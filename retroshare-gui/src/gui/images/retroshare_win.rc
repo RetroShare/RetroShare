@@ -1,0 +1,3 @@
+#include "retroshare_win.rc.h"
+
+IDI_ICON1               ICON    "gui/images/rswinicon.ico"

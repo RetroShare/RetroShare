@@ -1,0 +1,161 @@
+.QWidget {
+   background-color: #F9F9F9;
+}
+
+/* Customize the toolbar. */
+QToolBar {
+    border-image: url(:qss/black/backgroundblack.png);
+
+}
+
+QToolButton {
+      color: white;
+}
+
+QPushButton {
+      color: white;
+	min-height: 22px;
+
+}
+
+QPushButton#addfriendButton {
+      color: white;
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#invitefriendButton {
+      color: white;
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#addshareButton {
+      color: white;
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#optionsButton {
+      color: white;
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#quitButton {
+      color: white;
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#okButton {
+      color: white;
+	min-height: 27px;
+      min-width: 77px;
+}
+
+QPushButton#cancelButton#afcancelButton#doneButton {
+      color: white;
+	min-height: 25px;
+      min-width: 75px;
+}
+
+QPushButton#fileButton#emailButton {
+      color: white;
+	min-height: 27px;
+      min-width: 77px;
+}
+
+QPushButton#cancelprefButton {
+      color: white;
+	min-height: 25px;
+      min-width: 75px;
+}
+
+QPushButton#toggleAdvancedSearchBtn{
+	min-height: 34px;
+      min-width: 34px;
+}
+
+QPushButton#pushButtonDownload{
+	min-height: 34px;
+      min-width: 34px;
+}
+
+QPushButton
+{
+border-image: url(:qss/black/button.png) ;
+}
+
+QPushButton:hover 
+{
+border-image: url(:qss/black/button_hover.png);
+}
+
+QPushButton:pressed 
+{
+border-image: url(:qss/black/button_pressed.png) ;
+} 
+
+
+QSplitter
+{
+background-color: #F9F9F9;
+}
+
+QLineEdit
+{
+border-image: url(:qss/black/border.png) 4;
+border-width: 3;
+}
+
+QLabel
+{
+color: #306090;
+}
+
+
+QGroupBox
+{
+color: #306090;
+font: bold;
+}
+
+
+QRadioButton::indicator::unchecked {
+    image: url(:qss/black/checkBox.png);
+}
+
+QRadioButton::indicator:unchecked:hover {
+    image: url(:qss/black/checkBox_hover.png);
+}
+
+
+
+QRadioButton::indicator::checked {
+    image: url(:qss/black/checkBox_selected.png);
+}
+
+QRadioButton::indicator:checked:hover {
+    image: url(:qss/black/checkBox_hoverAndSelected.png);
+}
+
+
+QCheckBox::indicator:unchecked {
+    image: url(:qss/black/checkBox.png);
+}
+
+QCheckBox::indicator:unchecked:hover {
+    image: url(:qss/black/checkBox_hover.png);
+}
+
+
+QCheckBox::indicator:checked {
+    image: url(:qss/black/checkBox_selected.png);
+}
+
+QCheckBox::indicator:checked:hover {
+    image: url(:qss/black/checkBox_hoverAndSelected.png);
+}
+
+

@@ -1,0 +1,213 @@
+/*
+ * "$Id: tcpstream.h,v 1.5 2007-02-18 21:46:50 rmf24 Exp $"
+ *
+ * TCP-on-UDP (tou) network interface for RetroShare.
+ *
+ * Copyright 2004-2006 by Robert Fernie.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare@lunamutt.com".
+ *
+ */
+
+
+
+#ifndef TOU_TCP_PROTO_H
+#define TOU_TCP_PROTO_H
+
+
+/* so the packet will contain 
+ * a tcp header + data.
+ *
+ * This is done simplistically for speed.
+ */
+
+#include "tcppacket.h"
+#include "udplayer.h"
+
+#define MAX_SEG 		1500
+#define TCP_MAX_SEQ 		UINT_MAX
+#define TCP_MAX_WIN		65500
+#define TCP_ALIVE_TIMEOUT	20      /* 20 sec */
+#define TCP_RETRANS_TIMEOUT	1	/* 1 sec (Initial value) */
+#define kNoPktTimeout		60	/* 1 min */
+
+
+#define	TCP_CLOSED 	0
+#define	TCP_LISTEN 	1
+#define	TCP_SYN_SENT 	2
+#define	TCP_SYN_RCVD 	3
+#define	TCP_ESTABLISHED 4
+#define	TCP_FIN_WAIT_1 	5
+#define	TCP_FIN_WAIT_2 	6
+#define	TCP_TIMED_WAIT 	7
+#define	TCP_CLOSING 	8
+#define	TCP_CLOSE_WAIT 	9
+#define	TCP_LAST_ACK 	10
+
+class dataBuffer
+{
+	public:
+	uint8 data[MAX_SEG];
+};
+
+#include <list>
+#include <deque>
+
+
+class TcpStream
+{
+	public:
+
+	TcpStream(UdpLayer *lyr);
+
+	/* user interface */
+int     status(std::ostream &out);
+int     connect();
+bool    isConnected();
+
+bool 	widle(); /* write idle */
+bool 	ridle(); /* read idle */
+uint32 	wbytes();
+uint32 	rbytes();
+
+	/* network interface (unreliable) */
+int	receivePkt(void *dta, int size);
+int	sendPkt(void *dta, int *size);
+
+	/* stream Interface */
+int	write(char *dta, int size); /* write -> pkt -> net */
+int	read(char *dta, int size); /* net ->   pkt -> read */
+
+	/* check ahead for allowed bytes */
+int	write_allowed();
+int	read_pending();
+
+int	closeWrite(); /* non-standard, but for clean exit */
+int	close(); /* standard unix behaviour */
+
+int	tick(); /* check iface etc */
+	/* internal */
+
+int	cleanup();
+
+/* incoming data */
+int 	recv();
+int 	handleIncoming(TcpPacket *pkt);
+int 	incoming_Closed(TcpPacket *pkt);
+int 	incoming_SynSent(TcpPacket *pkt);
+int 	incoming_SynRcvd(TcpPacket *pkt);
+int 	incoming_Established(TcpPacket *pkt);
+int 	incoming_FinWait1(TcpPacket *pkt);
+int 	incoming_FinWait2(TcpPacket *pkt);
+int 	incoming_TimedWait(TcpPacket *pkt);
+int 	incoming_Closing(TcpPacket *pkt);
+int 	incoming_CloseWait(TcpPacket *pkt);
+int 	incoming_LastAck(TcpPacket *pkt);
+
+int 	check_InPkts();
+int 	UpdateInWinSize();
+
+/* outgoing data */
+int 	toSend(TcpPacket *pkt, bool retrans = true);
+void 	acknowledge();
+void 	calcWinSize();
+int	send();
+int	retrans();
+
+int	sendAck();
+
+
+uint32	genSequenceNo();
+bool 	isOldSequence(uint32 tst, uint32 curr);
+
+	/* data (in -> pkts) && (pkts -> out) */
+
+	/* for small amounts of data */
+	uint8 inData[MAX_SEG];
+	uint32 inSize;
+
+
+	/* two variable sized buffers required here */
+	uint8 outDataRead[MAX_SEG];
+	uint32 outSizeRead;
+	uint8 outDataNet[MAX_SEG];
+	uint32 outSizeNet;
+
+	/* get packed into here as size increases */
+	std::deque<dataBuffer *>   inQueue, outQueue;
+
+	/* packets waiting for acks */
+	std::list<TcpPacket *> inPkt, outPkt;
+
+
+	uint8  state; /* stream state */
+	bool   inStreamActive;
+	bool   outStreamActive;
+
+	uint32 outSeqno; /* next out */
+	uint32 outAcked; /* other size has received */
+	uint32 outWinSize; /* we allowed to send */
+
+	uint32 inAckno; /* next expected */
+	uint32 inWinSize; /* allowing other to send */
+	uint32 rrt;
+
+	/* some (initially) consts */
+	uint32 maxWinSize;
+	uint32 keepAliveTimeout;
+	double retransTimeout;
+
+	/* some timers */
+	double keepAliveTimer;
+	double lastIncomingPkt;
+
+	/* tracking */
+	uint32 lastSentAck;
+	uint32 lastSentWinSize;
+	uint32 initOurSeqno;
+	uint32 initPeerSeqno;
+
+	uint32 lastWriteTF,lastReadTF;
+	uint16 wcount, rcount;
+
+	int errorState;
+
+	/* RoundTripTime estimations */
+	double rtt_est;
+	double rtt_dev;
+
+	/* congestion limits */
+	uint32 congestThreshold;
+	uint32 congestWinSize;
+	uint32 congestUpdate;
+
+
+	/* UdpLayer */
+	UdpLayer *udp;
+};
+
+
+/* for debugging */
+
+#ifdef TCP_DEBUG_STREAM_EXTRA /* for extra checking! */
+int     setupBinaryCheck(std::string fname);
+#endif
+
+
+
+#endif
+

@@ -1,0 +1,665 @@
+<ui version="4.0" >
+ <class>MessengerWindow</class>
+ <widget class="QWidget" name="MessengerWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>238</width>
+    <height>482</height>
+   </rect>
+  </property>
+  <property name="palette" >
+   <palette>
+    <active>
+     <colorrole role="WindowText" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>0</red>
+        <green>0</green>
+        <blue>0</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Button" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>244</red>
+        <green>244</green>
+        <blue>244</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Light" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>244</red>
+        <green>244</green>
+        <blue>244</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Midlight" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>241</red>
+        <green>239</green>
+        <blue>226</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Dark" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>140</red>
+        <green>140</green>
+        <blue>140</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Mid" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>163</red>
+        <green>163</green>
+        <blue>163</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Text" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>0</red>
+        <green>0</green>
+        <blue>0</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="BrightText" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>244</red>
+        <green>244</green>
+        <blue>244</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="ButtonText" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>0</red>
+        <green>0</green>
+        <blue>0</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Base" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Window" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>236</red>
+        <green>243</green>
+        <blue>246</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Shadow" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>106</red>
+        <green>106</green>
+        <blue>106</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Highlight" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>197</red>
+        <green>231</green>
+        <blue>246</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="HighlightedText" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>0</red>
+        <green>0</green>
+        <blue>0</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="AlternateBase" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>232</red>
+        <green>232</green>
+        <blue>232</blue>
+       </color>
+      </brush>
+     </colorrole>
+    </active>
+    <inactive>
+     <colorrole role="WindowText" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>0</red>
+        <green>0</green>
+        <blue>0</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Button" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>244</red>
+        <green>244</green>
+        <blue>244</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Light" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>244</red>
+        <green>244</green>
+        <blue>244</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Midlight" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>241</red>
+        <green>239</green>
+        <blue>226</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Dark" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>140</red>
+        <green>140</green>
+        <blue>140</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Mid" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>163</red>
+        <green>163</green>
+        <blue>163</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Text" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>0</red>
+        <green>0</green>
+        <blue>0</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="BrightText" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>244</red>
+        <green>244</green>
+        <blue>244</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="ButtonText" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>0</red>
+        <green>0</green>
+        <blue>0</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Base" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Window" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>236</red>
+        <green>243</green>
+        <blue>246</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Shadow" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>106</red>
+        <green>106</green>
+        <blue>106</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Highlight" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>244</red>
+        <green>244</green>
+        <blue>244</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="HighlightedText" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>0</red>
+        <green>0</green>
+        <blue>0</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="AlternateBase" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>232</red>
+        <green>232</green>
+        <blue>232</blue>
+       </color>
+      </brush>
+     </colorrole>
+    </inactive>
+    <disabled>
+     <colorrole role="WindowText" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>122</red>
+        <green>122</green>
+        <blue>122</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Button" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>244</red>
+        <green>244</green>
+        <blue>244</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Light" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>244</red>
+        <green>244</green>
+        <blue>244</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Midlight" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>244</red>
+        <green>244</green>
+        <blue>244</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Dark" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>140</red>
+        <green>140</green>
+        <blue>140</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Mid" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>163</red>
+        <green>163</green>
+        <blue>163</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Text" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>122</red>
+        <green>122</green>
+        <blue>122</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="BrightText" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>244</red>
+        <green>244</green>
+        <blue>244</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="ButtonText" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>122</red>
+        <green>122</green>
+        <blue>122</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Base" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>244</red>
+        <green>244</green>
+        <blue>244</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Window" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>236</red>
+        <green>243</green>
+        <blue>246</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Shadow" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>0</red>
+        <green>0</green>
+        <blue>0</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Highlight" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>197</red>
+        <green>231</green>
+        <blue>246</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="HighlightedText" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>0</red>
+        <green>0</green>
+        <blue>0</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="AlternateBase" >
+      <brush brushstyle="SolidPattern" >
+       <color alpha="255" >
+        <red>232</red>
+        <green>232</green>
+        <blue>232</blue>
+       </color>
+      </brush>
+     </colorrole>
+    </disabled>
+   </palette>
+  </property>
+  <property name="font" >
+   <font/>
+  </property>
+  <property name="contextMenuPolicy" >
+   <enum>Qt::NoContextMenu</enum>
+  </property>
+  <property name="windowIcon" >
+   <iconset resource="images.qrc" >:/images/rstray3.png</iconset>
+  </property>
+  <property name="styleSheet" >
+   <string> QWidget#MessengerWindow {
+background-color: #ECF3F6; background-image:url(:/images/backgroundimage.png);
+background-position: top right;
+background-repeat: no-repeat
+}</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>0</number>
+   </property>
+   <property name="spacing" >
+    <number>0</number>
+   </property>
+   <item row="0" column="0" >
+    <layout class="QGridLayout" >
+     <property name="margin" >
+      <number>4</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item row="0" column="0" >
+      <widget class="QToolButton" name="avatarButton" >
+       <property name="toolTip" >
+        <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Click to change your avatar&lt;/p>&lt;/body>&lt;/html></string>
+       </property>
+       <property name="icon" >
+        <iconset resource="images.qrc" >:/images/retrosharelogo1.png</iconset>
+       </property>
+       <property name="iconSize" >
+        <size>
+         <width>70</width>
+         <height>70</height>
+        </size>
+       </property>
+       <property name="autoRaise" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>4</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item row="0" column="0" >
+        <widget class="QComboBox" name="statuscomboBox" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="toolTip" >
+          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Change your Status and your display&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">picture here.&lt;/p>&lt;/body>&lt;/html></string>
+         </property>
+         <property name="insertPolicy" >
+          <enum>QComboBox::NoInsert</enum>
+         </property>
+         <property name="frame" >
+          <bool>true</bool>
+         </property>
+         <property name="modelColumn" >
+          <number>0</number>
+         </property>
+         <item>
+          <property name="text" >
+           <string>Online</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="images.qrc" >:/images/donline.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>Busy</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="images.qrc" >:/images/dbusy.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>Be right Back</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="images.qrc" >:/images/dbrb.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>Away</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="images.qrc" >:/images/daway.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>In a Call</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="images.qrc" >:/images/dphone.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>Out of lunch</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="images.qrc" >:/images/dlunch.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>Apear Offline</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="images.qrc" >:/images/dhidden.png</iconset>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2" >
+        <widget class="QComboBox" name="messagecomboBox" >
+         <property name="toolTip" >
+          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Share a personal message with your contacts&lt;/p>&lt;/body>&lt;/html></string>
+         </property>
+         <property name="editable" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QFrame" name="logoframe" >
+     <property name="frameShape" >
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <layout class="QGridLayout" >
+     <property name="margin" >
+      <number>9</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item row="1" column="0" colspan="2" >
+      <widget class="QTreeWidget" name="messengertreeWidget" >
+       <property name="contextMenuPolicy" >
+        <enum>Qt::CustomContextMenu</enum>
+       </property>
+       <property name="iconSize" >
+        <size>
+         <width>18</width>
+         <height>18</height>
+        </size>
+       </property>
+       <property name="columnCount" >
+        <number>0</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0" >
+      <widget class="QLineEdit" name="searchlineEdit" />
+     </item>
+     <item row="0" column="1" >
+      <widget class="QToolButton" name="addIMAccountButton" >
+       <property name="toolTip" >
+        <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Add a Friend&lt;/p>&lt;/body>&lt;/html></string>
+       </property>
+       <property name="text" >
+        <string/>
+       </property>
+       <property name="icon" >
+        <iconset resource="images.qrc" >:/images/dadd.png</iconset>
+       </property>
+       <property name="iconSize" >
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="toolButtonStyle" >
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+       <property name="autoRaise" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>statuscomboBox</tabstop>
+  <tabstop>messagecomboBox</tabstop>
+  <tabstop>searchlineEdit</tabstop>
+  <tabstop>addIMAccountButton</tabstop>
+  <tabstop>messengertreeWidget</tabstop>
+  <tabstop>avatarButton</tabstop>
+ </tabstops>
+ <resources>
+  <include location="images.qrc" />
+ </resources>
+ <connections/>
+</ui>

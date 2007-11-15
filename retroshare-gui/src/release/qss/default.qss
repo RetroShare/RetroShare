@@ -1,0 +1,44 @@
+.QWidget {
+   background-color: #ECF3F6;
+}
+
+/* Customize the toolbar. */
+QToolBar {
+    border-image: url(qss/default/retrotoolbar.png);
+
+}
+
+QPushButton#addfriendButton {
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#invitefriendButton {
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#addshareButton {
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#optionsButton {
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#quitButton {
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#okButton {
+	min-height: 27px;
+      min-width: 77px;
+}
+
+QPushButton#cancelButton {
+	min-height: 25px;
+      min-width: 75px;
+}

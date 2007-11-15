@@ -1,0 +1,81 @@
+.QWidget {
+   background-color: #66ff33;
+}
+
+/* Customize the toolbar. */
+QToolBar {
+
+    border-image: url(:qss/over/backover.png);
+
+}
+
+
+QPushButton {
+
+	min-height: 22px;
+}
+
+
+QPushButton
+{
+border-image: url(:qss/over/greenbot.png) ;
+}
+
+QPushButton:hover 
+{
+border-image: url(:qss/over/greenhover.png);
+}
+
+QPushButton:pressed 
+{
+color: white;
+border-image: url(:qss/over/greentop.png) ;
+} 
+
+QPushButton#addfriendButton {
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#invitefriendButton {
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#addshareButton {
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#optionsButton {
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#quitButton {
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#okButton {
+	min-height: 27px;
+      min-width: 77px;
+}
+
+QPushButton#cancelButton {
+	min-height: 25px;
+      min-width: 75px;
+}
+
+QPushButton#cancelprefButton {
+      color: white;
+	min-height: 25px;
+      min-width: 75px;
+}
+
+QSplitter
+{
+background-color: #66ff33;
+}
+
+
