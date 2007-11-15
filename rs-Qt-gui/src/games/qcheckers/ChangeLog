@@ -1,0 +1,70 @@
+2005-12-29 Artur Wiebe <wibix@gmx.de>
+	* toplevel.cc, view.h: Removed unused slots.
+	* Renamed info to histrory.
+	* history.cc: Removed useless code.
+
+2005-12-19 Artur Wiebe <wibix@gmx.de>
+	* KCheckers 0.8 released.
+	* Added support for free men placement at the beginning of the game.
+	* Added multiple undos/redos: free movement in move history.
+	* Removed network code: there will be network in the next version.
+	* See below for more changes since 0.6.
+
+2005-09-09 Artur Wiebe <wibix@gmx.de>
+	* KCheckers 0.7 is done - will not be released.
+	* Ported to Qt 4.0. So watch out for more bugs.
+	* Added basic Theme support.
+	* Improved thread termination.
+	* Redesigned GUI.
+	* echeckers.cc: Fixed bug: man reaching the king row became king and
+		continued move.
+	* Improved PDN support. Can now re-play games.
+
+2005-04-11 Artur Wiebe <wibix@gmx.de>
+	* KCheckers 0.6 released.
+	* New game mode: Human vs. Human.
+	* Added Info widget next to game's board.
+	* Added different board sizes.
+	* Rewrote menubar and toolbar code.
+	* Rewrote network code.
+	* Fixed some bugs, introduced new.
+
+2004-08-08 Artur Wiebe <wibix@gmx.de>
+	* KCheckers 0.5 released.
+	* Machine thinks in a thread now.
+	* Added Internationalization support.
+	* Added Network support.
+	* Altered GUI interface to match KDE specifications.
+	* Extended Preview in File Open Dialog.
+	* Various improvements.
+
+2003-01-15 Andi Peredri <andi@ukr.net>
+	* KCheckers 0.4 released.
+	* Added support for Portable Draughts Notation database format.
+	* Added saving, loading and restarting of game.
+	* Added PDN preview widget.
+	* Added 20 PDN compositions.
+	* Added game information box.
+	* Various improvements.
+
+2002-06-10 Andi Peredri <andi@ukr.net>
+	* KCheckers 0.3 released.
+	* Ported to Qt 3.
+	* Added toolbar.
+	* Added green theme of the board.
+	* Added undo of last move.
+	* Added auto saving of settings.
+	* Added optional notation of the board.
+
+2002-03-10 Andi Peredri <andi@ukr.net>
+	* KCheckers 0.2 released.
+	* Ported to pure Qt.
+	* KCheckers engine improvements.
+	* Added support of english checkers.
+	* Added wooden theme of the board.
+	* Added auto change of the men's color.
+	* Added on-line description of the play's rules.
+
+2002-01-15 Andi Peredri <andi@ukr.net>
+	* Initial Release.
+

@@ -1,0 +1,56 @@
+
+
+/* Customize the toolbar. */
+QToolBar {
+
+	min-height: 89px;
+}
+
+QToolBar {
+    
+    border-image: url(:qss/arachnophobia/background.png);
+
+}
+
+
+QPushButton#addfriendButton {
+      color: white;
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#invitefriendButton {
+      color: white;
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#addshareButton {
+      color: white;
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#optionsButton {
+      color: white;
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#quitButton {
+      color: white;
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#okButton {
+      color: white;
+	min-height: 27px;
+      min-width: 77px;
+}
+
+QPushButton#cancelButton {
+      color: white;
+	min-height: 25px;
+      min-width: 75px;
+}

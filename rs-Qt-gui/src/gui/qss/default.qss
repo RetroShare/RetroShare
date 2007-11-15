@@ -1,0 +1,13 @@
+.QWidget {
+   background-color: #ECF3F6;
+}
+
+/* Customize the toolbar. */
+QToolBar {
+    border-image: url(:/qss/default/retrotoolbar.png);
+
+}
+
+
+
+

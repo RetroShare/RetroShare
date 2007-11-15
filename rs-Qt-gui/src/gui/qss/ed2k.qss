@@ -1,0 +1,73 @@
+.QWidget {
+   background-image: url(:qss/ed2k/little-back.png);
+}
+
+
+/* Customize the toolbar. */
+QToolBar {
+    border-image: url(:qss/ed2k/backed2k.png);
+
+}
+
+
+QPushButton {
+	min-height: 22px;
+}
+
+
+QPushButton
+{
+border-image: url(:qss/ed2k/button-down.png) ;
+}
+
+QPushButton:hover 
+{
+border-image: url(:qss/ed2k/button-hover.png);
+}
+
+QPushButton:pressed 
+{
+border-image: url(:qss/ed2k/button-up.png) ;
+} 
+
+
+QPushButton#addfriendButton {
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#invitefriendButton {
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#addshareButton {
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#optionsButton {
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#quitButton {
+	min-height: 34px;
+      min-width: 48px;
+}
+
+QPushButton#okButton {
+	min-height: 27px;
+      min-width: 77px;
+}
+
+QPushButton#cancelButton {
+	min-height: 25px;
+      min-width: 75px;
+}
+
+QPushButton#cancelprefButton {
+
+	min-height: 25px;
+      min-width: 75px;
+}

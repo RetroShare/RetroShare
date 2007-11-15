@@ -1,0 +1,67 @@
+/*
+ * "$Id: pqiloopback.h,v 1.5 2007-02-19 20:08:30 rmf24 Exp $"
+ *
+ * 3P/PQI network interface for RetroShare.
+ *
+ * Copyright 2004-2006 by Robert Fernie.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare@lunamutt.com".
+ *
+ */
+
+
+
+#ifndef MRK_PQI_LOOPBACK_HEADER
+#define MRK_PQI_LOOPBACK_HEADER
+
+
+// The standard data types and the search interface.
+#include "pqi/pqi.h"
+
+#include <map>
+#include <list>
+#include <iostream>
+
+
+// Test Interface (LoopBack)
+// public interface .... includes the whole p3interface.
+class pqiloopback: public PQInterface
+{
+public:
+	pqiloopback();
+virtual ~pqiloopback();
+
+// search Interface.
+virtual int	SendItem(PQItem *item);
+virtual PQItem *GetItem();
+
+virtual int	GetFile(PQFileItem *item, std::ostream &in);
+virtual int	SendFile(PQFileItem *item, std::istream &out);
+
+// PQI interface.
+virtual int	tick();
+virtual int	status();
+
+virtual Person *getContact();
+
+	private:
+	std::list<PQItem *> objs;
+};
+
+
+
+#endif //MRK_PQI_LOOPBACK_HEADER
