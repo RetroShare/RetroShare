@@ -295,5 +295,6 @@ win32 {
 }
 
 !win32 {
-    LIBS += -L../../../../../lib -lretroshare -lKadC -lminiupnpc -lssl -lcrypto -lqcheckers
+    LIBS += -L../../../../lib -lretroshare -lKadC -lminiupnpc -lssl -lcrypto
+    LIBS += -lqcheckers -lsmplayer
 }
