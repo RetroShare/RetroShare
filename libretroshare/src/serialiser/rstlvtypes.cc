@@ -1,36 +1,12 @@
 
-/*
- * libretroshare/src/serialiser: rstlvtypes.cc
- *
- * RetroShare Serialiser.
- *
- * Copyright 2007-2008 by Robert Fernie, Chris Parker
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+#include "rstlvbase.h"
+#include "rstlvtypes.h"
+#include "rsbaseserial.h"
 #include <ostream>
 #include <sstream>
 #include <iomanip>
+#include <iostream>
 
-#include "serialiser/rstlvbase.h"
-#include "serialiser/rstlvtypes.h"
-#include "serialiser/rsbaseserial.h"
 
 std::ostream &RsTlvItem::printBase(std::ostream &out, std::string clsName, uint16_t indent)
 {
@@ -59,7 +35,7 @@ std::ostream &printIndent(std::ostream &out, uint16_t indent)
 
 
 
-/*********************************** RsTlvFileBinaryData **********************************/
+/*!********************************** RsTlvFileBinaryData **********************************/
 
 
 RsTlvBinaryData::RsTlvBinaryData(uint16_t t)
@@ -68,6 +44,7 @@ RsTlvBinaryData::RsTlvBinaryData(uint16_t t)
 	return;
 }
 
+/// used to allocate memory andinitialize binary data member 
 bool     RsTlvBinaryData::setBinData(void *data, uint16_t size)
 {
 	/* ready to load */
@@ -202,7 +179,7 @@ void RsTlvPeerIdSet::TlvClear()
 uint16_t RsTlvPeerIdSet::TlvSize()
 {
 
-	uint32_t s = 8; /* header + 4 for size */
+	uint32_t s = 4; /* header */
 
 	/* determine the total size of ids strings in list */
 
@@ -210,12 +187,13 @@ uint16_t RsTlvPeerIdSet::TlvSize()
 	
 	for(it = ids.begin(); it != ids.end() ; ++it)
 	{
-		if ((*it).length() > 0)
+		if (it->length() > 0)
 			s += GetTlvStringSize(*it);
 	}
 
 	return s;
 }
+
 
 bool     RsTlvPeerIdSet::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
 {
@@ -238,7 +216,7 @@ bool     RsTlvPeerIdSet::SetTlv(void *data, uint32_t size, uint32_t *offset) /* 
 	
 	for(it = ids.begin(); it != ids.end() ; ++it)
 	{
-		if ((*it).length() > 0)
+		if (it->length() > 0)
 			ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_PEERID, *it); 
 	}
 
@@ -246,17 +224,22 @@ bool     RsTlvPeerIdSet::SetTlv(void *data, uint32_t size, uint32_t *offset) /* 
 
 }
 
+
 bool     RsTlvPeerIdSet::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
-{
-	
+{	
+	if (size < *offset + 4)
+		return false;	
+
 	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
 	uint16_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
 	uint32_t tlvend = *offset + tlvsize;
 
+
+
 	if (size < tlvend)    /* check size */
 		return false; /* not enough space */
-
-	if (tlvtype != TLV_TYPE_FILEDATA) /* check type */
+std::cout << "yeah!!!" << std::endl;
+	if (tlvtype != TLV_TYPE_PEERSET) /* check type */
 		return false;
 
 	bool ok = true;
@@ -267,23 +250,23 @@ bool     RsTlvPeerIdSet::GetTlv(void *data, uint32_t size, uint32_t *offset) /* 
 	/* skip the header */
 	(*offset) += 4;
 
-	int i = 0; /* temp variable to iterate through 'listed' data */
+	
 
 /* while there is TLV  */
 	while((*offset) + 2 < tlvend)
 	{
 		/* get the next type */
 		uint16_t tlvsubtype = GetTlvType( &(((uint8_t *) data)[*offset]) );
-		
-		if (tlvsubtype = TLV_TYPE_STR_PEERID)
+	
+		if (tlvsubtype == TLV_TYPE_STR_PEERID)
 		{
-			i++;
-
-			ids.resize(i);
-
-			ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_PEERID, *ids.rbegin());
-
-
+			std::string newIds;
+			ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_PEERID, newIds);
+			if(ok)
+			{
+				ids.push_back(newIds);
+				
+			}
 		}
 
 		if (!ok)
@@ -291,7 +274,27 @@ bool     RsTlvPeerIdSet::GetTlv(void *data, uint32_t size, uint32_t *offset) /* 
 			return false;
 		}
 	}
-		
+	
+	return ok;
+}
+
+/// print to screen RsTlvPeerIdSet contents
+std::ostream &RsTlvPeerIdSet::print(std::ostream &out, uint16_t indent)
+{
+	printBase(out, "RsTlvPeerIdSet", indent);
+	uint16_t int_Indent = indent + 2;
+
+	std::list<std::string>::iterator it;
+	for(it = ids.begin(); it != ids.end() ; ++it)
+	{
+		printIndent(out, int_Indent);
+		out << "id:" << *it;
+		out << std::endl;
+	}
+
+	printEnd(out, "RsTlvPeerIdSet", indent);
+	return out;
+
 }
 
 
@@ -305,16 +308,14 @@ void RsTlvServiceIdSet::TlvClear()
 
 uint16_t RsTlvServiceIdSet::TlvSize()
 {
-	uint32_t s = 8; /* header + 4 for size */
+	uint32_t s = 4; /* header */
 
 	/* determine the total size of ids strings in list */
-
-	std::list<uint8_t>::iterator it;
-	
+	std::list<uint32_t>::iterator it;
 	for(it = ids.begin(); it != ids.end() ; ++it)
 	{
 		if (*it > 0)
-			s += GetTlvUInt8Size();
+			s += GetTlvUInt32Size();
 	}
 
 	return s;
@@ -332,17 +333,15 @@ bool     RsTlvServiceIdSet::SetTlv(void *data, uint32_t size, uint32_t *offset) 
 	bool ok = true;
 
 	
-		/* start at data[offset] */
+	/* start at data[offset] */
 	ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_SERVICESET , tlvsize);
 
 	/* determine the total size of ids strings in list */
-
-	std::list<uint8_t>::iterator it;
-	
+	std::list<uint32_t>::iterator it;
 	for(it = ids.begin(); it != ids.end() ; ++it)
 	{
-	/*	if (*it > 0)
-			ok &= SetTlvUInt8(data, tlvend, offset, TLV_TYPE_UINT8_SERID, *it); (function needs to be implemented in rstlvbase.cc)*/
+		if (*it > 0)
+			ok &= SetTlvUInt32(data, tlvend, offset, TLV_TYPE_UINT32_SERID, *it);
 	}
 
 	return ok;
@@ -351,6 +350,8 @@ bool     RsTlvServiceIdSet::SetTlv(void *data, uint32_t size, uint32_t *offset) 
 
 bool     RsTlvServiceIdSet::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
 {
+	if (size < *offset + 4)
+		return false;	
 	
 	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
 	uint16_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
@@ -370,23 +371,21 @@ bool     RsTlvServiceIdSet::GetTlv(void *data, uint32_t size, uint32_t *offset) 
 	/* skip the header */
 	(*offset) += 4;
 
-	int i = 0; /* temp variable to iterate through 'listed' data */
-
 /* while there is TLV  */
 	while((*offset) + 2 < tlvend)
 	{
 		/* get the next type */
 		uint16_t tlvsubtype = GetTlvType( &(((uint8_t *) data)[*offset]) );
 		
-		if (tlvsubtype = TLV_TYPE_UINT8_SERID)
+		if (tlvsubtype == TLV_TYPE_UINT32_SERID)
 		{
-			i++;
-
-			ids.resize(i);
-
-		//	ok &= GetTlvUint8(data, size, offset); (function needs to be implemented in rstlvbase.cc)
-
-
+			uint32_t newIds;
+			ok &= GetTlvUInt32(data, tlvend, offset, TLV_TYPE_UINT32_SERID, &newIds);
+			if(ok)
+			{
+				ids.push_back(newIds);
+				
+			}
 		}
 
 		if (!ok)
@@ -394,7 +393,27 @@ bool     RsTlvServiceIdSet::GetTlv(void *data, uint32_t size, uint32_t *offset) 
 			return false;
 		}
 	}
-		
+	
+	return ok;
+}
+
+/// print to screen RsTlvServiceSet contents
+std::ostream &RsTlvServiceIdSet::print(std::ostream &out, uint16_t indent)
+{
+	printBase(out, "RsTlvServiceIdSet", indent);
+	uint16_t int_Indent = indent + 2;
+
+	std::list<uint32_t>::iterator it;
+	for(it = ids.begin(); it != ids.end() ; ++it)
+	{
+		printIndent(out, int_Indent);
+		out << "id:" << *it;
+		out << std::endl;
+	}
+
+	printEnd(out, "RsTlvServiceIdSet", indent);
+	return out;
+
 }
 
 /************************************* RsTlvKeyValue ************************************/
@@ -407,11 +426,7 @@ void RsTlvKeyValue::TlvClear()
 
 uint16_t RsTlvKeyValue::TlvSize()
 {
-	uint32_t s = 8; /* header + 4 for size */
-
-	/* first determine the total size of RstlvFileItems in list */
-
-	std::list<RsTlvFileItem>::iterator it;
+	uint32_t s = 4; /* header + 4 for size */
 
 	/* now add comment and title length of this tlv object */
 
@@ -452,6 +467,9 @@ return ok;
 
 bool  RsTlvKeyValue::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
 {
+	if (size < *offset + 4)
+		return false;	
+	
 	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
 	uint16_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
 	uint32_t tlvend = *offset + tlvsize;
@@ -499,7 +517,21 @@ bool  RsTlvKeyValue::GetTlv(void *data, uint32_t size, uint32_t *offset) /* seri
 	
 }
 
+std::ostream &RsTlvKeyValue::print(std::ostream &out, uint16_t indent)
+{ 
+	printBase(out, "RsTlvKeyValue", indent);
+	uint16_t int_Indent = indent + 2;
 
+	printIndent(out, int_Indent);
+	out << "Key:" << key;
+	printIndent(out, int_Indent);
+	out << "Value:" << value;
+	out << std::endl;
+	
+
+	printEnd(out, "RsTlvKeyValue", indent);
+	return out;
+}
 
 /************************************* RsTlvKeyValueSet ************************************/
 
@@ -511,7 +543,7 @@ void RsTlvKeyValueSet::TlvClear()
 uint16_t RsTlvKeyValueSet::TlvSize()
 {
 
-	uint32_t s = 8; /* header + 4 for size */
+	uint32_t s = 4; /* header + 4 for size */
 
 	std::list<RsTlvKeyValue>::iterator it;
 	
@@ -519,7 +551,7 @@ uint16_t RsTlvKeyValueSet::TlvSize()
 	{
 
 		for(it = pairs.begin(); it != pairs.end() ; ++it)
-			s += (*it).TlvSize();
+			s += it->TlvSize();
 
 	}
 
@@ -546,8 +578,7 @@ bool  RsTlvKeyValueSet::SetTlv(void *data, uint32_t size, uint32_t *offset) /* s
 		std::list<RsTlvKeyValue>::iterator it;
 
 		for(it = pairs.begin(); it != pairs.end() ; ++it)
-			ok &= (*it).SetTlv(data, size, offset);
-
+			ok &= it->SetTlv(data, size, offset);
 	}
 	
 
@@ -555,8 +586,12 @@ return ok;
 
 }
 
+
 bool  RsTlvKeyValueSet::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
 {
+	if (size < *offset + 4)
+		return false;	
+
 	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
 	uint16_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
 	uint32_t tlvend = *offset + tlvsize;
@@ -575,23 +610,17 @@ bool  RsTlvKeyValueSet::GetTlv(void *data, uint32_t size, uint32_t *offset) /* s
 	/* skip the header */
 	(*offset) += 4;
 
-	int i = 0; /* temporary variable to go through listed data*/
-
 	/* while there is TLV  */
 	while((*offset) + 2 < tlvend)
 	{
 		/* get the next type */
 		uint16_t tlvsubtype = GetTlvType( &(((uint8_t *) data)[*offset]) );
 		
-		if (tlvsubtype = TLV_TYPE_KEYVALUE)
+		RsTlvKeyValue kv;
+		ok &= kv.GetTlv(data, size, offset);
+		if (ok)
 		{
-			i++;
-
-			pairs.resize(i);
-
-			ok &= (*pairs.rbegin()).GetTlv(data, size, offset);
-
-
+			pairs.push_back(kv);
 		}
 
 		if (!ok)
@@ -600,16 +629,21 @@ bool  RsTlvKeyValueSet::GetTlv(void *data, uint32_t size, uint32_t *offset) /* s
 		}
 	}
 		
+	return ok;
 }
 
-
-
-std::ostream &RsTlvPeerIdSet::print(std::ostream &out, uint16_t indent)
-{ return out; }
-std::ostream &RsTlvServiceIdSet::print(std::ostream &out, uint16_t indent)
-{ return out; }
-std::ostream &RsTlvKeyValue::print(std::ostream &out, uint16_t indent)
-{ return out; }
+/// prints out contents of RsTlvKeyValueSet
 std::ostream &RsTlvKeyValueSet::print(std::ostream &out, uint16_t indent)
-{ return out; }
+{
+	printBase(out, "RsTlvKeyValue", indent);
+	uint16_t int_Indent = indent + 2;
+
+	std::list<RsTlvKeyValue>::iterator it;
+
+	for(it = pairs.begin(); it != pairs.end() ; ++it)
+		it->print(out, indent);
+
+	printEnd(out, "RsTlvKeyValue", indent);
+	return out;
+}
 
