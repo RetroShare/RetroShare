@@ -1,0 +1,249 @@
+####
+#Define OS.
+#
+OS = Linux
+#OS = Cygwin
+#OS = Win # MinGw.
+#
+#
+#
+#
+#
+###########################################################################
+###########################################################################
+# Please Define these Variables before Compiling. (Examples below:)
+# Linux (SSL_DIR & KADC_DIR)
+# Cygwin (SSL_DIR & KADC_DIR & FLTK_DIR & PTHREADS_DIR)
+# MinGW  (SSL_DIR & KADC_DIR & FLTK_DIR & PTHREADS_DIR)
+
+#### Linux/Cygwin Parameters.
+#SSL_DIR=/home/xxx/prog/src/openssl-0.9.7g-xpgp-0.1c
+#KADC_DIR=/home/xxx/prog/src/KadC
+#
+#### Cygwin Only....
+#FLTK_DIR=/MinGWlibs/FLTK-1.1.6  
+#PTHREADS_DIR=/cygdrive/c/home/dev/prog/MinGw/pthreads/Pre-built.2
+#KADC_DIR=/cygdrive/c/home/dev/prog/MinGW/KadC
+#ZLIB_DIR=/cygdrive/c/home/dev/prog/MinGW/zlib-1.2.3
+#
+###########################################################################
+# My Versions
+ifeq ($(OS),Linux)
+  #Linux.
+  SSL_DIR=../../../../../src/openssl-0.9.7g-xpgp-0.1c
+  KADC_DIR=../../../../../src/KadC
+  UPNPC_DIR=../../../../../src/miniupnpc-20070515
+else
+###########################################################################
+  ifeq ($(OS),Cygwin)
+
+    #Cygwin....
+    CYGWIN_SRC_ROOT=/cygdrive/c/home/rmfern/prog/MinGW
+    SSL_DIR=/home/rmfern/prog/src/openssl-0.9.7g
+    #SSL_DIR=$(CYGWIN_SRC_ROOT)/openssl-0.9.7g
+    FLTK_DIR=$(CYGWIN_SRC_ROOT)/FLTK-1.1.6
+    PTHREADS_DIR=$(CYGWIN_SRC_ROOT)/pthreads/pthreads.2
+    KADC_DIR=$(CYGWIN_SRC_ROOT)/debug/KadC-2006-Oct-19
+    ZLIB_DIR=$(CYGWIN_SRC_ROOT)/zlib-1.2.3
+    UPNPC_DIR=$(CYGWIN_SRC_ROOT)/libs/src/miniupnpc-20070515
+
+  else
+
+    #MinGw....
+    MINGW_SRC_ROOT=c:\home\rmfern\prog\MinGW
+    SSL_DIR=$(MINGW_SRC_ROOT)\openssl-0.9.7g
+    FLTK_DIR=$(MINGW_SRC_ROOT)\FLTK-1.1.6
+    PTHREADS_DIR=$(MINGW_SRC_ROOT)\pthreads\pthreads.2
+    KADC_DIR=$(MINGW_SRC_ROOT)\debug\KadC-2006-Oct-19
+    ZLIB_DIR=$(MINGW_SRC_ROOT)\zlib-1.2.3
+    UPNPC_DIR=$(MINGW_SRC_ROOT)\miniupnpc-20070515
+
+  endif
+
+###########################################################################
+endif
+###########################################################################
+
+ifndef RS_TOP_DIR
+dummy:
+	echo "RS_TOP_DIR is not defined in your makefile"
+endif
+
+RS_DIR=$(RS_TOP_DIR)
+
+ifndef SSL_DIR
+dummy:
+	echo "you must define SSL_DIR before you can compile"
+
+endif
+
+ifndef KADC_DIR
+dummy:
+	echo "you must define KADC_DIR before you can compile"
+
+endif
+
+ifneq ($(OS),Linux)
+# no longer dependancy
+#  ifndef FLTK_DIR
+#dummy:
+#	echo "you must define FLTK_DIR before you can compile"
+
+#  endif
+#
+  ifndef PTHREADS_DIR
+dummy:
+	echo "you must define PTHREADS_DIR before you can compile"
+
+  endif
+endif
+
+############ ENFORCE DIRECTORY NAMING ########################
+
+CC = g++
+
+
+# flags for components....
+PQI_USE_XPGP = 1
+PQI_USE_PROXY = 1
+#PQI_USE_CHANNELS = 1
+USE_FILELOOK = 1
+
+ifeq ($(OS),Win)
+  # MinGw
+  INCLUDE = -I $(RS_DIR) -I$(KADC_DIR)
+  ifdef PQI_USE_XPGP
+	INCLUDE += -I $(SSL_DIR)\include 
+  endif
+else
+  # Unix: Linux/Cygwin
+  INCLUDE = -I $(RS_DIR) -I$(KADC_DIR)
+  ifdef PQI_USE_XPGP
+	INCLUDE += -I $(SSL_DIR)/include 
+  endif
+endif
+
+CFLAGS = -Wall -g $(INCLUDE) 
+
+RANLIB = ranlib
+LIBRS = ../lib/libretroshare.a
+RSCFLAGS = -Wall -g $(INCLUDE) 
+
+ifdef PQI_USE_XPGP
+	CFLAGS += -DPQI_USE_XPGP
+endif
+
+ifdef PQI_USE_PROXY
+	CFLAGS += -DPQI_USE_PROXY
+endif
+
+ifdef PQI_USE_CHANNELS
+	CFLAGS += -DPQI_USE_CHANNELS
+endif
+
+ifdef USE_FILELOOK
+	CFLAGS += -DUSE_FILELOOK
+endif
+
+
+#########################################################################
+# OS specific Includes/Libs.
+# LINUX...
+ifeq ($(OS),Linux)
+
+
+	# XLIBS arent needed for basic libretroshare.
+	# only needed for FLTK interface.
+
+	#XLIB = -lXft -lpthread -lXext -lX11 \
+	#  -lXrender -lexpat -L/usr/X11R6/lib -lXau \
+	#  -lXinerama -lXdmcp -lXext \
+	#  -lfontconfig -lfreetype -lz 
+
+	RM = /bin/rm
+
+	LIBDIR = $(RS_DIR)/lib
+	LIBS =  -L$(LIBDIR) -lretroshare 
+  	ifdef PQI_USE_XPGP
+		LIBS +=  -L$(SSL_DIR) 
+  	endif
+	LIBS +=  -lssl -lcrypto  -lpthread
+        LIBS +=  -L$(KADC_DIR) -lKadC 
+        LIBS +=  -L$(UPNPC_DIR) -lminiupnpc
+	LIBS +=  $(XLIB) -ldl -lz 
+	
+	RSLIBS = $(LIBS)
+
+else # windows (Cygwin or MinGW)
+
+# for static pthread libs....
+WININC += -DPTW32_STATIC_LIB
+WINLIB = -lws2_32 -luuid -lole32 -liphlpapi 
+
+  ifeq ($(OS),Cygwin)
+  # Cygwin
+        WININC += -mno-cygwin -mwindows -fno-exceptions -fomit-frame-pointer -DWINDOWS_SYS  
+        WINLIB += -lcrypt32
+
+        # Cygwin
+        #CFLAGS += -I$(FLTK_DIR)/include 
+        CFLAGS += -I$(PTHREADS_DIR) $(WININC)
+        CFLAGS += -I$(ZLIB_DIR)
+
+        LIBDIR = $(RS_DIR)/lib
+        LIBS =  -L$(LIBDIR) -lretroshare 
+  	ifdef PQI_USE_XPGP
+		LIBS +=  -L$(SSL_DIR) 
+  	endif
+        LIBS +=  -lssl -lcrypto 
+        LIBS +=  -L$(KADC_DIR) -lKadC 
+        LIBS +=  -L$(UPNPC_DIR) -lminiupnpc
+        LIBS += -L$(ZLIB_DIR) -lz 
+
+        RSLIBS += $(LIBS)
+	RSLIBS += -L$(PTHREADS_DIR) -lpthreadGC2d 
+
+	RSLIBS += $(WINLIB)
+	LIBS += $(WINLIB)
+
+
+        RSCFLAGS += $(WININC)
+
+        RM = /bin/rm
+
+  else  # MinGw.
+
+        #WININC += -mwindows -fno-exceptions -fomit-frame-pointer -DWINDOWS_SYS  
+        WININC += -frtti -fexceptions -DWINDOWS_SYS  
+	WINLIB += -lcrypt32-cygwin
+
+        # Cygwin
+        CFLAGS += -I$(PTHREADS_DIR) $(WININC)
+        CFLAGS += -I$(ZLIB_DIR)
+        #CFLAGS += -I$(FLTK_DIR)\include 
+
+        LIBDIR = $(RS_DIR)\lib
+        LIBS =  -L$(LIBDIR) -lretroshare 
+  	ifdef PQI_USE_XPGP
+		LIBS +=  -L$(SSL_DIR) 
+  	endif
+        LIBS +=  -lssl -lcrypto 
+        LIBS +=  -L$(KADC_DIR) -lKadC 
+        LIBS +=  -L$(UPNPC_DIR) -lminiupnpc
+        LIBS += -L$(ZLIB_DIR) -lz 
+
+	RSLIBS =  $(LIBS)
+	RSLIBS += -L$(PTHREADS_DIR) -lpthreadGC2d 
+
+        LIBS += $(WINLIB)
+        RSLIBS += $(WINLIB)
+
+
+        RSCFLAGS += $(WININC)
+
+        RM = del
+  endif
+endif
+
+
+
