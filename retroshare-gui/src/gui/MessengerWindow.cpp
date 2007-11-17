@@ -33,6 +33,8 @@
 #include "util/PixmapMerging.h"
 #include "LogoBar.h"
 #include "util/Widget.h"
+#include "gui/connect/InviteDialog.h"
+#include "gui/connect/AddFriendDialog.h"
 
 #include <iostream>
 #include <sstream>
@@ -70,7 +72,9 @@ MessengerWindow::MessengerWindow(QWidget * parent)
 
   connect( ui.messengertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messengertreeWidgetCostumPopupMenu( QPoint ) ) );
 
-  connect( ui.avatarButton, SIGNAL(clicked()), SLOT(changeAvatarClicked()));
+	connect( ui.avatarButton, SIGNAL(clicked()), SLOT(changeAvatarClicked()));
+    connect( ui.addIMAccountButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend2() ) );
+
   
    /* to hide the header  */
    ui.messengertreeWidget->header()->hide(); 
@@ -126,25 +130,26 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
       
       exportfriendAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Export Friend" ), this );
       connect( exportfriendAct , SIGNAL( triggered() ), this, SLOT( exportfriend2() ) );
-      
-      removefriendAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Remove Friend" ), this );
-      connect( removefriendAct , SIGNAL( triggered() ), this, SLOT( removefriend2() ) );
-       *
-       *
+      *
+      *
       *********/
+      
+      removefriend2Act = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Remove Friend" ), this );
+      connect( removefriend2Act , SIGNAL( triggered() ), this, SLOT( removefriend2() ) );
+
 
       contextMnu.clear();
       contextMnu.addAction( chatAct);
       contextMnu.addAction( sendMessageAct);
       contextMnu.addSeparator(); 
       contextMnu.addAction( connectfriendAct);
+      contextMnu.addAction( removefriend2Act);
 
       /**** Do we want these options here??? 
        *
        *
       contextMnu.addAction( configurefriendAct);
       contextMnu.addAction( exportfriendAct);
-      contextMnu.addAction( removefriendAct);
        *
        *
       ****/
@@ -261,11 +266,6 @@ std::string getMessengerPeerRsCertId(QTreeWidgetItem *i)
 void MessengerWindow::exportfriend2()
 {
 
-}
-
-void MessengerWindow::removefriend2()
-{
-   
 }
 
 
@@ -431,12 +431,53 @@ QTreeWidgetItem *MessengerWindow::getCurrentPeer(bool &isOnline)
 	return item;
 }
 
+void MessengerWindow::removefriend2()
+{
+	bool isOnline;
+    QTreeWidgetItem *c = getCurrentPeer(isOnline);
+    std::cerr << "MessengerWindow::removefriend2()" << std::endl;
+	if (!c)
+	{
+        	std::cerr << "MessengerWindow::removefriend2() Noone Selected -- sorry" << std::endl;
+		return;
+	}
+	rsicontrol->FriendRemove(getMessengerPeerRsCertId(c));
+}
+
 void MessengerWindow::changeAvatarClicked() 
 {
 
 	updateAvatar();
 }
 
+
+/** Add a Friend ShortCut */
+void MessengerWindow::addFriend2()
+{
+    /* call load Certificate */
+#if 0
+    std::string id;
+    if (connectionsDialog)
+    {
+        id = connectionsDialog->loadneighbour();
+    }
+
+    /* call make Friend */
+    if (id != "")
+    {
+        connectionsDialog->showpeerdetails(id);
+    }
+    virtual int NeighLoadPEMString(std::string pem, std::string &id)  = 0;
+#else
+
+    static  AddFriendDialog *addDialog2 = 
+    new AddFriendDialog(networkDialog2, this);
+
+    std::string invite = "";
+    addDialog2->setInfo(invite);
+    addDialog2->show();
+#endif
+}
 
 void MessengerWindow::updateAvatar() 
 {

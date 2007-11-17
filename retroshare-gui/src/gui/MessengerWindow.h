@@ -25,6 +25,8 @@
 
 #include "mainpage.h"
 #include "ui_MessengerWindow.h"
+#include "NetworkDialog.h"
+
 
 class LogoBar;
 class ChatDialog;
@@ -40,6 +42,9 @@ public:
 
   void  insertPeers();
   void setChatDialog(ChatDialog *cd);
+  
+  NetworkDialog *networkDialog2;
+
 
 
 public slots:
@@ -67,6 +72,8 @@ private slots:
   void sendMessage();
 
   void configurefriend2();
+  
+  void addFriend2();
 
   /** RsServer Friend Calls */
   void allowfriend2();
@@ -96,7 +103,7 @@ private:
   QAction* connectfriendAct;
   QAction* configurefriendAct;
   QAction* exportfriendAct;
-  QAction* removefriendAct;
+  QAction* removefriend2Act;
 
   QTreeView *messengertreeWidget;
 
