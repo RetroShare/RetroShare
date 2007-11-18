@@ -31,6 +31,8 @@
 #include <QPoint>
 #include <QMouseEvent>
 #include <QPixmap>
+#include <QHeaderView>
+
 
 /** Constructor */
 ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
@@ -65,7 +67,10 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
     
   /* hide the Tree +/- */
   ui.msgSendList -> setRootIsDecorated( false );
-
+  ui.msgFileList -> setRootIsDecorated( false );
+  
+   /* to hide the header  */
+  //ui.msgSendList->header()->hide(); 
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -122,7 +127,7 @@ void  ChanMsgDialog::insertSendList()
 
         /* remove old items ??? */
 	sendWidget->clear();
-	sendWidget->setColumnCount(6);
+	sendWidget->setColumnCount(1);
 
         QList<QTreeWidgetItem *> items;
 	for(it = friends.begin(); it != friends.end(); it++)
@@ -141,18 +146,18 @@ void  ChanMsgDialog::insertSendList()
 		/* (0) Person */
 		item -> setText(0, QString::fromStdString(it->second.name));
 		/* () Org */
-		item -> setText(1, QString::fromStdString(it->second.org));
+		//item -> setText(1, QString::fromStdString(it->second.org));
 		/* () Location */
-		item -> setText(2, QString::fromStdString(it->second.loc));
+		//item -> setText(2, QString::fromStdString(it->second.loc));
 		/* () Country */
-		item -> setText(3, QString::fromStdString(it->second.country));
-		{
+		//item -> setText(3, QString::fromStdString(it->second.country));
+		/*{
 			std::ostringstream out;
 			out << it->second.id;
 			item -> setText(4, QString::fromStdString(out.str()));
-		}
+		}*/
 
-		item -> setText(5, "Friend");
+		item -> setText(1, "Friend");
 
 		item -> setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		//item -> setCheckState(0, Qt::Checked);
