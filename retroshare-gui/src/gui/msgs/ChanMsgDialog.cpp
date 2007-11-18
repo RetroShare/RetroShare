@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2006, crypton
+ *  Copyright (C) 2006,2007 RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -40,6 +40,9 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
+  
+  RshareSettings config;
+  config.loadWidgetInformation(this);
 
   setAttribute ( Qt::WA_DeleteOnClose, true );
   
@@ -96,6 +99,15 @@ void ChanMsgDialog::channelstreeViewCostumPopupMenu( QPoint point )
       contextMnu.addAction( deletechannelAct);
       contextMnu.addAction( createchannelmsgAct);
       contextMnu.exec( mevent->globalPos() );
+}
+
+void ChanMsgDialog::closeEvent (QCloseEvent * event)
+{
+	RshareSettings config;
+	config.saveWidgetInformation(this);
+
+    hide();
+    event->ignore();
 }
 
 

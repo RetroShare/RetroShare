@@ -69,6 +69,8 @@ MessengerWindow::MessengerWindow(QWidget * parent)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
   
+  RshareSettings config;
+  config.loadWidgetInformation(this);
 
   connect( ui.messengertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messengertreeWidgetCostumPopupMenu( QPoint ) ) );
 
@@ -327,6 +329,9 @@ void MessengerWindow::show()
 
 void MessengerWindow::closeEvent (QCloseEvent * event)
 {
+	RshareSettings config;
+	config.saveWidgetInformation(this);
+
     hide();
     event->ignore();
 }

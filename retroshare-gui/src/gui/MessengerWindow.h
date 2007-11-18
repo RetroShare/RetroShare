@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2006, crypton
+ *  Copyright (C) 2007, RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@
 #include "mainpage.h"
 #include "ui_MessengerWindow.h"
 #include "NetworkDialog.h"
-
+#include <config/rsharesettings.h>
 
 class LogoBar;
 class ChatDialog;

@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2006, crypton
+ *  Copyright (C) 2007, RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -24,6 +24,8 @@
 #define _CHAN_MSG_DIALOG_H
 
 #include <QMainWindow>
+#include <config/rsharesettings.h>
+
 
 #include "ui_ChanMsgDialog.h"
 
@@ -51,6 +53,9 @@ public slots:
 	/* actions to take.... */
 void  sendMessage();
 void  cancelMessage();
+
+protected:
+  void closeEvent (QCloseEvent * event);
 
 private slots:
 

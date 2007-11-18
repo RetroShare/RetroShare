@@ -36,6 +36,8 @@
 #include <QMouseEvent>
 #include <QPixmap>
 #include <QDateTime>
+#include <QHeaderView>
+
 
 /* Images for context menu icons */
 #define IMAGE_MESSAGE        ":/images/folder-draft.png"
@@ -66,7 +68,26 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   mCurrMsgId  = "";
   
   /* hide the Tree +/- */
-  ui.msgList -> setRootIsDecorated( false );
+  ui.msgList->setRootIsDecorated( false );
+
+  
+  /* Set header resize modes and initial section sizes */
+  QHeaderView * msgwheader = ui.msgWidget->header () ;
+  msgwheader->setResizeMode (0, QHeaderView::Interactive);
+    
+  msgwheader->resizeSection ( 0, 125 );
+  
+    /* Set header resize modes and initial section sizes */
+	QHeaderView * msglheader = ui.msgList->header () ;
+   	msglheader->setResizeMode (0, QHeaderView::Interactive);
+	msglheader->setResizeMode (1, QHeaderView::Interactive);
+	msglheader->setResizeMode (2, QHeaderView::Interactive);
+	msglheader->setResizeMode (3, QHeaderView::Interactive);
+  
+	msglheader->resizeSection ( 0, 125 );
+	msglheader->resizeSection ( 1, 100 );
+	msglheader->resizeSection ( 2, 100 );
+	msglheader->resizeSection ( 3, 200 );
 
 
   /* Hide platform specific features */
@@ -127,6 +148,8 @@ void MessagesDialog::newmessage()
     //std::cerr << "MessagesDialog::newmessage()" << std::endl;
     nMsgDialog->newMsg();
     nMsgDialog->show();
+    nMsgDialog->activateWindow();
+
 
     /* window will destroy itself! */
 }

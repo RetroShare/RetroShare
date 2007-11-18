@@ -693,6 +693,29 @@ border-image: url(:/images/deletemail-pressed.png);
           <property name="contextMenuPolicy" >
            <enum>Qt::CustomContextMenu</enum>
           </property>
+          <property name="sortingEnabled" >
+           <bool>true</bool>
+          </property>
+          <column>
+           <property name="text" >
+            <string>File Name</string>
+           </property>
+          </column>
+          <column>
+           <property name="text" >
+            <string>Size</string>
+           </property>
+          </column>
+          <column>
+           <property name="text" >
+            <string>Sources</string>
+           </property>
+          </column>
+          <column>
+           <property name="text" >
+            <string>Hash</string>
+           </property>
+          </column>
          </widget>
         </item>
         <item row="0" column="0" >

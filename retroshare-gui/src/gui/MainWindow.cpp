@@ -237,12 +237,14 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
             menu->addAction(QIcon(IMAGE_RETROSHARE), tr("Show/Hide"), this, SLOT(toggleVisibilitycontextmenu()));
     menu->addSeparator();
     menu->addAction(_messengerwindowAct);
+
     /* bandwidth only in development version */
 #ifdef RS_RELEASE_VERSION    
 #else
     menu->addAction(_bandwidthAct);
 #endif
     menu->addAction(_prefsAct);
+    menu->addAction(_smplayerAct);
     menu->addSeparator();
     menu->addAction(tr("Minimize"), this, SLOT(showMinimized()));
     menu->addAction(tr("Maximize"), this, SLOT(showMaximized()));
@@ -404,6 +406,7 @@ MainWindow::~MainWindow()
     delete _prefsAct;
     delete _bandwidthGraph;
     delete _messengerwindowAct;
+    delete _smplayerAct;
 }
 
 /** Create and bind actions to events. Setup for initial
@@ -420,6 +423,9 @@ void MainWindow::createActions()
           
     _messengerwindowAct = new QAction(QIcon(IMAGE_RSM16), tr("Open Messenger"), this);
     connect(_messengerwindowAct, SIGNAL(triggered()),this, SLOT(showMessengerWindow()));
+    
+    _smplayerAct = new QAction(QIcon(IMAGE_SMPLAYER), tr("SMPlayer"), this);
+    connect(_smplayerAct, SIGNAL(triggered()),this, SLOT(showsmplayer()));
          
           
     connect(ui.btntoggletoolbox, SIGNAL(toggled(bool)), this, SLOT(showToolboxFrame(bool)));

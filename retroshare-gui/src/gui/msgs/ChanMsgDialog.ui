@@ -165,7 +165,22 @@ p, li { white-space: pre-wrap; }
            </property>
            <column>
             <property name="text" >
-             <string>1</string>
+             <string>File Name</string>
+            </property>
+           </column>
+           <column>
+            <property name="text" >
+             <string>Size</string>
+            </property>
+           </column>
+           <column>
+            <property name="text" >
+             <string>Sources</string>
+            </property>
+           </column>
+           <column>
+            <property name="text" >
+             <string>Hash</string>
             </property>
            </column>
           </widget>
