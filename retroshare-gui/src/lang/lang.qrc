@@ -1,7 +1,7 @@
 <RCC>
   <qresource prefix="/lang">
-    <file alias="de">retroshare_de.qm</file>
     <file alias="en">retroshare_en.qm</file>
+    <file alias="de">retroshare_de.qm</file>
     <file alias="es">retroshare_es.qm</file>
     <file alias="fi">retroshare_fi.qm</file>
     <file alias="fr">retroshare_fr.qm</file>
