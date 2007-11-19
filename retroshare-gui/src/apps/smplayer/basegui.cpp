@@ -1458,7 +1458,9 @@ void BaseGui::closeWindow() {
 
 	core->stop();
 	//qApp->closeAllWindows();
-	qApp->quit();
+	//qApp->quit();
+	hide();
+
 }
 
 void BaseGui::showPlaylist() {
