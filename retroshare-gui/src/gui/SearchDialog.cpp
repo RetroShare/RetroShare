@@ -163,7 +163,8 @@ void SearchDialog::initialiseFileTypeMappings()
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_VIDEO, 
 		"3gp asf asx avi mov mp4 mpeg mpg qt rm swf vob wmv");
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_PICTURE, 
-		"3dm 3dmf ai bmp drw dxf eps gif ico indd jpe jpeg jpg mng pcx pcc pct pgm pix png psd psp qxd qxprgb sgi svg tga tif tiff xbm xcf");
+		"3dm 3dmf ai bmp drw dxf eps gif ico indd jpe jpeg jpg mng pcx pcc pct pgm "
+		"pix png psd psp qxd qxprgb sgi svg tga tif tiff xbm xcf");
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_PROGRAM, 
 		"app bat cgi com bin exe js pif py pl sh vb ws ");
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_ARCHIVE, 
@@ -266,7 +267,7 @@ void SearchDialog::searchtableWidget2CostumPopupMenu( QPoint point )
         connect( searchRemoveAct , SIGNAL( triggered() ), this, SLOT( searchRemove() ) );
         
         searchRemoveAllAct = new QAction(QIcon(IMAGE_REMOVEALL), tr( "Remove All" ), this );
-        connect( searchRemoveAllAct , SIGNAL( triggered() ), this, SLOT( searchRemoveall() ) );
+        connect( searchRemoveAllAct , SIGNAL( triggered() ), this, SLOT( searchRemoveAll() ) );
         
         contextMnu2->clear();
         contextMnu2->addAction( searchRemoveAct);
@@ -322,12 +323,9 @@ void SearchDialog::searchRemove()
 /** remove all search results **/
 void SearchDialog::searchRemoveAll()
 {
-	/* remove all summaries and results */
-        ui.searchSummaryWidget->clear();
-        ui.searchResultWidget->clear();
-
-        //ui.searchResultWidget->update();
-        //ui.searchSummaryWidget->update();
+	ui.searchResultWidget->clear();
+	ui.searchSummaryWidget->clear();
+	nextSearchId = 1;
 }
 
 /* *****************************************************************
