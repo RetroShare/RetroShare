@@ -501,7 +501,7 @@
    <enum>Qt::NoContextMenu</enum>
   </property>
   <property name="windowIcon" >
-   <iconset resource="../images.qrc" >:/images/RetroShare16.png</iconset>
+   <iconset resource="../images.qrc" >:/images/rstray3.png</iconset>
   </property>
   <widget class="QGroupBox" name="groupBox_3" >
    <property name="geometry" >

@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>395</width>
-    <height>385</height>
+    <height>389</height>
    </rect>
   </property>
   <property name="palette" >
@@ -496,7 +496,7 @@
    <string>RetroShare setup</string>
   </property>
   <property name="windowIcon" >
-   <iconset resource="images.qrc" >:/images/RetroShare16.png</iconset>
+   <iconset resource="images.qrc" >:/images/rstray3.png</iconset>
   </property>
   <layout class="QGridLayout" >
    <property name="margin" >
