@@ -78,6 +78,7 @@ const uint16_t TLV_TYPE_UINT32_SIZE   = 0x0010;
 const uint16_t TLV_TYPE_UINT32_POP    = 0x0011;
 const uint16_t TLV_TYPE_UINT32_AGE    = 0x0012;
 const uint16_t TLV_TYPE_UINT32_OFFSET = 0x0013;
+const uint16_t TLV_TYPE_UINT32_SERID  = 0x0014;
 
 const uint16_t TLV_TYPE_STR_HASH      = 0x0020;
 const uint16_t TLV_TYPE_STR_NAME      = 0x0021;

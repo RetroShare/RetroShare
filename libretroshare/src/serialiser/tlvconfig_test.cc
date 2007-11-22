@@ -7,9 +7,9 @@
 
 #include <iostream>
 #include <sstream>
-#include "rstlvtypes.h"
-#include "rstlvutil.h"
-#include "utest.h"
+#include "serialiser/rstlvtypes.h"
+#include "serialiser/rstlvutil.h"
+#include "util/utest.h"
 
 INITTEST();
 

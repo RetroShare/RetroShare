@@ -156,7 +156,7 @@ virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* seriali
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
 virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
-	std::list<uint8_t> ids; /* Mandatory */
+	std::list<uint32_t> ids; /* Mandatory */
 };
 
 
