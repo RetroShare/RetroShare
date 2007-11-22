@@ -11,10 +11,16 @@ RSOBJ  = rsserial.o rsbaseserial.o rstlvbase.o rstlvtypes.o rsbaseitems.o
 RSOBJ += rstlvfileitem.o rstlvutil.o
 
 TESTOBJ  = tlvbase_test.o tlvbase_test2.o tlvfileitem_test.o 
-TESTOBJ += tlvitems_test.o tlvstack_test.o tlvconfig_test.o
+TESTOBJ += tlvitems_test.o tlvstack_test.o tlvconfig_test.o 
+TESTOBJ += rsserial_test.o 
+
+#rsbaseitem_test.o 
 
 TESTS  = tlvbase_test tlvbase_test2 tlvfileitem_test 
 TESTS += tlvitems_test tlvstack_test tlvconfig_test
+TESTS += rsserial_test
+
+#rsbaseitem_test
 
 all: librs tests
 
@@ -36,8 +42,11 @@ tlvstack_test : tlvstack_test.o
 tlvconfig_test : tlvconfig_test.o
 	$(CC) $(CFLAGS) -o tlvconfig_test tlvconfig_test.o $(OBJ) $(LIBS) 
 
+rsserial_test : rsserial_test.o
+	$(CC) $(CFLAGS) -o rsserial_test rsserial_test.o $(OBJ) $(LIBS) 
 
-
+rsbaseitem_test : rsbaseitem_test.o
+	$(CC) $(CFLAGS) -o rsbaseitem_test rsbaseitem_test.o $(OBJ) $(LIBS) 
 
 
 ###############################################################

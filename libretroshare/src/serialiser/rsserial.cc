@@ -29,6 +29,11 @@
 
 #include <map>
 
+#define RSSERIAL_DEBUG 1
+
+#ifdef RSSERIAL_DEBUG
+	#include <iostream>
+#endif
 	
 RsItem::RsItem(uint32_t t)
 :type(t) 
@@ -152,7 +157,7 @@ RsSerialiser::~RsSerialiser()
 
 bool        RsSerialiser::addSerialType(RsSerialType *serialiser)
 {
-	uint32_t type = serialiser->PacketId();
+	uint32_t type = (serialiser->PacketId() & 0xFFFFFF00);
 	std::map<uint32_t, RsSerialType *>::iterator it;
 	if (serialisers.end() != (it = serialisers.find(type)))
 	{
@@ -172,7 +177,7 @@ bool        RsSerialiser::addSerialType(RsSerialType *serialiser)
 uint32_t    RsSerialiser::size(RsItem *item)
 {
 	/* find the type */
-	uint32_t type = item->PacketId();
+	uint32_t type = (item->PacketId() & 0xFFFFFF00);
 	std::map<uint32_t, RsSerialType *>::iterator it;
 
 	if (serialisers.end() == (it = serialisers.find(type)))
@@ -183,6 +188,12 @@ uint32_t    RsSerialiser::size(RsItem *item)
 #endif
 		return 0;
 	}
+
+#ifdef  RSSERIAL_DEBUG
+	std::cerr << "RsSerialiser::serialise() Found type: " << type;
+	std::cerr << std::endl;
+#endif
+
 
 	return (it->second)->size(item);
 }
@@ -201,6 +212,11 @@ bool        RsSerialiser::serialise  (RsItem *item, void *data, uint32_t *size)
 #endif
 		return false;
 	}
+
+#ifdef  RSSERIAL_DEBUG
+	std::cerr << "RsSerialiser::serialise() Found type: " << type;
+	std::cerr << std::endl;
+#endif
 
 	return (it->second)->serialise(item, data, size);
 }

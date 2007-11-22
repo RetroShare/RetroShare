@@ -101,7 +101,13 @@ bool     RsTlvFileItem::SetTlv(void *data, uint32_t size, uint32_t *offset)
 	uint32_t tlvend  = *offset + tlvsize;
 
 	if (size < tlvend)
+	{
+#ifdef TLV_FI_DEBUG
+		std::cerr << "RsTlvFileItem::SetTlv() Failed size (" << size;
+		std::cerr << ") < tlvend (" << tlvend << ")" << std::endl;
+#endif
 		return false; /* not enough space */
+	}
 
 	bool ok = true;
 

@@ -59,7 +59,7 @@ class RsFileItemSerialiser: public RsSerialType
 	:RsSerialType(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, 
 		RS_PKT_TYPE_FILE_ITEM)
 	{ return; }
-virtual     ~RsFileItemSerialiser();
+virtual     ~RsFileItemSerialiser() { return; }
 	
 virtual	uint32_t    size(RsItem *);
 virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
@@ -90,7 +90,7 @@ class RsFileDataSerialiser: public RsSerialType
 	:RsSerialType(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, 
 		RS_PKT_TYPE_FILE_DATA)
 	{ return; }
-virtual     ~RsFileDataSerialiser();
+virtual     ~RsFileDataSerialiser() { return; }
 	
 virtual	uint32_t    size(RsItem *);
 virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);

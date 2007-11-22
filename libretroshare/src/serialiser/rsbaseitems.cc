@@ -27,6 +27,9 @@
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rsbaseitems.h"
 
+#define RSSERIAL_DEBUG 1
+#include <iostream>
+
 RsFileItem::~RsFileItem()
 {
 	return;
@@ -53,7 +56,7 @@ bool     RsFileItemSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsiz
 	RsFileItem *item = (RsFileItem *) i;
 
 	uint32_t tlvsize = size(item);
-	uint32_t offset = 8;
+	uint32_t offset = 0;
 
 	if (*pktsize < tlvsize)
 		return false; /* not enough space */
@@ -64,12 +67,16 @@ bool     RsFileItemSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsiz
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
+	std::cerr << "RsFileItemSerialiser::serialise() Header: " << ok << std::endl;
+
 	/* skip the header */
 	offset += 8;
 
 	/* add mandatory parts first */
 	ok &= setRawUInt32(data, tlvsize, &offset, item->reqType);
+	std::cerr << "RsFileItemSerialiser::serialise() RawUInt32: " << ok << std::endl;
 	ok &= item->file.SetTlv(data, tlvsize, &offset);
+	std::cerr << "RsFileItemSerialiser::serialise() FileItem: " << ok << std::endl;
 
 	return ok;
 }
