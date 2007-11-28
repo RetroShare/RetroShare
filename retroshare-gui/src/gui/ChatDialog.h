@@ -53,25 +53,14 @@ void toggleSendItem( QTreeWidgetItem *item, int col );
   /** Create the context popup menu and it's submenus */
   void msgSendListCostumPopupMenu( QPoint point );
 
-  void setColor();
-    
-  void textBold();
-  void textUnderline();
-  void textItalic();
-  
-  void currentCharFormatChanged(const QTextCharFormat &format);
-
-  void  insertSendList();
+  void setColor();      
+  void insertSendList();
   void sendMsg();
   
   void privchat();
 
 private:
 
-  void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
-  void fontChanged(const QFont &f);
-  
-  void colorChanged(const QColor &c);
   
    QAction     *actionTextBold;
    QAction     *actionTextUnderline;
@@ -83,6 +72,9 @@ private:
   QAction* privchatAct;
 
   QTreeView *msgSendList;
+  	
+  QColor textColor;
+
 
 
   std::map<std::string, PopupChatDialog *> chatDialogs;

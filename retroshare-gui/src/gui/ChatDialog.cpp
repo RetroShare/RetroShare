@@ -50,13 +50,7 @@ ChatDialog::ChatDialog(QWidget *parent)
 
   connect(ui.lineEdit, SIGNAL(returnPressed( ) ), this, SLOT(sendMsg( ) ));
   
-  connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(setColor()));
-  
-  connect(ui.textboldChatButton, SIGNAL(clicked()), this, SLOT(textBold()));
-  
-  connect(ui.textunderlineChatButton, SIGNAL(clicked()), this, SLOT(textUnderline()));
-  
-  connect(ui.textitalicChatButton, SIGNAL(clicked()), this, SLOT(textItalic()));
+  connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(setColor())); 
   
   connect( ui.msgSendList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgSendListCostumPopupMenu( QPoint ) ) );
 
@@ -70,6 +64,9 @@ ChatDialog::ChatDialog(QWidget *parent)
   
   /* to hide the header  */
   ui.msgSendList->header()->hide();
+  
+  textColor = Qt::black;
+
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -120,8 +117,13 @@ void ChatDialog::insertChat()
 
         rsiface->unlockData(); /* Unlock Interface */
 
-static  std::string lastChatName("");
-static  int         lastChatTime = 0;
+	static  std::string lastChatName("");
+	static  int         lastChatTime = 0;
+
+	//QString color = ci.messageColor.name();
+	//QString nickColor;
+	//QString font  = ci.messageFont.family();
+	//QString fontSize = QString::number(ci.messageFont.pointSize());
 
 
 	/* determine how many spaces to add */
@@ -177,7 +179,7 @@ static  int         lastChatTime = 0;
 			{
 				out << spaces; 
 			}
-            		QString timestamp = "(" + QDateTime::currentDateTime().toString("hh:mm:ss") + ") ";
+            		QString timestamp = "[" + QDateTime::currentDateTime().toString("hh:mm:ss") + "]";
             		QString name = QString::fromStdString(it->name);
             		//QString line = "<span style=\"color:#1D84C9\">" + timestamp +
                        	//	                  "   " + name + "</span> \n<br>";
@@ -185,6 +187,7 @@ static  int         lastChatTime = 0;
                        		                  "   " + name + "</strong></span> \n<br>";
 
                 	out << line.toStdString();
+                	
 		}
 
 		out << it -> msg;
@@ -220,11 +223,18 @@ static  int         lastChatTime = 0;
 
 void ChatDialog::sendMsg()
 {
-        QLineEdit *lineWidget = ui.lineEdit;
+    QLineEdit *lineWidget = ui.lineEdit;
+        
+    //QFont font = QFont("Comic Sans MS", 10);
+	//font.setBold(ui.textboldChatButton->isChecked());
+	//font.setUnderline(ui.textunderlineChatButton->isChecked());
+	//font.setItalic(ui.textitalicChatButton->isChecked());
 
 	ChatInfo ci;
 	ci.msg = lineWidget->text().toStdString();
 	ci.chatflags = RS_CHAT_PUBLIC;
+	//ci.messageFont = font;
+	//ci.messageColor = textColor;
 
 	rsicontrol -> ChatSend(ci);
 	lineWidget -> setText(QString(""));
@@ -335,69 +345,10 @@ void ChatDialog::toggleSendItem( QTreeWidgetItem *item, int col )
 
 void ChatDialog::setColor()
 {
-    QColor col = QColorDialog::getColor(Qt::green, this);
-    if (col.isValid()) {
-
-        ui.colorChatButton->setPalette(QPalette(col));
-        QTextCharFormat fmt;
-        fmt.setForeground(col);
-        mergeFormatOnWordOrSelection(fmt);
-        colorChanged(col);
-    }
-}
-
-void ChatDialog::textBold()
-{
-    QTextCharFormat fmt;
-    fmt.setFontWeight(ui.textboldChatButton->isChecked() ? QFont::Bold : QFont::Normal);
-    mergeFormatOnWordOrSelection(fmt);
-}
-
-void ChatDialog::textUnderline()
-{
-    QTextCharFormat fmt;
-    fmt.setFontUnderline(ui.textunderlineChatButton->isChecked());
-    mergeFormatOnWordOrSelection(fmt);
-}
-
-void ChatDialog::textItalic()
-{
-    QTextCharFormat fmt;
-    fmt.setFontItalic(ui.textitalicChatButton->isChecked());
-    mergeFormatOnWordOrSelection(fmt);
-}
-
-void ChatDialog::currentCharFormatChanged(const QTextCharFormat &format)
-{
-    fontChanged(format.font());
-    colorChanged(format.foreground().color());
-}
-   
-void ChatDialog::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
-{
-    QTextCursor cursor = ui.msgText->textCursor();
-    if (!cursor.hasSelection())
-        cursor.select(QTextCursor::WordUnderCursor);
-    cursor.mergeCharFormat(format);
-    ui.msgText->mergeCurrentCharFormat(format);
-}
-
-void ChatDialog::fontChanged(const QFont &f)
-{
-    //comboFont->setCurrentIndex(comboFont->findText(QFontInfo(f).family()));
-    //comboSize->setCurrentIndex(comboSize->findText(QString::number(f.pointSize())));
-    ui.textboldChatButton->setChecked(f.bold());
-    ui.textunderlineChatButton->setChecked(f.italic());
-    ui.textitalicChatButton->setChecked(f.underline());
-}
-
-
-
-void ChatDialog::colorChanged(const QColor &c)
-{
-    QPixmap pix(16, 16);
-    pix.fill(c);
-    ui.colorChatButton->setIcon(pix);
+	textColor = QColorDialog::getColor(Qt::black, this);
+	QPixmap pxm(24,24);
+	pxm.fill(textColor);
+	ui.colorChatButton->setIcon(pxm);
 }
 
 
