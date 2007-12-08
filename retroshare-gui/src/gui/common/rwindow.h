@@ -1,9 +1,10 @@
 /****************************************************************
- *  RetroShare is distributed under the following license:
+ * This file is distributed under the following license:
  *
- *  Copyright (C) 2007,  crypton
+ * Copyright (c) 2006-2007, crypton
+ * Copyright (c) 2006, Matt Edman, Justin Hipple
  *
- *   This program is free software; you can redistribute it and/or
+ *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
  *  as published by the Free Software Foundation; either version 2
  *  of the License, or (at your option) any later version.
