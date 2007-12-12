@@ -23,10 +23,11 @@
 
 #include "dbase/fistore.h"
 #include "rsiface/rsexpr.h"
+#include "serialiser/rsserviceids.h"
 
 FileIndexStore::FileIndexStore(CacheTransfer *cft, 
 		NotifyBase *cb_in, RsPeerId ownid, std::string cachedir)
-	:CacheStore(CACHE_TYPE_FILE_INDEX, false, cft, cachedir), 
+	:CacheStore(RS_SERVICE_TYPE_FILE_INDEX, false, cft, cachedir), 
 		localId(ownid), localindex(NULL), cb(cb_in)
 { 
 	return;

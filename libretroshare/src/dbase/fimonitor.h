@@ -72,7 +72,7 @@ class FileIndexMonitor: public CacheSource, public RsThread
 virtual ~FileIndexMonitor();
 
 	/* external interface for filetransfer */
-bool    findLocalFile(std::string hash, std::string &fullpath, uint32_t &size);
+bool    findLocalFile(std::string hash, std::string &fullpath, uint64_t &size);
 
 
 	/* Interacting with CacheSource */

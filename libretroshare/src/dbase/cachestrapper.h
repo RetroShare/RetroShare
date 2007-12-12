@@ -74,11 +74,6 @@ class CacheId
 
 bool operator<(const CacheId &a, const CacheId &b);
 
-#define CACHE_TYPE_FILE_INDEX	1
-#define CACHE_TYPE_WEB		2
-#define CACHE_TYPE_OTHER	4
-
-/* think of any others? */
 
 class CacheData
 {
@@ -90,7 +85,7 @@ class CacheData
 	std::string path; 
 	std::string name;
 	std::string hash;
-	uint32_t size;
+	uint64_t size;
 	time_t recvd;
 };
 
@@ -106,7 +101,7 @@ class CacheTransfer
 virtual ~CacheTransfer() {}
 
 	/* upload side of things .... searches through CacheStrapper. */
-bool    FindCacheFile(std::string hash, std::string &path, uint32_t &size);
+bool    FindCacheFile(std::string hash, std::string &path, uint64_t &size);
 
 
 	/* At the download side RequestCache() => overloaded RequestCacheFile()
@@ -117,7 +112,7 @@ bool RequestCache(CacheData &data, CacheStore *cbStore); /* request from CacheSt
 
 	protected:
 	/* to be overloaded */
-virtual bool RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint32_t size); 
+virtual bool RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size); 
 
 bool CompletedCache(std::string hash);                   /* internal completion -> does cb */
 bool FailedCache(std::string hash);                      /* internal completion -> does cb */

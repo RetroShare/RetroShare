@@ -23,6 +23,8 @@
 
 #include "dbase/fimonitor.h"
 #include "util/rsdir.h"
+#include "serialiser/rsserviceids.h"
+
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -37,7 +39,7 @@
 #define FIM_DEBUG 1
 
 FileIndexMonitor::FileIndexMonitor(std::string cachedir, std::string pid)
-	:CacheSource(CACHE_TYPE_FILE_INDEX, false, cachedir), fi(pid), 
+	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cachedir), fi(pid), 
 		pendingDirs(false), pendingForceCacheWrite(false)
 
 {
@@ -52,7 +54,7 @@ FileIndexMonitor::~FileIndexMonitor()
 }
 
 bool    FileIndexMonitor::findLocalFile(std::string hash, 
-				std::string &fullpath, uint32_t &size)
+				std::string &fullpath, uint64_t &size)
 {
 	std::list<FileEntry *> results;
 	bool ok = false;
@@ -494,7 +496,7 @@ void 	FileIndexMonitor::updateCycle()
 #endif
 
 		std::string calchash;
-		uint32_t size;
+		uint64_t size;
 
 		fi.saveIndex(fname, calchash, size);
 

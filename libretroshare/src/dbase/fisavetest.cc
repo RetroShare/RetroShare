@@ -33,7 +33,7 @@ int main()
 
 	fi1->printFileIndex(std::cout);
 	std::string fhash;
-	uint32_t size;
+	uint64_t size;
 	fi1->saveIndex("test.index", fhash, size);
 
 	std::cout << " Saved Index: Size: " << size << " Hash: " << fhash << std::endl;

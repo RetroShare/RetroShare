@@ -84,11 +84,11 @@ virtual int print(std::ostream &out);
 	/* Data */
 	std::string name; 
 	std::string hash;
-	int size;         /* file size */
-	int modtime;      /* modification time - most recent mod time for a sub entry for dirs */
+	uint64_t size;         /* file size */
+	time_t modtime;      /* modification time - most recent mod time for a sub entry for dirs */
 	int pop;	  /* popularity rating */
 
-	int updtime;      /* last updated */
+	time_t updtime;      /* last updated */
 
 	/* References for easy manipulation */
 	DirEntry *parent;
@@ -213,8 +213,8 @@ int	cleanOldEntries(time_t old);  /* removes entries older than old */
 int	printFileIndex(std::ostream &out);
 
 	/* load/save to file */
-int 	loadIndex(std::string filename, std::string expectedHash, uint32_t size);
-int 	saveIndex(std::string filename, std::string &fileHash, uint32_t &size);
+int 	loadIndex(std::string filename, std::string expectedHash, uint64_t size);
+int 	saveIndex(std::string filename, std::string &fileHash, uint64_t &size);
 
 	/* search through this index */
 int 	searchTerms(std::list<std::string> terms, std::list<FileEntry *> &results);

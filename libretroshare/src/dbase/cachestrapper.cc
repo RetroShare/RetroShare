@@ -639,7 +639,7 @@ bool CacheTransfer::RequestCache(CacheData &data, CacheStore *cbStore)
 
 
 /* to be overloaded */
-bool CacheTransfer::RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint32_t size)
+bool CacheTransfer::RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size)
 {
 	std::cerr << "CacheTransfer::RequestCacheFile() : from:" << id << " #";
 	std::cerr << hash << " size: " << size;
@@ -704,7 +704,7 @@ bool CacheTransfer::FailedCache(std::string hash)
 }
 
 
-bool    CacheTransfer::FindCacheFile(std::string hash, std::string &path, uint32_t &size)
+bool    CacheTransfer::FindCacheFile(std::string hash, std::string &path, uint64_t &size)
 {
 	CacheData data;
 	if (strapper->findCache(hash, data))

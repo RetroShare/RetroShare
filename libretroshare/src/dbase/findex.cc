@@ -648,7 +648,7 @@ int     FileIndex::printFileIndex(std::ostream &out)
 }
 
 
-int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint32_t size)
+int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint64_t size)
 {
 	std::ifstream file (filename.c_str(), std::ifstream::binary);
 	if (!file)
@@ -794,7 +794,7 @@ int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint32_
 				nfile = new FileEntry();
 				nfile->name = tokens[0];
 				nfile->hash = tokens[1];
-				nfile->size = atoi(tokens[2].c_str());
+				nfile->size = atoll(tokens[2].c_str());
 				nfile->modtime = atoi(tokens[3].c_str());
 				nfile->pop = atoi(tokens[4].c_str());
 				nfile->updtime = atoi(tokens[5].c_str());
@@ -845,7 +845,7 @@ error:
 }
 
 
-int FileIndex::saveIndex(std::string filename, std::string &fileHash, uint32_t &size)
+int FileIndex::saveIndex(std::string filename, std::string &fileHash, uint64_t &size)
 {
 	unsigned char sha_buf[SHA_DIGEST_LENGTH];
 	std::ofstream file (filename.c_str(), std::ofstream::binary);

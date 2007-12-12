@@ -2,11 +2,10 @@
 RS_TOP_DIR = ..
 include ../make.opt
 
-OBJ = filedex.o filelook.o \
-	findex.o fimonitor.o cachestrapper.o fistore.o \
+OBJ =   findex.o fimonitor.o cachestrapper.o fistore.o \
 	rsexpr.o
 
-EXEC = ftest looktest fitest2 fisavetest ficachetest searchtest
+EXEC =  fitest2 fisavetest ficachetest searchtest
 
 ifeq ($(OS),Linux)
 	EXEC += fimontest 
