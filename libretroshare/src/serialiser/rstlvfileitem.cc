@@ -46,7 +46,8 @@ void RsTlvFileItem::TlvClear()
 
 uint16_t    RsTlvFileItem::TlvSize()
 {
-	uint32_t s = 8; /* header + 4 for size */
+	uint32_t s = 4; /* header */
+	s += 8; /* filesize */
 	s += GetTlvStringSize(hash); 
 #ifdef TLV_FI_DEBUG
 	std::cerr << "RsTlvFileItem::TlvSize() 8 + Hash: " << s << std::endl;
@@ -126,7 +127,7 @@ bool     RsTlvFileItem::SetTlv(void *data, uint32_t size, uint32_t *offset)
 
 
 	/* add mandatory parts first */
-	ok &= setRawUInt32(data, tlvend, offset, filesize);
+	ok &= setRawUInt64(data, tlvend, offset, filesize);
 
 #ifdef TLV_FI_DEBUG
 	if (!ok)
@@ -235,7 +236,7 @@ bool     RsTlvFileItem::GetTlv(void *data, uint32_t size, uint32_t *offset)
 	(*offset) += 4;
 
 	/* get mandatory parts first */
-	ok &= getRawUInt32(data, tlvend, offset, &filesize);
+	ok &= getRawUInt64(data, tlvend, offset, &filesize);
 	ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_HASH, hash);
 
 	/* while there is more TLV (optional part) */
@@ -503,7 +504,7 @@ uint16_t RsTlvFileData::TlvSize()
 
 	/* collect sizes for both uInts and data length */
 	s+= file.TlvSize();
-	s+= GetTlvUInt32Size();
+	s+= GetTlvUInt64Size();
 	s+= binData.TlvSize();
 
 	return s;
@@ -526,8 +527,8 @@ bool RsTlvFileData::SetTlv(void *data, uint32_t size, uint32_t *offset) /* seria
 
 	/* add mandatory part */
 	ok &= file.SetTlv(data, size, offset);
-	ok &= SetTlvUInt32(data,size,offset,
-			TLV_TYPE_UINT32_OFFSET,file_offset);
+	ok &= SetTlvUInt64(data,size,offset,
+			TLV_TYPE_UINT64_OFFSET,file_offset);
 	ok &= binData.SetTlv(data, size, offset);
 
 	return ok;
@@ -561,8 +562,8 @@ bool RsTlvFileData::GetTlv(void *data, uint32_t size, uint32_t *offset) /* seria
 	(*offset) += 4;
 
 	ok &= file.GetTlv(data, size, offset);
-	ok &= GetTlvUInt32(data,size,offset, 
-			TLV_TYPE_UINT32_OFFSET,&file_offset);
+	ok &= GetTlvUInt64(data,size,offset, 
+			TLV_TYPE_UINT64_OFFSET,&file_offset);
 	ok &= binData.GetTlv(data, size, offset);
 
 	return ok;

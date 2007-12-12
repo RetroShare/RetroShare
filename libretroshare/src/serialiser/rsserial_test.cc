@@ -60,7 +60,7 @@ int test_RsFileItem()
 	/* make a serialisable FileItem */
 
 	RsSerialiser srl;
-	RsFileItem rsfi;
+	RsFileRequest rsfi;
 
 	/* initialise */
 	rsfi.file.filesize = 101010;
@@ -104,7 +104,7 @@ int test_RsFileItem()
 	CHECK(output != NULL);
 	CHECK(sersize2 == sersize);
 
-	RsFileItem *outfi = dynamic_cast<RsFileItem *>(output);
+	RsFileRequest *outfi = dynamic_cast<RsFileRequest *>(output);
 
 	CHECK(outfi != NULL);
 
@@ -127,7 +127,7 @@ int test_RsFileItem()
 	displayRawPacket(std::cerr, (void *) buffer, 16 * 8 + sersize2);
 
 
-	REPORT("Serialise/Deserialise RsFileItem");
+	REPORT("Serialise/Deserialise RsFileRequest");
 
 	return 1;
 }

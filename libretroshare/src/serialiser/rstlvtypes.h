@@ -82,7 +82,7 @@ virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* seriali
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
 virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
-	uint32_t filesize; /* Mandatory */
+	uint64_t filesize; /* Mandatory */
 	std::string hash;  /* Mandatory */
 	std::string name;  /* Optional */
 	std::string path;  /* Optional */
@@ -119,7 +119,7 @@ virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deseria
 virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
 	RsTlvFileItem   file;         /* Mandatory */	
-	uint32_t        file_offset;  /* Mandatory */
+	uint64_t        file_offset;  /* Mandatory */
 	RsTlvBinaryData binData;      /* Mandatory */
 };
 

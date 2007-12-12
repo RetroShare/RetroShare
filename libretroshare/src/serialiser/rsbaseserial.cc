@@ -28,6 +28,46 @@
 
 #include "serialiser/rsbaseserial.h"
 
+/* UInt16 get/set */
+
+bool getRawUInt16(void *data, uint32_t size, uint32_t *offset, uint16_t *out)
+{
+	/* first check there is space */
+	if (size < *offset + 2)
+	{
+		return false;
+	}
+	void *buf = (void *) &(((uint8_t *) data)[*offset]);
+
+	/* extract the data */
+	uint16_t netorder_num;
+	memcpy(&netorder_num, buf, sizeof(uint16_t));
+
+	(*out) = ntohs(netorder_num);
+	(*offset) += 2;
+	return true;
+}
+	
+bool setRawUInt16(void *data, uint32_t size, uint32_t *offset, uint16_t in)
+{
+	/* first check there is space */
+	if (size < *offset + 2)
+	{
+		return false;
+	}
+
+	void *buf = (void *) &(((uint8_t *) data)[*offset]);
+
+	/* convert the data to the right format */
+	uint16_t netorder_num = htons(in);
+
+	/* pack it in */
+	memcpy(buf, &netorder_num, sizeof(uint16_t));
+
+	(*offset) += 2;
+	return true;
+}
+
 /* UInt32 get/set */
 
 bool getRawUInt32(void *data, uint32_t size, uint32_t *offset, uint32_t *out)
@@ -68,9 +108,47 @@ bool setRawUInt32(void *data, uint32_t size, uint32_t *offset, uint32_t in)
 	return true;
 }
 
+/* UInt64 get/set */
 
+bool getRawUInt64(void *data, uint32_t size, uint32_t *offset, uint64_t *out)
+{
+	/* first check there is space */
+	if (size < *offset + 8)
+	{
+		return false;
+	}
+	void *buf = (void *) &(((uint8_t *) data)[*offset]);
 
+	/* extract the data */
+	uint64_t netorder_num;
+	memcpy(&netorder_num, buf, sizeof(uint64_t));
 
+	//(*out) = ntohll(netorder_num);
+	(*out) = netorder_num;
+	(*offset) += 8;
+	return true;
+}
+	
+bool setRawUInt64(void *data, uint32_t size, uint32_t *offset, uint64_t in)
+{
+	/* first check there is space */
+	if (size < *offset + 8)
+	{
+		return false;
+	}
+
+	void *buf = (void *) &(((uint8_t *) data)[*offset]);
+
+	/* convert the data to the right format */
+	//uint64_t netorder_num = htonll(in);
+	uint64_t netorder_num = in;
+
+	/* pack it in */
+	memcpy(buf, &netorder_num, sizeof(uint64_t));
+
+	(*offset) += 8;
+	return true;
+}
 
 
 

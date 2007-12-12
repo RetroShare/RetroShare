@@ -33,6 +33,7 @@
 
 #ifdef RSSERIAL_DEBUG
 	#include <iostream>
+	#include <sstream>
 #endif
 	
 RsItem::RsItem(uint32_t t)
@@ -82,6 +83,19 @@ uint8_t    RsItem::PacketSubType()
 }
 
 
+	/* For Service Packets */	
+RsItem::RsItem(uint8_t ver, uint16_t service, uint8_t subtype)
+{
+	type = (ver << 24) + (service << 8) + subtype;
+	return;
+}
+
+uint16_t    RsItem::PacketService()
+{
+	return (type >> 8) & 0xFFFF;
+}
+
+
 
 RsSerialType::RsSerialType(uint32_t t)
 	:type(t & 0xFFFFFF00)
@@ -95,6 +109,11 @@ RsSerialType::RsSerialType(uint8_t ver, uint8_t cls, uint8_t t)
 	return;
 }
 
+RsSerialType::RsSerialType(uint8_t ver, uint16_t service)
+{
+	type = (ver << 24) + (service << 8);
+	return;
+}
 
 RsSerialType::~RsSerialType()
 {
@@ -182,18 +201,30 @@ uint32_t    RsSerialiser::size(RsItem *item)
 
 	if (serialisers.end() == (it = serialisers.find(type)))
 	{
+		/* remove 8 more bits -> try again */
+		type &= 0xFFFF0000;
+		if (serialisers.end() == (it = serialisers.find(type)))
+		{
+			/* one more try */
+			type &= 0xFF000000;
+			if (serialisers.end() == (it = serialisers.find(type)))
+			{
+
 #ifdef  RSSERIAL_DEBUG
-		std::cerr << "RsSerialiser::size() serialiser missing!";
-		std::cerr << std::endl;
+				std::cerr << "RsSerialiser::size() serialiser missing!";
+				std::cerr << std::endl;
 #endif
-		return 0;
+				return 0;
+			}
+		}
 	}
 
 #ifdef  RSSERIAL_DEBUG
-	std::cerr << "RsSerialiser::serialise() Found type: " << type;
-	std::cerr << std::endl;
+	std::ostringstream out;
+	out << std::hex << "RsSerialiser::size() Item->PacketId(): " << item->PacketId();
+	out << " matched to Serialiser Type: " << type;
+	std::cerr << out.str() << std::endl;
 #endif
-
 
 	return (it->second)->size(item);
 }
@@ -206,16 +237,29 @@ bool        RsSerialiser::serialise  (RsItem *item, void *data, uint32_t *size)
 
 	if (serialisers.end() == (it = serialisers.find(type)))
 	{
+		/* remove 8 more bits -> try again */
+		type &= 0xFFFF0000;
+		if (serialisers.end() == (it = serialisers.find(type)))
+		{
+			/* one more try */
+			type &= 0xFF000000;
+			if (serialisers.end() == (it = serialisers.find(type)))
+			{
+
 #ifdef  RSSERIAL_DEBUG
-		std::cerr << "RsSerialiser::serialise() serialiser missing!";
-		std::cerr << std::endl;
+				std::cerr << "RsSerialiser::serialise() serialiser missing!";
+				std::cerr << std::endl;
 #endif
-		return false;
+				return false;
+			}
+		}
 	}
 
 #ifdef  RSSERIAL_DEBUG
-	std::cerr << "RsSerialiser::serialise() Found type: " << type;
-	std::cerr << std::endl;
+	std::ostringstream out;
+	out << std::hex << "RsSerialiser::serialise() Item->PacketId(): " << item->PacketId();
+	out << " matched to Serialiser Type: " << type;
+	std::cerr << out.str() << std::endl;
 #endif
 
 	return (it->second)->serialise(item, data, size);
@@ -253,16 +297,31 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 	std::map<uint32_t, RsSerialType *>::iterator it;
 	if (serialisers.end() == (it = serialisers.find(type)))
 	{
+		/* remove 8 more bits -> try again */
+		type &= 0xFFFF0000;
+		if (serialisers.end() == (it = serialisers.find(type)))
+		{
+			/* one more try */
+			type &= 0xFF000000;
+			if (serialisers.end() == (it = serialisers.find(type)))
+			{
+
 #ifdef  RSSERIAL_DEBUG
-		std::cerr << "RsSerialiser::deserialise() deserialiser missing!";
-		std::cerr << std::endl;
+				std::cerr << "RsSerialiser::deserialise() deserialiser missing!";
+				std::cerr << std::endl;
 #endif
-		return NULL;
+				return NULL;
+			}
+		}
 	}
 
 	RsItem *item = (it->second)->deserialise(data, &pkt_size);
 	if (!item)
 	{
+#ifdef  RSSERIAL_DEBUG
+				std::cerr << "RsSerialiser::deserialise() Failed!";
+				std::cerr << std::endl;
+#endif
 		return NULL;
 	}
 
@@ -329,6 +388,46 @@ uint8_t  getRsItemSubType(uint32_t type)
 	return (type & 0xFF);
 }
 
+uint16_t  getRsItemService(uint32_t type)
+{
+	return (type >> 8) & 0xFFFF;
+}
 
 
+std::ostream &printRsItemBase(std::ostream &out, std::string clsName, uint16_t indent)
+{
+        printIndent(out, indent);
+	out << "RsItem: " << clsName << " ####################################";
+        out << std::endl;
+        return out;
+}
+
+std::ostream &printRsItemEnd(std::ostream &out, std::string clsName, uint16_t indent)
+{
+        printIndent(out, indent);
+        out << "###################### " << clsName << " #####################";
+        out << std::endl;
+	return out;
+}
+
+std::ostream &RsRawItem::print(std::ostream &out, uint16_t indent)
+{
+        printRsItemBase(out, "RsRawItem", indent);
+	printIndent(out, indent);
+	out << "Size: " << len << std::endl;
+	printRsItemEnd(out, "RsRawItem", indent);
+	return out;
+}
+
+
+uint32_t getRsPktMaxSize()
+{
+	return 65535; /* 2^16 */
+}
+
+
+uint32_t getRsPktBaseSize()
+{
+	return 8; /* 4 + 4 */
+}
 

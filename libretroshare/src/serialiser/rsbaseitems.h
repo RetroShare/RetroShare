@@ -31,40 +31,33 @@
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvtypes.h"
 
-const uint8_t RS_PKT_TYPE_FILE_ITEM = 0x01;
-const uint8_t RS_PKT_TYPE_FILE_DATA = 0x02;
-const uint8_t RS_PKT_TYPE_CHAT      = 0x03;
-const uint8_t RS_PKT_TYPE_MESSAGE   = 0x04;
-const uint8_t RS_PKT_TYPE_STATUS    = 0x05;
+const uint8_t RS_PKT_TYPE_FILE          = 0x01;
+const uint8_t RS_PKT_TYPE_CACHE         = 0x02;
+
+const uint8_t RS_PKT_SUBTYPE_FI_REQUEST  = 0x01;
+const uint8_t RS_PKT_SUBTYPE_FI_DATA     = 0x02;
+const uint8_t RS_PKT_SUBTYPE_FI_TRANSFER = 0x03;
+
+const uint8_t RS_PKT_SUBTYPE_CACHE_ITEM    = 0x01;
+const uint8_t RS_PKT_SUBTYPE_CACHE_REQUEST = 0x02;
 
 /**************************************************************************/
-class RsFileItem: public RsItem
+
+class RsFileRequest: public RsItem
 {
 	public:
-	RsFileItem() 
+	RsFileRequest() 
 	:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, 
-		RS_PKT_TYPE_FILE_ITEM, 0)
+		RS_PKT_TYPE_FILE,
+		RS_PKT_SUBTYPE_FI_REQUEST)
 	{ return; }
-virtual ~RsFileItem();
+virtual ~RsFileRequest();
 virtual void clear();
+std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	uint32_t reqType;     /* a request / result etc */
+	uint64_t fileoffset;  /* start of data requested */
+	uint32_t chunksize;   /* size of data requested */
 	RsTlvFileItem file;   /* file information */
-};
-
-class RsFileItemSerialiser: public RsSerialType
-{
-	public:
-	RsFileItemSerialiser()
-	:RsSerialType(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, 
-		RS_PKT_TYPE_FILE_ITEM)
-	{ return; }
-virtual     ~RsFileItemSerialiser() { return; }
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
-
 };
 
 /**************************************************************************/
@@ -74,98 +67,120 @@ class RsFileData: public RsItem
 	public:
 	RsFileData() 
 	:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, 
-		RS_PKT_TYPE_FILE_DATA, 0)
+		RS_PKT_TYPE_FILE, 
+		RS_PKT_SUBTYPE_FI_DATA)
 	{ return; }
 virtual ~RsFileData();
 virtual void clear();
+std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	RsTlvFileItem file;
-	RsTlvFileData data;
+	RsTlvFileData fd;
 };
 
-class RsFileDataSerialiser: public RsSerialType
+/**************************************************************************/
+
+class RsFileItemSerialiser: public RsSerialType
 {
 	public:
-	RsFileDataSerialiser()
+	RsFileItemSerialiser()
 	:RsSerialType(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, 
-		RS_PKT_TYPE_FILE_DATA)
+		RS_PKT_TYPE_FILE)
 	{ return; }
-virtual     ~RsFileDataSerialiser() { return; }
+virtual     ~RsFileItemSerialiser() { return; }
 	
 virtual	uint32_t    size(RsItem *);
 virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
 virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
+	private:
+
+	/* sub types */
+virtual	uint32_t    sizeReq(RsFileRequest *);
+virtual	bool        serialiseReq (RsFileRequest *item, void *data, uint32_t *size);
+virtual	RsFileRequest *  deserialiseReq(void *data, uint32_t *size);
+
+virtual	uint32_t    sizeData(RsFileData *);
+virtual	bool        serialiseData (RsFileData *item, void *data, uint32_t *size);
+virtual	RsFileData *  deserialiseData(void *data, uint32_t *size);
+
 };
 
 /**************************************************************************/
 
-class RsChatItem: public RsItem
+class RsCacheRequest: public RsItem
 {
 	public:
-	RsChatItem() 
+	RsCacheRequest() 
 	:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, 
-		RS_PKT_TYPE_CHAT, 0)
+		RS_PKT_TYPE_CACHE,
+		RS_PKT_SUBTYPE_CACHE_REQUEST)
 	{ return; }
-virtual ~RsChatItem();
+virtual ~RsCacheRequest();
 virtual void clear();
+std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	uint32_t chatFlags;
-	uint32_t sendTime;
-
-	std::string message;
-
-};
-
-class RsChatItemSerialiser: public RsSerialType
-{
-	public:
-	RsChatItemSerialiser()
-	:RsSerialType(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, 
-		RS_PKT_TYPE_CHAT)
-	{ return; }
-virtual     ~RsChatItemSerialiser();
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
-
+	uint16_t cacheType;
+	uint16_t cacheSubId;
+	RsTlvFileItem file;   /* file information */
 };
 
 /**************************************************************************/
 
-class RsMessageItem: public RsItem
+class RsCacheItem: public RsItem
 {
 	public:
-	RsMessageItem() 
+	RsCacheItem() 
 	:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, 
-		RS_PKT_TYPE_MESSAGE, 0)
+		RS_PKT_TYPE_CACHE,
+		RS_PKT_SUBTYPE_CACHE_ITEM)
 	{ return; }
-virtual ~RsMessageItem();
+virtual ~RsCacheItem();
 virtual void clear();
+std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	uint32_t msgFlags;
-	uint32_t sendTime;
-	uint32_t recvTime;
-
-	std::string subject;
-	std::string message;
-
-	RsTlvPeerIdSet msgto;
-	RsTlvPeerIdSet msgcc;
-	RsTlvPeerIdSet msgbcc;
-
-	RsTlvFileSet attachment;
+	uint16_t cacheType;
+	uint16_t cacheSubId;
+	RsTlvFileItem file;   /* file information */
 };
 
-class RsMessageItemSerialiser: public RsSerialType
+/**************************************************************************/
+
+class RsCacheItemSerialiser: public RsSerialType
 {
 	public:
-	RsMessageItemSerialiser()
+	RsCacheItemSerialiser()
 	:RsSerialType(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, 
-		RS_PKT_TYPE_MESSAGE)
+		RS_PKT_TYPE_CACHE)
 	{ return; }
-virtual     ~RsMessageItemSerialiser();
+virtual     ~RsCacheItemSerialiser() { return; }
+	
+virtual	uint32_t    size(RsItem *);
+virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
+virtual	RsItem *    deserialise(void *data, uint32_t *size);
+
+	private:
+
+	/* sub types */
+virtual	uint32_t    sizeReq(RsCacheRequest *);
+virtual	bool        serialiseReq (RsCacheRequest *item, void *data, uint32_t *size);
+virtual	RsCacheRequest *  deserialiseReq(void *data, uint32_t *size);
+
+virtual	uint32_t    sizeItem(RsCacheItem *);
+virtual	bool        serialiseItem (RsCacheItem *item, void *data, uint32_t *size);
+virtual	RsCacheItem *  deserialiseItem(void *data, uint32_t *size);
+
+};
+
+/**************************************************************************/
+
+class RsServiceSerialiser: public RsSerialType
+{
+	public:
+	RsServiceSerialiser()
+	:RsSerialType(RS_PKT_VERSION_SERVICE, 0, 0)
+	{ return; }
+virtual     ~RsServiceSerialiser()
+	{ return; }
 	
 virtual	uint32_t    size(RsItem *);
 virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
@@ -173,43 +188,6 @@ virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 };
 
-/**************************************************************************/
-
-class RsStatus: public RsItem
-{
-	public:
-	RsStatus() 
-	:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, 
-		RS_PKT_TYPE_STATUS, 0)
-	{ return; }
-virtual ~RsStatus();
-virtual void clear();
-
-	/* status */
-	uint32_t status;
-	RsTlvServiceIdSet services;
-};
-
-class RsStatusSerialiser: public RsSerialType
-{
-	public:
-	RsStatusSerialiser()
-	:RsSerialType(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, 
-		RS_PKT_TYPE_STATUS)
-	{ return; }
-virtual     ~RsStatusSerialiser();
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
-
-};
-
-/**************************************************************************/
-
-
-/**************************************************************************/
-  /* BELOW HERE to be fully defined */
 /**************************************************************************/
 
 #endif

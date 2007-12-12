@@ -24,7 +24,6 @@
  *
  */
 
-#include <netinet/in.h>
 #include <iostream>
 
 #include "serialiser/rstlvbase.h"
@@ -239,26 +238,124 @@ bool GetTlvUInt32(void *data, uint32_t size, uint32_t *offset,
 		return false;
 	}
 
-	uint32_t *intdata = (uint32_t *) right_shift_void_pointer(tlvstart, 4);
-	*in = ntohl(*intdata);
+	*offset += 4; /* step past header */
 
-	*offset += tlvsize; /* step along */
-	return true;
+	bool ok = true;
+	ok &= getRawUInt32(data, tlvend, offset, in);
+
+	return ok;
+}
+
+
+uint32_t GetTlvUInt64Size() {
+	return 4 + 8;
 }
 
 uint32_t GetTlvUInt32Size() {
-	return 8;
+	return 4 + 4;
 }
 
 uint32_t GetTlvUInt16Size() {
-	return sizeof(uint16_t);
+	return 4 + sizeof(uint16_t);
 
 }
 
 uint32_t GetTlvUInt8Size() {
-	return sizeof(uint8_t);
+	return 4 + sizeof(uint8_t);
 
 }
+
+
+bool SetTlvUInt64(void *data, uint32_t size, uint32_t *offset, uint16_t type,
+		uint64_t out) 
+{
+	if (!data)
+		return false;
+	uint16_t tlvsize = GetTlvUInt64Size(); 
+	uint32_t tlvend = *offset + tlvsize; 
+	if (size < tlvend)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "SetTlvUInt64() FAILED - not enough space. (or earlier)" << std::endl;
+		std::cerr << "SetTlvUInt64() size: " << size << std::endl;
+		std::cerr << "SetTlvUInt64() tlvsize: " << tlvsize << std::endl;
+		std::cerr << "SetTlvUInt64() tlvend: " << tlvend << std::endl;
+#endif
+		return false;
+	}
+
+	bool ok = true;
+
+	/* Now use the function we got to set the TlvHeader */
+	/* function shifts offset to the new start for the next data */
+	ok &= SetTlvBase(data, tlvend, offset, type, tlvsize);
+
+#ifdef TLV_BASE_DEBUG
+	if (!ok)
+	{
+		std::cerr << "SetTlvUInt64() SetTlvBase FAILED (or earlier)" << std::endl;
+	}
+#endif
+
+	/* now set the UInt64 ( in rsbaseserial.h???) */
+	ok &= setRawUInt64(data, tlvend, offset, out);
+
+#ifdef TLV_BASE_DEBUG
+	if (!ok)
+	{
+		std::cerr << "SetTlvUInt64() setRawUInt64 FAILED (or earlier)" << std::endl;
+	}
+#endif
+
+	return ok;
+
+}
+
+bool GetTlvUInt64(void *data, uint32_t size, uint32_t *offset, 
+		uint16_t type, uint64_t *in) 
+{
+	if (!data)
+		return false;
+
+	if (size < *offset + 4)
+		return false;
+
+	/* extract the type and size */
+	void *tlvstart = right_shift_void_pointer(data, *offset);
+	uint16_t tlvtype = GetTlvType(tlvstart);
+	uint16_t tlvsize = GetTlvSize(tlvstart);
+
+	/* check that there is size */
+	uint32_t tlvend = *offset + tlvsize;
+	if (size < tlvend)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "GetTlvUInt64() FAILED - not enough space." << std::endl;
+		std::cerr << "GetTlvUInt64() size: " << size << std::endl;
+		std::cerr << "GetTlvUInt64() tlvsize: " << tlvsize << std::endl;
+		std::cerr << "GetTlvUInt64() tlvend: " << tlvend << std::endl;
+#endif
+		return false;
+	}
+
+	if (type != tlvtype)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "GetTlvUInt64() FAILED - Type mismatch" << std::endl;
+		std::cerr << "GetTlvUInt64() type: " << type << std::endl;
+		std::cerr << "GetTlvUInt64() tlvtype: " << tlvtype << std::endl;
+#endif
+		return false;
+	}
+
+	*offset += 4; /* step past header */
+
+	bool ok = true;
+	ok &= getRawUInt64(data, tlvend, offset, in);
+
+	return ok;
+}
+
 
 bool SetTlvString(void *data, uint32_t size, uint32_t *offset, 
 			uint16_t type, std::string out) 
@@ -349,33 +446,36 @@ uint32_t GetTlvStringSize(std::string &in) {
 	return 4 + in.size();
 }
 
-//How to handle structure sockaddr_in? Convert it to void*?
 bool SetTlvIpAddrPortV4(void *data, uint32_t size, uint32_t *offset,
 		uint16_t type, struct sockaddr_in *out) {
 	if (!data)
 		return false;
 
-	if (size < *offset + sizeof(uint16_t)*2+ sizeof(sockaddr_in))
+	uint16_t tlvsize = GetTlvIpAddrPortV4Size();
+	uint32_t tlvend = *offset + tlvsize; /* where the data will extend to */
+
+	if (size < tlvend)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "SetTlvIpAddrPortV4() FAILED - not enough space" << std::endl;
+		std::cerr << "SetTlvIpAddrPortV4() size: " << size << std::endl;
+		std::cerr << "SetTlvIpAddrPortV4() tlvsize: " << tlvsize << std::endl;
+		std::cerr << "SetTlvIpAddrPortV4() tlvend: " << tlvend << std::endl;
+#endif
 		return false;
+	}
 
-	//	struct sockaddr_in out_n = *out;
-	//	out_n. sin_port = htons(out_n.sin_port);
-	//	out_n.sin_addr = htonl(out_n.sin_addr);
+	bool ok = true;
+	ok &= SetTlvBase(data, tlvend, offset, type, tlvsize);
 
-	void * to = right_shift_void_pointer(data, *offset);
-	memcpy(to, (void *)&type, sizeof(uint16_t));
+	/* now add the data .... (its already in network order) - so flip */
+	uint32_t ipaddr = out->sin_addr.s_addr;
+	ok &= setRawUInt32(data, tlvend, offset, ntohl(ipaddr));
 
-	to = right_shift_void_pointer(to, sizeof(uint16_t));
-	uint16_t len = sizeof(sockaddr_in);
-	memcpy(to, (void*)&len, sizeof(uint16_t));
+	uint16_t port = out->sin_port;
+	ok &= setRawUInt16(data, tlvend, offset, ntohs(port));
 
-	to = right_shift_void_pointer(to, sizeof(uint16_t));
-	memcpy(to, (void *)out, sizeof(sockaddr_in));
-
-	*offset += sizeof(uint16_t)*2+ sizeof(sockaddr_in);
-
-	return true;
-
+	return ok;
 }
 
 bool GetTlvIpAddrPortV4(void *data, uint32_t size, uint32_t *offset,
@@ -383,64 +483,63 @@ bool GetTlvIpAddrPortV4(void *data, uint32_t size, uint32_t *offset,
 	if (!data)
 		return false;
 
-	if (size < *offset + sizeof(uint16_t)*2+ sizeof(sockaddr_in))
+	if (size < *offset + 4)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "GetIpAddrPortV4() FAILED - not enough space" << std::endl;
+		std::cerr << "GetIpAddrPortV4() size: " << size << std::endl;
+		std::cerr << "GetIpAddrPortV4() *offset: " << *offset << std::endl;
+#endif
 		return false;
+	}
 
-	void * from = right_shift_void_pointer(data, *offset +2);
+	/* extract the type and size */
+	void *tlvstart = right_shift_void_pointer(data, *offset);
+	uint16_t tlvtype = GetTlvType(tlvstart);
+	uint16_t tlvsize = GetTlvSize(tlvstart);
 
-	uint16_t len;
-	memcpy((void *)&len, from, sizeof(uint16_t));
-	len = ntohs(len);
-
-	if (len != sizeof(sockaddr_in))
+	/* check that there is size */
+	uint32_t tlvend = *offset + tlvsize;
+	if (size < tlvend)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "GetIpAddrPortV4() FAILED - not enough space" << std::endl;
+		std::cerr << "GetIpAddrPortV4() size: " << size << std::endl;
+		std::cerr << "GetIpAddrPortV4() tlvsize: " << tlvsize << std::endl;
+		std::cerr << "GetIpAddrPortV4() tlvend: " << tlvend << std::endl;
+#endif
 		return false;
+	}
 
-	from = right_shift_void_pointer(from, sizeof(uint16_t));
+	if (type != tlvtype)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "GetIpAddrPortV4() FAILED - invalid type" << std::endl;
+		std::cerr << "GetIpAddrPortV4() type: " << type << std::endl;
+		std::cerr << "GetIpAddrPortV4() tlvtype: " << tlvtype << std::endl;
+#endif
+		return false;
+	}
 
-	memcpy((void*)in, from, sizeof(sockaddr_in));
+	*offset += 4; /* skip header */
 
-	*offset += sizeof(uint16_t)*2+ len;
-	return true;
+	bool ok = true;
 
+	/* now get the data .... (its already in network order) - so flip */
+
+	uint32_t ipaddr;
+	ok &= getRawUInt32(data, tlvend, offset, &ipaddr);
+	in->sin_family = AF_INET; /* set FAMILY */
+	in->sin_addr.s_addr = htonl(ipaddr);
+
+	uint16_t port;
+	ok &= getRawUInt16(data, tlvend, offset, &port);
+	in->sin_port = htons(port);
+
+	return ok;
 }
 
-//intention?
-bool GetTlvIpAddrPortV4Size() {
-	return sizeof(uint16_t)*2+ sizeof(sockaddr_in);
+uint32_t GetTlvIpAddrPortV4Size() {
+	return 4 + 4 + 2; /* header + 4 (IP) + 2 (Port) */
 }
-
-bool SetRawUInt32(void* data, uint32_t size, uint32_t* offset, uint32_t out) {
-	if (!data)
-		return false;
-	if (size < *offset + sizeof(uint32_t))
-		return false;
-
-	uint32_t out_n = htonl(out);
-
-	memcpy(right_shift_void_pointer(data, *offset), (void*)&out_n,
-			sizeof(uint32_t));
-
-	*offset += sizeof(uint32_t);
-	return true;
-}
-
-// additional serializer of data
-/*
-bool SetTlvBinData(void* data, uint32_t size, uint32_t* offset, uint16_t type, void* data_bin, uint32_t len_tlv)
- {
-	if (!data)
-		return false;
-	if (size < *offset + len)
-		return false;
-
-	setTlvBase(data, size, offset, TLV_TYPE_DATA, len_tlv);
-
-	memcpy(right_shift_void_pointer(data, *offset), data_bin,
-			len);
-
-	*offset += len;
-	return true;
-}
-
-*/
 
