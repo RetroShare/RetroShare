@@ -31,6 +31,8 @@
 #include <iostream>
 #include <string>
 
+
+#if 0
 #define RSCERTIDLEN 16
 
 class RsCertId
@@ -47,13 +49,11 @@ class RsCertId
 
 std::ostream &operator<<(std::ostream &out, const RsCertId &id);
 
-/* use RsCertId, (not unsigned long) because the definition will change 
-typedef unsigned long RsCertId; 
-*/
+#endif
 
-typedef RsCertId      RsChanId; 
-typedef RsCertId      RsMsgId; 
-
+typedef std::string   RsCertId;
+typedef std::string   RsChanId; 
+typedef std::string   RsMsgId; 
 typedef std::string   RsAuthId; 
 
 
@@ -192,6 +192,7 @@ class FileTransferInfo: public FileInfo
 {
 	public:
 	std::string source;
+	std::list<std::string> peerIds;
 	int transfered;
 	double tfRate; /* kbytes */
 	bool download;
@@ -223,9 +224,16 @@ class MessageInfo: public BaseInfo
 
 	unsigned int msgflags;
 	std::string srcname;
+
+	std::list<PersonInfo> msgto;
+	std::list<PersonInfo> msgcc;
+	std::list<PersonInfo> msgbcc;
+
 	std::string title;
-	std::string header;
 	std::string msg;
+
+	std::string attach_title;
+	std::string attach_comment;
 	std::list<FileInfo> files;
 	int size;  /* total of files */
 	int count; /* file count     */

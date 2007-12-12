@@ -428,7 +428,7 @@ void MessagesDialog::insertMsgTxtAndFiles()
 	else
 	{
 		cid = qtwi -> text(7).toStdString();
-		mid = qtwi -> text(8).toStdString();
+		mid = qtwi -> text(8).toStdString(); 
 	}
 
 	/* Save the Data.... for later */
@@ -491,11 +491,40 @@ void MessagesDialog::insertMsgTxtAndFiles()
 
 
 	/* add the Msg */
-	std::string msgtext = "Title:  " + mi -> title;
-	msgtext +=            "\nHdr:   " + mi -> header;
-	msgtext += "\n-----------------\n" + mi -> msg;
+	std::ostringstream msgout;
+	std::list<PersonInfo>::const_iterator pit;
+	msgout << "Msg Header ----------------- TS: " << mi->ts;
+	if (mi->msgto.size() > 0)
+		msgout << std::endl << "To: ";
+	for(pit = mi->msgto.begin(); pit != mi->msgto.end(); pit++)
+	{
+		msgout << pit->name << " (" << pit->id << "), ";
+	}
 
-	ui.msgText->setText(QString::fromStdString(msgtext));
+	if (mi->msgcc.size() > 0)
+		msgout << std::endl << "Cc: ";
+	for(pit = mi->msgcc.begin(); pit != mi->msgcc.end(); pit++)
+	{
+		msgout << pit->name << " (" << pit->id << "), ";
+	}
+
+	if (mi->msgbcc.size() > 0)
+		msgout << std::endl << "Bcc: ";
+	for(pit = mi->msgbcc.begin(); pit != mi->msgbcc.end(); pit++)
+	{
+		msgout << pit->name << " (" << pit->id << "), ";
+	}
+
+	msgout << std::endl;
+	msgout << "----------------------------";
+	msgout << std::endl;
+
+	msgout << "Subject: " << mi -> title << std::endl;
+	msgout << "Message: " << std::endl;
+	msgout << mi->msg << std::endl;
+		
+
+	ui.msgText->setText(QString::fromStdString(msgout.str()));
 
 	rsiface->unlockData();   /* Unlock Interface */
 
