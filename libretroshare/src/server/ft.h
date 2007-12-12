@@ -29,12 +29,13 @@
 /*
  * ftManager - virtual base class for FileTransfer
  */
- 
 
-#include "pqi/pqi.h"
 #include <list>
 #include <iostream>
 #include <string>
+
+#include "pqi/pqi.h"
+#include "serialiser/rsconfigitems.h"
 
 #include "dbase/cachestrapper.h"
 #include "server/hashsearch.h"
@@ -46,7 +47,7 @@ class ftFileRequest
 {
         public:
 	ftFileRequest(std::string id_in, std::string hash_in,
-		        uint32_t size_in, uint32_t offset_in,
+		        uint64_t size_in, uint64_t offset_in,
 		        uint32_t chunk_in)
 	:id(id_in), hash(hash_in), size(size_in),
 	 offset(offset_in), chunk(chunk_in)
@@ -58,8 +59,8 @@ virtual ~ftFileRequest() { return; }
 
         std::string id;
         std::string hash;
-        uint32_t size;
-        uint32_t offset;
+        uint64_t size;
+        uint64_t offset;
         uint32_t chunk;
 };
 
@@ -68,7 +69,7 @@ class ftFileData: public ftFileRequest
 {
         public:
 	ftFileData(std::string id_in, std::string hash_in,
-		        uint32_t size_in, uint32_t offset_in,
+		        uint64_t size_in, uint64_t offset_in,
 		        uint32_t chunk_in, void *data_in)
 	:ftFileRequest(id_in, hash_in, size_in, 
 		offset_in, chunk_in), data(data_in)
@@ -103,16 +104,16 @@ void    setFileHashSearch(FileHashSearch *hs) { fhs = hs; }
 /*********** overloaded from CacheTransfer ***************/
 /* Must callback after this fn - using utility functions */
 //virtual bool RequestCacheFile(RsPeerId id, std::string path, 
-//			std::string hash, uint32_t size);
+//			std::string hash, uint64_t size);
 /******************* GUI Interface ************************/
 virtual int	getFile(std::string name, std::string hash, 
-			uint32_t size, std::string destpath) = 0;
+			uint64_t size, std::string destpath) = 0;
 
 virtual int 	cancelFile(std::string hash) = 0;
 virtual int 	clearFailedTransfers() = 0;
 
 virtual int             tick() = 0;
-virtual std::list<FileTransferItem *> getStatus() = 0;
+virtual std::list<RsFileTransfer *> getStatus() = 0;
 
 /************* Network Interface****************************/
 
@@ -126,7 +127,7 @@ virtual ftFileRequest * sendFileInfo() = 0;
 	/****************** UTILITY FUNCTIONS ********************/
 
 	/* combines two lookup functions */
-bool	lookupLocalHash(std::string hash, std::string &path, uint32_t &size);
+bool	lookupLocalHash(std::string hash, std::string &path, uint64_t &size);
 bool	lookupRemoteHash(std::string hash, std::list<std::string> &ids);
 
 	/*********** callback   from CacheTransfer ***************/
@@ -142,3 +143,12 @@ bool	lookupRemoteHash(std::string hash, std::list<std::string> &ids);
 };
 
 #endif
+
+
+
+
+
+
+
+
+

@@ -61,19 +61,19 @@ const int ftfilerzone = 86539;
  *
  */
 
-const int PQIFILE_OFFLINE_CHECK  = 120; /* check every 2 minutes */
-const int PQIFILE_DOWNLOAD_TIMEOUT  = 60; /* time it out, -> offline after 60 secs */
-const int PQIFILE_DOWNLOAD_CHECK    = 10; /* desired delta = 10 secs */
-const int PQIFILE_DOWNLOAD_TOO_FAST = 8; /* 8 secs */
-const int PQIFILE_DOWNLOAD_TOO_SLOW = 12; /* 12 secs */
-const int PQIFILE_DOWNLOAD_MIN_DELTA = 5; /* 5 secs */
+const uint32_t PQIFILE_OFFLINE_CHECK  = 120; /* check every 2 minutes */
+const uint32_t PQIFILE_DOWNLOAD_TIMEOUT  = 60; /* time it out, -> offline after 60 secs */
+const uint32_t PQIFILE_DOWNLOAD_CHECK    = 10; /* desired delta = 10 secs */
+const uint32_t PQIFILE_DOWNLOAD_TOO_FAST = 8; /* 8 secs */
+const uint32_t PQIFILE_DOWNLOAD_TOO_SLOW = 12; /* 12 secs */
+const uint32_t PQIFILE_DOWNLOAD_MIN_DELTA = 5; /* 5 secs */
 
 const float TRANSFER_MODE_TRICKLE_RATE = 1000;   /* 1   kbyte limit */
 const float TRANSFER_MODE_NORMAL_RATE  = 500000; /* 500 kbyte limit - everyone uses this one for now */
 const float TRANSFER_MODE_FAST_RATE    = 500000; /* 500 kbyte limit */
 
-const int TRANSFER_START_MIN = 500;  /* 500 byte  min limit */
-const int TRANSFER_START_MAX = 10000; /* 10000 byte max limit */
+const uint32_t TRANSFER_START_MIN = 500;  /* 500 byte  min limit */
+const uint32_t TRANSFER_START_MAX = 10000; /* 10000 byte max limit */
 
 void printFtFileStatus(ftFileStatus *s, std::ostream &out);
 
@@ -93,7 +93,7 @@ void printFtFileStatus(ftFileStatus *s, std::ostream &out);
 
 
 int     ftfiler::getFile(std::string name, std::string hash, 
-			uint32_t size, std::string destpath)
+			uint64_t size, std::string destpath)
 {
 	/* add to local queue */
 	{
@@ -141,7 +141,7 @@ int     ftfiler::getFile(std::string name, std::string hash,
 	return 1;
 }
 
-bool    ftfiler::RequestCacheFile(std::string id, std::string destpath, std::string hash, uint32_t size)
+bool    ftfiler::RequestCacheFile(std::string id, std::string destpath, std::string hash, uint64_t size)
 {
 	/* add to local queue */
 	{
@@ -307,72 +307,147 @@ int	ftfiler::clearFailedTransfers()
 	return 1;
 }
 
-std::list<FileTransferItem *> ftfiler::getStatus()
+std::list<RsFileTransfer *> ftfiler::getStatus()
 {
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::getTransferStatus()");
-	std::list<FileTransferItem *>  stateList;
+	std::list<RsFileTransfer *>  stateList;
 
 	/* iterate through all files to recv */
 	std::list<ftFileStatus *>::iterator it;
 	for(it = recvFiles.begin(); it != recvFiles.end(); it++)
 	{
-		FileTransferItem *fti = new FileTransferItem();
+		RsFileTransfer *rft = new RsFileTransfer();
+		rft -> in = true;
 
-		/* fill in the basics
-		 * HACK - note - current system cannot save without a cert! 
-		 * - so use ours!
-		 */
-		fti -> p = getSSLRoot()->getOwnCert();
-
-		fti -> name = (*it)->name;
-
-		/* hack to only store 'Real' Transfers (Cache have blank hash value)*/
-		if ((*it)->ftMode != FT_MODE_CACHE)
+		/* Ids: current and all */
+		std::list<std::string>::iterator pit;
+		for(pit = (*it)->sources.begin(); 
+				pit != (*it)->sources.end(); pit++)
 		{
-			fti -> hash = (*it)->hash;
+			rft->allPeerIds.ids.push_back(*pit);
 		}
-		fti -> size = (*it)->size;
+		rft -> cPeerId = (*it)->id;
+
+		/* file details */
+		rft -> file.name = (*it)->name;
+		rft -> file.filesize = (*it)->size;
+		rft -> file.path = "";
+		rft -> file.pop = 0;
+		rft -> file.age = 0;
+
+		/* hack to store 'Real' Transfers (Cache have blank hash)*/
+		if ((*it)->ftMode != FT_MODE_CACHE)
+			rft -> file.hash = (*it)->hash;
+		else
+			rft -> file.hash = "";
 
 		/* Fill in rate and State */
-		fti -> transferred = (*it)->recv_size;
-		fti -> crate = (*it)->rate / 1000.0; // kbytes.
-		fti -> trate = (*it)->rate / 1000.0; // kbytes.
-		fti -> lrate = (*it)->rate / 1000.0; // kbytes.
-		fti -> ltransfer = (*it)->req_size;
-		fti -> in = true;
+		rft -> transferred = (*it)->recv_size;
+		rft -> crate = (*it)->rate; // bytes.
+		rft -> trate = (*it)->rate; // bytes.
+		rft -> lrate = (*it)->rate; // bytes.
+		rft -> ltransfer = (*it)->req_size;
 
 		/* get inactive period */
 		if ((*it) -> status == PQIFILE_NOT_ONLINE)
 		{
-			fti -> crate = 0;
-			fti -> trate = 0;
-			fti -> lrate = 0;
-			fti -> ltransfer = 0;
-			fti -> state = FT_STATE_OKAY;
+			rft -> crate = 0;
+			rft -> trate = 0;
+			rft -> lrate = 0;
+			rft -> ltransfer = 0;
+			rft -> state = FT_STATE_WAITING;
 		}
 		else if ((*it) -> status & PQIFILE_FAIL)
 		{
-			fti -> crate = 0;
-			fti -> trate = 0;
-			fti -> lrate = 0;
-			fti -> ltransfer = 0;
-			fti -> state = FT_STATE_FAILED;
+			rft -> crate = 0;
+			rft -> trate = 0;
+			rft -> lrate = 0;
+			rft -> ltransfer = 0;
+			rft -> state = FT_STATE_FAILED;
 
 		}
 		else if ((*it) -> status == PQIFILE_COMPLETE)
 		{
-			fti -> state = FT_STATE_COMPLETE;
+			rft -> state = FT_STATE_COMPLETE;
 		}
 		else if ((*it) -> status == PQIFILE_DOWNLOADING)
 		{
-			fti -> state = FT_STATE_OKAY;
+			rft -> state = FT_STATE_DOWNLOADING;
 		}
 		else
 		{
-			fti -> state = FT_STATE_FAILED;
+			rft -> state = FT_STATE_FAILED;
 		}
-		stateList.push_back(fti);
+		stateList.push_back(rft);
+	}
+
+	/* outgoing files */
+	for(it = fileCache.begin(); it != fileCache.end(); it++)
+	{
+		RsFileTransfer *rft = new RsFileTransfer();
+		rft -> in = false;
+
+		/* Ids: current and all */
+		std::list<std::string>::iterator pit;
+		for(pit = (*it)->sources.begin(); 
+				pit != (*it)->sources.end(); pit++)
+		{
+			rft->allPeerIds.ids.push_back(*pit);
+		}
+		rft -> cPeerId = (*it)->id;
+
+		/* file details */
+		rft -> file.name = (*it)->name;
+		rft -> file.filesize = (*it)->size;
+		rft -> file.path = "";
+		rft -> file.pop = 0;
+		rft -> file.age = 0;
+
+		/* hack to store 'Real' Transfers (Cache have blank hash)*/
+		if ((*it)->ftMode != FT_MODE_CACHE)
+			rft -> file.hash = (*it)->hash;
+		else
+			rft -> file.hash = "";
+
+		/* Fill in rate and State */
+		rft -> transferred = (*it)->recv_size;
+		rft -> crate = (*it)->rate; // bytes.
+		rft -> trate = (*it)->rate; // bytes.
+		rft -> lrate = (*it)->rate; // bytes.
+		rft -> ltransfer = (*it)->req_size;
+
+		/* get inactive period */
+		if ((*it) -> status == PQIFILE_NOT_ONLINE)
+		{
+			rft -> crate = 0;
+			rft -> trate = 0;
+			rft -> lrate = 0;
+			rft -> ltransfer = 0;
+			rft -> state = FT_STATE_WAITING;
+		}
+		else if ((*it) -> status & PQIFILE_FAIL)
+		{
+			rft -> crate = 0;
+			rft -> trate = 0;
+			rft -> lrate = 0;
+			rft -> ltransfer = 0;
+			rft -> state = FT_STATE_FAILED;
+
+		}
+		else if ((*it) -> status == PQIFILE_COMPLETE)
+		{
+			rft -> state = FT_STATE_COMPLETE;
+		}
+		else if ((*it) -> status == PQIFILE_DOWNLOADING)
+		{
+			rft -> state = FT_STATE_DOWNLOADING;
+		}
+		else
+		{
+			rft -> state = FT_STATE_FAILED;
+		}
+		stateList.push_back(rft);
 	}
 	return stateList;
 }
@@ -473,7 +548,7 @@ int ftfiler::handleFileNotAvailable(std::string hash)
 }
 
 
-int ftfiler::handleFileData(std::string hash, uint32_t offset, 
+int ftfiler::handleFileData(std::string hash, uint64_t offset, 
 				void *data, uint32_t datalen)
 {
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
@@ -512,7 +587,7 @@ int ftfiler::handleFileData(std::string hash, uint32_t offset,
 	return 1;
 }
 
-int ftfiler::handleFileRequest(std::string id, std::string hash, uint32_t offset, uint32_t chunk)
+int ftfiler::handleFileRequest(std::string id, std::string hash, uint64_t offset, uint32_t chunk)
 {
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::handleFileRequest()");
@@ -539,7 +614,7 @@ int ftfiler::handleFileRequest(std::string id, std::string hash, uint32_t offset
 	return handleFileCacheRequest(id, hash, offset, chunk);
 }
 
-int ftfiler::handleFileCacheRequest(std::string id, std::string hash, uint32_t offset, uint32_t chunk)
+int ftfiler::handleFileCacheRequest(std::string id, std::string hash, uint64_t offset, uint32_t chunk)
 {
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::handleFileCacheRequest()");
@@ -828,7 +903,7 @@ int 	ftfiler::requestData(ftFileStatus *item)
  */
 
 
-int	ftfiler::generateFileData(ftFileStatus *s, std::string id, uint32_t offset, uint32_t chunk)
+int	ftfiler::generateFileData(ftFileStatus *s, std::string id, uint64_t offset, uint32_t chunk)
 {
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::generateFileData()");
@@ -1128,7 +1203,7 @@ int ftfiler::resetFileTransfer(ftFileStatus *state)
 
 
 
-int ftfiler::addFileData(ftFileStatus *s, long idx, void *data, int size)
+int ftfiler::addFileData(ftFileStatus *s, uint64_t idx, void *data, uint32_t size)
 {
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::addFileData()");
@@ -1265,7 +1340,7 @@ ftFileStatus *ftfiler::createFileCache(std::string hash)
 
 	/* so look it up! */
 	std::string srcpath;
-	uint32_t size;
+	uint64_t size;
 	if (lookupLocalHash(s->hash, srcpath, size))
 	{
 		found = true;

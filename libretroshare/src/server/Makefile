@@ -2,8 +2,8 @@
 RS_TOP_DIR = ..
 include ../make.opt
 
-OBJ = filedexserver.o pqifiler.o \
-	ft.o ftfiler.o hashsearch.o
+OBJ =   ft.o ftfiler.o hashsearch.o \
+	filedexserver.o 
 
 EXEC = ftcachetest 
 

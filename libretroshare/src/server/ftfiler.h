@@ -78,7 +78,7 @@ public:
 	}
 ****/
 
-	ftFileStatus(std::string name_in, std::string hash_in, uint32_t size_in, 
+	ftFileStatus(std::string name_in, std::string hash_in, uint64_t size_in, 
 					std::string destpath_in, uint32_t mode_in)
 	:name(name_in), hash(hash_in), destpath(destpath_in), size(size_in), ftMode(mode_in),
 	status(PQIFILE_INIT), mode(0), rate(0), fd(NULL), total_size(0), recv_size(0),
@@ -92,7 +92,7 @@ public:
 		return;
 	}
 
-	ftFileStatus(std::string id_in, std::string name_in, std::string hash_in, uint32_t size_in, 
+	ftFileStatus(std::string id_in, std::string name_in, std::string hash_in, uint64_t size_in, 
 					std::string destpath_in, uint32_t mode_in)
 	:id(id_in), name(name_in), hash(hash_in), destpath(destpath_in), size(size_in), ftMode(mode_in),
 	status(PQIFILE_INIT), mode(0), rate(0), fd(NULL), total_size(0), recv_size(0),
@@ -119,7 +119,7 @@ public:
 	std::string name;
 	std::string hash;
 	std::string destpath;
-	uint32_t size;
+	uint64_t size;
 
 	/* new stuff */
 	uint32_t ftMode;
@@ -133,18 +133,18 @@ public:
 
 	std::string file_name;
 	FILE *fd;
-	long   total_size;
+	uint64_t  total_size;
 	/* this is the simplistic case where only inorder data 
 	 * otherwise - need much more status info */
-	long   recv_size; 
+	uint64_t   recv_size; 
 
 	/* current file data request */
-	long   req_loc;
-	int   req_size;
+	uint64_t   req_loc;
+	uint32_t   req_size;
 
 	/* timestamp */
-	long lastTS;
-	int  lastDelta; /* send til all recved */
+	time_t     lastTS;
+	uint32_t   lastDelta; /* send til all recved */
 };
 
 
@@ -158,15 +158,15 @@ public:
 virtual ~ftfiler() { return; }
 
 virtual bool    RequestCacheFile(std::string id, std::string path, 
-				std::string hash, uint32_t size);
+				std::string hash, uint64_t size);
 virtual int     getFile(std::string name, std::string hash, 
-	                        uint32_t size, std::string destpath);
+	                        uint64_t size, std::string destpath);
 
 virtual int     cancelFile(std::string hash);
 virtual int     clearFailedTransfers();
 
 int             tick();
-std::list<FileTransferItem *> getStatus();
+std::list<RsFileTransfer *> getStatus();
 
 virtual void    setSaveBasePath(std::string s);
 
@@ -179,13 +179,13 @@ private:
 virtual int 	handleFileError(std::string hash, uint32_t err);
 virtual int 	handleFileNotOnline(std::string hash);
 virtual int 	handleFileNotAvailable(std::string hash);
-virtual int 	handleFileData(std::string hash, uint32_t offset, 
+virtual int 	handleFileData(std::string hash, uint64_t offset, 
 				void *data, uint32_t size);
 
 virtual int 	handleFileRequest(     std::string id, std::string hash, 	
-				uint32_t offset, uint32_t chunk);
+				uint64_t offset, uint32_t chunk);
 virtual int 	handleFileCacheRequest(std::string id, std::string hash, 
-				uint32_t offset, uint32_t chunk);
+				uint64_t offset, uint32_t chunk);
 
 ftFileStatus   *findRecvFileItem(std::string hash);
 void		queryInactive();
@@ -199,7 +199,7 @@ int 		requestData(ftFileStatus *item);
 
 ftFileStatus *	createFileCache(std::string hash);
 ftFileRequest *	generateFileRequest(ftFileStatus *);
-int		generateFileData(ftFileStatus *s, std::string id, uint32_t offset, uint32_t size);
+int		generateFileData(ftFileStatus *s, std::string id, uint64_t offset, uint32_t size);
 //int 		sendFileNotAvail(PQFileItem *req);
 
 /************* FILE DATA HANDLING ******************************
@@ -210,7 +210,7 @@ std::string 	determineDestFilePath(ftFileStatus *s);
 
 int 		initiateFileTransfer(ftFileStatus *s);
 int 		resetFileTransfer(ftFileStatus *s);
-int 		addFileData(ftFileStatus *s, long idx, void *data, int size);
+int 		addFileData(ftFileStatus *s, uint64_t idx, void *data, uint32_t size);
 int 		completeFileTransfer(ftFileStatus *s);
 
 

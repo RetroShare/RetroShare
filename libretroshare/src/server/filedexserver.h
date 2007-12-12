@@ -49,6 +49,7 @@
 
 #include "pqi/pqi.h"
 #include "pqi/pqiindic.h"
+#include "serialiser/rsconfigitems.h"
 #include <map>
 #include <deque>
 #include <list>
@@ -82,23 +83,25 @@ class filedexserver
 void    loadWelcomeMsg(); /* startup message */
 
 int	setSearchInterface(P3Interface *si, sslroot *sr);
-int	additem(SearchItem *item, char *fname);
+//int	additem(SearchItem *item, char *fname);
 
-int	sendChat(std::string msg);
-int	sendPrivateChat(ChatItem *ci);
+//int	sendChat(std::string msg);
+//int	sendPrivateChat(ChatItem *ci);
 
-int	sendRecommend(PQFileItem *fi, std::string msg);
-int     sendMessage(MsgItem *item);
-int     checkOutgoingMessages();
+//int	sendRecommend(PQFileItem *fi, std::string msg);
+//int     sendMessage(MsgItem *item);
+//int     checkOutgoingMessages();
 
-int 	getChat();
+//int 	getChat();
 /* std::deque<std::string> &getChatQueue(); */
-std::list<ChatItem *> getChatQueue(); 
+//std::list<ChatItem *> getChatQueue(); 
 
-std::list<MsgItem *> &getMsgList();
-std::list<MsgItem *> &getMsgOutList();
-std::list<MsgItem *> getNewMsgs();
-std::list<FileTransferItem *> getTransfers();
+//std::list<MsgItem *> &getMsgList();
+//std::list<MsgItem *> &getMsgOutList();
+//std::list<MsgItem *> getNewMsgs();
+
+
+std::list<RsFileTransfer *> getTransfers();
 
 	// get files (obsolete?)
 int     getFile(std::string fname, std::string hash,
@@ -107,12 +110,12 @@ void 	clear_old_transfers();
 void 	cancelTransfer(std::string fname, std::string hash, uint32_t size);
 
 	// cleaning up....
-int	removeMsgItem(int itemnum);
+//int	removeMsgItem(int itemnum);
 	// alternative versions.
-int	removeMsgItem(MsgItem *mi);
+//int	removeMsgItem(MsgItem *mi);
 	// third versions.
-int     removeMsgId(unsigned long mid); /* id stored in sid */
-int     markMsgIdRead(unsigned long mid);
+//int     removeMsgId(unsigned long mid); /* id stored in sid */
+//int     markMsgIdRead(unsigned long mid);
 
 // access to search info is also required.
 
@@ -134,20 +137,17 @@ void		setSaveIncSearch(bool v);
 int	tick();
 int	status();
 
+
 	private:
 
 int	handleInputQueues();
 int	handleOutputQueues();
 
-std::list<ChatItem *> ichat;
-std::list<MsgItem *> imsg;
-std::list<MsgItem *> nmsg;
-std::list<MsgItem *> msgOutgoing; /* ones that haven't made it out yet! */
-
 std::list<std::string> dbase_dirs;
 
-P3Interface *pqisi;
-sslroot	*sslr;
+	sslroot	*sslr;
+
+	P3Interface *pqisi;
 
 std::string config_dir;
 std::string save_dir;
@@ -155,23 +155,23 @@ bool	save_inc; // is savedir include in share list.
 
 // bool state flags.
 	public:
-	Indicator msgChanged;
-	Indicator msgMajorChanged;
-	Indicator chatChanged;
+//	Indicator msgChanged;
+//	Indicator msgMajorChanged;
+//	Indicator chatChanged;
 
 #ifdef PQI_USE_CHANNELS
 
 	public:
 	// Channel stuff.
-void	setP3Channel(p3channel *p3c);
-int     getAvailableChannels(std::list<pqichannel *> &chans);
-int     getChannelMsgList(channelSign s, std::list<chanMsgSummary> &summary);
-channelMsg *getChannelMsg(channelSign s, MsgHash mh);
+//void	setP3Channel(p3channel *p3c);
+//int     getAvailableChannels(std::list<pqichannel *> &chans);
+//int     getChannelMsgList(channelSign s, std::list<chanMsgSummary> &summary);
+//channelMsg *getChannelMsg(channelSign s, MsgHash mh);
 
-	Indicator channelsChanged; // everything!
+//	Indicator channelsChanged; // everything!
 
 	private:
-p3channel *p3chan;
+//p3channel *p3chan;
 
 #endif
 

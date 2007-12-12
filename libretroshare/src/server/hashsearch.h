@@ -48,7 +48,7 @@ class FileHashSearch
 	~FileHashSearch() { return; }
 
 	/* Search Interface - For FileTransfer Lookup */
-	int searchLocalHash(std::string hash, std::string &path, uint32_t &size);
+	int searchLocalHash(std::string hash, std::string &path, uint64_t &size);
 
 	int searchRemoteHash(std::string hash, std::list<FileDetail> &results);
 

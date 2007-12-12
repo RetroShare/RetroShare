@@ -58,47 +58,19 @@
 #include "dbase/fimonitor.h"
 #include "dbase/fistore.h"
 
+#include "serialiser/rsserviceids.h"
+
 
 #include <sstream>
 
 const int fldxsrvrzone = 47659;
 
-
-/* Another little hack ..... unique message Ids
- * will be handled in this class.....
- * These are unique within this run of the server, 
- * and are not stored long term....
- *
- * Only 3 entry points:
- * (1) from network....
- * (2) from local send
- * (3) from storage...
- */
-
-static unsigned int msgUniqueId = 1;
-unsigned int getNewUniqueMsgId()
-{
-	return msgUniqueId++;
-}
-
-
-
 filedexserver::filedexserver()
 	:pqisi(NULL), sslr(NULL), 
-
-	ftFiler(NULL), 
-	
-	save_dir("."), 
-	msgChanged(1), msgMajorChanged(1), chatChanged(1)
-#ifdef PQI_USE_CHANNELS
-	,channelsChanged(1)
-#endif
+	save_dir("."),
+	ftFiler(NULL) 
 {
-#ifdef PQI_USE_CHANNELS
-	p3chan = NULL;
-#endif
 	initialiseFileStore();
-
 }
 
 int	filedexserver::setSearchInterface(P3Interface *si, sslroot *sr)
@@ -108,15 +80,10 @@ int	filedexserver::setSearchInterface(P3Interface *si, sslroot *sr)
 	return 1;
 }
 
-
-std::list<FileTransferItem *> filedexserver::getTransfers()
+std::list<RsFileTransfer *> filedexserver::getTransfers()
 {
 	return ftFiler->getStatus();
 }
-
-
-
-
 
 
 int	filedexserver::tick()
@@ -152,13 +119,6 @@ int	filedexserver::tick()
 	{
 		moreToTick = 1;
 	}
-
-	if (0 < getChat())
-	{
-		moreToTick = 1;
-	}
-	checkOutgoingMessages(); /* don't worry about increasing tick rate! */
-
 	return moreToTick;
 }
 
@@ -201,313 +161,6 @@ void	filedexserver::setSaveIncSearch(bool v)
 {
 	save_inc = v;
 }
-
-
-/***************** Chat Stuff **********************/
-
-int     filedexserver::sendChat(std::string msg)
-{
-	// make chat item....
-	ChatItem *ci = new ChatItem();
-	ci -> sid = getPQIsearchId();
-	ci -> p = sslr -> getOwnCert();
-	ci -> flags = 0;
-
-	pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, 
-		"filedexserver::sendChat()");
-
-	ci -> msg = msg;
-
-	/* will come back to us anyway (for now) */
-	//ichat.push_back(ci -> clone());
-	//chatChanged.IndicateChanged();
-
-	{
-	  std::ostringstream out;
-	  out << "Chat Item we are sending:" << std::endl;
-	  ci -> print(out);
-	  pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, out.str());
-	}
-
-	/* to global .... */
-	pqisi -> SendGlobalMsg(ci);
-	return 1;
-}
-
-int     filedexserver::sendPrivateChat(ChatItem *ci)
-{
-	// make chat item....
-	pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, 
-		"filedexserver::sendPrivateChat()");
-
-	{
-	  std::ostringstream out;
-	  out << "Private Chat Item we are sending:" << std::endl;
-	  ci -> print(out);
-	  pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, out.str());
-	}
-
-	/* to global .... */
-	pqisi -> SendMsg(ci);
-	return 1;
-}
-
-
-int 	filedexserver::getChat()
-{
-	ChatItem *ci;
-	int i = 0;
-	while((ci = pqisi -> GetMsg()) != NULL)
-	{
-		++i;
-		ci -> epoch = time(NULL);
-		std::string mesg;
-
-		if (ci -> subtype == PQI_MI_SUBTYPE_MSG)
-		{
-			// then a message..... push_back.
-			MsgItem *mi = (MsgItem *) ci;
-			if (mi -> p == sslr->getOwnCert())
-			{
-				/* from the loopback device */
-				mi -> msgflags = PQI_MI_FLAGS_OUTGOING;
-			}
-			else
-			{
-				/* from a peer */
-				mi -> msgflags = 0;
-			}
-
-			/* new as well! */
-			mi -> msgflags |= PQI_MI_FLAGS_NEW;
-			/* STORE MsgID */
-			mi -> sid = getNewUniqueMsgId();
-
-			imsg.push_back(mi);
-			//nmsg.push_back(mi);
-			msgChanged.IndicateChanged();
-		}
-		else
-		{
-			// push out the chat instead.
-			ichat.push_back(ci);
-			chatChanged.IndicateChanged();
-		}
-	}
-
-	if (i > 0)
-	{
-		return 1;
-	}
-	return 0;
-}
-	
-
-std::list<ChatItem *> filedexserver::getChatQueue()
-{
-	std::list<ChatItem *> ilist = ichat;
-	ichat.clear();
-	return ilist;
-}
-
-
-std::list<MsgItem *> &filedexserver::getMsgList()
-{
-	return imsg;
-}
-
-std::list<MsgItem *> &filedexserver::getMsgOutList()
-{
-	return msgOutgoing;
-}
-
-
-
-std::list<MsgItem *> filedexserver::getNewMsgs()
-{
-	std::list<MsgItem *> tmplist = nmsg;
-	nmsg.clear();
-	return tmplist;
-}
-
-/* remove based on the unique mid (stored in sid) */
-int     filedexserver::removeMsgId(unsigned long mid)
-{
-	std::list<MsgItem *>::iterator it;
-
-	for(it = imsg.begin(); it != imsg.end(); it++)
-	{
-		if ((*it)->sid == mid)
-		{
-			MsgItem *mi = (*it);
-			imsg.erase(it);
-			delete mi;
-			msgChanged.IndicateChanged();
-			msgMajorChanged.IndicateChanged();
-			return 1;
-		}
-	}
-
-	/* try with outgoing messages otherwise */
-	for(it = msgOutgoing.begin(); it != msgOutgoing.end(); it++)
-	{
-		if ((*it)->sid == mid)
-		{
-			MsgItem *mi = (*it);
-			msgOutgoing.erase(it);
-			delete mi;
-			msgChanged.IndicateChanged();
-			msgMajorChanged.IndicateChanged();
-			return 1;
-		}
-	}
-
-	return 0;
-}
-
-int     filedexserver::markMsgIdRead(unsigned long mid)
-{
-	std::list<MsgItem *>::iterator it;
-
-	for(it = imsg.begin(); it != imsg.end(); it++)
-	{
-		if ((*it)->sid == mid)
-		{
-			MsgItem *mi = (*it);
-			mi -> msgflags &= ~(PQI_MI_FLAGS_NEW);
-			msgChanged.IndicateChanged();
-			return 1;
-		}
-	}
-	return 0;
-}
-
-int     filedexserver::removeMsgItem(int itemnum)
-{
-	std::list<MsgItem *>::iterator it;
-	int i;
-
-	for(i = 1, it = imsg.begin(); (i != itemnum) && (it != imsg.end()); it++, i++);
-	if (it != imsg.end())
-	{
-		MsgItem *mi = (*it);
-		imsg.erase(it);
-		delete mi;
-		msgChanged.IndicateChanged();
-		msgMajorChanged.IndicateChanged();
-		return 1;
-	}
-	return 0;
-}
-
-
-int     filedexserver::removeMsgItem(MsgItem *mi)
-{
-	std::list<MsgItem *>::iterator it;
-	for(it = imsg.begin(); (mi != *it) && (it != imsg.end()); it++);
-	if (it != imsg.end())
-	{
-		imsg.erase(it);
-		delete mi;
-		msgChanged.IndicateChanged();
-		msgMajorChanged.IndicateChanged();
-		return 1;
-	}
-	return 0;
-}
-
-/* This is the old fltkgui send recommend....
- * can only handle one single file....
- * will maintain this fn.... but it is deprecated.
- */
-
-int     filedexserver::sendRecommend(PQFileItem *fi, std::string msg)
-{
-	// make chat item....
-	MsgItem *mi = new MsgItem();
-	mi -> sid = getPQIsearchId();
-
-	pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, 
-		"filedexserver::sendRecommend()");
-
-	mi -> msg = msg;
-
-	if (fi != NULL)
-	{
-		MsgFileItem mfi;
-		mfi.name = fi -> name;
-		mfi.hash = fi -> hash;
-		mfi.size = fi -> size;
-
-		mi -> files.push_back(mfi);
-	}
-	else
-	{
-		/* nuffink */
-	}
-
-	pqisi -> SendMsg(mi);
-	return 1;
-}
-
-
-int     filedexserver::sendMessage(MsgItem *item)
-{
-	item -> sid = getPQIsearchId();
-
-	pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, 
-		"filedexserver::sendMessage()");
-
-	if (item -> p)
-	{
-		/* add pending flag */
-		item->msgflags |= 
-			(PQI_MI_FLAGS_OUTGOING | 
-			 PQI_MI_FLAGS_PENDING);
-		/* STORE MsgID */
-		item -> sid = getNewUniqueMsgId();
-		msgOutgoing.push_back(item);
-	}
-	else
-	{
-		delete item;
-	}
-	return 1;
-}
-
-int     filedexserver::checkOutgoingMessages()
-{
-	/* iterate through the outgoing queue 
-	 *
-	 * if online, send
-	 */
-
-	std::list<MsgItem *>::iterator it;
-	for(it = msgOutgoing.begin(); it != msgOutgoing.end();)
-	{
-	 	/* if online, send it */
-		if (((*it) -> p -> Status() & PERSON_STATUS_CONNECTED) 
-		    || ((*it) -> p == sslr->getOwnCert()))
-		{
-			/* send msg */
-			pqioutput(PQL_ALERT, fldxsrvrzone, 
-				"filedexserver::checkOutGoingMessages() Sending out message");
-			/* remove the pending flag */
-			(*it)->msgflags &= ~PQI_MI_FLAGS_PENDING;
-
-			pqisi -> SendMsg(*it);
-			it = msgOutgoing.erase(it);
-		}
-		else
-		{
-			pqioutput(PQL_ALERT, fldxsrvrzone, 
-				"filedexserver::checkOutGoingMessages() Delaying until available...");
-			it++;
-		}
-	}
-	return 0;
-}
-
 
 int     filedexserver::addSearchDirectory(std::string dir)
 {
@@ -629,45 +282,33 @@ int     filedexserver::save_config()
 
 	std::string statelog = config_dir + "/state.rst";
 
+	/* what can be saved?? */
+	RsSerialiser *rss = new RsSerialiser();
+	rss->addSerialType(new RsFileTransferSerialiser());
+
 	BinFileInterface *out = new BinFileInterface((char *) statelog.c_str(), BIN_FLAGS_WRITEABLE);
-        pqiarchive *pa_out = new pqiarchive(out, BIN_FLAGS_WRITEABLE, sslr);
+        pqiarchive *pa_out = new pqiarchive(rss, out, BIN_FLAGS_WRITEABLE);
 	bool written = false;
 
-	std::list<MsgItem *>::iterator mit;
-	for(mit = imsg.begin(); mit != imsg.end(); mit++)
-	{
-		MsgItem *mi = (*mit)->clone();
-		if (pa_out -> SendItem(mi))
-		{
-			written = true;
-		}
-		
-	}
-
-	for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
-	{
-		MsgItem *mi = (*mit)->clone();
-		mi -> msgflags |= PQI_MI_FLAGS_PENDING;
-		if (pa_out -> SendItem(mi))
-		{
-			written = true;
-		}
-		
-	}
-
-	std::list<FileTransferItem *>::iterator fit;
-	std::list<FileTransferItem *> ftlist = ftFiler -> getStatus();
+	std::list<RsFileTransfer *>::iterator fit;
+	std::list<RsFileTransfer *> ftlist = ftFiler -> getStatus();
 	for(fit = ftlist.begin(); fit != ftlist.end(); fit++)
 	{
 		/* only write out the okay/uncompleted (with hash) files */
-		if (((*fit)->state != FT_STATE_OKAY) || ((*fit)->hash == ""))
+		if (((*fit)->state == FT_STATE_FAILED) || 
+		    ((*fit)->state == FT_STATE_COMPLETE) || 
+		    ((*fit)->in == false) ||
+		    ((*fit)->file.hash == ""))
 		{
-			delete(*fit);
+			/* ignore */
 		}
 		else if (pa_out -> SendItem(*fit))
 		{
 			written = true;
 		}
+
+		/* cleanup */
+		delete(*fit);
 	}
 
 	if (!written)
@@ -750,160 +391,35 @@ int     filedexserver::load_config()
 	std::string statelog = config_dir + "/state.rst";
 
 	// XXX Fix Interface!
+	/* what can be saved?? */
+	RsSerialiser *rss = new RsSerialiser();
+	rss->addSerialType(new RsFileTransferSerialiser());
+
 	BinFileInterface *in = new BinFileInterface((char *) statelog.c_str(), BIN_FLAGS_READABLE);
-        pqiarchive *pa_in = new pqiarchive(in, BIN_FLAGS_READABLE, sslr);
-	PQItem *item;
-	MsgItem *mitem;
-	PQFileItem *fitem;
+        pqiarchive *pa_in = new pqiarchive(rss, in, BIN_FLAGS_READABLE);
+	RsItem *item;
+	RsFileTransfer *rft;
 
 	while((item = pa_in -> GetItem()))
 	{
-		switch(item->type)
+		/* add to ft queue */
+		if (NULL != (rft = dynamic_cast<RsFileTransfer *>(item)))
 		{
-			case PQI_ITEM_TYPE_FILEITEM:
-				/* add to ft queue */
-				if (NULL != (fitem = dynamic_cast<PQFileItem *>(item)))
-				{
-					/* only add in ones which have a hash (filters old versions) */
-					if (fitem->hash != "")
-					{
-						ftFiler -> getFile(fitem->name, fitem->hash, 
-								fitem->size, "");
-					}
-				}
-				delete item;
-				break;
-			case PQI_ITEM_TYPE_CHATITEM:
-				if (NULL != (mitem = dynamic_cast<MsgItem *>(item)))
-				{
-					/* switch depending on the PENDING 
-					 * flags
-					 */
-					/* STORE MsgID */
-					mitem->sid = getNewUniqueMsgId();
-					if (mitem -> msgflags & PQI_MI_FLAGS_PENDING)
-					{
-						std::cerr << "MSG_PENDING";
-						std::cerr << std::endl;
-						mitem->print(std::cerr);
-						msgOutgoing.push_back(mitem);
-					}
-					else
-					{
-						imsg.push_back(mitem);
-					}
-				}
-				else
-				{
-					delete item;
-				}
-				/* add to chat queue */
-				break;
-			default:
-				/* unexpected */
-				break;
+			/* only add in ones which have a hash (filters old versions) */
+			if (rft->file.hash != "")
+			{
+				ftFiler -> getFile(
+					rft->file.name, 
+					rft->file.hash,
+					rft->file.filesize, "");
+			}
 		}
+		delete item;
 	}
 
 	delete pa_in;	
 
 	return 1;
-}
-
-
-#ifdef PQI_USE_CHANNELS
-
-        // Channel stuff.
-void    filedexserver::setP3Channel(p3channel *p3c)
-{
-	p3chan = p3c;
-	return;
-}
-
-int 	filedexserver::getAvailableChannels(std::list<pqichannel *> &chans)
-{
-	if (!p3chan)
-	{
-		pqioutput(PQL_ALERT, fldxsrvrzone, 
-			"fildexserver::getAvailableChannels() p3chan == NULL");
-		return 0;
-	}
-	return p3chan->getChannelList(chans);
-}
-
-
-int 	filedexserver::getChannelMsgList(channelSign s, std::list<chanMsgSummary> &summary)
-{
-	if (!p3chan)
-	{
-		pqioutput(PQL_ALERT, fldxsrvrzone, 
-			"fildexserver::getChannelMsgList() p3chan == NULL");
-		return 0;
-	}
-	pqichannel *chan = p3chan -> findChannel(s);
-	if (!chan)
-	{
-		pqioutput(PQL_ALERT, fldxsrvrzone, 
-			"fildexserver::getChannelMsgList() Channel don't exist!");
-		return 0;
-	}
-	return chan -> getMsgSummary(summary);
-}
-
-
-channelMsg *filedexserver::getChannelMsg(channelSign s, MsgHash mh)
-{
-	if (!p3chan)
-	{
-		pqioutput(PQL_ALERT, fldxsrvrzone, 
-			"fildexserver::getChannelMsg() p3chan == NULL");
-		return NULL;
-	}
-	pqichannel *chan = p3chan -> findChannel(s);
-	if (!chan)
-	{
-		pqioutput(PQL_ALERT, fldxsrvrzone, 
-			"fildexserver::getChannelMsg() Channel don't exist!");
-		return NULL;
-	}
-	channelMsg *msg = chan -> findMsg(mh);
-	if (!msg)
-	{
-		pqioutput(PQL_ALERT, fldxsrvrzone, 
-			"fildexserver::getChannelMsg() Msg don't exist!");
-		return NULL;
-	}
-	return msg;
-}
-
-
-	
-#endif
-
-
-void filedexserver::loadWelcomeMsg()
-{
-	/* Load Welcome Message */
-	MsgItem *msg = new MsgItem();
-
-	msg -> p = getSSLRoot() -> getOwnCert();
-
-	msg -> title  = "Welcome to Retroshare";
-	msg -> header = "Basic Instructions";
-	msg -> sendTime = 0;
-
-	msg -> msg    = "Send and receive messages\n"; 
-	msg -> msg   += "with your friends...\n\n";
-
-	msg -> msg   += "These can hold recommendations\n";
-	msg -> msg   += "from your local shared files\n\n";
-
-	msg -> msg   += "Add recommendations through\n";
-	msg -> msg   += "the Local Files Dialog\n\n";
-
-	msg -> msg   += "Enjoy.\n";
-
-	imsg.push_back(msg);	
 }
 
 /*************************************** NEW File Cache Stuff ****************************/
@@ -951,7 +467,7 @@ void    filedexserver::setFileCallback(NotifyBase *cb)
 
 	/* now add the set to the cachestrapper */
 
-	CachePair cp(fimon, fiStore, CacheId(CACHE_TYPE_FILE_INDEX, 0));
+	CachePair cp(fimon, fiStore, CacheId(RS_SERVICE_TYPE_FILE_INDEX, 0));
 	cacheStrapper -> addCachePair(cp);
 
 	/* add to peermonitor */
@@ -979,7 +495,7 @@ void    filedexserver::setFileCallback(NotifyBase *cb)
 		std::string loadCacheFile = localcachedir + "/" + localCacheFile;
 		CacheData cd;
 		cd.pid = ownId;
-		cd.cid = CacheId(CACHE_TYPE_FILE_INDEX, 0);
+		cd.cid = CacheId(RS_SERVICE_TYPE_FILE_INDEX, 0);
 		cd.name = localCacheFile;
 		cd.path = localcachedir;
 		cd.hash = localCacheHash;
@@ -1095,15 +611,17 @@ int filedexserver::FileStoreTick()
 int     filedexserver::handleInputQueues()
 {
 	// get all the incoming results.. and print to the screen.
-	SearchItem *si;
-	PQFileItem *fi;
-	PQFileItem *pfi;
+	RsCacheRequest *cr;
+	RsCacheItem    *ci;
+	RsFileRequest *fr;
+	RsFileData *fd;
+
 	// Loop through Search Results.
 	int i = 0;
 	int i_init = 0;
 
 	//std::cerr << "filedexserver::handleInputQueues()" << std::endl;
-	while((fi = pqisi -> GetSearchResult()) != NULL)
+	while((ci = pqisi -> GetSearchResult()) != NULL)
 	{
 		//std::cerr << "filedexserver::handleInputQueues() Recvd SearchResult (CacheResponse!)" << std::endl;
 		std::ostringstream out;
@@ -1111,37 +629,46 @@ int     filedexserver::handleInputQueues()
 		{
 			out << "Recieved Search Results:" << std::endl;
 		}
-		fi -> print(out);
+		ci -> print(out);
 		pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, out.str());
 
 		/* these go to the CacheStrapper! */
 		CacheData data;
-		data.cid = CacheId(fi->fileoffset, fi->chunksize);
-		data.hash = fi->hash;
-		data.size = fi->size;
-		data.name = fi->name;
-		data.path = fi->path;
+		data.cid = CacheId(ci->cacheType, ci->cacheSubId);
+		data.hash = ci->file.hash;
+		data.size = ci->file.filesize;
+		data.name = ci->file.name;
+		data.path = ci->file.path;
 
 		certsign sign;
+		convert_to_certsign(ci->PeerId(), sign);
+		cert *peer = getSSLRoot() -> findcertsign(sign);
 
-		if (getSSLRoot() -> getcertsign((cert *) fi->p, sign))
+		data.pid = ci->PeerId();
+
+		if (peer)
 		{
-			data.pid = convert_to_str(sign);
-			data.pname = fi->p->Name();
+			data.pname = peer->Name();
 			cacheStrapper->recvCacheResponse(data, time(NULL));
 		}
 		else
 		{
+			std::ostringstream out2;
+			out2 << "Failed to Find Peer for Search Result:";
+			out2 << std::endl;
+			ci -> print(out2);
+			
+			pqioutput(PQL_ALERT, fldxsrvrzone, out2.str());
 			std::cerr << "ERROR";
 			exit(1);
 		}
 
-		delete fi;
+		delete ci;
 	}
 
 	// now requested Searches.
 	i_init = i;
-	while((si = pqisi -> RequestedSearch()) != NULL)
+	while((cr = pqisi -> RequestedSearch()) != NULL)
 	{
 		//std::cerr << "filedexserver::handleInputQueues() Recvd RequestedSearch (CacheQuery!)" << std::endl;
 		std::ostringstream out;
@@ -1149,7 +676,7 @@ int     filedexserver::handleInputQueues()
 		{
 			out << "Requested Search:" << std::endl;
 		}
-		si -> print(out);
+		cr -> print(out);
 		pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, out.str());
 
 		/* these go to the CacheStrapper (handled immediately) */
@@ -1162,82 +689,114 @@ int     filedexserver::handleInputQueues()
 		{
 			//std::cerr << "filedexserver::handleInputQueues() Sending (CacheAnswer!)" << std::endl;
 			/* construct reply */
-			PQFileItem *fi = new PQFileItem();
+			RsCacheItem *ci = new RsCacheItem();
 	
-			/* PQItem ones (from incoming) */
-			fi -> p = si -> p;
-			fi -> cid = si -> cid;
-			/* type/subtype already done, flags/search id ignored */
+			/* id from incoming */
+			ci -> PeerId(cr->PeerId());
 
-			fi -> hash = (it->second).hash;
-			fi -> name = (it->second).name;
-			fi -> path = ""; // (it->second).path;
-			fi -> size = (it->second).size;
-			fi -> fileoffset = (it->second).cid.type;
-			fi -> chunksize =  (it->second).cid.subid;
+			ci -> file.hash = (it->second).hash;
+			ci -> file.name = (it->second).name;
+			ci -> file.path = ""; // (it->second).path;
+			ci -> file.filesize = (it->second).size;
+			ci -> cacheType  = (it->second).cid.type;
+			ci -> cacheSubId =  (it->second).cid.subid;
 
 			std::ostringstream out2;
-			out2 << "Outgoing CacheStrapper reply -> PQFileItem:" << std::endl;
-			fi -> print(out2);
+			out2 << "Outgoing CacheStrapper reply -> RsCacheItem:" << std::endl;
+			ci -> print(out2);
 			pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, out2.str());
-			pqisi -> SendFileItem(fi);
+			pqisi -> SendSearchResult(ci);
 		}
 
-		delete si;
-	}
-
-	// now Cancelled Searches.
-	i_init = i;
-	while((si = pqisi -> CancelledSearch()) != NULL)
-	{
-		std::ostringstream out;
-		if (i++ == i_init)
-		{
-			out << "Deleting Cancelled Search:" << std::endl;
-		}
-		si -> print(out);
-		pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, out.str());
-		delete si;
+		delete cr;
 	}
 
 	// now File Input.
 	i_init = i;
-	while((pfi = pqisi -> GetFileItem()) != NULL )
+	while((fr = pqisi -> GetFileRequest()) != NULL )
 	{
-		//std::cerr << "filedexserver::handleInputQueues() Recvd ftFiler Data" << std::endl;
+		//std::cerr << "filedexserver::handleInputQueues() Recvd ftFiler Request" << std::endl;
 		std::ostringstream out;
 		if (i++ == i_init)
 		{
 			out << "Incoming(Net) File Item:" << std::endl;
 		}
-		pfi -> print(out);
+		fr -> print(out);
 		pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, out.str());
-		certsign sign;
-		if (!getSSLRoot() -> getcertsign((cert *) pfi->p, sign))
-		{
-			std::cerr << "ERROR FFR";
-			exit(1);
-		}
-		std::string id = convert_to_str(sign);
 
-		PQFileData *pfd = dynamic_cast<PQFileData *>(pfi);
-		if (pfd)
+		/* This bit is for debugging only! (not really needed) */
+
+		certsign sign;
+		convert_to_certsign(fr->PeerId(), sign);
+		cert *peer = getSSLRoot() -> findcertsign(sign);
+		if (peer)
 		{
-			/* incoming data */
-			ftFileData *ffd = new ftFileData(id, pfd->hash, pfd->size, 
-					pfd->fileoffset, pfd->chunksize, pfd->data);
-			pfd -> data = NULL;
-			ftFiler->recvFileInfo(ffd);
+			/* ok! */
 		}
 		else
 		{
-			/* request */
-
-			ftFileRequest *ffr = new ftFileRequest(id, pfi->hash, 
-				pfi->size, pfi->fileoffset, pfi->chunksize);
-			ftFiler->recvFileInfo(ffr);
+			std::ostringstream out2;
+			out2 << "Failed to Find Peer for File Request:";
+			out2 << std::endl;
+			fr -> print(out2);
+			
+			pqioutput(PQL_ALERT, fldxsrvrzone, out2.str());
+			std::cerr << "ERROR FFR";
+			exit(1);
 		}
-		delete pfi;
+
+
+		/* request */
+		ftFileRequest *ffr = new ftFileRequest(fr->PeerId(), 
+			fr->file.hash,  fr->file.filesize, 
+			fr->fileoffset, fr->chunksize);
+		ftFiler->recvFileInfo(ffr);
+
+		delete fr;
+	}
+
+	// now File Data.
+	i_init = i;
+	while((fd = pqisi -> GetFileData()) != NULL )
+	{
+		//std::cerr << "filedexserver::handleInputQueues() Recvd ftFiler Data" << std::endl;
+		std::ostringstream out;
+		if (i++ == i_init)
+		{
+			out << "Incoming(Net) File Data:" << std::endl;
+		}
+		fd -> print(out);
+		pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, out.str());
+
+		/* This bit is for debugging only! (not really needed) */
+		certsign sign;
+		convert_to_certsign(fd->PeerId(), sign);
+		cert *peer = getSSLRoot() -> findcertsign(sign);
+		if (peer)
+		{
+			/* ok! */
+		}
+		else
+		{
+			std::ostringstream out2;
+			out2 << "Failed to Find Peer for File Request:";
+			out2 << std::endl;
+			fd -> print(out2);
+			
+			pqioutput(PQL_ALERT, fldxsrvrzone, out2.str());
+			std::cerr << "ERROR FFRD";
+			exit(1);
+		}
+
+		/* incoming data */
+		ftFileData *ffd = new ftFileData(fd->PeerId(), 
+			fd->fd.file.hash, fd->fd.file.filesize, 
+			fd->fd.file_offset, 
+			fd->fd.binData.bin_len, 
+			fd->fd.binData.bin_data);
+
+		ftFiler->recvFileInfo(ffd);
+		delete fd;
 	}
 
 	if (i > 0)
@@ -1265,37 +824,19 @@ int     filedexserver::handleOutputQueues()
 		//std::cerr << "filedexserver::handleOutputQueues() Cache Query for: " << (*pit) << std::endl;
 
 		/* now create one! */
-		SearchItem *si = new SearchItem();
-
-		/* set it up */
-		certsign sign;
-		if (!convert_to_certsign(*pit, sign))
-		{
-			std::cerr << "CERTSIGN error!" << std::endl;
-			exit(1);
-		}
-
-		/* look it up */
-		cert *c = getSSLRoot() -> findcertsign(sign);
-		if (c == NULL)
-		{
-			std::cerr << "CERTSIGN error! 2" << std::endl;
-			exit(1);
-		}
-
-		si->p = c;
-		si->cid = c->cid;
+		RsCacheRequest *cr = new RsCacheRequest();
+		cr->PeerId(*pit);
 
 		std::ostringstream out;
 		if (i++ == 0)
 		{
 			out << "Outgoing CacheStrapper -> SearchItem:" << std::endl;
 		}
-		si -> print(out);
+		cr -> print(out);
 		pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, out.str());
 
 		/* send it off */
-		pqisi -> SearchSpecific(si);
+		pqisi -> SearchSpecific(cr);
 	}
 
 	/* now see if the filer has any data */
@@ -1353,21 +894,20 @@ int     filedexserver::handleOutputQueues()
 
 void filedexserver::SendFileRequest(ftFileRequest *ftr, cert *peer)
 {
-	/* send request */
-	PQFileItem *fi = new PQFileItem();
-	fi -> subtype = PQI_FI_SUBTYPE_REQUEST;
+	RsFileRequest *rfi = new RsFileRequest();
 
-	fi -> p = peer;
-	fi -> cid = peer->cid;
-	/* type/subtype already done, flags/search id ignored */
+	/* id */
+	rfi->PeerId(peer->PeerId());
 
-	fi -> hash = ftr -> hash;
-	/* name, path, ext are ignored */
-	fi -> size = ftr -> size;
-	fi -> fileoffset = ftr->offset;
-	fi -> chunksize = ftr->chunk;
+	/* file info */
+	rfi->file.filesize   = ftr->size;
+	rfi->file.hash       = ftr->hash;
 
-	pqisi -> SendFileItem(fi);
+	/* offsets */
+	rfi->fileoffset = ftr->offset;
+	rfi->chunksize  = ftr->chunk;
+
+	pqisi -> SendFileRequest(rfi);
 }
 
 #define MAX_FT_CHUNK 4096
@@ -1389,21 +929,28 @@ void filedexserver::SendFileData(ftFileData *ftd, cert *peer)
 			chunk = tosend;
 		}
 
-		/* send data! */
-		PQFileData *fid = new PQFileData();
+		/******** New Serialiser Type *******/
 
-		fid -> p = peer;
-		fid -> cid = peer->cid;
-		fid -> hash = ftd -> hash;
-		fid -> size = ftd -> size;
+		RsFileData *rfd = new RsFileData();
 
-		fid -> data = malloc(chunk);
-		memcpy(fid->data, &(((uint8_t *) ftd->data)[offset]), chunk);
-		fid -> datalen = chunk;
-		fid -> chunksize = chunk;
-		fid -> fileoffset = baseoffset + offset;
+		/* set id */
+		rfd->PeerId(peer->PeerId());
 
-		pqisi -> SendFileItem(fid);
+		/* file info */
+		rfd->fd.file.filesize = ftd->size;
+		rfd->fd.file.hash     = ftd->hash;
+		rfd->fd.file.name     = ""; /* blank other data */
+		rfd->fd.file.path     = "";
+		rfd->fd.file.pop      = 0;
+		rfd->fd.file.age      = 0;
+
+		rfd->fd.file_offset = baseoffset + offset;
+
+		/* file data */
+		rfd->fd.binData.setBinData(
+			&(((uint8_t *) ftd->data)[offset]), chunk);
+
+		pqisi -> SendFileData(rfd);
 
 		offset += chunk;
 		tosend -= chunk;

@@ -26,7 +26,7 @@
 
 #include "server/ft.h"
 
-bool	ftManager::lookupLocalHash(std::string hash, std::string &path, uint32_t &size)
+bool	ftManager::lookupLocalHash(std::string hash, std::string &path, uint64_t &size)
 {
 	std::list<FileDetail> details;
 

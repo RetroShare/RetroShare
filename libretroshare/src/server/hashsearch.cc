@@ -32,7 +32,7 @@
 #include "dbase/fimonitor.h"
 
 	/* Search Interface - For FileTransfer Lookup */
-int FileHashSearch::searchLocalHash(std::string hash, std::string &path, uint32_t &size)
+int FileHashSearch::searchLocalHash(std::string hash, std::string &path, uint64_t &size)
 {
 	if (monitor)
 	{
