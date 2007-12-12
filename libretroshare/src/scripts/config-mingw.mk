@@ -105,9 +105,9 @@ CC = g++
 
 # flags for components....
 PQI_USE_XPGP = 1
-PQI_USE_PROXY = 1
+#PQI_USE_PROXY = 1
 #PQI_USE_CHANNELS = 1
-USE_FILELOOK = 1
+#USE_FILELOOK = 1
 
 ifeq ($(OS),Win)
   # MinGw

@@ -9,9 +9,9 @@ endif
 
 # flags for components....
 PQI_USE_XPGP = 1
-PQI_USE_PROXY = 1
-PQI_USE_CHANNELS = 1
-USE_FILELOOK = 1
+#PQI_USE_PROXY = 1
+#PQI_USE_CHANNELS = 1
+#USE_FILELOOK = 1
 
 SSL_DIR=../../../../../src/openssl-0.9.7g-xpgp-0.1c
 KADC_DIR=../../../../../src/KadC
