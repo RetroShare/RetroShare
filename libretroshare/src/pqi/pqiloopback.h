@@ -42,26 +42,20 @@
 class pqiloopback: public PQInterface
 {
 public:
-	pqiloopback();
+	pqiloopback(std::string id);
 virtual ~pqiloopback();
 
 // search Interface.
-virtual int	SendItem(PQItem *item);
-virtual PQItem *GetItem();
-
-virtual int	GetFile(PQFileItem *item, std::ostream &in);
-virtual int	SendFile(PQFileItem *item, std::istream &out);
+virtual int	SendItem(RsItem *item);
+virtual RsItem *GetItem();
 
 // PQI interface.
 virtual int	tick();
 virtual int	status();
 
-virtual Person *getContact();
-
+virtual int     notifyEvent(NetInterface *ni, int event) { return 0; }  /* Not used */
 	private:
-	std::list<PQItem *> objs;
+	std::list<RsItem *> objs;
 };
-
-
 
 #endif //MRK_PQI_LOOPBACK_HEADER

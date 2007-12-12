@@ -40,6 +40,7 @@
 
 //socket blocking/options.
 #include <fcntl.h>
+#include <inttypes.h>
 
 #else
 
@@ -135,6 +136,13 @@ int unix_getsockopt_error(int sockfd, int *err);
 int     WinToUnixError(int error);
 #endif
 
+/***** From http://www.codeproject.com/KB/cpp/endianness.aspx 
+
+#define ntohll(x) (((int64_t)(ntohl((int32_t)((x << 32) >> 32))) << 32) | 
+                     (uint32_t) ntohl(((int32_t)(x >> 32)))) 
+#define htonll(x) ntohll(x)
+
+*****/
 
 #endif
 

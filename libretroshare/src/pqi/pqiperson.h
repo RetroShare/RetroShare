@@ -1,5 +1,5 @@
 /*
- * "$Id: pqiperson.h,v 1.7 2007-02-18 21:46:49 rmf24 Exp $"
+ * libretroshare/src/pqi pqiperson.h
  *
  * 3P/PQI network interface for RetroShare.
  *
@@ -60,9 +60,9 @@ static const int CONNECT_FAILED       = 5;
 class pqiconnect: public pqistreamer, public NetInterface
 {
 public:
-	pqiconnect(NetBinInterface *ni_in)
-	:pqistreamer(ni_in, 0),  // pqistreamer will cleanup NetInterface.
-	 NetInterface(NULL, NULL),     // No need for callback.
+	pqiconnect(RsSerialiser *rss, NetBinInterface *ni_in)
+	:pqistreamer(rss, ni_in->PeerId(), ni_in, 0),  // pqistreamer will cleanup NetInterface.
+	 NetInterface(NULL, ni_in->PeerId()),     // No need for callback.
 	 ni(ni_in) 
 	{ 
 		if (!ni_in)
@@ -84,15 +84,15 @@ virtual int 	reset() 		{ return ni -> reset(); }
 virtual int 	disconnect() 		{ return ni -> reset(); }
 
 	// get the contact from the net side!
-virtual Person *getContact() 
+virtual std::string PeerId()
 {
 	if (ni)
 	{
-		return ni->getContact();
+		return ni->PeerId();
 	}
 	else
 	{
-		return PQInterface::getContact();
+		return PQInterface::PeerId();
 	}
 }
 
@@ -108,7 +108,7 @@ protected:
 class pqiperson: public PQInterface
 {
 public:
-	pqiperson(cert *c);
+	pqiperson(cert *c, std::string id);
 virtual ~pqiperson(); // must clean up children.
 
 	// control of the connection.
@@ -119,8 +119,8 @@ int	autoconnect(bool);
 int	addChildInterface(pqiconnect *pqi);
 
 	// The PQInterface interface.
-virtual int     SendItem(PQItem *);
-virtual PQItem *GetItem();
+virtual int     SendItem(RsItem *);
+virtual RsItem *GetItem();
 	
 virtual int 	status();
 virtual int	tick();
@@ -135,8 +135,6 @@ virtual void    setMaxRate(bool in, float val);
 
 	private:
 
-	// outgoing PQItems can be queued (nothing else).
-	std::list<PQItem *> togo;
 	std::list<pqiconnect *> kids;
 	cert *sslcert;
 	bool active;

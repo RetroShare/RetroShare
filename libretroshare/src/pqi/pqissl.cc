@@ -86,7 +86,8 @@ static const int PQISSL_SSL_CONNECT_TIMEOUT = 30;
  */
 
 pqissl::pqissl(cert *c, pqissllistener *l, PQInterface *parent)
-	:NetBinInterface(parent, c), 
+	//:NetBinInterface(parent, c), 
+	:NetBinInterface(parent, parent->PeerId()), 
 	waiting(WAITING_NOT), active(false), certvalid(false), 
 	sslmode(PQISSL_ACTIVE), ssl_connection(NULL), sockfd(-1), 
 	sslcert(c), sslccr(NULL), pqil(l),  // no init for remote_addr.
@@ -97,6 +98,12 @@ pqissl::pqissl(cert *c, pqissllistener *l, PQInterface *parent)
 
 {
 	sslccr = getSSLRoot();
+
+  	{
+	  std::ostringstream out;
+	  out << "pqissl for PeerId: " << PeerId();
+	  pqioutput(PQL_ALERT, pqisslzone, out.str());
+	}
 
 	// check certificate
 /**************** PQI_USE_XPGP ******************/

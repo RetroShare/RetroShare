@@ -1,5 +1,5 @@
 /*
- * "$Id: pqiperson.cc,v 1.9 2007-02-18 21:46:49 rmf24 Exp $"
+ * libretroshare/src/pqi pqiperson.cc
  *
  * 3P/PQI network interface for RetroShare.
  *
@@ -25,7 +25,6 @@
 
 
 
-
 #include "pqi/pqi.h"
 
 #include <list>
@@ -37,8 +36,8 @@ const int pqipersonzone = 82371;
 #include <sstream>
 
 
-pqiperson::pqiperson(cert *c)
-	:sslcert(c), active(false), activepqi(NULL), 
+pqiperson::pqiperson(cert *c, std::string id)
+	:PQInterface(id), sslcert(c), active(false), activepqi(NULL), 
 	inConnectAttempt(false), waittimes(0)
 {
 	sroot = getSSLRoot();
@@ -77,7 +76,7 @@ pqiperson::~pqiperson()
 
 
 	// The PQInterface interface.
-int     pqiperson::SendItem(PQItem *i)
+int     pqiperson::SendItem(RsItem *i)
 {
 	std::ostringstream out;
 	out << "pqiperson::SendItem()";
@@ -91,15 +90,13 @@ int     pqiperson::SendItem(PQItem *i)
 		out << " Not Active: Used to put in ToGo Store";
 		out << std::endl;
 		out << " Now deleting...";
-		// no longer storing in togo...
-		//togo.push_back(i);
 		delete i;
 	}
 	pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
 	return 0; // queued.	
 }
 
-PQItem *pqiperson::GetItem()
+RsItem *pqiperson::GetItem()
 {
 	if (active)
 		return activepqi -> GetItem();
@@ -184,27 +181,7 @@ int	pqiperson::tick()
 			}
 		}
 	}
-	// if active and togo!.
-	else if (togo.size() > 0)
-	{
-		while(togo.size() > 0)
-		{
-			PQItem *item = togo.front();
-			togo.pop_front();
 
-			std::ostringstream out;
-	  		out << "pqiperson::tick() Sending on Stored Item";
-	  		out << " to activepqi @ " << (void *) activepqi;
-			out << std::endl;
-			item -> print(out);
-			out << std::endl;
-
-	  		pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
-
-			activepqi -> SendItem(item);
-		}
-		activeTick = 1;
-	}
 	return activeTick;
 }
 

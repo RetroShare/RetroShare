@@ -36,6 +36,9 @@
 
 #include "pqi/pqinetwork.h"
 
+/*** Base DataTypes: ****/
+#include "serialiser/rsserial.h"
+
 
 #define PQI_MIN_PORT 1024
 #define PQI_MAX_PORT 16000
@@ -61,7 +64,7 @@ int     pqicid_cmp(const ChanId *cid1, ChanId *cid2);
 // So the basic pqi interface defines
 //
 // 1) Person -> reference object 
-// 2) PQItem 
+// 2) RsItem 
 // 3) PQInterface
 // 	which defines:
 // 		- send/recieve objs
@@ -80,7 +83,7 @@ int     pqicid_cmp(const ChanId *cid1, ChanId *cid2);
 
 // Base for all Security/Id/Certificate schemes.
 // The list of these must be maintained seperately
-// from the PQItems....
+// from the RsItems....
 
 
 // Person - includes
@@ -198,197 +201,6 @@ private:
 };
 
 
-class PQItem
-{
-	// include serialisation (Boost) functions...
-
-	// private copy constructor... prevent copying...
-	PQItem(const PQItem &) {return; }
-public:
-	PQItem();
-	PQItem(int t, int st); // initialise with subtypes.
-virtual	~PQItem();
-
-	// other type of serialise....
-virtual std::ostream &print(std::ostream &out);
-
-	// copy functions.
-virtual PQItem *clone();
-void copy(const PQItem *pqi);
-void copyIDs(const PQItem *pqi);
-
-	// stack operations -> could be converted to STL stack.
-int	cidpop();
-void	cidpush(int id);
-
-	// data
-	ChanId cid;
-	SearchId sid;
-
-	int type;
-	int subtype;
-
-	int flags;
-
-	Person *p; // This is shallow copied inside to itself, 
-			// Over serialisation - becomes a name....
-};
-
-
-// Some Functional Objects for operations on PQItems
-
-class PQItem_MatchSid
-//: public unary_function <PQItem *, bool>
-{
-	unsigned long sid;
-
-	public:
-	explicit PQItem_MatchSid(const unsigned long s) : sid(s) {}
-
-	bool operator()(const PQItem *pqi) const 
-	{
-		if (pqi == NULL)
-			return false;
-		return (pqi -> sid == sid);
-	}
-};
-
-
-class PQItem_MatchType
-//: public unary_function <PQItem *, bool>
-{
-	int type, subtype;
-
-	public:
-	explicit PQItem_MatchType(const int t, const int s = 0) 
-	: type(t), subtype(s) {}
-
-	bool operator()(const PQItem *pqi) const 
-	{
-		if (pqi == NULL)
-			return false;
-		if (type == pqi -> type)
-		{
-			if (subtype == 0)
-				return true;
-			return (pqi -> subtype == subtype);
-		}
-		return false;
-	}
-};
-
-
-#define PQIFILE_STD				0x0001
-#define PQIFILE_DIRLIST_FILE			0x0002
-#define PQIFILE_DIRLIST_DIR			0x0004
-
-
-class PQFileItem: public PQItem
-{
-	// private copy constructor... prevent copying...
-	PQFileItem(const PQFileItem &) {return; }
-public:
-	PQFileItem();
-	PQFileItem(int st); // initialise with subtypes.
-virtual	~PQFileItem();
-
-	// copy functions.
-virtual PQFileItem *clone();
-void	copy(const PQFileItem *src);
-
-std::ostream &print(std::ostream &out);
-virtual int match(std::string term);
-
-	std::string hash;
-	std::string name;
-	std::string path;
-	std::string ext;
-
-
-	int     size; 	// total size of file.
-	long    fileoffset; // used for file requests.
-	long    chunksize;  // used for file requests.
-
-	int     reqtype;
-	int     exttype;
-
-};
-
-
-class PQFileData: public PQFileItem
-{
-public:
-	PQFileData();
-virtual ~PQFileData();
-virtual PQFileData *clone();
-void 	copy(const PQFileData *fd);
-
-virtual std::ostream &print(std::ostream &out);
-
-int 	writedata(std::ostream &out);
-int	readdata(std::istream &in, int maxbytes);
-int 	endstream();
-
-void 	isend();
-
-	// data
-	int datalen;
-	void *data;
-
-	int fileflags;
-};
-
-// And finally the Control/Info Interface.
-
-
-class FileTransferItem: public PQFileItem
-{
-	// private copy constructor... prevent copying...
-	// FileTransferItem(const FileTransferItem &) {return; }
-public:
-	FileTransferItem();
-virtual	~FileTransferItem();
-
-virtual FileTransferItem *clone();
-void 	copy(const FileTransferItem *ft);
-
-virtual std::ostream &print(std::ostream &out);
-
-	int transferred;
-	int state;
-	float crate;
-	float trate;
-	bool in;
-
-	int ltransfer;
-	float lrate;
-};
-
-#define FT_STATE_FAILED 	0
-#define FT_STATE_OKAY   	1
-#define FT_STATE_COMPLETE	2
-
-
-
-class RateCntrlItem: public PQFileItem
-{
-public:
-	RateCntrlItem();
-virtual	~RateCntrlItem();
-
-virtual RateCntrlItem *clone();
-void 	copy(const RateCntrlItem *ft);
-
-virtual std::ostream &print(std::ostream &out);
-
-	float total;
-	float individual;
-};
-
-
-
-
-
 class RateInterface
 {
 // controlling data rates.
@@ -437,9 +249,6 @@ float	bw_in, bw_out, bwMax_in, bwMax_out;
 };
 
 
-
-
-
 /*********************** PQI INTERFACE ******************************\
  * The basic exchange interface.
  * This inherits the RateInterface, as Bandwidth control 
@@ -451,19 +260,23 @@ class NetInterface;
 class PQInterface: public RateInterface
 {
 public:
-	PQInterface()  { return; }
+	PQInterface(std::string id) :peerId(id) { return; }
 virtual	~PQInterface() { return; }
 
-virtual int	SendItem(PQItem *) = 0;
-virtual PQItem *GetItem() = 0;
+virtual int	SendItem(RsItem *) = 0;
+virtual RsItem *GetItem() = 0;
 
 // also there are  tick + person id  functions.
 virtual int     tick() { return 0; }
 virtual int     status() { return 0; }
-virtual Person *getContact() { return NULL; } 
+virtual std::string PeerId() { return peerId; }
 
 	// the callback from NetInterface Connection Events.
 virtual int	notifyEvent(NetInterface *ni, int event) { return 0; }
+
+	private:
+
+	std::string peerId;
 };
 
 /********************** Binary INTERFACE ****************************
@@ -474,6 +287,7 @@ virtual int	notifyEvent(NetInterface *ni, int event) { return 0; }
 #define BIN_FLAGS_NO_CLOSE  0x0001
 #define BIN_FLAGS_READABLE  0x0002
 #define BIN_FLAGS_WRITEABLE 0x0004
+#define BIN_FLAGS_NO_DELETE 0x0008
 
 class BinInterface
 {
@@ -515,8 +329,8 @@ static const int NET_CONNECT_FAILED       = 5;
 class NetInterface
 {
 public:
-	NetInterface(PQInterface *p_in, Person *person_in)
-	:p(p_in), person(person_in) { return; }
+	NetInterface(PQInterface *p_in, std::string id)
+	:p(p_in), peerId(id) { return; }
 
 virtual ~NetInterface() 
 	{ return; }
@@ -528,28 +342,29 @@ virtual int listen() = 0;
 virtual int stoplistening() = 0; 
 virtual int disconnect() = 0;
 virtual int reset() = 0;
-virtual Person *getContact() { return person; } 
+virtual std::string PeerId() { return peerId; }
 
 protected:
 PQInterface *parent() { return p; }
 
 private:
 	PQInterface *p;
-	Person *person;
+	std::string peerId;
 };
 
 
 class NetBinInterface: public NetInterface, public BinInterface
 {
 public:
-	NetBinInterface(PQInterface *parent, Person *person)
-	:NetInterface(parent, person)
+	NetBinInterface(PQInterface *parent, std::string id)
+	:NetInterface(parent, id)
 	{ return; }
 virtual ~NetBinInterface() { return; }
 };
 
 #define CHAN_SIGN_SIZE 16
 #define CERTSIGNLEN 16
+#define PQI_PEERID_LENGTH 16
 
 class certsign
 {

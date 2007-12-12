@@ -59,7 +59,7 @@ pqihandler::pqihandler(SecurityPolicy *Global)
 int	pqihandler::tick()
 {
 	// tick all interfaces...
-	std::map<int, SearchModule *>::iterator it;
+	std::map<std::string, SearchModule *>::iterator it;
 	int moreToTick = 0;
 	for(it = mods.begin(); it != mods.end(); it++)
 	{
@@ -81,7 +81,7 @@ int	pqihandler::tick()
 
 int	pqihandler::status()
 {
-	std::map<int, SearchModule *>::iterator it;
+	std::map<std::string, SearchModule *>::iterator it;
 
 	{ // for output
 		std::ostringstream out;
@@ -109,45 +109,35 @@ int	pqihandler::status()
 	
 
 
-int	pqihandler::AddSearchModule(SearchModule *mod, int chanid)
+bool	pqihandler::AddSearchModule(SearchModule *mod)
 {
-	// if chan id set, then use....
-	// otherwise find empty channel.
-
-	int realchanid = -1;
-	std::map<int, SearchModule *>::iterator it;
-
-
-	if ((chanid > 0) && (mods.find(chanid) == mods.end()))
+	// if peerid used -> error.
+	std::map<std::string, SearchModule *>::iterator it;
+	if (mod->peerid != mod->pqi->PeerId())
 	{
-		// okay id.
-		realchanid = chanid;
-		
+		// ERROR!
+		std::ostringstream out;
+		out << "ERROR peerid != PeerId!" << std::endl;
+		pqioutput(PQL_ALERT, pqihandlerzone, out.str());
+		return false;
 	}
-	else
-	{
-		// find empty chan.
-		for(int i = 1; (i < 1000) && (realchanid == -1); i++)
-		{
-			if (mods.find(i) == mods.end())
-			{
-				realchanid = i;
-			}
-		}
-		if (realchanid > 0)
-		{
-			std::ostringstream out;
-			out << "Allocated Chan Id: " << realchanid << std::endl;
-			pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
-		}
-		else
-		{
-			std::ostringstream out;
-			out << "Unable to Allocate Channel!" << std::endl;
-			pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
 
-			return -1;
-		}
+	if (mod->peerid == "")
+	{
+		// ERROR!
+		std::ostringstream out;
+		out << "ERROR peerid == NULL" << std::endl;
+		pqioutput(PQL_ALERT, pqihandlerzone, out.str());
+		return false;
+	}
+
+	if (mods.find(mod->peerid) != mods.end())
+	{
+		// ERROR!
+		std::ostringstream out;
+		out << "ERROR PeerId Module already exists!" << std::endl;
+		pqioutput(PQL_ALERT, pqihandlerzone, out.str());
+		return false;
 	}
 
 	// check security.
@@ -161,35 +151,26 @@ int	pqihandler::AddSearchModule(SearchModule *mod, int chanid)
 	secpolicy_limit(globsec, mod -> sp);
 
 	// store.
-	mods[realchanid] = mod;
-	mod -> smi = realchanid;
-
-	// experimental ... pushcid.
-	Person *p = (mod -> pqi) -> getContact();
-	if (p != NULL)
-	{
-		p -> cidpush(realchanid);
-	}
-
-	return realchanid;
+	mods[mod->peerid] = mod;
+	return true;
 }
 
-int	pqihandler::RemoveSearchModule(SearchModule *mod)
+bool	pqihandler::RemoveSearchModule(SearchModule *mod)
 {
-	std::map<int, SearchModule *>::iterator it;
+	std::map<std::string, SearchModule *>::iterator it;
 	for(it = mods.begin(); it != mods.end(); it++)
 	{
 		if (mod == it -> second)
 		{
 			mods.erase(it);
-			return 1;
+			return true;
 		}
 	}
-	return -1;
+	return false;
 }
 
 // dummy output check
-int	pqihandler::checkOutgoingPQItem(PQItem *item, int global)
+int	pqihandler::checkOutgoingRsItem(RsItem *item, int global)
 {
 	pqioutput(PQL_WARNING, pqihandlerzone, 
 	  "pqihandler::checkOutgoingPQItem() NULL fn");
@@ -199,166 +180,105 @@ int	pqihandler::checkOutgoingPQItem(PQItem *item, int global)
 
 
 // generalised output
-int	pqihandler::HandlePQItem(PQItem *item, int allowglobal)
+int	pqihandler::HandleRsItem(RsItem *item, int allowglobal)
 {
-	std::map<int, SearchModule *>::iterator it;
+	std::map<std::string, SearchModule *>::iterator it;
 	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-	  "pqihandler::HandlePQItem()");
+	  "pqihandler::HandleRsItem()");
 
-	
-	if ((!allowglobal) && (!checkOutgoingPQItem(item, allowglobal)))
+	/* simplified to no global! */
+	if (allowglobal)
 	{
+		/* error */
 		std::ostringstream out;
-	  	out <<	"pqihandler::HandlePQItem() checkOutgoingPQItem";
-		out << " Failed on item: " << std::endl;
-		item -> print(out);
-
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
+		out << "pqihandler::HandleSearchItem()";
+		out << " Cannot send out Global RsItem";
+		pqioutput(PQL_ALERT, pqihandlerzone, out.str());
 		delete item;
 		return -1;
 	}
 
-	// need to get channel id. (and remove from stack)
-	int chan = item -> cidpop();
-	if (chan > 0)
+	if (!checkOutgoingRsItem(item, allowglobal))
 	{
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-		  "pqihandler::HandlePQItem() Sending to One Channel");
+		std::ostringstream out;
+	  	out <<	"pqihandler::HandleRsItem() checkOutgoingPQItem";
+		out << " Failed on item: " << std::endl;
+		item -> print(out);
+
+		pqioutput(PQL_ALERT, pqihandlerzone, out.str());
+		delete item;
+		return -1;
+	}
+
+	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
+	  "pqihandler::HandleRsItem() Sending to One Channel");
 
 
-		// find module.
-		if ((it = mods.find(chan)) == mods.end())
-		{
-			std::ostringstream out;
-			out << "pqihandler::HandlePQItem() Invalid chan!";
-			pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
+	// find module.
+	if ((it = mods.find(item->PeerId())) == mods.end())
+	{
+		std::ostringstream out;
+		out << "pqihandler::HandleRsItem() Invalid chan!";
+		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
 
-			delete item;
-			return -1;
-		}
+		delete item;
+		return -1;
+	}
 
-		// check security... is output allowed.
-		if(0 < secpolicy_check((it -> second) -> sp, 0, PQI_OUTGOING))
-		{
-			std::ostringstream out;
-			out << "pqihandler::HandlePQItem() sending to chan:";
-			out << it -> first << std::endl;
-			pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
+	// check security... is output allowed.
+	if(0 < secpolicy_check((it -> second) -> sp, 0, PQI_OUTGOING))
+	{
+		std::ostringstream out;
+		out << "pqihandler::HandleRsItem() sending to chan:";
+		out << it -> first << std::endl;
+		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
 
-			// if yes send on item.
-			((it -> second) -> pqi) -> SendItem(item);
-			return 1;
-		}
-		else
-		{
-			std::ostringstream out;
-			out << "pqihandler::HandlePQItem()";
-			out << " Sec not approved";
-			pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
-
-			delete item;
-			return -1;
-		}
+		// if yes send on item.
+		((it -> second) -> pqi) -> SendItem(item);
+		return 1;
 	}
 	else
 	{
-		if (allowglobal <= 0)
-		{
-			std::ostringstream out;
-			out << "pqihandler::HandleSearchItem()";
-			out << " invalid routing for non-global searchitem";
-			pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
+		std::ostringstream out;
+		out << "pqihandler::HandleRsItem()";
+		out << " Sec not approved";
+		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
 
-			return -1;
-		}
-
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-		  "pqihandler::HandlePQItem() Sending to All Channels");
-
-		// loop through all channels.
-		// for each one.
-		
-			// find module
-			// if yes send.
-		for(it = mods.begin(); it != mods.end(); it++)
-		{
-
-			// check security... is output allowed.
-			if(0 < secpolicy_check((it -> second) -> sp, 0, PQI_OUTGOING))
-			{
-				std::ostringstream out;
-				out << "pqihandler::HandlePQItem()";
-				out << "Sending to chan:" << it -> first;
-			pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
-
-				// if yes send on item.
-				((it -> second) -> pqi) -> SendItem(item -> clone());
-			}
-			else
-			{
-				std::ostringstream out;
-				out << "pqihandler::HandlePQItem()";
-				out << " List Send - Not in this channel!";
-			pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
-
-			}
-		}
-
-		// now we can clean up!
 		delete item;
-		return 1;
+		return -1;
 	}
 
 	// if successfully sent to at least one.
 	return 1;
 }
 
-	
-
-// 4 very similar outputs.....
-int	pqihandler::Search(SearchItem *ns)
+int	pqihandler::SearchSpecific(RsCacheRequest *ns) 
 {
-	return HandlePQItem(ns, 1);
+	return HandleRsItem(ns, 0);
 }
 
-/* This is called when we only want it to go to 1 person.... */
-int	pqihandler::SearchSpecific(SearchItem *ns) 
+int	pqihandler::SendSearchResult(RsCacheItem *ns)
 {
-	return HandlePQItem(ns, 0);
+	return HandleRsItem(ns, 0);
 }
 
-int	pqihandler::CancelSearch(SearchItem *ns)
+int     pqihandler::SendFileRequest(RsFileRequest *ns)
 {
-	return HandlePQItem(ns, 1);
+	return HandleRsItem(ns, 0);
 }
 
-int     pqihandler::SendFileItem(PQFileItem *ns)
+int     pqihandler::SendFileData(RsFileData *ns)
 {
-	return HandlePQItem(ns, 0);
+	return HandleRsItem(ns, 0);
 }
 
-int	pqihandler::SendSearchResult(PQFileItem *ns)
-{
-	return HandlePQItem(ns, 0);
-}
-
-int	pqihandler::SendMsg(ChatItem *ns)
-{
-	/* switch from 1 -> 0 for specific directed Msg */
-	return HandlePQItem(ns, 0);
-}
-
-int	pqihandler::SendGlobalMsg(ChatItem *ns)
-{
-	return HandlePQItem(ns, 1);
-}
-
-int     pqihandler::SendOtherPQItem(PQItem *ns)
+int     pqihandler::SendRsRawItem(RsRawItem *ns)
 {
 	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-	  	"pqihandler::SendOtherPQItem()");
-	return HandlePQItem(ns, 1);
+	  	"pqihandler::SendRsRawItem()");
+	return HandleRsItem(ns, 0);
 }
+
 
 // inputs. This is a very basic
 // system that is completely biased and slow...
@@ -366,9 +286,9 @@ int     pqihandler::SendOtherPQItem(PQItem *ns)
 
 int pqihandler::GetItems()
 {
-	std::map<int, SearchModule *>::iterator it;
+	std::map<std::string, SearchModule *>::iterator it;
 
-	PQItem *item;
+	RsItem *item;
 	int count = 0;
 
 	// loop through modules....
@@ -391,9 +311,14 @@ int pqihandler::GetItems()
 				pqioutput(PQL_DEBUG_BASIC, 
 						pqihandlerzone, out.str());
 
-				// got one!....
-				// update routing.
-				item -> cidpush(mod -> smi);
+				if (item->PeerId() != (mod->pqi)->PeerId())
+				{
+					/* ERROR */
+					pqioutput(PQL_ALERT, 
+						pqihandlerzone, "ERROR PeerIds dont match!");
+					item->PeerId(mod->pqi->PeerId());
+				}
+
 				SortnStoreItem(item);
 				count++;
 			}
@@ -424,150 +349,162 @@ int pqihandler::GetItems()
 
 
 
-void pqihandler::SortnStoreItem(PQItem *item)
+void pqihandler::SortnStoreItem(RsItem *item)
 {
-	// some template comparors for sorting incoming.
-	const static PQItem_MatchType match_fileitem(PQI_ITEM_TYPE_FILEITEM, 
-				0);
-	const static PQItem_MatchType match_result(PQI_ITEM_TYPE_FILEITEM, 
-				PQI_FI_SUBTYPE_GENERAL);
+	/* get class type / subtype out of the item */
+	uint8_t vers    = item -> PacketVersion();
+	uint8_t cls     = item -> PacketClass();
+	uint8_t type    = item -> PacketType();
+	uint8_t subtype = item -> PacketSubType();
 
-	const static PQItem_MatchType match_endsrch(PQI_ITEM_TYPE_SEARCHITEM, 
-				PQI_SI_SUBTYPE_CANCEL);
-	const static PQItem_MatchType match_reqsrch(PQI_ITEM_TYPE_SEARCHITEM, 
-				PQI_SI_SUBTYPE_SEARCH);
-
-	const static PQItem_MatchType match_info(PQI_ITEM_TYPE_INFOITEM, 0);
-	const static PQItem_MatchType match_chat(PQI_ITEM_TYPE_CHATITEM, 0);
-
-	if (match_fileitem(item))
+	/* whole Version reserved for SERVICES/CACHES */
+	if (vers == RS_PKT_VERSION_SERVICE)
 	{
-		if (match_result(item))
-		{
-			pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-				"SortnStore -> Result");
-				
-			in_result.push_back(item);
+	    pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
+	      "SortnStore -> Service");
+	    in_service.push_back(item);
+	    item = NULL;
+	    return;
+	}
+
+	if (vers != RS_PKT_VERSION1)
+	{
+		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
+			"SortnStore -> Invalid VERSION! Deleting!");
+		delete item;
+		item = NULL;
+		return;
+	}
+
+	switch(cls)
+	{
+	  case RS_PKT_CLASS_BASE:
+	    switch(type)
+	    {
+	      case RS_PKT_TYPE_CACHE:
+	        switch(subtype)
+	        {
+	          case RS_PKT_SUBTYPE_CACHE_REQUEST:
+	            pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
+	              "SortnStore -> Cache Request");
+	            in_search.push_back(item);
+		    item = NULL;
+		    break;
+
+	          case RS_PKT_SUBTYPE_CACHE_ITEM:
+	            pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
+	              "SortnStore -> Cache Result");
+	            in_result.push_back(item);
+		    item = NULL;
+		    break;
+
+		  default:
+		    break; /* no match! */
 		}
-		else 
-		{
-			pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-				"SortnStore -> FileItem");
-			in_file.push_back(item);
-		}
-	}
-	else if (match_endsrch(item))
-	{
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-			"SortnStore -> Cancel Search");
+	        break;
 
-		in_endsrch.push_back(item);
+	      case RS_PKT_TYPE_FILE:
+	        switch(subtype)
+	        {
+	          case RS_PKT_SUBTYPE_FI_REQUEST:
+	            pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
+	              "SortnStore -> File Request");
+	            in_request.push_back(item);
+		    item = NULL;
+		    break;
+
+	          case RS_PKT_SUBTYPE_FI_DATA:
+	            pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
+	              "SortnStore -> File Data");
+	            in_data.push_back(item);
+		    item = NULL;
+		    break;
+
+		  default:
+		    break; /* no match! */
+		}
+	        break;
+
+	      default:
+	        break;  /* no match! */
+	    }
+	    break;
+	  
+	  default:
+	    pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
+	      "SortnStore -> Unknown");
+	    break;
+
 	}
-	else if (match_reqsrch(item))
+	 
+	if (item)
 	{
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-			"SortnStore -> Search Request");
-		in_reqsrch.push_back(item);
+	    pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
+	      "SortnStore -> Deleting Unsorted Item");
+	    delete item;
 	}
-	else if (match_chat(item))
-	{
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-			"SortnStore -> Chat");
-		in_chat.push_back(item);
-	}
-	else if (match_info(item))
-	{
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-			"SortnStore -> Info");
-		in_info.push_back(item);
-	}
-	else
-	{
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-			"SortnStore -> Other");
-		in_other.push_back(item);
-	}
+
 	return;
 }
 
 
 // much like the input stuff.
-PQFileItem *pqihandler::GetSearchResult()
+RsCacheItem *pqihandler::GetSearchResult()
 {
 	if (in_result.size() != 0)
 	{
-		PQFileItem *fi = (PQFileItem *) in_result.front();
+		RsCacheItem *fi = dynamic_cast<RsCacheItem *>(in_result.front());
+		if (!fi) { delete in_result.front(); }
 		in_result.pop_front();
 		return fi;
 	}
 	return NULL;
 }
 
-SearchItem *pqihandler::RequestedSearch()
+RsCacheRequest *pqihandler::RequestedSearch()
 {
-	if (in_reqsrch.size() != 0)
+	if (in_search.size() != 0)
 	{
-		SearchItem *si = (SearchItem *) in_reqsrch.front();
-		in_reqsrch.pop_front();
-		return si;
-	}
-	return NULL;
-}
-
-SearchItem *	pqihandler::CancelledSearch()
-{
-	if (in_endsrch.size() != 0)
-	{
-		SearchItem *si = (SearchItem *) in_endsrch.front();
-		in_endsrch.pop_front();
-		return si;
-	}
-	return NULL;
-}
-
-PQFileItem *pqihandler::GetFileItem()
-{
-	if (in_file.size() != 0)
-	{
-		PQFileItem *fi = (PQFileItem *) in_file.front();
-		in_file.pop_front();
+		RsCacheRequest *fi = dynamic_cast<RsCacheRequest *>(in_search.front());
+		if (!fi) { delete in_search.front(); }
+		in_search.pop_front();
 		return fi;
 	}
 	return NULL;
 }
 
-// Chat Interface
-ChatItem *pqihandler::GetMsg()
+RsFileRequest *pqihandler::GetFileRequest()
 {
-	if (in_chat.size() != 0)
+	if (in_request.size() != 0)
 	{
-		ChatItem *ci = (ChatItem *) in_chat.front();
-		in_chat.pop_front();
-		return ci;
+		RsFileRequest *fi = dynamic_cast<RsFileRequest *>(in_request.front());
+		if (!fi) { delete in_request.front(); }
+		in_request.pop_front();
+		return fi;
 	}
 	return NULL;
 }
 
-PQItem *pqihandler::GetOtherPQItem()
+RsFileData *pqihandler::GetFileData()
 {
-	if (in_other.size() != 0)
+	if (in_data.size() != 0)
 	{
-		PQItem *pqi = in_other.front();
-		in_other.pop_front();
-		return pqi;
+		RsFileData *fi = dynamic_cast<RsFileData *>(in_data.front());
+		if (!fi) { delete in_data.front(); }
+		in_data.pop_front();
+		return fi;
 	}
 	return NULL;
 }
 
-PQItem *pqihandler::SelectOtherPQItem(bool (*tst)(PQItem *))
+RsRawItem *pqihandler::GetRsRawItem()
 {
-	std::list<PQItem *>::iterator it;
-	it = find_if(in_other.begin(), in_other.end(), *tst);
-	if (it != in_other.end())
+	if (in_service.size() != 0)
 	{
-		PQItem *pqi = (*it);
-		in_other.erase(it);
-		return pqi;
+		RsRawItem *fi = dynamic_cast<RsRawItem *>(in_service.front());
+		if (!fi) { delete in_service.front(); }
+		in_service.pop_front();
+		return fi;
 	}
 	return NULL;
 }
@@ -577,7 +514,7 @@ static const float MIN_RATE = 0.01; // 10 B/s
 // internal fn to send updates 
 int     pqihandler::UpdateRates()
 {
-	std::map<int, SearchModule *>::iterator it;
+	std::map<std::string, SearchModule *>::iterator it;
 	int num_sm = mods.size();
 
 	float avail_in = getMaxRate(true);

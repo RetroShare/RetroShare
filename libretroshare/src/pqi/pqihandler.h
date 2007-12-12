@@ -50,7 +50,7 @@
 class SearchModule
 {
 	public:
-	int smi; // id.
+	std::string peerid;
 	PQInterface *pqi;
 	SecurityPolicy *sp;
 };
@@ -62,39 +62,30 @@ class pqihandler: public P3Interface
 {
 	public:
 	pqihandler(SecurityPolicy *Global);
-int	AddSearchModule(SearchModule *mod, int chanid = -1);
-int	RemoveSearchModule(SearchModule *mod);
+bool	AddSearchModule(SearchModule *mod);
+bool	RemoveSearchModule(SearchModule *mod);
 
 // P3Interface.
-// 4 very similar outputs.....
-virtual int	Search(SearchItem *ns);
-virtual int	SearchSpecific(SearchItem *ns); /* search one person only */
-virtual int	CancelSearch(SearchItem *ns); /* no longer used? */
-virtual int	SendSearchResult(PQFileItem *);
+virtual int	SearchSpecific(RsCacheRequest *ns); 
+virtual int	SendSearchResult(RsCacheItem *);
 
 // inputs.
-virtual PQFileItem * 	GetSearchResult();
-virtual SearchItem *	RequestedSearch();
-virtual SearchItem *	CancelledSearch();
+virtual RsCacheRequest *	RequestedSearch();
+virtual RsCacheItem    * 	GetSearchResult();
 
 // file i/o
-virtual int     SendFileItem(PQFileItem *ns);
-virtual PQFileItem *	GetFileItem();
-
-// Chat Interface
-virtual int     SendMsg(ChatItem *item);
-virtual int     SendGlobalMsg(ChatItem *ns); /* needed until chat complete */
-
-virtual ChatItem *GetMsg();
+virtual int     SendFileRequest(RsFileRequest *ns);
+virtual int     SendFileData(RsFileData *ns);
+virtual RsFileRequest *	GetFileRequest();
+virtual RsFileData *	GetFileData();
 
 // Rest of P3Interface
 virtual int 	tick();
 virtual int 	status();
 
-// Control Interface
-virtual int     SendOtherPQItem(PQItem *);
-virtual PQItem *GetOtherPQItem();
-virtual PQItem *SelectOtherPQItem(bool (*tst)(PQItem *));
+// Service Data Interface
+virtual int     SendRsRawItem(RsRawItem *);
+virtual RsRawItem *GetRsRawItem();
 
 	// rate control.
 void	setMaxIndivRate(bool in, float val);
@@ -106,19 +97,19 @@ float	getMaxRate(bool in);
 	/* check to be overloaded by those that can
 	 * generates warnings otherwise
 	 */
-virtual int checkOutgoingPQItem(PQItem *item, int global);
+virtual int checkOutgoingRsItem(RsItem *item, int global);
 
-int	HandlePQItem(PQItem *ns, int allowglobal);
+int	HandleRsItem(RsItem *ns, int allowglobal);
 
 int	GetItems();
-void	SortnStoreItem(PQItem *item);
+void	SortnStoreItem(RsItem *item);
 
-	std::map<int, SearchModule *> mods;
+	std::map<std::string, SearchModule *> mods;
 	SecurityPolicy *globsec;
 
 	// Temporary storage...
-	std::list<PQItem *> in_result, in_endsrch, in_reqsrch, in_reqfile,
-		in_file, in_chat, in_info, in_host, in_other;
+	std::list<RsItem *> in_result, in_search, 
+		in_request, in_data, in_service;
 
 	private:
 

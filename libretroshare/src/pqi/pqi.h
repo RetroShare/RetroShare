@@ -1,9 +1,9 @@
 /*
- * "$Id: pqi.h,v 1.8 2007-03-31 09:41:32 rmf24 Exp $"
+ * libretroshare/src/pqi pqi.h
  *
  * 3P/PQI network interface for RetroShare.
  *
- * Copyright 2004-2006 by Robert Fernie.
+ * Copyright 2004-2008 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,19 +24,21 @@
  */
 
 
+#ifndef PQI_TOP_HEADER
+#define PQI_TOP_HEADER
 
-#ifndef MRK_P3_PUBLIC_INTERFACE_HEADER
-#define MRK_P3_PUBLIC_INTERFACE_HEADER
+/* This just includes the standard headers required.
+ */
 
-// This is the overall include, for public usage
-// + extension of the p3 interface.
 
-#include "pqi/pqi_data.h"
+#include "pqi/pqi_base.h"
+#include "pqi/pqinetwork.h"
+#include "serialiser/rsserial.h"
+#include "serialiser/rsbaseitems.h"
 
 #include <iostream>
 #include <functional>
 #include <algorithm>
-
 
 /********************** SEARCH INTERFACE ***************************/
 // this is an interface.... so should be
@@ -49,54 +51,24 @@ public:
 
 virtual	~SearchInterface() { return; }
 
-	// OutGoing Searches...
+	// Cache Requests
+virtual int	SearchSpecific(RsCacheRequest *) = 0; 
+virtual RsCacheRequest *RequestedSearch() = 0;
 
-virtual int	Search(SearchItem *) = 0;  // Search All people...
-virtual int	SearchSpecific(SearchItem *) = 0; // Search One person only...
-virtual int	CancelSearch(SearchItem *) = 0; // no longer used?
-virtual PQFileItem *GetSearchResult() = 0;
-
-
-	// Incoming Searches...
-virtual SearchItem *RequestedSearch() = 0;
-virtual SearchItem *CancelledSearch() = 0;
-virtual int     SendSearchResult(PQFileItem *item) = 0;
+	// Cache Results
+virtual int     SendSearchResult(RsCacheItem *item) = 0;
+virtual RsCacheItem *GetSearchResult() = 0;
 
 	// FileTransfer.
-virtual PQFileItem *GetFileItem() = 0;
-virtual int     SendFileItem(PQFileItem *) = 0;
+virtual RsFileRequest *GetFileRequest() = 0;
+virtual int     SendFileRequest(RsFileRequest *) = 0;
+
+virtual RsFileData *GetFileData() = 0;
+virtual int     SendFileData(RsFileData *) = 0;
 
 };
 
-class ChatInterface
-{
-public:
-	ChatInterface() {return; };
-virtual ~ChatInterface() {return; };
-
-virtual int	SendMsg(ChatItem *item) = 0;
-virtual int     SendGlobalMsg(ChatItem *ns) = 0; 
-virtual ChatItem *GetMsg() = 0;
-
-};
-
-// This can potentially be moved to where the
-// discovery code is!!!!
-
-class HostItem: public PQItem { };
-
-class DiscoveryInterface
-{
-	public:
-virtual ~DiscoveryInterface() { return; }
-	// Discovery Request.
-virtual int 	DiscoveryRequest(PQItem *) = 0; // item is just for direction.
-virtual HostItem *DiscoveryResult() = 0;
-};
-
-
-class P3Interface: public SearchInterface, 
-		   public ChatInterface 
+class P3Interface: public SearchInterface
 {
 public:
 	P3Interface() {return; }
@@ -105,10 +77,10 @@ virtual ~P3Interface() {return; }
 virtual int	tick() { return 1; }
 virtual int	status() { return 1; }
 
-virtual int	SendOtherPQItem(PQItem *) = 0;
-virtual PQItem *GetOtherPQItem() = 0;
-virtual PQItem *SelectOtherPQItem(bool (*tst)(PQItem *)) = 0;
+virtual int	SendRsRawItem(RsRawItem *) = 0;
+virtual RsRawItem *GetRsRawItem() = 0;
 
 };
 
-#endif //MRK_PQI_BASE_HEADER
+#endif // PQI_TOP_HEADER
+

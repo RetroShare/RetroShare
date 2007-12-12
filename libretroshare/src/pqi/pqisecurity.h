@@ -28,11 +28,10 @@
 #ifndef MRK_PQI_SECURITY_HEADER
 #define MRK_PQI_SECURITY_HEADER
 
-#include "pqi/pqi.h"
-#include "pqi/pqipacket.h"
-
 #define PQI_INCOMING 2
 #define PQI_OUTGOING 5
+
+#include <string>
 
 //structure.
 typedef struct sec_policy

@@ -73,9 +73,11 @@ virtual	~cert();
 virtual std::string Signature();
 std::string	Hash();
 void	Hash(std::string);
+std::string	PeerId() { return Signature(); }
 
 	XPGP *certificate;
 	std::string hash;
+	std::string peerid;
 };
 
 

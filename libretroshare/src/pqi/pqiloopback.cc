@@ -45,7 +45,8 @@
 // Test Interface (LoopBack)
 
 
-pqiloopback::pqiloopback()
+pqiloopback::pqiloopback(std::string id)
+	:PQInterface(id)
 {
     	//std::cerr << "pqiloopback construction()" << std::endl;
 	// rates are irrelevant..... no B/W consumed.
@@ -62,19 +63,20 @@ pqiloopback::~pqiloopback()
 	return;
 }
 
-int	pqiloopback::SendItem(PQItem *i)
+int	pqiloopback::SendItem(RsItem *i)
 {
-	i -> p = getContact();
-	i -> flags |= PQI_ITEM_FLAG_LOCAL;
+	// contact Id should be correct already!
+	//i -> p = getContact();
+	//i -> flags |= PQI_ITEM_FLAG_LOCAL;
 	objs.push_back(i);
 	return 1;
 }
 
-PQItem * 	pqiloopback::GetItem()
+RsItem * 	pqiloopback::GetItem()
 {
 	if (objs.size() > 0)
 	{
-		PQItem *pqi = objs.front();
+		RsItem *pqi = objs.front();
 		objs.pop_front();
 		// breaks the module, through ssl dependance.
 		// but necessary for running system..
@@ -83,25 +85,6 @@ PQItem * 	pqiloopback::GetItem()
 	}
 	return NULL;
 }
-
-int pqiloopback::GetFile(PQFileItem *item, std::ostream &in)
-{
-	return 1;
-}
-
-int	pqiloopback::SendFile(PQFileItem *, std::istream &out)
-{
-	return 1;
-}
-
-Person *pqiloopback::getContact()
-{
-	sslroot *root = getSSLRoot();
-	cert *c = root -> getOwnCert();
-	return c;
-}
-
-
 
 // // PQI interface.
 int 	pqiloopback::tick()

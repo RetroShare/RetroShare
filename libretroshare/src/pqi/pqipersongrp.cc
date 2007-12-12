@@ -3,7 +3,7 @@
  *
  * 3P/PQI network interface for RetroShare.
  *
- * Copyright 2004-2006 by Robert Fernie.
+ * Copyright 2004-2008 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,22 +28,8 @@
 
 #include "pqi/pqipersongrp.h"
 
-/*
-#include "pqi/pqiproxy.h"
-#include "pqi/pqitunnelproxy.h"
- */
-
-
-#include "pqi/p3disc.h"
-#include "pqi/p3channel.h"
-
 #include "pqi/pqissl.h"
 #include "pqi/pqissllistener.h"
-
-/*
- * #include "pqi/pqiudpproxy.h"
- * #include "pqi/pqissludp.h"
- */
 
 #ifdef PQI_USE_PROXY
   #include "pqi/pqiudpproxy.h"
@@ -57,25 +43,11 @@
 
 const int pqipersongrpzone = 354;
 
-// get the Tunnel and TunnelInit packets from the queue.
-bool isTunnelItem(PQItem *item)
-{
-	if (item -> type == PQI_ITEM_TYPE_TUNNELITEM)
-		return true;
-	return false;
-}
-
-bool isTunnelInitItem(PQItem *item)
-{
-	if (item -> type == PQI_ITEM_TYPE_TUNNELINITITEM)
-		return true;
-	return false;
-}
 
 // handle the tunnel services.
-int pqipersongrp::tickTunnelServer()
+int pqipersongrp::tickServiceRecv()
 {
-        PQItem *pqi = NULL;
+        RsRawItem *pqi = NULL;
 	int i = 0;
 	{
 		std::ostringstream out;
@@ -83,16 +55,9 @@ int pqipersongrp::tickTunnelServer()
 		pqioutput(PQL_DEBUG_ALL, pqipersongrpzone, out.str());
 	}
 
-	PQTunnelServer::tick();
+	//p3ServiceServer::tick();
 
-	while(NULL != (pqi =  SelectOtherPQItem(isTunnelInitItem)))
-	{
-		++i;
-		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, 
-			"pqipersongrp::tickTunnelServer() Incoming TunnelInitItem");
-		incoming(pqi);
-	}
-	while(NULL != (pqi = SelectOtherPQItem(isTunnelItem)))
+	while(NULL != (pqi = GetRsRawItem()))
 	{
 		++i;
 		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, 
@@ -100,13 +65,33 @@ int pqipersongrp::tickTunnelServer()
 		incoming(pqi);
 	}
 
+	if (0 < i)
+	{
+		return 1;
+	}
+	return 0;
+}
+
+// handle the tunnel services.
+int pqipersongrp::tickServiceSend()
+{
+        RsRawItem *pqi = NULL;
+	int i = 0;
+	{
+		std::ostringstream out;
+		out << "pqipersongrp::tickServiceSend()";
+		pqioutput(PQL_DEBUG_ALL, pqipersongrpzone, out.str());
+	}
+
+	p3ServiceServer::tick();
+
 	while(NULL != (pqi = outgoing()))
 	{
 		++i;
 		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, 
-			"pqipersongrp::tickTunnelServer() OutGoing PQItem");
+			"pqipersongrp::tickTunnelServer() OutGoing RsItem");
 
-		SendOtherPQItem(pqi);
+		SendRsRawItem(pqi);
 	}
 	if (0 < i)
 	{
@@ -118,19 +103,15 @@ int pqipersongrp::tickTunnelServer()
 
 	// inits
 pqipersongrp::pqipersongrp(SecurityPolicy *glob, sslroot *sr, unsigned long flags)
-	:pqihandler(glob), sslr(sr), p3d(NULL), 
+	:pqihandler(glob), sslr(sr), 
 #ifdef PQI_USE_PROXY
 	p3p(NULL),
 #endif
 	initFlags(flags)
 {
 	// add a p3proxy & p3disc.
-	p3d = new p3disc(sr);
 #ifdef PQI_USE_PROXY
 	p3p = new p3udpproxy(p3d);
-#endif
-#ifdef PQI_USE_CHANNELS
-	p3c = new p3channel(sr);
 #endif
 
 	if (!(sr -> active()))
@@ -191,18 +172,11 @@ pqipersongrp::pqipersongrp(SecurityPolicy *glob, sslroot *sr, unsigned long flag
 	//addService(new PQTStst());
 	//registerTunnelType(PQI_TUNNEL_TST_TYPE, createPQTStst);
 
-	addService(p3d);
-	registerTunnelType(PQI_TUNNEL_DISC_ITEM_TYPE, createDiscItems);
 
 #ifdef PQI_USE_PROXY
 	addService(p3p);
 	registerTunnelType(PQI_TUNNEL_PROXY_TYPE, createPQTunnelProxy);
 	registerTunnelInitType(PQI_TUNNEL_PROXY_TYPE, createPQTunnelProxyInit);
-#endif
-
-#ifdef PQI_USE_CHANNELS
-	addService(p3c);
-	registerTunnelType(PQI_TUNNEL_CHANNEL_ITEM_TYPE, createChannelItems);
 #endif
 
 	return;
@@ -221,9 +195,15 @@ int	pqipersongrp::tick()
 #ifdef PQI_USE_PROXY
 	pqiudpl->tick();
 #endif
-	tickTunnelServer();
+	int i = 0;
 
-	return pqihandler::tick();
+	if (tickServiceSend()) i = 1;
+
+	if (pqihandler::tick()) i = 1; /* does actual Send/Recv */
+
+	if (tickServiceRecv()) i = 1;
+
+	return 1;
 }
 
 
@@ -251,9 +231,28 @@ int     pqipersongrp::cert_accept(cert *a)
 		return -1;
 	}
 
-	pqiperson *pqip = new pqiperson(a);
+	{
+		std::ostringstream out;
+		out << "pqipersongrp::cert_accept() PeerId: " << a->PeerId();
+		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, out.str());
+	}
+
+	pqiperson *pqip = new pqiperson(a, a->PeerId());
 	pqissl *pqis   = new pqissl(a, pqil, pqip);
-	pqiconnect *pqisc = new pqiconnect(pqis);
+
+	/* construct the serialiser ....
+	 * Needs:
+	 * * FileItem
+	 * * FileData
+	 * * ServiceGeneric
+	 */
+
+	RsSerialiser *rss = new RsSerialiser();
+	rss->addSerialType(new RsFileItemSerialiser());
+	rss->addSerialType(new RsCacheItemSerialiser());
+	rss->addSerialType(new RsServiceSerialiser());
+
+	pqiconnect *pqisc = new pqiconnect(rss, pqis);
 
 	pqip -> addChildInterface(pqisc);
 
@@ -275,7 +274,7 @@ int     pqipersongrp::cert_accept(cert *a)
 
 	// attach to pqihandler
 	SearchModule *sm = new SearchModule();
-	sm -> smi = 2;
+	sm -> peerid = a->PeerId();
 	sm -> pqi = pqip;
 	sm -> sp = secpolicy_create();
 
@@ -288,7 +287,7 @@ int     pqipersongrp::cert_accept(cert *a)
 
 int     pqipersongrp::cert_deny(cert *a)
 {
-	std::map<int, SearchModule *>::iterator it;
+	std::map<std::string, SearchModule *>::iterator it;
 	SearchModule *mod;
 	bool found = false;
 
@@ -299,8 +298,8 @@ int     pqipersongrp::cert_deny(cert *a)
 		for(it = mods.begin(); (!found) && (it != mods.end());it++)
 		{
 			mod = it -> second;
-			if (a == (cert *) ((pqiperson *) 
-					(mod -> pqi)) -> getContact())
+			pqiperson *p = (pqiperson *) mod -> pqi;
+			if (a->PeerId() == p->PeerId())
 			{
 				found = true;
 			}
@@ -321,7 +320,7 @@ int     pqipersongrp::cert_deny(cert *a)
 
 int     pqipersongrp::cert_auto(cert *a, bool b)
 {
-	std::map<int, SearchModule *>::iterator it;
+	std::map<std::string, SearchModule *>::iterator it;
 	if (b)
 	{
 		cert_accept(a);
@@ -330,7 +329,7 @@ int     pqipersongrp::cert_auto(cert *a, bool b)
 		{
 			SearchModule *mod = it -> second;
 			pqiperson *p = (pqiperson *) mod -> pqi;
-			if (a == (cert *) p -> getContact())
+			if (a->PeerId() == p->PeerId())
 			{
 				p -> autoconnect(b);
 				return 1;
@@ -406,75 +405,4 @@ int     pqipersongrp::load_config()
 	return 1;
 }
 	
-
-        /* Overloaded PQItem Check */
-int pqipersongrp::checkOutgoingPQItem(PQItem *item, int global)
-{
-	/* check cid vs Person */
-	if ((global) && (item->cid.route[0] == 0))
-	{
-		/* allowed through as for all! */
-		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone,
-			"pqipersongrp::checkOutgoingPQItem() Allowing global");
-		return 1;
-	}
-	if ((!global) && (item->cid.route[0] == 0))
-	{
-		/* not allowed for all! */
-		std::ostringstream out;
-		out << "Bad CID on non-global traffic" << std::endl;
-		item -> print(out);
-		pqioutput(PQL_ALERT, pqipersongrpzone,out.str());
-		return 0;
-	}
-
-	if (item -> p == NULL)
-	{
-		pqioutput(PQL_ALERT, pqipersongrpzone,
-			"pqipersongrp::checkOutgoingPQItem() ERROR: NULL Person");
-
-		std::ostringstream out;
-		item -> print(out);
-		pqioutput(PQL_ALERT, pqipersongrpzone,out.str());
-
-		return 0;
-	}
-
-	cert *c = (cert *) item -> p;
-	if (0 != pqicid_cmp(&(c -> cid), &(item -> cid)))
-	{
-		std::ostringstream out;
-		out << "pqipersongrp::checkOutgoingPQItem() c->cid != item->cid";
-		out << std::endl;
-		out << "c -> CID    [" << c->cid.route[0];
-		for(int i = 0; i < 10; i++)
-		{
-			out << ":" << c->cid.route[i];
-		}
-	        out << "]" << std::endl;
-
-		out << "item -> CID [" << item->cid.route[0];
-		for(int i = 0; i < 10; i++)
-		{
-			out << ":" << item->cid.route[i];
-		}
-	        out << "]" << std::endl;
-
-		item -> print(out);
-
-		pqioutput(PQL_ALERT, pqipersongrpzone,out.str());
-		pqicid_copy(&(c->cid), &(item->cid));
-	}
-
-	/* check the top one */
-
-	return 1;
-}
-
-		
-
-
-		
-	
-
 

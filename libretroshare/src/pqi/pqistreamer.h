@@ -1,9 +1,9 @@
 /*
- * "$Id: pqistreamer.h,v 1.10 2007-02-18 21:46:50 rmf24 Exp $"
+ * libretroshare/src/pqi pqistreamer.h
  *
  * 3P/PQI network interface for RetroShare.
  *
- * Copyright 2004-2006 by Robert Fernie.
+ * Copyright 2004-2008 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,7 +24,6 @@
  */
 
 
-
 #ifndef MRK_PQI_STREAMER_HEADER
 #define MRK_PQI_STREAMER_HEADER
 
@@ -41,12 +40,12 @@
 class pqistreamer: public PQInterface
 {
 public:
-	pqistreamer(BinInterface *bio_in, int bio_flagsin);
+	pqistreamer(RsSerialiser *rss, std::string peerid, BinInterface *bio_in, int bio_flagsin);
 virtual ~pqistreamer();
 
 // PQInterface
-virtual int     SendItem(PQItem *);
-virtual PQItem *GetItem();
+virtual int     SendItem(RsItem *);
+virtual RsItem *GetItem();
 
 virtual int     tick();
 virtual int     status();
@@ -55,8 +54,8 @@ virtual int     status();
 	/* Implementation */
 
 	// to filter functions - detect filecancel/data and act!
-int	queue_outpqi(      PQItem *i);
-int 	handleincomingitem(PQItem *i);
+int	queue_outpqi(      RsItem *i);
+int 	handleincomingitem(RsItem *i);
 
 	// ticked regularly (manages out queues and sending
 	// via above interfaces.
@@ -72,6 +71,8 @@ void	outSentBytes(int );
 int	inAllowedBytes();
 void	inReadBytes(int );
 
+	// RsSerialiser - determines which packets can be serialised.
+	RsSerialiser *rsSerialiser;
 	// Binary Interface for IO, initialisated at startup.
 	BinInterface *bio;
 	unsigned int  bio_flags; // only BIN_NO_CLOSE at the moment.
@@ -83,7 +84,7 @@ void	inReadBytes(int );
 	// Temp Storage for transient data.....
 	std::list<void *> out_pkt; // Cntrl / Search / Results queue
 	std::list<void *> out_data; // FileData - secondary queue.
-	std::list<PQItem *> incoming;
+	std::list<RsItem *> incoming;
 
 	// data for network stats.
 	int totalRead;

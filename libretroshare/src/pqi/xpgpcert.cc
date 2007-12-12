@@ -27,7 +27,6 @@
 
 
 #include "xpgpcert.h"
-#include "pqipacket.h"
 
 #include "pqinetwork.h"
 

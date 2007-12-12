@@ -30,7 +30,7 @@
 
 #include "pqi/pqihandler.h"
 #include "pqi/pqiperson.h"
-#include "pqi/pqitunnel.h"
+#include "pqi/pqiservice.h"
 
 
 // So this is a specific implementation 
@@ -50,12 +50,17 @@ const unsigned long PQIPERSON_NO_SSLLISTENER = 	0x0001;
 
 const unsigned long PQIPERSON_ALL_BW_LIMITED =  0x0010;
 
-class p3disc;
-class p3channel;
+#ifdef PQI_USE_DISC
+	class p3disc;
+#endif
+
+#ifdef PQI_USE_CHANNELS
+	class p3channel;
+#endif
 
 class pqissllistener;
 
-class pqipersongrp: public pqihandler, public PQTunnelServer
+class pqipersongrp: public pqihandler, public p3ServiceServer
 {
 	public:
 	pqipersongrp(SecurityPolicy *, sslroot *sr, unsigned long flags);
@@ -77,7 +82,9 @@ virtual int status();
 	// + SearchInterface which should automatically handle stuff
 
 	// acess to services.
+#ifdef PQI_USE_DISC
 	p3disc *getP3Disc()   { return p3d; } 
+#endif
 
 #ifdef PQI_USE_PROXY
 	p3proxy *getP3Proxy() { return p3p; }
@@ -88,22 +95,25 @@ virtual int status();
 #endif
 
 	protected:
-	/* Overloaded PQItem Check
+	/* Overloaded RsItem Check
 	 * checks item->cid vs Person
 	 */
-virtual int checkOutgoingPQItem(PQItem *item, int global);
+virtual int checkOutgoingRsItem(RsItem *item, int global) { return 1; }
 
 	private:
 
 	// The tunnelserver operation.
-	int tickTunnelServer();
-
+	int tickServiceRecv();
+	int tickServiceSend();
 
 		pqissllistener *pqil;
 
 		sslroot *sslr;
 
+#ifdef PQI_USE_DISC
 		p3disc    *p3d;
+#endif
+
 #ifdef PQI_USE_PROXY
 		p3proxy   *p3p;
 		pqiudplistener *pqiudpl;

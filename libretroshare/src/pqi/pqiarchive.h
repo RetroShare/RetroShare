@@ -28,23 +28,13 @@
 #ifndef MRK_PQI_ARCHIVE_STREAMER_HEADER
 #define MRK_PQI_ARCHIVE_STREAMER_HEADER
 
-// Only dependent on the base stuff.
-#include "pqi/pqi_base.h"
-
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-#include "pqi/xpgpcert.h"
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-#include "pqi/sslcert.h"
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
+#include "pqi/pqi.h"
 
 #include <list>
 
 /*******************************************************************
  * pqiarchive provides an archive stream.
- * This stores PQItem + Person Reference + Timestamp,
+ * This stores RsItem + Person Reference + Timestamp,
  *
  * and allows Objects to be replayed or restored, 
  * independently of the rest of the pqi system.
@@ -54,31 +44,32 @@
 class pqiarchive: PQInterface
 {
 public:
-	pqiarchive(BinInterface *bio_in, int bio_flagsin, sslroot *);
+	pqiarchive(RsSerialiser *rss, BinInterface *bio_in, int bio_flagsin);
 virtual ~pqiarchive();
 
 // PQInterface
-virtual int     SendItem(PQItem *);
-virtual PQItem *GetItem();
+virtual int     SendItem(RsItem *);
+virtual RsItem *GetItem();
 
 virtual int     tick();
 virtual int     status();
 
 virtual void	setRealTime(bool r) { realTime = r; }
 	private:
-int     writePkt(PQItem *item);
-int     readPkt(PQItem **item_out, long *ts);
+int     writePkt(RsItem *item);
+int     readPkt(RsItem **item_out, long *ts);
 
+	// Serialiser
+	RsSerialiser *rsSerialiser;
 	// Binary Interface for IO, initialisated at startup.
 	BinInterface *bio;
 	unsigned int  bio_flags; // only BIN_NO_CLOSE at the moment.
 
 	// Temp Storage for transient data.....
-	PQItem *nextPkt;
+	RsItem *nextPkt;
 	long  nextPktTS; /* timestamp associated with nextPkt */
 	long  firstPktTS; /* timestamp associated with first read Pkt */
 	long  initTS;    /* clock timestamp at first read */
-	sslroot *sslr;
 
 	bool realTime;
 };

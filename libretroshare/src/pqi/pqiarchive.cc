@@ -33,7 +33,7 @@
 
 /*******************************************************************
  * pqiarchive provides an archive stream.
- * This stores PQItem + Person Reference + Timestamp,
+ * This stores RsItem + Person Reference + Timestamp,
  *
  * and allows Objects to be replayed or restored, 
  * independently of the rest of the pqi system.
@@ -41,7 +41,7 @@
  */
 
 #include "pqi/pqiarchive.h"
-#include "pqi/pqipacket.h"
+#include "serialiser/rsserial.h"
 #include <iostream>
 #include <fstream>
 
@@ -60,10 +60,13 @@ struct pqiarchive_header
 
 const int PQIARCHIVE_TYPE_PQITEM = 0x0001;
 
-pqiarchive::pqiarchive(BinInterface *bio_in, int bio_flags_in, sslroot *s)
-	:bio(bio_in), bio_flags(bio_flags_in),
-        nextPkt(NULL), nextPktTS(0), firstPktTS(0), initTS(0),
-	sslr(s)
+/* PeerId of PQInterface is not important ... as we are archiving
+ * packets from other people...
+ */
+
+pqiarchive::pqiarchive(RsSerialiser *rss, BinInterface *bio_in, int bio_flags_in)
+	:PQInterface(""), rsSerialiser(rss), bio(bio_in), bio_flags(bio_flags_in),
+        nextPkt(NULL), nextPktTS(0), firstPktTS(0), initTS(0)
 {
         {
 	  std::ostringstream out;
@@ -112,14 +115,14 @@ pqiarchive::~pqiarchive()
 
 	if (nextPkt)
 	{
-		pqipkt_delete(nextPkt);
+		delete nextPkt;
 	}
 	return;
 }
 
 
 // Get/Send Items.
-int	pqiarchive::SendItem(PQItem *si)
+int	pqiarchive::SendItem(RsItem *si)
 {
         {
 	  std::ostringstream out;
@@ -132,7 +135,8 @@ int	pqiarchive::SendItem(PQItem *si)
 	
 	if (!(bio_flags & BIN_FLAGS_WRITEABLE))
 	{
-		delete si;
+		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
+			delete si;
 		return -1;
 	}
 
@@ -140,7 +144,7 @@ int	pqiarchive::SendItem(PQItem *si)
 	return ret; /* 0 - failure, 1 - success*/
 }
 
-PQItem *pqiarchive::GetItem()
+RsItem *pqiarchive::GetItem()
 {
         {
 	  std::ostringstream out;
@@ -198,7 +202,7 @@ PQItem *pqiarchive::GetItem()
 			initTS = time(NULL);
 			firstPktTS = nextPktTS;
 		}
-		PQItem *outPkt = nextPkt;
+		RsItem *outPkt = nextPkt;
 		nextPkt = NULL;
 
 		if (outPkt != NULL)
@@ -237,7 +241,7 @@ int	pqiarchive::status()
 //
 /**************** HANDLE OUTGOING TRANSLATION + TRANSMISSION ******/
 
-int	pqiarchive::writePkt(PQItem *pqi)
+int	pqiarchive::writePkt(RsItem *pqi)
 {
         {
 	  std::ostringstream out;
@@ -245,8 +249,9 @@ int	pqiarchive::writePkt(PQItem *pqi)
 	  pqioutput(PQL_DEBUG_ALL, pqiarchivezone, out.str());
 	}
 
-	void *ptr = pqipkt_makepkt(pqi);
-	if (NULL == ptr)
+	uint32_t pktsize = rsSerialiser->size(pqi);
+	void *ptr = malloc(pktsize);
+	if (!(rsSerialiser->serialise(pqi, ptr, &pktsize)))
 	{
 		std::ostringstream out;
 		out << "pqiarchive::writePkt() Null Pkt generated!";
@@ -255,13 +260,30 @@ int	pqiarchive::writePkt(PQItem *pqi)
 		pqi -> print(out);
 		pqioutput(PQL_ALERT, pqiarchivezone, out.str());
 
-		pqipkt_delete(ptr);
-		delete pqi;
+		free(ptr);
+		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
+			delete pqi;
 		return 0;
 	}
 
 	/* extract the extra details */
-	int len = pqipkt_rawlen(ptr);
+	uint32_t len = getRsItemSize(ptr);
+	if (len != pktsize)
+	{
+		std::ostringstream out;
+		out << "pqiarchive::writePkt() Length MisMatch: len: " << len;
+		out << " != pktsize: " << pktsize;
+		out << std::endl;
+		out << "Caused By: " << std::endl;
+		pqi -> print(out);
+		pqioutput(PQL_ALERT, pqiarchivezone, out.str());
+
+		free(ptr);
+		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
+			delete pqi;
+		return 0;
+	}
+
 
 	if (!(bio->cansend()))
 	{
@@ -272,9 +294,26 @@ int	pqiarchive::writePkt(PQItem *pqi)
 		pqi -> print(out);
 		pqioutput(PQL_ALERT, pqiarchivezone, out.str());
 
-		pqipkt_delete(ptr);
-		delete pqi;
+		free(ptr);
+		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
+			delete pqi;
 
+		return 0;
+	}
+
+	// using the peerid from the item.
+	if (pqi->PeerId().length() != PQI_PEERID_LENGTH)
+	{
+		std::ostringstream out;
+		out << "pqiarchive::writePkt() Invalid peerId Length!";
+		out << std::endl;
+		out << "Caused By: " << std::endl;
+		pqi -> print(out);
+		pqioutput(PQL_ALERT, pqiarchivezone, out.str());
+
+		free(ptr);
+		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
+			delete pqi;
 		return 0;
 	}
 
@@ -284,24 +323,7 @@ int	pqiarchive::writePkt(PQItem *pqi)
 	hdr.type 	= PQIARCHIVE_TYPE_PQITEM;
 	hdr.length 	= len;
 	hdr.ts 		= time(NULL);
-	certsign sig;
-
-	// NB: At the moment, the messages we have sent don't have
-	// pqi->p set, and so they will be discarded......
-	if (!sslr -> getcertsign((cert *) (pqi -> p), sig))
-	{
-		out << "pqiarchive::writePkt() cannot get certsign!";
-		out << std::endl;
-		out << "Caused By: " << std::endl;
-		pqi -> print(out);
-		pqioutput(PQL_ALERT, pqiarchivezone, out.str());
-
-		pqipkt_delete(ptr);
-		delete pqi;
-		return 0;
-	}
-
-	memcpy(hdr.personSig, sig.data, CERTSIGNLEN);
+	memcpy(hdr.personSig, pqi->PeerId().c_str(), PQI_PEERID_LENGTH);
 
 	// write packet header.
 	if (sizeof(hdr) != bio->senddata(&hdr, sizeof(hdr)))
@@ -310,8 +332,9 @@ int	pqiarchive::writePkt(PQItem *pqi)
 		out << std::endl;
 	  	pqioutput(PQL_ALERT, pqiarchivezone, out.str());
 
-		pqipkt_delete(ptr);
-		delete pqi;
+		free(ptr);
+		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
+			delete pqi;
 
 		return 0;
 	}
@@ -325,8 +348,9 @@ int	pqiarchive::writePkt(PQItem *pqi)
 		out << std::endl;
 	  	pqioutput(PQL_ALERT, pqiarchivezone, out.str());
 
-		pqipkt_delete(ptr);
-		delete pqi;
+		free(ptr);
+		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
+			delete pqi;
 
 		return 0;
 	}
@@ -334,8 +358,9 @@ int	pqiarchive::writePkt(PQItem *pqi)
 	out << " Success!" << std::endl;
 	pqioutput(PQL_DEBUG_BASIC, pqiarchivezone, out.str());
 
-	pqipkt_delete(ptr);
-	delete pqi;
+	free(ptr);
+	if (!(bio_flags & BIN_FLAGS_NO_DELETE))
+		delete pqi;
 
 	return 1;
 }
@@ -345,7 +370,7 @@ int	pqiarchive::writePkt(PQItem *pqi)
  *
  */
 
-int	pqiarchive::readPkt(PQItem **item_out, long *ts_out)
+int	pqiarchive::readPkt(RsItem **item_out, long *ts_out)
 {
         {
 	  std::ostringstream out;
@@ -362,11 +387,11 @@ int	pqiarchive::readPkt(PQItem **item_out, long *ts_out)
 	struct pqiarchive_header hdr;
 
 	// enough space to read any packet.
-	int maxlen = pqipkt_maxsize();
+	int maxlen = getRsPktMaxSize();
 	void *block = malloc(maxlen);
 
 	// initial read size: basic packet.
-	int blen = pqipkt_basesize();
+	int blen = getRsPktBaseSize();
 
 	int tmplen;
 
@@ -394,7 +419,7 @@ int	pqiarchive::readPkt(PQItem **item_out, long *ts_out)
 	}
 
 	// workout how much more to read.
-	int extralen = pqipkt_rawlen(block) - blen;
+	int extralen = getRsItemSize(block) - blen;
 	if (extralen > 0)
 	{
 		void *extradata = (void *) (((char *) block) + blen);
@@ -415,15 +440,11 @@ int	pqiarchive::readPkt(PQItem **item_out, long *ts_out)
 	// create packet, based on header.
 	std::cerr << "Read Data Block -> Incoming Pkt(";
 	std::cerr << blen + extralen << ")" << std::endl;
-	int readbytes = extralen + blen;
+	uint32_t readbytes = extralen + blen;
 
-	PQItem *item = NULL;
-	if (pqipkt_check(block, readbytes))
-	{
-		item = pqipkt_create(block);
-	}
-
+	RsItem *item = rsSerialiser->deserialise(block, &readbytes);
 	free(block);
+
 	if (item == NULL)
 	{
 	  	pqioutput(PQL_ALERT, pqiarchivezone, 
@@ -431,39 +452,20 @@ int	pqiarchive::readPkt(PQItem **item_out, long *ts_out)
 		return 0;
 	}
 
-	/* get the PersonSign out of the header */
-	certsign sig;
-	memcpy(sig.data, hdr.personSig, CERTSIGNLEN);
-	item -> p = sslr -> findcertsign(sig);
-	/* if we can't identify the person it is from, 
-	 * then we need to discard it!..... (happens
-	 * when they've been removed from our friend list....
+	/* Cannot detect bad ids here anymore.... 
+	 * but removed dependancy on the sslroot!
 	 */
-	if (item->p==NULL)
-	{
-	  	std::ostringstream out;
-	  	out << "pqiarchive::readPkt() Couldn't translate certsign";
-		out << " into cert for pkt:" << std::endl;
-		item->print(out);
-		out << "Discarding!";
-	  	pqioutput(PQL_ALERT, pqiarchivezone, out.str());
 
-		delete item;
-		item = NULL;
-		return 0;
-	}
-	else
+	std::string peerId = "";
+	for(int i = 0; i < PQI_PEERID_LENGTH; i++)
 	{
-		/* copy cid ... to ensure outgoing
-		 * msgs work properly
-		 */
-		item->cid = item->p->cid;
+		peerId += hdr.personSig[i];
 	}
+	item->PeerId(peerId);
 
 	*item_out = item;
 	*ts_out   = hdr.ts;
 
-	/* cid/sid will be wrong */
 	return 1;
 }
 
