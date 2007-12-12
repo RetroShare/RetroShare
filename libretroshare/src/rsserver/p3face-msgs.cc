@@ -37,6 +37,7 @@ const int p3facemsgzone = 11453;
 #include <sys/time.h>
 #include <time.h>
 
+#if 0
 
 unsigned long getMsgId(RsMsgId &id)
 {
@@ -49,7 +50,7 @@ unsigned long getMsgId(RsMsgId &id)
 	return mid;
 }
 
-void getRsMsgId(RsMsgId &rsmid, unsigned int mid)
+void setMsgId(RsMsgId &rsmid, unsigned int mid)
 {
 	/* version that uses the uniqueMsgId stored in sid */
 	/* 16 Bytes XXX Must be equal! */
@@ -64,6 +65,8 @@ void getRsMsgId(RsMsgId &rsmid, unsigned int mid)
 	return;
 }
 
+#endif
+
 
 /****************************************/
 /****************************************/
@@ -73,31 +76,52 @@ int RsServer::MessageSend(MessageInfo &info)
 	/* so we send this.... */
 	lockRsCore();     /* LOCK */
 
-	MsgItem *msg = new MsgItem();
+	RsMsgItem *msg = new RsMsgItem();
 
-	/* id who it is to */
-	msg -> p = intFindCert(info.id);
-	msg -> cid = msg -> p -> cid;
+	/* id who it is to ???? handled lower */
+	msg -> PeerId("");
 
-	msg -> title  = info.title;
-	msg -> header = info.header;
-	msg -> msg = info.msg;
+	msg -> msgFlags = 0;
+	msg -> msgId = 0;
 	msg -> sendTime = time(NULL);
+	msg -> recvTime = 0;
+	
+	msg -> subject = info.title;
+	msg -> message = info.msg;
+
+	std::list<PersonInfo>::iterator pit;
+	for(pit = info.msgto.begin(); pit != info.msgto.end(); pit++)
+	{
+		msg -> msgto.ids.push_back(pit->id);
+	}
+
+	for(pit = info.msgcc.begin(); pit != info.msgcc.end(); pit++)
+	{
+		msg -> msgcc.ids.push_back(pit->id);
+	}
+
+	for(pit = info.msgbcc.begin(); pit != info.msgbcc.end(); pit++)
+	{
+		msg -> msgbcc.ids.push_back(pit->id);
+	}
+
+	msg -> attachment.title   = info.attach_title;
+	msg -> attachment.comment = info.attach_comment;
 
 	std::list<FileInfo>::iterator it;
 	for(it = info.files.begin(); it != info.files.end(); it++)
 	{
-		MsgFileItem mfi;
+		RsTlvFileItem mfi;
 		mfi.hash = it -> hash;
 		mfi.name = it -> fname;
-		mfi.size = it -> size;
-		msg -> files.push_back(mfi);
+		mfi.filesize = it -> size;
+		msg -> attachment.items.push_back(mfi);
 	}
 
 	std::cerr << "RsServer::MessageSend()" << std::endl;
 	msg->print(std::cerr);
 
-	server -> sendMessage(msg);
+	msgSrv -> sendMessage(msg);
 
 	unlockRsCore();     /* UNLOCK */
 
@@ -107,20 +131,14 @@ int RsServer::MessageSend(MessageInfo &info)
 
 /****************************************/
 /****************************************/
-int RsServer::MessageDelete(std::string id)
+int RsServer::MessageDelete(std::string mid)
 {
 	lockRsCore();     /* LOCK */
 
-	RsMsgId uid(id);
-
-	unsigned long mid = getMsgId(uid);
-
-	std::cerr << "RsServer::MessageDelete()" << std::endl;
-	std::cerr << "str: " << id << std::endl;
-	std::cerr << "uid: " << uid << std::endl;
+	std::cerr << "RsServer::MessageDelete() ";
 	std::cerr << "mid: " << mid << std::endl;
 
-	server -> removeMsgId(mid);
+	msgSrv -> removeMsgId(atoi(mid.c_str()));
 
 	unlockRsCore();     /* UNLOCK */
 
@@ -128,20 +146,14 @@ int RsServer::MessageDelete(std::string id)
 	return 1;
 }
 
-int RsServer::MessageRead(std::string id)
+int RsServer::MessageRead(std::string mid)
 {
 	lockRsCore();     /* LOCK */
 
-	RsMsgId uid(id);
-
-	unsigned long mid = getMsgId(uid);
-
-	std::cerr << "RsServer::MessageRead()" << std::endl;
-	std::cerr << "str: " << id << std::endl;
-	std::cerr << "uid: " << uid << std::endl;
+	std::cerr << "RsServer::MessageRead() ";
 	std::cerr << "mid: " << mid << std::endl;
 
-	server -> markMsgIdRead(mid);
+	msgSrv -> markMsgIdRead(atoi(mid.c_str()));
 
 	unlockRsCore();     /* UNLOCK */
 
@@ -173,22 +185,12 @@ int 	RsServer::ChatSend(ChatInfo &ci)
 	/* send a message to all for now */
 	if (ci.chatflags & RS_CHAT_PRIVATE)
 	{
-
-	  /* to only one person */
-	  RsCertId id(ci.rsid);
-	  cert *c = intFindCert(id);
-	  ChatItem *item = new ChatItem();
-	  item -> sid = getPQIsearchId();
-	  item -> p = c;
-	  item -> cid = c -> cid;
-          item -> msg = ci.msg;
-          item -> flags = PQI_ITEM_FLAG_PRIVATE;
-	  server -> sendPrivateChat(item);
+	  chatSrv -> sendPrivateChat(ci.msg, ci.rsid);
 	}
 	else
 	{
 	  /* global */
-	  server -> sendChat(ci.msg);
+	  chatSrv -> sendChat(ci.msg);
 	}
 	unlockRsCore();     /* UNLOCK */
 
@@ -206,22 +208,17 @@ int 	RsServer::UpdateAllChat()
 
 	/* get any messages and push them to iface */
 
-#if 1
-	// at the end here, we handle chats.
-	if (server -> chatChanged.Changed(0))
+	// get the items from the list.
+	std::list<RsChatItem *> clist = chatSrv -> getChatQueue();
+	std::list<RsChatItem *>::iterator it;
+	for(it = clist.begin(); it != clist.end(); it++)
 	{
-		// get the items from the list.
-		std::list<ChatItem *> clist = server -> getChatQueue();
-		std::list<ChatItem *>::iterator it;
-		for(it = clist.begin(); it != clist.end(); it++)
-		{
-			ChatInfo ci;
-			initRsChatInfo((*it), ci);
-			iface.mChatList.push_back(ci);
-			delete (*it);
-		}
+		ChatInfo ci;
+		initRsChatInfo((*it), ci);
+		iface.mChatList.push_back(ci);
+		delete (*it);
 	}
-#endif
+
   	iface.setChanged(RsIface::Chat);
 
 	/* unlock Mutexes */
@@ -245,9 +242,9 @@ int     RsServer::UpdateAllMsgs()
 	iface.lockData(); /* LOCK */
 
 	/* do stuff */
-	std::list<MsgItem *> &msglist = server -> getMsgList();
-	std::list<MsgItem *> &msgOutlist = server -> getMsgOutList();
-  	std::list<MsgItem *>::iterator mit;
+	std::list<RsMsgItem *> &msglist =    msgSrv -> getMsgList();
+	std::list<RsMsgItem *> &msgOutlist = msgSrv -> getMsgOutList();
+  	std::list<RsMsgItem *>::iterator mit;
 
 	std::list<MessageInfo> &msgs = iface.mMessageList;
 
@@ -377,16 +374,17 @@ int RsServer::UpdateAllChannels()
  * for intAddChannel / intAddChannelMsg.
  */
 
-void RsServer::initRsChatInfo(ChatItem *c, ChatInfo &i)
+void RsServer::initRsChatInfo(RsChatItem *c, ChatInfo &i)
 {
-        RsCertId id = intGetCertId((cert *) c->p);
-	std::ostringstream out;
-	out << id;
+	i.rsid = c -> PeerId();
+	cert *peer = intFindCert(c->PeerId());
+	if (peer)
+		i.name = peer -> Name();
+	else
+		i.name = "Unknown";
 
-	i.name = c -> p -> Name();
-	i.rsid = out.str();
-	i.msg  = c -> msg;
-        if (c -> flags & PQI_ITEM_FLAG_PRIVATE)
+	i.msg  = c -> message;
+        if (c -> chatFlags & RS_CHAT_FLAG_PRIVATE)
 	{
 		std::cerr << "RsServer::initRsChatInfo() Chat Private!!!";
 		i.chatflags = RS_CHAT_PRIVATE;
@@ -509,71 +507,100 @@ void RsServer::intCheckFileStatus(FileInfo &file)
 }
 
 
-void RsServer::initRsMI(MsgItem *msg, MessageInfo &mi)
+void RsServer::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 {
-	mi.id = intGetCertId((cert *) msg->p);
 
 	mi.msgflags = 0;
 
 	/* translate flags, if we sent it... outgoing */
-	if ((msg->msgflags & PQI_MI_FLAGS_OUTGOING)
-	   || (msg->p == sslr->getOwnCert()))
+	if ((msg->msgFlags & RS_MSG_FLAGS_OUTGOING)
+	   || (msg->PeerId() == sslr->getOwnCert()->PeerId()))
 	{
 		mi.msgflags |= RS_MSG_OUTGOING;
 	}
 	/* if it has a pending flag, then its in the outbox */
-	if (msg->msgflags & PQI_MI_FLAGS_PENDING)
+	if (msg->msgFlags & RS_MSG_FLAGS_PENDING)
 	{
 		mi.msgflags |= RS_MSG_PENDING;
 	}
-	if (msg->msgflags & PQI_MI_FLAGS_NEW)
+	if (msg->msgFlags & RS_MSG_FLAGS_NEW)
 	{
 		mi.msgflags |= RS_MSG_NEW;
 	}
 
-	mi.srcname = msg->p->Name();
+	mi.id = msg->PeerId();
+	cert *c = intFindCert(mi.id);
+	if (c)
+		mi.srcname = c->Name();
+	else
+		mi.srcname = "Unknown";
 
-	mi.title = msg->title;
-	mi.header = msg->header;
-	mi.msg   = msg->msg;
+	std::list<std::string>::iterator pit;
+
+	for(pit = msg->msgto.ids.begin(); 
+		pit != msg->msgto.ids.end(); pit++)
+	{
+		PersonInfo pi;
+		pi.id = (*pit);
+		cert *peer = intFindCert(pi.id);
+		if (peer)
+			pi.name = peer->Name();
+		else
+			pi.name = "Unknown";
+		mi.msgto.push_back(pi);
+	}
+
+	for(pit = msg->msgcc.ids.begin(); 
+		pit != msg->msgcc.ids.end(); pit++)
+	{
+		PersonInfo pi;
+		pi.id = (*pit);
+		cert *peer = intFindCert(pi.id);
+		if (peer)
+			pi.name = peer->Name();
+		else
+			pi.name = "Unknown";
+		mi.msgcc.push_back(pi);
+	}
+
+	for(pit = msg->msgbcc.ids.begin(); 
+		pit != msg->msgbcc.ids.end(); pit++)
+	{
+		PersonInfo pi;
+		pi.id = (*pit);
+		cert *peer = intFindCert(pi.id);
+		if (peer)
+			pi.name = peer->Name();
+		else
+			pi.name = "Unknown";
+		mi.msgbcc.push_back(pi);
+	}
+
+	mi.title = msg->subject;
+	mi.msg   = msg->message;
+
+	mi.attach_title = msg->attachment.title;
+	mi.attach_comment = msg->attachment.comment;
+
 	mi.count = 0;
 	mi.size = 0;
 
-	std::list<MsgFileItem>::iterator it;
-	for(it = msg->files.begin(); it != msg->files.end(); it++)
+	std::list<RsTlvFileItem>::iterator it;
+	for(it = msg->attachment.items.begin(); 
+			it != msg->attachment.items.end(); it++)
 	{
 		FileInfo fi;
 	        fi.fname = RsDirUtil::getTopDir(it->name);
-		fi.size  = it->size;
+		fi.size  = it->filesize;
 		fi.hash  = it->hash;
-		fi.path  = it->name;
+		fi.path  = it->path;
 		mi.files.push_back(fi);
 		mi.count++;
 		mi.size += fi.size;
 	}
+
 	mi.ts = msg->sendTime;
-
-#if 0
-	/* hash the message (nasty to put here!) */
-	std::ostringstream out;
-	msg->print(out);
-	char *data = strdup(out.str().c_str());
-	unsigned int dlen = strlen(data);
-	unsigned int hashsize = 1024;
-	unsigned char hash[hashsize];
-
-	int hsize = sslr -> hashDigest(data, dlen, hash, hashsize);
-	if (hsize >= CHAN_SIGN_SIZE)
-	{
-	  for(int i = 0; i < CHAN_SIGN_SIZE; i++) /* 16 Bytes XXX Must be equal! */
-		mi.msgId.data[i] = hash[i];
-	}
-
-	free(data);
-#else
-	getRsMsgId(mi.msgId, msg->sid);
-#endif
-
+	mi.msgId = msg->msgId;
 }
 
         /* Flagging Persons / Channels / Files in or out of a set (CheckLists) */

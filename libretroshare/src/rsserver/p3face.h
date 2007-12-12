@@ -30,11 +30,13 @@
 #include "pqi/pqipersongrp.h"
 #include "pqi/pqissl.h"
 
-#include "pqi/p3disc.h"
-
 #include "rsiface/rsiface.h"
 #include "rsiface/rstypes.h"
 #include "util/rsthreads.h"
+
+#include "services/p3disc.h"
+#include "services/p3msgservice.h"
+#include "services/p3chatservice.h"
 
 /* The Main Interface Class - for controlling the server */
 
@@ -48,6 +50,8 @@ int LoadCertificates(RsInit *config);
 RsControl *createRsControl(RsIface &iface, NotifyBase &notify);
 
 
+#if 0
+
 class PendingDirectory
 {
         public:
@@ -59,6 +63,9 @@ void	addEntry(PQFileItem *item);
         int reqTime;
         DirInfo data;
 };
+
+#endif
+
 
 
 class RsServer: public RsControl, public RsThread
@@ -99,7 +106,7 @@ void    unlockRsCore()
 	   (Must be Locked)
          */
 
-cert   *intFindCert(RsCertId &id);
+cert   *intFindCert(RsCertId id);
 RsCertId intGetCertId(cert *c);
 
 /****************************************/
@@ -190,9 +197,8 @@ int     UpdateRemotePeople();
 	public:
 	/* Message Items */
 virtual int MessageSend(MessageInfo &info);
-virtual int MessageDelete(std::string id);
-virtual int MessageRead(std::string id);
-
+virtual int MessageDelete(std::string mid);
+virtual int MessageRead(std::string mid);
 
 	/* Channel Items */
 virtual int ChannelCreateNew(ChannelInfo &info);
@@ -221,7 +227,7 @@ int 	UpdateAllChat();
 int 	UpdateAllMsgs();
 int 	UpdateAllChannels();
 
-void initRsChatInfo(ChatItem *c, ChatInfo &i);
+void initRsChatInfo(RsChatItem *c, ChatInfo &i);
 
 
 #ifdef PQI_USE_CHANNELS
@@ -242,7 +248,7 @@ void initRsCMFI(pqichannel *chan, chanMsgSummary *msg,
 
 void intCheckFileStatus(FileInfo &file);
 
-void initRsMI(MsgItem *msg, MessageInfo &mi);
+void initRsMI(RsMsgItem *msg, MessageInfo &mi);
 
 /****************************************/
 /****************************************/
@@ -300,7 +306,11 @@ int UpdateAllConfig();
 	filedexserver *server;
 	pqipersongrp *pqih;
 	sslroot *sslr;
+
+	/* services */
 	p3disc *ad;
+	p3MsgService  *msgSrv;
+	p3ChatService *chatSrv;
 
 	// Worker Data.....
 

@@ -261,8 +261,8 @@ virtual	int FileSetBandwidthTotals(float outkB, float inkB)   = 0;
 /****************************************/
 	/* Message Items */
 virtual	int MessageSend(MessageInfo &info)                 = 0;
-virtual int MessageDelete(std::string id)                  = 0;
-virtual int MessageRead(std::string id)                    = 0;
+virtual int MessageDelete(std::string mid)                 = 0;
+virtual int MessageRead(std::string mid)                   = 0;
 
 	/* Channel Items */
 virtual	int ChannelCreateNew(ChannelInfo &info)            = 0;

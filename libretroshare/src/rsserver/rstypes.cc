@@ -35,6 +35,7 @@
 #include <iomanip>
 
 
+#if 0
 /****************************************/
 RsCertId::RsCertId()
 {
@@ -114,6 +115,8 @@ std::ostream &operator<<(std::ostream &out, const RsCertId &id)
 	out << str.str();
 	return out;
 }
+
+#endif
 
 
 /****************************************/

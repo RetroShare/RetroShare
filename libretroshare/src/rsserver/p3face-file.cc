@@ -29,6 +29,8 @@
 #include "rsserver/p3face.h"
 #include "util/rsdir.h"
 
+#include "serialiser/rsconfigitems.h"
+
 #include <iostream>
 #include <sstream>
 
@@ -82,31 +84,48 @@ int     RsServer::UpdateAllTransfers()
 	std::list<FileTransferInfo> &transfers = iface.mTransferList;
 	transfers.clear();
 
-	std::list<FileTransferItem *> nTransList = server -> getTransfers();
-	std::list<FileTransferItem *>::iterator it;
+	std::list<RsFileTransfer *> nTransList = server -> getTransfers();
+	std::list<RsFileTransfer *>::iterator it;
 
 	for(it = nTransList.begin(); it != nTransList.end(); it++)
 	{
 		FileTransferInfo ti;
-		if ((*it) -> p)
+
+                /* set it up */
+		certsign sign;
+		cert *c = NULL;
+		if (!convert_to_certsign((*it)->PeerId(), sign))
 		{
-			ti.source = (*it) -> p -> Name();
+			std::cerr << "CERTSIGN error!" << std::endl;
+		}
+
+		/* look it up */
+		c = getSSLRoot() -> findcertsign(sign);
+		if (c == NULL)
+		{
+			std::cerr << "CERTSIGN error! 2" << std::endl;
+			ti.source = "Unknown";
 		}
 		else
 		{
-			ti.source = "Unknown";
+			ti.source = c -> Name();
 		}
 	
-		ti.id = intGetCertId((cert *) (*it) -> p);
-		ti.fname = (*it) -> name;
-		ti.hash  = (*it) -> hash;
-		ti.path  = (*it) -> path;
-		ti.size  = (*it) -> size;
+		ti.id = (*it)->PeerId();
+		ti.peerIds = (*it) -> allPeerIds.ids;
+
+		ti.fname = (*it) -> file.name;
+		ti.hash  = (*it) -> file.hash;
+		ti.path  = (*it) -> file.path;
+		ti.size  = (*it) -> file.filesize;
+
 		ti.transfered = (*it) -> transferred;
 		/* other ones!!! */
-		ti.tfRate = (*it) -> crate;
+		ti.tfRate = (*it) -> crate / 1000;
+		ti.download = (*it) -> in;
 		ti.downloadStatus = (*it) -> state;
 		transfers.push_back(ti);
+
 	}
 
         iface.setChanged(RsIface::Transfer);

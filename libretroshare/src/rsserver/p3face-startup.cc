@@ -27,11 +27,14 @@
 #include <unistd.h>
 //#include <getopt.h>
 
-#include "dbase/filedex.h"
 #include "server/filedexserver.h"
 #include "pqi/pqipersongrp.h"
 #include "pqi/pqiloopback.h"
 #include "util/rsdir.h"
+
+#include "services/p3disc.h"
+#include "services/p3msgservice.h"
+#include "services/p3chatservice.h"
 
 #include <list>
 #include <string>
@@ -455,9 +458,6 @@ int RsServer::StartupRetroShare(RsInit *config)
 			/* sslroot does further checks */
         		sslr -> loadInitialTrustedPeer(config->load_trustedpeer_file);
 		}
-
-		server->loadWelcomeMsg();
-
 	}
 
 	unsigned long flags = 0;
@@ -476,10 +476,11 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 	// create loopback device, and add to pqisslgrp.
 
+	std::string ownPeerId = sslr->getOwnCert()->PeerId();
 	SearchModule *mod = new SearchModule();
-	pqiloopback *ploop = new pqiloopback();
+	pqiloopback *ploop = new pqiloopback(ownPeerId);
 
-	mod -> smi = 1;
+	mod -> peerid = ownPeerId;
 	mod -> pqi = ploop;
 	mod -> sp = secpolicy_create();
 
@@ -491,7 +492,21 @@ int RsServer::StartupRetroShare(RsInit *config)
 
         server->load_config();
 
-	ad = pqih->getP3Disc();
+	/* create Services */
+	ad = new p3disc(sslr);
+	msgSrv = new p3MsgService();
+	chatSrv = new p3ChatService();
+
+	pqih -> addService(ad);
+	pqih -> addService(msgSrv);
+	pqih -> addService(chatSrv);
+
+	/* put a welcome message in! */
+	if (config->firsttime_run)
+	{
+		msgSrv->loadWelcomeMsg();
+	}
+
 
 	// load up the help page
 	std::string helppage = config->basedir + config->dirSeperator;

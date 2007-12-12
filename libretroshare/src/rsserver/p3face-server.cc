@@ -45,25 +45,18 @@ RsServer::~RsServer()
 	  ----> MUST BE LOCKED! 
          */
 
-cert   *RsServer::intFindCert(RsCertId &id)
+cert   *RsServer::intFindCert(RsCertId id)
 {
 	certsign cs;
-	for(int i = 0; i < RSCERTIDLEN; i++)
-	{
-		cs.data[i] = id.data[i];
-	}
+	convert_to_certsign(id, cs);
 	return sslr -> findcertsign(cs);
 }
 
-RsChanId RsServer::intGetCertId(cert *c)
+RsCertId RsServer::intGetCertId(cert *c)
 {
 	certsign cs;
-	RsChanId id;
 	sslr -> getcertsign(c, cs);
-	for(int i = 0; i < RSCERTIDLEN; i++)
-	{
-		id.data[i] = cs.data[i];
-	}
+	RsCertId id = convert_to_str(cs);
 	return id;
 }
 
