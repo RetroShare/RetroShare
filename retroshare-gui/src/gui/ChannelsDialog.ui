@@ -500,6 +500,9 @@
   <property name="contextMenuPolicy" >
    <enum>Qt::DefaultContextMenu</enum>
   </property>
+  <property name="windowIcon" >
+   <iconset resource="images.qrc" >:/images/channels.png</iconset>
+  </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >
     <number>1</number>
@@ -654,6 +657,8 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="images.qrc" />
+ </resources>
  <connections/>
 </ui>

@@ -33,7 +33,6 @@
 #include "SearchDialog.h"
 #include "TransfersDialog.h"
 #include "MessagesDialog.h"
-#include "ChannelsDialog.h"
 #include "ChatDialog.h"
 #include "SharedFilesDialog.h"
 #include "StatisticDialog.h"
@@ -47,6 +46,9 @@
 #include "toplevel.h"
 
 #include "Preferences/ConfirmQuitDialog.h"
+
+#include "channels/channelsDialog.h"
+
 
 #include "ui_MainWindow.h"
 
@@ -88,7 +90,7 @@ public:
     TransfersDialog   *transfersDialog;
     ChatDialog        *chatDialog;
     MessagesDialog    *messagesDialog;
-    ChannelsDialog    *channelsDialog;
+    ChannelsDialog   *channelsDialog;
     SharedFilesDialog *sharedfilesDialog;
     //GroupsDialog      *groupsDialog;
     //StatisticDialog   *statisticDialog;

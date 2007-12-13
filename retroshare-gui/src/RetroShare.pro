@@ -63,7 +63,6 @@ HEADERS +=  rshare.h \
             gui/SearchDialog.h \
             gui/SharedFilesDialog.h \
             gui/StatisticDialog.h \
-            gui/ChannelsDialog.h \
             gui/HelpDialog.h \
             gui/LogoBar.h \
             lang/languagesupport.h \
@@ -127,7 +126,13 @@ HEADERS +=  rshare.h \
             games/qbackgammon/bgwindow.h \
             games/qbackgammon/bgwidget.h \
             games/qbackgammon/bgboard.h \
-            games/qbackgammon/optionsdlg.h
+            games/qbackgammon/optionsdlg.h \
+            gui/channels/channelsDialog.h \
+            gui/channels/channelBrowserDialog.h \
+            gui/channels/channelStatsDialog.h \
+            gui/channels/myChannelsDialog.h \
+            gui/channels/mySubscriptionsDialog.h
+
 
 FORMS +=    gui/ChatDialog.ui \
             gui/StartDialog.ui \
@@ -142,7 +147,6 @@ FORMS +=    gui/ChatDialog.ui \
             gui/SearchDialog.ui \
             gui/SharedFilesDialog.ui \
             gui/StatisticDialog.ui \
-            gui/ChannelsDialog.ui \
             gui/MessagesDialog.ui \
             gui/HelpDialog.ui \
             gui/bwgraph/bwgraph.ui \
@@ -173,7 +177,12 @@ FORMS +=    gui/ChatDialog.ui \
             gui/Settings/NetworkPage.ui \
             gui/authdlg/AuthorizationDialog.ui \
             gui/advsearch/advancedsearchdialog.ui \
-            gui/advsearch/expressionwidget.ui
+            gui/advsearch/expressionwidget.ui \
+            gui/channels/ChannelsDialog.ui \
+            gui/channels/ChannelBrowserDialog.ui \
+            gui/channels/ChannelStatsDialog.ui \
+            gui/channels/MyChannelsDialog.ui \
+            gui/channels/MySubscriptionsDialog.ui
 
 SOURCES += main.cpp \
             rshare.cpp \
@@ -197,7 +206,6 @@ SOURCES += main.cpp \
             gui/SearchDialog.cpp \
             gui/SharedFilesDialog.cpp \
             gui/StatisticDialog.cpp \
-            gui/ChannelsDialog.cpp \
             gui/MessagesDialog.cpp \
             gui/HelpDialog.cpp \
             gui/LogoBar.cpp \
@@ -252,7 +260,12 @@ SOURCES += main.cpp \
             games/qbackgammon/bgwindow.cpp \
             games/qbackgammon/bgwidget.cpp \
             games/qbackgammon/bgboard.cpp \
-            games/qbackgammon/optionsdlg.cpp
+            games/qbackgammon/optionsdlg.cpp \
+            gui/channels/channelsDialog.cpp \
+            gui/channels/channelBrowserDialog.cpp \
+            gui/channels/channelStatsDialog.cpp \
+            gui/channels/myChannelsDialog.cpp \
+            gui/channels/mySubscriptionsDialog.cpp
             
 RESOURCES += gui/images.qrc lang/lang.qrc games/qcheckers/qcheckers.qrc apps/smplayer/icons.qrc
 TRANSLATIONS +=  \

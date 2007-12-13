@@ -38,8 +38,6 @@
 #include "global.h"
 #include "translator.h"
 
-
-
 #include "Preferences/PreferencesWindow.h"
 #include "Settings/gsettingswin.h"
 #include "util/rsversion.h"
@@ -58,7 +56,7 @@
 #define IMAGE_SEARCH    	    ":/images/filefind.png"
 #define IMAGE_TRANSFERS      	":/images/ktorrent.png"
 #define IMAGE_FILES   	        ":/images/folder_green.png"
-#define IMAGE_CHANNELS       	":/images/konsole.png"
+#define IMAGE_CHANNELS       	":/images/channels.png"
 #define IMAGE_PREFERENCES       ":/images/settings16.png"
 #define IMAGE_CHAT          	":/images/chats_24x24.png"
 #define IMAGE_RETROSHARE        ":/images/rstray3.png"
