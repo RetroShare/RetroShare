@@ -24,8 +24,34 @@
 ChannelsDialog::ChannelsDialog(QWidget * parent) : MainPage (parent) 
 {
     setupUi(this);
+    QGridLayout* grid = new QGridLayout(this);
 
+    // setup the tabs
+    channelPages = new QTabWidget(this);
+    
     // add the tabs to the channels dialog 
+    channelBrowserDialog = new ChannelBrowserDialog();
+    channelBrowserDialog->setObjectName(QString::fromUtf8("browserTab"));
+    channelPages->addTab(channelBrowserDialog,
+ 	   		 QIcon(QString::fromUtf8(":/images/channels.png")),
+     			 tr("Browse Channels"));
+     
+    mySubscriptionsDialog = new MySubscriptionsDialog();
+    mySubscriptionsDialog->setObjectName(QString::fromUtf8("mySubsTab"));
+    channelPages->addTab(mySubscriptionsDialog,
+ 	   		 QIcon(QString::fromUtf8(":/images/folder-inbox.png")),
+     			 tr("My Subscriptions"));
+
+     myChannelsDialog = new MyChannelsDialog();
+     myChannelsDialog->setObjectName(QString::fromUtf8("myChannelsTab"));
+     channelPages->addTab(myChannelsDialog,
+                        QIcon(QString::fromUtf8(":/images/folder-outbox.png")),
+     			tr("My Channels"));
+    
+    grid->addWidget(channelPages, 0, 0, 1, 1);
+
+    channelPages->setCurrentIndex(0);
+
 }
 
 

@@ -21,5 +21,19 @@
 #ifndef _ChannelStatsDialog_h_
 #define _ChannelStatsDialog_h_
 
+#include <QDialog>
+#include "ui_ChannelStatsDialog.h"
+
+class ChannelStatsDialog : public QDialog,
+public Ui::ChannelStatsDialog 
+{
+    Q_OBJECT
+        
+public:
+    ChannelStatsDialog(QWidget * parent = 0 );
+    
+
+};
+
 
 #endif

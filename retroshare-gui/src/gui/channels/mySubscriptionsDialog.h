@@ -18,8 +18,22 @@
 *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
 *  Boston, MA  02110-1301, USA.
 ****************************************************************/
-#ifndef _MyChannelsDialog_h_
-#define _MyChannelsDialog_h_
+#ifndef _MySubscriptionsDialog_h_
+#define _MySubscriptionsDialog_h_
+
+#include <QDialog>
+#include "ui_MySubscriptionsDialog.h"
+
+class MySubscriptionsDialog : public QDialog,
+public Ui::MySubscriptionsDialog 
+{
+    Q_OBJECT
+        
+public:
+    MySubscriptionsDialog(QWidget * parent = 0 );
+    
+
+};
 
 
 #endif

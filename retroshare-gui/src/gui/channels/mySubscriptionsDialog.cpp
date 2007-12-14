@@ -19,3 +19,11 @@
 *  Boston, MA  02110-1301, USA.
 ****************************************************************/
 
+#include "mySubscriptionsDialog.h"
+
+MySubscriptionsDialog::MySubscriptionsDialog(QWidget * parent) : QDialog
+(parent) 
+{
+    setupUi(this);
+    
+}

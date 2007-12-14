@@ -237,6 +237,14 @@ p, li { white-space: pre-wrap; }
          <iconset resource="../images.qrc" >:/images/rstray3.png</iconset>
         </property>
        </item>
+       <item>
+        <property name="text" >
+         <string>The Open Source Channel</string>
+        </property>
+        <property name="icon" >
+         <iconset resource="../images.qrc" >:/images/FileTypeArchive.png</iconset>
+        </property>
+       </item>
       </widget>
      </item>
      <item>

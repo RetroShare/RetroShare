@@ -15,45 +15,6 @@
   <property name="windowIcon" >
    <iconset resource="../images.qrc" >:/images/channels.png</iconset>
   </property>
-  <layout class="QGridLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
-   <item row="0" column="0" >
-    <widget class="QTabWidget" name="channelPages" >
-     <property name="currentIndex" >
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="browserTab" >
-      <attribute name="title" >
-       <string>Browse Channels</string>
-      </attribute>
-      <attribute name="icon" >
-       <iconset resource="../images.qrc" >:/images/channels.png</iconset>
-      </attribute>
-     </widget>
-     <widget class="QWidget" name="subscriptionsTab" >
-      <attribute name="title" >
-       <string>My Subscriptions</string>
-      </attribute>
-      <attribute name="icon" >
-       <iconset resource="../images.qrc" >:/images/folder-inbox.png</iconset>
-      </attribute>
-     </widget>
-     <widget class="QWidget" name="managerTab" >
-      <attribute name="title" >
-       <string>My Channels</string>
-      </attribute>
-      <attribute name="icon" >
-       <iconset resource="../images.qrc" >:/images/folder-outbox.png</iconset>
-      </attribute>
-     </widget>
-    </widget>
-   </item>
-  </layout>
  </widget>
  <resources>
   <include location="../images.qrc" />

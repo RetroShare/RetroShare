@@ -22,5 +22,19 @@
 #define _MyChannelsDialog_h_
 
 
+#include <QDialog>
+#include "ui_MyChannelsDialog.h"
+
+class MyChannelsDialog : public QDialog,
+public Ui::MyChannelsDialog 
+{
+    Q_OBJECT
+        
+public:
+    MyChannelsDialog(QWidget * parent = 0 );
+    
+
+};
+
 #endif
 

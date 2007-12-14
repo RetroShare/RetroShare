@@ -24,7 +24,12 @@
 #include "../mainpage.h"
 #include "ui_ChannelsDialog.h"
 
+#include "channelBrowserDialog.h"
+#include "myChannelsDialog.h"
+#include "mySubscriptionsDialog.h"
+
 #include <QFileDialog>
+#include <QTabWidget>
 
 class QTreeWidgetItem;
 
@@ -73,6 +78,12 @@ private:
   
     QAction* getRecAct;
     QAction* getAllRecAct;
+
+    /** the module's pages */
+    QTabWidget *            channelPages;
+    ChannelBrowserDialog *  channelBrowserDialog;
+    MyChannelsDialog *      myChannelsDialog;
+    MySubscriptionsDialog * mySubscriptionsDialog;
 };
 
 

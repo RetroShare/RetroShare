@@ -157,12 +157,12 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(messagesDialog = new MessagesDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
 
-#ifdef RS_RELEASE_VERSION    
-    channelsDialog = NULL;
-#else
+//#ifdef RS_RELEASE_VERSION    
+//    channelsDialog = NULL;
+//#else
     ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
-#endif
+//#endif
 
     ui.stackPages->add(new HelpDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_ABOUT), tr("About/Help"), grp));
