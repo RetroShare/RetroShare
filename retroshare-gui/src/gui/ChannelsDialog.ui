@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>555</width>
-    <height>310</height>
+    <width>672</width>
+    <height>439</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -503,106 +503,46 @@
   <property name="windowIcon" >
    <iconset resource="images.qrc" >:/images/channels.png</iconset>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QGridLayout" >
    <property name="margin" >
-    <number>1</number>
+    <number>0</number>
    </property>
    <property name="spacing" >
-    <number>1</number>
+    <number>0</number>
    </property>
-   <item>
-    <widget class="QSplitter" name="splitter_2" >
+   <item row="0" column="0" >
+    <widget class="QSplitter" name="splitter_4" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="layoutWidget" >
-      <layout class="QGridLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>0</number>
-       </property>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="label" >
-         <property name="text" >
-          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:10pt; font-weight:600;">Messages&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" >
-        <widget class="QTreeWidget" name="msgWidget" >
-         <property name="contextMenuPolicy" >
-          <enum>Qt::CustomContextMenu</enum>
-         </property>
-         <property name="sortingEnabled" >
-          <bool>true</bool>
-         </property>
-         <property name="columnCount" >
-          <number>10</number>
-         </property>
-         <column>
-          <property name="text" >
-           <string>Date</string>
-          </property>
-         </column>
-         <column>
-          <property name="text" >
-           <string>Rank</string>
-          </property>
-         </column>
-         <column>
-          <property name="text" >
-           <string>From</string>
-          </property>
-         </column>
-         <column>
-          <property name="text" >
-           <string>Title</string>
-          </property>
-         </column>
-         <column>
-          <property name="text" >
-           <string>Msg</string>
-          </property>
-         </column>
-         <column>
-          <property name="text" >
-           <string>Count</string>
-          </property>
-         </column>
-         <column>
-          <property name="text" >
-           <string>Size</string>
-          </property>
-         </column>
-         <column>
-          <property name="text" >
-           <string>Type</string>
-          </property>
-         </column>
-         <column>
-          <property name="text" >
-           <string>Rs[Cert/Chan]IdSize</string>
-          </property>
-         </column>
-         <column>
-          <property name="text" >
-           <string>RsMsgId</string>
-          </property>
-         </column>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QSplitter" name="splitter" >
-      <property name="orientation" >
-       <enum>Qt::Vertical</enum>
+     <widget class="QToolBox" name="toolBox" >
+      <property name="maximumSize" >
+       <size>
+        <width>160</width>
+        <height>16777215</height>
+       </size>
       </property>
-      <widget class="QWidget" name="layoutWidget" >
+      <property name="currentIndex" >
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="page" >
+       <property name="geometry" >
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>160</width>
+         <height>380</height>
+        </rect>
+       </property>
+       <attribute name="label" >
+        <string>Channels</string>
+       </attribute>
+       <attribute name="icon" >
+        <iconset resource="images.qrc" >:/images/channels.png</iconset>
+       </attribute>
+       <attribute name="toolTip" >
+        <string>Channels</string>
+       </attribute>
        <layout class="QGridLayout" >
         <property name="margin" >
          <number>0</number>
@@ -611,46 +551,178 @@ p, li { white-space: pre-wrap; }
          <number>0</number>
         </property>
         <item row="0" column="0" >
-         <widget class="QLabel" name="label_3" >
-          <property name="text" >
-           <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:10pt; font-weight:600;">Message Text&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" >
-         <widget class="QTextBrowser" name="msgText" />
+         <widget class="QListWidget" name="channelslistWidget" />
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="layoutWidget" >
-       <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
+      <widget class="QWidget" name="page_2" >
+       <property name="geometry" >
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>160</width>
+         <height>380</height>
+        </rect>
+       </property>
+       <attribute name="label" >
+        <string>Page 2</string>
+       </attribute>
+      </widget>
+     </widget>
+     <widget class="QSplitter" name="splitter_3" >
+      <property name="orientation" >
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QSplitter" name="splitter_2" >
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <widget class="QWidget" name="layoutWidget" >
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" >
+          <widget class="QLabel" name="label" >
+           <property name="text" >
+            <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:10pt; font-weight:600;">Messages&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QTreeWidget" name="msgWidget" >
+           <property name="sizePolicy" >
+            <sizepolicy>
+             <hsizetype>7</hsizetype>
+             <vsizetype>3</vsizetype>
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="contextMenuPolicy" >
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
+           <property name="sortingEnabled" >
+            <bool>true</bool>
+           </property>
+           <property name="columnCount" >
+            <number>10</number>
+           </property>
+           <column>
+            <property name="text" >
+             <string>Date</string>
+            </property>
+           </column>
+           <column>
+            <property name="text" >
+             <string>Rank</string>
+            </property>
+           </column>
+           <column>
+            <property name="text" >
+             <string>From</string>
+            </property>
+           </column>
+           <column>
+            <property name="text" >
+             <string>Title</string>
+            </property>
+           </column>
+           <column>
+            <property name="text" >
+             <string>Msg</string>
+            </property>
+           </column>
+           <column>
+            <property name="text" >
+             <string>Count</string>
+            </property>
+           </column>
+           <column>
+            <property name="text" >
+             <string>Size</string>
+            </property>
+           </column>
+           <column>
+            <property name="text" >
+             <string>Type</string>
+            </property>
+           </column>
+           <column>
+            <property name="text" >
+             <string>Rs[Cert/Chan]IdSize</string>
+            </property>
+           </column>
+           <column>
+            <property name="text" >
+             <string>RsMsgId</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QSplitter" name="splitter" >
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
         </property>
-        <property name="spacing" >
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QLabel" name="label_2" >
-          <property name="text" >
-           <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+        <widget class="QWidget" name="layoutWidget" >
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>0</number>
+          </property>
+          <property name="spacing" >
+           <number>0</number>
+          </property>
+          <item row="0" column="0" >
+           <widget class="QLabel" name="label_3" >
+            <property name="text" >
+             <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:10pt; font-weight:600;">Message Text&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QTextBrowser" name="msgText" />
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="layoutWidget" >
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>0</number>
+          </property>
+          <property name="spacing" >
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="label_2" >
+            <property name="text" >
+             <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
 &lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:10pt; font-weight:600;">Recommended Files&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QTreeWidget" name="msgList" >
-          <property name="contextMenuPolicy" >
-           <enum>Qt::CustomContextMenu</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTreeWidget" name="msgList" >
+            <property name="contextMenuPolicy" >
+             <enum>Qt::CustomContextMenu</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
       </widget>
      </widget>
     </widget>
