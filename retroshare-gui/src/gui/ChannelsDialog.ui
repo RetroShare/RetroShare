@@ -522,6 +522,13 @@
         <height>16777215</height>
        </size>
       </property>
+      <property name="font" >
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="currentIndex" >
        <number>0</number>
       </property>
@@ -531,7 +538,7 @@
          <x>0</x>
          <y>0</y>
          <width>160</width>
-         <height>380</height>
+         <height>377</height>
         </rect>
        </property>
        <attribute name="label" >
@@ -561,7 +568,7 @@
          <x>0</x>
          <y>0</y>
          <width>160</width>
-         <height>380</height>
+         <height>377</height>
         </rect>
        </property>
        <attribute name="label" >
