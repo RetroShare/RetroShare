@@ -537,8 +537,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>160</width>
-         <height>337</height>
+         <width>98</width>
+         <height>62</height>
         </rect>
        </property>
        <attribute name="label" >
@@ -651,8 +651,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>160</width>
-         <height>337</height>
+         <width>98</width>
+         <height>62</height>
         </rect>
        </property>
        <attribute name="label" >
@@ -691,7 +691,7 @@
         </rect>
        </property>
        <attribute name="label" >
-        <string>Subscripted</string>
+        <string>My Subscriptions</string>
        </attribute>
        <layout class="QGridLayout" >
         <property name="margin" >
