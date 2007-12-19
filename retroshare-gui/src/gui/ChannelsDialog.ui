@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>672</width>
-    <height>439</height>
+    <height>448</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -505,10 +505,10 @@
   </property>
   <layout class="QGridLayout" >
    <property name="margin" >
-    <number>0</number>
+    <number>9</number>
    </property>
    <property name="spacing" >
-    <number>0</number>
+    <number>6</number>
    </property>
    <item row="0" column="0" >
     <widget class="QSplitter" name="splitter_4" >
@@ -530,7 +530,7 @@
        </font>
       </property>
       <property name="currentIndex" >
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="page" >
        <property name="geometry" >
@@ -538,7 +538,7 @@
          <x>0</x>
          <y>0</y>
          <width>160</width>
-         <height>377</height>
+         <height>337</height>
         </rect>
        </property>
        <attribute name="label" >
@@ -558,7 +558,91 @@
          <number>0</number>
         </property>
         <item row="0" column="0" >
-         <widget class="QListWidget" name="channelslistWidget" />
+         <widget class="QTreeWidget" name="treeWidget" >
+          <property name="verticalScrollBarPolicy" >
+           <enum>Qt::ScrollBarAsNeeded</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy" >
+           <enum>Qt::ScrollBarAsNeeded</enum>
+          </property>
+          <property name="verticalScrollMode" >
+           <enum>QAbstractItemView::ScrollPerItem</enum>
+          </property>
+          <column>
+           <property name="text" >
+            <string/>
+           </property>
+          </column>
+          <item>
+           <property name="text" >
+            <string>Indy</string>
+           </property>
+           <property name="icon" >
+            <iconset resource="images.qrc" >:/images/FileTypeAudio.png</iconset>
+           </property>
+           <item>
+            <property name="text" >
+             <string>Zoogie on Drums</string>
+            </property>
+            <property name="icon" >
+             <iconset resource="images.qrc" >:/images/graph-line.png</iconset>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Darkman Records</string>
+            </property>
+            <property name="icon" >
+             <iconset resource="images.qrc" >:/images/amsn.png</iconset>
+            </property>
+           </item>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Video</string>
+           </property>
+           <property name="icon" >
+            <iconset resource="images.qrc" >:/images/FileTypeVideo.png</iconset>
+           </property>
+           <item>
+            <property name="text" >
+             <string>Interviews with a Coder</string>
+            </property>
+            <property name="icon" >
+             <iconset resource="images.qrc" >:/images/daway.png</iconset>
+            </property>
+           </item>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Miscellaneous</string>
+           </property>
+           <property name="icon" >
+            <iconset resource="images.qrc" >:/images/informations_24x24.png</iconset>
+           </property>
+           <item>
+            <property name="text" >
+             <string>Test Channel 1</string>
+            </property>
+           </item>
+          </item>
+          <item>
+           <property name="text" >
+            <string>RetroShare</string>
+           </property>
+           <property name="icon" >
+            <iconset resource="images.qrc" >:/images/rstray3.png</iconset>
+           </property>
+           <item>
+            <property name="text" >
+             <string>Retroshare's Demo Channel</string>
+            </property>
+            <property name="icon" >
+             <iconset resource="images.qrc" >:/images/rstray3.png</iconset>
+            </property>
+           </item>
+          </item>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -568,12 +652,76 @@
          <x>0</x>
          <y>0</y>
          <width>160</width>
-         <height>377</height>
+         <height>337</height>
         </rect>
        </property>
        <attribute name="label" >
-        <string>Page 2</string>
+        <string>My Channels</string>
        </attribute>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item row="0" column="0" >
+         <widget class="QListWidget" name="listWidget" >
+          <property name="font" >
+           <font>
+            <pointsize>8</pointsize>
+           </font>
+          </property>
+          <item>
+           <property name="text" >
+            <string>Retroshare's Demo Channel</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="page_3" >
+       <property name="geometry" >
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>160</width>
+         <height>337</height>
+        </rect>
+       </property>
+       <attribute name="label" >
+        <string>Subscripted</string>
+       </attribute>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item row="0" column="0" >
+         <widget class="QListWidget" name="listWidget_2" >
+          <property name="font" >
+           <font>
+            <pointsize>8</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <item>
+           <property name="text" >
+            <string>Retroshare's Demo Channel</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Opensource Channel</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
      <widget class="QSplitter" name="splitter_3" >
