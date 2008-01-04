@@ -4,6 +4,8 @@
         <file>help/licence.html</file>
         <file>help/thanks.html</file>
         <file>images/channels.png</file>
+        <file>images/channeldelete.png</file>
+        <file>images/channelsubscribe.png</file>
         <file>images/FileTypeAny.png</file>
         <file>images/FileTypeArchive.png</file>
         <file>images/FileTypeAudio.png</file>

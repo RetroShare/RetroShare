@@ -21,7 +21,8 @@
 #ifndef _ChannelBrowserDialog_h_
 #define _ChannelBrowserDialog_h_
 
-#include <QDialog>
+#include <QtGui>
+
 #include "ui_ChannelBrowserDialog.h"
 
 class ChannelBrowserDialog : public QDialog,
@@ -32,7 +33,38 @@ public Ui::ChannelBrowserDialog
 public:
     ChannelBrowserDialog(QWidget * parent = 0 );
     
+private slots:
+    void channelTreeWidgetCustumPopupMenu( QPoint point );
 
+private:
+    /* constants for the image files */
+    static const QString IMAGE_QUICKSUBSCRIBE;
+    static const QString IMAGE_QUICKUNSUBSCRIBE;
+    static const QString IMAGE_MANAGE_SUB;
+    static const QString IMAGE_MANAGE_CHANNEL;
+    static const QString IMAGE_QUICKDELETE;
+ 
+    QMenu * browserContextMenu;
+    
+    // actions for the context menu
+    /** context menu: allows one-click subscription to a channel */
+    QAction* quickSubscribeAct;
+    /** context menu: allows one-click removal of channel subscription*/
+    QAction* quickUnsubscribeAct;
+    /** context menu: switches to the my subscriptions page with this
+        channel selected */
+    QAction* subscribeToChannelAct;
+    /** context menu: switches to my channels page with this channel
+        selected */
+    QAction* editChannelAct;
+    /** conetxt menu: one-click delete (with confirmation pop-up) */
+    QAction* quickDeleteAct;
+
+    void quickSubscribe();
+    void quickUnsubscribe();
+    void subscribeToChannel();
+    void manageChannel();
+    void quickDelete();
 };
 
 
