@@ -17,31 +17,98 @@ SetCompressor LZMA
 ; Modern interface settings
 !include "MUI.nsh"
 
+;Interface Settings
 !define MUI_ABORTWARNING
-!define MUI_COMPONENTSPAGE_SMALLDESC
-!define MUI_FINISHPAGE_RUN "$INSTDIR\RetroShare.exe"
+;!define MUI_HEADERIMAGE
+;!define MUI_HEADERIMAGE_BITMAP "retroshare.bmp" ; optional
 
+# MUI defines
+!define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\orange-install.ico"
+!define MUI_FINISHPAGE_NOAUTOCLOSE
+!define MUI_LICENSEPAGE_RADIOBUTTONS
+!define MUI_COMPONENTSPAGE_SMALLDESC
+!define MUI_FINISHPAGE_LINK "Visit the RetroShare forum for the latest news and support"
+!define MUI_FINISHPAGE_LINK_LOCATION "http://sourceforge.net/forum/forum.php?forum_id=618174"
+!define MUI_FINISHPAGE_RUN "$INSTDIR\RetroShare.exe"
+!define MUI_FINISHPAGE_SHOWREADME $INSTDIR\changelog.txt
+!define MUI_FINISHPAGE_SHOWREADME_TEXT changelog.txt
+!define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
+!define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\orange-uninstall.ico"
+!define MUI_UNFINISHPAGE_NOAUTOCLOSE
+!define MUI_LANGDLL_REGISTRY_ROOT HKLM
+!define MUI_LANGDLL_REGISTRY_KEY ${REGKEY}
+!define MUI_LANGDLL_REGISTRY_VALUENAME InstallerLanguage
+
+
+; Defines the un-/installer logo of RetroShare
+!insertmacro MUI_DEFAULT MUI_PAGE_WELCOME_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\orange.bmp"
+!insertmacro MUI_DEFAULT MUI_UNWELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\orange-uninstall.bmp"
+
+; Set languages (first is default language)
+!insertmacro MUI_RESERVEFILE_LANGDLL
+ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
+
+;--------------------------------
+;Configuration
+
+
+  ;!insertmacro MUI_RESERVEFILE_SPECIALBITMAP
+ 
+  LicenseLangString myLicenseData 1033 "license\license.txt"
+  LicenseLangString myLicenseData 1031 "license\license-GER.txt"
+
+  LicenseData $(myLicenseData)
+
+# Installer pages
 !insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_LICENSE "$(myLicenseData)"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
-
 !insertmacro MUI_PAGE_INSTFILES
-
 !insertmacro MUI_PAGE_FINISH
-
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
 
-; Set languages (first is default language)
-!insertmacro MUI_LANGUAGE "English"
-!insertmacro MUI_RESERVEFILE_LANGDLL
+# Installer languages
+!insertmacro MUI_LANGUAGE English
+!insertmacro MUI_LANGUAGE German
+
+  ;Component-selection page
+    ;Titles
+    
+    LangString sec_main ${LANG_ENGLISH} "Program Files"
+    LangString sec_data ${LANG_ENGLISH} "Program Skins"
+    LangString sec_shortcuts ${LANG_ENGLISH} "Shortcuts"
+    LangString sec_link ${LANG_ENGLISH} "File Association"
+    LangString sec_autostart ${LANG_ENGLISH} "Auto Startup"
+    LangString DESC_sec_main ${LANG_ENGLISH} "Installs the RetroShare program files."
+    LangString DESC_sec_data ${LANG_ENGLISH} "Installs RetroShare Skins"
+    LangString DESC_sec_shortcuts ${LANG_ENGLISH} "Create RetroShare shortcut icons."
+    LangString DESC_sec_link ${LANG_ENGLISH} "Associate RetroShare with .pqi file extension"
+    LangString DESC_sec_autostart ${LANG_ENGLISH} "Auto-Run and Login at Startup"
+    LangString LANGUAGEID ${LANG_ENGLISH} "1033"
+
+    
+    LangString sec_main ${LANG_GERMAN} "Programmdateien"
+    LangString sec_data ${LANG_GERMAN} "Programm Skins"
+    LangString sec_shortcuts ${LANG_GERMAN} "Shortcuts"
+    LangString sec_link ${LANG_GERMAN} ".pqi links annehmen"
+    LangString sec_autostart ${LANG_GERMAN} "AutoStart bei SystemStart"
+	LangString DESC_sec_main ${LANG_GERMAN} "Installiert die erforderlichen Programmdateien."
+	LangString DESC_sec_data ${LANG_GERMAN} "Installiert RetroShare Skins"
+    LangString DESC_sec_shortcuts ${LANG_GERMAN} "Erstellt eine RetroShare Verknüpfung als Desktop und/oder Schnellstart Icon."
+    LangString DESC_sec_link ${LANG_GERMAN} "RetroShare erlauben .pqi dateien anzunehmen"
+    LangString DESC_sec_autostart ${LANG_GERMAN} "AutoStart und Login bei Windows SystemStart"
+    LangString LANGUAGEID ${LANG_GERMAN} "1031"
+
+
 
 LangString TEXT_FLocations_TITLE ${LANG_ENGLISH} "Choose Default Save Locations"
 LangString TEXT_FLocations_SUBTITLE ${LANG_ENGLISH} "Choose the folders to save your downloads to."
 
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
 
-Section "RetroShare Core" Section1
+Section $(sec_main) sec_main
 
   ; Set Section properties
   SetOverwrite on
@@ -54,9 +121,11 @@ Section "RetroShare Core" Section1
   File /r "release\*"
   
 
+  
+
 SectionEnd
 
-Section "RetroShare Data" Section1b
+Section  $(sec_data) sec_data
 
   ; Set Section properties
   SetOverwrite on
@@ -76,7 +145,7 @@ Section "RetroShare Data" Section1b
 	
 SectionEnd
 
-Section "File Association" section2
+Section $(sec_link) sec_link
   ; Delete any existing keys
 
 
@@ -89,7 +158,8 @@ Section "File Association" section2
 
 SectionEnd
 
-Section "Start Menu Shortcuts" section3
+SectionGroup $(sec_shortcuts) sec_shortcuts
+Section  StartMenu SEC0001
 
   SetOutPath "$INSTDIR"
   CreateDirectory "$SMPROGRAMS\${APPNAME}"
@@ -98,20 +168,22 @@ Section "Start Menu Shortcuts" section3
 
 SectionEnd
 
-Section "Desktop Shortcut" section4
+Section  Desktop SEC0002
+  
 
   CreateShortCut "$DESKTOP\${APPNAME}.lnk" "$INSTDIR\RetroShare.exe" "" "$INSTDIR\RetroShare.exe" 0
   
 SectionEnd
 
-Section "Quicklaunch Shortcut" section5
+Section  Quicklaunchbar SEC0003
+  
 
   CreateShortCut "$QUICKLAUNCH\${APPNAME}.lnk" "$INSTDIR\RetroShare.exe" "" "$INSTDIR\RetroShare.exe" 0
   
 SectionEnd
-        
+SectionGroupEnd        
 
-Section "Automatic Startup" section6
+Section $(sec_autostart) sec_autostart
 
   WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "RetroRun"   "$INSTDIR\${APPNAME}.exe -a"
   
@@ -127,14 +199,17 @@ Section -FinishSection
 
 SectionEnd
 
-; Modern install component descriptions
+
+
+;--------------------------------
+;Descriptions
+
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-!insertmacro MUI_DESCRIPTION_TEXT ${Section1}  "RetroShare program files"
-!insertmacro MUI_DESCRIPTION_TEXT ${Section1b} "RetroShare data files"
-!insertmacro MUI_DESCRIPTION_TEXT ${Section2} "Associate RetroShare with .pqi file extension"
-!insertmacro MUI_DESCRIPTION_TEXT ${Section3} "Create RetroShare Start Menu shortcuts"
-!insertmacro MUI_DESCRIPTION_TEXT ${Section4} "Create RetroShare Desktop shortcut"	
-!insertmacro MUI_DESCRIPTION_TEXT ${Section5} "Auto-Run and Login at Startup"	
+    !insertmacro MUI_DESCRIPTION_TEXT ${sec_main} $(DESC_sec_main)
+    !insertmacro MUI_DESCRIPTION_TEXT ${sec_data} $(DESC_sec_data)
+    !insertmacro MUI_DESCRIPTION_TEXT ${sec_shortcuts} $(DESC_sec_shortcuts)
+    !insertmacro MUI_DESCRIPTION_TEXT ${sec_link} $(DESC_sec_link)
+	!insertmacro MUI_DESCRIPTION_TEXT ${sec_autostart} $(DESC_sec_autostart)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;Uninstall section
@@ -183,7 +258,13 @@ SectionEnd
 
 Function .onInit
 
-
+    InitPluginsDir
+    Push $R1
+    File /oname=$PLUGINSDIR\spltmp.bmp "${NSISDIR}\Contrib\Graphics\Wizard\orange.bmp"
+    advsplash::show 1200 1000 1000 -1 $PLUGINSDIR\spltmp
+    Pop $R1
+    Pop $R1
+    !insertmacro MUI_LANGDLL_DISPLAY
 
   ;This was written by Vytautas - http://nsis.sourceforge.net/archive/nsisweb.php?page=453
   System::Call 'kernel32::CreateMutexA(i 0, i 0, t "RetroShare") i .r1 ?e' 
