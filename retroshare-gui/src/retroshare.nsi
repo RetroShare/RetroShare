@@ -169,8 +169,11 @@ Section "Uninstall"
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\${APPNAME}\*.*"
 
-  ; Remove desktop icon
+  ; Remove desktop shortcut
   Delete "$DESKTOP\${APPNAME}.lnk"
+  
+  ; Remove Quicklaunch shortcut
+  Delete "$QUICKLAUNCH\${APPNAME}.lnk"
 
   ; Remove directories used
   RMDir "$SMPROGRAMS\${APPNAME}"
