@@ -63,7 +63,7 @@ Section "RetroShare Data" Section1b
 
   ; Set Section Files and Shortcuts
   SetOutPath "$APPDATA\RetroShare\"
-  File /r "data\*"
+  ;File /r "data\*"
   
   ; We're not ready for external skins...
   ; Set Section qss
@@ -98,13 +98,20 @@ Section "Start Menu Shortcuts" section3
 
 SectionEnd
 
-Section "Desktop Shortcuts" section4
+Section "Desktop Shortcut" section4
 
   CreateShortCut "$DESKTOP\${APPNAME}.lnk" "$INSTDIR\RetroShare.exe" "" "$INSTDIR\RetroShare.exe" 0
   
 SectionEnd
 
-Section "Automatic Startup" section5
+Section "Quicklaunch Shortcut" section5
+
+  CreateShortCut "$QUICKLAUNCH\${APPNAME}.lnk" "$INSTDIR\RetroShare.exe" "" "$INSTDIR\RetroShare.exe" 0
+  
+SectionEnd
+        
+
+Section "Automatic Startup" section6
 
   WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "RetroRun"   "$INSTDIR\${APPNAME}.exe -a"
   
