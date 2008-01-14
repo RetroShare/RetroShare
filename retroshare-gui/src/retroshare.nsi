@@ -91,15 +91,15 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
 
     
     LangString sec_main ${LANG_GERMAN} "Programmdateien"
-    LangString sec_data ${LANG_GERMAN} "Programm Skins"
+    LangString sec_data ${LANG_GERMAN} "Skins für das Programm"
     LangString sec_shortcuts ${LANG_GERMAN} "Shortcuts"
-    LangString sec_link ${LANG_GERMAN} ".pqi links annehmen"
-    LangString sec_autostart ${LANG_GERMAN} "AutoStart bei SystemStart"
+    LangString sec_link ${LANG_GERMAN} "Dateiverknüpfungen"
+    LangString sec_autostart ${LANG_GERMAN} "Auto Startup"
 	LangString DESC_sec_main ${LANG_GERMAN} "Installiert die erforderlichen Programmdateien."
 	LangString DESC_sec_data ${LANG_GERMAN} "Installiert RetroShare Skins"
-    LangString DESC_sec_shortcuts ${LANG_GERMAN} "Erstellt eine RetroShare Verknüpfung als Desktop und/oder Schnellstart Icon."
-    LangString DESC_sec_link ${LANG_GERMAN} "RetroShare erlauben .pqi dateien anzunehmen"
-    LangString DESC_sec_autostart ${LANG_GERMAN} "AutoStart und Login bei Windows SystemStart"
+    LangString DESC_sec_shortcuts ${LANG_GERMAN} "Erstellt eine RetroShare Verknüpfung als Start Menu ,Desktop und/oder Schnellstart Icon."
+    LangString DESC_sec_link ${LANG_GERMAN} "RetroShare mit .pqi Dateien verknüpfen"
+    LangString DESC_sec_autostart ${LANG_GERMAN} "Beim Neustart automatisch RetroShare starten und sich anmelden"
     LangString LANGUAGEID ${LANG_GERMAN} "1031"
 
 
