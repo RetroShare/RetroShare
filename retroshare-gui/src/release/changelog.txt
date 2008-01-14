@@ -1,0 +1,11 @@
+Retroshare V0.3.52a: Improvements:
+
+New improved search system.
+New Translations.
+Fixed Bugs in UPnP
+Can now remove Shared Directories.
+Attached the 'Recommend to' Context Menus.
+New Timestamps in Chats / Messages.
+Notification of Offline Peer in Chats.
+Example Games (not networked yet)
+Updated About Text.
