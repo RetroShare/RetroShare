@@ -15,6 +15,7 @@ BrandingText "${APPNAMEANDVERSION}"
 SetCompressor LZMA
 
 ; Modern interface settings
+!include Sections.nsh
 !include "MUI.nsh"
 
 ;Interface Settings
@@ -41,7 +42,7 @@ SetCompressor LZMA
 
 
 ; Defines the un-/installer logo of RetroShare
-!insertmacro MUI_DEFAULT MUI_PAGE_WELCOME_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\orange.bmp"
+!insertmacro MUI_DEFAULT MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\orange.bmp"
 !insertmacro MUI_DEFAULT MUI_UNWELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\orange-uninstall.bmp"
 
 ; Set languages (first is default language)
@@ -163,7 +164,7 @@ Section  StartMenu SEC0001
 
   SetOutPath "$INSTDIR"
   CreateDirectory "$SMPROGRAMS\${APPNAME}"
-  CreateShortCut "$SMPROGRAMS\${APPNAME}\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
+  CreateShortCut "$SMPROGRAMS\${APPNAME}\$(^UninstallLink).lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk" "$INSTDIR\RetroShare.exe" "" "$INSTDIR\RetroShare.exe" 0
 
 SectionEnd
@@ -260,7 +261,7 @@ Function .onInit
 
     InitPluginsDir
     Push $R1
-    File /oname=$PLUGINSDIR\spltmp.bmp "${NSISDIR}\Contrib\Graphics\Wizard\orange.bmp"
+    File /oname=$PLUGINSDIR\spltmp.bmp "gui\images\splash.bmp"
     advsplash::show 1200 1000 1000 -1 $PLUGINSDIR\spltmp
     Pop $R1
     Pop $R1
@@ -276,7 +277,11 @@ Function .onInit
 FunctionEnd
 
 
+# Installer Language Strings
+# TODO Update the Language Strings with the appropriate translations.
 
+LangString ^UninstallLink ${LANG_ENGLISH} "Uninstall"
+LangString ^UninstallLink ${LANG_GERMAN} "Deinstallieren"
 
 
 
