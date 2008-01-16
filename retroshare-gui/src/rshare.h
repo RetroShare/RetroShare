@@ -60,6 +60,8 @@ public:
   static bool setLanguage(QString languageCode = QString());
   /** Sets the current GUI style. */
   static bool setStyle(QString styleKey = QString());
+    /** Sets the current GUI stylesheet. */
+  static bool setSheet(QString sheet = QString());
   /** Shows the specified help topic, or the default if empty. */
   //static void help(QString topic = QString());
 
@@ -67,11 +69,11 @@ public:
   static QString language() { return _language; }
   /** Returns the current GUI style. */
   static QString style() { return _style; }
+  /** Returns the current GUI stylesheet. */
+  static QString stylesheet() { return _stylesheet; }
   /** Returns Rshare's application version. */
   static QString version() { return RSHARE_VERSION; }
 
-  /** Returns Rshare's main TorControl object. */
-//  static TorControl* torControl() { return _torControl; }
   
   /** Returns the location Rshare uses for its data files. */
   static QString dataDirectory();
@@ -101,6 +103,7 @@ private:
 
   static QMap<QString, QString> _args; /**< List of command-line arguments.  */
   static QString _style;               /**< The current GUI style.           */
+  static QString _stylesheet;          /**< The current GUI stylesheet.           */
   static QString _language;            /**< The current language.            */
 
   static bool    useConfigDir;

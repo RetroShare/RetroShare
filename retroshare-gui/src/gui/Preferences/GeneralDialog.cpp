@@ -47,7 +47,7 @@ GeneralDialog::GeneralDialog(QWidget *parent)
   }
   
   ui.styleSheetCombo->setCurrentIndex(ui.styleSheetCombo->findText("Default"));
-  loadStyleSheet("Default");
+  //loadStyleSheet("Default");
   loadqss(); 
 
 }
@@ -68,6 +68,7 @@ GeneralDialog::save(QString &errmsg)
   
   _settings->setLanguageCode(languageCode);
   _settings->setInterfaceStyle(ui.cmboStyle->currentText());
+  _settings->setSheetName(ui.styleSheetCombo->currentText());
  
   /* Set to new style */
   Rshare::setStyle(ui.cmboStyle->currentText());
@@ -83,6 +84,23 @@ GeneralDialog::load()
   
   index = ui.cmboStyle->findData(Rshare::style().toLower());
   ui.cmboStyle->setCurrentIndex(index);
+  
+  index = ui.styleSheetCombo->findData(Rshare::stylesheet().toLower());
+  ui.styleSheetCombo->setCurrentIndex(index);
+  
+  //index = ui.styleSheetCombo->findData(_settings->getSheetName());
+  //ui.styleSheetCombo->setCurrentIndex(index);
+  
+    /* load internal styleSheet */
+    //QFile file(":/qss/" + (_settings->getSheetName().toLower()) + ".qss");
+    
+    /** load extern Stylesheets **/
+    QFile file(QApplication::applicationDirPath() + "/qss/" + (_settings->getSheetName().toLower()) + ".qss");
+    
+    file.open(QFile::ReadOnly);
+    QString styleSheet = QLatin1String(file.readAll());
+    qApp->setStyleSheet(styleSheet);
+
 }
 
 void GeneralDialog::on_styleSheetCombo_activated(const QString &sheetName)
@@ -92,8 +110,12 @@ void GeneralDialog::on_styleSheetCombo_activated(const QString &sheetName)
 
 void GeneralDialog::loadStyleSheet(const QString &sheetName)
 {
+     /** internal Stylesheets **/
     //QFile file(":/qss/" + sheetName.toLower() + ".qss");
+    
+    /** extern Stylesheets **/
     QFile file(QApplication::applicationDirPath() + "/qss/" + sheetName.toLower() + ".qss");
+    
     file.open(QFile::ReadOnly);
     QString styleSheet = QLatin1String(file.readAll());
 

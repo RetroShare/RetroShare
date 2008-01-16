@@ -32,16 +32,18 @@
 #include "rshare.h"
 
 /* Available command-line arguments. */
-#define ARG_LANGUAGE   "lang"    /**< Argument specifying language.    */
-#define ARG_GUISTYLE   "style"   /**< Argument specfying GUI style.    */
-#define ARG_RESET      "reset"   /**< Reset Rshare's saved settings.  */
-#define ARG_DATADIR    "datadir" /**< Directory to use for data files. */
+#define ARG_LANGUAGE   		"lang"    		/**< Argument specifying language.    */
+#define ARG_GUISTYLE   		"style"  	 	/**< Argument specfying GUI style.    */
+#define ARG_GUISTYLESHEET   "stylesheet"   /**< Argument specfying GUI style.    */
+#define ARG_RESET      		"reset"   		/**< Reset Rshare's saved settings.  */
+#define ARG_DATADIR    		"datadir" 		/**< Directory to use for data files. */
 
 
 /* Static member variables */
 QMap<QString, QString> Rshare::_args; /**< List of command-line arguments.  */
 QString Rshare::_style;               /**< The current GUI style.           */
 QString Rshare::_language;            /**< The current language.            */
+QString Rshare::_stylesheet;          /**< The current GUI style.           */
 bool Rshare::useConfigDir;           
 QString Rshare::configDir;           
 
@@ -77,14 +79,16 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, QString dir)
 
   /** Set the GUI style appropriately. */
   setStyle(_args.value(ARG_GUISTYLE));
+  
+  /** Set the GUI stylesheet appropriately. */
+  setSheet(_args.value(ARG_GUISTYLESHEET));
 
 }
 
 /** Destructor */
 Rshare::~Rshare()
 {
- // delete _help;
-  //delete _torControl;
+
 }
 
 #if defined(Q_OS_WIN)
@@ -120,6 +124,7 @@ Rshare::printUsage(QString errmsg)
   out << "\t-"ARG_RESET"\t\tResets ALL stored Rshare settings."        << endl;
   out << "\t-"ARG_DATADIR"\tSets the directory Rshare uses for data files"<< endl;
   out << "\t-"ARG_GUISTYLE"\t\tSets Rshare's interface style."         << endl;
+  out << "\t-"ARG_GUISTYLESHEET"\t\tSets Rshare's stylesheet."         << endl;
   out << "\t\t\t[" << QStyleFactory::keys().join("|") << "]"            << endl;
   out << "\t-"ARG_LANGUAGE"\t\tSets Rshare's language."                << endl;
   out << "\t\t\t[" << LanguageSupport::languageCodes().join("|") << "]" << endl;
@@ -130,6 +135,7 @@ bool
 Rshare::argNeedsValue(QString argName)
 {
   return (argName == ARG_GUISTYLE ||
+		  argName == ARG_GUISTYLESHEET ||
           argName == ARG_LANGUAGE ||
           argName == ARG_DATADIR);
 
@@ -169,7 +175,7 @@ Rshare::validateArguments(QString &errmsg)
   if (_args.contains(ARG_HELP)) {
     return false;
   }*/
-  /* Check for a language that Rshare recognizes. */
+  /* Check for a language that Retroshare recognizes. */
   if (_args.contains(ARG_LANGUAGE) &&
       !LanguageSupport::isValidLanguageCode(_args.value(ARG_LANGUAGE))) {
     errmsg = tr("Invalid language code specified: ") + _args.value(ARG_LANGUAGE);
@@ -185,7 +191,7 @@ Rshare::validateArguments(QString &errmsg)
   return true;
 }
 
-/** Sets the translation Rshare will use. If one was specified on the
+/** Sets the translation RetroShare will use. If one was specified on the
  * command-line, we will use that. Otherwise, we'll check to see if one was
  * saved previously. If not, we'll default to one appropriate for the system
  * locale. */
@@ -205,7 +211,7 @@ Rshare::setLanguage(QString languageCode)
   return false;
 }
 
-/** Sets the GUI style Rshare will use. If one was specified on the
+/** Sets the GUI style RetroShare will use. If one was specified on the
  * command-line, we will use that. Otherwise, we'll check to see if one was
  * saved previously. If not, we'll default to one appropriate for the
  * operating system. */
@@ -224,6 +230,24 @@ Rshare::setStyle(QString styleKey)
   }
   return false;
 }
+
+bool
+Rshare::setSheet(QString sheet)
+{
+  /* If no stylesheet was specified, use the previously-saved setting */
+  if (sheet.isEmpty()) {
+    RshareSettings settings;
+    sheet = settings.getSheetName();
+  }
+  /* Apply the specified GUI stylesheet */
+  /*if (QApplication::setSheet(sheet)) {*/
+    _stylesheet = sheet;
+    return true;
+  /*}
+  return false;*/
+ 
+}
+
 
 /** Displays the help page associated with the specified topic. If no topic is
  * specified, then the default help page will be displayed. */

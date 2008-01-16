@@ -78,6 +78,12 @@ public:
   /** Sets the interface style key. */
   void setInterfaceStyle(QString styleKey);
   
+  /** Sets the stylesheet */
+  void setSheetName(QString sheet);
+  /** Gets the stylesheet */
+  QString getSheetName();
+
+  
     /* Get the destination log file. */
   QString getLogFile();
   /** Set the destination log file. */

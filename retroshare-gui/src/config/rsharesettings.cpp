@@ -38,21 +38,25 @@
 #endif
 
 
-/* Rshare's Settings */
+/* Retroshare's Settings */
 #define SETTING_LANGUAGE            "LanguageCode"
 #define SETTING_STYLE               "InterfaceStyle"
+#define SETTING_SHEETNAME           "SheetName"
+
 #define SETTING_DATA_DIRECTORY      "DataDirectory"
 
 #define SETTING_BWGRAPH_FILTER        "StatisticDialog/BWLineFilter"
 #define SETTING_BWGRAPH_OPACITY       "StatisticDialog/Opacity"
 #define SETTING_BWGRAPH_ALWAYS_ON_TOP "StatisticDialog/AlwaysOnTop"
 
-/* Default Rshare Settings */
+/* Default Retroshare Settings */
 #if defined(Q_WS_MAC)
 #define DEFAULT_STYLE               "macintosh (aqua)"
 #else
 #define DEFAULT_STYLE               "plastique"
 #endif
+
+#define DEFAULT_SHEETNAME			"Default"
 
 #define DEFAULT_LANGUAGE            LanguageSupport::defaultLanguageCode()
 
@@ -154,6 +158,16 @@ void RshareSettings::setInterfaceStyle(QString styleKey)
   setValue(SETTING_STYLE, styleKey);
 }
 
+/** Gets the sheetname.*/
+QString RshareSettings::getSheetName()
+{
+  return value(SETTING_SHEETNAME, DEFAULT_SHEETNAME).toString();
+}
+/** Sets the sheetname.*/
+void RshareSettings::setSheetName(QString sheet)                                  
+{ 
+    setValue(SETTING_SHEETNAME, sheet);
+}
 
 /** Returns the bandwidth line filter. */
 uint RshareSettings::getBWGraphFilter()
@@ -248,5 +262,4 @@ void RshareSettings::loadWidgetInformation(QMainWindow *widget, QToolBar *toolBa
  
  loadWidgetInformation(widget);
 }
-
 
