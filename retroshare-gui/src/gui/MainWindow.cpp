@@ -129,7 +129,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.quitButton->setToolTip(tr("Quit"));
     //connect(ui.quitButton, SIGNAL(clicked()), qApp, SLOT(quit()));
     connect(ui.quitButton, SIGNAL(clicked()), this, SLOT(doQuit()));
-    loadStyleSheet("Default");
+    
+    /* load the StyleSheet*/
+    loadStyleSheet(Rshare::stylesheet()); 
 
 
 

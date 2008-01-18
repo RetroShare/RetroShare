@@ -85,16 +85,13 @@ GeneralDialog::load()
   index = ui.cmboStyle->findData(Rshare::style().toLower());
   ui.cmboStyle->setCurrentIndex(index);
   
-  index = ui.styleSheetCombo->findData(Rshare::stylesheet().toLower());
-  ui.styleSheetCombo->setCurrentIndex(index);
   
-  //index = ui.styleSheetCombo->findData(_settings->getSheetName());
-  //ui.styleSheetCombo->setCurrentIndex(index);
+  ui.styleSheetCombo->setCurrentIndex(ui.styleSheetCombo->findText(_settings->getSheetName())); 
   
-    /* load internal styleSheet */
+    /** load saved internal styleSheet **/
     //QFile file(":/qss/" + (_settings->getSheetName().toLower()) + ".qss");
     
-    /** load extern Stylesheets **/
+    /** load saved extern Stylesheets **/
     QFile file(QApplication::applicationDirPath() + "/qss/" + (_settings->getSheetName().toLower()) + ".qss");
     
     file.open(QFile::ReadOnly);
