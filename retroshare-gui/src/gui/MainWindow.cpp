@@ -554,10 +554,14 @@ void MainWindow::showToolboxFrame(bool show)
 
 void MainWindow::loadStyleSheet(const QString &sheetName)
 {
-    QFile file(":/qss/" + sheetName.toLower() + ".qss");
+    /** internal Stylesheets **/
+    //QFile file(":/qss/" + sheetName.toLower() + ".qss");
+    
+    /** extern Stylesheets **/
+    QFile file(QApplication::applicationDirPath() + "/qss/" + sheetName.toLower() + ".qss");
+    
     file.open(QFile::ReadOnly);
     QString styleSheet = QLatin1String(file.readAll());
-
     
     qApp->setStyleSheet(styleSheet);
     
