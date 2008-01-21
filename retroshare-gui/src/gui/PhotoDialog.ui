@@ -1,0 +1,79 @@
+<ui version="4.0" >
+ <class>PhotoDialog</class>
+ <widget class="QWidget" name="PhotoDialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>598</width>
+    <height>510</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <widget class="QTreeWidget" name="photoTreeWidget" >
+     <property name="contextMenuPolicy" >
+      <enum>Qt::CustomContextMenu</enum>
+     </property>
+     <column>
+      <property name="text" >
+       <string>Friend / Set</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Thumb Image</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Image Name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Date</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Location</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Comment</string>
+      </property>
+     </column>
+     <item>
+      <property name="text" >
+       <string>QtChess</string>
+      </property>
+      <property name="text" >
+       <string>DrBob</string>
+      </property>
+      <property name="text" >
+       <string>2</string>
+      </property>
+      <property name="text" >
+       <string>Invites</string>
+      </property>
+      <property name="text" >
+       <string/>
+      </property>
+      <property name="text" >
+       <string/>
+      </property>
+     </item>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="images.qrc" />
+ </resources>
+ <connections/>
+</ui>

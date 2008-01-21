@@ -1,0 +1,347 @@
+<ui version="4.0" >
+ <class>GamesDialog</class>
+ <widget class="QWidget" name="GamesDialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>578</width>
+    <height>519</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <layout class="QGridLayout" >
+     <item row="0" column="0" >
+      <layout class="QVBoxLayout" >
+       <item>
+        <layout class="QHBoxLayout" >
+         <item>
+          <widget class="QLabel" name="label" >
+           <property name="font" >
+            <font>
+             <pointsize>14</pointsize>
+            </font>
+           </property>
+           <property name="text" >
+            <string>Game:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="gameComboBox" >
+           <item>
+            <property name="text" >
+             <string>QtChess</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Backgammon</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>QGo</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Snakes</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>BigTwo</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Poker</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Checkers</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" >
+         <item>
+          <widget class="QLabel" name="label_4" >
+           <property name="font" >
+            <font>
+             <pointsize>14</pointsize>
+            </font>
+           </property>
+           <property name="text" >
+            <string>Title / Comment</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="gameNameEdit" />
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" >
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="createButton" >
+           <property name="font" >
+            <font>
+             <pointsize>14</pointsize>
+            </font>
+           </property>
+           <property name="text" >
+            <string>Create New Game</string>
+           </property>
+           <property name="icon" >
+            <iconset resource="images.qrc" >:/images/kbackgammon.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkInviteAll" >
+           <property name="font" >
+            <font>
+             <pointsize>14</pointsize>
+            </font>
+           </property>
+           <property name="text" >
+            <string>Invite All Friends</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QSplitter" name="splitter" >
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <widget class="QTreeWidget" name="gameTreeWidget" >
+        <property name="contextMenuPolicy" >
+         <enum>Qt::CustomContextMenu</enum>
+        </property>
+        <column>
+         <property name="text" >
+          <string>Game Type</string>
+         </property>
+        </column>
+        <column>
+         <property name="text" >
+          <string>Server</string>
+         </property>
+        </column>
+        <column>
+         <property name="text" >
+          <string>Status</string>
+         </property>
+        </column>
+        <column>
+         <property name="text" >
+          <string>Comment</string>
+         </property>
+        </column>
+        <column>
+         <property name="text" >
+          <string>GameID</string>
+         </property>
+        </column>
+        <item>
+         <property name="text" >
+          <string>QtChess</string>
+         </property>
+         <property name="text" >
+          <string>DrBob</string>
+         </property>
+         <property name="text" >
+          <string>Invites</string>
+         </property>
+         <property name="text" >
+          <string>2</string>
+         </property>
+         <property name="text" >
+          <string/>
+         </property>
+        </item>
+       </widget>
+       <widget class="QTreeWidget" name="peertreeWidget" >
+        <property name="contextMenuPolicy" >
+         <enum>Qt::CustomContextMenu</enum>
+        </property>
+        <column>
+         <property name="text" >
+          <string>Player</string>
+         </property>
+        </column>
+        <column>
+         <property name="text" >
+          <string>Invite</string>
+         </property>
+        </column>
+        <column>
+         <property name="text" >
+          <string>Interested</string>
+         </property>
+        </column>
+        <column>
+         <property name="text" >
+          <string>Accept</string>
+         </property>
+        </column>
+        <item>
+         <property name="text" >
+          <string>Pauly</string>
+         </property>
+         <property name="text" >
+          <string>Yes</string>
+         </property>
+         <property name="text" >
+          <string>Yes</string>
+         </property>
+         <property name="text" >
+          <string>Yes</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>New Item</string>
+         </property>
+         <property name="text" >
+          <string/>
+         </property>
+         <property name="text" >
+          <string/>
+         </property>
+         <property name="text" >
+          <string>Np</string>
+         </property>
+        </item>
+       </widget>
+      </widget>
+     </item>
+     <item row="2" column="0" >
+      <layout class="QHBoxLayout" >
+       <item>
+        <widget class="QPushButton" name="deleteButton" >
+         <property name="font" >
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text" >
+          <string>Delete</string>
+         </property>
+         <property name="icon" >
+          <iconset resource="images.qrc" >:/images/reset.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="inviteButton" >
+         <property name="font" >
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text" >
+          <string>Invite</string>
+         </property>
+         <property name="icon" >
+          <iconset resource="images.qrc" >:/images/dadd.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="moveUpButton" >
+         <property name="font" >
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text" >
+          <string>Move Player</string>
+         </property>
+         <property name="icon" >
+          <iconset resource="images.qrc" >:/images/up.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="moveDownButton" >
+         <property name="font" >
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text" >
+          <string>Move Player</string>
+         </property>
+         <property name="icon" >
+          <iconset resource="images.qrc" >:/images/down_24x24.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="playButton" >
+         <property name="font" >
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text" >
+          <string>Play Game</string>
+         </property>
+         <property name="icon" >
+          <iconset resource="images.qrc" >:/images/startall.png</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="images.qrc" />
+ </resources>
+ <connections/>
+</ui>

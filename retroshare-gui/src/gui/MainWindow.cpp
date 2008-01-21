@@ -73,7 +73,9 @@
 #define UI_PREF_PROMPT_ON_QUIT  "UIOptions/ConfirmOnQuit"
 /* uncomment this for release version */
 
-#define RS_RELEASE_VERSION    1
+/*****
+ * #define RS_RELEASE_VERSION    1
+ ****/
 
 /* TEST (1) * friends/neighbours: okay for 16 hours! */
 /* TEST (2) * all but transfer/sharedfiles: crashed in under 8 hours! */

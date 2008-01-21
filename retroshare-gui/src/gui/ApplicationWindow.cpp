@@ -30,6 +30,7 @@
 #include <rshare.h>
 #include "ApplicationWindow.h"
 
+
 #include "Preferences/PreferencesWindow.h"
 #include "Settings/gsettingswin.h"
 #include "util/rsversion.h"
@@ -39,6 +40,8 @@
 #include "gui/connect/InviteDialog.h"
 #include "gui/connect/AddFriendDialog.h"
 
+#include "GamesDialog.h"
+#include "PhotoDialog.h"
 
 #define FONT        QFont(tr("Arial"), 8)
 
@@ -85,6 +88,15 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
 
     ui.stackPages->add(exampleDialog = new ExampleDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_MESSAGES), tr("Example Application"), grp));
+
+    GamesDialog *gamesDialog = NULL;
+    ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_MESSAGES), tr("Games Launcher"), grp));
+                     
+    PhotoDialog *photoDialog = NULL;
+    ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_MESSAGES), tr("Photo View"), grp));
+                     
                      
   //ui.stackPages->add(groupsDialog = new GroupsDialog(ui.stackPages),
   //                   createPageAction(QIcon(), tr("Groups"), grp));
