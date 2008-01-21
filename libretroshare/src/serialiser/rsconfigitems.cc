@@ -285,6 +285,11 @@ RsFileTransfer *RsFileTransferSerialiser::deserialiseTransfer(void *data, uint32
 
 /*************************************************************************/
 
+RsPeerConfig::~RsPeerConfig()
+{
+	return;
+}
+
 void RsPeerConfig::clear()
 {
 	status = 0;
@@ -320,7 +325,13 @@ std::ostream &RsPeerConfig::print(std::ostream &out, uint16_t indent)
 
 /*************************************************************************/
 
-uint32_t RsPeerConfigSerialiser::size(RsPeerConfig* i)
+
+RsPeerConfigSerialiser::~RsPeerConfigSerialiser()
+{
+	return;
+}
+
+uint32_t RsPeerConfigSerialiser::size(RsItem *i)
 {	
 	uint32_t s = 8; /* header */
 	s += 2; /* status */ 
@@ -333,8 +344,10 @@ uint32_t RsPeerConfigSerialiser::size(RsPeerConfig* i)
 
 }
 
-bool RsPeerConfigSerialiser::serialise(RsPeerConfig *item, void *data, uint32_t *size)
+bool RsPeerConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *size)
 {
+	RsPeerConfig *item = (RsPeerConfig *) i;
+
 	uint32_t tlvsize = RsPeerConfigSerialiser::size(item);
 	uint32_t offset = 0;
 
@@ -436,6 +449,12 @@ RsItem *RsPeerConfigSerialiser::deserialise(void *data, uint32_t *size)
 
 /****************************************************************************/
 
+
+RsCacheConfig::~RsCacheConfig()
+{
+	return;
+}
+
 void RsCacheConfig::clear()
 {
 
@@ -473,8 +492,15 @@ std::ostream &RsCacheConfig::print(std::ostream &out, uint16_t indent)
 
 /**************************************************************************/
 
-uint32_t RsCacheConfigSerialiser::size(RsCacheConfig *item)
+
+RsCacheConfigSerialiser::~RsCacheConfigSerialiser()
 {
+	return;
+}
+
+uint32_t RsCacheConfigSerialiser::size(RsItem *i)
+{
+	RsCacheConfig *item = (RsCacheConfig *) i;
 
 	uint32_t s = 8; // to store calculated size, initiailize with size of header
 
@@ -487,8 +513,9 @@ uint32_t RsCacheConfigSerialiser::size(RsCacheConfig *item)
 	return s;
 }
 
-bool RsCacheConfigSerialiser::serialise(RsCacheConfig *item, void *data, uint32_t *size)
+bool RsCacheConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *size)
 {
+	RsCacheConfig *item = (RsCacheConfig *) i;
 	uint32_t tlvsize = RsCacheConfigSerialiser::size(item);
 	uint32_t offset = 0;
 
