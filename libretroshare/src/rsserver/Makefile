@@ -9,7 +9,7 @@ OBJ = pqistrings.o \
 	p3face-network.o \
 	p3face-startup.o \
 	rstypes.o \
-	rsiface.o \
+	rsiface.o 
 
 TESTS = 
 

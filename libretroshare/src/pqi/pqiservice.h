@@ -65,12 +65,12 @@ virtual ~pqiService() { return; }
 virtual int		receive(RsRawItem *) = 0;
 virtual RsRawItem *	send() = 0;
 
-int	getType() { return type; }
+uint32_t getType() { return type; }
 
 virtual int	tick() { return 0; }
 
 	private:
-	int type;
+	uint32_t type;
 };
 
 #include <map>
@@ -90,8 +90,8 @@ int	tick();
 
 private:
 
-std::map<int, pqiService *> services;
-std::map<int, pqiService *>::iterator rrit;
+std::map<uint32_t, pqiService *> services;
+std::map<uint32_t, pqiService *>::iterator rrit;
 
 };
 

@@ -43,7 +43,7 @@ int	p3ServiceServer::addService(pqiService *ts)
 	pqioutput(PQL_DEBUG_BASIC, pqiservicezone, 
 		"p3ServiceServer::addService()");
 
-	std::map<int, pqiService *>::iterator it;
+	std::map<uint32_t, pqiService *>::iterator it;
 	it = services.find(ts -> getType());
 	if (it != services.end())
 	{
@@ -74,7 +74,7 @@ int	p3ServiceServer::incoming(RsRawItem *item)
 		pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out.str());
 	}
 
-	std::map<int, pqiService *>::iterator it;
+	std::map<uint32_t, pqiService *>::iterator it;
 	it = services.find(item -> PacketId() & 0xffffff00);
 	if (it == services.end())
 	{
@@ -117,7 +117,7 @@ RsRawItem *p3ServiceServer::outgoing()
 		rrit = services.begin();
 	}
 
-	std::map<int, pqiService *>::iterator sit = rrit;
+	std::map<uint32_t, pqiService *>::iterator sit = rrit;
 	// run to the end.
 	RsRawItem *item;
 
@@ -162,7 +162,7 @@ int	p3ServiceServer::tick()
 	pqioutput(PQL_DEBUG_ALL, pqiservicezone, 
 		"p3ServiceServer::tick()");
 
-	std::map<int, pqiService *>::iterator it;
+	std::map<uint32_t, pqiService *>::iterator it;
 
 	// from the beginning to where we started.
 	for(it = services.begin();it != services.end(); it++)

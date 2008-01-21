@@ -282,12 +282,15 @@ virtual int	notifyEvent(NetInterface *ni, int event) { return 0; }
 /********************** Binary INTERFACE ****************************
  * This defines the binary interface used by Network/loopback/file
  * interfaces
+ *
+ * Flags are passed to BinInterfaces, and serialisers
  */
 
 #define BIN_FLAGS_NO_CLOSE  0x0001
 #define BIN_FLAGS_READABLE  0x0002
 #define BIN_FLAGS_WRITEABLE 0x0004
 #define BIN_FLAGS_NO_DELETE 0x0008
+#define BIN_FLAGS_HASHDATA  0x0010
 
 class BinInterface
 {

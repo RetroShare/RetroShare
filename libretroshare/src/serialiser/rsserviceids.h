@@ -54,6 +54,20 @@ const uint16_t RS_SERVICE_TYPE_MSG         = 0x0014;
 const uint16_t RS_SERVICE_TYPE_CHANNEL_MSG = 0x0015;
 const uint16_t RS_SERVICE_TYPE_PROXY_MSG   = 0x0016;
 
+
+const uint16_t RS_SERVICE_TYPE_GAME_LAUNCHER = 0x1000;
+
+/* Example Games */
+/* Board Games */
+const uint16_t RS_SERVICE_TYPE_GAME_QTCHESS  = 0x1001;
+const uint16_t RS_SERVICE_TYPE_GAME_QGO      = 0x1002;
+
+/* Card Games */
+const uint16_t RS_SERVICE_TYPE_GAME_BIGTWO   = 0x1003;
+const uint16_t RS_SERVICE_TYPE_GAME_POKER    = 0x1004;
+
+
+
 /* Combined Cache/Service ids */
 
 

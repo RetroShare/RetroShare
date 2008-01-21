@@ -35,6 +35,7 @@
 #include "services/p3disc.h"
 #include "services/p3msgservice.h"
 #include "services/p3chatservice.h"
+#include "services/p3gamelauncher.h"
 
 #include <list>
 #include <string>
@@ -52,6 +53,7 @@
 
 #include "pqi/pqidebug.h"
 #include "rsserver/p3face.h"
+#include "rsiface/rsgame.h"
 
 const int p3facestartupzone = 47238;
 
@@ -496,10 +498,15 @@ int RsServer::StartupRetroShare(RsInit *config)
 	ad = new p3disc(sslr);
 	msgSrv = new p3MsgService();
 	chatSrv = new p3ChatService();
+	p3GameLauncher *gameLauncher = new p3GameLauncher();
 
 	pqih -> addService(ad);
 	pqih -> addService(msgSrv);
 	pqih -> addService(chatSrv);
+	pqih -> addService(gameLauncher);
+
+	/* setup the gui */
+	rsGameLauncher = gameLauncher;
 
 	/* put a welcome message in! */
 	if (config->firsttime_run)

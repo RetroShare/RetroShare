@@ -294,7 +294,10 @@ int	pqistreamer::queue_outpqi(RsItem *pqi)
 		{
 			out_data.push_back(ptr);
 		}
-		delete pqi;
+		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
+		{
+			delete pqi;
+		}
 		return 1;
 	}
 	else
@@ -310,7 +313,10 @@ int	pqistreamer::queue_outpqi(RsItem *pqi)
 	pqi -> print(out);
 	pqioutput(PQL_ALERT, pqistreamerzone, out.str());
 
-	delete pqi;
+	if (!(bio_flags & BIN_FLAGS_NO_DELETE))
+	{
+		delete pqi;
+	}
 	return 1; // keep error internal.
 }
 
