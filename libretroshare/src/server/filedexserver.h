@@ -34,19 +34,6 @@
  *
  */
 
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-
-#include "pqi/xpgpcert.h"
-
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
-#include "pqi/sslcert.h"
-
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
 #include "pqi/pqi.h"
 #include "pqi/pqiindic.h"
 #include "serialiser/rsconfigitems.h"
@@ -57,7 +44,12 @@
 #include <iostream>
 
 #include "rsiface/rsiface.h"
-class pqimonitor;
+
+#include "pqi/p3cfgmgr.h"
+
+class p3ConnectMgr;
+class p3AuthMgr;
+
 class CacheStrapper;
 class ftfiler;
 class FileIndexStore;
@@ -75,31 +67,14 @@ class ftFileData;
 #define MAX_RESULTS 100 // nice balance between results and traffic.
 
 
-class filedexserver
+class filedexserver: public p3Config
 {
 	public:
 	filedexserver();
 
 void    loadWelcomeMsg(); /* startup message */
 
-int	setSearchInterface(P3Interface *si, sslroot *sr);
-//int	additem(SearchItem *item, char *fname);
-
-//int	sendChat(std::string msg);
-//int	sendPrivateChat(ChatItem *ci);
-
-//int	sendRecommend(PQFileItem *fi, std::string msg);
-//int     sendMessage(MsgItem *item);
-//int     checkOutgoingMessages();
-
-//int 	getChat();
-/* std::deque<std::string> &getChatQueue(); */
-//std::list<ChatItem *> getChatQueue(); 
-
-//std::list<MsgItem *> &getMsgList();
-//std::list<MsgItem *> &getMsgOutList();
-//std::list<MsgItem *> getNewMsgs();
-
+int	setSearchInterface(P3Interface *si, p3AuthMgr *am, p3ConnectMgr *cm);
 
 std::list<RsFileTransfer *> getTransfers();
 
@@ -109,14 +84,6 @@ int     getFile(std::string fname, std::string hash,
 void 	clear_old_transfers();
 void 	cancelTransfer(std::string fname, std::string hash, uint32_t size);
 
-	// cleaning up....
-//int	removeMsgItem(int itemnum);
-	// alternative versions.
-//int	removeMsgItem(MsgItem *mi);
-	// third versions.
-//int     removeMsgId(unsigned long mid); /* id stored in sid */
-//int     markMsgIdRead(unsigned long mid);
-
 // access to search info is also required.
 
 std::list<std::string> &getSearchDirectories();
@@ -124,9 +91,6 @@ int 	addSearchDirectory(std::string dir);
 int 	removeSearchDirectory(std::string dir);
 int 	reScanDirs();
 int 	check_dBUpdate();
-
-int	load_config();
-int	save_config();
 
 std::string	getSaveDir();
 void		setSaveDir(std::string d);
@@ -145,35 +109,13 @@ int	handleOutputQueues();
 
 std::list<std::string> dbase_dirs;
 
-	sslroot	*sslr;
-
 	P3Interface *pqisi;
+	p3AuthMgr    *mAuthMgr;
+	p3ConnectMgr *mConnMgr;
 
 std::string config_dir;
 std::string save_dir;
 bool	save_inc; // is savedir include in share list.
-
-// bool state flags.
-	public:
-//	Indicator msgChanged;
-//	Indicator msgMajorChanged;
-//	Indicator chatChanged;
-
-#ifdef PQI_USE_CHANNELS
-
-	public:
-	// Channel stuff.
-//void	setP3Channel(p3channel *p3c);
-//int     getAvailableChannels(std::list<pqichannel *> &chans);
-//int     getChannelMsgList(channelSign s, std::list<chanMsgSummary> &summary);
-//channelMsg *getChannelMsg(channelSign s, MsgHash mh);
-
-//	Indicator channelsChanged; // everything!
-
-	private:
-//p3channel *p3chan;
-
-#endif
 
 	public:
 	/* some more switches (here for uniform saving) */
@@ -201,6 +143,17 @@ void 	setUPnPEnabled(int i)
 	int DHTState;
 	int UPnPState;
 
+/*************************** p3 Config Overload ********************/
+	protected:
+        /* Key Functions to be overloaded for Full Configuration */
+virtual RsSerialiser *setupSerialiser();
+virtual std::list<RsItem *> saveList(bool &cleanup);
+virtual bool    loadList(std::list<RsItem *> load);
+
+	private:
+bool  loadConfigMap(std::map<std::string, std::string> &configMap);
+
+/*************************** p3 Config Overload ********************/
 
 	/* new FileCache stuff */
 	public:
@@ -209,7 +162,7 @@ int 	FileStoreTick();
 int 	FileCacheSave();
 
 void 	initialiseFileStore();
-void    setFileCallback(NotifyBase *cb);
+void    setFileCallback(std::string ownId, CacheStrapper *cs, NotifyBase *cb);
 
 int RequestDirDetails(std::string uid, std::string path, DirDetails &details);
 int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags);
@@ -219,11 +172,10 @@ int SearchBoolExp(Expression * exp, std::list<FileDetail> &results);
 
 	private:
 
-void 	SendFileRequest(ftFileRequest *ftr, cert *peer);
-void 	SendFileData(ftFileData *ftd, cert *peer);
+void 	SendFileRequest(ftFileRequest *ftr, std::string pid);
+void 	SendFileData(ftFileData *ftd, std::string pid);
 
-	pqimonitor *peerMonitor;
-	CacheStrapper *cacheStrapper;
+	CacheStrapper *mCacheStrapper;
 	ftfiler 	*ftFiler;
         FileIndexStore *fiStore;
 	FileIndexMonitor *fimon;

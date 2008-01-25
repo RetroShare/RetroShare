@@ -52,13 +52,16 @@
 
 
 /* New FileCache Stuff */
-#include "pqi/pqimon.h"
 #include "server/ftfiler.h"
 #include "dbase/cachestrapper.h"
 #include "dbase/fimonitor.h"
 #include "dbase/fistore.h"
 
+#include "pqi/p3connmgr.h"
+#include "pqi/p3authmgr.h"
+
 #include "serialiser/rsserviceids.h"
+#include "serialiser/rsconfigitems.h"
 
 
 #include <sstream>
@@ -66,17 +69,19 @@
 const int fldxsrvrzone = 47659;
 
 filedexserver::filedexserver()
-	:pqisi(NULL), sslr(NULL), 
+	:p3Config(0, "server.cfg"), 
+	 pqisi(NULL), mAuthMgr(NULL), mConnMgr(NULL),
 	save_dir("."),
 	ftFiler(NULL) 
 {
 	initialiseFileStore();
 }
 
-int	filedexserver::setSearchInterface(P3Interface *si, sslroot *sr)
+int	filedexserver::setSearchInterface(P3Interface *si, p3AuthMgr *am, p3ConnectMgr *cm)
 {
 	pqisi = si;
-	sslr = sr;
+	mAuthMgr = am;
+	mConnMgr = cm;
 	return 1;
 }
 
@@ -196,232 +201,6 @@ int     filedexserver::reScanDirs()
 	return 1;
 }
 
-static const std::string fdex_dir("FDEX_DIR");
-static const std::string save_dir_ss("SAVE_DIR");
-static const std::string save_inc_ss("SAVE_INC");
-static const std::string NETWORK_ss("NET_PARAM");
-
-int     filedexserver::save_config()
-{
-	std::list<std::string>::iterator it;
-	std::string empty("");
-
-	pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, 
-		"fildexserver::save_config()");
-
-	/* basic control parameters */
-	{
-	  std::ostringstream out;
-	  out << getDHTEnabled() << " " << getUPnPEnabled();
-	  sslr -> setSetting(NETWORK_ss, out.str());
-	}
-
-
-	sslr -> setSetting(save_dir_ss, getSaveDir());
-	if (getSaveIncSearch())
-	{
-		sslr -> setSetting(save_inc_ss, "true");
-	}
-	else
-	{
-		sslr -> setSetting(save_inc_ss, "false");
-	}
-
-	int i;
-	for(it = dbase_dirs.begin(), i = 0; (it != dbase_dirs.end()) 
-		&& (i < 1000); it++, i++)
-	{
-		std::string name = fdex_dir;
-		int d1, d2, d3;
-		d1 = i / 100;
-		d2 = (i - d1 * 100) / 10;
-		d3 = i - d1 * 100 - d2 * 10;
-
-		name += '0'+d1;
-		name += '0'+d2;
-		name += '0'+d3;
-
-		sslr -> setSetting(name, (*it));
-	}
-	// blank other ones.
-	bool done = false;
-	for(; (i < 1000) && (!done); i++)
-	{
-		std::string name = fdex_dir;
-		int d1, d2, d3;
-		d1 = i / 100;
-		d2 = (i - d1 * 100) / 10;
-		d3 = i - d1 * 100 - d2 * 10;
-
-		name += '0'+d1;
-		name += '0'+d2;
-		name += '0'+d3;
-
-		if (empty == sslr -> getSetting(name))
-		{
-			done = true;
-		}
-		else
-		{
-			sslr -> setSetting(name, empty);
-
-			std::ostringstream out;
-			out << "Blanking Setting(" << name;
-			out << ")" << std::endl;
-			pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, out.str());
-		}
-	}
-
-
-	/* save the local cache file name */
-	FileCacheSave();
-
-	/* now we create a pqiarchive, and stream all the msgs/fts
-	 * into it
-	 */
-
-	std::string statelog = config_dir + "/state.rst";
-
-	/* what can be saved?? */
-	RsSerialiser *rss = new RsSerialiser();
-	rss->addSerialType(new RsFileTransferSerialiser());
-
-	BinFileInterface *out = new BinFileInterface((char *) statelog.c_str(), BIN_FLAGS_WRITEABLE);
-        pqiarchive *pa_out = new pqiarchive(rss, out, BIN_FLAGS_WRITEABLE);
-	bool written = false;
-
-	std::list<RsFileTransfer *>::iterator fit;
-	std::list<RsFileTransfer *> ftlist = ftFiler -> getStatus();
-	for(fit = ftlist.begin(); fit != ftlist.end(); fit++)
-	{
-		/* only write out the okay/uncompleted (with hash) files */
-		if (((*fit)->state == FT_STATE_FAILED) || 
-		    ((*fit)->state == FT_STATE_COMPLETE) || 
-		    ((*fit)->in == false) ||
-		    ((*fit)->file.hash == ""))
-		{
-			/* ignore */
-		}
-		else if (pa_out -> SendItem(*fit))
-		{
-			written = true;
-		}
-
-		/* cleanup */
-		delete(*fit);
-	}
-
-	if (!written)
-	{
-		/* need to push something out to overwrite old data! (For WINDOWS ONLY) */
-	}
-
-	delete pa_out;	
-	return 1;
-}
-
-int     filedexserver::load_config()
-{
-	std::list<std::string>::iterator it;
-
-	int i;
-	std::string empty("");
-	std::string dir("notempty");
-	std::string str_true("true");
-
-	std::string snet = sslr -> getSetting(NETWORK_ss);
-	{
-	  int a, b;
-
-	  // on by default
-	  setDHTEnabled(true);
-	  setUPnPEnabled(true); /* UPnP false -> until its totally happy */
-
-	  if (2 == sscanf(snet.c_str(), "%d %d", &a, &b))
-	  {
-	  	setDHTEnabled(a);
-		setUPnPEnabled(b);
-	  }
-	}
-
-
-	std::string sdir = sslr -> getSetting(save_dir_ss);
-	if (sdir != empty)
-	{
-		setSaveDir(sdir);
-	}
-
-	std::string sinc = sslr -> getSetting(save_inc_ss);
-	if (sdir != empty)
-	{
-		setSaveIncSearch(sdir == str_true);
-	}
-
-	dbase_dirs.clear();
-
-	for(i = 0; (i < 1000) && (dir != empty); i++)
-	{
-		std::string name = fdex_dir;
-		int d1, d2, d3;
-		d1 = i / 100;
-		d2 = (i - d1 * 100) / 10;
-		d3 = i - d1 * 100 - d2 * 10;
-
-		name += '0'+d1;
-		name += '0'+d2;
-		name += '0'+d3;
-
-		dir = sslr -> getSetting(name);
-		if (dir != empty)
-		{
-			dbase_dirs.push_back(dir);
-		}
-	}
-	if (dbase_dirs.size() > 0)
-	{
-		std::ostringstream out;
-		out << "Loading " << dbase_dirs.size();
-		out << " Directories" << std::endl;
-		pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, out.str());
-
-		reScanDirs();
-	}
-
-	/* load msg/ft */
-	std::string statelog = config_dir + "/state.rst";
-
-	// XXX Fix Interface!
-	/* what can be saved?? */
-	RsSerialiser *rss = new RsSerialiser();
-	rss->addSerialType(new RsFileTransferSerialiser());
-
-	BinFileInterface *in = new BinFileInterface((char *) statelog.c_str(), BIN_FLAGS_READABLE);
-        pqiarchive *pa_in = new pqiarchive(rss, in, BIN_FLAGS_READABLE);
-	RsItem *item;
-	RsFileTransfer *rft;
-
-	while((item = pa_in -> GetItem()))
-	{
-		/* add to ft queue */
-		if (NULL != (rft = dynamic_cast<RsFileTransfer *>(item)))
-		{
-			/* only add in ones which have a hash (filters old versions) */
-			if (rft->file.hash != "")
-			{
-				ftFiler -> getFile(
-					rft->file.name, 
-					rft->file.hash,
-					rft->file.filesize, "");
-			}
-		}
-		delete item;
-	}
-
-	delete pa_in;	
-
-	return 1;
-}
-
 /*************************************** NEW File Cache Stuff ****************************/
 
 void filedexserver::initialiseFileStore()
@@ -433,22 +212,11 @@ const std::string LOCAL_CACHE_FILE_KEY = "LCF_NAME";
 const std::string LOCAL_CACHE_HASH_KEY = "LCF_HASH";
 const std::string LOCAL_CACHE_SIZE_KEY = "LCF_SIZE";
 
-void    filedexserver::setFileCallback(NotifyBase *cb)
+void    filedexserver::setFileCallback(std::string ownId, CacheStrapper *strapper, NotifyBase *cb)
 {
-	/* work out our id! */
-	cert *own = getSSLRoot()->getOwnCert();
-	certsign sign;
-	getSSLRoot()->getcertsign(own, sign);
-	RsPeerId ownId = convert_to_str(sign);
+	mCacheStrapper = strapper;
 
-	uint32_t queryPeriod = 60; /* query every 1 minutes -> change later to 600+ */
-
-	/* setup the pqimonitor */
-	peerMonitor = new pqimonitor();
-
-	cacheStrapper = new CacheStrapper(ownId, queryPeriod);
-	/* fiFiler is also CacheTransfer */
-	ftFiler = new ftfiler(cacheStrapper);
+	ftFiler = new ftfiler(mCacheStrapper);
 
 	/* setup FiStore/Monitor */
 	std::string localcachedir = config_dir + "/cache/local";
@@ -468,21 +236,17 @@ void    filedexserver::setFileCallback(NotifyBase *cb)
 	/* now add the set to the cachestrapper */
 
 	CachePair cp(fimon, fiStore, CacheId(RS_SERVICE_TYPE_FILE_INDEX, 0));
-	cacheStrapper -> addCachePair(cp);
-
-	/* add to peermonitor */
-	peerMonitor -> addClient(cacheStrapper);
-
+	mCacheStrapper -> addCachePair(cp);
 
 	/* now we can load the cache configuration */
 	//std::string cacheconfig = config_dir + "/caches.cfg";
-	//cacheStrapper -> loadCaches(cacheconfig);
+	//mCacheStrapper -> loadCaches(cacheconfig);
 
 	/************ TMP HACK LOAD until new serialiser is finished */
 	/* get filename and hash from configuration */
-	std::string localCacheFile = getSSLRoot()->getSetting(LOCAL_CACHE_FILE_KEY);
-	std::string localCacheHash = getSSLRoot()->getSetting(LOCAL_CACHE_HASH_KEY);
-	std::string localCacheSize = getSSLRoot()->getSetting(LOCAL_CACHE_SIZE_KEY);
+	std::string localCacheFile; // = getSSLRoot()->getSetting(LOCAL_CACHE_FILE_KEY);
+	std::string localCacheHash; // = getSSLRoot()->getSetting(LOCAL_CACHE_HASH_KEY);
+	std::string localCacheSize; // = getSSLRoot()->getSetting(LOCAL_CACHE_SIZE_KEY);
 
 	std::list<std::string> saveLocalCaches;
 	std::list<std::string> saveRemoteCaches;
@@ -500,7 +264,7 @@ void    filedexserver::setFileCallback(NotifyBase *cb)
 		cd.path = localcachedir;
 		cd.hash = localCacheHash;
 		cd.size = atoi(localCacheSize.c_str());
-		fimon -> loadCache(cd);
+		fimon -> loadLocalCache(cd);
 
 		saveLocalCaches.push_back(cd.name);
 	}
@@ -547,9 +311,9 @@ int filedexserver::FileCacheSave()
 	}
 
 	/* extract the details of the local cache */
-	getSSLRoot()->setSetting(LOCAL_CACHE_FILE_KEY, localCacheFile);
-	getSSLRoot()->setSetting(LOCAL_CACHE_HASH_KEY, localCacheHash);
-	getSSLRoot()->setSetting(LOCAL_CACHE_SIZE_KEY, localCacheSize);
+	//getSSLRoot()->setSetting(LOCAL_CACHE_FILE_KEY, localCacheFile);
+	//getSSLRoot()->setSetting(LOCAL_CACHE_HASH_KEY, localCacheHash);
+	//getSSLRoot()->setSetting(LOCAL_CACHE_SIZE_KEY, localCacheSize);
 
 	/************ TMP HACK SAVE until new serialiser is finished */
 	return 1;
@@ -601,7 +365,6 @@ int filedexserver::SearchBoolExp(Expression * exp, std::list<FileDetail> &result
 
 int filedexserver::FileStoreTick()
 {
-	peerMonitor -> tick();
 	ftFiler -> tick();
 	return 1;
 }
@@ -639,29 +402,9 @@ int     filedexserver::handleInputQueues()
 		data.size = ci->file.filesize;
 		data.name = ci->file.name;
 		data.path = ci->file.path;
-
-		certsign sign;
-		convert_to_certsign(ci->PeerId(), sign);
-		cert *peer = getSSLRoot() -> findcertsign(sign);
-
 		data.pid = ci->PeerId();
-
-		if (peer)
-		{
-			data.pname = peer->Name();
-			cacheStrapper->recvCacheResponse(data, time(NULL));
-		}
-		else
-		{
-			std::ostringstream out2;
-			out2 << "Failed to Find Peer for Search Result:";
-			out2 << std::endl;
-			ci -> print(out2);
-			
-			pqioutput(PQL_ALERT, fldxsrvrzone, out2.str());
-			std::cerr << "ERROR";
-			exit(1);
-		}
+		data.pname = mAuthMgr->getName(ci->PeerId());
+		mCacheStrapper->recvCacheResponse(data, time(NULL));
 
 		delete ci;
 	}
@@ -684,7 +427,7 @@ int     filedexserver::handleInputQueues()
 		std::map<CacheId, CacheData> answer;
 		RsPeerId id;
 
-		cacheStrapper->handleCacheQuery(id, answer);
+		mCacheStrapper->handleCacheQuery(id, answer);
 		for(it = answer.begin(); it != answer.end(); it++)
 		{
 			//std::cerr << "filedexserver::handleInputQueues() Sending (CacheAnswer!)" << std::endl;
@@ -726,26 +469,6 @@ int     filedexserver::handleInputQueues()
 
 		/* This bit is for debugging only! (not really needed) */
 
-		certsign sign;
-		convert_to_certsign(fr->PeerId(), sign);
-		cert *peer = getSSLRoot() -> findcertsign(sign);
-		if (peer)
-		{
-			/* ok! */
-		}
-		else
-		{
-			std::ostringstream out2;
-			out2 << "Failed to Find Peer for File Request:";
-			out2 << std::endl;
-			fr -> print(out2);
-			
-			pqioutput(PQL_ALERT, fldxsrvrzone, out2.str());
-			std::cerr << "ERROR FFR";
-			exit(1);
-		}
-
-
 		/* request */
 		ftFileRequest *ffr = new ftFileRequest(fr->PeerId(), 
 			fr->file.hash,  fr->file.filesize, 
@@ -767,26 +490,6 @@ int     filedexserver::handleInputQueues()
 		}
 		fd -> print(out);
 		pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, out.str());
-
-		/* This bit is for debugging only! (not really needed) */
-		certsign sign;
-		convert_to_certsign(fd->PeerId(), sign);
-		cert *peer = getSSLRoot() -> findcertsign(sign);
-		if (peer)
-		{
-			/* ok! */
-		}
-		else
-		{
-			std::ostringstream out2;
-			out2 << "Failed to Find Peer for File Request:";
-			out2 << std::endl;
-			fd -> print(out2);
-			
-			pqioutput(PQL_ALERT, fldxsrvrzone, out2.str());
-			std::cerr << "ERROR FFRD";
-			exit(1);
-		}
 
 		/* incoming data */
 		ftFileData *ffd = new ftFileData(fd->PeerId(), 
@@ -817,7 +520,7 @@ int     filedexserver::handleOutputQueues()
 	std::list<RsPeerId> ids;
         std::list<RsPeerId>::iterator pit;
 
-	cacheStrapper->sendCacheQuery(ids, time(NULL));
+	mCacheStrapper->sendCacheQuery(ids, time(NULL));
 
 	for(pit = ids.begin(); pit != ids.end(); pit++)
 	{
@@ -845,31 +548,15 @@ int     filedexserver::handleOutputQueues()
 	{
 		//std::cerr << "filedexserver::handleOutputQueues() ftFiler Data for: " << ftr->id << std::endl;
 
-		/* work out who its going to */
-		certsign sign;
-		if (!convert_to_certsign(ftr->id, sign))
-		{
-			std::cerr << "CERTSIGN error! 3" << std::endl;
-			exit(1);
-		}
-
-		/* look it up */
-		cert *c = getSSLRoot() -> findcertsign(sign);
-		if (c == NULL)
-		{
-			std::cerr << "CERTSIGN error! 4" << std::endl;
-			exit(1);
-		}
-
 		/* decide if its data or request */
 		ftFileData *ftd = dynamic_cast<ftFileData *>(ftr);
 		if (ftd)
 		{
-			SendFileData(ftd, c);
+			SendFileData(ftd, ftr->id);
 		}
 		else
 		{
-			SendFileRequest(ftr, c);
+			SendFileRequest(ftr, ftr->id);
 		}
 
 		std::ostringstream out;
@@ -892,12 +579,12 @@ int     filedexserver::handleOutputQueues()
 	return 0;
 }
 
-void filedexserver::SendFileRequest(ftFileRequest *ftr, cert *peer)
+void filedexserver::SendFileRequest(ftFileRequest *ftr, std::string pid)
 {
 	RsFileRequest *rfi = new RsFileRequest();
 
 	/* id */
-	rfi->PeerId(peer->PeerId());
+	rfi->PeerId(pid);
 
 	/* file info */
 	rfi->file.filesize   = ftr->size;
@@ -912,7 +599,7 @@ void filedexserver::SendFileRequest(ftFileRequest *ftr, cert *peer)
 
 #define MAX_FT_CHUNK 4096
 
-void filedexserver::SendFileData(ftFileData *ftd, cert *peer)
+void filedexserver::SendFileData(ftFileData *ftd, std::string pid)
 {
 	uint32_t tosend = ftd->chunk;
 	uint32_t baseoffset = ftd->offset;
@@ -934,7 +621,7 @@ void filedexserver::SendFileData(ftFileData *ftd, cert *peer)
 		RsFileData *rfd = new RsFileData();
 
 		/* set id */
-		rfd->PeerId(peer->PeerId());
+		rfd->PeerId(pid);
 
 		/* file info */
 		rfd->fd.file.filesize = ftd->size;
@@ -957,4 +644,206 @@ void filedexserver::SendFileData(ftFileData *ftd, cert *peer)
 	}
 }
 
+
+/***************************************************************************/
+/****************************** CONFIGURATION HANDLING *********************/
+/***************************************************************************/
+
+
+/**** OVERLOADED FROM p3Config ****/
+
+
+
+static const std::string fdex_dir("FDEX_DIR");
+static const std::string save_dir_ss("SAVE_DIR");
+static const std::string save_inc_ss("SAVE_INC");
+
+RsSerialiser *filedexserver::setupSerialiser()
+{
+	RsSerialiser *rss = new RsSerialiser();
+
+	/* add in the types we need! */
+	rss->addSerialType(new RsFileTransferSerialiser());
+	rss->addSerialType(new RsGeneralConfigSerialiser());
+
+	return rss;
+}
+
+
+std::list<RsItem *> filedexserver::saveList(bool &cleanup)
+{
+	std::list<RsItem *> saveData;
+
+	/* it can delete them! */
+	cleanup = true;
+
+	/* create a key/value set for most of the parameters */
+	std::map<std::string, std::string> configMap;
+	std::map<std::string, std::string>::iterator mit;
+	std::list<std::string>::iterator it;
+
+	pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, 
+		"fildexserver::save_config()");
+
+	/* basic control parameters */
+	configMap[save_dir_ss] = getSaveDir();
+	if (getSaveIncSearch())
+	{
+		configMap[save_inc_ss] = "true";
+	}
+	else
+	{
+		configMap[save_inc_ss] = "false";
+	}
+
+	int i;
+	for(it = dbase_dirs.begin(), i = 0; (it != dbase_dirs.end()) 
+		&& (i < 1000); it++, i++)
+	{
+		std::string name = fdex_dir;
+		int d1, d2, d3;
+		d1 = i / 100;
+		d2 = (i - d1 * 100) / 10;
+		d3 = i - d1 * 100 - d2 * 10;
+
+		name += '0'+d1;
+		name += '0'+d2;
+		name += '0'+d3;
+
+		configMap[name] = (*it);
+	}
+
+	RsConfigKeyValueSet *rskv = new RsConfigKeyValueSet();
+
+	/* Convert to TLV */
+	for(mit = configMap.begin(); mit != configMap.end(); mit++)
+	{
+		RsTlvKeyValue kv;
+		kv.key = mit->first;
+		kv.value = mit->first;
+
+		rskv->tlvkvs.pairs.push_back(kv);
+	}
+
+	/* Add KeyValue to saveList */
+	saveData.push_back(rskv);
+
+	std::list<RsFileTransfer *>::iterator fit;
+	std::list<RsFileTransfer *> ftlist = ftFiler -> getStatus();
+	for(fit = ftlist.begin(); fit != ftlist.end(); fit++)
+	{
+		/* only write out the okay/uncompleted (with hash) files */
+		if (((*fit)->state == FT_STATE_FAILED) || 
+		    ((*fit)->state == FT_STATE_COMPLETE) || 
+		    ((*fit)->in == false) ||
+		    ((*fit)->file.hash == ""))
+		{
+			/* ignore */
+			/* cleanup */
+			delete(*fit);
+		}
+		else 
+		{
+			saveData.push_back(*fit);
+		}
+	}
+
+	/* list completed! */
+	return saveData;
+}
+
+
+bool filedexserver::loadList(std::list<RsItem *> load)
+{
+	std::list<RsItem *>::iterator it;
+	std::list<RsTlvKeyValue>::iterator kit;
+	RsConfigKeyValueSet *rskv;
+	RsFileTransfer      *rsft;
+
+	for(it = load.begin(); it != load.end(); it++)
+	{
+		/* switch on type */
+		if (NULL != (rskv = dynamic_cast<RsConfigKeyValueSet *>(*it)))
+		{
+			/* make into map */
+			std::map<std::string, std::string> configMap;
+			for(kit = rskv->tlvkvs.pairs.begin();
+				kit != rskv->tlvkvs.pairs.begin(); kit++)
+			{
+				configMap[kit->key] = kit->value;
+			}
+
+			loadConfigMap(configMap);
+
+		}
+		else if (NULL != (rsft = dynamic_cast<RsFileTransfer *>(*it)))
+		{
+			/* only add in ones which have a hash (filters old versions) */
+			if (rsft->file.hash != "")
+			{
+				ftFiler -> getFile(
+					rsft->file.name, 
+					rsft->file.hash,
+					rsft->file.filesize, "");
+			}
+		}
+		/* cleanup */
+		delete (*it);
+	}
+
+	return true;
+
+}
+
+bool  filedexserver::loadConfigMap(std::map<std::string, std::string> &configMap)
+{
+	std::map<std::string, std::string>::iterator mit;
+
+	int i;
+	std::string str_true("true");
+	std::string empty("");
+	std::string dir = "notempty";
+
+	if (configMap.end() != (mit = configMap.find(save_dir_ss)))
+	{
+		setSaveDir(mit->second);
+	}
+
+	if (configMap.end() != (mit = configMap.find(save_inc_ss)))
+	{
+		setSaveIncSearch(mit->second == str_true);
+	}
+
+	dbase_dirs.clear();
+
+	for(i = 0; (i < 1000) && (dir != empty); i++)
+	{
+		std::string name = fdex_dir;
+		int d1, d2, d3;
+		d1 = i / 100;
+		d2 = (i - d1 * 100) / 10;
+		d3 = i - d1 * 100 - d2 * 10;
+
+		name += '0'+d1;
+		name += '0'+d2;
+		name += '0'+d3;
+
+		if (configMap.end() != (mit = configMap.find(save_inc_ss)))
+		{
+			dir = mit->second;
+			dbase_dirs.push_back(mit->second);
+		}
+	}
+	if (dbase_dirs.size() > 0)
+	{
+		std::ostringstream out;
+		out << "Loading " << dbase_dirs.size();
+		out << " Directories" << std::endl;
+		pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, out.str());
+
+		reScanDirs();
+	}
+
+	return true;
+}
 
