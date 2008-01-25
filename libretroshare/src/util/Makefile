@@ -2,7 +2,8 @@
 RS_TOP_DIR = ..
 include ../make.opt
 
-OBJ = rsthreads.o  rsdir.o
+OBJ = rsthreads.o  rsdir.o rsprint.o
+# rsrand.o --- not really needed!
 
 all : $(OBJ) librs dirtest dir2test
 
