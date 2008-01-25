@@ -1,7 +1,4 @@
 
-#include "dht/dhthandler.h"
-
-
 /* This stuff is actually C */
 
 #ifdef  __cplusplus
@@ -12,12 +9,6 @@ extern "C" {
 } /* extern C */
 #endif
 /* This stuff is actually C */
-
-
-
-
-/* HACK TO SWITCH THIS OFF during testing */
-/*define  NO_UPNP_RUNNING  1*/
 
 #include "upnp/upnputil.h"
 #include "upnp/upnphandler.h"
@@ -163,7 +154,7 @@ bool upnphandler::initUPnPState()
 
 			/* convert to ipaddress. */
 			inet_aton(upcd->lanaddr, &(upnp_iaddr.sin_addr));
-			upnp_iaddr.sin_port = iaddr.sin_port;
+			upnp_iaddr.sin_port = htons(iport);
 
 			upnpState = RS_UPNP_S_READY;
 			upnpConfig = upcd;   /* */
@@ -281,7 +272,7 @@ bool upnphandler::updateUPnP()
 		if (!eport_curr)
 		{
 			/* use local port if eport is zero */
-			eport_curr = ntohs(iaddr.sin_port);
+			eport_curr = iport;
 			std::cerr << "Using LocalPort for extPort!";
 			std::cerr << std::endl;
 		}
@@ -302,14 +293,7 @@ bool upnphandler::updateUPnP()
 		char eport1[256];
 		char eport2[256];
 
-		//struct sockaddr_in localAddr = iaddr;
-		if (iaddr.sin_addr.s_addr != upnp_iaddr.sin_addr.s_addr)
-		{
-			std::cerr << "Warning ... Address Mismatch!";
-			std::cerr << std::endl;
-		}
-	
-		upnp_iaddr.sin_port = iaddr.sin_port;
+		upnp_iaddr.sin_port = htons(iport);
 		struct sockaddr_in localAddr = upnp_iaddr;
 
 		snprintf(in_port1, 256, "%d", ntohs(localAddr.sin_port));
@@ -352,5 +336,149 @@ bool upnphandler::updateUPnP()
 
 }
 
+
+/************************ External Interface *****************************
+ *
+ *
+ *
+ */
+
+upnphandler::upnphandler()
+	:toShutdown(false), toEnable(false), 
+	toStart(false), toStop(false),
+	eport(0), eport_curr(0),
+	upnpState(RS_UPNP_S_UNINITIALISED), 
+	upnpConfig(NULL)
+{
+	return;
+}
+
+upnphandler::~upnphandler()
+{
+		return;
+}
+
+	/* RsIface */
+void  upnphandler::enableUPnP(bool active)
+{
+	dataMtx.lock();   /***  LOCK MUTEX  ***/
+
+	if (active != toEnable)
+	{
+		if (active)
+		{
+			toStart = true;
+		}
+		else
+		{
+			toStop = true;
+		}
+	}
+	toEnable = active;
+
+	dataMtx.unlock(); /*** UNLOCK MUTEX ***/
+}
+
+void    upnphandler::shutdownUPnP()
+{
+        dataMtx.lock();   /***  LOCK MUTEX  ***/
+
+        toShutdown = true;
+
+        dataMtx.unlock(); /*** UNLOCK MUTEX ***/
+}
+
+
+bool    upnphandler::getUPnPEnabled()
+{
+	dataMtx.lock();   /***  LOCK MUTEX  ***/
+
+	bool on = toEnable;
+
+	dataMtx.unlock(); /*** UNLOCK MUTEX ***/
+
+	return on;
+}
+
+bool    upnphandler::getUPnPActive()
+{
+	dataMtx.lock();   /***  LOCK MUTEX  ***/
+
+	bool on = (upnpState == RS_UPNP_S_ACTIVE);
+
+	dataMtx.unlock(); /*** UNLOCK MUTEX ***/
+
+	return on;
+}
+
+	/* the address that the listening port is on */
+void    upnphandler::setInternalPort(unsigned short iport_in)
+{
+//	std::cerr << "UPnPHandler::setInternalAddress() pre Lock!" << std::endl;
+	dataMtx.lock();   /***  LOCK MUTEX  ***/
+//	std::cerr << "UPnPHandler::setInternalAddress() postLock!" << std::endl;
+
+	if (iport != iport_in)
+	{
+		iport = iport_in;
+		if ((toEnable) &&
+			(upnpState == RS_UPNP_S_ACTIVE))
+		{
+			toStop  = true;
+			toStart = true;
+		}
+	}
+	dataMtx.unlock(); /*** UNLOCK MUTEX ***/
+}
+
+void    upnphandler::setExternalPort(unsigned short eport_in)
+{
+//	std::cerr << "UPnPHandler::getExternalPort() pre Lock!" << std::endl;
+	dataMtx.lock();   /***  LOCK MUTEX  ***/
+//	std::cerr << "UPnPHandler::getExternalPort() postLock!" << std::endl;
+
+	/* flag both shutdown/start -> for restart */
+	if (eport != eport_in)
+	{
+		eport = eport_in;
+		if ((toEnable) &&
+			(upnpState == RS_UPNP_S_ACTIVE))
+		{
+			toStop  = true;
+			toStart = true;
+		}
+	}
+
+	dataMtx.unlock(); /*** UNLOCK MUTEX ***/
+}
+
+	/* as determined by uPnP */
+bool    upnphandler::getInternalAddress(struct sockaddr_in &addr)
+{
+//	std::cerr << "UPnPHandler::getInternalAddress() pre Lock!" << std::endl;
+	dataMtx.lock();   /***  LOCK MUTEX  ***/
+//	std::cerr << "UPnPHandler::getInternalAddress() postLock!" << std::endl;
+
+	addr = upnp_iaddr;
+	bool valid = (upnpState >= RS_UPNP_S_READY);
+
+	dataMtx.unlock(); /*** UNLOCK MUTEX ***/
+
+	return valid;
+}
+
+bool    upnphandler::getExternalAddress(struct sockaddr_in &addr)
+{
+//	std::cerr << "UPnPHandler::getExternalAddress() pre Lock!" << std::endl;
+	dataMtx.lock();   /***  LOCK MUTEX  ***/
+//	std::cerr << "UPnPHandler::getExternalAddress() postLock!" << std::endl;
+
+	addr = upnp_eaddr;
+	bool valid = (upnpState >= RS_UPNP_S_READY);
+
+	dataMtx.unlock(); /*** UNLOCK MUTEX ***/
+
+	return valid;
+}
 
 

@@ -48,34 +48,7 @@ int main(int argc, char **argv)
 	upnphandler upnp;
 
 	upnp.start();
-
-#ifdef NOTEVER
-
-	if (id == 0)
-	{
-		dht.setOwnPort(port1);
-		dht.setOwnHash(hash1);
-
-		dht.addFriend(hash2);
-		dht.addFriend(hash3);
-	}
-	else if (id == 1)
-	{
-		dht.setOwnPort(port2);
-		dht.setOwnHash(hash2);
-
-		dht.addFriend(hash1);
-		dht.addFriend(hash3);
-	}
-	else
-	{
-		dht.setOwnPort(port3);
-		dht.setOwnHash(hash3);
-
-		dht.addFriend(hash1);
-		dht.addFriend(hash2);
-	}
-#endif /* NOTEVER */
+	upnp.setInternalPort(12122);
 
 	for(int i = 0; 1; i++)
 	{
@@ -92,19 +65,17 @@ int main(int argc, char **argv)
 	if (i % 300 == 10)
 	{
 		/* start up a forward */
-		upnp.setupUPnPForwarding();
+		upnp.enableUPnP(true);
 
 	}
 
 	if (i % 300 == 20)
 	{
 		/* shutdown a forward */
-		upnp.shutdownUPnPForwarding();
-
-	}
-
+		upnp.enableUPnP(false);
 	}
 
 
+	}
 }
 
