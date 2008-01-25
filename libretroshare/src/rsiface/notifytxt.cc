@@ -25,6 +25,7 @@
 
 
 #include "rsiface/notifytxt.h"
+#include "rsiface/rspeers.h"
 
 #include <iostream>
 #include <sstream>
@@ -75,44 +76,42 @@ void NotifyTxt::notifyListChange(int list, int type)
 			
 void NotifyTxt::displayNeighbours()
 {
-	iface->lockData(); /* Lock Interface */
+	std::list<std::string> ids;
+	std::list<std::string>::iterator it;
 
-	std::map<RsCertId,NeighbourInfo>::const_iterator it;
-	const std::map<RsCertId,NeighbourInfo> &neighs = iface->getNeighbourMap();
+	rsPeers->getOthersList(ids);
 
 	std::ostringstream out;
-        for(it = neighs.begin(); it != neighs.end(); it++)
-        {
+	for(it = ids.begin(); it != ids.end(); it++)
+	{
+		RsPeerDetails detail;
+		rsPeers->getPeerDetails(*it, detail);
+
 		out << "Neighbour: ";
-		out << it ->second.name << " ";
-		out << it ->second.status << " ";
-		out << it ->second.trustLvl << " ";
+		out << detail;
 		out << std::endl;
 	}
 	std::cerr << out.str();
-
-	iface->unlockData(); /* UnLock Interface */
 }
 
 void NotifyTxt::displayFriends()
 {
-	iface->lockData(); /* Lock Interface */
+	std::list<std::string> ids;
+	std::list<std::string>::iterator it;
 
-	std::map<RsCertId,NeighbourInfo>::const_iterator it;
-	const std::map<RsCertId,NeighbourInfo> &friends = iface->getFriendMap();
+	rsPeers->getFriendList(ids);
 
 	std::ostringstream out;
-        for(it = friends.begin(); it != friends.end(); it++)
-        {
-		out << "Friend: ";
-		out << it->second.name << " ";
-		out << it->second.status << " ";
-		out << it->second.trustLvl << " ";
+	for(it = ids.begin(); it != ids.end(); it++)
+	{
+		RsPeerDetails detail;
+		rsPeers->getPeerDetails(*it, detail);
+
+		out << "Neighbour: ";
+		out << detail;
 		out << std::endl;
 	}
 	std::cerr << out.str();
-
-	iface->unlockData(); /* UnLock Interface */
 }
 
 void NotifyTxt::displayDirectories()

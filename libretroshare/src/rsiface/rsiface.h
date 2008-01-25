@@ -86,14 +86,6 @@ public:
 virtual	void lockData() = 0;
 virtual	void unlockData() = 0;
 
-	const std::map<RsCertId,NeighbourInfo> &getNeighbourMap() 
-		{ return mNeighbourMap; }
-
-	const std::map<RsCertId,NeighbourInfo> &getFriendMap()
-		{ return mFriendMap; }
-
-	const NeighbourInfo * getFriend(std::string id);
-
 	const std::list<FileTransferInfo> &getTransferList()
 		{ return mTransferList; }
 
@@ -167,8 +159,6 @@ bool	hasChanged(DataFlags set); /* resets it */
 void	fillLists(); /* create some dummy data to display */
 
 		/* Internals */
-	std::map<RsCertId,NeighbourInfo> mNeighbourMap;
-	std::map<RsCertId,NeighbourInfo> mFriendMap;
 	std::list<PersonInfo>    mRemoteDirList;
 	std::list<PersonInfo>    mLocalDirList;
 	std::list<FileTransferInfo> mTransferList;
@@ -201,38 +191,6 @@ virtual ~RsControl() { return; }
 
 	/* Real Startup Fn */
 virtual int StartupRetroShare(RsInit *config) = 0;
-
-/****************************************/
-	/* Neighbour Operations */
-virtual	std::string NeighGetInvite() = 0;
-virtual	int NeighLoadPEMString(std::string pem, std::string &id)  = 0;
-virtual	int NeighLoadCertificate(std::string fname, std::string &id)  = 0;
-virtual	int NeighAuthFriend(std::string id, RsAuthId code)   = 0;
-virtual	int NeighAddFriend(std::string id)                   = 0;
-virtual int NeighGetSigners(std::string uid, char *out, int len) = 0;
-
-/****************************************/
-	/* Friend Operations */
-virtual	int FriendStatus(std::string id, bool accept)        = 0;
-virtual	int FriendRemove(std::string id)                     = 0;
-virtual	int FriendConnectAttempt(std::string id)             = 0;
-
-virtual	int FriendSignCert(std::string id)                   = 0;
-virtual	int FriendTrustSignature(std::string id, bool trust) = 0;
-
-virtual	int FriendSetLocalAddress(std::string id, std::string addr,
-		unsigned short port)                      = 0;
-virtual	int FriendSetExtAddress(std::string id, std::string addr,
-		unsigned short port)                      = 0;
-virtual	int FriendSetDNSAddress(std::string id, std::string addr) = 0;
-virtual	int FriendSetFirewall(std::string id, bool firewalled, bool forwarded) = 0;
-
-virtual	int FriendSaveCertificate(std::string id, std::string fname) = 0;
-
-/*
-virtual	int FriendSetConnectMode(std::string id, int mode)   = 0;
-*/
-virtual	int FriendSetBandwidth(std::string id, float outkB, float inkB) = 0;
 
 /****************************************/
 	/* Directory Actions */
@@ -288,8 +246,8 @@ virtual int 	ClearInRecommend() = 0;
 
 /****************************************/
         /* RsIface Networking */
-virtual int     NetworkDHTActive(bool active)  = 0;
-virtual int     NetworkUPnPActive(bool active) = 0;
+//virtual int     NetworkDHTActive(bool active)  = 0;
+//virtual int     NetworkUPnPActive(bool active) = 0;
 
 /****************************************/
 	/* Config */
@@ -297,14 +255,9 @@ virtual	int 	ConfigAddSharedDir( std::string dir )      = 0;
 virtual	int 	ConfigRemoveSharedDir( std::string dir )   = 0;
 virtual	int 	ConfigSetIncomingDir( std::string dir )    = 0;
 
-virtual	int 	ConfigSetLocalAddr( std::string ipAddr, int port ) = 0;
-virtual	int 	ConfigSetExtAddr( std::string ipAddr, int port ) = 0;
-virtual	int 	ConfigSetExtName( std::string addr ) = 0;
-virtual int     ConfigSetLanConfig( bool fire, bool forw ) = 0;
-
 virtual int     ConfigSetDataRates( int total, int indiv ) = 0;
 virtual	int 	ConfigSetBootPrompt( bool on ) = 0;
-virtual	int 	ConfigSave( ) = 0;
+//virtual	int 	ConfigSave( ) = 0;
 
 /****************************************/
 

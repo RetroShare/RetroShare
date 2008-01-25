@@ -75,48 +75,6 @@ class BaseInfo
 	mutable unsigned int mId; /* (GUI) Model Id -> unique number */
 };
 
-class NeighbourInfo: public BaseInfo
-{
-	public:
-	std::string name;
-	std::string org;
-	std::string loc;
-	std::string state;
-	std::string country;
-	int         trustLvl;
-	std::string trustString;
-	std::list<RsCertId> signers;
-	std::string authCode;
-	int status;
-
-	std::string acceptString;
-	std::string statusString;
-	std::string connectString;
-	std::string lastConnect;
-	std::string peerAddress;
-
-	/* server settings */
-	std::string		localAddr;
-	int			localPort;
-	std::string		extAddr;
-	int			extPort;
-	std::string		extName;
-
-	bool			firewalled;
-	bool			forwardPort;
-
-	int			maxRate;     /* kb */
-
-	bool ownsign;
-
-	/* Flags to indicate if they are in
-	 * chat or msg list 
-	 */
-
-	bool inChat;
-	bool inMsg;
-};
-	
 /********************** For the Directory Listing *****************/
 
 class FileInfo: public BaseInfo
@@ -345,7 +303,6 @@ class SearchRequest
 };
 
 
-std::ostream &operator<<(std::ostream &out, const NeighbourInfo &info);
 std::ostream &operator<<(std::ostream &out, const MessageInfo &info);
 std::ostream &operator<<(std::ostream &out, const ChannelInfo &info);
 std::ostream &operator<<(std::ostream &out, const ChatInfo &info);
