@@ -83,7 +83,7 @@ void    CacheSource::unlockData()
 }
 	
 	/* to be overloaded for inherited Classes */
-bool    CacheSource::loadCache(const CacheData &data)
+bool    CacheSource::loadLocalCache(const CacheData &data)
 {
 	return refreshCache(data);
 }
@@ -450,6 +450,8 @@ void 	CacheStore::locked_storeCacheEntry(const CacheData &data)
 CacheStrapper::CacheStrapper(RsPeerId id, time_t period)
 	:ownId(id), queryPeriod(period)
 {
+	/* add OwnId */
+	addPeerId(ownId);
 	return;
 }
 
@@ -460,8 +462,9 @@ void	CacheStrapper::addCachePair(CachePair set)
 }
 
 
-        /* from pqimonclient */
-void    CacheStrapper::monUpdate(const std::list<pqipeer> &plist)
+        /**************** from pqimonclient ********************/
+
+void    CacheStrapper::statusChange(const std::list<pqipeer> &plist)
 {
 	std::list<pqipeer>::const_iterator it;
 	std::map<RsPeerId, CacheTS>::iterator mit;
@@ -473,6 +476,8 @@ void    CacheStrapper::monUpdate(const std::list<pqipeer> &plist)
 		}
 	}
 }
+
+        /**************** from pqimonclient ********************/
 
 
 void	CacheStrapper::addPeerId(RsPeerId pid)

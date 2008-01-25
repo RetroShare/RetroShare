@@ -77,7 +77,7 @@ bool    findLocalFile(std::string hash, std::string &fullpath, uint64_t &size);
 
 	/* Interacting with CacheSource */
 	/* overloaded from CacheSource */
-virtual bool loadCache(const CacheData &data);  /* called with stored data */
+virtual bool loadLocalCache(const CacheData &data);  /* called with stored data */
 bool 	updateCache(const CacheData &data);     /* we call when we have a new cache for others */
 
 

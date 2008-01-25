@@ -146,7 +146,7 @@ virtual bool 	cachesAvailable(RsPeerId pid, std::map<CacheId, CacheData> &ids);
 	 * configuration file....
 	 * to be overloaded by inherited class 
 	 */
-virtual bool    loadCache(const CacheData &data);
+virtual bool    loadLocalCache(const CacheData &data);
 
 	/* control Caches available */
 bool    refreshCache(const CacheData &data);
@@ -271,16 +271,17 @@ class CacheTS
 	time_t answer;
 };
 
-#include "pqi/pqimon.h"
+#include "pqi/pqimonitor.h"
 
-class CacheStrapper: public pqimonclient
+class CacheStrapper: public pqiMonitor
 {
 	public:
 	CacheStrapper(RsPeerId id, time_t period);
 virtual ~CacheStrapper() { return; }
 
-	/* from pqimonclient */
-virtual void monUpdate(const std::list<pqipeer> &plist);
+	/************* from pqiMonitor *******************/
+virtual void statusChange(const std::list<pqipeer> &plist);
+	/************* from pqiMonitor *******************/
 
 void	addCachePair(CachePair pair);
 

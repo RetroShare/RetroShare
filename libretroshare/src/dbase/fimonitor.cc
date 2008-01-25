@@ -99,7 +99,7 @@ bool    FileIndexMonitor::findLocalFile(std::string hash,
 }
 
 
-bool FileIndexMonitor::loadCache(const CacheData &data)  /* called with stored data */
+bool FileIndexMonitor::loadLocalCache(const CacheData &data)  /* called with stored data */
 {
 	bool ok = false;
 
