@@ -45,8 +45,8 @@
 
 const int p3chatzone = 1745;
 
-p3ChatService::p3ChatService()
-	:p3Service(RS_SERVICE_TYPE_CHAT) 
+p3ChatService::p3ChatService(p3ConnectMgr *cm)
+	:p3Service(RS_SERVICE_TYPE_CHAT), mConnMgr(cm)
 {
 	addSerialType(new RsChatSerialiser());
 }
@@ -70,19 +70,22 @@ int	p3ChatService::status()
 int     p3ChatService::sendChat(std::string msg)
 {
 	/* go through all the peers */
-	sslroot *sslr = getSSLRoot();
 
-	std::list<cert *>::iterator it;
-	std::list<cert *> &certs = sslr -> getCertList();
+	std::list<std::string> ids;
+	std::list<std::string>::iterator it;
+	mConnMgr->getOnlineList(ids);
 
-	for(it = certs.begin(); it != certs.end(); it++)
+	/* add in own id -> so get reflection */
+	ids.push_back(mConnMgr->getOwnId());
+
+	for(it = ids.begin(); it != ids.end(); it++)
 	{
 		pqioutput(PQL_DEBUG_BASIC, p3chatzone, 
 			"p3ChatService::sendChat()");
 
 		RsChatItem *ci = new RsChatItem();
 
-		ci->PeerId((*it)->PeerId());
+		ci->PeerId(*it);
 		ci->chatFlags = 0;
 		ci->sendTime = time(NULL);
 		ci->message = msg;

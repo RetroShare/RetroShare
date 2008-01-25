@@ -37,13 +37,12 @@
 #include "serialiser/rsmsgitems.h"
 
 #include "rsiface/rsiface.h"
-class pqimonitor;
-class sslroot;
+class p3ConnectMgr;
 
 class p3MsgService: public p3Service
 {
 	public:
-	p3MsgService();
+	p3MsgService(p3ConnectMgr *cm);
 
 void    loadWelcomeMsg(); /* startup message */
 
@@ -71,14 +70,14 @@ int 	incomingMsgs();
 std::list<RsMsgItem *> imsg;
 std::list<RsMsgItem *> msgOutgoing; /* ones that haven't made it out yet! */
 
+	p3ConnectMgr *mConnMgr;
+
 // bool state flags.
 	public:
 	Indicator msgChanged;
 	Indicator msgMajorChanged;
 
-sslroot *sslr;
 std::string config_dir;
-
 };
 
 #endif // MESSAGE_SERVICE_HEADER

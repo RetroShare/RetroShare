@@ -37,12 +37,13 @@
 
 #include "serialiser/rsmsgitems.h"
 #include "services/p3service.h"
+#include "pqi/p3connmgr.h"
 
 
 class p3ChatService: public p3Service
 {
 	public:
-	p3ChatService();
+	p3ChatService(p3ConnectMgr *cm);
 
 	/* overloaded */
 virtual int   tick();
@@ -52,6 +53,9 @@ int	sendChat(std::string msg);
 int	sendPrivateChat(std::string msg, std::string id);
 
 std::list<RsChatItem *> getChatQueue(); 
+
+	private:
+	p3ConnectMgr *mConnMgr;
 };
 
 #endif // SERVICE_CHAT_HEADER

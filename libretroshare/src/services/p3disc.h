@@ -36,19 +36,8 @@
 
 #include "pqi/pqi.h"
 
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-
-#include "pqi/xpgpcert.h"
-
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
-#include "pqi/sslcert.h"
-
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
+class p3ConnectMgr;
+class p3AuthMgr;
 
 #include "serialiser/rsdiscitems.h"
 #include "services/p3service.h"
@@ -60,8 +49,8 @@ class autoserver
 		:id(NULL), ca(NULL), connect(false), c_ts(0), 
 		listen(false), l_ts(0), discFlags(0) { return;}
 
-		Person *id;
-		Person *ca;
+		std::string id;
+		std::string ca;
 		bool connect;
 		unsigned int c_ts; // this is connect_tf converted to timestamp, 0 invalid.
 
@@ -94,7 +83,7 @@ class p3disc: public p3Service
 		bool remote_disc;
 		//sslroot *sslbase;
 
-		p3disc(sslroot *r);
+		p3disc(p3AuthMgr *am, p3ConnectMgr *cm);
 virtual		~p3disc();
 
 		// Overloaded from p3Service functions.
@@ -155,15 +144,18 @@ std::list<cert *> potentialproxy(cert *target);
 		int collectCerts();
 		int distillData();
 
+#if 0
 		//cert *checkDuplicateX509(X509 *x509);
 		std::list<cert *> &getDiscovered();
 
 		// Main Storage
-		std::list<autoneighbour *> neighbours;
 		std::list<cert *> ad_init;
-
 		std::list<cert *> discovered;
-		sslroot *sroot;
+#endif
+		std::list<autoneighbour *> neighbours;
+
+		p3AuthMgr *mAuthMgr;
+		p3ConnectMgr *mConnMgr;
 };
 
 #endif // MRK_PQI_AUTODISC_H

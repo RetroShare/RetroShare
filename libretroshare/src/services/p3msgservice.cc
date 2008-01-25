@@ -27,29 +27,14 @@
 #include "pqi/pqibin.h"
 #include "pqi/pqiarchive.h"
 #include "pqi/pqidebug.h"
+#include "pqi/p3connmgr.h"
 
 #include "services/p3msgservice.h"
 
 #include <sstream>
 #include <iomanip>
 
-
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-
-#include "pqi/xpgpcert.h"
-
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
-#include "pqi/sslcert.h"
-
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
-
 const int msgservicezone = 54319;
-
 
 /* Another little hack ..... unique message Ids
  * will be handled in this class.....
@@ -68,11 +53,10 @@ unsigned int getNewUniqueMsgId()
 	return msgUniqueId++;
 }
 
-p3MsgService::p3MsgService()
-	:p3Service(RS_SERVICE_TYPE_MSG), 
+p3MsgService::p3MsgService(p3ConnectMgr *cm)
+	:p3Service(RS_SERVICE_TYPE_MSG), mConnMgr(cm),
 	msgChanged(1), msgMajorChanged(1)
 {
-	sslr = getSSLRoot();
 }
 
 
@@ -110,7 +94,7 @@ int 	p3MsgService::incomingMsgs()
 		mi -> recvTime = time(NULL);
 		std::string mesg;
 
-		if (mi -> PeerId() == sslr->getOwnCert()->PeerId())
+		if (mi -> PeerId() == mConnMgr->getOwnId())
 		{
 			/* from the loopback device */
 			mi -> msgFlags = RS_MSG_FLAGS_OUTGOING;
@@ -219,18 +203,23 @@ int     p3MsgService::checkOutgoingMessages()
 	 * if online, send
 	 */
 
+	const std::string ownId = mConnMgr->getOwnId();
+
 	std::list<RsMsgItem *>::iterator it;
 	for(it = msgOutgoing.begin(); it != msgOutgoing.end();)
 	{
 
 		/* find the certificate */
-		certsign sign;
-		convert_to_certsign((*it)->PeerId(), sign);
-		cert *peer = sslr -> findcertsign(sign);
-
+		std::string pid = (*it)->PeerId();
+		peerConnectState pstate;
+		if (!mConnMgr->getFriendNetStatus(pid, pstate))
+		{
+			delete(*it);
+			it = msgOutgoing.erase(it);
+		}
 	 	/* if online, send it */
-		if ((peer -> Status() & PERSON_STATUS_CONNECTED) 
-		    || (peer == sslr->getOwnCert()))
+		else if ((pstate.state & RS_PEER_S_ONLINE)
+		    		|| (pid == ownId))
 		{
 			/* send msg */
 			pqioutput(PQL_ALERT, msgservicezone, 
@@ -359,7 +348,7 @@ void p3MsgService::loadWelcomeMsg()
 	/* Load Welcome Message */
 	RsMsgItem *msg = new RsMsgItem();
 
-	msg -> PeerId(sslr->getOwnCert()->PeerId());
+	msg -> PeerId(mConnMgr->getOwnId());
 
 	msg -> sendTime = 0;
 

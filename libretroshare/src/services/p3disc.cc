@@ -26,8 +26,8 @@
 
 #include "services/p3disc.h"
 
-// for active local cert stuff.
-#include "pqi/pqissl.h"
+#include "pqi/p3authmgr.h"
+#include "pqi/p3connmgr.h"
 
 #include <iostream>
 #include <errno.h>
@@ -51,8 +51,8 @@ static unsigned long determineCertAvailabilityFlags(cert *c);
 // Operating System specific includes.
 #include "pqi/pqinetwork.h"
 
-p3disc::p3disc(sslroot *r)
-	:p3Service(RS_SERVICE_TYPE_DISC), sroot(r)
+p3disc::p3disc(p3AuthMgr *am, p3ConnectMgr *cm)
+	:p3Service(RS_SERVICE_TYPE_DISC), mAuthMgr(am), mConnMgr(cm)
 {
 	addSerialType(new RsDiscSerialiser());
 
