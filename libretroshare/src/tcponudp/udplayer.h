@@ -35,6 +35,9 @@
 #include <sys/socket.h>
 */
 
+
+#include "util/rsthreads.h"
+
 /* universal networking functions */
 #include "tou_net.h"
 
@@ -42,55 +45,50 @@
 #include <list>
 #include <deque>
 
-std::ostream &operator<<(std::ostream &out,  struct sockaddr_in &addr);
-bool operator==(struct sockaddr_in &addr, struct sockaddr_in &addr2);
+std::ostream &operator<<(std::ostream &out,  const struct sockaddr_in &addr);
+bool operator==(const struct sockaddr_in &addr, const struct sockaddr_in &addr2);
+bool operator<(const struct sockaddr_in &addr, const struct sockaddr_in &addr2);
+
 std::string printPkt(void *d, int size);
 std::string printPktOffset(unsigned int offset, void *d, unsigned int size);
 
 
-/* So the UdpLayer ..... has a couple of roles 
- *
- * Firstly Send Proxy Packet() (for address determination).
- * all the rest of this functionality is handled elsewhere.
- *
- * Secondly support TcpStreamer....
+/* UdpLayer ..... is the bottom layer which 
+ * just sends and receives Udp packets.
  */
 
-class udpPacket;
+class UdpReceiver
+{
+	public:
+virtual void recvPkt(void *data, int size, struct sockaddr_in &from) = 0;
+};
 
-class UdpLayer
+class UdpLayer: public RsThread
 {
 	public:
 
-	UdpLayer(struct sockaddr_in &local);
+	UdpLayer(UdpReceiver *recv, struct sockaddr_in &local);
 virtual ~UdpLayer() { return; }
 
 int     status(std::ostream &out);
 
 	/* setup connections */
 	int openSocket();
-	int setTTL(int t);
-	int getTTL();
 
-	int  sendToProxy(struct sockaddr_in &proxy, const void *data, int size);
-	int  setRemoteAddr(struct sockaddr_in &remote);
-	int  getRemoteAddr(struct sockaddr_in &remote);
+	/* RsThread functions */
+virtual void run(); /* called once the thread is started */
+
+void	recv_loop(); /* uses callback to UdpReceiver */
 
 	/* Higher Level Interface */
-	int  readPkt(void *data, int *size);
-	int  sendPkt(void *data, int size);
+	//int  readPkt(void *data, int *size, struct sockaddr_in &from);
+	int  sendPkt(void *data, int size, struct sockaddr_in &to, int ttl);
 
 	/* monitoring / updates */
 	int okay();
 	int tick();
 
 	int close();
-
-	/* unix like interface for recving packets not part 
-	 * of the tcp stream
-	 */
-ssize_t recvRndPktfrom(void *buf, size_t len, int flags, 
-		struct sockaddr *from, socklen_t *fromlen);
 
 	/* data */
 	/* internals */
@@ -99,25 +97,21 @@ ssize_t recvRndPktfrom(void *buf, size_t len, int flags,
 virtual	int receiveUdpPacket(void *data, int *size, struct sockaddr_in &from);
 virtual	int sendUdpPacket(const void *data, int size, struct sockaddr_in &to);
  
+	int setTTL(int t);
+	int getTTL();
+
 	/* low level */
-	/*
-	 * int rwSocket();
-	 */
 	private:
 
+	UdpReceiver *recv;
 
-	struct sockaddr_in paddr; /* proxy addr */
-	struct sockaddr_in raddr; /* remote addr */
 	struct sockaddr_in laddr; /* local addr */
 
-	bool raddrKnown;
 	int  errorState;
 	int sockfd;
-
 	int ttl;
 
- 	std::deque<udpPacket * > randomPkts;
-
+	RsMutex sockMtx;
 };
 
 #include <iostream>
@@ -126,8 +120,8 @@ class LossyUdpLayer: public UdpLayer
 {
 	public:
 
-	LossyUdpLayer(struct sockaddr_in &local, double frac)
-	:UdpLayer(local), lossFraction(frac)
+	LossyUdpLayer(UdpReceiver *udpr, struct sockaddr_in &local, double frac)
+	:UdpLayer(udpr, local), lossFraction(frac)
 	{
 		return;
 	}

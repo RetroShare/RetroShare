@@ -115,33 +115,36 @@ int main(int argc, char **argv)
 	std::cerr << "Local Address: " << laddr << std::endl;
 	std::cerr << "Remote Address: " << raddr << std::endl;
 
-	//LossyUdpLayer udpl(laddr, 0.01);
-	UdpLayer udpl(laddr);
-	if (!udpl.openSocket())
+	UdpSorter udps(laddr);
+	if (!udps.okay())
 	{
-		std::cerr << "Cannot Open Local Address: " << laddr << std::endl;
+		std::cerr << "UdpSorter not Okay (Cannot Open Local Address): " << laddr << std::endl;
 		exit(1);
 	}
 
-	udpl.setRemoteAddr(raddr);
 
-	TcpStream tcp(&udpl);
+	TcpStream tcp(&udps);
+	udps.addUdpPeer(&tcp, raddr);
 
 	if (toConnect)
 	{
-		tcp.connect();
+		tcp.connect(raddr);
+	}
+	else
+	{
+		tcp.listenfor(raddr);
 	}
 
 	while(!tcp.isConnected())
 	{
 		sleep(1);
 		std::cerr << "Waiting for TCP to Connect!" << std::endl;
-		udpl.status(std::cerr);
+		udps.status(std::cerr);
 		tcp.status(std::cerr);
 		tcp.tick();
 	}
 	std::cerr << "TCP Connected***************************" << std::endl;
-	udpl.status(std::cerr);
+	udps.status(std::cerr);
 	tcp.status(std::cerr);
 	std::cerr << "TCP Connected***************************" << std::endl;
 
@@ -161,7 +164,7 @@ int main(int argc, char **argv)
 		while(!done)
 		{
 			//sleep(1);
-			usleep(10000);
+			usleep(100000);
 			//usleep(1000);
 			if (blockread != true)
 			{
@@ -196,8 +199,8 @@ int main(int argc, char **argv)
 
 		while(!tcp.widle())
 		{
-			sleep(1);
-			//usleep(10000);
+			//sleep(1);
+			usleep(100000);
 			//usleep(1000);
 			tcp.tick();
 			if (count++ % 10 == 0)
@@ -220,7 +223,7 @@ int main(int argc, char **argv)
 	while(1)
 	{
 		//sleep(1);
-		usleep(10000);
+		usleep(100000);
 		//usleep(1000);
 		//int writesize = bufsize;
 		int ret;
@@ -258,7 +261,9 @@ int main(int argc, char **argv)
 	while((stayOpen) || (!tcp.ridle()))
 	{
 		tcp.tick();
-		sleep(1);
+		//sleep(1);
+		usleep(100000);
+		//usleep(1000);
 		if (count++ % 10 == 0)
 		{
 			std::cerr << "Waiting for Idle()" << std::endl;

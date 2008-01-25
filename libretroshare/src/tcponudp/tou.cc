@@ -43,10 +43,7 @@ struct TcpOnUdp_t
 {
 	int tou_fd;
 	int lasterrno;
-	UdpLayer  *udp;
 	TcpStream *tcp;
-	bool know_eaddr;
-	struct sockaddr_in extaddr;
 	bool idle;
 };
 
@@ -55,32 +52,66 @@ typedef struct TcpOnUdp_t TcpOnUdp;
 static  std::vector<TcpOnUdp *> tou_streams;
 
 static  int tou_inited = 0;
+static  UdpSorter *udps = NULL;
 
 static int	tou_tick_all();
-static int	tou_init()
+
+/* 	tou_init - opens the udp port (universal bind) */
+int 	tou_init(const struct sockaddr *my_addr, socklen_t addrlen)
 {
 	if (tou_inited)
 		return 1;
 
 	tou_streams.resize(kInitStreamTable);
 
+	udps = new UdpSorter( *((struct sockaddr_in *) my_addr));
+
+	/* check the bind succeeded */
+	if (!(udps->okay()))
+	{
+		delete (udps);
+		udps = NULL;
+		return -1;
+	}
+
 	tou_inited = 1;
 	return 1;
+}
+
+/* 	tou_stunpeer supply tou with stun peers. */
+int 	tou_stunpeer(const struct sockaddr *my_addr, socklen_t addrlen,
+			const char *id)
+{
+	if (!tou_inited)
+		return -1;
+
+	udps->addStunPeer(*(struct sockaddr_in *) my_addr, id);
+	return 0;
+}
+
+int     tou_extaddr(struct sockaddr *ext_addr, socklen_t *addrlen)
+{
+	if (!tou_inited)
+		return -1;
+
+	return udps->externalAddr(*(struct sockaddr_in *) ext_addr);
 }
 
 
 /* 	open - which does nothing */
 int     tou_socket(int /*domain*/, int /*type*/, int /*protocol*/)
 {
-	tou_init();
+	if (!tou_inited)
+	{
+		return -1;
+	}
+
 	for(unsigned int i = 1; i < tou_streams.size(); i++)
 	{
 		if (tou_streams[i] == NULL)
 		{
 			tou_streams[i] = new TcpOnUdp();
 			tou_streams[i] -> tou_fd = i;
-			tou_streams[i] -> know_eaddr = false;
-			tou_streams[i] -> udp = NULL;
 			tou_streams[i] -> tcp = NULL;
 			return i;
 		}
@@ -93,8 +124,6 @@ int     tou_socket(int /*domain*/, int /*type*/, int /*protocol*/)
 	if (tou == tou_streams[tou_streams.size() -1])
 	{
 		tou -> tou_fd = tou_streams.size() -1;
-		tou -> know_eaddr = false;
-		tou -> udp = NULL;
 		tou -> tcp = NULL;
 		return tou->tou_fd;
 	}
@@ -109,10 +138,6 @@ int     tou_socket(int /*domain*/, int /*type*/, int /*protocol*/)
 #endif 
 }
 
-
-
-
-
 /* 	bind - opens the udp port */
 int 	tou_bind(int sockfd, const struct sockaddr *my_addr, 
 					socklen_t addrlen)
@@ -123,45 +148,9 @@ int 	tou_bind(int sockfd, const struct sockaddr *my_addr,
 	}
 	TcpOnUdp *tous = tou_streams[sockfd];
 
-	if (tous->udp)
-	{
-		tous -> lasterrno = EADDRINUSE;
-		return -1;
-	}
-
-	if (tous->tcp)
-	{
-		tous -> lasterrno = EADDRINUSE;
-		return -1;
-	}
-
-	if (addrlen != sizeof(struct sockaddr_in))
-	{
-		tous -> lasterrno = EADDRNOTAVAIL;
-		return -1;
-	}
-
-	/* 
-	 * tous->udp = new UdpLayer( *((struct sockaddr_in *) my_addr));
-	 */
-	// for testing - drop 5% of packets... */
-	//tous->udp = new LossyUdpLayer( *((struct sockaddr_in *) my_addr), 0.05);
-	tous->udp = new UdpLayer( *((struct sockaddr_in *) my_addr));
-	/* check the bind succeeded */
-	if (!(tous->udp->okay()))
-	{
-		delete (tous->udp);
-		tous->udp = NULL;
-		tous -> lasterrno = EADDRINUSE;
-		return -1;
-	}
-
-	tous->tcp = new TcpStream(tous->udp);
-
-	tous->tcp->tick();
-	tou_tick_all();
-
-	return 0;
+	/* this now always returns an error! */
+	tous -> lasterrno = EADDRINUSE;
+	return -1;
 }
 
 /* 	records peers address, and sends syn pkt 
@@ -188,12 +177,15 @@ int 	tou_connect(int sockfd, const struct sockaddr *serv_addr,
 		return -1;
 	}
 
-	if (tous->tcp->state == 0)
+	/* create a TCP stream to connect with. */
+	if (!tous->tcp)
 	{
-		tous->udp->setRemoteAddr(*((struct sockaddr_in *) serv_addr));
+		tous->tcp = new TcpStream(udps);
+		udps->addUdpPeer(tous->tcp, 
+			*((const struct sockaddr_in *) serv_addr));
 	}
 
-	tous->tcp->connect();
+	tous->tcp->connect(*(const struct sockaddr_in *) serv_addr);
 	tous->tcp->tick();
 	tou_tick_all();
 	if (tous->tcp->isConnected())
@@ -203,6 +195,36 @@ int 	tou_connect(int sockfd, const struct sockaddr *serv_addr,
 
 	tous -> lasterrno = EINPROGRESS;
 	return -1;
+}
+
+int 	tou_listenfor(int sockfd, const struct sockaddr *serv_addr, 
+					socklen_t addrlen)
+{
+	if (tou_streams[sockfd] == NULL)
+	{
+		return -1;
+	}
+	TcpOnUdp *tous = tou_streams[sockfd];
+	
+	if (addrlen != sizeof(struct sockaddr_in))
+	{
+		tous -> lasterrno = EINVAL;
+		return -1;
+	}
+
+	/* create a TCP stream to connect with. */
+	if (!tous->tcp)
+	{
+		tous->tcp = new TcpStream(udps);
+		udps->addUdpPeer(tous->tcp, 
+			*((const struct sockaddr_in *) serv_addr));
+	}
+
+	tous->tcp->listenfor(*((struct sockaddr_in *) serv_addr));
+	tous->tcp->tick();
+	tou_tick_all();
+
+	return 0;
 }
 
 int     tou_listen(int sockfd, int backlog)
@@ -233,158 +255,10 @@ int     tou_accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
 	if (tous->tcp->isConnected())
 	{
 		// should get remote address
-		tous->udp->getRemoteAddr(*((struct sockaddr_in *) addr));
+		tous->tcp->getRemoteAddress(*((struct sockaddr_in *) addr));
 		return sockfd;	
 	}
 
-	tous -> lasterrno = EAGAIN;
-	return -1;
-}
-
-int 	tou_listenfor(int sockfd, const struct sockaddr *serv_addr, 
-					socklen_t addrlen)
-{
-	if (tou_streams[sockfd] == NULL)
-	{
-		return -1;
-	}
-	TcpOnUdp *tous = tou_streams[sockfd];
-	
-	if (addrlen != sizeof(struct sockaddr_in))
-	{
-		tous -> lasterrno = EINVAL;
-		return -1;
-	}
-
-	if (tous->tcp->state == 0)
-	{
-		tous->udp->setRemoteAddr(*((struct sockaddr_in *) serv_addr));
-	}
-
-	tous->tcp->tick();
-	tou_tick_all();
-
-	return 0;
-}
-
-/* 	This is a udp socket - after all
- *  	independent operation from all of the 
- *  	stream stuff.
- */
-int     tou_extudp(const struct sockaddr *ext, socklen_t tolen)
-{
-	/* request a udp to listen on, in a leachy kinda way */
-	std::vector<TcpOnUdp *>::iterator it;
-	for(it = tou_streams.begin(); it != tou_streams.end(); it++)
-	{
-		if ((*it) && ((*it)->udp))
-		{
-			if ((*it)->know_eaddr)
-			{
-				*((struct sockaddr_in *) ext) = (*it)->extaddr;
-				return (*it)->tou_fd;
-			}
-		}
-	}
-	return -1;
-}
-
-int     tou_extaddr(int sockfd, const struct sockaddr *ext, socklen_t tolen)
-{
-	if (tou_streams[sockfd] == NULL)
-	{
-		return -1;
-	}
-	TcpOnUdp *tous = tou_streams[sockfd];
-	tous -> know_eaddr = true;
-	tous -> extaddr = *((struct sockaddr_in *) ext);
-	return 0;
-}
-
-
-ssize_t tou_recvfrom(int sockfd, void *buf, size_t len, int flags, struct sockaddr *from, socklen_t *fromlen)
-{
-	if (tou_streams[sockfd] == NULL)
-	{
-		std::cerr << "tou_recvfrom() Invalid sockfd:" << sockfd;
-		std::cerr << std::endl;
-		return -1;
-	}
-	TcpOnUdp *tous = tou_streams[sockfd];
-
-	if (*fromlen != sizeof(struct sockaddr_in))
-	{
-		std::cerr << "tou_recvfrom() Invalid addr size";
-		std::cerr << std::endl;
-		tous -> lasterrno = EINVAL;
-		return -1;
-	}
-
-	/* extra checks */
-	if ((!tous->tcp) || (!tous->udp))
-	{
-		std::cerr << "tou_recvfrom() Bad sockfd (!udp) || (!tcp) :" << sockfd;
-		std::cerr << std::endl;
-		return -1;
-	}
-
-	if (tous->tcp->state == 0)
-	{
-		//std::cerr << "tou_recvfrom() State = 0 .... Allow??";
-		//std::cerr << std::endl;
-	}
-
-
-	if (tous->udp->okay())
-	{
-		int ret = tous->udp->recvRndPktfrom(buf,len,flags, from, fromlen);
-		if (ret < 0)
-		{
-		//std::cerr << "tou_recvfrom() Sock Ok, Try Again later";
-		//std::cerr << std::endl;
-			tous -> lasterrno = EAGAIN;
-			return -1;
-		}
-		std::cerr << "tou_recvfrom() Got a Packet on: " << sockfd;
-		std::cerr << std::endl;
-		tous -> lasterrno = 0;
-		return ret;
-	}
-		std::cerr << "tou_recvfrom() Socket Not Okay:" << sockfd;
-		std::cerr << std::endl;
-	
-	tous -> lasterrno = EAGAIN;
-	return -1;
-}
-
-
-ssize_t tou_sendto(int sockfd, const void *buf, size_t len, int flags, const struct
-	              sockaddr *to, socklen_t tolen)
-{
-	if (tou_streams[sockfd] == NULL)
-	{
-		return -1;
-	}
-	TcpOnUdp *tous = tou_streams[sockfd];
-
-	if (tolen != sizeof(struct sockaddr_in))
-	{
-		tous -> lasterrno = EINVAL;
-		return -1;
-	}
-
-	if (tous->tcp->state == 0)
-	{
-	}
-
-
-	if (tous->udp->okay())
-	{
-        	tous->udp->sendToProxy(*((struct sockaddr_in *) to), 
-					buf, len);
-		return len;
-	}
-	
 	tous -> lasterrno = EAGAIN;
 	return -1;
 }
@@ -401,7 +275,7 @@ int     tou_connected(int sockfd)
 	tous->tcp->tick();
 	tou_tick_all();
 
-	return (tous->tcp->state == 4);
+	return (tous->tcp->TcpState() == 4);
 }
 
 
@@ -422,7 +296,7 @@ ssize_t tou_read(int sockfd, void *buf, size_t count)
 	int err = tous->tcp->read((char *) buf, count);
 	if (err < 0)
 	{
-		tous->lasterrno = tous->tcp->errorState;
+		tous->lasterrno = tous->tcp->TcpErrorState();
 		return -1;
 	}
 	return err;
@@ -440,7 +314,7 @@ ssize_t tou_write(int sockfd, const void *buf, size_t count)
 	int err = tous->tcp->write((char *) buf, count);
 	if (err < 0)
 	{
-		tous->lasterrno = tous->tcp->errorState;
+		tous->lasterrno = tous->tcp->TcpErrorState();
 		tous->tcp->tick();
 		tou_tick_all();
 		return -1;
@@ -464,7 +338,7 @@ int     tou_maxread(int sockfd)
 	int ret = tous->tcp->read_pending();
 	if (ret < 0)
 	{
-		tous->lasterrno = tous->tcp->errorState;
+		tous->lasterrno = tous->tcp->TcpErrorState();
 		return 0; // error detected next time.
 	}
 	return ret;
@@ -483,7 +357,7 @@ int     tou_maxwrite(int sockfd)
 	int ret = tous->tcp->write_allowed();
 	if (ret < 0)
 	{
-		tous->lasterrno = tous->tcp->errorState;
+		tous->lasterrno = tous->tcp->TcpErrorState();
 		return 0; // error detected next time?
 	}
 	return ret;
@@ -504,18 +378,19 @@ int 	tou_close(int sockfd)
 
 	/* shut it down */
 	tous->tcp->close();
-	tous->udp->close();
 	delete tous->tcp;
-	delete tous->udp;
 	delete tous;
 	tou_streams[sockfd] = NULL;
 	return 1;
 }
 
-
 /*	get an error number */
 int	tou_errno(int sockfd)
 {
+	if (!udps)
+	{
+		return ENOTSOCK;
+	}
 	if (tou_streams[sockfd] == NULL)
 	{
 		return ENOTSOCK;
@@ -535,11 +410,9 @@ int     tou_clear_error(int sockfd)
 	return 0;
 }
 
-
 /*	unfortuately the library needs to be ticked. (not running a thread)
  *	you can put it in a thread!
  */
-
 
 /*
  * Some helper functions for stuff.

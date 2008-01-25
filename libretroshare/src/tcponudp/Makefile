@@ -3,23 +3,37 @@ RS_TOP_DIR=..
 
 include $(RS_TOP_DIR)/make.opt
 
-EXECS = librs udp_server test_tou pair_tou reset_tou internal_tou largefile_tou 
+EXECS = librs  udpsock_test udpsort_test udp_server 
+#test_tou pair_tou reset_tou internal_tou largefile_tou 
 
-OBJ = tcpstream.o tcppacket.o  udplayer.o tou_net.o tou.o 
+OBJ  = tou_net.o udplayer.o udpsorter.o udptestfn.o
+OBJ += tcppacket.o tcpstream.o tou.o
+
+#tou.o 
 
 all : $(OBJ) $(EXECS)
 
 .cc.o:
 	$(CC) $(CFLAGS) -c $<
 
-udp_server: $(OBJ) udp_server.o
-	$(CC) $(CFLAGS) -o udp_server $(OBJ) udp_server.o $(LIBS)
-
 clean:
-	-$(RM) $(OBJ) $(BIOOBJ) test_tou.o pair_tou.o udp_server.o reset_tou.o internal_tou.o largefile_tou.o
+	-$(RM) $(OBJ) $(BIOOBJ) udpsock_test.o udpsort_test.o udp_server.o
+
+#test_tou.o pair_tou.o udp_server.o reset_tou.o internal_tou.o largefile_tou.o
 
 clobber: clean
-	-$(RM) udp_server test_tou pair_tou reset_tou internal_tou largefile_tou libtou.so ../lib/libtou.a
+	-$(RM) udpsock_test udpsort_test udp_server 
+
+#test_tou pair_tou reset_tou internal_tou largefile_tou libtou.so ../lib/libtou.a
+
+udpsock_test : $(OBJ) udpsock_test.o
+	$(CC) $(CFLAGS) -o udpsock_test $(OBJ) udpsock_test.o -lpthread -L../lib -lretroshare
+
+udpsort_test : $(OBJ) udpsort_test.o
+	$(CC) $(CFLAGS) -o udpsort_test $(OBJ) udpsort_test.o -lpthread -L../lib -lretroshare
+
+udp_server: $(OBJ) udp_server.o
+	$(CC) $(CFLAGS) -o udp_server $(OBJ) udp_server.o -lpthread -L../lib -lretroshare
 
 test_tou : $(OBJ) test_tou.o
 	$(CC) $(CFLAGS) -o test_tou $(OBJ) test_tou.o $(LIBS)

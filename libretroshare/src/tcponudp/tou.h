@@ -51,6 +51,47 @@
 extern "C" {
 #endif
 
+	/* The modification to a single UDP socket means
+ 	 * that the structure of the TOU interface must be changed.
+	 *
+	 * Init: 
+	 * (1) choose our local address. (a universal bind)
+	 * int  tou_init(const struct sockaddr *my_addr);
+	 * (2) query if we have determined our external address.
+         * int	tou_extaddr(struct sockaddr *ext_addr, socklen_t *addrlen);
+	 * (3) offer more stunpeers, for external address determination.
+         * int	tou_stunpeer(const struct sockaddr *ext_addr, socklen_t addrlen, const char *id);
+	 * (4) repeat (2)+(3) until a valid extaddr is returned.
+	 *
+	 */
+
+int  	tou_init(const struct sockaddr *my_addr, socklen_t addrlen);
+int	tou_extaddr(struct sockaddr *ext_addr, socklen_t *addrlen);
+int	tou_stunpeer(const struct sockaddr *ext_addr, socklen_t addrlen, const char *id);
+
+	/* Connections are as similar to UNIX as possible 
+	 * (1) create a socket: tou_socket() this reserves a socket id.
+	 * (2) connect: active: tou_connect() or passive: tou_listenfor().
+	 * (3) use as a normal socket.
+	 *
+	 * tou_bind() is not valid. tou_init performs this role.
+	 * tou_listen() is not valid. (must listen for a specific address) use tou_listenfor() instead.
+	 * tou_accept() can still be used.
+	 */ 
+
+	/* creation/connections */
+int	tou_socket(int domain, int type, int protocol);
+int 	tou_bind(int sockfd, const struct sockaddr *my_addr, socklen_t addrlen);	/* null op now */
+int 	tou_listen(int sockfd, int backlog); 						/* null op now */
+int 	tou_connect(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen);
+int 	tou_accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);		
+
+/* non-standard bonuses */
+int	tou_connected(int sockfd);
+int 	tou_listenfor(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen);
+
+
+
 	/* UNIX interface: minimum for the SSL BIO interface */
 ssize_t tou_read(int sockfd, void *buf, size_t count);
 ssize_t tou_write(int sockfd, const void *buf, size_t count);
@@ -64,28 +105,6 @@ int	tou_clear_error(int sockfd);
 int	tou_maxread(int sockfd);
 int	tou_maxwrite(int sockfd);
 
-
-	/* creation/connections */
-int	tou_socket(int domain, int type, int protocol);
-int 	tou_bind(int sockfd, const struct sockaddr *my_addr, socklen_t addrlen);
-int 	tou_connect(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen);
-int 	tou_listen(int sockfd, int backlog);
-int 	tou_accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
-
-	/* udp interface */
-	/* request an external udp port to use - returns sockfd */
-int	tou_extudp(const struct sockaddr *ext, socklen_t tolen);
-int	tou_extaddr(int sockfd, const struct sockaddr *to, socklen_t tolen);
-
-ssize_t tou_recvfrom(int sockfd, void *buf, size_t len, int flags, struct sockaddr *from, socklen_t *fromlen);
-ssize_t tou_sendto(int s, const void *buf, size_t len, int flags, const struct
-	              sockaddr *to, socklen_t tolen);
-
-
-/* non-standard bonuses */
-int	tou_connected(int sockfd);
-int 	tou_listenfor(int sockfd, const struct sockaddr *serv_addr, 
-					socklen_t addrlen);
 
 #ifdef  __cplusplus
 }

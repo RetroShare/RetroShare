@@ -36,7 +36,7 @@
  */
 
 #include "tcppacket.h"
-#include "udplayer.h"
+#include "udpsorter.h"
 
 #define MAX_SEG 		1500
 #define TCP_MAX_SEQ 		UINT_MAX
@@ -68,25 +68,23 @@ class dataBuffer
 #include <deque>
 
 
-class TcpStream
+class TcpStream: public UdpPeer
 {
 	public:
+	/* Top-Level exposed */
 
-	TcpStream(UdpLayer *lyr);
+	TcpStream(UdpSorter *lyr);
 
 	/* user interface */
 int     status(std::ostream &out);
-int     connect();
+int     connect(const struct sockaddr_in &raddr);
+int 	listenfor(const struct sockaddr_in &raddr);
 bool    isConnected();
 
-bool 	widle(); /* write idle */
-bool 	ridle(); /* read idle */
-uint32 	wbytes();
-uint32 	rbytes();
-
-	/* network interface (unreliable) */
-int	receivePkt(void *dta, int size);
-int	sendPkt(void *dta, int *size);
+	/* get tcp information */
+bool 	getRemoteAddress(struct sockaddr_in &raddr);
+uint8	TcpState();
+int	TcpErrorState();
 
 	/* stream Interface */
 int	write(char *dta, int size); /* write -> pkt -> net */
@@ -100,12 +98,34 @@ int	closeWrite(); /* non-standard, but for clean exit */
 int	close(); /* standard unix behaviour */
 
 int	tick(); /* check iface etc */
-	/* internal */
+
+	/* Callback Funcion from UDP Layers */
+virtual void recvPkt(void *data, int size); /* overloaded */
+
+
+
+	/* Exposed Data Counting */
+bool 	widle(); /* write idle */
+bool 	ridle(); /* read idle */
+uint32 	wbytes();
+uint32 	rbytes();
+
+	private: 
+
+	/* Internal Functions - use the Mutex (not reentrant) */
+	/* Internal Functions - that don't need mutex protection */
+
+uint32	genSequenceNo();
+bool 	isOldSequence(uint32 tst, uint32 curr);
+
+	RsMutex tcpMtx;
+
+	/* Internal Functions - only called inside mutex protection */
 
 int	cleanup();
 
 /* incoming data */
-int 	recv();
+int 	recv_check();
 int 	handleIncoming(TcpPacket *pkt);
 int 	incoming_Closed(TcpPacket *pkt);
 int 	incoming_SynSent(TcpPacket *pkt);
@@ -117,22 +137,26 @@ int 	incoming_TimedWait(TcpPacket *pkt);
 int 	incoming_Closing(TcpPacket *pkt);
 int 	incoming_CloseWait(TcpPacket *pkt);
 int 	incoming_LastAck(TcpPacket *pkt);
-
 int 	check_InPkts();
 int 	UpdateInWinSize();
+int	int_read_pending();
 
 /* outgoing data */
+int	send();
 int 	toSend(TcpPacket *pkt, bool retrans = true);
 void 	acknowledge();
-void 	calcWinSize();
-int	send();
 int	retrans();
-
 int	sendAck();
+void 	setRemoteAddress(const struct sockaddr_in &raddr);
 
+int	getTTL() { return ttl; }
+void	setTTL(int t) { ttl = t; }
 
-uint32	genSequenceNo();
-bool 	isOldSequence(uint32 tst, uint32 curr);
+/* data counting */
+uint32 	int_wbytes();
+uint32 	int_rbytes();
+
+	/* Internal Data - must have mutex to access! */
 
 	/* data (in -> pkts) && (pkts -> out) */
 
@@ -195,9 +219,15 @@ bool 	isOldSequence(uint32 tst, uint32 curr);
 	uint32 congestWinSize;
 	uint32 congestUpdate;
 
+	/* existing TTL for this stream (tweaked at startup) */
+	int ttl;
 
-	/* UdpLayer */
-	UdpLayer *udp;
+	struct sockaddr_in 	peeraddr;
+	bool 			peerKnown;
+
+	/* UdpSorter (has own Mutex!) */
+	UdpSorter *udp;
+
 };
 
 
