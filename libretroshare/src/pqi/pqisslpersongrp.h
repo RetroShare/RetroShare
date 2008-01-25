@@ -1,9 +1,9 @@
 /*
- * "$Id: pqitunneltst.cc,v 1.3 2007-02-18 21:46:50 rmf24 Exp $"
+ * libretroshare/src/pqi: pqisslpersongrp.h
  *
  * 3P/PQI network interface for RetroShare.
  *
- * Copyright 2004-2006 by Robert Fernie.
+ * Copyright 2004-2008 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,12 +25,24 @@
 
 
 
+#ifndef MRK_PQI_SSL_PERSON_HANDLER_HEADER
+#define MRK_PQI_SSL_PERSON_HANDLER_HEADER
 
-#include "pqi/pqitunneltst.h"
+#include "pqi/pqipersongrp.h"
 
-PQTunnel *createPQTStst(void *d, int n)
+class pqisslpersongrp: public pqipersongrp
 {
-	        return new PQTunnelTst();
-}
+	public:
+	pqisslpersongrp(SecurityPolicy *pol, unsigned long flags)
+	:pqipersongrp(pol, flags) { return; }
+
+	protected:
+
+	/********* FUNCTIONS to OVERLOAD for specialisation ********/
+virtual pqilistener *createListener(struct sockaddr_in laddr);
+virtual pqiperson   *createPerson(std::string id, pqilistener *listener);
+	/********* FUNCTIONS to OVERLOAD for specialisation ********/
+};
 
 
+#endif // MRK_PQI_SSL_PERSON_HANDLER_HEADER

@@ -36,7 +36,7 @@
 class Indicator
 {
 	public:
-	Indicator(int n = 0)
+	Indicator(int n = 1)
 	:num(n), changeFlags(n) {IndicateChanged();}
 void	IndicateChanged()
 	{
@@ -44,7 +44,7 @@ void	IndicateChanged()
 			changeFlags[i]=true;
 	}
 
-bool	Changed(int idx)
+bool	Changed(int idx = 0)
 	{
 		/* catch overflow */
 		if (idx > num - 1)

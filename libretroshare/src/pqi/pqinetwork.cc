@@ -436,6 +436,15 @@ in_addr_t pqi_inet_netof(struct in_addr addr)
 	//return abit;
 }
 
+int sockaddr_cmp(struct sockaddr_in &addr1, struct sockaddr_in &addr2 )
+{
+        if (addr1.sin_family != addr2.sin_family)
+		return addr1.sin_family - addr2.sin_family;
+        if (addr1.sin_addr.s_addr != addr2.sin_addr.s_addr)
+        	return (addr1.sin_addr.s_addr - addr2.sin_addr.s_addr);
+	if (addr1.sin_port != addr2.sin_port)
+		return (addr1.sin_port - addr2.sin_port);
+}
 
 int inaddr_cmp(struct sockaddr_in addr1, struct sockaddr_in addr2 )
 {
@@ -660,7 +669,7 @@ bool 	isSameSubnet(struct in_addr *addr1, struct in_addr *addr2)
 bool LookupDNSAddr(std::string name, struct sockaddr_in &addr)
 {
 
-#if 0  
+#if 1  
 	char service[100];
 	struct addrinfo hints_st;
 	struct addrinfo *hints = &hints_st;

@@ -85,25 +85,30 @@ static const int PQISSL_SSL_CONNECT_TIMEOUT = 30;
  *
  */
 
-pqissl::pqissl(cert *c, pqissllistener *l, PQInterface *parent)
-	//:NetBinInterface(parent, c), 
+pqissl::pqissl(pqissllistener *l, PQInterface *parent)
 	:NetBinInterface(parent, parent->PeerId()), 
 	waiting(WAITING_NOT), active(false), certvalid(false), 
 	sslmode(PQISSL_ACTIVE), ssl_connection(NULL), sockfd(-1), 
-	sslcert(c), sslccr(NULL), pqil(l),  // no init for remote_addr.
+	pqil(l),  // no init for remote_addr.
 	readpkt(NULL), pktlen(0), 
 	attempt_ts(0),
 	net_attempt(0), net_failure(0), net_unreachable(0), 
 	sameLAN(false), n_read_zero(0)
 
 {
-	sslccr = getSSLRoot();
+	/* set address to zero */
+	remote_addr.sin_addr.s_addr = 0;
+	remote_addr.sin_port = 0;
+	remote_addr.sin_family = AF_INET;
+
+	sslroot *sslccr = getSSLRoot();
 
   	{
 	  std::ostringstream out;
 	  out << "pqissl for PeerId: " << PeerId();
 	  pqioutput(PQL_ALERT, pqisslzone, out.str());
 	}
+	cert *sslcert = sslccr->findPeerId(PeerId());
 
 	// check certificate
 /**************** PQI_USE_XPGP ******************/
@@ -140,10 +145,13 @@ pqissl::pqissl(cert *c, pqissllistener *l, PQInterface *parent)
 
 /********** Implementation of NetInterface *************************/
 
-int	pqissl::connectattempt()
+int	pqissl::connect(struct sockaddr_in raddr)
 {
 	// reset failures
 	net_failure = 0;
+	remote_addr = raddr;
+	remote_addr.sin_family = AF_INET;
+
 	return ConnectAttempt();
 }
 
@@ -152,7 +160,7 @@ int	pqissl::listen()
 {
 	if (pqil)
 	{
-		return pqil -> addlistenaddr(sslcert, this);
+		return pqil -> addlistenaddr(PeerId(), this);
 	}
 	return 0;
 }
@@ -161,7 +169,7 @@ int 	pqissl::stoplistening()
 {
 	if (pqil)
 	{
-		pqil -> removeListenPort(sslcert);
+		pqil -> removeListenPort(PeerId());
 	}
 	return 1;
 }
@@ -185,7 +193,7 @@ int 	pqissl::reset()
 	 *
 	 */
 
-	out << "pqissl::reset():" << sslcert -> Name() << std::endl;
+	out << "pqissl::reset():" << PeerId() << std::endl;
 
 	out << "pqissl::reset() State Before Reset:" << std::endl;
 	out << "\tActive: " << (int) active << std::endl;
@@ -261,8 +269,12 @@ int 	pqissl::status()
 {
 	int alg;
 
+	sslroot *sslccr = getSSLRoot();
+	cert    *sslcert = sslccr->findPeerId(PeerId());
+
 	std::ostringstream out;
 	out << "pqissl::status()";
+
 	if (active)
 	{
 		out << " active: " << std::endl;
@@ -335,30 +347,9 @@ int 	pqissl::ConnectAttempt()
 			  "pqissl::ConnectAttempt() STATE = Not Waiting, starting connection");
 	
 			sslmode = PQISSL_ACTIVE; /* we're starting this one */
-			return Request_Proxy_Connection();
+			return Initiate_Connection();
 
 			break;
-		case WAITING_PROXY_CONNECT:
-
-  	  		pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
-			  "pqissl::ConnectAttempt() STATE = Proxy Wait.");
-	
-			return Check_Proxy_Connection();
-
-			break;
-		case WAITING_LOCAL_ADDR:
-
-  	  		pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
-			  "pqissl::ConnectAttempt() STATE = Waiting Local Addr");
-
-			return Determine_Local_Address();
-
-		case WAITING_REMOTE_ADDR:
-
-  	  		pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
-			  "pqissl::ConnectAttempt() STATE = Waiting Remote Addr");
-
-			return Determine_Remote_Address();
 
 		case WAITING_SOCK_CONNECT:
 
@@ -388,7 +379,7 @@ int 	pqissl::ConnectAttempt()
   	  		pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
 			  "pqissl::ConnectAttempt() Failed - Retrying");
 
-			return Reattempt_Connection();
+			return Failed_Connection();
 			break;
 
 
@@ -401,80 +392,6 @@ int 	pqissl::ConnectAttempt()
 	}
   	pqioutput(PQL_ALERT, pqisslzone, "pqissl::ConnectAttempt() Unknown");
 
-	return -1;
-}
-
-/****************************** REQUEST LOCAL ADDR **************************
- * Start Transaction. 
- *
- * Specifics:
- * TCP / UDP
- * TCP - null interface.
- * UDP - Proxy Connection and Exchange of Stunned addresses.
- *
- * X509 / XPGP - Same.
- *
- */
-int 	pqissl::Request_Proxy_Connection()
-{
-	waiting = WAITING_REMOTE_ADDR;
-	return Determine_Remote_Address();
-}
-
-int 	pqissl::Check_Proxy_Connection()
-{
-	waiting = WAITING_REMOTE_ADDR;
-	return Determine_Remote_Address();
-}
-
-int 	pqissl::Request_Local_Address()
-{
-	waiting = WAITING_REMOTE_ADDR;
-	return Determine_Remote_Address();
-}
-
-int 	pqissl::Determine_Local_Address()
-{
-	waiting = WAITING_REMOTE_ADDR;
-	return Determine_Remote_Address();
-	return -1;
-}
-
-/****************************** DETERMINE ADDR ******************************
- * Determine the Remote Address.
- *
- * Specifics:
- * TCP / UDP
- * TCP - check for which interface to use.
- * UDP - start proxy request....
- *
- * X509 / XPGP - Same.
- *
- */
-
-int 	pqissl::Determine_Remote_Address()
-{
-	struct sockaddr_in addr;
-    	pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
-		  "pqissl::Determine_Remote_Address() Finding Interface");
-	if (0 < connectInterface(addr))
-	{
-		remote_addr = addr;
-		remote_addr.sin_family = AF_INET;
-		// jump unneccessary state.
-		waiting = WAITING_REMOTE_ADDR;
-		return Initiate_Connection();
-	}
-	// cannot connect!.
-    	pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
-		  "pqissl::Request_Remote_Address() No Avail Interfaces");
-
-	// This is one of only place that notifies of failure...
-	if (parent())
-	{
-		parent() -> notifyEvent(this, NET_CONNECT_UNREACHABLE);
-	}
-	//waiting = WAITING_NOT;
 	return -1;
 }
 
@@ -491,15 +408,18 @@ int 	pqissl::Determine_Remote_Address()
  *
  */
 
-int 	pqissl::Reattempt_Connection()
+int 	pqissl::Failed_Connection()
 {
 	pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
-		"pqissl::ConnectAttempt() Failed - Retrying");
-	// flag last attempt as a failure.
-	net_failure |= net_attempt;
+		"pqissl::ConnectAttempt() Failed - Notifying");
+
+	if (parent())
+	{
+		parent() -> notifyEvent(this, NET_CONNECT_UNREACHABLE);
+	}
 	waiting = WAITING_NOT;
 
-	return Request_Proxy_Connection(); /* start of the chain */
+	return 1;
 }
 
 /****************************** MAKE CONNECTION *****************************
@@ -522,7 +442,7 @@ int 	pqissl::Initiate_Connection()
   	pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
 	  "pqissl::Initiate_Connection() Attempting Outgoing Connection....");
 
-	if (waiting != WAITING_REMOTE_ADDR)
+	if (waiting != WAITING_NOT)
 	{
   		pqioutput(PQL_WARNING, pqisslzone, 
 		 "pqissl::Initiate_Connection() Already Attempt in Progress!");
@@ -596,7 +516,7 @@ int 	pqissl::Initiate_Connection()
 	{ 
 		std::ostringstream out;
 		out << "Connecting to ";
-		out << sslcert -> Name() << " via ";
+		out << PeerId() << " via ";
 		out << inet_ntoa(addr.sin_addr);
 		out << ":" << ntohs(addr.sin_port);
   		pqioutput(PQL_DEBUG_BASIC, pqisslzone, out.str());
@@ -622,7 +542,7 @@ int 	pqissl::Initiate_Connection()
 		}
 		else if ((errno == ENETUNREACH) || (errno == ETIMEDOUT))
 		{
-			out << "ENETUNREACHABLE: cert" << sslcert -> Name();
+			out << "ENETUNREACHABLE: cert" << PeerId();
   		        pqioutput(PQL_WARNING, pqisslzone, out.str());
 
 			// Then send unreachable message.
@@ -788,7 +708,7 @@ int 	pqissl::Basic_Connection_Complete()
 			std::ostringstream out;
 	  	  	out << "pqissl::Basic_Connection_Complete()";
 			out << "TCP Connection Complete: cert: ";
-			out << sslcert -> Name();
+			out << PeerId();
 			out << " on osock: " << sockfd;
   		        pqioutput(PQL_WARNING, pqisslzone, out.str());
 			}
@@ -799,7 +719,7 @@ int 	pqissl::Basic_Connection_Complete()
 
 			std::ostringstream out;
 	  	  	out << "pqissl::Basic_Connection_Complete()";
-			out << "EINPROGRESS: cert" << sslcert -> Name();
+			out << "EINPROGRESS: cert" << PeerId();
   		        pqioutput(PQL_WARNING, pqisslzone, out.str());
 
 			return 0;
@@ -809,7 +729,7 @@ int 	pqissl::Basic_Connection_Complete()
 			std::ostringstream out;
 	  	  	out << "pqissl::Basic_Connection_Complete()";
 			out << "ENETUNREACH/ETIMEDOUT: cert";
-			out << sslcert -> Name();
+			out << PeerId();
   		        pqioutput(PQL_WARNING, pqisslzone, out.str());
 
 			// Then send unreachable message.
@@ -828,7 +748,7 @@ int 	pqissl::Basic_Connection_Complete()
 			std::ostringstream out;
 	  	  	out << "pqissl::Basic_Connection_Complete()";
 			out << "EHOSTUNREACH/EHOSTDOWN: cert";
-			out << sslcert -> Name();
+			out << PeerId();
   		        pqioutput(PQL_WARNING, pqisslzone, out.str());
 
 			// Then send unreachable message.
@@ -844,7 +764,7 @@ int 	pqissl::Basic_Connection_Complete()
 			std::ostringstream out;
 	  	  	out << "pqissl::Basic_Connection_Complete()";
 			out << "ECONNREFUSED: cert";
-			out << sslcert -> Name();
+			out << PeerId();
   		        pqioutput(PQL_WARNING, pqisslzone, out.str());
 
 			// Then send unreachable message.
@@ -886,6 +806,9 @@ int 	pqissl::Initiate_SSL_Connection()
 	{
 		return err;
 	}
+
+	sslroot *sslccr = getSSLRoot();
+
 
   	pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
 	  "pqissl::Initiate_SSL_Connection() Basic Connection Okay");
@@ -1011,6 +934,8 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
   	pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
 	  "pqissl::Extract_Failed_SSL_Certificate()");
 
+	sslroot *sslccr = getSSLRoot();
+
 	// Get the Peer Certificate....
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
@@ -1078,6 +1003,9 @@ int 	pqissl::Authorise_SSL_Connection()
 	waiting = WAITING_NOT;
 
 	// Get the Peer Certificate....
+	sslroot *sslccr = getSSLRoot();
+	cert    *sslcert = sslccr->findPeerId(PeerId());
+
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
 	XPGP *peercert = SSL_get_peer_pgp_certificate(ssl_connection);
@@ -1169,15 +1097,6 @@ int	pqissl::accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr) // initiat
 		
 		switch(waiting)
 		{
-		case WAITING_LOCAL_ADDR:
-
-  	  		pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
-			  "pqissl::accept() STATE = Waiting Local Addr - Nothing to close");
-
-		case WAITING_REMOTE_ADDR:
-
-  	  		pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
-			  "pqissl::accept() STATE = Waiting Remote Addr - Nothing to close");
 
 		case WAITING_SOCK_CONNECT:
 
@@ -1247,6 +1166,7 @@ int	pqissl::accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr) // initiat
 	remote_addr = foreign_addr; 
 
 	/* check whether it is on the same LAN */
+	sslroot *sslccr = getSSLRoot();
 	cert *own = sslccr -> getOwnCert();
 	struct sockaddr_in own_laddr = own -> localaddr;
 
@@ -1620,805 +1540,12 @@ bool 	pqissl::cansend()
 
 }
 
+std::string pqissl::gethash()
+{
+	std::string dummyhash;
+	return dummyhash;
+}
 
 /********** End of Implementation of BinInterface ******************/
 
 
-
-
-
-
-
-/******************* PQI NET SSL INTERFACE CHOOSER ************************
- * PQI NET SSL 
- *
- * This is the part that selects which network address the
- * SSL connection will attempt to connect to.
- *
- */
-
-
-/********************* CHOOSE TARGET ********************/
-int	pqissl::connectInterface(struct sockaddr_in &addr)
-{
-	// choose the interface to connect via.
-	// either local  addr. (if same localnet)
-	// or     server addr. (if not firewalled).
-
-	// says local, local is valid, and matches a local address.
-	// sounds like a lot of work, but only happens max 1 per hour / ssl.
-	
-	// attempt to connect to localaddr.
-	// don't worry about the local flag -> try anyway. (set it afterwards)
-	//              local  server  dns
-	//net_attempt;    0x01   0x02  0x04
-	//net_failure;    0x01   0x02  0x04
-        //net_unreachable;
-	
-	{
-		std::ostringstream out;
-		out << "pqissl::connectInterface() for: " << sslcert->Name();
-  		pqioutput(PQL_WARNING, pqisslzone, out.str());
-	}
-
-	if ((net_unreachable & PQISSL_LOCAL_FLAG) ||
-		(net_failure & PQISSL_LOCAL_FLAG) ||
-		!isValidNet(&(sslcert->localaddr.sin_addr)))
-	{
-  		pqioutput(PQL_WARNING, pqisslzone, 
-		  "pqissl::connectInterface() Not Local");
-		// not local...
-		net_failure |= PQISSL_LOCAL_FLAG;
-		sslcert -> Local(false);
-	}
-	else
-	{
-  		pqioutput(PQL_WARNING, pqisslzone, 
-		  "pqissl::connectInterface() Using Local Address: ");
-
-
-		std::list<std::string> addrs = getLocalInterfaces();
-		std::list<std::string>::iterator it;
-		for(it = addrs.begin(); it != addrs.end(); it++)
-		{
-			struct in_addr local;
-			inet_aton(it -> c_str(), &local);
-			if (sameNet(&local, &(sslcert -> localaddr.sin_addr)))
-			{
-				net_attempt = PQISSL_LOCAL_FLAG;
-		 		addr = sslcert -> localaddr;
-				return 1;
-			}
-		}
-	}
-
-	// if we get here the local failed....
-	if ((net_unreachable & PQISSL_REMOTE_FLAG) ||
-		(net_failure & PQISSL_REMOTE_FLAG) ||
-		!isValidNet(&(sslcert->serveraddr.sin_addr)))
-	{
-		std::ostringstream out;
-		out << "pqissl::connectInterface()";
-		out << " Failure to Connect via SSL (u:";
-		out << net_unreachable << ", f:";
-		out << net_failure << ")";
-
-  		pqioutput(PQL_WARNING, pqisslzone, out.str());
-
-		// fails server test.
-		net_failure |= PQISSL_REMOTE_FLAG;
-		// fall through...
-	}
-	else if ((sslcert->Firewalled()) && (!sslcert->Forwarded()))
-	{
-		// setup remote address
-  		pqioutput(PQL_WARNING, pqisslzone, 
-		  "pqissl::connectInterface() Server Firewalled - set u");
-  		pqioutput(PQL_WARNING, pqisslzone, 
-		  "pqissl::connectInterface() Destination Unreachable");
-		net_failure |= PQISSL_REMOTE_FLAG;
-
-
-		// shouldn't flag as unreachable - as if flags change, 
-		// we want to connect! -> only failure....
-		//net_unreachable |= PQISSL_REMOTE_FLAG;
-		
-		// dont' fall through... (name resolution wont help).
-		//return -1;
-	}
-	else
-	{
-		// setup remote address
-  		pqioutput(PQL_WARNING, pqisslzone, 
-		  "pqissl::connectInterface() Using Server Address: ");
-
-		net_attempt = PQISSL_REMOTE_FLAG;
-		addr = sslcert -> serveraddr;
-		return 1;
-	}
-
-	/* Finally we attempt the dns name lookup thingy */
-  	pqioutput(PQL_WARNING, pqisslzone, 
-		  "pqissl::connectInterface() Attempting DNS Address lookup: ");
-	
-
-	/* The initial attempt should have cached the dns request locally.
-	 * This is made at ...
-	 */
-	if ((net_unreachable & PQISSL_DNS_FLAG) ||
-		(net_failure & PQISSL_DNS_FLAG))
-	{
-
-		/* failed already */
-  		pqioutput(PQL_WARNING, pqisslzone, 
-			  "pqissl::connectInterface() DNS Address Failed Already");
-
-	}
-	else /* go for it! */
-	{
-		/* we also set it to the server addr, as it's
-		 * the best guess
-		 */
-
-		if (sslcert->hasDHT())
-		{
-			sslcert->serveraddr = sslcert->dhtaddr;
-			std::ostringstream out;
-			out << "pqissl::connectInterface() DHT:";
-			out << " " << inet_ntoa(sslcert->serveraddr.sin_addr) << std::endl;
-
-			net_attempt = PQISSL_DNS_FLAG;
-		 	addr = sslcert -> serveraddr;
-
-  			pqioutput(PQL_WARNING, pqisslzone, out.str());
-			return 1;
-		}
-
-#if  (0) /* DNS name resolution */
-		if (sslcert->dynDNSaddr.length () > 0)
-		{
-			if (LookupDNSAddr(sslcert->dynDNSaddr, sslcert->serveraddr))
-			{
-				/* success, load DNS */
-				net_attempt = PQISSL_DNS_FLAG;
-		 		addr = sslcert -> serveraddr;
-
-				std::ostringstream out;
-				out << "pqissl::connectInterface() DNS:" << sslcert->dynDNSaddr;
-				out << " " << inet_ntoa(sslcert->serveraddr.sin_addr) << std::endl;
-
-  				pqioutput(PQL_WARNING, pqisslzone, out.str());
-				return 1;
-			}
-		}
-#endif
-
-		/* otherwise we failed */
-	}
-
-  	pqioutput(PQL_WARNING, pqisslzone, 
-		  "pqissl::connectInterface() DNS Address Failed");
-	/* the end of the road */
-	net_failure |= PQISSL_DNS_FLAG;
-	waiting = WAITING_NOT;
-	return -1;
-}
-
-
-/************************ PQI NET SSL LISTENER ****************************
- * PQI NET SSL LISTENER
- *
- * to be worked out
- */
-
-
-
-#if 0 /* NO LISTENER */
-
-pqissllistener::pqissllistener(struct sockaddr_in addr)
-	:laddr(addr), active(false)
-{
-	sslccr = getSSLRoot();
-	if (!(sslccr -> active()))
-	{
-		pqioutput(PQL_ALERT, pqisslzone, 
-			"SSL-CTX-CERT-ROOT not initialised!");
-
-		exit(1);
-	}
-
-	setuplisten();
-	return;
-}
-
-int 	pqissllistener::tick()
-{
-	status();
-	// check listen port.
-	acceptconnection();
-	return continueaccepts();
-}
-
-int 	pqissllistener::status()
-{
-	// print certificates we are listening for.
-	std::map<cert *, pqissl *>::iterator it;
-
-	std::ostringstream out;
-	out << "pqissllistener::status(): ";
-	out << " Listening (" << ntohs(laddr.sin_port) << ") for Certs:" << std::endl;
-	for(it = listenaddr.begin(); it != listenaddr.end(); it++)
-	{
-		sslccr -> printCertificate(it -> first, out);
-	}
-	pqioutput(PQL_DEBUG_ALL, pqisslzone, out.str());
-
-	return 1;
-}
-
-int 	pqissllistener::addlistenaddr(cert *c, pqissl *acc)
-{
-	std::map<cert *, pqissl *>::iterator it;
-
-	std::ostringstream out;
-
-	out << "Adding to Cert Listening Addresses:" << std::endl;
-	sslccr -> printCertificate(c, out);
-	out << "Current Certs:" << std::endl;
-	for(it = listenaddr.begin(); it != listenaddr.end(); it++)
-	{
-		sslccr -> printCertificate(it -> first, out);
-		if (sslccr -> compareCerts(c, it -> first) == 0)
-		{
-			out << "pqissllistener::addlistenaddr()";
-			out << "Already listening for Certificate!";
-			out << std::endl;
-			
-			pqioutput(PQL_DEBUG_ALERT, pqisslzone, out.str());
-			return -1;
-
-		}
-	}
-
-	pqioutput(PQL_DEBUG_BASIC, pqisslzone, out.str());
-
-	// not there can accept it!
-	listenaddr[c] = acc;
-	return 1;
-}
-
-
-
-
-int	pqissllistener::setuplisten()
-{
-        int err;
-	if (active)
-		return -1;
-
-        lsock = socket(PF_INET, SOCK_STREAM, 0);
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS // ie UNIX
-        if (lsock < 0)
-        {
-		pqioutput(PQL_ALERT, pqisslzone, 
-		 "pqissllistener::setuplisten() Cannot Open Socket!");
-
-		return -1;
-	}
-
-        err = fcntl(lsock, F_SETFL, O_NONBLOCK);
-	if (err < 0)
-	{
-		std::ostringstream out;
-		out << "Error: Cannot make socket NON-Blocking: ";
-		out << err << std::endl;
-		pqioutput(PQL_ERROR, pqisslzone, out.str());
-
-		return -1;
-	}
-
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#else //WINDOWS_SYS 
-        if ((unsigned) lsock == INVALID_SOCKET)
-        {
-		std::ostringstream out;
-		out << "pqissllistener::setuplisten()";
-		out << " Cannot Open Socket!" << std::endl;
-		out << "Socket Error:";
-		out  << socket_errorType(WSAGetLastError()) << std::endl;
-		pqioutput(PQL_ALERT, pqisslzone, out.str());
-
-		return -1;
-	}
-
-	// Make nonblocking.
-	unsigned long int on = 1;
-	if (0 != (err = ioctlsocket(lsock, FIONBIO, &on)))
-	{
-		std::ostringstream out;
-		out << "pqissllistener::setuplisten()";
-		out << "Error: Cannot make socket NON-Blocking: ";
-		out << err << std::endl;
-		out << "Socket Error:";
-		out << socket_errorType(WSAGetLastError()) << std::endl;
-		pqioutput(PQL_ALERT, pqisslzone, out.str());
-
-		return -1;
-	}
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-
-	// setup listening address.
-
-	// fill in fconstant bits.
-
-	laddr.sin_family = AF_INET;
-
-	{
-		std::ostringstream out;
-		out << "pqissllistener::setuplisten()";
-		out << "\tAddress Family: " << (int) laddr.sin_family;
-		out << std::endl;
-		out << "\tSetup Address: " << inet_ntoa(laddr.sin_addr);
-		out << std::endl;
-		out << "\tSetup Port: " << ntohs(laddr.sin_port);
-
-		pqioutput(PQL_DEBUG_BASIC, pqisslzone, out.str());
-	}
-
-	if (0 != (err = bind(lsock, (struct sockaddr *) &laddr, sizeof(laddr))))
-	{
-		std::ostringstream out;
-		out << "pqissllistener::setuplisten()";
-		out << " Cannot Bind to Local Address!" << std::endl;
-		showSocketError(out);
-		pqioutput(PQL_ALERT, pqisslzone, out.str());
-
-		exit(1); 
-		return -1;
-	}
-	else
-	{
-		pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
-		  "pqissllistener::setuplisten() Bound to Address.");
-	}
-
-	if (0 != (err = listen(lsock, 100)))
-	{
-		std::ostringstream out;
-		out << "pqissllistener::setuplisten()";
-		out << "Error: Cannot Listen to Socket: ";
-		out << err << std::endl;
-		showSocketError(out);
-		pqioutput(PQL_ALERT, pqisslzone, out.str());
-
-		exit(1); 
-		return -1;
-	}
-	else
-	{
-		pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
-		  "pqissllistener::setuplisten() Listening to Socket");
-	}
-	active = true;
-	return 1;
-}
-
-int	pqissllistener::setListenAddr(struct sockaddr_in addr)
-{
-	laddr = addr;
-	return 1;
-}
-
-int	pqissllistener::resetlisten()
-{
-	if (active)
-	{
-		// close ports etc.
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS // ie UNIX
-		shutdown(lsock, SHUT_RDWR);	
-		close(lsock);
-#else //WINDOWS_SYS 
-		closesocket(lsock);
-#endif 
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-
-		active = false;
-		return 1;
-	}
-
-	return 0;
-}
-
-
-int	pqissllistener::acceptconnection()
-{
-	if (!active)
-		return 0;
-	// check port for any socets...
-	pqioutput(PQL_DEBUG_ALL, pqisslzone, "pqissllistener::accepting()");
-
-	// These are local but temp variables...
-	// can't be arsed making them all the time.
-	addrlen = sizeof(raddr);
-	int fd = accept(lsock, (struct sockaddr *) &raddr, &addrlen);
-	int err = 0;
-
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS // ie UNIX
-        if (fd < 0)
-        {
-		pqioutput(PQL_DEBUG_ALL, pqisslzone, 
-		 "pqissllistener::acceptconnnection() Nothing to Accept!");
-		return 0;
-	}
-
-        err = fcntl(fd, F_SETFL, O_NONBLOCK);
-	if (err < 0)
-	{
-		std::ostringstream out;
-		out << "pqissllistener::acceptconnection()";
-		out << "Error: Cannot make socket NON-Blocking: ";
-		out << err << std::endl;
-		pqioutput(PQL_ERROR, pqisslzone, out.str());
-
-		close(fd);
-		return -1;
-	}
-
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#else //WINDOWS_SYS 
-        if ((unsigned) fd == INVALID_SOCKET)
-        {
-		pqioutput(PQL_DEBUG_ALL, pqisslzone, 
-		 "pqissllistener::acceptconnnection() Nothing to Accept!");
-		return 0;
-	}
-
-	// Make nonblocking.
-	unsigned long int on = 1;
-	if (0 != (err = ioctlsocket(fd, FIONBIO, &on)))
-	{
-		std::ostringstream out;
-		out << "pqissllistener::acceptconnection()";
-		out << "Error: Cannot make socket NON-Blocking: ";
-		out << err << std::endl;
-		out << "Socket Error:";
-		out << socket_errorType(WSAGetLastError()) << std::endl;
-		pqioutput(PQL_ALERT, pqisslzone, out.str());
-
-		closesocket(fd);
-		return 0;
-	}
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-
-	{
-	  std::ostringstream out;
-	  out << "Accepted Connection from ";
-	  out << inet_ntoa(raddr.sin_addr) << ":" << ntohs(raddr.sin_port);
-	  pqioutput(PQL_DEBUG_BASIC, pqisslzone, out.str());
-	}
-
-	// Negotiate certificates. SSL stylee.
-	// Allow negotiations for secure transaction.
-	
-	SSL *ssl = SSL_new(sslccr -> getCTX());
-	SSL_set_fd(ssl, fd);
-
-	return continueSSL(ssl, true); // continue and save if incomplete.
-}
-
-int	pqissllistener::continueSSL(SSL *ssl, bool addin)
-{
-	// attempt the accept again.
-	int fd =  SSL_get_fd(ssl);
-	int err = SSL_accept(ssl);
-	if (err <= 0)
-	{
-		int ssl_err = SSL_get_error(ssl, err);
-		int err_err = ERR_get_error();
-
-		{
-	  	  std::ostringstream out;
-	  	  out << "pqissllistener::continueSSL() ";
-		  out << "Issues with SSL Accept(" << err << ")!" << std::endl;
-		  printSSLError(ssl, err, ssl_err, err_err, out);
-	  	  pqioutput(PQL_DEBUG_BASIC, pqisslzone, out.str());
-		}
-
-		if ((ssl_err == SSL_ERROR_WANT_READ) || 
-		   (ssl_err == SSL_ERROR_WANT_WRITE))
-		{
-	  		std::ostringstream out;
-	  	        out << "pqissllistener::continueSSL() ";
-			out << " Connection Not Complete!";
-			out << std::endl;
-
-			if (addin)
-			{
-	  	        	out << "pqissllistener::continueSSL() ";
-				out << "Adding SSL to incoming!";
-
-				// add to incomingqueue.
-				incoming_ssl.push_back(ssl);
-			}
-
-	  	        pqioutput(PQL_DEBUG_BASIC, pqisslzone, out.str());
-
-			// zero means still continuing....
-			return 0;
-		}
-
-		/* we have failed -> get certificate if possible */
-		Extract_Failed_SSL_Certificate(ssl, &raddr);
-
-		// other wise delete ssl connection.
-		// kill connection....
-		// so it will be removed from cache.
-		SSL_shutdown(ssl);
-
-		// close socket???
-/************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS // ie UNIX
-		shutdown(fd, SHUT_RDWR);	
-		close(fd);
-#else //WINDOWS_SYS 
-		closesocket(fd);
-#endif 
-/************************** WINDOWS/UNIX SPECIFIC PART ******************/
-		// free connection.
-		SSL_free(ssl);
-
-		std::ostringstream out;
-		out << "Read Error on the SSL Socket";
-		out << std::endl;
-		out << "Shutting it down!" << std::endl;
-  	        pqioutput(PQL_WARNING, pqisslzone, out.str());
-
-		// failure -1, pending 0, sucess 1.
-		return -1;
-	}
-	
-
-	// if it succeeds
-
-	// Get the Peer Certificate....
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	XPGP *peercert = SSL_get_peer_pgp_certificate(ssl);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-	X509 *peercert = SSL_get_peer_certificate(ssl);
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
-	if (peercert == NULL)
-	{
-  	        pqioutput(PQL_WARNING, pqisslzone, 
-		 "pqissl::connectattempt() Peer Did Not Provide Cert!");
-
-		// delete ssl connection.
-		SSL_shutdown(ssl);
-
-		// close socket???
-/************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS // ie UNIX
-		shutdown(fd, SHUT_RDWR);	
-		close(fd);
-#else //WINDOWS_SYS 
-		closesocket(fd);
-#endif 
-/************************** WINDOWS/UNIX SPECIFIC PART ******************/
-		// free connection.
-		SSL_free(ssl);
-
-		std::ostringstream out;
-		out << "Shutting it down!" << std::endl;
-  	        pqioutput(PQL_WARNING, pqisslzone, out.str());
-
-		// failure -1, pending 0, sucess 1.
-		return -1;
-	}
-
-
-	// save certificate... (and ip locations)
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	cert *npc = sslccr -> registerCertificateXPGP(peercert, raddr, true);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-	cert *npc = sslccr -> registerCertificate(peercert, raddr, true);
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
-	bool found = false;
-	std::map<cert *, pqissl *>::iterator it;
-
-	if ((npc == NULL) || (npc -> Connected()))
-	{
-		// bad - shutdown.
-	}
-	else
-	{
-		std::ostringstream out;
-
-		out << "pqissllistener::continueSSL()" << std::endl;
-		out << "checking: " << npc -> Name() << std::endl;
-		// check if cert is in our list.....
-		for(it = listenaddr.begin();(found!=true) && (it!=listenaddr.end());)
-		{
-		 	out << "\tagainst: " << it->first->Name() << std::endl;
-			if (sslccr -> compareCerts(it -> first, npc) == 0)
-			{
-		 	        out << "\t\tMatch!";
-				found = true;
-			}
-			else
-			{
-				it++;
-			}
-		}
-
-  	        pqioutput(PQL_DEBUG_BASIC, pqisslzone, out.str());
-	}
-	
-	if (found == false)
-	{
-		// kill connection....
-		// so it will be removed from cache.
-		SSL_shutdown(ssl);
-
-		// close socket???
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS // ie UNIX
-		shutdown(fd, SHUT_RDWR);	
-		close(fd);
-#else //WINDOWS_SYS 
-		closesocket(fd);
-#endif 
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-
-		// free connection.
-		SSL_free(ssl);
-
-		std::ostringstream out;
-		out << "No Matching Certificate/Already Connected";
-		out << " for Connection:" << inet_ntoa(raddr.sin_addr);
-		out << std::endl;
-		out << "Shutting it down!" << std::endl;
-  	        pqioutput(PQL_WARNING, pqisslzone, out.str());
-		return -1;
-	}
-
-	pqissl *pqis = it -> second;
-
-	// remove from the list of certificates.
-	listenaddr.erase(it);
-
-	// timestamp
-	// done in sslroot... npc -> lr_timestamp = time(NULL);
-
-	// hand off ssl conection.
-	pqis -> accept(ssl, fd);
-	return 1;
-}
-
-
-int 	pqissllistener::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_in *inaddr)
-{
-  	pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
-	  "pqissllistener::Extract_Failed_SSL_Certificate()");
-
-	// Get the Peer Certificate....
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	XPGP *peercert = SSL_get_peer_pgp_certificate(ssl);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-	X509 *peercert = SSL_get_peer_certificate(ssl);
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
-	if (peercert == NULL)
-	{
-  		pqioutput(PQL_WARNING, pqisslzone, 
-		  "pqissllistener::Extract_Failed_SSL_Certificate() Peer Didnt Give Cert");
-		return -1;
-	}
-
-  	pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
-	  "pqissllistener::Extract_Failed_SSL_Certificate() Have Peer Cert - Registering");
-
-	// save certificate... (and ip locations)
-	// false for outgoing....
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	cert *npc = sslccr -> registerCertificateXPGP(peercert, *inaddr, true);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-	cert *npc = sslccr -> registerCertificate(peercert, *inaddr, true);
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
-	return 1;
-}
-
-
-int pqissllistener::continueSocket(int fd, bool addin)
-{
-	// this does nothing, as sockets
-	// cannot (haven't) blocked yet!
-	return 0;
-}
-
-
-int	pqissllistener::continueaccepts()
-{
-
-	// for each of the incoming sockets.... call continue.
-	std::list<int>::iterator it;
-	std::list<SSL *>::iterator its;
-
-	for(it = incoming_skts.begin(); it != incoming_skts.end();)
-	{
-		if (continueSocket(*it, false))
-		{
-			it = incoming_skts.erase(it);
-		}
-		else
-		{
-			it++;
-		}
-	}
-	
-	for(its = incoming_ssl.begin(); its != incoming_ssl.end();)
-	{
-  	        pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
-		  "pqissllistener::continueaccepts() Continuing SSL");
-		if (0 != continueSSL(*its, false))
-		{
-  	        	pqioutput(PQL_DEBUG_ALERT, pqisslzone, 
-			  "pqissllistener::continueaccepts() SSL Complete/Dead!");
-
-			its = incoming_ssl.erase(its);
-		}
-		else
-		{
-			its++;
-		}
-	}
-	return 1;
-}
-
-
-	
-
-int	pqissllistener::removeListenPort(cert *c)
-{
-	// check where the connection is coming from.
-	// if in list of acceptable addresses, 
-	//
-	// check if in list.
-	std::map<cert *, pqissl *>::iterator it;
-	for(it = listenaddr.begin();it!=listenaddr.end();it++)
-	{
-		if (sslccr -> compareCerts(it -> first, c) == 0)
-		{
-			listenaddr.erase(it);
-
-  	        	pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
-			  "pqissllisten::removeListenPort() Success!");
-			return 1;
-		}
-	}
-
-  	pqioutput(PQL_WARNING, pqisslzone, 
-	  "pqissllistener::removeListenPort() Failed to Find a Match");
-
-	return -1;
-}
-
-#endif /* NO LISTENER */

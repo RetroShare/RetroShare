@@ -1,5 +1,5 @@
 /*
- * "$Id: pqipersongrp.cc,v 1.14 2007-02-19 20:08:30 rmf24 Exp $"
+ * libretroshare/src/pqi: pqipersongrp.cc
  *
  * 3P/PQI network interface for RetroShare.
  *
@@ -23,22 +23,10 @@
  *
  */
 
-
-
-
 #include "pqi/pqipersongrp.h"
-
-#include "pqi/pqissl.h"
-#include "pqi/pqissllistener.h"
-
-#ifdef PQI_USE_PROXY
-  #include "pqi/pqiudpproxy.h"
-  #include "pqi/pqissludp.h"
-#endif
-
-//#include "pqi/pqitunneltst.h"
-
+#include "pqi/p3connmgr.h"
 #include "pqi/pqidebug.h"
+
 #include <sstream>
 
 const int pqipersongrpzone = 354;
@@ -101,86 +89,12 @@ int pqipersongrp::tickServiceSend()
 }
 
 
-	// inits
-pqipersongrp::pqipersongrp(SecurityPolicy *glob, sslroot *sr, unsigned long flags)
-	:pqihandler(glob), sslr(sr), 
-#ifdef PQI_USE_PROXY
-	p3p(NULL),
-#endif
-	initFlags(flags)
+	// init
+pqipersongrp::pqipersongrp(SecurityPolicy *glob, unsigned long flags)
+	:pqihandler(glob), pqil(NULL), config(NULL), initFlags(flags)
 {
-	// add a p3proxy & p3disc.
-#ifdef PQI_USE_PROXY
-	p3p = new p3udpproxy(p3d);
-#endif
-
-	if (!(sr -> active()))
-	{
-		pqioutput(PQL_ALERT, pqipersongrpzone, "sslroot not active... exiting!");
-		exit(1);
-	}
-
-	// make listen
-	Person *us = sr -> getOwnCert();
-	if (us != NULL)
-	{
-		if (flags & PQIPERSON_NO_SSLLISTENER)
-		{
-			pqil = NULL;
-		}
-		else
-		{
-			pqil = new pqissllistener(us -> localaddr);
-		}
-#ifdef PQI_USE_PROXY
-		pqiudpl = new pqiudplistener((p3udpproxy *) p3p, 
-						us -> localaddr);
-#endif
-	}
-	else
-	{
-		pqioutput(PQL_ALERT, pqipersongrpzone, "No Us! what are we!");
-		exit(1);
-	}
-
-
-	// now we run through any certificates
-	// already made... and reactivate them.
-	std::list<cert *>::iterator it;
-	std::list<cert *> &clist = sr -> getCertList();
-	for(it = clist.begin(); it != clist.end(); it++)
-	{
-		cert *c = (*it);
-
-		c -> InUse(false);
-		c -> Listening(false);
-		c -> Connected(false);
-
-		// make new
-		if (c -> Accepted())
-		{
-			cert_accept(c);
-		}
-	}
-
-
-	// finally lets
-
-
-	// add in a tunneltest.
-	// register the packet creations.
-	//addService(new PQTStst());
-	//registerTunnelType(PQI_TUNNEL_TST_TYPE, createPQTStst);
-
-
-#ifdef PQI_USE_PROXY
-	addService(p3p);
-	registerTunnelType(PQI_TUNNEL_PROXY_TYPE, createPQTunnelProxy);
-	registerTunnelInitType(PQI_TUNNEL_PROXY_TYPE, createPQTunnelProxyInit);
-#endif
-
-	return;
 }
+
 
 int	pqipersongrp::tick()
 {
@@ -192,9 +106,6 @@ int	pqipersongrp::tick()
 	{
 		pqil -> tick();
 	}
-#ifdef PQI_USE_PROXY
-	pqiudpl->tick();
-#endif
 	int i = 0;
 
 	if (tickServiceSend()) i = 1;
@@ -206,165 +117,58 @@ int	pqipersongrp::tick()
 	return 1;
 }
 
-
 int	pqipersongrp::status()
 {
 	if (pqil)
 	{
 		pqil -> status();
 	}
-#ifdef PQI_USE_PROXY
-	//pqiudpl->status();
-#endif
 	return pqihandler::status();
 }
 
-        // control the connections.
 
-int     pqipersongrp::cert_accept(cert *a)
+/* Initialise pqilistener */
+int	pqipersongrp::init_listener()
 {
-	if (a -> InUse())
+	/* extract our information from the p3ConnectMgr */
+	if (initFlags & PQIPERSON_NO_LISTENER)
 	{
-		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, 
-			"pqipersongrp::cert_accept() Cert in Use!");
-
-		return -1;
-	}
-
-	{
-		std::ostringstream out;
-		out << "pqipersongrp::cert_accept() PeerId: " << a->PeerId();
-		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, out.str());
-	}
-
-	pqiperson *pqip = new pqiperson(a, a->PeerId());
-	pqissl *pqis   = new pqissl(a, pqil, pqip);
-
-	/* construct the serialiser ....
-	 * Needs:
-	 * * FileItem
-	 * * FileData
-	 * * ServiceGeneric
-	 */
-
-	RsSerialiser *rss = new RsSerialiser();
-	rss->addSerialType(new RsFileItemSerialiser());
-	rss->addSerialType(new RsCacheItemSerialiser());
-	rss->addSerialType(new RsServiceSerialiser());
-
-	pqiconnect *pqisc = new pqiconnect(rss, pqis);
-
-	pqip -> addChildInterface(pqisc);
-
-#ifdef PQI_USE_PROXY
-	pqiudpproxy *pqipxy 	= new pqiudpproxy(a, (p3udpproxy *) p3p, NULL);
-	pqissludp *pqius 	= new pqissludp(a, pqip, pqipxy);
-	pqiconnect *pqiusc 	= new pqiconnect(pqius);
-
-	// add a ssl + proxy interface.
-	// Add Proxy First.
-	pqip -> addChildInterface(pqiusc);
-#endif
-
-	a -> InUse(true);
-	a -> Accepted(true);
-
-
-	// setup no behaviour. (no remote address)
-
-	// attach to pqihandler
-	SearchModule *sm = new SearchModule();
-	sm -> peerid = a->PeerId();
-	sm -> pqi = pqip;
-	sm -> sp = secpolicy_create();
-
-	// reset it to start it working.
-	pqis -> reset();
-
-
-	return AddSearchModule(sm);
-}
-
-int     pqipersongrp::cert_deny(cert *a)
-{
-	std::map<std::string, SearchModule *>::iterator it;
-	SearchModule *mod;
-	bool found = false;
-
-	// if used find search module....
-	if (a -> InUse())
-	{
-		// find module.
-		for(it = mods.begin(); (!found) && (it != mods.end());it++)
-		{
-			mod = it -> second;
-			pqiperson *p = (pqiperson *) mod -> pqi;
-			if (a->PeerId() == p->PeerId())
-			{
-				found = true;
-			}
-		}
-		if (found)
-		{
-			RemoveSearchModule(mod);
-			secpolicy_delete(mod -> sp);
-			pqiperson *p = (pqiperson *) mod -> pqi;
-			p -> reset();
-			delete p;
-			a -> InUse(false);
-		}
-	}
-	a -> Accepted(false);
-	return 1;
-}
-
-int     pqipersongrp::cert_auto(cert *a, bool b)
-{
-	std::map<std::string, SearchModule *>::iterator it;
-	if (b)
-	{
-		cert_accept(a);
-		// find module.
-		for(it = mods.begin(); it != mods.end();it++)
-		{
-			SearchModule *mod = it -> second;
-			pqiperson *p = (pqiperson *) mod -> pqi;
-			if (a->PeerId() == p->PeerId())
-			{
-				p -> autoconnect(b);
-				return 1;
-			}
-		}
+		pqil = NULL;
 	}
 	else
 	{
-		a -> Manual(true);
-		cert_deny(a);
+		/* extract details from 
+		 */
+		peerConnectState state;
+		mConnMgr->getOwnNetStatus(state);
+
+		pqil = createListener(state.localaddr);
 	}
 	return 1;
 }
-
 
 int     pqipersongrp::restart_listener()
 {
 	// stop it, 
 	// change the address.
 	// restart.
-	cert *own = sslr -> getOwnCert();
 	if (pqil)
 	{
+		peerConnectState state;
+		mConnMgr->getOwnNetStatus(state);
+
 		pqil -> resetlisten();
-		pqil -> setListenAddr(own -> localaddr);
+		pqil -> setListenAddr(state.localaddr);
 		pqil -> setuplisten();
 	}
-#ifdef PQI_USE_PROXY
-	pqiudpl -> resetlisten();
-	pqiudpl -> setListenAddr(own -> localaddr);
-	pqiudpl -> setuplisten();
-#endif
 	return 1;
 }
 
+
+int	pqipersongrp::setConfig(p3GeneralConfig *cfg)
+{
+	config = cfg;
+}
 
 static const std::string pqih_ftr("PQIH_FTR");
 
@@ -373,15 +177,21 @@ int     pqipersongrp::save_config()
 	char line[512];
 	sprintf(line, "%f %f %f %f", getMaxRate(true), getMaxRate(false),
 	getMaxIndivRate(true), getMaxIndivRate(false));
-	sslr -> setSetting(pqih_ftr, std::string(line));
+	if (config)
+	{
+		config -> setSetting(pqih_ftr, std::string(line));
+	}
 	return 1;
 }
 	
-
-
 int     pqipersongrp::load_config()
 {
-	std::string line = sslr -> getSetting(pqih_ftr);
+	std::string line;
+	if (config)
+	{
+		line = config -> getSetting(pqih_ftr);
+	}
+
 	float mri, mro, miri, miro;
 	
 	if (4 == sscanf(line.c_str(), "%f %f %f %f", &mri, &mro, &miri, &miro))
@@ -405,4 +215,196 @@ int     pqipersongrp::load_config()
 	return 1;
 }
 	
+
+void    pqipersongrp::statusChange(const std::list<pqipeer> &plist)
+{
+
+	/* iterate through, only worry about the friends */
+	std::list<pqipeer>::const_iterator it;
+	for(it = plist.begin(); it != plist.end(); it++)
+	{
+	  if (it->state & RS_PEER_S_FRIEND)
+	  {
+	  	/* now handle add/remove */
+		if ((it->actions & RS_PEER_NEW) 
+		   || (it->actions & RS_PEER_MOVED))
+		{
+			addPeer(it->id);
+		}
+
+		if (it->actions & RS_PEER_CONNECT_REQ)
+		{
+			connectPeer(it->id);
+		}
+	  }
+	  else /* Not Friend */
+	  {
+		if (it->actions & RS_PEER_MOVED)
+		{
+			removePeer(it->id);
+		}
+	  }
+	}
+}
+
+
+
+int     pqipersongrp::addPeer(std::string id)
+{
+	{
+		std::ostringstream out;
+		out << "pqipersongrp::addPeer() PeerId: " << id;
+		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, out.str());
+	}
+
+	std::cerr << " pqipersongrp::addPeer() id: " << id;
+	std::cerr << std::endl;
+
+	SearchModule *sm = NULL;
+	std::map<std::string, SearchModule *>::iterator it;
+	it = mods.find(id);
+	if (it != mods.end())
+	{
+		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, 
+			"pqipersongrp::addPeer() Peer already in Use!");
+		return -1;
+	}
+
+	pqiperson *pqip = createPerson(id, pqil);
+
+	// attach to pqihandler
+	sm = new SearchModule();
+	sm -> peerid = id;
+	sm -> pqi = pqip;
+	sm -> sp = secpolicy_create();
+
+	// reset it to start it working.
+	pqip -> reset();
+
+	return AddSearchModule(sm);
+}
+
+
+int     pqipersongrp::removePeer(std::string id)
+{
+	std::map<std::string, SearchModule *>::iterator it;
+
+	std::cerr << " pqipersongrp::removePeer() id: " << id;
+	std::cerr << std::endl;
+
+	it = mods.find(id);
+	if (it != mods.end())
+	{
+		SearchModule *mod = it->second;
+		RemoveSearchModule(mod);
+		secpolicy_delete(mod -> sp);
+		pqiperson *p = (pqiperson *) mod -> pqi;
+		p -> reset();
+		delete p;
+		mods.erase(it);
+	}
+	return 1;
+}
+
+int     pqipersongrp::connectPeer(std::string id)
+{
+	/* get status from p3connectMgr */
+	std::cerr << " pqipersongrp::connectPeer() id: " << id << " does nothing yet! ";
+	std::cerr << std::endl;
+
+	std::map<std::string, SearchModule *>::iterator it;
+	it = mods.find(id);
+	if (it == mods.end())
+	{
+		return 0;
+	}
+	/* get the connect attempt details from the p3connmgr... */
+	SearchModule *mod = it->second;
+	pqiperson *p = (pqiperson *) mod -> pqi;
+
+
+	/* get address from p3connmgr */
+	if (!mConnMgr)
+		return 0;
+
+	struct sockaddr_in addr;
+	uint32_t type;
+
+	mConnMgr->connectAttempt(id, addr, type);
+
+	uint32_t ptype;
+	if (type & RS_NET_CONN_TCP_ALL)
+	{
+		ptype = PQI_CONNECT_TCP;
+	}
+	else if (type & RS_NET_CONN_UDP_ALL)
+	{
+		ptype = PQI_CONNECT_UDP;
+	}
+	else
+		return 0;
+
+	p->connect(ptype, addr);
+
+	/* */
+	return 1;
+}
+
+bool    pqipersongrp::notifyConnect(std::string id, bool success)
+{
+	if (mConnMgr)
+		mConnMgr->connectResult(id, success, 0);
+	
+	return (NULL != mConnMgr);
+}
+
+/******************************** DUMMY Specific features ***************************/
+
+#include "pqi/pqibin.h"
+
+pqilistener * pqipersongrpDummy::createListener(struct sockaddr_in laddr)
+{
+	pqilistener *listener = new pqilistener();
+	return listener;
+}
+
+
+pqiperson * pqipersongrpDummy::createPerson(std::string id, pqilistener *listener)
+{
+	{
+		std::ostringstream out;
+		out << "pqipersongrpDummy::createPerson() PeerId: " << id;
+		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, out.str());
+	}
+
+	pqiperson *pqip = new pqiperson(id, this);
+
+	// TCP
+	NetBinDummy *d1 = new NetBinDummy(pqip, id, PQI_CONNECT_TCP);
+
+	RsSerialiser *rss = new RsSerialiser();
+	rss->addSerialType(new RsFileItemSerialiser());
+	rss->addSerialType(new RsCacheItemSerialiser());
+	rss->addSerialType(new RsServiceSerialiser());
+
+	pqiconnect *pqic = new pqiconnect(rss, d1);
+
+	pqip -> addChildInterface(PQI_CONNECT_TCP, pqic);
+
+	// UDP.
+	NetBinDummy *d2 = new NetBinDummy(pqip, id, PQI_CONNECT_UDP);
+
+	RsSerialiser *rss2 = new RsSerialiser();
+	rss2->addSerialType(new RsFileItemSerialiser());
+	rss2->addSerialType(new RsCacheItemSerialiser());
+	rss2->addSerialType(new RsServiceSerialiser());
+
+	pqiconnect *pqic2 	= new pqiconnect(rss2, d2);
+
+	pqip -> addChildInterface(PQI_CONNECT_UDP, pqic2);
+
+	return pqip;
+}
+
+/******************************** DUMMY Specific features ***************************/
 

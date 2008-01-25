@@ -23,41 +23,22 @@
  *
  */
 
-
-
 #include "pqi/pqi.h"
-
-#include <list>
-
 #include "pqi/pqiperson.h"
+#include "pqi/pqipersongrp.h"
 
 const int pqipersonzone = 82371;
 #include "pqi/pqidebug.h"
 #include <sstream>
 
 
-pqiperson::pqiperson(cert *c, std::string id)
-	:PQInterface(id), sslcert(c), active(false), activepqi(NULL), 
-	inConnectAttempt(false), waittimes(0)
+pqiperson::pqiperson(std::string id, pqipersongrp *pg)
+	:PQInterface(id), active(false), activepqi(NULL), 
+	inConnectAttempt(false), waittimes(0), 
+	pqipg(pg)
 {
-	sroot = getSSLRoot();
 
-	// check certificate
-	
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	sroot -> validateCertificateXPGP(sslcert);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-	sroot -> validateCertificate(sslcert);
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
-	if (!(sslcert -> Valid()))
-	{
-		std::cerr << "pqiperson::Warning Certificate Not Approved!";
-		std::cerr << " pqiperson will not initialise...." << std::endl;
-	}
+	/* must check id! */
 
 	return;
 }
@@ -65,13 +46,13 @@ pqiperson::pqiperson(cert *c, std::string id)
 pqiperson::~pqiperson()
 {
 	// clean up the children.
-	std::list<pqiconnect *>::iterator it = kids.begin();
-	for(it = kids.begin(); it != kids.end(); )
+	std::map<uint32_t, pqiconnect *>::iterator it;
+	for(it = kids.begin(); it != kids.end(); it++)
 	{
-		pqiconnect *pc = (*it);
-		it = kids.erase(it);
+		pqiconnect *pc = (it->second);
 		delete pc;
 	}
+	kids.clear();
 }
 
 
@@ -111,11 +92,6 @@ int 	pqiperson::status()
 	return -1;
 }
 
-cert *	pqiperson::getContact()
-{
-	return sslcert;
-}
-
 	// tick......
 int	pqiperson::tick()
 {
@@ -123,7 +99,7 @@ int	pqiperson::tick()
 
 	{
 	  std::ostringstream out;
-	  out << "pqiperson::tick() Cert: " << sslcert -> Name() << " ";
+	  out << "pqiperson::tick() Id: " << PeerId() << " ";
 	  if (active)
 	  	out << "***Active***";
 	  else
@@ -140,47 +116,18 @@ int	pqiperson::tick()
 
 
 	// tick the children.
-	std::list<pqiconnect *>::iterator it;
+	std::map<uint32_t, pqiconnect *>::iterator it;
 	for(it = kids.begin(); it != kids.end(); it++)
 	{
-		if (0 < (*it) -> tick())
+		if (0 < (it->second) -> tick())
 		{
 			activeTick = 1;
 		}
-	  	out << "\tTicking Child: " << (*it) << std::endl;
+	  	out << "\tTicking Child: " << (it->first) << std::endl;
 	}
 
 	  pqioutput(PQL_DEBUG_ALL, pqipersonzone, out.str());
 	} // end of pqioutput.
-
-	// use cert settings to control everything.
-	if (!active)
-	{
-		if ((sslcert -> WillConnect()) && (!inConnectAttempt))
-		{
-			if (sslcert -> nc_timestamp < time(NULL))
-			{
-				// calc the time til next connect.
-				sslcert -> nc_timestamp = time(NULL) + 
-						connectWait();
-				connectattempt(NULL);
-			}
-		}
-		if (sslcert -> Listening())
-		{
-			if (!(sslcert -> WillListen()))
-			{
-				stoplistening();
-			}
-		}
-		else
-		{
-			if (sslcert -> WillListen())
-			{
-				listen();
-			}
-		}
-	}
 
 	return activeTick;
 }
@@ -192,7 +139,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 {
 	{
 	  std::ostringstream out;
-	  out << "pqiperson::notifyEvent() Cert: " << sslcert -> Name();
+	  out << "pqiperson::notifyEvent() Id: " << PeerId();
 	  out << std::endl;
 	  out << "Message: " << newState << " from: " << ni << std::endl;
 
@@ -201,7 +148,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 
 	/* find the pqi, */
 	pqiconnect *pqi = NULL;
-	std::list<pqiconnect *>::iterator it;
+	std::map<uint32_t, pqiconnect *>::iterator it;
 		
 	/* start again */
 	int i = 0;
@@ -211,15 +158,15 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 	  	out << "pqiperson::connectattempt() Kid# ";
 	  	out << i << " of " << kids.size();
 	  	out << std::endl;
-		out << " pqiconn: " << (*it);
-		out << " ni: " << (*it)->ni;
+		out << " type: " << (it->first);
+		out << " ni: " << (it->second)->ni;
 		out << " in_ni: " << ni;
 	  	pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
 		i++;
 
-		if ((*it)->thisNetInterface(ni))
+		if ((it->second)->thisNetInterface(ni))
 		{
-			pqi = (*it);
+			pqi = (it->second);
 		}
 	}
 
@@ -234,12 +181,15 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 	{
 	case CONNECT_RECEIVED:
 	case CONNECT_SUCCESS:
+
+		/* notify */
+		if (pqipg)
+			pqipg->notifyConnect(PeerId(), true);
+
 		if ((active) && (activepqi != pqi)) // already connected - trouble
 		{
 	  		pqioutput(PQL_WARNING, pqipersonzone, 
 				"CONNECT_SUCCESS+active->trouble: shutdown EXISTING->switch to new one!");
-
-			//pqi -> stoplistening();
 
 			// This is the RESET that's killing the connections.....
 			activepqi -> reset();
@@ -256,20 +206,20 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 			// mark as active.
 			active = true;
 			activepqi = pqi;
-			sslcert -> Connected(true);
-			sroot -> IndicateCertsChanged();
 
-			connectSuccess();
 
 	  		inConnectAttempt = false;
-			// dont stop listening.
-			//stoplistening();
 			return 1;
 		}
 		break;
 	case CONNECT_UNREACHABLE:
 	case CONNECT_FIREWALLED:
 	case CONNECT_FAILED:
+
+		/* notify up */
+		if (pqipg)
+			pqipg->notifyConnect(PeerId(), false);
+
 		if (active)
 		{
 			if (activepqi == pqi)
@@ -278,8 +228,6 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 					"CONNECT_FAILED->marking so!");
 				active = false;
 				activepqi = NULL;
-				sslcert -> Connected(false);
-				sroot -> IndicateCertsChanged();
 				return 1;
 			}
 			else
@@ -295,7 +243,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 	  		pqioutput(PQL_WARNING, pqipersonzone, 
 			  "CONNECT_FAILED+NOT active -> try connect again");
 
-			connectattempt(pqi);
+			//connectattempt(pqi);
 			return 1;
 		}
 		break;
@@ -311,59 +259,33 @@ int 	pqiperson::reset()
 {
 	{
 	  std::ostringstream out;
-	  out << "pqiperson::reset() Cert: " << sslcert -> Name();
+	  out << "pqiperson::reset() Id: " << PeerId();
 	  out << std::endl;
 	  pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
 	}
 
-	std::list<pqiconnect *>::iterator it;
+	std::map<uint32_t, pqiconnect *>::iterator it;
 	for(it = kids.begin(); it != kids.end(); it++)
 	{
-		(*it) -> reset();
+		(it->second) -> reset();
 	}		
 
 	activepqi = NULL;
 	active = false;
-	sslcert -> Listening(false);
-	sslcert -> Connected(false);
-	sroot -> IndicateCertsChanged();
-
-	// check auto setting at reset.
-	if (!sslcert -> Manual())
-		autoconnect(true);
 
 	return 1;
 }
 
-int	pqiperson::autoconnect(bool b)
+int	pqiperson::addChildInterface(uint32_t type, pqiconnect *pqi)
 {
 	{
 	  std::ostringstream out;
-	  out << "pqiperson::autoconnect() Cert: " << sslcert -> Name();
-	  out << " - " << (int) b << std::endl;
-	  pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
-	}
-
-	sslcert -> Manual(!b);
-
-	sslcert -> WillConnect(b);
-	sslcert -> WillListen(b);
-	sroot -> IndicateCertsChanged();
-
-	return 1;
-}
-
-
-int	pqiperson::addChildInterface(pqiconnect *pqi)
-{
-	{
-	  std::ostringstream out;
-	  out << "pqiperson::addChildInterface() : " << pqi;
+	  out << "pqiperson::addChildInterface() : Id " << PeerId() << " " << type;
 	  out << std::endl;
 	  pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
 	}
 
-	kids.push_back(pqi);
+	kids[type] = pqi;
 	return 1;
 }
 
@@ -375,21 +297,19 @@ int 	pqiperson::listen()
 {
 	{
 	  std::ostringstream out;
-	  out << "pqiperson::listen() Cert: " << sslcert -> Name();
+	  out << "pqiperson::listen() Id: " << PeerId();
 	  out << std::endl;
 	  pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
 	}
 
 	if (!active)
 	{
-		std::list<pqiconnect *>::iterator it;
+		std::map<uint32_t, pqiconnect *>::iterator it;
 		for(it = kids.begin(); it != kids.end(); it++)
 		{
 			// set them all listening.
-			(*it) -> listen();
+			(it->second) -> listen();
 		}
-		sslcert -> Listening(true);
-		sroot -> IndicateCertsChanged();
 	}
 	return 1;
 }
@@ -399,111 +319,50 @@ int 	pqiperson::stoplistening()
 {
 	{
 	  std::ostringstream out;
-	  out << "pqiperson::stoplistening() Cert: " << sslcert -> Name();
+	  out << "pqiperson::stoplistening() Id: " << PeerId();
 	  out << std::endl;
 	  pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
 	}
 
-	std::list<pqiconnect *>::iterator it;
+	std::map<uint32_t, pqiconnect *>::iterator it;
 	for(it = kids.begin(); it != kids.end(); it++)
 	{
 		// set them all listening.
-		(*it) -> stoplistening();
+		(it->second) -> stoplistening();
 	}
-	sslcert -> Listening(false);
-	sroot -> IndicateCertsChanged();
-
 	return 1;
 }
 
-int	pqiperson::connectattempt(pqiconnect *last)
+int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr)
 {
 	{
 	  std::ostringstream out;
-	  out << "pqiperson::connectattempt() Cert: " << sslcert -> Name();
+	  out << "pqiperson::connect() Id: " << PeerId();
+	  out << " type: " << type;
+	  out << " addr: " << inet_ntoa(raddr.sin_addr);
+	  out << ":" << ntohs(raddr.sin_port);
 	  out << std::endl;
 	  pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
 	}
 
-	std::list<pqiconnect *>::iterator it = kids.begin();
-	int i = 0; 
-	if (last != NULL)
-	{
-		// find the current connection.
-		for(; (it != kids.end()) && ((*it) != last); it++, i++);
-
-		if (it != kids.end())
-		{
-	  		std::ostringstream out;
-	  		out << "pqiperson::connectattempt() Last Cert#: ";
-	  		out << i << " of " << kids.size();
-	  		out << std::endl;
-	  		pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
-
-
-			it++;
-			i++;
-		}
-	}
-	// now at the first one to try.
-	{
-	  std::ostringstream out;
-	  out << "pqiperson::connectattempt() Cert: " << sslcert -> Name();
-	  out << " Starting Attempts at Interface " << i << " of " << kids.size();
-	  out << std::endl;
-	  pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
-	}
-
-	// try to connect on the next one.
-	for(; (it != kids.end()) && (0 > (*it)->connectattempt()); it++, i++); 
-
+	std::map<uint32_t, pqiconnect *>::iterator it;
+	
+	it = kids.find(type);
 	if (it == kids.end())
 	{
-	  std::ostringstream out;
-	  out << "pqiperson::connectattempt() Cert: " << sslcert -> Name();
-	  out << " Failed on All Interfaces";
-	  out << std::endl;
-	  pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
+	  	std::ostringstream out;
+	  	out << "pqiperson::connect()";
+	  	out << " missing pqiconnect";
+	  	out << std::endl;
+	  	pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
 	}
-	else
-	{
-	  std::ostringstream out;
-	  out << "pqiperson::connectattempt() Cert: " << sslcert -> Name();
-	  out << " attempt on pqiconnect #" << i << " suceeded";
-	  out << std::endl;
-	  pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
-	}
+	
+	(it->second)->connect(raddr);	
 		
 	// flag if we started a new connectionAttempt.
-	inConnectAttempt = (it != kids.end());
+	inConnectAttempt = true;
 
 	return 1;
-}
-
-
-// returns (in secs) the time til next connect attempt
-// this is based on the 
-//
-#define SEC_PER_LOG_UNIT   600 /* ten minutes? */
-#define MAX_WAITTIMES      10  /* ten minutes? */
-
-int	pqiperson::connectWait()
-{
-	int log_weight = (1 << waittimes);
-	// max wait of 2^10 = 1024  * X min (over a month)
-	// 			10240 min = 1 day
-	waittimes++;
-	if (waittimes > MAX_WAITTIMES)
-		waittimes = MAX_WAITTIMES;
-	// make it linear instead!.
-	return waittimes * SEC_PER_LOG_UNIT;
-	//return log_weight * SEC_PER_LOG_UNIT;
-}
-
-// called to reduce the waittimes, next time.
-int	pqiperson::connectSuccess()
-{
-	return waittimes = 0;
 }
 
 
@@ -520,10 +379,10 @@ void    pqiperson::setMaxRate(bool in, float val)
 	// set to all of them. (and us)
 	PQInterface::setMaxRate(in, val);
 	// clean up the children.
-	std::list<pqiconnect *>::iterator it = kids.begin();
+	std::map<uint32_t, pqiconnect *>::iterator it;
 	for(it = kids.begin(); it != kids.end(); it++)
 	{
-		(*it) -> setMaxRate(in, val);
+		(it->second) -> setMaxRate(in, val);
 	}
 }
 

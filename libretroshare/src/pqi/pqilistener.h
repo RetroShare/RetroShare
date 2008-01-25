@@ -1,9 +1,9 @@
 /*
- * "$Id: pqibin.h,v 1.2 2007-02-18 21:46:49 rmf24 Exp $"
+ * libretroshare/src/pqi: pqilistener.h
  *
  * 3P/PQI network interface for RetroShare.
  *
- * Copyright 2004-2006 by Robert Fernie.
+ * Copyright 2004-2008 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,50 +23,26 @@
  *
  */
 
-#ifndef PQI_MONITOR_HEADER
-#define PQI_MONITOR_HEADER
+#ifndef MRK_PQI_GENERIC_LISTEN_HEADER
+#define MRK_PQI_GENERIC_LISTEN_HEADER
 
-/**** Rough sketch of a Monitor class 
- * expect it to change significantly
- *
- */
+// operating system specific network header.
+#include "pqi/pqinetwork.h"
 
-
-const uint32_t PQI_PEER_STATE_OFFLINE = 0;
-const uint32_t PQI_PEER_STATE_ONLINE  = 1;
-
-class pqipeer
-{
-	public:
-std::string id;
-std::string name;
-int	state;
-};
-
-class pqimonclient
+class pqilistener
 {
 	public:
 
-	pqimonclient() { return; }
-virtual ~pqimonclient() { return; }
+	pqilistener() 		{ return; }
+virtual ~pqilistener() 		{ return; }
 
-virtual void monUpdate(const std::list<pqipeer> &plist) = 0;
+virtual int     tick()					{ return 1; }
+virtual int     status()				{ return 1; }
+virtual int     setListenAddr(struct sockaddr_in addr)  { return 1; }
+virtual int	setuplisten() 				{ return 1; }
+virtual int     resetlisten() 				{ return 1; }
+
 };
 
 
-class pqimonitor
-{
-public:
-	pqimonitor();
-	~pqimonitor();
-int     tick();
-int	addClient(pqimonclient *cli) { clients.push_back(cli); return 1; }
-
-private:
-	std::list<pqimonclient *> clients;
-	std::list<pqipeer> plist;
-};
-
-
-
-#endif 
+#endif // MRK_PQI_GENERIC_LISTEN_HEADER

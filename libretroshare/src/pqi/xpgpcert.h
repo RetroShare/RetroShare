@@ -181,6 +181,7 @@ void setSetting(std::string opt, std::string val);
 
 
 /* Fns for relating cert signatures to structures */
+cert *findPeerId(std::string id);
 cert *findcertsign(certsign &sign);
 int   getcertsign(cert *c, certsign &sign);
 int   addtosignmap(cert *);

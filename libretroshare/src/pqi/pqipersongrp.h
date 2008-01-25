@@ -1,9 +1,9 @@
 /*
- * "$Id: pqipersongrp.h,v 1.13 2007-02-18 21:46:49 rmf24 Exp $"
+ * libretroshare/src/pqi: pqipersongrp.h
  *
  * 3P/PQI network interface for RetroShare.
  *
- * Copyright 2004-2006 by Robert Fernie.
+ * Copyright 2004-2008 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,13 +24,15 @@
  */
 
 
-
 #ifndef MRK_PQI_PERSON_HANDLER_HEADER
 #define MRK_PQI_PERSON_HANDLER_HEADER
 
 #include "pqi/pqihandler.h"
 #include "pqi/pqiperson.h"
+#include "pqi/pqilistener.h"
 #include "pqi/pqiservice.h"
+#include "pqi/pqimonitor.h"
+#include "pqi/p3cfgmgr.h"
 
 
 // So this is a specific implementation 
@@ -40,61 +42,46 @@
 // as an added bonus, we are going to 
 // make this a pqitunnelserver, to which services can be attached.
 
-#ifdef PQI_USE_PROXY
-	class p3proxy;
-	class pqiudplistener;
-#endif
-
-
-const unsigned long PQIPERSON_NO_SSLLISTENER = 	0x0001;
+const unsigned long PQIPERSON_NO_LISTENER = 	0x0001;
 
 const unsigned long PQIPERSON_ALL_BW_LIMITED =  0x0010;
 
-#ifdef PQI_USE_DISC
-	class p3disc;
-#endif
-
-#ifdef PQI_USE_CHANNELS
-	class p3channel;
-#endif
-
-class pqissllistener;
-
-class pqipersongrp: public pqihandler, public p3ServiceServer
+class pqipersongrp: public pqihandler, public pqiMonitor, public p3ServiceServer
 {
 	public:
-	pqipersongrp(SecurityPolicy *, sslroot *sr, unsigned long flags);
+	pqipersongrp(SecurityPolicy *, unsigned long flags);
 
-	// control the connections.
-int	cert_accept(cert *a);
-int	cert_deny(cert *a);
-int	cert_auto(cert *a, bool b);
-
+	/*************************** Setup *************************/
+	/* pqilistener */
+int     init_listener(); 
 int	restart_listener();
 
+int     setConfig(p3GeneralConfig *cfg);
 int	save_config();
 int	load_config();
+
+	/*************** pqiMonitor callback ***********************/
+virtual void    statusChange(const std::list<pqipeer> &plist);
+
+	/******************* Peer Control **************************/
+virtual int addPeer(std::string id); /* can be overloaded for testing */
+int     removePeer(std::string id);
+int     connectPeer(std::string id);
+
+	/*** callback from children ****/
+bool    notifyConnect(std::string id, bool success);
 
 	// tick interfaces.
 virtual int tick();
 virtual int status();
 
-	// + SearchInterface which should automatically handle stuff
-
-	// acess to services.
-#ifdef PQI_USE_DISC
-	p3disc *getP3Disc()   { return p3d; } 
-#endif
-
-#ifdef PQI_USE_PROXY
-	p3proxy *getP3Proxy() { return p3p; }
-#endif
-
-#ifdef PQI_USE_CHANNELS
-	p3channel *getP3Channel() { return p3c; }
-#endif
-
 	protected:
+
+	/********* FUNCTIONS to OVERLOAD for specialisation ********/
+virtual pqilistener *createListener(struct sockaddr_in laddr) = 0;
+virtual pqiperson   *createPerson(std::string id, pqilistener *listener) = 0;
+	/********* FUNCTIONS to OVERLOAD for specialisation ********/
+
 	/* Overloaded RsItem Check
 	 * checks item->cid vs Person
 	 */
@@ -106,22 +93,25 @@ virtual int checkOutgoingRsItem(RsItem *item, int global) { return 1; }
 	int tickServiceRecv();
 	int tickServiceSend();
 
-		pqissllistener *pqil;
-
-		sslroot *sslr;
-
-#ifdef PQI_USE_DISC
-		p3disc    *p3d;
-#endif
-
-#ifdef PQI_USE_PROXY
-		p3proxy   *p3p;
-		pqiudplistener *pqiudpl;
-#endif
-#ifdef PQI_USE_CHANNELS
-		p3channel *p3c;
-#endif
+	pqilistener *pqil;
+	p3GeneralConfig *config;
 	unsigned long initFlags;
 };
+
+class pqipersongrpDummy: public pqipersongrp
+{
+	public:
+	pqipersongrpDummy(SecurityPolicy *pol, unsigned long flags)
+	:pqipersongrp(pol, flags) { return; }
+
+	protected:
+
+	/********* FUNCTIONS to OVERLOAD for specialisation ********/
+virtual pqilistener *createListener(struct sockaddr_in laddr);
+virtual pqiperson   *createPerson(std::string id, pqilistener *listener);
+	/********* FUNCTIONS to OVERLOAD for specialisation ********/
+};
+
+
 
 #endif // MRK_PQI_PERSON_HANDLER_HEADER

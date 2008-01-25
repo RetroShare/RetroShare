@@ -3,42 +3,40 @@ RS_TOP_DIR = ..
 include ../make.opt
 
 # All the executables that should be generated.
-EXECS = # test_p3items
+EXECS = dht_test conn_test # test_p3items
 
-BASE_OBJ = pqi_base.o \
-	pqidebug.o pqisecurity.o pqinetwork.o \
-	pqibin.o pqimon.o \
-
+BASE_OBJ = pqi_base.o pqidebug.o pqisecurity.o pqinetwork.o 
 LOOP_OBJ = pqiloopback.o 
+STREAM_OBJ = pqistreamer.o pqiarchive.o pqibin.o
+MGR_OBJ = pqimonitor.o p3dhtmgr.o p3connmgr.o p3cfgmgr.o p3authmgr.o
+GRP_OBJ = pqiperson.o pqihandler.o pqiservice.o pqipersongrp.o  
 
 ifdef PQI_USE_XPGP
-	SSL_OBJ = xpgpcert.o 
+	SSL_OBJ = authxpgp.o   
+#xpgpcert.o 
 # Disabled for release...	EXECS += p3supernode 
 else
 	SSL_OBJ  = sslcert.o  
 endif
 
-SSL_OBJ  += pqissl.o pqissllistener.o
-GRP_OBJ = pqiperson.o pqihandler.o pqiservice.o pqipersongrp.o  
-STREAM_OBJ = pqistreamer.o pqiarchive.o 
+SSL_OBJ  += pqissl.o pqissllistener.o pqisslpersongrp.o
+UDP_OBJ  = pqissludp.o
 
-
-OLD_OBJ = pqipacket.o p3loopback.o pqi.o
-TUNN_OBJ = pqitunnel.o pqitunneltst.o
-DISC_OBJ = discItem.o p3disc.o
-UDP_OBJ  = pqistunner.o pqiudpproxy.o pqissludp.o pqitunnelproxyudp.o
-
-PRXY_OBJ = pqiproxy.o  pqitunnelproxy.o
-CHAN_OBJ = p3channel.o pqichannel.o
-SN_OBJ = pqisupernode.o
+# Old code - no longer used!
+#OLD_OBJ = pqipacket.o p3loopback.o pqi.o
+#TUNN_OBJ = pqitunnel.o pqitunneltst.o
+#DISC_OBJ = discItem.o p3disc.o
+#UDP_OBJ  = pqistunner.o pqiudpproxy.o pqissludp.o pqitunnelproxyudp.o
+#PRXY_OBJ = pqiproxy.o  pqitunnelproxy.o
+#CHAN_OBJ = p3channel.o pqichannel.o
+#SN_OBJ = pqisupernode.o
 
 OBJ = $(BASE_OBJ) $(LOOP_OBJ) \
-	$(GRP_OBJ) $(SSL_OBJ) $(STREAM_OBJ)
-
-# Disabling this part of pqi core - until we have the basic
-# items replaced by the new serialiser.....
-# $(TUNN_OBJ) $(DISC_OBJ) \
-# $(CHAN_OBJ) $(PRXY_OBJ) $(UDP_OBJ) 
+	$(STREAM_OBJ) \
+	$(MGR_OBJ) \
+	$(SSL_OBJ) \
+	$(UDP_OBJ) \
+	$(GRP_OBJ) 
 
 # Linux only parts.
 ifeq ($(OS),Linux)
@@ -85,14 +83,20 @@ librs:  $(OBJ)
 
 $(OBJ) : $(HDR)
 
-p3supernode: p3supernode.o librs
-	$(CC) $(CFLAGS) -o p3supernode p3supernode.o $(RSLIBS)
+#p3supernode: p3supernode.o librs
+#	$(CC) $(CFLAGS) -o p3supernode p3supernode.o $(RSLIBS)
+
+dht_test: dht_test.o librs
+	$(CC) $(CFLAGS) -o dht_test dht_test.o $(RSLIBS)
+
+conn_test: conn_test.o librs
+	$(CC) $(CFLAGS) -o conn_test conn_test.o $(RSLIBS)
 
 .cc.o:
 	$(CC) $(CFLAGS) -c $<
 
 clean:
-	-/bin/rm $(OBJ) p3supernode.o
+	-/bin/rm $(OBJ) 
 
 clobber: clean
 	-/bin/rm $(EXECS) $(LIBPQIA) $(LIBPQISO) 

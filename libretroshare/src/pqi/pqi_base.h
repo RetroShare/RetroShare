@@ -279,18 +279,24 @@ virtual int	notifyEvent(NetInterface *ni, int event) { return 0; }
 	std::string peerId;
 };
 
+
+
+/**** Consts for pqiperson -> placed here for NetBinDummy usage() */
+
+const uint32_t PQI_CONNECT_TCP = 0x0001;
+const uint32_t PQI_CONNECT_UDP = 0x0002;
+
+
 /********************** Binary INTERFACE ****************************
  * This defines the binary interface used by Network/loopback/file
  * interfaces
- *
- * Flags are passed to BinInterfaces, and serialisers
  */
 
 #define BIN_FLAGS_NO_CLOSE  0x0001
 #define BIN_FLAGS_READABLE  0x0002
 #define BIN_FLAGS_WRITEABLE 0x0004
 #define BIN_FLAGS_NO_DELETE 0x0008
-#define BIN_FLAGS_HASHDATA  0x0010
+#define BIN_FLAGS_HASH_DATA 0x0010
 
 class BinInterface
 {
@@ -306,6 +312,8 @@ virtual int	netstatus() = 0;
 virtual int	isactive() = 0;
 virtual bool	moretoread() = 0;
 virtual bool 	cansend() = 0;
+virtual std::string gethash() = 0;
+
 		/* used by pqistreamer to limit transfers */
 virtual bool 	bandwidthLimited() { return true; }
 };
@@ -340,7 +348,7 @@ virtual ~NetInterface()
 
 // virtual int tick() = 0; // Already defined for BinInterface.
 
-virtual int connectattempt() = 0; 
+virtual int connect(struct sockaddr_in raddr) = 0; 
 virtual int listen() = 0; 
 virtual int stoplistening() = 0; 
 virtual int disconnect() = 0;

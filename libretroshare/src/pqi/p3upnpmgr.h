@@ -1,9 +1,9 @@
 /*
- * "$Id: pqistunner.h,v 1.2 2007-02-18 21:46:50 rmf24 Exp $"
+ * libretroshare/src/pqi: p3upnpmgr.h
  *
  * 3P/PQI network interface for RetroShare.
  *
- * Copyright 2004-2006 by Robert Fernie.
+ * Copyright 2004-2007 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,45 +24,35 @@
  */
 
 
+#ifndef MRK_P3_UPNP_MANAGER_H
+#define MRK_P3_UPNP_MANAGER_H
 
-
-
+/* platform independent networking... */
+#include "util/rsthreads.h"
 #include "pqi/pqinetwork.h"
 
-
-class pqistunner
+class p3UpnpMgr: public RsThread
 {
 	public:
 
-	pqistunner(struct sockaddr_in addr);
+virtual	~p3UpnpMgr() { return; }
 
-int     setListenAddr(struct sockaddr_in addr);
-int     setuplisten();
+		/* External Interface */
+virtual void    enableUPnP(bool on) = 0;
+virtual void    shutdownUPnP() = 0;
 
-int     resetlisten();
+virtual bool    getUPnPEnabled() = 0;
+virtual bool    getUPnPActive() = 0;
 
-int     stun(struct sockaddr_in stun_addr);
-
-bool    response(void *stun_pkt, int size, struct sockaddr_in &addr);
-int     recvfrom(void *data, int *size, struct sockaddr_in &addr);
-int     reply(void *data, int size, struct sockaddr_in &addr);
-
-	private:
-
-/************************** Basic Functionality ******************/
-
-bool 	generate_stun_pkt(void *stun_pkt, int *len);
-void *	generate_stun_reply(struct sockaddr_in *stun_addr, int *len);
-
-
-	int sockfd;
-	bool active;
-	void *stunpkt;
-	unsigned int stunpktlen;
-
-	struct sockaddr_in laddr, stun_addr;
+		/* the address that the listening port is on */
+virtual void    setInternalPort(unsigned short iport_in) = 0;
+virtual void    setExternalPort(unsigned short eport_in) = 0;
+ 
+	 	/* as determined by uPnP */
+virtual bool    getInternalAddress(struct sockaddr_in &addr) = 0;
+virtual bool    getExternalAddress(struct sockaddr_in &addr) = 0;
 
 };
 
-
+#endif /* MRK_P3_UPNP_MANAGER_H */
 

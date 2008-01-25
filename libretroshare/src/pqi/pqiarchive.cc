@@ -469,5 +469,11 @@ int	pqiarchive::readPkt(RsItem **item_out, long *ts_out)
 	return 1;
 }
 
+/**** Hashing Functions ****/
+std::string pqiarchive::gethash()
+{
+	return bio->gethash();
+}
 
 
+	

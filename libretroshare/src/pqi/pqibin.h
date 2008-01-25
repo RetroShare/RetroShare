@@ -29,11 +29,12 @@
 #define PQI_BIN_INTERFACE_HEADER
 
 #include "pqi/pqi_base.h"
+#include "pqi/pqihash.h"
 
 class BinFileInterface: public BinInterface
 {
 public:
-	BinFileInterface(char *fname, int flags);
+	BinFileInterface(const char *fname, int flags);
 virtual ~BinFileInterface();
 
 virtual int     tick() { return 1; }
@@ -56,11 +57,13 @@ virtual bool	moretoread()
 
 
 virtual bool 	cansend() { return (bin_flags | BIN_FLAGS_WRITEABLE);   }
+virtual std::string gethash();
 
 private:
 	int   bin_flags;
 	FILE *buf;
 	int   size;
+	pqihash *hash;
 };
 
 
@@ -93,6 +96,7 @@ virtual bool	moretoread()
 	}
 
 virtual bool 	cansend()    { return (bin_flags | BIN_FLAGS_WRITEABLE); }
+virtual std::string gethash();
 
 	private:
 	int   bin_flags;
@@ -100,8 +104,41 @@ virtual bool 	cansend()    { return (bin_flags | BIN_FLAGS_WRITEABLE); }
 	int   size;
 	int   recvsize;
 	int   readloc;
+	pqihash *hash;
 };
 
+
+class NetBinDummy: public NetBinInterface
+{
+public:
+	NetBinDummy(PQInterface *parent, std::string id, uint32_t t);
+virtual ~NetBinDummy() { return; }
+
+	// Net Interface
+virtual int connect(struct sockaddr_in raddr);
+virtual int listen();
+virtual int stoplistening();
+virtual int disconnect();
+virtual int reset();
+
+	// Bin Interface.
+virtual int     tick();
+
+virtual int     senddata(void *data, int len);
+virtual int     readdata(void *data, int len);
+virtual int     netstatus();
+virtual int     isactive();
+virtual bool    moretoread();
+virtual bool    cansend();
+virtual std::string gethash();
+
+	private:
+	uint32_t type;
+	bool 	 dummyConnected;
+        bool     toConnect;
+	uint32_t connectDelta;
+	time_t   connectTS;
+};
 
 
 #endif // PQI_BINARY_INTERFACES_HEADER

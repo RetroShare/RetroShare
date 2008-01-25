@@ -49,13 +49,10 @@
 
 
 #define WAITING_NOT            0
-#define WAITING_PROXY_CONNECT  1
-#define WAITING_LOCAL_ADDR     2
-#define WAITING_REMOTE_ADDR    3
-#define WAITING_SOCK_CONNECT   4
-#define WAITING_SSL_CONNECTION 5
-#define WAITING_SSL_AUTHORISE  6
-#define WAITING_FAIL_INTERFACE 7
+#define WAITING_SOCK_CONNECT   1
+#define WAITING_SSL_CONNECTION 2
+#define WAITING_SSL_AUTHORISE  3
+#define WAITING_FAIL_INTERFACE 4
 
 
 #define PQISSL_PASSIVE  0x00
@@ -93,63 +90,14 @@ class cert;
 
 class pqissllistener;
 
-#if 0 /* REMOVING pqissllistener */
-
-class pqissllistener
-{
-	public:
-
-	pqissllistener(struct sockaddr_in addr);
-
-int 	addlistenaddr(cert *c, pqissl *acc);
-int	removeListenPort(cert *c);
-
-int     setListenAddr(struct sockaddr_in addr);
-int	setuplisten();
-int     resetlisten();
-
-int	acceptconnection();
-int	continueaccepts();
-int	continueSSL(SSL *ssl, bool);
-int	continueSocket(int fd, bool);
-
-//int	connectCertExchange(cert *);
-//
-
-
-int 	tick();
-int 	status();
-
-	private:
-
-	// fn to get cert, anyway
-int     Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_in *inaddr);
-
-	struct sockaddr_in raddr;
-	struct sockaddr_in laddr;
-	socklen_t addrlen;
-
-	bool active;
-	int lsock;
-	cert *localcert;
-	std::map<cert *, pqissl *> listenaddr;
-	std::list<SSL *> incoming_ssl;
-	std::list<int> incoming_skts;
-
-	sslroot *sslccr;
-};
-
-
-#endif /* removing pqisllistener */
-
 class pqissl: public NetBinInterface
 {
 public:
-	pqissl(cert *c, pqissllistener *l, PQInterface *parent);
+	pqissl(pqissllistener *l, PQInterface *parent);
 virtual ~pqissl();
 
 	// NetInterface
-virtual int connectattempt();
+virtual int connect(struct sockaddr_in raddr);
 virtual int listen();
 virtual int stoplistening();
 virtual int reset();
@@ -165,6 +113,7 @@ virtual int netstatus();
 virtual int isactive();
 virtual bool moretoread();
 virtual bool cansend();
+virtual std::string gethash(); /* not used here */
 virtual bool bandwidthLimited();
 
 protected:
@@ -177,14 +126,9 @@ protected:
 int 	ConnectAttempt();
 int 	waiting; 
 
-	// These first five fns are overloaded for udp/etc connections.
-virtual int Reattempt_Connection();
-virtual int Request_Proxy_Connection();
-virtual int Check_Proxy_Connection();
-virtual int Request_Local_Address();
-virtual int Determine_Local_Address();
-virtual int Determine_Remote_Address();
+virtual int Failed_Connection();
 
+	// These two fns are overloaded for udp/etc connections.
 virtual int Initiate_Connection();
 virtual int Basic_Connection_Complete();
 
@@ -223,13 +167,8 @@ virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd)
 	SSL *ssl_connection;
 	int sockfd;
 
-	cert *sslcert;
-	sslroot *sslccr;
-
 	pqissllistener *pqil;
-
 	struct sockaddr_in remote_addr;
-
 
 	void *readpkt;
 	int pktlen;

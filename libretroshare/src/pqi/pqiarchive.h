@@ -55,6 +55,9 @@ virtual int     tick();
 virtual int     status();
 
 virtual void	setRealTime(bool r) { realTime = r; }
+
+std::string     gethash();
+
 	private:
 int     writePkt(RsItem *item);
 int     readPkt(RsItem **item_out, long *ts);

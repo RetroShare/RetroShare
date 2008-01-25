@@ -1,9 +1,9 @@
 /*
- * "$Id: pqiloopback.h,v 1.5 2007-02-19 20:08:30 rmf24 Exp $"
+ * libretroshare/src/pqi: pqiloopback.h
  *
  * 3P/PQI network interface for RetroShare.
  *
- * Copyright 2004-2006 by Robert Fernie.
+ * Copyright 2004-2008 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,11 +23,8 @@
  *
  */
 
-
-
 #ifndef MRK_PQI_LOOPBACK_HEADER
 #define MRK_PQI_LOOPBACK_HEADER
-
 
 // The standard data types and the search interface.
 #include "pqi/pqi.h"
@@ -36,9 +33,6 @@
 #include <list>
 #include <iostream>
 
-
-// Test Interface (LoopBack)
-// public interface .... includes the whole p3interface.
 class pqiloopback: public PQInterface
 {
 public:

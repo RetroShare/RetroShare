@@ -23,26 +23,11 @@
  *
  */
 
-
-
 #ifndef MRK_PQI_HANDLER_HEADER
 #define MRK_PQI_HANDLER_HEADER
 
 #include "pqi/pqi.h"
 #include "pqi/pqisecurity.h"
-
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-
-#include "pqi/xpgpcert.h"
-
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
-#include "pqi/sslcert.h"
-
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
 #include <map>
 #include <list>

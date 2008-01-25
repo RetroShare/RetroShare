@@ -1932,6 +1932,19 @@ bool certsign::operator==(const certsign &ref) const
 
 
 /* Fns for relating cert signatures to structures */
+cert *sslroot::findPeerId(std::string id)
+{
+	certsign sign;
+	if (!convert_to_certsign(id, sign))
+	{
+		pqioutput(PQL_WARNING, pqisslrootzone, 
+			"sslroot::findPeerId() ERROR: Failed to Convert to certsign");
+		return NULL;
+	}
+
+	return findcertsign(sign);
+}
+
 cert *sslroot::findcertsign(certsign &sign)
 {
 	std::map<certsign, cert *>::iterator it;

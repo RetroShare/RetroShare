@@ -37,6 +37,7 @@
 #include <map>
 
 #include "pqi/pqi_base.h"
+#include "pqi/pqilistener.h"
 
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
@@ -53,23 +54,29 @@
 class pqissl;
 class cert;
 
-class pqissllistenbase
+class pqissllistenbase: public pqilistener
 {
 	public:
+
 
 	pqissllistenbase(struct sockaddr_in addr);
 virtual ~pqissllistenbase();
 
-int     setListenAddr(struct sockaddr_in addr);
-int	setuplisten();
-int     resetlisten();
+/*************************************/
+/*       LISTENER INTERFACE         **/
+
+virtual int 	tick();
+virtual int 	status();
+virtual int     setListenAddr(struct sockaddr_in addr);
+virtual int	setuplisten();
+virtual int     resetlisten();
+
+/*************************************/
 
 int	acceptconnection();
 int	continueaccepts();
 int	continueSSL(SSL *ssl, struct sockaddr_in remote_addr, bool);
 
-virtual int 	tick();
-virtual int 	status();
 
 virtual int completeConnection(int sockfd, SSL *in_connection, struct sockaddr_in &raddr) = 0;
 
@@ -100,8 +107,8 @@ class pqissllistener: public pqissllistenbase
 	pqissllistener(struct sockaddr_in addr);
 virtual ~pqissllistener();
 
-int 	addlistenaddr(cert *c, pqissl *acc);
-int	removeListenPort(cert *c);
+int 	addlistenaddr(std::string id, pqissl *acc);
+int	removeListenPort(std::string id);
 
 //virtual int 	tick();
 virtual int 	status();
@@ -110,7 +117,7 @@ virtual int completeConnection(int sockfd, SSL *in_connection, struct sockaddr_i
 
 	private:
 
-	std::map<cert *, pqissl *> listenaddr;
+	std::map<std::string, pqissl *> listenaddr;
 };
 
 

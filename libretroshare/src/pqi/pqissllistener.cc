@@ -503,19 +503,18 @@ pqissllistener::~pqissllistener()
 	return;
 }
 
-int 	pqissllistener::addlistenaddr(cert *c, pqissl *acc)
+int 	pqissllistener::addlistenaddr(std::string id, pqissl *acc)
 {
-	std::map<cert *, pqissl *>::iterator it;
+	std::map<std::string, pqissl *>::iterator it;
 
 	std::ostringstream out;
 
-	out << "Adding to Cert Listening Addresses:" << std::endl;
-	sslccr -> printCertificate(c, out);
+	out << "Adding to Cert Listening Addresses Id: " << id << std::endl;
 	out << "Current Certs:" << std::endl;
 	for(it = listenaddr.begin(); it != listenaddr.end(); it++)
 	{
-		sslccr -> printCertificate(it -> first, out);
-		if (sslccr -> compareCerts(c, it -> first) == 0)
+		out << id << std::endl;
+		if (it -> first == id)
 		{
 			out << "pqissllistener::addlistenaddr()";
 			out << "Already listening for Certificate!";
@@ -530,20 +529,20 @@ int 	pqissllistener::addlistenaddr(cert *c, pqissl *acc)
 	pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out.str());
 
 	// not there can accept it!
-	listenaddr[c] = acc;
+	listenaddr[id] = acc;
 	return 1;
 }
 
-int	pqissllistener::removeListenPort(cert *c)
+int	pqissllistener::removeListenPort(std::string id)
 {
 	// check where the connection is coming from.
 	// if in list of acceptable addresses, 
 	//
 	// check if in list.
-	std::map<cert *, pqissl *>::iterator it;
+	std::map<std::string, pqissl *>::iterator it;
 	for(it = listenaddr.begin();it!=listenaddr.end();it++)
 	{
-		if (sslccr -> compareCerts(it -> first, c) == 0)
+		if (it->first == id)
 		{
 			listenaddr.erase(it);
 
@@ -564,14 +563,14 @@ int 	pqissllistener::status()
 {
 	pqissllistenbase::status();
 	// print certificates we are listening for.
-	std::map<cert *, pqissl *>::iterator it;
+	std::map<std::string, pqissl *>::iterator it;
 
 	std::ostringstream out;
 	out << "pqissllistener::status(): ";
 	out << " Listening (" << ntohs(laddr.sin_port) << ") for Certs:" << std::endl;
 	for(it = listenaddr.begin(); it != listenaddr.end(); it++)
 	{
-		sslccr -> printCertificate(it -> first, out);
+		out << it -> first << std::endl;
 	}
 	pqioutput(PQL_DEBUG_ALL, pqissllistenzone, out.str());
 
@@ -612,7 +611,7 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 /**************** PQI_USE_XPGP ******************/
 
 	bool found = false;
-	std::map<cert *, pqissl *>::iterator it;
+	std::map<std::string, pqissl *>::iterator it;
 
 	// Let connected one through as well! if ((npc == NULL) || (npc -> Connected()))
 	if (npc == NULL)
@@ -633,8 +632,8 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 		// check if cert is in our list.....
 		for(it = listenaddr.begin();(found!=true) && (it!=listenaddr.end());)
 		{
-		 	out << "\tagainst: " << it->first->Name() << std::endl;
-			if (sslccr -> compareCerts(it -> first, npc) == 0)
+		 	out << "\tagainst: " << it->first << std::endl;
+			if (it -> first == npc->PeerId())
 			{
 		 	        out << "\t\tMatch!";
 				found = true;

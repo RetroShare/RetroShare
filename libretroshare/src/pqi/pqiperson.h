@@ -31,23 +31,9 @@
 
 #include "pqi/pqi.h"
 
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-
-#include "pqi/xpgpcert.h"
-
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
-#include "pqi/sslcert.h"
-
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
 #include <list>
 
 class pqiperson;
-class sslroot;
 
 static const int CONNECT_RECEIVED     = 1; 
 static const int CONNECT_SUCCESS      = 2;
@@ -77,7 +63,7 @@ public:
 virtual ~pqiconnect() { return; }
 
 	// presents a virtual NetInterface -> passes to ni.
-virtual int 	connectattempt() 	{ return ni -> connectattempt(); }
+virtual int	connect(struct sockaddr_in raddr) { return ni->connect(raddr); }
 virtual int	listen() 		{ return ni -> listen(); }
 virtual int	stoplistening() 	{ return ni -> stoplistening(); }
 virtual int 	reset() 		{ return ni -> reset(); }
@@ -104,19 +90,20 @@ protected:
 };
 
 
+class pqipersongrp;
 
 class pqiperson: public PQInterface
 {
 public:
-	pqiperson(cert *c, std::string id);
+	pqiperson(std::string id, pqipersongrp *ppg);
 virtual ~pqiperson(); // must clean up children.
 
 	// control of the connection.
 int 	reset();
-int	autoconnect(bool);
+int	connect(uint32_t type, struct sockaddr_in raddr);
 
 	// add in connection method.
-int	addChildInterface(pqiconnect *pqi);
+int	addChildInterface(uint32_t type, pqiconnect *pqi);
 
 	// The PQInterface interface.
 virtual int     SendItem(RsItem *);
@@ -124,7 +111,6 @@ virtual RsItem *GetItem();
 	
 virtual int 	status();
 virtual int	tick();
-virtual cert *	getContact();
 
 // overloaded callback function for the child - notify of a change.
 int 	notifyEvent(NetInterface *ni, int event);
@@ -135,23 +121,18 @@ virtual void    setMaxRate(bool in, float val);
 
 	private:
 
-	std::list<pqiconnect *> kids;
-	cert *sslcert;
+	std::map<uint32_t, pqiconnect *> kids;
 	bool active;
 	pqiconnect *activepqi;
 	bool inConnectAttempt;
 	int waittimes;
 
-	sslroot *sroot;
-
 private: /* Helper functions */
 
-int	connectWait();
-int	connectSuccess();
 int 	listen();
 int 	stoplistening();
-int	connectattempt(pqiconnect *last);
 
+	pqipersongrp *pqipg; /* parent for callback */
 };
 
 
