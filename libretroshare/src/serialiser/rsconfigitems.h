@@ -32,9 +32,13 @@
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvtypes.h"
 
-const uint8_t RS_PKT_TYPE_PEER_CONFIG    = 0x01;
-const uint8_t RS_PKT_TYPE_CACHE_CONFIG   = 0x02;
-const uint8_t RS_PKT_TYPE_FILE_CONFIG    = 0x03;
+const uint8_t RS_PKT_TYPE_GENERAL_CONFIG = 0x01;
+const uint8_t RS_PKT_TYPE_PEER_CONFIG    = 0x02;
+const uint8_t RS_PKT_TYPE_CACHE_CONFIG   = 0x03;
+const uint8_t RS_PKT_TYPE_FILE_CONFIG    = 0x04;
+
+	/* GENERAL CONFIG SUBTYPES */
+const uint8_t RS_PKT_SUBTYPE_KEY_VALUE = 0x01;
 
 /**************************************************************************/
 
@@ -185,5 +189,44 @@ virtual	RsFileTransfer *  deserialiseTransfer(void *data, uint32_t *size);
 };
 
 /**************************************************************************/
+
+/* Config items that are used generally */
+
+class RsConfigKeyValueSet: public RsItem
+{
+	public:
+	RsConfigKeyValueSet() 
+	:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG,
+		RS_PKT_TYPE_GENERAL_CONFIG,
+		RS_PKT_SUBTYPE_KEY_VALUE)
+	{ return; }
+virtual ~RsConfigKeyValueSet();
+virtual void clear();
+std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+	RsTlvKeyValueSet tlvkvs;
+};
+
+
+class RsGeneralConfigSerialiser: public RsSerialType
+{
+	public:
+	RsGeneralConfigSerialiser()
+        :RsSerialType(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG,
+	                RS_PKT_TYPE_GENERAL_CONFIG)
+	{ return; }
+
+virtual     ~RsGeneralConfigSerialiser();
+	
+virtual	uint32_t    size(RsItem *);
+virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
+virtual	RsItem *    deserialise(void *data, uint32_t *size);
+
+	private:
+uint32_t    sizeKeyValueSet(RsConfigKeyValueSet *item);
+bool     serialiseKeyValueSet(RsConfigKeyValueSet *item, void *data, uint32_t *pktsize);
+RsConfigKeyValueSet *deserialiseKeyValueSet(void *data, uint32_t *pktsize);
+
+};
 
 #endif /* RS_CONFIG_ITEMS_SERIALISER_H */

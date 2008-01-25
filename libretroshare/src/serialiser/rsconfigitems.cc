@@ -4,7 +4,7 @@
  *
  * RetroShare Serialiser.
  *
- * Copyright 2007-2008 by Robert Fernie.
+ * Copyright 2007-2008 by Robert Fernie, Chris Parker.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -282,6 +282,199 @@ RsFileTransfer *RsFileTransferSerialiser::deserialiseTransfer(void *data, uint32
 	return item;
 }
 
+
+/*************************************************************************/
+/*************************************************************************/
+/*************************************************************************/
+/*************************************************************************/
+/*************************************************************************/
+
+RsGeneralConfigSerialiser::~RsGeneralConfigSerialiser()
+{
+	return;
+}
+
+uint32_t    RsGeneralConfigSerialiser::size(RsItem *i)
+{
+	RsConfigKeyValueSet  *kvs;
+
+	if (NULL != (kvs = dynamic_cast<RsConfigKeyValueSet *>(i)))
+	{
+		return sizeKeyValueSet(kvs);
+	}
+	else if (NULL != (kvs = dynamic_cast<RsConfigKeyValueSet *>(i)))
+	{
+		return sizeKeyValueSet(kvs);
+	}
+
+	return 0;
+}
+
+/* serialise the data to the buffer */
+bool    RsGeneralConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
+{
+	RsConfigKeyValueSet  *kvs;
+
+	/* do reply first - as it is derived from Item */
+	if (NULL != (kvs = dynamic_cast<RsConfigKeyValueSet *>(i)))
+	{
+		return serialiseKeyValueSet(kvs, data, pktsize);
+	}
+	else if (NULL != (kvs = dynamic_cast<RsConfigKeyValueSet *>(i)))
+	{
+		return serialiseKeyValueSet(kvs, data, pktsize);
+	}
+
+	return false;
+}
+
+RsItem *RsGeneralConfigSerialiser::deserialise(void *data, uint32_t *pktsize)
+{
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+
+	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
+		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
+		(RS_PKT_TYPE_GENERAL_CONFIG != getRsItemType(rstype)))
+	{
+		std::cerr << "RsGeneralConfigSerialiser::deserialise() Wrong Type" << std::endl;
+		return NULL; /* wrong type */
+	}
+
+	switch(getRsItemSubType(rstype))
+	{
+		case RS_PKT_SUBTYPE_KEY_VALUE:
+			return deserialiseKeyValueSet(data, pktsize);
+			break;
+		default:
+			return NULL;
+			break;
+	}
+	return NULL;
+}
+
+/*************************************************************************/
+
+RsConfigKeyValueSet::~RsConfigKeyValueSet()
+{
+	return;
+}
+
+void 	RsConfigKeyValueSet::clear()
+{
+	tlvkvs.pairs.clear();
+}
+
+std::ostream &RsConfigKeyValueSet::print(std::ostream &out, uint16_t indent)
+{
+        printRsItemBase(out, "RsConfigKeyValueSet", indent);
+	uint16_t int_Indent = indent + 2;
+
+        tlvkvs.print(out, int_Indent);
+
+        printRsItemEnd(out, "RsConfigKeyValueSet", indent);
+        return out;
+}
+
+
+uint32_t    RsGeneralConfigSerialiser::sizeKeyValueSet(RsConfigKeyValueSet *item)
+{
+	uint32_t s = 8; /* header */
+	s += item->tlvkvs.TlvSize();
+
+	return s;
+}
+
+/* serialise the data to the buffer */
+bool     RsGeneralConfigSerialiser::serialiseKeyValueSet(RsConfigKeyValueSet *item, void *data, uint32_t *pktsize)
+{
+	uint32_t tlvsize = sizeKeyValueSet(item);
+	uint32_t offset = 0;
+
+	if (*pktsize < tlvsize)
+		return false; /* not enough space */
+
+	*pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+	std::cerr << "RsGeneralConfigSerialiser::serialiseKeyValueSet() Header: " << ok << std::endl;
+	std::cerr << "RsGeneralConfigSerialiser::serialiseKeyValueSet() Size: " << tlvsize << std::endl;
+
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+	ok &= item->tlvkvs.SetTlv(data, tlvsize, &offset);
+	std::cerr << "RsGeneralConfigSerialiser::serialiseKeyValueSet() kvs: " << ok << std::endl;
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+		std::cerr << "RsGeneralConfigSerialiser::serialiseKeyValueSet() Size Error! " << std::endl;
+	}
+
+	return ok;
+}
+
+RsConfigKeyValueSet *RsGeneralConfigSerialiser::deserialiseKeyValueSet(void *data, uint32_t *pktsize)
+{
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+	uint32_t offset = 0;
+
+
+	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
+		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
+		(RS_PKT_TYPE_GENERAL_CONFIG != getRsItemType(rstype)) ||
+		(RS_PKT_SUBTYPE_KEY_VALUE != getRsItemSubType(rstype)))
+	{
+		std::cerr << "RsGeneralConfigSerialiser::deserialiseKeyValueSet() Wrong Type" << std::endl;
+		return NULL; /* wrong type */
+	}
+
+	if (*pktsize < rssize)    /* check size */
+	{
+		std::cerr << "RsGeneralConfigSerialiser::deserialiseKeyValueSet() Not Enough Space" << std::endl;
+		return NULL; /* not enough data */
+	}
+
+	/* set the packet length */
+	*pktsize = rssize;
+
+	bool ok = true;
+
+	/* ready to load */
+	RsConfigKeyValueSet *item = new RsConfigKeyValueSet();
+	item->clear();
+
+	/* skip the header */
+	offset += 8;
+
+	/* get mandatory parts first */
+	ok &= item->tlvkvs.GetTlv(data, rssize, &offset), 
+	std::cerr << "RsGeneralConfigSerialiser::deserialiseKeyValueSet() kvs: " << ok << std::endl;
+	if (offset != rssize)
+	{
+		std::cerr << "RsGeneralConfigSerialiser::deserialiseKeyValueSet() offset != rssize" << std::endl;
+		/* error */
+		delete item;
+		return NULL;
+	}
+
+	if (!ok)
+	{
+		std::cerr << "RsGeneralConfigSerialiser::deserialiseKeyValueSet() ok = false" << std::endl;
+		delete item;
+		return NULL;
+	}
+
+	return item;
+}
 
 /*************************************************************************/
 
@@ -634,17 +827,6 @@ RsItem *RsCacheConfigSerialiser::deserialise(void *data, uint32_t *size)
 	return item;
 
 }
-   
-
-
-
-	
-	
-
-
-
- 
-
 
 
 
