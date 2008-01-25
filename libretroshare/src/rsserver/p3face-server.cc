@@ -45,6 +45,7 @@ RsServer::~RsServer()
 	  ----> MUST BE LOCKED! 
          */
 
+#if 0
 cert   *RsServer::intFindCert(RsCertId id)
 {
 	certsign cs;
@@ -59,6 +60,7 @@ RsCertId RsServer::intGetCertId(cert *c)
 	RsCertId id = convert_to_str(cs);
 	return id;
 }
+#endif
 
 #ifdef WINDOWS_SYS
 #include <time.h>
@@ -122,9 +124,14 @@ void 	RsServer::run()
 
 /******************************** RUN SERVER *****************/
 		lockRsCore();
+
 	//	std::cerr << "RsServer::run() Lock() -> Run()" << std::endl;
 		int moreToTick = server -> tick();
+
 		unlockRsCore();
+
+		/* tick the connection Manager */
+		mConnMgr->tick();
 /******************************** RUN SERVER *****************/
 
 		/* adjust tick rate depending on whether there is more.
@@ -184,9 +191,9 @@ void 	RsServer::run()
 			
 				// These two have been completed!	
 				//std::cerr << "RsServer::run() UpdateAllCerts()" << std::endl;
-				UpdateAllCerts();
+				//UpdateAllCerts();
 				//std::cerr << "RsServer::run() UpdateAllNetwork()" << std::endl;
-				UpdateAllNetwork();
+				//UpdateAllNetwork();
 
 				// currently Dummy Functions.
 				//std::cerr << "RsServer::run() UpdateAllTransfers()" << std::endl;
@@ -210,7 +217,7 @@ void 	RsServer::run()
 
 
 				//std::cerr << "RsServer::run() CheckDHT()" << std::endl;
-				CheckNetworking();
+				//CheckNetworking();
 
 			}
 	
@@ -222,7 +229,7 @@ void 	RsServer::run()
 				// save the config every 5 minutes.
 				if (min % 5 == 1)
 				{
-					ConfigSave();
+					//ConfigSave();
 #ifdef PQI_USE_CHANNELS
 					/* hack to update for now 
 					 * Only occassionally - cos disabled

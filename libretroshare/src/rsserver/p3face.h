@@ -27,16 +27,21 @@
  */
 
 #include "server/filedexserver.h"
+//#include "pqi/pqissl.h"
+
+#include "pqi/p3connmgr.h"
 #include "pqi/pqipersongrp.h"
-#include "pqi/pqissl.h"
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rstypes.h"
 #include "util/rsthreads.h"
 
-#include "services/p3disc.h"
-#include "services/p3msgservice.h"
+class p3disc;
+class p3MsgService;
+class p3ChatService;
+
 #include "services/p3chatservice.h"
+#include "services/p3msgservice.h"
 
 /* The Main Interface Class - for controlling the server */
 
@@ -105,54 +110,13 @@ void    unlockRsCore()
 	/* General Internal Helper Functions
 	   (Must be Locked)
          */
-
+#if 0
 cert   *intFindCert(RsCertId id);
 RsCertId intGetCertId(cert *c);
+#endif
 
 /****************************************/
 	/* p3face-people Operations */
-
-	public:
-
-	// All Public Fns, must use td::string instead of RsCertId.
-	// cos of windows interfacing errors...
-virtual std::string NeighGetInvite();
-virtual int NeighLoadPEMString(std::string pem, std::string &id);
-virtual int NeighLoadCertificate(std::string fname, std::string &id);
-virtual int NeighAuthFriend(std::string id, RsAuthId code);
-virtual int NeighAddFriend(std::string id); 
-virtual int NeighGetSigners(std::string uid, char *out, int len);
-
-	/* Friend Operations */
-virtual int FriendStatus(std::string id, bool accept);
-
-virtual int FriendRemove(std::string id);
-virtual int FriendConnectAttempt(std::string id);
-
-virtual int FriendSignCert(std::string id);
-virtual int FriendTrustSignature(std::string id, bool trust);
-
-//virtual int FriendSetAddress(std::string, std::string &addr, unsigned short port);
-virtual int FriendSaveCertificate(std::string id, std::string fname);
-virtual int FriendSetBandwidth(std::string id, float outkB, float inkB);
-
-virtual int FriendSetLocalAddress(std::string id, std::string addr, unsigned short port);
-virtual int FriendSetExtAddress(std::string id, std::string addr, unsigned short port);
-virtual int FriendSetDNSAddress(std::string id, std::string addr);
-virtual int FriendSetFirewall(std::string id, bool firewalled, bool forwarded);
-
-	private:
-
-void    intNotifyCertError(RsCertId &id, std::string errstr);
-void    intNotifyChangeCert(RsCertId &id);
-
-	/* Internal Update Iface Fns */
-int 	UpdateAllCerts();
-int 	UpdateAllNetwork();
-
-void    initRsNI(cert *c, NeighbourInfo &ni); /* translate to Ext */
-
-int 	ensureExtension(std::string &name, std::string def_ext);
 
 /****************************************/
 /****************************************/
@@ -256,24 +220,24 @@ void initRsMI(RsMsgItem *msg, MessageInfo &mi);
 	public:
 /****************************************/
 	/* RsIface Networking */
-virtual int	NetworkDHTActive(bool active);
-virtual int	NetworkUPnPActive(bool active);
-virtual int	NetworkDHTStatus();
-virtual int	NetworkUPnPStatus();
+//virtual int	NetworkDHTActive(bool active);
+//virtual int	NetworkUPnPActive(bool active);
+//virtual int	NetworkDHTStatus();
+//virtual int	NetworkUPnPStatus();
 
 	private:
 /* internal */
-int	InitNetworking(std::string);
-int	CheckNetworking();
+//int	InitNetworking(std::string);
+//int	CheckNetworking();
 
-int	InitDHT(std::string);
-int	CheckDHT();
+//int	InitDHT(std::string);
+//int	CheckDHT();
 
-int	InitUPnP();
-int	CheckUPnP();
+//int	InitUPnP();
+//int	CheckUPnP();
 
-int     UpdateNetworkConfig(RsConfig &config);
-int     SetExternalPorts();
+//int     UpdateNetworkConfig(RsConfig &config);
+//int     SetExternalPorts();
 
 
 	public:
@@ -284,14 +248,14 @@ virtual int     ConfigAddSharedDir( std::string dir );
 virtual int     ConfigRemoveSharedDir( std::string dir );
 virtual int     ConfigSetIncomingDir( std::string dir );
 
-virtual int     ConfigSetLocalAddr( std::string ipAddr, int port );
-virtual int     ConfigSetExtAddr( std::string ipAddr, int port );
-virtual int     ConfigSetExtName( std::string addr );
-virtual int     ConfigSetLanConfig( bool fire, bool forw );
+//virtual int     ConfigSetLocalAddr( std::string ipAddr, int port );
+//virtual int     ConfigSetExtAddr( std::string ipAddr, int port );
+//virtual int     ConfigSetExtName( std::string addr );
+//virtual int     ConfigSetLanConfig( bool fire, bool forw );
 
 virtual int     ConfigSetDataRates( int total, int indiv );
 virtual int     ConfigSetBootPrompt( bool on );
-virtual int     ConfigSave( );
+//virtual int     ConfigSave( );
 
 	private:
 int UpdateAllConfig();
@@ -304,8 +268,13 @@ int UpdateAllConfig();
 	// The real Server Parts.
 
 	filedexserver *server;
+
+	p3ConnectMgr *mConnMgr;
+	p3AuthMgr    *mAuthMgr;
+
 	pqipersongrp *pqih;
-	sslroot *sslr;
+
+	//sslroot *sslr;
 
 	/* services */
 	p3disc *ad;

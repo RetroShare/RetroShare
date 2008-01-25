@@ -42,12 +42,7 @@ const int p3facefilezone = 11452;
 
 static const int FileMaxAge = 1800; /* Reload Data after 30 minutes */
 
-/* add in an extension if necessary */
-int ensureExtension(std::string &name, std::string def_ext)
-{
-	return 1;
-}
-
+//int ensureExtension(std::string &name, std::string def_ext);
 
 /****************************************/
 /****************************************/
@@ -91,27 +86,8 @@ int     RsServer::UpdateAllTransfers()
 	{
 		FileTransferInfo ti;
 
-                /* set it up */
-		certsign sign;
-		cert *c = NULL;
-		if (!convert_to_certsign((*it)->PeerId(), sign))
-		{
-			std::cerr << "CERTSIGN error!" << std::endl;
-		}
-
-		/* look it up */
-		c = getSSLRoot() -> findcertsign(sign);
-		if (c == NULL)
-		{
-			std::cerr << "CERTSIGN error! 2" << std::endl;
-			ti.source = "Unknown";
-		}
-		else
-		{
-			ti.source = c -> Name();
-		}
-	
 		ti.id = (*it)->PeerId();
+		ti.source = mAuthMgr->getName(ti.id);
 		ti.peerIds = (*it) -> allPeerIds.ids;
 
 		ti.fname = (*it) -> file.name;

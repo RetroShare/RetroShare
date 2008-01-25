@@ -29,18 +29,6 @@
 #include "rsiface/rsiface.h"
 #include "util/rsdir.h"
 			
-const NeighbourInfo *RsIface::getFriend(std::string id)
-{
-	RsCertId cid(id);
-        std::map<RsCertId,NeighbourInfo>::const_iterator it;
-	it = mFriendMap.find(cid);
-	if (it == mFriendMap.end())
-	{
-		return NULL;
-	}
-	return &(it -> second);
-}
-
 const DirInfo *RsIface::getDirectory(std::string id, std::string path)
 {
 	const DirInfo *dir = getDirectoryMod(id, path);

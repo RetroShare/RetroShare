@@ -525,12 +525,12 @@ std::string getX509Info(X509 *cert)
  * into a string.
  */
 
-static char *TIME_FORMAT_STR_BRIEF = "%H:%M:%S";
-static char *TIME_FORMAT_STR_OLDVAGUE_NOW = "%H:%M:%S";
-static char *TIME_FORMAT_STR_OLDVAGUE_WEEK = "%a %H:%M";
-static char *TIME_FORMAT_STR_OLDVAGUE_OLD = "%a, %d %b";
-static char *TIME_FORMAT_STR_LONG = "%c";
-static char *TIME_FORMAT_STR_NORMAL = "%a, %H:%M:%S";
+static const char *TIME_FORMAT_STR_BRIEF = "%H:%M:%S";
+static const char *TIME_FORMAT_STR_OLDVAGUE_NOW = "%H:%M:%S";
+static const char *TIME_FORMAT_STR_OLDVAGUE_WEEK = "%a %H:%M";
+static const char *TIME_FORMAT_STR_OLDVAGUE_OLD = "%a, %d %b";
+static const char *TIME_FORMAT_STR_LONG = "%c";
+static const char *TIME_FORMAT_STR_NORMAL = "%a, %H:%M:%S";
 
 std::string timeFormat(int epoch, int format)
 {
@@ -539,7 +539,7 @@ std::string timeFormat(int epoch, int format)
 
 	size_t msize = 1024;
 	char space[msize];
-	char *fmtstr = NULL;
+	const char *fmtstr = NULL;
 
 	if (format == TIME_FORMAT_OLDVAGUE)
 	{

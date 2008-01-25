@@ -377,11 +377,7 @@ int RsServer::UpdateAllChannels()
 void RsServer::initRsChatInfo(RsChatItem *c, ChatInfo &i)
 {
 	i.rsid = c -> PeerId();
-	cert *peer = intFindCert(c->PeerId());
-	if (peer)
-		i.name = peer -> Name();
-	else
-		i.name = "Unknown";
+	i.name = mAuthMgr->getName(i.rsid);
 
 	i.msg  = c -> message;
         if (c -> chatFlags & RS_CHAT_FLAG_PRIVATE)
@@ -514,7 +510,7 @@ void RsServer::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 
 	/* translate flags, if we sent it... outgoing */
 	if ((msg->msgFlags & RS_MSG_FLAGS_OUTGOING)
-	   || (msg->PeerId() == sslr->getOwnCert()->PeerId()))
+	   || (msg->PeerId() == mAuthMgr->OwnId()))
 	{
 		mi.msgflags |= RS_MSG_OUTGOING;
 	}
@@ -529,11 +525,7 @@ void RsServer::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	}
 
 	mi.id = msg->PeerId();
-	cert *c = intFindCert(mi.id);
-	if (c)
-		mi.srcname = c->Name();
-	else
-		mi.srcname = "Unknown";
+	mi.srcname = mAuthMgr->getName(mi.id);
 
 	std::list<std::string>::iterator pit;
 
@@ -542,11 +534,7 @@ void RsServer::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	{
 		PersonInfo pi;
 		pi.id = (*pit);
-		cert *peer = intFindCert(pi.id);
-		if (peer)
-			pi.name = peer->Name();
-		else
-			pi.name = "Unknown";
+		pi.name = mAuthMgr->getName(pi.id);
 		mi.msgto.push_back(pi);
 	}
 
@@ -555,11 +543,7 @@ void RsServer::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	{
 		PersonInfo pi;
 		pi.id = (*pit);
-		cert *peer = intFindCert(pi.id);
-		if (peer)
-			pi.name = peer->Name();
-		else
-			pi.name = "Unknown";
+		pi.name = mAuthMgr->getName(pi.id);
 		mi.msgcc.push_back(pi);
 	}
 
@@ -568,11 +552,7 @@ void RsServer::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	{
 		PersonInfo pi;
 		pi.id = (*pit);
-		cert *peer = intFindCert(pi.id);
-		if (peer)
-			pi.name = peer->Name();
-		else
-			pi.name = "Unknown";
+		pi.name = mAuthMgr->getName(pi.id);
 		mi.msgbcc.push_back(pi);
 	}
 
@@ -607,7 +587,7 @@ void RsServer::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 int     RsServer::ClearInChat()
 {
 	lockRsCore(); /* LOCK */
-
+#if 0
 	std::list<cert *>::iterator it;
 	std::list<cert *> &certs = sslr -> getCertList();
 	
@@ -617,7 +597,7 @@ int     RsServer::ClearInChat()
 	}
 
 	sslr->IndicateCertsChanged();
-
+#endif
 	unlockRsCore();   /* UNLOCK */
 
 	return 1;
@@ -630,6 +610,7 @@ int     RsServer::SetInChat(std::string id, bool in)             /* friend : cha
 	/* so we send this.... */
 	lockRsCore();     /* LOCK */
 
+#if 0
 	RsCertId rsid(id);
 	cert *c = intFindCert(rsid);
 
@@ -643,10 +624,11 @@ int     RsServer::SetInChat(std::string id, bool in)             /* friend : cha
 	{
 		std::cerr << "FAILED TO Set InChat(" << id << ") to " << (in ? "True" : "False") << std::endl;
 	}
+#endif
 
 	unlockRsCore();   /* UNLOCK */
 
-	UpdateAllCerts();
+	//UpdateAllCerts();
 	return 1;
 }
 
@@ -655,6 +637,7 @@ int     RsServer::ClearInMsg()
 {
 	lockRsCore(); /* LOCK */
 
+#if 0
 	std::list<cert *>::iterator it;
 	std::list<cert *> &certs = sslr -> getCertList();
 	
@@ -663,6 +646,7 @@ int     RsServer::ClearInMsg()
 		(*it)->InMessage(false);
 	}
 	sslr->IndicateCertsChanged();
+#endif
 
 	unlockRsCore();   /* UNLOCK */
 
@@ -675,6 +659,7 @@ int     RsServer::SetInMsg(std::string id, bool in)             /* friend : msgs
 	/* so we send this.... */
 	lockRsCore();     /* LOCK */
 
+#if 0
 	RsCertId rsid(id);
 	cert *c = intFindCert(rsid);
 
@@ -689,9 +674,12 @@ int     RsServer::SetInMsg(std::string id, bool in)             /* friend : msgs
 		std::cerr << "FAILED to Set InMsg(" << id << ") to " << (in ? "True" : "False") << std::endl;
 
 	}
+#endif
+
+
 	unlockRsCore();   /* UNLOCK */
 
-	UpdateAllCerts();
+	//UpdateAllCerts();
 	return 1;
 }
 

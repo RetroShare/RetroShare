@@ -106,7 +106,7 @@ int RsServer::ConfigSetIncomingDir( std::string dir )
 
 }
 
-#ifdef MOVE_TO_RS_NETWORK
+#if 0
 
 int     RsServer::ConfigSetLocalAddr( std::string ipAddr, int port )
 {
@@ -182,7 +182,6 @@ int     RsServer::ConfigSetExtAddr( std::string ipAddr, int port )
 	return 1;
 }
 
-#endif /* MOVE_TO_RS_NETWORK */
 
 
 int     RsServer::ConfigSetLanConfig( bool firewalled, bool forwarded )
@@ -239,6 +238,7 @@ int     RsServer::ConfigSetExtName( std::string addr )
 	return 1;
 }
 
+#endif /* 0 */
 
 int     RsServer::ConfigSetDataRates( int total, int indiv ) /* in kbrates */
 {
@@ -283,42 +283,26 @@ int RsServer::UpdateAllConfig()
 
  	RsConfig &config = iface.mConfig;
 
-	cert *own = sslr -> getOwnCert();
-
-        /* set the id.  */
-	{
-           RsCertId rid = intGetCertId(own);
-	   std::ostringstream out;
-	   out << rid;
-	   config.ownId = out.str();
-	}
-
-	config.ownName = own->Name();
+	config.ownId = mAuthMgr->OwnId();
+	config.ownName = mAuthMgr->getName(config.ownId);
+	peerConnectState pstate;
+	mConnMgr->getOwnNetStatus(pstate);
 
 	/* shared dirs */
 	std::list<std::string> &dirs = server -> getSearchDirectories();
  	config.sharedDirList = dirs;
  	config.incomingDir = server->getSaveDir();
 
+
 	/* ports */
-	config.localAddr = inet_ntoa(own -> localaddr.sin_addr);
-	config.localPort = ntohs(own -> localaddr.sin_port);
+	config.localAddr = inet_ntoa(pstate.localaddr.sin_addr);
+	config.localPort = ntohs(pstate.localaddr.sin_port);
 	
-	config.firewalled = own -> Firewalled();
-	config.forwardPort  = own -> Forwarded();
+	config.firewalled = true;
+	config.forwardPort  = true;
 	
-	if (own -> Firewalled() && !own -> Forwarded())
-	{
-		config.extAddr = "0.0.0.0";
-		config.extPort = 0;
-		config.extName = "<Incoming Not Possible>";
-	}
-	else		
-	{
-		config.extAddr = inet_ntoa(own -> serveraddr.sin_addr);
-		config.extPort = ntohs(own -> serveraddr.sin_port);
-		config.extName = "<Coming Soon!>";
-	}
+	config.extAddr = inet_ntoa(pstate.serveraddr.sin_addr);
+	config.extPort = ntohs(pstate.serveraddr.sin_port);
 
 	/* data rates */
 	config.maxDataRate = (int) pqih -> getMaxRate(true);     /* kb */
@@ -326,7 +310,11 @@ int RsServer::UpdateAllConfig()
 	config.promptAtBoot = true; /* popup the password prompt */      
 
 	/* update DHT/UPnP config */
-	UpdateNetworkConfig(config);
+
+	config.uPnPState  = mConnMgr->getUPnPState();
+	config.uPnPActive = mConnMgr->getUPnPEnabled();
+	config.DHTPeers   = 20;
+	config.DHTActive  = mConnMgr->getDHTEnabled();;
 
 	/* Notify of Changes */
 	iface.setChanged(RsIface::Config);
@@ -341,28 +329,5 @@ int RsServer::UpdateAllConfig()
 }
 
 
-int RsServer::ConfigSave()
-{
-	/* fill the rsiface class */
-	RsIface &iface = getIface();
-
-	/* lock Mutexes */
-	lockRsCore();     /* LOCK */
-	iface.lockData(); /* LOCK */
-
-        // call save all the other parts.
-        server -> save_config();
-        ad -> save_configuration();
-        pqih -> save_config();
-        sslr -> saveCertificates();
-
-	/* unlock Mutexes */
-	iface.unlockData(); /* UNLOCK */
-	unlockRsCore();     /* UNLOCK */
-
-	return 1;
-
-
-}
 
 

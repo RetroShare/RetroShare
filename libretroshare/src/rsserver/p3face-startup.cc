@@ -27,12 +27,19 @@
 #include <unistd.h>
 //#include <getopt.h>
 
+#include "dbase/cachestrapper.h"
 #include "server/filedexserver.h"
 #include "pqi/pqipersongrp.h"
+#include "pqi/pqisslpersongrp.h"
 #include "pqi/pqiloopback.h"
+#include "pqi/p3cfgmgr.h"
 #include "util/rsdir.h"
 
-#include "services/p3disc.h"
+#include "upnp/upnphandler.h"
+#include "dht/opendhtmgr.h"
+
+// Removed temporarily...
+//#include "services/p3disc.h"
 #include "services/p3msgservice.h"
 #include "services/p3chatservice.h"
 #include "services/p3gamelauncher.h"
@@ -41,19 +48,22 @@
 #include <string>
 #include <sstream>
 
-// Includes for directory creation.
-//#include <sys/types.h>
-//#include <sys/stat.h>
-//#include <unistd.h>
-// Conflicts with FLTK def - hope they are the same.
-//#include <dirent.h>
-
 // for blocking signals
 #include <signal.h>
 
 #include "pqi/pqidebug.h"
 #include "rsserver/p3face.h"
+#include "rsserver/p3peers.h"
 #include "rsiface/rsgame.h"
+
+/**************** PQI_USE_XPGP ******************/
+#if defined(PQI_USE_XPGP)
+	#include "pqi/authxpgp.h"
+#else /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+
+#endif /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
 
 const int p3facestartupzone = 47238;
 
@@ -364,10 +374,10 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
 	/* do a null init to allow the SSL libray to startup! */
-	getSSLRoot() -> initssl(NULL, NULL, NULL); 
+	getAuthMgr() -> InitAuth(NULL, NULL, NULL); 
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
-	getSSLRoot() -> initssl(NULL, NULL, NULL, NULL); 
+	getAuthMgr() -> InitAuth(NULL, NULL, NULL, NULL); 
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
@@ -393,16 +403,21 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 
 int RsServer::StartupRetroShare(RsInit *config)
 {
-	// ssl root is setup already.... by welcome_window.
-	// this means that the cert/key + cacerts have been loaded.
-	sslr = getSSLRoot();
+	/**************************************************************************/
+	/* STARTUP procedure */
+	/**************************************************************************/
+	/**************************************************************************/
+	/* (1) Load up own certificate (DONE ALREADY) - just CHECK */
+	/**************************************************************************/
+
+	mAuthMgr = getAuthMgr(); 
 
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
-	if (1 != sslr -> initssl(NULL, NULL, NULL))
+	if (1 != mAuthMgr -> InitAuth(NULL, NULL, NULL))
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
-	if (1 != sslr -> initssl(NULL, NULL, NULL, NULL))
+	if (1 != mAuthMgr -> InitAuth(NULL, NULL, NULL, NULL))
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 	{
@@ -412,6 +427,12 @@ int RsServer::StartupRetroShare(RsInit *config)
 		exit(1);
 	}
 
+	std::string ownId = mAuthMgr->OwnId();
+
+	/**************************************************************************/
+	/* Any Initial Configuration (Commandline Options)  */
+	/**************************************************************************/
+
 	/* set the debugging to crashMode */
 	if ((!config->haveLogFile) && (!config->outStderr))
 	{
@@ -420,19 +441,78 @@ int RsServer::StartupRetroShare(RsInit *config)
 		setDebugCrashMode(crashfile.c_str());
 	}
 
+	unsigned long flags = 0;
+	if (config->udpListenerOnly)
+	{
+		flags |= PQIPERSON_NO_LISTENER;
+	}
+
+	/**************************************************************************/
+
 	// set the directories for full configuration load.
-	sslr -> setConfigDirs(config->basedir.c_str(), configCertDir.c_str());
-	sslr -> loadCertificates(configConfFile.c_str());
-	sslr -> checkNetAddress();
+	mAuthMgr -> setConfigDirectories(config->basedir.c_str(), configCertDir.c_str());
+	//sslr -> loadCertificates(configConfFile.c_str());
 
 	// Create Classes.
 	// filedex server.
 	server = new filedexserver();
 	server->setConfigDir(config->basedir.c_str());
 
-	server->setFileCallback(&(getNotify()));
+
+
+
+
+	/**************************************************************************/
+	/* setup classes / structures */
+	/**************************************************************************/
+        uint32_t queryPeriod = 60; /* query every 1 minutes -> change later to 600+ */
+
+	mConnMgr = new p3ConnectMgr(mAuthMgr);
+	p3UpnpMgr *mUpnpMgr = new upnphandler();
+	p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr);
+	CacheStrapper *mCacheStrapper = new CacheStrapper(ownId, queryPeriod);
+	p3ConfigMgr *mConfigMgr = new p3ConfigMgr(config->basedir, "rs-v0.4.cfg", "rs-v0.4.sgn");
 
 	SecurityPolicy *none = secpolicy_create();
+	//pqih = new pqisslpersongrp(none, flags);
+	pqih = new pqipersongrpDummy(none, flags);
+
+	// Setup Peer Interface.
+	rsPeers = new p3Peers(mConnMgr, mAuthMgr);
+
+	/**************************************************************************/
+	mConnMgr->setDhtMgr(mDhtMgr);
+	mConnMgr->setUpnpMgr(mUpnpMgr);
+
+	/**************************************************************************/
+
+	mConnMgr->addMonitor(pqih);
+	mConnMgr->addMonitor(mCacheStrapper);
+	/**************************************************************************/
+
+	mConfigMgr->addConfiguration(CONFIG_TYPE_FSERVER, server); //"server.cfg");
+	mConfigMgr->addConfiguration(CONFIG_TYPE_PEERS, mConnMgr);
+	
+	/**************************************************************************/
+
+	server->setSearchInterface(pqih, mAuthMgr, mConnMgr);
+
+
+
+	/**************************************************************************/
+	/* (2) Load configuration files */
+	/**************************************************************************/
+
+	mConfigMgr->loadConfiguration();
+
+	/**************************************************************************/
+	/* trigger generalConfig loading for classes that require it */
+	/**************************************************************************/
+
+
+	/**************************************************************************/
+	/* Force Any Configuration before Startup (After Load) */
+	/**************************************************************************/
 
 	if (config->forceLocalAddr)
 	{
@@ -444,13 +524,10 @@ int RsServer::StartupRetroShare(RsInit *config)
 		// universal
 		laddr.sin_addr.s_addr = inet_addr(config->inet);
 
-		cert *own = sslr -> getOwnCert();
-		if (own != NULL)
-		{
-			own -> localaddr = laddr;
-		}
+		mConnMgr->setLocalAddress(ownId, laddr);
 	}
 
+#if 0
 	/* must load the trusted_peer before setting up the pqipersongrp */
 	if (config->firsttime_run)
 	{
@@ -461,16 +538,45 @@ int RsServer::StartupRetroShare(RsInit *config)
         		sslr -> loadInitialTrustedPeer(config->load_trustedpeer_file);
 		}
 	}
+#endif
 
-	unsigned long flags = 0;
-	if (config->udpListenerOnly)
-	{
-		flags |= PQIPERSON_NO_SSLLISTENER;
-	}
+	mConnMgr -> checkNetAddress();
 
-	pqih = new pqipersongrp(none, sslr, flags);
+	/**************************************************************************/
+	/* startup (stuff dependent on Ids/peers is after this point) */
+	/**************************************************************************/
+
+
+
+
+	/**************************************************************************/
+	/* load caches and secondary data */
+	/**************************************************************************/
+
+
+	/**************************************************************************/
+	/* Force Any Last Configuration Options */
+	/**************************************************************************/
+
+
+
+
+
+
+
+
+
+
+
+
+	/****************** setup new stuff ***************/
+
         pqih->load_config();
-	server->setSearchInterface(pqih, sslr);
+
+	/* must be after server->setSearchInterface() */
+	server->setFileCallback(ownId, mCacheStrapper, &(getNotify()));
+
+
 
 #ifdef PQI_USE_CHANNELS
 	server->setP3Channel(pqih->getP3Channel());
@@ -478,11 +584,10 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 	// create loopback device, and add to pqisslgrp.
 
-	std::string ownPeerId = sslr->getOwnCert()->PeerId();
 	SearchModule *mod = new SearchModule();
-	pqiloopback *ploop = new pqiloopback(ownPeerId);
+	pqiloopback *ploop = new pqiloopback(ownId);
 
-	mod -> peerid = ownPeerId;
+	mod -> peerid = ownId;
 	mod -> pqi = ploop;
 	mod -> sp = secpolicy_create();
 
@@ -492,15 +597,15 @@ int RsServer::StartupRetroShare(RsInit *config)
 	// Load from config will overwrite...
 	server->setSaveDir(config->homePath.c_str());
 
-        server->load_config();
+        //server->load_config();
 
 	/* create Services */
-	ad = new p3disc(sslr);
-	msgSrv = new p3MsgService();
-	chatSrv = new p3ChatService();
+	//ad = new p3disc(sslr); // XXX
+	msgSrv = new p3MsgService(mConnMgr);
+	chatSrv = new p3ChatService(mConnMgr);
 	p3GameLauncher *gameLauncher = new p3GameLauncher();
 
-	pqih -> addService(ad);
+	//pqih -> addService(ad);
 	pqih -> addService(msgSrv);
 	pqih -> addService(chatSrv);
 	pqih -> addService(gameLauncher);
@@ -520,10 +625,10 @@ int RsServer::StartupRetroShare(RsInit *config)
 	helppage += configHelpName;
 
 	/* for DHT/UPnP stuff */
-	InitNetworking(config->basedir + "/kadc.ini");
+	//InitNetworking(config->basedir + "/kadc.ini");
 
 	/* Startup this thread! */
-        pthread_t coreId = createThread(*this);
+        createThread(*this);
 
 	return 1;
 }
@@ -553,16 +658,16 @@ int LoadCertificates(RsInit *config, bool autoLoginNT)
 	std::string ca_loc = config->basedir + config->dirSeperator;
 	ca_loc += configCaFile;
 
-	sslroot *sr = getSSLRoot();
+	p3AuthMgr *authMgr = getAuthMgr();
 
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
-	if (0 < sr -> initssl(config->load_cert.c_str(), 
+	if (0 < authMgr -> InitAuth(config->load_cert.c_str(), 
 				config->load_key.c_str(), 
 				config->passwd.c_str()))
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
-	if (0 < sr -> initssl(config->load_cert.c_str(), 
+	if (0 < authMgr -> InitAuth(config->load_cert.c_str(), 
 				config->load_key.c_str(), 
 				ca_loc.c_str(), 
 				config->passwd.c_str()))

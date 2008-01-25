@@ -119,40 +119,21 @@ int RsServer::FriendStatus(std::string uid, bool accept)
 
 	RsCertId id(uid);
 
-	cert *c = intFindCert(id);
-	std::string errstr;
-	int err = 0;
-	if ((c == NULL) || (c == sslr -> getOwnCert()))
+	std::cerr << "RsServer::FriendStatus() " << uid << " accept: " << accept << std::endl;
+	if (accept)
 	{
-		if (accept)
-		{
-			pqih -> cert_accept(c);
-			pqih -> cert_auto(c,  true);
-		}
-		else
-		{
-			pqih -> cert_auto(c,  false);
-			pqih -> cert_deny(c);
-		}
+		mConnMgr->addFriend(uid);
 	}
 	else
 	{
-		/* error */
-		err = 1;
+		mConnMgr->removeFriend(uid);
 	}
+
 	unlockRsCore(); /* UNLOCK */
 
-	if (err)
-	{
-		/* notify */
-	}
-	else
-	{
-		/* call the repopulate fn */
-		UpdateAllCerts();
-
-	}
-	return err;
+	/* call the repopulate fn */
+	UpdateAllCerts();
+	return 1;
 }
 
 
@@ -161,34 +142,15 @@ int RsServer::FriendRemove(std::string uid)
 {
 	lockRsCore(); /* LOCK */
 
-	RsCertId id(uid);
-	cert * c = intFindCert(id);
-	int err = 0;
-	if ((c == NULL) || (c == sslr -> getOwnCert()))
-	{
-		std::cerr << "RsServer::FriendRemove() Failed ... Bad Cert or Own." << std::endl;
-		err = 1;
-	}
-	else
-	{
-		std::cerr << "RsServer::FriendRemove() " << c -> Name() << std::endl;
-		pqih -> cert_deny(c);
-		err = sslr -> removeCertificate(c);
-	}
+	std::cerr << "RsServer::FriendRemove() " << uid << std::endl;
+	mConnMgr->removeFriend(uid);
 
 	unlockRsCore(); /* UNLOCK */
 
-	if (err)
-	{
-		/* notify */
-	}
-	else
-	{
-		/* call the repopulate fn */
-		UpdateAllCerts();
+	/* call the repopulate fn */
+	UpdateAllCerts();
 
-	}
-	return err;
+	return 1;
 }
 
 
@@ -199,26 +161,13 @@ int RsServer::FriendConnectAttempt(std::string uid)
 
 	lockRsCore(); /* LOCK */
 
-	RsCertId id(uid);
-	cert *c = intFindCert(id);
-	c -> nc_timestamp = 0;
-	// set Firewall to off -> so we 
-	// will definitely have connect attempt.
-	c -> Firewalled(false);
-	c -> WillConnect(true);
+	err = mConnMgr->connectFriend(uid);
 
 	unlockRsCore(); /* UNLOCK */
 
-	if (err)
-	{
-		/* notify */
-	}
-	else
-	{
-		/* call the repopulate fn */
-		UpdateAllCerts();
+	/* call the repopulate fn */
+	UpdateAllCerts();
 
-	}
 	return err;
 }
 
@@ -226,25 +175,7 @@ int RsServer::FriendSignCert(std::string uid)
 {
 	lockRsCore(); /* LOCK */
 
-	RsCertId id(uid);
-	/* get the current cert, check that its
-	 * in the allowed group.
-	 */
-
-	/* ask sslroot to sign certificate
-	 */
-	int ret = 1;
-	cert *c = intFindCert(id);
-
-	if ((c == NULL) || (c == sslr -> getOwnCert()))
-	{
-		ret = 0;
-	}
-
-	if (ret)
-	{
-		ret = sslr -> signCertificate(c);
-	}
+	int ret = mConnMgr->signCertificate(uid);
 
 	unlockRsCore(); /* UNLOCK */
 
@@ -260,17 +191,8 @@ int RsServer::FriendTrustSignature(std::string uid, bool trust)
 {
 	lockRsCore(); /* LOCK */
 
-	RsCertId id(uid);
 	int ret = -1;
-	cert *c = intFindCert(id);
-
-	if ((c == NULL) || (c == sslr -> getOwnCert()))
-	{
-		return -1;
-	}
-
-	ret = sslr -> trustCertificate(c, !(c -> Trusted()));
-
+	ret = mConnMgr -> trustCertificate(uid, trust);
 
 	unlockRsCore(); /* UNLOCK */
 
@@ -329,16 +251,8 @@ int RsServer::FriendSetLocalAddress(std::string uid,
 	struct sockaddr_in addr;
 
 	lockRsCore(); /* LOCK */
-	RsCertId id(uid);
 
 	int ret = 1;
-
-	cert *c = intFindCert(id);
-	if ((c == NULL) || (c == sslr -> getOwnCert()))
-	{
-		pqioutput(PQL_ALERT, fltksrvrzone, "NULL/Own cert!");
-		ret = 0;
-	}
 
 /********************************** WINDOWS/UNIX SPECIFIC PART *******************/
 #ifndef WINDOWS_SYS
@@ -349,11 +263,11 @@ int RsServer::FriendSetLocalAddress(std::string uid,
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART *******************/
 	{
-		// get the server address.
-		c -> localaddr.sin_addr = addr.sin_addr;
-		c -> localaddr.sin_port = htons(port);
-		/* tell SSL */
-		getSSLRoot() -> IndicateCertsChanged();
+		addr.sin_family = AF_INET;
+		addr.sin_port = htons(port);
+
+		mConnMgr->setPeerLocalAddress(uid, addr);
+
 		ret = 1;
 	}
 	unlockRsCore(); /* UNLOCK */
@@ -378,16 +292,9 @@ int RsServer::FriendSetExtAddress(std::string uid,
 	struct sockaddr_in addr;
 
 	lockRsCore(); /* LOCK */
-	RsCertId id(uid);
 
 	int ret = 1;
 
-	cert *c = intFindCert(id);
-	if ((c == NULL) || (c == sslr -> getOwnCert()))
-	{
-		pqioutput(PQL_ALERT, fltksrvrzone, "NULL/Own cert!");
-		ret = 0;
-	}
 
 /********************************** WINDOWS/UNIX SPECIFIC PART *******************/
 #ifndef WINDOWS_SYS
@@ -399,10 +306,10 @@ int RsServer::FriendSetExtAddress(std::string uid,
 /********************************** WINDOWS/UNIX SPECIFIC PART *******************/
 	{
 		// get the server address.
-		c -> serveraddr.sin_addr = addr.sin_addr;
-		c -> serveraddr.sin_port = htons(port);
-		/* tell SSL */
-		getSSLRoot() -> IndicateCertsChanged();
+		addr.sin_family = AF_INET;
+		addr.sin_port = htons(port);
+
+		mConnMgr->setPeerExtAddress(uid, addr);
 		ret = 1;
 	}
 	unlockRsCore(); /* UNLOCK */
@@ -428,33 +335,8 @@ int RsServer::FriendSetDNSAddress(std::string uid, std::string addr_str)
 
 	int ret = 1;
 
-	cert *c = intFindCert(id);
-	if ((c == NULL) || (c == sslr -> getOwnCert()))
-	{
-		pqioutput(PQL_ALERT, fltksrvrzone, "NULL/Own cert!");
-		ret = 0;
-	}
-
-	if (ret)
-	{
-		// get the server address.
-		c -> dynDNSaddr = addr_str;
-		/* tell SSL */
-		getSSLRoot() -> IndicateCertsChanged();
-		ret = 1;
-	}
 	unlockRsCore(); /* UNLOCK */
 
-	if (ret)
-	{
-		/* notify */
-		UpdateAllCerts();
-	}
-	else
-	{
-		/* error message? */
-		intNotifyCertError(id, "Failed to Change Cert Address");
-	}
 	return ret;
 }
 
@@ -467,30 +349,9 @@ int RsServer::FriendSaveCertificate(std::string uid, std::string fname)
 
 	int ret = 1;
 
-	cert *c = intFindCert(id);
-	if (c == NULL) 
-	{
-		pqioutput(PQL_ALERT, p3facepersonzone, "FriendSaveCertificate: Invalid cert!");
-		ret = 0;
-	}
+	ensureExtension(fname, "pqi");
 
-	if (ret)
-	{
-		ensureExtension(fname, "pqi");
-	
-		if (c -> certificate == NULL)
-		{
-			std::ostringstream out;
-			out << "File Export (" << fname;
-			out << ") Failed -> Certificate == NULL!" << std::endl;
-			pqioutput(PQL_DEBUG_BASIC, p3facepersonzone, out.str());
-			ret = 0;
-		}
-		else
-		{
-			ret =  sslr -> savecertificate(c, fname.c_str());
-		}
-	}
+	mConnMgr->saveCertificate(uid, fname);
 
 	unlockRsCore(); /* UNLOCK */
 
@@ -526,7 +387,6 @@ int	RsServer::UpdateAllCerts()
 	NotifyBase &cb = getNotify();
         cb.notifyListPreChange(NOTIFY_LIST_FRIENDS, NOTIFY_TYPE_MOD);
 
-
 	lockRsCore(); /* LOCK */
 
 
@@ -536,34 +396,27 @@ int	RsServer::UpdateAllCerts()
 	int i;
 	int ret = 1;
 
-	//Fl_Funky_Browser *cb = ui -> cert_list;
-	// Get the Current Cert, by getting current item 
-	// and extracting ref.
+	std::list<std::string> peers;
+	std::list<std::string>::iterator it;
 
-	// only do if 
-	if ((sslr -> CertsChanged()) ||
-		(sslr -> CertsMajorChanged())) 
+	mConnMgr->getFriendList(peers);
+
+	// clear the data.
+	std::map<RsChanId, NeighbourInfo> &frnds = iface.mFriendMap;
+	frnds.clear();
+
+	for(it = peers.begin(); it != peers.end(); it++)
 	{
-		// clear the data.
-		std::map<RsChanId, NeighbourInfo> &frnds = iface.mFriendMap;
+		peerConnectState state;
+		mConnMgr->setFriendNetStatus(*it, state);
 
-		frnds.clear();
-	
-		std::list<cert *>::iterator it;
-		std::list<cert *> &certs = sslr -> getCertList();
-	
 		std::string emptystr("");
 
-		for(it = certs.begin(), i = 0; 
-				it != certs.end(); it++, i++)
-		{
-			cert *c = (*it);
-			NeighbourInfo ni;
+		NeighbourInfo ni;
 
-			initRsNI(c, ni); /* same as for neighbour */
+		initRsNI(state, ni); /* same as for neighbour */
 
-			frnds[ni.id] = ni;
-		}
+		frnds[ni.id] = ni;
 
 		/* let the GUI know */
 		iface.setChanged(RsIface::Friend);
@@ -638,9 +491,6 @@ void RsServer::intNotifyChangeCert(RsCertId &id)
  */
 
 
-
-
-
 /**************************** NEIGHBOUR FNS *******************
  *
  *
@@ -654,9 +504,11 @@ std::string RsServer::NeighGetInvite()
 {
 	lockRsCore(); /* LOCK */
 
-	cert *own = sslr -> getOwnCert();
-	std::string name = own -> Name();
-	std::string certstr = sslr -> saveCertAsString(own);
+	peerConnectState state;
+	mConnMgr->getOwnNetStatus(state);
+
+	std::string name = state.name;
+	std::string certstr = mConnMgr -> getCertificateAsString(state.id);
 
 	unlockRsCore(); /* UNLOCK */
 
@@ -692,27 +544,7 @@ int     RsServer::NeighLoadPEMString(std::string pem, std::string &id)
 {
 	lockRsCore(); /* LOCK */
 
-	int ret = 1;
-
-	std::ostringstream out;
-        cert *nc;
-
-	nc = sslr -> loadCertFromString(pem);
-	if (nc == NULL)
-	{
-		out << "Stringe Import (" << pem;
-		out << ") Failed!" << std::endl;
-		pqioutput(PQL_DEBUG_BASIC, fltksrvrzone, out.str());
-		ret = 0;
-	}
-	else  if (0 > sslr -> addCollectedCertificate(nc))
-	{
-		out << "Imported Certificate....but no";
-		out << " need for addition - As it exists!";
-		out << std::endl;
-		pqioutput(PQL_DEBUG_BASIC, fltksrvrzone, out.str());
-		//ret = 0; want this case to set id (as is valid!)
-	}
+	id = mConnMgr -> loadCertificateAsString(pem);
 
 	/* ensure it gets to p3disc */
 	if (ad)
@@ -722,17 +554,12 @@ int     RsServer::NeighLoadPEMString(std::string pem, std::string &id)
 
 	unlockRsCore(); /* UNLOCK */
 
-	if (ret)
+	if (id != "")
 	{
 		UpdateAllNetwork();
-
-	 	/* set the id.  */
-		RsCertId rid = intGetCertId(nc);
-		std::ostringstream out;
-		out << rid;
-		id = out.str();
+		return 1;
 	}
-	return ret;
+	return 0;
 }
 
 
@@ -742,27 +569,9 @@ int  RsServer::NeighLoadCertificate(std::string fname, std::string &id)
 
 	int ret = 1;
 
-	std::ostringstream out;
-	std::string nullhash(""); // empty hash - as signature not correct.
+	lockRsCore(); /* LOCK */
 
-        cert *nc;
-
-	nc = sslr -> loadcertificate(fname.c_str(), nullhash);
-	if (nc == NULL)
-	{
-		out << "File Import (" << fname;
-		out << ") Failed!" << std::endl;
-		pqioutput(PQL_DEBUG_BASIC, fltksrvrzone, out.str());
-		ret = 0;
-	}
-	else  if (0 > sslr -> addCollectedCertificate(nc))
-	{
-		out << "Imported Certificate....but no";
-		out << " need for addition - As it exists!";
-		out << std::endl;
-		pqioutput(PQL_DEBUG_BASIC, fltksrvrzone, out.str());
-		//ret = 0; want this case to set id (as is valid!)
-	}
+	id = mConnMgr -> loadCertificateFromFile(fname);
 
 	/* ensure it gets to p3disc */
 	if (ad)
@@ -772,17 +581,12 @@ int  RsServer::NeighLoadCertificate(std::string fname, std::string &id)
 
 	unlockRsCore(); /* UNLOCK */
 
-	if (ret)
+	if (id != "")
 	{
 		UpdateAllNetwork();
-
-	 	/* set the id.  */
-		RsCertId rid = intGetCertId(nc);
-		std::ostringstream out;
-		out << rid;
-		id = out.str();
+		return 1;
 	}
-	return ret;
+	return 0;
 }
 
 
@@ -791,45 +595,8 @@ int RsServer::NeighAuthFriend(std::string uid, RsAuthId code)
 	lockRsCore(); /* LOCK */
 	RsCertId id(uid);
 
-	int ret = 1;
+	int ret = mConnMgr -> AuthNeighbour(uid, code);
 
-	cert *c = intFindCert(id);
-	if ((c == NULL) || (c->certificate == NULL))
-	{
-		ret = 0;
-
-	}
-	else
-	{
-		std::string real_code = getXPGPAuthCode(c->certificate);
-	
-		if (code == real_code) { 
-			ret = 1; 
-		} else { 
-			ret = 0; 
-		}
-	}
-
-	/* if correct -> sign */
-	if (ret)
-	{
-	  	if (0 < validateCertificateIsSignedByKey(c->certificate, 
-			sslr -> getOwnCert() -> certificate))
-		{
-			std::cerr << "RsServer::cert_add_neighbour() Signed Already";
-			std::cerr << std::endl;
-			ret = 0;
-		}
-		else
-		{
-			/* if not signed already */
-			std::cerr << "RsServer::cert_add_neighbour() Signing Cert";
-			std::cerr << std::endl;
-
-			/* sign certificate */
-			sslr -> signCertificate(c);
-		}
-	}
 	unlockRsCore(); /* UNLOCK */
 
 	if (ret)
@@ -845,46 +612,7 @@ int 	RsServer::NeighAddFriend(std::string uid)
 {
 	lockRsCore(); /* LOCK */
 
-	int ret = 1;
-	RsCertId id(uid);
-
-	cert *c = intFindCert(id);
-	if ((c == NULL) || (c->certificate == NULL)
-		|| (c == sslr -> getOwnCert()))
-	{
-		std::cerr << "RsServer::NeighAddFriend() Invalid Cert";
-		std::cerr << std::endl;
-		ret = 0;
-	}
-	else
-	{
-	  /* check authentication */
-	  sslr -> checkAuthCertificate(c);
-	  if (c->trustLvl < TRUST_SIGN_AUTHEN)
-	  {
-		/* do nothing */
-		std::cerr << "RsServer::cert_add_neighbour() Not Authed";
-		std::cerr << std::endl;
-		std::cerr << "RsServer::cert_add_neighbour() Do Nothing";
-		std::cerr << std::endl;
-		ret = 0;
-	  }
-	  else
-	  {
-		std::cerr << "RsServer::cert_add_neighbour() Adding Cert";
-		std::cerr << std::endl;
-
-		/* add */
-		sslr -> addUntrustedCertificate(c);
-
-		std::cerr << "RsServer::cert_add_neighbour() Auto Connecting";
-		std::cerr << std::endl;
-		/* auto connect */
-		pqih -> cert_auto(c, true);
-
-		/* XXX: Update the Neighbour/Friends Maps */
-	  }
-	}
+	int ret = mConnMgr -> AddNeighbour(uid);
 
 	unlockRsCore(); /* UNLOCK */
 
@@ -896,39 +624,6 @@ int 	RsServer::NeighAddFriend(std::string uid)
 	}
 	return (ret);
 }
-
-
-#if 0
-
-std::list<std::string> 	RsServer::NeighGetSigners(std::string uid)
-{
-	lockRsCore(); /* LOCK */
-	RsCertId id(uid);
-	std::list<std::string> signers;
-
-	int ret = 1;
-
-	cert *c = intFindCert(id);
-	if ((c == NULL) || (c->certificate == NULL))
-	{
-		ret = 0;
-
-	}
-
-	/* if valid, get signers */
-	if (ret)
-	{
-		signers = getXPGPsigners(c->certificate);
-
-	}
-	unlockRsCore(); /* UNLOCK */
-
-	return signers;
-}
-
-#endif
-
-
 
 int RsServer::NeighGetSigners(std::string uid, char *out, int len)
 {
@@ -982,21 +677,29 @@ int  RsServer::UpdateAllNetwork()
 	int ret = 1;
 	int i;
 
+	
+	std::list<std::string> peers;
+	std::list<std::string>::iterator it;
+
+	mConnMgr->getOthersList(peers);
+
 	// clear the data.
 	std::map<RsChanId, NeighbourInfo> &neighs = iface.mNeighbourMap;
-
 	neighs.clear();
-	
-	std::list<cert *>::iterator it;
-	std::list<cert *> &certs = ad -> getDiscovered();
 
-	for(it = certs.begin(), i = 0; it != certs.end(); it++, i++)
+	for(it = peers.begin(); it != peers.end(); it++)
 	{
+		peerConnectState state;
+		mConnMgr->getOthersNetStatus(*it, state);
+
 		NeighbourInfo ni;
-		cert *c = (*it);
-		initRsNI(c, ni);
+
+		initRsNI(state, ni); /* same as for neighbour */
 
 		neighs[ni.id] = ni;
+
+		/* let the GUI know */
+		iface.setChanged(RsIface::Friend);
 	}
 
 	/* let the GUI know */

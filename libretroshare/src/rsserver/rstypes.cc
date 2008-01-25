@@ -35,16 +35,6 @@
 #include <iomanip>
 
 
-#if 0
-/****************************************/
-RsCertId::RsCertId()
-{
-	for(int i = 0; i < RSCERTIDLEN; i++)
-	{
-		data[i] = 0;
-	}
-}
-
 /**********************************************************************
  * NOTE NOTE NOTE ...... XXX
  * BUG in MinGW .... %hhx in sscanf overwrites 32bits, instead of 8bits.
@@ -55,84 +45,9 @@ RsCertId::RsCertId()
  *
 **********************************************************************/
 
-RsCertId::RsCertId(std::string idstr)
-{
-        unsigned int a, b, c, d;
-        /* scan the string and create an id */
-        if (16 != sscanf(idstr.c_str(),
-                "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx:%hhx:%hhx:%hhx:%hhx:%hhx:%hhx:%x:%x:%x:%x",
-                &(data[0]), &(data[1]), &(data[2]), &(data[3]),
-                &(data[4]), &(data[5]), &(data[6]), &(data[7]),
-                &(data[8]), &(data[9]), &(data[10]), &(data[11]),
-                &a, &b, &c, &d))
-        {
-                std::cerr << "RsCertId() Invalid Parsing!" << std::endl;
-                /* clear it */
-                for(int i = 0; i < RSCERTIDLEN; i++)
-                {
-                        data[i] = 0;
-                }
-        }
-        ((unsigned char *) data)[12] = a;
-        ((unsigned char *) data)[13] = b;
-        ((unsigned char *) data)[14] = c;
-        ((unsigned char *) data)[15] = d;
-}
-
-bool RsCertId::operator<(const RsCertId &ref) const
-{
-        //compare the signature.
-        if (0 > memcmp(data, ref.data, RSCERTIDLEN))
-                return true;
-        return false;
-}
-
-bool RsCertId::operator==(const RsCertId &ref) const
-{
-        //compare the signature.
-        return (0 == memcmp(data, ref.data, RSCERTIDLEN));
-}
-
-bool RsCertId::operator!=(const RsCertId &ref) const
-{
-        //compare the signature.
-        return !(*this == ref);
-}
-
-std::ostream &operator<<(std::ostream &out, const RsCertId &id)
-{
-	std::ostringstream str;
-	for(int i = 0; i < RSCERTIDLEN; i++)
-	{
-		if (i != 0)
-		{
-			str << ":";
-		}
-		str << std::hex << std::setw(2) << std::setfill('0')
-		    << std::setprecision(2);
-		str << (unsigned int) (((unsigned char *) (id.data))[i]);
-	}
-	out << str.str();
-	return out;
-}
-
-#endif
-
 
 /****************************************/
 	/* Print Functions for Info Classes */
-std::ostream &operator<<(std::ostream &out, const NeighbourInfo &info)
-{
-	out << "Neighbour Name: " << info.name;
-	out << std::endl;
-	out << "TrustLvl:  " << info.trustLvl;
-	out << std::endl;
-	out << "Status:    " << info.status;
-	out << std::endl;
-	out << "Auth Code: " << info.authCode;
-	out << std::endl;
-	return out;
-}
 
 std::ostream &operator<<(std::ostream &out, const PersonInfo &info)
 {
