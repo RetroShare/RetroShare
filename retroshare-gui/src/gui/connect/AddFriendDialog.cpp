@@ -21,6 +21,8 @@
 #include "AddFriendDialog.h"
 
 #include "rsiface/rsiface.h"
+#include "rsiface/rspeers.h"
+
 #include "gui/NetworkDialog.h"
 #include <util/WidgetBackgroundImage.h>
 
@@ -53,7 +55,7 @@ void AddFriendDialog::donebutton()
 	std::string certstr  = ui.emailText->toPlainText().toStdString();
 
 	/* ask retroshare to load */
-	if ((cDialog) && (rsicontrol ->  NeighLoadPEMString(certstr, id)))
+	if ((cDialog) && (rsPeers->LoadCertificateFromString(certstr, id)))
 	{
 		close();
 		cDialog->showpeerdetails(id);

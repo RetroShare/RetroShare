@@ -28,7 +28,7 @@
 #include "connect/ConnectDialog.h"
 #include "authdlg/AuthorizationDialog.h"
 #include "rsiface/rsiface.h"
-#include "rsiface/rstypes.h"
+#include "rsiface/rspeers.h"
 #include <sstream>
 
 
@@ -214,11 +214,14 @@ void NetworkDialog::loadcert()
 /* get the list of Neighbours from the RsIface.  */
 void NetworkDialog::insertConnect()
 {
-        rsiface->lockData(); /* Lock Interface */
+	if (!rsPeers)
+	{
+		return;
+	}
 
-        std::map<RsCertId,NeighbourInfo>::const_iterator it;
-        const std::map<RsCertId,NeighbourInfo> &neighs = 
-				rsiface->getNeighbourMap();
+	std::list<std::string> neighs;
+	std::list<std::string>::iterator it;
+	rsPeers->getOthersList(neighs);
 
 	/* get a link to the table */
         QTreeWidget *connectWidget = ui.connecttreeWidget;
@@ -230,57 +233,76 @@ void NetworkDialog::insertConnect()
 		oldId = (oldSelect -> text(9)).toStdString();
 	}
 
-	/* remove old items ??? */
-	connectWidget->clear();
-	connectWidget->setColumnCount(11);	
-
         QList<QTreeWidgetItem *> items;
 	for(it = neighs.begin(); it != neighs.end(); it++)
 	{
+		RsPeerDetails detail;
+		if (!rsPeers->getPeerDetails(*it, detail))
+		{
+			continue; /* BAD */
+		}
+
 		/* make a widget per friend */
            	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
 		/* add all the labels */
 		
-	    /* (0) Status Icon */
-		        item -> setText(0, "");
+	        /* (0) Status Icon */
+		item -> setText(0, "");
 
 		/* (1) Accept/Deny */
-                item -> setText(1, QString::fromStdString(it->second.acceptString));
-		/* (2) Trust Level */
-                item -> setText(2, QString::fromStdString(it->second.trustString));
+		if (detail.state & RS_PEER_STATE_FRIEND)
+		{
+                	item -> setText(1, tr("Accept"));
+		}
+		else
+		{
+                	item -> setText(1, tr("Deny"));
+		}
+
+                item -> setText(2,QString::fromStdString(
+				RsPeerTrustString(detail.trustLvl)));
+
 		/* (3) Last Connect */
-                item -> setText(3, QString::fromStdString(it->second.lastConnect));
-        /* (4) Person */
-				item -> setText(4, QString::fromStdString(it->second.name));
-		
-		/* (5) Peer Address */
-				item -> setText(5, QString::fromStdString(it->second.peerAddress));
-
-		/* Others */
-				item -> setText(6, QString::fromStdString(it->second.org));
-				item -> setText(7, QString::fromStdString(it->second.loc));
-				item -> setText(8, QString::fromStdString(it->second.country));
-
-
 		{
 			std::ostringstream out;
-			out << it -> second.id;
-			item -> setText(9, QString::fromStdString(out.str()));
-			if ((oldSelect) && (oldId == out.str()))
+			out << detail.lastConnect;
+                	item -> setText(3, QString::fromStdString(out.str()));
+		}
+
+        	/* (4) Person */
+		item -> setText(4, QString::fromStdString(detail.name));
+		
+		/* (5) Peer Address */
+		{
+			std::ostringstream out;
+			out << detail.localAddr << ":";
+			out << detail.localPort << "/";
+			out << detail.extAddr << ":";
+			out << detail.extPort;
+                	item -> setText(5, QString::fromStdString(out.str()));
+		}
+
+		/* Others */
+		item -> setText(6, QString::fromStdString(detail.org));
+		item -> setText(7, QString::fromStdString(detail.location));
+		item -> setText(8, QString::fromStdString(detail.email));
+
+		{
+			item -> setText(9, QString::fromStdString(detail.id));
+			if ((oldSelect) && (oldId == detail.id))
 			{
 				newSelect = item;
 			}
 		}
 
-			item -> setText(10, QString::fromStdString(it->second.authCode));
-
+		item -> setText(10, QString::fromStdString(detail.authcode));
 
 		/* change background */
 		int i;
-                if (it->second.acceptString == "Accept")
+		if (detail.state & RS_PEER_STATE_FRIEND)
 		{
-                	if (it->second.lastConnect != "Never")
+                	if (detail.lastConnect < 10000) /* 3 hours? */
 			{
 				/* bright green */
 				for(i = 1; i < 11; i++)
@@ -300,7 +322,7 @@ void NetworkDialog::insertConnect()
 		}
 		else
 		{
-                	if (it->second.trustLvl > 3)
+                	if (detail.trustLvl > RS_TRUST_LVL_MARGINAL)
 			{
 				for(i = 1; i < 11; i++)
 				{
@@ -308,7 +330,7 @@ void NetworkDialog::insertConnect()
 				  item -> setIcon(0,(QIcon(IMAGE_DENIED)));
 				}
 			}
-                	else if (it->second.lastConnect != "Never")
+                	else if (detail.lastConnect < 10000) /* 3 hours? */
 			{
 				for(i = 1; i < 11; i++)
 				{
@@ -331,14 +353,16 @@ void NetworkDialog::insertConnect()
 		items.append(item);
 	}
 
+	/* remove old items ??? */
+	connectWidget->clear();
+	connectWidget->setColumnCount(11);	
+
 	/* add the items in! */
 	connectWidget->insertTopLevelItems(0, items);
 	if (newSelect)
 	{
 		connectWidget->setCurrentItem(newSelect);
 	}
-
-	rsiface->unlockData(); /* UnLock Interface */
 
 	connectWidget->update(); /* update display */
 }
@@ -357,18 +381,6 @@ QTreeWidgetItem *NetworkDialog::getCurrentNeighbour()
         }
     
         /* Display the columns of this item. */
-
-/**** NO NEED ANYMORE
-        std::ostringstream out;
-        out << "CurrentNeighbourItem: " << std::endl;
-
-        for(int i = 1; i < 6; i++)
-        {
-                QString txt = item -> text(i);
-                out << "\t" << i << ":" << txt.toStdString() << std::endl;
-        }
-        std::cerr << out.str();
-*****************/
 
         return item;
 }   
@@ -398,7 +410,7 @@ std::string NetworkDialog::loadneighbour()
 	std::string id;
 	if (file != "")
 	{
-        	rsicontrol->NeighLoadCertificate(file, id);
+        	rsPeers->LoadCertificateFromFile(file, id);
 	}
 	return id;
 }

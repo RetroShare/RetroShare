@@ -21,6 +21,7 @@
 #include "ConfCertDialog.h"
 
 #include "rsiface/rsiface.h"
+#include "rsiface/rspeers.h"
 
 /* Define the format used for displaying the date and time */
 #define DATETIME_FMT  "MMM dd hh:mm:ss"
@@ -74,43 +75,43 @@ void ConfCertDialog::loadId(std::string id)
 
 void ConfCertDialog::loadDialog()
 {
-	/* open up the rsiface and get the data */
-        /* get the shared directories */
-	rsiface->lockData(); /* Lock Interface */
 
-	/* get the correct friend */
-	const NeighbourInfo *ni = rsiface->getFriend(mId);
-	if (!ni)
+	RsPeerDetails detail;
+	if (!rsPeers->getPeerDetails(mId, detail))
 	{
 		/* fail */
-		rsiface->unlockData(); /* UnLock Interface */
 		return;
 	}
 	
-	ui.name->setText(QString::fromStdString(ni -> name));
-	ui.orgloc->setText(QString::fromStdString(ni -> org + "/" + ni -> loc));
-	ui.country->setText(QString::fromStdString(ni -> country + "/" + ni -> state));
+	ui.name->setText(QString::fromStdString(detail.name));
+	ui.orgloc->setText(QString::fromStdString(detail.org));
+	ui.country->setText(QString::fromStdString(detail.location));
 	
 	/* set local address */
-	ui.localAddress->setText(QString::fromStdString(ni->localAddr));
-	ui.localPort -> setValue(ni->localPort);
+	ui.localAddress->setText(QString::fromStdString(detail.localAddr));
+	ui.localPort -> setValue(detail.localPort);
 	/* set the server address */
-	ui.extAddress->setText(QString::fromStdString(ni->extAddr));
-	ui.extPort -> setValue(ni->extPort);
-	/* set the url for DNS access */
-	ui.extName->setText(QString::fromStdString(ni->extName));
-	ui.chkFirewall  ->setChecked(ni->firewalled);
-	ui.chkForwarded ->setChecked(ni->forwardPort);
+	ui.extAddress->setText(QString::fromStdString(detail.extAddr));
+	ui.extPort -> setValue(detail.extPort);
+
+	/* set the url for DNS access (OLD) */
+	ui.extName->setText(QString::fromStdString(""));
+
+	/**** TODO ****/
+	//ui.chkFirewall  ->setChecked(ni->firewalled);
+	//ui.chkForwarded ->setChecked(ni->forwardPort);
+	ui.chkFirewall  ->setChecked(0);
+	ui.chkForwarded ->setChecked(0);
 	
-	ui.indivRate->setValue(ni->maxRate);
+	ui.indivRate->setValue(0);
 
-	ui.trustLvl->setText(QString::fromStdString(ni->trustString));
+	ui.trustLvl->setText(QString::fromStdString(RsPeerTrustString(detail.trustLvl)));
 
-	if (ni->ownsign)
+	if (detail.ownsign)
 	{
 		ui.signBox -> setCheckState(Qt::Checked);
 		ui.signBox -> setEnabled(false);
-		if (ni->trustLvl == 5) /* 5 = Trusted, 6 = OwnSign */
+		if (detail.trusted)
 		{
 			ui.trustBox -> setCheckState(Qt::Checked);
 		}
@@ -128,60 +129,44 @@ void ConfCertDialog::loadDialog()
 		ui.trustBox -> setCheckState(Qt::Unchecked);
 		ui.trustBox -> setEnabled(false);
 	}
-		
-	rsiface->unlockData(); /* UnLock Interface */
-	
 
 }
 
 
 void ConfCertDialog::applyDialog()
 {
-	/* open up the rsiface and get the data */
-        /* get the shared directories */
-	rsiface->lockData(); /* Lock Interface */
-
-	/* get the correct friend */
-	const NeighbourInfo *ni = rsiface->getFriend(mId);
-	if (!ni)
+	RsPeerDetails detail;
+	if (!rsPeers->getPeerDetails(mId, detail))
 	{
 		/* fail */
-		rsiface->unlockData(); /* UnLock Interface */
 		return;
 	}
 	
-
 	/* check if the data is the same */
 	bool localChanged = false;
 	bool extChanged = false;
 	bool fwChanged = false;
-	bool dnsChanged = false;
 	bool signChanged = false;
 	bool trustChanged = false;
 
 	/* set local address */
-	if ((ni->localAddr != ui.localAddress->text().toStdString())
-		|| (ni->localPort != ui.localPort -> value()))
+	if ((detail.localAddr != ui.localAddress->text().toStdString())
+		|| (detail.localPort != ui.localPort -> value()))
 	{
 		/* changed ... set it */
 		localChanged = true;
 	}
 
-	if ((ni->extAddr != ui.extAddress->text().toStdString())
-		|| (ni->extPort != ui.extPort -> value()))
+	if ((detail.extAddr != ui.extAddress->text().toStdString())
+		|| (detail.extPort != ui.extPort -> value()))
 	{
 		/* changed ... set it */
 		extChanged = true;
 	}
 
-	if (ni->extName != ui.extName->text().toStdString())
-	{
-		/* changed ... set it */
-		dnsChanged = true;
-	}
-
-	if ((ni->firewalled != ui.chkFirewall  ->isChecked()) ||
-		(ni->forwardPort != ui.chkForwarded ->isChecked()))
+#if 0
+	if ((detail.firewalled != ui.chkFirewall  ->isChecked()) ||
+		(detail.forwardPort != ui.chkForwarded ->isChecked()))
 	{
 		/* changed ... set it */
 		fwChanged = true;
@@ -191,13 +176,11 @@ void ConfCertDialog::applyDialog()
 	{
 		/* nada */
 	}
+#endif
 
-	if (ni->ownsign)
+	if (detail.ownsign)
 	{
-		/* check the trust tick */
-		bool trsted = (ni->trustLvl == 5); /* 5 = Trusted, 6 = OwnSign */
-		
-		if (trsted != ui.trustBox->isChecked())
+		if (detail.trusted != ui.trustBox->isChecked())
 		{
 			trustChanged = true;
 		}
@@ -210,30 +193,26 @@ void ConfCertDialog::applyDialog()
 		}
 	}
 		
-	rsiface->unlockData(); /* UnLock Interface */
-
-
 	/* now we can action the changes */
 	if (localChanged)
-		rsicontrol -> FriendSetLocalAddress(mId, 
+		rsPeers->setLocalAddress(mId, 
 			ui.localAddress->text().toStdString(), ui.localPort->value());
 
 	if (extChanged)
-		rsicontrol -> FriendSetExtAddress(mId, 
+		rsPeers->setExtAddress(mId, 
 			ui.extAddress->text().toStdString(), ui.extPort->value());
 
-	if (dnsChanged)
-		rsicontrol -> FriendSetDNSAddress(mId, ui.extName->text().toStdString());
-
+#if 0
 	if (fwChanged)
 		rsicontrol -> FriendSetFirewall(mId, ui.chkFirewall->isChecked(),
 						ui.chkForwarded->isChecked());
+#endif
 
 	if (trustChanged)
-		rsicontrol -> FriendTrustSignature(mId, ui.trustBox->isChecked());
+		rsPeers->TrustCertificate(mId, ui.trustBox->isChecked());
 
 	if (signChanged)
-		rsicontrol -> FriendSignCert(mId);
+		rsPeers->SignCertificate(mId);
 
 	/* reload now */
 	loadDialog();

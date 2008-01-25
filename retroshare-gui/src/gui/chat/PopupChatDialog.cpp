@@ -30,6 +30,8 @@
 #include <QTextCursor>
 #include <QTextList>
 
+#include "rsiface/rspeers.h"
+
 
 /* Define the format used for displaying the date and time */
 #define DATETIME_FMT  "MMM dd hh:mm:ss"
@@ -205,18 +207,15 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 	bool offline = true;
 
 	{
-          rsiface->lockData(); /* Lock Interface */
-          const NeighbourInfo *peer = rsiface->getFriend(dialogId);
-	  if (!peer)
+	  RsPeerDetails detail;
+	  if (!rsPeers->getPeerDetails(dialogId, detail))
 	  {
 		std::cerr << "WARNING CANNOT GET PEER INFO!!!!" << std::endl;
 	  }
-	  else if (peer->statusString == "Online")
+	  else if (detail.state & RS_PEER_STATE_CONNECTED)
 	  {
 	    offline = false;
 	  }
-
-          rsiface->unlockData(); /* Unlock Interface */
 	}
 
 	if (offline)

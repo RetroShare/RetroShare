@@ -22,7 +22,9 @@
 
 #include "rshare.h"
 #include "SharedFilesDialog.h"
+
 #include "rsiface/rsiface.h"
+#include "rsiface/rspeers.h"
 #include "rsiface/RemoteDirModel.h"
 #include "util/RsAction.h"
 #include "msgs/ChanMsgDialog.h"
@@ -308,40 +310,36 @@ void SharedFilesDialog::shareddirtreeWidgetCostumPopupMenu( QPoint point )
       	QMenu *recMenu = new QMenu( tr("Recommend To "), this );
       	QMenu *msgMenu = new QMenu( tr("Message Friend "), &contextMnu2 );
 
+        std::list<std::string> peers;
+	std::list<std::string>::iterator it;
 
-        rsiface->lockData(); /* Lock Interface */
-
-        std::map<RsCertId,NeighbourInfo>::const_iterator it;
-        const std::map<RsCertId,NeighbourInfo> &friends =
-                                rsiface->getFriendMap();
-
-	for(it = friends.begin(); it != friends.end(); it++)
+	if (!rsPeers)
 	{
+		/* not ready yet! */
+		return;
+	}
+		
+	rsPeers->getFriendList(peers);
+
+	for(it = peers.begin(); it != peers.end(); it++)
+	{
+		std::string name = rsPeers->getPeerName(*it);
 		/* parents are
 		 * 	recMenu
 		 * 	msgMenu
 		 */
-		std::string rsid;
-		{
-			std::ostringstream out;
-		        out << it -> second.id;
-			rsid = out.str();
-		}
 
-      		RsAction *qaf1 = new RsAction( QString::fromStdString( it->second.name ), recMenu, rsid );
+      		RsAction *qaf1 = new RsAction( QString::fromStdString( name ), recMenu, *it );
       		connect( qaf1 , SIGNAL( triggeredId( std::string ) ), this, SLOT( recommendFilesTo( std::string ) ) );
         	recMenu->addAction(qaf1);
 
-      		RsAction *qaf2 = new RsAction( QString::fromStdString( it->second.name ), msgMenu, rsid );
+      		RsAction *qaf2 = new RsAction( QString::fromStdString( name ), msgMenu, *it );
       		connect( qaf2 , SIGNAL( triggeredId( std::string ) ), this, SLOT( recommendFilesToMsg( std::string ) ) );
         	msgMenu->addAction(qaf2);
 
 		/* create list of ids */
 
 	}
-
-        rsiface->unlockData(); /* UnLock Interface */
-
 
         contextMnu2.addAction( openfileAct);
         contextMnu2.addMenu( recMenu);

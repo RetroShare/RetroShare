@@ -22,12 +22,10 @@
 #include <QFile>
 #include <QFileInfo>
 
-//#include "common/vmessagebox.h"
-//#include "rshare.h"
-
 #include "GamesDialog.h"
 #include "rsiface/rsiface.h"
 #include "rsiface/rsgame.h"
+#include "rsiface/rspeers.h"
 
 #include <iostream>
 #include <sstream>
@@ -269,35 +267,30 @@ void GamesDialog::updateGameDetails()
 	}
 	if (detail.status == "Invite")
 	{
-		/* add all the online peers not listed above */
-	        rsiface->lockData(); /* Lock Interface */
+		std::list<std::string> friends;
+		std::list<std::string>::iterator fit;
 
-	        std::map<RsCertId,NeighbourInfo>::const_iterator fit;
-	        const std::map<RsCertId,NeighbourInfo> &friends =
-	                                rsiface->getFriendMap();
+		rsPeers->getOnlineList(friends);
+
         	for(fit = friends.begin(); fit != friends.end(); fit++)
 	        {
-			if (detail.gamers.end() != detail.gamers.find(fit->first))
+			if (detail.gamers.end() != detail.gamers.find(*fit))
 			{
 				/* already present */
 				continue;
 			}
 
-			if (1)
-			{
-				/* not online */
-
-			}
+			std::string name = rsPeers->getPeerName(*fit);
 
 	                /* make a widget per friend */
 	                QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
-			item -> setText(GAME_PEER_PLAYER, QString::fromStdString(fit->second.name));
+			item -> setText(GAME_PEER_PLAYER, QString::fromStdString(name));
 			item -> setText(GAME_PEER_INVITE, "No");
 			item -> setText(GAME_PEER_INTEREST, "?");
 			item -> setText(GAME_PEER_PLAY, "?");
-			item -> setText(GAME_PEER_ID, QString::fromStdString(fit->first));
+			item -> setText(GAME_PEER_ID, QString::fromStdString(*fit));
 		
-			if ((oldSelect) && (oldId == fit->first))
+			if ((oldSelect) && (oldId == *fit))
 			{
 				newSelect = item;
 			}
@@ -305,9 +298,6 @@ void GamesDialog::updateGameDetails()
 			/* add to the list */
 			items.append(item);
 		}
-
-		rsiface->unlockData(); /* UnLock Interface */
-
 	}
 
 	detailWidget->clear();
@@ -415,18 +405,14 @@ void GamesDialog::createGame()
 
 	if (addAll)
 	{
-		/* add all the online peers not listed above */
-	        rsiface->lockData(); /* Lock Interface */
+		std::list<std::string> friends;
+		std::list<std::string>::iterator fit;
 
-	        std::map<RsCertId,NeighbourInfo>::const_iterator fit;
-	        const std::map<RsCertId,NeighbourInfo> &friends =
-	                                rsiface->getFriendMap();
+		rsPeers->getOnlineList(friends);
         	for(fit = friends.begin(); fit != friends.end(); fit++)
 	        {
-			rsGameLauncher -> invitePeer(gameId, fit->first);
+			rsGameLauncher -> invitePeer(gameId, *fit);
 		}
-
-		rsiface->unlockData(); /* UnLock Interface */
 	}
 
 	/* call to the GameControl */

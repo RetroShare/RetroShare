@@ -25,7 +25,9 @@
 #include "ConnectDialog.h"
 
 #include "rsiface/rsiface.h"
+#include "rsiface/rspeers.h"
 #include <iostream>
+#include <sstream>
 
 /** Default constructor */
 ConnectDialog::ConnectDialog(QWidget *parent, Qt::WFlags flags)
@@ -124,8 +126,8 @@ void ConnectDialog::authAttempt()
 
 	/* well lets do it ! */
 	std::cerr << "Attempting AuthCode:" << authCode << std::endl;
-	rsicontrol -> NeighAuthFriend(authId, authCode);
-	rsicontrol -> NeighAddFriend(authId);
+	rsPeers->AuthCertificate(authId, authCode);
+	rsPeers->addFriend(authId);
 
 	/* close it up! */
 	closeinfodlg();
@@ -133,42 +135,44 @@ void ConnectDialog::authAttempt()
 
 bool ConnectDialog::loadPeer(std::string id)
 { 
-	std::map<RsCertId,NeighbourInfo>::const_iterator it;
-	/* first grab the list of signers (outside lock) */
-
-	char signerstr[1024];
-	rsicontrol->NeighGetSigners(id, signerstr, 1024);
-
-	/* XXX NOTE We must copy the char * to a string, 
-         * otherwise it get trampled on by the it = find(id).
-         * ( DONT KNOW WHY???? ) under mingw.
-         */
-
-	std::string signersString; 
-	signersString = signerstr;
-
-	/* grab the interface and check person */
-	rsiface->lockData(); /* Lock Interface */
-	
-	const std::map<RsCertId,NeighbourInfo> &neighs = 
-			rsiface->getNeighbourMap();
-
-	it = neighs.find(id);
-
-	if (it == neighs.end())
+	RsPeerDetails detail;
+	if (!rsPeers->getPeerDetails(id, detail))
 	{
 		rsiface->unlockData(); /* UnLock Interface */
 		return false;
 	}
 
+	std::string trustString;
+
+	switch(detail.trustLvl)
+	{
+		case RS_TRUST_LVL_GOOD:
+			trustString = "Good";
+		break;
+		case RS_TRUST_LVL_MARGINAL:
+			trustString = "Marginal";
+		break;
+		case RS_TRUST_LVL_UNKNOWN:
+		default:
+			trustString = "No Trust";
+		break;
+	}
+
+	std::ostringstream out;
+
+	std::list<std::string>::iterator it;
+	for(it = detail.signers.begin(); it != detail.signers.end(); it++)
+	{
+		out << rsPeers->getPeerName(*it) << " <" << *it << ">";
+		out << std::endl;
+	}
+		
 	/* setup the gui */
-	setInfo(it->second.name, it->second.trustString, it->second.org,
-	it->second.loc, it->second.country, signersString);
+	setInfo(detail.name, trustString, detail.org,
+		detail.location, detail.email, out.str());
 
-	setAuthCode(id, it->second.authCode);
+	setAuthCode(id, detail.authcode);
 	
-	rsiface->unlockData(); /* UnLock Interface */
-
 	return true;
 }
 	

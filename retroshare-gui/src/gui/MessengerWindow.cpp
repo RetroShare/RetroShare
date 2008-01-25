@@ -23,9 +23,12 @@
 #include <QFileInfo>
 #include "common/vmessagebox.h"
 
+#include "rsiface/rsiface.h"
+#include "rsiface/rspeers.h"
+
 #include "rshare.h"
 #include "MessengerWindow.h"
-#include "rsiface/rsiface.h"
+
 #include "chat/PopupChatDialog.h"
 #include "msgs/ChanMsgDialog.h"
 #include "ChatDialog.h"
@@ -164,51 +167,51 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
 /* get the list of peers from the RsIface.  */
 void  MessengerWindow::insertPeers()
 {
-        rsiface->lockData(); /* Lock Interface */
+        if (!rsPeers)
+        {
+                /* not ready yet! */
+                return;
+        }
 
-        std::map<RsCertId,NeighbourInfo>::const_iterator it;
-        const std::map<RsCertId,NeighbourInfo> &friends =
-                                rsiface->getFriendMap();
+        std::list<std::string> peers;
+        std::list<std::string>::iterator it;
+
+        rsPeers->getFriendList(peers);
 
         /* get a link to the table */
         QTreeWidget *peerWidget = ui.messengertreeWidget;
-
-        /* remove old items ??? */
-	peerWidget->clear();
-	peerWidget->setColumnCount(1);
-
 
 	/* have two lists: online / offline */
         QList<QTreeWidgetItem *> online_items;
         QList<QTreeWidgetItem *> offline_items;
 
-
-	for(it = friends.begin(); it != friends.end(); it++)
+	for(it = peers.begin(); it != peers.end(); it++)
 	{
+
+                RsPeerDetails details;
+                if (!rsPeers->getPeerDetails(*it, details))
+                {
+                        continue; /* BAD */
+                }
+
 		/* make a widget per friend */
            	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
 		/* add all the labels */
 		/* (0) Person */
-		item -> setText(0, QString::fromStdString(it->second.name));
+		item -> setText(0, QString::fromStdString(details.name));
 		/* (1) Org */
-		//item -> setText(1, QString::fromStdString(it->second.org));
+		//item -> setText(1, QString::fromStdString(details.org));
 		/* (2) Location */
-		//item -> setText(2, QString::fromStdString(it->second.loc));
-		/* (3) Country */
-		//item -> setText(3, QString::fromStdString(it->second.country));
+		//item -> setText(2, QString::fromStdString(details.location));
+		/* (3) Email */
+		//item -> setText(3, QString::fromStdString(details.email));
 		
-
-		/* Hidden ones: */
-		/* ()  RsCertId */
-		{
-			std::ostringstream out;
-			out << it -> second.id;
-			item -> setText(4, QString::fromStdString(out.str()));
-		}
+		/* Hidden ones: RsCertId */
+		item -> setText(4, QString::fromStdString(details.id));
 
 		/* add to the list */
-                if (it->second.statusString == "Online")
+                if (details.state & RS_PEER_STATE_CONNECTED)
 		{
 		   online_items.append(item);
 		   item -> setIcon(0,(QIcon(IMAGE_ONLINE)));	   
@@ -220,8 +223,9 @@ void  MessengerWindow::insertPeers()
 		}
 	}
 
-	/* make parent items (TODO) */
-	/* add the items in! */
+        /* remove old items */
+	peerWidget->clear();
+	peerWidget->setColumnCount(1);
 
 	if (online_items.size() > 0)
 	{
@@ -249,8 +253,6 @@ void  MessengerWindow::insertPeers()
 		peerWidget->expandItem(item);
 		item -> setIcon(0,(QIcon(IMAGE_OFF)));
 	}
-
-	rsiface->unlockData(); /* UnLock Interface */
 
 	peerWidget->update(); /* update display */
 }
@@ -291,7 +293,7 @@ void MessengerWindow::connectfriend2()
     else
     {
 	std::cerr << "MessengerWindow::connectfriend2() Trying" << std::endl;
-	rsicontrol->FriendConnectAttempt(getMessengerPeerRsCertId(i));
+	rsPeers->connectAttempt(getMessengerPeerRsCertId(i));
     }
 }
 
@@ -446,7 +448,7 @@ void MessengerWindow::removefriend2()
         	std::cerr << "MessengerWindow::removefriend2() Noone Selected -- sorry" << std::endl;
 		return;
 	}
-	rsicontrol->FriendRemove(getMessengerPeerRsCertId(c));
+	rsPeers->removeFriend(getMessengerPeerRsCertId(c));
 }
 
 void MessengerWindow::changeAvatarClicked() 

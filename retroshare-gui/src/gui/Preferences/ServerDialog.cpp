@@ -25,6 +25,7 @@
 #include <iostream>
 
 #include "rsiface/rsiface.h"
+#include "rsiface/rspeers.h"
 
 
 
@@ -187,8 +188,8 @@ void ServerDialog::saveAddresses()
 	QString str;
 
 	bool saveAddr = false;
-	rsicontrol -> NetworkDHTActive(ui.DHTButton->isChecked());
-	rsicontrol -> NetworkUPnPActive(ui.UPnPButton->isChecked());
+	//rsicontrol -> NetworkDHTActive(ui.DHTButton->isChecked());
+	//rsicontrol -> NetworkUPnPActive(ui.UPnPButton->isChecked());
 
 	if (ui.ManualButton->isChecked())
 	{
@@ -197,9 +198,9 @@ void ServerDialog::saveAddresses()
 
 	if (saveAddr)
 	{
-	  rsicontrol->ConfigSetLocalAddr(ui.localAddress->text().toStdString(), ui.localPort->value());
-	  rsicontrol->ConfigSetLanConfig(ui.chkFirewall->isChecked(), ui.chkForwarded->isChecked());
-	  rsicontrol->ConfigSetExtAddr(ui.extAddress->text().toStdString(), ui.extPort->value());
+	  rsPeers->setLocalAddress(rsPeers->getOwnId(), ui.localAddress->text().toStdString(), ui.localPort->value());
+	  //rsicontrol->ConfigSetLanConfig(ui.chkFirewall->isChecked(), ui.chkForwarded->isChecked());
+	  rsPeers->setExtAddress(rsPeers->getOwnId(), ui.extAddress->text().toStdString(), ui.extPort->value());
 	}
 
 	rsicontrol->ConfigSetDataRates( ui.totalRate->value(),  ui.indivRate->value() );

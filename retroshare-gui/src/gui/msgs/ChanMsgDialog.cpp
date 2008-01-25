@@ -23,6 +23,8 @@
 #include "ChanMsgDialog.h"
 
 #include "rsiface/rsiface.h"
+#include "rsiface/rspeers.h"
+
 #include <sstream>
 
 #include <QContextMenuEvent>
@@ -128,53 +130,52 @@ void ChanMsgDialog::createchannelmsg()
 
 void  ChanMsgDialog::insertSendList()
 {
-        rsiface->lockData(); /* Lock Interface */
-
-        std::map<RsCertId,NeighbourInfo>::const_iterator it;
-        const std::map<RsCertId,NeighbourInfo> &friends =
-                                rsiface->getFriendMap();
-
+	if (!rsPeers)
+	{
+		/* not ready yet! */
+		return;
+	}
+		
+	std::list<std::string> peers;
+	std::list<std::string>::iterator it;
+		
+	rsPeers->getFriendList(peers);
+		
         /* get a link to the table */
         QTreeWidget *sendWidget = ui.msgSendList;
 
-        /* remove old items ??? */
-	sendWidget->clear();
-	sendWidget->setColumnCount(1);
-
         QList<QTreeWidgetItem *> items;
-	for(it = friends.begin(); it != friends.end(); it++)
+	for(it = peers.begin(); it != peers.end(); it++)
 	{
-		if (it -> second.connectString == "Yourself")
+		
+		RsPeerDetails detail;
+		if (!rsPeers->getPeerDetails(*it, detail))
 		{
-			/* ok */
-			continue;
+			continue; /* BAD */
 		}
-
+		
 		/* make a widget per friend */
            	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
 
 		/* add all the labels */
 		/* (0) Person */
-		item -> setText(0, QString::fromStdString(it->second.name));
+		item -> setText(0, QString::fromStdString(detail.name));
 		/* () Org */
-		//item -> setText(1, QString::fromStdString(it->second.org));
+		item -> setText(1, QString::fromStdString(detail.org));
 		/* () Location */
-		//item -> setText(2, QString::fromStdString(it->second.loc));
+		item -> setText(2, QString::fromStdString(detail.location));
 		/* () Country */
-		//item -> setText(3, QString::fromStdString(it->second.country));
-		/*{
-			std::ostringstream out;
-			out << it->second.id;
-			item -> setText(4, QString::fromStdString(out.str()));
-		}*/
-
-		item -> setText(1, "Friend");
+		item -> setText(3, QString::fromStdString(detail.email));
+		/* () Id */
+		item -> setText(4, QString::fromStdString(detail.id));
 
 		item -> setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		//item -> setCheckState(0, Qt::Checked);
 		//
 	
+		item -> setCheckState(0, Qt::Unchecked);
+#if 0
 		if (it -> second.inMsg)
 		{
 			item -> setCheckState(0, Qt::Checked);
@@ -183,15 +184,18 @@ void  ChanMsgDialog::insertSendList()
 		{
 			item -> setCheckState(0, Qt::Unchecked);
 		}
+#endif
 
 		/* add to the list */
 		items.append(item);
 	}
 
+        /* remove old items ??? */
+	sendWidget->clear();
+	sendWidget->setColumnCount(6);
+
 	/* add the items in! */
 	sendWidget->insertTopLevelItems(0, items);
-
-	rsiface->unlockData(); /* UnLock Interface */
 
 	sendWidget->update(); /* update display */
 }
@@ -389,13 +393,15 @@ void  ChanMsgDialog::sendMessage()
 		}
 	}
 
+	std::list<std::string> persons;
+	std::list<std::string>::iterator it3;
+
+#if 0
 	/* get a list of people to send it to */
         std::map<RsCertId,NeighbourInfo>::const_iterator it2;
         const std::map<RsCertId,NeighbourInfo> &friends =
                                 rsiface->getFriendMap();
 
-	std::list<std::string> persons;
-	std::list<std::string>::iterator it3;
 
 	for(it2 = friends.begin(); it2 != friends.end(); it2++)
 	{
@@ -408,6 +414,7 @@ void  ChanMsgDialog::sendMessage()
 			persons.push_back(out.str());
 		}
 	}
+#endif
 
 	rsiface->unlockData(); /* UnLock Interface */
 

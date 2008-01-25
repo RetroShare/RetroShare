@@ -25,6 +25,7 @@
 #include "AuthorizationDialog.h"
 
 #include "rsiface/rsiface.h"
+#include "rsiface/rspeers.h"
 
 #include <iostream>
 
@@ -112,8 +113,8 @@ void AuthorizationDialog::authAttempt()
 
 	/* well lets do it ! */
 	std::cerr << "Attempting AuthCode:" << authCode << std::endl;
-	rsicontrol -> NeighAuthFriend(authId, authCode);
-	rsicontrol -> NeighAddFriend(authId);
+	rsPeers->AuthCertificate(authId, authCode);
+	rsPeers->addFriend(authId);
 
 	/* close it up! */
 	closedlg();

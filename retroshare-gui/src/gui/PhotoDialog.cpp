@@ -118,6 +118,8 @@ void PhotoDialog::peertreeWidgetCostumPopupMenu( QPoint point )
 /* get the list of peers from the RsIface.  */
 void  PhotoDialog::insertExample()
 {
+
+#if 0
         rsiface->lockData(); /* Lock Interface */
 
         std::map<RsCertId,NeighbourInfo>::const_iterator it;
@@ -224,6 +226,7 @@ void  PhotoDialog::insertExample()
 	rsiface->unlockData(); /* UnLock Interface */
 
 	peerWidget->update(); /* update display */
+#endif
 }
 
 QTreeWidgetItem *PhotoDialog::getCurrentLine()

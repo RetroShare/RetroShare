@@ -118,6 +118,8 @@ void ExampleDialog::peertreeWidgetCostumPopupMenu( QPoint point )
 /* get the list of peers from the RsIface.  */
 void  ExampleDialog::insertExample()
 {
+
+#if 0
         rsiface->lockData(); /* Lock Interface */
 
         std::map<RsCertId,NeighbourInfo>::const_iterator it;
@@ -226,6 +228,7 @@ void  ExampleDialog::insertExample()
 	rsiface->unlockData(); /* UnLock Interface */
 
 	peerWidget->update(); /* update display */
+#endif
 }
 
 QTreeWidgetItem *ExampleDialog::getCurrentLine()

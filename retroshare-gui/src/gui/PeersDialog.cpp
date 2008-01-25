@@ -26,6 +26,8 @@
 #include "rshare.h"
 #include "PeersDialog.h"
 #include "rsiface/rsiface.h"
+#include "rsiface/rspeers.h"
+
 #include "chat/PopupChatDialog.h"
 #include "msgs/ChanMsgDialog.h"
 #include "ChatDialog.h"
@@ -147,11 +149,16 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
 /* get the list of peers from the RsIface.  */
 void  PeersDialog::insertPeers()
 {
-        rsiface->lockData(); /* Lock Interface */
+	std::list<std::string> peers;
+	std::list<std::string>::iterator it;
 
-        std::map<RsCertId,NeighbourInfo>::const_iterator it;
-        const std::map<RsCertId,NeighbourInfo> &friends =
-                                rsiface->getFriendMap();
+	if (!rsPeers)
+        {
+                /* not ready yet! */
+                return;
+        }
+
+	rsPeers->getFriendList(peers);
 
         /* get a link to the table */
         QTreeWidget *peerWidget = ui.peertreeWidget;
@@ -168,10 +175,15 @@ void  PeersDialog::insertPeers()
 	peerWidget->setColumnCount(12);
 	
 
-
         QList<QTreeWidgetItem *> items;
-	for(it = friends.begin(); it != friends.end(); it++)
+	for(it = peers.begin(); it != peers.end(); it++)
 	{
+		RsPeerDetails detail;
+		if (!rsPeers->getPeerDetails(*it, detail))
+		{
+			continue; /* BAD */
+		}
+		
 		/* make a widget per friend */
            	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
@@ -181,51 +193,56 @@ void  PeersDialog::insertPeers()
 		item -> setText(0, "");
 		
 		/* (0) Status */		
-		item -> setText(1, QString::fromStdString(
-						it->second.statusString));
+		item -> setText(1, 
+			QString::fromStdString(RsPeerStateString(detail.state)));
 
 		/* (1) Person */
-		item -> setText(2, QString::fromStdString(it->second.name));
+		item -> setText(2, QString::fromStdString(detail.name));
 
 		/* (2) Auto Connect */
-		item -> setText(3, QString::fromStdString(
-						it->second.connectString));
+		item -> setText(3, QString::fromStdString("Yes"));
 
 		/* (3) Trust Level */
-		item -> setText(4, QString::fromStdString(it->second.trustString));
+                item -> setText(4,QString::fromStdString(
+				RsPeerTrustString(detail.trustLvl)));
+		
 		/* (4) Peer Address */
-		item -> setText(5, QString::fromStdString(it->second.peerAddress));
-
-		/* less important ones */
-		/* () Last Contact */
-		item -> setText(6, QString::fromStdString(it->second.lastConnect));
-
-		/* () Org */
-		item -> setText(7, QString::fromStdString(it->second.org));
-		/* () Location */
-		item -> setText(8, QString::fromStdString(it->second.loc));
-		/* () Country */
-		item -> setText(9, QString::fromStdString(it->second.country));
-	
-	
-		/* Hidden ones: */
-		/* ()  RsCertId */
 		{
 			std::ostringstream out;
-			out << it -> second.id;
-			item -> setText(10, QString::fromStdString(out.str()));
-                        if ((oldSelect) && (oldId == out.str()))
+			out << detail.localAddr << ":";
+			out << detail.localPort << "/";
+			out << detail.extAddr << ":";
+			out << detail.extPort;
+			item -> setText(5, QString::fromStdString(out.str()));
+		}
+		
+		/* less important ones */
+		/* () Last Contact */
+                item -> setText(6,QString::fromStdString(
+				RsPeerLastConnectString(detail.lastConnect)));
+
+		/* () Org */
+		item -> setText(7, QString::fromStdString(detail.org));
+		/* () Location */
+		item -> setText(8, QString::fromStdString(detail.location));
+		/* () Email */
+		item -> setText(9, QString::fromStdString(detail.email));
+	
+		/* Hidden ones: RsCertId */
+		{
+			item -> setText(10, QString::fromStdString(detail.id));
+                        if ((oldSelect) && (oldId == detail.id))
                         {
                                 newSelect = item;
                         }
 		}
 
 		/* ()  AuthCode */	
-                item -> setText(11, QString::fromStdString(it->second.authCode));
+                item -> setText(11, QString::fromStdString(detail.authcode));
 
 		/* change background */
 		int i;
-                if (it->second.statusString == "Online")
+		if (detail.state & RS_PEER_STATE_CONNECTED)
 		{
 			/* bright green */
 			for(i = 1; i < 12; i++)
@@ -234,9 +251,18 @@ void  PeersDialog::insertPeers()
 			  item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
 			}
 		}
-		else
+		else if (detail.state & RS_PEER_STATE_ONLINE)
 		{
-                	if (it->second.lastConnect != "Never")
+			/* bright green */
+			for(i = 1; i < 12; i++)
+			{
+			  item -> setBackground(i,QBrush(Qt::cyan));
+			  item -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
+			}
+		}
+		else 
+		{
+                	if (detail.lastConnect < 10000)
 			{
 				for(i = 1; i < 12; i++)
 				{
@@ -254,8 +280,6 @@ void  PeersDialog::insertPeers()
 			}
 		}
 			
-
-
 		/* add to the list */
 		items.append(item);
 	}
@@ -266,9 +290,6 @@ void  PeersDialog::insertPeers()
         {
                 peerWidget->setCurrentItem(newSelect);
         }
-
-
-	rsiface->unlockData(); /* UnLock Interface */
 
 	peerWidget->update(); /* update display */
 }
@@ -300,7 +321,10 @@ void PeersDialog::exportfriend()
 	{
         	std::cerr << "PeersDialog::exportfriend() Saving to: " << file << std::endl;
         	std::cerr << std::endl;
-		rsicontrol->FriendSaveCertificate(id, file);
+		if (rsPeers)
+		{
+			rsPeers->SaveCertificateToFile(id, file);
+		}
 	}
 
 }
@@ -408,7 +432,11 @@ void PeersDialog::removefriend()
         	std::cerr << "PeersDialog::removefriend() Noone Selected -- sorry" << std::endl;
 		return;
 	}
-	rsicontrol->FriendRemove(getPeerRsCertId(c));
+
+	if (rsPeers)
+	{
+		rsPeers->removeFriend(getPeerRsCertId(c));
+	}
 }
 
 
@@ -427,7 +455,10 @@ void PeersDialog::connectfriend()
 {
 	QTreeWidgetItem *c = getCurrentPeer();
 	std::cerr << "PeersDialog::connectfriend()" << std::endl;
-	rsicontrol->FriendConnectAttempt(getPeerRsCertId(c));
+	if (rsPeers)
+	{
+		rsPeers->connectAttempt(getPeerRsCertId(c));
+	}
 }
 
 void PeersDialog::setaddressfriend()

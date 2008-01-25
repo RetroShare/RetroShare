@@ -24,6 +24,8 @@
 #include "ChatDialog.h"
 
 #include "rsiface/rsiface.h"
+#include "rsiface/rspeers.h"
+
 #include "chat/PopupChatDialog.h"
 #include <sstream>
 
@@ -247,53 +249,36 @@ void ChatDialog::sendMsg()
 
 void  ChatDialog::insertSendList()
 {
-        rsiface->lockData(); /* Lock Interface */
+	std::list<std::string> peers;
+	std::list<std::string>::iterator it;
 
-        std::map<RsCertId,NeighbourInfo>::const_iterator it;
-        const std::map<RsCertId,NeighbourInfo> &friends =
-                                rsiface->getFriendMap();
+	if (!rsPeers)
+	{
+		/* not ready yet! */
+		return;
+	}
+
+	rsPeers->getOnlineList(peers);
 
         /* get a link to the table */
         QTreeWidget *sendWidget = ui.msgSendList;
+	QList<QTreeWidgetItem *> items;
 
-        /* remove old items ??? */
-	sendWidget->clear();
-	sendWidget->setColumnCount(1);
-
-        QList<QTreeWidgetItem *> items;
-	for(it = friends.begin(); it != friends.end(); it++)
+	for(it = peers.begin(); it != peers.end(); it++)
 	{
-		/* if offline, don't add */
-		if ((it -> second.connectString == "Online" ) ||
-			(it -> second.connectString == "Yourself"))
+
+		RsPeerDetails details;
+		if (!rsPeers->getPeerDetails(*it, details))
 		{
-			/* ok */
-		}
-		else
-		{
-			continue;
+			continue; /* BAD */
 		}
 
 		/* make a widget per friend */
            	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
-
 		/* add all the labels */
 		/* (0) Person */
-		item -> setText(0, QString::fromStdString(it->second.name));
-		/* () Org */
-		//item -> setText(1, QString::fromStdString(it->second.org));
-		/* () Location */
-		//item -> setText(2, QString::fromStdString(it->second.loc));
-		/* () Country */
-		//item -> setText(3, QString::fromStdString(it->second.country));
-		/*{
-			std::ostringstream out;
-			out << it->second.id;
-			item -> setText(4, QString::fromStdString(out.str()));
-		}*/
-
-		//item -> setText(5, "Friend");
+		item -> setText(0, QString::fromStdString(details.name));
 
 		//item -> setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		item -> setFlags(Qt::ItemIsUserCheckable);
@@ -309,16 +294,16 @@ void  ChatDialog::insertSendList()
 			item -> setCheckState(0, Qt::Unchecked);
 		}
 		************/
-
-
 		/* add to the list */
 		items.append(item);
 	}
 
+        /* remove old items */
+	sendWidget->clear();
+	sendWidget->setColumnCount(1);
+
 	/* add the items in! */
 	sendWidget->insertTopLevelItems(0, items);
-
-	rsiface->unlockData(); /* UnLock Interface */
 
 	sendWidget->update(); /* update display */
 }

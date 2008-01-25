@@ -43,6 +43,7 @@
 #include "util/rsversion.h"
 
 #include "rsiface/rsiface.h"
+#include "rsiface/rspeers.h"
 
 #include "gui/connect/InviteDialog.h"
 #include "gui/connect/AddFriendDialog.h"
@@ -347,7 +348,7 @@ void MainWindow::inviteFriend()
 {
     static  InviteDialog *inviteDialog = new InviteDialog(this);
 
-    std::string invite = rsicontrol->NeighGetInvite();
+    std::string invite = rsPeers->GetRetroshareInvite();
     inviteDialog->setInfo(invite);
     inviteDialog->show();
 
@@ -367,7 +368,7 @@ void MainWindow::addSharedDirectory()
     if (dir != "")
     {
         rsicontrol -> ConfigAddSharedDir(dir);
-        rsicontrol -> ConfigSave();
+        //rsicontrol -> ConfigSave();
     }
 
 }

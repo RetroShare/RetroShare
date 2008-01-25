@@ -115,6 +115,23 @@ void NotifyQt::UpdateGUI()
 
 	iface->unlockData(); /* UnLock Interface */
 
+	/* hack to force updates until we've fixed that part */
+static  time_t lastTs = 0;
+
+	if (time(NULL) > lastTs + 5)
+	{
+		lastTs = time(NULL);
+
+		uNeigh = true;
+		uFri = true;
+		uTrans = true;
+		uChat = true;
+		uMsg = true;
+		uChan = true;
+		uRecom = true;
+		uConf = true;
+	}
+
 	if (uNeigh)
 		displayNeighbours();
 
@@ -148,24 +165,6 @@ void NotifyQt::UpdateGUI()
 			
 void NotifyQt::displayNeighbours()
 {
-	iface->lockData(); /* Lock Interface */
-
-	std::map<RsCertId,NeighbourInfo>::const_iterator it;
-	const std::map<RsCertId,NeighbourInfo> &neighs = iface->getNeighbourMap();
-
-	std::ostringstream out;
-        for(it = neighs.begin(); it != neighs.end(); it++)
-        {
-		out << "Neighbour: ";
-		out << it ->second.name << " ";
-		out << it ->second.status << " ";
-		out << it ->second.trustLvl << " ";
-		out << std::endl;
-	}
-	std::cerr << out.str();
-
-	iface->unlockData(); /* UnLock Interface */
-
 	/* Do the GUI */
 	if (cDialog)
 		cDialog->insertConnect();
@@ -173,24 +172,6 @@ void NotifyQt::displayNeighbours()
 
 void NotifyQt::displayFriends()
 {
-	iface->lockData(); /* Lock Interface */
-
-	std::map<RsCertId,NeighbourInfo>::const_iterator it;
-	const std::map<RsCertId,NeighbourInfo> &friends = iface->getFriendMap();
-
-	std::ostringstream out;
-        for(it = friends.begin(); it != friends.end(); it++)
-        {
-		out << "Friend: ";
-		out << it->second.name << " ";
-		out << it->second.status << " ";
-		out << it->second.trustLvl << " ";
-		out << std::endl;
-	}
-	std::cerr << out.str();
-
-	iface->unlockData(); /* UnLock Interface */
-
 	if (pDialog)
 		pDialog->insertPeers();
 	if (mWindow)

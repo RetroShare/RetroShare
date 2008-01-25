@@ -165,7 +165,7 @@ PreferencesWindow::saveChanges()
   }
 
   /* call to RsIface save function.... */
-  rsicontrol -> ConfigSave();
+  //rsicontrol -> ConfigSave();
 
   QMainWindow::close();
 }
