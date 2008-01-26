@@ -152,8 +152,10 @@ void NotifyTxt::displayMessages()
 	for(it = msgs.begin(); it != msgs.end(); it++)
 	{
 		out << "Message: ";
-		out << it->title << std::endl;
- 		out << "\t" << it->msg << std::endl;
+		std::string cnv_title(it->title.begin(), it->title.end());
+		out << cnv_title << std::endl;
+		std::string cnv_msg(it->msg.begin(), it->msg.end());
+ 		out << "\t" << cnv_msg << std::endl;
 		const std::list<FileInfo> &files = it -> files;
 		for(fit = files.begin(), i = 1; fit != files.end(); fit++, i++)
 		{

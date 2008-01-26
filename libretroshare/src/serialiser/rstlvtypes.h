@@ -34,7 +34,7 @@
 #include <string>
 #include <list>
 
-#define RS_TLV_TYPE_FILE_ITEM   0x0000
+//#define RS_TLV_TYPE_FILE_ITEM   0x0000
 
 //! A base class for all tlv items 
 /*! This class is provided to allow the serialisation and deserialization of compund 
@@ -112,8 +112,8 @@ virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deseria
 virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
 	std::list<RsTlvFileItem> items; /// Mandatory 
-	std::string title;   		/// Optional: title of file set
-	std::string comment; 		/// Optional: comments for file
+	std::wstring title;   		/// Optional: title of file set
+	std::wstring comment; 		/// Optional: comments for file
 };
 
 

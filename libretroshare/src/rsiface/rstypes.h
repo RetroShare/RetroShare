@@ -187,11 +187,11 @@ class MessageInfo: public BaseInfo
 	std::list<PersonInfo> msgcc;
 	std::list<PersonInfo> msgbcc;
 
-	std::string title;
-	std::string msg;
+	std::wstring title;
+	std::wstring msg;
 
-	std::string attach_title;
-	std::string attach_comment;
+	std::wstring attach_title;
+	std::wstring attach_comment;
 	std::list<FileInfo> files;
 	int size;  /* total of files */
 	int count; /* file count     */
@@ -228,7 +228,7 @@ class ChatInfo: public BaseInfo
 	std::string rsid;
 	unsigned int chatflags;
 	std::string name;
-	std::string msg;
+	std::wstring msg;
 };
 
 /* matched to the uPnP states */

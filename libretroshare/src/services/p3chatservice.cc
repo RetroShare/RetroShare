@@ -67,7 +67,7 @@ int	p3ChatService::status()
 
 /***************** Chat Stuff **********************/
 
-int     p3ChatService::sendChat(std::string msg)
+int     p3ChatService::sendChat(std::wstring msg)
 {
 	/* go through all the peers */
 
@@ -103,7 +103,7 @@ int     p3ChatService::sendChat(std::string msg)
 	return 1;
 }
 
-int     p3ChatService::sendPrivateChat(std::string msg, std::string id)
+int     p3ChatService::sendPrivateChat(std::wstring msg, std::string id)
 {
 	// make chat item....
 	pqioutput(PQL_DEBUG_BASIC, p3chatzone, 

@@ -52,7 +52,7 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	uint32_t chatFlags;
 	uint32_t sendTime;
 
-	std::string message;
+	std::wstring message;
 
 	/* not serialised */
 	uint32_t recvTime; 
@@ -104,8 +104,8 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	uint32_t sendTime;
 	uint32_t recvTime;
 
-	std::string subject;
-	std::string message;
+	std::wstring subject;
+	std::wstring message;
 
 	RsTlvPeerIdSet msgto;
 	RsTlvPeerIdSet msgcc;

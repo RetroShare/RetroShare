@@ -352,18 +352,18 @@ void p3MsgService::loadWelcomeMsg()
 
 	msg -> sendTime = 0;
 
-	msg -> subject = "Welcome to Retroshare";
+	msg -> subject = L"Welcome to Retroshare";
 
-	msg -> message    = "Send and receive messages\n"; 
-	msg -> message   += "with your friends...\n\n";
+	msg -> message    = L"Send and receive messages\n"; 
+	msg -> message   += L"with your friends...\n\n";
 
-	msg -> message   += "These can hold recommendations\n";
-	msg -> message   += "from your local shared files\n\n";
+	msg -> message   += L"These can hold recommendations\n";
+	msg -> message   += L"from your local shared files\n\n";
 
-	msg -> message   += "Add recommendations through\n";
-	msg -> message   += "the Local Files Dialog\n\n";
+	msg -> message   += L"Add recommendations through\n";
+	msg -> message   += L"the Local Files Dialog\n\n";
 
-	msg -> message   += "Enjoy.\n";
+	msg -> message   += L"Enjoy.\n";
 
 	imsg.push_back(msg);	
 }

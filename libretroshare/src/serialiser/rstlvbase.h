@@ -66,16 +66,22 @@
 /* 0b 0000 0000 0011 XXXX UInt32      */
 /* 0b 0000 0000 0100 XXXX UInt64      */
 /* 0b 0000 0000 0101 XXXX String      */
-/* 0b 0000 0000 0110 XXXX IP:Port V4  */
-/* 0b 0000 0000 0111 XXXX ??????      */
+/* 0b 0000 0000 0110 XXXX Wide String */
+/* 0b 0000 0000 0111 XXXX Hashes      */
+/* 0b 0000 0000 1000 XXXX IP:Port V4  */
 
 /******* BINARY TYPES *****************/
-/* 0b 0000 0000 1000 XXXX CERT        */
-/* 0b 0000 0000 1001 XXXX Priv Key    */
-/* 0b 0000 0000 1010 XXXX Pub  Key    */
-/* 0b 0000 0000 1011 XXXX Signature   */
+/* 0b 0000 0001 0000 XXXX CERT        */
+/* 0b 0000 0001 0001 XXXX Priv Key    */
+/* 0b 0000 0001 0010 XXXX Pub  Key    */
+/* 0b 0000 0001 0011 XXXX Signature   */
 
+/******* COMPOUND TYPES ***************/
 /* 0b 0001 XXXX XXXX XXXX Compound    */
+/* 0b 0001 0000 0000 XXXX FILE        */
+/* 0b 0001 0000 0001 XXXX KEY VALUE   */
+/* 0b 0001 0000 0010 XXXX PEERS       */
+/* 0b 0001 0000 0011 XXXX SERVICES    */
 
 const uint16_t TLV_TYPE_UINT8_SERID   = 0x0010;
 
@@ -90,45 +96,59 @@ const uint16_t TLV_TYPE_UINT32_SERID  = 0x0034;
 const uint16_t TLV_TYPE_UINT64_SIZE   = 0x0040;
 const uint16_t TLV_TYPE_UINT64_OFFSET = 0x0041;
 
-const uint16_t TLV_TYPE_STR_HASH      = 0x0050;
+const uint16_t TLV_TYPE_STR_PEERID    = 0x0050;
 const uint16_t TLV_TYPE_STR_NAME      = 0x0051;
 const uint16_t TLV_TYPE_STR_PATH      = 0x0052;
-const uint16_t TLV_TYPE_STR_PEERID    = 0x0053;
-const uint16_t TLV_TYPE_STR_KEY       = 0x0054;
-const uint16_t TLV_TYPE_STR_VALUE     = 0x0055;
-const uint16_t TLV_TYPE_STR_COMMENT   = 0x0056;
-const uint16_t TLV_TYPE_STR_TITLE     = 0x0057;
-const uint16_t TLV_TYPE_STR_MSG       = 0x0058;
-const uint16_t TLV_TYPE_STR_SUBJECT   = 0x0059;
+const uint16_t TLV_TYPE_STR_KEY       = 0x0053;
+const uint16_t TLV_TYPE_STR_VALUE     = 0x0054;
+const uint16_t TLV_TYPE_STR_COMMENT   = 0x0055;
+const uint16_t TLV_TYPE_STR_TITLE     = 0x0056;
+const uint16_t TLV_TYPE_STR_MSG       = 0x0057;
+const uint16_t TLV_TYPE_STR_SUBJECT   = 0x0058;
 
+/* Wide Chars (4 bytes per char) for internationalisation */
+const uint16_t TLV_TYPE_WSTR_PEERID   = 0x0060;
+const uint16_t TLV_TYPE_WSTR_NAME     = 0x0061;
+const uint16_t TLV_TYPE_WSTR_PATH     = 0x0062;
+const uint16_t TLV_TYPE_WSTR_KEY      = 0x0063;
+const uint16_t TLV_TYPE_WSTR_VALUE    = 0x0064;
+const uint16_t TLV_TYPE_WSTR_COMMENT  = 0x0065;
+const uint16_t TLV_TYPE_WSTR_TITLE    = 0x0066;
+const uint16_t TLV_TYPE_WSTR_MSG      = 0x0067;
+const uint16_t TLV_TYPE_WSTR_SUBJECT  = 0x0068;
 
-const uint16_t TLV_TYPE_IPV4_LOCAL    = 0x0060;
-const uint16_t TLV_TYPE_IPV4_SERVER   = 0x0061;
-const uint16_t TLV_TYPE_IPV4_LAST     = 0x0062;
+/* Hashs are always strings */
+const uint16_t TLV_TYPE_STR_HASH_SHA1 = 0x0070;
+const uint16_t TLV_TYPE_STR_HASH_ED2K = 0x0071;
+
+const uint16_t TLV_TYPE_IPV4_LOCAL    = 0x0080;
+const uint16_t TLV_TYPE_IPV4_SERVER   = 0x0081;
+const uint16_t TLV_TYPE_IPV4_LAST     = 0x0082;
+
 
 	/**** Binary Types ****/
-const uint16_t TLV_TYPE_CERT_XPGP_DER = 0x0080;
-const uint16_t TLV_TYPE_CERT_X509     = 0x0081;
-const uint16_t TLV_TYPE_CERT_OPENPGP  = 0x0082;
+const uint16_t TLV_TYPE_CERT_XPGP_DER = 0x0100;
+const uint16_t TLV_TYPE_CERT_X509     = 0x0101;
+const uint16_t TLV_TYPE_CERT_OPENPGP  = 0x0102;
 
-const uint16_t TLV_TYPE_PRIV_KEY_RSA  = 0x0090;
+const uint16_t TLV_TYPE_PRIV_KEY_RSA  = 0x0110;
 
-const uint16_t TLV_TYPE_PUB_KEY_RSA   = 0x00A0;
+const uint16_t TLV_TYPE_PUB_KEY_RSA   = 0x0120;
 
-const uint16_t TLV_TYPE_SIGN_RSA_SHA1 = 0x00B0;
+const uint16_t TLV_TYPE_SIGN_RSA_SHA1 = 0x0130;
 
-const uint16_t TLV_TYPE_BIN_FILEDATA  = 0x00C0;
+const uint16_t TLV_TYPE_BIN_FILEDATA  = 0x0140;
 
 	/**** Compound Types ****/
-const uint16_t TLV_TYPE_FILEITEM      = 0x1001;
-const uint16_t TLV_TYPE_FILESET       = 0x1002;
-const uint16_t TLV_TYPE_FILEDATA      = 0x1003;
+const uint16_t TLV_TYPE_FILEITEM      = 0x1000;
+const uint16_t TLV_TYPE_FILESET       = 0x1001;
+const uint16_t TLV_TYPE_FILEDATA      = 0x1002;
 
-const uint16_t TLV_TYPE_KEYVALUE      = 0x1005;
-const uint16_t TLV_TYPE_KEYVALUESET   = 0x1006;
+const uint16_t TLV_TYPE_KEYVALUE      = 0x1010;
+const uint16_t TLV_TYPE_KEYVALUESET   = 0x1011;
 
-const uint16_t TLV_TYPE_PEERSET       = 0x1007;
-const uint16_t TLV_TYPE_SERVICESET    = 0x1008;
+const uint16_t TLV_TYPE_PEERSET       = 0x1020;
+const uint16_t TLV_TYPE_SERVICESET    = 0x1030;
 
 
 /**** Basic TLV Functions ****/
@@ -165,6 +185,10 @@ uint32_t GetTlvUInt64Size();
 bool     SetTlvString(void *data, uint32_t size, uint32_t *offset, uint16_t type, std::string out);
 bool     GetTlvString(void *data, uint32_t size, uint32_t *offset, uint16_t type, std::string &in);
 uint32_t GetTlvStringSize(std::string &in);
+
+bool     SetTlvWideString(void *data, uint32_t size, uint32_t *offset, uint16_t type, std::wstring out);
+bool     GetTlvWideString(void *data, uint32_t size, uint32_t *offset, uint16_t type, std::wstring &in);
+uint32_t GetTlvWideStringSize(std::wstring &in);
 
 bool     SetTlvIpAddrPortV4(void *data, uint32_t size, uint32_t *offset, uint16_t type, struct sockaddr_in *out);
 bool     GetTlvIpAddrPortV4(void *data, uint32_t size, uint32_t *offset, uint16_t type, struct sockaddr_in *in);

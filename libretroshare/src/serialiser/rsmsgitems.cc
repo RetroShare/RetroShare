@@ -42,7 +42,7 @@ void 	RsChatItem::clear()
 {
 	chatFlags = 0;
 	sendTime = 0;
-	message = "";
+	message.clear();
 }
 
 std::ostream &RsChatItem::print(std::ostream &out, uint16_t indent)
@@ -56,7 +56,9 @@ std::ostream &RsChatItem::print(std::ostream &out, uint16_t indent)
         out << "sendTime:  " << sendTime  << std::endl;
 
         printIndent(out, int_Indent);
-        out << "msg:  " << message  << std::endl;
+
+	std::string cnv_message(message.begin(), message.end());
+        out << "msg:  " << cnv_message  << std::endl;
 
         printRsItemEnd(out, "RsChatItem", indent);
         return out;
@@ -68,7 +70,7 @@ uint32_t    RsChatSerialiser::sizeItem(RsChatItem *item)
 	uint32_t s = 8; /* header */
 	s += 4; /* chatFlags */
 	s += 4; /* sendTime  */
-	s += GetTlvStringSize(item->message);
+	s += GetTlvWideStringSize(item->message);
 
 	return s;
 }
@@ -99,7 +101,7 @@ bool     RsChatSerialiser::serialiseItem(RsChatItem *item, void *data, uint32_t 
 	std::cerr << "RsChatSerialiser::serialiseItem() chatFlags: " << ok << std::endl;
 	ok &= setRawUInt32(data, tlvsize, &offset, item->sendTime);
 	std::cerr << "RsChatSerialiser::serialiseItem() sendTime: " << ok << std::endl;
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, item->message);
+	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_MSG, item->message);
 	std::cerr << "RsChatSerialiser::serialiseItem() Message: " << ok << std::endl;
 
 	if (offset != tlvsize)
@@ -145,7 +147,7 @@ RsChatItem *RsChatSerialiser::deserialiseItem(void *data, uint32_t *pktsize)
 	/* get mandatory parts first */
 	ok &= getRawUInt32(data, rssize, &offset, &(item->chatFlags));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->sendTime));
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->message);
+	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_MSG, item->message);
 
 	if (offset != rssize)
 	{
@@ -195,8 +197,8 @@ void 	RsMsgItem::clear()
 	msgFlags = 0;
 	sendTime = 0;
 	recvTime = 0;
-	subject = "";
-	message = "";
+	subject.clear();
+	message.clear();
 
 	msgto.TlvClear();
 	msgcc.TlvClear();
@@ -232,9 +234,12 @@ std::ostream &RsMsgItem::print(std::ostream &out, uint16_t indent)
 	msgbcc.print(out, int_Indent);
 
         printIndent(out, int_Indent);
-        out << "subject:  " << subject  << std::endl;
+	std::string cnv_subject(subject.begin(), subject.end());
+        out << "subject:  " << cnv_subject  << std::endl;
+
         printIndent(out, int_Indent);
-        out << "msg:  " << message  << std::endl;
+	std::string cnv_message(message.begin(), message.end());
+        out << "msg:  " << cnv_message  << std::endl;
 
         printIndent(out, int_Indent);
         out << "Attachment: " << std::endl;
@@ -252,8 +257,8 @@ uint32_t    RsMsgSerialiser::sizeItem(RsMsgItem *item)
 	s += 4; /* sendTime  */
 	s += 4; /* recvTime  */
 
-	s += GetTlvStringSize(item->subject);
-	s += GetTlvStringSize(item->message);
+	s += GetTlvWideStringSize(item->subject);
+	s += GetTlvWideStringSize(item->message);
 
 	s += item->msgto.TlvSize();
 	s += item->msgcc.TlvSize();
@@ -292,9 +297,9 @@ bool     RsMsgSerialiser::serialiseItem(RsMsgItem *item, void *data, uint32_t *p
 	ok &= setRawUInt32(data, tlvsize, &offset, item->recvTime);
 	std::cerr << "RsMsgSerialiser::serialiseItem() recvTime: " << ok << std::endl;
 
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_SUBJECT, item->subject);
+	ok &= SetTlvWideString(data,tlvsize,&offset,TLV_TYPE_WSTR_SUBJECT,item->subject);
 	std::cerr << "RsMsgSerialiser::serialiseItem() Subject: " << ok << std::endl;
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, item->message);
+	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_MSG, item->message);
 	std::cerr << "RsMsgSerialiser::serialiseItem() Message: " << ok << std::endl;
 
 	ok &= item->msgto.SetTlv(data, tlvsize, &offset);
@@ -351,8 +356,8 @@ RsMsgItem *RsMsgSerialiser::deserialiseItem(void *data, uint32_t *pktsize)
 	ok &= getRawUInt32(data, rssize, &offset, &(item->sendTime));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->recvTime));
 
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_SUBJECT, item->message);
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->message);
+	ok &= GetTlvWideString(data,rssize,&offset,TLV_TYPE_WSTR_SUBJECT,item->subject);
+	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_MSG, item->message);
 	ok &= item->msgto.GetTlv(data, rssize, &offset);
 	ok &= item->msgcc.GetTlv(data, rssize, &offset);
 	ok &= item->msgbcc.GetTlv(data, rssize, &offset);

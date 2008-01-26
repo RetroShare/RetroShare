@@ -446,6 +446,112 @@ uint32_t GetTlvStringSize(std::string &in) {
 	return 4 + in.size();
 }
 
+
+/* We must use a consistent wchar size for cross platform ness.
+ * As unix uses 4bytes, and windows 2bytes? we'll go with 4bytes for maximum flexibility
+ */
+
+const uint32_t RS_WCHAR_SIZE = 4;
+
+bool SetTlvWideString(void *data, uint32_t size, uint32_t *offset, 
+			uint16_t type, std::wstring out) 
+{
+	if (!data)
+		return false;
+	uint16_t tlvsize = GetTlvWideStringSize(out); 
+	uint32_t tlvend = *offset + tlvsize; /* where the data will extend to */
+
+	if (size < tlvend)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "SetTlvWideString() FAILED - not enough space" << std::endl;
+		std::cerr << "SetTlvWideString() size: " << size << std::endl;
+		std::cerr << "SetTlvWideString() tlvsize: " << tlvsize << std::endl;
+		std::cerr << "SetTlvWideString() tlvend: " << tlvend << std::endl;
+#endif
+		return false;
+	}
+
+	bool ok = true;
+	ok &= SetTlvBase(data, tlvend, offset, type, tlvsize);
+
+	uint16_t strlen = out.length();
+
+	/* Must convert manually to ensure its always the same! */
+	for(uint16_t i = 0; i < strlen; i++)
+	{
+		uint32_t widechar = out[i];
+		ok &= setRawUInt32(data, tlvend, offset, widechar);
+	}
+	return ok;
+}
+
+//tested
+bool GetTlvWideString(void *data, uint32_t size, uint32_t *offset, 
+			uint16_t type, std::wstring &in) 
+{
+	if (!data)
+		return false;
+
+	if (size < *offset + 4)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "GetTlvWideString() FAILED - not enough space" << std::endl;
+		std::cerr << "GetTlvWideString() size: " << size << std::endl;
+		std::cerr << "GetTlvWideString() *offset: " << *offset << std::endl;
+#endif
+		return false;
+	}
+
+	/* extract the type and size */
+	void *tlvstart = right_shift_void_pointer(data, *offset);
+	uint16_t tlvtype = GetTlvType(tlvstart);
+	uint16_t tlvsize = GetTlvSize(tlvstart);
+
+	/* check that there is size */
+	uint32_t tlvend = *offset + tlvsize;
+	if (size < tlvend)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "GetTlvWideString() FAILED - not enough space" << std::endl;
+		std::cerr << "GetTlvWideString() size: " << size << std::endl;
+		std::cerr << "GetTlvWideString() tlvsize: " << tlvsize << std::endl;
+		std::cerr << "GetTlvWideString() tlvend: " << tlvend << std::endl;
+#endif
+		return false;
+	}
+
+	if (type != tlvtype)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "GetTlvWideString() FAILED - invalid type" << std::endl;
+		std::cerr << "GetTlvWideString() type: " << type << std::endl;
+		std::cerr << "GetTlvWideString() tlvtype: " << tlvtype << std::endl;
+#endif
+		return false;
+	}
+
+
+	bool ok = true;
+	/* remove the header, calc string length */
+	*offset += 4;
+	uint16_t strlen = (tlvsize - 4) / RS_WCHAR_SIZE; 
+
+	/* Must convert manually to ensure its always the same! */
+	for(uint16_t i = 0; i < strlen; i++)
+	{
+		uint32_t widechar;
+		ok &= getRawUInt32(data, tlvend, offset, &widechar);
+		in += widechar;
+	}
+	return ok;
+}
+
+uint32_t GetTlvWideStringSize(std::wstring &in) {
+	return 4 + in.size() * RS_WCHAR_SIZE;
+}
+
+
 bool SetTlvIpAddrPortV4(void *data, uint32_t size, uint32_t *offset,
 		uint16_t type, struct sockaddr_in *out) {
 	if (!data)

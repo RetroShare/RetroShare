@@ -49,8 +49,8 @@ class p3ChatService: public p3Service
 virtual int   tick();
 virtual int   status();
 
-int	sendChat(std::string msg);
-int	sendPrivateChat(std::string msg, std::string id);
+int	sendChat(std::wstring msg);
+int	sendPrivateChat(std::wstring msg, std::string id);
 
 std::list<RsChatItem *> getChatQueue(); 
 

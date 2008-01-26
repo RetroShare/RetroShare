@@ -741,7 +741,7 @@ bool RsCacheConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *size)
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->name);
 	std::cerr << "RsCacheConfigSerialiser::serialise() name: " << ok << std::endl;
 
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_HASH, item->hash);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_HASH_SHA1, item->hash);
 	std::cerr << "RsCacheConfigSerialiser::serialise() hash: " << ok << std::endl;
 
 
@@ -811,7 +811,7 @@ RsItem *RsCacheConfigSerialiser::deserialise(void *data, uint32_t *size)
 				case TLV_TYPE_STR_NAME:
 					ok &= GetTlvString(data, tlvend, offset,  tlvsubtype, item->name);
 					break;
-				case TLV_TYPE_STR_HASH:
+				case TLV_TYPE_STR_HASH_SHA1:
 					ok &= GetTlvString(data, tlvend, offset,  tlvsubtype, item->hash);
 					break;
 				default:

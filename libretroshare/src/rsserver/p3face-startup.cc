@@ -619,7 +619,6 @@ int RsServer::StartupRetroShare(RsInit *config)
 		msgSrv->loadWelcomeMsg();
 	}
 
-
 	// load up the help page
 	std::string helppage = config->basedir + config->dirSeperator;
 	helppage += configHelpName;
