@@ -162,13 +162,13 @@ void  ChanMsgDialog::insertSendList()
 		/* (0) Person */
 		item -> setText(0, QString::fromStdString(detail.name));
 		/* () Org */
-		item -> setText(1, QString::fromStdString(detail.org));
+		//item -> setText(1, QString::fromStdString(detail.org));
 		/* () Location */
-		item -> setText(2, QString::fromStdString(detail.location));
+		//item -> setText(2, QString::fromStdString(detail.location));
 		/* () Country */
-		item -> setText(3, QString::fromStdString(detail.email));
+		//item -> setText(3, QString::fromStdString(detail.email));
 		/* () Id */
-		item -> setText(4, QString::fromStdString(detail.id));
+		item -> setText(1, QString::fromStdString(detail.id));
 
 		item -> setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		//item -> setCheckState(0, Qt::Checked);
@@ -192,7 +192,7 @@ void  ChanMsgDialog::insertSendList()
 
         /* remove old items ??? */
 	sendWidget->clear();
-	sendWidget->setColumnCount(6);
+	sendWidget->setColumnCount(1);
 
 	/* add the items in! */
 	sendWidget->insertTopLevelItems(0, items);
@@ -378,8 +378,8 @@ void  ChanMsgDialog::sendMessage()
 	/* construct a message */
 	MessageInfo mi;
 
-	mi.title = ui.titleEdit->text().toStdString();
-	mi.msg =   ui.msgText->toPlainText().toStdString();
+	mi.title = ui.titleEdit->text().toStdWString();
+	mi.msg =   ui.msgText->toPlainText().toStdWString();
 	/* filled in later */
 	//mi.msgId = rand();
 
@@ -451,7 +451,7 @@ void ChanMsgDialog::togglePersonItem( QTreeWidgetItem *item, int col )
         std::cerr << "TogglePersonItem()" << std::endl;
 
         /* extract id */
-        std::string id = (item -> text(4)).toStdString();
+        std::string id = (item -> text(1)).toStdString();
 
         /* get state */
         bool inMsg = (Qt::Checked == item -> checkState(0)); /* alway column 0 */

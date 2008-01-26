@@ -89,6 +89,7 @@ void ChatDialog::msgSendListCostumPopupMenu( QPoint point )
       contextMnu.addAction( privchatAct);
       contextMnu.exec( mevent->globalPos() );
 }
+
 int     ChatDialog::loadInitMsg()
 {
 	std::ostringstream out;
@@ -145,11 +146,6 @@ void ChatDialog::insertChat()
 	}
 	n = 1 + n / 2; /* shrink it! */
 
-	//std::cerr << "Space count : " << n << std::endl;
-
-	std::string spaces(" ");
-
-
 	/* add in lines at the bottom */
 	int ts = time(NULL);
 	for(it = newchat.begin(); it != newchat.end(); it++)
@@ -164,6 +160,7 @@ void ChatDialog::insertChat()
 
 		std::ostringstream out;
 		QString currenttxt = msgWidget->toHtml();
+		QString extraTxt;
 
 		if ((it->name == lastChatName) && (ts - lastChatTime < 60))
 		{
@@ -173,48 +170,39 @@ void ChatDialog::insertChat()
 		{
 #if defined(Q_OS_WIN)
 			/* nothing */
-			//out << "<br>" << std::endl;
 #else
-			out << "<br>" << std::endl;
+			extraTxt += "<br>\n";
 #endif
 			for(int i = 0; i < n; i++)
 			{
-				out << spaces; 
+				extraTxt += " ";
 			}
             		QString timestamp = "[" + QDateTime::currentDateTime().toString("hh:mm:ss") + "]";
             		QString name = QString::fromStdString(it->name);
-            		//QString line = "<span style=\"color:#1D84C9\">" + timestamp +
-                       	//	                  "   " + name + "</span> \n<br>";
             		QString line = "<span style=\"color:#1D84C9\"><strong>" + timestamp +
                        		                  "   " + name + "</strong></span> \n<br>";
 
-                	out << line.toStdString();
+                	extraTxt += line;
                 	
 		}
 
-		out << it -> msg;
+		extraTxt += QString::fromStdWString(it->msg);
 
 	        /* This might be WIN32 only - or maybe Qt4.2.2 only - but need it for windows at the mom */
 #if defined(Q_OS_WIN)
-		//out << "<br>";
-		//out << "<br>" << std::endl;
-
-		out << std::endl;
+		extraTxt += "\n";
 #else
-		out << std::endl;
+		extraTxt += "\n";
 #endif
 
 		lastChatName = it -> name;
 		lastChatTime = ts;
 
 		/* add it everytime */
-		QString extra = QString::fromStdString(out.str());
-		currenttxt += extra;
+		currenttxt += extraTxt;
 
 		msgWidget->setHtml(currenttxt);
 
-		//std::cerr << " Added Text: " << std::endl;
-		//std::cerr << out.str() << std::endl;
 		QScrollBar *qsb =  msgWidget->verticalScrollBar();
 		qsb -> setValue(qsb->maximum());
 	}
@@ -233,7 +221,7 @@ void ChatDialog::sendMsg()
 	//font.setItalic(ui.textitalicChatButton->isChecked());
 
 	ChatInfo ci;
-	ci.msg = lineWidget->text().toStdString();
+	ci.msg = lineWidget->text().toStdWString();
 	ci.chatflags = RS_CHAT_PUBLIC;
 	//ci.messageFont = font;
 	//ci.messageColor = textColor;
@@ -280,8 +268,8 @@ void  ChatDialog::insertSendList()
 		/* (0) Person */
 		item -> setText(0, QString::fromStdString(details.name));
 
-		//item -> setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-		item -> setFlags(Qt::ItemIsUserCheckable);
+		item -> setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+		//item -> setFlags(Qt::ItemIsUserCheckable);
 
 		item -> setCheckState(0, Qt::Checked);
 		/**** NOT SELECTABLE AT THE MOMENT 

@@ -200,7 +200,7 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 
 
 	/* add in lines at the bottom */
-	std::ostringstream out;
+	QString extraTxt;
 	int ts = time(NULL);
 
 
@@ -222,7 +222,7 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 	{
 	    	QString line = "<br>\n<span style=\"color:#1D84C9\"><strong> ----- PEER OFFLINE (Chat will be lost) -----</strong></span> \n<br>";
 
-		out << line.toStdString();
+		extraTxt += line;
 	}
 
 	
@@ -236,15 +236,12 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 #if defined(Q_OS_WIN)
 		// Nothing.
 #else
-		out << "<br>" << std::endl;
+		extraTxt += "<br>\n";
 #endif
 		for(int i = 0; i < n; i++)
 		{
-			out << spaces;
+			extraTxt += " ";
 		}
-
-		//out << "[ " << ci->name << " +" << ts - lastChatTime << "s ]" << std::endl;
-		//out << "<br>" << std::endl;
 
             QString timestamp = "(" + QDateTime::currentDateTime().toString("hh:mm:ss") + ") ";
             //QString pre = tr("Peer:" );
@@ -252,24 +249,22 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 	    QString line = "<span style=\"color:#1D84C9\"><strong>" + timestamp + 
 					 "   " + name + "</strong></span> \n<br>";
 
-		out << line.toStdString();
+		extraTxt += line;
 
 	}
-	out << ci -> msg;
+	extraTxt += QString::fromStdWString(ci -> msg);
 
 	/* This might be WIN32 only - or maybe Qt4.2.2 only - but need it for windows at the mom */
 #if defined(Q_OS_WIN)
-		//out << "<br>"; // << std::endl;
-		out << std::endl;
+		extraTxt += "\n";
 #else
-		out << std::endl;
+		extraTxt += "\n";
 #endif
 
 	lastChatTime = ts;
 	lastChatName = ci->name;
 
-	QString extra = QString::fromStdString(out.str());
-	currenttxt += extra;
+	currenttxt += extraTxt;
 
 	msgWidget->setHtml(currenttxt);
 
@@ -296,7 +291,7 @@ void PopupChatDialog::sendChat()
           rsiface->unlockData(); /* Unlock Interface */
 	}
 
-        ci.msg = lineWidget->text().toStdString();
+        ci.msg = lineWidget->text().toStdWString();
         ci.chatflags = RS_CHAT_PRIVATE;
 
 	addChatMsg(&ci);

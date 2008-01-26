@@ -5,17 +5,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>519</width>
-    <height>343</height>
+    <width>747</width>
+    <height>492</height>
    </rect>
   </property>
   <property name="sizePolicy" >
-   <sizepolicy>
-    <hsizetype>5</hsizetype>
-    <vsizetype>7</vsizetype>
+   <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="minimumSize" >
+   <size>
+    <width>60</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="palette" >
    <palette>
@@ -501,12 +505,105 @@
    <enum>Qt::DefaultContextMenu</enum>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
-    <number>4</number>
-   </property>
-   <property name="spacing" >
-    <number>1</number>
-   </property>
+   <item row="0" column="0" >
+    <widget class="QPushButton" name="newmessageButton" >
+     <property name="minimumSize" >
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="toolTip" >
+      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">New Message&lt;/p>&lt;/body>&lt;/html></string>
+     </property>
+     <property name="styleSheet" >
+      <string>QPushButton
+{
+border-image: url(:/images/folder-draft24.png);
+}
+QPushButton:hover 
+{
+border-image: url(:/images/folder-draft24-hover.png);
+}
+
+QPushButton:pressed 
+{
+border-image: url(:/images/folder-draft24-pressed.png);
+}
+</string>
+     </property>
+     <property name="text" >
+      <string/>
+     </property>
+     <property name="iconSize" >
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="default" >
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QPushButton" name="replymessageButton" >
+     <property name="minimumSize" >
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="toolTip" >
+      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">reply to selected message&lt;/p>&lt;/body>&lt;/html></string>
+     </property>
+     <property name="styleSheet" >
+      <string>
+QPushButton
+{
+border-image: url(:/images/replymail24.png);
+}
+
+QPushButton:hover
+{
+border-image: url(:/images/replymail24-hover.png);
+}
+
+QPushButton:pressed
+{
+border-image: url(:/images/replymail-pressed.png);
+}
+</string>
+     </property>
+     <property name="text" >
+      <string/>
+     </property>
+     <property name="iconSize" >
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="2" >
     <widget class="QPushButton" name="removemessageButton" >
      <property name="minimumSize" >
@@ -554,15 +651,28 @@ border-image: url(:/images/deletemail-pressed.png);
      </property>
     </widget>
    </item>
+   <item row="0" column="3" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
    <item row="1" column="0" colspan="4" >
-    <widget class="QSplitter" name="splitter_3" >
+    <widget class="QSplitter" name="splitter_2" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
      <widget class="QListWidget" name="listWidget" >
       <property name="maximumSize" >
        <size>
-        <width>160</width>
+        <width>120</width>
         <height>16777215</height>
        </size>
       </property>
@@ -626,257 +736,442 @@ border-image: url(:/images/deletemail-pressed.png);
        </property>
       </item>
      </widget>
-     <widget class="QSplitter" name="splitter_2" >
+     <widget class="QSplitter" name="msgSplitter" >
       <property name="orientation" >
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="QSplitter" name="splitter" >
-       <property name="orientation" >
-        <enum>Qt::Vertical</enum>
+      <widget class="QTreeWidget" name="msgWidget" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>5</verstretch>
+        </sizepolicy>
        </property>
-       <widget class="QTreeWidget" name="msgWidget" >
-        <property name="contextMenuPolicy" >
-         <enum>Qt::CustomContextMenu</enum>
+       <property name="contextMenuPolicy" >
+        <enum>Qt::CustomContextMenu</enum>
+       </property>
+       <property name="indentation" >
+        <number>16</number>
+       </property>
+       <property name="sortingEnabled" >
+        <bool>true</bool>
+       </property>
+       <property name="columnCount" >
+        <number>4</number>
+       </property>
+       <column>
+        <property name="text" >
+         <string>Date</string>
         </property>
-        <property name="indentation" >
-         <number>16</number>
+       </column>
+       <column>
+        <property name="text" >
+         <string>From</string>
         </property>
-        <property name="sortingEnabled" >
-         <bool>true</bool>
+       </column>
+       <column>
+        <property name="text" >
+         <string>Subject</string>
         </property>
-        <property name="columnCount" >
-         <number>6</number>
+       </column>
+       <column>
+        <property name="text" >
+         <string>#Recommendations</string>
         </property>
-        <column>
-         <property name="text" >
-          <string>Date</string>
-         </property>
-        </column>
-        <column>
-         <property name="text" >
-          <string>From</string>
-         </property>
-        </column>
-        <column>
-         <property name="text" >
-          <string>Title</string>
-         </property>
-        </column>
-        <column>
-         <property name="text" >
-          <string>Count</string>
-         </property>
-        </column>
-        <column>
-         <property name="text" >
-          <string>Size</string>
-         </property>
-        </column>
-        <column>
-         <property name="text" >
-          <string>Msg</string>
-         </property>
-        </column>
-       </widget>
-       <widget class="QTextBrowser" name="msgText" />
+       </column>
       </widget>
-      <widget class="QWidget" name="layoutWidget" >
-       <layout class="QGridLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
-         <number>0</number>
-        </property>
-        <item row="1" column="0" colspan="2" >
-         <widget class="QTreeWidget" name="msgList" >
-          <property name="contextMenuPolicy" >
-           <enum>Qt::CustomContextMenu</enum>
+      <widget class="QWidget" name="" >
+       <layout class="QVBoxLayout" >
+        <item>
+         <layout class="QHBoxLayout" >
+          <item>
+           <layout class="QVBoxLayout" >
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Preferred</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QGridLayout" >
+            <item row="0" column="0" >
+             <widget class="QLabel" name="label_16" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>60</width>
+                <height>10</height>
+               </size>
+              </property>
+              <property name="maximumSize" >
+               <size>
+                <width>16777215</width>
+                <height>10</height>
+               </size>
+              </property>
+              <property name="font" >
+               <font>
+                <pointsize>10</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string>Subject:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" >
+             <widget class="QLabel" name="subjectText" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                <horstretch>2</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>0</width>
+                <height>10</height>
+               </size>
+              </property>
+              <property name="maximumSize" >
+               <size>
+                <width>16777215</width>
+                <height>10</height>
+               </size>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QLabel" name="label_7" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>60</width>
+                <height>10</height>
+               </size>
+              </property>
+              <property name="maximumSize" >
+               <size>
+                <width>16777215</width>
+                <height>10</height>
+               </size>
+              </property>
+              <property name="font" >
+               <font>
+                <pointsize>10</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string>From:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <widget class="QLabel" name="fromText" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                <horstretch>2</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>0</width>
+                <height>10</height>
+               </size>
+              </property>
+              <property name="maximumSize" >
+               <size>
+                <width>16777215</width>
+                <height>10</height>
+               </size>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" >
+             <widget class="QLabel" name="label_12" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>60</width>
+                <height>10</height>
+               </size>
+              </property>
+              <property name="maximumSize" >
+               <size>
+                <width>16777215</width>
+                <height>10</height>
+               </size>
+              </property>
+              <property name="font" >
+               <font>
+                <pointsize>10</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string>Date:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1" >
+             <widget class="QLabel" name="dateText" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                <horstretch>2</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>0</width>
+                <height>10</height>
+               </size>
+              </property>
+              <property name="maximumSize" >
+               <size>
+                <width>16777215</width>
+                <height>10</height>
+               </size>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0" >
+             <widget class="QLabel" name="label_14" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>60</width>
+                <height>10</height>
+               </size>
+              </property>
+              <property name="maximumSize" >
+               <size>
+                <width>16777215</width>
+                <height>10</height>
+               </size>
+              </property>
+              <property name="font" >
+               <font>
+                <pointsize>10</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string>To:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1" >
+             <widget class="QLabel" name="toText" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                <horstretch>2</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>0</width>
+                <height>10</height>
+               </size>
+              </property>
+              <property name="maximumSize" >
+               <size>
+                <width>16777215</width>
+                <height>10</height>
+               </size>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QTextBrowser" name="msgText" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+            <horstretch>0</horstretch>
+            <verstretch>10</verstretch>
+           </sizepolicy>
           </property>
-          <property name="sortingEnabled" >
-           <bool>true</bool>
-          </property>
-          <column>
-           <property name="text" >
-            <string>File Name</string>
-           </property>
-          </column>
-          <column>
-           <property name="text" >
-            <string>Size</string>
-           </property>
-          </column>
-          <column>
-           <property name="text" >
-            <string>Sources</string>
-           </property>
-          </column>
-          <column>
-           <property name="text" >
-            <string>Hash</string>
-           </property>
-          </column>
          </widget>
         </item>
-        <item row="0" column="0" >
-         <layout class="QGridLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <item row="0" column="0" >
-           <widget class="QLabel" name="label_6" >
-            <property name="text" >
-             <string/>
+        <item>
+         <layout class="QHBoxLayout" >
+          <item>
+           <layout class="QGridLayout" >
+            <property name="leftMargin" >
+             <number>0</number>
             </property>
-            <property name="pixmap" >
-             <pixmap resource="images.qrc" >:/images/attachment.png</pixmap>
+            <property name="topMargin" >
+             <number>0</number>
             </property>
-           </widget>
-          </item>
-          <item row="0" column="1" >
-           <widget class="QLabel" name="label_2" >
-            <property name="text" >
-             <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>6</number>
+            </property>
+            <property name="verticalSpacing" >
+             <number>6</number>
+            </property>
+            <item row="0" column="1" >
+             <widget class="QLabel" name="label_6" >
+              <property name="text" >
+               <string/>
+              </property>
+              <property name="pixmap" >
+               <pixmap resource="images.qrc" >:/images/attachment.png</pixmap>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2" >
+             <widget class="QLabel" name="label_2" >
+              <property name="text" >
+               <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
 &lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:10pt; font-weight:600;">Recommended Files&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3" >
+             <widget class="QLabel" name="filesText" >
+              <property name="font" >
+               <font>
+                <pointsize>10</pointsize>
+                <italic>true</italic>
+               </font>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0" >
+             <widget class="QPushButton" name="expandFilesButton" >
+              <property name="text" >
+               <string/>
+              </property>
+              <property name="icon" >
+               <iconset resource="images.qrc" >:/images/add_24x24.png</iconset>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>351</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="downloadButton" >
+            <property name="text" >
+             <string/>
+            </property>
+            <property name="icon" >
+             <iconset resource="images.qrc" >:/images/down.png</iconset>
             </property>
            </widget>
           </item>
          </layout>
         </item>
-        <item row="0" column="1" >
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
        </layout>
+      </widget>
+      <widget class="QTreeWidget" name="msgList" >
+       <property name="contextMenuPolicy" >
+        <enum>Qt::CustomContextMenu</enum>
+       </property>
+       <property name="sortingEnabled" >
+        <bool>true</bool>
+       </property>
+       <column>
+        <property name="text" >
+         <string>File Name</string>
+        </property>
+       </column>
+       <column>
+        <property name="text" >
+         <string>Size</string>
+        </property>
+       </column>
+       <column>
+        <property name="text" >
+         <string>Sources</string>
+        </property>
+       </column>
+       <column>
+        <property name="text" >
+         <string>Hash</string>
+        </property>
+       </column>
       </widget>
      </widget>
     </widget>
-   </item>
-   <item row="0" column="1" >
-    <widget class="QPushButton" name="replymessageButton" >
-     <property name="minimumSize" >
-      <size>
-       <width>24</width>
-       <height>24</height>
-      </size>
-     </property>
-     <property name="maximumSize" >
-      <size>
-       <width>24</width>
-       <height>24</height>
-      </size>
-     </property>
-     <property name="toolTip" >
-      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">reply to selected message&lt;/p>&lt;/body>&lt;/html></string>
-     </property>
-     <property name="styleSheet" >
-      <string>
-QPushButton
-{
-border-image: url(:/images/replymail24.png);
-}
-
-QPushButton:hover
-{
-border-image: url(:/images/replymail24-hover.png);
-}
-
-QPushButton:pressed
-{
-border-image: url(:/images/replymail-pressed.png);
-}
-</string>
-     </property>
-     <property name="text" >
-      <string/>
-     </property>
-     <property name="iconSize" >
-      <size>
-       <width>24</width>
-       <height>24</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0" >
-    <widget class="QPushButton" name="newmessageButton" >
-     <property name="minimumSize" >
-      <size>
-       <width>24</width>
-       <height>24</height>
-      </size>
-     </property>
-     <property name="maximumSize" >
-      <size>
-       <width>24</width>
-       <height>24</height>
-      </size>
-     </property>
-     <property name="toolTip" >
-      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">New Message&lt;/p>&lt;/body>&lt;/html></string>
-     </property>
-     <property name="styleSheet" >
-      <string>QPushButton
-{
-border-image: url(:/images/folder-draft24.png);
-}
-QPushButton:hover 
-{
-border-image: url(:/images/folder-draft24-hover.png);
-}
-
-QPushButton:pressed 
-{
-border-image: url(:/images/folder-draft24-pressed.png);
-}
-</string>
-     </property>
-     <property name="text" >
-      <string/>
-     </property>
-     <property name="iconSize" >
-      <size>
-       <width>24</width>
-       <height>24</height>
-      </size>
-     </property>
-     <property name="default" >
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="3" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" >
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>

@@ -60,6 +60,9 @@ void updateMessages ( QTreeWidgetItem * item, int column );
   void getcurrentrecommended();
   void getallrecommended();
 
+  /* handle splitter */
+  void togglefileview();
+
 private:
 
   bool getCurrentMsg(std::string &cid, std::string &mid);

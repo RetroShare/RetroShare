@@ -59,9 +59,11 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   connect( ui.msgWidget, SIGNAL( itemClicked ( QTreeWidgetItem *, int) ), this, SLOT( updateMessages ( QTreeWidgetItem *, int) ) );
   connect( ui.listWidget, SIGNAL( currentRowChanged ( int) ), this, SLOT( changeBox ( int) ) );
   
-  
   connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(newmessage()));
   connect(ui.removemessageButton, SIGNAL(clicked()), this, SLOT(removemessage()));
+
+  connect(ui.expandFilesButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
+  connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getallrecommended()));
   
 
   mCurrCertId = "";
@@ -86,8 +88,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   
 	msglheader->resizeSection ( 0, 125 );
 	msglheader->resizeSection ( 1, 100 );
-	msglheader->resizeSection ( 2, 100 );
-	msglheader->resizeSection ( 3, 200 );
+	msglheader->resizeSection ( 2, 250 );
+	msglheader->resizeSection ( 3, 50 );
 
 
   /* Hide platform specific features */
@@ -159,6 +161,64 @@ void MessagesDialog::replytomessage()
 	/* put msg on msgBoard, and switch to it. */
 
 
+}
+
+void MessagesDialog::togglefileview()
+{
+	/* if msg header visible -> hide by changing splitter 
+	 * three widgets...
+	 */
+
+	QList<int> sizeList = ui.msgSplitter->sizes();
+	QList<int>::iterator it;
+
+	int listSize = 0;
+	int msgSize = 0;
+	int recommendSize = 0;
+	int i = 0;
+
+	for(it = sizeList.begin(); it != sizeList.end(); it++, i++)
+	{
+		if (i == 0)
+		{
+			listSize = (*it);
+		}
+		else if (i == 1)
+		{
+			msgSize = (*it);
+		}
+		else if (i == 2)
+		{
+			recommendSize = (*it);
+		}
+	}
+
+	int totalSize = listSize + msgSize + recommendSize;
+
+	bool toShrink = true;
+	if (recommendSize < (int) totalSize / 10)
+	{
+		toShrink = false;
+	}
+
+	QList<int> newSizeList;
+	if (toShrink)
+	{
+		newSizeList.push_back(listSize + recommendSize / 3);
+		newSizeList.push_back(msgSize + recommendSize * 2 / 3);
+		newSizeList.push_back(0);
+	}
+	else
+	{
+		/* no change */
+		int nlistSize = (totalSize * 2 / 3) * listSize / (listSize + msgSize);
+		int nMsgSize = (totalSize * 2 / 3) - listSize;
+		newSizeList.push_back(nlistSize);
+		newSizeList.push_back(nMsgSize);
+		newSizeList.push_back(totalSize * 1 / 3);
+	}
+
+	ui.msgSplitter->setSizes(newSizeList);
 }
 
 
@@ -318,7 +378,8 @@ void MessagesDialog::insertMessages()
 			item -> setText(1, QString::fromStdString(out.str()));
 		}
 
-		item -> setText(2, QString::fromStdString(it->title));
+		// Subject
+		item -> setText(2, QString::fromStdWString(it->title));
 
 		// No of Files.
 		{
@@ -327,47 +388,11 @@ void MessagesDialog::insertMessages()
 			item -> setText(3, QString::fromStdString(out.str()));
 		}
 
-		// Size.
-		// Msg.
-		// Rank
+		item -> setText(4, QString::fromStdString(it->id));
+		item -> setText(5, QString::fromStdString(it->msgId));
+		if ((oldSelected) && (mid == it->msgId))
 		{
-			std::ostringstream out;
-			out << it -> size;
-			item -> setText(4, QString::fromStdString(out.str()));
-		}
-
-		/* strip out the \n and \r symbols */
-		std::string tmsg = it -> msg;
-		for(int i = 0; i < tmsg.length(); i++)
-		{
-			if ((tmsg[i] == '\n') ||
-			    (tmsg[i] == '\r'))
-			{
-			   tmsg[i] = ' ';
-			}
-		}
-		item -> setText(5, QString::fromStdString(tmsg));
-
-		{
-			std::ostringstream out;
-			out << "5"; // RANK 
-			item -> setText(6, QString::fromStdString(out.str()));
-		}
-
-		{
-			std::ostringstream out;
-			out << it -> id;
-			item -> setText(7, QString::fromStdString(out.str()));
-		}
-
-		{
-			std::ostringstream out;
-			out << it -> msgId;
-			item -> setText(8, QString::fromStdString(out.str()));
-			if ((oldSelected) && (mid == out.str()))
-			{
-				newSelected = item;
-			}
+			newSelected = item;
 		}
 
 		if (it -> msgflags & RS_MSG_NEW)
@@ -421,14 +446,21 @@ void MessagesDialog::insertMsgTxtAndFiles()
 	if (!qtwi)
 	{
 		/* blank it */
+		ui.dateText-> setText("");
+		ui.toText->setText("");
+		ui.fromText->setText("");
+		ui.filesText->setText("");
+
+		ui.subjectText->setText("");
 		ui.msgText->setText("");
 		ui.msgList->clear();
+
 		return;
 	}
 	else
 	{
-		cid = qtwi -> text(7).toStdString();
-		mid = qtwi -> text(8).toStdString(); 
+		cid = qtwi -> text(4).toStdString();
+		mid = qtwi -> text(5).toStdString(); 
 	}
 
 	/* Save the Data.... for later */
@@ -489,43 +521,55 @@ void MessagesDialog::insertMsgTxtAndFiles()
 	/* add the items in! */
 	tree->insertTopLevelItems(0, items);
 
-
 	/* add the Msg */
-	std::ostringstream msgout;
 	std::list<PersonInfo>::const_iterator pit;
-	msgout << "Msg Header ----------------- TS: " << mi->ts;
-	if (mi->msgto.size() > 0)
-		msgout << std::endl << "To: ";
+
+	QString msgTxt;
 	for(pit = mi->msgto.begin(); pit != mi->msgto.end(); pit++)
 	{
-		msgout << pit->name << " (" << pit->id << "), ";
+		msgTxt += QString::fromStdString(pit->name);
+		msgTxt += " <";
+		msgTxt += QString::fromStdString(pit->id);
+		msgTxt += ">, ";
 	}
 
 	if (mi->msgcc.size() > 0)
-		msgout << std::endl << "Cc: ";
+		msgTxt += "\nCc: ";
 	for(pit = mi->msgcc.begin(); pit != mi->msgcc.end(); pit++)
 	{
-		msgout << pit->name << " (" << pit->id << "), ";
+		msgTxt += QString::fromStdString(pit->name);
+		msgTxt += " <";
+		msgTxt += QString::fromStdString(pit->id);
+		msgTxt += ">, ";
 	}
 
 	if (mi->msgbcc.size() > 0)
-		msgout << std::endl << "Bcc: ";
+		msgTxt += "\nBcc: ";
 	for(pit = mi->msgbcc.begin(); pit != mi->msgbcc.end(); pit++)
 	{
-		msgout << pit->name << " (" << pit->id << "), ";
+		msgTxt += QString::fromStdString(pit->name);
+		msgTxt += " <";
+		msgTxt += QString::fromStdString(pit->id);
+		msgTxt += ">, ";
 	}
 
-	msgout << std::endl;
-	msgout << "----------------------------";
-	msgout << std::endl;
+	{
+		QDateTime qtime;
+		qtime.setTime_t(mi->ts);
+		QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
+		ui.dateText-> setText(timestamp);
+	}
+	ui.toText->setText(msgTxt);
+	ui.fromText->setText(QString::fromStdString(mi->srcname));
 
-	msgout << "Subject: " << mi -> title << std::endl;
-	msgout << "Message: " << std::endl;
-	msgout << mi->msg << std::endl;
-		
+	ui.subjectText->setText(QString::fromStdWString(mi -> title));
+	ui.msgText->setText(QString::fromStdWString(mi->msg));
 
-	ui.msgText->setText(QString::fromStdString(msgout.str()));
-
+	{
+		std::ostringstream out;
+		out << "(" << mi->count << " Files)";
+		ui.filesText->setText(QString::fromStdString(out.str()));
+	}
 	rsiface->unlockData();   /* Unlock Interface */
 
 
@@ -545,8 +589,8 @@ bool MessagesDialog::getCurrentMsg(std::string &cid, std::string &mid)
 	QTreeWidgetItem *qtwi = msglist -> currentItem();
 	if (qtwi)
 	{
-		cid = qtwi -> text(7).toStdString();
-		mid = qtwi -> text(8).toStdString();
+		cid = qtwi -> text(4).toStdString();
+		mid = qtwi -> text(5).toStdString();
 		return true;
 	}
 	return false;

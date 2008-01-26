@@ -336,11 +336,24 @@ void PeersDialog::chatfriend()
     if (!i)
 	return;
 
-    std::string status = (i -> text(1)).toStdString();
     std::string name = (i -> text(2)).toStdString();
     std::string id = (i -> text(10)).toStdString();
+    
+    RsPeerDetails detail;
+    if (!rsPeers->getPeerDetails(id, detail))
+    {
+    	return;
+    }
 
-    if (status != "Online")
+    if (detail.state & RS_PEER_STATE_CONNECTED)
+    {
+    	/* must reference ChatDialog */
+    	if (chatDialog)
+    	{
+    		chatDialog->getPrivateChat(id, name, true);
+    	}
+    }
+    else
     {
     	/* info dialog */
         QMessageBox::StandardButton sb = QMessageBox::question ( NULL, 
@@ -351,15 +364,10 @@ void PeersDialog::chatfriend()
 	{
 		msgfriend();
 	}
-	return;
     }
-
-    /* must reference ChatDialog */
-    if (chatDialog)
-    {
-    	chatDialog->getPrivateChat(id, name, true);
-    }
+    return;
 }
+
 
 void PeersDialog::msgfriend()
 {
