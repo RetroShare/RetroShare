@@ -48,11 +48,19 @@ const int pqissllistenzone = 49787;
  */
 
 
-pqissllistenbase::pqissllistenbase(struct sockaddr_in addr)
-	:laddr(addr), active(false)
+pqissllistenbase::pqissllistenbase(struct sockaddr_in addr, p3AuthMgr *am, p3ConnectMgr *cm)
+	:laddr(addr), active(false), 
+/**************** PQI_USE_XPGP ******************/
+#if defined(PQI_USE_XPGP)
+	mAuthMgr((AuthXPGP *) am), mConnMgr(cm)
+#else /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+	mAuthMgr(am), mConnMgr(cm)
+#endif /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+
 {
-	sslccr = getSSLRoot();
-	if (!(sslccr -> active()))
+	if (!(mAuthMgr -> active()))
 	{
 		pqioutput(PQL_ALERT, pqissllistenzone, 
 			"SSL-CTX-CERT-ROOT not initialised!");
@@ -304,7 +312,7 @@ int	pqissllistenbase::acceptconnection()
 	// Negotiate certificates. SSL stylee.
 	// Allow negotiations for secure transaction.
 	
-	SSL *ssl = SSL_new(sslccr -> getCTX());
+	SSL *ssl = SSL_new(mAuthMgr -> getCTX());
 	SSL_set_fd(ssl, fd);
 
 	return continueSSL(ssl, remote_addr, true); // continue and save if incomplete.
@@ -444,7 +452,7 @@ int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_
 	// false for outgoing....
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
-	sslccr -> registerCertificateXPGP(peercert, *inaddr, true);
+	mAuthMgr->FailedCertificateXPGP(peercert, true);
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 	sslccr -> registerCertificate(peercert, *inaddr, true);
@@ -492,8 +500,8 @@ int	pqissllistenbase::continueaccepts()
  *
  */
 
-pqissllistener::pqissllistener(struct sockaddr_in addr)
-	:pqissllistenbase(addr)
+pqissllistener::pqissllistener(struct sockaddr_in addr, p3AuthMgr *am, p3ConnectMgr *cm)
+	:pqissllistenbase(addr, am, cm)
 {
 	return;
 }
@@ -600,10 +608,12 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 		return -1;
 	}
 
-	// save certificate... (and ip locations)
+	// Check cert.
+	std::string newPeerId;
+
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
-	cert *npc = sslccr -> registerCertificateXPGP(peercert, remote_addr, true);
+	bool certOk = mAuthMgr->ValidateCertificateXPGP(peercert, newPeerId);
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 	cert *npc = sslccr -> registerCertificate(peercert, remote_addr, true);
@@ -614,13 +624,14 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 	std::map<std::string, pqissl *>::iterator it;
 
 	// Let connected one through as well! if ((npc == NULL) || (npc -> Connected()))
-	if (npc == NULL)
+	if (!certOk)
 	{
   	        pqioutput(PQL_WARNING, pqissllistenzone, 
 		 "pqissllistener::completeConnection() registerCertificate Failed!");
 
 		// bad - shutdown.
 		// pqissllistenbase will shutdown!
+		XPGP_free(peercert);
 		return -1;
 	}
 	else
@@ -628,12 +639,12 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 		std::ostringstream out;
 
 		out << "pqissllistener::continueSSL()" << std::endl;
-		out << "checking: " << npc -> Name() << std::endl;
+		out << "checking: " << newPeerId << std::endl;
 		// check if cert is in our list.....
 		for(it = listenaddr.begin();(found!=true) && (it!=listenaddr.end());)
 		{
 		 	out << "\tagainst: " << it->first << std::endl;
-			if (it -> first == npc->PeerId())
+			if (it -> first == newPeerId)
 			{
 		 	        out << "\t\tMatch!";
 				found = true;
@@ -651,6 +662,20 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 	{
 		std::ostringstream out;
 		out << "No Matching Certificate/Already Connected";
+		out << " for Connection:" << inet_ntoa(remote_addr.sin_addr);
+		out << std::endl;
+		out << "pqissllistenbase: Will shut it down!" << std::endl;
+  	        pqioutput(PQL_WARNING, pqissllistenzone, out.str());
+		XPGP_free(peercert);
+		return -1;
+	}
+
+	/* Certificate consumed! */
+	bool certKnown = mAuthMgr->CheckCertificateXPGP(it->first, peercert);
+	if (certKnown == false)
+	{
+		std::ostringstream out;
+		out << "Failed Final Check";
 		out << " for Connection:" << inet_ntoa(remote_addr.sin_addr);
 		out << std::endl;
 		out << "pqissllistenbase: Will shut it down!" << std::endl;

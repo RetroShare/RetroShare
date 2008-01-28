@@ -1105,6 +1105,68 @@ bool AuthXPGP::getXPGPid(XPGP *xpgp, std::string &xpgpid)
 }
 
 
+
+	/* validate + get id */
+bool    AuthXPGP::ValidateCertificateXPGP(XPGP *xpgp, std::string &peerId)
+{
+	/* check self signed */
+	if (!XPGP_check_valid_certificate(xpgp))
+	{
+		/* bad certificate */
+		return false;
+	}
+
+	return getXPGPid(xpgp, peerId);
+}
+
+/* store for discovery */
+bool    AuthXPGP::FailedCertificateXPGP(XPGP *xpgp, bool incoming)
+{
+	std::string id;
+	return ProcessXPGP(xpgp, id);
+}
+
+/* check that they are exact match */
+bool    AuthXPGP::CheckCertificateXPGP(std::string xpgpId, XPGP *xpgp)
+{
+	xpgpMtx.lock();   /***** LOCK *****/
+
+	xpgpcert *cert = NULL;
+	if (!locked_FindCert(xpgpId, &cert))
+	{
+		/* not there -> error */
+		XPGP_free(xpgp);
+
+		xpgpMtx.unlock(); /**** UNLOCK ****/
+		return false;
+	}
+	else
+	{
+		/* have a duplicate */
+		/* check that they are exact */
+		if (0 != XPGP_cmp(cert->certificate, xpgp))
+		{
+			/* MAJOR ERROR */
+			XPGP_free(xpgp);
+			xpgpMtx.unlock(); /**** UNLOCK ****/
+			return false;
+		}
+
+		/* transfer new signatures */
+		XPGP_copy_known_signatures(pgp_keyring, cert->certificate, xpgp);
+		XPGP_free(xpgp);
+
+		/* update signers */
+		cert->signers = getXPGPsigners(cert->certificate);
+
+		xpgpMtx.unlock(); /**** UNLOCK ****/
+		return true;
+	}
+}
+
+
+
+
 /********************************************************************************/
 /********************************************************************************/
 /********************************************************************************/

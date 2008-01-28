@@ -55,7 +55,8 @@ class cert;
 class pqissludp: public pqissl
 {
 public:
-	pqissludp(PQInterface *parent);
+        pqissludp(PQInterface *parent, p3AuthMgr *am, p3ConnectMgr *cm);
+
 virtual ~pqissludp();
 
 	// NetInterface.

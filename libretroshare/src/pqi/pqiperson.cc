@@ -342,7 +342,8 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr)
 	  out << " addr: " << inet_ntoa(raddr.sin_addr);
 	  out << ":" << ntohs(raddr.sin_port);
 	  out << std::endl;
-	  pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
+	  std::cerr << out.str();
+	  //pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
 	}
 
 	std::map<uint32_t, pqiconnect *>::iterator it;

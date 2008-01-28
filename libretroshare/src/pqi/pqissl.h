@@ -38,12 +38,13 @@
 
 #include "pqi/pqi_base.h"
 
+#include "pqi/p3connmgr.h"
+
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
-#include "pqi/xpgpcert.h"
+#include "pqi/authxpgp.h"
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
-#include "pqi/sslcert.h"
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
@@ -93,7 +94,8 @@ class pqissllistener;
 class pqissl: public NetBinInterface
 {
 public:
-	pqissl(pqissllistener *l, PQInterface *parent);
+	pqissl(pqissllistener *l, PQInterface *parent, 
+		p3AuthMgr *am, p3ConnectMgr *cm);
 virtual ~pqissl();
 
 	// NetInterface
@@ -189,6 +191,19 @@ virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd)
 	int ssl_connect_timeout; /* timeout to ensure that we don't get stuck (can happen on udp!) */
 
 private:
+
+
+/**************** PQI_USE_XPGP ******************/
+#if defined(PQI_USE_XPGP)
+
+	AuthXPGP *mAuthMgr;
+
+#else /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+#endif /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+
+	p3ConnectMgr *mConnMgr;
 
 	// ssl only fns.
 int connectInterface(sockaddr_in&);

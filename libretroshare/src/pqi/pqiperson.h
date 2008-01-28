@@ -100,6 +100,8 @@ virtual ~pqiperson(); // must clean up children.
 
 	// control of the connection.
 int 	reset();
+int 	listen();
+int 	stoplistening();
 int	connect(uint32_t type, struct sockaddr_in raddr);
 
 	// add in connection method.
@@ -129,8 +131,6 @@ virtual void    setMaxRate(bool in, float val);
 
 private: /* Helper functions */
 
-int 	listen();
-int 	stoplistening();
 
 	pqipersongrp *pqipg; /* parent for callback */
 };

@@ -85,7 +85,7 @@ static const int PQISSL_SSL_CONNECT_TIMEOUT = 30;
  *
  */
 
-pqissl::pqissl(pqissllistener *l, PQInterface *parent)
+pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3AuthMgr *am, p3ConnectMgr *cm)
 	:NetBinInterface(parent, parent->PeerId()), 
 	waiting(WAITING_NOT), active(false), certvalid(false), 
 	sslmode(PQISSL_ACTIVE), ssl_connection(NULL), sockfd(-1), 
@@ -93,7 +93,16 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent)
 	readpkt(NULL), pktlen(0), 
 	attempt_ts(0),
 	net_attempt(0), net_failure(0), net_unreachable(0), 
-	sameLAN(false), n_read_zero(0)
+	sameLAN(false), n_read_zero(0), 
+
+/**************** PQI_USE_XPGP ******************/
+#if defined(PQI_USE_XPGP)
+	mAuthMgr((AuthXPGP *) am), mConnMgr(cm)
+#else /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+	mAuthMgr(am), mConnMgr(cm)
+#endif /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
 
 {
 	/* set address to zero */
@@ -101,26 +110,13 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent)
 	remote_addr.sin_port = 0;
 	remote_addr.sin_family = AF_INET;
 
-	sslroot *sslccr = getSSLRoot();
-
   	{
 	  std::ostringstream out;
 	  out << "pqissl for PeerId: " << PeerId();
 	  pqioutput(PQL_ALERT, pqisslzone, out.str());
 	}
-	cert *sslcert = sslccr->findPeerId(PeerId());
 
-	// check certificate
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	sslccr -> validateCertificateXPGP(sslcert);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-	sslccr -> validateCertificate(sslcert);
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
-	if (!(sslcert -> Valid()))
+	if (!(mAuthMgr->isAuthenticated(PeerId())))
 	{
   	  pqioutput(PQL_ALERT, pqisslzone, 
 	    "pqissl::Warning Certificate Not Approved!");
@@ -269,9 +265,6 @@ int 	pqissl::status()
 {
 	int alg;
 
-	sslroot *sslccr = getSSLRoot();
-	cert    *sslcert = sslccr->findPeerId(PeerId());
-
 	std::ostringstream out;
 	out << "pqissl::status()";
 
@@ -279,9 +272,8 @@ int 	pqissl::status()
 	{
 		out << " active: " << std::endl;
 		// print out connection.
-		out << "Connected TO : ";
-		sslccr -> printCertificate(sslcert, out);
-		
+		out << "Connected TO : " << PeerId();
+		out << std::endl;
 		// print out cipher.
 		out << "\t\tSSL Cipher:" << SSL_get_cipher(ssl_connection);
 		out << " (" << SSL_get_cipher_bits(ssl_connection, &alg);
@@ -296,7 +288,6 @@ int 	pqissl::status()
 		out << " Waiting for connection!" << std::endl;
 	}
 
-	out << "pqissl::cert status : "  << sslcert -> Status() << std::endl;
 	pqioutput(PQL_DEBUG_BASIC, pqisslzone, out.str());
 
 	if (active)
@@ -807,9 +798,6 @@ int 	pqissl::Initiate_SSL_Connection()
 		return err;
 	}
 
-	sslroot *sslccr = getSSLRoot();
-
-
   	pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
 	  "pqissl::Initiate_SSL_Connection() Basic Connection Okay");
 
@@ -818,7 +806,7 @@ int 	pqissl::Initiate_SSL_Connection()
 
 	// Perform SSL magic.
 	// library already inited by sslroot().
-	SSL *ssl = SSL_new(sslccr -> getCTX());
+	SSL *ssl = SSL_new(mAuthMgr->getCTX());
 	if (ssl == NULL)
 	{
   		pqioutput(PQL_ALERT, pqisslzone, 
@@ -934,8 +922,6 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
   	pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
 	  "pqissl::Extract_Failed_SSL_Certificate()");
 
-	sslroot *sslccr = getSSLRoot();
-
 	// Get the Peer Certificate....
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
@@ -963,10 +949,9 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
 	//      (pqissl's case) sslcert->serveraddr or sslcert->localaddr.
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
-	sslccr -> registerCertificateXPGP(peercert, remote_addr, false);
+	mAuthMgr->FailedCertificateXPGP(peercert, false);
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
-	sslccr -> registerCertificate(peercert, remote_addr, false);
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
@@ -1003,8 +988,7 @@ int 	pqissl::Authorise_SSL_Connection()
 	waiting = WAITING_NOT;
 
 	// Get the Peer Certificate....
-	sslroot *sslccr = getSSLRoot();
-	cert    *sslcert = sslccr->findPeerId(PeerId());
+	AuthXPGP *authXPGP = (AuthXPGP *) getAuthMgr();
 
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
@@ -1020,11 +1004,6 @@ int 	pqissl::Authorise_SSL_Connection()
   		pqioutput(PQL_WARNING, pqisslzone, 
 		  "pqissl::Authorise_SSL_Connection() Peer Didnt Give Cert");
 
-
-		//SSL_shutdown(ssl_connection);
-		//net_internal_close(sockfd);
-		//waiting = WAITING_FAIL_INTERFACE;
-		//
 		// Failed completely
 		reset();
 		return -1;
@@ -1038,28 +1017,21 @@ int 	pqissl::Authorise_SSL_Connection()
 	// we actually connected to remote_addr, 
 	// 	which could be 
 	//      (pqissl's case) sslcert->serveraddr or sslcert->localaddr.
+
+	bool certCorrect = false;
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
-	//cert *npc = sslccr -> registerCertificateXPGP(peercert, sslcert -> serveraddr, false);
-	cert *npc = sslccr -> registerCertificateXPGP(peercert, remote_addr, false);
+	certCorrect = mAuthMgr->CheckCertificateXPGP(PeerId(), peercert);
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
-	//cert *npc = sslccr -> registerCertificate(peercert, sslcert -> serveraddr, false);
-	cert *npc = sslccr -> registerCertificate(peercert, remote_addr, false);
+
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
 	// check it's the right one.
-	if ((npc != NULL) && (!(npc -> Connected())) && 
-				(sslccr -> compareCerts(sslcert, npc) == 0))
+	if (certCorrect)
 	{
 		// then okay...
-
-		// timestamp.
-		npc -> lc_timestamp = time(NULL);
-		// pass to accept...
-		// and notify that we're likely to succeed.
-	
   		pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
 	  		"pqissl::Authorise_SSL_Connection() Accepting Conn");
 
@@ -1071,12 +1043,7 @@ int 	pqissl::Authorise_SSL_Connection()
 	  "pqissl::Authorise_SSL_Connection() Something Wrong ... Shutdown ");
 
 	// else shutdown ssl connection.
-	//
-	// failed completely...
-	//SSL_shutdown(ssl_connection);
-	//net_internal_close(sockfd);
-	//sockfd = -1;
-	//waiting = WAITING_FAIL_INTERFACE;
+
 	reset();
 	return 0;
 }
@@ -1166,19 +1133,18 @@ int	pqissl::accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr) // initiat
 	remote_addr = foreign_addr; 
 
 	/* check whether it is on the same LAN */
-	sslroot *sslccr = getSSLRoot();
-	cert *own = sslccr -> getOwnCert();
-	struct sockaddr_in own_laddr = own -> localaddr;
 
-	sameLAN = isSameSubnet(&(remote_addr.sin_addr), &(own_laddr.sin_addr));
+	peerConnectState details;
+	mConnMgr->getOwnNetStatus(details);
+	sameLAN = isSameSubnet(&(remote_addr.sin_addr), &(details.localaddr.sin_addr));
 
 	{
 	  std::ostringstream out;
 	  out << "pqissl::accept() checking for same LAN";
 	  out << std::endl;
-	  out << "\t localaddr: " << inet_ntoa(remote_addr.sin_addr);
+	  out << "\t localaddr: " << inet_ntoa(details.localaddr.sin_addr);
 	  out << std::endl;
-	  out << "\tremoteaddr: " << inet_ntoa(own_laddr.sin_addr);
+	  out << "\t remoteaddr: " << inet_ntoa(remote_addr.sin_addr);
 	  out << std::endl;
 	  if (sameLAN)
 	  {

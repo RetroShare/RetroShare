@@ -49,8 +49,8 @@ static const int PQI_SSLUDP_CONNECT_TIMEOUT = 300;
 
 /********** PQI SSL UDP STUFF **************************************/
 
-pqissludp::pqissludp(PQInterface *parent)
-	:pqissl(NULL, parent), tou_bio(NULL), 
+pqissludp::pqissludp(PQInterface *parent, p3AuthMgr *am, p3ConnectMgr *cm)
+	:pqissl(NULL, parent, am, cm), tou_bio(NULL), 
 	listen_checktime(0)
 
 {

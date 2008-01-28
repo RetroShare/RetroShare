@@ -474,8 +474,8 @@ int RsServer::StartupRetroShare(RsInit *config)
 	p3ConfigMgr *mConfigMgr = new p3ConfigMgr(config->basedir, "rs-v0.4.cfg", "rs-v0.4.sgn");
 
 	SecurityPolicy *none = secpolicy_create();
-	//pqih = new pqisslpersongrp(none, flags);
-	pqih = new pqipersongrpDummy(none, flags);
+	pqih = new pqisslpersongrp(none, flags);
+	//pqih = new pqipersongrpDummy(none, flags);
 
 	// Setup Peer Interface.
 	rsPeers = new p3Peers(mConnMgr, mAuthMgr);
@@ -545,6 +545,8 @@ int RsServer::StartupRetroShare(RsInit *config)
 	/**************************************************************************/
 	/* startup (stuff dependent on Ids/peers is after this point) */
 	/**************************************************************************/
+
+	pqih->init_listener();
 
 
 

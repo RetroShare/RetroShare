@@ -1079,7 +1079,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		pca.type = RS_NET_CONN_TCP_LOCAL;
 		pca.addr = details.laddr;
 
-		it->second.connAddrs.push_front(pca);
+		it->second.connAddrs.push_back(pca);
 	}
 
 	if ((details.type & RS_NET_CONN_TCP_EXTERNAL) &&
@@ -1092,7 +1092,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		pca.type = RS_NET_CONN_TCP_EXTERNAL;
 		pca.addr = details.raddr;
 
-		it->second.connAddrs.push_front(pca);
+		it->second.connAddrs.push_back(pca);
 	}
 
 	if (it->second.inConnAttempt)
@@ -1491,7 +1491,7 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 			pca.type = RS_NET_CONN_TCP_LOCAL;
 			pca.addr = it->second.localaddr;
 
-			it->second.connAddrs.push_front(pca);
+			it->second.connAddrs.push_back(pca);
 		}
 		else
 		{
@@ -1539,7 +1539,7 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 			pca.type = RS_NET_CONN_TCP_EXTERNAL;
 			pca.addr = it->second.serveraddr;
 
-			it->second.connAddrs.push_front(pca);
+			it->second.connAddrs.push_back(pca);
 		}
 		else
 		{
@@ -1554,9 +1554,13 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 		return true;
 	}
 
-	/* start a connection attempt */
-	it->second.actions |= RS_PEER_CONNECT_REQ;
-	mStatusChanged = true;
+	
+	/* start a connection attempt (only if we stuck something on the queue) */
+	if (it->second.connAddrs.size() > 0)
+	{
+		it->second.actions |= RS_PEER_CONNECT_REQ;
+		mStatusChanged = true;
+	}
 
 	return true; 
 }

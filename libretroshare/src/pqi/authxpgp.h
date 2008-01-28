@@ -119,15 +119,18 @@ virtual bool TrustCertificate(std::string id, bool trust);
 	/* Sign / Encrypt / Verify Data (TODO) */
 
 
-	/**** NEW functions we've added ****/
-
-
 	/*********** Overloaded Functions from p3AuthMgr **********/
+
+	public: /* XPGP specific functions used in pqissl/pqissllistener */
+SSL_CTX *getCTX();
+
+bool 	ValidateCertificateXPGP(XPGP *xpgp, std::string &peerId); /* validate + get id */
+bool 	FailedCertificateXPGP(XPGP *xpgp, bool incoming);     /* store for discovery */
+bool 	CheckCertificateXPGP(std::string peerId, XPGP *xpgp); /* check that they are exact match */
 
 	private:
 
 	/* Helper Functions */
-SSL_CTX *getCTX();
 
 bool 	getXPGPid(XPGP *xpgp, std::string &xpgpid);
 bool 	ProcessXPGP(XPGP *xpgp, std::string &id);

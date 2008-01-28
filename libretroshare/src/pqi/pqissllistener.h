@@ -41,10 +41,10 @@
 
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
-#include "pqi/xpgpcert.h"
+#include "pqi/authxpgp.h"
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
-#include "pqi/sslcert.h"
+//#include "pqi/sslcert.h"
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
@@ -52,14 +52,13 @@
  */
 
 class pqissl;
-class cert;
 
 class pqissllistenbase: public pqilistener
 {
 	public:
 
 
-	pqissllistenbase(struct sockaddr_in addr);
+	pqissllistenbase(struct sockaddr_in addr, p3AuthMgr *am, p3ConnectMgr *cm);
 virtual ~pqissllistenbase();
 
 /*************************************/
@@ -83,19 +82,33 @@ virtual int completeConnection(int sockfd, SSL *in_connection, struct sockaddr_i
 	protected:
 
 	struct sockaddr_in laddr;
-	sslroot *sslccr;
 
 	private:
 
 	// fn to get cert, anyway
 int     Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_in *inaddr);
 
-
 	bool active;
 	int lsock;
-	cert *localcert;
 
 	std::map<SSL *, struct sockaddr_in> incoming_ssl;
+
+	protected:
+
+/**************** PQI_USE_XPGP ******************/
+#if defined(PQI_USE_XPGP)
+
+	AuthXPGP *mAuthMgr;
+
+#else /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+
+	p3AuthMgr *mAuthMgr;
+
+#endif /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+
+	p3ConnectMgr *mConnMgr;
 
 };
 
@@ -104,7 +117,7 @@ class pqissllistener: public pqissllistenbase
 {
 	public:
 
-	pqissllistener(struct sockaddr_in addr);
+	pqissllistener(struct sockaddr_in addr, p3AuthMgr *am, p3ConnectMgr *cm);
 virtual ~pqissllistener();
 
 int 	addlistenaddr(std::string id, pqissl *acc);

@@ -280,6 +280,7 @@ int     pqipersongrp::addPeer(std::string id)
 
 	// reset it to start it working.
 	pqip -> reset();
+	pqip -> listen();
 
 	return AddSearchModule(sm);
 }
@@ -330,15 +331,30 @@ int     pqipersongrp::connectPeer(std::string id)
 	struct sockaddr_in addr;
 	uint32_t type;
 
-	mConnMgr->connectAttempt(id, addr, type);
+	if (!mConnMgr->connectAttempt(id, addr, type))
+	{
+		std::cerr << " pqipersongrp::connectPeer() No Net Address";
+		std::cerr << std::endl;
+		return 0;
+	}
+
+	std::cerr << " pqipersongrp::connectPeer() connectAttempt data id: " << id;
+	std::cerr << " addr: " << inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port);
+	std::cerr << " type: " << type;
+	std::cerr << std::endl;
+
 
 	uint32_t ptype;
 	if (type & RS_NET_CONN_TCP_ALL)
 	{
+		std::cerr << " pqipersongrp::connectPeer() connecting with TCP";
+		std::cerr << std::endl;
 		ptype = PQI_CONNECT_TCP;
 	}
 	else if (type & RS_NET_CONN_UDP_ALL)
 	{
+		std::cerr << " pqipersongrp::connectPeer() connecting with UDP";
+		std::cerr << std::endl;
 		ptype = PQI_CONNECT_UDP;
 	}
 	else
