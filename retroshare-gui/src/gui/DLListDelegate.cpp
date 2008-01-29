@@ -95,7 +95,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 					multi *= 1024.0;
 				}
 			}
-			painter->drawText(option.rect, Qt::AlignCenter, temp);
+			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
 		case REMAINING:
 			remaining = index.data().toLongLong();
@@ -135,14 +135,14 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 					multi *= 1024.0;
 				}
 			}
-			painter->drawText(option.rect, Qt::AlignCenter, temp);
+			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
 		case DLSPEED:
 		    dlspeed = index.data().toDouble();
 			temp.clear();
 			temp.sprintf("%.2f", dlspeed/1024.);
 			temp += " KB/s";
-			painter->drawText(option.rect, Qt::AlignCenter, temp);
+			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
 		case PROGRESS:
 			progress = index.data().toDouble();
@@ -183,6 +183,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 
 QSize DLListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
+	return QSize(50,17);
 	QVariant value = index.data(Qt::FontRole);
 	QFont fnt = value.isValid() ? qvariant_cast<QFont>(value) : option.font;
 	QFontMetrics fontMetrics(fnt);
