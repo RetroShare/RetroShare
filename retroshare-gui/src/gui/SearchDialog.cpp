@@ -149,8 +149,8 @@ SearchDialog::SearchDialog(QWidget *parent)
     
     // set header text aligment
 	QTreeWidgetItem * headerItem = ui.searchResultWidget->headerItem();
-	headerItem->setTextAlignment(1, Qt::AlignRight   | Qt::AlignVRight);
-	headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVRight);
+	headerItem->setTextAlignment(1, Qt::AlignRight   | Qt::AlignRight);
+	headerItem->setTextAlignment(2, Qt::AlignRight | Qt::AlignRight);
    
 
 
