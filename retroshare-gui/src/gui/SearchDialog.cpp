@@ -47,8 +47,8 @@
 /* indicies for search results item columns SR_ = Search Result */
 #define SR_NAME_COL         0
 #define SR_SIZE_COL         1
-#define SR_HASH_COL         2
-#define SR_ID_COL           3
+#define SR_ID_COL           2
+#define SR_HASH_COL         3
 #define SR_SEARCH_ID_COL    4
 
 /* indicies for search summary item columns SS_ = Search Summary */
@@ -145,7 +145,13 @@ SearchDialog::SearchDialog(QWidget *parent)
     _smheader->resizeSection ( 0, 200 );
     _smheader->resizeSection ( 1, 75 );
     _smheader->resizeSection ( 2, 75 );
-    _smheader->resizeSection ( 3, 75 );
+    _smheader->resizeSection ( 3, 240 );
+    
+    // set header text aligment
+	QTreeWidgetItem * headerItem = ui.searchResultWidget->headerItem();
+	headerItem->setTextAlignment(1, Qt::AlignRight   | Qt::AlignVRight);
+	headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVRight);
+   
 
 
 /* Hide platform specific features */
@@ -480,12 +486,12 @@ void SearchDialog::resultsToTree(std::string txt, std::list<FileDetail> results)
 		if (it->id == "Local")
 		{
 			/* colour green? */
-			item->setBackground(3, QBrush(Qt::green));
+			item->setBackground(2, QBrush(Qt::green));
 		}
 		else
 		{
 			/* colour blue? */
-			item->setBackground(3, QBrush(Qt::blue));
+			item->setBackground(2, QBrush(Qt::blue));
 		}
 		ui.searchResultWidget->addTopLevelItem(item);
 	}
