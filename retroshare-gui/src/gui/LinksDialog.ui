@@ -1,0 +1,388 @@
+<ui version="4.0" >
+ <class>LinksDialog</class>
+ <widget class="QWidget" name="LinksDialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>633</width>
+    <height>552</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <widget class="QSplitter" name="msgSplitter" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <widget class="QWidget" name="" >
+      <layout class="QGridLayout" >
+       <item row="0" column="0" colspan="13" >
+        <widget class="QTreeWidget" name="linkTreeWidget" >
+         <property name="font" >
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="contextMenuPolicy" >
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
+         <column>
+          <property name="text" >
+           <string>Title / Comment</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Score</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Peer / Link</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item row="1" column="0" >
+        <widget class="QPushButton" name="expandButton" >
+         <property name="text" >
+          <string/>
+         </property>
+         <property name="icon" >
+          <iconset resource="images.qrc" >:/images/add_24x24.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>16</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="2" >
+        <widget class="QLabel" name="label" >
+         <property name="font" >
+          <font>
+           <pointsize>10</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text" >
+          <string>Sort by</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3" >
+        <widget class="QComboBox" name="rankComboBox" >
+         <property name="font" >
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <item>
+          <property name="text" >
+           <string>Combo</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>Time</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>Ranking</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="4" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>16</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="5" >
+        <widget class="QLabel" name="label_2" >
+         <property name="font" >
+          <font>
+           <pointsize>10</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text" >
+          <string>In last</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="6" >
+        <widget class="QComboBox" name="periodComboBox" >
+         <property name="font" >
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <item>
+          <property name="text" >
+           <string>Month</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>Week</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>Day</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="7" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>16</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="8" >
+        <widget class="QLabel" name="label_3" >
+         <property name="font" >
+          <font>
+           <pointsize>10</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text" >
+          <string>From</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="9" >
+        <widget class="QComboBox" name="fromComboBox" >
+         <property name="font" >
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <item>
+          <property name="text" >
+           <string>All Peers</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>Own Links</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="10" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>16</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="11" >
+        <widget class="QLabel" name="label_5" >
+         <property name="font" >
+          <font>
+           <pointsize>10</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text" >
+          <string>Show</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="12" >
+        <widget class="QComboBox" name="topComboBox" >
+         <property name="font" >
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <item>
+          <property name="text" >
+           <string>Top 100</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>101-200</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>201-300</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>301-400</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>401-500</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>Bottom 100</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="" >
+      <layout class="QVBoxLayout" >
+       <item>
+        <layout class="QHBoxLayout" >
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>441</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="addButton" >
+           <property name="font" >
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="text" >
+            <string>Add Link/Comment</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="QLabel" name="label_6" >
+           <property name="font" >
+            <font>
+             <pointsize>12</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text" >
+            <string>Title:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QLineEdit" name="titleLineEdit" >
+           <property name="font" >
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QLabel" name="label_7" >
+           <property name="font" >
+            <font>
+             <pointsize>12</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text" >
+            <string>Url:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="QLineEdit" name="linkLineEdit" >
+           <property name="font" >
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QTextEdit" name="linkTextEdit" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize" >
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="font" >
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="images.qrc" />
+ </resources>
+ <connections/>
+</ui>

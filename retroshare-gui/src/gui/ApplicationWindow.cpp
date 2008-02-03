@@ -40,6 +40,7 @@
 #include "gui/connect/InviteDialog.h"
 #include "gui/connect/AddFriendDialog.h"
 
+#include "LinksDialog.h"
 #include "GamesDialog.h"
 #include "PhotoDialog.h"
 
@@ -85,17 +86,20 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     /* Create the config pages and actions */
     QActionGroup *grp = new QActionGroup(this);
 
+    LinksDialog *linksDialog = NULL;
+    ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_TRANSFERS), tr("Links Cloud"), grp));
 
-    ui.stackPages->add(exampleDialog = new ExampleDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_MESSAGES), tr("Example Application"), grp));
+//    ui.stackPages->add(exampleDialog = new ExampleDialog(ui.stackPages),
+//                      createPageAction(QIcon(IMAGE_MESSAGES), tr("Example Application"), grp));
 
     GamesDialog *gamesDialog = NULL;
     ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_MESSAGES), tr("Games Launcher"), grp));
                      
-    PhotoDialog *photoDialog = NULL;
-    ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_MESSAGES), tr("Photo View"), grp));
+//    PhotoDialog *photoDialog = NULL;
+//    ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
+//                      createPageAction(QIcon(IMAGE_MESSAGES), tr("Photo View"), grp));
                      
                      
   //ui.stackPages->add(groupsDialog = new GroupsDialog(ui.stackPages),
@@ -104,9 +108,9 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
   //ui.stackPages->add(new StatisticDialog(ui.stackPages),
   //                   createPageAction(QIcon(IMAGE_STATISTIC), tr("Statistics"), grp));
 
-    statusBar()->addWidget(new QLabel(tr("Application Users: 0  Files: 0 ")));
-    statusBar()->addPermanentWidget(new QLabel(tr("Down: 0.0  Up: 0.0 ")));
-    statusBar()->addPermanentWidget(new QLabel(tr("Connections: 0/45 ")));
+  //  statusBar()->addWidget(new QLabel(tr("Application Users: 0  Files: 0 ")));
+  //  statusBar()->addPermanentWidget(new QLabel(tr("Down: 0.0  Up: 0.0 ")));
+  //  statusBar()->addPermanentWidget(new QLabel(tr("Connections: 0/45 ")));
 
    /* Create the toolbar */
    ui.toolBar->addActions(grp->actions());
