@@ -1,9 +1,9 @@
 /*
- * libretroshare/src/util: rsnet.h
+ * libretroshare/src/util: rsnet.cc
  *
  * Universal Networking Header for RetroShare.
  *
- * Copyright 2004-2006 by Robert Fernie.
+ * Copyright 2007-2008 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,36 +23,33 @@
  *
  */
 
-#ifndef RS_UNIVERSAL_NETWORK_HEADER
-#define RS_UNIVERSAL_NETWORK_HEADER
+#include "util/rsnet.h"
 
-#include <inttypes.h>
+uint64_t ntohll(uint64_t x)
+{
+#ifdef BYTE_ORDER
+        #if BYTE_ORDER == BIG_ENDIAN
+                return x;
+        #elif BYTE_ORDER == LITTLE_ENDIAN
 
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS
+                uint32_t top = (uint32_t) (x >> 32);
+                uint32_t bot = (uint32_t) (0x00000000ffffffffULL & x);
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+                uint64_t rev = ((uint64_t) ntohl(top)) | (((uint64_t) ntohl(bot)) << 32);
 
-#include <fcntl.h>
-#include <errno.h>
-
+                return rev;
+        #else
+                #error "ENDIAN determination Failed"
+        #endif
 #else
-
-#include <winsock2.h>
-#include <ws2tcpip.h>
-
-#include <stdio.h> /* for ssize_t */
-typedef uint32_t socklen_t;
-typedef uint32_t in_addr_t;
-
+        #error "ENDIAN determination Failed (BYTE_ORDER not defined)"
 #endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-/* 64 bit conversions */
-uint64_t ntohll(uint64_t x);
-uint64_t htonll(uint64_t x);
+}
 
-#endif /* RS_UNIVERSAL_NETWORK_HEADER */
+uint64_t htonll(uint64_t x)
+{
+        return ntohll(x);
+}
+
+

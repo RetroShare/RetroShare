@@ -46,6 +46,11 @@ int errno;
 
 #endif               
 
+void sockaddr_clear(struct sockaddr_in *addr)
+{
+	memset(addr, 0, sizeof(struct sockaddr_in));
+	addr->sin_family = AF_INET;
+}
 
 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
@@ -142,8 +147,15 @@ std::list<std::string> getLocalInterfaces()
 		exit(1);
 	}
 
+	if (!ifptr)
+	{
+		pqioutput(PQL_ALERT, pqinetzone, 
+			"getLocalInterfaces(): ERROR if_nameindex == NULL");
+	}
+
 	// loop through the interfaces.
-	for(; *(char *)ifptr != 0; ifptr++)
+	//for(; *(char *)ifptr != 0; ifptr++)
+	for(; ifptr->if_index != 0; ifptr++)
 	{
 		//copy in the interface name to look up address of
 		strncpy(ifreq.ifr_name, ifptr->if_name, IF_NAMESIZE);
@@ -860,3 +872,4 @@ int	WinToUnixError(int error)
 
 #endif
 /******************* WINDOWS SPECIFIC PART ******************/
+

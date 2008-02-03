@@ -106,9 +106,7 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3AuthMgr *am, p3ConnectM
 
 {
 	/* set address to zero */
-	remote_addr.sin_addr.s_addr = 0;
-	remote_addr.sin_port = 0;
-	remote_addr.sin_family = AF_INET;
+        sockaddr_clear(&remote_addr);
 
   	{
 	  std::ostringstream out;

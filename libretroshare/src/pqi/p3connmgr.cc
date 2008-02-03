@@ -66,22 +66,15 @@ p3ConnectMgr::p3ConnectMgr(p3AuthMgr *am)
 peerConnectAddress::peerConnectAddress()
 	:type(0), ts(0)
 {
-	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = 0;
-	addr.sin_port = 0;
+	sockaddr_clear(&addr);
 }
 
 
 peerAddrInfo::peerAddrInfo()
 	:found(false), type(0), ts(0)
 {
-	laddr.sin_family = AF_INET;
-	laddr.sin_addr.s_addr = 0;
-	laddr.sin_port = 0;
-
-	raddr.sin_family = AF_INET;
-	raddr.sin_addr.s_addr = 0;
-	raddr.sin_port = 0;
+	sockaddr_clear(&laddr);
+	sockaddr_clear(&raddr);
 }
 
 peerConnectState::peerConnectState()
@@ -94,17 +87,9 @@ peerConnectState::peerConnectState()
 	 //lc_timestamp(0), lr_timestamp(0),
 	 //nc_timestamp(0), nc_timeintvl(0)
 {
-	lastaddr.sin_family = AF_INET;
-	lastaddr.sin_addr.s_addr = 0;
-	lastaddr.sin_port = 0;
-
-	localaddr.sin_family = AF_INET;
-	localaddr.sin_addr.s_addr = 0;
-	localaddr.sin_port = 0;
-
-	serveraddr.sin_family = AF_INET;
-	serveraddr.sin_addr.s_addr = 0;
-	serveraddr.sin_port = 0;
+	sockaddr_clear(&lastaddr);
+	sockaddr_clear(&localaddr);
+	sockaddr_clear(&serveraddr);
 
 	return;
 }
@@ -1698,6 +1683,9 @@ bool p3ConnectMgr::getDHTEnabled()
 
 bool 	p3ConnectMgr::checkNetAddress()
 {
+	std::cerr << "p3ConnectMgr::checkNetAddress()";
+	std::cerr << std::endl;
+
 	std::list<std::string> addrs = getLocalInterfaces();
 	std::list<std::string>::iterator it;
 
@@ -1706,8 +1694,13 @@ bool 	p3ConnectMgr::checkNetAddress()
 	bool found = false;
 	for(it = addrs.begin(); (!found) && (it != addrs.end()); it++)
 	{
+		std::cerr << "p3ConnectMgr::checkNetAddress() Local Interface: " << *it;
+		std::cerr << std::endl;
+
 		if ((*it) == inet_ntoa(ownState.localaddr.sin_addr))
 		{
+			std::cerr << "p3ConnectMgr::checkNetAddress() Matches Existing Address! FOUND = true";
+			std::cerr << std::endl;
 			found = true;
 		}
 	}
@@ -1720,6 +1713,11 @@ bool 	p3ConnectMgr::checkNetAddress()
 	if (!found)
 	{
 		ownState.localaddr.sin_addr = getPreferredInterface();
+
+		std::cerr << "p3ConnectMgr::checkNetAddress() Local Address Not Found: Using Preferred Interface: ";
+		std::cerr << inet_ntoa(ownState.localaddr.sin_addr);
+		std::cerr << std::endl;
+
 	}
 	if ((isPrivateNet(&(ownState.localaddr.sin_addr))) ||
 		(isLoopbackNet(&(ownState.localaddr.sin_addr))))
@@ -1754,6 +1752,11 @@ bool 	p3ConnectMgr::checkNetAddress()
 	ownState.localaddr.sin_family = AF_INET;
 	ownState.serveraddr.sin_family = AF_INET;
 	ownState.lastaddr.sin_family = AF_INET;
+
+	std::cerr << "p3ConnectMgr::checkNetAddress() Final Local Address: ";
+	std::cerr << inet_ntoa(ownState.localaddr.sin_addr);
+	std::cerr << ":" << ntohs(ownState.localaddr.sin_port);
+	std::cerr << std::endl;
   
 	return 1;
 }

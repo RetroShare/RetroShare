@@ -97,6 +97,8 @@ extern int errno; /* Define extern errno, to duplicate unix behaviour */
 #include <string>
 #include <list>
 
+void sockaddr_clear(struct sockaddr_in *addr1);
+
 // Same def - different functions...
 
 std::ostream &showSocketError(std::ostream &out);
@@ -137,13 +139,7 @@ int unix_getsockopt_error(int sockfd, int *err);
 int     WinToUnixError(int error);
 #endif
 
-/***** From http://www.codeproject.com/KB/cpp/endianness.aspx 
 
-#define ntohll(x) (((int64_t)(ntohl((int32_t)((x << 32) >> 32))) << 32) | 
-                     (uint32_t) ntohl(((int32_t)(x >> 32)))) 
-#define htonll(x) ntohll(x)
-
-*****/
 
 #endif
 

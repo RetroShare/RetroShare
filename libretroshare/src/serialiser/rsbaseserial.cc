@@ -123,8 +123,7 @@ bool getRawUInt64(void *data, uint32_t size, uint32_t *offset, uint64_t *out)
 	uint64_t netorder_num;
 	memcpy(&netorder_num, buf, sizeof(uint64_t));
 
-	//(*out) = ntohll(netorder_num);
-	(*out) = netorder_num;
+	(*out) = ntohll(netorder_num);
 	(*offset) += 8;
 	return true;
 }
@@ -140,8 +139,7 @@ bool setRawUInt64(void *data, uint32_t size, uint32_t *offset, uint64_t in)
 	void *buf = (void *) &(((uint8_t *) data)[*offset]);
 
 	/* convert the data to the right format */
-	//uint64_t netorder_num = htonll(in);
-	uint64_t netorder_num = in;
+	uint64_t netorder_num = htonll(in);
 
 	/* pack it in */
 	memcpy(buf, &netorder_num, sizeof(uint64_t));

@@ -29,18 +29,21 @@ RSOBJ = $(BASE_OBJ) $(LOOP_OBJ) \
 	$(UDP_OBJ) \
 	$(GRP_OBJ) 
 
-TESTOBJ  = dht_test.o conn_test.o
+TESTOBJ  = net_test.o dht_test.o conn_test.o
 
-TESTS  = dht_test conn_test
+TESTS  = net_test dht_test conn_test
 
 
 all: librs tests
 
-dht_test: dht_test.o librs
+dht_test: dht_test.o 
 	$(CC) $(CFLAGS) -o dht_test dht_test.o $(LIBS)
 
-conn_test: conn_test.o librs
+conn_test: conn_test.o 
 	$(CC) $(CFLAGS) -o conn_test conn_test.o $(LIBS)
+
+net_test: net_test.o 
+	$(CC) $(CFLAGS) -o net_test net_test.o $(LIBS)
 
 ###############################################################
 include $(RS_TOP_DIR)/scripts/rules.mk
