@@ -1,24 +1,25 @@
 
 RS_TOP_DIR = ..
-include ../make.opt
+##### Define any flags that are needed for this section #######
+###############################################################
 
-OBJ = notifytxt.o retroshare.o
+###############################################################
+include $(RS_TOP_DIR)/scripts/config.mk
+###############################################################
 
-TESTS = 
+OBJ  = notifytxt.o retroshare.o
 
-all : $(OBJ) retroshare-nogui
+#TESTOBJ  = 
+
+TESTS  = retroshare-nogui
+
+all: tests
 
 retroshare-nogui: $(OBJ)
-	$(CC) $(RSCFLAGS) -o retroshare-nogui $(OBJ) $(RSLIBS) 
-	
-.cc.o:
-	$(CC) $(RSCFLAGS) -c $<
+	$(CC) $(CFLAGS) -o retroshare-nogui $(OBJ) $(LIBS) 
 
 
-clean:
-	-/bin/rm $(OBJ) 
-
-clobber: clean
-	-/bin/rm retroshare-nogui
-
+###############################################################
+include $(RS_TOP_DIR)/scripts/rules.mk
+###############################################################
 

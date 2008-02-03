@@ -65,6 +65,7 @@ class pqiConfig
 	{
 		return;
 	}
+virtual ~pqiConfig() { return; }
 
 virtual bool	loadConfiguration(std::string filename, std::string &load) = 0;
 virtual bool	saveConfiguration(std::string filename) = 0;

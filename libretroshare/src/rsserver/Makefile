@@ -1,8 +1,13 @@
 
 RS_TOP_DIR = ..
-include ../make.opt
+##### Define any flags that are needed for this section #######
+###############################################################
 
-OBJ = p3face-file.o \
+###############################################################
+include $(RS_TOP_DIR)/scripts/config.mk
+###############################################################
+
+RSOBJ = p3face-file.o \
 	p3face-msgs.o \
 	p3face-server.o \
 	p3face-config.o \
@@ -15,21 +20,16 @@ OBJ = p3face-file.o \
 #	p3face-people.o 
 #	p3face-network.o \
 
-TESTS = 
+#TESTOBJ  = 
 
-all : $(OBJ) librs $(TESTS) 
+#TESTS  = 
 
-librs:  $(OBJ)
-	$(AR) r $(LIBRS) $(OBJ)
-	$(RANLIB) $(LIBRS)
+all: librs tests
 
-.cc.o:
-	$(CC) $(CFLAGS) -c $<
+#tlvbase_test : tlvbase_test.o
+#	$(CC) $(CFLAGS) -o tlvbase_test tlvbase_test.o $(OBJ) $(LIBS) 
 
-
-clean:
-	-/bin/rm $(OBJ) 
-
-clobber: clean
-
+###############################################################
+include $(RS_TOP_DIR)/scripts/rules.mk
+###############################################################
 

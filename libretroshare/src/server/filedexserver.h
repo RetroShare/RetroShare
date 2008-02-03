@@ -58,14 +58,7 @@ class FileIndexMonitor;
 class ftFileRequest;
 class ftFileData;
 
-
-#ifdef PQI_USE_CHANNELS
-	#include "pqi/pqichannel.h"
-	#include "pqi/p3channel.h"
-#endif
-	
 #define MAX_RESULTS 100 // nice balance between results and traffic.
-
 
 class filedexserver: public p3Config
 {

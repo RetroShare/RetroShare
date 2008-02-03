@@ -444,6 +444,7 @@ int sockaddr_cmp(struct sockaddr_in &addr1, struct sockaddr_in &addr2 )
         	return (addr1.sin_addr.s_addr - addr2.sin_addr.s_addr);
 	if (addr1.sin_port != addr2.sin_port)
 		return (addr1.sin_port - addr2.sin_port);
+	return 0;
 }
 
 int inaddr_cmp(struct sockaddr_in addr1, struct sockaddr_in addr2 )

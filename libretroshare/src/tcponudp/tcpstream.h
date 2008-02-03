@@ -74,6 +74,7 @@ class TcpStream: public UdpPeer
 	/* Top-Level exposed */
 
 	TcpStream(UdpSorter *lyr);
+virtual ~TcpStream() { return; }
 
 	/* user interface */
 int     status(std::ostream &out);

@@ -1,7 +1,7 @@
 
-ifneq ($(OS),Linux)
+ifneq ($(OS),MacOSX)
 dummy:
-	echo "ERROR Linux configuration file included, but (OS != Linux)
+	echo "ERROR MacOSX configuration file included, but (OS != MacOSX)
 
 endif
 
@@ -14,7 +14,6 @@ PQI_USE_XPGP = 1
 #USE_FILELOOK = 1
 
 SSL_DIR=../../../../../src/openssl-0.9.7g-xpgp-0.1c
-KADC_DIR=../../../../../src/KadC
 UPNPC_DIR=../../../../../src/miniupnpc-20070515
 
 include $(RS_TOP_DIR)/scripts/checks.mk
@@ -29,7 +28,6 @@ LIBRS = $(LIBDIR)/libretroshare.a
 
 # Unix: Linux/Cygwin
 INCLUDE = -I $(RS_TOP_DIR) 
-#-I$(KADC_DIR)
 CFLAGS = -Wall -g $(INCLUDE) 
 
 ifdef PQI_USE_XPGP
@@ -54,6 +52,7 @@ endif
 
 
 RSCFLAGS = -Wall -g $(INCLUDE) 
+
 #########################################################################
 # OS Compile Options
 #########################################################################
@@ -61,19 +60,20 @@ RSCFLAGS = -Wall -g $(INCLUDE)
 # For the SSL BIO compilation. (Copied from OpenSSL compilation flags)
 BIOCC  = gcc
 
-# Linux flags
-BIOCFLAGS =  -I $(SSL_DIR)/include -DOPENSSL_THREADS -D_REENTRANT -DDSO_DLFCN -DHAVE_DLFCN_H -DOPENSSL_NO_KRB5 -DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -m486 -Wall -DSHA1_ASM -DMD5_ASM -DRMD160_ASM  
+# MacOSX flags
+BIOCFLAGS =  -I $(SSL_DIR)/include -DOPENSSL_SYSNAME_MACOSX -DOPENSSL_THREADS -D_REENTRANT -DOPENSSL_NO_KRB5 -O3 -fomit-frame-pointer -fno-common -DB_ENDIAN
+
 
 #########################################################################
 # OS specific Linking.
 #########################################################################
 
-LIBS =  -L$(LIBDIR) -lretroshare 
+LIBS = -Wl,-search_paths_first
+LIBS +=  -L$(LIBDIR) -lretroshare 
 ifdef PQI_USE_XPGP
 	LIBS +=  -L$(SSL_DIR) 
   endif
 LIBS +=  -lssl -lcrypto  -lpthread
-#LIBS +=  -L$(KADC_DIR) -lKadC 
 LIBS +=  -L$(UPNPC_DIR) -lminiupnpc
 LIBS +=  $(XLIB) -ldl -lz 
 	

@@ -4,7 +4,8 @@
 ###########################################################################
 #Define OS.
 #
-OS = Linux
+#OS = Linux
+OS = MacOSX
 #OS = Cygwin
 #OS = Win # MinGw.
 ###########################################################################
@@ -12,10 +13,14 @@ OS = Linux
 ifeq ($(OS),Linux)
   include $(RS_TOP_DIR)/scripts/config-linux.mk
 else
-  ifeq ($(OS),Cygwin)
-    include $(RS_TOP_DIR)/scripts/config-cygwin.mk
+  ifeq ($(OS),MacOSX)
+    include $(RS_TOP_DIR)/scripts/config-macosx.mk
   else
-    include $(RS_TOP_DIR)/scripts/config-mingw.mk
+    ifeq ($(OS),Cygwin)
+      include $(RS_TOP_DIR)/scripts/config-cygwin.mk
+    else
+      include $(RS_TOP_DIR)/scripts/config-mingw.mk
+    endif
   endif
 endif
 

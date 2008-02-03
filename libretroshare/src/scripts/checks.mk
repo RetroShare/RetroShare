@@ -11,17 +11,13 @@ dummy:
 
 endif
 
-ifndef KADC_DIR
-dummy:
-	echo "you must define KADC_DIR before you can compile"
-
-endif
-
 ifneq ($(OS),Linux)
-  ifndef PTHREADS_DIR
+  ifneq ($(OS),MacOSX)
+    ifndef PTHREADS_DIR
 dummy:
 	echo "you must define PTHREADS_DIR before you can compile"
 
+    endif
   endif
 endif
 

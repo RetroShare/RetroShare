@@ -1,28 +1,27 @@
 
 RS_TOP_DIR = ..
-include ../make.opt
+##### Define any flags that are needed for this section #######
+###############################################################
 
-OBJ = rsthreads.o  rsdir.o rsprint.o
-# rsrand.o --- not really needed!
+###############################################################
+include $(RS_TOP_DIR)/scripts/config.mk
+###############################################################
 
-all : $(OBJ) librs dirtest dir2test
+RSOBJ = rsthreads.o  rsdir.o rsprint.o
+
+TESTOBJ  = dirtest.o dir2test.o 
+
+TESTS  = dirtest dir2test
+
+all: librs tests
 
 dirtest: $(OBJ) dirtest.o
-	$(CC) $(CFLAGS) -o dirtest $(OBJ) dirtest.o $(RSLIBS)
+	$(CC) $(CFLAGS) -o dirtest dirtest.o $(OBJ) $(LIBS)
 
 dir2test: $(OBJ) dir2test.o
-	$(CC) $(CFLAGS) -o dir2test $(OBJ) dir2test.o $(RSLIBS)
+	$(CC) $(CFLAGS) -o dir2test dir2test.o $(OBJ) $(LIBS)
 
-librs:  $(OBJ)
-	$(AR) r $(LIBRS) $(OBJ)
-	$(RANLIB) $(LIBRS)
-
-.cc.o:
-	$(CC) $(CFLAGS) -c $<
-
-clean:
-	-/bin/rm $(OBJ) dirtest.o dir2test.o
-
-clobber: clean
-	-/bin/rm dirtest dir2test
+###############################################################
+include $(RS_TOP_DIR)/scripts/rules.mk
+###############################################################
 

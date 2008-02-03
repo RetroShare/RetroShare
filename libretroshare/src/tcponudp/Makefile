@@ -1,74 +1,60 @@
 
-RS_TOP_DIR=..
+RS_TOP_DIR = ..
+##### Define any flags that are needed for this section #######
+###############################################################
 
-include $(RS_TOP_DIR)/make.opt
+###############################################################
+include $(RS_TOP_DIR)/scripts/config.mk
+###############################################################
+
+BIOOBJ = bss_tou.o 
+
+RSOBJ  = tou_net.o udplayer.o udpsorter.o udptestfn.o
+RSOBJ += tcppacket.o tcpstream.o tou.o $(BIOOBJ)
 
 EXECS = librs  udpsock_test udpsort_test udp_server 
 #test_tou pair_tou reset_tou internal_tou largefile_tou 
 
-OBJ  = tou_net.o udplayer.o udpsorter.o udptestfn.o
-OBJ += tcppacket.o tcpstream.o tou.o
+TESTOBJ  = udpsock_test.o udpsort_test.o udp_server.o test_tou.o
+TESTOBJ += pair_tou.o reset_tou.o largefile_tou.o
+#internal_tou.o 
 
-#tou.o 
+TESTS  = udpsock_test udpsort_test udp_server test_tou 
+TESTS += pair_tou reset_tou largefile_tou
+#internal_tou 
 
-all : $(OBJ) $(EXECS)
-
-.cc.o:
-	$(CC) $(CFLAGS) -c $<
-
-clean:
-	-$(RM) $(OBJ) $(BIOOBJ) udpsock_test.o udpsort_test.o udp_server.o
-
-#test_tou.o pair_tou.o udp_server.o reset_tou.o internal_tou.o largefile_tou.o
-
-clobber: clean
-	-$(RM) udpsock_test udpsort_test udp_server 
-
-#test_tou pair_tou reset_tou internal_tou largefile_tou libtou.so ../lib/libtou.a
+all: librs tests
 
 udpsock_test : $(OBJ) udpsock_test.o
-	$(CC) $(CFLAGS) -o udpsock_test $(OBJ) udpsock_test.o -lpthread -L../lib -lretroshare
+	$(CC) $(CFLAGS) -o udpsock_test udpsock_test.o $(OBJ) $(LIBS)
 
 udpsort_test : $(OBJ) udpsort_test.o
-	$(CC) $(CFLAGS) -o udpsort_test $(OBJ) udpsort_test.o -lpthread -L../lib -lretroshare
+	$(CC) $(CFLAGS) -o udpsort_test udpsort_test.o $(OBJ) $(LIBS)
 
 udp_server: $(OBJ) udp_server.o
-	$(CC) $(CFLAGS) -o udp_server $(OBJ) udp_server.o -lpthread -L../lib -lretroshare
+	$(CC) $(CFLAGS) -o udp_server udp_server.o $(OBJ) $(LIBS)
 
 test_tou : $(OBJ) test_tou.o
-	$(CC) $(CFLAGS) -o test_tou $(OBJ) test_tou.o $(LIBS)
+	$(CC) $(CFLAGS) -o test_tou test_tou.o $(OBJ) $(LIBS)
 
 pair_tou : $(OBJ) pair_tou.o
-	$(CC) $(CFLAGS) -o pair_tou $(OBJ) pair_tou.o $(LIBS)
+	$(CC) $(CFLAGS) -o pair_tou pair_tou.o $(OBJ) $(LIBS)
 
 reset_tou : $(OBJ) reset_tou.o
-	$(CC) $(CFLAGS) -o reset_tou $(OBJ) reset_tou.o $(LIBS)
+	$(CC) $(CFLAGS) -o reset_tou reset_tou.o $(OBJ) $(LIBS)
 
 internal_tou : $(OBJ) internal_tou.o
-	$(CC) $(CFLAGS) -o internal_tou $(OBJ) internal_tou.o $(LIBS)
+	$(CC) $(CFLAGS) -o internal_tou internal_tou.o $(OBJ) $(LIBS)
 
 largefile_tou : $(OBJ) largefile_tou.o
-	$(CC) $(CFLAGS) -o largefile_tou $(OBJ) largefile_tou.o $(LIBS)
+	$(CC) $(CFLAGS) -o largefile_tou largefile_tou.o $(OBJ) $(LIBS)
 
 
-
-# For BIO Compilation.... SSL Interface.
-#
-
-
-BIOOBJ = bss_tou.o 
-BIOCC  = gcc
-BIOCFLAGS =  -I $(SSL_DIR)/include -DOPENSSL_THREADS -D_REENTRANT -DDSO_DLFCN -DHAVE_DLFCN_H -DOPENSSL_NO_KRB5 -DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -m486 -Wall -DSHA1_ASM -DMD5_ASM -DRMD160_ASM  
-
-
-libtou.a: $(BIOOBJ) $(OBJ)
-	ar rc ../lib/libtou.a $(BIOOBJ) $(OBJ)
-
-libtou.so: $(BIOOBJ) $(OBJ)
-	$(CC) -o libtou.so -shared $(BIOOBJ) $(OBJ)
-
-librs: $(BIOOBJ) $(OBJ)	
-	ar r ../lib/libretroshare.a $(BIOOBJ) $(OBJ)
-	
+# Extra Rule for BIOFLAGS
 .c.o:
 	$(BIOCC) $(BIOCFLAGS) -c $<
+
+###############################################################
+include $(RS_TOP_DIR)/scripts/rules.mk
+###############################################################
+

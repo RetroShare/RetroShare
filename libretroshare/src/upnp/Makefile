@@ -1,26 +1,28 @@
 
 RS_TOP_DIR = ..
-include ../make.opt
+##### Define any flags that are needed for this section #######
+###############################################################
 
-OBJ = upnphandler.o upnputil.o
+EXTRA_CFLAGS += -I$(UPNPC_DIR) -DMINIUPNP_EXPORTS 
 
-CFLAGS += -I$(UPNPC_DIR) -DMINIUPNP_EXPORTS 
+###############################################################
+include $(RS_TOP_DIR)/scripts/config.mk
+###############################################################
 
-all : $(OBJ) librs upnptest
+CFLAGS += $(EXTRA_CFLAGS)
+
+RSOBJ = upnphandler.o upnputil.o
+
+TESTOBJ  = upnptest.o
+
+TESTS  = upnptest
+
+all: librs tests
 
 upnptest: $(OBJ) upnptest.o
 	$(CC) $(CFLAGS) -o upnptest $(OBJ) upnptest.o $(RSLIBS)
 
-librs:  $(OBJ)
-	$(AR) r $(LIBRS) $(OBJ)
-	$(RANLIB) $(LIBRS)
-
-.cc.o:
-	$(CC) $(CFLAGS) -c $<
-
-clean:
-	-/bin/rm $(OBJ) upnptest.o
-
-clobber: clean
-	-/bin/rm upnptest
+###############################################################
+include $(RS_TOP_DIR)/scripts/rules.mk
+###############################################################
 

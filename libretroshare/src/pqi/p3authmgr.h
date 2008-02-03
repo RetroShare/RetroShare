@@ -72,6 +72,8 @@ class p3AuthMgr
 {
 	public:
 
+virtual ~p3AuthMgr() { return; }
+
 		/* initialisation -> done by derived classes */
 virtual bool    active() = 0;
 virtual int     InitAuth(const char *srvr_cert, const char *priv_key, 
@@ -149,6 +151,7 @@ virtual bool SaveCertificateToFile(std::string id, std::string filename);
 
 		/* Signatures */
 
+virtual bool AuthCertificate(std::string uid);
 virtual bool SignCertificate(std::string id);
 virtual	bool RevokeCertificate(std::string id);
 virtual bool TrustCertificate(std::string id, bool trust);

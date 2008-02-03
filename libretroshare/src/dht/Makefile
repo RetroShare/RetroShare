@@ -1,18 +1,21 @@
 
 RS_TOP_DIR = ..
-include ../make.opt
+##### Define any flags that are needed for this section #######
+###############################################################
 
-OBJ = b64.o opendhtstr.o opendht.o opendhtmgr.o
+###############################################################
+include $(RS_TOP_DIR)/scripts/config.mk
+###############################################################
 
-#CADKINC = /home/rmf24/prog/src/KadC
-#CFLAGS += -I $(CADKINC)
-#RSLIBS += -L $(CADKINC) -lKadC
+RSOBJ = b64.o opendhtstr.o opendht.o opendhtmgr.o
 
+TESTOBJ  = odhtstr_test.o odhtpost_test.o odhtmgr_test.o 
 
-all : $(OBJ) librs odhtstr_test odhtpost_test odhtmgr_test
+TESTS  = odhtstr_test odhtpost_test odhtmgr_test
 
-#dhttest
+all: librs tests
 
+#dhttest is OLD
 dhttest: $(OBJ) dhttest.o
 	$(CC) $(CFLAGS) -o dhttest $(OBJ) dhttest.o $(RSLIBS)
 
@@ -25,19 +28,11 @@ odhtstr_test: $(OBJ) odhtstr_test.o
 odhtmgr_test: $(OBJ) odhtmgr_test.o
 	$(CC) $(CFLAGS) -o odhtmgr_test $(OBJ) odhtmgr_test.o $(RSLIBS)
 
-librs:  $(OBJ)
-	$(AR) r $(LIBRS) $(OBJ)
-	$(RANLIB) $(LIBRS)
-
-.cc.o:
-	$(CC) $(CFLAGS) -c $<
-
+# Extra Rule...
 .c.o:
 	$(CC) $(CFLAGS) -c $<
 
-clean:
-	-/bin/rm $(OBJ) dhttest.o
-
-clobber: clean
-	-/bin/rm dhttest
+###############################################################
+include $(RS_TOP_DIR)/scripts/rules.mk
+###############################################################
 

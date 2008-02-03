@@ -1,28 +1,24 @@
 
 RS_TOP_DIR = ..
-include ../make.opt
+##### Define any flags that are needed for this section #######
+###############################################################
 
-OBJ =   ft.o ftfiler.o hashsearch.o \
-	filedexserver.o 
+###############################################################
+include $(RS_TOP_DIR)/scripts/config.mk
+###############################################################
 
-EXEC = ftcachetest 
+RSOBJ =   ft.o ftfiler.o hashsearch.o filedexserver.o 
 
-all : $(OBJ) librs $(EXEC)
+TESTOBJ  = ftcachetest.o
 
-librs:  $(OBJ)
-	$(AR) r $(LIBRS) $(OBJ)
-	$(RANLIB) $(LIBRS)
+TESTS  = ftcachetest
+
+all: librs tests
 
 ftcachetest : ftcachetest.o $(OBJ)
-	$(CC) $(CFLAGS) -o ftcachetest ftcachetest.o $(OBJ) $(RSLIBS)
+	$(CC) $(CFLAGS) -o ftcachetest ftcachetest.o $(OBJ) $(LIBS)
 
-.cc.o:
-	$(CC) $(CFLAGS) -c $<
-
-clean:
-	-/bin/rm $(OBJ) 
-	-/bin/rm ftcachetest.o 
-
-clobber: clean
-	-/bin/rm $(EXEC)
+###############################################################
+include $(RS_TOP_DIR)/scripts/rules.mk
+###############################################################
 

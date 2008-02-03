@@ -209,6 +209,11 @@ bool p3DummyAuthMgr::SaveCertificateToFile(std::string id, std::string filename)
 }
 
 		/* Signatures */
+bool p3DummyAuthMgr::AuthCertificate(std::string id)
+{
+	return false;
+}
+
 bool p3DummyAuthMgr::SignCertificate(std::string id)
 {
 	return false;
