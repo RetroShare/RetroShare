@@ -27,6 +27,7 @@
 #include <arpa/inet.h>
 
 #include "serialiser/rsbaseserial.h"
+#include "util/rsnet.h"
 
 /* UInt16 get/set */
 
