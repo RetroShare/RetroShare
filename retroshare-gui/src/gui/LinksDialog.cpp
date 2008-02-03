@@ -344,7 +344,14 @@ void  LinksDialog::updateLinks()
            		QTreeWidgetItem *child = new QTreeWidgetItem((QTreeWidget*)0);
 
 			/* (0) Comment */		
-			child -> setText(0, QString::fromStdWString(cit->comment));
+			if (cit->comment != L"")
+			{
+				child -> setText(0, QString::fromStdWString(cit->comment));
+			}
+			else
+			{
+				child -> setText(0, "No Comment");
+			}
 
 			/* (2) Peer / Date */
 		        {
@@ -412,14 +419,12 @@ void LinksDialog::openLink ( QTreeWidgetItem * item, int column )
 		return;
 	}
 
-	std::cerr << "LinksDialog::openLink() " << (item->text(0)).toStdString() << std::endl;
+	std::cerr << "LinksDialog::openLink() " << (item->text(2)).toStdString() << std::endl;
 	/* open a browser */
-	QUrl url(item->text(0));
+	QUrl url(item->text(2));
 	QDesktopServices::openUrl ( url );
 
 	/* close expansion */
-        //ui.linkTreeWidget->collapseItem(item);
-	
 	bool state = item->isExpanded();
 	item->setExpanded(!state);
 }

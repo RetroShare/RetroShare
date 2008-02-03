@@ -38,6 +38,7 @@ std::string generateRandomLinkId();
  *
  */
 
+#define RANK_DEBUG 1
 
 p3Ranking::p3Ranking(uint16_t subtype, CacheTransfer *cft,
 		std::string sourcedir, std::string storedir, 
@@ -47,6 +48,9 @@ p3Ranking::p3Ranking(uint16_t subtype, CacheTransfer *cft,
 	mStorePeriod(storePeriod)
 {
 	mOwnId = getAuthMgr()->OwnId();
+	mViewPeriod = 60 * 60 * 24 * 30; /* one Month */
+	mSortType = RS_RANK_ALG;
+
 	createDummyData();
 	return;
 }
@@ -173,52 +177,175 @@ void p3Ranking::addRankMsg(RsRankMsg *msg)
 
 bool p3Ranking::setSortPeriod(uint32_t period)
 {
+	bool reSort = (mViewPeriod != period);
 	mViewPeriod = period;
+
+	if (reSort)
+	{
+		sortAllMsgs();
+	}
+
 	return true;
 }
 
 bool p3Ranking::setSortMethod(uint32_t type)
 {
+	bool reSort = (mSortType != type);
 	mSortType = type;
+
+	if (reSort)
+	{
+		sortAllMsgs();
+	}
+
 	return true;
 }
 
 bool p3Ranking::clearPeerFilter()
 {
+	bool reSort = (mPeerFilter.size() > 0);
+
 	mPeerFilter.clear();
+
+	if (reSort)
+	{
+		sortAllMsgs();
+	}
+
 	return true;
 }
 
 bool p3Ranking::setPeerFilter(std::list<std::string> peers)
 {
 	mPeerFilter = peers;
+
+	sortAllMsgs();
+
 	return true;
 }
 
-float 	p3Ranking::locked_calcRank(RankGroup &grp) /* returns 0->100 */
+float 	p3Ranking::locked_calcRank(RankGroup &grp) 
 {
+	/* Ranking Calculations ..... 
+	 */
 
-#if 0
-	/* where all the work is done */
-	bool doScore = (mSortType == 
-	bool doTime  = (mSortType == 
+	time_t now = time(NULL);
+	time_t minTime = now-mViewPeriod;
 	bool doFilter = (mPeerFilter.size() > 0);
-	float rank = 0;
+	bool doScore = (mSortType & RS_RANK_SCORE);
+	bool doTime  = (mSortType & RS_RANK_TIME); 
 
-	for(it = grp.comments.begin(); it != grp.comments.end(); it++)
-	{
-		
-	if (doFilter)
-	{
-		/* do first so we can discard */
+	uint32_t count = 0;
+	float   algScore = 0;
 
-
-	if (doScore)
-	if (mSortType
+#ifdef RANK_DEBUG
+	std::string normlink(grp.link.begin(), grp.link.end());
+	std::cerr << "p3Ranking::locked_calcRank() for: " << normlink;
+	std::cerr << std::endl;
+	std::cerr << "Period: " << mViewPeriod;
+	std::cerr << " doFilter: " << doFilter;
+	std::cerr << " doScore: " << doScore;
+	std::cerr << " doTime: " << doTime;
+	std::cerr << std::endl;
 #endif
 
-	return 100;
+	std::map<std::string, RsRankMsg *>::iterator it;
+	for(it = grp.comments.begin(); it != grp.comments.end(); it++)
+	{
+#ifdef RANK_DEBUG
+	std::cerr << "Comment by:" << it->first << " age: " << now - it->second->timestamp;
+	std::cerr << std::endl;
+#endif
+		if (doFilter)
+		{
+			if (mPeerFilter.end() == 
+				std::find(mPeerFilter.begin(), mPeerFilter.end(), it->first))
+			{
+				continue; /* skip it */
+#ifdef RANK_DEBUG
+				std::cerr << "\tFiltered Out";
+				std::cerr << std::endl;
+#endif
+
+			}
+		}
+
+		/* if Scoring is involved... drop old ones */
+		if ((doScore) && (it->second->timestamp < minTime))
+		{
+#ifdef RANK_DEBUG
+			std::cerr << "\tToo Old";
+			std::cerr << std::endl;
+#endif
+			continue;
+		}
+
+		time_t deltaT;
+		if (it->second->timestamp > now)
+		{
+			deltaT = it->second->timestamp - now;
+		}
+		else
+		{
+			deltaT = now - it->second->timestamp;
+		}
+		float timeScore = ((float) mViewPeriod - deltaT) / (mViewPeriod + 0.01);
+
+#ifdef RANK_DEBUG
+		std::cerr << "\tTimeScore: " << timeScore;
+		std::cerr << std::endl;
+#endif
+
+		/* algScore is sum of (filtered) timeScores */
+		/* timeScore is average of (all) timeScores */
+		/* popScore is just count of valid scores */
+
+		algScore += timeScore;
+		count++;
+	}
+
+#ifdef RANK_DEBUG
+	std::cerr << "p3Ranking::locked_calcRank() algScore: " << algScore;
+	std::cerr << " Count: " << count;
+	std::cerr << std::endl;
+#endif
+
+	if ((count < 0) || (algScore < 0))
+	{
+#ifdef RANK_DEBUG
+		std::cerr << "Final score: 0";
+		std::cerr << std::endl;
+#endif
+		return 0;
+	}
+
+	if ((doScore) && (doTime))
+	{
+#ifdef RANK_DEBUG
+		std::cerr << "Final (alg) score:" << algScore;
+		std::cerr << std::endl;
+#endif
+		return algScore;
+	}
+	else if (doScore)
+	{
+#ifdef RANK_DEBUG
+		std::cerr << "Final (pop) score:" << count;
+		std::cerr << std::endl;
+#endif
+		return count;
+	}
+	else if (doTime)
+	{
+#ifdef RANK_DEBUG
+		std::cerr << "Final (time) score:" << algScore / count;
+		std::cerr << std::endl;
+#endif
+		return algScore / count;
+	}
+	return 0;
 }
+
 
 void	p3Ranking::reSortGroup(RankGroup &grp)
 {
@@ -281,11 +408,11 @@ float   p3Ranking::getMaxRank()
 bool    p3Ranking::getRankings(uint32_t first, uint32_t count, std::list<std::string> &rids)
 {
 	uint32_t i = 0;
-	std::multimap<float, std::string>::iterator rit;
-	for(rit = mRankings.begin(); (i < first) && (rit != mRankings.end()); rit++);
+	std::multimap<float, std::string>::reverse_iterator rit;
+	for(rit = mRankings.rbegin(); (i < first) && (rit != mRankings.rend()); rit++);
 
 	i = 0;
-	for(; (i < count) && (rit != mRankings.end()); rit++)
+	for(; (i < count) && (rit != mRankings.rend()); rit++)
 	{
 		rids.push_back(rit->second);
 	}
@@ -404,7 +531,7 @@ void	p3Ranking::createDummyData()
 	msg->PeerId(mOwnId);
 	msg->rid = "0001";
 	msg->title = L"Original Awesome Site!";
-	msg->timestamp = now - 12345;
+	msg->timestamp = now - 60 * 60 * 24 * 15;
 	msg->link = L"http://www.retroshare.org";
 	msg->comment = L"Retroshares Website";
 
@@ -424,12 +551,46 @@ void	p3Ranking::createDummyData()
 	msg->PeerId("ALTID");
 	msg->rid = "0002";
 	msg->title = L"Awesome Site!";
-	msg->timestamp = now - 12345;
+	msg->timestamp = now - 60 * 60 * 24 * 29;
 	msg->link = L"http://www.lunamutt.org";
 	msg->comment = L"Lunamutt's Website (TWO) How Long can this comment be!\n";
 	msg->comment += L"What happens to the second line?\n";
 	msg->comment += L"And a 3rd!";
 
 	addRankMsg(msg);
+
+	msg = new RsRankMsg();
+	msg->PeerId("ALTID2");
+	msg->rid = "0002";
+	msg->title = L"Awesome Site!";
+	msg->timestamp = now - 60 * 60 * 7;
+	msg->link = L"http://www.lunamutt.org";
+	msg->comment += L"A Short Comment";
+
+	addRankMsg(msg);
+
+
+	/***** Third one ****/
+
+	msg = new RsRankMsg();
+	msg->PeerId(mOwnId);
+	msg->rid = "0003";
+	msg->title = L"Weird Site!";
+	msg->timestamp = now - 60 * 60;
+	msg->link = L"http://www.lunamutt.com";
+	msg->comment = L"";
+
+	addRankMsg(msg);
+
+	msg = new RsRankMsg();
+	msg->PeerId("ALTID");
+	msg->rid = "0003";
+	msg->title = L"Weird Site!";
+	msg->timestamp = now - 60 * 60 * 24 * 2;
+	msg->link = L"http://www.lunamutt.com";
+	msg->comment = L"";
+
+	addRankMsg(msg);
+
 }
 
