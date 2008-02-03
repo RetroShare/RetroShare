@@ -41,903 +41,77 @@ const uint32_t AUTODISC_LDI_SUBTYPE_RPLY = 0x02;
 
 const int pqidisczone = 2482;
 
-
-static int updateAutoServer(autoserver *as, RsDiscItem *di);
 static int convertTDeltaToTRange(double tdelta);
 static int convertTRangeToTDelta(int trange);
-static int updateCertAvailabilityFlags(cert *c, unsigned long discFlags);
-static unsigned long determineCertAvailabilityFlags(cert *c);
 
 // Operating System specific includes.
 #include "pqi/pqinetwork.h"
+
+/* DISC FLAGS */
+
+const uint32_t P3DISC_FLAGS_USE_DISC 		= 0x0001;
+const uint32_t P3DISC_FLAGS_USE_DHT 		= 0x0002;
+const uint32_t P3DISC_FLAGS_EXTERNAL_ADDR 	= 0x0004;
+const uint32_t P3DISC_FLAGS_PEER_ONLINE 	= 0x0008;
+const uint32_t P3DISC_FLAGS_OWN_DETAILS 	= 0x0010;
+
+
+#define P3DISC_DEBUG 	1
+
+/******************************************************************************************
+ ******************************  NEW DISCOVERY  *******************************************
+ ******************************************************************************************
+ *****************************************************************************************/
 
 p3disc::p3disc(p3AuthMgr *am, p3ConnectMgr *cm)
 	:p3Service(RS_SERVICE_TYPE_DISC), mAuthMgr(am), mConnMgr(cm)
 {
 	addSerialType(new RsDiscSerialiser());
 
-	ldata = NULL;
-	ldlenmax = 1024;
-
-	local_disc = false; //true;
-	remote_disc = true;
-
-	// set last check to current time, this prevents queued.
-	// messages at the start! (actually shouldn't matter - as they aren't connected).
-	ts_lastcheck = time(NULL); // 0;
-
-        // configure...
-	load_configuration();
-	localSetup();
-
-	return;
-}
-
-p3disc::~p3disc()
-{
+	mRemoteDisc = true;
+	mLocalDisc  = false;
 	return;
 }
 
 int p3disc::tick()
 {
-	pqioutput(PQL_DEBUG_ALL, pqidisczone,
-		"p3disc::tick()");
 
-	if (local_disc)
-	{
-		if (ts_nextlp == 0)
-		{
-			pqioutput(PQL_DEBUG_ALL, pqidisczone,
-				"Local Discovery On!");
-			localPing(baddr);
-			localListen();
-		}
-	}
-	else
-	{
-		pqioutput(PQL_DEBUG_ALL, pqidisczone,
-				"Local Discovery Off!");
-	}
-	
-	// ten minute counter.
-	if (--ts_nextlp < 0)
-	{
-		ts_nextlp = 600;
-	}
+#ifdef P3DISC_DEBUG
 
-	if (ts_nextlp % 300 == 0)
+static int count = 0;
+
+	if (++count % 10 == 0)
+	{
 		idServers();
-
-
-	/* remote discovery can run infrequently....
-	 * this is a good idea, as it ensures that 
-	 * multiple Pings aren't sent to neighbours....
-	 *
-	 * only run every 5 seconds.
-	 */
-
-	if (ts_nextlp % 5 != 0)
-	{
-		return 1;
 	}
-
-	// important bit
-	int nr = handleReplies(); // discards packets if not running.
-	if (remote_disc)
-	{
-		pqioutput(PQL_DEBUG_ALL, pqidisczone,
-				"Remote Discovery On!");
-		newRequests();
-		if ((sroot -> collectedCerts()) || (nr > 0))
-		{
-			distillData();
-		}
-	}
-	else
-	{
-		pqioutput(PQL_DEBUG_ALL, pqidisczone,
-				"Remote Discovery Off!");
-	}
-	return 1;
-}
-
-static int local_disc_def_port = 7770;
-static int local_disc_secondary_port = 7870;
-
-int p3disc::setLocalAddress(struct sockaddr_in srvaddr)
-{
-	saddr = srvaddr;
-	return 1;
-}
-
-
-int p3disc::determineLocalNetAddr()
-{
-	// laddr filled in by load_configuration.
-	laddr.sin_port = htons(local_disc_def_port);
-
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS // ie UNIX
-	// broadcast address.
-	baddr.sin_family = AF_INET;
-	inet_aton("0.0.0.0", &(baddr.sin_addr));
-	baddr.sin_port = htons(local_disc_def_port);
-#else // WIN
-
-	baddr. sin_family = AF_INET;
-
-	// So as recommended on this site.. will use |+& to calc it.
-	unsigned long netmask = inet_addr("255.255.255.0");
-	unsigned long netaddr = saddr.sin_addr.s_addr & netmask;
-	baddr.sin_addr.s_addr =  netaddr | (~netmask);
-
-	// direct works!
-	//baddr.sin_addr.s_addr =  inet_addr("10.0.0.59"); 
-	//baddr.sin_addr.s_addr =  inet_addr("127.0.0.1"); 
-	// broadcast!
-	baddr.sin_addr.s_addr =  INADDR_BROADCAST;
-	baddr.sin_port = htons(local_disc_def_port);
-
-	
-
-
-
 #endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-	{
-		std::ostringstream out;
-		out << "p3disc::determineLocalNetAddr() baddr: ";
-		out << inet_ntoa(baddr.sin_addr) << std::endl;
-		pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-	}
-
-	return 1;
+	return handleIncoming();
 }
 
-int p3disc::setupLocalPacket(int type, struct sockaddr_in *home, 
-						struct sockaddr_in *server)
-{
-	if (ldata == NULL)
-	{
-		ldata = malloc(ldlenmax);
-	}
-
-	// setup packet.
-	// 8 bytes - tag
-	((char *) ldata)[0] = 'P';
-	((char *) ldata)[1] = 'Q';
-	((char *) ldata)[2] = 'I';
-	((char *) ldata)[3] = 'L';
-	if (type == AUTODISC_LDI_SUBTYPE_PING)
-	{
-		((char *) ldata)[4] = 'D';
-		((char *) ldata)[5] = 'I';
-		((char *) ldata)[6] = 'S';
-		((char *) ldata)[7] = 'C';
-	}
-	else
-	{
-		((char *) ldata)[4] = 'R';
-		((char *) ldata)[5] = 'P';
-		((char *) ldata)[6] = 'L';
-		((char *) ldata)[7] = 'Y';
-	}
-
-	// sockaddr copy.
-	ldlen = 8;
-	for(unsigned int i = 0; i < sizeof(*home); i++)
-	{
-		((char *) ldata)[ldlen + i] = ((char *) home)[i];
-	}
-
-	ldlen += sizeof(*home);
-	for(unsigned int i = 0; i < sizeof(*server); i++)
-	{
-		((char *) ldata)[ldlen + i] = ((char *) server)[i];
-	}
-	ldlen += sizeof(*server);
-
-	return 1;
-}
-
-
-
-
-
-int p3disc::localSetup()
-{
-		
-	if (!local_disc)
-	{
-		pqioutput(PQL_DEBUG_BASIC, pqidisczone, 
-			"p3disc::localSetup() Warning local_disc OFF!");
-		return -1;
-	}
-
-	//First we must attempt to open the default socket
-	determineLocalNetAddr();
-
-	int err = 0;
-
-	lsock = socket(PF_INET, SOCK_DGRAM, 0);
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS // ie UNIX
-
-	if (lsock < 0)
-	{
-		pqioutput(PQL_DEBUG_BASIC, pqidisczone, 
-			"p3disc::localSetup() Cannot open UDP socket!");
-		local_disc = false;
-		return -1;
-	}
-
-	err = fcntl(lsock, F_SETFL, O_NONBLOCK);
-        if (err < 0)
-	{
-		pqioutput(PQL_DEBUG_BASIC, pqidisczone, 
-			"p3disc::localSetup() Error: Cannot make socket NON-Blocking: ");
-
-		local_disc = false;
-		return -1;
-	}
-
-	int on = 1;
-	if(0 != (err =setsockopt(lsock, SOL_SOCKET, SO_BROADCAST,(void *) &on, sizeof(on))))
-	{
-		pqioutput(PQL_DEBUG_BASIC, pqidisczone, 
-			"p3disc::localSetup() Error: Cannot make socket Broadcast: ");
-		local_disc = false;
-		return -1;
-	}
-	else
-	{
-		pqioutput(PQL_DEBUG_BASIC, pqidisczone, 
-			"p3disc::localSetup() Broadcast Flag Set!");
-	}
-	
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#else //WINDOWS_SYS
-
-	if (lsock == INVALID_SOCKET)
-	{
-		pqioutput(PQL_DEBUG_BASIC, pqidisczone, 
-			"p3disc::localSetup() Cannot open UDP socket!");
-		local_disc = false;
-		return -1;
-	}
-
-	unsigned long int on = 1;
-	if (0 != (err = ioctlsocket(lsock, FIONBIO, &on)))
-        {
-		pqioutput(PQL_DEBUG_BASIC, pqidisczone, 
-			"p3disc::localSetup() Error: Cannot make socket NON-Blocking: ");
-		local_disc = false;
-		return -1;
-	}
-
-	on = 1;
-	if(0 != (err=setsockopt(lsock, SOL_SOCKET, SO_BROADCAST,(char *) &on, sizeof(on))))
-	{
-		pqioutput(PQL_DEBUG_BASIC, pqidisczone, 
-			"p3disc::localSetup() Error: Cannot make socket Broadcast: ");
-
-		local_disc = false;
-		return -1;
-	}
-	else
-	{
-		pqioutput(PQL_DEBUG_BASIC, pqidisczone, 
-			"p3disc::localSetup() Broadcast Flag Set!");
-	}
-
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-
-	{
-	  std::ostringstream out;
-	  out << "p3disc::localSetup()" << std::endl;
-	  out << "\tSetup Family: " << laddr.sin_family;
-	  out << std::endl;
-	  out << "\tSetup Address: " << inet_ntoa(laddr.sin_addr);
-	  out << std::endl;
-	  out << "\tSetup Port: " << ntohs(laddr.sin_port) << std::endl;
-	  pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-	}
-
-	if (0 != (err = bind(lsock, (struct sockaddr *) &laddr, sizeof(laddr))))
-	{
-	  	std::ostringstream out;
-		out << "p3disc::localSetup()";
-		out << " Cannot Bind to Default Address!" << std::endl;
-		showSocketError(out);
-		out << std::endl;
-		out << " Trying Secondary Address." << std::endl;
-	  	pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-
-	}
-	else
-	{
-		// ifsucessful then call localPing
-		// set ts to -1 and don't worry about outgoing until
-		// we receive a packet
-	  	std::ostringstream out;
-		out << "p3disc::localSetup()" << std::endl;
-		out << " Bound to Address." << std::endl;
-		out << "\tSetup Address: " << inet_ntoa(laddr.sin_addr);
-		out << std::endl;
-		out << "\tSetup Port: " << ntohs(laddr.sin_port) << std::endl;
-	  	pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-
-		ts_nextlp = -1;
-		ts_nextlp = 10;
-		localPing(baddr);
-		return 1;
-	}
-
-	laddr.sin_port = htons(local_disc_secondary_port);
-	if (0 != (err = bind(lsock, (struct sockaddr *) &laddr, sizeof(laddr))))
-	{
-	  	std::ostringstream out;
-		out << "p3disc::localSetup()";
-		out << " Cannot Bind to Secondary Address!" << std::endl;
-		showSocketError(out);
-		out << std::endl;
-		out << " Giving Up!" << std::endl;
-	  	pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-		local_disc = false;
-		return -1;
-	}
-	else
-	{
-	  	std::ostringstream out;
-		out << "p3disc::localSetup()" << std::endl;
-		out << " Bound to Secondary Address." << std::endl;
-		out << "\tSetup Address: " << inet_ntoa(laddr.sin_addr);
-		out << std::endl;
-		out << "\tSetup Port: " << ntohs(laddr.sin_port) << std::endl;
-	  	pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-
-		ts_nextlp = 10;
-		localPing(baddr);
-		return 1;
-	}
-
-	// else we open a random port and set the timer
-	// ie - don't bind to a port.....
-	ts_nextlp = 10; // ping every 10 minutes.
-	localPing(baddr);
-	return 1;
-}
-
-int p3disc::localPing(struct sockaddr_in reply_to)
-{
-	//This function sends a meessage out containing both cert
-	// and server address, as well as the ping address (if not standard)
-	
-	// so we send a packet out to that address 
-	// (most likely broadcast address).
-	
-	// setup up the data for connection.
-	setupLocalPacket(AUTODISC_LDI_SUBTYPE_PING,&laddr, &saddr);
-	
-	// Cast to char for windows benefit.
-	int len = sendto(lsock, (char *) ldata, ldlen, 0, (struct sockaddr *) &reply_to, sizeof(reply_to));
-	if (len != ldlen)
-	{
-		std::ostringstream out;
-		out << "p3disc::localPing()";
-		out << " Failed to send Packet." << std::endl;
-		out << "Sent (" << len << "/" << ldlen;
-		out << std::endl;
-		out << "Addr:" << inet_ntoa(reply_to.sin_addr) << std::endl;
-		out << "Port:" << ntohs(reply_to.sin_port) << std::endl;
-		out << std::endl;
-	  	pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-	}
-	else
-	{
-		std::ostringstream out;
-		out << "p3disc::localPing() Success!" << std::endl;
-		out << "Sent To Addr:" << inet_ntoa(reply_to.sin_addr) << std::endl;
-		out << "Sent To Port:" << ntohs(reply_to.sin_port) << std::endl;
-		out << "Message Size: " << len << std::endl;
-	  	pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-	}
-	return 1;
-}
-
-int p3disc::localReply(struct sockaddr_in reply_to)
-{
-	//This function sends a meessage out containing both cert
-	// and server address, as well as the ping address (if not standard)
-	
-	// so we send a packet out to that address 
-	// (most likely broadcast address).
-	
-	// setup up the data for connection.
-	setupLocalPacket(AUTODISC_LDI_SUBTYPE_RPLY,&laddr, &saddr);
-
-	// Cast to char for windows benefit.
-	int len = sendto(lsock, (char *) ldata, ldlen, 0, (struct sockaddr *) &reply_to, sizeof(reply_to));
-	if (len != ldlen)
-	{
-		std::ostringstream out;
-		out << "p3disc::localPing()";
-		out << " Failed to send Packet." << std::endl;
-	  	pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-	}
-	
-	return 1;
-}
-
-
-int p3disc::localListen()
-{
-	//This function listens to the ping address.
-	//For each reply, store the result in the structure and mark as local
-	struct sockaddr_in addr;
-	struct sockaddr_in neighbour;
-	struct sockaddr_in server;
-	socklen_t alen = sizeof(addr);
-	int nlen = sizeof(neighbour);
-	int len;
-	int size = 0;
-
-	while(0 < (size = recvfrom(lsock, (char *) ldata, ldlen, 0, 
-				(struct sockaddr *) &addr, &alen)))
-	{
-		std::ostringstream out;
-		out << "Recved Message" << std::endl;
-		out << "From Addr:" << inet_ntoa(addr.sin_addr) << std::endl;
-		out << "From Port:" << ntohs(addr.sin_port) << std::endl;
-		out << "Message Size: " << size << std::endl;
-
-		for(int i = 0; i < 8; i++)
-		{
-			out << ((char *) ldata)[i];
-		}
-		out << std::endl;
-
-		len = 8;
-		// sockaddr copy.
-		for(int i = 0; i < nlen; i++)
-		{
-			((char *) &neighbour)[i] = ((char *) ldata)[len + i]; 
-		}
-		len += nlen;
-		for(int i = 0; i < nlen; i++)
-		{
-			((char *) &server)[i] = ((char *) ldata)[len + i]; 
-		}
-		len += nlen;
-
-
-		out << "Neighbour Addr:" << inet_ntoa(neighbour.sin_addr) << std::endl;
-		out << "Neighbour Port:" << ntohs(neighbour.sin_port) << std::endl;
-		out << "Server Addr:" << inet_ntoa(server.sin_addr) << std::endl;
-		out << "Server Port:" << ntohs(server.sin_port) << std::endl;
-
-		if ((laddr.sin_addr.s_addr == neighbour.sin_addr.s_addr) &&
-			(laddr.sin_port == neighbour.sin_port))
-		{
-			// Then We Sent it!!!!
-			// ignore..
-			out << "Found Self! Addr - " << inet_ntoa(neighbour.sin_addr);
-			out << ":" << ntohs(neighbour.sin_port) << std::endl;
-		}
-		else
-		{
-			if ('D' == (((char *) ldata)[4])) // Then Ping.
-			{
-				// reply.
-				localReply(neighbour);
-			}
-
-			addLocalNeighbour(&neighbour, &server);
-		}
-
-	  	pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-	}
-	
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS // ie UNIX
-
-	if ((size < 0) && (errno != EAGAIN))
-	{
-		std::ostringstream out;
-		out << "Error Recieving Message" << std::endl;
-		out << "Errno: " << errno << std::endl;
-		out << socket_errorType(errno) << std::endl;
-	  	pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-	}
-
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#else // WINDOWS_SYS
-
-	if (size == SOCKET_ERROR)
-	{
-		int err = WSAGetLastError();
-		if (err != WSAEWOULDBLOCK)
-		{
-			std::ostringstream out;
-			out << "Error Recieving Message" << std::endl;
-			out << "WSE: " << err << std::endl;
-	  		pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-		}
-	}
-
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-		
-	return 1;
-}
-
-// This needs to be fixed up....
-// Local dicsovery disabled for the moment....
-
-int p3disc::addLocalNeighbour(struct sockaddr_in *n, struct sockaddr_in *s)
-{
-	std::list<autoneighbour *>::iterator it;
-	for(it = neighbours.begin(); it != neighbours.end(); it++)
-	{
-		// if the server address matches one already!
-		// make sure its flags as local and return.
-		if (0 == memcmp((char *) &((*it) -> server_addr), (char *) s, sizeof(*s)))
-		{
-			(*it) -> local = true;
-			return 1;
-		}
-	}
-	// else add it in!
-	autoneighbour *ln = new autoneighbour();
-	ln -> server_addr = (*s);
-	ln -> local = true;
-	ln -> id = NULL; // null cert
-
-	std::string nname = "Local Neighbour (";
-	nname += inet_ntoa(ln -> server_addr.sin_addr);
-	nname += ")";
-
-	//ln -> id -> Name(nname);
-
-	// now we call the dummy connect...
-	// this will only be done once per local neighbour.
-	// connectForExchange(ln -> server_addr);
-
-	neighbours.push_back(ln);
-	// update dicovered.
-	distillData();
-	return 1;
-}
-
-
-// Code Fragment that might be useful when local is patched up....
-/****************************************************
-int 	p3disc::distillLocalData()
-{
-	// This transforms the autoneighbour tree into 
-	// a list of certificates with the best guess settings.
-
-	discovered.clear();
-
-	pqioutput(PQL_DEBUG_BASIC, pqidisczone, "p3disc::distillData()");
-
-	std::list<autoneighbour *>::iterator it;
-	std::list<autoneighbour *>::iterator it2;
-
-	// Now check for local -> remote duplicates....
-	for(it = neighbours.begin(); it != neighbours.end();)
-	{
-		cert *c = (cert *) ((*it) -> id);
-		if (((*it) -> local) && (c == NULL))
-		{
-			// potentially a duplicate.
-			bool found = false;
-			for(it2 = neighbours.begin(); it2 != neighbours.end(); it2++)
-			{
-				// if address is the same -> remove first version.
-				if ((it != it2) && (0 == memcmp((char *) &((*it) -> addr), 
-						(char *) &((*it2) -> addr), 
-					 		sizeof(struct sockaddr))))
-				{
-					(*it2) -> local = true;
-					found = true;
-				}
-			}
-			if (found == true)
-			{
-				// remove the certless local.
-				it = neighbours.erase(it);
-			}
-			else
-			{
-				it++;
-			}
-		}
-		else
-		{
-			it++;
-		}
-	}
-
-******************************************/
-
-
-int p3disc::idServers()
-{
-	std::list<autoneighbour *>::iterator it;
-	std::list<autoserver *>::iterator nit;
-	int cts = time(NULL);
-
-	std::ostringstream out;
-	out << "::::AutoDiscovery Neighbours::::" << std::endl;
-	for(it = neighbours.begin(); it != neighbours.end(); it++)
-	{
-		if ((*it) -> local)
-		{
-			out << "Local Neighbour: ";
-		}
-		else
-		{
-			out << "Friend of a friend: ";
-		}
-		cert *c = (cert *) ((*it) -> id);
-
-		if (c != NULL)
-		{
-			if (c -> certificate != NULL)
-			{
-				out << c -> certificate -> name;
-			}
-			else
-			{
-				out << c -> Name();
-			}
-		}
-		else
-		{
-			out << "UnIdentified";
-		}
-
-		out << std::endl;
-		out << "BG LocalAddr: ";
-		out <<  inet_ntoa((*it) -> local_addr.sin_addr);
-		out << ":" << ntohs((*it) -> local_addr.sin_port) << std::endl;
-		out << "BG Server: ";
-		out <<  inet_ntoa((*it) -> server_addr.sin_addr);
-		out << ":" << ntohs((*it) -> server_addr.sin_port) << std::endl;
-		out << "  Listen TR: ";
-		if (((*it) -> listen) && ((*it) -> l_ts))
-		{
-			out << cts - (*it) -> l_ts << " sec ago";
-		}
-		else
-		{
-			out << "Never";
-		}
-		out << "    ";
-
-		out << "Connect TR: ";
-		if (((*it) -> connect) && ((*it) -> c_ts))
-		{
-			out << cts - (*it) -> c_ts << " sec ago";
-		}
-		else
-		{
-			out << "Never";
-		}
-
-		if ((*it) -> active)
-		{
-			out << " Active!!!";
-		}
-		out << std::endl;
-
-		out << " -->DiscFlags: 0x" << std::hex << (*it)->discFlags;
-		out << std::dec << std::endl;
-
-		for(nit = ((*it) -> neighbour_of).begin(); 
-				nit != ((*it) -> neighbour_of).end(); nit++)
-		{
-			out << "\tConnected via: ";
-			if ((*nit) -> id != NULL)
-			{
-			  out << ((*nit) ->id) -> Name() << "(";
-			  out <<  inet_ntoa(((*nit) -> id) -> lastaddr.sin_addr);
-			  out << ":" << ntohs(((*nit) -> id) -> lastaddr.sin_port);
-			  out << ")";
-			}
-			out << std::endl;
-			out << "\t\tServer: ";
-			out <<  inet_ntoa((*nit) -> server_addr.sin_addr);
-			out <<":"<< ntohs((*nit) -> server_addr.sin_port);
-			out << std::endl;
-			out << "\t\tLocalAddr: ";
-			out <<  inet_ntoa((*nit) -> local_addr.sin_addr);
-			out <<":"<< ntohs((*nit) -> local_addr.sin_port);
-
-			out << std::endl;
-			if ((*nit) -> listen)
-			{
-				out << "\t\tListen TR:";
-				out << cts - (*nit) -> l_ts << " sec ago";
-			}
-			else
-			{
-				out << "\t\tNever Received!";
-			}
-			out  << std::endl;
-			if ((*nit) -> connect)
-			{
-				out << "\t\tConnect TR:";
-				out << cts - (*nit) -> c_ts << " sec ago";
-			}
-			else
-			{
-				out << "\t\tNever Connected!";
-			}
-			out << std::endl;
-			out << "\t\tDiscFlags: 0x" << std::hex << (*nit)->discFlags;
-			out << std::dec << std::endl;
-		}
-	}
-	pqioutput(PQL_WARNING, pqidisczone, out.str());
-	return 1;
-}
-
-
-		
-
-int p3disc::newRequests()
-{
-	// Check the timestamp against the list of certs.
-	// If any are newer and currently active, then
-	// send out Discovery Request.
-	// This initiates the p3disc procedure.
-
-	if (!remote_disc)
-	{
-		pqioutput(PQL_DEBUG_ALL, pqidisczone, 
-		  "p3disc::newRequests() Remote Discovery is turned off");
-		return -1;
-	}
-
-	pqioutput(PQL_DEBUG_ALL, pqidisczone, 
-		"p3disc::newRequests() checkin for new neighbours");
-
-	// Perform operation on the cert list.
-	std::list<cert *>::iterator it;
-	// Temp variable
-	std::list<cert *> &certlist = sroot -> getCertList();
-
-	{
-		std::ostringstream out;
-		out << "Checking CertList!" << std::endl;
-		out << "last_check: " << ts_lastcheck;
-		out << " time(): " << time(NULL);
-		pqioutput(PQL_DEBUG_ALL, pqidisczone, out.str());
-	}
-
-	for(it = certlist.begin(); it != certlist.end(); it++)
-	{
-		{
-		  std::ostringstream out;
-		  out << "Cert: " << (*it) -> Name();
-		  out << " lc_ts: " << (*it) -> lc_timestamp;
-		  out << " lr_ts: " << (*it) -> lr_timestamp;
-		  pqioutput(PQL_DEBUG_ALL, pqidisczone, out.str());
-		}
-
-		// This should be Connected(), rather than Accepted().
-		// should reply with all Accepted(), but only send to all connected().
-		// if (((*it) -> Accepted()) && 
-		//
-		// need >= to ensure that it will happen, 
-		// about 1 in 5 chance of multiple newRequests if called every 5 secs.
-		// can live with this. (else switch to fractional seconds).
-
-		if (((*it) -> Connected()) && 
-				(((*it) -> lc_timestamp >= ts_lastcheck)
-				|| ((*it) -> lr_timestamp >= ts_lastcheck)))
-		{
-
-		  // also must not have already sent message.
-		  // (unless reconnection?)
-		  // actually - this should occur, even if last 
-		  // exchange not complete.
-		  // reconnect 
-
-/*****************************************************************************
- * No more need for ad_init silliness....
- *
-		  //if (ad_init.end() == 
-		  // find(ad_init.begin(),ad_init.end(),*it))
-		  // infact - we need the opposite behaviour.
-		  // remove if in the init list.
-		  
-		  std::list<cert *>::iterator it2;
-		  if (ad_init.end() != 
-			 (it2 = find(ad_init.begin(),ad_init.end(),*it)))
-		  {
-			  ad_init.erase(it2);
-		  }
- *
- *
- *
- ****************************************************************************/
-
-		  
-		  {
-			// Then send message.
-			{
-		  	  std::ostringstream out;
-			  out << "p3disc::newRequests()";
-			  out << "Constructing a Message!" << std::endl;
-			  out << "Sending to: " << (*it) -> Name();
-			  out << " lc_ts: " << (*it) -> lc_timestamp;
-			  out << " lr_ts: " << (*it) -> lr_timestamp;
-		 	  pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-			}
-
-			// Construct a message
-			RsDiscItem *di = new RsDiscItem();
-
-			// get our details.....
-			cert *own = sroot -> getOwnCert();
-
-			// Fill the message
-			di -> PeerId((*it) -> PeerId());
-			di -> laddr = own -> localaddr;
-			di -> saddr = own -> serveraddr;
-
-			// if we are firewalled..... (and no forwarding...)
-			// set received as impossible.
-			if (own -> Firewalled() && (!(own -> Forwarded())))
-				di -> receive_tr = 0; /* invalid */
-			else
-				di -> receive_tr = 1; /* zero time */
-
-			di -> connect_tr = 1; /* zero time */
-			di -> discFlags = determineCertAvailabilityFlags(own);
-
-			// Send off message
-			sendItem(di);
-		
-/*****************************************************************************
- * No more need for ad_init silliness....
-			// push onto init list.
-			ad_init.push_back(*it);
- *
- ****************************************************************************/
-
-			// Finally we should also advertise the
-			// new connection to our neighbours????
-			// SHOULD DO - NOT YET.
-
-		  }
-		}
-	}
-	ts_lastcheck = time(NULL);
-	return 1;
-}
-
-int p3disc::handleReplies()
+int p3disc::handleIncoming()
 {
 	RsItem *item = NULL;
-	pqioutput(PQL_DEBUG_ALL, pqidisczone, "p3disc::handleReplies()");
+
+#ifdef P3DISC_DEBUG
+	std::cerr << "p3disc::handleIncoming()";
+	std::cerr << std::endl;
+#endif
 
 	// if off discard item.
-	if (!remote_disc)
+	if (!mRemoteDisc)
 	{
 		while(NULL != (item = recvItem()))
 		{
+#ifdef P3DISC_DEBUG
 			std::ostringstream out;
-			out << "p3disc::handleReplies()";
+			out << "p3disc::handleIncoming()";
 			out << " Deleting - Cos RemoteDisc Off!" << std::endl;
 
 			item -> print(out);
-			pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
+
+			std::cerr << out.str() << std::endl;
+#endif
 
 			delete item;
 		}
@@ -953,11 +127,15 @@ int p3disc::handleReplies()
 
 		if (NULL == (di = dynamic_cast<RsDiscItem *> (item)))
 		{
+
+#ifdef P3DISC_DEBUG
 			std::ostringstream out;
-			out << "p3disc::handleReplies()";
+			out << "p3disc::handleIncoming()";
 			out << "Deleting Non RsDiscItem Msg" << std::endl;
 			item -> print(out);
-			pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
+
+			std::cerr << out.str() << std::endl;
+#endif
 
 			// delete and continue to next loop.
 			delete item;
@@ -967,1135 +145,536 @@ int p3disc::handleReplies()
 		nhandled++;
 
 		{
-		std::ostringstream out;
-		out << "p3disc::handleReplies()";
-		out << " Received Message!" << std::endl;
-		di -> print(out);
-		pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
+#ifdef P3DISC_DEBUG
+			std::ostringstream out;
+			out << "p3disc::handleIncoming()";
+			out << " Received Message!" << std::endl;
+			di -> print(out);
+
+			std::cerr << out.str() << std::endl;
+#endif
 		}
 
 
-		// if discovery reply then respondif haven't already.
+		// if discovery reply then respond if haven't already.
 		if (NULL != (dri = dynamic_cast<RsDiscReply *> (di)))
 		{
 
-			// add to data tree.
-			handleDiscoveryData(dri);
+			recvPeerFriendMsg(dri);
 		}
 		else /* Ping */
 		{
-			handleDiscoveryPing(di);
-
-			/* find the certificate */
-			certsign sign;
-			convert_to_certsign(di->PeerId(), sign);
-			cert *peer = getSSLRoot() -> findcertsign(sign);
-			if (peer)
-			{
-				sendDiscoveryReply(peer);
-				pqioutput(PQL_DEBUG_BASIC, pqidisczone, 
-					"After Reply to Ping");
-			}
-			else
-			{
-				pqioutput(PQL_ALERT, pqidisczone, 
-					"Failed to Match disc Ping ID");
-			}
+			recvPeerOwnMsg(di);
 		}
 		delete di;
 	}
 	return nhandled;
 }
 
-int 	p3disc::sendDiscoveryReply(cert *p)
+
+
+        /************* from pqiMonitor *******************/
+void p3disc::statusChange(const std::list<pqipeer> &plist)
 {
-	if (!remote_disc)
-		return -1;
-
-	// So to send a discovery reply .... we need to....
-	// 1) generate a list of our neighbours.....
-	pqioutput(PQL_DEBUG_BASIC, pqidisczone, 
-		"p3disc::sendDiscoveryReply() Generating Messages!");
-	
-	std::list<cert *>::iterator it;
-	// Temp variable
-	std::list<cert *> &certlist = sroot -> getCertList();
-	int good_certs = 0;
-	int cts = time(NULL);
-
-	for(it = certlist.begin(); it != certlist.end(); it++)
-	{
-		// if accepted and has connected (soon)
-		if ((*it) -> Accepted())
-		{
-			good_certs++;
-
-			{
-			std::ostringstream out;
-			out << "p3disc::sendDiscoveryReply()";
-			out << " Found Neighbour Cert!" << std::endl;
-			out << "Encoding: "<<(*it)->Name() << std::endl;
-			out << "Encoding(2): "<<(*it)->certificate->name << std::endl;
-			pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-			}
-
-			// Construct a message
-			RsDiscReply *di = new RsDiscReply();
-
-			// Fill the message
-			// Set Target as input cert.
-			di -> PeerId(p -> PeerId());
-
-			// set the server address.
-			di -> laddr = (*it) -> localaddr;
-			di -> saddr = (*it) -> serveraddr;
-
-			// set the timeframe since last connection.
-			if ((*it) -> lr_timestamp <= 0)
-			{
-				di -> receive_tr = 0;
-			}
-			else
-			{
-				di -> receive_tr = convertTDeltaToTRange(cts - (*it) -> lr_timestamp);
-			}
-
-			if ((*it) -> lc_timestamp <= 0)
-			{
-				di -> connect_tr = 0;
-			}
-			else
-			{
-				di -> connect_tr = convertTDeltaToTRange(cts - (*it) -> lc_timestamp);
-			}
-			di -> discFlags = determineCertAvailabilityFlags(*it);
-
-			// actually ned to copy certificate to array
-			// for proper cert stuff.
-
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-			int len = i2d_XPGP((*it) -> certificate, (unsigned char **) &(di -> certDER.bin_data));
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-			int len = i2d_X509((*it) -> certificate, (unsigned char **) &(di -> certDER.bin_data));
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-			if (len > 0)
-			{
-				di -> certDER.bin_len = len;
-				std::ostringstream out;
-				out << "Cert Encoded(" << len << ")" << std::endl;
-				pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-			}
-			else
-			{
-				pqioutput(PQL_DEBUG_BASIC, pqidisczone, "Failed to Encode Cert");
-				di -> certDER.bin_len = 0;
-			}
-
-			// Send off message
-			sendItem(di);
-			pqioutput(PQL_DEBUG_BASIC, pqidisczone, "Sent DI Message");
-		}
-		else
-		{
-			std::ostringstream out;
-			out << "p3disc::sendDiscoveryReply()";
-			out << "Not Sending Cert: " << std::endl;
-			out << (*it) -> Name() << std::endl;
-			pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-		}
-
-	}
-
-	{
-	std::ostringstream out;
-	out << "p3disc::sendDiscoveryReply()";
-	out << "Found " << good_certs << " Certs" << std::endl;
-	pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-	}
-	
-	return 1;
-}
-
-
-int	p3disc::handleDiscoveryPing(RsDiscItem *di)
-{
-	std::list<autoneighbour *>::iterator it;
-
-	// as already connected.... certificate available.
-        certsign sign;
-        convert_to_certsign(di->PeerId(), sign);
-        cert *c = getSSLRoot() -> findcertsign(sign);
-
-	if (c == NULL)
-		return -1;
-
-	{
-	  std::ostringstream out;
-	  out << "p3disc::handleDiscoveryPing()" << std::endl;
-	  di -> print(out);
-	  out << "RECEIVED Self Describing RsDiscItem!";
-	  out << std::endl;
-	  pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-	}
-
-	// The first check is whether this packet came from 
-	// the cert in the reply.
-
-	// Local address is always right!
-	// No User control anyway!
-	c -> localaddr = di -> laddr;
-
-	// The Rest of this should only be set
-	// if we are in autoconnect mode.....
-	// else should be done manually.
-	// ----> Think we should do this always (is disc from then)
-	/****************************
-	if (!(c -> Manual()))
-	****************************/
-	{
-	
-		// if the connect addr isn't valid.
-		if (!isValidNet(&(c -> lastaddr.sin_addr)))
-		{
-			// set it all
-			c -> serveraddr = di -> saddr;
-	  		pqioutput(PQL_WARNING, pqidisczone, 
-			  "lastaddr !Valid -> serveraddr=di->saddr");
-		}
-		// if the connect addr == dispkt.local
-		else if (0 == inaddr_cmp(c -> lastaddr, di -> laddr))
-		{
-			// set it all
-			c -> serveraddr = di -> saddr;
-			c -> Local(true);
-	  		pqioutput(PQL_WARNING, pqidisczone, 
-			  "lastaddr=di->laddr -> Local & serveraddr=di->saddr");
-		}
-		else if (0 == inaddr_cmp(c -> lastaddr, di -> saddr))
-		{
-	  		pqioutput(PQL_WARNING, pqidisczone, 
-			  "lastaddr=di->saddr -> !Local & serveraddr=di->saddr");
-			c -> serveraddr = di -> saddr;
-			c -> Local(false);
-		}
-		else
-		{
-	  		pqioutput(PQL_WARNING, pqidisczone, 
-			  "lastaddr!=(di->laddr|di->saddr) -> !Local,serveraddr left");
-			c -> Local(false);
-		}
-	
-		updateCertAvailabilityFlags(c, di->discFlags);
-
-	}
-	/****************************
-	else
-	{
-	  	pqioutput(PQL_WARNING, pqidisczone, 
-		  "peer is Manual -> leaving server settings");
-		if (0 == inaddr_cmp(c -> lastaddr, di -> laddr))
-		{
-	  		pqioutput(PQL_WARNING, pqidisczone, 
-		  		"c->lastaddr=di->laddr -> local");
-			c -> Local(true);
-		}
-		else
-		{
-	  		pqioutput(PQL_WARNING, pqidisczone, 
-		  		"c->lastaddr!=di->laddr -> !local");
-			c -> Local(false);
-		}
-
-	}
-	****************************/
-
-	// Now add it into the system.
-	// check if it exists already......
-	for(it = neighbours.begin(); it != neighbours.end(); it++)
-	{
-		cert *c2 = (cert *) (*it) -> id;
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-		if ((c2 != NULL) && (0 == XPGP_cmp(
-				c -> certificate, c2 -> certificate)))
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-		if ((c2 != NULL) && (0 == X509_cmp(
-				c -> certificate, c2 -> certificate)))
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-		{
-			// matching....
-			// update it....;
-	  		pqioutput(PQL_DEBUG_BASIC, pqidisczone, "Updating Certificate (AN)!");
-
-			(*it)-> local = c -> Local();
-			updateAutoServer((*it), di);
-
-			/* now look through the neighbours_of */
-			std::list<autoserver *>::iterator nit;
-			for(nit = ((*it) -> neighbour_of).begin(); 
-		  		  nit != ((*it) -> neighbour_of).end(); nit++)
-			{
-
-				/* check if we already have a autoserver.... */
-				if ((*it)->id == (*nit)->id)
-				{
-					/* we already have one */
-					// update it....;
-	  				pqioutput(PQL_DEBUG_BASIC, pqidisczone, 
-						"Updating Certificate (AS)!");
-
-					updateAutoServer(*nit, di);
-					return 0;
-				}
-			}
-
-	  		pqioutput(PQL_DEBUG_BASIC, pqidisczone, 
-						"Adding Certificate (AS)!");
-
-			/* if we get here, we need to add an autoserver */
-			autoserver *as = new autoserver();
-			as -> id = c;
-			updateAutoServer(as, di);
-			(*it) -> neighbour_of.push_back(as);
-
-			return 1;
-		}
-	}
-
-	// if get here must add a autoneighbour + an autoserver.
-	
-	autoneighbour *an = new autoneighbour();
-	an -> id = c;
-	an -> local = c -> Local();
-	updateAutoServer(an, di);
-
-	// add autoserver to an.
-	autoserver *as = new autoserver();
-	as -> id = c;
-	updateAutoServer(as, di);
-
-	an -> neighbour_of.push_back(as);
-	neighbours.push_back(an);
-
-	return 1;
-}
-
-
-int	p3disc::handleDiscoveryData(RsDiscReply *di)
-{
-	std::list<autoneighbour *>::iterator it;
-
-	{
-	  std::ostringstream out;
-	  out << "p3disc::handleDiscoveryData()" << std::endl;
-	  di -> print(out);
-	  pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-	}
-
-
-	certsign sign;
-	convert_to_certsign(di->PeerId(), sign);
-	cert *di_peer = getSSLRoot() -> findcertsign(sign);
-	if (!di_peer)
-	{
-	  std::ostringstream out;
-	  out << "p3disc::handleDiscoveryData() BAD Id" << std::endl;
-	  di -> print(out);
-	  pqioutput(PQL_ALERT, pqidisczone, out.str());
-	  delete di;
-	  return 0;
-	}
-
-
-	/* WIN/LINUX Difference.
-	 */
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS // ie UNIX
-	const unsigned char *certptr = (const unsigned char *) di -> certDER.bin_data; 
-#else
-	unsigned char *certptr = (unsigned char *) di -> certDER.bin_data;
+#ifdef P3DISC_DEBUG
+	std::cerr << "p3disc::statusChange()";
+	std::cerr << std::endl;
 #endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
+	/* get a list of all online peers */
+	std::list<std::string> onlineIds;
+	mConnMgr->getOnlineList(onlineIds);
 
-	// load up the certificate.....
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-
-	XPGP *tmp = NULL;
-	XPGP *xpgp = d2i_XPGP(&tmp, (unsigned char **) &certptr, di -> certDER.bin_len);
-	if (xpgp == NULL)
-		return -1;
+	std::list<pqipeer>::const_iterator pit;
+	/* if any have switched to 'connected' then we notify */
+	for(pit =  plist.begin(); pit != plist.end(); pit++)
 	{
-	  std::ostringstream out;
-	  out << "p3disc::handleDiscoveryData()" << std::endl;
-	  out << "certificate name: " << xpgp -> name << std::endl;
-	  pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-	}
-
-	// if a duplicate with ad/or sslroot;
-	cert *c = sroot -> makeCertificateXPGP(xpgp);
-	if (c == NULL)
-	{
-	  	pqioutput(PQL_DEBUG_BASIC, pqidisczone,
-			"Failed to Create Certificate");
-		// delete the cert.
-		XPGP_free(xpgp);
-		return -1;
-	}
-
-
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
-	X509 *tmp = NULL;
-	X509 *x509 = d2i_X509(&tmp, &certptr, di -> certLen);
-	if (x509 == NULL)
-		return -1;
-	{
-	  std::ostringstream out;
-	  out << "p3disc::handleDiscoveryData()" << std::endl;
-	  out << "certificate name: " << x509 -> name << std::endl;
-	  pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-	}
-
-	// if a duplicate with ad/or sslroot;
-	cert *c = sroot -> makeCertificate(x509);
-	if (c == NULL)
-	{
-	  	pqioutput(PQL_DEBUG_BASIC, pqidisczone,
-			"Failed to Create Certificate");
-		// delete the cert.
-		X509_free(x509);
-		return -1;
-	}
-
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
-
-	// So have new/existing cert;
-	// check if it exists already......
-	for(it = neighbours.begin(); it != neighbours.end(); it++)
-	{
-		cert *c2 = (cert *) (*it) -> id;
-
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-		if ((c2 != NULL) && (0 == XPGP_cmp(
-				c -> certificate, c2 -> certificate)))
-#else  /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-		if ((c2 != NULL) && (0 == X509_cmp(
-				c -> certificate, c2 -> certificate)))
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
+		if ((pit->state & RS_PEER_S_FRIEND) &&
+			(pit->actions & RS_PEER_CONNECTED))
 		{
-			// matching.... check neighbours of....
-			// for the source of the message.
-
-			std::list<autoserver *>::iterator nit;
-			for(nit = ((*it) -> neighbour_of).begin(); 
-		  		  nit != ((*it) -> neighbour_of).end(); nit++)
-			{
-
-
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-			  if (0 == XPGP_cmp(
-#else  /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-			  if (0 == X509_cmp(
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-				((cert *) (*nit) -> id) -> certificate, 
-				di_peer -> certificate))
-			  {
-				
-				// update it....;
-	  			pqioutput(PQL_DEBUG_BASIC, pqidisczone, 
-					"Updating Certificate!");
-
-				updateAutoServer(*nit, di);
-
-				return 0;
-			  }
-			}
-
-			// if we get to here - add neighbour of info.
-			autoserver *as = new autoserver();
-			as -> id = di_peer;
-
-			// add in some more ....as -> addr = (di -> );
-			
-			updateAutoServer(as, di);
-
-			(*it) -> neighbour_of.push_back(as);
-				
-			return 1;
+			/* send our details to them */
+			sendOwnDetails(pit->id);
 		}
 	}
-
-	// if get here must add a autoneighbour + autoserver.
-
-	{
-	  std::ostringstream out;
-	  out << "p3disc::handleDiscoveryData()" << std::endl;
-	  out << "Adding New AutoNeighbour:" << c -> Name() << std::endl;
-	  pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-	}
-
-	autoneighbour *an = new autoneighbour();
-	an -> id = c;
-	// initial guess.
-	an -> local_addr = di -> laddr;
-	an -> server_addr = di -> saddr;
-	an -> local = false;
-
-	autoserver *as = new autoserver();
-	as -> id = di_peer;
-
-	updateAutoServer(as, di);
-
-	an -> neighbour_of.push_back(as);
-
-	neighbours.push_back(an);
-
-	return 1;
 }
 
-int 	p3disc::collectCerts()
+void p3disc::respondToPeer(std::string id)
 {
+	/* get a peer lists */
 
-	// First get any extras from the CollectedCerts Queue.
-	// if the cert matches an existing one.... update + discard
-	// else add in....
-	
-	std::list<autoneighbour *>::iterator it;
-	std::list<autoneighbour *>::iterator it2;
+#ifdef P3DISC_DEBUG
+	std::cerr << "p3disc::respondToPeer() id: " << id;
+	std::cerr << std::endl;
+#endif
 
-	cert *nc;
-	while(NULL != (nc = sroot -> getCollectedCert()))
+	std::list<std::string> friendIds;
+	std::list<std::string> onlineIds;
+	std::list<std::string>::iterator it;
+
+	mConnMgr->getFriendList(friendIds);
+	mConnMgr->getOnlineList(onlineIds);
+
+	/* Check that they have DISC on */
 	{
-		// check for matching certs.
-		bool found = false;
-
+		/* get details */
+		peerConnectState detail;
+		if (!mConnMgr->getFriendNetStatus(id, detail))
 		{
-		std::ostringstream out;
-		out << "p3disc::collectCert: " << std::endl;
-		out << "Name: " << nc -> Name() << std::endl;
-		out << "CN: " << nc -> certificate -> name << std::endl;
-
-		out << "    From: ";
-		out <<  inet_ntoa(nc -> lastaddr.sin_addr);
-		out << ":" << ntohs(nc -> lastaddr.sin_port) << std::endl;
-		out << "    Local: ";
-		out <<  inet_ntoa(nc -> localaddr.sin_addr);
-		out << ":" << ntohs(nc -> localaddr.sin_port) << std::endl;
-		out << "    Server: ";
-		out <<  inet_ntoa(nc -> serveraddr.sin_addr);
-		out << ":" << ntohs(nc -> serveraddr.sin_port) << std::endl;
-		out << "    Listen TS:";
-		out << nc -> lr_timestamp <<  "    ";
-		out << "Connect TR:";
-		out << nc -> lc_timestamp << std::endl;
-		out << std::endl;
-	  	pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
+			/* major error! */
+			return;
 		}
 
-		
-		for(it = neighbours.begin(); (!found) && (it != neighbours.end()); it++)
+		if (detail.visState & RS_VIS_STATE_NODISC)
 		{
-			cert *c = (cert *) ((*it) -> id);
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-			if ((c != NULL) && 
-				(0 == XPGP_cmp(c -> certificate, nc -> certificate)))
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-			if ((c != NULL) && 
-				(0 == X509_cmp(c -> certificate, nc -> certificate)))
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-			{
-				/* addresses handled already ....
-				 * by sslroot. (more intelligent decisions).
-				 * update timestamps so we don't overwrite
-				 * the uptodate cert data.
-				 */
-
-				found = true;
-				if ((nc -> lc_timestamp > 0) && 
-					((unsigned) nc -> lc_timestamp > (*it) -> c_ts))
-				{
-					// connect.... timestamp 
-					(*it) -> connect = true;
-					(*it) -> c_ts = nc -> lc_timestamp;
-					// don't make this decision here.
-					//(*it) -> server_addr = nc -> lastaddr;
-				}
-
-				if ((nc -> lr_timestamp > 0) &&
-					((unsigned) nc -> lr_timestamp > (*it) -> l_ts))
-				{
-					// received.... timestamp 
-					(*it) -> listen = true;
-					(*it) -> l_ts = nc -> lr_timestamp;
-				}
-
-				if ((c != nc) || 
-				    (c -> certificate != nc -> certificate))
-				{
-					std::ostringstream out;
-					out << "Warning Dup/Diff Mem ";
-					out << " Found in p3Disc!";
-					out << std::endl;
-	  				pqioutput(PQL_ALERT, pqidisczone, out.str());
-					exit(1);
-				}
-			}
-		}
-		if (!found)
-		{
-			// add into the list.....
-			autoneighbour *an = new autoneighbour();
-			an -> id = nc;
-
-			// initial guess.
-			an -> local_addr = nc -> localaddr;
-			an -> server_addr = nc -> serveraddr;
-			an -> local = false;
-
-			if (nc -> lc_timestamp > 0)
-			{
-				an -> c_ts = nc -> lc_timestamp;
-				an -> connect = true;
-			}
-			else
-			{
-				an -> c_ts = 0;
-				an -> connect = false;
-			}
-
-			if (nc -> lr_timestamp > 0)
-			{
-				an -> l_ts = nc -> lr_timestamp;
-				an -> listen = true;
-			}
-			else
-			{
-				an -> l_ts = 0;
-				an -> listen = false;
-			}
-
-			neighbours.push_back(an);
+			/* don't have DISC enabled */
+			return;
 		}
 	}
-	return 1;
-}
 
-int 	p3disc::distillData()
-{
-	// This transforms the autoneighbour tree into 
-	// a list of certificates with the best guess settings.
-
-	// get any extra. from sslroot.
-	collectCerts();
-
-	discovered.clear();
-
-	std::ostringstream out;
-	out << "p3disc::distillData()" << std::endl;
-
-	std::list<autoneighbour *>::iterator it;
-	std::list<autoneighbour *>::iterator it2;
-	std::list<autoserver *>::iterator nit;
-	cert *own = sroot -> getOwnCert();
-
-	for(it = neighbours.begin(); it != neighbours.end(); it++)
+	/* send them a list of all friend's details */
+	for(it = friendIds.begin(); it != friendIds.end(); it++)
 	{
-		/* for the moment this is going to be a simplistic
-		 * (and non-fault tolerent design)....
-		 * we will take the most up-to-date values.... from the friends of neighbours.
-		 *
-		 * if these are more up-to-date than both the
-		 * (1) neighbour (*it) and
-		 * (2) the actual certificate and
-		 * (3) we are not connected... then 
-		 *
-		 * (a) we update the addresses and timestamps on the neighbour.
-		 * (b) addresses on the certificate.
-		 *
-		 * Therefore 
-		 * 	cert has (1) our connect times, (2) best guess server.
-		 * 	neighbour has uptodate times/servers from last distill.
-		 * 
-		 * NOTE this requires a better algorithm.
-		 *
-		 */
-
-		unsigned int mr_connect = 0;
-		unsigned int mr_listen  = 0;
-
-		unsigned int mr_both = 0; /* connect or receive */
-		/* three fields below match most recent (of either) */
-		struct sockaddr_in mr_server; 
-		struct sockaddr_in mr_local;  
-		unsigned int mr_flags = 0;
-
-		/* if we find a neighbour_of, which is the same cert.
-		 * then we have the definitive answer already 
-		 * (and it has been installed)
-		 */
-
-		bool haveDefinitive = false;
-
-		cert *c = (cert *) (*it) -> id;
-		for(nit = ((*it) -> neighbour_of).begin(); 
-				nit != ((*it) -> neighbour_of).end(); nit++)
+		/* get details */
+		peerConnectState detail;
+		if (!mConnMgr->getFriendNetStatus(*it, detail))
 		{
-			out << "\tDistill Connected via: ";
-			if ((*nit) -> id != NULL)
-			{
-				out << ((*nit) ->id) -> Name();
-			}
-			out << std::endl;
-			out << "\t\tServer: ";
-			out <<  inet_ntoa((*nit)->server_addr.sin_addr);
-			out << ":" << ntohs((*nit)->server_addr.sin_port);
-			out << std::endl;
-			if ((*nit)->id == (*it)->id)
-			{
-				haveDefinitive = true;
-				out << "\t\tIs Definitive Answer!";
-				out << std::endl;
-			}
-
-			if ((*nit) -> listen)
-			{
-				if ((*nit)->l_ts > mr_listen)
-				{
-				    mr_listen = (*nit)->l_ts;
-				    if (mr_listen > mr_both)
-				    {
-				    	mr_both = mr_listen;
-					mr_server = (*nit) -> server_addr;
-					mr_local  = (*nit) -> local_addr;
-					mr_flags  = (*nit) -> discFlags;
-				    }
-				}
-			}
-
-			if ((*nit) -> connect)
-			{
-				if ((*nit) -> c_ts > mr_connect)
-				{
-				  mr_connect = (*nit)->c_ts;
-				  if (mr_connect > mr_both)
-				  {
-				    	mr_both = mr_connect;
-					mr_server = (*nit) -> server_addr;
-					mr_local  = (*nit) -> local_addr;
-					mr_flags  = (*nit) -> discFlags;
-				  }
-				}
-			}
-		}
-		
-		if ((c == own) || (haveDefinitive))
-		{
-			out << c -> Name();
-			out << ": Is Own or Definitive: no Update...";
-			out << std::endl;
-
-			discovered.push_back(c);
+			/* major error! */
 			continue;
 		}
 
-		if ((mr_both > (*it)-> c_ts) && (mr_both > (*it)-> l_ts))
+		if (!(detail.visState & RS_VIS_STATE_NODISC))
 		{
-			(*it) -> server_addr = mr_server;
-			(*it) -> local_addr  = mr_local;
-			(*it) -> discFlags   = mr_flags;
-
+			sendPeerDetails(id, *it); /* (dest (to), source (cert)) */
 		}
-
-		/* now we can check against (*it) */
-		if ((!(*it)->listen) || ((*it)-> l_ts < mr_listen))
-		{
-			(*it) -> listen = true;
-			(*it)-> l_ts = mr_listen;
-		}
-
-		if ((!(*it)->connect) || ((*it)-> c_ts < mr_connect))
-		{
-			(*it) -> connect = true;
-			(*it)-> c_ts = mr_connect;
-		}
-
-			/* XXX fixme ***/
-		// Finally we can update the certificate, if auto
-		// is selected.... or not in use.
-		if (!(c -> Connected()))
-		{
-			out << "Checking: " << c -> Name() << std::endl;
-
-			// if empty local 
-			if (0 == inaddr_cmp(c -> localaddr, INADDR_ANY)) 
-			{
-			  out << "\tUpdating NULL Local Addr:" << std::endl;
-			  out << "\t\tOld: ";
-			  out <<  inet_ntoa(c->localaddr.sin_addr);
-			  out << ":" << ntohs(c->localaddr.sin_port);
-			  c -> localaddr = (*it) -> local_addr;
-			  out << "\t\tNew: ";
-			  out <<  inet_ntoa(c->localaddr.sin_addr);
-			  out << ":" << ntohs(c->localaddr.sin_port);
-			}
-
-			// if empty server .....
-			if (0 == inaddr_cmp(c -> serveraddr, INADDR_ANY)) 
-			{
-			  out << "\tUpdating NULL Serv Addr:" << std::endl;
-			  out << "\t\tOld: ";
-			  out <<  inet_ntoa(c->serveraddr.sin_addr);
-			  out << ":" << ntohs(c->serveraddr.sin_port);
-			  c -> serveraddr = (*it) -> server_addr;
-			  out << "\t\tNew: ";
-			  out <<  inet_ntoa(c->serveraddr.sin_addr);
-			  out << ":" << ntohs(c->serveraddr.sin_port);
-			}
-			// if local (second as should catch empty)
-			else if ((0 == inaddr_cmp((*it) -> server_addr, 
-						c -> localaddr)))
-				 //&& (inaddr_local(c -> localaddr))
-			{
-				out << "\tMaking Local..." << std::endl;
-				c -> Local(true);
-			}
-
-			// Finally the key update .... 
-			// check only against the latest data....
-			
-			if (mr_both) 
-			{
-				// 
-				unsigned int cert_both = c -> lc_timestamp;
-				if (cert_both < (unsigned) c -> lr_timestamp)
-				{
-					cert_both = c -> lr_timestamp;
-				}
-
-				int log_delta = -1; /* invalid log */
-				if (mr_both > cert_both)
-				{
-					log_delta = (int) log10((double) (mr_both - cert_both));
-				}
-
-				/* if a peer has connected more recently than us */
-				if (log_delta > 3) // or > 10000 (secs), or ~3 hours.
-				{
-			  		out << "\tUpdating OLD Addresses:" << std::endl;
-			  		out << "\t\tOld Local: ";
-			  		out <<  inet_ntoa(c->serveraddr.sin_addr);
-			  		out << ":" << ntohs(c->serveraddr.sin_port);
-					out << std::endl;
-			  		out << "\t\tOld Server: ";
-			  		out <<  inet_ntoa(c->serveraddr.sin_addr);
-			  		out << ":" << ntohs(c->serveraddr.sin_port);
-					out << std::endl;
-					if (c->Firewalled())
-					{
-			  			out << "\t\tFireWalled/";
-					}
-					else
-					{
-			  			out << "\t\tNot FireWalled/";
-					}
-					if (c->Forwarded())
-					{
-			  			out << "Forwarded";
-					}
-					else
-					{
-			  			out << "Not Forwarded";
-					}
-					out << std::endl;
-
-					if (0!=inaddr_cmp(mr_server, INADDR_ANY))
-					{
-			  			c -> serveraddr = mr_server;
-					}
-
-					if (0!=inaddr_cmp(mr_local, INADDR_ANY))
-					{
-			  			c -> localaddr = mr_local;
-					}
-
-					updateCertAvailabilityFlags(c, mr_flags);
-
-			  		out << "\t\tNew: ";
-			  		out <<  inet_ntoa(c->serveraddr.sin_addr);
-			  		out << ":" << ntohs(c->serveraddr.sin_port);
-			  		out << "\t\tNew Local: ";
-			  		out <<  inet_ntoa(c->serveraddr.sin_addr);
-			  		out << ":" << ntohs(c->serveraddr.sin_port);
-					out << std::endl;
-			  		out << "\t\tNew Server: ";
-			  		out <<  inet_ntoa(c->serveraddr.sin_addr);
-			  		out << ":" << ntohs(c->serveraddr.sin_port);
-					out << std::endl;
-					if (c->Firewalled())
-					{
-			  			out << "\t\tFireWalled/";
-					}
-					else
-					{
-			  			out << "\t\tNot FireWalled/";
-					}
-					if (c->Forwarded())
-					{
-			  			out << "Forwarded";
-					}
-					else
-					{
-			  			out << "Not Forwarded";
-					}
-					out << std::endl;
-			 	}
-			}
-		}
-		discovered.push_back(c);
 	}
-	pqioutput(PQL_DEBUG_BASIC, pqidisczone, out.str());
-	idServers();
-	return 1;
-}
 
-std::list<cert *> &p3disc::getDiscovered()
-{
-	return discovered;
-}
-
-static const std::string pqi_adflags("PQI_ADFLAGS");
-
-int	p3disc::save_configuration()
-{
-	if (sroot == NULL)
-		return -1;
-
-	std::string localflags;
-	if (local_disc)
-		localflags += "L";
-	if (remote_disc)
-		localflags += "R";
-	sroot -> setSetting(pqi_adflags, localflags);
-	return 1;
-}
-
-
-// load configuration from sslcert -> owncert()
-// instead of from the configuration files.
-
-int	p3disc::load_configuration()
-{
-	unsigned int i = 0;
-
-	if (sroot == NULL)
-		return -1;
-
-	Person *p = sroot -> getOwnCert();
-	if (p == NULL)
-		return -1;
-	laddr = p -> localaddr;
-	//laddr.sin_family = AF_INET;
-
-	saddr = p -> serveraddr;
-	local_firewalled = p -> Firewalled();
-	local_forwarded = p -> Forwarded();
-
-	std::string localflags = sroot -> getSetting(pqi_adflags);
-	// initially drop out gracefully.
-	if (localflags.length() == 0)
-		return 1;
-	if (i < localflags.length()) 
-		if (local_disc = ('L' == localflags[i]))
-			i++;
-	if (i < localflags.length()) 
-		if (remote_disc = ('R' == localflags[i]))
-			i++;
-	// temp turn on!
-	local_disc = false; // true;
-	remote_disc = true;
-	return 1;
-}
-
-
-std::list<cert *> p3disc::potentialproxy(cert *target)
-{
-	std::list<cert *> certs;
-	// search the discovery tree for proxies for target.
-
-	std::list<autoneighbour *>::iterator it;
-	std::list<autoserver *>::iterator nit;
-
-	pqioutput(PQL_DEBUG_BASIC, pqidisczone, 
-		"p3disc::potentialproxy()");
-
-	for(it = neighbours.begin(); it != neighbours.end(); it++)
+	/* send their details to all online peers */
+	for(it = onlineIds.begin(); it != onlineIds.end(); it++)
 	{
-		cert *c = (cert *) (*it) -> id;
-		if (c == target)
+		peerConnectState detail;
+		if (!mConnMgr->getFriendNetStatus(*it, detail))
 		{
-			// found target.
-			for(nit = ((*it) -> neighbour_of).begin(); 
-				nit != ((*it) -> neighbour_of).end(); nit++)
-			{
-			  /* can't use target as proxy */
-			  cert *pp = (cert *) (*nit)->id;
-			  if ((pp -> Connected()) &&  (target != pp))
-			  {
-				std::ostringstream out;
-				out << "Potential Proxy: ";
-				out << pp -> Name();
-				certs.push_back(pp);
-				pqioutput(PQL_DEBUG_BASIC, pqidisczone, 
-						out.str());
-			  }
-			}
+			/* major error! */
+			continue;
+		}
 
-			return certs;
+		if (!(detail.visState & RS_VIS_STATE_NODISC))
+		{
+			sendPeerDetails(*it, id); /* (dest (to), source (cert)) */
 		}
 	}
-
-	pqioutput(PQL_DEBUG_BASIC, pqidisczone, 
-		"p3disc::potentialproxy() No proxies found");
-	// empty list.
-	return certs;
 }
 
-std::list<struct sockaddr_in> p3disc::requestStunServers()
+/*************************************************************************************/
+/*				Output Network Msgs				     */
+/*************************************************************************************/
+void p3disc::sendOwnDetails(std::string to)
 {
-
-	/* loop through all the possibilities 
-	 *
-	 * find the ones which aren't firewalled.
-	 *
-	 * get their addresses.
+	/* setup:
+	 * IP local / external
+	 * availability (TCP LOCAL / EXT, UDP ...)
 	 */
-	cert *own = sroot -> getOwnCert();
 
-	std::list<struct sockaddr_in> stunList;
-
-	std::list<autoneighbour *>::iterator it;
-	for(it = neighbours.begin(); it != neighbours.end(); it++)
+	// Then send message.
 	{
-		cert *c = (cert *) (*it) -> id;
-
-		/* if flags are correct, and the address looks
-		 * valid.
-		 */
-
-/* switch on Local Stun for testing */
-/*
- * #define STUN_ALLOW_LOCAL_NET 1
- */
-
-
-#ifdef STUN_ALLOW_LOCAL_NET
-		bool isExtern = true;
-#else
-		bool isExtern = (!c->Firewalled()) || 
-			(c->Firewalled() && c->Forwarded());
+#ifdef P3DISC_DEBUG
+	  	  std::ostringstream out;
+		  out << "p3disc::sendOwnDetails()";
+		  out << "Constructing a RsDiscItem Message!" << std::endl;
+		  out << "Sending to: " << to;
+		  std::cerr << out.str() << std::endl;
 #endif
-
-		if (isExtern)
-		{
-			// second level of checks.
-			// if we will connect, and haven't -> they are probably
-			// offline.
-			if (c->Accepted() && (!c->Connected()))
-			{
-				std::ostringstream out;
-				out << "Offline Friend: ";
-				out << c -> Name();
-				out << " not available for Stun";
-				pqioutput(PQL_DEBUG_ALERT, pqidisczone, out.str());
-				isExtern = false;
-			}
-
-			// and address looks good.
-			//
-			// and not in our subnet (external to us)
-		}
-
-
-		if (isExtern)
-		{
-			std::ostringstream out;
-			out << "Potential Stun Server: ";
-			out << c -> Name();
-			out << std::endl;
-			out << " ServerAddr: " << inet_ntoa(c->serveraddr.sin_addr);
-			out << " : " << ntohs(c->serveraddr.sin_port);
-			out << std::endl;
-			out << " LocalAddr: " << inet_ntoa(c->localaddr.sin_addr);
-			out << " : " << ntohs(c->localaddr.sin_port);
-			out << std::endl;
-
-#ifdef STUN_ALLOW_LOCAL_NET
-			if (isValidNet(&(c->serveraddr.sin_addr)) &&
-				 (!sameNet(&(own->serveraddr.sin_addr), &(c->serveraddr.sin_addr))))
-#else
-			if ((isValidNet(&(c->serveraddr.sin_addr))) &&
-				(!isPrivateNet(&(c->serveraddr.sin_addr))) &&
-				 (!sameNet(&(own->localaddr.sin_addr), &(c->serveraddr.sin_addr))) &&
-				 (!sameNet(&(own->serveraddr.sin_addr), &(c->serveraddr.sin_addr))))
-#endif
-			{
-				out << " -- Chose Server Address";
-				out << std::endl;
-				stunList.push_back(c->serveraddr);
-			} 
-#ifdef STUN_ALLOW_LOCAL_NET
-			else if (isValidNet(&(c->localaddr.sin_addr)))
-#else
-			else if ((!c->Firewalled()) && 
-				 (isValidNet(&(c->localaddr.sin_addr))) &&
-				 (!isPrivateNet(&(c->localaddr.sin_addr))) &&
-				 (!sameNet(&(own->localaddr.sin_addr), &(c->localaddr.sin_addr))))
-#endif
-			{
-				out << " -- Chose Local Address";
-				out << std::endl;
-				stunList.push_back(c->localaddr);
-			}
-			else
-			{
-				out << "<=> Invalid / Private Addresses";
-				out << std::endl;
-			}
-			pqioutput(PQL_DEBUG_ALERT, pqidisczone, out.str());
-		}
-		else
-		{
-			std::ostringstream out;
-			out << "Non-Stun Neighbour: ";
-			out << c -> Name();
-			pqioutput(PQL_DEBUG_ALERT, pqidisczone, out.str());
-		}
 	}
 
-	return stunList;
+	// Construct a message
+	RsDiscItem *di = new RsDiscItem();
+
+	/* components:
+	 * laddr
+	 * saddr
+	 * contact_tf
+	 * discFlags
+	 */
+
+	peerConnectState detail;
+	if (!mConnMgr->getOwnNetStatus(detail))
+	{
+		/* major error! */
+		return;
+	}
+
+	// Fill the message
+	di -> PeerId(to);
+	di -> laddr = detail.localaddr;
+	di -> saddr = detail.serveraddr;
+	di -> contact_tf = 0; 
+
+	/* construct disc flags */
+	if (!(detail.visState & RS_VIS_STATE_NODISC))
+	{
+		di->discFlags |= P3DISC_FLAGS_USE_DISC;
+	}
+
+	if (!(detail.visState & RS_VIS_STATE_NODHT))
+	{
+		di->discFlags |= P3DISC_FLAGS_USE_DHT;
+	}
+
+	if ((detail.netMode == RS_NET_MODE_EXT) ||
+		(detail.netMode & RS_NET_MODE_UPNP))
+	{
+		di->discFlags |= P3DISC_FLAGS_EXTERNAL_ADDR;
+	}
+	di->discFlags |= P3DISC_FLAGS_OWN_DETAILS;
+
+	/* send msg */
+	sendItem(di);
+}
+
+ /* (dest (to), source (cert)) */
+void p3disc::sendPeerDetails(std::string to, std::string about)
+{
+	/* setup:
+	 * Certificate.
+	 * IP local / external
+	 * availability ...
+	 * last connect (0) if online.
+	 */
+
+	/* send it off */
+	{
+#ifdef P3DISC_DEBUG
+		std::ostringstream out;
+		out << "p3disc::sendPeerDetails()";
+		out << " Sending details of: " << about;
+		out << " to: " << to << std::endl;
+		std::cerr << out.str() << std::endl;
+#endif
+	}
+
+
+	peerConnectState detail;
+	if (!mConnMgr->getFriendNetStatus(about, detail))
+	{
+		/* major error! */
+		return;
+	}
+
+	// Construct a message
+	RsDiscReply *di = new RsDiscReply();
+
+	// Fill the message
+	// Set Target as input cert.
+	di -> PeerId(to);
+	di -> aboutId = about;
+
+	// set the server address.
+	di -> laddr = detail.localaddr;
+	di -> saddr = detail.serveraddr;
+
+	if (detail.state & RS_PEER_S_CONNECTED)
+	{
+		di -> contact_tf = 0;
+	}
+	else
+	{
+		di -> contact_tf = convertTDeltaToTRange(time(NULL) - detail.lastcontact);
+	}
+
+	/* construct disc flags */
+	di->discFlags = 0;
+
+	/* NOTE we should not be sending packet if NODISC is set....
+	 * checked elsewhere... so don't check.
+	 */
+	di->discFlags |= P3DISC_FLAGS_USE_DISC;
+
+	if (!(detail.visState & RS_VIS_STATE_NODHT))
+	{
+		di->discFlags |= P3DISC_FLAGS_USE_DHT;
+	}
+
+	if (detail.netMode == RS_NET_MODE_EXT)
+	{
+		di->discFlags |= P3DISC_FLAGS_EXTERNAL_ADDR;
+	}
+
+	if (detail.state & RS_PEER_S_CONNECTED)
+	{
+		di->discFlags |= P3DISC_FLAGS_PEER_ONLINE;
+	}
+
+	uint32_t certLen = 0;
+
+	unsigned char **binptr = (unsigned char **) &(di -> certDER.bin_data);
+	mAuthMgr->SaveCertificateToBinary(about, binptr, &certLen);
+	if (certLen > 0)
+	{
+		di -> certDER.bin_len = certLen;
+#ifdef P3DISC_DEBUG
+		std::cerr << "Cert Encoded(" << certLen << ")" << std::endl;
+#endif
+	}
+	else
+	{
+#ifdef P3DISC_DEBUG
+		std::cerr << "Failed to Encode Cert" << std::endl;
+#endif
+		di -> certDER.bin_len = 0;
+	}
+
+	// Send off message
+	sendItem(di);
+
+#ifdef P3DISC_DEBUG
+	std::cerr << "Sent DI Message" << std::endl;
+#endif
+}
+
+
+/*************************************************************************************/
+/*				Input Network Msgs				     */
+/*************************************************************************************/
+void p3disc::recvPeerOwnMsg(RsDiscItem *item)
+{
+#ifdef P3DISC_DEBUG
+	std::cerr << "p3disc::recvPeerOwnMsg() From: " << item->PeerId() << std::endl;
+#endif
+
+	/* tells us their exact address (mConnectMgr can ignore if it looks wrong) */
+	uint32_t type = 0; 
+	uint32_t flags = 0; 
+
+	/* translate flags */
+	if (item->discFlags & P3DISC_FLAGS_USE_DISC)
+	{
+		flags |= RS_NET_FLAGS_USE_DISC;
+	}
+	if (item->discFlags & P3DISC_FLAGS_USE_DHT)
+	{
+		flags |= RS_NET_FLAGS_USE_DHT;
+	}
+	if (item->discFlags & P3DISC_FLAGS_PEER_ONLINE)
+	{
+		flags |= RS_NET_FLAGS_ONLINE;
+	}
+
+	/* generate type */
+	type = RS_NET_CONN_TCP_LOCAL;
+	if (item->discFlags & P3DISC_FLAGS_EXTERNAL_ADDR)
+	{
+		type |= RS_NET_CONN_TCP_EXTERNAL;
+	}
+
+	mConnMgr->peerStatus(item->PeerId(), item->laddr, item->saddr, 
+				type, flags, RS_CB_PERSON);
+
+	/* now reply with all details */
+	respondToPeer(item->PeerId());
+
+	addDiscoveryData(item->PeerId(), item->PeerId(), 
+			item->laddr, item->saddr, item->discFlags, time(NULL));
+
+	/* cleanup (handled by caller) */
+}
+
+
+void p3disc::recvPeerFriendMsg(RsDiscReply *item)
+{
+
+#ifdef P3DISC_DEBUG
+	std::cerr << "p3disc::recvPeerFriendMsg() From: " << item->PeerId();
+	std::cerr << " About " << item->aboutId;
+	std::cerr << std::endl;
+#endif
+
+	/* tells us their exact address (mConnectMgr can ignore if it looks wrong) */
+
+	/* load certificate */
+	std::string peerId;
+
+	uint8_t *certptr = (uint8_t *) item->certDER.bin_data;
+	uint32_t len = item->certDER.bin_len;
+
+	bool loaded = mAuthMgr->LoadCertificateFromBinary(certptr, len, peerId);
+
+	uint32_t type = 0; 
+	uint32_t flags = 0; 
+
+	/* translate flags */
+	if (item->discFlags & P3DISC_FLAGS_USE_DISC)
+	{
+		flags |= RS_NET_FLAGS_USE_DISC;
+	}
+	if (item->discFlags & P3DISC_FLAGS_USE_DHT)
+	{
+		flags |= RS_NET_FLAGS_USE_DHT;
+	}
+	if (item->discFlags & P3DISC_FLAGS_PEER_ONLINE)
+	{
+		flags |= RS_NET_FLAGS_ONLINE;
+	}
+
+	/* generate type */
+	type = RS_NET_CONN_TCP_LOCAL;
+	if (item->discFlags & P3DISC_FLAGS_EXTERNAL_ADDR)
+	{
+		type |= RS_NET_CONN_TCP_EXTERNAL;
+	}
+
+	if (loaded)
+	{
+		mConnMgr->peerStatus(peerId, item->laddr, 
+					item->saddr, type, flags, RS_CB_DISC);
+	}
+
+	addDiscoveryData(item->PeerId(), peerId, item->laddr, item->saddr, item->discFlags, time(NULL));
+
+	/* cleanup (handled by caller) */
+}
+
+
+/*************************************************************************************/
+/*				Storing Network Graph				     */
+/*************************************************************************************/
+
+
+int	p3disc::addDiscoveryData(std::string fromId, std::string aboutId, 
+		struct sockaddr_in laddr, struct sockaddr_in raddr, uint32_t flags, time_t ts)
+{
+	/* Store Network information */
+
+	std::map<std::string, autoneighbour>::iterator it;
+	if (neighbours.end() == (it = neighbours.find(aboutId)))
+	{
+		/* doesn't exist */
+		autoneighbour an;
+
+		/* an data */
+		an.id = aboutId;
+		an.validAddrs = false;
+		an.discFlags = 0;
+		an.ts = 0;
+
+		neighbours[aboutId] = an;
+
+		it = neighbours.find(aboutId);
+	}
+
+	/* it always valid */
+
+	/* just update packet */
+
+	autoserver as;
+
+	as.id = fromId;
+	as.localAddr = laddr;
+	as.remoteAddr = raddr;
+	as.discFlags = flags;
+	as.ts = ts;
+
+	bool authDetails = (as.id == it->second.id);
+
+	/* KEY decision about address */
+	if ((authDetails) || 
+		((!(it->second.authoritative)) && (as.ts > it->second.ts)))
+	{
+		/* copy details to an */
+		it->second.authoritative = authDetails;
+		it->second.ts = as.ts;
+		it->second.validAddrs = true;
+		it->second.localAddr = as.localAddr;
+		it->second.remoteAddr = as.remoteAddr;
+		it->second.discFlags = as.discFlags;
+	}
+
+	(it->second).neighbour_of[fromId] = as;
+
+	/* do we update network address info??? */
+	return 1;
+
 }
 
 
 
+/*************************************************************************************/
+/*			   Extracting Network Graph Details			     */
+/*************************************************************************************/
+
+bool p3disc::potentialproxies(std::string id, std::list<std::string> proxyIds)
+{
+	/* find id -> and extract the neighbour_of ids */
+	std::map<std::string, autoneighbour>::iterator it;
+	std::map<std::string, autoserver>::iterator sit;
+	if (neighbours.end() == (it = neighbours.find(id)))
+	{
+		return false;
+	}
+
+	for(sit = it->second.neighbour_of.begin();
+		sit != it->second.neighbour_of.end(); sit++)
+	{
+		proxyIds.push_back(sit->first);
+	}
+	return true;
+}
+
+
+int p3disc::idServers()
+{
+	std::map<std::string, autoneighbour>::iterator nit;
+	std::map<std::string, autoserver>::iterator sit;
+	int cts = time(NULL);
+
+	std::ostringstream out;
+	out << "::::AutoDiscovery Neighbours::::" << std::endl;
+	for(nit = neighbours.begin(); nit != neighbours.end(); nit++)
+	{
+		out << "Neighbour: " << (nit->second).id;
+		out << std::endl;
+		out << "-> LocalAddr: ";
+		out <<  inet_ntoa(nit->second.localAddr.sin_addr);
+		out << ":" << ntohs(nit->second.localAddr.sin_port) << std::endl;
+		out << "-> RemoteAddr: ";
+		out <<  inet_ntoa(nit->second.remoteAddr.sin_addr);
+		out << ":" << ntohs(nit->second.remoteAddr.sin_port) << std::endl;
+		out << "  Last Contact: ";
+		out << cts - (nit->second.ts) << " sec ago";
+		out << std::endl;
+
+		out << " -->DiscFlags: 0x" << std::hex << nit->second.discFlags;
+		out << std::dec << std::endl;
+
+		for(sit = (nit->second.neighbour_of).begin(); 
+				sit != (nit->second.neighbour_of).end(); sit++)
+		{
+			out << "\tConnected via: " << (sit->first);
+			out << std::endl;
+			out << "\t\tLocalAddr: ";
+			out <<  inet_ntoa(sit->second.localAddr.sin_addr);
+			out <<":"<< ntohs(sit->second.remoteAddr.sin_port);
+			out << std::endl;
+			out << "\t\tRemoteAddr: ";
+			out <<  inet_ntoa(sit->second.remoteAddr.sin_addr);
+			out <<":"<< ntohs(sit->second.remoteAddr.sin_port);
+
+			out << std::endl;
+			out << "\t\tLast Contact:";
+			out << cts - (sit->second.ts) << " sec ago";
+			out << std::endl;
+			out << "\t\tDiscFlags: 0x" << std::hex << (sit->second.discFlags);
+			out << std::dec << std::endl;
+		}
+	}
+
+#ifdef P3DISC_DEBUG
+	std::cerr << "p3disc::idServers()" << std::endl;
+	std::cerr << out.str();
+	std::cerr << std::endl;
+#endif
+
+	return 1;
+}
 
 
 // tdelta     -> trange.
@@ -2129,101 +708,5 @@ int convertTRangeToTDelta(int trange)
 		return -1;
 	
 	return (int) (pow(10.0, trange) - 1.5); // (int) xxx98.5 -> xxx98
-}
-
-// fn which updates: connect, c_ts, 
-// 			listen, l_ts, 
-// 			local_addr, server_addr, 
-// 			and discFlags.
-int updateAutoServer(autoserver *as, RsDiscItem *di)
-{
-	int cts = time(NULL);
-
-
-	as->listen = (di->receive_tr != 0);
-	as->connect= (di->connect_tr != 0);
-
-	/* convert [r|c]_tf to timestamps.... 
-	 *
-	 * Conversion to a _tf....
-	 *
-	 *
-	 * */
-	if (as->listen)
-	{
-		as->l_ts = cts - convertTRangeToTDelta(di->receive_tr);
-	}
-
-	if (as->connect)
-	{
-		as->c_ts = cts - convertTRangeToTDelta(di->connect_tr);
-
-	}
-	as->local_addr = di->laddr;
-	as->server_addr = di->saddr;
-	as->discFlags = di->discFlags;
-
-	return 1;
-}
-
-
-static const int PQI_DISC_FLAGS_FIREWALLED = 0x0001;
-static const int PQI_DISC_FLAGS_FORWARDED  = 0x0002;
-static const int PQI_DISC_FLAGS_LOCAL	     = 0x0004;
-
-int updateCertAvailabilityFlags(cert *c, unsigned long discFlags)
-{
-	if (c)
-	{
-		c->Firewalled(discFlags & PQI_DISC_FLAGS_FIREWALLED);
-		c->Forwarded(discFlags & PQI_DISC_FLAGS_FORWARDED);
- 
-		if (discFlags & PQI_DISC_FLAGS_FIREWALLED)
-		{
-	  		pqioutput(PQL_WARNING, pqidisczone, 
-				"updateCertAvailabilityFlags() Setting Firewalled Flag = true");
-		}
-		else
-		{
-	  		pqioutput(PQL_WARNING, pqidisczone, 
-				"updateCertAvailabilityFlags() Setting Firewalled Flag = false");
-		}
-
-		if (discFlags & PQI_DISC_FLAGS_FORWARDED)
-		{
-	  		pqioutput(PQL_WARNING, pqidisczone, 
-				"updateCertAvailabilityFlags() Setting Forwarded Flag = true");
-		}
-		else
-		{
-	  		pqioutput(PQL_WARNING, pqidisczone, 
-				"updateCertAvailabilityFlags() Setting Forwarded Flag = false");
-		}
-
-		return 1;
-	}
-	return 0;
-}
-
-
-unsigned long determineCertAvailabilityFlags(cert *c)
-{
-	unsigned long flags = 0;
-	if (c->Firewalled())
-	{
-		flags |= PQI_DISC_FLAGS_FIREWALLED;
-	}
-
-	if (c->Forwarded())
-	{
-		flags |= PQI_DISC_FLAGS_FORWARDED;
-	}
-
-	if (c->Local())
-	{
-		flags |= PQI_DISC_FLAGS_LOCAL;
-	}
-	
-	return flags;
 }
 

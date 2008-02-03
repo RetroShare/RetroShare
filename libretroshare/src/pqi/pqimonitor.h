@@ -44,15 +44,16 @@ const uint32_t RS_PEER_ACTION_MASK      = 0xff00;
 
 /* STATE */
 const uint32_t RS_PEER_S_FRIEND		= 0x0001;
-const uint32_t RS_PEER_S_ONLINE    	= 0x0002;
-const uint32_t RS_PEER_S_CONNECTED   	= 0x0004;  /* heard from recently..*/
+const uint32_t RS_PEER_S_ONLINE    	= 0x0002;    /* heard from recently..*/
+const uint32_t RS_PEER_S_CONNECTED   	= 0x0004;  
 
 /* ACTIONS */
 const uint32_t RS_PEER_NEW              = 0x0001;    /* new Peer */
 const uint32_t RS_PEER_MOVED            = 0x0002;    /* moved from F->O or O->F */
-const uint32_t RS_PEER_CONNECTED        = 0x0004;
-const uint32_t RS_PEER_DISCONNECTED     = 0x0008;
-const uint32_t RS_PEER_CONNECT_REQ      = 0x0010;
+const uint32_t RS_PEER_ONLINE 		= 0x0004;
+const uint32_t RS_PEER_CONNECTED        = 0x0008;
+const uint32_t RS_PEER_DISCONNECTED     = 0x0010;
+const uint32_t RS_PEER_CONNECT_REQ      = 0x0020;
 
 /* Stun Status Flags */
 //const uint32_t RS_STUN_SRC_DHT		= 0x0001;
@@ -105,7 +106,7 @@ class pqiConnectCb
 virtual ~pqiConnectCb() { return; }
 virtual void	peerStatus(std::string id, 
 			struct sockaddr_in laddr, struct sockaddr_in raddr, 
-			uint32_t type, uint32_t mode, uint32_t source) = 0;
+			uint32_t type, uint32_t flags, uint32_t source) = 0;
 
 virtual void	peerConnectRequest(std::string id, uint32_t type) = 0;
 

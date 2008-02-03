@@ -39,6 +39,7 @@
 class p3ConnectMgr;
 class p3AuthMgr;
 
+#include "pqi/pqimonitor.h"
 #include "serialiser/rsdiscitems.h"
 #include "services/p3service.h"
 
@@ -46,20 +47,14 @@ class autoserver
 {
 	public:
 		autoserver()
-		:id(NULL), ca(NULL), connect(false), c_ts(0), 
-		listen(false), l_ts(0), discFlags(0) { return;}
+		:ts(0), discFlags(0) { return;}
 
 		std::string id;
-		std::string ca;
-		bool connect;
-		unsigned int c_ts; // this is connect_tf converted to timestamp, 0 invalid.
+		struct sockaddr_in localAddr;
+		struct sockaddr_in remoteAddr;
 
-		bool listen;
-		unsigned int l_ts; // this is receive_tf converted to timestamp, 0 invalid.
-
-		struct sockaddr_in local_addr;
-		struct sockaddr_in server_addr;
-		unsigned long discFlags;
+		time_t ts;
+		uint32_t discFlags;
 };
 
 
@@ -67,95 +62,69 @@ class autoneighbour: public autoserver
 {
 	public:
 		autoneighbour()
-		:autoserver(), local(false), active(false) {}
+		:autoserver(), authoritative(false) {}
 
-		bool local;
-		bool active; // meaning in ssl's list.
-		std::list<autoserver *> neighbour_of;
+		bool authoritative;
+		bool validAddrs;
+
+		std::map<std::string, autoserver> neighbour_of;
 
 };
 
+class p3AuthMgr;
+class p3ConnectMgr;
 
-class p3disc: public p3Service
+
+class p3disc: public p3Service, public pqiMonitor
 {
 	public:
-		bool local_disc;
-		bool remote_disc;
-		//sslroot *sslbase;
-
-		p3disc(p3AuthMgr *am, p3ConnectMgr *cm);
-virtual		~p3disc();
-
-		// Overloaded from p3Service functions.
-virtual		int tick();
 
 
-		// For Proxy Information.
-std::list<sockaddr_in> requestStunServers();
-std::list<cert *> potentialproxy(cert *target);
+        p3disc(p3AuthMgr *am, p3ConnectMgr *cm);
 
-		// load and save configuration to sslroot.
-		int save_configuration();
-		int load_configuration();
+	/************* from pqiMonitor *******************/
+virtual void statusChange(const std::list<pqipeer> &plist);
+	/************* from pqiMonitor *******************/
 
-		int ts_lastcheck;
+int	tick();
 
-		int idServers();
-
-		// Handle Local Discovery.
-		int localListen();
-		int localSetup();
-	
-		int lsock; // local discovery socket.
-		struct sockaddr_in laddr; // local addr
-		struct sockaddr_in baddr; // local broadcast addr.
-		struct sockaddr_in saddr; // pqi ssl server addr.
-
-		// bonus configuration flags.
- 		bool local_firewalled;
-         	bool local_forwarded;
+	private:
 
 
-		// local message construction/destruction.
-		void *ldata;
-		int ldlen;
-		int ldlenmax;
+void respondToPeer(std::string id);
 
+	/* Network Output */
+void sendOwnDetails(std::string to);
+void sendPeerDetails(std::string to, std::string about);
 
-		bool std_port; // if we have bound to default.
-		int  ts_nextlp; // -1 for never (if on default)
+	/* Network Input */
+int  handleIncoming();
+void recvPeerOwnMsg(RsDiscItem *item);
+void recvPeerFriendMsg(RsDiscReply *item);
 
-		// helper functions.
-		int setLocalAddress(struct sockaddr_in srvaddr);
-		int determineLocalNetAddr();
-		int setupLocalPacket(int type, struct sockaddr_in *home,
-					struct sockaddr_in *server);
-		int localPing(struct sockaddr_in);
-		int localReply(struct sockaddr_in);
-		int addLocalNeighbour(struct sockaddr_in*, struct sockaddr_in*);
+	/* handle network shape */
+int     addDiscoveryData(std::string fromId, std::string aboutId,
+		struct sockaddr_in laddr, struct sockaddr_in raddr, 
+		uint32_t flags, time_t ts);
 
-		// remote discovery function.
-		int newRequests();
-		int handleReplies();
+bool 	potentialproxies(std::string id, std::list<std::string> proxyIds);
+int 	idServers();
 
-		int handleDiscoveryData(RsDiscReply *di);
-		int handleDiscoveryPing(RsDiscItem *di);
-		int sendDiscoveryReply(cert *);
-		int collectCerts();
-		int distillData();
+	/* data */
 
-#if 0
-		//cert *checkDuplicateX509(X509 *x509);
-		std::list<cert *> &getDiscovered();
+	private:
 
-		// Main Storage
-		std::list<cert *> ad_init;
-		std::list<cert *> discovered;
-#endif
-		std::list<autoneighbour *> neighbours;
+	p3AuthMgr *mAuthMgr;
+	p3ConnectMgr *mConnMgr;
 
-		p3AuthMgr *mAuthMgr;
-		p3ConnectMgr *mConnMgr;
+	bool mRemoteDisc;
+	bool mLocalDisc;
+
+	std::map<std::string, autoneighbour> neighbours;
+
 };
+
+
+
 
 #endif // MRK_PQI_AUTODISC_H

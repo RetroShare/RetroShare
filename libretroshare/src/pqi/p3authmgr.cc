@@ -207,6 +207,15 @@ bool p3DummyAuthMgr::SaveCertificateToFile(std::string id, std::string filename)
 {
 	return false;
 }
+bool p3DummyAuthMgr::LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id)
+{
+	return false;
+}
+
+bool p3DummyAuthMgr::SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len)
+{
+	return false;
+}
 
 		/* Signatures */
 bool p3DummyAuthMgr::AuthCertificate(std::string id)

@@ -113,8 +113,7 @@ void 	RsDiscItem::clear()
 {
 	memset(&laddr, 0, sizeof(laddr));
 	memset(&saddr, 0, sizeof(laddr));
-	connect_tr = 0;
-	receive_tr = 0;
+	contact_tf = 0;
 	discFlags = 0;
 }
 
@@ -132,8 +131,8 @@ std::ostream &RsDiscItem::print(std::ostream &out, uint16_t indent)
 	out << " Port: " << ntohs(saddr.sin_port) << std::endl;
 
         printIndent(out, int_Indent);
-        out << "C/R Tr: " << connect_tr;
-        out << " /  " << receive_tr  << std::endl;
+        out << "Contact TimeFrame: " << contact_tf;
+        out << std::endl;
 
         printIndent(out, int_Indent);
         out << "DiscFlags:  " << discFlags  << std::endl;
@@ -148,8 +147,7 @@ uint32_t    RsDiscSerialiser::sizeItem(RsDiscItem *item)
 	uint32_t s = 8; /* header */
 	s += GetTlvIpAddrPortV4Size(); /* laddr */
 	s += GetTlvIpAddrPortV4Size(); /* saddr */
-	s += 2; /* connect_tr */
-	s += 2; /* receive_tr */
+	s += 2; /* contact_tf */
 	s += 4; /* discFlags  */
 
 	return s;
@@ -183,10 +181,8 @@ bool     RsDiscSerialiser::serialiseItem(RsDiscItem *item, void *data, uint32_t 
 	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, 
 					TLV_TYPE_IPV4_SERVER, &(item->saddr));
 	std::cerr << "RsDiscSerialiser::serialiseItem() saddress: " << ok << std::endl;
-	ok &= setRawUInt16(data, tlvsize, &offset, item->connect_tr);
-	std::cerr << "RsDiscSerialiser::serialiseItem() connect_tr: " << ok << std::endl;
-	ok &= setRawUInt16(data, tlvsize, &offset, item->receive_tr);
-	std::cerr << "RsDiscSerialiser::serialiseItem() receive_tr: " << ok << std::endl;
+	ok &= setRawUInt16(data, tlvsize, &offset, item->contact_tf);
+	std::cerr << "RsDiscSerialiser::serialiseItem() contact_tf: " << ok << std::endl;
 	ok &= setRawUInt32(data, tlvsize, &offset, item->discFlags);
 	std::cerr << "RsDiscSerialiser::serialiseItem() discFlags: " << ok << std::endl;
 
@@ -241,10 +237,8 @@ RsDiscItem *RsDiscSerialiser::deserialiseItem(void *data, uint32_t *pktsize)
 	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, 
 					TLV_TYPE_IPV4_SERVER, &(item->saddr));
 	std::cerr << "RsDiscSerialiser::deserialiseItem() saddress: " << ok << std::endl;
-	ok &= getRawUInt16(data, rssize, &offset, &(item->connect_tr));
-	std::cerr << "RsDiscSerialiser::deserialiseItem() connect_tr: " << ok << std::endl;
-	ok &= getRawUInt16(data, rssize, &offset, &(item->receive_tr));
-	std::cerr << "RsDiscSerialiser::deserialiseItem() receive_tr: " << ok << std::endl;
+	ok &= getRawUInt16(data, rssize, &offset, &(item->contact_tf));
+	std::cerr << "RsDiscSerialiser::deserialiseItem() contact_tf: " << ok << std::endl;
 	ok &= getRawUInt32(data, rssize, &offset, &(item->discFlags));
 	std::cerr << "RsDiscSerialiser::deserialiseItem() discFlags: " << ok << std::endl;
 
@@ -279,9 +273,9 @@ void 	RsDiscReply::clear()
 {
 	memset(&laddr, 0, sizeof(laddr));
 	memset(&saddr, 0, sizeof(laddr));
-	connect_tr = 0;
-	receive_tr = 0;
+	contact_tf = 0;
 	discFlags = 0;
+	aboutId.clear();
 	certDER.TlvClear();
 }
 
@@ -299,12 +293,14 @@ std::ostream &RsDiscReply::print(std::ostream &out, uint16_t indent)
 	out << " Port: " << ntohs(saddr.sin_port) << std::endl;
 
         printIndent(out, int_Indent);
-        out << "C/R Tr: " << connect_tr;
-        out << " /  " << receive_tr  << std::endl;
+        out << "Contact TimeFrame: " << contact_tf;
+        out << std::endl;
 
         printIndent(out, int_Indent);
         out << "DiscFlags:  " << discFlags  << std::endl;
 
+        printIndent(out, int_Indent);
+        out << "AboutId:  " << aboutId  << std::endl;
 	certDER.print(out, int_Indent);
 
         printRsItemEnd(out, "RsDiscReply", indent);
@@ -318,8 +314,8 @@ uint32_t    RsDiscSerialiser::sizeReply(RsDiscReply *item)
 	s += GetTlvIpAddrPortV4Size(); /* laddr */
 	s += GetTlvIpAddrPortV4Size(); /* saddr */
 	s += 2; /* connect_tr */
-	s += 2; /* receive_tr */
 	s += 4; /* discFlags  */
+	s += GetTlvStringSize(item->aboutId);
 	s += item->certDER.TlvSize();
 
 	return s;
@@ -353,12 +349,14 @@ bool     RsDiscSerialiser::serialiseReply(RsDiscReply *item, void *data, uint32_
 	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, 
 					TLV_TYPE_IPV4_SERVER, &(item->saddr));
 	std::cerr << "RsDiscSerialiser::serialiseReply() saddress: " << ok << std::endl;
-	ok &= setRawUInt16(data, tlvsize, &offset, item->connect_tr);
-	std::cerr << "RsDiscSerialiser::serialiseReply() connect_tr: " << ok << std::endl;
-	ok &= setRawUInt16(data, tlvsize, &offset, item->receive_tr);
-	std::cerr << "RsDiscSerialiser::serialiseReply() receive_tr: " << ok << std::endl;
+	ok &= setRawUInt16(data, tlvsize, &offset, item->contact_tf);
+	std::cerr << "RsDiscSerialiser::serialiseReply() contact_tf: " << ok << std::endl;
 	ok &= setRawUInt32(data, tlvsize, &offset, item->discFlags);
 	std::cerr << "RsDiscSerialiser::serialiseReply() discFlags: " << ok << std::endl;
+
+	ok &= SetTlvString(data, tlvsize, &offset, 
+					TLV_TYPE_STR_PEERID, item->aboutId);
+	std::cerr << "RsDiscSerialiser::serialiseReply() aboutId: " << ok << std::endl;
 
 	ok &= item->certDER.SetTlv(data, tlvsize, &offset);
 	std::cerr << "RsDiscSerialiser::serialiseReply() discFlags: " << ok << std::endl;
@@ -414,12 +412,14 @@ RsDiscReply *RsDiscSerialiser::deserialiseReply(void *data, uint32_t *pktsize)
 	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, 
 					TLV_TYPE_IPV4_SERVER, &(item->saddr));
 	std::cerr << "RsDiscSerialiser::deserialiseReply() saddress: " << ok << std::endl;
-	ok &= getRawUInt16(data, rssize, &offset, &(item->connect_tr));
-	std::cerr << "RsDiscSerialiser::deserialiseReply() connect_tr: " << ok << std::endl;
-	ok &= getRawUInt16(data, rssize, &offset, &(item->receive_tr));
-	std::cerr << "RsDiscSerialiser::deserialiseReply() receive_tr: " << ok << std::endl;
+	ok &= getRawUInt16(data, rssize, &offset, &(item->contact_tf));
+	std::cerr << "RsDiscSerialiser::deserialiseReply() contact_tf: " << ok << std::endl;
 	ok &= getRawUInt32(data, rssize, &offset, &(item->discFlags));
 	std::cerr << "RsDiscSerialiser::deserialiseReply() discFlags: " << ok << std::endl;
+
+	ok &= GetTlvString(data, rssize, &offset, 
+					TLV_TYPE_STR_PEERID, item->aboutId);
+	std::cerr << "RsDiscSerialiser::deserialiseReply() aboutId: " << ok << std::endl;
 	ok &= item->certDER.GetTlv(data, rssize, &offset);
 	std::cerr << "RsDiscSerialiser::deserialiseReply() certDER: " << ok << std::endl;
 

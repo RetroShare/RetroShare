@@ -102,6 +102,12 @@ virtual std::string SaveCertificateToString(std::string id)  = 0;
 virtual bool LoadCertificateFromFile(std::string filename, std::string &id)  = 0;
 virtual bool SaveCertificateToFile(std::string id, std::string filename)  = 0;
 
+		/* specific OpenSSL ones -> careful with pointers.... 
+		 * save will allocate space, 
+		 */
+virtual bool LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id) = 0;
+virtual bool SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len) 	= 0;
+
 		/* Signatures */
 virtual bool AuthCertificate(std::string uid) = 0;
 virtual bool SignCertificate(std::string id) = 0;
@@ -149,6 +155,8 @@ virtual std::string SaveCertificateToString(std::string id);
 virtual bool LoadCertificateFromFile(std::string filename, std::string &id);
 virtual bool SaveCertificateToFile(std::string id, std::string filename);
 
+virtual bool LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id);
+virtual bool SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len);
 		/* Signatures */
 
 virtual bool AuthCertificate(std::string uid);

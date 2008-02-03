@@ -60,8 +60,7 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	struct sockaddr_in saddr;
 
 	// time frame of recent connections.
-	uint16_t connect_tr;
-	uint16_t receive_tr;
+	uint16_t contact_tf;
 	// flags...
 	uint32_t discFlags;
 };
@@ -80,6 +79,7 @@ virtual ~RsDiscReply();
 virtual  void clear();  
 virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
+	std::string aboutId;
 	RsTlvBinaryData certDER;
 };
 

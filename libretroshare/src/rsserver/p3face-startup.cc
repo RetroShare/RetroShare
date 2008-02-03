@@ -39,10 +39,11 @@
 #include "dht/opendhtmgr.h"
 
 // Removed temporarily...
-//#include "services/p3disc.h"
+#include "services/p3disc.h"
 #include "services/p3msgservice.h"
 #include "services/p3chatservice.h"
 #include "services/p3gamelauncher.h"
+#include "services/p3ranking.h"
 
 #include <list>
 #include <string>
@@ -54,6 +55,7 @@
 #include "pqi/pqidebug.h"
 #include "rsserver/p3face.h"
 #include "rsserver/p3peers.h"
+#include "rsserver/p3rank.h"
 #include "rsiface/rsgame.h"
 
 /**************** PQI_USE_XPGP ******************/
@@ -602,18 +604,23 @@ int RsServer::StartupRetroShare(RsInit *config)
         //server->load_config();
 
 	/* create Services */
-	//ad = new p3disc(sslr); // XXX
+	ad = new p3disc(mAuthMgr, mConnMgr);
 	msgSrv = new p3MsgService(mConnMgr);
 	chatSrv = new p3ChatService(mConnMgr);
 	p3GameLauncher *gameLauncher = new p3GameLauncher();
+	p3Ranking *ranking = new p3Ranking(0, NULL, "", "", 3600 * 24 * 30);
 
-	//pqih -> addService(ad);
+	pqih -> addService(ad);
 	pqih -> addService(msgSrv);
 	pqih -> addService(chatSrv);
 	pqih -> addService(gameLauncher);
 
+	/* so need to Monitor too! */
+	mConnMgr->addMonitor(ad);
+
 	/* setup the gui */
 	rsGameLauncher = gameLauncher;
+	rsRanks = new p3Rank(ranking);
 
 	/* put a welcome message in! */
 	if (config->firsttime_run)

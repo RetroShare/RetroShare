@@ -59,6 +59,12 @@ const uint32_t RS_NET_CONN_TCP_EXTERNAL 	= 0x0002;
 const uint32_t RS_NET_CONN_UDP_DHT_SYNC 	= 0x0010;
 
 
+/* flags of peerStatus */
+const uint32_t RS_NET_FLAGS_USE_DISC		= 0x0001;
+const uint32_t RS_NET_FLAGS_USE_DHT		= 0x0002;
+const uint32_t RS_NET_FLAGS_ONLINE		= 0x0004;
+const uint32_t RS_NET_FLAGS_EXTERNAL_ADDR	= 0x0008;
+
 class peerAddrInfo
 {
 	public:
@@ -119,15 +125,15 @@ class peerConnectState
 	peerConnectAddress currentConnAddr;
 	std::list<peerConnectAddress> connAddrs;
 
+        time_t lastcontact;
 
 	/* stuff here un-used at the moment */
 
+	//time_t c_timestamp; // last connect timestamp
+        //time_t lr_timestamp; // last receive timestamp
 
-        time_t lc_timestamp; // last connect timestamp
-        time_t lr_timestamp; // last receive timestamp
-
-	time_t nc_timestamp; // next connect timestamp.
-	time_t nc_timeintvl; // next connect time interval.
+	//time_t nc_timestamp; // next connect timestamp.
+	//time_t nc_timeintvl; // next connect time interval.
 };
 
 
@@ -182,7 +188,7 @@ void	removeMonitor(pqiMonitor *mon);
 	/******* overloaded from pqiConnectCb *************/
 virtual void    peerStatus(std::string id, 
 			struct sockaddr_in laddr, struct sockaddr_in raddr,
-                        uint32_t type, uint32_t mode, uint32_t source);
+                        uint32_t type, uint32_t flags, uint32_t source);
 virtual void    peerConnectRequest(std::string id, uint32_t type);
 virtual void    stunStatus(std::string id, struct sockaddr_in addr, uint32_t flags);
 

@@ -43,9 +43,7 @@ const uint32_t RS_STUN_LIST_MIN =      	100;
 
 const uint32_t MAX_UPNP_INIT = 		10; /* seconds UPnP timeout */
 
-
 #define CONN_DEBUG 1
-
 
 p3ConnectMgr::p3ConnectMgr(p3AuthMgr *am)
 	:p3Config(CONFIG_TYPE_PEERS, "peers.cfg"), 
@@ -91,8 +89,10 @@ peerConnectState::peerConnectState()
 	 netMode(RS_NET_MODE_UNKNOWN), visState(RS_VIS_STATE_STD), 
 	 source(0), 
 	 inConnAttempt(0), connAttemptTS(0),
-	 lc_timestamp(0), lr_timestamp(0),
-	 nc_timestamp(0), nc_timeintvl(0)
+	 lastcontact(0)
+
+	 //lc_timestamp(0), lr_timestamp(0),
+	 //nc_timestamp(0), nc_timeintvl(0)
 {
 	lastaddr.sin_family = AF_INET;
 	lastaddr.sin_addr.s_addr = 0;
@@ -212,7 +212,7 @@ void p3ConnectMgr::netTick()
 {
 
 #ifdef CONN_DEBUG
-	std::cerr << "p3ConnectMgr::netTick()" << std::endl;
+	//std::cerr << "p3ConnectMgr::netTick()" << std::endl;
 #endif
 
 	connMtx.lock();   /*   LOCK MUTEX */
@@ -258,7 +258,7 @@ void p3ConnectMgr::netTick()
 
 		case RS_NET_DONE:
 #ifdef CONN_DEBUG
-			std::cerr << "p3ConnectMgr::netTick() STATUS: DONE" << std::endl;
+			//std::cerr << "p3ConnectMgr::netTick() STATUS: DONE" << std::endl;
 #endif
 		default:
 			break;
@@ -830,7 +830,7 @@ void p3ConnectMgr::getOnlineList(std::list<std::string> &peers)
 	connMtx.unlock(); /* UNLOCK MUTEX */
 	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
 	{
-		if (it->second.state & RS_PEER_S_ONLINE)
+		if (it->second.state & RS_PEER_S_CONNECTED)
 		{
 			peers.push_back(it->first);
 		}
@@ -923,12 +923,13 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags)
 		it->second.connAddrs.clear();
 		mDhtMgr->dropPeer(id);
 
-		/* update address */
+		/* update address (will come through from DISC) */
 
 		/* change state */
 		it->second.state |= RS_PEER_S_CONNECTED;
 		it->second.actions |= RS_PEER_CONNECTED;
 		mStatusChanged = true;
+		it->second.lastcontact = time(NULL);  /* time of connect */
 
 		return true;
 	}
@@ -938,6 +939,8 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags)
 	{
 		it->second.state ^= RS_PEER_S_CONNECTED;
 		it->second.actions |= RS_PEER_DISCONNECTED;
+
+		it->second.lastcontact = time(NULL);  /* time of disconnect */
 
 		mDhtMgr->findPeer(id);
 		if (it->second.visState & RS_VIS_STATE_NODHT)
@@ -973,7 +976,7 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags)
 
 void    p3ConnectMgr::peerStatus(std::string id, 
 			struct sockaddr_in laddr, struct sockaddr_in raddr,
-                       uint32_t type, uint32_t mode, uint32_t source)
+                       uint32_t type, uint32_t flags, uint32_t source)
 {
 	std::cerr << "p3ConnectMgr::peerStatus()";
 	std::cerr << " id: " << id;
@@ -982,7 +985,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
 	std::cerr << " raddr: " << inet_ntoa(raddr.sin_addr);
 	std::cerr << " rport: " << ntohs(raddr.sin_port);
 	std::cerr << " type: " << type;
-	std::cerr << " mode: " << mode;
+	std::cerr << " flags: " << flags;
 	std::cerr << " source: " << source;
 	std::cerr << std::endl;
 
@@ -1027,6 +1030,9 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		 */
 		it->second.source = RS_CB_DHT;
 		it->second.dht = details;
+
+		/* If we get a info -> then they are online */
+		it->second.state |= RS_PEER_S_ONLINE;
 	}
 	else if (source == RS_CB_DISC)
 	{
@@ -1036,16 +1042,62 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		 */
 		it->second.source = RS_CB_DISC;
 		it->second.disc = details;
+
+		if (flags & RS_NET_FLAGS_ONLINE)
+		{
+			it->second.actions |= RS_PEER_ONLINE;
+			it->second.state |= RS_PEER_S_ONLINE;
+			mStatusChanged = true;
+		}
+
+		/* not updating VIS status??? */
 	}
 	else if (source == RS_CB_PERSON)
 	{
 		/* PERSON can tell us about
 		 * 1) online / offline
 		 * 2) connect address
+		 * -> update all!
 		 */
 
 		it->second.source = RS_CB_PERSON;
 		it->second.peer = details;
+
+		it->second.localaddr = laddr;
+		it->second.serveraddr = raddr;
+		it->second.state |= RS_PEER_S_ONLINE;
+
+		/* must be online to recv info (should be connected too!) 
+		 * but no need for action as should be connected already 
+		 */
+
+		if (flags & RS_NET_FLAGS_EXTERNAL_ADDR)
+		{
+			it->second.netMode = RS_NET_MODE_EXT;
+		}
+		else
+		{
+			it->second.netMode = RS_NET_MODE_UDP;
+		}
+
+		/* always update VIS status */
+		if (flags & RS_NET_FLAGS_USE_DISC)
+		{
+			it->second.visState &= (~RS_VIS_STATE_NODISC);
+		}
+		else
+		{
+			it->second.visState |= RS_VIS_STATE_NODISC;
+		}
+
+		if (flags & RS_NET_FLAGS_USE_DHT)
+		{
+			it->second.visState &= (~RS_VIS_STATE_NODHT);
+		}
+		else
+		{
+			it->second.visState |= RS_VIS_STATE_NODHT;
+		}
 	}
 
 	if (!isFriend)

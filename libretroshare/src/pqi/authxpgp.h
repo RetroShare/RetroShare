@@ -103,11 +103,14 @@ virtual	std::string getName(std::string id);
 virtual bool    getDetails(std::string id, pqiAuthDetails &details);
 	
 	/* Load/Save certificates */
-	
+
 virtual bool LoadCertificateFromString(std::string pem, std::string &id);
 virtual	std::string SaveCertificateToString(std::string id);
 virtual bool LoadCertificateFromFile(std::string filename, std::string &id);
 virtual bool SaveCertificateToFile(std::string id, std::string filename);
+
+virtual bool LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id);	
+virtual	bool SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len);
 	
 	/* Signatures */
 
@@ -128,16 +131,20 @@ bool 	ValidateCertificateXPGP(XPGP *xpgp, std::string &peerId); /* validate + ge
 bool 	FailedCertificateXPGP(XPGP *xpgp, bool incoming);     /* store for discovery */
 bool 	CheckCertificateXPGP(std::string peerId, XPGP *xpgp); /* check that they are exact match */
 
+
 	private:
 
 	/* Helper Functions */
 
 bool 	getXPGPid(XPGP *xpgp, std::string &xpgpid);
 bool 	ProcessXPGP(XPGP *xpgp, std::string &id);
-XPGP *	loadXPGPFromDER(char *data, uint32_t len);
+
 XPGP *	loadXPGPFromPEM(std::string pem);
 XPGP *	loadXPGPFromFile(std::string fname, std::string hash);
 bool    saveXPGPToFile(XPGP *xpgp, std::string fname, std::string &hash);
+
+XPGP *	loadXPGPFromDER(const uint8_t *ptr, uint32_t len);
+bool 	saveXPGPToDER(XPGP *xpgp, uint8_t **ptr, uint32_t *len);
 
 	/*********** LOCKED Functions ******/
 bool 	locked_FindCert(std::string id, xpgpcert **cert);

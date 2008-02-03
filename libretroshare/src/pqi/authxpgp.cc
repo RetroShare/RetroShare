@@ -50,7 +50,9 @@ xPGP_vfy.h:#define TRUST_SIGN_BAD               -1
 /********************************************************************************/
 /********************************************************************************/
 
-#define AUTHXPGP_DEBUG	1
+/***********
+ ** #define AUTHXPGP_DEBUG	1
+ **********/
 
 // the single instance of this.
 static AuthXPGP instance_sslroot;
@@ -563,7 +565,57 @@ bool AuthXPGP::SaveCertificateToFile(std::string id, std::string filename)
 	xpgpMtx.unlock(); /**** UNLOCK ****/
 	return valid;
 }
-	
+
+	/**** To/From DER format ***/
+
+bool 	AuthXPGP::LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id)
+{
+#ifdef AUTHXPGP_DEBUG
+	std::cerr << "AuthXPGP::LoadCertificateFromFile() " << id;
+	std::cerr << std::endl;
+#endif
+
+	XPGP *xpgp = loadXPGPFromDER(ptr, len);
+	if (!xpgp)
+		return false;
+
+	return ProcessXPGP(xpgp, id);
+
+}
+
+bool 	AuthXPGP::SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len)
+{
+#ifdef AUTHXPGP_DEBUG
+	std::cerr << "AuthXPGP::SaveCertificateToBinary() " << id;
+	std::cerr << std::endl;
+#endif
+
+	xpgpMtx.lock();   /***** LOCK *****/
+
+	/* get the cert first */
+	xpgpcert *cert = NULL;
+	bool valid = false;
+	std::string hash;
+
+	if (id == mOwnId)
+	{
+		cert = mOwnCert;
+		valid = true;
+	}
+	else if (locked_FindCert(id, &cert))
+	{
+		valid = true;
+	}
+	if (valid)
+	{
+		valid = saveXPGPToDER(cert->certificate, ptr, len);
+	}
+
+	xpgpMtx.unlock(); /**** UNLOCK ****/
+	return valid;
+}
+
+
 	/* Signatures */
 bool AuthXPGP::SignCertificate(std::string id)
 {
@@ -940,16 +992,43 @@ XPGP *AuthXPGP::loadXPGPFromPEM(std::string pem)
 	return pc;
 }
 
-XPGP *AuthXPGP::loadXPGPFromDER(char *data, uint32_t len)
+XPGP *AuthXPGP::loadXPGPFromDER(const uint8_t *ptr, uint32_t len)
 {
 #ifdef AUTHXPGP_DEBUG
 	std::cerr << "AuthXPGP::LoadXPGPFromDER()";
 	std::cerr << std::endl;
 #endif
 
-	/**** TODO ****/
-	return NULL;
+        XPGP *tmp = NULL;
+        unsigned char **certptr = (unsigned char **) &ptr;
+        XPGP *xpgp = d2i_XPGP(&tmp, certptr, len);
+
+	return xpgp;
 }
+
+bool AuthXPGP::saveXPGPToDER(XPGP *xpgp, uint8_t **ptr, uint32_t *len)
+{
+#ifdef AUTHXPGP_DEBUG
+	std::cerr << "AuthXPGP::saveXPGPToDER()";
+	std::cerr << std::endl;
+#endif
+
+	int certlen = i2d_XPGP(xpgp, (unsigned char **) ptr);
+	if (certlen > 0)
+	{
+		*len = certlen;
+		return true;
+	}
+	else
+	{
+		*len = 0;
+		return false;
+	}
+	return false;
+}
+
+
+
 
 bool AuthXPGP::ProcessXPGP(XPGP *xpgp, std::string &id)
 {
@@ -1294,7 +1373,7 @@ std::string getX509CNString(X509_NAME *name)
 }
 
 
-std::string getX509TypeString(X509_NAME *name, char *type, int len)
+std::string getX509TypeString(X509_NAME *name, const char *type, int len)
 {
 	std::string namestr;
 	for(int i = 0; i < X509_NAME_entry_count(name); i++)
