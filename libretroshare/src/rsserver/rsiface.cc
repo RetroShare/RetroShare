@@ -111,6 +111,7 @@ DirInfo *RsIface::getDirectoryMod(std::string uid, std::string path)
 
 
 
+#if 0
 
 const MessageInfo *RsIface::getMessage(std::string cid_in, std::string mid_in)
 {
@@ -171,6 +172,8 @@ const MessageInfo *RsIface::getChannelMsg(std::string chid_in, std::string mid_i
 
 	return NULL;
 }
+
+#endif
 
 /* set to true */
 bool    RsIface::setChanged(DataFlags set)

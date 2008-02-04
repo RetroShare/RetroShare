@@ -89,6 +89,8 @@ std::ostream &print(std::ostream &out, const DirInfo &info, int indentLvl)
 }
 
 
+#if 0
+
 std::ostream &operator<<(std::ostream &out, const MessageInfo &info)
 {
 	out << "MessageInfo(TODO)";
@@ -96,16 +98,18 @@ std::ostream &operator<<(std::ostream &out, const MessageInfo &info)
 	return out;
 }
 
-std::ostream &operator<<(std::ostream &out, const ChannelInfo &info)
+std::ostream &operator<<(std::ostream &out, const ChatInfo &info)
 {
-	out << "ChannelInfo(TODO)";
+	out << "ChatInfo(TODO)";
 	out << std::endl;
 	return out;
 }
 
-std::ostream &operator<<(std::ostream &out, const ChatInfo &info)
+#endif
+
+std::ostream &operator<<(std::ostream &out, const ChannelInfo &info)
 {
-	out << "ChatInfo(TODO)";
+	out << "ChannelInfo(TODO)";
 	out << std::endl;
 	return out;
 }

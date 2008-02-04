@@ -31,12 +31,14 @@
 #include <map>
 #include <iostream>
 
+#include "rsiface/rsmsgs.h"
+
 #include "pqi/pqi.h"
 #include "pqi/pqiindic.h"
 #include "services/p3service.h"
 #include "serialiser/rsmsgitems.h"
+#include "util/rsthreads.h"
 
-#include "rsiface/rsiface.h"
 class p3ConnectMgr;
 
 class p3MsgService: public p3Service
@@ -44,17 +46,25 @@ class p3MsgService: public p3Service
 	public:
 	p3MsgService(p3ConnectMgr *cm);
 
+	/* External Interface */
+bool    ModifiedMsgs();
+bool 	getMessageSummaries(std::list<MsgInfoSummary> &msgList);
+bool 	getMessage(std::string mid, MessageInfo &msg);
+
+bool    removeMsgId(std::string mid); 
+bool    markMsgIdRead(std::string mid);
+
+bool    MessageSend(MessageInfo &info);
+
+
+
 void    loadWelcomeMsg(); /* startup message */
 
-int     sendMessage(RsMsgItem *item);
 int     checkOutgoingMessages();
 
 std::list<RsMsgItem *> &getMsgList();
 std::list<RsMsgItem *> &getMsgOutList();
 
-	// cleaning up....
-int     removeMsgId(uint32_t   mid); /* id stored in sid */
-int     markMsgIdRead(uint32_t mid);
 
 int	load_config();
 int	save_config();
@@ -64,20 +74,27 @@ int	status();
 
 	private:
 
+int     sendMessage(RsMsgItem *item);
 int 	incomingMsgs();
 
+void 	initRsMI(RsMsgItem *msg, MessageInfo &mi);
+void 	initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis);
+RsMsgItem *initMIRsMsg(MessageInfo &info, std::string to);
 
-std::list<RsMsgItem *> imsg;
-std::list<RsMsgItem *> msgOutgoing; /* ones that haven't made it out yet! */
+
+	/* Mutex Required for stuff below */
+
+	RsMutex msgMtx;
+
+std::map<uint32_t, RsMsgItem *> imsg;
+std::map<uint32_t, RsMsgItem *> msgOutgoing; /* ones that haven't made it out yet! */
 
 	p3ConnectMgr *mConnMgr;
 
-// bool state flags.
-	public:
 	Indicator msgChanged;
 	Indicator msgMajorChanged;
 
-std::string config_dir;
+	std::string config_dir;
 };
 
 #endif // MESSAGE_SERVICE_HEADER

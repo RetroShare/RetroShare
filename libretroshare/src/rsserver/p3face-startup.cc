@@ -38,7 +38,6 @@
 #include "upnp/upnphandler.h"
 #include "dht/opendhtmgr.h"
 
-// Removed temporarily...
 #include "services/p3disc.h"
 #include "services/p3msgservice.h"
 #include "services/p3chatservice.h"
@@ -56,6 +55,7 @@
 #include "rsserver/p3face.h"
 #include "rsserver/p3peers.h"
 #include "rsserver/p3rank.h"
+#include "rsserver/p3msgs.h"
 #include "rsiface/rsgame.h"
 
 /**************** PQI_USE_XPGP ******************/
@@ -621,6 +621,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	/* setup the gui */
 	rsGameLauncher = gameLauncher;
 	rsRanks = new p3Rank(ranking);
+	rsMsgs  = new p3Msgs(mAuthMgr, msgSrv, chatSrv);
 
 	/* put a welcome message in! */
 	if (config->firsttime_run)

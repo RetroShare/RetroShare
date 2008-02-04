@@ -7,15 +7,16 @@ RS_TOP_DIR = ..
 include $(RS_TOP_DIR)/scripts/config.mk
 ###############################################################
 
-RSOBJ = p3face-file.o \
-	p3face-msgs.o \
+RSOBJ = p3peers.o \
+	p3rank.o  \
+	p3msgs.o  \
+	p3face-file.o \
 	p3face-server.o \
 	p3face-config.o \
 	p3face-startup.o \
 	rstypes.o \
 	rsiface.o \
-	p3peers.o \
-	p3rank.o
+	p3face-msgs.o 
 
 #	pqistrings.o \
 #	p3face-people.o 

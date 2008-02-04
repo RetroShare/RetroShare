@@ -36,12 +36,9 @@
 #include "rsiface/rstypes.h"
 #include "util/rsthreads.h"
 
-class p3disc;
-class p3MsgService;
-class p3ChatService;
-
-#include "services/p3chatservice.h"
+#include "services/p3disc.h"
 #include "services/p3msgservice.h"
+#include "services/p3chatservice.h"
 
 /* The Main Interface Class - for controlling the server */
 
@@ -159,17 +156,9 @@ int     UpdateRemotePeople();
 	/* p3face-msg Operations */
 
 	public:
-	/* Message Items */
-virtual int MessageSend(MessageInfo &info);
-virtual int MessageDelete(std::string mid);
-virtual int MessageRead(std::string mid);
-
 	/* Channel Items */
 virtual int ChannelCreateNew(ChannelInfo &info);
 virtual int ChannelSendMsg(ChannelInfo &info);
-
-	/* Chat */
-virtual int 	ChatSend(ChatInfo &ci);
 
 /* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
 virtual int     SetInChat(std::string id, bool in);         /* friend : chat msgs */
@@ -183,15 +172,16 @@ virtual int     ClearInBroadcast();
 virtual int     ClearInSubscribe();
 virtual int     ClearInRecommend();
 
+virtual bool    IsInChat(std::string id);           /* friend : chat msgs */
+virtual bool    IsInMsg(std::string id);            /* friend : msg recpts*/
+
 
 	private:
 
+ 	std::list<std::string> mInChatList, mInMsgList;
+	         
 	/* Internal Update Iface Fns */
-int 	UpdateAllChat();
-int 	UpdateAllMsgs();
 int 	UpdateAllChannels();
-
-void initRsChatInfo(RsChatItem *c, ChatInfo &i);
 
 
 #ifdef PQI_USE_CHANNELS

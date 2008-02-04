@@ -212,6 +212,12 @@ uint32_t    RsSerialiser::size(RsItem *item)
 
 #ifdef  RSSERIAL_DEBUG
 				std::cerr << "RsSerialiser::size() serialiser missing!";
+			
+				std::ostringstream out;
+				out << std::hex << item->PacketId();
+
+				std::cerr << "RsSerialiser::size() PacketId: ";
+				std::cerr << out.str();
 				std::cerr << std::endl;
 #endif
 				return 0;
@@ -248,6 +254,11 @@ bool        RsSerialiser::serialise  (RsItem *item, void *data, uint32_t *size)
 
 #ifdef  RSSERIAL_DEBUG
 				std::cerr << "RsSerialiser::serialise() serialiser missing!";
+				std::ostringstream out;
+				out << std::hex << item->PacketId();
+
+				std::cerr << "RsSerialiser::serialise() PacketId: ";
+				std::cerr << out.str();
 				std::cerr << std::endl;
 #endif
 				return false;
@@ -308,6 +319,11 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 
 #ifdef  RSSERIAL_DEBUG
 				std::cerr << "RsSerialiser::deserialise() deserialiser missing!";
+				std::ostringstream out;
+				out << std::hex << getRsItemId(data);
+
+				std::cerr << "RsSerialiser::deserialise() PacketId: ";
+				std::cerr << out.str();
 				std::cerr << std::endl;
 #endif
 				return NULL;

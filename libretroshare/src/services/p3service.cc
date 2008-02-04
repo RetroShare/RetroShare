@@ -26,6 +26,8 @@
 #include "pqi/pqi.h"
 #include "services/p3service.h"
 
+#define SERV_DEBUG 1
+
 void    p3Service::addSerialType(RsSerialType *st)
 {
 	rsSerialiser->addSerialType(st);
@@ -78,7 +80,10 @@ int	p3Service::receive(RsRawItem *raw)
 {
 	srvMtx.lock();   /*****   LOCK MUTEX *****/
 
-	std::cerr << "p3Service::receive()" << std::endl;
+#ifdef SERV_DEBUG 
+	std::cerr << "p3Service::receive()";
+	std::cerr << std::endl;
+#endif
 
 	/* convert to RsServiceItem */
 	uint32_t size = raw->getRawLength();
@@ -86,11 +91,20 @@ int	p3Service::receive(RsRawItem *raw)
 	if ((!item) || (size != raw->getRawLength()))
 	{
 		/* error in conversion */
+#ifdef SERV_DEBUG 
 		std::cerr << "p3Service::receive() Error" << std::endl;
 		std::cerr << "p3Service::receive() Size: " << size << std::endl;
 		std::cerr << "p3Service::receive() RawLength: " << raw->getRawLength() << std::endl;
+#endif
+
 		if (item)
 		{
+#ifdef SERV_DEBUG 
+			std::cerr << "p3Service::receive() Bad Item:";
+			std::cerr << std::endl;
+			item->print(std::cerr, 0);
+			std::cerr << std::endl;
+#endif
 			delete item;
 		}
 	}
@@ -99,6 +113,13 @@ int	p3Service::receive(RsRawItem *raw)
 	/* if we have something - pass it on */
 	if (item)
 	{
+#ifdef SERV_DEBUG 
+		std::cerr << "p3Service::receive() item:";
+		std::cerr << std::endl;
+		item->print(std::cerr, 0);
+		std::cerr << std::endl;
+#endif
+
 		/* ensure PeerId is transferred */
 		item->PeerId(raw->PeerId());
 		recv_queue.push_back(item);
@@ -126,10 +147,22 @@ RsRawItem *p3Service::send()
 	RsItem *si = send_queue.front();
 	send_queue.pop_front();
 
+#ifdef SERV_DEBUG 
+	std::cerr << "p3Service::send() Sending item:";
+	std::cerr << std::endl;
+	si->print(std::cerr, 0);
+	std::cerr << std::endl;
+#endif
+
 	/* try to convert */
 	uint32_t size = rsSerialiser->size(si);
 	if (!size)
 	{
+#ifdef SERV_DEBUG 
+		std::cerr << "p3Service::send() ERROR size == 0";
+		std::cerr << std::endl;
+#endif
+
 		/* can't convert! */
 		delete si;
 		srvMtx.unlock(); /***** UNLOCK MUTEX *****/
@@ -139,12 +172,20 @@ RsRawItem *p3Service::send()
 	RsRawItem *raw = new RsRawItem(si->PacketId(), size);
 	if (!rsSerialiser->serialise(si, raw->getRawData(), &size))
 	{
+#ifdef SERV_DEBUG 
+		std::cerr << "p3Service::send() ERROR serialise failed";
+		std::cerr << std::endl;
+#endif
 		delete raw;
 		raw = NULL;
 	}
 
 	if ((raw) && (size != raw->getRawLength()))
 	{
+#ifdef SERV_DEBUG 
+		std::cerr << "p3Service::send() ERROR serialise size mismatch";
+		std::cerr << std::endl;
+#endif
 		delete raw;
 		raw = NULL;
 	}

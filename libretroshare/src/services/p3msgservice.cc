@@ -31,6 +31,8 @@
 
 #include "services/p3msgservice.h"
 
+#include "util/rsdir.h"
+
 #include <sstream>
 #include <iomanip>
 
@@ -57,8 +59,16 @@ p3MsgService::p3MsgService(p3ConnectMgr *cm)
 	:p3Service(RS_SERVICE_TYPE_MSG), mConnMgr(cm),
 	msgChanged(1), msgMajorChanged(1)
 {
+	addSerialType(new RsMsgSerialiser());
 }
 
+bool	p3MsgService::ModifiedMsgs()
+{
+	bool m1 = msgChanged.Changed();
+	bool m2 = msgMajorChanged.Changed();
+
+	return (m1 || m2);
+}
 
 int	p3MsgService::tick()
 {
@@ -111,88 +121,9 @@ int 	p3MsgService::incomingMsgs()
 		/* STORE MsgID */
 		mi -> msgId = getNewUniqueMsgId();
 
-		imsg.push_back(mi);
+		imsg[mi->msgId] = mi;
 		msgChanged.IndicateChanged();
 	}
-	return 1;
-}
-
-
-std::list<RsMsgItem *> &p3MsgService::getMsgList()
-{
-	return imsg;
-}
-
-std::list<RsMsgItem *> &p3MsgService::getMsgOutList()
-{
-	return msgOutgoing;
-}
-
-/* remove based on the unique mid (stored in sid) */
-int     p3MsgService::removeMsgId(uint32_t mid)
-{
-	std::list<RsMsgItem *>::iterator it;
-
-	for(it = imsg.begin(); it != imsg.end(); it++)
-	{
-		if ((*it)->msgId == mid)
-		{
-			RsMsgItem *mi = (*it);
-			imsg.erase(it);
-			delete mi;
-			msgChanged.IndicateChanged();
-			msgMajorChanged.IndicateChanged();
-			return 1;
-		}
-	}
-
-	/* try with outgoing messages otherwise */
-	for(it = msgOutgoing.begin(); it != msgOutgoing.end(); it++)
-	{
-		if ((*it)->msgId == mid)
-		{
-			RsMsgItem *mi = (*it);
-			msgOutgoing.erase(it);
-			delete mi;
-			msgChanged.IndicateChanged();
-			msgMajorChanged.IndicateChanged();
-			return 1;
-		}
-	}
-
-	return 0;
-}
-
-int     p3MsgService::markMsgIdRead(uint32_t mid)
-{
-	std::list<RsMsgItem *>::iterator it;
-
-	for(it = imsg.begin(); it != imsg.end(); it++)
-	{
-		if ((*it)->msgId == mid)
-		{
-			RsMsgItem *mi = (*it);
-			mi -> msgFlags &= ~(RS_MSG_FLAGS_NEW);
-			msgChanged.IndicateChanged();
-			return 1;
-		}
-	}
-	return 0;
-}
-
-int     p3MsgService::sendMessage(RsMsgItem *item)
-{
-	pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
-		"p3MsgService::sendMessage()");
-
-	/* add pending flag */
-	item->msgFlags |= 
-		(RS_MSG_FLAGS_OUTGOING | 
-		 RS_MSG_FLAGS_PENDING);
-	/* STORE MsgID */
-	item -> msgId = getNewUniqueMsgId();
-	msgOutgoing.push_back(item);
-
 	return 1;
 }
 
@@ -205,38 +136,59 @@ int     p3MsgService::checkOutgoingMessages()
 
 	const std::string ownId = mConnMgr->getOwnId();
 
-	std::list<RsMsgItem *>::iterator it;
-	for(it = msgOutgoing.begin(); it != msgOutgoing.end();)
+	std::list<uint32_t>::iterator it;
+	std::list<uint32_t> toErase;
+
+	std::map<uint32_t, RsMsgItem *>::iterator mit;
+
+	for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
 	{
 
 		/* find the certificate */
-		std::string pid = (*it)->PeerId();
+		std::string pid = mit->second->PeerId();
 		peerConnectState pstate;
-		if (!mConnMgr->getFriendNetStatus(pid, pstate))
+		bool toSend = false;
+
+		if (mConnMgr->getFriendNetStatus(pid, pstate))
 		{
-			delete(*it);
-			it = msgOutgoing.erase(it);
+			if (pstate.state & RS_PEER_S_ONLINE)
+			{
+				toSend = true;
+			}
 		}
-	 	/* if online, send it */
-		else if ((pstate.state & RS_PEER_S_ONLINE)
-		    		|| (pid == ownId))
+		else if (pid == ownId) /* FEEDBACK Msg to Ourselves */
+		{
+			toSend = true;
+		}
+
+		if (toSend)
 		{
 			/* send msg */
 			pqioutput(PQL_ALERT, msgservicezone, 
 				"p3MsgService::checkOutGoingMessages() Sending out message");
 			/* remove the pending flag */
-			(*it)->msgFlags &= ~RS_MSG_FLAGS_PENDING;
+			(mit->second)->msgFlags &= ~RS_MSG_FLAGS_PENDING;
 
-			sendItem(*it);
-			it = msgOutgoing.erase(it);
+			sendItem(mit->second);
+			toErase.push_back(mit->first);
 		}
 		else
 		{
 			pqioutput(PQL_ALERT, msgservicezone, 
 				"p3MsgService::checkOutGoingMessages() Delaying until available...");
-			it++;
 		}
 	}
+
+	/* clean up */
+	for(it = toErase.begin(); it != toErase.end(); it++)
+	{
+		mit = msgOutgoing.find(*it);
+		if (mit != msgOutgoing.end())
+		{
+			msgOutgoing.erase(mit);
+		}
+	}
+
 	return 0;
 }
 
@@ -260,11 +212,10 @@ int     p3MsgService::save_config()
         pqiarchive *pa_out = new pqiarchive(rss, out, BIN_FLAGS_WRITEABLE | BIN_FLAGS_NO_DELETE);
 	bool written = false;
 
-	std::list<RsMsgItem *>::iterator mit;
+	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	for(mit = imsg.begin(); mit != imsg.end(); mit++)
 	{
-		//RsMsgItem *mi = (*mit)->clone();
-		if (pa_out -> SendItem(*mit))
+		if (pa_out -> SendItem(mit->second))
 		{
 			written = true;
 		}
@@ -275,16 +226,11 @@ int     p3MsgService::save_config()
 	{
 		//RsMsgItem *mi = (*mit)->clone();
 		//mi -> msgFlags |= RS_MSG_FLAGS_PENDING;
-		if (pa_out -> SendItem(*mit))
+		if (pa_out -> SendItem(mit->second))
 		{
 			written = true;
 		}
 		
-	}
-
-	if (!written)
-	{
-		/* need to push something out to overwrite old data! (For WINDOWS ONLY) */
 	}
 
 	delete pa_out;	
@@ -324,11 +270,11 @@ int     p3MsgService::load_config()
 				std::cerr << "MSG_PENDING";
 				std::cerr << std::endl;
 				mitem->print(std::cerr);
-				msgOutgoing.push_back(mitem);
+				msgOutgoing[mitem->msgId] = mitem;
 			}
 			else
 			{
-				imsg.push_back(mitem);
+				imsg[mitem->msgId] = mitem;
 			}
 		}
 		else
@@ -350,7 +296,7 @@ void p3MsgService::loadWelcomeMsg()
 
 	msg -> PeerId(mConnMgr->getOwnId());
 
-	msg -> sendTime = 0;
+	msg -> sendTime = time(NULL);
 
 	msg -> subject = L"Welcome to Retroshare";
 
@@ -365,8 +311,344 @@ void p3MsgService::loadWelcomeMsg()
 
 	msg -> message   += L"Enjoy.\n";
 
-	imsg.push_back(msg);	
+	msg -> msgId = getNewUniqueMsgId();
+
+	imsg[msg->msgId] = msg;	
 }
 
 
+/***********************************************************************/
+/***********************************************************************/
+/***********************************************************************/
+/***********************************************************************/
+
+
+/****************************************/
+/****************************************/
+
+bool p3MsgService::getMessageSummaries(std::list<MsgInfoSummary> &msgList)
+{
+	/* do stuff */
+	msgList.clear();
+
+	std::map<uint32_t, RsMsgItem *>::iterator mit;
+	for(mit = imsg.begin(); mit != imsg.end(); mit++)
+	{
+		MsgInfoSummary mis;
+		initRsMIS(mit->second, mis);
+		msgList.push_back(mis);
+	}
+
+	for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
+	{
+		MsgInfoSummary mis;
+		initRsMIS(mit->second, mis);
+		msgList.push_back(mis);
+	}
+	return 1;
+}
+
+
+bool p3MsgService::getMessage(std::string mId, MessageInfo &msg)
+{
+  	std::map<uint32_t, RsMsgItem *>::iterator mit;
+	uint32_t msgId = atoi(mId.c_str());
+
+	mit = imsg.find(msgId);
+	if (mit == imsg.end())
+	{
+		mit = msgOutgoing.find(msgId);
+		if (mit == msgOutgoing.end())
+		{
+			return false;
+		}
+	}
+
+	/* mit valid */
+	initRsMI(mit->second, msg);
+	return true;
+}
+
+
+/* remove based on the unique mid (stored in sid) */
+bool    p3MsgService::removeMsgId(std::string mid)
+{
+  	std::map<uint32_t, RsMsgItem *>::iterator mit;
+	uint32_t msgId = atoi(mid.c_str());
+
+	mit = imsg.find(msgId);
+	if (mit != imsg.end())
+	{
+		RsMsgItem *mi = mit->second;
+		imsg.erase(mit);
+		delete mi;
+		msgChanged.IndicateChanged();
+		msgMajorChanged.IndicateChanged();
+
+		return true;
+	}
+
+	mit = msgOutgoing.find(msgId);
+	if (mit != msgOutgoing.end())
+	{
+		RsMsgItem *mi = mit->second;
+		msgOutgoing.erase(mit);
+		delete mi;
+		msgChanged.IndicateChanged();
+		msgMajorChanged.IndicateChanged();
+
+		return true;
+	}
+
+	return false;
+}
+
+bool    p3MsgService::markMsgIdRead(std::string mid)
+{
+  	std::map<uint32_t, RsMsgItem *>::iterator mit;
+	uint32_t msgId = atoi(mid.c_str());
+
+	mit = imsg.find(msgId);
+	if (mit != imsg.end())
+	{
+		RsMsgItem *mi = mit->second;
+		mi -> msgFlags &= ~(RS_MSG_FLAGS_NEW);
+		msgChanged.IndicateChanged();
+		return true;
+	}
+	return false;
+}
+
+/****************************************/
+/****************************************/
+	/* Message Items */
+int     p3MsgService::sendMessage(RsMsgItem *item)
+{
+	pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
+		"p3MsgService::sendMessage()");
+
+	/* add pending flag */
+	item->msgFlags |= 
+		(RS_MSG_FLAGS_OUTGOING | 
+		 RS_MSG_FLAGS_PENDING);
+	/* STORE MsgID */
+	item -> msgId = getNewUniqueMsgId();
+	msgOutgoing[item->msgId] = item;
+
+	return 1;
+}
+
+bool 	p3MsgService::MessageSend(MessageInfo &info)
+{
+	std::list<std::string>::const_iterator pit;
+	for(pit = info.msgto.begin(); pit != info.msgto.end(); pit++)
+	{
+		RsMsgItem *msg = initMIRsMsg(info, *pit);
+		if (msg)
+		{
+			sendMessage(msg);
+		}
+	}
+
+	for(pit = info.msgcc.begin(); pit != info.msgcc.end(); pit++)
+	{
+		RsMsgItem *msg = initMIRsMsg(info, *pit);
+		if (msg)
+		{
+			sendMessage(msg);
+		}
+	}
+
+	for(pit = info.msgbcc.begin(); pit != info.msgbcc.end(); pit++)
+	{
+		RsMsgItem *msg = initMIRsMsg(info, *pit);
+		if (msg)
+		{
+			sendMessage(msg);
+		}
+	}
+
+	/* send to ourselves as well */
+	RsMsgItem *msg = initMIRsMsg(info, mConnMgr->getOwnId());
+	if (msg)
+	{
+		sendMessage(msg);
+	}
+
+	return true;
+}
+
+/****************************************/
+/****************************************/
+
+
+/****************************************/
+
+/**** HELPER FNS For Chat/Msg/Channel Lists ************
+ * These aren't required to be locked, unless
+ * the data used is from internal stores -> then they should be.
+ */
+
+void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
+{
+
+	mi.msgflags = 0;
+
+	/* translate flags, if we sent it... outgoing */
+	if ((msg->msgFlags & RS_MSG_FLAGS_OUTGOING)
+	   || (msg->PeerId() == mConnMgr->getOwnId()))
+	{
+		mi.msgflags |= RS_MSG_OUTGOING;
+	}
+	/* if it has a pending flag, then its in the outbox */
+	if (msg->msgFlags & RS_MSG_FLAGS_PENDING)
+	{
+		mi.msgflags |= RS_MSG_PENDING;
+	}
+	if (msg->msgFlags & RS_MSG_FLAGS_NEW)
+	{
+		mi.msgflags |= RS_MSG_NEW;
+	}
+
+	mi.ts = msg->sendTime;
+	mi.srcId = msg->PeerId();
+	{
+		//msg->msgId;
+		std::ostringstream out;
+		out << msg->msgId;
+		mi.msgId = out.str();
+	}
+
+	std::list<std::string>::iterator pit;
+
+	for(pit = msg->msgto.ids.begin(); 
+		pit != msg->msgto.ids.end(); pit++)
+	{
+		mi.msgto.push_back(*pit);
+	}
+
+	for(pit = msg->msgcc.ids.begin(); 
+		pit != msg->msgcc.ids.end(); pit++)
+	{
+		mi.msgcc.push_back(*pit);
+	}
+
+	for(pit = msg->msgbcc.ids.begin(); 
+		pit != msg->msgbcc.ids.end(); pit++)
+	{
+		mi.msgbcc.push_back(*pit);
+	}
+
+	mi.title = msg->subject;
+	mi.msg   = msg->message;
+
+	mi.attach_title = msg->attachment.title;
+	mi.attach_comment = msg->attachment.comment;
+
+	mi.count = 0;
+	mi.size = 0;
+
+	std::list<RsTlvFileItem>::iterator it;
+	for(it = msg->attachment.items.begin(); 
+			it != msg->attachment.items.end(); it++)
+	{
+		FileInfo fi;
+	        fi.fname = RsDirUtil::getTopDir(it->name);
+		fi.size  = it->filesize;
+		fi.hash  = it->hash;
+		fi.path  = it->path;
+		mi.files.push_back(fi);
+		mi.count++;
+		mi.size += fi.size;
+	}
+
+}
+
+
+void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
+{
+	mis.msgflags = 0;
+
+	/* translate flags, if we sent it... outgoing */
+	if ((msg->msgFlags & RS_MSG_FLAGS_OUTGOING)
+	   || (msg->PeerId() == mConnMgr->getOwnId()))
+	{
+		mis.msgflags |= RS_MSG_OUTGOING;
+	}
+	/* if it has a pending flag, then its in the outbox */
+	if (msg->msgFlags & RS_MSG_FLAGS_PENDING)
+	{
+		mis.msgflags |= RS_MSG_PENDING;
+	}
+	if (msg->msgFlags & RS_MSG_FLAGS_NEW)
+	{
+		mis.msgflags |= RS_MSG_NEW;
+	}
+
+	mis.srcId = msg->PeerId();
+	{
+		//msg->msgId;
+		std::ostringstream out;
+		out << msg->msgId;
+		mis.msgId = out.str();
+	}
+
+	mis.title = msg->subject;
+	mis.count = msg->attachment.items.size();
+	mis.ts = msg->sendTime;
+}
+
+
+
+RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, std::string to)
+{
+	RsMsgItem *msg = new RsMsgItem();
+
+	msg -> PeerId(to);
+
+	msg -> msgFlags = 0;
+	msg -> msgId = 0;
+	msg -> sendTime = time(NULL);
+	msg -> recvTime = 0;
+	
+	msg -> subject = info.title;
+	msg -> message = info.msg;
+
+	std::list<std::string>::iterator pit;
+	for(pit = info.msgto.begin(); pit != info.msgto.end(); pit++)
+	{
+		msg -> msgto.ids.push_back(*pit);
+	}
+
+	for(pit = info.msgcc.begin(); pit != info.msgcc.end(); pit++)
+	{
+		msg -> msgcc.ids.push_back(*pit);
+	}
+
+	/* We don't fill in bcc (unless to ourselves) */
+	if (to == mConnMgr->getOwnId())
+	{
+		for(pit = info.msgbcc.begin(); pit != info.msgbcc.end(); pit++)
+		{
+			msg -> msgbcc.ids.push_back(*pit);
+		}
+	}
+
+	msg -> attachment.title   = info.attach_title;
+	msg -> attachment.comment = info.attach_comment;
+
+	std::list<FileInfo>::iterator it;
+	for(it = info.files.begin(); it != info.files.end(); it++)
+	{
+		RsTlvFileItem mfi;
+		mfi.hash = it -> hash;
+		mfi.name = it -> fname;
+		mfi.filesize = it -> size;
+		msg -> attachment.items.push_back(mfi);
+	}
+
+	std::cerr << "p3MsgService::initMIRsMsg()" << std::endl;
+	msg->print(std::cerr);
+	return msg;
+}
 

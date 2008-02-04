@@ -175,11 +175,6 @@ void 	RsServer::run()
 		{
 			lastSec = (int) ts;
 
-			/* Chat needs to be quick too! */
-			//std::cerr << "RsServer::run() UpdateAllChat()" << std::endl;
-			UpdateAllChat();
-
-	
 			// every five loops (> 5 secs)
 			if (loop % 5 == 0)
 			{
@@ -199,8 +194,6 @@ void 	RsServer::run()
 				//std::cerr << "RsServer::run() UpdateAllTransfers()" << std::endl;
 				UpdateAllTransfers();
 
-				//std::cerr << "RsServer::run() UpdateAllMsgs()" << std::endl;
-				UpdateAllMsgs();
 				//std::cerr << "RsServer::run() UpdateAllChannels()" << std::endl;
 				UpdateAllChannels();
 

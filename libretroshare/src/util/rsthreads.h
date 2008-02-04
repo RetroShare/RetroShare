@@ -45,6 +45,17 @@ bool	trylock() { return (0 == pthread_mutex_trylock(&realMutex)); }
 	pthread_mutex_t  realMutex;
 };
 
+class RsStackMutex
+{
+	public:
+
+	RsStackMutex(RsMutex &mtx): mMtx(mtx) { mMtx.lock(); }
+        ~RsStackMutex() { mMtx.unlock(); }
+
+	private:
+	RsMutex &mMtx;
+};
+
 class RsThread;
 
 /* to create a thread! */
