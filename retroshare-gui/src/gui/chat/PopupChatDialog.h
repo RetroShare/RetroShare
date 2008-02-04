@@ -34,6 +34,8 @@ class QAction;
 class QTextEdit;
 class QTextCharFormat;
 
+class ChatInfo;
+
 class PopupChatDialog : public QMainWindow
 {
   Q_OBJECT

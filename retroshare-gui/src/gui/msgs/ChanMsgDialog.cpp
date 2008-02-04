@@ -24,6 +24,7 @@
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
+#include "rsiface/rsmsgs.h"
 
 #include <sstream>
 
@@ -171,12 +172,9 @@ void  ChanMsgDialog::insertSendList()
 		item -> setText(1, QString::fromStdString(detail.id));
 
 		item -> setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-		//item -> setCheckState(0, Qt::Checked);
-		//
-	
 		item -> setCheckState(0, Qt::Unchecked);
-#if 0
-		if (it -> second.inMsg)
+
+		if (rsicontrol->IsInMsg(detail.id))
 		{
 			item -> setCheckState(0, Qt::Checked);
 		}
@@ -184,7 +182,6 @@ void  ChanMsgDialog::insertSendList()
 		{
 			item -> setCheckState(0, Qt::Unchecked);
 		}
-#endif
 
 		/* add to the list */
 		items.append(item);
@@ -372,7 +369,6 @@ void  ChanMsgDialog::insertMsgText(std::string msg)
 
 void  ChanMsgDialog::sendMessage()
 {
-	rsiface->lockData();   /* Lock Interface */
 
 
 	/* construct a message */
@@ -380,8 +376,8 @@ void  ChanMsgDialog::sendMessage()
 
 	mi.title = ui.titleEdit->text().toStdWString();
 	mi.msg =   ui.msgText->toPlainText().toStdWString();
-	/* filled in later */
-	//mi.msgId = rand();
+
+	rsiface->lockData();   /* Lock Interface */
 
         const std::list<FileInfo> &recList = rsiface->getRecommendList();
 	std::list<FileInfo>::const_iterator it;
@@ -393,37 +389,24 @@ void  ChanMsgDialog::sendMessage()
 		}
 	}
 
-	std::list<std::string> persons;
-	std::list<std::string>::iterator it3;
-
-#if 0
-	/* get a list of people to send it to */
-        std::map<RsCertId,NeighbourInfo>::const_iterator it2;
-        const std::map<RsCertId,NeighbourInfo> &friends =
-                                rsiface->getFriendMap();
-
-
-	for(it2 = friends.begin(); it2 != friends.end(); it2++)
-	{
-		/* send to all listed + ourselves */
-		if ((it2 -> second.inMsg)
-		   || (it2 -> second.connectString == "Yourself"))
-		{
-			std::ostringstream out;
-			out << it2 -> second.id;
-			persons.push_back(out.str());
-		}
-	}
-#endif
-
 	rsiface->unlockData(); /* UnLock Interface */
 
-	/* send message */
-	for(it3 = persons.begin(); it3 != persons.end(); it3++)
+	/* get the ids from the send list */
+	std::list<std::string> peers;
+	std::list<std::string> msgto;
+	std::list<std::string>::iterator iit;
+
+	rsPeers->getFriendList(peers);
+		
+	for(iit = peers.begin(); iit != peers.end(); iit++)
 	{
-		mi.id = *it3;
-		rsicontrol -> MessageSend(mi);
+		if (rsicontrol->IsInMsg(*iit))
+		{
+			mi.msgto.push_back(*iit);
+		}
 	}
+
+	rsMsgs->MessageSend(mi);
 
 	close();
 	return;

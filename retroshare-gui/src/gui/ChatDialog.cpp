@@ -25,6 +25,7 @@
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
+#include "rsiface/rsmsgs.h"
 
 #include "chat/PopupChatDialog.h"
 #include <sstream>
@@ -111,14 +112,14 @@ int     ChatDialog::loadInitMsg()
 
 void ChatDialog::insertChat()
 {
-        rsiface->lockData(); /* Lock Interface */
+	std::list<ChatInfo> newchat;
+	if (!rsMsgs->getNewChat(newchat))
+	{
+		return;
+	}
 
-	        /* get a link to the table */
         QTextEdit *msgWidget = ui.msgText;
-	std::list<ChatInfo> newchat = rsiface->getChatNew();
 	std::list<ChatInfo>::iterator it;
-
-        rsiface->unlockData(); /* Unlock Interface */
 
 	static  std::string lastChatName("");
 	static  int         lastChatTime = 0;
@@ -226,7 +227,7 @@ void ChatDialog::sendMsg()
 	//ci.messageFont = font;
 	//ci.messageColor = textColor;
 
-	rsicontrol -> ChatSend(ci);
+	rsMsgs -> ChatSend(ci);
 	lineWidget -> setText(QString(""));
 
 	/* redraw send list */
@@ -272,8 +273,8 @@ void  ChatDialog::insertSendList()
 		//item -> setFlags(Qt::ItemIsUserCheckable);
 
 		item -> setCheckState(0, Qt::Checked);
-		/**** NOT SELECTABLE AT THE MOMENT 
-		if (it ->second.inChat)
+
+		if (rsicontrol->IsInChat(*it))
 		{
 			item -> setCheckState(0, Qt::Checked);
 		}
@@ -281,7 +282,7 @@ void  ChatDialog::insertSendList()
 		{
 			item -> setCheckState(0, Qt::Unchecked);
 		}
-		************/
+
 		/* add to the list */
 		items.append(item);
 	}

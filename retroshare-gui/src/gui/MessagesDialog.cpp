@@ -20,13 +20,13 @@
  ****************************************************************/
 
 
-#include "rshare.h"
 #include "MessagesDialog.h"
 #include "msgs/ChanMsgDialog.h"
 #include "gui/toaster/MessageToaster.h"
 
 
-#include "rsiface/rsiface.h"
+#include "rsiface/rspeers.h"
+#include "rsiface/rsmsgs.h"
 #include <sstream>
 
 #include <QContextMenuEvent>
@@ -232,17 +232,13 @@ void MessagesDialog::getcurrentrecommended()
 void MessagesDialog::getallrecommended()
 {
 	/* get Message */
-	rsiface->lockData();   /* Lock Interface */
-
-	const MessageInfo *mi = 
-		rsiface->getMessage(mCurrCertId, mCurrMsgId);
-	if (!mi)
+	MessageInfo msgInfo;
+	if (!rsMsgs -> getMessage(mCurrMsgId, msgInfo))
 	{
-		rsiface->unlockData();   /* Unlock Interface */
 		return;
 	}
 
-        const std::list<FileInfo> &recList = mi->files;
+        const std::list<FileInfo> &recList = msgInfo.files;
 	std::list<FileInfo>::const_iterator it;
 
 	std::list<std::string> fnames;
@@ -256,8 +252,6 @@ void MessagesDialog::getallrecommended()
 		sizes.push_back(it->size);
 	}
 
-	rsiface->unlockData(); /* Unlock Interface */
-
 	/* now do requests */
 	std::list<std::string>::const_iterator fit;
 	std::list<std::string>::const_iterator hit;
@@ -266,7 +260,7 @@ void MessagesDialog::getallrecommended()
 	for(fit = fnames.begin(), hit = hashes.begin(), sit = sizes.begin(); 
 		fit != fnames.end(); fit++, hit++, sit++)
 	{
-        	rsicontrol -> FileRequest(*fit, *hit, *sit, "");
+        	//rsicontrol -> FileRequest(*fit, *hit, *sit, "");
 	}
 }
 
@@ -279,16 +273,15 @@ void MessagesDialog::changeBox( int newrow )
 
 void MessagesDialog::insertMessages()
 {
-	rsiface->lockData(); /* Lock Interface */
+	std::list<MsgInfoSummary> msgList;
+	std::list<MsgInfoSummary>::const_iterator it;
 
-	std::list<MessageInfo>::const_iterator it;
-	const std::list<MessageInfo> &msgs = rsiface->getMessages();
+	rsMsgs -> getMessageSummaries(msgList);
 
 	/* get a link to the table */
         QTreeWidget *msgWidget = ui.msgWidget;
 
 	/* get the MsgId of the current one ... */
-
 
 	std::string cid;
 	std::string mid;
@@ -323,7 +316,7 @@ void MessagesDialog::insertMessages()
 	}
 
         QList<QTreeWidgetItem *> items;
-	for(it = msgs.begin(); it != msgs.end(); it++)
+	for(it = msgList.begin(); it != msgList.end(); it++)
 	{
 		/* check the message flags, to decide which
 		 * group it should go in...
@@ -373,9 +366,7 @@ void MessagesDialog::insertMessages()
 
 		//  From ....
 		{
-			std::ostringstream out;
-			out << it -> srcname;
-			item -> setText(1, QString::fromStdString(out.str()));
+			item -> setText(1, QString::fromStdString(rsPeers->getPeerName(it->srcId)));
 		}
 
 		// Subject
@@ -388,7 +379,7 @@ void MessagesDialog::insertMessages()
 			item -> setText(3, QString::fromStdString(out.str()));
 		}
 
-		item -> setText(4, QString::fromStdString(it->id));
+		item -> setText(4, QString::fromStdString(it->srcId));
 		item -> setText(5, QString::fromStdString(it->msgId));
 		if ((oldSelected) && (mid == it->msgId))
 		{
@@ -419,8 +410,6 @@ void MessagesDialog::insertMessages()
 	{
 		msgWidget->setCurrentItem(newSelected);
 	}
-
-	rsiface->unlockData(); /* UnLock Interface */
 }
 
 void MessagesDialog::updateMessages( QTreeWidgetItem * item, int column )
@@ -435,7 +424,7 @@ void MessagesDialog::insertMsgTxtAndFiles()
 	/* Locate the current Message */
 	QTreeWidget *msglist = ui.msgWidget;
 
-	//std::cerr << "MessagesDialog::insertMsgTxtAndFiles()" << std::endl;
+	std::cerr << "MessagesDialog::insertMsgTxtAndFiles()" << std::endl;
 
 
 	/* get its Ids */
@@ -463,23 +452,21 @@ void MessagesDialog::insertMsgTxtAndFiles()
 		mid = qtwi -> text(5).toStdString(); 
 	}
 
+	std::cerr << "MessagesDialog::insertMsgTxtAndFiles() mid:" << mid << std::endl;
+
 	/* Save the Data.... for later */
 
 	mCurrCertId = cid;
 	mCurrMsgId  = mid;
 
-	/* get Message */
-	rsiface->lockData();   /* Lock Interface */
-
-	const MessageInfo *mi = NULL;
-	mi = rsiface->getMessage(cid, mid);
-	if (!mi)
+	MessageInfo msgInfo;
+	if (!rsMsgs -> getMessage(mid, msgInfo))
 	{
-		rsiface->unlockData();   /* Unlock Interface */
+		std::cerr << "MessagesDialog::insertMsgTxtAndFiles() Couldn't find Msg" << std::endl;
 		return;
 	}
 
-        const std::list<FileInfo> &recList = mi->files;
+        const std::list<FileInfo> &recList = msgInfo.files;
 	std::list<FileInfo>::const_iterator it;
 
 	/* get a link to the table */
@@ -521,60 +508,60 @@ void MessagesDialog::insertMsgTxtAndFiles()
 	/* add the items in! */
 	tree->insertTopLevelItems(0, items);
 
-	/* add the Msg */
-	std::list<PersonInfo>::const_iterator pit;
+	/* iterate through the sources */
+	std::list<std::string>::const_iterator pit;
 
 	QString msgTxt;
-	for(pit = mi->msgto.begin(); pit != mi->msgto.end(); pit++)
+	for(pit = msgInfo.msgto.begin(); pit != msgInfo.msgto.end(); pit++)
 	{
-		msgTxt += QString::fromStdString(pit->name);
+		msgTxt += QString::fromStdString(*pit);
 		msgTxt += " <";
-		msgTxt += QString::fromStdString(pit->id);
+		msgTxt += QString::fromStdString(rsPeers->getPeerName(*pit));
 		msgTxt += ">, ";
 	}
 
-	if (mi->msgcc.size() > 0)
+	if (msgInfo.msgcc.size() > 0)
 		msgTxt += "\nCc: ";
-	for(pit = mi->msgcc.begin(); pit != mi->msgcc.end(); pit++)
+	for(pit = msgInfo.msgcc.begin(); pit != msgInfo.msgcc.end(); pit++)
 	{
-		msgTxt += QString::fromStdString(pit->name);
+		msgTxt += QString::fromStdString(*pit);
 		msgTxt += " <";
-		msgTxt += QString::fromStdString(pit->id);
+		msgTxt += QString::fromStdString(rsPeers->getPeerName(*pit));
 		msgTxt += ">, ";
 	}
 
-	if (mi->msgbcc.size() > 0)
+	if (msgInfo.msgbcc.size() > 0)
 		msgTxt += "\nBcc: ";
-	for(pit = mi->msgbcc.begin(); pit != mi->msgbcc.end(); pit++)
+	for(pit = msgInfo.msgbcc.begin(); pit != msgInfo.msgbcc.end(); pit++)
 	{
-		msgTxt += QString::fromStdString(pit->name);
+		msgTxt += QString::fromStdString(*pit);
 		msgTxt += " <";
-		msgTxt += QString::fromStdString(pit->id);
+		msgTxt += QString::fromStdString(rsPeers->getPeerName(*pit));
 		msgTxt += ">, ";
 	}
 
 	{
 		QDateTime qtime;
-		qtime.setTime_t(mi->ts);
+		qtime.setTime_t(msgInfo.ts);
 		QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
 		ui.dateText-> setText(timestamp);
 	}
 	ui.toText->setText(msgTxt);
-	ui.fromText->setText(QString::fromStdString(mi->srcname));
+	ui.fromText->setText(QString::fromStdString(rsPeers->getPeerName(msgInfo.srcId)));
 
-	ui.subjectText->setText(QString::fromStdWString(mi -> title));
-	ui.msgText->setText(QString::fromStdWString(mi->msg));
+	ui.subjectText->setText(QString::fromStdWString(msgInfo.title));
+	ui.msgText->setText(QString::fromStdWString(msgInfo.msg));
 
 	{
 		std::ostringstream out;
-		out << "(" << mi->count << " Files)";
+		out << "(" << msgInfo.count << " Files)";
 		ui.filesText->setText(QString::fromStdString(out.str()));
 	}
-	rsiface->unlockData();   /* Unlock Interface */
 
+	std::cerr << "MessagesDialog::insertMsgTxtAndFiles() Msg Displayed OK!" << std::endl;
 
 	/* finally mark message as read! */
-	rsicontrol -> MessageRead(mid);
+	rsMsgs -> MessageRead(mid);
 }
 
 
@@ -608,7 +595,7 @@ void MessagesDialog::removemessage()
 		return;
 	}
 
-	rsicontrol -> MessageDelete(mid);
+	rsMsgs -> MessageDelete(mid);
 
 	return;
 }
@@ -625,7 +612,7 @@ void MessagesDialog::markMsgAsRead()
 		return;
 	}
 
-	rsicontrol -> MessageRead(mid);
+	rsMsgs -> MessageRead(mid);
 
 	return;
 }

@@ -32,25 +32,6 @@
 #include <string>
 
 
-#if 0
-#define RSCERTIDLEN 16
-
-class RsCertId
-{
-        public:
-	RsCertId();
-	RsCertId(std::string idstr);
-
-        bool    operator<(const RsCertId &ref) const;
-        bool    operator==(const RsCertId &ref) const;
-        bool    operator!=(const RsCertId &ref) const;
-        char    data[RSCERTIDLEN];
-};
-
-std::ostream &operator<<(std::ostream &out, const RsCertId &id);
-
-#endif
-
 typedef std::string   RsCertId;
 typedef std::string   RsChanId; 
 typedef std::string   RsMsgId; 
@@ -157,48 +138,6 @@ class FileTransferInfo: public FileInfo
 	int  downloadStatus; /* 0 = Err, 1 = Ok, 2 = Done */
 };
 
-
-/********************** For Messages and Channels *****************/
-
-#define RS_MSG_BOXMASK   0x000f   /* Mask for determining Box */
-
-#define RS_MSG_OUTGOING  0x0001   /* !Inbox */
-#define RS_MSG_PENDING   0x0002   /* OutBox */
-#define RS_MSG_DRAFT     0x0004   /* Draft  */
-
-/* ORs of above */
-#define RS_MSG_INBOX     0x00     /* Inbox */
-#define RS_MSG_SENTBOX   0x01     /* Sentbox */
-#define RS_MSG_OUTBOX    0x03     /* Outbox */
-#define RS_MSG_DRAFTBOX  0x05     /* Draftbox */
-
-#define RS_MSG_NEW       0x0010
-
-class MessageInfo: public BaseInfo
-{
-	public:
-	MessageInfo() {}
-	RsMsgId msgId;
-
-	unsigned int msgflags;
-	std::string srcname;
-
-	std::list<PersonInfo> msgto;
-	std::list<PersonInfo> msgcc;
-	std::list<PersonInfo> msgbcc;
-
-	std::wstring title;
-	std::wstring msg;
-
-	std::wstring attach_title;
-	std::wstring attach_comment;
-	std::list<FileInfo> files;
-	int size;  /* total of files */
-	int count; /* file count     */
-
-	int ts;
-};
-
 class ChannelInfo: public BaseInfo
 {
 	public:
@@ -206,7 +145,7 @@ class ChannelInfo: public BaseInfo
 	RsChanId chanId;
 	bool publisher;
 	std::string chanName;
-	std::list<MessageInfo> msglist;
+	//std::list<MessageInfo> msglist;
 
 	/* details */
 	int mode;
@@ -217,18 +156,6 @@ class ChannelInfo: public BaseInfo
 
 	int size;  /* total of msgs */
 	int count; /* msg count     */
-};
-
-#define RS_CHAT_PUBLIC 		0x0001
-#define RS_CHAT_PRIVATE 	0x0002
-
-class ChatInfo: public BaseInfo
-{
-	public:
-	std::string rsid;
-	unsigned int chatflags;
-	std::string name;
-	std::wstring msg;
 };
 
 /* matched to the uPnP states */
@@ -303,9 +230,7 @@ class SearchRequest
 };
 
 
-std::ostream &operator<<(std::ostream &out, const MessageInfo &info);
 std::ostream &operator<<(std::ostream &out, const ChannelInfo &info);
-std::ostream &operator<<(std::ostream &out, const ChatInfo &info);
 std::ostream &operator<<(std::ostream &out, const PersonInfo &info);
 std::ostream &print(std::ostream &out, const DirInfo &info, int indentLvl);
 

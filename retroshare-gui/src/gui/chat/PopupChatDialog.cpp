@@ -21,7 +21,6 @@
 
 #include <QtGui>
 
-#include "rshare.h"
 #include "PopupChatDialog.h"
 
 #include <QTextCodec>
@@ -31,6 +30,7 @@
 #include <QTextList>
 
 #include "rsiface/rspeers.h"
+#include "rsiface/rsmsgs.h"
 
 
 /* Define the format used for displaying the date and time */
@@ -300,7 +300,7 @@ void PopupChatDialog::sendChat()
 	ci.rsid = dialogId;
 	ci.name = dialogName;
 
-        rsicontrol -> ChatSend(ci);
+        rsMsgs -> ChatSend(ci);
         lineWidget -> setText(QString(""));
 
         /* redraw send list */
