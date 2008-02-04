@@ -49,26 +49,48 @@ const int msgservicezone = 54319;
  * (3) from storage...
  */
 
-static unsigned int msgUniqueId = 1;
-unsigned int getNewUniqueMsgId()
-{
-	return msgUniqueId++;
-}
 
 p3MsgService::p3MsgService(p3ConnectMgr *cm)
 	:p3Service(RS_SERVICE_TYPE_MSG), mConnMgr(cm),
-	msgChanged(1), msgMajorChanged(1)
+	msgChanged(1), mMsgUniqueId(1)
 {
 	addSerialType(new RsMsgSerialiser());
 }
 
-bool	p3MsgService::ModifiedMsgs()
+uint32_t p3MsgService::getNewUniqueMsgId()
 {
-	bool m1 = msgChanged.Changed();
-	bool m2 = msgMajorChanged.Changed();
-
-	return (m1 || m2);
+	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+	return mMsgUniqueId++;
 }
+
+/****** Mods/Notifications ****/
+
+bool	p3MsgService::MsgsChanged()
+{
+	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+	bool m1 = msgChanged.Changed();
+
+	return (m1);
+}
+
+bool	p3MsgService::MsgNotifications()
+{
+	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+	return (msgNotifications.size() > 0);
+}
+
+bool    p3MsgService::getMessageNotifications(std::list<MsgInfoSummary> &noteList)
+{
+	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+	noteList = msgNotifications;
+	msgNotifications.clear();
+	
+	return (noteList.size() > 0);
+}
+
+
 
 int	p3MsgService::tick()
 {
@@ -102,27 +124,30 @@ int 	p3MsgService::incomingMsgs()
 	{
 		++i;
 		mi -> recvTime = time(NULL);
+		mi -> msgFlags = RS_MSG_FLAGS_NEW;
+		mi -> msgId = getNewUniqueMsgId();
+
 		std::string mesg;
+
+		RsStackMutex stack(mMsgMtx); /*** STACK LOCKED MTX ***/
 
 		if (mi -> PeerId() == mConnMgr->getOwnId())
 		{
 			/* from the loopback device */
-			mi -> msgFlags = RS_MSG_FLAGS_OUTGOING;
+			mi -> msgFlags |= RS_MSG_FLAGS_OUTGOING;
 		}
 		else
 		{
 			/* from a peer */
-			mi -> msgFlags = 0;
+			MsgInfoSummary mis;
+			initRsMIS(mi, mis);
+			msgNotifications.push_back(mis);
 		}
-
-		/* new as well! */
-		mi -> msgFlags |= RS_MSG_FLAGS_NEW;
-
-		/* STORE MsgID */
-		mi -> msgId = getNewUniqueMsgId();
 
 		imsg[mi->msgId] = mi;
 		msgChanged.IndicateChanged();
+
+		/**** STACK UNLOCKED ***/
 	}
 	return 1;
 }
@@ -139,8 +164,9 @@ int     p3MsgService::checkOutgoingMessages()
 	std::list<uint32_t>::iterator it;
 	std::list<uint32_t> toErase;
 
-	std::map<uint32_t, RsMsgItem *>::iterator mit;
+	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
+	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
 	{
 
@@ -204,6 +230,9 @@ int     p3MsgService::save_config()
 	/* now we create a pqiarchive, and stream all the msgs into it
 	 */
 
+
+	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
 	std::string statelog = config_dir + "/msgs.rst";
 	RsSerialiser *rss = new RsSerialiser();
 	rss->addSerialType(new RsMsgSerialiser());
@@ -255,6 +284,8 @@ int     p3MsgService::load_config()
         pqiarchive *pa_in = new pqiarchive(rss, in, BIN_FLAGS_READABLE);
 	RsItem *item;
 	RsMsgItem *mitem;
+
+	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
 	while((item = pa_in -> GetItem()))
 	{
@@ -313,6 +344,8 @@ void p3MsgService::loadWelcomeMsg()
 
 	msg -> msgId = getNewUniqueMsgId();
 
+	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
 	imsg[msg->msgId] = msg;	
 }
 
@@ -330,6 +363,8 @@ bool p3MsgService::getMessageSummaries(std::list<MsgInfoSummary> &msgList)
 {
 	/* do stuff */
 	msgList.clear();
+
+	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
 	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	for(mit = imsg.begin(); mit != imsg.end(); mit++)
@@ -354,6 +389,8 @@ bool p3MsgService::getMessage(std::string mId, MessageInfo &msg)
   	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	uint32_t msgId = atoi(mId.c_str());
 
+	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
 	mit = imsg.find(msgId);
 	if (mit == imsg.end())
 	{
@@ -376,6 +413,8 @@ bool    p3MsgService::removeMsgId(std::string mid)
   	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	uint32_t msgId = atoi(mid.c_str());
 
+	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
 	mit = imsg.find(msgId);
 	if (mit != imsg.end())
 	{
@@ -383,7 +422,6 @@ bool    p3MsgService::removeMsgId(std::string mid)
 		imsg.erase(mit);
 		delete mi;
 		msgChanged.IndicateChanged();
-		msgMajorChanged.IndicateChanged();
 
 		return true;
 	}
@@ -395,7 +433,6 @@ bool    p3MsgService::removeMsgId(std::string mid)
 		msgOutgoing.erase(mit);
 		delete mi;
 		msgChanged.IndicateChanged();
-		msgMajorChanged.IndicateChanged();
 
 		return true;
 	}
@@ -407,6 +444,8 @@ bool    p3MsgService::markMsgIdRead(std::string mid)
 {
   	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	uint32_t msgId = atoi(mid.c_str());
+
+	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
 	mit = imsg.find(msgId);
 	if (mit != imsg.end())
@@ -426,6 +465,8 @@ int     p3MsgService::sendMessage(RsMsgItem *item)
 {
 	pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
 		"p3MsgService::sendMessage()");
+
+	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
 	/* add pending flag */
 	item->msgFlags |= 

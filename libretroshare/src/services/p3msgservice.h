@@ -47,7 +47,10 @@ class p3MsgService: public p3Service
 	p3MsgService(p3ConnectMgr *cm);
 
 	/* External Interface */
-bool    ModifiedMsgs();
+bool    MsgsChanged();		/* should update display */
+bool    MsgNotifications();	/* popup - messages */
+bool 	getMessageNotifications(std::list<MsgInfoSummary> &noteList);
+
 bool 	getMessageSummaries(std::list<MsgInfoSummary> &msgList);
 bool 	getMessage(std::string mid, MessageInfo &msg);
 
@@ -74,6 +77,7 @@ int	status();
 
 	private:
 
+uint32_t getNewUniqueMsgId();
 int     sendMessage(RsMsgItem *item);
 int 	incomingMsgs();
 
@@ -81,18 +85,22 @@ void 	initRsMI(RsMsgItem *msg, MessageInfo &mi);
 void 	initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis);
 RsMsgItem *initMIRsMsg(MessageInfo &info, std::string to);
 
+	p3ConnectMgr *mConnMgr;
 
 	/* Mutex Required for stuff below */
 
-	RsMutex msgMtx;
+	RsMutex mMsgMtx;
 
-std::map<uint32_t, RsMsgItem *> imsg;
-std::map<uint32_t, RsMsgItem *> msgOutgoing; /* ones that haven't made it out yet! */
+		/* stored list of messages */
+	std::map<uint32_t, RsMsgItem *> imsg;
+		/* ones that haven't made it out yet! */
+	std::map<uint32_t, RsMsgItem *> msgOutgoing; 
 
-	p3ConnectMgr *mConnMgr;
+		/* List of notifications to post via Toaster */
+	std::list<MsgInfoSummary> msgNotifications;
 
 	Indicator msgChanged;
-	Indicator msgMajorChanged;
+	uint32_t mMsgUniqueId;
 
 	std::string config_dir;
 };

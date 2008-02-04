@@ -58,6 +58,11 @@ const uint32_t P3DISC_FLAGS_OWN_DETAILS 	= 0x0010;
 
 #define P3DISC_DEBUG 	1
 
+/*********** NOTE ***************
+ *
+ * Only need Mutexs for neighbours information
+ */
+
 /******************************************************************************************
  ******************************  NEW DISCOVERY  *******************************************
  ******************************************************************************************
@@ -66,6 +71,8 @@ const uint32_t P3DISC_FLAGS_OWN_DETAILS 	= 0x0010;
 p3disc::p3disc(p3AuthMgr *am, p3ConnectMgr *cm)
 	:p3Service(RS_SERVICE_TYPE_DISC), mAuthMgr(am), mConnMgr(cm)
 {
+	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+
 	addSerialType(new RsDiscSerialiser());
 
 	mRemoteDisc = true;
@@ -97,6 +104,13 @@ int p3disc::handleIncoming()
 	std::cerr << "p3disc::handleIncoming()";
 	std::cerr << std::endl;
 #endif
+
+	bool discOn;
+
+	{
+		RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+		discOn = mRemoteDisc;
+	}
 
 	// if off discard item.
 	if (!mRemoteDisc)
@@ -542,8 +556,9 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 int	p3disc::addDiscoveryData(std::string fromId, std::string aboutId, 
 		struct sockaddr_in laddr, struct sockaddr_in raddr, uint32_t flags, time_t ts)
 {
-	/* Store Network information */
+	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
 
+	/* Store Network information */
 	std::map<std::string, autoneighbour>::iterator it;
 	if (neighbours.end() == (it = neighbours.find(aboutId)))
 	{
@@ -604,6 +619,9 @@ int	p3disc::addDiscoveryData(std::string fromId, std::string aboutId,
 bool p3disc::potentialproxies(std::string id, std::list<std::string> proxyIds)
 {
 	/* find id -> and extract the neighbour_of ids */
+
+	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+
 	std::map<std::string, autoneighbour>::iterator it;
 	std::map<std::string, autoserver>::iterator sit;
 	if (neighbours.end() == (it = neighbours.find(id)))
@@ -622,6 +640,8 @@ bool p3disc::potentialproxies(std::string id, std::list<std::string> proxyIds)
 
 int p3disc::idServers()
 {
+	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+
 	std::map<std::string, autoneighbour>::iterator nit;
 	std::map<std::string, autoserver>::iterator sit;
 	int cts = time(NULL);
@@ -652,7 +672,7 @@ int p3disc::idServers()
 			out << std::endl;
 			out << "\t\tLocalAddr: ";
 			out <<  inet_ntoa(sit->second.localAddr.sin_addr);
-			out <<":"<< ntohs(sit->second.remoteAddr.sin_port);
+			out <<":"<< ntohs(sit->second.localAddr.sin_port);
 			out << std::endl;
 			out << "\t\tRemoteAddr: ";
 			out <<  inet_ntoa(sit->second.remoteAddr.sin_addr);

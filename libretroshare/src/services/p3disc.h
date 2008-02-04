@@ -110,12 +110,15 @@ int     addDiscoveryData(std::string fromId, std::string aboutId,
 bool 	potentialproxies(std::string id, std::list<std::string> proxyIds);
 int 	idServers();
 
-	/* data */
 
 	private:
 
 	p3AuthMgr *mAuthMgr;
 	p3ConnectMgr *mConnMgr;
+
+
+	/* data */
+	RsMutex mDiscMtx;
 
 	bool mRemoteDisc;
 	bool mLocalDisc;

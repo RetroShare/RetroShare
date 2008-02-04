@@ -25,25 +25,14 @@
 
 
 #include "services/p3chatservice.h"
-#include "pqi/pqidebug.h"
-#include <sstream>
 
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
+#define CHAT_DEBUG 1
 
-#include "pqi/xpgpcert.h"
-
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
-#include "pqi/sslcert.h"
-
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
-
-
-const int p3chatzone = 1745;
+/************ NOTE *********************************
+ * This Service is so simple that there is no
+ * mutex protection required!
+ *
+ */
 
 p3ChatService::p3ChatService(p3ConnectMgr *cm)
 	:p3Service(RS_SERVICE_TYPE_CHAT), mConnMgr(cm)
@@ -53,15 +42,23 @@ p3ChatService::p3ChatService(p3ConnectMgr *cm)
 
 int	p3ChatService::tick()
 {
-	pqioutput(PQL_DEBUG_BASIC, p3chatzone, 
-		"p3ChatService::tick()");
+
+#ifdef CHAT_DEBUG
+	std::cerr << "p3ChatService::tick()";
+	std::cerr << std::endl;
+#endif
+
 	return 0;
 }
 
 int	p3ChatService::status()
 {
-	pqioutput(PQL_DEBUG_BASIC, p3chatzone, 
-		"p3ChatService::status()");
+
+#ifdef CHAT_DEBUG
+	std::cerr << "p3ChatService::status()";
+	std::cerr << std::endl;
+#endif
+
 	return 1;
 }
 
@@ -78,11 +75,13 @@ int     p3ChatService::sendChat(std::wstring msg)
 	/* add in own id -> so get reflection */
 	ids.push_back(mConnMgr->getOwnId());
 
+#ifdef CHAT_DEBUG
+	std::cerr << "p3ChatService::sendChat()";
+	std::cerr << std::endl;
+#endif
+
 	for(it = ids.begin(); it != ids.end(); it++)
 	{
-		pqioutput(PQL_DEBUG_BASIC, p3chatzone, 
-			"p3ChatService::sendChat()");
-
 		RsChatItem *ci = new RsChatItem();
 
 		ci->PeerId(*it);
@@ -90,13 +89,13 @@ int     p3ChatService::sendChat(std::wstring msg)
 		ci->sendTime = time(NULL);
 		ci->message = msg;
 	
-		{
-		  std::ostringstream out;
-		  out << "Chat Item we are sending:" << std::endl;
-		  ci -> print(out);
-		  pqioutput(PQL_DEBUG_BASIC, p3chatzone, out.str());
-		}
-	
+#ifdef CHAT_DEBUG
+		std::cerr << "p3ChatService::sendChat() Item:";
+		std::cerr << std::endl;
+		ci->print(std::cerr);
+		std::cerr << std::endl;
+#endif
+
 		sendItem(ci);
 	}
 
@@ -106,8 +105,10 @@ int     p3ChatService::sendChat(std::wstring msg)
 int     p3ChatService::sendPrivateChat(std::wstring msg, std::string id)
 {
 	// make chat item....
-	pqioutput(PQL_DEBUG_BASIC, p3chatzone, 
-		"p3ChatService::sendPrivateChat()");
+#ifdef CHAT_DEBUG
+	std::cerr << "p3ChatService::sendPrivateChat()";
+	std::cerr << std::endl;
+#endif
 
 	RsChatItem *ci = new RsChatItem();
 
@@ -116,13 +117,12 @@ int     p3ChatService::sendPrivateChat(std::wstring msg, std::string id)
 	ci->sendTime = time(NULL);
 	ci->message = msg;
 
-	{
-	  std::ostringstream out;
-	  out << "Private Chat Item we are sending:" << std::endl;
-	  ci -> print(out);
-	  out << "Sending to:" << id << std::endl;
-	  pqioutput(PQL_DEBUG_BASIC, p3chatzone, out.str());
-	}
+#ifdef CHAT_DEBUG
+	std::cerr << "p3ChatService::sendPrivateChat() Item:";
+	std::cerr << std::endl;
+	ci->print(std::cerr);
+	std::cerr << std::endl;
+#endif
 
 	sendItem(ci);
 
