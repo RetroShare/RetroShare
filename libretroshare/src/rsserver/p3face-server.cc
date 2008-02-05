@@ -212,6 +212,9 @@ void 	RsServer::run()
 				//std::cerr << "RsServer::run() CheckDHT()" << std::endl;
 				//CheckNetworking();
 
+
+				/* Tick slow services */
+				mRanking->tick();
 			}
 	
 			// every 60 loops (> 1 min)

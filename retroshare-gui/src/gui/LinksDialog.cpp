@@ -495,12 +495,37 @@ void  LinksDialog::updateComments(std::string rid, std::string pid)
 	ui.titleLineEdit->setText(QString::fromStdWString(detail.title));
 	ui.linkLineEdit->setText(QString::fromStdWString(detail.link));
 
-	if (mLinkId != rid)
+	if (mLinkId == rid)
 	{
-		/* clean comments */
-		ui.linkTextEdit->setText("");
+		/* leave comments */
+		//ui.linkTextEdit->setText("");
+		return;
 	}
+
 	mLinkId = rid;
+
+	/* Add your text to the comment */
+	std::string ownId = rsPeers->getOwnId();
+
+	for(cit = detail.comments.begin(); cit != detail.comments.end(); cit++)
+	{
+		if (cit->id == ownId)
+			break;
+	}
+
+	if (cit != detail.comments.end())
+	{
+		QString comment = QString::fromStdWString(cit->comment);
+		ui.linkTextEdit->setText(comment);
+	}
+	else
+	{
+		ui.linkTextEdit->setText("");
+
+	}
+
+	return;
+		
 
 #if 0
 
@@ -584,6 +609,9 @@ void LinksDialog::addLinkComment( void )
 			link.toStdWString(),
 			title.toStdWString(),
 			comment.toStdWString());
+	
+		updateLinks();
+		return;
 	}
 
 	/* get existing details */

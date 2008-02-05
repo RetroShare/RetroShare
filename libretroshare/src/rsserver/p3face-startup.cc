@@ -28,11 +28,15 @@
 //#include <getopt.h>
 
 #include "dbase/cachestrapper.h"
+#include "server/ftfiler.h"
 #include "server/filedexserver.h"
+
 #include "pqi/pqipersongrp.h"
 #include "pqi/pqisslpersongrp.h"
 #include "pqi/pqiloopback.h"
 #include "pqi/p3cfgmgr.h"
+#include "pqi/pqidebug.h"
+
 #include "util/rsdir.h"
 
 #include "upnp/upnphandler.h"
@@ -51,7 +55,6 @@
 // for blocking signals
 #include <signal.h>
 
-#include "pqi/pqidebug.h"
 #include "rsserver/p3face.h"
 #include "rsserver/p3peers.h"
 #include "rsserver/p3rank.h"
@@ -472,7 +475,10 @@ int RsServer::StartupRetroShare(RsInit *config)
 	mConnMgr = new p3ConnectMgr(mAuthMgr);
 	p3UpnpMgr *mUpnpMgr = new upnphandler();
 	p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr);
+
 	CacheStrapper *mCacheStrapper = new CacheStrapper(ownId, queryPeriod);
+	ftfiler       *mCacheTransfer = new ftfiler(mCacheStrapper);
+
 	p3ConfigMgr *mConfigMgr = new p3ConfigMgr(config->basedir, "rs-v0.4.cfg", "rs-v0.4.sgn");
 
 	SecurityPolicy *none = secpolicy_create();
@@ -577,8 +583,12 @@ int RsServer::StartupRetroShare(RsInit *config)
 
         pqih->load_config();
 
-	/* must be after server->setSearchInterface() */
-	server->setFileCallback(ownId, mCacheStrapper, &(getNotify()));
+	/* Must be after server->setSearchInterface() 
+	 * and.
+	 * Must be before other Caches are added to the Strapper!
+	 * */
+
+	server->setFileCallback(ownId, mCacheStrapper, mCacheTransfer, &(getNotify()));
 
 
 
@@ -608,7 +618,6 @@ int RsServer::StartupRetroShare(RsInit *config)
 	msgSrv = new p3MsgService(mConnMgr);
 	chatSrv = new p3ChatService(mConnMgr);
 	p3GameLauncher *gameLauncher = new p3GameLauncher();
-	p3Ranking *ranking = new p3Ranking(0, NULL, "", "", 3600 * 24 * 30);
 
 	pqih -> addService(ad);
 	pqih -> addService(msgSrv);
@@ -618,9 +627,20 @@ int RsServer::StartupRetroShare(RsInit *config)
 	/* so need to Monitor too! */
 	mConnMgr->addMonitor(ad);
 
+	/* create Cache Services */
+	std::string config_dir = config->basedir;
+        std::string localcachedir = config_dir + "/cache/local";
+	std::string remotecachedir = config_dir + "/cache/remote";
+
+	mRanking = new p3Ranking(RS_SERVICE_TYPE_RANK, 
+		mCacheTransfer, localcachedir, remotecachedir, 3600 * 24 * 30);
+
+        CachePair cp(mRanking, mRanking, CacheId(RS_SERVICE_TYPE_RANK, 0));
+	mCacheStrapper -> addCachePair(cp);
+
 	/* setup the gui */
 	rsGameLauncher = gameLauncher;
-	rsRanks = new p3Rank(ranking);
+	rsRanks = new p3Rank(mRanking);
 	rsMsgs  = new p3Msgs(mAuthMgr, msgSrv, chatSrv);
 
 	/* put a welcome message in! */

@@ -23,7 +23,9 @@
  *
  */
 
+#include "serialiser/rsrankitems.h"
 #include "services/p3ranking.h"
+
 #include "pqi/pqibin.h"
 #include "pqi/p3authmgr.h"
 
@@ -40,72 +42,156 @@ std::string generateRandomLinkId();
 
 #define RANK_DEBUG 1
 
-p3Ranking::p3Ranking(uint16_t subtype, CacheTransfer *cft,
+p3Ranking::p3Ranking(uint16_t type, CacheTransfer *cft,
 		std::string sourcedir, std::string storedir, 
 		uint32_t storePeriod)
-	:CacheSource(subtype, true, sourcedir), 
-	CacheStore(subtype, true, cft, storedir), 
+	:CacheSource(type, true, sourcedir), 
+	CacheStore(type, true, cft, storedir), 
 	mStorePeriod(storePeriod)
 {
 	mOwnId = getAuthMgr()->OwnId();
 	mViewPeriod = 60 * 60 * 24 * 30; /* one Month */
 	mSortType = RS_RANK_ALG;
 
-	createDummyData();
+//	createDummyData();
 	return;
 }
 
 bool    p3Ranking::loadLocalCache(const CacheData &data)
 {
-
+	/* ignore Local Cache -> just use remote caches */
 	return true;
 }
 
 int    p3Ranking::loadCache(const CacheData &data)
 {
+	std::string filename = data.path + '/' + data.name;
+	std::string hash = data.hash;
+	//uint64_t size = data.size;
+	std::string source = data.pid;
+
+#ifdef RANK_DEBUG
+	std::cerr << "p3Ranking::loadCache()";
+	std::cerr << std::endl;
+	std::cerr << "\tSource: " << source;
+	std::cerr << std::endl;
+	std::cerr << "\tFilename: " << filename;
+	std::cerr << std::endl;
+	std::cerr << "\tHash: " << hash;
+	std::cerr << std::endl;
+	std::cerr << "\tSize: " << data.size;
+	std::cerr << std::endl;
+#endif
+
+	loadRankFile(filename, source);
 
 	return 1;
 }
 
+
 void p3Ranking::loadRankFile(std::string filename, std::string src)
 {
-
-#if 0
 	/* create the serialiser to load info */
-	pqistreamer *streamer = createStreamer(filename, src, BIN_FLAGS_READABLE);
-
+	RsSerialiser *rsSerialiser = new RsSerialiser();
+	rsSerialiser->addSerialType(new RsRankSerialiser());
+	
+	uint32_t bioflags = BIN_FLAGS_HASH_DATA | BIN_FLAGS_READABLE;
+	BinInterface *bio = new BinFileInterface(filename.c_str(), bioflags);
+	pqistreamer *stream = new pqistreamer(rsSerialiser, src, bio, 0);
+	
 	time_t now = time(NULL);
 	time_t min = now - mStorePeriod;
 	time_t max = now + RANK_MAX_FWD_OFFSET;
 
-	RsItem *item;
-	RsRankMsg *newMsg;
-	while(NULL != (item = streamer->GetItem()))
-	{
-		newMsg = (RsRankMsg *) item;
+#ifdef RANK_DEBUG
+	std::cerr << "p3Ranking::loadRankFile()";
+	std::cerr << std::endl;
+	std::cerr << "\tSource: " << src;
+	std::cerr << std::endl;
+	std::cerr << "\tFilename: " << filename;
+	std::cerr << std::endl;
+#endif
 
-		/* check timestamp */
-		if ((newMsg->timestamp < min) || (newMsg->timestamp > max))
+	RsItem *item;
+	RsRankLinkMsg *newMsg;
+
+	stream->tick(); /* Tick to read! */
+	while(NULL != (item = stream->GetItem()))
+	{
+
+#ifdef RANK_DEBUG
+		std::cerr << "p3Ranking::loadRankFile() Got Item:";
+		std::cerr << std::endl;
+		item->print(std::cerr, 10);
+		std::cerr << std::endl;
+#endif
+
+		if (NULL == (newMsg = dynamic_cast<RsRankLinkMsg *>(item)))
 		{
+#ifdef RANK_DEBUG
+			std::cerr << "p3Ranking::loadRankFile() Item not LinkMsg (deleting):";
+			std::cerr << std::endl;
+#endif
+
+			delete item;
+		}
+			/* check timestamp */
+		else if (((time_t) newMsg->timestamp < min) || 
+				((time_t) newMsg->timestamp > max))
+		{
+#ifdef RANK_DEBUG
+			std::cerr << "p3Ranking::loadRankFile() Outside TimeRange (deleting):";
+			std::cerr << std::endl;
+#endif
 			/* if outside range -> remove */
 			delete newMsg;
 		}
 		else
 		{
+#ifdef RANK_DEBUG
+			std::cerr << "p3Ranking::loadRankFile() Loading Item";
+			std::cerr << std::endl;
+#endif
 			addRankMsg(newMsg);
 		}
+
+		stream->tick(); /* Tick to read! */
 	}
-#endif
+
+	delete stream;
 }
+
 
 void p3Ranking::publishMsgs()
 {
 
-#if 0
-	/* create a serialiser */
-	std::string file;
-	pqistreamer *stream = createStreamer(file, mOwnId, BIN_FLAGS_NO_DELETE | BIN_FLAGS_HASH_DATA);
+#ifdef RANK_DEBUG
+	std::cerr << "p3Ranking::publishMsgs()";
+	std::cerr << std::endl;
+#endif
 
+	/* determine filename */
+
+	std::string path = CacheSource::getCacheDir();
+	std::ostringstream out;
+	out << "rank-links-" << time(NULL) << ".rsrl";
+	
+	std::string tmpname = out.str();
+	std::string fname = path + "/" + tmpname;
+
+#ifdef RANK_DEBUG
+	std::cerr << "p3Ranking::publishMsgs() Storing to: " << fname;
+	std::cerr << std::endl;
+#endif
+
+	RsSerialiser *rsSerialiser = new RsSerialiser();
+	rsSerialiser->addSerialType(new RsRankSerialiser());
+	
+	uint32_t bioflags = BIN_FLAGS_HASH_DATA | BIN_FLAGS_WRITEABLE;
+	BinInterface *bio = new BinFileInterface(fname.c_str(), bioflags);
+	pqistreamer *stream = new pqistreamer(rsSerialiser, mOwnId, bio,
+					BIN_FLAGS_NO_DELETE);
+	
 	/* iterate through list */
 	std::map<std::string, RankGroup>::iterator it;
 	for(it = mData.begin(); it != mData.end(); it++)
@@ -115,26 +201,76 @@ void p3Ranking::publishMsgs()
 			/* write to serialiser */
 			RsItem *item = it->second.comments[mOwnId];
 			if (item)
+			{
+
+#ifdef RANK_DEBUG
+				std::cerr << "p3Ranking::publishMsgs() Storing Item:";
+				std::cerr << std::endl;
+				item->print(std::cerr, 10);
+				std::cerr << std::endl;
+#endif
 				stream->SendItem(item);
+				stream->tick(); /* Tick to write! */
+
+			}
+		}
+		else
+		{
+#ifdef RANK_DEBUG
+			std::cerr << "p3Ranking::publishMsgs() Skipping Foreign item";
+			std::cerr << std::endl;
+#endif
 		}
 	}
 
+	stream->tick(); /* Tick for final write! */
+
+	/* flag as new info */
 	CacheData data;
 	data.pid = mOwnId;
-	data.cid = CacheId(CacheSource::getCacheType(), 0);
-	data.name = file;
+	data.cid = CacheId(CacheSource::getCacheType(), 1);
 
-	refreshCache(data);
+	data.path = path;
+	data.name = tmpname;
+
+	data.hash = bio->gethash();
+	data.size = bio->bytecount();
+	data.recvd = time(NULL);
+	
+#ifdef RANK_DEBUG
+	std::cerr << "p3Ranking::publishMsgs() refreshing Cache";
+	std::cerr << std::endl;
+	std::cerr << "\tCache Path: " << data.path;
+	std::cerr << std::endl;
+	std::cerr << "\tCache Name: " << data.name;
+	std::cerr << std::endl;
+	std::cerr << "\tCache Hash: " << data.hash;
+	std::cerr << std::endl;
+	std::cerr << "\tCache Size: " << data.size;
+	std::cerr << std::endl;
 #endif
+	if (data.size > 0) /* don't refresh zero sized caches */
+	{
+		refreshCache(data);
+	}
+
+	delete stream;
 }
 
 
 
-void p3Ranking::addRankMsg(RsRankMsg *msg)
+void p3Ranking::addRankMsg(RsRankLinkMsg *msg)
 {
 	/* find msg */
 	std::string id = msg->PeerId();
 	std::string rid = msg->rid;
+
+#ifdef RANK_DEBUG
+	std::cerr << "p3Ranking::addRankMsg() Item:";
+	std::cerr << std::endl;
+	msg->print(std::cerr, 10);
+	std::cerr << std::endl;
+#endif
 
 	std::map<std::string, RankGroup>::iterator it;
 	it = mData.find(rid);
@@ -154,22 +290,46 @@ void p3Ranking::addRankMsg(RsRankMsg *msg)
 	}
 
 	/* check for old comment */
-	std::map<std::string, RsRankMsg *>::iterator cit;
+	std::map<std::string, RsRankLinkMsg *>::iterator cit;
 	cit = (it->second).comments.find(id);
-	if ((it->second).comments.end() != cit)
+
+	/* Check that it is different! */
+	bool newComment = false;
+	if ((it->second).comments.end() == cit)
 	{
-		(it->second).comments.erase(cit);
+		newComment = true;
+	}
+	else 
+	{
+		RsRankLinkMsg *old = cit->second;
+		if ((msg->timestamp != old->timestamp) ||
+		 	(msg->comment != old->comment))
+		{
+			newComment = true;
+		}
 	}
 
-	(it->second).comments[id] = msg;
-
-	if (id == mOwnId)
+	if (newComment)
 	{
-		it->second.ownTag = true;
-		mRepublish = true;
-	}
+		/* clean up old */
+		if ((it->second).comments.end() != cit)
+		{
+			delete (cit->second);
+			(it->second).comments.erase(cit);
+		}
 
-	reSortGroup(it->second);
+		/* add in */
+		(it->second).comments[id] = msg;
+
+		/* republish? */
+		if (id == mOwnId)
+		{
+			it->second.ownTag = true;
+			mRepublish = true;
+		}
+
+		reSortGroup(it->second);
+	}
 }
 
 
@@ -249,7 +409,7 @@ float 	p3Ranking::locked_calcRank(RankGroup &grp)
 	std::cerr << std::endl;
 #endif
 
-	std::map<std::string, RsRankMsg *>::iterator it;
+	std::map<std::string, RsRankLinkMsg *>::iterator it;
 	for(it = grp.comments.begin(); it != grp.comments.end(); it++)
 	{
 #ifdef RANK_DEBUG
@@ -271,7 +431,7 @@ float 	p3Ranking::locked_calcRank(RankGroup &grp)
 		}
 
 		/* if Scoring is involved... drop old ones */
-		if ((doScore) && (it->second->timestamp < minTime))
+		if ((doScore) && ((time_t) it->second->timestamp < minTime))
 		{
 #ifdef RANK_DEBUG
 			std::cerr << "\tToo Old";
@@ -281,7 +441,7 @@ float 	p3Ranking::locked_calcRank(RankGroup &grp)
 		}
 
 		time_t deltaT;
-		if (it->second->timestamp > now)
+		if ((time_t) it->second->timestamp > now)
 		{
 			deltaT = it->second->timestamp - now;
 		}
@@ -350,7 +510,7 @@ float 	p3Ranking::locked_calcRank(RankGroup &grp)
 void	p3Ranking::reSortGroup(RankGroup &grp)
 {
 	std::string rid = grp.rid;
-	float rank = grp.rank;
+	//float rank = grp.rank;
 
 	/* remove from existings rankings */
 	std::multimap<float, std::string>::iterator rit;
@@ -435,7 +595,7 @@ bool    p3Ranking::getRankDetails(std::string rid, RsRankDetails &details)
 	details.rank = (it->second).rank;
 	details.ownTag = (it->second).ownTag;
 
-	std::map<std::string, RsRankMsg *>::iterator cit;
+	std::map<std::string, RsRankLinkMsg *>::iterator cit;
 	for(cit = (it->second).comments.begin();
 		cit != (it->second).comments.end(); cit++)
 	{
@@ -469,7 +629,7 @@ std::string p3Ranking::newRankMsg(std::wstring link, std::wstring title, std::ws
 	/* generate an id */
 	std::string rid = generateRandomLinkId();
 
-	RsRankMsg *msg = new RsRankMsg();
+	RsRankLinkMsg *msg = new RsRankLinkMsg();
 
 	time_t now = time(NULL);
 
@@ -477,8 +637,10 @@ std::string p3Ranking::newRankMsg(std::wstring link, std::wstring title, std::ws
 	msg->rid = rid;
 	msg->title = title;
 	msg->timestamp = now;
-	msg->link = link;
 	msg->comment = comment;
+
+	msg->linktype =  RS_LINK_TYPE_WEB;
+	msg->link = link;
 
 	addRankMsg(msg);
 
@@ -487,24 +649,72 @@ std::string p3Ranking::newRankMsg(std::wstring link, std::wstring title, std::ws
 
 bool p3Ranking::updateComment(std::string rid, std::wstring comment)
 {
+
+#ifdef RANK_DEBUG
+	std::cerr << "p3Ranking::updateComment() rid:" << rid;
+	std::cerr << std::endl;
+#endif
+
+	std::map<std::string, RankGroup>::iterator it;
+	it = mData.find(rid);
+	if (it == mData.end())
+	{
+		/* missing group -> fail */
+
+#ifdef RANK_DEBUG
+		std::cerr << "p3Ranking::updateComment() Failed - noData";
+		std::cerr << std::endl;
+#endif
+		return false;
+	}
+
+	RsRankLinkMsg *msg = new RsRankLinkMsg();
+
+	time_t now = time(NULL);
+
+	msg->PeerId(mOwnId);
+	msg->rid = rid;
+	msg->timestamp = now;
+	msg->title = (it->second).title;
+	msg->comment = comment;
+
+	msg->linktype =  RS_LINK_TYPE_WEB;
+	msg->link =  (it->second).link;
+
+#ifdef RANK_DEBUG
+	std::cerr << "p3Ranking::updateComment() Item:";
+	std::cerr << std::endl;
+	msg->print(std::cerr, 10);
+	std::cerr << std::endl;
+#endif
+
+	addRankMsg(msg);
 	return true;
 }
 
-pqistreamer *createStreamer(std::string file, std::string src, uint32_t bioflags)
+pqistreamer *createStreamer(std::string file, std::string src, bool reading)
 {
 
-#if 0
 	RsSerialiser *rsSerialiser = new RsSerialiser();
-	RsSerialType *serialType = new RsRankSerial(); /* TODO */
+	rsSerialiser->addSerialType(new RsRankSerialiser());
 
-	rsSerialiser->addSerialType(serialType);
+	uint32_t bioflags = BIN_FLAGS_HASH_DATA;
+	if (reading)
+	{
+		bioflags |= BIN_FLAGS_READABLE;
+	}
+	else
+	{
+		bioflags |= BIN_FLAGS_WRITEABLE;
+	}
 
-	BinInterface *bio = BinFileInterface(file.c_str(), bioflags);
-	pqistreamer *streamer = new pqistreamer(rsSerialiser, src, bio, 0);
+	/* bin flags: READ | WRITE | HASH_DATA */
+	BinInterface *bio = new BinFileInterface(file.c_str(), bioflags);
+	/* streamer flags: NO_DELETE (yes) | NO_CLOSE (no) */
+	pqistreamer *streamer = new pqistreamer(rsSerialiser, src, bio, 
+						BIN_FLAGS_NO_DELETE);
 
 	return streamer;
-#endif 
-	return NULL;
 }
 
 std::string generateRandomLinkId()
@@ -524,7 +734,7 @@ std::string generateRandomLinkId()
 
 void	p3Ranking::createDummyData()
 {
-	RsRankMsg *msg = new RsRankMsg();
+	RsRankLinkMsg *msg = new RsRankLinkMsg();
 
 	time_t now = time(NULL);
 
@@ -537,7 +747,7 @@ void	p3Ranking::createDummyData()
 
 	addRankMsg(msg);
 
-	msg = new RsRankMsg();
+	msg = new RsRankLinkMsg();
 	msg->PeerId(mOwnId);
 	msg->rid = "0002";
 	msg->title = L"Awesome Site!";
@@ -547,7 +757,7 @@ void	p3Ranking::createDummyData()
 
 	addRankMsg(msg);
 
-	msg = new RsRankMsg();
+	msg = new RsRankLinkMsg();
 	msg->PeerId("ALTID");
 	msg->rid = "0002";
 	msg->title = L"Awesome Site!";
@@ -559,7 +769,7 @@ void	p3Ranking::createDummyData()
 
 	addRankMsg(msg);
 
-	msg = new RsRankMsg();
+	msg = new RsRankLinkMsg();
 	msg->PeerId("ALTID2");
 	msg->rid = "0002";
 	msg->title = L"Awesome Site!";
@@ -572,7 +782,7 @@ void	p3Ranking::createDummyData()
 
 	/***** Third one ****/
 
-	msg = new RsRankMsg();
+	msg = new RsRankLinkMsg();
 	msg->PeerId(mOwnId);
 	msg->rid = "0003";
 	msg->title = L"Weird Site!";
@@ -582,7 +792,7 @@ void	p3Ranking::createDummyData()
 
 	addRankMsg(msg);
 
-	msg = new RsRankMsg();
+	msg = new RsRankLinkMsg();
 	msg->PeerId("ALTID");
 	msg->rid = "0003";
 	msg->title = L"Weird Site!";

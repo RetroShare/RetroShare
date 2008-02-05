@@ -39,17 +39,18 @@
 
 /* These are Cache Only */
 const uint16_t RS_SERVICE_TYPE_FILE_INDEX  = 0x0001;
+const uint16_t RS_SERVICE_TYPE_RANK        = 0x0002;
 
 /* These are Services only */
 const uint16_t RS_SERVICE_TYPE_DISC        = 0x0011;
+const uint16_t RS_SERVICE_TYPE_CHAT        = 0x0012;
+const uint16_t RS_SERVICE_TYPE_MSG         = 0x0013;
 
 
-
+/****************** BELOW ARE ONLY THEORETICAL (CAN BE CHANGED) *****/
 
 const uint16_t RS_SERVICE_TYPE_STATUS      = 0x0012;
 
-const uint16_t RS_SERVICE_TYPE_CHAT        = 0x0013;
-const uint16_t RS_SERVICE_TYPE_MSG         = 0x0014;
 
 const uint16_t RS_SERVICE_TYPE_CHANNEL_MSG = 0x0015;
 const uint16_t RS_SERVICE_TYPE_PROXY_MSG   = 0x0016;

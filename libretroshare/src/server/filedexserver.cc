@@ -212,11 +212,10 @@ const std::string LOCAL_CACHE_FILE_KEY = "LCF_NAME";
 const std::string LOCAL_CACHE_HASH_KEY = "LCF_HASH";
 const std::string LOCAL_CACHE_SIZE_KEY = "LCF_SIZE";
 
-void    filedexserver::setFileCallback(std::string ownId, CacheStrapper *strapper, NotifyBase *cb)
+void    filedexserver::setFileCallback(std::string ownId, CacheStrapper *strapper, ftfiler *ft, NotifyBase *cb)
 {
 	mCacheStrapper = strapper;
-
-	ftFiler = new ftfiler(mCacheStrapper);
+	ftFiler = ft; 
 
 	/* setup FiStore/Monitor */
 	std::string localcachedir = config_dir + "/cache/local";

@@ -39,6 +39,7 @@
 #include "services/p3disc.h"
 #include "services/p3msgservice.h"
 #include "services/p3chatservice.h"
+#include "services/p3ranking.h"
 
 /* The Main Interface Class - for controlling the server */
 
@@ -270,6 +271,9 @@ int UpdateAllConfig();
 	p3disc *ad;
 	p3MsgService  *msgSrv;
 	p3ChatService *chatSrv;
+
+	/* caches (that need ticking) */
+	p3Ranking *mRanking;
 
 	// Worker Data.....
 

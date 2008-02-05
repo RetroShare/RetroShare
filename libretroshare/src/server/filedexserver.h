@@ -155,7 +155,8 @@ int 	FileStoreTick();
 int 	FileCacheSave();
 
 void 	initialiseFileStore();
-void    setFileCallback(std::string ownId, CacheStrapper *cs, NotifyBase *cb);
+void    setFileCallback(std::string ownId, CacheStrapper *strapper, 
+				ftfiler *ft, NotifyBase *cb);
 
 int RequestDirDetails(std::string uid, std::string path, DirDetails &details);
 int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags);

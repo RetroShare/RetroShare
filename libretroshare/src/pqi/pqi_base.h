@@ -312,7 +312,10 @@ virtual int	netstatus() = 0;
 virtual int	isactive() = 0;
 virtual bool	moretoread() = 0;
 virtual bool 	cansend() = 0;
+
+	/* if hashing data */
 virtual std::string gethash() = 0;
+virtual uint64_t bytecount() { return 0; }
 
 		/* used by pqistreamer to limit transfers */
 virtual bool 	bandwidthLimited() { return true; }

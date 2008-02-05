@@ -29,7 +29,7 @@
 #include "pqi/pqibin.h"
 
 BinFileInterface::BinFileInterface(const char *fname, int flags)
-	:bin_flags(flags), buf(NULL), hash(NULL)
+	:bin_flags(flags), buf(NULL), hash(NULL), bcount(0)
 {
 	/* if read + write - open r+ */
 	if ((bin_flags & BIN_FLAGS_READABLE) &&
@@ -102,6 +102,7 @@ int	BinFileInterface::senddata(void *data, int len)
 	if (bin_flags & BIN_FLAGS_HASH_DATA)
 	{  
 		hash->addData(data, len);
+		bcount += len;
 	}
 	return len;
 }
@@ -118,6 +119,7 @@ int	BinFileInterface::readdata(void *data, int len)
 	if (bin_flags & BIN_FLAGS_HASH_DATA)
 	{  
 		hash->addData(data, len);
+		bcount += len;
 	}
 	return len;
 }
@@ -131,11 +133,20 @@ std::string  BinFileInterface::gethash()
 	}
 	return hashstr;
 }
+
+uint64_t BinFileInterface::bytecount()
+{
+	if (bin_flags & BIN_FLAGS_HASH_DATA)
+	{  
+		return bcount;
+	}
+	return 0;
+}
 	
 
 BinMemInterface::BinMemInterface(int defsize, int flags)
 	:bin_flags(flags), buf(NULL), size(defsize), 
-	recvsize(0), readloc(0), hash(NULL)
+	recvsize(0), readloc(0), hash(NULL), bcount(0)
 	{
 		buf = malloc(defsize);
 		if (bin_flags & BIN_FLAGS_HASH_DATA)
@@ -174,6 +185,7 @@ int	BinMemInterface::senddata(void *data, int len)
 		if (bin_flags & BIN_FLAGS_HASH_DATA)
 		{  
 			hash->addData(data, len);
+			bcount += len;
 		}
 		recvsize += len;
 		return len;
@@ -191,6 +203,7 @@ int	BinMemInterface::readdata(void *data, int len)
 		if (bin_flags & BIN_FLAGS_HASH_DATA)
 		{  
 			hash->addData(data, len);
+			bcount += len;
 		}
 		readloc += len;
 		return len;
@@ -208,6 +221,16 @@ std::string  BinMemInterface::gethash()
 		return hashstr;
 	}
 
+
+uint64_t BinMemInterface::bytecount()
+{
+	if (bin_flags & BIN_FLAGS_HASH_DATA)
+	{  
+		return bcount;
+	}
+	return 0;
+}
+	
 
 
 /**************************************************************************/
@@ -424,7 +447,5 @@ std::string NetBinDummy::gethash()
 
 	return std::string("");
 }
-
-
 
 

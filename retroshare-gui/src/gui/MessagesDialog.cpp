@@ -25,6 +25,7 @@
 #include "gui/toaster/MessageToaster.h"
 
 
+#include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsmsgs.h"
 #include <sstream>
@@ -260,7 +261,7 @@ void MessagesDialog::getallrecommended()
 	for(fit = fnames.begin(), hit = hashes.begin(), sit = sizes.begin(); 
 		fit != fnames.end(); fit++, hit++, sit++)
 	{
-        	//rsicontrol -> FileRequest(*fit, *hit, *sit, "");
+        	rsicontrol -> FileRequest(*fit, *hit, *sit, "");
 	}
 }
 

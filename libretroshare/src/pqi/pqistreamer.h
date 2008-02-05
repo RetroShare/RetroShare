@@ -36,6 +36,7 @@
 // and communicates with peer etc via the BinInterface.
 //
 // The interface does not handle connection, just communication.
+// possible bioflags: BIN_FLAGS_NO_CLOSE | BIN_FLAGS_NO_DELETE
 
 class pqistreamer: public PQInterface
 {
@@ -75,7 +76,7 @@ void	inReadBytes(int );
 	RsSerialiser *rsSerialiser;
 	// Binary Interface for IO, initialisated at startup.
 	BinInterface *bio;
-	unsigned int  bio_flags; // only BIN_NO_CLOSE at the moment.
+	unsigned int  bio_flags; // BIN_FLAGS_NO_CLOSE | BIN_FLAGS_NO_DELETE
 
 	void *pkt_wpending; // storage for pending packet to write.
 	int   pkt_rpend_size; // size of pkt_rpending.

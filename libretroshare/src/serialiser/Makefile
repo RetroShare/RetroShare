@@ -10,7 +10,7 @@ include $(RS_TOP_DIR)/scripts/config.mk
 RSOBJ  = rsserial.o rsbaseserial.o rstlvbase.o rstlvtypes.o 
 RSOBJ += rstlvfileitem.o rstlvutil.o    # TLV Objs
 RSOBJ += rsbaseitems.o rsconfigitems.o rsdiscitems.o # RsItems 
-RSOBJ += rsmsgitems.o 	# RsItems
+RSOBJ += rsmsgitems.o rsrankitems.o	# RsItems
 
 TESTOBJ  = tlvbase_test.o tlvbase_test2.o tlvfileitem_test.o 
 TESTOBJ += tlvitems_test.o tlvstack_test.o tlvconfig_test.o 

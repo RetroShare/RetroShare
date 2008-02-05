@@ -57,13 +57,18 @@ virtual bool	moretoread()
 
 
 virtual bool 	cansend() { return (bin_flags | BIN_FLAGS_WRITEABLE);   }
+virtual bool    bandwidthLimited() { return false; }
+
+	/* if HASHing is switched on */
 virtual std::string gethash();
+virtual uint64_t bytecount();
 
 private:
 	int   bin_flags;
 	FILE *buf;
 	int   size;
 	pqihash *hash;
+	uint64_t bcount;
 };
 
 
@@ -96,7 +101,10 @@ virtual bool	moretoread()
 	}
 
 virtual bool 	cansend()    { return (bin_flags | BIN_FLAGS_WRITEABLE); }
+virtual bool    bandwidthLimited() { return false; }
+
 virtual std::string gethash();
+virtual uint64_t bytecount();
 
 	private:
 	int   bin_flags;
@@ -105,6 +113,7 @@ virtual std::string gethash();
 	int   recvsize;
 	int   readloc;
 	pqihash *hash;
+	uint64_t bcount;
 };
 
 

@@ -41,38 +41,12 @@
  *
  * can be overloaded for specific types
  * (links, shares, photos etc)
+ *
+ * This is not generic yet!!!
  */
 
-class RsRankMsg: public RsItem
-{
-	public:
-
-	//std::string peerId; /* From */
-	std::string rid; /* Random Id */
-	time_t      timestamp;
-	std::wstring link;
-	std::wstring title;
-	std::wstring comment;
-
-	RsRankMsg():RsItem(0) { return; }
-virtual void clear() 
-	{ return; }
-virtual std::ostream& print(std::ostream &out, uint16_t) 
-	{ return out; }
-
-};
-
-class RsRankSerial: public RsSerialType
-{
-	public:
-
-	RsRankSerial()
-	:RsSerialType(0,0,0)
-	{ return; }
-
-};
-
-/* group these together */
+class RsRankMsg;
+class RsRankLinkMsg;
 
 class RankGroup
 {
@@ -83,7 +57,7 @@ class RankGroup
 	std::wstring title; 
 	float rank;
 	bool ownTag;
-	std::map<std::string, RsRankMsg *>  comments;
+	std::map<std::string, RsRankLinkMsg *>  comments;
 };
 
 
@@ -91,7 +65,7 @@ class p3Ranking: public CacheSource, public CacheStore
 {
 	public:
 
-	p3Ranking(uint16_t subtype, CacheTransfer *cft,
+	p3Ranking(uint16_t type, CacheTransfer *cft,
 		std::string sourcedir, std::string storedir, 
 		uint32_t storePeriod);
 
@@ -129,12 +103,12 @@ virtual bool updateComment(std::string rid, std::wstring comment);
 void	tick();
 
 void	loadRankFile(std::string filename, std::string src);
-void 	addRankMsg(RsRankMsg *msg);
+void 	addRankMsg(RsRankLinkMsg *msg);
 void 	publishMsgs();
 float 	locked_calcRank(RankGroup &grp); /* returns 0->100 */
 void	reSortGroup(RankGroup &grp);
 void	sortAllMsgs();
-pqistreamer *createStreamer(std::string file, std::string src, uint32_t bioflags);
+pqistreamer *createStreamer(std::string file, std::string src, bool reading);
 
 	private:	
 

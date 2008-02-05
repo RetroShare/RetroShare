@@ -105,6 +105,8 @@ const uint16_t TLV_TYPE_STR_COMMENT   = 0x0055;
 const uint16_t TLV_TYPE_STR_TITLE     = 0x0056;
 const uint16_t TLV_TYPE_STR_MSG       = 0x0057;
 const uint16_t TLV_TYPE_STR_SUBJECT   = 0x0058;
+const uint16_t TLV_TYPE_STR_LINK      = 0x0059;
+const uint16_t TLV_TYPE_STR_GENID     = 0x005a;
 
 /* Wide Chars (4 bytes per char) for internationalisation */
 const uint16_t TLV_TYPE_WSTR_PEERID   = 0x0060;
@@ -116,6 +118,8 @@ const uint16_t TLV_TYPE_WSTR_COMMENT  = 0x0065;
 const uint16_t TLV_TYPE_WSTR_TITLE    = 0x0066;
 const uint16_t TLV_TYPE_WSTR_MSG      = 0x0067;
 const uint16_t TLV_TYPE_WSTR_SUBJECT  = 0x0068;
+const uint16_t TLV_TYPE_WSTR_LINK     = 0x0069;
+const uint16_t TLV_TYPE_WSTR_GENID    = 0x006a;
 
 /* Hashs are always strings */
 const uint16_t TLV_TYPE_STR_HASH_SHA1 = 0x0070;
