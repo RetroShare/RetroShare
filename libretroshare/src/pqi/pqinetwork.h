@@ -97,8 +97,6 @@ extern int errno; /* Define extern errno, to duplicate unix behaviour */
 #include <string>
 #include <list>
 
-void sockaddr_clear(struct sockaddr_in *addr1);
-
 // Same def - different functions...
 
 std::ostream &showSocketError(std::ostream &out);

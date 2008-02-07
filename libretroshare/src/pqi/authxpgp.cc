@@ -248,7 +248,7 @@ SSL_CTX *AuthXPGP::getCTX()
 	return sslctx;
 }
 
-int     AuthXPGP::setConfigDirectories(const char *cdir, const char *ndir)
+int     AuthXPGP::setConfigDirectories(std::string configfile, std::string neighdir)
 {
 #ifdef AUTHXPGP_DEBUG
 	std::cerr << "AuthXPGP::setConfigDirectories()";
@@ -256,8 +256,8 @@ int     AuthXPGP::setConfigDirectories(const char *cdir, const char *ndir)
 #endif
 	xpgpMtx.lock();   /***** LOCK *****/
 
-	mCertDir = cdir;
-	mNeighDir = ndir;
+	mCertConfigFile = configfile;
+	mNeighDir = neighdir;
 
 	xpgpMtx.unlock(); /**** UNLOCK ****/
 	return 1;
@@ -1510,7 +1510,22 @@ std::list<std::string> getXPGPsigners(XPGP *cert)
 	return signers;
 }
 
-
+// other fns
+std::string getCertName(XPGP *xpgp)
+{
+	std::string name = xpgp->name;
+	// strip out bad chars.
+	for(int i = 0; i < (signed) name.length(); i++)
+	{
+		if ((name[i] == '/') || (name[i] == ' ') || (name[i] == '=') ||
+			(name[i] == '\\') || (name[i] == '\t') || (name[i] == '\n'))
+		{
+			name[i] = '_';
+		}
+	}
+	return name;
+}
+	
 
 /********** SSL ERROR STUFF ******************************************/
 
@@ -1563,38 +1578,68 @@ int printSSLError(SSL *ssl, int retval, int err, unsigned long err2,
 }
 
 
-#if 0
+/***************************** OLD STORAGE of CERTS *************************
+ * We will retain the existing CERT storage format for the moment....
+ * This will enable the existing certs to be loaded in.
+ *
+ * BUT Save will change the format - removing the options from 
+ * the configuration file. This will mean that we can catch NEW/OLD formats.
+ *
+ * We only want to load old format ONCE. as we'll use it to get 
+ * the list of existing friends...
+ *
+ *
+ *
+ */
 
-int     AuthXPGP::saveCertificates(const char *fname)
+bool    AuthXPGP::saveCertificates()
 {
 	// construct file name.
-	//
 	// create the file in memory - hash + sign.
 	// write out data to a file.
 	
-	std::string neighdir = certdir + "/" + neighbourdir + "/";
-	std::string configname = certdir + "/";
-	configname += fname;
+	xpgpMtx.lock();   /***** LOCK *****/
+
+	std::string configfile = mCertConfigFile;
+	std::string neighdir = mNeighDir;
+
+	xpgpMtx.unlock(); /**** UNLOCK ****/
 
 	std::map<std::string, std::string>::iterator mit;
-
 
 	std::string conftxt;
 	std::string empty("");
 	unsigned int i;
 
-	std::list<cert *>::iterator it;
-	for(it = peercerts.begin(); it != peercerts.end(); it++)
+#ifdef AUTHXPGP_DEBUG
+	std::cerr << "AuthXPGP::saveCertificates()";
+	std::cerr << std::endl;
+#endif
+	xpgpMtx.lock();   /***** LOCK *****/
+
+	/* iterate through both lists */
+	std::map<std::string, xpgpcert *>::iterator it;
+
+	for(it = mCerts.begin(); it != mCerts.end(); it++)
 	{
-		std::string neighfile = neighdir + getCertName(*it) + ".pqi";
-		savecertificate((*it), neighfile.c_str());
-		conftxt += "CERT ";
-		conftxt += getCertName(*it);
-		conftxt += "\n";
-		conftxt += (*it) -> Hash();
-		conftxt += "\n";
-		std::cerr << std::endl;
+		if (it->second->trustLvl > TRUST_SIGN_BASIC)
+		{
+			XPGP *xpgp = it->second->certificate;
+			std::string hash;
+			std::string neighfile = neighdir + getCertName(xpgp) + ".pqi";
+
+			if (saveXPGPToFile(xpgp, neighfile, hash))
+			{
+				conftxt += "CERT ";
+				conftxt += getCertName(xpgp);
+				conftxt += "\n";
+				conftxt += hash;
+				conftxt += "\n";
+				std::cerr << std::endl;
+			}
+		}
 	}
+
 
 	// now work out signature of it all. This relies on the 
 	// EVP library of openSSL..... We are going to use signing
@@ -1631,38 +1676,76 @@ int     AuthXPGP::saveCertificates(const char *fname)
 	}
 	std::cerr << std::endl;
 
-	FILE *cfd = fopen(configname.c_str(), "wb");
+	FILE *cfd = fopen(configfile.c_str(), "wb");
 	int wrec;
 	if (1 != (wrec = fwrite(conftxt.c_str(), conftxt.length(), 1, cfd)))
 	{
-		std::cerr << "Error writing: " << configname << std::endl;
+		std::cerr << "Error writing: " << configfile << std::endl;
 		std::cerr << "Wrote: " << wrec << "/" << 1 << " Records" << std::endl;
 	}
 
 	EVP_MD_CTX_destroy(mdctx);
 	fclose(cfd);
 
-	return 1;
+	xpgpMtx.unlock(); /**** UNLOCK ****/
+
+	return true;
 }
 
-int     sslroot::loadCertificates(const char *conf_fname)
+
+/****** 
+ * Special version for backwards compatibility
+ *
+ * has two extra parameters.
+ * bool oldFormat & std::map<std::string, std::string> keyvaluemap
+ *
+ * We'll leave these in for the next couple of months...
+ * so that old versions will automatically be converted to the 
+ * new format!
+ *
+ */
+
+bool    AuthXPGP::loadCertificates()
 {
-	// open the configuration file.
-	//
-	// read in CERT + Hash.
+	bool oldFormat;
+	std::map<std::string, std::string> keyValueMap;
 
-	// construct file name.
-	//
-	// create the file in memory - hash + sign.
-	// write out data to a file.
+	return loadCertificates(oldFormat, keyValueMap);
+}
+
+/*********************
+ * NOTE no need to Lock here. locking handled in ProcessXPGP()
+ */
+static const uint32_t OPT_LEN = 16;
+static const uint32_t VAL_LEN = 1000;
+
+bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::string> &keyValueMap)
+{
+
+	/*******************************************
+	 * open the configuration file.
+	 * read in CERT + Hash.
+	 *
+	 * construct file name.
+	 * create the file in memory - hash + sign.
+	 * write out data to a file.
+	 *****************************************/
+
+	xpgpMtx.lock();   /***** LOCK *****/
+
+	std::string configfile = mCertConfigFile;
+	std::string neighdir = mNeighDir;
+
+	xpgpMtx.unlock(); /**** UNLOCK ****/
+
+	/* add on the slash */
+	if (neighdir != "")
+	{
+		neighdir += "/";
+	}
+
+	oldFormat = false;
 	
-	std::string neighdir = certdir + "/" + neighbourdir + "/";
-	std::string configname = certdir + "/";
-	configname += conf_fname;
-
-	// save name for later save attempts.
-	certfile = conf_fname;
-
 	std::string conftxt;
 
 	unsigned int maxnamesize = 1024;
@@ -1671,12 +1754,12 @@ int     sslroot::loadCertificates(const char *conf_fname)
 	int c;
 	unsigned int i;
 
-	FILE *cfd = fopen(configname.c_str(), "rb");
+	FILE *cfd = fopen(configfile.c_str(), "rb");
 	if (cfd == NULL)
 	{
 		std::cerr << "Unable to Load Configuration File!" << std::endl;
-		std::cerr << "File: " << configname << std::endl;
-		return -1;
+		std::cerr << "File: " << configfile << std::endl;
+		return false;
 	}
 
 	std::list<std::string> fnames;
@@ -1807,9 +1890,6 @@ int     sslroot::loadCertificates(const char *conf_fname)
 	// continue...
 	for(i = 0; (name[i] != '\n') && (i < signlen); i++);
 
-		//printf("Stepping over [%d] %0x\n", i, name[i]);
-
-
 	if (i != signlen)
 	{
 		for(i++; i < signlen; i++)
@@ -1881,32 +1961,34 @@ int     sslroot::loadCertificates(const char *conf_fname)
 	{
 		std::cerr << "ERROR VALIDATING CONFIGURATION!" << std::endl;
 		std::cerr << "PLEASE FIX!" << std::endl;
-		return -1;
+		return false;
 	}
+
 	std::list<std::string>::iterator it;
 	std::list<std::string>::iterator it2;
 	for(it = fnames.begin(), it2 = hashes.begin(); it != fnames.end(); it++, it2++)
 	{
 		std::string neighfile = neighdir + (*it) + ".pqi";
-		cert *nc = loadcertificate(neighfile.c_str(), (*it2));
-		if (nc != NULL)
+		XPGP *xpgp = loadXPGPFromFile(neighfile, (*it2));
+		if (xpgp != NULL)
 		{
-			if (0 > addCertificate(nc))
+			std::string id;
+			if (ProcessXPGP(xpgp, id))
 			{
-				// cleanup.
-				std::cerr << "Updated Certificate....but no";
-				std::cerr << " need for addition";
+				std::cerr << "Loaded Certificate: " << id;
 				std::cerr << std::endl;
-				// X509_free(nc -> certificate);
-				//delete nc;
 			}
 		}
 	}
 	for(mit = tmpsettings.begin(); mit != tmpsettings.end(); mit++)
 	{
-		settings[mit -> first] = mit -> second;
+		keyValueMap[mit -> first] = mit -> second;
 	}
-	return 1;
+	if (keyValueMap.size() > 0)
+	{
+		oldFormat = true;
+	}
+
+	return true;
 }
 
-#endif

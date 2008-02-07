@@ -84,7 +84,7 @@ virtual bool	active();
 virtual int	InitAuth(const char *srvr_cert, const char *priv_key, 
 					const char *passwd);
 virtual bool	CloseAuth();
-virtual int     setConfigDirectories(const char *cdir, const char *ndir);
+virtual int     setConfigDirectories(std::string confFile, std::string neighDir);
 
 	/*********** Overloaded Functions from p3AuthMgr **********/
 	
@@ -102,8 +102,11 @@ virtual bool    isAuthenticated(std::string id);
 virtual	std::string getName(std::string id);
 virtual bool    getDetails(std::string id, pqiAuthDetails &details);
 	
-	/* Load/Save certificates */
+	/* High Level Load/Save Configuration */
+virtual bool saveCertificates();
+virtual bool loadCertificates();
 
+	/* Load/Save certificates */
 virtual bool LoadCertificateFromString(std::string pem, std::string &id);
 virtual	std::string SaveCertificateToString(std::string id);
 virtual bool LoadCertificateFromFile(std::string filename, std::string &id);
@@ -131,6 +134,8 @@ bool 	ValidateCertificateXPGP(XPGP *xpgp, std::string &peerId); /* validate + ge
 bool 	FailedCertificateXPGP(XPGP *xpgp, bool incoming);     /* store for discovery */
 bool 	CheckCertificateXPGP(std::string peerId, XPGP *xpgp); /* check that they are exact match */
 
+	/* Special Config Loading (backwards compatibility) */
+bool  	loadCertificates(bool &oldFormat, std::map<std::string, std::string> &keyValueMap);
 
 	private:
 
@@ -154,7 +159,7 @@ bool 	locked_FindCert(std::string id, xpgpcert **cert);
 	RsMutex xpgpMtx;  /**** LOCKING */
 
 	int init;
-	std::string mCertDir;
+	std::string mCertConfigFile;
 	std::string mNeighDir;
 
 	SSL_CTX *sslctx;

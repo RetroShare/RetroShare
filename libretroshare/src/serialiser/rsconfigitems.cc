@@ -477,71 +477,146 @@ RsConfigKeyValueSet *RsGeneralConfigSerialiser::deserialiseKeyValueSet(void *dat
 }
 
 /*************************************************************************/
-
-RsPeerConfig::~RsPeerConfig()
-{
-	return;
-}
-
-void RsPeerConfig::clear()
-{
-	status = 0;
-	lastconn_ts = 0;
-	lastrecv_ts = 0;
-	nextconn_ts = 0;
-	nextconn_period = 0;
-
-}
-
-std::ostream &RsPeerConfig::print(std::ostream &out, uint16_t indent)
-{
-	printRsItemBase(out, "RsPeerConfig", indent);
-	uint16_t int_Indent = indent + 2;
-
-	printIndent(out, int_Indent);
-    out << "status: " << status << std::endl; 
-
-    printIndent(out, int_Indent);
-	out << "lastconn_ts: " << lastconn_ts << std::endl;
-
-	printIndent(out, int_Indent);
-	out << "lastrecv_ts: " << lastrecv_ts << std::endl;
-	
-	printIndent(out, int_Indent);
-	out << "nextconn_ts: " << nextconn_ts << std::endl;
-
-	printIndent(out, int_Indent);
-	out << "nextconn_period: " << nextconn_period << std::endl;
-
-	return out;
-}
-
 /*************************************************************************/
-
+/*************************************************************************/
+/*************************************************************************/
+/*************************************************************************/
 
 RsPeerConfigSerialiser::~RsPeerConfigSerialiser()
 {
 	return;
 }
 
-uint32_t RsPeerConfigSerialiser::size(RsItem *i)
+uint32_t    RsPeerConfigSerialiser::size(RsItem *i)
+{
+	RsPeerNetItem *pni;
+	RsPeerStunItem *psi;
+
+	if (NULL != (pni = dynamic_cast<RsPeerNetItem *>(i)))
+	{
+		return sizeNet(pni);
+	}
+	else if (NULL != (psi = dynamic_cast<RsPeerStunItem *>(i)))
+	{
+		return sizeStun(psi);
+	}
+
+	return 0;
+}
+
+/* serialise the data to the buffer */
+bool    RsPeerConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
+{
+	RsPeerNetItem *pni;
+	RsPeerStunItem *psi;
+
+	if (NULL != (pni = dynamic_cast<RsPeerNetItem *>(i)))
+	{
+		return serialiseNet(pni, data, pktsize);
+	}
+	else if (NULL != (psi = dynamic_cast<RsPeerStunItem *>(i)))
+	{
+		return serialiseStun(psi, data, pktsize);
+	}
+
+	return false;
+}
+
+RsItem *RsPeerConfigSerialiser::deserialise(void *data, uint32_t *pktsize)
+{
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+
+	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
+		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
+		(RS_PKT_TYPE_PEER_CONFIG != getRsItemType(rstype)))
+	{
+		std::cerr << "RsPeerConfigSerialiser::deserialise() Wrong Type" << std::endl;
+		return NULL; /* wrong type */
+	}
+
+	switch(getRsItemSubType(rstype))
+	{
+		case RS_PKT_SUBTYPE_PEER_NET:
+			return deserialiseNet(data, pktsize);
+			break;
+		case RS_PKT_SUBTYPE_PEER_STUN:
+			return deserialiseStun(data, pktsize);
+			break;
+		default:
+			return NULL;
+			break;
+	}
+	return NULL;
+}
+
+
+/*************************************************************************/
+
+RsPeerNetItem::~RsPeerNetItem()
+{
+	return;
+}
+
+void RsPeerNetItem::clear()
+{
+	pid.clear();
+	netMode = 0;
+	visState = 0;
+	lastContact = 0;
+
+	sockaddr_clear(&localaddr);
+	sockaddr_clear(&remoteaddr);
+}
+
+std::ostream &RsPeerNetItem::print(std::ostream &out, uint16_t indent)
+{
+	printRsItemBase(out, "RsPeerNetItem", indent);
+	uint16_t int_Indent = indent + 2;
+
+	printIndent(out, int_Indent);
+    	out << "PeerId: " << pid << std::endl; 
+
+    	printIndent(out, int_Indent);
+	out << "netMode: " << netMode << std::endl;
+
+	printIndent(out, int_Indent);
+	out << "visState: " << visState << std::endl;
+	
+	printIndent(out, int_Indent);
+	out << "lastContact: " << lastContact << std::endl;
+
+	printIndent(out, int_Indent);
+	out << "localaddr: " << inet_ntoa(localaddr.sin_addr);
+	out << ":" << htons(localaddr.sin_port) << std::endl;
+
+	printIndent(out, int_Indent);
+	out << "remoteaddr: " << inet_ntoa(remoteaddr.sin_addr);
+	out << ":" << htons(remoteaddr.sin_port) << std::endl;
+
+        printRsItemEnd(out, "RsPeerNetItem", indent);
+	return out;
+}
+
+/*************************************************************************/
+
+uint32_t RsPeerConfigSerialiser::sizeNet(RsPeerNetItem *i)
 {	
 	uint32_t s = 8; /* header */
-	s += 2; /* status */ 
-	s += 2; /* lastconnect_ts */
-	s += 2; /* lastrecv_ts */ 
-	s += 2; /* nextconn_ts */ 
-	s += 2; /* nextperiod */ 
+	s += GetTlvStringSize(i->pid); /* peerid */ 
+	s += 4; /* netMode */
+	s += 4; /* visState */
+	s += 4; /* lastContact */
+	s += GetTlvIpAddrPortV4Size(); /* localaddr */ 
+	s += GetTlvIpAddrPortV4Size(); /* remoteaddr */ 
 
 	return s;
 
 }
 
-bool RsPeerConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *size)
+bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint32_t *size)
 {
-	RsPeerConfig *item = (RsPeerConfig *) i;
-
-	uint32_t tlvsize = RsPeerConfigSerialiser::size(item);
+	uint32_t tlvsize = RsPeerConfigSerialiser::sizeNet(item);
 	uint32_t offset = 0;
 
 	if(*size < tlvsize)
@@ -555,24 +630,30 @@ bool RsPeerConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *size)
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
-	std::cerr << "RsConfigSerialiser::serialise() Header: " << ok << std::endl;
-	std::cerr << "RsConfigSerialiser::serialise() Header: " << tlvsize << std::endl;
+	std::cerr << "RsPeerConfigSerialiser::serialiseNet() Header: " << ok << std::endl;
+	std::cerr << "RsPeerConfigSerialiser::serialiseNet() Header: " << tlvsize << std::endl;
 
 	/* skip the header */
 	offset += 8;
 
 	/* add mandatory parts first */
-	ok &= setRawUInt32(data, tlvsize, &offset, item->lastconn_ts); /* Mandatory */
-	std::cerr << "RsPeerConfigSerialiser::serialise() lastconn_ts: " << ok << std::endl; /* WRITE error check */
+        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, item->pid); /* Mandatory */
+	std::cerr << "RsPeerConfigSerialiser::serialiseNet() pid: " << ok << std::endl;
 
-	ok &= setRawUInt32(data, tlvsize, &offset, item->lastrecv_ts); /* Mandatory */
-	std::cerr << "RsPeerConfigSerialiser::serialise() lastrecv_ts: " << ok << std::endl;
+	ok &= setRawUInt32(data, tlvsize, &offset, item->netMode); /* Mandatory */
+	std::cerr << "RsPeerConfigSerialiser::serialiseNet() netMode: " << ok << std::endl; 
 
-	ok &= setRawUInt32(data, tlvsize, &offset, item->nextconn_ts); /* Mandatory */
-	std::cerr << "RsPeerConfigSerialiser::serialise() nextconn_ts: " << ok << std::endl;
+	ok &= setRawUInt32(data, tlvsize, &offset, item->visState); /* Mandatory */
+	std::cerr << "RsPeerConfigSerialiser::serialiseNet() visState: " << ok << std::endl;
 
-	ok &= setRawUInt32(data, tlvsize, &offset, item->nextconn_period); /* Mandatory */
-	std::cerr << "RsPeerConfigSerialiser::serialise() nextconn_period: " << ok << std::endl;
+	ok &= setRawUInt32(data, tlvsize, &offset, item->lastContact); /* Mandatory */
+	std::cerr << "RsPeerConfigSerialiser::serialiseNet() lastContact: " << ok << std::endl;
+
+        ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->localaddr)); 
+	std::cerr << "RsPeerConfigSerialiser::serialiseNet() localaddr: " << ok << std::endl;
+
+        ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->remoteaddr)); 
+	std::cerr << "RsPeerConfigSerialiser::serialiseNet() remoteaddr: " << ok << std::endl;
 
 	if(offset != tlvsize)
 	{
@@ -584,7 +665,7 @@ bool RsPeerConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *size)
 
 }
 
-RsItem *RsPeerConfigSerialiser::deserialise(void *data, uint32_t *size)
+RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size)
 {
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
@@ -596,7 +677,7 @@ RsItem *RsPeerConfigSerialiser::deserialise(void *data, uint32_t *size)
 	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
 		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
 		(RS_PKT_TYPE_PEER_CONFIG  != getRsItemType(rstype)) ||
-		(RS_PKT_SUBTYPE_DEFAULT != getRsItemSubType(rstype)))
+		(RS_PKT_SUBTYPE_PEER_NET != getRsItemSubType(rstype)))
 	{
 		return NULL; /* wrong type */
 	}
@@ -609,25 +690,30 @@ RsItem *RsPeerConfigSerialiser::deserialise(void *data, uint32_t *size)
 
 	bool ok = true;
 
-	RsPeerConfig *item = new RsPeerConfig();
+	RsPeerNetItem *item = new RsPeerNetItem();
 	item->clear();
 
 	/* skip the header */
 	offset += 8;
 
 	/* get mandatory parts first */
+        ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, item->pid); /* Mandatory */
+	std::cerr << "RsPeerConfigSerialiser::deserialiseNet() pid: " << ok << std::endl;
 
-	ok &= getRawUInt32(data, rssize, &offset, &(item->lastconn_ts));
-	std::cerr << "RsFileTransferSerialiser::deserilise() lastconn_ts: " << ok << std::endl;
+	ok &= getRawUInt32(data, rssize, &offset, &(item->netMode)); /* Mandatory */
+	std::cerr << "RsPeerConfigSerialiser::deserialiseNet() netMode: " << ok << std::endl; 
 
-	ok &= getRawUInt32(data, rssize, &offset, &(item->lastconn_ts));
-	std::cerr << "RsFileTransferSerialiser::deserilise() lastrecv_ts: " << ok << std::endl;
+	ok &= getRawUInt32(data, rssize, &offset, &(item->visState)); /* Mandatory */
+	std::cerr << "RsPeerConfigSerialiser::deserialiseNet() visState: " << ok << std::endl;
 
-	ok &= getRawUInt32(data, rssize, &offset, &(item->lastconn_ts));
-	std::cerr << "RsFileTransferSerialiser::deserilise() nextconn_ts: " << ok << std::endl;
+	ok &= getRawUInt32(data, rssize, &offset, &(item->lastContact)); /* Mandatory */
+	std::cerr << "RsPeerConfigSerialiser::deserialiseNet() lastContact: " << ok << std::endl;
 
-	ok &= getRawUInt32(data, rssize, &offset, &(item->lastconn_ts));
-	std::cerr << "RsFileTransferSerialiser::deserilise() nextconn_period: " << ok << std::endl;
+        ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->localaddr)); 
+	std::cerr << "RsPeerConfigSerialiser::deserialiseNet() localaddr: " << ok << std::endl;
+
+        ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->remoteaddr)); 
+	std::cerr << "RsPeerConfigSerialiser::deserialiseNet() remoteaddr: " << ok << std::endl;
 
 	if (offset != rssize)
 	{
@@ -639,6 +725,123 @@ RsItem *RsPeerConfigSerialiser::deserialise(void *data, uint32_t *size)
 
 	return item;
 }
+
+/****************************************************************************/
+
+RsPeerStunItem::~RsPeerStunItem()
+{
+	return;
+}
+
+void RsPeerStunItem::clear()
+{
+	stunList.TlvClear();
+}
+
+std::ostream &RsPeerStunItem::print(std::ostream &out, uint16_t indent)
+{
+	printRsItemBase(out, "RsPeerStunItem", indent);
+	uint16_t int_Indent = indent + 2;
+
+	stunList.print(out, int_Indent);
+
+        printRsItemEnd(out, "RsPeerStunItem", indent);
+	return out;
+}
+
+/*************************************************************************/
+
+uint32_t RsPeerConfigSerialiser::sizeStun(RsPeerStunItem *i)
+{	
+	uint32_t s = 8; /* header */
+	s += i->stunList.TlvSize(); /* stunList */ 
+
+	return s;
+
+}
+
+bool RsPeerConfigSerialiser::serialiseStun(RsPeerStunItem *item, void *data, uint32_t *size)
+{
+	uint32_t tlvsize = RsPeerConfigSerialiser::sizeStun(item);
+	uint32_t offset = 0;
+
+	if(*size < tlvsize)
+		return false; /* not enough space */
+
+	*size = tlvsize;
+
+	bool ok = true;
+
+	// serialise header
+
+	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+	std::cerr << "RsPeerConfigSerialiser::serialiseStun() Header: " << ok << std::endl;
+	std::cerr << "RsPeerConfigSerialiser::serialiseStun() Header: " << tlvsize << std::endl;
+
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+	ok &= item->stunList.SetTlv(data, tlvsize, &offset); /* Mandatory */
+	std::cerr << "RsPeerConfigSerialiser::serialiseStun() stunList: " << ok << std::endl; 
+
+	if(offset != tlvsize)
+	{
+		ok = false;
+		std::cerr << "RsPeerConfigSerialiser::serialiseStun() Size Error! " << std::endl;
+	}
+
+	return ok;
+
+}
+
+RsPeerStunItem *RsPeerConfigSerialiser::deserialiseStun(void *data, uint32_t *size)
+{
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+	uint32_t offset = 0;
+
+
+	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
+		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
+		(RS_PKT_TYPE_PEER_CONFIG  != getRsItemType(rstype)) ||
+		(RS_PKT_SUBTYPE_PEER_STUN != getRsItemSubType(rstype)))
+	{
+		return NULL; /* wrong type */
+	}
+
+	if (*size < rssize)    /* check size */
+		return NULL; /* not enough data */
+
+	/* set the packet length */
+	*size = rssize;
+
+	bool ok = true;
+
+	RsPeerStunItem *item = new RsPeerStunItem();
+	item->clear();
+
+	/* skip the header */
+	offset += 8;
+
+	/* get mandatory parts first */
+	ok &= item->stunList.GetTlv(data, rssize, &offset); /* Mandatory */
+	std::cerr << "RsPeerConfigSerialiser::deserialiseStun() stunList: " << ok << std::endl; 
+
+	if (offset != rssize)
+	{
+
+		/* error */
+		delete item;
+		return NULL;
+	}
+
+	return item;
+}
+
 
 /****************************************************************************/
 

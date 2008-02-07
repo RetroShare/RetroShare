@@ -26,6 +26,7 @@
 
 
 
+#include "util/rsnet.h"
 
 #include "pqi/pqissl.h"
 #include "pqi/pqinetwork.h"

@@ -49,9 +49,14 @@ p3Ranking::p3Ranking(uint16_t type, CacheTransfer *cft,
 	CacheStore(type, true, cft, storedir), 
 	mStorePeriod(storePeriod)
 {
+
+     { 	RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+
 	mOwnId = getAuthMgr()->OwnId();
 	mViewPeriod = 60 * 60 * 24 * 30; /* one Month */
 	mSortType = RS_RANK_ALG;
+
+     } 	RsStackMutex stack(mRankMtx); 
 
 //	createDummyData();
 	return;
@@ -100,8 +105,14 @@ void p3Ranking::loadRankFile(std::string filename, std::string src)
 	pqistreamer *stream = new pqistreamer(rsSerialiser, src, bio, 0);
 	
 	time_t now = time(NULL);
-	time_t min = now - mStorePeriod;
-	time_t max = now + RANK_MAX_FWD_OFFSET;
+	time_t min, max;
+
+     { 	RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+
+	min = now - mStorePeriod;
+	max = now + RANK_MAX_FWD_OFFSET;
+
+     } 	/********** STACK LOCKED MTX ******/
 
 #ifdef RANK_DEBUG
 	std::cerr << "p3Ranking::loadRankFile()";
@@ -192,6 +203,8 @@ void p3Ranking::publishMsgs()
 	pqistreamer *stream = new pqistreamer(rsSerialiser, mOwnId, bio,
 					BIN_FLAGS_NO_DELETE);
 	
+     { 	RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+
 	/* iterate through list */
 	std::map<std::string, RankGroup>::iterator it;
 	for(it = mData.begin(); it != mData.end(); it++)
@@ -223,11 +236,18 @@ void p3Ranking::publishMsgs()
 		}
 	}
 
+     } 	/********** STACK LOCKED MTX ******/
+
+
 	stream->tick(); /* Tick for final write! */
 
 	/* flag as new info */
 	CacheData data;
+
+     { 	RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
 	data.pid = mOwnId;
+     } 	/********** STACK LOCKED MTX ******/
+
 	data.cid = CacheId(CacheSource::getCacheType(), 1);
 
 	data.path = path;
@@ -271,6 +291,8 @@ void p3Ranking::addRankMsg(RsRankLinkMsg *msg)
 	msg->print(std::cerr, 10);
 	std::cerr << std::endl;
 #endif
+
+     	RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
 
 	std::map<std::string, RankGroup>::iterator it;
 	it = mData.find(rid);
@@ -328,7 +350,7 @@ void p3Ranking::addRankMsg(RsRankLinkMsg *msg)
 			mRepublish = true;
 		}
 
-		reSortGroup(it->second);
+		locked_reSortGroup(it->second);
 	}
 }
 
@@ -337,8 +359,14 @@ void p3Ranking::addRankMsg(RsRankLinkMsg *msg)
 
 bool p3Ranking::setSortPeriod(uint32_t period)
 {
-	bool reSort = (mViewPeriod != period);
-	mViewPeriod = period;
+	bool reSort = false;
+
+	{
+     	  RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+	  reSort = (mViewPeriod != period);
+	  mViewPeriod = period;
+	}
+
 
 	if (reSort)
 	{
@@ -350,8 +378,13 @@ bool p3Ranking::setSortPeriod(uint32_t period)
 
 bool p3Ranking::setSortMethod(uint32_t type)
 {
-	bool reSort = (mSortType != type);
-	mSortType = type;
+	bool reSort = false;
+
+	{
+     	  RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+	  reSort = (mSortType != type);
+	  mSortType = type;
+	}
 
 	if (reSort)
 	{
@@ -363,9 +396,14 @@ bool p3Ranking::setSortMethod(uint32_t type)
 
 bool p3Ranking::clearPeerFilter()
 {
-	bool reSort = (mPeerFilter.size() > 0);
+	bool reSort = false;
 
-	mPeerFilter.clear();
+	{
+     	  RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+	  reSort = (mPeerFilter.size() > 0);
+	  mPeerFilter.clear();
+	}
+
 
 	if (reSort)
 	{
@@ -377,7 +415,10 @@ bool p3Ranking::clearPeerFilter()
 
 bool p3Ranking::setPeerFilter(std::list<std::string> peers)
 {
-	mPeerFilter = peers;
+	{
+     	  RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+	  mPeerFilter = peers;
+	}
 
 	sortAllMsgs();
 
@@ -507,10 +548,9 @@ float 	p3Ranking::locked_calcRank(RankGroup &grp)
 }
 
 
-void	p3Ranking::reSortGroup(RankGroup &grp)
+void	p3Ranking::locked_reSortGroup(RankGroup &grp)
 {
 	std::string rid = grp.rid;
-	//float rank = grp.rank;
 
 	/* remove from existings rankings */
 	std::multimap<float, std::string>::iterator rit;
@@ -532,6 +572,8 @@ void	p3Ranking::reSortGroup(RankGroup &grp)
 
 void	p3Ranking::sortAllMsgs()
 {
+     	RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+
 	/* iterate through list and re-score each one */
 	std::map<std::string, RankGroup>::iterator it;
 
@@ -554,11 +596,15 @@ void	p3Ranking::sortAllMsgs()
         /* get Ids */
 uint32_t p3Ranking::getRankingsCount()
 {
+     	RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+
 	return mRankings.size();
 }
 
 float   p3Ranking::getMaxRank()
 {
+     	RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+
 	if (mRankings.size() == 0)
 		return 0;
 
@@ -567,6 +613,8 @@ float   p3Ranking::getMaxRank()
 
 bool    p3Ranking::getRankings(uint32_t first, uint32_t count, std::list<std::string> &rids)
 {
+     	RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+
 	uint32_t i = 0;
 	std::multimap<float, std::string>::reverse_iterator rit;
 	for(rit = mRankings.rbegin(); (i < first) && (rit != mRankings.rend()); rit++);
@@ -579,9 +627,13 @@ bool    p3Ranking::getRankings(uint32_t first, uint32_t count, std::list<std::st
 	return true;
 }
 
+
 bool    p3Ranking::getRankDetails(std::string rid, RsRankDetails &details)
 {
+     	RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+
 	/* get the details. */
+
 	std::map<std::string, RankGroup>::iterator it;
 	it = mData.find(rid);
 	if (mData.end() == it)
@@ -613,9 +665,17 @@ bool    p3Ranking::getRankDetails(std::string rid, RsRankDetails &details)
 
 void	p3Ranking::tick()
 {
-	if (mRepublish)
+	bool repub = false;
+	{
+     		RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+		repub = mRepublish;
+	}
+
+	if (repub)
 	{
 		publishMsgs();
+
+     		RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
 		mRepublish = false;
 	}
 }
@@ -633,7 +693,11 @@ std::string p3Ranking::newRankMsg(std::wstring link, std::wstring title, std::ws
 
 	time_t now = time(NULL);
 
-	msg->PeerId(mOwnId);
+	{
+     		RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+		msg->PeerId(mOwnId);
+	}
+
 	msg->rid = rid;
 	msg->title = title;
 	msg->timestamp = now;
@@ -654,6 +718,9 @@ bool p3Ranking::updateComment(std::string rid, std::wstring comment)
 	std::cerr << "p3Ranking::updateComment() rid:" << rid;
 	std::cerr << std::endl;
 #endif
+	RsRankLinkMsg *msg = NULL;
+
+     {  RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
 
 	std::map<std::string, RankGroup>::iterator it;
 	it = mData.find(rid);
@@ -668,7 +735,7 @@ bool p3Ranking::updateComment(std::string rid, std::wstring comment)
 		return false;
 	}
 
-	RsRankLinkMsg *msg = new RsRankLinkMsg();
+	msg = new RsRankLinkMsg();
 
 	time_t now = time(NULL);
 
@@ -680,6 +747,8 @@ bool p3Ranking::updateComment(std::string rid, std::wstring comment)
 
 	msg->linktype =  RS_LINK_TYPE_WEB;
 	msg->link =  (it->second).link;
+
+     }  /********** STACK UNLOCKED MTX ******/
 
 #ifdef RANK_DEBUG
 	std::cerr << "p3Ranking::updateComment() Item:";

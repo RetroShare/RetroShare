@@ -454,15 +454,24 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 	/**************************************************************************/
 
-	// set the directories for full configuration load.
-	mAuthMgr -> setConfigDirectories(config->basedir.c_str(), configCertDir.c_str());
-	//sslr -> loadCertificates(configConfFile.c_str());
+	// Load up Certificates, and Old Configuration (if present)
+	
+	std::string certConfigFile = config->basedir.c_str();
+	std::string certNeighDir   = config->basedir.c_str();
+	if (certConfigFile != "")
+	{
+		certConfigFile += "/";
+		certNeighDir += "/";
+	}
+	certConfigFile += configConfFile;
+	certNeighDir +=   configCertDir;
 
-	// Create Classes.
-	// filedex server.
-	server = new filedexserver();
-	server->setConfigDir(config->basedir.c_str());
+	/* if we've loaded an old format file! */
+        bool oldFormat = false;
+	std::map<std::string, std::string> oldConfigMap;
 
+	mAuthMgr -> setConfigDirectories(certConfigFile, certNeighDir);
+	((AuthXPGP *) mAuthMgr) -> loadCertificates(oldFormat, oldConfigMap);
 
 
 
@@ -479,14 +488,35 @@ int RsServer::StartupRetroShare(RsInit *config)
 	CacheStrapper *mCacheStrapper = new CacheStrapper(ownId, queryPeriod);
 	ftfiler       *mCacheTransfer = new ftfiler(mCacheStrapper);
 
-	p3ConfigMgr *mConfigMgr = new p3ConfigMgr(config->basedir, "rs-v0.4.cfg", "rs-v0.4.sgn");
-
 	SecurityPolicy *none = secpolicy_create();
 	pqih = new pqisslpersongrp(none, flags);
 	//pqih = new pqipersongrpDummy(none, flags);
 
+	// filedex server.
+	server = new filedexserver();
+	server->setConfigDir(config->basedir.c_str());
+	server->setSaveDir(config->homePath.c_str()); /* Default Save Dir - config will overwrite */
+	server->setSearchInterface(pqih, mAuthMgr, mConnMgr);
+
+	mConfigMgr = new p3ConfigMgr(config->basedir, "rs-v0.4.cfg", "rs-v0.4.sgn");
+	mGeneralConfig = new p3GeneralConfig();
+
+
 	// Setup Peer Interface.
 	rsPeers = new p3Peers(mConnMgr, mAuthMgr);
+
+	/* create Services */
+	ad = new p3disc(mAuthMgr, mConnMgr);
+	msgSrv = new p3MsgService(mConnMgr);
+	chatSrv = new p3ChatService(mConnMgr);
+	p3GameLauncher *gameLauncher = new p3GameLauncher();
+
+	pqih -> addService(ad);
+	pqih -> addService(msgSrv);
+	pqih -> addService(chatSrv);
+	pqih -> addService(gameLauncher);
+
+	/* so need to Monitor too! */
 
 	/**************************************************************************/
 	mConnMgr->setDhtMgr(mDhtMgr);
@@ -496,15 +526,17 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 	mConnMgr->addMonitor(pqih);
 	mConnMgr->addMonitor(mCacheStrapper);
+	mConnMgr->addMonitor(ad);
+	mConnMgr->addMonitor(msgSrv);
+
 	/**************************************************************************/
 
-	mConfigMgr->addConfiguration(CONFIG_TYPE_FSERVER, server); //"server.cfg");
-	mConfigMgr->addConfiguration(CONFIG_TYPE_PEERS, mConnMgr);
+	mConfigMgr->addConfiguration("server.cfg", server); 
+	mConfigMgr->addConfiguration("peers.cfg", mConnMgr);
+	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
+	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
 	
 	/**************************************************************************/
-
-	server->setSearchInterface(pqih, mAuthMgr, mConnMgr);
-
 
 
 	/**************************************************************************/
@@ -512,6 +544,25 @@ int RsServer::StartupRetroShare(RsInit *config)
 	/**************************************************************************/
 
 	mConfigMgr->loadConfiguration();
+
+	/**************************************************************************/
+	/* Hack Old Configuration into new System (first load only) */
+	/**************************************************************************/
+
+	if (oldFormat)
+	{
+		/* transfer all authenticated peers to friend list */
+		std::list<std::string> authIds;
+		mAuthMgr->getAuthenticatedList(authIds);
+
+		std::list<std::string>::iterator it;
+		for(it = authIds.begin(); it != authIds.end(); it++)
+		{
+			mConnMgr->addFriend(*it);
+		}
+
+		/* move other configuration options */
+	}
 
 	/**************************************************************************/
 	/* trigger generalConfig loading for classes that require it */
@@ -607,25 +658,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 	pqih->AddSearchModule(mod);
 
-	// Set Default Save Dir. pre-load
-	// Load from config will overwrite...
-	server->setSaveDir(config->homePath.c_str());
 
-        //server->load_config();
-
-	/* create Services */
-	ad = new p3disc(mAuthMgr, mConnMgr);
-	msgSrv = new p3MsgService(mConnMgr);
-	chatSrv = new p3ChatService(mConnMgr);
-	p3GameLauncher *gameLauncher = new p3GameLauncher();
-
-	pqih -> addService(ad);
-	pqih -> addService(msgSrv);
-	pqih -> addService(chatSrv);
-	pqih -> addService(gameLauncher);
-
-	/* so need to Monitor too! */
-	mConnMgr->addMonitor(ad);
 
 	/* create Cache Services */
 	std::string config_dir = config->basedir;

@@ -40,35 +40,48 @@ const uint8_t RS_PKT_TYPE_FILE_CONFIG    = 0x04;
 	/* GENERAL CONFIG SUBTYPES */
 const uint8_t RS_PKT_SUBTYPE_KEY_VALUE = 0x01;
 
+	/* PEER CONFIG SUBTYPES */
+const uint8_t RS_PKT_SUBTYPE_PEER_NET  = 0x01;
+const uint8_t RS_PKT_SUBTYPE_PEER_STUN = 0x02;
+
 /**************************************************************************/
 
-class RsPeerConfig: public RsItem
+class RsPeerNetItem: public RsItem
 {
 	public:
-	RsPeerConfig() 
+	RsPeerNetItem() 
 	:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG,
 		RS_PKT_TYPE_PEER_CONFIG,
-		RS_PKT_SUBTYPE_DEFAULT)
+		RS_PKT_SUBTYPE_PEER_NET)
 	{ return; }
-virtual ~RsPeerConfig();
+virtual ~RsPeerNetItem();
 virtual void clear();
 std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-        //RsTlvPeerId     peerid;                 /* Mandatory */
-	//RsTlvPeerFingerprint fpr;               /* Mandatory */
+	/* networking information */
+	std::string pid;                          /* Mandatory */
+	uint32_t    netMode;                      /* Mandatory */
+	uint32_t    visState;                     /* Mandatory */
+	uint32_t    lastContact;                  /* Mandatory */
 
-	//struct sockaddr_in lastaddr;            /* Mandatory */
-	//struct sockaddr_in localaddr;           /* Mandatory */
-	//struct sockaddr_in serveraddr;          /* Mandatory */
-
-	uint32_t status;                        /* Mandatory */
-
-        uint32_t lastconn_ts;                   /* Mandatory */
-        uint32_t lastrecv_ts;                   /* Mandatory */
-        uint32_t nextconn_ts;                   /* Mandatory */
-        uint32_t nextconn_period;               /* Mandatory */
+	struct sockaddr_in localaddr;             /* Mandatory */
+	struct sockaddr_in remoteaddr;            /* Mandatory */
 };
 
+class RsPeerStunItem: public RsItem
+{
+	public:
+	RsPeerStunItem() 
+	:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG,
+		RS_PKT_TYPE_PEER_CONFIG,
+		RS_PKT_SUBTYPE_PEER_STUN)
+	{ return; }
+virtual ~RsPeerStunItem();
+virtual void clear();
+std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+	RsTlvPeerIdSet stunList;		  /* Mandatory */
+};
 
 class RsPeerConfigSerialiser: public RsSerialType
 {
@@ -84,7 +97,20 @@ virtual	uint32_t    size(RsItem *);
 virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
 virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
+	private:
+
+virtual	uint32_t    sizeNet(RsPeerNetItem *);
+virtual	bool        serialiseNet  (RsPeerNetItem *item, void *data, uint32_t *size);
+virtual	RsPeerNetItem *deserialiseNet(void *data, uint32_t *size);
+
+virtual	uint32_t    sizeStun(RsPeerStunItem *);
+virtual	bool        serialiseStun  (RsPeerStunItem *item, void *data, uint32_t *size);
+virtual	RsPeerStunItem *    deserialiseStun(void *data, uint32_t *size);
+
 };
+
+/**************************************************************************/
+/**************************************************************************/
 
 /**************************************************************************/
 

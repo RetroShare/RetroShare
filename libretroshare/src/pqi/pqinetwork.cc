@@ -46,13 +46,6 @@ int errno;
 
 #endif               
 
-void sockaddr_clear(struct sockaddr_in *addr)
-{
-	memset(addr, 0, sizeof(struct sockaddr_in));
-	addr->sin_family = AF_INET;
-}
-
-
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
 

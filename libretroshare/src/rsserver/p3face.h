@@ -29,6 +29,7 @@
 #include "server/filedexserver.h"
 //#include "pqi/pqissl.h"
 
+#include "pqi/p3cfgmgr.h"
 #include "pqi/p3connmgr.h"
 #include "pqi/pqipersongrp.h"
 
@@ -246,7 +247,8 @@ virtual int     ConfigSetIncomingDir( std::string dir );
 
 virtual int     ConfigSetDataRates( int total, int indiv );
 virtual int     ConfigSetBootPrompt( bool on );
-//virtual int     ConfigSave( );
+
+virtual void    ConfigFinalSave( );
 
 	private:
 int UpdateAllConfig();
@@ -274,6 +276,10 @@ int UpdateAllConfig();
 
 	/* caches (that need ticking) */
 	p3Ranking *mRanking;
+
+	/* Config */
+	p3ConfigMgr     *mConfigMgr;
+	p3GeneralConfig *mGeneralConfig;
 
 	// Worker Data.....
 

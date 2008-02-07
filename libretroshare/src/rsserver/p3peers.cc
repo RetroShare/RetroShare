@@ -234,7 +234,11 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 	/* get from mConnectMgr */
 	peerConnectState pcs;
 
-	if (!mConnMgr->getFriendNetStatus(id, pcs))
+	if (id == mAuthMgr->OwnId())
+	{
+		mConnMgr->getOwnNetStatus(pcs);
+	}
+	else if (!mConnMgr->getFriendNetStatus(id, pcs))
 	{
 		if (!mConnMgr->getOthersNetStatus(id, pcs))
 		{
@@ -256,7 +260,7 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 	d.localPort	= ntohs(pcs.localaddr.sin_port);
 	d.extAddr	= inet_ntoa(pcs.serveraddr.sin_addr);
 	d.extPort	= ntohs(pcs.serveraddr.sin_port);
-	d.lastConnect	= 0;
+	d.lastConnect	= pcs.lastcontact;
 	d.connectPeriod = 0;
 
 	/* Translate */
@@ -269,8 +273,32 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 	if (pcs.state & RS_PEER_S_CONNECTED)
 		d.state |= RS_PEER_STATE_CONNECTED;
 
-	d.netMode	= 0;
-	// TODO if (pcs.type & RS_NET_CONN_TCP_EXTERNAL)
+	switch(pcs.netMode)
+	{
+		case RS_NET_MODE_EXT:
+			d.netMode	= RS_NETMODE_EXT;
+			break;
+		case RS_NET_MODE_UDP:
+			d.netMode	= RS_NETMODE_UDP;
+			break;
+		case RS_NET_MODE_UNKNOWN:
+		case RS_NET_MODE_ERROR:
+		case RS_NET_MODE_UPNP:
+		default:
+			d.netMode	= RS_NETMODE_UPNP;
+			break;
+	}
+
+	d.visState	= 0;
+	if (!(pcs.visState & RS_VIS_STATE_NODISC))
+	{
+		d.visState |= RS_VS_DISC_ON;
+	}
+
+	if (!(pcs.visState & RS_VIS_STATE_NODHT))
+	{
+		d.visState |= RS_VS_DHT_ON;
+	}
 
 	return true;
 }
@@ -372,14 +400,47 @@ bool 	p3Peers::setExtAddress(std::string id, std::string addr_str, uint16_t port
 }
 
 
-bool 	p3Peers::setNetworkMode(std::string id, uint32_t netMode)
+bool 	p3Peers::setNetworkMode(std::string id, uint32_t extNetMode)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::setNetworkMode() " << id;
 	std::cerr << std::endl;
 #endif
 
+	/* translate */
+	uint32_t netMode = 0;
+	switch(extNetMode)
+	{
+		case RS_NETMODE_UDP:
+			netMode = RS_NET_MODE_UDP;
+			break;
+		case RS_NETMODE_EXT:
+			netMode = RS_NET_MODE_EXT;
+			break;
+		default:
+		case RS_NETMODE_UPNP:
+			netMode = RS_NET_MODE_UPNP;
+			break;
+	}
+
 	return mConnMgr->setNetworkMode(id, netMode);
+}
+
+
+bool 	p3Peers::setVisState(std::string id, uint32_t extVisState)
+{
+#ifdef P3PEERS_DEBUG
+	std::cerr << "p3Peers::setVisState() " << id;
+	std::cerr << std::endl;
+#endif
+
+	uint32_t visState = 0;
+	if (!(extVisState & RS_VS_DHT_ON))
+		visState |= RS_VIS_STATE_NODHT;
+	if (!(extVisState & RS_VS_DISC_ON))
+		visState |= RS_VIS_STATE_NODISC;
+
+	return mConnMgr->setVisState(id, visState);
 }
 
 	/* Auth Stuff */

@@ -47,6 +47,10 @@
 int getPQIsearchId();
 int fixme(char *str, int n);
 
+
+
+#if 0 /* removing old stuff */
+
 struct chan_id
 {
 	int route[10];
@@ -200,6 +204,7 @@ private:
 	std::list<std::string> groups;
 };
 
+#endif /* removing old stuff */
 
 class RateInterface
 {
@@ -377,9 +382,10 @@ virtual ~NetBinInterface() { return; }
 };
 
 #define CHAN_SIGN_SIZE 16
-#define CERTSIGNLEN 16
-#define PQI_PEERID_LENGTH 16
+#define CERTSIGNLEN 16       /* actual byte length of signature */
+#define PQI_PEERID_LENGTH 32 /* When expanded into a string */
 
+#if 0
 class certsign
 {
         public:
@@ -420,6 +426,9 @@ const int PQI_FI_SUBTYPE_RATE  = 7;
 const int PQI_FI_SUBTYPE_ERROR = 8;
 
 const int PQI_FD_FLAG_ENDSTREAM = 1;
+
+#endif /* removing old stuff */
+
 
 #endif // PQI_BASE_ITEM_HEADER
 

@@ -34,6 +34,7 @@
 #include "pqi/pqi_base.h"
 #include "pqi/pqiindic.h"
 #include "pqi/pqinetwork.h"
+#include "util/rsthreads.h"
 
 /***** Configuration Management *****
  *
@@ -52,39 +53,60 @@
  *
  */
 
+/**** THESE are STORED in CONFIGURATION FILES....
+ * Cannot be changed
+ *
+ *********************/
+
 const uint32_t CONFIG_TYPE_GENERAL 	= 0x0001;
-const uint32_t CONFIG_TYPE_STUNLIST 	= 0x0002;
+const uint32_t CONFIG_TYPE_PEERS 	= 0x0002;
 const uint32_t CONFIG_TYPE_FSERVER 	= 0x0003;
-const uint32_t CONFIG_TYPE_PEERS 	= 0x0004;
+const uint32_t CONFIG_TYPE_MSGS 	= 0x0004;
+
+class p3ConfigMgr;
 
 class pqiConfig
 {
 	public:	
-	pqiConfig(uint32_t t, std::string defaultname)
-	:ConfInd(2), type(t), filename(defaultname)
-	{
-		return;
-	}
-virtual ~pqiConfig() { return; }
+	pqiConfig(uint32_t t);
+virtual ~pqiConfig();
 
-virtual bool	loadConfiguration(std::string filename, std::string &load) = 0;
-virtual bool	saveConfiguration(std::string filename) = 0;
+virtual bool	loadConfiguration(std::string &loadHash) = 0;
+virtual bool	saveConfiguration() = 0;
+
+uint32_t   Type();
+std::string Filename();
+std::string Hash();
+
+	protected:
+
+void	IndicateConfigChanged();
+void	setHash(std::string h); 
+
+	RsMutex cfgMtx;
+
+	private:
+
+void    setFilename(std::string name); 
+bool    HasConfigChanged(uint16_t idx);
 
 	Indicator ConfInd;
 
-uint32_t   Type()      { return type;     }
-std::string Filename() { return filename; }
-std::string Hash()     { return hash;     }
-
-	protected:
-void	setHash(std::string h) { hash = h; }
-
-	private:
 	uint32_t    type;
 	std::string filename;
 	std::string hash;
+
+	friend class p3ConfigMgr; 
+	/* so it can access:
+	 * setFilename() and HasConfigChanged()
+	 */
 };
 
+
+/**** MUTEX NOTE
+ * None - because no-one calls any functions
+ * besides tick() when the system is running.
+ */
 
 class p3ConfigMgr
 {
@@ -94,16 +116,25 @@ class p3ConfigMgr
 void	tick();
 void	saveConfiguration();
 void	loadConfiguration();
-void	addConfiguration(uint32_t type, pqiConfig *conf);
+void	addConfiguration(std::string file, pqiConfig *conf);
+
+	/* saves config, and disables further saving
+	 * used for exiting the system
+	 */
+void	completeConfiguration(); 
 
 	private:
 
+
+	/* these are constants - so shouldn't need mutex */
+const std::string basedir;
+const std::string metafname;
+const std::string metasigfname;
+
+	RsMutex cfgMtx; /* below is protected */
+
+bool	mConfigSaveActive;
 std::map<uint32_t, pqiConfig *> configs;
-
-std::string basedir;
-std::string metafname;
-std::string metasigfname;
-
 };
 
 
@@ -111,10 +142,10 @@ class p3Config: public pqiConfig
 {
 	public:
 
-	p3Config(uint32_t t, std::string name);
+	p3Config(uint32_t t);
 
-virtual bool	loadConfiguration(std::string basedir, std::string &loadHash);
-virtual bool	saveConfiguration(std::string basedir);
+virtual bool	loadConfiguration(std::string &loadHash);
+virtual bool	saveConfiguration();
 
 	protected:
 
@@ -122,7 +153,11 @@ virtual bool	saveConfiguration(std::string basedir);
 virtual RsSerialiser *setupSerialiser() = 0;
 virtual std::list<RsItem *> saveList(bool &cleanup) = 0;
 virtual bool	loadList(std::list<RsItem *> load) = 0;
-
+/**
+ * callback for mutex unlocking
+ * in derived classes (should only be needed if cleanup = false)
+ */
+virtual void    saveDone() { return; } 
 
 }; /* end of p3Config */
 
@@ -145,6 +180,7 @@ virtual bool	loadList(std::list<RsItem *> load);
 
 	private:
 
+	/* protected by pqiConfig mutex as well! */
 std::map<std::string, std::string> settings;
 };
 

@@ -61,6 +61,7 @@ virtual	bool connectAttempt(std::string id);
 virtual	bool setLocalAddress(std::string id, std::string addr, uint16_t port);
 virtual	bool setExtAddress(std::string id, std::string addr, uint16_t port);
 virtual	bool setNetworkMode(std::string id, uint32_t netMode);
+virtual bool setVisState(std::string id, uint32_t mode); 
 
 	/* Auth Stuff */
 virtual	std::string GetRetroshareInvite();

@@ -79,7 +79,7 @@ virtual bool    active() = 0;
 virtual int     InitAuth(const char *srvr_cert, const char *priv_key, 
                                         const char *passwd) = 0;
 virtual bool    CloseAuth() = 0;
-virtual int     setConfigDirectories(const char *cdir, const char *ndir) = 0;
+virtual int     setConfigDirectories(std::string confFile, std::string neighDir) = 0;
 
 		/* get Certificate Ids */
 
@@ -94,6 +94,10 @@ virtual	bool	isValid(std::string id) = 0;
 virtual	bool	isAuthenticated(std::string id) = 0;
 virtual	std::string getName(std::string id) = 0;
 virtual	bool	getDetails(std::string id, pqiAuthDetails &details) = 0;
+
+		/* High Level Load/Save Configuration */
+virtual bool saveCertificates() = 0;
+virtual bool loadCertificates() = 0;
 
 		/* Load/Save certificates */
 
@@ -117,6 +121,8 @@ virtual bool TrustCertificate(std::string id, bool trust) = 0;
 		/* Sign / Encrypt / Verify Data (TODO) */
 //virtual	bool encryptData(std::string recipientId, std::string plaindata, std::string &result);
 
+
+
 };
 
 
@@ -132,7 +138,7 @@ virtual bool    active();
 virtual int     InitAuth(const char *srvr_cert, const char *priv_key, 
                                         const char *passwd);
 virtual bool    CloseAuth();
-virtual int     setConfigDirectories(const char *cdir, const char *ndir);
+virtual int     setConfigDirectories(std::string confFile, std::string neighDir);
 
 		/* get Certificate Ids */
 
@@ -148,8 +154,11 @@ virtual	bool	isAuthenticated(std::string id);
 virtual	std::string getName(std::string id);
 virtual	bool	getDetails(std::string id, pqiAuthDetails &details);
 
-		/* Load/Save certificates */
+		/* High Level Load/Save Configuration */
+virtual bool saveCertificates();
+virtual bool loadCertificates();
 
+		/* Load/Save certificates */
 virtual bool LoadCertificateFromString(std::string pem, std::string &id);
 virtual std::string SaveCertificateToString(std::string id);
 virtual bool LoadCertificateFromFile(std::string filename, std::string &id);
@@ -163,6 +172,7 @@ virtual bool AuthCertificate(std::string uid);
 virtual bool SignCertificate(std::string id);
 virtual	bool RevokeCertificate(std::string id);
 virtual bool TrustCertificate(std::string id, bool trust);
+
 
 	std::string mOwnId;
 	std::map<std::string, pqiAuthDetails> mPeerList;

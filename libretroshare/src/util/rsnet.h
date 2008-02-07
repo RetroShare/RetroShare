@@ -55,4 +55,7 @@ typedef uint32_t in_addr_t;
 uint64_t ntohll(uint64_t x);
 uint64_t htonll(uint64_t x);
 
+/* blank a network address */
+void sockaddr_clear(struct sockaddr_in *addr);
+
 #endif /* RS_UNIVERSAL_NETWORK_HEADER */

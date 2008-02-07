@@ -102,7 +102,7 @@ bool    p3DummyAuthMgr::CloseAuth()
 	return true;
 }
 
-int     p3DummyAuthMgr::setConfigDirectories(const char *cdir, const char *ndir)
+int     p3DummyAuthMgr::setConfigDirectories(std::string confFile, std::string neighDir)
 {
 	return 1;
 }
@@ -184,6 +184,16 @@ bool	p3DummyAuthMgr::getDetails(std::string id, pqiAuthDetails &details)
 		details = it->second;
 		return true;
 	}
+	return false;
+}
+
+bool p3DummyAuthMgr::saveCertificates()
+{
+	return false;
+}
+
+bool p3DummyAuthMgr::loadCertificates()
+{
 	return false;
 }
 

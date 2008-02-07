@@ -126,7 +126,7 @@ const uint16_t TLV_TYPE_STR_HASH_SHA1 = 0x0070;
 const uint16_t TLV_TYPE_STR_HASH_ED2K = 0x0071;
 
 const uint16_t TLV_TYPE_IPV4_LOCAL    = 0x0080;
-const uint16_t TLV_TYPE_IPV4_SERVER   = 0x0081;
+const uint16_t TLV_TYPE_IPV4_REMOTE   = 0x0081;
 const uint16_t TLV_TYPE_IPV4_LAST     = 0x0082;
 
 

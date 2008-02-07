@@ -105,14 +105,20 @@ void	tick();
 void	loadRankFile(std::string filename, std::string src);
 void 	addRankMsg(RsRankLinkMsg *msg);
 void 	publishMsgs();
+
 float 	locked_calcRank(RankGroup &grp); /* returns 0->100 */
-void	reSortGroup(RankGroup &grp);
+void	locked_reSortGroup(RankGroup &grp);
+
 void	sortAllMsgs();
 pqistreamer *createStreamer(std::string file, std::string src, bool reading);
 
 	private:	
 
 void	createDummyData();
+
+	RsMutex mRankMtx;
+
+	/***** below here is locked *****/
 
 	bool mRepublish;
 	uint32_t mStorePeriod;

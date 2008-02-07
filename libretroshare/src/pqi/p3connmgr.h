@@ -35,6 +35,15 @@
 
 #include "util/rsthreads.h"
 
+	/* RS_VIS_STATE_XXXX
+	 * determines how public this peer wants to be...
+	 *
+	 * STD = advertise to Peers / DHT checking etc 
+	 * GRAY = share with friends / but not DHT 
+	 * DARK = hidden from all 
+	 * BROWN? = hidden from friends / but on DHT
+	 */
+
 const uint32_t RS_VIS_STATE_NODISC = 0x0001;
 const uint32_t RS_VIS_STATE_NODHT  = 0x0002;
 
@@ -42,6 +51,8 @@ const uint32_t RS_VIS_STATE_STD    = 0x0000;
 const uint32_t RS_VIS_STATE_GRAY   = RS_VIS_STATE_NODHT;
 const uint32_t RS_VIS_STATE_DARK   = RS_VIS_STATE_NODISC | RS_VIS_STATE_NODHT;
 const uint32_t RS_VIS_STATE_BROWN  = RS_VIS_STATE_NODISC;
+
+
 
 const uint32_t RS_NET_MODE_UNKNOWN =    0x0000;
 const uint32_t RS_NET_MODE_EXT =        0x0001;
@@ -92,27 +103,20 @@ class peerConnectState
 	peerConnectState(); /* init */
 
 	std::string id;
+
+	uint32_t netMode; /* EXT / UPNP / UDP / INVALID */
+	uint32_t visState; /* STD, GRAY, DARK */	
+
+	struct sockaddr_in localaddr, serveraddr;
+
+        time_t lastcontact; 
+
+	/***** Below here not stored permanently *****/
+
 	std::string name;
 
 	uint32_t    state;
 	uint32_t    actions;
-
-	uint32_t netMode; /* EXT / UPNP / UDP / INVALID */
-
-	/* Fix this up! */
-
-        // public for the moment.
-	struct sockaddr_in lastaddr, localaddr, serveraddr;
-
-	/* determines how public this peer wants to be...
-	 *
-	 * STD = advertise to Peers / DHT checking etc 
-	 * GRAY = share with friends / but not DHT 
-	 * DARK = hidden from all 
-	 * BROWN? = hidden from friends / but on DHT
-	 */
-
-	uint32_t visState; /* STD, GRAY, DARK */	
 
 	uint32_t		source; /* most current source */
 	peerAddrInfo		dht;
@@ -125,15 +129,6 @@ class peerConnectState
 	peerConnectAddress currentConnAddr;
 	std::list<peerConnectAddress> connAddrs;
 
-        time_t lastcontact;
-
-	/* stuff here un-used at the moment */
-
-	//time_t c_timestamp; // last connect timestamp
-        //time_t lr_timestamp; // last receive timestamp
-
-	//time_t nc_timestamp; // next connect timestamp.
-	//time_t nc_timeintvl; // next connect time interval.
 };
 
 
@@ -157,12 +152,17 @@ bool    getUPnPState();
 bool	getUPnPEnabled();
 bool	getDHTEnabled();
 
+void 	setOwnNetConfig(uint32_t netMode, uint32_t visState);
 bool 	setLocalAddress(std::string id, struct sockaddr_in addr);
 bool 	setExtAddress(std::string id, struct sockaddr_in addr);
+
 bool 	setNetworkMode(std::string id, uint32_t netMode);
+bool 	setVisState(std::string id, uint32_t visState);
 
 	/* add/remove friends */
-bool	addFriend(std::string);
+bool 	addFriend(std::string id, uint32_t netMode = RS_NET_MODE_UDP, 
+	   uint32_t visState = RS_VIS_STATE_STD , time_t lastContact = 0);
+
 bool	removeFriend(std::string);
 bool	addNeighbour(std::string);
 

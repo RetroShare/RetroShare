@@ -23,21 +23,6 @@
  *
  */
 
-
-
-
-/* So this is a test pqi server.....
- *
- * the idea is that this holds some
- * random data....., and responds to 
- * requests of a pqihandler.
- *
- */
-
-// as it is a simple test...
-// don't make anything hard to do.
-//
-
 #include "server/filedexserver.h"
 #include <fstream>
 #include <time.h>
@@ -68,11 +53,13 @@
 
 const int fldxsrvrzone = 47659;
 
+#define SERVER_DEBUG 1
+
 filedexserver::filedexserver()
-	:p3Config(0, "server.cfg"), 
+	:p3Config(CONFIG_TYPE_FSERVER), 
 	 pqisi(NULL), mAuthMgr(NULL), mConnMgr(NULL),
 	save_dir("."),
-	ftFiler(NULL) 
+        mCacheStrapper(NULL), ftFiler(NULL), fiStore(NULL), fimon(NULL)
 {
 	initialiseFileStore();
 }
@@ -153,7 +140,10 @@ std::string	filedexserver::getSaveDir()
 void	filedexserver::setSaveDir(std::string d)
 {
 	save_dir = d;
-	ftFiler -> setSaveBasePath(save_dir);
+	if (ftFiler)
+		ftFiler -> setSaveBasePath(save_dir);
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 }
 
 
@@ -165,12 +155,16 @@ bool 	filedexserver::getSaveIncSearch()
 void	filedexserver::setSaveIncSearch(bool v)
 {
 	save_inc = v;
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 }
 
 int     filedexserver::addSearchDirectory(std::string dir)
 {
 	dbase_dirs.push_back(dir);
 	reScanDirs();
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 	return 1;
 }
 
@@ -185,6 +179,8 @@ int     filedexserver::removeSearchDirectory(std::string dir)
 	}
 
 	reScanDirs();
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 	return 1;
 }
 
@@ -196,7 +192,8 @@ std::list<std::string> &filedexserver::getSearchDirectories()
 
 int     filedexserver::reScanDirs()
 {
-	fimon->setSharedDirectories(dbase_dirs);
+	if (fimon)
+		fimon->setSharedDirectories(dbase_dirs);
 
 	return 1;
 }
@@ -281,6 +278,25 @@ void    filedexserver::setFileCallback(std::string ownId, CacheStrapper *strappe
 	fimon->setSharedDirectories(dbase_dirs);
 	fimon->start();
 
+
+	std::list<RsFileTransfer *>::iterator tit;
+	for(tit = mResumeTransferList.begin(); 
+		tit != mResumeTransferList.end(); tit++)
+	{
+		RsFileTransfer      *rsft = (*tit);
+
+		/* only add in ones which have a hash (filters old versions) */
+		if (rsft->file.hash != "")
+		{
+			ftFiler -> getFile(
+				rsft->file.name, 
+				rsft->file.hash,
+				rsft->file.filesize, "");
+		}
+		delete rsft;
+	}
+	mResumeTransferList.clear();
+
 }
 
 int filedexserver::FileCacheSave()
@@ -318,24 +334,37 @@ int filedexserver::FileCacheSave()
 	return 1;
 }
 
+// Transfer control.
+void filedexserver::saveFileTransferStatus()
+{
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+}
+
 
 // Transfer control.
 int filedexserver::getFile(std::string fname, std::string hash,
                         uint32_t size, std::string dest)
 
 {
-	// send to filer.
-	return ftFiler -> getFile(fname, hash, size, dest);
+	int ret = ftFiler -> getFile(fname, hash, size, dest);
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+	return ret;
 }
 
 void filedexserver::clear_old_transfers()
 {
 	ftFiler -> clearFailedTransfers();
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 }
 
 void filedexserver::cancelTransfer(std::string fname, std::string hash, uint32_t size)
 {
 	ftFiler -> cancelFile(hash);
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 }
 
 
@@ -719,7 +748,7 @@ std::list<RsItem *> filedexserver::saveList(bool &cleanup)
 	{
 		RsTlvKeyValue kv;
 		kv.key = mit->first;
-		kv.value = mit->first;
+		kv.value = mit->second;
 
 		rskv->tlvkvs.pairs.push_back(kv);
 	}
@@ -759,6 +788,11 @@ bool filedexserver::loadList(std::list<RsItem *> load)
 	RsConfigKeyValueSet *rskv;
 	RsFileTransfer      *rsft;
 
+#ifdef SERVER_DEBUG 
+	std::cerr << "filedexserver::loadList() Item Count: " << load.size();
+	std::cerr << std::endl;
+#endif
+
 	for(it = load.begin(); it != load.end(); it++)
 	{
 		/* switch on type */
@@ -767,27 +801,26 @@ bool filedexserver::loadList(std::list<RsItem *> load)
 			/* make into map */
 			std::map<std::string, std::string> configMap;
 			for(kit = rskv->tlvkvs.pairs.begin();
-				kit != rskv->tlvkvs.pairs.begin(); kit++)
+				kit != rskv->tlvkvs.pairs.end(); kit++)
 			{
 				configMap[kit->key] = kit->value;
 			}
 
 			loadConfigMap(configMap);
+			/* cleanup */
+			delete (*it);
 
 		}
 		else if (NULL != (rsft = dynamic_cast<RsFileTransfer *>(*it)))
 		{
-			/* only add in ones which have a hash (filters old versions) */
-			if (rsft->file.hash != "")
-			{
-				ftFiler -> getFile(
-					rsft->file.name, 
-					rsft->file.hash,
-					rsft->file.filesize, "");
-			}
+			/* save to the preLoad list */
+			mResumeTransferList.push_back(rsft);
 		}
-		/* cleanup */
-		delete (*it);
+		else
+		{
+			/* cleanup */
+			delete (*it);
+		}
 	}
 
 	return true;
@@ -827,7 +860,7 @@ bool  filedexserver::loadConfigMap(std::map<std::string, std::string> &configMap
 		name += '0'+d2;
 		name += '0'+d3;
 
-		if (configMap.end() != (mit = configMap.find(save_inc_ss)))
+		if (configMap.end() != (mit = configMap.find(name)))
 		{
 			dir = mit->second;
 			dbase_dirs.push_back(mit->second);

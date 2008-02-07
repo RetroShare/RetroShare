@@ -26,6 +26,7 @@
 
 
 #include "rsserver/p3face.h"
+#include <sstream>
 
 #include <sys/time.h>
 #include <time.h>
@@ -215,6 +216,23 @@ void 	RsServer::run()
 
 				/* Tick slow services */
 				mRanking->tick();
+
+
+				/* force saving test */
+#if 0
+				std::string opt;
+				std::string val = "VALUE";
+				{
+					std::ostringstream out;
+					out << "SEC:" << lastSec;
+					opt = out.str();
+				}
+
+				mGeneralConfig->setSetting(opt, val);
+#endif
+
+				mConfigMgr->tick(); /* saves stuff */
+
 			}
 	
 			// every 60 loops (> 1 min)
@@ -222,29 +240,14 @@ void 	RsServer::run()
 			{
 				loop = 0;
 
-				// save the config every 5 minutes.
-				if (min % 5 == 1)
-				{
-					//ConfigSave();
-#ifdef PQI_USE_CHANNELS
-					/* hack to update for now 
-					 * Only occassionally - cos disabled
-					 */
-					// channel_list_ok = false;
-					// update_channels();
-#endif
-
-
-					//std::cerr << "RsServer::run() UpdateAllFiles()" << std::endl;
-					//UpdateAllFiles();
-				}
+				/* force saving FileTransferStatus */
+				server->saveFileTransferStatus();
 	
 				/* hour loop */
 				if (++min >= 60)
 				{
 					min = 0;
 				}
-				// update_dirlist();
 			}
 
 			// slow update tick as well.

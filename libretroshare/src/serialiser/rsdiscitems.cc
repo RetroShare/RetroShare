@@ -179,7 +179,7 @@ bool     RsDiscSerialiser::serialiseItem(RsDiscItem *item, void *data, uint32_t 
 					TLV_TYPE_IPV4_LOCAL, &(item->laddr));
 	std::cerr << "RsDiscSerialiser::serialiseItem() laddress: " << ok << std::endl;
 	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, 
-					TLV_TYPE_IPV4_SERVER, &(item->saddr));
+					TLV_TYPE_IPV4_REMOTE, &(item->saddr));
 	std::cerr << "RsDiscSerialiser::serialiseItem() saddress: " << ok << std::endl;
 	ok &= setRawUInt16(data, tlvsize, &offset, item->contact_tf);
 	std::cerr << "RsDiscSerialiser::serialiseItem() contact_tf: " << ok << std::endl;
@@ -235,7 +235,7 @@ RsDiscItem *RsDiscSerialiser::deserialiseItem(void *data, uint32_t *pktsize)
 					TLV_TYPE_IPV4_LOCAL, &(item->laddr));
 	std::cerr << "RsDiscSerialiser::deserialiseItem() laddress: " << ok << std::endl;
 	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, 
-					TLV_TYPE_IPV4_SERVER, &(item->saddr));
+					TLV_TYPE_IPV4_REMOTE, &(item->saddr));
 	std::cerr << "RsDiscSerialiser::deserialiseItem() saddress: " << ok << std::endl;
 	ok &= getRawUInt16(data, rssize, &offset, &(item->contact_tf));
 	std::cerr << "RsDiscSerialiser::deserialiseItem() contact_tf: " << ok << std::endl;
@@ -347,7 +347,7 @@ bool     RsDiscSerialiser::serialiseReply(RsDiscReply *item, void *data, uint32_
 					TLV_TYPE_IPV4_LOCAL, &(item->laddr));
 	std::cerr << "RsDiscSerialiser::serialiseReply() laddress: " << ok << std::endl;
 	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, 
-					TLV_TYPE_IPV4_SERVER, &(item->saddr));
+					TLV_TYPE_IPV4_REMOTE, &(item->saddr));
 	std::cerr << "RsDiscSerialiser::serialiseReply() saddress: " << ok << std::endl;
 	ok &= setRawUInt16(data, tlvsize, &offset, item->contact_tf);
 	std::cerr << "RsDiscSerialiser::serialiseReply() contact_tf: " << ok << std::endl;
@@ -410,7 +410,7 @@ RsDiscReply *RsDiscSerialiser::deserialiseReply(void *data, uint32_t *pktsize)
 					TLV_TYPE_IPV4_LOCAL, &(item->laddr));
 	std::cerr << "RsDiscSerialiser::deserialiseReply() laddress: " << ok << std::endl;
 	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, 
-					TLV_TYPE_IPV4_SERVER, &(item->saddr));
+					TLV_TYPE_IPV4_REMOTE, &(item->saddr));
 	std::cerr << "RsDiscSerialiser::deserialiseReply() saddress: " << ok << std::endl;
 	ok &= getRawUInt16(data, rssize, &offset, &(item->contact_tf));
 	std::cerr << "RsDiscSerialiser::deserialiseReply() contact_tf: " << ok << std::endl;

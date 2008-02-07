@@ -55,7 +55,7 @@ struct pqiarchive_header
 	uint32_t	type;
 	uint32_t	length;
 	uint32_t	ts;
-	uint8_t		personSig[CERTSIGNLEN];
+	uint8_t		personSig[PQI_PEERID_LENGTH];
 };
 
 const int PQIARCHIVE_TYPE_PQITEM = 0x0001;

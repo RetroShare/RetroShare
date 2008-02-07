@@ -51,8 +51,8 @@ const int msgservicezone = 54319;
 
 
 p3MsgService::p3MsgService(p3ConnectMgr *cm)
-	:p3Service(RS_SERVICE_TYPE_MSG), mConnMgr(cm),
-	msgChanged(1), mMsgUniqueId(1)
+	:p3Service(RS_SERVICE_TYPE_MSG), pqiConfig(CONFIG_TYPE_MSGS), 
+	mConnMgr(cm), msgChanged(1), mMsgUniqueId(1)
 {
 	addSerialType(new RsMsgSerialiser());
 }
@@ -102,7 +102,7 @@ int	p3MsgService::tick()
 	 */
 
 	incomingMsgs(); 
-	checkOutgoingMessages(); 
+	//checkOutgoingMessages(); 
 
 	return 0;
 }
@@ -146,10 +146,17 @@ int 	p3MsgService::incomingMsgs()
 
 		imsg[mi->msgId] = mi;
 		msgChanged.IndicateChanged();
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 		/**** STACK UNLOCKED ***/
 	}
 	return 1;
+}
+
+void    p3MsgService::statusChange(const std::list<pqipeer> &plist)
+{
+	/* should do it properly! */
+	checkOutgoingMessages();
 }
 
 int     p3MsgService::checkOutgoingMessages()
@@ -215,11 +222,18 @@ int     p3MsgService::checkOutgoingMessages()
 		}
 	}
 
+	if (toErase.size() > 0)
+	{
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+	}
+
 	return 0;
 }
 
 
-int     p3MsgService::save_config()
+
+
+bool    p3MsgService::saveConfiguration()
 {
 	std::list<std::string>::iterator it;
 	std::string empty("");
@@ -230,14 +244,14 @@ int     p3MsgService::save_config()
 	/* now we create a pqiarchive, and stream all the msgs into it
 	 */
 
+	std::string msgfile = Filename();
 
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-	std::string statelog = config_dir + "/msgs.rst";
 	RsSerialiser *rss = new RsSerialiser();
 	rss->addSerialType(new RsMsgSerialiser());
 
-	BinFileInterface *out = new BinFileInterface((char *) statelog.c_str(), BIN_FLAGS_WRITEABLE);
+	BinFileInterface *out = new BinFileInterface(msgfile.c_str(), BIN_FLAGS_WRITEABLE | BIN_FLAGS_HASH_DATA);
         pqiarchive *pa_out = new pqiarchive(rss, out, BIN_FLAGS_WRITEABLE | BIN_FLAGS_NO_DELETE);
 	bool written = false;
 
@@ -253,8 +267,6 @@ int     p3MsgService::save_config()
 
 	for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
 	{
-		//RsMsgItem *mi = (*mit)->clone();
-		//mi -> msgFlags |= RS_MSG_FLAGS_PENDING;
 		if (pa_out -> SendItem(mit->second))
 		{
 			written = true;
@@ -262,30 +274,26 @@ int     p3MsgService::save_config()
 		
 	}
 
+	setHash(out->gethash());
+
 	delete pa_out;	
-	return 1;
+	return true;
 }
 
-int     p3MsgService::load_config()
+bool    p3MsgService::loadConfiguration(std::string &loadHash)
 {
 	std::list<std::string>::iterator it;
 
-	std::string empty("");
-	std::string dir("notempty");
-	std::string str_true("true");
-
-	/* load msg/ft */
-	std::string statelog = config_dir + "/msgs.rst";
+	std::string msgfile = Filename();
 
 	RsSerialiser *rss = new RsSerialiser();
 	rss->addSerialType(new RsMsgSerialiser());
 
-	BinFileInterface *in = new BinFileInterface((char *) statelog.c_str(), BIN_FLAGS_READABLE);
+	BinFileInterface *in = new BinFileInterface(msgfile.c_str(), BIN_FLAGS_READABLE | BIN_FLAGS_HASH_DATA);
         pqiarchive *pa_in = new pqiarchive(rss, in, BIN_FLAGS_READABLE);
 	RsItem *item;
 	RsMsgItem *mitem;
 
-	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
 	while((item = pa_in -> GetItem()))
 	{
@@ -298,6 +306,8 @@ int     p3MsgService::load_config()
 			mitem->msgId = getNewUniqueMsgId();
 			if (mitem -> msgFlags & RS_MSG_FLAGS_PENDING)
 			{
+				RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
 				std::cerr << "MSG_PENDING";
 				std::cerr << std::endl;
 				mitem->print(std::cerr);
@@ -305,6 +315,8 @@ int     p3MsgService::load_config()
 			}
 			else
 			{
+				RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
 				imsg[mitem->msgId] = mitem;
 			}
 		}
@@ -314,9 +326,23 @@ int     p3MsgService::load_config()
 		}
 	}
 
+	std::string hashin = in->gethash();
+
+	if (hashin != loadHash)
+	{
+		/* big error message! */
+		std::cerr << "p3MsgService::loadConfiguration() FAILED!" << std::endl;
+		std::cerr << "p3MsgService::loadConfiguration() FAILED!" << std::endl;
+		std::cerr << "p3MsgService::loadConfiguration() FAILED!" << std::endl;
+		std::cerr << "p3MsgService::loadConfiguration() FAILED!" << std::endl;
+		std::cerr << "p3MsgService::loadConfiguration() FAILED!" << std::endl;
+	}
+
+	setHash(hashin);
+
 	delete pa_in;	
 
-	return 1;
+	return true;
 }
 
 
@@ -423,6 +449,8 @@ bool    p3MsgService::removeMsgId(std::string mid)
 		delete mi;
 		msgChanged.IndicateChanged();
 
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
 		return true;
 	}
 
@@ -433,6 +461,8 @@ bool    p3MsgService::removeMsgId(std::string mid)
 		msgOutgoing.erase(mit);
 		delete mi;
 		msgChanged.IndicateChanged();
+
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 		return true;
 	}
@@ -466,6 +496,9 @@ int     p3MsgService::sendMessage(RsMsgItem *item)
 	pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
 		"p3MsgService::sendMessage()");
 
+	item -> msgId = getNewUniqueMsgId(); /* grabs Mtx as well */
+
+      {
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
 	/* add pending flag */
@@ -473,8 +506,12 @@ int     p3MsgService::sendMessage(RsMsgItem *item)
 		(RS_MSG_FLAGS_OUTGOING | 
 		 RS_MSG_FLAGS_PENDING);
 	/* STORE MsgID */
-	item -> msgId = getNewUniqueMsgId();
 	msgOutgoing[item->msgId] = item;
+      }
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+	checkOutgoingMessages(); 
 
 	return 1;
 }

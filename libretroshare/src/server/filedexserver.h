@@ -71,7 +71,7 @@ int	setSearchInterface(P3Interface *si, p3AuthMgr *am, p3ConnectMgr *cm);
 
 std::list<RsFileTransfer *> getTransfers();
 
-	// get files (obsolete?)
+void 	saveFileTransferStatus();
 int     getFile(std::string fname, std::string hash,
                         uint32_t size, std::string dest);
 void 	clear_old_transfers();
@@ -173,6 +173,9 @@ void 	SendFileData(ftFileData *ftd, std::string pid);
 	ftfiler 	*ftFiler;
         FileIndexStore *fiStore;
 	FileIndexMonitor *fimon;
+
+	/* Temp Transfer List (for loading config) */
+	std::list<RsFileTransfer *> mResumeTransferList;
 };
 
 #endif // MRK_PQI_FILEDEX_SERVER_HEADER

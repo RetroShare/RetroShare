@@ -27,6 +27,8 @@
 #include "tcponudp/tou.h"
 #include "util/rsprint.h"
 
+#include "serialiser/rsconfigitems.h"
+
 /* Network setup States */
 
 const uint32_t RS_NET_UNKNOWN = 	0x0001;
@@ -45,23 +47,6 @@ const uint32_t MAX_UPNP_INIT = 		10; /* seconds UPnP timeout */
 
 #define CONN_DEBUG 1
 
-p3ConnectMgr::p3ConnectMgr(p3AuthMgr *am)
-	:p3Config(CONFIG_TYPE_PEERS, "peers.cfg"), 
-	mAuthMgr(am), mDhtMgr(NULL), mUpnpMgr(NULL), mNetStatus(RS_NET_UNKNOWN), 
-	mStunStatus(0), mStatusChanged(false)
-{
-	mUpnpAddrValid = false;
-	mStunAddrValid = false;
-
-	/* setup basics of own state */
-	if (am)
-	{
-		ownState.id = mAuthMgr->OwnId();
-		ownState.name = mAuthMgr->getName(ownState.id);
-	}
-
-	return;
-}
 
 peerConnectAddress::peerConnectAddress()
 	:type(0), ts(0)
@@ -78,21 +63,55 @@ peerAddrInfo::peerAddrInfo()
 }
 
 peerConnectState::peerConnectState()
-	:id("unknown"), name("nameless"), state(0), actions(0), 
+	:id("unknown"), 
 	 netMode(RS_NET_MODE_UNKNOWN), visState(RS_VIS_STATE_STD), 
-	 source(0), 
-	 inConnAttempt(0), connAttemptTS(0),
-	 lastcontact(0)
+	 lastcontact(0),
 
-	 //lc_timestamp(0), lr_timestamp(0),
-	 //nc_timestamp(0), nc_timeintvl(0)
+	 name("nameless"), state(0), actions(0), 
+	 source(0), 
+	 inConnAttempt(0), connAttemptTS(0)
 {
-	sockaddr_clear(&lastaddr);
 	sockaddr_clear(&localaddr);
 	sockaddr_clear(&serveraddr);
 
 	return;
 }
+
+
+p3ConnectMgr::p3ConnectMgr(p3AuthMgr *am)
+	:p3Config(CONFIG_TYPE_PEERS), 
+	mAuthMgr(am), mDhtMgr(NULL), mUpnpMgr(NULL), mNetStatus(RS_NET_UNKNOWN), 
+	mStunStatus(0), mStatusChanged(false)
+{
+	mUpnpAddrValid = false;
+	mStunAddrValid = false;
+
+	/* setup basics of own state */
+	if (am)
+	{
+		ownState.id = mAuthMgr->OwnId();
+		ownState.name = mAuthMgr->getName(ownState.id);
+		ownState.netMode = RS_NET_MODE_UDP;
+	}
+
+	return;
+}
+
+
+void p3ConnectMgr::setOwnNetConfig(uint32_t netMode, uint32_t visState)
+{
+	ownState.netMode = netMode;
+	ownState.visState = visState;
+
+	/* if we've started up - then tweak Dht On/Off */
+	if (mNetStatus != RS_NET_UNKNOWN)
+	{
+		mDhtMgr->setDhtOn(!(ownState.visState & RS_VIS_STATE_NODHT));
+	}
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+}
+
 
 /***** Framework / initial implementation for a connection manager.
  *
@@ -374,6 +393,7 @@ void p3ConnectMgr::netUdpCheck()
 			{
 				mode |= RS_NET_CONN_TCP_EXTERNAL;
 			}
+			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 		}
 
 		connMtx.unlock(); /* UNLOCK MUTEX */
@@ -567,6 +587,8 @@ void p3ConnectMgr::stunCollect(std::string id, struct sockaddr_in addr, uint32_t
 #endif
 			/* push to the front */
 			mStunList.push_front(id);
+
+			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 		}
 	}
 	else
@@ -581,6 +603,8 @@ void p3ConnectMgr::stunCollect(std::string id, struct sockaddr_in addr, uint32_t
 			/* move to front */
 			mStunList.erase(it);
 			mStunList.push_front(id);
+
+			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 		}
 	}
 
@@ -1036,6 +1060,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		}
 
 		/* not updating VIS status??? */
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 	}
 	else if (source == RS_CB_PERSON)
 	{
@@ -1083,6 +1108,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		{
 			it->second.visState |= RS_VIS_STATE_NODHT;
 		}
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 	}
 
 	if (!isFriend)
@@ -1216,7 +1242,7 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, uint32_t type)
 /*******************************************************************/
 /*******************************************************************/
 
-bool p3ConnectMgr::addFriend(std::string id)
+bool p3ConnectMgr::addFriend(std::string id, uint32_t netMode, uint32_t visState, time_t lastContact)
 {
 	/* so three possibilities 
 	 * (1) already exists as friend -> do nothing.
@@ -1276,12 +1302,18 @@ bool p3ConnectMgr::addFriend(std::string id)
 		it->second.state = RS_PEER_S_FRIEND;
 		it->second.actions = RS_PEER_NEW;
 
+		/* setup connectivity parameters */
+		it->second.visState = visState;
+		it->second.netMode  = netMode;
+		it->second.lastcontact = lastContact;
+
 		mStatusChanged = true;
 
 		/* add peer to DHT (if not dark) */
 		if (it->second.visState & RS_VIS_STATE_NODHT)
 		{
 			/* hidden from DHT world */
+			mDhtMgr->dropPeer(id);
 		}
 		else
 		{
@@ -1289,6 +1321,9 @@ bool p3ConnectMgr::addFriend(std::string id)
 		}
 
 		connMtx.unlock(); /* UNLOCK MUTEX */
+
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
 		return true;
 	}
 
@@ -1320,8 +1355,9 @@ bool p3ConnectMgr::addFriend(std::string id)
 
 	pstate.state = RS_PEER_S_FRIEND;
 	pstate.actions = RS_PEER_NEW;
-	pstate.visState = RS_VIS_STATE_STD;
-	pstate.netMode = RS_NET_MODE_UNKNOWN;
+	pstate.visState = visState;
+	pstate.netMode = netMode;
+	pstate.lastcontact = lastContact;
 
 	/* addr & timestamps -> auto cleared */
 
@@ -1333,6 +1369,8 @@ bool p3ConnectMgr::addFriend(std::string id)
 	mDhtMgr->findPeer(id);
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 	return true;
 }
@@ -1372,6 +1410,8 @@ bool p3ConnectMgr::removeFriend(std::string id)
 	}
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 	return success;
 }
@@ -1611,6 +1651,7 @@ bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
 	if (id == mAuthMgr->OwnId())
 	{
 		ownState.localaddr = addr;
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 		return true;
 	}
 
@@ -1626,6 +1667,7 @@ bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
 
 	/* "it" points to peer */
 	it->second.localaddr = addr;
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 	return true;
 }
@@ -1637,6 +1679,7 @@ bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
 	if (id == mAuthMgr->OwnId())
 	{
 		ownState.serveraddr = addr;
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 		return true;
 	}
 
@@ -1652,16 +1695,92 @@ bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
 
 	/* "it" points to peer */
 	it->second.serveraddr = addr;
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 	return true;
 }
 
 bool    p3ConnectMgr::setNetworkMode(std::string id, uint32_t netMode)
 {
+	if (id == mAuthMgr->OwnId())
+	{
+		uint32_t visState = ownState.visState;
+		setOwnNetConfig(netMode, visState);
+
+		return true;
+	}
+
+	/* check if it is a friend */
+        std::map<std::string, peerConnectState>::iterator it;
+	if (mFriendList.end() == (it = mFriendList.find(id)))
+	{
+		if (mOthersList.end() == (it = mOthersList.find(id)))
+		{
+			return false;
+		}
+	}
+
+	/* "it" points to peer */
+	it->second.netMode = netMode;
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+
 	connMtx.lock();   /*   LOCK MUTEX */
 	connMtx.unlock(); /* UNLOCK MUTEX */
 	return false;
 }
+
+bool    p3ConnectMgr::setVisState(std::string id, uint32_t visState)
+{
+	if (id == mAuthMgr->OwnId())
+	{
+		uint32_t netMode = ownState.netMode;
+		setOwnNetConfig(netMode, visState);
+
+		return true;
+	}
+
+	/* check if it is a friend */
+        std::map<std::string, peerConnectState>::iterator it;
+	bool isFriend = false;
+	if (mFriendList.end() == (it = mFriendList.find(id)))
+	{
+		if (mOthersList.end() == (it = mOthersList.find(id)))
+		{
+			return false;
+		}
+	}
+	else
+	{
+		isFriend = true;
+	}
+
+	/* "it" points to peer */
+	it->second.visState = visState;
+	if (isFriend)
+	{
+		/* toggle DHT state */
+		if (it->second.visState & RS_VIS_STATE_NODHT)
+		{
+			/* hidden from DHT world */
+			mDhtMgr->dropPeer(id);
+		}
+		else
+		{
+			mDhtMgr->findPeer(id);
+		}
+	}
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+
+	connMtx.lock();   /*   LOCK MUTEX */
+	connMtx.unlock(); /* UNLOCK MUTEX */
+	return false;
+}
+
+
+
 
 bool p3ConnectMgr::getUPnPState()
 {
@@ -1717,6 +1836,8 @@ bool 	p3ConnectMgr::checkNetAddress()
 		std::cerr << "p3ConnectMgr::checkNetAddress() Local Address Not Found: Using Preferred Interface: ";
 		std::cerr << inet_ntoa(ownState.localaddr.sin_addr);
 		std::cerr << std::endl;
+	
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 	}
 	if ((isPrivateNet(&(ownState.localaddr.sin_addr))) ||
@@ -1751,7 +1872,6 @@ bool 	p3ConnectMgr::checkNetAddress()
 	// ensure that address family is set, otherwise windows Barfs.
 	ownState.localaddr.sin_family = AF_INET;
 	ownState.serveraddr.sin_family = AF_INET;
-	ownState.lastaddr.sin_family = AF_INET;
 
 	std::cerr << "p3ConnectMgr::checkNetAddress() Final Local Address: ";
 	std::cerr << inet_ntoa(ownState.localaddr.sin_addr);
@@ -1766,12 +1886,10 @@ bool 	p3ConnectMgr::checkNetAddress()
 /*******************************************************************/
         /* Key Functions to be overloaded for Full Configuration */
 
-/**** TODO ****/
-
 RsSerialiser *p3ConnectMgr::setupSerialiser()
 {
 	RsSerialiser *rss = new RsSerialiser();
-	//rss->addSerialType(new RsConfigSerialiser());
+	rss->addSerialType(new RsPeerConfigSerialiser());
 
 	return rss;
 }
@@ -1782,101 +1900,129 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
 	/* create a list of current peers */
 	std::list<RsItem *> saveData;
 	cleanup = true;
+
 	connMtx.lock();   /*   LOCK MUTEX */
 	connMtx.unlock(); /* UNLOCK MUTEX */
+
+	RsPeerNetItem *item = new RsPeerNetItem();
+	item->clear();
+
+	item->pid = getOwnId();
+	item->netMode = ownState.netMode;
+	item->visState = ownState.visState;
+	item->lastContact = ownState.lastcontact;
+	item->localaddr = ownState.localaddr;
+	item->remoteaddr = ownState.serveraddr;
+
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::saveList() Own Config Item:";
+	std::cerr << std::endl;
+	item->print(std::cerr, 10);
+	std::cerr << std::endl;
+#endif
+
+	saveData.push_back(item);
+
+	/* iterate through all friends and save */
+        std::map<std::string, peerConnectState>::iterator it;
+	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
+	{
+		item = new RsPeerNetItem();
+		item->clear();
+
+		item->pid = it->first;
+		item->netMode = (it->second).netMode;
+		item->visState = (it->second).visState;
+		item->lastContact = (it->second).lastcontact;
+		item->localaddr = (it->second).localaddr;
+		item->remoteaddr = (it->second).serveraddr;
+
+		saveData.push_back(item);
+#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr::saveList() Peer Config Item:";
+		std::cerr << std::endl;
+		item->print(std::cerr, 10);
+		std::cerr << std::endl;
+#endif
+	}
+
+	RsPeerStunItem *sitem = new RsPeerStunItem();
+
+	std::list<std::string>::iterator sit;
+	for(sit = mStunList.begin(); sit != mStunList.end(); sit++)
+	{
+		sitem->stunList.ids.push_back(*sit);
+	}
+	saveData.push_back(sitem);
 
 	return saveData;
 }
 
 bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 {
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::loadList() Item Count: " << load.size();
+	std::cerr << std::endl;
+#endif
+
 	/* load the list of peers */
 	std::list<RsItem *>::iterator it;
 	for(it = load.begin(); it != load.end(); it++)
 	{
+		RsPeerNetItem *pitem = dynamic_cast<RsPeerNetItem *>(*it);
+		RsPeerStunItem *sitem = dynamic_cast<RsPeerStunItem *>(*it);
 
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
+		if (pitem)
+		{
+			if (pitem->pid == getOwnId())
+			{
+#ifdef CONN_DEBUG
+				std::cerr << "p3ConnectMgr::loadList() Own Config Item:";
+				std::cerr << std::endl;
+				pitem->print(std::cerr, 10);
+				std::cerr << std::endl;
+#endif
+				/* add ownConfig */
+				setOwnNetConfig(pitem->netMode, pitem->visState);
+				setLocalAddress(pitem->pid, pitem->localaddr);
+				setExtAddress(pitem->pid, pitem->remoteaddr);
+			}
+			else
+			{
+#ifdef CONN_DEBUG
+				std::cerr << "p3ConnectMgr::loadList() Peer Config Item:";
+				std::cerr << std::endl;
+				pitem->print(std::cerr, 10);
+				std::cerr << std::endl;
+#endif
+				/* ************* */
+				addFriend(pitem->pid, pitem->netMode, pitem->visState, pitem->lastContact);
+				setLocalAddress(pitem->pid, pitem->localaddr);
+				setExtAddress(pitem->pid, pitem->remoteaddr);
+			}
+		}
+		else if (sitem)
+		{
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::loadList() Stun Config Item:";
+			std::cerr << std::endl;
+			sitem->print(std::cerr, 10);
+			std::cerr << std::endl;
+#endif
+			std::list<std::string>::iterator sit;
+			for(sit = sitem->stunList.ids.begin();
+				sit != sitem->stunList.ids.end(); sit++)
+			{
+				mStunList.push_back(*sit);
+			}
+		}
+
+		connMtx.lock();   /*   LOCK MUTEX */
+		connMtx.unlock(); /* UNLOCK MUTEX */
 		delete (*it);
 	}
-
 	return true;
 }
 
-/*******************************************************************/
-#if 0
-		
-/******************************** Load/Save Config *********************************
- * Configuration Loading / Saving.
- */
 
-
-void p3ConnectMgr::saveConfiguration()
-{
-
-	return;
-}
-
-void p3ConnectMgr::loadConfiguration()
-{
-	/* open the config file....
-	 * load:
-	 * (1) a list of friends 
-	 * (2) a list of stun peers
-	 */
-	return;
-}
-
-
-	std::string configFile = configMgr->getConfigDir();
-
-	configFile += "rsnet.state";
-
-	/* open file */
-	while(NULL != (item = config.read()))
-	{
-
-		switch(item->SubType())
-		{
-			case OWN_CONFIG:
-			{
-				RsPeerConfigItem *peeritem = (RsPeerConfigItem *) item;
-				setupConfig(peeritem);
-				break;
-			}
-			case PEER_CONFIG:
-			{
-				RsPeerConfigItem *peeritem = (RsPeerConfigItem *) item;
-				addPeer(peeritem);
-				break;
-			}
-			case STUNLIST:
-			{
-				RsStunConfigItem *slitem = (RsStunConfigItem *) item;
-
-				/* add to existing list */
-				for(it = slitem.begin(); 
-					it = slitem.end(); it++)
-				{
-					mStunList.push_back(*it);
-				}
-				break;
-			}
-			default:
-				break;
-		}
-
-		delete item;
-	}
-
-}
-
-
-void p3ConnectMgr::setupOwnNetConfig(RsPeerConfigItem *item)
-{
-
-	return;
-}
-
-#endif
 

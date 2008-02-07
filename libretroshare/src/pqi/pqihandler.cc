@@ -298,7 +298,7 @@ int pqihandler::GetItems()
 
 		// check security... is output allowed.
 		if(0 < secpolicy_check((it -> second) -> sp, 
-					PQI_ITEM_TYPE_ITEM, PQI_INCOMING))
+					0, PQI_INCOMING)) // PQI_ITEM_TYPE_ITEM, PQI_INCOMING))
 		{
 			// if yes... attempt to read.
 			while((item = (mod -> pqi) -> GetItem()) != NULL)

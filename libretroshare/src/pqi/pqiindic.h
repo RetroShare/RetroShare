@@ -36,15 +36,15 @@
 class Indicator
 {
 	public:
-	Indicator(int n = 1)
+	Indicator(uint16_t n = 1)
 	:num(n), changeFlags(n) {IndicateChanged();}
 void	IndicateChanged()
 	{
-		for(int i = 0; i < num; i++)
+		for(uint16_t i = 0; i < num; i++)
 			changeFlags[i]=true;
 	}
 
-bool	Changed(int idx = 0)
+bool	Changed(uint16_t idx = 0)
 	{
 		/* catch overflow */
 		if (idx > num - 1)
@@ -56,7 +56,7 @@ bool	Changed(int idx = 0)
 	}
 
 	private:
-	int num;
+	uint16_t num;
 	std::vector<bool> changeFlags;
 };
 

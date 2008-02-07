@@ -24,6 +24,8 @@
  */
 
 #include "util/rsnet.h"
+#include <string.h>
+
 
 uint64_t ntohll(uint64_t x)
 {
@@ -52,4 +54,9 @@ uint64_t htonll(uint64_t x)
         return ntohll(x);
 }
 
+void sockaddr_clear(struct sockaddr_in *addr)
+{
+        memset(addr, 0, sizeof(struct sockaddr_in));
+        addr->sin_family = AF_INET;
+}
 
