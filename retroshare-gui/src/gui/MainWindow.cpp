@@ -455,12 +455,14 @@ void MainWindow::doQuit()
         
         if (confirm->result() == QDialog::Accepted) 
         {
+	    rsicontrol->ConfigFinalSave();
             qApp->quit();
         } else {
             delete confirm;
         }
         
     } else {
+	rsicontrol->ConfigFinalSave();
         qApp->quit();
     }
 }

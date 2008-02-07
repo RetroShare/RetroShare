@@ -45,6 +45,10 @@ const uint32_t RS_NETMODE_UDP		= 0x0001;
 const uint32_t RS_NETMODE_UPNP		= 0x0002;
 const uint32_t RS_NETMODE_EXT		= 0x0003;
 
+/* Visibility */
+const uint32_t RS_VS_DHT_ON		= 0x0001;
+const uint32_t RS_VS_DISC_ON		= 0x0002;
+
 /* State */
 const uint32_t RS_PEER_STATE_FRIEND	= 0x0001;
 const uint32_t RS_PEER_STATE_ONLINE	= 0x0002;
@@ -90,6 +94,7 @@ class RsPeerDetails
         uint16_t                extPort;
 
 	uint32_t		netMode;
+	uint32_t		visState;
 
 	/* basic stats */
 	uint32_t		lastConnect; /* how long ago */
@@ -129,6 +134,7 @@ virtual	bool connectAttempt(std::string id)			= 0;
 virtual	bool setLocalAddress(std::string id, std::string addr, uint16_t port) = 0;
 virtual	bool setExtAddress(  std::string id, std::string addr, uint16_t port) = 0;
 virtual	bool setNetworkMode(std::string id, uint32_t netMode) 	= 0;
+virtual bool setVisState(std::string id, uint32_t vis)		= 0;
 
 	/* Auth Stuff */
 virtual	std::string GetRetroshareInvite() 			= 0;

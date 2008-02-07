@@ -23,6 +23,7 @@
 #include <rshare.h>
 #include "ServerDialog.h"
 #include <iostream>
+#include <sstream>
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
@@ -39,8 +40,7 @@ ServerDialog::ServerDialog(QWidget *parent)
  /* Create RshareSettings object */
   _settings = new RshareSettings();
 
-  connect( ui.ManualButton, SIGNAL( toggled( bool ) ), this, SLOT( toggleUPnP( ) ) );
-  connect( ui.UPnPButton, SIGNAL( toggled( bool ) ), this, SLOT( toggleUPnP( ) ) );
+  connect( ui.netModeComboBox, SIGNAL( activated ( int ) ), this, SLOT( toggleUPnP( ) ) );
 
 
   /* Hide platform specific features */
@@ -67,84 +67,103 @@ ServerDialog::save(QString &errmsg)
 
 
 /** Loads the settings for this page */
-void
-ServerDialog::load()
+void ServerDialog::load()
 {
-	/* get the shared directories */
-	rsiface->lockData(); /* Lock Interface */
 
-/* set local address */
-	ui.localAddress->setText(QString::fromStdString(rsiface->getConfig().localAddr));
-	ui.localPort -> setValue(rsiface->getConfig().localPort);
-/* set the server address */
-	ui.extAddress->setText(QString::fromStdString(rsiface->getConfig().extAddr));
-	ui.extPort -> setValue(rsiface->getConfig().extPort);
-/* set the flags */
-	ui.chkFirewall  ->setChecked(rsiface->getConfig().firewalled);
-	ui.chkForwarded ->setChecked(rsiface->getConfig().forwardPort);
-
-	/* now handle networking options */
-	if (rsiface->getConfig().DHTActive)
+	/* load up configuration from rsPeers */
+	RsPeerDetails detail;
+	if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
 	{
-		ui.DHTButton -> setChecked(true);
-	}
-	else
-	{
-		ui.noDHTButton -> setChecked(true);
+		return;
 	}
 
-	int dhtPeers = rsiface->getConfig().DHTPeers;
-	if (!dhtPeers)
+	/* set net mode */
+	int netIndex = 0;
+	switch(detail.netMode)
 	{
-		ui.dhtStatus -> setText("DHT Off/Unavailable");
-	}
-	else if (dhtPeers < 20)
-	{
-		ui.dhtStatus -> setText("DHT Initialising");
-	}
-	else
-	{
-		ui.dhtStatus -> setText("DHT Active");
-	}
-		
-	switch(rsiface->getConfig().uPnPState)
-	{
-		case UPNP_STATE_ACTIVE:
-			ui.upnpStatus -> setText("Forwarding Active");
+		case RS_NETMODE_EXT:
+			netIndex = 2;
 			break;
-		case UPNP_STATE_FAILED_UDP:
-			ui.upnpStatus -> setText("TCP Active/UDP Failed");
+		case RS_NETMODE_UDP:
+			netIndex = 1;
 			break;
-		case UPNP_STATE_FAILED_TCP:
-			ui.upnpStatus -> setText("Forwarding Failed");
-			break;
-		case UPNP_STATE_READY:
-			ui.upnpStatus -> setText("uPnP Ready");
-			break;
-		case UPNP_STATE_UNAVAILABILE:
-			ui.upnpStatus -> setText("uPnP Unavailable");
-			break;
-		case UPNP_STATE_UNINITIALISED:
 		default:
-			ui.upnpStatus -> setText("uPnP Uninitialised");
+		case RS_NETMODE_UPNP:
+			netIndex = 0;
 			break;
+	}
+	ui.netModeComboBox->setCurrentIndex(netIndex);
 
-	}
-	ui.upnpStatus->setReadOnly(true);
-	ui.dhtStatus ->setReadOnly(true);
-      
-	if (rsiface->getConfig().uPnPActive)
+	/* set dht/disc */
+	netIndex = 1;
+	if (detail.visState & RS_VS_DHT_ON)
 	{
-		/* flag uPnP */
-		ui.UPnPButton->setChecked(true);
-		/* shouldn't fiddle with port */
+		netIndex = 0;
 	}
+	ui.dhtComboBox->setCurrentIndex(netIndex);
+
+	netIndex = 1;
+	if (detail.visState & RS_VS_DISC_ON)
+	{
+		netIndex = 0;
+	}
+	ui.discComboBox->setCurrentIndex(netIndex);
+
+
+	/* set the addresses */
+		/* set local address */
+	ui.localAddress->setText(QString::fromStdString(detail.localAddr));
+	ui.localPort -> setValue(detail.localPort);
+		/* set the server address */
+	ui.extAddress->setText(QString::fromStdString(detail.extAddr));
+	ui.extPort -> setValue(detail.extPort);
+
+	/* set status */
+	std::ostringstream out;
+	out << "Network Mode: ";
+	switch(detail.netMode)
+	{
+		case RS_NETMODE_EXT:
+			out << "External Forwarded Port (UltraPEER Mode)";
+			break;
+		case RS_NETMODE_UDP:
+			out << "Firewalled";
+			break;
+		default:
+		case RS_NETMODE_UPNP:
+			out << "Automatic: UPnP Forwarded Port";
+			break;
+	}
+	out << std::endl;
+	out << "\tLocal Address: " << detail.localAddr;
+	out << ":" << detail.localPort;
+	out << std::endl;
+	out << "\tExternal Address: " << detail.extAddr;
+	out << ":" << detail.extPort;
+	out << std::endl;
+
+	out << "UPnP Status: ";
+	out << std::endl;
+
+	out << "DHT Status: ";
+	if (detail.visState & RS_VS_DHT_ON)
+		out << " Enabled";
 	else
-	{
-		/* noobie */
-		ui.ManualButton->setChecked(true);
+		out << " Disabled";
+	out << std::endl;
 
-	}
+	out << "Discovery Status: ";
+	if (detail.visState & RS_VS_DISC_ON)
+		out << " Enabled";
+	else
+		out << " Disabled";
+	out << std::endl;
+
+
+	ui.netStatusBox->setText(QString::fromStdString(out.str()));
+	ui.netStatusBox ->setReadOnly(true);
+
+	rsiface->lockData(); /* Lock Interface */
 
 	ui.totalRate->setValue(rsiface->getConfig().maxDataRate);
 	ui.indivRate->setValue(rsiface->getConfig().maxIndivDataRate);
@@ -158,28 +177,32 @@ void ServerDialog::toggleUPnP()
 {
 	/* switch on the radioButton */
 	bool settingChangeable = false;
-	if (ui.ManualButton->isChecked())
+	if (0 != ui.netModeComboBox->currentIndex())
 	{
 		settingChangeable = true;
 	}
 
 	if (settingChangeable)
 	{
+		ui.dhtComboBox->setEnabled(true);
+		// disabled until we've got it all working.
+		//ui.discComboBox->setEnabled(true);
+		ui.discComboBox->setEnabled(false);
+
 		ui.localAddress->setEnabled(true);
 		ui.localPort  -> setEnabled(true);
 		ui.extAddress -> setEnabled(true);
 		ui.extPort    -> setEnabled(true);
-		ui.chkFirewall-> setEnabled(true);
-		ui.chkForwarded->setEnabled(true);
 	}
 	else
 	{
+		ui.dhtComboBox->setEnabled(false);
+		ui.discComboBox->setEnabled(false);
+
 		ui.localAddress->setEnabled(false);
 		ui.localPort  -> setEnabled(false);
 		ui.extAddress -> setEnabled(false);
 		ui.extPort    -> setEnabled(false);
-		ui.chkFirewall-> setEnabled(false);
-		ui.chkForwarded->setEnabled(false);
 	}
 }
 
@@ -188,10 +211,57 @@ void ServerDialog::saveAddresses()
 	QString str;
 
 	bool saveAddr = false;
-	//rsicontrol -> NetworkDHTActive(ui.DHTButton->isChecked());
-	//rsicontrol -> NetworkUPnPActive(ui.UPnPButton->isChecked());
 
-	if (ui.ManualButton->isChecked())
+
+	RsPeerDetails detail;
+	std::string ownId = rsPeers->getOwnId();
+
+	if (!rsPeers->getPeerDetails(ownId, detail))
+	{
+		return;
+	}
+
+	int netIndex = ui.netModeComboBox->currentIndex();
+
+	/* Check if netMode has changed */
+	int netMode = 0;
+	switch(netIndex)
+	{
+		case 2:
+			netMode = RS_NETMODE_EXT;
+			break;
+		case 1:
+			netMode = RS_NETMODE_UDP;
+			break;
+		default:
+		case 0:
+			netMode = RS_NETMODE_UPNP;
+			break;
+	}
+
+	if (detail.netMode != netMode)
+	{
+		rsPeers->setNetworkMode(ownId, netMode);
+	}
+
+	int visState = 0;
+	/* Check if vis has changed */
+	if (0 == ui.discComboBox->currentIndex())
+	{
+		visState |= RS_VS_DISC_ON;
+	}
+
+	if (0 == ui.dhtComboBox->currentIndex())
+	{
+		visState |= RS_VS_DHT_ON;
+	}
+
+	if (visState != detail.visState)
+	{
+		rsPeers->setVisState(ownId, visState);
+	}
+
+	if (0 != netIndex)
 	{
 		saveAddr = true;
 	}
@@ -199,7 +269,6 @@ void ServerDialog::saveAddresses()
 	if (saveAddr)
 	{
 	  rsPeers->setLocalAddress(rsPeers->getOwnId(), ui.localAddress->text().toStdString(), ui.localPort->value());
-	  //rsicontrol->ConfigSetLanConfig(ui.chkFirewall->isChecked(), ui.chkForwarded->isChecked());
 	  rsPeers->setExtAddress(rsPeers->getOwnId(), ui.extAddress->text().toStdString(), ui.extPort->value());
 	}
 
