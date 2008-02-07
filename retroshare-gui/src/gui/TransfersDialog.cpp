@@ -56,11 +56,11 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     DLListModel = new QStandardItemModel(0,9);
     DLListModel->setHeaderData(NAME, Qt::Horizontal, tr("Name", "i.e: file name"));
     DLListModel->setHeaderData(SIZE, Qt::Horizontal, tr("Size", "i.e: file size"));
-    DLListModel->setHeaderData(PROGRESS, Qt::Horizontal, tr("Progress", "i.e: % downloaded"));
+    DLListModel->setHeaderData(COMPLETED, Qt::Horizontal, tr("Completed", ""));
     DLListModel->setHeaderData(DLSPEED, Qt::Horizontal, tr("Speed", "i.e: Download speed"));
+    DLListModel->setHeaderData(PROGRESS, Qt::Horizontal, tr("Progress", "i.e: % downloaded"));
     DLListModel->setHeaderData(SOURCES, Qt::Horizontal, tr("Sources", "i.e: Sources"));
     DLListModel->setHeaderData(STATUS, Qt::Horizontal, tr("Status"));
-    DLListModel->setHeaderData(COMPLETED, Qt::Horizontal, tr("Completed", ""));
     DLListModel->setHeaderData(REMAINING, Qt::Horizontal, tr("Remaining", "i.e: Estimated Time of Arrival / Time left"));
     DLListModel->setHeaderData(ID, Qt::Horizontal, tr("Core-ID"));
     ui.downloadList->setModel(DLListModel);

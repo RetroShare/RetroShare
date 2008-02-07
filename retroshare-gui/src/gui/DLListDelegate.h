@@ -29,11 +29,11 @@
 // Defines for download list list columns
 #define NAME 0
 #define SIZE 1
-#define PROGRESS 2
+#define COMPLETED 2
 #define DLSPEED 3
-#define SOURCES 4
-#define STATUS 5
-#define COMPLETED 6
+#define PROGRESS 4
+#define SOURCES 5
+#define STATUS 6
 #define REMAINING 7
 #define ID 8
 
