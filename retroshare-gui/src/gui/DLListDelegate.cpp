@@ -155,7 +155,6 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			progressBar.paint(); // paint the progress bar
 			}
 			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
-			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
 			break;
 		case NAME:
         		// decoration
