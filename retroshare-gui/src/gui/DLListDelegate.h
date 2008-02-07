@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2006,2007 crypton
+ *  Copyright (C) 2006,2007,2008 crypton
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -23,6 +23,8 @@
 #define DLLISTDELEGATE_H
 
 #include <QAbstractItemDelegate>
+#include "xprogressbar.h"
+
 
 // Defines for download list list columns
 #define NAME 0

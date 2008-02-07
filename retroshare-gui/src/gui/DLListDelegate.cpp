@@ -145,24 +145,16 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
 		case PROGRESS:
+		    {
 			progress = index.data().toDouble();
-			temp.clear();
-			temp.sprintf("%.2f", progress);
-			temp += "%";
-			newopt.rect = opt.rect;
-			//newopt.text = temp;
-			newopt.maximum = 100;
-			newopt.minimum = 0;
-			newopt.progress = (int)progress;
-			newopt.state |= QStyle::State_Enabled;
-			newopt.textVisible = false;
-			QApplication::style()->drawControl(QStyle::CE_ProgressBar, &newopt,
-			painter);
-        		//We prefer to display text manually to control color/font/boldness
-			if (option.state & QStyle::State_Selected){
-				opt.palette.setColor(QPalette::Text, QColor("grey"));
-				painter->setPen(opt.palette.color(cg, QPalette::Text));
+			// create a xProgressBar
+			xProgressBar progressBar(option.rect, painter); // the 3rd param is the  color schema (0 is the default value)
+			progressBar.setDisplayText(false); // should display % text?
+			progressBar.setValue(progress); // set the progress value
+			progressBar.setVerticalSpan(1);
+			progressBar.paint(); // paint the progress bar
 			}
+			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
 			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
 			break;
 		case NAME:

@@ -10,9 +10,7 @@
    </rect>
   </property>
   <property name="sizePolicy" >
-   <sizepolicy>
-    <hsizetype>7</hsizetype>
-    <vsizetype>7</vsizetype>
+   <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -501,10 +499,22 @@
    <enum>Qt::NoContextMenu</enum>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
+   <property name="leftMargin" >
     <number>0</number>
    </property>
-   <property name="spacing" >
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>0</number>
+   </property>
+   <property name="verticalSpacing" >
     <number>0</number>
    </property>
    <item row="1" column="0" >
@@ -517,10 +527,22 @@
        <string>About</string>
       </attribute>
       <layout class="QGridLayout" >
-       <property name="margin" >
+       <property name="leftMargin" >
         <number>9</number>
        </property>
-       <property name="spacing" >
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing" >
         <number>6</number>
        </property>
        <item row="0" column="2" >
@@ -541,12 +563,12 @@
          <property name="html" >
           <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;">
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://retroshare.wiki.sourceforge.net/help_tab">&lt;span style=" text-decoration: underline; color:#0000ff;">This Page in the retroshare Wiki&lt;/span>&lt;/a>&lt;br />&lt;br />The About/Help Tab is regularly updated from the Wiki page.&lt;br />&lt;br />External Links to more information:&lt;br />&lt;/p>
-&lt;ul style="-qt-list-indent: 1;">&lt;li style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://retroshare.sourceforge.net">&lt;span style=" text-decoration: underline; color:#0000ff;">Retroshare Webpage&lt;/span>&lt;/a>&lt;/li>
-&lt;li style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://retroshare.wiki.sourceforge.net/">&lt;span style=" text-decoration: underline; color:#0000ff;">Retroshare Wiki&lt;/span>&lt;/a>&lt;/li>
-&lt;li style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://sourceforge.net/projects/retroshare/">&lt;span style=" text-decoration: underline; color:#0000ff;">Retroshare Project Page&lt;/span>&lt;/a>&lt;/li>
-&lt;li style=" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://www.lunamutt.com">&lt;span style=" text-decoration: underline; color:#0000ff;">Lunamutt Homepage.&lt;/span>&lt;/a>&lt;/li>&lt;/ul>&lt;/body>&lt;/html></string>
+&lt;ul style="-qt-list-indent: 1;">&lt;li style="" style=" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://retroshare.sourceforge.net">&lt;span style=" text-decoration: underline; color:#0000ff;">Retroshare Webpage&lt;/span>&lt;/a>&lt;/li>
+&lt;li style="" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://retroshare.wiki.sourceforge.net/">&lt;span style=" text-decoration: underline; color:#0000ff;">Retroshare Wiki&lt;/span>&lt;/a>&lt;/li>
+&lt;li style="" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://sourceforge.net/projects/retroshare/">&lt;span style=" text-decoration: underline; color:#0000ff;">Retroshare Project Page&lt;/span>&lt;/a>&lt;/li>
+&lt;li style="" style=" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://www.lunamutt.com">&lt;span style=" text-decoration: underline; color:#0000ff;">Lunamutt Homepage.&lt;/span>&lt;/a>&lt;/li>&lt;/ul>&lt;/body>&lt;/html></string>
          </property>
          <property name="openExternalLinks" >
           <bool>true</bool>
@@ -581,11 +603,20 @@ p, li { white-space: pre-wrap; }
        <string>Authors</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
        <property name="spacing" >
         <number>6</number>
+       </property>
+       <property name="leftMargin" >
+        <number>9</number>
+       </property>
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
        </property>
        <item>
         <widget class="QTextEdit" name="authors" >
@@ -601,7 +632,7 @@ p, li { white-space: pre-wrap; }
          <property name="html" >
           <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;">
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;br />&lt;span style=" font-size:19pt; font-weight:600; color:#0000ff;">The RetroShare Team:&lt;/span>&lt;br /> &lt;br />&lt;span style=" font-size:9pt; color:#0000ff;">defnax&lt;/span>:  Lead GUI developer &lt;br />&lt;span style=" font-size:9pt; color:#0000ff;">drbob7&lt;/span>: Lead Core developer. &lt;br /> &lt;br />&lt;span style=" font-size:9pt; color:#0000ff;">bmeck&lt;/span> : Our new web-developer. Joined retroshare a couple &lt;br />of weeks ago, and already starting on an exciting new &lt;br />design for the web-page. &lt;br /> &lt;br />&lt;span style=" font-size:9pt; color:#0000ff;">noragen&lt;/span> : Developer from the SIM-IM project. Working on a retroshare plugin to SIM-IM. &lt;br />&lt;/p>
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:9pt; color:#0000ff;">kernelpanix&lt;/span> : Gui and skin developer&lt;/p>
 &lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
@@ -618,7 +649,7 @@ p, li { white-space: pre-wrap; }
           <bool>false</bool>
          </property>
          <property name="textInteractionFlags" >
-          <enum>Qt::TextBrowserInteraction</enum>
+          <set>Qt::TextBrowserInteraction</set>
          </property>
         </widget>
        </item>
@@ -629,11 +660,20 @@ p, li { white-space: pre-wrap; }
        <string>Thanks to</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
        <property name="spacing" >
         <number>6</number>
+       </property>
+       <property name="leftMargin" >
+        <number>9</number>
+       </property>
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
        </property>
        <item>
         <widget class="QTextEdit" name="thanks" >
@@ -646,11 +686,20 @@ p, li { white-space: pre-wrap; }
          <property name="readOnly" >
           <bool>true</bool>
          </property>
+         <property name="html" >
+          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-family:'Sans Serif'; font-size:10pt; font-weight:600;">xEsk&lt;/span>&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif'; font-size:9pt;">	xProgressBar: A custom progress bar for Qt 4.&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif'; font-size:9pt;">	xEsk (Xesc &amp;amp; Technology 2008)&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif'; font-size:9pt;">      ProgressBar&lt;/p>&lt;/body>&lt;/html></string>
+         </property>
          <property name="acceptRichText" >
           <bool>false</bool>
          </property>
          <property name="textInteractionFlags" >
-          <enum>Qt::TextBrowserInteraction</enum>
+          <set>Qt::TextBrowserInteraction</set>
          </property>
         </widget>
        </item>
@@ -661,11 +710,20 @@ p, li { white-space: pre-wrap; }
        <string>Translation</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
        <property name="spacing" >
         <number>6</number>
+       </property>
+       <property name="leftMargin" >
+        <number>9</number>
+       </property>
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
        </property>
        <item>
         <widget class="QTextEdit" name="translation" >
@@ -678,7 +736,7 @@ p, li { white-space: pre-wrap; }
          <property name="html" >
           <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;">
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Translators:&lt;/span>&lt;/p>
 &lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">French&lt;/span>:Temet&lt;/p>
@@ -690,7 +748,7 @@ p, li { white-space: pre-wrap; }
           <bool>false</bool>
          </property>
          <property name="textInteractionFlags" >
-          <enum>Qt::TextSelectableByMouse</enum>
+          <set>Qt::TextSelectableByMouse</set>
          </property>
         </widget>
        </item>
@@ -701,11 +759,20 @@ p, li { white-space: pre-wrap; }
        <string>License Agreement</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
        <property name="spacing" >
         <number>6</number>
+       </property>
+       <property name="leftMargin" >
+        <number>9</number>
+       </property>
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
        </property>
        <item>
         <widget class="QTextEdit" name="license" >
@@ -719,7 +786,7 @@ p, li { white-space: pre-wrap; }
           <bool>false</bool>
          </property>
          <property name="textInteractionFlags" >
-          <enum>Qt::TextBrowserInteraction</enum>
+          <set>Qt::TextBrowserInteraction</set>
          </property>
         </widget>
        </item>
@@ -729,10 +796,22 @@ p, li { white-space: pre-wrap; }
    </item>
    <item row="0" column="0" >
     <layout class="QGridLayout" >
-     <property name="margin" >
+     <property name="leftMargin" >
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>0</number>
+     </property>
+     <property name="verticalSpacing" >
       <number>0</number>
      </property>
      <item row="0" column="1" >
@@ -750,10 +829,22 @@ p, li { white-space: pre-wrap; }
      </item>
      <item row="0" column="0" >
       <layout class="QGridLayout" >
-       <property name="margin" >
+       <property name="leftMargin" >
         <number>0</number>
        </property>
-       <property name="spacing" >
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing" >
         <number>6</number>
        </property>
        <item row="0" column="0" >

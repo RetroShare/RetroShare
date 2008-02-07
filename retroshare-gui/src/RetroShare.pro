@@ -68,6 +68,7 @@ HEADERS +=  rshare.h \
             gui/StatisticDialog.h \
             gui/HelpDialog.h \
             gui/LogoBar.h \
+            gui/xprogressbar.h \
             lang/languagesupport.h \
             util/process.h \
             util/registry.h \
@@ -218,6 +219,7 @@ SOURCES += main.cpp \
             gui/MessagesDialog.cpp \
             gui/HelpDialog.cpp \
             gui/LogoBar.cpp \
+            gui/xprogressbar.cpp \
             lang/languagesupport.cpp \
             util/process.cpp \
             util/registry.cpp \
