@@ -498,7 +498,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	server->setSaveDir(config->homePath.c_str()); /* Default Save Dir - config will overwrite */
 	server->setSearchInterface(pqih, mAuthMgr, mConnMgr);
 
-	mConfigMgr = new p3ConfigMgr(config->basedir, "rs-v0.4.cfg", "rs-v0.4.sgn");
+	mConfigMgr = new p3ConfigMgr(mAuthMgr, config->basedir, "rs-v0.4.cfg", "rs-v0.4.sgn");
 	mGeneralConfig = new p3GeneralConfig();
 
 
@@ -551,6 +551,8 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 	if (oldFormat)
 	{
+		std::cerr << "Startup() Loaded Old Certificate Format" << std::endl;
+
 		/* transfer all authenticated peers to friend list */
 		std::list<std::string> authIds;
 		mAuthMgr->getAuthenticatedList(authIds);

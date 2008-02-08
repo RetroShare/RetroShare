@@ -242,6 +242,9 @@ void 	RsServer::run()
 
 				/* force saving FileTransferStatus */
 				server->saveFileTransferStatus();
+
+				/* see if we need to resave certs */
+				mAuthMgr->CheckSaveCertificates(); 
 	
 				/* hour loop */
 				if (++min >= 60)

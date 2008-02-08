@@ -64,6 +64,7 @@ const uint32_t CONFIG_TYPE_FSERVER 	= 0x0003;
 const uint32_t CONFIG_TYPE_MSGS 	= 0x0004;
 
 class p3ConfigMgr;
+class p3AuthMgr;
 
 class pqiConfig
 {
@@ -111,7 +112,7 @@ bool    HasConfigChanged(uint16_t idx);
 class p3ConfigMgr
 {
 	public:
-	p3ConfigMgr(std::string bdir, std::string fname, std::string signame);
+	p3ConfigMgr(p3AuthMgr *am, std::string bdir, std::string fname, std::string signame);
 
 void	tick();
 void	saveConfiguration();
@@ -127,6 +128,8 @@ void	completeConfiguration();
 
 
 	/* these are constants - so shouldn't need mutex */
+	p3AuthMgr *mAuthMgr;
+
 const std::string basedir;
 const std::string metafname;
 const std::string metasigfname;

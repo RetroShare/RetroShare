@@ -96,6 +96,8 @@ virtual	std::string getName(std::string id) = 0;
 virtual	bool	getDetails(std::string id, pqiAuthDetails &details) = 0;
 
 		/* High Level Load/Save Configuration */
+virtual bool FinalSaveCertificates() = 0;
+virtual bool CheckSaveCertificates() = 0;
 virtual bool saveCertificates() = 0;
 virtual bool loadCertificates() = 0;
 
@@ -119,9 +121,10 @@ virtual	bool RevokeCertificate(std::string id) = 0;
 virtual bool TrustCertificate(std::string id, bool trust) = 0;
 
 		/* Sign / Encrypt / Verify Data (TODO) */
+virtual bool    SignData(std::string input, std::string &sign) = 0;
+virtual bool    SignData(const void *data, const uint32_t len, std::string &sign) = 0;
+
 //virtual	bool encryptData(std::string recipientId, std::string plaindata, std::string &result);
-
-
 
 };
 
@@ -155,6 +158,8 @@ virtual	std::string getName(std::string id);
 virtual	bool	getDetails(std::string id, pqiAuthDetails &details);
 
 		/* High Level Load/Save Configuration */
+virtual bool FinalSaveCertificates();
+virtual bool CheckSaveCertificates();
 virtual bool saveCertificates();
 virtual bool loadCertificates();
 
@@ -173,6 +178,8 @@ virtual bool SignCertificate(std::string id);
 virtual	bool RevokeCertificate(std::string id);
 virtual bool TrustCertificate(std::string id, bool trust);
 
+virtual bool SignData(std::string input, std::string &sign);
+virtual bool SignData(const void *data, const uint32_t len, std::string &sign);
 
 	std::string mOwnId;
 	std::map<std::string, pqiAuthDetails> mPeerList;

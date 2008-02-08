@@ -25,6 +25,7 @@
 
 
 #include "pqi/p3cfgmgr.h"
+#include "pqi/p3authmgr.h"
 #include "pqi/pqibin.h"
 #include "pqi/pqistreamer.h"
 
@@ -32,8 +33,8 @@
 
 #define CONFIG_DEBUG 1
 
-p3ConfigMgr::p3ConfigMgr(std::string dir, std::string fname, std::string signame)
-	:basedir(dir), metafname(fname), metasigfname(signame),
+p3ConfigMgr::p3ConfigMgr(p3AuthMgr *am, std::string dir, std::string fname, std::string signame)
+	:mAuthMgr(am), basedir(dir), metafname(fname), metasigfname(signame),
 	mConfigSaveActive(true)
 {
 
@@ -108,6 +109,12 @@ void	p3ConfigMgr::saveConfiguration()
 		std::cerr << it->first << " Hash: " << it->second->Hash();
 		std::cerr << std::endl;
 #endif
+		if (it->second->Hash() == "")
+		{
+			/* skip if no hash */
+			continue;
+		}
+
 		RsTlvKeyValue kv;
 		{
 			std::ostringstream out;
@@ -126,23 +133,47 @@ void	p3ConfigMgr::saveConfiguration()
 #endif
 
 	/* Write the data to a stream */
-	uint32_t bioflags = BIN_FLAGS_HASH_DATA | BIN_FLAGS_WRITEABLE;
-	BinInterface *bio = new BinFileInterface(metafname.c_str(), bioflags);
+	uint32_t bioflags = BIN_FLAGS_WRITEABLE;
+	BinMemInterface *membio = new BinMemInterface(1000, bioflags);
 	RsSerialiser *rss = new RsSerialiser();
 	rss->addSerialType(new RsGeneralConfigSerialiser());
-	pqistreamer stream(rss, "CONFIG", bio, 0);
+	pqistreamer stream(rss, "CONFIG", membio, 0);
 
 	stream.SendItem(item);
 	stream.tick();
 	stream.tick();
 
-	/* get hash */
-	std::string totalhash = bio->gethash();
+	/* sign data */
+	std::string signature;
+	mAuthMgr->SignData(membio->memptr(), membio->memsize(), signature);
 
-	/* sign the hash of the data */
+#ifdef CONFIG_DEBUG 
+	std::cerr << "p3ConfigMgr::saveConfiguration() MetaFile Signature:";
+	std::cerr << std::endl;
+	std::cerr << signature;
+	std::cerr << std::endl;
+#endif
+
+	if (!membio->writetofile(metafname.c_str()))
+	{
+#ifdef CONFIG_DEBUG 
+		std::cerr << "p3ConfigMgr::saveConfiguration() Failed to Write MetaFile";
+		std::cerr << std::endl;
+#endif
+	}
 
 
 	/* write signature to configuration */
+	BinMemInterface *signbio = new BinMemInterface(signature.c_str(), 
+					signature.length(), BIN_FLAGS_READABLE);
+
+	if (!signbio->writetofile(metasigfname.c_str()))
+	{
+#ifdef CONFIG_DEBUG 
+		std::cerr << "p3ConfigMgr::saveConfiguration() Failed to Write MetaSignFile";
+		std::cerr << std::endl;
+#endif
+	}
 
 
 }
@@ -156,13 +187,63 @@ void	p3ConfigMgr::loadConfiguration()
 	std::cerr << std::endl;
 #endif
 
-	/* Write the data to a stream */
-	uint32_t bioflags = BIN_FLAGS_HASH_DATA | BIN_FLAGS_READABLE;
-	BinInterface *bio = new BinFileInterface(metafname.c_str(), bioflags);
+	/* write signature to configuration */
+	BinMemInterface *signbio = new BinMemInterface(1000, BIN_FLAGS_READABLE);
+
+	if (!signbio->readfromfile(metasigfname.c_str()))
+	{
+#ifdef CONFIG_DEBUG 
+		std::cerr << "p3ConfigMgr::loadConfiguration() Failed to Load MetaSignFile";
+		std::cerr << std::endl;
+#endif
+	}
+
+	std::string oldsignature((char *) signbio->memptr(), signbio->memsize());
+	delete signbio;
+
+	BinMemInterface *membio = new BinMemInterface(1000, BIN_FLAGS_READABLE);
+
+	if (!membio->readfromfile(metafname.c_str()))
+	{
+#ifdef CONFIG_DEBUG 
+		std::cerr << "p3ConfigMgr::loadConfiguration() Failed to Load MetaFile";
+		std::cerr << std::endl;
+#endif
+		delete membio;
+	}
+
+	/* get signature */
+	std::string signature;
+	mAuthMgr->SignData(membio->memptr(), membio->memsize(), signature);
+
+#ifdef CONFIG_DEBUG 
+	std::cerr << "p3ConfigMgr::loadConfiguration() New MetaFile Signature:";
+	std::cerr << std::endl;
+	std::cerr << signature;
+	std::cerr << std::endl;
+#endif
+
+#ifdef CONFIG_DEBUG 
+	std::cerr << "p3ConfigMgr::loadConfiguration() Orig MetaFile Signature:";
+	std::cerr << std::endl;
+	std::cerr << oldsignature;
+	std::cerr << std::endl;
+#endif
+
+	if (signature != oldsignature)
+	{
+		/* Failed */
+#ifdef CONFIG_DEBUG 
+		std::cerr << "p3ConfigMgr::loadConfiguration() Signature Check Failed";
+		std::cerr << std::endl;
+#endif
+		return;
+	}
+
+	membio->fseek(0); /* go to start */
 	RsSerialiser *rss = new RsSerialiser();
 	rss->addSerialType(new RsGeneralConfigSerialiser());
-	pqistreamer stream(rss, "CONFIG", bio, 0);
-
+	pqistreamer stream(rss, "CONFIG", membio, 0);
 
 	stream.tick();
 	stream.tick();
@@ -181,12 +262,6 @@ void	p3ConfigMgr::loadConfiguration()
 	item->print(std::cerr, 20);
 
 #endif
-
-	std::string totalhash = bio->gethash();
-
-	/* check it TODO */
-	/* sign the hash of the data */
-	/* check signature with configuration */
 
 	/* extract info from KeyValueSet */
 	std::list<RsTlvKeyValue>::iterator it;
@@ -300,6 +375,8 @@ bool	p3Config::loadConfiguration(std::string &loadHash)
 		{
 			delete (*it);
 		}
+
+		setHash("");
 		return false;
 	}
 

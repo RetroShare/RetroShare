@@ -187,6 +187,16 @@ bool	p3DummyAuthMgr::getDetails(std::string id, pqiAuthDetails &details)
 	return false;
 }
 
+bool p3DummyAuthMgr::FinalSaveCertificates()
+{
+	return false;
+}
+
+bool p3DummyAuthMgr::CheckSaveCertificates()
+{
+	return false;
+}
+
 bool p3DummyAuthMgr::saveCertificates()
 {
 	return false;
@@ -247,4 +257,15 @@ bool p3DummyAuthMgr::TrustCertificate(std::string id, bool trust)
 {
 	return false;
 }
+
+bool p3DummyAuthMgr::SignData(std::string input, std::string &sign)
+{
+	return false;
+}
+
+bool p3DummyAuthMgr::SignData(const void *data, const uint32_t len, std::string &sign)
+{
+	return false;
+}
+
 

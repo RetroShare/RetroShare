@@ -328,19 +328,40 @@ bool    p3MsgService::loadConfiguration(std::string &loadHash)
 
 	std::string hashin = in->gethash();
 
+	delete pa_in;	
+
 	if (hashin != loadHash)
 	{
 		/* big error message! */
-		std::cerr << "p3MsgService::loadConfiguration() FAILED!" << std::endl;
-		std::cerr << "p3MsgService::loadConfiguration() FAILED!" << std::endl;
-		std::cerr << "p3MsgService::loadConfiguration() FAILED!" << std::endl;
-		std::cerr << "p3MsgService::loadConfiguration() FAILED!" << std::endl;
-		std::cerr << "p3MsgService::loadConfiguration() FAILED!" << std::endl;
+		std::cerr << "p3MsgService::loadConfiguration() FAILED! Msgs Tampered" << std::endl;
+		std::string msgfileold = msgfile + ".failed";
+
+		rename(msgfile.c_str(), msgfileold.c_str());
+
+		std::cerr << "Moving Old file to: " << msgfileold << std::endl;
+		std::cerr << "removing dodgey msgs" << std::endl;
+
+		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+
+		std::map<uint32_t, RsMsgItem *>::iterator mit;
+		for(mit = imsg.begin(); mit != imsg.end(); mit++)
+		{
+			delete (mit->second);
+		}
+		imsg.clear();
+
+		for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
+		{
+			delete (mit->second);
+		}
+		msgOutgoing.clear();
+		setHash("");
+		return false;
+
 	}
 
 	setHash(hashin);
-
-	delete pa_in;	
 
 	return true;
 }

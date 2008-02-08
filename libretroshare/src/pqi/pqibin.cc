@@ -35,23 +35,23 @@ BinFileInterface::BinFileInterface(const char *fname, int flags)
 	if ((bin_flags & BIN_FLAGS_READABLE) &&
 		(bin_flags & BIN_FLAGS_WRITEABLE))
 	{
-		buf = fopen(fname, "r+");
+		buf = fopen(fname, "rb+");
 		/* if the file don't exist */
 		if (!buf)
 		{
-			buf = fopen(fname, "w+");
+			buf = fopen(fname, "wb+");
 		}
 
 	}
 	else if (bin_flags & BIN_FLAGS_READABLE)
 	{
-		buf = fopen(fname, "r");
+		buf = fopen(fname, "rb");
 	}
 	else if (bin_flags & BIN_FLAGS_WRITEABLE)
 	{
 		// This is enough to remove old file in Linux...
 		// but not in windows.... (what to do)
-		buf = fopen(fname, "w");
+		buf = fopen(fname, "wb");
 		fflush(buf); /* this might help windows! */
 	}
 	else
@@ -155,6 +155,23 @@ BinMemInterface::BinMemInterface(int defsize, int flags)
 		}
 	}
 
+
+BinMemInterface::BinMemInterface(const void *data, const int defsize, int flags)
+	:bin_flags(flags), buf(NULL), size(defsize), 
+	recvsize(0), readloc(0), hash(NULL), bcount(0)
+	{
+		buf = malloc(defsize);
+		if (bin_flags & BIN_FLAGS_HASH_DATA)
+		{
+			hash = new pqihash();
+		}
+
+		/* just remove the const 
+		 * *BAD* but senddata don't change it anyway 
+		 */
+		senddata((void *) data, defsize);
+	}
+
 BinMemInterface::~BinMemInterface() 
 	{ 
 		if (buf)
@@ -174,7 +191,7 @@ int	BinMemInterface::fseek(int loc)
 	}
 
 
-int	BinMemInterface::senddata(void *data, int len)
+int	BinMemInterface::senddata(void *data, const int len)
 	{
 		if(recvsize + len > size)
 		{
@@ -231,6 +248,64 @@ uint64_t BinMemInterface::bytecount()
 	return 0;
 }
 	
+bool    BinMemInterface::writetofile(const char *fname)
+{
+	FILE *fd = fopen(fname, "wb");
+	if (!fd)
+	{
+		return false;
+	}
+
+	if (1 != fwrite(buf, recvsize, 1, fd))
+	{
+		fclose(fd);
+		return false;
+	}
+
+	fclose(fd);
+
+	return true;
+}
+
+bool    BinMemInterface::readfromfile(const char *fname)
+{
+	FILE *fd = fopen(fname, "rb");
+	if (!fd)
+	{
+		return false;
+	}
+
+	/* get size */
+	::fseek(fd, 0L, SEEK_END);
+	int fsize = ftell(fd);
+
+	if (fsize > size)
+	{
+		/* not enough room */
+		std::cerr << "BinMemInterface::readfromfile() not enough room";
+		std::cerr << std::endl;
+
+		fclose(fd);
+		return false;
+	}
+
+	::fseek(fd, 0L, SEEK_SET);
+	if (1 != fread(buf, fsize, 1, fd))
+	{
+		/* not enough room */
+		std::cerr << "BinMemInterface::readfromfile() failed fread";
+		std::cerr << std::endl;
+
+		fclose(fd);
+		return false;
+	}
+
+	recvsize = fsize;
+	readloc = 0;
+	fclose(fd);
+
+	return true;
+}
 
 
 /**************************************************************************/
@@ -447,5 +522,4 @@ std::string NetBinDummy::gethash()
 
 	return std::string("");
 }
-
 

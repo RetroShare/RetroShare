@@ -103,6 +103,8 @@ virtual	std::string getName(std::string id);
 virtual bool    getDetails(std::string id, pqiAuthDetails &details);
 	
 	/* High Level Load/Save Configuration */
+virtual bool FinalSaveCertificates();
+virtual bool CheckSaveCertificates();
 virtual bool saveCertificates();
 virtual bool loadCertificates();
 
@@ -123,7 +125,8 @@ virtual bool RevokeCertificate(std::string id);
 virtual bool TrustCertificate(std::string id, bool trust);
 	
 	/* Sign / Encrypt / Verify Data (TODO) */
-
+virtual bool 	SignData(std::string input, std::string &sign);
+virtual bool 	SignData(const void *data, const uint32_t len, std::string &sign);
 
 	/*********** Overloaded Functions from p3AuthMgr **********/
 
@@ -169,6 +172,8 @@ bool 	locked_FindCert(std::string id, xpgpcert **cert);
 	xpgpcert *mOwnCert;
 	EVP_PKEY *pkey;
 
+	bool mToSaveCerts;
+	bool mConfigSaveActive;
 	std::map<std::string, xpgpcert *> mCerts;
 
 };

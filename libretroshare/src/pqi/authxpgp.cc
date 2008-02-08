@@ -82,7 +82,7 @@ xpgpcert::xpgpcert(XPGP *xpgp, std::string pid)
 
 
 AuthXPGP::AuthXPGP()
-	:init(0), sslctx(NULL), pkey(NULL)
+	:init(0), sslctx(NULL), pkey(NULL), mToSaveCerts(false), mConfigSaveActive(true)
 {
 }
 
@@ -679,6 +679,9 @@ bool AuthXPGP::TrustCertificate(std::string id, bool totrust)
 		/* reevaluate the auth of the xpgp */
 		cert->trustLvl = XPGP_auth_certificate(pgp_keyring, cert->certificate);
 		valid = true;
+
+		/* resave if changed trust setting */
+		mToSaveCerts = true;
 	}
 
 	xpgpMtx.unlock(); /**** UNLOCK ****/
@@ -755,8 +758,62 @@ bool AuthXPGP::AuthCertificate(std::string id)
 }
 
 
-	
 	/* Sign / Encrypt / Verify Data (TODO) */
+	
+bool AuthXPGP::SignData(std::string input, std::string &sign)
+{
+	return SignData(input.c_str(), input.length(), sign);
+}
+
+bool AuthXPGP::SignData(const void *data, const uint32_t len, std::string &sign)
+{
+
+	RsStackMutex stack(xpgpMtx);   /***** STACK LOCK MUTEX *****/
+
+	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+	unsigned int signlen = EVP_PKEY_size(pkey);
+	unsigned char signature[signlen];
+
+	if (0 == EVP_SignInit(mdctx, EVP_sha1()))
+	{
+		std::cerr << "EVP_SignInit Failure!" << std::endl;
+
+		EVP_MD_CTX_destroy(mdctx);
+		return false;
+	}
+
+	if (0 == EVP_SignUpdate(mdctx, data, len))
+	{
+		std::cerr << "EVP_SignUpdate Failure!" << std::endl;
+
+		EVP_MD_CTX_destroy(mdctx);
+		return false;
+	}
+
+	if (0 == EVP_SignFinal(mdctx, signature, &signlen, pkey))
+	{
+		std::cerr << "EVP_SignFinal Failure!" << std::endl;
+
+		EVP_MD_CTX_destroy(mdctx);
+		return false;
+	}
+
+	EVP_MD_CTX_destroy(mdctx);
+
+	sign.clear();	
+	std::ostringstream out;
+	out << std::hex;
+	for(uint32_t i = 0; i < signlen; i++) 
+	{
+		out << std::setw(2) << std::setfill('0');
+		out << (uint32_t) (signature[i]);
+	}
+
+	sign = out.str();
+
+	return true;
+}
+
 
 
 	/**** NEW functions we've added ****/
@@ -1119,6 +1176,8 @@ bool AuthXPGP::ProcessXPGP(XPGP *xpgp, std::string &id)
 
 	cert->signers = getXPGPsigners(xpgp);
 
+	/* resave if new certificate */
+	mToSaveCerts = true;
 	xpgpMtx.unlock(); /**** UNLOCK ****/
 
 	id = xpgpid;
@@ -1592,6 +1651,33 @@ int printSSLError(SSL *ssl, int retval, int err, unsigned long err2,
  *
  */
 
+bool	AuthXPGP::FinalSaveCertificates()
+{
+	CheckSaveCertificates();
+
+	RsStackMutex stack(xpgpMtx); /***** LOCK *****/
+	mConfigSaveActive = false;
+	return true;
+}
+
+bool	AuthXPGP::CheckSaveCertificates()
+{
+	xpgpMtx.lock();   /***** LOCK *****/
+
+	if ((mConfigSaveActive) && (mToSaveCerts))
+	{
+		mToSaveCerts = false;
+		xpgpMtx.unlock(); /**** UNLOCK ****/
+
+		saveCertificates();
+		return true;
+	}
+
+	xpgpMtx.unlock(); /**** UNLOCK ****/
+
+	return false;
+}
+
 bool    AuthXPGP::saveCertificates()
 {
 	// construct file name.
@@ -1604,6 +1690,12 @@ bool    AuthXPGP::saveCertificates()
 	std::string neighdir = mNeighDir;
 
 	xpgpMtx.unlock(); /**** UNLOCK ****/
+
+	/* add on the slash */
+	if (neighdir != "")
+	{
+		neighdir += "/";
+	}
 
 	std::map<std::string, std::string>::iterator mit;
 
@@ -1989,6 +2081,7 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 		oldFormat = true;
 	}
 
+	mToSaveCerts = false;
 	return true;
 }
 

@@ -76,11 +76,17 @@ class BinMemInterface: public BinInterface
 {
 public:
 	BinMemInterface(int defsize, int flags);
+	BinMemInterface(const void *data, const int size, int flags);
 virtual ~BinMemInterface();
 
+	/* Extra Interfaces */
 int	fseek(int loc);
 int	memsize() { return recvsize; }
 void   *memptr() { return buf; }
+
+	/* file interface */
+bool	writetofile(const char *fname);
+bool	readfromfile(const char *fname);
 
 virtual int     tick() { return 1; }
 

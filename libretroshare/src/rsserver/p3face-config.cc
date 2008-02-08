@@ -335,6 +335,8 @@ void    RsServer::ConfigFinalSave()
 {
 	/* force saving of transfers */
 	server->saveFileTransferStatus();
+
+	mAuthMgr->FinalSaveCertificates();
 	mConfigMgr->completeConfiguration();
 }
 
