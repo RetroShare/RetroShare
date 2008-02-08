@@ -94,7 +94,11 @@ int     tou_extaddr(struct sockaddr *ext_addr, socklen_t *addrlen)
 	if (!tou_inited)
 		return -1;
 
-	return udps->externalAddr(*(struct sockaddr_in *) ext_addr);
+	if (udps->externalAddr(*(struct sockaddr_in *) ext_addr))
+	{
+		return 1;
+	}
+	return 0;
 }
 
 

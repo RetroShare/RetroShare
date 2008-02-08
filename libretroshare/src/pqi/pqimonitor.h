@@ -49,9 +49,9 @@ const uint32_t RS_PEER_S_CONNECTED   	= 0x0004;
 
 /* ACTIONS */
 const uint32_t RS_PEER_NEW              = 0x0001;    /* new Peer */
-const uint32_t RS_PEER_MOVED            = 0x0002;    /* moved from F->O or O->F */
-const uint32_t RS_PEER_ONLINE 		= 0x0004;
-const uint32_t RS_PEER_CONNECTED        = 0x0008;
+const uint32_t RS_PEER_ONLINE 		= 0x0002;
+const uint32_t RS_PEER_CONNECTED        = 0x0004;
+const uint32_t RS_PEER_MOVED            = 0x0008;    /* moved from F->O or O->F */
 const uint32_t RS_PEER_DISCONNECTED     = 0x0010;
 const uint32_t RS_PEER_CONNECT_REQ      = 0x0020;
 

@@ -638,6 +638,16 @@ struct in_addr getPreferredInterface() // returns best addr.
 
 bool    sameNet(struct in_addr *addr, struct in_addr *addr2)
 {
+	std::cerr << "sameNet: " << inet_ntoa(*addr);
+	std::cerr << " VS " << inet_ntoa(*addr2);
+	std::cerr << std::endl;
+	struct in_addr addrnet, addrnet2;
+
+	addrnet.s_addr = inet_netof(*addr);
+	addrnet2.s_addr = inet_netof(*addr2);
+	std::cerr << " (" << inet_ntoa(addrnet);
+	std::cerr << " =?= " << inet_ntoa(addrnet2);
+	std::cerr << ")" << std::endl;
 	return (inet_netof(*addr) == inet_netof(*addr2));
 }
 
