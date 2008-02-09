@@ -65,7 +65,7 @@ class p3Ranking: public CacheSource, public CacheStore
 {
 	public:
 
-	p3Ranking(uint16_t type, CacheTransfer *cft,
+	p3Ranking(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
 		std::string sourcedir, std::string storedir, 
 		uint32_t storePeriod);
 

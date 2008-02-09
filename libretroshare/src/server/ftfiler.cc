@@ -173,6 +173,46 @@ bool    ftfiler::RequestCacheFile(std::string id, std::string destpath, std::str
 	return 1;
 }
 
+bool    ftfiler::CancelCacheFile(RsPeerId id, std::string path, 
+				std::string hash, uint64_t size)
+{
+	/* clean up old transfer - just remove it (no callback) */
+	{
+		std::ostringstream out;
+		out << "ftfiler::CancelCacheFile() Looking for: " << hash;
+		pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
+	}
+
+	/* iterate through fileItems and check for this one */
+	std::list<ftFileStatus *>::iterator it;
+	for(it = recvFiles.begin(); it != recvFiles.end(); it++)
+	{
+		if  ((hash==(*it)->hash) && 
+			(size==(*it)->size) &&
+			((*it)->ftMode == FT_MODE_CACHE))
+		{
+			std::ostringstream out;
+			out << "ftfiler::CancelCacheFile() ";
+			out << "Match ftFileStatus: " << hash;
+			pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
+			/* same */
+
+			std::cerr << "Clearing Failed Cache Transfer: " << (*it)->name;
+			std::cerr << std::endl;
+			delete (*it);
+			it = recvFiles.erase(it);
+
+			return true;
+		}
+	}
+
+	std::cerr << "************* ERROR *****************";
+	std::cerr << std::endl;
+	std::cerr << "ftfiler::CancelCacheFile() Failed to Find: " << hash;
+	std::cerr << std::endl;
+	return false;
+}
+
 
 
 ftFileStatus *ftfiler::findRecvFileItem(std::string hash)

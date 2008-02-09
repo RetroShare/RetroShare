@@ -9,9 +9,9 @@ include $(RS_TOP_DIR)/scripts/config.mk
 
 RSOBJ =   ft.o ftfiler.o hashsearch.o filedexserver.o 
 
-TESTOBJ  = ftcachetest.o
+TESTOBJ  = #ftcachetest.o
 
-TESTS  = ftcachetest
+TESTS  = #ftcachetest
 
 all: librs tests
 

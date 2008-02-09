@@ -52,9 +52,13 @@ int main(int argc, char **argv)
 	RsPeerId  pid2("0x0102");
 	RsPeerId  pid3("0x0103");
 
-	CacheStrapper sc1(pid1, period);
-	CacheStrapper sc2(pid2, period);
-	CacheStrapper sc3(pid3, period);
+	p3ConnectMgr *connMgr1 = NULL;
+	p3ConnectMgr *connMgr2 = NULL;
+	p3ConnectMgr *connMgr3 = NULL;
+
+	CacheStrapper sc1(connMgr1);
+	CacheStrapper sc2(connMgr2);
+	CacheStrapper sc3(connMgr3);
 	CacheTransfer ctt1(&sc1);
 	CacheTransfer ctt2(&sc2);
 	CacheTransfer ctt3(&sc3);
@@ -67,15 +71,15 @@ int main(int argc, char **argv)
 
 	std::string nulldir = "";
 
-	CacheSource *csrc1 = new CacheTestSource(nulldir);
+	CacheSource *csrc1 = new CacheTestSource(&sc1, nulldir);
 	CacheStore  *cstore1 = new CacheTestStore(&ctt1, nulldir);
 	CacheId cid1(TESTID, 0);
 
-	CacheSource *csrc2 = new CacheTestSource(nulldir);
+	CacheSource *csrc2 = new CacheTestSource(&sc2, nulldir);
 	CacheStore  *cstore2 = new CacheTestStore(&ctt2, nulldir);
 	CacheId cid2(TESTID, 0);
 
-	CacheSource *csrc3 = new CacheTestSource(nulldir);
+	CacheSource *csrc3 = new CacheTestSource(&sc3, nulldir);
 	CacheStore  *cstore3 = new CacheTestStore(&ctt3, nulldir);
 	CacheId cid3(TESTID, 0);
 
@@ -86,12 +90,6 @@ int main(int argc, char **argv)
 	sc1.addCachePair(cp1);
 	sc2.addCachePair(cp2);
 	sc3.addCachePair(cp3);
-
-
-	sc1.addPeerId(pid2);
-	sc2.addPeerId(pid1);
-	sc2.addPeerId(pid3);
-	sc3.addPeerId(pid2);
 
 	/* add in a cache to sc2 */
 	CacheData cdata;

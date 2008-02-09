@@ -42,11 +42,11 @@ std::string generateRandomLinkId();
 
 #define RANK_DEBUG 1
 
-p3Ranking::p3Ranking(uint16_t type, CacheTransfer *cft,
+p3Ranking::p3Ranking(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
 		std::string sourcedir, std::string storedir, 
 		uint32_t storePeriod)
-	:CacheSource(type, true, sourcedir), 
-	CacheStore(type, true, cft, storedir), 
+	:CacheSource(type, true, cs, sourcedir), 
+	CacheStore(type, true, cs, cft, storedir), 
 	mStorePeriod(storePeriod)
 {
 
@@ -64,7 +64,35 @@ p3Ranking::p3Ranking(uint16_t type, CacheTransfer *cft,
 
 bool    p3Ranking::loadLocalCache(const CacheData &data)
 {
-	/* ignore Local Cache -> just use remote caches */
+	std::string filename = data.path + '/' + data.name;
+	std::string hash = data.hash;
+	//uint64_t size = data.size;
+	std::string source = data.pid;
+
+#ifdef RANK_DEBUG
+	std::cerr << "p3Ranking::loadLocalCache()";
+	std::cerr << std::endl;
+	std::cerr << "\tSource: " << source;
+	std::cerr << std::endl;
+	std::cerr << "\tFilename: " << filename;
+	std::cerr << std::endl;
+	std::cerr << "\tHash: " << hash;
+	std::cerr << std::endl;
+	std::cerr << "\tSize: " << data.size;
+	std::cerr << std::endl;
+#endif
+
+	loadRankFile(filename, source);
+
+	{
+          RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+	  mRepublish = false;
+	}
+
+	if (data.size > 0) /* don't refresh zero sized caches */
+	{
+		refreshCache(data);
+	}
 	return true;
 }
 
@@ -89,6 +117,11 @@ int    p3Ranking::loadCache(const CacheData &data)
 #endif
 
 	loadRankFile(filename, source);
+
+
+	CacheStore::lockData();   /*****   LOCK ****/
+	locked_storeCacheEntry(data); 
+	CacheStore::unlockData(); /***** UNLOCK ****/
 
 	return 1;
 }

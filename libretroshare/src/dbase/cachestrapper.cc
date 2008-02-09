@@ -22,14 +22,17 @@
  */
 
 #include "dbase/cachestrapper.h"
+#include "serialiser/rsconfigitems.h"
+#include "pqi/p3connmgr.h"
+#include "util/rsdir.h"
 
 #include <iostream>
 #include <sstream>
 #include <iomanip>
 
-/**
- * #define CS_DEBUG 1
- */
+/***/
+#define CS_DEBUG 1
+/***/
 
 bool operator<(const CacheId &a, const CacheId &b)
 {
@@ -59,8 +62,8 @@ std::ostream &operator<<(std::ostream &out, const CacheData &d)
  *
  ********************************* Cache Store / Source *************************/
 
-CacheSource::CacheSource(uint16_t t, bool m, std::string cachedir)
-	:cacheType(t), multiCache(m), cacheDir(cachedir)
+CacheSource::CacheSource(uint16_t t, bool m, CacheStrapper *cs, std::string cachedir)
+	:cacheType(t), multiCache(m), mStrapper(cs), cacheDir(cachedir)
 	{ 
 		return; 
 	}
@@ -108,6 +111,9 @@ bool    CacheSource::refreshCache(const CacheData &data)
 	}
 
 	unlockData(); /* UNLOCK MUTEX */
+
+	if (mStrapper) /* allow testing without full feedback */
+		mStrapper->refreshCache(data);
 	return ret;
 }
 		
@@ -189,8 +195,10 @@ void    CacheSource::listCaches(std::ostream &out)
 }
 
 
-CacheStore::CacheStore(uint16_t t, bool m, CacheTransfer *cft, std::string cachedir)
-	:cacheType(t), multiCache(m), cacheTransfer(cft), cacheDir(cachedir)
+CacheStore::CacheStore(uint16_t t, bool m, 	
+			CacheStrapper *cs, CacheTransfer *cft, std::string cachedir)
+	:cacheType(t), multiCache(m), mStrapper(cs), 
+		cacheTransfer(cft), cacheDir(cachedir)
 	{ 
 		/* not much */
 		return; 
@@ -290,6 +298,28 @@ bool	CacheStore::locked_getStoredCache(CacheData &data)
 	return true;
 }
 
+
+
+bool	CacheStore::getAllStoredCaches(std::list<CacheData> &data)
+{
+	lockData(); /* LOCK MUTEX */
+
+	std::map<RsPeerId, CacheSet>::iterator pit;
+	for(pit = caches.begin(); pit != caches.end(); pit++)
+	{
+		CacheSet::iterator cit;
+		/* look for subid */
+		for(cit = (pit->second).begin();
+				cit != (pit->second).end(); cit++)
+		{
+			data.push_back(cit->second);
+		}
+	}
+
+	unlockData(); /* UNLOCK MUTEX */
+
+	return true;
+}
 
 
 	/* input from CacheStrapper.
@@ -438,6 +468,12 @@ void 	CacheStore::locked_storeCacheEntry(const CacheData &data)
 	{
 		(pit->second)[0] = data;
 	}
+
+	/* tell the strapper we've loaded one */
+	if (mStrapper)
+	{
+		mStrapper->refreshCacheStore(data);
+	}
 	return;
 }
 
@@ -447,11 +483,9 @@ void 	CacheStore::locked_storeCacheEntry(const CacheData &data)
  *
  ********************************* CacheStrapper ********************************/
 
-CacheStrapper::CacheStrapper(RsPeerId id, time_t period)
-	:ownId(id), queryPeriod(period)
+CacheStrapper::CacheStrapper(p3AuthMgr *am, p3ConnectMgr *cm)
+	:p3Config(CONFIG_TYPE_CACHE), mAuthMgr(am), mConnMgr(cm)
 {
-	/* add OwnId */
-	addPeerId(ownId);
 	return;
 }
 
@@ -467,12 +501,22 @@ void	CacheStrapper::addCachePair(CachePair set)
 void    CacheStrapper::statusChange(const std::list<pqipeer> &plist)
 {
 	std::list<pqipeer>::const_iterator it;
-	std::map<RsPeerId, CacheTS>::iterator mit;
 	for(it = plist.begin(); it != plist.end(); it++)
 	{
-		if (status.end() == (mit = status.find(it->id)))
+		if (it->actions & RS_PEER_CONNECTED)
 		{
-			addPeerId(it->id);
+			/* grab all the cache ids and add */
+
+			std::map<CacheId,CacheData> hashs;
+			std::map<CacheId,CacheData>::iterator cit;
+
+			handleCacheQuery(it->id, hashs);
+
+			RsStackMutex stack(csMtx); /******* LOCK STACK MUTEX *********/
+			for(cit = hashs.begin(); cit != hashs.end(); cit++)
+			{
+				mCacheUpdates.push_back(std::make_pair(it->id, cit->second));
+			}
 		}
 	}
 }
@@ -480,50 +524,51 @@ void    CacheStrapper::statusChange(const std::list<pqipeer> &plist)
         /**************** from pqimonclient ********************/
 
 
-void	CacheStrapper::addPeerId(RsPeerId pid)
+void	CacheStrapper::refreshCache(const CacheData &data)
 {
-	std::map<RsPeerId, CacheTS>::iterator it;
+	/* we've received an update 
+	 * send to all online peers + self
+	 */
 
-	/* just reset it for the moment */
-	CacheTS ts;
-	ts.query = 0;
-	ts.answer = 0;
+	std::list<std::string> ids;
+	std::list<std::string>::iterator it;
 
-	status[pid] = ts;
-}
+	mConnMgr->getOnlineList(ids);
 
-bool	CacheStrapper::removePeerId(RsPeerId pid)
-{
-	std::map<RsPeerId, CacheTS>::iterator it;
-	if (status.end() != (it = status.find(pid)))
+	RsStackMutex stack(csMtx); /******* LOCK STACK MUTEX *********/
+	for(it = ids.begin(); it != ids.end(); it++)
 	{
-		status.erase(it);
-		return true;
+		mCacheUpdates.push_back(std::make_pair(*it, data));
 	}
-	return false; 
+
+	mCacheUpdates.push_back(std::make_pair(mConnMgr->getOwnId(), data));
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 }
+
+
+void	CacheStrapper::refreshCacheStore(const CacheData &data)
+{
+
+	/* indicate to save data */
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+}
+
+bool	CacheStrapper::getCacheUpdates(std::list<std::pair<RsPeerId, CacheData> > &updates)
+{
+	RsStackMutex stack(csMtx); /******* LOCK STACK MUTEX *********/
+	updates = mCacheUpdates;
+	mCacheUpdates.clear();
+
+	return true;
+}
+
 
 
 	/* pass to correct CacheSet */
 void	CacheStrapper::recvCacheResponse(CacheData &data, time_t ts)
 {
-	/* update internal data first */
-	std::map<RsPeerId, CacheTS>::iterator it;
-	if (status.end() == status.find(data.pid))
-	{
-		/* add it in */
-		CacheTS d;
-		d.query = 0;
-		d.answer = 0;
-
-		status[data.pid] = d;
-	}
-
-	it = status.find(data.pid); /* will always succeed */
-
-	/* update status */
-	(it -> second).answer = ts;
-
 	/* find cache store */
 	std::map<uint16_t, CachePair>::iterator it2;
 	if (caches.end() == (it2 = caches.find(data.cid.type)))
@@ -534,10 +579,12 @@ void	CacheStrapper::recvCacheResponse(CacheData &data, time_t ts)
 
 	/* notify the CacheStore */
 	(it2 -> second).store -> availableCache(data);
+
 }
 
 
 	/* generate periodically or at a change */
+#if 0
 bool    CacheStrapper::sendCacheQuery(std::list<RsPeerId> &id, time_t ts)
 {
 	/* iterate through peers, and see who we haven't got an answer from recently */
@@ -553,6 +600,7 @@ bool    CacheStrapper::sendCacheQuery(std::list<RsPeerId> &id, time_t ts)
 	}
 	return (id.size() > 0);
 }
+#endif
 
 
 void    CacheStrapper::handleCacheQuery(RsPeerId id, std::map<CacheId,CacheData> &hashs)
@@ -575,8 +623,8 @@ void    CacheStrapper::listCaches(std::ostream &out)
 {
 	/* can overwrite for more control! */
 	std::map<uint16_t, CachePair>::iterator it;
-	out << "CacheStrapper::listCaches() [" << ownId;
-	out << "] Total Peers: " << status.size() << " Total Caches: " << caches.size();
+	out << "CacheStrapper::listCaches() [" << mConnMgr->getOwnId();
+	out << "] " << " Total Caches: " << caches.size();
 	out << std::endl;
 	for(it = caches.begin(); it != caches.end(); it++)
 	{
@@ -592,6 +640,7 @@ void    CacheStrapper::listCaches(std::ostream &out)
 
 void    CacheStrapper::listPeerStatus(std::ostream &out)
 {
+#if 0
 	std::map<RsPeerId, CacheTS>::iterator it;
 	out << "CacheStrapper::listPeerStatus() [" << ownId;
 	out << "] Total Peers: " << status.size() << " Total Caches: " << caches.size();
@@ -604,6 +653,7 @@ void    CacheStrapper::listPeerStatus(std::ostream &out)
 		out << std::endl;
 	}
 	return;
+#endif
 }
 
 
@@ -620,6 +670,256 @@ bool    CacheStrapper::findCache(std::string hash, CacheData &data)
 	}
 	return false;
 }
+	
+	
+
+/***************************************************************************/
+/****************************** CONFIGURATION HANDLING *********************/
+/***************************************************************************/
+
+/**** OVERLOADED FROM p3Config ****/
+
+RsSerialiser *CacheStrapper::setupSerialiser()
+{
+	RsSerialiser *rss = new RsSerialiser();
+
+	/* add in the types we need! */
+	rss->addSerialType(new RsCacheConfigSerialiser());
+
+	return rss;
+}
+
+
+std::list<RsItem *> CacheStrapper::saveList(bool &cleanup)
+{
+	std::list<RsItem *> saveData;
+
+	/* it can delete them! */
+	cleanup = true;
+
+#ifdef CS_DEBUG 
+	std::cerr << "CacheStrapper::saveList()" << std::endl;
+#endif
+
+	/* iterate through the Caches (local first) */
+
+	std::list<CacheData>::iterator cit;
+	std::list<CacheData> ownCaches;
+	std::list<CacheData> remoteCaches;
+	std::string ownId = mConnMgr->getOwnId();
+
+	std::map<uint16_t, CachePair>::iterator it;
+	for(it = caches.begin(); it != caches.end(); it++)
+	{
+		std::map<CacheId, CacheData>::iterator tit;
+		std::map<CacheId, CacheData> ownTmp;
+		(it->second).source -> cachesAvailable(ownId, ownTmp);
+		(it->second).store -> getAllStoredCaches(remoteCaches);
+
+		for(tit = ownTmp.begin(); tit != ownTmp.end(); tit++)
+		{
+			ownCaches.push_back(tit->second);
+		}
+	}
+
+	for(cit = ownCaches.begin(); cit != ownCaches.end(); cit++)
+	{
+		RsCacheConfig *rscc = new RsCacheConfig();
+
+		rscc->pid = cit->pid;
+		//rscc->pname = cit->pname;
+		rscc->cachetypeid = cit->cid.type;
+		rscc->cachesubid = cit->cid.subid;
+		rscc->path = cit->path;
+		rscc->name = cit->name;
+		rscc->hash = cit->hash;
+		rscc->size = cit->size;
+		rscc->recvd = cit->recvd;
+
+		saveData.push_back(rscc);
+	}
+
+	for(cit = remoteCaches.begin(); cit != remoteCaches.end(); cit++)
+	{
+		if (cit->pid == ownId)
+		{
+#ifdef CS_DEBUG 
+			std::cerr << "CacheStrapper::loadList() discarding Own Remote Cache";
+			std::cerr << std::endl;
+#endif
+			continue; /* skip own caches -> will get transferred anyway */
+		}
+
+		RsCacheConfig *rscc = new RsCacheConfig();
+
+		rscc->pid = cit->pid;
+		//rscc->pname = cit->pname;
+		rscc->cachetypeid = cit->cid.type;
+		rscc->cachesubid = cit->cid.subid;
+		rscc->path = cit->path;
+		rscc->name = cit->name;
+		rscc->hash = cit->hash;
+		rscc->size = cit->size;
+		rscc->recvd = cit->recvd;
+
+		saveData.push_back(rscc);
+	}
+
+	/* list completed! */
+	return saveData;
+}
+
+
+bool CacheStrapper::loadList(std::list<RsItem *> load)
+{
+	std::list<RsItem *>::iterator it;
+	RsCacheConfig *rscc;
+
+#ifdef CS_DEBUG 
+	std::cerr << "CacheStrapper::loadList() Item Count: " << load.size();
+	std::cerr << std::endl;
+#endif
+	std::list<CacheData> ownCaches;
+	std::list<CacheData> remoteCaches;
+	std::string ownId = mConnMgr->getOwnId();
+
+	std::map<std::string, std::list<std::string> > saveFiles;
+	std::map<std::string, std::list<std::string> >::iterator sit;
+
+	for(it = load.begin(); it != load.end(); it++)
+	{
+		/* switch on type */
+		if (NULL != (rscc = dynamic_cast<RsCacheConfig *>(*it)))
+		{
+#ifdef CS_DEBUG 
+			std::cerr << "CacheStrapper::loadList() Item: ";
+			std::cerr << std::endl;
+			rscc->print(std::cerr, 10);
+			std::cerr << std::endl;
+#endif
+			CacheData cd;
+
+			cd.pid = rscc->pid;
+			cd.pname = mAuthMgr->getName(cd.pid);
+			cd.cid.type = rscc->cachetypeid;
+			cd.cid.subid = rscc->cachesubid;
+			cd.path = rscc->path;
+			cd.name = rscc->name;
+			cd.hash = rscc->hash;
+			cd.size = rscc->size;
+			cd.recvd = rscc->recvd;
+
+			/* store files that we want to keep */
+			(saveFiles[cd.path]).push_back(cd.name);
+
+			std::map<uint16_t, CachePair>::iterator it2;
+			if (caches.end() == (it2 = caches.find(cd.cid.type)))
+			{
+				/* error - don't have this type of cache */
+#ifdef CS_DEBUG 
+				std::cerr << "CacheStrapper::loadList() Can't Find Cache discarding";
+				std::cerr << std::endl;
+#endif
+			}
+			else
+			{
+				if (cd.pid == ownId)
+				{
+					/* load local */
+					(it2 -> second).source -> loadLocalCache(cd);
+#ifdef CS_DEBUG 
+					std::cerr << "CacheStrapper::loadList() loaded Local";
+					std::cerr << std::endl;
+#endif
+				}
+				else
+				{
+					/* load remote */
+					(it2 -> second).store -> loadCache(cd);
+#ifdef CS_DEBUG 
+					std::cerr << "CacheStrapper::loadList() loaded Remote";
+					std::cerr << std::endl;
+#endif
+				}
+			}
+
+			/* cleanup */
+			delete (*it);
+
+		}
+		else
+		{
+			/* cleanup */
+			delete (*it);
+		}
+	}
+
+	/* assemble a list of dirs to clean (union of cache dirs) */
+	std::list<std::string> cacheDirs;
+	std::list<std::string>::iterator dit, fit;
+	std::map<uint16_t, CachePair>::iterator cit;
+	for(cit = caches.begin(); cit != caches.end(); cit++)
+	{
+		std::string lcdir = (cit->second).source->getCacheDir();
+		std::string rcdir = (cit->second).store->getCacheDir();
+
+		if (cacheDirs.end() == std::find(cacheDirs.begin(), cacheDirs.end(), lcdir))
+		{
+			cacheDirs.push_back(lcdir);
+		}
+
+		if (cacheDirs.end() == std::find(cacheDirs.begin(), cacheDirs.end(), rcdir))
+		{
+			cacheDirs.push_back(rcdir);
+		}
+	}
+
+#ifdef CS_DEBUG 
+	std::cerr << "CacheStrapper::loadList() Files To Save:"  << std::endl;
+#endif
+
+	for(sit = saveFiles.begin(); sit != saveFiles.end(); sit++)
+	{
+#ifdef CS_DEBUG 
+		std::cerr << "CacheStrapper::loadList() Files To Save in dir: <" << sit->first << ">" << std::endl;
+#endif
+		for(fit = (sit->second).begin(); fit != (sit->second).end(); fit++)
+		{
+#ifdef CS_DEBUG 
+			std::cerr << "\tFile: " << *fit << std::endl;
+#endif
+		}
+	}
+
+	std::list<std::string> emptyList;
+	for(dit = cacheDirs.begin(); dit != cacheDirs.end(); dit++)
+	{
+#ifdef CS_DEBUG 
+		std::cerr << "CacheStrapper::loadList() Cleaning cache dir: <" << *dit << ">" << std::endl;
+#endif
+		sit = saveFiles.find(*dit);
+		if (sit != saveFiles.end())
+		{
+			for(fit = (sit->second).begin(); fit != (sit->second).end(); fit++)
+			{
+#ifdef CS_DEBUG 
+				std::cerr << "CacheStrapper::loadList() Keeping File: " << *fit << std::endl;
+#endif
+			}
+			RsDirUtil::cleanupDirectory(*dit, sit->second);
+		}
+		else
+		{
+#ifdef CS_DEBUG 
+			std::cerr << "CacheStrapper::loadList() No Files to save here!" << std::endl;
+#endif
+			RsDirUtil::cleanupDirectory(*dit, emptyList);
+		}
+	}
+
+	return true;
+
+}
 
 
 /********************************* CacheStrapper *********************************
@@ -631,6 +931,43 @@ bool    CacheStrapper::findCache(std::string hash, CacheData &data)
 /* request from CacheStore */
 bool CacheTransfer::RequestCache(CacheData &data, CacheStore *cbStore)
 {
+	/* check for a previous request -> and cancel 
+	 *
+	 * - if duplicate pid, cid -> cancel old transfer
+	 * - if duplicate hash -> Fail Transfer
+	 */
+
+	std::map<std::string, CacheData>::iterator dit;
+	std::map<std::string, CacheStore *>::iterator sit;
+
+	for(dit = cbData.begin(); dit != cbData.end(); dit++)
+	{
+		if (((dit->second).pid == data.pid) && 
+			((dit->second).cid.type == data.cid.type) &&
+			((dit->second).cid.subid == data.cid.subid))
+		{
+			/* cancel old transfer */
+			CancelCacheFile(dit->second.pid, dit->second.path, 
+				dit->second.hash, dit->second.size);
+
+			sit = cbStores.find(dit->second.hash);
+			cbData.erase(dit);
+			cbStores.erase(sit);
+
+			break;
+		}
+	}
+
+	/* find in store.... */
+	sit = cbStores.find(data.hash);
+	if (sit != cbStores.end())
+	{
+		/* Duplicate Current Request */
+		cbStore -> failedCache(data);
+		return false;
+	}
+
+
 	/* store request */
 	cbData[data.hash] = data;
 	cbStores[data.hash] = cbStore;
@@ -654,6 +991,18 @@ bool CacheTransfer::RequestCacheFile(RsPeerId id, std::string path, std::string 
 
 	/* just tell them we've completed! */
 	CompletedCache(hash);
+	return true;
+}
+
+/* to be overloaded */
+bool CacheTransfer::CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size)
+{
+	std::cerr << "CacheTransfer::CancelCacheFile() : from:" << id << " #";
+	std::cerr << hash << " size: " << size;
+	std::cerr << " savepath: " << path << std::endl;
+	std::cerr << "CacheTransfer::CancelCacheFile() Dummy fn";
+	std::cerr << std::endl;
+
 	return true;
 }
 

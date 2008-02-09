@@ -217,10 +217,10 @@ void    filedexserver::setFileCallback(std::string ownId, CacheStrapper *strappe
 	/* setup FiStore/Monitor */
 	std::string localcachedir = config_dir + "/cache/local";
 	std::string remotecachedir = config_dir + "/cache/remote";
-	fiStore = new FileIndexStore(ftFiler, cb, ownId, remotecachedir);
+	fiStore = new FileIndexStore(strapper, ftFiler, cb, ownId, remotecachedir);
 
 	/* now setup the FiMon */
-	fimon = new FileIndexMonitor(localcachedir, ownId);
+	fimon = new FileIndexMonitor(strapper, localcachedir, ownId);
 
 	/* setup ftFiler
 	 * to find peer info / savedir 
@@ -234,10 +234,7 @@ void    filedexserver::setFileCallback(std::string ownId, CacheStrapper *strappe
 	CachePair cp(fimon, fiStore, CacheId(RS_SERVICE_TYPE_FILE_INDEX, 0));
 	mCacheStrapper -> addCachePair(cp);
 
-	/* now we can load the cache configuration */
-	//std::string cacheconfig = config_dir + "/caches.cfg";
-	//mCacheStrapper -> loadCaches(cacheconfig);
-
+#if 0
 	/************ TMP HACK LOAD until new serialiser is finished */
 	/* get filename and hash from configuration */
 	std::string localCacheFile; // = getSSLRoot()->getSetting(LOCAL_CACHE_FILE_KEY);
@@ -270,8 +267,14 @@ void    filedexserver::setFileCallback(std::string ownId, CacheStrapper *strappe
 	RsDirUtil::cleanupDirectory(remotecachedir, saveRemoteCaches); /* clean up all */
 
 	/************ TMP HACK LOAD until new serialiser is finished */
+#endif
+
+	return;
+}
 
 
+void    filedexserver::StartupMonitor()
+{
 	/* startup the FileMonitor (after cache load) */
 	fimon->setPeriod(600); /* 10 minutes */
 	/* start it up */
@@ -296,8 +299,9 @@ void    filedexserver::setFileCallback(std::string ownId, CacheStrapper *strappe
 		delete rsft;
 	}
 	mResumeTransferList.clear();
-
 }
+
+
 
 int filedexserver::FileCacheSave()
 {
@@ -441,29 +445,28 @@ int     filedexserver::handleInputQueues()
 	i_init = i;
 	while((cr = pqisi -> RequestedSearch()) != NULL)
 	{
-		//std::cerr << "filedexserver::handleInputQueues() Recvd RequestedSearch (CacheQuery!)" << std::endl;
+		/* just delete these */
 		std::ostringstream out;
-		if (i++ == i_init)
-		{
-			out << "Requested Search:" << std::endl;
-		}
+		out << "Requested Search:" << std::endl;
 		cr -> print(out);
 		pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, out.str());
+		delete cr;
+	}
 
-		/* these go to the CacheStrapper (handled immediately) */
-		std::map<CacheId, CacheData>::iterator it;
-		std::map<CacheId, CacheData> answer;
-		RsPeerId id;
 
-		mCacheStrapper->handleCacheQuery(id, answer);
-		for(it = answer.begin(); it != answer.end(); it++)
+	// Now handle it replacement (pushed cache results) 
+	{
+		std::list<std::pair<RsPeerId, CacheData> > cacheUpdates;
+		std::list<std::pair<RsPeerId, CacheData> >::iterator it;
+
+		mCacheStrapper->getCacheUpdates(cacheUpdates);
+		for(it = cacheUpdates.begin(); it != cacheUpdates.end(); it++)
 		{
-			//std::cerr << "filedexserver::handleInputQueues() Sending (CacheAnswer!)" << std::endl;
 			/* construct reply */
 			RsCacheItem *ci = new RsCacheItem();
 	
 			/* id from incoming */
-			ci -> PeerId(cr->PeerId());
+			ci -> PeerId(it->first);
 
 			ci -> file.hash = (it->second).hash;
 			ci -> file.name = (it->second).name;
@@ -473,13 +476,13 @@ int     filedexserver::handleInputQueues()
 			ci -> cacheSubId =  (it->second).cid.subid;
 
 			std::ostringstream out2;
-			out2 << "Outgoing CacheStrapper reply -> RsCacheItem:" << std::endl;
+			out2 << "Outgoing CacheStrapper Update -> RsCacheItem:" << std::endl;
 			ci -> print(out2);
-			pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, out2.str());
+			std::cerr << out2.str() << std::endl;
+
+			//pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, out2.str());
 			pqisi -> SendSearchResult(ci);
 		}
-
-		delete cr;
 	}
 
 	// now File Input.
@@ -545,11 +548,13 @@ int     filedexserver::handleOutputQueues()
 	//std::cerr << "filedexserver::handleOutputQueues()" << std::endl;
 	int i = 0;
 
+
+#if 0 /* no more cache queries -> results are pushed */
+
 	std::list<RsPeerId> ids;
         std::list<RsPeerId>::iterator pit;
 
 	mCacheStrapper->sendCacheQuery(ids, time(NULL));
-
 	for(pit = ids.begin(); pit != ids.end(); pit++)
 	{
 		//std::cerr << "filedexserver::handleOutputQueues() Cache Query for: " << (*pit) << std::endl;
@@ -569,6 +574,8 @@ int     filedexserver::handleOutputQueues()
 		/* send it off */
 		pqisi -> SearchSpecific(cr);
 	}
+#endif
+
 
 	/* now see if the filer has any data */
 	ftFileRequest *ftr;

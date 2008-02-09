@@ -853,22 +853,27 @@ RsCacheConfig::~RsCacheConfig()
 
 void RsCacheConfig::clear()
 {
-
-	cacheid = 0;
+	pid.clear();
+	cachetypeid = 0;
+	cachesubid = 0;
 	path = "";
 	name = "";
 	hash = "";
+	size = 0;
 	recvd = 0;
 
 }
 
 std::ostream &RsCacheConfig::print(std::ostream &out, uint16_t indent)
 {
-	printRsItemBase(out, "RsCacheConfig", indent); // begin 'WRITE' check
+	printRsItemBase(out, "RsCacheConfig", indent); 
 	uint16_t int_Indent = indent + 2;
 
 	printIndent(out, int_Indent); //indent 
-	out << "cacheid: " << cacheid << std::endl; // display value of cacheid
+	out << "pid: " << pid << std::endl; // display value of peerid
+
+	printIndent(out, int_Indent); //indent 
+	out << "cacheid: " << cachetypeid << ":" << cachesubid << std::endl; // display value of cacheid
 	
 	printIndent(out, int_Indent);
 	out << "path: " << path << std::endl; // display value of path
@@ -878,6 +883,9 @@ std::ostream &RsCacheConfig::print(std::ostream &out, uint16_t indent)
 
 	printIndent(out, int_Indent);
 	out << "hash: " << hash << std::endl; // display value of hash
+
+	printIndent(out, int_Indent);
+	out << "size: " << size << std::endl; // display value of size
 
 	printIndent(out, int_Indent);
 	out << "recvd: " << recvd << std::endl; // display value of recvd
@@ -900,11 +908,15 @@ uint32_t RsCacheConfigSerialiser::size(RsItem *i)
 
 	uint32_t s = 8; // to store calculated size, initiailize with size of header
 
-	s += 2; /* cacheid */
+
+	s += GetTlvStringSize(item->pid);
+	s += 2; /* cachetypeid */
+	s += 2; /* cachesubid */
 	s += GetTlvStringSize(item->path);
 	s += GetTlvStringSize(item->name);
 	s += GetTlvStringSize(item->hash);
-	s += 2; /* recvd */
+	s += 8; /* size */
+	s += 4; /* recvd */
 
 	return s;
 }
@@ -932,11 +944,14 @@ bool RsCacheConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *size)
 	
 	/* add the mandatory parts first */
 
-	ok &= setRawUInt32(data, tlvsize, &offset, item->cacheid);
-	std::cerr << "RsCacheConfigSerialiser::serialise() cacheid: " << ok << std::endl;
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, item->pid);
+	std::cerr << "RsCacheConfigSerialiser::serialise() peerid: " << ok << std::endl;
 
-	ok &= setRawUInt32(data, tlvsize, &offset, item->recvd);
-	std::cerr << "RsCacheConfigSerialiser::serialise() recvd: " << ok << std::endl;
+	ok &= setRawUInt16(data, tlvsize, &offset, item->cachetypeid);
+	std::cerr << "RsCacheConfigSerialiser::serialise() cacheTypeId: " << ok << std::endl;
+
+	ok &= setRawUInt16(data, tlvsize, &offset, item->cachesubid);
+	std::cerr << "RsCacheConfigSerialiser::serialise() cacheSubId: " << ok << std::endl;
 
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PATH, item->path);
 	std::cerr << "RsCacheConfigSerialiser::serialise() path: " << ok << std::endl;
@@ -946,6 +961,12 @@ bool RsCacheConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *size)
 
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_HASH_SHA1, item->hash);
 	std::cerr << "RsCacheConfigSerialiser::serialise() hash: " << ok << std::endl;
+
+	ok &= setRawUInt64(data, tlvsize, &offset, item->size);
+	std::cerr << "RsCacheConfigSerialiser::serialise() size: " << ok << std::endl;
+
+	ok &= setRawUInt32(data, tlvsize, &offset, item->recvd);
+	std::cerr << "RsCacheConfigSerialiser::serialise() recvd: " << ok << std::endl;
 
 
 	if (offset !=tlvsize)
@@ -962,13 +983,8 @@ RsItem *RsCacheConfigSerialiser::deserialise(void *data, uint32_t *size)
 	uint32_t rstype = getRsItemId(data);
 	uint32_t rssize = getRsItemSize(data);
 	
-	uint32_t *offset;
-	*offset = 0;
-
-	uint32_t tlvend = *offset + rssize;
-
-
-
+	uint32_t offset;
+	offset = 0;
 
 	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
 		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
@@ -995,40 +1011,40 @@ RsItem *RsCacheConfigSerialiser::deserialise(void *data, uint32_t *size)
 
 	/* get mandatory parts first */ 
 
-	ok &= getRawUInt32(data, rssize, offset, &(item->cacheid));
-	std::cerr << "RsCacheConfigSerialiser::deserialise() cacheid: " << ok << std::endl;
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, item->pid);
+	std::cerr << "RsCacheConfigSerialiser::deserialise() peerid: " << ok << std::endl;
 
-	ok &= getRawUInt32(data, rssize, offset, &(item->recvd));
+	ok &= getRawUInt16(data, rssize, &offset, &(item->cachetypeid));
+	std::cerr << "RsCacheConfigSerialiser::serialise() cacheTypeId: " << ok << std::endl;
+
+	ok &= getRawUInt16(data, rssize, &offset, &(item->cachesubid));
+	std::cerr << "RsCacheConfigSerialiser::serialise() cacheSubId: " << ok << std::endl;
+
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PATH, item->path);
+	std::cerr << "RsCacheConfigSerialiser::serialise() path: " << ok << std::endl;
+
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->name);
+	std::cerr << "RsCacheConfigSerialiser::serialise() name: " << ok << std::endl;
+
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_HASH_SHA1, item->hash);
+	std::cerr << "RsCacheConfigSerialiser::deserialise() hash: " << ok << std::endl;
+
+	ok &= getRawUInt64(data, rssize, &offset, &(item->size));
+	std::cerr << "RsCacheConfigSerialiser::deserialise() size: " << ok << std::endl;
+
+	ok &= getRawUInt32(data, rssize, &offset, &(item->recvd));
 	std::cerr << "RsCacheConfigSerialiser::deserialise() recvd: " << ok << std::endl;
 
-	while((*offset) + 2 < tlvend)
+
+	if (offset != rssize)
 	{
-		/* get the next type */
-		uint16_t tlvsubtype = GetTlvType( &(((uint8_t *) data)[*offset]) );
 
-		switch(tlvsubtype)
-			{
-				case TLV_TYPE_STR_PATH:
-					ok &= GetTlvString(data, tlvend, offset, tlvsubtype, item->path);
-					break;
-				case TLV_TYPE_STR_NAME:
-					ok &= GetTlvString(data, tlvend, offset,  tlvsubtype, item->name);
-					break;
-				case TLV_TYPE_STR_HASH_SHA1:
-					ok &= GetTlvString(data, tlvend, offset,  tlvsubtype, item->hash);
-					break;
-				default:
-					break;
-			}
-
-			if (!ok)
-			{
-			return false;
-			}
+		/* error */
+		delete item;
+		return NULL;
 	}
 
 	return item;
-
 }
 
 

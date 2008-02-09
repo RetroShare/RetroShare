@@ -32,8 +32,8 @@
 class CacheTestSource: public CacheSource
 {
 	public:
-	CacheTestSource(std::string dir)
-	:CacheSource(TESTID, false, dir) { return; }
+	CacheTestSource(CacheStrapper *cs, std::string dir)
+	:CacheSource(cs, TESTID, false, dir) { return; }
 };
 
 class CacheTestStore: public CacheStore
@@ -47,8 +47,8 @@ class CacheTestStore: public CacheStore
 class CacheTestMultiSource: public CacheSource
 {
 	public:
-	CacheTestMultiSource(std::string dir)
-	:CacheSource(TESTID2, true, dir) { return; }
+	CacheTestMultiSource(CacheStrapper *cs, std::string dir)
+	:CacheSource(cs, TESTID2, true, dir) { return; }
 };
 
 class CacheTestMultiStore: public CacheStore

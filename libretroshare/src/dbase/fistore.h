@@ -63,7 +63,7 @@ class FileIndexStore: public CacheStore
 {
 	public:
 
-	FileIndexStore(CacheTransfer *cft, NotifyBase *cb_in, 
+	FileIndexStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in, 
 			RsPeerId ownid, std::string cachedir);
 virtual ~FileIndexStore();
 

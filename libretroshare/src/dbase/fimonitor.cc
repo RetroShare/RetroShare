@@ -38,8 +38,8 @@
 
 #define FIM_DEBUG 1
 
-FileIndexMonitor::FileIndexMonitor(std::string cachedir, std::string pid)
-	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cachedir), fi(pid), 
+FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, std::string cachedir, std::string pid)
+	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cachedir), fi(pid), 
 		pendingDirs(false), pendingForceCacheWrite(false)
 
 {

@@ -10,9 +10,11 @@ include $(RS_TOP_DIR)/scripts/config.mk
 RSOBJ =   findex.o fimonitor.o cachestrapper.o fistore.o \
 	rsexpr.o
 
-TESTOBJ =  fitest2.o fisavetest.o ficachetest.o searchtest.o
+TESTOBJ =  fitest2.o fisavetest.o searchtest.o 
+#ficachetest.o 
 
-TESTS =  fitest2 fisavetest ficachetest searchtest
+TESTS =  fitest2 fisavetest searchtest
+#ficachetest 
 
 ifeq ($(OS),Linux)
         TESTOBJ += fimontest.o

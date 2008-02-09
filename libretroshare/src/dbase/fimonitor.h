@@ -68,7 +68,7 @@ std::string FileIndexMonitor::findRealRoot(std::string base);
 class FileIndexMonitor: public CacheSource, public RsThread
 {
 	public:
-	FileIndexMonitor(std::string cachedir, std::string pid);
+	FileIndexMonitor(CacheStrapper *cs, std::string cachedir, std::string pid);
 virtual ~FileIndexMonitor();
 
 	/* external interface for filetransfer */

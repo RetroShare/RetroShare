@@ -126,12 +126,14 @@ virtual ~RsCacheConfig();
 virtual void clear();
 std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-        //RsTlvPeerId     peerid;                 /* Mandatory */
-	uint32_t        cacheid;                /* Mandatory */
+        std::string     pid;                 /* Mandatory */
+	uint16_t        cachetypeid;            /* Mandatory */
+	uint16_t        cachesubid;             /* Mandatory */
 
 	std::string     path;    	        /* Mandatory */
 	std::string     name;    	        /* Mandatory */
 	std::string     hash;    	        /* Mandatory */
+	uint64_t	size;			/* Mandatory */
 
 	uint32_t	recvd;                  /* Mandatory */
 };

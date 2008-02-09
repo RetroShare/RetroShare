@@ -159,6 +159,9 @@ virtual ~ftfiler() { return; }
 
 virtual bool    RequestCacheFile(std::string id, std::string path, 
 				std::string hash, uint64_t size);
+virtual bool    CancelCacheFile(RsPeerId id, std::string path, 
+				std::string hash, uint64_t size);
+
 virtual int     getFile(std::string name, std::string hash, 
 	                        uint64_t size, std::string destpath);
 

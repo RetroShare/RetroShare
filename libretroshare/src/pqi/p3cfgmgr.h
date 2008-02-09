@@ -62,6 +62,7 @@ const uint32_t CONFIG_TYPE_GENERAL 	= 0x0001;
 const uint32_t CONFIG_TYPE_PEERS 	= 0x0002;
 const uint32_t CONFIG_TYPE_FSERVER 	= 0x0003;
 const uint32_t CONFIG_TYPE_MSGS 	= 0x0004;
+const uint32_t CONFIG_TYPE_CACHE 	= 0x0005;
 
 class p3ConfigMgr;
 class p3AuthMgr;

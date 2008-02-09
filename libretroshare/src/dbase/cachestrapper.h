@@ -113,6 +113,7 @@ bool RequestCache(CacheData &data, CacheStore *cbStore); /* request from CacheSt
 	protected:
 	/* to be overloaded */
 virtual bool RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size); 
+virtual bool CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
 
 bool CompletedCache(std::string hash);                   /* internal completion -> does cb */
 bool FailedCache(std::string hash);                      /* internal completion -> does cb */
@@ -134,7 +135,7 @@ typedef std::map<uint16_t, CacheData> CacheSet;
 class CacheSource
 {
 	public:
-	CacheSource(uint16_t t, bool m, std::string cachedir);
+	CacheSource(uint16_t t, bool m, CacheStrapper *cs, std::string cachedir);
 virtual ~CacheSource() {}
 
 	/* called to determine available cache for peer - 
@@ -165,17 +166,17 @@ bool    findCache(std::string hash, CacheData &data);
 
 	protected:
 
-	/*** MUTEX LOCKING - TODO 
-	*/
+	uint16_t cacheType;    /* for checking */
+	bool   multiCache;   /* do we care about subid's */
+	CacheStrapper *mStrapper;
+
+	/*** MUTEX LOCKING */
 void	lockData();
 void	unlockData();
 
 	CacheSet caches;
 
 	private:
-
-	uint16_t cacheType;    /* for checking */
-	bool   multiCache;   /* do we care about subid's */
 
 	std::string cacheDir;
 	RsMutex cMutex;
@@ -186,11 +187,12 @@ class CacheStore
 {
 	public:
 
-	CacheStore(uint16_t t, bool m, CacheTransfer *cft, std::string cachedir);
+	CacheStore(uint16_t t, bool m, CacheStrapper *cs, CacheTransfer *cft, std::string cachedir);
 virtual ~CacheStore() {} 
 
 	/* current stored data */
 bool 	getStoredCache(CacheData &data); /* use pid/cid in data */
+bool 	getAllStoredCaches(std::list<CacheData> &data); /* use pid/cid in data */
 
 	/* input from CacheStrapper -> store can then download new data */
 void	availableCache(const CacheData &data);
@@ -232,12 +234,15 @@ bool    locked_getStoredCache(CacheData &data);
 	uint16_t cacheType;    /* for checking */
 	bool     multiCache;   /* do we care about subid's */
 
+	CacheStrapper *mStrapper;
 	CacheTransfer *cacheTransfer;
+
 	std::string cacheDir;
+
+	RsMutex cMutex;
 
 	std::map<RsPeerId, CacheSet> caches;
 
-	RsMutex cMutex;
 };
 
 
@@ -263,40 +268,34 @@ class CachePair
 
 bool operator<(const CachePair &a, const CachePair &b);
 
-class CacheTS
-{
-	public:
-
-	time_t query;
-	time_t answer;
-};
-
 #include "pqi/pqimonitor.h"
+#include "pqi/p3cfgmgr.h"
 
-class CacheStrapper: public pqiMonitor
+class p3AuthMgr;
+
+class CacheStrapper: public pqiMonitor, public p3Config
 {
 	public:
-	CacheStrapper(RsPeerId id, time_t period);
+	CacheStrapper(p3AuthMgr *am, p3ConnectMgr *cm);
 virtual ~CacheStrapper() { return; }
 
 	/************* from pqiMonitor *******************/
 virtual void statusChange(const std::list<pqipeer> &plist);
 	/************* from pqiMonitor *******************/
 
+	/* Feedback from CacheSources */
+void 	refreshCache(const CacheData &data);
+void 	refreshCacheStore(const CacheData &data);
+
+	/* list of Caches to send out */
+bool    getCacheUpdates(std::list<std::pair<RsPeerId, CacheData> > &updates);
+
 void	addCachePair(CachePair pair);
 
-void   addPeerId(RsPeerId pid);
-bool   removePeerId(RsPeerId pid);
-
-	/*** I/O (1) ***/
-				/* pass to correct CacheSet */
-void	recvCacheResponse(CacheData &date, time_t ts);  
-				/* generate periodically or at a change */
-bool    sendCacheQuery(std::list<RsPeerId> &id, time_t ts);		
-
 	/*** I/O (2) ***/
-				/* handle a DirQuery */
+void	recvCacheResponse(CacheData &data, time_t ts);  
 void    handleCacheQuery(RsPeerId id, std::map<CacheId, CacheData> &data); 
+
 
 	/* search through CacheSources. */
 bool    findCache(std::string hash, CacheData &data);
@@ -304,13 +303,27 @@ bool    findCache(std::string hash, CacheData &data);
 	/* display */
 void 	listCaches(std::ostream &out);
 void 	listPeerStatus(std::ostream &out);
-	
+
+
+	/* Config */
+        protected:
+
+	        /* Key Functions to be overloaded for Full Configuration */
+virtual RsSerialiser *setupSerialiser();
+virtual std::list<RsItem *> saveList(bool &cleanup);
+virtual bool    loadList(std::list<RsItem *> load);
+
 	private:
 
-	std::map<RsPeerId, CacheTS> status;
+	/* these are static - so shouldn't need mutex */
+	p3AuthMgr *mAuthMgr;
+	p3ConnectMgr *mConnMgr;
+
 	std::map<uint16_t, CachePair> caches;
-	RsPeerId ownId;
-	time_t queryPeriod;
+
+	RsMutex csMtx; /* protect below */
+
+	std::list<std::pair<RsPeerId, CacheData> > mCacheUpdates;
 };
 
 

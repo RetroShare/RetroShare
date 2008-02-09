@@ -154,10 +154,13 @@ bool  loadConfigMap(std::map<std::string, std::string> &configMap);
 int 	FileStoreTick();
 int 	FileCacheSave();
 
+	/* Setup */
 void 	initialiseFileStore();
 void    setFileCallback(std::string ownId, CacheStrapper *strapper, 
 				ftfiler *ft, NotifyBase *cb);
+void    StartupMonitor();
 
+	/* Controls */
 int RequestDirDetails(std::string uid, std::string path, DirDetails &details);
 int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags);
 
