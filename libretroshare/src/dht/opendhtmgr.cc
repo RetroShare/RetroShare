@@ -106,8 +106,8 @@ bool    OpenDHTMgr::init()
 	std::string configpath = ".";
 
 	/* load up DHT gateways */
-	//mClient = new OpenDHTClient();
-	mClient = new DHTClientDummy();
+	mClient = new OpenDHTClient();
+	//mClient = new DHTClientDummy();
 
 	std::string filename = configpath;
 	if (configpath.size() > 0)

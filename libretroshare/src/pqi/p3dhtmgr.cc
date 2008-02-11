@@ -24,6 +24,7 @@
  */
 
 #include "pqi/p3dhtmgr.h"
+#include "pqi/p3connmgr.h"
 #include <openssl/sha.h>
 #include <sstream>
 #include <iomanip>
@@ -54,7 +55,7 @@
 #define DHT_SEARCH_PERIOD	1800 /* PeerKeys: if we haven't found them: 30 min */
 #define DHT_CHECK_PERIOD	3600 /* PeerKeys: re-lookup peer: 60 min */
 #define DHT_PUBLISH_PERIOD	1800 /* OwnKey 30 min */
-#define DHT_NOTIFY_PERIOD	600  /* 10 min - Notify Check period */
+#define DHT_NOTIFY_PERIOD	300  /* 5 min - Notify Check period */
 #define DHT_RESTART_PERIOD	300  /* 5 min */
 
 #define DHT_DEFAULT_PERIOD	600  /* Default period if no work to do */
@@ -531,33 +532,64 @@ int p3DhtMgr::checkOwnDHTKeys()
 
 		/* check for connect requests */
 		if ((peer.state == DHT_PEER_PUBLISHED) &&
-			(now - peer.notifyTS >= DHT_NOTIFY_PERIOD))
+			(!(peer.type & RS_NET_CONN_TCP_EXTERNAL))) 
 		{
-#ifdef DHT_DEBUG
-			std::cerr << "p3DhtMgr::checkOwnDHTKeys() check for Notify (rep=0)";
-			std::cerr << std::endl;
-#endif
-			if (dhtSearch(peer.hash1, DHT_MODE_NOTIFY))
+			if (now - peer.notifyTS >= DHT_NOTIFY_PERIOD)
 			{
-				dhtMtx.lock(); /* LOCK MUTEX */
+#ifdef DHT_DEBUG
+				std::cerr << "p3DhtMgr::checkOwnDHTKeys() check for Notify (rep=0)";
+				std::cerr << std::endl;
+#endif
+				if (dhtSearch(peer.hash1, DHT_MODE_NOTIFY))
+				{
+					dhtMtx.lock(); /* LOCK MUTEX */
 
-				ownEntry.notifyTS = now;
+					ownEntry.notifyTS = now;
 
-				dhtMtx.unlock(); /* UNLOCK MUTEX */
+					dhtMtx.unlock(); /* UNLOCK MUTEX */
+				}
+
+				/* restart immediately */
+				repubPeriod = DHT_MIN_PERIOD;
+				return repubPeriod;
 			}
-
-			/* restart immediately */
-			repubPeriod = DHT_MIN_PERIOD;
-			return repubPeriod;
+			else
+			{
+		  		repubPeriod = DHT_NOTIFY_PERIOD - 
+					(now - peer.notifyTS);
+				if (repubPeriod < DHT_MIN_PERIOD)
+				{
+					repubPeriod = DHT_MIN_PERIOD;
+				}
+#ifdef DHT_DEBUG
+				std::cerr << "p3DhtMgr::checkOwnDHTKeys() check Notify in: ";
+				std::cerr << repubPeriod << std::endl;
+#endif
+			}
 		}
 		else
 		{
-		  	repubPeriod = DHT_NOTIFY_PERIOD - 
-				(now - peer.notifyTS);
+			if (peer.state != DHT_PEER_PUBLISHED)
+			{
 #ifdef DHT_DEBUG
-			std::cerr << "p3DhtMgr::checkOwnDHTKeys() check Notify in: ";
-			std::cerr << repubPeriod << std::endl;
+				std::cerr << "p3DhtMgr::checkOwnDHTKeys() No Notify until Published";
+				std::cerr << std::endl;
 #endif
+			}
+			else if (peer.type & RS_NET_CONN_TCP_EXTERNAL)
+			{
+#ifdef DHT_DEBUG
+				std::cerr << "p3DhtMgr::checkOwnDHTKeys() No Notify because have Ext Addr";
+				std::cerr << std::endl;
+#endif
+			}
+			else
+			{
+#ifdef DHT_DEBUG
+				std::cerr << "p3DhtMgr::checkOwnDHTKeys() No Notify: Unknown Reason";
+				std::cerr << std::endl;
+#endif
+			}
 		}
 
 	}

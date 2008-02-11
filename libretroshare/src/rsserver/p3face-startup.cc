@@ -637,6 +637,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 	server->StartupMonitor();
 	mUpnpMgr->start();
+	mDhtMgr->start();
 
 
 #ifdef PQI_USE_CHANNELS

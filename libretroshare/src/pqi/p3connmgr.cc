@@ -310,7 +310,7 @@ void p3ConnectMgr::netUpnpInit()
 	mNetStatus = RS_NET_UPNP_SETUP;
 	iport = ntohs(ownState.localaddr.sin_port);
 	eport = ntohs(ownState.serveraddr.sin_port);
-	if ((eport < 1000) || (eport > 10000))
+	if ((eport < 1000) || (eport > 30000))
 	{
 		eport = iport;
 	}
