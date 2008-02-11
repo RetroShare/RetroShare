@@ -97,6 +97,10 @@ private:
 public slots:
 		int addItem(QString symbol, QString name, QString coreID, qlonglong size, double progress, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining);
 		void delItem(int row);
+
+		int addUploadItem(QString symbol, QString name, QString coreID, qlonglong size, double progress, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining);
+		void delUploadItem(int row);
+
 		void editItem(int row, int column, QVariant data);
 		void updateProgress(int value);
 		

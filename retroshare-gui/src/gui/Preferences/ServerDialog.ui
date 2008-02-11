@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>416</width>
-    <height>345</height>
+    <width>459</width>
+    <height>409</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -498,376 +498,259 @@
   <property name="contextMenuPolicy" >
    <enum>Qt::NoContextMenu</enum>
   </property>
-  <widget class="QGroupBox" name="groupBox_3" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>270</y>
-     <width>411</width>
-     <height>71</height>
-    </rect>
-   </property>
-   <property name="title" >
-    <string>Transfer Rates</string>
-   </property>
-   <widget class="QWidget" name="layoutWidget" >
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>170</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>6</number>
+  <layout class="QVBoxLayout" >
+   <item>
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="title" >
+      <string>Network Address Configuration (takes effect after restart)</string>
      </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="label_14" >
-       <property name="text" >
-        <string>Total Rate (KB/s) </string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="totalRate" >
-       <property name="minimum" >
-        <number>1</number>
-       </property>
-       <property name="maximum" >
-        <number>4096</number>
-       </property>
-       <property name="value" >
-        <number>1</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="layoutWidget" >
-    <property name="geometry" >
-     <rect>
-      <x>200</x>
-      <y>20</y>
-      <width>170</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>6</number>
-     </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="label_12" >
-       <property name="text" >
-        <string>Per Person  </string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="indivRate" >
-       <property name="minimum" >
-        <number>1</number>
-       </property>
-       <property name="maximum" >
-        <number>1024</number>
-       </property>
-       <property name="value" >
-        <number>1</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="groupBox_4" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>40</y>
-     <width>411</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="title" >
-    <string>External Visibility / Discovery Configuration</string>
-   </property>
-   <widget class="QComboBox" name="dhtComboBox" >
-    <property name="geometry" >
-     <rect>
-      <x>30</x>
-      <y>10</y>
-      <width>161</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <item>
-     <property name="text" >
-      <string>DHT Enabled</string>
-     </property>
-    </item>
-    <item>
-     <property name="text" >
-      <string>DHT Disabled</string>
-     </property>
-    </item>
-   </widget>
-   <widget class="QComboBox" name="discComboBox" >
-    <property name="geometry" >
-     <rect>
-      <x>220</x>
-      <y>10</y>
-      <width>161</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <item>
-     <property name="text" >
-      <string>Discovery Enabled</string>
-     </property>
-    </item>
-    <item>
-     <property name="text" >
-      <string>Discovery Disabled</string>
-     </property>
-    </item>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="groupBox_2" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>411</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="title" >
-    <string>Network Address Configuration (takes effect after restart)</string>
-   </property>
-   <widget class="QComboBox" name="netModeComboBox" >
-    <property name="geometry" >
-     <rect>
-      <x>30</x>
-      <y>10</y>
-      <width>351</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <item>
-     <property name="text" >
-      <string>Automatic (Firewalled)</string>
-     </property>
-    </item>
-    <item>
-     <property name="text" >
-      <string>Firewalled  + No UPnP</string>
-     </property>
-    </item>
-    <item>
-     <property name="text" >
-      <string>External (Forwarded) Port</string>
-     </property>
-    </item>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="groupBox" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>80</y>
-     <width>411</width>
-     <height>191</height>
-    </rect>
-   </property>
-   <property name="title" >
-    <string>Server Status And Network Settings</string>
-   </property>
-   <widget class="QWidget" name="layoutWidget" >
-    <property name="geometry" >
-     <rect>
-      <x>93</x>
-      <y>20</y>
-      <width>291</width>
-      <height>152</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" >
-     <property name="spacing" >
-      <number>6</number>
-     </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QTextEdit" name="netStatusBox" />
-     </item>
-     <item>
-      <layout class="QGridLayout" >
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <property name="horizontalSpacing" >
-        <number>6</number>
-       </property>
-       <property name="verticalSpacing" >
-        <number>6</number>
-       </property>
-       <item row="0" column="0" >
-        <widget class="QLineEdit" name="localAddress" />
-       </item>
-       <item row="0" column="2" >
-        <widget class="QSpinBox" name="localPort" >
-         <property name="minimum" >
-          <number>0</number>
-         </property>
-         <property name="maximum" >
-          <number>65535</number>
-         </property>
-         <property name="value" >
-          <number>7812</number>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <widget class="QLabel" name="label_5" >
+     <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <widget class="QComboBox" name="netModeComboBox" >
+        <item>
          <property name="text" >
-          <string>Port:</string>
+          <string>Automatic (Firewalled)</string>
          </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QGridLayout" >
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <property name="horizontalSpacing" >
-        <number>6</number>
-       </property>
-       <property name="verticalSpacing" >
-        <number>6</number>
-       </property>
-       <item row="0" column="0" >
-        <widget class="QLineEdit" name="extAddress" />
-       </item>
-       <item row="0" column="2" >
-        <widget class="QSpinBox" name="extPort" >
-         <property name="minimum" >
-          <number>0</number>
-         </property>
-         <property name="maximum" >
-          <number>65535</number>
-         </property>
-         <property name="value" >
-          <number>7812</number>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <widget class="QLabel" name="label_4" >
+        </item>
+        <item>
          <property name="text" >
-          <string>Port:</string>
+          <string>Firewalled  + No UPnP</string>
          </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QLabel" name="label_2" >
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>150</y>
-      <width>91</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>External Address</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_6" >
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>30</y>
-      <width>80</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>Network Status</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label" >
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>130</y>
-      <width>81</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>Local Address</string>
-    </property>
-   </widget>
-  </widget>
+        </item>
+        <item>
+         <property name="text" >
+          <string>External (Forwarded) Port</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_4" >
+     <property name="title" >
+      <string>External Visibility / Discovery Configuration</string>
+     </property>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <widget class="QComboBox" name="dhtComboBox" >
+        <item>
+         <property name="text" >
+          <string>DHT Enabled</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>DHT Disabled</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QComboBox" name="discComboBox" >
+        <item>
+         <property name="text" >
+          <string>Discovery Enabled</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Discovery Disabled</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>Server Status And Network Settings</string>
+     </property>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <layout class="QVBoxLayout" >
+        <item>
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="QLabel" name="label_6" >
+            <property name="text" >
+             <string>Network Status</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextEdit" name="netStatusBox" />
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" >
+          <item>
+           <layout class="QVBoxLayout" >
+            <item>
+             <widget class="QLabel" name="label" >
+              <property name="text" >
+               <string>Local Address</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_2" >
+              <property name="text" >
+               <string>External Address</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QGridLayout" >
+            <item row="0" column="0" >
+             <widget class="QLineEdit" name="localAddress" />
+            </item>
+            <item row="0" column="1" >
+             <widget class="QLabel" name="label_5" >
+              <property name="text" >
+               <string>Port:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2" >
+             <widget class="QSpinBox" name="localPort" >
+              <property name="minimum" >
+               <number>0</number>
+              </property>
+              <property name="maximum" >
+               <number>65535</number>
+              </property>
+              <property name="value" >
+               <number>7812</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QLineEdit" name="extAddress" />
+            </item>
+            <item row="1" column="1" >
+             <widget class="QLabel" name="label_4" >
+              <property name="text" >
+               <string>Port:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2" >
+             <widget class="QSpinBox" name="extPort" >
+              <property name="minimum" >
+               <number>0</number>
+              </property>
+              <property name="maximum" >
+               <number>65535</number>
+              </property>
+              <property name="value" >
+               <number>7812</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_3" >
+     <property name="title" >
+      <string>Transfer Rates</string>
+     </property>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <layout class="QHBoxLayout" >
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_14" >
+          <property name="text" >
+           <string>Total Rate (KB/s) </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="totalRate" >
+          <property name="minimum" >
+           <number>1</number>
+          </property>
+          <property name="maximum" >
+           <number>4096</number>
+          </property>
+          <property name="value" >
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="1" >
+       <layout class="QHBoxLayout" >
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_12" >
+          <property name="text" >
+           <string>Per Person  </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="indivRate" >
+          <property name="minimum" >
+           <number>1</number>
+          </property>
+          <property name="maximum" >
+           <number>1024</number>
+          </property>
+          <property name="value" >
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <tabstops>
   <tabstop>localAddress</tabstop>

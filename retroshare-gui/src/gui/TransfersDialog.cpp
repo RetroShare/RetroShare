@@ -203,9 +203,35 @@ int TransfersDialog::addItem(QString symbol, QString name, QString coreID, qlong
 	return row;
 }
 
+
+int TransfersDialog::addUploadItem(QString symbol, QString name, QString coreID, qlonglong fileSize, double progress, double dlspeed, QString sources,  QString status, qlonglong completed, qlonglong remaining)
+{
+	int row;
+	QString sl;
+	//QIcon icon(symbol);
+	name.insert(0, " ");
+	row = ULListModel->rowCount();
+	ULListModel->insertRow(row);
+
+	ULListModel->setData(ULListModel->index(row, UNAME), QVariant((QString)name), Qt::DisplayRole);
+	ULListModel->setData(ULListModel->index(row, USIZE), QVariant((qlonglong)fileSize));
+	ULListModel->setData(ULListModel->index(row, USERNAME), QVariant((QString)sources));
+	ULListModel->setData(ULListModel->index(row, UPROGRESS), QVariant((double)progress));
+	ULListModel->setData(ULListModel->index(row, ULSPEED), QVariant((double)dlspeed));
+	ULListModel->setData(ULListModel->index(row, USTATUS), QVariant((QString)status));
+	ULListModel->setData(ULListModel->index(row, UTRANSFERRED), QVariant((qlonglong)remaining));
+
+	return row;
+}
+
 void TransfersDialog::delItem(int row)
 {
 	DLListModel->removeRow(row, QModelIndex());
+}
+
+void TransfersDialog::delUploadItem(int row)
+{
+	ULListModel->removeRow(row, QModelIndex());
 }
 
 void TransfersDialog::editItem(int row, int column, QVariant data)
@@ -259,6 +285,11 @@ void TransfersDialog::insertTransfers()
 	{
 		delItem(i);
 	}
+
+	for(int i = ULListModel->rowCount(); i >= 0; i--) 
+	{
+		delUploadItem(i);
+	}
 	
 	
 	//nun aktuelle DownloadListe hinzufügen
@@ -309,8 +340,17 @@ void TransfersDialog::insertTransfers()
 		completed 	= it->transfered;
 		progress 	= it->transfered * 100.0 / it->size;
 		remaining   = (it->size - it->transfered) / (it->tfRate * 1024.0);
-		
-		addItem(symbol, name, coreId, fileSize, progress, dlspeed, sources,  status, completed, remaining);
+	
+		if (it->download)
+		{
+			addItem(symbol, name, coreId, fileSize, progress, 
+					dlspeed, sources,  status, completed, remaining);
+		}
+		else
+		{
+			addUploadItem(symbol, name, coreId, fileSize, progress, 
+					dlspeed, sources,  status, completed, remaining);
+		}
 	}
 
 	rsiface->unlockData(); /* UnLock Interface */
