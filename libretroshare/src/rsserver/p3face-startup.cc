@@ -631,7 +631,13 @@ int RsServer::StartupRetroShare(RsInit *config)
 	/* Force Any Last Configuration Options */
 	/**************************************************************************/
 
+	/**************************************************************************/
+	/* Start up Threads */
+	/**************************************************************************/
+
 	server->StartupMonitor();
+	mUpnpMgr->start();
+
 
 #ifdef PQI_USE_CHANNELS
 	server->setP3Channel(pqih->getP3Channel());

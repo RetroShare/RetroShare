@@ -24,6 +24,7 @@
  */
 
 #include "udpsorter.h"
+#include "util/rsnet.h"
 
 #include <iostream>
 #include <sstream>
@@ -38,8 +39,10 @@ static const int STUN_TTL = 64;
 #define DEBUG_UDP_SORTER 1
 
 UdpSorter::UdpSorter(struct sockaddr_in &local)
-	: udpLayer(NULL), laddr(local)
+	:udpLayer(NULL), laddr(local), eaddrKnown(false)
 {
+	sockaddr_clear(&eaddr);
+
 	openSocket();
 	return;
 }

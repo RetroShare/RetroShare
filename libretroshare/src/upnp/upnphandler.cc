@@ -25,6 +25,8 @@ class uPnPConfigData
 #include <iostream>
 #include <sstream>
 
+#include "util/rsnet.h"
+
 
 void upnphandler::run()
 {
@@ -73,8 +75,8 @@ void upnphandler::run()
 			case RS_UPNP_S_TCP_FAILED: 
 			case RS_UPNP_S_UDP_FAILED:
 			case RS_UPNP_S_ACTIVE:
-				/* working ... normal 15 seconds */
-				allowedSleep = 15;
+				/* working ... normal 10 seconds */
+				allowedSleep = 10;
 			break;
 
 			default:
@@ -243,7 +245,7 @@ bool upnphandler::updateUPnP()
 		char eport2[256];
 
 		snprintf(eport1, 256, "%d", eport_curr);
-		snprintf(eport2, 256, "%d", eport_curr + 1);
+		snprintf(eport2, 256, "%d", eport_curr);
 
 		std::cerr << "Attempting To Remove Redirection: port: " << eport1;
 		std::cerr << " Prot: " << eprot1;
@@ -297,7 +299,7 @@ bool upnphandler::updateUPnP()
 		struct sockaddr_in localAddr = upnp_iaddr;
 
 		snprintf(in_port1, 256, "%d", ntohs(localAddr.sin_port));
-		snprintf(in_port2, 256, "%d", ntohs(localAddr.sin_port) + 1);
+		snprintf(in_port2, 256, "%d", ntohs(localAddr.sin_port));
 		snprintf(in_addr, 256, "%d.%d.%d.%d", 
 			 ((localAddr.sin_addr.s_addr >> 0) & 0xff),
 			 ((localAddr.sin_addr.s_addr >> 8) & 0xff),
@@ -305,7 +307,7 @@ bool upnphandler::updateUPnP()
 			 ((localAddr.sin_addr.s_addr >> 24) & 0xff));
 
 		snprintf(eport1, 256, "%d", eport_curr);
-		snprintf(eport2, 256, "%d", eport_curr + 1);
+		snprintf(eport2, 256, "%d", eport_curr);
 
 		std::cerr << "Attempting Redirection: InAddr: " << in_addr;
 		std::cerr << " InPort: " << in_port1;
@@ -327,10 +329,34 @@ bool upnphandler::updateUPnP()
 		{
 			upnpState = RS_UPNP_S_ACTIVE;
 		}
+
+
+		/* now store the external address */
+		char externalIPAddress[32];
+        	UPNP_GetExternalIPAddress(config -> urls.controlURL,
+					  config->data.servicetype, 
+		                          externalIPAddress);
+
+		sockaddr_clear(&upnp_eaddr);
+
+		if(externalIPAddress[0])
+		{
+			std::cerr << "Stored External address: " << externalIPAddress;
+			std::cerr << ":" << eport_curr;
+			std::cerr << std::endl;
+
+			inet_aton(externalIPAddress, &(upnp_eaddr.sin_addr));
+			upnp_eaddr.sin_family = AF_INET;
+			upnp_eaddr.sin_port = htons(eport_curr);
+		}
+		else
+		{
+			std::cerr << "FAILED To get external Address";
+			std::cerr << std::endl;
+		}
 	}
 
 	dataMtx.unlock(); /* UNLOCK MUTEX */
-
 
 	return true;
 
@@ -418,6 +444,9 @@ void    upnphandler::setInternalPort(unsigned short iport_in)
 	dataMtx.lock();   /***  LOCK MUTEX  ***/
 //	std::cerr << "UPnPHandler::setInternalAddress() postLock!" << std::endl;
 
+	std::cerr << "UPnPHandler::setInternalPort(" << iport_in << ") current port: ";
+	std::cerr << iport << std::endl;
+
 	if (iport != iport_in)
 	{
 		iport = iport_in;
@@ -436,6 +465,9 @@ void    upnphandler::setExternalPort(unsigned short eport_in)
 //	std::cerr << "UPnPHandler::getExternalPort() pre Lock!" << std::endl;
 	dataMtx.lock();   /***  LOCK MUTEX  ***/
 //	std::cerr << "UPnPHandler::getExternalPort() postLock!" << std::endl;
+
+	std::cerr << "UPnPHandler::setExternalPort(" << eport_in << ") current port: ";
+	std::cerr << eport << std::endl;
 
 	/* flag both shutdown/start -> for restart */
 	if (eport != eport_in)
@@ -459,8 +491,10 @@ bool    upnphandler::getInternalAddress(struct sockaddr_in &addr)
 	dataMtx.lock();   /***  LOCK MUTEX  ***/
 //	std::cerr << "UPnPHandler::getInternalAddress() postLock!" << std::endl;
 
+	std::cerr << "UPnPHandler::getInternalAddress()" << std::endl;
+
 	addr = upnp_iaddr;
-	bool valid = (upnpState >= RS_UPNP_S_READY);
+	bool valid = (upnpState >= RS_UPNP_S_ACTIVE);
 
 	dataMtx.unlock(); /*** UNLOCK MUTEX ***/
 
@@ -473,8 +507,9 @@ bool    upnphandler::getExternalAddress(struct sockaddr_in &addr)
 	dataMtx.lock();   /***  LOCK MUTEX  ***/
 //	std::cerr << "UPnPHandler::getExternalAddress() postLock!" << std::endl;
 
+	std::cerr << "UPnPHandler::getExternalAddress()" << std::endl;
 	addr = upnp_eaddr;
-	bool valid = (upnpState >= RS_UPNP_S_READY);
+	bool valid = (upnpState == RS_UPNP_S_ACTIVE);
 
 	dataMtx.unlock(); /*** UNLOCK MUTEX ***/
 

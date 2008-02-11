@@ -43,7 +43,7 @@ const uint32_t RS_STUN_DHT =      	0x0001;
 const uint32_t RS_STUN_DONE =      	0x0002;
 const uint32_t RS_STUN_LIST_MIN =      	100;
 
-const uint32_t MAX_UPNP_INIT = 		10; /* seconds UPnP timeout */
+const uint32_t MAX_UPNP_INIT = 		60; /* seconds UPnP timeout */
 
 #define CONN_DEBUG 1
 
@@ -308,6 +308,12 @@ void p3ConnectMgr::netUpnpInit()
 	/* get the ports from the configuration */
 
 	mNetStatus = RS_NET_UPNP_SETUP;
+	iport = ntohs(ownState.localaddr.sin_port);
+	eport = ntohs(ownState.serveraddr.sin_port);
+	if ((eport < 1000) || (eport > 10000))
+	{
+		eport = iport;
+	}
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
 
@@ -337,7 +343,7 @@ void p3ConnectMgr::netUpnpCheck()
 
 		mUpnpAddrValid = false;
 		mNetStatus = RS_NET_UDP_SETUP;
-		ownState.netMode = RS_NET_MODE_UDP; /* UPnP Failed us! */
+		//ownState.netMode = RS_NET_MODE_UDP; /* UPnP Failed us! */
 
 		connMtx.unlock(); /* UNLOCK MUTEX */
 	}
@@ -360,7 +366,7 @@ void p3ConnectMgr::netUdpCheck()
 #ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::netUdpCheck()" << std::endl;
 #endif
-	if (stunCheck())
+	if (stunCheck() || (mUpnpAddrValid)) 
 	{
 		bool extValid = false;
 		struct sockaddr_in extAddr;
@@ -390,8 +396,7 @@ void p3ConnectMgr::netUdpCheck()
 		{
 			ownState.serveraddr = extAddr;
 			mode = RS_NET_CONN_TCP_LOCAL | RS_NET_CONN_UDP_DHT_SYNC;
-			if ((ownState.netMode == RS_NET_MODE_UPNP) || 
-				(ownState.netMode == RS_NET_MODE_EXT))
+			if (mUpnpAddrValid  || (ownState.netMode == RS_NET_MODE_EXT))
 			{
 				mode |= RS_NET_CONN_TCP_EXTERNAL;
 			}

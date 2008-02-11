@@ -51,10 +51,10 @@
 #define DHT_STATE_ACTIVE	4
 
 /* TIMEOUTS */
-#define DHT_SEARCH_PERIOD	600  /* 10 min */
-#define DHT_CHECK_PERIOD	60  //1800 /* 30 min */
-#define DHT_PUBLISH_PERIOD	1800 /* 30 min */
-#define DHT_NOTIFY_PERIOD	20 //120  /* 2 min - Notify Check period */
+#define DHT_SEARCH_PERIOD	1800 /* PeerKeys: if we haven't found them: 30 min */
+#define DHT_CHECK_PERIOD	3600 /* PeerKeys: re-lookup peer: 60 min */
+#define DHT_PUBLISH_PERIOD	1800 /* OwnKey 30 min */
+#define DHT_NOTIFY_PERIOD	600  /* 10 min - Notify Check period */
 #define DHT_RESTART_PERIOD	300  /* 5 min */
 
 #define DHT_DEFAULT_PERIOD	600  /* Default period if no work to do */
@@ -63,7 +63,7 @@
 #define DHT_DEFAULT_WAITTIME	1    /* Std sleep break period */
 
 /* TTLs for DHTs posts */
-#define DHT_TTL_PUBLISH		DHT_PUBLISH_PERIOD  
+#define DHT_TTL_PUBLISH		(DHT_PUBLISH_PERIOD + 30)
 #define DHT_TTL_NOTIFY		DHT_NOTIFY_PERIOD  
 
 
