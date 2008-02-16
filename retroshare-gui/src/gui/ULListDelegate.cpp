@@ -93,7 +93,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 					multi *= 1024.0;
 				}
 			}
-			painter->drawText(option.rect, Qt::AlignCenter, temp);
+			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
 		case UTRANSFERRED:
 			transferred = index.data().toLongLong();
@@ -112,14 +112,14 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 					multi *= 1024.0;
 				}
 			}
-			painter->drawText(option.rect, Qt::AlignCenter, temp);
+			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
 		case ULSPEED:
 		    ulspeed = index.data().toDouble();
 			temp.clear();
 			temp.sprintf("%.2f", ulspeed/1024.);
 			temp += " KB/s";
-			painter->drawText(option.rect, Qt::AlignCenter, temp);
+			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
 		case UPROGRESS:
 			progress = index.data().toDouble();
@@ -151,6 +151,9 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				QPoint p = QStyle::alignedRect(option.direction, Qt::AlignLeft, pixmap.size(), option.rect).topLeft();
 				painter->drawPixmap(p, pixmap);
 			}
+			painter->drawText(option.rect.translated(pixmap.size().width(), 0), Qt::AlignLeft, index.data().toString());
+			break;
+		case USTATUS:
 			painter->drawText(option.rect.translated(pixmap.size().width(), 0), Qt::AlignLeft, index.data().toString());
 			break;
 		default:

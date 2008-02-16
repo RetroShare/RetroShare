@@ -25,14 +25,13 @@
 #include <QAbstractItemDelegate>
 
 // Defines for upload list list columns
-#define UNAME 0
-#define USERNAME 1
-#define USIZE 2
-#define UPROGRESS 3
-#define ULSPEED 4
+#define USERNAME 0
+#define UNAME 1
+#define ULSPEED 2
+#define UTRANSFERRED 3
+#define UPROGRESS 4
 #define USTATUS 5
-#define UTRANSFERRED 6
-
+#define USIZE 6
 
 
 #define MAX_CHAR_TMP 128
