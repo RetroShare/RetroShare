@@ -131,13 +131,13 @@ void ChatDialog::insertChat()
 
 
 	/* determine how many spaces to add */
-	int n = msgWidget->width();
+	//int n = msgWidget->width();
 	/* now spaces = (width - txt width) / (pixel / space)
 	 */
 
 	//std::cerr << "Width is : " << n << std::endl;
-	n -= 256; /* 220 pixels for name */
-	if (n > 0)
+	/*n -= 256;  220 pixels for name */
+	/*if (n > 0)
 	{
 		n = 2 + n / 10;
 	}
@@ -145,7 +145,7 @@ void ChatDialog::insertChat()
 	{
 		n = 1;
 	}
-	n = 1 + n / 2; /* shrink it! */
+	n = 1 + n / 2;*/ /* shrink it! */
 
 	/* add in lines at the bottom */
 	int ts = time(NULL);
@@ -174,14 +174,14 @@ void ChatDialog::insertChat()
 #else
 			extraTxt += "<br>\n";
 #endif
-			for(int i = 0; i < n; i++)
+			/*for(int i = 0; i < n; i++)
 			{
 				extraTxt += " ";
-			}
+			}*/
             		QString timestamp = "[" + QDateTime::currentDateTime().toString("hh:mm:ss") + "]";
             		QString name = QString::fromStdString(it->name);
-            		QString line = "<span style=\"color:#1D84C9\"><strong>" + timestamp +
-                       		                  "   " + name + "</strong></span> \n<br>";
+            		QString line = "<span style=\"color:#C00000\"><strong>" + timestamp + "</strong></span>" +			
+            		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span> \<br>";
 
                 	extraTxt += line;
                 	
