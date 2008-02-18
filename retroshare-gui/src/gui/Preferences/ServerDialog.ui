@@ -699,7 +699,7 @@
            <number>1</number>
           </property>
           <property name="maximum" >
-           <number>4096</number>
+           <number>12500</number>
           </property>
           <property name="value" >
            <number>1</number>
