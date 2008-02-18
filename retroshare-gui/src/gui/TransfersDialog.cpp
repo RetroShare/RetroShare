@@ -85,12 +85,12 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 //
 //    
 //	_header->resizeSection ( 0, 100 ); /*Name*/
-//	_header->resizeSection ( 1, 100 ); /*Size*/
+//	_header->resizeSection ( 1, 75 ); /*Size*/
 //	_header->resizeSection ( 2, 170 ); /*Progress*/
-//	_header->resizeSection ( 3, 100 ); /*Speed*/
+//	_header->resizeSection ( 3, 75 ); /*Speed*/
 //	_header->resizeSection ( 4, 100 ); /*Sources*/
 //	_header->resizeSection ( 5, 100 ); /*Status*/
-//	_header->resizeSection ( 6, 100 ); /*Completed*/
+//	_header->resizeSection ( 6, 75 ); /*Completed*/
 //	_header->resizeSection ( 7, 100 ); /*Remaining */
 	
 	// Set Upload list model
@@ -105,6 +105,8 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     ui.uploadsList->setModel(ULListModel);
     ULDelegate = new ULListDelegate();
     ui.uploadsList->setItemDelegate(ULDelegate);
+    
+    ui.uploadsList->setRootIsDecorated(false);
   
   	//Selection Setup
 	//selection = ui.uploadsList->selectionModel();
@@ -120,12 +122,12 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 //	upheader->setResizeMode (6, QHeaderView::Interactive); /*Transferred*/
 //    
 //	upheader->resizeSection ( 0, 100 ); /*Name */
-//	upheader->resizeSection ( 1, 100 ); /*Size */
+//	upheader->resizeSection ( 1, 75 ); /*Size */
 //	upheader->resizeSection ( 2, 100 ); /*User Name*/
 //	upheader->resizeSection ( 3, 100 ); /*Progress*/
-//	upheader->resizeSection ( 4, 100 ); /*Speed */
+//	upheader->resizeSection ( 4, 75 ); /*Speed */
 //	upheader->resizeSection ( 5, 100 ); /*Status*/
-//	upheader->resizeSection ( 6, 100 ); /*Transferred*/
+//	upheader->resizeSection ( 6, 75 ); /*Transferred*/
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
