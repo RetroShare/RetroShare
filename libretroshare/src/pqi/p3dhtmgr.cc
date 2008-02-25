@@ -495,8 +495,20 @@ int p3DhtMgr::checkOwnDHTKeys()
 		    (now - peer.lastTS > DHT_PUBLISH_PERIOD))
 		{
 #ifdef DHT_DEBUG
-		std::cerr << "p3DhtMgr::checkOwnDHTKeys() OWN ADDR REPUB" << std::endl;
+			std::cerr << "p3DhtMgr::checkOwnDHTKeys() OWN ADDR REPUB" << std::endl;
 #endif
+
+#ifdef DHT_DEBUG
+	        	std::cerr << "PUBLISH: ";
+	        	std::cerr << " hash1: " << peer.hash1;
+	        	std::cerr << " laddr: " << inet_ntoa(peer.laddr.sin_addr);
+			std::cerr << ":" << ntohs(peer.laddr.sin_port);
+	        	std::cerr << "   raddr: " << inet_ntoa(peer.raddr.sin_addr);
+			std::cerr << ":" << ntohs(peer.raddr.sin_port);
+	        	std::cerr << "   type: " << peer.type;
+			std::cerr << std::endl;
+#endif
+
 			/* publish own key */
 			if (dhtPublish(peer.hash1, peer.laddr, peer.raddr, peer.type, ""))
 			{
@@ -1016,11 +1028,29 @@ bool p3DhtMgr::dhtPublish(std::string idhash,
 		uint32_t type, std::string sign)
 {
 	/* ... goes and searches */
+#ifdef DHT_DEBUG
 	std::cerr << "p3DhtMgr::dhtPublish()" << std::endl;
 
-	/* Create a Value from addresses and type */
+       	std::cerr << "PUBLISHing: idhash: " << idhash;
+       	std::cerr << " laddr: " << inet_ntoa(laddr.sin_addr);
+	std::cerr << ":" << ntohs(laddr.sin_port);
+       	std::cerr << "   raddr: " << inet_ntoa(raddr.sin_addr);
+	std::cerr << ":" << ntohs(raddr.sin_port);
+       	std::cerr << "   type: " << type;
+       	std::cerr << "   sign: " << sign;
+	std::cerr << std::endl;
+#endif
 
+	/* Create a Value from addresses and type */
         /* to store the ip address and flags */
+
+	std::ostringstream out;
+	out << "RSDHT:" << std::setw(2) << std::setfill('0') << DHT_MODE_SEARCH << ": ";
+	out << "IPL="   << inet_ntoa(laddr.sin_addr) << ":"  << ntohs(laddr.sin_port) << ", ";
+	out << "IPE="   << inet_ntoa(raddr.sin_addr) << ":"  << ntohs(raddr.sin_port) << ", ";
+	out << "type="  << std::setw(4) << std::setfill('0') << std::hex << type << ", ";
+
+/*******
 	char valuearray[1024];
 	snprintf(valuearray, 1024, "RSDHT:%02d: IPL=%s:%d, IPE=%s:%d, type=%04X,",
 			DHT_MODE_SEARCH,
@@ -1031,6 +1061,17 @@ bool p3DhtMgr::dhtPublish(std::string idhash,
 	                type);
 
 	std::string value = valuearray;
+******/
+
+	std::string value = out.str();
+
+#ifdef DHT_DEBUG
+	std::cerr << "p3DhtMgr::dhtPublish()" << std::endl;
+
+       	std::cerr << "PUBLISH: key: " << idhash;
+       	std::cerr << " value: " << value;
+	std::cerr << std::endl;
+#endif
 
 	/* call to the real DHT */
 	return publishDHT(idhash, value, DHT_TTL_PUBLISH);

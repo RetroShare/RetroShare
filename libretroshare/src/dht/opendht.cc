@@ -230,6 +230,10 @@ bool OpenDHTClient::dhtActive()
 bool OpenDHTClient::publishKey(std::string key, std::string value, uint32_t ttl)
 {
 	/* create request */
+#ifdef	OPENDHT_DEBUG
+	std::cerr << "OpenDHTClient::openDHT_publishKey() key: " << key << " value: " << value;
+	std::cerr << std::endl;
+#endif
         std::string putmsg = createOpenDHT_put(key, value, ttl, openDHT_Client);
 	std::string response;
 

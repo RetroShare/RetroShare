@@ -139,31 +139,6 @@ void NotifyTxt::displaySearch()
 void NotifyTxt::displayMessages()
 {
 	iface->lockData(); /* Lock Interface */
-
-	std::ostringstream out;
-	std::cerr << out.str();
-
-	std::list<MessageInfo>::const_iterator it;
-	const std::list<MessageInfo> &msgs = iface->getMessages();
-
-	std::list<FileInfo>::const_iterator fit;
-	int i;
-
-	for(it = msgs.begin(); it != msgs.end(); it++)
-	{
-		out << "Message: ";
-		std::string cnv_title(it->title.begin(), it->title.end());
-		out << cnv_title << std::endl;
-		std::string cnv_msg(it->msg.begin(), it->msg.end());
- 		out << "\t" << cnv_msg << std::endl;
-		const std::list<FileInfo> &files = it -> files;
-		for(fit = files.begin(), i = 1; fit != files.end(); fit++, i++)
-		{
- 			out << "\t\tFile(" << i << ") " << fit->fname << std::endl;
-		}
-		out << std::endl;
-	}
-
 	iface->unlockData(); /* UnLock Interface */
 }
 
