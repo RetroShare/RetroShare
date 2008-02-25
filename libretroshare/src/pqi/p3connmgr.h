@@ -190,7 +190,7 @@ virtual void    peerStatus(std::string id,
 			struct sockaddr_in laddr, struct sockaddr_in raddr,
                         uint32_t type, uint32_t flags, uint32_t source);
 virtual void    peerConnectRequest(std::string id, uint32_t type);
-virtual void    stunStatus(std::string id, struct sockaddr_in addr, uint32_t flags);
+virtual void    stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags);
 
 	/****************** Connections *******************/
 bool 	connectAttempt(std::string id, struct sockaddr_in &addr, uint32_t &type);

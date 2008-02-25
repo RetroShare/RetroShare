@@ -1339,9 +1339,13 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 			doNotify = true;
 		}
 
-		/* if stun not happy yet - doStun aswell */
-		if ((mDhtState != DHT_STATE_OFF) &&
-			(mDhtState != DHT_STATE_ACTIVE))
+		/* if stun not happy yet - doStun as well..
+		 * as the DHT doesn't know if the Stun is happy - send 
+		 * it through always!
+		 * if ((mDhtState != DHT_STATE_OFF) &&
+		 *	(mDhtState != DHT_STATE_ACTIVE))
+		 */
+		if (mDhtState != DHT_STATE_OFF)
 		{
 			doStun = true;
 			stunFlags = RS_STUN_FRIEND | RS_STUN_ONLINE;
@@ -1375,7 +1379,7 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 
 	if (doStun)
 	{
-		connCb->stunStatus(idhash, raddr, stunFlags);
+		connCb->stunStatus(idhash, raddr, type, stunFlags);
 	}
 			
 	return true;

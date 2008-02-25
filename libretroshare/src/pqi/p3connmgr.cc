@@ -529,11 +529,11 @@ bool p3ConnectMgr::stunCheck()
 	return false;
 }
 
-void p3ConnectMgr::stunStatus(std::string id, struct sockaddr_in addr, uint32_t flags)
+void    p3ConnectMgr::stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags)
 {
 	std::cerr << "p3ConnectMgr::stunStatus()";
-	std::cerr << " id: " << RsUtil::BinToHex(id) << " addr: " << inet_ntoa(addr.sin_addr);
-	std::cerr << " port: " << ntohs(addr.sin_port);
+	std::cerr << " id: " << RsUtil::BinToHex(id) << " raddr: " << inet_ntoa(raddr.sin_addr);
+	std::cerr << ":" << ntohs(raddr.sin_port);
 	std::cerr << std::endl;
 
 	connMtx.lock();   /*   LOCK MUTEX */
@@ -542,17 +542,22 @@ void p3ConnectMgr::stunStatus(std::string id, struct sockaddr_in addr, uint32_t 
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
 
-	if (stillStunning)
+	/* only useful if they have an exposed TCP/UDP port */
+	if (type & RS_NET_CONN_TCP_EXTERNAL) 
 	{
+		if (stillStunning)
+		{
+		
 #ifdef CONN_DEBUG
-		std::cerr << "p3ConnectMgr::stunStatus() Sending to UDP" << std::endl;
+			std::cerr << "p3ConnectMgr::stunStatus() Sending to UDP" << std::endl;
 #endif
-		/* push to the UDP */
-		udpStunPeer(id, addr);
-	}
+			/* push to the UDP */
+			udpStunPeer(id, raddr);
+		}
 
-	/* push to the stunCollect */
-	stunCollect(id, addr, flags);
+		/* push to the stunCollect */
+		stunCollect(id, raddr, flags);
+	}
 }
 
 /* FLAGS 

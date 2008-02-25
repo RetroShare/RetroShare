@@ -110,7 +110,7 @@ virtual void	peerStatus(std::string id,
 
 virtual void	peerConnectRequest(std::string id, uint32_t type) = 0;
 
-virtual void	stunStatus(std::string id, struct sockaddr_in addr, uint32_t flags) = 0;
+virtual void	stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags) = 0;
 };
 
 
@@ -126,7 +126,7 @@ virtual void	peerStatus(std::string id,
 
 virtual void	peerConnectRequest(std::string id, uint32_t type);
 
-virtual void	stunStatus(std::string id, struct sockaddr_in addr, uint32_t flags);
+virtual void	stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags);
 };
 
 #endif // PQI_MONITOR_H
