@@ -326,6 +326,7 @@ void p3disc::sendOwnDetails(std::string to)
 	di -> contact_tf = 0; 
 
 	/* construct disc flags */
+	di -> discFlags = 0;
 	if (!(detail.visState & RS_VIS_STATE_NODISC))
 	{
 		di->discFlags |= P3DISC_FLAGS_USE_DISC;
@@ -545,7 +546,8 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 		flags |= RS_NET_FLAGS_EXTERNAL_ADDR;
 	}
 
-	if (loaded)
+	/* only valid certs, and not ourselves */
+	if ((loaded) && (peerId != mConnMgr->getOwnId()))
 	{
 		mConnMgr->peerStatus(peerId, item->laddr, 
 					item->saddr, type, flags, RS_CB_DISC);

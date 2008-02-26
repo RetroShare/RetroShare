@@ -2116,7 +2116,9 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
 	RsPeerStunItem *sitem = new RsPeerStunItem();
 
 	std::list<std::string>::iterator sit;
-	for(sit = mStunList.begin(); sit != mStunList.end(); sit++)
+	uint32_t count = 0;
+	for(sit = mStunList.begin(); (sit != mStunList.end()) && 
+			(count < RS_STUN_LIST_MIN); sit++, count++)
 	{
 		sitem->stunList.ids.push_back(*sit);
 	}
