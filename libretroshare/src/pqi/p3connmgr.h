@@ -54,11 +54,22 @@ const uint32_t RS_VIS_STATE_BROWN  = RS_VIS_STATE_NODISC;
 
 
 
+
+	/* Startup Modes (confirmed later) */
+const uint32_t RS_NET_MODE_TRYMODE =    0x00f0;
+
+const uint32_t RS_NET_MODE_TRY_EXT  =   0x0010;
+const uint32_t RS_NET_MODE_TRY_UPNP =   0x0020;
+const uint32_t RS_NET_MODE_TRY_UDP  =   0x0040;
+
+	/* Actual State */
+const uint32_t RS_NET_MODE_ACTUAL =     0x000f;
+
 const uint32_t RS_NET_MODE_UNKNOWN =    0x0000;
 const uint32_t RS_NET_MODE_EXT =        0x0001;
 const uint32_t RS_NET_MODE_UPNP =       0x0002;
-const uint32_t RS_NET_MODE_UDP =        0x0003;
-const uint32_t RS_NET_MODE_ERROR =      0x0004;
+const uint32_t RS_NET_MODE_UDP =        0x0004;
+const uint32_t RS_NET_MODE_ERROR =      0x0008;
 
 
 /* order of attempts ... */

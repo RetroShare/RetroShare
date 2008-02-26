@@ -334,7 +334,7 @@ void p3disc::sendOwnDetails(std::string to)
 		di->discFlags |= P3DISC_FLAGS_USE_DHT;
 	}
 
-	if ((detail.netMode == RS_NET_MODE_EXT) ||
+	if ((detail.netMode & RS_NET_MODE_EXT) ||
 		(detail.netMode & RS_NET_MODE_UPNP))
 	{
 		di->discFlags |= P3DISC_FLAGS_EXTERNAL_ADDR;
@@ -408,7 +408,7 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 		di->discFlags |= P3DISC_FLAGS_USE_DHT;
 	}
 
-	if (detail.netMode == RS_NET_MODE_EXT)
+	if (detail.netMode & RS_NET_MODE_EXT)
 	{
 		di->discFlags |= P3DISC_FLAGS_EXTERNAL_ADDR;
 	}
@@ -483,6 +483,10 @@ void p3disc::recvPeerOwnMsg(RsDiscItem *item)
 	mConnMgr->peerStatus(item->PeerId(), item->laddr, item->saddr, 
 				type, flags, RS_CB_PERSON);
 
+	/* also add as potential stun buddy */
+	mConnMgr->stunStatus(item->PeerId(), item->saddr, type, 
+					RS_STUN_ONLINE | RS_STUN_FRIEND);
+
 	/* now reply with all details */
 	respondToPeer(item->PeerId());
 
@@ -540,6 +544,10 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 	{
 		mConnMgr->peerStatus(peerId, item->laddr, 
 					item->saddr, type, flags, RS_CB_DISC);
+
+		mConnMgr->stunStatus(peerId, item->saddr, type, 
+						RS_STUN_FRIEND_OF_FRIEND);
+
 	}
 
 	addDiscoveryData(item->PeerId(), peerId, item->laddr, item->saddr, item->discFlags, time(NULL));

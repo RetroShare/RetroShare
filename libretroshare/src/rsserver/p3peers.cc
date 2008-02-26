@@ -273,20 +273,33 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 	if (pcs.state & RS_PEER_S_CONNECTED)
 		d.state |= RS_PEER_STATE_CONNECTED;
 
-	switch(pcs.netMode)
+	switch(pcs.netMode & RS_NET_MODE_ACTUAL)
 	{
 		case RS_NET_MODE_EXT:
 			d.netMode	= RS_NETMODE_EXT;
 			break;
-		case RS_NET_MODE_UDP:
-			d.netMode	= RS_NETMODE_UDP;
-			break;
-		case RS_NET_MODE_UNKNOWN:
-		case RS_NET_MODE_ERROR:
 		case RS_NET_MODE_UPNP:
-		default:
 			d.netMode	= RS_NETMODE_UPNP;
 			break;
+		case RS_NET_MODE_UDP:
+		case RS_NET_MODE_UNKNOWN:
+		case RS_NET_MODE_ERROR:
+		default:
+			d.netMode	= RS_NETMODE_UDP;
+			break;
+	}
+
+	if (pcs.netMode & RS_NET_MODE_TRY_EXT)
+	{
+		d.tryNetMode	= RS_NETMODE_EXT;
+	}
+	else if (pcs.netMode & RS_NET_MODE_TRY_UPNP)
+	{
+		d.tryNetMode	= RS_NETMODE_UPNP;
+	}
+	else
+	{
+		d.tryNetMode 	= RS_NETMODE_UDP;
 	}
 
 	d.visState	= 0;
@@ -411,15 +424,16 @@ bool 	p3Peers::setNetworkMode(std::string id, uint32_t extNetMode)
 	uint32_t netMode = 0;
 	switch(extNetMode)
 	{
-		case RS_NETMODE_UDP:
-			netMode = RS_NET_MODE_UDP;
-			break;
 		case RS_NETMODE_EXT:
 			netMode = RS_NET_MODE_EXT;
 			break;
-		default:
 		case RS_NETMODE_UPNP:
 			netMode = RS_NET_MODE_UPNP;
+			break;
+		case RS_NETMODE_UDP:
+			netMode = RS_NET_MODE_UDP;
+			break;
+		default:
 			break;
 	}
 

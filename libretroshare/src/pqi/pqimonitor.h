@@ -60,6 +60,7 @@ const uint32_t RS_PEER_CONNECT_REQ      = 0x0020;
 //const uint32_t RS_STUN_SRC_PEER 	= 0x0002;
 const uint32_t RS_STUN_ONLINE 		= 0x0010;
 const uint32_t RS_STUN_FRIEND 		= 0x0020;
+const uint32_t RS_STUN_FRIEND_OF_FRIEND	= 0x0040;
 
 
 

@@ -79,7 +79,7 @@ void ServerDialog::load()
 
 	/* set net mode */
 	int netIndex = 0;
-	switch(detail.netMode)
+	switch(detail.tryNetMode)
 	{
 		case RS_NETMODE_EXT:
 			netIndex = 2;
@@ -120,7 +120,22 @@ void ServerDialog::load()
 
 	/* set status */
 	std::ostringstream out;
-	out << "Network Mode: ";
+	out << "Attempted Network Mode: ";
+	switch(detail.tryNetMode)
+	{
+		case RS_NETMODE_EXT:
+			out << "External Forwarded Port (UltraPEER Mode)";
+			break;
+		case RS_NETMODE_UDP:
+			out << "Firewalled";
+			break;
+		default:
+		case RS_NETMODE_UPNP:
+			out << "Automatic: UPnP Forwarded Port";
+			break;
+	}
+	out << std::endl;
+	out << "Actual Network Mode: ";
 	switch(detail.netMode)
 	{
 		case RS_NETMODE_EXT:
@@ -239,7 +254,7 @@ void ServerDialog::saveAddresses()
 			break;
 	}
 
-	if (detail.netMode != netMode)
+	if (detail.tryNetMode != netMode)
 	{
 		rsPeers->setNetworkMode(ownId, netMode);
 	}

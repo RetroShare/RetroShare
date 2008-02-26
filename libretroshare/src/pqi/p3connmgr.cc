@@ -102,8 +102,42 @@ p3ConnectMgr::p3ConnectMgr(p3AuthMgr *am)
 
 void p3ConnectMgr::setOwnNetConfig(uint32_t netMode, uint32_t visState)
 {
-	ownState.netMode = netMode;
+	/* only change TRY flags */
+
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::setOwnNetConfig()" << std::endl;
+	std::cerr << "Existing netMode: " << ownState.netMode << " vis: " << ownState.visState;
+	std::cerr << std::endl;
+	std::cerr << "Input netMode: " << netMode << " vis: " << visState;
+	std::cerr << std::endl;
+#endif
+	ownState.netMode &= ~(RS_NET_MODE_TRYMODE);
+
+#ifdef CONN_DEBUG
+	std::cerr << "After Clear netMode: " << ownState.netMode << " vis: " << ownState.visState;
+	std::cerr << std::endl;
+#endif
+
+	switch(netMode & RS_NET_MODE_ACTUAL)
+	{
+		case RS_NET_MODE_EXT:
+			ownState.netMode |= RS_NET_MODE_TRY_EXT;
+			break;
+		case RS_NET_MODE_UPNP:
+			ownState.netMode |= RS_NET_MODE_TRY_UPNP;
+			break;
+		default:
+		case RS_NET_MODE_UDP:
+			ownState.netMode |= RS_NET_MODE_TRY_UDP;
+			break;
+	}
+
 	ownState.visState = visState;
+
+#ifdef CONN_DEBUG
+	std::cerr << "Final netMode: " << ownState.netMode << " vis: " << ownState.visState;
+	std::cerr << std::endl;
+#endif
 
 	/* if we've started up - then tweak Dht On/Off */
 	if (mNetStatus != RS_NET_UNKNOWN)
@@ -190,15 +224,23 @@ void p3ConnectMgr::netStartup()
 
 	mNetInitTS = time(NULL);
 
-	switch(ownState.netMode)
+	ownState.netMode &= ~(RS_NET_MODE_ACTUAL);
+
+	switch(ownState.netMode & RS_NET_MODE_TRYMODE)
 	{
-		case RS_NET_MODE_UPNP:
+		case RS_NET_MODE_TRY_UPNP:
 			mNetStatus = RS_NET_UPNP_INIT;
+			ownState.netMode |= RS_NET_MODE_UDP;
 			break;
 
-		case RS_NET_MODE_EXT:  /* v similar to UDP */
-		case RS_NET_MODE_UDP:
+		case RS_NET_MODE_TRY_EXT:  /* v similar to UDP */
+			ownState.netMode |= RS_NET_MODE_EXT;
+			mNetStatus = RS_NET_UDP_SETUP;
+			break;
+
+		case RS_NET_MODE_TRY_UDP:
 		default:
+			ownState.netMode |= RS_NET_MODE_UDP;
 			mNetStatus = RS_NET_UDP_SETUP;
 			break;
 
@@ -341,9 +383,9 @@ void p3ConnectMgr::netUpnpCheck()
 		/* fallback to UDP startup */
 		connMtx.lock();   /*   LOCK MUTEX */
 
+		/* UPnP Failed us! */
 		mUpnpAddrValid = false;
 		mNetStatus = RS_NET_UDP_SETUP;
-		//ownState.netMode = RS_NET_MODE_UDP; /* UPnP Failed us! */
 
 		connMtx.unlock(); /* UNLOCK MUTEX */
 	}
@@ -356,6 +398,8 @@ void p3ConnectMgr::netUpnpCheck()
 		mUpnpAddrValid = true;
 		mUpnpExtAddr = extAddr;
 		mNetStatus = RS_NET_UDP_SETUP;
+		/* Fix netMode & Clear others! */
+		ownState.netMode = RS_NET_MODE_TRY_UPNP | RS_NET_MODE_UPNP; 
 
 		connMtx.unlock(); /* UNLOCK MUTEX */
 	}
@@ -411,7 +455,8 @@ void p3ConnectMgr::netUdpCheck()
 		}
 		else
 		{
-			mDhtMgr->setExternalInterface(iaddr, extAddr, RS_NET_MODE_ERROR);
+			/* mode = 0 for error */
+			mDhtMgr->setExternalInterface(iaddr, extAddr, mode);
 		}
 	}
 }
@@ -1127,6 +1172,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		 * but no need for action as should be connected already 
 		 */
 
+		it->second.netMode &= (~RS_NET_MODE_ACTUAL); /* clear actual flags */
 		if (flags & RS_NET_FLAGS_EXTERNAL_ADDR)
 		{
 			it->second.netMode = RS_NET_MODE_EXT;
@@ -2017,7 +2063,19 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
 	item->clear();
 
 	item->pid = getOwnId();
-	item->netMode = ownState.netMode;
+	if (ownState.netMode & RS_NET_MODE_TRY_EXT)
+	{
+		item->netMode = RS_NET_MODE_EXT;
+	}
+	else if (ownState.netMode & RS_NET_MODE_TRY_UPNP)
+	{
+		item->netMode = RS_NET_MODE_UPNP;
+	}
+	else
+	{
+		item->netMode = RS_NET_MODE_UDP;
+	}
+
 	item->visState = ownState.visState;
 	item->lastContact = ownState.lastcontact;
 	item->localaddr = ownState.localaddr;
@@ -2062,6 +2120,14 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
 	{
 		sitem->stunList.ids.push_back(*sit);
 	}
+
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::saveList() Peer Stun Item:";
+	std::cerr << std::endl;
+	sitem->print(std::cerr, 10);
+	std::cerr << std::endl;
+#endif
+
 	saveData.push_back(sitem);
 
 	return saveData;

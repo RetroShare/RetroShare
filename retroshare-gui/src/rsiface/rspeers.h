@@ -94,6 +94,7 @@ class RsPeerDetails
         uint16_t                extPort;
 
 	uint32_t		netMode;
+	uint32_t		tryNetMode; /* only for ownState */
 	uint32_t		visState;
 
 	/* basic stats */

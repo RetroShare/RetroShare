@@ -181,7 +181,7 @@ void ChatDialog::insertChat()
             		QString timestamp = "[" + QDateTime::currentDateTime().toString("hh:mm:ss") + "]";
             		QString name = QString::fromStdString(it->name);
             		QString line = "<span style=\"color:#C00000\"><strong>" + timestamp + "</strong></span>" +			
-            		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span> \<br>";
+            		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span> <br>";
 
                 	extraTxt += line;
                 	
