@@ -37,7 +37,9 @@ const uint32_t AUTODISC_LDI_SUBTYPE_PING = 0x01;
 const uint32_t AUTODISC_LDI_SUBTYPE_RPLY = 0x02;
 
 #include <sstream>
+
 #include "pqi/pqidebug.h"
+#include "util/rsprint.h"
 
 const int pqidisczone = 2482;
 
@@ -478,14 +480,16 @@ void p3disc::recvPeerOwnMsg(RsDiscItem *item)
 	if (item->discFlags & P3DISC_FLAGS_EXTERNAL_ADDR)
 	{
 		type |= RS_NET_CONN_TCP_EXTERNAL;
+		flags |= RS_NET_FLAGS_EXTERNAL_ADDR;
 	}
 
 	mConnMgr->peerStatus(item->PeerId(), item->laddr, item->saddr, 
 				type, flags, RS_CB_PERSON);
 
 	/* also add as potential stun buddy */
-	mConnMgr->stunStatus(item->PeerId(), item->saddr, type, 
-					RS_STUN_ONLINE | RS_STUN_FRIEND);
+	std::string hashid1 = RsUtil::HashId(item->PeerId(), false);
+	mConnMgr->stunStatus(hashid1, item->saddr, type, 
+				RS_STUN_ONLINE | RS_STUN_FRIEND);
 
 	/* now reply with all details */
 	respondToPeer(item->PeerId());
@@ -538,6 +542,7 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 	if (item->discFlags & P3DISC_FLAGS_EXTERNAL_ADDR)
 	{
 		type |= RS_NET_CONN_TCP_EXTERNAL;
+		flags |= RS_NET_FLAGS_EXTERNAL_ADDR;
 	}
 
 	if (loaded)
@@ -545,7 +550,8 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 		mConnMgr->peerStatus(peerId, item->laddr, 
 					item->saddr, type, flags, RS_CB_DISC);
 
-		mConnMgr->stunStatus(peerId, item->saddr, type, 
+		std::string hashid1 = RsUtil::HashId(peerId, false);
+		mConnMgr->stunStatus(hashid1, item->saddr, type, 
 						RS_STUN_FRIEND_OF_FRIEND);
 
 	}
