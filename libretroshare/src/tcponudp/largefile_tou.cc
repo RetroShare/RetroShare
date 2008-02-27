@@ -232,7 +232,7 @@ int  connect_socket_pair(int fd1, int fd2,
 
 
 	std::cerr << "Socket1 Connecting to: " << addr2 << std::endl;
-	err = tou_connect(fd1, (struct sockaddr *) &addr2, sizeof(addr2));
+	err = tou_connect(fd1, (struct sockaddr *) &addr2, sizeof(addr2), 30);
 	if (err < 0)
 	{
 		err_num = tou_errno(fd1);

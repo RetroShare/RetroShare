@@ -78,7 +78,7 @@ virtual ~TcpStream() { return; }
 
 	/* user interface */
 int     status(std::ostream &out);
-int     connect(const struct sockaddr_in &raddr);
+int     connect(const struct sockaddr_in &raddr, uint32_t conn_period);
 int 	listenfor(const struct sockaddr_in &raddr);
 bool    isConnected();
 
@@ -222,6 +222,10 @@ uint32 	int_rbytes();
 
 	/* existing TTL for this stream (tweaked at startup) */
 	int ttl;
+
+	double mTTL_period;
+	double mTTL_start;
+	double mTTL_end;
 
 	struct sockaddr_in 	peeraddr;
 	bool 			peerKnown;

@@ -329,9 +329,11 @@ int     pqipersongrp::connectPeer(std::string id)
 		return 0;
 
 	struct sockaddr_in addr;
+	uint32_t delay;
+	uint32_t period;
 	uint32_t type;
 
-	if (!mConnMgr->connectAttempt(id, addr, type))
+	if (!mConnMgr->connectAttempt(id, addr, delay, period, type))
 	{
 		std::cerr << " pqipersongrp::connectPeer() No Net Address";
 		std::cerr << std::endl;
@@ -340,6 +342,8 @@ int     pqipersongrp::connectPeer(std::string id)
 
 	std::cerr << " pqipersongrp::connectPeer() connectAttempt data id: " << id;
 	std::cerr << " addr: " << inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port);
+	std::cerr << " delay: " << delay;
+	std::cerr << " period: " << period;
 	std::cerr << " type: " << type;
 	std::cerr << std::endl;
 
@@ -360,7 +364,7 @@ int     pqipersongrp::connectPeer(std::string id)
 	else
 		return 0;
 
-	p->connect(ptype, addr);
+	p->connect(ptype, addr, delay, period);
 
 	/* */
 	return 1;

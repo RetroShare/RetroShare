@@ -48,13 +48,12 @@
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
-
 #define WAITING_NOT            0
-#define WAITING_SOCK_CONNECT   1
-#define WAITING_SSL_CONNECTION 2
-#define WAITING_SSL_AUTHORISE  3
-#define WAITING_FAIL_INTERFACE 4
-
+#define WAITING_DELAY	       1
+#define WAITING_SOCK_CONNECT   2
+#define WAITING_SSL_CONNECTION 3
+#define WAITING_SSL_AUTHORISE  4
+#define WAITING_FAIL_INTERFACE 5
 
 #define PQISSL_PASSIVE  0x00
 #define PQISSL_ACTIVE   0x01
@@ -105,6 +104,8 @@ virtual int stoplistening();
 virtual int reset();
 virtual int disconnect();
 
+virtual bool connect_parameter(uint32_t type, uint32_t value);
+
 	// BinInterface
 virtual int	tick();
 virtual int     status();
@@ -129,6 +130,9 @@ int 	ConnectAttempt();
 int 	waiting; 
 
 virtual int Failed_Connection();
+
+	// Start up connection with delay...
+virtual int Delay_Connection();
 
 	// These two fns are overloaded for udp/etc connections.
 virtual int Initiate_Connection();
@@ -190,8 +194,8 @@ virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd)
 
 	int ssl_connect_timeout; /* timeout to ensure that we don't get stuck (can happen on udp!) */
 
-private:
-
+	uint32_t mConnectDelay;
+	time_t   mConnectTS;
 
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
@@ -205,6 +209,7 @@ private:
 
 	p3ConnectMgr *mConnMgr;
 
+private:
 	// ssl only fns.
 int connectInterface(sockaddr_in&);
 

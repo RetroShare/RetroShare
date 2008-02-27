@@ -102,7 +102,7 @@ virtual ~pqiperson(); // must clean up children.
 int 	reset();
 int 	listen();
 int 	stoplistening();
-int	connect(uint32_t type, struct sockaddr_in raddr);
+int	connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, uint32_t period);
 
 	// add in connection method.
 int	addChildInterface(uint32_t type, pqiconnect *pqi);

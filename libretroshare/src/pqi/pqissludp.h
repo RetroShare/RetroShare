@@ -66,6 +66,8 @@ virtual int stoplistening();
 virtual int tick();
 virtual int reset();
 
+virtual bool connect_parameter(uint32_t type, uint32_t value);
+
 	// BinInterface.
 	// These are reimplemented.	
 virtual bool moretoread();
@@ -96,6 +98,8 @@ private:
 	int udp_connect_timeout;
 
 	long listen_checktime;
+
+	uint32_t mConnectPeriod;
 };
 
 #endif // MRK_PQI_SSL_UDP_HEADER

@@ -743,7 +743,7 @@ int p3DhtMgr::checkNotifyDHT()
 	if (dhtNotify(peer.hash1, own.hash2, ""))
 	{
 		/* feedback to say we started it! */
-		connCb->peerConnectRequest(peer.id, RS_CONNECT_ACTIVE);
+		connCb->peerConnectRequest(peer.id, peer.raddr, RS_CB_DHT);
 	}
 
 
@@ -1247,6 +1247,8 @@ bool p3DhtMgr::dhtResultNotify(std::string idhash)
 
 	/* update data */
 	std::string peerid;
+	struct sockaddr_in raddr;
+
 	if (it != peers.end())
 	{
 #ifdef DHT_DEBUG
@@ -1267,6 +1269,7 @@ bool p3DhtMgr::dhtResultNotify(std::string idhash)
 			doNotify = true;
 			it->second.notifyPending = 0;
 			peerid = (it->second).id;
+			raddr  = (it->second).raddr;
 		}
 	}
 	else
@@ -1281,7 +1284,7 @@ bool p3DhtMgr::dhtResultNotify(std::string idhash)
 
 	/* do callback */
 	if (doNotify)
-		connCb->peerConnectRequest(peerid, RS_CONNECT_PASSIVE);
+		connCb->peerConnectRequest(peerid, raddr, RS_CB_DHT);
 
 	return true;
 }
@@ -1373,7 +1376,7 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 				//ent.type, RS_CB_LOCAL_ADDR | RS_CB_REMOTE_ADDR, RS_CB_DHT);
 		if (doNotify)
 		{
-			connCb->peerConnectRequest(ent.id, RS_CONNECT_PASSIVE);
+			connCb->peerConnectRequest(ent.id, ent.raddr, RS_CB_DHT);
 		}
 	}
 

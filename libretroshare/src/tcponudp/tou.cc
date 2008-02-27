@@ -166,7 +166,7 @@ int 	tou_bind(int sockfd, const struct sockaddr *my_addr,
  *  	- always non blocking.
  */
 int 	tou_connect(int sockfd, const struct sockaddr *serv_addr, 
-					socklen_t addrlen)
+					socklen_t addrlen, uint32_t conn_period)
 {
 	if (tou_streams[sockfd] == NULL)
 	{
@@ -189,7 +189,7 @@ int 	tou_connect(int sockfd, const struct sockaddr *serv_addr,
 			*((const struct sockaddr_in *) serv_addr));
 	}
 
-	tous->tcp->connect(*(const struct sockaddr_in *) serv_addr);
+	tous->tcp->connect(*(const struct sockaddr_in *) serv_addr, conn_period);
 	tous->tcp->tick();
 	tou_tick_all();
 	if (tous->tcp->isConnected())
@@ -377,12 +377,17 @@ int 	tou_close(int sockfd)
 	}
 	TcpOnUdp *tous = tou_streams[sockfd];
 
-	tous->tcp->tick();
 	tou_tick_all();
 
-	/* shut it down */
-	tous->tcp->close();
-	delete tous->tcp;
+	if (tous->tcp)
+	{
+		tous->tcp->tick();
+
+		/* shut it down */
+		tous->tcp->close();
+		delete tous->tcp;
+	}
+
 	delete tous;
 	tou_streams[sockfd] = NULL;
 	return 1;

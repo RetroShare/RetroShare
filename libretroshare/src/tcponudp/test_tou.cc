@@ -186,7 +186,7 @@ int main(int argc, char **argv)
 #ifdef USE_TCP_SOCKET
 		err = connect(sockfd, (struct sockaddr *) &raddr, sizeof(raddr));
 #else
-		err = tou_connect(sockfd, (struct sockaddr *) &raddr, sizeof(raddr));
+		err = tou_connect(sockfd, (struct sockaddr *) &raddr, sizeof(raddr), 30);
 #endif
 		if (err < 0)
 		{

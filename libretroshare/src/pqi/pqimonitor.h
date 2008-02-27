@@ -70,6 +70,7 @@ const uint32_t RS_STUN_FRIEND_OF_FRIEND	= 0x0040;
 #define RS_CB_DHT 		1   /* from dht */
 #define RS_CB_DISC 		2   /* from peers */
 #define RS_CB_PERSON 		3   /* from connection */
+#define RS_CB_PROXY 		4   /* via proxy */
 
 
 class pqipeer
@@ -109,7 +110,8 @@ virtual void	peerStatus(std::string id,
 			struct sockaddr_in laddr, struct sockaddr_in raddr, 
 			uint32_t type, uint32_t flags, uint32_t source) = 0;
 
-virtual void	peerConnectRequest(std::string id, uint32_t type) = 0;
+virtual void    peerConnectRequest(std::string id,              
+                        struct sockaddr_in raddr, uint32_t source) = 0;
 
 virtual void	stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags) = 0;
 };
@@ -125,7 +127,8 @@ virtual void	peerStatus(std::string id,
 			struct sockaddr_in laddr, struct sockaddr_in raddr, 
 			uint32_t type, uint32_t mode, uint32_t source);
 
-virtual void	peerConnectRequest(std::string id, uint32_t type);
+virtual void    peerConnectRequest(std::string id,              
+                        struct sockaddr_in raddr, uint32_t source);
 
 virtual void	stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags);
 };

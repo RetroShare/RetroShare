@@ -56,9 +56,9 @@ int	setupBinaryCheck(std::string fname);
 
 static const uint32 kMaxQueueSize = 100;
 static const uint32 kMaxPktRetransmit = 20;
-static const uint32 kMaxSynPktRetransmit = 200; // max TTL of 40?
+static const uint32 kMaxSynPktRetransmit = 1000; // up to 1000 (16 min?) startup
 static const int    TCP_STD_TTL = 64;
-static const int    TCP_STARTUP_COUNT_PER_TTL = 2;
+static const int    TCP_DEFAULT_FIREWALL_TTL = 4;
 
 static const double RTT_ALPHA = 0.875;
 
@@ -84,6 +84,9 @@ TcpStream::TcpStream(UdpSorter *lyr)
 	congestThreshold(TCP_MAX_WIN),
 	congestWinSize(MAX_SEG),
 	congestUpdate(0),
+        mTTL_period(0), 
+        mTTL_start(0),
+        mTTL_end(0), 
 	peerKnown(false),
 	udp(lyr)
 {
@@ -91,7 +94,7 @@ TcpStream::TcpStream(UdpSorter *lyr)
 }
 
 /* Stream Control! */
-int	TcpStream::connect(const struct sockaddr_in &raddr)
+int	TcpStream::connect(const struct sockaddr_in &raddr, uint32_t conn_period)
 {
 	tcpMtx.lock();   /********** LOCK MUTEX *********/
 
@@ -147,6 +150,10 @@ int	TcpStream::connect(const struct sockaddr_in &raddr)
 	 */
 
 	setTTL(1);
+
+	mTTL_start  = getCurrentTS();
+	mTTL_period = conn_period;
+	mTTL_end    = mTTL_start + mTTL_period;
 
 	toSend(pkt);
 	/* change state */
@@ -1864,25 +1871,39 @@ int TcpStream::retrans()
 
 			if ((pkt->hasSyn()) && (getTTL() < TCP_STD_TTL))
 			{
-				setTTL(1 + pkt->retrans / 
-						TCP_STARTUP_COUNT_PER_TTL);
-
 				std::cerr << "TcpStream::retrans() Startup SYNs";
 				std::cerr <<  std::endl;
 				std::cerr << "TcpStream::retrans() retransTimeout: ";
 				std::cerr <<  retransTimeout << std::endl;
 
+				//setTTL(1 + pkt->retrans / 
+				//		TCP_STARTUP_COUNT_PER_TTL);
+
+				/* calculate a new TTL */
+				if (mTTL_end > cts)
+				{
+					setTTL(TCP_DEFAULT_FIREWALL_TTL);
+				}
+				else
+				{
+					setTTL(getTTL() + 1);
+				}
+
+				std::cerr << "TcpStream::retrans() retrans count: ";
+				std::cerr << pkt->retrans << std::endl;
 				std::cerr << "TcpStream::retrans() Setting TTL to: ";
-				std::cerr << (int) (1 + pkt->retrans / 
-					TCP_STARTUP_COUNT_PER_TTL) << std::endl;
+				std::cerr << getTTL() << std::endl;
+
 			}
 			
 			/* catch excessive retransmits 
-			 * (Allow Syn case more.... )
+			 * - Allow Syn case more.... 
+			 * - if not SYN or TTL has reached STD then timeout quickly.
 			 */
 
 			if ((pkt->hasSyn() && (pkt->retrans > kMaxSynPktRetransmit)) ||
-				(pkt->retrans > kMaxPktRetransmit))
+			    (((!pkt->hasSyn()) || (TCP_STD_TTL == getTTL()))  
+			    		&& (pkt->retrans > kMaxPktRetransmit)))
 			{
 					/* too many attempts close stream */
 #ifdef DEBUG_TCP_STREAM

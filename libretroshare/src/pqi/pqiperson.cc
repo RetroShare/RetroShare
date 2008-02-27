@@ -333,7 +333,7 @@ int 	pqiperson::stoplistening()
 	return 1;
 }
 
-int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr)
+int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, uint32_t period)
 {
 	{
 	  std::ostringstream out;
@@ -355,9 +355,14 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr)
 	  	out << "pqiperson::connect()";
 	  	out << " missing pqiconnect";
 	  	out << std::endl;
-	  	pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
+	  	std::cerr << out.str();
+	  	//pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
+		return 0;
 	}
-	
+
+	/* set the parameters */
+	(it->second)->connect_parameter(NET_PARAM_CONNECT_DELAY, delay);
+	(it->second)->connect_parameter(NET_PARAM_CONNECT_PERIOD, period);
 	(it->second)->connect(raddr);	
 		
 	// flag if we started a new connectionAttempt.

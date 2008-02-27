@@ -95,6 +95,7 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3AuthMgr *am, p3ConnectM
 	attempt_ts(0),
 	net_attempt(0), net_failure(0), net_unreachable(0), 
 	sameLAN(false), n_read_zero(0), 
+	mConnectDelay(0), mConnectTS(0),
 
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
@@ -246,6 +247,16 @@ int 	pqissl::reset()
 	return 1;
 }
 
+bool 	pqissl::connect_parameter(uint32_t type, uint32_t value)
+{
+        if (type == NET_PARAM_CONNECT_DELAY)
+	{
+		mConnectDelay = value;
+		return true;
+	}
+        return NetInterface::connect_parameter(type, value);
+}
+
 
 /********** End of Implementation of NetInterface ******************/
 /********** Implementation of BinInterface **************************
@@ -333,11 +344,18 @@ int 	pqissl::ConnectAttempt()
 	{
 		case WAITING_NOT:
 
+			sslmode = PQISSL_ACTIVE; /* we're starting this one */
+
   	  		pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
 			  "pqissl::ConnectAttempt() STATE = Not Waiting, starting connection");
+
+		case WAITING_DELAY:
+
+  	  		pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
+			  "pqissl::ConnectAttempt() STATE = Waiting Delay, starting connection");
 	
-			sslmode = PQISSL_ACTIVE; /* we're starting this one */
-			return Initiate_Connection();
+			return Delay_Connection();
+			//return Initiate_Connection(); /* now called by Delay_Connection() */
 
 			break;
 
@@ -424,6 +442,62 @@ int 	pqissl::Failed_Connection()
  *
  */
 
+int 	pqissl::Delay_Connection()
+{
+  	pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
+	  "pqissl::Delay_Connection() Attempting Outgoing Connection....");
+
+	if (waiting == WAITING_NOT)
+	{
+		waiting = WAITING_DELAY;
+
+		/* set delay */
+		if (mConnectDelay == 0)
+		{
+			return Initiate_Connection();
+		}
+
+		/* set Connection TS.
+		 */
+		{ 
+			std::ostringstream out;
+	  		out << "pqissl::Delay_Connection() ";
+			out << " Delaying Connection to ";
+			out << PeerId() << " for ";
+			out << mConnectDelay;
+			out << " seconds";
+  			pqioutput(PQL_DEBUG_BASIC, pqisslzone, out.str());
+		}
+
+
+		mConnectTS = time(NULL) + mConnectDelay;
+		return 0;
+	}
+	else if (waiting == WAITING_DELAY)
+	{
+		{ 
+			std::ostringstream out;
+	  		out << "pqissl::Delay_Connection() ";
+			out << " Connection to ";
+			out << PeerId() << " starting in ";
+			out << mConnectTS - time(NULL);
+			out << " seconds";
+  			pqioutput(PQL_DEBUG_BASIC, pqisslzone, out.str());
+		}
+
+		if (time(NULL) > mConnectTS)
+		{
+			return Initiate_Connection();
+		}
+		return 0;
+	}
+
+  	pqioutput(PQL_WARNING, pqisslzone, 
+		 "pqissl::Initiate_Connection() Already Attempt in Progress!");
+	return -1;
+}
+
+
 int 	pqissl::Initiate_Connection()
 {
 	int err;
@@ -432,7 +506,7 @@ int 	pqissl::Initiate_Connection()
   	pqioutput(PQL_DEBUG_BASIC, pqisslzone, 
 	  "pqissl::Initiate_Connection() Attempting Outgoing Connection....");
 
-	if (waiting != WAITING_NOT)
+	if (waiting != WAITING_DELAY)
 	{
   		pqioutput(PQL_WARNING, pqisslzone, 
 		 "pqissl::Initiate_Connection() Already Attempt in Progress!");

@@ -104,6 +104,8 @@ class peerConnectAddress
 	peerConnectAddress(); /* init */
 
 	struct sockaddr_in addr;
+	uint32_t delay;  /* to stop simultaneous connects */
+	uint32_t period; /* UDP only */
 	uint32_t type;
 	time_t ts;
 };
@@ -200,11 +202,13 @@ void	removeMonitor(pqiMonitor *mon);
 virtual void    peerStatus(std::string id, 
 			struct sockaddr_in laddr, struct sockaddr_in raddr,
                         uint32_t type, uint32_t flags, uint32_t source);
-virtual void    peerConnectRequest(std::string id, uint32_t type);
+virtual void    peerConnectRequest(std::string id, 
+			struct sockaddr_in raddr, uint32_t source);
 virtual void    stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags);
 
 	/****************** Connections *******************/
-bool 	connectAttempt(std::string id, struct sockaddr_in &addr, uint32_t &type);
+bool 	connectAttempt(std::string id, struct sockaddr_in &addr, 
+				uint32_t &delay, uint32_t &period, uint32_t &type);
 bool 	connectResult(std::string id, bool success, uint32_t flags);
 
 

@@ -345,6 +345,9 @@ static const int NET_CONNECT_UNREACHABLE  = 3;
 static const int NET_CONNECT_FIREWALLED   = 4;
 static const int NET_CONNECT_FAILED       = 5;
 
+static const uint32_t NET_PARAM_CONNECT_DELAY  = 1;
+static const uint32_t NET_PARAM_CONNECT_PERIOD = 2;
+
 class NetInterface
 {
 public:
@@ -362,6 +365,8 @@ virtual int stoplistening() = 0;
 virtual int disconnect() = 0;
 virtual int reset() = 0;
 virtual std::string PeerId() { return peerId; }
+
+virtual bool connect_parameter(uint32_t type, uint32_t value) { return false; }
 
 protected:
 PQInterface *parent() { return p; }

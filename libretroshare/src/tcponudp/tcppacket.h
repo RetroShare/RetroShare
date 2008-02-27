@@ -60,7 +60,7 @@ class TcpPacket
 
 	/* other variables */
 	double  ts; /* transmit time */ 
-	uint8   retrans; /* retransmit counter */
+	uint16  retrans; /* retransmit counter */
 
 	TcpPacket(uint8 *ptr, int size);
 	TcpPacket(); /* likely control packet */

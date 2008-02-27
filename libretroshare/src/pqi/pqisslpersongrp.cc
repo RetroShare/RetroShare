@@ -31,12 +31,16 @@
 
 const int pqipersongrpzone = 354;
 
+/****
+ * #define PQI_DISABLE_UDP 1
+ ***/
+
 /********************************** SSL Specific features ***************************/
 
 #include "pqi/pqissl.h"
 #include "pqi/pqissllistener.h"
 
-#ifdef PQI_USE_PROXY
+#ifndef PQI_DISABLE_UDP
   #include "pqi/pqissludp.h"
 #endif
 
@@ -75,7 +79,7 @@ pqiperson * pqisslpersongrp::createPerson(std::string id, pqilistener *listener)
 
 	pqip -> addChildInterface(PQI_CONNECT_TCP, pqisc);
 
-#ifdef PQI_USE_PROXY
+#ifndef PQI_DISABLE_UDP
 	pqissludp *pqius 	= new pqissludp(pqip, authMgr, mConnMgr);
 
 	RsSerialiser *rss2 = new RsSerialiser();

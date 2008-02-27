@@ -39,22 +39,25 @@
 #include "pqi/pqidebug.h"
 #include <sstream>
 
+#include "util/rsnet.h"
+
 const int pqissludpzone = 3144;
 
 	/* a final timeout, to ensure this never blocks completely
 	 * 300 secs to complete udp/tcp/ssl connection.
 	 * This is long as the udp connect can take some time.
 	 */
-static const int PQI_SSLUDP_CONNECT_TIMEOUT = 300; 
+
+static const uint32_t PQI_SSLUDP_CONNECT_TIMEOUT = 600;  /* 10 minutes - give it longer! */
+static const uint32_t PQI_SSLUDP_DEF_CONN_PERIOD = 300;  /* 5  minutes? */
 
 /********** PQI SSL UDP STUFF **************************************/
 
 pqissludp::pqissludp(PQInterface *parent, p3AuthMgr *am, p3ConnectMgr *cm)
 	:pqissl(NULL, parent, am, cm), tou_bio(NULL), 
-	listen_checktime(0)
-
+	listen_checktime(0), mConnectPeriod(PQI_SSLUDP_DEF_CONN_PERIOD)
 {
-	attach();
+	sockaddr_clear(&remote_addr);
 	return;
 }
 
@@ -114,16 +117,27 @@ int	pqissludp::attach()
 
 
 // The Address determination is done centrally
-
 int 	pqissludp::Initiate_Connection()
 {
 	int err;
+
+	attach(); /* open socket */
 	remote_addr.sin_family = AF_INET;
 
   	pqioutput(PQL_DEBUG_BASIC, pqissludpzone, 
 	  "pqissludp::Initiate_Connection() Attempting Outgoing Connection....");
 
-	if (waiting != WAITING_NOT)
+	/* decide if we're active or passive */
+	if (PeerId() < mConnMgr->getOwnId())
+	{
+		sslmode = PQISSL_ACTIVE;
+	}
+	else
+	{
+		sslmode = PQISSL_PASSIVE;
+	}
+
+	if (waiting != WAITING_DELAY)
 	{
   		pqioutput(PQL_WARNING, pqissludpzone, 
 		 "pqissludp::Initiate_Connection() Already Attempt in Progress!");
@@ -138,6 +152,15 @@ int 	pqissludp::Initiate_Connection()
 		out << "pqissludp::Initiate_Connection() ";
 		out << "Connecting To: " << inet_ntoa(remote_addr.sin_addr) << ":";
 		out << ntohs(remote_addr.sin_port) << std::endl;
+		if (sslmode)
+		{
+			out << "Using ACTIVE Connect Mode (SSL_Connect)";
+		}
+		else
+		{
+			out << "Using PASSIVE Connect Mode (SSL_Accept)";
+		}
+		out << std::endl;
   		pqioutput(PQL_WARNING, pqissludpzone, out.str());
 	}
 
@@ -166,7 +189,8 @@ int 	pqissludp::Initiate_Connection()
 
 	udp_connect_timeout = time(NULL) + PQI_SSLUDP_CONNECT_TIMEOUT;
 	/* <===================== UDP Difference *******************/
-	if (0 != (err = tou_connect(sockfd, (struct sockaddr *) &remote_addr, sizeof(remote_addr))))
+	if (0 != (err = tou_connect(sockfd, (struct sockaddr *) &remote_addr, 
+						sizeof(remote_addr), mConnectPeriod)))
 	/* <===================== UDP Difference *******************/
 	{
 		int tou_err = tou_errno(sockfd);
@@ -229,8 +253,11 @@ int 	pqissludp::Basic_Connection_Complete()
 	if (time(NULL) > udp_connect_timeout)
 	{
 		pqioutput(PQL_DEBUG_BASIC, pqissludpzone, 
-	  		"pqissludp::Basic_Connection_Complete() Connectoin Timed Out!");
+	  		"pqissludp::Basic_Connection_Complete() Connection Timed Out!");
 		/* as sockfd is valid, this should close it all up */
+
+	  	std::cerr << "pqissludp::Basic_Connection_Complete() Connection Timed Out!";
+		std::cerr << std::endl;
 		reset();
 	}
 
@@ -367,6 +394,15 @@ int pqissludp::stoplistening()
 }
 
 
+bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
+{
+	if (type == NET_PARAM_CONNECT_PERIOD)
+	{
+		mConnectPeriod = value;
+		return true;
+	}
+	return pqissl::connect_parameter(type, value);
+}
 
 /********** PQI STREAMER OVERLOADING *********************************/
 

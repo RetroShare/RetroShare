@@ -46,12 +46,16 @@ const uint32_t RS_STUN_LIST_MIN =      	100;
 const uint32_t MAX_UPNP_INIT = 		60; /* seconds UPnP timeout */
 
 #define CONN_DEBUG 1
+#define P3CONNMGR_NO_TCP_CONNECTIONS 1
 
+const uint32_t P3CONNMGR_TCP_DEFAULT_DELAY = 10; /* 10 Seconds should be enough! */
+const uint32_t P3CONNMGR_UDP_DHT_DELAY     = 300; /* 5 minutes */
+const uint32_t P3CONNMGR_UDP_PROXY_DELAY   = 30;  /* 30 seconds */
 
 void  printConnectState(peerConnectState &peer);
 
 peerConnectAddress::peerConnectAddress()
-	:type(0), ts(0)
+	:delay(0), period(0), type(0), ts(0)
 {
 	sockaddr_clear(&addr);
 }
@@ -933,7 +937,9 @@ void p3ConnectMgr::getOthersList(std::list<std::string> &peers)
 
 
 
-bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr, uint32_t &type)
+bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr, 
+                                uint32_t &delay, uint32_t &period, uint32_t &type)
+
 {
 	/* check for existing */
         std::map<std::string, peerConnectState>::iterator it;
@@ -963,6 +969,8 @@ bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr, uint
 	it->second.connAddrs.pop_front();
 
 	addr = it->second.currentConnAddr.addr;
+	delay = it->second.currentConnAddr.delay;
+	period = it->second.currentConnAddr.period;
 	type = it->second.currentConnAddr.type;
 
 	std::cerr << "p3ConnectMgr::connectAttempt() Success: ";
@@ -970,6 +978,8 @@ bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr, uint
 	std::cerr << std::endl;
 	std::cerr << " laddr: " << inet_ntoa(addr.sin_addr);
 	std::cerr << " lport: " << ntohs(addr.sin_port);
+	std::cerr << " delay: " << delay;
+	std::cerr << " period: " << period;
 	std::cerr << " type: " << type;
 	std::cerr << std::endl;
 
@@ -1235,12 +1245,26 @@ void    p3ConnectMgr::peerStatus(std::string id,
 	std::cerr << " flags: " << flags;
 	std::cerr << " source: " << source;
 	std::cerr << std::endl;
-	
+
+
+#ifndef P3CONNMGR_NO_TCP_CONNECTIONS
 
 	time_t now = time(NULL);
 	/* add in attempts ... local(TCP), remote(TCP) 
 	 * udp must come from notify 
 	 */
+
+	/* determine delay (for TCP connections) 
+	 * this is to ensure that simultaneous connections don't occur
+	 * (which can fail).
+	 * easest way is to compare ids ... and delay one of them
+	 */
+	
+	uint32_t tcp_delay = 0;
+	if (id > ownState.id)
+	{
+		tcp_delay = P3CONNMGR_TCP_DEFAULT_DELAY;
+	}
 
 	/* if address is same -> try local */
 	if ((isValidNet(&(details.laddr.sin_addr))) &&
@@ -1250,6 +1274,8 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		/* add the local address */
 		peerConnectAddress pca;
 		pca.ts = now;
+		pca.delay = tcp_delay;
+		pca.period = 0;
 		pca.type = RS_NET_CONN_TCP_LOCAL;
 		pca.addr = details.laddr;
 
@@ -1257,6 +1283,8 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		std::cerr << " id: " << id;
 		std::cerr << " laddr: " << inet_ntoa(pca.addr.sin_addr);
 		std::cerr << " lport: " << ntohs(pca.addr.sin_port);
+		std::cerr << " delay: " << pca.delay;
+		std::cerr << " period: " << pca.period;
 		std::cerr << " type: " << pca.type;
 		std::cerr << " source: " << source;
 		std::cerr << std::endl;
@@ -1282,6 +1310,8 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		/* add the remote address */
 		peerConnectAddress pca;
 		pca.ts = now;
+		pca.delay = tcp_delay;
+		pca.period = 0;
 		pca.type = RS_NET_CONN_TCP_EXTERNAL;
 		pca.addr = details.raddr;
 
@@ -1289,6 +1319,8 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		std::cerr << " id: " << id;
 		std::cerr << " laddr: " << inet_ntoa(pca.addr.sin_addr);
 		std::cerr << " lport: " << ntohs(pca.addr.sin_port);
+		std::cerr << " delay: " << pca.delay;
+		std::cerr << " period: " << pca.period;
 		std::cerr << " type: " << pca.type;
 		std::cerr << " source: " << source;
 		std::cerr << std::endl;
@@ -1305,6 +1337,8 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		std::cerr << std::endl;
 	}
 
+#endif
+
 	if (it->second.inConnAttempt)
 	{
 		std::cerr << "p3ConnectMgr::peerStatus() ALREADY IN CONNECT ATTEMPT: ";
@@ -1314,22 +1348,34 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		return;
 	}
 
-	std::cerr << "p3ConnectMgr::peerStatus() Started CONNECT ATTEMPT! ";
-	std::cerr << " id: " << id;
-	std::cerr << std::endl;
-
 
 	/* start a connection attempt */
-	it->second.actions |= RS_PEER_CONNECT_REQ;
-	mStatusChanged = true;
+	if (it->second.connAddrs.size() > 0)
+	{
+		std::cerr << "p3ConnectMgr::peerStatus() Started CONNECT ATTEMPT! ";
+		std::cerr << " id: " << id;
+		std::cerr << std::endl;
+
+		it->second.actions |= RS_PEER_CONNECT_REQ;
+		mStatusChanged = true;
+	}
+	else
+	{
+		std::cerr << "p3ConnectMgr::peerStatus() No addr suitable for CONNECT ATTEMPT! ";
+		std::cerr << " id: " << id;
+		std::cerr << std::endl;
+	}
+
 }
 
-
-void    p3ConnectMgr::peerConnectRequest(std::string id, uint32_t type)
+void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in raddr,
+                       							uint32_t source)
 {
 	std::cerr << "p3ConnectMgr::peerConnectRequest()";
 	std::cerr << " id: " << id;
-	std::cerr << " type: " << type;
+	std::cerr << " raddr: " << inet_ntoa(raddr.sin_addr);
+	std::cerr << ":" << ntohs(raddr.sin_port);
+	std::cerr << " source: " << source;
 	std::cerr << std::endl;
 
 	/* look up the id */
@@ -1346,37 +1392,61 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, uint32_t type)
 		if (it == mOthersList.end())
 		{
 			/* not found - ignore */
-			std::cerr << "p3ConnectMgr::peerStatus() Peer Not Found - Ignore";
+			std::cerr << "p3ConnectMgr::peerConnectRequest() Peer Not Found - Ignore";
 			std::cerr << std::endl;
 			return;
 		}
-		std::cerr << "p3ConnectMgr::peerStatus() Peer is in mOthersList";
+		std::cerr << "p3ConnectMgr::peerConnectRequest() Peer is in mOthersList - Ignore";
 		std::cerr << std::endl;
+		return;
 	}
 
 	/* if already connected -> done */
 	if (it->second.state & RS_PEER_S_CONNECTED)
 	{
+		std::cerr << "p3ConnectMgr::peerConnectRequest() Already connected - Ignore";
+		std::cerr << std::endl;
 		return;
 	}
 
 	time_t now = time(NULL);
 	/* this is a UDP connection request (DHT only for the moment!) */
-	if (isValidNet(&(it->second.dht.raddr.sin_addr)))
-
+	if (isValidNet(&(raddr.sin_addr)))
 	{
 		/* add the remote address */
 		peerConnectAddress pca;
 		pca.ts = now;
 		pca.type = RS_NET_CONN_UDP_DHT_SYNC;
-		pca.addr = it->second.dht.raddr;
+		pca.delay = 0;
 
-		/* add to the start of list -> so handled next! */
-		//it->second.connAddrs.push_front(pca);
+		if (source == RS_CB_DHT)
+		{
+			pca.period = P3CONNMGR_UDP_DHT_DELAY; 
+			std::cerr << "p3ConnectMgr::peerConnectRequest() source = DHT ";
+			std::cerr << std::endl;
+		}
+		else if (source == RS_CB_PROXY)
+		{
+			std::cerr << "p3ConnectMgr::peerConnectRequest() source = PROXY ";
+			std::cerr << std::endl;
+			pca.period = P3CONNMGR_UDP_PROXY_DELAY; 
+		}
+		else
+		{
+			std::cerr << "p3ConnectMgr::peerConnectRequest() source = UNKNOWN ";
+			std::cerr << std::endl;
+			/* error! */
+			pca.period = P3CONNMGR_UDP_PROXY_DELAY; 
+		}
+
+		std::cerr << "p3ConnectMgr::peerConnectRequest() period = " << pca.period;
+		std::cerr << std::endl;
+
+		pca.addr = raddr;
+
 		/* push to the back ... TCP ones should be tried first */
 		it->second.connAddrs.push_back(pca);
 	}
-
 
 	if (it->second.inConnAttempt)
 	{
@@ -1385,8 +1455,21 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, uint32_t type)
 	}
 
 	/* start a connection attempt */
-	it->second.actions |= RS_PEER_CONNECT_REQ;
-	mStatusChanged = true;
+	if (it->second.connAddrs.size() > 0)
+	{
+		std::cerr << "p3ConnectMgr::peerConnectRequest() Started CONNECT ATTEMPT! ";
+		std::cerr << " id: " << id;
+		std::cerr << std::endl;
+
+		it->second.actions |= RS_PEER_CONNECT_REQ;
+		mStatusChanged = true;
+	}
+	else
+	{
+		std::cerr << "p3ConnectMgr::peerConnectRequest() No addr suitable for CONNECT ATTEMPT! ";
+		std::cerr << " id: " << id;
+		std::cerr << std::endl;
+	}
 }
 
 
@@ -1683,6 +1766,8 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 	/* add in attempts ... local(TCP), remote(TCP) 
 	 */
 
+#ifndef P3CONNMGR_NO_TCP_CONNECTIONS
+
 	/* if address is same -> try local */
 	if ((isValidNet(&(it->second.localaddr.sin_addr))) &&
 		(sameNet(&(ownState.localaddr.sin_addr), 
@@ -1733,8 +1818,8 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 	}
 
 	/* otherwise try external ... (should check flags) */
-	if ((isValidNet(&(it->second.serveraddr.sin_addr))) && (1))
-	//	(it->second.netMode & RS_NET_CONN_TCP_EXTERNAL))
+	if ((isValidNet(&(it->second.serveraddr.sin_addr))) && 
+			(it->second.netMode = RS_NET_MODE_EXT))
 	{
 		std::cerr << "p3ConnectMgr::retryConnect() Ext Address Valid (+EXT Flag): ";
 		std::cerr << inet_ntoa(it->second.serveraddr.sin_addr);
@@ -1779,6 +1864,23 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 			std::cerr << std::endl;
 		}
 	}
+#endif
+
+	if (it->second.netMode != RS_NET_MODE_EXT)
+	{
+		std::cerr << "p3ConnectMgr::retryConnect() trying UDP connection!";
+		std::cerr << " id: " << id;
+		std::cerr << std::endl;
+
+		/* attempt UDP connection */
+		mDhtMgr->notifyPeer(id);
+	}
+	else
+	{
+		std::cerr << "p3ConnectMgr::retryConnect() EXT so not trying UDP connection!";
+		std::cerr << " id: " << id;
+		std::cerr << std::endl;
+	}
 
 	if (it->second.inConnAttempt)
 	{
@@ -1786,14 +1888,22 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 		return true;
 	}
 
-	
-	/* start a connection attempt (only if we stuck something on the queue) */
+	/* start a connection attempt */
 	if (it->second.connAddrs.size() > 0)
 	{
+		std::cerr << "p3ConnectMgr::retryConnect() Started CONNECT ATTEMPT! ";
+		std::cerr << " id: " << id;
+		std::cerr << std::endl;
+
 		it->second.actions |= RS_PEER_CONNECT_REQ;
 		mStatusChanged = true;
 	}
-
+	else
+	{
+		std::cerr << "p3ConnectMgr::retryConnect() No addr suitable for CONNECT ATTEMPT! ";
+		std::cerr << " id: " << id;
+		std::cerr << std::endl;
+	}
 	return true; 
 }
 

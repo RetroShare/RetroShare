@@ -61,11 +61,14 @@ void    pqiConnectCbDummy::peerStatus(std::string id,
 	std::cerr << std::endl;
 }
 
-void    pqiConnectCbDummy::peerConnectRequest(std::string id, uint32_t type)
+void    pqiConnectCbDummy::peerConnectRequest(std::string id, 
+                        	struct sockaddr_in raddr, uint32_t source)
 {
 	std::cerr << "pqiConnectCbDummy::peerConnectRequest()";
 	std::cerr << " id: " << id;
-	std::cerr << " type: " << type;
+	std::cerr << " raddr: " << inet_ntoa(raddr.sin_addr);
+	std::cerr << ":" << ntohs(raddr.sin_port);
+	std::cerr << " source: " << source;
 	std::cerr << std::endl;
 }
 

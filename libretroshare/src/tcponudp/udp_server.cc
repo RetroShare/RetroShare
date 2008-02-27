@@ -128,7 +128,7 @@ int main(int argc, char **argv)
 
 	if (toConnect)
 	{
-		tcp.connect(raddr);
+		tcp.connect(raddr, 30);
 	}
 	else
 	{
