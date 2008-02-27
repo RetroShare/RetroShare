@@ -117,6 +117,7 @@ void upnphandler::checkUPnPState()
 		case RS_UPNP_S_UDP_FAILED:
 		case RS_UPNP_S_ACTIVE:
 			printUPnPState();
+			checkUPnPActive();
 			updateUPnP();
 		break;
 
@@ -218,6 +219,65 @@ bool upnphandler::printUPnPState()
 	dataMtx.unlock(); /* UNLOCK MUTEX */
 
 	return 1;
+}
+
+
+bool upnphandler::checkUPnPActive()
+{
+	dataMtx.lock(); /* LOCK MUTEX */
+
+
+	uPnPConfigData *config = upnpConfig;
+	if ((upnpState > RS_UPNP_S_READY) && (config))
+	{
+		char eprot1[] = "TCP";
+		char eprot2[] = "UDP";
+
+		char in_addr[256];
+		char in_port1[256];
+		char in_port2[256];
+		char eport1[256];
+		char eport2[256];
+
+		struct sockaddr_in localAddr = upnp_iaddr;
+
+		snprintf(in_port1, 256, "%d", ntohs(localAddr.sin_port));
+		snprintf(in_port2, 256, "%d", ntohs(localAddr.sin_port));
+		snprintf(in_addr, 256, "%d.%d.%d.%d", 
+			 ((localAddr.sin_addr.s_addr >> 0) & 0xff),
+			 ((localAddr.sin_addr.s_addr >> 8) & 0xff),
+			 ((localAddr.sin_addr.s_addr >> 16) & 0xff),
+			 ((localAddr.sin_addr.s_addr >> 24) & 0xff));
+
+		snprintf(eport1, 256, "%d", eport_curr);
+		snprintf(eport2, 256, "%d", eport_curr);
+
+		std::cerr << "upnphandler::checkUPnPState()";
+		std::cerr << " Checking Redirection: InAddr: " << in_addr;
+		std::cerr << " InPort: " << in_port1;
+		std::cerr << " ePort: " << eport1;
+		std::cerr << " eProt: " << eprot1;
+		std::cerr << std::endl;
+
+
+		bool tcpOk = TestRedirect(&(config -> urls), &(config->data),
+				in_addr, in_port1, eport1, eprot1);
+		bool udpOk = TestRedirect(&(config -> urls), &(config->data),
+				in_addr, in_port2, eport2, eprot2);
+
+		if ((!tcpOk) || (!udpOk))
+		{
+			std::cerr << "upnphandler::checkUPnPState() ... Redirect Expired, restarting";
+			std::cerr << std::endl;
+
+			toStop = true;
+			toStart = true;
+		}
+	}
+
+	dataMtx.unlock(); /* UNLOCK MUTEX */
+
+	return true;
 }
 
 

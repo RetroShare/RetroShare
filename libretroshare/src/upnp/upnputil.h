@@ -34,10 +34,17 @@ void ListRedirections(struct UPNPUrls * urls,
 
 bool SetRedirectAndTest(struct UPNPUrls * urls,
                                struct IGDdatas * data,
-							   const char * iaddr,
-							   const char * iport,
-							   const char * eport,
-                               const char * proto);
+				const char * iaddr,
+				const char * iport,
+				const char * eport,
+                       		const char * proto);
+
+bool TestRedirect(struct UPNPUrls * urls,
+                               struct IGDdatas * data,
+				const char * iaddr,
+				const char * iport,
+				const char * eport,
+                       		const char * proto);
 
 bool RemoveRedirect(struct UPNPUrls * urls,
                     struct IGDdatas * data,

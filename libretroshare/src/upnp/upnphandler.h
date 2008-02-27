@@ -69,6 +69,8 @@ virtual void run();
 bool initUPnPState();
 void checkUPnPState();
 bool printUPnPState();
+
+bool checkUPnPActive();
 bool updateUPnP();
 
 

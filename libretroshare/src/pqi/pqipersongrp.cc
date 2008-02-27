@@ -297,7 +297,8 @@ int     pqipersongrp::removePeer(std::string id)
 	if (it != mods.end())
 	{
 		SearchModule *mod = it->second;
-		RemoveSearchModule(mod);
+		// Don't duplicate remove!!!
+		//RemoveSearchModule(mod);
 		secpolicy_delete(mod -> sp);
 		pqiperson *p = (pqiperson *) mod -> pqi;
 		p -> reset();

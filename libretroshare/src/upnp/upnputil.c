@@ -115,6 +115,7 @@ bool SetRedirectAndTest(struct UPNPUrls * urls,
 	char externalIPAddress[16];
 	char intClient[16];
 	char intPort[6];
+	char leaseDuration[] = "600";
 	int r;
 	int ok = 1;
 
@@ -139,11 +140,14 @@ bool SetRedirectAndTest(struct UPNPUrls * urls,
 		printf("GetExternalIPAddress failed.\n");
 	
 	r = UPNP_AddPortMapping(urls->controlURL, data->servicetype,
-	                        eport, iport, iaddr, 0, proto);
+	                        eport, iport, iaddr, 0, leaseDuration, proto);
 	if(r==0)
 	{
 		printf("AddPortMapping(%s, %s, %s) failed\n", eport, iport, iaddr);
-		ok = 0;
+		//this seems to trigger for unknown reasons sometimes.
+		//rely on Checking it afterwards...
+		//should check IP address then!
+		//ok = 0;
 	}
 
 	UPNP_GetSpecificPortMappingEntry(urls->controlURL,
@@ -158,6 +162,16 @@ bool SetRedirectAndTest(struct UPNPUrls * urls,
 		ok = 0;
 	}
 
+	if ((strcmp(iaddr, intClient) != 0) || (strcmp(iport, intPort) != 0))
+	{
+		printf("PortMappingEntry to wrong location! FAILED\n");
+		printf("IP1:\"%s\"\n", iaddr);
+		printf("IP2:\"%s\"\n", intClient);
+		printf("PORT1:\"%s\"\n", iport);
+		printf("PORT2:\"%s\"\n", intPort);
+		ok = 0;
+	}
+
 	printf("external %s:%s is redirected to internal %s:%s\n",
 	       externalIPAddress, eport, intClient, intPort);
 
@@ -168,6 +182,56 @@ bool SetRedirectAndTest(struct UPNPUrls * urls,
 	else
 	{
 		printf("uPnP Forward/Mapping Failed\n");
+	}
+
+	return ok;
+}
+
+bool TestRedirect(struct UPNPUrls * urls,
+                               struct IGDdatas * data,
+				const char * iaddr,
+				const char * iport,
+				const char * eport,
+				const char * proto)
+{
+	char intClient[16];
+	char intPort[6];
+	int ok = 1;
+
+	if(!iaddr || !iport || !eport || !proto)
+	{
+		fprintf(stderr, "Wrong arguments\n");
+		return 0;
+	}
+	proto = protofix(proto);
+	if(!proto)
+	{
+		fprintf(stderr, "invalid protocol\n");
+		return 0;
+	}
+	
+	UPNP_GetSpecificPortMappingEntry(urls->controlURL,
+	                                 data->servicetype,
+    	                             eport, proto,
+					 intClient, intPort);
+	if(intClient[0])
+		printf("uPnP Check: InternalIP:Port = %s:%s\n", intClient, intPort);
+	else
+	{
+		printf("GetSpecificPortMappingEntry failed.\n");
+		ok = 0;
+	}
+
+	printf("uPnP Check: External port %s is redirected to internal %s:%s\n",
+	       eport, intClient, intPort);
+
+	if (ok)
+	{
+		printf("uPnP Check: uPnP Forward/Mapping still Active\n");
+	}
+	else
+	{
+		printf("uPnP Check: Forward/Mapping has been Dropped\n");
 	}
 
 	return ok;

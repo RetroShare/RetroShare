@@ -32,7 +32,9 @@
 #include "util/rsprint.h"
 
 #define DHT_DEBUG 1
-
+/*****
+ * #define P3DHTMGR_USE_LOCAL_UDP_CONN 1  // For Testing only 
+ ****/
 
 /**** DHT State Variables ****
  * TODO:
@@ -743,7 +745,11 @@ int p3DhtMgr::checkNotifyDHT()
 	if (dhtNotify(peer.hash1, own.hash2, ""))
 	{
 		/* feedback to say we started it! */
+#ifdef P3DHTMGR_USE_LOCAL_UDP_CONN
+		connCb->peerConnectRequest(peer.id, peer.laddr, RS_CB_DHT);
+#else
 		connCb->peerConnectRequest(peer.id, peer.raddr, RS_CB_DHT);
+#endif
 	}
 
 
@@ -1247,7 +1253,7 @@ bool p3DhtMgr::dhtResultNotify(std::string idhash)
 
 	/* update data */
 	std::string peerid;
-	struct sockaddr_in raddr;
+	struct sockaddr_in raddr, laddr;
 
 	if (it != peers.end())
 	{
@@ -1270,6 +1276,7 @@ bool p3DhtMgr::dhtResultNotify(std::string idhash)
 			it->second.notifyPending = 0;
 			peerid = (it->second).id;
 			raddr  = (it->second).raddr;
+			laddr  = (it->second).laddr;
 		}
 	}
 	else
@@ -1284,7 +1291,13 @@ bool p3DhtMgr::dhtResultNotify(std::string idhash)
 
 	/* do callback */
 	if (doNotify)
+	{
+#ifdef P3DHTMGR_USE_LOCAL_UDP_CONN
+		connCb->peerConnectRequest(peerid, laddr, RS_CB_DHT);
+#else
 		connCb->peerConnectRequest(peerid, raddr, RS_CB_DHT);
+#endif
+	}
 
 	return true;
 }
@@ -1376,7 +1389,11 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 				//ent.type, RS_CB_LOCAL_ADDR | RS_CB_REMOTE_ADDR, RS_CB_DHT);
 		if (doNotify)
 		{
+#ifdef P3DHTMGR_USE_LOCAL_UDP_CONN
+			connCb->peerConnectRequest(ent.id, ent.laddr, RS_CB_DHT);
+#else
 			connCb->peerConnectRequest(ent.id, ent.raddr, RS_CB_DHT);
+#endif
 		}
 	}
 
