@@ -36,6 +36,8 @@
  * #define P3DHTMGR_USE_LOCAL_UDP_CONN 1  // For Testing only 
  ****/
 
+#define P3DHTMGR_USE_LOCAL_UDP_CONN 1  // For Testing only 
+
 /**** DHT State Variables ****
  * TODO:
  * (1) notify call in.

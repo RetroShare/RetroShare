@@ -75,7 +75,7 @@ peerConnectState::peerConnectState()
 
 	 name("nameless"), state(0), actions(0), 
 	 source(0), 
-	 inConnAttempt(0), connAttemptTS(0)
+	 inConnAttempt(0), lastattempt(0)
 {
 	sockaddr_clear(&localaddr);
 	sockaddr_clear(&serveraddr);
@@ -215,6 +215,9 @@ void p3ConnectMgr::netStartup()
 	/* StunInit gets a list of peers, and asks the DHT to find them...
 	 * This is needed for all systems so startup straight away 
 	 */
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::netStartup()" << std::endl;
+#endif
 
 	loadConfiguration();
 	netDhtInit();
@@ -228,18 +231,27 @@ void p3ConnectMgr::netStartup()
 
 	mNetInitTS = time(NULL);
 
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::netStartup() tou_stunkeepalive() enabled" << std::endl;
+#endif
+	tou_stunkeepalive(1);
+
 	ownState.netMode &= ~(RS_NET_MODE_ACTUAL);
 
 	switch(ownState.netMode & RS_NET_MODE_TRYMODE)
 	{
 		case RS_NET_MODE_TRY_UPNP:
-			mNetStatus = RS_NET_UPNP_INIT;
 			ownState.netMode |= RS_NET_MODE_UDP;
+			mNetStatus = RS_NET_UPNP_INIT;
 			break;
 
 		case RS_NET_MODE_TRY_EXT:  /* v similar to UDP */
 			ownState.netMode |= RS_NET_MODE_EXT;
 			mNetStatus = RS_NET_UDP_SETUP;
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::netStartup() disabling stunkeepalive() cos EXT" << std::endl;
+#endif
+			tou_stunkeepalive(0);
 			break;
 
 		case RS_NET_MODE_TRY_UDP:
@@ -322,6 +334,9 @@ void p3ConnectMgr::netTick()
 
 void p3ConnectMgr::netUdpInit()
 {
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::netUdpInit()" << std::endl;
+#endif
 	connMtx.lock();   /*   LOCK MUTEX */
 
 	struct sockaddr_in iaddr = ownState.localaddr;
@@ -335,6 +350,9 @@ void p3ConnectMgr::netUdpInit()
 
 void p3ConnectMgr::netDhtInit()
 {
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::netDhtInit()" << std::endl;
+#endif
 	connMtx.lock();   /*   LOCK MUTEX */
 
 	uint32_t vs = ownState.visState;
@@ -347,6 +365,9 @@ void p3ConnectMgr::netDhtInit()
 
 void p3ConnectMgr::netUpnpInit()
 {
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::netUpnpInit()" << std::endl;
+#endif
 	uint16_t eport, iport;
 
 	connMtx.lock();   /*   LOCK MUTEX */
@@ -390,6 +411,10 @@ void p3ConnectMgr::netUpnpCheck()
 		/* UPnP Failed us! */
 		mUpnpAddrValid = false;
 		mNetStatus = RS_NET_UDP_SETUP;
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::netUpnpCheck() ensabling stunkeepalive() cos UDP" << std::endl;
+#endif
+		tou_stunkeepalive(1);
 
 		connMtx.unlock(); /* UNLOCK MUTEX */
 	}
@@ -404,6 +429,10 @@ void p3ConnectMgr::netUpnpCheck()
 		mNetStatus = RS_NET_UDP_SETUP;
 		/* Fix netMode & Clear others! */
 		ownState.netMode = RS_NET_MODE_TRY_UPNP | RS_NET_MODE_UPNP; 
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::netUpnpCheck() disabling stunkeepalive() cos uPnP" << std::endl;
+#endif
+		tou_stunkeepalive(0);
 
 		connMtx.unlock(); /* UNLOCK MUTEX */
 	}
@@ -964,6 +993,7 @@ bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr,
 		return false;
 	}
 	
+	it->second.lastattempt = time(NULL);  /* time of last connect attempt */
 	it->second.inConnAttempt = true;
 	it->second.currentConnAddr = it->second.connAddrs.front();
 	it->second.connAddrs.pop_front();

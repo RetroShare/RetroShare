@@ -66,12 +66,18 @@ extern "C" {
 	 * (3) offer more stunpeers, for external address determination.
          * int	tou_stunpeer(const struct sockaddr *ext_addr, socklen_t addrlen, const char *id);
 	 * (4) repeat (2)+(3) until a valid extaddr is returned.
+	 * (5) if stunkeepalive is required, then periodically send out
+	 *     stun packets to maintain external firewall port.
 	 *
 	 */
 
 int  	tou_init(const struct sockaddr *my_addr, socklen_t addrlen);
 int	tou_extaddr(struct sockaddr *ext_addr, socklen_t *addrlen);
 int	tou_stunpeer(const struct sockaddr *ext_addr, socklen_t addrlen, const char *id);
+int     tou_stunkeepalive(int required);
+int     tou_tick_stunkeepalive();
+
+
 
 	/* Connections are as similar to UNIX as possible 
 	 * (1) create a socket: tou_socket() this reserves a socket id.

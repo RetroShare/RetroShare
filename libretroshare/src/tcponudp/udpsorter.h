@@ -43,6 +43,24 @@ class UdpPeer
 virtual void recvPkt(void *data, int size) = 0;
 };
 
+
+	
+class TouStunPeer
+{
+	public:
+	TouStunPeer()
+	:lastsend(0), failCount(0) { return; }
+	
+	TouStunPeer(std::string id_in, const struct sockaddr_in &addr)
+	:id(id_in), remote(addr), lastsend(0), failCount(0) { return; }
+	
+	std::string id;
+	struct sockaddr_in remote;
+	time_t lastsend;
+	uint32_t failCount;
+};
+	
+
 class UdpSorter: public UdpReceiver
 {
 	public:
@@ -52,7 +70,11 @@ virtual ~UdpSorter() { return; }
 
 	/* add a TCPonUDP stream */
 int	addUdpPeer(UdpPeer *peer, const struct sockaddr_in &raddr);
+
+bool 	setStunKeepAlive(uint32_t required);
 bool    addStunPeer(const struct sockaddr_in &remote, const char *peerid);
+bool    checkStunKeepAlive();
+
 bool    externalAddr(struct sockaddr_in &remote);
 
 	/* Packet IO */
@@ -76,7 +98,7 @@ int     status(std::ostream &out);
 
 	/* STUN handling */
 bool	isStunPacket(void *data, int size);
-bool 	handleStunPkt(void *data, int size, struct sockaddr_in &from);
+bool 	locked_handleStunPkt(void *data, int size, struct sockaddr_in &from);
 
 int     doStun(struct sockaddr_in stun_addr);
 bool    response(void *stun_pkt, int size, struct sockaddr_in &addr);
@@ -84,7 +106,10 @@ bool    response(void *stun_pkt, int size, struct sockaddr_in &addr);
 void   *generate_stun_reply(struct sockaddr_in *stun_addr, int *len);
 bool    generate_stun_pkt(void *stun_pkt, int *len);
 
-
+	/* stun keepAlive */
+bool    locked_printStunList();
+bool    locked_recvdStun(const struct sockaddr_in &remote);
+bool    storeStunPeer(const struct sockaddr_in &remote, const char *peerid);
 
 	UdpLayer *udpLayer;
 
@@ -94,9 +119,16 @@ bool    generate_stun_pkt(void *stun_pkt, int *len);
 	struct sockaddr_in eaddr; /* external addr */
         bool eaddrKnown;
 
-	std::list<struct sockaddr_in> stunPeers; /* potentials */
+	bool mStunKeepAlive;
+	time_t mStunLastRecv;
+	time_t mStunLastSend;
+
+	std::list<TouStunPeer> mStunList; /* potentials */
 
 	std::map<struct sockaddr_in, UdpPeer *> streams;
+
+
+
 };
 
 #endif

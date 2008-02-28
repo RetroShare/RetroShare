@@ -26,6 +26,7 @@
 
 
 #include "rsserver/p3face.h"
+#include "tcponudp/tou.h"
 #include <sstream>
 
 #include <sys/time.h>
@@ -175,6 +176,9 @@ void 	RsServer::run()
 		if ((int) ts > lastSec)
 		{
 			lastSec = (int) ts;
+
+			// Every second! (UDP keepalive).
+			tou_tick_stunkeepalive();
 
 			// every five loops (> 5 secs)
 			if (loop % 5 == 0)

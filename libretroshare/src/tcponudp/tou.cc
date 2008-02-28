@@ -89,6 +89,24 @@ int 	tou_stunpeer(const struct sockaddr *my_addr, socklen_t addrlen,
 	return 0;
 }
 
+int 	tou_stunkeepalive(int required)
+{
+	if (!tou_inited)
+		return -1;
+
+	udps->setStunKeepAlive(required);
+	return 1;
+}
+
+int     tou_tick_stunkeepalive()
+{
+	if (!tou_inited)
+		return -1;
+
+	udps->tick();
+	return 1;
+}
+
 int     tou_extaddr(struct sockaddr *ext_addr, socklen_t *addrlen)
 {
 	if (!tou_inited)

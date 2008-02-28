@@ -138,7 +138,7 @@ class peerConnectState
 
 	/* a list of connect attempts to make (in order) */
 	bool inConnAttempt;
-	time_t connAttemptTS;
+	time_t lastattempt;
 	peerConnectAddress currentConnAddr;
 	std::list<peerConnectAddress> connAddrs;
 
