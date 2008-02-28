@@ -91,6 +91,7 @@ p3ConnectMgr::p3ConnectMgr(p3AuthMgr *am)
 {
 	mUpnpAddrValid = false;
 	mStunAddrValid = false;
+	mStunAddrStable = false;
 
 	/* setup basics of own state */
 	if (am)
@@ -446,6 +447,7 @@ void p3ConnectMgr::netUdpCheck()
 	if (stunCheck() || (mUpnpAddrValid)) 
 	{
 		bool extValid = false;
+		bool extAddrStable = false;
 		struct sockaddr_in extAddr;
 		uint32_t mode = 0;
 
@@ -462,21 +464,42 @@ void p3ConnectMgr::netUdpCheck()
 		{
 			extValid = true;
 			extAddr = mUpnpExtAddr;
+			extAddrStable = true;
 		}
 		else if (mStunAddrValid)
 		{
 			extValid = true;
 			extAddr = mStunExtAddr;
+			extAddrStable = mStunAddrStable;
 		}
 
 		if (extValid)
 		{
 			ownState.serveraddr = extAddr;
-			mode = RS_NET_CONN_TCP_LOCAL | RS_NET_CONN_UDP_DHT_SYNC;
+			mode = RS_NET_CONN_TCP_LOCAL;
+
 			if (mUpnpAddrValid  || (ownState.netMode == RS_NET_MODE_EXT))
 			{
 				mode |= RS_NET_CONN_TCP_EXTERNAL;
 			}
+			else if (extAddrStable)
+			{
+				mode |= RS_NET_CONN_UDP_DHT_SYNC;
+			}
+			else // if (!extAddrStable)
+			{
+#ifdef CONN_DEBUG
+				std::cerr << "p3ConnectMgr::netUdpCheck() UDP Unstable :( ";
+				std::cerr <<  std::endl;
+				std::cerr << "p3ConnectMgr::netUdpCheck() We are unreachable";
+				std::cerr <<  std::endl;
+				std::cerr << "netMode =>  RS_NET_MODE_UNREACHABLE";
+				std::cerr <<  std::endl;
+#endif
+				ownState.netMode = RS_NET_MODE_UNREACHABLE;
+				tou_stunkeepalive(0);
+			}
+
 			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 		}
 
@@ -514,24 +537,26 @@ bool p3ConnectMgr::udpExtAddressCheck()
 	 */
 	struct sockaddr_in addr;
 	socklen_t len = sizeof(addr);
+	uint8_t stable;
 
 #ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::udpExtAddressCheck()" << std::endl;
 #endif
 
-	if (0 < tou_extaddr((struct sockaddr *) &addr, &len))
+	if (0 < tou_extaddr((struct sockaddr *) &addr, &len, &stable))
 	{
 		/* update UDP information */
 		connMtx.lock();   /*   LOCK MUTEX */
 
 		mStunExtAddr = addr;
 		mStunAddrValid = true;
-
+		mStunAddrStable = (stable != 0);
 
 #ifdef CONN_DEBUG
         	std::cerr << "p3ConnectMgr::udpExtAddressCheck() Got ";
 	        std::cerr << " addr: " << inet_ntoa(mStunExtAddr.sin_addr);
-		std::cerr << " port: " << ntohs(mStunExtAddr.sin_port);
+		std::cerr << ":" << ntohs(mStunExtAddr.sin_port);
+		std::cerr << " stable: " << mStunAddrStable;
 		std::cerr << std::endl;
 #endif
 
@@ -1217,10 +1242,15 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		{
 			it->second.netMode = RS_NET_MODE_EXT;
 		}
-		else
+		else if (flags & RS_NET_FLAGS_STABLE_UDP)
 		{
 			it->second.netMode = RS_NET_MODE_UDP;
 		}
+		else
+		{
+			it->second.netMode = RS_NET_MODE_UNREACHABLE;
+		}
+
 
 		/* always update VIS status */
 		if (flags & RS_NET_FLAGS_USE_DISC)
@@ -1241,6 +1271,39 @@ void    p3ConnectMgr::peerStatus(std::string id,
 			it->second.visState |= RS_VIS_STATE_NODHT;
 		}
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+	}
+
+	/* Determine Reachability (only advisory) */
+	if (ownState.netMode == RS_NET_MODE_UDP)
+	{
+		if ((details.type & RS_NET_CONN_UDP_DHT_SYNC) ||
+		    (details.type & RS_NET_CONN_TCP_EXTERNAL)) 
+		{
+			/* reachable! */
+			it->second.state &= (~RS_PEER_S_UNREACHABLE);
+		}
+		else 
+		{
+			/* unreachable */
+			it->second.state |= RS_PEER_S_UNREACHABLE;
+		}
+	}
+	else if (ownState.netMode == RS_NET_MODE_UNREACHABLE)
+	{
+		if (details.type & RS_NET_CONN_TCP_EXTERNAL) 
+		{
+			/* reachable! */
+			it->second.state &= (~RS_PEER_S_UNREACHABLE);
+		}
+		else 
+		{
+			/* unreachable */
+			it->second.state |= RS_PEER_S_UNREACHABLE;
+		}
+	}
+	else
+	{
+		it->second.state &= (~RS_PEER_S_UNREACHABLE);
 	}
 
 	if (!isFriend)
@@ -1896,7 +1959,7 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 	}
 #endif
 
-	if (it->second.netMode != RS_NET_MODE_EXT)
+	if (it->second.netMode == RS_NET_MODE_UDP)
 	{
 		std::cerr << "p3ConnectMgr::retryConnect() trying UDP connection!";
 		std::cerr << " id: " << id;
@@ -1907,7 +1970,7 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 	}
 	else
 	{
-		std::cerr << "p3ConnectMgr::retryConnect() EXT so not trying UDP connection!";
+		std::cerr << "p3ConnectMgr::retryConnect() EXT/UNREACHABLE so not trying UDP connection!";
 		std::cerr << " id: " << id;
 		std::cerr << std::endl;
 	}

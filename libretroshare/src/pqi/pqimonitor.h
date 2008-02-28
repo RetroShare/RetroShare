@@ -46,6 +46,7 @@ const uint32_t RS_PEER_ACTION_MASK      = 0xff00;
 const uint32_t RS_PEER_S_FRIEND		= 0x0001;
 const uint32_t RS_PEER_S_ONLINE    	= 0x0002;    /* heard from recently..*/
 const uint32_t RS_PEER_S_CONNECTED   	= 0x0004;  
+const uint32_t RS_PEER_S_UNREACHABLE    = 0x0008;  
 
 /* ACTIONS */
 const uint32_t RS_PEER_NEW              = 0x0001;    /* new Peer */

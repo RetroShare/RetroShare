@@ -72,7 +72,7 @@ extern "C" {
 	 */
 
 int  	tou_init(const struct sockaddr *my_addr, socklen_t addrlen);
-int	tou_extaddr(struct sockaddr *ext_addr, socklen_t *addrlen);
+int	tou_extaddr(struct sockaddr *ext_addr, socklen_t *addrlen, uint8_t *stable);
 int	tou_stunpeer(const struct sockaddr *ext_addr, socklen_t addrlen, const char *id);
 int     tou_stunkeepalive(int required);
 int     tou_tick_stunkeepalive();

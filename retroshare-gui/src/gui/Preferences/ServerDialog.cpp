@@ -144,9 +144,12 @@ void ServerDialog::load()
 		case RS_NETMODE_UDP:
 			out << "Firewalled";
 			break;
-		default:
 		case RS_NETMODE_UPNP:
 			out << "Automatic: UPnP Forwarded Port";
+			break;
+		default:
+		case RS_NETMODE_UNREACHABLE:
+			out << "Unreachable: Firewalled by Symmetric NAT";
 			break;
 	}
 	out << std::endl;
@@ -174,6 +177,16 @@ void ServerDialog::load()
 		out << " Disabled";
 	out << std::endl;
 
+
+
+	if (detail.netMode == RS_NETMODE_UNREACHABLE)
+	{
+		ui.netStatusBox->setTextColor( Qt::red );
+	}
+	else
+	{
+		ui.netStatusBox->setTextColor( Qt::black );
+	}
 
 	ui.netStatusBox->setText(QString::fromStdString(out.str()));
 	ui.netStatusBox ->setReadOnly(true);

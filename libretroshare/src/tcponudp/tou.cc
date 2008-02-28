@@ -107,12 +107,12 @@ int     tou_tick_stunkeepalive()
 	return 1;
 }
 
-int     tou_extaddr(struct sockaddr *ext_addr, socklen_t *addrlen)
+int     tou_extaddr(struct sockaddr *ext_addr, socklen_t *addrlen, uint8_t *stable)
 {
 	if (!tou_inited)
 		return -1;
 
-	if (udps->externalAddr(*(struct sockaddr_in *) ext_addr))
+	if (udps->externalAddr(*(struct sockaddr_in *) ext_addr, *stable))
 	{
 		return 1;
 	}

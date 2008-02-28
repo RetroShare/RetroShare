@@ -39,7 +39,7 @@ static const int STUN_TTL = 64;
 #define DEBUG_UDP_SORTER 1
 
 UdpSorter::UdpSorter(struct sockaddr_in &local)
-	:udpLayer(NULL), laddr(local), eaddrKnown(false),
+	:udpLayer(NULL), laddr(local), eaddrKnown(false), eaddrStable(false),
         mStunKeepAlive(false), mStunLastRecv(0), mStunLastSend(0)
 
 
@@ -234,10 +234,7 @@ bool UdpSorter::locked_handleStunPkt(void *data, int size, struct sockaddr_in &f
 			std::cerr << inet_ntoa(eAddr.sin_addr) << ":" << ntohs(eAddr.sin_port);
 			std::cerr << std::endl;
 #endif
-			eaddrKnown = true;
-			eaddr = eAddr;
-
-			locked_recvdStun(from);
+			locked_recvdStun(from, eAddr);
 
 			return true;
 		}
@@ -251,11 +248,17 @@ bool UdpSorter::locked_handleStunPkt(void *data, int size, struct sockaddr_in &f
 }
 
 
-bool    UdpSorter::externalAddr(struct sockaddr_in &external)
+bool    UdpSorter::externalAddr(struct sockaddr_in &external, uint8_t &stable)
 {
 	if (eaddrKnown)
 	{
 		external = eaddr;
+
+		if (eaddrStable)
+			stable = 1;
+		else
+			stable = 0;
+
 		return true;
 	}
 	return false;
@@ -612,15 +615,21 @@ bool    UdpSorter::checkStunKeepAlive()
 }
 
 
-bool    UdpSorter::locked_recvdStun(const struct sockaddr_in &remote)
+bool    UdpSorter::locked_recvdStun(const struct sockaddr_in &remote, const struct sockaddr_in &extaddr)
 {
 #ifdef DEBUG_UDP_SORTER
-	std::cerr << "UdpSorter::recvdStun()";
-	std::cerr << std::endl;
+	std::ostringstream out;
+	out << "UdpSorter::locked_recvdStun() from:";
+	out << inet_ntoa(remote.sin_addr) << ":" << ntohs(remote.sin_port);
+	out << " claiming ExtAddr is:";
+	out << inet_ntoa(extaddr.sin_addr) << ":" << ntohs(extaddr.sin_port);
+
+	std::cerr << out.str() << std::endl;
 #endif
 
 	locked_printStunList();
 
+	bool found = true;
 	std::list<TouStunPeer>::iterator it;
 	for(it = mStunList.begin(); it != mStunList.end(); it++)
 	{
@@ -628,12 +637,84 @@ bool    UdpSorter::locked_recvdStun(const struct sockaddr_in &remote)
 		    (remote.sin_port == it->remote.sin_port))
 		{
 			it->failCount = 0;
-			return true;
+			it->eaddr = extaddr;
+			it->response = true;
+
+			found = true;
+			break;
 		}
+	}
+
+	if (!eaddrKnown)
+	{
+		locked_checkExternalAddress();
+	}
+
+	return found;
+}
+
+bool    UdpSorter::locked_checkExternalAddress()
+{
+#ifdef DEBUG_UDP_SORTER
+	std::ostringstream out;
+	out << "UdpSorter::locked_checkExternalAddress()";
+	std::cerr << out.str() << std::endl;
+#endif
+
+	bool found1 = false;
+	bool found2 = false;
+
+	std::list<TouStunPeer>::iterator it;
+	std::list<TouStunPeer>::iterator p1;
+	std::list<TouStunPeer>::iterator p2;
+	for(it = mStunList.begin(); it != mStunList.end(); it++)
+	{
+		if (it->response)
+		{
+			if (!found1)
+			{
+				p1 = it;
+				found1 = true;
+			}
+			else
+			{
+				p2 = it;
+				found2 = true;
+				break;
+			}
+		}
+	}
+
+	if (found1 && found2)
+	{
+		if ((p1->eaddr.sin_addr.s_addr == p2->eaddr.sin_addr.s_addr) &&
+		    (p1->eaddr.sin_port == p2->eaddr.sin_port))
+		{
+			eaddrStable = true;
+		}
+		else
+		{
+			eaddrStable = false;
+		}
+		eaddrKnown = true;
+		eaddr = p1->eaddr;
+
+#ifdef DEBUG_UDP_SORTER
+		std::cerr << "UdpSorter::locked_checkExternalAddress() Found State:";
+		if (eaddrStable)
+			std::cerr << " Stable NAT translation (GOOD!) ";
+		else
+			std::cerr << " unStable (symmetric NAT translation (BAD!) ";
+		std::cerr << std::endl;
+#endif
+
+		return true;
 	}
 
 	return false;
 }
+
+
 
 bool    UdpSorter::locked_printStunList()
 {

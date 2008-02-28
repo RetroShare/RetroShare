@@ -62,6 +62,10 @@ std::string RsPeerStateString(uint32_t state)
 	{
 		str = "Connected";
 	}
+	else if (state & RS_PEER_STATE_UNREACHABLE)
+	{
+		str = "Unreachable";
+	}
 	else if (state & RS_PEER_STATE_ONLINE)
 	{
 		str = "Available";
@@ -91,6 +95,10 @@ std::string RsPeerNetModeString(uint32_t netModel)
 	else if (netModel == RS_NETMODE_UDP)
 	{
 		str = "UDP Mode";
+	}
+	else if (netModel == RS_NETMODE_UNREACHABLE)
+	{
+		str = "UDP Mode (Unreachable)";
 	}
 	else 
 	{
@@ -272,6 +280,8 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 		d.state |= RS_PEER_STATE_ONLINE;
 	if (pcs.state & RS_PEER_S_CONNECTED)
 		d.state |= RS_PEER_STATE_CONNECTED;
+	if (pcs.state & RS_PEER_S_UNREACHABLE)
+		d.state |= RS_PEER_STATE_UNREACHABLE;
 
 	switch(pcs.netMode & RS_NET_MODE_ACTUAL)
 	{
@@ -282,10 +292,12 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 			d.netMode	= RS_NETMODE_UPNP;
 			break;
 		case RS_NET_MODE_UDP:
-		case RS_NET_MODE_UNKNOWN:
-		case RS_NET_MODE_ERROR:
-		default:
 			d.netMode	= RS_NETMODE_UDP;
+			break;
+		case RS_NET_MODE_UNREACHABLE:
+		case RS_NET_MODE_UNKNOWN:
+		default:
+			d.netMode	= RS_NETMODE_UNREACHABLE;
 			break;
 	}
 
@@ -432,6 +444,9 @@ bool 	p3Peers::setNetworkMode(std::string id, uint32_t extNetMode)
 			break;
 		case RS_NETMODE_UDP:
 			netMode = RS_NET_MODE_UDP;
+			break;
+		case RS_NETMODE_UNREACHABLE:
+			netMode = RS_NET_MODE_UNREACHABLE;
 			break;
 		default:
 			break;

@@ -63,13 +63,13 @@ const uint32_t RS_NET_MODE_TRY_UPNP =   0x0020;
 const uint32_t RS_NET_MODE_TRY_UDP  =   0x0040;
 
 	/* Actual State */
-const uint32_t RS_NET_MODE_ACTUAL =     0x000f;
+const uint32_t RS_NET_MODE_ACTUAL =      0x000f;
 
-const uint32_t RS_NET_MODE_UNKNOWN =    0x0000;
-const uint32_t RS_NET_MODE_EXT =        0x0001;
-const uint32_t RS_NET_MODE_UPNP =       0x0002;
-const uint32_t RS_NET_MODE_UDP =        0x0004;
-const uint32_t RS_NET_MODE_ERROR =      0x0008;
+const uint32_t RS_NET_MODE_UNKNOWN =     0x0000;
+const uint32_t RS_NET_MODE_EXT =         0x0001;
+const uint32_t RS_NET_MODE_UPNP =        0x0002;
+const uint32_t RS_NET_MODE_UDP =         0x0004;
+const uint32_t RS_NET_MODE_UNREACHABLE = 0x0008;
 
 
 /* order of attempts ... */
@@ -86,6 +86,7 @@ const uint32_t RS_NET_FLAGS_USE_DISC		= 0x0001;
 const uint32_t RS_NET_FLAGS_USE_DHT		= 0x0002;
 const uint32_t RS_NET_FLAGS_ONLINE		= 0x0004;
 const uint32_t RS_NET_FLAGS_EXTERNAL_ADDR	= 0x0008;
+const uint32_t RS_NET_FLAGS_STABLE_UDP		= 0x0010;
 
 class peerAddrInfo
 {
@@ -287,6 +288,7 @@ private:
 
 	/* external Address determination */
 	bool mUpnpAddrValid, mStunAddrValid;
+	bool mStunAddrStable;
 	struct sockaddr_in mUpnpExtAddr;
 	struct sockaddr_in mStunExtAddr;
 

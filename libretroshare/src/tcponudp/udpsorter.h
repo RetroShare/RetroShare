@@ -49,13 +49,14 @@ class TouStunPeer
 {
 	public:
 	TouStunPeer()
-	:lastsend(0), failCount(0) { return; }
+	:response(false), lastsend(0), failCount(0) { return; }
 	
 	TouStunPeer(std::string id_in, const struct sockaddr_in &addr)
-	:id(id_in), remote(addr), lastsend(0), failCount(0) { return; }
+	:id(id_in), remote(addr), response(false), lastsend(0), failCount(0) { return; }
 	
 	std::string id;
-	struct sockaddr_in remote;
+	struct sockaddr_in remote, eaddr;
+	bool response;
 	time_t lastsend;
 	uint32_t failCount;
 };
@@ -75,7 +76,7 @@ bool 	setStunKeepAlive(uint32_t required);
 bool    addStunPeer(const struct sockaddr_in &remote, const char *peerid);
 bool    checkStunKeepAlive();
 
-bool    externalAddr(struct sockaddr_in &remote);
+bool    externalAddr(struct sockaddr_in &remote, uint8_t &stable);
 
 	/* Packet IO */
 		/* pass-through send packets */
@@ -108,7 +109,9 @@ bool    generate_stun_pkt(void *stun_pkt, int *len);
 
 	/* stun keepAlive */
 bool    locked_printStunList();
-bool    locked_recvdStun(const struct sockaddr_in &remote);
+bool    locked_recvdStun(const struct sockaddr_in &remote, const struct sockaddr_in &extaddr);
+bool    locked_checkExternalAddress();
+
 bool    storeStunPeer(const struct sockaddr_in &remote, const char *peerid);
 
 	UdpLayer *udpLayer;
@@ -116,8 +119,10 @@ bool    storeStunPeer(const struct sockaddr_in &remote, const char *peerid);
 	RsMutex sortMtx; /* for all class data (below) */
 
 	struct sockaddr_in laddr; /* local addr */
+
 	struct sockaddr_in eaddr; /* external addr */
         bool eaddrKnown;
+	bool eaddrStable; /* if true then usable. if false -> Symmettric NAT */
 
 	bool mStunKeepAlive;
 	time_t mStunLastRecv;

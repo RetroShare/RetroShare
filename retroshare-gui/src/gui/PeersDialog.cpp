@@ -251,6 +251,15 @@ void  PeersDialog::insertPeers()
 			  item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
 			}
 		}
+		else if (detail.state & RS_PEER_STATE_UNREACHABLE)
+		{
+			/* bright green */
+			for(i = 1; i < 12; i++)
+			{
+			  item -> setBackground(i,QBrush(Qt::red));
+			  item -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
+			}
+		}
 		else if (detail.state & RS_PEER_STATE_ONLINE)
 		{
 			/* bright green */

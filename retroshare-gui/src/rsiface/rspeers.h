@@ -44,6 +44,7 @@ const uint32_t RS_TRUST_LVL_GOOD	= 0x0003;
 const uint32_t RS_NETMODE_UDP		= 0x0001;
 const uint32_t RS_NETMODE_UPNP		= 0x0002;
 const uint32_t RS_NETMODE_EXT		= 0x0003;
+const uint32_t RS_NETMODE_UNREACHABLE	= 0x0004;
 
 /* Visibility */
 const uint32_t RS_VS_DHT_ON		= 0x0001;
@@ -53,6 +54,7 @@ const uint32_t RS_VS_DISC_ON		= 0x0002;
 const uint32_t RS_PEER_STATE_FRIEND	= 0x0001;
 const uint32_t RS_PEER_STATE_ONLINE	= 0x0002;
 const uint32_t RS_PEER_STATE_CONNECTED  = 0x0004;
+const uint32_t RS_PEER_STATE_UNREACHABLE= 0x0008;
 
 /* A couple of helper functions for translating the numbers games */
 

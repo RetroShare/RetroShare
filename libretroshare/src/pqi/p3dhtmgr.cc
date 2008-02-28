@@ -36,8 +36,6 @@
  * #define P3DHTMGR_USE_LOCAL_UDP_CONN 1  // For Testing only 
  ****/
 
-#define P3DHTMGR_USE_LOCAL_UDP_CONN 1  // For Testing only 
-
 /**** DHT State Variables ****
  * TODO:
  * (1) notify call in.
@@ -57,8 +55,8 @@
 
 /* TIMEOUTS */
 #define DHT_SEARCH_PERIOD	1800 /* PeerKeys: if we haven't found them: 30 min */
-#define DHT_CHECK_PERIOD	3600 /* PeerKeys: re-lookup peer: 60 min */
-#define DHT_PUBLISH_PERIOD	1800 /* OwnKey 30 min */
+#define DHT_CHECK_PERIOD	1800 /* PeerKeys: re-lookup peer: 30 min */
+#define DHT_PUBLISH_PERIOD	900 /* OwnKey 30 min (15 minutes for now) */
 #define DHT_NOTIFY_PERIOD	300  /* 5 min - Notify Check period */
 #define DHT_RESTART_PERIOD	300  /* 5 min */
 
@@ -547,8 +545,9 @@ int p3DhtMgr::checkOwnDHTKeys()
 			
 
 		/* check for connect requests */
-		if ((peer.state == DHT_PEER_PUBLISHED) &&
-			(!(peer.type & RS_NET_CONN_TCP_EXTERNAL))) 
+		//if ((peer.state == DHT_PEER_PUBLISHED) &&
+		//	(!(peer.type & RS_NET_CONN_TCP_EXTERNAL))) 
+		if (peer.state == DHT_PEER_PUBLISHED) 
 		{
 			if (now - peer.notifyTS >= DHT_NOTIFY_PERIOD)
 			{

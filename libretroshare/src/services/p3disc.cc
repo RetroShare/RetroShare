@@ -54,8 +54,9 @@ static int convertTRangeToTDelta(int trange);
 const uint32_t P3DISC_FLAGS_USE_DISC 		= 0x0001;
 const uint32_t P3DISC_FLAGS_USE_DHT 		= 0x0002;
 const uint32_t P3DISC_FLAGS_EXTERNAL_ADDR 	= 0x0004;
-const uint32_t P3DISC_FLAGS_PEER_ONLINE 	= 0x0008;
-const uint32_t P3DISC_FLAGS_OWN_DETAILS 	= 0x0010;
+const uint32_t P3DISC_FLAGS_STABLE_UDP	 	= 0x0008;
+const uint32_t P3DISC_FLAGS_PEER_ONLINE 	= 0x0010;
+const uint32_t P3DISC_FLAGS_OWN_DETAILS 	= 0x0020;
 
 
 #define P3DISC_DEBUG 	1
@@ -342,6 +343,11 @@ void p3disc::sendOwnDetails(std::string to)
 	{
 		di->discFlags |= P3DISC_FLAGS_EXTERNAL_ADDR;
 	}
+	else if (detail.netMode & RS_NET_MODE_UDP)
+	{
+		di->discFlags |= P3DISC_FLAGS_STABLE_UDP;
+	}
+
 	di->discFlags |= P3DISC_FLAGS_OWN_DETAILS;
 
 	/* send msg */
@@ -415,6 +421,10 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 	{
 		di->discFlags |= P3DISC_FLAGS_EXTERNAL_ADDR;
 	}
+	else if (detail.netMode & RS_NET_MODE_UDP)
+	{
+		di->discFlags |= P3DISC_FLAGS_STABLE_UDP;
+	}
 
 	if (detail.state & RS_PEER_S_CONNECTED)
 	{
@@ -484,6 +494,12 @@ void p3disc::recvPeerOwnMsg(RsDiscItem *item)
 		flags |= RS_NET_FLAGS_EXTERNAL_ADDR;
 	}
 
+	if (item->discFlags & P3DISC_FLAGS_STABLE_UDP)
+	{
+		type |= RS_NET_CONN_UDP_DHT_SYNC;
+		flags |= RS_NET_FLAGS_STABLE_UDP;
+	}
+
 	mConnMgr->peerStatus(item->PeerId(), item->laddr, item->saddr, 
 				type, flags, RS_CB_PERSON);
 
@@ -544,6 +560,12 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 	{
 		type |= RS_NET_CONN_TCP_EXTERNAL;
 		flags |= RS_NET_FLAGS_EXTERNAL_ADDR;
+	}
+
+	if (item->discFlags & P3DISC_FLAGS_STABLE_UDP)
+	{
+		type |= RS_NET_CONN_UDP_DHT_SYNC;
+		flags |= RS_NET_FLAGS_STABLE_UDP;
 	}
 
 	/* only valid certs, and not ourselves */
