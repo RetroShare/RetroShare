@@ -33,10 +33,7 @@
 #include "HelpDialog.h"
 
 #include "games/qbackgammon/bgwindow.h"
-#include "toplevel.h"
-#include "defaultgui.h"
-#include "global.h"
-#include "translator.h"
+#include "smplayer.h"
 
 #include "Preferences/PreferencesWindow.h"
 #include "Settings/gsettingswin.h"
@@ -591,14 +588,14 @@ void MainWindow::startqcheckers()
 /** Shows smplayer */
 void MainWindow::showsmplayer()
 {
-    static DefaultGui* smplayer = 0;
+    static SMPlayer * smplayer = 0;
 
-    if (!smplayer) {
-        global_init( "smplayer" );
-        translator->load( pref->language );
-
-        smplayer = new DefaultGui(this);
+    if (smplayer == 0) {
+        smplayer = new SMPlayer(QString::null, this);
     }
 
-    smplayer->show();
+    smplayer->gui()->show();
+    // Or
+    // smplayer->start();
+    //smplayer->show();
 }
