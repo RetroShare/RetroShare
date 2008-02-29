@@ -1,0 +1,977 @@
+<ui version="4.0" >
+ <class>PrefSubtitles</class>
+ <widget class="QWidget" name="PrefSubtitles" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>556</width>
+    <height>449</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string/>
+  </property>
+  <property name="windowIcon" >
+   <iconset/>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>0</number>
+   </property>
+   <property name="spacing" >
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QTabWidget" name="subtitles_tab" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>&amp;Subtitles</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox" >
+         <property name="title" >
+          <string>Autoload</string>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="0" column="0" >
+           <widget class="QLabel" name="textLabel5" >
+            <property name="text" >
+             <string>Au&amp;toload subtitles files (*.srt, *.sub...):</string>
+            </property>
+            <property name="wordWrap" >
+             <bool>false</bool>
+            </property>
+            <property name="buddy" >
+             <cstring>font_autoload_combo</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="2" >
+           <widget class="QCheckBox" name="font_autoload_check" >
+            <property name="text" >
+             <string>S&amp;elect first available subtitle</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QComboBox" name="font_autoload_combo" >
+            <item>
+             <property name="text" >
+              <string>Same name as movie</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>All subs containing movie name</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>All subs in directory</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>131</width>
+              <height>21</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="textLabel4" >
+         <property name="text" >
+          <string>&amp;Default subtitle encoding:</string>
+         </property>
+         <property name="wordWrap" >
+          <bool>false</bool>
+         </property>
+         <property name="buddy" >
+          <cstring>font_encoding_combo</cstring>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item>
+          <widget class="MyComboBox" name="font_encoding_combo" >
+           <property name="sizePolicy" >
+            <sizepolicy>
+             <hsizetype>5</hsizetype>
+             <vsizetype>0</vsizetype>
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="editable" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>161</width>
+             <height>31</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2" >
+         <property name="title" >
+          <string>Position</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="textLabel1_22" >
+            <property name="text" >
+             <string>Default &amp;position of the subtitles on screen</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignVCenter</set>
+            </property>
+            <property name="wordWrap" >
+             <bool>true</bool>
+            </property>
+            <property name="buddy" >
+             <cstring>sub_pos_slider</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QSlider" name="sub_pos_slider" >
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>7</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimum" >
+               <number>0</number>
+              </property>
+              <property name="maximum" >
+               <number>100</number>
+              </property>
+              <property name="pageStep" >
+               <number>1</number>
+              </property>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="sub_pos_label" >
+              <property name="text" >
+               <string>0</string>
+              </property>
+              <property name="wordWrap" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="textLabel2_9" >
+              <property name="text" >
+               <string>Top</string>
+              </property>
+              <property name="wordWrap" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>131</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="textLabel3_5" >
+              <property name="text" >
+               <string>Bottom</string>
+              </property>
+              <property name="wordWrap" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="subtitles_on_screeshots_check" >
+         <property name="text" >
+          <string>&amp;Include subtitles on screenshots</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="TabPage" >
+      <attribute name="title" >
+       <string>&amp;Font</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox_5" >
+         <property name="title" >
+          <string>Font</string>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="1" column="0" >
+           <widget class="QRadioButton" name="ttf_font_button" >
+            <property name="text" >
+             <string>&amp;TTF font:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QLineEdit" name="ttf_font_edit" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2" >
+           <widget class="QPushButton" name="searchButton" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string>Sea&amp;rch...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>121</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="2" column="0" >
+           <widget class="QRadioButton" name="system_font_button" >
+            <property name="text" >
+             <string>S&amp;ystem font:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="3" >
+           <widget class="QLabel" name="textLabel1" >
+            <property name="text" >
+             <string>Select the font which will be used for subtitles (and OSD):</string>
+            </property>
+            <property name="wordWrap" >
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" >
+           <widget class="MyFontComboBox" name="fontCombo" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>5</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_6" >
+         <property name="title" >
+          <string>Size</string>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="0" column="0" colspan="3" >
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="textLabel2_2" >
+              <property name="text" >
+               <string>A&amp;utoscale:</string>
+              </property>
+              <property name="wordWrap" >
+               <bool>false</bool>
+              </property>
+              <property name="buddy" >
+               <cstring>font_autoscale_combo</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="font_autoscale_combo" >
+              <item>
+               <property name="text" >
+                <string>No autoscale</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Proportional to movie height</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Proportional to movie width</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Proportional to movie diagonal</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>71</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="2" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="2" column="2" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QDoubleSpinBox" name="font_text_scale" >
+            <property name="decimals" >
+             <number>1</number>
+            </property>
+            <property name="singleStep" >
+             <double>0.200000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" >
+           <widget class="QDoubleSpinBox" name="ass_font_scale" >
+            <property name="maximum" >
+             <double>100.000000000000000</double>
+            </property>
+            <property name="singleStep" >
+             <double>0.200000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" >
+           <widget class="QLabel" name="label" >
+            <property name="text" >
+             <string>Default sc&amp;ale for SSA/ASS subtitles:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="buddy" >
+             <cstring>ass_font_scale</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="scalelabel" >
+            <property name="text" >
+             <string>Default s&amp;cale for normal subtitles:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="buddy" >
+             <cstring>font_text_scale</cstring>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2" >
+      <attribute name="title" >
+       <string>SSA/ASS &amp;library</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="textLabel1_14" >
+         <property name="text" >
+          <string>The new SSA/ASS library will provide nice styled subtitles for external SSA/ASS subtitles files and Matroska tracks. But it will be used too for rendering other formats like SUB and SRT files.</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignVCenter</set>
+         </property>
+         <property name="wordWrap" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="font_ass_check" >
+         <property name="text" >
+          <string>&amp;Use SSA/ASS library for subtitle rendering</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="asscolor_label" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>&amp;Text color:</string>
+           </property>
+           <property name="wordWrap" >
+            <bool>false</bool>
+           </property>
+           <property name="buddy" >
+            <cstring>colorButton</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="colorButton" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Preferred</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>41</width>
+             <height>31</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="assbordercolor_label" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>&amp;Border color:</string>
+           </property>
+           <property name="wordWrap" >
+            <bool>false</bool>
+           </property>
+           <property name="buddy" >
+            <cstring>borderButton</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="borderButton" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="Line" name="ass_styles_line_2" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>0</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape" >
+          <enum>QFrame::HLine</enum>
+         </property>
+         <property name="frameShadow" >
+          <enum>QFrame::Sunken</enum>
+         </property>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="styles_desc_label" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="text" >
+          <string>Here you can override styles for SSA/ASS subtitles. It can be also used for fine-tuning the rendering of SRT and SUB subtitles by the SSA/ASS library. Example: &lt;b>Bold=1,Outline=2,Shadow=4&lt;/b></string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignVCenter</set>
+         </property>
+         <property name="wordWrap" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="ass_styles_label" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>St&amp;yles:</string>
+           </property>
+           <property name="wordWrap" >
+            <bool>false</bool>
+           </property>
+           <property name="buddy" >
+            <cstring>ass_styles_edit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="ass_styles_edit" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>61</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MyComboBox</class>
+   <extends>QComboBox</extends>
+   <header>mycombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MyFontComboBox</class>
+   <extends>QFontComboBox</extends>
+   <header>mycombobox.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>subtitles_tab</tabstop>
+  <tabstop>font_autoload_combo</tabstop>
+  <tabstop>font_autoload_check</tabstop>
+  <tabstop>font_encoding_combo</tabstop>
+  <tabstop>sub_pos_slider</tabstop>
+  <tabstop>subtitles_on_screeshots_check</tabstop>
+  <tabstop>ttf_font_button</tabstop>
+  <tabstop>ttf_font_edit</tabstop>
+  <tabstop>searchButton</tabstop>
+  <tabstop>system_font_button</tabstop>
+  <tabstop>fontCombo</tabstop>
+  <tabstop>font_autoscale_combo</tabstop>
+  <tabstop>font_text_scale</tabstop>
+  <tabstop>ass_font_scale</tabstop>
+  <tabstop>font_ass_check</tabstop>
+  <tabstop>colorButton</tabstop>
+  <tabstop>borderButton</tabstop>
+  <tabstop>ass_styles_edit</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>ttf_font_button</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ttf_font_edit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>83</x>
+     <y>114</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>273</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ttf_font_button</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>searchButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>83</x>
+     <y>114</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>456</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>font_ass_check</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>asscolor_label</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>258</x>
+     <y>161</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>68</x>
+     <y>196</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>font_ass_check</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>colorButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>258</x>
+     <y>161</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>163</x>
+     <y>196</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>font_ass_check</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>borderButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>258</x>
+     <y>161</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>448</x>
+     <y>196</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>font_ass_check</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>assbordercolor_label</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>258</x>
+     <y>161</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>353</x>
+     <y>196</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>font_ass_check</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ass_styles_label</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>258</x>
+     <y>161</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>44</x>
+     <y>305</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>font_ass_check</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ass_styles_edit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>258</x>
+     <y>161</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>282</x>
+     <y>305</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>font_ass_check</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>styles_desc_label</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>258</x>
+     <y>161</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>258</x>
+     <y>256</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sub_pos_slider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sub_pos_label</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>252</x>
+     <y>298</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>492</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>system_font_button</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>fontCombo</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>74</x>
+     <y>138</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>264</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
