@@ -57,6 +57,7 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
  
   LicenseLangString myLicenseData 1033 "license\license.txt"
   LicenseLangString myLicenseData 1031 "license\license-GER.txt"
+  LicenseLangString myLicenseData 1055 "license\license-TR.txt"
 
   LicenseData $(myLicenseData)
 
@@ -73,6 +74,7 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
 # Installer languages
 !insertmacro MUI_LANGUAGE English
 !insertmacro MUI_LANGUAGE German
+!insertmacro MUI_LANGUAGE Turkish
 
   ;Component-selection page
     ;Titles
@@ -101,11 +103,20 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString DESC_sec_link ${LANG_GERMAN} "RetroShare mit .pqi Dateien verknüpfen"
     LangString DESC_sec_autostart ${LANG_GERMAN} "Beim Neustart automatisch RetroShare starten und sich anmelden"
     LangString LANGUAGEID ${LANG_GERMAN} "1031"
-
-
-
-LangString TEXT_FLocations_TITLE ${LANG_ENGLISH} "Choose Default Save Locations"
-LangString TEXT_FLocations_SUBTITLE ${LANG_ENGLISH} "Choose the folders to save your downloads to."
+    
+    
+    LangString sec_main ${LANG_TURKISH} "Program Dosyalarý"
+    LangString sec_data ${LANG_TURKISH} "Program Skinleri"
+    LangString sec_shortcuts ${LANG_TURKISH} "Shortcut'lar"
+    LangString sec_link ${LANG_TURKISH} ".pqi Dosya Kaydet"
+    LangString sec_autostart ${LANG_TURKISH} "Otomatik calistir ve baglan"
+	LangString DESC_sec_main ${LANG_TURKISH} "Program dosyalarýný kurar."
+	LangString DESC_sec_data ${LANG_TURKISH} "RetroShare Skin'leri kurar"
+    LangString DESC_sec_shortcuts ${TURKISH} "Shortcut yap Start menu , Desktop veya Quicklaunchbar icin."
+    LangString DESC_sec_link ${LANG_TURKISH} "RetroShare .pqi almasý için kaydettirir"
+    LangString DESC_sec_autostart ${LANG_TURKISH} "Isletim sistemi acildiginda Otomatik olarak calistir ve baglan"
+    LangString LANGUAGEID ${LANG_TURKISH} "1055"
+    
 
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
 
@@ -267,12 +278,7 @@ Function .onInit
     Pop $R1
     !insertmacro MUI_LANGDLL_DISPLAY
 
-  ;This was written by Vytautas - http://nsis.sourceforge.net/archive/nsisweb.php?page=453
-  System::Call 'kernel32::CreateMutexA(i 0, i 0, t "RetroShare") i .r1 ?e' 
-  Pop $R0 
-  StrCmp $R0 0 +3 
-    MessageBox MB_OK "The ${APPNAME} installer is already running." 
-    Abort 
+
 
 FunctionEnd
 
@@ -282,6 +288,8 @@ FunctionEnd
 
 LangString ^UninstallLink ${LANG_ENGLISH} "Uninstall"
 LangString ^UninstallLink ${LANG_GERMAN} "Deinstallieren"
+LangString ^UninstallLink ${LANG_TURKISH} "Kaldýr"
+
 
 
 
