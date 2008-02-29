@@ -315,10 +315,12 @@ win32 {
 
     "LIBS += -L"../../winlibs" -lretroshare -lssl -lcrypto -lpthreadGC2d -lKadC -lminiupnpc -lz -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lskin -lqcheckers -lsmplayer -lgdi32
     CONFIG += qt release"
+    LIBS += libole32
 
 }
 
 !win32 {
     LIBS += -L../../../../lib -lretroshare -lKadC -lminiupnpc -lssl -lcrypto
-    LIBS += -lqcheckers -lsmplayer
+    LIBS += -lqcheckers -lsmplayer -lole32
 }
+
