@@ -39,7 +39,6 @@
 /*
  * #define DEBUG_TCP_STREAM 1
  */
-#define DEBUG_TCP_STREAM 1
 
 /*
  *#define DEBUG_TCP_STREAM_EXTRA 1

@@ -403,6 +403,7 @@ int 	tou_close(int sockfd)
 
 		/* shut it down */
 		tous->tcp->close();
+		udps->removeUdpPeer(tous->tcp);
 		delete tous->tcp;
 	}
 

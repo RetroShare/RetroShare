@@ -56,6 +56,9 @@ virtual	bool searchKey(std::string key, std::list<std::string> &values);
 
 	/* Fns accessing data */
 virtual bool loadServers(std::string filename);
+virtual bool loadServersFromWeb(std::string storefname);
+virtual bool loadServers(std::istream&);
+
 virtual bool dhtActive();
 
 	private:
@@ -67,6 +70,7 @@ void 	setServerFailed(std::string host);
 
 	/* generic send msg */
 	bool openDHT_sendMessage(std::string msg, std::string &response);
+	bool openDHT_getDHTList(std::string &response);
 
 	RsMutex dhtMutex;
 	std::map<std::string, dhtServer> mServers;

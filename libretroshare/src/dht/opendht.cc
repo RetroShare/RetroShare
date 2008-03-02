@@ -27,6 +27,9 @@
 #include "dht/opendhtstr.h"
 #include "dht/b64.h"
 #include <fstream>
+#include <sstream>
+
+#include "util/rsnet.h"
 
 const std::string openDHT_Client = "Retroshare V0.4";
 const std::string openDHT_Agent  = "RS-HTTP-V0.4";
@@ -43,8 +46,12 @@ bool OpenDHTClient::loadServers(std::string filename)
 	/* open the file */
 	std::ifstream file(filename.c_str());
 
-	/* chew first line */
-	file.ignore(1024, '\n');
+
+	return loadServers(file);
+}
+
+bool OpenDHTClient::loadServers(std::istream &instr)
+{
 
 	std::string line;
 	char number[1024];
@@ -55,10 +62,13 @@ bool OpenDHTClient::loadServers(std::string filename)
 	mServers.clear();
 	dhtMutex.unlock(); /**** UNLOCK ****/
 
-	while((!file.eof()) && (!file.fail()))
+	/* chew first line */
+	instr.ignore(1024, '\n');
+
+	while((!instr.eof()) && (!instr.fail()))
 	{
 		line = "";
-		getline(file, line);
+		getline(instr, line);
 
 		if (3 == sscanf(line.c_str(), "%1023s %1023s %1023s", number, ipaddr, dnsname))
 		{
@@ -92,7 +102,69 @@ bool OpenDHTClient::loadServers(std::string filename)
 		dhtMutex.unlock(); /**** UNLOCK ****/
 	}
 
-	return true;
+	dhtMutex.lock();   /****  LOCK  ****/
+	uint32_t count = mServers.size();
+	dhtMutex.unlock(); /**** UNLOCK ****/
+
+	return (count >= MIN_DHT_SERVERS);
+}
+
+/******* refresh Servers from WebPage ******/
+
+bool OpenDHTClient::loadServersFromWeb(std::string storename)
+{
+
+#ifdef	OPENDHT_DEBUG
+	std::cerr << "OpenDHTClient::loadServersFromWeb()" << std::endl;
+#endif
+
+	std::string response;
+	if (!openDHT_getDHTList(response))
+	{
+#ifdef	OPENDHT_DEBUG
+		std::cerr << "OpenDHTClient::loadServersFromWeb() Web GET failed" << std::endl;
+#endif
+		return false;
+	}
+
+	std::string::size_type i;
+	if (std::string::npos == (i = response.find("\r\n\r\n")))
+	{
+#ifdef	OPENDHT_DEBUG
+		std::cerr << "OpenDHTClient::loadServersFromWeb() Failed to Find Content" << std::endl;
+#endif
+		return false;
+	}
+
+	/* now step past 4 chars */
+	i += 4;
+
+	std::string content(response, i, response.length() - i);
+
+#ifdef	OPENDHT_DEBUG
+	std::cerr << "OpenDHTClient::loadServersFromWeb() Content:" << std::endl;
+	std::cerr << content << std::endl;
+	std::cerr << "<== OpenDHTClient::loadServersFromWeb() Content" << std::endl;
+#endif
+
+	std::istringstream iss(content);	
+
+	if (loadServers(iss))
+	{
+#ifdef	OPENDHT_DEBUG
+		std::cerr << "OpenDHTClient::loadServersFromWeb() Saving WebData to: ";
+		std::cerr << storename << std::endl;
+#endif
+		/* save the data to file - replacing old data */
+		std::ofstream ofstr(storename.c_str());
+		ofstr << content;
+		ofstr.close();
+
+		return true;
+	}
+
+	return false;
+
 }
 
 
@@ -439,11 +511,119 @@ bool OpenDHTClient::openDHT_sendMessage(std::string msg, std::string &response)
 	/* now wait for the response */
 	sleep(1);
 
-	int recvsize = 10240; /* 10kb */
-	void *inbuf = malloc(recvsize);
-	size = recv(sockfd, inbuf, recvsize, 0);
+	int recvsize = 51200; /* 50kb */
+	char *inbuf = (char *) malloc(recvsize);
+	uint32_t idx = 0;
+	while(0 < (size = recv(sockfd, &(inbuf[idx]), recvsize - idx, 0)))
+	{
+		std::cerr << "OpenDHTClient::openDHT_sendMessage()";
+		std::cerr << " Recvd Chunk:" << size;
+		std::cerr << std::endl;
 
-	response = (char *) inbuf;
+		idx += size;
+	}
+
+	std::cerr << "OpenDHTClient::openDHT_sendMessage()";
+	std::cerr << " Recvd Msg:" << idx;
+
+	response = std::string(inbuf, idx);
+	free(inbuf);
+
+	/* print it out */
+	std::cerr << "HTTP response *******************" << std::endl;
+	std::cerr << response;
+	std::cerr << std::endl;
+	std::cerr << "HTTP response *******************" << std::endl;
+
+	close(sockfd);
+
+	return true;
+}
+
+bool OpenDHTClient::openDHT_getDHTList(std::string &response)
+{
+	struct sockaddr_in addr;
+	std::string host = "www.opendht.org"; 
+	uint16_t    port = 80;
+
+	sockaddr_clear(&addr);
+
+		/* lookup the address */
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(port);
+	if (!LookupDNSAddr(host, addr))
+	{
+		/* no address */
+		std::cerr << "OpenDHTClient::openDHT_getDHTList()";
+		std::cerr << " ERROR: No Address";
+		std::cerr << std::endl;
+
+		return false;
+	}
+
+	std::cerr << "OpenDHTClient::openDHT_getDHTList()";
+	std::cerr << " Connecting to:" << host << ":" << port;
+	std::cerr << " (" << inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port) << ")";
+	std::cerr << std::endl;
+
+	/* create request */
+	std::string putheader = createHttpHeaderGET(host, port, "servers.txt", openDHT_Agent, 0);
+
+	/* open a socket */
+        int sockfd = unix_socket(PF_INET, SOCK_STREAM, 0);
+
+	/* connect */
+        int err = unix_connect(sockfd, (struct sockaddr *) &addr, sizeof(addr));
+	if (err)
+	{
+		unix_close(sockfd);
+		std::cerr << "OpenDHTClient::openDHT_getDHTList()";
+		std::cerr << " ERROR: Failed to Connect";
+		std::cerr << std::endl;
+
+		return false;
+	}
+
+	std::cerr << "HTTP message *******************" << std::endl;
+	std::cerr << putheader;
+	std::cerr << std::endl;
+	std::cerr << "HTTP message *******************" << std::endl;
+
+	/* send data */
+	int sendsize = strlen(putheader.c_str());
+	int size = send(sockfd, putheader.c_str(), sendsize, 0);
+	if (sendsize != size)
+	{
+		unix_close(sockfd);
+		std::cerr << "OpenDHTClient::openDHT_getDHTList()";
+		std::cerr << " ERROR: Failed to Send(1)";
+		std::cerr << std::endl;
+
+		return false;
+	}
+	std::cerr << "OpenDHTClient::openDHT_getDHTList()";
+	std::cerr << " Send(1):" << size;
+	std::cerr << std::endl;
+
+	/* now wait for the response */
+	sleep(1);
+
+	int recvsize = 51200; /* 50kb */
+	char *inbuf = (char *) malloc(recvsize);
+	uint32_t idx = 0;
+	while(0 < (size = recv(sockfd, &(inbuf[idx]), recvsize - idx, 0)))
+	{
+		std::cerr << "OpenDHTClient::openDHT_getDHTList()";
+		std::cerr << " Recvd Chunk:" << size;
+		std::cerr << std::endl;
+
+		idx += size;
+	}
+
+	std::cerr << "OpenDHTClient::openDHT_getDHTList()";
+	std::cerr << " Recvd Msg:" << idx;
+
+	response = std::string(inbuf, idx);
 	free(inbuf);
 
 	/* print it out */

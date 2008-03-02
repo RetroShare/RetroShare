@@ -116,7 +116,11 @@ bool    OpenDHTMgr::init()
 	}
 	filename += "servers.txt";
 
-	return mClient -> loadServers(filename);
+	if (!mClient -> loadServersFromWeb(filename))
+	{
+		return mClient -> loadServers(filename);
+	}
+	return true;
 }
 
 bool    OpenDHTMgr::shutdown()

@@ -48,8 +48,12 @@ const uint32_t MAX_UPNP_INIT = 		60; /* seconds UPnP timeout */
 #define CONN_DEBUG 1
 #define P3CONNMGR_NO_TCP_CONNECTIONS 1
 
+/****
+ * #define P3CONNMGR_NO_AUTO_CONNECTION 1
+ ***/
+
 const uint32_t P3CONNMGR_TCP_DEFAULT_DELAY = 10; /* 10 Seconds should be enough! */
-const uint32_t P3CONNMGR_UDP_DHT_DELAY     = 300; /* 5 minutes */
+const uint32_t P3CONNMGR_UDP_DHT_DELAY     = 300 + 60; /* 5 minutes FIND + 1 minute for DHT POST */
 const uint32_t P3CONNMGR_UDP_PROXY_DELAY   = 30;  /* 30 seconds */
 
 void  printConnectState(peerConnectState &peer);
@@ -72,10 +76,11 @@ peerConnectState::peerConnectState()
 	:id("unknown"), 
 	 netMode(RS_NET_MODE_UNKNOWN), visState(RS_VIS_STATE_STD), 
 	 lastcontact(0),
-
+	 lastavailable(0),
+	 lastattempt(0),
 	 name("nameless"), state(0), actions(0), 
 	 source(0), 
-	 inConnAttempt(0), lastattempt(0)
+	 inConnAttempt(0)
 {
 	sockaddr_clear(&localaddr);
 	sockaddr_clear(&serveraddr);
@@ -241,10 +246,6 @@ void p3ConnectMgr::netStartup()
 
 	switch(ownState.netMode & RS_NET_MODE_TRYMODE)
 	{
-		case RS_NET_MODE_TRY_UPNP:
-			ownState.netMode |= RS_NET_MODE_UDP;
-			mNetStatus = RS_NET_UPNP_INIT;
-			break;
 
 		case RS_NET_MODE_TRY_EXT:  /* v similar to UDP */
 			ownState.netMode |= RS_NET_MODE_EXT;
@@ -256,11 +257,15 @@ void p3ConnectMgr::netStartup()
 			break;
 
 		case RS_NET_MODE_TRY_UDP:
-		default:
 			ownState.netMode |= RS_NET_MODE_UDP;
 			mNetStatus = RS_NET_UDP_SETUP;
 			break;
 
+		case RS_NET_MODE_TRY_UPNP:
+		default:
+			ownState.netMode |= RS_NET_MODE_UDP;
+			mNetStatus = RS_NET_UPNP_INIT;
+			break;
 	}
 	connMtx.unlock(); /* UNLOCK MUTEX */
 }
@@ -269,9 +274,77 @@ void p3ConnectMgr::netStartup()
 void p3ConnectMgr::tick()
 {
 	netTick();
+	statusTick();
 	tickMonitors();
 
 }
+
+#define MAX_AVAIL_PERIOD 900   // 15 minutes 
+#define MIN_RETRY_PERIOD 1900  // just over 30 minutes. (DHT retry period)
+
+void    p3ConnectMgr::statusTick()
+{
+	/* iterate through peers ... 
+	 * 	if been available for long time ... remove flag
+	 * 	if last attempt a while - retryConnect. 
+	 * 	etc.
+	 */
+
+#ifdef CONN_DEBUG
+	//std::cerr << "p3ConnectMgr::statusTick()" << std::endl;
+#endif
+	std::list<std::string> retryIds;
+	std::list<std::string>::iterator it2;
+
+	time_t now = time(NULL);
+	time_t oldavail = now - MAX_AVAIL_PERIOD;
+	time_t retry = now - MIN_RETRY_PERIOD;
+
+      {
+      	RsStackMutex stack(connMtx);  /******   LOCK MUTEX ******/
+        std::map<std::string, peerConnectState>::iterator it;
+	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
+	{
+		if (it->second.state & RS_PEER_S_CONNECTED)
+		{
+			continue;
+		}
+
+		if ((it->second.state & RS_PEER_S_ONLINE) &&
+			(it->second.lastavailable < oldavail))
+		{
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::statusTick() ONLINE TIMEOUT for: ";
+			std::cerr << it->first;
+			std::cerr << std::endl;
+#endif
+			it->second.state &= (~RS_PEER_S_ONLINE);
+		}
+
+		if (it->second.lastattempt < retry)
+		{
+			retryIds.push_back(it->first);
+		}
+	}
+      }
+
+#ifndef P3CONNMGR_NO_AUTO_CONNECTION 
+
+        for(it2 = retryIds.begin(); it2 != retryIds.end(); it2++)
+	{
+#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr::statusTick() RETRY TIMEOUT for: ";
+		std::cerr << *it2;
+		std::cerr << std::endl;
+#endif
+		/* retry it! */
+		retryConnect(*it2);
+	}
+
+#endif
+
+}
+
 
 void p3ConnectMgr::netTick()
 {
@@ -481,6 +554,7 @@ void p3ConnectMgr::netUdpCheck()
 			if (mUpnpAddrValid  || (ownState.netMode == RS_NET_MODE_EXT))
 			{
 				mode |= RS_NET_CONN_TCP_EXTERNAL;
+				mode |= RS_NET_CONN_UDP_DHT_SYNC;
 			}
 			else if (extAddrStable)
 			{
@@ -496,7 +570,8 @@ void p3ConnectMgr::netUdpCheck()
 				std::cerr << "netMode =>  RS_NET_MODE_UNREACHABLE";
 				std::cerr <<  std::endl;
 #endif
-				ownState.netMode = RS_NET_MODE_UNREACHABLE;
+				ownState.netMode &= ~(RS_NET_MODE_ACTUAL);
+				ownState.netMode |= RS_NET_MODE_UNREACHABLE;
 				tou_stunkeepalive(0);
 			}
 
@@ -514,7 +589,85 @@ void p3ConnectMgr::netUdpCheck()
 			/* mode = 0 for error */
 			mDhtMgr->setExternalInterface(iaddr, extAddr, mode);
 		}
+
+		/* flag unreachables! */
+		if ((extValid) && (!extAddrStable))
+		{
+			netUnreachableCheck();
+		}
 	}
+}
+
+void p3ConnectMgr::netUnreachableCheck()
+{
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::netUnreachableCheck()" << std::endl;
+#endif
+        std::map<std::string, peerConnectState>::iterator it;
+
+	connMtx.lock();   /*   LOCK MUTEX */
+	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
+	{
+		/* get last contact detail */
+		if (it->second.state & RS_PEER_S_CONNECTED)
+		{
+#ifdef CONN_DEBUG
+			std::cerr << "NUC() Ignoring Connected Peer" << std::endl;
+#endif
+			continue;
+		}
+
+		peerAddrInfo details;
+		switch(it->second.source)
+		{
+			case RS_CB_DHT:
+				details = it->second.dht;
+#ifdef CONN_DEBUG
+				std::cerr << "NUC() Using DHT data" << std::endl;
+#endif
+				break;
+			case RS_CB_DISC:
+				details = it->second.disc;
+#ifdef CONN_DEBUG
+				std::cerr << "NUC() Using DISC data" << std::endl;
+#endif
+				break;
+			case RS_CB_PERSON:
+				details = it->second.peer;
+#ifdef CONN_DEBUG
+				std::cerr << "NUC() Using PEER data" << std::endl;
+#endif
+				break;
+			default:
+				continue;
+				break;
+		}
+
+		std::cerr << "NUC() Peer: " << it->first << std::endl;
+
+		/* Determine Reachability (only advisory) */
+		// if (ownState.netMode == RS_NET_MODE_UNREACHABLE) // MUST BE TRUE!
+		{
+			if (details.type & RS_NET_CONN_TCP_EXTERNAL) 
+			{
+				/* reachable! */
+				it->second.state &= (~RS_PEER_S_UNREACHABLE);
+#ifdef CONN_DEBUG
+				std::cerr << "NUC() Peer EXT TCP - reachable" << std::endl;
+#endif
+			}
+			else 
+			{
+				/* unreachable */
+				it->second.state |= RS_PEER_S_UNREACHABLE;
+#ifdef CONN_DEBUG
+				std::cerr << "NUC() Peer !EXT TCP - unreachable" << std::endl;
+#endif
+			}
+		}
+	}
+
+	connMtx.unlock(); /* UNLOCK MUTEX */
 }
 
 
@@ -1136,6 +1289,7 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags)
  * From various sources
  */
 
+
 void    p3ConnectMgr::peerStatus(std::string id, 
 			struct sockaddr_in laddr, struct sockaddr_in raddr,
                        uint32_t type, uint32_t flags, uint32_t source)
@@ -1178,13 +1332,14 @@ void    p3ConnectMgr::peerStatus(std::string id,
 	std::cerr << std::endl;
 
 	/* update the status */
+	time_t now = time(NULL);
 
 	peerAddrInfo details;
 	details.type    = type;
 	details.found   = true;
 	details.laddr   = laddr;
 	details.raddr   = raddr;
-	details.ts      = time(NULL);
+	details.ts      = now;
 
 	/* if source is DHT */
 	if (source == RS_CB_DHT)
@@ -1198,6 +1353,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
 
 		/* If we get a info -> then they are online */
 		it->second.state |= RS_PEER_S_ONLINE;
+		it->second.lastavailable = now;
 	}
 	else if (source == RS_CB_DISC)
 	{
@@ -1212,6 +1368,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		{
 			it->second.actions |= RS_PEER_ONLINE;
 			it->second.state |= RS_PEER_S_ONLINE;
+			it->second.lastavailable = now;
 			mStatusChanged = true;
 		}
 
@@ -1231,7 +1388,9 @@ void    p3ConnectMgr::peerStatus(std::string id,
 
 		it->second.localaddr = laddr;
 		it->second.serveraddr = raddr;
+
 		it->second.state |= RS_PEER_S_ONLINE;
+		it->second.lastavailable = now;
 
 		/* must be online to recv info (should be connected too!) 
 		 * but no need for action as should be connected already 
@@ -1274,7 +1433,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
 	}
 
 	/* Determine Reachability (only advisory) */
-	if (ownState.netMode == RS_NET_MODE_UDP)
+	if (ownState.netMode & RS_NET_MODE_UDP)
 	{
 		if ((details.type & RS_NET_CONN_UDP_DHT_SYNC) ||
 		    (details.type & RS_NET_CONN_TCP_EXTERNAL)) 
@@ -1288,7 +1447,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
 			it->second.state |= RS_PEER_S_UNREACHABLE;
 		}
 	}
-	else if (ownState.netMode == RS_NET_MODE_UNREACHABLE)
+	else if (ownState.netMode & RS_NET_MODE_UNREACHABLE)
 	{
 		if (details.type & RS_NET_CONN_TCP_EXTERNAL) 
 		{
@@ -1339,6 +1498,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
 	std::cerr << " source: " << source;
 	std::cerr << std::endl;
 
+#ifndef P3CONNMGR_NO_AUTO_CONNECTION 
 
 #ifndef P3CONNMGR_NO_TCP_CONNECTIONS
 
@@ -1430,7 +1590,16 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		std::cerr << std::endl;
 	}
 
-#endif
+#endif  // P3CONNMGR_NO_TCP_CONNECTIONS
+
+	/* notify if they say we can, or we cannot connect ! */
+	if (details.type & RS_NET_CONN_UDP_DHT_SYNC) 
+	{
+		retryConnectNotify(id);
+	}
+
+#endif  // P3CONNMGR_NO_AUTO_CONNECTION 
+
 
 	if (it->second.inConnAttempt)
 	{
@@ -1471,6 +1640,22 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in radd
 	std::cerr << " source: " << source;
 	std::cerr << std::endl;
 
+	/******************** TCP PART *****************************/
+
+	std::cerr << "p3ConnectMgr::peerConnectRequest() Try TCP first";
+	std::cerr << std::endl;
+
+	retryConnectTCP(id);
+
+	/******************** UDP PART *****************************/
+
+	if (ownState.netMode & RS_NET_MODE_UNREACHABLE)
+	{
+		std::cerr << "p3ConnectMgr::peerConnectRequest() Unreachable - no UDP connection";
+		std::cerr << std::endl;
+		return;
+	}
+
 	/* look up the id */
         std::map<std::string, peerConnectState>::iterator it;
 	connMtx.lock();   /*   LOCK MUTEX */
@@ -1501,6 +1686,7 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in radd
 		std::cerr << std::endl;
 		return;
 	}
+
 
 	time_t now = time(NULL);
 	/* this is a UDP connection request (DHT only for the moment!) */
@@ -1826,8 +2012,17 @@ bool p3ConnectMgr::addNeighbour(std::string id)
        /*************** External Control ****************/
 bool   p3ConnectMgr::retryConnect(std::string id)
 {
+	retryConnectTCP(id);
+	retryConnectNotify(id);
+
+	return true;
+}
+
+
+bool   p3ConnectMgr::retryConnectTCP(std::string id)
+{
 	/* push addresses onto stack */
-	std::cerr << "p3ConnectMgr::retryConnect()";
+	std::cerr << "p3ConnectMgr::retryConnectTCP()";
 	std::cerr << " id: " << id;
 	std::cerr << std::endl;
 
@@ -1838,7 +2033,7 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
-		std::cerr << "p3ConnectMgr::retryConnect() Peer is not Friend";
+		std::cerr << "p3ConnectMgr::retryConnectTCP() Peer is not Friend";
 		std::cerr << std::endl;
 		return false;
 	}
@@ -1846,7 +2041,7 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 	/* if already connected -> done */
 	if (it->second.state & RS_PEER_S_CONNECTED)
 	{
-		std::cerr << "p3ConnectMgr::retryConnect() Peer Already Connected";
+		std::cerr << "p3ConnectMgr::retryConnectTCP() Peer Already Connected";
 		std::cerr << std::endl;
 		return true;
 	}
@@ -1867,7 +2062,7 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 			&(it->second.localaddr.sin_addr))))
 
 	{
-		std::cerr << "p3ConnectMgr::retryConnect() Local Address Valid: ";
+		std::cerr << "p3ConnectMgr::retryConnectTCP() Local Address Valid: ";
 		std::cerr << inet_ntoa(it->second.localaddr.sin_addr);
 		std::cerr << ":" << ntohs(it->second.localaddr.sin_port);
 		std::cerr << std::endl;
@@ -1892,7 +2087,7 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 
 		if (!localExists)
 		{
-			std::cerr << "p3ConnectMgr::retryConnect() Adding Local Addr to Queue";
+			std::cerr << "p3ConnectMgr::retryConnectTCP() Adding Local Addr to Queue";
 			std::cerr << std::endl;
 
 			/* add the local address */
@@ -1905,16 +2100,19 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 		}
 		else
 		{
-			std::cerr << "p3ConnectMgr::retryConnect() Local Addr already in Queue";
+			std::cerr << "p3ConnectMgr::retryConnectTCP() Local Addr already in Queue";
 			std::cerr << std::endl;
 		}
 	}
 
 	/* otherwise try external ... (should check flags) */
-	if ((isValidNet(&(it->second.serveraddr.sin_addr))) && 
-			(it->second.netMode = RS_NET_MODE_EXT))
+	//if ((isValidNet(&(it->second.serveraddr.sin_addr))) && 
+	//		(it->second.netMode = RS_NET_MODE_EXT))
+	
+	/* always try external */
+	if (isValidNet(&(it->second.serveraddr.sin_addr)))
 	{
-		std::cerr << "p3ConnectMgr::retryConnect() Ext Address Valid (+EXT Flag): ";
+		std::cerr << "p3ConnectMgr::retryConnectTCP() Ext Address Valid: ";
 		std::cerr << inet_ntoa(it->second.serveraddr.sin_addr);
 		std::cerr << ":" << ntohs(it->second.serveraddr.sin_port);
 		std::cerr << std::endl;
@@ -1940,7 +2138,7 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 
 		if (!remoteExists)
 		{
-			std::cerr << "p3ConnectMgr::retryConnect() Adding Ext Addr to Queue";
+			std::cerr << "p3ConnectMgr::retryConnectTCP() Adding Ext Addr to Queue";
 			std::cerr << std::endl;
 
 			/* add the remote address */
@@ -1953,27 +2151,15 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 		}
 		else
 		{
-			std::cerr << "p3ConnectMgr::retryConnect() Ext Addr already in Queue";
+			std::cerr << "p3ConnectMgr::retryConnectTCP() Ext Addr already in Queue";
 			std::cerr << std::endl;
 		}
 	}
-#endif
 
-	if (it->second.netMode == RS_NET_MODE_UDP)
-	{
-		std::cerr << "p3ConnectMgr::retryConnect() trying UDP connection!";
-		std::cerr << " id: " << id;
-		std::cerr << std::endl;
+#endif // P3CONNMGR_NO_TCP_CONNECTIONS
 
-		/* attempt UDP connection */
-		mDhtMgr->notifyPeer(id);
-	}
-	else
-	{
-		std::cerr << "p3ConnectMgr::retryConnect() EXT/UNREACHABLE so not trying UDP connection!";
-		std::cerr << " id: " << id;
-		std::cerr << std::endl;
-	}
+	/* flag as last attempt to prevent loop */
+	it->second.lastattempt = time(NULL);  
 
 	if (it->second.inConnAttempt)
 	{
@@ -1984,7 +2170,7 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 	/* start a connection attempt */
 	if (it->second.connAddrs.size() > 0)
 	{
-		std::cerr << "p3ConnectMgr::retryConnect() Started CONNECT ATTEMPT! ";
+		std::cerr << "p3ConnectMgr::retryConnectTCP() Started CONNECT ATTEMPT! ";
 		std::cerr << " id: " << id;
 		std::cerr << std::endl;
 
@@ -1993,12 +2179,64 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 	}
 	else
 	{
-		std::cerr << "p3ConnectMgr::retryConnect() No addr suitable for CONNECT ATTEMPT! ";
+		std::cerr << "p3ConnectMgr::retryConnectTCP() No addr suitable for CONNECT ATTEMPT! ";
 		std::cerr << " id: " << id;
 		std::cerr << std::endl;
 	}
 	return true; 
 }
+
+
+bool   p3ConnectMgr::retryConnectNotify(std::string id)
+{
+	/* push addresses onto stack */
+	std::cerr << "p3ConnectMgr::retryConnectNotify()";
+	std::cerr << " id: " << id;
+	std::cerr << std::endl;
+
+	/* look up the id */
+        std::map<std::string, peerConnectState>::iterator it;
+	connMtx.lock();   /*   LOCK MUTEX */
+	connMtx.unlock(); /* UNLOCK MUTEX */
+
+	if (mFriendList.end() == (it = mFriendList.find(id)))
+	{
+		std::cerr << "p3ConnectMgr::retryConnectNotify() Peer is not Friend";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	/* if already connected -> done */
+	if (it->second.state & RS_PEER_S_CONNECTED)
+	{
+		std::cerr << "p3ConnectMgr::retryConnectNotify() Peer Already Connected";
+		std::cerr << std::endl;
+		return true;
+	}
+
+	/* flag as last attempt to prevent loop */
+	it->second.lastattempt = time(NULL);  
+
+	if (ownState.netMode & RS_NET_MODE_UNREACHABLE)
+	{
+		std::cerr << "p3ConnectMgr::retryConnectNotify() UNREACHABLE so no Notify!";
+		std::cerr << " id: " << id;
+		std::cerr << std::endl;
+	}
+	else
+	{
+		std::cerr << "p3ConnectMgr::retryConnectNotify() Notifying Peer";
+		std::cerr << " id: " << id;
+		std::cerr << std::endl;
+
+		/* attempt UDP connection */
+		mDhtMgr->notifyPeer(id);
+	}
+
+	return true; 
+}
+
+
 
 
 

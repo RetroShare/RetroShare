@@ -59,7 +59,9 @@ const uint32_t P3DISC_FLAGS_PEER_ONLINE 	= 0x0010;
 const uint32_t P3DISC_FLAGS_OWN_DETAILS 	= 0x0020;
 
 
-#define P3DISC_DEBUG 	1
+/*****
+ * #define P3DISC_DEBUG 	1
+ ****/
 
 /*********** NOTE ***************
  *

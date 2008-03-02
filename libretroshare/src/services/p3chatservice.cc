@@ -26,7 +26,9 @@
 
 #include "services/p3chatservice.h"
 
-#define CHAT_DEBUG 1
+/****
+ * #define CHAT_DEBUG 1
+ ****/
 
 /************ NOTE *********************************
  * This Service is so simple that there is no

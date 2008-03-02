@@ -66,8 +66,8 @@
 #define DHT_DEFAULT_WAITTIME	1    /* Std sleep break period */
 
 /* TTLs for DHTs posts */
-#define DHT_TTL_PUBLISH		(DHT_PUBLISH_PERIOD + 30)
-#define DHT_TTL_NOTIFY		DHT_NOTIFY_PERIOD  
+#define DHT_TTL_PUBLISH		(DHT_PUBLISH_PERIOD + 120)  // for a little overlap.
+#define DHT_TTL_NOTIFY		(DHT_NOTIFY_PERIOD  + 60)   // for time to find it...
 
 
 void printDhtPeerEntry(dhtPeerEntry *ent, std::ostream &out);
@@ -185,45 +185,41 @@ bool p3DhtMgr::setExternalInterface(
 	/* add / remove peers */
 bool p3DhtMgr::findPeer(std::string id)
 {
-	dhtMtx.lock(); /* LOCK MUTEX */
+	RsStackMutex stack(dhtMtx); /***** LOCK MUTEX *****/
 
 	mDhtModifications = true;
 
 	std::map<std::string, dhtPeerEntry>::iterator it;
 	it = peers.find(id);
-	if (it == peers.end())
+	if (it != peers.end())
 	{
-		/* if they are not in the list -> add */
-		dhtPeerEntry ent;
-		ent.id = id;
-		ent.state = DHT_PEER_INIT;
-		ent.type = DHT_ADDR_INVALID;
-		ent.lastTS = 0;
-
-		ent.notifyPending = 0;
-		ent.notifyTS = 0;
-
-		/* fill in hashes */
-		ent.hash1 = RsUtil::HashId(id, false);
-		ent.hash2 = RsUtil::HashId(id, true);
-
-		/* other fields don't matter */
-
-		peers[id] = ent;
-	}
-	else
-	{
-		/* ignore */
+		return true;
 	}
 
-	dhtMtx.unlock(); /* UNLOCK MUTEX */
+	/* if they are not in the list -> add */
+	dhtPeerEntry ent;
+	ent.id = id;
+	ent.state = DHT_PEER_INIT;
+	ent.type = DHT_ADDR_INVALID;
+	ent.lastTS = 0;
+
+	ent.notifyPending = 0;
+	ent.notifyTS = 0;
+
+	/* fill in hashes */
+	ent.hash1 = RsUtil::HashId(id, false);
+	ent.hash2 = RsUtil::HashId(id, true);
+
+	/* other fields don't matter */
+
+	peers[id] = ent;
 
 	return true;
 }
 
 bool p3DhtMgr::dropPeer(std::string id)
 {
-	dhtMtx.lock(); /* LOCK MUTEX */
+	RsStackMutex stack(dhtMtx); /***** LOCK MUTEX *****/
 
 	mDhtModifications = true;
 
@@ -232,15 +228,11 @@ bool p3DhtMgr::dropPeer(std::string id)
 	it = peers.find(id);
 	if (it == peers.end())
 	{
-		/* ignore */
-	}
-	else
-	{
-		/* remove */
-		peers.erase(it);
+		return false;
 	}
 
-	dhtMtx.unlock(); /* UNLOCK MUTEX */
+	/* remove */
+	peers.erase(it);
 
 	return true;
 }
@@ -248,30 +240,45 @@ bool p3DhtMgr::dropPeer(std::string id)
 	/* post DHT key saying we should connect */
 bool p3DhtMgr::notifyPeer(std::string id) 
 {
-	dhtMtx.lock(); /* LOCK MUTEX */
+	RsStackMutex stack(dhtMtx); /***** LOCK MUTEX *****/
+#ifdef DHT_DEBUG
+	std::cerr << "p3DhtMgr::notifyPeer() " << id << std::endl;
+#endif
 
-	mDhtModifications = true;
-
-	/* once we are connected ... don't worry about them anymore */
 	std::map<std::string, dhtPeerEntry>::iterator it;
 	it = peers.find(id);
-	bool ret = true;
 	if (it == peers.end())
 	{
-		/* ignore */
-		ret = false;
+		return false;
 	}
-	else
+
+	time_t now = time(NULL);
+
+	if (now - it->second.notifyTS < 2 * DHT_NOTIFY_PERIOD)
 	{
-		it->second.notifyPending = RS_CONNECT_ACTIVE;
-		it->second.notifyTS = time(NULL);
+		/* drop the notify (too soon) */
+#ifdef DHT_DEBUG
+		std::cerr << "p3DhtMgr::notifyPeer() TO SOON - DROPPING" << std::endl;
+#endif
+		return false;
 	}
 
-	dhtMtx.unlock(); /* UNLOCK MUTEX */
+	it->second.notifyPending = RS_CONNECT_ACTIVE;
+	it->second.notifyTS = time(NULL);
 
-	return ret;
+	/* Trigger search if not found! */
+	if (it->second.state != DHT_PEER_FOUND)
+	{
+#ifdef DHT_DEBUG
+		std::cerr << "p3DhtMgr::notifyPeer() PEER NOT FOUND - Trigger search" << std::endl;
+#endif
+		it->second.lastTS = 0;
+	}
+
+	mDhtModifications = true; /* no wait! */
+
+	return true;
 }
-
 
 	/* extract current peer status */
 bool p3DhtMgr::getPeerStatus(std::string id, 
@@ -680,12 +687,12 @@ int p3DhtMgr::checkPeerDHTKeys()
 		return repeatPeriod;
 	}
 
-	/* update timestamp */
+	/* update timestamp 
+	 * clear FOUND or INIT state.
+	 * */
+
 	pit->second.lastTS = now;
-	if (pit->second.state == DHT_PEER_INIT)
-	{
-		pit->second.state = DHT_PEER_SEARCH;
-	}
+	pit->second.state = DHT_PEER_SEARCH;
 
 	dhtPeerEntry peer = (pit->second);
 
@@ -705,8 +712,12 @@ int p3DhtMgr::checkNotifyDHT()
 	std::cerr << "p3DhtMgr::checkNotifyDHT()" << std::endl;
 #endif
 	/* now loop through the peers */
+	uint32_t notifyType = 0;
+	dhtPeerEntry peer;
+	dhtPeerEntry  own;
 
-	dhtMtx.lock(); /* LOCK MUTEX */
+      {
+	RsStackMutex stack(dhtMtx); /***** LOCK MUTEX *****/
 
 	/* iterate through and find min time and suitable candidate */
         std::map<std::string, dhtPeerEntry>::iterator it;
@@ -716,46 +727,68 @@ int p3DhtMgr::checkNotifyDHT()
 	/* find the first with a notify flag */
 	for(it = peers.begin(); it != peers.end(); it++)
 	{
-		if ((it->second.state == DHT_PEER_FOUND) &&
-			(it->second.notifyPending == RS_CONNECT_ACTIVE))
+		if (it->second.notifyPending)
 		{
-			break;
+			if (it->second.state == DHT_PEER_FOUND)
+			{
+				notifyType = it->second.notifyPending;
+				break;
+			}
+
+			/* if very old drop it */
+			if (now - it->second.notifyTS > DHT_NOTIFY_PERIOD)
+			{
+#ifdef DHT_DEBUG
+				std::cerr << "p3DhtMgr::checkNotifyDHT() Dropping OLD Notify: ";
+				std::cerr << it->first << std::endl;
+#endif
+				it->second.notifyPending = 0;
+			}
 		}
 	}
+
 	/* now have - peer to handle */
 	if (it == peers.end())
 	{
-		dhtMtx.unlock(); /* UNLOCK MUTEX */
 		return repeatPeriod;
 	}
+
+#ifdef DHT_DEBUG
+	std::cerr << "p3DhtMgr::checkNotifyDHT() Notify From: ";
+	std::cerr << it->first << std::endl;
+#endif
 
 	/* update timestamp */
 	it->second.notifyTS = now;
 	it->second.notifyPending = 0;
 
-	dhtPeerEntry peer = (it->second);
-	dhtPeerEntry own  = ownEntry;
+	peer = (it->second);
+	own  = ownEntry;
 
-	dhtMtx.unlock(); /* UNLOCK MUTEX */
+      } /******* UNLOCK ******/
 
-	/* publish notification (publish Our Id) 
-	 * We publish the connection attempt on peers hash, 
-	 * using our alternative hash..
-	 * */
-
-	if (dhtNotify(peer.hash1, own.hash2, ""))
+        if (notifyType == RS_CONNECT_ACTIVE)
 	{
-		/* feedback to say we started it! */
-#ifdef P3DHTMGR_USE_LOCAL_UDP_CONN
-		connCb->peerConnectRequest(peer.id, peer.laddr, RS_CB_DHT);
-#else
-		connCb->peerConnectRequest(peer.id, peer.raddr, RS_CB_DHT);
+		/* publish notification (publish Our Id) 
+		 * We publish the connection attempt on peers hash, 
+		 * using our alternative hash..
+		 * */
+#ifdef DHT_DEBUG
+		std::cerr << "p3DhtMgr::checkNotifyDHT() Posting Active Notify";
+		std::cerr << std::endl;
 #endif
+
+		dhtNotify(peer.hash1, own.hash2, "");
 	}
 
+	/* feedback to say we started it! */
+#ifdef P3DHTMGR_USE_LOCAL_UDP_CONN
+	connCb->peerConnectRequest(peer.id, peer.laddr, RS_CB_DHT);
+#else
+	connCb->peerConnectRequest(peer.id, peer.raddr, RS_CB_DHT);
+#endif
 
-	repeatPeriod = DHT_MIN_PERIOD; 
-	return repeatPeriod;
+	return DHT_MIN_PERIOD; 
 }
 
 
@@ -1239,14 +1272,13 @@ bool p3DhtMgr::resultDHT(std::string key, std::string value)
 
 bool p3DhtMgr::dhtResultNotify(std::string idhash)
 {
-	dhtMtx.lock(); /* LOCK MUTEX */
+	RsStackMutex stack(dhtMtx); /***** LOCK MUTEX *****/
 
 #ifdef DHT_DEBUG
 	std::cerr << "p3DhtMgr::dhtResultNotify() from idhash: ";
 	std::cerr << RsUtil::BinToHex(idhash) << std::endl;
 #endif
 	std::map<std::string, dhtPeerEntry>::iterator it;
-	bool doNotify = false;
 	time_t now = time(NULL);
 
 	/* if notify - we must match on the second hash */
@@ -1254,7 +1286,6 @@ bool p3DhtMgr::dhtResultNotify(std::string idhash)
 
 	/* update data */
 	std::string peerid;
-	struct sockaddr_in raddr, laddr;
 
 	if (it != peers.end())
 	{
@@ -1263,21 +1294,13 @@ bool p3DhtMgr::dhtResultNotify(std::string idhash)
 #endif
 		/* delay callback -> if they are not found */
 		it->second.notifyTS      = now;
+		it->second.notifyPending = RS_CONNECT_PASSIVE;
+		mDhtModifications = true; /* no wait! */
+
 		if (it->second.state != DHT_PEER_FOUND)
 		{
-			doNotify = false;
-			it->second.notifyPending = RS_CONNECT_PASSIVE;
 			/* flag for immediate search */
-			mDhtModifications = true; /* no wait! */
 			it->second.lastTS = 0;
-		}
-		else
-		{
-			doNotify = true;
-			it->second.notifyPending = 0;
-			peerid = (it->second).id;
-			raddr  = (it->second).raddr;
-			laddr  = (it->second).laddr;
 		}
 	}
 	else
@@ -1285,18 +1308,6 @@ bool p3DhtMgr::dhtResultNotify(std::string idhash)
 #ifdef DHT_DEBUG
 		std::cerr << "p3DhtMgr::dhtResult() unknown NOTIFY ";
 		std::cerr << RsUtil::BinToHex(idhash) << std::endl;
-#endif
-	}
-
-	dhtMtx.unlock(); /* UNLOCK MUTEX */
-
-	/* do callback */
-	if (doNotify)
-	{
-#ifdef P3DHTMGR_USE_LOCAL_UDP_CONN
-		connCb->peerConnectRequest(peerid, laddr, RS_CB_DHT);
-#else
-		connCb->peerConnectRequest(peerid, raddr, RS_CB_DHT);
 #endif
 	}
 
@@ -1316,7 +1327,6 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 #endif
 	std::map<std::string, dhtPeerEntry>::iterator it;
 	bool doCb = false;
-	bool doNotify = false;
 	bool doStun = false;
 	uint32_t stunFlags = 0;
 	time_t now = time(NULL);
@@ -1334,39 +1344,25 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 #endif
 		it->second.lastTS = now;
 
-		/* has it changed??? */
-		if ((it->second.state != DHT_PEER_FOUND) ||
-			(0 != sockaddr_cmp(it->second.laddr,laddr)) ||
-			(0 != sockaddr_cmp(it->second.raddr,raddr)) ||
-			(it->second.type != type))
+		/* Do callback all the time */
+		ent = it->second;
+		doCb = true;
+
+		/* update info .... always */
+		it->second.state = DHT_PEER_FOUND;
+		it->second.laddr  = laddr;
+		it->second.raddr  = raddr;
+		it->second.type  = type;
+
+		if (it->second.notifyPending)
 		{
-			it->second.state = DHT_PEER_FOUND;
-			it->second.laddr  = laddr;
-			it->second.raddr  = raddr;
-			it->second.type  = type;
-			ent = it->second;
-			doCb = true;
+			/* no wait if we have pendingNotification */
+			mDhtModifications = true; 
 		}
 
-		/* do we have a pending notify */
-		if ((it->second.state == DHT_PEER_FOUND) &&
-			(it->second.notifyPending == RS_CONNECT_PASSIVE))
-		{
-			it->second.notifyPending = 0;
-			doNotify = true;
-		}
-
-		/* if stun not happy yet - doStun as well..
-		 * as the DHT doesn't know if the Stun is happy - send 
-		 * it through always!
-		 * if ((mDhtState != DHT_STATE_OFF) &&
-		 *	(mDhtState != DHT_STATE_ACTIVE))
-		 */
-		if (mDhtState != DHT_STATE_OFF)
-		{
-			doStun = true;
-			stunFlags = RS_STUN_FRIEND | RS_STUN_ONLINE;
-		}
+		/* do Stun always */
+		doStun = true;
+		stunFlags = RS_STUN_FRIEND | RS_STUN_ONLINE;
 	}
 	else
 	{
@@ -1381,21 +1377,10 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 
 	dhtMtx.unlock(); /* UNLOCK MUTEX */
 
-	/* if changed - do callback */
 	if (doCb)
 	{
-		connCb->peerStatus(ent.id, 
-				ent.laddr, ent.raddr, 
+		connCb->peerStatus(ent.id, ent.laddr, ent.raddr, 
 				ent.type, 0, RS_CB_DHT);
-				//ent.type, RS_CB_LOCAL_ADDR | RS_CB_REMOTE_ADDR, RS_CB_DHT);
-		if (doNotify)
-		{
-#ifdef P3DHTMGR_USE_LOCAL_UDP_CONN
-			connCb->peerConnectRequest(ent.id, ent.laddr, RS_CB_DHT);
-#else
-			connCb->peerConnectRequest(ent.id, ent.raddr, RS_CB_DHT);
-#endif
-		}
 	}
 
 	if (doStun)

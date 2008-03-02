@@ -32,6 +32,9 @@
 std::string createHttpHeader(std::string host, uint16_t port, 
 					std::string agent, uint32_t length);
 
+std::string createHttpHeaderGET(std::string host, uint16_t port, 
+			std::string page, std::string agent, uint32_t length);
+
 std::string createOpenDHT_put(std::string key, std::string value, 
 					uint32_t ttl, std::string client);
 

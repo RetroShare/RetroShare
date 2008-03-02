@@ -101,6 +101,7 @@ class RsPeerDetails
 
 	/* basic stats */
 	uint32_t		lastConnect; /* how long ago */
+	std::string		autoconnect;
 	uint32_t		connectPeriod; 
 };
 

@@ -126,6 +126,8 @@ class peerConnectState
         time_t lastcontact; 
 
 	/***** Below here not stored permanently *****/
+        time_t lastavailable;
+	time_t lastattempt;
 
 	std::string name;
 
@@ -139,7 +141,6 @@ class peerConnectState
 
 	/* a list of connect attempts to make (in order) */
 	bool inConnAttempt;
-	time_t lastattempt;
 	peerConnectAddress currentConnAddr;
 	std::list<peerConnectAddress> connAddrs;
 
@@ -216,6 +217,7 @@ bool 	connectResult(std::string id, bool success, uint32_t flags);
 protected:
 
 	/* Internal Functions */
+void 	statusTick();
 void 	netTick();
 void 	netStartup();
 
@@ -236,6 +238,7 @@ void 	netUpnpInit();
 void 	netUpnpCheck();
 
 void 	netUdpCheck();
+void    netUnreachableCheck();
 
 	/* Udp / Stun functions */
 bool 	udpInternalAddress(struct sockaddr_in iaddr);
@@ -249,6 +252,9 @@ void 	stunCollect(std::string id, struct sockaddr_in addr, uint32_t flags);
 	/* monitor control */
 void 	tickMonitors();
 
+	/* connect attempts */
+bool	retryConnectTCP(std::string id);
+bool	retryConnectNotify(std::string id);
 
 	/* temporary for testing */
 virtual void 	loadConfiguration() { return; }

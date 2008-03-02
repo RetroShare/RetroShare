@@ -164,6 +164,8 @@ void  PeersDialog::insertPeers()
         QTreeWidget *peerWidget = ui.peertreeWidget;
         QTreeWidgetItem *oldSelect = getCurrentPeer();
         QTreeWidgetItem *newSelect = NULL;
+	time_t now = time(NULL);
+
         std::string oldId;
         if (oldSelect)
         {
@@ -200,7 +202,7 @@ void  PeersDialog::insertPeers()
 		item -> setText(2, QString::fromStdString(detail.name));
 
 		/* (2) Auto Connect */
-		item -> setText(3, QString::fromStdString("Yes"));
+		item -> setText(3, QString::fromStdString(detail.autoconnect));
 
 		/* (3) Trust Level */
                 item -> setText(4,QString::fromStdString(
@@ -219,7 +221,7 @@ void  PeersDialog::insertPeers()
 		/* less important ones */
 		/* () Last Contact */
                 item -> setText(6,QString::fromStdString(
-				RsPeerLastConnectString(detail.lastConnect)));
+				RsPeerLastConnectString(now - detail.lastConnect)));
 
 		/* () Org */
 		item -> setText(7, QString::fromStdString(detail.org));
@@ -271,7 +273,7 @@ void  PeersDialog::insertPeers()
 		}
 		else 
 		{
-                	if (detail.lastConnect < 10000)
+                	if (now - detail.lastConnect < 3600)
 			{
 				for(i = 1; i < 12; i++)
 				{

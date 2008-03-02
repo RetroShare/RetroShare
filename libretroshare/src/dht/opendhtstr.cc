@@ -43,6 +43,20 @@ std::string createHttpHeader(std::string host, uint16_t port, std::string agent,
 	return req.str();
 };
 
+std::string createHttpHeaderGET(std::string host, uint16_t port, std::string page, std::string agent, uint32_t length)
+{
+	std::ostringstream req;
+
+	req << "GET /" << page << " HTTP/1.0\r\n";
+	req << "Host: " << host << ":" << port << "\r\n";
+	req << "User-Agent: " << agent << "\r\n";
+	//req << "Content-Type: text/xml\r\n";
+	//req << "Content-Length: " << length << "\r\n";
+	req << "\r\n";
+
+	return req.str();
+};
+
 std::string createOpenDHT_put(std::string key, std::string value, uint32_t ttl, std::string client)
 {
 	std::ostringstream req;

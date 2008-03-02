@@ -71,6 +71,7 @@ virtual ~UdpSorter() { return; }
 
 	/* add a TCPonUDP stream */
 int	addUdpPeer(UdpPeer *peer, const struct sockaddr_in &raddr);
+int 	removeUdpPeer(UdpPeer *peer);
 
 bool 	setStunKeepAlive(uint32_t required);
 bool    addStunPeer(const struct sockaddr_in &remote, const char *peerid);

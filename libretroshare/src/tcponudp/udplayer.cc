@@ -44,9 +44,9 @@
 #include <errno.h>
 */
 
-/*
- */ #define DEBUG_UDP_LAYER 1
- /**/
+/***
+ * #define DEBUG_UDP_LAYER 1
+ ***/
 
 static const int UDP_DEF_TTL = 64;
 

@@ -189,6 +189,30 @@ int UdpSorter::addUdpPeer(UdpPeer *peer, const struct sockaddr_in &raddr)
 	return ok;
 }
 
+int UdpSorter::removeUdpPeer(UdpPeer *peer)
+{
+        RsStackMutex stack(sortMtx);   /********** LOCK MUTEX *********/
+
+	/* check for duplicate */
+        std::map<struct sockaddr_in, UdpPeer *>::iterator it;
+	for(it = streams.begin(); it != streams.end(); it++)
+	{
+		if (it->second == peer)
+		{
+#ifdef DEBUG_UDP_SORTER
+			std::cerr << "UdpSorter::removeUdpPeer() SUCCESS" << std::endl;
+#endif
+			streams.erase(it);
+			return 1;
+		}
+	}
+
+#ifdef DEBUG_UDP_SORTER
+	std::cerr << "UdpSorter::removeUdpPeer() ERROR" << std::endl;
+#endif
+	return 0;
+}
+
 
 /******************************* STUN Handling ********************************/
 

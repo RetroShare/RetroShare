@@ -36,6 +36,8 @@ class DHTClient
 
 	/* initialise from file */
 virtual bool loadServers(std::string filename) = 0;
+virtual bool loadServersFromWeb(std::string storename) = 0;
+virtual bool loadServers(std::istream&) = 0;
 
 	/* check that its working */
 virtual bool dhtActive() = 0;
@@ -53,6 +55,8 @@ class DHTClientDummy: public DHTClient
 
 	/* initialise from file */
 virtual bool loadServers(std::string filename) { return true; }
+virtual bool loadServersFromWeb(std::string storename) { return true; }
+virtual bool loadServers(std::istream&) { return true; }
 
 	/* check that its working */
 virtual bool dhtActive() { return true; }

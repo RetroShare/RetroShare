@@ -325,6 +325,40 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 		d.visState |= RS_VS_DHT_ON;
 	}
 
+
+	/* Finally determine AutoConnect Status */
+	std::ostringstream autostr;
+	if (pcs.inConnAttempt)
+	{
+		/* 
+		 */
+		autostr << "Trying ";
+		switch(pcs.currentConnAddr.type)
+		{
+			case RS_NET_CONN_TCP_LOCAL:
+				autostr << "TCP (Local)";
+				break;
+			case RS_NET_CONN_TCP_EXTERNAL:
+				autostr << "TCP (External)";
+				break;
+			case RS_NET_CONN_UDP_DHT_SYNC:
+				autostr << "UDP (ETA: ";
+				autostr << 360 - (time(NULL) - pcs.currentConnAddr.ts);
+				autostr << ")";
+				break;
+			default:
+				autostr << "Unknown";
+				break;
+		}
+
+	}
+	else
+	{
+		autostr << "Idle";
+	}
+
+	d.autoconnect = autostr.str();
+
 	return true;
 }
 
