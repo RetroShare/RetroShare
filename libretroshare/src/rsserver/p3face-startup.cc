@@ -480,7 +480,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 	mConnMgr = new p3ConnectMgr(mAuthMgr);
 	p3UpnpMgr *mUpnpMgr = new upnphandler();
-	p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr);
+	p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr, config->basedir);
 
 	CacheStrapper *mCacheStrapper = new CacheStrapper(mAuthMgr, mConnMgr);
 	ftfiler       *mCacheTransfer = new ftfiler(mCacheStrapper);

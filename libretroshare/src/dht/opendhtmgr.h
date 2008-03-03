@@ -37,7 +37,7 @@ class OpenDHTMgr: public p3DhtMgr
 {
 	public:
 
-	OpenDHTMgr(std::string ownId, pqiConnectCb* cb);
+	OpenDHTMgr(std::string ownId, pqiConnectCb* cb, std::string configdir);
 
         protected:
 
@@ -56,6 +56,7 @@ virtual bool searchDHT(std::string key);
 	private:
 
 	DHTClient *mClient;
+	std::string mConfigDir;
 };
 
 

@@ -75,6 +75,8 @@
  * #define RS_RELEASE_VERSION    1
  ****/
 
+#define RS_RELEASE_VERSION    1
+
 /** Constructor */
 MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     : QMainWindow(parent, flags)
@@ -187,9 +189,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
 
 #ifdef RS_RELEASE_VERSION    
-    addAction(new QAction(QIcon(IMAGE_PEERS), tr("In Development / New Apps"), ui.toolBar), SLOT(showApplWindow()));
+    addAction(new QAction(QIcon(IMAGE_PEERS), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 #else
-    addAction(new QAction(QIcon(IMAGE_PEERS), tr("In Development / New Apps"), ui.toolBar), SLOT(showApplWindow()));
+    addAction(new QAction(QIcon(IMAGE_PEERS), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 #endif
  
 #ifdef NO_MORE_OPTIONS_OR_SS

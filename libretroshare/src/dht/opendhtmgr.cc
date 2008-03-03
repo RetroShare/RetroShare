@@ -99,8 +99,8 @@ extern "C" void* doDhtSearch(void* p)
 
 
 
-OpenDHTMgr::OpenDHTMgr(std::string ownId, pqiConnectCb* cb)
-	:p3DhtMgr(ownId, cb)
+OpenDHTMgr::OpenDHTMgr(std::string ownId, pqiConnectCb* cb, std::string configdir)
+	:p3DhtMgr(ownId, cb), mConfigDir(configdir)
 {
 	return;
 }
@@ -109,7 +109,7 @@ OpenDHTMgr::OpenDHTMgr(std::string ownId, pqiConnectCb* cb)
         /********** OVERLOADED FROM p3DhtMgr ***************/
 bool    OpenDHTMgr::init()
 {
-	std::string configpath = ".";
+	std::string configpath = mConfigDir;
 
 	/* load up DHT gateways */
 	mClient = new OpenDHTClient();
@@ -120,7 +120,7 @@ bool    OpenDHTMgr::init()
 	{
 		filename += "/";
 	}
-	filename += "servers.txt";
+	filename += "ODHTservers.txt";
 
 	if (!mClient -> loadServersFromWeb(filename))
 	{

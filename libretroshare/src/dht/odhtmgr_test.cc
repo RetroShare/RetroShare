@@ -81,7 +81,7 @@ int main(int argc, char **argv)
 	time_t startTime = time(NULL);
 
 	pqiConnectCbDummy cbTester;
-	OpenDHTMgr  dhtTester(ownId, &cbTester);
+	OpenDHTMgr  dhtTester(ownId, &cbTester, ".");
 
 	/* startup dht */
 	std::cerr << "Starting up DhtTester()" << std::endl;

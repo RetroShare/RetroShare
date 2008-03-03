@@ -1155,7 +1155,8 @@ bool p3DhtMgr::resultDHT(std::string key, std::string value)
 	 */
 
 #ifdef DHT_DEBUG
-	std::cerr << "p3DhtMgr::resultDHT() key: " << key << " value: " << value << std::endl;
+	std::cerr << "p3DhtMgr::resultDHT() key: 0x" << RsUtil::BinToHex(key);
+	std::cerr << " value: 0x" << RsUtil::BinToHex(value) << std::endl;
 #endif
 
 	/* variables for dhtResult() call */
