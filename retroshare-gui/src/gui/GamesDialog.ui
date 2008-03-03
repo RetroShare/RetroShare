@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>578</width>
+    <width>598</width>
     <height>519</height>
    </rect>
   </property>
@@ -23,7 +23,7 @@
           <widget class="QLabel" name="label" >
            <property name="font" >
             <font>
-             <pointsize>14</pointsize>
+             <pointsize>10</pointsize>
             </font>
            </property>
            <property name="text" >
@@ -35,37 +35,17 @@
           <widget class="QComboBox" name="gameComboBox" >
            <item>
             <property name="text" >
-             <string>QtChess</string>
+             <string>GameType: 0. Want to Add your Game here?</string>
             </property>
            </item>
            <item>
             <property name="text" >
-             <string>Backgammon</string>
+             <string>GameType: 1. Get In Touch with the developers</string>
             </property>
            </item>
            <item>
             <property name="text" >
-             <string>QGo</string>
-            </property>
-           </item>
-           <item>
-            <property name="text" >
-             <string>Snakes</string>
-            </property>
-           </item>
-           <item>
-            <property name="text" >
-             <string>BigTwo</string>
-            </property>
-           </item>
-           <item>
-            <property name="text" >
-             <string>Poker</string>
-            </property>
-           </item>
-           <item>
-            <property name="text" >
-             <string>Checkers</string>
+             <string>GameType: 2.</string>
             </property>
            </item>
           </widget>
@@ -78,7 +58,7 @@
           <widget class="QLabel" name="label_4" >
            <property name="font" >
             <font>
-             <pointsize>14</pointsize>
+             <pointsize>10</pointsize>
             </font>
            </property>
            <property name="text" >
@@ -110,7 +90,7 @@
           <widget class="QPushButton" name="createButton" >
            <property name="font" >
             <font>
-             <pointsize>14</pointsize>
+             <pointsize>10</pointsize>
             </font>
            </property>
            <property name="text" >
@@ -125,7 +105,7 @@
           <widget class="QCheckBox" name="checkInviteAll" >
            <property name="font" >
             <font>
-             <pointsize>14</pointsize>
+             <pointsize>10</pointsize>
             </font>
            </property>
            <property name="text" >
@@ -184,23 +164,6 @@
           <string>GameID</string>
          </property>
         </column>
-        <item>
-         <property name="text" >
-          <string>QtChess</string>
-         </property>
-         <property name="text" >
-          <string>DrBob</string>
-         </property>
-         <property name="text" >
-          <string>Invites</string>
-         </property>
-         <property name="text" >
-          <string>2</string>
-         </property>
-         <property name="text" >
-          <string/>
-         </property>
-        </item>
        </widget>
        <widget class="QTreeWidget" name="peertreeWidget" >
         <property name="contextMenuPolicy" >
@@ -226,34 +189,6 @@
           <string>Accept</string>
          </property>
         </column>
-        <item>
-         <property name="text" >
-          <string>Pauly</string>
-         </property>
-         <property name="text" >
-          <string>Yes</string>
-         </property>
-         <property name="text" >
-          <string>Yes</string>
-         </property>
-         <property name="text" >
-          <string>Yes</string>
-         </property>
-        </item>
-        <item>
-         <property name="text" >
-          <string>New Item</string>
-         </property>
-         <property name="text" >
-          <string/>
-         </property>
-         <property name="text" >
-          <string/>
-         </property>
-         <property name="text" >
-          <string>Np</string>
-         </property>
-        </item>
        </widget>
       </widget>
      </item>
@@ -263,7 +198,7 @@
         <widget class="QPushButton" name="deleteButton" >
          <property name="font" >
           <font>
-           <pointsize>14</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text" >
@@ -278,7 +213,7 @@
         <widget class="QPushButton" name="inviteButton" >
          <property name="font" >
           <font>
-           <pointsize>14</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text" >
@@ -293,7 +228,7 @@
         <widget class="QPushButton" name="moveUpButton" >
          <property name="font" >
           <font>
-           <pointsize>14</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text" >
@@ -308,7 +243,7 @@
         <widget class="QPushButton" name="moveDownButton" >
          <property name="font" >
           <font>
-           <pointsize>14</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text" >
@@ -323,7 +258,7 @@
         <widget class="QPushButton" name="playButton" >
          <property name="font" >
           <font>
-           <pointsize>14</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text" >

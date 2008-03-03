@@ -73,7 +73,6 @@ public slots:
     /** Shows the config dialog with focus set to the given page. */
     void show(Page page);
   
-  
 
 private slots:
 
@@ -81,6 +80,8 @@ private slots:
     
     void toggleVisibility(QSystemTrayIcon::ActivationReason e);
     void toggleVisibilitycontextmenu();
+
+    void showsmplayer();
 
 protected:
     void closeEvent(QCloseEvent *);

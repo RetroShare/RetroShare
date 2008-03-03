@@ -1517,7 +1517,6 @@ void    p3ConnectMgr::peerStatus(std::string id,
 
 #ifndef P3CONNMGR_NO_TCP_CONNECTIONS
 
-	time_t now = time(NULL);
 	/* add in attempts ... local(TCP), remote(TCP) 
 	 * udp must come from notify 
 	 */

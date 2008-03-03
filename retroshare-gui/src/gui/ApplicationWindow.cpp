@@ -43,6 +43,10 @@
 #include "LinksDialog.h"
 #include "GamesDialog.h"
 #include "PhotoDialog.h"
+#include "channels/channelsDialog.h"
+
+/* for smplayer */
+#include "smplayer.h"
 
 #define FONT        QFont(tr("Arial"), 8)
 
@@ -63,6 +67,8 @@
 #define IMAGE_RSM32             ":/images/rsmessenger32.png"
 #define IMAGE_RSM16             ":/images/rsmessenger16.png"
 #define IMAGE_CLOSE             ":/images/close_normal.png"
+#define IMAGE_SMPLAYER          ":/images/smplayer_icon32.png"
+
 
 /* Keys for UI Preferences */
 #define UI_PREF_PROMPT_ON_QUIT  "UIOptions/ConfirmOnQuit"
@@ -82,7 +88,6 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     this->setWindowIcon(QIcon(QString::fromUtf8(":/images/RetroShare16.png")));
     loadStyleSheet("Default");
 
-
     /* Create the config pages and actions */
     QActionGroup *grp = new QActionGroup(this);
 
@@ -90,37 +95,22 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_TRANSFERS), tr("Links Cloud"), grp));
 
-//    ui.stackPages->add(exampleDialog = new ExampleDialog(ui.stackPages),
-//                      createPageAction(QIcon(IMAGE_MESSAGES), tr("Example Application"), grp));
+    ChannelsDialog *channelsDialog = NULL;
+    ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
+                           createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
 
     GamesDialog *gamesDialog = NULL;
     ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_MESSAGES), tr("Games Launcher"), grp));
-                     
-//    PhotoDialog *photoDialog = NULL;
-//    ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
-//                      createPageAction(QIcon(IMAGE_MESSAGES), tr("Photo View"), grp));
-                     
-                     
-  //ui.stackPages->add(groupsDialog = new GroupsDialog(ui.stackPages),
-  //                   createPageAction(QIcon(), tr("Groups"), grp));
-                                                              
-  //ui.stackPages->add(new StatisticDialog(ui.stackPages),
-  //                   createPageAction(QIcon(IMAGE_STATISTIC), tr("Statistics"), grp));
 
-  //  statusBar()->addWidget(new QLabel(tr("Application Users: 0  Files: 0 ")));
-  //  statusBar()->addPermanentWidget(new QLabel(tr("Down: 0.0  Up: 0.0 ")));
-  //  statusBar()->addPermanentWidget(new QLabel(tr("Connections: 0/45 ")));
-
+                     
    /* Create the toolbar */
    ui.toolBar->addActions(grp->actions());
    ui.toolBar->addSeparator();
    connect(grp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *)));
 
     /* Create and bind the messenger button */
-    //addAction(new QAction(QIcon(IMAGE_RSM32), tr("Messenger"), ui.toolBar), SLOT(showMessengerWindow()));
-
-
+    addAction(new QAction(QIcon(IMAGE_SMPLAYER), tr("SMPlayer"), ui.toolBar), SLOT(showsmplayer()));
 
 }
 
@@ -232,4 +222,15 @@ void ApplicationWindow::loadStyleSheet(const QString &sheetName)
     
 }
 
+/** Shows smplayer */
+void ApplicationWindow::showsmplayer()
+{
+    static SMPlayer * smplayer = 0;
+    
+    if (smplayer == 0) {
+        smplayer = new SMPlayer(QString::null, this);
+    }
+		    
+    smplayer->gui()->show();
+}
 

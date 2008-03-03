@@ -65,7 +65,7 @@
 #define IMAGE_RSM32             ":/images/rsmessenger32.png"
 #define IMAGE_RSM16             ":/images/rsmessenger16.png"
 #define IMAGE_CLOSE             ":/images/close_normal.png"
-#define IMAGE_SMPLAYER			":/images/smplayer_icon32.png"
+#define IMAGE_SMPLAYER		":/images/smplayer_icon32.png"
 
 /* Keys for UI Preferences */
 #define UI_PREF_PROMPT_ON_QUIT  "UIOptions/ConfirmOnQuit"
@@ -75,13 +75,6 @@
  * #define RS_RELEASE_VERSION    1
  ****/
 
-/* TEST (1) * friends/neighbours: okay for 16 hours! */
-/* TEST (2) * all but transfer/sharedfiles: crashed in under 8 hours! */
-/* TEST (3) * friends/neighbour/msg/channels: crashed in under 8 hours */
-/* TEST (4) * friends/neighbour/channels: crashes */
-/* TEST (5) * all but msg/channels:  short term okay*/
-/* TEST (5) * all but channels: stable longterm!  */
- 
 /** Constructor */
 MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     : QMainWindow(parent, flags)
@@ -159,12 +152,13 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(messagesDialog = new MessagesDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
 
-//#ifdef RS_RELEASE_VERSION    
-//    channelsDialog = NULL;
-//#else
-    ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
-//#endif
+#ifdef RS_RELEASE_VERSION    
+    channelsDialog = NULL;
+#else
+    channelsDialog = NULL;
+//    ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
+//                       createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
+#endif
 
     ui.stackPages->add(new HelpDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_ABOUT), tr("About/Help"), grp));
@@ -188,13 +182,14 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     addAction(new QAction(QIcon(IMAGE_RSM32), tr("Messenger"), ui.toolBar), SLOT(showMessengerWindow()));
     
     
-    addAction(new QAction(QIcon(IMAGE_SMPLAYER), tr("SMPlayer"), ui.toolBar), SLOT(showsmplayer()));
+    //addAction(new QAction(QIcon(IMAGE_SMPLAYER), tr("SMPlayer"), ui.toolBar), SLOT(showsmplayer()));
 
 
 
 #ifdef RS_RELEASE_VERSION    
+    addAction(new QAction(QIcon(IMAGE_PEERS), tr("In Development / New Apps"), ui.toolBar), SLOT(showApplWindow()));
 #else
-    addAction(new QAction(QIcon(IMAGE_PEERS), tr("Apps"), ui.toolBar), SLOT(showApplWindow()));
+    addAction(new QAction(QIcon(IMAGE_PEERS), tr("In Development / New Apps"), ui.toolBar), SLOT(showApplWindow()));
 #endif
  
 #ifdef NO_MORE_OPTIONS_OR_SS
@@ -244,7 +239,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     menu->addAction(_bandwidthAct);
 #endif
     menu->addAction(_prefsAct);
-    menu->addAction(_smplayerAct);
+    //menu->addAction(_smplayerAct);
     menu->addSeparator();
     menu->addAction(tr("Minimize"), this, SLOT(showMinimized()));
     menu->addAction(tr("Maximize"), this, SLOT(showMaximized()));
@@ -406,7 +401,7 @@ MainWindow::~MainWindow()
     delete _prefsAct;
     delete _bandwidthGraph;
     delete _messengerwindowAct;
-    delete _smplayerAct;
+    //delete _smplayerAct;
 }
 
 /** Create and bind actions to events. Setup for initial
@@ -424,8 +419,8 @@ void MainWindow::createActions()
     _messengerwindowAct = new QAction(QIcon(IMAGE_RSM16), tr("Open Messenger"), this);
     connect(_messengerwindowAct, SIGNAL(triggered()),this, SLOT(showMessengerWindow()));
     
-    _smplayerAct = new QAction(QIcon(IMAGE_SMPLAYER), tr("SMPlayer"), this);
-    connect(_smplayerAct, SIGNAL(triggered()),this, SLOT(showsmplayer()));
+    //_smplayerAct = new QAction(QIcon(IMAGE_SMPLAYER), tr("SMPlayer"), this);
+    //connect(_smplayerAct, SIGNAL(triggered()),this, SLOT(showsmplayer()));
          
           
     connect(ui.btntoggletoolbox, SIGNAL(toggled(bool)), this, SLOT(showToolboxFrame(bool)));

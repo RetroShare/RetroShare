@@ -3,6 +3,7 @@ CONFIG += staticlib
 DESTDIR = lib
 LANGUAGE	= C++
 
+CONFIG	+= release
 #CONFIG	+= qt warn_on release
 
 QT += network
