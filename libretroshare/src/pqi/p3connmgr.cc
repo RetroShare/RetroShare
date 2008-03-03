@@ -45,16 +45,24 @@ const uint32_t RS_STUN_LIST_MIN =      	100;
 
 const uint32_t MAX_UPNP_INIT = 		60; /* seconds UPnP timeout */
 
-#define CONN_DEBUG 1
-#define P3CONNMGR_NO_TCP_CONNECTIONS 1
-
+/****
+ * #define CONN_DEBUG 1
+ ***/
+/****
+ * #define P3CONNMGR_NO_TCP_CONNECTIONS 1
+ ***/
 /****
  * #define P3CONNMGR_NO_AUTO_CONNECTION 1
  ***/
 
+#define CONN_DEBUG 1
+
 const uint32_t P3CONNMGR_TCP_DEFAULT_DELAY = 10; /* 10 Seconds should be enough! */
-const uint32_t P3CONNMGR_UDP_DHT_DELAY     = 300 + 60; /* 5 minutes FIND + 1 minute for DHT POST */
-const uint32_t P3CONNMGR_UDP_PROXY_DELAY   = 30;  /* 30 seconds */
+const uint32_t P3CONNMGR_UDP_DHT_DELAY     = DHT_NOTIFY_PERIOD + 60; /* + 1 minute for DHT POST */
+const uint32_t P3CONNMGR_UDP_PROXY_DELAY   = 30;  /* 30 seconds (NOT IMPLEMENTED YET!) */
+
+#define MAX_AVAIL_PERIOD (2 * DHT_NOTIFY_PERIOD)  // If we haven't connected in 2 DHT periods.
+#define MIN_RETRY_PERIOD (DHT_CHECK_PERIOD + 120) // just over DHT CHECK_PERIOD
 
 void  printConnectState(peerConnectState &peer);
 
@@ -263,10 +271,19 @@ void p3ConnectMgr::netStartup()
 
 		case RS_NET_MODE_TRY_UPNP:
 		default:
+			/* Force it here (could be default!) */
+			ownState.netMode |= RS_NET_MODE_TRY_UPNP;
 			ownState.netMode |= RS_NET_MODE_UDP;
 			mNetStatus = RS_NET_UPNP_INIT;
 			break;
 	}
+
+	/* add Bootstrap Peers if we've got none from config */
+	if (mStunList.size() < 1)
+	{
+		addBootstrapStunPeers();
+	}
+
 	connMtx.unlock(); /* UNLOCK MUTEX */
 }
 
@@ -279,8 +296,6 @@ void p3ConnectMgr::tick()
 
 }
 
-#define MAX_AVAIL_PERIOD 900   // 15 minutes 
-#define MIN_RETRY_PERIOD 1900  // just over 30 minutes. (DHT retry period)
 
 void    p3ConnectMgr::statusTick()
 {
@@ -338,7 +353,7 @@ void    p3ConnectMgr::statusTick()
 		std::cerr << std::endl;
 #endif
 		/* retry it! */
-		retryConnect(*it2);
+		retryConnectTCP(*it2);
 	}
 
 #endif
@@ -1606,7 +1621,13 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		std::cerr << "p3ConnectMgr::peerStatus() ALREADY IN CONNECT ATTEMPT: ";
 		std::cerr << " id: " << id;
 		std::cerr << std::endl;
+
 		/*  -> it'll automatically use the addresses */
+
+		std::cerr << "p3ConnectMgr::peerStatus() Resulting Peer State:" << std::endl;
+		printConnectState(it->second);
+		std::cerr << std::endl;
+
 		return;
 	}
 
@@ -1627,6 +1648,10 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		std::cerr << " id: " << id;
 		std::cerr << std::endl;
 	}
+
+	std::cerr << "p3ConnectMgr::peerStatus() Resulting Peer State:" << std::endl;
+	printConnectState(it->second);
+	std::cerr << std::endl;
 
 }
 
@@ -2673,4 +2698,23 @@ void  printConnectState(peerConnectState &peer)
 #endif
 	return;
 }
+
+
+
+bool  p3ConnectMgr::addBootstrapStunPeers()
+{
+	std::string id;
+
+	// Two Defaults for The Initial Release.
+	id = "7ad672ea4d4af8560d5230aff3c88b59";
+	mStunList.push_back(RsUtil::HashId(id, false));
+
+	id = "8ad7c08e7778e0289de04843bf57a6ae";
+	mStunList.push_back(RsUtil::HashId(id, false));
+
+}
+
+
+
+
 

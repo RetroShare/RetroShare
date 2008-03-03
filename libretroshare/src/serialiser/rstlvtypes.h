@@ -150,6 +150,7 @@ virtual void	 TlvClear();
 virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
 virtual std::ostream &print(std::ostream &out, uint16_t indent);
+virtual std::ostream &printHex(std::ostream &out, uint16_t indent); /* SPECIAL One */
 
 	std::list<std::string> ids; /* Mandatory */
 };

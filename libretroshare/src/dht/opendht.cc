@@ -30,6 +30,7 @@
 #include <sstream>
 
 #include "util/rsnet.h"
+#include "util/rsprint.h"
 
 const std::string openDHT_Client = "Retroshare V0.4";
 const std::string openDHT_Agent  = "RS-HTTP-V0.4";
@@ -303,7 +304,7 @@ bool OpenDHTClient::publishKey(std::string key, std::string value, uint32_t ttl)
 {
 	/* create request */
 #ifdef	OPENDHT_DEBUG
-	std::cerr << "OpenDHTClient::openDHT_publishKey() key: " << key << " value: " << value;
+	std::cerr << "OpenDHTClient::openDHT_publishKey() key: 0x" << RsUtil::BinToHex(key) << " value: 0x" << RsUtil::BinToHex(value);
 	std::cerr << std::endl;
 #endif
         std::string putmsg = createOpenDHT_put(key, value, ttl, openDHT_Client);
@@ -391,7 +392,7 @@ bool OpenDHTClient::searchKey(std::string key, std::list<std::string> &values)
 		{
 			std::cerr << "openDHT_searchKey() Value:" << value << ":END:" << std::endl;
 			std::string result = convertFromBase64(value);
-			std::cerr << "openDHT_searchKey() Result:" << result << ":END:" << std::endl;
+			std::cerr << "openDHT_searchKey() Result: 0x" << RsUtil::BinToHex(result) << ":END:" << std::endl;
 			values.push_back(result);
 		}
 

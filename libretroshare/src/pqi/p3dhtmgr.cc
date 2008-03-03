@@ -53,21 +53,12 @@
 #define DHT_STATE_FIND_STUN	3
 #define DHT_STATE_ACTIVE	4
 
-/* TIMEOUTS */
-#define DHT_SEARCH_PERIOD	1800 /* PeerKeys: if we haven't found them: 30 min */
-#define DHT_CHECK_PERIOD	1800 /* PeerKeys: re-lookup peer: 30 min */
-#define DHT_PUBLISH_PERIOD	900 /* OwnKey 30 min (15 minutes for now) */
-#define DHT_NOTIFY_PERIOD	300  /* 5 min - Notify Check period */
+/* TIMEOUTS (Key ones in .h) */
 #define DHT_RESTART_PERIOD	300  /* 5 min */
-
-#define DHT_DEFAULT_PERIOD	600  /* Default period if no work to do */
+#define DHT_DEFAULT_PERIOD	300  /* Default period if no work to do */
 #define DHT_MIN_PERIOD 		1    /* to ensure we don't get too many requests */
 
 #define DHT_DEFAULT_WAITTIME	1    /* Std sleep break period */
-
-/* TTLs for DHTs posts */
-#define DHT_TTL_PUBLISH		(DHT_PUBLISH_PERIOD + 120)  // for a little overlap.
-#define DHT_TTL_NOTIFY		(DHT_NOTIFY_PERIOD  + 60)   // for time to find it...
 
 
 void printDhtPeerEntry(dhtPeerEntry *ent, std::ostream &out);
@@ -509,7 +500,7 @@ int p3DhtMgr::checkOwnDHTKeys()
 
 #ifdef DHT_DEBUG
 	        	std::cerr << "PUBLISH: ";
-	        	std::cerr << " hash1: " << peer.hash1;
+	        	std::cerr << " hash1: " << RsUtil::BinToHex(peer.hash1);
 	        	std::cerr << " laddr: " << inet_ntoa(peer.laddr.sin_addr);
 			std::cerr << ":" << ntohs(peer.laddr.sin_port);
 	        	std::cerr << "   raddr: " << inet_ntoa(peer.raddr.sin_addr);
@@ -1071,7 +1062,7 @@ bool p3DhtMgr::dhtPublish(std::string idhash,
 #ifdef DHT_DEBUG
 	std::cerr << "p3DhtMgr::dhtPublish()" << std::endl;
 
-       	std::cerr << "PUBLISHing: idhash: " << idhash;
+       	std::cerr << "PUBLISHing: idhash: " << RsUtil::BinToHex(idhash);
        	std::cerr << " laddr: " << inet_ntoa(laddr.sin_addr);
 	std::cerr << ":" << ntohs(laddr.sin_port);
        	std::cerr << "   raddr: " << inet_ntoa(raddr.sin_addr);
@@ -1108,7 +1099,7 @@ bool p3DhtMgr::dhtPublish(std::string idhash,
 #ifdef DHT_DEBUG
 	std::cerr << "p3DhtMgr::dhtPublish()" << std::endl;
 
-       	std::cerr << "PUBLISH: key: " << idhash;
+       	std::cerr << "PUBLISH: key: " << RsUtil::BinToHex(idhash);
        	std::cerr << " value: " << value;
 	std::cerr << std::endl;
 #endif
@@ -1198,7 +1189,7 @@ bool p3DhtMgr::resultDHT(std::string key, std::string value)
 			/* get the hash */
 			std::string notifyHash = value.substr(loc);
 #ifdef DHT_DEBUG
-			std::cerr << "p3DhtMgr::resultDHT() NOTIFY msg HASH:->" << notifyHash << "<-" << std::endl;
+			std::cerr << "p3DhtMgr::resultDHT() NOTIFY msg HASH:-> 0x" << RsUtil::BinToHex(notifyHash) << "<-" << std::endl;
 #endif
 			/* call out */
 			dhtResultNotify(notifyHash);
@@ -1344,15 +1335,15 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 #endif
 		it->second.lastTS = now;
 
-		/* Do callback all the time */
-		ent = it->second;
-		doCb = true;
-
 		/* update info .... always */
 		it->second.state = DHT_PEER_FOUND;
 		it->second.laddr  = laddr;
 		it->second.raddr  = raddr;
 		it->second.type  = type;
+
+		/* Do callback all the time */
+		ent = it->second;
+		doCb = true;
 
 		if (it->second.notifyPending)
 		{

@@ -27,6 +27,7 @@
 #include "rstlvbase.h"
 #include "rstlvtypes.h"
 #include "rsbaseserial.h"
+#include "util/rsprint.h"
 #include <ostream>
 #include <sstream>
 #include <iomanip>
@@ -314,6 +315,25 @@ std::ostream &RsTlvPeerIdSet::print(std::ostream &out, uint16_t indent)
 	{
 		printIndent(out, int_Indent);
 		out << "id:" << *it;
+		out << std::endl;
+	}
+
+	printEnd(out, "RsTlvPeerIdSet", indent);
+	return out;
+
+}
+
+/// print to screen RsTlvPeerIdSet contents
+std::ostream &RsTlvPeerIdSet::printHex(std::ostream &out, uint16_t indent)
+{
+	printBase(out, "RsTlvPeerIdSet", indent);
+	uint16_t int_Indent = indent + 2;
+
+	std::list<std::string>::iterator it;
+	for(it = ids.begin(); it != ids.end() ; ++it)
+	{
+		printIndent(out, int_Indent);
+		out << "id: 0x" << RsUtil::BinToHex(*it);
 		out << std::endl;
 	}
 

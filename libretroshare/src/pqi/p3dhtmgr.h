@@ -57,6 +57,21 @@
 #define DHT_MODE_NOTIFY         2
 
 
+
+/* TIMEOUTS: Reference Values are set here... */
+
+#define DHT_SEARCH_PERIOD       1800 /* PeerKeys: if we haven't found them: 30 min */
+#define DHT_CHECK_PERIOD        1800 /* PeerKeys: re-lookup peer: 30 min */
+#define DHT_PUBLISH_PERIOD      1800 /* OwnKey: 30 min */
+#define DHT_NOTIFY_PERIOD       300  /* 5 min - Notify Check period */
+
+/* TTLs for DHTs posts */
+#define DHT_TTL_PUBLISH         (DHT_PUBLISH_PERIOD + 120)  // for a little overlap.
+#define DHT_TTL_NOTIFY          (DHT_NOTIFY_PERIOD  + 60)   // for time to find it...
+
+
+
+
 class dhtPeerEntry
 {
         public:

@@ -41,7 +41,7 @@
 #define MAX_SEG 		1500
 #define TCP_MAX_SEQ 		UINT_MAX
 #define TCP_MAX_WIN		65500
-#define TCP_ALIVE_TIMEOUT	20      /* 20 sec */
+#define TCP_ALIVE_TIMEOUT	15      /* 15 sec ... < 20 sec UDP state limit on some firewalls */
 #define TCP_RETRANS_TIMEOUT	1	/* 1 sec (Initial value) */
 #define kNoPktTimeout		60	/* 1 min */
 

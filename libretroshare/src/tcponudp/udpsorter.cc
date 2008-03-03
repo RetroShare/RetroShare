@@ -25,6 +25,7 @@
 
 #include "udpsorter.h"
 #include "util/rsnet.h"
+#include "util/rsprint.h"
 
 #include <iostream>
 #include <sstream>
@@ -222,7 +223,8 @@ bool UdpSorter::locked_handleStunPkt(void *data, int size, struct sockaddr_in &f
 	if (size == 20) /* request */
 	{
 #ifdef DEBUG_UDP_SORTER
-		std::cerr << "UdpSorter::handleStunPkt() got Request";
+		std::cerr << "UdpSorter::handleStunPkt() got Request from: ";
+		std::cerr << inet_ntoa(from.sin_addr) << ":" << ntohs(from.sin_port);
 		std::cerr << std::endl;
 #endif
 
@@ -752,8 +754,10 @@ bool    UdpSorter::locked_printStunList()
 	std::list<TouStunPeer>::iterator it;
 	for(it = mStunList.begin(); it != mStunList.end(); it++)
 	{
-		out << "id:" << it->id << " addr: " << inet_ntoa(it->remote.sin_addr);
+		out << "id:" << RsUtil::BinToHex(it->id) << " addr: " << inet_ntoa(it->remote.sin_addr);
 		out << ":" << htons(it->remote.sin_port);
+		out << " eaddr: " << inet_ntoa(it->eaddr.sin_addr);
+		out << ":" << htons(it->eaddr.sin_port);
 		out << " failCount: " << it->failCount;
 		out << " lastSend: " << now - it->lastsend;
 		out << std::endl;

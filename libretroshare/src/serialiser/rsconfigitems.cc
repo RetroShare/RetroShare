@@ -743,7 +743,7 @@ std::ostream &RsPeerStunItem::print(std::ostream &out, uint16_t indent)
 	printRsItemBase(out, "RsPeerStunItem", indent);
 	uint16_t int_Indent = indent + 2;
 
-	stunList.print(out, int_Indent);
+	stunList.printHex(out, int_Indent);
 
         printRsItemEnd(out, "RsPeerStunItem", indent);
 	return out;

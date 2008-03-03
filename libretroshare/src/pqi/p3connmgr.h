@@ -248,6 +248,7 @@ void 	udpStunPeer(std::string id, struct sockaddr_in &addr);
 void 	stunInit();
 bool 	stunCheck();
 void 	stunCollect(std::string id, struct sockaddr_in addr, uint32_t flags);
+bool    addBootstrapStunPeers();
 
 	/* monitor control */
 void 	tickMonitors();
