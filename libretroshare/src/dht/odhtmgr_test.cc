@@ -27,17 +27,18 @@
 
 /***** Test for the new DHT system *****/
 
+#include "pqi/p3dhtmgr.h"
+#include "pqi/pqimonitor.h"
+#include "dht/opendhtmgr.h"
 
 #include "util/rsnet.h"
 #include "util/rsthreads.h"
 #include "util/rsprint.h"
 
-#include "pqi/p3dhtmgr.h"
-#include "pqi/pqimonitor.h"
-#include "dht/opendhtmgr.h"
 
 #include <iostream>
 #include <sstream>
+#include <unistd.h>
 
 void usage(char *name)
 {
@@ -87,7 +88,14 @@ int main(int argc, char **argv)
 	dhtTester.start();
 
 	/* wait for a little before switching on */
-	sleep(1);
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS
+        sleep(1);
+#else
+        Sleep(1000);
+#endif
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+
 
 	std::cerr << "Switching on DhtTester()" << std::endl;
 	dhtTester.setDhtOn(true);
@@ -104,7 +112,13 @@ int main(int argc, char **argv)
 	while(1)
 	{
 		std::cerr << "Main waiting..." << std::endl;
-		sleep(3);
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS
+	        sleep(3);
+#else
+		Sleep(3000);
+#endif
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 		if (!haveOwnAddress)
 		{

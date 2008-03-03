@@ -28,6 +28,11 @@
 #ifndef TOU_UNIVERSAL_NETWORK_HEADER
 #define TOU_UNIVERSAL_NETWORK_HEADER
 
+/* Some Types need to be defined before the interface can be declared
+ */
+
+#include "util/rsnet.h"
+
 /* C Interface */
 #ifdef  __cplusplus
 extern "C" {
@@ -57,32 +62,6 @@ extern "C" {
  * int tounet_init();  		required for windows 
  * int tounet_checkTTL();  	a check if we can modify the ttl 
  */
-
-/* Some Types need to be defined before the interface can be declared
- */
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS
-
-#include <sys/types.h>
-#include <sys/socket.h>
-
-#include <netinet/in.h>
-#include <arpa/inet.h>
-
-#include <fcntl.h>
-#include <errno.h>
-
-#else
-
-#include <winsock2.h>
-#include <ws2tcpip.h>
-
-#include <stdio.h> /* for ssize_t */
-typedef int socklen_t;
-typedef unsigned long in_addr_t;
-
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 
 /* the universal interface */

@@ -31,9 +31,11 @@ RSOBJ = $(BASE_OBJ) $(LOOP_OBJ) \
 	$(UDP_OBJ) \
 	$(GRP_OBJ) 
 
-TESTOBJ  = net_test.o dht_test.o conn_test.o
+TESTOBJ  = net_test.o dht_test.o 
+#conn_test.o
 
-TESTS  = net_test dht_test conn_test
+TESTS  = net_test dht_test 
+#conn_test
 
 
 all: librs tests

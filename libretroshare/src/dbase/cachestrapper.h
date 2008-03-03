@@ -24,11 +24,14 @@
 #ifndef MRK_CACHE_STRAPPER_H
 #define MRK_CACHE_STRAPPER_H
 
+#include "pqi/p3cfgmgr.h"
+#include "pqi/pqimonitor.h"
+#include "util/rsthreads.h"
+
 #include <list>
 #include <map>
 #include <string>
 #include <iostream>
-#include "util/rsthreads.h"
 
 /******************* CacheStrapper and Related Classes *******************
  * A generic Cache Update system.
@@ -268,8 +271,6 @@ class CachePair
 
 bool operator<(const CachePair &a, const CachePair &b);
 
-#include "pqi/pqimonitor.h"
-#include "pqi/p3cfgmgr.h"
 
 class p3AuthMgr;
 

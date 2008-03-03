@@ -26,6 +26,12 @@
 #include "util/rsnet.h"
 #include <string.h>
 
+/* enforce LITTLE_ENDIAN on Windows */
+#ifdef WINDOWS_SYS
+	#define BYTE_ORDER  1234
+	#define LITTLE_ENDIAN 1234
+	#define BIG_ENDIAN  4321
+#endif
 
 uint64_t ntohll(uint64_t x)
 {

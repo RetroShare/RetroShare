@@ -62,6 +62,8 @@ extern "C" void* doDhtPublish(void* p)
 
 	delete data;
 	pthread_exit(NULL);
+
+	return NULL;
 }
 
 
@@ -71,6 +73,8 @@ extern "C" void* doDhtSearch(void* p)
   	if ((!data) || (!data->mgr) || (!data->client))
 	{
 		pthread_exit(NULL);
+
+		return NULL;
 	}
 
 	/* search it! */
@@ -88,6 +92,8 @@ extern "C" void* doDhtSearch(void* p)
 
 	delete data;
 	pthread_exit(NULL);
+
+	return NULL;
 }
 
 

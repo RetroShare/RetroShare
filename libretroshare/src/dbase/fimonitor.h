@@ -24,8 +24,8 @@
 #ifndef FILE_INDEX_MONITOR_H
 #define FILE_INDEX_MONITOR_H
 
-#include "dbase/findex.h"
 #include "dbase/cachestrapper.h"
+#include "dbase/findex.h"
 #include "util/rsthreads.h"
 
 /******************************************************************************************

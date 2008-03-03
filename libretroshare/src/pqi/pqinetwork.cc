@@ -354,7 +354,7 @@ in_addr_t inet_netof(struct in_addr addr)
 
 // This returns in Host Byte Order. (as the man page says)
 // Again, to be consistent with Linux.
-in_addr_t inet_network(char *inet_name)
+in_addr_t inet_network(const char *inet_name)
 {
 	struct in_addr addr;
 	if (inet_aton(inet_name, &addr))

@@ -29,10 +29,10 @@
 
 #include <string>
 #include <iostream>
-#include <netinet/in.h>
 
 #include "serialiser/rstlvbase.h"
 #include "util/utest.h"
+#include "util/rsnet.h"
 
 INITTEST();
 

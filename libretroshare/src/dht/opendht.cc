@@ -29,15 +29,17 @@
 #include <fstream>
 #include <sstream>
 
+#include <sys/time.h>
+#include <time.h>
 #include "util/rsnet.h"
 #include "util/rsprint.h"
 
 const std::string openDHT_Client = "Retroshare V0.4";
 const std::string openDHT_Agent  = "RS-HTTP-V0.4";
 
-#define MAX_DHT_PEER_FAILS 	5
-#define MAX_DHT_TOTAL_FAILS 	5
-#define MAX_DHT_ATTEMPTS	5
+#define MAX_DHT_PEER_FAILS 	2  /* then discard */
+#define MAX_DHT_TOTAL_FAILS 	10 /* in a row -> think we're not connected! */
+#define MAX_DHT_ATTEMPTS	10 /* attempts per search/publish */
 #define MIN_DHT_SERVERS		5
 
 #define OPENDHT_DEBUG		1
@@ -173,6 +175,16 @@ bool OpenDHTClient::getServer(std::string &host, uint16_t &port, struct sockaddr
 {
 	/* randomly choose one */
 	dhtMutex.lock();   /****  LOCK  ****/
+
+#ifndef WINDOWS_SYS
+#else
+
+	/* WINDOWS don't randomise properly so we'll do it ourselves...
+         */
+
+        uint32_t randomize = timeGetTime();
+        srand(randomize);
+#endif
 
 	uint32_t len = mServers.size();
 	uint32_t rnd = len * (rand() / (RAND_MAX + 1.0));
@@ -334,6 +346,11 @@ bool OpenDHTClient::publishKey(std::string key, std::string value, uint32_t ttl)
 
 bool OpenDHTClient::searchKey(std::string key, std::list<std::string> &values)
 {
+#ifdef	OPENDHT_DEBUG
+	std::cerr << "OpenDHTClient::openDHT_searchKey() key: 0x" << RsUtil::BinToHex(key);
+	std::cerr << std::endl;
+#endif
+
 	/* create request */
         std::string getmsg = createOpenDHT_get(key, 1024, openDHT_Client);
 	std::string response;
@@ -510,7 +527,13 @@ bool OpenDHTClient::openDHT_sendMessage(std::string msg, std::string &response)
 	std::cerr << std::endl;
 
 	/* now wait for the response */
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS
 	sleep(1);
+#else
+	Sleep(1000);
+#endif
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	int recvsize = 51200; /* 50kb */
 	char *inbuf = (char *) malloc(recvsize);
@@ -520,7 +543,6 @@ bool OpenDHTClient::openDHT_sendMessage(std::string msg, std::string &response)
 		std::cerr << "OpenDHTClient::openDHT_sendMessage()";
 		std::cerr << " Recvd Chunk:" << size;
 		std::cerr << std::endl;
-
 		idx += size;
 	}
 
@@ -531,12 +553,16 @@ bool OpenDHTClient::openDHT_sendMessage(std::string msg, std::string &response)
 	free(inbuf);
 
 	/* print it out */
+	std::cerr << "HTTP What We Sent ***************" << std::endl;
+	std::cerr << putheader;
+	std::cerr << msg;
+	std::cerr << std::endl;
 	std::cerr << "HTTP response *******************" << std::endl;
 	std::cerr << response;
 	std::cerr << std::endl;
 	std::cerr << "HTTP response *******************" << std::endl;
 
-	close(sockfd);
+	unix_close(sockfd);
 
 	return true;
 }
@@ -607,7 +633,13 @@ bool OpenDHTClient::openDHT_getDHTList(std::string &response)
 	std::cerr << std::endl;
 
 	/* now wait for the response */
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS
 	sleep(1);
+#else
+	Sleep(1000);
+#endif
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	int recvsize = 51200; /* 50kb */
 	char *inbuf = (char *) malloc(recvsize);
@@ -617,7 +649,6 @@ bool OpenDHTClient::openDHT_getDHTList(std::string &response)
 		std::cerr << "OpenDHTClient::openDHT_getDHTList()";
 		std::cerr << " Recvd Chunk:" << size;
 		std::cerr << std::endl;
-
 		idx += size;
 	}
 
@@ -633,7 +664,7 @@ bool OpenDHTClient::openDHT_getDHTList(std::string &response)
 	std::cerr << std::endl;
 	std::cerr << "HTTP response *******************" << std::endl;
 
-	close(sockfd);
+	unix_close(sockfd);
 
 	return true;
 }

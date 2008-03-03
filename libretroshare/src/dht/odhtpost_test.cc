@@ -48,7 +48,13 @@ int main()
 
 	dht.publishKey(key, value, ttl);
 
-	sleep(10);
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS
+        sleep(10);
+#else
+        Sleep(10000);
+#endif
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	std::list<std::string> values;
 	dht.searchKey(key, values);

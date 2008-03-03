@@ -10,8 +10,8 @@ extern "C" {
 #endif
 /* This stuff is actually C */
 
-#include "upnp/upnputil.h"
 #include "upnp/upnphandler.h"
+#include "upnp/upnputil.h"
 
 class uPnPConfigData
 {

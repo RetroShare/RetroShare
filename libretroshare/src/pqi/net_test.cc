@@ -29,8 +29,8 @@
  *
  */
 
-#include "util/rsnet.h"
 #include "pqi/pqinetwork.h"
+#include "util/rsnet.h"
 #include <iostream>
 #include <sstream>
 

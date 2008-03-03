@@ -15,12 +15,12 @@ RSOBJ += tcppacket.o tcpstream.o tou.o $(BIOOBJ)
 EXECS = librs  udpsock_test udpsort_test udp_server 
 #test_tou pair_tou reset_tou internal_tou largefile_tou 
 
-TESTOBJ  = udpsock_test.o udpsort_test.o udp_server.o test_tou.o
-TESTOBJ += pair_tou.o reset_tou.o largefile_tou.o
+#TESTOBJ  = udpsock_test.o udpsort_test.o udp_server.o test_tou.o
+#TESTOBJ += pair_tou.o reset_tou.o largefile_tou.o
 #internal_tou.o 
 
-TESTS  = udpsock_test udpsort_test udp_server test_tou 
-TESTS += pair_tou reset_tou largefile_tou
+#TESTS  = udpsock_test udpsort_test udp_server test_tou 
+#TESTS += pair_tou reset_tou largefile_tou
 #internal_tou 
 
 all: librs tests

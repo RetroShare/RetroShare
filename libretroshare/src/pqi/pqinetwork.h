@@ -28,6 +28,7 @@
 #ifndef MRK_PQI_NETWORKING_HEADER
 #define MRK_PQI_NETWORKING_HEADER
 
+
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
 
@@ -47,20 +48,21 @@
 /* This defines the platform to be WinXP or later...
  * and is needed for getaddrinfo.... (not used anymore)
  *
-#define _WIN32_WINNT 0x0501
  */
 
+#define _WIN32_WINNT 0x0501
 
+#include "util/rsnet.h" /* more generic networking header */
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
 typedef int socklen_t;
-typedef unsigned long in_addr_t;
+//typedef unsigned long in_addr_t;
 
 // Some Network functions that are missing from windows.
 
 in_addr_t inet_netof(struct in_addr addr);
-in_addr_t inet_network(char *inet_name);
+in_addr_t inet_network(const char *inet_name);
 int inet_aton(const char *name, struct in_addr *addr);
 
 extern int errno; /* Define extern errno, to duplicate unix behaviour */

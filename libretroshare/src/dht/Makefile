@@ -17,16 +17,16 @@ all: librs tests
 
 #dhttest is OLD
 dhttest: $(OBJ) dhttest.o
-	$(CC) $(CFLAGS) -o dhttest $(OBJ) dhttest.o $(RSLIBS)
+	$(CC) $(CFLAGS) -o dhttest $(OBJ) dhttest.o $(LIBS)
 
 odhtpost_test: $(OBJ) odhtpost_test.o
-	$(CC) $(CFLAGS) -o odhtpost_test $(OBJ) odhtpost_test.o $(RSLIBS)
+	$(CC) $(CFLAGS) -o odhtpost_test $(OBJ) odhtpost_test.o $(LIBS)
 
 odhtstr_test: $(OBJ) odhtstr_test.o
-	$(CC) $(CFLAGS) -o odhtstr_test $(OBJ) odhtstr_test.o $(RSLIBS)
+	$(CC) $(CFLAGS) -o odhtstr_test $(OBJ) odhtstr_test.o $(LIBS)
 
 odhtmgr_test: $(OBJ) odhtmgr_test.o
-	$(CC) $(CFLAGS) -o odhtmgr_test $(OBJ) odhtmgr_test.o $(RSLIBS)
+	$(CC) $(CFLAGS) -o odhtmgr_test $(OBJ) odhtmgr_test.o $(LIBS)
 
 # Extra Rule...
 .c.o:

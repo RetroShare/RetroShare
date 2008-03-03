@@ -34,7 +34,12 @@ LIBRS = $(LIBDIR)/libretroshare.a
 
 # Unix: Linux/Cygwin
 INCLUDE = -I $(RS_TOP_DIR) -I$(KADC_DIR)
-CFLAGS = -Wall -g $(INCLUDE) 
+
+ifdef PQI_DEBUG
+	CFLAGS = -Wall -g $(INCLUDE) 
+else
+	CFLAGS = -Wall -O2 $(INCLUDE) 
+endif
 
 ifdef PQI_USE_XPGP
 	INCLUDE += -I $(SSL_DIR)/include 
@@ -60,6 +65,16 @@ endif
 RSCFLAGS = -Wall -g $(INCLUDE) 
 
 #########################################################################
+# OS Compile Options
+#########################################################################
+
+# For the SSL BIO compilation. (Copied from OpenSSL compilation flags)
+BIOCC  = gcc
+
+# Cygwin - ?same? as Linux flags
+BIOCFLAGS =  -I $(SSL_DIR)/include -DOPENSSL_THREADS -D_REENTRANT -DDSO_DLFCN -DHAVE_DLFCN_H -DOPENSSL_NO_KRB5 -DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -m486 -Wall -DSHA1_ASM -DMD5_ASM -DRMD160_ASM
+
+#########################################################################
 # OS specific Linking.
 #########################################################################
 
@@ -69,7 +84,7 @@ WININC += -mno-cygwin -mwindows -fno-exceptions
 WININC += -DWINDOWS_SYS  
 
 WINLIB = -lws2_32 -luuid -lole32 -liphlpapi 
-WINLIB += -lcrypt32
+WINLIB += -lcrypt32 -lwinmm
 
 CFLAGS += -I$(PTHREADS_DIR) $(WININC)
 CFLAGS += -I$(ZLIB_DIR)
@@ -83,12 +98,8 @@ LIBS +=  -lssl -lcrypto
 LIBS +=  -L$(KADC_DIR) -lKadC 
 LIBS +=  -L$(UPNPC_DIR) -lminiupnpc
 LIBS += -L$(ZLIB_DIR) -lz 
-
-RSLIBS += $(LIBS)
-RSLIBS += -L$(PTHREADS_DIR) -lpthreadGC2d 
-
-RSLIBS += $(WINLIB)
-LIBS += $(WINLIB)
+LIBS += -L$(PTHREADS_DIR) -lpthreadGC2d 
+LIBS += $(WINLIB) 
 
 RSCFLAGS += $(WININC)
 

@@ -20,7 +20,7 @@ TESTS  = upnptest
 all: librs tests
 
 upnptest: $(OBJ) upnptest.o
-	$(CC) $(CFLAGS) -o upnptest $(OBJ) upnptest.o $(RSLIBS)
+	$(CC) $(CFLAGS) -o upnptest $(OBJ) upnptest.o $(LIBS)
 
 ###############################################################
 include $(RS_TOP_DIR)/scripts/rules.mk

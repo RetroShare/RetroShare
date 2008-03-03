@@ -138,9 +138,13 @@ bool SetRedirectAndTest(struct UPNPUrls * urls,
 		printf("ExternalIPAddress = %s\n", externalIPAddress);
 	else
 		printf("GetExternalIPAddress failed.\n");
-	
+
+// Unix at the moment!	
+//	r = UPNP_AddPortMapping(urls->controlURL, data->servicetype,
+//	                        eport, iport, iaddr, 0, leaseDuration, proto);
+
 	r = UPNP_AddPortMapping(urls->controlURL, data->servicetype,
-	                        eport, iport, iaddr, 0, leaseDuration, proto);
+	                        eport, iport, iaddr, 0, proto);
 	if(r==0)
 	{
 		printf("AddPortMapping(%s, %s, %s) failed\n", eport, iport, iaddr);

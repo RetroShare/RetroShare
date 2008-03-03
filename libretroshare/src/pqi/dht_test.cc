@@ -3,6 +3,8 @@
 /***** Test for the new DHT system *****/
 
 
+#include "pqi/pqinetwork.h"
+
 #include "util/rsnet.h"
 #include "util/rsthreads.h"
 #include "util/rsprint.h"
@@ -218,7 +220,13 @@ int main()
 	dhtTester.start();
 
 	/* wait for a little before switching on */
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS
 	sleep(1);
+#else
+	Sleep(1000);
+#endif
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	std::cerr << "Switching on DhtTester()" << std::endl;
 	dhtTester.setDhtOn(true);
@@ -234,7 +242,14 @@ int main()
 	while(1)
 	{
 		std::cerr << "Main waiting..." << std::endl;
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS
 		sleep(3);
+#else
+		Sleep(3000);
+#endif
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+
 
 		/* handle async search */
 		frmMtx.lock();   /*   LOCK TEST FRAMEWORK MUTEX */

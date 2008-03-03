@@ -457,8 +457,14 @@ void p3DhtMgr::run()
 				break; /* speed up config modifications */
 			}
 
-
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS
 			sleep(waittime);
+#else
+			Sleep(1000 * waittime); 
+#endif
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+
 		}
 	}
 }
@@ -1147,6 +1153,10 @@ bool p3DhtMgr::resultDHT(std::string key, std::string value)
 	 * RSDHT:02: HASH 			(connect request)
 	 *
 	 */
+
+#ifdef DHT_DEBUG
+	std::cerr << "p3DhtMgr::resultDHT() key: " << key << " value: " << value << std::endl;
+#endif
 
 	/* variables for dhtResult() call */
 	struct sockaddr_in laddr;

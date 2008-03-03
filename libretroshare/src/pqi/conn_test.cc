@@ -302,7 +302,13 @@ int main()
 	dhtTester.start();
 
 	/* wait for a little before switching on */
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS
 	sleep(1);
+#else
+	Sleep(1000);
+#endif
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	std::cerr << "Switching on DhtTester()" << std::endl;
 	dhtTester.setDhtOn(true);
@@ -310,7 +316,13 @@ int main()
 	/* wait loop */
 	while(1)
 	{
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS
 		sleep(1);
+#else
+		Sleep(1000);
+#endif
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 		connMgr.tick();
 		pqipg->tick();

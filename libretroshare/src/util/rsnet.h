@@ -45,8 +45,10 @@
 #include <ws2tcpip.h>
 
 #include <stdio.h> /* for ssize_t */
-typedef uint32_t socklen_t;
+//typedef uint32_t socklen_t;
 typedef uint32_t in_addr_t;
+
+int inet_aton(const char *name, struct in_addr *addr);
 
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/

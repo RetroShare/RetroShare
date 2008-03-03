@@ -24,7 +24,6 @@
  *
  */
 
-#include <arpa/inet.h>
 
 #include "serialiser/rsbaseserial.h"
 #include "util/rsnet.h"
