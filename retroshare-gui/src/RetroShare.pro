@@ -62,6 +62,7 @@ HEADERS +=  rshare.h \
             gui/GamesDialog.h \
             gui/PhotoDialog.h \
             gui/LinksDialog.h \
+            gui/NetworkView.h \
             gui/MessengerWindow.h \
             gui/PeersDialog.h \
             gui/SearchDialog.h \
@@ -150,6 +151,7 @@ FORMS +=    gui/ChatDialog.ui \
             gui/GamesDialog.ui \
             gui/PhotoDialog.ui \
             gui/LinksDialog.ui \
+            gui/NetworkView.ui \
             gui/MessengerWindow.ui \
             gui/PeersDialog.ui \
             gui/SearchDialog.ui \
@@ -212,6 +214,7 @@ SOURCES += main.cpp \
             gui/GamesDialog.cpp \
             gui/PhotoDialog.cpp \
             gui/LinksDialog.cpp \
+            gui/NetworkView.cpp \
             gui/MessengerWindow.cpp \
             gui/PeersDialog.cpp \
             gui/SearchDialog.cpp \

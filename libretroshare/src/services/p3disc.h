@@ -88,6 +88,9 @@ virtual void statusChange(const std::list<pqipeer> &plist);
 
 int	tick();
 
+	/* GUI requires access */
+bool 	potentialproxies(std::string id, std::list<std::string> &proxyIds);
+
 	private:
 
 
@@ -107,7 +110,6 @@ int     addDiscoveryData(std::string fromId, std::string aboutId,
 		struct sockaddr_in laddr, struct sockaddr_in raddr, 
 		uint32_t flags, time_t ts);
 
-bool 	potentialproxies(std::string id, std::list<std::string> proxyIds);
 int 	idServers();
 
 

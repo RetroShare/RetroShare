@@ -656,7 +656,7 @@ int	p3disc::addDiscoveryData(std::string fromId, std::string aboutId,
 /*			   Extracting Network Graph Details			     */
 /*************************************************************************************/
 
-bool p3disc::potentialproxies(std::string id, std::list<std::string> proxyIds)
+bool p3disc::potentialproxies(std::string id, std::list<std::string> &proxyIds)
 {
 	/* find id -> and extract the neighbour_of ids */
 

@@ -47,6 +47,7 @@
 #include "services/p3chatservice.h"
 #include "services/p3gamelauncher.h"
 #include "services/p3ranking.h"
+#include "services/p3photoservice.h"
 
 #include <list>
 #include <string>
@@ -55,10 +56,13 @@
 // for blocking signals
 #include <signal.h>
 
+/* Implemented Rs Interfaces */
 #include "rsserver/p3face.h"
 #include "rsserver/p3peers.h"
 #include "rsserver/p3rank.h"
 #include "rsserver/p3msgs.h"
+#include "rsserver/p3discovery.h"
+#include "rsserver/p3photo.h"
 #include "rsiface/rsgame.h"
 
 /**************** PQI_USE_XPGP ******************/
@@ -522,6 +526,13 @@ int RsServer::StartupRetroShare(RsInit *config)
         CachePair cp(mRanking, mRanking, CacheId(RS_SERVICE_TYPE_RANK, 0));
 	mCacheStrapper -> addCachePair(cp);
 
+	p3PhotoService *photoService = new p3PhotoService(RS_SERVICE_TYPE_PHOTO, 
+			mCacheStrapper, mCacheTransfer, 
+			localcachedir, remotecachedir);
+
+        CachePair cp2(photoService, photoService, CacheId(RS_SERVICE_TYPE_PHOTO, 0));
+	mCacheStrapper -> addCachePair(cp2);
+
 	/**************************************************************************/
 
 	mConnMgr->setDhtMgr(mDhtMgr);
@@ -661,6 +672,8 @@ int RsServer::StartupRetroShare(RsInit *config)
 	rsGameLauncher = gameLauncher;
 	rsRanks = new p3Rank(mRanking);
 	rsMsgs  = new p3Msgs(mAuthMgr, msgSrv, chatSrv);
+	rsDisc  = new p3Discovery(ad);
+	rsPhoto = new p3Photo(photoService);
 
 	/* put a welcome message in! */
 	if (config->firsttime_run)

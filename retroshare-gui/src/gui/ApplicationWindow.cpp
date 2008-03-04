@@ -42,6 +42,7 @@
 
 #include "LinksDialog.h"
 #include "GamesDialog.h"
+#include "NetworkView.h"
 #include "PhotoDialog.h"
 #include "channels/channelsDialog.h"
 
@@ -103,7 +104,21 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_MESSAGES), tr("Games Launcher"), grp));
 
+    NetworkView *networkView = NULL;
+    ui.stackPages->add(networkView = new NetworkView(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_NETWORK), tr("Network View"), grp));
                      
+    PhotoDialog *photoDialog = NULL;
+    ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_CHANNELS), tr("Photo View"), grp));
+                     
+                     
+  //ui.stackPages->add(groupsDialog = new GroupsDialog(ui.stackPages),
+  //                   createPageAction(QIcon(), tr("Groups"), grp));
+                                                              
+  //ui.stackPages->add(new StatisticDialog(ui.stackPages),
+  //                   createPageAction(QIcon(IMAGE_STATISTIC), tr("Statistics"), grp));
+
    /* Create the toolbar */
    ui.toolBar->addActions(grp->actions());
    ui.toolBar->addSeparator();

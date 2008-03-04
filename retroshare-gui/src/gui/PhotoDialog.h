@@ -27,6 +27,8 @@
 #include "mainpage.h"
 #include "ui_PhotoDialog.h"
 
+#include <map>
+
 
 class PhotoDialog : public MainPage 
 {
@@ -38,15 +40,26 @@ public:
   /** Default Destructor */
 
   void  insertExample();
+  void insertShowLists();
 
 private slots:
   /** Create the context popup menu and it's submenus */
-  void peertreeWidgetCostumPopupMenu( QPoint point );
+  void photoTreeWidgetCustomPopupMenu( QPoint point );
+  void peerTreeWidgetCustomPopupMenu( QPoint point );
 
-  void voteup();
-  void votedown();
-  
+  void updatePhotoList();
+
+
+  void removePhoto();
+  void updatePhoto();
+  void addPhotos();
+
 private:
+
+  void addShows(std::string peerid);
+
+  void addPhoto(QString filename);
+  void showPhoto(QString filename);
 
   /* Worker Functions */
   /* (1) Update Display */
@@ -54,11 +67,13 @@ private:
   /* (2) Utility Fns */
   QTreeWidgetItem *getCurrentLine();
 
+  std::map<QString, QPixmap *> photoMap;
+
+  std::string mCurrentPID;
+  std::string mCurrentSID;
+
   /** Define the popup menus for the Context menu */
   QMenu* contextMnu;
-    /** Defines the actions for the context menu */
-  QAction* voteupAct;
-  QAction* votedownAct;
 
   QTreeWidget *exampletreeWidget;
 

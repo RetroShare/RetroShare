@@ -8,7 +8,8 @@ include $(RS_TOP_DIR)/scripts/config.mk
 ###############################################################
 
 RSOBJ  = p3service.o p3chatservice.o p3msgservice.o \
-	p3gamelauncher.o p3ranking.o p3disc.o 
+	p3gamelauncher.o p3ranking.o p3disc.o \
+	p3photoservice.o
 
 #TESTOBJ  = 
 

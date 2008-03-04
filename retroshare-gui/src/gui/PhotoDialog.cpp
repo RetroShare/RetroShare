@@ -23,9 +23,9 @@
 #include <QFileInfo>
 #include "common/vmessagebox.h"
 
-#include "rshare.h"
 #include "PhotoDialog.h"
-#include "rsiface/rsiface.h"
+#include "rsiface/rspeers.h"
+#include "rsiface/rsphoto.h"
 
 #include <iostream>
 #include <sstream>
@@ -48,6 +48,23 @@
 #define IMAGE_ONLINE             ":/images/donline.png"
 #define IMAGE_OFFLINE            ":/images/dhidden.png"
 
+#define PHOTO_ICON_SIZE		90
+
+
+#define PHOTO_PEER_COL_NAME 	0
+#define PHOTO_PEER_COL_SHOW 	1
+#define PHOTO_PEER_COL_PHOTO 	2
+#define PHOTO_PEER_COL_PID 	3
+#define PHOTO_PEER_COL_SID 	4
+#define PHOTO_PEER_COL_PHOTOID 	5
+
+
+#define PHOTO_LIST_COL_PHOTO	0
+#define PHOTO_LIST_COL_COMMENT  1
+#define PHOTO_LIST_COL_PHOTOID  2
+
+
+
 /** Constructor */
 PhotoDialog::PhotoDialog(QWidget *parent)
 : MainPage(parent)
@@ -55,10 +72,21 @@ PhotoDialog::PhotoDialog(QWidget *parent)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
-  connect( ui.photoTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( photoTreeWidgetCostumPopupMenu( QPoint ) ) );
+  connect( ui.peerTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( peerTreeWidgetCustomPopupMenu( QPoint ) ) );
+  connect( ui.photoTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( photoTreeWidgetCustomPopupMenu( QPoint ) ) );
+
+  connect( ui.peerTreeWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem * , QTreeWidgetItem * ) ), this, SLOT( updatePhotoList( ) ) );
+
+  //connect( ui.photoTreeWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem * , QTreeWidgetItem * ) ), this, SLOT( displayPhoto( ) ) );
+  //connect( ui.addPhotoButton, SIGNAL( clicked( ) ), this, SLOT( addPhotos( ) ) );
+
+
 
   /* hide the Tree +/- */
   ui.photoTreeWidget -> setRootIsDecorated( false );
+
+  QSize iconSize(PHOTO_ICON_SIZE,PHOTO_ICON_SIZE);
+  ui.photoTreeWidget->setIconSize(iconSize);
   
     /* Set header resize modes and initial section sizes */
 //	QHeaderView * _header = ui.peertreeWidget->header () ;
@@ -94,23 +122,196 @@ PhotoDialog::PhotoDialog(QWidget *parent)
 #endif
 }
 
-void PhotoDialog::peertreeWidgetCostumPopupMenu( QPoint point )
+void PhotoDialog::peerTreeWidgetCustomPopupMenu( QPoint point )
 {
 
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
-      voteupAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Vote Up" ), this );
-      connect( voteupAct , SIGNAL( triggered() ), this, SLOT( voteup() ) );
+      QAction *ins = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Insert Show Lists" ), this );
+      connect( ins , SIGNAL( triggered() ), this, SLOT( insertShowLists() ) );
 
-      votedownAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Vote Down" ), this );
-      connect( votedownAct , SIGNAL( triggered() ), this, SLOT( votedown() ) );
-      
       contextMnu.clear();
-      contextMnu.addAction(voteupAct);
-      contextMnu.addSeparator(); 
-      contextMnu.addAction(votedownAct);
+      contextMnu.addAction(ins);
       contextMnu.exec( mevent->globalPos() );
+}
+
+void PhotoDialog::photoTreeWidgetCustomPopupMenu( QPoint point )
+{
+
+      QMenu contextMnu( this );
+      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
+
+      QAction *rm = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Remove" ), this );
+      connect( rm , SIGNAL( triggered() ), this, SLOT( removePhoto() ) );
+
+      contextMnu.clear();
+      contextMnu.addAction(rm);
+      contextMnu.addSeparator(); 
+      contextMnu.exec( mevent->globalPos() );
+}
+
+void PhotoDialog::insertShowLists()
+{
+	/* clear it all */
+	ui.peerTreeWidget->clear();
+
+	/* iterate through peers */
+	addShows(rsPeers->getOwnId());
+
+	std::list<std::string> ids;
+	std::list<std::string>::iterator it;
+	rsPeers->getFriendList(ids);
+
+	for(it = ids.begin(); it != ids.end(); it++)
+	{
+		addShows(*it);
+	}
+}
+
+void PhotoDialog::addShows(std::string id)
+{
+	std::list<std::string> allPhotos;
+	std::list<std::string> showIds;
+	std::list<std::string>::iterator it;
+
+        QTreeWidgetItem *peerItem = new QTreeWidgetItem((QTreeWidget*)0);
+	peerItem->setText(PHOTO_PEER_COL_NAME, QString::fromStdString(rsPeers->getPeerName(id)));
+	peerItem->setText(PHOTO_PEER_COL_PID, QString::fromStdString(id));
+	peerItem->setText(PHOTO_PEER_COL_SID, "");
+	peerItem->setText(PHOTO_PEER_COL_PHOTOID, "");
+
+	ui.peerTreeWidget->insertTopLevelItem(0, peerItem);
+
+        QTreeWidgetItem *allItem = new QTreeWidgetItem((QTreeWidget*)0);
+	allItem->setText(PHOTO_PEER_COL_SHOW, "All Photos");
+	allItem->setText(PHOTO_PEER_COL_PID, QString::fromStdString(id));
+	allItem->setText(PHOTO_PEER_COL_SID, "");
+	allItem->setText(PHOTO_PEER_COL_PHOTOID, "");
+
+	peerItem->addChild(allItem);
+
+	rsPhoto->getPhotoList(id, allPhotos);
+	rsPhoto->getShowList(id, showIds);
+
+	for(it = allPhotos.begin(); it != allPhotos.end(); it++)
+	{
+        	QTreeWidgetItem *photoItem = new QTreeWidgetItem((QTreeWidget*)0);
+		photoItem->setText(PHOTO_PEER_COL_PHOTO, QString::fromStdString(*it));
+
+		photoItem->setText(PHOTO_PEER_COL_PID, QString::fromStdString(id));
+		photoItem->setText(PHOTO_PEER_COL_SID, "");
+		photoItem->setText(PHOTO_PEER_COL_PHOTOID, QString::fromStdString(*it));
+
+		allItem->addChild(photoItem);
+	}
+
+
+	for(it = showIds.begin(); it != showIds.end(); it++)
+	{
+		/* get details */
+		RsPhotoShowDetails detail;
+		rsPhoto->getShowDetails(id, *it, detail);
+
+        	QTreeWidgetItem *showItem = new QTreeWidgetItem((QTreeWidget*)0);
+		showItem->setText(PHOTO_PEER_COL_SHOW, QString::fromStdString(*it));
+
+		showItem->setText(PHOTO_PEER_COL_PID, QString::fromStdString(id));
+		showItem->setText(PHOTO_PEER_COL_SID, QString::fromStdString(*it));
+		showItem->setText(PHOTO_PEER_COL_PHOTOID, "");
+
+		peerItem->addChild(showItem);
+
+		std::list<RsPhotoShowInfo>::iterator sit;
+		for(sit = detail.photos.begin(); sit != detail.photos.end(); sit++)
+		{
+        		QTreeWidgetItem *photoItem = new QTreeWidgetItem((QTreeWidget*)0);
+			photoItem->setText(PHOTO_PEER_COL_PHOTO, QString::fromStdString(sit->photoId));
+
+			photoItem->setText(PHOTO_PEER_COL_PID, QString::fromStdString(id));
+			photoItem->setText(PHOTO_PEER_COL_SID, QString::fromStdString(*it));
+			photoItem->setText(PHOTO_PEER_COL_PHOTOID, QString::fromStdString(sit->photoId));
+
+			showItem->addChild(photoItem);
+		}
+	}
+}
+
+
+void PhotoDialog::updatePhotoList()
+{
+	/* get current item */
+	QTreeWidgetItem *item = ui.peerTreeWidget->currentItem();
+
+	if (!item)
+	{
+		/* leave current list */
+		return;
+	}
+
+	/* check if it has changed */
+	std::string pid = item->text(PHOTO_PEER_COL_PID).toStdString();
+	std::string sid = item->text(PHOTO_PEER_COL_SID).toStdString();
+
+	if ((mCurrentPID == pid) && (mCurrentSID == sid))
+	{
+		/* still good */
+		return;
+	}
+
+	/* get the list of photos */
+
+	ui.photoTreeWidget->clear();
+        QList<QTreeWidgetItem *> items;
+
+	if (sid != "")
+	{
+		/* load up show list */
+		RsPhotoShowDetails detail;
+		rsPhoto->getShowDetails(pid, sid, detail);
+
+
+		std::list<RsPhotoShowInfo>::iterator sit;
+		for(sit = detail.photos.begin(); sit != detail.photos.end(); sit++)
+		{
+			RsPhotoDetails photoDetail;
+
+			if (!rsPhoto->getPhotoDetails(pid, sit->photoId, photoDetail))
+			{
+				continue;
+			}
+
+        		QTreeWidgetItem *photoItem = new QTreeWidgetItem((QTreeWidget*)0);
+			if (photoDetail.isAvailable)
+			{
+				QPixmap qpp(QString::fromStdString(photoDetail.path));
+				photoItem->setIcon(PHOTO_LIST_COL_PHOTO, 
+					QIcon(qpp.scaledToHeight(PHOTO_ICON_SIZE)));
+
+  				QSize iconSize(PHOTO_ICON_SIZE + 10,PHOTO_ICON_SIZE + 10);
+  				photoItem->setSizeHint(PHOTO_LIST_COL_PHOTO, iconSize);
+			}
+			else
+			{
+				photoItem->setText(PHOTO_LIST_COL_PHOTO, "Photo Not Available");
+			}
+
+			photoItem->setText(PHOTO_LIST_COL_COMMENT, 
+					QString::fromStdWString(photoDetail.comment));
+			photoItem->setText(PHOTO_LIST_COL_PHOTOID, 
+					QString::fromStdString(photoDetail.hash));
+
+			items.append(photoItem);
+		}
+	}
+	else
+	{
+
+	}
+
+	/* add the items in! */
+	ui.photoTreeWidget->insertTopLevelItems(0, items);
+	ui.photoTreeWidget->update();
 }
 
 
@@ -119,114 +320,6 @@ void PhotoDialog::peertreeWidgetCostumPopupMenu( QPoint point )
 void  PhotoDialog::insertExample()
 {
 
-#if 0
-        rsiface->lockData(); /* Lock Interface */
-
-        std::map<RsCertId,NeighbourInfo>::const_iterator it;
-        const std::map<RsCertId,NeighbourInfo> &friends =
-                                rsiface->getFriendMap();
-
-        /* get a link to the table */
-        QTreeWidget *peerWidget = ui.photoTreeWidget;
-
-        /* remove old items ??? */
-	peerWidget->clear();
-	peerWidget->setColumnCount(12);
-
-        QList<QTreeWidgetItem *> items;
-	for(it = friends.begin(); it != friends.end(); it++)
-	{
-		/* make a widget per friend */
-           	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
-
-		/* add all the labels */
-		/* First 5 (1-5) Key Items */
-		/* () Status Icon */
-		item -> setText(0, "");
-		
-		/* (0) Status */		
-		item -> setText(1, QString::fromStdString(
-						it->second.statusString));
-
-		/* (1) Person */
-		item -> setText(2, QString::fromStdString(it->second.name));
-
-		/* (2) Auto Connect */
-		item -> setText(3, QString::fromStdString(
-						it->second.connectString));
-
-		/* (3) Trust Level */
-		item -> setText(4, QString::fromStdString(it->second.trustString));
-		/* (4) Peer Address */
-		item -> setText(5, QString::fromStdString(it->second.peerAddress));
-
-		/* less important ones */
-		/* () Last Contact */
-		item -> setText(6, QString::fromStdString(it->second.lastConnect));
-
-		/* () Org */
-		item -> setText(7, QString::fromStdString(it->second.org));
-		/* () Location */
-		item -> setText(8, QString::fromStdString(it->second.loc));
-		/* () Country */
-		item -> setText(9, QString::fromStdString(it->second.country));
-	
-	
-		/* Hidden ones: */
-		/* ()  RsCertId */
-		{
-			std::ostringstream out;
-			out << it -> second.id;
-			item -> setText(10, QString::fromStdString(out.str()));
-		}
-
-		/* ()  AuthCode */	
-                item -> setText(11, QString::fromStdString(it->second.authCode));
-
-		/* change background */
-		int i;
-                if (it->second.statusString == "Online")
-		{
-			/* bright green */
-			for(i = 1; i < 12; i++)
-			{
-			  item -> setBackground(i,QBrush(Qt::green));
-			  item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
-			}
-		}
-		else
-		{
-                	if (it->second.lastConnect != "Never")
-			{
-				for(i = 1; i < 12; i++)
-				{
-				  item -> setBackground(i,QBrush(Qt::lightGray));
-				  item -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
-				}
-			}
-			else
-			{
-				for(i = 1; i < 12; i++)
-				{
-				  item -> setBackground(i,QBrush(Qt::gray));
-				  item -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
-				}
-			}
-		}
-			
-
-
-		/* add to the list */
-		items.append(item);
-	}
-
-	/* add the items in! */
-	peerWidget->insertTopLevelItems(0, items);
-
-	rsiface->unlockData(); /* UnLock Interface */
-
-	peerWidget->update(); /* update display */
-#endif
 }
 
 QTreeWidgetItem *PhotoDialog::getCurrentLine()
@@ -255,24 +348,97 @@ QTreeWidgetItem *PhotoDialog::getCurrentLine()
 	return item;
 }
 
-void PhotoDialog::voteup()
+void PhotoDialog::removePhoto()
 {
 	QTreeWidgetItem *c = getCurrentLine();
-	std::cerr << "PhotoDialog::voteup()" << std::endl;
+	std::cerr << "PhotoDialog::removePhoto()" << std::endl;
 }
 
-void PhotoDialog::votedown()
+
+void PhotoDialog::addPhotos()
 {
-	QTreeWidgetItem *c = getCurrentLine();
-	std::cerr << "PhotoDialog::votedown()" << std::endl;
-
-	/* need to get the input address / port */
-	/*
- 	std::string addr;
-	unsigned short port;
-	rsServer->FriendSetAddress(getPeerRsCertId(c), addr, port);
-	*/
+	/* get file dialog */
+ 	QStringList files = QFileDialog::getOpenFileNames(this,
+			         "Select one or more Photos to add",
+			         "/home", "Images (*.png *.xpm *.jpg *.gif)");
+	/* add photo to list */
+ 	QStringList::iterator it;
+	for(it = files.begin(); it != files.end(); it++)
+	{
+		addPhoto(*it);
+	}
 }
+
+void PhotoDialog::addPhoto(QString filename)
+{
+	/* load pixmap */
+
+	/* add QTreeWidgetItem */
+	QPixmap *qpp = new QPixmap(filename);
+
+	/* store in map */
+	photoMap[filename] = qpp;
+
+	/* add treeitem */
+	QTreeWidgetItem *item = new QTreeWidgetItem(NULL);
+
+	/* */
+	item->setText(0, "Yourself");
+	item->setText(2, filename);
+
+	item->setIcon(1, QIcon(qpp->scaledToHeight(PHOTO_ICON_SIZE)));
+  	QSize iconSize(PHOTO_ICON_SIZE + 10,PHOTO_ICON_SIZE + 10);
+  	item->setSizeHint(1, iconSize);
+
+
+	//item->setIcon(1, QIcon(*qpp));
+
+	ui.photoTreeWidget->insertTopLevelItem (0, item);
+
+	showPhoto(filename);
+}
+
+void PhotoDialog::updatePhoto()
+{
+	/* load pixmap */
+
+	QTreeWidgetItem *item = ui.photoTreeWidget->currentItem();
+	if (!item)
+	{
+		showPhoto("");
+	}
+
+	showPhoto(item->text(2));
+}
+
+
+
+void PhotoDialog::showPhoto(QString filename)
+{
+
+#if 0
+	/* find in map */
+	std::map<QString, QPixmap *>::iterator it;
+	it = photoMap.find(filename);
+	if (it == photoMap.end())
+	{
+		ui.photoPixLabel->clear();
+		ui.photoPixLabel->setText("No Photo Selected");
+		ui.photoNameLabel->setText("No Photo File Selected");
+		return;
+	}
+	
+	QSize diaSize = ui.photoTreeWidget->size();
+	int width = diaSize.width();
+	ui.photoPixLabel->setPixmap((it->second)->scaledToWidth(width));
+	ui.photoNameLabel->setText(filename);
+
+#endif
+
+	return;
+}
+
+
 
 
 

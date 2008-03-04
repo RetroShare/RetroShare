@@ -9,14 +9,16 @@ include $(RS_TOP_DIR)/scripts/config.mk
 
 RSOBJ = p3peers.o \
 	p3rank.o  \
+	p3photo.o  \
 	p3msgs.o  \
+	p3discovery.o \
 	p3face-file.o \
 	p3face-server.o \
 	p3face-config.o \
 	p3face-startup.o \
+	p3face-msgs.o \
 	rstypes.o \
-	rsiface.o \
-	p3face-msgs.o 
+	rsiface.o 
 
 #	pqistrings.o \
 #	p3face-people.o 
