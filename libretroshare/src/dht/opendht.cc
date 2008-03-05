@@ -44,6 +44,97 @@ const std::string openDHT_Agent  = "RS-HTTP-V0.4";
 
 #define OPENDHT_DEBUG		1
 
+bool OpenDHTClient::checkServerFile(std::string filename)
+{
+#ifdef	OPENDHT_DEBUG
+	std::cerr << "OpenDHTClient::checkServerFile(" << filename << ")" << std::endl;
+#endif
+
+	/* open the file */
+	std::ifstream file(filename.c_str());
+
+	if (file.fail())
+	{
+#ifdef	OPENDHT_DEBUG
+		std::cerr << "OpenDHTClient::checkServerFile() Open Failed" << std::endl;
+#endif
+		return false;
+	}
+
+	/* get the first line */
+	std::string line;
+	getline(file, line);
+	char day[16], month[16];
+	int  date;
+	char day2[16], month2[16];
+	int  date2;
+
+	if (3 != sscanf(line.c_str(), "%15s %15s %d", day, month, &date))
+	{
+#ifdef	OPENDHT_DEBUG
+		std::cerr << "OpenDHTClient::checkServerFile() failed file TS parse";
+		std::cerr << std::endl;
+#endif
+		return false;
+	}
+
+#ifdef	OPENDHT_DEBUG
+	std::cerr << "OpenDHTClient::checkServerFile() file TS month: ";
+	std::cerr << month << " date: " << date << std::endl;
+#endif
+
+	/* store current timestamp */
+	struct tm result;
+	time_t now = time(NULL);
+	char   nowstr[1023];
+
+	asctime_r(gmtime_r(&now, &result), nowstr);
+
+	if (3 != sscanf(nowstr, "%15s %15s %d", day2, month2, &date2))
+	{
+#ifdef	OPENDHT_DEBUG
+		std::cerr << "OpenDHTClient::checkServerFile() failed now TS parse";
+		std::cerr << std::endl;
+#endif
+		return false;
+	}
+
+#ifdef	OPENDHT_DEBUG
+	std::cerr << "OpenDHTClient::checkServerFile() current TS month: ";
+	std::cerr << month2 << " date: " << date2 << std::endl;
+#endif
+
+	/* if month is different */
+	if (0 != strcmp(month, month2))
+	{
+#ifdef	OPENDHT_DEBUG
+		std::cerr << "OpenDHTClient::checkServerFile() different MONTHS fail";
+		std::cerr << std::endl;
+#endif
+		return false;
+	}
+
+	/* if month is different */
+	int delta = abs(date-date2);
+	if (delta > 2)
+	{
+#ifdef	OPENDHT_DEBUG
+		std::cerr << "OpenDHTClient::checkServerFile() fail - large DATE diff: " << delta;
+		std::cerr << std::endl;
+#endif
+		return false;
+	}
+
+#ifdef	OPENDHT_DEBUG
+	std::cerr << "OpenDHTClient::checkServerFile() file is up-to-date!";
+	std::cerr << std::endl;
+#endif
+
+	return true;
+}
+
+	
+
 bool OpenDHTClient::loadServers(std::string filename)
 {
 	/* open the file */

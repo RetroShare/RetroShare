@@ -55,6 +55,7 @@ virtual	bool publishKey(std::string key, std::string value, uint32_t ttl);
 virtual	bool searchKey(std::string key, std::list<std::string> &values);
 
 	/* Fns accessing data */
+virtual bool checkServerFile(std::string filename);
 virtual bool loadServers(std::string filename);
 virtual bool loadServersFromWeb(std::string storefname);
 virtual bool loadServers(std::istream&);

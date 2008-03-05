@@ -122,7 +122,12 @@ bool    OpenDHTMgr::init()
 	}
 	filename += "ODHTservers.txt";
 
-	if (!mClient -> loadServersFromWeb(filename))
+	/* check file date first */
+	if (mClient -> checkServerFile(filename))
+	{
+		return mClient -> loadServers(filename);
+	}
+	else if (!mClient -> loadServersFromWeb(filename))
 	{
 		return mClient -> loadServers(filename);
 	}

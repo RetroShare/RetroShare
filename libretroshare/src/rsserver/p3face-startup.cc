@@ -511,7 +511,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	ad = new p3disc(mAuthMgr, mConnMgr);
 	msgSrv = new p3MsgService(mConnMgr);
 	chatSrv = new p3ChatService(mConnMgr);
-	p3GameLauncher *gameLauncher = new p3GameLauncher();
+	p3GameLauncher *gameLauncher = new p3GameLauncher(mConnMgr);
 
 	pqih -> addService(ad);
 	pqih -> addService(msgSrv);

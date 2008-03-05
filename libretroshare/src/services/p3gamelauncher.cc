@@ -26,6 +26,7 @@
 #include "services/p3gamelauncher.h"
 #include "services/p3gameservice.h"
 #include "pqi/pqidebug.h"
+#include "pqi/p3connmgr.h"
 #include <sstream>
 #include <iomanip>
 
@@ -103,11 +104,12 @@ const uint32_t RS_GAME_MSG_REJECT     = 6;  /*  ANY  -> ANY   */
 
 const int p3gamezone = 1745;
 
-p3GameLauncher::p3GameLauncher()
-	:p3Service(RS_SERVICE_TYPE_GAME_LAUNCHER) 
+p3GameLauncher::p3GameLauncher(p3ConnectMgr *connMgr)
+	:p3Service(RS_SERVICE_TYPE_GAME_LAUNCHER), 
+	 mConnMgr(connMgr)
 {
 	//addSerialType(new RsGameSerialiser());
-	mOwnId = "mOwnId";
+	mOwnId = mConnMgr->getOwnId();
 }
 
 int	p3GameLauncher::tick()
@@ -196,15 +198,15 @@ std::string  p3GameLauncher::newGame(uint16_t srvId, std::string name)
 	newGame.numPlayers = 0;
 	newGame.gameName = name;
 
+	newGame.interestedPeers.clear();
+	newGame.peerIds.clear();
+	newGame.state = RS_GAME_INIT_SETUP;  /* Server Only */
+
 	newGame.areServer = true;
 	newGame.serverId = mOwnId; 
 	newGame.allowedPeers.push_back(mOwnId);
 	newGame.interestedPeers.push_back(mOwnId);
 	newGame.peerIds.push_back(mOwnId);
-
-	newGame.interestedPeers.clear();
-	newGame.peerIds.clear();
-	newGame.state = RS_GAME_INIT_SETUP;  /* Server Only */
 
 	/* send messages to peers inviting to game */
 	std::list<std::string>::const_iterator it;
@@ -268,6 +270,7 @@ bool  p3GameLauncher::inviteGame(std::string gameId)
 		RsGameItem  *rgi = new RsGameItem();
 		rgi->serviceId  = git->second.serviceId;
 		rgi->gameId     = git->second.gameId;
+		rgi->gameComment= git->second.gameName;
 		rgi->numPlayers = git->second.numPlayers;
 		rgi->players    = git->second.allowedPeers;
 
@@ -310,6 +313,7 @@ bool    p3GameLauncher::confirmGame(std::string game)
 		RsGameItem  *rgi = new RsGameItem();
 		rgi->serviceId  = git->second.serviceId;
 		rgi->gameId     = git->second.gameId;
+		rgi->gameComment= git->second.gameName;
 		rgi->numPlayers = git->second.numPlayers;
 		rgi->players    = git->second.peerIds;
 
@@ -354,6 +358,7 @@ bool    p3GameLauncher::playGame(std::string gameId)
 		RsGameItem  *rgi = new RsGameItem();
 		rgi->serviceId  = git->second.serviceId;
 		rgi->gameId     = git->second.gameId;
+		rgi->gameComment= git->second.gameName;
 		rgi->numPlayers = git->second.numPlayers;
 		rgi->players    = git->second.peerIds;
 
@@ -378,6 +383,7 @@ bool    p3GameLauncher::playGame(std::string gameId)
 			RsGameItem  *rgi = new RsGameItem();
 			rgi->serviceId  = git->second.serviceId;
 			rgi->gameId     = git->second.gameId;
+			rgi->gameComment= git->second.gameName;
 			rgi->numPlayers = 0;
 			rgi->players.clear();
 
@@ -575,6 +581,7 @@ bool    p3GameLauncher::inviteResponse(std::string gameId, bool interested)
 	RsGameItem  *rgi = new RsGameItem();
 	rgi->serviceId  = git->second.serviceId;
 	rgi->gameId     = git->second.gameId;
+	rgi->gameComment= git->second.gameName;
 	rgi->numPlayers = 0;
 	rgi->players.clear();
 
@@ -671,7 +678,7 @@ bool    p3GameLauncher::getGameDetail(std::string gameId, RsGameDetail &detail)
 			it != git->second.allowedPeers.end(); it++)
 		{
 			RsGamePeer rgp;
-			rgp.name = "PEER???";
+			rgp.id = *it;
 			rgp.invite = true;
 			rgp.interested = false;
 			rgp.play = false;
@@ -689,13 +696,13 @@ bool    p3GameLauncher::getGameDetail(std::string gameId, RsGameDetail &detail)
 			it != git->second.allowedPeers.end(); it++)
 		{
 			RsGamePeer rgp;
-			rgp.name = "PEER???";
+			rgp.id = *it;
 			rgp.invite = true;
 
 			if (git->second.interestedPeers.end() !=
 				std::find(git->second.interestedPeers.begin(), 
 			 		git->second.interestedPeers.end(), 
-					git->first))
+					*it))
 			{
 				rgp.interested = true;
 			}
@@ -707,7 +714,7 @@ bool    p3GameLauncher::getGameDetail(std::string gameId, RsGameDetail &detail)
 			if (git->second.peerIds.end() !=
 				std::find(git->second.peerIds.begin(), 
 			 		git->second.peerIds.end(), 
-					git->first))
+					*it))
 			{
 				rgp.play = true;
 			}
@@ -729,7 +736,7 @@ bool    p3GameLauncher::getGameDetail(std::string gameId, RsGameDetail &detail)
 			it != git->second.peerIds.end(); it++)
 		{
 			RsGamePeer rgp;
-			rgp.name = "PEER???";
+			rgp.id = *it;
 			rgp.invite = true;
 			rgp.interested = true;
 			rgp.play = true;
@@ -933,6 +940,7 @@ int p3GameLauncher::handleClientStart(RsGameItem *gi)
 	gameStatus gs;
 	gs.serviceId  = gi->serviceId;
 	gs.gameId     = gi->gameId;
+	gs.gameName   = gi->gameComment;
 	gs.areServer  = false;
 	gs.serverId   = gi->PeerId();
 	gs.state = RS_GAME_INIT_INVITED;  /* Client */

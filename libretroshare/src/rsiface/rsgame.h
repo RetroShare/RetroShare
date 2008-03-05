@@ -58,7 +58,7 @@ class RsGameInfo
 class RsGamePeer
 {
 	public:
-	std::string name;
+	std::string id;
 	bool invite;
 	bool interested;
 	bool play;
