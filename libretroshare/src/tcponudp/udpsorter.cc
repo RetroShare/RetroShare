@@ -653,8 +653,6 @@ bool    UdpSorter::locked_recvdStun(const struct sockaddr_in &remote, const stru
 	std::cerr << out.str() << std::endl;
 #endif
 
-	locked_printStunList();
-
 	bool found = true;
 	std::list<TouStunPeer>::iterator it;
 	for(it = mStunList.begin(); it != mStunList.end(); it++)
@@ -670,6 +668,8 @@ bool    UdpSorter::locked_recvdStun(const struct sockaddr_in &remote, const stru
 			break;
 		}
 	}
+
+	locked_printStunList();
 
 	if (!eaddrKnown)
 	{

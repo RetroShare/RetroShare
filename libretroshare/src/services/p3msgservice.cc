@@ -30,6 +30,7 @@
 #include "pqi/p3connmgr.h"
 
 #include "services/p3msgservice.h"
+#include "rsiface/rsnotify.h"
 
 #include "util/rsdir.h"
 
@@ -141,7 +142,13 @@ int 	p3MsgService::incomingMsgs()
 			/* from a peer */
 			MsgInfoSummary mis;
 			initRsMIS(mi, mis);
-			msgNotifications.push_back(mis);
+			
+			// msgNotifications.push_back(mis);
+			if (rsNotify)
+			{
+				rsNotify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId(), 
+						"New Message from: ");
+			}
 		}
 
 		imsg[mi->msgId] = mi;

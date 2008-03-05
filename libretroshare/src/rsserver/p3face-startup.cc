@@ -58,6 +58,7 @@
 
 /* Implemented Rs Interfaces */
 #include "rsserver/p3face.h"
+#include "rsserver/p3notify.h"
 #include "rsserver/p3peers.h"
 #include "rsserver/p3rank.h"
 #include "rsserver/p3msgs.h"
@@ -482,6 +483,9 @@ int RsServer::StartupRetroShare(RsInit *config)
 	/* setup classes / structures */
 	/**************************************************************************/
 
+	/* Setup Notify Early - So we can use it. */
+	rsNotify = new p3Notify();
+
 	mConnMgr = new p3ConnectMgr(mAuthMgr);
 	p3UpnpMgr *mUpnpMgr = new upnphandler();
 	p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr, config->basedir);
@@ -674,6 +678,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	rsMsgs  = new p3Msgs(mAuthMgr, msgSrv, chatSrv);
 	rsDisc  = new p3Discovery(ad);
 	rsPhoto = new p3Photo(photoService);
+
 
 	/* put a welcome message in! */
 	if (config->firsttime_run)

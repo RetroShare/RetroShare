@@ -287,7 +287,11 @@ private:
 
 	time_t   mNetInitTS;
 	uint32_t mNetStatus;
+
 	uint32_t mStunStatus;
+	uint32_t mStunFound;
+	bool 	 mStunMoreRequired;
+
 	bool     mStatusChanged;
 
 	std::list<pqiMonitor *> clients;

@@ -28,6 +28,7 @@
 #include "util/rsprint.h"
 
 #include "serialiser/rsconfigitems.h"
+#include "rsiface/rsnotify.h"
 
 /* Network setup States */
 
@@ -42,6 +43,7 @@ const uint32_t RS_NET_DONE =    	0x0005;
 const uint32_t RS_STUN_DHT =      	0x0001;
 const uint32_t RS_STUN_DONE =      	0x0002;
 const uint32_t RS_STUN_LIST_MIN =      	100;
+const uint32_t RS_STUN_FOUND_MIN =     	10;
 
 const uint32_t MAX_UPNP_INIT = 		30; /* seconds UPnP timeout */
 
@@ -100,7 +102,8 @@ peerConnectState::peerConnectState()
 p3ConnectMgr::p3ConnectMgr(p3AuthMgr *am)
 	:p3Config(CONFIG_TYPE_PEERS), 
 	mAuthMgr(am), mDhtMgr(NULL), mUpnpMgr(NULL), mNetStatus(RS_NET_UNKNOWN), 
-	mStunStatus(0), mStatusChanged(false)
+	mStunStatus(0), mStunFound(0), mStunMoreRequired(true), 
+	mStatusChanged(false)
 {
 	mUpnpAddrValid = false;
 	mStunAddrValid = false;
@@ -262,6 +265,8 @@ void p3ConnectMgr::netStartup()
 	std::cerr << "p3ConnectMgr::netStartup() disabling stunkeepalive() cos EXT" << std::endl;
 #endif
 			tou_stunkeepalive(0);
+			mStunMoreRequired = false; /* only need to validate address (EXT) */
+
 			break;
 
 		case RS_NET_MODE_TRY_UDP:
@@ -278,13 +283,11 @@ void p3ConnectMgr::netStartup()
 			break;
 	}
 
-	/* add Bootstrap Peers if we've got none from config */
-	if (mStunList.size() < 1)
-	{
-		addBootstrapStunPeers();
-	}
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
+
+	/* add Bootstrap Peers ALWAYs (get stuck on the end) */
+	addBootstrapStunPeers();
 }
 
 
@@ -413,6 +416,7 @@ void p3ConnectMgr::netTick()
 #ifdef CONN_DEBUG
 			//std::cerr << "p3ConnectMgr::netTick() STATUS: DONE" << std::endl;
 #endif
+			stunCheck(); /* Keep on stunning until its happy */
 		default:
 			break;
 	}
@@ -501,7 +505,7 @@ void p3ConnectMgr::netUpnpCheck()
 		mUpnpAddrValid = false;
 		mNetStatus = RS_NET_UDP_SETUP;
 #ifdef CONN_DEBUG
-	std::cerr << "p3ConnectMgr::netUpnpCheck() ensabling stunkeepalive() cos UDP" << std::endl;
+	std::cerr << "p3ConnectMgr::netUpnpCheck() enabling stunkeepalive() cos UDP" << std::endl;
 #endif
 		tou_stunkeepalive(1);
 
@@ -522,6 +526,7 @@ void p3ConnectMgr::netUpnpCheck()
 	std::cerr << "p3ConnectMgr::netUpnpCheck() disabling stunkeepalive() cos uPnP" << std::endl;
 #endif
 		tou_stunkeepalive(0);
+		mStunMoreRequired = false; /* only need to validate address (UPNP) */
 
 		connMtx.unlock(); /* UNLOCK MUTEX */
 	}
@@ -532,14 +537,12 @@ void p3ConnectMgr::netUdpCheck()
 #ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::netUdpCheck()" << std::endl;
 #endif
-	if (stunCheck() || (mUpnpAddrValid)) 
+	if (udpExtAddressCheck() || (mUpnpAddrValid)) 
 	{
 		bool extValid = false;
 		bool extAddrStable = false;
 		struct sockaddr_in extAddr;
 		uint32_t mode = 0;
-
-
 
 		connMtx.lock();   /*   LOCK MUTEX */
 
@@ -588,6 +591,30 @@ void p3ConnectMgr::netUdpCheck()
 				ownState.netMode &= ~(RS_NET_MODE_ACTUAL);
 				ownState.netMode |= RS_NET_MODE_UNREACHABLE;
 				tou_stunkeepalive(0);
+				mStunMoreRequired = false; /* no point -> unreachable (EXT) */
+
+				/* send a system warning message */
+				if (rsNotify)
+				{
+					std::string title = 
+						"Warning: Bad Firewall Configuration";
+
+					std::string msg;
+					msg +=  "               **** WARNING ****     \n";
+					msg +=  "Retroshare has detected that you are behind";
+					msg +=  " a restrictive Firewall\n";
+					msg +=  "\n";
+					msg +=  "You cannot connect to other firewalled peers\n";
+					msg +=  "\n";
+					msg +=  "You can fix this by:\n";
+					msg +=  "   (1) opening an External Port\n";
+					msg +=  "   (2) enabling UPnP, or\n";
+					msg +=  "   (3) get a new (approved) Firewall/Router\n";
+
+					rsNotify->AddSysMessage(0, RS_SYS_WARNING, 
+							title, msg);
+				}
+
 			}
 
 			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
@@ -771,6 +798,8 @@ void p3ConnectMgr::stunInit()
 		mDhtMgr->addStun(*it);
 	}
 	mStunStatus = RS_STUN_DHT;
+	mStunFound = 0;
+	mStunMoreRequired = true;
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
 }
@@ -778,13 +807,30 @@ void p3ConnectMgr::stunInit()
 bool p3ConnectMgr::stunCheck()
 {
 	/* check if we've got a Stun result */
+	bool stunOk = false;
 
 #ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::stunCheck()" << std::endl;
 #endif
 
+      {
+      	RsStackMutex stack(connMtx); /********* LOCK STACK MUTEX ******/
 
-	if (udpExtAddressCheck())
+	/* if DONE -> return */
+	if (mStunStatus == RS_STUN_DONE)
+	{
+		return true;
+	}
+
+	if (mStunFound >= RS_STUN_FOUND_MIN)
+	{
+		mStunMoreRequired = false;
+	}
+	stunOk = (!mStunMoreRequired);
+      }
+
+
+	if (udpExtAddressCheck() && (stunOk))
 	{
 		/* set external UDP address */
 		mDhtMgr->doneStun();
@@ -818,12 +864,16 @@ void    p3ConnectMgr::stunStatus(std::string id, struct sockaddr_in raddr, uint3
 	{
 		if (stillStunning)
 		{
+			connMtx.lock();   /*   LOCK MUTEX */
+			mStunFound++;
+			connMtx.unlock(); /* UNLOCK MUTEX */
 		
 #ifdef CONN_DEBUG
 			std::cerr << "p3ConnectMgr::stunStatus() Sending to UDP" << std::endl;
 #endif
 			/* push to the UDP */
 			udpStunPeer(id, raddr);
+
 		}
 
 		/* push to the stunCollect */
@@ -862,14 +912,23 @@ void p3ConnectMgr::stunCollect(std::string id, struct sockaddr_in addr, uint32_t
 		/* add it in:
 		 * if FRIEND / ONLINE or if list is short.
 		 */
-		if ((flags & RS_STUN_ONLINE) || (flags & RS_STUN_FRIEND) 
-			|| (mStunList.size() < RS_STUN_LIST_MIN))
+		if ((flags & RS_STUN_ONLINE) || (flags & RS_STUN_FRIEND))
 		{
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::stunCollect() Id added to Front" << std::endl;
 #endif
 			/* push to the front */
 			mStunList.push_front(id);
+
+			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+		}
+		else if (mStunList.size() < RS_STUN_LIST_MIN)
+		{
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::stunCollect() Id added to Back" << std::endl;
+#endif
+			/* push to the front */
+			mStunList.push_back(id);
 
 			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 		}
@@ -989,6 +1048,15 @@ void p3ConnectMgr::tickMonitors()
 
 				std::cerr << std::endl;
 #endif
+
+				/* notify GUI */
+				if ((peer.actions & RS_PEER_CONNECTED) &&
+				 	(rsNotify))
+				{
+					rsNotify->AddPopupMessage(RS_POPUP_CONNECT, 
+							peer.id, "Peer Online: ");
+				}
+
 			}
 		}
 		/* do the Others as well! */
@@ -1230,7 +1298,7 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags)
 		return false;
 	}
 
-	std::cerr << "p3ConnectMgr::connectAttempt() Success: ";
+	std::cerr << "p3ConnectMgr::connectResult() Success: ";
 	std::cerr << " id: " << id;
 	std::cerr << std::endl;
 	std::cerr << " Success: " << success;
@@ -2703,14 +2771,17 @@ void  printConnectState(peerConnectState &peer)
 bool  p3ConnectMgr::addBootstrapStunPeers()
 {
 	std::string id;
+	struct sockaddr_in dummyaddr;
+	uint32_t flags = 0;
 
 	// Two Defaults for The Initial Release.
 	id = "7ad672ea4d4af8560d5230aff3c88b59";
-	mStunList.push_back(RsUtil::HashId(id, false));
+	stunCollect(RsUtil::HashId(id, false), dummyaddr, flags);
 
 	id = "8ad7c08e7778e0289de04843bf57a6ae";
-	mStunList.push_back(RsUtil::HashId(id, false));
+	stunCollect(RsUtil::HashId(id, false), dummyaddr, flags);
 
+	return true;
 }
 
 

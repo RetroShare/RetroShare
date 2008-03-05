@@ -391,6 +391,8 @@ void p3DhtMgr::run()
 #ifdef DHT_DEBUG
 				std::cerr << "p3DhtMgr::run() state = ACTIVE -> do stuff" << std::endl;
 #endif
+				doStun();
+
 				period = checkOwnDHTKeys();
 #ifdef DHT_DEBUG
 		std::cerr << "p3DhtMgr::run() checkOwnDHTKeys() period: " << period << std::endl;
@@ -792,18 +794,38 @@ int p3DhtMgr::checkNotifyDHT()
 
 int p3DhtMgr::doStun()
 {
-#ifdef DHT_DEBUG
-	std::cerr << "p3DhtMgr::doStun()" << std::endl;
-#endif
 	if (stunIds.size() < 1)
+	{
+#ifdef DHT_DEBUG
+		std::cerr << "p3DhtMgr::doStun() Failed -> no Ids left" << std::endl;
+#endif
 		return 0;
+	}
+
+	dhtMtx.lock(); /* LOCK MUTEX */
+
+	bool stunRequired = mStunRequired;
+
+	dhtMtx.unlock(); /* UNLOCK MUTEX */
+
+	/* now loop through the peers */
+	if (!stunRequired)
+	{
+#ifdef DHT_DEBUG
+		std::cerr << "p3DhtMgr::doStun() not Required" << std::endl;
+#endif
+		return 0;
+	}
 
 	/* pop the front one */
 	std::string activeStunId = stunIds.front();
 
 	stunIds.pop_front();
-	/* Don't recycle -> otherwise can end in an infinite (pointless) loop! */
-	//stunIds.push_back(activeStunId);
+
+#ifdef DHT_DEBUG
+	std::cerr << "p3DhtMgr::doStun() STUN: " << RsUtil::BinToHex(activeStunId);
+	std::cerr << std::endl;
+#endif
 
 	/* look it up! */
 	dhtSearch(activeStunId, DHT_MODE_SEARCH);

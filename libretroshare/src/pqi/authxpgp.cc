@@ -2079,6 +2079,7 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 	if (keyValueMap.size() > 0)
 	{
 		oldFormat = true;
+		mToSaveCerts = true;
 	}
 
 	mToSaveCerts = false;

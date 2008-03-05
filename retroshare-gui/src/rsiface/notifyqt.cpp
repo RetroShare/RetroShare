@@ -1,5 +1,7 @@
 
 #include "rsiface/notifyqt.h"
+#include "rsiface/rsnotify.h"
+#include "rsiface/rspeers.h"
 
 #include "gui/NetworkDialog.h"
 #include "gui/PeersDialog.h"
@@ -9,6 +11,10 @@
 #include "gui/MessagesDialog.h"
 #include "gui/ChannelsDialog.h"
 #include "gui/MessengerWindow.h"
+
+#include "gui/toaster/MessageToaster.h"
+#include "gui/toaster/ChatToaster.h"
+#include "gui/toaster/CallToaster.h"
 
 #include <iostream>
 #include <sstream>
@@ -158,9 +164,79 @@ static  time_t lastTs = 0;
 		displayConfig();
 	*/
 
+	/* Finally Check for PopupMessages / System Error Messages */
+
+	if (rsNotify)
+	{
+		uint32_t sysid;
+		uint32_t type;
+		std::string title, id, msg;
+		
+		if (rsNotify->NotifyPopupMessage(type, id, msg))
+		{
+			/* id the name */
+			std::string name = rsPeers->getPeerName(id);
+			std::string realmsg = msg + name;
+			switch(type)
+			{
+				case RS_POPUP_MSG:
+				{
+					MessageToaster * msgToaster = new MessageToaster();
+					msgToaster->setMessage(QString::fromStdString(realmsg));
+					msgToaster->show();
+					break;
+				}
+				case RS_POPUP_CHAT:
+				{
+					ChatToaster * chatToaster = new ChatToaster();
+					chatToaster->setMessage(QString::fromStdString(realmsg));
+					chatToaster->show();
+					break;
+				}
+				case RS_POPUP_CALL:
+				{
+					CallToaster * callToaster = new CallToaster();
+					callToaster->setMessage(QString::fromStdString(realmsg));
+					callToaster->show();
+					break;
+				}
+				default:
+				case RS_POPUP_CONNECT:
+				{
+					MessageToaster * msgToaster = new MessageToaster();
+					msgToaster->setMessage(QString::fromStdString(realmsg));
+					msgToaster->show();
+				}
+					break;
+			}
+
+		}
+
+		if (rsNotify->NotifySysMessage(sysid, type, title, msg))
+		{
+			/* make a warning message */
+			switch(type)
+			{
+				case RS_SYS_ERROR:
+					QMessageBox::critical(0, 
+							QString::fromStdString(title), 
+							QString::fromStdString(msg));
+					break;
+				case RS_SYS_WARNING:
+					QMessageBox::warning(0, 
+							QString::fromStdString(title), 
+							QString::fromStdString(msg));
+					break;
+				default:
+				case RS_SYS_INFO:
+					QMessageBox::information(0, 
+							QString::fromStdString(title), 
+							QString::fromStdString(msg));
+					break;
+			}
+		}
+	}
 }
-
-
 			
 			
 void NotifyQt::displayNeighbours()
