@@ -81,11 +81,13 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     
     LangString sec_main ${LANG_ENGLISH} "Program Files"
     LangString sec_data ${LANG_ENGLISH} "Program Skins"
+    LangString sec_mplayer ${LANG_ENGLISH} "MPlayer Engine"
     LangString sec_shortcuts ${LANG_ENGLISH} "Shortcuts"
     LangString sec_link ${LANG_ENGLISH} "File Association"
     LangString sec_autostart ${LANG_ENGLISH} "Auto Startup"
     LangString DESC_sec_main ${LANG_ENGLISH} "Installs the RetroShare program files."
     LangString DESC_sec_data ${LANG_ENGLISH} "Installs RetroShare Skins"
+    LangString DESC_sec_mplayer ${LANG_ENGLISH} "Insalls MPlayer required for ReroShare's SMPlayer"
     LangString DESC_sec_shortcuts ${LANG_ENGLISH} "Create RetroShare shortcut icons."
     LangString DESC_sec_link ${LANG_ENGLISH} "Associate RetroShare with .pqi file extension"
     LangString DESC_sec_autostart ${LANG_ENGLISH} "Auto-Run and Login at Startup"
@@ -94,11 +96,13 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     
     LangString sec_main ${LANG_GERMAN} "Programmdateien"
     LangString sec_data ${LANG_GERMAN} "Skins für das Programm"
+    LangString sec_mplayer ${LANG_GERMAN} "MPlayer "
     LangString sec_shortcuts ${LANG_GERMAN} "Shortcuts"
     LangString sec_link ${LANG_GERMAN} "Dateiverknüpfungen"
     LangString sec_autostart ${LANG_GERMAN} "Auto Startup"
 	LangString DESC_sec_main ${LANG_GERMAN} "Installiert die erforderlichen Programmdateien."
 	LangString DESC_sec_data ${LANG_GERMAN} "Installiert RetroShare Skins"
+	LangString DESC_sec_mplayer ${LANG_GERMAN} "Installiert MPlayer das für SMPlayer erforderlich ist"
     LangString DESC_sec_shortcuts ${LANG_GERMAN} "Erstellt eine RetroShare Verknüpfung im Startmenü, Desktop oder im Schnellstarter."
     LangString DESC_sec_link ${LANG_GERMAN} "RetroShare mit .pqi Dateien verknüpfen"
     LangString DESC_sec_autostart ${LANG_GERMAN} "Beim Neustart automatisch RetroShare starten und sich anmelden"
@@ -107,11 +111,13 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     
     LangString sec_main ${LANG_TURKISH} "Program Dosyalarý"
     LangString sec_data ${LANG_TURKISH} "Program Skinleri"
+    LangString sec_mplayer ${LANG_TURKISH} "MPlayer "
     LangString sec_shortcuts ${LANG_TURKISH} "Shortcut'lar"
     LangString sec_link ${LANG_TURKISH} ".pqi Dosya Kaydet"
     LangString sec_autostart ${LANG_TURKISH} "Otomatik calistir ve baglan"
 	LangString DESC_sec_main ${LANG_TURKISH} "Program dosyalarýný kurar."
 	LangString DESC_sec_data ${LANG_TURKISH} "RetroShare Skin'leri kurar"
+	LangString DESC_sec_mplayer ${LANG_TURKISH} "Mplayer SMPlayer icin gereklidir"
     LangString DESC_sec_shortcuts ${TURKISH} "Shortcut yap Start menu , Desktop veya Quicklaunchbar icin."
     LangString DESC_sec_link ${LANG_TURKISH} "RetroShare .pqi almasý için kaydettirir"
     LangString DESC_sec_autostart ${LANG_TURKISH} "Isletim sistemi acildiginda Otomatik olarak calistir ve baglan"
@@ -122,6 +128,9 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
 
 Section $(sec_main) sec_main
 
+  ;Set Section required
+  SectionIn RO
+
   ; Set Section properties
   SetOverwrite on
 
@@ -130,8 +139,8 @@ Section $(sec_main) sec_main
 	
   ; Set Section Files and Shortcuts
   SetOutPath "$INSTDIR\"
-  File /r "release\*"
-  
+  File /r "release\RetroShare.exe"
+  File /r "release\changelog.txt"
 
   
 
@@ -147,14 +156,29 @@ Section  $(sec_data) sec_data
   ;File /r "data\*"
   
   ; We're not ready for external skins...
-  ; Set Section qss
-  ; SetOutPath "$INSTDIR\qss\"
-  ; File /r release\qss\*.*   
+  ; Set Section qss need to remove svn path
+  SetOutPath "$INSTDIR\qss\"
+  File /r release\qss\*.*   
   
   ; Set Section skin
   ; SetOutPath "$INSTDIR\skin\"
   ; File /r release\skin\*.* 
 	
+SectionEnd
+
+Section $(sec_mplayer) sec_mplayer
+
+  ;Set Section required
+  ;SectionIn RO
+
+  ; Set Section properties
+  SetOverwrite on
+	
+  ; Set Section Files and Shortcuts
+  SetOutPath "$INSTDIR\mplayer"
+  File /r "E:\MPlayer-mingw32-1.0rc2\MPlayer-1.0rc2\*.*"
+
+
 SectionEnd
 
 Section $(sec_link) sec_link
@@ -219,6 +243,7 @@ SectionEnd
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${sec_main} $(DESC_sec_main)
     !insertmacro MUI_DESCRIPTION_TEXT ${sec_data} $(DESC_sec_data)
+    !insertmacro MUI_DESCRIPTION_TEXT ${sec_mplayer} $(DESC_sec_mplayer)
     !insertmacro MUI_DESCRIPTION_TEXT ${sec_shortcuts} $(DESC_sec_shortcuts)
     !insertmacro MUI_DESCRIPTION_TEXT ${sec_link} $(DESC_sec_link)
 	!insertmacro MUI_DESCRIPTION_TEXT ${sec_autostart} $(DESC_sec_autostart)
@@ -265,6 +290,9 @@ Section "Uninstall"
   ; Remove directories used
   RMDir "$SMPROGRAMS\${APPNAME}"
   RMDir "$INSTDIR"
+  RMDir "$INSTDIR\mplayer"
+  RMDir "$INSTDIR\smplayer"
+  RMDir "$INSTDIR\qss"
 
 SectionEnd
 
