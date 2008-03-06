@@ -24,12 +24,15 @@ endif
 SSL_OBJ  += pqissl.o pqissllistener.o pqisslpersongrp.o
 UDP_OBJ  = pqissludp.o
 
+OTHER_OBJ = p3notify.o
+
 RSOBJ = $(BASE_OBJ) $(LOOP_OBJ) \
 	$(STREAM_OBJ) \
 	$(MGR_OBJ) \
 	$(SSL_OBJ) \
 	$(UDP_OBJ) \
-	$(GRP_OBJ) 
+	$(GRP_OBJ) \
+	$(OTHER_OBJ)
 
 TESTOBJ  = net_test.o dht_test.o 
 #conn_test.o
