@@ -41,19 +41,18 @@ class RsGameItem: public RsItem
 	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GAME_LAUNCHER, 
 		RS_PKT_SUBTYPE_DEFAULT)
 	{ return; }
-virtual ~RsGameItem() { return; }
-virtual void clear()  { return; }
-std::ostream &print(std::ostream &out, uint16_t indent = 0)
-			{ return out; }
+virtual ~RsGameItem();
+virtual void clear();  
+std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
         uint32_t serviceId;
-        std::string gameId;
-        std::string gameComment;
-
-        uint16_t numPlayers;
-        std::list<std::string> players;
+        uint32_t numPlayers;
         uint32_t msg; /* RS_GAME_MSG_XXX */
 
+        std::string gameId;
+        std::wstring gameComment;
+
+	RsTlvPeerIdSet players;
 };
 
 class RsGameSerialiser: public RsSerialType

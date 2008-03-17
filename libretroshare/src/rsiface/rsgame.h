@@ -48,7 +48,7 @@ class RsGameInfo
 	std::string serverId;
 	
 	std::string gameType;
-	std::string gameName;
+	std::wstring gameName;
 	std::string serverName;
 	std::string status;
 	uint16_t    numPlayers;
@@ -69,7 +69,7 @@ class RsGameDetail
 	public:
 	std::string gameId;
 	std::string gameType;
-	std::string gameName;
+	std::wstring gameName;
 	
 	bool areServer;         /* are we the server? */
 	std::string serverId;   /* if not, who is? */
@@ -87,7 +87,7 @@ class RsGameLauncher
         public:
 
 /* server commands */
-virtual std::string createGame(uint32_t gameType, std::string name) = 0;
+virtual std::string createGame(uint32_t gameType, std::wstring name) = 0;
 virtual bool    deleteGame(std::string gameId) = 0;
 virtual bool    inviteGame(std::string gameId) = 0;
 virtual bool    playGame(std::string gameId) = 0;

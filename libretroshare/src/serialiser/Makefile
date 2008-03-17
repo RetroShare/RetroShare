@@ -12,6 +12,7 @@ RSOBJ += rstlvfileitem.o rstlvutil.o    # TLV Objs
 RSOBJ += rsbaseitems.o rsconfigitems.o rsdiscitems.o # RsItems 
 RSOBJ += rsmsgitems.o rsrankitems.o	# RsItems
 RSOBJ += rsphotoitems.o			# RsItems
+RSOBJ += rsgameitems.o			# RsItems
 
 TESTOBJ  = tlvbase_test.o tlvbase_test2.o tlvfileitem_test.o 
 TESTOBJ += tlvitems_test.o tlvstack_test.o tlvconfig_test.o 

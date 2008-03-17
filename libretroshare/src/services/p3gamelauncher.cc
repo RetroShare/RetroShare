@@ -33,6 +33,8 @@
 /* global variable for GUI */
 RsGameLauncher *rsGameLauncher = NULL;
 
+#define GAME_DEBUG 1
+#define TEST_NO_GAMES 1
 
 /* So STATEs is always the best way to do things....
  *
@@ -108,7 +110,12 @@ p3GameLauncher::p3GameLauncher(p3ConnectMgr *connMgr)
 	:p3Service(RS_SERVICE_TYPE_GAME_LAUNCHER), 
 	 mConnMgr(connMgr)
 {
-	//addSerialType(new RsGameSerialiser());
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::p3GameLauncher()";
+	std::cerr << std::endl;
+#endif
+
+	addSerialType(new RsGameSerialiser());
 	mOwnId = mConnMgr->getOwnId();
 }
 
@@ -116,6 +123,7 @@ int	p3GameLauncher::tick()
 {
 	pqioutput(PQL_DEBUG_BASIC, p3gamezone, 
 		"p3GameLauncher::tick()");
+	checkIncoming();
 	return 0;
 }
 
@@ -163,6 +171,11 @@ std::string generateRandomGameId()
 
 bool 	p3GameLauncher::resumeGame(std::string)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::resumeGame()";
+	std::cerr << std::endl;
+#endif
+
 	/* get game details from p3gameService */
 	/* add to status reports */
 	/* send resume invites to peers in list */
@@ -179,16 +192,28 @@ bool 	p3GameLauncher::resumeGame(std::string)
 
 	/* Server commands */
 
-std::string p3GameLauncher::createGame(uint32_t gameType, std::string name)
+std::string p3GameLauncher::createGame(uint32_t gameType, std::wstring name)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::createGame()";
+	std::cerr << std::endl;
+#endif
+
 	/* translate Id */
 	uint16_t srvId = gameType;
 
 	return newGame(srvId, name);
 }
 
-std::string  p3GameLauncher::newGame(uint16_t srvId, std::string name)
+std::string  p3GameLauncher::newGame(uint16_t srvId, std::wstring name)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::newGame()";
+	std::string tmpname(name.begin(), name.end());
+	std::cerr << "srvId: " << srvId << " name: " << tmpname;
+	std::cerr << std::endl;
+#endif
+
 	/* generate GameId (random string) */
 	std::string gameId = generateRandomGameId();
 
@@ -220,11 +245,23 @@ std::string  p3GameLauncher::newGame(uint16_t srvId, std::string name)
 
 void  p3GameLauncher::cleanupGame(std::string gameId)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::cleanupGame()";
+	std::cerr << " gameId: " << gameId;
+	std::cerr << std::endl;
+#endif
+
 	deleteGame(gameId);
 }
 
 bool  p3GameLauncher::deleteGame(std::string gameId)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::deleteGame()";
+	std::cerr << " gameId: " << gameId;
+	std::cerr << std::endl;
+#endif
+
 	std::map<std::string, gameStatus>::iterator git;
 	git = gamesCurrent.find(gameId);
 	if (git == gamesCurrent.end())
@@ -245,6 +282,12 @@ bool  p3GameLauncher::deleteGame(std::string gameId)
 
 bool  p3GameLauncher::inviteGame(std::string gameId)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::inviteGame()";
+	std::cerr << " gameId: " << gameId;
+	std::cerr << std::endl;
+#endif
+
 	std::map<std::string, gameStatus>::iterator git;
 	git = gamesCurrent.find(gameId);
 	if (git == gamesCurrent.end())
@@ -266,13 +309,17 @@ bool  p3GameLauncher::inviteGame(std::string gameId)
 		/* for an invite we need:
 		 * serviceId, gameId, numPlayers....
 		 */
+		if (*it == mOwnId)
+		{
+			continue;
+		}
 
-		RsGameItem  *rgi = new RsGameItem();
-		rgi->serviceId  = git->second.serviceId;
-		rgi->gameId     = git->second.gameId;
-		rgi->gameComment= git->second.gameName;
-		rgi->numPlayers = git->second.numPlayers;
-		rgi->players    = git->second.allowedPeers;
+		RsGameItem  *rgi  = new RsGameItem();
+		rgi->serviceId    = git->second.serviceId;
+		rgi->gameId       = git->second.gameId;
+		rgi->gameComment  = git->second.gameName;
+		rgi->numPlayers   = git->second.numPlayers;
+		rgi->players.ids  = git->second.allowedPeers;
 
 		rgi->msg = RS_GAME_MSG_START;
 		/* destination */
@@ -289,12 +336,18 @@ bool  p3GameLauncher::inviteGame(std::string gameId)
 
 
 /* support Game */
-bool    p3GameLauncher::confirmGame(std::string game)
+bool    p3GameLauncher::confirmGame(std::string gameId)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::confirmGame()";
+	std::cerr << " gameId: " << gameId;
+	std::cerr << std::endl;
+#endif
+
 	
 	std::map<std::string, gameStatus>::iterator git;
 
-	git = gamesCurrent.find(game);
+	git = gamesCurrent.find(gameId);
 	if (git == gamesCurrent.end())
 	{
 		return false;
@@ -310,12 +363,17 @@ bool    p3GameLauncher::confirmGame(std::string game)
 		 * serviceId, gameId, numPlayers....
 		 */
 
+		if (*it == mOwnId)
+		{
+			continue;
+		}
+
 		RsGameItem  *rgi = new RsGameItem();
-		rgi->serviceId  = git->second.serviceId;
-		rgi->gameId     = git->second.gameId;
-		rgi->gameComment= git->second.gameName;
-		rgi->numPlayers = git->second.numPlayers;
-		rgi->players    = git->second.peerIds;
+		rgi->serviceId   = git->second.serviceId;
+		rgi->gameId      = git->second.gameId;
+		rgi->gameComment = git->second.gameName;
+		rgi->numPlayers  = git->second.numPlayers;
+		rgi->players.ids = git->second.peerIds;
 
 		rgi->msg = RS_GAME_MSG_CONFIRM;
 
@@ -332,6 +390,12 @@ bool    p3GameLauncher::confirmGame(std::string game)
 
 bool    p3GameLauncher::playGame(std::string gameId)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::playGame()";
+	std::cerr << " gameId: " << gameId;
+	std::cerr << std::endl;
+#endif
+
 	std::map<std::string, gameStatus>::iterator git;
 
 	git = gamesCurrent.find(gameId);
@@ -355,12 +419,17 @@ bool    p3GameLauncher::playGame(std::string gameId)
 		 * serviceId, gameId, numPlayers....
 		 */
 
+		if (*it == mOwnId)
+		{
+			continue;
+		}
+
 		RsGameItem  *rgi = new RsGameItem();
-		rgi->serviceId  = git->second.serviceId;
-		rgi->gameId     = git->second.gameId;
-		rgi->gameComment= git->second.gameName;
-		rgi->numPlayers = git->second.numPlayers;
-		rgi->players    = git->second.peerIds;
+		rgi->serviceId   = git->second.serviceId;
+		rgi->gameId      = git->second.gameId;
+		rgi->gameComment = git->second.gameName;
+		rgi->numPlayers  = git->second.numPlayers;
+		rgi->players.ids = git->second.peerIds;
 
 		rgi->msg = RS_GAME_MSG_PLAY;
 
@@ -385,7 +454,7 @@ bool    p3GameLauncher::playGame(std::string gameId)
 			rgi->gameId     = git->second.gameId;
 			rgi->gameComment= git->second.gameName;
 			rgi->numPlayers = 0;
-			rgi->players.clear();
+			rgi->players.ids.clear();
 
 			rgi->msg = RS_GAME_MSG_REJECT;
 
@@ -408,6 +477,12 @@ bool    p3GameLauncher::playGame(std::string gameId)
 
 bool    p3GameLauncher::quitGame(std::string gameId)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::checkGameProperties()";
+	std::cerr << " gameId: " << gameId;
+	std::cerr << std::endl;
+#endif
+
 	/* TODO */
 
 	return false;
@@ -417,6 +492,12 @@ bool    p3GameLauncher::quitGame(std::string gameId)
 
 bool    p3GameLauncher::invitePeer(std::string gameId, std::string peerId)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::invitePeer()";
+	std::cerr << " gameId: " << gameId << " peerId: " << peerId;
+	std::cerr << std::endl;
+#endif
+
 	std::map<std::string, gameStatus>::iterator git;
 	git = gamesCurrent.find(gameId);
 	if (git == gamesCurrent.end())
@@ -451,6 +532,12 @@ bool    p3GameLauncher::invitePeer(std::string gameId, std::string peerId)
 /* Server GUI commands */
 bool    p3GameLauncher::uninvitePeer(std::string gameId, std::string peerId)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::uninvitePeer()";
+	std::cerr << " gameId: " << gameId << " peerId: " << peerId;
+	std::cerr << std::endl;
+#endif
+
 	std::map<std::string, gameStatus>::iterator git;
 	git = gamesCurrent.find(gameId);
 	if (git == gamesCurrent.end())
@@ -482,12 +569,18 @@ bool    p3GameLauncher::uninvitePeer(std::string gameId, std::string peerId)
 }
 
 
-bool    p3GameLauncher::confirmPeer(std::string game, std::string peerId, 
+bool    p3GameLauncher::confirmPeer(std::string gameId, std::string peerId, 
 							int16_t pos)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::confirmPeer()";
+	std::cerr << " gameId: " << gameId << " peerId: " << peerId;
+	std::cerr << std::endl;
+#endif
+
 	std::map<std::string, gameStatus>::iterator git;
 
-	git = gamesCurrent.find(game);
+	git = gamesCurrent.find(gameId);
 	if (git == gamesCurrent.end())
 	{
 		return false;
@@ -524,15 +617,21 @@ bool    p3GameLauncher::confirmPeer(std::string game, std::string peerId,
 	}
 		
 	git->second.peerIds.insert(it, peerId);
-	return confirmGame(game);
+	return confirmGame(gameId);
 }
 
 
-bool    p3GameLauncher::unconfirmPeer(std::string game, std::string peerId)
+bool    p3GameLauncher::unconfirmPeer(std::string gameId, std::string peerId)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::unconfirmPeer()";
+	std::cerr << " gameId: " << gameId << " peerId: " << peerId;
+	std::cerr << std::endl;
+#endif
+
 	std::map<std::string, gameStatus>::iterator git;
 
-	git = gamesCurrent.find(game);
+	git = gamesCurrent.find(gameId);
 	if (git == gamesCurrent.end())
 	{
 		return false;
@@ -551,23 +650,41 @@ bool    p3GameLauncher::unconfirmPeer(std::string game, std::string peerId)
 	{
 		git->second.peerIds.erase(it);
 	}
-	return confirmGame(game);
+	return confirmGame(gameId);
 }
 
 
 /* Client GUI Commands */
 bool    p3GameLauncher::interestedPeer(std::string gameId)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::interestedPeer()";
+	std::cerr << " gameId: " << gameId;
+	std::cerr << std::endl;
+#endif
+
 	return inviteResponse(gameId, true);
 }
 
 bool    p3GameLauncher::uninterestedPeer(std::string gameId)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::uninterestedPeer()";
+	std::cerr << " gameId: " << gameId;
+	std::cerr << std::endl;
+#endif
+
 	return inviteResponse(gameId, false);
 }
 
 bool    p3GameLauncher::inviteResponse(std::string gameId, bool interested)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::inviteResponse()";
+	std::cerr << " gameId: " << gameId << "interested: " << interested;
+	std::cerr << std::endl;
+#endif
+
 	std::map<std::string, gameStatus>::iterator git;
 
 	git = gamesCurrent.find(gameId);
@@ -583,15 +700,17 @@ bool    p3GameLauncher::inviteResponse(std::string gameId, bool interested)
 	rgi->gameId     = git->second.gameId;
 	rgi->gameComment= git->second.gameName;
 	rgi->numPlayers = 0;
-	rgi->players.clear();
+	rgi->players.ids.clear();
 
 	if (interested)
 	{
 		rgi->msg = RS_GAME_MSG_INTERESTED;
+		git->second.state = RS_GAME_INIT_READY;
 	}
 	else
 	{
 		rgi->msg = RS_GAME_MSG_REJECT;
+		git->second.state = RS_GAME_INIT_INVITED;
 	}
 
 	/* destination */
@@ -609,6 +728,11 @@ bool    p3GameLauncher::inviteResponse(std::string gameId, bool interested)
 /* get details */
 bool    p3GameLauncher::getGameList(std::list<RsGameInfo> &gameList)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::getGameList()";
+	std::cerr << std::endl;
+#endif
+
 	std::map<std::string, gameStatus>::iterator git;
 	for(git = gamesCurrent.begin(); git != gamesCurrent.end(); git++)
 	{
@@ -625,15 +749,21 @@ bool    p3GameLauncher::getGameList(std::list<RsGameInfo> &gameList)
 		info.numPlayers = git->second.numPlayers;
 		info.gameName =   git->second.gameName;
 
-		if ((git->second.state == RS_GAME_INIT_SETUP) ||
-			(git->second.state == RS_GAME_INIT_INVITED))
+		if (git->second.state == RS_GAME_INIT_SETUP) 
+		{
+			info.status = "Setup";
+		}
+		else if (git->second.state == RS_GAME_INIT_INVITED)
 		{
 			info.status = "Invite";
 		}
-		else if ((git->second.state == RS_GAME_INIT_CONFIRM) ||
-			(git->second.state == RS_GAME_INIT_READY))
+		else if (git->second.state == RS_GAME_INIT_CONFIRM) 
 		{
 			info.status = "Confirm";
+		}
+		else if	(git->second.state == RS_GAME_INIT_READY)
+		{
+			info.status = "Ready";
 		}
 		else if (git->second.state == RS_GAME_INIT_ACTIVE)
 		{
@@ -651,6 +781,12 @@ bool    p3GameLauncher::getGameList(std::list<RsGameInfo> &gameList)
 
 bool    p3GameLauncher::getGameDetail(std::string gameId, RsGameDetail &detail)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::getGameDetail()";
+	std::cerr << " gameId: " << gameId;
+	std::cerr << std::endl;
+#endif
+
 	std::map<std::string, gameStatus>::iterator git;
 	std::list<std::string>::iterator it;
 	git = gamesCurrent.find(gameId);
@@ -660,18 +796,21 @@ bool    p3GameLauncher::getGameDetail(std::string gameId, RsGameDetail &detail)
 	}
 
 	/* fill in the details */
-	detail.gameId = gameId;
-	detail.gameType = git->second.serviceId;
-	detail.gameName =   git->second.gameName;
-	detail.areServer = git->second.areServer;
-	detail.serverId =  git->second.serverId;
+	detail.gameId     = gameId;
+	detail.gameType   = git->second.serviceId;
+	detail.gameName   = git->second.gameName;
+	detail.areServer  = git->second.areServer;
+	detail.serverId   = git->second.serverId;
 	detail.serverName = "Server???";
 	detail.numPlayers = git->second.numPlayers;
 
 	if ((git->second.state == RS_GAME_INIT_SETUP) ||
 		(git->second.state == RS_GAME_INIT_INVITED))
 	{
-		detail.status = "Invite";
+		if (git->second.state == RS_GAME_INIT_SETUP) 
+			detail.status = "Setup";
+		else
+			detail.status = "Invite";
 
 		/* copy from invited List */
 		for(it = git->second.allowedPeers.begin();
@@ -689,7 +828,10 @@ bool    p3GameLauncher::getGameDetail(std::string gameId, RsGameDetail &detail)
 	else if ((git->second.state == RS_GAME_INIT_CONFIRM) ||
 			(git->second.state == RS_GAME_INIT_READY))
 	{
-		detail.status = "Confirm";
+		if (git->second.state == RS_GAME_INIT_CONFIRM) 
+			detail.status = "Confirm";
+		else
+			detail.status = "Ready";
 
 		/* copy from invited List */
 		for(it = git->second.allowedPeers.begin();
@@ -756,6 +898,11 @@ bool    p3GameLauncher::getGameDetail(std::string gameId, RsGameDetail &detail)
 
 int p3GameLauncher::checkIncoming()
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::checkIncoming()";
+	std::cerr << std::endl;
+#endif
+
 	/* check for incoming items */
 
 	RsGameItem *gi = NULL;
@@ -771,6 +918,11 @@ int p3GameLauncher::checkIncoming()
 
 int p3GameLauncher::handleIncoming(RsGameItem *gi)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::handleIncoming()";
+	std::cerr << std::endl;
+#endif
+
 	/* check that its a valid packet...
 	 * and that there is a gameStatus.
 	 */
@@ -778,6 +930,10 @@ int p3GameLauncher::handleIncoming(RsGameItem *gi)
 	/* Always check the Properties */
 	if (!checkGameProperties(gi->serviceId, gi->numPlayers))
 	{
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::handleIncoming()";
+	std::cerr << std::endl;
+#endif
 		sendRejectMsg(gi);
 		return 0;
 	}
@@ -796,6 +952,10 @@ int p3GameLauncher::handleIncoming(RsGameItem *gi)
 			/* we are the client -> start it up! */
 			return handleClientStart(gi);
 		}
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::handleIncoming()";
+	std::cerr << std::endl;
+#endif
 		sendRejectMsg(gi);
 		return 0;
 	}
@@ -809,10 +969,14 @@ int p3GameLauncher::handleIncoming(RsGameItem *gi)
 
 	if (it->second.areServer)
 	{
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::handleIncoming() AreServer for Game";
+	std::cerr << std::endl;
+#endif
 		/***** SERVER HANDLING ****/
 		switch(it->second.state)
 		{
-			case RS_GAME_INIT_SETUP:
+			case RS_GAME_INIT_CONFIRM:
 				/* only accept INTERESTED | REJECT */
 				if ((gi->msg == RS_GAME_MSG_INTERESTED) ||
 				    (gi->msg == RS_GAME_MSG_REJECT))
@@ -822,6 +986,11 @@ int p3GameLauncher::handleIncoming(RsGameItem *gi)
 				}
 				else
 				{
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::handleIncoming()";
+	std::cerr << " INIT_CONFIRM & msg != INT | REJ - reject";
+	std::cerr << std::endl;
+#endif
 					sendRejectMsg(gi);
 					return 0;
 				}
@@ -836,14 +1005,25 @@ int p3GameLauncher::handleIncoming(RsGameItem *gi)
 				}
 				else
 				{
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::handleIncoming()";
+	std::cerr << " INIT_ACTIVE & msg != PAU | QUIT - reject ";
+	std::cerr << std::endl;
+#endif
 					sendRejectMsg(gi);
 					return 0;
 				}
 				break;
 
+			case RS_GAME_INIT_SETUP:    /* invalid state */
 			case RS_GAME_INIT_INVITED:  /* invalid state */
 			case RS_GAME_INIT_READY:    /* invalid state */
 			default:
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::handleIncoming()";
+	std::cerr << " INIT_SETUP | INIT_INVITED | INIT_READY | default - reject ";
+	std::cerr << std::endl;
+#endif
 				sendRejectMsg(gi);
 				return 0;
 				break;
@@ -851,6 +1031,10 @@ int p3GameLauncher::handleIncoming(RsGameItem *gi)
 	}
 	else
 	{
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::handleIncoming() AreClient for Game";
+	std::cerr << std::endl;
+#endif
 		/***** CLIENT HANDLING ****/
 		switch(it->second.state)
 		{
@@ -863,6 +1047,11 @@ int p3GameLauncher::handleIncoming(RsGameItem *gi)
 				}
 				else
 				{
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::handleIncoming()";
+	std::cerr << " INIT_INVITED & msg != REJ - reject ";
+	std::cerr << std::endl;
+#endif
 					sendRejectMsg(gi);
 					return 0;
 				}
@@ -879,6 +1068,11 @@ int p3GameLauncher::handleIncoming(RsGameItem *gi)
 				}
 				else
 				{
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::handleIncoming()";
+	std::cerr << " INIT_READY & msg != CFM, REJ, PLY - reject ";
+	std::cerr << std::endl;
+#endif
 					sendRejectMsg(gi);
 					return 0;
 				}
@@ -893,6 +1087,11 @@ int p3GameLauncher::handleIncoming(RsGameItem *gi)
 				}
 				else
 				{
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::handleIncoming()";
+	std::cerr << " INIT_ACTIVE & msg != PAU, QUIT - reject ";
+	std::cerr << std::endl;
+#endif
 					sendRejectMsg(gi);
 					return 0;
 				}
@@ -901,11 +1100,21 @@ int p3GameLauncher::handleIncoming(RsGameItem *gi)
 
 			case RS_GAME_INIT_SETUP:    /* invalid state */
 			default:
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::handleIncoming()";
+	std::cerr << " INIT_SETUP - invalid state - reject ";
+	std::cerr << std::endl;
+#endif
 				sendRejectMsg(gi);
 				return 0;
 				break;
 		}
 	}
+
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::handleIncoming() Never Get Here - reject";
+	std::cerr << std::endl;
+#endif
 
 	/* should never get here */
 	sendRejectMsg(gi);
@@ -934,6 +1143,11 @@ int p3GameLauncher::handleIncoming(RsGameItem *gi)
 	/* START msg */
 int p3GameLauncher::handleClientStart(RsGameItem *gi)   
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::handleClientStart()";
+	std::cerr << std::endl;
+#endif
+
 	/* Already checked existance / Properties */
 
 	/* else -> add into the list of games */
@@ -945,7 +1159,9 @@ int p3GameLauncher::handleClientStart(RsGameItem *gi)
 	gs.serverId   = gi->PeerId();
 	gs.state = RS_GAME_INIT_INVITED;  /* Client */
 	gs.numPlayers = gi->numPlayers;
-	gs.peerIds    = gi->players;
+	gs.allowedPeers = gi->players.ids;
+	//gs.interestedPeers = gi->players.ids;
+	//gs.peerIds      = gi->players.ids;
 
 	gamesCurrent[gi->gameId] = gs;
 
@@ -955,6 +1171,11 @@ int p3GameLauncher::handleClientStart(RsGameItem *gi)
 	/* REJECT msg */
 int p3GameLauncher::handleClientInvited(RsGameItem *gi)   
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::handleClientInvited()";
+	std::cerr << std::endl;
+#endif
+
 	/* cleanup game */
 	cleanupGame(gi->gameId);
 	return 1;
@@ -963,6 +1184,11 @@ int p3GameLauncher::handleClientInvited(RsGameItem *gi)
 	/* CONFIRM / REJECT / PLAY msg */
 int p3GameLauncher::handleClientReady(RsGameItem *gi)   
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::handleClientReady()";
+	std::cerr << std::endl;
+#endif
+
 	/* get game */
 	std::map<std::string, gameStatus>::iterator it;
 	if (gamesCurrent.end() == (it = gamesCurrent.find(gi->gameId)))
@@ -979,7 +1205,9 @@ int p3GameLauncher::handleClientReady(RsGameItem *gi)
 		 * (other info should be the same)
 		 */
 		it->second.numPlayers = gi->numPlayers;
-		it->second.peerIds    = gi->players;
+		// Which one?
+		it->second.interestedPeers = gi->players.ids;
+		//it->second.peerIds    = gi->players.ids;
 
 	  	return 1;
 	  	break;
@@ -1002,6 +1230,11 @@ int p3GameLauncher::handleClientReady(RsGameItem *gi)
 	/* PAUSE / QUIT msg */
 int p3GameLauncher::handleClientActive(RsGameItem *gi)   
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::handleClientActive()";
+	std::cerr << std::endl;
+#endif
+
 
 
 	return 1;
@@ -1011,6 +1244,11 @@ int p3GameLauncher::handleClientActive(RsGameItem *gi)
 	/* INTERESTED / REJECT msg */
 int p3GameLauncher::handleServerSetup(RsGameItem *gi)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::handleServerSetup()";
+	std::cerr << std::endl;
+#endif
+
 	/* check if there is an existing game? */
 	std::map<std::string, gameStatus>::iterator it;
 	if (gamesCurrent.end() == (it = gamesCurrent.find(gi->gameId)))
@@ -1043,20 +1281,47 @@ int p3GameLauncher::handleServerSetup(RsGameItem *gi)
  */
 int p3GameLauncher::handleServerActive(RsGameItem *gi)   
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::handleServerActive()";
+	std::cerr << std::endl;
+#endif
+
 
 	return 1;
 }
 
 int	p3GameLauncher::sendRejectMsg(RsGameItem *gi)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::sendRejectMsg()";
+	std::cerr << std::endl;
+#endif
+
 	/* all should be okay ... except msg */
-	gi->msg = RS_GAME_MSG_REJECT;
-	sendItem(gi);
+
+	RsGameItem *response = new RsGameItem();
+	response->serviceId = gi->serviceId;
+	response->numPlayers = gi->numPlayers;
+	response->msg = RS_GAME_MSG_REJECT;
+	response->gameId     = gi->gameId;
+	response->gameComment = gi->gameComment;
+	response->players.ids = gi->players.ids;
+
+	sendItem(response);
 	return 1;
 }
 
 bool p3GameLauncher::checkGameProperties(uint16_t serviceId, uint16_t players)
 {
+#ifdef GAME_DEBUG
+	std::cerr << "p3GameLauncher::checkGameProperties()";
+	std::cerr << std::endl;
+#endif
+
+#ifdef TEST_NO_GAMES
+	return true;
+#endif
+
 	std::map<uint16_t, p3GameService *>::iterator it;
 	if (gameList.end() == (it = gameList.find(serviceId)))
 	{

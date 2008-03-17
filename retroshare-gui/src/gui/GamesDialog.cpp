@@ -142,7 +142,7 @@ void GamesDialog::updateGameList()
 		std::string serverName = rsPeers->getPeerName(it->serverId);
 		item -> setText(GAME_LIST_TYPE, QString::fromStdString(it->gameType));
 		item -> setText(GAME_LIST_SERVER, QString::fromStdString(serverName));
-		item -> setText(GAME_LIST_NAME, QString::fromStdString(it->gameName));
+		item -> setText(GAME_LIST_NAME, QString::fromStdWString(it->gameName));
 		item -> setText(GAME_LIST_STATUS, QString::fromStdString(it->status));
 		item -> setText(GAME_LIST_ID, QString::fromStdString(it->gameId));
 
@@ -218,11 +218,13 @@ void GamesDialog::updateGameDetails()
 	for(it = detail.gamers.begin(); it != detail.gamers.end(); it++)
 	{
 		bool showPeer = false;
-		if (detail.status == "Invite")
+		if ((detail.status == "Setup") ||
+			(detail.status == "Invite"))
 		{
 			showPeer = true;
 		}
-		else if (detail.status == "Confirm")
+		else if ((detail.status == "Confirm") ||
+			 (detail.status == "Ready"))
 		{
 			if ((it->second).invite == true)
 				showPeer = true;
@@ -273,7 +275,7 @@ void GamesDialog::updateGameDetails()
 			items.append(item);
 		}
 	}
-	if (detail.status == "Invite")
+	if (detail.status == "Setup")
 	{
 		std::list<std::string> friends;
 		std::list<std::string>::iterator fit;
@@ -354,7 +356,7 @@ void GamesDialog::gamePeersPopupMenu( QPoint point )
       		return;
       }
 
-      if (mCurrentGameStatus == "Invite")
+      if (mCurrentGameStatus == "Setup")
       {
       	/* invite */
 	/* uninvite */
@@ -369,31 +371,73 @@ void GamesDialog::gamePeersPopupMenu( QPoint point )
         contextMnu.addAction(uninviteAct);
         contextMnu.exec( mevent->globalPos() );
       }
+      else if (mCurrentGameStatus == "Invite")
+      {
+      	/* invite */
+	/* uninvite */
+
+        QAction *inviteAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Interested in Playing" ), this );
+        connect( inviteAct , SIGNAL( triggered() ), this, SLOT( interested() ) );
+        QAction *uninviteAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Not Interested in Game" ), this );
+        connect( uninviteAct , SIGNAL( triggered() ), this, SLOT( uninterested() ) );
+
+        contextMnu.clear();
+        contextMnu.addAction(inviteAct);
+        contextMnu.addAction(uninviteAct);
+        contextMnu.exec( mevent->globalPos() );
+      }
+      else if (mCurrentGameStatus == "Invite")
+      {
+      	/* invite */
+	/* uninvite */
+
+        QAction *interestedAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Interested in Playing" ), this );
+        connect( interestedAct , SIGNAL( triggered() ), this, SLOT( interested() ) );
+        QAction *uninterestedAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Not Interested" ), this );
+        connect( uninterestedAct , SIGNAL( triggered() ), this, SLOT( uninterested() ) );
+
+        contextMnu.clear();
+        contextMnu.addAction(interestedAct);
+        contextMnu.addAction(uninterestedAct);
+        contextMnu.exec( mevent->globalPos() );
+      }
       else if (mCurrentGameStatus == "Confirm")
       {
       	/* invite */
 	/* uninvite */
 
-        QAction *inviteAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Add to Play List" ), this );
+        QAction *inviteAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Confirm Peer in Game" ), this );
         connect( inviteAct , SIGNAL( triggered() ), this, SLOT( confirmPeer() ) );
-        QAction *uninviteAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Remove from Play List" ), this );
+        QAction *uninviteAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Remove Peer from Game" ), this );
         connect( uninviteAct , SIGNAL( triggered() ), this, SLOT( unconfirmPeer() ) );
+
+        contextMnu.clear();
+        contextMnu.addAction(inviteAct);
+        contextMnu.addAction(uninviteAct);
+        contextMnu.exec( mevent->globalPos() );
+      }
+      else if (mCurrentGameStatus == "Ready")
+      {
+      	/* invite */
+	/* uninvite */
+
         QAction *interestedAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Interested in Game" ), this );
         connect( interestedAct , SIGNAL( triggered() ), this, SLOT( interested() ) );
         QAction *uninterestedAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Not Interested" ), this );
         connect( uninterestedAct , SIGNAL( triggered() ), this, SLOT( uninterested() ) );
 
         contextMnu.clear();
-        contextMnu.addAction(inviteAct);
-        contextMnu.addAction(uninviteAct);
-        contextMnu.addSeparator(); 
         contextMnu.addAction(interestedAct);
         contextMnu.addAction(uninterestedAct);
         contextMnu.exec( mevent->globalPos() );
       }
-      else
+      else /* PLAYING */
       {
       	/* no menu for playing */
+        QAction *quitAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Quit Game" ), this );
+        contextMnu.clear();
+        contextMnu.addAction(quitAct);
+        contextMnu.exec( mevent->globalPos() );
       }
 
       return;
@@ -404,7 +448,7 @@ void GamesDialog::gamePeersPopupMenu( QPoint point )
 void GamesDialog::createGame()
 {
 	/* extract the Game Type and number of players from GUI */
-	std::string gameName = ui.gameNameEdit->text().toStdString();
+	std::wstring gameName = ui.gameNameEdit->text().toStdWString();
 	uint32_t gameType   = ui.gameComboBox->currentIndex();
 	bool     addAll     = ui.checkInviteAll->isChecked();
 	std::list<std::string> playerList;
@@ -424,7 +468,8 @@ void GamesDialog::createGame()
 	}
 
 	/* call to the GameControl */
-	std::cerr << "GamesDialog::createGame() Game: " << gameType << " name: " << gameName;
+	std::string tmpName(gameName.begin(), gameName.end());
+	std::cerr << "GamesDialog::createGame() Game: " << gameType << " name: " << tmpName;
 	std::cerr << std::endl;
 
 	updateGameList();

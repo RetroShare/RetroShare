@@ -56,7 +56,7 @@ class gameStatus
 
 	uint32_t serviceId;
 	std::string gameId;
-	std::string gameName;
+	std::wstring gameName;
 
 	bool areServer;  	/* are we the server? */
 	std::string serverId; 	/* if not, who is? */
@@ -80,7 +80,7 @@ class p3GameLauncher: public p3Service, public RsGameLauncher
 
 	/***** EXTERNAL RsGameLauncher Interface *******/
 /* server commands */
-virtual std::string createGame(uint32_t gameType, std::string name);
+virtual std::string createGame(uint32_t gameType, std::wstring name);
 virtual bool    deleteGame(std::string gameId);
 virtual bool    inviteGame(std::string gameId);
 virtual bool    playGame(std::string gameId);
@@ -103,7 +103,7 @@ virtual bool    getGameDetail(std::string gameId, RsGameDetail &detail);
 
 	/* support functions */
 	private:
-std::string  	newGame(uint16_t srvId, std::string name);
+std::string  	newGame(uint16_t srvId, std::wstring name);
 bool    	confirmGame(std::string gameId);
 bool    	quitGame(std::string gameId);
 bool 		inviteResponse(std::string gameId, bool interested);
