@@ -45,13 +45,13 @@
        <item>
         <layout class="QVBoxLayout" >
          <item>
-          <widget class="QLineEdit" name="lineEdit_2" />
+          <widget class="QLineEdit" name="dateLineEdit" />
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEdit" />
+          <widget class="QLineEdit" name="locLineEdit" />
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEdit_3" />
+          <widget class="QLineEdit" name="commentLineEdit" />
          </item>
         </layout>
        </item>
@@ -67,7 +67,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox_2" >
+        <widget class="QComboBox" name="sizeComboBox" >
          <item>
           <property name="text" >
            <string>320 x 320</string>
@@ -93,7 +93,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox" >
+        <widget class="QComboBox" name="speedComboBox" >
          <item>
           <property name="text" >
            <string>1 Sec</string>
@@ -140,14 +140,14 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_4" >
+        <widget class="QPushButton" name="editButton" >
          <property name="text" >
           <string>Edit Photo Details</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_3" >
+        <widget class="QPushButton" name="saveButton" >
          <property name="text" >
           <string>Save Photo</string>
          </property>
@@ -156,7 +156,7 @@
       </layout>
      </item>
      <item>
-      <widget class="QLabel" name="label" >
+      <widget class="QLabel" name="photoLabel" >
        <property name="text" >
         <string>No Photo Selected</string>
        </property>
@@ -178,35 +178,35 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_5" >
+        <widget class="QPushButton" name="startButton" >
          <property name="text" >
           <string>Start</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_6" >
+        <widget class="QPushButton" name="backButton" >
          <property name="text" >
           <string>Back</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton" >
+        <widget class="QPushButton" name="playButton" >
          <property name="text" >
           <string>Play </string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_2" >
+        <widget class="QPushButton" name="pauseButton" >
          <property name="text" >
           <string>Pause</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_7" >
+        <widget class="QPushButton" name="stepButton" >
          <property name="text" >
           <string>Forward</string>
          </property>

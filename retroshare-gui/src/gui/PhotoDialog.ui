@@ -18,7 +18,7 @@
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
-     <widget class="QWidget" name="" >
+     <widget class="QWidget" name="layoutWidget" >
       <layout class="QVBoxLayout" >
        <item>
         <widget class="QSplitter" name="splitter" >
@@ -51,17 +51,17 @@
           </property>
           <column>
            <property name="text" >
-            <string>Friend / Set</string>
-           </property>
-          </column>
-          <column>
-           <property name="text" >
             <string>Thumb Image</string>
            </property>
           </column>
           <column>
            <property name="text" >
             <string>Image Name</string>
+           </property>
+          </column>
+          <column>
+           <property name="text" >
+            <string>Comment</string>
            </property>
           </column>
           <column>
@@ -76,7 +76,17 @@
           </column>
           <column>
            <property name="text" >
-            <string>Comment</string>
+            <string>Size</string>
+           </property>
+          </column>
+          <column>
+           <property name="text" >
+            <string>PeerId</string>
+           </property>
+          </column>
+          <column>
+           <property name="text" >
+            <string>PhotoId</string>
            </property>
           </column>
          </widget>
@@ -132,7 +142,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="" >
+     <widget class="QWidget" name="layoutWidget" >
       <layout class="QGridLayout" >
        <item row="0" column="0" >
         <widget class="QLabel" name="label" >

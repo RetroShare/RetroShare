@@ -44,7 +44,7 @@
 #include <QPixmap>
 #include <QMessageBox>
 #include <QHeaderView>
-
+#include <QTimer>
 
 /* Images for context menu icons */
 #define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
@@ -100,10 +100,34 @@ LinksDialog::LinksDialog(QWidget *parent)
 	_header->resizeSection ( 1, 50 );
 	_header->resizeSection ( 2, 150 );
 
+
+	/* Set a GUI update timer - much cleaner than
+	 * doing everything through the notify agent 
+	 */
+
+  QTimer *timer = new QTimer(this);
+  timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
+  timer->start(1000);
+
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
+
+}
+
+void LinksDialog::checkUpdate()
+{
+	/* update */
+	if (!rsRanks)
+		return;
+
+	if (rsRanks->updated())
+	{
+		updateLinks();
+	}
+
+	return;
 }
 
 void LinksDialog::linkTreeWidgetCostumPopupMenu( QPoint point )

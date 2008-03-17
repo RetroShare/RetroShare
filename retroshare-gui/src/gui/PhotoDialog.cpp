@@ -24,6 +24,7 @@
 #include "common/vmessagebox.h"
 
 #include "PhotoDialog.h"
+#include "PhotoShow.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsphoto.h"
 
@@ -38,6 +39,7 @@
 #include <QPixmap>
 #include <QMessageBox>
 #include <QHeaderView>
+#include <QTimer>
 
 
 /* Images for context menu icons */
@@ -58,11 +60,14 @@
 #define PHOTO_PEER_COL_SID 	4
 #define PHOTO_PEER_COL_PHOTOID 	5
 
-
 #define PHOTO_LIST_COL_PHOTO	0
-#define PHOTO_LIST_COL_COMMENT  1
-#define PHOTO_LIST_COL_PHOTOID  2
-
+#define PHOTO_LIST_COL_NAME	1
+#define PHOTO_LIST_COL_COMMENT  2
+#define PHOTO_LIST_COL_DATE	3
+#define PHOTO_LIST_COL_LOCATION 4
+#define PHOTO_LIST_COL_SIZE	5
+#define PHOTO_LIST_COL_PEERID   6
+#define PHOTO_LIST_COL_PHOTOID  7
 
 
 /** Constructor */
@@ -77,10 +82,8 @@ PhotoDialog::PhotoDialog(QWidget *parent)
 
   connect( ui.peerTreeWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem * , QTreeWidgetItem * ) ), this, SLOT( updatePhotoList( ) ) );
 
-  //connect( ui.photoTreeWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem * , QTreeWidgetItem * ) ), this, SLOT( displayPhoto( ) ) );
-  //connect( ui.addPhotoButton, SIGNAL( clicked( ) ), this, SLOT( addPhotos( ) ) );
-
-
+  connect( ui.photoTreeWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem * , int ) ), this, SLOT( showPhoto( QTreeWidgetItem *, int ) ) );
+  connect( ui.addButton, SIGNAL( clicked( ) ), this, SLOT( addPhotos( ) ) );
 
   /* hide the Tree +/- */
   ui.photoTreeWidget -> setRootIsDecorated( false );
@@ -116,11 +119,35 @@ PhotoDialog::PhotoDialog(QWidget *parent)
 //	_header->resizeSection ( 10, 100 );
 
 
+	/* Set a GUI update timer - much cleaner than
+	 * doing everything through the notify agent 
+	 */
+
+  QTimer *timer = new QTimer(this);
+  timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
+  timer->start(1000);
+
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
+
 }
+
+void PhotoDialog::checkUpdate()
+{
+	/* update */
+	if (!rsPhoto)
+		return;
+
+	if (rsPhoto->updated())
+	{
+		insertShowLists();
+	}
+
+	return;
+}
+
 
 void PhotoDialog::peerTreeWidgetCustomPopupMenu( QPoint point )
 {
@@ -240,12 +267,15 @@ void PhotoDialog::addShows(std::string id)
 
 void PhotoDialog::updatePhotoList()
 {
+	std::cerr << "PhotoDialog::updatePhotoList()" << std::endl;
+
 	/* get current item */
 	QTreeWidgetItem *item = ui.peerTreeWidget->currentItem();
 
 	if (!item)
 	{
 		/* leave current list */
+		std::cerr << "PhotoDialog::updatePhotoList() No Current item -> leave" << std::endl;
 		return;
 	}
 
@@ -256,9 +286,11 @@ void PhotoDialog::updatePhotoList()
 	if ((mCurrentPID == pid) && (mCurrentSID == sid))
 	{
 		/* still good */
+		std::cerr << "PhotoDialog::updatePhotoList() List still good!" << std::endl;
 		return;
 	}
 
+	std::cerr << "PhotoDialog::updatePhotoList() pid: " << pid << " sid: " << sid << std::endl;
 	/* get the list of photos */
 
 	ui.photoTreeWidget->clear();
@@ -266,6 +298,7 @@ void PhotoDialog::updatePhotoList()
 
 	if (sid != "")
 	{
+		std::cerr << "PhotoDialog::updatePhotoList() SID -> showing show" << std::endl;
 		/* load up show list */
 		RsPhotoShowDetails detail;
 		rsPhoto->getShowDetails(pid, sid, detail);
@@ -278,6 +311,7 @@ void PhotoDialog::updatePhotoList()
 
 			if (!rsPhoto->getPhotoDetails(pid, sit->photoId, photoDetail))
 			{
+	std::cerr << "PhotoDialog::updatePhotoList() getPhotoDetails: " << sit->photoId << " FAILED" << std::endl;
 				continue;
 			}
 
@@ -296,8 +330,18 @@ void PhotoDialog::updatePhotoList()
 				photoItem->setText(PHOTO_LIST_COL_PHOTO, "Photo Not Available");
 			}
 
+			photoItem->setText(PHOTO_LIST_COL_NAME, 
+					QString::fromStdString(photoDetail.name));
 			photoItem->setText(PHOTO_LIST_COL_COMMENT, 
 					QString::fromStdWString(photoDetail.comment));
+			photoItem->setText(PHOTO_LIST_COL_DATE, 
+					QString::fromStdString(photoDetail.date));
+			photoItem->setText(PHOTO_LIST_COL_LOCATION, 
+					QString::fromStdString(photoDetail.location));
+			photoItem->setText(PHOTO_LIST_COL_SIZE, 
+					QString::number(photoDetail.size));
+			photoItem->setText(PHOTO_LIST_COL_PEERID, 
+					QString::fromStdString(photoDetail.id));
 			photoItem->setText(PHOTO_LIST_COL_PHOTOID, 
 					QString::fromStdString(photoDetail.hash));
 
@@ -306,8 +350,61 @@ void PhotoDialog::updatePhotoList()
 	}
 	else
 	{
+		std::cerr << "PhotoDialog::updatePhotoList() No SID -> show all" << std::endl;
+
+		std::list<std::string> photoIds;
+		std::list<std::string>::iterator pit;
+		rsPhoto->getPhotoList(pid, photoIds);
+		for(pit = photoIds.begin(); pit != photoIds.end(); pit++)
+		{
+			RsPhotoDetails photoDetail;
+
+			if (!rsPhoto->getPhotoDetails(pid, *pit, photoDetail))
+			{
+	std::cerr << "PhotoDialog::updatePhotoList() getPhotoDetails: " << *pit << " FAILED" << std::endl;
+				continue;
+			}
+
+        		QTreeWidgetItem *photoItem = new QTreeWidgetItem((QTreeWidget*)0);
+			if (photoDetail.isAvailable)
+			{
+				QPixmap qpp(QString::fromStdString(photoDetail.path));
+				photoItem->setIcon(PHOTO_LIST_COL_PHOTO, 
+					QIcon(qpp.scaledToHeight(PHOTO_ICON_SIZE)));
+
+  				QSize iconSize(PHOTO_ICON_SIZE + 10,PHOTO_ICON_SIZE + 10);
+  				photoItem->setSizeHint(PHOTO_LIST_COL_PHOTO, iconSize);
+			}
+			else
+			{
+				photoItem->setText(PHOTO_LIST_COL_PHOTO, "Photo Not Available");
+			}
+
+			photoItem->setText(PHOTO_LIST_COL_NAME, 
+					QString::fromStdString(photoDetail.name));
+			photoItem->setText(PHOTO_LIST_COL_COMMENT, 
+					QString::fromStdWString(photoDetail.comment));
+			photoItem->setText(PHOTO_LIST_COL_DATE, 
+					QString::fromStdString(photoDetail.date));
+			photoItem->setText(PHOTO_LIST_COL_LOCATION, 
+					QString::fromStdString(photoDetail.location));
+			photoItem->setText(PHOTO_LIST_COL_SIZE, 
+					QString::number(photoDetail.size));
+			photoItem->setText(PHOTO_LIST_COL_PEERID, 
+					QString::fromStdString(photoDetail.id));
+			photoItem->setText(PHOTO_LIST_COL_PHOTOID, 
+					QString::fromStdString(photoDetail.hash));
+
+
+			std::cerr << "PhotoDialog::updatePhotoList() added Item: " << *pit << std::endl;
+			items.append(photoItem);
+		}
 
 	}
+
+	/* update ids? */
+	mCurrentPID = pid;
+	mCurrentSID = sid;
 
 	/* add the items in! */
 	ui.photoTreeWidget->insertTopLevelItems(0, items);
@@ -371,69 +468,26 @@ void PhotoDialog::addPhotos()
 
 void PhotoDialog::addPhoto(QString filename)
 {
-	/* load pixmap */
+	/* store in rsPhoto */
+	std::string photoId = rsPhoto->addPhoto(filename.toStdString());
 
-	/* add QTreeWidgetItem */
-	QPixmap *qpp = new QPixmap(filename);
-
-	/* store in map */
-	photoMap[filename] = qpp;
-
-	/* add treeitem */
-	QTreeWidgetItem *item = new QTreeWidgetItem(NULL);
-
-	/* */
-	item->setText(0, "Yourself");
-	item->setText(2, filename);
-
-	item->setIcon(1, QIcon(qpp->scaledToHeight(PHOTO_ICON_SIZE)));
-  	QSize iconSize(PHOTO_ICON_SIZE + 10,PHOTO_ICON_SIZE + 10);
-  	item->setSizeHint(1, iconSize);
-
-
-	//item->setIcon(1, QIcon(*qpp));
-
-	ui.photoTreeWidget->insertTopLevelItem (0, item);
-
-	showPhoto(filename);
 }
 
-void PhotoDialog::updatePhoto()
+void PhotoDialog::showPhoto( QTreeWidgetItem *item, int column)
 {
-	/* load pixmap */
 
-	QTreeWidgetItem *item = ui.photoTreeWidget->currentItem();
 	if (!item)
-	{
-		showPhoto("");
-	}
-
-	showPhoto(item->text(2));
-}
-
-
-
-void PhotoDialog::showPhoto(QString filename)
-{
-
-#if 0
-	/* find in map */
-	std::map<QString, QPixmap *>::iterator it;
-	it = photoMap.find(filename);
-	if (it == photoMap.end())
-	{
-		ui.photoPixLabel->clear();
-		ui.photoPixLabel->setText("No Photo Selected");
-		ui.photoNameLabel->setText("No Photo File Selected");
 		return;
-	}
-	
-	QSize diaSize = ui.photoTreeWidget->size();
-	int width = diaSize.width();
-	ui.photoPixLabel->setPixmap((it->second)->scaledToWidth(width));
-	ui.photoNameLabel->setText(filename);
 
-#endif
+	/* get the photoId */
+	std::string pid = item->text(PHOTO_LIST_COL_PEERID).toStdString();
+	std::string photoid = item->text(PHOTO_LIST_COL_PHOTOID).toStdString();
+
+	PhotoShow *newView = new PhotoShow();
+	newView->show();
+
+	newView->setPeerId(pid);
+	newView->setPhotoId(photoid);
 
 	return;
 }

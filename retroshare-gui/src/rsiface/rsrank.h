@@ -69,6 +69,9 @@ class RsRanks
 	RsRanks()  { return; }
 virtual ~RsRanks() { return; }
 
+	/* needs update? */
+virtual bool updated() = 0;
+
 	/* Set Sort Methods */
 virtual bool setSortPeriod(uint32_t period) 		= 0;
 virtual bool setSortMethod(uint32_t type)		= 0;

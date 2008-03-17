@@ -19,67 +19,49 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef _PHOTODIALOG_H
-#define _PHOTODIALOG_H
+#ifndef _PHOTOSHOW_H
+#define _PHOTOSHOW_H
 
 #include <QFileDialog>
 
 #include "mainpage.h"
-#include "ui_PhotoDialog.h"
+#include "ui_PhotoShow.h"
 
 #include <map>
 
 
-class PhotoDialog : public MainPage 
+class PhotoShow : public QWidget 
 {
   Q_OBJECT
 
 public:
   /** Default Constructor */
-  PhotoDialog(QWidget *parent = 0);
+  PhotoShow(QWidget *parent = 0);
   /** Default Destructor */
 
-  void  insertExample();
-  void insertShowLists();
+  void  setPeerId(std::string id);
+  void  setPhotoId(std::string id);
+  void  setPhotoShow(std::string id);
+
 
 private slots:
   /** Create the context popup menu and it's submenus */
-  void photoTreeWidgetCustomPopupMenu( QPoint point );
-  void peerTreeWidgetCustomPopupMenu( QPoint point );
+  void photoCustomPopupMenu( QPoint point );
 
-  void updatePhotoList();
+  void updatePhotoShow();
 
-  void removePhoto();
-  void addPhotos();
-
-  void checkUpdate();
-
-  void showPhoto( QTreeWidgetItem *item, int column);
 
 private:
 
-  void addShows(std::string peerid);
+  void updatePhoto(std::string pid, std::string photoId);
 
-  void addPhoto(QString filename);
-
-  /* Worker Functions */
-  /* (1) Update Display */
-
-  /* (2) Utility Fns */
-  QTreeWidgetItem *getCurrentLine();
-
-  std::map<QString, QPixmap *> photoMap;
-
-  std::string mCurrentPID;
-  std::string mCurrentSID;
-
-  /** Define the popup menus for the Context menu */
-  QMenu* contextMnu;
-
-  QTreeWidget *exampletreeWidget;
+  bool mDoShow;
+  std::string mPeerId;
+  std::string mShowId;
+  std::string mPhotoId;
 
   /** Qt Designer generated object */
-  Ui::PhotoDialog ui;
+  Ui::PhotoShow ui;
 };
 
 #endif

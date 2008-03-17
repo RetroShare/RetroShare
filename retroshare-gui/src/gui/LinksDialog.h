@@ -57,6 +57,8 @@ void toggleWindows( void );
 
 void  openLink ( QTreeWidgetItem * item, int column );
 void  changedItem(QTreeWidgetItem *curr, QTreeWidgetItem *prev);
+
+void checkUpdate();
   
 private:
 

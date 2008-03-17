@@ -2,6 +2,7 @@
 #include "rsiface/notifyqt.h"
 #include "rsiface/rsnotify.h"
 #include "rsiface/rspeers.h"
+#include "rsiface/rsphoto.h"
 
 #include "gui/NetworkDialog.h"
 #include "gui/PeersDialog.h"
