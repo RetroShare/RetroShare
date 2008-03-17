@@ -75,9 +75,12 @@ virtual int    loadCache(const CacheData &data);
 
 /************* Extern Interface *******/
 
+	/* things changed */
+bool updated();
+
         /* access data */
-bool getPhotoList(std::string id, std::list<std::string> hashs);
-bool getShowList(std::string id, std::list<std::string> showIds);
+bool getPhotoList(std::string id, std::list<std::string> &hashs);
+bool getShowList(std::string id, std::list<std::string> &showIds);
 bool getShowDetails(std::string id, std::string showId, RsPhotoShowDetails &detail);
 bool getPhotoDetails(std::string id, std::string photoId, RsPhotoDetails &detail);
 
@@ -130,7 +133,10 @@ void		createDummyData();
 	bool mRepublish;
 	std::string mOwnId;
 
+	bool mUpdated;
+
 	std::map<std::string, PhotoSet> mPhotos;
+
 
 };
 

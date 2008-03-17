@@ -28,6 +28,8 @@
 #include "pqi/pqibin.h"
 #include "pqi/p3authmgr.h"
 
+#include "util/rsdir.h"
+
 std::string generateRandomShowId();
 
 #define PHOTO_DEBUG 1
@@ -45,7 +47,8 @@ PhotoSet::PhotoSet()
 p3PhotoService::p3PhotoService(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
 		std::string sourcedir, std::string storedir)
 	:CacheSource(type, true, cs, sourcedir), 
-	CacheStore(type, true, cs, cft, storedir)
+	CacheStore(type, true, cs, cft, storedir),
+	mUpdated(true)
 {
 
      { 	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
@@ -112,6 +115,7 @@ bool    p3PhotoService::loadLocalCache(const CacheData &data)
 	{
           RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
 	  mRepublish = false;
+	  mUpdated = true;
 	}
 
 	if (data.size > 0) /* don't refresh zero sized caches */
@@ -247,6 +251,8 @@ bool p3PhotoService::loadPhotoItem(RsPhotoItem *item)
 	PhotoSet &pset = locked_getPhotoSet(item->PeerId());
 	pset.photos[item->photoId] = item;
 
+	mUpdated = true;
+
 	return true;
 
 
@@ -270,6 +276,7 @@ bool p3PhotoService::loadPhotoShowItem(RsPhotoShowItem *item)
 	pset.shows[item->showId] = item;
 
 	//mRepublish = true;
+	mUpdated = true;
 
 	return true;
 }
@@ -395,8 +402,19 @@ void p3PhotoService::publishPhotos()
 /******************* External Interface *****************************************/
 /********************************************************************************/
 
+bool    p3PhotoService::updated()
+{
+	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/ 
+	
+	if (mUpdated)
+	{
+		mUpdated = false;
+		return true;
+	}
+	return false;
+}
 
-bool p3PhotoService::getPhotoList(std::string id, std::list<std::string> photoIds)
+bool p3PhotoService::getPhotoList(std::string id, std::list<std::string> &photoIds)
 {
 #ifdef PHOTO_DEBUG
 	std::cerr << "p3PhotoService::getPhotoList() pid: " << id;
@@ -411,6 +429,10 @@ bool p3PhotoService::getPhotoList(std::string id, std::list<std::string> photoId
 	std::map<std::string, RsPhotoItem *>::iterator pit;
 	for(pit = pset.photos.begin(); pit != pset.photos.end(); pit++)
 	{
+#ifdef PHOTO_DEBUG
+		std::cerr << "p3PhotoService::getPhotoList() PhotoId: " << pit->first;
+		std::cerr << std::endl;
+#endif
 		photoIds.push_back(pit->first);
 	}
 
@@ -418,7 +440,7 @@ bool p3PhotoService::getPhotoList(std::string id, std::list<std::string> photoId
 }
 
 
-bool p3PhotoService::getShowList(std::string id, std::list<std::string> showIds)
+bool p3PhotoService::getShowList(std::string id, std::list<std::string> &showIds)
 {
 #ifdef PHOTO_DEBUG
 	std::cerr << "p3PhotoService::getShowList() pid: " << id;
@@ -433,6 +455,10 @@ bool p3PhotoService::getShowList(std::string id, std::list<std::string> showIds)
         std::map<std::string, RsPhotoShowItem *>::iterator sit;
 	for(sit = pset.shows.begin(); sit != pset.shows.end(); sit++)
 	{
+#ifdef PHOTO_DEBUG
+		std::cerr << "p3PhotoService::getShowList() ShowId: " << sit->first;
+		std::cerr << std::endl;
+#endif
 		showIds.push_back(sit->first);
 	}
 
@@ -478,6 +504,17 @@ bool p3PhotoService::getPhotoDetails(std::string id, std::string photoId, RsPhot
 	}
 
 	/* extract Photo details */
+	detail.id = item->PeerId();
+	detail.srcid = item->srcId;
+	detail.hash = item->photoId;
+	detail.size = item->size;
+	detail.name = item->name;
+	detail.location = item->location;
+	detail.comment = item->comment;
+	detail.date = item->date;
+	detail.format = 0;
+	detail.isAvailable = item->isAvailable;
+	detail.path = item->path;
 
 	return true;
 }
@@ -587,11 +624,15 @@ bool p3PhotoService::removePhotoFromShow(std::string showId, std::string photoId
 std::string p3PhotoService::addPhoto(std::string path) /* add from file */
 {
 	/* check file exists */
+	std::string hash;
+	uint64_t    size;
 
-	/* copy to outgoing directory */
+	if (!RsDirUtil::getFileHash(path, hash, size))
+	{
+		return hash;
+	}
 
-	/* hash it */
-	std::string hash = "PHOTO HASH";
+	/* copy to outgoing directory TODO */
 
 	/* create item */
 	RsPhotoItem *item = new RsPhotoItem();
@@ -603,8 +644,11 @@ std::string p3PhotoService::addPhoto(std::string path) /* add from file */
 
 	item->srcId = item->PeerId();
 	item->photoId = hash;
-	item->name = hash;
+	item->name = RsDirUtil::getTopDir(path);
 	item->path = path;
+	item->size = size;
+	item->isAvailable = true;
+	item->comment = L"No Comment Yet!";
 
 	/* add in */
 	loadPhotoItem(item);

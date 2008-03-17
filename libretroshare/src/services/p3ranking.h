@@ -83,6 +83,9 @@ virtual int    loadCache(const CacheData &data);
 
 /************* Extern Interface *******/
 
+	/* changed */
+virtual bool updated();
+
         /* Set Sort Methods */
 virtual bool setSortPeriod(uint32_t period);
 virtual bool setSortMethod(uint32_t type);
@@ -124,6 +127,7 @@ void	createDummyData();
 	uint32_t mStorePeriod;
 
 	std::string mOwnId;
+	bool mUpdated;
 
 	std::map<std::string, RankGroup> mData;
 	std::multimap<float, std::string> mRankings;

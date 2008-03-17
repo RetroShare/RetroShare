@@ -276,4 +276,55 @@ bool 	RsDirUtil::cleanupDirectory(std::string cleandir, std::list<std::string> k
 
 	return true;
 }
-	
+
+#include <openssl/sha.h>
+#include <sstream>
+#include <iomanip>
+
+
+/* Function to hash, and get details of a file */
+bool RsDirUtil::getFileHash(std::string filepath, 
+				std::string &hash, uint64_t &size)
+{
+	FILE *fd;
+	int  len;
+	SHA_CTX *sha_ctx = new SHA_CTX;
+	unsigned char sha_buf[SHA_DIGEST_LENGTH];
+	unsigned char gblBuf[512];
+
+	if (NULL == (fd = fopen(filepath.c_str(), "rb")))
+		return false;
+
+	/* determine size */
+ 	fseek(fd, 0, SEEK_END);
+	size = ftell(fd);
+	fseek(fd, 0, SEEK_SET);
+
+	SHA1_Init(sha_ctx);
+	while((len = fread(gblBuf,1, 512, fd)) > 0)
+	{
+		SHA1_Update(sha_ctx, gblBuf, len);
+	}
+
+	/* reading failed for some reason */
+	if (ferror(fd)) 
+	{
+		delete sha_ctx;
+		fclose(fd);
+		return false;
+	}
+
+	SHA1_Final(&sha_buf[0], sha_ctx);
+
+        std::ostringstream tmpout;
+	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
+	{
+		tmpout << std::setw(2) << std::setfill('0') << std::hex << (unsigned int) (sha_buf[i]);
+	}
+	hash = tmpout.str();
+
+	delete sha_ctx;
+	fclose(fd);
+	return true;
+}
+

@@ -46,6 +46,9 @@ int     	breakupDirList(std::string path,
 bool    	checkCreateDirectory(std::string dir);
 bool    	cleanupDirectory(std::string dir, std::list<std::string> keepFiles);
 
+bool 		getFileHash(std::string filepath,                
+			std::string &hash, uint64_t &size);
+
 };
 
 	

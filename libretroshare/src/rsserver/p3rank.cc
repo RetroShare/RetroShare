@@ -37,6 +37,11 @@ p3Rank::~p3Rank()
 {
 	return; 
 }
+        /* needs update? */
+bool p3Rank::updated()
+{
+	return mRank->updated();
+}
 
         /* Set Sort Methods */
 bool p3Rank::setSortPeriod(uint32_t period)

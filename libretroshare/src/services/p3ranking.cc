@@ -48,7 +48,7 @@ p3Ranking::p3Ranking(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
 		uint32_t storePeriod)
 	:CacheSource(type, true, cs, sourcedir), 
 	CacheStore(type, true, cs, cft, storedir), 
-	mStorePeriod(storePeriod)
+	mStorePeriod(storePeriod), mUpdated(true)
 {
 
      { 	RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
@@ -385,6 +385,8 @@ void p3Ranking::addRankMsg(RsRankLinkMsg *msg)
 		}
 
 		locked_reSortGroup(it->second);
+
+		mUpdated = true;
 	}
 }
 
@@ -714,8 +716,17 @@ void	p3Ranking::tick()
 	}
 }
 
+bool 	p3Ranking::updated()
+{
+     	RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
 
-
+	if (mUpdated)
+	{
+		mUpdated = false;
+		return true;
+	}
+	return false;
+}
 
 /***** NEW CONTENT *****/
 std::string p3Ranking::newRankMsg(std::wstring link, std::wstring title, std::wstring comment)

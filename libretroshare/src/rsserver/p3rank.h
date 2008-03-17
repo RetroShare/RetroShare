@@ -36,6 +36,9 @@ class p3Rank: public RsRanks
 	p3Rank(p3Ranking *ranking);
 virtual ~p3Rank(); 
 
+        /* needs update? */
+virtual bool updated();
+
         /* Set Sort Methods */
 virtual bool setSortPeriod(uint32_t period);
 virtual bool setSortMethod(uint32_t type);

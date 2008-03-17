@@ -36,9 +36,12 @@ class p3Photo: public RsPhoto
 	p3Photo(p3PhotoService *p3ps);
 virtual ~p3Photo();
 
+	/* changed? */
+virtual bool updated();
+
 	/* access data */
-virtual bool getPhotoList(std::string id, std::list<std::string> hashs);
-virtual bool getShowList(std::string id, std::list<std::string> showIds);
+virtual bool getPhotoList(std::string id, std::list<std::string> &hashs);
+virtual bool getShowList(std::string id, std::list<std::string> &showIds);
 virtual bool getShowDetails(std::string id, std::string showId, RsPhotoShowDetails &detail);
 virtual bool getPhotoDetails(std::string id, std::string photoId, RsPhotoDetails &detail);
 

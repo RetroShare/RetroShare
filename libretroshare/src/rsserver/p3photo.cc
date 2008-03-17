@@ -50,13 +50,19 @@ p3Photo::~p3Photo()
 	return; 
 }
 
+        /* needs update? */
+bool p3Photo::updated()
+{
+	return mPhoto->updated();
+}
+
 	/* access data */
-bool p3Photo::getPhotoList(std::string id, std::list<std::string> hashs)
+bool p3Photo::getPhotoList(std::string id, std::list<std::string> &hashs)
 {
 	return mPhoto->getPhotoList(id, hashs);
 }
 
-bool p3Photo::getShowList(std::string id, std::list<std::string> showIds)
+bool p3Photo::getShowList(std::string id, std::list<std::string> &showIds)
 {
 	return mPhoto -> getShowList(id, showIds);
 }

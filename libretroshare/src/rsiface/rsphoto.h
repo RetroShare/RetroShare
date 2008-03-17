@@ -73,10 +73,12 @@ class RsPhotoDetails
 	std::string srcid;
 
 	std::string hash;
+	uint64_t size;
 
 	std::string name; 
-	std::wstring location;
 	std::wstring comment;
+
+	std::string location;
 	std::string date;
 
 	uint32_t format;
@@ -95,9 +97,12 @@ class RsPhoto
 	RsPhoto()  { return; }
 virtual ~RsPhoto() { return; }
 
+	/* changed? */
+virtual bool updated() = 0;
+
 	/* access data */
-virtual bool getPhotoList(std::string id, std::list<std::string> hashs) 	= 0;
-virtual bool getShowList(std::string id, std::list<std::string> showIds) 	= 0;
+virtual bool getPhotoList(std::string id, std::list<std::string> &hashs) 	= 0;
+virtual bool getShowList(std::string id,  std::list<std::string> &showIds) 	= 0;
 virtual bool getShowDetails(std::string id, std::string showId, RsPhotoShowDetails &detail) = 0;
 virtual bool getPhotoDetails(std::string id, std::string photoId, RsPhotoDetails &detail) = 0;
 
