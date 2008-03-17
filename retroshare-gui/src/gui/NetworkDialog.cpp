@@ -94,6 +94,9 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 	 networkview = new NetworkView(ui.networkviewTab);
 	 QVBoxLayout *layout = new QVBoxLayout;
      layout->addWidget(networkview);
+     ui.networkviewTab->setLayout(layout);
+     layout->setSpacing( 0 );
+     layout->setMargin( 0 );
      
 
   /* Hide platform specific features */
