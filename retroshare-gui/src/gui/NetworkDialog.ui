@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>510</width>
-    <height>289</height>
+    <width>565</width>
+    <height>346</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -505,162 +505,179 @@
   </property>
   <layout class="QGridLayout" >
    <property name="margin" >
-    <number>1</number>
+    <number>0</number>
    </property>
    <property name="spacing" >
-    <number>1</number>
+    <number>6</number>
    </property>
    <item row="0" column="0" >
-    <layout class="QGridLayout" >
-     <property name="margin" >
-      <number>0</number>
+    <widget class="QSplitter" name="splitter" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
      </property>
-     <property name="spacing" >
-      <number>0</number>
-     </property>
-     <item row="0" column="0" >
+     <widget class="QWidget" name="layoutWidget" >
       <layout class="QGridLayout" >
        <property name="margin" >
         <number>0</number>
        </property>
        <property name="spacing" >
-        <number>6</number>
+        <number>0</number>
        </property>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="label" >
-         <property name="text" >
-          <string/>
+       <item row="1" column="0" >
+        <widget class="QTreeWidget" name="connecttreeWidget" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>7</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="pixmap" >
-          <pixmap resource="images.qrc" >:/images/network16.png</pixmap>
+         <property name="font" >
+          <font>
+           <family>Arial</family>
+           <pointsize>8</pointsize>
+           <weight>50</weight>
+           <italic>false</italic>
+           <bold>false</bold>
+           <underline>false</underline>
+           <strikeout>false</strikeout>
+          </font>
          </property>
+         <property name="contextMenuPolicy" >
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
+         <property name="acceptDrops" >
+          <bool>false</bool>
+         </property>
+         <property name="autoFillBackground" >
+          <bool>false</bool>
+         </property>
+         <property name="lineWidth" >
+          <number>0</number>
+         </property>
+         <property name="iconSize" >
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+         <property name="sortingEnabled" >
+          <bool>true</bool>
+         </property>
+         <column>
+          <property name="text" >
+           <string>#</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Accept</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Trust</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Last Contact</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Peer Address</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Organisation</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Location</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Country</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Cert Id</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Auth Code</string>
+          </property>
+         </column>
         </widget>
        </item>
-       <item row="0" column="1" >
-        <widget class="QLabel" name="label_2" >
-         <property name="text" >
-          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+       <item row="0" column="0" >
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" >
+          <widget class="QLabel" name="label" >
+           <property name="text" >
+            <string/>
+           </property>
+           <property name="pixmap" >
+            <pixmap resource="images.qrc" >:/images/network16.png</pixmap>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QLabel" name="label_2" >
+           <property name="text" >
+            <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
 &lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;">
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:9pt; font-weight:600;">Network:&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
       </layout>
-     </item>
-     <item row="1" column="0" >
-      <widget class="QTreeWidget" name="connecttreeWidget" >
-       <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>7</hsizetype>
-         <vsizetype>7</vsizetype>
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="font" >
-        <font>
-         <family>Arial</family>
-         <pointsize>8</pointsize>
-         <weight>50</weight>
-         <italic>false</italic>
-         <bold>false</bold>
-         <underline>false</underline>
-         <strikeout>false</strikeout>
-        </font>
-       </property>
-       <property name="contextMenuPolicy" >
-        <enum>Qt::CustomContextMenu</enum>
-       </property>
-       <property name="acceptDrops" >
-        <bool>false</bool>
-       </property>
-       <property name="autoFillBackground" >
-        <bool>false</bool>
-       </property>
-       <property name="lineWidth" >
-        <number>0</number>
-       </property>
-       <property name="iconSize" >
-        <size>
-         <width>16</width>
-         <height>16</height>
-        </size>
-       </property>
-       <property name="sortingEnabled" >
-        <bool>true</bool>
-       </property>
-       <column>
-        <property name="text" >
-         <string>#</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Accept</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Trust</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Last Contact</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Name</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Peer Address</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Organisation</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Location</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Country</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Cert Id</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Auth Code</string>
-        </property>
-       </column>
+     </widget>
+     <widget class="QTabWidget" name="networkviewTab" >
+      <property name="currentIndex" >
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="networkviewTab" >
+       <attribute name="title" >
+        <string>Network View</string>
+       </attribute>
       </widget>
-     </item>
-    </layout>
+     </widget>
+    </widget>
    </item>
   </layout>
  </widget>

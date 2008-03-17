@@ -79,6 +79,8 @@ QTreeWidgetItem *getCurrentNeighbour();
   ConnectDialog *connectdialog;
 
   QTreeWidget *connecttreeWidget;
+  
+  class NetworkView *networkview;
 
   /** Qt Designer generated object */
   Ui::NetworkDialog ui;

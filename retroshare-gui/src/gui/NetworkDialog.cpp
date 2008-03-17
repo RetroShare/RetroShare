@@ -25,6 +25,7 @@
 #include "rshare.h"
 #include "common/vmessagebox.h"
 #include "NetworkDialog.h"
+#include "NetworkView.h"
 #include "connect/ConnectDialog.h"
 #include "authdlg/AuthorizationDialog.h"
 #include "rsiface/rsiface.h"
@@ -89,6 +90,10 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 	_header->resizeSection ( 7, 100 );
 	_header->resizeSection ( 8, 100 );
 	_header->resizeSection ( 9, 100 );
+	
+	 networkview = new NetworkView(ui.networkviewTab);
+	 QVBoxLayout *layout = new QVBoxLayout;
+     layout->addWidget(networkview);
      
 
   /* Hide platform specific features */
