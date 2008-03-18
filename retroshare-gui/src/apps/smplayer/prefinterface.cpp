@@ -98,6 +98,7 @@ void PrefInterface::createLanguageCombo() {
 	m["ja"] = tr("Japanese");
 	m["ka"] = tr("Georgian");
 	m["ko"] = tr("Korean");
+	m["mk"] = tr("Macedonian");
 	m["nl"] = tr("Dutch");
 	m["pl"] = tr("Polish");
 	m["pt_BR"] = tr("Portuguese - Brazil");
@@ -415,8 +416,65 @@ void PrefInterface::changeInstanceImages() {
 void PrefInterface::createHelp() {
 	clearHelp();
 
+	addSectionTitle(tr("Interface"));
+
+	setWhatsThis(mainwindow_resize_combo, tr("Autoresize"),
+        tr("The main window can be resized automatically. Select the option "
+           "you prefer.") );
+
+	setWhatsThis(save_size_check, tr("Remember position and size"),
+        tr("If you check this option, the position and size of the main "
+           "window will be saved and restored when you run SMPlayer again.") );
+
+	setWhatsThis(recents_max_items_spin, tr("Recent files"),
+        tr("Select the maximum number of items that will be shown in the "
+           "<b>Open->Recent files</b> submenu. If you set it to 0 that "
+           "menu won't be shown at all.") );
+
 	setWhatsThis(language_combo, tr("Language"),
 		tr("Here you can change the language of the application.") );
+
+	setWhatsThis(iconset_combo, tr("Icon set"),
+        tr("Select the icon set you prefer for the application.") );
+
+	setWhatsThis(style_combo, tr("Style"),
+        tr("Select the style you prefer for the application.") );
+
+	setWhatsThis(changeFontButton, tr("Default font"),
+        tr("You can change here the application's font.") );
+
+	addSectionTitle(tr("Seeking"));
+
+	setWhatsThis(seek1, tr("Short jump"),
+        tr("Select the time that should be go forward or backward when you "
+           "choose the %1 action.").arg(tr("short jump")) );
+
+	setWhatsThis(seek2, tr("Medium jump"),
+        tr("Select the time that should be go forward or backward when you "
+           "choose the %1 action.").arg(tr("medium jump")) );
+
+	setWhatsThis(seek3, tr("Long jump"),
+        tr("Select the time that should be go forward or backward when you "
+           "choose the %1 action.").arg(tr("long jump")) );
+
+	setWhatsThis(seek4, tr("Mouse wheel jump"),
+        tr("Select the time that should be go forward or backward when you "
+           "move the mouse wheel.") );
+
+	setWhatsThis(timeslider_behaviour_combo, tr("Behaviour of time slider"),
+        tr("Select what to do when dragging the time slider.") );
+
+	addSectionTitle(tr("Instances"));
+
+	setWhatsThis(single_instance_check, 
+        tr("Use only one running instance of SMPlayer"),
+        tr("Check this option if you want to use an already running instance "
+           "of SMPlayer when opening other files.") );
+
+	setWhatsThis(server_port_spin, tr("Port"),
+        tr("SMPlayer needs to listen to a port to receive commands from other "
+           "instances. You can change the port in case the default one is "
+           "used by another application.") );
 }
 
 #include "moc_prefinterface.cpp"

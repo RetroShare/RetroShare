@@ -21,6 +21,7 @@
 
 #include "ui_prefadvanced.h"
 #include "prefwidget.h"
+#include "config.h"
 
 class Preferences;
 
@@ -42,8 +43,10 @@ public:
     void getData(Preferences * pref);
 
 	bool clearingBackgroundChanged() { return clearing_background_changed; };
-	bool colorkeyChanged() { return colorkey_changed; };
 	bool monitorAspectChanged() { return monitor_aspect_changed; };
+#if USE_COLORKEY
+	bool colorkeyChanged() { return colorkey_changed; };
+#endif
 
 protected:
 	virtual void createHelp();
@@ -71,8 +74,10 @@ protected:
 	void setMplayerAdditionalAudioFilters(QString s);
 	QString mplayerAdditionalAudioFilters();
 
+#if USE_COLORKEY
 	void setColorKey(unsigned int c);
 	unsigned int colorKey();
+#endif
 
 	// Log options
 	void setLogMplayer(bool b);
@@ -105,8 +110,10 @@ protected slots:
 
 private:
 	bool clearing_background_changed;
-	bool colorkey_changed;
 	bool monitor_aspect_changed;
+#if USE_COLORKEY
+	bool colorkey_changed;
+#endif
 };
 
 #endif

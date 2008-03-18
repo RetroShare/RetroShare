@@ -74,8 +74,9 @@ void Preferences::reset() {
 	vo = ""; 
 	ao = "";
 
+#if USE_COLORKEY
 	color_key = 0x020202;
-
+#endif
 
 	dvd_device = "";
 	cdrom_device = "";
@@ -290,7 +291,9 @@ void Preferences::save() {
 	set->setValue("vo", vo);
 	set->setValue("ao", ao);
 
+#if USE_COLORKEY
 	set->setValue("color_key", QString::number(color_key,16));
+#endif
 
 	set->setValue("fast_audio_change", fast_audio_change);
 	set->setValue("fast_chapter_change", fast_chapter_change);
@@ -500,12 +503,14 @@ void Preferences::load() {
 	vo = set->value("vo", vo).toString();
 	ao = set->value("ao", ao).toString();
 
+#if USE_COLORKEY
 	bool ok;
 	QString color = set->value("color_key", QString::number(color_key,16)).toString();
 	unsigned int temp_color_key = color.toUInt(&ok, 16);
 	if (ok)
 		color_key = temp_color_key;
 	//color_key = set->value("color_key", color_key).toInt();
+#endif
 
 	fast_audio_change = (OptionState) set->value("fast_audio_change", fast_audio_change).toInt();
 	fast_chapter_change = set->value("fast_chapter_change", fast_chapter_change).toBool();

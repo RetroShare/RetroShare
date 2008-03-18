@@ -47,7 +47,6 @@ public slots:
 	//virtual void showPlaylist(bool b);
 
 protected:
-    void closeEvent (QCloseEvent * event);
 	virtual void retranslateStrings();
 	virtual QMenu * createPopupMenu();
 
@@ -68,7 +67,7 @@ protected:
     virtual void aboutToExitCompactMode();
 
 	virtual void resizeEvent( QResizeEvent * );
-	/* virtual void closeEvent( QCloseEvent * ); */
+	virtual void closeEvent( QCloseEvent * ); 
 
 protected slots:
 	virtual void updateWidgets();

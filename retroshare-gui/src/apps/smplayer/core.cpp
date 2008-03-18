@@ -66,6 +66,13 @@ Core::Core( MplayerWindow *mpw, QWidget* parent )
 
     proc = new MplayerProcess(this);
 
+	// Do this the first
+	connect( proc, SIGNAL(processExited()),
+             mplayerwindow->videoLayer(), SLOT(playingStopped()) );
+
+	connect( proc, SIGNAL(error(QProcess::ProcessError)),
+             mplayerwindow->videoLayer(), SLOT(playingStopped()) );
+
 	connect( proc, SIGNAL(receivedCurrentSec(double)),
              this, SLOT(changeCurrentSec(double)) );
 
@@ -129,14 +136,15 @@ Core::Core( MplayerWindow *mpw, QWidget* parent )
 	connect( this, SIGNAL(stateChanged(Core::State)), 
 	         this, SLOT(watchState(Core::State)) );
 
+	connect( proc, SIGNAL(error(QProcess::ProcessError)), 
+             this, SIGNAL(mplayerFailed(QProcess::ProcessError)) );
+
 	//pref->load();
 	mset.reset();
 
 	// Mplayerwindow
 	connect( this, SIGNAL(aboutToStartPlaying()),
              mplayerwindow->videoLayer(), SLOT(playingStarted()) );
-	connect( proc, SIGNAL(processExited()),
-             mplayerwindow->videoLayer(), SLOT(playingStopped()) );
 
 	mplayerwindow->videoLayer()->allowClearingBackground(pref->always_clear_video_background);
 	mplayerwindow->setMonitorAspect( pref->monitor_aspect_double() );
@@ -929,10 +937,10 @@ void Core::processFinished()
 		//emit stateChanged(state());
 	}
 
-	int exit_status = proc->exitStatus();
-	qDebug(" exit_status: %d", exit_status);
-	if (exit_status != 0) {
-		emit mplayerFinishedWithError(exit_status);
+	int exit_code = proc->exitCode();
+	qDebug("Core::processFinished: exit_code: %d", exit_code);
+	if (exit_code != 0) {
+		emit mplayerFinishedWithError(exit_code);
 	}
 }
 
@@ -1029,8 +1037,12 @@ void Core::startMplayer( QString file, double seek ) {
 
 	proc->addArgument("-noquiet");
 
-	// No mplayer fullscreen mode
-	proc->addArgument("-nofs");
+	if (pref->fullscreen && pref->use_mplayer_window) {
+		proc->addArgument("-fs");
+	} else {
+		// No mplayer fullscreen mode
+		proc->addArgument("-nofs");
+	}
 
 	// Demuxer and audio and video codecs:
 	if (!mset.forced_demuxer.isEmpty()) {
@@ -1177,14 +1189,21 @@ void Core::startMplayer( QString file, double seek ) {
 	if (!pref->use_mplayer_window) {
 		proc->addArgument("-wid");
 		proc->addArgument( QString::number( (int) mplayerwindow->videoLayer()->winId() ) );
-	
-		proc->addArgument("-colorkey");
-		//proc->addArgument( "0x"+QString::number(pref->color_key, 16) );
-		proc->addArgument( Helper::colorToRGB(pref->color_key) );
 
-		// Set monitoraspect to desktop aspect
-		proc->addArgument("-monitoraspect");
-		proc->addArgument( QString::number( DesktopInfo::desktop_aspectRatio(mplayerwindow) ) );
+#if USE_COLORKEY
+		if (pref->vo == "directx") {
+			proc->addArgument("-colorkey");
+			//proc->addArgument( "0x"+QString::number(pref->color_key, 16) );
+			proc->addArgument( Helper::colorToRGB(pref->color_key) );
+		} else {
+			qDebug("Core::startMplayer: * not using -colorkey for %s", pref->vo.toUtf8().data());
+			qDebug("Core::startMplayer: * report if you can't see the video"); 
+		}
+#endif
+
+		// Square pixels
+		proc->addArgument("-monitorpixelaspect");
+		proc->addArgument("1");
 	} else {
 		// no -wid
 		if (!pref->monitor_aspect.isEmpty()) {
@@ -1442,6 +1461,12 @@ void Core::startMplayer( QString file, double seek ) {
 	}
 #endif
 
+	// Rotate
+	if (mset.rotate != MediaSettings::NoRotate) {
+		proc->addArgument( "-vf-add" );
+		proc->addArgument( QString("rotate=%1").arg(mset.rotate) );
+	}
+
 	// Denoise
 	if (mset.current_denoiser != MediaSettings::NoDenoise) {
 		proc->addArgument("-vf-add");
@@ -1542,9 +1567,15 @@ void Core::startMplayer( QString file, double seek ) {
 		proc->addArgument("screenshot");
 	}
 
-	if ( (pref->use_soft_video_eq) /*&& (pref->vo!="gl") && (pref->vo!="gl2")*/ ) {
+	if ( (pref->use_soft_video_eq) ) {
 		proc->addArgument("-vf-add");
-		proc->addArgument("eq2,hue");
+		QString eq_filter = "eq2,hue";
+		if ( (pref->vo == "gl") || (pref->vo == "gl2")
+#ifdef Q_OS_WIN
+             || (pref->vo == "directx:noaccel")
+#endif
+		    ) eq_filter += ",scale";
+		proc->addArgument(eq_filter);
 	}
 
 	// Audio channels
@@ -2706,6 +2737,13 @@ void Core::nextOSD() {
 		osd = Preferences::None;	
 	}
 	changeOSD( osd );
+}
+
+void Core::changeRotate(int r) {
+	if (mset.rotate != r) {
+		mset.rotate = r;
+		restartPlay();
+	}
 }
 
 void Core::changeSize(int n) {

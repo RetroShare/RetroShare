@@ -82,15 +82,11 @@ static void initKeyMap()
 	keyMap[Qt::Key_Up] = "Up";
 	keyMap[Qt::Key_Right] = "Right";
 	keyMap[Qt::Key_Down] = "Down";
-	keyMap[Qt::Key_PageUp] = "PageUp";
-	keyMap[Qt::Key_PageDown] = "PageDown";
+	keyMap[Qt::Key_PageUp] = "PgUp";
+	keyMap[Qt::Key_PageDown] = "PgDown";
 	keyMap[Qt::Key_CapsLock] = "CapsLock";
 	keyMap[Qt::Key_NumLock] = "NumLock";
 	keyMap[Qt::Key_ScrollLock] = "ScrollLock";
-
-	// Added by rvm:
-	keyMap[Qt::Key_Space] = "Space";
-	keyMap[Qt::Key_Backspace] = "Backspace";
 	
 	/*
 		These one are quite sure...
@@ -202,7 +198,22 @@ static void initKeyMap()
 	keyMap[Qt::Key_Bar] = "|";
 	keyMap[Qt::Key_BraceRight] = "}";
 	keyMap[Qt::Key_AsciiTilde] = "~";
-	
+
+	// Added by rvm:
+	keyMap[Qt::Key_Space] = "Space";
+	keyMap[Qt::Key_Backspace] = "Backspace";
+	keyMap[Qt::Key_MediaPlay] = "Media Play";
+	keyMap[Qt::Key_MediaStop] = "Media Stop";
+	keyMap[Qt::Key_MediaPrevious] = "Media Previous";
+	keyMap[Qt::Key_MediaNext] = "Media Next";
+	keyMap[Qt::Key_MediaRecord] = "Media Record";
+	keyMap[Qt::Key_MediaLast] = "Media Last"; // doesn't work?
+	keyMap[Qt::Key_VolumeUp] = "Volume Up";
+	keyMap[Qt::Key_VolumeDown] = "Volume Down";
+	keyMap[Qt::Key_VolumeMute] = "Volume Mute";	
+	keyMap[Qt::Key_Back] = "Back";	
+	keyMap[Qt::Key_Forward] = "Forward";	
+	keyMap[Qt::Key_Stop] = "Stop";
 }
 
 static QString keyToString(int k)

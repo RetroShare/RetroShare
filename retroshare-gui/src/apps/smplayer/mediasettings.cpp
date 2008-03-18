@@ -91,6 +91,7 @@ void MediaSettings::reset() {
 
 	starting_time = -1; // Not set yet.
 
+	rotate = NoRotate;
 	flip = false;
 
 	is264andHD = false;
@@ -172,6 +173,7 @@ void MediaSettings::list() {
 
 	qDebug("  panscan_factor: %f", panscan_factor);
 
+	qDebug("  rotate: %d", rotate);
 	qDebug("  flip: %d", flip);
 
 	qDebug("  forced_demuxer: '%s'", forced_demuxer.toUtf8().data());
@@ -255,6 +257,7 @@ void MediaSettings::save(QSettings * set) {
 
 	set->setValue( "panscan_factor", panscan_factor);
 
+	set->setValue( "rotate", rotate );
 	set->setValue( "flip", flip);
 
 	set->setValue( "forced_demuxer", forced_demuxer);
@@ -340,6 +343,7 @@ void MediaSettings::load(QSettings * set) {
 
 	panscan_factor = set->value( "panscan_factor", panscan_factor).toDouble();
 
+	rotate = set->value( "rotate", rotate).toInt();
 	flip = set->value( "flip", flip).toBool();
 
 	forced_demuxer = set->value( "forced_demuxer", forced_demuxer).toString();

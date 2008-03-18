@@ -53,6 +53,12 @@
 #define STYLE_SWITCHING 1
 
 
+// ALLOW_CHANGE_STYLESHEET
+// if 1, the app stylesheet can be changed
+
+#define ALLOW_CHANGE_STYLESHEET 0
+
+
 // New code to resize the main window
 
 #define NEW_RESIZE_CODE 1
@@ -96,6 +102,11 @@
 // Setting SCALE_ASS_SUBS to 1 activates this code.
 
 #define SCALE_ASS_SUBS 1
+
+
+// Just for testing, possibility to disable the use of the colorkey
+
+#define USE_COLORKEY 1
 
 
 // Testing with a QGLWidget (for Windows)

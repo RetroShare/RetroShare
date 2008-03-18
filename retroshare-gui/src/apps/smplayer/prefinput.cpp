@@ -179,6 +179,8 @@ int PrefInput::wheelFunction() {
 void PrefInput::createHelp() {
 	clearHelp();
 
+	addSectionTitle(tr("Keyboard"));
+
 	setWhatsThis(actions_editor, tr("Shortcut editor"),
         tr("This table allows you to change the key shortcuts of most "
            "available actions. Double click or press enter on a item, or "
@@ -190,11 +192,16 @@ void PrefInput::createHelp() {
            "keys). If the <b>Capture</b> button is off "
            "then you could enter the full name of the key.") );
 
+	addSectionTitle(tr("Mouse"));
+
 	setWhatsThis(left_click_combo, tr("Left click"),
 		tr("Select the action for left click on the mouse.") );
 
 	setWhatsThis(double_click_combo, tr("Double click"),
 		tr("Select the action for double click on the mouse.") );
+
+	setWhatsThis(middle_click_combo, tr("Middle click"),
+		tr("Select the action for middle click on the mouse.") );
 
 	setWhatsThis(wheel_function_combo, tr("Wheel function"),
 		tr("Select the action for the mouse wheel.") );

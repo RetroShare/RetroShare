@@ -40,6 +40,9 @@ QString TrackData::displayName() const {
 
     if (!_name.isEmpty()) {
         dname = _name;
+		if (!_lang.isEmpty()) {
+			dname += " ["+ _lang + "]";
+		}
 	}
     else
     if (!_lang.isEmpty()) {

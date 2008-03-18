@@ -169,9 +169,11 @@ MplayerWindow::MplayerWindow(QWidget* parent, Qt::WindowFlags f)
 MplayerWindow::~MplayerWindow() {
 }
 
+#if USE_COLORKEY
 void MplayerWindow::setColorKey( QColor c ) {
 	Helper::setBackgroundColor( mplayerlayer, c );
 }
+#endif
 
 void MplayerWindow::retranslateStrings() {
 	//qDebug("MplayerWindow::retranslateStrings");

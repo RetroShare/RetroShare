@@ -85,14 +85,15 @@ DefaultGui::~DefaultGui() {
 	saveConfig();
 }
 
-/*
+
 void DefaultGui::closeEvent( QCloseEvent * ) {
-	qDebug("DefaultGui::closeEvent");
+	/*qDebug("DefaultGui::closeEvent");
 
 	//BaseGuiPlus::closeEvent(e);
-	qDebug("w: %d h: %d", width(), height() );
+	qDebug("w: %d h: %d", width(), height() );*/
+	hide();
 }
-*/
+
 
 void DefaultGui::createActions() {
 	qDebug("DefaultGui::createActions");
@@ -568,12 +569,6 @@ void DefaultGui::loadConfig() {
 	set->endGroup();
 
 	updateWidgets();
-}
-
-void DefaultGui::closeEvent (QCloseEvent * event)
-{
-    hide();
-    event->ignore();
 }
 
 #include "moc_defaultgui.cpp"

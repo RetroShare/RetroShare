@@ -65,7 +65,7 @@ signals:
 
 protected slots:
 	void parseLine(QByteArray ba);
-	void processFinished();
+	void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
 	void gotError(QProcess::ProcessError);
 
 protected:

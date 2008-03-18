@@ -52,7 +52,7 @@ Extensions::Extensions()
            << "mkv" << "nsv" << "ram" << "flv"
            << "ts" << "rmvb" << "dvr-ms";
 
-	_audio << "mp3" << "ogg" << "wav" << "wma" <<  "ac3" << "ra" << "ape";
+	_audio << "mp3" << "ogg" << "wav" << "wma" <<  "ac3" << "ra" << "ape" << "flac";
 
 	_subtitles << "srt" << "sub" << "ssa" << "ass" << "idx" << "txt" << "smi"
                << "rt" << "utf" << "aqt";

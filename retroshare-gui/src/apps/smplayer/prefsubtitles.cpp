@@ -290,10 +290,48 @@ void PrefSubtitles::on_borderButton_clicked() {
 void PrefSubtitles::createHelp() {
 	clearHelp();
 
+	addSectionTitle(tr("Subtitles"));
+
+	setWhatsThis(font_autoload_combo, tr("Autoload"), 
+        tr("Select the subtitle autoload method.") );
+
+	setWhatsThis(font_autoload_check, tr("Select first available subtitle"), 
+        tr("If there are one or more subtitle tracks available, one of them "
+           "will be automatically selected, usually the first one, although if "
+           "one of them matches the user's preferred language that one will "
+           "be used instead.") );
+
+	setWhatsThis(font_encoding_combo, tr("Default subtitle encoding"), 
+        tr("Select the encoding which will be used for subtitle files.") );
+
 	setWhatsThis(sub_pos_slider, tr("Subtitle position"),
 		tr("This option specifies the position of the subtitles over the "
            "video window. <i>100</i> means the bottom, while <i>0</i> means "
            "the top." ) );
+
+	setWhatsThis(subtitles_on_screeshots_check, 
+        tr("Include subtitles on screenshots"), 
+        tr("If this option is checked, the subtitles will appear in the "
+           "screenshots. Note: it may cause some troubles sometimes." ) );
+
+	addSectionTitle(tr("Font"));
+
+	setWhatsThis(ttf_font_edit, tr("TTF font"), 
+        tr("Here you can select a ttf font to be used for the subtitles. "
+           "Usually you'll find a lot of ttf fonts in <i>%1</i>.")
+#ifdef Q_OS_WIN
+        .arg("C:\\Windows\\Fonts\\")
+#else
+        .arg("/usr/X11R6/lib/X11/fonts/truetype/")
+#endif
+        );
+
+	setWhatsThis(fontCombo, tr("System font"), 
+        tr("Here you can select a system font to be used for the subtitles "
+           "and OSD. <b>Note:</b> requires a MPlayer with fontconfig support.") );
+
+	setWhatsThis(font_autoscale_combo, tr("Autoscale"), 
+        tr("Select the subtitle autoscaling method.") );
 
 	setWhatsThis(font_text_scale, tr("Default scale for normal subtitles"),
 		tr("This option specifies the default font scale for normal (white) "
@@ -302,6 +340,18 @@ void PrefSubtitles::createHelp() {
 	setWhatsThis(ass_font_scale, tr("Default scale for SSA/ASS subtitles"),
 		tr("This option specifies the default font scale for SSA/ASS "
            "subtitles which will be used for new videos."));
+
+	addSectionTitle(tr("SSA/ASS library"));
+
+	setWhatsThis(font_ass_check, tr("Use SSA/ASS library for subtitle rendering"), 
+        tr("Check this option to activate the SSA/ASS library. It provides "
+           "nicer subtitles, so it's a good idea to do it.") );
+
+	setWhatsThis(colorButton, tr("Text color"), 
+        tr("Select the color for the text of the subtitles.") );
+
+	setWhatsThis(borderButton, tr("Border color"), 
+        tr("Select the color for the border of the subtitles.") );
 
 	setWhatsThis(ass_styles_edit, tr("SSA/ASS styles"), 
 		tr("Here you can override styles for SSA/ASS subtitles. "

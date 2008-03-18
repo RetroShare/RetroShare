@@ -201,6 +201,8 @@ bool PrefPerformance::useIdx() {
 void PrefPerformance::createHelp() {
 	clearHelp();
 
+	addSectionTitle(tr("Performance"));
+	
 	// Performance tab
 #ifdef Q_OS_WIN
 	setWhatsThis(priority_combo, tr("Priority"), 
@@ -224,13 +226,13 @@ void PrefPerformance::createHelp() {
            "than not doing deblocking on e.g. MPEG-2 video. But at least for "
            "high bitrate HDTV this provides a big speedup with no visible "
            "quality loss.") +"<br>"+
-           tr("Possible values:") +"<ul><li>" +
-           tr("<b>Enabled</b>: the loop filter is not skipped")+"</li><li>"+
+           tr("Possible values:") +"<br>" +
+           tr("<b>Enabled</b>: the loop filter is not skipped")+"<br>"+
            tr("<b>Skip (always)</b>: the loop filter is skipped no matter the "
-           "resolution of the video")+"</li><li>"+
+           "resolution of the video")+"<br>"+
            tr("<b>Skip only on HD videos</b>: the loop filter will be "
            "skipped only on videos which height is %1 or "
-           "greater.").arg(pref->HD_height) +"</li></ul>" );
+           "greater.").arg(pref->HD_height) +"<br>" );
 
 	setWhatsThis(autosync_check, tr("Audio/video auto synchronization"),
 		tr("Gradually adjusts the A/V sync based on audio delay "
@@ -255,6 +257,8 @@ void PrefPerformance::createHelp() {
            "This option only works if the underlying media supports "
            "seeking (i.e. not with stdin, pipe, etc).<br> "
            "Note: the creation of the index may take some time.") );
+
+	addSectionTitle(tr("Cache"));
 
 	setWhatsThis(cache_files_spin, tr("Cache for files"), 
 		tr("This option specifies how much memory (in kBytes) to use when "

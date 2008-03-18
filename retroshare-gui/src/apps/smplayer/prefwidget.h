@@ -51,6 +51,8 @@ protected:
 	virtual void retranslateStrings();
 	virtual void changeEvent ( QEvent * event ) ;
 
+	// Help
+	void addSectionTitle(const QString & title);
 	void setWhatsThis( QWidget *w, const QString & title, const QString & text);
 	void clearHelp();
 	

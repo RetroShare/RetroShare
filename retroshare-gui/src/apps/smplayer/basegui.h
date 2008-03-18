@@ -186,9 +186,14 @@ protected slots:
 	//! version supplied by the user
 	void askForMplayerVersion(QString);
 
+	void showExitCodeFromMplayer(int exit_code);
+	void showErrorFromMplayer(QProcess::ProcessError);
+
 	// stylesheet
+#if ALLOW_CHANGE_STYLESHEET
 	virtual void loadQss(QString filename);
 	virtual void changeStyleSheet(QString style);
+#endif
 
 #if NEW_RESIZE_CODE
 	void calculateDiff(); //!< Updates diff_size
@@ -214,6 +219,9 @@ signals:
 	void leftClicked();
 	void middleClicked();
 	*/
+
+	//! Sent when the user wants to close the main window
+	void quitSolicited();
 
 protected:
 	virtual void retranslateStrings();
@@ -369,6 +377,7 @@ protected:
 	MyAction * nextChapterAct;
 	MyAction * prevChapterAct;
 	MyAction * doubleSizeAct;
+	MyAction * resetVideoEqualizerAct;
 
 	// Moving and zoom
 	MyAction * moveUpAct;
@@ -429,6 +438,14 @@ protected:
 	MyAction * aspect43To169Act;
 #endif
 
+	// Rotate Group
+	MyActionGroup * rotateGroup;
+	MyAction * rotateNoneAct;
+	MyAction * rotateClockwiseFlipAct;
+	MyAction * rotateClockwiseAct;
+	MyAction * rotateCounterclockwiseAct;
+	MyAction * rotateCounterclockwiseFlipAct;
+
 	// Audio Channels Action Group
 	MyActionGroup * channelsGroup;
 	/* MyAction * channelsDefaultAct; */
@@ -442,12 +459,13 @@ protected:
 	MyAction * leftChannelAct;
 	MyAction * rightChannelAct;
 
-	// Audio Track Group
+	// Other groups
 	MyActionGroup * audioTrackGroup;
 	MyActionGroup * subtitleTrackGroup;
 	MyActionGroup * titleGroup;
 	MyActionGroup * angleGroup;
 	MyActionGroup * chapterGroup;
+
 
 	// MENUS
 	QMenu *openMenu;
@@ -477,6 +495,7 @@ protected:
 	QMenu * audiofilter_menu;
 	QMenu * logs_menu;
 	QMenu * panscan_menu;
+	QMenu * rotate_menu;
 
 	QMenu * popup;
 	QMenu * recentfiles_menu;

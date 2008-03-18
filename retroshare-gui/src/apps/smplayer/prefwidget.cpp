@@ -37,6 +37,10 @@ QPixmap PrefWidget::sectionIcon() {
 	return QPixmap();
 }
 
+void PrefWidget::addSectionTitle(const QString & title) {
+	help_message += "<h2>"+title+"</h2>";
+}
+
 void PrefWidget::setWhatsThis( QWidget *w, const QString & title, 
                                const QString & text)
 {

@@ -1,6 +1,7 @@
 TEMPLATE = lib
 CONFIG += staticlib
 DESTDIR = lib
+#TEMPLATE	= app
 LANGUAGE	= C++
 
 CONFIG	+= release
@@ -68,7 +69,8 @@ HEADERS	+= config.h \
 	filedialog.h \
 	inputmplayerversion.h \
 	about.h \
-    basegui.h \
+    errordialog.h \
+	basegui.h \
 	baseguiplus.h \
 	floatingwidget.h \
 	widgetactions.h \
@@ -132,6 +134,7 @@ SOURCES	+= version.cpp \
 	filedialog.cpp \
 	inputmplayerversion.cpp \
 	about.cpp \
+    errordialog.cpp \
 	basegui.cpp \
 	baseguiplus.cpp \
 	floatingwidget.cpp \
@@ -139,13 +142,14 @@ SOURCES	+= version.cpp \
 	defaultgui.cpp \
 	minigui.cpp \
 	clhelp.cpp \
-	smplayer.cpp
+	smplayer.cpp \
+	main.cpp
 
 FORMS = inputdvddirectory.ui logwindowbase.ui filepropertiesdialog.ui \
         eqslider.ui seekwidget.ui inputurl.ui \
         preferencesdialog.ui prefgeneral.ui prefdrives.ui prefinterface.ui \
         prefperformance.ui prefinput.ui prefsubtitles.ui prefadvanced.ui \
-        about.ui inputmplayerversion.ui 
+        about.ui inputmplayerversion.ui errordialog.ui
 
 TRANSLATIONS = translations/smplayer_es.ts translations/smplayer_de.ts \
                translations/smplayer_sk.ts translations/smplayer_it.ts \
@@ -159,7 +163,8 @@ TRANSLATIONS = translations/smplayer_es.ts translations/smplayer_de.ts \
                translations/smplayer_sv.ts translations/smplayer_sr.ts \
                translations/smplayer_zh_TW.ts translations/smplayer_ro_RO.ts \
                translations/smplayer_pt_PT.ts translations/smplayer_el_GR.ts \
-               translations/smplayer_fi.ts translations/smplayer_ko.ts
+               translations/smplayer_fi.ts translations/smplayer_ko.ts \
+               translations/smplayer_mk.ts translations/smplayer_eu.ts
 
 unix {
   UI_DIR = .ui

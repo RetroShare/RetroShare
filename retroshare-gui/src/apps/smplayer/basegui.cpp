@@ -57,6 +57,7 @@
 #include "inputurl.h"
 #include "recents.h"
 #include "about.h"
+#include "errordialog.h"
 #include "clhelp.h"
 
 #include "config.h"
@@ -165,7 +166,7 @@ void BaseGui::initializeGui() {
 	if (pref->stay_on_top) toggleStayOnTop(TRUE);
 	toggleFrameCounter( pref->show_frame_counter );
 
-#if QT_VERSION >= 0x040200
+#if ALLOW_CHANGE_STYLESHEET
 	changeStyleSheet(pref->iconset);
 #endif
 
@@ -684,6 +685,9 @@ void BaseGui::createActions() {
 	doubleSizeAct = new MyAction( Qt::CTRL | Qt::Key_D, this, "toggle_double_size");
 	connect( doubleSizeAct, SIGNAL(triggered()), core, SLOT(toggleDoubleSize()) );
 
+	resetVideoEqualizerAct = new MyAction( this, "reset_video_equalizer");
+	connect( resetVideoEqualizerAct, SIGNAL(triggered()), equalizer, SLOT(reset()) );
+
 	// Group actions
 
 	// OSD
@@ -768,6 +772,16 @@ void BaseGui::createActions() {
 #endif
 	connect( aspectGroup, SIGNAL(activated(int)),
              core, SLOT(changeAspectRatio(int)) );
+
+	// Rotate
+	rotateGroup = new MyActionGroup(this);
+	rotateNoneAct = new MyActionGroupItem(this, rotateGroup, "rotate_none", MediaSettings::NoRotate);
+	rotateClockwiseFlipAct = new MyActionGroupItem(this, rotateGroup, "rotate_clockwise_flip", MediaSettings::Clockwise_flip);
+	rotateClockwiseAct = new MyActionGroupItem(this, rotateGroup, "rotate_clockwise", MediaSettings::Clockwise);
+	rotateCounterclockwiseAct = new MyActionGroupItem(this, rotateGroup, "rotate_counterclockwise", MediaSettings::Counterclockwise);
+	rotateCounterclockwiseFlipAct = new MyActionGroupItem(this, rotateGroup, "rotate_counterclockwise_flip", MediaSettings::Counterclockwise_flip);
+	connect( rotateGroup, SIGNAL(activated(int)),
+             core, SLOT(changeRotate(int)) );
 
 	// Audio track
 	audioTrackGroup = new MyActionGroup(this);
@@ -891,6 +905,7 @@ void BaseGui::setActionsEnabled(bool b) {
 	sizeGroup->setActionsEnabled(b);
 	deinterlaceGroup->setActionsEnabled(b);
 	aspectGroup->setActionsEnabled(b);
+	rotateGroup->setActionsEnabled(b);
 	channelsGroup->setActionsEnabled(b);
 	stereoGroup->setActionsEnabled(b);
 }
@@ -936,7 +951,6 @@ void BaseGui::enableActionsOnPlaying() {
 		addLetterboxAct->setEnabled(false);
 #endif
 		upscaleAct->setEnabled(false);
-
 		doubleSizeAct->setEnabled(false);
 
 		// Moving and zoom
@@ -952,6 +966,7 @@ void BaseGui::enableActionsOnPlaying() {
 		sizeGroup->setActionsEnabled(false);
 		deinterlaceGroup->setActionsEnabled(false);
 		aspectGroup->setActionsEnabled(false);
+		rotateGroup->setActionsEnabled(false);
 	}
 }
 
@@ -1129,6 +1144,7 @@ void BaseGui::retranslateStrings() {
 	nextChapterAct->change( tr("Next chapter") );
 	prevChapterAct->change( tr("Previous chapter") );
 	doubleSizeAct->change( tr("&Toggle double size") );
+	resetVideoEqualizerAct->change( tr("Reset video equalizer") );
 
 	// Action groups
 	osdNoneAct->change( tr("&Disabled") );
@@ -1183,6 +1199,9 @@ void BaseGui::retranslateStrings() {
 	videofilter_menu->menuAction()->setText( tr("F&ilters") );
 	videofilter_menu->menuAction()->setIcon( Images::icon("video_filters") );
 
+	rotate_menu->menuAction()->setText( tr("&Rotate") );
+	rotate_menu->menuAction()->setIcon( Images::icon("rotate") );
+
 	/*
 	denoise_menu->menuAction()->setText( tr("De&noise") );
 	denoise_menu->menuAction()->setIcon( Images::icon("denoise") );
@@ -1212,6 +1231,12 @@ void BaseGui::retranslateStrings() {
 	denoiseNoneAct->change( tr("Denoise o&ff") );
 	denoiseNormalAct->change( tr("Denoise nor&mal") );
 	denoiseSoftAct->change( tr("Denoise &soft") );
+
+	rotateNoneAct->change( tr("&Off") );
+	rotateClockwiseFlipAct->change( tr("&Rotate by 90 degrees clockwise and flip") );
+	rotateClockwiseAct->change( tr("Rotate by 90 degrees &clockwise") );
+	rotateCounterclockwiseAct->change( tr("Rotate by 90 degrees counterclock&wise") );
+	rotateCounterclockwiseFlipAct->change( tr("Rotate by 90 degrees counterclockwise and &flip") );
 
 	// Menu Audio
 	audiotrack_menu->menuAction()->setText( tr("&Track") );
@@ -1348,6 +1373,12 @@ void BaseGui::createCore() {
 	connect( core, SIGNAL(failedToParseMplayerVersion(QString)),
              this, SLOT(askForMplayerVersion(QString)) );
 
+	connect( core, SIGNAL(mplayerFailed(QProcess::ProcessError)),
+             this, SLOT(showErrorFromMplayer(QProcess::ProcessError)) );
+
+	connect( core, SIGNAL(mplayerFinishedWithError(int)),
+             this, SLOT(showExitCodeFromMplayer(int)) );
+
 	// Hide mplayer window
 	connect( core, SIGNAL(noVideo()),
              this, SLOT(hidePanel()) );
@@ -1355,7 +1386,9 @@ void BaseGui::createCore() {
 
 void BaseGui::createMplayerWindow() {
     mplayerwindow = new MplayerWindow( panel );
+#if USE_COLORKEY
 	mplayerwindow->setColorKey( pref->color_key );
+#endif
 	mplayerwindow->allowVideoMovement( pref->allow_video_movement );
 
 	QHBoxLayout * layout = new QHBoxLayout;
@@ -1562,6 +1595,12 @@ void BaseGui::createMenus() {
 	videoMenu->addMenu(denoise_menu);
 	*/
 
+	// Rotate submenu
+	rotate_menu = new QMenu(this);
+	rotate_menu->addActions(rotateGroup->actions());
+
+	videoMenu->addMenu(rotate_menu);
+
 	videoMenu->addAction(flipAct);
 	videoMenu->addSeparator();
 	videoMenu->addAction(equalizerAct);
@@ -1719,8 +1758,8 @@ void BaseGui::closeWindow() {
 	qDebug("BaseGui::closeWindow");
 
 	core->stop();
-	//qApp->closeAllWindows();
 	//qApp->quit();
+	//emit quitSolicited();
 	hide();
 }
 
@@ -1796,9 +1835,9 @@ void BaseGui::applyNewPreferences() {
 	if (_interface->iconsetChanged()) { 
 		need_update_language = true;
 		// Stylesheet
-		#if QT_VERSION >= 0x040200
+#if ALLOW_CHANGE_STYLESHEET
 		changeStyleSheet(pref->iconset);
-		#endif
+#endif
 	}
 
 	if (!pref->use_single_instance && server->isListening()) {
@@ -1825,9 +1864,11 @@ void BaseGui::applyNewPreferences() {
 	if (advanced->clearingBackgroundChanged()) {
 		mplayerwindow->videoLayer()->allowClearingBackground(pref->always_clear_video_background);
 	}
+#if USE_COLORKEY
 	if (advanced->colorkeyChanged()) {
 		mplayerwindow->setColorKey( pref->color_key );
 	}
+#endif
 	if (advanced->monitorAspectChanged()) {
 		mplayerwindow->setMonitorAspect( pref->monitor_aspect_double() );
 	}
@@ -2162,6 +2203,9 @@ void BaseGui::updateWidgets() {
 	// Aspect ratio
 	aspectGroup->setChecked( core->mset.aspect_ratio_id );
 
+	// Rotate
+	rotateGroup->setChecked( core->mset.rotate );
+
 	// OSD
 	osdGroup->setChecked( pref->osd );
 
@@ -2284,6 +2328,9 @@ void BaseGui::updateWidgets() {
 	// Enable or disable subtitle options
 	bool e = ((core->mset.current_sub_id != MediaSettings::SubNone) &&
               (core->mset.current_sub_id != MediaSettings::NoneSelected));
+
+	if (pref->use_closed_caption_subs) e = true; // Enable if using closed captions
+
 	decSubDelayAct->setEnabled(e);
 	incSubDelayAct->setEnabled(e);
 	decSubPosAct->setEnabled(e);
@@ -3315,6 +3362,7 @@ void BaseGui::checkMousePos(QPoint p) {
 	}
 }
 
+#if ALLOW_CHANGE_STYLESHEET
 void BaseGui::loadQss(QString filename) {
 	QFile file( filename );
 	file.open(QFile::ReadOnly);
@@ -3341,6 +3389,7 @@ void BaseGui::changeStyleSheet(QString style) {
 		}
 	}
 }
+#endif
 
 void BaseGui::loadActions() {
 	qDebug("BaseGui::loadActions");
@@ -3404,6 +3453,32 @@ void BaseGui::askForMplayerVersion(QString line) {
 	}
 }
 
+void BaseGui::showExitCodeFromMplayer(int exit_code) {
+	qDebug("BaseGui::showExitCodeFromMplayer: %d", exit_code);
+
+	if (exit_code != 255 ) {
+		ErrorDialog d(this);
+		d.setText(tr("MPlayer has finished unexpectedly.") + " " + 
+	              tr("Exit code: %1").arg(exit_code));
+		d.setLog( core->mplayer_log );
+		d.exec();
+	} 
+}
+
+void BaseGui::showErrorFromMplayer(QProcess::ProcessError e) {
+	if ((e == QProcess::FailedToStart) || (e == QProcess::Crashed)) {
+		ErrorDialog d(this);
+		if (e == QProcess::FailedToStart) {
+			d.setText(tr("MPlayer failed to start.") + " " + 
+                         tr("Please check the MPlayer path in preferences."));
+		} else {
+			d.setText(tr("MPlayer has crashed.") + " " + 
+                      tr("See the log for more info."));
+		}
+		d.setLog( core->mplayer_log );
+		d.exec();
+	}
+}
 
 // Language change stuff
 void BaseGui::changeEvent(QEvent *e) {

@@ -242,7 +242,10 @@ void BaseGuiPlus::trayIconActivated(QSystemTrayIcon::ActivationReason reason) {
 }
 
 void BaseGuiPlus::toggleShowAll() {
-	showAll( !isVisible() );
+	// Ignore if tray is not visible
+	if (tray->isVisible()) {
+		showAll( !isVisible() );
+	}
 }
 
 void BaseGuiPlus::showAll(bool b) {

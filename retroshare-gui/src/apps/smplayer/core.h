@@ -20,7 +20,7 @@
 #define _CORE_H_
 
 #include <QObject>
-
+#include <QProcess> // For QProcess::ProcessError
 #include "mediadata.h"
 #include "mediasettings.h"
 #include "config.h"
@@ -207,6 +207,8 @@ public slots:
 	void toggleDoubleSize();
 	void changePanscan(double); // Zoom on mplayerwindow
 
+	void changeRotate(int r);
+
 	void incPanscan();
 	void decPanscan();
 	void resetPanscan();
@@ -289,9 +291,14 @@ signals:
 	void showTime(double sec);
 	void showFrame(int frame);
 	void needResize(int w, int h);
-	void mplayerFinishedWithError(int);
 	void noVideo();
 	void volumeChanged(int);
+
+	//! MPlayer started but finished with exit code != 0
+	void mplayerFinishedWithError(int exitCode);
+
+	//! MPlayer didn't started or crashed
+	void mplayerFailed(QProcess::ProcessError error);
 
 	// Resend signal from mplayerprocess:
 	void failedToParseMplayerVersion(QString line_with_mplayer_version);

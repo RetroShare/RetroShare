@@ -44,7 +44,7 @@ public:
 signals:
 	void visibilityChanged();
 
-protected slots:
+public slots:
 	void reset();
 	void setDefaults();
 

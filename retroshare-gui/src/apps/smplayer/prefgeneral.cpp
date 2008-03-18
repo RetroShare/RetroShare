@@ -452,6 +452,8 @@ void PrefGeneral::on_selectButton_clicked() {
 void PrefGeneral::createHelp() {
 	clearHelp();
 
+	addSectionTitle(tr("General"));
+
 	setWhatsThis(mplayerbin_edit, tr("MPlayer executable"), 
 		tr("Here you must specify the mplayer "
            "executable that smplayer will use.<br>"
@@ -489,7 +491,9 @@ void PrefGeneral::createHelp() {
            "main window is hidden. When the window is restored, play will be "
            "resumed.") );
 
-	// Video/audio tab
+	addSectionTitle(tr("Video"));
+
+	// Video tab
 	setWhatsThis(eq2_check, tr("Software video equalizer"),
 		tr("You can check this option if video equalizer is not supported by "
            "your graphic card or the selected video output driver.<br>"
@@ -523,6 +527,8 @@ void PrefGeneral::createHelp() {
            "The screensaver will enabled again when play finishes.<br>"
            "<b>Note:</b> This option works only in X11 and Windows.") );
 
+	addSectionTitle(tr("Audio"));
+
 	setWhatsThis(softvol_check, tr("Software volume control"),
 		tr("Check this option to use the software mixer, instead of "
            "using the sound card mixer.") );
@@ -539,10 +545,6 @@ void PrefGeneral::createHelp() {
 
 	setWhatsThis(volnorm_check, tr("Volume normalization by default"),
 		tr("Maximizes the volume without distorting the sound.") );
-
-	setWhatsThis(scaletempo_combo, tr("High speed playback without altering pitch"),
-		tr("Allows to change the playback speed without altering pitch. "
-           "Requires at least MPlayer dev-SVN-r24924.") );
 
 	setWhatsThis(change_volume_check, tr("Change volume"),
 		tr("If checked, SMPlayer will remember the volume for every file "
@@ -570,6 +572,12 @@ void PrefGeneral::createHelp() {
            "into the requested number of channels. "
            "NOTE: This option is honored by codecs (AC3 only), "
            "filters (surround) and audio output drivers (OSS at least).") );
+
+	setWhatsThis(scaletempo_combo, tr("High speed playback without altering pitch"),
+		tr("Allows to change the playback speed without altering pitch. "
+           "Requires at least MPlayer dev-SVN-r24924.") );
+
+	addSectionTitle(tr("Preferred audio and subtitles"));
 
 	setWhatsThis(audio_lang_edit, tr("Preferred audio language"),
 		tr("Here you can type your preferred language for the audio streams. "

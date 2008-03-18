@@ -122,7 +122,9 @@ public:
 	void setMonitorAspect(double asp);
 	void updateVideoWindow();
 
+#if USE_COLORKEY
 	void setColorKey(QColor c);
+#endif
 
 	void setOffsetX( int );
 	int offsetX();

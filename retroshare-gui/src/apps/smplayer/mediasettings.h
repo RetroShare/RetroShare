@@ -48,6 +48,10 @@ public:
 	enum AudioChannels { ChDefault = 0, ChStereo = 2, ChSurround = 4, 
                          ChFull51 = 6 };
 	enum StereoMode { Stereo = 0, Left = 1, Right = 2 };
+
+	enum Rotate { NoRotate = -1, Clockwise_flip = 0, Clockwise = 1, 
+                  Counterclockwise = 2, Counterclockwise_flip = 3 };
+
 	enum IDs { NoneSelected = -1000, SubNone = 90000 };
 
 	MediaSettings();
@@ -116,6 +120,7 @@ public:
 
 	double panscan_factor; // mplayerwindow zoom
 
+	int rotate;
 	bool flip; //!< Flip image
 
 	// This a property of the video and it should be

@@ -49,7 +49,9 @@ public:
 	QString vo; // video output
 	QString ao; // audio output
 
+#if USE_COLORKEY
 	unsigned int color_key;
+#endif
 
 	// Subtitles font
 	bool use_fontconfig;

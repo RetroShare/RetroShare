@@ -34,7 +34,7 @@ MplayerProcess::MplayerProcess(QObject * parent) : MyProcess(parent)
 			 this, SLOT(parseLine(QByteArray)) );
 
 	connect( this, SIGNAL(finished(int,QProcess::ExitStatus)), 
-             this, SLOT(processFinished()) );
+             this, SLOT(processFinished(int,QProcess::ExitStatus)) );
 
 	connect( this, SIGNAL(error(QProcess::ProcessError)),
              this, SLOT(gotError(QProcess::ProcessError)) );
@@ -385,9 +385,14 @@ void MplayerProcess::parseLine(QByteArray ba) {
 		else
 
 		// Clip info
+
+		//QString::trimmed() is used for removing leading and trailing whitespaces
+		//Some .mp3 files contain tags with starting and ending whitespaces
+		//Unfortunately MPlayer gives us leading and trailing whitespaces, Winamp for example doesn't show them
+
 		// Name
 		if (rx_clip_name.indexIn(line) > -1) {
-			QString s = rx_clip_name.cap(2);
+			QString s = rx_clip_name.cap(2).trimmed();
 			qDebug("MplayerProcess::parseLine: clip_name: '%s'", s.toUtf8().data());
 			md.clip_name = s;
 		}
@@ -395,7 +400,7 @@ void MplayerProcess::parseLine(QByteArray ba) {
 
 		// Artist
 		if (rx_clip_artist.indexIn(line) > -1) {
-			QString s = rx_clip_artist.cap(1);
+			QString s = rx_clip_artist.cap(1).trimmed();
 			qDebug("MplayerProcess::parseLine: clip_artist: '%s'", s.toUtf8().data());
 			md.clip_artist = s;
 		}
@@ -403,7 +408,7 @@ void MplayerProcess::parseLine(QByteArray ba) {
 
 		// Author
 		if (rx_clip_author.indexIn(line) > -1) {
-			QString s = rx_clip_author.cap(1);
+			QString s = rx_clip_author.cap(1).trimmed();
 			qDebug("MplayerProcess::parseLine: clip_author: '%s'", s.toUtf8().data());
 			md.clip_author = s;
 		}
@@ -411,7 +416,7 @@ void MplayerProcess::parseLine(QByteArray ba) {
 
 		// Album
 		if (rx_clip_album.indexIn(line) > -1) {
-			QString s = rx_clip_album.cap(1);
+			QString s = rx_clip_album.cap(1).trimmed();
 			qDebug("MplayerProcess::parseLine: clip_album: '%s'", s.toUtf8().data());
 			md.clip_album = s;
 		}
@@ -419,7 +424,7 @@ void MplayerProcess::parseLine(QByteArray ba) {
 
 		// Genre
 		if (rx_clip_genre.indexIn(line) > -1) {
-			QString s = rx_clip_genre.cap(1);
+			QString s = rx_clip_genre.cap(1).trimmed();
 			qDebug("MplayerProcess::parseLine: clip_genre: '%s'", s.toUtf8().data());
 			md.clip_genre = s;
 		}
@@ -427,7 +432,7 @@ void MplayerProcess::parseLine(QByteArray ba) {
 
 		// Date
 		if (rx_clip_date.indexIn(line) > -1) {
-			QString s = rx_clip_date.cap(2);
+			QString s = rx_clip_date.cap(2).trimmed();
 			qDebug("MplayerProcess::parseLine: clip_date: '%s'", s.toUtf8().data());
 			md.clip_date = s;
 		}
@@ -435,7 +440,7 @@ void MplayerProcess::parseLine(QByteArray ba) {
 
 		// Track
 		if (rx_clip_track.indexIn(line) > -1) {
-			QString s = rx_clip_track.cap(1);
+			QString s = rx_clip_track.cap(1).trimmed();
 			qDebug("MplayerProcess::parseLine: clip_track: '%s'", s.toUtf8().data());
 			md.clip_track = s;
 		}
@@ -443,7 +448,7 @@ void MplayerProcess::parseLine(QByteArray ba) {
 
 		// Copyright
 		if (rx_clip_copyright.indexIn(line) > -1) {
-			QString s = rx_clip_copyright.cap(1);
+			QString s = rx_clip_copyright.cap(1).trimmed();
 			qDebug("MplayerProcess::parseLine: clip_copyright: '%s'", s.toUtf8().data());
 			md.clip_copyright = s;
 		}
@@ -451,7 +456,7 @@ void MplayerProcess::parseLine(QByteArray ba) {
 
 		// Comment
 		if (rx_clip_comment.indexIn(line) > -1) {
-			QString s = rx_clip_comment.cap(1);
+			QString s = rx_clip_comment.cap(1).trimmed();
 			qDebug("MplayerProcess::parseLine: clip_comment: '%s'", s.toUtf8().data());
 			md.clip_comment = s;
 		}
@@ -459,7 +464,7 @@ void MplayerProcess::parseLine(QByteArray ba) {
 
 		// Software
 		if (rx_clip_software.indexIn(line) > -1) {
-			QString s = rx_clip_software.cap(1);
+			QString s = rx_clip_software.cap(1).trimmed();
 			qDebug("MplayerProcess::parseLine: clip_software: '%s'", s.toUtf8().data());
 			md.clip_software = s;
 		}
@@ -559,8 +564,8 @@ void MplayerProcess::parseLine(QByteArray ba) {
 }
 
 // Called when the process is finished
-void MplayerProcess::processFinished() {
-	qDebug("MplayerProcess::processFinished");
+void MplayerProcess::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
+	qDebug("MplayerProcess::processFinished: exitCode: %d, status: %d", exitCode, (int) exitStatus);
 	// Send this signal before the endoffile one, otherwise
 	// the playlist will start to play next file before all
 	// objects are notified that the process has exited.

@@ -96,5 +96,7 @@
         <file>icons-png/cl_help.png</file>
         <file>icons-png/osd.png</file>
         <file>icons-png/angle.png</file>
+        <file>icons-png/rotate.png</file>
+        <file>icons-png/warning.png</file>
     </qresource>
 </RCC>
