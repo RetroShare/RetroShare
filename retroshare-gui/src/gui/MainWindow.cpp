@@ -584,15 +584,14 @@ void MainWindow::startqcheckers()
 
 /** Shows smplayer */
 void MainWindow::showsmplayer()
-{
+{    
     static SMPlayer * smplayer = 0;
-
+    
     if (smplayer == 0) {
-        smplayer = new SMPlayer(QString::null, this);
-    }
+    smplayer = new SMPlayer(QString::null, this);
+    /*connect(smplayer->gui(), SIGNAL(quitSolicited()), 
+            smplayer->gui(), SLOT(hide()));*/
+	}
+	smplayer->gui()->show();
 
-    smplayer->gui()->show();
-    // Or
-    // smplayer->start();
-    //smplayer->show();
 }
