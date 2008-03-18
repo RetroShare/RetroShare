@@ -28,7 +28,7 @@
    <item row="0" column="0" >
     <widget class="QTabWidget" name="networkTab" >
      <property name="tabPosition" >
-      <enum>QTabWidget::South</enum>
+      <enum>QTabWidget::North</enum>
      </property>
      <property name="currentIndex" >
       <number>0</number>
