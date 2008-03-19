@@ -32,7 +32,7 @@ InviteDialog::InviteDialog(QWidget *parent, Qt::WFlags flags)
   ui.setupUi(this);
   
   /* add a Background image for Invite a Friend Label */
-  WidgetBackgroundImage::setBackgroundImage(ui.invitefriendLabel, ":images/new-contact.png", WidgetBackgroundImage::AdjustHeight);
+  //WidgetBackgroundImage::setBackgroundImage(ui.invitefriendLabel, ":images/new-contact.png", WidgetBackgroundImage::AdjustHeight);
 
   connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(cancelbutton()));
   connect(ui.emailButton, SIGNAL(clicked()), this, SLOT(emailbutton()));

@@ -63,7 +63,8 @@
 #define IMAGE_RETROSHARE        ":/images/RetroShare16.png"
 #define IMAGE_ABOUT             ":/images/informations_24x24.png"
 #define IMAGE_STATISTIC         ":/images/utilities-system-monitor.png"
-#define IMAGE_MESSAGES          ":/images/evolution.png"
+#define IMAGE_GAMES             ":/images/kgames.png"
+#define IMAGE_PHOTO             ":/images/lphoto.png"
 #define IMAGE_BWGRAPH           ":/images/ksysguard.png"
 #define IMAGE_RSM32             ":/images/rsmessenger32.png"
 #define IMAGE_RSM16             ":/images/rsmessenger16.png"
@@ -86,7 +87,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     setWindowTitle(tr("RetroShare %1").arg(retroshareVersion()));
   
     // Setting icons
-    this->setWindowIcon(QIcon(QString::fromUtf8(":/images/RetroShare16.png")));
+    this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
     loadStyleSheet("Default");
 
     /* Create the config pages and actions */
@@ -102,7 +103,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
 
     GamesDialog *gamesDialog = NULL;
     ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_MESSAGES), tr("Games Launcher"), grp));
+                       createPageAction(QIcon(IMAGE_GAMES), tr("Games Launcher"), grp));
 
     NetworkView *networkView = NULL;
     ui.stackPages->add(networkView = new NetworkView(ui.stackPages),
@@ -110,7 +111,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
                      
     PhotoDialog *photoDialog = NULL;
     ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_CHANNELS), tr("Photo View"), grp));
+                      createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), grp));
                      
                      
   //ui.stackPages->add(groupsDialog = new GroupsDialog(ui.stackPages),

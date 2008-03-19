@@ -36,7 +36,7 @@ AddFriendDialog::AddFriendDialog(NetworkDialog *cd, QWidget *parent, Qt::WFlags 
   ui.setupUi(this);
   
   /* add a Background image for Add Friend Label */
-  WidgetBackgroundImage::setBackgroundImage(ui.addfriendLabel, ":images/new-contact.png", WidgetBackgroundImage::AdjustHeight);
+  //WidgetBackgroundImage::setBackgroundImage(ui.addfriendLabel, ":images/new-contact.png", WidgetBackgroundImage::AdjustHeight);
 
   connect(ui.afcancelButton, SIGNAL(clicked()), this, SLOT(afcancelbutton()));
   connect(ui.fileButton, SIGNAL(clicked()), this, SLOT(filebutton()));

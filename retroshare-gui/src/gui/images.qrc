@@ -3,7 +3,8 @@
         <file>help/authors.html</file>
         <file>help/licence.html</file>
         <file>help/thanks.html</file>
-        <file>images/channels.png</file>
+        <file>images/addfriendlabel.png</file>
+        <file>images/channels.png</file>        
         <file>images/channeldelete.png</file>
         <file>images/channelsubscribe.png</file>
         <file>images/FileTypeAny.png</file>
@@ -110,18 +111,21 @@
         <file>images/folder_doments.png</file>
         <file>images/folder_green.png</file>
         <file>images/folder_green16.png</file>
+        <file>images/kgames.png</file>
         <file>images/graph-area.png</file>
         <file>images/graph-line.png</file>
         <file>images/hide_toolbox_frame.png</file>
         <file>images/info16.png</file>
         <file>images/informations_24x24.png</file>
         <file>images/invite-friend24.png</file>
+        <file>images/invitefriendlabel.png</file>
         <file>images/kbackgammon.png</file>
         <file>images/konsole.png</file>
         <file>images/ksysguard.png</file>
         <file>images/ktorrent.png</file>
         <file>images/loadcert16.png</file>
         <file>images/locale.png</file>
+        <file>images/lphoto.png</file>
         <file>images/logobar/logo_bar_fill.png</file>
         <file>images/logobar/logo_bar_start.png</file>
         <file>images/logobar/rslogo.png</file>
