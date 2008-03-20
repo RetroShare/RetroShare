@@ -65,7 +65,8 @@
 #define IMAGE_RSM32             ":/images/rsmessenger32.png"
 #define IMAGE_RSM16             ":/images/rsmessenger16.png"
 #define IMAGE_CLOSE             ":/images/close_normal.png"
-#define IMAGE_SMPLAYER		":/images/smplayer_icon32.png"
+#define IMAGE_SMPLAYER		    ":/images/smplayer_icon32.png"
+#define IMAGE_BLOCK         	":/images/blockdevice.png"
 
 /* Keys for UI Preferences */
 #define UI_PREF_PROMPT_ON_QUIT  "UIOptions/ConfirmOnQuit"
@@ -84,7 +85,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Invoke the Qt Designer generated QObject setup routine */
     ui.setupUi(this);
     
-    setWindowTitle(tr("RetroShare %1").arg(retroshareVersion()));
+    setWindowTitle(tr("RetroShare %1").arg(retroshareVersion())); 
   
     /* Hide Console frame */
     showConsoleFrame(false);
@@ -189,9 +190,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
 
 #ifdef RS_RELEASE_VERSION    
-    addAction(new QAction(QIcon(IMAGE_PEERS), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
+    addAction(new QAction(QIcon(IMAGE_BLOCK), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 #else
-    addAction(new QAction(QIcon(IMAGE_PEERS), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
+    addAction(new QAction(QIcon(IMAGE_BLOCK), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 #endif
  
 #ifdef NO_MORE_OPTIONS_OR_SS
