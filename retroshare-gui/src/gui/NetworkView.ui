@@ -78,7 +78,7 @@ p, li { white-space: pre-wrap; }
     </spacer>
    </item>
    <item row="1" column="0" colspan="2" >
-    <widget class="QGraphicsView" name="graphicsView" />
+    <widget class="GraphWidget" name="graphicsView" />
    </item>
    <item row="2" column="0" colspan="2" >
     <layout class="QGridLayout" >
@@ -131,6 +131,13 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GraphWidget</class>
+   <extends>QGraphicsView</extends>
+   <header>gui/elastic/graphwidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

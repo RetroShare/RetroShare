@@ -30,7 +30,8 @@ DEPENDPATH += . \
             gui\common\
             gui\Settings \
             gui\toaster \
-            gui\authdlg
+            gui\authdlg \
+            gui\elastic
             
 INCLUDEPATH += . \
 			games/qcheckers \
@@ -138,7 +139,10 @@ HEADERS +=  rshare.h \
             gui/channels/channelBrowserDialog.h \
             gui/channels/channelStatsDialog.h \
             gui/channels/myChannelsDialog.h \
-            gui/channels/mySubscriptionsDialog.h
+            gui/channels/mySubscriptionsDialog.h \
+            gui/elastic/graphwidget.h \
+            gui/elastic/edge.h \
+            gui/elastic/node.h
 
 
 FORMS +=    gui/ChatDialog.ui \
@@ -283,7 +287,10 @@ SOURCES += main.cpp \
             gui/channels/channelBrowserDialog.cpp \
             gui/channels/channelStatsDialog.cpp \
             gui/channels/myChannelsDialog.cpp \
-            gui/channels/mySubscriptionsDialog.cpp
+            gui/channels/mySubscriptionsDialog.cpp \
+            gui/elastic/graphwidget.cpp \
+            gui/elastic/edge.cpp \
+            gui/elastic/node.cpp
             
 RESOURCES += gui/images.qrc lang/lang.qrc games/qcheckers/qcheckers.qrc apps/smplayer/icons.qrc
 TRANSLATIONS +=  \

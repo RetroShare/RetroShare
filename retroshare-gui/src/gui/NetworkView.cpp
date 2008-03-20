@@ -36,22 +36,14 @@ NetworkView::NetworkView(QWidget *parent)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
-  mScene = new QGraphicsScene();
-  ui.graphicsView->setScene(mScene);
-
-
-  //connect( ui.linkTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( linkTreeWidgetCostumPopupMenu( QPoint ) ) );
-
-
-  /* link combos */
-//  connect( ui.rankComboBox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( changedSortRank( int ) ) );
-//  connect( ui.periodComboBox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( changedSortPeriod( int ) ) );
-//  connect( ui.fromComboBox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( changedSortFrom( int ) ) );
-//  connect( ui.topComboBox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( changedSortTop( int ) ) );
+  //mScene = new QGraphicsScene();
+  //ui.graphicsView->setScene(mScene);
 
   /* add button */
   connect( ui.refreshButton, SIGNAL( clicked( void ) ), this, SLOT( insertPeers( void ) ) );
-  connect( mScene, SIGNAL( changed ( const QList<QRectF> & ) ), this, SLOT ( changedScene( void ) ) );
+//  connect( mScene, SIGNAL( changed ( const QList<QRectF> & ) ), this, SLOT ( changedScene( void ) ) );
+
+
   /* hide the Tree +/- */
 //  ui.linkTreeWidget -> setRootIsDecorated( false );
   
@@ -102,9 +94,7 @@ void  NetworkView::clearPeerItems()
 
 	for(pit = mPeerItems.begin(); pit != mPeerItems.end(); pit++)
 	{
-		//mScene->removeItem(pit->second);
-		mScene->destroyItemGroup((QGraphicsItemGroup *) pit->second);
-		//delete (pit->second);
+		//mScene->destroyItemGroup((QGraphicsItemGroup *) pit->second);
 	}
 	mPeerItems.clear();
 }
@@ -116,7 +106,7 @@ void  NetworkView::clearOtherItems()
 
 	for(oit = mOtherItems.begin(); oit != mOtherItems.end(); oit++)
 	{
-		mScene->removeItem(*oit);
+		//mScene->removeItem(*oit);
 		delete (*oit);
 	}
 	mOtherItems.clear();
@@ -129,7 +119,7 @@ void  NetworkView::clearLineItems()
 
 	for(oit = mLineItems.begin(); oit != mLineItems.end(); oit++)
 	{
-		mScene->removeItem(*oit);
+		//mScene->removeItem(*oit);
 		delete (*oit);
 	}
 	mLineItems.clear();
@@ -139,80 +129,33 @@ void  NetworkView::clearLineItems()
 void  NetworkView::insertPeers()
 {
 	/* clear graphics scene */
-	clearPeerItems();
-	clearOtherItems();
+  	ui.graphicsView->clearGraph();
 
 	/* add all friends */
 	std::list<std::string> ids;
 	std::list<std::string>::iterator it;
  	rsPeers->getOthersList(ids);
- 	ids.push_back(rsPeers->getOwnId()); /* add yourself too */
 
 	std::cerr << "NetworkView::insertPeers()" << std::endl;
 
 	int i = 0;
+	uint32_t type = 0;
 	for(it = ids.begin(); it != ids.end(); it++, i++)
 	{
 		/* *** */
+		std::string name = rsPeers->getPeerName(*it);
 
-		QString name = QString::fromStdString(rsPeers->getPeerName(*it));
-		QGraphicsTextItem *gti = new QGraphicsTextItem(name);
-		mScene->addItem(gti);
-
-		//QPointF textPoint( i * 10, i * 20);
-		//gti->setPos(textPoint);
-		gti->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
-		gti->setZValue(20);
-
-		QRectF textBound = gti->boundingRect();
-
-		/* work out bounds for circle */
-		qreal diameter = textBound.width() + 10;
-		if (diameter < 40)
-			diameter = 40;
-
-		qreal x = textBound.left() + (textBound.width() / 2.0) - (diameter/ 2.0);
-		qreal y = textBound.top() + (textBound.height() / 2.0) - (diameter/ 2.0);
-
-		QGraphicsEllipseItem *gei = new QGraphicsEllipseItem(x, y, diameter, diameter);
-		mScene->addItem(gei);
-		gei->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
-		gei->setZValue(10);
-
-		/* colour depends on Friend... */
-		if (*it == rsPeers->getOwnId())
+		if (rsPeers->isFriend(*it))
 		{
-			gei->setBrush(QBrush(Qt::green));
-		}
-		else if (rsPeers->isFriend(*it))
-		{
-			gei->setBrush(QBrush(Qt::blue));
+			type = 2;
 		}
 		else
 		{
-			gei->setBrush(QBrush(Qt::red));
+			type = 3;
 		}
 
-		QGraphicsItemGroup *gig = new QGraphicsItemGroup();
-		mScene->addItem(gig);
-
-		gig->addToGroup(gei);
-		gig->addToGroup(gti);
-		gig->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
-
-
-
-
-
-		//, const QPen & pen = QPen(), const QBrush & brush = QBrush() )
-
-		mPeerItems[*it] = gig;
-		mOtherItems.push_back(gti);
-		mOtherItems.push_back(gei);
-
+  		ui.graphicsView->addNode(type, *it, name);
 		std::cerr << "NetworkView::insertPeers() Added Friend: " << *it << std::endl;
-		std::cerr << "\t At: " << i*5 << "," << i*10 << std::endl;
-
 	}
 
 	insertConnections();
@@ -221,106 +164,73 @@ void  NetworkView::insertPeers()
 
 void  NetworkView::insertConnections()
 {
-	clearLineItems();
+	/* iterate through all friends */
+	std::list<std::string> ids;
+	std::list<std::string>::iterator it;
+	std::map<std::string, std::list<std::string> > connLists;
 
-	/* iterate through all peerItems .... and find any proxies */
-	std::map<std::string, QGraphicsItem *>::const_iterator pit, pit2;
+	std::string ownId = rsPeers->getOwnId();
+ 	rsPeers->getOthersList(ids);
+
+	std::cerr << "NetworkView::insertConnections()" << std::endl;
 
 	int i = 0;
-	for(pit = mPeerItems.begin(); pit != mPeerItems.end(); pit++, i++)
+	for(it = ids.begin(); it != ids.end(); it++, i++)
 	{
-		std::list<std::string> friendList;
-		std::list<std::string>::iterator it;
-
-		rsDisc->getDiscFriends(pit->first, friendList);
-		int j = 0;
-
-		for(it = friendList.begin(); it != friendList.end(); it++)
+		if (rsPeers->isFriend(*it))
 		{
-			//pit2  = std::find(pit, mPeerItems.end(), *it);
-			pit2 = mPeerItems.find(*it);
-			if (pit2 == mPeerItems.end())
+			/* add own connection (check for it first) */
+			std::list<std::string> &refList = connLists[*it];
+			if (refList.end() == std::find(refList.begin(), refList.end(), ownId))
 			{
-				std::cerr << " Failed to Find: " << *it;
+				connLists[ownId].push_back(*it);
+				connLists[*it].push_back(ownId);
+
+  				ui.graphicsView->addEdge("", *it);
+				std::cerr << "NetworkView: Adding Edge: Self -> " << *it;
 				std::cerr << std::endl;
-				continue; /* missing */
 			}
-
-			if (pit == pit2)
-				continue; /* skip same one */
-
-			std::cerr << " Connecting: " << pit->first << " to " << pit2->first;
-			std::cerr << std::endl;
-
-			QPointF pos1 = (pit->second)->pos();
-			QRectF  bound1 = (pit->second)->boundingRect();
-
-			QPointF pos2 = (pit2->second)->pos();
-			QRectF  bound2 = (pit2->second)->boundingRect();
-
-			pos1 += QPointF(bound1.width() / 2.0, bound1.height() / 2.0);
-			pos2 += QPointF(bound2.width() / 2.0, bound2.height() / 2.0);
-
-			QLineF  line(pos1, pos2);
-
-			QGraphicsLineItem *gli = mScene->addLine(line);
-
-			mLineItems.push_back(gli);
+			else
+			{
+				std::cerr << "NetworkView: Already Edge: Self -> " << *it;
+				std::cerr << std::endl;
+			}
 		}
-	}
 
-/* debugging all lines */
-#if 0
-	/* iterate through all peerItems .... and find any proxies */
-	std::map<std::string, QGraphicsItem *>::const_iterator pit, pit2;
-	int i = 0;
-	for(pit = mPeerItems.begin(); pit != mPeerItems.end(); pit++, i++)
-	{
+		std::list<std::string> friendList;
+		std::list<std::string>::iterator it2;
+
+		rsDisc->getDiscFriends(*it, friendList);
 		int j = 0;
-		for(pit2 = mPeerItems.begin(); (pit2 != mPeerItems.end()) && (j < i); pit2++, j++)
+
+		for(it2 = friendList.begin(); it2 != friendList.end(); it2++)
 		{
-			if (pit == pit2)
-				continue; /* skip same one */
+			if (*it == *it2)
+				continue;
 
-			std::cerr << " Connecting: " << pit->first << " to " << pit2->first;
-			std::cerr << std::endl;
+			/* check that we haven't added this one already */
+			std::list<std::string> &refList = connLists[*it];
+			if (refList.end() == std::find(refList.begin(), refList.end(), *it2))
+			{
+				connLists[*it2].push_back(*it);
+				connLists[*it].push_back(*it2);
 
-			QPointF pos1 = (pit->second)->pos();
-			QPointF pos2 = (pit2->second)->pos();
-			QLineF  line(pos1, pos2);
-
-			QGraphicsLineItem *gli = mScene->addLine(line);
-
-			mLineItems.push_back(gli);
+  				ui.graphicsView->addEdge(*it, *it2);
+				std::cerr << "NetworkView: Adding Edge: " << *it << " <-> " << *it2;
+				std::cerr << std::endl;
+			}
+			else
+			{
+				std::cerr << "NetworkView: Already Edge: " << *it << " <-> " << *it2;
+				std::cerr << std::endl;
+			}
 		}
 	}
-#endif
-
-	mLineChanged = true;
 }
 
 
 void  NetworkView::changedScene()
 {
-	std::cerr << "NetworkView::changedScene()" << std::endl;
-
-	QList<QGraphicsItem *> items = mScene->selectedItems();
-
-	std::cerr << "NetworkView::changedScene() Items selected: " << items.size() << std::endl;
-
-	/* if an item was selected and moved - then redraw lines */
-	if (mLineChanged)
-	{
-		mLineChanged = false;
-		return;
-	}
-
-	if (items.size() > 0)
-	{
-		mScene->clearSelection();
-		insertConnections();
-	}
-
 }
 
 
