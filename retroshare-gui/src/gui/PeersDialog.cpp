@@ -77,22 +77,17 @@ PeersDialog::PeersDialog(QWidget *parent)
 	_header->setResizeMode (5, QHeaderView::Interactive);
 	_header->setResizeMode (6, QHeaderView::Interactive);
 	_header->setResizeMode (7, QHeaderView::Interactive);
-	_header->setResizeMode (8, QHeaderView::Interactive);
-	_header->setResizeMode (9, QHeaderView::Interactive);
-	_header->setResizeMode (10, QHeaderView::Interactive);
-	_header->setResizeMode (11, QHeaderView::Interactive);
+
     
 	_header->resizeSection ( 0, 25 );
 	_header->resizeSection ( 1, 100 );
 	_header->resizeSection ( 2, 100 );
 	_header->resizeSection ( 3, 100 );
 	_header->resizeSection ( 4, 100 );
-	_header->resizeSection ( 5, 200 );
+	_header->resizeSection ( 5, 230 );
 	_header->resizeSection ( 6, 100 );
-	_header->resizeSection ( 7, 100 );
-	_header->resizeSection ( 8, 100 );
-	_header->resizeSection ( 9, 100 );
-	_header->resizeSection ( 10, 100 );
+	_header->resizeSection ( 7, 220 );
+
 
 
   /* Hide platform specific features */
@@ -169,12 +164,12 @@ void  PeersDialog::insertPeers()
         std::string oldId;
         if (oldSelect)
         {
-                oldId = (oldSelect -> text(10)).toStdString();
+                oldId = (oldSelect -> text(7)).toStdString();
         }
 
         /* remove old items ??? */
 	peerWidget->clear();
-	peerWidget->setColumnCount(12);
+	peerWidget->setColumnCount(8);
 	
 
         QList<QTreeWidgetItem *> items;
@@ -224,15 +219,15 @@ void  PeersDialog::insertPeers()
 				RsPeerLastConnectString(now - detail.lastConnect)));
 
 		/* () Org */
-		item -> setText(7, QString::fromStdString(detail.org));
+		//item -> setText(7, QString::fromStdString(detail.org));
 		/* () Location */
-		item -> setText(8, QString::fromStdString(detail.location));
+		//item -> setText(8, QString::fromStdString(detail.location));
 		/* () Email */
-		item -> setText(9, QString::fromStdString(detail.email));
+		//item -> setText(9, QString::fromStdString(detail.email));
 	
 		/* Hidden ones: RsCertId */
 		{
-			item -> setText(10, QString::fromStdString(detail.id));
+			item -> setText(7, QString::fromStdString(detail.id));
                         if ((oldSelect) && (oldId == detail.id))
                         {
                                 newSelect = item;
@@ -240,14 +235,14 @@ void  PeersDialog::insertPeers()
 		}
 
 		/* ()  AuthCode */	
-                item -> setText(11, QString::fromStdString(detail.authcode));
+        //        item -> setText(11, QString::fromStdString(detail.authcode));
 
 		/* change background */
 		int i;
 		if (detail.state & RS_PEER_STATE_CONNECTED)
 		{
 			/* bright green */
-			for(i = 1; i < 12; i++)
+			for(i = 1; i < 8; i++)
 			{
 			  item -> setBackground(i,QBrush(Qt::green));
 			  item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
@@ -256,7 +251,7 @@ void  PeersDialog::insertPeers()
 		else if (detail.state & RS_PEER_STATE_UNREACHABLE)
 		{
 			/* bright green */
-			for(i = 1; i < 12; i++)
+			for(i = 1; i < 8; i++)
 			{
 			  item -> setBackground(i,QBrush(Qt::red));
 			  item -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
@@ -265,7 +260,7 @@ void  PeersDialog::insertPeers()
 		else if (detail.state & RS_PEER_STATE_ONLINE)
 		{
 			/* bright green */
-			for(i = 1; i < 12; i++)
+			for(i = 1; i < 8; i++)
 			{
 			  item -> setBackground(i,QBrush(Qt::cyan));
 			  item -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
@@ -275,7 +270,7 @@ void  PeersDialog::insertPeers()
 		{
                 	if (now - detail.lastConnect < 3600)
 			{
-				for(i = 1; i < 12; i++)
+				for(i = 1; i < 8; i++)
 				{
 				  item -> setBackground(i,QBrush(Qt::lightGray));
 				  item -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
@@ -283,7 +278,7 @@ void  PeersDialog::insertPeers()
 			}
 			else
 			{
-				for(i = 1; i < 12; i++)
+				for(i = 1; i < 8; i++)
 				{
 				  item -> setBackground(i,QBrush(Qt::gray));
 				  item -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
@@ -308,7 +303,7 @@ void  PeersDialog::insertPeers()
 /* Utility Fns */
 std::string getPeerRsCertId(QTreeWidgetItem *i)
 {
-	std::string id = (i -> text(10)).toStdString();
+	std::string id = (i -> text(7)).toStdString();
 	return id;
 }
 
@@ -348,7 +343,7 @@ void PeersDialog::chatfriend()
 	return;
 
     std::string name = (i -> text(2)).toStdString();
-    std::string id = (i -> text(10)).toStdString();
+    std::string id = (i -> text(7)).toStdString();
     
     RsPeerDetails detail;
     if (!rsPeers->getPeerDetails(id, detail))
@@ -391,7 +386,7 @@ void PeersDialog::msgfriend()
 
     std::string status = (i -> text(1)).toStdString();
     std::string name = (i -> text(2)).toStdString();
-    std::string id = (i -> text(10)).toStdString();
+    std::string id = (i -> text(7)).toStdString();
 
     rsicontrol -> ClearInMsg();
     rsicontrol -> SetInMsg(id, true);

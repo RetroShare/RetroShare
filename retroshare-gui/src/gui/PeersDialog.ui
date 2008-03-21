@@ -493,18 +493,42 @@
    <enum>Qt::NoContextMenu</enum>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
+   <property name="leftMargin" >
     <number>1</number>
    </property>
-   <property name="spacing" >
+   <property name="topMargin" >
+    <number>1</number>
+   </property>
+   <property name="rightMargin" >
+    <number>1</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>1</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>1</number>
+   </property>
+   <property name="verticalSpacing" >
     <number>1</number>
    </property>
    <item row="0" column="0" >
     <layout class="QGridLayout" >
-     <property name="margin" >
+     <property name="leftMargin" >
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>0</number>
+     </property>
+     <property name="verticalSpacing" >
       <number>0</number>
      </property>
      <item row="0" column="1" >
@@ -522,10 +546,22 @@
      </item>
      <item row="0" column="0" >
       <layout class="QGridLayout" >
-       <property name="margin" >
+       <property name="leftMargin" >
         <number>0</number>
        </property>
-       <property name="spacing" >
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing" >
         <number>6</number>
        </property>
        <item row="0" column="0" >
@@ -607,27 +643,7 @@ p, li { white-space: pre-wrap; }
        </column>
        <column>
         <property name="text" >
-         <string>Organisation</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Location</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Country</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
          <string>Person Id</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Auth Code</string>
         </property>
        </column>
       </widget>
