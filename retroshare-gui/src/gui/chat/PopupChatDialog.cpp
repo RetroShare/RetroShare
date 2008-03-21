@@ -174,34 +174,13 @@ void PopupChatDialog::updateChat()
 
 void PopupChatDialog::addChatMsg(ChatInfo *ci)
 {
-        QTextBrowser *msgWidget = ui.textBrowser;
+    QTextBrowser *msgWidget = ui.textBrowser;
 
 	QString currenttxt = msgWidget->toHtml();
-
-	/* determine how many spaces to add */
-	int n = msgWidget->width();
-	/* now spaces = (width - txt width) / (pixel / space)
-	 */
-
-	//std::cerr << "Width is : " << n << std::endl;
-	n -= 256; /* 220 pixels for name */
-	if (n > 0)
-	{
-		n = 2 + n / 10;
-	}
-	else
-	{
-		n = 1;
-	}
-
-	//std::cerr << "Space count : " << n << std::endl;
-
-	std::string spaces(" ");
 
 
 	/* add in lines at the bottom */
 	QString extraTxt;
-	int ts = time(NULL);
 
 
 	bool offline = true;
@@ -224,45 +203,18 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 
 		extraTxt += line;
 	}
-
 	
-	if ((ci->name == lastChatName) && (ts - lastChatTime < 60))
-	{
-			/* no name */
-	}
-	else
-	{
 
-#if defined(Q_OS_WIN)
-		// Nothing.
-#else
-		extraTxt += "<br>\n";
-#endif
-		for(int i = 0; i < n; i++)
-		{
-			extraTxt += " ";
-		}
-
-            QString timestamp = "(" + QDateTime::currentDateTime().toString("hh:mm:ss") + ") ";
+        QString timestamp = "[" + QDateTime::currentDateTime().toString("hh:mm:ss") + "]";
             //QString pre = tr("Peer:" );
 	    QString name = QString::fromStdString(ci->name);
 	    QString line = "<span style=\"color:#1D84C9\"><strong>" + timestamp + 
-					 "   " + name + "</strong></span> \n<br>";
+					 " " + name + "</strong></span> \n<br>";
 
 		extraTxt += line;
 
-	}
+
 	extraTxt += QString::fromStdWString(ci -> msg);
-
-	/* This might be WIN32 only - or maybe Qt4.2.2 only - but need it for windows at the mom */
-#if defined(Q_OS_WIN)
-		extraTxt += "\n";
-#else
-		extraTxt += "\n";
-#endif
-
-	lastChatTime = ts;
-	lastChatName = ci->name;
 
 	currenttxt += extraTxt;
 

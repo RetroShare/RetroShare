@@ -118,37 +118,15 @@ void ChatDialog::insertChat()
 		return;
 	}
 
-        QTextEdit *msgWidget = ui.msgText;
+    QTextEdit *msgWidget = ui.msgText;
 	std::list<ChatInfo>::iterator it;
-
-	static  std::string lastChatName("");
-	static  int         lastChatTime = 0;
-
+	
 	//QString color = ci.messageColor.name();
 	//QString nickColor;
 	//QString font  = ci.messageFont.family();
 	//QString fontSize = QString::number(ci.messageFont.pointSize());
 
-
-	/* determine how many spaces to add */
-	//int n = msgWidget->width();
-	/* now spaces = (width - txt width) / (pixel / space)
-	 */
-
-	//std::cerr << "Width is : " << n << std::endl;
-	/*n -= 256;  220 pixels for name */
-	/*if (n > 0)
-	{
-		n = 2 + n / 10;
-	}
-	else
-	{
-		n = 1;
-	}
-	n = 1 + n / 2;*/ /* shrink it! */
-
 	/* add in lines at the bottom */
-	int ts = time(NULL);
 	for(it = newchat.begin(); it != newchat.end(); it++)
 	{
 		/* are they private? */
@@ -163,46 +141,20 @@ void ChatDialog::insertChat()
 		QString currenttxt = msgWidget->toHtml();
 		QString extraTxt;
 
-		if ((it->name == lastChatName) && (ts - lastChatTime < 60))
-		{
-			/* no name */
-		}
-		else
-		{
-#if defined(Q_OS_WIN)
-			/* nothing */
-#else
-			extraTxt += "<br>\n";
-#endif
-			/*for(int i = 0; i < n; i++)
-			{
-				extraTxt += " ";
-			}*/
-            		QString timestamp = "[" + QDateTime::currentDateTime().toString("hh:mm:ss") + "]";
-            		QString name = QString::fromStdString(it->name);
-            		QString line = "<span style=\"color:#C00000\"><strong>" + timestamp + "</strong></span>" +			
+        QString timestamp = "[" + QDateTime::currentDateTime().toString("hh:mm:ss") + "]";
+        QString name = QString::fromStdString(it->name);
+        QString line = "<span style=\"color:#C00000\"><strong>" + timestamp + "</strong></span>" +			
             		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span> <br>";
+            		
+        extraTxt += line;
 
-                	extraTxt += line;
-                	
-		}
-
-		extraTxt += QString::fromStdWString(it->msg);
-
-	        /* This might be WIN32 only - or maybe Qt4.2.2 only - but need it for windows at the mom */
-#if defined(Q_OS_WIN)
-		extraTxt += "\n";
-#else
-		extraTxt += "\n";
-#endif
-
-		lastChatName = it -> name;
-		lastChatTime = ts;
-
-		/* add it everytime */
+        extraTxt += QString::fromStdWString(it->msg);
+        
+        /* add it everytime */
 		currenttxt += extraTxt;
-
-		msgWidget->setHtml(currenttxt);
+		
+        msgWidget->setHtml(currenttxt);
+        
 
 		QScrollBar *qsb =  msgWidget->verticalScrollBar();
 		qsb -> setValue(qsb->maximum());
@@ -216,10 +168,10 @@ void ChatDialog::sendMsg()
 {
     QLineEdit *lineWidget = ui.lineEdit;
         
-    //QFont font = QFont("Comic Sans MS", 10);
-	//font.setBold(ui.textboldChatButton->isChecked());
-	//font.setUnderline(ui.textunderlineChatButton->isChecked());
-	//font.setItalic(ui.textitalicChatButton->isChecked());
+    QFont font = QFont("Comic Sans MS", 10);
+	font.setBold(ui.textboldChatButton->isChecked());
+	font.setUnderline(ui.textunderlineChatButton->isChecked());
+	font.setItalic(ui.textitalicChatButton->isChecked());
 
 	ChatInfo ci;
 	ci.msg = lineWidget->text().toStdWString();
