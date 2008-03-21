@@ -144,7 +144,6 @@ bool  	loadCertificates(bool &oldFormat, std::map<std::string, std::string> &key
 
 	/* Helper Functions */
 
-bool 	getXPGPid(XPGP *xpgp, std::string &xpgpid);
 bool 	ProcessXPGP(XPGP *xpgp, std::string &id);
 
 XPGP *	loadXPGPFromPEM(std::string pem);
@@ -191,7 +190,9 @@ std::list<std::string> getXPGPsigners(XPGP *cert);
 std::string getXPGPInfo(XPGP *cert);
 std::string getXPGPAuthCode(XPGP *xpgp);
 
-int     LoadCheckXPGPandGetName(const char *cert_file, std::string &userName);
+int     LoadCheckXPGPandGetName(const char *cert_file, 
+			std::string &userName, std::string &userId);
+bool 	getXPGPid(XPGP *xpgp, std::string &xpgpid);
 
 
 #endif // MRK_SSL_XPGP_CERT_HEADER

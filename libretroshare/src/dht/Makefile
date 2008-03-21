@@ -9,9 +9,11 @@ include $(RS_TOP_DIR)/scripts/config.mk
 
 RSOBJ = b64.o opendhtstr.o opendht.o opendhtmgr.o
 
-TESTOBJ  = odhtstr_test.o odhtpost_test.o odhtmgr_test.o 
+TESTOBJ  = odhtstr_test.o odhtpost_test.o odhtmgr_test.o \
+	dht_bootstrap.o
 
-TESTS  = odhtstr_test odhtpost_test odhtmgr_test
+TESTS  = odhtstr_test odhtpost_test odhtmgr_test \
+	dht_bootstrap
 
 all: librs tests
 
@@ -27,6 +29,9 @@ odhtstr_test: $(OBJ) odhtstr_test.o
 
 odhtmgr_test: $(OBJ) odhtmgr_test.o
 	$(CC) $(CFLAGS) -o odhtmgr_test $(OBJ) odhtmgr_test.o $(LIBS)
+
+dht_bootstrap: dht_bootstrap.o
+	$(CC) $(CFLAGS) -o dht_bootstrap dht_bootstrap.o $(LIBS)
 
 # Extra Rule...
 .c.o:

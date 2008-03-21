@@ -31,8 +31,8 @@
 
 #include "util/rsprint.h"
 
-#define DHT_DEBUG 1
 /*****
+ * #define DHT_DEBUG 1
  * #define P3DHTMGR_USE_LOCAL_UDP_CONN 1  // For Testing only 
  ****/
 

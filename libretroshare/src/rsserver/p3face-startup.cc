@@ -370,10 +370,12 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	std::string userName;
+	std::string userId;
 	bool existingUser = false;
-	if (LoadCheckXPGPandGetName(config->load_cert.c_str(), userName))
+	if (LoadCheckXPGPandGetName(config->load_cert.c_str(), userName, userId))
 	{
 		std::cerr << "Existing Name: " << userName << std::endl;
+		std::cerr << "Existing Id: " << userId << std::endl;
 		existingUser = true;
 	}
 	else
@@ -773,16 +775,18 @@ int LoadCertificates(RsInit *config, bool autoLoginNT)
 bool ValidateCertificate(RsInit *config, std::string &userName)
 {
 	std::string fname = config->load_cert;
+	std::string userId;
 	if (fname != "")
 	{
-		return LoadCheckXPGPandGetName(fname.c_str(), userName);
+		return LoadCheckXPGPandGetName(fname.c_str(), userName, userId);
 	}
 	return false;
 }
 
 bool ValidateTrustedUser(RsInit *config, std::string fname, std::string &userName)
 {
-	bool valid = LoadCheckXPGPandGetName(fname.c_str(), userName);
+	std::string userId;
+	bool valid = LoadCheckXPGPandGetName(fname.c_str(), userName, userId);
 	if (valid)
 	{
 		config -> load_trustedpeer = true;

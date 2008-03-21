@@ -22,7 +22,8 @@ TESTOBJ += rsserial_test.o
 
 TESTS  = tlvbase_test tlvbase_test2 tlvfileitem_test 
 TESTS += tlvitems_test tlvstack_test tlvconfig_test
-TESTS += rsserial_test 
+TESTS += 
+#rsserial_test 
 
 #rsbaseitem_test
 

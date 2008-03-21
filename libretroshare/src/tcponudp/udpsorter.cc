@@ -69,7 +69,7 @@ void UdpSorter::recvPkt(void *data, int size, struct sockaddr_in &from)
 	it = streams.find(from);
 
 	/* check for STUN packet */
-	if (isStunPacket(data, size))
+	if (UdpStun_isStunPacket(data, size))
 	{
 		std::cerr << "UdpSorter::recvPkt() is Stun Packet";
 		std::cerr << std::endl;
@@ -230,7 +230,7 @@ bool UdpSorter::locked_handleStunPkt(void *data, int size, struct sockaddr_in &f
 
 		/* generate a response */
 		int len;
-		void *pkt = generate_stun_reply(&from, &len);
+		void *pkt = UdpStun_generate_stun_reply(&from, &len);
 		if (!pkt)
 			return false;
 
@@ -252,7 +252,7 @@ bool UdpSorter::locked_handleStunPkt(void *data, int size, struct sockaddr_in &f
 #endif
 		/* got response */
 		struct sockaddr_in eAddr;
-		bool good = response(data, size, eAddr);
+		bool good = UdpStun_response(data, size, eAddr);
 		if (good)
 		{
 #ifdef DEBUG_UDP_SORTER
@@ -310,7 +310,7 @@ int     UdpSorter::doStun(struct sockaddr_in stun_addr)
 #define MAX_STUN_SIZE 64
 	char stundata[MAX_STUN_SIZE];
 	int tmplen = MAX_STUN_SIZE;
-	bool done = generate_stun_pkt(stundata, &tmplen);
+	bool done = UdpStun_generate_stun_pkt(stundata, &tmplen);
 	if (!done)
 	{
 #ifdef DEBUG_UDP_SORTER
@@ -343,7 +343,11 @@ int     UdpSorter::doStun(struct sockaddr_in stun_addr)
 	return 1;
 }
 
-bool    UdpSorter::response(void *stun_pkt, int size, struct sockaddr_in &addr)
+/******************************* STUN Handling ********************************/
+/***** These next functions are generic and not dependent on class variables **/
+/******************************* STUN Handling ********************************/
+
+bool    UdpStun_response(void *stun_pkt, int size, struct sockaddr_in &addr)
 {
 	/* check what type it is */
 	if (size < 28)
@@ -376,7 +380,7 @@ bool    UdpSorter::response(void *stun_pkt, int size, struct sockaddr_in &addr)
 
 }
 
-bool UdpSorter::generate_stun_pkt(void *stun_pkt, int *len)
+bool UdpStun_generate_stun_pkt(void *stun_pkt, int *len)
 {
 	if (*len < 20)
 	{
@@ -396,7 +400,7 @@ bool UdpSorter::generate_stun_pkt(void *stun_pkt, int *len)
 }
 
 
-void *UdpSorter::generate_stun_reply(struct sockaddr_in *stun_addr, int *len)
+void *UdpStun_generate_stun_reply(struct sockaddr_in *stun_addr, int *len)
 {
 	/* just the header */
 	void *stun_pkt = malloc(28);
@@ -422,7 +426,7 @@ void *UdpSorter::generate_stun_reply(struct sockaddr_in *stun_addr, int *len)
 	return stun_pkt;
 }
 
-bool UdpSorter::isStunPacket(void *data, int size)
+bool UdpStun_isStunPacket(void *data, int size)
 {
 #ifdef DEBUG_UDP_SORTER
 	std::cerr << "UdpSorter::isStunPacket() ?";

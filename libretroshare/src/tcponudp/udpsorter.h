@@ -99,14 +99,10 @@ int     status(std::ostream &out);
 	private:
 
 	/* STUN handling */
-bool	isStunPacket(void *data, int size);
 bool 	locked_handleStunPkt(void *data, int size, struct sockaddr_in &from);
 
 int     doStun(struct sockaddr_in stun_addr);
-bool    response(void *stun_pkt, int size, struct sockaddr_in &addr);
 
-void   *generate_stun_reply(struct sockaddr_in *stun_addr, int *len);
-bool    generate_stun_pkt(void *stun_pkt, int *len);
 
 	/* stun keepAlive */
 bool    locked_printStunList();
@@ -136,5 +132,12 @@ bool    storeStunPeer(const struct sockaddr_in &remote, const char *peerid);
 
 
 };
+
+	/* generic stun functions */
+
+bool	UdpStun_isStunPacket(void *data, int size);
+bool    UdpStun_response(void *stun_pkt, int size, struct sockaddr_in &addr);
+void   *UdpStun_generate_stun_reply(struct sockaddr_in *stun_addr, int *len);
+bool    UdpStun_generate_stun_pkt(void *stun_pkt, int *len);
 
 #endif

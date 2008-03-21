@@ -1186,7 +1186,7 @@ bool AuthXPGP::ProcessXPGP(XPGP *xpgp, std::string &id)
 }
 
 
-bool AuthXPGP::getXPGPid(XPGP *xpgp, std::string &xpgpid)
+bool getXPGPid(XPGP *xpgp, std::string &xpgpid)
 {
 #ifdef AUTHXPGP_DEBUG
 	std::cerr << "AuthXPGP::getXPGPid()";
@@ -1320,7 +1320,7 @@ int pem_passwd_cb(char *buf, int size, int rwflag, void *password)
 
 // Not dependent on sslroot. load, and detroys the XPGP memory.
 
-int	LoadCheckXPGPandGetName(const char *cert_file, std::string &userName)
+int	LoadCheckXPGPandGetName(const char *cert_file, std::string &userName, std::string &userId)
 {
 	/* This function loads the XPGP certificate from the file, 
 	 * and checks the certificate 
@@ -1350,6 +1350,11 @@ int	LoadCheckXPGPandGetName(const char *cert_file, std::string &userName)
 	{
 		// extract the name.
 		userName = getX509CNString(xpgp->subject->subject);
+	}
+
+	if (!getXPGPid(xpgp, userId))
+	{
+		valid = false;
 	}
 
 	// clean up.
