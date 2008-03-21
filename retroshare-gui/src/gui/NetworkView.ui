@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>603</width>
-    <height>418</height>
+    <width>493</width>
+    <height>373</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -25,62 +25,25 @@
    <property name="bottomMargin" >
     <number>0</number>
    </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
    <property name="verticalSpacing" >
-    <number>0</number>
+    <number>2</number>
    </property>
    <item row="0" column="0" >
-    <layout class="QGridLayout" >
-     <item row="0" column="0" >
-      <widget class="QLabel" name="networkviewiconlabel" >
-       <property name="minimumSize" >
-        <size>
-         <width>20</width>
-         <height>16</height>
-        </size>
-       </property>
-       <property name="text" >
-        <string/>
-       </property>
-       <property name="pixmap" >
-        <pixmap resource="images.qrc" >:/images/network16.png</pixmap>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1" >
-      <widget class="QLabel" name="label_2" >
-       <property name="font" >
-        <font>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text" >
-        <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;span style=" font-size:9pt; font-weight:600;">Network View&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="0" column="1" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
+    <widget class="GraphWidget" name="graphicsView" >
+     <property name="styleSheet" >
+      <string>background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 lightgray, stop:1 darkgray);
+ 
+
+
+</string>
      </property>
-     <property name="sizeHint" >
-      <size>
-       <width>311</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
+    </widget>
    </item>
-   <item row="1" column="0" colspan="2" >
-    <widget class="GraphWidget" name="graphicsView" />
-   </item>
-   <item row="2" column="0" colspan="2" >
+   <item row="1" column="0" >
     <layout class="QGridLayout" >
      <item row="0" column="0" >
       <widget class="QPushButton" name="refreshButton" >
@@ -96,38 +59,102 @@ p, li { white-space: pre-wrap; }
        </property>
        <property name="sizeHint" >
         <size>
-         <width>31</width>
-         <height>20</height>
+         <width>391</width>
+         <height>23</height>
         </size>
        </property>
       </spacer>
      </item>
      <item row="0" column="2" >
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <widget class="QCheckBox" name="fofCheckBox" >
-         <property name="text" >
-          <string>Show Friends of Friends</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <widget class="QCheckBox" name="checkBox" >
-         <property name="text" >
-          <string>Connect Signature</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2" >
-        <widget class="QCheckBox" name="checkBox_2" >
-         <property name="text" >
-          <string>Draw Friend Connections</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <widget class="QPushButton" name="nviewsettingsButton" >
+       <property name="text" >
+        <string>Settings</string>
+       </property>
+       <property name="checkable" >
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
     </layout>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QFrame" name="viewsettingsframe" >
+     <property name="frameShape" >
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>9</number>
+      </property>
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="rightMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <item row="0" column="0" >
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <widget class="QCheckBox" name="fofCheckBox" >
+          <property name="text" >
+           <string>Show Friends of Friends</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <widget class="QCheckBox" name="checkBox" >
+          <property name="text" >
+           <string>Connect Signature</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="1" >
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <widget class="QCheckBox" name="checkBox_2" >
+          <property name="text" >
+           <string>Draw Friend Connections</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>141</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="2" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>161</width>
+          <height>41</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>

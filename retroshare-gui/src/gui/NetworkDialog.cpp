@@ -24,6 +24,7 @@
 
 #include "rshare.h"
 #include "common/vmessagebox.h"
+#include "util/rsversion.h"
 #include "NetworkDialog.h"
 #include "NetworkView.h"
 #include "connect/ConnectDialog.h"
@@ -32,7 +33,7 @@
 #include "rsiface/rspeers.h"
 #include <sstream>
 
-
+#include <QTime>
 #include <QContextMenuEvent>
 #include <QMenu>
 #include <QCursor>
@@ -62,6 +63,8 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 
   /* create a single connect dialog */
   connectdialog = new ConnectDialog();
+  
+  connect(ui.infoLog, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(displayInfoLogMenu(const QPoint&)));
   
   /* hide the Tree +/- */
   ui.connecttreeWidget -> setRootIsDecorated( false );
@@ -97,6 +100,11 @@ NetworkDialog::NetworkDialog(QWidget *parent)
      ui.networkviewTab->setLayout(layout);
      layout->setSpacing( 0 );
      layout->setMargin( 0 );
+     
+    // Set Log infos
+    setLogInfo(tr("RetroShare %1 started.", "e.g: RetroShare v0.x started.").arg(retroshareVersion()));
+    
+    setLogInfo(tr("Welcome to RetroShare."), QString::fromUtf8("blue"));
      
 
   /* Hide platform specific features */
@@ -442,3 +450,26 @@ void NetworkDialog::authneighbour()
         */
 }
 
+// Update Log Info information
+void NetworkDialog::setLogInfo(QString info, QColor color) {
+  static unsigned int nbLines = 0;
+  ++nbLines;
+  // Check log size, clear it if too big
+  if(nbLines > 200) {
+    ui.infoLog->clear();
+    nbLines = 1;
+  }
+  ui.infoLog->append(QString::fromUtf8("<font color='grey'>")+ QTime::currentTime().toString(QString::fromUtf8("hh:mm:ss")) + QString::fromUtf8("</font> - <font color='") + color.name() +QString::fromUtf8("'><i>") + info + QString::fromUtf8("</i></font>"));
+}
+
+void NetworkDialog::on_actionClearLog_triggered() {
+  ui.infoLog->clear();
+}
+
+void NetworkDialog::displayInfoLogMenu(const QPoint& pos) {
+  // Log Menu
+  QMenu myLogMenu(this);
+  myLogMenu.addAction(ui.actionClearLog);
+  // XXX: Why mapToGlobal() is not enough?
+  myLogMenu.exec(mapToGlobal(pos)+QPoint(20,450));
+}

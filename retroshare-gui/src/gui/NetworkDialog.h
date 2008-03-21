@@ -48,6 +48,8 @@ public:
 public slots:
   std::string loadneighbour();
   /* void loadneighbour(); */
+  void setLogInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));
+
 
 private slots:
 
@@ -62,6 +64,9 @@ private slots:
 
   void authneighbour();
   void addneighbour();
+  
+  void on_actionClearLog_triggered();
+  void displayInfoLogMenu(const QPoint& pos);
 
 private:
 

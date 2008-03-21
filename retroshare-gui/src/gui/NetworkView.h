@@ -50,6 +50,9 @@ void changedFoFCheckBox( );
 void changedDrawSignatures( );
 void changedDrawFriends( );
 
+/** Called when Settings button is toggled */
+void shownwSettingsFrame(bool show);
+
 private:
 
 	void  clearPeerItems();

@@ -41,7 +41,11 @@ NetworkView::NetworkView(QWidget *parent)
 
   /* add button */
   connect( ui.refreshButton, SIGNAL( clicked( void ) ), this, SLOT( insertPeers( void ) ) );
-//  connect( mScene, SIGNAL( changed ( const QList<QRectF> & ) ), this, SLOT ( changedScene( void ) ) );
+//connect( mScene, SIGNAL( changed ( const QList<QRectF> & ) ), this, SLOT ( changedScene( void ) ) );
+
+    /* Hide Settings frame */
+    shownwSettingsFrame(false);
+    connect( ui.nviewsettingsButton, SIGNAL(toggled(bool)), this, SLOT(shownwSettingsFrame(bool)));
 
 
   /* hide the Tree +/- */
@@ -233,4 +237,19 @@ void  NetworkView::changedScene()
 {
 }
 
+/**
+Toggles the Settings pane on and off, changes toggle button text
+ */
+void NetworkView::shownwSettingsFrame(bool show)
+{
+    if (show) {
+        ui.viewsettingsframe->setVisible(true);
+        ui.nviewsettingsButton->setChecked(true);
+        ui.nviewsettingsButton->setToolTip(tr("Hide Settings"));
+    } else {
+        ui.viewsettingsframe->setVisible(false);
+        ui.nviewsettingsButton->setChecked(false);
+        ui.nviewsettingsButton->setToolTip(tr("Show Settings"));
+    }
+}
 

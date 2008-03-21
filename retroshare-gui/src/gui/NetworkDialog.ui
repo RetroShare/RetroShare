@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>619</width>
-    <height>443</height>
+    <width>582</width>
+    <height>444</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -49,9 +49,6 @@
        </property>
        <property name="bottomMargin" >
         <number>0</number>
-       </property>
-       <property name="horizontalSpacing" >
-        <number>6</number>
        </property>
        <property name="verticalSpacing" >
         <number>0</number>
@@ -208,6 +205,63 @@ p, li { white-space: pre-wrap; }
          </column>
         </widget>
        </item>
+       <item row="2" column="0" >
+        <widget class="QTabWidget" name="tabBottom" >
+         <property name="maximumSize" >
+          <size>
+           <width>16777215</width>
+           <height>142</height>
+          </size>
+         </property>
+         <property name="tabPosition" >
+          <enum>QTabWidget::North</enum>
+         </property>
+         <property name="currentIndex" >
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="log_tab" >
+          <attribute name="title" >
+           <string>Log</string>
+          </attribute>
+          <layout class="QVBoxLayout" >
+           <property name="spacing" >
+            <number>6</number>
+           </property>
+           <property name="leftMargin" >
+            <number>0</number>
+           </property>
+           <property name="topMargin" >
+            <number>0</number>
+           </property>
+           <property name="rightMargin" >
+            <number>0</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QTextBrowser" name="infoLog" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize" >
+              <size>
+               <width>16777215</width>
+               <height>142</height>
+              </size>
+             </property>
+             <property name="contextMenuPolicy" >
+              <enum>Qt::CustomContextMenu</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="networkviewTab" >
@@ -218,6 +272,11 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
   </layout>
+  <action name="actionClearLog" >
+   <property name="text" >
+    <string>Clear</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
