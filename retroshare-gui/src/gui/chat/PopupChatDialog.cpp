@@ -44,11 +44,18 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 				QWidget *parent, Qt::WFlags flags)
   : QMainWindow(parent, flags), dialogId(id), dialogName(name),
     lastChatTime(0), lastChatName("")
+    
 {
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
+  
+  /* Hide ToolBox frame */
+  showAvatarFrame(true);
+  connect(ui.avatarFrameButton, SIGNAL(toggled(bool)), this, SLOT(showAvatarFrame(bool)));
 
   connect(ui.lineEdit, SIGNAL(returnPressed( ) ), this, SLOT(sendChat( ) ));
+  
+  connect(ui.sendButton, SIGNAL(clicked( ) ), this, SLOT(sendChat( ) ));
 
   connect(ui.colorButton, SIGNAL(clicked()), this, SLOT(setColor()));
   
@@ -66,11 +73,23 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 
   QString title = "RS:" + tr("Chatting with") + " " + QString::fromStdString(name);
   setWindowTitle(title);
+  
+  //set the default avatar
+  ui.avatarlabel->setPixmap(QPixmap(":/images/retrosharelogo1.png"));
+  
+  setWindowIcon(QIcon(QString(":/images/chat.png")));
+  ui.textboldButton->setIcon(QIcon(QString(":/images/edit-bold.png")));
+  ui.textunderlineButton->setIcon(QIcon(QString(":/images/edit-underline.png")));
+  ui.textitalicButton->setIcon(QIcon(QString(":/images/edit-italic.png")));
 
 
 }
 
+/** Destructor. */
+PopupChatDialog::~PopupChatDialog()
+{
 
+}
 
 /** 
  Overloads the default show() slot so we can set opacity*/
@@ -258,4 +277,20 @@ void PopupChatDialog::sendChat()
         /* redraw send list */
 }
 
-
+/**
+ Toggles the ToolBox on and off, changes toggle button text
+ */
+void PopupChatDialog::showAvatarFrame(bool show)
+{
+    if (show) {
+        ui.avatarframe->setVisible(true);
+        ui.avatarFrameButton->setChecked(true);
+        ui.avatarFrameButton->setToolTip(tr("Hide Avatar"));
+        ui.avatarFrameButton->setIcon(QIcon(tr(":images/hide_toolbox_frame.png")));
+    } else {
+        ui.avatarframe->setVisible(false);
+        ui.avatarFrameButton->setChecked(false);
+        ui.avatarFrameButton->setToolTip(tr("Show Avatar"));
+        ui.avatarFrameButton->setIcon(QIcon(tr(":images/show_toolbox_frame.png")));
+    }
+}

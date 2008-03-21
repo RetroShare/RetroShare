@@ -45,6 +45,7 @@ public:
   PopupChatDialog(std::string id, std::string name, 
   		QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default destructor */
+  ~PopupChatDialog();
 
   void updateChat();
   void addChatMsg(ChatInfo *ci);
@@ -57,6 +58,8 @@ protected:
   void closeEvent (QCloseEvent * event);
   
 private slots:
+
+  void showAvatarFrame(bool show);
 
   void setColor();
     
