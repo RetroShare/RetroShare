@@ -216,9 +216,6 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 	case CONNECT_FIREWALLED:
 	case CONNECT_FAILED:
 
-		/* notify up */
-		if (pqipg)
-			pqipg->notifyConnect(PeerId(), false);
 
 		if (active)
 		{
@@ -228,13 +225,13 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 					"CONNECT_FAILED->marking so!");
 				active = false;
 				activepqi = NULL;
-				return 1;
 			}
 			else
 			{
 	  			pqioutput(PQL_WARNING, pqipersonzone, 
 					"CONNECT_FAIL+not activepqi->strange!");
-				// something strange!
+				// probably UDP connect has failed, 
+				// TCP connection has been made since attempt started.
 				return -1;
 			}
 		}
@@ -242,10 +239,14 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 		{
 	  		pqioutput(PQL_WARNING, pqipersonzone, 
 			  "CONNECT_FAILED+NOT active -> try connect again");
-
-			//connectattempt(pqi);
-			return 1;
 		}
+
+		/* notify up (But not if we are actually active: rtn -1 case above) */
+		if (pqipg)
+			pqipg->notifyConnect(PeerId(), false);
+
+		return 1;
+
 		break;
 	default:
 		break;
@@ -361,6 +362,7 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, 
 	}
 
 	/* set the parameters */
+	(it->second)->reset();
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_DELAY, delay);
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_PERIOD, period);
 	(it->second)->connect(raddr);	

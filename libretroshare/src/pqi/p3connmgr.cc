@@ -2781,19 +2781,6 @@ bool  p3ConnectMgr::addBootstrapStunPeers()
 	id = "8ad7c08e7778e0289de04843bf57a6ae";
 	stunCollect(RsUtil::HashId(id, false), dummyaddr, flags);
 
-	// Donated by public.
-	id = "8523688347027884059506005618ae74"; /* tm */
-	stunCollect(RsUtil::HashId(id, false), dummyaddr, flags);
-
-	id = "1bd15b320269fa1561ceb1162fd042f0"; /* cp */
-	stunCollect(RsUtil::HashId(id, false), dummyaddr, flags);
-
-	id = "2cf2361f2afcd6d871159714bbbfc502"; /* cc */
-	stunCollect(RsUtil::HashId(id, false), dummyaddr, flags);
-
-	id = "128646cdf761970376a62c52c372c931"; /* rf */
-	stunCollect(RsUtil::HashId(id, false), dummyaddr, flags);
-
 	return true;
 }
 

@@ -318,6 +318,7 @@ class RsInit
         std::string homePath;
 
         /* Listening Port */
+	bool forceExtPort;
         bool forceLocalAddr;
         unsigned short port;
         char inet[256];

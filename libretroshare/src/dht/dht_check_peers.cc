@@ -53,7 +53,6 @@ void usage(char *name)
 	exit(1);
 }
 
-void loadBootStrapIds(std::list<std::string> &peerIds);
 bool stunPeer(struct sockaddr_in toaddr, struct sockaddr_in &ansaddr);
 
 class pqiConnectCbStun;
@@ -129,6 +128,31 @@ virtual void    peerStatus(std::string id,
                         struct sockaddr_in laddr, struct sockaddr_in raddr,
                         uint32_t type, uint32_t mode, uint32_t source)
 {
+
+      {
+	RsStackMutex stack(peerMtx); /**** LOCK MUTEX ***/
+
+	std::map<std::string, StunDetails>::iterator it;
+	it = peerMap.find(id);
+	if (it == peerMap.end())
+	{
+		std::cerr << "peerStatus() for unknown Peer id: " << id;
+		std::cerr << std::endl;
+		return;
+	}
+	it->second.laddr = laddr;
+	it->second.raddr = raddr;
+	it->second.type  = type;
+	it->second.mode  = mode;
+	it->second.source= source;
+
+	it->second.lastStatus = time(NULL);
+
+	it->second.stunAttempts++; /* as we are about to try! */
+      }
+
+	printPeerStatus();
+	stunPeer(id, raddr);
 }
 
 void	printPeerStatus()
@@ -140,7 +164,7 @@ void	printPeerStatus()
 	std::cerr << "BootstrapStatus: " << timestr;
 	std::cerr << "BootstrapStatus: " << peerMap.size() << " Peers";
 	std::cerr << std::endl;
-	std::cerr << "BootstrapStatus: ID ---------------------  DHT ENTRY ---";
+	std::cerr << "BootstrapStatus: ID ----------  DHT ENTRY ---";
 	std::cerr << " EXT PORT -- STUN OK -- %AVAIL -- LAST DHT TS";
 	std::cerr << std::endl;
 
@@ -148,7 +172,7 @@ void	printPeerStatus()
 
 	for(it = peerMap.begin(); it != peerMap.end(); it++)
 	{
-		std::cerr << RsUtil::BinToHex(it->first);
+		std::cerr << it->first;
 
 		bool dhtActive = (time(NULL) - it->second.lastStatus < 1900);
 		bool stunActive = (time(NULL) - it->second.lastStunResult < 1900);
@@ -203,8 +227,7 @@ void	printPeerStatus()
 
 void	stunPeer(std::string id, struct sockaddr_in peeraddr)
 {
-	std::cerr << "stunPeer: 0x" << RsUtil::BinToHex(id);
-	
+	std::cerr << "Should Stun Peer: " << id;
 	std::cerr << std::endl;
 
         /* launch a publishThread */
@@ -232,27 +255,6 @@ virtual void    peerConnectRequest(std::string id,
 
 virtual void    stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags)
 {
-	addPeer(id);
-      {
-	RsStackMutex stack(peerMtx); /**** LOCK MUTEX ***/
-
-	std::map<std::string, StunDetails>::iterator it;
-	it = peerMap.find(id);
-	if (it == peerMap.end())
-	{
-		std::cerr << "peerStatus() for unknown Peer id: 0x" << RsUtil::BinToHex(id);
-		std::cerr << std::endl;
-		return;
-	}
-	it->second.raddr = raddr;
-	it->second.type  = type;
-	it->second.lastStatus = time(NULL);
-
-	it->second.stunAttempts++; /* as we are about to try! */
-      }
-
-	printPeerStatus();
-	stunPeer(id, raddr);
 	return;
 }
 
@@ -265,11 +267,11 @@ virtual void    stunSuccess(std::string id, struct sockaddr_in toaddr, struct so
 	it = peerMap.find(id);
 	if (it == peerMap.end())
 	{
-		std::cerr << "stunSuccess() for unknown Peer id: 0x" << RsUtil::BinToHex(id);
+		std::cerr << "stunSuccess() for unknown Peer id: " << id;
 		std::cerr << std::endl;
 		return;
 	}
-	std::cerr << "stunSuccess() for id: 0x" << RsUtil::BinToHex(id);
+	std::cerr << "stunSuccess() for id: " << id;
 	std::cerr << std::endl;
 
 	it->second.lastStunResult = time(NULL);
@@ -391,6 +393,19 @@ int main(int argc, char **argv)
 	std::cerr << "Switching on DhtTester()" << std::endl;
 	dhtTester.setDhtOn(true);
 
+	std::cerr << "Adding a List of Peers" << std::endl;
+	std::list<std::string>::iterator it;
+	for(it = peerIds.begin(); it != peerIds.end(); it++)
+	{
+		cbStun.addPeer(*it);
+		dhtTester.findPeer(*it);
+	}
+
+	/* switch off Stun/Bootstrap stuff */
+	dht.doneStun();
+	dht.setBootstrapAllowed(false);
+		
+
 	/* wait loop */
 	while(1)
 	{
@@ -405,8 +420,6 @@ int main(int argc, char **argv)
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 	}
 };
-
-
 
 
 bool stunPeer(struct sockaddr_in toaddr, struct sockaddr_in &ansaddr)

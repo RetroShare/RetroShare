@@ -55,7 +55,7 @@
 #define DHT_MODE_SEARCH         1
 #define DHT_MODE_PUBLISH        1
 #define DHT_MODE_NOTIFY         2
-
+#define DHT_MODE_BOOTSTRAP	3
 
 
 /* TIMEOUTS: Reference Values are set here... */
@@ -68,9 +68,7 @@
 /* TTLs for DHTs posts */
 #define DHT_TTL_PUBLISH         (DHT_PUBLISH_PERIOD + 120)  // for a little overlap.
 #define DHT_TTL_NOTIFY          (DHT_NOTIFY_PERIOD  + 60)   // for time to find it...
-
-
-
+#define DHT_TTL_BOOTSTRAP       (DHT_PUBLISH_PERIOD)        // To start with.
 
 class dhtPeerEntry
 {
@@ -107,6 +105,9 @@ void	setDhtOn(bool on);
 bool	getDhtOn();
 bool	getDhtActive();
 
+void	setBootstrapAllowed(bool on);
+bool 	getBootstrapAllowed();
+
 	/* set key data */
 bool 	setExternalInterface(struct sockaddr_in laddr,
 			struct sockaddr_in raddr, uint32_t type);
@@ -139,6 +140,8 @@ virtual bool dhtResultSearch(std::string id,
 		struct sockaddr_in &laddr, struct sockaddr_in &raddr, 
 				uint32_t type, std::string sign);
 
+virtual bool dhtResultBootstrap(std::string idhash);
+
 	protected:
 
 	/* can block briefly (called only from thread) */
@@ -149,7 +152,12 @@ virtual bool dhtPublish(std::string id,
 
 virtual bool dhtNotify(std::string peerid, std::string ownId, 
 		std::string sign);
+
 virtual	bool dhtSearch(std::string id, uint32_t mode);
+
+virtual bool dhtBootstrap(std::string storehash, std::string ownIdHash, 
+		std::string sign); /* to publish bootstrap */
+
 
 
 	/********** Actual DHT Work Functions ************************
@@ -191,6 +199,7 @@ virtual void run();
 	/* search scheduling */
 void 	checkDHTStatus();
 int 	checkStunState();
+int 	checkStunState_Active(); /* when in active state */
 int 	doStun();
 int 	checkPeerDHTKeys();
 int 	checkOwnDHTKeys();
@@ -198,6 +207,10 @@ int 	checkNotifyDHT();
 
 void 	clearDhtData();
 
+	/* IP Bootstrap */
+bool 	getDhtBootstrapList();
+std::string BootstrapId(uint32_t bin);
+std::string randomBootstrapId();
 
 	/* other feedback through callback */
 	pqiConnectCb *connCb;
@@ -218,6 +231,8 @@ void 	clearDhtData();
 	uint32_t mDhtState;
 	time_t   mDhtActiveTS;
 
+	bool   mBootstrapAllowed;
+	time_t mLastBootstrapListTS;
 };
 
 

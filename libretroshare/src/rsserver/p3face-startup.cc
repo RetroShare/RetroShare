@@ -237,7 +237,7 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	int c;
-	while((c = getopt(argc, argv,"ai:p:c:sw:l:d:u")) != -1)
+	while((c = getopt(argc, argv,"ai:p:ec:sw:l:d:u")) != -1)
 	{
 		switch (c)
 		{
@@ -290,6 +290,11 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 			case 'u':
 				config->udpListenerOnly = true;
 				std::cerr << "Opt for only udpListener";
+				std::cerr << std::endl;
+				break;
+			case 'e':
+				config->forceExtPort = true;
+				std::cerr << "Opt for External Port Mode";
 				std::cerr << std::endl;
 				break;
 			default:
@@ -614,6 +619,11 @@ int RsServer::StartupRetroShare(RsInit *config)
 		laddr.sin_addr.s_addr = inet_addr(config->inet);
 
 		mConnMgr->setLocalAddress(ownId, laddr);
+	}
+
+	if (config->forceExtPort)
+	{
+		mConnMgr->setOwnNetConfig(RS_NET_MODE_EXT, RS_VIS_STATE_STD);
 	}
 
 #if 0

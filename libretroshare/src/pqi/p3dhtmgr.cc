@@ -36,6 +36,8 @@
  * #define P3DHTMGR_USE_LOCAL_UDP_CONN 1  // For Testing only 
  ****/
 
+#define DHT_DEBUG 1
+
 /**** DHT State Variables ****
  * TODO:
  * (1) notify call in.
@@ -57,9 +59,12 @@
 #define DHT_RESTART_PERIOD	300  /* 5 min */
 #define DHT_DEFAULT_PERIOD	300  /* Default period if no work to do */
 #define DHT_MIN_PERIOD 		1    /* to ensure we don't get too many requests */
+#define DHT_SHORT_PERIOD	10   /* a short period */
 
 #define DHT_DEFAULT_WAITTIME	1    /* Std sleep break period */
 
+#define DHT_NUM_BOOTSTRAP_BINS 		1
+#define DHT_MIN_BOOTSTRAP_REQ_PERIOD 	30
 
 void printDhtPeerEntry(dhtPeerEntry *ent, std::ostream &out);
 
@@ -102,6 +107,9 @@ p3DhtMgr::p3DhtMgr(std::string id, pqiConnectCb *cb)
 	mDhtOn = false;
 	mDhtState  = DHT_STATE_OFF;
 
+	mBootstrapAllowed = true;
+	mLastBootstrapListTS = 0;
+
 	dhtMtx.unlock(); /* UNLOCK MUTEX */
 
 	return;
@@ -137,6 +145,26 @@ bool    p3DhtMgr::getDhtActive()
 	dhtMtx.unlock(); /* UNLOCK MUTEX */
 
 	return act;
+}
+
+void    p3DhtMgr::setBootstrapAllowed(bool on)
+{
+	dhtMtx.lock(); /* LOCK MUTEX */
+
+	mBootstrapAllowed = on;
+
+	dhtMtx.unlock(); /* UNLOCK MUTEX */
+}
+
+bool    p3DhtMgr::getBootstrapAllowed()
+{
+	dhtMtx.lock(); /* LOCK MUTEX */
+
+	bool on = mBootstrapAllowed;
+
+	dhtMtx.unlock(); /* UNLOCK MUTEX */
+
+	return on;
 }
 
 /******************************** PEER MANAGEMENT **********************************
@@ -391,7 +419,6 @@ void p3DhtMgr::run()
 #ifdef DHT_DEBUG
 				std::cerr << "p3DhtMgr::run() state = ACTIVE -> do stuff" << std::endl;
 #endif
-				doStun();
 
 				period = checkOwnDHTKeys();
 #ifdef DHT_DEBUG
@@ -409,6 +436,15 @@ void p3DhtMgr::run()
 					period = tmpperiod;
 				if (tmpperiod2 < period)
 					period = tmpperiod2;
+
+				/* finally we need to keep stun going */
+				if (checkStunState_Active())
+				{
+					/* still more stun to do */
+					period = DHT_SHORT_PERIOD;
+					doStun();
+				}
+
 			}
 				break;
 			default:
@@ -528,6 +564,21 @@ int p3DhtMgr::checkOwnDHTKeys()
 				dhtMtx.unlock(); /* UNLOCK MUTEX */
 			}
 
+			/* dhtBootstrap -> if allowed and EXT port */
+			if (peer.type & RS_NET_CONN_TCP_EXTERNAL)
+			{
+				dhtMtx.lock(); /* LOCK MUTEX */
+
+				bool doBootstrapPub = mBootstrapAllowed;
+
+				dhtMtx.unlock(); /* UNLOCK MUTEX */
+
+				if (doBootstrapPub)
+				{
+					dhtBootstrap(randomBootstrapId(), peer.hash1, "");
+				}
+			}
+				
 			/* restart immediately */
 			repubPeriod = DHT_MIN_PERIOD;
 			return repubPeriod;
@@ -868,17 +919,120 @@ int p3DhtMgr::checkStunState()
 	}
 	else if (mDhtState == DHT_STATE_FIND_STUN)
 	{
-		/* if we run out of stun peers -> just go to active */
+		/* if we run out of stun peers -> get some more */
 		if (stunIds.size() < 1)
 		{
-			std::cerr << "WARNING: out of Stun Peers - without getting id" << std::endl;
+			std::cerr << "WARNING: out of Stun Peers - switching to Active Now" << std::endl;
 			mDhtState = DHT_STATE_ACTIVE;
+			dhtMtx.unlock(); /* UNLOCK MUTEX */
+
+			/* this is a locked function */
+			getDhtBootstrapList();
+
+			dhtMtx.lock(); /* LOCK MUTEX */
 		}
 	}
 
 	dhtMtx.unlock(); /* UNLOCK MUTEX */
 	return 1;
 }
+
+int p3DhtMgr::checkStunState_Active()
+{
+#ifdef DHT_DEBUG
+	std::cerr << "p3DhtMgr::checkStunState_Active()" << std::endl;
+#endif
+	dhtMtx.lock(); /* LOCK MUTEX */
+
+	bool stunReq = mStunRequired;
+	bool moreIds  = ((mStunRequired) && (stunIds.size() < 1));
+
+	dhtMtx.unlock(); /* UNLOCK MUTEX */
+
+	if (moreIds)
+	/* if we run out of stun peers -> get some more */
+	{
+		std::cerr << "WARNING: out of Stun Peers - getting more" << std::endl;
+		getDhtBootstrapList();
+	}
+	
+	return stunReq;
+}
+
+bool p3DhtMgr::getDhtBootstrapList()
+{
+#ifdef DHT_DEBUG
+	std::cerr << "p3DhtMgr::getDHTBootstrapList()" << std::endl;
+#endif
+	dhtMtx.lock(); /* LOCK MUTEX */
+
+	time_t now = time(NULL);
+	if (now - mLastBootstrapListTS < DHT_MIN_BOOTSTRAP_REQ_PERIOD)
+	{
+#ifdef DHT_DEBUG
+		std::cerr << "p3DhtMgr::getDHTBootstrapList() Waiting: ";
+		std::cerr << DHT_MIN_BOOTSTRAP_REQ_PERIOD-(now-mLastBootstrapListTS);
+		std::cerr << " secs" << std::endl;
+#endif
+		dhtMtx.unlock(); /* UNLOCK MUTEX */
+
+		return false;
+	}
+
+	mLastBootstrapListTS = now;
+	std::string bootId = randomBootstrapId();
+
+
+	dhtMtx.unlock(); /* UNLOCK MUTEX */
+
+#ifdef DHT_DEBUG
+	std::cerr << "p3DhtMgr::getDHTBootstrapList() bootId: 0x";
+	std::cerr << RsUtil::BinToHex(bootId) << std::endl;
+#endif
+
+	dhtSearch(bootId, DHT_MODE_SEARCH);
+
+	return true;
+}
+
+
+std::string p3DhtMgr::BootstrapId(uint32_t bin)
+{
+	/* generate these from an equation! (makes it easy) 
+	 * Make sure that NUM_BOOTSTRAP_BINS doesn't affect ids
+	 */
+
+	std::ostringstream genId;
+	genId << "BootstrapId";
+
+	uint32_t id = (bin % DHT_NUM_BOOTSTRAP_BINS) * 1234;
+
+	genId << id;
+
+#ifdef DHT_DEBUG
+	std::cerr << "p3DhtMgr::BootstrapId() generatedId: ";
+	std::cerr << genId.str() << std::endl;
+#endif
+
+	/* now hash this to create a bootstrap Bin Id */
+	std::string bootId = RsUtil::HashId(genId.str(), false);
+
+#ifdef DHT_DEBUG
+	std::cerr << "p3DhtMgr::BootstrapId() bootId: 0x";
+	std::cerr << RsUtil::BinToHex(bootId) << std::endl;
+#endif
+
+	return bootId;
+}
+
+std::string p3DhtMgr::randomBootstrapId()
+{
+	uint32_t rnd = DHT_NUM_BOOTSTRAP_BINS * (rand() / (RAND_MAX + 1.0));
+
+	return BootstrapId(rnd);
+}
+
+
 
 void p3DhtMgr::checkDHTStatus()
 {
@@ -1157,7 +1311,17 @@ bool p3DhtMgr::dhtSearch(std::string idhash, uint32_t mode)
 }
 
 
+bool p3DhtMgr::dhtBootstrap(std::string storehash, std::string ownIdHash, std::string sign)
+{
+	std::cerr << "p3DhtMgr::dhtBootstrap()" << std::endl;
 
+	std::ostringstream value;
+	value << "RSDHT:" << std::setw(2) << std::setfill('0') << DHT_MODE_BOOTSTRAP << ":";
+	value << ownIdHash;
+
+	/* call to the real DHT */
+	return publishDHT(storehash, value.str(), DHT_TTL_BOOTSTRAP);
+}
 
 
 /****************************** DHT FEEDBACK INTERFACE *********************************
@@ -1280,6 +1444,23 @@ bool p3DhtMgr::resultDHT(std::string key, std::string value)
 			break;
 		}
 
+		case DHT_MODE_BOOTSTRAP:
+		{
+#ifdef DHT_DEBUG
+			std::cerr << "p3DhtMgr::resultDHT() BOOTSTRAP msg" << std::endl;
+#endif
+
+			/* get the hash */
+			std::string bootId = value.substr(loc);
+#ifdef DHT_DEBUG
+			std::cerr << "p3DhtMgr::resultDHT() BOOTSTRAP msg, IdHash:->" << RsUtil::BinToHex(bootId) << "<-" << std::endl;
+#endif
+			/* call out */
+			dhtResultBootstrap(bootId);
+
+			break;
+		}
+
 		default:
 		
 			return false;
@@ -1290,6 +1471,37 @@ bool p3DhtMgr::resultDHT(std::string key, std::string value)
 }
 
 
+
+
+bool p3DhtMgr::dhtResultBootstrap(std::string idhash)
+{
+	RsStackMutex stack(dhtMtx); /***** LOCK MUTEX *****/
+
+#ifdef DHT_DEBUG
+	std::cerr << "p3DhtMgr::dhtResultBootstrap() from idhash: ";
+	std::cerr << RsUtil::BinToHex(idhash) << std::endl;
+#endif
+
+	/* Temp - to avoid duplication during testing */
+	if (stunIds.end() == std::find(stunIds.begin(), stunIds.end(), idhash))
+	{
+		stunIds.push_back(idhash);
+#ifdef DHT_DEBUG
+		std::cerr << "p3DhtMgr::dhtResultBootstrap() adding to StunList";
+		std::cerr << std::endl;
+#endif
+	}
+	else
+	{
+#ifdef DHT_DEBUG
+		std::cerr << "p3DhtMgr::dhtResultBootstrap() DUPLICATE not adding to List";
+		std::cerr << std::endl;
+#endif
+	}
+
+
+	return true;
+}
 
 
 
