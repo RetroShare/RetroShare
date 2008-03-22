@@ -1,18 +1,34 @@
 # FLTKGUI is not required for the Qt4,0 gui.
 #
 
-all:
-	make -C	util
-	make -C tcponudp
-	make -C	serialiser
-	make -C pqi
-	make -C	dbase
-	make -C	services
-	make -C	dht
-	make -C	upnp
-	make -C	server
-	make -C	rsserver
-	make -C	rsiface
+all: librs tests
+
+librs:
+	make -C	util librs
+	make -C tcponudp librs
+	make -C	serialiser librs
+	make -C pqi librs
+	make -C	dbase librs
+	make -C	services librs
+	make -C	dht librs
+	make -C	upnp librs
+	make -C	server librs
+	make -C	rsserver librs
+
+# 	make -C	rsiface librs
+
+tests:
+	make -C	util tests
+	make -C tcponudp tests
+	make -C	serialiser tests
+	make -C pqi tests
+	make -C	dbase tests
+	make -C	services tests
+	make -C	dht tests
+	make -C	upnp tests
+	make -C	server tests
+	make -C	rsserver tests
+	make -C	rsiface tests
 
 clean:
 	make -C	util clean

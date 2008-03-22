@@ -317,11 +317,16 @@ TRANSLATIONS +=  \
             lang/retroshare_se.ts
 
 
-
 !macx {
     # On non-Mac, make the binary all lowercase
     TARGET = RetroShare
 }
+
+macx {
+    CONFIG += ppc x86
+    LIBS += -Wl,-search_paths_first
+}
+
 
 win32 {
 
@@ -335,7 +340,7 @@ win32 {
 }
 
 !win32 {
-    LIBS += -L../../../../lib -lretroshare -lKadC -lminiupnpc -lssl -lcrypto
+    LIBS += -L../../../../lib -lretroshare -lminiupnpc -lssl -lcrypto
     LIBS += -lqcheckers -lsmplayer 
 }
 

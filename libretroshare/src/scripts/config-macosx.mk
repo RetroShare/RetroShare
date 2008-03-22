@@ -22,13 +22,18 @@ include $(RS_TOP_DIR)/scripts/checks.mk
 
 CC = g++
 RM = /bin/rm
-RANLIB = ranlib
+
+# Dummy ranlib -> can't do it until afterwards with universal binaries.
+RANLIB = ls -l 
+
 LIBDIR = $(RS_TOP_DIR)/lib
 LIBRS = $(LIBDIR)/libretroshare.a
 
 # Unix: Linux/Cygwin
 INCLUDE = -I $(RS_TOP_DIR) 
-CFLAGS = -Wall -g $(INCLUDE) 
+CFLAGS = -arch ppc -arch i386 -Wall -g $(INCLUDE) 
+
+# CFLAGS = -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc -Wall -g $(INCLUDE) 
 
 ifdef PQI_USE_XPGP
 	INCLUDE += -I $(SSL_DIR)/include 
@@ -51,7 +56,7 @@ ifdef USE_FILELOOK
 endif
 
 
-RSCFLAGS = -Wall -g $(INCLUDE) 
+# RSCFLAGS = -Wall -g $(INCLUDE) 
 
 #########################################################################
 # OS Compile Options
@@ -61,7 +66,7 @@ RSCFLAGS = -Wall -g $(INCLUDE)
 BIOCC  = gcc
 
 # MacOSX flags
-BIOCFLAGS =  -I $(SSL_DIR)/include -DOPENSSL_SYSNAME_MACOSX -DOPENSSL_THREADS -D_REENTRANT -DOPENSSL_NO_KRB5 -O3 -fomit-frame-pointer -fno-common -DB_ENDIAN
+BIOCFLAGS =  -arch ppc -arch i386 -I $(SSL_DIR)/include -DOPENSSL_SYSNAME_MACOSX -DOPENSSL_THREADS -D_REENTRANT -DOPENSSL_NO_KRB5 -O3 -fomit-frame-pointer -fno-common -DB_ENDIAN
 
 
 #########################################################################
@@ -69,6 +74,10 @@ BIOCFLAGS =  -I $(SSL_DIR)/include -DOPENSSL_SYSNAME_MACOSX -DOPENSSL_THREADS -D
 #########################################################################
 
 LIBS = -Wl,-search_paths_first
+LIBS += -arch ppc -arch i386
+
+# LIBS += -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -arch ppc -arch i386
+
 LIBS +=  -L$(LIBDIR) -lretroshare 
 ifdef PQI_USE_XPGP
 	LIBS +=  -L$(SSL_DIR) 
