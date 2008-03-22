@@ -471,5 +471,5 @@ void NetworkDialog::displayInfoLogMenu(const QPoint& pos) {
   QMenu myLogMenu(this);
   myLogMenu.addAction(ui.actionClearLog);
   // XXX: Why mapToGlobal() is not enough?
-  myLogMenu.exec(mapToGlobal(pos)+QPoint(20,450));
+  myLogMenu.exec(mapToGlobal(pos)+QPoint(0,320));
 }
