@@ -71,13 +71,13 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   statusBar()->showMessage(QString::fromStdString(statusstr.str()));
   ui.textBrowser->setOpenExternalLinks ( false );
 
-  QString title = "RS:" + tr("Chatting with") + " " + QString::fromStdString(name);
+  QString title = QString::fromStdString(name) + " :" + tr(" RetroShare - Chat")  ;
   setWindowTitle(title);
   
   //set the default avatar
   ui.avatarlabel->setPixmap(QPixmap(":/images/retrosharelogo1.png"));
   
-  setWindowIcon(QIcon(QString(":/images/chat.png")));
+  setWindowIcon(QIcon(QString(":/images/rstray3.png")));
   ui.textboldButton->setIcon(QIcon(QString(":/images/edit-bold.png")));
   ui.textunderlineButton->setIcon(QIcon(QString(":/images/edit-underline.png")));
   ui.textitalicButton->setIcon(QIcon(QString(":/images/edit-italic.png")));
@@ -100,7 +100,7 @@ void PopupChatDialog::show()
   if(!this->isVisible()) {
     QMainWindow::show();
   } else {
-    QMainWindow::activateWindow();
+    //QMainWindow::activateWindow();
     setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
     QMainWindow::raise();
   }
