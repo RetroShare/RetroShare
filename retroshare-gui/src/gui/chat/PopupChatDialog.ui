@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>560</width>
-    <height>332</height>
+    <width>565</width>
+    <height>349</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -14,23 +14,215 @@
   </property>
   <widget class="QWidget" name="centralwidget" >
    <layout class="QGridLayout" >
-    <item row="0" column="0" colspan="5" >
-     <widget class="QTextBrowser" name="textBrowser" >
-      <property name="minimumSize" >
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
+    <property name="leftMargin" >
+     <number>0</number>
+    </property>
+    <property name="topMargin" >
+     <number>0</number>
+    </property>
+    <property name="rightMargin" >
+     <number>0</number>
+    </property>
+    <property name="bottomMargin" >
+     <number>0</number>
+    </property>
+    <property name="horizontalSpacing" >
+     <number>0</number>
+    </property>
+    <property name="verticalSpacing" >
+     <number>0</number>
+    </property>
+    <item row="0" column="0" >
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>9</number>
       </property>
-      <property name="sizeIncrement" >
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
+      <property name="topMargin" >
+       <number>9</number>
       </property>
-     </widget>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <item row="0" column="0" >
+       <widget class="QTextBrowser" name="textBrowser" >
+        <property name="minimumSize" >
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="sizeIncrement" >
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <layout class="QGridLayout" >
+        <property name="horizontalSpacing" >
+         <number>0</number>
+        </property>
+        <property name="verticalSpacing" >
+         <number>0</number>
+        </property>
+        <item row="0" column="0" >
+         <widget class="QWidget" native="1" name="widget" >
+          <property name="maximumSize" >
+           <size>
+            <width>16777215</width>
+            <height>42</height>
+           </size>
+          </property>
+          <property name="styleSheet" >
+           <string/>
+          </property>
+          <layout class="QGridLayout" >
+           <property name="leftMargin" >
+            <number>0</number>
+           </property>
+           <property name="topMargin" >
+            <number>8</number>
+           </property>
+           <property name="rightMargin" >
+            <number>6</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>8</number>
+           </property>
+           <item row="0" column="0" >
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>261</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="0" column="1" >
+            <widget class="QPushButton" name="textboldButton" >
+             <property name="minimumSize" >
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize" >
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="text" >
+              <string/>
+             </property>
+             <property name="icon" >
+              <iconset>C:/Dokumente und Einstellungen/Linux/.designer/backup</iconset>
+             </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2" >
+            <widget class="QPushButton" name="textunderlineButton" >
+             <property name="minimumSize" >
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize" >
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="text" >
+              <string/>
+             </property>
+             <property name="icon" >
+              <iconset>C:/Dokumente und Einstellungen/Linux/.designer/backup</iconset>
+             </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3" >
+            <widget class="QPushButton" name="textitalicButton" >
+             <property name="minimumSize" >
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize" >
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="text" >
+              <string/>
+             </property>
+             <property name="icon" >
+              <iconset>C:/Dokumente und Einstellungen/Linux/.designer/backup</iconset>
+             </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="4" >
+            <widget class="QPushButton" name="colorButton" >
+             <property name="minimumSize" >
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize" >
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="text" >
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <layout class="QGridLayout" >
+          <item row="0" column="0" >
+           <widget class="QLineEdit" name="lineEdit" />
+          </item>
+          <item row="0" column="1" >
+           <widget class="QPushButton" name="sendButton" >
+            <property name="text" >
+             <string>Send</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </item>
-    <item rowspan="3" row="0" column="5" >
+    <item row="0" column="1" >
      <widget class="QFrame" name="avatarframe" >
       <property name="frameShape" >
        <enum>QFrame::StyledPanel</enum>
@@ -39,34 +231,31 @@
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QGridLayout" >
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
        <item row="0" column="0" >
         <widget class="QLabel" name="avatarlabel" >
          <property name="minimumSize" >
           <size>
-           <width>64</width>
-           <height>64</height>
+           <width>70</width>
+           <height>70</height>
+          </size>
+         </property>
+         <property name="maximumSize" >
+          <size>
+           <width>70</width>
+           <height>70</height>
           </size>
          </property>
          <property name="styleSheet" >
           <string>QLabel{
-border-image: url(:/images/avatar_background.png);
+border-image: url(:/images/mystatus_bg.png);
 
 }</string>
          </property>
          <property name="text" >
           <string/>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -77,24 +266,48 @@ border-image: url(:/images/avatar_background.png);
          </property>
          <property name="sizeHint" >
           <size>
-           <width>121</width>
-           <height>121</height>
+           <width>71</width>
+           <height>138</height>
           </size>
          </property>
         </spacer>
        </item>
        <item row="2" column="0" >
-        <widget class="QLabel" name="label" >
+        <widget class="QLabel" name="myavatarlabel" >
+         <property name="minimumSize" >
+          <size>
+           <width>70</width>
+           <height>70</height>
+          </size>
+         </property>
+         <property name="maximumSize" >
+          <size>
+           <width>70</width>
+           <height>70</height>
+          </size>
+         </property>
+         <property name="styleSheet" >
+          <string>QLabel{
+border-image: url(:/images/mystatus_bg.png);
+
+}</string>
+         </property>
          <property name="text" >
           <string/>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
       </layout>
      </widget>
     </item>
-    <item rowspan="3" row="0" column="6" >
+    <item row="0" column="2" >
      <layout class="QGridLayout" >
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
       <item row="0" column="0" >
        <widget class="QPushButton" name="avatarFrameButton" >
         <property name="minimumSize" >
@@ -112,6 +325,12 @@ border-image: url(:/images/avatar_background.png);
         <property name="text" >
          <string/>
         </property>
+        <property name="iconSize" >
+         <size>
+          <width>16</width>
+          <height>31</height>
+         </size>
+        </property>
         <property name="checkable" >
          <bool>true</bool>
         </property>
@@ -124,132 +343,11 @@ border-image: url(:/images/avatar_background.png);
         </property>
         <property name="sizeHint" >
          <size>
-          <width>16</width>
+          <width>12</width>
           <height>509</height>
          </size>
         </property>
        </spacer>
-      </item>
-     </layout>
-    </item>
-    <item row="1" column="0" >
-     <spacer>
-      <property name="orientation" >
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" >
-       <size>
-        <width>261</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="1" column="1" >
-     <widget class="QPushButton" name="textboldButton" >
-      <property name="minimumSize" >
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize" >
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="text" >
-       <string/>
-      </property>
-      <property name="icon" >
-       <iconset>C:/Dokumente und Einstellungen/Linux/.designer/backup</iconset>
-      </property>
-      <property name="checkable" >
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="2" >
-     <widget class="QPushButton" name="textunderlineButton" >
-      <property name="minimumSize" >
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize" >
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="text" >
-       <string/>
-      </property>
-      <property name="icon" >
-       <iconset>C:/Dokumente und Einstellungen/Linux/.designer/backup</iconset>
-      </property>
-      <property name="checkable" >
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="3" >
-     <widget class="QPushButton" name="textitalicButton" >
-      <property name="minimumSize" >
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize" >
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="text" >
-       <string/>
-      </property>
-      <property name="icon" >
-       <iconset>C:/Dokumente und Einstellungen/Linux/.designer/backup</iconset>
-      </property>
-      <property name="checkable" >
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="4" >
-     <widget class="QPushButton" name="colorButton" >
-      <property name="minimumSize" >
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize" >
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="text" >
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0" colspan="5" >
-     <layout class="QGridLayout" >
-      <item row="0" column="0" >
-       <widget class="QLineEdit" name="lineEdit" />
-      </item>
-      <item row="0" column="1" >
-       <widget class="QPushButton" name="sendButton" >
-        <property name="text" >
-         <string>Send</string>
-        </property>
-       </widget>
       </item>
      </layout>
     </item>

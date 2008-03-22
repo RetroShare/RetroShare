@@ -75,7 +75,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   setWindowTitle(title);
   
   //set the default avatar
-  ui.avatarlabel->setPixmap(QPixmap(":/images/retrosharelogo1.png"));
+  //ui.avatarlabel->setPixmap(QPixmap(":/images/retrosharelogo1.png"));
   
   setWindowIcon(QIcon(QString(":/images/rstray3.png")));
   ui.textboldButton->setIcon(QIcon(QString(":/images/edit-bold.png")));
