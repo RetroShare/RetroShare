@@ -56,6 +56,10 @@ ChatDialog::ChatDialog(QWidget *parent)
   connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(setColor())); 
   
   connect( ui.msgSendList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgSendListCostumPopupMenu( QPoint ) ) );
+  
+  connect(ui.textboldChatButton, SIGNAL(clicked()), this, SLOT(insertBold()));  
+  connect(ui.textunderlineChatButton, SIGNAL(clicked()), this, SLOT(insertUnderline()));  
+  connect(ui.textitalicChatButton, SIGNAL(clicked()), this, SLOT(insertItalic()));
 
 //  connect(ui.msgSendList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ), 
 //  this, SLOT(toggleSendItem( QTreeWidgetItem *, int ) ));
@@ -317,4 +321,44 @@ void ChatDialog::clearOldChats()
 
 }
 
+void ChatDialog::insertBold()
+{
+  
+  this->insertAutour(tr("<b>"), tr("</b>"));
+  this->ui.lineEdit->setFocus();
 
+}
+
+void ChatDialog::insertItalic()
+{
+  
+  this->insertAutour(tr("<i>"), tr("</i>"));
+  this->ui.lineEdit->setFocus();
+
+}
+
+void ChatDialog::insertUnderline()
+{
+  
+  this->insertAutour(tr("<u>"), tr("</u>"));
+  this->ui.lineEdit->setFocus();
+
+}
+
+void ChatDialog::insertStrike()
+{
+  
+  this->insertAutour(tr("<s>"), tr("</s>"));
+  this->ui.lineEdit->setFocus();
+
+}
+
+void ChatDialog::insertAutour(QString leftTruc,QString rightTruc)
+{
+    int p0 = ui.lineEdit->cursorPosition();
+    QString stringToInsert = leftTruc ;
+    stringToInsert.append(rightTruc);
+    ui.lineEdit->insert(stringToInsert);
+    ui.lineEdit->setCursorPosition(p0 + leftTruc.size());
+    
+}
