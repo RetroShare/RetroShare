@@ -117,6 +117,7 @@ RsInit *InitRsConfig()
 	config -> forceLocalAddr = false;
 	config -> haveLogFile    = false;
 	config -> outStderr      = false;
+	config -> forceExtPort   = false;
 
 	strcpy(config->inet, "127.0.0.1");
 	strcpy(config->logfname, "");

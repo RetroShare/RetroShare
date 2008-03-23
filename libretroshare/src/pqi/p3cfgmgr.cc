@@ -131,6 +131,16 @@ void	p3ConfigMgr::saveConfiguration()
 	item->print(std::cerr, 20);
 
 #endif
+	/* construct filename */
+	std::string filename1 = basedir;
+	std::string filename2 = basedir;
+	if (basedir != "")
+	{
+		filename1 += "/";
+		filename2 += "/";
+	}
+	filename1 += metasigfname;
+	filename2 += metafname;
 
 	/* Write the data to a stream */
 	uint32_t bioflags = BIN_FLAGS_WRITEABLE;
@@ -154,7 +164,7 @@ void	p3ConfigMgr::saveConfiguration()
 	std::cerr << std::endl;
 #endif
 
-	if (!membio->writetofile(metafname.c_str()))
+	if (!membio->writetofile(filename2.c_str()))
 	{
 #ifdef CONFIG_DEBUG 
 		std::cerr << "p3ConfigMgr::saveConfiguration() Failed to Write MetaFile";
@@ -167,7 +177,7 @@ void	p3ConfigMgr::saveConfiguration()
 	BinMemInterface *signbio = new BinMemInterface(signature.c_str(), 
 					signature.length(), BIN_FLAGS_READABLE);
 
-	if (!signbio->writetofile(metasigfname.c_str()))
+	if (!signbio->writetofile(filename1.c_str()))
 	{
 #ifdef CONFIG_DEBUG 
 		std::cerr << "p3ConfigMgr::saveConfiguration() Failed to Write MetaSignFile";
@@ -187,15 +197,50 @@ void	p3ConfigMgr::loadConfiguration()
 	std::cerr << std::endl;
 #endif
 
+	/* construct filename */
+	std::string filename1 = basedir;
+	std::string filename2 = basedir;
+	if (basedir != "")
+	{
+		filename1 += "/";
+		filename2 += "/";
+	}
+	filename1 += metasigfname;
+	filename2 += metafname;
+
 	/* write signature to configuration */
 	BinMemInterface *signbio = new BinMemInterface(1000, BIN_FLAGS_READABLE);
 
-	if (!signbio->readfromfile(metasigfname.c_str()))
+	if (!signbio->readfromfile(filename1.c_str()))
 	{
 #ifdef CONFIG_DEBUG 
 		std::cerr << "p3ConfigMgr::loadConfiguration() Failed to Load MetaSignFile";
 		std::cerr << std::endl;
 #endif
+
+		/* HACK to load the old one (with the wrong directory) 
+		 * THIS SHOULD BE REMOVED IN A COUPLE OF VERSIONS....
+		 * ONLY HERE TO CORRECT BAD MISTAKE IN EARLIER VERSIONS.
+		 */
+
+		filename1 = metasigfname;
+		filename2 = metafname;
+
+		if (!signbio->readfromfile(filename1.c_str()))
+		{
+#ifdef CONFIG_DEBUG 
+			std::cerr << "p3ConfigMgr::loadConfiguration() HACK: Failed to Load ALT MetaSignFile";
+			std::cerr << std::endl;
+#endif
+		}
+		else
+		{
+#ifdef CONFIG_DEBUG 
+			std::cerr << "p3ConfigMgr::loadConfiguration() HACK: Loaded ALT MetaSignFile";
+			std::cerr << std::endl;
+#endif
+		}
+
 	}
 
 	std::string oldsignature((char *) signbio->memptr(), signbio->memsize());
@@ -203,7 +248,7 @@ void	p3ConfigMgr::loadConfiguration()
 
 	BinMemInterface *membio = new BinMemInterface(1000, BIN_FLAGS_READABLE);
 
-	if (!membio->readfromfile(metafname.c_str()))
+	if (!membio->readfromfile(filename2.c_str()))
 	{
 #ifdef CONFIG_DEBUG 
 		std::cerr << "p3ConfigMgr::loadConfiguration() Failed to Load MetaFile";
