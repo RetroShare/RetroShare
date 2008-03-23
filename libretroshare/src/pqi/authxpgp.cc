@@ -639,6 +639,8 @@ bool AuthXPGP::SignCertificate(std::string id)
 		cert->trustLvl = XPGP_auth_certificate(pgp_keyring, cert->certificate);
 		cert->ownsign = true;
 		valid = true;
+
+		mToSaveCerts = true;
 	}
 
 	xpgpMtx.unlock(); /**** UNLOCK ****/
