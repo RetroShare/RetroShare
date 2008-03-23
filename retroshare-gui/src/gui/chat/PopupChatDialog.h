@@ -49,6 +49,12 @@ public:
 
   void updateChat();
   void addChatMsg(ChatInfo *ci);
+  
+  void insertBold();
+  void insertItalic();
+  void insertUnderline();
+  void insertStrike();
+  void insertAutour(QString leftTruc,QString rightTruc);
 
 public slots:
   /** Overloaded QWidget.show */
@@ -61,23 +67,13 @@ private slots:
 
   void showAvatarFrame(bool show);
 
-  void setColor();
-    
-  void textBold();
-  void textUnderline();
-  void textItalic();
-
-  void sendChat();
+  void setColor();    
+  void setFont();
   
-  void currentCharFormatChanged(const QTextCharFormat &format);
-
-
+  void sendChat();
   
 private:
 
-
-  void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
-  void fontChanged(const QFont &f);
   
   void colorChanged(const QColor &c);
   

@@ -78,7 +78,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   QHeaderView * msgwheader = ui.msgWidget->header () ;
   msgwheader->setResizeMode (0, QHeaderView::Interactive);
     
-  msgwheader->resizeSection ( 0, 125 );
+  msgwheader->resizeSection ( 0, 140 );
+  msgwheader->resizeSection ( 2, 150 );
   
     /* Set header resize modes and initial section sizes */
 	QHeaderView * msglheader = ui.msgList->header () ;
@@ -87,10 +88,10 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 	msglheader->setResizeMode (2, QHeaderView::Interactive);
 	msglheader->setResizeMode (3, QHeaderView::Interactive);
   
-	msglheader->resizeSection ( 0, 125 );
+	msglheader->resizeSection ( 0, 200 );
 	msglheader->resizeSection ( 1, 100 );
-	msglheader->resizeSection ( 2, 250 );
-	msglheader->resizeSection ( 3, 50 );
+	msglheader->resizeSection ( 2, 100 );
+	msglheader->resizeSection ( 3, 200 );
 
 
   /* Hide platform specific features */

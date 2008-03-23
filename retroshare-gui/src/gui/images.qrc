@@ -4,6 +4,7 @@
         <file>help/licence.html</file>
         <file>help/thanks.html</file>
         <file>images/addfriendlabel.png</file>
+        <file>images/backgroundl.png</file>
         <file>images/blockdevice.png</file>
         <file>images/channels.png</file>        
         <file>images/channeldelete.png</file>
@@ -16,6 +17,7 @@
         <file>images/FileTypePicture.png</file>
         <file>images/FileTypeProgram.png</file>
         <file>images/FileTypeVideo.png</file>
+        <file>images/fonts.png</file>
         <file>images/RetroShare16.png</file>
         <file>images/add-friend24.png</file>
         <file>images/add-share24.png</file>

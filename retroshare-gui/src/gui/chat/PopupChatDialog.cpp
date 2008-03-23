@@ -58,12 +58,16 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   connect(ui.sendButton, SIGNAL(clicked( ) ), this, SLOT(sendChat( ) ));
 
   connect(ui.colorButton, SIGNAL(clicked()), this, SLOT(setColor()));
+  connect(ui.fontButton, SIGNAL(clicked()), this, SLOT(setFont())); 
+   
+  connect(ui.textboldButton, SIGNAL(triggered()), this, SLOT(insertBold()));  
+  connect(ui.textunderlineButton, SIGNAL(triggered()), this, SLOT(insertUnderline()));  
+  connect(ui.textitalicButton, SIGNAL(triggered()), this, SLOT(insertItalic()));
   
-  connect(ui.textboldButton, SIGNAL(clicked()), this, SLOT(textBold()));
-  
-  connect(ui.textunderlineButton, SIGNAL(clicked()), this, SLOT(textUnderline()));
-  
-  connect(ui.textitalicButton, SIGNAL(clicked()), this, SLOT(textItalic()));
+  //connect(ui.actionBold, SIGNAL(triggered()), this, SLOT(insertBold()));
+  //connect(ui.actionItalic, SIGNAL(triggered()), this, SLOT(insertItalic()));
+  //connect(ui.actionStrike, SIGNAL(triggered()), this, SLOT(insertStrike()));
+  //connect(ui.actionUnderline, SIGNAL(triggered()), this, SLOT(insertUnderline()));
 
   // Create the status bar
   std::ostringstream statusstr;
@@ -81,6 +85,11 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   ui.textboldButton->setIcon(QIcon(QString(":/images/edit-bold.png")));
   ui.textunderlineButton->setIcon(QIcon(QString(":/images/edit-underline.png")));
   ui.textitalicButton->setIcon(QIcon(QString(":/images/edit-italic.png")));
+  ui.fontButton->setIcon(QIcon(QString(":/images/fonts.png")));
+  
+  //QMenu * fontmenu = new QMenu();
+  //fontmenu->addAction(actionBold);
+  //ui.fontButton->setMenu(fontmenu);
 
 
 }
@@ -121,56 +130,19 @@ void PopupChatDialog::setColor()
         ui.colorButton->setPalette(QPalette(col));
         QTextCharFormat fmt;
         fmt.setForeground(col);
-        mergeFormatOnWordOrSelection(fmt);
         colorChanged(col);
     }
 }
 
-void PopupChatDialog::textBold()
+void PopupChatDialog::setFont()
 {
-    QTextCharFormat fmt;
-    fmt.setFontWeight(ui.textboldButton->isChecked() ? QFont::Bold : QFont::Normal);
-    mergeFormatOnWordOrSelection(fmt);
+    bool ok;
+    QFont font = QFontDialog::getFont(&ok, QFont(ui.lineEdit->text()), this);
+    if (ok) {
+        //ui.lineEdit->setText(font.key());
+        ui.lineEdit->setFont(font);
+    }
 }
-
-void PopupChatDialog::textUnderline()
-{
-    QTextCharFormat fmt;
-    fmt.setFontUnderline(ui.textunderlineButton->isChecked());
-    mergeFormatOnWordOrSelection(fmt);
-}
-
-void PopupChatDialog::textItalic()
-{
-    QTextCharFormat fmt;
-    fmt.setFontItalic(ui.textitalicButton->isChecked());
-    mergeFormatOnWordOrSelection(fmt);
-}
-
-void PopupChatDialog::currentCharFormatChanged(const QTextCharFormat &format)
-{
-    fontChanged(format.font());
-    colorChanged(format.foreground().color());
-}
-   
-void PopupChatDialog::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
-{
-    QTextCursor cursor = ui.textBrowser->textCursor();
-    if (!cursor.hasSelection())
-        cursor.select(QTextCursor::WordUnderCursor);
-    cursor.mergeCharFormat(format);
-    ui.textBrowser->mergeCurrentCharFormat(format);
-}
-
-void PopupChatDialog::fontChanged(const QFont &f)
-{
-    //comboFont->setCurrentIndex(comboFont->findText(QFontInfo(f).family()));
-    //comboSize->setCurrentIndex(comboSize->findText(QString::number(f.pointSize())));
-    ui.textboldButton->setChecked(f.bold());
-    ui.textunderlineButton->setChecked(f.italic());
-    ui.textitalicButton->setChecked(f.underline());
-}
-
 
 
 void PopupChatDialog::colorChanged(const QColor &c)
@@ -188,7 +160,6 @@ void PopupChatDialog::updateChat()
 	/* write it out */
 
 }
-
 
 
 void PopupChatDialog::addChatMsg(ChatInfo *ci)
@@ -294,3 +265,46 @@ void PopupChatDialog::showAvatarFrame(bool show)
         ui.avatarFrameButton->setIcon(QIcon(tr(":images/show_toolbox_frame.png")));
     }
 }
+
+void PopupChatDialog::insertBold()
+{
+  
+  this->insertAutour(tr("<b>"), tr("</b>"));
+  this->ui.lineEdit->setFocus();
+
+}
+
+void PopupChatDialog::insertItalic()
+{
+  
+  this->insertAutour(tr("<i>"), tr("</i>"));
+  this->ui.lineEdit->setFocus();
+
+}
+
+void PopupChatDialog::insertUnderline()
+{
+  
+  this->insertAutour(tr("<u>"), tr("</u>"));
+  this->ui.lineEdit->setFocus();
+
+}
+
+void PopupChatDialog::insertStrike()
+{
+  
+  this->insertAutour(tr("<s>"), tr("</s>"));
+  this->ui.lineEdit->setFocus();
+
+}
+
+void PopupChatDialog::insertAutour(QString leftTruc,QString rightTruc)
+{
+    int p0 = ui.lineEdit->cursorPosition();
+    QString stringToInsert = leftTruc ;
+    stringToInsert.append(rightTruc);
+    ui.lineEdit->insert(stringToInsert);
+    ui.lineEdit->setCursorPosition(p0 + leftTruc.size());
+    
+}
+

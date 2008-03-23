@@ -82,18 +82,6 @@
            <string/>
           </property>
           <layout class="QGridLayout" >
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>8</number>
-           </property>
-           <property name="rightMargin" >
-            <number>6</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>8</number>
-           </property>
            <item row="0" column="0" >
             <spacer>
              <property name="orientation" >
@@ -101,8 +89,8 @@
              </property>
              <property name="sizeHint" >
               <size>
-               <width>261</width>
-               <height>20</height>
+               <width>291</width>
+               <height>24</height>
               </size>
              </property>
             </spacer>
@@ -128,7 +116,7 @@
               <iconset>C:/Dokumente und Einstellungen/Linux/.designer/backup</iconset>
              </property>
              <property name="checkable" >
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -153,7 +141,7 @@
               <iconset>C:/Dokumente und Einstellungen/Linux/.designer/backup</iconset>
              </property>
              <property name="checkable" >
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -178,11 +166,36 @@
               <iconset>C:/Dokumente und Einstellungen/Linux/.designer/backup</iconset>
              </property>
              <property name="checkable" >
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
             </widget>
            </item>
            <item row="0" column="4" >
+            <widget class="QPushButton" name="fontButton" >
+             <property name="minimumSize" >
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize" >
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="text" >
+              <string/>
+             </property>
+             <property name="icon" >
+              <iconset>C:/Dokumente und Einstellungen/Linux/.designer/backup</iconset>
+             </property>
+             <property name="checkable" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="5" >
             <widget class="QPushButton" name="colorButton" >
              <property name="minimumSize" >
               <size>
