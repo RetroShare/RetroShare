@@ -63,7 +63,7 @@
 
 #define DHT_DEFAULT_WAITTIME	1    /* Std sleep break period */
 
-#define DHT_NUM_BOOTSTRAP_BINS 		1
+#define DHT_NUM_BOOTSTRAP_BINS 		2
 #define DHT_MIN_BOOTSTRAP_REQ_PERIOD 	30
 
 void printDhtPeerEntry(dhtPeerEntry *ent, std::ostream &out);
