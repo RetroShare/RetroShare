@@ -73,6 +73,9 @@ ChatDialog::ChatDialog(QWidget *parent)
   ui.msgSendList->header()->hide();
   
   textColor = Qt::black;
+  QPixmap pxm(24,24);
+  pxm.fill(textColor);
+  ui.colorChatButton->setIcon(pxm);
 
 
   /* Hide platform specific features */
@@ -278,6 +281,9 @@ void ChatDialog::setColor()
 	textColor = QColorDialog::getColor(Qt::black, this);
 	QPixmap pxm(24,24);
 	pxm.fill(textColor);
+	ui.lineEdit->setText(QString(tr("<a style=\"color:")) + (textColor.name()));
+    this->insertAutour(tr("\">"), tr("</style>"));
+    this->ui.lineEdit->setFocus();
 	ui.colorChatButton->setIcon(pxm);
 }
 

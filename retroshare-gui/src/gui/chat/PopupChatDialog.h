@@ -61,6 +61,7 @@ public slots:
   void insertStrike();
   void insertAutour(QString leftTruc,QString rightTruc);
 
+
 protected:
   void closeEvent (QCloseEvent * event);
   

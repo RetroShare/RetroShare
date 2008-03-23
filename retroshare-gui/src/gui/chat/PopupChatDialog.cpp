@@ -98,6 +98,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   fontmenu->addAction(ui.actionItalic);
   fontmenu->addAction(ui.actionStrike);
   ui.fontButton->setMenu(fontmenu);
+  
 
 
 }
@@ -117,7 +118,7 @@ void PopupChatDialog::show()
   if(!this->isVisible()) {
     QMainWindow::show();
   } else {
-    //QMainWindow::activateWindow();
+    QMainWindow::activateWindow();
     setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
     QMainWindow::raise();
   }
@@ -136,6 +137,9 @@ void PopupChatDialog::setColor()
     if (col.isValid()) {
 
         ui.colorButton->setPalette(QPalette(col));
+        ui.lineEdit->setText(QString(tr("<a style=\"color:")) + (col.name()));
+        this->insertAutour(tr("\">"), tr("</style>"));
+        this->ui.lineEdit->setFocus();
         QTextCharFormat fmt;
         fmt.setForeground(col);
         colorChanged(col);
@@ -315,4 +319,6 @@ void PopupChatDialog::insertAutour(QString leftTruc,QString rightTruc)
     ui.lineEdit->setCursorPosition(p0 + leftTruc.size());
     
 }
+
+
 
