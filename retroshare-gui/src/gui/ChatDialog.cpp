@@ -53,13 +53,16 @@ ChatDialog::ChatDialog(QWidget *parent)
 
   connect(ui.lineEdit, SIGNAL(returnPressed( ) ), this, SLOT(sendMsg( ) ));
   
-  connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(setColor())); 
   
   connect( ui.msgSendList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgSendListCostumPopupMenu( QPoint ) ) );
-  
+ 
+#ifdef CHAT_IMPROVEMENTS
+  connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(setColor())); 
   connect(ui.textboldChatButton, SIGNAL(clicked()), this, SLOT(insertBold()));  
   connect(ui.textunderlineChatButton, SIGNAL(clicked()), this, SLOT(insertUnderline()));  
   connect(ui.textitalicChatButton, SIGNAL(clicked()), this, SLOT(insertItalic()));
+#endif
+
 
 //  connect(ui.msgSendList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ), 
 //  this, SLOT(toggleSendItem( QTreeWidgetItem *, int ) ));
@@ -241,6 +244,10 @@ void  ChatDialog::insertSendList()
 		{
 			item -> setCheckState(0, Qt::Unchecked);
 		}
+
+		/* disable for the moment */
+		item -> setFlags(Qt::ItemIsUserCheckable);
+		item -> setCheckState(0, Qt::Checked);
 
 		/* add to the list */
 		items.append(item);
