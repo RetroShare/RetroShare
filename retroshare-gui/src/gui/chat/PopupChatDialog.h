@@ -50,15 +50,16 @@ public:
   void updateChat();
   void addChatMsg(ChatInfo *ci);
   
+
+public slots:
+  /** Overloaded QWidget.show */
+  void show();
+  
   void insertBold();
   void insertItalic();
   void insertUnderline();
   void insertStrike();
   void insertAutour(QString leftTruc,QString rightTruc);
-
-public slots:
-  /** Overloaded QWidget.show */
-  void show();
 
 protected:
   void closeEvent (QCloseEvent * event);
@@ -71,6 +72,7 @@ private slots:
   void setFont();
   
   void sendChat();
+  
   
 private:
 

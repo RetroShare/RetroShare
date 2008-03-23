@@ -58,16 +58,16 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   connect(ui.sendButton, SIGNAL(clicked( ) ), this, SLOT(sendChat( ) ));
 
   connect(ui.colorButton, SIGNAL(clicked()), this, SLOT(setColor()));
-  connect(ui.fontButton, SIGNAL(clicked()), this, SLOT(setFont())); 
+  //connect(ui.fontButton, SIGNAL(clicked()), this, SLOT(setFont())); 
    
-  connect(ui.textboldButton, SIGNAL(triggered()), this, SLOT(insertBold()));  
-  connect(ui.textunderlineButton, SIGNAL(triggered()), this, SLOT(insertUnderline()));  
-  connect(ui.textitalicButton, SIGNAL(triggered()), this, SLOT(insertItalic()));
+  connect(ui.textboldButton, SIGNAL(clicked()), this, SLOT(insertBold()));  
+  connect(ui.textunderlineButton, SIGNAL(clicked()), this, SLOT(insertUnderline()));  
+  connect(ui.textitalicButton, SIGNAL(clicked()), this, SLOT(insertItalic()));
   
-  //connect(ui.actionBold, SIGNAL(triggered()), this, SLOT(insertBold()));
-  //connect(ui.actionItalic, SIGNAL(triggered()), this, SLOT(insertItalic()));
-  //connect(ui.actionStrike, SIGNAL(triggered()), this, SLOT(insertStrike()));
-  //connect(ui.actionUnderline, SIGNAL(triggered()), this, SLOT(insertUnderline()));
+  connect(ui.actionBold, SIGNAL(triggered()), this, SLOT(insertBold()));
+  connect(ui.actionItalic, SIGNAL(triggered()), this, SLOT(insertItalic()));
+  connect(ui.actionUnderline, SIGNAL(triggered()), this, SLOT(insertUnderline()));
+  connect(ui.actionStrike, SIGNAL(triggered()), this, SLOT(insertStrike()));
 
   // Create the status bar
   std::ostringstream statusstr;
@@ -87,9 +87,17 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   ui.textitalicButton->setIcon(QIcon(QString(":/images/edit-italic.png")));
   ui.fontButton->setIcon(QIcon(QString(":/images/fonts.png")));
   
-  //QMenu * fontmenu = new QMenu();
-  //fontmenu->addAction(actionBold);
-  //ui.fontButton->setMenu(fontmenu);
+  ui.actionBold->setIcon(QIcon(":/images/edit-bold.png"));
+  ui.actionUnderline->setIcon(QIcon(":/images/edit-underline.png"));
+  ui.actionItalic->setIcon(QIcon(":/images/edit-italic.png"));
+  //ui.actionStrike->setIcon(QIcon(":/exit.png"));
+  
+  QMenu * fontmenu = new QMenu();
+  fontmenu->addAction(ui.actionBold);
+  fontmenu->addAction(ui.actionUnderline);
+  fontmenu->addAction(ui.actionItalic);
+  fontmenu->addAction(ui.actionStrike);
+  ui.fontButton->setMenu(fontmenu);
 
 
 }

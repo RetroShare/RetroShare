@@ -378,6 +378,26 @@ border-image: url(:/images/mystatus_bg.png);
     <bool>false</bool>
    </attribute>
   </widget>
+  <action name="actionBold" >
+   <property name="text" >
+    <string>Bold</string>
+   </property>
+  </action>
+  <action name="actionItalic" >
+   <property name="text" >
+    <string>Italic</string>
+   </property>
+  </action>
+  <action name="actionUnderline" >
+   <property name="text" >
+    <string>Underline</string>
+   </property>
+  </action>
+  <action name="actionStrike" >
+   <property name="text" >
+    <string>Strike</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
