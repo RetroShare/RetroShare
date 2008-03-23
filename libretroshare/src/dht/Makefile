@@ -10,16 +10,19 @@ include $(RS_TOP_DIR)/scripts/config.mk
 RSOBJ = b64.o opendhtstr.o opendht.o opendhtmgr.o
 
 TESTOBJ  = odhtstr_test.o odhtpost_test.o odhtmgr_test.o \
-	dht_bootstrap.o
+	dht_bootstrap.o dht_check_peers.o
 
 TESTS  = odhtstr_test odhtpost_test odhtmgr_test \
-	dht_bootstrap
+	dht_bootstrap dht_check_peers
 
 all: librs tests
 
 #dhttest is OLD
 dhttest: $(OBJ) dhttest.o
 	$(CC) $(CFLAGS) -o dhttest $(OBJ) dhttest.o $(LIBS)
+
+dht_check_peers: $(OBJ) dht_check_peers.o
+	$(CC) $(CFLAGS) -o dht_check_peers $(OBJ) dht_check_peers.o $(LIBS)
 
 odhtpost_test: $(OBJ) odhtpost_test.o
 	$(CC) $(CFLAGS) -o odhtpost_test $(OBJ) odhtpost_test.o $(LIBS)

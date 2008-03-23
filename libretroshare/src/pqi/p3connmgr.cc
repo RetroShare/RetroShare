@@ -278,7 +278,7 @@ void p3ConnectMgr::netStartup()
 		default:
 			/* Force it here (could be default!) */
 			ownState.netMode |= RS_NET_MODE_TRY_UPNP;
-			ownState.netMode |= RS_NET_MODE_UDP;
+			ownState.netMode |= RS_NET_MODE_UDP;      /* set to UDP, upgraded is UPnP is Okay */
 			mNetStatus = RS_NET_UPNP_INIT;
 			break;
 	}
@@ -569,16 +569,7 @@ void p3ConnectMgr::netUdpCheck()
 			ownState.serveraddr = extAddr;
 			mode = RS_NET_CONN_TCP_LOCAL;
 
-			if (mUpnpAddrValid  || (ownState.netMode == RS_NET_MODE_EXT))
-			{
-				mode |= RS_NET_CONN_TCP_EXTERNAL;
-				mode |= RS_NET_CONN_UDP_DHT_SYNC;
-			}
-			else if (extAddrStable)
-			{
-				mode |= RS_NET_CONN_UDP_DHT_SYNC;
-			}
-			else // if (!extAddrStable)
+			if (!extAddrStable)
 			{
 #ifdef CONN_DEBUG
 				std::cerr << "p3ConnectMgr::netUdpCheck() UDP Unstable :( ";
@@ -615,6 +606,15 @@ void p3ConnectMgr::netUdpCheck()
 							title, msg);
 				}
 
+			}
+			else if (mUpnpAddrValid  || (ownState.netMode & RS_NET_MODE_EXT))
+			{
+				mode |= RS_NET_CONN_TCP_EXTERNAL;
+				mode |= RS_NET_CONN_UDP_DHT_SYNC;
+			}
+			else // if (extAddrStable)
+			{
+				mode |= RS_NET_CONN_UDP_DHT_SYNC;
 			}
 
 			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/

@@ -402,8 +402,8 @@ int main(int argc, char **argv)
 	}
 
 	/* switch off Stun/Bootstrap stuff */
-	dht.doneStun();
-	dht.setBootstrapAllowed(false);
+	dhtTester.doneStun();
+	dhtTester.setBootstrapAllowed(false);
 		
 
 	/* wait loop */
