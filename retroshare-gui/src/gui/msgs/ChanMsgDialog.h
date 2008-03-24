@@ -24,10 +24,18 @@
 #define _CHAN_MSG_DIALOG_H
 
 #include <QMainWindow>
+#include <QMap>
+#include <QPointer>
 #include <config/rsharesettings.h>
 
 
 #include "ui_ChanMsgDialog.h"
+
+class QAction;
+class QComboBox;
+class QFontComboBox;
+class QTextEdit;
+class QTextCharFormat;
 
 class ChanMsgDialog : public QMainWindow 
 {
@@ -65,15 +73,34 @@ private slots:
   /** Defines the context menu functions*/
   void deletechannel();
   void createchannelmsg();
-
+  
+  /* toggle Contacts DockWidget */
+  void toggleContacts();
 
 	/* for toggling flags */
   void togglePersonItem( QTreeWidgetItem *item, int col );
   void toggleChannelItem( QTreeWidgetItem *item, int col );
   void toggleRecommendItem( QTreeWidgetItem *item, int col );
+  
+  void textBold();
+  void textUnderline();
+  void textItalic();
+  void textFamily(const QString &f);
+  void textSize(const QString &p);
+  void textStyle(int styleIndex);
+  void textColor();
+  void textAlign(QAction *a);
+
+  void currentCharFormatChanged(const QTextCharFormat &format);
+  void cursorPositionChanged();
 
  
 private:
+
+    void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
+    void fontChanged(const QFont &f);
+    void colorChanged(const QColor &c);
+    void alignmentChanged(Qt::Alignment a);
 
    /** Define the popup menus for the Context menu */
   QMenu* contextMnu;
@@ -81,6 +108,11 @@ private:
    /** Defines the actions for the context menu */
   QAction* deletechannelAct;
   QAction* createchannelmsgAct;
+  
+  QAction *actionAlignLeft,
+        *actionAlignCenter,
+        *actionAlignRight,
+        *actionAlignJustify;
 
   QTreeView *channelstreeView;
 

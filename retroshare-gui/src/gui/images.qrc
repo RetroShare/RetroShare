@@ -9,6 +9,7 @@
         <file>images/channels.png</file>        
         <file>images/channeldelete.png</file>
         <file>images/channelsubscribe.png</file>
+        <file>images/contacts24.png</file>
         <file>images/FileTypeAny.png</file>
         <file>images/FileTypeArchive.png</file>
         <file>images/FileTypeAudio.png</file>
@@ -171,6 +172,13 @@
         <file>images/smplayer_icon32.png</file>
         <file>images/start.png</file>
         <file>images/startall.png</file>
+        <file>images/textedit/textbold.png</file>
+        <file>images/textedit/textitalic.png</file>
+        <file>images/textedit/textunder.png</file>
+        <file>images/textedit/textjustify.png</file>
+        <file>images/textedit/textcenter.png</file>
+        <file>images/textedit/textleft.png</file>
+        <file>images/textedit/textright.png</file>
         <file>images/toaster/chat.png</file>
         <file>images/toaster/hangup.png</file>
         <file>images/toaster/pickup.png</file>

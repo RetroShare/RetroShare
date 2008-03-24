@@ -443,7 +443,7 @@ void MessagesDialog::insertMsgTxtAndFiles()
 		ui.filesText->setText("");
 
 		ui.subjectText->setText("");
-		ui.msgText->setText("");
+		//ui.msgText->setText("");
 		ui.msgList->clear();
 
 		return;

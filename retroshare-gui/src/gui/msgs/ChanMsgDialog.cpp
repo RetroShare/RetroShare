@@ -29,12 +29,17 @@
 #include <sstream>
 
 #include <QContextMenuEvent>
+#include <QColorDialog>
 #include <QMenu>
 #include <QCursor>
 #include <QPoint>
 #include <QMouseEvent>
 #include <QPixmap>
 #include <QHeaderView>
+#include <QTextCodec>
+#include <QTextEdit>
+#include <QTextCursor>
+#include <QTextList>
 
 
 /** Constructor */
@@ -55,6 +60,16 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
   // connect up the buttons. 
   connect( ui.actionSend, SIGNAL( triggered (bool)), this, SLOT( sendMessage( ) ) );
   //connect( ui.actionReply, SIGNAL( triggered (bool)), this, SLOT( replyMessage( ) ) );
+  connect(ui.boldbtn, SIGNAL(clicked()), this, SLOT(textBold()));
+  connect(ui.underlinebtn, SIGNAL(clicked()), this, SLOT(textUnderline()));
+  connect(ui.italicbtn, SIGNAL(clicked()), this, SLOT(textItalic()));
+  connect(ui.colorbtn, SIGNAL(clicked()), this, SLOT(textColor()));
+  connect(ui.actionContactsView, SIGNAL(triggered()), this, SLOT(toggleContacts()));
+  
+  connect(ui.msgText, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)),
+            this, SLOT(currentCharFormatChanged(const QTextCharFormat &)));
+  connect(ui.msgText, SIGNAL(cursorPositionChanged()),
+            this, SLOT(cursorPositionChanged()));
 
   /* if Msg */
   if (mIsMsg)
@@ -77,6 +92,59 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
   
    /* to hide the header  */
   //ui.msgSendList->header()->hide(); 
+  
+    QActionGroup *grp = new QActionGroup(this);
+    connect(grp, SIGNAL(triggered(QAction *)), this, SLOT(textAlign(QAction *)));
+
+    actionAlignLeft = new QAction(QIcon(":/images/textedit/textleft.png"), tr("&Left"), grp);
+    actionAlignLeft->setShortcut(Qt::CTRL + Qt::Key_L);
+    actionAlignLeft->setCheckable(true);
+    actionAlignCenter = new QAction(QIcon(":/images/textedit/textcenter.png"), tr("C&enter"), grp);
+    actionAlignCenter->setShortcut(Qt::CTRL + Qt::Key_E);
+    actionAlignCenter->setCheckable(true);
+    actionAlignRight = new QAction(QIcon(":/images/textedit/textright.png"), tr("&Right"), grp);
+    actionAlignRight->setShortcut(Qt::CTRL + Qt::Key_R);
+    actionAlignRight->setCheckable(true);
+    actionAlignJustify = new QAction(QIcon(":/images/textedit/textjustify.png"), tr("&Justify"), grp);
+    actionAlignJustify->setShortcut(Qt::CTRL + Qt::Key_J);
+    actionAlignJustify->setCheckable(true);
+    
+    ui.comboStyle->addItem("Standard");
+    ui.comboStyle->addItem("Bullet List (Disc)");
+    ui.comboStyle->addItem("Bullet List (Circle)");
+    ui.comboStyle->addItem("Bullet List (Square)");
+    ui.comboStyle->addItem("Ordered List (Decimal)");
+    ui.comboStyle->addItem("Ordered List (Alpha lower)");
+    ui.comboStyle->addItem("Ordered List (Alpha upper)");
+    connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(textStyle(int)));
+    
+    connect(ui.comboFont, SIGNAL(activated(const QString &)), this, SLOT(textFamily(const QString &)));
+    
+    ui.comboSize->setEditable(true);
+
+    QFontDatabase db;
+    foreach(int size, db.standardSizes())
+        ui.comboSize->addItem(QString::number(size));
+
+    connect(ui.comboSize, SIGNAL(activated(const QString &)),this, SLOT(textSize(const QString &)));
+    ui.comboSize->setCurrentIndex(ui.comboSize->findText(QString::number(QApplication::font().pointSize())));
+    
+    ui.boldbtn->setIcon(QIcon(QString(":/images/textedit/textbold.png")));
+    ui.underlinebtn->setIcon(QIcon(QString(":/images/textedit/textitalic.png")));
+    ui.italicbtn->setIcon(QIcon(QString(":/images/textedit/textunder.png")));
+    ui.textalignmentbtn->setIcon(QIcon(QString(":/images/textedit/textcenter.png")));
+    ui.actionContactsView->setIcon(QIcon(":/images/contacts24.png"));
+       
+    QMenu * alignmentmenu = new QMenu();
+    alignmentmenu->addAction(actionAlignLeft);
+    alignmentmenu->addAction(actionAlignCenter);
+    alignmentmenu->addAction(actionAlignRight);
+    alignmentmenu->addAction(actionAlignJustify);
+    ui.textalignmentbtn->setMenu(alignmentmenu);
+    
+	QPixmap pxm(24,24);
+	pxm.fill(Qt::black);
+	ui.colorbtn->setIcon(pxm);
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -375,7 +443,8 @@ void  ChanMsgDialog::sendMessage()
 	MessageInfo mi;
 
 	mi.title = ui.titleEdit->text().toStdWString();
-	mi.msg =   ui.msgText->toPlainText().toStdWString();
+	mi.msg =   ui.msgText->toHtml().toStdWString();
+	
 
 	rsiface->lockData();   /* Lock Interface */
 
@@ -477,5 +546,173 @@ void ChanMsgDialog::toggleRecommendItem( QTreeWidgetItem *item, int col )
 
         rsicontrol -> SetInRecommend(id, inRecommend);
         return;
+}
+
+void ChanMsgDialog::textBold()
+{
+    QTextCharFormat fmt;
+    fmt.setFontWeight(ui.boldbtn->isChecked() ? QFont::Bold : QFont::Normal);
+    mergeFormatOnWordOrSelection(fmt);
+}
+
+void ChanMsgDialog::textUnderline()
+{
+    QTextCharFormat fmt;
+    fmt.setFontUnderline(ui.underlinebtn->isChecked());
+    mergeFormatOnWordOrSelection(fmt);
+}
+
+void ChanMsgDialog::textItalic()
+{
+    QTextCharFormat fmt;
+    fmt.setFontItalic(ui.italicbtn->isChecked());
+    mergeFormatOnWordOrSelection(fmt);
+}
+
+void ChanMsgDialog::textFamily(const QString &f)
+{
+    QTextCharFormat fmt;
+    fmt.setFontFamily(f);
+    mergeFormatOnWordOrSelection(fmt);
+}
+
+void ChanMsgDialog::textSize(const QString &p)
+{
+    QTextCharFormat fmt;
+    fmt.setFontPointSize(p.toFloat());
+    mergeFormatOnWordOrSelection(fmt);
+}
+
+void ChanMsgDialog::textStyle(int styleIndex)
+{
+    QTextCursor cursor = ui.msgText->textCursor();
+
+    if (styleIndex != 0) {
+        QTextListFormat::Style style = QTextListFormat::ListDisc;
+
+        switch (styleIndex) {
+            default:
+            case 1:
+                style = QTextListFormat::ListDisc;
+                break;
+            case 2:
+                style = QTextListFormat::ListCircle;
+                break;
+            case 3:
+                style = QTextListFormat::ListSquare;
+                break;
+            case 4:
+                style = QTextListFormat::ListDecimal;
+                break;
+            case 5:
+                style = QTextListFormat::ListLowerAlpha;
+                break;
+            case 6:
+                style = QTextListFormat::ListUpperAlpha;
+                break;
+        }
+
+        cursor.beginEditBlock();
+
+        QTextBlockFormat blockFmt = cursor.blockFormat();
+
+        QTextListFormat listFmt;
+
+        if (cursor.currentList()) {
+            listFmt = cursor.currentList()->format();
+        } else {
+            listFmt.setIndent(blockFmt.indent() + 1);
+            blockFmt.setIndent(0);
+            cursor.setBlockFormat(blockFmt);
+        }
+
+        listFmt.setStyle(style);
+
+        cursor.createList(listFmt);
+
+        cursor.endEditBlock();
+    } else {
+        // ####
+        QTextBlockFormat bfmt;
+        bfmt.setObjectIndex(-1);
+        cursor.mergeBlockFormat(bfmt);
+    }
+}
+
+void ChanMsgDialog::textColor()
+{
+    QColor col = QColorDialog::getColor(ui.msgText->textColor(), this);
+    if (!col.isValid())
+        return;
+    QTextCharFormat fmt;
+    fmt.setForeground(col);
+    mergeFormatOnWordOrSelection(fmt);
+    colorChanged(col);
+}
+
+void ChanMsgDialog::textAlign(QAction *a)
+{
+    if (a == actionAlignLeft)
+        ui.msgText->setAlignment(Qt::AlignLeft);
+    else if (a == actionAlignCenter)
+        ui.msgText->setAlignment(Qt::AlignHCenter);
+    else if (a == actionAlignRight)
+        ui.msgText->setAlignment(Qt::AlignRight);
+    else if (a == actionAlignJustify)
+        ui.msgText->setAlignment(Qt::AlignJustify);
+}
+
+void ChanMsgDialog::currentCharFormatChanged(const QTextCharFormat &format)
+{
+    fontChanged(format.font());
+    colorChanged(format.foreground().color());
+}
+
+void ChanMsgDialog::cursorPositionChanged()
+{
+    alignmentChanged(ui.msgText->alignment());
+}
+
+void ChanMsgDialog::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
+{
+    QTextCursor cursor = ui.msgText->textCursor();
+    if (!cursor.hasSelection())
+        cursor.select(QTextCursor::WordUnderCursor);
+    cursor.mergeCharFormat(format);
+    ui.msgText->mergeCurrentCharFormat(format);
+}
+
+void ChanMsgDialog::fontChanged(const QFont &f)
+{
+    ui.comboFont->setCurrentIndex(ui.comboFont->findText(QFontInfo(f).family()));
+    ui.comboSize->setCurrentIndex(ui.comboSize->findText(QString::number(f.pointSize())));
+    ui.boldbtn->setChecked(f.bold());
+    ui.italicbtn->setChecked(f.italic());
+    ui.underlinebtn->setChecked(f.underline());
+}
+
+void ChanMsgDialog::colorChanged(const QColor &c)
+{
+    QPixmap pix(16, 16);
+    pix.fill(c);
+    ui.colorbtn->setIcon(pix);
+}
+
+void ChanMsgDialog::alignmentChanged(Qt::Alignment a)
+{
+    if (a & Qt::AlignLeft) {
+        actionAlignLeft->setChecked(true);
+    } else if (a & Qt::AlignHCenter) {
+        actionAlignCenter->setChecked(true);
+    } else if (a & Qt::AlignRight) {
+        actionAlignRight->setChecked(true);
+    } else if (a & Qt::AlignJustify) {
+        actionAlignJustify->setChecked(true);
+    }
+}
+
+void ChanMsgDialog::toggleContacts()
+{
+	ui.contactsdockWidget->setVisible(!ui.contactsdockWidget->isVisible());
 }
 
