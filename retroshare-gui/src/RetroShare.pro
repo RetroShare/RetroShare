@@ -323,7 +323,9 @@ TRANSLATIONS +=  \
 }
 
 macx {
-    CONFIG += ppc x86
+    # ENABLE THIS OPTION FOR Univeral Binary BUILD.
+    # CONFIG += ppc x86 
+
     LIBS += -Wl,-search_paths_first
 }
 
