@@ -55,12 +55,15 @@ void  insertChannelSendList(); /* for Channels */
 void  insertFileList(); /* for Both */
 void  insertTitleText(std::string title);
 void  insertMsgText(std::string msg);
+void  Create_New_Image_Tag( const QString urlremoteorlocal );
+ QSettings setter;
 
 public slots:
 
 	/* actions to take.... */
 void  sendMessage();
 void  cancelMessage();
+void  addImage();
 
 protected:
   void closeEvent (QCloseEvent * event);
@@ -87,6 +90,8 @@ private slots:
   bool fileSave();
   bool fileSaveAs();
   void filePrint();
+  
+
   //void filePrintPreview();
   void filePrintPdf();
   
@@ -110,6 +115,7 @@ private:
 	void setupEditActions();
 	bool load(const QString &f);
 	bool maybeSave();
+	//bool image_extension( QString nametomake );
 	void setCurrentFileName(const QString &fileName);
 
     void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
@@ -138,6 +144,7 @@ private:
   QTreeView *channelstreeView;
   
   QString fileName;
+  QString nametomake;
 
   bool mIsMsg; /* different behaviour for Msg or ChanMsg */
 

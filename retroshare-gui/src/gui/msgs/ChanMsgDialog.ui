@@ -278,6 +278,28 @@ p, li { white-space: pre-wrap; }
             </property>
            </spacer>
           </item>
+          <item row="0" column="8" >
+           <widget class="QPushButton" name="imagebtn" >
+            <property name="minimumSize" >
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="toolTip" >
+             <string>Add a Image</string>
+            </property>
+            <property name="text" >
+             <string/>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
         <item row="2" column="0" >

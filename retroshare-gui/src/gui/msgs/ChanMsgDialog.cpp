@@ -51,6 +51,7 @@
 #include <QTextCursor>
 #include <QTextList>
 #include <QTextStream>
+#include <QTextDocumentFragment>
 
 
 /** Constructor */
@@ -78,6 +79,7 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
   connect(ui.underlinebtn, SIGNAL(clicked()), this, SLOT(textUnderline()));
   connect(ui.italicbtn, SIGNAL(clicked()), this, SLOT(textItalic()));
   connect(ui.colorbtn, SIGNAL(clicked()), this, SLOT(textColor()));
+  connect(ui.imagebtn, SIGNAL(clicked()), this, SLOT(addImage()));
   connect(ui.actionContactsView, SIGNAL(triggered()), this, SLOT(toggleContacts()));
   connect(ui.actionSaveas, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
   
@@ -177,6 +179,7 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
     ui.underlinebtn->setIcon(QIcon(QString(":/images/textedit/textitalic.png")));
     ui.italicbtn->setIcon(QIcon(QString(":/images/textedit/textunder.png")));
     ui.textalignmentbtn->setIcon(QIcon(QString(":/images/textedit/textcenter.png")));
+    ui.imagebtn->setIcon(QIcon(QString(":/images/lphoto24.png")));
     ui.actionContactsView->setIcon(QIcon(":/images/contacts24.png"));
     ui.actionSaveas->setIcon(QIcon(":/images/save24.png"));
     
@@ -986,5 +989,34 @@ bool ChanMsgDialog::maybeSave()
 void ChanMsgDialog::toggleContacts()
 {
 	ui.contactsdockWidget->setVisible(!ui.contactsdockWidget->isVisible());
+}
+
+void  ChanMsgDialog::addImage()
+{
+  
+	QString fileimg = QFileDialog::getOpenFileName( this, tr( "Choose Image" ), 
+	QString(setter.value("LastDir").toString()) ,tr("Image Files supported (*.png *.jpeg *.jpg *.gif)"));
+    
+    if ( fileimg.isEmpty() ) {
+     return; 
+    }
+    
+    QImage base(fileimg);
+    
+    QString pathimage = fileimg.left(fileimg.lastIndexOf("/"))+"/";
+    setter.setValue("LastDir",pathimage);   
+    
+    Create_New_Image_Tag(fileimg);
+}
+
+void  ChanMsgDialog::Create_New_Image_Tag( const QString urlremoteorlocal )
+{
+   /*if (image_extension(urlremoteorlocal)) {*/
+       QString subtext = QString("<p><img src=\"%1\" />").arg(urlremoteorlocal);
+               ///////////subtext.append("<br/><br/>Description on image.</p>");
+       QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(subtext);
+       ui.msgText->textCursor().insertFragment(fragment);
+       //emit statusMessage(QString("Image new :").arg(urlremoteorlocal));
+   //}
 }
 
