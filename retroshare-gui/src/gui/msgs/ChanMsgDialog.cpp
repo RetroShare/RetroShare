@@ -26,20 +26,31 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsmsgs.h"
 
+#include <config/rsharesettings.h>
+
 #include <sstream>
 
 #include <QContextMenuEvent>
+#include <QCloseEvent>
 #include <QColorDialog>
+#include <QClipboard>
+#include <QFile>
+#include <QFileDialog>
+#include <QFileInfo>
 #include <QMenu>
 #include <QCursor>
 #include <QPoint>
 #include <QMouseEvent>
+#include <QMessageBox>
 #include <QPixmap>
+#include <QPrintDialog>
+#include <QPrinter>
 #include <QHeaderView>
 #include <QTextCodec>
 #include <QTextEdit>
 #include <QTextCursor>
 #include <QTextList>
+#include <QTextStream>
 
 
 /** Constructor */
@@ -48,6 +59,9 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
+  
+  setupFileActions();
+  setupEditActions();
   
   RshareSettings config;
   config.loadWidgetInformation(this);
@@ -65,11 +79,41 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
   connect(ui.italicbtn, SIGNAL(clicked()), this, SLOT(textItalic()));
   connect(ui.colorbtn, SIGNAL(clicked()), this, SLOT(textColor()));
   connect(ui.actionContactsView, SIGNAL(triggered()), this, SLOT(toggleContacts()));
+  connect(ui.actionSaveas, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
   
   connect(ui.msgText, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)),
             this, SLOT(currentCharFormatChanged(const QTextCharFormat &)));
   connect(ui.msgText, SIGNAL(cursorPositionChanged()),
             this, SLOT(cursorPositionChanged()));
+            
+    connect(ui.msgText->document(), SIGNAL(modificationChanged(bool)),
+            actionSave, SLOT(setEnabled(bool)));
+    connect(ui.msgText->document(), SIGNAL(modificationChanged(bool)),
+            this, SLOT(setWindowModified(bool)));
+    connect(ui.msgText->document(), SIGNAL(undoAvailable(bool)),
+            actionUndo, SLOT(setEnabled(bool)));
+    connect(ui.msgText->document(), SIGNAL(redoAvailable(bool)),
+            actionRedo, SLOT(setEnabled(bool)));
+
+    setWindowModified(ui.msgText->document()->isModified());
+    actionSave->setEnabled(ui.msgText->document()->isModified());
+    actionUndo->setEnabled(ui.msgText->document()->isUndoAvailable());
+    actionRedo->setEnabled(ui.msgText->document()->isRedoAvailable());
+
+    connect(actionUndo, SIGNAL(triggered()), ui.msgText, SLOT(undo()));
+    connect(actionRedo, SIGNAL(triggered()), ui.msgText, SLOT(redo()));
+
+    actionCut->setEnabled(false);
+    actionCopy->setEnabled(false);
+
+    connect(actionCut, SIGNAL(triggered()), ui.msgText, SLOT(cut()));
+    connect(actionCopy, SIGNAL(triggered()), ui.msgText, SLOT(copy()));
+    connect(actionPaste, SIGNAL(triggered()), ui.msgText, SLOT(paste()));
+
+    connect(ui.msgText, SIGNAL(copyAvailable(bool)), actionCut, SLOT(setEnabled(bool)));
+    connect(ui.msgText, SIGNAL(copyAvailable(bool)), actionCopy, SLOT(setEnabled(bool)));
+
+    connect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(clipboardDataChanged()));
 
   /* if Msg */
   if (mIsMsg)
@@ -134,6 +178,13 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
     ui.italicbtn->setIcon(QIcon(QString(":/images/textedit/textunder.png")));
     ui.textalignmentbtn->setIcon(QIcon(QString(":/images/textedit/textcenter.png")));
     ui.actionContactsView->setIcon(QIcon(":/images/contacts24.png"));
+    ui.actionSaveas->setIcon(QIcon(":/images/save24.png"));
+    
+    /* ToolTips */
+    ui.actionSend->setStatusTip(tr("Send this message now"));
+    ui.actionContactsView->setStatusTip(tr("Toggle Contacts View"));
+    ui.actionSaveas->setStatusTip(tr("Save this message"));
+    
        
     QMenu * alignmentmenu = new QMenu();
     alignmentmenu->addAction(actionAlignLeft);
@@ -174,13 +225,19 @@ void ChanMsgDialog::channelstreeViewCostumPopupMenu( QPoint point )
 
 void ChanMsgDialog::closeEvent (QCloseEvent * event)
 {
-	RshareSettings config;
-	config.saveWidgetInformation(this);
-
-    hide();
-    event->ignore();
+    if (maybeSave())
+    {     
+       event->accept();
+    }
+    else    
+    {
+		event->ignore();
+		hide();
+    
+		RshareSettings config;
+		config.saveWidgetInformation(this);
+	}
 }
-
 
 void ChanMsgDialog::deletechannel()
 {
@@ -548,6 +605,84 @@ void ChanMsgDialog::toggleRecommendItem( QTreeWidgetItem *item, int col )
         return;
 }
 
+
+void ChanMsgDialog::setupFileActions()
+{
+    QMenu *menu = new QMenu(tr("&File"), this);
+    menuBar()->addMenu(menu);
+
+    QAction *a;
+
+    a = new QAction(QIcon(":/images/textedit/filenew.png"), tr("&New"), this);
+    a->setShortcut(QKeySequence::New);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileNew()));
+    menu->addAction(a);
+
+    a = new QAction(QIcon(":/images/textedit/fileopen.png"), tr("&Open..."), this);
+    a->setShortcut(QKeySequence::Open);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
+    menu->addAction(a);
+
+    menu->addSeparator();
+
+    actionSave = a = new QAction(QIcon(":/images/textedit/filesave.png"), tr("&Save"), this);
+    a->setShortcut(QKeySequence::Save);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileSave()));
+    a->setEnabled(false);
+    menu->addAction(a);
+
+    a = new QAction(tr("Save &As..."), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
+    menu->addAction(a);
+    menu->addSeparator();
+
+    a = new QAction(QIcon(":/images/textedit/fileprint.png"), tr("&Print..."), this);
+    a->setShortcut(QKeySequence::Print);
+    connect(a, SIGNAL(triggered()), this, SLOT(filePrint()));
+    menu->addAction(a);
+
+    /*a = new QAction(QIcon(":/images/textedit/fileprint.png"), tr("Print Preview..."), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(filePrintPreview()));
+    menu->addAction(a);*/
+
+    a = new QAction(QIcon(":/images/textedit/exportpdf.png"), tr("&Export PDF..."), this);
+    a->setShortcut(Qt::CTRL + Qt::Key_D);
+    connect(a, SIGNAL(triggered()), this, SLOT(filePrintPdf()));
+    menu->addAction(a);
+
+    menu->addSeparator();
+
+    a = new QAction(tr("&Quit"), this);
+    a->setShortcut(Qt::CTRL + Qt::Key_Q);
+    connect(a, SIGNAL(triggered()), this, SLOT(close()));
+    menu->addAction(a);
+}
+
+void ChanMsgDialog::setupEditActions()
+{
+    QMenu *menu = new QMenu(tr("&Edit"), this);
+    menuBar()->addMenu(menu);
+
+    QAction *a;
+    a = actionUndo = new QAction(QIcon(":/images/textedit/editundo.png"), tr("&Undo"), this);
+    a->setShortcut(QKeySequence::Undo);
+    menu->addAction(a);
+    a = actionRedo = new QAction(QIcon(":/images/textedit/editredo.png"), tr("&Redo"), this);
+    a->setShortcut(QKeySequence::Redo);
+    menu->addAction(a);
+    menu->addSeparator();
+    a = actionCut = new QAction(QIcon(":/images/textedit/editcut.png"), tr("Cu&t"), this);
+    a->setShortcut(QKeySequence::Cut);
+    menu->addAction(a);
+    a = actionCopy = new QAction(QIcon(":/images/textedit/editcopy.png"), tr("&Copy"), this);
+    a->setShortcut(QKeySequence::Copy);
+    menu->addAction(a);
+    a = actionPaste = new QAction(QIcon(":/images/textedit/editpaste.png"), tr("&Paste"), this);
+    a->setShortcut(QKeySequence::Paste);
+    menu->addAction(a);
+    actionPaste->setEnabled(!QApplication::clipboard()->text().isEmpty());
+}
+
 void ChanMsgDialog::textBold()
 {
     QTextCharFormat fmt;
@@ -710,6 +845,143 @@ void ChanMsgDialog::alignmentChanged(Qt::Alignment a)
         actionAlignJustify->setChecked(true);
     }
 }
+
+void ChanMsgDialog::clipboardDataChanged()
+{
+    actionPaste->setEnabled(!QApplication::clipboard()->text().isEmpty());
+}
+
+void ChanMsgDialog::fileNew()
+{
+    if (maybeSave()) {
+        ui.msgText->clear();
+        //setCurrentFileName(QString());
+    }
+}
+
+void ChanMsgDialog::fileOpen()
+{
+    QString fn = QFileDialog::getOpenFileName(this, tr("Open File..."),
+                                              QString(), tr("HTML-Files (*.htm *.html);;All Files (*)"));
+    if (!fn.isEmpty())
+        load(fn);
+}
+
+bool ChanMsgDialog::fileSave()
+{
+    if (fileName.isEmpty())
+        return fileSaveAs();
+
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly))
+        return false;
+    QTextStream ts(&file);
+    ts.setCodec(QTextCodec::codecForName("UTF-8"));
+    ts << ui.msgText->document()->toHtml("UTF-8");
+    ui.msgText->document()->setModified(false);
+    return true;
+}
+
+bool ChanMsgDialog::fileSaveAs()
+{
+    QString fn = QFileDialog::getSaveFileName(this, tr("Save as..."),
+                                              QString(), tr("HTML-Files (*.htm *.html);;All Files (*)"));
+    if (fn.isEmpty())
+        return false;
+    setCurrentFileName(fn);
+    return fileSave();
+}
+
+void ChanMsgDialog::filePrint()
+{
+#ifndef QT_NO_PRINTER
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setFullPage(true);
+    QPrintDialog *dlg = new QPrintDialog(&printer, this);
+    if (ui.msgText->textCursor().hasSelection())
+        dlg->addEnabledOption(QAbstractPrintDialog::PrintSelection);
+    dlg->setWindowTitle(tr("Print Document"));
+    if (dlg->exec() == QDialog::Accepted) {
+        ui.msgText->print(&printer);
+    }
+    delete dlg;
+#endif
+}
+
+/*void TextEdit::filePrintPreview()
+{
+    PrintPreview *preview = new PrintPreview(textEdit->document(), this);
+    preview->setWindowModality(Qt::WindowModal);
+    preview->setAttribute(Qt::WA_DeleteOnClose);
+    preview->show();
+}*/
+
+void ChanMsgDialog::filePrintPdf()
+{
+#ifndef QT_NO_PRINTER
+    QString fileName = QFileDialog::getSaveFileName(this, "Export PDF",
+                                                    QString(), "*.pdf");
+    if (!fileName.isEmpty()) {
+        if (QFileInfo(fileName).suffix().isEmpty())
+            fileName.append(".pdf");
+        QPrinter printer(QPrinter::HighResolution);
+        printer.setOutputFormat(QPrinter::PdfFormat);
+        printer.setOutputFileName(fileName);
+        ui.msgText->document()->print(&printer);
+    }
+#endif
+}
+
+void ChanMsgDialog::setCurrentFileName(const QString &fileName)
+{
+    this->fileName = fileName;
+    ui.msgText->document()->setModified(false);
+
+    setWindowModified(false);
+}
+
+bool ChanMsgDialog::load(const QString &f)
+{
+    if (!QFile::exists(f))
+        return false;
+    QFile file(f);
+    if (!file.open(QFile::ReadOnly))
+        return false;
+
+    QByteArray data = file.readAll();
+    QTextCodec *codec = Qt::codecForHtml(data);
+    QString str = codec->toUnicode(data);
+    if (Qt::mightBeRichText(str)) {
+        ui.msgText->setHtml(str);
+    } else {
+        str = QString::fromLocal8Bit(data);
+        ui.msgText->setPlainText(str);
+    }
+
+    setCurrentFileName(f);
+    return true;
+}
+
+
+bool ChanMsgDialog::maybeSave()
+{
+    if (!ui.msgText->document()->isModified())
+        return true;
+    if (fileName.startsWith(QLatin1String(":/")))
+        return true;
+    QMessageBox::StandardButton ret;
+    ret = QMessageBox::warning(this, tr("Save Message"),
+                               tr("Message has not been Sent.\n"
+                                  "Do you want to save message ?"),
+                               QMessageBox::Save | QMessageBox::Discard
+                               | QMessageBox::Cancel);
+    if (ret == QMessageBox::Save)
+        return fileSave();
+    else if (ret == QMessageBox::Cancel)
+        return false;
+    return true;
+}
+
 
 void ChanMsgDialog::toggleContacts()
 {

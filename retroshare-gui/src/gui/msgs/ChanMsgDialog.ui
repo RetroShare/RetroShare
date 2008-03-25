@@ -406,6 +406,8 @@ p, li { white-space: pre-wrap; }
    </attribute>
    <addaction name="actionSend" />
    <addaction name="actionContactsView" />
+   <addaction name="separator" />
+   <addaction name="actionSaveas" />
   </widget>
   <action name="actionSend" >
    <property name="icon" >
@@ -426,6 +428,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionContactsView" >
    <property name="text" >
     <string>Contacts</string>
+   </property>
+  </action>
+  <action name="actionSaveas" >
+   <property name="text" >
+    <string>Save</string>
    </property>
   </action>
  </widget>

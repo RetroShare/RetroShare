@@ -165,6 +165,7 @@
         <file>images/rsmessenger16.png</file>
         <file>images/rsmessenger32.png</file>
         <file>images/rstray3.png</file>
+        <file>images/save24.png</file>
         <file>images/send24.png</file>
         <file>images/settings.png</file>
         <file>images/settings16.png</file>
@@ -179,6 +180,16 @@
         <file>images/textedit/textcenter.png</file>
         <file>images/textedit/textleft.png</file>
         <file>images/textedit/textright.png</file>
+        <file>images/textedit/editcopy.png</file>
+        <file>images/textedit/editcut.png</file>
+        <file>images/textedit/editpaste.png</file>
+        <file>images/textedit/editredo.png</file>
+        <file>images/textedit/editundo.png</file>
+        <file>images/textedit/exportpdf.png</file>
+        <file>images/textedit/filenew.png</file>
+        <file>images/textedit/fileopen.png</file>
+        <file>images/textedit/fileprint.png</file>
+        <file>images/textedit/filesave.png</file>
         <file>images/toaster/chat.png</file>
         <file>images/toaster/hangup.png</file>
         <file>images/toaster/pickup.png</file>

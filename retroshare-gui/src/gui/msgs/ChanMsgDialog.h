@@ -82,6 +82,14 @@ private slots:
   void toggleChannelItem( QTreeWidgetItem *item, int col );
   void toggleRecommendItem( QTreeWidgetItem *item, int col );
   
+  void fileNew();
+  void fileOpen();
+  bool fileSave();
+  bool fileSaveAs();
+  void filePrint();
+  //void filePrintPreview();
+  void filePrintPdf();
+  
   void textBold();
   void textUnderline();
   void textItalic();
@@ -93,9 +101,16 @@ private slots:
 
   void currentCharFormatChanged(const QTextCharFormat &format);
   void cursorPositionChanged();
+  
+  void clipboardDataChanged();
 
  
 private:
+	void setupFileActions();
+	void setupEditActions();
+	bool load(const QString &f);
+	bool maybeSave();
+	void setCurrentFileName(const QString &fileName);
 
     void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
     void fontChanged(const QFont &f);
@@ -109,12 +124,20 @@ private:
   QAction* deletechannelAct;
   QAction* createchannelmsgAct;
   
-  QAction *actionAlignLeft,
+  QAction *actionSave,
+		*actionAlignLeft,
         *actionAlignCenter,
         *actionAlignRight,
-        *actionAlignJustify;
+        *actionAlignJustify,
+        *actionUndo,
+        *actionRedo,
+        *actionCut,
+        *actionCopy,
+        *actionPaste;
 
   QTreeView *channelstreeView;
+  
+  QString fileName;
 
   bool mIsMsg; /* different behaviour for Msg or ChanMsg */
 
