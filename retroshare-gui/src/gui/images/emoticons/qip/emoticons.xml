@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messagin-emoticon-map>
+    <emoticon file="aa">>
+        <string>O:-)</string>
+        <string>O:)</string>
+        <string>O+)</string>
+        <string>O=)</string>
+        <string>0:-)</string>
+        <string>0:)</string>
+        <string>0+)</string>
+        <string>0=)</string>
+    </emoticon>
+    <emoticon file="ab">
+        <string>:-)</string>
+        <string>:)</string>
+        <string>=)</string>
+        <string>+)</string>
+    </emoticon>
+    <emoticon file="ac">
+        <string>:-(</string>
+        <string>:(</string>
+        <string>+(</string>
+        <string>=(</string>
+    </emoticon>
+    <emoticon file="ad">
+        <string>;-)</string>
+        <string>;)</string>
+        <string>^_~</string>
+    </emoticon>
+    <emoticon file="ae">
+        <string>:-P</string>
+        <string>:P</string>
+        <string>:-p</string>
+        <string>:p</string>
+        <string>+P</string>
+        <string>=P</string>
+        <string>+p</string>
+        <string>=p</string>
+        <string>:-b</string>
+        <string>:b</string>
+        <string>+b</string>
+        <string>=b</string>
+    </emoticon>
+    <emoticon file="af">
+        <string>8-)</string>
+        <string>8)</string>
+        <string>B)</string>
+    </emoticon>
+    <emoticon file="ag">
+        <string>:-D</string>
+        <string>:D</string>
+        <string>+D</string>
+        <string>=D</string>
+    </emoticon>
+    <emoticon file="ah">
+        <string>:-[</string>
+        <string>:[</string>
+        <string>;'></string>
+        <string>;-.</string>
+    </emoticon>
+    <emoticon file="ai">
+        <string>=-O</string>
+        <string>=O</string>
+        <string>=-o</string>
+        <string>=0</string>
+        <string>O_O</string>
+        <string>O_o</string>
+        <string>o_O</string>
+        <string>O_0</string>
+        <string>o_0</string>
+        <string>0_O</string>
+        <string>0_o</string>
+    </emoticon>
+    <emoticon file="aj">
+        <string>:-*</string>
+        <string>:*</string>
+        <string>:-{}</string>
+        <string>:{}</string>
+        <string>+{}</string>
+        <string>={}</string>
+        <string>^.^</string>
+    </emoticon>
+    <emoticon file="ak">
+        <string>:'(</string>
+        <string>:-'(</string>
+    </emoticon>
+    <emoticon file="al">
+        <string>:-X</string>
+        <string>:-x</string>
+        <string>X:</string>
+        <string>x:</string>
+        <string>:-#</string>
+        <string>:#</string>
+    </emoticon>
+    <emoticon file="am">
+        <string>>:o</string>
+        <string>>:O</string>
+        <string>>+O</string>
+        <string>>:o</string>
+        <string>>+o</string>
+        <string>:-@</string>
+    </emoticon>
+    <emoticon file="an">
+        <string>:-|</string>
+        <string>:|</string>
+        <string>=|</string>
+    </emoticon>
+    <emoticon file="ao">
+        <string>:-\</string>
+        <string>:-/</string>
+        <string>:\</string>
+        <string>*BEEE*</string>
+    </emoticon>
+    <emoticon file="ap">
+        <string>*JOKINGLY*</string>
+        <string>8P</string>
+        <string>8p</string>
+    </emoticon>
+    <emoticon file="aq">
+        <string>]:-></string>
+        <string>}:-></string>
+        <string>]:></string>
+        <string>}:></string>
+        <string>>:-]</string>
+        <string>>:]</string>
+        <string>*DIABLO*</string>
+    </emoticon>
+    <emoticon file="ar">
+        <string>[:-}</string>
+        <string>[:}</string>
+    </emoticon>
+    <emoticon file="as">
+        <string>*KISSED*</string>
+    </emoticon>
+    <emoticon file="at">
+        <string>:-!</string>
+        <string>;-!</string>
+        <string>:!</string>
+        <string>;!</string>
+        <string>:-~</string>
+        <string>;-~</string>
+    </emoticon>
+    <emoticon file="au">
+        <string>*TIRED*</string>
+        <string>|-0</string>
+    </emoticon>
+    <emoticon file="av">
+        <string>*STOP*</string>
+    </emoticon>
+    <emoticon file="aw">
+        <string>*KISSING*</string>
+    </emoticon>
+    <emoticon file="ax">
+        <string>@}->--</string>
+        <string>@}-:--</string>
+        <string>@>}--`---</string>
+    </emoticon>
+    <emoticon file="ay">
+        <string>*THUMBS UP*</string>
+        <string>*GOOD*</string>
+    </emoticon>
+    <emoticon file="az">
+        <string>*DRINK*</string>
+    </emoticon>
+    <emoticon file="ba">
+        <string>*IN LOVE*</string>
+    </emoticon>
+    <emoticon file="bb">
+        <string>@=</string>
+    </emoticon>
+    <emoticon file="bc">
+        <string>*HELP*</string>
+    </emoticon>
+    <emoticon file="bd">
+        <string>\m/</string>
+    </emoticon>
+    <emoticon file="be">
+        <string>%)</string>
+        <string>%-)</string>
+        <string>:$</string>
+    </emoticon>
+    <emoticon file="bf">
+        <string>*OK*</string>
+    </emoticon>
+    <emoticon file="bg">
+        <string>*WASSUP*</string>
+        <string>*SUP*</string>
+    </emoticon>
+    <emoticon file="bh">
+        <string>*SORRY*</string>
+    </emoticon>
+    <emoticon file="bi">
+        <graphic mime="image/gif">bi.gif</graphic>
+    </emoticon>
+    <emoticon file="bj">
+        <string>*ROFL*</string>
+    </emoticon>
+    <emoticon file="bk">
+        <string>*PARDON*</string>
+        <string>=]</string>
+    </emoticon>
+    <emoticon file="bl">
+        <string>*NO*</string>
+    </emoticon>
+    <emoticon file="bm">
+        <string>*CRAZY*</string>
+    </emoticon>
+    <emoticon file="bn">
+        <string>*DONT_KNOW*</string>
+        <string>*UNKNOWN*</string>
+    </emoticon>
+    <emoticon file="bo">
+        <string>*DANCE*</string>
+    </emoticon>
+    <emoticon file="bp">
+        <string>*YAHOO*</string>
+        <string>*YAHOO!*</string>
+    </emoticon>
+    <emoticon file="bq">
+        <string>;D</string>
+        <string>*ACUTE*</string>
+    </emoticon>
+    <emoticon file="br">
+        <string>*BB*</string>
+    </emoticon>
+    <emoticon file="bs">
+        <string>*BYE*</string>
+    </emoticon>
+    <emoticon file="bt">
+        <string>*HI*</string>
+    </emoticon>
+    <emoticon file="bu">
+        <string>*HAPPY*</string>
+    </emoticon>
+    <emoticon file="bv">
+        <string>*LOL*</string>
+    </emoticon>
+    <emoticon file="bw">
+        <string>*SCRATCH*</string>
+    </emoticon>
+    <emoticon file="bx">
+        <string>*YEEES!*</string>
+    </emoticon>
+    <emoticon file="by">
+        <string>*SMOKE*</string>
+    </emoticon>
+    <emoticon file="bz">
+        <string>*BOSS*</string>
+    </emoticon>
+    <emoticon file="ca">
+        <string>*SARCASTIC*</string>
+    </emoticon>
+    <emoticon file="cb">
+        <string>*BOAST*</string>
+    </emoticon>
+    <emoticon file="cd">
+        <string>*db*</string>
+    </emoticon>
+    <emoticon file="ce">
+        <string>*HOHO*</string>
+    </emoticon>
+    <emoticon file="cf">
+        <string>*SHOUT*</string>
+    </emoticon>
+    <emoticon file="cg">
+        <string>*VAVA*</string>
+    </emoticon>
+    <emoticon file="ch">
+        <string>*CENSORED*</string>
+    </emoticon>
+    <emoticon file="ci">
+        <string>*SEARCH*</string>
+    </emoticon>
+    <emoticon file="cj">
+        <string>*BEACH*</string>
+    </emoticon>
+    <emoticon file="ck">
+        <string>*FOCUS*</string>
+    </emoticon>
+    <emoticon file="cl">
+        <string>*HUNTER*</string>
+    </emoticon>
+    <emoticon file="cm">
+        <string>*GIRL_CRY*</string>
+        <string>*GIRL_CRAY*</string>
+    </emoticon>
+    <emoticon file="cn">
+        <string>*GIRL_CRAZY*</string>
+    </emoticon>
+    <emoticon file="co">
+        <string>*HOSPITAL*</string>
+    </emoticon>
+    <emoticon file="cp">
+        <string>*GIRL_IN_LOVE*</string>
+    </emoticon>
+    <emoticon file="cq">
+        <string>*PINKGLASSES*</string>
+    </emoticon>
+    <emoticon file="cr">
+        <string>*HYSTERIC*</string>
+    </emoticon>
+    <emoticon file="cs">
+        <string>*TENDER*</string>
+    </emoticon>
+    <emoticon file="ct">
+        <string>*SPRUSE_UP*</string>
+    </emoticon>
+    <emoticon file="cu">
+        <string>*FLIRT*</string>
+    </emoticon>
+    <emoticon file="cv">
+        <string>*GIVE_HEART*</string>
+    </emoticon>
+    <emoticon file="cw">
+        <string>*CURTSEY*</string>
+    </emoticon>
+    <emoticon file="cx">
+        <string>*FEMINIST*</string>
+    </emoticon>
+    <emoticon file="cy">
+        <string>*GIRL_DRINK*</string>
+    </emoticon>
+    <emoticon file="cz">
+        <string>*HAHA*</string>
+    </emoticon>
+    <emoticon file="da">
+        <string>*IMPOSSIBLE*</string>
+    </emoticon>
+    <emoticon file="db">
+        <string>*SIGH*</string>
+    </emoticon>
+    <emoticon file="dc">
+        <string>X-)</string>
+        <string>X)</string>
+    </emoticon>
+    <emoticon file="dd">
+        <string>*SLOW*</string>
+    </emoticon>
+    <emoticon file="de">
+        <string>*MOIL*</string>
+        <string>*JOB*</string>
+    </emoticon>
+    <emoticon file="df">
+        <string>*YES*</string>
+    </emoticon>
+    <emoticon file="dg">
+        <string>*MEGA_SHOK*</string>
+    </emoticon>
+    <emoticon file="dh">
+        <string>*THANK*</string>
+    </emoticon>
+    <emoticon file="di">
+        <string>*KING*</string>
+    </emoticon>
+    <emoticon file="dj">
+        <string>*LAZY*</string>
+    </emoticon>
+    <emoticon file="dk">
+        <string>*FRIEND*</string>
+    </emoticon>
+    <emoticon file="dl">
+        <string>*PUNISH*</string>
+    </emoticon>
+    <emoticon file="dm">
+        <string>*WIZARD*</string>
+    </emoticon>
+    <emoticon file="dn">
+        <string>*V*</string>
+    </emoticon>
+    <emoticon file="do">
+        <string>*SPITEFUL*</string>
+    </emoticon>
+    <emoticon file="dp">
+        <string>*TEASE*</string>
+    </emoticon>
+    <emoticon file="dr">
+        <string>*SCARE*</string>
+    </emoticon>
+    <emoticon file="ds">
+        <string>*THIS*</string>
+    </emoticon>
+    <emoticon file="dt">
+        <string>*PAINT*</string>
+    </emoticon>
+    <emoticon file="du">
+        <string>*TRAINING*</string>
+    </emoticon>
+    <emoticon file="dv">
+        <string>*PARTY*</string>
+    </emoticon>
+</messagin-emoticon-map>
