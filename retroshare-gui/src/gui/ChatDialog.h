@@ -58,15 +58,14 @@ void toggleSendItem( QTreeWidgetItem *item, int col );
   void sendMsg();
   
   void privchat();
-  
   void insertBold();
   void insertItalic();
   void insertUnderline();
   void insertStrike();
   void insertAutour(QString leftTruc,QString rightTruc);
+  
 
 private:
-
   
    QAction     *actionTextBold;
    QAction     *actionTextUnderline;

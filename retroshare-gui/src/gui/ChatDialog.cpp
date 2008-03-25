@@ -32,9 +32,10 @@
 
 #include <QTextCodec>
 #include <QTextEdit>
-#include <QToolBar>
 #include <QTextCursor>
 #include <QTextList>
+#include <QTextStream>
+#include <QTextDocumentFragment>
 
 #include <QContextMenuEvent>
 #include <QMenu>
@@ -51,8 +52,10 @@ ChatDialog::ChatDialog(QWidget *parent)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
-  connect(ui.lineEdit, SIGNAL(returnPressed( ) ), this, SLOT(sendMsg( ) ));
-  
+  //connect(ui.lineEdit, SIGNAL(returnPressed( ) ), this, SLOT(sendMsg( ) ));
+  connect(ui.Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
+  connect(ui.actionSend, SIGNAL( triggered (bool)), this, SLOT( sendMsg( ) ) );  
+  ui.actionSend->setShortcut(Qt::CTRL + Qt::SHIFT);
   
   connect( ui.msgSendList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgSendListCostumPopupMenu( QPoint ) ) );
  
@@ -62,7 +65,7 @@ ChatDialog::ChatDialog(QWidget *parent)
   connect(ui.textunderlineChatButton, SIGNAL(clicked()), this, SLOT(insertUnderline()));  
   connect(ui.textitalicChatButton, SIGNAL(clicked()), this, SLOT(insertItalic()));
 #endif
-
+  
 
 //  connect(ui.msgSendList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ), 
 //  this, SLOT(toggleSendItem( QTreeWidgetItem *, int ) ));
@@ -154,7 +157,7 @@ void ChatDialog::insertChat()
         QString timestamp = "[" + QDateTime::currentDateTime().toString("hh:mm:ss") + "]";
         QString name = QString::fromStdString(it->name);
         QString line = "<span style=\"color:#C00000\"><strong>" + timestamp + "</strong></span>" +			
-            		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span> <br>";
+            		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span>";
             		
         extraTxt += line;
 
@@ -176,7 +179,7 @@ void ChatDialog::insertChat()
 
 void ChatDialog::sendMsg()
 {
-    QLineEdit *lineWidget = ui.lineEdit;
+    QTextEdit *lineWidget = ui.lineEdit;
         
     QFont font = QFont("Comic Sans MS", 10);
 	font.setBold(ui.textboldChatButton->isChecked());
@@ -184,17 +187,18 @@ void ChatDialog::sendMsg()
 	font.setItalic(ui.textitalicChatButton->isChecked());
 
 	ChatInfo ci;
-	ci.msg = lineWidget->text().toStdWString();
+	//ci.msg = lineWidget->Text().toStdWString();
+	ci.msg = lineWidget->toHtml().toStdWString();
 	ci.chatflags = RS_CHAT_PUBLIC;
 	//ci.messageFont = font;
 	//ci.messageColor = textColor;
 
 	rsMsgs -> ChatSend(ci);
-	lineWidget -> setText(QString(""));
+	//lineWidget -> setText(QString(""));
+	ui.lineEdit->clear();
 
 	/* redraw send list */
 	insertSendList();
-
 
 }
 
@@ -342,6 +346,7 @@ void ChatDialog::insertBold()
 
 }
 
+
 void ChatDialog::insertItalic()
 {
   
@@ -368,10 +373,10 @@ void ChatDialog::insertStrike()
 
 void ChatDialog::insertAutour(QString leftTruc,QString rightTruc)
 {
-    int p0 = ui.lineEdit->cursorPosition();
+    /*int p0 = */ui.lineEdit->textCursor();
     QString stringToInsert = leftTruc ;
     stringToInsert.append(rightTruc);
-    ui.lineEdit->insert(stringToInsert);
-    ui.lineEdit->setCursorPosition(p0 + leftTruc.size());
+    ui.lineEdit->insertPlainText(stringToInsert);
+    //ui.lineEdit->setCursorPosition(p0 + leftTruc.size());
     
 }
