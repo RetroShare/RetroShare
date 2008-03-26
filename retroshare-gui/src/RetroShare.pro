@@ -92,6 +92,7 @@ HEADERS +=  rshare.h \
             util/Widget.h \
             util/rsversion.h \
             util/RsAction.h \
+            util/printpreview.h \
             gui/bwgraph/bwgraph.h \
             gui/chat/PopupChatDialog.h \
             gui/connect/ConnectDialog.h \
@@ -245,6 +246,7 @@ SOURCES += main.cpp \
             util/Widget.cpp \
             util/rsversion.cpp \
             util/RsAction.cpp \
+            util/printpreview.cpp \
             gui/bwgraph/bwgraph.cpp \
             gui/chat/PopupChatDialog.cpp \
             gui/connect/ConnectDialog.cpp \
@@ -331,13 +333,17 @@ macx {
 
 
 win32 {
+    OBJECTS_DIR = temp/obj
+    RCC_DIR = temp/qrc
+	UI_DIR  = temp/ui
+	MOC_DIR = temp/moc
 
     RC_FILE = gui/images/retroshare_win.rc
 
     LIBS += -L"../../../../lib" -lretroshare -lssl -lcrypto -lpthreadGC2d -lKadC -lminiupnpc -lz
     LIBS += -lqcheckers -lsmplayer 
     LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -gdi32
-    LIBS += -lole32
+    LIBS += -lole32 -lwinmm
 
 }
 

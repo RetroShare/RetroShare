@@ -53,6 +53,8 @@ void updateMessages ( QTreeWidgetItem * item, int column );
   void newmessage();
 
   void replytomessage();
+  void print();
+  void printpreview();
   
   void removemessage();
   void markMsgAsRead();  

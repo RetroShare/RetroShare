@@ -509,14 +509,14 @@
     <widget class="QPushButton" name="newmessageButton" >
      <property name="minimumSize" >
       <size>
-       <width>24</width>
-       <height>24</height>
+       <width>28</width>
+       <height>28</height>
       </size>
      </property>
      <property name="maximumSize" >
       <size>
-       <width>24</width>
-       <height>24</height>
+       <width>28</width>
+       <height>28</height>
       </size>
      </property>
      <property name="toolTip" >
@@ -526,20 +526,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">New Message&lt;/p>&lt;/body>&lt;/html></string>
      </property>
      <property name="styleSheet" >
-      <string>QPushButton
-{
-border-image: url(:/images/folder-draft24.png);
-}
-QPushButton:hover 
-{
-border-image: url(:/images/folder-draft24-hover.png);
-}
-
-QPushButton:pressed 
-{
-border-image: url(:/images/folder-draft24-pressed.png);
-}
-</string>
+      <string/>
      </property>
      <property name="text" >
       <string/>
@@ -559,14 +546,14 @@ border-image: url(:/images/folder-draft24-pressed.png);
     <widget class="QPushButton" name="replymessageButton" >
      <property name="minimumSize" >
       <size>
-       <width>24</width>
-       <height>24</height>
+       <width>28</width>
+       <height>28</height>
       </size>
      </property>
      <property name="maximumSize" >
       <size>
-       <width>24</width>
-       <height>24</height>
+       <width>28</width>
+       <height>28</height>
       </size>
      </property>
      <property name="toolTip" >
@@ -576,22 +563,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">reply to selected message&lt;/p>&lt;/body>&lt;/html></string>
      </property>
      <property name="styleSheet" >
-      <string>
-QPushButton
-{
-border-image: url(:/images/replymail24.png);
-}
-
-QPushButton:hover
-{
-border-image: url(:/images/replymail24-hover.png);
-}
-
-QPushButton:pressed
-{
-border-image: url(:/images/replymail-pressed.png);
-}
-</string>
+      <string/>
      </property>
      <property name="text" >
       <string/>
@@ -608,14 +580,14 @@ border-image: url(:/images/replymail-pressed.png);
     <widget class="QPushButton" name="removemessageButton" >
      <property name="minimumSize" >
       <size>
-       <width>24</width>
-       <height>24</height>
+       <width>28</width>
+       <height>28</height>
       </size>
      </property>
      <property name="maximumSize" >
       <size>
-       <width>24</width>
-       <height>24</height>
+       <width>28</width>
+       <height>28</height>
       </size>
      </property>
      <property name="toolTip" >
@@ -625,20 +597,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">remove selected message&lt;/p>&lt;/body>&lt;/html></string>
      </property>
      <property name="styleSheet" >
-      <string>QPushButton
-{
-border-image: url(:/images/deletemail24.png);
-}
-
-QPushButton:hover
-{
-border-image: url(:/images/deletemail-hover.png);
-}
-
-QPushButton:pressed
-{
-border-image: url(:/images/deletemail-pressed.png);
-}</string>
+      <string/>
      </property>
      <property name="text" >
       <string/>
@@ -652,19 +611,50 @@ border-image: url(:/images/deletemail-pressed.png);
     </widget>
    </item>
    <item row="0" column="3" >
+    <widget class="QPushButton" name="printbutton" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize" >
+      <size>
+       <width>28</width>
+       <height>28</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>28</width>
+       <height>28</height>
+      </size>
+     </property>
+     <property name="text" >
+      <string/>
+     </property>
+     <property name="iconSize" >
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="4" >
     <spacer>
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="sizeHint" >
       <size>
-       <width>40</width>
-       <height>20</height>
+       <width>571</width>
+       <height>24</height>
       </size>
      </property>
     </spacer>
    </item>
-   <item row="1" column="0" colspan="4" >
+   <item row="1" column="0" colspan="5" >
     <widget class="QSplitter" name="splitter_2" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
@@ -1180,6 +1170,16 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
   </layout>
+  <action name="actionPrint" >
+   <property name="text" >
+    <string>Print</string>
+   </property>
+  </action>
+  <action name="actionPrintPreview" >
+   <property name="text" >
+    <string>PrintPreview</string>
+   </property>
+  </action>
  </widget>
  <tabstops>
   <tabstop>newmessageButton</tabstop>

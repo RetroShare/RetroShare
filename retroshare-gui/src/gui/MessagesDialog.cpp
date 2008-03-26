@@ -23,7 +23,7 @@
 #include "MessagesDialog.h"
 #include "msgs/ChanMsgDialog.h"
 #include "gui/toaster/MessageToaster.h"
-
+#include "util/printpreview.h"
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
@@ -36,6 +36,8 @@
 #include <QPoint>
 #include <QMouseEvent>
 #include <QPixmap>
+#include <QPrintDialog>
+#include <QPrinter>
 #include <QDateTime>
 #include <QHeaderView>
 
@@ -62,6 +64,9 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   
   connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(newmessage()));
   connect(ui.removemessageButton, SIGNAL(clicked()), this, SLOT(removemessage()));
+  //connect(ui.printbutton, SIGNAL(clicked()), this, SLOT(print()));
+  connect(ui.actionPrint, SIGNAL(triggered()), this, SLOT(print()));
+  connect(ui.actionPrintPreview, SIGNAL(triggered()), this, SLOT(printpreview()));
 
   connect(ui.expandFilesButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
   connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getallrecommended()));
@@ -92,6 +97,19 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 	msglheader->resizeSection ( 1, 100 );
 	msglheader->resizeSection ( 2, 100 );
 	msglheader->resizeSection ( 3, 200 );
+	
+	ui.newmessageButton->setIcon(QIcon(QString(":/images/folder-draft24-pressed.png")));
+    ui.replymessageButton->setIcon(QIcon(QString(":/images/replymail-pressed.png")));
+    ui.removemessageButton->setIcon(QIcon(QString(":/images/deletemail-pressed.png")));
+    ui.printbutton->setIcon(QIcon(QString(":/images/print24.png")));
+    
+    /*Disabled Reply Button */
+    ui.replymessageButton->setEnabled(false);
+    
+    QMenu * printmenu = new QMenu();
+    printmenu->addAction(ui.actionPrint);
+    printmenu->addAction(ui.actionPrintPreview);
+    ui.printbutton->setMenu(printmenu);
 
 
   /* Hide platform specific features */
@@ -621,4 +639,26 @@ void MessagesDialog::markMsgAsRead()
 	return;
 }
 
+void MessagesDialog::print()
+{
+#ifndef QT_NO_PRINTER
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setFullPage(true);
+    QPrintDialog *dlg = new QPrintDialog(&printer, this);
+    if (ui.msgText->textCursor().hasSelection())
+        dlg->addEnabledOption(QAbstractPrintDialog::PrintSelection);
+    dlg->setWindowTitle(tr("Print Document"));
+    if (dlg->exec() == QDialog::Accepted) {
+        ui.msgText->print(&printer);
+    }
+    delete dlg;
+#endif
+}
 
+void MessagesDialog::printpreview()
+{
+    PrintPreview *preview = new PrintPreview(ui.msgText->document(), this);
+    preview->setWindowModality(Qt::WindowModal);
+    preview->setAttribute(Qt::WA_DeleteOnClose);
+    preview->show();
+}

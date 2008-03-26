@@ -155,6 +155,7 @@
         <file>images/peerdetails_16x16.png</file>
         <file>images/peers_16x16.png</file>
         <file>images/peers_24x24.png</file>
+        <file>images/print24.png</file>
         <file>images/removefriend16.png</file>
         <file>images/replymail-pressed.png</file>
         <file>images/replymail24-hover.png</file>
@@ -192,6 +193,8 @@
         <file>images/textedit/fileopen.png</file>
         <file>images/textedit/fileprint.png</file>
         <file>images/textedit/filesave.png</file>
+        <file>images/textedit/zoomin.png</file>
+        <file>images/textedit/zoomout.png</file>
         <file>images/toaster/chat.png</file>
         <file>images/toaster/hangup.png</file>
         <file>images/toaster/pickup.png</file>
