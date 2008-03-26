@@ -373,6 +373,7 @@ void MessagesDialog::insertMessages()
 
 		// Subject
 		item -> setText(2, QString::fromStdWString(it->title));
+		item -> setIcon(2, (QIcon(":/images/message-mail-read.png")));
 
 		// No of Files.
 		{
@@ -395,6 +396,7 @@ void MessagesDialog::insertMessages()
 				QFont qf = item->font(i);
 				qf.setBold(true);
 				item->setFont(i, qf);
+			    item -> setIcon(2, (QIcon(":/images/message-mail.png")));
 
 				//std::cerr << "Setting Item BOLD!" << std::endl;
 			}
