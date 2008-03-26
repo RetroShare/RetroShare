@@ -65,7 +65,9 @@ ChatDialog::ChatDialog(QWidget *parent)
   connect(ui.textunderlineChatButton, SIGNAL(clicked()), this, SLOT(insertUnderline()));  
   connect(ui.textitalicChatButton, SIGNAL(clicked()), this, SLOT(insertItalic()));
 #endif
+  connect(ui.fontsButton, SIGNAL(clicked()), this, SLOT(setFont()));  
   
+  ui.fontsButton->setIcon(QIcon(QString(":/images/fonts.png")));
 
 //  connect(ui.msgSendList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ), 
 //  this, SLOT(toggleSendItem( QTreeWidgetItem *, int ) ));
@@ -379,4 +381,13 @@ void ChatDialog::insertAutour(QString leftTruc,QString rightTruc)
     ui.lineEdit->insertPlainText(stringToInsert);
     //ui.lineEdit->setCursorPosition(p0 + leftTruc.size());
     
+}
+
+void ChatDialog::setFont()
+{
+    bool ok;
+    QFont font = QFontDialog::getFont(&ok, QFont(ui.lineEdit->toHtml()), this);
+    if (ok) {
+        ui.lineEdit->setFont(font);
+    }
 }

@@ -64,6 +64,8 @@ void toggleSendItem( QTreeWidgetItem *item, int col );
   void insertStrike();
   void insertAutour(QString leftTruc,QString rightTruc);
   
+  void setFont();
+  
 
 private:
   
