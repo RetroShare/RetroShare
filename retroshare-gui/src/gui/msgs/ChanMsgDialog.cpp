@@ -63,6 +63,8 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
   
   setupFileActions();
   setupEditActions();
+  setupViewActions();
+  setupInsertActions();
   
   RshareSettings config;
   config.loadWidgetInformation(this);
@@ -80,6 +82,7 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
   connect(ui.italicbtn, SIGNAL(clicked()), this, SLOT(textItalic()));
   connect(ui.colorbtn, SIGNAL(clicked()), this, SLOT(textColor()));
   connect(ui.imagebtn, SIGNAL(clicked()), this, SLOT(addImage()));
+  //connect(ui.linkbtn, SIGNAL(clicked()), this, SLOT(insertLink()));
   connect(ui.actionContactsView, SIGNAL(triggered()), this, SLOT(toggleContacts()));
   connect(ui.actionSaveas, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
   
@@ -686,6 +689,32 @@ void ChanMsgDialog::setupEditActions()
     actionPaste->setEnabled(!QApplication::clipboard()->text().isEmpty());
 }
 
+void ChanMsgDialog::setupViewActions()
+{
+    QMenu *menu = new QMenu(tr("&View"), this);
+    menuBar()->addMenu(menu);
+
+    QAction *a;
+
+    a = new QAction(QIcon(""), tr("&Contacts Sidebar"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(toggleContacts()));
+    menu->addAction(a);
+
+}
+
+void ChanMsgDialog::setupInsertActions()
+{
+    QMenu *menu = new QMenu(tr("&Insert"), this);
+    menuBar()->addMenu(menu);
+
+    QAction *a;
+
+    a = new QAction(QIcon(""), tr("&Image"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(addImage()));
+    menu->addAction(a);
+
+}
+
 void ChanMsgDialog::textBold()
 {
     QTextCharFormat fmt;
@@ -1019,4 +1048,6 @@ void  ChanMsgDialog::Create_New_Image_Tag( const QString urlremoteorlocal )
        //emit statusMessage(QString("Image new :").arg(urlremoteorlocal));
    //}
 }
+
+
 

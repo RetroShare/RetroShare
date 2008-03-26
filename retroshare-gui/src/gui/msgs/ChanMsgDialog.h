@@ -28,7 +28,6 @@
 #include <QPointer>
 #include <config/rsharesettings.h>
 
-
 #include "ui_ChanMsgDialog.h"
 
 class QAction;
@@ -89,8 +88,7 @@ private slots:
   void fileOpen();
   bool fileSave();
   bool fileSaveAs();
-  void filePrint();
-  
+  void filePrint(); 
 
   //void filePrintPreview();
   void filePrintPdf();
@@ -113,6 +111,9 @@ private slots:
 private:
 	void setupFileActions();
 	void setupEditActions();
+	void setupViewActions();
+	void setupInsertActions();
+	
 	bool load(const QString &f);
 	bool maybeSave();
 	//bool image_extension( QString nametomake );
@@ -145,6 +146,10 @@ private:
   
   QString fileName;
   QString nametomake;
+  
+  QHash<QString, QString> autoLinkDictionary;
+  QHash<QString, QString> autoLinkTitleDictionary;
+  QHash<QString, int> autoLinkTargetDictionary;
 
   bool mIsMsg; /* different behaviour for Msg or ChanMsg */
 
