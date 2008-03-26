@@ -69,7 +69,7 @@ int main(int argc, char **argv)
 
 	}
 
-	if (i % 300 == 20)
+	if (i % 300 == 120)
 	{
 		/* shutdown a forward */
 		upnp.enableUPnP(false);

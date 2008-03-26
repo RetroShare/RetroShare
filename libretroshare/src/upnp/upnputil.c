@@ -27,6 +27,7 @@ void DisplayInfos(struct UPNPUrls * urls,
 	char externalIPAddress[16];
 	char connectionType[64];
 	char status[64];
+	char lastconnerror[64];
 	unsigned int uptime;
 	unsigned int brUp, brDown;
 	UPNP_GetConnectionTypeInfo(urls->controlURL,
@@ -36,8 +37,8 @@ void DisplayInfos(struct UPNPUrls * urls,
 		printf("Connection Type : %s\n", connectionType);
 	else
 		printf("GetConnectionTypeInfo failed.\n");
-	UPNP_GetStatusInfo(urls->controlURL, data->servicetype, status, &uptime);
-	printf("Status : %s, uptime=%u\n", status, uptime);
+	UPNP_GetStatusInfo(urls->controlURL, data->servicetype, status, &uptime, lastconnerror);
+	printf("Status : %s, uptime=%u LastConnError %s\n", status, uptime, lastconnerror);
 	UPNP_GetLinkLayerMaxBitRates(urls->controlURL_CIF, data->servicetype_CIF,
 			&brDown, &brUp);
 	printf("MaxBitRateDown : %u bps   MaxBitRateUp %u bps\n", brDown, brUp);

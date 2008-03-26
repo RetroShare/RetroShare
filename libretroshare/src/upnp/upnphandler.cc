@@ -132,7 +132,7 @@ bool upnphandler::initUPnPState()
 	/* allocate memory */
 	uPnPConfigData *upcd = new uPnPConfigData;
 
-	upcd->devlist = upnpDiscover(2000);
+	upcd->devlist = upnpDiscover(2000, NULL, NULL);
 	if(upcd->devlist)
 	{
 		struct UPNPDev * device;
