@@ -148,6 +148,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 
 	/* find the pqi, */
 	pqiconnect *pqi = NULL;
+	uint32_t    type = 0;
 	std::map<uint32_t, pqiconnect *>::iterator it;
 		
 	/* start again */
@@ -167,6 +168,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 		if ((it->second)->thisNetInterface(ni))
 		{
 			pqi = (it->second);
+			type = (it->first);
 		}
 	}
 
@@ -184,7 +186,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 
 		/* notify */
 		if (pqipg)
-			pqipg->notifyConnect(PeerId(), true);
+			pqipg->notifyConnect(PeerId(), type, true);
 
 		if ((active) && (activepqi != pqi)) // already connected - trouble
 		{
@@ -202,13 +204,20 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 		{
 
 	  		pqioutput(PQL_WARNING, pqipersonzone, 
-				"CONNECT_SUCCESS->marking so!");
+				"CONNECT_SUCCESS->marking so! (resetting others)");
 			// mark as active.
 			active = true;
 			activepqi = pqi;
-
-
 	  		inConnectAttempt = false;
+
+			/* reset all other children? (clear up long UDP attempt) */
+			for(it = kids.begin(); it != kids.end(); it++)
+			{
+				if (it->second != activepqi)
+				{
+					it->second->reset();
+				}
+			}
 			return 1;
 		}
 		break;
@@ -243,7 +252,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 
 		/* notify up (But not if we are actually active: rtn -1 case above) */
 		if (pqipg)
-			pqipg->notifyConnect(PeerId(), false);
+			pqipg->notifyConnect(PeerId(), type, false);
 
 		return 1;
 
@@ -334,7 +343,7 @@ int 	pqiperson::stoplistening()
 	return 1;
 }
 
-int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, uint32_t period)
+int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, uint32_t period, uint32_t timeout)
 {
 	{
 	  std::ostringstream out;
@@ -342,6 +351,9 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, 
 	  out << " type: " << type;
 	  out << " addr: " << inet_ntoa(raddr.sin_addr);
 	  out << ":" << ntohs(raddr.sin_port);
+	  out << " delay: " << delay;
+	  out << " period: " << period;
+	  out << " timeout: " << timeout;
 	  out << std::endl;
 	  std::cerr << out.str();
 	  //pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
@@ -363,8 +375,12 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, 
 
 	/* set the parameters */
 	(it->second)->reset();
+
+	std::cerr << "pqiperson::connect() setting connect_parameters" << std::endl;
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_DELAY, delay);
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_PERIOD, period);
+	(it->second)->connect_parameter(NET_PARAM_CONNECT_TIMEOUT, timeout);
+
 	(it->second)->connect(raddr);	
 		
 	// flag if we started a new connectionAttempt.

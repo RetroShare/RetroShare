@@ -93,9 +93,8 @@ private:
 
 	BIO *tou_bio;  // specific to ssludp.
 
-	int remote_timeout;
-	int proxy_timeout;
-	int udp_connect_timeout;
+	//int remote_timeout;
+	//int proxy_timeout;
 
 	long listen_checktime;
 

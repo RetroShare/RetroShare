@@ -48,7 +48,6 @@ const int pqissludpzone = 3144;
 	 * This is long as the udp connect can take some time.
 	 */
 
-static const uint32_t PQI_SSLUDP_CONNECT_TIMEOUT = 600;  /* 10 minutes - give it longer! */
 static const uint32_t PQI_SSLUDP_DEF_CONN_PERIOD = 300;  /* 5  minutes? */
 
 /********** PQI SSL UDP STUFF **************************************/
@@ -187,7 +186,10 @@ int 	pqissludp::Initiate_Connection()
   		pqioutput(PQL_DEBUG_BASIC, pqissludpzone, out.str());
 	}
 
-	udp_connect_timeout = time(NULL) + PQI_SSLUDP_CONNECT_TIMEOUT;
+	mTimeoutTS = time(NULL) + mConnectTimeout;
+	std::cerr << "Setting Connect Timeout " << mConnectTimeout << " Seconds into Future " << std::endl;
+	std::cerr << " Connect Period is:" << mConnectPeriod <<  std::endl;
+
 	/* <===================== UDP Difference *******************/
 	if (0 != (err = tou_connect(sockfd, (struct sockaddr *) &remote_addr, 
 						sizeof(remote_addr), mConnectPeriod)))
@@ -250,7 +252,7 @@ int 	pqissludp::Basic_Connection_Complete()
 	  "pqissludp::Basic_Connection_Complete()...");
 
 
-	if (time(NULL) > udp_connect_timeout)
+	if (time(NULL) > mTimeoutTS)
 	{
 		pqioutput(PQL_DEBUG_BASIC, pqissludpzone, 
 	  		"pqissludp::Basic_Connection_Complete() Connection Timed Out!");
@@ -258,7 +260,10 @@ int 	pqissludp::Basic_Connection_Complete()
 
 	  	std::cerr << "pqissludp::Basic_Connection_Complete() Connection Timed Out!";
 		std::cerr << std::endl;
+	  	std::cerr << "pqissludp::Basic_Connection_Complete() Timeout Period: " << mConnectTimeout;
+		std::cerr << std::endl;
 		reset();
+		return -1;
 	}
 
 
@@ -396,8 +401,10 @@ int pqissludp::stoplistening()
 
 bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 {
+	std::cerr << "pqissludp::connect_parameter() type: " << type << "value: " << value << std::endl;
 	if (type == NET_PARAM_CONNECT_PERIOD)
 	{
+		std::cerr << "pqissludp::connect_parameter() PERIOD: " << value << std::endl;
 		mConnectPeriod = value;
 		return true;
 	}

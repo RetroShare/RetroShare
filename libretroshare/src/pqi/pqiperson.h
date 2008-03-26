@@ -68,6 +68,7 @@ virtual int	listen() 		{ return ni -> listen(); }
 virtual int	stoplistening() 	{ return ni -> stoplistening(); }
 virtual int 	reset() 		{ return ni -> reset(); }
 virtual int 	disconnect() 		{ return ni -> reset(); }
+virtual bool 	connect_parameter(uint32_t type, uint32_t value) { return ni -> connect_parameter(type, value);}
 
 	// get the contact from the net side!
 virtual std::string PeerId()
@@ -102,7 +103,7 @@ virtual ~pqiperson(); // must clean up children.
 int 	reset();
 int 	listen();
 int 	stoplistening();
-int	connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, uint32_t period);
+int	connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, uint32_t period, uint32_t timeout);
 
 	// add in connection method.
 int	addChildInterface(uint32_t type, pqiconnect *pqi);

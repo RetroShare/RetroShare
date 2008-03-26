@@ -88,6 +88,8 @@ const uint32_t RS_NET_FLAGS_ONLINE		= 0x0004;
 const uint32_t RS_NET_FLAGS_EXTERNAL_ADDR	= 0x0008;
 const uint32_t RS_NET_FLAGS_STABLE_UDP		= 0x0010;
 
+const uint32_t RS_TCP_STD_TIMEOUT_PERIOD	= 5; /* 5 seconds! */
+
 class peerAddrInfo
 {
 	public:
@@ -126,6 +128,8 @@ class peerConnectState
         time_t lastcontact; 
 
 	/***** Below here not stored permanently *****/
+
+	uint32_t connecttype;  // RS_NET_CONN_TCP_ALL / RS_NET_CONN_UDP_ALL
         time_t lastavailable;
 	time_t lastattempt;
 

@@ -343,7 +343,7 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 				break;
 			case RS_NET_CONN_UDP_DHT_SYNC:
 				autostr << "UDP (ETA: ";
-				autostr << 360 - (time(NULL) - pcs.currentConnAddr.ts);
+				autostr << 420 - (time(NULL) - pcs.currentConnAddr.ts);
 				autostr << ")";
 				break;
 			default:
@@ -351,6 +351,21 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 				break;
 		}
 
+	}
+	else if (pcs.state & RS_PEER_S_CONNECTED)
+	{
+		if (pcs.connecttype == RS_NET_CONN_TCP_ALL)
+		{
+			autostr << "TCP";
+		}
+		else if (pcs.connecttype == RS_NET_CONN_UDP_ALL)
+		{
+			autostr << "UDP";
+		}
+		else 
+		{
+			autostr << "Unknown Connect Method!";
+		}
 	}
 	else
 	{

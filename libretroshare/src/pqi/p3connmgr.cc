@@ -59,7 +59,7 @@ const uint32_t MAX_UPNP_INIT = 		30; /* seconds UPnP timeout */
 
 #define CONN_DEBUG 1
 
-const uint32_t P3CONNMGR_TCP_DEFAULT_DELAY = 10; /* 10 Seconds should be enough! */
+const uint32_t P3CONNMGR_TCP_DEFAULT_DELAY = 2; /* 2 Seconds? is it be enough! */
 const uint32_t P3CONNMGR_UDP_DHT_DELAY     = DHT_NOTIFY_PERIOD + 60; /* + 1 minute for DHT POST */
 const uint32_t P3CONNMGR_UDP_PROXY_DELAY   = 30;  /* 30 seconds (NOT IMPLEMENTED YET!) */
 
@@ -86,6 +86,7 @@ peerConnectState::peerConnectState()
 	:id("unknown"), 
 	 netMode(RS_NET_MODE_UNKNOWN), visState(RS_VIS_STATE_STD), 
 	 lastcontact(0),
+	 connecttype(0),
 	 lastavailable(0),
 	 lastattempt(0),
 	 name("nameless"), state(0), actions(0), 
@@ -1328,6 +1329,7 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags)
 		it->second.actions |= RS_PEER_CONNECTED;
 		mStatusChanged = true;
 		it->second.lastcontact = time(NULL);  /* time of connect */
+		it->second.connecttype = flags;
 
 		return true;
 	}
@@ -2774,12 +2776,7 @@ bool  p3ConnectMgr::addBootstrapStunPeers()
 	struct sockaddr_in dummyaddr;
 	uint32_t flags = 0;
 
-	// Two Defaults for The Initial Release.
-	id = "7ad672ea4d4af8560d5230aff3c88b59";
-	stunCollect(RsUtil::HashId(id, false), dummyaddr, flags);
-
-	id = "8ad7c08e7778e0289de04843bf57a6ae";
-	stunCollect(RsUtil::HashId(id, false), dummyaddr, flags);
+	/* only use the Bootstrap system now */
 
 	return true;
 }

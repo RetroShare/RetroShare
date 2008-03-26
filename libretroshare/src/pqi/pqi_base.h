@@ -33,6 +33,7 @@
 #include <iostream>
 #include <functional>
 #include <algorithm>
+#include <inttypes.h>
 
 #include "pqi/pqinetwork.h"
 
@@ -345,8 +346,9 @@ static const int NET_CONNECT_UNREACHABLE  = 3;
 static const int NET_CONNECT_FIREWALLED   = 4;
 static const int NET_CONNECT_FAILED       = 5;
 
-static const uint32_t NET_PARAM_CONNECT_DELAY  = 1;
-static const uint32_t NET_PARAM_CONNECT_PERIOD = 2;
+static const uint32_t NET_PARAM_CONNECT_DELAY   = 1;
+static const uint32_t NET_PARAM_CONNECT_PERIOD  = 2;
+static const uint32_t NET_PARAM_CONNECT_TIMEOUT = 3;
 
 class NetInterface
 {
@@ -366,7 +368,7 @@ virtual int disconnect() = 0;
 virtual int reset() = 0;
 virtual std::string PeerId() { return peerId; }
 
-virtual bool connect_parameter(uint32_t type, uint32_t value) { return false; }
+virtual bool connect_parameter(uint32_t type, uint32_t value) = 0;
 
 protected:
 PQInterface *parent() { return p; }

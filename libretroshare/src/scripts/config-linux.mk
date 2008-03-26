@@ -14,8 +14,7 @@ PQI_USE_XPGP = 1
 #USE_FILELOOK = 1
 
 SSL_DIR=../../../../../src/openssl-0.9.7g-xpgp-0.1c
-KADC_DIR=../../../../../src/KadC
-UPNPC_DIR=../../../../../src/miniupnpc-20070515
+UPNPC_DIR=../../../../../src/miniupnpc-1.0
 
 include $(RS_TOP_DIR)/scripts/checks.mk
 
@@ -73,7 +72,6 @@ ifdef PQI_USE_XPGP
 	LIBS +=  -L$(SSL_DIR) 
   endif
 LIBS +=  -lssl -lcrypto  -lpthread
-#LIBS +=  -L$(KADC_DIR) -lKadC 
 LIBS +=  -L$(UPNPC_DIR) -lminiupnpc
 LIBS +=  $(XLIB) -ldl -lz 
 	

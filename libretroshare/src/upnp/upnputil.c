@@ -116,7 +116,7 @@ bool SetRedirectAndTest(struct UPNPUrls * urls,
 	char externalIPAddress[16];
 	char intClient[16];
 	char intPort[6];
-	char leaseDuration[] = "600"; /* 10 mins */
+	char leaseDuration[] = "3600"; /* 60 mins */
 	int r;
 	int ok = 1;
 
@@ -141,11 +141,11 @@ bool SetRedirectAndTest(struct UPNPUrls * urls,
 		printf("GetExternalIPAddress failed.\n");
 
 // Unix at the moment!	
-//	r = UPNP_AddPortMapping(urls->controlURL, data->servicetype,
-//	                        eport, iport, iaddr, 0, leaseDuration, proto);
-
 	r = UPNP_AddPortMapping(urls->controlURL, data->servicetype,
-	                        eport, iport, iaddr, 0, proto);
+	                        eport, iport, iaddr, 0, leaseDuration, proto);
+
+//	r = UPNP_AddPortMapping(urls->controlURL, data->servicetype,
+//	                        eport, iport, iaddr, 0, proto);
 	if(r==0)
 	{
 		printf("AddPortMapping(%s, %s, %s) failed\n", eport, iport, iaddr);

@@ -135,6 +135,7 @@ virtual int listen();
 virtual int stoplistening();
 virtual int disconnect();
 virtual int reset();
+virtual bool connect_parameter(uint32_t type, uint32_t value) { return false; }
 
 	// Bin Interface.
 virtual int     tick();

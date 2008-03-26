@@ -69,7 +69,7 @@ int     removePeer(std::string id);
 int     connectPeer(std::string id);
 
 	/*** callback from children ****/
-bool    notifyConnect(std::string id, bool success);
+bool    notifyConnect(std::string id, uint32_t type, bool success);
 
 	// tick interfaces.
 virtual int tick();

@@ -14,7 +14,7 @@ PQI_USE_XPGP = 1
 #USE_FILELOOK = 1
 
 SSL_DIR=../../../../../src/openssl-0.9.7g-xpgp-0.1c
-UPNPC_DIR=../../../../../src/miniupnpc-20070515
+UPNPC_DIR=../../../../../src/miniupnpc-1.0
 
 include $(RS_TOP_DIR)/scripts/checks.mk
 

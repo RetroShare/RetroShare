@@ -206,10 +206,10 @@ int     pqipersongrp::load_config()
 		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone,
 			"pqipersongrp::load_config() Loading Default Rates!");
 
-		setMaxRate(true, 50.0);
-		setMaxRate(false,50.0);
-		setMaxIndivRate(true, 50.0);
-		setMaxIndivRate(false, 50.0);
+		setMaxRate(true,  500.0);
+		setMaxRate(false, 500.0);
+		setMaxIndivRate(true, 100.0);
+		setMaxIndivRate(false, 100.0);
 	}
 
 	return 1;
@@ -332,6 +332,7 @@ int     pqipersongrp::connectPeer(std::string id)
 	struct sockaddr_in addr;
 	uint32_t delay;
 	uint32_t period;
+	uint32_t timeout;
 	uint32_t type;
 
 	if (!mConnMgr->connectAttempt(id, addr, delay, period, type))
@@ -352,29 +353,42 @@ int     pqipersongrp::connectPeer(std::string id)
 	uint32_t ptype;
 	if (type & RS_NET_CONN_TCP_ALL)
 	{
-		std::cerr << " pqipersongrp::connectPeer() connecting with TCP";
-		std::cerr << std::endl;
 		ptype = PQI_CONNECT_TCP;
+		timeout = RS_TCP_STD_TIMEOUT_PERIOD; 
+		std::cerr << " pqipersongrp::connectPeer() connecting with TCP: Timeout :" << timeout;
+		std::cerr << std::endl;
 	}
 	else if (type & RS_NET_CONN_UDP_ALL)
 	{
-		std::cerr << " pqipersongrp::connectPeer() connecting with UDP";
-		std::cerr << std::endl;
 		ptype = PQI_CONNECT_UDP;
+		timeout = period * 2;
+		std::cerr << " pqipersongrp::connectPeer() connecting with UDP: Timeout :" << timeout;
+		std::cerr << std::endl;
 	}
 	else
 		return 0;
 
-	p->connect(ptype, addr, delay, period);
+	p->connect(ptype, addr, delay, period, timeout);
 
 	/* */
 	return 1;
 }
 
-bool    pqipersongrp::notifyConnect(std::string id, bool success)
+bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success)
 {
+	uint32_t type = 0;
+	if (ptype == PQI_CONNECT_TCP)
+	{
+		type = RS_NET_CONN_TCP_ALL;
+	}
+	else
+	{
+		type = RS_NET_CONN_UDP_ALL;
+	}
+
+	
 	if (mConnMgr)
-		mConnMgr->connectResult(id, success, 0);
+		mConnMgr->connectResult(id, success, type);
 	
 	return (NULL != mConnMgr);
 }

@@ -196,6 +196,8 @@ virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd)
 
 	uint32_t mConnectDelay;
 	time_t   mConnectTS;
+	uint32_t mConnectTimeout;
+	time_t   mTimeoutTS;
 
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
