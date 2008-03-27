@@ -51,6 +51,8 @@ ChatDialog::ChatDialog(QWidget *parent)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
+  
+  setWindowIcon(QIcon(QString(":/images/rstray3.png")));
 
   //connect(ui.lineEdit, SIGNAL(returnPressed( ) ), this, SLOT(sendMsg( ) ));
   connect(ui.Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
@@ -60,13 +62,13 @@ ChatDialog::ChatDialog(QWidget *parent)
   connect( ui.msgSendList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgSendListCostumPopupMenu( QPoint ) ) );
  
 #ifdef CHAT_IMPROVEMENTS
-  connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(setColor())); 
-  connect(ui.textboldChatButton, SIGNAL(clicked()), this, SLOT(insertBold()));  
-  connect(ui.textunderlineChatButton, SIGNAL(clicked()), this, SLOT(insertUnderline()));  
-  connect(ui.textitalicChatButton, SIGNAL(clicked()), this, SLOT(insertItalic()));
+  connect(ui.textboldChatButton, SIGNAL(clicked()), this, SLOT(setFont()));  
+  connect(ui.textunderlineChatButton, SIGNAL(clicked()), this, SLOT(setFont()));  
+  connect(ui.textitalicChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
+  connect(ui.fontsButton, SIGNAL(clicked()), this, SLOT(getFont()));  
+  connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(setColor()));
 #endif
-  connect(ui.fontsButton, SIGNAL(clicked()), this, SLOT(setFont()));  
-  
+   
   ui.fontsButton->setIcon(QIcon(QString(":/images/fonts.png")));
 
 //  connect(ui.msgSendList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ), 
@@ -84,6 +86,8 @@ ChatDialog::ChatDialog(QWidget *parent)
   QPixmap pxm(24,24);
   pxm.fill(textColor);
   ui.colorChatButton->setIcon(pxm);
+  
+  QFont font = QFont("Comic Sans MS", 10);
 
 
   /* Hide platform specific features */
@@ -135,11 +139,7 @@ void ChatDialog::insertChat()
 
     QTextEdit *msgWidget = ui.msgText;
 	std::list<ChatInfo>::iterator it;
-	
-	//QString color = ci.messageColor.name();
-	//QString nickColor;
-	//QString font  = ci.messageFont.family();
-	//QString fontSize = QString::number(ci.messageFont.pointSize());
+
 
 	/* add in lines at the bottom */
 	for(it = newchat.begin(); it != newchat.end(); it++)
@@ -182,21 +182,13 @@ void ChatDialog::insertChat()
 void ChatDialog::sendMsg()
 {
     QTextEdit *lineWidget = ui.lineEdit;
-        
-    QFont font = QFont("Comic Sans MS", 10);
-	font.setBold(ui.textboldChatButton->isChecked());
-	font.setUnderline(ui.textunderlineChatButton->isChecked());
-	font.setItalic(ui.textitalicChatButton->isChecked());
 
 	ChatInfo ci;
 	//ci.msg = lineWidget->Text().toStdWString();
 	ci.msg = lineWidget->toHtml().toStdWString();
 	ci.chatflags = RS_CHAT_PUBLIC;
-	//ci.messageFont = font;
-	//ci.messageColor = textColor;
 
 	rsMsgs -> ChatSend(ci);
-	//lineWidget -> setText(QString(""));
 	ui.lineEdit->clear();
 
 	/* redraw send list */
@@ -289,18 +281,6 @@ void ChatDialog::toggleSendItem( QTreeWidgetItem *item, int col )
 	return;
 }
 
-void ChatDialog::setColor()
-{
-	textColor = QColorDialog::getColor(Qt::black, this);
-	QPixmap pxm(24,24);
-	pxm.fill(textColor);
-	ui.lineEdit->setText(QString(tr("<a style=\"color:")) + (textColor.name()));
-    this->insertAutour(tr("\">"), tr("</style>"));
-    this->ui.lineEdit->setFocus();
-	ui.colorChatButton->setIcon(pxm);
-}
-
-
 void ChatDialog::privchat()
 {
 
@@ -340,50 +320,15 @@ void ChatDialog::clearOldChats()
 
 }
 
-void ChatDialog::insertBold()
+void ChatDialog::setColor()
 {
-  
-  this->insertAutour(tr("<b>"), tr("</b>"));
-  this->ui.lineEdit->setFocus();
-
+	textColor = QColorDialog::getColor(Qt::black, this);
+	QPixmap pxm(24,24);
+	pxm.fill(textColor);
+	ui.colorChatButton->setIcon(pxm);
 }
 
-
-void ChatDialog::insertItalic()
-{
-  
-  this->insertAutour(tr("<i>"), tr("</i>"));
-  this->ui.lineEdit->setFocus();
-
-}
-
-void ChatDialog::insertUnderline()
-{
-  
-  this->insertAutour(tr("<u>"), tr("</u>"));
-  this->ui.lineEdit->setFocus();
-
-}
-
-void ChatDialog::insertStrike()
-{
-  
-  this->insertAutour(tr("<s>"), tr("</s>"));
-  this->ui.lineEdit->setFocus();
-
-}
-
-void ChatDialog::insertAutour(QString leftTruc,QString rightTruc)
-{
-    /*int p0 = */ui.lineEdit->textCursor();
-    QString stringToInsert = leftTruc ;
-    stringToInsert.append(rightTruc);
-    ui.lineEdit->insertPlainText(stringToInsert);
-    //ui.lineEdit->setCursorPosition(p0 + leftTruc.size());
-    
-}
-
-void ChatDialog::setFont()
+void ChatDialog::getFont()
 {
     bool ok;
     QFont font = QFontDialog::getFont(&ok, QFont(ui.lineEdit->toHtml()), this);
@@ -391,3 +336,19 @@ void ChatDialog::setFont()
         ui.lineEdit->setFont(font);
     }
 }
+
+void ChatDialog::setFont()
+{
+  
+  QFont font = QFont("Comic Sans MS", 10);
+  
+  font.setBold(ui.textboldChatButton->isChecked());
+  font.setUnderline(ui.textunderlineChatButton->isChecked());
+  font.setItalic(ui.textitalicChatButton->isChecked());
+  ui.lineEdit->setFont(font);
+  
+}
+
+
+
+

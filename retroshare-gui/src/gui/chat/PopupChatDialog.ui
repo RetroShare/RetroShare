@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>565</width>
-    <height>349</height>
+    <width>560</width>
+    <height>410</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -14,40 +14,19 @@
   </property>
   <widget class="QWidget" name="centralwidget" >
    <layout class="QGridLayout" >
-    <property name="leftMargin" >
-     <number>0</number>
-    </property>
-    <property name="topMargin" >
-     <number>0</number>
-    </property>
     <property name="rightMargin" >
-     <number>0</number>
-    </property>
-    <property name="bottomMargin" >
-     <number>0</number>
-    </property>
-    <property name="horizontalSpacing" >
-     <number>0</number>
-    </property>
-    <property name="verticalSpacing" >
      <number>0</number>
     </property>
     <item row="0" column="0" >
      <layout class="QGridLayout" >
-      <property name="leftMargin" >
-       <number>9</number>
-      </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>0</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>9</number>
-      </property>
       <item row="0" column="0" >
        <widget class="QTextBrowser" name="textBrowser" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="MinimumExpanding" hsizetype="Expanding" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize" >
          <size>
           <width>0</width>
@@ -64,12 +43,6 @@
       </item>
       <item row="1" column="0" >
        <layout class="QGridLayout" >
-        <property name="horizontalSpacing" >
-         <number>0</number>
-        </property>
-        <property name="verticalSpacing" >
-         <number>0</number>
-        </property>
         <item row="0" column="0" >
          <widget class="QWidget" native="1" name="widget" >
           <property name="maximumSize" >
@@ -82,6 +55,21 @@
            <string/>
           </property>
           <layout class="QGridLayout" >
+           <property name="leftMargin" >
+            <number>0</number>
+           </property>
+           <property name="topMargin" >
+            <number>0</number>
+           </property>
+           <property name="rightMargin" >
+            <number>0</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>0</number>
+           </property>
+           <property name="horizontalSpacing" >
+            <number>6</number>
+           </property>
            <item row="0" column="0" >
             <spacer>
              <property name="orientation" >
@@ -109,6 +97,9 @@
                <height>24</height>
               </size>
              </property>
+             <property name="toolTip" >
+              <string>Bold</string>
+             </property>
              <property name="text" >
               <string/>
              </property>
@@ -133,6 +124,9 @@
                <width>24</width>
                <height>24</height>
               </size>
+             </property>
+             <property name="toolTip" >
+              <string>Underline</string>
              </property>
              <property name="text" >
               <string/>
@@ -159,6 +153,9 @@
                <height>24</height>
               </size>
              </property>
+             <property name="toolTip" >
+              <string>Italic</string>
+             </property>
              <property name="text" >
               <string/>
              </property>
@@ -183,6 +180,9 @@
                <width>24</width>
                <height>24</height>
               </size>
+             </property>
+             <property name="toolTip" >
+              <string>Italic</string>
              </property>
              <property name="text" >
               <string/>
@@ -209,6 +209,9 @@
                <height>24</height>
               </size>
              </property>
+             <property name="toolTip" >
+              <string>Text Color</string>
+             </property>
              <property name="text" >
               <string/>
              </property>
@@ -218,18 +221,38 @@
          </widget>
         </item>
         <item row="1" column="0" >
-         <layout class="QGridLayout" >
-          <item row="0" column="0" >
-           <widget class="QLineEdit" name="lineEdit" />
-          </item>
-          <item row="0" column="1" >
-           <widget class="QPushButton" name="sendButton" >
-            <property name="text" >
-             <string>Send</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QTextEdit" name="chattextEdit" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Maximum" hsizetype="Expanding" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0" >
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>351</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="1" >
+         <widget class="QPushButton" name="sendButton" >
+          <property name="text" >
+           <string>Send</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -244,6 +267,18 @@
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QGridLayout" >
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
+       </property>
        <item row="0" column="0" >
         <widget class="QLabel" name="avatarlabel" >
          <property name="minimumSize" >
@@ -279,8 +314,8 @@ border-image: url(:/images/mystatus_bg.png);
          </property>
          <property name="sizeHint" >
           <size>
-           <width>71</width>
-           <height>138</height>
+           <width>61</width>
+           <height>141</height>
           </size>
          </property>
         </spacer>
@@ -312,6 +347,19 @@ border-image: url(:/images/mystatus_bg.png);
           <set>Qt::AlignCenter</set>
          </property>
         </widget>
+       </item>
+       <item row="3" column="0" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>61</width>
+           <height>41</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>

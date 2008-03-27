@@ -53,21 +53,15 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   showAvatarFrame(true);
   connect(ui.avatarFrameButton, SIGNAL(toggled(bool)), this, SLOT(showAvatarFrame(bool)));
 
-  connect(ui.lineEdit, SIGNAL(returnPressed( ) ), this, SLOT(sendChat( ) ));
+  //connect(ui.chattextEdit, SIGNAL(returnPressed( ) ), this, SLOT(sendChat( ) ));
   
   connect(ui.sendButton, SIGNAL(clicked( ) ), this, SLOT(sendChat( ) ));
-
-  connect(ui.colorButton, SIGNAL(clicked()), this, SLOT(setColor()));
-  //connect(ui.fontButton, SIGNAL(clicked()), this, SLOT(setFont())); 
    
-  connect(ui.textboldButton, SIGNAL(clicked()), this, SLOT(insertBold()));  
-  connect(ui.textunderlineButton, SIGNAL(clicked()), this, SLOT(insertUnderline()));  
-  connect(ui.textitalicButton, SIGNAL(clicked()), this, SLOT(insertItalic()));
-  
-  connect(ui.actionBold, SIGNAL(triggered()), this, SLOT(insertBold()));
-  connect(ui.actionItalic, SIGNAL(triggered()), this, SLOT(insertItalic()));
-  connect(ui.actionUnderline, SIGNAL(triggered()), this, SLOT(insertUnderline()));
-  connect(ui.actionStrike, SIGNAL(triggered()), this, SLOT(insertStrike()));
+  connect(ui.textboldButton, SIGNAL(clicked()), this, SLOT(setFont()));  
+  connect(ui.textunderlineButton, SIGNAL(clicked()), this, SLOT(setFont()));  
+  connect(ui.textitalicButton, SIGNAL(clicked()), this, SLOT(setFont()));
+  connect(ui.fontButton, SIGNAL(clicked()), this, SLOT(getFont())); 
+  connect(ui.colorButton, SIGNAL(clicked()), this, SLOT(setColor()));
 
   // Create the status bar
   std::ostringstream statusstr;
@@ -82,24 +76,28 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   //ui.avatarlabel->setPixmap(QPixmap(":/images/retrosharelogo1.png"));
   
   setWindowIcon(QIcon(QString(":/images/rstray3.png")));
+  
   ui.textboldButton->setIcon(QIcon(QString(":/images/edit-bold.png")));
   ui.textunderlineButton->setIcon(QIcon(QString(":/images/edit-underline.png")));
   ui.textitalicButton->setIcon(QIcon(QString(":/images/edit-italic.png")));
   ui.fontButton->setIcon(QIcon(QString(":/images/fonts.png")));
   
-  ui.actionBold->setIcon(QIcon(":/images/edit-bold.png"));
-  ui.actionUnderline->setIcon(QIcon(":/images/edit-underline.png"));
-  ui.actionItalic->setIcon(QIcon(":/images/edit-italic.png"));
-  //ui.actionStrike->setIcon(QIcon(":/exit.png"));
-  
-  QMenu * fontmenu = new QMenu();
+  ui.textboldButton->setCheckable(true);
+  ui.textunderlineButton->setCheckable(true);
+  ui.textitalicButton->setCheckable(true);
+   
+  /*QMenu * fontmenu = new QMenu();
   fontmenu->addAction(ui.actionBold);
   fontmenu->addAction(ui.actionUnderline);
   fontmenu->addAction(ui.actionItalic);
   fontmenu->addAction(ui.actionStrike);
-  ui.fontButton->setMenu(fontmenu);
+  ui.fontButton->setMenu(fontmenu);*/
   
-
+  QPixmap pxm(24,24);
+  pxm.fill(Qt::black);
+  ui.colorButton->setIcon(pxm);
+  
+  QFont font = QFont("Comic Sans MS", 10);
 
 }
 
@@ -130,40 +128,6 @@ void PopupChatDialog::closeEvent (QCloseEvent * event)
     hide();
     event->ignore();
 }
-
-void PopupChatDialog::setColor()
-{
-    QColor col = QColorDialog::getColor(Qt::green, this);
-    if (col.isValid()) {
-
-        ui.colorButton->setPalette(QPalette(col));
-        ui.lineEdit->setText(QString(tr("<a style=\"color:")) + (col.name()));
-        this->insertAutour(tr("\">"), tr("</style>"));
-        this->ui.lineEdit->setFocus();
-        QTextCharFormat fmt;
-        fmt.setForeground(col);
-        colorChanged(col);
-    }
-}
-
-void PopupChatDialog::setFont()
-{
-    bool ok;
-    QFont font = QFontDialog::getFont(&ok, QFont(ui.lineEdit->text()), this);
-    if (ok) {
-        //ui.lineEdit->setText(font.key());
-        ui.lineEdit->setFont(font);
-    }
-}
-
-
-void PopupChatDialog::colorChanged(const QColor &c)
-{
-    QPixmap pix(16, 16);
-    pix.fill(c);
-    ui.colorButton->setIcon(pix);
-}
-
 
 void PopupChatDialog::updateChat()
 {
@@ -211,7 +175,7 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
             //QString pre = tr("Peer:" );
 	    QString name = QString::fromStdString(ci->name);
 	    QString line = "<span style=\"color:#1D84C9\"><strong>" + timestamp + 
-					 " " + name + "</strong></span> \n<br>";
+					 " " + name + "</strong></span>";
 
 		extraTxt += line;
 
@@ -231,7 +195,7 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 
 void PopupChatDialog::sendChat()
 {
-        QLineEdit *lineWidget = ui.lineEdit;
+        QTextEdit *chatWidget = ui.chattextEdit;
 
         ChatInfo ci;
 
@@ -245,7 +209,7 @@ void PopupChatDialog::sendChat()
           rsiface->unlockData(); /* Unlock Interface */
 	}
 
-        ci.msg = lineWidget->text().toStdWString();
+        ci.msg = chatWidget->toHtml().toStdWString();
         ci.chatflags = RS_CHAT_PRIVATE;
 
 	addChatMsg(&ci);
@@ -255,7 +219,7 @@ void PopupChatDialog::sendChat()
 	ci.name = dialogName;
 
         rsMsgs -> ChatSend(ci);
-        lineWidget -> setText(QString(""));
+        chatWidget ->clear();
 
         /* redraw send list */
 }
@@ -278,47 +242,52 @@ void PopupChatDialog::showAvatarFrame(bool show)
     }
 }
 
-void PopupChatDialog::insertBold()
+void PopupChatDialog::setColor()
 {
-  
-  this->insertAutour(tr("<b>"), tr("</b>"));
-  this->ui.lineEdit->setFocus();
+    QColor col = QColorDialog::getColor(Qt::black, this);
+    if (col.isValid()) {
 
+        ui.colorButton->setPalette(QPalette(col));
+        ui.chattextEdit->setTextColor(QColor(col));
+        QTextCharFormat fmt;
+        fmt.setForeground(col);
+        mergeFormatOnWordOrSelection(fmt);
+        colorChanged(col);
+    }
 }
 
-void PopupChatDialog::insertItalic()
+void PopupChatDialog::colorChanged(const QColor &c)
 {
-  
-  this->insertAutour(tr("<i>"), tr("</i>"));
-  this->ui.lineEdit->setFocus();
-
+    QPixmap pix(16, 16);
+    pix.fill(c);
+    ui.colorButton->setIcon(pix);
 }
 
-void PopupChatDialog::insertUnderline()
+void PopupChatDialog::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
 {
-  
-  this->insertAutour(tr("<u>"), tr("</u>"));
-  this->ui.lineEdit->setFocus();
-
+    QTextCursor cursor = ui.chattextEdit->textCursor();
+    if (!cursor.hasSelection())
+        cursor.select(QTextCursor::WordUnderCursor);
+    cursor.mergeCharFormat(format);
+    ui.chattextEdit->mergeCurrentCharFormat(format);
 }
 
-void PopupChatDialog::insertStrike()
+void PopupChatDialog::getFont()
 {
-  
-  this->insertAutour(tr("<s>"), tr("</s>"));
-  this->ui.lineEdit->setFocus();
-
+    bool ok;
+    QFont font = QFontDialog::getFont(&ok, QFont(ui.chattextEdit->toHtml()), this);
+    if (ok) {
+        ui.chattextEdit->setFont(font);
+    }
 }
 
-void PopupChatDialog::insertAutour(QString leftTruc,QString rightTruc)
+void PopupChatDialog::setFont()
 {
-    int p0 = ui.lineEdit->cursorPosition();
-    QString stringToInsert = leftTruc ;
-    stringToInsert.append(rightTruc);
-    ui.lineEdit->insert(stringToInsert);
-    ui.lineEdit->setCursorPosition(p0 + leftTruc.size());
-    
+  QFont font = QFont("Comic Sans MS", 10);
+  font.setBold(ui.textboldButton->isChecked());
+  font.setUnderline(ui.textunderlineButton->isChecked());
+  font.setItalic(ui.textitalicButton->isChecked());
+  ui.chattextEdit->setFont(font);
 }
-
 
 

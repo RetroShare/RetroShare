@@ -49,18 +49,11 @@ public:
 
   void updateChat();
   void addChatMsg(ChatInfo *ci);
-  
-
+    
 public slots:
   /** Overloaded QWidget.show */
   void show();
   
-  void insertBold();
-  void insertItalic();
-  void insertUnderline();
-  void insertStrike();
-  void insertAutour(QString leftTruc,QString rightTruc);
-
 
 protected:
   void closeEvent (QCloseEvent * event);
@@ -70,6 +63,7 @@ private slots:
   void showAvatarFrame(bool show);
 
   void setColor();    
+  void getFont();
   void setFont();
   
   void sendChat();
@@ -77,7 +71,7 @@ private slots:
   
 private:
 
-  
+  void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
   void colorChanged(const QColor &c);
   
    QAction     *actionTextBold;

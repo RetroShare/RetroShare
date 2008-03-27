@@ -58,13 +58,9 @@ void toggleSendItem( QTreeWidgetItem *item, int col );
   void sendMsg();
   
   void privchat();
-  void insertBold();
-  void insertItalic();
-  void insertUnderline();
-  void insertStrike();
-  void insertAutour(QString leftTruc,QString rightTruc);
   
   void setFont();
+  void getFont();
   
 
 private:

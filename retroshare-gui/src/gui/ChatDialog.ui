@@ -831,6 +831,9 @@
            <height>24</height>
           </size>
          </property>
+         <property name="toolTip" >
+          <string>Underline</string>
+         </property>
          <property name="text" >
           <string/>
          </property>
@@ -838,7 +841,7 @@
           <iconset resource="images.qrc" >:/images/edit-underline.png</iconset>
          </property>
          <property name="checkable" >
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -856,6 +859,9 @@
            <height>24</height>
           </size>
          </property>
+         <property name="toolTip" >
+          <string>Italic</string>
+         </property>
          <property name="text" >
           <string/>
          </property>
@@ -863,7 +869,7 @@
           <iconset resource="images.qrc" >:/images/edit-italic.png</iconset>
          </property>
          <property name="checkable" >
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -881,6 +887,9 @@
            <height>24</height>
           </size>
          </property>
+         <property name="toolTip" >
+          <string>Bold</string>
+         </property>
          <property name="text" >
           <string/>
          </property>
@@ -888,7 +897,7 @@
           <iconset resource="images.qrc" >:/images/edit-bold.png</iconset>
          </property>
          <property name="checkable" >
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -905,6 +914,9 @@
            <width>24</width>
            <height>24</height>
           </size>
+         </property>
+         <property name="toolTip" >
+          <string>Text Color</string>
          </property>
          <property name="text" >
           <string/>
@@ -924,6 +936,9 @@
            <width>24</width>
            <height>24</height>
           </size>
+         </property>
+         <property name="toolTip" >
+          <string>Font</string>
          </property>
          <property name="text" >
           <string/>
