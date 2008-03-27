@@ -77,14 +77,16 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   
   /* hide the Tree +/- */
   ui.msgList->setRootIsDecorated( false );
-
+  ui.msgWidget->setRootIsDecorated( false );
   
   /* Set header resize modes and initial section sizes */
   QHeaderView * msgwheader = ui.msgWidget->header () ;
-  msgwheader->setResizeMode (0, QHeaderView::Interactive);
+  msgwheader->setResizeMode (0, QHeaderView::Custom);
+  msgwheader->setResizeMode (3, QHeaderView::Interactive);
     
-  msgwheader->resizeSection ( 0, 140 );
-  msgwheader->resizeSection ( 2, 150 );
+  msgwheader->resizeSection ( 0, 24 );
+  msgwheader->resizeSection ( 2, 250 );
+  msgwheader->resizeSection ( 3, 140 );
   
     /* Set header resize modes and initial section sizes */
 	QHeaderView * msglheader = ui.msgList->header () ;
@@ -381,7 +383,7 @@ void MessagesDialog::insertMessages()
 			QDateTime qtime;
 			qtime.setTime_t(it->ts);
 			QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
-			item -> setText(0, timestamp);
+			item -> setText(3, timestamp);
 		}
 
 		//  From ....
@@ -397,7 +399,7 @@ void MessagesDialog::insertMessages()
 		{
 			std::ostringstream out;
 			out << it -> count;
-			item -> setText(3, QString::fromStdString(out.str()));
+			item -> setText(0, QString::fromStdString(out.str()));
 		}
 
 		item -> setText(4, QString::fromStdString(it->srcId));
@@ -662,3 +664,4 @@ void MessagesDialog::printpreview()
     preview->setAttribute(Qt::WA_DeleteOnClose);
     preview->show();
 }
+

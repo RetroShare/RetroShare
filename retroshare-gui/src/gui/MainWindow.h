@@ -126,7 +126,7 @@ private slots:
 	void showsmplayer();
 
     void showSettings();
-    
+    void setStyle();
     
     /** Called when console button is toggled */
     void showConsoleFrame(bool show);

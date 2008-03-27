@@ -67,6 +67,8 @@
 #define IMAGE_CLOSE             ":/images/close_normal.png"
 #define IMAGE_SMPLAYER		    ":/images/smplayer_icon32.png"
 #define IMAGE_BLOCK         	":/images/blockdevice.png"
+#define IMAGE_COLOR         	":/images/highlight.png"
+
 
 /* Keys for UI Preferences */
 #define UI_PREF_PROMPT_ON_QUIT  "UIOptions/ConfirmOnQuit"
@@ -186,6 +188,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     
     
     //addAction(new QAction(QIcon(IMAGE_SMPLAYER), tr("SMPlayer"), ui.toolBar), SLOT(showsmplayer()));
+    
 
 
 
@@ -194,6 +197,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 #else
     addAction(new QAction(QIcon(IMAGE_BLOCK), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 #endif
+
+    addAction(new QAction(QIcon(IMAGE_COLOR), tr("Color"), ui.toolBar), SLOT(setStyle()));
+
  
 #ifdef NO_MORE_OPTIONS_OR_SS
 
@@ -596,3 +602,16 @@ void MainWindow::showsmplayer()
 	smplayer->gui()->show();
 
 }
+
+void MainWindow::setStyle()
+{
+ QString standardSheet = "{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 <color1>, stop:1 <color2>);}";
+ QColor stop1 = QColorDialog::getColor(Qt::white);
+ QColor stop2 = QColorDialog::getColor(Qt::black);
+ //QString widgetSheet = ".QWidget" + standardSheet.replace("<color1>", stop1.name()).replace("<color2>", stop2.name());
+ QString toolSheet = "QToolBar" + standardSheet.replace("<color1>", stop1.name()).replace("<color2>", stop2.name());
+ QString menuSheet = "QMenuBar" + standardSheet.replace("<color1>", stop1.name()).replace("<color2>", stop2.name());
+ qApp->setStyleSheet(/*widgetSheet + */toolSheet + menuSheet);
+ 
+}
+
