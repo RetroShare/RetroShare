@@ -68,6 +68,7 @@ ChatDialog::ChatDialog(QWidget *parent)
   connect(ui.fontsButton, SIGNAL(clicked()), this, SLOT(getFont()));  
   connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(setColor()));
 #endif
+
    
   ui.fontsButton->setIcon(QIcon(QString(":/images/fonts.png")));
 
@@ -326,6 +327,7 @@ void ChatDialog::setColor()
 	QPixmap pxm(24,24);
 	pxm.fill(textColor);
 	ui.colorChatButton->setIcon(pxm);
+	ui.lineEdit->setTextColor(textColor);
 }
 
 void ChatDialog::getFont()
