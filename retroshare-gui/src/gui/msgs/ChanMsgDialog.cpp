@@ -61,6 +61,7 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
   
+  
   setupFileActions();
   setupEditActions();
   setupViewActions();

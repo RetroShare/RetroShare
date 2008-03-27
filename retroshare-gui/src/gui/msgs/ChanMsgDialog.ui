@@ -197,6 +197,9 @@ p, li { white-space: pre-wrap; }
             <property name="text" >
              <string/>
             </property>
+            <property name="checkable" >
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="0" column="5" >
@@ -218,6 +221,9 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="text" >
              <string/>
+            </property>
+            <property name="checkable" >
+             <bool>true</bool>
             </property>
            </widget>
           </item>
