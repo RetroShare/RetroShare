@@ -626,7 +626,7 @@
           </sizepolicy>
          </property>
          <property name="contextMenuPolicy" >
-          <enum>Qt::CustomContextMenu</enum>
+          <enum>Qt::DefaultContextMenu</enum>
          </property>
          <property name="undoRedoEnabled" >
           <bool>false</bool>
