@@ -173,11 +173,11 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 
         QString timestamp = "[" + QDateTime::currentDateTime().toString("hh:mm:ss") + "]";
             //QString pre = tr("Peer:" );
-	    QString name = QString::fromStdString(ci->name);
-	    QString line = "<span style=\"color:#1D84C9\"><strong>" + timestamp + 
-					 " " + name + "</strong></span>";
-
-		extraTxt += line;
+	    QString name = QString::fromStdString(ci->name);        
+	    QString line = "<span style=\"color:#C00000\"><strong>" + timestamp + "</strong></span>" +			
+            		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span>";		
+        
+        extraTxt += line;
 
 
 	extraTxt += QString::fromStdWString(ci -> msg);
@@ -244,14 +244,16 @@ void PopupChatDialog::showAvatarFrame(bool show)
 
 void PopupChatDialog::setColor()
 {
+	    
     QColor col = QColorDialog::getColor(Qt::black, this);
     if (col.isValid()) {
 
-        ui.colorButton->setPalette(QPalette(col));
+        //ui.colorButton->setPalette(QPalette(col));
+        //ui.chattextEdit->setTextCursor();
         ui.chattextEdit->setTextColor(QColor(col));
-        QTextCharFormat fmt;
-        fmt.setForeground(col);
-        mergeFormatOnWordOrSelection(fmt);
+        //QTextCharFormat fmt;
+        //fmt.setForeground(col);
+        //mergeFormatOnWordOrSelection(fmt);
         colorChanged(col);
     }
 }
@@ -265,11 +267,11 @@ void PopupChatDialog::colorChanged(const QColor &c)
 
 void PopupChatDialog::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
 {
-    QTextCursor cursor = ui.chattextEdit->textCursor();
-    if (!cursor.hasSelection())
+    //QTextCursor cursor = ui.chattextEdit->textCursor();
+    /*if (!cursor.hasSelection())
         cursor.select(QTextCursor::WordUnderCursor);
-    cursor.mergeCharFormat(format);
-    ui.chattextEdit->mergeCurrentCharFormat(format);
+    cursor.mergeCharFormat(format);*/
+    //ui.chattextEdit->mergeCurrentCharFormat(format);
 }
 
 void PopupChatDialog::getFont()
