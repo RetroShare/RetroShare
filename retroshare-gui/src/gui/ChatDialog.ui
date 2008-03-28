@@ -625,6 +625,9 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="contextMenuPolicy" >
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
          <property name="undoRedoEnabled" >
           <bool>false</bool>
          </property>
@@ -1005,6 +1008,11 @@
   <action name="actionSend" >
    <property name="text" >
     <string>Send</string>
+   </property>
+  </action>
+  <action name="actionClearChat" >
+   <property name="text" >
+    <string>ClearChat</string>
    </property>
   </action>
  </widget>

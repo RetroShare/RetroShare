@@ -44,7 +44,11 @@ void insertChat();
 PopupChatDialog *getPrivateChat(std::string id, std::string name, bool show);
 void clearOldChats();
 
-int     loadInitMsg();
+//int     loadInitMsg();
+
+public slots:
+
+  void setChatInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));
 
 private slots:
 
@@ -61,6 +65,11 @@ void toggleSendItem( QTreeWidgetItem *item, int col );
   
   void setFont();
   void getFont();
+  
+  void setupsendActions();
+  
+  void on_actionClearChat_triggered();
+  void displayInfoChatMenu(const QPoint& pos);
   
 
 private:

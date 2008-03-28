@@ -52,14 +52,15 @@ ChatDialog::ChatDialog(QWidget *parent)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
   
+  setupsendActions();
+  
   setWindowIcon(QIcon(QString(":/images/rstray3.png")));
 
   //connect(ui.lineEdit, SIGNAL(returnPressed( ) ), this, SLOT(sendMsg( ) ));
   connect(ui.Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
-  connect(ui.actionSend, SIGNAL( triggered (bool)), this, SLOT( sendMsg( ) ) );  
-  ui.actionSend->setShortcut(Qt::CTRL + Qt::SHIFT);
-  
+   
   connect( ui.msgSendList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgSendListCostumPopupMenu( QPoint ) ) );
+  connect( ui.msgText, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(displayInfoChatMenu(const QPoint&)));
  
 #ifdef CHAT_IMPROVEMENTS
   connect(ui.textboldChatButton, SIGNAL(clicked()), this, SLOT(setFont()));  
@@ -75,7 +76,7 @@ ChatDialog::ChatDialog(QWidget *parent)
 //  connect(ui.msgSendList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ), 
 //  this, SLOT(toggleSendItem( QTreeWidgetItem *, int ) ));
 
-  loadInitMsg();
+  //loadInitMsg();
   
   /* hide the Tree +/- */
   ui.msgSendList -> setRootIsDecorated( false );
@@ -89,6 +90,8 @@ ChatDialog::ChatDialog(QWidget *parent)
   ui.colorChatButton->setIcon(pxm);
   
   QFont font = QFont("Comic Sans MS", 10);
+  
+  setChatInfo(tr("Welcome to RetroShare's group chat."), QString::fromUtf8("blue"));
 
 
   /* Hide platform specific features */
@@ -111,22 +114,22 @@ void ChatDialog::msgSendListCostumPopupMenu( QPoint point )
       contextMnu.exec( mevent->globalPos() );
 }
 
-int     ChatDialog::loadInitMsg()
+/*int     ChatDialog::loadInitMsg()
 {
 	std::ostringstream out;
 
 	//out << std::endl;
 	//out << std::endl;
 	//out << std::endl;
-	out << "      Welcome to:";
-	out << "<br>" << std::endl;
-	out << "      Retroshare's group chat. <br>";
+	//out << "      Welcome to:";
+	//out << "<br>" << std::endl;
+	//out << "      Retroshare's group chat. <br>";
 
 	QString txt = QString::fromStdString(out.str());
 	ui.msgText->setHtml(txt);
 
 	return 1;
-}
+}*/
 
 
 
@@ -351,6 +354,38 @@ void ChatDialog::setFont()
   
 }
 
+void  ChatDialog::setupsendActions()
+{
+    QAction *a;
 
+    a = new QAction(this);
+    a->setShortcut(Qt::CTRL + Qt::Key_S);
+    connect(a, SIGNAL(triggered()), this, SLOT(sendMsg()));
+    
+}
+
+// Update Chat Info information
+void ChatDialog::setChatInfo(QString info, QColor color) {
+  static unsigned int nbLines = 0;
+  ++nbLines;
+  // Check log size, clear it if too big
+  if(nbLines > 200) {
+    ui.msgText->clear();
+    nbLines = 1;
+  }
+  ui.msgText->append(QString::fromUtf8("<font color='grey'>")+ QTime::currentTime().toString(QString::fromUtf8("hh:mm:ss")) + QString::fromUtf8("</font> - <font color='") + color.name() +QString::fromUtf8("'><i>") + info + QString::fromUtf8("</i></font>"));
+}
+
+void ChatDialog::on_actionClearChat_triggered() {
+  ui.msgText->clear();
+}
+
+void ChatDialog::displayInfoChatMenu(const QPoint& pos) {
+  // Log Menu
+  QMenu myChatMenu(this);
+  myChatMenu.addAction(ui.actionClearChat);
+  // XXX: Why mapToGlobal() is not enough?
+  myChatMenu.exec(mapToGlobal(pos)+QPoint(0,80));
+}
 
 
