@@ -23,12 +23,14 @@
 #ifndef _POPUPCHATDIALOG_H
 #define _POPUPCHATDIALOG_H
 
+#include <QtGui>
+#include <QDialog>
 
 #include "ui_PopupChatDialog.h"
 
 #include "rsiface/rsiface.h"
 
-#include <QDialog>
+
 
 class QAction;
 class QTextEdit;
@@ -49,10 +51,16 @@ public:
 
   void updateChat();
   void addChatMsg(ChatInfo *ci);
-    
+  
+  void loadEmoticons();
+
+   
 public slots:
   /** Overloaded QWidget.show */
-  void show();
+  void show(); 
+  	
+  void smileyWidget();
+  void addSmiley();
   
 
 protected:
@@ -81,6 +89,8 @@ private:
    std::string dialogId, dialogName;
    unsigned int lastChatTime;
    std::string  lastChatName;
+   
+   QHash<QString, QString> smileys;
   
   /** Qt Designer generated object */
   Ui::PopupChatDialog ui;

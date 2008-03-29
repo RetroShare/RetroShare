@@ -28,6 +28,11 @@
 #include <QToolBar>
 #include <QTextCursor>
 #include <QTextList>
+#include <QString>
+#include <QtDebug>
+#include <QIcon>
+#include <QPixmap>
+#include <QHashIterator>
 
 #include "rsiface/rspeers.h"
 #include "rsiface/rsmsgs.h"
@@ -49,6 +54,8 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
   
+  loadEmoticons();
+  
   /* Hide ToolBox frame */
   showAvatarFrame(true);
   connect(ui.avatarFrameButton, SIGNAL(toggled(bool)), this, SLOT(showAvatarFrame(bool)));
@@ -62,6 +69,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   connect(ui.textitalicButton, SIGNAL(clicked()), this, SLOT(setFont()));
   connect(ui.fontButton, SIGNAL(clicked()), this, SLOT(getFont())); 
   connect(ui.colorButton, SIGNAL(clicked()), this, SLOT(setColor()));
+  connect(ui.emoteiconButton, SIGNAL(clicked()), this, SLOT(smileyWidget()));
 
   // Create the status bar
   std::ostringstream statusstr;
@@ -81,6 +89,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   ui.textunderlineButton->setIcon(QIcon(QString(":/images/edit-underline.png")));
   ui.textitalicButton->setIcon(QIcon(QString(":/images/edit-italic.png")));
   ui.fontButton->setIcon(QIcon(QString(":/images/fonts.png")));
+  ui.emoteiconButton->setIcon(QIcon(QString(":/images/emoticons/kopete/kopete020.png")));
   
   ui.textboldButton->setCheckable(true);
   ui.textunderlineButton->setCheckable(true);
@@ -140,7 +149,7 @@ void PopupChatDialog::updateChat()
 
 void PopupChatDialog::addChatMsg(ChatInfo *ci)
 {
-    QTextBrowser *msgWidget = ui.textBrowser;
+    QTextEdit *msgWidget = ui.textBrowser;
 
 	QString currenttxt = msgWidget->toHtml();
 
@@ -183,11 +192,16 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 	extraTxt += QString::fromStdWString(ci -> msg);
 
 	currenttxt += extraTxt;
+	
+    QHashIterator<QString, QString> i(smileys);
+	while(i.hasNext())
+	{
+		i.next();
+		currenttxt.replace(i.key(), "<img src=\"" + i.value() + "\">");
+	}
 
 	msgWidget->setHtml(currenttxt);
 
-//	std::cerr << " Added Text: " << std::endl;
-//	std::cerr << out.str() << std::endl;
 	QScrollBar *qsb =  msgWidget->verticalScrollBar();
 	qsb -> setValue(qsb->maximum());
 }
@@ -198,6 +212,9 @@ void PopupChatDialog::sendChat()
         QTextEdit *chatWidget = ui.chattextEdit;
 
         ChatInfo ci;
+        
+
+	
 
 	{
           rsiface->lockData(); /* Lock Interface */
@@ -292,4 +309,58 @@ void PopupChatDialog::setFont()
   ui.chattextEdit->setFont(font);
 }
 
+void PopupChatDialog::loadEmoticons()
+{
+	QDir smdir(QApplication::applicationDirPath() + "/emoticons/kopete");
+	//QDir smdir(":/gui/images/emoticons/kopete");
+	QFileInfoList sminfo = smdir.entryInfoList(QStringList() << "*.gif" << "*.png", QDir::Files, QDir::Name);
+	foreach(QFileInfo info, sminfo)
+	{
+		QString smcode = info.fileName().replace(".gif", "");
+		QString smstring;
+		for(int i = 0; i < 9; i+=3)
+		{
+			smstring += QString((char)smcode.mid(i,3).toInt());
+		}
+		//qDebug(smstring.toAscii());
+		smileys.insert(smstring, info.absoluteFilePath());
+	}
+}
 
+void PopupChatDialog::smileyWidget()
+{ 
+	qDebug("MainWindow::smileyWidget()");
+	QWidget *smWidget = new QWidget;
+	smWidget->setWindowTitle("Emoteicons");
+	smWidget->setWindowIcon(QIcon(QString(":/images/rstray3.png")));
+	smWidget->setFixedSize(256,256);
+	
+	
+	
+	int x = 0, y = 0;
+	
+	QHashIterator<QString, QString> i(smileys);
+	while(i.hasNext())
+	{
+		i.next();
+		QPushButton *smButton = new QPushButton("", smWidget);
+		smButton->setGeometry(x*24, y*24, 24,24);
+		smButton->setIconSize(QSize(24,24));
+		smButton->setIcon(QPixmap(i.value()));
+		smButton->setToolTip(i.key());
+		++x;
+		if(x > 4)
+		{
+			x = 0;
+			y++;
+		}
+		connect(smButton, SIGNAL(clicked()), this, SLOT(addSmiley()));
+	}
+	
+	smWidget->show();
+}
+
+void PopupChatDialog::addSmiley()
+{
+	ui.chattextEdit->setText(ui.chattextEdit->toHtml() + qobject_cast<QPushButton*>(sender())->toolTip());
+}
