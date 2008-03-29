@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<icondef>
+    <meta>
+        <name>QIP Iconset</name>
+        <version>1.0</version>
+        <description>Default iconset from QIP</description>
+        <author>lnking</author>
+        <creation>2007-06-18</creation>
+    </meta>
+    <icon>
+        <text>O:-)</text>
+        <text>O:)</text>
+        <text>O+)</text>
+        <text>O=)</text>
+        <text>0:-)</text>
+        <text>0:)</text>
+        <text>0+)</text>
+        <text>0=)</text>
+        <graphic mime="image/gif">aa.gif</graphic>
+    </icon>
+    <icon>
+        <text>:-)</text>
+        <text>:)</text>
+        <text>=)</text>
+        <text>+)</text>
+        <graphic mime="image/gif">ab.gif</graphic>
+    </icon>
+    <icon>
+        <text>:-(</text>
+        <text>:(</text>
+        <text>+(</text>
+        <text>=(</text>
+        <graphic mime="image/gif">ac.gif</graphic>
+    </icon>
+    <icon>
+        <text>;-)</text>
+        <text>;)</text>
+        <text>^_~</text>
+        <graphic mime="image/gif">ad.gif</graphic>
+    </icon>
+    <icon>
+        <text>:-P</text>
+        <text>:P</text>
+        <text>:-p</text>
+        <text>:p</text>
+        <text>+P</text>
+        <text>=P</text>
+        <text>+p</text>
+        <text>=p</text>
+        <text>:-b</text>
+        <text>:b</text>
+        <text>+b</text>
+        <text>=b</text>
+        <graphic mime="image/gif">ae.gif</graphic>
+    </icon>
+    <icon>
+        <text>8-)</text>
+        <text>8)</text>
+        <text>B)</text>
+        <graphic mime="image/gif">af.gif</graphic>
+    </icon>
+    <icon>
+        <text>:-D</text>
+        <text>:D</text>
+        <text>+D</text>
+        <text>=D</text>
+        <graphic mime="image/gif">ag.gif</graphic>
+    </icon>
+    <icon>
+        <text>:-[</text>
+        <text>:[</text>
+        <text>;'></text>
+        <text>;-.</text>
+        <graphic mime="image/gif">ah.gif</graphic>
+    </icon>
+    <icon>
+        <text>=-O</text>
+        <text>=O</text>
+        <text>=-o</text>
+        <text>=0</text>
+        <text>O_O</text>
+        <text>O_o</text>
+        <text>o_O</text>
+        <text>O_0</text>
+        <text>o_0</text>
+        <text>0_O</text>
+        <text>0_o</text>
+        <graphic mime="image/gif">ai.gif</graphic>
+    </icon>
+    <icon>
+        <text>:-*</text>
+        <text>:*</text>
+        <text>:-{}</text>
+        <text>:{}</text>
+        <text>+{}</text>
+        <text>={}</text>
+        <text>^.^</text>
+        <graphic mime="image/gif">aj.gif</graphic>
+    </icon>
+    <icon>
+        <text>:'(</text>
+        <text>:-'(</text>
+        <graphic mime="image/gif">ak.gif</graphic>
+    </icon>
+    <icon>
+        <text>:-X</text>
+        <text>:-x</text>
+        <text>X:</text>
+        <text>x:</text>
+        <text>:-#</text>
+        <text>:#</text>
+        <graphic mime="image/gif">al.gif</graphic>
+    </icon>
+    <icon>
+        <text>>:o</text>
+        <text>>:O</text>
+        <text>>+O</text>
+        <text>>:o</text>
+        <text>>+o</text>
+        <text>:-@</text>
+        <graphic mime="image/gif">am.gif</graphic>
+    </icon>
+    <icon>
+        <text>:-|</text>
+        <text>:|</text>
+        <text>=|</text>
+        <graphic mime="image/gif">an.gif</graphic>
+    </icon>
+    <icon>
+        <text>:-\</text>
+        <text>:-/</text>
+        <text>:\</text>
+        <text>*BEEE*</text>
+        <graphic mime="image/gif">ao.gif</graphic>
+    </icon>
+    <icon>
+        <text>*JOKINGLY*</text>
+        <text>8P</text>
+        <text>8p</text>
+        <graphic mime="image/gif">ap.gif</graphic>
+    </icon>
+    <icon>
+        <text>]:-></text>
+        <text>}:-></text>
+        <text>]:></text>
+        <text>}:></text>
+        <text>>:-]</text>
+        <text>>:]</text>
+        <text>*DIABLO*</text>
+        <graphic mime="image/gif">aq.gif</graphic>
+    </icon>
+    <icon>
+        <text>[:-}</text>
+        <text>[:}</text>
+        <graphic mime="image/gif">ar.gif</graphic>
+    </icon>
+    <icon>
+        <text>*KISSED*</text>
+        <graphic mime="image/gif">as.gif</graphic>
+    </icon>
+    <icon>
+        <text>:-!</text>
+        <text>;-!</text>
+        <text>:!</text>
+        <text>;!</text>
+        <text>:-~</text>
+        <text>;-~</text>
+        <graphic mime="image/gif">at.gif</graphic>
+    </icon>
+    <icon>
+        <text>*TIRED*</text>
+        <text>|-0</text>
+        <graphic mime="image/gif">au.gif</graphic>
+    </icon>
+    <icon>
+        <text>*STOP*</text>
+        <graphic mime="image/gif">av.gif</graphic>
+    </icon>
+    <icon>
+        <text>*KISSING*</text>
+        <graphic mime="image/gif">aw.gif</graphic>
+    </icon>
+    <icon>
+        <text>@}->--</text>
+        <text>@}-:--</text>
+        <text>@>}--`---</text>
+        <graphic mime="image/gif">ax.gif</graphic>
+    </icon>
+    <icon>
+        <text>*THUMBS UP*</text>
+        <text>*GOOD*</text>
+        <graphic mime="image/gif">ay.gif</graphic>
+    </icon>
+    <icon>
+        <text>*DRINK*</text>
+        <graphic mime="image/gif">az.gif</graphic>
+    </icon>
+    <icon>
+        <text>*IN LOVE*</text>
+        <graphic mime="image/gif">ba.gif</graphic>
+    </icon>
+    <icon>
+        <text>@=</text>
+        <graphic mime="image/gif">bb.gif</graphic>
+    </icon>
+    <icon>
+        <text>*HELP*</text>
+        <graphic mime="image/gif">bc.gif</graphic>
+    </icon>
+    <icon>
+        <text>\m/</text>
+        <graphic mime="image/gif">bd.gif</graphic>
+    </icon>
+    <icon>
+        <text>%)</text>
+        <text>%-)</text>
+        <text>:$</text>
+        <graphic mime="image/gif">be.gif</graphic>
+    </icon>
+    <icon>
+        <text>*OK*</text>
+        <graphic mime="image/gif">bf.gif</graphic>
+    </icon>
+    <icon>
+        <text>*WASSUP*</text>
+        <text>*SUP*</text>
+        <graphic mime="image/gif">bg.gif</graphic>
+    </icon>
+    <icon>
+        <text>*SORRY*</text>
+        <graphic mime="image/gif">bh.gif</graphic>
+    </icon>
+    <icon>
+        <text>*BRAVO*</text>
+        <graphic mime="image/gif">bi.gif</graphic>
+    </icon>
+    <icon>
+        <text>*ROFL*</text>
+        <graphic mime="image/gif">bj.gif</graphic>
+    </icon>
+    <icon>
+        <text>*PARDON*</text>
+        <text>=]</text>
+        <graphic mime="image/gif">bk.gif</graphic>
+    </icon>
+    <icon>
+        <text>*NO*</text>
+        <graphic mime="image/gif">bl.gif</graphic>
+    </icon>
+    <icon>
+        <text>*CRAZY*</text>
+        <graphic mime="image/gif">bm.gif</graphic>
+    </icon>
+    <icon>
+        <text>*DONT_KNOW*</text>
+        <text>*UNKNOWN*</text>
+        <graphic mime="image/gif">bn.gif</graphic>
+    </icon>
+    <icon>
+        <text>*DANCE*</text>
+        <graphic mime="image/gif">bo.gif</graphic>
+    </icon>
+    <icon>
+        <text>*YAHOO*</text>
+        <text>*YAHOO!*</text>
+        <graphic mime="image/gif">bp.gif</graphic>
+    </icon>
+    <icon>
+        <text>;D</text>
+        <text>*ACUTE*</text>
+        <graphic mime="image/gif">bq.gif</graphic>
+    </icon>
+    <icon>
+        <text>*BB*</text>
+        <graphic mime="image/gif">br.gif</graphic>
+    </icon>
+    <icon>
+        <text>*BYE*</text>
+        <graphic mime="image/gif">bs.gif</graphic>
+    </icon>
+    <icon>
+        <text>*HI*</text>
+        <graphic mime="image/gif">bt.gif</graphic>
+    </icon>
+    <icon>
+        <text>*HAPPY*</text>
+        <graphic mime="image/gif">bu.gif</graphic>
+    </icon>
+    <icon>
+        <text>*LOL*</text>
+        <graphic mime="image/gif">bv.gif</graphic>
+    </icon>
+    <icon>
+        <text>*SCRATCH*</text>
+        <graphic mime="image/gif">bw.gif</graphic>
+    </icon>
+    <icon>
+        <text>*YEEES!*</text>
+        <graphic mime="image/gif">bx.gif</graphic>
+    </icon>
+    <icon>
+        <text>*SMOKE*</text>
+        <graphic mime="image/gif">by.gif</graphic>
+    </icon>
+    <icon>
+        <text>*BOSS*</text>
+        <graphic mime="image/gif">bz.gif</graphic>
+    </icon>
+    <icon>
+        <text>*SARCASTIC*</text>
+        <graphic mime="image/gif">ca.gif</graphic>
+    </icon>
+    <icon>
+        <text>*BOAST*</text>
+        <graphic mime="image/gif">cb.gif</graphic>
+    </icon>
+    <icon>
+        <text>*db*</text>
+        <graphic mime="image/gif">cd.gif</graphic>
+    </icon>
+    <icon>
+        <text>*HOHO*</text>
+        <graphic mime="image/gif">ce.gif</graphic>
+    </icon>
+    <icon>
+        <text>*SHOUT*</text>
+        <graphic mime="image/gif">cf.gif</graphic>
+    </icon>
+    <icon>
+        <text>*VAVA*</text>
+        <graphic mime="image/gif">cg.gif</graphic>
+    </icon>
+    <icon>
+        <text>*CENSORED*</text>
+        <graphic mime="image/gif">ch.gif</graphic>
+    </icon>
+    <icon>
+        <text>*SEARCH*</text>
+        <graphic mime="image/gif">ci.gif</graphic>
+    </icon>
+    <icon>
+        <text>*BEACH*</text>
+        <graphic mime="image/gif">cj.gif</graphic>
+    </icon>
+    <icon>
+        <text>*FOCUS*</text>
+        <graphic mime="image/gif">ck.gif</graphic>
+    </icon>
+    <icon>
+        <text>*HUNTER*</text>
+        <graphic mime="image/gif">cl.gif</graphic>
+    </icon>
+    <icon>
+        <text>*GIRL_CRY*</text>
+        <text>*GIRL_CRAY*</text>
+        <graphic mime="image/gif">cm.gif</graphic>
+    </icon>
+    <icon>
+        <text>*GIRL_CRAZY*</text>
+        <graphic mime="image/gif">cn.gif</graphic>
+    </icon>
+    <icon>
+        <text>*HOSPITAL*</text>
+        <graphic mime="image/gif">co.gif</graphic>
+    </icon>
+    <icon>
+        <text>*GIRL_IN_LOVE*</text>
+        <graphic mime="image/gif">cp.gif</graphic>
+    </icon>
+    <icon>
+        <text>*PINKGLASSES*</text>
+        <graphic mime="image/gif">cq.gif</graphic>
+    </icon>
+    <icon>
+        <text>*HYSTERIC*</text>
+        <graphic mime="image/gif">cr.gif</graphic>
+    </icon>
+    <icon>
+        <text>*TENDER*</text>
+        <graphic mime="image/gif">cs.gif</graphic>
+    </icon>
+    <icon>
+        <text>*SPRUSE_UP*</text>
+        <graphic mime="image/gif">ct.gif</graphic>
+    </icon>
+    <icon>
+        <text>*FLIRT*</text>
+        <graphic mime="image/gif">cu.gif</graphic>
+    </icon>
+    <icon>
+        <text>*GIVE_HEART*</text>
+        <graphic mime="image/gif">cv.gif</graphic>
+    </icon>
+    <icon>
+        <text>*CURTSEY*</text>
+        <graphic mime="image/gif">cw.gif</graphic>
+    </icon>
+    <icon>
+        <text>*FEMINIST*</text>
+        <graphic mime="image/gif">cx.gif</graphic>
+    </icon>
+    <icon>
+        <text>*GIRL_DRINK*</text>
+        <graphic mime="image/gif">cy.gif</graphic>
+    </icon>
+    <icon>
+        <text>*HAHA*</text>
+        <graphic mime="image/gif">cz.gif</graphic>
+    </icon>
+    <icon>
+        <text>*IMPOSSIBLE*</text>
+        <graphic mime="image/gif">da.gif</graphic>
+    </icon>
+    <icon>
+        <text>*SIGH*</text>
+        <graphic mime="image/gif">db.gif</graphic>
+    </icon>
+    <icon>
+        <text>X-)</text>
+        <text>X)</text>
+        <graphic mime="image/gif">dc.gif</graphic>
+    </icon>
+    <icon>
+        <text>*SLOW*</text>
+        <graphic mime="image/gif">dd.gif</graphic>
+    </icon>
+    <icon>
+        <text>*MOIL*</text>
+        <text>*JOB*</text>
+        <graphic mime="image/gif">de.gif</graphic>
+    </icon>
+    <icon>
+        <text>*YES*</text>
+        <graphic mime="image/gif">df.gif</graphic>
+    </icon>
+    <icon>
+        <text>*MEGA_SHOK*</text>
+        <graphic mime="image/gif">dg.gif</graphic>
+    </icon>
+    <icon>
+        <text>*THANK*</text>
+        <graphic mime="image/gif">dh.gif</graphic>
+    </icon>
+    <icon>
+        <text>*KING*</text>
+        <graphic mime="image/gif">di.gif</graphic>
+    </icon>
+    <icon>
+        <text>*LAZY*</text>
+        <graphic mime="image/gif">dj.gif</graphic>
+    </icon>
+    <icon>
+        <text>*FRIEND*</text>
+        <graphic mime="image/gif">dk.gif</graphic>
+    </icon>
+    <icon>
+        <text>*PUNISH*</text>
+        <graphic mime="image/gif">dl.gif</graphic>
+    </icon>
+    <icon>
+        <text>*WIZARD*</text>
+        <graphic mime="image/gif">dm.gif</graphic>
+    </icon>
+    <icon>
+        <text>*V*</text>
+        <graphic mime="image/gif">dn.gif</graphic>
+    </icon>
+    <icon>
+        <text>*SPITEFUL*</text>
+        <graphic mime="image/gif">do.gif</graphic>
+    </icon>
+    <icon>
+        <text>*TEASE*</text>
+        <graphic mime="image/gif">dp.gif</graphic>
+    </icon>
+    <icon>
+        <text>*SCARE*</text>
+        <graphic mime="image/gif">dr.gif</graphic>
+    </icon>
+    <icon>
+        <text>*THIS*</text>
+        <graphic mime="image/gif">ds.gif</graphic>
+    </icon>
+    <icon>
+        <text>*PAINT*</text>
+        <graphic mime="image/gif">dt.gif</graphic>
+    </icon>
+    <icon>
+        <text>*TRAINING*</text>
+        <graphic mime="image/gif">du.gif</graphic>
+    </icon>
+    <icon>
+        <text>*PARTY*</text>
+        <graphic mime="image/gif">dv.gif</graphic>
+    </icon>
+</icondef>
