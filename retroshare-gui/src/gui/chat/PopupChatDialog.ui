@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>560</width>
+    <width>573</width>
     <height>410</height>
    </rect>
   </property>
@@ -305,7 +305,7 @@
         <number>9</number>
        </property>
        <property name="rightMargin" >
-        <number>9</number>
+        <number>0</number>
        </property>
        <property name="bottomMargin" >
         <number>9</number>
@@ -384,6 +384,9 @@ border-image: url(:/images/mystatus_bg.png);
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
          <property name="sizeHint" >
           <size>
            <width>61</width>
@@ -397,9 +400,6 @@ border-image: url(:/images/mystatus_bg.png);
     </item>
     <item row="0" column="2" >
      <layout class="QGridLayout" >
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
       <item row="0" column="0" >
        <widget class="QPushButton" name="avatarFrameButton" >
         <property name="minimumSize" >
@@ -435,8 +435,8 @@ border-image: url(:/images/mystatus_bg.png);
         </property>
         <property name="sizeHint" >
          <size>
-          <width>12</width>
-          <height>509</height>
+          <width>14</width>
+          <height>321</height>
          </size>
         </property>
        </spacer>
