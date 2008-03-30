@@ -57,7 +57,7 @@
 #define IMAGE_NETWORK           ":/images/network32.png"
 #define IMAGE_PEERS         	":/images/peers_24x24.png"
 #define IMAGE_SEARCH    	    ":/images/filefind.png"
-#define IMAGE_TRANSFERS      	":/images/ktorrent.png"
+#define IMAGE_TRANSFERS      	":/images/ktorrent32.png"
 #define IMAGE_FILES   	        ":/images/folder_green.png"
 #define IMAGE_CHANNELS       	":/images/channels.png"
 #define IMAGE_PREFERENCES       ":/images/settings16.png"
@@ -76,7 +76,12 @@
 #define IMAGE_GAMES             ":/images/kgames.png"
 #define IMAGE_PHOTO             ":/images/lphoto.png"
 #define IMAGE_SMPLAYER          ":/images/smplayer_icon32.png"
-
+#define IMAGE_LINKS         	":/images/ktorrent.png"
+#define IMAGE_ADDFRIEND         ":/images/add-friend24.png"
+#define IMAGE_INVITEFRIEND      ":/images/invite-friend24.png"
+#define IMAGE_ADDSHARE          ":/images/directoryadd_24x24_shadow.png"
+#define IMAGE_OPTIONS           ":/images/settings.png"
+#define IMAGE_QUIT              ":/images/exit_24x24.png"
 
 /* Keys for UI Preferences */
 #define UI_PREF_PROMPT_ON_QUIT  "UIOptions/ConfirmOnQuit"
@@ -102,7 +107,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(ui.btnToggleConsole, SIGNAL(toggled(bool)), this, SLOT(showConsoleFrame(bool)));
 	
     /* Hide ToolBox frame */
-    showToolboxFrame(true);
+    //showToolboxFrame(true);
 	
     // Setting icons
     this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
@@ -115,26 +120,26 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     applicationWindow->hide();
 	
 	/** General ToolBox**/
-    connect(ui.addfriendButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend() ) );
-    connect(ui.invitefriendButton, SIGNAL(clicked( bool ) ), this , SLOT( inviteFriend() ) );
-    connect(ui.addshareButton, SIGNAL(clicked( bool ) ), this , SLOT( addSharedDirectory() ) );
-    connect(ui.optionsButton, SIGNAL(clicked( bool )), this, SLOT( showPreferencesWindow()) );
+    //connect(ui.addfriendButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend() ) );
+    //connect(ui.invitefriendButton, SIGNAL(clicked( bool ) ), this , SLOT( inviteFriend() ) );
+    //connect(ui.addshareButton, SIGNAL(clicked( bool ) ), this , SLOT( addSharedDirectory() ) );
+    //connect(ui.optionsButton, SIGNAL(clicked( bool )), this, SLOT( showPreferencesWindow()) );
     
     /** Games ToolBox*/
-	connect(ui.qbackgammonButton, SIGNAL(clicked( bool )), this, SLOT( startgammon()) );
-	connect(ui.qcheckersButton, SIGNAL(clicked( bool )), this, SLOT( startqcheckers()) );
+	//connect(ui.qbackgammonButton, SIGNAL(clicked( bool )), this, SLOT( startgammon()) );
+	//connect(ui.qcheckersButton, SIGNAL(clicked( bool )), this, SLOT( startqcheckers()) );
 	
 	
-    ui.addfriendButton->setToolTip(tr("Add a Friend"));
-    ui.invitefriendButton->setToolTip(tr("Invite a Friend"));
-    ui.addshareButton->setToolTip(tr("Add a Share"));
-    ui.optionsButton->setToolTip(tr("Options"));
+    //ui.addfriendButton->setToolTip(tr("Add a Friend"));
+    //ui.invitefriendButton->setToolTip(tr("Invite a Friend"));
+    //ui.addshareButton->setToolTip(tr("Add a Share"));
+    //ui.optionsButton->setToolTip(tr("Options"));
         
     /** adjusted quit behaviour: trigger a warning that can be switched off in the saved
         config file RetroShare.conf */
-    ui.quitButton->setToolTip(tr("Quit"));
+    //ui.quitButton->setToolTip(tr("Quit"));
     //connect(ui.quitButton, SIGNAL(clicked()), qApp, SLOT(quit()));
-    connect(ui.quitButton, SIGNAL(clicked()), this, SLOT(doQuit()));
+    //connect(ui.quitButton, SIGNAL(clicked()), this, SLOT(doQuit()));
     
     /* load the StyleSheet*/
     loadStyleSheet(Rshare::stylesheet()); 
@@ -143,8 +148,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     /* Create the Main pages and actions */
     QActionGroup *grp = new QActionGroup(this);
-    /* Create the Service pages and actions */
-    QActionGroup *servicegrp = new QActionGroup(this);
+
 
     ui.stackPages->add(networkDialog = new NetworkDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_NETWORK), tr("Network"), grp));
@@ -167,21 +171,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(messagesDialog = new MessagesDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
                        
-    LinksDialog *linksDialog = NULL;
-    ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_TRANSFERS), tr("Links Cloud"), servicegrp));
 
-    ChannelsDialog *channelsDialog = NULL;
-    ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
-                           createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), servicegrp));
-
-    GamesDialog *gamesDialog = NULL;
-    ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_GAMES), tr("Games"), servicegrp));
-                     
-    PhotoDialog *photoDialog = NULL;
-    ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), servicegrp));    
 
 #ifdef RS_RELEASE_VERSION    
     channelsDialog = NULL;
@@ -208,10 +198,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.toolBar->addActions(grp->actions());
     ui.toolBar->addSeparator();
     connect(grp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *)));
-    /* Create the toolbarservice */
-    ui.toolBarservice->addActions(servicegrp->actions());
-    ui.toolBarservice->addSeparator();
-    connect(servicegrp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *)));
+
  
     /* Create and bind the messenger button */
     addAction(new QAction(QIcon(IMAGE_RSM32), tr("Messenger"), ui.toolBar), SLOT(showMessengerWindow()));
@@ -235,7 +222,44 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Select the first action */
     grp->actions()[0]->setChecked(true);
     /* Select the first action */
-    servicegrp->actions()[0]->setChecked(true);
+        /* Create the Service pages and actions */
+    QActionGroup *servicegrp = new QActionGroup(this);
+    
+     /* Create and bind the Add Friend button */
+    addActionservice(new QAction(QIcon(IMAGE_ADDFRIEND), tr("Add Friend"), ui.toolBarservice), SLOT(addFriend()));
+    addActionservice(new QAction(QIcon(IMAGE_INVITEFRIEND), tr("Invite Friend"), ui.toolBarservice), SLOT(inviteFriend()));
+    addActionservice(new QAction(QIcon(IMAGE_ADDSHARE), tr("Add Share"), ui.toolBarservice), SLOT(addSharedDirectory()));
+                           
+    LinksDialog *linksDialog = NULL;
+    ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), servicegrp));
+
+    ChannelsDialog *channelsDialog = NULL;
+    ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
+                           createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), servicegrp));
+
+    GamesDialog *gamesDialog = NULL;
+    ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_GAMES), tr("Games"), servicegrp));
+                     
+    PhotoDialog *photoDialog = NULL;
+    ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), servicegrp)); 
+                         
+                                      
+    
+    /* Create the toolbarservice */
+    ui.toolBarservice->addActions(servicegrp->actions());
+    ui.toolBarservice->addSeparator();
+    connect(servicegrp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *))); 
+    
+    addActionservice(new QAction(QIcon(IMAGE_OPTIONS), tr("Options"), ui.toolBarservice), SLOT(showPreferencesWindow()));
+    
+    ui.toolBarservice->addSeparator();
+
+    addActionservice(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), ui.toolBarservice), SLOT(doQuit()));  
+
+    //servicegrp->actions()[0]->setChecked(true);
   
     /* Create the actions that will go in the tray menu */
     createActions();
@@ -300,14 +324,32 @@ QAction* MainWindow::createPageAction(QIcon img, QString text, QActionGroup *gro
     return action;
 }
 
+/** Creates a new action associated with a config page. */
+QAction* MainWindow::createPageActionservice(QIcon img, QString text, QActionGroup *groupservice)
+{
+    QAction *actionservice = new QAction(img, text, groupservice);
+    actionservice->setCheckable(true);
+    actionservice->setFont(FONT);
+    return actionservice;
+}
+
+
 /** Adds the given action to the toolbar and hooks its triggered() signal to
  * the specified slot (if given). */
 void MainWindow::addAction(QAction *action, const char *slot)
 {
     action->setFont(FONT);
     ui.toolBar->addAction(action);
-    ui.toolBarservice->addAction(action);
     connect(action, SIGNAL(triggered()), this, slot);
+}
+
+/** Adds the given action to the toolbar and hooks its triggered() signal to
+ * the specified slot (if given). */
+void MainWindow::addActionservice(QAction *actionservice, const char *slot)
+{
+    actionservice->setFont(FONT);
+    ui.toolBarservice->addAction(actionservice);
+    connect(actionservice, SIGNAL(triggered()), this, slot);
 }
 
 /** Overloads the default show so we can load settings */
@@ -455,7 +497,7 @@ void MainWindow::createActions()
     //connect(_smplayerAct, SIGNAL(triggered()),this, SLOT(showsmplayer()));
          
           
-    connect(ui.btntoggletoolbox, SIGNAL(toggled(bool)), this, SLOT(showToolboxFrame(bool)));
+    //connect(ui.btntoggletoolbox, SIGNAL(toggled(bool)), this, SLOT(showToolboxFrame(bool)));
   
 }
 
@@ -564,7 +606,7 @@ void MainWindow::showConsoleFrame(bool show)
 /**
  Toggles the ToolBox on and off, changes toggle button text
  */
-void MainWindow::showToolboxFrame(bool show)
+/*void MainWindow::showToolboxFrame(bool show)
 {
     if (show) {
         ui.toolboxframe->setVisible(true);
@@ -577,7 +619,7 @@ void MainWindow::showToolboxFrame(bool show)
         ui.btntoggletoolbox->setToolTip(tr("Show ToolBox"));
         ui.btntoggletoolbox->setIcon(QIcon(tr(":images/show_toolbox_frame.png")));
     }
-}
+}*/
 
 
 

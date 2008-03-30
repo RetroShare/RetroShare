@@ -132,7 +132,7 @@ private slots:
     void showConsoleFrame(bool show);
 	
     /** Called when console button is toggled */
-    void showToolboxFrame(bool show);
+    //void showToolboxFrame(bool show);
     
     /** Called when user attempts to quit via quit button*/
     void doQuit();
@@ -164,10 +164,15 @@ private:
     PreferencesWindow* _preferencesWindow;
     
     
-    /** Creates a new action for a config page. */
+    /** Creates a new action for a Main page. */
     QAction* createPageAction(QIcon img, QString text, QActionGroup *group);
     /** Adds a new action to the toolbar. */
     void addAction(QAction *action, const char *slot = 0);
+    
+    /** Creates a new action for a Service pages. */
+    QAction* createPageActionservice(QIcon img, QString text, QActionGroup *groupservice);
+    /** Adds a new action to the toolbar. */
+    void addActionservice(QAction *actionservice, const char *slot = 0);
     
     void loadStyleSheet(const QString &sheetName);
     
