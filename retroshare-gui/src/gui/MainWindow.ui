@@ -502,14 +502,26 @@
    </size>
   </property>
   <property name="toolButtonStyle" >
-   <enum>Qt::ToolButtonTextUnderIcon</enum>
+   <enum>Qt::ToolButtonIconOnly</enum>
   </property>
   <widget class="QWidget" name="centralwidget" >
    <layout class="QGridLayout" >
-    <property name="margin" >
+    <property name="leftMargin" >
      <number>1</number>
     </property>
-    <property name="spacing" >
+    <property name="topMargin" >
+     <number>1</number>
+    </property>
+    <property name="rightMargin" >
+     <number>1</number>
+    </property>
+    <property name="bottomMargin" >
+     <number>1</number>
+    </property>
+    <property name="horizontalSpacing" >
+     <number>1</number>
+    </property>
+    <property name="verticalSpacing" >
      <number>1</number>
     </property>
     <item row="0" column="0" >
@@ -522,8 +534,7 @@
         <bool>true</bool>
        </property>
        <property name="styleSheet" >
-        <string>
-</string>
+        <string/>
        </property>
        <property name="currentIndex" >
         <number>0</number>
@@ -533,10 +544,19 @@
          <string>Home</string>
         </attribute>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
+         <property name="spacing" >
           <number>0</number>
          </property>
-         <property name="spacing" >
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
           <number>0</number>
          </property>
          <item>
@@ -554,18 +574,28 @@
             <enum>QFrame::Raised</enum>
            </property>
            <layout class="QGridLayout" >
-            <property name="margin" >
+            <property name="leftMargin" >
              <number>0</number>
             </property>
-            <property name="spacing" >
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>0</number>
+            </property>
+            <property name="verticalSpacing" >
              <number>0</number>
             </property>
             <item row="0" column="0" >
              <widget class="QToolBox" name="toolBox" >
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>4</hsizetype>
-                <vsizetype>5</vsizetype>
+               <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -583,10 +613,7 @@
                </size>
               </property>
               <property name="font" >
-               <font>
-                <weight>30</weight>
-                <bold>true</bold>
-               </font>
+               <font/>
               </property>
               <property name="styleSheet" >
                <string>QToolBox::tab {         
@@ -612,17 +639,29 @@ color: black;
                  <x>0</x>
                  <y>0</y>
                  <width>72</width>
-                 <height>265</height>
+                 <height>269</height>
                 </rect>
                </property>
                <attribute name="label" >
                 <string>General</string>
                </attribute>
                <layout class="QGridLayout" >
-                <property name="margin" >
+                <property name="leftMargin" >
                  <number>9</number>
                 </property>
-                <property name="spacing" >
+                <property name="topMargin" >
+                 <number>9</number>
+                </property>
+                <property name="rightMargin" >
+                 <number>9</number>
+                </property>
+                <property name="bottomMargin" >
+                 <number>9</number>
+                </property>
+                <property name="horizontalSpacing" >
+                 <number>6</number>
+                </property>
+                <property name="verticalSpacing" >
                  <number>6</number>
                 </property>
                 <item row="2" column="0" >
@@ -631,9 +670,7 @@ color: black;
                    <enum>Qt::NonModal</enum>
                   </property>
                   <property name="sizePolicy" >
-                   <sizepolicy>
-                    <hsizetype>0</hsizetype>
-                    <vsizetype>0</vsizetype>
+                   <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
@@ -679,18 +716,28 @@ color: black;
                 </item>
                 <item row="0" column="0" >
                  <layout class="QGridLayout" >
-                  <property name="margin" >
+                  <property name="leftMargin" >
                    <number>0</number>
                   </property>
-                  <property name="spacing" >
+                  <property name="topMargin" >
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin" >
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin" >
+                   <number>0</number>
+                  </property>
+                  <property name="horizontalSpacing" >
+                   <number>7</number>
+                  </property>
+                  <property name="verticalSpacing" >
                    <number>7</number>
                   </property>
                   <item row="1" column="0" >
                    <widget class="QPushButton" name="invitefriendButton" >
                     <property name="sizePolicy" >
-                     <sizepolicy>
-                      <hsizetype>0</hsizetype>
-                      <vsizetype>0</vsizetype>
+                     <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
@@ -724,9 +771,7 @@ color: black;
                   <item row="0" column="0" >
                    <widget class="QPushButton" name="addfriendButton" >
                     <property name="sizePolicy" >
-                     <sizepolicy>
-                      <hsizetype>0</hsizetype>
-                      <vsizetype>0</vsizetype>
+                     <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
@@ -760,9 +805,7 @@ color: black;
                   <item row="3" column="0" >
                    <widget class="QPushButton" name="optionsButton" >
                     <property name="sizePolicy" >
-                     <sizepolicy>
-                      <hsizetype>0</hsizetype>
-                      <vsizetype>0</vsizetype>
+                     <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
@@ -796,9 +839,7 @@ color: black;
                   <item row="2" column="0" >
                    <widget class="QPushButton" name="addshareButton" >
                     <property name="sizePolicy" >
-                     <sizepolicy>
-                      <hsizetype>0</hsizetype>
-                      <vsizetype>0</vsizetype>
+                     <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
@@ -851,8 +892,8 @@ color: black;
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>72</width>
-                 <height>30</height>
+                 <width>98</width>
+                 <height>28</height>
                 </rect>
                </property>
                <attribute name="label" >
@@ -922,10 +963,22 @@ p, li { white-space: pre-wrap; }
          </item>
          <item>
           <layout class="QGridLayout" >
-           <property name="margin" >
+           <property name="leftMargin" >
             <number>0</number>
            </property>
-           <property name="spacing" >
+           <property name="topMargin" >
+            <number>0</number>
+           </property>
+           <property name="rightMargin" >
+            <number>0</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>0</number>
+           </property>
+           <property name="horizontalSpacing" >
+            <number>0</number>
+           </property>
+           <property name="verticalSpacing" >
             <number>0</number>
            </property>
            <item row="0" column="0" >
@@ -1473,9 +1526,7 @@ p, li { white-space: pre-wrap; }
       </widget>
       <widget class="QFrame" name="frmConsole" >
        <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>7</hsizetype>
-         <vsizetype>7</vsizetype>
+        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -1502,10 +1553,19 @@ p, li { white-space: pre-wrap; }
         <enum>QFrame::Raised</enum>
        </property>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
+        <property name="spacing" >
          <number>0</number>
         </property>
-        <property name="spacing" >
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
          <number>0</number>
         </property>
         <item>
@@ -1530,10 +1590,22 @@ p, li { white-space: pre-wrap; }
     </item>
     <item row="1" column="0" >
      <layout class="QGridLayout" >
-      <property name="margin" >
+      <property name="leftMargin" >
        <number>0</number>
       </property>
-      <property name="spacing" >
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>0</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
        <number>6</number>
       </property>
       <item row="0" column="2" >
@@ -1641,7 +1713,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="allowedAreas" >
-    <enum>Qt::TopToolBarArea</enum>
+    <set>Qt::TopToolBarArea</set>
    </property>
    <property name="orientation" >
     <enum>Qt::Horizontal</enum>
@@ -1656,14 +1728,37 @@ p, li { white-space: pre-wrap; }
     <enum>Qt::ToolButtonTextUnderIcon</enum>
    </property>
    <attribute name="toolBarArea" >
-    <number>4</number>
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QToolBar" name="toolBarservice" >
+   <property name="windowTitle" >
+    <string/>
+   </property>
+   <property name="allowedAreas" >
+    <set>Qt::BottomToolBarArea|Qt::LeftToolBarArea|Qt::NoToolBarArea|Qt::RightToolBarArea</set>
+   </property>
+   <property name="iconSize" >
+    <size>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>RightToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
    </attribute>
   </widget>
  </widget>
  <customwidgets>
   <customwidget>
    <class>MainPageStack</class>
-   <extends>QStackedPageWidget</extends>
+   <extends>QWidget</extends>
    <header>gui/mainpagestack.h</header>
   </customwidget>
  </customwidgets>

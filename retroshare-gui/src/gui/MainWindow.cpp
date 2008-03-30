@@ -27,6 +27,11 @@
 #include <QIcon>
 #include <QPixmap>
 
+#include "LinksDialog.h"
+#include "GamesDialog.h"
+#include "PhotoDialog.h"
+#include "channels/channelsDialog.h"
+
 #include <rshare.h>
 #include "MainWindow.h"
 #include "MessengerWindow.h"
@@ -68,6 +73,9 @@
 #define IMAGE_SMPLAYER		    ":/images/smplayer_icon32.png"
 #define IMAGE_BLOCK         	":/images/blockdevice.png"
 #define IMAGE_COLOR         	":/images/highlight.png"
+#define IMAGE_GAMES             ":/images/kgames.png"
+#define IMAGE_PHOTO             ":/images/lphoto.png"
+#define IMAGE_SMPLAYER          ":/images/smplayer_icon32.png"
 
 
 /* Keys for UI Preferences */
@@ -133,8 +141,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
 
 
-    /* Create the config pages and actions */
+    /* Create the Main pages and actions */
     QActionGroup *grp = new QActionGroup(this);
+    /* Create the Service pages and actions */
+    QActionGroup *servicegrp = new QActionGroup(this);
 
     ui.stackPages->add(networkDialog = new NetworkDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_NETWORK), tr("Network"), grp));
@@ -156,6 +166,22 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     ui.stackPages->add(messagesDialog = new MessagesDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
+                       
+    LinksDialog *linksDialog = NULL;
+    ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_TRANSFERS), tr("Links Cloud"), servicegrp));
+
+    ChannelsDialog *channelsDialog = NULL;
+    ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
+                           createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), servicegrp));
+
+    GamesDialog *gamesDialog = NULL;
+    ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_GAMES), tr("Games"), servicegrp));
+                     
+    PhotoDialog *photoDialog = NULL;
+    ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), servicegrp));    
 
 #ifdef RS_RELEASE_VERSION    
     channelsDialog = NULL;
@@ -182,6 +208,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.toolBar->addActions(grp->actions());
     ui.toolBar->addSeparator();
     connect(grp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *)));
+    /* Create the toolbarservice */
+    ui.toolBarservice->addActions(servicegrp->actions());
+    ui.toolBarservice->addSeparator();
+    connect(servicegrp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *)));
  
     /* Create and bind the messenger button */
     addAction(new QAction(QIcon(IMAGE_RSM32), tr("Messenger"), ui.toolBar), SLOT(showMessengerWindow()));
@@ -198,27 +228,19 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     addAction(new QAction(QIcon(IMAGE_BLOCK), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 #endif
 
-    addAction(new QAction(QIcon(IMAGE_COLOR), tr("Color"), ui.toolBar), SLOT(setStyle()));
-
- 
-#ifdef NO_MORE_OPTIONS_OR_SS
-
-    /* Create and bind the Preferences button */  
-    addAction(new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), ui.toolBar),
-              SLOT(showSettings())); 
-            
-
-            
-
-#endif
+    //addAction(new QAction(QIcon(IMAGE_COLOR), tr("Color"), ui.toolBar), SLOT(setStyle()));
 
  
 
     /* Select the first action */
     grp->actions()[0]->setChecked(true);
+    /* Select the first action */
+    servicegrp->actions()[0]->setChecked(true);
   
     /* Create the actions that will go in the tray menu */
     createActions();
+             
+
   
     statusBar()->addWidget(new QLabel(tr("Users: 0  Files: 0 ")));
     statusBar()->addPermanentWidget(new QLabel(tr("Down: 0.0  Up: 0.0 ")));
@@ -284,6 +306,7 @@ void MainWindow::addAction(QAction *action, const char *slot)
 {
     action->setFont(FONT);
     ui.toolBar->addAction(action);
+    ui.toolBarservice->addAction(action);
     connect(action, SIGNAL(triggered()), this, slot);
 }
 
