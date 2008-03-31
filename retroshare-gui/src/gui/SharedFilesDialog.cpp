@@ -39,9 +39,12 @@
 #include <QMouseEvent>
 #include <QPixmap>
 #include <QHeaderView>
+#include <QTimer>
 
 /* Images for context menu icons */
 #define IMAGE_DOWNLOAD       ":/images/start.png"
+#define IMAGE_HASH_BUSY      ":/images/settings.png"
+#define IMAGE_HASH_DONE      ":/images/folder_green.png"
 
 /** Constructor */
 SharedFilesDialog::SharedFilesDialog(QWidget *parent)
@@ -49,6 +52,9 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
+
+    connect(ui.checkButton, SIGNAL(clicked()), this, SLOT(forceCheck()));
+
 
   connect( ui.localDirTreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( shareddirtreeWidgetCostumPopupMenu( QPoint ) ) );
 
@@ -107,11 +113,38 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   ui.remoteDirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
   ui.localDirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
+  QTimer *timer = new QTimer(this);
+  timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
+  timer->start(1000);
+
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
 }
+
+void SharedFilesDialog::checkUpdate()
+{
+        /* update */
+	if (rsicontrol->InDirectoryCheck())
+	{
+		ui.hashLabel->setPixmap(QPixmap(IMAGE_HASH_BUSY));
+	}
+	else
+	{
+		ui.hashLabel->setPixmap(QPixmap(IMAGE_HASH_DONE));
+	}
+
+	return;
+}
+
+
+void SharedFilesDialog::forceCheck()
+{
+	rsicontrol->ForceDirectoryCheck();
+	return;
+}
+
 
 void SharedFilesDialog::shareddirtreeviewCostumPopupMenu( QPoint point )
 {
@@ -170,6 +203,34 @@ void SharedFilesDialog::recommendfile()
 
   QItemSelectionModel *qism = ui.localDirTreeView->selectionModel();
   localModel -> recommendSelected(qism->selectedIndexes());
+}
+
+
+void SharedFilesDialog::playselectedfiles()
+{
+  /* call back to the model (which does all the interfacing? */
+
+  std::cerr << "SharedFilesDialog::playselectedfiles()";
+  std::cerr << std::endl;
+
+  QItemSelectionModel *qism = ui.localDirTreeView->selectionModel();
+
+  std::list<std::string> paths;
+  localModel -> getFilePaths(qism->selectedIndexes(), paths);
+
+  std::list<std::string>::iterator it;
+  QStringList fullpaths;
+  for(it = paths.begin(); it != paths.end(); it++)
+  {
+  	std::string fullpath;
+  	rsicontrol->ConvertSharedFilePath(*it, fullpath);
+	fullpaths.push_back(QString::fromStdString(fullpath));
+
+  	std::cerr << "Playing: " << fullpath;
+  	std::cerr << std::endl;
+  }
+
+  playFiles(fullpaths);
 }
 
 
@@ -288,12 +349,13 @@ void SharedFilesDialog::shareddirtreeWidgetCostumPopupMenu( QPoint point )
       QMenu contextMnu2( this );
       QMouseEvent *mevent2 = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
+      openfolderAct = new QAction( tr( "Play File(s)" ), this );
+      connect( openfolderAct , SIGNAL( triggered() ), this, SLOT( playselectedfiles() ) );
+
       openfileAct = new QAction( tr( "Add to Recommend List" ), this );
       connect( openfileAct , SIGNAL( triggered() ), this, SLOT( recommendfile() ) );
       
-     // openfolderAct = new QAction( tr( "Play File" ), this );
-     // connect( openfolderAct , SIGNAL( triggered() ), this, SLOT( openfile() ) );
-     //
+     
 	/* now we're going to ask who to recommend it to...
 	 * First Level.
 	 *
@@ -341,6 +403,7 @@ void SharedFilesDialog::shareddirtreeWidgetCostumPopupMenu( QPoint point )
 
 	}
 
+        contextMnu2.addAction( openfolderAct);
         contextMnu2.addAction( openfileAct);
         contextMnu2.addMenu( recMenu);
         contextMnu2.addMenu( msgMenu);

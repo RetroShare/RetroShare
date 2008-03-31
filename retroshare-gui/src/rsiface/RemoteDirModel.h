@@ -3,6 +3,8 @@
 
 #include <QAbstractItemModel>
 #include <vector>
+#include <list>
+#include <string>
 
 class RemoteDirModel : public QAbstractItemModel
  {
@@ -39,6 +41,8 @@ class RemoteDirModel : public QAbstractItemModel
      void recommendSelected(QModelIndexList list);
      void recommendSelectedOnly(QModelIndexList list);
      void openSelected(QModelIndexList list);
+
+     void getFilePaths(QModelIndexList list, std::list<std::string> &fullpaths);
 
   public slots:
 

@@ -65,11 +65,6 @@ virtual bool GetPopupMessageList(std::map<uint32_t, std::string> &list)			= 0;
 virtual bool SetSysMessageMode(uint32_t sysid, uint32_t mode)				= 0;
 virtual bool SetPopupMessageMode(uint32_t ptype, uint32_t mode)				= 0;
 
-	/* Input from libretroshare */
-virtual bool AddPopupMessage(uint32_t ptype, std::string name, std::string msg) 	= 0;
-virtual bool AddSysMessage(uint32_t sysid, uint32_t type, 
-					std::string title, std::string msg) 		= 0;
-
 };
 
 

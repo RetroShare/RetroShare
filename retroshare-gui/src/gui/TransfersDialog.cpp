@@ -42,6 +42,7 @@
 #define IMAGE_INFO                 ":/images/fileinfo.png"
 #define IMAGE_CANCEL               ":/images/delete.png"
 #define IMAGE_CLEARCOMPLETED       ":/images/deleteall.png"
+#define IMAGE_PLAY		   ":/images/start.png"
 
 /** Constructor */
 TransfersDialog::TransfersDialog(QWidget *parent)
@@ -141,8 +142,35 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
-//      showdowninfoAct = new QAction(QIcon(IMAGE_INFO), tr( "Details..." ), this );
-//      connect( showdowninfoAct , SIGNAL( triggered() ), this, SLOT( showDownInfoWindow() ) );
+      //showdowninfoAct = new QAction(QIcon(IMAGE_INFO), tr( "Details..." ), this );
+      //connect( showdowninfoAct , SIGNAL( triggered() ), this, SLOT( showDownInfoWindow() ) );
+
+      /* check which item is selected 
+       * - if it is completed - play should appear in menu 
+       */
+	std::cerr << "TransfersDialog::downloadListCostumPopupMenu()" << std::endl;
+
+      	bool addPlayOption = false;
+	for(int i = 0; i <= DLListModel->rowCount(); i++) {
+		std::cerr << "Row Status :" << getStatus(i, DLListModel).toStdString() << ":" << std::endl;
+		if(selection->isRowSelected(i, QModelIndex())) {
+			std::cerr << "Selected Row Status :" << getStatus(i, DLListModel).toStdString() << ":" << std::endl;
+			QString qstatus = getStatus(i, DLListModel);
+			std::string status = (qstatus.trimmed()).toStdString();
+			if (status == "Complete")
+			{
+				std::cerr << "Add Play Option" << std::endl;
+				addPlayOption = true;
+			}
+		}
+	}
+
+      	QAction *playAct = NULL;
+	if (addPlayOption)
+	{
+      		playAct = new QAction(QIcon(IMAGE_PLAY), tr( "Play" ), this );
+      		connect( playAct , SIGNAL( triggered() ), this, SLOT( playSelectedTransfer() ) );
+	}
 
 	  cancelAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Cancel" ), this );
       connect( cancelAct , SIGNAL( triggered() ), this, SLOT( cancel() ) );
@@ -151,6 +179,12 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       connect( clearcompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
 
       contextMnu.clear();
+      if (addPlayOption)
+      {
+      	contextMnu.addAction(playAct);
+      }
+      contextMnu.addSeparator();     
+
       contextMnu.addAction( cancelAct);
 //      contextMnu.addSeparator();     
 //      contextMnu.addAction( showdowninfoAct);
@@ -158,6 +192,39 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       contextMnu.addAction( clearcompletedAct);
       contextMnu.exec( mevent->globalPos() );
 }
+
+void TransfersDialog::playSelectedTransfer()
+{
+	std::cerr << "TransfersDialog::playSelectedTransfer()" << std::endl;
+
+        /* get the shared directories */
+	rsiface->lockData(); /* Lock Interface */
+															        std::string incomingdir = rsiface->getConfig().incomingDir;
+																rsiface->unlockData(); /* UnLock Interface */
+
+	/* create the List of Files */
+	QStringList playList;
+	for(int i = 0; i <= DLListModel->rowCount(); i++) {
+		if(selection->isRowSelected(i, QModelIndex())) {
+			QString qstatus = getStatus(i, DLListModel);
+			std::string status = (qstatus.trimmed()).toStdString();
+			if (status == "Complete")
+			{
+				QString qname = getFileName(i, DLListModel);
+				QString fullpath = QString::fromStdString(incomingdir);
+				fullpath += "/";
+				fullpath += qname.trimmed();
+
+				playList.push_back(fullpath);
+
+				std::cerr << "PlayFile:" << fullpath.toStdString() << std::endl;
+
+			}
+		}
+	}
+	playFiles(playList);
+}
+
 
 /** Shows Downloads Informations */
 void TransfersDialog::showDownInfoWindow()
@@ -282,6 +349,17 @@ void TransfersDialog::insertTransfers()
 	qlonglong fileSize, completed, remaining;
 	double progress, dlspeed; 
 
+
+	/* get current selection */
+	std::list<std::string> selectedIds;
+
+	for(int i = 0; i <= DLListModel->rowCount(); i++) {
+		if(selection->isRowSelected(i, QModelIndex())) {
+			std::string id = getID(i, DLListModel).toStdString();
+			selectedIds.push_back(id);
+		}
+	}
+
 	//remove all Items 
 	for(int i = DLListModel->rowCount(); i >= 0; i--) 
 	{
@@ -300,6 +378,9 @@ void TransfersDialog::insertTransfers()
 	std::list<FileTransferInfo>::const_iterator it;
 	const std::list<FileTransferInfo> &transfers = rsiface->getTransferList();
 
+	uint32_t dlCount = 0;
+	uint32_t ulCount = 0;
+
 	for(it = transfers.begin(); it != transfers.end(); it++) 
 	{
 		
@@ -316,21 +397,28 @@ void TransfersDialog::insertTransfers()
 
 		switch(it->downloadStatus) 
 		{
-			/* XXX HAND CODED! */
+
+	/******** XXX HAND CODED! 
+#define FT_STATE_FAILED         0
+#define FT_STATE_OKAY           1
+#define FT_STATE_WAITING        2
+#define FT_STATE_DOWNLOADING    3
+#define FT_STATE_COMPLETE       4
+	*******************/
+
 			case 0: /* FAILED */
 				status = "Failed";
 				break;
-			case 1: /* Downloading */
-				if (it->tfRate > 0.01)
-				{
-					status = "Downloading";
-				}
-				else
-				{
-					status = "Waiting for Peer";
-				}
+			case 1: /* OKAY */
+				status = "Okay";
 				break;
-		    case 2: /* COMPLETE */
+			case 2: /* WAITING */
+				status = "Waiting";
+				break;
+			case 3: /* DOWNLOADING */
+				status = "Downloading";
+				break;
+		    	case 4: /* COMPLETE */
 			default:
 				status = "Complete";
 				break;
@@ -347,11 +435,21 @@ void TransfersDialog::insertTransfers()
 		{
 			addItem(symbol, name, coreId, fileSize, progress, 
 					dlspeed, sources,  status, completed, remaining);
+
+			/* if found in selectedIds -> select again */
+			if (selectedIds.end() != std::find(selectedIds.begin(), selectedIds.end(), it->hash))
+			{
+				selection->select(DLListModel->index(dlCount, 0), 
+					QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent);
+
+			}
+			dlCount++;
 		}
 		else
 		{
 			addUploadItem(symbol, name, coreId, fileSize, progress, 
 					dlspeed, sources,  status, completed, remaining);
+			ulCount++;
 		}
 	}
 

@@ -45,9 +45,10 @@ public:
 void  preModDirectories(bool update_local);
 void     ModDirectories(bool update_local);
 
-
-
 private slots:
+
+  void checkUpdate();
+  void forceCheck();
 
   /** Create the context popup menu and it's submenus */
   void shareddirtreeviewCostumPopupMenu( QPoint point );
@@ -58,12 +59,16 @@ private slots:
   void addMsgRemoteSelected();
 
   void recommendfile();
+  void playselectedfiles();
   void openfile();
   void openfolder();
 
   void recommendFileSetOnly();
   void recommendFilesTo( std::string rsid );
   void recommendFilesToMsg( std::string rsid );
+
+signals:
+  void playFiles(QStringList files);
 
 private:
   /** Define the popup menus for the Context menu */

@@ -61,7 +61,10 @@ private slots:
   void cancel();
   /** removes finished Downloads**/
   void clearcompleted();
- 
+  void playSelectedTransfer(); 
+
+signals:
+  void playFiles(QStringList files);
 
 private:
   		QStandardItemModel *DLListModel;

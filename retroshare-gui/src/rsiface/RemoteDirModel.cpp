@@ -692,3 +692,53 @@ void RemoteDirModel::openSelected(QModelIndexList list)
 	recommendSelected(list);
 }
 
+
+void RemoteDirModel::getFilePaths(QModelIndexList list, std::list<std::string> &fullpaths)
+{
+	std::cerr << "RemoteDirModel::getFilePaths()" << std::endl;
+	if (RemoteMode)
+	{
+		std::cerr << "No File Paths for remote files" << std::endl;
+		return;
+	}
+	/* translate */
+	QModelIndexList::iterator it;
+	for(it = list.begin(); it != list.end(); it++)
+	{
+		void *ref = it -> internalPointer();
+
+     		DirDetails details;
+     		uint32_t flags = DIR_FLAGS_DETAILS;
+     		flags |= DIR_FLAGS_LOCAL;
+
+     		if (!rsicontrol->RequestDirDetails(ref, details, flags))
+     		{
+			std::cerr << "getFilePaths() Bad Request" << std::endl;
+			continue;
+     		}
+
+		if (details.type != DIR_TYPE_FILE)
+		{
+			std::cerr << "getFilePaths() Not File" << std::endl;
+			continue; /* not file! */
+		}
+
+		std::cerr << "::::::::::::File Details:::: " << std::endl;
+		std::cerr << "Name: " << details.name << std::endl;
+		std::cerr << "Hash: " << details.hash << std::endl;
+		std::cerr << "Size: " << details.count << std::endl;
+		std::cerr << "Path: " << details.path << std::endl;
+
+		std::string filepath = details.path + "/";
+		filepath += details.name;
+
+		std::cerr << "Constructed FilePath: " << filepath << std::endl;
+		if (fullpaths.end() == std::find(fullpaths.begin(), fullpaths.end(), filepath))
+		{
+			fullpaths.push_back(filepath);
+		}
+	}
+	std::cerr << "::::::::::::Done getFilePaths" << std::endl;
+}
+
+

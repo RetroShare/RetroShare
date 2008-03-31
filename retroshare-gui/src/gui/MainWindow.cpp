@@ -101,6 +101,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.setupUi(this);
     
     setWindowTitle(tr("RetroShare %1").arg(retroshareVersion())); 
+
+    mSMPlayer = NULL;
   
     /* Hide Console frame */
     //showConsoleFrame(false);
@@ -197,7 +199,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(grp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *)));
        
 
-
+    // Allow to play files from SharedFilesDialog.
+    connect(sharedfilesDialog, SIGNAL(playFiles( QStringList )), this, SLOT(playFiles( QStringList )));
+    connect(transfersDialog, SIGNAL(playFiles( QStringList )), this, SLOT(playFiles( QStringList )));
 
 #ifdef RS_RELEASE_VERSION    
     addAction(new QAction(QIcon(IMAGE_BLOCK), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
@@ -280,7 +284,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     menu->addAction(_bandwidthAct);
 #endif
     menu->addAction(_prefsAct);
-    //menu->addAction(_smplayerAct);
+    menu->addAction(_smplayerAct);
     menu->addSeparator();
     menu->addAction(tr("Minimize"), this, SLOT(showMinimized()));
     menu->addAction(tr("Maximize"), this, SLOT(showMaximized()));
@@ -461,7 +465,7 @@ MainWindow::~MainWindow()
     delete _prefsAct;
     delete _bandwidthGraph;
     delete _messengerwindowAct;
-    //delete _smplayerAct;
+    delete _smplayerAct;
 }
 
 /** Create and bind actions to events. Setup for initial
@@ -479,8 +483,8 @@ void MainWindow::createActions()
     _messengerwindowAct = new QAction(QIcon(IMAGE_RSM16), tr("Open Messenger"), this);
     connect(_messengerwindowAct, SIGNAL(triggered()),this, SLOT(showMessengerWindow()));
     
-    //_smplayerAct = new QAction(QIcon(IMAGE_SMPLAYER), tr("SMPlayer"), this);
-    //connect(_smplayerAct, SIGNAL(triggered()),this, SLOT(showsmplayer()));
+    _smplayerAct = new QAction(QIcon(IMAGE_SMPLAYER), tr("SMPlayer"), this);
+    connect(_smplayerAct, SIGNAL(triggered()),this, SLOT(showsmplayer()));
          
           
     //connect(ui.btntoggletoolbox, SIGNAL(toggled(bool)), this, SLOT(showToolboxFrame(bool)));
@@ -645,14 +649,20 @@ void MainWindow::showsmplayer()
 {    
     static SMPlayer * smplayer = 0;
     
-    if (smplayer == 0) {
-    smplayer = new SMPlayer(QString::null, this);
-    /*connect(smplayer->gui(), SIGNAL(quitSolicited()), 
-            smplayer->gui(), SLOT(hide()));*/
-	}
-	smplayer->gui()->show();
+    if (mSMPlayer == 0) 
+    {
+    	mSMPlayer = new SMPlayer(QString::null, this);
+    }
+    mSMPlayer->gui()->show();
 
 }
+
+void MainWindow::playFiles(QStringList files)
+{
+	showsmplayer();
+	mSMPlayer->gui()->openFiles(files);
+}
+
 
 void MainWindow::showabout()
 {

@@ -384,6 +384,12 @@ void  LinksDialog::updateLinks()
 				QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
 
 				QString peerLabel = QString::fromStdString(rsPeers->getPeerName(cit->id));
+				if (peerLabel == "")
+				{
+					peerLabel = "<";
+					peerLabel += QString::fromStdString(cit->id);
+					peerLabel = ">";
+				}
 				peerLabel += "  ";
 				peerLabel += timestamp;
 				child -> setText(2, peerLabel);

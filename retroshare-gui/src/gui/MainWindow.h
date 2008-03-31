@@ -54,6 +54,8 @@
 
 #include "../config/rsharesettings.h"
 
+class SMPlayer;
+
 class MainWindow : public QMainWindow
 {
   Q_OBJECT
@@ -97,6 +99,7 @@ public:
     MessengerWindow   *messengerWindow;
     ApplicationWindow   *applicationWindow;
 
+    SMPlayer * mSMPlayer;
 
 public slots:
     /** Called when this dialog is to be displayed */
@@ -107,6 +110,7 @@ public slots:
     void startgammon();
     void startqcheckers();
 
+    void playFiles(QStringList files);
 
 private slots:
 

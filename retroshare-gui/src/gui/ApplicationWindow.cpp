@@ -105,9 +105,9 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_GAMES), tr("Games Launcher"), grp));
 
-    NetworkView *networkView = NULL;
-    ui.stackPages->add(networkView = new NetworkView(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_NETWORK), tr("Network View"), grp));
+    //NetworkView *networkView = NULL;
+    //ui.stackPages->add(networkView = new NetworkView(ui.stackPages),
+    //                   createPageAction(QIcon(IMAGE_NETWORK), tr("Network View"), grp));
                      
     PhotoDialog *photoDialog = NULL;
     ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
@@ -126,7 +126,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
    connect(grp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *)));
 
     /* Create and bind the messenger button */
-    addAction(new QAction(QIcon(IMAGE_SMPLAYER), tr("SMPlayer"), ui.toolBar), SLOT(showsmplayer()));
+    //addAction(new QAction(QIcon(IMAGE_SMPLAYER), tr("SMPlayer"), ui.toolBar), SLOT(showsmplayer()));
 
 }
 

@@ -119,7 +119,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
-      peerdetailsAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Peer Details / Authenticate " ), this );
+      peerdetailsAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Make Friend / Peer Details" ), this );
       connect( peerdetailsAct , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
       
       //authAct = new QAction(QIcon(IMAGE_AUTH), tr( "Authenticate" ), this );
