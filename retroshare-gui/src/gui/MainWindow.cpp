@@ -103,8 +103,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     setWindowTitle(tr("RetroShare %1").arg(retroshareVersion())); 
   
     /* Hide Console frame */
-    showConsoleFrame(false);
-    connect(ui.btnToggleConsole, SIGNAL(toggled(bool)), this, SLOT(showConsoleFrame(bool)));
+    //showConsoleFrame(false);
+    //connect(ui.btnToggleConsole, SIGNAL(toggled(bool)), this, SLOT(showConsoleFrame(bool)));
 	
     /* Hide ToolBox frame */
     //showToolboxFrame(true);
@@ -234,17 +234,17 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), servicegrp));
 
-    ChannelsDialog *channelsDialog = NULL;
-    ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
-                           createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), servicegrp));
+    //ChannelsDialog *channelsDialog = NULL;
+    //ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
+    //                       createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), servicegrp));
 
-    GamesDialog *gamesDialog = NULL;
-    ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_GAMES), tr("Games"), servicegrp));
+    //GamesDialog *gamesDialog = NULL;
+    //ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
+    //                   createPageAction(QIcon(IMAGE_GAMES), tr("Games"), servicegrp));
                      
-    PhotoDialog *photoDialog = NULL;
-    ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), servicegrp)); 
+    //PhotoDialog *photoDialog = NULL;
+    //ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
+    //                  createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), servicegrp)); 
                          
                                       
     
@@ -590,7 +590,7 @@ void MainWindow::toggleVisibilitycontextmenu()
 /**
 Toggles the Console pane on and off, changes toggle button text
  */
-void MainWindow::showConsoleFrame(bool show)
+/*void MainWindow::showConsoleFrame(bool show)
 {
     if (show) {
         ui.frmConsole->setVisible(true);
@@ -601,7 +601,7 @@ void MainWindow::showConsoleFrame(bool show)
         ui.btnToggleConsole->setChecked(false);
         ui.btnToggleConsole->setToolTip(tr("Show Console"));
     }
-}
+}*/
 
 /**
  Toggles the ToolBox on and off, changes toggle button text

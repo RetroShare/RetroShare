@@ -129,7 +129,7 @@ private slots:
     void setStyle();
     
     /** Called when console button is toggled */
-    void showConsoleFrame(bool show);
+    //void showConsoleFrame(bool show);
 	
     /** Called when console button is toggled */
     //void showToolboxFrame(bool show);
