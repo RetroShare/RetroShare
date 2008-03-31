@@ -120,10 +120,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     applicationWindow->hide();
 	
 	/** General ToolBox**/
-    //connect(ui.addfriendButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend() ) );
-    //connect(ui.invitefriendButton, SIGNAL(clicked( bool ) ), this , SLOT( inviteFriend() ) );
-    //connect(ui.addshareButton, SIGNAL(clicked( bool ) ), this , SLOT( addSharedDirectory() ) );
-    //connect(ui.optionsButton, SIGNAL(clicked( bool )), this, SLOT( showPreferencesWindow()) );
+    connect(ui.actionAdd_Friend, SIGNAL(triggered() ), this , SLOT( addFriend() ) );
+    connect(ui.actionInvite_Friend, SIGNAL(triggered() ), this , SLOT( inviteFriend() ) );
+    connect(ui.actionAdd_Share, SIGNAL(triggered() ), this , SLOT( addSharedDirectory() ) );
+    connect(ui.actionOptions, SIGNAL(triggered()), this, SLOT( showPreferencesWindow()) );
     
     /** Games ToolBox*/
 	//connect(ui.qbackgammonButton, SIGNAL(clicked( bool )), this, SLOT( startgammon()) );
@@ -137,10 +137,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
         
     /** adjusted quit behaviour: trigger a warning that can be switched off in the saved
         config file RetroShare.conf */
-    //ui.quitButton->setToolTip(tr("Quit"));
+    //ui.actionQuit->setToolTip(tr("Quit"));
     //connect(ui.quitButton, SIGNAL(clicked()), qApp, SLOT(quit()));
-    //connect(ui.quitButton, SIGNAL(clicked()), this, SLOT(doQuit()));
-    
+   connect(ui.actionQuit, SIGNAL(triggered()), this, SLOT(doQuit()));
+
     /* load the StyleSheet*/
     loadStyleSheet(Rshare::stylesheet()); 
 
@@ -226,25 +226,25 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     QActionGroup *servicegrp = new QActionGroup(this);
     
      /* Create and bind the Add Friend button */
-    addActionservice(new QAction(QIcon(IMAGE_ADDFRIEND), tr("Add Friend"), ui.toolBarservice), SLOT(addFriend()));
-    addActionservice(new QAction(QIcon(IMAGE_INVITEFRIEND), tr("Invite Friend"), ui.toolBarservice), SLOT(inviteFriend()));
-    addActionservice(new QAction(QIcon(IMAGE_ADDSHARE), tr("Add Share"), ui.toolBarservice), SLOT(addSharedDirectory()));
+    //addActionservice(new QAction(QIcon(IMAGE_ADDFRIEND), tr("Add Friend"), ui.toolBarservice), SLOT(addFriend()));
+    //addActionservice(new QAction(QIcon(IMAGE_INVITEFRIEND), tr("Invite Friend"), ui.toolBarservice), SLOT(inviteFriend()));
+    //addActionservice(new QAction(QIcon(IMAGE_ADDSHARE), tr("Add Share"), ui.toolBarservice), SLOT(addSharedDirectory()));
                            
     LinksDialog *linksDialog = NULL;
     ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), servicegrp));
 
-    //ChannelsDialog *channelsDialog = NULL;
-    //ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
-    //                       createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), servicegrp));
+    ChannelsDialog *channelsDialog = NULL;
+    ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
+                           createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), servicegrp));
 
-    //GamesDialog *gamesDialog = NULL;
-    //ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
-    //                   createPageAction(QIcon(IMAGE_GAMES), tr("Games"), servicegrp));
+    GamesDialog *gamesDialog = NULL;
+    ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_GAMES), tr("Games"), servicegrp));
                      
-    //PhotoDialog *photoDialog = NULL;
-    //ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
-    //                  createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), servicegrp)); 
+    PhotoDialog *photoDialog = NULL;
+    ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), servicegrp)); 
                          
                                       
     
@@ -252,12 +252,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.toolBarservice->addActions(servicegrp->actions());
     ui.toolBarservice->addSeparator();
     connect(servicegrp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *))); 
-    
-    addActionservice(new QAction(QIcon(IMAGE_OPTIONS), tr("Options"), ui.toolBarservice), SLOT(showPreferencesWindow()));
-    
+        
     ui.toolBarservice->addSeparator();
 
-    addActionservice(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), ui.toolBarservice), SLOT(doQuit()));  
 
     //servicegrp->actions()[0]->setChecked(true);
   
