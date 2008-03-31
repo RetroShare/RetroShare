@@ -6,6 +6,7 @@
         <file>images/addfriendlabel.png</file>
         <file>images/backgroundl.png</file>
         <file>images/blockdevice.png</file>
+        <file>images/blockdevice2.png</file>
         <file>images/channels.png</file>        
         <file>images/channeldelete.png</file>
         <file>images/channelsubscribe.png</file>
@@ -127,6 +128,7 @@
         <file>images/invite-friend24.png</file>
         <file>images/invitefriendlabel.png</file>
         <file>images/kbackgammon.png</file>
+        <file>images/kdmconfig.png</file>
         <file>images/konsole.png</file>
         <file>images/ksysguard.png</file>
         <file>images/ktorrent.png</file>

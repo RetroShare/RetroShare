@@ -136,6 +136,9 @@ private slots:
     
     /** Called when user attempts to quit via quit button*/
     void doQuit();
+    
+    //void toggleViewAction ();
+
 
 
 protected:
@@ -177,7 +180,7 @@ private:
     void loadStyleSheet(const QString &sheetName);
     
     QSystemTrayIcon *trayIcon;
-    QAction *toggleVisibilityAction;
+    QAction *toggleVisibilityAction, *toolAct;
     QMenu *menu;
        
     /** Qt Designer generated object */

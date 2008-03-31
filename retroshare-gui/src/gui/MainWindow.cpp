@@ -67,7 +67,7 @@
 #define IMAGE_STATISTIC         ":/images/utilities-system-monitor.png"
 #define IMAGE_MESSAGES          ":/images/evolution.png"
 #define IMAGE_BWGRAPH           ":/images/ksysguard.png"
-#define IMAGE_RSM32             ":/images/rsmessenger32.png"
+#define IMAGE_RSM32             ":/images/kdmconfig.png"
 #define IMAGE_RSM16             ":/images/rsmessenger16.png"
 #define IMAGE_CLOSE             ":/images/close_normal.png"
 #define IMAGE_SMPLAYER		    ":/images/smplayer_icon32.png"
@@ -104,10 +104,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
   
     /* Hide Console frame */
     //showConsoleFrame(false);
-    //connect(ui.btnToggleConsole, SIGNAL(toggled(bool)), this, SLOT(showConsoleFrame(bool)));
-	
-    /* Hide ToolBox frame */
-    //showToolboxFrame(true);
+    //connect(ui.btnToggleConsole, SIGNAL(toggled(bool)), this, SLOT(showConsoleFrame(bool)));	
+
+	ui.toolBarservice->hide();
 	
     // Setting icons
     this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
@@ -128,17 +127,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /** Games ToolBox*/
 	//connect(ui.qbackgammonButton, SIGNAL(clicked( bool )), this, SLOT( startgammon()) );
 	//connect(ui.qcheckersButton, SIGNAL(clicked( bool )), this, SLOT( startqcheckers()) );
-	
-	
-    //ui.addfriendButton->setToolTip(tr("Add a Friend"));
-    //ui.invitefriendButton->setToolTip(tr("Invite a Friend"));
-    //ui.addshareButton->setToolTip(tr("Add a Share"));
-    //ui.optionsButton->setToolTip(tr("Options"));
+	 
         
     /** adjusted quit behaviour: trigger a warning that can be switched off in the saved
         config file RetroShare.conf */
     //ui.actionQuit->setToolTip(tr("Quit"));
-    //connect(ui.quitButton, SIGNAL(clicked()), qApp, SLOT(quit()));
    connect(ui.actionQuit, SIGNAL(triggered()), this, SLOT(doQuit()));
 
     /* load the StyleSheet*/
@@ -215,8 +208,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     addAction(new QAction(QIcon(IMAGE_BLOCK), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 #endif
 
-    //addAction(new QAction(QIcon(IMAGE_COLOR), tr("Color"), ui.toolBar), SLOT(setStyle()));
-
+    toolAct = ui.toolBarservice->toggleViewAction();
+    toolAct->setText("Service");
+    toolAct->setShortcut(tr("Ctrl+T"));
+    toolAct->setIcon(QIcon(":/images/blockdevice2.png"));
+    ui.toolBar->addAction(toolAct);
  
 
     /* Select the first action */
@@ -224,11 +220,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Select the first action */
         /* Create the Service pages and actions */
     QActionGroup *servicegrp = new QActionGroup(this);
-    
-     /* Create and bind the Add Friend button */
-    //addActionservice(new QAction(QIcon(IMAGE_ADDFRIEND), tr("Add Friend"), ui.toolBarservice), SLOT(addFriend()));
-    //addActionservice(new QAction(QIcon(IMAGE_INVITEFRIEND), tr("Invite Friend"), ui.toolBarservice), SLOT(inviteFriend()));
-    //addActionservice(new QAction(QIcon(IMAGE_ADDSHARE), tr("Add Share"), ui.toolBarservice), SLOT(addSharedDirectory()));
+   
                            
     LinksDialog *linksDialog = NULL;
     ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
@@ -676,4 +668,13 @@ void MainWindow::setStyle()
  qApp->setStyleSheet(/*widgetSheet + */toolSheet + menuSheet);
  
 }
+
+/*void MainWindow::toggleViewAction ()
+{    
+
+        ui.toolBarservice->toggleViewAction();
+
+        //ui.toolBarservice->show();
+
+}*/
 
