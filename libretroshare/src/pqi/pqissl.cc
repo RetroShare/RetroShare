@@ -177,6 +177,12 @@ int 	pqissl::disconnect()
 	return reset();
 }
 
+/* BinInterface version of reset() for pqistreamer */
+int 	pqissl::close() 
+{
+	return reset();
+}
+
 // put back on the listening queue.
 int 	pqissl::reset()
 {

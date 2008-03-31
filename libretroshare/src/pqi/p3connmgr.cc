@@ -28,7 +28,7 @@
 #include "util/rsprint.h"
 
 #include "serialiser/rsconfigitems.h"
-#include "rsiface/rsnotify.h"
+#include "pqi/pqinotify.h"
 
 /* Network setup States */
 
@@ -586,7 +586,8 @@ void p3ConnectMgr::netUdpCheck()
 				mStunMoreRequired = false; /* no point -> unreachable (EXT) */
 
 				/* send a system warning message */
-				if (rsNotify)
+				pqiNotify *notify = getPqiNotify();
+				if (notify)
 				{
 					std::string title = 
 						"Warning: Bad Firewall Configuration";
@@ -603,8 +604,7 @@ void p3ConnectMgr::netUdpCheck()
 					msg +=  "   (2) enabling UPnP, or\n";
 					msg +=  "   (3) get a new (approved) Firewall/Router\n";
 
-					rsNotify->AddSysMessage(0, RS_SYS_WARNING, 
-							title, msg);
+					notify->AddSysMessage(0, RS_SYS_WARNING, title, msg);
 				}
 
 			}
@@ -1051,13 +1051,15 @@ void p3ConnectMgr::tickMonitors()
 #endif
 
 				/* notify GUI */
-				if ((peer.actions & RS_PEER_CONNECTED) &&
-				 	(rsNotify))
+				if (peer.actions & RS_PEER_CONNECTED)
 				{
-					rsNotify->AddPopupMessage(RS_POPUP_CONNECT, 
+					pqiNotify *notify = getPqiNotify();
+					if (notify)
+					{
+						notify->AddPopupMessage(RS_POPUP_CONNECT, 
 							peer.id, "Peer Online: ");
+					}
 				}
-
 			}
 		}
 		/* do the Others as well! */

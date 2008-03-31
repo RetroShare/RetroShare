@@ -32,6 +32,9 @@
 
 const uint32_t RANK_MAX_FWD_OFFSET = (60 * 60 * 24 * 2); /* 2 Days */
 
+//const uint32_t FRIEND_RANK_REPUBLISH_PERIOD = 60; /* every minute for testing */
+const uint32_t FRIEND_RANK_REPUBLISH_PERIOD = 1800; /* every 30 minutes */
+
 std::string generateRandomLinkId();
 
 /*****
@@ -43,17 +46,20 @@ std::string generateRandomLinkId();
 
 #define RANK_DEBUG 1
 
-p3Ranking::p3Ranking(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
+p3Ranking::p3Ranking(p3ConnectMgr *connMgr, 
+		uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
 		std::string sourcedir, std::string storedir, 
 		uint32_t storePeriod)
 	:CacheSource(type, true, cs, sourcedir), 
 	CacheStore(type, true, cs, cft, storedir), 
+	mConnMgr(connMgr), 
+        mRepublish(false), mRepublishFriends(false), mRepublishFriendTS(0),
 	mStorePeriod(storePeriod), mUpdated(true)
 {
 
      { 	RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
 
-	mOwnId = getAuthMgr()->OwnId();
+	mOwnId = mConnMgr->getOwnId();
 	mViewPeriod = 60 * 60 * 24 * 30; /* one Month */
 	mSortType = RS_RANK_ALG;
 
@@ -197,6 +203,8 @@ void p3Ranking::loadRankFile(std::string filename, std::string src)
 			std::cerr << "p3Ranking::loadRankFile() Loading Item";
 			std::cerr << std::endl;
 #endif
+			/* correct the source (if is a message from a friend) */
+			newMsg->PeerId(newMsg->pid);
 			addRankMsg(newMsg);
 		}
 
@@ -207,7 +215,7 @@ void p3Ranking::loadRankFile(std::string filename, std::string src)
 }
 
 
-void p3Ranking::publishMsgs()
+void p3Ranking::publishMsgs(bool own)
 {
 
 #ifdef RANK_DEBUG
@@ -215,12 +223,29 @@ void p3Ranking::publishMsgs()
 	std::cerr << std::endl;
 #endif
 
-	/* determine filename */
-
 	std::string path = CacheSource::getCacheDir();
 	std::ostringstream out;
-	out << "rank-links-" << time(NULL) << ".rsrl";
-	
+	uint16_t subid;
+
+
+	/* setup name / etc based on whether we're
+	 * publishing own or friends...
+	 */
+
+	if (own)
+	{
+		/* setup to publish own messages */
+		out << "rank-links-" << time(NULL) << ".rsrl";
+		subid = 1;
+	}
+	else
+	{
+		/* setup to publish friend messages */
+		out << "rank-friend-links-" << time(NULL) << ".rsrl";
+		subid = 2;
+	}
+
+	/* determine filename */
 	std::string tmpname = out.str();
 	std::string fname = path + "/" + tmpname;
 
@@ -241,10 +266,14 @@ void p3Ranking::publishMsgs()
 
 	/* iterate through list */
 	std::map<std::string, RankGroup>::iterator it;
+	std::map<std::string, RsRankLinkMsg *>::iterator cit;
+
 	for(it = mData.begin(); it != mData.end(); it++)
 	{
-		if (it->second.ownTag)
+		if (own)
 		{
+		  if (it->second.ownTag)
+		  {
 			/* write to serialiser */
 			RsItem *item = it->second.comments[mOwnId];
 			if (item)
@@ -260,13 +289,36 @@ void p3Ranking::publishMsgs()
 				stream->tick(); /* Tick to write! */
 
 			}
-		}
-		else
-		{
+		  }
+		  else
+		  {
 #ifdef RANK_DEBUG
 			std::cerr << "p3Ranking::publishMsgs() Skipping Foreign item";
 			std::cerr << std::endl;
 #endif
+		  }
+		}
+		else
+		{
+		  /* iterate through all comments */
+		  for(cit = it->second.comments.begin(); 
+		  	cit != it->second.comments.end(); cit++)
+		  {
+			RsItem *item = cit->second;
+			/* write to serialiser */
+			if (item && (mConnMgr->isFriend(item->PeerId())))
+			{
+#ifdef RANK_DEBUG
+				std::cerr << "p3Ranking::publishMsgs() Storing Friend Item:";
+				std::cerr << std::endl;
+				item->print(std::cerr, 10);
+				std::cerr << std::endl;
+#endif
+				stream->SendItem(item);
+				stream->tick(); /* Tick to write! */
+
+			}
+		  }
 		}
 	}
 
@@ -282,7 +334,7 @@ void p3Ranking::publishMsgs()
 	data.pid = mOwnId;
      } 	/********** STACK LOCKED MTX ******/
 
-	data.cid = CacheId(CacheSource::getCacheType(), 1);
+	data.cid = CacheId(CacheSource::getCacheType(), subid);
 
 	data.path = path;
 	data.name = tmpname;
@@ -367,6 +419,10 @@ void p3Ranking::addRankMsg(RsRankLinkMsg *msg)
 
 	if (newComment)
 	{
+#ifdef RANK_DEBUG
+		std::cerr << "p3Ranking::addRankMsg() New Comment";
+		std::cerr << std::endl;
+#endif
 		/* clean up old */
 		if ((it->second).comments.end() != cit)
 		{
@@ -382,11 +438,31 @@ void p3Ranking::addRankMsg(RsRankLinkMsg *msg)
 		{
 			it->second.ownTag = true;
 			mRepublish = true;
+#ifdef RANK_DEBUG
+			std::cerr << "p3Ranking::addRankMsg() Own Comment: mRepublish = true";
+			std::cerr << std::endl;
+#endif
+		}
+		else
+		{
+			mRepublishFriends = true;
+#ifdef RANK_DEBUG
+			std::cerr << "p3Ranking::addRankMsg() Other Comment: mRepublishFriends = true";
+			std::cerr << "p3Ranking::addRankMsg() Old Comment ignoring";
+			std::cerr << std::endl;
+#endif
 		}
 
 		locked_reSortGroup(it->second);
 
 		mUpdated = true;
+	}
+	else
+	{
+#ifdef RANK_DEBUG
+		std::cerr << "p3Ranking::addRankMsg() Old Comment ignoring";
+		std::cerr << std::endl;
+#endif
 	}
 }
 
@@ -702,18 +778,33 @@ bool    p3Ranking::getRankDetails(std::string rid, RsRankDetails &details)
 void	p3Ranking::tick()
 {
 	bool repub = false;
+	bool repubFriends = false;
+
 	{
      		RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
 		repub = mRepublish;
+		repubFriends = mRepublishFriends && (time(NULL) > mRepublishFriendTS);
 	}
 
 	if (repub)
 	{
-		publishMsgs();
+		publishMsgs(true);
 
      		RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
 		mRepublish = false;
 	}
+
+
+	if (repubFriends)
+	{
+		publishMsgs(false);
+
+     		RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+		mRepublishFriends = false;
+		mRepublishFriendTS = time(NULL) + FRIEND_RANK_REPUBLISH_PERIOD;
+	}
+
+		
 }
 
 bool 	p3Ranking::updated()
@@ -741,6 +832,7 @@ std::string p3Ranking::newRankMsg(std::wstring link, std::wstring title, std::ws
 	{
      		RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
 		msg->PeerId(mOwnId);
+		msg->pid = mOwnId;
 	}
 
 	msg->rid = rid;
@@ -785,6 +877,7 @@ bool p3Ranking::updateComment(std::string rid, std::wstring comment)
 	time_t now = time(NULL);
 
 	msg->PeerId(mOwnId);
+	msg->pid = mOwnId;
 	msg->rid = rid;
 	msg->timestamp = now;
 	msg->title = (it->second).title;
@@ -866,6 +959,7 @@ void	p3Ranking::createDummyData()
 	time_t now = time(NULL);
 
 	msg->PeerId(mOwnId);
+	msg->pid = mOwnId;
 	msg->rid = "0001";
 	msg->title = L"Original Awesome Site!";
 	msg->timestamp = now - 60 * 60 * 24 * 15;
@@ -876,6 +970,7 @@ void	p3Ranking::createDummyData()
 
 	msg = new RsRankLinkMsg();
 	msg->PeerId(mOwnId);
+	msg->pid = mOwnId;
 	msg->rid = "0002";
 	msg->title = L"Awesome Site!";
 	msg->timestamp = now - 123;
@@ -886,6 +981,7 @@ void	p3Ranking::createDummyData()
 
 	msg = new RsRankLinkMsg();
 	msg->PeerId("ALTID");
+	msg->pid = "ALTID";
 	msg->rid = "0002";
 	msg->title = L"Awesome Site!";
 	msg->timestamp = now - 60 * 60 * 24 * 29;
@@ -898,6 +994,7 @@ void	p3Ranking::createDummyData()
 
 	msg = new RsRankLinkMsg();
 	msg->PeerId("ALTID2");
+	msg->pid = "ALTID2";
 	msg->rid = "0002";
 	msg->title = L"Awesome Site!";
 	msg->timestamp = now - 60 * 60 * 7;
@@ -911,6 +1008,7 @@ void	p3Ranking::createDummyData()
 
 	msg = new RsRankLinkMsg();
 	msg->PeerId(mOwnId);
+	msg->pid = mOwnId;
 	msg->rid = "0003";
 	msg->title = L"Weird Site!";
 	msg->timestamp = now - 60 * 60;
@@ -921,6 +1019,7 @@ void	p3Ranking::createDummyData()
 
 	msg = new RsRankLinkMsg();
 	msg->PeerId("ALTID");
+	msg->pid = "ALTID";
 	msg->rid = "0003";
 	msg->title = L"Weird Site!";
 	msg->timestamp = now - 60 * 60 * 24 * 2;

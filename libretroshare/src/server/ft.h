@@ -119,6 +119,7 @@ virtual std::list<RsFileTransfer *> getStatus() = 0;
 
 	public:
 virtual void    	setSaveBasePath(std::string s) = 0;
+virtual void    	setEmergencyBasePath(std::string s) = 0;
 virtual int             recvFileInfo(ftFileRequest *in) = 0;
 virtual ftFileRequest * sendFileInfo() = 0;
 

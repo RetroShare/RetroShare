@@ -30,6 +30,7 @@
 #include "util/rsdir.h"
 
 #include "pqi/pqidebug.h"
+#include "pqi/pqinotify.h"
 
 #include <errno.h>
 #include <sstream>
@@ -1111,10 +1112,77 @@ int ftfiler::initiateFileTransfer(ftFileStatus *s)
 	partialpath += PARTIAL_DIR;
 	if (!RsDirUtil::checkCreateDirectory(partialpath))
 	{
-		std::ostringstream out;
-		out << "ftfiler::initiateFileTransfer() Cannot create partial directory: " << partialpath;
-        	pqioutput(PQL_ALERT, ftfilerzone, out.str());
-		exit(1);
+		{
+		  std::ostringstream out;
+		  out << "ftfiler::initiateFileTransfer() Cannot create partial directory: " << partialpath;
+        	  pqioutput(PQL_ALERT, ftfilerzone, out.str());
+		}
+
+		std::string tmppath = mEmergencyIncomingDir;
+		if (!RsDirUtil::checkCreateDirectory(tmppath))
+		{
+		  	std::ostringstream out;
+			out << "ftfiler::initiateFileTransfer() Cannot create EmergencyIncomingDir: ";
+			out << tmppath;
+        		pqioutput(PQL_ALERT, ftfilerzone, out.str());
+			exit(1);
+		}
+
+		/* Store new temp path */
+		saveBasePath = tmppath;
+
+		tmppath += "/";
+		tmppath += PARTIAL_DIR;
+
+		if (!RsDirUtil::checkCreateDirectory(tmppath))
+		{
+		  	std::ostringstream out;
+			out << "ftfiler::initiateFileTransfer() Cannot create EmergencyIncomingPartialsDir: ";
+			out << tmppath;
+        		pqioutput(PQL_ALERT, ftfilerzone, out.str());
+			exit(1);
+		}
+
+		{
+		  std::ostringstream out;
+		  out << "ftfiler::initiateFileTransfer() Using Emergency Download Directory: " << saveBasePath;
+        	  pqioutput(PQL_ALERT, ftfilerzone, out.str());
+		}
+
+		pqiNotify *notify = getPqiNotify();
+		if (notify)
+		{
+			std::string title =
+			"Warning: Bad Incoming Directory";
+			
+			std::string msg;
+			msg +=  "               **** WARNING ****     \n";
+			msg +=  "Retroshare cannot create Incoming Partials Directory: ";
+			msg +=  "\n";
+			msg +=  partialpath;
+			msg +=  "\n";
+			msg +=  "\n";
+			msg +=  "This is needed for normal operation.";
+			msg +=  "\n";
+			msg +=  "\n";
+			msg +=  "The incoming directory has been temporarily changed to:";
+			msg +=  "\n";
+			msg +=  saveBasePath;
+			msg +=  "\n";
+			msg +=  "\n";
+			msg +=  "Please select a new Downloads Directory ASAP Using:";
+			msg +=  "\n";
+			msg +=  "SideBar->Options->Directories";
+			msg +=  "\n";
+			
+			notify->AddSysMessage(0, RS_SYS_WARNING, title, msg);
+		}
+		else
+		{
+			std::cerr << "ftfiler::initiateFileTransfer() Notify not exist!";
+			std::cerr << std::endl;
+			exit(1);
+		}
 	}
 
 	/* check if the file exists */
@@ -1433,6 +1501,13 @@ ftFileStatus *ftfiler::createFileCache(std::string hash)
 void    ftfiler::setSaveBasePath(std::string s)
 {
 	saveBasePath = s;
+	return;
+}
+
+
+void    ftfiler::setEmergencyBasePath(std::string s)
+{
+	mEmergencyIncomingDir = s;
 	return;
 }
 

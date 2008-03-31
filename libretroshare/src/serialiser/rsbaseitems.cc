@@ -27,7 +27,10 @@
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rsbaseitems.h"
 
+/***
 #define RSSERIAL_DEBUG 1
+***/
+
 #include <iostream>
 
 /*************************************************************************/
@@ -146,24 +149,25 @@ bool     RsFileItemSerialiser::serialiseReq(RsFileRequest *item, void *data, uin
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsFileItemSerialiser::serialiseReq() Header: " << ok << std::endl;
 	std::cerr << "RsFileItemSerialiser::serialiseReq() Size: " << tlvsize << std::endl;
+#endif
 
 	/* skip the header */
 	offset += 8;
 
 	/* add mandatory parts first */
 	ok &= setRawUInt64(data, tlvsize, &offset, item->fileoffset);
-	std::cerr << "RsFileItemSerialiser::serialiseReq() Fileoffset: " << ok << std::endl;
 	ok &= setRawUInt32(data, tlvsize, &offset, item->chunksize);
-	std::cerr << "RsFileItemSerialiser::serialiseReq() Chunksize: " << ok << std::endl;
 	ok &= item->file.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsFileItemSerialiser::serialiseReq() FileItem: " << ok << std::endl;
 
 	if (offset != tlvsize)
 	{
 		ok = false;
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsFileItemSerialiser::serialiseReq() Size Error! " << std::endl;
+#endif
 	}
 
 	return ok;
@@ -269,19 +273,22 @@ bool     RsFileItemSerialiser::serialiseData(RsFileData *item, void *data, uint3
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsFileItemSerialiser::serialiseData() Header: " << ok << std::endl;
+#endif
 
 	/* skip the header */
 	offset += 8;
 
 	/* add mandatory parts first */
 	ok &= item->fd.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsFileItemSerialiser::serialiseData() TlvFileData: " << ok << std::endl;
 
 	if (offset != tlvsize)
 	{
 		ok = false;
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsFileItemSerialiser::serialiseData() Size Error! " << std::endl;
+#endif
 	}
 
 	return ok;
@@ -453,23 +460,24 @@ bool     RsCacheItemSerialiser::serialiseReq(RsCacheRequest *item, void *data, u
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsCacheItemSerialiser::serialiseReq() Header: " << ok << std::endl;
+#endif
 
 	/* skip the header */
 	offset += 8;
 
 	/* add mandatory parts first */
 	ok &= setRawUInt16(data, tlvsize, &offset, item->cacheType);
-	std::cerr << "RsCacheItemSerialiser::serialiseReq() cacheType: " << ok << std::endl;
 	ok &= setRawUInt16(data, tlvsize, &offset, item->cacheSubId);
-	std::cerr << "RsCacheItemSerialiser::serialiseReq() cacheSubId: " << ok << std::endl;
 	ok &= item->file.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsCacheItemSerialiser::serialiseReq() FileItem: " << ok << std::endl;
 
 	if (offset != tlvsize)
 	{
 		ok = false;
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsFileItemSerialiser::serialiseReq() Size Error! " << std::endl;
+#endif
 	}
 
 	return ok;
@@ -580,23 +588,24 @@ bool     RsCacheItemSerialiser::serialiseItem(RsCacheItem *item, void *data, uin
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsCacheItemSerialiser::serialiseItem() Header: " << ok << std::endl;
+#endif
 
 	/* skip the header */
 	offset += 8;
 
 	/* add mandatory parts first */
 	ok &= setRawUInt16(data, tlvsize, &offset, item->cacheType);
-	std::cerr << "RsCacheItemSerialiser::serialiseItem() cacheType: " << ok << std::endl;
 	ok &= setRawUInt16(data, tlvsize, &offset, item->cacheSubId);
-	std::cerr << "RsCacheItemSerialiser::serialiseItem() cacheSubId: " << ok << std::endl;
 	ok &= item->file.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsCacheItemSerialiser::serialiseItem() FileItem: " << ok << std::endl;
 
 	if (offset != tlvsize)
 	{
 		ok = false;
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsFileItemSerialiser::serialiseItem() Size Error! " << std::endl;
+#endif
 	}
 
 	return ok;

@@ -27,6 +27,7 @@
  */
 
 #include "rsiface/rsnotify.h"
+#include "pqi/pqinotify.h"
 
 #include "util/rsthreads.h"
 
@@ -49,7 +50,8 @@ class p3NotifyPopupMsg
 	std::string msg;
 };
 
-class p3Notify: public RsNotify 
+
+class p3Notify: public RsNotify, public pqiNotify
 {
 	public:
 
@@ -68,10 +70,10 @@ virtual bool GetPopupMessageList(std::map<uint32_t, std::string> &list);
 virtual bool SetSysMessageMode(uint32_t sysid, uint32_t mode);
 virtual bool SetPopupMessageMode(uint32_t ptype, uint32_t mode);
 
-	/* Input from libretroshare */
+
+	/* Overloaded from pqiNotify */
 virtual bool AddPopupMessage(uint32_t ptype, std::string name, std::string msg);
-virtual bool AddSysMessage(uint32_t sysid, uint32_t type, 
-					std::string title, std::string msg);
+virtual bool AddSysMessage(uint32_t sysid, uint32_t type, std::string title, std::string msg);
 
 	private:
 

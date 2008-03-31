@@ -69,6 +69,7 @@ std::ostream &RsRankMsg::print(std::ostream &out, uint16_t indent)
 void 	RsRankLinkMsg::clear()
 {
 	rid.clear();
+	pid.clear();
 	timestamp = 0;
 	title.clear();
 	comment.clear();
@@ -82,6 +83,8 @@ std::ostream &RsRankLinkMsg::print(std::ostream &out, uint16_t indent)
 	uint16_t int_Indent = indent + 2;
         printIndent(out, int_Indent);
         out << "rid: " << rid << std::endl;
+        printIndent(out, int_Indent);
+        out << "pid: " << pid << std::endl;
 
         printIndent(out, int_Indent);
         out << "timestamp:  " << timestamp  << std::endl;
@@ -110,6 +113,7 @@ uint32_t    RsRankSerialiser::sizeLink(RsRankLinkMsg *item)
 {
 	uint32_t s = 8; /* header */
 	s += GetTlvStringSize(item->rid);
+	s += GetTlvStringSize(item->pid);
 	s += 4; /* timestamp */
 	s += GetTlvWideStringSize(item->title);
 	s += GetTlvWideStringSize(item->comment);
@@ -143,6 +147,8 @@ bool     RsRankSerialiser::serialiseLink(RsRankLinkMsg *item, void *data, uint32
 	/* add mandatory parts first */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GENID, item->rid);
 	std::cerr << "RsRankLinkSerialiser::serialiseLink() rid: " << ok << std::endl;
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, item->pid);
+	std::cerr << "RsRankLinkSerialiser::serialiseLink() pid: " << ok << std::endl;
 
 	ok &= setRawUInt32(data, tlvsize, &offset, item->timestamp);
 	std::cerr << "RsRankLinkSerialiser::serialiseLink() timestamp: " << ok << std::endl;
@@ -178,7 +184,7 @@ RsRankLinkMsg *RsRankSerialiser::deserialiseLink(void *data, uint32_t *pktsize)
 
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
 		(RS_SERVICE_TYPE_RANK != getRsItemService(rstype)) ||
-		(RS_PKT_SUBTYPE_RANK_LINK != getRsItemSubType(rstype)))
+		(RS_PKT_SUBTYPE_RANK_LINK2 != getRsItemSubType(rstype)))
 	{
 		return NULL; /* wrong type */
 	}
@@ -200,6 +206,7 @@ RsRankLinkMsg *RsRankSerialiser::deserialiseLink(void *data, uint32_t *pktsize)
 
 	/* get mandatory parts first */
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_GENID, item->rid);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, item->pid);
 	ok &= getRawUInt32(data, rssize, &offset, &(item->timestamp));
 	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_TITLE, item->title);
 	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_COMMENT, item->comment);

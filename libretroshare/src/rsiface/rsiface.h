@@ -193,6 +193,10 @@ virtual int StartupRetroShare(RsInit *config) = 0;
 virtual int RequestDirDetails(std::string uid, std::string path, DirDetails &details) = 0;
 virtual int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) = 0;
 
+virtual bool ConvertSharedFilePath(std::string path, std::string &fullpath) = 0;
+virtual void ForceDirectoryCheck() = 0;
+virtual bool InDirectoryCheck() = 0;
+
 /****************************************/
 	/* Search Actions */
 virtual int SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results) = 0;

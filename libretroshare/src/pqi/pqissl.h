@@ -116,6 +116,8 @@ virtual int netstatus();
 virtual int isactive();
 virtual bool moretoread();
 virtual bool cansend();
+
+virtual int close(); /* BinInterface version of reset() */
 virtual std::string gethash(); /* not used here */
 virtual bool bandwidthLimited();
 

@@ -30,9 +30,9 @@
 #include <sstream>
 #include <iomanip>
 
-/***/
+/***
 #define CS_DEBUG 1
-/***/
+***/
 
 bool operator<(const CacheId &a, const CacheId &b)
 {
@@ -529,6 +529,9 @@ void	CacheStrapper::refreshCache(const CacheData &data)
 	/* we've received an update 
 	 * send to all online peers + self
 	 */
+#ifdef CS_DEBUG 
+	std::cerr << "CacheStrapper::refreshCache() : " << data << std::endl;
+#endif
 
 	std::list<std::string> ids;
 	std::list<std::string>::iterator it;
@@ -538,6 +541,10 @@ void	CacheStrapper::refreshCache(const CacheData &data)
 	RsStackMutex stack(csMtx); /******* LOCK STACK MUTEX *********/
 	for(it = ids.begin(); it != ids.end(); it++)
 	{
+#ifdef CS_DEBUG 
+		std::cerr << "CacheStrapper::refreshCache() Send To: " << *it << std::endl;
+#endif
+
 		mCacheUpdates.push_back(std::make_pair(*it, data));
 	}
 

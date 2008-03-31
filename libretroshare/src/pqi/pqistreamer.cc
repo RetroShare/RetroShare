@@ -34,6 +34,7 @@
 
 #include <sstream>
 #include "pqi/pqidebug.h"
+#include "pqi/pqinotify.h"
 
 const int pqistreamerzone = 8221;
 
@@ -520,7 +521,34 @@ int	pqistreamer::handleincoming()
 		if (extralen > maxlen - blen)
 		{
 	  		pqioutput(PQL_ALERT, pqistreamerzone, "ERROR: Read Packet too Big!");
-			exit(1);
+
+			pqiNotify *notify = getPqiNotify();
+			if (notify)
+			{
+				std::string title =
+					"Warning: Bad Packet Read";
+			
+				std::string msg;
+				msg +=  "               **** WARNING ****     \n";
+				msg +=  "Retroshare has caught a BAD Packet Read";
+				msg +=  "\n";
+				msg +=  "This is normally caused by connecting to an";
+				msg +=  " OLD version of Retroshare";
+				msg +=  "\n";
+				msg +=  "\n";
+				msg +=  "Please get your friends to upgrade to the latest version";
+				msg +=  "\n";
+				msg +=  "\n";
+				msg +=  "If you are sure the error was not caused by an old version";
+				msg +=  "\n";
+				msg +=  "Please report the problem to Retroshare's developers";
+				msg +=  "\n";
+				notify->AddSysMessage(0, RS_SYS_WARNING, title, msg);
+			}
+			bio->close();	
+			return -1;
+
+			// Used to exit now! exit(1);
 		}
 
 		if (extralen > 0)
@@ -534,10 +562,27 @@ int	pqistreamer::handleincoming()
 				out << tmplen << "/" << extralen << ")" << std::endl;
 	  			pqioutput(PQL_ALERT, pqistreamerzone, out.str());
 
-				// temp to catch this....
+				pqiNotify *notify = getPqiNotify();
+				if (notify)
+				{
+					std::string title =
+						"Warning: Error Completing Read";
+			
+					std::string msg;
+					msg +=  "               **** WARNING ****     \n";
+					msg +=  "Retroshare has experienced an unexpected Read ERROR";
+					msg +=  "\n";
+					msg +=  "Please contact the developers.";
+					msg +=  "\n";
+
+					notify->AddSysMessage(0, RS_SYS_WARNING, title, msg);
+				}
+				bio->close();	
+				return -1;
+
 				// if it is triggered ... need to modify code.
 				// XXXX Bug to fix!
-				exit(1);
+				//exit(1);
 
 				// error....
 				inReadBytes(readbytes);

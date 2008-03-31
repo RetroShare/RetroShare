@@ -55,7 +55,7 @@ virtual bool	moretoread()
 		return false;
 	}
 
-
+virtual int	close();
 virtual bool 	cansend() { return (bin_flags | BIN_FLAGS_WRITEABLE);   }
 virtual bool    bandwidthLimited() { return false; }
 
@@ -106,6 +106,7 @@ virtual bool	moretoread()
 		return false;
 	}
 
+virtual int	close();
 virtual bool 	cansend()    { return (bin_flags | BIN_FLAGS_WRITEABLE); }
 virtual bool    bandwidthLimited() { return false; }
 
@@ -146,6 +147,8 @@ virtual int     netstatus();
 virtual int     isactive();
 virtual bool    moretoread();
 virtual bool    cansend();
+virtual int	close();
+
 virtual std::string gethash();
 
 	private:

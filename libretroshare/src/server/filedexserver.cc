@@ -146,6 +146,13 @@ void	filedexserver::setSaveDir(std::string d)
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 }
 
+void    filedexserver::setEmergencySaveDir(std::string s)
+{
+	if (ftFiler)
+	{
+		ftFiler -> setEmergencyBasePath(s);
+	}
+}
 
 bool 	filedexserver::getSaveIncSearch()
 {
@@ -198,6 +205,29 @@ int     filedexserver::reScanDirs()
 	return 1;
 }
 
+bool    filedexserver::ConvertSharedFilePath(std::string path, std::string &fullpath)
+{
+	if (fimon)
+		return fimon->convertSharedFilePath(path, fullpath);
+
+	return false;
+}
+
+void    filedexserver::ForceDirectoryCheck()
+{
+	if (fimon)
+		fimon->forceDirectoryCheck();
+	return;
+}
+
+bool    filedexserver::InDirectoryCheck()
+{
+	if (fimon)
+		return fimon->inDirectoryCheck();
+	return false;
+}
+
+
 /*************************************** NEW File Cache Stuff ****************************/
 
 void filedexserver::initialiseFileStore()
@@ -233,41 +263,6 @@ void    filedexserver::setFileCallback(std::string ownId, CacheStrapper *strappe
 
 	CachePair cp(fimon, fiStore, CacheId(RS_SERVICE_TYPE_FILE_INDEX, 0));
 	mCacheStrapper -> addCachePair(cp);
-
-#if 0
-	/************ TMP HACK LOAD until new serialiser is finished */
-	/* get filename and hash from configuration */
-	std::string localCacheFile; // = getSSLRoot()->getSetting(LOCAL_CACHE_FILE_KEY);
-	std::string localCacheHash; // = getSSLRoot()->getSetting(LOCAL_CACHE_HASH_KEY);
-	std::string localCacheSize; // = getSSLRoot()->getSetting(LOCAL_CACHE_SIZE_KEY);
-
-	std::list<std::string> saveLocalCaches;
-	std::list<std::string> saveRemoteCaches;
-
-	if ((localCacheFile != "") && 
-		(localCacheHash != "") && 
-		(localCacheSize != ""))
-	{
-		/* load it up! */
-		std::string loadCacheFile = localcachedir + "/" + localCacheFile;
-		CacheData cd;
-		cd.pid = ownId;
-		cd.cid = CacheId(RS_SERVICE_TYPE_FILE_INDEX, 0);
-		cd.name = localCacheFile;
-		cd.path = localcachedir;
-		cd.hash = localCacheHash;
-		cd.size = atoi(localCacheSize.c_str());
-		fimon -> loadLocalCache(cd);
-
-		saveLocalCaches.push_back(cd.name);
-	}
-
-	/* cleanup cache directories */
-	RsDirUtil::cleanupDirectory(localcachedir, saveLocalCaches);
-	RsDirUtil::cleanupDirectory(remotecachedir, saveRemoteCaches); /* clean up all */
-
-	/************ TMP HACK LOAD until new serialiser is finished */
-#endif
 
 	return;
 }

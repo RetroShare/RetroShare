@@ -27,7 +27,10 @@
 #include "serialiser/rsgameitems.h"
 #include "serialiser/rstlvbase.h"
 
+/***
 #define RSSERIAL_DEBUG 1
+***/
+
 #include <iostream>
 
 /*************************************************************************/
@@ -103,31 +106,29 @@ bool     RsGameSerialiser::serialiseItem(RsGameItem *item, void *data, uint32_t 
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsGameSerialiser::serialiseItem() Header: " << ok << std::endl;
 	std::cerr << "RsGameSerialiser::serialiseItem() Size: " << tlvsize << std::endl;
+#endif
 
 	/* skip the header */
 	offset += 8;
 
 	/* add mandatory parts first */
 	ok &= setRawUInt32(data, tlvsize, &offset, item->serviceId);
-	std::cerr << "RsGameSerialiser::serialiseItem() serviceId: " << ok << std::endl;
 	ok &= setRawUInt32(data, tlvsize, &offset, item->numPlayers);
-	std::cerr << "RsGameSerialiser::serialiseItem() numPlayers: " << ok << std::endl;
 	ok &= setRawUInt32(data, tlvsize, &offset, item->msg);
-	std::cerr << "RsGameSerialiser::serialiseItem() msg: " << ok << std::endl;
 
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GENID, item->gameId);
-	std::cerr << "RsGameSerialiser::serialiseItem() gameId: " << ok << std::endl;
 	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_COMMENT, item->gameComment);
-	std::cerr << "RsGameSerialiser::serialiseItem() gameComment: " << ok << std::endl;
 	ok &= item->players.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsMsgSerialiser::serialiseItem() players: " << ok << std::endl;
 
 	if (offset != tlvsize)
 	{
 		ok = false;
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsGameSerialiser::serialiseItem() Size Error! " << std::endl;
+#endif
 	}
 
 	return ok;

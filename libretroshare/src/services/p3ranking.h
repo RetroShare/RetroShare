@@ -29,7 +29,7 @@
 #include "dbase/cachestrapper.h"
 #include "pqi/pqiservice.h"
 #include "pqi/pqistreamer.h"
-//#include "util/rsthreads.h"
+#include "pqi/p3connmgr.h"
 
 #include "serialiser/rsserial.h"
 
@@ -65,7 +65,8 @@ class p3Ranking: public CacheSource, public CacheStore
 {
 	public:
 
-	p3Ranking(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
+	p3Ranking(p3ConnectMgr *connMgr, 
+		uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
 		std::string sourcedir, std::string storedir, 
 		uint32_t storePeriod);
 
@@ -107,7 +108,7 @@ void	tick();
 
 void	loadRankFile(std::string filename, std::string src);
 void 	addRankMsg(RsRankLinkMsg *msg);
-void 	publishMsgs();
+void 	publishMsgs(bool own);
 
 float 	locked_calcRank(RankGroup &grp); /* returns 0->100 */
 void	locked_reSortGroup(RankGroup &grp);
@@ -119,11 +120,16 @@ pqistreamer *createStreamer(std::string file, std::string src, bool reading);
 
 void	createDummyData();
 
+	p3ConnectMgr *mConnMgr;
+
 	RsMutex mRankMtx;
 
 	/***** below here is locked *****/
 
 	bool mRepublish;
+	bool mRepublishFriends;
+	time_t mRepublishFriendTS;
+
 	uint32_t mStorePeriod;
 
 	std::string mOwnId;

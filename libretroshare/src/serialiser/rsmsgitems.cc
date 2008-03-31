@@ -28,7 +28,10 @@
 #include "serialiser/rsmsgitems.h"
 #include "serialiser/rstlvbase.h"
 
+/***
 #define RSSERIAL_DEBUG 1
+***/
+
 #include <iostream>
 
 /*************************************************************************/
@@ -90,24 +93,25 @@ bool     RsChatSerialiser::serialiseItem(RsChatItem *item, void *data, uint32_t 
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsChatSerialiser::serialiseItem() Header: " << ok << std::endl;
 	std::cerr << "RsChatSerialiser::serialiseItem() Size: " << tlvsize << std::endl;
+#endif
 
 	/* skip the header */
 	offset += 8;
 
 	/* add mandatory parts first */
 	ok &= setRawUInt32(data, tlvsize, &offset, item->chatFlags);
-	std::cerr << "RsChatSerialiser::serialiseItem() chatFlags: " << ok << std::endl;
 	ok &= setRawUInt32(data, tlvsize, &offset, item->sendTime);
-	std::cerr << "RsChatSerialiser::serialiseItem() sendTime: " << ok << std::endl;
 	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_MSG, item->message);
-	std::cerr << "RsChatSerialiser::serialiseItem() Message: " << ok << std::endl;
 
 	if (offset != tlvsize)
 	{
 		ok = false;
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
+#endif
 	}
 
 	return ok;
@@ -283,38 +287,33 @@ bool     RsMsgSerialiser::serialiseItem(RsMsgItem *item, void *data, uint32_t *p
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsMsgSerialiser::serialiseItem() Header: " << ok << std::endl;
 	std::cerr << "RsMsgSerialiser::serialiseItem() Size: " << tlvsize << std::endl;
+#endif
 
 	/* skip the header */
 	offset += 8;
 
 	/* add mandatory parts first */
 	ok &= setRawUInt32(data, tlvsize, &offset, item->msgFlags);
-	std::cerr << "RsMsgSerialiser::serialiseItem() msgFlags: " << ok << std::endl;
 	ok &= setRawUInt32(data, tlvsize, &offset, item->sendTime);
-	std::cerr << "RsMsgSerialiser::serialiseItem() sendTime: " << ok << std::endl;
 	ok &= setRawUInt32(data, tlvsize, &offset, item->recvTime);
-	std::cerr << "RsMsgSerialiser::serialiseItem() recvTime: " << ok << std::endl;
 
 	ok &= SetTlvWideString(data,tlvsize,&offset,TLV_TYPE_WSTR_SUBJECT,item->subject);
-	std::cerr << "RsMsgSerialiser::serialiseItem() Subject: " << ok << std::endl;
 	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_MSG, item->message);
-	std::cerr << "RsMsgSerialiser::serialiseItem() Message: " << ok << std::endl;
 
 	ok &= item->msgto.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsMsgSerialiser::serialiseItem() MsgTo: " << ok << std::endl;
 	ok &= item->msgcc.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsMsgSerialiser::serialiseItem() MsgCC: " << ok << std::endl;
 	ok &= item->msgbcc.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsMsgSerialiser::serialiseItem() MsgBCC: " << ok << std::endl;
 
 	ok &= item->attachment.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsMsgSerialiser::serialiseItem() Attachment: " << ok << std::endl;
 	if (offset != tlvsize)
 	{
 		ok = false;
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsMsgSerialiser::serialiseItem() Size Error! " << std::endl;
+#endif
 	}
 
 	return ok;

@@ -40,7 +40,8 @@
 
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, std::string cachedir, std::string pid)
 	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cachedir), fi(pid), 
-		pendingDirs(false), pendingForceCacheWrite(false)
+		pendingDirs(false), pendingForceCacheWrite(false), 
+		mForceCheck(false), mInCheck(false)
 
 {
 	updatePeriod = 60;
@@ -92,6 +93,32 @@ bool    FileIndexMonitor::findLocalFile(std::string hash,
 		std::cerr << "FileIndexMonitor::findLocalFile() Found Size: " << size << std::endl;
 	}
 
+
+	} fiMutex.unlock(); /* UNLOCKED DIRS */
+
+	return ok;
+}
+
+bool    FileIndexMonitor::convertSharedFilePath(std::string path, std::string &fullpath)
+{
+	bool ok = false;
+
+	fiMutex.lock(); { /* LOCKED DIRS */
+
+	std::cerr << "FileIndexMonitor::convertSharedFilePath() path: " << path << std::endl;
+
+	std::string shpath =  RsDirUtil::removeRootDir(path);
+	std::string basedir = RsDirUtil::getRootDir(path);
+	std::string realroot = findRealRoot(basedir);
+
+	/* construct full name */
+	if (realroot.length() > 0)
+	{
+		fullpath = realroot + "/";
+		fullpath += shpath;
+		std::cerr << "FileIndexMonitor::convertSharedFilePath() Found Path: " << fullpath << std::endl;
+		ok = true;
+	}
 
 	} fiMutex.unlock(); /* UNLOCKED DIRS */
 
@@ -179,6 +206,11 @@ void 	FileIndexMonitor::updateCycle()
 	/* iterate through all out-of-date directories */
 	bool moretodo = true;
 	bool fiMods = false;
+
+	{
+		RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
+		mInCheck = true;
+	}
 
 	while(moretodo)
 	{
@@ -527,6 +559,11 @@ void 	FileIndexMonitor::updateCycle()
 
 		} fiMutex.unlock(); /* UNLOCKED DIRS */
 	}
+
+	{
+		RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
+		mInCheck = false;
+	}
 }
 
 	/* interface */
@@ -540,6 +577,27 @@ void    FileIndexMonitor::setSharedDirectories(std::list<std::string> dirs)
 	} fiMutex.unlock(); /* UNLOCKED DIRS */
 }
 
+	/* interface */
+void    FileIndexMonitor::forceDirectoryCheck()
+{
+	fiMutex.lock(); { /* LOCKED DIRS */
+
+	if (!mInCheck)
+		mForceCheck = true;
+
+	} fiMutex.unlock(); /* UNLOCKED DIRS */
+}
+
+
+	/* interface */
+bool    FileIndexMonitor::inDirectoryCheck()
+{
+	RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
+
+	return mInCheck;
+}
+
+
 bool    FileIndexMonitor::internal_setSharedDirectories()
 {
 	int i;
@@ -547,10 +605,18 @@ bool    FileIndexMonitor::internal_setSharedDirectories()
 
 	if (!pendingDirs)
 	{
+		if (mForceCheck)
+		{
+			mForceCheck = false;
+			fiMutex.unlock(); /* UNLOCKED DIRS */
+			return true;
+		}
+
 		fiMutex.unlock(); /* UNLOCKED DIRS */
 		return false;
 	}
-		
+	
+	mForceCheck = false;
 	pendingDirs = false;
 	pendingForceCacheWrite = true;
 	

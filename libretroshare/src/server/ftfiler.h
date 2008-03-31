@@ -172,6 +172,7 @@ int             tick();
 std::list<RsFileTransfer *> getStatus();
 
 virtual void    setSaveBasePath(std::string s);
+virtual void    setEmergencyBasePath(std::string s);
 
 /************* Network Interface****************************/
 virtual int            recvFileInfo(ftFileRequest *in);
@@ -224,6 +225,7 @@ private:
 	std::list<ftFileRequest *> out_queue;
 
 	std::string saveBasePath;
+        std::string mEmergencyIncomingDir;
 };
 
 

@@ -29,6 +29,11 @@
 /* external reference point */
 RsNotify *rsNotify = NULL;
 
+pqiNotify *getPqiNotify()
+{
+	return ((p3Notify *) rsNotify);
+}
+
 	/* Output for retroshare-gui */
 bool p3Notify::NotifySysMessage(uint32_t &sysid, uint32_t &type, 
 					std::string &title, std::string &msg)

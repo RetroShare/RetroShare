@@ -30,7 +30,7 @@
 #include "pqi/p3connmgr.h"
 
 #include "services/p3msgservice.h"
-#include "rsiface/rsnotify.h"
+#include "pqi/pqinotify.h"
 
 #include "util/rsdir.h"
 
@@ -144,9 +144,10 @@ int 	p3MsgService::incomingMsgs()
 			initRsMIS(mi, mis);
 			
 			// msgNotifications.push_back(mis);
-			if (rsNotify)
+			pqiNotify *notify = getPqiNotify();
+			if (notify)
 			{
-				rsNotify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId(), 
+				notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId(), 
 						"New Message from: ");
 			}
 		}
@@ -191,7 +192,7 @@ int     p3MsgService::checkOutgoingMessages()
 
 		if (mConnMgr->getFriendNetStatus(pid, pstate))
 		{
-			if (pstate.state & RS_PEER_S_ONLINE)
+			if (pstate.state & RS_PEER_S_CONNECTED)
 			{
 				toSend = true;
 			}

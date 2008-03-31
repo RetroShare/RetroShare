@@ -472,13 +472,16 @@ int RsServer::StartupRetroShare(RsInit *config)
 	
 	std::string certConfigFile = config->basedir.c_str();
 	std::string certNeighDir   = config->basedir.c_str();
+	std::string emergencySaveDir = config->basedir.c_str();
 	if (certConfigFile != "")
 	{
 		certConfigFile += "/";
 		certNeighDir += "/";
+		emergencySaveDir += "/";
 	}
 	certConfigFile += configConfFile;
 	certNeighDir +=   configCertDir;
+	emergencySaveDir += "Downloads";
 
 	/* if we've loaded an old format file! */
         bool oldFormat = false;
@@ -510,8 +513,10 @@ int RsServer::StartupRetroShare(RsInit *config)
 	server = new filedexserver();
 	server->setConfigDir(config->basedir.c_str());
 	server->setSaveDir(config->homePath.c_str()); /* Default Save Dir - config will overwrite */
+
 	server->setSearchInterface(pqih, mAuthMgr, mConnMgr);
 	server->setFileCallback(ownId, mCacheStrapper, mCacheTransfer, &(getNotify()));
+	server->setEmergencySaveDir(emergencySaveDir); /* (after setFileCallback()) if saveDir invalid */
 
 	mConfigMgr = new p3ConfigMgr(mAuthMgr, config->basedir, "rs-v0.4.cfg", "rs-v0.4.sgn");
 	mGeneralConfig = new p3GeneralConfig();
@@ -532,7 +537,7 @@ int RsServer::StartupRetroShare(RsInit *config)
         std::string localcachedir = config_dir + "/cache/local";
 	std::string remotecachedir = config_dir + "/cache/remote";
 
-	mRanking = new p3Ranking(RS_SERVICE_TYPE_RANK, 
+	mRanking = new p3Ranking(mConnMgr, RS_SERVICE_TYPE_RANK, 
 			mCacheStrapper, mCacheTransfer, 
 			localcachedir, remotecachedir, 3600 * 24 * 30);
 

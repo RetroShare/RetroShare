@@ -357,4 +357,47 @@ int RsServer::SearchBoolExp(Expression *exp, std::list<FileDetail> &results)
 	return val;
 }
 
+bool RsServer::ConvertSharedFilePath(std::string path, std::string &fullpath)
+{
+        lockRsCore();     /* LOCK */
+
+	/* call to filedexserver */
+	bool val = server->ConvertSharedFilePath(path, fullpath);
+
+	/* done! */
+        /* unlock Mutexes */
+        unlockRsCore();     /* UNLOCK */
+
+	return val;
+}
+
+
+void RsServer::ForceDirectoryCheck()
+{
+        lockRsCore();     /* LOCK */
+
+	/* call to filedexserver */
+	server->ForceDirectoryCheck();
+
+	/* done! */
+        /* unlock Mutexes */
+        unlockRsCore();     /* UNLOCK */
+}
+
+
+bool RsServer::InDirectoryCheck()
+{
+        lockRsCore();     /* LOCK */
+
+	/* call to filedexserver */
+	bool val = server->InDirectoryCheck();
+
+	/* done! */
+        /* unlock Mutexes */
+        unlockRsCore();     /* UNLOCK */
+
+	return val;
+}
+
+	
 

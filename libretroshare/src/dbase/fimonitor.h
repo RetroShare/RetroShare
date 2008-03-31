@@ -74,6 +74,9 @@ virtual ~FileIndexMonitor();
 	/* external interface for filetransfer */
 bool    findLocalFile(std::string hash, std::string &fullpath, uint64_t &size);
 
+	/* external interface for local access to files */
+bool    convertSharedFilePath(std::string path, std::string &fullpath);
+
 
 	/* Interacting with CacheSource */
 	/* overloaded from CacheSource */
@@ -87,7 +90,8 @@ void 	updateCycle();
 
 void    setSharedDirectories(std::list<std::string> dirs);
 void    setPeriod(int insecs);
-
+void    forceDirectoryCheck();
+bool	inDirectoryCheck();
 	/* util fns */
 
 	private:
@@ -108,6 +112,10 @@ bool 	hashFile(std::string path, FileEntry &fi); /* To Implement */
 	/* flags to kick - if we were busy or sleeping */
 	bool pendingDirs;
 	bool pendingForceCacheWrite;
+
+	/* flags to force Check, to tell if we're in check */
+	bool mForceCheck;
+	bool mInCheck;
 
 	std::list<std::string> pendingDirList;
 bool    internal_setSharedDirectories();

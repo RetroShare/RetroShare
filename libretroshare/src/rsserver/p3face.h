@@ -130,6 +130,9 @@ virtual int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags);
 virtual int SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results);
 virtual int SearchBoolExp(Expression *exp, std::list<FileDetail> &results);
 
+virtual bool ConvertSharedFilePath(std::string path, std::string &fullpath);
+virtual void ForceDirectoryCheck();
+virtual bool InDirectoryCheck();
 
 	/* Actions For Upload/Download */
 

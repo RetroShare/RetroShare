@@ -297,9 +297,6 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 		details.age = time(NULL) - file->modtime;
 		details.rank = file->pop;
 
-		/* TODO Path */
-		details.path = "";
-
 		/* find parent pointer, and row */
 		DirEntry *parent = file->parent;
 		if (!parent) /* then must be root */
@@ -320,6 +317,9 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 			/* cannot be null -> no files at root level */
 			parent=file->parent;
 		}
+
+		/* NEW add path (to dir - if dir, or parent dir - if file? */
+		details.path = parent->path;
 
 		while(parent->parent)
 			parent = parent->parent;

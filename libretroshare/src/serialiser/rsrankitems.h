@@ -32,8 +32,9 @@
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvtypes.h"
 
-const uint8_t RS_PKT_SUBTYPE_RANK_LINK  = 0x02;
-const uint8_t RS_PKT_SUBTYPE_RANK_PHOTO = 0x03;
+const uint8_t RS_PKT_SUBTYPE_RANK_OLD_LINK  = 0x02; /* defunct - don't use! */
+const uint8_t RS_PKT_SUBTYPE_RANK_LINK2  = 0x03;
+const uint8_t RS_PKT_SUBTYPE_RANK_PHOTO = 0x04;
 
 /**************************************************************************/
 
@@ -49,6 +50,7 @@ virtual void clear();
 virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
 	std::string rid; /* Random Id */
+	std::string pid; /* Peer Id (cannot use RsItem::PeerId - as FoF transport!) */
         uint32_t    timestamp;
         std::wstring title;
         std::wstring comment;
@@ -57,12 +59,13 @@ virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
 /* Flags */
 const uint32_t RS_LINK_TYPE_WEB = 0x0001;
+const uint32_t RS_LINK_TYPE_OFF = 0x0002;
 
 class RsRankLinkMsg: public RsRankMsg
 {
         public:
         RsRankLinkMsg()
-	:RsRankMsg(RS_PKT_SUBTYPE_RANK_LINK) { return; }
+	:RsRankMsg(RS_PKT_SUBTYPE_RANK_LINK2) { return; }
 virtual ~RsRankLinkMsg() { return; }
 virtual void clear();
 virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);

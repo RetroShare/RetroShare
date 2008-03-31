@@ -89,6 +89,16 @@ BinFileInterface::~BinFileInterface()
 		fclose(buf);
 	}
 }
+
+int BinFileInterface::close()
+{
+	if (buf)
+	{
+		fclose(buf);
+		buf = NULL;
+	}
+	return 1;
+}
 		
 int	BinFileInterface::senddata(void *data, int len)
 {
@@ -178,6 +188,19 @@ BinMemInterface::~BinMemInterface()
 			free(buf);
 		return; 
 	}
+
+int BinMemInterface::close()
+{
+	if (buf)
+	{
+		free(buf);
+		buf = NULL;
+	}
+	size = 0;
+	recvsize = 0;
+	readloc = 0;
+	return 1;
+}
 
 	/* some fns to mess with the memory */
 int	BinMemInterface::fseek(int loc)
@@ -512,6 +535,15 @@ bool    NetBinDummy::cansend()
 	std::cerr << std::endl;
 
 	return dummyConnected;
+}
+
+int	NetBinDummy::close()
+{
+	std::cerr << "NetBinDummy::close() ";
+	printNetBinID(std::cerr, PeerId(), type);
+	std::cerr << std::endl;
+
+	return 1;
 }
 
 std::string NetBinDummy::gethash()

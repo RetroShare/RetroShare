@@ -77,7 +77,12 @@ int     getFile(std::string fname, std::string hash,
 void 	clear_old_transfers();
 void 	cancelTransfer(std::string fname, std::string hash, uint32_t size);
 
+
 // access to search info is also required.
+
+bool 	ConvertSharedFilePath(std::string path, std::string &fullpath);
+void 	ForceDirectoryCheck();
+bool 	InDirectoryCheck();
 
 std::list<std::string> &getSearchDirectories();
 int 	addSearchDirectory(std::string dir);
@@ -87,6 +92,8 @@ int 	check_dBUpdate();
 
 std::string	getSaveDir();
 void		setSaveDir(std::string d);
+void    	setEmergencySaveDir(std::string s);
+
 void		setConfigDir(std::string d) { config_dir = d; }
 bool		getSaveIncSearch();
 void		setSaveIncSearch(bool v);

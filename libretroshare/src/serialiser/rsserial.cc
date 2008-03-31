@@ -28,11 +28,13 @@
 #include "serialiser/rsserial.h"
 
 #include <map>
+#include <iostream>
 
+/***
 #define RSSERIAL_DEBUG 1
+***/
 
 #ifdef RSSERIAL_DEBUG
-	#include <iostream>
 	#include <sstream>
 #endif
 	
@@ -438,7 +440,12 @@ std::ostream &RsRawItem::print(std::ostream &out, uint16_t indent)
 
 uint32_t getRsPktMaxSize()
 {
-	return 65535; /* 2^16 */
+	//return 65535; /* 2^16 (old artifical low size) */
+	//return 1048575; /* 2^20 -1 (Too Big! - must remove fixed static buffers first) */
+	/* Remember that every pqistreamer allocates an input buffer of this size!
+	 * So don't make it too big!
+	 */
+	return 262143; /* 2^18 -1 */
 }
 
 

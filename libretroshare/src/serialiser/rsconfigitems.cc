@@ -27,7 +27,10 @@
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rsconfigitems.h"
 
+/***
 #define RSSERIAL_DEBUG 1
+***/
+
 #include <iostream>
 
 /*************************************************************************/
@@ -166,43 +169,36 @@ bool     RsFileTransferSerialiser::serialiseTransfer(RsFileTransfer *item, void 
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() Header: " << ok << std::endl;
 	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() Size: " << tlvsize << std::endl;
+#endif
 
 	/* skip the header */
 	offset += 8;
 
 	/* add mandatory parts first */
 	ok &= item->file.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() FileItem: " << ok << std::endl;
 	ok &= item->allPeerIds.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() allPeerIds: " << ok << std::endl;
 
         ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, item->cPeerId);
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() cId: " << ok << std::endl;
 
 	ok &= setRawUInt16(data, tlvsize, &offset, item->state);
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() State: " << ok << std::endl;
 	ok &= setRawUInt16(data, tlvsize, &offset, item->in);
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() In/Out: " << ok << std::endl;
 
 	ok &= setRawUInt64(data, tlvsize, &offset, item->transferred);
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() Transferred: " << ok << std::endl;
 
 	ok &= setRawUInt32(data, tlvsize, &offset, item->crate);
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() crate: " << ok << std::endl;
 	ok &= setRawUInt32(data, tlvsize, &offset, item->trate);
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() trate: " << ok << std::endl;
 	ok &= setRawUInt32(data, tlvsize, &offset, item->lrate);
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() lrate: " << ok << std::endl;
 	ok &= setRawUInt32(data, tlvsize, &offset, item->ltransfer);
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() ltransfer: " << ok << std::endl;
-
 
 	if (offset != tlvsize)
 	{
 		ok = false;
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsFileTransferSerialiser::serialiseTransfer() Size Error! " << std::endl;
+#endif
 	}
 
 	return ok;
@@ -242,29 +238,19 @@ RsFileTransfer *RsFileTransferSerialiser::deserialiseTransfer(void *data, uint32
 
 	/* get mandatory parts first */
 	ok &= item->file.GetTlv(data, rssize, &offset);
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() FileItem: " << ok << std::endl;
 	ok &= item->allPeerIds.GetTlv(data, rssize, &offset);
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() allPeerIds: " << ok << std::endl;
 
 	/* string */
         ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, item->cPeerId);
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() cId: " << ok << std::endl;
 
 	/* data */
 	ok &= getRawUInt16(data, rssize, &offset, &(item->state));
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() State: " << ok << std::endl;
 	ok &= getRawUInt16(data, rssize, &offset, &(item->in));
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() In/Out: " << ok << std::endl;
 	ok &= getRawUInt64(data, rssize, &offset, &(item->transferred));
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() Transferred: " << ok << std::endl;
 	ok &= getRawUInt32(data, rssize, &offset, &(item->crate));
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() crate: " << ok << std::endl;
 	ok &= getRawUInt32(data, rssize, &offset, &(item->trate));
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() trate: " << ok << std::endl;
 	ok &= getRawUInt32(data, rssize, &offset, &(item->lrate));
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() lrate: " << ok << std::endl;
 	ok &= getRawUInt32(data, rssize, &offset, &(item->ltransfer));
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() ltransfer: " << ok << std::endl;
 
 	if (offset != rssize)
 	{
@@ -337,7 +323,9 @@ RsItem *RsGeneralConfigSerialiser::deserialise(void *data, uint32_t *pktsize)
 		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
 		(RS_PKT_TYPE_GENERAL_CONFIG != getRsItemType(rstype)))
 	{
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsGeneralConfigSerialiser::deserialise() Wrong Type" << std::endl;
+#endif
 		return NULL; /* wrong type */
 	}
 
@@ -400,20 +388,23 @@ bool     RsGeneralConfigSerialiser::serialiseKeyValueSet(RsConfigKeyValueSet *it
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsGeneralConfigSerialiser::serialiseKeyValueSet() Header: " << ok << std::endl;
 	std::cerr << "RsGeneralConfigSerialiser::serialiseKeyValueSet() Size: " << tlvsize << std::endl;
+#endif
 
 	/* skip the header */
 	offset += 8;
 
 	/* add mandatory parts first */
 	ok &= item->tlvkvs.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsGeneralConfigSerialiser::serialiseKeyValueSet() kvs: " << ok << std::endl;
 
 	if (offset != tlvsize)
 	{
 		ok = false;
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsGeneralConfigSerialiser::serialiseKeyValueSet() Size Error! " << std::endl;
+#endif
 	}
 
 	return ok;
@@ -433,13 +424,17 @@ RsConfigKeyValueSet *RsGeneralConfigSerialiser::deserialiseKeyValueSet(void *dat
 		(RS_PKT_TYPE_GENERAL_CONFIG != getRsItemType(rstype)) ||
 		(RS_PKT_SUBTYPE_KEY_VALUE != getRsItemSubType(rstype)))
 	{
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsGeneralConfigSerialiser::deserialiseKeyValueSet() Wrong Type" << std::endl;
+#endif
 		return NULL; /* wrong type */
 	}
 
 	if (*pktsize < rssize)    /* check size */
 	{
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsGeneralConfigSerialiser::deserialiseKeyValueSet() Not Enough Space" << std::endl;
+#endif
 		return NULL; /* not enough data */
 	}
 
@@ -456,11 +451,13 @@ RsConfigKeyValueSet *RsGeneralConfigSerialiser::deserialiseKeyValueSet(void *dat
 	offset += 8;
 
 	/* get mandatory parts first */
-	ok &= item->tlvkvs.GetTlv(data, rssize, &offset), 
-	std::cerr << "RsGeneralConfigSerialiser::deserialiseKeyValueSet() kvs: " << ok << std::endl;
+	ok &= item->tlvkvs.GetTlv(data, rssize, &offset);
+
 	if (offset != rssize)
 	{
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsGeneralConfigSerialiser::deserialiseKeyValueSet() offset != rssize" << std::endl;
+#endif
 		/* error */
 		delete item;
 		return NULL;
@@ -468,7 +465,9 @@ RsConfigKeyValueSet *RsGeneralConfigSerialiser::deserialiseKeyValueSet(void *dat
 
 	if (!ok)
 	{
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsGeneralConfigSerialiser::deserialiseKeyValueSet() ok = false" << std::endl;
+#endif
 		delete item;
 		return NULL;
 	}
@@ -531,7 +530,9 @@ RsItem *RsPeerConfigSerialiser::deserialise(void *data, uint32_t *pktsize)
 		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
 		(RS_PKT_TYPE_PEER_CONFIG != getRsItemType(rstype)))
 	{
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsPeerConfigSerialiser::deserialise() Wrong Type" << std::endl;
+#endif
 		return NULL; /* wrong type */
 	}
 
@@ -630,35 +631,28 @@ bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint3
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsPeerConfigSerialiser::serialiseNet() Header: " << ok << std::endl;
 	std::cerr << "RsPeerConfigSerialiser::serialiseNet() Header: " << tlvsize << std::endl;
+#endif
 
 	/* skip the header */
 	offset += 8;
 
 	/* add mandatory parts first */
         ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, item->pid); /* Mandatory */
-	std::cerr << "RsPeerConfigSerialiser::serialiseNet() pid: " << ok << std::endl;
-
 	ok &= setRawUInt32(data, tlvsize, &offset, item->netMode); /* Mandatory */
-	std::cerr << "RsPeerConfigSerialiser::serialiseNet() netMode: " << ok << std::endl; 
-
 	ok &= setRawUInt32(data, tlvsize, &offset, item->visState); /* Mandatory */
-	std::cerr << "RsPeerConfigSerialiser::serialiseNet() visState: " << ok << std::endl;
-
 	ok &= setRawUInt32(data, tlvsize, &offset, item->lastContact); /* Mandatory */
-	std::cerr << "RsPeerConfigSerialiser::serialiseNet() lastContact: " << ok << std::endl;
-
         ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->localaddr)); 
-	std::cerr << "RsPeerConfigSerialiser::serialiseNet() localaddr: " << ok << std::endl;
-
         ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->remoteaddr)); 
-	std::cerr << "RsPeerConfigSerialiser::serialiseNet() remoteaddr: " << ok << std::endl;
 
 	if(offset != tlvsize)
 	{
 		ok = false;
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsPeerConfigSerialiser::serialise() Size Error! " << std::endl;
+#endif
 	}
 
 	return ok;
@@ -698,22 +692,11 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 
 	/* get mandatory parts first */
         ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, item->pid); /* Mandatory */
-	std::cerr << "RsPeerConfigSerialiser::deserialiseNet() pid: " << ok << std::endl;
-
 	ok &= getRawUInt32(data, rssize, &offset, &(item->netMode)); /* Mandatory */
-	std::cerr << "RsPeerConfigSerialiser::deserialiseNet() netMode: " << ok << std::endl; 
-
 	ok &= getRawUInt32(data, rssize, &offset, &(item->visState)); /* Mandatory */
-	std::cerr << "RsPeerConfigSerialiser::deserialiseNet() visState: " << ok << std::endl;
-
 	ok &= getRawUInt32(data, rssize, &offset, &(item->lastContact)); /* Mandatory */
-	std::cerr << "RsPeerConfigSerialiser::deserialiseNet() lastContact: " << ok << std::endl;
-
         ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->localaddr)); 
-	std::cerr << "RsPeerConfigSerialiser::deserialiseNet() localaddr: " << ok << std::endl;
-
         ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->remoteaddr)); 
-	std::cerr << "RsPeerConfigSerialiser::deserialiseNet() remoteaddr: " << ok << std::endl;
 
 	if (offset != rssize)
 	{
@@ -776,20 +759,23 @@ bool RsPeerConfigSerialiser::serialiseStun(RsPeerStunItem *item, void *data, uin
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsPeerConfigSerialiser::serialiseStun() Header: " << ok << std::endl;
 	std::cerr << "RsPeerConfigSerialiser::serialiseStun() Header: " << tlvsize << std::endl;
+#endif
 
 	/* skip the header */
 	offset += 8;
 
 	/* add mandatory parts first */
 	ok &= item->stunList.SetTlv(data, tlvsize, &offset); /* Mandatory */
-	std::cerr << "RsPeerConfigSerialiser::serialiseStun() stunList: " << ok << std::endl; 
 
 	if(offset != tlvsize)
 	{
 		ok = false;
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsPeerConfigSerialiser::serialiseStun() Size Error! " << std::endl;
+#endif
 	}
 
 	return ok;
@@ -829,7 +815,6 @@ RsPeerStunItem *RsPeerConfigSerialiser::deserialiseStun(void *data, uint32_t *si
 
 	/* get mandatory parts first */
 	ok &= item->stunList.GetTlv(data, rssize, &offset); /* Mandatory */
-	std::cerr << "RsPeerConfigSerialiser::deserialiseStun() stunList: " << ok << std::endl; 
 
 	if (offset != rssize)
 	{
@@ -936,8 +921,10 @@ bool RsCacheConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *size)
 
 	ok &=setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsCacheConfigSerialiser::serialise() Header: " << ok << std::endl;
 	std::cerr << "RsCacheConfigSerialiser::serialise() Size: " << size << std::endl;
+#endif
 
 	/* skip the header */
 	offset += 8;
@@ -945,34 +932,20 @@ bool RsCacheConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *size)
 	/* add the mandatory parts first */
 
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, item->pid);
-	std::cerr << "RsCacheConfigSerialiser::serialise() peerid: " << ok << std::endl;
-
 	ok &= setRawUInt16(data, tlvsize, &offset, item->cachetypeid);
-	std::cerr << "RsCacheConfigSerialiser::serialise() cacheTypeId: " << ok << std::endl;
-
 	ok &= setRawUInt16(data, tlvsize, &offset, item->cachesubid);
-	std::cerr << "RsCacheConfigSerialiser::serialise() cacheSubId: " << ok << std::endl;
-
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PATH, item->path);
-	std::cerr << "RsCacheConfigSerialiser::serialise() path: " << ok << std::endl;
-
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->name);
-	std::cerr << "RsCacheConfigSerialiser::serialise() name: " << ok << std::endl;
-
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_HASH_SHA1, item->hash);
-	std::cerr << "RsCacheConfigSerialiser::serialise() hash: " << ok << std::endl;
-
 	ok &= setRawUInt64(data, tlvsize, &offset, item->size);
-	std::cerr << "RsCacheConfigSerialiser::serialise() size: " << ok << std::endl;
-
 	ok &= setRawUInt32(data, tlvsize, &offset, item->recvd);
-	std::cerr << "RsCacheConfigSerialiser::serialise() recvd: " << ok << std::endl;
-
 
 	if (offset !=tlvsize)
 	{
 		ok = false;
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsConfigSerialiser::serialisertransfer() Size Error! " << std::endl;
+#endif
 	}
 
 	return ok;
@@ -1012,28 +985,13 @@ RsItem *RsCacheConfigSerialiser::deserialise(void *data, uint32_t *size)
 	/* get mandatory parts first */ 
 
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, item->pid);
-	std::cerr << "RsCacheConfigSerialiser::deserialise() peerid: " << ok << std::endl;
-
 	ok &= getRawUInt16(data, rssize, &offset, &(item->cachetypeid));
-	std::cerr << "RsCacheConfigSerialiser::serialise() cacheTypeId: " << ok << std::endl;
-
 	ok &= getRawUInt16(data, rssize, &offset, &(item->cachesubid));
-	std::cerr << "RsCacheConfigSerialiser::serialise() cacheSubId: " << ok << std::endl;
-
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PATH, item->path);
-	std::cerr << "RsCacheConfigSerialiser::serialise() path: " << ok << std::endl;
-
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->name);
-	std::cerr << "RsCacheConfigSerialiser::serialise() name: " << ok << std::endl;
-
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_HASH_SHA1, item->hash);
-	std::cerr << "RsCacheConfigSerialiser::deserialise() hash: " << ok << std::endl;
-
 	ok &= getRawUInt64(data, rssize, &offset, &(item->size));
-	std::cerr << "RsCacheConfigSerialiser::deserialise() size: " << ok << std::endl;
-
 	ok &= getRawUInt32(data, rssize, &offset, &(item->recvd));
-	std::cerr << "RsCacheConfigSerialiser::deserialise() recvd: " << ok << std::endl;
 
 
 	if (offset != rssize)
