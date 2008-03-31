@@ -283,19 +283,16 @@ void PopupChatDialog::showAvatarFrame(bool show)
 }
 
 void PopupChatDialog::setColor()
-{
-	    
-    QColor col = QColorDialog::getColor(Qt::black, this);
-    if (col.isValid()) {
+{	    
+	bool ok;    
+    QRgb color = QColorDialog::getRgba(ui.chattextEdit->textColor().rgba(), &ok, this);
+    if (ok) {
 
-        //ui.colorButton->setPalette(QPalette(col));
-        //ui.chattextEdit->setTextCursor();
-        ui.chattextEdit->setTextColor(QColor(col));
-        //QTextCharFormat fmt;
-        //fmt.setForeground(col);
-        //mergeFormatOnWordOrSelection(fmt);
-        colorChanged(col);
+        currentColor = QColor(color);
+        ui.chattextEdit->setTextColor(currentColor);
+        colorChanged(currentColor);
     }
+    ui.chattextEdit->setFocus();
 }
 
 void PopupChatDialog::colorChanged(const QColor &c)

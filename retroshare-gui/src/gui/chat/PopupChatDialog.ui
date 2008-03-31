@@ -182,7 +182,7 @@
               </size>
              </property>
              <property name="toolTip" >
-              <string>Italic</string>
+              <string>Set Font</string>
              </property>
              <property name="text" >
               <string/>
