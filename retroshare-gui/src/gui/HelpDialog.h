@@ -25,12 +25,12 @@
 #include <QFileDialog>
 
 
-#include "mainpage.h"
+//#include "mainpage.h"
 #include "ui_HelpDialog.h"
 
 #include "rsiface/rstypes.h"
 
-class HelpDialog : public MainPage 
+class HelpDialog : public QDialog 
 {
   Q_OBJECT
 

@@ -1080,8 +1080,11 @@
    <addaction name="actionAdd_Friend" />
    <addaction name="actionInvite_Friend" />
    <addaction name="actionAdd_Share" />
+   <addaction name="actionMessenger" />
+   <addaction name="actionSMPlayer" />
    <addaction name="actionOptions" />
    <addaction name="actionColor" />
+   <addaction name="actionAbout" />
    <addaction name="separator" />
    <addaction name="actionQuit" />
   </widget>
@@ -1131,6 +1134,30 @@
    </property>
    <property name="text" >
     <string>Color</string>
+   </property>
+  </action>
+  <action name="actionSMPlayer" >
+   <property name="icon" >
+    <iconset resource="images.qrc" >:/images/smplayer_icon32.png</iconset>
+   </property>
+   <property name="text" >
+    <string>SMPlayer</string>
+   </property>
+  </action>
+  <action name="actionMessenger" >
+   <property name="icon" >
+    <iconset resource="images.qrc" >:/images/kdmconfig.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Messenger</string>
+   </property>
+  </action>
+  <action name="actionAbout" >
+   <property name="icon" >
+    <iconset resource="images.qrc" >:/images/informations_24x24.png</iconset>
+   </property>
+   <property name="text" >
+    <string>About</string>
    </property>
   </action>
  </widget>

@@ -41,7 +41,7 @@
 
 /** Constructor */
 HelpDialog::HelpDialog(QWidget *parent)
-: MainPage(parent)
+:QDialog(parent)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
@@ -62,6 +62,8 @@ HelpDialog::HelpDialog(QWidget *parent)
         QTextStream in(&thanksFile);
         ui.thanks->setText(in.readAll());
    }
+   
+   ui.label_4->setMinimumWidth(20);
 
 
   /* Hide platform specific features */

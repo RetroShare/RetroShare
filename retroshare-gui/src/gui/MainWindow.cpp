@@ -118,11 +118,14 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     applicationWindow = new ApplicationWindow();
     applicationWindow->hide();
 	
-	/** General ToolBox**/
+	/** Left Side ToolBar**/
     connect(ui.actionAdd_Friend, SIGNAL(triggered() ), this , SLOT( addFriend() ) );
     connect(ui.actionInvite_Friend, SIGNAL(triggered() ), this , SLOT( inviteFriend() ) );
     connect(ui.actionAdd_Share, SIGNAL(triggered() ), this , SLOT( addSharedDirectory() ) );
     connect(ui.actionOptions, SIGNAL(triggered()), this, SLOT( showPreferencesWindow()) );
+    connect(ui.actionMessenger, SIGNAL(triggered()), this, SLOT( showMessengerWindow()) );
+    connect(ui.actionSMPlayer, SIGNAL(triggered()), this, SLOT( showsmplayer()) );
+    connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT( showabout()) );
     connect(ui.actionColor, SIGNAL(triggered()), this, SLOT( setStyle()) );
 
     
@@ -133,7 +136,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
         
     /** adjusted quit behaviour: trigger a warning that can be switched off in the saved
         config file RetroShare.conf */
-    //ui.actionQuit->setToolTip(tr("Quit"));
    connect(ui.actionQuit, SIGNAL(triggered()), this, SLOT(doQuit()));
 
     /* load the StyleSheet*/
@@ -176,8 +178,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 //                       createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
 #endif
 
-    ui.stackPages->add(new HelpDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_ABOUT), tr("About/Help"), grp));
+    //ui.stackPages->add(new HelpDialog(ui.stackPages),
+    //                   createPageAction(QIcon(IMAGE_ABOUT), tr("About/Help"), grp));
                      
   //ui.stackPages->add(groupsDialog = new GroupsDialog(ui.stackPages),
   //                   createPageAction(QIcon(), tr("Groups"), grp));
@@ -193,14 +195,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.toolBar->addActions(grp->actions());
     ui.toolBar->addSeparator();
     connect(grp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *)));
-
- 
-    /* Create and bind the messenger button */
-    addAction(new QAction(QIcon(IMAGE_RSM32), tr("Messenger"), ui.toolBar), SLOT(showMessengerWindow()));
-    
-    
-    //addAction(new QAction(QIcon(IMAGE_SMPLAYER), tr("SMPlayer"), ui.toolBar), SLOT(showsmplayer()));
-    
+       
 
 
 
@@ -657,6 +652,12 @@ void MainWindow::showsmplayer()
 	}
 	smplayer->gui()->show();
 
+}
+
+void MainWindow::showabout()
+{
+    static HelpDialog *helpdlg = new HelpDialog(this); 
+	helpdlg->show(); 
 }
 
 void MainWindow::setStyle()

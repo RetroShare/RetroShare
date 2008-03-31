@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>HelpDialog</class>
- <widget class="QWidget" name="HelpDialog" >
+ <widget class="QDialog" name="HelpDialog" >
   <property name="geometry" >
    <rect>
     <x>0</x>

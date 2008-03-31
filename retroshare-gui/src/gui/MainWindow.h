@@ -124,6 +124,8 @@ private slots:
     void showMessengerWindow();
     void showApplWindow();
 	void showsmplayer();
+	void showabout();
+
 
     void showSettings();
     void setStyle();
