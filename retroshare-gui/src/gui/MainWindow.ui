@@ -1075,12 +1075,13 @@
     <enum>LeftToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak" >
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
    <addaction name="actionAdd_Friend" />
    <addaction name="actionInvite_Friend" />
    <addaction name="actionAdd_Share" />
    <addaction name="actionOptions" />
+   <addaction name="actionColor" />
    <addaction name="separator" />
    <addaction name="actionQuit" />
   </widget>
@@ -1122,6 +1123,14 @@
    </property>
    <property name="text" >
     <string>Quit</string>
+   </property>
+  </action>
+  <action name="actionColor" >
+   <property name="icon" >
+    <iconset resource="images.qrc" >:/images/highlight.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Color</string>
    </property>
   </action>
  </widget>

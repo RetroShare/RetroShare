@@ -123,6 +123,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(ui.actionInvite_Friend, SIGNAL(triggered() ), this , SLOT( inviteFriend() ) );
     connect(ui.actionAdd_Share, SIGNAL(triggered() ), this , SLOT( addSharedDirectory() ) );
     connect(ui.actionOptions, SIGNAL(triggered()), this, SLOT( showPreferencesWindow()) );
+    connect(ui.actionColor, SIGNAL(triggered()), this, SLOT( setStyle()) );
+
     
     /** Games ToolBox*/
 	//connect(ui.qbackgammonButton, SIGNAL(clicked( bool )), this, SLOT( startgammon()) );
@@ -669,12 +671,5 @@ void MainWindow::setStyle()
  
 }
 
-/*void MainWindow::toggleViewAction ()
-{    
 
-        ui.toolBarservice->toggleViewAction();
-
-        //ui.toolBarservice->show();
-
-}*/
 
