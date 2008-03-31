@@ -232,6 +232,14 @@ void ChanMsgDialog::channelstreeViewCostumPopupMenu( QPoint point )
 
 void ChanMsgDialog::closeEvent (QCloseEvent * event)
 {
+    event->accept();
+    return;
+
+    /* We can save to Drafts.... but we'll do this later.
+     * ... no auto saving for the moment,
+     */
+
+#if 0
     if (maybeSave())
     {     
        event->accept();
@@ -243,7 +251,9 @@ void ChanMsgDialog::closeEvent (QCloseEvent * event)
     
 		RshareSettings config;
 		config.saveWidgetInformation(this);
-	}
+    }
+#endif
+
 }
 
 void ChanMsgDialog::deletechannel()

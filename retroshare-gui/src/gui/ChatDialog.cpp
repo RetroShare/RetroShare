@@ -57,6 +57,7 @@ ChatDialog::ChatDialog(QWidget *parent)
   setWindowIcon(QIcon(QString(":/images/rstray3.png")));
 
   //connect(ui.lineEdit, SIGNAL(returnPressed( ) ), this, SLOT(sendMsg( ) ));
+  connect(ui.lineEdit, SIGNAL(textChanged ( ) ), this, SLOT(checkChat( ) ));
   connect(ui.Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
    
   connect( ui.msgSendList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgSendListCostumPopupMenu( QPoint ) ) );
@@ -162,8 +163,27 @@ void ChatDialog::insertChat()
 	}
 }
 
-
-
+void ChatDialog::checkChat()
+{
+	/* if <return> at the end of the text -> we can send it! */
+        QTextEdit *chatWidget = ui.lineEdit;
+        std::string txt = chatWidget->toPlainText().toStdString();
+	if ('\n' == txt[txt.length()-1])
+	{
+		//std::cerr << "Found <return> found at end of :" << txt << ": should send!";
+		//std::cerr << std::endl;
+		if (txt.length()-1 == txt.find('\n')) /* only if on first line! */
+		{
+			/* should remove last char ... */
+			sendMsg();
+		}
+	}
+	else
+	{
+		//std::cerr << "No <return> found in :" << txt << ":";
+		//std::cerr << std::endl;
+	}
+}
 
 void ChatDialog::sendMsg()
 {

@@ -73,7 +73,8 @@ private slots:
   void setColor();    
   void getFont();
   void setFont();
-  
+ 
+  void checkChat();
   void sendChat();
   
   

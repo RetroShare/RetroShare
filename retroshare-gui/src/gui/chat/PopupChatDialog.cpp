@@ -61,6 +61,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   connect(ui.avatarFrameButton, SIGNAL(toggled(bool)), this, SLOT(showAvatarFrame(bool)));
 
   //connect(ui.chattextEdit, SIGNAL(returnPressed( ) ), this, SLOT(sendChat( ) ));
+  connect(ui.chattextEdit, SIGNAL(textChanged ( ) ), this, SLOT(checkChat( ) ));
   
   connect(ui.sendButton, SIGNAL(clicked( ) ), this, SLOT(sendChat( ) ));
    
@@ -204,6 +205,28 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 
 	QScrollBar *qsb =  msgWidget->verticalScrollBar();
 	qsb -> setValue(qsb->maximum());
+}
+
+void PopupChatDialog::checkChat()
+{
+	/* if <return> at the end of the text -> we can send it! */
+        QTextEdit *chatWidget = ui.chattextEdit;
+        std::string txt = chatWidget->toPlainText().toStdString();
+	if ('\n' == txt[txt.length()-1])
+	{
+		//std::cerr << "Found <return> found at end of :" << txt << ": should send!";
+		//std::cerr << std::endl;
+		if (txt.length()-1 == txt.find('\n')) /* only if on first line! */
+		{
+			/* should remove last char ... */
+			sendChat();
+		}
+	}
+	else
+	{
+		//std::cerr << "No <return> found in :" << txt << ":";
+		//std::cerr << std::endl;
+	}
 }
 
 

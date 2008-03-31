@@ -58,6 +58,7 @@ void toggleSendItem( QTreeWidgetItem *item, int col );
 
   void setColor();      
   void insertSendList();
+  void checkChat();
   void sendMsg();
   
   void privchat();
