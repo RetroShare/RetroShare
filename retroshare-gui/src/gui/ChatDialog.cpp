@@ -44,15 +44,15 @@
 #include <QMouseEvent>
 #include <QPixmap>
 #include <QHeaderView>
+#include <QtGui/QKeyEvent>
 
 /** Constructor */
 ChatDialog::ChatDialog(QWidget *parent)
-: MainPage(parent)
+: MainPage (parent)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
   
-  setupsendActions();
   
   setWindowIcon(QIcon(QString(":/images/rstray3.png")));
 
@@ -69,14 +69,15 @@ ChatDialog::ChatDialog(QWidget *parent)
   connect(ui.fontsButton, SIGNAL(clicked()), this, SLOT(getFont()));  
   connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(setColor()));
 #endif
+  connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(setColor()));
 
+  connect(ui.actionSend, SIGNAL(triggered()), this, SLOT(returnPressed()));
    
   ui.fontsButton->setIcon(QIcon(QString(":/images/fonts.png")));
 
 //  connect(ui.msgSendList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ), 
 //  this, SLOT(toggleSendItem( QTreeWidgetItem *, int ) ));
 
-  //loadInitMsg();
   
   /* hide the Tree +/- */
   ui.msgSendList -> setRootIsDecorated( false );
@@ -113,25 +114,6 @@ void ChatDialog::msgSendListCostumPopupMenu( QPoint point )
       contextMnu.addAction( privchatAct);
       contextMnu.exec( mevent->globalPos() );
 }
-
-/*int     ChatDialog::loadInitMsg()
-{
-	std::ostringstream out;
-
-	//out << std::endl;
-	//out << std::endl;
-	//out << std::endl;
-	//out << "      Welcome to:";
-	//out << "<br>" << std::endl;
-	//out << "      Retroshare's group chat. <br>";
-
-	QString txt = QString::fromStdString(out.str());
-	ui.msgText->setHtml(txt);
-
-	return 1;
-}*/
-
-
 
 void ChatDialog::insertChat()
 {
@@ -326,11 +308,18 @@ void ChatDialog::clearOldChats()
 
 void ChatDialog::setColor()
 {
-	textColor = QColorDialog::getColor(Qt::black, this);
-	QPixmap pxm(24,24);
-	pxm.fill(textColor);
-	ui.colorChatButton->setIcon(pxm);
-	ui.lineEdit->setTextColor(textColor);
+	
+    bool ok;
+ 	QRgb color = QColorDialog::getRgba(ui.lineEdit->textColor().rgba(), &ok, this);
+ 	if (ok) {
+ 	        _currentColor = QColor(color);
+ 	        ui.lineEdit->setTextColor(_currentColor);
+ 	        QPixmap pxm(24,24);
+	        pxm.fill(_currentColor);
+	        ui.colorChatButton->setIcon(pxm);
+ 	}
+ 	ui.lineEdit->setFocus();
+ 	
 }
 
 void ChatDialog::getFont()
@@ -354,15 +343,12 @@ void ChatDialog::setFont()
   
 }
 
-void  ChatDialog::setupsendActions()
+void ChatDialog::returnPressed() 
 {
-    QAction *a;
 
-    a = new QAction(this);
-    a->setShortcut(Qt::CTRL + Qt::Key_S);
-    connect(a, SIGNAL(triggered()), this, SLOT(sendMsg()));
-    
-}
+         this->sendMsg();
+
+} 
 
 // Update Chat Info information
 void ChatDialog::setChatInfo(QString info, QColor color) {
@@ -388,4 +374,14 @@ void ChatDialog::displayInfoChatMenu(const QPoint& pos) {
   myChatMenu.exec(mapToGlobal(pos)+QPoint(0,80));
 }
 
-
+bool ChatDialog::keyPressed(QEvent * event) 
+{
+ 	        QKeyEvent * e = static_cast<QKeyEvent *>(event);
+ 	        if ((e->key() == Qt::Key_Enter) || (e->key() == Qt::Key_Return)) {
+ 	                event->accept();
+ 	                sendMsg();
+ 	                return true;
+ 	        }
+ 	
+ 	        return false;
+ }
