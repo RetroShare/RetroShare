@@ -61,7 +61,7 @@
 #define IMAGE_FILES   	        ":/images/folder_green.png"
 #define IMAGE_CHANNELS       	":/images/channels.png"
 #define IMAGE_PREFERENCES       ":/images/settings16.png"
-#define IMAGE_CHAT          	":/images/chats_24x24.png"
+#define IMAGE_CHAT          	":/images/groupchat.png"
 #define IMAGE_RETROSHARE        ":/images/rstray3.png"
 #define IMAGE_ABOUT             ":/images/informations_24x24.png"
 #define IMAGE_STATISTIC         ":/images/utilities-system-monitor.png"
