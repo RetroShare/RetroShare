@@ -160,6 +160,10 @@ Section  $(sec_data) sec_data
   SetOutPath "$INSTDIR\qss\"
   File /r release\qss\*.*   
   
+  ; Set Section emoticons need to remove svn path
+  SetOutPath "$INSTDIR\emoticons\"
+  File /r release\emoticons\*.*  
+  
   ; Set Section skin
   ; SetOutPath "$INSTDIR\skin\"
   ; File /r release\skin\*.* 
