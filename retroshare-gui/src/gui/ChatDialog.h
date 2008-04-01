@@ -40,14 +40,20 @@ public:
   ChatDialog(QWidget *parent = 0);
   /** Default Destructor */
 
-void insertChat();
-PopupChatDialog *getPrivateChat(std::string id, std::string name, bool show);
-void clearOldChats();
+  void insertChat();
+  PopupChatDialog *getPrivateChat(std::string id, std::string name, bool show);
+  void clearOldChats();
+  
+  void loadEmoticonsgroupchat();
+
         
 
 public slots:
 
   void setChatInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));
+  
+  void smileyWidgetgroupchat();
+  void addSmileys();
 
 private slots:
 
@@ -70,10 +76,6 @@ void toggleSendItem( QTreeWidgetItem *item, int col );
   void on_actionClearChat_triggered();
   void displayInfoChatMenu(const QPoint& pos);
   
-  void returnPressed();
-  bool keyPressed(QEvent * event);
-
-  
 
 private:
   
@@ -91,7 +93,7 @@ private:
   QColor textColor;
   QColor _currentColor;
 
-
+  QHash<QString, QString> smileys;
 
   std::map<std::string, PopupChatDialog *> chatDialogs;
 

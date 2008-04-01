@@ -53,12 +53,14 @@ ChatDialog::ChatDialog(QWidget *parent)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
   
+  loadEmoticonsgroupchat();
   
   setWindowIcon(QIcon(QString(":/images/rstray3.png")));
 
-  //connect(ui.lineEdit, SIGNAL(returnPressed( ) ), this, SLOT(sendMsg( ) ));
   connect(ui.lineEdit, SIGNAL(textChanged ( ) ), this, SLOT(checkChat( ) ));
   connect(ui.Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
+  connect(ui.emoticonBtn, SIGNAL(clicked()), this, SLOT(smileyWidgetgroupchat()));
+
    
   connect( ui.msgSendList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgSendListCostumPopupMenu( QPoint ) ) );
   connect( ui.msgText, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(displayInfoChatMenu(const QPoint&)));
@@ -143,9 +145,9 @@ void ChatDialog::insertChat()
 		QString currenttxt = msgWidget->toHtml();
 		QString extraTxt;
 
-        QString timestamp = "[" + QDateTime::currentDateTime().toString("hh:mm:ss") + "]";
+        QString timestamp = QDateTime::currentDateTime().toString("hh:mm:ss");
         QString name = QString::fromStdString(it->name);
-        QString line = "<span style=\"color:#C00000\"><strong>" + timestamp + "</strong></span>" +			
+        QString line = "<span style=\"color:#C00000\">" + timestamp + "</span>" +			
             		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span>";
             		
         extraTxt += line;
@@ -154,6 +156,14 @@ void ChatDialog::insertChat()
         
         /* add it everytime */
 		currenttxt += extraTxt;
+		
+		QHashIterator<QString, QString> i(smileys);
+	    while(i.hasNext())
+	    {
+			i.next();
+			currenttxt.replace(i.key(), "<img src=\"" + i.value() + "\">");
+	    }
+
 		
         msgWidget->setHtml(currenttxt);
         
@@ -362,16 +372,11 @@ void ChatDialog::setFont()
   ui.lineEdit->setFont(font);
   
 }
-
-void ChatDialog::returnPressed() 
-{
-
-         this->sendMsg();
-
-} 
+ 
 
 // Update Chat Info information
-void ChatDialog::setChatInfo(QString info, QColor color) {
+void ChatDialog::setChatInfo(QString info, QColor color) 
+{
   static unsigned int nbLines = 0;
   ++nbLines;
   // Check log size, clear it if too big
@@ -382,11 +387,13 @@ void ChatDialog::setChatInfo(QString info, QColor color) {
   ui.msgText->append(QString::fromUtf8("<font color='grey'>")+ QTime::currentTime().toString(QString::fromUtf8("hh:mm:ss")) + QString::fromUtf8("</font> - <font color='") + color.name() +QString::fromUtf8("'><i>") + info + QString::fromUtf8("</i></font>"));
 }
 
-void ChatDialog::on_actionClearChat_triggered() {
+void ChatDialog::on_actionClearChat_triggered() 
+{
   ui.msgText->clear();
 }
 
-void ChatDialog::displayInfoChatMenu(const QPoint& pos) {
+void ChatDialog::displayInfoChatMenu(const QPoint& pos) 
+{
   // Log Menu
   QMenu myChatMenu(this);
   myChatMenu.addAction(ui.actionClearChat);
@@ -394,14 +401,58 @@ void ChatDialog::displayInfoChatMenu(const QPoint& pos) {
   myChatMenu.exec(mapToGlobal(pos)+QPoint(0,80));
 }
 
-bool ChatDialog::keyPressed(QEvent * event) 
+void ChatDialog::loadEmoticonsgroupchat()
 {
- 	        QKeyEvent * e = static_cast<QKeyEvent *>(event);
- 	        if ((e->key() == Qt::Key_Enter) || (e->key() == Qt::Key_Return)) {
- 	                event->accept();
- 	                sendMsg();
- 	                return true;
- 	        }
- 	
- 	        return false;
- }
+	QDir smdir(QApplication::applicationDirPath() + "/emoticons/kopete");
+	//QDir smdir(":/gui/images/emoticons/kopete");
+	QFileInfoList sminfo = smdir.entryInfoList(QStringList() << "*.gif" << "*.png", QDir::Files, QDir::Name);
+	foreach(QFileInfo info, sminfo)
+	{
+		QString smcode = info.fileName().replace(".gif", "");
+		QString smstring;
+		for(int i = 0; i < 9; i+=3)
+		{
+			smstring += QString((char)smcode.mid(i,3).toInt());
+		}
+		//qDebug(smstring.toAscii());
+		smileys.insert(smstring, info.absoluteFilePath());
+	}
+}
+
+void ChatDialog::smileyWidgetgroupchat()
+{ 
+	qDebug("MainWindow::smileyWidget()");
+	QWidget *smWidget = new QWidget;
+	smWidget->setWindowTitle("Emoteicons");
+	smWidget->setWindowIcon(QIcon(QString(":/images/rstray3.png")));
+	smWidget->setFixedSize(256,256);
+	
+	
+	
+	int x = 0, y = 0;
+	
+	QHashIterator<QString, QString> i(smileys);
+	while(i.hasNext())
+	{
+		i.next();
+		QPushButton *smButton = new QPushButton("", smWidget);
+		smButton->setGeometry(x*24, y*24, 24,24);
+		smButton->setIconSize(QSize(24,24));
+		smButton->setIcon(QPixmap(i.value()));
+		smButton->setToolTip(i.key());
+		++x;
+		if(x > 4)
+		{
+			x = 0;
+			y++;
+		}
+		connect(smButton, SIGNAL(clicked()), this, SLOT(addSmileys()));
+	}
+	
+	smWidget->show();
+}
+
+void ChatDialog::addSmileys()
+{
+	ui.lineEdit->setText(ui.lineEdit->toHtml() + qobject_cast<QPushButton*>(sender())->toolTip());
+}
