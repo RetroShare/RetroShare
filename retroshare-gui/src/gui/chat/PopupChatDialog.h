@@ -80,7 +80,6 @@ private slots:
   
 private:
 
-  void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
   void colorChanged(const QColor &c);
   
    QAction     *actionTextBold;

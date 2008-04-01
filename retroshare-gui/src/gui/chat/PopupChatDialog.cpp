@@ -293,6 +293,7 @@ void PopupChatDialog::setColor()
         colorChanged(currentColor);
     }
     ui.chattextEdit->setFocus();
+    QTextCursor cursor = ui.chattextEdit->textCursor();
 }
 
 void PopupChatDialog::colorChanged(const QColor &c)
@@ -300,15 +301,6 @@ void PopupChatDialog::colorChanged(const QColor &c)
     QPixmap pix(16, 16);
     pix.fill(c);
     ui.colorButton->setIcon(pix);
-}
-
-void PopupChatDialog::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
-{
-    //QTextCursor cursor = ui.chattextEdit->textCursor();
-    /*if (!cursor.hasSelection())
-        cursor.select(QTextCursor::WordUnderCursor);
-    cursor.mergeCharFormat(format);*/
-    //ui.chattextEdit->mergeCurrentCharFormat(format);
 }
 
 void PopupChatDialog::getFont()
