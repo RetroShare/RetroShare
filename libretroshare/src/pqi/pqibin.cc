@@ -88,6 +88,11 @@ BinFileInterface::~BinFileInterface()
 	{
 		fclose(buf);
 	}
+
+	if (hash)
+	{
+		delete hash;
+	}
 }
 
 int BinFileInterface::close()
@@ -183,11 +188,14 @@ BinMemInterface::BinMemInterface(const void *data, const int defsize, int flags)
 	}
 
 BinMemInterface::~BinMemInterface() 
-	{ 
-		if (buf)
-			free(buf);
-		return; 
-	}
+{ 
+	if (buf)
+		free(buf);
+
+	if (hash)
+		delete hash;
+	return; 
+}
 
 int BinMemInterface::close()
 {

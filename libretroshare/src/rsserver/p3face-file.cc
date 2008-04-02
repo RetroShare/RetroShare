@@ -102,6 +102,7 @@ int     RsServer::UpdateAllTransfers()
 		ti.downloadStatus = (*it) -> state;
 		transfers.push_back(ti);
 
+		delete (*it); 
 	}
 
         iface.setChanged(RsIface::Transfer);

@@ -113,6 +113,9 @@ pqiarchive::~pqiarchive()
 	  delete bio;
 	}
 
+	if (rsSerialiser)
+		delete rsSerialiser;
+
 	if (nextPkt)
 	{
 		delete nextPkt;

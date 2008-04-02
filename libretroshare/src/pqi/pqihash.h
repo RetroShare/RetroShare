@@ -40,6 +40,13 @@ class pqihash
 	doHash = true;
 }
 
+	~pqihash()
+{
+	delete[] sha_hash;
+	delete sha_ctx;
+}
+
+
 void    addData(void *data, uint32_t len)
 {
 	if (doHash)
@@ -67,9 +74,6 @@ void 	Complete(std::string &hash)
 	endHash = out.str();
 	hash = endHash;
 	doHash = false;
-
-	delete []sha_hash;
-	delete sha_ctx;
 
 	return;
 }

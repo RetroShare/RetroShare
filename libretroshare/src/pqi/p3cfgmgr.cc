@@ -185,6 +185,8 @@ void	p3ConfigMgr::saveConfiguration()
 #endif
 	}
 
+	delete signbio;
+
 
 }
 
@@ -332,6 +334,7 @@ void	p3ConfigMgr::loadConfiguration()
 		}
 	}
 
+	delete item;
 
 #ifdef CONFIG_DEBUG 
 	std::cerr << "p3ConfigMgr::loadConfiguration() Done!";

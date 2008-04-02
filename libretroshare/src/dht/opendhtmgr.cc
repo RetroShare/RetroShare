@@ -179,6 +179,7 @@ bool OpenDHTMgr::publishDHT(std::string key, std::string value, uint32_t ttl)
 
         void *data = (void *) pub;
 	pthread_create(&tid, 0, &doDhtPublish, data);
+	pthread_detach(tid); /* so memory is reclaimed in linux */
 
 	return true;
 }
@@ -195,6 +196,7 @@ bool OpenDHTMgr::searchDHT(std::string key)
 
         void *data = (void *) dht;
 	pthread_create(&tid, 0, &doDhtSearch, data);
+	pthread_detach(tid); /* so memory is reclaimed in linux */
 
 	return true;
 }

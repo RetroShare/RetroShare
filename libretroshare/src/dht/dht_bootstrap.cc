@@ -217,6 +217,7 @@ void	stunPeer(std::string id, struct sockaddr_in peeraddr)
 
         void *data = (void *) pub;
         pthread_create(&tid, 0, &doStunPeer, data);
+	pthread_detach(tid);
 
         return;
 
@@ -361,6 +362,7 @@ int main(int argc, char **argv)
 
 #endif
 
+	srand(time(NULL)); /* randomise! */
 
 	if (!setOwnId)
 	{

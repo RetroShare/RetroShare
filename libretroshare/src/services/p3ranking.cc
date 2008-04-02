@@ -459,6 +459,7 @@ void p3Ranking::addRankMsg(RsRankLinkMsg *msg)
 	}
 	else
 	{
+		delete msg;
 #ifdef RANK_DEBUG
 		std::cerr << "p3Ranking::addRankMsg() Old Comment ignoring";
 		std::cerr << std::endl;

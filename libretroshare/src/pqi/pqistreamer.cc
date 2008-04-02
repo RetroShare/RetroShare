@@ -104,6 +104,10 @@ pqistreamer::~pqistreamer()
 	  delete bio;
 	}
 
+	/* clean up serialiser */
+	if (rsSerialiser)
+		delete rsSerialiser;
+
 	// clean up outgoing. (cntrl packets)
 	while(out_pkt.size() > 0)
 	{
