@@ -204,10 +204,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(transfersDialog, SIGNAL(playFiles( QStringList )), this, SLOT(playFiles( QStringList )));
 
 #ifdef RS_RELEASE_VERSION    
-    addAction(new QAction(QIcon(IMAGE_BLOCK), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
+    //addAction(new QAction(QIcon(IMAGE_BLOCK), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
+
 #else
     addAction(new QAction(QIcon(IMAGE_BLOCK), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
-#endif
 
     toolAct = ui.toolBarservice->toggleViewAction();
     toolAct->setText("Service");
@@ -248,18 +248,17 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
         
     ui.toolBarservice->addSeparator();
 
+    statusBar()->addWidget(new QLabel(tr("Users: 0  Files: 0 ")));
+    statusBar()->addPermanentWidget(new QLabel(tr("Down: 0.0  Up: 0.0 ")));
+    statusBar()->addPermanentWidget(new QLabel(tr("Connections: 0/45 ")));
+
+#endif
 
     //servicegrp->actions()[0]->setChecked(true);
   
     /* Create the actions that will go in the tray menu */
     createActions();
              
-
-  
-    statusBar()->addWidget(new QLabel(tr("Users: 0  Files: 0 ")));
-    statusBar()->addPermanentWidget(new QLabel(tr("Down: 0.0  Up: 0.0 ")));
-    statusBar()->addPermanentWidget(new QLabel(tr("Connections: 0/45 ")));
-  
 /******  
     * This is an annoying warning I get all the time...
     * (no help!)

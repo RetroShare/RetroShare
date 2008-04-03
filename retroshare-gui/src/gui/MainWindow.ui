@@ -1065,6 +1065,9 @@
    </attribute>
   </widget>
   <widget class="QToolBar" name="toolBar_2" >
+   <property name="enabled" >
+    <bool>true</bool>
+   </property>
    <property name="windowTitle" >
     <string>toolBar_2</string>
    </property>
@@ -1080,11 +1083,16 @@
    <addaction name="actionAdd_Friend" />
    <addaction name="actionInvite_Friend" />
    <addaction name="actionAdd_Share" />
+   <addaction name="separator" />
+   <addaction name="separator" />
+   <addaction name="separator" />
    <addaction name="actionMessenger" />
    <addaction name="actionSMPlayer" />
-   <addaction name="actionOptions" />
    <addaction name="actionColor" />
    <addaction name="actionAbout" />
+   <addaction name="actionOptions" />
+   <addaction name="separator" />
+   <addaction name="separator" />
    <addaction name="separator" />
    <addaction name="actionQuit" />
   </widget>
@@ -1129,11 +1137,17 @@
    </property>
   </action>
   <action name="actionColor" >
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
    <property name="icon" >
     <iconset resource="images.qrc" >:/images/highlight.png</iconset>
    </property>
    <property name="text" >
     <string>Color</string>
+   </property>
+   <property name="visible" >
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionSMPlayer" >
