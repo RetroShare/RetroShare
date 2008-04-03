@@ -997,7 +997,7 @@ int	ftfiler::generateFileData(ftFileStatus *s, std::string id, uint64_t offset, 
 		}
 
                 // make a FileData type.
-		ftFileData *fd = new ftFileData(id, s->hash, s->size, offset, tosend, data);
+		ftFileData *fd = new ftFileData(id, s->hash, s->size, offset, tosend, data, 0);
 
 		/* send off the packet */
 		out_queue.push_back(fd);

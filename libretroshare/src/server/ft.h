@@ -64,28 +64,38 @@ virtual ~ftFileRequest() { return; }
         uint32_t chunk;
 };
 
+const uint32_t FT_FILEDATA_FLAG_NOFREE = 0x01;
 
 class ftFileData: public ftFileRequest
 {
         public:
 	ftFileData(std::string id_in, std::string hash_in,
 		        uint64_t size_in, uint64_t offset_in,
-		        uint32_t chunk_in, void *data_in)
+		        uint32_t chunk_in, void *data_in, uint32_t flags)
 	:ftFileRequest(id_in, hash_in, size_in, 
-		offset_in, chunk_in), data(data_in)
+		offset_in, chunk_in), data(data_in), ftFlags(flags)
 	{
 		return;
 	}
 
 virtual ~ftFileData()
 	{
-		if (data)
+		if (ftFlags & FT_FILEDATA_FLAG_NOFREE)
 		{
-			free(data);
+			/* don't free */
 		}
+		else
+		{
+			if (data)
+			{
+				free(data);
+			}
+		}
+		data = NULL;
 	}
 
 	void *data;
+	uint32_t ftFlags;
 };
 
 

@@ -496,14 +496,17 @@ int     filedexserver::handleInputQueues()
 	i_init = i;
 	while((fr = pqisi -> GetFileRequest()) != NULL )
 	{
-		//std::cerr << "filedexserver::handleInputQueues() Recvd ftFiler Request" << std::endl;
+#ifdef SERVER_DEBUG 
+		std::cerr << "filedexserver::handleInputQueues() Recvd ftFiler Request" << std::endl;
 		std::ostringstream out;
-		if (i++ == i_init)
+		if (i == i_init)
 		{
 			out << "Incoming(Net) File Item:" << std::endl;
 		}
 		fr -> print(out);
 		pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, out.str());
+#endif
+		i++; /* count */
 
 		/* This bit is for debugging only! (not really needed) */
 
@@ -521,20 +524,23 @@ int     filedexserver::handleInputQueues()
 	while((fd = pqisi -> GetFileData()) != NULL )
 	{
 		//std::cerr << "filedexserver::handleInputQueues() Recvd ftFiler Data" << std::endl;
+#ifdef SERVER_DEBUG 
 		std::ostringstream out;
-		if (i++ == i_init)
+		if (i == i_init)
 		{
 			out << "Incoming(Net) File Data:" << std::endl;
 		}
 		fd -> print(out);
 		pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, out.str());
+#endif
+		i++; /* count */
 
 		/* incoming data */
 		ftFileData *ffd = new ftFileData(fd->PeerId(), 
 			fd->fd.file.hash, fd->fd.file.filesize, 
 			fd->fd.file_offset, 
 			fd->fd.binData.bin_len, 
-			fd->fd.binData.bin_data);
+			fd->fd.binData.bin_data, FT_FILEDATA_FLAG_NOFREE);
 
 		ftFiler->recvFileInfo(ffd);
 		delete fd;

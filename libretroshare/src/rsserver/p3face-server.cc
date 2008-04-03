@@ -212,7 +212,8 @@ void 	RsServer::run()
 
 
 				/* Tick slow services */
-				mRanking->tick();
+				if (mRanking)
+					mRanking->tick();
 
 
 #if 0

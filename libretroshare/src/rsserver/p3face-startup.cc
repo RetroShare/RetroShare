@@ -67,6 +67,11 @@
 
 #include "pqi/p3notify.h" // HACK - moved to pqi for compilation order.
 
+
+// UNCOMMENT THIS FOR UNFINISHED SERVICES
+#define RS_RELEASE 1  
+
+
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
 	#include "pqi/authxpgp.h"
@@ -525,17 +530,19 @@ int RsServer::StartupRetroShare(RsInit *config)
 	ad = new p3disc(mAuthMgr, mConnMgr);
 	msgSrv = new p3MsgService(mConnMgr);
 	chatSrv = new p3ChatService(mConnMgr);
-	p3GameLauncher *gameLauncher = new p3GameLauncher(mConnMgr);
 
 	pqih -> addService(ad);
 	pqih -> addService(msgSrv);
 	pqih -> addService(chatSrv);
-	pqih -> addService(gameLauncher);
 
 	/* create Cache Services */
 	std::string config_dir = config->basedir;
         std::string localcachedir = config_dir + "/cache/local";
 	std::string remotecachedir = config_dir + "/cache/remote";
+
+#ifndef RS_RELEASE
+	p3GameLauncher *gameLauncher = new p3GameLauncher(mConnMgr);
+	pqih -> addService(gameLauncher);
 
 	mRanking = new p3Ranking(mConnMgr, RS_SERVICE_TYPE_RANK, 
 			mCacheStrapper, mCacheTransfer, 
@@ -550,6 +557,11 @@ int RsServer::StartupRetroShare(RsInit *config)
 
         CachePair cp2(photoService, photoService, CacheId(RS_SERVICE_TYPE_PHOTO, 0));
 	mCacheStrapper -> addCachePair(cp2);
+#else
+	mRanking = NULL;
+
+#endif
+
 
 	/**************************************************************************/
 
@@ -692,11 +704,17 @@ int RsServer::StartupRetroShare(RsInit *config)
 	/* Setup GUI Interfaces. */
 
 	rsPeers = new p3Peers(mConnMgr, mAuthMgr);
-	rsGameLauncher = gameLauncher;
-	rsRanks = new p3Rank(mRanking);
 	rsMsgs  = new p3Msgs(mAuthMgr, msgSrv, chatSrv);
 	rsDisc  = new p3Discovery(ad);
+#ifndef RS_RELEASE
+	rsGameLauncher = gameLauncher;
 	rsPhoto = new p3Photo(photoService);
+	rsRanks = new p3Rank(mRanking);
+#else
+	rsGameLauncher = NULL;
+	rsPhoto = NULL;
+	rsRanks = NULL;
+#endif
 
 
 	/* put a welcome message in! */
