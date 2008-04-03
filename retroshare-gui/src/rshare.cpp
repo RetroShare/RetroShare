@@ -83,6 +83,8 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, QString dir)
   /** Set the GUI stylesheet appropriately. */
   setSheet(_args.value(ARG_GUISTYLESHEET));
 
+  /* Switch off auto shutdown */
+  setQuitOnLastWindowClosed ( false );
 }
 
 /** Destructor */
