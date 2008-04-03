@@ -70,6 +70,12 @@ RsTlvBinaryData::RsTlvBinaryData(uint16_t t)
 	return;
 }
 
+RsTlvBinaryData::~RsTlvBinaryData()
+{
+	TlvClear();
+}
+
+
 /// used to allocate memory andinitialize binary data member 
 bool     RsTlvBinaryData::setBinData(void *data, uint16_t size)
 {

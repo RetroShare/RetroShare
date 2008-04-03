@@ -31,6 +31,9 @@
 
 const int pqipersongrpzone = 354;
 
+/****
+#define DEBUG_TICK 1
+****/
 
 // handle the tunnel services.
 int pqipersongrp::tickServiceRecv()
@@ -108,13 +111,32 @@ int	pqipersongrp::tick()
 	}
 	int i = 0;
 
-	if (tickServiceSend()) i = 1;
+	if (tickServiceSend())
+	{
+		i = 1;
+#ifdef DEBUG_TICK
+                std::cerr << "pqipersongrp::tick() moreToTick from tickServiceSend()" << std::endl;
+#endif
+	}
 
-	if (pqihandler::tick()) i = 1; /* does actual Send/Recv */
+	if (pqihandler::tick()) /* does actual Send/Recv */
+	{
+		i = 1;
+#ifdef DEBUG_TICK
+                std::cerr << "pqipersongrp::tick() moreToTick from pqihandler::tick()" << std::endl;
+#endif
+	}
 
-	if (tickServiceRecv()) i = 1;
 
-	return 1;
+	if (tickServiceRecv())
+	{
+		i = 1;
+#ifdef DEBUG_TICK
+                std::cerr << "pqipersongrp::tick() moreToTick from tickServiceRecv()" << std::endl;
+#endif
+	}
+
+	return i;
 }
 
 int	pqipersongrp::status()

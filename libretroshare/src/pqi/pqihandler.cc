@@ -32,6 +32,10 @@
 #include "pqi/pqidebug.h"
 const int pqihandlerzone = 34283;
 
+/****
+#define DEBUG_TICK 1
+#define RSITEM_DEBUG 1
+****/
 
 pqihandler::pqihandler(SecurityPolicy *Global)
 {
@@ -65,12 +69,18 @@ int	pqihandler::tick()
 	{
 		if (0 < ((it -> second) -> pqi) -> tick())
 		{
+#ifdef DEBUG_TICK
+                	std::cerr << "pqihandler::tick() moreToTick from mod()" << std::endl;
+#endif
 			moreToTick = 1;
 		}
 	}
 	// get the items, and queue them correctly
 	if (0 < GetItems())
 	{
+#ifdef DEBUG_TICK
+               	std::cerr << "pqihandler::tick() moreToTick from GetItems()" << std::endl;
+#endif
 		moreToTick = 1;
 	}
 
@@ -303,6 +313,7 @@ int pqihandler::GetItems()
 			// if yes... attempt to read.
 			while((item = (mod -> pqi) -> GetItem()) != NULL)
 			{
+#ifdef RSITEM_DEBUG 
 				std::ostringstream out;
 				out << "pqihandler::GetItems() Incoming Item ";
 				out << " from: " << mod -> pqi << std::endl;
@@ -310,6 +321,7 @@ int pqihandler::GetItems()
 
 				pqioutput(PQL_DEBUG_BASIC, 
 						pqihandlerzone, out.str());
+#endif
 
 				if (item->PeerId() != (mod->pqi)->PeerId())
 				{

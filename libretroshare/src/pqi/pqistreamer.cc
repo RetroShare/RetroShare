@@ -40,6 +40,12 @@ const int pqistreamerzone = 8221;
 
 const int PQISTREAM_ABS_MAX = 100000000; /* 100 MB/sec (actually per loop) */
 
+/* This removes the print statements (which hammer pqidebug) */
+/***
+#define RSITEM_DEBUG 1
+ ***/
+
+
 pqistreamer::pqistreamer(RsSerialiser *rss, std::string id, BinInterface *bio_in, int bio_flags_in)
 	:PQInterface(id), rsSerialiser(rss), bio(bio_in), bio_flags(bio_flags_in), 
 	pkt_wpending(NULL), 
@@ -146,12 +152,14 @@ pqistreamer::~pqistreamer()
 // Get/Send Items.
 int	pqistreamer::SendItem(RsItem *si)
 {
+#ifdef RSITEM_DEBUG 
         {
 	  std::ostringstream out;
 	  out << "pqistreamer::SendItem():" << std::endl;
 	  si -> print(out);
 	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
 	}
+#endif
 
 	return queue_outpqi(si);
 }

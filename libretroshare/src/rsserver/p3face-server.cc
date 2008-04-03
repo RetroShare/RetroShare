@@ -32,6 +32,10 @@
 #include <sys/time.h>
 #include <time.h>
 
+/****
+#define DEBUG_TICK 1
+****/
+
 RsServer::RsServer(RsIface &i, NotifyBase &callback)
 	:RsControl(i, callback)
 {
@@ -46,23 +50,6 @@ RsServer::~RsServer()
         /* General Internal Helper Functions 
 	  ----> MUST BE LOCKED! 
          */
-
-#if 0
-cert   *RsServer::intFindCert(RsCertId id)
-{
-	certsign cs;
-	convert_to_certsign(id, cs);
-	return sslr -> findcertsign(cs);
-}
-
-RsCertId RsServer::intGetCertId(cert *c)
-{
-	certsign cs;
-	sslr -> getcertsign(c, cs);
-	RsCertId id = convert_to_str(cs);
-	return id;
-}
-#endif
 
 #ifdef WINDOWS_SYS
 #include <time.h>
@@ -91,7 +78,7 @@ void 	RsServer::run()
 
     double timeDelta = 0.25;
     double minTimeDelta = 0.1; // 25;
-    double maxTimeDelta = 2.0;
+    double maxTimeDelta = 1.0;
     double kickLimit = 0.5;
 
     double avgTickRate = timeDelta;
@@ -118,17 +105,21 @@ void 	RsServer::run()
 	/* for the fast ticked stuff */
 	if (delta > timeDelta) 
 	{
-		//std::cerr << "Delta: " << delta << std::endl;
-		//std::cerr << "Time Delta: " << timeDelta << std::endl;
-		//std::cerr << "Avg Tick Rate: " << avgTickRate << std::endl;
+#ifdef	DEBUG_TICK
+		std::cerr << "Delta: " << delta << std::endl;
+		std::cerr << "Time Delta: " << timeDelta << std::endl;
+		std::cerr << "Avg Tick Rate: " << avgTickRate << std::endl;
+#endif
 
 		lastts = ts;
 
 /******************************** RUN SERVER *****************/
 		lockRsCore();
 
-	//	std::cerr << "RsServer::run() Lock() -> Run()" << std::endl;
 		int moreToTick = server -> tick();
+#ifdef	DEBUG_TICK
+		std::cerr << "RsServer::run() server->tick(): moreToTick: " << moreToTick << std::endl;
+#endif
 
 		unlockRsCore();
 
@@ -187,7 +178,9 @@ void 	RsServer::run()
 
 				// Update All Every 5 Seconds.
 				// These Update Functions do the locking themselves.
-				//std::cerr << "RsServer::run() Updates()" << std::endl;
+#ifdef	DEBUG_TICK
+				std::cerr << "RsServer::run() Updates()" << std::endl;
+#endif
 			
 				// These two have been completed!	
 				//std::cerr << "RsServer::run() UpdateAllCerts()" << std::endl;
@@ -222,7 +215,6 @@ void 	RsServer::run()
 				mRanking->tick();
 
 
-				/* force saving test */
 #if 0
 				std::string opt;
 				std::string val = "VALUE";
@@ -262,13 +254,6 @@ void 	RsServer::run()
 		} // end of slow tick.
 
 	} // end of only once a second.
-
-	// update graphics.. ( but only if gui is visible )
-	// This is also triggered in slow tick...
-	//if ((ui->main_win->shown()) || (ui->chatter_window->shown()))
-	{
-	//	update();
-	}
      }
      return;
 }

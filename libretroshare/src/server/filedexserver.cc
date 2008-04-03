@@ -53,7 +53,10 @@
 
 const int fldxsrvrzone = 47659;
 
+/****
 #define SERVER_DEBUG 1
+#define DEBUG_TICK 1
+****/
 
 filedexserver::filedexserver()
 	:p3Config(CONFIG_TYPE_FSERVER), 
@@ -100,16 +103,25 @@ int	filedexserver::tick()
 	if (0 < pqisi -> tick())
 	{
 		moreToTick = 1;
+#ifdef DEBUG_TICK
+		std::cerr << "filedexserver::tick() moreToTick from pqisi" << std::endl;
+#endif
 	}
 
 	if (0 < handleInputQueues())
 	{
 		moreToTick = 1;
+#ifdef DEBUG_TICK
+		std::cerr << "filedexserver::tick() moreToTick from InputQueues" << std::endl;
+#endif
 	}
 
 	if (0 < handleOutputQueues())
 	{
 		moreToTick = 1;
+#ifdef DEBUG_TICK
+		std::cerr << "filedexserver::tick() moreToTick from OutputQueues" << std::endl;
+#endif
 	}
 	return moreToTick;
 }
