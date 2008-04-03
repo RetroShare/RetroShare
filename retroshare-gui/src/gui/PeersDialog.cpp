@@ -50,7 +50,7 @@
 #define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
 #define IMAGE_EXPIORTFRIEND      ":/images/exportpeers_16x16.png"
 #define IMAGE_CHAT               ":/images/chat.png"
-#define IMAGE_MSG                ":/images/message.png"
+#define IMAGE_MSG                ":/images/message-mail.png"
 /* Images for Status icons */
 #define IMAGE_ONLINE             ":/images/donline.png"
 #define IMAGE_OFFLINE            ":/images/dhidden.png"
@@ -82,10 +82,10 @@ PeersDialog::PeersDialog(QWidget *parent)
 	_header->resizeSection ( 0, 25 );
 	_header->resizeSection ( 1, 100 );
 	_header->resizeSection ( 2, 100 );
-	_header->resizeSection ( 3, 100 );
+	_header->resizeSection ( 3, 120 );
 	_header->resizeSection ( 4, 100 );
 	_header->resizeSection ( 5, 230 );
-	_header->resizeSection ( 6, 100 );
+	_header->resizeSection ( 6, 120 );
 	_header->resizeSection ( 7, 220 );
 
 

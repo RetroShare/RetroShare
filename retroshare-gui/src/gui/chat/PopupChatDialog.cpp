@@ -60,7 +60,6 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   showAvatarFrame(true);
   connect(ui.avatarFrameButton, SIGNAL(toggled(bool)), this, SLOT(showAvatarFrame(bool)));
 
-  //connect(ui.chattextEdit, SIGNAL(returnPressed( ) ), this, SLOT(sendChat( ) ));
   connect(ui.chattextEdit, SIGNAL(textChanged ( ) ), this, SLOT(checkChat( ) ));
   
   connect(ui.sendButton, SIGNAL(clicked( ) ), this, SLOT(sendChat( ) ));
@@ -343,7 +342,7 @@ void PopupChatDialog::smileyWidget()
 { 
 	qDebug("MainWindow::smileyWidget()");
 	QWidget *smWidget = new QWidget;
-	smWidget->setWindowTitle("Emoteicons");
+	smWidget->setWindowTitle("Emoticons");
 	smWidget->setWindowIcon(QIcon(QString(":/images/rstray3.png")));
 	smWidget->setFixedSize(256,256);
 	

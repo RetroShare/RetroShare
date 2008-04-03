@@ -65,16 +65,11 @@ ChatDialog::ChatDialog(QWidget *parent)
   connect( ui.msgSendList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgSendListCostumPopupMenu( QPoint ) ) );
   connect( ui.msgText, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(displayInfoChatMenu(const QPoint&)));
  
-#ifdef CHAT_IMPROVEMENTS
   connect(ui.textboldChatButton, SIGNAL(clicked()), this, SLOT(setFont()));  
   connect(ui.textunderlineChatButton, SIGNAL(clicked()), this, SLOT(setFont()));  
   connect(ui.textitalicChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
   connect(ui.fontsButton, SIGNAL(clicked()), this, SLOT(getFont()));  
   connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(setColor()));
-#endif
-  connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(setColor()));
-
-  connect(ui.actionSend, SIGNAL(triggered()), this, SLOT(returnPressed()));
    
   ui.fontsButton->setIcon(QIcon(QString(":/images/fonts.png")));
 
@@ -423,7 +418,7 @@ void ChatDialog::smileyWidgetgroupchat()
 { 
 	qDebug("MainWindow::smileyWidget()");
 	QWidget *smWidget = new QWidget;
-	smWidget->setWindowTitle("Emoteicons");
+	smWidget->setWindowTitle("Emoticons");
 	smWidget->setWindowIcon(QIcon(QString(":/images/rstray3.png")));
 	smWidget->setFixedSize(256,256);
 	
