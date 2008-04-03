@@ -2,7 +2,7 @@
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.4.01a"
+!define VERSION "0.4.06a"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
 
 ; Main Install settings
@@ -39,6 +39,10 @@ SetCompressor LZMA
 !define MUI_LANGDLL_REGISTRY_ROOT HKLM
 !define MUI_LANGDLL_REGISTRY_KEY ${REGKEY}
 !define MUI_LANGDLL_REGISTRY_VALUENAME InstallerLanguage
+
+; !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of RetroShare. \r\n\r\nIt is recommended that you close all other applications before starting Setup. This will make it possible to update relevant system files without havinf to reboot your computer. \r\n\r\nIMPORTANT: Ensure that RetroShare is NOT RUNNING before continuing (you can exit from the taskbar menu), otherwise the installer cannot update the executables, and the installation will fail. \r\n\r\nClick Next to continue. "
+
+!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of RetroShare. \r\n\r\nIMPORTANT: Ensure that RetroShare is NOT RUNNING before continuing (you can exit from the taskbar menu), otherwise the installer cannot update the executables, and the installation will fail. \r\n\r\nClick Next to continue. "
 
 
 ; Defines the un-/installer logo of RetroShare
@@ -140,6 +144,7 @@ Section $(sec_main) sec_main
   ; Set Section Files and Shortcuts
   SetOutPath "$INSTDIR\"
   File /r "release\RetroShare.exe"
+  File /r "release\mingwm10.dll"
   File /r "release\changelog.txt"
 
   
@@ -161,12 +166,16 @@ Section  $(sec_data) sec_data
   File /r release\qss\*.*   
   
   ; Set Section emoticons need to remove svn path
-  SetOutPath "$INSTDIR\emoticons\"
-  File /r release\emoticons\*.*  
+  ; SetOutPath "$INSTDIR\emoticons\"
+  ; File /r release\emoticons\*.*  
   
   ; Set Section skin
   ; SetOutPath "$INSTDIR\skin\"
   ; File /r release\skin\*.* 
+
+  ; Add emoticons
+  SetOutPath "$INSTDIR\emoticons\kopete\"
+  File /r release\emoticons\kopete\*.*   
 	
 SectionEnd
 
@@ -180,7 +189,7 @@ Section $(sec_mplayer) sec_mplayer
 	
   ; Set Section Files and Shortcuts
   SetOutPath "$INSTDIR\mplayer"
-  File /r "E:\MPlayer-mingw32-1.0rc2\MPlayer-1.0rc2\*.*"
+  File /r "mplayer\MPlayer-1.0rc2\*.*"
 
 
 SectionEnd

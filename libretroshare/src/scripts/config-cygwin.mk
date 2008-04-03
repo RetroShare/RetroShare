@@ -14,13 +14,16 @@ PQI_USE_XPGP = 1
 
 ###########################################################################
 
-CYGWIN_SRC_ROOT=/cygdrive/c/home/rmfern/prog/MinGW
-SSL_DIR=$(CYGWIN_SRC_ROOT)/openssl-0.9.7g
-FLTK_DIR=$(CYGWIN_SRC_ROOT)/FLTK-1.1.6
-PTHREADS_DIR=$(CYGWIN_SRC_ROOT)/pthreads/pthreads.2
-KADC_DIR=$(CYGWIN_SRC_ROOT)/debug/KadC-2006-Oct-19
-ZLIB_DIR=$(CYGWIN_SRC_ROOT)/zlib-1.2.3
-UPNPC_DIR=$(CYGWIN_SRC_ROOT)/libs/src/miniupnpc-20070515
+ALT_SRC_ROOT=/cygdrive/c/home/rmfern/prog/MinGW
+SRC_ROOT=../../../..
+
+# These never change.
+PTHREADS_DIR=$(ALT_SRC_ROOT)/pthreads/pthreads.2
+ZLIB_DIR=$(ALT_SRC_ROOT)/zlib-1.2.3
+
+# pretty stable...
+SSL_DIR=$(SRC_ROOT)/openssl-0.9.7g-xpgp-0.1c
+UPNPC_DIR=$(SRC_ROOT)/miniupnpc-1.0
 
 include $(RS_TOP_DIR)/scripts/checks.mk
 
@@ -33,7 +36,7 @@ LIBDIR = $(RS_TOP_DIR)/lib
 LIBRS = $(LIBDIR)/libretroshare.a
 
 # Unix: Linux/Cygwin
-INCLUDE = -I $(RS_TOP_DIR) -I$(KADC_DIR)
+INCLUDE = -I $(RS_TOP_DIR) 
 
 ifdef PQI_DEBUG
 	CFLAGS = -Wall -g $(INCLUDE) 
@@ -95,7 +98,6 @@ ifdef PQI_USE_XPGP
 endif
 
 LIBS +=  -lssl -lcrypto 
-LIBS +=  -L$(KADC_DIR) -lKadC 
 LIBS +=  -L$(UPNPC_DIR) -lminiupnpc
 LIBS += -L$(ZLIB_DIR) -lz 
 LIBS += -L$(PTHREADS_DIR) -lpthreadGC2d 
