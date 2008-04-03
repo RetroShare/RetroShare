@@ -7,6 +7,25 @@ endif
 
 ############   LINUX CONFIGURATION    ########################
 
+
+# FLAGS to decide if we want i386 Build or ppc Build
+# 
+# 
+
+# PPC is default 
+# Could define both for combined compilation...
+# except might not work for bio_tou.c file! 
+# 
+# MAC_I386_BUILD = 1
+# MAC_PPC_BUILD = 1
+
+#MAC_I386_BUILD = 1
+#MAC_PPC_BUILD = 1
+
+ifndef MAC_I386_BUILD
+	MAC_PPC_BUILD = 1
+endif
+
 # flags for components....
 PQI_USE_XPGP = 1
 #PQI_USE_PROXY = 1
@@ -23,22 +42,32 @@ include $(RS_TOP_DIR)/scripts/checks.mk
 CC = g++
 RM = /bin/rm
 
-# RANLIB = ranlib
+RANLIB = ranlib
+
 # Dummy ranlib -> can't do it until afterwards with universal binaries.
-RANLIB = ls -l 
+# RANLIB = ls -l 
 
 LIBDIR = $(RS_TOP_DIR)/lib
 LIBRS = $(LIBDIR)/libretroshare.a
 
-# Unix: Linux/Cygwin
 INCLUDE = -I $(RS_TOP_DIR) 
-CFLAGS = -Wall -g $(INCLUDE) 
+CFLAGS = -Wall -O3 
 
-# This Line is for Universal BUILD.
-# CFLAGS = -arch ppc -arch i386 -Wall -g $(INCLUDE) 
+# Flags for architecture builds. 
+ifdef MAC_I386_BUILD
+	CFLAGS += -arch i386 
+endif
 
-# This Line is for Universal BUILD for 10.4 + 10.5 (but unlikely to work unless Qt Libraries are build properly)
-# CFLAGS = -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc -Wall -g $(INCLUDE) 
+ifdef MAC_PPC_BUILD
+	CFLAGS += -arch ppc 
+endif
+
+CFLAGS += $(INCLUDE) 
+
+# This Line is for Universal BUILD for 10.4 + 10.5 
+# (but unlikely to work unless Qt Libraries are build properly)
+# CFLAGS += -isysroot /Developer/SDKs/MacOSX10.4u.sdk 
+
 
 ifdef PQI_USE_XPGP
 	INCLUDE += -I $(SSL_DIR)/include 
@@ -61,7 +90,7 @@ ifdef USE_FILELOOK
 endif
 
 
-# RSCFLAGS = -Wall -g $(INCLUDE) 
+# RSCFLAGS = -Wall -O3 $(INCLUDE) 
 
 #########################################################################
 # OS Compile Options
@@ -70,8 +99,20 @@ endif
 # For the SSL BIO compilation. (Copied from OpenSSL compilation flags)
 BIOCC  = gcc
 
+
+# Flags for architecture builds. 
+ifdef MAC_I386_BUILD
+	BIOCFLAGS = -arch i386 -I $(SSL_DIR)/include -DOPENSSL_SYSNAME_MACOSX -DOPENSSL_THREADS -D_REENTRANT -DOPENSSL_NO_KRB5 -O3 -fomit-frame-pointer -fno-common 
+endif
+
+ifdef MAC_PPC_BUILD
+	BIOCFLAGS = -arch ppc -I $(SSL_DIR)/include -DOPENSSL_SYSNAME_MACOSX -DOPENSSL_THREADS -D_REENTRANT -DOPENSSL_NO_KRB5 -O3 -fomit-frame-pointer -fno-common -DB_ENDIAN
+endif
+
+
+
 # MacOSX flags
-BIOCFLAGS =  -I $(SSL_DIR)/include -DOPENSSL_SYSNAME_MACOSX -DOPENSSL_THREADS -D_REENTRANT -DOPENSSL_NO_KRB5 -O3 -fomit-frame-pointer -fno-common -DB_ENDIAN
+# BIOCFLAGS =  -I $(SSL_DIR)/include -DOPENSSL_SYSNAME_MACOSX -DOPENSSL_THREADS -D_REENTRANT -DOPENSSL_NO_KRB5 -O3 -fomit-frame-pointer -fno-common -DB_ENDIAN
 
 # This is for the Universal Build...
 # but is unlikely to work... as options are PPC specific.... 
@@ -87,7 +128,6 @@ LIBS = -Wl,-search_paths_first
 
 # for Univeral BUILD
 # LIBS += -arch ppc -arch i386
-
 # LIBS += -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -arch ppc -arch i386
 
 LIBS +=  -L$(LIBDIR) -lretroshare 
