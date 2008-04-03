@@ -512,6 +512,8 @@ bool    p3MsgService::markMsgIdRead(std::string mid)
 		RsMsgItem *mi = mit->second;
 		mi -> msgFlags &= ~(RS_MSG_FLAGS_NEW);
 		msgChanged.IndicateChanged();
+	
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 		return true;
 	}
 	return false;
