@@ -26,6 +26,10 @@
 #include "pqi/pqi.h"
 #include "pqi/pqiloopback.h"
 
+/***
+#define LOOPBACK_DEBUG 1
+***/
+
 pqiloopback::pqiloopback(std::string id)
 	:PQInterface(id)
 {
@@ -44,6 +48,13 @@ pqiloopback::~pqiloopback()
 
 int	pqiloopback::SendItem(RsItem *i)
 {
+
+#ifdef  LOOPBACK_DEBUG 
+	std::cerr << "pqiloopback::SendItem()";
+	std::cerr << std::endl;
+	i->print(std::cerr);
+	std::cerr << std::endl;
+#endif
 	objs.push_back(i);
 	return 1;
 }
@@ -54,6 +65,12 @@ RsItem * 	pqiloopback::GetItem()
 	{
 		RsItem *pqi = objs.front();
 		objs.pop_front();
+#ifdef  LOOPBACK_DEBUG 
+		std::cerr << "pqiloopback::GetItem()";
+		std::cerr << std::endl;
+		pqi->print(std::cerr);
+		std::cerr << std::endl;
+#endif
 		return pqi;
 	}
 	return NULL;

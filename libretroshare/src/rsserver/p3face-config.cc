@@ -254,6 +254,8 @@ int     RsServer::ConfigSetDataRates( int total, int indiv ) /* in kbrates */
 	pqih -> setMaxIndivRate(true, indiv);
 	pqih -> setMaxIndivRate(false, indiv);
 
+	pqih -> save_config();
+
 	/* unlock Mutexes */
 	iface.unlockData(); /* UNLOCK */
 	unlockRsCore();     /* UNLOCK */

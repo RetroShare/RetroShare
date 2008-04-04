@@ -127,6 +127,7 @@ virtual bool MessageRead(std::string mid)                   = 0;
 
 /****************************************/
 	/* Chat */
+virtual bool    chatAvailable() 			   = 0;
 virtual	bool 	ChatSend(ChatInfo &ci)                     = 0;
 virtual	bool	getNewChat(std::list<ChatInfo> &chats)	   = 0;
 

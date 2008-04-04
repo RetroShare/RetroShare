@@ -633,15 +633,33 @@ bool AuthXPGP::SignCertificate(std::string id)
 
 	if (locked_FindCert(id, &cert))
 	{
-		XPGP_sign_certificate(pgp_keyring, cert->certificate, own->certificate);
+	  	if (0 < validateCertificateIsSignedByKey(
+				cert->certificate, own->certificate))
+		{
+#ifdef AUTHXPGP_DEBUG
+			std::cerr << "AuthXPGP::SignCertificate() Signed Already: " << id;
+			std::cerr << std::endl;
+#endif
+			cert->ownsign=true;
+		}
+		else
+		{
+#ifdef AUTHXPGP_DEBUG
+			std::cerr << "AuthXPGP::SignCertificate() Signing Cert: " << id;
+			std::cerr << std::endl;
+#endif
+			/* sign certificate */
+			XPGP_sign_certificate(pgp_keyring, cert->certificate, own->certificate);
 
-		/* reevaluate the auth of the xpgp */
-		cert->trustLvl = XPGP_auth_certificate(pgp_keyring, cert->certificate);
-		cert->ownsign = true;
+			/* reevaluate the auth of the xpgp */
+			cert->trustLvl = XPGP_auth_certificate(pgp_keyring, cert->certificate);
+			cert->ownsign = true;
+
+			mToSaveCerts = true;
+		}
 		valid = true;
-
-		mToSaveCerts = true;
 	}
+
 
 	xpgpMtx.unlock(); /**** UNLOCK ****/
 	return valid;
@@ -751,6 +769,8 @@ bool AuthXPGP::AuthCertificate(std::string id)
 			/* reevaluate the auth of the xpgp */
 			cert->trustLvl = XPGP_auth_certificate(pgp_keyring, cert->certificate);
 			cert->ownsign = true;
+
+			mToSaveCerts = true;
 		}
 		valid = true;
 	}
@@ -2083,13 +2103,15 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 	{
 		keyValueMap[mit -> first] = mit -> second;
 	}
+
+	mToSaveCerts = false;
+
 	if (keyValueMap.size() > 0)
 	{
 		oldFormat = true;
 		mToSaveCerts = true;
 	}
 
-	mToSaveCerts = false;
 	return true;
 }
 

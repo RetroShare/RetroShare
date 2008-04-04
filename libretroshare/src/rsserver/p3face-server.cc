@@ -78,8 +78,8 @@ void 	RsServer::run()
 
     double timeDelta = 0.25;
     double minTimeDelta = 0.1; // 25;
-    double maxTimeDelta = 1.0;
-    double kickLimit = 0.5;
+    double maxTimeDelta = 0.5;
+    double kickLimit = 0.15;
 
     double avgTickRate = timeDelta;
 

@@ -52,6 +52,7 @@ virtual bool MessageRead(std::string mid);
 
 /****************************************/
 	/* Chat */
+virtual bool    chatAvailable();
 virtual	bool 	ChatSend(ChatInfo &ci);
 virtual	bool	getNewChat(std::list<ChatInfo> &chats);
 

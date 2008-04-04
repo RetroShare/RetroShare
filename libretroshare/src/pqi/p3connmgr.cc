@@ -811,7 +811,7 @@ bool p3ConnectMgr::stunCheck()
 	bool stunOk = false;
 
 #ifdef CONN_DEBUG
-	std::cerr << "p3ConnectMgr::stunCheck()" << std::endl;
+	//std::cerr << "p3ConnectMgr::stunCheck()" << std::endl;
 #endif
 
       {

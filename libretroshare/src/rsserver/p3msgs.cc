@@ -106,6 +106,11 @@ bool 	p3Msgs::ChatSend(ChatInfo &ci)
 	return true;
 }
 
+bool    p3Msgs::chatAvailable()
+{
+	return mChatSrv->receivedItems();
+}
+
 bool	p3Msgs::getNewChat(std::list<ChatInfo> &chats)
 {
 	/* get any messages and push them to iface */

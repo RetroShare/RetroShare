@@ -140,6 +140,12 @@ std::list<RsChatItem *> p3ChatService::getChatQueue()
 
 	while(NULL != (ci = (RsChatItem *) recvItem()))
 	{
+#ifdef CHAT_DEBUG
+		std::cerr << "p3ChatService::getChatQueue() Item:";
+		std::cerr << std::endl;
+		ci->print(std::cerr);
+		std::cerr << std::endl;
+#endif
 		ci->recvTime = now;
 		ilist.push_back(ci);
 	}
