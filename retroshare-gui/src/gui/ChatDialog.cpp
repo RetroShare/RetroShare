@@ -91,6 +91,12 @@ ChatDialog::ChatDialog(QWidget *parent)
   QFont font = QFont("Comic Sans MS", 10);
   
   setChatInfo(tr("Welcome to RetroShare's group chat."), QString::fromUtf8("blue"));
+  
+  QMenu * grpchatmenu = new QMenu();
+  grpchatmenu->addAction(ui.actionClearChat);
+  ui.menuButton->setMenu(grpchatmenu);
+  
+  _underline = false;
 
 
   /* Hide platform specific features */
@@ -364,8 +370,15 @@ void ChatDialog::setFont()
   font.setBold(ui.textboldChatButton->isChecked());
   font.setUnderline(ui.textunderlineChatButton->isChecked());
   font.setItalic(ui.textitalicChatButton->isChecked());
+  //font.setStrikeOut(ui.textstrikeChatButton->isChecked());
   ui.lineEdit->setFont(font);
   
+}
+
+void ChatDialog::underline() 
+{
+ 	        _underline = !_underline;
+ 	        ui.lineEdit->setFontUnderline(_underline);
 }
  
 
@@ -398,8 +411,7 @@ void ChatDialog::displayInfoChatMenu(const QPoint& pos)
 
 void ChatDialog::loadEmoticonsgroupchat()
 {
-	QDir smdir(QApplication::applicationDirPath() + "/emoticons/kopete");
-	//QDir smdir(":/gui/images/emoticons/kopete");
+	QDir smdir(QApplication::applicationDirPath() + "/emoticons/default");
 	QFileInfoList sminfo = smdir.entryInfoList(QStringList() << "*.gif" << "*.png", QDir::Files, QDir::Name);
 	foreach(QFileInfo info, sminfo)
 	{
@@ -420,8 +432,8 @@ void ChatDialog::smileyWidgetgroupchat()
 	QWidget *smWidget = new QWidget;
 	smWidget->setWindowTitle("Emoticons");
 	smWidget->setWindowIcon(QIcon(QString(":/images/rstray3.png")));
-	smWidget->setFixedSize(256,256);
-	
+	//smWidget->setFixedSize(256,256);
+
 	
 	
 	int x = 0, y = 0;
@@ -435,6 +447,7 @@ void ChatDialog::smileyWidgetgroupchat()
 		smButton->setIconSize(QSize(24,24));
 		smButton->setIcon(QPixmap(i.value()));
 		smButton->setToolTip(i.key());
+		//smButton->setFixedSize(24,24);
 		++x;
 		if(x > 4)
 		{

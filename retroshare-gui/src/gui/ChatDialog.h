@@ -24,9 +24,11 @@
 
 #include "mainpage.h"
 #include "ui_ChatDialog.h"
+#include "ui_SmWidget.h"
 
 #include "chat/PopupChatDialog.h"
 
+class QFont;
 class QAction;
 class QTextEdit;
 class QTextCharFormat;
@@ -71,6 +73,8 @@ void toggleSendItem( QTreeWidgetItem *item, int col );
   
   void setFont();
   void getFont();
+  void underline(); 
+
   
   
   void on_actionClearChat_triggered();
@@ -92,6 +96,7 @@ private:
   	
   QColor textColor;
   QColor _currentColor;
+  bool _underline;
 
   QHash<QString, QString> smileys;
 

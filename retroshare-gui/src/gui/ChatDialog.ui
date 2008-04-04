@@ -853,7 +853,7 @@
           <string/>
          </property>
          <property name="icon" >
-          <iconset resource="images.qrc" >:/images/edit-underline.png</iconset>
+          <iconset resource="images.qrc" >:/images/edit-italic.png</iconset>
          </property>
          <property name="checkable" >
           <bool>true</bool>
@@ -881,7 +881,7 @@
           <string/>
          </property>
          <property name="icon" >
-          <iconset resource="images.qrc" >:/images/edit-italic.png</iconset>
+          <iconset resource="images.qrc" >:/images/edit-underline.png</iconset>
          </property>
          <property name="checkable" >
           <bool>true</bool>
@@ -988,6 +988,25 @@
          </property>
         </widget>
        </item>
+       <item row="0" column="7" >
+        <widget class="QPushButton" name="menuButton" >
+         <property name="minimumSize" >
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="maximumSize" >
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="text" >
+          <string/>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item row="1" column="0" >
@@ -1052,7 +1071,7 @@
   </action>
   <action name="actionClearChat" >
    <property name="text" >
-    <string>ClearChat</string>
+    <string>Clear Chat History</string>
    </property>
   </action>
  </widget>
