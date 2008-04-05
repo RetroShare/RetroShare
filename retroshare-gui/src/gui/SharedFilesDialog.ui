@@ -507,6 +507,9 @@
    </property>
    <item row="0" column="0" >
     <layout class="QVBoxLayout" >
+     <property name="spacing" >
+      <number>0</number>
+     </property>
      <item>
       <layout class="QHBoxLayout" >
        <item>
@@ -575,9 +578,6 @@ p, li { white-space: pre-wrap; }
         <widget class="QLabel" name="hashLabel" >
          <property name="text" >
           <string/>
-         </property>
-         <property name="pixmap" >
-          <pixmap resource="images.qrc" >:/qss/black/checkBox_selected.png</pixmap>
          </property>
         </widget>
        </item>

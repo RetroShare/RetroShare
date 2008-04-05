@@ -40,6 +40,8 @@
 #include <QPixmap>
 #include <QHeaderView>
 #include <QTimer>
+#include <QMovie>
+#include <QLabel>
 
 /* Images for context menu icons */
 #define IMAGE_DOWNLOAD       ":/images/start.png"
@@ -48,6 +50,7 @@
 #define IMAGE_MSG            ":/images/message-mail.png"
 #define IMAGE_ATTACHMENT     ":/images/attachment.png"
 #define IMAGE_FRIEND         ":/images/peers_16x16.png"
+#define IMAGE_PROGRESS       ":/images/browse-looking.gif"
 
 
 /** Constructor */
@@ -56,6 +59,8 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
+  
+
 
     connect(ui.checkButton, SIGNAL(clicked()), this, SLOT(forceCheck()));
 
@@ -133,6 +138,9 @@ void SharedFilesDialog::checkUpdate()
 	if (rsicontrol->InDirectoryCheck())
 	{
 		ui.hashLabel->setPixmap(QPixmap(IMAGE_HASH_BUSY));
+		/*QMovie *movie = new QMovie(IMAGE_PROGRESS);
+        ui.hashLabel->setMovie(movie);
+        movie->start();*/
 	}
 	else
 	{
