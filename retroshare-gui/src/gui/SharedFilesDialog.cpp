@@ -45,6 +45,10 @@
 #define IMAGE_DOWNLOAD       ":/images/start.png"
 #define IMAGE_HASH_BUSY      ":/images/settings.png"
 #define IMAGE_HASH_DONE      ":/images/folder_green.png"
+#define IMAGE_MSG            ":/images/message-mail.png"
+#define IMAGE_ATTACHMENT     ":/images/attachment.png"
+#define IMAGE_FRIEND         ":/images/peers_16x16.png"
+
 
 /** Constructor */
 SharedFilesDialog::SharedFilesDialog(QWidget *parent)
@@ -349,10 +353,10 @@ void SharedFilesDialog::shareddirtreeWidgetCostumPopupMenu( QPoint point )
       QMenu contextMnu2( this );
       QMouseEvent *mevent2 = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
-      openfolderAct = new QAction( tr( "Play File(s)" ), this );
+      openfolderAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Play File(s)" ), this );
       connect( openfolderAct , SIGNAL( triggered() ), this, SLOT( playselectedfiles() ) );
 
-      openfileAct = new QAction( tr( "Add to Recommend List" ), this );
+      openfileAct = new QAction(QIcon(IMAGE_ATTACHMENT), tr( "Add to Recommend List" ), this );
       connect( openfileAct , SIGNAL( triggered() ), this, SLOT( recommendfile() ) );
       
      
@@ -370,7 +374,9 @@ void SharedFilesDialog::shareddirtreeWidgetCostumPopupMenu( QPoint point )
 	 */
 
       	QMenu *recMenu = new QMenu( tr("Recommend To "), this );
+      	recMenu->setIcon(QIcon(IMAGE_ATTACHMENT));
       	QMenu *msgMenu = new QMenu( tr("Message Friend "), &contextMnu2 );
+      	msgMenu->setIcon(QIcon(IMAGE_MSG));
 
         std::list<std::string> peers;
 	std::list<std::string>::iterator it;
@@ -391,11 +397,11 @@ void SharedFilesDialog::shareddirtreeWidgetCostumPopupMenu( QPoint point )
 		 * 	msgMenu
 		 */
 
-      		RsAction *qaf1 = new RsAction( QString::fromStdString( name ), recMenu, *it );
+      		RsAction *qaf1 = new RsAction( QIcon(IMAGE_FRIEND), QString::fromStdString( name ), recMenu, *it );
       		connect( qaf1 , SIGNAL( triggeredId( std::string ) ), this, SLOT( recommendFilesTo( std::string ) ) );
         	recMenu->addAction(qaf1);
 
-      		RsAction *qaf2 = new RsAction( QString::fromStdString( name ), msgMenu, *it );
+      		RsAction *qaf2 = new RsAction( QIcon(IMAGE_FRIEND), QString::fromStdString( name ), msgMenu, *it );
       		connect( qaf2 , SIGNAL( triggeredId( std::string ) ), this, SLOT( recommendFilesToMsg( std::string ) ) );
         	msgMenu->addAction(qaf2);
 
@@ -405,6 +411,7 @@ void SharedFilesDialog::shareddirtreeWidgetCostumPopupMenu( QPoint point )
 
         contextMnu2.addAction( openfolderAct);
         contextMnu2.addAction( openfileAct);
+        contextMnu2.addSeparator(); 
         contextMnu2.addMenu( recMenu);
         contextMnu2.addMenu( msgMenu);
 
