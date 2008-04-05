@@ -423,7 +423,7 @@ void ChatDialog::displayInfoChatMenu(const QPoint& pos)
 
 void ChatDialog::loadEmoticonsgroupchat()
 {
-	QDir smdir(QApplication::applicationDirPath() + "/emoticons/default");
+	QDir smdir(QApplication::applicationDirPath() + "/emoticons/kopete");
 	QFileInfoList sminfo = smdir.entryInfoList(QStringList() << "*.gif" << "*.png", QDir::Files, QDir::Name);
 	foreach(QFileInfo info, sminfo)
 	{
@@ -444,7 +444,7 @@ void ChatDialog::smileyWidgetgroupchat()
 	QWidget *smWidget = new QWidget;
 	smWidget->setWindowTitle("Emoticons");
 	smWidget->setWindowIcon(QIcon(QString(":/images/rstray3.png")));
-	//smWidget->setFixedSize(256,256);
+	smWidget->setFixedSize(256,256);
 
 	
 	
