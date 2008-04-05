@@ -100,10 +100,10 @@ void ConfCertDialog::loadDialog()
 	/**** TODO ****/
 	//ui.chkFirewall  ->setChecked(ni->firewalled);
 	//ui.chkForwarded ->setChecked(ni->forwardPort);
-	ui.chkFirewall  ->setChecked(0);
-	ui.chkForwarded ->setChecked(0);
+	//ui.chkFirewall  ->setChecked(0);
+	//ui.chkForwarded ->setChecked(0);
 	
-	ui.indivRate->setValue(0);
+	//ui.indivRate->setValue(0);
 
 	ui.trustLvl->setText(QString::fromStdString(RsPeerTrustString(detail.trustLvl)));
 

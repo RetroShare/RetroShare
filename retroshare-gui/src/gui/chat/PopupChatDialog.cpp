@@ -102,11 +102,12 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   fontmenu->addAction(ui.actionStrike);
   ui.fontButton->setMenu(fontmenu);*/
   
-  QPixmap pxm(24,24);
-  pxm.fill(Qt::black);
-  ui.colorButton->setIcon(pxm);
-  
-  QFont font = QFont("Comic Sans MS", 10);
+  mCurrentColor = Qt::black;
+  mCurrentFont = QFont("Comic Sans MS", 12);
+
+  colorChanged(mCurrentColor);
+  setFont();
+
 
 }
 
@@ -259,6 +260,7 @@ void PopupChatDialog::sendChat()
 
         rsMsgs -> ChatSend(ci);
         chatWidget ->clear();
+	setFont();
 
         /* redraw send list */
 }
@@ -286,13 +288,10 @@ void PopupChatDialog::setColor()
 	bool ok;    
     QRgb color = QColorDialog::getRgba(ui.chattextEdit->textColor().rgba(), &ok, this);
     if (ok) {
-
-        currentColor = QColor(color);
-        ui.chattextEdit->setTextColor(currentColor);
-        colorChanged(currentColor);
+        mCurrentColor = QColor(color);
+        colorChanged(mCurrentColor);
     }
-    ui.chattextEdit->setFocus();
-    QTextCursor cursor = ui.chattextEdit->textCursor();
+    setFont();
 }
 
 void PopupChatDialog::colorChanged(const QColor &c)
@@ -305,19 +304,22 @@ void PopupChatDialog::colorChanged(const QColor &c)
 void PopupChatDialog::getFont()
 {
     bool ok;
-    QFont font = QFontDialog::getFont(&ok, QFont(ui.chattextEdit->toHtml()), this);
-    if (ok) {
-        ui.chattextEdit->setFont(font);
-    }
+    mCurrentFont = QFontDialog::getFont(&ok, mCurrentFont, this);
+    setFont();
 }
 
 void PopupChatDialog::setFont()
 {
-  QFont font = QFont("Comic Sans MS", 10);
-  font.setBold(ui.textboldButton->isChecked());
-  font.setUnderline(ui.textunderlineButton->isChecked());
-  font.setItalic(ui.textitalicButton->isChecked());
-  ui.chattextEdit->setFont(font);
+
+  mCurrentFont.setBold(ui.textboldButton->isChecked());
+  mCurrentFont.setUnderline(ui.textunderlineButton->isChecked());
+  mCurrentFont.setItalic(ui.textitalicButton->isChecked());
+
+  ui.chattextEdit->setFont(mCurrentFont);
+  ui.chattextEdit->setTextColor(mCurrentColor);
+
+  ui.chattextEdit->setFocus();
+
 }
 
 void PopupChatDialog::loadEmoticons()

@@ -91,7 +91,8 @@ private:
    std::string  lastChatName;
    
    QHash<QString, QString> smileys;
-   QColor currentColor;
+   QColor mCurrentColor;
+   QFont  mCurrentFont;
   
   /** Qt Designer generated object */
   Ui::PopupChatDialog ui;

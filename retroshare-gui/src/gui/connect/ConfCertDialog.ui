@@ -5,14 +5,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>434</width>
-    <height>462</height>
+    <width>425</width>
+    <height>449</height>
    </rect>
   </property>
   <property name="sizePolicy" >
-   <sizepolicy>
-    <hsizetype>7</hsizetype>
-    <vsizetype>7</vsizetype>
+   <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -506,75 +504,53 @@
   <widget class="QGroupBox" name="groupBox_3" >
    <property name="geometry" >
     <rect>
-     <x>10</x>
-     <y>300</y>
-     <width>411</width>
-     <height>121</height>
+     <x>9</x>
+     <y>279</y>
+     <width>407</width>
+     <height>127</height>
     </rect>
    </property>
    <property name="title" >
     <string>Trust Settings</string>
    </property>
-   <widget class="QLabel" name="label_9" >
-    <property name="geometry" >
-     <rect>
-      <x>20</x>
-      <y>20</y>
-      <width>81</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>Trust Level</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="trustBox" >
-    <property name="geometry" >
-     <rect>
-      <x>120</x>
-      <y>70</y>
-      <width>271</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>Trust Their Signature</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="signBox" >
-    <property name="geometry" >
-     <rect>
-      <x>120</x>
-      <y>50</y>
-      <width>271</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>Sign The Certificate</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="trustLvl" >
-    <property name="geometry" >
-     <rect>
-      <x>110</x>
-      <y>20</y>
-      <width>221</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="readOnly" >
-     <bool>true</bool>
-    </property>
-   </widget>
+   <layout class="QGridLayout" >
+    <item row="0" column="0" >
+     <widget class="QLabel" name="label_9" >
+      <property name="text" >
+       <string>Trust Level</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" >
+     <widget class="QLineEdit" name="trustLvl" >
+      <property name="readOnly" >
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1" >
+     <widget class="QCheckBox" name="signBox" >
+      <property name="text" >
+       <string>Sign The Certificate</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1" >
+     <widget class="QCheckBox" name="trustBox" >
+      <property name="text" >
+       <string>Trust Their Signature</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QPushButton" name="cancelButton" >
    <property name="geometry" >
     <rect>
-     <x>210</x>
-     <y>430</y>
-     <width>101</width>
-     <height>23</height>
+     <x>9</x>
+     <y>415</y>
+     <width>199</width>
+     <height>25</height>
     </rect>
    </property>
    <property name="text" >
@@ -584,10 +560,10 @@
   <widget class="QPushButton" name="applyButton" >
    <property name="geometry" >
     <rect>
-     <x>320</x>
-     <y>430</y>
-     <width>101</width>
-     <height>23</height>
+     <x>218</x>
+     <y>415</y>
+     <width>198</width>
+     <height>25</height>
     </rect>
    </property>
    <property name="text" >
@@ -603,318 +579,229 @@
   <widget class="QGroupBox" name="groupBox" >
    <property name="geometry" >
     <rect>
-     <x>10</x>
-     <y>110</y>
-     <width>411</width>
-     <height>191</height>
+     <x>9</x>
+     <y>143</y>
+     <width>407</width>
+     <height>127</height>
     </rect>
    </property>
    <property name="title" >
-    <string>Peer Adress</string>
+    <string>Peer Address</string>
    </property>
-   <widget class="QWidget" name="layoutWidget" >
-    <property name="geometry" >
-     <rect>
-      <x>100</x>
-      <y>20</y>
-      <width>274</width>
-      <height>130</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>6</number>
-     </property>
-     <item>
-      <layout class="QGridLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
-       <item row="0" column="2" >
-        <widget class="QSpinBox" name="localPort" >
-         <property name="maximum" >
-          <number>65535</number>
-         </property>
-         <property name="minimum" >
-          <number>0</number>
-         </property>
-         <property name="value" >
-          <number>7812</number>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <widget class="QLabel" name="label_5" >
-         <property name="text" >
-          <string>Port:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" >
-        <widget class="QLineEdit" name="localAddress" />
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
-       <item>
-        <widget class="QCheckBox" name="chkFirewall" >
-         <property name="text" >
-          <string>behind zee Firewall</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="chkForwarded" >
-         <property name="text" >
-          <string>Forwarded External Port</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QGridLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
-       <item row="0" column="0" >
-        <widget class="QLineEdit" name="extAddress" />
-       </item>
-       <item row="0" column="2" >
-        <widget class="QSpinBox" name="extPort" >
-         <property name="maximum" >
-          <number>65535</number>
-         </property>
-         <property name="minimum" >
-          <number>0</number>
-         </property>
-         <property name="value" >
-          <number>7812</number>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <widget class="QLabel" name="label_4" >
-         <property name="text" >
-          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+   <layout class="QGridLayout" >
+    <item row="0" column="0" >
+     <widget class="QLabel" name="label" >
+      <property name="text" >
+       <string>Local Address:</string>
+      </property>
+     </widget>
+    </item>
+    <item rowspan="3" row="0" column="1" >
+     <layout class="QVBoxLayout" >
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <property name="leftMargin" >
+       <number>0</number>
+      </property>
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QGridLayout" >
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
+        <property name="horizontalSpacing" >
+         <number>6</number>
+        </property>
+        <property name="verticalSpacing" >
+         <number>6</number>
+        </property>
+        <item row="0" column="2" >
+         <widget class="QSpinBox" name="localPort" >
+          <property name="minimum" >
+           <number>0</number>
+          </property>
+          <property name="maximum" >
+           <number>65535</number>
+          </property>
+          <property name="value" >
+           <number>7812</number>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="QLabel" name="label_5" >
+          <property name="text" >
+           <string>Port:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" >
+         <widget class="QLineEdit" name="localAddress" />
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QGridLayout" >
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
+        <property name="horizontalSpacing" >
+         <number>6</number>
+        </property>
+        <property name="verticalSpacing" >
+         <number>6</number>
+        </property>
+        <item row="0" column="0" >
+         <widget class="QLineEdit" name="extAddress" />
+        </item>
+        <item row="0" column="2" >
+         <widget class="QSpinBox" name="extPort" >
+          <property name="minimum" >
+           <number>0</number>
+          </property>
+          <property name="maximum" >
+           <number>65535</number>
+          </property>
+          <property name="value" >
+           <number>7812</number>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="QLabel" name="label_4" >
+          <property name="text" >
+           <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
 &lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Port:&lt;/p>&lt;/body>&lt;/html></string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="extName" />
-     </item>
-    </layout>
-   </widget>
-   <widget class="QLabel" name="label_2" >
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>90</y>
-      <width>91</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="extName" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0" >
+     <widget class="QLabel" name="label_2" >
+      <property name="text" >
+       <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
 &lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">External Address:&lt;/p>&lt;/body>&lt;/html></string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3" >
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>120</y>
-      <width>80</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" >
+     <widget class="QLabel" name="label_3" >
+      <property name="text" >
+       <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
 &lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">External Name&lt;/p>&lt;/body>&lt;/html></string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label" >
-    <property name="geometry" >
-     <rect>
-      <x>12</x>
-      <y>21</y>
-      <width>66</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Lokal Adress:&lt;/p>&lt;/body>&lt;/html></string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="layoutWidget_3" >
-    <property name="geometry" >
-     <rect>
-      <x>120</x>
-      <y>150</y>
-      <width>194</width>
-      <height>33</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>6</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="label_14" >
-       <property name="text" >
-        <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Max Transfer Rate (kb/s) &lt;/p>&lt;/body>&lt;/html></string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="indivRate" >
-       <property name="maximum" >
-        <number>65535</number>
-       </property>
-       <property name="minimum" >
-        <number>1</number>
-       </property>
-       <property name="value" >
-        <number>7812</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QGroupBox" name="groupBox_2" >
    <property name="geometry" >
     <rect>
-     <x>10</x>
-     <y>0</y>
-     <width>411</width>
-     <height>111</height>
+     <x>9</x>
+     <y>7</y>
+     <width>407</width>
+     <height>127</height>
     </rect>
    </property>
    <property name="title" >
     <string>Peer Info</string>
    </property>
-   <widget class="QLineEdit" name="name" >
-    <property name="geometry" >
-     <rect>
-      <x>101</x>
-      <y>25</y>
-      <width>259</width>
-      <height>19</height>
-     </rect>
-    </property>
-    <property name="readOnly" >
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="country" >
-    <property name="geometry" >
-     <rect>
-      <x>101</x>
-      <y>85</y>
-      <width>259</width>
-      <height>19</height>
-     </rect>
-    </property>
-    <property name="readOnly" >
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="orgloc" >
-    <property name="geometry" >
-     <rect>
-      <x>101</x>
-      <y>55</y>
-      <width>259</width>
-      <height>19</height>
-     </rect>
-    </property>
-    <property name="readOnly" >
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_10" >
-    <property name="geometry" >
-     <rect>
-      <x>11</x>
-      <y>21</y>
-      <width>79</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+   <layout class="QGridLayout" >
+    <item row="0" column="0" >
+     <widget class="QLabel" name="label_10" >
+      <property name="text" >
+       <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
 &lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Name:&lt;/p>&lt;/body>&lt;/html></string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_8" >
-    <property name="geometry" >
-     <rect>
-      <x>11</x>
-      <y>84</y>
-      <width>79</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Country/State:&lt;/p>&lt;/body>&lt;/html></string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_11" >
-    <property name="geometry" >
-     <rect>
-      <x>11</x>
-      <y>53</y>
-      <width>79</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" >
+     <widget class="QLineEdit" name="name" >
+      <property name="readOnly" >
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" >
+     <widget class="QLabel" name="label_11" >
+      <property name="text" >
+       <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
 &lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Org / Loc:&lt;/p>&lt;/body>&lt;/html></string>
-    </property>
-   </widget>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1" >
+     <widget class="QLineEdit" name="orgloc" >
+      <property name="readOnly" >
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" >
+     <widget class="QLabel" name="label_8" >
+      <property name="text" >
+       <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Country/State:&lt;/p>&lt;/body>&lt;/html></string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1" >
+     <widget class="QLineEdit" name="country" >
+      <property name="readOnly" >
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <tabstops>
@@ -923,12 +810,9 @@ p, li { white-space: pre-wrap; }
   <tabstop>country</tabstop>
   <tabstop>localAddress</tabstop>
   <tabstop>localPort</tabstop>
-  <tabstop>chkFirewall</tabstop>
-  <tabstop>chkForwarded</tabstop>
   <tabstop>extAddress</tabstop>
   <tabstop>extPort</tabstop>
   <tabstop>extName</tabstop>
-  <tabstop>indivRate</tabstop>
   <tabstop>trustLvl</tabstop>
   <tabstop>signBox</tabstop>
   <tabstop>trustBox</tabstop>

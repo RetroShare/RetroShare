@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>459</width>
-    <height>409</height>
+    <width>451</width>
+    <height>438</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -498,78 +498,113 @@
   <property name="contextMenuPolicy" >
    <enum>Qt::NoContextMenu</enum>
   </property>
-  <layout class="QVBoxLayout" >
-   <item>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
     <widget class="QGroupBox" name="groupBox_2" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title" >
-      <string>Network Address Configuration (takes effect after restart)</string>
+      <string>Network Configuration (takes effect after restart)</string>
      </property>
      <layout class="QGridLayout" >
-      <item row="0" column="0" >
-       <widget class="QComboBox" name="netModeComboBox" >
+      <property name="leftMargin" >
+       <number>4</number>
+      </property>
+      <property name="topMargin" >
+       <number>2</number>
+      </property>
+      <property name="rightMargin" >
+       <number>4</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>2</number>
+      </property>
+      <item row="1" column="0" >
+       <layout class="QVBoxLayout" >
         <item>
-         <property name="text" >
-          <string>Automatic (Firewalled)</string>
-         </property>
+         <widget class="QComboBox" name="netModeComboBox" >
+          <item>
+           <property name="text" >
+            <string>Automatic (Firewalled)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Firewalled  + No UPnP</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>External (Forwarded) Port</string>
+           </property>
+          </item>
+         </widget>
         </item>
         <item>
-         <property name="text" >
-          <string>Firewalled  + No UPnP</string>
-         </property>
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="QComboBox" name="dhtComboBox" >
+            <item>
+             <property name="text" >
+              <string>DHT Enabled</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>DHT Disabled</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="discComboBox" >
+            <item>
+             <property name="text" >
+              <string>Discovery Enabled</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Discovery Disabled</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
         </item>
-        <item>
-         <property name="text" >
-          <string>External (Forwarded) Port</string>
-         </property>
-        </item>
-       </widget>
+       </layout>
       </item>
      </layout>
     </widget>
    </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_4" >
-     <property name="title" >
-      <string>External Visibility / Discovery Configuration</string>
-     </property>
-     <layout class="QGridLayout" >
-      <item row="0" column="0" >
-       <widget class="QComboBox" name="dhtComboBox" >
-        <item>
-         <property name="text" >
-          <string>DHT Enabled</string>
-         </property>
-        </item>
-        <item>
-         <property name="text" >
-          <string>DHT Disabled</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item row="0" column="1" >
-       <widget class="QComboBox" name="discComboBox" >
-        <item>
-         <property name="text" >
-          <string>Discovery Enabled</string>
-         </property>
-        </item>
-        <item>
-         <property name="text" >
-          <string>Discovery Disabled</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
+   <item row="1" column="0" >
     <widget class="QGroupBox" name="groupBox" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title" >
       <string>Server Status And Network Settings</string>
      </property>
      <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>4</number>
+      </property>
+      <property name="topMargin" >
+       <number>4</number>
+      </property>
+      <property name="rightMargin" >
+       <number>4</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>4</number>
+      </property>
       <item row="0" column="0" >
        <layout class="QVBoxLayout" >
         <item>
@@ -663,12 +698,30 @@
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="2" column="0" >
     <widget class="QGroupBox" name="groupBox_3" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title" >
       <string>Transfer Rates</string>
      </property>
      <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>4</number>
+      </property>
+      <property name="topMargin" >
+       <number>4</number>
+      </property>
+      <property name="rightMargin" >
+       <number>4</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>4</number>
+      </property>
       <item row="0" column="0" >
        <layout class="QHBoxLayout" >
         <property name="spacing" >

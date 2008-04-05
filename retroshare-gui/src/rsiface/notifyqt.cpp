@@ -114,7 +114,7 @@ void NotifyQt::UpdateGUI()
 	bool uNeigh = iface->hasChanged(RsIface::Neighbour);
 	bool uFri   = iface->hasChanged(RsIface::Friend);
 	bool uTrans = iface->hasChanged(RsIface::Transfer);
-	bool uChat  = iface->hasChanged(RsIface::Chat);
+	//bool uChat  = iface->hasChanged(RsIface::Chat);
 	bool uMsg   = iface->hasChanged(RsIface::Message);
 	bool uChan  = iface->hasChanged(RsIface::Channel);
 	bool uRecom = iface->hasChanged(RsIface::Recommend);
@@ -132,7 +132,7 @@ static  time_t lastTs = 0;
 		uNeigh = true;
 		uFri = true;
 		uTrans = true;
-		uChat = true;
+		//uChat = true;
 		uMsg = true;
 		uChan = true;
 		uRecom = true;
@@ -148,8 +148,8 @@ static  time_t lastTs = 0;
 	if (uTrans)
 		displayTransfers();
 
-	if (uChat)
-		displayChat();
+	//if (uChat)
+	//	displayChat();
 
 	if (uMsg)
 		displayMessages();

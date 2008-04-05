@@ -24,7 +24,6 @@
 
 #include "mainpage.h"
 #include "ui_ChatDialog.h"
-#include "ui_SmWidget.h"
 
 #include "chat/PopupChatDialog.h"
 
@@ -42,7 +41,6 @@ public:
   ChatDialog(QWidget *parent = 0);
   /** Default Destructor */
 
-  void insertChat();
   PopupChatDialog *getPrivateChat(std::string id, std::string name, bool show);
   void clearOldChats();
   
@@ -52,6 +50,7 @@ public:
 
 public slots:
 
+  void insertChat();
   void setChatInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));
   
   void smileyWidgetgroupchat();
@@ -94,7 +93,7 @@ private:
 
   QTreeView *msgSendList;
   	
-  QColor textColor;
+ // QColor textColor;
   QColor _currentColor;
   bool _underline;
 
@@ -102,7 +101,7 @@ private:
 
   std::map<std::string, PopupChatDialog *> chatDialogs;
 
-
+  QFont mCurrentFont; /* how the text will come out */
 
   /** Qt Designer generated object */
   Ui::ChatDialog ui;

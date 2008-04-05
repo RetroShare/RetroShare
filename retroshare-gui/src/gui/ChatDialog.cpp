@@ -83,12 +83,14 @@ ChatDialog::ChatDialog(QWidget *parent)
   /* to hide the header  */
   ui.msgSendList->header()->hide();
   
-  textColor = Qt::black;
+  _currentColor = Qt::black;
   QPixmap pxm(24,24);
-  pxm.fill(textColor);
+  pxm.fill(_currentColor);
   ui.colorChatButton->setIcon(pxm);
   
-  QFont font = QFont("Comic Sans MS", 10);
+  //QFont font = QFont("Comic Sans MS", 10);
+  mCurrentFont = QFont("Comic Sans MS", 12);
+  ui.lineEdit->setFont(mCurrentFont);
   
   setChatInfo(tr("Welcome to RetroShare's group chat."), QString::fromUtf8("blue"));
   
@@ -98,6 +100,9 @@ ChatDialog::ChatDialog(QWidget *parent)
   
   _underline = false;
 
+  QTimer *timer = new QTimer(this);
+  timer->connect(timer, SIGNAL(timeout()), this, SLOT(insertChat()));
+  timer->start(500); /* half a second */
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -121,6 +126,11 @@ void ChatDialog::msgSendListCostumPopupMenu( QPoint point )
 
 void ChatDialog::insertChat()
 {
+	if (!rsMsgs->chatAvailable())
+	{
+		return;
+	}
+
 	std::list<ChatInfo> newchat;
 	if (!rsMsgs->getNewChat(newchat))
 	{
@@ -134,6 +144,9 @@ void ChatDialog::insertChat()
 	/* add in lines at the bottom */
 	for(it = newchat.begin(); it != newchat.end(); it++)
 	{
+		std::string msg(it->msg.begin(), it->msg.end());
+		std::cerr << "ChatDialog::insertChat(): " << msg << std::endl;
+
 		/* are they private? */
 		if (it->chatflags & RS_CHAT_PRIVATE)
 		{
@@ -205,8 +218,12 @@ void ChatDialog::sendMsg()
 	ci.msg = lineWidget->toHtml().toStdWString();
 	ci.chatflags = RS_CHAT_PUBLIC;
 
+	std::string msg(ci.msg.begin(), ci.msg.end());
+	std::cerr << "ChatDialog::sendMsg(): " << msg << std::endl;
+
 	rsMsgs -> ChatSend(ci);
 	ui.lineEdit->clear();
+	setFont();
 
 	/* redraw send list */
 	insertSendList();
@@ -340,38 +357,33 @@ void ChatDialog::clearOldChats()
 void ChatDialog::setColor()
 {
 	
-    bool ok;
+    	bool ok;
  	QRgb color = QColorDialog::getRgba(ui.lineEdit->textColor().rgba(), &ok, this);
  	if (ok) {
  	        _currentColor = QColor(color);
- 	        ui.lineEdit->setTextColor(_currentColor);
  	        QPixmap pxm(24,24);
 	        pxm.fill(_currentColor);
 	        ui.colorChatButton->setIcon(pxm);
  	}
- 	ui.lineEdit->setFocus();
- 	
+	setFont();
 }
 
 void ChatDialog::getFont()
 {
     bool ok;
-    QFont font = QFontDialog::getFont(&ok, QFont(ui.lineEdit->toHtml()), this);
-    if (ok) {
-        ui.lineEdit->setFont(font);
-    }
+    mCurrentFont = QFontDialog::getFont(&ok, mCurrentFont, this);
+    setFont();
 }
 
 void ChatDialog::setFont()
 {
-  
-  QFont font = QFont("Comic Sans MS", 10);
-  
-  font.setBold(ui.textboldChatButton->isChecked());
-  font.setUnderline(ui.textunderlineChatButton->isChecked());
-  font.setItalic(ui.textitalicChatButton->isChecked());
-  //font.setStrikeOut(ui.textstrikeChatButton->isChecked());
-  ui.lineEdit->setFont(font);
+  mCurrentFont.setBold(ui.textboldChatButton->isChecked());
+  mCurrentFont.setUnderline(ui.textunderlineChatButton->isChecked());
+  mCurrentFont.setItalic(ui.textitalicChatButton->isChecked());
+  ui.lineEdit->setFont(mCurrentFont);
+  ui.lineEdit->setTextColor(_currentColor);
+
+  ui.lineEdit->setFocus();
   
 }
 
