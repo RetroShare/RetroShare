@@ -261,6 +261,7 @@ virtual	int 	ConfigSetIncomingDir( std::string dir )    = 0;
 virtual int     ConfigSetDataRates( int total, int indiv ) = 0;
 virtual	int 	ConfigSetBootPrompt( bool on ) = 0;
 virtual void    ConfigFinalSave( ) 			   = 0;
+virtual void 	rsGlobalShutDown( )			   = 0;
 
 /****************************************/
 
