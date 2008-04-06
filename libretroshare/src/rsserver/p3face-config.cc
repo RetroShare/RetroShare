@@ -59,7 +59,6 @@ int RsServer::ConfigAddSharedDir( std::string dir )
 	/* does its own locking */
 	UpdateAllConfig();
 	return 1;
-
 }
 
 int RsServer::ConfigRemoveSharedDir( std::string dir )
@@ -299,7 +298,7 @@ int RsServer::UpdateAllConfig()
 	/* ports */
 	config.localAddr = inet_ntoa(pstate.localaddr.sin_addr);
 	config.localPort = ntohs(pstate.localaddr.sin_port);
-	
+
 	config.firewalled = true;
 	config.forwardPort  = true;
 	
@@ -342,4 +341,7 @@ void    RsServer::ConfigFinalSave()
 	mConfigMgr->completeConfiguration();
 }
 
-
+void RsServer::rsGlobalShutDown()
+{
+	ConfigFinalSave(); // save configuration before exit
+}
