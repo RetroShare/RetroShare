@@ -13,8 +13,8 @@ PQI_USE_XPGP = 1
 #PQI_USE_CHANNELS = 1
 #USE_FILELOOK = 1
 
-SSL_DIR=~/retroshare-package-v0.4.04b/src/openssl-0.9.7g-xpgp-0.1c
-UPNPC_DIR= ~/retroshare-package-v0.4.04b/src/miniupnpc-1.0
+SSL_DIR=../../../../../src/openssl-0.9.7g-xpgp-0.1c
+UPNPC_DIR=../../../../../src/miniupnpc-1.0
 
 include $(RS_TOP_DIR)/scripts/checks.mk
 
@@ -23,7 +23,7 @@ include $(RS_TOP_DIR)/scripts/checks.mk
 CC = g++
 RM = /bin/rm
 RANLIB = ranlib
-LIBDIR =/home/chris/retroshare-package-v0.4.04b/lib
+LIBDIR = $(RS_TOP_DIR)/lib
 LIBRS = $(LIBDIR)/libretroshare.a
 
 # Unix: Linux/Cygwin
