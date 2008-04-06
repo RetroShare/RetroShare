@@ -30,9 +30,9 @@ OS = Linux
 # My Versions
 ifeq ($(OS),Linux)
   #Linux.
-  SSL_DIR=../../../../../src/openssl-0.9.7g-xpgp-0.1c
-  KADC_DIR=../../../../../src/KadC
-  UPNPC_DIR=../../../../../src/miniupnpc-20070515
+  SSL_DIR=home/chris/retroshare-package-v0.4.04b/sr9c/openssl-0.9.7g-xpgp-0.1c
+  KADC_DIR=~/retroshare-package-v0.4.04b/lib
+  UPNPC_DIR=home/chris/retroshare-package-v0.4.04b/src/miniupnpc-1.0
 else
 ###########################################################################
   ifeq ($(OS),Cygwin)
