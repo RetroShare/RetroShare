@@ -253,6 +253,13 @@ virtual int     ConfigSetBootPrompt( bool on );
 
 virtual void    ConfigFinalSave( );
 
+/************* Rs shut down function: in upnp 'port lease time' bug *****************/
+
+/**
+ * This function is responsible for ensuring Retroshare exits in a legal state:
+ * i.e. releases all held resources and saves current configuration
+ */
+virtual void 	rsGlobalShutDown( ); 
 	private:
 int UpdateAllConfig();
 
