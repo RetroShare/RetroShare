@@ -469,6 +469,12 @@ void PeersDialog::connectfriend()
 {
 	QTreeWidgetItem *c = getCurrentPeer();
 	std::cerr << "PeersDialog::connectfriend()" << std::endl;
+	if (!c)
+	{
+        	std::cerr << "PeersDialog::connectfriend() Noone Selected -- sorry" << std::endl;
+		return;
+	}
+
 	if (rsPeers)
 	{
 		rsPeers->connectAttempt(getPeerRsCertId(c));
