@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>238</width>
+    <width>262</width>
     <height>482</height>
    </rect>
   </property>
@@ -434,33 +434,48 @@
    <iconset resource="images.qrc" >:/images/rstray3.png</iconset>
   </property>
   <property name="styleSheet" >
-   <string> QWidget#MessengerWindow {
-background-color: #ECF3F6; background-image:url(:/images/backgroundimage.png);
-background-position: top right;
-background-repeat: no-repeat
-}</string>
+   <string>
+</string>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
+   <property name="leftMargin" >
     <number>0</number>
    </property>
-   <property name="spacing" >
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
     <number>0</number>
    </property>
    <item row="0" column="0" >
     <layout class="QGridLayout" >
-     <property name="margin" >
+     <property name="leftMargin" >
       <number>4</number>
      </property>
-     <property name="spacing" >
+     <property name="topMargin" >
+      <number>4</number>
+     </property>
+     <property name="rightMargin" >
+      <number>4</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>4</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>6</number>
+     </property>
+     <property name="verticalSpacing" >
       <number>6</number>
      </property>
      <item row="0" column="0" >
       <widget class="QToolButton" name="avatarButton" >
        <property name="toolTip" >
-        <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
+        <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">&#xd;
+p, li { white-space: pre-wrap; }&#xd;
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">&#xd;
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Click to change your avatar&lt;/p>&lt;/body>&lt;/html></string>
        </property>
        <property name="icon" >
@@ -479,10 +494,22 @@ p, li { white-space: pre-wrap; }
      </item>
      <item row="0" column="1" >
       <layout class="QGridLayout" >
-       <property name="margin" >
+       <property name="leftMargin" >
         <number>4</number>
        </property>
-       <property name="spacing" >
+       <property name="topMargin" >
+        <number>4</number>
+       </property>
+       <property name="rightMargin" >
+        <number>4</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>4</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing" >
         <number>6</number>
        </property>
        <item row="0" column="0" >
@@ -581,22 +608,24 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="2" column="0" >
-    <widget class="QFrame" name="logoframe" >
-     <property name="frameShape" >
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow" >
-      <enum>QFrame::Raised</enum>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0" >
     <layout class="QGridLayout" >
-     <property name="margin" >
+     <property name="leftMargin" >
       <number>9</number>
      </property>
-     <property name="spacing" >
+     <property name="topMargin" >
+      <number>9</number>
+     </property>
+     <property name="rightMargin" >
+      <number>9</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>9</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>6</number>
+     </property>
+     <property name="verticalSpacing" >
       <number>6</number>
      </property>
      <item row="1" column="0" colspan="2" >
@@ -647,6 +676,16 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QFrame" name="logoframe" >
+     <property name="frameShape" >
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

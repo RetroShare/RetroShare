@@ -69,20 +69,20 @@
 MessengerWindow::MessengerWindow(QWidget * parent)
 : QWidget(parent)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  ui.setupUi(this);
+	/* Invoke the Qt Designer generated object setup routine */
+	ui.setupUi(this);
   
-  RshareSettings config;
-  config.loadWidgetInformation(this);
+	RshareSettings config;
+	config.loadWidgetInformation(this);
 
-  connect( ui.messengertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messengertreeWidgetCostumPopupMenu( QPoint ) ) );
+	connect( ui.messengertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messengertreeWidgetCostumPopupMenu( QPoint ) ) );
 
 	connect( ui.avatarButton, SIGNAL(clicked()), SLOT(changeAvatarClicked()));
     connect( ui.addIMAccountButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend2() ) );
 
   
-   /* to hide the header  */
-   ui.messengertreeWidget->header()->hide(); 
+	/* to hide the header  */
+	ui.messengertreeWidget->header()->hide(); 
  
     /* Set header resize modes and initial section sizes */
 	ui.messengertreeWidget->setColumnCount(1);
@@ -95,15 +95,22 @@ MessengerWindow::MessengerWindow(QWidget * parent)
 
 	_header->resizeSection ( 0, 200 );   
  
-  //LogoBar
-  _rsLogoBarmessenger = NULL;
-  _rsLogoBarmessenger = new LogoBar(ui.logoframe);
-  Widget::createLayout(ui.logoframe)->addWidget(_rsLogoBarmessenger);
+	//LogoBar
+	_rsLogoBarmessenger = NULL;
+	_rsLogoBarmessenger = new LogoBar(ui.logoframe);
+	Widget::createLayout(ui.logoframe)->addWidget(_rsLogoBarmessenger);
   
 
-  ui.statuscomboBox->setMinimumWidth(20);
-  ui.messagecomboBox->setMinimumWidth(20);
-  ui.searchlineEdit->setMinimumWidth(20);
+	ui.statuscomboBox->setMinimumWidth(20);
+	ui.messagecomboBox->setMinimumWidth(20);
+	ui.searchlineEdit->setMinimumWidth(20);
+  
+  	QPixmap Backpixmap((QString)":/images/backgroundimage.png");
+	//QPixmap pixmap5((QString)REC_PATH+(QString)"back2765.png");
+
+	QBrush BackBrush(Backpixmap);
+	QPalette BackPalette(BackBrush, BackBrush, BackBrush, BackBrush, BackBrush, BackBrush, BackBrush, BackBrush, BackBrush);
+	this->setPalette(BackPalette);                             //Set Background
   
   
   /* Hide platform specific features */
@@ -433,7 +440,7 @@ QTreeWidgetItem *MessengerWindow::getCurrentPeer(bool &isOnline)
 		return NULL;
 	}
 
-	isOnline = (parent->text(0) == "Online");
+	isOnline = (parent->text(0) == "<span><strong>Online</strong></span>");
 
 	return item;
 }
