@@ -18,45 +18,29 @@ QPushButton {
 
 }
 
-QPushButton#addfriendButton {
-      color: white;
-	min-height: 34px;
-      min-width: 48px;
-}
-
-QPushButton#invitefriendButton {
-      color: white;
-	min-height: 34px;
-      min-width: 48px;
-}
-
-QPushButton#addshareButton {
-      color: white;
-	min-height: 34px;
-      min-width: 48px;
-}
-
-QPushButton#optionsButton {
-      color: white;
-	min-height: 34px;
-      min-width: 48px;
-}
-
-QPushButton#quitButton {
-      color: white;
-	min-height: 34px;
-      min-width: 48px;
-}
 
 QPushButton#okButton {
       color: white;
-	min-height: 27px;
+	  min-height: 27px;
       min-width: 77px;
 }
 
-QPushButton#cancelButton#afcancelButton#doneButton {
+QPushButton#applyButton {
+
+	  min-height: 25px;
+      min-width: 77px;
+}
+
+QPushButton#cancelButton {
+
+	  min-height: 25px;
+      min-width: 77px;
+}
+
+QPushButton#afcancelButton#doneButton#refreshButtonv#nviewsettingsButton#checkButton
+{
       color: white;
-	min-height: 25px;
+	  min-height: 25px;
       min-width: 75px;
 }
 
@@ -68,7 +52,7 @@ QPushButton#fileButton#emailButton {
 
 QPushButton#cancelprefButton {
       color: white;
-	min-height: 25px;
+	min-height: 27px;
       min-width: 75px;
 }
 
@@ -80,6 +64,42 @@ QPushButton#toggleAdvancedSearchBtn{
 QPushButton#pushButtonDownload{
 	min-height: 34px;
       min-width: 34px;
+}
+
+QPushButton#Sendbtn {
+
+	  min-height: 25px;
+      min-width: 77px;
+}
+
+QPushButton#sendButton {
+
+	  min-height: 25px;
+      min-width: 77px;
+}
+
+QPushButton#newmessageButton{
+
+	  min-height: 27px;
+      min-width: 47px;
+}
+
+QPushButton#replymessageButton{
+
+	  min-height: 27px;
+      min-width: 47px;
+}
+
+QPushButton#removemessageButton{
+
+	  min-height: 27px;
+      min-width: 47px;
+}
+
+QPushButton#printbutton{
+
+	  min-height: 27px;
+      min-width: 47px;
 }
 
 QPushButton

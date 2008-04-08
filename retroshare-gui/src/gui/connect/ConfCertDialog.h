@@ -23,11 +23,11 @@
 #ifndef _CONFCERTDIALOG_H
 #define _CONFCERTDIALOG_H
 
-#include <QMainWindow>
+#include <QDialog>
 
 #include "ui_ConfCertDialog.h"
 
-class ConfCertDialog : public QMainWindow
+class ConfCertDialog : public QDialog
 {
   Q_OBJECT
 

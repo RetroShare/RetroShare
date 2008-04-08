@@ -21,14 +21,13 @@
 
 #include <util/AnimatedButton.h>
 
-//#include <util/SafeConnect.h>
-//#include <util/SafeDelete.h>
+
 
 #include <QtGui/QtGui>
 
 static const char * MNG_FORMAT = "MNG";
 
-AnimatedButton::AnimatedButton(QAbstractButton * button, const QString & animatedIconFilename) {
+AnimatedButton::AnimatedButton(QToolButton * button, const QString & animatedIconFilename) {
 	_button = button;
 	_animatedIcon = new QMovie(animatedIconFilename, MNG_FORMAT, _button);
 	connect(_animatedIcon, SIGNAL(frameChanged(int)), SLOT(updateButtonIcon()));

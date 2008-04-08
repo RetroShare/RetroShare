@@ -28,7 +28,7 @@
 
 /** Default constructor */
 ConfCertDialog::ConfCertDialog(QWidget *parent, Qt::WFlags flags)
-  : QMainWindow(parent, flags)
+  : QDialog(parent, flags)
 {
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
@@ -38,7 +38,7 @@ ConfCertDialog::ConfCertDialog(QWidget *parent, Qt::WFlags flags)
   connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(closeinfodlg()));
 
  
-  setFixedSize(QSize(434, 462));
+  //setFixedSize(QSize(434, 462));
 }
 
 
@@ -51,7 +51,7 @@ ConfCertDialog::show()
 {
   //loadSettings();
   if(!this->isVisible()) {
-    QMainWindow::show();
+    QDialog::show();
 
   }
 }

@@ -28,7 +28,7 @@
 
 #include <QtCore/QObject>
 
-class QAbstractButton;
+class QToolButton;
 class QMovie;
 class QString;
 
@@ -49,7 +49,7 @@ public:
 	 * @param button button' icon to animate
 	 * @param animatedIconFilename mng filename to animate the button icon
 	 */
-	AnimatedButton(QAbstractButton * button, const QString & animatedIconFilename);
+	AnimatedButton(QToolButton * button, const QString & animatedIconFilename);
 
 	~AnimatedButton();
 
@@ -62,7 +62,7 @@ private Q_SLOTS:
 
 private:
 
-	QAbstractButton * _button;
+	QToolButton * _button;
 
 	QMovie * _animatedIcon;
 };

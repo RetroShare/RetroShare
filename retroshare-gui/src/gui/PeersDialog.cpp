@@ -49,6 +49,7 @@
 /* Images for context menu icons */
 #define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
 #define IMAGE_EXPIORTFRIEND      ":/images/exportpeers_16x16.png"
+#define IMAGE_PEERINFO           ":/images/peerdetails_16x16.png"
 #define IMAGE_CHAT               ":/images/chat.png"
 #define IMAGE_MSG                ":/images/message-mail.png"
 /* Images for Status icons */
@@ -117,7 +118,7 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       connectfriendAct = new QAction( tr( "Connect To Friend" ), this );
       connect( connectfriendAct , SIGNAL( triggered() ), this, SLOT( connectfriend() ) );
       
-      configurefriendAct = new QAction( tr( "Configure Friend" ), this );
+      configurefriendAct = new QAction(QIcon(IMAGE_PEERINFO), tr( "Peer Details" ), this );
       connect( configurefriendAct , SIGNAL( triggered() ), this, SLOT( configurefriend() ) );
       
       exportfriendAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Export Friend" ), this );
@@ -131,9 +132,9 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       contextMnu.addAction( chatAct);
       contextMnu.addAction( msgAct);
       contextMnu.addSeparator(); 
-      contextMnu.addAction( connectfriendAct);
-      contextMnu.addSeparator(); 
       contextMnu.addAction( configurefriendAct);
+      contextMnu.addSeparator();
+      contextMnu.addAction( connectfriendAct); 
       contextMnu.addAction( exportfriendAct);
       contextMnu.addAction( removefriendAct);
       contextMnu.exec( mevent->globalPos() );

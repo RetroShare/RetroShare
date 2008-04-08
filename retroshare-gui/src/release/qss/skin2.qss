@@ -7,37 +7,26 @@ QToolBar {
 }
 
 
-QPushButton#addfriendButton {
-	min-height: 34px;
-      min-width: 48px;
-}
-
-QPushButton#invitefriendButton {
-	min-height: 34px;
-      min-width: 48px;
-}
-
-QPushButton#addshareButton {
-	min-height: 34px;
-      min-width: 48px;
-}
-
-QPushButton#optionsButton {
-	min-height: 34px;
-      min-width: 48px;
-}
-
-QPushButton#quitButton {
-	min-height: 34px;
-      min-width: 48px;
-}
-
 QPushButton#okButton {
 	min-height: 27px;
       min-width: 77px;
 }
 
+QPushButton#cancelprefButton {
+	  min-height: 27px;
+      min-width: 77px;
+}
+
 QPushButton#cancelButton {
-	min-height: 25px;
+	  min-height: 25px;
+	  max-height: 25px;
+      min-width: 75px;
+}
+
+
+QPushButton#applyButton {
+
+	  min-height: 25px;
+	  max-height: 25px;
       min-width: 75px;
 }
