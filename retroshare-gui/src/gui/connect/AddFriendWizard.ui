@@ -10,9 +10,7 @@
    </rect>
   </property>
   <property name="sizePolicy" >
-   <sizepolicy>
-    <hsizetype>7</hsizetype>
-    <vsizetype>7</vsizetype>
+   <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -690,7 +688,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Enter the Key code you got from your friend:&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
      </property>
     </widget>
-    <widget class="QTextBrowser" name="textBrowser" >
+    <widget class="QTextBrowser" name="keyText" >
      <property name="geometry" >
       <rect>
        <x>10</x>
@@ -748,17 +746,29 @@ p, li { white-space: pre-wrap; }
       </rect>
      </property>
      <layout class="QGridLayout" >
-      <property name="margin" >
+      <property name="leftMargin" >
        <number>0</number>
       </property>
-      <property name="spacing" >
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>0</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
        <number>6</number>
       </property>
       <item row="0" column="0" >
        <widget class="QLineEdit" name="lineEdit" />
       </item>
       <item row="0" column="1" >
-       <widget class="QPushButton" name="pushButton_4" >
+       <widget class="QPushButton" name="loadfileButton" >
         <property name="text" >
          <string>Browse</string>
         </property>
@@ -809,9 +819,9 @@ p, li { white-space: pre-wrap; }
   <tabstop>keyradioButton</tabstop>
   <tabstop>pqipemradioButton</tabstop>
   <tabstop>inviteradioButton</tabstop>
-  <tabstop>textBrowser</tabstop>
+  <tabstop>keyText</tabstop>
   <tabstop>lineEdit</tabstop>
-  <tabstop>pushButton_4</tabstop>
+  <tabstop>loadfileButton</tabstop>
   <tabstop>emailText</tabstop>
  </tabstops>
  <resources>

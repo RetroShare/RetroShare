@@ -24,9 +24,11 @@
 #define _ADDFRIENDWIZARD_H
 
 #include <QDialog>
-
+#include <QSettings>
 
 #include "ui_AddFriendWizard.h"
+
+class NetworkDialog;
 
 class AddFriendWizard : public QDialog 
 {
@@ -35,9 +37,11 @@ class AddFriendWizard : public QDialog
 public:
   /** Default Constructor */
 
-  AddFriendWizard(QWidget *parent = 0, Qt::WFlags flags = 0);
+  AddFriendWizard(NetworkDialog *cd, QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default Destructor */
+  ~AddFriendWizard();
 
+  void reset(QSettings *settingsPointer);
 
 
 private slots:
@@ -46,12 +50,18 @@ private slots:
     void on_nextButton_clicked();
     void on_backButton_clicked();
     void on_cancelButton_clicked();
+    
+    void loadfile();
+
 
 
 
 private:
+    QSettings *settings;
 
     bool lastStep;
+    
+    NetworkDialog *cDialog;
 
   /** Qt Designer generated object */
   Ui::AddFriendWizard ui;

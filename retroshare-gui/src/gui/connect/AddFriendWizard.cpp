@@ -19,30 +19,36 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
+#include "AddFriendWizard.h"
 //#include "rshare.h"
 //#include "config/gconfig.h"
 
-//#include "rsiface/rsiface.h"
-#include "AddFriendWizard.h"
+#include "rsiface/rsiface.h"
+#include "rsiface/rspeers.h"
+
 #include <sstream>
 
 #include <QContextMenuEvent>
-#include <QMenu>
 #include <QCursor>
-#include <QPoint>
+#include <QMenu>
+#include <QMessageBox>
 #include <QMouseEvent>
 #include <QPixmap>
+#include <QPoint>
+
+#include "gui/NetworkDialog.h"
 
 /** Constructor */
-AddFriendWizard::AddFriendWizard(QWidget *parent, Qt::WFlags flags)
-: QDialog(parent, flags)
+AddFriendWizard::AddFriendWizard(NetworkDialog *cd, QWidget *parent, Qt::WFlags flags)
+: QDialog(parent, flags), cDialog(cd)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  ui.setupUi(this);
+	/* Invoke the Qt Designer generated object setup routine */
+	ui.setupUi(this);
   
-  //GConfig config;
-  //config.loadWidgetInformation(this);
+	//GConfig config;
+	//config.loadWidgetInformation(this);
+
+    connect(ui.loadfileButton, SIGNAL(clicked()), this, SLOT(loadfile()));
 
 
     setFixedSize(QSize(508, 312));
@@ -53,7 +59,27 @@ AddFriendWizard::AddFriendWizard(QWidget *parent, Qt::WFlags flags)
 #endif
 }
 
+/*!
+* The destructor for AddFriendWizard
+*/
+AddFriendWizard::~AddFriendWizard()
+{
+}
 
+
+void AddFriendWizard::reset(QSettings *settingsPointer)
+{
+    // set the labelstackedWidget and textstackedWidget to the first position
+    //labelstackedWidget->setCurrentIndex(0);
+    ui.textstackedWidget->setCurrentIndex(0);
+    // disable the backButton: We don't need it if we are on the first position
+    ui.backButton->setEnabled(false);                                                   
+    // and we aren't at the last step, were the next button becomes the finish button
+    lastStep = false;
+    
+    settings = settingsPointer;
+    
+}
 
 
 void AddFriendWizard::on_nextButton_clicked()
@@ -127,4 +153,32 @@ void AddFriendWizard::on_cancelButton_clicked()
     //writeSettings();
     // leave but show that cancel was pressed
     reject();
+}
+
+void AddFriendWizard::loadfile()
+{
+
+	/* show file dialog, 
+	 * load file into screen, 
+	 * push done button!
+	 */
+        std::string id;
+	if (cDialog)
+	{
+		id = cDialog->loadneighbour();
+	}
+					  
+	/* call make Friend */
+	if (id != "")
+	{
+		close();
+		cDialog->showpeerdetails(id);
+	}
+	else
+	{
+		/* error message */
+		int ret = QMessageBox::warning(this, tr("RetroShare"),
+                   tr("Certificate Load Failed"),
+                   QMessageBox::Ok, QMessageBox::Ok);
+	}
 }
