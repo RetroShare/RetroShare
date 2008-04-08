@@ -102,6 +102,25 @@ QPushButton#printbutton{
       min-width: 47px;
 }
 
+QPushButton#refreshButton
+{
+	  min-height: 25px;
+      min-width: 75px;
+}
+
+QPushButton#checkButton
+{
+	  min-height: 25px;
+      min-width: 75px;
+}
+
+
+QPushButton#nviewsettingsButton
+{
+	  min-height: 25px;
+      min-width: 75px;
+}
+
 QPushButton
 {
 border-image: url(qss/black/button.png) ;
