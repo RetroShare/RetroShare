@@ -2,7 +2,7 @@
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.4.06a"
+!define VERSION "0.4.06c"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
 
 ; Main Install settings

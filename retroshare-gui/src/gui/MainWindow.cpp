@@ -91,6 +91,7 @@
  * #define RS_RELEASE_VERSION    1
  ****/
 
+#define RS_RELEASE_VERSION    1
 
 /** Constructor */
 MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
