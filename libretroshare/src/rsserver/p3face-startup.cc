@@ -48,6 +48,7 @@
 #include "services/p3gamelauncher.h"
 #include "services/p3ranking.h"
 #include "services/p3photoservice.h"
+#include "services/p3forums.h"
 
 #include <list>
 #include <string>
@@ -68,8 +69,10 @@
 #include "pqi/p3notify.h" // HACK - moved to pqi for compilation order.
 
 
-// UNCOMMENT THIS FOR UNFINISHED SERVICES
+// COMMENT THIS FOR UNFINISHED SERVICES
+/****
 #define RS_RELEASE 1  
+****/
 
 
 /**************** PQI_USE_XPGP ******************/
@@ -557,6 +560,8 @@ int RsServer::StartupRetroShare(RsInit *config)
 
         CachePair cp2(photoService, photoService, CacheId(RS_SERVICE_TYPE_PHOTO, 0));
 	mCacheStrapper -> addCachePair(cp2);
+
+	
 #else
 	mRanking = NULL;
 
@@ -682,7 +687,6 @@ int RsServer::StartupRetroShare(RsInit *config)
 	/**************************************************************************/
 
 	server->StartupMonitor();
-	mUpnpMgr->start();
 	mDhtMgr->start();
 
 
@@ -710,10 +714,12 @@ int RsServer::StartupRetroShare(RsInit *config)
 	rsGameLauncher = gameLauncher;
 	rsPhoto = new p3Photo(photoService);
 	rsRanks = new p3Rank(mRanking);
+	rsForums = new p3Forums();
 #else
 	rsGameLauncher = NULL;
 	rsPhoto = NULL;
 	rsRanks = NULL;
+	rsForums = NULL;
 #endif
 
 

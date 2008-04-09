@@ -31,15 +31,16 @@
 #include "util/rsthreads.h"
 #include "pqi/pqinetwork.h"
 
-class p3UpnpMgr: public RsThread
+class p3UpnpMgr
 {
 	public:
 
 virtual	~p3UpnpMgr() { return; }
 
 		/* External Interface */
-virtual void    enableUPnP(bool on) = 0;
-virtual void    shutdownUPnP() = 0;
+virtual void    enableUPnP(bool on) = 0;  /* launches thread to start it up */
+virtual void    shutdownUPnP() = 0;       /* blocking shutdown call */
+virtual void	restartUPnP() = 0;   	  /* must be called if ports change */
 
 virtual bool    getUPnPEnabled() = 0;
 virtual bool    getUPnPActive() = 0;

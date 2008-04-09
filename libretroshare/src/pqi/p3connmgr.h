@@ -165,6 +165,8 @@ void	setUpnpMgr(p3UpnpMgr *umgr)	{ mUpnpMgr = umgr; }
 bool	checkNetAddress(); /* check our address is sensible */
 
 	/*************** External Control ****************/
+bool	shutdown(); /* blocking shutdown call */
+
 bool	retryConnect(std::string id);
 
 bool    getUPnPState();

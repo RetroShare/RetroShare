@@ -45,7 +45,7 @@ const uint32_t RS_STUN_DONE =      	0x0002;
 const uint32_t RS_STUN_LIST_MIN =      	100;
 const uint32_t RS_STUN_FOUND_MIN =     	10;
 
-const uint32_t MAX_UPNP_INIT = 		30; /* seconds UPnP timeout */
+const uint32_t MAX_UPNP_INIT = 		10; /* seconds UPnP timeout */
 
 /****
  * #define CONN_DEBUG 1
@@ -298,6 +298,21 @@ void p3ConnectMgr::tick()
 	statusTick();
 	tickMonitors();
 
+}
+
+bool p3ConnectMgr::shutdown() /* blocking shutdown call */
+{
+	connMtx.lock();   /*   LOCK MUTEX */
+
+	bool upnpActive = ownState.netMode & RS_NET_MODE_UPNP;
+
+	connMtx.unlock(); /* UNLOCK MUTEX */
+
+	if (upnpActive)
+	{
+		mUpnpMgr->shutdownUPnP();
+	}
+	return true;
 }
 
 

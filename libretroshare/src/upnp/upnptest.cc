@@ -47,7 +47,6 @@ int main(int argc, char **argv)
 
 	upnphandler upnp;
 
-	upnp.start();
 	upnp.setInternalPort(12122);
 
 	for(int i = 0; 1; i++)
@@ -62,19 +61,24 @@ int main(int argc, char **argv)
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 		
-	if (i % 300 == 10)
+	if (i % 120 == 10)
 	{
 		/* start up a forward */
 		upnp.enableUPnP(true);
 
 	}
 
-	if (i % 300 == 120)
+	if (i % 120 == 60)
 	{
 		/* shutdown a forward */
-		upnp.enableUPnP(false);
+		upnp.restartUPnP();
 	}
 
+	if (i % 120 == 100)
+	{
+		/* shutdown a forward */
+		upnp.shutdownUPnP();
+	}
 
 	}
 }

@@ -27,106 +27,6 @@ class uPnPConfigData
 
 #include "util/rsnet.h"
 
-
-void upnphandler::run()
-{
-
-	/* infinite loop */
-	while(1)
-	{
-		std::cerr << "UPnPHandler::Run()" << std::endl;
-		int allowedSleep = 30; /* check every 30 seconds */
-
-		/* lock it up */
-		dataMtx.lock(); /* LOCK MUTEX */
-
-		bool shutdown = toShutdown;
-		int state = upnpState;
-
-		dataMtx.unlock(); /* UNLOCK MUTEX */
-
-		if (shutdown)
-		{
-			return;
-		}
-
-		/* do the work! */
-		checkUPnPState();
-
-		/* check new state for sleep period */
-
-		dataMtx.lock(); /* LOCK MUTEX */
-
-		state = upnpState;
-
-		dataMtx.unlock(); /* UNLOCK MUTEX */
-
-
-		/* state machine */
-		switch(state)
-		{
-			case RS_UPNP_S_UNINITIALISED:
-			case RS_UPNP_S_UNAVAILABLE:
-				/* failed ... try again in 30 min. */
-				allowedSleep = 1800;
-			break;
-
-			case RS_UPNP_S_READY:
-			case RS_UPNP_S_TCP_FAILED: 
-			case RS_UPNP_S_UDP_FAILED:
-			case RS_UPNP_S_ACTIVE:
-				/* working ... normal 10 seconds */
-				allowedSleep = 10;
-			break;
-
-			default:
-				/* default??? how did it get here? */
-			break;
-		}
-
-		std::cerr << "UPnPHandler::Run() sleeping for:" << allowedSleep << std::endl;
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS
-		sleep(allowedSleep); 
-#else
-		Sleep(1000 * allowedSleep); 
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-	}
-	return;
-}
-
-void upnphandler::checkUPnPState()
-{
-	dataMtx.lock(); /* LOCK MUTEX */
-
-	int state = upnpState;
-
-	dataMtx.unlock(); /* UNLOCK MUTEX */
-
-	/* state machine */
-	switch(state)
-	{
-		case RS_UPNP_S_UNINITIALISED:
-		case RS_UPNP_S_UNAVAILABLE:
-			initUPnPState();
-		break;
-
-		case RS_UPNP_S_READY:
-		case RS_UPNP_S_TCP_FAILED: 
-		case RS_UPNP_S_UDP_FAILED:
-		case RS_UPNP_S_ACTIVE:
-			printUPnPState();
-			checkUPnPActive();
-			updateUPnP();
-		break;
-
-	}
-
-	return;
-}
-
-
 bool upnphandler::initUPnPState()
 {
 	/* allocate memory */
@@ -160,11 +60,13 @@ bool upnphandler::initUPnPState()
 			upnp_iaddr.sin_port = htons(iport);
 
 			upnpState = RS_UPNP_S_READY;
+			if (upnpConfig)
+			{
+				delete upnpConfig;
+			}
 			upnpConfig = upcd;   /* */
 
 			dataMtx.unlock(); /* UNLOCK MUTEX */
-
-
 
 
 			/* done -> READY */
@@ -240,6 +142,7 @@ bool upnphandler::checkUPnPActive()
 		char eport2[256];
 
 		struct sockaddr_in localAddr = upnp_iaddr;
+		uint32_t linaddr = ntohl(localAddr.sin_addr.s_addr);
 
 		snprintf(in_port1, 256, "%d", ntohs(localAddr.sin_port));
 		snprintf(in_port2, 256, "%d", ntohs(localAddr.sin_port));
@@ -248,6 +151,12 @@ bool upnphandler::checkUPnPActive()
 			 ((localAddr.sin_addr.s_addr >> 8) & 0xff),
 			 ((localAddr.sin_addr.s_addr >> 16) & 0xff),
 			 ((localAddr.sin_addr.s_addr >> 24) & 0xff));
+
+		snprintf(in_addr, 256, "%d.%d.%d.%d", 
+		 	((linaddr >> 24) & 0xff),
+		 	((linaddr >> 16) & 0xff),
+		 	((linaddr >> 8) & 0xff),
+		 	((linaddr >> 0) & 0xff));
 
 		snprintf(eport1, 256, "%d", eport_curr);
 		snprintf(eport2, 256, "%d", eport_curr);
@@ -280,12 +189,62 @@ bool upnphandler::checkUPnPActive()
 	return true;
 }
 
+class upnpThreadData
+{
+        public:
+		upnphandler *handler;
+		bool start;
+		bool stop;
+};
 
+	/* Thread routines */
+extern "C" void* doSetupUPnP(void* p)
+{
+        upnpThreadData *data = (upnpThreadData *) p;
+        if ((!data) || (!data->handler))
+        {
+                pthread_exit(NULL);
+        }
 
-bool upnphandler::updateUPnP()
+        /* publish it! */
+	if (data -> stop)
+	{
+		data->handler->shutdown_upnp();
+	}
+
+	if (data -> start)
+	{
+		data->handler->initUPnPState();
+		data->handler->start_upnp();
+	}
+
+	data->handler->printUPnPState();
+
+        delete data;
+        pthread_exit(NULL);
+
+        return NULL;
+}
+
+bool upnphandler::background_setup_upnp(bool start, bool stop)
+{
+	pthread_t tid;
+
+	/* launch thread */
+	upnpThreadData *data = new upnpThreadData();
+	data->handler = this;
+	data->start = start;
+	data->stop = stop;
+
+	pthread_create(&tid, 0, &doSetupUPnP, (void *) data);
+	pthread_detach(tid); /* so memory is reclaimed in linux */
+
+	return true;
+}
+
+bool upnphandler::start_upnp()
 {
 	dataMtx.lock(); /* LOCK MUTEX */
-
 
 	uPnPConfigData *config = upnpConfig;
 	if (!((upnpState >= RS_UPNP_S_READY) && (config)))
@@ -296,10 +255,117 @@ bool upnphandler::updateUPnP()
 	char eprot1[] = "TCP";
 	char eprot2[] = "UDP";
 
-	/* if we're to unload -> unload */
-	if ((toStop) && (eport_curr > 0))
+	/* if we're to load -> load */
+	/* select external ports */
+	eport_curr = eport;
+	if (!eport_curr)
 	{
-		toStop = false;
+		/* use local port if eport is zero */
+		eport_curr = iport;
+		std::cerr << "Using LocalPort for extPort!";
+		std::cerr << std::endl;
+	}
+
+	if (!eport_curr)
+	{
+		std::cerr << "Invalid eport ... ";
+		std::cerr << std::endl;
+		return false;
+	}
+
+
+	/* our port */
+	char in_addr[256];
+	char in_port1[256];
+	char in_port2[256];
+	char eport1[256];
+	char eport2[256];
+
+	upnp_iaddr.sin_port = htons(iport);
+	struct sockaddr_in localAddr = upnp_iaddr;
+	uint32_t linaddr = ntohl(localAddr.sin_addr.s_addr);
+
+	snprintf(in_port1, 256, "%d", ntohs(localAddr.sin_port));
+	snprintf(in_port2, 256, "%d", ntohs(localAddr.sin_port));
+	snprintf(in_addr, 256, "%d.%d.%d.%d", 
+		 ((linaddr >> 24) & 0xff),
+		 ((linaddr >> 16) & 0xff),
+		 ((linaddr >> 8) & 0xff),
+		 ((linaddr >> 0) & 0xff));
+
+	snprintf(eport1, 256, "%d", eport_curr);
+	snprintf(eport2, 256, "%d", eport_curr);
+
+	std::cerr << "Attempting Redirection: InAddr: " << in_addr;
+	std::cerr << " InPort: " << in_port1;
+	std::cerr << " ePort: " << eport1;
+	std::cerr << " eProt: " << eprot1;
+	std::cerr << std::endl;
+
+	if (!SetRedirectAndTest(&(config -> urls), &(config->data),
+			in_addr, in_port1, eport1, eprot1))
+	{
+		upnpState = RS_UPNP_S_TCP_FAILED; 
+	}
+	else if (!SetRedirectAndTest(&(config -> urls), &(config->data),
+			in_addr, in_port2, eport2, eprot2))
+	{
+		upnpState = RS_UPNP_S_UDP_FAILED; 
+	}
+	else
+	{
+		upnpState = RS_UPNP_S_ACTIVE;
+	}
+
+
+	/* now store the external address */
+	char externalIPAddress[32];
+        UPNP_GetExternalIPAddress(config -> urls.controlURL,
+				  config->data.servicetype, 
+	                          externalIPAddress);
+
+	sockaddr_clear(&upnp_eaddr);
+
+	if(externalIPAddress[0])
+	{
+		std::cerr << "Stored External address: " << externalIPAddress;
+		std::cerr << ":" << eport_curr;
+		std::cerr << std::endl;
+
+		inet_aton(externalIPAddress, &(upnp_eaddr.sin_addr));
+		upnp_eaddr.sin_family = AF_INET;
+		upnp_eaddr.sin_port = htons(eport_curr);
+	}
+	else
+	{
+		std::cerr << "FAILED To get external Address";
+		std::cerr << std::endl;
+	}
+
+	toStart = false;
+
+	dataMtx.unlock(); /* UNLOCK MUTEX */
+
+	return true;
+
+}
+
+bool upnphandler::shutdown_upnp()
+{
+	dataMtx.lock(); /* LOCK MUTEX */
+
+	uPnPConfigData *config = upnpConfig;
+	if (!((upnpState >= RS_UPNP_S_READY) && (config)))
+	{
+		return false;
+	}
+
+	char eprot1[] = "TCP";
+	char eprot2[] = "UDP";
+
+	/* always attempt this (unless no port number) */
+	if (eport_curr > 0)
+	{
 
 		char eport1[256];
 		char eport2[256];
@@ -323,97 +389,7 @@ bool upnphandler::updateUPnP()
 				eport2, eprot2);
 
 		upnpState = RS_UPNP_S_READY;
-	}
-
-
-	/* if we're to load -> load */
-	if (toStart)
-	{
-		/* select external ports */
-		eport_curr = eport;
-		if (!eport_curr)
-		{
-			/* use local port if eport is zero */
-			eport_curr = iport;
-			std::cerr << "Using LocalPort for extPort!";
-			std::cerr << std::endl;
-		}
-
-		if (!eport_curr)
-		{
-			std::cerr << "Invalid eport ... ";
-			std::cerr << std::endl;
-			return false;
-		}
-
-		toStart = false;
-
-		/* our port */
-		char in_addr[256];
-		char in_port1[256];
-		char in_port2[256];
-		char eport1[256];
-		char eport2[256];
-
-		upnp_iaddr.sin_port = htons(iport);
-		struct sockaddr_in localAddr = upnp_iaddr;
-
-		snprintf(in_port1, 256, "%d", ntohs(localAddr.sin_port));
-		snprintf(in_port2, 256, "%d", ntohs(localAddr.sin_port));
-		snprintf(in_addr, 256, "%d.%d.%d.%d", 
-			 ((localAddr.sin_addr.s_addr >> 0) & 0xff),
-			 ((localAddr.sin_addr.s_addr >> 8) & 0xff),
-			 ((localAddr.sin_addr.s_addr >> 16) & 0xff),
-			 ((localAddr.sin_addr.s_addr >> 24) & 0xff));
-
-		snprintf(eport1, 256, "%d", eport_curr);
-		snprintf(eport2, 256, "%d", eport_curr);
-
-		std::cerr << "Attempting Redirection: InAddr: " << in_addr;
-		std::cerr << " InPort: " << in_port1;
-		std::cerr << " ePort: " << eport1;
-		std::cerr << " eProt: " << eprot1;
-		std::cerr << std::endl;
-
-		if (!SetRedirectAndTest(&(config -> urls), &(config->data),
-				in_addr, in_port1, eport1, eprot1))
-		{
-			upnpState = RS_UPNP_S_TCP_FAILED; 
-		}
-		else if (!SetRedirectAndTest(&(config -> urls), &(config->data),
-				in_addr, in_port2, eport2, eprot2))
-		{
-			upnpState = RS_UPNP_S_UDP_FAILED; 
-		}
-		else
-		{
-			upnpState = RS_UPNP_S_ACTIVE;
-		}
-
-
-		/* now store the external address */
-		char externalIPAddress[32];
-        	UPNP_GetExternalIPAddress(config -> urls.controlURL,
-					  config->data.servicetype, 
-		                          externalIPAddress);
-
-		sockaddr_clear(&upnp_eaddr);
-
-		if(externalIPAddress[0])
-		{
-			std::cerr << "Stored External address: " << externalIPAddress;
-			std::cerr << ":" << eport_curr;
-			std::cerr << std::endl;
-
-			inet_aton(externalIPAddress, &(upnp_eaddr.sin_addr));
-			upnp_eaddr.sin_family = AF_INET;
-			upnp_eaddr.sin_port = htons(eport_curr);
-		}
-		else
-		{
-			std::cerr << "FAILED To get external Address";
-			std::cerr << std::endl;
-		}
+		toStop = false;
 	}
 
 	dataMtx.unlock(); /* UNLOCK MUTEX */
@@ -422,7 +398,6 @@ bool upnphandler::updateUPnP()
 
 }
 
-
 /************************ External Interface *****************************
  *
  *
@@ -430,8 +405,7 @@ bool upnphandler::updateUPnP()
  */
 
 upnphandler::upnphandler()
-	:toShutdown(false), toEnable(false), 
-	toStart(false), toStop(false),
+	:toEnable(false), toStart(false), toStop(false),
 	eport(0), eport_curr(0),
 	upnpState(RS_UPNP_S_UNINITIALISED), 
 	upnpConfig(NULL)
@@ -462,17 +436,34 @@ void  upnphandler::enableUPnP(bool active)
 	}
 	toEnable = active;
 
+	bool start = toStart;
+
 	dataMtx.unlock(); /*** UNLOCK MUTEX ***/
+
+	if (start)
+	{
+		/* make background thread to startup UPnP */
+		background_setup_upnp(true, false);
+	}
+
+
 }
+
 
 void    upnphandler::shutdownUPnP()
 {
-        dataMtx.lock();   /***  LOCK MUTEX  ***/
+	/* blocking call to shutdown upnp */
 
-        toShutdown = true;
-
-        dataMtx.unlock(); /*** UNLOCK MUTEX ***/
+	shutdown_upnp();
 }
+
+
+void    upnphandler::restartUPnP()
+{
+	/* non-blocking call to shutdown upnp, and startup again. */
+	background_setup_upnp(true, true);
+}
+
 
 
 bool    upnphandler::getUPnPEnabled()

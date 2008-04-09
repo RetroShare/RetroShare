@@ -52,6 +52,7 @@ virtual	~upnphandler();
 	/* External Interface */
 virtual void    enableUPnP(bool active);
 virtual void    shutdownUPnP();
+virtual void 	restartUPnP();
 
 virtual bool    getUPnPEnabled();
 virtual bool    getUPnPActive();
@@ -61,24 +62,23 @@ virtual void    setExternalPort(unsigned short eport_in);
 virtual bool    getInternalAddress(struct sockaddr_in &addr);
 virtual bool    getExternalAddress(struct sockaddr_in &addr);
 
-	/* must run thread */
-virtual void run();
+/* Public functions - for background thread operation, 
+ * but effectively private from rest of RS, as in derived class
+ */
+
+bool 	start_upnp();
+bool	shutdown_upnp();
+
+bool initUPnPState();
+bool printUPnPState();
 
 	private:
 
-bool initUPnPState();
-void checkUPnPState();
-bool printUPnPState();
-
+bool background_setup_upnp(bool, bool);
 bool checkUPnPActive();
-bool updateUPnP();
-
 
 	/* Mutex for data below */
 	RsMutex dataMtx;
-
- 	/* requested from rs */
-	bool toShutdown; /* if set shuts down the thread. */
 
 	bool toEnable;   /* overall on/off switch */
 	bool toStart;  /* if set start forwarding */

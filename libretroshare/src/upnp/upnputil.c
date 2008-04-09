@@ -142,7 +142,10 @@ bool SetRedirectAndTest(struct UPNPUrls * urls,
 
 // Unix at the moment!	
 	r = UPNP_AddPortMapping(urls->controlURL, data->servicetype,
-	                        eport, iport, iaddr, 0, leaseDuration, proto);
+	                        eport, iport, iaddr, 0, 0, proto);
+
+//	r = UPNP_AddPortMapping(urls->controlURL, data->servicetype,
+//	                        eport, iport, iaddr, 0, leaseDuration, proto);
 
 //	r = UPNP_AddPortMapping(urls->controlURL, data->servicetype,
 //	                        eport, iport, iaddr, 0, proto);

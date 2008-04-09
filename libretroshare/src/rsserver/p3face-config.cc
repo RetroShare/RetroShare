@@ -329,9 +329,6 @@ int RsServer::UpdateAllConfig()
 
 }
 
-
-
-
 void    RsServer::ConfigFinalSave()
 {
 	/* force saving of transfers */
@@ -344,4 +341,6 @@ void    RsServer::ConfigFinalSave()
 void RsServer::rsGlobalShutDown()
 {
 	ConfigFinalSave(); // save configuration before exit
+	mConnMgr->shutdown(); /* Handles UPnP */
 }
+
