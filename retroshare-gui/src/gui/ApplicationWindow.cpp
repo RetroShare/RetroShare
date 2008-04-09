@@ -44,6 +44,7 @@
 #include "GamesDialog.h"
 #include "NetworkView.h"
 #include "PhotoDialog.h"
+#include "ForumsDialog.h"
 #include "channels/channelsDialog.h"
 
 /* for smplayer */
@@ -105,9 +106,9 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_GAMES), tr("Games Launcher"), grp));
 
-    //NetworkView *networkView = NULL;
-    //ui.stackPages->add(networkView = new NetworkView(ui.stackPages),
-    //                   createPageAction(QIcon(IMAGE_NETWORK), tr("Network View"), grp));
+    ForumsDialog *forumsDialog = NULL;
+    ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_NETWORK), tr("Forums"), grp));
                      
     PhotoDialog *photoDialog = NULL;
     ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
