@@ -1,0 +1,26 @@
+	.header {
+	        font-weight: bold;
+	}
+	
+	.time {
+	}
+	
+	.incomingHeader {
+	        background-color:#dfedff;
+	        border-color:#fafafa #d1dfef #d1dfef #fafafa;
+	        color: #295b07;
+	}
+	
+	.incomingTime {
+	        color: #295b07;
+	}
+	
+	.outgoingHeader {
+	        background-color:#f5f5f5;
+	        border-color:#fafafa #e3e3e3 #e3e3e3 #fafafa;
+	        color: #244578;
+	}
+	
+	.outgoingTime {
+	        color: #244578;
+	}

@@ -37,6 +37,7 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsmsgs.h"
 
+#define appDir QApplication::applicationDirPath()
 
 /* Define the format used for displaying the date and time */
 #define DATETIME_FMT  "MMM dd hh:mm:ss"
@@ -56,6 +57,8 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   
   loadEmoticons();
   
+  styleHtm = appDir + "/style/chat/default.htm";
+  
   /* Hide ToolBox frame */
   showAvatarFrame(true);
   connect(ui.avatarFrameButton, SIGNAL(toggled(bool)), this, SLOT(showAvatarFrame(bool)));
@@ -70,6 +73,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   connect(ui.fontButton, SIGNAL(clicked()), this, SLOT(getFont())); 
   connect(ui.colorButton, SIGNAL(clicked()), this, SLOT(setColor()));
   connect(ui.emoteiconButton, SIGNAL(clicked()), this, SLOT(smileyWidget()));
+  connect(ui.styleButton, SIGNAL(clicked()), SLOT(changeStyle()));
 
   // Create the status bar
   std::ostringstream statusstr;
@@ -90,10 +94,14 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   ui.textitalicButton->setIcon(QIcon(QString(":/images/edit-italic.png")));
   ui.fontButton->setIcon(QIcon(QString(":/images/fonts.png")));
   ui.emoteiconButton->setIcon(QIcon(QString(":/images/emoticons/kopete/kopete020.png")));
+  ui.styleButton->setIcon(QIcon(QString(":/images/looknfeel.png")));
   
   ui.textboldButton->setCheckable(true);
   ui.textunderlineButton->setCheckable(true);
   ui.textitalicButton->setCheckable(true);
+  
+  /*Disabled style Button when will switch style RetroShare will crash need to be fix */
+  ui.styleButton->setEnabled(false);
    
   /*QMenu * fontmenu = new QMenu();
   fontmenu->addAction(ui.actionBold);
@@ -147,16 +155,15 @@ void PopupChatDialog::updateChat()
 
 }
 
-
 void PopupChatDialog::addChatMsg(ChatInfo *ci)
 {
-    QTextEdit *msgWidget = ui.textBrowser;
+    //QTextBrowser *msgWidget = ui.textBrowser;
 
-	QString currenttxt = msgWidget->toHtml();
+	//QString message = msgWidget->toHtml();
 
 
 	/* add in lines at the bottom */
-	QString extraTxt;
+	//QString extraTxt;
 
 
 	bool offline = true;
@@ -177,34 +184,44 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 	{
 	    	QString line = "<br>\n<span style=\"color:#1D84C9\"><strong> ----- PEER OFFLINE (Chat will be lost) -----</strong></span> \n<br>";
 
-		extraTxt += line;
+		//extraTxt += line;
 	}
 	
 
         QString timestamp = "[" + QDateTime::currentDateTime().toString("hh:mm:ss") + "]";
-            //QString pre = tr("Peer:" );
-	    QString name = QString::fromStdString(ci->name);        
-	    QString line = "<span style=\"color:#C00000\"><strong>" + timestamp + "</strong></span>" +			
-            		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span>";		
-        
-        extraTxt += line;
+	    QString name = QString::fromStdString(ci ->name);        
+	    //QString line = "<span style=\"color:#C00000\"><strong>" + timestamp + "</strong></span>" +			
+        //    		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span>";		
+        //extraTxt += line;
 
+	    QString message = QString::fromStdWString(ci -> msg);
 
-	extraTxt += QString::fromStdWString(ci -> msg);
-
-	currenttxt += extraTxt;
+	//currenttxt += extraTxt;
 	
     QHashIterator<QString, QString> i(smileys);
 	while(i.hasNext())
 	{
 		i.next();
-		currenttxt.replace(i.key(), "<img src=\"" + i.value() + "\">");
+		message.replace(i.key(), "<img src=\"" + i.value() + "\">");
 	}
+	history /*<< nickColor << color << font << fontSize*/ << timestamp << name << message;
+	
+	QString formatMsg = loadEmptyStyle()/*.replace(nickColor)
+				    .replace(color)
+				    .replace(font)
+				    .replace(fontSize)*/
+				    .replace("%timestamp%", timestamp)
+                    .replace("%name%", name)
+				    .replace("%message%", message);
 
-	msgWidget->setHtml(currenttxt);
+	ui.textBrowser->setHtml(ui.textBrowser->toHtml() + formatMsg + "\n");
+	
+	QTextCursor cursor = ui.textBrowser->textCursor();
+	cursor.movePosition(QTextCursor::End);
+	ui.textBrowser->setTextCursor(cursor);
 
-	QScrollBar *qsb =  msgWidget->verticalScrollBar();
-	qsb -> setValue(qsb->maximum());
+	//QScrollBar *qsb =  ui.textBrowser->verticalScrollBar();
+	//qsb -> setValue(qsb->maximum());
 }
 
 void PopupChatDialog::checkChat()
@@ -376,4 +393,47 @@ void PopupChatDialog::smileyWidget()
 void PopupChatDialog::addSmiley()
 {
 	ui.chattextEdit->setText(ui.chattextEdit->toHtml() + qobject_cast<QPushButton*>(sender())->toolTip());
+}
+
+QString PopupChatDialog::loadEmptyStyle()
+{
+	QString ret;
+	QFile file(styleHtm);
+	file.open(QIODevice::ReadOnly);
+	ret = file.readAll();
+	file.close();
+	QString styleTmp = styleHtm;
+	QString styleCss = styleTmp.remove(styleHtm.lastIndexOf("."), styleHtm.length()-styleHtm.lastIndexOf(".")) + ".css";
+	qDebug() << styleCss.toAscii();
+	QFile css(styleCss);
+	css.open(QIODevice::ReadOnly);
+	QString tmp = css.readAll();
+	css.close();
+	ret.replace("%css-style%", tmp);
+	return ret;
+}
+
+void PopupChatDialog::changeStyle()
+{
+	QString newStyle = QFileDialog::getOpenFileName(this, tr("Open Style"),
+                                                 appDir + "/style/chat/",
+                                                 tr("Styles (*.htm)"));
+	if(!newStyle.isEmpty())
+	{
+		QString wholeChat;
+		styleHtm = newStyle;
+		
+		
+		for(int i = 0; i < history.size(); i+=4)
+		{
+			QString formatMsg = loadEmptyStyle();
+			wholeChat += formatMsg.replace("%timestamp%", history.at(i+1))
+                                  .replace("%name%", history.at(i+2))
+				                  .replace("%message%", history.at(i+3)) + "\n";
+		}
+		ui.textBrowser->setHtml(wholeChat);
+	}
+	QTextCursor cursor = ui.textBrowser->textCursor();
+	cursor.movePosition(QTextCursor::End);
+	ui.textBrowser->setTextCursor(cursor);
 }

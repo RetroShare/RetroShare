@@ -54,6 +54,7 @@ public:
   
   void loadEmoticons();
 
+  QString loadEmptyStyle(); 
    
 public slots:
   /** Overloaded QWidget.show */
@@ -62,6 +63,7 @@ public slots:
   void smileyWidget();
   void addSmiley();
   
+  void changeStyle();
 
 protected:
   void closeEvent (QCloseEvent * event);
@@ -93,6 +95,11 @@ private:
    QHash<QString, QString> smileys;
    QColor mCurrentColor;
    QFont  mCurrentFont;
+   
+   QString styleHtm;
+   QString emptyStyle;
+   QStringList history;
+   QString wholeChat;
   
   /** Qt Designer generated object */
   Ui::PopupChatDialog ui;
