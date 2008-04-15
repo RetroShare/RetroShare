@@ -21,6 +21,8 @@
 
 
 #include "ForumsDialog.h"
+#include "gui/forums/CreateForum.h"
+#include "gui/forums/CreateForumMsg.h"
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
@@ -38,7 +40,7 @@
 #include <QPrinter>
 #include <QDateTime>
 #include <QHeaderView>
-
+#include <QTimer>
 
 /* Images for context menu icons */
 #define IMAGE_MESSAGE        ":/images/folder-draft.png"
@@ -60,6 +62,23 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 
   connect(ui.newForumButton, SIGNAL(clicked()), this, SLOT(newforum()));
 
+
+  connect( ui.forumTreeWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem *, QTreeWidgetItem *) ), this,
+  	SLOT( changedForum( QTreeWidgetItem *, QTreeWidgetItem * ) ) );
+
+  //connect( ui.threadTreeWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem *, QTreeWidgetItem *) ), this,
+  //	SLOT( changedThread( QTreeWidgetItem *, QTreeWidgetItem * ) ) );
+
+  connect( ui.threadTreeWidget, SIGNAL( itemSelectionChanged() ), this, SLOT( changedThread2() ) );
+  connect( ui.viewBox, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( changedThread2() ) );
+  
+  connect(ui.expandButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
+
+  QTimer *timer = new QTimer(this);
+  timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
+  timer->start(1000);
+
+
 #if 0
   connect( ui.msgWidget, SIGNAL( itemClicked ( QTreeWidgetItem *, int) ), this, SLOT( updateMessages ( QTreeWidgetItem *, int) ) );
   connect( ui.listWidget, SIGNAL( currentRowChanged ( int) ), this, SLOT( changeBox ( int) ) );
@@ -70,7 +89,6 @@ ForumsDialog::ForumsDialog(QWidget *parent)
   //connect(ui.actionPrint, SIGNAL(triggered()), this, SLOT(print()));
   //connect(ui.actionPrintPreview, SIGNAL(triggered()), this, SLOT(printpreview()));
 
-  connect(ui.expandFilesButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
   connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getallrecommended()));
   
 
@@ -155,10 +173,10 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
       QAction *replyAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Reply" ), this );
-      connect( replyAct , SIGNAL( triggered() ), this, SLOT( removemessage() ) );
+      connect( replyAct , SIGNAL( triggered() ), this, SLOT( createmessage() ) );
       
-      QAction *viewAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr( "View Post" ), this );
-      connect( viewAct , SIGNAL( triggered() ), this, SLOT( removemessage() ) );
+      QAction *viewAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr( "View Whole Thread" ), this );
+      connect( viewAct , SIGNAL( triggered() ), this, SLOT( showthread() ) );
 
       contextMnu.clear();
       contextMnu.addAction( replyAct);
@@ -192,7 +210,6 @@ void ForumsDialog::replytomessage()
 
 void ForumsDialog::togglefileview()
 {
-#if 0
 	/* if msg header visible -> hide by changing splitter 
 	 * three widgets...
 	 */
@@ -202,7 +219,6 @@ void ForumsDialog::togglefileview()
 
 	int listSize = 0;
 	int msgSize = 0;
-	int recommendSize = 0;
 	int i = 0;
 
 	for(it = sizeList.begin(); it != sizeList.end(); it++, i++)
@@ -215,16 +231,12 @@ void ForumsDialog::togglefileview()
 		{
 			msgSize = (*it);
 		}
-		else if (i == 2)
-		{
-			recommendSize = (*it);
-		}
 	}
 
-	int totalSize = listSize + msgSize + recommendSize;
+	int totalSize = listSize + msgSize;
 
 	bool toShrink = true;
-	if (recommendSize < (int) totalSize / 10)
+	if (msgSize < (int) totalSize / 10)
 	{
 		toShrink = false;
 	}
@@ -232,22 +244,40 @@ void ForumsDialog::togglefileview()
 	QList<int> newSizeList;
 	if (toShrink)
 	{
-		newSizeList.push_back(listSize + recommendSize / 3);
-		newSizeList.push_back(msgSize + recommendSize * 2 / 3);
+		newSizeList.push_back(totalSize);
 		newSizeList.push_back(0);
 	}
 	else
 	{
 		/* no change */
-		int nlistSize = (totalSize * 2 / 3) * listSize / (listSize + msgSize);
-		int nMsgSize = (totalSize * 2 / 3) - listSize;
+		int nlistSize = (totalSize / 2);
+		int nMsgSize = (totalSize / 2);
 		newSizeList.push_back(nlistSize);
 		newSizeList.push_back(nMsgSize);
-		newSizeList.push_back(totalSize * 1 / 3);
 	}
 
 	ui.msgSplitter->setSizes(newSizeList);
-#endif
+}
+
+void ForumsDialog::checkUpdate()
+{
+	std::list<std::string> forumIds;
+	std::list<std::string>::iterator it;
+	if (!rsForums)
+		return;
+
+	if (rsForums->forumsChanged(forumIds))
+	{
+		/* update Forums List */
+		insertForums();
+
+		it = std::find(forumIds.begin(), forumIds.end(), mCurrForumId);
+		if (it != forumIds.end())
+		{
+			/* update threads as well */
+			insertThreads();
+		}
+	}
 }
 
 
@@ -272,6 +302,9 @@ void ForumsDialog::insertForums()
 	}
 
 	rsForums->getForumList(forumList);
+
+	mCurrForumId = "";
+	mCurrPostId = "";
 
         QList<QTreeWidgetItem *> AdminList;
         QList<QTreeWidgetItem *> SubList;
@@ -456,156 +489,178 @@ void ForumsDialog::insertForums()
 	return;
 }
 
+void ForumsDialog::changedForum( QTreeWidgetItem *curr, QTreeWidgetItem *prev )
+{
+	insertThreads();
+}
+
+void ForumsDialog::changedThread( QTreeWidgetItem *curr, QTreeWidgetItem *prev )
+{
+	/* just grab the ids of the current item */
+	if ((!curr) || (!curr->isSelected()))
+	{
+		mCurrPostId = "";
+	}
+	else
+	{
+		mCurrPostId = (curr->text(5)).toStdString();
+		insertPost();
+	}
+}
+
+void ForumsDialog::changedThread2()
+{
+	QTreeWidgetItem *curr = ui.threadTreeWidget->currentItem();
+
+	/* just grab the ids of the current item */
+	if ((!curr) || (!curr->isSelected()))
+	{
+		mCurrPostId = "";
+	}
+	else
+	{
+		mCurrPostId = (curr->text(5)).toStdString();
+		insertPost();
+	}
+}
+
+
 void ForumsDialog::insertThreads()
 {
-#if 0
+	/* get the current Forum */
+	std::cerr << "ForumsDialog::insertThreads()" << std::endl;
 
-virtual bool getForumList(std::list<ForumInfo> &forumList) = 0;
-virtual bool getForumThreadList(std::string fId, std::list<ThreadInfoSummary> &msgs) = 0;
-virtual bool getForumThreadMsgList(std::string fId, std::string tId, std::list<ThreadInfoSummary> &msgs) = 0;
-virtual bool getForumMessage(std::string fId, std::string mId, ForumMsgInfo &msg) = 0;
 
-	std::list<MsgInfoSummary> msgList;
-	std::list<MsgInfoSummary>::const_iterator it;
-
-	rsMsgs -> getMessageSummaries(msgList);
-
-	/* get a link to the table */
-        QTreeWidget *msgWidget = ui.msgWidget;
-
-	/* get the MsgId of the current one ... */
-
-	std::string cid;
-	std::string mid;
-
-	bool oldSelected = getCurrentMsg(cid, mid);
-	QTreeWidgetItem *newSelected = NULL;
-
-	/* remove old items ??? */
-
-	int listrow = ui.listWidget -> currentRow();
-
-	//std::cerr << "ForumsDialog::insertMessages()" << std::endl;
-	//std::cerr << "Current Row: " << listrow << std::endl;
-
-	/* check the mode we are in */
-	unsigned int msgbox = 0;
-	switch(listrow)
+	QTreeWidgetItem *forumItem = ui.forumTreeWidget->currentItem();
+	if ((!forumItem) || (forumItem->parent() == NULL))
 	{
-		case 3:
-			msgbox = RS_MSG_SENTBOX;
-			break;
-		case 2:
-			msgbox = RS_MSG_DRAFTBOX;
-			break;
-		case 1:
-			msgbox = RS_MSG_OUTBOX;
-			break;
-		case 0:
-		default:
-			msgbox = RS_MSG_INBOX;
-			break;
+		/* not an actual forum - clear */
+		ui.threadTreeWidget->clear();
+		std::cerr << "ForumsDialog::insertThreads() Current Thread Invalid" << std::endl;
+
+		return;
 	}
 
-        QList<QTreeWidgetItem *> items;
-	for(it = msgList.begin(); it != msgList.end(); it++)
-	{
-		/* check the message flags, to decide which
-		 * group it should go in...
-		 *
-		 * InBox 
-		 * OutBox 
-		 * Drafts 
-		 * Sent 
-		 *
-		 * FLAGS = OUTGOING.
-		 * 	-> Outbox/Drafts/Sent
-		 * 	  + SENT -> Sent
-		 *	  + IN_PROGRESS -> Draft.
-		 *	  + nuffing -> Outbox.
-		 * FLAGS = INCOMING = (!OUTGOING)
-		 * 	-> + NEW -> Bold.
-		 *
-		 */
+	/* store forumId */
+	mCurrForumId = (forumItem->text(4)).toStdString();
+	ui.forumName->setText(forumItem->text(0));
+	mCurrPostId = "";
+	std::string fId = mCurrForumId;
 
-		if ((it -> msgflags & RS_MSG_BOXMASK) != msgbox)
+	bool flatView = false;
+	if (ui.viewBox->currentIndex() == 1)
+	{
+		flatView = true;
+	}
+
+	std::list<ThreadInfoSummary> threads;
+	std::list<ThreadInfoSummary>::iterator tit;
+	rsForums->getForumThreadList(mCurrForumId, threads);
+
+        QList<QTreeWidgetItem *> items;
+	for(tit = threads.begin(); tit != threads.end(); tit++)
+	{
+		std::cerr << "ForumsDialog::insertThreads() Adding TopLevel Thread: mId: ";
+		std::cerr << tit->msgId << std::endl;
+
+		/* add the top threads */
+		ForumMsgInfo msg;
+		if (!rsForums->getForumMessage(fId, tit->threadId, msg))
 		{
-			//std::cerr << "Msg from other box: " << it->msgflags;
-			//std::cerr << std::endl;
+			std::cerr << "ForumsDialog::insertThreads() Failed to Get TopLevel Msg";
+			std::cerr << std::endl;
 			continue;
 		}
-		/* make a widget per friend */
-           	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
-		/* So Text should be:
-		 * (1) Msg / Broadcast
-		 * (1b) Person / Channel Name
-		 * (2) Rank
-		 * (3) Date
-		 * (4) Title
-		 * (5) Msg
-		 * (6) File Count
-		 * (7) File Total
+		/* add Msg */
+		/* setup 
+		 *
 		 */
 
-		// Date First.... (for sorting)
+		QTreeWidgetItem *item = new QTreeWidgetItem();
+
 		{
 			QDateTime qtime;
-			qtime.setTime_t(it->ts);
+			qtime.setTime_t(tit->ts);
 			QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
-			item -> setText(3, timestamp);
+			item -> setText(0, timestamp);
 		}
+		item->setText(1, QString::fromStdWString(tit->title));
+		item->setText(2, "author");
+		item->setText(3, "signed");
+		item->setText(4, QString::fromStdString(tit->parentId));
+		item->setText(5, QString::fromStdString(tit->msgId));
 
-		//  From ....
+		std::list<QTreeWidgetItem *> threadlist;
+		threadlist.push_back(item);
+
+		while (threadlist.size() > 0)
 		{
-			item -> setText(1, QString::fromStdString(rsPeers->getPeerName(it->srcId)));
-		}
+			/* get children */
+			QTreeWidgetItem *parent = threadlist.front();
+			threadlist.pop_front();
+			std::string pId = (parent->text(5)).toStdString();
 
-		// Subject
-		item -> setText(2, QString::fromStdWString(it->title));
-		item -> setIcon(2, (QIcon(":/images/message-mail-read.png")));
+			std::list<ThreadInfoSummary> msgs;
+			std::list<ThreadInfoSummary>::iterator mit;
 
-		// No of Files.
-		{
-			std::ostringstream out;
-			out << it -> count;
-			item -> setText(0, QString::fromStdString(out.str()));
-		}
+			std::cerr << "ForumsDialog::insertThreads() Getting Children of : " << pId;
+			std::cerr << std::endl;
 
-		item -> setText(4, QString::fromStdString(it->srcId));
-		item -> setText(5, QString::fromStdString(it->msgId));
-		if ((oldSelected) && (mid == it->msgId))
-		{
-			newSelected = item;
-		}
-
-		if (it -> msgflags & RS_MSG_NEW)
-		{
-			for(int i = 0; i < 10; i++)
+			if (rsForums->getForumThreadMsgList(fId, pId, msgs))
 			{
-				QFont qf = item->font(i);
-				qf.setBold(true);
-				item->setFont(i, qf);
-			    item -> setIcon(2, (QIcon(":/images/message-mail.png")));
+				std::cerr << "ForumsDialog::insertThreads() #Children " << msgs.size();
+				std::cerr << std::endl;
 
-				//std::cerr << "Setting Item BOLD!" << std::endl;
+				/* iterate through child */
+				for(mit = msgs.begin(); mit != msgs.end(); mit++)
+				{
+					std::cerr << "ForumsDialog::insertThreads() adding " << mit->msgId;
+					std::cerr << std::endl;
+
+					QTreeWidgetItem *child = NULL;
+					if (flatView)
+					{
+						child = new QTreeWidgetItem(NULL);
+					}
+					else
+					{
+						child = new QTreeWidgetItem(parent);
+					}
+		
+					{
+						QDateTime qtime;
+						qtime.setTime_t(mit->ts);
+						QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
+						child -> setText(0, timestamp);
+					}
+					child->setText(1, QString::fromStdWString(mit->title));
+					child->setText(2, "author");
+					child->setText(3, "signed");
+					child->setText(4, QString::fromStdString(mit->parentId));
+					child->setText(5, QString::fromStdString(mit->msgId));
+
+					/* setup child */
+					threadlist.push_back(child);
+
+					if (flatView)
+					{
+						items.append(child);
+					}
+				}
 			}
 		}
 
-		/* add to the list */
+		/* add to list */
 		items.append(item);
 	}
 
-	/* add the items in! */
-	msgWidget->clear();
-	msgWidget->insertTopLevelItems(0, items);
+	/* add all messages in! */
+	ui.threadTreeWidget->clear();
+	ui.threadTreeWidget->insertTopLevelItems(0, items);
 
-	if (newSelected)
-	{
-		msgWidget->setCurrentItem(newSelected);
-	}
-#endif
 }
+
 
 void ForumsDialog::updateMessages( QTreeWidgetItem * item, int column )
 {
@@ -618,169 +673,29 @@ void ForumsDialog::updateMessages( QTreeWidgetItem * item, int column )
 
 void ForumsDialog::insertPost()
 {
-#if 0
-	/* Locate the current Message */
-	QTreeWidget *msglist = ui.msgWidget;
-
-	std::cerr << "ForumsDialog::insertMsgTxtAndFiles()" << std::endl;
-
-
-	/* get its Ids */
-	std::string cid;
-	std::string mid;
-
-	QTreeWidgetItem *qtwi = msglist -> currentItem();
-	if (!qtwi)
+	if ((mCurrForumId == "") || (mCurrPostId == ""))
 	{
-		/* blank it */
-		ui.dateText-> setText("");
-		ui.toText->setText("");
-		ui.fromText->setText("");
-		ui.filesText->setText("");
+		/* 
+		 */
 
-		ui.subjectText->setText("");
-		//ui.msgText->setText("");
-		ui.msgList->clear();
-
-		return;
-	}
-	else
-	{
-		cid = qtwi -> text(4).toStdString();
-		mid = qtwi -> text(5).toStdString(); 
-	}
-
-	std::cerr << "ForumsDialog::insertMsgTxtAndFiles() mid:" << mid << std::endl;
-
-	/* Save the Data.... for later */
-
-	mCurrCertId = cid;
-	mCurrMsgId  = mid;
-
-	MessageInfo msgInfo;
-	if (!rsMsgs -> getMessage(mid, msgInfo))
-	{
-		std::cerr << "ForumsDialog::insertMsgTxtAndFiles() Couldn't find Msg" << std::endl;
+		ui.postText->setText("");
 		return;
 	}
 
-        const std::list<FileInfo> &recList = msgInfo.files;
-	std::list<FileInfo>::const_iterator it;
-
-	/* get a link to the table */
-	QTreeWidget *tree = ui.msgList;
-
-	/* get the MessageInfo */
-
-        tree->clear(); 
-        tree->setColumnCount(5); 
-
-        QList<QTreeWidgetItem *> items;
-	for(it = recList.begin(); it != recList.end(); it++)
+	/* get the Post */
+	ForumMsgInfo msg;
+	if (!rsForums->getForumMessage(mCurrForumId, mCurrPostId, msg))
 	{
-		/* make a widget per person */
-           	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
-		/* (0) Filename */
-		item -> setText(0, QString::fromStdString(it->fname));
-		//std::cerr << "Msg FileItem(" << it->fname.length() << ") :" << it->fname << std::endl;
-			
-		/* (1) Size */
-		{
-			std::ostringstream out;
-			out << it->size;
-			item -> setText(1, QString::fromStdString(out.str()));
-		}
-		/* (2) Rank */
-		{
-			std::ostringstream out;
-			out << it->rank;
-			item -> setText(2, QString::fromStdString(out.str()));
-		}
-			
-		item -> setText(3, QString::fromStdString(it->hash));
-			
-		/* add to the list */
-		items.append(item);
+		ui.postText->setText("");
+		return;
 	}
 
-	/* add the items in! */
-	tree->insertTopLevelItems(0, items);
-
-	/* iterate through the sources */
-	std::list<std::string>::const_iterator pit;
-
-	QString msgTxt;
-	for(pit = msgInfo.msgto.begin(); pit != msgInfo.msgto.end(); pit++)
-	{
-		msgTxt += QString::fromStdString(*pit);
-		msgTxt += " <";
-		msgTxt += QString::fromStdString(rsPeers->getPeerName(*pit));
-		msgTxt += ">, ";
-	}
-
-	if (msgInfo.msgcc.size() > 0)
-		msgTxt += "\nCc: ";
-	for(pit = msgInfo.msgcc.begin(); pit != msgInfo.msgcc.end(); pit++)
-	{
-		msgTxt += QString::fromStdString(*pit);
-		msgTxt += " <";
-		msgTxt += QString::fromStdString(rsPeers->getPeerName(*pit));
-		msgTxt += ">, ";
-	}
-
-	if (msgInfo.msgbcc.size() > 0)
-		msgTxt += "\nBcc: ";
-	for(pit = msgInfo.msgbcc.begin(); pit != msgInfo.msgbcc.end(); pit++)
-	{
-		msgTxt += QString::fromStdString(*pit);
-		msgTxt += " <";
-		msgTxt += QString::fromStdString(rsPeers->getPeerName(*pit));
-		msgTxt += ">, ";
-	}
-
-	{
-		QDateTime qtime;
-		qtime.setTime_t(msgInfo.ts);
-		QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
-		ui.dateText-> setText(timestamp);
-	}
-	ui.toText->setText(msgTxt);
-	ui.fromText->setText(QString::fromStdString(rsPeers->getPeerName(msgInfo.srcId)));
-
-	ui.subjectText->setText(QString::fromStdWString(msgInfo.title));
-	ui.msgText->setText(QString::fromStdWString(msgInfo.msg));
-
-	{
-		std::ostringstream out;
-		out << "(" << msgInfo.count << " Files)";
-		ui.filesText->setText(QString::fromStdString(out.str()));
-	}
-
-	std::cerr << "ForumsDialog::insertMsgTxtAndFiles() Msg Displayed OK!" << std::endl;
-
-	/* finally mark message as read! */
-	rsMsgs -> MessageRead(mid);
-#endif
+	ui.postText->setHtml(QString::fromStdWString(msg.msg));
 }
 
 
 bool ForumsDialog::getCurrentMsg(std::string &cid, std::string &mid)
 {
-#if 0
-	/* Locate the current Message */
-	QTreeWidget *msglist = ui.msgWidget;
-
-	//std::cerr << "ForumsDialog::getCurrentMsg()" << std::endl;
-
-	/* get its Ids */
-	QTreeWidgetItem *qtwi = msglist -> currentItem();
-	if (qtwi)
-	{
-		cid = qtwi -> text(4).toStdString();
-		mid = qtwi -> text(5).toStdString();
-		return true;
-	}
-#endif
 	return false;
 }
 
@@ -828,7 +743,36 @@ void ForumsDialog::markMsgAsRead()
 
 void ForumsDialog::newforum()
 {
-	insertForums();
+	CreateForum *cf = new CreateForum(NULL);
+	cf->show();
+
+	//insertForums();
 }
+
+
+void ForumsDialog::createmessage()
+{
+	if (mCurrForumId == "")
+	{
+		return;
+	}
+
+	CreateForumMsg *cfm = new CreateForumMsg(mCurrForumId, mCurrPostId);
+	cfm->show();
+}
+
+
+void ForumsDialog::showthread()
+{
+	if (mCurrForumId == "")
+	{
+		return;
+	}
+
+	CreateForumMsg *cfm = new CreateForumMsg(mCurrForumId, "");
+	cfm->show();
+}
+
+
 
 

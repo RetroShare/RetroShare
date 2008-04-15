@@ -40,6 +40,7 @@ class RsRankComment
 
 	std::string id;
 	std::wstring comment;
+	int32_t	     score;
 	time_t	     timestamp;
 };
 	
@@ -85,8 +86,10 @@ virtual bool	getRankings(uint32_t first, uint32_t count, std::list<std::string> 
 virtual bool	getRankDetails(std::string rid, RsRankDetails &details) = 0;
 
 	/* Add New Comment / Msg */
-virtual std::string newRankMsg(std::wstring link, std::wstring title, std::wstring comment) = 0;
-virtual bool updateComment(std::string rid, std::wstring comment) = 0;
+virtual std::string newRankMsg(std::wstring link, std::wstring title, std::wstring comment, int32_t score) = 0;
+virtual bool updateComment(std::string rid, std::wstring comment, int32_t score) = 0;
+
+virtual std::string anonRankMsg(std::wstring link, std::wstring title) = 0;
 
 };
 

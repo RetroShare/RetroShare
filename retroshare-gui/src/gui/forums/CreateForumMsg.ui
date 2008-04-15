@@ -1,25 +1,19 @@
 <ui version="4.0" >
- <class>ForumsDialog</class>
- <widget class="QWidget" name="ForumsDialog" >
+ <class>CreateForumMsg</class>
+ <widget class="QWidget" name="CreateForumMsg" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>485</width>
-    <height>422</height>
+    <width>358</width>
+    <height>435</height>
    </rect>
   </property>
   <property name="sizePolicy" >
-   <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+   <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
-  </property>
-  <property name="minimumSize" >
-   <size>
-    <width>60</width>
-    <height>0</height>
-   </size>
   </property>
   <property name="palette" >
    <palette>
@@ -502,293 +496,148 @@
    </font>
   </property>
   <property name="contextMenuPolicy" >
-   <enum>Qt::DefaultContextMenu</enum>
+   <enum>Qt::NoContextMenu</enum>
+  </property>
+  <property name="windowTitle" >
+   <string>Post Forum Msg</string>
+  </property>
+  <property name="windowIcon" >
+   <iconset>../msgs</iconset>
   </property>
   <layout class="QGridLayout" >
    <item row="0" column="0" >
-    <widget class="QSplitter" name="splitter" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <widget class="QWidget" name="layoutWidget" >
-      <layout class="QVBoxLayout" >
+    <layout class="QVBoxLayout" >
+     <item>
+      <layout class="QHBoxLayout" >
        <item>
-        <widget class="QTreeWidget" name="forumTreeWidget" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <widget class="QLabel" name="label_2" >
+         <property name="text" >
+          <string>Forum</string>
          </property>
-         <property name="contextMenuPolicy" >
-          <enum>Qt::CustomContextMenu</enum>
-         </property>
-         <column>
-          <property name="text" >
-           <string>Forum Name</string>
-          </property>
-         </column>
-         <column>
-          <property name="text" >
-           <string>Popularity</string>
-          </property>
-         </column>
-         <column>
-          <property name="text" >
-           <string>Posts</string>
-          </property>
-         </column>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="newForumButton" >
+        <widget class="QLineEdit" name="forumName" />
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" >
+       <item>
+        <widget class="QLabel" name="label" >
          <property name="text" >
-          <string>New Forum</string>
+          <string>Forum Post Subject</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="forumSubject" />
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" >
+       <item>
+        <widget class="QLabel" name="label_5" >
+         <property name="text" >
+          <string>Forum Post</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="signBox" >
+         <property name="text" >
+          <string>Sign Message</string>
          </property>
         </widget>
        </item>
       </layout>
-     </widget>
-     <widget class="QSplitter" name="msgSplitter" >
-      <property name="orientation" >
-       <enum>Qt::Vertical</enum>
-      </property>
-      <widget class="QWidget" name="" >
-       <layout class="QVBoxLayout" >
-        <item>
-         <layout class="QHBoxLayout" >
-          <item>
-           <widget class="QLabel" name="label_17" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize" >
-             <size>
-              <width>60</width>
-              <height>10</height>
-             </size>
-            </property>
-            <property name="maximumSize" >
-             <size>
-              <width>16777215</width>
-              <height>10</height>
-             </size>
-            </property>
-            <property name="font" >
-             <font>
-              <pointsize>10</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text" >
-             <string>Forum Name</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="forumName" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-              <horstretch>2</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize" >
-             <size>
-              <width>0</width>
-              <height>10</height>
-             </size>
-            </property>
-            <property name="maximumSize" >
-             <size>
-              <width>16777215</width>
-              <height>10</height>
-             </size>
-            </property>
-            <property name="text" >
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="viewBox" >
-            <item>
-             <property name="text" >
-              <string>Threaded View</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>Flat View</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QTreeWidget" name="threadTreeWidget" >
-          <property name="contextMenuPolicy" >
-           <enum>Qt::CustomContextMenu</enum>
-          </property>
-          <property name="sortingEnabled" >
-           <bool>true</bool>
-          </property>
-          <column>
-           <property name="text" >
-            <string>Date</string>
-           </property>
-          </column>
-          <column>
-           <property name="text" >
-            <string>Title</string>
-           </property>
-          </column>
-          <column>
-           <property name="text" >
-            <string>Author</string>
-           </property>
-          </column>
-          <column>
-           <property name="text" >
-            <string>Signed</string>
-           </property>
-          </column>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" >
-          <item>
-           <layout class="QGridLayout" >
-            <property name="leftMargin" >
-             <number>0</number>
-            </property>
-            <property name="topMargin" >
-             <number>0</number>
-            </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
-             <number>0</number>
-            </property>
-            <property name="horizontalSpacing" >
-             <number>6</number>
-            </property>
-            <property name="verticalSpacing" >
-             <number>6</number>
-            </property>
-            <item row="0" column="1" >
-             <widget class="QLabel" name="label_8" >
-              <property name="text" >
-               <string/>
-              </property>
-              <property name="pixmap" >
-               <pixmap resource="images.qrc" >:/images/attachment.png</pixmap>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2" >
-             <widget class="QLabel" name="label_3" >
-              <property name="text" >
-               <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:10pt; font-weight:600;">Forum Post&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="3" >
-             <widget class="QLabel" name="filesText_2" >
-              <property name="font" >
-               <font>
-                <pointsize>10</pointsize>
-                <italic>true</italic>
-               </font>
-              </property>
-              <property name="text" >
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0" >
-             <widget class="QPushButton" name="expandButton" >
-              <property name="text" >
-               <string/>
-              </property>
-              <property name="icon" >
-               <iconset resource="images.qrc" >:/images/add_24x24.png</iconset>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>351</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton_2" >
-            <property name="text" >
-             <string>Prev</string>
-            </property>
-            <property name="icon" >
-             <iconset resource="images.qrc" >:/images/up.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton" >
-            <property name="text" >
-             <string>Next</string>
-            </property>
-            <property name="icon" >
-             <iconset resource="images.qrc" >:/images/start.png</iconset>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QTextBrowser" name="postText" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-         <horstretch>0</horstretch>
-         <verstretch>10</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </widget>
-    </widget>
+     </item>
+     <item>
+      <widget class="QTextEdit" name="forumMessage" />
+     </item>
+     <item>
+      <layout class="QHBoxLayout" >
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="cancelButton" >
+         <property name="text" >
+          <string>Cancel Msg</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="postButton" >
+         <property name="text" >
+          <string>Post Forum Msg</string>
+         </property>
+         <property name="default" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+    </layout>
    </item>
   </layout>
-  <action name="actionPrint" >
-   <property name="text" >
-    <string>Print</string>
-   </property>
-  </action>
-  <action name="actionPrintPreview" >
-   <property name="text" >
-    <string>PrintPreview</string>
-   </property>
-  </action>
  </widget>
+ <tabstops>
+  <tabstop>postButton</tabstop>
+ </tabstops>
  <resources>
-  <include location="images.qrc" />
+  <include location="../images.qrc" />
  </resources>
  <connections/>
 </ui>

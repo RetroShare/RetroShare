@@ -44,6 +44,12 @@ private slots:
 
   void newforum();
 
+void checkUpdate();
+
+void changedForum( QTreeWidgetItem *curr, QTreeWidgetItem *prev );
+void changedThread( QTreeWidgetItem *curr, QTreeWidgetItem *prev );
+void changedThread2();
+
 void changeBox( int newrow );
 void updateMessages ( QTreeWidgetItem * item, int column );
 
@@ -58,6 +64,9 @@ void updateMessages ( QTreeWidgetItem * item, int column );
   
   /* handle splitter */
   void togglefileview();
+
+  void showthread();
+  void createmessage();
 
 private:
 

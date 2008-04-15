@@ -80,6 +80,7 @@ LinksDialog::LinksDialog(QWidget *parent)
   connect( ui.linkTreeWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int ) ), 
   		this, SLOT( openLink ( QTreeWidgetItem *, int ) ) );
 
+  connect( ui.anonBox, SIGNAL( stateChanged ( int ) ), this, SLOT( checkAnon ( void  ) ) );
 
 
 
@@ -237,6 +238,7 @@ void LinksDialog::changedSortFrom( int index )
 	updateLinks();
 }
 
+#define ENTRIES_PER_BLOCK 100
 
 void LinksDialog::changedSortTop( int index )
 {
@@ -253,19 +255,19 @@ void LinksDialog::changedSortTop( int index )
 		case 0:
 			mStart = 0;
 			break;
+		case 1:
+			mStart = 1 * ENTRIES_PER_BLOCK;
+			break;
 		case 2:
-			mStart = 100;
+			mStart = 2 * ENTRIES_PER_BLOCK;
 			break;
 		case 3:
-			mStart = 200;
+			mStart = 3 * ENTRIES_PER_BLOCK;
 			break;
 		case 4:
-			mStart = 300;
+			mStart = 4 * ENTRIES_PER_BLOCK;
 			break;
 		case 5:
-			mStart = 400;
-			break;
-		case 6:
 			mStart = -1;
 			break;
 	}
@@ -281,11 +283,13 @@ void  LinksDialog::updateLinks()
 	std::list<std::string>::iterator rit;
 	std::list<RsRankComment>::iterator cit;
 
+	std::cerr << "LinksDialog::updateLinks()" << std::endl;
+
 	/* Work out the number/entries to show */
 	uint32_t count = rsRanks->getRankingsCount();
 	uint32_t start;
 
-	uint32_t entries = 100;
+	uint32_t entries = ENTRIES_PER_BLOCK;
 	if (count < entries)
 	{
 		entries = count;
@@ -367,15 +371,44 @@ void  LinksDialog::updateLinks()
 			/* create items */
            		QTreeWidgetItem *child = new QTreeWidgetItem((QTreeWidget*)0);
 
+			QString commentText;
+			QString peerScore;
+			if (cit->score > 1)
+			{
+				peerScore = "[+2] ";
+				//peerScore = "[+2 Great Link] ";
+			}
+			else if (cit->score == 1)
+			{
+				peerScore = "[+1] ";
+				//peerScore = "[+1 Good] ";
+			}
+			else if (cit->score == 0)
+			{
+				peerScore = "[+0] ";
+				//peerScore = "[+0 Okay] ";
+			}
+			else if (cit->score == -1)
+			{
+				peerScore = "[-1] ";
+				//peerScore = "[-1 Not Worth It] ";
+			}
+			else //if (cit->score < -1)
+			{
+				peerScore = "[-2 BAD] ";
+				//peerScore = "[-2 BAD Link] ";
+			}
+
 			/* (0) Comment */		
 			if (cit->comment != L"")
 			{
-				child -> setText(0, QString::fromStdWString(cit->comment));
+				commentText = peerScore + QString::fromStdWString(cit->comment);
 			}
 			else
 			{
-				child -> setText(0, "No Comment");
+				commentText = peerScore + "No Comment";
 			}
+			child -> setText(0, commentText);
 
 			/* (2) Peer / Date */
 		        {
@@ -388,9 +421,10 @@ void  LinksDialog::updateLinks()
 				{
 					peerLabel = "<";
 					peerLabel += QString::fromStdString(cit->id);
-					peerLabel = ">";
+					peerLabel += ">";
 				}
-				peerLabel += "  ";
+				peerLabel += " ";
+
 				peerLabel += timestamp;
 				child -> setText(2, peerLabel);
 
@@ -493,6 +527,27 @@ void  LinksDialog::changedItem(QTreeWidgetItem *curr, QTreeWidgetItem *prev)
 	}
 }
 
+void LinksDialog::checkAnon()
+{
+	changedItem(ui.linkTreeWidget->currentItem(), NULL);
+}
+
+
+int IndexToScore(int index)
+{
+	if ((index == -1) || (index > 4))
+		return 0;
+	int score = 2 - index;
+	return score;
+}
+
+int ScoreToIndex(int score)
+{
+	if ((score < -2) || (score > 2))
+		return 2;
+	int index = 2 - score;
+	return index;
+}
 
 
 /* get the list of Links from the RsRanks.  */
@@ -500,26 +555,43 @@ void  LinksDialog::updateComments(std::string rid, std::string pid)
 {
 	std::list<RsRankComment>::iterator cit;
 
-	if (rid == "")
+
+	if (ui.anonBox->isChecked())
+	{
+		/* empty everything */
+		ui.titleLineEdit->setText("");
+		ui.linkLineEdit->setText("");
+		ui.linkTextEdit->setText("");
+		ui.scoreBox->setCurrentIndex(ScoreToIndex(0));
+		mLinkId = "";
+
+		/* disable comment + score */
+		ui.scoreBox->setEnabled(false);
+		ui.linkTextEdit->setEnabled(false);
+
+		/* done! */
+		return;
+	}
+	else
+	{
+		/* enable comment + score */
+		ui.scoreBox->setEnabled(true);
+		ui.linkTextEdit->setEnabled(true);
+	}
+
+
+	RsRankDetails detail;
+	if ((rid == "") || (!rsRanks->getRankDetails(rid, detail)))
 	{
 		/* clear it up */
 		ui.titleLineEdit->setText("");
 		ui.linkLineEdit->setText("");
 		ui.linkTextEdit->setText("");
+		ui.scoreBox->setCurrentIndex(ScoreToIndex(0));
 		mLinkId = rid;
 		return;
 	}
 
-	RsRankDetails detail;
-	if (!rsRanks->getRankDetails(rid, detail))
-	{
-		/* clear it up */
-		ui.titleLineEdit->setText("");
-		ui.linkLineEdit->setText("");
-		ui.linkTextEdit->setText("");
-		mLinkId = "";
-		return;
-	}
 
 	/* set Link details */
 	ui.titleLineEdit->setText(QString::fromStdWString(detail.title));
@@ -547,74 +619,16 @@ void  LinksDialog::updateComments(std::string rid, std::string pid)
 	{
 		QString comment = QString::fromStdWString(cit->comment);
 		ui.linkTextEdit->setText(comment);
+		ui.scoreBox->setCurrentIndex(ScoreToIndex(cit->score));
 	}
 	else
 	{
 		ui.linkTextEdit->setText("");
+		ui.scoreBox->setCurrentIndex(ScoreToIndex(0));
 
 	}
 
 	return;
-		
-
-#if 0
-
-	for(cit = detail.comments.begin(); cit != detail.comments.end(); cit++)
-	{
-		if (cit->id == pid)
-			break;
-	}
-
-	if (cit != detail.comments.end())
-	{
-		/* one comment selected */
-		QString comment;
-
-		QDateTime qtime;
-		qtime.setTime_t(cit->timestamp);
-		QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
-
-		comment += "Submitter: ";
-		comment += QString::fromStdString(rsPeers->getPeerName(cit->id));
-		comment += "  Date: ";
-		comment += timestamp;
-		comment += "\n";
-		comment += QString::fromStdWString(cit->comment);
-
-		ui.linkTextEdit->setText(comment);
-		return;
-	}
-
-
-	QString comment;
-	for(cit = detail.comments.begin(); cit != detail.comments.end(); cit++)
-	{
-		/* add all comments */
-		QDateTime qtime;
-		qtime.setTime_t(cit->timestamp);
-		QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
-
-		comment += "Submitter: ";
-		comment += QString::fromStdString(rsPeers->getPeerName(cit->id));
-		comment += "  Date: ";
-		comment += timestamp;
-		comment += "\n";
-		comment += QString::fromStdWString(cit->comment);
-		comment += "\n====================================================";
-		comment += "====================================================\n";
-	}
-
-	ui.linkTextEdit->setText(comment);
-
-	/* .... 
-	 * */
-	/**
-	mLinkId = rid;
-	mPeerId = pid;
-	mCommentFilled = true;
-	**/
-#endif
-
 }
 
 void LinksDialog::addLinkComment( void ) 
@@ -623,6 +637,7 @@ void LinksDialog::addLinkComment( void )
 	QString title = ui.titleLineEdit->text();
 	QString link = ui.linkLineEdit->text();
 	QString comment = ui.linkTextEdit->toPlainText();
+	int32_t   score = IndexToScore(ui.scoreBox->currentIndex());
 
 	if (mLinkId == "") 
 	{
@@ -635,10 +650,19 @@ void LinksDialog::addLinkComment( void )
 			/* can't do anything */
 			return;
 		}
-		rsRanks->newRankMsg(
-			link.toStdWString(),
-			title.toStdWString(),
-			comment.toStdWString());
+
+		/* add it either way */
+		if (ui.anonBox->isChecked())
+		{
+			rsRanks->anonRankMsg(link.toStdWString(), title.toStdWString());
+		}
+		else
+		{
+			rsRanks->newRankMsg(
+				link.toStdWString(),
+				title.toStdWString(),
+				comment.toStdWString(), score);
+		}
 	
 		updateLinks();
 		return;
@@ -669,7 +693,8 @@ void LinksDialog::addLinkComment( void )
 		}
 
 		rsRanks->updateComment(mLinkId, 
-			comment.toStdWString());
+			comment.toStdWString(), 
+			score);
 	}
 	else
 	{
@@ -689,7 +714,8 @@ void LinksDialog::addLinkComment( void )
 			rsRanks->newRankMsg(
 				link.toStdWString(),
 				title.toStdWString(),
-				comment.toStdWString());
+				comment.toStdWString(), 
+				score);
 		}
 	}
 	updateLinks();
