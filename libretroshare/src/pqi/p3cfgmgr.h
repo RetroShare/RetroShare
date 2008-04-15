@@ -64,6 +64,8 @@ const uint32_t CONFIG_TYPE_FSERVER 	= 0x0003;
 const uint32_t CONFIG_TYPE_MSGS 	= 0x0004;
 const uint32_t CONFIG_TYPE_CACHE 	= 0x0005;
 
+const uint32_t CONFIG_TYPE_RANK_LINK 	= 0x0011;
+
 class p3ConfigMgr;
 class p3AuthMgr;
 

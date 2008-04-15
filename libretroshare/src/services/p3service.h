@@ -48,6 +48,9 @@
  *    For both Cached and Messages.
  */
 
+std::string generateRandomServiceId();
+
+
 class p3Service: public pqiService
 {
 	protected:

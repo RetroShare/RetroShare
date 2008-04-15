@@ -25,6 +25,8 @@
 
 #include "pqi/pqi.h"
 #include "services/p3service.h"
+#include <sstream>
+#include <iomanip>
 
 #define SERV_DEBUG 1
 
@@ -201,4 +203,31 @@ RsRawItem *p3Service::send()
 }
 
 
+std::string generateRandomServiceId()
+{
+	std::ostringstream out;
+	out << std::hex;
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS
+	/* 4 bytes per random number: 4 x 4 = 16 bytes */
+	for(int i = 0; i < 4; i++)
+	{
+		out << std::setw(8) << std::setfill('0');
+		uint32_t rint = random();
+		out << rint;
+	}
+#else
+	srand(time(NULL));
+	/* 2 bytes per random number: 8 x 2 = 16 bytes */
+	for(int i = 0; i < 8; i++)
+	{
+		out << std::setw(4) << std::setfill('0');
+		uint16_t rint = rand(); /* only gives 16 bits */
+		out << rint;
+	}
+#endif
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+	return out.str();
+}
+	
 

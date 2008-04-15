@@ -30,6 +30,7 @@
 #include "pqi/pqiservice.h"
 #include "pqi/pqistreamer.h"
 #include "pqi/p3connmgr.h"
+#include "pqi/p3cfgmgr.h"
 
 #include "serialiser/rsserial.h"
 
@@ -61,7 +62,7 @@ class RankGroup
 };
 
 
-class p3Ranking: public CacheSource, public CacheStore
+class p3Ranking: public CacheSource, public CacheStore, public p3Config
 {
 	public:
 
@@ -100,8 +101,9 @@ virtual bool    getRankings(uint32_t first, uint32_t count, std::list<std::strin
 virtual bool    getRankDetails(std::string rid, RsRankDetails &details);
 
         /* Add New Comment / Msg */
-virtual std::string newRankMsg(std::wstring link, std::wstring title, std::wstring comment);
-virtual bool updateComment(std::string rid, std::wstring comment);
+virtual std::string newRankMsg(std::wstring link, std::wstring title, std::wstring comment, int32_t score);
+virtual bool updateComment(std::string rid, std::wstring comment, int32_t score);
+virtual std::string anonRankMsg(std::wstring link, std::wstring title);
 
 
 void	tick();
@@ -115,6 +117,16 @@ void	locked_reSortGroup(RankGroup &grp);
 
 void	sortAllMsgs();
 pqistreamer *createStreamer(std::string file, std::string src, bool reading);
+
+
+	/****************** p3Config STUFF *******************/
+        protected:
+bool    addAnonToList(RsRankLinkMsg *msg);
+
+virtual RsSerialiser *setupSerialiser();
+virtual std::list<RsItem *> saveList(bool &cleanup);
+virtual bool loadList(std::list<RsItem *> load);
+virtual void    saveDone();
 
 	private:	
 
@@ -143,6 +155,12 @@ void	createDummyData();
 	uint32_t mViewPeriod;
 	uint32_t mSortType;
 
+	/* Anonymous Link List */
+	std::list<RsRankLinkMsg *> mAnon;
+
 };
 
 #endif 
+
+
+

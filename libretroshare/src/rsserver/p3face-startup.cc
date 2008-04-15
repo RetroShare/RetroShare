@@ -74,8 +74,6 @@
 #define RS_RELEASE 1  
 ****/
 
-#define RS_RELEASE 1  
-
 
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
@@ -590,6 +588,9 @@ int RsServer::StartupRetroShare(RsInit *config)
 	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
 	mConfigMgr->addConfiguration("cache.cfg", mCacheStrapper);
+#ifndef RS_RELEASE
+	mConfigMgr->addConfiguration("ranklink.cfg", mRanking);
+#endif
 
 	/**************************************************************************/
 

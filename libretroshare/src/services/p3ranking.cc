@@ -52,6 +52,7 @@ p3Ranking::p3Ranking(p3ConnectMgr *connMgr,
 		uint32_t storePeriod)
 	:CacheSource(type, true, cs, sourcedir), 
 	CacheStore(type, true, cs, cft, storedir), 
+	p3Config(CONFIG_TYPE_RANK_LINK),
 	mConnMgr(connMgr), 
         mRepublish(false), mRepublishFriends(false), mRepublishFriendTS(0),
 	mStorePeriod(storePeriod), mUpdated(true)
@@ -300,25 +301,68 @@ void p3Ranking::publishMsgs(bool own)
 		}
 		else
 		{
-		  /* iterate through all comments */
-		  for(cit = it->second.comments.begin(); 
-		  	cit != it->second.comments.end(); cit++)
+		  /* if we have pushed it out already - don't bother */
+		  if (it->second.ownTag)
 		  {
-			RsItem *item = cit->second;
-			/* write to serialiser */
-			if (item && (mConnMgr->isFriend(item->PeerId())))
-			{
 #ifdef RANK_DEBUG
-				std::cerr << "p3Ranking::publishMsgs() Storing Friend Item:";
-				std::cerr << std::endl;
-				item->print(std::cerr, 10);
-				std::cerr << std::endl;
+			std::cerr << "p3Ranking::publishMsgs() (Friends) Skipping Own Item";
+			std::cerr << std::endl;
 #endif
-				stream->SendItem(item);
-				stream->tick(); /* Tick to write! */
-
-			}
+		  	continue;
 		  }
+
+		  /* if we have some comments ... then a friend has recommended it 
+		   * serialise a sanitized version.
+		   */
+		  if (it->second.comments.size() > 0)
+		  {
+		  	RsRankLinkMsg *origmsg = (it->second.comments.begin())->second;
+			RsRankLinkMsg *msg = new RsRankLinkMsg();
+
+			/* copy anon data */
+
+/*************************************************************************/
+/****************************** LINK SPECIFIC ****************************/
+/*************************************************************************/
+			msg->clear();
+			msg->PeerId("");
+			msg->pid = ""; /* Anon */
+			msg->rid = origmsg->rid;
+			msg->link = origmsg->link;
+			msg->title = origmsg->title;
+			msg->timestamp = origmsg->timestamp;
+			msg->score = 0;
+
+#ifdef RANK_DEBUG
+			std::cerr << "p3Ranking::publishMsgs() (Friends) Storing (Anon) Item:";
+			std::cerr << std::endl;
+			msg->print(std::cerr, 10);
+			std::cerr << std::endl;
+#endif
+			stream->SendItem(msg);
+			stream->tick(); /* Tick to write! */
+
+			/* cleanup */
+			delete msg;
+		  }
+		}
+	}
+
+
+	/* now we also add our anon messages to the friends list */
+	if (!own)
+	{
+		std::list<RsRankLinkMsg *>::iterator ait;
+		for(ait=mAnon.begin(); ait != mAnon.end(); ait++)
+		{
+#ifdef RANK_DEBUG
+			std::cerr << "p3Ranking::publishMsgs() (Friends) Adding Own Anon Item:";
+			std::cerr << std::endl;
+			(*ait)->print(std::cerr, 10);
+			std::cerr << std::endl;
+#endif
+			stream->SendItem(*ait);
+			stream->tick(); /* Tick to write! */
 		}
 	}
 
@@ -389,12 +433,36 @@ void p3Ranking::addRankMsg(RsRankLinkMsg *msg)
 		grp.rid = rid;
 		grp.ownTag = false;
 
-	/******** LINK SPECIFIC ****/
+/*************************************************************************/
+/****************************** LINK SPECIFIC ****************************/
+/*************************************************************************/
+
 		grp.link = msg->link;
 		grp.title = msg->title;
 
+/*************************************************************************/
+/****************************** LINK SPECIFIC ****************************/
+/*************************************************************************/
+
 		mData[rid] = grp;
 		it = mData.find(rid);
+
+
+		if (id == "")
+		{
+#ifdef RANK_DEBUG
+			std::cerr << "p3Ranking::addRankMsg() New Anon Link: mUpdated = true";
+			std::cerr << std::endl;
+#endif
+			locked_reSortGroup(it->second);
+			mUpdated = true;
+		}
+	}
+
+	/**** If it is an anonymous Link (ie Friend of a Friend) Drop out now ***/
+	if (id == "")
+	{
+		return;
 	}
 
 	/* check for old comment */
@@ -624,7 +692,7 @@ float 	p3Ranking::locked_calcRank(RankGroup &grp)
 	std::cerr << std::endl;
 #endif
 
-	if ((count < 0) || (algScore < 0))
+	if ((count <= 0) || (algScore <= 0))
 	{
 #ifdef RANK_DEBUG
 		std::cerr << "Final score: 0";
@@ -695,12 +763,14 @@ void	p3Ranking::sortAllMsgs()
 	for(it = mData.begin(); it != mData.end(); it++)
 	{
 		(it->second).rank = locked_calcRank(it->second);
-		if (it->second.rank > 0)
+		if (it->second.rank < 0)
 		{
-			mRankings.insert(
-				std::pair<float, std::string>
-				(it->second.rank, it->first));
+			it->second.rank = 0;
 		}
+
+		mRankings.insert(
+			std::pair<float, std::string>
+			(it->second.rank, it->first));
 	}
 }
 
@@ -728,12 +798,17 @@ bool    p3Ranking::getRankings(uint32_t first, uint32_t count, std::list<std::st
 {
      	RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
 
+#ifdef RANK_DEBUG
+	std::cerr << "p3Ranking::getRankings() First: " << first << " Count: " << count;
+	std::cerr << std::endl;
+#endif
+
 	uint32_t i = 0;
 	std::multimap<float, std::string>::reverse_iterator rit;
-	for(rit = mRankings.rbegin(); (i < first) && (rit != mRankings.rend()); rit++);
+	for(rit = mRankings.rbegin(); (i < first) && (rit != mRankings.rend()); rit++, i++);
 
 	i = 0;
-	for(; (i < count) && (rit != mRankings.rend()); rit++)
+	for(; (i < count) && (rit != mRankings.rend()); rit++, i++)
 	{
 		rids.push_back(rit->second);
 	}
@@ -754,11 +829,19 @@ bool    p3Ranking::getRankDetails(std::string rid, RsRankDetails &details)
 		return false;
 	}
 
+/*************************************************************************/
+/****************************** LINK SPECIFIC ****************************/
+/*************************************************************************/
+
 	details.rid = it->first;
 	details.link = (it->second).link;
 	details.title = (it->second).title;
 	details.rank = (it->second).rank;
 	details.ownTag = (it->second).ownTag;
+
+/*************************************************************************/
+/****************************** LINK SPECIFIC ****************************/
+/*************************************************************************/
 
 	std::map<std::string, RsRankLinkMsg *>::iterator cit;
 	for(cit = (it->second).comments.begin();
@@ -768,6 +851,7 @@ bool    p3Ranking::getRankDetails(std::string rid, RsRankDetails &details)
 		comm.id = (cit->second)->PeerId();
 		comm.timestamp = (cit->second)->timestamp;
 		comm.comment = (cit->second)->comment;
+		comm.score = (cit->second)->score;
 
 		details.comments.push_back(comm);
 	}
@@ -821,7 +905,10 @@ bool 	p3Ranking::updated()
 }
 
 /***** NEW CONTENT *****/
-std::string p3Ranking::newRankMsg(std::wstring link, std::wstring title, std::wstring comment)
+/*************************************************************************/
+/****************************** LINK SPECIFIC ****************************/
+/*************************************************************************/
+std::string p3Ranking::newRankMsg(std::wstring link, std::wstring title, std::wstring comment, int32_t score)
 {
 	/* generate an id */
 	std::string rid = generateRandomLinkId();
@@ -840,16 +927,22 @@ std::string p3Ranking::newRankMsg(std::wstring link, std::wstring title, std::ws
 	msg->title = title;
 	msg->timestamp = now;
 	msg->comment = comment;
+	msg->score = score;
 
 	msg->linktype =  RS_LINK_TYPE_WEB;
 	msg->link = link;
+
 
 	addRankMsg(msg);
 
 	return rid;
 }
 
-bool p3Ranking::updateComment(std::string rid, std::wstring comment)
+
+/*************************************************************************/
+/****************************** LINK SPECIFIC ****************************/
+/*************************************************************************/
+bool p3Ranking::updateComment(std::string rid, std::wstring comment, int32_t score)
 {
 
 #ifdef RANK_DEBUG
@@ -883,6 +976,7 @@ bool p3Ranking::updateComment(std::string rid, std::wstring comment)
 	msg->timestamp = now;
 	msg->title = (it->second).title;
 	msg->comment = comment;
+	msg->score = score;
 
 	msg->linktype =  RS_LINK_TYPE_WEB;
 	msg->link =  (it->second).link;
@@ -899,6 +993,54 @@ bool p3Ranking::updateComment(std::string rid, std::wstring comment)
 	addRankMsg(msg);
 	return true;
 }
+
+/*************************************************************************/
+/****************************** LINK SPECIFIC ****************************/
+/*************************************************************************/
+std::string p3Ranking::anonRankMsg(std::wstring link, std::wstring title)
+{
+	/* generate an id */
+	std::string rid = generateRandomLinkId();
+
+	RsRankLinkMsg *msg1 = new RsRankLinkMsg();
+	RsRankLinkMsg *msg2 = new RsRankLinkMsg();
+
+	time_t now = time(NULL);
+
+	{
+     		RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+		msg1->PeerId("");
+		msg1->pid = "";
+
+		msg2->PeerId("");
+		msg2->pid = "";
+	}
+
+	msg1->rid = rid;
+	msg1->title = title;
+	msg1->timestamp = now;
+	msg1->comment.clear();
+	msg1->score = 0;
+
+	msg1->linktype =  RS_LINK_TYPE_WEB;
+	msg1->link = link;
+
+	msg2->rid = rid;
+	msg2->title = title;
+	msg2->timestamp = now;
+	msg2->comment.clear();
+	msg2->score = 0;
+
+	msg2->linktype =  RS_LINK_TYPE_WEB;
+	msg2->link = link;
+
+	addRankMsg(msg1);
+	addAnonToList(msg2);
+
+	return rid;
+}
+
+
 
 pqistreamer *createStreamer(std::string file, std::string src, bool reading)
 {
@@ -953,6 +1095,9 @@ std::string generateRandomLinkId()
 }
 	
 
+/*************************************************************************/
+/****************************** LINK SPECIFIC ****************************/
+/*************************************************************************/
 void	p3Ranking::createDummyData()
 {
 	RsRankLinkMsg *msg = new RsRankLinkMsg();
@@ -966,6 +1111,7 @@ void	p3Ranking::createDummyData()
 	msg->timestamp = now - 60 * 60 * 24 * 15;
 	msg->link = L"http://www.retroshare.org";
 	msg->comment = L"Retroshares Website";
+	msg->score = 1;
 
 	addRankMsg(msg);
 
@@ -977,6 +1123,7 @@ void	p3Ranking::createDummyData()
 	msg->timestamp = now - 123;
 	msg->link = L"http://www.lunamutt.org";
 	msg->comment = L"Lunamutt's Website";
+	msg->score = 1;
 
 	addRankMsg(msg);
 
@@ -990,6 +1137,7 @@ void	p3Ranking::createDummyData()
 	msg->comment = L"Lunamutt's Website (TWO) How Long can this comment be!\n";
 	msg->comment += L"What happens to the second line?\n";
 	msg->comment += L"And a 3rd!";
+	msg->score = 1;
 
 	addRankMsg(msg);
 
@@ -1001,6 +1149,7 @@ void	p3Ranking::createDummyData()
 	msg->timestamp = now - 60 * 60 * 7;
 	msg->link = L"http://www.lunamutt.org";
 	msg->comment += L"A Short Comment";
+	msg->score = 1;
 
 	addRankMsg(msg);
 
@@ -1015,6 +1164,7 @@ void	p3Ranking::createDummyData()
 	msg->timestamp = now - 60 * 60;
 	msg->link = L"http://www.lunamutt.com";
 	msg->comment = L"";
+	msg->score = 1;
 
 	addRankMsg(msg);
 
@@ -1026,8 +1176,136 @@ void	p3Ranking::createDummyData()
 	msg->timestamp = now - 60 * 60 * 24 * 2;
 	msg->link = L"http://www.lunamutt.com";
 	msg->comment = L"";
+	msg->score = 1;
 
 	addRankMsg(msg);
+
+}
+
+
+/***************************************************************************/
+/****************************** CONFIGURATION HANDLING *********************/
+/***************************************************************************/
+
+/**** Store Anon Links: OVERLOADED FROM p3Config ****/
+
+RsSerialiser *p3Ranking::setupSerialiser()
+{
+	RsSerialiser *rss = new RsSerialiser();
+
+	/* add in the types we need! */
+	rss->addSerialType(new RsRankSerialiser());
+	return rss;
+}
+
+bool	p3Ranking::addAnonToList(RsRankLinkMsg *msg)
+{
+	{
+     	  RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+	  mAnon.push_back(msg);
+	  mRepublishFriends = true;
+	}
+
+	IndicateConfigChanged(); /**** INDICATE CONFIG CHANGED! *****/
+	return true;
+}
+
+std::list<RsItem *> p3Ranking::saveList(bool &cleanup)
+{
+	std::list<RsItem *> saveData;
+
+	mRankMtx.lock(); /*********************** LOCK *******/
+
+	cleanup = false;
+
+	std::list<RsRankLinkMsg *>::iterator it;
+	for(it = mAnon.begin(); it != mAnon.end(); it++)
+	{
+		saveData.push_back(*it);
+	}
+
+	/* list completed! */
+	return saveData;
+}
+
+void    p3Ranking::saveDone()
+{ 
+	mRankMtx.unlock(); /*********************** UNLOCK *******/
+	return; 
+}
+
+bool p3Ranking::loadList(std::list<RsItem *> load)
+{
+	std::list<RsItem *>::iterator it;
+	RsRankLinkMsg *msg;
+
+#ifdef SERVER_DEBUG 
+	std::cerr << "p3Ranking::loadList() Item Count: " << load.size();
+	std::cerr << std::endl;
+#endif
+
+	time_t now = time(NULL);
+	time_t min, max;
+
+     { 	RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+
+	min = now - mStorePeriod;
+	max = now + RANK_MAX_FWD_OFFSET;
+
+     } 	/********** STACK LOCKED MTX ******/
+
+	for(it = load.begin(); it != load.end(); it++)
+	{
+		/* switch on type */
+		if (NULL != (msg = dynamic_cast<RsRankLinkMsg *>(*it)))
+		{
+			/* check date -> if old expire */
+			if (((time_t) msg->timestamp < min) || 
+				((time_t) msg->timestamp > max))
+			{
+#ifdef RANK_DEBUG
+				std::cerr << "p3Ranking::loadList() Outside TimeRange (deleting Own Anon):";
+				std::cerr << std::endl;
+#endif
+				/* if outside range -> remove */
+				delete msg;
+				continue;
+			}
+
+#ifdef RANK_DEBUG
+			std::cerr << "p3Ranking::loadList() Anon TimeRange ok";
+			std::cerr << std::endl;
+#endif
+			msg->PeerId("");
+			msg->pid = "";
+
+			RsRankLinkMsg *msg2 = new RsRankLinkMsg();
+			msg2->clear();
+			msg2->PeerId(msg->PeerId());
+			msg2->pid = msg->pid;
+			msg2->rid = msg->rid;
+			msg2->title = msg->title;
+			msg2->timestamp = msg->timestamp;
+			msg2->comment.clear();
+			msg2->score = 0;
+
+			msg2->linktype =  msg->linktype;
+			msg2->link = msg->link;
+
+			/* make a copy to add into standard map */
+			addRankMsg(msg);
+
+     		 	RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+			mAnon.push_back(msg2);
+		}
+		else
+		{
+			/* cleanup */
+			delete (*it);
+		}
+	}
+
+	return true;
 
 }
 

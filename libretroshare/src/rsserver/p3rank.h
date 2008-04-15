@@ -52,8 +52,9 @@ virtual bool    getRankings(uint32_t first, uint32_t count, std::list<std::strin
 virtual bool    getRankDetails(std::string rid, RsRankDetails &details);
 
         /* Add New Comment / Msg */
-virtual std::string newRankMsg(std::wstring link, std::wstring title, std::wstring comment);
-virtual bool updateComment(std::string rid, std::wstring comment);
+virtual std::string newRankMsg(std::wstring link, std::wstring title, std::wstring comment, int32_t score);
+virtual bool updateComment(std::string rid, std::wstring comment, int32_t score);
+virtual std::string anonRankMsg(std::wstring link, std::wstring title);
 
 	private:
 

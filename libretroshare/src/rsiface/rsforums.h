@@ -37,6 +37,9 @@
 #define RS_FORUM_PRIVATE	0x0002   /* anyone with key can publish */
 #define RS_FORUM_ENCRYPTED	0x0004   /* need admin key */
 
+#define RS_FORUM_MSG_AUTH	0x0010   /* you must sign messages */
+#define RS_FORUM_MSG_ANON	0x0020   /* you can send anonymous messages */
+
 #define RS_FORUM_ADMIN		0x0100   /* anyone can publish */
 #define RS_FORUM_SUBSCRIBED	0x0200   /* anyone can publish */
 
@@ -61,7 +64,10 @@ class ForumMsgInfo
 	ForumMsgInfo() {}
 	std::string forumId;
 	std::string threadId;
+	std::string parentId;
 	std::string msgId;
+
+	std::string srcId; /* if Authenticated -> signed here */
 
 	unsigned int msgflags;
 
@@ -75,13 +81,15 @@ class ThreadInfoSummary
 {
 	public:
 	ThreadInfoSummary() {}
-
+	std::string forumId;
+	std::string threadId;
+	std::string parentId;
 	std::string msgId;
-	std::string srcId;
 
 	uint32_t msgflags;
 
 	std::wstring title;
+	std::wstring msg;
 	int count; /* file count     */
 	time_t ts;
 
@@ -105,9 +113,12 @@ virtual ~RsForums() { return; }
 
 virtual bool forumsChanged(std::list<std::string> &forumIds) = 0;
 
+
+virtual std::string createForum(std::wstring forumName, std::wstring forumDesc, uint32_t forumFlags) = 0;
+
 virtual bool getForumList(std::list<ForumInfo> &forumList) = 0;
 virtual bool getForumThreadList(std::string fId, std::list<ThreadInfoSummary> &msgs) = 0;
-virtual bool getForumThreadMsgList(std::string fId, std::string tId, std::list<ThreadInfoSummary> &msgs) = 0;
+virtual bool getForumThreadMsgList(std::string fId, std::string pId, std::list<ThreadInfoSummary> &msgs) = 0;
 virtual bool getForumMessage(std::string fId, std::string mId, ForumMsgInfo &msg) = 0;
 
 virtual	bool ForumMessageSend(ForumMsgInfo &info)                 = 0;

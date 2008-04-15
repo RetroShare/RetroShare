@@ -99,22 +99,114 @@ bool p3Forums::getForumList(std::list<ForumInfo> &forumList)
 
 bool p3Forums::getForumThreadList(std::string fId, std::list<ThreadInfoSummary> &msgs)
 {
+	std::map<std::string, ThreadInfoSummary>::iterator it;
+	for(it = mForumMsgs.begin(); it != mForumMsgs.end(); it++)
+	{
+		if (((it->second).forumId == fId) && ((it->second).parentId == ""))
+		{
+			msgs.push_back(it->second);
+		}
+	}
 	return true;
 }
 
-bool p3Forums::getForumThreadMsgList(std::string fId, std::string tId, std::list<ThreadInfoSummary> &msgs)
+bool p3Forums::getForumThreadMsgList(std::string fId, std::string pId, std::list<ThreadInfoSummary> &msgs)
 {
+	std::map<std::string, ThreadInfoSummary>::iterator it;
+	for(it = mForumMsgs.begin(); it != mForumMsgs.end(); it++)
+	{
+		if (((it->second).forumId == fId) && ((it->second).parentId == pId))
+		{
+			msgs.push_back(it->second);
+		}
+	}
 	return true;
 }
 
 bool p3Forums::getForumMessage(std::string fId, std::string mId, ForumMsgInfo &msg)
 {
+	std::map<std::string, ThreadInfoSummary>::iterator it;
+	it = mForumMsgs.find(mId);
+	if (it == mForumMsgs.end())
+	{
+		return false;
+	}
+
+	msg.forumId  = (it->second).forumId;
+	msg.threadId = (it->second).threadId;
+	msg.parentId = (it->second).parentId;
+	msg.msgId    = (it->second).msgId;
+
+	msg.title    = (it->second).title;
+	msg.msg      = (it->second).msg;
+	msg.ts       = (it->second).ts;
+
+	msg.srcId    = "SRC";
+	msg.ts       = (it->second).ts;
+
 	return true;
 }
 
 bool p3Forums::ForumMessageSend(ForumMsgInfo &info)
 {
+
+	createForumMsg(info.forumId, info.parentId, info.title, info.msg);
 	return true;
+}
+
+
+std::string p3Forums::createForum(std::wstring forumName, std::wstring forumDesc, uint32_t forumFlags)
+{
+	time_t now = time(NULL);
+
+	ForumInfo fi;
+	fi.lastPost = now;
+	fi.pop = 1;
+
+	fi.forumId = generateRandomServiceId();
+	fi.forumName = forumName;
+	fi.forumDesc = forumDesc;
+	fi.forumFlags = forumFlags;
+	fi.forumFlags |= RS_FORUM_ADMIN;
+
+	mForums.push_back(fi);
+	mForumsChanged = true;
+
+	return fi.forumId;
+}
+
+std::string p3Forums::createForumMsg(std::string fId, std::string pId, 
+				std::wstring title, std::wstring msg)
+{
+	ThreadInfoSummary tis;
+
+	tis.forumId = fId;
+	tis.parentId = pId;
+
+	/* find the parent -> copy threadId */
+	tis.msgId = generateRandomServiceId();
+
+	std::map<std::string, ThreadInfoSummary>::iterator it;
+	it = mForumMsgs.find(pId);
+
+	if (it == mForumMsgs.end())
+	{
+		tis.parentId = "";
+		tis.threadId = tis.msgId;
+	}
+	else
+	{
+		tis.threadId = (it->second).threadId;
+	}
+
+	tis.title = title;
+	tis.msg = msg;
+	tis.ts = time(NULL);
+
+	mForumMsgs[tis.msgId] = tis;
+	mForumsChanged = true;
+
+	return tis.msgId;
 }
 
 

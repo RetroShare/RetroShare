@@ -87,14 +87,18 @@ bool    p3Rank::getRankDetails(std::string rid, RsRankDetails &details)
 
 
         /* Add New Comment / Msg */
-std::string p3Rank::newRankMsg(std::wstring link, std::wstring title, std::wstring comment)
+std::string p3Rank::newRankMsg(std::wstring link, std::wstring title, std::wstring comment, int32_t score)
 {
-	return mRank->newRankMsg(link, title, comment);
+	return mRank->newRankMsg(link, title, comment, score);
 }
 
-bool p3Rank::updateComment(std::string rid, std::wstring comment)
+bool p3Rank::updateComment(std::string rid, std::wstring comment, int32_t score)
 {
-	return mRank->updateComment(rid, comment);
+	return mRank->updateComment(rid, comment, score);
 }
 
+std::string p3Rank::anonRankMsg(std::wstring link, std::wstring title)
+{
+	return mRank->anonRankMsg(link, title);
+}
 

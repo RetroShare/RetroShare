@@ -33,8 +33,10 @@
 #include "serialiser/rstlvtypes.h"
 
 const uint8_t RS_PKT_SUBTYPE_RANK_OLD_LINK  = 0x02; /* defunct - don't use! */
-const uint8_t RS_PKT_SUBTYPE_RANK_LINK2  = 0x03;
-const uint8_t RS_PKT_SUBTYPE_RANK_PHOTO = 0x04;
+const uint8_t RS_PKT_SUBTYPE_RANK_OLD_LINK2 = 0x03;
+const uint8_t RS_PKT_SUBTYPE_RANK_LINK3     = 0x04;
+
+const uint8_t RS_PKT_SUBTYPE_RANK_PHOTO     = 0x05;
 
 /**************************************************************************/
 
@@ -54,6 +56,7 @@ virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
         uint32_t    timestamp;
         std::wstring title;
         std::wstring comment;
+        int32_t     score;
 };
 
 
@@ -65,7 +68,7 @@ class RsRankLinkMsg: public RsRankMsg
 {
         public:
         RsRankLinkMsg()
-	:RsRankMsg(RS_PKT_SUBTYPE_RANK_LINK2) { return; }
+	:RsRankMsg(RS_PKT_SUBTYPE_RANK_LINK3) { return; }
 virtual ~RsRankLinkMsg() { return; }
 virtual void clear();
 virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
@@ -75,6 +78,7 @@ virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
         uint32_t    timestamp;
         std::wstring title;
         std::wstring comment;
+	int32_t	    score;
 	***************************/
 
 	/* Link specific Fields */

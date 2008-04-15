@@ -51,6 +51,7 @@ std::ostream &RsRankMsg::print(std::ostream &out, uint16_t indent)
         printIndent(out, int_Indent);
         out << "timestamp:  " << timestamp  << std::endl;
 
+
         printIndent(out, int_Indent);
 
 	std::string cnv_title(title.begin(), title.end());
@@ -59,6 +60,9 @@ std::ostream &RsRankMsg::print(std::ostream &out, uint16_t indent)
         printIndent(out, int_Indent);
 	std::string cnv_comment(comment.begin(), comment.end());
         out << "comment:  " << cnv_comment  << std::endl;
+
+        printIndent(out, int_Indent);
+        out << "score:  " << score  << std::endl;
 
         printRsItemEnd(out, "RsRankMsg", indent);
         return out;
@@ -73,6 +77,7 @@ void 	RsRankLinkMsg::clear()
 	timestamp = 0;
 	title.clear();
 	comment.clear();
+	score = 0;
 	linktype = 0;
 	link.clear();
 }
@@ -99,6 +104,9 @@ std::ostream &RsRankLinkMsg::print(std::ostream &out, uint16_t indent)
         out << "comment:  " << cnv_comment  << std::endl;
 
         printIndent(out, int_Indent);
+        out << "score:  " << score  << std::endl;
+
+        printIndent(out, int_Indent);
         out << "linktype:  " << linktype << std::endl;
         printIndent(out, int_Indent);
 	std::string cnv_link(link.begin(), link.end());
@@ -117,6 +125,7 @@ uint32_t    RsRankSerialiser::sizeLink(RsRankLinkMsg *item)
 	s += 4; /* timestamp */
 	s += GetTlvWideStringSize(item->title);
 	s += GetTlvWideStringSize(item->comment);
+	s += 4; /* score  */
 	s += 4; /* linktype  */
 	s += GetTlvWideStringSize(item->link);
 
@@ -158,6 +167,9 @@ bool     RsRankSerialiser::serialiseLink(RsRankLinkMsg *item, void *data, uint32
 	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_COMMENT, item->comment);
 	std::cerr << "RsRankLinkSerialiser::serialiseLink() Comment: " << ok << std::endl;
 
+	ok &= setRawUInt32(data, tlvsize, &offset, *((uint32_t *) &(item->score)));
+	std::cerr << "RsRankLinkSerialiser::serialiseLink() timestamp: " << ok << std::endl;
+
 	ok &= setRawUInt32(data, tlvsize, &offset, item->linktype);
 	std::cerr << "RsRankLinkSerialiser::serialiseLink() linktype: " << ok << std::endl;
 
@@ -184,7 +196,7 @@ RsRankLinkMsg *RsRankSerialiser::deserialiseLink(void *data, uint32_t *pktsize)
 
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
 		(RS_SERVICE_TYPE_RANK != getRsItemService(rstype)) ||
-		(RS_PKT_SUBTYPE_RANK_LINK2 != getRsItemSubType(rstype)))
+		(RS_PKT_SUBTYPE_RANK_LINK3 != getRsItemSubType(rstype)))
 	{
 		return NULL; /* wrong type */
 	}
@@ -210,6 +222,7 @@ RsRankLinkMsg *RsRankSerialiser::deserialiseLink(void *data, uint32_t *pktsize)
 	ok &= getRawUInt32(data, rssize, &offset, &(item->timestamp));
 	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_TITLE, item->title);
 	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_COMMENT, item->comment);
+	ok &= getRawUInt32(data, rssize, &offset, (uint32_t *) &(item->score));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->linktype));
 	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_LINK, item->link);
 

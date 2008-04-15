@@ -27,6 +27,7 @@
  */
 
 #include "rsiface/rsforums.h"
+#include "services/p3service.h"
 
 class p3Forums: public RsForums 
 {
@@ -40,6 +41,8 @@ virtual ~p3Forums();
 
 virtual bool forumsChanged(std::list<std::string> &forumIds);
 
+virtual std::string createForum(std::wstring forumName, std::wstring forumDesc, uint32_t forumFlags);
+
 virtual bool getForumList(std::list<ForumInfo> &forumList);
 virtual bool getForumThreadList(std::string fId, std::list<ThreadInfoSummary> &msgs);
 virtual bool getForumThreadMsgList(std::string fId, std::string tId, std::list<ThreadInfoSummary> &msgs);
@@ -51,8 +54,13 @@ virtual	bool ForumMessageSend(ForumMsgInfo &info);
 
 	private:
 
+std::string createForumMsg(std::string fid, std::string pid, 
+				std::wstring title, std::wstring msg);
+
 void	loadDummyData();
 std::list<ForumInfo> mForums;
+std::map<std::string, ThreadInfoSummary> mForumMsgs;
+
 bool 	mForumsChanged;
 };
 
