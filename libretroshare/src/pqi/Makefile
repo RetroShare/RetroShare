@@ -34,12 +34,10 @@ RSOBJ = $(BASE_OBJ) $(LOOP_OBJ) \
 	$(GRP_OBJ) \
 	$(OTHER_OBJ)
 
-TESTOBJ  = xpgp_id.o net_test.o dht_test.o 
-#net_test1.o
+TESTOBJ  = xpgp_id.o net_test.o dht_test.o net_test1.o
 #conn_test.o
 
-TESTS  = xpgp_id net_test dht_test 
-#net_test1
+TESTS  = xpgp_id net_test dht_test net_test1
 #conn_test
 
 
