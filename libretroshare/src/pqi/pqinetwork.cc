@@ -508,7 +508,7 @@ bool    isPrivateNet(struct in_addr *addr)
 	bool ret = false;
 	std::ostringstream out;
 
-	in_addr_t taddr = inet_netof(*addr);
+	in_addr_t taddr = htonl(addr->s_addr);
 
 	out << "isPrivateNet(" << inet_ntoa(*addr) << ") ? ";
 	out << std::endl;
@@ -528,10 +528,14 @@ bool    isPrivateNet(struct in_addr *addr)
 	addr2.s_addr = htonl(inet_network("169.254.0.0"));
 	out << "\t(" << inet_ntoa(addr2) << ")" << std::endl;
 
-	if ((taddr == htonl(inet_network("10.0.0.0"))) ||
- 		(taddr == htonl(inet_network("172.16.0.0"))) ||
- 		(taddr == htonl(inet_network("192.168.0.0"))) ||
- 		(taddr == htonl(inet_network("169.254.0.0"))))
+	// 10.0.0.0/8
+	// 172.16.0.0/12
+	// 192.168.0.0/16
+	// 169.254.0.0/16
+	if ((taddr>>24 == 10) ||
+ 		(taddr>>20 == (172<<4 | 16>>4)) ||
+ 		(taddr>>16 == (192<<8 | 168)) ||
+ 		(taddr>>16 == (169<<8 | 254)))
 	{
 		out << " True" << std::endl;
 		ret = true;
@@ -648,6 +652,16 @@ bool    sameNet(struct in_addr *addr, struct in_addr *addr2)
 	std::cerr << " (" << inet_ntoa(addrnet);
 	std::cerr << " =?= " << inet_ntoa(addrnet2);
 	std::cerr << ")" << std::endl;
+
+	in_addr_t address1 = htonl(addr->s_addr);
+	in_addr_t address2 = htonl(addr2->s_addr);
+
+	// handle case for private net: 172.16.0.0/12
+	if (address1>>20 == (172<<4 | 16>>4))
+	{
+		return (address1>>20 == address2>>20);
+	}
+
 	return (inet_netof(*addr) == inet_netof(*addr2));
 }
 
