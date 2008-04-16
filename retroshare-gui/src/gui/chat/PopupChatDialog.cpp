@@ -157,14 +157,11 @@ void PopupChatDialog::updateChat()
 
 void PopupChatDialog::addChatMsg(ChatInfo *ci)
 {
-    //QTextBrowser *msgWidget = ui.textBrowser;
-
-	//QString message = msgWidget->toHtml();
-
+        QTextBrowser *msgWidget = ui.textBrowser;
+	QString currenttxt = msgWidget->toHtml();
 
 	/* add in lines at the bottom */
-	//QString extraTxt;
-
+	QString extraTxt;
 
 	bool offline = true;
 
@@ -184,26 +181,30 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 	{
 	    	QString line = "<br>\n<span style=\"color:#1D84C9\"><strong> ----- PEER OFFLINE (Chat will be lost) -----</strong></span> \n<br>";
 
-		//extraTxt += line;
+		extraTxt += line;
 	}
 	
-
         QString timestamp = "[" + QDateTime::currentDateTime().toString("hh:mm:ss") + "]";
-	    QString name = QString::fromStdString(ci ->name);        
-	    //QString line = "<span style=\"color:#C00000\"><strong>" + timestamp + "</strong></span>" +			
-        //    		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span>";		
-        //extraTxt += line;
+	QString name = QString::fromStdString(ci ->name);     
+	QString line = "<span style=\"color:#C00000\"><strong>" + timestamp + "</strong></span>" +			
+            		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span>";		
+	extraTxt += line;
+	extraTxt += QString::fromStdWString(ci -> msg);
 
-	    QString message = QString::fromStdWString(ci -> msg);
+	//QString message = QString::fromStdWString(ci -> msg);
 
-	//currenttxt += extraTxt;
-	
-    QHashIterator<QString, QString> i(smileys);
+	QHashIterator<QString, QString> i(smileys);
 	while(i.hasNext())
 	{
 		i.next();
-		message.replace(i.key(), "<img src=\"" + i.value() + "\">");
+		extraTxt.replace(i.key(), "<img src=\"" + i.value() + "\">");
+		//message.replace(i.key(), "<img src=\"" + i.value() + "\">");
 	}
+
+	currenttxt += extraTxt;
+	ui.textBrowser->setHtml(currenttxt);
+
+#if 0
 	history /*<< nickColor << color << font << fontSize*/ << timestamp << name << message;
 	
 	QString formatMsg = loadEmptyStyle()/*.replace(nickColor)
@@ -215,6 +216,7 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 				    .replace("%message%", message);
 
 	ui.textBrowser->setHtml(ui.textBrowser->toHtml() + formatMsg + "\n");
+#endif
 	
 	QTextCursor cursor = ui.textBrowser->textCursor();
 	cursor.movePosition(QTextCursor::End);
