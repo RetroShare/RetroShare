@@ -2,11 +2,11 @@
 #define RSQBLOG_H_
 
 /*
- * libretroshare/src/rsiface: rsmsgs.h
+ * libretroshare/src/rsiface: rsQblog.h
  *
  * RetroShare C++ Interface.
  *
- * Copyright 2007-2008 by Robert Fernie.
+ * Copyright 2007-2008 by Chris Parker, Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,7 +29,6 @@
  #include <iostream>
  #include <strings>
  #include <list>
- #include <time.h>
  #include <map>
  
  
@@ -41,42 +40,22 @@
 /*!
  * blog records to be accessed only by user!
  */
- class rsQBlogMsgs
- {
- 	public:
- 	
- 	std::list< std::pair<time_t, std::string> > blogs; // blogs recorded
- };
- 	
+ class RsQBlogMsgs
 
  
  /*!
   * contains information that defines rsQblogs attribute space 
   */
  class rsQBlogInfo
+
+ /*! allows gui to interface with the rsQblogs service */
+ class RsQblog
  {
  	public:
  	
  	
- 	list<std::string> filterList; /// contains the list of ids usr only wants to see
- 	bool filterSwitch; /// determines whether filter is activated or not
- 	std::string Status; /// the status of the user  
- 	list<Profile> UsrProfiles; /// contains list to users friends profile
- 	
- 	std::map< std::string, rsQblogMsgs> usrBlogSet; /// contain usr and frineds blogs
- 	// std::string favSong; ///usrs latest fav song
- };
- 
- 
- 	
- 	
- class rsQblogs
- {
- 	public:
- 	
- 	
-	rsQblogs() { return; }
-virtual ~rsQblogs() { return; }
+	RsQblog() { return; }
+virtual ~RsQblog() { return; }
  	
  	/**
  	 * allow user to set his status
@@ -88,7 +67,7 @@ virtual ~rsQblogs() { return; }
  	 * get status of users friends
  	 *
  	 **/
- 	 virtual std::string* getStatus(void) = 0;
+ 	 virtual bool getStatus(std::string &status) = 0;
  	 
  	/**
  	 * choose whether to filter or not
@@ -116,7 +95,7 @@ virtual ~rsQblogs() { return; }
  	/**
  	  * get users profile
  	  */
- 	  virtual Profile* getProfile(std::string &id) = 0;
+ 	  virtual bool getProfile(std::string &id, Profile &profile) = 0;
  	  
  	  /**
  	   * set profile info
@@ -131,10 +110,10 @@ virtual ~rsQblogs() { return; }
  	   
  	   /**
  	    * retrieve blog of usr
- 	    * @param usr the user to return bloginfo for
- 	    * @return rsQblog the blog information of usr
+ 	    * @param usr the user to return blog for
+ 	    * @param rsQblo
  	    */
- 	   virtual rsQBlog* getBlogs(std::string &usr) = 0;
+ 	   virtual bool getBlogs(std::string &usr, rsQBlogMsgs &blogs) = 0;
  	   
  };
 
