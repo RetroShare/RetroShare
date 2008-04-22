@@ -101,7 +101,7 @@ bool upnphandler::printUPnPState()
 	std::cerr << "upnphandler::printUPnPState() ... locking";
 	std::cerr << std::endl;
 
-	dataMtx.lock(); /* LOCK MUTEX */
+	RsStackMutex stack(dataMtx); /* LOCK STACK MUTEX */
 
 	std::cerr << "upnphandler::printUPnPState() ... locked";
 	std::cerr << std::endl;
@@ -118,16 +118,13 @@ bool upnphandler::printUPnPState()
 		std::cerr << "UPNP not Ready" << std::endl;
 	}
 
-	dataMtx.unlock(); /* UNLOCK MUTEX */
-
 	return 1;
 }
 
 
 bool upnphandler::checkUPnPActive()
 {
-	dataMtx.lock(); /* LOCK MUTEX */
-
+	RsStackMutex stack(dataMtx); /* LOCK STACK MUTEX */
 
 	uPnPConfigData *config = upnpConfig;
 	if ((upnpState > RS_UPNP_S_READY) && (config))
@@ -146,11 +143,6 @@ bool upnphandler::checkUPnPActive()
 
 		snprintf(in_port1, 256, "%d", ntohs(localAddr.sin_port));
 		snprintf(in_port2, 256, "%d", ntohs(localAddr.sin_port));
-		snprintf(in_addr, 256, "%d.%d.%d.%d", 
-			 ((localAddr.sin_addr.s_addr >> 0) & 0xff),
-			 ((localAddr.sin_addr.s_addr >> 8) & 0xff),
-			 ((localAddr.sin_addr.s_addr >> 16) & 0xff),
-			 ((localAddr.sin_addr.s_addr >> 24) & 0xff));
 
 		snprintf(in_addr, 256, "%d.%d.%d.%d", 
 		 	((linaddr >> 24) & 0xff),
@@ -183,8 +175,6 @@ bool upnphandler::checkUPnPActive()
 			toStart = true;
 		}
 	}
-
-	dataMtx.unlock(); /* UNLOCK MUTEX */
 
 	return true;
 }
@@ -244,11 +234,13 @@ bool upnphandler::background_setup_upnp(bool start, bool stop)
 
 bool upnphandler::start_upnp()
 {
-	dataMtx.lock(); /* LOCK MUTEX */
+	RsStackMutex stack(dataMtx); /* LOCK STACK MUTEX */
 
 	uPnPConfigData *config = upnpConfig;
 	if (!((upnpState >= RS_UPNP_S_READY) && (config)))
 	{
+		std::cerr << "upnphandler::start_upnp() Not Ready";
+		std::cerr << std::endl;
 		return false;
 	}
 
@@ -344,15 +336,13 @@ bool upnphandler::start_upnp()
 
 	toStart = false;
 
-	dataMtx.unlock(); /* UNLOCK MUTEX */
-
 	return true;
 
 }
 
 bool upnphandler::shutdown_upnp()
 {
-	dataMtx.lock(); /* LOCK MUTEX */
+	RsStackMutex stack(dataMtx); /* LOCK STACK MUTEX */
 
 	uPnPConfigData *config = upnpConfig;
 	if (!((upnpState >= RS_UPNP_S_READY) && (config)))
@@ -391,8 +381,6 @@ bool upnphandler::shutdown_upnp()
 		upnpState = RS_UPNP_S_READY;
 		toStop = false;
 	}
-
-	dataMtx.unlock(); /* UNLOCK MUTEX */
 
 	return true;
 
