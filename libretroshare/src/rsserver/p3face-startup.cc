@@ -246,7 +246,10 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	int c;
-	while((c = getopt(argc, argv,"ai:p:ec:sw:l:d:u")) != -1)
+	/* getopt info: every availiable option is listet here. if it is followed by a ':' it 
+	   needs an argument. If it is followed by a '::' the argument is optional.
+	*/
+	while((c = getopt(argc, argv,"hesaui:p:c:w:l:d:")) != -1)
 	{
 		switch (c)
 		{
@@ -306,8 +309,25 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 				std::cerr << "Opt for External Port Mode";
 				std::cerr << std::endl;
 				break;
+			case 'h':
+				std::cerr << "Help: " << std::endl;
+				std::cerr << "The commandline options are for retroshare-nogui, a headless server in a shell, or systems without QT." << std::endl << std::endl;
+				std::cerr << "-l [logfile]      Set the logfilename" << std::endl;
+				std::cerr << "-w [password]     Set the password" << std::endl;
+				std::cerr << "-i [ip_adress]    Set IP Adress to use" << std::endl;
+				std::cerr << "-p [port]         Set the Port to listen on" << std::endl;
+				std::cerr << "-c [basedir]      Set the config basdir" << std::endl;
+				std::cerr << "-s                Output to Stderr" << std::endl;
+				std::cerr << "-d [debuglevel]   Set the debuglevel" << std::endl;
+				std::cerr << "-u                Only listen to UDP" << std::endl;
+				std::cerr << "-e                Use a forwarded external Port" << std::endl << std::endl;
+				std::cerr << "Example" << std::endl;
+				std::cerr << "./retroshare-nogui -wmysecretpassword -e" << std::endl;
+				exit(1);
+				break;
 			default:
-				std::cerr << "Unknown Option!";
+				std::cerr << "Unknown Option!" << std::endl;
+				std::cerr << "Use '-h' for help." << std::endl;
 				exit(1);
 		}
 	}
