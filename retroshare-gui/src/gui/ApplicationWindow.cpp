@@ -46,6 +46,7 @@
 #include "PhotoDialog.h"
 #include "ForumsDialog.h"
 #include "channels/channelsDialog.h"
+#include "BlogDialog.h"
 
 /* for smplayer */
 #include "smplayer.h"
@@ -113,6 +114,11 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     PhotoDialog *photoDialog = NULL;
     ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), grp));
+                     
+    BlogDialog *blogDialog = NULL;
+    ui.stackPages->add(blogDialog = new BlogDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_NETWORK), tr("Blog Feed"), grp));
+                     
                      
                      
   //ui.stackPages->add(groupsDialog = new GroupsDialog(ui.stackPages),
