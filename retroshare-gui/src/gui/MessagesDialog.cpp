@@ -465,7 +465,6 @@ void MessagesDialog::insertMsgTxtAndFiles()
 		ui.filesText->setText("");
 
 		ui.subjectText->setText("");
-		//ui.msgText->setText("");
 		ui.msgList->clear();
 
 		return;
@@ -574,7 +573,7 @@ void MessagesDialog::insertMsgTxtAndFiles()
 	ui.fromText->setText(QString::fromStdString(rsPeers->getPeerName(msgInfo.srcId)));
 
 	ui.subjectText->setText(QString::fromStdWString(msgInfo.title));
-	ui.msgText->setText(QString::fromStdWString(msgInfo.msg));
+	ui.msgText->setHtml(QString::fromStdWString(msgInfo.msg));
 
 	{
 		std::ostringstream out;

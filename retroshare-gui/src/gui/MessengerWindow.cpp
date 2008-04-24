@@ -104,18 +104,21 @@ MessengerWindow::MessengerWindow(QWidget * parent)
 	ui.statuscomboBox->setMinimumWidth(20);
 	ui.messagecomboBox->setMinimumWidth(20);
 	ui.searchlineEdit->setMinimumWidth(20);
-  
-  	QPixmap Backpixmap((QString)":/images/backgroundimage.png");
-	//QPixmap pixmap5((QString)REC_PATH+(QString)"back2765.png");
+ 
+ 	/* The background palette breaks MessengerWindow in Linux...
+	 * so it is disabled until a solution is found.
+	 */
 
-	QBrush BackBrush(Backpixmap);
+#if 0
+  	QPixmap Backpixmap((QString)":/images/backgroundimage.png");
+
+	//QBrush BackBrush(Backpixmap);
 	QPalette BackPalette(BackBrush, BackBrush, BackBrush, BackBrush, BackBrush, BackBrush, BackBrush, BackBrush, BackBrush);
 	this->setPalette(BackPalette);                             //Set Background
-  
+#endif
   
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
-
 #endif
 }
 

@@ -115,6 +115,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     _bandwidthGraph = new BandwidthGraph();
     messengerWindow = new MessengerWindow();
     messengerWindow->hide();
+    //messengerWindow->show();
     applicationWindow = new ApplicationWindow();
     applicationWindow->hide();
 	
@@ -196,6 +197,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.toolBar->addSeparator();
     connect(grp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *)));
        
+    /* Select the first action */
+    grp->actions()[0]->setChecked(true);
 
     // Allow to play files from SharedFilesDialog.
     connect(sharedfilesDialog, SIGNAL(playFiles( QStringList )), this, SLOT(playFiles( QStringList )));
@@ -211,16 +214,13 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     toolAct->setText("Service");
     toolAct->setShortcut(tr("Ctrl+T"));
     toolAct->setIcon(QIcon(":/images/blockdevice2.png"));
-    ui.toolBar->addAction(toolAct);
+    //ui.toolBar->addAction(toolAct);
  
-
-    /* Select the first action */
-    grp->actions()[0]->setChecked(true);
-    /* Select the first action */
         /* Create the Service pages and actions */
     QActionGroup *servicegrp = new QActionGroup(this);
    
                            
+#if 0
     LinksDialog *linksDialog = NULL;
     ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), servicegrp));
@@ -237,6 +237,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), servicegrp)); 
                          
+#endif
                                       
     
     /* Create the toolbarservice */
