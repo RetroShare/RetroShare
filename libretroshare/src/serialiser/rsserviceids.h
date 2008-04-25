@@ -50,6 +50,7 @@ const uint16_t RS_SERVICE_TYPE_MSG         = 0x0013;
 
 /****************** BELOW ARE ONLY THEORETICAL (CAN BE CHANGED) *****/
 
+
 const uint16_t RS_SERVICE_TYPE_STATUS      = 0x0012;
 
 
@@ -58,6 +59,9 @@ const uint16_t RS_SERVICE_TYPE_PROXY_MSG   = 0x0016;
 
 
 const uint16_t RS_SERVICE_TYPE_GAME_LAUNCHER = 0x1000;
+ 
+ /*! for Qblog service */
+const uint16_t RS_SERVICE_TYPE_QBLOG	   = 0x0017;
 
 /* Example Games */
 /* Board Games */
