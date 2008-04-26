@@ -25,7 +25,7 @@
 #include "mainpage.h"
 #include "ui_BlogDialog.h"
 
-class BlogDialog : public MainPage 
+class BlogDialog : public MainPage , private Ui::BlogDialog
 {
   Q_OBJECT
 
@@ -36,6 +36,9 @@ public:
 
   /** Qt Designer generated object */
   Ui::BlogDialog ui;
+  
+public slots:
+	void sendMsg();
 };
 
 #endif

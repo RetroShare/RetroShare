@@ -27,7 +27,19 @@ BlogDialog::BlogDialog(QWidget *parent)
 : MainPage (parent)
 {
   /* Invoke the Qt Designer generated object setup routine */
-  ui.setupUi(this);
+  setupUi(this);
+  
+  connect(Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
   
 }
 
+void BlogDialog::sendMsg()
+{
+	QString msg = lineEdit->toPlainText();
+	
+	/* Write text into windows */
+	msgText->append(msg);
+	
+	/* Clear lineEdit */
+	lineEdit->clear();
+}
