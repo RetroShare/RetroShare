@@ -30,7 +30,7 @@ class RsStatusInterface;
 
 extern RsStatusInterface *rsStatusInterface;
 
-#include <string.h>
+#include <string>
 #include <inttypes.h>
 
 const uint32_t RS_STATUS_OFFLINE = 0x0001;
