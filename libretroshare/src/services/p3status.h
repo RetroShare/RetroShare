@@ -1,12 +1,12 @@
-#ifndef RS_STATUS_INTERFACE_H
-#define RS_STATUS_INTERFACE_H
+#ifndef RS_P3_STATUS_INTERFACE_H
+#define RS_P3_STATUS_INTERFACE_H
 
 /*
- * libretroshare/src/rsiface: rsstatus.h
+ * libretroshare/src/services: p3status.h
  *
  * RetroShare C++ .
  *
- * Copyright 2007-2008 by Vinny Do.
+ * Copyright 2008 by Vinny Do.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,34 +26,29 @@
  *
  */
 
-class RsStatus;
+#include <map>
 
-extern RsStatus *rsStatus;
+#include "rsiface/rsstatus.h"
 
-#include <iostream>
-#include <string>
-#include <inttypes.h>
-
-const uint32_t RS_STATUS_OFFLINE = 0x0001;
-const uint32_t RS_STATUS_AWAY    = 0x0002;
-const uint32_t RS_STATUS_BUSY    = 0x0003;
-const uint32_t RS_STATUS_ONLINE  = 0x0004;
-
-class StatusInfo
+class p3Status: public RsStatus
 {
 	public:
-	std::string id;
-	uint32_t status;
+
+	p3Status();
+virtual ~p3Status();
+
+/********* RsStatus ***********/
+
+virtual bool getStatus(std::string id, StatusInfo& statusInfo);
+virtual bool setStatus(StatusInfo& statusInfo);
+
+/******************************/
+
+	private:
+
+void 	loadDummyData();
+std::map<std::string, StatusInfo> mStatusInfoMap;
+
 };
-
-class RsStatus
-{
-	public:
-virtual bool getStatus(std::string id, StatusInfo& statusInfo) = 0;
-virtual bool setStatus(StatusInfo& statusInfo)                 = 0;
-
-};
-
-std::ostream& operator<<(std::ostream& out, const StatusInfo& statusInfo);
 
 #endif

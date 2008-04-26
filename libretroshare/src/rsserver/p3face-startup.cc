@@ -49,6 +49,7 @@
 #include "services/p3ranking.h"
 #include "services/p3photoservice.h"
 #include "services/p3forums.h"
+#include "services/p3status.h"
 
 #include <list>
 #include <string>
@@ -738,11 +739,13 @@ int RsServer::StartupRetroShare(RsInit *config)
 	rsPhoto = new p3Photo(photoService);
 	rsRanks = new p3Rank(mRanking);
 	rsForums = new p3Forums();
+	rsStatus = new p3Status();
 #else
 	rsGameLauncher = NULL;
 	rsPhoto = NULL;
 	rsRanks = NULL;
 	rsForums = NULL;
+	rsStatus = NULL;
 #endif
 
 
