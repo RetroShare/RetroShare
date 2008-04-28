@@ -39,6 +39,8 @@ const uint32_t RS_STATUS_AWAY    = 0x0002;
 const uint32_t RS_STATUS_BUSY    = 0x0003;
 const uint32_t RS_STATUS_ONLINE  = 0x0004;
 
+std::string RsStatusString(uint32_t status);
+
 class StatusInfo
 {
 	public:
