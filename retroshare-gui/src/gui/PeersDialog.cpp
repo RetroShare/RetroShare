@@ -27,6 +27,7 @@
 #include "PeersDialog.h"
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
+#include "rsiface/rsstatus.h"
 
 #include "chat/PopupChatDialog.h"
 #include "msgs/ChanMsgDialog.h"
@@ -191,8 +192,16 @@ void  PeersDialog::insertPeers()
 		item -> setText(0, "");
 		
 		/* (0) Status */		
-		item -> setText(1, 
-			QString::fromStdString(RsPeerStateString(detail.state)));
+		QString status = QString::fromStdString(RsPeerStateString(detail.state));
+
+		/* Append additional status info from status service */
+		StatusInfo statusInfo;
+		if (rsStatus->getStatus(*it, statusInfo))
+		{
+			status.append(QString::fromStdString("/" + RsStatusString(statusInfo.status)));
+		}
+
+		item -> setText(1, status);
 
 		/* (1) Person */
 		item -> setText(2, QString::fromStdString(detail.name));
