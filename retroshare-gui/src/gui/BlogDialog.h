@@ -39,6 +39,14 @@ public:
   
 public slots:
 	void sendMsg();
+	void setFont();
+	
+private slots:
+/*nothing here yet */
+
+private:
+
+QFont mCurrentFont;
 };
 
 #endif

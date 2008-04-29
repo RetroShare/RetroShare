@@ -29,7 +29,12 @@ BlogDialog::BlogDialog(QWidget *parent)
   /* Invoke the Qt Designer generated object setup routine */
   setupUi(this);
   
-  connect(Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
+  connect(sendBtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
+  connect(boldBtn, SIGNAL(clicked()), this, SLOT(setFont()));
+  connect(underlineBtn, SIGNAL(clicked()), this, SLOT(setFont()));
+  connect(italicBtn, SIGNAL(clicked()), this, SLOT(setFont()));
+  
+  mCurrentFont = QFont("Comic Sans MS", 8);
   
 }
 
@@ -37,9 +42,25 @@ void BlogDialog::sendMsg()
 {
 	QString msg = lineEdit->toPlainText();
 	
+	msgText->setCurrentFont(mCurrentFont);
+		
 	/* Write text into windows */
 	msgText->append(msg);
 	
 	/* Clear lineEdit */
 	lineEdit->clear();
+	
 }
+
+void BlogDialog::setFont()
+{
+	mCurrentFont.setUnderline(underlineBtn->isChecked());
+	mCurrentFont.setItalic(italicBtn->isChecked());
+	mCurrentFont.setBold(boldBtn->isChecked());
+	lineEdit->setFont(mCurrentFont);
+	lineEdit->setFocus();
+}
+	
+	
+
+
