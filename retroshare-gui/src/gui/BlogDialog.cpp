@@ -39,7 +39,7 @@ BlogDialog::BlogDialog(QWidget *parent)
   mCurrentFont = QFont("Comic Sans MS", 8);
   
   /* Current user status - online by default */
-  QString currentStatus = "Online";
+  currentStatus = "Online";
   
 }
 
