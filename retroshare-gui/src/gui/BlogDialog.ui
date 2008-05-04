@@ -623,7 +623,7 @@
      </layout>
     </item>
     <item row="1" column="0" >
-     <widget class="QTreeWidget" name="msgSendList" >
+     <widget class="QTreeWidget" name="userList" >
       <property name="sizePolicy" >
        <sizepolicy vsizetype="Ignored" hsizetype="Ignored" >
         <horstretch>0</horstretch>
@@ -783,7 +783,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QComboBox" name="comboBox" >
+  <widget class="QComboBox" name="statusBox" >
    <property name="geometry" >
     <rect>
      <x>600</x>
@@ -796,6 +796,9 @@
     <font>
      <pointsize>10</pointsize>
     </font>
+   </property>
+   <property name="currentIndex" >
+    <number>0</number>
    </property>
    <item>
     <property name="text" >

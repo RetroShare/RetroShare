@@ -33,8 +33,13 @@ BlogDialog::BlogDialog(QWidget *parent)
   connect(boldBtn, SIGNAL(clicked()), this, SLOT(setFont()));
   connect(underlineBtn, SIGNAL(clicked()), this, SLOT(setFont()));
   connect(italicBtn, SIGNAL(clicked()), this, SLOT(setFont()));
+  connect(statusBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setStatus()));
   
+  /* Current Font */
   mCurrentFont = QFont("Comic Sans MS", 8);
+  
+  /* Current user status - online by default */
+  QString currentStatus = "Online";
   
 }
 
@@ -60,6 +65,16 @@ void BlogDialog::setFont()
 	lineEdit->setFont(mCurrentFont);
 	lineEdit->setFocus();
 }
+
+
+void BlogDialog::setStatus()
+{
+	currentStatus = statusBox->currentText();
+	
+	/* for testing */
+	/* msgText->append(currentStatus); */
+}
+	
 	
 	
 

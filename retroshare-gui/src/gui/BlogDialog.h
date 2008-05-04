@@ -40,13 +40,20 @@ public:
 public slots:
 	void sendBlog();
 	void setFont();
+	void setStatus();
 	
 private slots:
 /*nothing here yet */
 
 private:
 
+/* Current Font */
 QFont mCurrentFont;
+
+/* Current status, online by default */
+QString currentStatus;
+
+
 };
 
 #endif
