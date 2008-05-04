@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>680</width>
-    <height>399</height>
+    <width>757</width>
+    <height>494</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -510,7 +510,7 @@
      <x>460</x>
      <y>6</y>
      <width>211</width>
-     <height>383</height>
+     <height>356</height>
     </rect>
    </property>
    <layout class="QGridLayout" >
@@ -783,13 +783,68 @@
     </item>
    </layout>
   </widget>
+  <widget class="QComboBox" name="comboBox" >
+   <property name="geometry" >
+    <rect>
+     <x>600</x>
+     <y>368</y>
+     <width>71</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="font" >
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <item>
+    <property name="text" >
+     <string>Online</string>
+    </property>
+   </item>
+   <item>
+    <property name="text" >
+     <string>Away</string>
+    </property>
+   </item>
+   <item>
+    <property name="text" >
+     <string>Busy</string>
+    </property>
+   </item>
+   <item>
+    <property name="text" >
+     <string>Offline</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QLabel" name="label_3" >
+   <property name="geometry" >
+    <rect>
+     <x>503</x>
+     <y>371</y>
+     <width>101</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font" >
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text" >
+    <string>Current Status:</string>
+   </property>
+  </widget>
   <widget class="QWidget" name="" >
    <property name="geometry" >
     <rect>
      <x>0</x>
      <y>227</y>
      <width>451</width>
-     <height>165</height>
+     <height>174</height>
     </rect>
    </property>
    <layout class="QGridLayout" >
