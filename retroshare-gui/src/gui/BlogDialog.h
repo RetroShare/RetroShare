@@ -38,7 +38,7 @@ public:
   Ui::BlogDialog ui;
   
 public slots:
-	void sendMsg();
+	void sendBlog();
 	void setFont();
 	
 private slots:

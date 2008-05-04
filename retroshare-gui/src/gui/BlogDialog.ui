@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>471</width>
-    <height>418</height>
+    <width>680</width>
+    <height>399</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -504,27 +504,203 @@
   <property name="windowIcon" >
    <iconset/>
   </property>
-  <widget class="QWidget" name="" >
+  <widget class="QWidget" name="layoutWidget" >
    <property name="geometry" >
     <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>463</width>
-     <height>403</height>
+     <x>460</x>
+     <y>6</y>
+     <width>211</width>
+     <height>383</height>
     </rect>
    </property>
    <layout class="QGridLayout" >
     <property name="leftMargin" >
      <number>0</number>
     </property>
+    <property name="topMargin" >
+     <number>0</number>
+    </property>
+    <property name="rightMargin" >
+     <number>0</number>
+    </property>
+    <property name="bottomMargin" >
+     <number>0</number>
+    </property>
     <property name="horizontalSpacing" >
-     <number>-1</number>
+     <number>0</number>
     </property>
     <property name="verticalSpacing" >
-     <number>1</number>
+     <number>0</number>
     </property>
     <item row="0" column="0" >
      <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>0</number>
+      </property>
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>0</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>6</number>
+      </property>
+      <item row="0" column="1" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType" >
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>41</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="0" >
+       <layout class="QGridLayout" >
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
+        <property name="horizontalSpacing" >
+         <number>6</number>
+        </property>
+        <property name="verticalSpacing" >
+         <number>6</number>
+        </property>
+        <item row="0" column="1" >
+         <widget class="QLabel" name="label_14" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font" >
+           <font>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text" >
+           <string>User status:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" >
+         <widget class="QLabel" name="label_2" >
+          <property name="text" >
+           <string/>
+          </property>
+          <property name="pixmap" >
+           <pixmap resource="images.qrc" >:/images/peers_16x16.png</pixmap>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0" >
+     <widget class="QTreeWidget" name="msgSendList" >
+      <property name="sizePolicy" >
+       <sizepolicy vsizetype="Ignored" hsizetype="Ignored" >
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize" >
+       <size>
+        <width>20</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="sizeIncrement" >
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="contextMenuPolicy" >
+       <enum>Qt::CustomContextMenu</enum>
+      </property>
+      <property name="sortingEnabled" >
+       <bool>true</bool>
+      </property>
+      <column>
+       <property name="text" >
+        <string>User</string>
+       </property>
+      </column>
+      <column>
+       <property name="text" >
+        <string>Status</string>
+       </property>
+      </column>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="layoutWidget" >
+   <property name="geometry" >
+    <rect>
+     <x>1</x>
+     <y>4</y>
+     <width>451</width>
+     <height>221</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" >
+    <property name="topMargin" >
+     <number>2</number>
+    </property>
+    <property name="horizontalSpacing" >
+     <number>0</number>
+    </property>
+    <property name="verticalSpacing" >
+     <number>0</number>
+    </property>
+    <item row="0" column="0" >
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>0</number>
+      </property>
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>0</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>6</number>
+      </property>
       <item row="0" column="0" >
        <layout class="QGridLayout" >
         <property name="leftMargin" >
@@ -546,238 +722,227 @@
          <number>6</number>
         </property>
         <item row="0" column="0" >
-         <layout class="QGridLayout" >
-          <property name="leftMargin" >
-           <number>0</number>
+         <widget class="QLabel" name="label" >
+          <property name="text" >
+           <string/>
           </property>
-          <property name="topMargin" >
-           <number>0</number>
+          <property name="pixmap" >
+           <pixmap resource="images.qrc" >:/images/chat.png</pixmap>
           </property>
-          <property name="rightMargin" >
-           <number>0</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>0</number>
-          </property>
-          <property name="horizontalSpacing" >
-           <number>6</number>
-          </property>
-          <property name="verticalSpacing" >
-           <number>6</number>
-          </property>
-          <item row="0" column="0" >
-           <widget class="QLabel" name="label" >
-            <property name="text" >
-             <string/>
-            </property>
-            <property name="pixmap" >
-             <pixmap resource="images.qrc" >:/images/chat.png</pixmap>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1" >
-           <widget class="QLabel" name="label_12" >
-            <property name="font" >
-             <font>
-              <pointsize>10</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text" >
-             <string>Blog Feed:</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         </widget>
         </item>
         <item row="0" column="1" >
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
+         <widget class="QLabel" name="label_12" >
+          <property name="font" >
+           <font>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
           </property>
-          <property name="sizeHint" >
-           <size>
-            <width>360</width>
-            <height>16</height>
-           </size>
+          <property name="text" >
+           <string>Blog Feed:</string>
           </property>
-         </spacer>
+         </widget>
         </item>
        </layout>
       </item>
-      <item row="1" column="0" >
-       <widget class="QTextBrowser" name="msgText" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+      <item row="0" column="1" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
         </property>
-        <property name="contextMenuPolicy" >
-         <enum>Qt::DefaultContextMenu</enum>
+        <property name="sizeHint" >
+         <size>
+          <width>360</width>
+          <height>16</height>
+         </size>
         </property>
-        <property name="undoRedoEnabled" >
-         <bool>false</bool>
-        </property>
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
+       </spacer>
       </item>
      </layout>
     </item>
     <item row="1" column="0" >
-     <layout class="QGridLayout" >
-      <property name="verticalSpacing" >
-       <number>1</number>
+     <widget class="QTextBrowser" name="msgText" >
+      <property name="sizePolicy" >
+       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
-      <item row="0" column="0" >
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" >
-         <size>
-          <width>355</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="1" colspan="2" >
-       <widget class="QPushButton" name="boldBtn" >
-        <property name="minimumSize" >
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="maximumSize" >
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="toolTip" >
-         <string>Bold</string>
-        </property>
-        <property name="text" >
-         <string/>
-        </property>
-        <property name="icon" >
-         <iconset resource="images.qrc" >:/images/edit-bold.png</iconset>
-        </property>
-        <property name="checkable" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="3" >
-       <widget class="QPushButton" name="underlineBtn" >
-        <property name="minimumSize" >
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="maximumSize" >
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="toolTip" >
-         <string>Italic</string>
-        </property>
-        <property name="text" >
-         <string/>
-        </property>
-        <property name="icon" >
-         <iconset resource="images.qrc" >:/images/edit-underline.png</iconset>
-        </property>
-        <property name="checkable" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="4" >
-       <widget class="QPushButton" name="italicBtn" >
-        <property name="minimumSize" >
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="maximumSize" >
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="toolTip" >
-         <string>Underline</string>
-        </property>
-        <property name="text" >
-         <string/>
-        </property>
-        <property name="icon" >
-         <iconset resource="images.qrc" >:/images/edit-italic.png</iconset>
-        </property>
-        <property name="checkable" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="5" >
-       <widget class="QTextEdit" name="lineEdit" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Maximum" hsizetype="Expanding" >
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize" >
-         <size>
-          <width>16777215</width>
-          <height>100</height>
-         </size>
-        </property>
-        <property name="sizeIncrement" >
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="baseSize" >
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" colspan="2" >
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" >
-         <size>
-          <width>321</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="2" column="2" colspan="3" >
-       <widget class="QPushButton" name="sendBtn" >
-        <property name="text" >
-         <string>Send</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+      <property name="contextMenuPolicy" >
+       <enum>Qt::DefaultContextMenu</enum>
+      </property>
+      <property name="undoRedoEnabled" >
+       <bool>false</bool>
+      </property>
+      <property name="readOnly" >
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>227</y>
+     <width>451</width>
+     <height>165</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" >
+    <property name="horizontalSpacing" >
+     <number>10</number>
+    </property>
+    <property name="verticalSpacing" >
+     <number>1</number>
+    </property>
+    <item row="0" column="0" >
+     <spacer>
+      <property name="orientation" >
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" >
+       <size>
+        <width>360</width>
+        <height>16</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="0" column="1" >
+     <widget class="QPushButton" name="boldBtn" >
+      <property name="minimumSize" >
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize" >
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="toolTip" >
+       <string>Bold</string>
+      </property>
+      <property name="text" >
+       <string/>
+      </property>
+      <property name="icon" >
+       <iconset resource="images.qrc" >:/images/edit-bold.png</iconset>
+      </property>
+      <property name="checkable" >
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2" >
+     <widget class="QPushButton" name="underlineBtn" >
+      <property name="minimumSize" >
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize" >
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="toolTip" >
+       <string>Italic</string>
+      </property>
+      <property name="text" >
+       <string/>
+      </property>
+      <property name="icon" >
+       <iconset resource="images.qrc" >:/images/edit-underline.png</iconset>
+      </property>
+      <property name="checkable" >
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3" >
+     <widget class="QPushButton" name="italicBtn" >
+      <property name="minimumSize" >
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize" >
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="toolTip" >
+       <string>Underline</string>
+      </property>
+      <property name="text" >
+       <string/>
+      </property>
+      <property name="icon" >
+       <iconset resource="images.qrc" >:/images/edit-italic.png</iconset>
+      </property>
+      <property name="checkable" >
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="4" >
+     <widget class="QTextEdit" name="lineEdit" >
+      <property name="sizePolicy" >
+       <sizepolicy vsizetype="Maximum" hsizetype="Expanding" >
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize" >
+       <size>
+        <width>16777215</width>
+        <height>100</height>
+       </size>
+      </property>
+      <property name="sizeIncrement" >
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="baseSize" >
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" >
+     <spacer>
+      <property name="orientation" >
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" >
+       <size>
+        <width>360</width>
+        <height>16</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="2" column="1" colspan="3" >
+     <widget class="QPushButton" name="sendBtn" >
+      <property name="text" >
+       <string>Send</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

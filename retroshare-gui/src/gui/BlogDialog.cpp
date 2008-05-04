@@ -29,7 +29,7 @@ BlogDialog::BlogDialog(QWidget *parent)
   /* Invoke the Qt Designer generated object setup routine */
   setupUi(this);
   
-  connect(sendBtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
+  connect(sendBtn, SIGNAL(clicked()), this, SLOT(sendBlog()));
   connect(boldBtn, SIGNAL(clicked()), this, SLOT(setFont()));
   connect(underlineBtn, SIGNAL(clicked()), this, SLOT(setFont()));
   connect(italicBtn, SIGNAL(clicked()), this, SLOT(setFont()));
@@ -38,7 +38,7 @@ BlogDialog::BlogDialog(QWidget *parent)
   
 }
 
-void BlogDialog::sendMsg()
+void BlogDialog::sendBlog()
 {
 	QString msg = lineEdit->toPlainText();
 	
