@@ -27,14 +27,14 @@
  */
 
 #include <map>
-#includ <list>
-
+#include <list>
+ 
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvtypes.h"
 
 /*! retroshare data sturcture to be serialised */
-class RsQblogItem: RsItem
+class RsQblogItem: public RsItem
 {
 	public:
 	RsQblogItem() 
@@ -45,7 +45,7 @@ virtual ~RsQblogItem();
 virtual void clear();
 
 /**
- * Used for unit test and checking serialisation occured fine on both ends
+ * Used for unit test / debugging: i.e. checking serialisation occured fine on both ends
  * @param out output stream for printing
  * @param indent allows user to choose indentation of output stream
  * @return pointer to stream object, to store output to a variety of formats
@@ -53,12 +53,15 @@ virtual void clear();
 std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 
-std::multimap<uint32_t, std::string> blogMsgs; /// contain blog mesgs and their blogged times (client time)
+/* everything below is serialised */
+
+std::pair<uint32_t, std::string> blogMsg; /// contain blog mesgs and their blogged times (client time)
 std::string status; /// to be serialised: status of a requested user
+std::string favSong; /// the users favorite song
 };
 
 /*! to serialise rsQblogItems: method names are self explanatory */
-class RsQblogSerialiser : RsSerialType
+class RsQblogSerialiser : public RsSerialType
 {
 
 		public:
@@ -81,7 +84,7 @@ virtual	RsItem *    deserialise(void *data, uint32_t *size);
 				
 virtual	uint32_t    sizeItem(RsQblogItem *);
 virtual	bool        serialiseItem  (RsQblogItem *item, void *data, uint32_t *size);
-virtual	RsChatItem *deserialiseItem(void *data, uint32_t *size);
+virtual	RsQblogItem *deserialiseItem(void *data, uint32_t *size);
 	
 };
 
