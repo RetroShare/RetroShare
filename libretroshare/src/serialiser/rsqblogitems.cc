@@ -34,11 +34,13 @@
 
 RsQblogItem::~RsQblogItem(void)
 {
+	return;
 }
 
 void RsQblogItem::clear()
 {
-	blogMsgs.empty();
+	blogMsg.first = 0;
+	blogMsg.second = "";
 	status = "";
 }
 
@@ -47,69 +49,141 @@ std::ostream &RsQblogItem::print(std::ostream &out, uint16_t indent)
 {
         printRsItemBase(out, "RsQblogItem", indent);
 		uint16_t int_Indent = indent + 2;
+		
+		/* print out the content of the item */
         printIndent(out, int_Indent);
-        out << "blogMsgs: ";
-        
-   		for(std::multimap<uin32_t, std::string>::iterator it = blogMsgs.begin()
-   		; it != blogMsgs.end(); it++)
-   		{
-   			std::pair<uint32_t, std::string> chkMsgs = (std::pair<uint32_t, std::String>) it;
-   			out << chkMsgs.first << std::endl;
-   			out << chkMsgs.second << std::endl;
-   		}
-   		
-		std::string cnv_message(message.begin(), message.end());
+        out << "blogMsg(time): " << blogMsg.first << std::endl;
+        printIndent(out, int_Indent);
+        out << "blogMsg(message): " << blogMsg.second << std::endl;   
+        printIndent(out, int_Indent);     
         out << "status  " << status  << std::endl;
-
+        
         printRsItemEnd(out, "RsQblogItem", indent);
         return out;
 }
 
-RsQblogSerialiser::~RsQblogSerialiser()
-{
-}
 
 
-RsQblogSerialiser::sizeItem(RsQblogItem *item)
+uint32_t RsQblogSerialiser::sizeItem(RsQblogItem *item)
 {
 	uint32_t s = 8; // for header size
-	for(std::multimap<uin32_t, std::string>::iterator it = blogMsgs.begin()
-   		; it != blogMsgs.end(); it++)
-   		{
-   			std::pair<uint32_t, std::string> chkMsgs = (std::pair<uint32_t, std::String>) it;
-   			s += 4; // client time
-   			s += GetTlvStringSize(chkMsgs.second.size());
-   		}
+   	s += 4; // blog creation time
+   	s += GetTlvStringSize(item->blogMsg.second); // string part of blog
+   	s += GetTlvStringSize(item->status);
+   	s += GetTlvStringSize(item->favSong);
    	
    	return s;
 }
 
+/*******************************************************************************/
+
 bool RsQblogSerialiser::serialiseItem(RsQblogItem* item, void* data, u_int32_t *size)
 {
-	//TODO
-	return true;
+	uint32_t tlvsize = sizeItem(item);
+	uint32_t offset = 0;
+
+	if (*size < tlvsize)
+		return false; /* not enough space */
+
+	*size = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+	
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsChatSerialiser::serialiseItem() Header: " << ok << std::endl;
+	std::cerr << "RsChatSerialiser::serialiseItem() Size: " << tlvsize << std::endl;
+#endif
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+	ok &= setRawUInt32(data, tlvsize, &offset, item->blogMsg.first);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, item->blogMsg.second);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, item->status);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, item->favSong);
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
+#endif
+	}
+
+	return ok;
 }
 
-bool RsQblogSerialiser::deserialiseItem(void * data, uint32_t *size)
+/**************************************************************************/
+
+RsQblogItem* RsQblogSerialiser::deserialiseItem(void * data, uint32_t *size)
 {
-	//TODO
-	return bool;
+	
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+	uint32_t offset = 0;
+
+
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+		(RS_SERVICE_TYPE_QBLOG != getRsItemService(rstype)) ||
+		(RS_PKT_SUBTYPE_DEFAULT != getRsItemSubType(rstype)))
+	{
+		return NULL; /* wrong type */
+	}
+
+	if (*size < rssize)    /* check size */
+		return NULL; /* not enough data */
+
+	/* set the packet length */
+	*size = rssize;
+
+	bool ok = true;
+	
+	/* ready to load */
+	RsQblogItem *item = new RsQblogItem();
+	item->clear();
+
+	/* skip the header */
+	offset += 8;
+
+	/* get mandatory parts first */
+	ok &= getRawUInt32(data, rssize, &offset, &(item->blogMsg.first));
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->blogMsg.second);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->status);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->favSong);
+
+	if (offset != rssize)
+	{
+		/* error */
+		delete item;
+		return NULL;
+	}
+
+	if (!ok)
+	{
+		delete item;
+		return NULL;
+	}
+
+	return item;
 }
+
+/*********************************************************************/
 
 bool RsQblogSerialiser::serialise(RsItem *item, void* data, uint32_t* size)
 {
-	//TODO
-	return bool;
+	return serialiseItem((RsQblogItem *) item, data, size);
 }
 
-bool RsQblogSerialiser::deserialise(void* datam, uint32_t* size)
+RsItem* RsQblogSerialiser::deserialise(void* data, uint32_t* size)
 {
-	//TODO
-	return bool;
+	return deserialiseItem(data, size);
 }
-	
 
-uint32_t RsQblogSerialiser::size(RsItem *)
+uint32_t RsQblogSerialiser::size(RsItem *item)
 {
 	return sizeItem((RsQblogItem *) item);
 }
