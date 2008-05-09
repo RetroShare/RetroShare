@@ -27,26 +27,12 @@
  */
  
  #include <iostream>
- #include <strings>
+ #include <string>
  #include <list>
  #include <map>
  
  
- /*!
-  * will contain profile information
-  */
- class Profile;
- 
-/*!
- * blog records to be accessed only by user!
- */
- class RsQBlogMsgs
 
- 
- /*!
-  * contains information that defines rsQblogs attribute space 
-  */
- class rsQBlogInfo
 
  /*! allows gui to interface with the rsQblogs service */
  class RsQblog
@@ -73,7 +59,13 @@ virtual ~RsQblog() { return; }
  	 * choose whether to filter or not
  	 * @param filterSwitch
  	 **/
- 	virtual bool setFilterSwitch(bool filterSwitch) = 0;
+ 	virtual bool setFilterSwitch(bool &filterSwitch) = 0;
+ 	
+ 	/**
+ 	 * get usrs friend list
+ 	 * @ param usrList
+ 	 */
+ 	 virtual bool getFriendList(std::list<std::string> &friendList) =0;
  	
  	/**
  	 * retrieve usrs filterSwitch status
@@ -84,36 +76,39 @@ virtual ~RsQblog() { return; }
  	 * add user id to filter list 
  	 * @param usr id to add to filter list
  	 **/
- 	virtual bool addToFilter(std::string &id) = 0
+ 	virtual bool addToFilter(std::string &usrId) = 0;
  	
  	/**
  	 * remove friend from filter list
  	 * @param id The user's frined's id
  	 **/
- 	 virtual bool removeFiltFriend(std::string &id) = 0;
+ 	 virtual bool removeFiltFriend(std::string &usrId) = 0;
  	 
  	/**
- 	  * get users profile
+ 	  * get users fav song
+ 	  * @param usrId the usr whose fav song you want
+ 	  * @param favSong puts ref for fav song here
  	  */
- 	  virtual bool getProfile(std::string &id, Profile &profile) = 0;
+ 	  virtual bool getProfile(std::string &usrId, std::string &favSong) = 0;
+ 	  
+ 	  
  	  
  	  /**
- 	   * set profile info
+ 	   * for now just fav song, TODO: must find way to link to rs profile
  	   */
- 	   virtual bool setProfile(Profile &profile) = 0;
+ 	   virtual bool setProfile(std::string &favSong) = 0;
  	   
  	   /**
- 	    * send blog info to usr blog list
- 	    * @param msg The msg of the usr wants to send
+ 	    * send blog info, will send to a data structure for transmission
+ 	    * @param msg The msg the usr wants to send
  	    */
- 	   virtual bool sendBlog(std::string &msg) = 0
+ 	   virtual bool sendBlog(std::string &msg) = 0;
  	   
  	   /**
- 	    * retrieve blog of usr
- 	    * @param usr the user to return blog for
- 	    * @param rsQblo
+ 	    * retrieve blog of a usr
+ 	    * @param blogs contains the blog msgs of usr along with time posted for sorting
  	    */
- 	   virtual bool getBlogs(std::string &usr, rsQBlogMsgs &blogs) = 0;
+ 	   virtual bool getBlogs(std::map< std::string, std::multimap<long int, std:: string> > &blogs) = 0;
  	   
  };
 
