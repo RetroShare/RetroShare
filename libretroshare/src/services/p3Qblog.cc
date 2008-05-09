@@ -130,7 +130,7 @@ bool p3Qblog::setProfile(std::string &favSong)
 	FavSong = favSong;
 	return true;
 } 
-	
+
 void p3Qblog::loadDummy(void)
 {
 	/* load usr list */
@@ -157,14 +157,25 @@ void p3Qblog::loadDummy(void)
 	
 	std::string usrBlog = "I think we should eat more cheese";
 	
-	std::string Blog2 = "today was so cool, i got attacked by fifty ninja while buying a loaf 
-	so i used my paper bag to suffocate each of them to death at hyper speed";
+	std::string Blog2 = "today was so cool, i got attacked by fifty ninja while buying a loaf so i used my paper bag to suffocate each of them to death at hyper speed";
 	
 	std::string Blog5 = "I'm really a boring person and having nothin interesting to say";
 	
-	UsrBlogSet.insert(std::make_pair("Usr1", usrBlog));
-	UsrBlogSet.insert(std::make_pair("Mike2", Blog2));
-	UsrBlogSet.insert(std::make_pair("Mike5", Blog5));
+	long int time1, time2, time5;
+	time1 = 12123121;
+	time2 = 1213212;
+	time5 = 522133131;
+	
+	/*** time blog multimaps ****/
+	
+	std::multimap<long int, std::string> timeBlog1, timeBlog2, timeBlog5;
+	timeBlog1.insert(std::make_pair(time1, usrBlog));
+	timeBlog2.insert(std::make_pair(time2, Blog2));
+	timeBlog5.insert(std::make_pair(time5, Blog5));
+	
+	UsrBlogSet.insert(std::make_pair("Usr1", timeBlog1));
+	UsrBlogSet.insert(std::make_pair("Mike2", timeBlog2));
+	UsrBlogSet.insert(std::make_pair("Mike5", timeBlog5));
 	
 }	
 	
