@@ -28,7 +28,7 @@
  
 
 #include <iostream>
-#include <strings>
+#include <string>
 #include <list>
 #include <map>
 
@@ -36,39 +36,47 @@
 
 #include "pqi/pqi.h"
 #include "pqi/pqiindic.h"
+#include "dbase/cachestrapper.h"
 #include "services/p3service.h"
-//#include "serialiser/rsqblogitems"
 #include "util/rsthreads.h"
 
-/*!
- * blog records to be accessed only by user!
- */
- class rsQBlogMsgs
- {
- 	public:
- 	
- 	std::multimap<long int, std::string> blogs; // blogs recorded
- };
- 	
 
- 
- /*!
-  * contains information that defines rsQblogs attribute space 
-  */
- class rsQBlogInfo
+/*!
+ * contains definitions of the interface and blog information to be manipulated
+ */
+ class p3Qblog : p3Service, RsQblog 
  {
  	public:
  	
+ 		p3Qblog();
+ 		virtual ~p3Qblog ();
  	
- 	list<std::string> filterList; /// contains the list of ids usr only wants to see
- 	bool filterSwitch; /// determines whether filter is activated or not
+ 		virtual bool setStatus(std::string &status);
+    	virtual bool getStatus(std::string &status);
+		virtual bool setFilterSwitch(bool &filterSwitch);
+    	virtual bool getFriendList(std::list<std::string> &friendList);
+		virtual bool getFilterSwitch(void);
+		virtual bool addToFilter(std::string &usrId);
+    	virtual bool removeFiltFriend(std::string &usrId);
+    	virtual bool getProfile(std::string &usrId, std::string &favSong);	  
+ 		virtual bool setProfile(std::string &favSong);   
+    	virtual bool sendBlog(std::string &msg);
+    	virtual bool getBlogs(std::map< std::string, std::multimap<long int, std:: string> > &blogs);
+ 	
+  	private:
+  	
+  	std::list<std::string> FilterList; /// contains the list of ids usr only wants to see
+ 	bool FilterSwitch; /// determines whether filter is activated or not
  	std::string Status; /// the status of the user  
- 	list<Profile> UsrProfiles; /// contains list to users friends profile
+ 	std::string FavSong; /// favorite song of usr, consider sending pathfile to d/l 
+ 	std::list<std::string> FriendList; /// list of friends
+ 	std::map<std::string, std::string> FriendSongset; //
+ 	//std::multimap<long int, std::string> blogs; /// blogs recorded
+ 	std::map< std::string, std::multimap<long int, std:: string> > UsrBlogSet; /// contain usr and their blogs
  	
- 	std::map< std::string, rsQblogMsgs> usrBlogSet; /// contain usr and frineds blogs
- 	// std::string favSong; ///usrs latest fav song
+ 	void loadDummy(void); /// loads dummy data for testing
+ 	
  };
- 
- 
+  
 
 #endif /*P3QBLOG_H_*/
