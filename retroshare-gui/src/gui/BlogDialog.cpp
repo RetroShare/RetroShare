@@ -21,6 +21,7 @@
 #include <QtGui>
 
 #include "BlogDialog.h"
+#include "rsiface/rsQblog.h"
 
 /** Constructor */
 BlogDialog::BlogDialog(QWidget *parent)
@@ -30,27 +31,23 @@ BlogDialog::BlogDialog(QWidget *parent)
   setupUi(this);
   
   connect(sendBtn, SIGNAL(clicked()), this, SLOT(sendBlog()));
+  connect(statusBtn, SIGNAL(clicked()), this, SLOT(setStatus()));
   connect(boldBtn, SIGNAL(clicked()), this, SLOT(setFont()));
   connect(underlineBtn, SIGNAL(clicked()), this, SLOT(setFont()));
   connect(italicBtn, SIGNAL(clicked()), this, SLOT(setFont()));
-  connect(statusBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setStatus()));
   
   /* Current Font */
   mCurrentFont = QFont("Comic Sans MS", 8);
-  
-  /* Current user status - online by default */
-  currentStatus = "Online";
-  
 }
 
 void BlogDialog::sendBlog()
 {
-	QString msg = lineEdit->toPlainText();
+	QString blogMsg = lineEdit->toPlainText();
 	
-	msgText->setCurrentFont(mCurrentFont);
+	blogText->setCurrentFont(mCurrentFont);
 		
-	/* Write text into windows */
-	msgText->append(msg);
+	/* Write blog message to window */
+	blogText->append(blogMsg);
 	
 	/* Clear lineEdit */
 	lineEdit->clear();
@@ -69,10 +66,16 @@ void BlogDialog::setFont()
 
 void BlogDialog::setStatus()
 {
-	currentStatus = statusBox->currentText();
+	QString statusMsg = lineEdit->toPlainText();
 	
-	/* for testing */
-	/* msgText->append(currentStatus); */
+	blogText->setCurrentFont(mCurrentFont);
+	
+	/* Write status to window */
+	blogText->append(statusMsg);
+	
+	/* Clear lineEdit */
+	lineEdit->clear();
+	
 }
 	
 	

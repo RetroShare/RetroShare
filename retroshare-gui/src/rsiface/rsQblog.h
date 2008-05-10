@@ -32,7 +32,7 @@
  #include <map>
  
  
-/* delcare interafce for everyone o use */
+/* delcare interface for everyone to use */
 class RsQblog;
 extern RsQblog *rsQblog;
 

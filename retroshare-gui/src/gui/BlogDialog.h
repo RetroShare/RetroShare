@@ -50,10 +50,6 @@ private:
 /* Current Font */
 QFont mCurrentFont;
 
-/* Current status, online by default */
-QString currentStatus;
-
-
 };
 
 #endif
