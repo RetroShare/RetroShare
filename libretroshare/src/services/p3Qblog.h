@@ -44,7 +44,7 @@
 /*!
  * contains definitions of the interface and blog information to be manipulated
  */
- class p3Qblog : p3Service, RsQblog 
+ class p3Qblog : public RsQblog 
  {
  	public:
  	
