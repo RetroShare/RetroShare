@@ -27,6 +27,20 @@
 #include <utility>
 #include <ctime>
 
+RsQblog *rsQblog = NULL;
+
+p3Qblog::p3Qblog()
+: FilterSwitch(false)
+{
+	loadDummy(); // load dummy data
+	return;
+}
+
+p3Qblog::~p3Qblog()
+{
+	return;
+}
+
 
 bool p3Qblog::setStatus(std::string &status)
 {
@@ -34,7 +48,7 @@ bool p3Qblog::setStatus(std::string &status)
 	return true;
 }
 
-bool p3Qblog::getFilterSwitch()
+bool p3Qblog::getFilterSwitch(void)
 {
 	return FilterSwitch;
 }
@@ -108,7 +122,7 @@ bool p3Qblog::getBlogs(std::map< std::string, std::multimap<long int, std:: stri
 bool p3Qblog::sendBlog(std::string &msg)
 {
 	time_t msgCreatedTime;
-	UsrBlogSet.at("Usr").insert(std::make_pair(msgCreatedTime, msg));
+	UsrBlogSet.at("Usr1").insert(std::make_pair(msgCreatedTime, msg));
 	return true;
 }
 
