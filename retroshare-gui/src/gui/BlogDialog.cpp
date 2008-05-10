@@ -43,11 +43,29 @@ BlogDialog::BlogDialog(QWidget *parent)
 void BlogDialog::sendBlog()
 {
 	QString blogMsg = lineEdit->toPlainText();
+	QString debug = "unsuccessful";
 	
 	blogText->setCurrentFont(mCurrentFont);
 		
 	/* Write blog message to window */
 	blogText->append(blogMsg);
+	
+	std::list<std::string> UsrList;
+	
+	/* test to see if load dummy data worked ! */
+	
+	QString blogMsg2;
+	
+	 if(!rsQblog->getFriendList(UsrList))
+	 {
+	 	blogText->append(debug); // put error on screen if problem getting usr list
+	 }
+	 else
+	 {
+	 	blogMsg2 = UsrList.begin()->c_str();
+	 	blogText->append(blogMsg2); // past the first usr list to blog screen
+	 }
+	
 	
 	/* Clear lineEdit */
 	lineEdit->clear();
