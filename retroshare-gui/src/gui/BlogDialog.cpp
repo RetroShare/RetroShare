@@ -52,6 +52,8 @@ void BlogDialog::sendBlog()
 	/* Clear lineEdit */
 	lineEdit->clear();
 	
+	/* setFocus on lineEdit */
+	lineEdit->setFocus();
 }
 
 void BlogDialog::setFont()
@@ -76,6 +78,9 @@ void BlogDialog::setStatus()
 	/* Clear lineEdit */
 	lineEdit->clear();
 	
+	/* set focus on lineEdit */
+	lineEdit->setFocus();
+		
 }
 	
 	
