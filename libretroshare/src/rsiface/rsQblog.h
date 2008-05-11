@@ -32,7 +32,9 @@
  #include <map>
  
  
-
+/* delcare interafce for everyone o use */
+class RsQblog;
+extern RsQblog *rsQblog;
 
  /*! allows gui to interface with the rsQblogs service */
  class RsQblog
