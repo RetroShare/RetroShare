@@ -50,6 +50,9 @@ private:
 /* Current Font */
 QFont mCurrentFont;
 
+/* Font to be used for username (bold) */
+QFont mUsrFont;
+
 };
 
 #endif

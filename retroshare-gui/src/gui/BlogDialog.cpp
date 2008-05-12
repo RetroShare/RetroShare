@@ -21,6 +21,7 @@
 #include <QtGui>
 
 #include "BlogDialog.h"
+
 #include "rsiface/rsQblog.h"
 
 /** Constructor */
@@ -38,23 +39,27 @@ BlogDialog::BlogDialog(QWidget *parent)
   
   /* Current Font */
   mCurrentFont = QFont("Comic Sans MS", 8);
+
+  /* Font for username and timestamp */
+  mUsrFont = QFont("Comic Sans MS", 8);
+  
 }
+
+/* Currently both status and message are the same, will soon be changed
+ * Status will stay the same, well relatively.
+ * However the blog will only display when the user is clicked
+ * and will have multiple messages from the same user.
+ */
 
 void BlogDialog::sendBlog()
 {
 	QString blogMsg = lineEdit->toPlainText();
 	QString debug = "unsuccessful";
-	
-	blogText->setCurrentFont(mCurrentFont);
-		
-	/* Write blog message to window */
-	blogText->append(blogMsg);
+	QString blogUsr;
 	
 	std::list<std::string> UsrList;
 	
 	/* test to see if load dummy data worked ! */
-	
-	QString blogMsg2;
 	
 	 if(!rsQblog->getFriendList(UsrList))
 	 {
@@ -62,11 +67,29 @@ void BlogDialog::sendBlog()
 	 }
 	 else
 	 {
-	 	blogMsg2 = UsrList.begin()->c_str();
-	 	blogText->append(blogMsg2); // past the first usr list to blog screen
+	 	if(blogMsg == "")
+	 	{
+	 		QMessageBox::information(this, tr("No message entered"),
+            tr("Please enter a message."),QMessageBox::Ok,
+            QMessageBox::Ok);
+	 	}
+	 	else
+	 	{
+	 		
+	 		/* I know its messy, I will clean it up */
+	 		blogUsr = UsrList.begin()->c_str();
+	 		blogText->setCurrentFont(mUsrFont); // make bold for username
+	 		blogText->setTextColor(QColor(255, 0, 0, 255));
+	 		QTime qtime;
+			qtime = qtime.currentTime();
+			QString timestamp = qtime.toString("H:m:s");
+	 		blogText->append("[" + timestamp + "] " + blogUsr); // past the first usr list to blog screen
+	 		blogText->setCurrentFont(mCurrentFont); // reset the font for blog message
+	 		blogText->setTextColor(QColor(0, 0, 0, 255));
+	 		blogText->append(blogMsg); // append the users message
+	 	}
 	 }
-	
-	
+	 
 	/* Clear lineEdit */
 	lineEdit->clear();
 	
@@ -83,20 +106,47 @@ void BlogDialog::setFont()
 	lineEdit->setFocus();
 }
 
-
+/* Currently both status and message are the same, will soon be changed
+ * Status will stay the same, well relatively.
+ * However the blog will only display when the user is clicked
+ * and will have multiple messages from the same user.
+ */
 void BlogDialog::setStatus()
 {
 	QString statusMsg = lineEdit->toPlainText();
+	QString debug = "unsuccessful";
+	QString blogUsr;
 	
-	blogText->setCurrentFont(mCurrentFont);
+	std::list<std::string> UsrList;
 	
-	/* Write status to window */
-	blogText->append(statusMsg);
+	/* test to see if load dummy data worked ! */
 	
+	 if(!rsQblog->getFriendList(UsrList))
+	 {
+	 	blogText->append(debug); // put error on screen if problem getting usr list
+	 }
+	 else
+	 {
+	 	if(statusMsg == "")
+	 	{
+	 		QMessageBox::information(this, tr("No message"),
+            tr("Please enter a message."),QMessageBox::Ok,
+            QMessageBox::Ok);
+	 	}
+	 	else
+	 	{
+	 		blogUsr = UsrList.begin()->c_str();
+	 		blogText->setCurrentFont(mUsrFont); // make bold for username
+	 		blogText->append(blogUsr + ": "); // past the first usr list to blog screen
+	 		blogText->setCurrentFont(mCurrentFont); // reset the font for blog message
+	 		blogText->append(statusMsg); // append the users message
+	 	}
+	 }
+	 
 	/* Clear lineEdit */
 	lineEdit->clear();
 	
-	/* set focus on lineEdit */
+	/* setFocus on lineEdit */
 	lineEdit->setFocus();
 		
 }
