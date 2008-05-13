@@ -122,7 +122,7 @@ bool p3Qblog::getBlogs(std::map< std::string, std::multimap<long int, std:: stri
 bool p3Qblog::sendBlog(std::string &msg)
 {
 	time_t msgCreatedTime;
-	UsrBlogSet.at("Usr1").insert(std::make_pair(msgCreatedTime, msg));
+	UsrBlogSet["Usr1"].insert(std::make_pair(msgCreatedTime, msg));
 	return true;
 }
 
@@ -135,7 +135,7 @@ bool p3Qblog::getProfile(std::string &usrId, std::string &favSong)
 		return false;
 	} 
 	
-	favSong = FriendSongset.at(usrId);
+	favSong = FriendSongset[usrId];
 	return true;
 }
 

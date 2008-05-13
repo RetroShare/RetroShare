@@ -77,7 +77,7 @@ uint32_t RsQblogSerialiser::sizeItem(RsQblogItem *item)
 
 /*******************************************************************************/
 
-bool RsQblogSerialiser::serialiseItem(RsQblogItem* item, void* data, u_int32_t *size)
+bool RsQblogSerialiser::serialiseItem(RsQblogItem* item, void* data, uint32_t *size)
 {
 	uint32_t tlvsize = sizeItem(item);
 	uint32_t offset = 0;
