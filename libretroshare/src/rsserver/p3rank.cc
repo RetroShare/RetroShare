@@ -97,8 +97,8 @@ bool p3Rank::updateComment(std::string rid, std::wstring comment, int32_t score)
 	return mRank->updateComment(rid, comment, score);
 }
 
-std::string p3Rank::anonRankMsg(std::wstring link, std::wstring title)
+std::string p3Rank::anonRankMsg(std::string rid, std::wstring link, std::wstring title)
 {
-	return mRank->anonRankMsg(link, title);
+	return mRank->anonRankMsg(rid, link, title);
 }
 

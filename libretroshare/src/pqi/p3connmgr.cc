@@ -245,7 +245,7 @@ void p3ConnectMgr::netStartup()
 	/* decide which net setup mode we're going into 
 	 */
 
-	connMtx.lock();   /*   LOCK MUTEX */
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 	mNetInitTS = time(NULL);
 
@@ -283,12 +283,6 @@ void p3ConnectMgr::netStartup()
 			mNetStatus = RS_NET_UPNP_INIT;
 			break;
 	}
-
-
-	connMtx.unlock(); /* UNLOCK MUTEX */
-
-	/* add Bootstrap Peers ALWAYs (get stuck on the end) */
-	addBootstrapStunPeers();
 }
 
 
@@ -663,7 +657,8 @@ void p3ConnectMgr::netUnreachableCheck()
 #endif
         std::map<std::string, peerConnectState>::iterator it;
 
-	connMtx.lock();   /*   LOCK MUTEX */
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
 	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
 	{
 		/* get last contact detail */
@@ -725,7 +720,6 @@ void p3ConnectMgr::netUnreachableCheck()
 		}
 	}
 
-	connMtx.unlock(); /* UNLOCK MUTEX */
 }
 
 
@@ -756,9 +750,10 @@ bool p3ConnectMgr::udpExtAddressCheck()
 
 	if (0 < tou_extaddr((struct sockaddr *) &addr, &len, &stable))
 	{
-		/* update UDP information */
-		connMtx.lock();   /*   LOCK MUTEX */
+		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
+
+		/* update UDP information */
 		mStunExtAddr = addr;
 		mStunAddrValid = true;
 		mStunAddrStable = (stable != 0);
@@ -770,9 +765,6 @@ bool p3ConnectMgr::udpExtAddressCheck()
 		std::cerr << " stable: " << mStunAddrStable;
 		std::cerr << std::endl;
 #endif
-
-
-		connMtx.unlock(); /* UNLOCK MUTEX */
 
 		return true;
 	}
@@ -805,7 +797,7 @@ void p3ConnectMgr::netStunInit()
 void p3ConnectMgr::stunInit()
 {
 
-	connMtx.lock();   /*   LOCK MUTEX */
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 	/* push stun list to DHT */
 	std::list<std::string>::iterator it;
@@ -816,8 +808,6 @@ void p3ConnectMgr::stunInit()
 	mStunStatus = RS_STUN_DHT;
 	mStunFound = 0;
 	mStunMoreRequired = true;
-
-	connMtx.unlock(); /* UNLOCK MUTEX */
 }
 
 bool p3ConnectMgr::stunCheck()
@@ -851,11 +841,9 @@ bool p3ConnectMgr::stunCheck()
 		/* set external UDP address */
 		mDhtMgr->doneStun();
 
-		connMtx.lock();   /*   LOCK MUTEX */
+		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 		mStunStatus = RS_STUN_DONE;
-
-		connMtx.unlock(); /* UNLOCK MUTEX */
 
 		return true;
 	}
@@ -911,8 +899,7 @@ OTHER
 
 void p3ConnectMgr::stunCollect(std::string id, struct sockaddr_in addr, uint32_t flags)
 {
-	/* if peer is online - move to the top */
-	connMtx.lock();   /*   LOCK MUTEX */
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 #ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::stunCollect() id: " << RsUtil::BinToHex(id) << std::endl;
@@ -966,7 +953,6 @@ void p3ConnectMgr::stunCollect(std::string id, struct sockaddr_in addr, uint32_t
 		}
 	}
 
-	connMtx.unlock(); /* UNLOCK MUTEX */
 }
 
 /********************************  Network Status  *********************************
@@ -976,10 +962,8 @@ void p3ConnectMgr::stunCollect(std::string id, struct sockaddr_in addr, uint32_t
 
 void p3ConnectMgr::addMonitor(pqiMonitor *mon)
 {
-	/* 
-	 */
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
 	std::list<pqiMonitor *>::iterator it;
 	it = std::find(clients.begin(), clients.end(), mon);
 	if (it != clients.end())
@@ -994,10 +978,8 @@ void p3ConnectMgr::addMonitor(pqiMonitor *mon)
 
 void p3ConnectMgr::removeMonitor(pqiMonitor *mon)
 {
-	/* 
-	 */
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
 	std::list<pqiMonitor *>::iterator it;
 	it = std::find(clients.begin(), clients.end(), mon);
 	if (it == clients.end())
@@ -1013,16 +995,18 @@ void p3ConnectMgr::removeMonitor(pqiMonitor *mon)
 
 void p3ConnectMgr::tickMonitors()
 {
+	bool doStatusChange = false;
 	std::list<pqipeer> actionList;
         std::map<std::string, peerConnectState>::iterator it;
+
+      {
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 	if (mStatusChanged)
 	{
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::tickMonitors() StatusChanged! List:" << std::endl;
 #endif
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
 		/* assemble list */
 		for(it = mFriendList.begin(); it != mFriendList.end(); it++)
 		{
@@ -1121,7 +1105,18 @@ void p3ConnectMgr::tickMonitors()
 			}
 		}
 		mStatusChanged = false;
+		doStatusChange = true;
 	
+	}
+      } /****** UNLOCK STACK MUTEX ******/
+
+	/* NOTE - clients is accessed without mutex protection!!!!
+	 * At the moment this is okay - as they are only added at the start.
+	 * IF this changes ---- must fix with second Mutex.
+	 */
+
+	if (doStatusChange)
+	{
 #ifdef CONN_DEBUG
 		std::cerr << "Sending to " << clients.size() << " monitorClients";
 		std::cerr << std::endl;
@@ -1153,25 +1148,23 @@ const std::string p3ConnectMgr::getOwnId()
 
 bool p3ConnectMgr::getOwnNetStatus(peerConnectState &state)
 {
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 	state = ownState;
 	return true;
 }
 
 bool p3ConnectMgr::isFriend(std::string id)
 {
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 	return (mFriendList.end() != mFriendList.find(id));
 }
 
 bool p3ConnectMgr::getFriendNetStatus(std::string id, peerConnectState &state)
 {
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
 	/* check for existing */
         std::map<std::string, peerConnectState>::iterator it;
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
 	it = mFriendList.find(id);
 	if (it == mFriendList.end())
 	{
@@ -1185,10 +1178,10 @@ bool p3ConnectMgr::getFriendNetStatus(std::string id, peerConnectState &state)
 
 bool p3ConnectMgr::getOthersNetStatus(std::string id, peerConnectState &state)
 {
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
 	/* check for existing */
         std::map<std::string, peerConnectState>::iterator it;
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
 	it = mOthersList.find(id);
 	if (it == mOthersList.end())
 	{
@@ -1202,10 +1195,10 @@ bool p3ConnectMgr::getOthersNetStatus(std::string id, peerConnectState &state)
 
 void p3ConnectMgr::getOnlineList(std::list<std::string> &peers)
 {
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
 	/* check for existing */
         std::map<std::string, peerConnectState>::iterator it;
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
 	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
 	{
 		if (it->second.state & RS_PEER_S_CONNECTED)
@@ -1218,10 +1211,10 @@ void p3ConnectMgr::getOnlineList(std::list<std::string> &peers)
 
 void p3ConnectMgr::getFriendList(std::list<std::string> &peers)
 {
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
 	/* check for existing */
         std::map<std::string, peerConnectState>::iterator it;
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
 	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
 	{
 		peers.push_back(it->first);
@@ -1232,10 +1225,10 @@ void p3ConnectMgr::getFriendList(std::list<std::string> &peers)
 
 void p3ConnectMgr::getOthersList(std::list<std::string> &peers)
 {
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
 	/* check for existing */
         std::map<std::string, peerConnectState>::iterator it;
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
 	for(it = mOthersList.begin(); it != mOthersList.end(); it++)
 	{
 		peers.push_back(it->first);
@@ -1249,10 +1242,10 @@ bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr,
                                 uint32_t &delay, uint32_t &period, uint32_t &type)
 
 {
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
 	/* check for existing */
         std::map<std::string, peerConnectState>::iterator it;
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
 	it = mFriendList.find(id);
 	if (it == mFriendList.end())
 	{
@@ -1306,10 +1299,10 @@ bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr,
 
 bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags)
 {
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
 	/* check for existing */
         std::map<std::string, peerConnectState>::iterator it;
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
 	it = mFriendList.find(id);
 	if (it == mFriendList.end())
 	{
@@ -1396,6 +1389,22 @@ void    p3ConnectMgr::peerStatus(std::string id,
 			struct sockaddr_in laddr, struct sockaddr_in raddr,
                        uint32_t type, uint32_t flags, uint32_t source)
 {
+        std::map<std::string, peerConnectState>::iterator it;
+	bool isFriend = true;
+
+	time_t now = time(NULL);
+
+	peerAddrInfo details;
+	details.type    = type;
+	details.found   = true;
+	details.laddr   = laddr;
+	details.raddr   = raddr;
+	details.ts      = now;
+
+
+      {
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
 	std::cerr << "p3ConnectMgr::peerStatus()";
 	std::cerr << " id: " << id;
 	std::cerr << " laddr: " << inet_ntoa(laddr.sin_addr);
@@ -1408,10 +1417,6 @@ void    p3ConnectMgr::peerStatus(std::string id,
 	std::cerr << std::endl;
 
 	/* look up the id */
-        std::map<std::string, peerConnectState>::iterator it;
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
-	bool isFriend = true;
 	it = mFriendList.find(id);
 	if (it == mFriendList.end())
 	{
@@ -1434,14 +1439,6 @@ void    p3ConnectMgr::peerStatus(std::string id,
 	std::cerr << std::endl;
 
 	/* update the status */
-	time_t now = time(NULL);
-
-	peerAddrInfo details;
-	details.type    = type;
-	details.found   = true;
-	details.laddr   = laddr;
-	details.raddr   = raddr;
-	details.ts      = now;
 
 	/* if source is DHT */
 	if (source == RS_CB_DHT)
@@ -1693,14 +1690,18 @@ void    p3ConnectMgr::peerStatus(std::string id,
 
 #endif  // P3CONNMGR_NO_TCP_CONNECTIONS
 
+      } /****** STACK UNLOCK MUTEX *******/
+
 	/* notify if they say we can, or we cannot connect ! */
 	if (details.type & RS_NET_CONN_UDP_DHT_SYNC) 
 	{
 		retryConnectNotify(id);
 	}
-
+#else 
+      } // P3CONNMGR_NO_AUTO_CONNECTION /****** STACK UNLOCK MUTEX *******/
 #endif  // P3CONNMGR_NO_AUTO_CONNECTION 
 
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 	if (it->second.inConnAttempt)
 	{
@@ -1760,6 +1761,8 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in radd
 
 	/******************** UDP PART *****************************/
 
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
 	if (ownState.netMode & RS_NET_MODE_UNREACHABLE)
 	{
 		std::cerr << "p3ConnectMgr::peerConnectRequest() Unreachable - no UDP connection";
@@ -1769,8 +1772,6 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in radd
 
 	/* look up the id */
         std::map<std::string, peerConnectState>::iterator it;
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
 	bool isFriend = true;
 	it = mFriendList.find(id);
 	if (it == mFriendList.end())
@@ -1864,9 +1865,6 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in radd
 
 
 
-
-//void    p3ConnectMgr::stunStatus(std::string id, struct sockaddr_in addr)
-
 /*******************************************************************/
 /*******************************************************************/
 
@@ -1883,7 +1881,7 @@ bool p3ConnectMgr::addFriend(std::string id, uint32_t netMode, uint32_t visState
 	std::cerr << std::endl;
 #endif
 
-	connMtx.lock();   /*   LOCK MUTEX */
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 
         std::map<std::string, peerConnectState>::iterator it;
@@ -1894,8 +1892,6 @@ bool p3ConnectMgr::addFriend(std::string id, uint32_t netMode, uint32_t visState
 		std::cerr << std::endl;
 #endif
 		/* (1) already exists */
-
-		connMtx.unlock(); /* UNLOCK MUTEX */
 		return true;
 	}
 
@@ -1907,8 +1903,6 @@ bool p3ConnectMgr::addFriend(std::string id, uint32_t netMode, uint32_t visState
 		std::cerr << std::endl;
 #endif
 		/* no auth */
-
-		connMtx.unlock(); /* UNLOCK MUTEX */
 		return false;
 	}
 
@@ -1948,8 +1942,6 @@ bool p3ConnectMgr::addFriend(std::string id, uint32_t netMode, uint32_t visState
 			mDhtMgr->findPeer(id);
 		}
 
-		connMtx.unlock(); /* UNLOCK MUTEX */
-
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 		return true;
@@ -1964,8 +1956,6 @@ bool p3ConnectMgr::addFriend(std::string id, uint32_t netMode, uint32_t visState
 		std::cerr << std::endl;
 #endif
 		/* ERROR: no details */
-
-		connMtx.unlock(); /* UNLOCK MUTEX */
 		return false;
 	}
 
@@ -1996,8 +1986,6 @@ bool p3ConnectMgr::addFriend(std::string id, uint32_t netMode, uint32_t visState
 	/* expect it to be a standard DHT */
 	mDhtMgr->findPeer(id);
 
-	connMtx.unlock(); /* UNLOCK MUTEX */
-
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 	return true;
@@ -2014,7 +2002,7 @@ bool p3ConnectMgr::removeFriend(std::string id)
 
 	mDhtMgr->dropPeer(id);
 
-	connMtx.lock();   /*   LOCK MUTEX */
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 	/* move to othersList */
 	bool success = false;
@@ -2037,8 +2025,6 @@ bool p3ConnectMgr::removeFriend(std::string id)
 		success = true;
 	}
 
-	connMtx.unlock(); /* UNLOCK MUTEX */
-
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 	return success;
@@ -2060,20 +2046,18 @@ bool p3ConnectMgr::addNeighbour(std::string id)
 	 * (3) is non-existant -> create new one.
 	 */
 
-	connMtx.lock();   /*   LOCK MUTEX */
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
         std::map<std::string, peerConnectState>::iterator it;
 	if (mFriendList.end() == mFriendList.find(id))
 	{
 		/* (1) already exists */
-		connMtx.unlock(); /* UNLOCK MUTEX */
 		return false;
 	}
 
 	if (mOthersList.end() == mOthersList.find(id))
 	{
 		/* (2) already exists */
-		connMtx.unlock(); /* UNLOCK MUTEX */
 		return true;
 	}
 
@@ -2081,7 +2065,6 @@ bool p3ConnectMgr::addNeighbour(std::string id)
 	if (!mAuthMgr->isValid(id))
 	{
 		/* no auth */
-		connMtx.unlock(); /* UNLOCK MUTEX */
 		return false;
 	}
 
@@ -2090,7 +2073,6 @@ bool p3ConnectMgr::addNeighbour(std::string id)
 	if (!mAuthMgr->getDetails(id, detail))
 	{
 		/* no details */
-		connMtx.unlock(); /* UNLOCK MUTEX */
 		return false;
 	}
 
@@ -2106,13 +2088,7 @@ bool p3ConnectMgr::addNeighbour(std::string id)
 	pstate.netMode = RS_NET_MODE_UNKNOWN;
 
 	/* addr & timestamps -> auto cleared */
-
 	mOthersList[id] = pstate;
-
-	// Nothing to notify anyone about... as no new information
-	//mStatusChanged = true;
-
-	connMtx.unlock(); /* UNLOCK MUTEX */
 
 	return true;
 }
@@ -2132,6 +2108,8 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 
 bool   p3ConnectMgr::retryConnectTCP(std::string id)
 {
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
 	/* push addresses onto stack */
 	std::cerr << "p3ConnectMgr::retryConnectTCP()";
 	std::cerr << " id: " << id;
@@ -2139,9 +2117,6 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 
 	/* look up the id */
         std::map<std::string, peerConnectState>::iterator it;
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
-
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
 		std::cerr << "p3ConnectMgr::retryConnectTCP() Peer is not Friend";
@@ -2300,6 +2275,8 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 
 bool   p3ConnectMgr::retryConnectNotify(std::string id)
 {
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
 	/* push addresses onto stack */
 	std::cerr << "p3ConnectMgr::retryConnectNotify()";
 	std::cerr << " id: " << id;
@@ -2307,8 +2284,6 @@ bool   p3ConnectMgr::retryConnectNotify(std::string id)
 
 	/* look up the id */
         std::map<std::string, peerConnectState>::iterator it;
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
 
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
@@ -2353,8 +2328,8 @@ bool   p3ConnectMgr::retryConnectNotify(std::string id)
 
 bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
 {
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
 	if (id == mAuthMgr->OwnId())
 	{
 		ownState.localaddr = addr;
@@ -2381,8 +2356,9 @@ bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
 
 bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
 {
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+
 	if (id == mAuthMgr->OwnId())
 	{
 		ownState.serveraddr = addr;
@@ -2417,6 +2393,8 @@ bool    p3ConnectMgr::setNetworkMode(std::string id, uint32_t netMode)
 		return true;
 	}
 
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
 	/* check if it is a friend */
         std::map<std::string, peerConnectState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
@@ -2431,9 +2409,6 @@ bool    p3ConnectMgr::setNetworkMode(std::string id, uint32_t netMode)
 	it->second.netMode = netMode;
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
-
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
 	return false;
 }
 
@@ -2446,6 +2421,8 @@ bool    p3ConnectMgr::setVisState(std::string id, uint32_t visState)
 
 		return true;
 	}
+
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 	/* check if it is a friend */
         std::map<std::string, peerConnectState>::iterator it;
@@ -2480,9 +2457,6 @@ bool    p3ConnectMgr::setVisState(std::string id, uint32_t visState)
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
-
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
 	return false;
 }
 
@@ -2515,8 +2489,8 @@ bool 	p3ConnectMgr::checkNetAddress()
 	std::list<std::string> addrs = getLocalInterfaces();
 	std::list<std::string>::iterator it;
 
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
 	bool found = false;
 	for(it = addrs.begin(); (!found) && (it != addrs.end()); it++)
 	{
@@ -2608,8 +2582,7 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
 	std::list<RsItem *> saveData;
 	cleanup = true;
 
-	connMtx.lock();   /*   LOCK MUTEX */
-	connMtx.unlock(); /* UNLOCK MUTEX */
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 	RsPeerNetItem *item = new RsPeerNetItem();
 	item->clear();
@@ -2694,6 +2667,7 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 	std::cerr << std::endl;
 #endif
 
+
 	/* load the list of peers */
 	std::list<RsItem *>::iterator it;
 	for(it = load.begin(); it != load.end(); it++)
@@ -2732,6 +2706,7 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 		}
 		else if (sitem)
 		{
+			RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 #ifdef CONN_DEBUG
 			std::cerr << "p3ConnectMgr::loadList() Stun Config Item:";
 			std::cerr << std::endl;
@@ -2746,8 +2721,6 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 			}
 		}
 
-		connMtx.lock();   /*   LOCK MUTEX */
-		connMtx.unlock(); /* UNLOCK MUTEX */
 		delete (*it);
 	}
 	return true;

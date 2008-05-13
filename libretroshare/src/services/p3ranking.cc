@@ -997,10 +997,16 @@ bool p3Ranking::updateComment(std::string rid, std::wstring comment, int32_t sco
 /*************************************************************************/
 /****************************** LINK SPECIFIC ****************************/
 /*************************************************************************/
-std::string p3Ranking::anonRankMsg(std::wstring link, std::wstring title)
+std::string p3Ranking::anonRankMsg(std::string rid, std::wstring link, std::wstring title)
 {
-	/* generate an id */
-	std::string rid = generateRandomLinkId();
+	bool alreadyExists = true;
+
+	if (rid == "")
+	{
+		alreadyExists = false;
+		/* generate an id */
+		rid = generateRandomLinkId();
+	}
 
 	RsRankLinkMsg *msg1 = new RsRankLinkMsg();
 	RsRankLinkMsg *msg2 = new RsRankLinkMsg();
@@ -1034,7 +1040,15 @@ std::string p3Ranking::anonRankMsg(std::wstring link, std::wstring title)
 	msg2->linktype =  RS_LINK_TYPE_WEB;
 	msg2->link = link;
 
-	addRankMsg(msg1);
+	if (alreadyExists)
+	{
+		delete msg1;
+	}
+	else
+	{
+		addRankMsg(msg1);
+	}
+
 	addAnonToList(msg2);
 
 	return rid;
@@ -1202,6 +1216,19 @@ bool	p3Ranking::addAnonToList(RsRankLinkMsg *msg)
 {
 	{
      	  RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
+	  std::list<RsRankLinkMsg *>::iterator it;
+	  for(it = mAnon.begin(); it != mAnon.end(); it++)
+	  {
+	  	if (msg->rid == (*it)->rid)
+			break;
+	  }
+
+	  if (it != mAnon.end())
+	  {
+	  	delete msg;
+		return false;
+	  }
+	  
 	  mAnon.push_back(msg);
 	  mRepublishFriends = true;
 	}
