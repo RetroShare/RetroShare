@@ -47,12 +47,7 @@
 #include <QTimer>
 
 /* Images for context menu icons */
-#define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
-#define IMAGE_EXPIORTFRIEND      ":/images/exportpeers_16x16.png"
-#define IMAGE_CHAT               ":/images/chat.png"
-/* Images for Status icons */
-#define IMAGE_ONLINE             ":/images/donline.png"
-#define IMAGE_OFFLINE            ":/images/dhidden.png"
+#define IMAGE_EXPORTFRIEND      ":/images/exportpeers_16x16.png"
 
 /** Constructor */
 LinksDialog::LinksDialog(QWidget *parent)
@@ -137,16 +132,34 @@ void LinksDialog::linkTreeWidgetCostumPopupMenu( QPoint point )
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
-      voteupAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Vote Link Up" ), this );
-      connect( voteupAct , SIGNAL( triggered() ), this, SLOT( voteup() ) );
+      voteupAct = new QAction(QIcon(IMAGE_EXPORTFRIEND), tr( "Share Link Anonymously" ), this );
+      connect( voteupAct , SIGNAL( triggered() ), this, SLOT( voteup_anon() ) );
 
-      //votedownAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Vote Down" ), this );
-      //connect( votedownAct , SIGNAL( triggered() ), this, SLOT( votedown() ) );
-      
+
+      	QMenu *voteMenu = new QMenu( tr("Vote on Link"), this );
+      	voteMenu->setIcon(QIcon(IMAGE_EXPORTFRIEND));
+
+      	QAction *vote_p2 = new QAction( QIcon(IMAGE_EXPORTFRIEND), "[+2] Great", this );
+        connect( vote_p2 , SIGNAL( triggered() ), this, SLOT( voteup_p2() ) );
+	voteMenu->addAction(vote_p2);
+      	QAction *vote_p1 = new QAction( QIcon(IMAGE_EXPORTFRIEND), "[+1] Good", this );
+        connect( vote_p1 , SIGNAL( triggered() ), this, SLOT( voteup_p1() ) );
+	voteMenu->addAction(vote_p1);
+      	QAction *vote_p0 = new QAction( QIcon(IMAGE_EXPORTFRIEND), "[+0] Okay", this );
+        connect( vote_p0 , SIGNAL( triggered() ), this, SLOT( voteup_p0() ) );
+	voteMenu->addAction(vote_p0);
+      	QAction *vote_m1 = new QAction( QIcon(IMAGE_EXPORTFRIEND), "[-1] Sux", this );
+        connect( vote_m1 , SIGNAL( triggered() ), this, SLOT( voteup_m1() ) );
+	voteMenu->addAction(vote_m1);
+      	QAction *vote_m2 = new QAction( QIcon(IMAGE_EXPORTFRIEND), "[-2] BAD LINK", this );
+        connect( vote_m2 , SIGNAL( triggered() ), this, SLOT( voteup_m2() ) );
+	voteMenu->addAction(vote_m2);
+
       contextMnu.clear();
       contextMnu.addAction(voteupAct);
-      //contextMnu.addSeparator(); 
-      //contextMnu.addAction(votedownAct);
+      contextMnu.addSeparator(); 
+      contextMnu.addMenu(voteMenu);
+
       contextMnu.exec( mevent->globalPos() );
 }
 
@@ -654,7 +667,7 @@ void LinksDialog::addLinkComment( void )
 		/* add it either way */
 		if (ui.anonBox->isChecked())
 		{
-			rsRanks->anonRankMsg(link.toStdWString(), title.toStdWString());
+			rsRanks->anonRankMsg(mLinkId, link.toStdWString(), title.toStdWString());
 		}
 		else
 		{
@@ -797,7 +810,7 @@ QTreeWidgetItem *LinksDialog::getCurrentLine()
 	return item;
 }
 
-void LinksDialog::voteup()
+void LinksDialog::voteup_anon()
 {
 	//QTreeWidgetItem *c = getCurrentLine();
 
@@ -814,21 +827,74 @@ void LinksDialog::voteup()
 	}
 
 	QString link = QString::fromStdWString(detail.link);
-	std::cerr << "LinksDialog::voteup() : " << link.toStdString() << std::endl;
+	std::cerr << "LinksDialog::voteup_anon() : " << link.toStdString() << std::endl;
+	// need a proper anon sharing option.
+	rsRanks->anonRankMsg(mLinkId, detail.link, detail.title);
 }
 
-void LinksDialog::votedown()
+
+
+
+void LinksDialog::voteup_score(int score)
 {
-	QTreeWidgetItem *c = getCurrentLine();
-	std::cerr << "LinksDialog::votedown()" << std::endl;
+	if (mLinkId == "")
+	{
+		return;
+	}
 
-	/* need to get the input address / port */
-	/*
- 	std::string addr;
-	unsigned short port;
-	rsServer->FriendSetAddress(getPeerRsCertId(c), addr, port);
-	*/
+	RsRankDetails detail;
+	if (!rsRanks->getRankDetails(mLinkId, detail))
+	{
+		/* not there! */
+		return;
+	}
+
+	QString link = QString::fromStdWString(detail.link);
+	std::wstring comment;
+	std::cerr << "LinksDialog::voteup_score() : " << link.toStdString() << std::endl;
+
+
+	std::list<RsRankComment>::iterator cit;
+	/* Add your text to the comment */
+	std::string ownId = rsPeers->getOwnId();
+
+	for(cit = detail.comments.begin(); cit != detail.comments.end(); cit++)
+	{
+		if (cit->id == ownId)
+			break;
+	}
+
+	if (cit != detail.comments.end())
+	{
+		comment = cit->comment;
+	}
+
+	rsRanks->updateComment(mLinkId, comment, score);
 }
 
 
+void LinksDialog::voteup_p2()
+{
+	voteup_score(2);
+}
+
+void LinksDialog::voteup_p1()
+{
+	voteup_score(1);
+}
+
+void LinksDialog::voteup_p0()
+{
+	voteup_score(0);
+}
+
+void LinksDialog::voteup_m1()
+{
+	voteup_score(-1);
+}
+
+void LinksDialog::voteup_m2()
+{
+	voteup_score(-2);
+}
 

@@ -43,8 +43,13 @@ private slots:
   /** Create the context popup menu and it's submenus */
   void linkTreeWidgetCostumPopupMenu( QPoint point );
 
-  void voteup();
-  void votedown();
+  void voteup_anon();
+  void voteup_score(int score);
+  void voteup_p2();
+  void voteup_p1();
+  void voteup_p0();
+  void voteup_m1();
+  void voteup_m2();
 
 void changedSortRank( int index );
 void changedSortPeriod( int index );
