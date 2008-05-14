@@ -46,12 +46,10 @@ const uint16_t RS_SERVICE_TYPE_PHOTO       = 0x0003;
 const uint16_t RS_SERVICE_TYPE_DISC        = 0x0011;
 const uint16_t RS_SERVICE_TYPE_CHAT        = 0x0012;
 const uint16_t RS_SERVICE_TYPE_MSG         = 0x0013;
+const uint16_t RS_SERVICE_TYPE_STATUS      = 0x0014;
 
 
 /****************** BELOW ARE ONLY THEORETICAL (CAN BE CHANGED) *****/
-
-
-const uint16_t RS_SERVICE_TYPE_STATUS      = 0x0012;
 
 
 const uint16_t RS_SERVICE_TYPE_CHANNEL_MSG = 0x0015;
