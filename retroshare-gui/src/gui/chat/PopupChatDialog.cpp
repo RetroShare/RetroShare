@@ -157,11 +157,13 @@ void PopupChatDialog::updateChat()
 
 void PopupChatDialog::addChatMsg(ChatInfo *ci)
 {
-        QTextBrowser *msgWidget = ui.textBrowser;
-	QString currenttxt = msgWidget->toHtml();
+    //QTextBrowser *msgWidget = ui.textBrowser;
+
+	//QString message = msgWidget->toHtml();
+
 
 	/* add in lines at the bottom */
-	QString extraTxt;
+	//QString extraTxt;
 
 	bool offline = true;
 
@@ -181,30 +183,26 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 	{
 	    	QString line = "<br>\n<span style=\"color:#1D84C9\"><strong> ----- PEER OFFLINE (Chat will be lost) -----</strong></span> \n<br>";
 
-		extraTxt += line;
+		//extraTxt += line;
 	}
 	
+
         QString timestamp = "[" + QDateTime::currentDateTime().toString("hh:mm:ss") + "]";
-	QString name = QString::fromStdString(ci ->name);     
-	QString line = "<span style=\"color:#C00000\"><strong>" + timestamp + "</strong></span>" +			
-            		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span>";		
-	extraTxt += line;
-	extraTxt += QString::fromStdWString(ci -> msg);
+	    QString name = QString::fromStdString(ci ->name);        
+	    //QString line = "<span style=\"color:#C00000\"><strong>" + timestamp + "</strong></span>" +			
+        //    		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span>";		
+        //extraTxt += line;
 
-	//QString message = QString::fromStdWString(ci -> msg);
+	    QString message = QString::fromStdWString(ci -> msg);
 
-	QHashIterator<QString, QString> i(smileys);
+	//currenttxt += extraTxt;
+	
+    QHashIterator<QString, QString> i(smileys);
 	while(i.hasNext())
 	{
 		i.next();
-		extraTxt.replace(i.key(), "<img src=\"" + i.value() + "\">");
-		//message.replace(i.key(), "<img src=\"" + i.value() + "\">");
+		message.replace(i.key(), "<img src=\"" + i.value() + "\">");
 	}
-
-	currenttxt += extraTxt;
-	ui.textBrowser->setHtml(currenttxt);
-
-#if 0
 	history /*<< nickColor << color << font << fontSize*/ << timestamp << name << message;
 	
 	QString formatMsg = loadEmptyStyle()/*.replace(nickColor)
@@ -216,7 +214,6 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 				    .replace("%message%", message);
 
 	ui.textBrowser->setHtml(ui.textBrowser->toHtml() + formatMsg + "\n");
-#endif
 	
 	QTextCursor cursor = ui.textBrowser->textCursor();
 	cursor.movePosition(QTextCursor::End);
@@ -270,6 +267,8 @@ void PopupChatDialog::sendChat()
 
         ci.msg = chatWidget->toHtml().toStdWString();
         ci.chatflags = RS_CHAT_PRIVATE;
+
+std::cout << "PopupChatDialog:sendChat " << styleHtm.toStdString() << std::endl;
 
 	addChatMsg(&ci);
 
@@ -399,20 +398,34 @@ void PopupChatDialog::addSmiley()
 
 QString PopupChatDialog::loadEmptyStyle()
 {
+        std::cout << "PopupChatDialog:loadEmptyStyle " << styleHtm.toStdString() << std::endl;
 	QString ret;
 	QFile file(styleHtm);
-	file.open(QIODevice::ReadOnly);
-	ret = file.readAll();
-	file.close();
-	QString styleTmp = styleHtm;
-	QString styleCss = styleTmp.remove(styleHtm.lastIndexOf("."), styleHtm.length()-styleHtm.lastIndexOf(".")) + ".css";
-	qDebug() << styleCss.toAscii();
-	QFile css(styleCss);
-	css.open(QIODevice::ReadOnly);
-	QString tmp = css.readAll();
-	css.close();
-	ret.replace("%css-style%", tmp);
-	return ret;
+	//file.open(QIODevice::ReadOnly);
+       	if (file.open(QIODevice::ReadOnly)) {
+		ret = file.readAll();
+		file.close();
+		QString styleTmp = styleHtm;
+		QString styleCss = styleTmp.remove(styleHtm.lastIndexOf("."), styleHtm.length()-styleHtm.lastIndexOf(".")) + ".css";
+		qDebug() << styleCss.toAscii();
+		QFile css(styleCss);
+		QString tmp;
+		if (css.open(QIODevice::ReadOnly)) {
+			tmp = css.readAll();
+			css.close();
+		}
+		else {
+			std::cerr << "PopupChatDialog:loadEmptyStyle " << "Missing file of default css " << std::endl;
+			tmp = "";
+		}
+		ret.replace("%css-style%", tmp);
+		return ret;
+       	}
+	else {
+                std::cerr << "PopupChatDialog:loadEmptyStyle " << "Missing file of default style " << std::endl;
+		ret="%timestamp% %name% \n %message% ";
+		return ret;
+	}
 }
 
 void PopupChatDialog::changeStyle()
