@@ -41,11 +41,20 @@ public slots:
 	void sendBlog();
 	void setFont();
 	void setStatus();
+	/// populates blog service with current information from core
+	void update(); 
+
 	
 private slots:
 /*nothing here yet */
 
 private:
+
+/// to add usr to usr list: utility function for update
+void addUser(const std::string& usr);
+
+/// remove everything from usrlist and blogText box
+void clear(); 
 
 /* Current Font */
 QFont mCurrentFont;
@@ -54,6 +63,8 @@ QFont mCurrentFont;
 QFont mUsrFont;
 
 };
+
+
 
 #endif
 
