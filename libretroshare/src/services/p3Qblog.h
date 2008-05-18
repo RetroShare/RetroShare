@@ -43,6 +43,7 @@
 
 /*!
  * contains definitions of the interface and blog information to be manipulated
+ * See RsQblog class for virtual methods documentation
  */
  class p3Qblog : public RsQblog 
  {
@@ -65,16 +66,25 @@
  	
   	private:
   	
-  	std::list<std::string> FilterList; /// contains the list of ids usr only wants to see
- 	bool FilterSwitch; /// determines whether filter is activated or not
- 	std::string Status; /// the status of the user  
- 	std::string FavSong; /// favorite song of usr, consider sending pathfile to d/l 
- 	std::list<std::string> FriendList; /// list of friends
- 	std::map<std::string, std::string> FriendSongset; //
- 	//std::multimap<long int, std::string> blogs; /// blogs recorded
- 	std::map< std::string, std::multimap<long int, std:: string> > UsrBlogSet; /// contain usr and their blogs
+  	/// contains the list of ids usr only wants to see
+  	std::list<std::string> FilterList; 
+  	/// determines whether filter is activated or not
+ 	bool FilterSwitch; 
+ 	/// the status of the user
+ 	std::string Status;
+ 	/// favorite song of usr, consider sending pathfile to d/l   
+ 	std::string FavSong; 
+ 	/// list of friends
+ 	std::list<std::string> FriendList;
+ 	/// usr and fav song
+ 	std::map<std::string, std::string> FriendSongset; 
+ 	/// usr and current status
+ 	std::map<std::string, std::string> FriendStatusSet;
+	/// contain usr and their blogs 
+ 	std::map< std::string, std::multimap<long int, std:: string> > UsrBlogSet; 
  	
- 	void loadDummy(void); /// loads dummy data for testing
+ 	/// loads dummy data for testing
+ 	void loadDummy(void); 
  	
  };
   

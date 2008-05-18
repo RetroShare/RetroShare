@@ -61,6 +61,12 @@ bool p3Qblog::setFilterSwitch(bool &filterSwitch)
 
 bool p3Qblog::getFriendList(std::list<std::string> &friendList)
 {
+	if(FriendList.empty())
+	{
+		std::cerr << "FriendList empty!" << std::endl;
+		return false;
+	}
+	
 	friendList = FriendList;
 	return true;
 }
@@ -149,10 +155,10 @@ void p3Qblog::loadDummy(void)
 {
 	/* load usr list */
 	FriendList.push_back("Usr1"); // home usr/server
-	FriendList.push_back("mike2");
-	FriendList.push_back("mike3");
-	FriendList.push_back("mike4");
-	FriendList.push_back("mike5");
+	FriendList.push_back("Mike2");
+	FriendList.push_back("Mike3");
+	FriendList.push_back("Mike4");
+	FriendList.push_back("Mike5");
 	
 	/* set usr status: need to create usr/status set or just add to profile object */
 	Status = "I'm chilling homey";
@@ -167,28 +173,30 @@ void p3Qblog::loadDummy(void)
 	FriendSongset.insert(std::make_pair("Mike4", "revolvers"));
 	FriendSongset.insert(std::make_pair("Mike5", "pepolvers"));
 	
-	/* load could usr blogs, not all tho */
+	/* load usr blogs */
 	
+	/* the usr dummy usr blogs */	
 	std::string usrBlog = "I think we should eat more cheese";
-	
 	std::string Blog2 = "today was so cool, i got attacked by fifty ninja while buying a loaf so i used my paper bag to suffocate each of them to death at hyper speed";
-	
+	std::string Blog3 = "Nuthins up";
+	std::string Blog4 = "stop bothering me";
 	std::string Blog5 = "I'm really a boring person and having nothin interesting to say";
+		
 	
-	long int time1, time2, time5;
-	time1 = 12123121;
-	time2 = 1213212;
-	time5 = 522133131;
+	time_t  time1, time2, time3, time4, time5; // times of blogs
 	
-	/*** time blog multimaps ****/
-	
-	std::multimap<long int, std::string> timeBlog1, timeBlog2, timeBlog5;
+	/*** populate time/blog multimaps and usrBlog map ****/	
+	std::multimap<long int, std::string> timeBlog1, timeBlog2, timeBlog3, timeBlog4, timeBlog5;
 	timeBlog1.insert(std::make_pair(time1, usrBlog));
 	timeBlog2.insert(std::make_pair(time2, Blog2));
+	timeBlog3.insert(std::make_pair(time3, Blog3));
+	timeBlog4.insert(std::make_pair(time4, Blog4));
 	timeBlog5.insert(std::make_pair(time5, Blog5));
 	
 	UsrBlogSet.insert(std::make_pair("Usr1", timeBlog1));
 	UsrBlogSet.insert(std::make_pair("Mike2", timeBlog2));
+	UsrBlogSet.insert(std::make_pair("Mike3", timeBlog2));
+	UsrBlogSet.insert(std::make_pair("Mike4", timeBlog2));
 	UsrBlogSet.insert(std::make_pair("Mike5", timeBlog5));
 	
 }	
