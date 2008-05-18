@@ -23,6 +23,7 @@
 #include "BlogDialog.h"
 
 #include "rsiface/rsQblog.h"
+#include "rsiface/rspeers.h" //to retrieve peer/usrId info
 
 /** Constructor */
 BlogDialog::BlogDialog(QWidget *parent)
@@ -36,6 +37,7 @@ BlogDialog::BlogDialog(QWidget *parent)
   connect(boldBtn, SIGNAL(clicked()), this, SLOT(setFont()));
   connect(underlineBtn, SIGNAL(clicked()), this, SLOT(setFont()));
   connect(italicBtn, SIGNAL(clicked()), this, SLOT(setFont()));
+  connect(refreshBtn, SIGNAL(clicked()), this, SLOT(update()));
   
   /* Current Font */
   mCurrentFont = QFont("Comic Sans MS", 8);
@@ -45,56 +47,28 @@ BlogDialog::BlogDialog(QWidget *parent)
   
 }
 
-/* Currently both status and message are the same, will soon be changed
- * Status will stay the same, well relatively.
- * However the blog will only display when the user is clicked
- * and will have multiple messages from the same user.
- */
 
 void BlogDialog::sendBlog()
 {
 	QString blogMsg = lineEdit->toPlainText();
-	QString debug = "unsuccessful";
-	QString blogUsr;
-	
-	std::list<std::string> UsrList;
-	
-	/* test to see if load dummy data worked ! */
-	
-	 if(!rsQblog->getFriendList(UsrList))
+	QString blogUsr = "Usr1"; // will always be Usr1
+
+	 if(blogMsg == "")
 	 {
-	 	blogText->append(debug); // put error on screen if problem getting usr list
+	 	QMessageBox::information(this, tr("No message entered"),
+        tr("Please enter a message."),QMessageBox::Ok,
+        QMessageBox::Ok);
 	 }
 	 else
 	 {
-	 	if(blogMsg == "")
-	 	{
-	 		QMessageBox::information(this, tr("No message entered"),
-            tr("Please enter a message."),QMessageBox::Ok,
-            QMessageBox::Ok);
-	 	}
-	 	else
-	 	{
-	 		
-	 		/* I know its messy, I will clean it up */
-	 		blogUsr = UsrList.begin()->c_str();
-	 		blogText->setCurrentFont(mUsrFont); // make bold for username
-	 		blogText->setTextColor(QColor(255, 0, 0, 255));
-	 		QTime qtime;
-			qtime = qtime.currentTime();
-			QString timestamp = qtime.toString("H:m:s");
-	 		blogText->append("[" + timestamp + "] " + blogUsr); // past the first usr list to blog screen
-	 		blogText->setCurrentFont(mCurrentFont); // reset the font for blog message
-	 		blogText->setTextColor(QColor(0, 0, 0, 255));
-	 		blogText->append(blogMsg); // append the users message
-	 	}
-	 }
-	 
-	/* Clear lineEdit */
-	lineEdit->clear();
-	
-	/* setFocus on lineEdit */
-	lineEdit->setFocus();
+	 	/* note: timing will be handled by core */
+		std::string blog = blogMsg.toStdString();
+		rsQblog->sendBlog(blog); 
+		update(); // call update to display new blog
+	 }	
+	  
+	lineEdit->clear();//Clear lineEdit
+	lineEdit->setFocus(); //setFocus on lineEdit
 }
 
 void BlogDialog::setFont()
@@ -106,10 +80,8 @@ void BlogDialog::setFont()
 	lineEdit->setFocus();
 }
 
-/* Currently both status and message are the same, will soon be changed
- * Status will stay the same, well relatively.
- * However the blog will only display when the user is clicked
- * and will have multiple messages from the same user.
+/*
+ * this will also send to core, to blog "updated"
  */
 void BlogDialog::setStatus()
 {
@@ -150,7 +122,70 @@ void BlogDialog::setStatus()
 	lineEdit->setFocus();
 		
 }
+
+void BlogDialog::addUser(const std::string &usr)
+{
+	QTreeWidgetItem *NewUser = new QTreeWidgetItem(userList);
+	NewUser->setText(0, tr(usr.c_str()));	
+	//TODO can add status as subtree to each user (use rsQblog.getStatus(usr) )	
+}
+
+void BlogDialog::clear(void)
+{
+	blogText->clear();
+	userList->clear();
+}
 	
+void BlogDialog::update(void)
+{
+	clear(); //create a clear screen
+	 
+	/* retrieve usr names and populate usr list bar */
+	
+	std::list<std::string> usrList; 
+	QString TempVar; // to convert numerics to string note: tbd find way to avoid temporary
+	
+	
+	if(!rsQblog->getFriendList(usrList))
+		std::cerr << "failed to get friend list";
+	
+	
+	/* populate the blog msgs screen */
+	
+	std::map< std::string, std::multimap<long int, std::string> > blogs; // to store blogs
+	
+	if(!rsQblog->getBlogs(blogs))
+		std::cerr << "failed to get blogs";
+	
+	/* print usr name and their blogs to screen */
+	for(std::list<std::string>::iterator it = usrList.begin(); it !=usrList.end(); it++)
+	{	
+		TempVar = it->c_str(); // store usr name in temporary
+		blogText->setTextColor(QColor(255, 0, 0, 255));
+		blogText->setCurrentFont(mUsrFont); // make bold for username		
+		blogText->append("\n" + TempVar); // write usr name to screen
+		
+		/*print blog time-posted/msgs to screen*/
+		
+		std::multimap<long int, std::string>::reverse_iterator blogIt =  blogs[*it].rbegin(); 
+		addUser(*it); // add usr to Qwidget tree
+		
+		if(blogs.at(*it).empty())
+			continue; 	
+	
+		for( ; blogIt != blogs[*it].rend(); blogIt++)
+		{	
+			time_t postedTime = blogIt->first;
+			time(&postedTime); //convert to human readable time
+			blogText->setTextColor(QColor(255, 0, 0, 255)); // 
+			blogText->setCurrentFont(mUsrFont); // make bold for posted date
+			blogText->append("\nPosted: " + QString (ctime(&postedTime))); // print time of blog to screen 
+			blogText->setCurrentFont(mCurrentFont); // reset the font for blog messages
+			blogText->setTextColor(QColor(0, 0, 0, 255)); // set back color to black
+			blogText->append(blogIt->second.c_str()); // print blog msg to screen 
+		}			
+	}	
+}
 	
 	
 
