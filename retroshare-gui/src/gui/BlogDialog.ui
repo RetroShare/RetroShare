@@ -5,12 +5,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>618</width>
-    <height>424</height>
+    <width>606</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="sizePolicy" >
-   <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+   <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -509,9 +509,15 @@
     <rect>
      <x>460</x>
      <y>6</y>
-     <width>151</width>
-     <height>389</height>
+     <width>141</width>
+     <height>391</height>
     </rect>
+   </property>
+   <property name="sizeIncrement" >
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
    </property>
    <layout class="QGridLayout" >
     <property name="leftMargin" >
@@ -554,6 +560,12 @@
       </property>
       <item row="0" column="1" >
        <spacer>
+        <property name="sizeIncrement" >
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
         </property>
@@ -591,10 +603,16 @@
         <item row="0" column="1" >
          <widget class="QLabel" name="label_14" >
           <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="sizeIncrement" >
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
           </property>
           <property name="font" >
            <font>
@@ -610,6 +628,12 @@
         </item>
         <item row="0" column="0" >
          <widget class="QLabel" name="label_2" >
+          <property name="sizeIncrement" >
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="text" >
            <string/>
           </property>
@@ -625,7 +649,7 @@
     <item row="1" column="0" >
      <widget class="QTreeWidget" name="userList" >
       <property name="sizePolicy" >
-       <sizepolicy vsizetype="Ignored" hsizetype="Ignored" >
+       <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -665,6 +689,12 @@
      <width>451</width>
      <height>221</height>
     </rect>
+   </property>
+   <property name="sizeIncrement" >
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
    </property>
    <layout class="QGridLayout" >
     <property name="topMargin" >
@@ -718,6 +748,12 @@
         </property>
         <item row="0" column="0" >
          <widget class="QLabel" name="label" >
+          <property name="sizeIncrement" >
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="text" >
            <string/>
           </property>
@@ -728,6 +764,18 @@
         </item>
         <item row="0" column="1" >
          <widget class="QLabel" name="label_12" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="sizeIncrement" >
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="font" >
            <font>
             <pointsize>10</pointsize>
@@ -744,6 +792,12 @@
       </item>
       <item row="0" column="1" >
        <spacer>
+        <property name="sizeIncrement" >
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
         </property>
@@ -765,6 +819,12 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="sizeIncrement" >
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
       <property name="contextMenuPolicy" >
        <enum>Qt::DefaultContextMenu</enum>
       </property>
@@ -778,176 +838,214 @@
     </item>
    </layout>
   </widget>
+  <widget class="QPushButton" name="boldBtn" >
+   <property name="geometry" >
+    <rect>
+     <x>358</x>
+     <y>233</y>
+     <width>24</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="minimumSize" >
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="maximumSize" >
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="sizeIncrement" >
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="toolTip" >
+    <string>Bold</string>
+   </property>
+   <property name="text" >
+    <string/>
+   </property>
+   <property name="icon" >
+    <iconset resource="images.qrc" >:/images/edit-bold.png</iconset>
+   </property>
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="underlineBtn" >
+   <property name="geometry" >
+    <rect>
+     <x>392</x>
+     <y>233</y>
+     <width>24</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="minimumSize" >
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="maximumSize" >
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="sizeIncrement" >
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="toolTip" >
+    <string>Italic</string>
+   </property>
+   <property name="text" >
+    <string/>
+   </property>
+   <property name="icon" >
+    <iconset resource="images.qrc" >:/images/edit-underline.png</iconset>
+   </property>
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="italicBtn" >
+   <property name="geometry" >
+    <rect>
+     <x>426</x>
+     <y>233</y>
+     <width>24</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="minimumSize" >
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="maximumSize" >
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="sizeIncrement" >
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="toolTip" >
+    <string>Underline</string>
+   </property>
+   <property name="text" >
+    <string/>
+   </property>
+   <property name="icon" >
+    <iconset resource="images.qrc" >:/images/edit-italic.png</iconset>
+   </property>
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QTextEdit" name="lineEdit" >
+   <property name="geometry" >
+    <rect>
+     <x>1</x>
+     <y>263</y>
+     <width>449</width>
+     <height>100</height>
+    </rect>
+   </property>
+   <property name="sizePolicy" >
+    <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+     <horstretch>0</horstretch>
+     <verstretch>5</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="maximumSize" >
+    <size>
+     <width>16777215</width>
+     <height>100</height>
+    </size>
+   </property>
+   <property name="sizeIncrement" >
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="baseSize" >
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+  </widget>
   <widget class="QWidget" name="layoutWidget" >
    <property name="geometry" >
     <rect>
-     <x>0</x>
-     <y>227</y>
-     <width>451</width>
-     <height>174</height>
+     <x>200</x>
+     <y>370</y>
+     <width>247</width>
+     <height>25</height>
     </rect>
    </property>
-   <layout class="QGridLayout" >
-    <property name="horizontalSpacing" >
-     <number>10</number>
-    </property>
-    <property name="verticalSpacing" >
-     <number>1</number>
-    </property>
-    <item row="0" column="0" colspan="2" >
-     <spacer>
-      <property name="orientation" >
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" >
-       <size>
-        <width>360</width>
-        <height>16</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="0" column="2" >
-     <widget class="QPushButton" name="boldBtn" >
-      <property name="minimumSize" >
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize" >
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="toolTip" >
-       <string>Bold</string>
-      </property>
-      <property name="text" >
-       <string/>
-      </property>
-      <property name="icon" >
-       <iconset resource="images.qrc" >:/images/edit-bold.png</iconset>
-      </property>
-      <property name="checkable" >
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="3" >
-     <widget class="QPushButton" name="underlineBtn" >
-      <property name="minimumSize" >
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize" >
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="toolTip" >
-       <string>Italic</string>
-      </property>
-      <property name="text" >
-       <string/>
-      </property>
-      <property name="icon" >
-       <iconset resource="images.qrc" >:/images/edit-underline.png</iconset>
-      </property>
-      <property name="checkable" >
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="4" >
-     <widget class="QPushButton" name="italicBtn" >
-      <property name="minimumSize" >
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize" >
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="toolTip" >
-       <string>Underline</string>
-      </property>
-      <property name="text" >
-       <string/>
-      </property>
-      <property name="icon" >
-       <iconset resource="images.qrc" >:/images/edit-italic.png</iconset>
-      </property>
-      <property name="checkable" >
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0" colspan="5" >
-     <widget class="QTextEdit" name="lineEdit" >
-      <property name="sizePolicy" >
-       <sizepolicy vsizetype="Maximum" hsizetype="Expanding" >
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="maximumSize" >
-       <size>
-        <width>16777215</width>
-        <height>100</height>
-       </size>
-      </property>
+   <property name="sizeIncrement" >
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <layout class="QHBoxLayout" >
+    <item>
+     <widget class="QPushButton" name="refreshBtn" >
       <property name="sizeIncrement" >
        <size>
         <width>0</width>
         <height>0</height>
        </size>
       </property>
-      <property name="baseSize" >
+      <property name="text" >
+       <string>Refresh Blog</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="statusBtn" >
+      <property name="sizeIncrement" >
        <size>
         <width>0</width>
         <height>0</height>
        </size>
       </property>
-     </widget>
-    </item>
-    <item row="2" column="2" colspan="3" >
-     <widget class="QPushButton" name="sendBtn" >
-      <property name="text" >
-       <string>Send</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1" >
-     <widget class="QPushButton" name="statusBtn" >
       <property name="text" >
        <string>Set Status</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="0" >
-     <spacer>
-      <property name="orientation" >
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeType" >
-       <enum>QSizePolicy::Fixed</enum>
-      </property>
-      <property name="sizeHint" >
+    <item>
+     <widget class="QPushButton" name="sendBtn" >
+      <property name="sizeIncrement" >
        <size>
-        <width>245</width>
-        <height>16</height>
+        <width>0</width>
+        <height>0</height>
        </size>
       </property>
-     </spacer>
+      <property name="text" >
+       <string>Send</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
