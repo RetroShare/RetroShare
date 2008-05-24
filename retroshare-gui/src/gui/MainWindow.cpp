@@ -58,6 +58,7 @@
 #define IMAGE_PEERS         	":/images/peers_24x24.png"
 #define IMAGE_SEARCH    	    ":/images/filefind.png"
 #define IMAGE_TRANSFERS      	":/images/ktorrent32.png"
+#define IMAGE_LINKS             ":/images/ktorrent.png"
 #define IMAGE_FILES   	        ":/images/folder_green.png"
 #define IMAGE_CHANNELS       	":/images/channels.png"
 #define IMAGE_PREFERENCES       ":/images/settings16.png"
@@ -169,6 +170,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(messagesDialog = new MessagesDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
                        
+    LinksDialog *linksDialog = NULL;
+    ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
+			createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
 
 
 #ifdef RS_RELEASE_VERSION    

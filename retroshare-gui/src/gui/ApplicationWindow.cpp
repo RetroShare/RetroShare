@@ -95,9 +95,9 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     /* Create the config pages and actions */
     QActionGroup *grp = new QActionGroup(this);
 
-    LinksDialog *linksDialog = NULL;
-    ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_TRANSFERS), tr("Links Cloud"), grp));
+ //   LinksDialog *linksDialog = NULL;
+ //   ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
+ //                      createPageAction(QIcon(IMAGE_TRANSFERS), tr("Links Cloud"), grp));
 
     ChannelsDialog *channelsDialog = NULL;
     ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),

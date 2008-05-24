@@ -576,7 +576,7 @@ void  LinksDialog::updateComments(std::string rid, std::string pid)
 		ui.linkLineEdit->setText("");
 		ui.linkTextEdit->setText("");
 		ui.scoreBox->setCurrentIndex(ScoreToIndex(0));
-		mLinkId = "";
+		mLinkId = rid; /* must be set for Context Menu */
 
 		/* disable comment + score */
 		ui.scoreBox->setEnabled(false);
@@ -652,7 +652,7 @@ void LinksDialog::addLinkComment( void )
 	QString comment = ui.linkTextEdit->toPlainText();
 	int32_t   score = IndexToScore(ui.scoreBox->currentIndex());
 
-	if (mLinkId == "") 
+	if ((mLinkId == "") || (ui.anonBox->isChecked()))
 	{
 		if ((link == "") || (title == ""))
 		{
@@ -667,7 +667,7 @@ void LinksDialog::addLinkComment( void )
 		/* add it either way */
 		if (ui.anonBox->isChecked())
 		{
-			rsRanks->anonRankMsg(mLinkId, link.toStdWString(), title.toStdWString());
+			rsRanks->anonRankMsg("", link.toStdWString(), title.toStdWString());
 		}
 		else
 		{
