@@ -32,8 +32,8 @@
 
 const uint32_t RANK_MAX_FWD_OFFSET = (60 * 60 * 24 * 2); /* 2 Days */
 
-//const uint32_t FRIEND_RANK_REPUBLISH_PERIOD = 60; /* every minute for testing */
-const uint32_t FRIEND_RANK_REPUBLISH_PERIOD = 1800; /* every 30 minutes */
+const uint32_t FRIEND_RANK_REPUBLISH_PERIOD = 60; /* every minute for testing */
+//const uint32_t FRIEND_RANK_REPUBLISH_PERIOD = 1800; /* every 30 minutes */
 
 std::string generateRandomLinkId();
 
@@ -619,6 +619,8 @@ float 	p3Ranking::locked_calcRank(RankGroup &grp)
 
 	uint32_t count = 0;
 	float   algScore = 0;
+	float   comboScore = 0;
+	float   popScore = 0;
 
 #ifdef RANK_DEBUG
 	std::string normlink(grp.link.begin(), grp.link.end());
@@ -684,6 +686,15 @@ float 	p3Ranking::locked_calcRank(RankGroup &grp)
 
 		algScore += timeScore;
 		count++;
+
+		/* for more advanced scoring (where each peer gives a score +2 -> -2) */
+		/* combo = SUM value * timeScore */
+		/* time = same as before (average) */
+		/* popScore = SUM value */
+
+		float value = it->second->score;
+		comboScore += value * timeScore;
+		popScore += value;
 	}
 
 #ifdef RANK_DEBUG
@@ -704,18 +715,40 @@ float 	p3Ranking::locked_calcRank(RankGroup &grp)
 	if ((doScore) && (doTime))
 	{
 #ifdef RANK_DEBUG
-		std::cerr << "Final (alg) score:" << algScore;
+		std::cerr << "Old (alg) score:" << algScore;
+		std::cerr << std::endl;
+		std::cerr << "Final (Combo) score:" << comboScore;
 		std::cerr << std::endl;
 #endif
-		return algScore;
+
+		if (comboScore < 0)
+		{
+#ifdef RANK_DEBUG
+			std::cerr << "Combo score reset = 0";
+			std::cerr << std::endl;
+#endif
+			comboScore = 0;
+		}
+		return comboScore;
+
 	}
 	else if (doScore)
 	{
 #ifdef RANK_DEBUG
-		std::cerr << "Final (pop) score:" << count;
+		std::cerr << "Old (tally) score:" << count;
+		std::cerr << std::endl;
+		std::cerr << "Final (pop) score:" << popScore;
 		std::cerr << std::endl;
 #endif
-		return count;
+		if (popScore < 0)
+		{
+#ifdef RANK_DEBUG
+			std::cerr << "Pop score reset = 0";
+			std::cerr << std::endl;
+#endif
+			popScore = 0;
+		}
+		return popScore;
 	}
 	else if (doTime)
 	{
