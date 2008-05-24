@@ -111,7 +111,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   ui.fontButton->setMenu(fontmenu);*/
   
   mCurrentColor = Qt::black;
-  mCurrentFont = QFont("Comic Sans MS", 12);
+  mCurrentFont = QFont("Comic Sans MS", 10);
 
   colorChanged(mCurrentColor);
   setFont();

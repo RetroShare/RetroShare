@@ -170,7 +170,7 @@ void BlogDialog::update(void)
 		std::multimap<long int, std::string>::reverse_iterator blogIt =  blogs[*it].rbegin(); 
 		addUser(*it); // add usr to Qwidget tree
 		
-		if(blogs.at(*it).empty())
+		if(blogs[*it].empty())
 			continue; 	
 	
 		for( ; blogIt != blogs[*it].rend(); blogIt++)
