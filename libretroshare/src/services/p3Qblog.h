@@ -52,16 +52,16 @@
  		p3Qblog();
  		virtual ~p3Qblog ();
  	
- 		virtual bool setStatus(std::string &status);
-    	virtual bool getStatus(std::string &status);
+ 		virtual bool setStatus(const std::string &status);
+    	virtual bool getStatus(std::map<std::string, std::string> &usrStatus);
 		virtual bool setFilterSwitch(bool &filterSwitch);
     	virtual bool getFriendList(std::list<std::string> &friendList);
 		virtual bool getFilterSwitch(void);
 		virtual bool addToFilter(std::string &usrId);
     	virtual bool removeFiltFriend(std::string &usrId);
-    	virtual bool getProfile(std::string &usrId, std::string &favSong);	  
- 		virtual bool setProfile(std::string &favSong);   
-    	virtual bool sendBlog(std::string &msg);
+    	virtual bool getProfile(std::map<std::string, std::string> &profile);	  
+ 		virtual bool setProfile(const std::string &favSong); 
+    	virtual bool sendBlog(const std::string &msg);
     	virtual bool getBlogs(std::map< std::string, std::multimap<long int, std:: string> > &blogs);
  	
   	private:
@@ -70,8 +70,8 @@
   	std::list<std::string> FilterList; 
   	/// determines whether filter is activated or not
  	bool FilterSwitch; 
- 	/// the status of the user
- 	std::string Status;
+ 	/// the current usr
+ 	std::string usr;
  	/// favorite song of usr, consider sending pathfile to d/l   
  	std::string FavSong; 
  	/// list of friends

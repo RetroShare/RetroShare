@@ -42,9 +42,9 @@ p3Qblog::~p3Qblog()
 }
 
 
-bool p3Qblog::setStatus(std::string &status)
+bool p3Qblog::setStatus(const std::string &status)
 {
-	Status = status;
+	FriendStatusSet[usr] = status;
 	return true;
 }
 
@@ -71,9 +71,9 @@ bool p3Qblog::getFriendList(std::list<std::string> &friendList)
 	return true;
 }
 
-bool p3Qblog::getStatus(std::string &status)
+bool p3Qblog::getStatus(std::map<std::string, std::string> &usrStatus)
 {
-	status = Status;
+	usrStatus = FriendStatusSet;
 	return true;
 }
 
@@ -125,14 +125,14 @@ bool p3Qblog::getBlogs(std::map< std::string, std::multimap<long int, std:: stri
 	return true;
 }
 	
-bool p3Qblog::sendBlog(std::string &msg)
+bool p3Qblog::sendBlog(const std::string &msg)
 {
 	time_t msgCreatedTime;
 	UsrBlogSet["Usr1"].insert(std::make_pair(msgCreatedTime, msg));
 	return true;
 }
 
-bool p3Qblog::getProfile(std::string &usrId, std::string &favSong)
+bool p3Qblog::getProfile(std::map<std::string, std::string> &profile)
 {	
 	/* return error is set empty */
 	if(FriendSongset.empty())
@@ -141,13 +141,13 @@ bool p3Qblog::getProfile(std::string &usrId, std::string &favSong)
 		return false;
 	} 
 	
-	favSong = FriendSongset[usrId];
+	profile = FriendSongset;
 	return true;
 }
 
-bool p3Qblog::setProfile(std::string &favSong)
+bool p3Qblog::setProfile(const std::string &favSong)
 {
-	FavSong = favSong;
+	FriendSongset[usr] = favSong;
 	return true;
 } 
 
@@ -161,7 +161,7 @@ void p3Qblog::loadDummy(void)
 	FriendList.push_back("Mike5");
 	
 	/* set usr status: need to create usr/status set or just add to profile object */
-	Status = "I'm chilling homey";
+	//TODO
 	
 	/* set favsong: will be made part of profile */
 	FavSong = "DeathOfAthousandSuns"; 
