@@ -47,6 +47,7 @@
 #include "ForumsDialog.h"
 #include "channels/channelsDialog.h"
 #include "BlogDialog.h"
+#include "CalDialog.h"
 
 /* for smplayer */
 #include "smplayer.h"
@@ -72,6 +73,7 @@
 #define IMAGE_RSM16             ":/images/rsmessenger16.png"
 #define IMAGE_CLOSE             ":/images/close_normal.png"
 #define IMAGE_SMPLAYER          ":/images/smplayer_icon32.png"
+#define IMAGE_CALENDAR          ":/images/calendar.png"
 
 
 /* Keys for UI Preferences */
@@ -118,6 +120,10 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     BlogDialog *blogDialog = NULL;
     ui.stackPages->add(blogDialog = new BlogDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_NETWORK), tr("Blog Feed"), grp));
+
+    CalDialog *calDialog = NULL;
+    ui.stackPages->add(calDialog = new CalDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_CALENDAR), tr("Shared Calendars"), grp));
                      
                      
                      

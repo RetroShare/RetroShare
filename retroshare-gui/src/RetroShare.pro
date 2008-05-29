@@ -51,6 +51,7 @@ HEADERS +=  rshare.h \
             gui/StartDialog.h \
             gui/ChatDialog.h \
             gui/BlogDialog.h \
+	    gui/CalDialog.h \
             gui/NetworkDialog.h \
             gui/GenCertDialog.h \
             gui/TransfersDialog.h \
@@ -152,6 +153,7 @@ HEADERS +=  rshare.h \
 
 FORMS +=    gui/ChatDialog.ui \
 	    gui/BlogDialog.ui \
+	    gui/CalDialog.ui \
             gui/StartDialog.ui \
             gui/GenCertDialog.ui \
             gui/NetworkDialog.ui \
@@ -220,6 +222,7 @@ SOURCES += main.cpp \
             gui/GenCertDialog.cpp \
             gui/ChatDialog.cpp \
             gui/BlogDialog.cpp \
+            gui/CalDialog.cpp \
             gui/NetworkDialog.cpp \
             gui/TransfersDialog.cpp \
             gui/graphframe.cpp \
