@@ -32,6 +32,7 @@
 #include "util/rsdir.h"
 #include <string>
 #include <iostream>
+#include <algorithm>
 
 std::string 	RsDirUtil::getTopDir(std::string dir)
 {
