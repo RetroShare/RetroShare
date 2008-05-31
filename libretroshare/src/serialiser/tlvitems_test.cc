@@ -30,6 +30,7 @@
  *
  */
 
+#include <string.h>
 #include <iostream>
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rstlvutil.h"

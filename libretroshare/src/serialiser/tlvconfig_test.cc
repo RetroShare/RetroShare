@@ -31,6 +31,7 @@
  *
  */
 
+#include <stdlib.h>
 #include <iostream>
 #include <sstream>
 #include "serialiser/rstlvtypes.h"
