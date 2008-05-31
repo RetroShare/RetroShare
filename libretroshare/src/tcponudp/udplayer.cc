@@ -31,6 +31,8 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <string.h>
+#include <stdlib.h>
 
 /*
 #include <sys/types.h>

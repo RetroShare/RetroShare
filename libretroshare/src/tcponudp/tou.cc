@@ -30,6 +30,9 @@
 
 static  const int kInitStreamTable = 5;
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "udplayer.h"
 #include "tcpstream.h"
 #include <vector>

@@ -115,6 +115,7 @@ virtual	int sendUdpPacket(const void *data, int size, struct sockaddr_in &to);
 };
 
 #include <iostream>
+#include <stdlib.h>
 
 class LossyUdpLayer: public UdpLayer
 {

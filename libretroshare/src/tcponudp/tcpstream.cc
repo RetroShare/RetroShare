@@ -24,7 +24,8 @@
  */
 
 
-
+#include <stdlib.h>
+#include <string.h>
  
 #include "tcpstream.h"
 #include <iostream>

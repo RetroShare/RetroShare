@@ -27,6 +27,7 @@
 #include "util/rsnet.h"
 #include "util/rsprint.h"
 
+#include <stdlib.h>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
