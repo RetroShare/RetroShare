@@ -214,6 +214,11 @@ void 	RsServer::run()
 				/* Tick slow services */
 				if (mRanking)
 					mRanking->tick();
+				
+				/*	TODO need to implement tick function
+				if(mQblog)
+					mQblog->tick()
+					*/
 
 
 #if 0

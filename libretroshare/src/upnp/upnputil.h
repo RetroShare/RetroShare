@@ -16,9 +16,9 @@
 #include <winsock2.h>
 #define snprintf _snprintf
 #endif
-#include "miniwget.h"
-#include "miniupnpc.h"
-#include "upnpcommands.h"
+#include <miniwget.h>
+#include <miniupnpc.h>
+#include <upnpcommands.h>
 
 /* protofix() checks if protocol is "UDP" or "TCP" 
  * returns NULL if not */

@@ -6,7 +6,7 @@
  *
  * RetroShare Blog Service.
  *
- * Copyright 2007-2008 by Chris Parker, Robert Fernie.
+ * Copyright 2007-2008 by Chris Evi-Parker, Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,28 +34,47 @@
 
 #include "rsiface/rsQblog.h"
 
-#include "pqi/pqi.h"
-#include "pqi/pqiindic.h"
 #include "dbase/cachestrapper.h"
-#include "services/p3service.h"
-#include "util/rsthreads.h"
+#include "pqi/pqiservice.h"
+#include "pqi/pqistreamer.h"
+#include "pqi/p3connmgr.h"
+#include "pqi/p3cfgmgr.h"
 
+#include "serialiser/rsserial.h"
+
+class RsQblogItem; /* to populate maps of blogs */
 
 /*!
  * contains definitions of the interface and blog information to be manipulated
  * See RsQblog class for virtual methods documentation
  */
- class p3Qblog : public RsQblog 
+ class p3Qblog : public CacheSource, public CacheStore, public p3Config
  {
  	public:
  	
- 		p3Qblog();
+		p3Qblog(p3ConnectMgr *connMgr, 
+		uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
+		std::string sourcedir, std::string storedir, 
+		uint32_t storePeriod);
  		virtual ~p3Qblog ();
+ 		
+ 	public:
+ 		
+ 		/******************************* CACHE SOURCE / STORE Interface *********************/
+
+		/// overloaded functions from Cache Source 
+		virtual bool    loadLocalCache(const CacheData &data);
+
+		/// overloaded functions from Cache Store 
+		virtual int    loadCache(const CacheData &data);
+
+		/******************************* CACHE SOURCE / STORE Interface *********************/
+ 	
+ 	public:
  	
  		virtual bool setStatus(const std::string &status);
     	virtual bool getStatus(std::map<std::string, std::string> &usrStatus);
 		virtual bool setFilterSwitch(bool &filterSwitch);
-    	virtual bool getFriendList(std::list<std::string> &friendList);
 		virtual bool getFilterSwitch(void);
 		virtual bool addToFilter(std::string &usrId);
     	virtual bool removeFiltFriend(std::string &usrId);
@@ -63,30 +82,78 @@
  		virtual bool setProfile(const std::string &favSong); 
     	virtual bool sendBlog(const std::string &msg);
     	virtual bool getBlogs(std::map< std::string, std::multimap<long int, std:: string> > &blogs);
+    	
+    	/*
+    	 * to load and transform cache source to normal attribute format of a blog message 
+    	 * @param filename ?? TODO
+    	 * @param source ?? TODO
+    	 */
+    	bool loadBlogFile(std::string filename, std::string src);
+    	
+    	/*
+    	 * add a blog item to maps 
+    	 * @param newBlog a blog item from a peer or yourself
+    	 */
+    	bool addBlog(RsQblogItem  *newBlog);
+    	
+    	/*
+    	 * post our blog to our friends, connectivity function
+    	 */
+    	bool postBlogs(void);
+    
+    	/*
+    	 * sort blog maps in time order
+    	 */
+    	bool sort(void);
+    	
+		// ??
+		pqistreamer *createStreamer(std::string file, std::string src, bool reading);
+ 
+ 		
+    protected:
+
+		/// p3Config STUFF
+		virtual RsSerialiser *setupSerialiser();
+		/// p3Config STUFF
+		virtual std::list<RsItem *> saveList(bool &cleanup);
+		/// p3Config STUFF
+		virtual bool loadList(std::list<RsItem *> load);
+		/// p3Config STUFF
+		virtual void saveDone(void);
+ 
  	
   	private:
   	
-  	/// contains the list of ids usr only wants to see
-  	std::list<std::string> FilterList; 
-  	/// determines whether filter is activated or not
- 	bool FilterSwitch; 
- 	/// the current usr
- 	std::string usr;
- 	/// favorite song of usr, consider sending pathfile to d/l   
- 	std::string FavSong; 
- 	/// list of friends
- 	std::list<std::string> FriendList;
- 	/// usr and fav song
- 	std::map<std::string, std::string> FriendSongset; 
- 	/// usr and current status
- 	std::map<std::string, std::string> FriendStatusSet;
-	/// contain usr and their blogs 
- 	std::map< std::string, std::multimap<long int, std:: string> > UsrBlogSet; 
- 	
- 	/// loads dummy data for testing
- 	void loadDummy(void); 
+  		/// handles connection to peers
+  		p3ConnectMgr *mConnMgr;
+		/// for locking files provate members below
+		RsMutex mBlogMtx;
+		/// the current usr
+ 		std::string mOwnId;
+  	
+  		/// contains the list of ids usr only wants to see
+  		std::list<std::string> mFilterList; 
+  		/// determines whether filter is activated or not
+ 		bool mFilterSwitch; 
+ 		/// usr and fav song
+ 		std::map<std::string, std::string> mPeerSongSet; 
+ 		/// usr and current status
+ 		std::map<std::string, std::string> mPeerStatusSet;
+		/// contain usr and their blogs 
+ 		std::map< std::string, std::multimap<long int, std:: string> > mUsrBlogSet; 
+ 		//fills up above sets
+ 		std::list<RsQblogItem*> mBlogItems; 
+ 		//how long to keep posts
+ 		uint32_t mStorePeriod;
+ 		// to track updates
+ 		bool mUpdated;
+ 		
+ 		/*
+ 		 * load dummy data
+ 		 */
+ 		void loadDummy(void); 
+ 		
  	
  };
-  
 
 #endif /*P3QBLOG_H_*/

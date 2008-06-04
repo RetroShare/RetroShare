@@ -11,6 +11,7 @@ RSOBJ = p3peers.o \
 	p3rank.o  \
 	p3photo.o  \
 	p3msgs.o  \
+	p3Blog.o  \
 	p3discovery.o \
 	p3face-file.o \
 	p3face-server.o \

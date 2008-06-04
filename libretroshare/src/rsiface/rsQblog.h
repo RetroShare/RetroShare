@@ -6,7 +6,7 @@
  *
  * RetroShare C++ Interface.
  *
- * Copyright 2007-2008 by Chris Parker, Robert Fernie.
+ * Copyright 2007-2008 by Chris Evi-Parker, Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -63,11 +63,6 @@ extern RsQblog *rsQblog;
 	 	 */
 	 	virtual bool setFilterSwitch(bool &filterSwitch) = 0;
 	 	
-	 	/**
-	 	 * get usrs friend list
-	 	 * @ param usrList
-	 	 */
-	 	virtual bool getFriendList(std::list<std::string> &friendList) =0;
 	 	
 	 	/**
 	 	 * retrieve usrs filterSwitch status
@@ -92,9 +87,7 @@ extern RsQblog *rsQblog;
 	 	 * @param favSong puts ref for fav song here
 	 	 */
 	 	virtual bool getProfile(std::map<std::string, std::string> &profile) = 0;
-	 	  
-	 	  
-	 	  
+	 	   	  
 	 	/**
 	 	 * for now just fav song, TODO: must find way to link to rs profile
 	 	 */

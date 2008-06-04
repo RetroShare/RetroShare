@@ -53,7 +53,7 @@ std::ostream &RsChatItem::print(std::ostream &out, uint16_t indent)
         printRsItemBase(out, "RsChatItem", indent);
 	uint16_t int_Indent = indent + 2;
         printIndent(out, int_Indent);
-        out << "chatFlags: " << chatFlags << std::endl;
+        out << "QblogMs " << chatFlags << std::endl;
 
         printIndent(out, int_Indent);
         out << "sendTime:  " << sendTime  << std::endl;

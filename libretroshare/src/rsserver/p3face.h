@@ -41,6 +41,7 @@
 #include "services/p3msgservice.h"
 #include "services/p3chatservice.h"
 #include "services/p3ranking.h"
+#include "services/p3Qblog.h"
 
 /* The Main Interface Class - for controlling the server */
 
@@ -286,6 +287,7 @@ int UpdateAllConfig();
 
 	/* caches (that need ticking) */
 	p3Ranking *mRanking;
+	p3Qblog *mQblog;
 
 	/* Config */
 	p3ConfigMgr     *mConfigMgr;

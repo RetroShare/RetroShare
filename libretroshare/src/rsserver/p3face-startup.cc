@@ -66,7 +66,9 @@
 #include "rsserver/p3msgs.h"
 #include "rsserver/p3discovery.h"
 #include "rsserver/p3photo.h"
+#include "rsserver/p3Blog.h"
 #include "rsiface/rsgame.h"
+
 
 #include "pqi/p3notify.h" // HACK - moved to pqi for compilation order.
 
@@ -569,23 +571,32 @@ int RsServer::StartupRetroShare(RsInit *config)
 	p3GameLauncher *gameLauncher = new p3GameLauncher(mConnMgr);
 	pqih -> addService(gameLauncher);
 
-	mRanking = new p3Ranking(mConnMgr, RS_SERVICE_TYPE_RANK, 
+	mRanking = new p3Ranking(mConnMgr, RS_SERVICE_TYPE_RANK,     /* declaration of cache enable service rank */
 			mCacheStrapper, mCacheTransfer, 
 			localcachedir, remotecachedir, 3600 * 24 * 30);
 
         CachePair cp(mRanking, mRanking, CacheId(RS_SERVICE_TYPE_RANK, 0));
-	mCacheStrapper -> addCachePair(cp);
+	mCacheStrapper -> addCachePair(cp);				/* end of declaration */
 
-	p3PhotoService *photoService = new p3PhotoService(RS_SERVICE_TYPE_PHOTO, 
+	p3PhotoService *photoService = new p3PhotoService(RS_SERVICE_TYPE_PHOTO,   /* .... for photo service */
 			mCacheStrapper, mCacheTransfer, 
 			localcachedir, remotecachedir);
 
         CachePair cp2(photoService, photoService, CacheId(RS_SERVICE_TYPE_PHOTO, 0));
 	mCacheStrapper -> addCachePair(cp2);
 
+	mQblog = new p3Qblog(mConnMgr, RS_SERVICE_TYPE_QBLOG, 			/* ...then for Qblog */
+			mCacheStrapper, mCacheTransfer,	
+			localcachedir, remotecachedir, 3600 * 24 * 30);
+
+	CachePair cp3(mQblog, mQblog, CacheId(RS_SERVICE_TYPE_QBLOG, 0));
+	mCacheStrapper -> addCachePair(cp3);
+	
+
 	
 #else
 	mRanking = NULL;
+	mQBlog = NULL;
 
 #endif
 
@@ -612,6 +623,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	mConfigMgr->addConfiguration("cache.cfg", mCacheStrapper);
 #ifndef RS_RELEASE
 	mConfigMgr->addConfiguration("ranklink.cfg", mRanking);
+	mConfigMgr->addConfiguration("qblog.cfg", mQblog);
 #endif
 
 	/**************************************************************************/
@@ -741,7 +753,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	rsRanks = new p3Rank(mRanking);
 	rsForums = new p3Forums();
 	rsStatus = new p3Status();
-	rsQblog = new p3Qblog();
+	rsQblog = new p3Blog(mQblog);
 	
 #else
 	rsGameLauncher = NULL;

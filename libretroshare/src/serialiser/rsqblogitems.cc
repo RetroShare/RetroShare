@@ -57,7 +57,8 @@ std::ostream &RsQblogItem::print(std::ostream &out, uint16_t indent)
         out << "blogMsg(message): " << blogMsg.second << std::endl;   
         printIndent(out, int_Indent);     
         out << "status  " << status  << std::endl;
-        
+        printIndent(out, int_Indent);     
+        out << "pid  " << pid  << std::endl;        
         printRsItemEnd(out, "RsQblogItem", indent);
         return out;
 }
@@ -71,7 +72,8 @@ uint32_t RsQblogSerialiser::sizeItem(RsQblogItem *item)
    	s += GetTlvStringSize(item->blogMsg.second); // string part of blog
    	s += GetTlvStringSize(item->status);
    	s += GetTlvStringSize(item->favSong);
-   	
+   	s += GetTlvStringSize(item->pid);
+   	  	
    	return s;
 }
 
@@ -102,6 +104,7 @@ bool RsQblogSerialiser::serialiseItem(RsQblogItem* item, void* data, uint32_t *s
 	ok &= setRawUInt32(data, tlvsize, &offset, item->blogMsg.first);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, item->blogMsg.second);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, item->status);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, item->favSong);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, item->favSong);
 
 	if (offset != tlvsize)
@@ -154,6 +157,7 @@ RsQblogItem* RsQblogSerialiser::deserialiseItem(void * data, uint32_t *size)
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->blogMsg.second);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->status);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->favSong);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->pid);
 
 	if (offset != rssize)
 	{

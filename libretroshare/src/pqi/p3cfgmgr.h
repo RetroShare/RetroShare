@@ -65,6 +65,7 @@ const uint32_t CONFIG_TYPE_MSGS 	= 0x0004;
 const uint32_t CONFIG_TYPE_CACHE 	= 0x0005;
 
 const uint32_t CONFIG_TYPE_RANK_LINK 	= 0x0011;
+const uint32_t CONFIG_TYPE_QBLOG = 0x0012;
 
 class p3ConfigMgr;
 class p3AuthMgr;

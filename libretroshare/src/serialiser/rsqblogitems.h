@@ -55,9 +55,14 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 /* everything below is serialised */
 
-std::pair<uint32_t, std::string> blogMsg; /// contain blog mesgs and their blogged times (client time)
-std::string status; /// to be serialised: status of a requested user
-std::string favSong; /// the users favorite song
+/// contain blog mesgs and their blog time stamp (client time)
+std::pair<uint32_t, std::string> blogMsg; 
+/// to be serialised: status of a requested user
+std::string status; 
+/// the users favorite song
+std::string favSong;
+/// peer id TODO: serialise this
+std::string pid; 
 };
 
 /*! to serialise rsQblogItems: method names are self explanatory */
