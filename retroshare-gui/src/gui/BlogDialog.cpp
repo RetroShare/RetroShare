@@ -51,7 +51,6 @@ BlogDialog::BlogDialog(QWidget *parent)
 void BlogDialog::sendBlog()
 {
 	QString blogMsg = lineEdit->toPlainText();
-	QString blogUsr = "Usr1"; // will always be Usr1
 
 	 if(blogMsg == "")
 	 {
@@ -64,7 +63,6 @@ void BlogDialog::sendBlog()
 	 	/* note: timing will be handled by core */
 		std::string blog = blogMsg.toStdString();
 		rsQblog->sendBlog(blog); 
-		update(); // call update to display new blog
 	 }	
 	  
 	lineEdit->clear();//Clear lineEdit
@@ -86,19 +84,11 @@ void BlogDialog::setFont()
 void BlogDialog::setStatus()
 {
 	QString statusMsg = lineEdit->toPlainText();
-	QString debug = "unsuccessful";
-	QString blogUsr;
 	
 	std::list<std::string> UsrList;
 	
 	/* test to see if load dummy data worked ! */
-	
-	 if(!rsQblog->getFriendList(UsrList))
-	 {
-	 	blogText->append(debug); // put error on screen if problem getting usr list
-	 }
-	 else
-	 {
+
 	 	if(statusMsg == "")
 	 	{
 	 		QMessageBox::information(this, tr("No message"),
@@ -107,18 +97,13 @@ void BlogDialog::setStatus()
 	 	}
 	 	else
 	 	{
-	 		blogUsr = UsrList.begin()->c_str();
-	 		blogText->setCurrentFont(mUsrFont); // make bold for username
-	 		blogText->append(blogUsr + ": "); // past the first usr list to blog screen
-	 		blogText->setCurrentFont(mCurrentFont); // reset the font for blog message
-	 		blogText->append(statusMsg); // append the users message
+	 		rsQblog->setStatus("whatsup");
 	 	}
-	 }
 	 
 	/* Clear lineEdit */
 	lineEdit->clear();
 	
-	/* setFocus on lineEdit */
+	/* setFocus on lineEdit **/
 	lineEdit->setFocus();
 		
 }
@@ -138,6 +123,13 @@ void BlogDialog::clear(void)
 	
 void BlogDialog::update(void)
 {
+	rsQblog->getFilterSwitch();
+	
+	std::map<std::string, std::string> UsrStatus;
+	
+	if(!rsQblog->getStatus(UsrStatus))
+		std::cerr << "failed to get usr status" << std::endl;
+	
 	clear(); //create a clear screen
 	 
 	/* retrieve usr names and populate usr list bar */
@@ -145,36 +137,48 @@ void BlogDialog::update(void)
 	std::list<std::string> usrList; 
 	QString TempVar; // to convert numerics to string note: tbd find way to avoid temporary
 	
+	if (!rsPeers)
+	{
+		/* not ready yet! */
+		return;
+	}
 	
-	if(!rsQblog->getFriendList(usrList))
+	if(!rsPeers->getFriendList(usrList))
 		std::cerr << "failed to get friend list";
 	
+	
+	usrList.push_back(rsPeers->getOwnId()); // add your id
 	
 	/* populate the blog msgs screen */
 	
 	std::map< std::string, std::multimap<long int, std::string> > blogs; // to store blogs
 	
 	if(!rsQblog->getBlogs(blogs))
-		std::cerr << "failed to get blogs";
+		std::cerr << "failed to get blogs" << std::endl;
 	
 	/* print usr name and their blogs to screen */
 	for(std::list<std::string>::iterator it = usrList.begin(); it !=usrList.end(); it++)
 	{	
-		TempVar = it->c_str(); // store usr name in temporary
+		TempVar = rsPeers->getPeerName(*it).c_str(); // store usr name in temporary
 		blogText->setTextColor(QColor(255, 0, 0, 255));
 		blogText->setCurrentFont(mUsrFont); // make bold for username		
 		blogText->append("\n" + TempVar); // write usr name to screen
+		std::cerr << "creating usr tree" << std::endl;
 		
 		/*print blog time-posted/msgs to screen*/
 		
 		std::multimap<long int, std::string>::reverse_iterator blogIt =  blogs[*it].rbegin(); 
-		addUser(*it); // add usr to Qwidget tree
+		addUser(rsPeers->getPeerName(*it)); // add usr to Qwidget tree
 		
 		if(blogs[*it].empty())
+		{
+			std::cerr << "usr blog empty!"  << std::endl;
 			continue; 	
+		}
 	
 		for( ; blogIt != blogs[*it].rend(); blogIt++)
 		{	
+			std::cerr << "now printing blogs" << std::endl;
 			time_t postedTime = blogIt->first;
 			time(&postedTime); //convert to human readable time
 			blogText->setTextColor(QColor(255, 0, 0, 255)); // 
@@ -183,7 +187,8 @@ void BlogDialog::update(void)
 			blogText->setCurrentFont(mCurrentFont); // reset the font for blog messages
 			blogText->setTextColor(QColor(0, 0, 0, 255)); // set back color to black
 			blogText->append(blogIt->second.c_str()); // print blog msg to screen 
-		}			
+		}	
+			
 	}	
 }
 	
