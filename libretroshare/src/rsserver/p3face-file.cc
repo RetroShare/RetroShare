@@ -86,7 +86,7 @@ int     RsServer::UpdateAllTransfers()
 	{
 		FileTransferInfo ti;
 
-		ti.id = (*it)->PeerId();
+		ti.id = (*it)->cPeerId;
 		ti.source = mAuthMgr->getName(ti.id);
 		ti.peerIds = (*it) -> allPeerIds.ids;
 
