@@ -621,7 +621,7 @@ void ForumsDialog::insertThreads()
 					QTreeWidgetItem *child = NULL;
 					if (flatView)
 					{
-						child = new QTreeWidgetItem(NULL);
+						child = new QTreeWidgetItem(); 
 					}
 					else
 					{
