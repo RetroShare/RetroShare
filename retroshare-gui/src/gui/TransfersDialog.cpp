@@ -288,7 +288,7 @@ int TransfersDialog::addUploadItem(QString symbol, QString name, QString coreID,
 	ULListModel->setData(ULListModel->index(row, UPROGRESS), QVariant((double)progress));
 	ULListModel->setData(ULListModel->index(row, ULSPEED), QVariant((double)dlspeed));
 	ULListModel->setData(ULListModel->index(row, USTATUS), QVariant((QString)status));
-	ULListModel->setData(ULListModel->index(row, UTRANSFERRED), QVariant((qlonglong)remaining));
+	ULListModel->setData(ULListModel->index(row, UTRANSFERRED), QVariant((qlonglong)completed));
 
 	return row;
 }
@@ -394,6 +394,8 @@ void TransfersDialog::insertTransfers()
 		//out << it->id;
 		//coreId		= QString::fromStdString(it->hashout.str());
 		coreId		= QString::fromStdString(it->hash);
+
+		sources = QString::fromStdString(it->source);
 
 		switch(it->downloadStatus) 
 		{
