@@ -106,6 +106,11 @@ class RsQblogItem; /* to populate maps of blogs */
     	 */
     	bool sort(void);
     	
+    	/**
+    	 * updates attributes of connected peers
+    	 */
+    	void tick();
+    	
 		// ??
 		pqistreamer *createStreamer(std::string file, std::string src, bool reading);
  
@@ -141,12 +146,14 @@ class RsQblogItem; /* to populate maps of blogs */
  		std::map<std::string, std::string> mPeerStatusSet;
 		/// contain usr and their blogs 
  		std::map< std::string, std::multimap<long int, std:: string> > mUsrBlogSet; 
- 		//fills up above sets
+ 		///fills up above sets
  		std::list<RsQblogItem*> mBlogItems; 
- 		//how long to keep posts
+ 		///how long to keep posts
  		uint32_t mStorePeriod;
- 		// to track updates
- 		bool mUpdated;
+ 		/// to track updates
+ 		bool mUpdated; //possibly useless in light of bottom variable
+ 		/// to see whether to update
+ 		bool mRepost;
  		
  		/*
  		 * load dummy data
