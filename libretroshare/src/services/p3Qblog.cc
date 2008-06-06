@@ -49,7 +49,6 @@ p3Qblog::p3Qblog(p3ConnectMgr *connMgr,
 	{	
 		RsStackMutex stack(mBlogMtx);
 		mOwnId = mConnMgr->getOwnId(); // get your own usr Id
-		//bool ok = mConnMgr->getFriendList(FriendList);
 		loadDummy(); // load dummy data
 		
 		#ifdef QBLOG_DEBUG
@@ -82,8 +81,11 @@ bool p3Qblog::loadLocalCache(const CacheData &data)
 	#endif
 
 	loadBlogFile(filename, source);
-
-	// TODO might need to add boolean saying cached blogs not posted
+	
+	{
+		RsStackMutex stack(mBlogMtx);
+		mRepost = false; // there is nothing to tick/repost (i.e. comes from cache)
+	}
 
 	if (data.size > 0) /* don't refresh zero sized caches */
 	{
@@ -207,6 +209,13 @@ bool p3Qblog::loadBlogFile(std::string filename, std::string src)
 
 bool p3Qblog::addBlog(RsQblogItem *newBlog)
 {
+	#ifdef QBLOG_DEBUG
+	std::cerr << "p3Ranking::addBlog() Item:";
+	std::cerr << std::endl;
+	newBlog->print(std::cerr, 10); // check whats in the blog item
+	std::cerr << std::endl;
+	#endif
+	
 	{
 		RsStackMutex Stack(mBlogMtx);
 		
@@ -228,6 +237,8 @@ bool p3Qblog::addBlog(RsQblogItem *newBlog)
 		std::cerr << "\tmUsrBlogSet: blog" << newBlog->blogMsg.second;
 		std::cerr << std::endl;
 		#endif 
+		mUpdated = true; // might be useless
+		mRepost = true;
 	}	
 	
 	return true;
@@ -705,4 +716,20 @@ bool p3Qblog::sort(void)
 {
 	// TODO sorts blog maps in time order
 	return true;
+}
+
+void p3Qblog::tick()
+{
+	bool repost = false; // so stack mutex is not enabled during postblog call
+	
+	{
+		RsStackMutex stack(mBlogMtx);
+		repost = mRepost;
+	}
+	
+	if(repost) // 
+	{
+		if(!postBlogs())
+			std::cerr << "p3Qblog::tick():" << "tick failed!";
+	}
 }
