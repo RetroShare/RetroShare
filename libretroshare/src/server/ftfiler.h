@@ -115,7 +115,7 @@ public:
 
 
 	/* data */
-	std::string id;       /* current source */
+	std::string id;       /* current source / most recent destination */
 	std::string name;
 	std::string hash;
 	std::string destpath;
@@ -138,12 +138,12 @@ public:
 	 * otherwise - need much more status info */
 	uint64_t   recv_size; 
 
-	/* current file data request */
+	/* current file data request / most recent request answered (upload) */
 	uint64_t   req_loc;
 	uint32_t   req_size;
 
 	/* timestamp */
-	time_t     lastTS;
+	time_t     lastTS;    /* last request / request answered (upload) */
 	uint32_t   lastDelta; /* send til all recved */
 };
 

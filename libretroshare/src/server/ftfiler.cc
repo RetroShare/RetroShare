@@ -61,6 +61,8 @@ const float TRANSFER_MODE_FAST_RATE    = 500000; /* 500 kbyte limit */
 const uint32_t TRANSFER_START_MIN = 500;  /* 500 byte  min limit */
 const uint32_t TRANSFER_START_MAX = 10000; /* 10000 byte max limit */
 
+const uint32_t CACHE_FILE_TIMEOUT = 30; /* 30 seconds */
+
 void printFtFileStatus(ftFileStatus *s, std::ostream &out);
 
 /************* Local File Interface ****************************
@@ -414,13 +416,7 @@ std::list<RsFileTransfer *> ftfiler::getStatus()
 		RsFileTransfer *rft = new RsFileTransfer();
 		rft -> in = false;
 
-		/* Ids: current and all */
-		std::list<std::string>::iterator pit;
-		for(pit = (*it)->sources.begin(); 
-				pit != (*it)->sources.end(); pit++)
-		{
-			rft->allPeerIds.ids.push_back(*pit);
-		}
+		/* Only set the most recent */
 		rft -> cPeerId = (*it)->id;
 
 		/* file details */
@@ -437,10 +433,10 @@ std::list<RsFileTransfer *> ftfiler::getStatus()
 			rft -> file.hash = "";
 
 		/* Fill in rate and State */
-		rft -> transferred = (*it)->recv_size;
-		rft -> crate = (*it)->rate; // bytes.
-		rft -> trate = (*it)->rate; // bytes.
-		rft -> lrate = (*it)->rate; // bytes.
+		rft -> transferred = (*it)->req_loc;
+		rft -> crate = (*it)->req_size / 10.0; /* very approx */
+		rft -> trate = (*it)->req_size / 10.0; 
+		rft -> lrate = (*it)->req_size / 10.0; 
 		rft -> ltransfer = (*it)->req_size;
 
 		/* get inactive period */
@@ -463,7 +459,9 @@ std::list<RsFileTransfer *> ftfiler::getStatus()
 		}
 		else if ((*it) -> status == PQIFILE_COMPLETE)
 		{
-			rft -> state = FT_STATE_COMPLETE;
+			// uploads are going while they are here..
+			//rft -> state = FT_STATE_COMPLETE;
+			rft -> state = FT_STATE_DOWNLOADING;
 		}
 		else if ((*it) -> status == PQIFILE_DOWNLOADING)
 		{
@@ -762,6 +760,24 @@ void	ftfiler::queryInactive()
 		}
 
 	}
+
+	/* check the cached upload files too */
+	time_t now = time(NULL);
+	for(it = fileCache.begin(); it != fileCache.end();) /* increment at end of loop */
+	{
+		if (now - (*it)->lastTS > CACHE_FILE_TIMEOUT)
+		{
+			std::cerr << "Clearing Timed-out Cache File: " << (*it)->name;
+			std::cerr << std::endl;
+			delete (*it);
+			it = fileCache.erase(it);
+		}
+		else
+		{
+			it++;
+		}
+	}
+			
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
 }
 
@@ -1001,6 +1017,20 @@ int	ftfiler::generateFileData(ftFileStatus *s, std::string id, uint64_t offset, 
 
 		/* send off the packet */
 		out_queue.push_back(fd);
+
+		/* Update status of ftFileStatus to reflect last usage (for GUI display)
+		 * We need to store.
+		 * (a) Id, 
+		 * (b) Offset, 
+		 * (c) Size, 
+		 * (d) timestamp
+		 */
+
+		time_t now = time(NULL);
+		s->id = id;
+		s->req_loc = offset;
+		s->req_size = tosend;
+		s->lastTS = now;
 	}
 	return 1;
 }
@@ -1482,6 +1512,8 @@ ftFileStatus *ftfiler::createFileCache(std::string hash)
 	s->total_size = s->size; /* save the total length */
 	s->req_loc  = 0;	/* no request */
 	s->req_size = 0;
+
+	s->name = RsDirUtil::getTopDir(s->file_name);
 
 	/* we are now ready for transfers */
 	s->fd = fd;
