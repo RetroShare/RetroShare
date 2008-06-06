@@ -215,10 +215,10 @@ void 	RsServer::run()
 				if (mRanking)
 					mRanking->tick();
 				
-				/*	TODO need to implement tick function
+				
 				if(mQblog)
-					mQblog->tick()
-					*/
+					mQblog->tick();
+					
 
 
 #if 0
