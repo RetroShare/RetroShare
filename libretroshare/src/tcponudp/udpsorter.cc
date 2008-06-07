@@ -700,7 +700,7 @@ bool    UdpSorter::locked_checkExternalAddress()
 	std::list<TouStunPeer>::iterator p2;
 	for(it = mStunList.begin(); it != mStunList.end(); it++)
 	{
-		if (it->response)
+		if (it->response && isExternalNet(&(it->eaddr.sin_addr)))
 		{
 			if (!found1)
 			{
