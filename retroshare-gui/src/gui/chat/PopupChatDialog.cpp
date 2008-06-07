@@ -157,14 +157,6 @@ void PopupChatDialog::updateChat()
 
 void PopupChatDialog::addChatMsg(ChatInfo *ci)
 {
-    //QTextBrowser *msgWidget = ui.textBrowser;
-
-	//QString message = msgWidget->toHtml();
-
-
-	/* add in lines at the bottom */
-	//QString extraTxt;
-
 	bool offline = true;
 
 	{
@@ -181,23 +173,16 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 
 	if (offline)
 	{
-	    	QString line = "<br>\n<span style=\"color:#1D84C9\"><strong> ----- PEER OFFLINE (Chat will be lost) -----</strong></span> \n<br>";
-
-		//extraTxt += line;
+	    	QString offlineMsg = "<br>\n<span style=\"color:#1D84C9\"><strong> ----- PEER OFFLINE (Chat will be lost) -----</strong></span> \n<br>";
+		ui.textBrowser->setHtml(ui.textBrowser->toHtml() + offlineMsg);
 	}
 	
 
         QString timestamp = "[" + QDateTime::currentDateTime().toString("hh:mm:ss") + "]";
-	    QString name = QString::fromStdString(ci ->name);        
-	    //QString line = "<span style=\"color:#C00000\"><strong>" + timestamp + "</strong></span>" +			
-        //    		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span>";		
-        //extraTxt += line;
+        QString name = QString::fromStdString(ci ->name);        
+        QString message = QString::fromStdWString(ci -> msg);
 
-	    QString message = QString::fromStdWString(ci -> msg);
-
-	//currenttxt += extraTxt;
-	
-    QHashIterator<QString, QString> i(smileys);
+        QHashIterator<QString, QString> i(smileys);
 	while(i.hasNext())
 	{
 		i.next();
@@ -218,9 +203,6 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 	QTextCursor cursor = ui.textBrowser->textCursor();
 	cursor.movePosition(QTextCursor::End);
 	ui.textBrowser->setTextCursor(cursor);
-
-	//QScrollBar *qsb =  ui.textBrowser->verticalScrollBar();
-	//qsb -> setValue(qsb->maximum());
 }
 
 void PopupChatDialog::checkChat()
