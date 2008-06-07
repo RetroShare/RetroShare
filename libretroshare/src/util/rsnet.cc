@@ -66,3 +66,62 @@ void sockaddr_clear(struct sockaddr_in *addr)
         addr->sin_family = AF_INET;
 }
 
+
+bool    isValidNet(struct in_addr *addr)
+{
+        // invalid address.
+	if((*addr).s_addr == INADDR_NONE)
+		return false;
+	if((*addr).s_addr == 0)
+		return false;
+	// should do more tests.
+	return true;
+}
+
+
+bool    isLoopbackNet(struct in_addr *addr)
+{
+	in_addr_t taddr = ntohl(addr->s_addr);
+	return (taddr == (127 << 24 | 1));
+}
+
+bool    isPrivateNet(struct in_addr *addr)
+{
+	in_addr_t taddr = ntohl(addr->s_addr);
+
+	// 10.0.0.0/8
+	// 172.16.0.0/12
+	// 192.168.0.0/16
+	// 169.254.0.0/16
+	if ((taddr>>24 == 10) ||
+ 		(taddr>>20 == (172<<4 | 16>>4)) ||
+ 		(taddr>>16 == (192<<8 | 168)) ||
+ 		(taddr>>16 == (169<<8 | 254)))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool    isExternalNet(struct in_addr *addr)
+{
+	if (!isValidNet(addr))
+	{
+		return false;
+	}
+	if (isLoopbackNet(addr))
+	{
+		return false;
+	}
+	if (isPrivateNet(addr))
+	{
+		return false;
+	}
+	return true;
+}
+
+
+

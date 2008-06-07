@@ -60,4 +60,11 @@ uint64_t htonll(uint64_t x);
 /* blank a network address */
 void sockaddr_clear(struct sockaddr_in *addr);
 
+/* determine network type (moved from pqi/pqinetwork.cc) */
+bool isValidNet(struct in_addr *addr);
+bool isLoopbackNet(struct in_addr *addr);
+bool isPrivateNet(struct in_addr *addr);
+bool isExternalNet(struct in_addr *addr);
+
+
 #endif /* RS_UNIVERSAL_NETWORK_HEADER */
