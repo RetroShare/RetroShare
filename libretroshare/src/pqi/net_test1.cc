@@ -86,6 +86,7 @@ int test_isExternalNet()
 	struct in_addr localnet4_addr;
 	struct in_addr external_addr;
 	struct in_addr invalid_addr;
+	struct in_addr invalid_addr2;
 
 	inet_aton(loopback_addrstr, &loopback_addr);
 	inet_aton(localnet1_addrstr, &localnet1_addr);
@@ -93,7 +94,8 @@ int test_isExternalNet()
 	inet_aton(localnet3_addrstr, &localnet3_addr);
 	inet_aton(localnet4_addrstr, &localnet4_addr);
 	inet_aton(external_addrstr, &external_addr);
-	inet_aton(invalid_addrstr, &invalid_addr);
+	invalid_addr.s_addr = 0;
+	invalid_addr2.s_addr = -1;
 
 	CHECK(isExternalNet(&loopback_addr)==false);
 	CHECK(isExternalNet(&localnet1_addr)==false);
@@ -102,6 +104,7 @@ int test_isExternalNet()
 	CHECK(isExternalNet(&localnet4_addr)==false);
 	CHECK(isExternalNet(&external_addr)==true);
 	CHECK(isExternalNet(&invalid_addr)==false);
+	CHECK(isExternalNet(&invalid_addr2)==false);
 
 	REPORT("isExternalNet()");
 

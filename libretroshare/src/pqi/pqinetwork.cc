@@ -27,6 +27,7 @@
 
 
 #include "pqi/pqinetwork.h"
+#include "util/rsnet.h"
 
 #include <errno.h>
 #include <iostream>
@@ -492,80 +493,6 @@ int inaddr_cmp(struct sockaddr_in addr1, unsigned long addr2)
 	return 1;
 }
 
-bool    isLoopbackNet(struct in_addr *addr)
-{
-	if (0 == strcmp(inet_ntoa(*addr), "127.0.0.1"))
-	{
-		return true;
-	}
-	return false;
-}
-
-// returns all possible addrs.
-// all processing is done in network byte order.
-bool    isPrivateNet(struct in_addr *addr)
-{
-	bool ret = false;
-	std::ostringstream out;
-
-	in_addr_t taddr = htonl(addr->s_addr);
-
-	out << "isPrivateNet(" << inet_ntoa(*addr) << ") ? ";
-	out << std::endl;
-
-	struct in_addr addr2;
-
-	addr2.s_addr = taddr;
-	out << "Checking (" << inet_ntoa(addr2) << ") Against: " << std::endl;
-	// shouldn't need to rotate these...h -> n (in network already.
-	// check text output....
-	addr2.s_addr = htonl(inet_network("10.0.0.0"));
-	out << "\t(" << inet_ntoa(addr2) << ")" << std::endl;
-	addr2.s_addr = htonl(inet_network("172.16.0.0"));
-	out << "\t(" << inet_ntoa(addr2) << ")" << std::endl;
-	addr2.s_addr = htonl(inet_network("192.168.0.0"));
-	out << "\t(" << inet_ntoa(addr2) << ")" << std::endl;
-	addr2.s_addr = htonl(inet_network("169.254.0.0"));
-	out << "\t(" << inet_ntoa(addr2) << ")" << std::endl;
-
-	// 10.0.0.0/8
-	// 172.16.0.0/12
-	// 192.168.0.0/16
-	// 169.254.0.0/16
-	if ((taddr>>24 == 10) ||
- 		(taddr>>20 == (172<<4 | 16>>4)) ||
- 		(taddr>>16 == (192<<8 | 168)) ||
- 		(taddr>>16 == (169<<8 | 254)))
-	{
-		out << " True" << std::endl;
-		ret = true;
-	}
-	else
-	{
-		out << " False" << std::endl;
-		ret = false;
-	}
-	pqioutput(PQL_DEBUG_BASIC, pqinetzone, out.str());
-	return ret;
-}
-
-bool    isExternalNet(struct in_addr *addr)
-{
-	if (!isValidNet(addr))
-	{
-		return false;
-	}
-	if (isLoopbackNet(addr))
-	{
-		return false;
-	}
-	if (isPrivateNet(addr))
-	{
-		return false;
-	}
-	return true;
-}
-
 
 struct in_addr getPreferredInterface() // returns best addr.
 {
@@ -665,17 +592,6 @@ bool    sameNet(struct in_addr *addr, struct in_addr *addr2)
 	return (inet_netof(*addr) == inet_netof(*addr2));
 }
 
-
-bool    isValidNet(struct in_addr *addr)
-{
-	// invalid address.
-	if((*addr).s_addr == INADDR_NONE)
-		return false;
-	if((*addr).s_addr == 0)
-		return false;
-	// should do more tests.
-	return true;
-}
 
 bool 	isSameSubnet(struct in_addr *addr1, struct in_addr *addr2)
 {

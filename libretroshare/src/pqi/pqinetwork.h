@@ -108,19 +108,12 @@ int sockaddr_cmp(struct sockaddr_in &addr1, struct sockaddr_in &addr2 );
 int inaddr_cmp(struct sockaddr_in addr1, struct sockaddr_in addr1 );
 int inaddr_cmp(struct sockaddr_in addr1, unsigned long);
 
+struct in_addr getPreferredInterface(); // returns best addr.
 std::list<std::string> getLocalInterfaces(); // returns all possible addrs.
-bool    isExternalNet(struct in_addr *addr); // if Valid & is not Private or Loopback.
-bool	isPrivateNet(struct in_addr *addr); // if inside 10.0.0.0 or 
-						// other then firewalled.
-bool	isLoopbackNet(struct in_addr *addr); 
-bool	sameNet(struct in_addr *addr, struct in_addr *addr2); 
-bool	isValidNet(struct in_addr *addr);
 
 	// checks (addr1 & 255.255.255.0) == (addr2 & 255.255.255.0)
 bool    isSameSubnet(struct in_addr *addr1, struct in_addr *addr2);
-					
-
-struct in_addr getPreferredInterface(); // returns best addr.
+bool	sameNet(struct in_addr *addr, struct in_addr *addr2); 
 
 in_addr_t pqi_inet_netof(struct in_addr addr); // our implementation.
 
