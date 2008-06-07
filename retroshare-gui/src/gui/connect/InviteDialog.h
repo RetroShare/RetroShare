@@ -24,6 +24,7 @@
 #define _INVITEDIALOG_H
 
 #include <QDialog>
+#include <QFileDialog>
 
 #include "ui_InviteDialog.h"
 
@@ -45,6 +46,8 @@ private slots:
 	void closebutton();
 	void cancelbutton();
 	void emailbutton();
+	/// saves your certificate to file to send to friends
+	void savecertbutton();
   
 private:
 

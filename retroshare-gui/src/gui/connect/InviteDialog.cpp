@@ -22,6 +22,7 @@
 #include "InviteDialog.h"
 
 #include "rsiface/rsiface.h"
+#include "rsiface/rspeers.h"
 #include <util/WidgetBackgroundImage.h>
 
 /** Default constructor */
@@ -37,6 +38,7 @@ InviteDialog::InviteDialog(QWidget *parent, Qt::WFlags flags)
   connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(cancelbutton()));
   connect(ui.emailButton, SIGNAL(clicked()), this, SLOT(emailbutton()));
   connect(ui.doneButton, SIGNAL(clicked()), this, SLOT(closebutton()));
+  connect(ui.sCertButton, SIGNAL(clicked()), this, SLOT(savecertbutton()));
  
   //setFixedSize(QSize(434, 462));
 }
@@ -103,4 +105,14 @@ void InviteDialog::setInfo(std::string invite)
 	ui.emailText->setText(QString::fromStdString(invite));
 }
 
+void InviteDialog::savecertbutton(void)
+{
+	std::string filename = rsPeers->getPeerName(rsPeers->getOwnId()); // file name will be user name
+	filename += ".pqi"; // append retroshare cert extension
+	QString qdir = QFileDialog::getExistingDirectory(this, tr("Please Choose Directory to Save Certificate"), "",
+            false); // get current directory
+    
+    qdir += tr(filename.c_str()); // append file name to directory
+	rsPeers->SaveCertificateToFile(rsPeers->getOwnId(), qdir.toStdString()); // save to file
+}
 		     
