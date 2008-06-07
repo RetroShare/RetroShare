@@ -40,39 +40,66 @@
 /* These are Cache Only */
 const uint16_t RS_SERVICE_TYPE_FILE_INDEX  = 0x0001;
 const uint16_t RS_SERVICE_TYPE_RANK        = 0x0002;
-const uint16_t RS_SERVICE_TYPE_PHOTO       = 0x0003;
 
 /* These are Services only */
 const uint16_t RS_SERVICE_TYPE_DISC        = 0x0011;
 const uint16_t RS_SERVICE_TYPE_CHAT        = 0x0012;
 const uint16_t RS_SERVICE_TYPE_MSG         = 0x0013;
-const uint16_t RS_SERVICE_TYPE_STATUS      = 0x0014;
 
+/* Combined Cache/Service ids */
 
 /****************** BELOW ARE ONLY THEORETICAL (CAN BE CHANGED) *****/
+/*
+ * If you are planning on making a new service....
+ * Test it out with an ID in the range from 0xf000 - 0xffff
+ * And Change the ID everytime you make significant changes to the
+ * data structures... 
+ *
+ * eg.
+ * const uint16_t RS_SERVICE_TYPE_DISTRIB_O1  = 0xf110;  // First  Revision.
+ * const uint16_t RS_SERVICE_TYPE_DISTRIB_O2  = 0xf111;  // Second Revision.
+ * const uint16_t RS_SERVICE_TYPE_DISTRIB     = 0xf112;  // Final  Revision.
+ *
+ * This minimises the chances of your new serialisers messing with
+ * other existing, older, or proposed services.
+ *
+ * ONLY MOVE your Id once the service has been finalised.
+ *
+ */
 
+ /*! for Qblog service (Cache Only) */
+const uint16_t RS_SERVICE_TYPE_QBLOG	   = 0xf010;
 
-const uint16_t RS_SERVICE_TYPE_CHANNEL_MSG = 0x0015;
-const uint16_t RS_SERVICE_TYPE_PROXY_MSG   = 0x0016;
+ /* Status - Service only */
+const uint16_t RS_SERVICE_TYPE_STATUS      = 0xf020;
 
+ /* Proxy - Service only */
+const uint16_t RS_SERVICE_TYPE_PROXY       = 0xf030;
 
-const uint16_t RS_SERVICE_TYPE_GAME_LAUNCHER = 0x1000;
- 
- /*! for Qblog service */
-const uint16_t RS_SERVICE_TYPE_QBLOG	   = 0x0017;
+ /* Photo - Cache Only */
+const uint16_t RS_SERVICE_TYPE_PHOTO       = 0xf040;
+
+/* Caches based on p3distrib (Cache Only)
+ * DUMMY IDS until testing is finished
+ */
+const uint16_t RS_SERVICE_TYPE_DISTRIB     = 0xf110;
+const uint16_t RS_SERVICE_TYPE_FORUM       = 0xf120;
+const uint16_t RS_SERVICE_TYPE_CHANNEL     = 0xf130;
+
+/* Games/External Apps - Service Only */
+const uint16_t RS_SERVICE_TYPE_GAME_LAUNCHER = 0xf200;
 
 /* Example Games */
 /* Board Games */
-const uint16_t RS_SERVICE_TYPE_GAME_QTCHESS  = 0x1001;
-const uint16_t RS_SERVICE_TYPE_GAME_QGO      = 0x1002;
+const uint16_t RS_SERVICE_TYPE_GAME_QTCHESS  = 0xf201;
+const uint16_t RS_SERVICE_TYPE_GAME_QGO      = 0xf202;
 
 /* Card Games */
-const uint16_t RS_SERVICE_TYPE_GAME_BIGTWO   = 0x1003;
-const uint16_t RS_SERVICE_TYPE_GAME_POKER    = 0x1004;
+const uint16_t RS_SERVICE_TYPE_GAME_BIGTWO   = 0xf203;
+const uint16_t RS_SERVICE_TYPE_GAME_POKER    = 0xf204;
 
 
 
-/* Combined Cache/Service ids */
 
 
 
