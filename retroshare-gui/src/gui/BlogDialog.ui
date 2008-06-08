@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>606</width>
-    <height>400</height>
+    <width>640</width>
+    <height>454</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -504,551 +504,487 @@
   <property name="windowIcon" >
    <iconset/>
   </property>
-  <widget class="QWidget" name="layoutWidget" >
-   <property name="geometry" >
-    <rect>
-     <x>460</x>
-     <y>6</y>
-     <width>141</width>
-     <height>391</height>
-    </rect>
-   </property>
-   <property name="sizeIncrement" >
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
-   </property>
-   <layout class="QGridLayout" >
-    <property name="leftMargin" >
-     <number>0</number>
-    </property>
-    <property name="topMargin" >
-     <number>0</number>
-    </property>
-    <property name="rightMargin" >
-     <number>0</number>
-    </property>
-    <property name="bottomMargin" >
-     <number>0</number>
-    </property>
-    <property name="horizontalSpacing" >
-     <number>0</number>
-    </property>
-    <property name="verticalSpacing" >
-     <number>0</number>
-    </property>
-    <item row="0" column="0" >
-     <layout class="QGridLayout" >
-      <property name="leftMargin" >
-       <number>0</number>
-      </property>
-      <property name="topMargin" >
-       <number>0</number>
-      </property>
-      <property name="rightMargin" >
-       <number>0</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>0</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing" >
-       <number>6</number>
-      </property>
-      <item row="0" column="1" >
-       <spacer>
-        <property name="sizeIncrement" >
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="orientation" >
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType" >
-         <enum>QSizePolicy::Expanding</enum>
-        </property>
-        <property name="sizeHint" >
-         <size>
-          <width>41</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="0" >
-       <layout class="QGridLayout" >
-        <property name="leftMargin" >
-         <number>0</number>
-        </property>
-        <property name="topMargin" >
-         <number>0</number>
-        </property>
-        <property name="rightMargin" >
-         <number>0</number>
-        </property>
-        <property name="bottomMargin" >
-         <number>0</number>
-        </property>
-        <property name="horizontalSpacing" >
-         <number>6</number>
-        </property>
-        <property name="verticalSpacing" >
-         <number>6</number>
-        </property>
-        <item row="0" column="1" >
-         <widget class="QLabel" name="label_14" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="sizeIncrement" >
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="font" >
-           <font>
-            <pointsize>10</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text" >
-           <string>Users:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0" >
-         <widget class="QLabel" name="label_2" >
-          <property name="sizeIncrement" >
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text" >
-           <string/>
-          </property>
-          <property name="pixmap" >
-           <pixmap resource="images.qrc" >:/images/peers_16x16.png</pixmap>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </item>
-    <item row="1" column="0" >
-     <widget class="QTreeWidget" name="userList" >
-      <property name="sizePolicy" >
-       <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize" >
-       <size>
-        <width>20</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="sizeIncrement" >
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="contextMenuPolicy" >
-       <enum>Qt::CustomContextMenu</enum>
-      </property>
-      <property name="sortingEnabled" >
-       <bool>true</bool>
-      </property>
-      <column>
-       <property name="text" >
-        <string>User</string>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" colspan="3" >
+    <layout class="QGridLayout" >
+     <property name="topMargin" >
+      <number>2</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>0</number>
+     </property>
+     <property name="verticalSpacing" >
+      <number>0</number>
+     </property>
+     <item row="0" column="0" >
+      <layout class="QGridLayout" >
+       <property name="leftMargin" >
+        <number>0</number>
        </property>
-      </column>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget" >
-   <property name="geometry" >
-    <rect>
-     <x>1</x>
-     <y>4</y>
-     <width>451</width>
-     <height>221</height>
-    </rect>
-   </property>
-   <property name="sizeIncrement" >
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
-   </property>
-   <layout class="QGridLayout" >
-    <property name="topMargin" >
-     <number>2</number>
-    </property>
-    <property name="horizontalSpacing" >
-     <number>0</number>
-    </property>
-    <property name="verticalSpacing" >
-     <number>0</number>
-    </property>
-    <item row="0" column="0" >
-     <layout class="QGridLayout" >
-      <property name="leftMargin" >
-       <number>0</number>
-      </property>
-      <property name="topMargin" >
-       <number>0</number>
-      </property>
-      <property name="rightMargin" >
-       <number>0</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>0</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing" >
-       <number>6</number>
-      </property>
-      <item row="0" column="0" >
-       <layout class="QGridLayout" >
-        <property name="leftMargin" >
-         <number>0</number>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing" >
+        <number>6</number>
+       </property>
+       <item row="0" column="0" >
+        <layout class="QGridLayout" >
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
+         </property>
+         <property name="horizontalSpacing" >
+          <number>6</number>
+         </property>
+         <property name="verticalSpacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" >
+          <widget class="QLabel" name="label" >
+           <property name="sizeIncrement" >
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="text" >
+            <string/>
+           </property>
+           <property name="pixmap" >
+            <pixmap resource="images.qrc" >:/images/chat.png</pixmap>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QLabel" name="label_12" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="sizeIncrement" >
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font" >
+            <font>
+             <pointsize>10</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text" >
+            <string>Blog Feed:</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="0" column="1" >
+        <spacer>
+         <property name="sizeIncrement" >
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>360</width>
+           <height>16</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QTextBrowser" name="blogText" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="sizeIncrement" >
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="contextMenuPolicy" >
+        <enum>Qt::DefaultContextMenu</enum>
+       </property>
+       <property name="undoRedoEnabled" >
+        <bool>false</bool>
+       </property>
+       <property name="readOnly" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item rowspan="4" row="0" column="3" >
+    <layout class="QGridLayout" >
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>0</number>
+     </property>
+     <property name="verticalSpacing" >
+      <number>0</number>
+     </property>
+     <item row="0" column="0" >
+      <layout class="QGridLayout" >
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing" >
+        <number>6</number>
+       </property>
+       <item row="0" column="1" >
+        <spacer>
+         <property name="sizeIncrement" >
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>41</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="0" >
+        <layout class="QGridLayout" >
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
+         </property>
+         <property name="horizontalSpacing" >
+          <number>6</number>
+         </property>
+         <property name="verticalSpacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="1" >
+          <widget class="QLabel" name="label_14" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="sizeIncrement" >
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font" >
+            <font>
+             <pointsize>10</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text" >
+            <string>Users:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" >
+          <widget class="QLabel" name="label_2" >
+           <property name="sizeIncrement" >
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="text" >
+            <string/>
+           </property>
+           <property name="pixmap" >
+            <pixmap resource="images.qrc" >:/images/peers_16x16.png</pixmap>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QTreeWidget" name="userList" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize" >
+        <size>
+         <width>20</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="sizeIncrement" >
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="contextMenuPolicy" >
+        <enum>Qt::CustomContextMenu</enum>
+       </property>
+       <property name="sortingEnabled" >
+        <bool>true</bool>
+       </property>
+       <column>
+        <property name="text" >
+         <string>User</string>
         </property>
-        <property name="topMargin" >
-         <number>0</number>
-        </property>
-        <property name="rightMargin" >
-         <number>0</number>
-        </property>
-        <property name="bottomMargin" >
-         <number>0</number>
-        </property>
-        <property name="horizontalSpacing" >
-         <number>6</number>
-        </property>
-        <property name="verticalSpacing" >
-         <number>6</number>
-        </property>
-        <item row="0" column="0" >
-         <widget class="QLabel" name="label" >
-          <property name="sizeIncrement" >
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text" >
-           <string/>
-          </property>
-          <property name="pixmap" >
-           <pixmap resource="images.qrc" >:/images/chat.png</pixmap>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1" >
-         <widget class="QLabel" name="label_12" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="sizeIncrement" >
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="font" >
-           <font>
-            <pointsize>10</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text" >
-           <string>Blog Feed:</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="0" column="1" >
-       <spacer>
-        <property name="sizeIncrement" >
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="orientation" >
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" >
-         <size>
-          <width>360</width>
-          <height>16</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item row="1" column="0" >
-     <widget class="QTextBrowser" name="blogText" >
-      <property name="sizePolicy" >
-       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="sizeIncrement" >
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="contextMenuPolicy" >
-       <enum>Qt::DefaultContextMenu</enum>
-      </property>
-      <property name="undoRedoEnabled" >
-       <bool>false</bool>
-      </property>
-      <property name="readOnly" >
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QPushButton" name="boldBtn" >
-   <property name="geometry" >
-    <rect>
-     <x>358</x>
-     <y>233</y>
-     <width>24</width>
-     <height>24</height>
-    </rect>
-   </property>
-   <property name="minimumSize" >
-    <size>
-     <width>24</width>
-     <height>24</height>
-    </size>
-   </property>
-   <property name="maximumSize" >
-    <size>
-     <width>24</width>
-     <height>24</height>
-    </size>
-   </property>
-   <property name="sizeIncrement" >
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
-   </property>
-   <property name="toolTip" >
-    <string>Bold</string>
-   </property>
-   <property name="text" >
-    <string/>
-   </property>
-   <property name="icon" >
-    <iconset resource="images.qrc" >:/images/edit-bold.png</iconset>
-   </property>
-   <property name="checkable" >
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="underlineBtn" >
-   <property name="geometry" >
-    <rect>
-     <x>392</x>
-     <y>233</y>
-     <width>24</width>
-     <height>24</height>
-    </rect>
-   </property>
-   <property name="minimumSize" >
-    <size>
-     <width>24</width>
-     <height>24</height>
-    </size>
-   </property>
-   <property name="maximumSize" >
-    <size>
-     <width>24</width>
-     <height>24</height>
-    </size>
-   </property>
-   <property name="sizeIncrement" >
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
-   </property>
-   <property name="toolTip" >
-    <string>Italic</string>
-   </property>
-   <property name="text" >
-    <string/>
-   </property>
-   <property name="icon" >
-    <iconset resource="images.qrc" >:/images/edit-underline.png</iconset>
-   </property>
-   <property name="checkable" >
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="italicBtn" >
-   <property name="geometry" >
-    <rect>
-     <x>426</x>
-     <y>233</y>
-     <width>24</width>
-     <height>24</height>
-    </rect>
-   </property>
-   <property name="minimumSize" >
-    <size>
-     <width>24</width>
-     <height>24</height>
-    </size>
-   </property>
-   <property name="maximumSize" >
-    <size>
-     <width>24</width>
-     <height>24</height>
-    </size>
-   </property>
-   <property name="sizeIncrement" >
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
-   </property>
-   <property name="toolTip" >
-    <string>Underline</string>
-   </property>
-   <property name="text" >
-    <string/>
-   </property>
-   <property name="icon" >
-    <iconset resource="images.qrc" >:/images/edit-italic.png</iconset>
-   </property>
-   <property name="checkable" >
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QTextEdit" name="lineEdit" >
-   <property name="geometry" >
-    <rect>
-     <x>1</x>
-     <y>263</y>
-     <width>449</width>
-     <height>100</height>
-    </rect>
-   </property>
-   <property name="sizePolicy" >
-    <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-     <horstretch>0</horstretch>
-     <verstretch>5</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="maximumSize" >
-    <size>
-     <width>16777215</width>
-     <height>100</height>
-    </size>
-   </property>
-   <property name="sizeIncrement" >
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
-   </property>
-   <property name="baseSize" >
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
-   </property>
-  </widget>
-  <widget class="QWidget" name="layoutWidget" >
-   <property name="geometry" >
-    <rect>
-     <x>200</x>
-     <y>370</y>
-     <width>247</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="sizeIncrement" >
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
-   </property>
-   <layout class="QHBoxLayout" >
-    <item>
-     <widget class="QPushButton" name="refreshBtn" >
-      <property name="sizeIncrement" >
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="text" >
-       <string>Refresh Blog</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="statusBtn" >
-      <property name="sizeIncrement" >
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="text" >
-       <string>Set Status</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="sendBtn" >
-      <property name="sizeIncrement" >
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="text" >
-       <string>Send</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
+       </column>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QPushButton" name="boldBtn" >
+     <property name="minimumSize" >
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="sizeIncrement" >
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="toolTip" >
+      <string>Bold</string>
+     </property>
+     <property name="text" >
+      <string/>
+     </property>
+     <property name="icon" >
+      <iconset resource="images.qrc" >:/images/edit-bold.png</iconset>
+     </property>
+     <property name="checkable" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QPushButton" name="underlineBtn" >
+     <property name="minimumSize" >
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="sizeIncrement" >
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="toolTip" >
+      <string>Italic</string>
+     </property>
+     <property name="text" >
+      <string/>
+     </property>
+     <property name="icon" >
+      <iconset resource="images.qrc" >:/images/edit-underline.png</iconset>
+     </property>
+     <property name="checkable" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2" >
+    <widget class="QPushButton" name="italicBtn" >
+     <property name="minimumSize" >
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="sizeIncrement" >
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="toolTip" >
+      <string>Underline</string>
+     </property>
+     <property name="text" >
+      <string/>
+     </property>
+     <property name="icon" >
+      <iconset resource="images.qrc" >:/images/edit-italic.png</iconset>
+     </property>
+     <property name="checkable" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="3" >
+    <widget class="QTextEdit" name="lineEdit" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+       <horstretch>0</horstretch>
+       <verstretch>5</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>16777215</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="sizeIncrement" >
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="baseSize" >
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="3" >
+    <layout class="QHBoxLayout" >
+     <item>
+      <widget class="QPushButton" name="refreshBtn" >
+       <property name="sizeIncrement" >
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text" >
+        <string>Refresh Blog</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="statusBtn" >
+       <property name="sizeIncrement" >
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text" >
+        <string>Set Status</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="sendBtn" >
+       <property name="sizeIncrement" >
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text" >
+        <string>Send</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
   <action name="actionSend" >
    <property name="text" >
     <string>Send</string>

@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2008 Robert Fernie
+ *  Copyright (C) 2008, Robert Fernie
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -19,60 +19,49 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef _BLOG_DIALOG_H
-#define _BLOG_DIALOG_H
 
-#include "mainpage.h"
-#include "ui_BlogDialog.h"
+#ifndef _PROFILE_EDIT_H
+#define _PROFILE_EDIT_H
 
-class BlogDialog : public MainPage , private Ui::BlogDialog
+#include "ui_ProfileEdit.h"
+
+#include <string>
+#include <QDialog>
+
+class ProfileEdit : public QDialog
 {
   Q_OBJECT
 
 public:
   /** Default Constructor */
-  BlogDialog(QWidget *parent = 0);
+
+  ProfileEdit(QWidget *parent = 0);
   /** Default Destructor */
 
-  /** Qt Designer generated object */
-  //Ui::BlogDialog ui;
-  
-public slots:
-	void sendBlog();
-	void setFont();
-	void setStatus();
-	/// populates blog service with current information from core
-	void update(); 
+void  clear();
+void  update();
 
-	void showprofile(std::string id);
-	
+public slots:
+
 private slots:
 
-	/** context popup menus */
-	void peerCustomPopupMenu( QPoint point );
+  /** context popup menus */
+  void profileCustomPopupMenu( QPoint point );
+   
+  /* for Profile */
+  void profileEntryAdd();
+  void profileEntryRemove();
+  void profileEntryMoveUp();
+  void profileEntryMoveDown();
 
-	/* peer ContextMenu Actions */
-	void showuserprofile();
-	void showoneblog();
-	void showallblogs();
+  void profileEntryCustomChanged(); /* check box */
 
 private:
 
-/// to add usr to usr list: utility function for update
-void addUser(const std::string& usr);
-
-/// remove everything from usrlist and blogText box
-void clear(); 
-
-/* Current Font */
-QFont mCurrentFont;
-
-/* Font to be used for username (bold) */
-QFont mUsrFont;
+  /** Qt Designer generated object */
+  Ui::ProfileEdit ui;
 
 };
-
-
 
 #endif
 

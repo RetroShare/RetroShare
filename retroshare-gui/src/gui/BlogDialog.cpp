@@ -25,6 +25,8 @@
 #include "rsiface/rsQblog.h"
 #include "rsiface/rspeers.h" //to retrieve peer/usrId info
 
+#include "profile/ProfileView.h"
+
 /** Constructor */
 BlogDialog::BlogDialog(QWidget *parent)
 : MainPage (parent)
@@ -38,13 +40,64 @@ BlogDialog::BlogDialog(QWidget *parent)
   connect(underlineBtn, SIGNAL(clicked()), this, SLOT(setFont()));
   connect(italicBtn, SIGNAL(clicked()), this, SLOT(setFont()));
   connect(refreshBtn, SIGNAL(clicked()), this, SLOT(update()));
-  
+ 
+  connect(userList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( peerCustomPopupMenu( QPoint ) ) );
+    
   /* Current Font */
   mCurrentFont = QFont("Comic Sans MS", 8);
 
   /* Font for username and timestamp */
   mUsrFont = QFont("Comic Sans MS", 8);
   
+}
+
+
+void BlogDialog::peerCustomPopupMenu( QPoint point )
+{
+	/* 
+	 */
+	
+	QMenu contextMnu( this );
+	QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
+	
+	QAction *profileAct = new QAction( tr( "Show Profile" ), this );
+	QAction *onlyoneAct = new QAction( tr( "Show Only This Blog" ), this );
+	QAction *allAct = new QAction( tr( "Show All Blogs" ), this );
+	
+	connect( profileAct , SIGNAL( triggered() ), this, SLOT( showuserprofile() ) );
+	connect( onlyoneAct , SIGNAL( triggered() ), this, SLOT( showoneblog() ) );
+	connect( allAct , SIGNAL( triggered() ), this, SLOT( showallblogs() ) );
+	
+	contextMnu.clear();
+	contextMnu.addAction( profileAct );
+	contextMnu.addAction( onlyoneAct );
+	contextMnu.addAction( allAct );
+	contextMnu.exec( mevent->globalPos() );
+
+}
+
+void BlogDialog::showuserprofile()
+{
+	showprofile("");
+}
+
+void BlogDialog::showprofile(std::string id)
+{
+static ProfileView *oneProfile = new ProfileView(NULL);
+
+	oneProfile -> setPeerId(id);
+	oneProfile -> show();
+}
+
+void BlogDialog::showoneblog()
+{
+	return;
+}
+
+
+void BlogDialog::showallblogs()
+{
+	return;
 }
 
 
