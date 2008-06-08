@@ -30,6 +30,8 @@
  #include <string>
  #include <list>
  #include <map>
+
+#include "rsiface/rstypes.h"
  
  
 /* delcare interafce for everyone o use */
@@ -104,7 +106,36 @@ extern RsQblog *rsQblog;
 	 	  * @param blogs contains the blog msgs of usr along with time posted for sorting
 	 	  */
 	 	virtual bool getBlogs(std::map< std::string, std::multimap<long int, std:: string> > &blogs) = 0;
- 	   
+ 	  
+
+
+		/**
+		 * Stuff DrBob Added for Profile View!
+		 */
+
+	 	/**
+	 	 * get users Latest Blog Post.
+	 	 * @param id the usr whose idetails you want to get.
+	 	 * @param ts Timestamp of the Blog Post.
+	 	 * @param post the actual Blog Post.
+	 	 */
+
+	 	virtual bool getPeerLatestBlog(std::string id, uint32_t &ts, std::wstring &post) = 0;
+
+	 	/**
+	 	 * get users Profile.
+	 	 * @param id the user id
+	 	 * @param entries set of profile information.
+	 	 */
+	 	virtual bool getPeerProfile(std::string id, std::list< std::pair<std::wstring, std::wstring> > &entries) = 0;
+	 	/**
+	 	 * get users fav files
+	 	 * @param id the user whose info you want.
+	 	 * @param favs list of Files 
+	 	 */
+	 	virtual bool getPeerFavourites(std::string id, std::list<FileInfo> &favs) = 0;
+
+
  };
 
 #endif /*RSQBLOG_H_*/

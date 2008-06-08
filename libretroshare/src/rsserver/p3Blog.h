@@ -54,7 +54,9 @@ class p3Blog : public RsQblog
 		virtual bool sendBlog(const std::string &msg);
 		virtual bool getBlogs(std::map< std::string, std::multimap<long int, std:: string> > &blogs);
 		
-		
+		virtual bool getPeerLatestBlog(std::string id, uint32_t &ts, std::wstring &post);
+		virtual bool getPeerProfile(std::string id, std::list< std::pair<std::wstring, std::wstring> > &entries);
+		virtual bool getPeerFavourites(std::string id, std::list<FileInfo> &favs);
 		
 	private:
 		
