@@ -35,7 +35,7 @@ BlogDialog::BlogDialog(QWidget *parent)
   setupUi(this);
   
   connect(sendBtn, SIGNAL(clicked()), this, SLOT(sendBlog()));
-  connect(statusBtn, SIGNAL(clicked()), this, SLOT(setStatus()));
+  //connect(statusBtn, SIGNAL(clicked()), this, SLOT(setStatus()));
   connect(boldBtn, SIGNAL(clicked()), this, SLOT(setFont()));
   connect(underlineBtn, SIGNAL(clicked()), this, SLOT(setFont()));
   connect(italicBtn, SIGNAL(clicked()), this, SLOT(setFont()));
@@ -171,10 +171,15 @@ void BlogDialog::addUser(const std::string &usr)
 void BlogDialog::clear(void)
 {
 	blogText->clear();
-	userList->clear();
 }
 	
 void BlogDialog::update(void)
+{
+	updateUserList();
+	updateBlogs();
+}
+
+void BlogDialog::updateBlogs(void)
 {
 	rsQblog->getFilterSwitch();
 	
@@ -212,6 +217,8 @@ void BlogDialog::update(void)
 	/* print usr name and their blogs to screen */
 	for(std::list<std::string>::iterator it = usrList.begin(); it !=usrList.end(); it++)
 	{	
+
+
 		TempVar = rsPeers->getPeerName(*it).c_str(); // store usr name in temporary
 		blogText->setTextColor(QColor(255, 0, 0, 255));
 		blogText->setCurrentFont(mUsrFont); // make bold for username		
@@ -221,7 +228,6 @@ void BlogDialog::update(void)
 		/*print blog time-posted/msgs to screen*/
 		
 		std::multimap<long int, std::string>::reverse_iterator blogIt =  blogs[*it].rbegin(); 
-		addUser(rsPeers->getPeerName(*it)); // add usr to Qwidget tree
 		
 		if(blogs[*it].empty())
 		{
@@ -243,6 +249,53 @@ void BlogDialog::update(void)
 		}	
 			
 	}	
+}
+	
+	
+void BlogDialog::updateUserList(void)
+{
+	/* retrieve usr names and populate usr list bar */
+	
+	std::list<std::string> usrList; 
+	/* get existing list ... */
+	std::list<std::string> filterList;
+
+	std::list<std::string>::iterator it;
+	if ((!rsPeers) || (!rsQblog))
+	{
+		/* not ready yet! */
+		return;
+	}
+	
+	rsPeers->getFriendList(usrList);
+	usrList.push_back(rsPeers->getOwnId()); // add your id
+
+	//rsQblog->getFilterList(filterList);
+	
+	
+	userList->clear();
+
+	/* print usr name and their blogs to screen */
+	for(it = usrList.begin(); it !=usrList.end(); it++)
+	{	
+		QTreeWidgetItem *item = new QTreeWidgetItem(userList);
+
+		bool active = false;
+		if (filterList.end() != std::find(filterList.begin(), filterList.end(), *it))
+			active = true;
+
+		item->setText(0, QString::fromStdString(rsPeers->getPeerName(*it))); // add usr to Qwidget tree
+		item->setText(1, QString::fromStdString(*it)); // add usr id.
+
+                if (active)
+		{
+			item -> setCheckState(0, Qt::Checked);
+		}
+		else
+		{
+			item -> setCheckState(0, Qt::Unchecked);
+		}
+	}
 }
 	
 	

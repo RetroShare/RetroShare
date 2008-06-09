@@ -99,6 +99,8 @@ HEADERS +=  rshare.h \
             util/RsAction.h \
             util/printpreview.h \
             gui/bwgraph/bwgraph.h \
+	    gui/profile/ProfileView.h \
+	    gui/profile/ProfileEdit.h \
             gui/chat/PopupChatDialog.h \
             gui/connect/ConnectDialog.h \
             gui/connect/ConfCertDialog.h \
@@ -177,6 +179,8 @@ FORMS +=    gui/ChatDialog.ui \
             gui/MessagesDialog.ui \
             gui/HelpDialog.ui \
             gui/bwgraph/bwgraph.ui \
+	    gui/profile/ProfileView.ui \
+	    gui/profile/ProfileEdit.ui \
             gui/chat/PopupChatDialog.ui \
             gui/connect/ConnectDialog.ui \
             gui/connect/ConfCertDialog.ui \
@@ -263,6 +267,8 @@ SOURCES += main.cpp \
             util/RsAction.cpp \
             util/printpreview.cpp \
             gui/bwgraph/bwgraph.cpp \
+	    gui/profile/ProfileView.cpp \
+	    gui/profile/ProfileEdit.cpp \
             gui/chat/PopupChatDialog.cpp \
             gui/connect/ConnectDialog.cpp \
             gui/connect/ConfCertDialog.cpp \

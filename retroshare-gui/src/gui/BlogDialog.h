@@ -45,6 +45,8 @@ public slots:
 	void update(); 
 
 	void showprofile(std::string id);
+	void updateUserList();
+	void updateBlogs();
 	
 private slots:
 
