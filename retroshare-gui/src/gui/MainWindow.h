@@ -115,6 +115,7 @@ public slots:
 private slots:
 
     void updateMenu();
+    void updateStatus();
     
     void toggleVisibility(QSystemTrayIcon::ActivationReason e);
     void toggleVisibilitycontextmenu();
@@ -188,6 +189,9 @@ private:
     QSystemTrayIcon *trayIcon;
     QAction *toggleVisibilityAction, *toolAct;
     QMenu *menu;
+
+    QLabel *statusRates;
+    QLabel *statusPeers;
        
     /** Qt Designer generated object */
     Ui::MainWindow ui;

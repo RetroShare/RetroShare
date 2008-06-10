@@ -50,6 +50,8 @@
 #include "gui/connect/InviteDialog.h"
 #include "gui/connect/AddFriendDialog.h"
 
+#include <sstream>
+#include <iomanip>
 
 #define FONT        QFont(tr("Arial"), 8)
 
@@ -211,6 +213,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 #ifdef RS_RELEASE_VERSION    
     //addAction(new QAction(QIcon(IMAGE_BLOCK), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 
+
 #else
     addAction(new QAction(QIcon(IMAGE_BLOCK), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 
@@ -251,11 +254,12 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
         
     ui.toolBarservice->addSeparator();
 
-    statusBar()->addWidget(new QLabel(tr("Users: 0  Files: 0 ")));
-    statusBar()->addPermanentWidget(new QLabel(tr("Down: 0.0  Up: 0.0 ")));
-    statusBar()->addPermanentWidget(new QLabel(tr("Connections: 0/45 ")));
-
 #endif
+
+    //statusBar()->addWidget(new QLabel(tr("Users: 0  Files: 0 ")));
+    statusBar()->addPermanentWidget(statusRates = new QLabel(tr("Down: 0.0  Up: 0.0 ")));
+    statusBar()->addPermanentWidget(statusPeers = new QLabel(tr("Connections: 0/0/0 ")));
+
 
     //servicegrp->actions()[0]->setChecked(true);
   
@@ -304,8 +308,47 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
             SLOT(toggleVisibility(QSystemTrayIcon::ActivationReason)));
     trayIcon->show();
 
+    QTimer *timer = new QTimer(this);
+    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
+    timer->start(5113);
 
 }
+
+void MainWindow::updateStatus()
+{
+	/* set users/friends/network */
+	float downKb = 0;
+	float upKb = 0;
+	rsicontrol -> ConfigGetDataRates(downKb, upKb);
+
+	std::ostringstream out;
+	out << "Down: " << std::setprecision(2) << std::fixed << downKb << " (kB/s)  Up: " << std::setprecision(2) << std::fixed <<  upKb << " (kB/s) ";
+
+	std::list<std::string> ids;
+	rsPeers->getOnlineList(ids);
+	int online = ids.size();
+
+	ids.clear();
+	rsPeers->getFriendList(ids);
+	int friends = ids.size();
+
+	ids.clear();
+	rsPeers->getOthersList(ids);
+	int others = 1 + ids.size();
+
+	std::ostringstream out2;
+	out << "Online/Friends/Network: " << online << "/" << friends << "/" << others << " ";
+
+	/* set uploads/download rates */
+
+	if (statusRates)
+    		statusRates -> setText(QString::fromStdString(out.str()));
+
+	if (statusPeers)
+    		statusPeers -> setText(QString::fromStdString(out2.str()));
+
+}
+
 
 /** Creates a new action associated with a config page. */
 QAction* MainWindow::createPageAction(QIcon img, QString text, QActionGroup *group)
