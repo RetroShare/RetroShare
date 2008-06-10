@@ -78,6 +78,9 @@ float	getMaxIndivRate(bool in);
 void	setMaxRate(bool in, float val);
 float	getMaxRate(bool in);
 
+void	getCurrentRates(float &in, float &out);
+
+
 	protected:
 	/* check to be overloaded by those that can
 	 * generates warnings otherwise
@@ -100,12 +103,15 @@ void	SortnStoreItem(RsItem *item);
 
 	// rate control.
 int	UpdateRates();
+void	StoreCurrentRates(float in, float out);
 
 	float rateIndiv_in;
 	float rateIndiv_out;
 	float rateMax_in;
 	float rateMax_out;
 
+	float rateTotal_in;
+	float rateTotal_out;
 };
 
 inline void pqihandler::setMaxIndivRate(bool in, float val)

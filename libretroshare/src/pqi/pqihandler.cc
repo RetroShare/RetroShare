@@ -573,18 +573,20 @@ int     pqihandler::UpdateRates()
 			}
 			extra_bw_out +=  crate_out - avg_rate_out;
 		}
-//		std::cerr << "\tSM(" << mod -> smi << ")";
-//		std::cerr << "In A: " << mod -> pqi -> getMaxRate(true);
-//		std::cerr << " C: " << crate_in;
-//		std::cerr << " && Out A: " << mod -> pqi -> getMaxRate(false);
-//		std::cerr << " C: " << crate_out << std::endl;
+		//std::cerr << "\tSM(" << mod -> smi << ")";
+		std::cerr << "In A: " << mod -> pqi -> getMaxRate(true);
+		std::cerr << " C: " << crate_in;
+		std::cerr << " && Out A: " << mod -> pqi -> getMaxRate(false);
+		std::cerr << " C: " << crate_out << std::endl;
 	}
-//	std::cerr << "Totals (In) Used B/W " << used_bw_in;
-//	std::cerr << " Excess B/W " << extra_bw_in;
-//	std::cerr << " Available B/W " << avail_in << std::endl;
-//	std::cerr << "Totals (Out) Used B/W " << used_bw_out;
-//	std::cerr << " Excess B/W " << extra_bw_out;
-//	std::cerr << " Available B/W " << avail_out << std::endl;
+	std::cerr << "Totals (In) Used B/W " << used_bw_in;
+	std::cerr << " Excess B/W " << extra_bw_in;
+	std::cerr << " Available B/W " << avail_in << std::endl;
+	std::cerr << "Totals (Out) Used B/W " << used_bw_out;
+	std::cerr << " Excess B/W " << extra_bw_out;
+	std::cerr << " Available B/W " << avail_out << std::endl;
+
+	StoreCurrentRates(used_bw_in, used_bw_out);
 
 	if (used_bw_in > avail_in)
 	{
@@ -706,7 +708,20 @@ int     pqihandler::UpdateRates()
 		}
 
 	}
+
 	return 1;
+}
+
+void    pqihandler::getCurrentRates(float &in, float &out)
+{
+	in = rateTotal_in;
+	out = rateTotal_out;
+}
+
+void    pqihandler::StoreCurrentRates(float in, float out)
+{
+	rateTotal_in = in;
+	rateTotal_out = out;
 }
 
 

@@ -265,6 +265,25 @@ int     RsServer::ConfigSetDataRates( int total, int indiv ) /* in kbrates */
 }
 
 
+int     RsServer::ConfigGetDataRates( float &inKb, float &outKb ) /* in kbrates */
+{
+	/* fill the rsiface class */
+	RsIface &iface = getIface();
+
+	/* lock Mutexes */
+	lockRsCore();     /* LOCK */
+	iface.lockData(); /* LOCK */
+
+        pqih -> getCurrentRates(inKb, outKb);
+
+	/* unlock Mutexes */
+	iface.unlockData(); /* UNLOCK */
+	unlockRsCore();     /* UNLOCK */
+
+	return 1;
+}
+
+
 int     RsServer::ConfigSetBootPrompt( bool on )
 {
 
@@ -315,7 +334,7 @@ int RsServer::UpdateAllConfig()
 	config.uPnPState  = mConnMgr->getUPnPState();
 	config.uPnPActive = mConnMgr->getUPnPEnabled();
 	config.DHTPeers   = 20;
-	config.DHTActive  = mConnMgr->getDHTEnabled();;
+	config.DHTActive  = mConnMgr->getDHTEnabled();
 
 	/* Notify of Changes */
 	iface.setChanged(RsIface::Config);

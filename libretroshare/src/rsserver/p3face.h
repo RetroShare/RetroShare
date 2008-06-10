@@ -249,6 +249,8 @@ virtual int     ConfigSetIncomingDir( std::string dir );
 //virtual int     ConfigSetExtName( std::string addr );
 //virtual int     ConfigSetLanConfig( bool fire, bool forw );
 
+
+virtual int 	ConfigGetDataRates(float &inKb, float &outKb);
 virtual int     ConfigSetDataRates( int total, int indiv );
 virtual int     ConfigSetBootPrompt( bool on );
 
