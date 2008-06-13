@@ -55,24 +55,24 @@ void  CreateForum::createForum()
 
 	if (ui.forumTypePublic->isChecked())
 	{
-		flags |= RS_FORUM_PUBLIC;
+		flags |= RS_DISTRIB_PUBLIC;
 	}
 	else if (ui.forumTypePrivate->isChecked())
 	{
-		flags |= RS_FORUM_PRIVATE;
+		flags |= RS_DISTRIB_PRIVATE;
 	}
 	else if (ui.forumTypeEncrypted->isChecked())
 	{
-		flags |= RS_FORUM_ENCRYPTED;
+		flags |= RS_DISTRIB_ENCRYPTED;
 	}
 
 	if (ui.forumMsgAuth->isChecked())
 	{
-		flags |= RS_FORUM_MSG_AUTH;
+		flags |= RS_DISTRIB_AUTHEN_REQ;
 	}
 	else if (ui.forumMsgAnon->isChecked())
 	{
-		flags |= RS_FORUM_MSG_ANON;
+		flags |= RS_DISTRIB_AUTHEN_ANON;
 	}
 
 	rsForums->createForum(name.toStdWString(), desc.toStdWString(), flags);

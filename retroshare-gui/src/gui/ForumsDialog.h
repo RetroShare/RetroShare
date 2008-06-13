@@ -68,8 +68,14 @@ void updateMessages ( QTreeWidgetItem * item, int column );
   void showthread();
   void createmessage();
 
+  void subscribeToForum();
+  void unsubscribeToForum();
+
+  void showForumDetails();
+
 private:
 
+  void forumSubscribe(bool subscribe);
   bool getCurrentMsg(std::string &cid, std::string &mid);
 
   std::string mCurrForumId;

@@ -147,22 +147,22 @@ void ForumsDialog::forumListCustomPopupMenu( QPoint point )
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
       QAction *subForumAct = new QAction(QIcon(IMAGE_MESSAGE), tr( "Subscribe to Forum" ), this );
-      connect( subForumAct , SIGNAL( triggered() ), this, SLOT( newmessage() ) );
+      connect( subForumAct , SIGNAL( triggered() ), this, SLOT( subscribeToForum() ) );
       
       QAction *unsubForumAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Unsubscribe to Forum" ), this );
-      connect( unsubForumAct , SIGNAL( triggered() ), this, SLOT( replytomessage() ) );
+      connect( unsubForumAct , SIGNAL( triggered() ), this, SLOT( unsubscribeToForum() ) );
       
       QAction *newForumAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "New Forum" ), this );
-      connect( newForumAct , SIGNAL( triggered() ), this, SLOT( removemessage() ) );
+      connect( newForumAct , SIGNAL( triggered() ), this, SLOT( newforum() ) );
 
-      QAction *delForumAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Delete Forum" ), this );
-      connect( delForumAct , SIGNAL( triggered() ), this, SLOT( removemessage() ) );
+      QAction *detailsForumAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Show Forum Details" ), this );
+      connect( detailsForumAct , SIGNAL( triggered() ), this, SLOT( showForumDetails() ) );
 
       contextMnu.clear();
       contextMnu.addAction( subForumAct );
       contextMnu.addAction( unsubForumAct );
       contextMnu.addAction( newForumAct );
-      contextMnu.addAction( delForumAct );
+      contextMnu.addAction( detailsForumAct );
       contextMnu.exec( mevent->globalPos() );
 
 }
@@ -317,7 +317,7 @@ void ForumsDialog::insertForums()
 		/* sort it into Publish (Own), Subscribed, Popular and Other */
 		uint32_t flags = it->forumFlags;
 
-		if (flags & RS_FORUM_ADMIN)
+		if (flags & RS_DISTRIB_ADMIN)
 		{
 			/* own */
 
@@ -350,7 +350,7 @@ void ForumsDialog::insertForums()
 			item -> setText(4, QString::fromStdString(it->forumId));
 			AdminList.append(item);
 		}
-		else if (flags & RS_FORUM_SUBSCRIBED)
+		else if (flags & RS_DISTRIB_SUBSCRIBED)
 		{
 			/* subscribed forum */
 
@@ -411,11 +411,11 @@ void ForumsDialog::insertForums()
 		/* ignore the ones we've done already */
 		uint32_t flags = it->forumFlags;
 
-		if (flags & RS_FORUM_ADMIN)
+		if (flags & RS_DISTRIB_ADMIN)
 		{
 			continue;
 		}
-		else if (flags & RS_FORUM_SUBSCRIBED)
+		else if (flags & RS_DISTRIB_SUBSCRIBED)
 		{
 			continue;
 		}
@@ -773,6 +773,51 @@ void ForumsDialog::showthread()
 	cfm->show();
 }
 
+void ForumsDialog::subscribeToForum()
+{
+	forumSubscribe(true);
+}
+
+void ForumsDialog::unsubscribeToForum()
+{
+	forumSubscribe(false);
+}
+
+void ForumsDialog::forumSubscribe(bool subscribe)
+{
+	QTreeWidgetItem *forumItem = ui.forumTreeWidget->currentItem();
+	if ((!forumItem) || (forumItem->parent() == NULL))
+	{
+		return;
+	}
+
+	/* store forumId */
+	std::string fId = (forumItem->text(4)).toStdString();
+
+	rsForums->forumSubscribe(fId, subscribe);
+}
+
+void ForumsDialog::showForumDetails()
+{
+#if 0
+static 	ForumDisplay *fui = new ForumDisplay();
+
+	if (mCurrForumId == "")
+	{
+		return;
+	}
+
+	fui->showDetails(mCurrForumId);
+	fui->show();
+#endif
+
+}
+
+
+
+
+
+	
 
 
 
