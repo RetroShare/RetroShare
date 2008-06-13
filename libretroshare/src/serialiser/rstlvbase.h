@@ -56,6 +56,20 @@
  *
  * *in / *out - the data to (un)pack.
  *
+ *
+ * BIG TLV Fields have now been added. 
+ * If the Tlv Type & TLV_BIGLEN_BIT
+ * ---------------------------------------------------------
+ * | TLV TYPE (2 bytes)| TLV LEN (4 bytes)                  |
+ * ---------------------------------------------------------
+ * |                                                        |
+ * |         Data ....                                      |
+ * |                                                        |
+ * ---------------------------------------------------------
+ *
+ *
+ *
+ *
  ******************************************************************/
 
 #include <string>
@@ -82,6 +96,17 @@
 /* 0b 0001 0000 0001 XXXX KEY VALUE   */
 /* 0b 0001 0000 0010 XXXX PEERS       */
 /* 0b 0001 0000 0011 XXXX SERVICES    */
+
+/******* BIG LEN TYPES ***************/
+
+/* 0b 1000 XXXX XXXX XXXX BIG LEN     */
+/* 0b 1000 0000 0001 XXXX STRINGS     */
+/* 0b 1000 0000 0010 XXXX WSTRINGS    */
+/* 0b 1000 0000 0011 XXXX BINARY      */
+
+/* 0b 1001 XXXX XXXX XXXX Compound    */
+
+
 
 const uint16_t TLV_TYPE_UINT8_SERID   = 0x0010;
 
@@ -129,19 +154,33 @@ const uint16_t TLV_TYPE_IPV4_LOCAL    = 0x0080;
 const uint16_t TLV_TYPE_IPV4_REMOTE   = 0x0081;
 const uint16_t TLV_TYPE_IPV4_LAST     = 0x0082;
 
+/*** MORE STRING IDS ****/
+const uint16_t TLV_TYPE_STR_GROUPID   = 0x00a0;
+const uint16_t TLV_TYPE_STR_MSGID     = 0x00a1;
+const uint16_t TLV_TYPE_STR_PARENTID  = 0x00a2;
+const uint16_t TLV_TYPE_STR_THREADID  = 0x00a3;
+const uint16_t TLV_TYPE_STR_KEYID     = 0x00a4;
+
+const uint16_t TLV_TYPE_WSTR_CATEGORY = 0x00b0;
+
 
 	/**** Binary Types ****/
 const uint16_t TLV_TYPE_CERT_XPGP_DER = 0x0100;
 const uint16_t TLV_TYPE_CERT_X509     = 0x0101;
 const uint16_t TLV_TYPE_CERT_OPENPGP  = 0x0102;
 
-const uint16_t TLV_TYPE_PRIV_KEY_RSA  = 0x0110;
+const uint16_t TLV_TYPE_KEY_EVP_PKEY  = 0x0110; /* Used (Generic - Distrib) */
+const uint16_t TLV_TYPE_KEY_PRIV_RSA  = 0x0111; /* not used yet */
+const uint16_t TLV_TYPE_KEY_PUB_RSA   = 0x0112; /* not used yet */
 
-const uint16_t TLV_TYPE_PUB_KEY_RSA   = 0x0120;
+const uint16_t TLV_TYPE_SIGN_RSA_SHA1 = 0x0120; /* Used (Distrib/Forums) */
 
-const uint16_t TLV_TYPE_SIGN_RSA_SHA1 = 0x0130;
+const uint16_t TLV_TYPE_BIN_IMAGE     = 0x0130; /* Used (Generic - Forums) */
 
-const uint16_t TLV_TYPE_BIN_FILEDATA  = 0x0140;
+const uint16_t TLV_TYPE_BIN_FILEDATA  = 0x0140; /* Used - ACTIVE! */
+
+const uint16_t TLV_TYPE_BIN_SERIALISE = 0x0150; /* Used (Generic - Distrib) */
+
 
 	/**** Compound Types ****/
 const uint16_t TLV_TYPE_FILEITEM      = 0x1000;
@@ -152,7 +191,14 @@ const uint16_t TLV_TYPE_KEYVALUE      = 0x1010;
 const uint16_t TLV_TYPE_KEYVALUESET   = 0x1011;
 
 const uint16_t TLV_TYPE_PEERSET       = 0x1020;
-const uint16_t TLV_TYPE_SERVICESET    = 0x1030;
+const uint16_t TLV_TYPE_SERVICESET    = 0x1030; 
+
+const uint16_t TLV_TYPE_SECURITYKEY   = 0x1040;
+const uint16_t TLV_TYPE_SECURITYKEYSET= 0x1041;
+
+const uint16_t TLV_TYPE_KEYSIGNATURE  = 0x1050;
+
+const uint16_t TLV_TYPE_IMAGE         = 0x1060;
 
 
 /**** Basic TLV Functions ****/

@@ -8,11 +8,16 @@ include $(RS_TOP_DIR)/scripts/config.mk
 ###############################################################
 
 RSOBJ  = rsserial.o rsbaseserial.o rstlvbase.o rstlvtypes.o 
-RSOBJ += rstlvfileitem.o rstlvutil.o    # TLV Objs
+RSOBJ += rstlvfileitem.o                # TLV Objs
+RSOBJ += rstlvkeys.o                    # TLV Objs
+RSOBJ += rstlvimage.o                   # TLV Objs
+RSOBJ += rstlvutil.o                    # TLV Objs
 RSOBJ += rsbaseitems.o rsconfigitems.o rsdiscitems.o # RsItems 
 RSOBJ += rsmsgitems.o rsrankitems.o	# RsItems
 RSOBJ += rsphotoitems.o			# RsItems
 RSOBJ += rsgameitems.o			# RsItems
+RSOBJ += rsdistribitems.o		# RsItems
+RSOBJ += rsforumitems.o			# RsItems
 RSOBJ += rsqblogitems.o			# RsItems
 RSOBJ += rsstatusitems.o		# RsItems
 

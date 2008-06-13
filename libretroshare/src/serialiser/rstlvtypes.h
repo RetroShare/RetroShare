@@ -209,6 +209,21 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent);
 };
 
 
+class RsTlvImage: public RsTlvItem
+{
+	public:
+	 RsTlvImage(); 
+	 virtual ~RsTlvImage() { return; }
+virtual uint16_t TlvSize();
+virtual void	 TlvClear();
+virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
+virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
+virtual std::ostream &print(std::ostream &out, uint16_t indent);
+
+	uint32_t        image_type;   // Mandatory: 
+	RsTlvBinaryData binData;      // Mandatory: serialised file info
+};
+
 
 #endif
 
