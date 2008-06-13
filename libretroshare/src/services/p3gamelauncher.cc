@@ -33,7 +33,10 @@
 /* global variable for GUI */
 RsGameLauncher *rsGameLauncher = NULL;
 
-#define GAME_DEBUG 1
+/*****
+ * #define GAME_DEBUG 1
+ *****/
+
 #define TEST_NO_GAMES 1
 
 /* So STATEs is always the best way to do things....

@@ -23,55 +23,22 @@
  *
  */
 
+#include <openssl/err.h>
+#include <openssl/ssl.h>
+#include <openssl/evp.h>
+
+#include "rsiface/rsdistrib.h"
 #include "services/p3distrib.h"
+#include "serialiser/rsdistribitems.h"
+
 #include "pqi/pqibin.h"
 
+#define DISTRIB_DEBUG 1
 
-//#include "pqi/pqiservice.h"
-//#include "util/rsthreads.h"
-
-/* 
- * Group Messages....
- * 
- * Forums / Channels / Blogs...
- *
- *
- * Plan.
- *
- * (1) First create basic structures .... algorithms.
- *
- * (2) integrate with Cache Source/Store for data transmission.
- * (3) integrate with Serialiser for messages
- * (4) bring over the final key parts from existing p3channel.
- *
- *****************************************************************
- *
- * Group Description:
- *
- * Master Public/Private Key: (Admin Key) used to control 
- *	Group Name/Description/Icon.
- * 	Filter Lists.
- *	Publish Keys.
- *	
- * Publish Keys. (multiple possible)
- * Filters: blacklist or whitelist.
- * TimeStore Length ??? (could make it a minimum of this and system one)
- *
- * Everyone gets:
- *    Master Public Key.
- *    Publish Public Keys.
- *	blacklist, or whitelist filter. (Only useful for Non-Anonymous groups)
- *	Name, Desc, 
- *	etc.
- *	
- * Admins get Master Private Key.
- * Publishers get Publish Private Key.
- *	- Channels only some get publish key.
- *	- Forums everyone gets publish private key.
- * 
- * Create a Signing structure for Messages in general.
- *
- */
+RSA *extractPublicKey(RsTlvSecurityKey &key);
+RSA *extractPrivateKey(RsTlvSecurityKey &key);
+void 	setRSAPublicKey(RsTlvSecurityKey &key, RSA *rsa_pub);
+void 	setRSAPrivateKey(RsTlvSecurityKey &key, RSA *rsa_priv);
 
 
 p3GroupDistrib::p3GroupDistrib(uint16_t subtype, 
@@ -82,7 +49,7 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 
 	:CacheSource(subtype, true, cs, sourcedir), 
 	CacheStore(subtype, true, cs, cft, storedir), 
-	p3Config(configId),
+	p3Config(configId), nullService(subtype),
 	mStorePeriod(storePeriod), 
 	mPubPeriod(pubPeriod)
 {
@@ -94,13 +61,21 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 	 */
 
 	mNextPublishTime = now + mPubPeriod / 4;
+	mGroupsRepublish = false;
 
 	return;
 }
 
 
-void	p3GroupDistrib::tick()
+int	p3GroupDistrib::tick()
 {
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::tick()";
+	std::cerr << std::endl;
+#endif
+
+#if 0
 	time_t now = time(NULL);
 	bool toPublish;
 
@@ -111,11 +86,30 @@ void	p3GroupDistrib::tick()
 
 	if (toPublish)
 	{
-		publishPendingMsgs();
-
 		RsStackMutex stack(distribMtx);  /**** STACK LOCKED MUTEX ****/
+
+		locked_publishPendingMsgs();
 		mNextPublishTime = now + mPubPeriod;
 	}
+#endif
+
+	bool toPublishGroups;
+	{
+		RsStackMutex stack(distribMtx);  /**** STACK LOCKED MUTEX ****/
+		toPublishGroups = mGroupsRepublish;
+	}
+
+	if (toPublishGroups)
+	{
+		publishDistribGroups();
+
+		IndicateConfigChanged(); /**** INDICATE CONFIG CHANGED! *****/
+
+		RsStackMutex stack(distribMtx);  /**** STACK LOCKED MUTEX ****/
+		mGroupsRepublish = false;
+	}
+
+	return 0;
 }
 
 
@@ -133,6 +127,12 @@ int     p3GroupDistrib::loadAnyCache(const CacheData &data, bool local)
 	file += "/";
 	file += data.name;
 
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::loadAnyCache() file: " << file << std::endl;
+	std::cerr << "PeerId: " << data.pid << std::endl;
+	std::cerr << "Cid: " << data.cid.type << ":" << data.cid.subid << std::endl;
+#endif
+
 	if (data.cid.subid == 0)
 	{
 		loadFileGroups(file, data.pid, local);
@@ -146,11 +146,21 @@ int     p3GroupDistrib::loadAnyCache(const CacheData &data, bool local)
 
 int    p3GroupDistrib::loadCache(const CacheData &data)
 {
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::loadCache()";
+	std::cerr << std::endl;
+#endif
+
 	return loadAnyCache(data, false);
 }
 
 bool 	p3GroupDistrib::loadLocalCache(const CacheData &data)
 {
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::loadLocalCache()";
+	std::cerr << std::endl;
+#endif
+
 	return loadAnyCache(data, true);
 }
 
@@ -167,21 +177,47 @@ bool 	p3GroupDistrib::loadLocalCache(const CacheData &data)
  */
 void	p3GroupDistrib::loadFileGroups(std::string filename, std::string src, bool local)
 {
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::loadFileGroups()";
+	std::cerr << std::endl;
+#endif
+
 	/* create the serialiser to load info */
 	BinInterface *bio = new BinFileInterface(filename.c_str(), BIN_FLAGS_READABLE);
 	pqistreamer *streamer = createStreamer(bio, src, 0);
 
 	RsItem *item;
 	RsDistribGrp *newGrp;
+	RsDistribGrpKey *newKey;
+
+	streamer->tick();
 	while(NULL != (item = streamer->GetItem()))
 	{
-		if (NULL == (newGrp = dynamic_cast<RsDistribGrp *>(item)))
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::loadFileGroups() Got Item:";
+		std::cerr << std::endl;
+		item->print(std::cerr, 10);
+		std::cerr << std::endl;
+#endif
+
+		newKey = dynamic_cast<RsDistribGrpKey *>(item);
+		if ((newGrp = dynamic_cast<RsDistribGrp *>(item)))
 		{
-			/* wrong message type */
-			delete item;
-			continue;
+			loadGroup(newGrp);
 		}
-		loadGroup(newGrp);
+		else if ((newKey = dynamic_cast<RsDistribGrpKey *>(item)))
+		{
+			loadGroupKey(newKey);
+		}
+		else
+		{
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::loadFileGroups() Unexpected Item - deleting";
+			std::cerr << std::endl;
+#endif
+			delete item;
+		}
+		streamer->tick();
 	}
 
 	delete streamer;
@@ -192,81 +228,52 @@ void	p3GroupDistrib::loadFileGroups(std::string filename, std::string src, bool 
 
 void	p3GroupDistrib::loadFileMsgs(std::string filename, uint16_t cacheSubId, std::string src, bool local)
 {
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::loadFileMsgs()";
+	std::cerr << std::endl;
+#endif
+
 	time_t now = time(NULL);
-	time_t start = now;
-	time_t end   = 0;
+	//time_t start = now;
+	//time_t end   = 0;
 
 	/* create the serialiser to load msgs */
 	BinInterface *bio = new BinFileInterface(filename.c_str(), BIN_FLAGS_READABLE);
 	pqistreamer *streamer = createStreamer(bio, src, 0);
 
 	RsItem *item;
-	RsDistribMsg *newMsg;
+	RsDistribSignedMsg *newMsg;
+
+	streamer->tick();
 	while(NULL != (item = streamer->GetItem()))
 	{
-		if (NULL == (newMsg = dynamic_cast<RsDistribMsg *>(item)))
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::loadFileMsgs() Got Item:";
+		std::cerr << std::endl;
+		item->print(std::cerr, 10);
+		std::cerr << std::endl;
+#endif
+
+		if ((newMsg = dynamic_cast<RsDistribSignedMsg *>(item)))
 		{
+			loadMsg(newMsg, src, local);
+		}
+		else
+		{
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::loadFileMsgs() Unexpected Item - deleting";
+			std::cerr << std::endl;
+#endif
 			/* wrong message type */
 			delete item;
-			continue;
 		}
-
-		if (local)
-		{
-			/* calc the range */
-			if (newMsg->timestamp < start)
-				start = newMsg->timestamp;
-			if (newMsg->timestamp > end)
-				end = newMsg->timestamp;
-		}
-
-		loadMsg(newMsg, src, local);
+		streamer->tick();
 	}
-
-	/* Check the Hash? */
 
 	delete streamer;
-
-	if (local)
-	{
-		GroupCache newCache;
-
-		newCache.filename = filename;
-		newCache.cacheSubId = cacheSubId;
-		newCache.start = start;
-		newCache.end = end;
-
-		distribMtx.lock();   /********************    LOCKED MUTEX ************/
-
-		mLocalCaches.push_back(newCache);		
-
-
-/******************** This probably ain't necessary *******************/
-#if 0
-		/* adjust next Publish Time if needed */
-		if ((end < now) && (end + mPubPeriod > mNextPublishTime))
-		{
-			mNextPublishTime = end + mPubPeriod;
-		}
-#endif 
-/******************** This probably ain't necessary *******************/
-
-		distribMtx.unlock(); /********************  UNLOCKED MUTEX ************/
-
-	}
-
 	return;
 }
-
-
-/*******************************
-********************************
-********************************
-*****  COMPLETED TO HERE  ******
-********************************
-********************************
-********************************/
-
 
 /***************************************************************************************/
 /***************************************************************************************/
@@ -278,19 +285,185 @@ void	p3GroupDistrib::loadFileMsgs(std::string filename, uint16_t cacheSubId, std
 void	p3GroupDistrib::loadGroup(RsDistribGrp *newGrp)
 {
 	/* load groupInfo */
+	std::string gid = newGrp -> grpId;
+	std::string pid = newGrp -> PeerId();
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::loadGroup()" << std::endl;
+	std::cerr << "groupId: " << gid << std::endl;
+	std::cerr << "PeerId: " << gid << std::endl;
+	std::cerr << "Group:" << std::endl;
+	newGrp -> print(std::cerr, 10);
+	std::cerr << "----------------------" << std::endl;
+#endif
+
+	RsStackMutex stack(distribMtx); /******* STACK LOCKED MUTEX ***********/
 
 	/* look for duplicate */
+	bool checked = false;
+	std::map<std::string, GroupInfo>::iterator it;
+	it = mGroups.find(gid);
 
+	if (it == mGroups.end())
+	{
 
-	/* check signature */
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::loadGroup() Group Not Found";
+		std::cerr << std::endl;
+#endif
 
-	/* add in */
+		if (!validateDistribGrp(newGrp))
+		{
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::loadGroup() Invalid Group ";
+			std::cerr << std::endl;
+#endif
+			/* fails test */
+			delete newGrp;
+			return;
+		}
 
-	/* */
+		checked = true;
+
+		GroupInfo gi;
+		gi.grpId = gid;
+		mGroups[gid] = gi;
+
+		it = mGroups.find(gid);
+	}
+
+	/* at this point - always in the map */
+
+	/* add as source ... don't need to validate for this! */
+	std::list<std::string>::iterator pit;
+	pit = std::find(it->second.sources.begin(), it->second.sources.end(), pid);
+	if (pit == it->second.sources.end())
+	{
+		it->second.sources.push_back(pid);
+		it->second.pop = it->second.sources.size();
+
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::loadGroup() New Source, pop = ";
+		std::cerr << it->second.pop;
+		std::cerr << std::endl;
+#endif
+	}
+
+	if (!checked)
+	{
+		if (!locked_checkGroupInfo(it->second, newGrp))
+		{
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::loadGroup() Fails Check";
+			std::cerr << std::endl;
+#endif
+			/* either fails check or old/same data */
+			delete newGrp;
+			return;
+		}
+	}
+
+	/* useful info/update */
+	if(!locked_updateGroupInfo(it->second, newGrp))
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::loadGroup() Fails Update";
+		std::cerr << std::endl;
+#endif
+		/* cleanup on false */
+		delete newGrp;
+	}
+	else
+	{
+		locked_notifyGroupChanged(it->second);
+	}
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::loadGroup() Done";
+	std::cerr << std::endl;
+#endif
 }
 
 
-void	p3GroupDistrib::loadMsg(RsDistribMsg *msg, std::string src, bool local)
+void	p3GroupDistrib::loadGroupKey(RsDistribGrpKey *newKey)
+{
+	/* load Key */
+	std::string pid = newKey -> PeerId();
+	std::string gid = newKey -> grpId;
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::loadGroupKey()" << std::endl;
+	std::cerr << "PeerId: " << pid << std::endl;
+	std::cerr << "groupId: " << gid << std::endl;
+	std::cerr << "Key:" << std::endl;
+	newKey -> print(std::cerr, 10);
+	std::cerr << "----------------------" << std::endl;
+#endif
+
+	RsStackMutex stack(distribMtx); /******* STACK LOCKED MUTEX ***********/
+
+	/* Find the Group */
+	std::map<std::string, GroupInfo>::iterator it;
+	it = mGroups.find(gid);
+
+	if (it == mGroups.end())
+	{
+
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::loadGroupKey() Group Not Found - discarding Key";
+		std::cerr << std::endl;
+#endif
+		delete newKey;
+		return;
+	}
+
+	/* have the group -> add in the key */
+	bool updateOk = false;
+	if (newKey->key.keyFlags & RSTLV_KEY_DISTRIB_ADMIN)
+	{
+		if(!locked_updateGroupAdminKey(it->second, newKey))
+		{
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::loadGroupKey() Failed Admin Key Update";
+			std::cerr << std::endl;
+#endif
+		}
+		else
+		{
+			updateOk = true;
+		}
+	}
+	else
+	{
+		if(!locked_updateGroupPublishKey(it->second, newKey))
+		{
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::loadGroupKey() Failed Publish Key Update";
+			std::cerr << std::endl;
+#endif
+		}
+		else
+		{
+			updateOk = true;
+		}
+	}
+
+	if (updateOk)
+	{
+		locked_notifyGroupChanged(it->second);
+	}
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::loadGroupKey() Done - Cleaning up.";
+	std::cerr << std::endl;
+#endif
+	delete newKey;
+
+	return;
+}
+
+
+void	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, std::string src, bool local)
 {
 	/****************** check the msg ******************/
 	/* Do the most likely checks to fail first....
@@ -302,105 +475,91 @@ void	p3GroupDistrib::loadMsg(RsDistribMsg *msg, std::string src, bool local)
 	 * -> then do the expensive Hash / signature checks.
 	 */
 
-	distribMtx.lock();   /********************    LOCKED MUTEX ************/
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::loadMsg()" << std::endl;
+	std::cerr << "Source:" << src << std::endl;
+	std::cerr << "Local:" << local << std::endl;
+	newMsg -> print(std::cerr, 10);
+	std::cerr << "----------------------" << std::endl;
+#endif
 
-	/* check timestamp */
-	time_t now = time(NULL);
-	time_t min = now - mStorePeriod;
-	time_t minPub = now - mStorePeriod / 2.0;
-	time_t max = now + GROUP_MAX_FWD_OFFSET;
+	RsStackMutex stack(distribMtx); /******* STACK LOCKED MUTEX ***********/
 
-	distribMtx.unlock(); /********************  UNLOCKED MUTEX ************/
-
-	if ((msg->timestamp < min) || (msg->timestamp > max))
-	{
-		/* if outside range -> remove */
-		delete msg;
-		return;
-	}
-
-
-	distribMtx.lock();   /********************    LOCKED MUTEX ************/
+	/* Check if it exists already */
 
 	/* find group */
 	std::map<std::string, GroupInfo>::iterator git;
-	if (mGroups.end() == (git = mGroups.find(msg->grpId)))
+	if (mGroups.end() == (git = mGroups.find(newMsg->grpId)))
 	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::loadMsg() Group Dont Exist" << std::endl;
+		std::cerr << std::endl;
+#endif
 		/* if not there -> remove */
-		distribMtx.unlock(); /********************  UNLOCKED MUTEX ************/
-
-		delete msg;
+		delete newMsg;
 		return;
 	}
 
 	/* check for duplicate message */
 	std::map<std::string, RsDistribMsg *>::iterator mit;
-	if ((git->second).msgs.end() != (git->second).msgs.find(msg->msgId))
+	if ((git->second).msgs.end() != (git->second).msgs.find(newMsg->msgId))
 	{
-		distribMtx.unlock(); /********************  UNLOCKED MUTEX ************/
-
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::loadMsg() Msg already exists" << std::endl;
+		std::cerr << std::endl;
+#endif
 		/* if already there -> remove */
-		delete msg;
+		delete newMsg;
 		return;
 	}
-
-	distribMtx.unlock(); /********************  UNLOCKED MUTEX ************/
-
-	/* save and reset hash/signatures */
-	std::string hash = msg->msgId;
-	std::string grpSign = msg->grpSignature;
-	std::string srcSign = msg->sourceSignature;
-
-	msg->msgId = "";
-	msg->grpSignature = "";
-	msg->sourceSignature = "";
-
-	std::string computedHash = HashRsItem(msg);
-
-	/* restore data */
-	msg->msgId = hash;
-	msg->grpSignature = grpSign;
-	msg->sourceSignature = srcSign;
-
-	if (computedHash != hash)
-	{
-		/* hash is wrong */
-		delete msg;
-		return;
-	}
-
-	/* calc group signature */
-		/* if fails -> remove */
-
-	/* check peer signature */
-		/* if !allowedAnon & anon -> remove */
-		/* if !allowedUnknown & unknown -> remove */
 
 	/****************** check the msg ******************/
+	if (!locked_validateDistribSignedMsg(git->second, newMsg))
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::loadMsg() validate failed" << std::endl;
+		std::cerr << std::endl;
+#endif
+		delete newMsg;
+		return;
+	}
+
+	/* convert Msg */
+	RsDistribMsg *msg = unpackDistribSignedMsg(newMsg);
+	if (!msg)
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::loadMsg() unpack failed" << std::endl;
+		std::cerr << std::endl;
+#endif
+		return;
+	}
+
+	if (!locked_checkDistribMsg(git->second, msg))
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::loadMsg() check failed" << std::endl;
+		std::cerr << std::endl;
+#endif
+		delete msg;
+		return;
+	}
 
 	/* accept message */
 	(git->second).msgs[msg->msgId] = msg;
 
-	if (local)
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::loadMsg() Msg Loaded Successfully" << std::endl;
+	std::cerr << std::endl;
+#endif
+
+	/* else if group = subscribed | listener -> publish */
+	if (git->second.flags & (RS_DISTRIB_SUBSCRIBED))
 	{
-		/* if from local -> already published */
-		/* All local loads - will also come in as Remote loads.
-		 * but should be discarded because of duplicates 
-		 * (Local load must happen first!)
-		 */
-		//delete msg;
-		return;
+		locked_toPublishMsg(msg);
 	}
 
-	if (msg->timestamp < minPub)
-	{
-		/* outside publishing range */
-		//delete msg;
-		return;
-	}
-	
-	/* else if group = subscribed | listener -> publish */
-	toPublishMsg(msg);
+	locked_notifyGroupChanged(git->second);
 }
 
 
@@ -409,11 +568,13 @@ void	p3GroupDistrib::loadMsg(RsDistribMsg *msg, std::string src, bool local)
 	/****************** create/mod Cache Content  **********************************/
 /***************************************************************************************/
 /***************************************************************************************/
-
-void	p3GroupDistrib::toPublishMsg(RsDistribMsg *msg)
+uint16_t p3GroupDistrib::determineCacheSubId()
 {
-	RsStackMutex stack(distribMtx); /****** STACK MUTEX LOCKED *******/
+	return 1;
+}
 
+void	p3GroupDistrib::locked_toPublishMsg(RsDistribMsg *msg)
+{
 	mPendingPublish.push_back(msg);
 }
 
@@ -439,13 +600,12 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 	pqistreamer *streamer = createStreamer(bio, mOwnId, 
 						BIN_FLAGS_NO_DELETE);
 
-	RsStackMutex stack(distribMtx); /****** STACK MUTEX LOCKED *******/
-
 
 	std::list<RsDistribMsg *>::iterator it;
 	for(it = mPendingPublish.begin(); it != mPendingPublish.end(); it++)
 	{
 		streamer->SendItem(*it); /* doesnt delete it */
+		streamer->tick();
 	}
 
 	/* cleanup */
@@ -470,6 +630,11 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 
 void 	p3GroupDistrib::publishDistribGroups()
 {
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::publishDistribGroups()";
+	std::cerr << std::endl;
+#endif
+
 	/* set subid = 0 */	
 	CacheData newCache;
 
@@ -487,7 +652,7 @@ void 	p3GroupDistrib::publishDistribGroups()
 
 	BinInterface *bio = new BinFileInterface(filename.c_str(), 
 				BIN_FLAGS_WRITEABLE | BIN_FLAGS_HASH_DATA);
-	pqistreamer *streamer = createStreamer(bio, mOwnId, 0);
+	pqistreamer *streamer = createStreamer(bio, mOwnId, BIN_FLAGS_NO_DELETE);
 
 	RsStackMutex stack(distribMtx); /****** STACK MUTEX LOCKED *******/
 
@@ -497,13 +662,73 @@ void 	p3GroupDistrib::publishDistribGroups()
 	for(it = mGroups.begin(); it != mGroups.end(); it++)
 	{
 		/* if subscribed or listener -> do stuff */
+		if (it->second.flags & (RS_DISTRIB_SUBSCRIBED))
+		{
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::publishDistribGroups() Saving Group: " << it->first;
+			std::cerr << std::endl;
+#endif
 
-		/* extract public info to RsDistribGrp */
-		RsDistribGrp *grp = new RsDistribGrp();
+			/* extract public info to RsDistribGrp */
+			RsDistribGrp *grp = it->second.distribGroup;
 
+			if (grp)
+			{
+				/* store in Cache File */
+				streamer->SendItem(grp); /* no delete */
+				streamer->tick();
+			}
 
-		/* store in Cache File */
-		streamer->SendItem(grp); /* deletes it */
+			/* if they have public keys, publish these too */
+			std::map<std::string, GroupKey>::iterator kit;
+			for(kit = it->second.publishKeys.begin(); 
+						kit != it->second.publishKeys.end(); kit++)
+			{
+				if ((kit->second.type & RSTLV_KEY_DISTRIB_PUBLIC) &&
+					(kit->second.type & RSTLV_KEY_TYPE_FULL))
+				{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::publishDistribGroups() Saving Key: " << kit->first;
+		std::cerr << std::endl;
+#endif
+					/* create Key for sharing */
+
+					RsDistribGrpKey *pubKey = new RsDistribGrpKey();
+					pubKey->grpId = it->first;
+
+					RSA *rsa_priv = EVP_PKEY_get1_RSA(kit->second.key);
+					setRSAPrivateKey(pubKey->key, rsa_priv);
+					RSA_free(rsa_priv);
+
+					pubKey->key.keyFlags = RSTLV_KEY_TYPE_FULL;
+					pubKey->key.keyFlags |= RSTLV_KEY_DISTRIB_PUBLIC;
+					pubKey->key.startTS = kit->second.startTS;
+					pubKey->key.endTS   = kit->second.endTS;
+
+					streamer->SendItem(pubKey);
+					streamer->tick();
+					delete pubKey;
+				}
+				else
+				{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::publishDistribGroups() Ignoring Key: " << kit->first;
+		std::cerr << std::endl;
+		std::cerr << "p3GroupDistrib::publishDistribGroups() Key Type: " << kit->second.type;
+		std::cerr << std::endl;
+#endif
+				}
+
+			}
+		}
+		else
+		{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::publishDistribGroups() Ignoring Group: " << it->first;
+		std::cerr << std::endl;
+#endif
+		}
+
 	}
 
 	/* Extract File Information from pqistreamer */
@@ -572,7 +797,7 @@ bool p3GroupDistrib::getSubscribedGroupList(std::list<std::string> &grpids)
 	std::map<std::string, GroupInfo>::iterator git;
 	for(git = mGroups.begin(); git != mGroups.end(); git++)
 	{
-		if (git->second.flags & RS_GRPDISTRIB_SUBSCRIBED)
+		if (git->second.flags & RS_DISTRIB_SUBSCRIBED)
 		{
 			grpids.push_back(git->first);
 		}
@@ -586,7 +811,7 @@ bool p3GroupDistrib::getPublishGroupList(std::list<std::string> &grpids)
 	std::map<std::string, GroupInfo>::iterator git;
 	for(git = mGroups.begin(); git != mGroups.end(); git++)
 	{
-		if (git->second.flags & RS_GRPDISTRIB_PUBLISH)
+		if (git->second.flags & (RS_DISTRIB_ADMIN | RS_DISTRIB_PUBLISH))
 		{
 			grpids.push_back(git->first);
 		}
@@ -626,6 +851,28 @@ bool p3GroupDistrib::getAllMsgList(std::string grpId, std::list<std::string> &ms
 	for(mit = git->second.msgs.begin(); mit != git->second.msgs.end(); mit++)
 	{
 		msgIds.push_back(mit->first);
+	}
+	return true;
+}
+
+bool p3GroupDistrib::getParentMsgList(std::string grpId, std::string pId, 
+						std::list<std::string> &msgIds)
+{
+	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
+	std::map<std::string, GroupInfo>::iterator git;
+	if (mGroups.end() == (git = mGroups.find(grpId)))
+	{
+		return false;
+	}
+
+	std::map<std::string, RsDistribMsg *>::iterator mit;
+
+	for(mit = git->second.msgs.begin(); mit != git->second.msgs.end(); mit++)
+	{
+		if (mit->second->parentId == pId)
+		{
+			msgIds.push_back(mit->first);
+		}
 	}
 	return true;
 }
@@ -684,13 +931,7 @@ RsDistribMsg *p3GroupDistrib::locked_getGroupMsg(std::string grpId, std::string 
 	return mit->second;
 }
 
-
-/**** These must be created in derived classes ****/
-
-#if 0
-	
-/* get Group Details */
-bool p3GroupDistrib::getGroupDetails(std::string grpId, RsExternalDistribGroup &grp)
+bool    p3GroupDistrib::subscribeToGroup(std::string grpId, bool subscribe)
 {
 	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
 	std::map<std::string, GroupInfo>::iterator git;
@@ -699,44 +940,32 @@ bool p3GroupDistrib::getGroupDetails(std::string grpId, RsExternalDistribGroup &
 		return false;
 	}
 
-	/* Fill in details */
+	if (subscribe)
+	{
+		if (!(git->second.flags & RS_DISTRIB_SUBSCRIBED)) 
+		{
+			git->second.flags |= RS_DISTRIB_SUBSCRIBED;
+			mGroupsRepublish = true;
+		}
+	}
+	else 
+	{
+		if (git->second.flags & RS_DISTRIB_SUBSCRIBED)
+		{
+			git->second.flags &= (~RS_DISTRIB_SUBSCRIBED);
+			mGroupsRepublish = true;
+		}
+	}
 
 	return true;
 }
-
-/* get Msg */
-bool p3GroupDistrib::getGroupMsgDetails(std::string grpId, std::string msgId, RsExternalDistribMsg &msg)
-{
-	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
-	std::map<std::string, GroupInfo>::iterator git;
-	if (mGroups.end() == (git = mGroups.find(grpId)))
-	{
-		return false;
-	}
-
-	std::map<std::string, RsDistribMsg *>::iterator mit;
-	if (git->second.msgs.end() == (mit = git->second.msgs.find(msgId)))
-	{
-		return false;
-	}
-
-	/* Fill in the message details */
-
-
-	return true;
-}
-
-#endif
-
 
 /************************************* p3Config *************************************/
 
 RsSerialiser *p3GroupDistrib::setupSerialiser()
 {
 	RsSerialiser *rss = new RsSerialiser();
-
-	rss->addSerialType(new RsSerialDistrib());
-	rss->addSerialType(new RsConfigDistrib());
+	rss->addSerialType(new RsDistribSerialiser());
 
 	return rss;
 }
@@ -745,11 +974,134 @@ std::list<RsItem *> p3GroupDistrib::saveList(bool &cleanup)
 {
 	std::list<RsItem *> saveData;
 
-	/* store private information for OUR lists */
-	/* store information on subscribed lists */
-	/* store messages for pending Publication */
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::saveList()";
+	std::cerr << std::endl;
+#endif
+
+	cleanup = false;
+
+	distribMtx.lock(); /****** MUTEX LOCKED *******/
+
+	/* Iterate through all the Groups */
+	std::map<std::string, GroupInfo>::iterator it;
+	for(it = mGroups.begin(); it != mGroups.end(); it++)
+	{
+		/* if subscribed or listener -> do stuff */
+		if (it->second.flags & (RS_DISTRIB_SUBSCRIBED))
+		{
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::saveList() Saving Group: " << it->first;
+			std::cerr << std::endl;
+#endif
+
+			/* extract public info to RsDistribGrp */
+			RsDistribGrp *grp = it->second.distribGroup;
+
+			if (grp)
+			{
+				/* store in Cache File */
+				saveData.push_back(grp); /* no delete */
+			}
+
+			/* if they have public keys, publish these too */
+			std::map<std::string, GroupKey>::iterator kit;
+			for(kit = it->second.publishKeys.begin(); 
+						kit != it->second.publishKeys.end(); kit++)
+			{
+				if (kit->second.type & RSTLV_KEY_TYPE_FULL)
+				{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::saveList() Saving Key: " << kit->first;
+		std::cerr << std::endl;
+#endif
+					/* create Key for sharing */
+
+					RsDistribGrpKey *pubKey = new RsDistribGrpKey();
+					pubKey->grpId = it->first;
+
+					RSA *rsa_priv = EVP_PKEY_get1_RSA(kit->second.key);
+					setRSAPrivateKey(pubKey->key, rsa_priv);
+					RSA_free(rsa_priv);
+
+					pubKey->key.keyFlags = kit->second.type;
+					pubKey->key.startTS = kit->second.startTS;
+					pubKey->key.endTS   = kit->second.endTS;
+
+					saveData.push_back(pubKey);
+					saveCleanupList.push_back(pubKey);
+				}
+				else
+				{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::saveList() Ignoring Key: " << kit->first;
+		std::cerr << std::endl;
+		std::cerr << "p3GroupDistrib::saveList() Key Type: " << kit->second.type;
+		std::cerr << std::endl;
+#endif
+				}
+
+			}
+
+			if (it->second.adminKey.type & RSTLV_KEY_TYPE_FULL)
+			{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::saveList() Saving Admin Key";
+		std::cerr << std::endl;
+#endif
+				/* create Key for sharing */
+
+				RsDistribGrpKey *pubKey = new RsDistribGrpKey();
+				pubKey->grpId = it->first;
+
+				RSA *rsa_priv = EVP_PKEY_get1_RSA(kit->second.key);
+				setRSAPrivateKey(pubKey->key, rsa_priv);
+				RSA_free(rsa_priv);
+
+				pubKey->key.keyFlags = RSTLV_KEY_TYPE_FULL;
+				pubKey->key.keyFlags |= RSTLV_KEY_DISTRIB_ADMIN;
+				pubKey->key.startTS = kit->second.startTS;
+				pubKey->key.endTS   = kit->second.endTS;
+
+				saveData.push_back(pubKey);
+				saveCleanupList.push_back(pubKey);
+			}
+			else
+			{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::saveList() Ignoring Admin Key: " << it->second.adminKey.keyId;
+		std::cerr << std::endl;
+		std::cerr << "p3GroupDistrib::saveList() Admin Key Type: " << it->second.adminKey.type;
+		std::cerr << std::endl;
+#endif
+			}
+		}
+		else
+		{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::saveList() Ignoring Group: " << it->first;
+		std::cerr << std::endl;
+#endif
+		}
+
+	}
 
 	return saveData;
+}
+
+void    p3GroupDistrib::saveDone()
+{
+	/* clean up the save List */
+	std::list<RsItem *>::iterator it;
+	for(it = saveCleanupList.begin(); it != saveCleanupList.end(); it++)
+	{
+		delete (*it);
+	}
+
+	saveCleanupList.clear();
+
+	/* unlock mutex */
+	distribMtx.unlock(); /****** MUTEX UNLOCKED *******/
 }
 
 bool    p3GroupDistrib::loadList(std::list<RsItem *> load)
@@ -758,17 +1110,49 @@ bool    p3GroupDistrib::loadList(std::list<RsItem *> load)
 	for(lit = load.begin(); lit != load.end(); lit++)
 	{
 		/* decide what type it is */
+
+		RsDistribGrp *newGrp = NULL;
+		RsDistribGrpKey *newKey = NULL;
+
+		if ((newGrp = dynamic_cast<RsDistribGrp *>(*lit)))
+		{
+			std::string gid = newGrp -> grpId;
+			loadGroup(newGrp);
+
+			/* flag as SUBSCRIBER */
+			RsStackMutex stack(distribMtx); /******* STACK LOCKED MUTEX ***********/
+
+			std::map<std::string, GroupInfo>::iterator it;
+			it = mGroups.find(gid);
+
+			if (it != mGroups.end())
+			{
+				it->second.flags |= RS_DISTRIB_SUBSCRIBED;
+			}
+		}
+		else if ((newKey = dynamic_cast<RsDistribGrpKey *>(*lit)))
+		{
+			loadGroupKey(newKey);
+		}
 	}
+
+	/* no need to republish until something new comes in */
+	RsStackMutex stack(distribMtx); /******* STACK LOCKED MUTEX ***********/
+	mGroupsRepublish = false;
+
 	return true;
 }
 
 /************************************* p3Config *************************************/
 
+/* This Streamer is used for Reading and Writing Cache Files....
+ * As All the child packets are Packed, we should only need RsSerialDistrib() in it.
+ */
+
 pqistreamer *p3GroupDistrib::createStreamer(BinInterface *bio, std::string src, uint32_t bioflags)
 {
 	RsSerialiser *rsSerialiser = new RsSerialiser();
-	RsSerialType *serialType = new RsSerialDistrib(); /* TODO */
-
+	RsSerialType *serialType = new RsDistribSerialiser();
 	rsSerialiser->addSerialType(serialType);
 
 	pqistreamer *streamer = new pqistreamer(rsSerialiser, src, bio, bioflags);
@@ -777,200 +1161,1240 @@ pqistreamer *p3GroupDistrib::createStreamer(BinInterface *bio, std::string src, 
 }
 
 
-std::string HashRsItem(RsItem *item)
-{
-	/* calc/check hash (of serialised data) */
-	RsSerialType *serial = new RsSerialDistrib();
-	
-	uint32_t size = serial->size(item);
-	RsRawItem *ri = new RsRawItem(0, size);
-	serial->serialise(item, ri->getRawData(), &size);
-
-	pqihash hash;
-	std::string computedHash;
-
-	hash.addData(ri->getRawData(), size);
-	hash.Complete(computedHash);
-
-	delete ri;
-	delete serial;
-	
-	return computedHash;
-}
-
-
-
 /***************************************************************************************/
 /***************************************************************************************/
 	/********************** Create Content   ***************************************/
 /***************************************************************************************/
 /***************************************************************************************/
 
-std::string p3GroupDistrib::createGroup(std::string name, uint32_t flags)
+std::string getRsaKeySign(RSA *pubkey)
 {
+	int len = BN_num_bytes(pubkey -> n);
+	unsigned char tmp[len];
+	BN_bn2bin(pubkey -> n, tmp);
+
+	// copy first CERTSIGNLEN bytes...
+	if (len > CERTSIGNLEN)
+	{
+		len = CERTSIGNLEN;
+	}
+
+        std::ostringstream id;
+        for(uint32_t i = 0; i < CERTSIGNLEN; i++)
+        {
+		id << std::hex << std::setw(2) << std::setfill('0')
+			<< (uint16_t) (((uint8_t *) (tmp))[i]);
+	}
+        std::string rsaId = id.str();
+
+	return rsaId;
+}
+
+std::string getBinDataSign(void *data, int len)
+{
+	unsigned char *tmp = (unsigned char *) data;
+
+	// copy first CERTSIGNLEN bytes...
+	if (len > CERTSIGNLEN)
+	{
+		len = CERTSIGNLEN;
+	}
+
+        std::ostringstream id;
+        for(uint32_t i = 0; i < CERTSIGNLEN; i++)
+        {
+		id << std::hex << std::setw(2) << std::setfill('0')
+			<< (uint16_t) (((uint8_t *) (tmp))[i]);
+	}
+        std::string Id = id.str();
+
+	return Id;
+}
+
+
+void 	setRSAPublicKey(RsTlvSecurityKey &key, RSA *rsa_pub)
+{
+	unsigned char data[10240]; /* more than enough space */
+	unsigned char *ptr = data;
+	int reqspace = i2d_RSAPublicKey(rsa_pub, &ptr);
+
+	key.keyData.setBinData(data, reqspace);
+
+	std::string keyId = getRsaKeySign(rsa_pub);
+	key.keyId = keyId;
+}
+
+void 	setRSAPrivateKey(RsTlvSecurityKey &key, RSA *rsa_priv)
+{
+	unsigned char data[10240]; /* more than enough space */
+	unsigned char *ptr = data;
+	int reqspace = i2d_RSAPrivateKey(rsa_priv, &ptr);
+
+	key.keyData.setBinData(data, reqspace);
+
+	std::string keyId = getRsaKeySign(rsa_priv);
+	key.keyId = keyId;
+}
+
+
+RSA *extractPublicKey(RsTlvSecurityKey &key)
+{
+	const unsigned char *keyptr = (const unsigned char *) key.keyData.bin_data;
+	long keylen = key.keyData.bin_len;
+
+	/* extract admin key */
+	RSA *rsakey = d2i_RSAPublicKey(NULL, &(keyptr), keylen);
+
+	return rsakey;
+}
+
+
+RSA *extractPrivateKey(RsTlvSecurityKey &key)
+{
+	const unsigned char *keyptr = (const unsigned char *) key.keyData.bin_data;
+	long keylen = key.keyData.bin_len;
+
+	/* extract admin key */
+	RSA *rsakey = d2i_RSAPrivateKey(NULL, &(keyptr), keylen);
+
+	return rsakey;
+}
+
+
+std::string p3GroupDistrib::createGroup(std::wstring name, std::wstring desc, uint32_t flags)
+{
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::createGroup()" << std::endl;
+	std::cerr << std::endl;
+#endif
 	/* Create a Group */
 	GroupInfo grpInfo;
 	std::string grpId;
+	time_t now = time(NULL);
 
-#ifdef  GROUP_SIGNATURES
+	/* create Keys */
+	RSA *rsa_admin = RSA_generate_key(2048, 65537, NULL, NULL);
+	RSA *rsa_admin_pub = RSAPublicKey_dup(rsa_admin);
 
-	/* Create Key Set (Admin) */
+	RSA *rsa_publish = RSA_generate_key(2048, 65537, NULL, NULL);
+	RSA *rsa_publish_pub = RSAPublicKey_dup(rsa_publish);
+
+	/* Create Group Description */
+
+	RsDistribGrp *newGrp = new RsDistribGrp();
+
+	newGrp->grpName = name;
+	newGrp->grpDesc = desc;
+	newGrp->timestamp = now;
+	newGrp->grpFlags = flags & (RS_DISTRIB_PRIVACY_MASK | RS_DISTRIB_AUTHEN_MASK);
+	newGrp->grpControlFlags = 0;
+
+	/* set keys */
+	setRSAPublicKey(newGrp->adminKey, rsa_admin_pub);
+	newGrp->adminKey.keyFlags = RSTLV_KEY_TYPE_PUBLIC_ONLY | RSTLV_KEY_DISTRIB_ADMIN;
+	newGrp->adminKey.startTS = now;
+	newGrp->adminKey.endTS = 0; /* no end */
+
+	RsTlvSecurityKey publish_key;
+	setRSAPublicKey(publish_key, rsa_publish_pub);
+
+	publish_key.keyFlags = RSTLV_KEY_TYPE_PUBLIC_ONLY;
+	if (flags & RS_DISTRIB_PUBLIC)
+	{
+		publish_key.keyFlags |= RSTLV_KEY_DISTRIB_PUBLIC;
+	}
+	else
+	{
+		publish_key.keyFlags |= RSTLV_KEY_DISTRIB_PRIVATE;
+	}
+
+	publish_key.startTS = now;
+	publish_key.endTS = now + 60 * 60 * 24 * 365 * 5; /* approx 5 years */
+
+	newGrp->publishKeys.keys[publish_key.keyId] = publish_key;
+	newGrp->publishKeys.groupId = newGrp->adminKey.keyId;
+
+
+	/************* create Key Messages (to Add Later) *********************/
+	RsDistribGrpKey *adKey = new RsDistribGrpKey();
+	adKey->grpId = grpId;
+
+	setRSAPrivateKey(adKey->key, rsa_admin);
+	adKey->key.keyFlags = RSTLV_KEY_TYPE_FULL | RSTLV_KEY_DISTRIB_ADMIN;
+	adKey->key.startTS = newGrp->adminKey.startTS;
+	adKey->key.endTS   = newGrp->adminKey.endTS;
+
+	RsDistribGrpKey *pubKey = new RsDistribGrpKey();
+	pubKey->grpId = grpId;
+
+	setRSAPrivateKey(pubKey->key, rsa_publish);
+	pubKey->key.keyFlags = RSTLV_KEY_TYPE_FULL;
+	if (flags & RS_DISTRIB_PUBLIC)
+	{
+		pubKey->key.keyFlags |= RSTLV_KEY_DISTRIB_PUBLIC;
+	}
+	else
+	{
+		pubKey->key.keyFlags |= RSTLV_KEY_DISTRIB_PRIVATE;
+	}
+	pubKey->key.startTS = publish_key.startTS;
+	pubKey->key.endTS   = publish_key.endTS;
+	/************* create Key Messages (to Add Later) *********************/
+
+
+	/* clean up publish_key manually -> else 
+	 * the data will get deleted...
+	 */
+
+	publish_key.keyData.bin_data = NULL;
+	publish_key.keyData.bin_len = 0;
+
+	grpId = newGrp->adminKey.keyId;
+	newGrp->grpId = grpId;
+
+	/************** Serialise and sign **************************************/
 	EVP_PKEY *key_admin = EVP_PKEY_new();
-	mAuthMgr->generateKeyPair(key_admin, 0);
+	EVP_PKEY_assign_RSA(key_admin, rsa_admin);
 
-	/* extract AdminKey Id -> groupId */
-	grpId = mAuthMgr->getKeyId(key_admin);
+	newGrp->adminSignature.TlvClear();
 
-	/* setup GroupInfo */
-	grpInfo.adminKey = key_admin;
+	RsSerialType *serialType = new RsDistribSerialiser(); 
 
-#else 
-	grpInfo.id = generateRandomId();
-#endif
+	char data[16000];
+	uint32_t size = 16000;
 
-	grpInfo.id = grpId;
-	grpInfo.flags = flags;
-	grpInfo.name  = name;
+	serialType->serialise(newGrp, data, &size);
 
-	/* generate a set of keys */
+	/* calc and check signature */
+	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
 
-	/* generate RsDistribGrp */
+	EVP_SignInit(mdctx, EVP_sha1());
+	EVP_SignUpdate(mdctx, data, size);
 
-	/* sign Grp (with date) */
+	unsigned int siglen = EVP_PKEY_size(key_admin);
+        unsigned char sigbuf[siglen];
+	int ans = EVP_SignFinal(mdctx, sigbuf, &siglen, key_admin);
 
-	/* store new GroupInfo */
+	/* save signature */
+	newGrp->adminSignature.signData.setBinData(sigbuf, siglen);
+	newGrp->adminSignature.keyId = grpId;
+
+	/* clean up */
+	delete serialType;
+	EVP_MD_CTX_destroy(mdctx);
+
+
+	/******************* clean up all Keys *******************/
+
+	RSA_free(rsa_admin_pub);
+	RSA_free(rsa_publish_pub);
+	RSA_free(rsa_publish);
+	EVP_PKEY_free(key_admin);
+
+	/******************* load up new Group *********************/
+	loadGroup(newGrp);
+
+	/* add Keys to GroupInfo */
+	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
+	GroupInfo *gi = locked_getGroupInfo(grpId);
+	if (!gi)
+	{
+		return grpId;
+	}
+
+	gi->flags |= RS_DISTRIB_SUBSCRIBED;
+	mGroupsRepublish = true;
+
+	/* replace the public keys */
+	locked_updateGroupAdminKey(*gi, adKey);
+	locked_updateGroupPublishKey(*gi, pubKey);
+
+	delete adKey;
+	delete pubKey;
+
 
 	return grpId;
 }
 
-std::string p3GroupDistrib::addPublishKey(std::string grpId, uint32_t keyflags, time_t startDate, time_t endDate)
+
+std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 {
-	/* Find the Group */
-	GroupInfo *grpInfo = locked_getGroupInfo(grpId);
-	std::string keyId;
 
-	if (!grpInfo)
-	{
-		return keyId;
-	}
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::publishMsg()" << std::endl;
+	msg->print(std::cerr, 10);
+	std::cerr << std::endl;
+#endif
 
-	/* if we don't have the admin key -> then we cannot add a key */
-	if (!(grpInfo->grpFlags & RS_GRPDISTRIB_ADMIN_KEY))
-	{
-		return keyId;
-	}
-
-	/* Create Key Set (Publish) */
-	EVP_PKEY *key_publish = EVP_PKEY_new();
-	mAuthMgr->generateKeyPair(key_publish, 0);
-
-	/* extract Key Id -> keyId */
-	keyId = mAuthMgr->getKeyId(key_publish);
-
-	/* setup RsKey */
-	RsKey *publishKey = new RsKey();
-	publishKey -> key = key_publish;
-	publishKey -> keyId = keyId;
-	publishKey -> startDate = startDate;
-	publishKey -> endDate = endDate;
-
-	/* setup data packet for signing */
-
-
-	/* sign key with Admin Key */
-	publishKey -> adminSignature = ...;
-
-
-	grpInfo.publishKeys.push_back(publishKey);
-
-	return keyId;
-}
-
-
-
-
-
-int p3channel::signRsKey(RsKey *pubkey, EVP_PKEY *signKey, std::string &signature)
-{
-	/* 
-
-
-
-
-
-        // sslroot will generate the pair...
-	// we need to split it into an pub/private.
-	
-	EVP_PKEY *keypair = EVP_PKEY_new();
-	EVP_PKEY *pubkey = EVP_PKEY_new();
-
-	mAuthMgr->generateKeyPair(keypair, 0);
-	
-        RSA *rsa1 = EVP_PKEY_get1_RSA(keypair);
-        RSA *rsa2 = RSAPublicKey_dup(rsa1);
-	
-	{
-	std::ostringstream out;
-	out << "p3channel::generateRandomKeys()" << std::endl;
-	out << "Rsa1: " << (void *) rsa1 << " & Rsa2: ";
-	out << (void *)  rsa2 << std::endl;
-	
-	pqioutput(PQL_DEBUG_BASIC, pqichannelzone, out.str());
-	}
-	
-	EVP_PKEY_assign_RSA(pubkey, rsa1);
-	RSA_free(rsa1); // decrement ref count!
-	
-	priv -> setKey(keypair);
-	pub -> setKey(pubkey);
-	
-	{
-	std::ostringstream out;
-	out << "p3channel::generateRandomKey(): ";
-	priv -> print(out);
-	pqioutput(PQL_DEBUG_BASIC, pqichannelzone, out.str());
-	}
-	return 1;
-	}
-	
-	
-void	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
-{
 	/* extract grpId */
 	std::string grpId = msg->grpId;
+	std::string msgId;
+
+	RsDistribSignedMsg *signedMsg = NULL;
 
 	/* ensure Group exists */
+      { /* STACK MUTEX */
+	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
+	GroupInfo *gi = locked_getGroupInfo(grpId);
+	if (!gi)
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::publishMsg() No Group";
+		std::cerr << std::endl;
+#endif
+		return msgId;
+	}
 
-	/* hash message */
+	/******************* FIND KEY ******************************/
+	if (!locked_choosePublishKey(*gi))
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::publishMsg() No Publish Key(1)";
+		std::cerr << std::endl;
+#endif
+		return msgId;
+	}
 
-	/* sign message */
+	/* find valid publish_key */
+	EVP_PKEY *publishKey = NULL;
+	std::map<std::string, GroupKey>::iterator kit;
+	kit = gi->publishKeys.find(gi->publishKeyId);
+	if (kit != gi->publishKeys.end())
+	{
+		publishKey = kit->second.key;
+	}
 
-	/* personal signature? */	
+	if (!publishKey)
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::publishMsg() No Publish Key";
+		std::cerr << std::endl;
+#endif
+		/* no publish Key */
+		return msgId;
+	}
+	/******************* FIND KEY ******************************/
 
-	/* Message now Complete */
+	signedMsg = new RsDistribSignedMsg();
 
-	/* Insert in Group */
+	RsSerialType *serialType = createSerialiser();
+	uint32_t size = serialType->size(msg);
+	void *data = malloc(size);
 
-	/* add to PublishPending */
+	serialType->serialise(msg, data, &size);
+	signedMsg->packet.setBinData(data, size);
 
-	/* done */
-	return;
-}
+	/* sign Packet */
 
+	/* calc and check signature */
+	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
 
+	EVP_SignInit(mdctx, EVP_sha1());
+	EVP_SignUpdate(mdctx, data, size);
+
+	unsigned int siglen = EVP_PKEY_size(publishKey);
+        unsigned char sigbuf[siglen];
+	int ans = EVP_SignFinal(mdctx, sigbuf, &siglen, publishKey);
+
+	/* save signature */
+	signedMsg->publishSignature.signData.setBinData(sigbuf, siglen);
+	signedMsg->publishSignature.keyId = gi->publishKeyId;
 
 #if 0
+	if (personalSign)
+	{
+		/* calc and check signature */
+		EVP_MD_CTX *mdctx2 = EVP_MD_CTX_create();
 
-/* Modify Group */
-std::string p3GroupDistrib::modGroupDescription(std::string grpId, std::string description)
-{
-	return;
-}
+		EVP_SignInit(mdctx2, EVP_sha1());
+		EVP_SignUpdate(mdctx2, data, size);
 
-std::string p3GroupDistrib::modGroupIcon(std::string grpId, PIXMAP icon)
-{
-	return;
-}
+		unsigned int siglen = EVP_PKEY_size(personal_admin);
+        	unsigned char sigbuf[siglen];
+		int ans = EVP_SignFinal(mdctx2, sigbuf, &siglen, personal_admin);
 
+		signedMsg->personalSignature.signData.setBinData(sigbuf, siglen);
+		signedMsg->personalSignature.keyId = ownId;
+	
+		EVP_MD_CTX_destroy(mdctx2);
+	}
 #endif
+
+	/* clean up */
+	delete serialType;
+	EVP_MD_CTX_destroy(mdctx);
+
+      } /* END STACK MUTEX */
+
+	/* extract Ids from publishSignature */
+	signedMsg->msgId = getBinDataSign(
+		signedMsg->publishSignature.signData.bin_data, 
+		signedMsg->publishSignature.signData.bin_len);
+	signedMsg->grpId = grpId;
+	signedMsg->timestamp = msg->timestamp;
+
+	msgId = signedMsg->msgId;
+
+	/* delete original msg */
+	delete msg;
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::publishMsg() Created SignedMsg:";
+	std::cerr << std::endl;
+	signedMsg->print(std::cerr, 10);
+	std::cerr << std::endl;
+#endif
+
+	/* load proper */
+	loadMsg(signedMsg, "ownId", true);
+
+	/* done */
+	return msgId;
+}
+
+
+
+
+/********************* Overloaded Functions **************************/
+
+bool 	p3GroupDistrib::validateDistribGrp(RsDistribGrp *newGrp)
+{
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::validateDistribGrp()";
+	std::cerr << std::endl;
+#endif
+
+	/* check signature */
+	RsSerialType *serialType = new RsDistribSerialiser(); 
+
+	char data[16000];
+	uint32_t size = 16000;
+
+	/* copy out signature (shallow copy) */
+	RsTlvKeySignature tmpSign = newGrp->adminSignature;
+	unsigned char *sigbuf = (unsigned char *) tmpSign.signData.bin_data;
+	unsigned int siglen = tmpSign.signData.bin_len;
+
+	/* clear signature */
+	newGrp->adminSignature.ShallowClear();
+
+	serialType->serialise(newGrp, data, &size);
+
+
+	const unsigned char *keyptr = (const unsigned char *) newGrp->adminKey.keyData.bin_data;
+	long keylen = newGrp->adminKey.keyData.bin_len;
+
+	/* extract admin key */
+	RSA *rsakey = d2i_RSAPublicKey(NULL, &(keyptr), keylen);
+
+	EVP_PKEY *key = EVP_PKEY_new();
+	EVP_PKEY_assign_RSA(key, rsakey);
+
+	/* calc and check signature */
+	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+
+	EVP_VerifyInit(mdctx, EVP_sha1());
+	EVP_VerifyUpdate(mdctx, data, size);
+	int ans = EVP_VerifyFinal(mdctx, sigbuf, siglen, key);
+
+
+	/* restore signature */
+	newGrp->adminSignature = tmpSign;
+	tmpSign.ShallowClear();
+
+	/* clean up */
+	EVP_PKEY_free(key);
+	delete serialType;
+	EVP_MD_CTX_destroy(mdctx);
+
+
+	if (ans == 1)
+		return true;
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::validateDistribGrp() Signature invalid";
+	std::cerr << std::endl;
+#endif
+	return false;
+}
+
+
+bool 	p3GroupDistrib::locked_checkGroupInfo(GroupInfo &info, RsDistribGrp *newGrp)
+{
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::locked_checkGroupInfo()";
+	std::cerr << std::endl;
+#endif
+	/* groupInfo */
+
+	/* If adminKey is the same and 
+	 * timestamp is <= timestamp, 
+	 * then just discard it.
+	 */
+
+	if (info.grpId != newGrp->grpId)
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_checkGroupInfo() Failed GrpId Wrong";
+		std::cerr << std::endl;
+#endif
+		return false;
+	}
+
+	if ((info.distribGroup) && 
+		(info.distribGroup->timestamp <= newGrp->timestamp))
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_checkGroupInfo() Group Data Old/Same";
+		std::cerr << std::endl;
+#endif
+		/* old or same info -> drop it */
+		return false;
+	}
+
+	/* otherwise validate it */
+	return validateDistribGrp(newGrp);
+}
+
+
+/* return false - to cleanup (delete group) afterwards, 
+ * true - we've kept the data
+ */
+bool 	p3GroupDistrib::locked_updateGroupInfo(GroupInfo &info, RsDistribGrp *newGrp)
+{
+	/* new group has been validated already 
+	 * update information.
+	 */
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::locked_updateGroupInfo()";
+	std::cerr << std::endl;
+#endif
+
+	if (info.distribGroup)
+	{
+		delete info.distribGroup;
+	}
+
+	info.distribGroup = newGrp;
+
+	/* copy details  */
+	info.grpName = newGrp->grpName;
+	info.grpDesc = newGrp->grpDesc;
+	info.grpCategory = newGrp->grpCategory;
+	info.grpFlags   = newGrp->grpFlags; 
+
+	/* pop already calculated */
+	/* last post handled seperately */
+
+	locked_checkGroupKeys(info);
+
+	/* if we are subscribed to the group -> then we need to republish */
+	if (info.flags & RS_DISTRIB_SUBSCRIBED)
+	{
+		mGroupsRepublish = true;
+	}
+
+	return true;
+}
+
+
+bool 	p3GroupDistrib::locked_checkGroupKeys(GroupInfo &info)
+{
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::locked_checkGroupKeys()";
+	std::cerr << "GrpId: " << info.grpId;
+	std::cerr << std::endl;
+#endif
+
+	/* iterate through publish keys - check that they exist in distribGrp, or delete */
+	RsDistribGrp *grp = info.distribGroup;
+
+	std::list<std::string> removeKeys;
+	std::map<std::string, GroupKey>::iterator it;
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::locked_checkGroupKeys() Checking if Expanded Keys still Exist";
+	std::cerr << std::endl;
+#endif
+
+	for(it = info.publishKeys.begin(); it != info.publishKeys.end(); it++)
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_checkGroupKeys() Publish Key: " << it->first;
+#endif
+		/* check for key in distribGrp */
+		if (grp->publishKeys.keys.end() == grp->publishKeys.keys.find(it->first))
+		{
+			/* remove publishKey */
+			removeKeys.push_back(it->first);
+#ifdef DISTRIB_DEBUG
+			std::cerr << " Old -> to Remove" << std::endl;
+#endif
+
+		}
+
+#ifdef DISTRIB_DEBUG
+		std::cerr << " Ok" << std::endl;
+#endif
+
+	}
+
+	while(removeKeys.size() > 0)
+	{
+		std::string rkey = removeKeys.front();
+		removeKeys.pop_front();
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_checkGroupKeys() Removing Key: " << rkey;
+		std::cerr << std::endl;
+#endif
+
+		it = info.publishKeys.find(rkey);
+		EVP_PKEY_free(it->second.key);
+		info.publishKeys.erase(it);
+	}
+
+	/* iterate through distribGrp list - expanding any missing keys */
+	std::map<std::string, RsTlvSecurityKey>::iterator dit;
+	for(dit = grp->publishKeys.keys.begin(); dit != grp->publishKeys.keys.end(); dit++)
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_checkGroupKeys() Checking for New Keys: KeyId: " << dit->first;
+		std::cerr << std::endl;
+#endif
+
+		it = info.publishKeys.find(dit->first);
+		if (it == info.publishKeys.end())
+		{
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::locked_checkGroupKeys() Key Missing - Expand";
+			std::cerr << std::endl;
+#endif
+
+			/* create a new expanded public key */
+			RSA *rsa_pub = extractPublicKey(dit->second);
+			if (!rsa_pub)
+			{
+#ifdef DISTRIB_DEBUG
+				std::cerr << "p3GroupDistrib::locked_checkGroupKeys() Failed to Expand Key";
+				std::cerr << std::endl;
+#endif
+				continue;
+			}
+
+			GroupKey newKey;
+			newKey.keyId = dit->first;
+			newKey.type = RSTLV_KEY_TYPE_PUBLIC_ONLY | (dit->second.keyFlags & RSTLV_KEY_DISTRIB_MASK);
+			newKey.startTS = dit->second.startTS;
+			newKey.endTS = dit->second.endTS;
+
+			newKey.key = EVP_PKEY_new();
+			EVP_PKEY_assign_RSA(newKey.key, rsa_pub);
+			
+			info.publishKeys[newKey.keyId] = newKey;
+
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::locked_checkGroupKeys() Expanded Key: " << dit->first;
+			std::cerr << "Key Type: " << newKey.type;
+			std::cerr << std::endl;
+			std::cerr << "Start: " << newKey.startTS;
+			std::cerr << std::endl;
+			std::cerr << "End: " << newKey.endTS;
+			std::cerr << std::endl;
+#endif
+		}
+	}
+
+	/* now check admin key */
+	if ((info.adminKey.keyId == "") || (!info.adminKey.key))
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_checkGroupKeys() Must Expand AdminKey Too";
+		std::cerr << std::endl;
+#endif
+
+		/* must expand admin key too */
+		RSA *rsa_pub = extractPublicKey(grp->adminKey);
+		if (rsa_pub)
+		{
+			info.adminKey.keyId = grp->adminKey.keyId;
+			info.adminKey.type = RSTLV_KEY_TYPE_PUBLIC_ONLY & RSTLV_KEY_DISTRIB_ADMIN;
+			info.adminKey.startTS = grp->adminKey.startTS;
+			info.adminKey.endTS = grp->adminKey.endTS;
+
+			info.adminKey.key = EVP_PKEY_new();
+			EVP_PKEY_assign_RSA(info.adminKey.key, rsa_pub);
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::locked_checkGroupKeys() AdminKey Expanded";
+			std::cerr << std::endl;
+#endif
+		}
+		else
+		{
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::locked_checkGroupKeys() ERROR Expandng AdminKey";
+			std::cerr << std::endl;
+#endif
+		}
+	}
+
+	return true;
+}
+
+
+
+bool 	p3GroupDistrib::locked_updateGroupAdminKey(GroupInfo &info, RsDistribGrpKey *newKey)
+{
+	/* so firstly - check that the KeyId matches something in the group */
+	std::string keyId = newKey->key.keyId;
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::locked_updateGroupAdminKey() grpId: " << keyId;
+	std::cerr << std::endl;
+#endif
+
+
+	if (keyId != info.grpId)
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_updateGroupAdminKey() Id mismatch - ERROR";
+		std::cerr << std::endl;
+#endif
+
+		return false;
+	}
+
+	if (!(newKey->key.keyFlags & RSTLV_KEY_TYPE_FULL))
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_updateGroupAdminKey() Key not Full - Ignore";
+		std::cerr << std::endl;
+#endif
+
+		/* not a full key -> ignore */
+		return false;
+	}
+
+	if (info.adminKey.type & RSTLV_KEY_TYPE_FULL)
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_updateGroupAdminKey() Already have Full Key - Ignore";
+		std::cerr << std::endl;
+#endif
+
+		/* if we have full key already - ignore */
+		return true;
+	}
+
+	/* need to update key */
+	RSA *rsa_priv = extractPrivateKey(newKey->key);
+
+	if (!rsa_priv)
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_updateGroupAdminKey() Extract Key failed - ERROR";
+		std::cerr << std::endl;
+#endif
+
+		return false;
+	}
+
+	/* validate they are a matching pair */
+	std::string realkeyId = getRsaKeySign(rsa_priv);
+	if ((1 != RSA_check_key(rsa_priv)) || (realkeyId != keyId))
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_updateGroupAdminKey() Validate Key Failed - ERROR";
+		std::cerr << std::endl;
+#endif
+
+		/* clean up */
+		RSA_free(rsa_priv);
+		return false;
+	}
+
+	/* add it in */
+	EVP_PKEY *evp_pkey = EVP_PKEY_new();
+	EVP_PKEY_assign_RSA(evp_pkey, rsa_priv);
+
+	EVP_PKEY_free(info.adminKey.key);
+	info.adminKey.key = evp_pkey;
+	info.adminKey.type = RSTLV_KEY_TYPE_FULL | RSTLV_KEY_DISTRIB_ADMIN;
+
+	info.flags |= RS_DISTRIB_ADMIN;
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::locked_updateGroupAdminKey() Success";
+	std::cerr << std::endl;
+#endif
+
+	return true;
+}
+
+
+bool 	p3GroupDistrib::locked_updateGroupPublishKey(GroupInfo &info, RsDistribGrpKey *newKey)
+{
+	/* so firstly - check that the KeyId matches something in the group */
+	std::string keyId = newKey->key.keyId;
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::locked_updateGroupPublishKey() grpId: " << info.grpId << " keyId: " << keyId;
+	std::cerr << std::endl;
+#endif
+
+
+	std::map<std::string, GroupKey>::iterator it;
+	it = info.publishKeys.find(keyId);
+	if (it == info.publishKeys.end())
+	{
+
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_updateGroupPublishKey() key not Found - Ignore";
+		std::cerr << std::endl;
+#endif
+
+		/* no key -> ignore */
+		return false;
+	}
+
+	if (!(newKey->key.keyFlags & RSTLV_KEY_TYPE_FULL))
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_updateGroupPublishKey() not FullKey - Ignore";
+		std::cerr << std::endl;
+#endif
+
+		/* not a full key -> ignore */
+		return false;
+	}
+
+	if (it->second.type & RSTLV_KEY_TYPE_FULL)
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_updateGroupPublishKey() already have FullKey - Ignore";
+		std::cerr << std::endl;
+#endif
+
+		/* if we have full key already - ignore */
+		return true;
+	}
+
+	/* need to update key */
+	RSA *rsa_priv = extractPrivateKey(newKey->key);
+
+	if (!rsa_priv)
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_updateGroupPublishKey() Private Extract Failed - ERROR";
+		std::cerr << std::endl;
+#endif
+
+		return false;
+	}
+
+	/* validate they are a matching pair */
+	std::string realkeyId = getRsaKeySign(rsa_priv);
+	if ((1 != RSA_check_key(rsa_priv)) || (realkeyId != keyId))
+	{
+
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_updateGroupPublishKey() Validate Private Key failed - ERROR";
+		std::cerr << std::endl;
+#endif
+
+		/* clean up */
+		RSA_free(rsa_priv);
+		return false;
+	}
+
+	/* add it in */
+	EVP_PKEY *evp_pkey = EVP_PKEY_new();
+	EVP_PKEY_assign_RSA(evp_pkey, rsa_priv);
+
+	EVP_PKEY_free(it->second.key);
+	it->second.key = evp_pkey;
+	it->second.type &= (~RSTLV_KEY_TYPE_PUBLIC_ONLY);
+	it->second.type |= RSTLV_KEY_TYPE_FULL;
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::locked_updateGroupPublishKey() Success";
+	std::cerr << std::endl;
+	std::cerr << "Key ID: " << it->first;
+	std::cerr << std::endl;
+	std::cerr << "Key Type: " << it->second.type;
+	std::cerr << std::endl;
+	std::cerr << "Start: " << it->second.startTS;
+	std::cerr << std::endl;
+	std::cerr << "End: " << it->second.endTS;
+	std::cerr << std::endl;
+#endif
+
+	info.flags |= RS_DISTRIB_PUBLISH;
+
+	/* if we have updated, we are subscribed, and it is a public key */
+	if ((info.flags & RS_DISTRIB_SUBSCRIBED) &&
+		(it->second.type & RSTLV_KEY_DISTRIB_PUBLIC))
+	{
+		mGroupsRepublish = true;
+	}
+
+	return true;
+}
+
+
+bool 	p3GroupDistrib::locked_choosePublishKey(GroupInfo &info)
+{
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::locked_choosePublishKey()";
+	std::cerr << std::endl;
+#endif
+	time_t now = time(NULL);
+
+	/******************* CHECK CURRENT KEY ******************************/
+	/* if current key is valid -> okay */
+
+	std::map<std::string, GroupKey>::iterator kit;
+	kit = info.publishKeys.find(info.publishKeyId);
+	if (kit != info.publishKeys.end())
+	{
+		if ((kit->second.type & RSTLV_KEY_TYPE_FULL) && 
+			(now < kit->second.endTS) && (now > kit->second.startTS)) 
+		{
+			/* key is okay */
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::locked_choosePublishKey() Current Key is Okay";
+			std::cerr << std::endl;
+#endif
+			return true;
+		}
+	}
+
+	/******************* FIND KEY ******************************/
+	std::string bestKey = "";
+	time_t bestEndTime = 0;
+
+	for(kit = info.publishKeys.begin(); kit != info.publishKeys.end(); kit++)
+	{
+
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_choosePublishKey() Found Key: ";
+		std::cerr << kit->first << " type: " << kit->second.type;
+		std::cerr << std::endl;
+#endif
+
+		if (kit->second.type & RSTLV_KEY_TYPE_FULL)
+		{
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::locked_choosePublishKey() Found FULL Key: ";
+			std::cerr << kit->first << " startTS: " << kit->second.startTS;
+			std::cerr << " endTS: " << kit->second.startTS;
+			std::cerr << " now: " << now;
+			std::cerr << std::endl;
+#endif
+			if ((now < kit->second.endTS) && (now >= kit->second.startTS)) 
+			{
+				if (kit->second.endTS > bestEndTime)
+				{
+					bestKey = kit->first;
+					bestEndTime = kit->second.endTS;
+#ifdef DISTRIB_DEBUG
+				std::cerr << "p3GroupDistrib::locked_choosePublishKey() Better Key: ";
+				std::cerr << kit->first;
+				std::cerr << std::endl;
+#endif
+				}
+			}
+		}
+	}
+
+	if (bestEndTime == 0)
+	{
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::locked_choosePublishKey() No Valid Key";
+			std::cerr << std::endl;
+#endif
+		return false;
+	}
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::locked_choosePublishKey() Best Key is: " << bestKey;
+	std::cerr << std::endl;
+#endif
+
+	info.publishKeyId = bestKey;
+	return true;
+}
+
+
+/********************/
+
+bool 	p3GroupDistrib::locked_validateDistribSignedMsg(
+				GroupInfo &info, RsDistribSignedMsg *newMsg)
+{
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg()";
+	std::cerr << std::endl;
+	std::cerr << "GroupInfo -> distribGrp:";
+	std::cerr << std::endl;
+	info.distribGroup->print(std::cerr, 10);
+	std::cerr << std::endl;
+	std::cerr << "RsDistribSignedMsg: ";
+	std::cerr << std::endl;
+	newMsg->print(std::cerr, 10);
+	std::cerr << std::endl;
+#endif
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() KeyId: ";
+	std::cerr << newMsg->publishSignature.keyId;
+	std::cerr << std::endl;
+#endif
+
+	/********************* check signature *******************/
+
+	/* find the right key */
+	RsTlvSecurityKeySet &keyset = info.distribGroup->publishKeys;
+
+	std::map<std::string, RsTlvSecurityKey>::iterator kit;
+	kit = keyset.keys.find(newMsg->publishSignature.keyId);
+
+	if (kit == keyset.keys.end())
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Missing Publish Key";
+		std::cerr << std::endl;
+#endif
+		return false;
+	}
+
+	/* check signature timeperiod */
+	if ((newMsg->timestamp < kit->second.startTS) ||
+		(newMsg->timestamp > kit->second.endTS))
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() TS out of range";
+		std::cerr << std::endl;
+#endif
+		return false;
+	}
+
+
+	/* decode key */
+	const unsigned char *keyptr = (const unsigned char *) kit->second.keyData.bin_data;
+	long keylen = kit->second.keyData.bin_len;
+	unsigned int siglen = newMsg->publishSignature.signData.bin_len;
+        unsigned char *sigbuf = (unsigned char *) newMsg->publishSignature.signData.bin_data;
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Decode Key";
+	std::cerr << " keylen: " << keylen << " siglen: " << siglen;
+	std::cerr << std::endl;
+#endif
+
+	/* extract admin key */
+	RSA *rsakey = d2i_RSAPublicKey(NULL, &(keyptr), keylen);
+
+	if (!rsakey)
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg()";
+		std::cerr << " Invalid RSA Key";
+		std::cerr << std::endl;
+
+		unsigned long err = ERR_get_error();
+		std::cerr << "RSA Load Failed .... CODE(" << err << ")" << std::endl;
+		std::cerr << ERR_error_string(err, NULL) << std::endl;
+
+		kit->second.print(std::cerr, 10);
+#endif
+	}
+		
+
+	EVP_PKEY *signKey = EVP_PKEY_new();
+	EVP_PKEY_assign_RSA(signKey, rsakey);
+
+	/* calc and check signature */
+	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+
+	EVP_VerifyInit(mdctx, EVP_sha1());
+	EVP_VerifyUpdate(mdctx, newMsg->packet.bin_data, newMsg->packet.bin_len);
+	int signOk = EVP_VerifyFinal(mdctx, sigbuf, siglen, signKey);
+
+	/* clean up */
+	EVP_PKEY_free(signKey);
+	EVP_MD_CTX_destroy(mdctx);
+
+
+	/* now verify Personal signature */
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Personal Signature TODO";
+	std::cerr << std::endl;
+#endif
+
+	if (signOk == 1)
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Signature OK";
+		std::cerr << std::endl;
+#endif
+		return true;
+	}
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Signature invalid";
+	std::cerr << std::endl;
+#endif
+
+	return false;
+}
+
+	/* deserialise RsDistribSignedMsg */
+RsDistribMsg *p3GroupDistrib::unpackDistribSignedMsg(RsDistribSignedMsg *newMsg)
+{
+	RsSerialType *serialType = createSerialiser();
+	uint32_t size = newMsg->packet.bin_len;
+	RsDistribMsg *distribMsg = (RsDistribMsg *) 
+		serialType->deserialise(newMsg->packet.bin_data, &size);
+
+	if (distribMsg)
+	{
+
+		/* transfer data that is not in the serialiser */
+		distribMsg->msgId = newMsg->msgId;
+		distribMsg->publishSignature = newMsg->publishSignature;
+		distribMsg->personalSignature = newMsg->personalSignature;
+
+		newMsg->publishSignature.ShallowClear();
+		newMsg->personalSignature.ShallowClear();
+	}
+
+	delete newMsg;
+	delete serialType;
+
+	return distribMsg;
+}
+
+
+bool	p3GroupDistrib::locked_checkDistribMsg(
+				GroupInfo &gi, RsDistribMsg *msg)
+{
+
+	/* check timestamp */
+	time_t now = time(NULL);
+	time_t min = now - mStorePeriod;
+	time_t minPub = now - mStorePeriod / 2.0;
+	time_t max = now + GROUP_MAX_FWD_OFFSET;
+
+	if ((msg->timestamp < min) || (msg->timestamp > max))
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_checkDistribMsg() TS out of range";
+		std::cerr << std::endl;
+#endif
+		/* if outside range -> remove */
+		return false;
+	}
+
+	/* check filters */
+
+	return true;
+}
+
+
+/***** DEBUG *****/
+
+void    p3GroupDistrib::printGroups(std::ostream &out)
+{
+	/* iterate through all the groups */
+	std::map<std::string, GroupInfo>::iterator git;
+	for(git = mGroups.begin(); git != mGroups.end(); git++)
+	{
+		out << "GroupId: " << git->first << std::endl;
+		out << "Group Details: " << std::endl;
+		out << git->second;
+		out << std::endl;
+
+		std::map<std::string, RsDistribMsg *>::iterator mit;
+		for(mit = git->second.msgs.begin(); 
+			mit != git->second.msgs.end(); mit++)
+		{
+			out << "MsgId: " << mit->first << std::endl;
+			out << "Message Details: " << std::endl;
+			mit->second->print(out, 10);
+			out << std::endl;
+		}
+	}
+}
+
+
+
+std::ostream &operator<<(std::ostream &out, const GroupInfo &info)
+{
+	/* print Group Info */
+	out << "GroupInfo: " << info.grpId << std::endl;
+	out << "sources [" << info.sources.size() << "]: ";
+
+	std::list<std::string>::const_iterator sit;
+	for(sit = info.sources.begin(); sit != info.sources.end(); sit++)
+	{
+		out << " " << *sit;
+	}
+	out << std::endl;
+
+	out << " Message Count: " << info.msgs.size() << std::endl;
+
+	std::string grpName(info.grpName.begin(), info.grpName.end());
+	std::string grpDesc(info.grpDesc.begin(), info.grpDesc.end());
+
+	out << "Group Name:  " << grpName << std::endl;
+	out << "Group Desc:  " << grpDesc << std::endl;
+	out << "Group Flags: " << info.flags << std::endl;
+	out << "Group Pop:   " << info.pop << std::endl;
+	out << "Last Post:   " << info.lastPost << std::endl;
+
+	out << "PublishKeyId:" << info.publishKeyId << std::endl;
+
+	out << "Published RsDistribGrp: " << std::endl;
+	if (info.distribGroup)
+	{
+		info.distribGroup->print(out, 10);
+	}
+	else
+	{
+		out << "No RsDistribGroup Object" << std::endl;
+	}
+
+	return out;
+}
+
+void 	p3GroupDistrib::locked_notifyGroupChanged(GroupInfo &info)
+{
+	mGroupsChanged = true;
+	info.grpChanged = true;
+}
+	
+
+bool p3GroupDistrib::groupsChanged(std::list<std::string> &groupIds)
+{
+	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
+
+	/* iterate through all groups and get changed list */
+	if (!mGroupsChanged)
+		return false;
+
+	std::map<std::string, GroupInfo>::iterator it;
+	for(it = mGroups.begin(); it != mGroups.end(); it++)
+	{
+		if (it->second.grpChanged)
+		{
+			groupIds.push_back(it->first);
+			it->second.grpChanged = false;
+		}
+	}
+
+	mGroupsChanged = false;
+	return true;
+}
+
 

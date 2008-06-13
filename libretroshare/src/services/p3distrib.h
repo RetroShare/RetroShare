@@ -31,9 +31,10 @@
 #include "pqi/p3cfgmgr.h"
 #include "services/p3service.h"
 #include "dbase/cachestrapper.h"
+#include "serialiser/rsforumitems.h"
 
-//#include "util/rsthreads.h"
-
+#include <openssl/ssl.h>
+#include <openssl/evp.h>
 
 /* 
  * Group Messages....
@@ -78,80 +79,11 @@
  *
  */
 
-/* Our Mode for the Group */
-const uint32_t 	RS_GRPDISTRIB_SUBSCRIBED = 0x0001;
-const uint32_t 	RS_GRPDISTRIB_PUBLISH	 = 0x0002;
-
-
-
-/* Group Type */
-const uint32_t RS_DISTRIB_PRIVATE	= 0x0001;	/* retain Private Key ( Default ) */
-const uint32_t RS_DISTRIB_PUBLIC	= 0x0002;	/* share  All Keys */
-const uint32_t RS_DISTRIB_ENCRYPTED	= 0x0004;	/* encrypt Msgs */
-
-class RsSignature
-{
-	public:
-
-	uint32_t type;	/* MASTER, PUBLISH, PERSONAL */
-	std::string signerId;
-	std::string signature;
-};
-
-class RsAuthMsg
-{
-	public:
-
-	RsItem *msg;
-	std::string hash;
-	std::map<std::string, RsSignature> signs;
-};
-
-
-class RsKey
-{
-	public:
-
-	uint32_t type; /* PUBLIC, PRIVATE */
-	uint32_t type2; /* MASTER, PUBLISH, PERSONAL (not sent) */
-
-	EVP_PKEY *key;
-};
-
-
 const uint32_t GROUP_MAX_FWD_OFFSET = (60 * 60 * 24 * 2); /* 2 Days */
 
 /************* The Messages that are serialised ****************/
-class RsDistribMsg: public RsItem
-{
-	public:
-	RsDistribMsg(); //uint16_t type);
 
-virtual void clear();
-virtual std::ostream& print(std::ostream&, uint16_t);
-
-	std::string grpId; 
-	std::string headId;    /* head of the thread */
-	std::string parentId;  /* parent id */
-	time_t      timestamp;
-
-	/* This data is not Hashed (set to zero - before hash calced) */
-	std::string msgId; /* SHA1 Hash */
-	std::string grpSignature; /* sign of msgId */
-	std::string sourceSignature; /* sign of msgId */
-
-};
-
-class RsDistribGrp: public RsItem
-{
-	public:
-	RsDistribGrp(); //uint16_t type);
-
-virtual void clear();
-virtual std::ostream& print(std::ostream&, uint16_t);
-
-	RsKey rsKey;
-};
+#if 0
 
 class RsConfigDistrib: public RsSerialType
 {
@@ -169,37 +101,89 @@ class RsSerialDistrib: public RsSerialType
 
 };
 
+#endif
 
 
 /************* The Messages that are serialised ****************/
 
-//class PIXMAP; 
+#if 0
+const uint32_t GROUP_KEY_TYPE_MASK		= 0x000f;
+const uint32_t GROUP_KEY_DISTRIB_MASK		= 0x00f0;
+
+const uint32_t GROUP_KEY_TYPE_PUBLIC_ONLY	= 0x0001;
+const uint32_t GROUP_KEY_TYPE_FULL		= 0x0002;
+const uint32_t GROUP_KEY_DISTRIB_PUBLIC		= 0x0010;
+const uint32_t GROUP_KEY_DISTRIB_PRIVATE	= 0x0020;
+const uint32_t GROUP_KEY_DISTRIB_ADMIN		= 0x0040;
+#endif
+
+class GroupKey
+{
+	public:
+
+	GroupKey()
+	:type(0), startTS(0), endTS(0), key(NULL) { return; }
+
+	uint32_t type;
+	std::string keyId;
+	time_t   startTS, endTS;
+	EVP_PKEY *key;
+};
 
 class GroupInfo
 {
 	public:
+	GroupInfo()
+	:distribGroup(NULL), grpFlags(0), pop(0), lastPost(0), flags(0), grpChanged(false)
+	{
+		return;
+	}
 
-	std::string grpId;
-	std::string grpName;
-	std::string grpDesc;
+	std::string grpId; 
+	RsDistribGrp *distribGroup;
 
-	std::string category; 
+	std::list<std::string> sources;
+	std::map<std::string, RsDistribMsg *> msgs;
+
+/***********************************/
+
+	/* Copied from DistribGrp */
+	std::wstring grpName;
+	std::wstring grpDesc;
+	std::wstring grpCategory;
+	uint32_t     grpFlags;     /* PRIVACY & AUTHEN */
+
+
+	uint32_t pop; 	    /* sources.size() */
+	time_t   lastPost;  /* modded as msgs added */
+
+/***********************************/
+
+	uint32_t flags;     /* PUBLISH, SUBSCRIBE, ADMIN */
+
+	/* current active Publish Key */
+	std::string publishKeyId;
+	std::map<std::string, GroupKey> publishKeys;
+
+	GroupKey adminKey;
+
+	/* NOT USED YET */
+
 	//PIXMAP *GroupIcon;
-
-	//RSA_KEY privateKey;
-	//RSA_KEY publicKey;
 
 	bool publisher, allowAnon, allowUnknown;
 	bool subscribed, listener;
 
 	uint32_t type;
-	uint32_t pop;
-	uint32_t flags;
 
-	std::list<std::string> sources;
-
-	std::map<std::string, RsDistribMsg *> msgs;
+	/* FLAG for GUI - set if changed */
+	bool grpChanged;
 };
+
+
+std::ostream &operator<<(std::ostream &out, const GroupInfo &info);
+
+
 
 class GroupCache
 {
@@ -211,7 +195,7 @@ class GroupCache
 };
 
 
-class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config
+class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, public nullService
 {
 	public:
 
@@ -239,9 +223,12 @@ int  	loadAnyCache(const CacheData &data, bool local);
 void	loadFileGroups(std::string filename, std::string src, bool local);
 void	loadFileMsgs(std::string filename, uint16_t cacheSubId, std::string src, bool local);
 
+	protected:
 	/* load cache msgs */	
-void	loadMsg(RsDistribMsg *msg, std::string src, bool local);
+void	loadMsg(RsDistribSignedMsg *msg, std::string src, bool local);
 void	loadGroup(RsDistribGrp *newGrp);
+void    loadGroupKey(RsDistribGrpKey *newKey);
+
 
 /***************************************************************************************/
 /***************************************************************************************/
@@ -252,11 +239,14 @@ void	loadGroup(RsDistribGrp *newGrp);
 /* TO FINISH */
 
 	public:
-std::string createGroup(std::string name, uint32_t flags);
+std::string createGroup(std::wstring name, std::wstring desc, uint32_t flags);
 //std::string modGroupDescription(std::string grpId, std::string discription);
 //std::string modGroupIcon(std::string grpId, PIXMAP *icon);
 
-void		publishMsg(RsDistribMsg *msg, bool personalSign);
+std::string publishMsg(RsDistribMsg *msg, bool personalSign);
+
+bool	subscribeToGroup(std::string grpId, bool subscribe);
+
 
 /***************************************************************************************/
 /***************************************************************************************/
@@ -265,6 +255,7 @@ void		publishMsg(RsDistribMsg *msg, bool personalSign);
 /****************************** Access Content   ***************************************/
 /***************************************************************************************/
 	public:
+
 	/* get Group Lists */
 bool 	getAllGroupList(std::list<std::string> &grpids);
 bool 	getSubscribedGroupList(std::list<std::string> &grpids);
@@ -274,16 +265,13 @@ bool 	getPopularGroupList(uint32_t popMin, uint32_t popMax, std::list<std::strin
 
 	/* get Msg Lists */
 bool 	getAllMsgList(std::string grpId, std::list<std::string> &msgIds);
+bool 	getParentMsgList(std::string grpId, std::string pId, std::list<std::string> &msgIds);
 bool 	getTimePeriodMsgList(std::string grpId, uint32_t timeMin, 
 					uint32_t timeMax, std::list<std::string> &msgIds);
 
+
+GroupInfo *locked_getGroupInfo(std::string grpId);
 RsDistribMsg *locked_getGroupMsg(std::string grpId, std::string msgId);
-
-/* TO FINISH DEFINITIONS */
-
-	/* get Details */
-//bool 	getGroupDetails(std::string grpId, RsExternalDistribGroup &grp);
-//bool 	getGroupMsgDetails(std::string grpId, std::string msgId, RsExternalDistribMsg &msg);
 
 	/* Filter Messages */
 
@@ -299,15 +287,14 @@ RsDistribMsg *locked_getGroupMsg(std::string grpId, std::string msgId);
 
 virtual RsSerialiser *setupSerialiser();
 virtual std::list<RsItem *> saveList(bool &cleanup);
+virtual void 	saveDone();
 virtual bool    loadList(std::list<RsItem *> load);
 
 /***************************************************************************************/
 /***************************************************************************************/
-/* TO FINISH */
-
 
 	public:
-void	tick();
+virtual int 	tick(); /* overloaded form pqiService */
 
 /***************************************************************************************/
 /**************************** Publish Content ******************************************/
@@ -316,7 +303,7 @@ void	tick();
 	protected:
 
 	/* create/mod cache content */
-void	toPublishMsg(RsDistribMsg *msg);
+void	locked_toPublishMsg(RsDistribMsg *msg);
 void 	publishPendingMsgs();
 void 	publishDistribGroups();
 void	clear_local_caches(time_t now);
@@ -329,12 +316,54 @@ uint16_t determineCacheSubId();
 /***************************************************************************************/
 
 /***************************************************************************************/
+/*************************** Overloaded Functions **************************************/
+/***************************************************************************************/
+
+	/* Overloaded by inherited classes to Pack/UnPack their messages */
+virtual RsSerialType *createSerialiser() = 0;
+
+	/* Used to Create/Load Cache Files only */
+virtual pqistreamer *createStreamer(BinInterface *bio, std::string src, uint32_t bioflags);
+
+virtual bool    validateDistribGrp(RsDistribGrp *newGrp);
+virtual bool    locked_checkGroupInfo(GroupInfo  &info, RsDistribGrp *newGrp);
+virtual bool    locked_updateGroupInfo(GroupInfo &info, RsDistribGrp *newGrp);
+virtual bool    locked_checkGroupKeys(GroupInfo &info);
+virtual bool    locked_updateGroupAdminKey(GroupInfo &info, RsDistribGrpKey *newKey);
+virtual bool    locked_updateGroupPublishKey(GroupInfo &info, RsDistribGrpKey *newKey);
+
+
+virtual bool    locked_validateDistribSignedMsg(GroupInfo &info, RsDistribSignedMsg *msg);
+virtual RsDistribMsg* unpackDistribSignedMsg(RsDistribSignedMsg *newMsg);
+virtual bool    locked_checkDistribMsg(GroupInfo &info, RsDistribMsg *msg);
+virtual bool    locked_choosePublishKey(GroupInfo &info);
+
+
+//virtual RsDistribGrp *locked_createPublicDistribGrp(GroupInfo &info);
+//virtual RsDistribGrp *locked_createPrivateDistribGrp(GroupInfo &info);
+
+/***************************************************************************************/
 /***************************** Utility Functions ***************************************/
 /***************************************************************************************/
 /* TO FINISH */
 	/* utilities */
-pqistreamer *createStreamer(BinInterface *bio, std::string src, uint32_t bioflags);
 std::string HashRsItem(const RsItem *item);
+
+/***************************************************************************************/
+/***************************************************************************************/
+
+/***************************************************************************************/
+/***************************** Utility Functions ***************************************/
+/***************************************************************************************/
+	public:
+
+void	printGroups(std::ostream &out);
+
+bool 	groupsChanged(std::list<std::string> &groupIds);
+
+	protected:
+
+void    locked_notifyGroupChanged(GroupInfo &info);
 
 /***************************************************************************************/
 /***************************************************************************************/
@@ -342,33 +371,28 @@ std::string HashRsItem(const RsItem *item);
 	/* key cache functions - we use .... (not overloaded)
  	 */
 
-	private:	
-	
 	/* storage */
+	protected:
 
 	RsMutex distribMtx; /* Protects All Data Below */
-
 	std::string mOwnId;
+
+	private:	
+	
 	std::list<GroupCache> mLocalCaches;
 	std::map<std::string, GroupInfo> mGroups;
 	uint32_t mStorePeriod, mPubPeriod;
 	time_t mNextPublishTime;
 
 	std::list<RsDistribMsg *> mPendingPublish;
+
+	bool mGroupsChanged;
+	bool mGroupsRepublish;
+
+        std::list<RsItem *> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
 };
 
 
-/***************************************************************************************/
-/***************************************************************************************/
-/*
- * Structure of the Storage:
- *
- * map<std::string(id) -> GroupInfo>
- *
- *
- *
- *
- */
 /***************************************************************************************/
 /***************************************************************************************/
 

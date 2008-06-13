@@ -44,7 +44,9 @@ std::string generateRandomLinkId();
  *
  */
 
-#define RANK_DEBUG 1
+/*********
+ * #define RANK_DEBUG 1
+ *********/
 
 p3Ranking::p3Ranking(p3ConnectMgr *connMgr, 
 		uint16_t type, CacheStrapper *cs, CacheTransfer *cft,

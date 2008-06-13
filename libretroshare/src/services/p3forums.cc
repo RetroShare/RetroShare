@@ -25,6 +25,9 @@
 
 #include "services/p3forums.h"
 
+uint32_t convertToInternalFlags(uint32_t extFlags);
+uint32_t convertToExternalFlags(uint32_t intFlags);
+
 std::ostream &operator<<(std::ostream &out, const ForumInfo &info)
 {
 	std::string name(info.forumName.begin(), info.forumName.end());
@@ -65,10 +68,17 @@ std::ostream &operator<<(std::ostream &out, const ForumMsgInfo &info)
 
 RsForums *rsForums = NULL;
 
-p3Forums::p3Forums() 
-	:mForumsChanged(false)
+
+#define FORUM_STOREPERIOD 10000
+#define FORUM_PUBPERIOD   600
+
+p3Forums::p3Forums(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
+	                std::string srcdir, std::string storedir)
+	:p3GroupDistrib(type, cs, cft, srcdir, storedir, 
+			CONFIG_TYPE_FORUMS, FORUM_STOREPERIOD, FORUM_PUBPERIOD), 
+	mForumsChanged(false)
 { 
-	loadDummyData();
+	//loadDummyData();
 	return; 
 }
 
@@ -81,68 +91,133 @@ p3Forums::~p3Forums()
 
 bool p3Forums::forumsChanged(std::list<std::string> &forumIds)
 {
-	bool changed = mForumsChanged;
-	mForumsChanged = false;
-	return changed;
+	return groupsChanged(forumIds);
 }
 
 
 bool p3Forums::getForumList(std::list<ForumInfo> &forumList)
 {
-	std::list<ForumInfo>::iterator it;
-	for(it = mForums.begin(); it != mForums.end(); it++)
+	std::list<std::string> grpIds;
+	std::list<std::string>::iterator it;
+
+	getAllGroupList(grpIds);
+
+	RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
+	for(it = grpIds.begin(); it != grpIds.end(); it++)
 	{
-		forumList.push_back(*it);
+		/* extract details */
+		GroupInfo *gi = locked_getGroupInfo(*it);
+
+		ForumInfo fi;
+		fi.forumId = gi->grpId;
+		fi.forumName = gi->grpName;
+		fi.forumDesc = gi->grpDesc;
+
+		fi.forumFlags = gi->flags;
+
+		fi.pop = gi->sources.size();
+		fi.lastPost = gi->lastPost;
+
+		forumList.push_back(fi);
 	}
 	return true;
 }
 
 bool p3Forums::getForumThreadList(std::string fId, std::list<ThreadInfoSummary> &msgs)
 {
-	std::map<std::string, ThreadInfoSummary>::iterator it;
-	for(it = mForumMsgs.begin(); it != mForumMsgs.end(); it++)
+	std::list<std::string> msgIds;
+	std::list<std::string>::iterator it;
+
+	getParentMsgList(fId, "", msgIds);
+
+	RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
+	for(it = msgIds.begin(); it != msgIds.end(); it++)
 	{
-		if (((it->second).forumId == fId) && ((it->second).parentId == ""))
-		{
-			msgs.push_back(it->second);
-		}
+		/* get details */
+		RsDistribMsg *msg = locked_getGroupMsg(fId, *it);
+		RsForumMsg *fmsg = dynamic_cast<RsForumMsg *>(msg);
+		if (!fmsg)
+			continue;
+
+		ThreadInfoSummary tis;
+
+		tis.forumId = msg->grpId;
+		tis.msgId = msg->msgId;
+		tis.parentId = ""; // always NULL (see request)
+		tis.threadId = msg->msgId; // these are the thread heads!
+
+		tis.ts = msg->timestamp;
+
+		/* the rest must be gotten from the derived Msg */
+		
+		tis.title = fmsg->title;
+		tis.msg  = fmsg->msg;
+
+		msgs.push_back(tis);
 	}
 	return true;
 }
 
 bool p3Forums::getForumThreadMsgList(std::string fId, std::string pId, std::list<ThreadInfoSummary> &msgs)
 {
-	std::map<std::string, ThreadInfoSummary>::iterator it;
-	for(it = mForumMsgs.begin(); it != mForumMsgs.end(); it++)
+	std::list<std::string> msgIds;
+	std::list<std::string>::iterator it;
+
+	getParentMsgList(fId, pId, msgIds);
+
+	RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
+	for(it = msgIds.begin(); it != msgIds.end(); it++)
 	{
-		if (((it->second).forumId == fId) && ((it->second).parentId == pId))
-		{
-			msgs.push_back(it->second);
-		}
+		/* get details */
+		RsDistribMsg *msg = locked_getGroupMsg(fId, *it);
+		RsForumMsg *fmsg = dynamic_cast<RsForumMsg *>(msg);
+		if (!fmsg)
+			continue;
+
+		ThreadInfoSummary tis;
+
+		tis.forumId = msg->grpId;
+		tis.msgId = msg->msgId;
+		tis.parentId = msg->parentId;
+		tis.threadId = msg->threadId;
+
+		tis.ts = msg->timestamp;
+
+		/* the rest must be gotten from the derived Msg */
+		
+		tis.title = fmsg->title;
+		tis.msg  = fmsg->msg;
+
+		msgs.push_back(tis);
 	}
 	return true;
 }
 
-bool p3Forums::getForumMessage(std::string fId, std::string mId, ForumMsgInfo &msg)
+bool p3Forums::getForumMessage(std::string fId, std::string mId, ForumMsgInfo &info)
 {
-	std::map<std::string, ThreadInfoSummary>::iterator it;
-	it = mForumMsgs.find(mId);
-	if (it == mForumMsgs.end())
-	{
+	std::list<std::string> msgIds;
+	std::list<std::string>::iterator it;
+
+	RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
+
+	RsDistribMsg *msg = locked_getGroupMsg(fId, mId);
+	RsForumMsg *fmsg = dynamic_cast<RsForumMsg *>(msg);
+	if (!fmsg)
 		return false;
-	}
 
-	msg.forumId  = (it->second).forumId;
-	msg.threadId = (it->second).threadId;
-	msg.parentId = (it->second).parentId;
-	msg.msgId    = (it->second).msgId;
 
-	msg.title    = (it->second).title;
-	msg.msg      = (it->second).msg;
-	msg.ts       = (it->second).ts;
+	info.forumId = msg->grpId;
+	info.msgId = msg->msgId;
+	info.parentId = msg->parentId;
+	info.threadId = msg->threadId;
 
-	msg.srcId    = "SRC";
-	msg.ts       = (it->second).ts;
+	info.ts = msg->timestamp;
+
+	/* the rest must be gotten from the derived Msg */
+		
+	info.title = fmsg->title;
+	info.msg  = fmsg->msg;
+	info.srcId = "SRC";
 
 	return true;
 }
@@ -157,56 +232,112 @@ bool p3Forums::ForumMessageSend(ForumMsgInfo &info)
 
 std::string p3Forums::createForum(std::wstring forumName, std::wstring forumDesc, uint32_t forumFlags)
 {
-	time_t now = time(NULL);
+        std::string id = createGroup(forumName, forumDesc, 
+				convertToInternalFlags(forumFlags));
 
-	ForumInfo fi;
-	fi.lastPost = now;
-	fi.pop = 1;
-
-	fi.forumId = generateRandomServiceId();
-	fi.forumName = forumName;
-	fi.forumDesc = forumDesc;
-	fi.forumFlags = forumFlags;
-	fi.forumFlags |= RS_FORUM_ADMIN;
-
-	mForums.push_back(fi);
-	mForumsChanged = true;
-
-	return fi.forumId;
+	return id;
 }
 
 std::string p3Forums::createForumMsg(std::string fId, std::string pId, 
 				std::wstring title, std::wstring msg)
 {
-	ThreadInfoSummary tis;
 
-	tis.forumId = fId;
-	tis.parentId = pId;
+	RsForumMsg *fmsg = new RsForumMsg();
+	fmsg->grpId = fId;
+	fmsg->parentId = pId;
 
-	/* find the parent -> copy threadId */
-	tis.msgId = generateRandomServiceId();
+      {
+	RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
 
-	std::map<std::string, ThreadInfoSummary>::iterator it;
-	it = mForumMsgs.find(pId);
-
-	if (it == mForumMsgs.end())
+	RsDistribMsg *msg = locked_getGroupMsg(fId, pId);
+	if (!msg)
 	{
-		tis.parentId = "";
-		tis.threadId = tis.msgId;
+		fmsg->parentId = "";
+		fmsg->threadId = "";
 	}
 	else
 	{
-		tis.threadId = (it->second).threadId;
+		if (msg->parentId == "")
+		{
+			fmsg->threadId = fmsg->parentId;
+		}
+		else
+		{
+			fmsg->threadId = msg->threadId;
+		}
 	}
+      }
 
-	tis.title = title;
-	tis.msg = msg;
-	tis.ts = time(NULL);
+	fmsg->title = title;
+	fmsg->msg   = msg;
+	fmsg->timestamp = time(NULL);
 
-	mForumMsgs[tis.msgId] = tis;
-	mForumsChanged = true;
+	std::string msgId = publishMsg(fmsg, true);
+	return msgId;
+}
 
-	return tis.msgId;
+
+#if 0
+	/* p3Config Serialiser */
+RsSerialiser *p3Forums::setupSerialiser()
+{
+        RsSerialiser *rss = new RsSerialiser();
+
+	rss->addSerialType(new RsForumSerialiser());
+        return rss;
+}
+
+pqistreamer *p3Forums::createStreamer(BinInterface *bio, std::string src, uint32_t bioflags)
+{
+        RsSerialiser *rsSerialiser = new RsSerialiser();
+        //rsSerialiser->addSerialType(new RsForumSerialiser());
+        rsSerialiser->addSerialType(new RsDistribSerialiser());
+
+        pqistreamer *streamer = new pqistreamer(rsSerialiser, src, bio, bioflags);
+        return streamer;
+}
+
+#endif
+
+RsSerialType *p3Forums::createSerialiser()
+{
+        return new RsForumSerialiser();
+}
+
+bool    p3Forums::locked_checkDistribMsg(RsDistribMsg *msg)
+{
+	return true;
+}
+
+
+RsDistribGrp *p3Forums::locked_createPublicDistribGrp(GroupInfo &info)
+{
+	RsDistribGrp *grp = NULL; //new RsForumGrp();
+
+	return grp;
+}
+
+RsDistribGrp *p3Forums::locked_createPrivateDistribGrp(GroupInfo &info)
+{
+	RsDistribGrp *grp = NULL; //new RsForumGrp();
+
+	return grp;
+}
+
+
+uint32_t convertToInternalFlags(uint32_t extFlags)
+{
+	return extFlags;
+}
+
+uint32_t convertToExternalFlags(uint32_t intFlags)
+{
+	return intFlags;
+}
+
+bool p3Forums::forumSubscribe(std::string fId, bool subscribe)
+{
+	return subscribeToGroup(fId, subscribe);
 }
 
 
@@ -215,25 +346,33 @@ std::string p3Forums::createForumMsg(std::string fId, std::string pId,
 void    p3Forums::loadDummyData()
 {
 	ForumInfo fi;
+	std::string forumId;
+	std::string msgId;
 	time_t now = time(NULL);
 
 	fi.forumId = "FID1234";
 	fi.forumName = L"Forum 1";
 	fi.forumDesc = L"Forum 1";
-	fi.forumFlags = RS_FORUM_ADMIN;
+	fi.forumFlags = RS_DISTRIB_ADMIN;
 	fi.pop = 2;
 	fi.lastPost = now - 123;
 
-	mForums.push_back(fi);
+	forumId = createForum(fi.forumName, fi.forumDesc, fi.forumFlags);
 
 	fi.forumId = "FID2345";
 	fi.forumName = L"Forum 2";
 	fi.forumDesc = L"Forum 2";
-	fi.forumFlags = RS_FORUM_SUBSCRIBED;
+	fi.forumFlags = RS_DISTRIB_SUBSCRIBED;
 	fi.pop = 3;
 	fi.lastPost = now - 1234;
 
-	mForums.push_back(fi);
+	forumId = createForum(fi.forumName, fi.forumDesc, fi.forumFlags);
+	msgId = createForumMsg(forumId, "", L"WELCOME TO Forum1", L"Hello!");
+	msgId = createForumMsg(forumId, msgId, L"Love this forum", L"Hello2!");
+
+	return; 
+
+	/* ignore this */
 
 	fi.forumId = "FID3456";
 	fi.forumName = L"Forum 3";
@@ -242,7 +381,7 @@ void    p3Forums::loadDummyData()
 	fi.pop = 3;
 	fi.lastPost = now - 1234;
 
-	mForums.push_back(fi);
+	forumId = createForum(fi.forumName, fi.forumDesc, fi.forumFlags);
 
 	fi.forumId = "FID4567";
 	fi.forumName = L"Forum 4";
@@ -251,7 +390,8 @@ void    p3Forums::loadDummyData()
 	fi.pop = 5;
 	fi.lastPost = now - 1234;
 
-	mForums.push_back(fi);
+	forumId = createForum(fi.forumName, fi.forumDesc, fi.forumFlags);
+
 	fi.forumId = "FID5678";
 	fi.forumName = L"Forum 5";
 	fi.forumDesc = L"Forum 5";
@@ -259,7 +399,8 @@ void    p3Forums::loadDummyData()
 	fi.pop = 1;
 	fi.lastPost = now - 1234;
 
-	mForums.push_back(fi);
+	forumId = createForum(fi.forumName, fi.forumDesc, fi.forumFlags);
+
 	fi.forumId = "FID6789";
 	fi.forumName = L"Forum 6";
 	fi.forumDesc = L"Forum 6";
@@ -267,7 +408,8 @@ void    p3Forums::loadDummyData()
 	fi.pop = 2;
 	fi.lastPost = now - 1234;
 
-	mForums.push_back(fi);
+	forumId = createForum(fi.forumName, fi.forumDesc, fi.forumFlags);
+
 	fi.forumId = "FID7890";
 	fi.forumName = L"Forum 7";
 	fi.forumDesc = L"Forum 7";
@@ -275,7 +417,8 @@ void    p3Forums::loadDummyData()
 	fi.pop = 4;
 	fi.lastPost = now - 1234;
 
-	mForums.push_back(fi);
+	forumId = createForum(fi.forumName, fi.forumDesc, fi.forumFlags);
+
 	fi.forumId = "FID8901";
 	fi.forumName = L"Forum 8";
 	fi.forumDesc = L"Forum 8";
@@ -283,7 +426,8 @@ void    p3Forums::loadDummyData()
 	fi.pop = 3;
 	fi.lastPost = now - 1234;
 
-	mForums.push_back(fi);
+	forumId = createForum(fi.forumName, fi.forumDesc, fi.forumFlags);
+
 	fi.forumId = "FID9012";
 	fi.forumName = L"Forum 9";
 	fi.forumDesc = L"Forum 9";
@@ -291,7 +435,7 @@ void    p3Forums::loadDummyData()
 	fi.pop = 2;
 	fi.lastPost = now - 1234;
 
-	mForums.push_back(fi);
+	forumId = createForum(fi.forumName, fi.forumDesc, fi.forumFlags);
 
 	fi.forumId = "FID9123";
 	fi.forumName = L"Forum 10";
@@ -300,7 +444,7 @@ void    p3Forums::loadDummyData()
 	fi.pop = 1;
 	fi.lastPost = now - 1234;
 
-	mForums.push_back(fi);
+	forumId = createForum(fi.forumName, fi.forumDesc, fi.forumFlags);
 
 	mForumsChanged = true;
 }

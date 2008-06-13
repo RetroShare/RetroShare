@@ -27,14 +27,56 @@
  */
 
 #include "rsiface/rsforums.h"
-#include "services/p3service.h"
+#include "services/p3distrib.h"
+#include "serialiser/rsforumitems.h"
 
-class p3Forums: public RsForums 
+#if 0
+class RsForumGrp: public RsDistribGrp
 {
 	public:
 
-	p3Forums();
+	RsForumGrp();
+
+	/* orig data (from RsDistribMsg)
+	 * std::string grpId
+	 */
+
+	std::wstring name;
+	std::wstring desc;
+};
+
+class RsForumMsg: public RsDistribMsg
+{
+	public:
+
+	RsForumMsg();
+
+	/* orig data (from RsDistribMsg)
+	 * std::string grpId
+	 * std::string msgId
+	 * std::string threadId
+	 * std::string parentId
+	 * time_t timestamp
+	 */
+
+	/* new data */
+	std::wstring title;
+	std::wstring msg;
+	std::string srcId;
+};
+
+#endif
+
+
+class p3Forums: public p3GroupDistrib, public RsForums 
+{
+	public:
+
+	p3Forums(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
+		std::string srcdir, std::string storedir);
 virtual ~p3Forums();
+
+void	loadDummyData();
 
 /****************************************/
 /********* rsForums Interface ***********/
@@ -50,16 +92,28 @@ virtual bool getForumMessage(std::string fId, std::string mId, ForumMsgInfo &msg
 
 virtual	bool ForumMessageSend(ForumMsgInfo &info);
 
-/****************************************/
+virtual bool forumSubscribe(std::string fId, bool subscribe);
 
-	private:
+/****************************************/
+/********* Overloaded Functions *********/
+
+//virtual RsSerialiser *setupSerialiser();
+//virtual pqistreamer *createStreamer(BinInterface *bio, std::string src, uint32_t bioflags);
+virtual RsSerialType *createSerialiser();
+
+virtual bool    locked_checkDistribMsg(RsDistribMsg *msg);
+virtual RsDistribGrp *locked_createPublicDistribGrp(GroupInfo &info);
+virtual RsDistribGrp *locked_createPrivateDistribGrp(GroupInfo &info);
+
+
+/****************************************/
 
 std::string createForumMsg(std::string fid, std::string pid, 
 				std::wstring title, std::wstring msg);
 
-void	loadDummyData();
-std::list<ForumInfo> mForums;
-std::map<std::string, ThreadInfoSummary> mForumMsgs;
+	private:
+
+
 
 bool 	mForumsChanged;
 };

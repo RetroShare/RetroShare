@@ -95,6 +95,35 @@ void 	addSerialType(RsSerialType *);
 };
 
 
+class nullService: public pqiService
+{
+	protected:
+
+	nullService(uint16_t type) 
+	:pqiService((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) type) << 8))
+	{
+		return; 
+	}
+
+//virtual int	tick() 
+
+	public:
+	// overloaded NULL pqiService interface.
+virtual int		receive(RsRawItem *item)
+	{
+		/* drop any items */
+		delete item;
+		return 1;
+	}
+
+virtual RsRawItem *	send()
+	{
+		return NULL;
+	}
+
+};
+
+
 #if 0
 
 class p3ThreadedService: public p3Service, public RsThread
