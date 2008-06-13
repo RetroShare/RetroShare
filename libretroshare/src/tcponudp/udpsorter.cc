@@ -38,7 +38,6 @@ static const int STUN_TTL = 64;
  * #define DEBUG_UDP_SORTER 1
  */
 
-#define DEBUG_UDP_SORTER 1
 
 UdpSorter::UdpSorter(struct sockaddr_in &local)
 	:udpLayer(NULL), laddr(local), eaddrKnown(false), eaddrStable(false),
@@ -72,8 +71,10 @@ void UdpSorter::recvPkt(void *data, int size, struct sockaddr_in &from)
 	/* check for STUN packet */
 	if (UdpStun_isStunPacket(data, size))
 	{
+#ifdef DEBUG_UDP_SORTER
 		std::cerr << "UdpSorter::recvPkt() is Stun Packet";
 		std::cerr << std::endl;
+#endif
 
 		/* respond */
 		locked_handleStunPkt(data, size, from);
@@ -81,15 +82,19 @@ void UdpSorter::recvPkt(void *data, int size, struct sockaddr_in &from)
 	else if (it == streams.end())
 	{
 		/* peer unknown */
+#ifdef DEBUG_UDP_SORTER
 		std::cerr << "UdpSorter::recvPkt() Peer Unknown!";
 		std::cerr << std::endl;
+#endif
 	}
 	else
 	{
 		/* forward to them */
+#ifdef DEBUG_UDP_SORTER
 		std::cerr << "UdpSorter::recvPkt() Sending to UdpPeer: ";
 		std::cerr << it->first;
 		std::cerr << std::endl;
+#endif
 		(it->second)->recvPkt(data, size);
 	}
 

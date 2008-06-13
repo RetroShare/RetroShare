@@ -36,7 +36,9 @@
 #include <unistd.h>
 #include <openssl/sha.h>
 
-#define FIM_DEBUG 1
+/***********
+ * #define FIM_DEBUG 1
+ ***********/
 
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, std::string cachedir, std::string pid)
 	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cachedir), fi(pid), 
@@ -62,7 +64,9 @@ bool    FileIndexMonitor::findLocalFile(std::string hash,
 
 	fiMutex.lock(); { /* LOCKED DIRS */
 
+#ifdef FIM_DEBUG
 	std::cerr << "FileIndexMonitor::findLocalFile() Hash: " << hash << std::endl;
+#endif
 	/* search through the fileIndex */
 	fi.searchHash(hash, results);
 	if (results.size() > 0)
@@ -71,7 +75,9 @@ bool    FileIndexMonitor::findLocalFile(std::string hash,
 		FileEntry *fe = results.front();
 		DirEntry  *de = fe->parent; /* all files must have a valid parent! */
 
+#ifdef FIM_DEBUG
 		std::cerr << "FileIndexMonitor::findLocalFile() Found Name: " << fe->name << std::endl;
+#endif
 		std::string shpath =  RsDirUtil::removeRootDir(de->path);
 		std::string basedir = RsDirUtil::getRootDir(de->path);
 		std::string realroot = findRealRoot(basedir);
@@ -89,8 +95,10 @@ bool    FileIndexMonitor::findLocalFile(std::string hash,
 			size = fe->size;
 			ok = true;
 		}
+#ifdef FIM_DEBUG
 		std::cerr << "FileIndexMonitor::findLocalFile() Found Path: " << fullpath << std::endl;
 		std::cerr << "FileIndexMonitor::findLocalFile() Found Size: " << size << std::endl;
+#endif
 	}
 
 
@@ -105,7 +113,9 @@ bool    FileIndexMonitor::convertSharedFilePath(std::string path, std::string &f
 
 	fiMutex.lock(); { /* LOCKED DIRS */
 
+#ifdef FIM_DEBUG
 	std::cerr << "FileIndexMonitor::convertSharedFilePath() path: " << path << std::endl;
+#endif
 
 	std::string shpath =  RsDirUtil::removeRootDir(path);
 	std::string basedir = RsDirUtil::getRootDir(path);
@@ -116,7 +126,9 @@ bool    FileIndexMonitor::convertSharedFilePath(std::string path, std::string &f
 	{
 		fullpath = realroot + "/";
 		fullpath += shpath;
+#ifdef FIM_DEBUG
 		std::cerr << "FileIndexMonitor::convertSharedFilePath() Found Path: " << fullpath << std::endl;
+#endif
 		ok = true;
 	}
 
@@ -138,13 +150,17 @@ bool FileIndexMonitor::loadLocalCache(const CacheData &data)  /* called with sto
 	if ((ok = fi.loadIndex(data.path + '/' + data.name, 
 				data.hash, data.size)))
 	{
+#ifdef FIM_DEBUG
 		std::cerr << "FileIndexMonitor::loadCache() Success!";
 		std::cerr << std::endl;
+#endif
 	}
 	else
 	{
+#ifdef FIM_DEBUG
 		std::cerr << "FileIndexMonitor::loadCache() Failed!";
 		std::cerr << std::endl;
+#endif
 	}
 		
 	} fiMutex.unlock(); /* UNLOCKED DIRS */
@@ -273,6 +289,7 @@ void 	FileIndexMonitor::updateCycle()
 		}
 			
 
+
 #ifdef FIM_DEBUG
 		std::cerr << "FileIndexMonitor::updateCycle()";
 		std::cerr << " RealPath: " << realpath << std::endl;
@@ -282,8 +299,10 @@ void 	FileIndexMonitor::updateCycle()
 		DIR *dir = opendir(realpath.c_str());
 		if (!dir)
 		{
+#ifdef FIM_DEBUG
 			std::cerr << "FileIndexMonitor::updateCycle()";
 			std::cerr << " Missing Dir: " << realpath << std::endl;
+#endif
 			/* bad directory - delete */
                 	if (!fi.removeOldDirectory(olddir->parent->path, olddir->name, stamp))
 			{
@@ -433,10 +452,13 @@ void 	FileIndexMonitor::updateCycle()
 
 		if (filesToHash.size() > 0)
 		{
+#ifdef FIM_DEBUG
 			std::cerr << "List of Files to rehash in: " << dirpath << std::endl;
+#endif
 			fiMods = true;
 		}
 
+#ifdef FIM_DEBUG
                 for(hit = filesToHash.begin(); hit != filesToHash.end(); hit++)
 		{
 			std::cerr << "\t" << hit->name << std::endl;
@@ -446,6 +468,7 @@ void 	FileIndexMonitor::updateCycle()
 		{
 			std::cerr << std::endl;
 		}
+#endif
 			
                 /* update files */
                 for(hit = filesToHash.begin(); hit != filesToHash.end(); hit++)
@@ -703,7 +726,9 @@ bool FileIndexMonitor::hashFile(std::string fullpath, FileEntry &fent)
 	unsigned char sha_buf[SHA_DIGEST_LENGTH];
 	unsigned char gblBuf[512];
 
+#ifdef FIM_DEBUG
 	std::cerr << "File to hash = " << f_hash << std::endl;
+#endif
 	if (NULL == (fd = fopen(f_hash.c_str(), "rb")))	return false;
 
 	SHA1_Init(sha_ctx);

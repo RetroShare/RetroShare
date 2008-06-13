@@ -32,6 +32,10 @@
 
 RsPeers *rsPeers = NULL;
 
+/*******
+ * #define P3PEERS_DEBUG 1
+ *******/
+
 static uint32_t RsPeerTranslateTrust(uint32_t trustLvl);
 int ensureExtension(std::string &name, std::string def_ext);
 
@@ -115,7 +119,6 @@ std::string RsPeerLastConnectString(uint32_t lastConnect)
 	return out.str();
 }
 
-#define P3PEERS_DEBUG 1
 
 p3Peers::p3Peers(p3ConnectMgr *cm, p3AuthMgr *am)
 	:mConnMgr(cm), mAuthMgr(am)

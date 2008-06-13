@@ -32,17 +32,7 @@
 #include <string>
 
 #include "rsiface/rstypes.h"
-
-#define RS_FORUM_PUBLIC		0x0001   /* anyone can publish */
-#define RS_FORUM_PRIVATE	0x0002   /* anyone with key can publish */
-#define RS_FORUM_ENCRYPTED	0x0004   /* need admin key */
-
-#define RS_FORUM_MSG_AUTH	0x0010   /* you must sign messages */
-#define RS_FORUM_MSG_ANON	0x0020   /* you can send anonymous messages */
-
-#define RS_FORUM_ADMIN		0x0100   /* anyone can publish */
-#define RS_FORUM_SUBSCRIBED	0x0200   /* anyone can publish */
-
+#include "rsiface/rsdistrib.h" /* For FLAGS */
 
 class ForumInfo 
 {
@@ -123,6 +113,7 @@ virtual bool getForumMessage(std::string fId, std::string mId, ForumMsgInfo &msg
 
 virtual	bool ForumMessageSend(ForumMsgInfo &info)                 = 0;
 
+virtual bool forumSubscribe(std::string fId, bool subscribe)	= 0;
 /****************************************/
 
 };

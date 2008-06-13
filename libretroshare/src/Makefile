@@ -1,5 +1,7 @@
-# FLTKGUI is not required for the Qt4,0 gui.
-#
+RS_TOP_DIR = .
+###############################################################
+include $(RS_TOP_DIR)/scripts/config.mk
+###############################################################
 
 all: librs tests
 
@@ -55,4 +57,5 @@ clobber:
 	make -C	server clobber
 	make -C	rsserver clobber
 	make -C	rsiface clobber
+	-$(RM) lib/libretroshare.a
 

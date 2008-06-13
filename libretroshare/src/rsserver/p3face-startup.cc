@@ -134,7 +134,7 @@ RsInit *InitRsConfig()
 	strcpy(config->inet, "127.0.0.1");
 	strcpy(config->logfname, "");
 
-	config -> autoLogin      = false;
+	config -> autoLogin      = true; // Always on now.
 	config -> passwd         = "";
 	config -> havePasswd     = false;
 	config -> haveDebugLevel = false;
@@ -592,14 +592,19 @@ int RsServer::StartupRetroShare(RsInit *config)
 	CachePair cp3(mQblog, mQblog, CacheId(RS_SERVICE_TYPE_QBLOG, 0));
 	mCacheStrapper -> addCachePair(cp3);
 	
+	p3Forums *mForums = new p3Forums(RS_SERVICE_TYPE_FORUM,
+			mCacheStrapper, mCacheTransfer, 
+			localcachedir, remotecachedir);
 
+        CachePair cp4(mForums, mForums, CacheId(RS_SERVICE_TYPE_FORUM, 0));
+	mCacheStrapper -> addCachePair(cp4);
+	pqih -> addService(mForums);  /* This must be also ticked as a service */
 	
 #else
 	mRanking = NULL;
 	mQBlog = NULL;
-
+	mForums = NULL;
 #endif
-
 
 	/**************************************************************************/
 
@@ -624,6 +629,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 #ifndef RS_RELEASE
 	mConfigMgr->addConfiguration("ranklink.cfg", mRanking);
 	mConfigMgr->addConfiguration("qblog.cfg", mQblog);
+	mConfigMgr->addConfiguration("forums.cfg", mForums);
 #endif
 
 	/**************************************************************************/
@@ -751,7 +757,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	rsGameLauncher = gameLauncher;
 	rsPhoto = new p3Photo(photoService);
 	rsRanks = new p3Rank(mRanking);
-	rsForums = new p3Forums();
+	rsForums = mForums;
 	rsStatus = new p3Status();
 	rsQblog = new p3Blog(mQblog);
 	
