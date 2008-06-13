@@ -72,6 +72,8 @@
  *
  ******************************************************************/
 
+#include <stdlib.h>
+#include <string.h>
 #include <string>
 #include "util/rsnet.h"
 

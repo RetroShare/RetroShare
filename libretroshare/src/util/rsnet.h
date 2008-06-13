@@ -27,6 +27,8 @@
 #define RS_UNIVERSAL_NETWORK_HEADER
 
 #include <inttypes.h>
+#include <stdlib.h>	/* Included because GCC4.4 wants it */
+#include <string.h> 	/* Included because GCC4.4 wants it */
 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS

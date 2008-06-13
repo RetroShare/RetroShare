@@ -24,6 +24,8 @@
  *
  */
 
+#include <stdlib.h>	/* Included because GCC4.4 wants it */
+#include <string.h> 	/* Included because GCC4.4 wants it */
 
 #include "serialiser/rsbaseserial.h"
 #include "util/rsnet.h"
