@@ -78,6 +78,8 @@
 #define RS_RELEASE 1  
 ****/
 
+#define RS_RELEASE 1  
+
 
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
@@ -567,16 +569,16 @@ int RsServer::StartupRetroShare(RsInit *config)
         std::string localcachedir = config_dir + "/cache/local";
 	std::string remotecachedir = config_dir + "/cache/remote";
 
-#ifndef RS_RELEASE
-	p3GameLauncher *gameLauncher = new p3GameLauncher(mConnMgr);
-	pqih -> addService(gameLauncher);
-
 	mRanking = new p3Ranking(mConnMgr, RS_SERVICE_TYPE_RANK,     /* declaration of cache enable service rank */
 			mCacheStrapper, mCacheTransfer, 
 			localcachedir, remotecachedir, 3600 * 24 * 30);
 
         CachePair cp(mRanking, mRanking, CacheId(RS_SERVICE_TYPE_RANK, 0));
 	mCacheStrapper -> addCachePair(cp);				/* end of declaration */
+
+#ifndef RS_RELEASE
+	p3GameLauncher *gameLauncher = new p3GameLauncher(mConnMgr);
+	pqih -> addService(gameLauncher);
 
 	p3PhotoService *photoService = new p3PhotoService(RS_SERVICE_TYPE_PHOTO,   /* .... for photo service */
 			mCacheStrapper, mCacheTransfer, 
@@ -601,9 +603,8 @@ int RsServer::StartupRetroShare(RsInit *config)
 	pqih -> addService(mForums);  /* This must be also ticked as a service */
 	
 #else
-	mRanking = NULL;
-	mQBlog = NULL;
-	mForums = NULL;
+	mQblog = NULL;
+	//mForums = NULL;
 #endif
 
 	/**************************************************************************/
@@ -626,8 +627,8 @@ int RsServer::StartupRetroShare(RsInit *config)
 	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
 	mConfigMgr->addConfiguration("cache.cfg", mCacheStrapper);
-#ifndef RS_RELEASE
 	mConfigMgr->addConfiguration("ranklink.cfg", mRanking);
+#ifndef RS_RELEASE
 	mConfigMgr->addConfiguration("qblog.cfg", mQblog);
 	mConfigMgr->addConfiguration("forums.cfg", mForums);
 #endif
@@ -753,10 +754,11 @@ int RsServer::StartupRetroShare(RsInit *config)
 	rsPeers = new p3Peers(mConnMgr, mAuthMgr);
 	rsMsgs  = new p3Msgs(mAuthMgr, msgSrv, chatSrv);
 	rsDisc  = new p3Discovery(ad);
+	rsRanks = new p3Rank(mRanking);
+
 #ifndef RS_RELEASE
 	rsGameLauncher = gameLauncher;
 	rsPhoto = new p3Photo(photoService);
-	rsRanks = new p3Rank(mRanking);
 	rsForums = mForums;
 	rsStatus = new p3Status();
 	rsQblog = new p3Blog(mQblog);
@@ -764,7 +766,6 @@ int RsServer::StartupRetroShare(RsInit *config)
 #else
 	rsGameLauncher = NULL;
 	rsPhoto = NULL;
-	rsRanks = NULL;
 	rsForums = NULL;
 	rsStatus = NULL;
 	rsQblog = NULL;

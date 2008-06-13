@@ -87,9 +87,14 @@ bool upnphandler::initUPnPState()
 		fprintf(stderr, "No IGD UPnP Device found on the network !\n");
 	}
 
+	/* MODIFY STATE */
+	dataMtx.lock(); /* LOCK MUTEX */
+
 	upnpState = RS_UPNP_S_UNAVAILABLE;
 	delete upcd;
 	upnpConfig = NULL;
+
+	dataMtx.unlock(); /* UNLOCK MUTEX */
 
 	/* done, FAILED -> NOT AVAILABLE */
 
