@@ -37,7 +37,7 @@ QtToaster::QtToaster(QWidget * toaster, QFrame * toasterWindowFrame)
 	_toaster = toaster;
 	_toaster->setParent(_toaster->parentWidget(), Qt::ToolTip | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 
-	WidgetBackgroundImage::setBackgroundImage(toasterWindowFrame, ":images/toaster/toaster-backrs4.png", WidgetBackgroundImage::AdjustHeight);
+	WidgetBackgroundImage::setBackgroundImage(toasterWindowFrame, ":images/toaster/toaster-backrs4.png", WidgetBackgroundImage::AdjustSize);
 
 	_toaster->resize(201, 116);
 }
@@ -56,9 +56,9 @@ void QtToaster::close() {
 void QtToaster::show() {
 	//10 pixels of margin
 #if !defined(OS_WINDOWS)
-	static const int MARGIN_X = 30;
+	static const int MARGIN_X = 50;
 #else
-	static const int MARGIN_X = 10;
+	static const int MARGIN_X = 30;
 #endif
 
 	QDesktopWidget * desktop = QApplication::desktop();
