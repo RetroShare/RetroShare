@@ -196,7 +196,7 @@ void  PeersDialog::insertPeers()
 
 		/* Append additional status info from status service */
 		StatusInfo statusInfo;
-		if (rsStatus->getStatus(*it, statusInfo))
+		if ((rsStatus) && (rsStatus->getStatus(*it, statusInfo)))
 		{
 			status.append(QString::fromStdString("/" + RsStatusString(statusInfo.status)));
 		}
