@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
         /* RetroShare Core Objects */
         RsInit *config = InitRsConfig();
         bool okStart = InitRetroShare(argc, argv, config);
+        bool startMinimised = RsConfigStartMinimised(config);
 
 
 	/* Setup The GUI Stuff */
@@ -143,20 +144,14 @@ int main(int argc, char *argv[])
         notify->setChannelsDialog(w->channelsDialog);
         notify->setMessengerWindow(w->messengerWindow);
 
-	/* only show window, if not autologin */
-#if defined(Q_OS_WIN)
-  	if (!okStart)
+	/* only show window, if not startMinimised */
+  	if (!startMinimised)
 	{
 		
 		w->show();
+		//skinWindow->show();
 		
 	}
-#else
-	
-	w->show();
-	
-	//skinWindow->show();
-#endif
 
 	/* Startup a Timer to keep the gui's updated */
 	QTimer *timer = new QTimer(w);
