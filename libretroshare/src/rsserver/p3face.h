@@ -323,6 +323,7 @@ class RsInit
 
         bool havePasswd; /* for Commandline password */
         bool autoLogin;  /* autoLogin allowed */
+	bool startMinimised; /* Icon or Full Window */
 
         /* Win/Unix Differences */
         char dirSeperator;

@@ -47,7 +47,9 @@ extern RsControl *rsicontrol;
  */
 
 RsInit *InitRsConfig();
+/* extract various options for GUI */
 const char   *RsConfigDirectory(RsInit *config);
+bool    RsConfigStartMinimised(RsInit *config);
 void    CleanupRsConfig(RsInit *);
 
 

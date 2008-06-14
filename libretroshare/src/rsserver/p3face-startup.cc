@@ -137,6 +137,7 @@ RsInit *InitRsConfig()
 	strcpy(config->logfname, "");
 
 	config -> autoLogin      = true; // Always on now.
+	config -> startMinimised = false; 
 	config -> passwd         = "";
 	config -> havePasswd     = false;
 	config -> haveDebugLevel = false;
@@ -187,6 +188,11 @@ RsInit *InitRsConfig()
 const char *RsConfigDirectory(RsInit *config)
 {
 	return (config->basedir).c_str();
+}
+
+bool	RsConfigStartMinimised(RsInit *config)
+{
+	return config->startMinimised;
 }
 
 //int InitRetroShare(int argc, char **argv, RsInit *config)
@@ -255,13 +261,19 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 	/* getopt info: every availiable option is listet here. if it is followed by a ':' it 
 	   needs an argument. If it is followed by a '::' the argument is optional.
 	*/
-	while((c = getopt(argc, argv,"hesaui:p:c:w:l:d:")) != -1)
+	while((c = getopt(argc, argv,"hesamui:p:c:w:l:d:")) != -1)
 	{
 		switch (c)
 		{
 			case 'a':
 				config->autoLogin = true;
-				std::cerr << "AutoLogin Allowed";
+				config->startMinimised = true;
+				std::cerr << "AutoLogin Allowed / Start Minimised On";
+				std::cerr << std::endl;
+				break;
+			case 'm':
+				config->startMinimised = true;
+				std::cerr << "Start Minimised On";
 				std::cerr << std::endl;
 				break;
 			case 'l':
@@ -325,6 +337,8 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 				std::cerr << "-c [basedir]      Set the config basdir" << std::endl;
 				std::cerr << "-s                Output to Stderr" << std::endl;
 				std::cerr << "-d [debuglevel]   Set the debuglevel" << std::endl;
+				std::cerr << "-a                AutoLogin (Windows Only) + StartMinimised" << std::endl;
+				std::cerr << "-m                StartMinimised" << std::endl;
 				std::cerr << "-u                Only listen to UDP" << std::endl;
 				std::cerr << "-e                Use a forwarded external Port" << std::endl << std::endl;
 				std::cerr << "Example" << std::endl;
