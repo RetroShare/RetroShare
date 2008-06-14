@@ -324,7 +324,7 @@ void MainWindow::updateStatus()
 	rsicontrol -> ConfigGetDataRates(downKb, upKb);
 
 	std::ostringstream out;
-	out << "Down: " << std::setprecision(2) << std::fixed << downKb << " (kB/s)  Up: " << std::setprecision(2) << std::fixed <<  upKb << " (kB/s) ";
+	out << "Down: " << std::setprecision(2) << std::fixed << downKb << " (kB/s)|  Up: " << std::setprecision(2) << std::fixed <<  upKb << " (kB/s) ";
 
 	std::list<std::string> ids;
 	rsPeers->getOnlineList(ids);
