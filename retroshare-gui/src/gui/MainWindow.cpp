@@ -258,9 +258,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
 #endif
 
-    //statusBar()->addWidget(new QLabel(tr("Users: 0  Files: 0 ")));
-    statusBar()->addPermanentWidget(statusRates = new QLabel(tr("Down: 0.0  Up: 0.0 ")));
-    statusBar()->addPermanentWidget(statusPeers = new QLabel(tr("Connections: 0/0/0 ")));
+    statusBar()->addWidget(statusPeers = new QLabel(tr("Online: 0 |Friends: 0|Network: 0")));
+    //statusPeers->setPixmap(QPixmap::QPixmap(":/images/.png"));
+    statusBar()->addPermanentWidget(statusRates = new QLabel(tr("Down: 0.0 | Up: 0.0 ")));
+    //statusBar()->addPermanentWidget(statusPeers = new QLabel(tr("Online: 0 |Friends: 0|Network: 0")));
 
 
     //servicegrp->actions()[0]->setChecked(true);
@@ -324,7 +325,7 @@ void MainWindow::updateStatus()
 	rsicontrol -> ConfigGetDataRates(downKb, upKb);
 
 	std::ostringstream out;
-	out << "Down: " << std::setprecision(2) << std::fixed << downKb << " (kB/s)|  Up: " << std::setprecision(2) << std::fixed <<  upKb << " (kB/s) ";
+	out << "Down: " << std::setprecision(2) << std::fixed << downKb << " (kB/s) |  Up: " << std::setprecision(2) << std::fixed <<  upKb << " (kB/s) ";
 
 	std::list<std::string> ids;
 	rsPeers->getOnlineList(ids);
@@ -339,7 +340,7 @@ void MainWindow::updateStatus()
 	int others = 1 + ids.size();
 
 	std::ostringstream out2;
-	out << "Online/Friends/Network: " << online << "/" << friends << "/" << others << " ";
+	out2 << "Online: " << online << "| Friends: " << friends << "| Network: " << others << " ";
 
 	/* set uploads/download rates */
 
