@@ -87,6 +87,12 @@
         <file>images/exportpeers_16x16.png</file>
         <file>images/filefind.png</file>
         <file>images/fileinfo.png</file>
+        <file>images/filerating0.png</file>
+        <file>images/filerating1.png</file>
+        <file>images/filerating2.png</file>
+        <file>images/filerating3.png</file>
+        <file>images/filerating4.png</file>
+        <file>images/filerating5.png</file>
         <file>images/find.png</file>
         <file>images/emoticons/kopete/kopete020.png</file>
         <file>images/flags/af.png</file>
@@ -214,6 +220,7 @@
         <file>images/toaster/toaster-backrs3.png</file>
         <file>images/toaster/toaster-backrs4.png</file>
         <file>images/up.png</file>
+        <file>images/user.png</file>
         <file>images/webcache_24x24.png</file>
         <file>layouts/default.ui</file>
         <file>qss/arachnophobia.qss</file>

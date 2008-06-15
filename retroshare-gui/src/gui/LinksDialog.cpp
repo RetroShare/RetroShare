@@ -48,6 +48,11 @@
 
 /* Images for context menu icons */
 #define IMAGE_EXPORTFRIEND      ":/images/exportpeers_16x16.png"
+#define IMAGE_GREAT			    ":/images/filerating5.png"
+#define IMAGE_GOOD			    ":/images/filerating4.png"
+#define IMAGE_OK			    ":/images/filerating3.png"
+#define IMAGE_SUX			    ":/images/filerating2.png"
+#define IMAGE_BADLINK			":/images/filerating1.png"
 
 /** Constructor */
 LinksDialog::LinksDialog(QWidget *parent)
@@ -95,6 +100,8 @@ LinksDialog::LinksDialog(QWidget *parent)
 	_header->resizeSection ( 0, 400 );
 	_header->resizeSection ( 1, 50 );
 	_header->resizeSection ( 2, 150 );
+	
+	ui.linkTreeWidget->setSortingEnabled(true);
 
 
 	/* Set a GUI update timer - much cleaner than
@@ -139,19 +146,19 @@ void LinksDialog::linkTreeWidgetCostumPopupMenu( QPoint point )
       	QMenu *voteMenu = new QMenu( tr("Vote on Link"), this );
       	voteMenu->setIcon(QIcon(IMAGE_EXPORTFRIEND));
 
-      	QAction *vote_p2 = new QAction( QIcon(IMAGE_EXPORTFRIEND), "[+2] Great", this );
+      	QAction *vote_p2 = new QAction( QIcon(IMAGE_GREAT), "[+2] Great", this );
         connect( vote_p2 , SIGNAL( triggered() ), this, SLOT( voteup_p2() ) );
 	voteMenu->addAction(vote_p2);
-      	QAction *vote_p1 = new QAction( QIcon(IMAGE_EXPORTFRIEND), "[+1] Good", this );
+      	QAction *vote_p1 = new QAction( QIcon(IMAGE_GOOD), "[+1] Good", this );
         connect( vote_p1 , SIGNAL( triggered() ), this, SLOT( voteup_p1() ) );
 	voteMenu->addAction(vote_p1);
-      	QAction *vote_p0 = new QAction( QIcon(IMAGE_EXPORTFRIEND), "[+0] Okay", this );
+      	QAction *vote_p0 = new QAction( QIcon(IMAGE_OK), "[+0] Okay", this );
         connect( vote_p0 , SIGNAL( triggered() ), this, SLOT( voteup_p0() ) );
 	voteMenu->addAction(vote_p0);
-      	QAction *vote_m1 = new QAction( QIcon(IMAGE_EXPORTFRIEND), "[-1] Sux", this );
+      	QAction *vote_m1 = new QAction( QIcon(IMAGE_SUX), "[-1] Sux", this );
         connect( vote_m1 , SIGNAL( triggered() ), this, SLOT( voteup_m1() ) );
 	voteMenu->addAction(vote_m1);
-      	QAction *vote_m2 = new QAction( QIcon(IMAGE_EXPORTFRIEND), "[-2] BAD LINK", this );
+      	QAction *vote_m2 = new QAction( QIcon(IMAGE_BADLINK), "[-2] BAD LINK", this );
         connect( vote_m2 , SIGNAL( triggered() ), this, SLOT( voteup_m2() ) );
 	voteMenu->addAction(vote_m2);
 
