@@ -396,25 +396,40 @@ p, li { white-space: pre-wrap; }
             <property name="text" >
              <string>+2 Great!</string>
             </property>
+            <property name="icon" >
+             <iconset resource="images.qrc" >:/images/filerating5.png</iconset>
+            </property>
            </item>
            <item>
             <property name="text" >
              <string>+1 Good</string>
+            </property>
+            <property name="icon" >
+             <iconset resource="images.qrc" >:/images/filerating4.png</iconset>
             </property>
            </item>
            <item>
             <property name="text" >
              <string>0 Okay</string>
             </property>
+            <property name="icon" >
+             <iconset resource="images.qrc" >:/images/filerating3.png</iconset>
+            </property>
            </item>
            <item>
             <property name="text" >
              <string>-1 Sux</string>
             </property>
+            <property name="icon" >
+             <iconset resource="images.qrc" >:/images/filerating2.png</iconset>
+            </property>
            </item>
            <item>
             <property name="text" >
              <string>-2 Bad Link</string>
+            </property>
+            <property name="icon" >
+             <iconset resource="images.qrc" >:/images/filerating1.png</iconset>
             </property>
            </item>
           </widget>
