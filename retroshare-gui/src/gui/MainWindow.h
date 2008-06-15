@@ -116,6 +116,7 @@ private slots:
 
     void updateMenu();
     void updateStatus();
+    void peerstat();
     
     void toggleVisibility(QSystemTrayIcon::ActivationReason e);
     void toggleVisibilitycontextmenu();
@@ -192,6 +193,8 @@ private:
 
     QLabel *statusRates;
     QLabel *statusPeers;
+    
+    class PeerStatus *peerstatus;
        
     /** Qt Designer generated object */
     Ui::MainWindow ui;

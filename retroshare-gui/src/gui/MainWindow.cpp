@@ -40,6 +40,7 @@
 #include "games/qbackgammon/bgwindow.h"
 #include "smplayer.h"
 
+#include "statusbar/peerstatus.h"
 #include "Preferences/PreferencesWindow.h"
 #include "Settings/gsettingswin.h"
 #include "util/rsversion.h"
@@ -213,7 +214,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(transfersDialog, SIGNAL(playFiles( QStringList )), this, SLOT(playFiles( QStringList )));
 
 #ifdef RS_RELEASE_VERSION    
-    //addAction(new QAction(QIcon(IMAGE_BLOCK), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
+    addAction(new QAction(QIcon(IMAGE_BLOCK), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 
 
 #else
@@ -257,9 +258,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.toolBarservice->addSeparator();
 
 #endif
-
+    //peerstatus = new PeerStatus();
+    //statusBar()->addWidget(peerstatus);
     statusBar()->addWidget(statusPeers = new QLabel(tr("Online: 0 |Friends: 0|Network: 0")));
-    //statusPeers->setPixmap(QPixmap::QPixmap(":/images/.png"));
     statusBar()->addPermanentWidget(statusRates = new QLabel(tr("Down: 0.0 | Up: 0.0 ")));
     //statusBar()->addPermanentWidget(statusPeers = new QLabel(tr("Online: 0 |Friends: 0|Network: 0")));
 
@@ -350,6 +351,11 @@ void MainWindow::updateStatus()
 	if (statusPeers)
     		statusPeers -> setText(QString::fromStdString(out2.str()));
 
+}
+
+void MainWindow::peerstat()
+{
+    peerstatus->setPeerStatus();
 }
 
 

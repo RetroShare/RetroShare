@@ -135,6 +135,7 @@ HEADERS +=  rshare.h \
             gui/Settings/DirectoriesPage.h \
             gui/Settings/ServerPage.h \
             gui/Settings/NetworkPage.h \
+            gui/statusbar/peerstatus.h \
             gui/authdlg/AuthorizationDialog.h \
             gui/advsearch/advancedsearchdialog.h \
             gui/advsearch/expressionwidget.h \
@@ -293,7 +294,8 @@ SOURCES += main.cpp \
             gui/Settings/GeneralPage.cpp \
             gui/Settings/DirectoriesPage.cpp \
             gui/Settings/ServerPage.cpp \
-            gui/Settings/NetworkPage.cpp \    
+            gui/Settings/NetworkPage.cpp \
+            gui/statusbar/peerstatus.cpp \    
             gui/toaster/ChatToaster.cpp \
             gui/toaster/MessageToaster.cpp \
             gui/toaster/CallToaster.cpp \

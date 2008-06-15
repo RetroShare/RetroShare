@@ -396,26 +396,31 @@ void  LinksDialog::updateLinks()
 			if (cit->score > 1)
 			{
 				peerScore = "[+2] ";
+				child -> setIcon(0,(QIcon(IMAGE_GREAT)));
 				//peerScore = "[+2 Great Link] ";
 			}
 			else if (cit->score == 1)
 			{
 				peerScore = "[+1] ";
+				child -> setIcon(0,(QIcon(IMAGE_GOOD)));
 				//peerScore = "[+1 Good] ";
 			}
 			else if (cit->score == 0)
 			{
 				peerScore = "[+0] ";
+				child -> setIcon(0,(QIcon(IMAGE_OK)));
 				//peerScore = "[+0 Okay] ";
 			}
 			else if (cit->score == -1)
 			{
 				peerScore = "[-1] ";
+				child -> setIcon(0,(QIcon(IMAGE_SUX)));
 				//peerScore = "[-1 Not Worth It] ";
 			}
 			else //if (cit->score < -1)
 			{
 				peerScore = "[-2 BAD] ";
+				child -> setIcon(0,(QIcon(IMAGE_BADLINK)));
 				//peerScore = "[-2 BAD Link] ";
 			}
 
