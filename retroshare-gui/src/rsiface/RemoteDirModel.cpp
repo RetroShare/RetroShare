@@ -317,7 +317,7 @@
      if (role == Qt::SizeHintRole)
      {
      	 int defw = 50;
-     	 int defh = 30;
+     	 int defh = 21;
      	 if (section < 2)
 	 {
 	 	defw = 200;
