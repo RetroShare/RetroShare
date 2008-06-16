@@ -96,7 +96,7 @@
  ****/
 
 #define RS_RELEASE_VERSION    1
-
+ 
 /** Constructor */
 MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     : QMainWindow(parent, flags)
@@ -214,7 +214,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(transfersDialog, SIGNAL(playFiles( QStringList )), this, SLOT(playFiles( QStringList )));
 
 #ifdef RS_RELEASE_VERSION    
-    addAction(new QAction(QIcon(IMAGE_BLOCK), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
+    //addAction(new QAction(QIcon(IMAGE_BLOCK), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 
 
 #else
@@ -258,9 +258,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.toolBarservice->addSeparator();
 
 #endif
-    //peerstatus = new PeerStatus();
-    //statusBar()->addWidget(peerstatus);
-    statusBar()->addWidget(statusPeers = new QLabel(tr("Online: 0 |Friends: 0|Network: 0")));
+    peerstatus = new PeerStatus();
+    statusBar()->addWidget(peerstatus);
+    //statusBar()->addWidget(statusPeers = new QLabel(tr("Online: 0 |Friends: 0|Network: 0")));
     statusBar()->addPermanentWidget(statusRates = new QLabel(tr("Down: 0.0 | Up: 0.0 ")));
     //statusBar()->addPermanentWidget(statusPeers = new QLabel(tr("Online: 0 |Friends: 0|Network: 0")));
 
@@ -328,34 +328,13 @@ void MainWindow::updateStatus()
 	std::ostringstream out;
 	out << "Down: " << std::setprecision(2) << std::fixed << downKb << " (kB/s) |  Up: " << std::setprecision(2) << std::fixed <<  upKb << " (kB/s) ";
 
-	std::list<std::string> ids;
-	rsPeers->getOnlineList(ids);
-	int online = ids.size();
-
-	ids.clear();
-	rsPeers->getFriendList(ids);
-	int friends = ids.size();
-
-	ids.clear();
-	rsPeers->getOthersList(ids);
-	int others = 1 + ids.size();
-
-	std::ostringstream out2;
-	out2 << "Online: " << online << "| Friends: " << friends << "| Network: " << others << " ";
-
 	/* set uploads/download rates */
-
 	if (statusRates)
     		statusRates -> setText(QString::fromStdString(out.str()));
 
-	if (statusPeers)
-    		statusPeers -> setText(QString::fromStdString(out2.str()));
+    	if (peerstatus)
+		peerstatus->setPeerStatus();
 
-}
-
-void MainWindow::peerstat()
-{
-    peerstatus->setPeerStatus();
 }
 
 

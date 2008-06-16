@@ -52,10 +52,7 @@ PeerStatus::PeerStatus(QWidget *parent)
     hbox->addWidget(statusPeers);
     
     setLayout( hbox );
-    
-    QTimer *timer2 = new QTimer(this);
-    timer2->connect(timer2, SIGNAL(timeout()), this, SLOT(setPeerStatus()));
-    timer2->start(5113);
+
 }
 
 PeerStatus::~PeerStatus()
@@ -79,7 +76,7 @@ void PeerStatus::setPeerStatus()
 	int others = 1 + ids.size();
 
 	std::ostringstream out2;
-	out2 << "Online: " << online << "| Friends: " << friends << "| Network: " << others << " ";
+	out2 << "Online: " << online << " | Friends: " << friends << " | Network: " << others << " ";
 
 
 	if (statusPeers)

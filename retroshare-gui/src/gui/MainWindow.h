@@ -56,6 +56,8 @@
 
 class SMPlayer;
 
+class PeerStatus;
+
 class MainWindow : public QMainWindow
 {
   Q_OBJECT
@@ -116,7 +118,6 @@ private slots:
 
     void updateMenu();
     void updateStatus();
-    void peerstat();
     
     void toggleVisibility(QSystemTrayIcon::ActivationReason e);
     void toggleVisibilitycontextmenu();
@@ -192,9 +193,7 @@ private:
     QMenu *menu;
 
     QLabel *statusRates;
-    QLabel *statusPeers;
-    
-    class PeerStatus *peerstatus;
+    PeerStatus *peerstatus;
        
     /** Qt Designer generated object */
     Ui::MainWindow ui;

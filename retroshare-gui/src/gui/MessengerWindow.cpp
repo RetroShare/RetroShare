@@ -296,7 +296,8 @@ void MessengerWindow::connectfriend2()
     if (!i)
       return;
 
-    if (isOnline)
+    std::string id = (i -> text(4)).toStdString();
+    if (rsPeers->isOnline(id))
     {
 	std::cerr << "MessengerWindow::connectfriend2() Already online" << std::endl;
     }
@@ -368,7 +369,7 @@ void MessengerWindow::chatfriend2()
     std::string name = (i -> text(0)).toStdString();
     std::string id = (i -> text(4)).toStdString();
 
-    if (!isOnline)
+    if (!(rsPeers->isOnline(id)))
     {
     	/* info dialog */
         QMessageBox::StandardButton sb = QMessageBox::question ( NULL, 
