@@ -196,6 +196,23 @@ bool	p3Peers::getOthersList(std::list<std::string> &ids)
 	return true;
 }
 
+bool    p3Peers::isOnline(std::string id)
+{
+#ifdef P3PEERS_DEBUG
+	std::cerr << "p3Peers::isOnline() " << id;
+	std::cerr << std::endl;
+#endif
+
+	/* get from mConnectMgr */
+	peerConnectState state;
+	if (mConnMgr->getFriendNetStatus(id, state) &&
+			(state.state & RS_PEER_S_CONNECTED))
+	{
+		return true;
+	}
+	return false;
+}
+
 bool    p3Peers::isFriend(std::string id)
 {
 #ifdef P3PEERS_DEBUG

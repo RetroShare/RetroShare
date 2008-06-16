@@ -318,6 +318,17 @@ void	p3ConfigMgr::loadConfiguration()
 		uint32_t confId = atoi(it->key.c_str());
 		std::string hashin = it->value;
 
+		/*********************** HACK TO CHANGE CACHE CONFIG ID *********
+		 * REMOVE IN A MONTH OR TWO
+		 */
+
+		if (confId == CONFIG_TYPE_CACHE_OLDID)
+		{
+			confId = CONFIG_TYPE_CACHE;
+		}
+
+		/*********************** HACK TO CHANGE CACHE CONFIG ID *********/
+
 		std::map<uint32_t, pqiConfig *>::iterator cit;
 		cit = configs.find(confId);
 		if (cit != configs.end())

@@ -48,6 +48,7 @@ virtual bool	getOnlineList(std::list<std::string> &ids);
 virtual bool	getFriendList(std::list<std::string> &ids);
 virtual bool	getOthersList(std::list<std::string> &ids);
 
+virtual bool    isOnline(std::string id);
 virtual bool    isFriend(std::string id);
 virtual std::string getPeerName(std::string id);
 virtual bool	getPeerDetails(std::string id, RsPeerDetails &d);

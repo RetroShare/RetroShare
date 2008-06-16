@@ -221,7 +221,7 @@ int  	loadAnyCache(const CacheData &data, bool local);
 
 	/* load cache files */
 void	loadFileGroups(std::string filename, std::string src, bool local);
-void	loadFileMsgs(std::string filename, uint16_t cacheSubId, std::string src, bool local);
+void	loadFileMsgs(std::string filename, uint16_t cacheSubId, std::string src, uint32_t ts, bool local);
 
 	protected:
 	/* load cache msgs */	
@@ -303,13 +303,13 @@ virtual int 	tick(); /* overloaded form pqiService */
 	protected:
 
 	/* create/mod cache content */
-void	locked_toPublishMsg(RsDistribMsg *msg);
+void	locked_toPublishMsg(RsDistribSignedMsg *msg);
 void 	publishPendingMsgs();
 void 	publishDistribGroups();
 void	clear_local_caches(time_t now);
 
 void    locked_publishPendingMsgs();
-uint16_t determineCacheSubId();
+uint16_t locked_determineCacheSubId();
 
 
 /***************************************************************************************/
@@ -382,14 +382,18 @@ void    locked_notifyGroupChanged(GroupInfo &info);
 	std::list<GroupCache> mLocalCaches;
 	std::map<std::string, GroupInfo> mGroups;
 	uint32_t mStorePeriod, mPubPeriod;
-	time_t mNextPublishTime;
 
-	std::list<RsDistribMsg *> mPendingPublish;
+	/* Message Publishing */
+	std::list<RsDistribSignedMsg *> mPendingPublish; 
+	time_t mLastPublishTime;
+	std::map<uint32_t, uint16_t> mLocalCacheTs;
+	uint16_t mMaxCacheSubId;
 
 	bool mGroupsChanged;
 	bool mGroupsRepublish;
 
         std::list<RsItem *> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
+
 };
 
 

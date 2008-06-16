@@ -80,7 +80,6 @@
 
 #define RS_RELEASE 1  
 
-
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
 	#include "pqi/authxpgp.h"

@@ -62,13 +62,18 @@ const uint32_t CONFIG_TYPE_GENERAL 	= 0x0001;
 const uint32_t CONFIG_TYPE_PEERS 	= 0x0002;
 const uint32_t CONFIG_TYPE_FSERVER 	= 0x0003;
 const uint32_t CONFIG_TYPE_MSGS 	= 0x0004;
-const uint32_t CONFIG_TYPE_CACHE 	= 0x0005;
+const uint32_t CONFIG_TYPE_CACHE_OLDID 	= 0x0005;
 
 const uint32_t CONFIG_TYPE_RANK_LINK 	= 0x0011;
 
 const uint32_t CONFIG_TYPE_QBLOG 	= 0x0012;
 
 const uint32_t CONFIG_TYPE_FORUMS 	= 0x0013;
+
+/* CACHE ID Must be at the END so that other configurations
+ * are loaded First (Cache Config --> Cache Loading)
+ */
+const uint32_t CONFIG_TYPE_CACHE 	= 0xff01;
 
 class p3ConfigMgr;
 class p3AuthMgr;
