@@ -43,17 +43,14 @@ class p3Blog : public RsQblog
 		p3Blog(p3Qblog* qblog);
 		virtual ~p3Blog();
 	
-		virtual bool setStatus(const std::string &status);
-		virtual bool getStatus(std::map<std::string, std::string> &usrStatus);
 		virtual bool setFilterSwitch(bool &filterSwitch);
 		virtual bool getFilterSwitch(void);
 		virtual bool addToFilter(std::string &usrId);
 		virtual bool removeFiltFriend(std::string &usrId);
-		virtual bool getProfile(std::map<std::string, std::string> &profile);
-		virtual bool setProfile(const std::string &favSong);
-		virtual bool sendBlog(const std::string &msg);
-		virtual bool getBlogs(std::map< std::string, std::multimap<long int, std:: string> > &blogs);
-		
+		virtual bool sendBlog(const std::wstring &msg);
+		virtual bool getBlogs(std::map< std::string, std::multimap<long int, std::wstring> > &blogs);
+		virtual bool setFavorites(FileInfo favFile);
+		virtual bool setProfile(std::pair<std::wstring, std::wstring> entry);
 		virtual bool getPeerLatestBlog(std::string id, uint32_t &ts, std::wstring &post);
 		virtual bool getPeerProfile(std::string id, std::list< std::pair<std::wstring, std::wstring> > &entries);
 		virtual bool getPeerFavourites(std::string id, std::list<FileInfo> &favs);

@@ -28,52 +28,121 @@
 
 #include <map>
 #include <list>
+#include <string>
  
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvtypes.h"
 
-/*! retroshare data sturcture to be serialised */
-class RsQblogItem: public RsItem
+
+const uint8_t RS_PKT_SUBTYPE_QBLOG_PROFILE = 0x01;
+
+
+/*!
+ *  retroshare qblog msg item for storing received and sent blog message
+ */
+class RsQblogMsg: public RsItem
 {
 	public:
-	RsQblogItem() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_QBLOG, 
+	RsQblogMsg() 
+	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_QBLOG, // add msg id type
 		RS_PKT_SUBTYPE_DEFAULT)
 	{ return; }
-virtual ~RsQblogItem();
+virtual ~RsQblogMsg();
 virtual void clear();
 
-/**
- * Used for unit test / debugging: i.e. checking serialisation occured fine on both ends
- * @param out output stream for printing
- * @param indent allows user to choose indentation of output stream
- * @return pointer to stream object, to store output to a variety of formats
- */
+/// inherited method from RsItem
 std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-
-/* everything below is serialised */
+/// use for time stamp
+uint32_t timeStamp;
 
 /// contain blog mesgs and their blog time stamp (client time)
-std::pair<uint32_t, std::string> blogMsg; 
-/// to be serialised: status of a requested user
-std::string status; 
-/// the users favorite song
-std::string favSong;
-/// peer id TODO: serialise this
-std::string pid; 
+std::wstring blogMsg; 
+
 };
 
-/*! to serialise rsQblogItems: method names are self explanatory */
-class RsQblogSerialiser : public RsSerialType
+/*!
+ *  retroshare qblog profile item for storing received and sent profile info
+ * designed in an open ended way to accomodate multiple fields
+ */
+class RsQblogProfile: public RsItem
+{
+	public:
+	RsQblogProfile() 
+	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_QBLOG, // add profile id type
+		RS_PKT_SUBTYPE_QBLOG_PROFILE)
+	{ return; }
+virtual ~RsQblogProfile();
+virtual void clear();
+
+/// inherited method from RsItem
+std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+uint32_t timeStamp;
+
+/// contains various profile information set by user, this and below use an open ended format 
+RsTlvKeyValueSet openProfile;
+
+/// favoirte files of the user..... 
+RsTlvFileSet favoriteFiles;
+
+};
+
+/*!
+ *  to serialise rsQblogItems: method names are self explanatory
+ */
+class RsQblogMsgSerialiser : public RsSerialType
 {
 
 		public:
-	RsQblogSerialiser()
+	RsQblogMsgSerialiser()
 	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_QBLOG)
 	{ return; }
-virtual     ~RsQblogSerialiser()
+virtual     ~RsQblogMsgSerialiser()
+	{ return; }
+					/**
+					 * check size of RsItem to be serialised
+					 * @param RsItem RsItem which is going to be serilised
+					 * @return size of the RsItem in bytes
+					 */	
+virtual	uint32_t    size(RsItem *);
+	
+					/**
+					 * serialise contents of item to data
+					 * @param item RsItem which is going to be serilised
+					 * @param data where contents will be serialised into
+					 * @return size of the RsItem in bytes
+					 */	
+virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
+
+					/**
+					 * serialise contents of item to data
+					 * @param data where contents will be deserialisedout of
+					 * @return size of the RsItem in bytes
+					 */			
+virtual	RsItem *    deserialise(void *data, uint32_t *size);
+
+	private:
+
+				
+virtual	uint32_t    sizeItem(RsQblogMsg *);
+virtual	bool        serialiseItem  (RsQblogMsg *item, void *data, uint32_t *size);
+virtual	RsQblogMsg *deserialiseItem(void *data, uint32_t *size);
+	
+};
+
+/*!
+ *  to serialise rsQblogProfile items, method names are self explanatory 
+ */
+class RsQblogProfileSerialiser : public RsSerialType
+{
+
+		public:
+	RsQblogProfileSerialiser()
+	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_QBLOG)
+	{ return; }
+virtual     ~RsQblogProfileSerialiser()
 	{ return; }
 					/**
 					 * check size of RsItem to be serialised
@@ -81,17 +150,29 @@ virtual     ~RsQblogSerialiser()
 					 * @return size of the RsItem
 					 */	
 virtual	uint32_t    size(RsItem *);
+
+					/**
+					 * serialise contents of item to data
+					 * @param item RsItem which is going to be serilised
+					 * @param data where contents will be serialised into
+					 * @return size of the RsItem in bytes
+					 */	
 virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
+
+					/**
+					 * serialise contents of item to data
+					 * @param data where contents will be deserialisedout of
+					 * @return size of the RsItem in bytes
+					 */	
 virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 	private:
 
 				
-virtual	uint32_t    sizeItem(RsQblogItem *);
-virtual	bool        serialiseItem  (RsQblogItem *item, void *data, uint32_t *size);
-virtual	RsQblogItem *deserialiseItem(void *data, uint32_t *size);
+virtual	uint32_t    sizeItem(RsQblogProfile *);
+virtual	bool        serialiseItem  (RsQblogProfile *item, void *data, uint32_t *size);
+virtual	RsQblogProfile *deserialiseItem(void *data, uint32_t *size);
 	
 };
-
 
 #endif /*RSQBLOGITEM_H_*/

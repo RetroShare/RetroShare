@@ -44,7 +44,7 @@ bool p3Blog::addToFilter(std::string &usrId)
 	return mQblog->addToFilter(usrId);
 }
 
-bool p3Blog::getBlogs(std::map< std::string, std::multimap<long int, std:: string> > &blogs)
+bool p3Blog::getBlogs(std::map< std::string, std::multimap<long int, std::wstring> > &blogs)
 {
 	return mQblog->getBlogs(blogs);
 }
@@ -54,17 +54,7 @@ bool p3Blog::getFilterSwitch(void)
 	return mQblog->getFilterSwitch();
 }
 
-bool p3Blog::getProfile(std::map<std::string, std::string> &profile)
-{
-	return mQblog->getProfile(profile);
-}
-
-bool p3Blog::getStatus(std::map<std::string, std::string> &usrStatus)
-{
-	return mQblog->getStatus(usrStatus);
-}
-
-bool p3Blog::sendBlog(const std::string &msg)
+bool p3Blog::sendBlog(const std::wstring &msg)
 {
 	return mQblog->sendBlog(msg);
 }
@@ -74,19 +64,21 @@ bool p3Blog::setFilterSwitch(bool &filterSwitch)
 	return mQblog->setFilterSwitch(filterSwitch);
 }
 
-bool p3Blog::setProfile(const std::string &favSong)
-{
-	return mQblog->setProfile(favSong);
-}
-
-bool p3Blog::setStatus(const std::string &status)
-{
-	return mQblog->setStatus(status);
-}
-
 bool p3Blog::removeFiltFriend(std::string &usrId)
 {
 	return mQblog->removeFiltFriend(usrId);
+}
+
+bool p3Blog::setFavorites(FileInfo favFile)
+{
+	//TODO 
+	//return mQblog->setFavorites(favFile);
+}
+
+bool p3Blog::setProfile(std::pair<std::wstring, std::wstring> entry)
+{
+	//TODO
+	//return mQblog->setProfile(entry);
 }
 
 bool p3Blog::getPeerLatestBlog(std::string id, uint32_t &ts, std::wstring &post)

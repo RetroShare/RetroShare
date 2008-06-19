@@ -28,7 +28,9 @@
 #include "pqi/p3authmgr.h"
 
 #include <iostream>
+#include <fstream>
 #include <sstream>
+
 
 RsPeers *rsPeers = NULL;
 
@@ -789,6 +791,32 @@ uint32_t RsPeerTranslateTrust(uint32_t trustLvl)
 	return RS_TRUST_LVL_UNKNOWN;
 }
 
+bool p3Peers::certToFile(void)
+{
+	std::string invite = GetRetroshareInvite();
+	const int SIZE = 400;
+	char certStore[SIZE]; // enough store to reach certification part of string
+	std::ofstream cert_file; // to help with counting non cert part of string
+	std::istringstream certFind(invite); // tie invite to stream 
+	
+	/* find out how long it takes to reach certification part of string */
+	certFind.get(certStore, SIZE, '='); 
+	invite.erase(0, certFind.gcount()); // delete all characters before certificate part
+	
+	#ifdef P3PEERS_DEBUG
+	std::cerr << "p3Peers::certToFile() : certificate"  << invite;
+	#endif
+	
+	std::string usrId = getPeerName(getOwnId()); // replace with actual textual id
+	usrId += ".pqi";
+	cert_file.open(usrId.c_str());
+	cert_file << invite; //store cert to file
+	cert_file.close();
+	
+	return true;
+	
+}
+		
 
 
 	

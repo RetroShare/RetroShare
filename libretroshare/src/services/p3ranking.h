@@ -146,6 +146,7 @@ void	createDummyData();
 
 	std::string mOwnId;
 	bool mUpdated;
+	bool mRepost;
 
 	std::map<std::string, RankGroup> mData;
 	std::multimap<float, std::string> mRankings;

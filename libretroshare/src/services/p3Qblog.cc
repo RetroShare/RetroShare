@@ -43,8 +43,8 @@ p3Qblog::p3Qblog(p3ConnectMgr *connMgr,
 		uint32_t storePeriod)
 	:CacheSource(type, true, cs, sourcedir), 
 	CacheStore(type, true, cs, cft, storedir), 
-	p3Config(CONFIG_TYPE_QBLOG), mConnMgr(connMgr), mFilterSwitch(false),
-	mStorePeriod(storePeriod), mUpdated(true)
+	mConnMgr(connMgr), mFilterSwitch(false),
+	mStorePeriod(storePeriod), mPostsUpdated(false), mProfileUpdated(false)
 {
 	{	
 		RsStackMutex stack(mBlogMtx);
@@ -59,6 +59,14 @@ p3Qblog::p3Qblog(p3ConnectMgr *connMgr,
 	}
 	
 	return;
+}
+
+std::ostream &operator<<(std::ostream& out, const std::wstring wstr)
+{
+	std::string str(wstr.begin(), wstr.end());
+	out << str;
+	
+	return out;
 }
 
 bool p3Qblog::loadLocalCache(const CacheData &data)
@@ -84,7 +92,7 @@ bool p3Qblog::loadLocalCache(const CacheData &data)
 	
 	{
 		RsStackMutex stack(mBlogMtx);
-		mRepost = false; // there is nothing to tick/repost (i.e. comes from cache)
+		mPostsUpdated = true; // there is nothing to tick/repost (i.e. comes from cache)
 	}
 
 	if (data.size > 0) /* don't refresh zero sized caches */
@@ -129,7 +137,7 @@ bool p3Qblog::loadBlogFile(std::string filename, std::string src)
 {
 	/* create the serialiser to load info */
 	RsSerialiser *rsSerialiser = new RsSerialiser();
-	rsSerialiser->addSerialType(new RsQblogSerialiser());
+	rsSerialiser->addSerialType(new RsQblogMsgSerialiser());
 	
 	uint32_t bioflags = BIN_FLAGS_HASH_DATA | BIN_FLAGS_READABLE;
 	BinInterface *bio = new BinFileInterface(filename.c_str(), bioflags); 
@@ -148,7 +156,7 @@ bool p3Qblog::loadBlogFile(std::string filename, std::string src)
 	
 	/* will load file info to these items */
 	RsItem *item;
-	RsQblogItem *newBlog;
+	RsQblogMsg *newBlog;
 	
 	stream->tick(); // tick to read
 	
@@ -170,7 +178,7 @@ bool p3Qblog::loadBlogFile(std::string filename, std::string src)
 		std::cerr << std::endl;
 		#endif
 		
-		if (NULL == (newBlog = dynamic_cast<RsQblogItem *>(item)))
+		if (NULL == (newBlog = dynamic_cast<RsQblogMsg *>(item)))
 		{
 			#ifdef QBLOG_DEBUG
 			std::cerr << "p3Qblog::loadBlogFile() Item not Blog (deleting):";
@@ -180,8 +188,8 @@ bool p3Qblog::loadBlogFile(std::string filename, std::string src)
 			delete item;
 		}
 					/* check timestamp */
-		else if (((time_t) newBlog->blogMsg.first < min) || 
-				((time_t) newBlog->blogMsg.first > max))
+		else if (((time_t) newBlog->timeStamp < min) || 
+				((time_t) newBlog->timeStamp > max))
 		{
 			#ifdef QBLOG_DEBUG
 			std::cerr << "p3Qblog::loadBlogFile() Outside TimeRange (deleting):";
@@ -207,7 +215,7 @@ bool p3Qblog::loadBlogFile(std::string filename, std::string src)
 	return true;
 }
 
-bool p3Qblog::addBlog(RsQblogItem *newBlog)
+bool p3Qblog::addBlog(RsQblogMsg *newBlog)
 {
 	#ifdef QBLOG_DEBUG
 	std::cerr << "p3Ranking::addBlog() Item:";
@@ -219,26 +227,19 @@ bool p3Qblog::addBlog(RsQblogItem *newBlog)
 	{
 		RsStackMutex Stack(mBlogMtx);
 		
-		mPeerSongSet[newBlog->pid] = newBlog->favSong;
-		mPeerStatusSet[newBlog->pid] = newBlog->status;
-		mUsrBlogSet[newBlog->pid].insert(newBlog->blogMsg);
+		mUsrBlogSet[newBlog->PeerId()].insert(std::make_pair(newBlog->timeStamp, newBlog->blogMsg));
 		
 		#ifdef QBLOG_DEBUG
 		std::cerr << "p3Qblog::addBlog()";
 		std::cerr << std::endl;
-		std::cerr << "pid" << newBlog->pid;
+		std::cerr << "\tpeerId" << newBlog->PeerId();
 		std::cerr << std::endl;
-		std::cerr << "\tmPeerSongset" << mPeerSongSet[newBlog->pid];
+		std::cerr << "\tmUsrBlogSet: time" << newBlog->timeStamp;
 		std::cerr << std::endl;
-		std::cerr << "\tmPeerStatusSet" << mPeerStatusSet[newBlog->pid];
-		std::cerr << std::endl;
-		std::cerr << "\tmUsrBlogSet: time" << newBlog->blogMsg.first;
-		std::cerr << std::endl;
-		std::cerr << "\tmUsrBlogSet: blog" << newBlog->blogMsg.second;
+		std::cerr << "\tmUsrBlogSet: blog" << newBlog->blogMsg;
 		std::cerr << std::endl;
 		#endif 
-		mUpdated = true; // might be useless
-		mRepost = true;
+		mPostsUpdated = false; // need to figure how this should work/ wherre this should be placed
 	}	
 	
 	return true;
@@ -268,7 +269,7 @@ bool p3Qblog::postBlogs(void)
 	#endif
 
 	RsSerialiser *rsSerialiser = new RsSerialiser();
-	rsSerialiser->addSerialType(new RsQblogSerialiser());
+	rsSerialiser->addSerialType(new RsQblogMsgSerialiser());
 	
 	uint32_t bioflags = BIN_FLAGS_HASH_DATA | BIN_FLAGS_WRITEABLE;
 	BinInterface *bio = new BinFileInterface(fname.c_str(), bioflags);
@@ -279,12 +280,12 @@ bool p3Qblog::postBlogs(void)
 		RsStackMutex stack(mBlogMtx); /********** STACK LOCKED MTX ******/
 		
 			/* iterate through list */
-		std::list<RsQblogItem*>::iterator it; 
+		std::list<RsQblogMsg*>::iterator it; 
 		
-		for(it = mBlogItems.begin(); it != mBlogItems.end();  it++)
+		for(it = mBlogs.begin(); it != mBlogs.end();  it++)
 		{
 			/* only post own blogs */
-			if(mOwnId == (*it)->pid)
+			if(mOwnId == (*it)->PeerId())
 			{
 				/*write to serialiser*/
 				RsItem *item = *it;
@@ -362,22 +363,6 @@ p3Qblog::~p3Qblog()
 	return;
 }
 
-
-bool p3Qblog::setStatus(const std::string &status)
-{
-	{
-		RsStackMutex stack(mBlogMtx);
-		mPeerStatusSet[mOwnId] = status;
-		
-		#ifdef QBLOG_DEBUG
-		std::cerr << "p3Qblog::getStatus() mPeerStatus[mOwnId]" << mPeerStatusSet[mOwnId];
-		std::cerr << std::endl;
-		#endif
-	}
-	
-	return true;
-}
-
 bool p3Qblog::getFilterSwitch(void)
 {
 	{ 
@@ -397,26 +382,6 @@ bool p3Qblog::setFilterSwitch(bool &filterSwitch)
 		std::cerr << std::endl;
 		#endif
 	}	
-	return true;
-}
-
-bool p3Qblog::getStatus(std::map<std::string, std::string> &usrStatus)
-{
-	{
-		RsStackMutex stack(mBlogMtx);
-		
-		#ifdef QBLOG_DEBUG
-		if(mPeerStatusSet.empty())
-		{
-			std::cerr << "p3Qblog::getStatus() mPeerStatusSet empty! ";
-			std::cerr << std::endl;
-			return false;
-		}
-		#endif
-		
-		usrStatus = mPeerStatusSet;
-	}
-		
 	return true;
 }
 
@@ -475,7 +440,7 @@ bool p3Qblog::addToFilter(std::string& usrId)
 	return true;
 }
 	
-bool p3Qblog::getBlogs(std::map< std::string, std::multimap<long int, std:: string> > &blogs)
+bool p3Qblog::getBlogs(std::map< std::string, std::multimap<long int, std::wstring> > &blogs)
 {
 	{	
 		RsStackMutex stack(mBlogMtx);
@@ -496,7 +461,7 @@ bool p3Qblog::getBlogs(std::map< std::string, std::multimap<long int, std:: stri
 	}
 }
 	
-bool p3Qblog::sendBlog(const std::string &msg)
+bool p3Qblog::sendBlog(const std::wstring &msg)
 {
 	time_t blogTimeStamp;
 	
@@ -504,67 +469,64 @@ bool p3Qblog::sendBlog(const std::string &msg)
 		RsStackMutex stack(mBlogMtx);
 		mUsrBlogSet[mOwnId].insert(std::make_pair(blogTimeStamp, msg));
 	
-		RsQblogItem *blogItem = new RsQblogItem();
-		blogItem->clear();
+		RsQblogMsg *blog = new RsQblogMsg();
+		blog->clear();
 		
-		blogItem->pid = mOwnId;
-		blogItem->blogMsg.first = blogTimeStamp;
-		blogItem->blogMsg.second = msg;
-		blogItem->favSong = mPeerSongSet[mOwnId];
-		blogItem->status = mPeerStatusSet[mOwnId];
+		blog->timeStamp = blogTimeStamp;
+		blog->blogMsg = msg;
+
 		
 		#ifdef QBLOG_DEBUG
 		std::cerr << "p3Qblog::sendBlogFile()";
 		std::cerr << std::endl;
-		std::cerr << "\tblogItem->pid" << blogItem->blogMsg.first;
+		std::cerr << "\tblogItem->timeStamp" << blog->timeStamp;
 		std::cerr << std::endl;
-		std::cerr << "\tblogItem->blogMsg.first" << blogItem->blogMsg.first;
+		std::cerr << "\tblogItem->blogMsg.second" << blog->blogMsg;
 		std::cerr << std::endl;
-		std::cerr << "\tblogItem->blogMsg.second" << blogItem->blogMsg.second;
-		std::cerr << std::endl;
-		std::cerr << "\tblogItem->favSong" << blogItem->favSong;
-		std::cerr << std::endl;
-		std::cerr << "\tblogItem->status" << blogItem->status;
-		std::cerr << std::endl; 
 		#endif
 		
-		mBlogItems.push_back(blogItem);
+		mBlogs.push_back(blog);
 	}	
 	return true;
 }
 
-bool p3Qblog::getProfile(std::map<std::string, std::string> &profile)
+bool p3Qblog::getPeerProfile(std::string id, std::list< std::pair<std::wstring, std::wstring> > &entries)
 {	
-	{
-		RsStackMutex stack(mBlogMtx);
-	
-		/* return error is set empty */
-		if(mPeerSongSet.empty())
-		{
-			std::cerr << "friend song set empty!" << std::endl;
-			return false;
-		} 
-	
-		profile = mPeerSongSet;
-	}
-	
+	// TODO	
 	return true;
 }
 
-bool p3Qblog::setProfile(const std::string &favSong)
+bool p3Qblog::setProfile(std::pair<std::wstring, std::wstring> entry)
 {
-	{
-		RsStackMutex stack(mBlogMtx);
-		mPeerSongSet[mOwnId] = favSong;
-	}
-	
+	//TODO	
 	return true;
 } 
+
+bool p3Qblog::setFavorites(FileInfo favFile)
+{
+	//TODO
+	return true;
+}
+
+bool p3Qblog::getPeerLatestBlog(std::string id, uint32_t &ts, std::wstring &post)
+{
+	//TODO
+	return true;
+}
+
+
+bool p3Qblog::getPeerFavourites(std::string id, std::list<FileInfo> &favs)
+{
+	//TODO
+	return true;
+}
+
+	
 
 void p3Qblog::loadDummy(void)
 {
 	std::list<std::string> peers;
-	
+	std::wstring cnv_wstr;
 	mConnMgr->getFriendList(peers); // retrieve peers list from core
 	if(peers.empty())
 	{
@@ -575,10 +537,10 @@ void p3Qblog::loadDummy(void)
 	
 	srand(60);
 	long int now = time(NULL); // the present time
-	std::multimap<long int, std::string> emptySet; // time/blog map
+	std::multimap<long int, std::wstring> emptySet; // time/blog map
 	
-	std::string statusSet[5] = { "great", "rubbish", "ecstatic", "save me", "emo depression"};
-	std::string songs[5] = { "broken spleen", "niobium", "ewe (a sheep)", "velvet stuff", "chun li kicks"};
+	//std::string statusSet[5] = { "great", "rubbish", "ecstatic", "save me", "emo depression"};
+	//std::string songs[5] = { "broken spleen", "niobium", "ewe (a sheep)", "velvet stuff", "chun li kicks"};
 
 	/* the usr dummy usr blogs */	
 	std::string B1 = "I think we should eat more cheese";
@@ -588,34 +550,38 @@ void p3Qblog::loadDummy(void)
 	std::string B5 = "I'm really a boring person and having nothin interesting to say";
 	std::string blogs[5] = {B1, B2, B3, B4, B5};
 	
+	
+	
 	/* fill up maps: first usrblogset with empty blogs */
 	
 	std::list<std::string>::iterator it; 
 	
-		mUsrBlogSet.insert(std::make_pair(mOwnId, emptySet));
-		mPeerSongSet.insert(std::make_pair(mOwnId, songs[rand() % 5]));
-		mPeerStatusSet.insert(std::make_pair(mOwnId, statusSet[rand() % 5]));
+	mUsrBlogSet.insert(std::make_pair(mOwnId, emptySet));
 	
 	for(it = peers.begin(); it!=peers.end();it++)
 	{
 		mUsrBlogSet.insert(std::make_pair(*it, emptySet));
-		mPeerSongSet.insert(std::make_pair(*it, songs[rand() % 5]));
-		mPeerStatusSet.insert(std::make_pair(*it, statusSet[rand() % 5]));
 	}
 
 	/* now fill up blog map */
+	
+	
 	
 	for(int i=0; i < 50 ; i++)
 	{
 		std::list<std::string>::iterator it = peers.begin();
 		long int timeStamp;
 		timeStamp = now + rand() % 2134223;
-		mUsrBlogSet[mOwnId].insert(std::make_pair(timeStamp, blogs[rand() % 5]));
+		int b = rand() % 5;
+		cnv_wstr.assign(blogs[b].begin(), blogs[b].end());
+		mUsrBlogSet[mOwnId].insert(std::make_pair(timeStamp, cnv_wstr )); // store a random blog
 	
 		for(;it!=peers.end(); it++)
 		{
 			timeStamp = now + rand() % 2134223; // a random time for each blog
-			mUsrBlogSet[*it].insert(std::make_pair(timeStamp, blogs[rand() % 5]));
+			int c = rand() % 5;
+			cnv_wstr.assign(blogs[c].begin(), blogs[c].end());
+			mUsrBlogSet[*it].insert(std::make_pair(timeStamp, cnv_wstr)); // store a random blog
 		}
 	}
 	
@@ -623,94 +589,6 @@ void p3Qblog::loadDummy(void)
 }	
 	
 
-RsSerialiser* p3Qblog::setupSerialiser()
-{
-	RsSerialiser *rss = new RsSerialiser();
-	rss->addSerialType(new RsQblogSerialiser()); // add in the types we need! 
-	return rss;
-}
-
-std::list<RsItem* > p3Qblog::saveList(bool &cleanup)
-{
-	std::list<RsItem* > saveData;
-	
-	mBlogMtx.lock(); // LOCK
-	
-	cleanup = false;
-	
-	/* create save data */
-	
-	std::list<RsQblogItem*>::iterator it;
-	
-	for(it = mBlogItems.begin(); it != mBlogItems.end() ; it++)
-		saveData.push_back(*it);
-	
-	/*save data created */
-	return saveData;
-}
-
-void p3Qblog::saveDone()
-{
-	mBlogMtx.unlock(); // UNLOCK
-	return;
-}
-	
-bool p3Qblog::loadList(std::list<RsItem* > load)
-{
-	std::list<RsItem*>::iterator it;
-	RsQblogItem *blog;
-	
-	#ifdef SERVER_DEBUG 
-	std::cerr << "p3Qblog::loadList() Item Count: " << load.size();
-	std::cerr << std::endl;
-	#endif
-
-	time_t now = time(NULL);
-	time_t min, max;
-
-     { 	RsStackMutex stack(mBlogMtx); /********** STACK LOCKED MTX ******/
-
-	min = now - mStorePeriod;
-	max = now + RANK_MAX_FWD_OFFSET;
-
-     } 	/********** STACK LOCKED MTX ******/
-
-	for(it = load.begin(); it != load.end(); it++)
-	{
-		/* switch on type */
-		if (NULL != (blog = dynamic_cast<RsQblogItem *>(*it)))
-		{
-			/* check date -> if old expire */
-			if (((time_t) blog->blogMsg.first < min) || 
-				((time_t) blog->blogMsg.first > max))
-			{
-				#ifdef QBLOG_DEBUG
-				std::cerr << "p3Blog::loadList() Outside TimeRange :";
-				std::cerr << std::endl;
-				#endif
-				
-				/* if outside range -> remove */
-				delete blog;
-				continue;
-			}
-			
-			#ifdef QBLOG_DEBUG
-			std::cerr << "p3Ranking::loadList() Anon TimeRange ok";
-			std::cerr << std::endl;
-			#endif
-
-			/* make a copy to add into standard map */
-			addBlog(blog);
-		}
-		else
-		{
-			/* cleanup */
-			delete (*it);
-		}
-	}
-
-	return true;
-}
 
 bool p3Qblog::sort(void)
 {
@@ -720,14 +598,14 @@ bool p3Qblog::sort(void)
 
 void p3Qblog::tick()
 {
-	bool repost = false; // so stack mutex is not enabled during postblog call
+	bool postUpdated = false; // so stack mutex is not enabled during postblog call
 	
 	{
 		RsStackMutex stack(mBlogMtx);
-		repost = mRepost;
+		postUpdated = mPostsUpdated;
 	}
 	
-	if(repost) // 
+	if(!postUpdated)
 	{
 		if(!postBlogs())
 			std::cerr << "p3Qblog::tick():" << "tick failed!";
