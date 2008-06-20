@@ -46,6 +46,50 @@ const uint32_t RS_POPUP_CALL	= 0x0004;
 const uint32_t RS_POPUP_CONNECT = 0x0008;
 
 
+
+const uint32_t RS_FEED_TYPE_PEER 	= 0x0010;
+const uint32_t RS_FEED_TYPE_CHAN 	= 0x0020;
+const uint32_t RS_FEED_TYPE_FORUM 	= 0x0040;
+const uint32_t RS_FEED_TYPE_BLOG 	= 0x0080;
+const uint32_t RS_FEED_TYPE_CHAT 	= 0x0100;
+const uint32_t RS_FEED_TYPE_MSG 	= 0x0200;
+const uint32_t RS_FEED_TYPE_FILES 	= 0x0400;
+
+const uint32_t RS_FEED_ITEM_PEER_CONNECT	 = RS_FEED_TYPE_PEER  | 0x0001;
+const uint32_t RS_FEED_ITEM_PEER_DISCONNECT	 = RS_FEED_TYPE_PEER  | 0x0002;
+const uint32_t RS_FEED_ITEM_PEER_NEW		 = RS_FEED_TYPE_PEER  | 0x0003;
+const uint32_t RS_FEED_ITEM_PEER_HELLO		 = RS_FEED_TYPE_PEER  | 0x0004;
+
+const uint32_t RS_FEED_ITEM_CHAN_NEW		 = RS_FEED_TYPE_CHAN  | 0x0001;
+const uint32_t RS_FEED_ITEM_CHAN_UPDATE		 = RS_FEED_TYPE_CHAN  | 0x0002;
+const uint32_t RS_FEED_ITEM_CHAN_MSG		 = RS_FEED_TYPE_CHAN  | 0x0003;
+
+const uint32_t RS_FEED_ITEM_FORUM_NEW		 = RS_FEED_TYPE_FORUM | 0x0001;
+const uint32_t RS_FEED_ITEM_FORUM_UPDATE	 = RS_FEED_TYPE_FORUM | 0x0002;
+const uint32_t RS_FEED_ITEM_FORUM_MSG		 = RS_FEED_TYPE_FORUM | 0x0003;
+
+const uint32_t RS_FEED_ITEM_BLOG_MSG		 = RS_FEED_TYPE_BLOG  | 0x0001;
+const uint32_t RS_FEED_ITEM_CHAT_NEW		 = RS_FEED_TYPE_CHAT  | 0x0001;
+const uint32_t RS_FEED_ITEM_MESSAGE		 = RS_FEED_TYPE_MSG   | 0x0001;
+const uint32_t RS_FEED_ITEM_FILES_NEW		 = RS_FEED_TYPE_FILES | 0x0001;
+
+
+class RsFeedItem
+{
+public:
+	RsFeedItem(uint32_t type, std::string id1, std::string id2, std::string id3)
+	:mType(type), mId1(id1), mId2(id2), mId3(id3)
+	{
+		return;
+	}
+
+	RsFeedItem() :mType(0) { return; }
+
+	uint32_t mType;
+	std::string mId1, mId2, mId3;
+};
+
+
 class RsNotify 
 {
 	public:
@@ -64,6 +108,9 @@ virtual bool GetPopupMessageList(std::map<uint32_t, std::string> &list)			= 0;
 
 virtual bool SetSysMessageMode(uint32_t sysid, uint32_t mode)				= 0;
 virtual bool SetPopupMessageMode(uint32_t ptype, uint32_t mode)				= 0;
+
+	/* Feed Output */
+virtual bool GetFeedItem(RsFeedItem &item)						= 0;
 
 };
 

@@ -18,46 +18,40 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
+#include <QtGui>
 
-#ifndef _BLOG_DIALOG_H
-#define _BLOG_DIALOG_H
-
-#include "mainpage.h"
-#include "ui_BlogDialog.h"
-
+#include "GeneralMsgDialog.h"
 #include "gui/feeds/FeedHolder.h"
-class BlogMsgItem;
 
+#include <iostream>
 
-class BlogDialog : public MainPage, public FeedHolder, private Ui::BlogDialog
+/** Constructor */
+GeneralMsgDialog::GeneralMsgDialog(QWidget *parent)
+: QDialog (parent)
 {
-  Q_OBJECT
-
-public:
-  	/** Default Constructor */
-  	BlogDialog(QWidget *parent = 0);
-
-        /* FeedHolder Functions (for FeedItem functionality) */
-	virtual void deleteFeedItem(QWidget *item, uint32_t type);
-	virtual void openChat(std::string peerId);
-	virtual void openMsg(uint32_t type, std::string grpId, std::string inReplyTo);
-
-	void updateBlogsStatic(); 
-
-private slots:
-
-	void updateBlogs(); 
-	void postBlog(); 
-
-private:
-	void addDummyData();
-
-	QLayout *mLayout;
-
-	std::map<std::string, BlogMsgItem *> mBlogMsgItems;
-};
+	/* Invoke the Qt Designer generated object setup routine */
+	setupUi(this);
+}
 
 
 
-#endif
+void GeneralMsgDialog::cancelMsg()
+{
+	return;
+}
+
+void GeneralMsgDialog::sendMsg()
+{
+	return;
+}
+
+void GeneralMsgDialog::addDestination(uint32_t type, std::string grpId, std::string inReplyTo)
+{
+	std::cerr << "GeneralMsgDialog::addDestination()";
+	std::cerr << std::endl;
+
+	return;
+}
+
+
 

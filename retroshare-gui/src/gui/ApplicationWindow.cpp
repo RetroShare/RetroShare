@@ -48,6 +48,8 @@
 #include "channels/channelsDialog.h"
 #include "BlogDialog.h"
 #include "CalDialog.h"
+#include "NewsFeed.h"
+#include "ChannelFeed.h"
 
 /* for smplayer */
 #include "smplayer.h"
@@ -74,6 +76,7 @@
 #define IMAGE_CLOSE             ":/images/close_normal.png"
 #define IMAGE_SMPLAYER          ":/images/smplayer_icon32.png"
 #define IMAGE_CALENDAR          ":/images/calendar.png"
+#define IMAGE_NEWSFEED           ":/images/konsole.png"
 
 
 /* Keys for UI Preferences */
@@ -101,29 +104,38 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
  //   ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
  //                      createPageAction(QIcon(IMAGE_TRANSFERS), tr("Links Cloud"), grp));
 
-    ChannelsDialog *channelsDialog = NULL;
-    ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
-                           createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
-
-    GamesDialog *gamesDialog = NULL;
-    ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_GAMES), tr("Games Launcher"), grp));
-
+ //   ChannelsDialog *channelsDialog = NULL;
+ //   ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
+ //                        createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
+ 
+    NewsFeed *newsFeed = NULL;
+    ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_NEWSFEED), tr("News Feed"), grp));
+                     
     ForumsDialog *forumsDialog = NULL;
     ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_NETWORK), tr("Forums"), grp));
                      
-    PhotoDialog *photoDialog = NULL;
-    ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), grp));
+    ChannelFeed *channelFeed = NULL;
+    ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_CHANNELS), tr("Channel Feed"), grp));
                      
     BlogDialog *blogDialog = NULL;
     ui.stackPages->add(blogDialog = new BlogDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_NETWORK), tr("Blog Feed"), grp));
 
+    GamesDialog *gamesDialog = NULL;
+    ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_GAMES), tr("Games Launcher"), grp));
+
+    PhotoDialog *photoDialog = NULL;
+    ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), grp));
+                     
     CalDialog *calDialog = NULL;
     ui.stackPages->add(calDialog = new CalDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_CALENDAR), tr("Shared Calendars"), grp));
+                     
                      
                      
                      

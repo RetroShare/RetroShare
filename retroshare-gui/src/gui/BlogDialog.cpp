@@ -25,162 +25,57 @@
 #include "rsiface/rsQblog.h"
 #include "rsiface/rspeers.h" //to retrieve peer/usrId info
 
-#include "profile/ProfileView.h"
+#include "gui/feeds/BlogMsgItem.h"
+
 
 /** Constructor */
 BlogDialog::BlogDialog(QWidget *parent)
 : MainPage (parent)
 {
   /* Invoke the Qt Designer generated object setup routine */
-  setupUi(this);
-  
-  connect(sendBtn, SIGNAL(clicked()), this, SLOT(sendBlog()));
-  //connect(statusBtn, SIGNAL(clicked()), this, SLOT(setStatus()));
-  connect(boldBtn, SIGNAL(clicked()), this, SLOT(setFont()));
-  connect(underlineBtn, SIGNAL(clicked()), this, SLOT(setFont()));
-  connect(italicBtn, SIGNAL(clicked()), this, SLOT(setFont()));
-  connect(refreshBtn, SIGNAL(clicked()), this, SLOT(update()));
- 
-  connect(userList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( peerCustomPopupMenu( QPoint ) ) );
-    
-  /* Current Font */
-  mCurrentFont = QFont("Comic Sans MS", 8);
+	setupUi(this);
 
-  /* Font for username and timestamp */
-  mUsrFont = QFont("Comic Sans MS", 8);
-  
-}
-
-
-void BlogDialog::peerCustomPopupMenu( QPoint point )
-{
-	/* 
-	 */
+  	connect(postButton, SIGNAL(clicked()), this, SLOT(postBlog()));
 	
-	QMenu contextMnu( this );
-	QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
+	/* mLayout -> to add widgets to */
+	mLayout = new QVBoxLayout;
 	
-	QAction *profileAct = new QAction( tr( "Show Profile" ), this );
-	QAction *onlyoneAct = new QAction( tr( "Show Only This Blog" ), this );
-	QAction *allAct = new QAction( tr( "Show All Blogs" ), this );
+	QWidget *middleWidget = new QWidget();
+	middleWidget->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
+	middleWidget->setLayout(mLayout);
 	
-	connect( profileAct , SIGNAL( triggered() ), this, SLOT( showuserprofile() ) );
-	connect( onlyoneAct , SIGNAL( triggered() ), this, SLOT( showoneblog() ) );
-	connect( allAct , SIGNAL( triggered() ), this, SLOT( showallblogs() ) );
+	QScrollArea *scrollArea = new QScrollArea;
+	scrollArea->setBackgroundRole(QPalette::Dark);
+	scrollArea->setWidget(middleWidget);
+	scrollArea->setWidgetResizable(true);
+	scrollArea->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
 	
-	contextMnu.clear();
-	contextMnu.addAction( profileAct );
-	contextMnu.addAction( onlyoneAct );
-	contextMnu.addAction( allAct );
-	contextMnu.exec( mevent->globalPos() );
-
-}
-
-void BlogDialog::showuserprofile()
-{
-	showprofile("");
-}
-
-void BlogDialog::showprofile(std::string id)
-{
-static ProfileView *oneProfile = new ProfileView(NULL);
-
-	oneProfile -> setPeerId(id);
-	oneProfile -> show();
-}
-
-void BlogDialog::showoneblog()
-{
-	return;
-}
-
-
-void BlogDialog::showallblogs()
-{
-	return;
-}
-
-
-void BlogDialog::sendBlog()
-{
-	QString blogMsg = lineEdit->toPlainText();
-
-	 if(blogMsg == "")
-	 {
-	 	QMessageBox::information(this, tr("No message entered"),
-        tr("Please enter a message."),QMessageBox::Ok,
-        QMessageBox::Ok);
-	 }
-	 else
-	 {
-	 	/* note: timing will be handled by core */
-		std::string blog = blogMsg.toStdString();
-		rsQblog->sendBlog(blog); 
-	 }	
-	  
-	lineEdit->clear();//Clear lineEdit
-	lineEdit->setFocus(); //setFocus on lineEdit
-}
-
-void BlogDialog::setFont()
-{
-	mCurrentFont.setUnderline(underlineBtn->isChecked());
-	mCurrentFont.setItalic(italicBtn->isChecked());
-	mCurrentFont.setBold(boldBtn->isChecked());
-	lineEdit->setFont(mCurrentFont);
-	lineEdit->setFocus();
-}
-
-/*
- * this will also send to core, to blog "updated"
- */
-void BlogDialog::setStatus()
-{
-	QString statusMsg = lineEdit->toPlainText();
+	QVBoxLayout *layout2 = new QVBoxLayout;
+	layout2->addWidget(scrollArea);
 	
-	std::list<std::string> UsrList;
+	frame->setLayout(layout2);
 	
-	/* test to see if load dummy data worked ! */
+	addDummyData();
 
-	 	if(statusMsg == "")
-	 	{
-	 		QMessageBox::information(this, tr("No message"),
-            tr("Please enter a message."),QMessageBox::Ok,
-            QMessageBox::Ok);
-	 	}
-	 	else
-	 	{
-	 		rsQblog->setStatus("whatsup");
-	 	}
-	 
-	/* Clear lineEdit */
-	lineEdit->clear();
-	
-	/* setFocus on lineEdit **/
-	lineEdit->setFocus();
-		
+	updateBlogsStatic();
+
+	QTimer *timer = new QTimer(this);
+	timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateBlogs()));
+	timer->start(15631);
+
 }
 
-void BlogDialog::addUser(const std::string &usr)
-{
-	QTreeWidgetItem *NewUser = new QTreeWidgetItem(userList);
-	NewUser->setText(0, tr(usr.c_str()));	
-	//TODO can add status as subtree to each user (use rsQblog.getStatus(usr) )	
-}
-
-void BlogDialog::clear(void)
-{
-	blogText->clear();
-}
-	
-void BlogDialog::update(void)
-{
-	updateUserList();
-	updateBlogs();
-}
 
 void BlogDialog::updateBlogs(void)
 {
+
+}
+
+
+void BlogDialog::updateBlogsStatic(void)
+{
+
+#if 0
 	rsQblog->getFilterSwitch();
 	
 	std::map<std::string, std::string> UsrStatus;
@@ -249,55 +144,53 @@ void BlogDialog::updateBlogs(void)
 		}	
 			
 	}	
+
+#endif
+
 }
 	
 	
-void BlogDialog::updateUserList(void)
+void BlogDialog::addDummyData()
 {
-	/* retrieve usr names and populate usr list bar */
-	
-	std::list<std::string> usrList; 
-	/* get existing list ... */
-	std::list<std::string> filterList;
+	BlogMsgItem *bm1 = new BlogMsgItem(this, 0, "peerId", "msgId", true);
+	BlogMsgItem *bm2 = new BlogMsgItem(this, 0, "peerId", "msgId", true);
+	BlogMsgItem *bm3 = new BlogMsgItem(this, 0, "peerId", "msgId", true);
+	BlogMsgItem *bm4 = new BlogMsgItem(this, 0, "peerId", "msgId", true);
+	BlogMsgItem *bm5 = new BlogMsgItem(this, 0, "peerId", "msgId", true);
 
-	std::list<std::string>::iterator it;
-	if ((!rsPeers) || (!rsQblog))
-	{
-		/* not ready yet! */
-		return;
-	}
-	
-	rsPeers->getFriendList(usrList);
-	usrList.push_back(rsPeers->getOwnId()); // add your id
-
-	//rsQblog->getFilterList(filterList);
-	
-	
-	userList->clear();
-
-	/* print usr name and their blogs to screen */
-	for(it = usrList.begin(); it !=usrList.end(); it++)
-	{	
-		QTreeWidgetItem *item = new QTreeWidgetItem(userList);
-
-		bool active = false;
-		if (filterList.end() != std::find(filterList.begin(), filterList.end(), *it))
-			active = true;
-
-		item->setText(0, QString::fromStdString(rsPeers->getPeerName(*it))); // add usr to Qwidget tree
-		item->setText(1, QString::fromStdString(*it)); // add usr id.
-
-                if (active)
-		{
-			item -> setCheckState(0, Qt::Checked);
-		}
-		else
-		{
-			item -> setCheckState(0, Qt::Unchecked);
-		}
-	}
+	mLayout->addWidget(bm1);
+	mLayout->addWidget(bm2);
+	mLayout->addWidget(bm3);
+	mLayout->addWidget(bm4);
+	mLayout->addWidget(bm5);
 }
-	
-	
+
+
+
+/* FeedHolder Functions (for FeedItem functionality) */
+void BlogDialog::deleteFeedItem(QWidget *item, uint32_t type)
+{
+        std::cerr << "BlogDialog::deleteFeedItem()";
+        std::cerr << std::endl;
+}
+
+
+void BlogDialog::openChat(std::string peerId)
+{
+        std::cerr << "BlogDialog::openChat()";
+        std::cerr << std::endl;
+}
+
+void BlogDialog::postBlog()
+{
+	openMsg(FEEDHOLDER_MSG_BLOG, "", "");
+}
+
+void BlogDialog::openMsg(uint32_t type, std::string grpId, std::string inReplyTo)
+{
+        std::cerr << "BlogDialog::openMsg()";
+        std::cerr << std::endl;
+}
+
 
 

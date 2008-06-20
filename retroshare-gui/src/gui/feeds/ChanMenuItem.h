@@ -19,42 +19,36 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef _BLOG_DIALOG_H
-#define _BLOG_DIALOG_H
+#ifndef _CHAN_MENU_ITEM_DIALOG_H
+#define _CHAN_MENU_ITEM_DIALOG_H
 
-#include "mainpage.h"
-#include "ui_BlogDialog.h"
+#include "ui_ChanMenuItem.h"
 
-#include "gui/feeds/FeedHolder.h"
-class BlogMsgItem;
+#include <string>
 
+class SubFileItem;
 
-class BlogDialog : public MainPage, public FeedHolder, private Ui::BlogDialog
+class ChanMenuItem : public QWidget, private Ui::ChanMenuItem
 {
   Q_OBJECT
 
 public:
-  	/** Default Constructor */
-  	BlogDialog(QWidget *parent = 0);
+  /** Default Constructor */
+  ChanMenuItem(std::string chanId);
 
-        /* FeedHolder Functions (for FeedItem functionality) */
-	virtual void deleteFeedItem(QWidget *item, uint32_t type);
-	virtual void openChat(std::string peerId);
-	virtual void openMsg(uint32_t type, std::string grpId, std::string inReplyTo);
+  /** Default Destructor */
 
-	void updateBlogsStatic(); 
+	void updateItemStatic();
+  	void small();
 
 private slots:
+	/* default stuff */
+	void toggle();
 
-	void updateBlogs(); 
-	void postBlog(); 
+	void updateItem();
 
 private:
-	void addDummyData();
-
-	QLayout *mLayout;
-
-	std::map<std::string, BlogMsgItem *> mBlogMsgItems;
+	std::string mChanId;
 };
 
 

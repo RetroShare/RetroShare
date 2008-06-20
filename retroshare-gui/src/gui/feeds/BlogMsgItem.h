@@ -19,42 +19,49 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef _BLOG_DIALOG_H
-#define _BLOG_DIALOG_H
+#ifndef _BLOG_MSG_ITEM_DIALOG_H
+#define _BLOG_MSG_ITEM_DIALOG_H
 
-#include "mainpage.h"
-#include "ui_BlogDialog.h"
+#include "ui_BlogMsgItem.h"
 
-#include "gui/feeds/FeedHolder.h"
-class BlogMsgItem;
+#include <string>
 
+class FeedHolder;
+class SubFileItem;
 
-class BlogDialog : public MainPage, public FeedHolder, private Ui::BlogDialog
+class BlogMsgItem : public QWidget, private Ui::BlogMsgItem
 {
   Q_OBJECT
 
 public:
-  	/** Default Constructor */
-  	BlogDialog(QWidget *parent = 0);
+  /** Default Constructor */
+  BlogMsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId, std::string msgId, bool isHome);
 
-        /* FeedHolder Functions (for FeedItem functionality) */
-	virtual void deleteFeedItem(QWidget *item, uint32_t type);
-	virtual void openChat(std::string peerId);
-	virtual void openMsg(uint32_t type, std::string grpId, std::string inReplyTo);
+  /** Default Destructor */
 
-	void updateBlogsStatic(); 
+	void updateItemStatic();
+  	void small();
 
 private slots:
+	/* default stuff */
+  	void gotoHome();
+  	void removeItem();
+	void toggle();
 
-	void updateBlogs(); 
-	void postBlog(); 
+	void playMedia();
+
+	void updateItem();
 
 private:
-	void addDummyData();
+	FeedHolder *mParent;
+	uint32_t mFeedId;
 
-	QLayout *mLayout;
+	std::string mPeerId;
+	std::string mMsgId;
 
-	std::map<std::string, BlogMsgItem *> mBlogMsgItems;
+	bool mIsHome;
+
+	std::list<SubFileItem *> mFileItems;
 };
 
 

@@ -19,42 +19,54 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef _BLOG_DIALOG_H
-#define _BLOG_DIALOG_H
+#ifndef _PEER_ITEM_DIALOG_H
+#define _PEER_ITEM_DIALOG_H
 
-#include "mainpage.h"
-#include "ui_BlogDialog.h"
+#include "ui_PeerItem.h"
 
-#include "gui/feeds/FeedHolder.h"
-class BlogMsgItem;
+#include <string>
+
+const uint32_t PEER_TYPE_STD	 = 0x0001;
+const uint32_t PEER_TYPE_CONNECT = 0x0002;
+const uint32_t PEER_TYPE_HELLO   = 0x0003; /* failed Connect Attempt */
+const uint32_t PEER_TYPE_NEW_FOF = 0x0004; /* new Friend of Friend */
+
+class FeedHolder;
 
 
-class BlogDialog : public MainPage, public FeedHolder, private Ui::BlogDialog
+class PeerItem : public QWidget, private Ui::PeerItem
 {
   Q_OBJECT
 
 public:
-  	/** Default Constructor */
-  	BlogDialog(QWidget *parent = 0);
+  /** Default Constructor */
+  PeerItem(FeedHolder *parent, uint32_t feedId, std::string peerId, uint32_t type, bool isHome);
 
-        /* FeedHolder Functions (for FeedItem functionality) */
-	virtual void deleteFeedItem(QWidget *item, uint32_t type);
-	virtual void openChat(std::string peerId);
-	virtual void openMsg(uint32_t type, std::string grpId, std::string inReplyTo);
+  /** Default Destructor */
 
-	void updateBlogsStatic(); 
+	void updateItemStatic();
+  	void small();
 
 private slots:
+	/* default stuff */
+  	void gotoHome();
+  	void removeItem();
+	void toggle();
 
-	void updateBlogs(); 
-	void postBlog(); 
+	void addFriend();
+	void removeFriend();
+	void sendMsg();
+	void openChat();
+
+	void updateItem();
 
 private:
-	void addDummyData();
+	FeedHolder *mParent;
+	uint32_t mFeedId;
 
-	QLayout *mLayout;
-
-	std::map<std::string, BlogMsgItem *> mBlogMsgItems;
+	std::string mPeerId;
+	uint32_t mType;
+	bool mIsHome;
 };
 
 

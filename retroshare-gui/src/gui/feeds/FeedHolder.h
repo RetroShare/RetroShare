@@ -19,45 +19,24 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef _BLOG_DIALOG_H
-#define _BLOG_DIALOG_H
+#ifndef _FEED_HOLDER_H
+#define _FEED_HOLDER_H
 
-#include "mainpage.h"
-#include "ui_BlogDialog.h"
+#include <string>
 
-#include "gui/feeds/FeedHolder.h"
-class BlogMsgItem;
+const uint32_t FEEDHOLDER_MSG_MESSAGE	= 0x0001;
+const uint32_t FEEDHOLDER_MSG_FORUM	= 0x0002;
+const uint32_t FEEDHOLDER_MSG_CHANNEL	= 0x0003;
+const uint32_t FEEDHOLDER_MSG_BLOG	= 0x0004;
 
-
-class BlogDialog : public MainPage, public FeedHolder, private Ui::BlogDialog
+class FeedHolder
 {
-  Q_OBJECT
+	public:
 
-public:
-  	/** Default Constructor */
-  	BlogDialog(QWidget *parent = 0);
-
-        /* FeedHolder Functions (for FeedItem functionality) */
-	virtual void deleteFeedItem(QWidget *item, uint32_t type);
-	virtual void openChat(std::string peerId);
-	virtual void openMsg(uint32_t type, std::string grpId, std::string inReplyTo);
-
-	void updateBlogsStatic(); 
-
-private slots:
-
-	void updateBlogs(); 
-	void postBlog(); 
-
-private:
-	void addDummyData();
-
-	QLayout *mLayout;
-
-	std::map<std::string, BlogMsgItem *> mBlogMsgItems;
+virtual void deleteFeedItem(QWidget *item, uint32_t type) = 0;
+virtual	void openChat(std::string peerId) = 0;
+virtual	void openMsg(uint32_t type, std::string grpId, std::string inReplyTo) = 0;
 };
-
-
 
 #endif
 

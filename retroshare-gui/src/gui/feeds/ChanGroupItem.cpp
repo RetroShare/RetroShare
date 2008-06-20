@@ -18,46 +18,53 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
+#include <QtGui>
 
-#ifndef _BLOG_DIALOG_H
-#define _BLOG_DIALOG_H
+#include "ChanGroupItem.h"
+#include "SubFileItem.h"
 
-#include "mainpage.h"
-#include "ui_BlogDialog.h"
+#include <iostream>
 
-#include "gui/feeds/FeedHolder.h"
-class BlogMsgItem;
+#define DEBUG_ITEM 1
 
-
-class BlogDialog : public MainPage, public FeedHolder, private Ui::BlogDialog
+/** Constructor */
+ChanGroupItem::ChanGroupItem(std::string groupName)
+:QWidget(NULL), mGroupName(groupName)
 {
-  Q_OBJECT
+  /* Invoke the Qt Designer generated object setup routine */
+  setupUi(this);
 
-public:
-  	/** Default Constructor */
-  	BlogDialog(QWidget *parent = 0);
+  /* general ones */
+  connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
 
-        /* FeedHolder Functions (for FeedItem functionality) */
-	virtual void deleteFeedItem(QWidget *item, uint32_t type);
-	virtual void openChat(std::string peerId);
-	virtual void openMsg(uint32_t type, std::string grpId, std::string inReplyTo);
-
-	void updateBlogsStatic(); 
-
-private slots:
-
-	void updateBlogs(); 
-	void postBlog(); 
-
-private:
-	void addDummyData();
-
-	QLayout *mLayout;
-
-	std::map<std::string, BlogMsgItem *> mBlogMsgItems;
-};
+  small();
+  updateItemStatic();
+  updateItem();
+}
 
 
-
+void ChanGroupItem::updateItemStatic()
+{
+	/* fill in */
+#ifdef DEBUG_ITEM
+	std::cerr << "ChanGroupItem::updateItemStatic()";
+	std::cerr << std::endl;
 #endif
+
+	titleLabel->setText(QString::fromStdString(mGroupName));
+}
+
+
+void ChanGroupItem::updateItem()
+{
+}
+
+
+void ChanGroupItem::small()
+{
+}
+
+void ChanGroupItem::toggle()
+{
+}
 

@@ -19,42 +19,41 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef _BLOG_DIALOG_H
-#define _BLOG_DIALOG_H
+#ifndef _SUB_FILE_ITEM_DIALOG_H
+#define _SUB_FILE_ITEM_DIALOG_H
 
-#include "mainpage.h"
-#include "ui_BlogDialog.h"
+#include "ui_SubFileItem.h"
 
-#include "gui/feeds/FeedHolder.h"
-class BlogMsgItem;
+#include <string>
 
-
-class BlogDialog : public MainPage, public FeedHolder, private Ui::BlogDialog
+class SubFileItem : public QWidget, private Ui::SubFileItem
 {
   Q_OBJECT
 
 public:
-  	/** Default Constructor */
-  	BlogDialog(QWidget *parent = 0);
+  /** Default Constructor */
+  SubFileItem(std::string hash);
 
-        /* FeedHolder Functions (for FeedItem functionality) */
-	virtual void deleteFeedItem(QWidget *item, uint32_t type);
-	virtual void openChat(std::string peerId);
-	virtual void openMsg(uint32_t type, std::string grpId, std::string inReplyTo);
+  /** Default Destructor */
 
-	void updateBlogsStatic(); 
+  void small();
+  bool done();
+
+void updateItemStatic();
 
 private slots:
+	/* default stuff */
+  	void cancel();
+	void play();
+	void toggle();
 
-	void updateBlogs(); 
-	void postBlog(); 
+	void updateItem();
 
 private:
-	void addDummyData();
+	std::string mFileHash;
 
-	QLayout *mLayout;
-
-	std::map<std::string, BlogMsgItem *> mBlogMsgItems;
+	/* for display purposes */
+	float amountDone;
 };
 
 
