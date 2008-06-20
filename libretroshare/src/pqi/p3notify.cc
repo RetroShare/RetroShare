@@ -132,3 +132,27 @@ bool p3Notify::AddSysMessage(uint32_t sysid, uint32_t type,
 	return true;
 }
 
+
+bool p3Notify::GetFeedItem(RsFeedItem &item)
+{
+	RsStackMutex stack(noteMtx); /************* LOCK MUTEX ************/
+	if (pendingNewsFeed.size() > 0)
+	{
+		item = pendingNewsFeed.front();
+		pendingNewsFeed.pop_front();
+
+		return true;
+	}
+
+	return false;
+}
+
+
+bool p3Notify::AddFeedItem(uint32_t type, std::string id1, std::string id2, std::string id3)
+{
+	RsStackMutex stack(noteMtx); /************* LOCK MUTEX ************/
+	pendingNewsFeed.push_back(RsFeedItem(type, id1, id2, id3));
+
+	return true;
+}
+

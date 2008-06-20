@@ -94,6 +94,28 @@ bool p3Forums::forumsChanged(std::list<std::string> &forumIds)
 	return groupsChanged(forumIds);
 }
 
+bool p3Forums::getForumInfo(std::string fId, ForumInfo &fi)
+{
+	RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
+
+	/* extract details */
+	GroupInfo *gi = locked_getGroupInfo(fId);
+
+	if (!gi)
+		return false;
+
+	fi.forumId = gi->grpId;
+	fi.forumName = gi->grpName;
+	fi.forumDesc = gi->grpDesc;
+
+	fi.forumFlags = gi->flags;
+
+	fi.pop = gi->sources.size();
+	fi.lastPost = gi->lastPost;
+
+	return true;
+}
+
 
 bool p3Forums::getForumList(std::list<ForumInfo> &forumList)
 {
@@ -102,23 +124,13 @@ bool p3Forums::getForumList(std::list<ForumInfo> &forumList)
 
 	getAllGroupList(grpIds);
 
-	RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
 	for(it = grpIds.begin(); it != grpIds.end(); it++)
 	{
-		/* extract details */
-		GroupInfo *gi = locked_getGroupInfo(*it);
-
 		ForumInfo fi;
-		fi.forumId = gi->grpId;
-		fi.forumName = gi->grpName;
-		fi.forumDesc = gi->grpDesc;
-
-		fi.forumFlags = gi->flags;
-
-		fi.pop = gi->sources.size();
-		fi.lastPost = gi->lastPost;
-
-		forumList.push_back(fi);
+		if (getForumInfo(*it, fi))
+		{
+			forumList.push_back(fi);
+		}
 	}
 	return true;
 }
@@ -339,6 +351,42 @@ bool p3Forums::forumSubscribe(std::string fId, bool subscribe)
 {
 	return subscribeToGroup(fId, subscribe);
 }
+
+
+/***************************************************************************************/
+/****************** Event Feedback (Overloaded form p3distrib) *************************/
+/***************************************************************************************/
+
+#include "pqi/pqinotify.h"
+
+bool p3Forums::locked_eventUpdateGroup(GroupInfo  *info, bool isNew)
+{
+	std::string grpId = info->grpId;
+	std::string msgId;
+	std::string nullId;
+
+	if (isNew)
+	{
+		getPqiNotify()->AddFeedItem(RS_FEED_ITEM_FORUM_NEW, grpId, msgId, nullId);
+	}
+	else
+	{
+		getPqiNotify()->AddFeedItem(RS_FEED_ITEM_FORUM_UPDATE, grpId, msgId, nullId);
+	}
+
+	return true;
+}
+
+bool p3Forums::locked_eventNewMsg(RsDistribMsg *msg)
+{
+	std::string grpId = msg->grpId;
+	std::string msgId = msg->msgId;
+	std::string nullId;
+
+	getPqiNotify()->AddFeedItem(RS_FEED_ITEM_FORUM_MSG, grpId, msgId, nullId);
+	return true;
+}
+
 
 
 /****************************************/

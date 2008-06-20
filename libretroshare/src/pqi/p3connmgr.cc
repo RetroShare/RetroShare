@@ -1056,6 +1056,19 @@ void p3ConnectMgr::tickMonitors()
 					{
 						notify->AddPopupMessage(RS_POPUP_CONNECT, 
 							peer.id, "Peer Online: ");
+
+
+						notify->AddFeedItem(RS_FEED_ITEM_PEER_CONNECT, peer.id, "", "");
+					}
+				}
+				if (peer.actions & RS_PEER_DISCONNECTED)
+				{
+					pqiNotify *notify = getPqiNotify();
+					if (notify)
+					{
+						notify->AddFeedItem(RS_FEED_ITEM_PEER_DISCONNECT, peer.id, "", "");
+
+
 					}
 				}
 			}

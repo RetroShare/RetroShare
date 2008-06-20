@@ -27,6 +27,9 @@
 
 #include "pqinetwork.h"
 
+/******************** notify of new Cert **************************/
+#include "pqinotify.h"
+
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/pem.h>
@@ -1201,6 +1204,14 @@ bool AuthXPGP::ProcessXPGP(XPGP *xpgp, std::string &id)
 	/* resave if new certificate */
 	mToSaveCerts = true;
 	xpgpMtx.unlock(); /**** UNLOCK ****/
+
+	/******************** notify of new Cert **************************/
+	pqiNotify *pqinotify = getPqiNotify();
+	if (pqinotify)
+	{
+		pqinotify->AddFeedItem(RS_FEED_ITEM_PEER_NEW, xpgpid, "","");
+	}
+	/******************** notify of new Cert **************************/
 
 	id = xpgpid;
 

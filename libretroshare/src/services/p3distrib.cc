@@ -354,6 +354,7 @@ void	p3GroupDistrib::loadGroup(RsDistribGrp *newGrp)
 
 	/* look for duplicate */
 	bool checked = false;
+	bool isNew = false;
 	std::map<std::string, GroupInfo>::iterator it;
 	it = mGroups.find(gid);
 
@@ -383,6 +384,8 @@ void	p3GroupDistrib::loadGroup(RsDistribGrp *newGrp)
 		mGroups[gid] = gi;
 
 		it = mGroups.find(gid);
+
+		isNew = true;
 	}
 
 	/* at this point - always in the map */
@@ -428,6 +431,9 @@ void	p3GroupDistrib::loadGroup(RsDistribGrp *newGrp)
 	}
 	else
 	{
+		/* Callback for any derived classes */
+		locked_eventUpdateGroup(&(it->second), isNew);
+
 		locked_notifyGroupChanged(it->second);
 	}
 
@@ -607,6 +613,9 @@ void	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, std::string src, bool l
 	std::cerr << "p3GroupDistrib::loadMsg() Msg Loaded Successfully" << std::endl;
 	std::cerr << std::endl;
 #endif
+
+	/* Callback for any derived classes to play with */
+	locked_eventNewMsg(msg);
 
 	/* else if group = subscribed | listener -> publish */
 	/* if it has come from us... then it has been published already */
@@ -2463,6 +2472,14 @@ bool	p3GroupDistrib::locked_checkDistribMsg(
 	{
 #ifdef DISTRIB_DEBUG
 		std::cerr << "p3GroupDistrib::locked_checkDistribMsg() TS out of range";
+		std::cerr << std::endl;
+		std::cerr << "p3GroupDistrib::locked_checkDistribMsg() msg->timestamp: " << msg->timestamp;
+		std::cerr << std::endl;
+		std::cerr << "p3GroupDistrib::locked_checkDistribMsg() = " << now - msg->timestamp << " secs ago";
+		std::cerr << std::endl;
+		std::cerr << "p3GroupDistrib::locked_checkDistribMsg() max TS: " << max;
+		std::cerr << std::endl;
+		std::cerr << "p3GroupDistrib::locked_checkDistribMsg() min TS: " << min;
 		std::cerr << std::endl;
 #endif
 		/* if outside range -> remove */

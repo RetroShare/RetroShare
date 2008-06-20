@@ -85,6 +85,7 @@ virtual bool forumsChanged(std::list<std::string> &forumIds);
 
 virtual std::string createForum(std::wstring forumName, std::wstring forumDesc, uint32_t forumFlags);
 
+virtual bool getForumInfo(std::string fId, ForumInfo &fi);
 virtual bool getForumList(std::list<ForumInfo> &forumList);
 virtual bool getForumThreadList(std::string fId, std::list<ThreadInfoSummary> &msgs);
 virtual bool getForumThreadMsgList(std::string fId, std::string tId, std::list<ThreadInfoSummary> &msgs);
@@ -93,6 +94,14 @@ virtual bool getForumMessage(std::string fId, std::string mId, ForumMsgInfo &msg
 virtual	bool ForumMessageSend(ForumMsgInfo &info);
 
 virtual bool forumSubscribe(std::string fId, bool subscribe);
+
+/***************************************************************************************/
+/****************** Event Feedback (Overloaded form p3distrib) *************************/
+/***************************************************************************************/
+
+virtual bool locked_eventUpdateGroup(GroupInfo  *, bool isNew);
+virtual bool locked_eventNewMsg(RsDistribMsg *);
+
 
 /****************************************/
 /********* Overloaded Functions *********/
