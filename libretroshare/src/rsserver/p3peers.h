@@ -75,7 +75,6 @@ virtual	std::string SaveCertificateToString(std::string id);
 virtual	bool AuthCertificate(std::string id, std::string code);
 virtual	bool SignCertificate(std::string id);
 virtual	bool TrustCertificate(std::string id, bool trust);
-virtual bool certToFile(void);
 
 	private:
 

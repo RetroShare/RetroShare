@@ -153,12 +153,6 @@ virtual	bool AuthCertificate(std::string id, std::string code) 	= 0;
 virtual	bool SignCertificate(std::string id)                   	= 0;
 virtual	bool TrustCertificate(std::string id, bool trust) 	= 0;
 
-/**
- * saves the usrs cert to file so it can easily be attached in an email
- * @return successful or not
- */
-virtual bool certToFile(void) = 0;
-
 };
 
 #endif
