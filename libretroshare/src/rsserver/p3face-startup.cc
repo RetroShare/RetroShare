@@ -640,7 +640,6 @@ int RsServer::StartupRetroShare(RsInit *config)
 	mConfigMgr->addConfiguration("cache.cfg", mCacheStrapper);
 	mConfigMgr->addConfiguration("ranklink.cfg", mRanking);
 #ifndef RS_RELEASE
-	mConfigMgr->addConfiguration("qblog.cfg", mQblog);
 	mConfigMgr->addConfiguration("forums.cfg", mForums);
 #endif
 
