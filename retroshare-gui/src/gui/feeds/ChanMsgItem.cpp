@@ -25,6 +25,8 @@
 #include "FeedHolder.h"
 #include "SubFileItem.h"
 
+#include "rsiface/rschannels.h"
+
 #include <iostream>
 
 #define DEBUG_ITEM 1
@@ -60,18 +62,39 @@ void ChanMsgItem::updateItemStatic()
 	std::cerr << std::endl;
 #endif
 
-	msgLabel->setText("FFFFFFFFFFF AAAAAAAAAAAAAAA \n HHHHHHHHHHH HHHHHHHHHHHHHHHHH");
-	titleLabel->setText("Channel Feed: Best Channel Ever");
-	subjectLabel->setText("Brand new exciting Ever");
+	ChannelMsgInfo cmi;
 
-	/* add Files */
-	int total = (int) (10.0 * (rand() / (RAND_MAX + 1.0)));
-	int i;
+	if (!rsChannels) 
+		return;
 
-	for(i = 0; i < total; i++)
+	if (!rsChannels->getChannelMessage(mChanId, mMsgId, cmi))
+		return;
+
+	QString title;
+
+	if (!mIsHome)
+	{
+		ChannelInfo ci;
+		rsChannels->getChannelInfo(mChanId, ci);
+		title = "Channel Feed: ";
+		title += QString::fromStdWString(ci.channelName);
+		titleLabel->setText(title);
+		subjectLabel->setText(QString::fromStdWString(cmi.subject));
+	}
+	else
+	{
+		/* subject */
+		titleLabel->setText(QString::fromStdWString(cmi.subject));
+		subjectLabel->setText(QString::fromStdWString(cmi.subject));
+	}
+		
+	msgLabel->setText(QString::fromStdWString(cmi.msg));
+
+	std::list<FileInfo>::iterator it;
+	for(it = cmi.files.begin(); it != cmi.files.end(); it++)
 	{
 		/* add file */
-		SubFileItem *fi = new SubFileItem("dummyHash");
+		SubFileItem *fi = new SubFileItem(it->hash, it->fname, it->size);
 		mFileItems.push_back(fi);
 
 		QLayout *layout = expandFrame->layout();
@@ -85,6 +108,7 @@ void ChanMsgItem::updateItemStatic()
 		/* disable buttons */
 		clearButton->setEnabled(false);
 		gotoButton->setEnabled(false);
+		unsubscribeButton->setEnabled(false);
 	}
 }
 

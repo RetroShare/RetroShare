@@ -24,22 +24,46 @@
 
 #include "ui_GeneralMsgDialog.h"
 
+class SubDestItem;
+class SubFileItem;
+class FileInfo;
+
+const uint32_t GMD_TYPE_MESSAGE_IDX = 0;
+const uint32_t GMD_TYPE_FORUM_IDX = 1;
+const uint32_t GMD_TYPE_CHANNEL_IDX = 2;
+const uint32_t GMD_TYPE_BLOG_IDX = 3;
+
 class GeneralMsgDialog : public QDialog, private Ui::GeneralMsgDialog
 {
   Q_OBJECT
 
 public:
   /** Default Constructor */
-  GeneralMsgDialog(QWidget *parent = 0);
+  GeneralMsgDialog(QWidget *parent = 0, uint32_t type = 0);
   /** Default Destructor */
 
-virtual void addDestination(uint32_t type, std::string grpId, std::string inReplyTo);
+	void addAttachment(std::string path);
+	void addDestination(uint32_t type, std::string grpId, std::string inReplyTo);
 
-virtual void cancelMsg();
-virtual void sendMsg();
+protected:
+virtual void dragEnterEvent(QDragEnterEvent *event);
+virtual void dropEvent(QDropEvent *event);
+
+private slots:
+	void updateGroupId();
+	void newDestination();
+	void cancelMsg();
+	void sendMsg();
 
 private:
 
+void sendMessage(uint32_t type, std::string grpId, std::string inReplyTo, 
+         std::wstring subject, std::wstring msg, std::list<FileInfo> &files);
+
+
+	/* maps of files and destinations */
+	std::list<SubDestItem *> mDestinations;
+	std::list<SubFileItem *> mAttachments;
 };
 
 

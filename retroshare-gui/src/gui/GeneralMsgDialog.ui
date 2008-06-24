@@ -9,6 +9,9 @@
     <height>516</height>
    </rect>
   </property>
+  <property name="acceptDrops" >
+   <bool>true</bool>
+  </property>
   <property name="windowTitle" >
    <string>Dialog</string>
   </property>
@@ -167,9 +170,6 @@
        <width>16</width>
        <height>60</height>
       </size>
-     </property>
-     <property name="acceptDrops" >
-      <bool>true</bool>
      </property>
      <property name="toolTip" >
       <string>Drag and Drop Files from Search Results</string>

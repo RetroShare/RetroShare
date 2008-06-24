@@ -22,6 +22,8 @@
 
 #include "BlogDialog.h"
 
+#include "GeneralMsgDialog.h"
+
 #include "rsiface/rsQblog.h"
 #include "rsiface/rspeers.h" //to retrieve peer/usrId info
 
@@ -188,8 +190,15 @@ void BlogDialog::postBlog()
 
 void BlogDialog::openMsg(uint32_t type, std::string grpId, std::string inReplyTo)
 {
-        std::cerr << "BlogDialog::openMsg()";
-        std::cerr << std::endl;
+	std::cerr << "BlogDialog::openMsg()";
+	std::cerr << std::endl;
+        GeneralMsgDialog *msgDialog = new GeneralMsgDialog(NULL);
+
+
+	msgDialog->addDestination(type, grpId, inReplyTo);
+
+	msgDialog->show();
+	return;
 }
 
 

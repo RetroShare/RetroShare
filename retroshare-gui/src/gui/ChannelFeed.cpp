@@ -20,55 +20,49 @@
  ****************************************************************/
 #include <QtGui>
 
+#include <iostream>
+
+#include "rsiface/rschannels.h"
+
 #include "ChannelFeed.h"
 #include "gui/feeds/ChanGroupItem.h"
 #include "gui/feeds/ChanMenuItem.h"
 #include "gui/feeds/ChanMsgItem.h"
 
+#include "gui/forums/CreateForum.h"
+
+#include "GeneralMsgDialog.h"
+
+
 /** Constructor */
 ChannelFeed::ChannelFeed(QWidget *parent)
 : MainPage (parent)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  setupUi(this);
+  	/* Invoke the Qt Designer generated object setup routine */
+  	setupUi(this);
 
-	/* add dynamic widgets in */
+  	connect(chanButton, SIGNAL(clicked()), this, SLOT(createChannel()));
+  	connect(postButton, SIGNAL(clicked()), this, SLOT(sendMsg()));
 
-	/* add layout */
+	/*************** Setup Left Hand Side (List of Channels) ****************/
 
-	/* add form */
+	mGroupLayout = new QVBoxLayout;
 
-	QVBoxLayout *layout = new QVBoxLayout;
+	mGroupOwn = new ChanGroupItem("Own Channels");
+	mGroupSub = new ChanGroupItem("Subscribed Channels");
+	mGroupPop = new ChanGroupItem("Popular Channels");
+	mGroupOther = new ChanGroupItem("Other Channels");
 
-	ChanGroupItem *cg1 = new ChanGroupItem("Own Channels");
-	ChanGroupItem *cg2 = new ChanGroupItem("Subscribed Channels");
-	ChanGroupItem *cg3 = new ChanGroupItem("Popular Channels");
-	ChanGroupItem *cg4 = new ChanGroupItem("Other Channels");
+	mGroupLayout->addWidget(mGroupOwn);
+	mGroupLayout->addWidget(mGroupSub);
+	mGroupLayout->addWidget(mGroupPop);
+	mGroupLayout->addWidget(mGroupOther);
 
-	ChanMenuItem *cm1 = new ChanMenuItem("Channel with long name");
-	ChanMenuItem *cm2 = new ChanMenuItem("Channel with very very very very long name");
-	ChanMenuItem *cm3 = new ChanMenuItem("Channel with long name");
-	ChanMenuItem *cm4 = new ChanMenuItem("Retroshare Releases");
-	ChanMenuItem *cm5 = new ChanMenuItem("Popular Channel");
-
-	layout->addWidget(cg1);
-	layout->addWidget(cm1);
-
-	layout->addWidget(cg2);
-	layout->addWidget(cm2);
-	layout->addWidget(cm3);
-	layout->addWidget(cm4);
-
-	layout->addWidget(cg3);
-	layout->addWidget(cm5);
-
-	layout->addWidget(cg4);
 
 	QWidget *middleWidget = new QWidget();
 	//middleWidget->setSizePolicy( QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
 	middleWidget->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
-	middleWidget->setLayout(layout);
-
+	middleWidget->setLayout(mGroupLayout);
 
      	QScrollArea *scrollArea = new QScrollArea;
         scrollArea->setBackgroundRole(QPalette::Dark);
@@ -81,32 +75,13 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	
      	chanFrame->setLayout(layout2);
 
-	/***** SECOND HALF *****/
+	/*************** Setup Left Hand Side (List of Channels) ****************/
 
-	QVBoxLayout *msgLayout = new QVBoxLayout;
-
-	ChanMsgItem *ni1 = new ChanMsgItem(NULL, 0, "JEZ", "MSGID:47654765476", true);
-	ChanMsgItem *ni2 = new ChanMsgItem(NULL, 0, "JEZ", "MSGID:47654765476", true);
-	ChanMsgItem *ni3 = new ChanMsgItem(NULL, 0, "JEZ", "MSGID:47654765476", true);
-	ChanMsgItem *ni4 = new ChanMsgItem(NULL, 0, "JEZ", "MSGID:47654765476", true);
-	ChanMsgItem *ni5 = new ChanMsgItem(NULL, 0, "JEZ", "MSGID:47654765476", true);
-	ChanMsgItem *ni6 = new ChanMsgItem(NULL, 0, "JEZ", "MSGID:47654765476", true);
-	ChanMsgItem *ni7 = new ChanMsgItem(NULL, 0, "JEZ", "MSGID:47654765476", true);
-	ChanMsgItem *ni8 = new ChanMsgItem(NULL, 0, "JEZ", "MSGID:47654765476", true);
-
-	msgLayout->addWidget(ni1);
-	msgLayout->addWidget(ni2);
-	msgLayout->addWidget(ni3);
-	msgLayout->addWidget(ni4);
-	msgLayout->addWidget(ni5);
-	msgLayout->addWidget(ni6);
-	msgLayout->addWidget(ni7);
-	msgLayout->addWidget(ni8);
+	mMsgLayout = new QVBoxLayout;
 
 	QWidget *middleWidget2 = new QWidget();
 	middleWidget2->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
-	middleWidget2->setLayout(msgLayout);
-
+	middleWidget2->setLayout(mMsgLayout);
 
      	QScrollArea *scrollArea2 = new QScrollArea;
         scrollArea2->setBackgroundRole(QPalette::Dark);
@@ -118,9 +93,55 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	layout3->addWidget(scrollArea2);
 
      	msgFrame->setLayout(layout3);
+
+	mChannelId = "OWNID"; 
+
+	updateChannelList();
+
+	QTimer *timer = new QTimer(this);
+	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
+	timer->start(1000);
+
 }
 
 
+void ChannelFeed::createChannel()
+{
+	CreateForum *cf = new CreateForum(NULL, false);
+	cf->show();
+}
+
+void ChannelFeed::channelSelection()
+{
+	/* which item was selected? */
+
+
+	/* update mChannelId */
+
+	updateChannelMsgs();
+}
+
+void ChannelFeed::sendMsg()
+{
+	std::cerr << "ChannelFeed::sendMsg()";
+	std::cerr << std::endl;
+
+	if (mChannelId != "")
+	{
+		openMsg(FEEDHOLDER_MSG_CHANNEL, mChannelId, "");
+	}
+	else
+	{
+		std::cerr << "ChannelFeed::sendMsg() no Channel Selected!";
+		std::cerr << std::endl;
+	}
+
+}
+
+
+/*************************************************************************************/
+/*************************************************************************************/
+/*************************************************************************************/
 
 void ChannelFeed::deleteFeedItem(QWidget *item, uint32_t type)
 {
@@ -132,9 +153,304 @@ void ChannelFeed::openChat(std::string peerId)
 	return;
 }
 
+
 void ChannelFeed::openMsg(uint32_t type, std::string grpId, std::string inReplyTo)
 {
+	std::cerr << "ChannelFeed::openMsg()";
+	std::cerr << std::endl;
+	GeneralMsgDialog *msgDialog = new GeneralMsgDialog(NULL);
+
+
+	msgDialog->addDestination(type, grpId, inReplyTo);
+
+	msgDialog->show();
 	return;
 }
 
+void ChannelFeed::selectChannel( std::string cId)
+{
+	mChannelId = cId;
+
+	updateChannelMsgs();
+}
+
+void ChannelFeed::checkUpdate()
+{
+	std::list<std::string> chanIds;
+	std::list<std::string>::iterator it;
+	if (!rsChannels)
+		return;
+
+	if (rsChannels->channelsChanged(chanIds))
+	{
+		/* update Forums List */
+		updateChannelList();
+
+		it = std::find(chanIds.begin(), chanIds.end(), mChannelId);
+		if (it != chanIds.end())
+		{
+			updateChannelMsgs();
+		}
+	}
+}
+
+
+
+
+void ChannelFeed::updateChannelList()
+{
+
+	std::list<ChannelInfo> channelList;
+	std::list<ChannelInfo>::iterator it;
+	if (!rsChannels)
+	{
+		return;
+	}
+
+	rsChannels->getChannelList(channelList);
+
+	/* get the ids for our lists */
+	std::list<std::string> adminIds;
+	std::list<std::string> subIds;
+	std::list<std::string> popIds;
+	std::list<std::string> otherIds;
+	std::multimap<uint32_t, std::string> popMap;
+
+	for(it = channelList.begin(); it != channelList.end(); it++)
+	{
+		/* sort it into Publish (Own), Subscribed, Popular and Other */
+		uint32_t flags = it->channelFlags;
+
+		if (flags & RS_DISTRIB_ADMIN)
+		{
+			adminIds.push_back(it->channelId);
+		}
+		else if (flags & RS_DISTRIB_SUBSCRIBED)
+		{
+			subIds.push_back(it->channelId);
+		}
+		else
+		{
+			/* rate the others by popularity */
+			popMap.insert(std::make_pair(it->pop, it->channelId));
+		}
+	}
+
+	/* iterate backwards through popMap - take the top 5 or 10% of list */
+	uint32_t popCount = 5;
+	if (popCount < popMap.size() / 10)
+	{
+		popCount = popMap.size() / 10;
+	}
+
+	uint32_t i = 0;
+	uint32_t popLimit = 0;
+	std::multimap<uint32_t, std::string>::reverse_iterator rit;
+	for(rit = popMap.rbegin(); ((rit != popMap.rend()) && (i < popCount)); rit++, i++)
+	{
+		popIds.push_back(rit->second);
+	}
+
+	if (rit != popMap.rend())
+	{
+		popLimit = rit->first;
+	}
+
+	for(it = channelList.begin(); it != channelList.end(); it++)
+	{
+		/* ignore the ones we've done already */
+		uint32_t flags = it->channelFlags;
+
+		if (flags & RS_DISTRIB_ADMIN)
+		{
+			continue;
+		}
+		else if (flags & RS_DISTRIB_SUBSCRIBED)
+		{
+			continue;
+		}
+		else
+		{
+			if (it->pop < popLimit)
+			{
+				otherIds.push_back(it->channelId);
+			}
+		}
+	}
+
+	/* now we have our lists ---> update entries */
+
+	updateChannelListOwn(adminIds);
+	updateChannelListSub(subIds);
+	updateChannelListPop(popIds);
+	updateChannelListOther(otherIds);
+}
+
+void ChannelFeed::updateChannelListOwn(std::list<std::string> &ids)
+{
+	std::list<ChanMenuItem *>::iterator it;
+	std::list<std::string>::iterator iit;
+
+	/* TEMP just replace all of them */
+	for(it = mChannelListOwn.begin(); it != mChannelListOwn.end(); it++)
+	{
+		delete (*it);
+	}
+	mChannelListOwn.clear();
+
+	int topIndex = mGroupLayout->indexOf(mGroupOwn);
+	int index = topIndex + 1;
+	for (iit = ids.begin(); iit != ids.end(); iit++, index++)
+	{
+		std::cerr << "ChannelFeed::updateChannelListOwn(): " << *iit << " at: " << index;
+		std::cerr << std::endl;
+
+		ChanMenuItem *cmi = new ChanMenuItem(*iit);
+		mChannelListOwn.push_back(cmi);
+		mGroupLayout->insertWidget(index, cmi);
+  	
+		connect(cmi, SIGNAL( selectMe( std::string )), this, SLOT( selectChannel( std::string )));
+	}
+}
+
+void ChannelFeed::updateChannelListSub(std::list<std::string> &ids)
+{
+	std::list<ChanMenuItem *>::iterator it;
+	std::list<std::string>::iterator iit;
+
+	/* TEMP just replace all of them */
+	for(it = mChannelListSub.begin(); it != mChannelListSub.end(); it++)
+	{
+		delete (*it);
+	}
+	mChannelListSub.clear();
+
+	int topIndex = mGroupLayout->indexOf(mGroupSub);
+	int index = topIndex + 1;
+	for (iit = ids.begin(); iit != ids.end(); iit++, index++)
+	{
+		std::cerr << "ChannelFeed::updateChannelListSub(): " << *iit << " at: " << index;
+		std::cerr << std::endl;
+
+		ChanMenuItem *cmi = new ChanMenuItem(*iit);
+		mChannelListSub.push_back(cmi);
+		mGroupLayout->insertWidget(index, cmi);
+		connect(cmi, SIGNAL( selectMe( std::string )), this, SLOT( selectChannel( std::string )));
+	}
+
+}
+
+void ChannelFeed::updateChannelListPop(std::list<std::string> &ids)
+{
+	std::list<ChanMenuItem *>::iterator it;
+	std::list<std::string>::iterator iit;
+
+	/* TEMP just replace all of them */
+	for(it = mChannelListPop.begin(); it != mChannelListPop.end(); it++)
+	{
+		delete (*it);
+	}
+	mChannelListPop.clear();
+
+	int topIndex = mGroupLayout->indexOf(mGroupPop);
+	int index = topIndex + 1;
+	for (iit = ids.begin(); iit != ids.end(); iit++, index++)
+	{
+		std::cerr << "ChannelFeed::updateChannelListPop(): " << *iit << " at: " << index;
+		std::cerr << std::endl;
+
+		ChanMenuItem *cmi = new ChanMenuItem(*iit);
+		mChannelListPop.push_back(cmi);
+		mGroupLayout->insertWidget(index, cmi);
+		connect(cmi, SIGNAL( selectMe( std::string )), this, SLOT( selectChannel( std::string )));
+	}
+
+
+}
+
+void ChannelFeed::updateChannelListOther(std::list<std::string> &ids)
+{
+	std::list<ChanMenuItem *>::iterator it;
+	std::list<std::string>::iterator iit;
+
+	/* TEMP just replace all of them */
+	for(it = mChannelListOther.begin(); it != mChannelListOther.end(); it++)
+	{
+		delete (*it);
+	}
+	mChannelListOther.clear();
+
+	int topIndex = mGroupLayout->indexOf(mGroupOther);
+	int index = topIndex + 1;
+	for (iit = ids.begin(); iit != ids.end(); iit++, index++)
+	{
+		std::cerr << "ChannelFeed::updateChannelListOther(): " << *iit << " at: " << index;
+		std::cerr << std::endl;
+
+		ChanMenuItem *cmi = new ChanMenuItem(*iit);
+		mChannelListOther.push_back(cmi);
+		mGroupLayout->insertWidget(index, cmi);
+		connect(cmi, SIGNAL( selectMe( std::string )), this, SLOT( selectChannel( std::string )));
+	}
+}
+
+void ChannelFeed::updateChannelMsgs()
+{
+	if (!rsChannels)
+		return;
+
+	ChannelInfo ci;
+	if (!rsChannels->getChannelInfo(mChannelId, ci))
+	{
+		postButton->setEnabled(false);
+		subscribeButton->setEnabled(false);
+		unsubscribeButton->setEnabled(false);
+		nameLabel->setText("No Channel Selected");
+		return;
+	}
+	/* set channel name */
+	nameLabel->setText(QString::fromStdWString(ci.channelName));
+
+	/* do buttons */
+	if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED)
+	{
+		subscribeButton->setEnabled(false);
+		unsubscribeButton->setEnabled(true);
+	}
+	else
+	{
+		subscribeButton->setEnabled(true);
+		unsubscribeButton->setEnabled(false);
+	}
+
+	if (ci.channelFlags & RS_DISTRIB_PUBLISH)
+	{
+		postButton->setEnabled(true);
+	}
+	else
+	{
+		postButton->setEnabled(false);
+	}
+
+	/* replace all the messages with new ones */
+	std::list<ChanMsgItem *>::iterator mit;
+	for(mit = mChanMsgItems.begin(); mit != mChanMsgItems.end(); mit++)
+	{
+		delete (*mit);
+	}
+	mChanMsgItems.clear();
+
+	std::list<ChannelMsgSummary> msgs;
+	std::list<ChannelMsgSummary>::iterator it;
+
+	rsChannels->getChannelMsgList(mChannelId, msgs);
+
+	for(it = msgs.begin(); it != msgs.end(); it++)
+	{
+		ChanMsgItem *cmi = new ChanMsgItem(this, 0, mChannelId, it->msgId, true);
+
+		mChanMsgItems.push_back(cmi);
+		mMsgLayout->addWidget(cmi);
+	}
+}
 

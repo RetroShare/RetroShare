@@ -27,8 +27,8 @@
 #define DEBUG_ITEM 1
 
 /** Constructor */
-SubFileItem::SubFileItem(std::string hash)
-:QWidget(NULL), mFileHash(hash)
+SubFileItem::SubFileItem(std::string hash, std::string name, uint64_t size)
+:QWidget(NULL), mFileHash(hash), mFileName(name), mFileSize(size)
 {
   /* Invoke the Qt Designer generated object setup routine */
   setupUi(this);
@@ -37,7 +37,7 @@ SubFileItem::SubFileItem(std::string hash)
   connect( cancelButton, SIGNAL( clicked( void ) ), this, SLOT( cancel ( void ) ) );
   connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( play ( void ) ) );
 
-  amountDone = 1;
+  amountDone = 1000;
 
   small();
   updateItemStatic();
@@ -57,11 +57,27 @@ void SubFileItem::updateItemStatic()
 	fileLabel->setToolTip(filename);
 
 	playButton->setEnabled(false);
+
+	if (mFileSize > 10000000) /* 10 Mb */
+	{
+		progressBar->setRange(0, mFileSize / 1000000);
+		progressBar->setFormat("%v MB");
+	}
+	else if (mFileSize > 10000) /* 10 Kb */
+	{
+		progressBar->setRange(0, mFileSize / 1000);
+		progressBar->setFormat("%v kB");
+	}
+	else 
+	{
+		progressBar->setRange(0, mFileSize);
+		progressBar->setFormat("%v B");
+	}
 }
 
 bool SubFileItem::done()
 {
-	return (amountDone >= 100);
+	return (amountDone >= mFileSize);
 }
 
 
@@ -74,17 +90,28 @@ void SubFileItem::updateItem()
 #endif
 	int msec_rate = 1000;
 
-	if (amountDone < 100)
+	uint64_t divisor = 1;
+	if (mFileSize > 10000000) /* 10 Mb */
+	{
+		divisor = 1000000;
+	}
+	else if (mFileSize > 10000) /* 10 Kb */
+	{
+		divisor = 1000;
+	}
+
+	if (amountDone < mFileSize)
 	{
 		amountDone *= 1.1;
 
-		progressBar->setValue(amountDone);
+		progressBar->setValue(amountDone / divisor);
 	  	QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
 	}
 	else
 	{
 		/* complete! */
-		progressBar->setValue(100);
+		amountDone = mFileSize + 1;
+		progressBar->setValue(mFileSize / divisor);
 		playButton->setEnabled(true);
 	}
 		

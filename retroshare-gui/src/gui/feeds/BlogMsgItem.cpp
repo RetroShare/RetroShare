@@ -70,7 +70,7 @@ void BlogMsgItem::updateItemStatic()
 	for(i = 0; i < total; i++)
 	{
 		/* add file */
-		SubFileItem *fi = new SubFileItem("dummyHash");
+		SubFileItem *fi = new SubFileItem("dummyHash", "dummyFileName", 1283918);
 		mFileItems.push_back(fi);
 
 		QLayout *layout = expandFrame->layout();

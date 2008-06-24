@@ -41,11 +41,17 @@ public:
 	void updateItemStatic();
   	void small();
 
+signals:
+	void selectMe( std::string );
+
 private slots:
 	/* default stuff */
 	void toggle();
 
 	void updateItem();
+
+protected:
+	virtual void mousePressEvent ( QMouseEvent * event );
 
 private:
 	std::string mChanId;

@@ -23,10 +23,11 @@
 #include "CreateForum.h"
 
 #include "rsiface/rsforums.h"
+#include "rsiface/rschannels.h"
 
 /** Constructor */
-CreateForum::CreateForum(QWidget *parent)
-: QWidget(parent)
+CreateForum::CreateForum(QWidget *parent, bool isForum)
+: QWidget(parent), mIsForum(isForum)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
@@ -42,40 +43,74 @@ CreateForum::CreateForum(QWidget *parent)
 
 void  CreateForum::newForum()
 {
-	/* clear all */
-	ui.forumTypePublic->setChecked(true);
-	ui.forumMsgAnon->setChecked(true);
+
+	if (mIsForum)
+	{
+		/* enforce Public for the moment */
+		ui.typePublic->setChecked(true);
+
+		ui.typePrivate->setEnabled(false);
+		ui.typeEncrypted->setEnabled(false);
+
+		ui.msgAnon->setChecked(true);
+		ui.msgAuth->setEnabled(false);
+	}
+	else
+	{
+		/* enforce Private for the moment */
+		ui.typePrivate->setChecked(true);
+
+		ui.typePublic->setEnabled(false);
+		ui.typeEncrypted->setEnabled(false);
+
+		ui.msgAnon->setChecked(true);
+		ui.msgAuth->setEnabled(false);
+		ui.msgGroupBox->hide();
+	}
 }
 
 void  CreateForum::createForum()
 {
 	QString name = ui.forumName->text();
-	QString desc = ui.forumDesc->toHtml();
+	QString desc = ui.forumDesc->toPlainText(); //toHtml();
 	uint32_t flags = 0;
 
-	if (ui.forumTypePublic->isChecked())
+	if (ui.typePublic->isChecked())
 	{
 		flags |= RS_DISTRIB_PUBLIC;
 	}
-	else if (ui.forumTypePrivate->isChecked())
+	else if (ui.typePrivate->isChecked())
 	{
 		flags |= RS_DISTRIB_PRIVATE;
 	}
-	else if (ui.forumTypeEncrypted->isChecked())
+	else if (ui.typeEncrypted->isChecked())
 	{
 		flags |= RS_DISTRIB_ENCRYPTED;
 	}
 
-	if (ui.forumMsgAuth->isChecked())
+	if (ui.msgAuth->isChecked())
 	{
 		flags |= RS_DISTRIB_AUTHEN_REQ;
 	}
-	else if (ui.forumMsgAnon->isChecked())
+	else if (ui.msgAnon->isChecked())
 	{
 		flags |= RS_DISTRIB_AUTHEN_ANON;
 	}
 
-	rsForums->createForum(name.toStdWString(), desc.toStdWString(), flags);
+	if (mIsForum)
+	{
+		if (rsForums)
+		{
+			rsForums->createForum(name.toStdWString(), desc.toStdWString(), flags);
+		}
+	}
+	else
+	{
+		if (rsChannels)
+		{
+			rsChannels->createChannel(name.toStdWString(), desc.toStdWString(), flags);
+		}
+	}
 
 	close();
 	return;

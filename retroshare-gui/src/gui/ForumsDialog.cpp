@@ -743,10 +743,8 @@ void ForumsDialog::markMsgAsRead()
 
 void ForumsDialog::newforum()
 {
-	CreateForum *cf = new CreateForum(NULL);
+	CreateForum *cf = new CreateForum(NULL, true);
 	cf->show();
-
-	//insertForums();
 }
 
 

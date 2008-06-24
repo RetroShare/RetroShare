@@ -19,36 +19,40 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#ifndef _SUB_DEST_ITEM_DIALOG_H
+#define _SUB_DEST_ITEM_DIALOG_H
 
-#ifndef _CREATE_FORUM_DIALOG_H
-#define _CREATE_FORUM_DIALOG_H
+#include "ui_SubDestItem.h"
 
-#include <QMainWindow>
+#include <string>
 
-#include "ui_CreateForum.h"
-
-class CreateForum : public QWidget
+class SubDestItem : public QWidget, private Ui::SubDestItem
 {
   Q_OBJECT
 
 public:
-  CreateForum(QWidget *parent = 0, bool isForum = true);
+  	/** Default Constructor */
+  	SubDestItem(uint32_t type, std::string groupId, std::string inReplyTo);
 
-void  newForum(); /* cleanup */
+  	/** Default Destructor */
+
+	uint32_t     DestType() { return mType; }
+	std::string  DestGroupId() { return mGroupId; }
+	std::string  DestInReplyTo() { return mInReplyTo; }
+
+void updateItemStatic();
 
 private slots:
-
-	/* actions to take.... */
-void  createForum();
-void  cancelForum();
+	/* default stuff */
+  	void cancel();
 
 private:
-
-  /** Qt Designer generated object */
-  Ui::CreateForum ui;
-
-  bool mIsForum;
+	uint32_t     mType; 
+	std::string  mGroupId; 
+	std::string  mInReplyTo; 
 };
+
+
 
 #endif
 

@@ -342,6 +342,7 @@ void  ChanMsgDialog::insertSendList()
 
 void  ChanMsgDialog::insertChannelSendList()
 {
+#if 0
         rsiface->lockData(); /* Lock Interface */
 
         std::map<RsChanId,ChannelInfo>::const_iterator it;
@@ -399,9 +400,11 @@ void  ChanMsgDialog::insertChannelSendList()
 	/* add the items in! */
 	sendWidget->insertTopLevelItems(0, items);
 
+
 	rsiface->unlockData(); /* UnLock Interface */
 
 	sendWidget->update(); /* update display */
+#endif
 }
 
 

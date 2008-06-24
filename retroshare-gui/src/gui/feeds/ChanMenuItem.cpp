@@ -20,6 +20,7 @@
  ****************************************************************/
 #include <QtGui>
 
+#include "rsiface/rschannels.h"
 #include "ChanMenuItem.h"
 
 #include <iostream>
@@ -50,8 +51,18 @@ void ChanMenuItem::updateItemStatic()
 	std::cerr << std::endl;
 #endif
 
-	titleLabel->setText(QString::fromStdString(mChanId));
-	descLabel->setText("Brand new exciting Ever asvljh ljdsafl kjdsahfl kjsahf; kjsahdf; kljashfdl;kjhasfkl;  asvljh ljdsafl kjdsahfl kjsahf; kjsahdf; kljashfdl;kjhasfkl;  asvljh ljdsafl kjdsahfl kjsahf; kjsahdf; kljashfdl;kjhasfkl;  asvljh ljdsafl kjdsahfl kjsahf; kjsahdf; kljashfdl;kjhasfkl;  asvljh ljdsafl kjdsahfl kjsahf; kjsahdf; kljashfdl;kjhasfkl;  asvljh ljdsafl kjdsahfl kjsahf; kjsahdf; kljashfdl;kjhasfkl;  asvljh ljdsafl kjdsahfl kjsahf; kjsahdf; kljashfdl;kjhasfkl;  asvljh ljdsafl kjdsahfl kjsahf; kjsahdf; kljashfdl;kjhasfkl; ");
+	/* extract details from channels */
+	ChannelInfo ci;
+	if ((rsChannels) && (rsChannels->getChannelInfo(mChanId, ci)))
+	{
+		titleLabel->setText(QString::fromStdWString(ci.channelName));
+		descLabel->setText(QString::fromStdWString(ci.channelDesc));
+	}
+	else
+	{
+		titleLabel->setText("Unknown Channel");
+		descLabel->setText("No Description");
+	}
 }
 
 
@@ -83,5 +94,10 @@ void ChanMenuItem::toggle()
 }
 
 /*********** SPECIFIC FUNCTIOSN ***********************/
+
+void ChanMenuItem::mousePressEvent ( QMouseEvent * event )
+{
+	selectMe( mChanId );
+}
 
 

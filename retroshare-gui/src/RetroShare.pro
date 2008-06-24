@@ -164,6 +164,7 @@ HEADERS +=  rshare.h \
             gui/feeds/ChanMsgItem.h \
             gui/feeds/BlogMsgItem.h \
             gui/feeds/SubFileItem.h \
+            gui/feeds/SubDestItem.h \
 
 
 FORMS +=    gui/ChatDialog.ui \
@@ -238,6 +239,7 @@ FORMS +=    gui/ChatDialog.ui \
             gui/feeds/ChanMsgItem.ui \
             gui/feeds/BlogMsgItem.ui \
             gui/feeds/SubFileItem.ui \
+            gui/feeds/SubDestItem.ui \
 
 SOURCES += main.cpp \
             rshare.cpp \
@@ -350,6 +352,7 @@ SOURCES += main.cpp \
             gui/feeds/ChanMsgItem.cpp \
             gui/feeds/BlogMsgItem.cpp \
             gui/feeds/SubFileItem.cpp \
+            gui/feeds/SubDestItem.cpp \
             
 RESOURCES += gui/images.qrc lang/lang.qrc games/qcheckers/qcheckers.qrc apps/smplayer/icons.qrc
 TRANSLATIONS +=  \

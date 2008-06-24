@@ -510,7 +510,7 @@
      <item>
       <widget class="QLabel" name="label" >
        <property name="text" >
-        <string>Forum Name</string>
+        <string>Name</string>
        </property>
       </widget>
      </item>
@@ -524,7 +524,7 @@
      <item>
       <widget class="QLabel" name="label_5" >
        <property name="text" >
-        <string>Forum Description</string>
+        <string>Description</string>
        </property>
       </widget>
      </item>
@@ -534,29 +534,29 @@
     </layout>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2" >
+    <widget class="QGroupBox" name="tyoeGroupBox" >
      <property name="title" >
-      <string>Forum Type:</string>
+      <string>Type:</string>
      </property>
      <layout class="QVBoxLayout" >
       <item>
-       <widget class="QRadioButton" name="forumTypePublic" >
+       <widget class="QRadioButton" name="typePublic" >
         <property name="text" >
-         <string>Public Forum (Shared Publish Key)</string>
+         <string>Public - Anyone can read and publish (Shared Publish Key)</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="forumTypePrivate" >
+       <widget class="QRadioButton" name="typePrivate" >
         <property name="text" >
-         <string>Private Forum (Private Publish Key)</string>
+         <string>Restricted - Anyone can read, limited publishing (Private Publish Key)</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="forumTypeEncrypted" >
+       <widget class="QRadioButton" name="typeEncrypted" >
         <property name="text" >
-         <string>Encrypted Forum (Private Publish Key required to view Messages)</string>
+         <string>Private - (Private Publish Key required to view Messages)</string>
         </property>
        </widget>
       </item>
@@ -564,20 +564,20 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox" >
+    <widget class="QGroupBox" name="msgGroupBox" >
      <property name="title" >
       <string>Allowed Messages</string>
      </property>
      <layout class="QVBoxLayout" >
       <item>
-       <widget class="QRadioButton" name="forumMsgAuth" >
+       <widget class="QRadioButton" name="msgAuth" >
         <property name="text" >
          <string>Authemticated Messages</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="forumMsgAnon" >
+       <widget class="QRadioButton" name="msgAnon" >
         <property name="text" >
          <string>Anonymous Messages</string>
         </property>
@@ -604,7 +604,7 @@
      <item>
       <widget class="QPushButton" name="cancelButton" >
        <property name="text" >
-        <string>Cancel Forum</string>
+        <string>Cancel</string>
        </property>
       </widget>
      </item>
@@ -624,7 +624,7 @@
      <item>
       <widget class="QPushButton" name="createButton" >
        <property name="text" >
-        <string>Create Forum</string>
+        <string>Create</string>
        </property>
        <property name="default" >
         <bool>true</bool>

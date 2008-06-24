@@ -47,17 +47,6 @@ extern RsQblog *rsQblog;
 		RsQblog() { return; }
 		virtual ~RsQblog() { return; }
 	 	
-	 	/**
-	 	 * allows user to set his status
-	 	 * @param status The status of the user 
-	 	 */
-	 	virtual bool setStatus(const std::string &status) = 0;
-	 	
-	 	/**
-	 	 * returns reference to map of usrs and their status
-	 	 * @param usrStatus returns map to usr and their status
-	 	 */
-	 	virtual bool getStatus(std::map<std::string, std::string> &usrStatus) = 0;
 	 	 
 	 	/**
 	 	 * choose whether to filter or not
@@ -82,31 +71,30 @@ extern RsQblog *rsQblog;
 	 	 * @param id The user's frined's id
 	 	 */
 	 	virtual bool removeFiltFriend(std::string &usrId) = 0;
-	 	 
-	 	/**
-	 	 * get users fav song
-	 	 * @param usrId the usr whose fav song you want
-	 	 * @param favSong puts ref for fav song here
-	 	 */
-	 	virtual bool getProfile(std::map<std::string, std::string> &profile) = 0;
-	 	   	  
-	 	/**
-	 	 * for now just fav song, TODO: must find way to link to rs profile
-	 	 */
-	 	virtual bool setProfile(const std::string &favSong) = 0;
 	 	   
 	 	/**
 	 	 * send blog info, will send to a data structure for transmission
 	     * @param msg The msg the usr wants to send
 	     */
-	    virtual bool sendBlog(const std::string &msg) = 0;
+	    virtual bool sendBlog(const std::wstring &msg) = 0;
 	 	   
 	 	/**
 	 	  * retrieve blog of a usr
 	 	  * @param blogs contains the blog msgs of usr along with time posted for sorting
 	 	  */
-	 	virtual bool getBlogs(std::map< std::string, std::multimap<long int, std:: string> > &blogs) = 0;
+	 	virtual bool getBlogs(std::map< std::string, std::multimap<long int, std::wstring> > &blogs) = 0;
  	  
+ 	   /**
+ 	  	* set usr profile, send an empty second pair to delete entry
+ 	  	* @param entry profile entry
+ 	  	*/
+ 	  	virtual bool setProfile(std::pair<std::wstring, std::wstring> entry) = 0;
+ 	  	 
+ 	  	/**
+ 	  	 * add fav file, send file info with only name to delete that entry
+ 	  	 * @param entry file info entry
+ 	  	 */
+    	virtual bool setFavorites(FileInfo favFile) = 0; 
 
 
 		/**
@@ -134,8 +122,7 @@ extern RsQblog *rsQblog;
 	 	 * @param favs list of Files 
 	 	 */
 	 	virtual bool getPeerFavourites(std::string id, std::list<FileInfo> &favs) = 0;
-
-
+	 	
  };
 
 #endif /*RSQBLOG_H_*/

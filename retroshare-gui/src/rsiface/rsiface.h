@@ -100,21 +100,6 @@ virtual	void unlockData() = 0;
 	const PersonInfo *getPerson(std::string id);
 	const DirInfo *getDirectory(std::string id, std::string path);
 
-	const std::map<RsChanId, ChannelInfo> &getChannels()
-		{ return mChannelMap; }
-
-	const std::map<RsChanId, ChannelInfo> &getOurChannels()
-		{ return mChannelOwnMap; }
-
-	//const MessageInfo *getChannelMsg(std::string chId, std::string mId);
-
-	//std::list<ChatInfo> getChatNew()
-	//	{ 
-	//		std::list<ChatInfo> newList = mChatList; 
-	//		mChatList.clear(); 
-	//		return newList;
-	//	}
-
 	const std::list<FileInfo> &getRecommendList()
 		{ return mRecommendList; }
 
@@ -160,10 +145,6 @@ void	fillLists(); /* create some dummy data to display */
 	std::list<PersonInfo>    mRemoteDirList;
 	std::list<PersonInfo>    mLocalDirList;
 	std::list<FileTransferInfo> mTransferList;
-	//std::list<MessageInfo>   mMessageList;
-	std::map<RsChanId, ChannelInfo> mChannelMap;
-	std::map<RsChanId, ChannelInfo> mChannelOwnMap;
-	//std::list<ChatInfo>      mChatList;
 	std::list<FileInfo>      mRecommendList;
 
 	bool mChanged[NumOfFlags];
@@ -217,20 +198,6 @@ virtual int FileCancel(std::string fname, std::string hash, uint32_t size) = 0;
 // Transfer control.
 virtual int FileClearCompleted()                              = 0;
 virtual	int FileSetBandwidthTotals(float outkB, float inkB)   = 0;
-
-/****************************************/
-	/* Message Items */
-//virtual	int MessageSend(MessageInfo &info)                 = 0;
-//virtual int MessageDelete(std::string mid)                 = 0;
-//virtual int MessageRead(std::string mid)                   = 0;
-
-	/* Channel Items */
-virtual	int ChannelCreateNew(ChannelInfo &info)            = 0;
-virtual	int ChannelSendMsg(ChannelInfo &info)              = 0;
-
-/****************************************/
-	/* Chat */
-//virtual	int 	ChatSend(ChatInfo &ci)                     = 0;
 
 /****************************************/
 

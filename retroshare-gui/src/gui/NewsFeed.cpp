@@ -220,6 +220,14 @@ void	NewsFeed::addFeedItemChanUpdate(RsFeedItem &fi)
 
 void	NewsFeed::addFeedItemChanMsg(RsFeedItem &fi)
 {
+	/* make new widget */
+	ChanMsgItem *cm = new ChanMsgItem(this, NEWSFEED_CHANMSGLIST, fi.mId1, fi.mId2, false);
+
+	/* store in forum list */
+
+	/* add to layout */
+	mLayout->addWidget(cm);
+
 	std::cerr << "NewsFeed::addFeedItemChanMsg()";
 	std::cerr << std::endl;
 }

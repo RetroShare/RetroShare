@@ -31,13 +31,17 @@ class SubFileItem : public QWidget, private Ui::SubFileItem
   Q_OBJECT
 
 public:
-  /** Default Constructor */
-  SubFileItem(std::string hash);
+  	/** Default Constructor */
+  	SubFileItem(std::string hash, std::string name, uint64_t size);
 
-  /** Default Destructor */
+  	/** Default Destructor */
 
-  void small();
-  bool done();
+  	void small();
+  	bool done();
+
+	std::string FileHash() { return mFileHash; }
+	std::string FileName() { return mFileName; }
+	uint64_t    FileSize() { return mFileSize; }
 
 void updateItemStatic();
 
@@ -51,6 +55,8 @@ private slots:
 
 private:
 	std::string mFileHash;
+	std::string mFileName;
+	uint64_t    mFileSize;
 
 	/* for display purposes */
 	float amountDone;
