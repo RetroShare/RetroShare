@@ -192,9 +192,6 @@ void 	RsServer::run()
 				//std::cerr << "RsServer::run() UpdateAllTransfers()" << std::endl;
 				UpdateAllTransfers();
 
-				//std::cerr << "RsServer::run() UpdateAllChannels()" << std::endl;
-				UpdateAllChannels();
-
 			        //std::cerr << "RsServer::run() ";
 				//std::cerr << "UpdateRemotePeople()"<<std::endl;
 				//UpdateRemotePeople();

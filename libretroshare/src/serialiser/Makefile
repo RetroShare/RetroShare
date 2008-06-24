@@ -18,6 +18,7 @@ RSOBJ += rsphotoitems.o			# RsItems
 RSOBJ += rsgameitems.o			# RsItems
 RSOBJ += rsdistribitems.o		# RsItems
 RSOBJ += rsforumitems.o			# RsItems
+RSOBJ += rschannelitems.o		# RsItems
 RSOBJ += rsqblogitems.o			# RsItems
 RSOBJ += rsstatusitems.o		# RsItems
 

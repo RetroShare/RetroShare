@@ -25,8 +25,6 @@
  */
 
 
-#include "rsserver/p3face.h"
-#include "util/rsdir.h"
 
 #include <iostream>
 #include <sstream>
@@ -37,7 +35,12 @@ const int p3facemsgzone = 11453;
 #include <sys/time.h>
 #include <time.h>
 
+#include "rsiface/rstypes.h"
+#include "util/rsdir.h"
 #include "rsserver/p3msgs.h"
+
+#include "services/p3msgservice.h"
+#include "services/p3chatservice.h"
 
 /* external reference point */
 RsMsgs *rsMsgs = NULL;

@@ -107,15 +107,6 @@ std::ostream &operator<<(std::ostream &out, const ChatInfo &info)
 
 #endif
 
-std::ostream &operator<<(std::ostream &out, const ChannelInfo &info)
-{
-	out << "ChannelInfo(TODO)";
-	out << std::endl;
-	return out;
-}
-
-
-
 int DirInfo::merge(const DirInfo &udir)
 {
 	/* add in the data from the udir */

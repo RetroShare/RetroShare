@@ -70,6 +70,8 @@ const uint32_t CONFIG_TYPE_QBLOG 	= 0x0012;
 
 const uint32_t CONFIG_TYPE_FORUMS 	= 0x0013;
 
+const uint32_t CONFIG_TYPE_CHANNELS 	= 0x0014;
+
 /* CACHE ID Must be at the END so that other configurations
  * are loaded First (Cache Config --> Cache Loading)
  */

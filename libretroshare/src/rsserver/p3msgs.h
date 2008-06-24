@@ -32,6 +32,8 @@ class p3AuthMgr;
 class p3MsgService;
 class p3ChatService;
 
+class RsChatItem;
+
 class p3Msgs: public RsMsgs 
 {
 	public:

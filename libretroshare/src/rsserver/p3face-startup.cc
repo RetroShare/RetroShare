@@ -49,6 +49,7 @@
 #include "services/p3ranking.h"
 #include "services/p3photoservice.h"
 #include "services/p3forums.h"
+#include "services/p3channels.h"
 #include "services/p3status.h"
 #include "services/p3Qblog.h"
 
@@ -613,6 +614,14 @@ int RsServer::StartupRetroShare(RsInit *config)
 	mCacheStrapper -> addCachePair(cp4);
 	pqih -> addService(mForums);  /* This must be also ticked as a service */
 	
+	p3Channels *mChannels = new p3Channels(RS_SERVICE_TYPE_CHANNEL,
+			mCacheStrapper, mCacheTransfer, 
+			localcachedir, remotecachedir, localcachedir);
+
+        CachePair cp5(mChannels, mChannels, CacheId(RS_SERVICE_TYPE_CHANNEL, 0));
+	mCacheStrapper -> addCachePair(cp5);
+	pqih -> addService(mChannels);  /* This must be also ticked as a service */
+	
 #else
 	mQblog = NULL;
 	//mForums = NULL;
@@ -641,6 +650,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	mConfigMgr->addConfiguration("ranklink.cfg", mRanking);
 #ifndef RS_RELEASE
 	mConfigMgr->addConfiguration("forums.cfg", mForums);
+	mConfigMgr->addConfiguration("channels.cfg", mChannels);
 #endif
 
 	/**************************************************************************/
@@ -770,6 +780,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	rsGameLauncher = gameLauncher;
 	rsPhoto = new p3Photo(photoService);
 	rsForums = mForums;
+	rsChannels = mChannels;
 	rsStatus = new p3Status();
 	rsQblog = new p3Blog(mQblog);
 	
@@ -777,6 +788,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	rsGameLauncher = NULL;
 	rsPhoto = NULL;
 	rsForums = NULL;
+	rsChannels = NULL;
 	rsStatus = NULL;
 	rsQblog = NULL;
 #endif

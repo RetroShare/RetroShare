@@ -75,8 +75,8 @@ static const int kRsFiStatusDone = 2;
 	std::string hash;
 	std::string ext;
 
-	int size; 
-	int avail; /* how much we have */
+	uint64_t size; 
+	uint64_t avail; /* how much we have */
 	int status;
 
 	bool inRecommend;
@@ -136,26 +136,6 @@ class FileTransferInfo: public FileInfo
 	double tfRate; /* kbytes */
 	bool download;
 	int  downloadStatus; /* 0 = Err, 1 = Ok, 2 = Done */
-};
-
-class ChannelInfo: public BaseInfo
-{
-	public:
-	ChannelInfo() :publisher(false) {}
-	RsChanId chanId;
-	bool publisher;
-	std::string chanName;
-	//std::list<MessageInfo> msglist;
-
-	/* details */
-	int mode;
-	float rank;
-
-	bool inBroadcast; 
-	bool inSubscribe;
-
-	int size;  /* total of msgs */
-	int count; /* msg count     */
 };
 
 /* matched to the uPnP states */
@@ -230,7 +210,6 @@ class SearchRequest
 };
 
 
-std::ostream &operator<<(std::ostream &out, const ChannelInfo &info);
 std::ostream &operator<<(std::ostream &out, const PersonInfo &info);
 std::ostream &print(std::ostream &out, const DirInfo &info, int indentLvl);
 

@@ -13,7 +13,8 @@ RSOBJ  = p3service.o p3chatservice.o p3msgservice.o \
 	p3distrib.o \
 	p3status.o \
 	p3Qblog.o \
-	p3forums.o 
+	p3forums.o \
+	p3channels.o 
 
 # dummy forums interface.
 #	p3forums-dummy.o \

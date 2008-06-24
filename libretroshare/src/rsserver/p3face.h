@@ -162,10 +162,6 @@ int     UpdateRemotePeople();
 	/* p3face-msg Operations */
 
 	public:
-	/* Channel Items */
-virtual int ChannelCreateNew(ChannelInfo &info);
-virtual int ChannelSendMsg(ChannelInfo &info);
-
 /* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
 virtual int     SetInChat(std::string id, bool in);         /* friend : chat msgs */
 virtual int     SetInMsg(std::string id, bool in);          /* friend : msg receipients */ 
@@ -186,26 +182,6 @@ virtual bool    IsInMsg(std::string id);            /* friend : msg recpts*/
 
  	std::list<std::string> mInChatList, mInMsgList;
 	         
-	/* Internal Update Iface Fns */
-int 	UpdateAllChannels();
-
-
-#ifdef PQI_USE_CHANNELS
-	/* Internal Helper Fns */
-RsChanId signToChanId(const channelSign &cs) const;
-
-
-int intAddChannel(ChannelInfo &info);
-int intAddChannelMsg(RsChanId id, MessageInfo &msg);
-
-
-void initRsCI(pqichannel *in, ChannelInfo &out);
-void initRsCMI(pqichannel *chan, channelMsg *cm, MessageInfo &msg);
-void initRsCMFI(pqichannel *chan, chanMsgSummary *msg,
-      const PQChanItem::FileItem *cfdi, FileInfo &file);
-
-#endif
-
 void intCheckFileStatus(FileInfo &file);
 
 void initRsMI(RsMsgItem *msg, MessageInfo &mi);
