@@ -88,15 +88,16 @@ const uint16_t RS_SERVICE_TYPE_CHANNEL     = 0xf130;
 
 /* Games/External Apps - Service Only */
 const uint16_t RS_SERVICE_TYPE_GAME_LAUNCHER = 0xf200;
+const uint16_t RS_SERVICE_TYPE_PORT          = 0xf201;
 
-/* Example Games */
+/* Example Games (NOT USED YET!) */
 /* Board Games */
-const uint16_t RS_SERVICE_TYPE_GAME_QTCHESS  = 0xf201;
-const uint16_t RS_SERVICE_TYPE_GAME_QGO      = 0xf202;
+const uint16_t RS_SERVICE_TYPE_GAME_QTCHESS  = 0xf211;
+const uint16_t RS_SERVICE_TYPE_GAME_QGO      = 0xf212;
 
 /* Card Games */
-const uint16_t RS_SERVICE_TYPE_GAME_BIGTWO   = 0xf203;
-const uint16_t RS_SERVICE_TYPE_GAME_POKER    = 0xf204;
+const uint16_t RS_SERVICE_TYPE_GAME_BIGTWO   = 0xf213;
+const uint16_t RS_SERVICE_TYPE_GAME_POKER    = 0xf214;
 
 
 
