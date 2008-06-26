@@ -94,6 +94,12 @@ class RsMsgItem: public RsItem
 	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_MSG, 
 		RS_PKT_SUBTYPE_DEFAULT)
 	{ return; }
+	
+	RsMsgItem(uint16_t type) 
+	:RsItem(RS_PKT_VERSION_SERVICE, type, 
+		RS_PKT_SUBTYPE_DEFAULT)
+	{ return; }
+	
 virtual ~RsMsgItem(); 
 virtual void clear();
 std::ostream &print(std::ostream &out, uint16_t indent = 0);
@@ -120,6 +126,11 @@ class RsMsgSerialiser: public RsSerialType
 	RsMsgSerialiser()
 	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_MSG)
 	{ return; }
+	
+	RsMsgSerialiser(uint16_t type)
+	:RsSerialType(RS_PKT_VERSION_SERVICE, type)
+	{ return; }
+	
 virtual     ~RsMsgSerialiser() { return; }
 	
 virtual	uint32_t    size(RsItem *);

@@ -190,7 +190,9 @@ const uint16_t TLV_TYPE_FILESET       = 0x1001;
 const uint16_t TLV_TYPE_FILEDATA      = 0x1002;
 
 const uint16_t TLV_TYPE_KEYVALUE      = 0x1010;
+const uint16_t TLV_TYPE_WKEYVALUE     = 0x1012;
 const uint16_t TLV_TYPE_KEYVALUESET   = 0x1011;
+const uint16_t TLV_TYPE_WKEYVALUESET  = 0x1013;
 
 const uint16_t TLV_TYPE_PEERSET       = 0x1020;
 const uint16_t TLV_TYPE_SERVICESET    = 0x1030; 

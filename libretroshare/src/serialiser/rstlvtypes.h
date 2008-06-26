@@ -224,6 +224,5 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent);
 	RsTlvBinaryData binData;      // Mandatory: serialised file info
 };
 
-
 #endif
 

@@ -12,6 +12,7 @@ RSOBJ += rstlvfileitem.o                # TLV Objs
 RSOBJ += rstlvkeys.o                    # TLV Objs
 RSOBJ += rstlvimage.o                   # TLV Objs
 RSOBJ += rstlvutil.o                    # TLV Objs
+RSOBJ += rstlvkvwide.o			# TLV Objs
 RSOBJ += rsbaseitems.o rsconfigitems.o rsdiscitems.o # RsItems 
 RSOBJ += rsmsgitems.o rsrankitems.o	# RsItems
 RSOBJ += rsphotoitems.o			# RsItems
@@ -24,13 +25,13 @@ RSOBJ += rsstatusitems.o		# RsItems
 
 TESTOBJ  = tlvbase_test.o tlvbase_test2.o tlvfileitem_test.o 
 TESTOBJ += tlvitems_test.o tlvstack_test.o tlvconfig_test.o 
-TESTOBJ += rsserial_test.o 
+TESTOBJ += rsserial_test.o rstlvwidetest.o
 
 #rsbaseitem_test.o 
 
 TESTS  = tlvbase_test tlvbase_test2 tlvfileitem_test 
 TESTS += tlvitems_test tlvstack_test tlvconfig_test
-TESTS += 
+TESTS += rstlvwidetest
 #rsserial_test 
 
 #rsbaseitem_test
@@ -60,6 +61,9 @@ rsserial_test : rsserial_test.o
 
 rsbaseitem_test : rsbaseitem_test.o
 	$(CC) $(CFLAGS) -o rsbaseitem_test rsbaseitem_test.o $(OBJ) $(LIBS) 
+
+rstlvwidetest : rstlvwidetest.o
+	$(CC) $(CFLAGS) -o rstlvwidetest rstlvwidetest.o $(OBJ) $(LIBS)
 
 
 ###############################################################
