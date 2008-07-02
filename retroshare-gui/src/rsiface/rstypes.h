@@ -38,28 +38,19 @@ typedef std::string   RsMsgId;
 typedef std::string   RsAuthId; 
 
 
-/* forward declarations of the classes */
-
-#define INFO_SAME 0x01
-#define INFO_CHG  0x02
-#define INFO_NEW  0x04
-#define INFO_DEL  0x08
-
-class BaseInfo
+class FileInfo
 {
+	/* old BaseInfo Entries */
 	public:
-	BaseInfo() :flags(0), mId(0) { return; }
+
+	FileInfo() :flags(0), mId(0) { return; }
 	RsCertId id; /* key for matching everything */
 	int flags; /* INFO_TAG above */
 
 	/* allow this to be tweaked by the GUI Model */
 	mutable unsigned int mId; /* (GUI) Model Id -> unique number */
-};
 
-/********************** For the Directory Listing *****************/
-
-class FileInfo: public BaseInfo
-{
+	/* Old FileInfo Entries */
 	public:
 
 static const int kRsFiStatusNone = 0;
@@ -83,52 +74,8 @@ static const int kRsFiStatusDone = 2;
 
 	double rank;
 	int age;
-};
 
-class DirInfo: public BaseInfo
-{
-	public:
-
-	DirInfo() :infoAge(0), nofiles(0), nobytes(0) { return; }
-	std::string path;
-	std::string dirname;
-	std::list<DirInfo> subdirs;
-	std::list<FileInfo> files;
-	int infoAge; 
-	int nofiles;
-	int nobytes;
-
-	double rank;
-	int    age;
-
-int 	 merge(const DirInfo &udir);
-
-bool     exists(const DirInfo&);
-DirInfo* existsPv(const DirInfo&);
-bool     add(const DirInfo&);
-int 	 update(const DirInfo &udir);
-
-
-bool     exists(const FileInfo&);
-FileInfo* existsPv(const FileInfo&);
-bool     add(const FileInfo&);
-
-};
-
-class PersonInfo: public BaseInfo
-{
-	public:
-	std::string name;
-	bool online;
-	int infoAge; /* time() at when this was last updated */
-
-	DirInfo rootdir;
-};
-
-/********************** For Messages and Channels *****************/
-
-class FileTransferInfo: public FileInfo
-{
+	/* Old FileTransferInfo Entries */
 	public:
 	std::string source;
 	std::list<std::string> peerIds;
@@ -136,6 +83,12 @@ class FileTransferInfo: public FileInfo
 	double tfRate; /* kbytes */
 	bool download;
 	int  downloadStatus; /* 0 = Err, 1 = Ok, 2 = Done */
+};
+
+class FileTransferInfo: public FileInfo
+{
+	public:
+	FileTransferInfo() { return; }
 };
 
 /* matched to the uPnP states */
@@ -209,9 +162,6 @@ class SearchRequest
 	std::list<Condition> tests;
 };
 
-
-std::ostream &operator<<(std::ostream &out, const PersonInfo &info);
-std::ostream &print(std::ostream &out, const DirInfo &info, int indentLvl);
 
 /********************** For FileCache Interface *****************/
 

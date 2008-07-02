@@ -91,15 +91,6 @@ virtual	void unlockData() = 0;
 	const std::list<FileTransferInfo> &getTransferList()
 		{ return mTransferList; }
 
-	const std::list<PersonInfo> &getRemoteDirectoryList()
-		{ return mRemoteDirList; }
-
-	const std::list<PersonInfo> &getLocalDirectoryList()
-		{ return mLocalDirList; }
-
-	const PersonInfo *getPerson(std::string id);
-	const DirInfo *getDirectory(std::string id, std::string path);
-
 	const std::list<FileInfo> &getRecommendList()
 		{ return mRecommendList; }
 
@@ -135,15 +126,9 @@ bool	hasChanged(DataFlags set); /* resets it */
 
 	private:
 
-	/* Internal Fn for getting the Directory Entry */
-	PersonInfo *getPersonMod(std::string id);
-	DirInfo *getDirectoryMod(std::string id, std::string path);
-
 void	fillLists(); /* create some dummy data to display */
 
 		/* Internals */
-	std::list<PersonInfo>    mRemoteDirList;
-	std::list<PersonInfo>    mLocalDirList;
 	std::list<FileTransferInfo> mTransferList;
 	std::list<FileInfo>      mRecommendList;
 
