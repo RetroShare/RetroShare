@@ -70,6 +70,7 @@
 #include "rsserver/p3Blog.h"
 #include "rsiface/rsgame.h"
 
+#include "rsserver/p3files.h"
 
 #include "pqi/p3notify.h" // HACK - moved to pqi for compilation order.
 
@@ -564,6 +565,13 @@ int RsServer::StartupRetroShare(RsInit *config)
 	server->setFileCallback(ownId, mCacheStrapper, mCacheTransfer, &(getNotify()));
 	server->setEmergencySaveDir(emergencySaveDir); /* (after setFileCallback()) if saveDir invalid */
 
+	/*
+	 * *** TMP NEW INTERFACE FOR FILES - until ftServer comes online ***
+	 */
+
+	rsFiles = new p3Files(server, this, mAuthMgr);
+
+
 	mConfigMgr = new p3ConfigMgr(mAuthMgr, config->basedir, "rs-v0.4.cfg", "rs-v0.4.sgn");
 	mGeneralConfig = new p3GeneralConfig();
 
@@ -780,6 +788,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	rsMsgs  = new p3Msgs(mAuthMgr, msgSrv, chatSrv);
 	rsDisc  = new p3Discovery(ad);
 	rsRanks = new p3Rank(mRanking);
+
 
 #ifndef RS_RELEASE
 	rsGameLauncher = gameLauncher;

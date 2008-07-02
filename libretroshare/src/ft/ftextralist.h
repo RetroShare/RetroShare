@@ -92,13 +92,13 @@ bool		addExtraFile(std::string path, std::string hash,
 		 **/
 
 bool 		hashExtraFile(std::string path, uint32_t period, uint32_t flags);
-bool	 	hashExtraFileDone(std::string path, FileDetails &details);
+bool	 	hashExtraFileDone(std::string path, FileInfo &info);
 
 		/***
 		 * Search Function - used by File Transfer 
 		 *
 		 **/
-bool		searchExtraFiles(std::string hash, FileDetails &details);
+bool		searchExtraFiles(std::string hash, FileInfo &info);
 
 		/***
 		 * Configuration - store extra files.
@@ -114,7 +114,7 @@ virtual bool    loadList(std::list<RsItem *> load);
 		RsMutex extMutex;
 
 		std::map<std::string, std::string> hashedList; /* path -> hash ( not saved ) */
-		std::map<std::string, FileDetails> files;
+		std::map<std::string, FileInfo> files;
 };
 
 

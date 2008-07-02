@@ -58,6 +58,8 @@ class FileIndexMonitor;
 class ftFileRequest;
 class ftFileData;
 
+class Expression;
+
 #define MAX_RESULTS 100 // nice balance between results and traffic.
 
 class filedexserver: public p3Config

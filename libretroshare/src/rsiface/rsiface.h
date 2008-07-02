@@ -34,9 +34,7 @@
 class NotifyBase;
 class RsIface;
 class RsControl;
-//class RsServer;
 class RsInit;
-class Expression;
 
 /* declare single RsIface for everyone to use! */
 
@@ -88,9 +86,6 @@ public:
 virtual	void lockData() = 0;
 virtual	void unlockData() = 0;
 
-	const std::list<FileTransferInfo> &getTransferList()
-		{ return mTransferList; }
-
 	const std::list<FileInfo> &getRecommendList()
 		{ return mRecommendList; }
 
@@ -129,7 +124,6 @@ bool	hasChanged(DataFlags set); /* resets it */
 void	fillLists(); /* create some dummy data to display */
 
 		/* Internals */
-	std::list<FileTransferInfo> mTransferList;
 	std::list<FileInfo>      mRecommendList;
 
 	bool mChanged[NumOfFlags];
@@ -157,34 +151,6 @@ virtual ~RsControl() { return; }
 virtual int StartupRetroShare(RsInit *config) = 0;
 
 /****************************************/
-	/* Directory Actions */
-virtual int RequestDirDetails(std::string uid, std::string path, DirDetails &details) = 0;
-virtual int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) = 0;
-
-virtual bool ConvertSharedFilePath(std::string path, std::string &fullpath) = 0;
-virtual void ForceDirectoryCheck() = 0;
-virtual bool InDirectoryCheck() = 0;
-
-/****************************************/
-	/* Search Actions */
-virtual int SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results) = 0;
-virtual int SearchBoolExp(Expression *exp, std::list<FileDetail> &results) = 0;
-
-/****************************************/
-	/* Actions For Upload/Download */
-
-//virtual int FileDelete(std::string uId, std::string fname)    = 0;
-//virtual int FileMove(std::string uId, std::string src, std::string dest) = 0;
-
-virtual	int FileRecommend(std::string fname, std::string hash, int size) = 0;
-virtual int FileRequest(std::string fname, std::string hash, uint32_t size, std::string dest) = 0;
-virtual int FileCancel(std::string fname, std::string hash, uint32_t size) = 0;
-
-// Transfer control.
-virtual int FileClearCompleted()                              = 0;
-virtual	int FileSetBandwidthTotals(float outkB, float inkB)   = 0;
-
-/****************************************/
 
 	/* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
 virtual int 	SetInChat(std::string id, bool in) = 0;		/* friend : chat msgs */
@@ -202,15 +168,7 @@ virtual bool 	IsInChat(std::string id) = 0;		/* friend : chat msgs */
 virtual bool 	IsInMsg(std::string id) = 0;		/* friend : msg recpts*/
 
 /****************************************/
-        /* RsIface Networking */
-//virtual int     NetworkDHTActive(bool active)  = 0;
-//virtual int     NetworkUPnPActive(bool active) = 0;
-
-/****************************************/
 	/* Config */
-virtual	int 	ConfigAddSharedDir( std::string dir )      = 0;
-virtual	int 	ConfigRemoveSharedDir( std::string dir )   = 0;
-virtual	int 	ConfigSetIncomingDir( std::string dir )    = 0;
 
 virtual int     ConfigSetDataRates( int total, int indiv ) = 0;
 virtual int     ConfigGetDataRates( float &inKb, float &outKb) = 0;

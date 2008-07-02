@@ -38,14 +38,6 @@ const int p3facemsgzone = 11453;
 #include <time.h>
 
 
-void RsServer::intCheckFileStatus(FileInfo &file)
-{
-  /* see if its being transfered */
-  file.avail = file.size / 2;
-  file.rank = 0;
-}
-
-
         /* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
 int     RsServer::ClearInChat()
 {

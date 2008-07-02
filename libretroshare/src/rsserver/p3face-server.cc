@@ -26,6 +26,7 @@
 
 
 #include "rsserver/p3face.h"
+#include "rsserver/p3files.h" // TMP FOR HACK!
 #include "tcponudp/tou.h"
 #include <sstream>
 
@@ -190,7 +191,13 @@ void 	RsServer::run()
 
 				// currently Dummy Functions.
 				//std::cerr << "RsServer::run() UpdateAllTransfers()" << std::endl;
-				UpdateAllTransfers();
+				//
+				// TMP HACK.
+				p3Files *p3f = (p3Files *) rsFiles;
+				if (p3f)
+				{
+					p3f -> UpdateAllTransfers();
+				}
 
 			        //std::cerr << "RsServer::run() ";
 				//std::cerr << "UpdateRemotePeople()"<<std::endl;

@@ -13,13 +13,14 @@ RSOBJ = p3peers.o \
 	p3msgs.o  \
 	p3Blog.o  \
 	p3discovery.o \
-	p3face-file.o \
 	p3face-server.o \
 	p3face-config.o \
 	p3face-startup.o \
 	p3face-msgs.o \
-	rsiface.o 
+	rsiface.o \
+	p3files.o  \
 
+#	p3face-file.o \
 #	rstypes.o \
 #	pqistrings.o \
 #	p3face-people.o 

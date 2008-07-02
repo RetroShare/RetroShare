@@ -55,24 +55,6 @@ int LoadCertificates(RsInit *config);
 RsControl *createRsControl(RsIface &iface, NotifyBase &notify);
 
 
-#if 0
-
-class PendingDirectory
-{
-        public:
-        PendingDirectory(RsCertId in_id, const DirInfo *req_dir, int depth);
-void	addEntry(PQFileItem *item);	
-
-        RsCertId id;
-        int reqDepth;
-        int reqTime;
-        DirInfo data;
-};
-
-#endif
-
-
-
 class RsServer: public RsControl, public RsThread
 {
 	public:
@@ -90,7 +72,7 @@ virtual	int StartupRetroShare(RsInit *config);
         /* Thread Fn: Run the Core */
 virtual void run();
 
-	private:
+	public: // no longer private:!!!
 	/* locking stuff */
 void    lockRsCore() 
 	{ 
@@ -104,6 +86,8 @@ void    unlockRsCore()
 		coreMutex.unlock(); 
 	}
 
+	private:
+
 	/* mutex */
 	RsMutex coreMutex;
 
@@ -114,48 +98,6 @@ void    unlockRsCore()
 cert   *intFindCert(RsCertId id);
 RsCertId intGetCertId(cert *c);
 #endif
-
-/****************************************/
-	/* p3face-people Operations */
-
-/****************************************/
-/****************************************/
-	/* p3face-file Operations */
-
-	public:
-
-	/* Directory Actions */
-virtual int RequestDirDetails(std::string uid, std::string path, 
-					DirDetails &details);
-virtual int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags);
-virtual int SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results);
-virtual int SearchBoolExp(Expression *exp, std::list<FileDetail> &results);
-
-virtual bool ConvertSharedFilePath(std::string path, std::string &fullpath);
-virtual void ForceDirectoryCheck();
-virtual bool InDirectoryCheck();
-
-	/* Actions For Upload/Download */
-
-// REDO these three TODO XXX .
-//virtual int FileBroadcast(std::string uId, std::string src, int size);
-//virtual int FileDelete(std::string, std::string);
-
-virtual int FileRecommend(std::string fname, std::string hash, int size);
-virtual int FileRequest(std::string fname, std::string hash, uint32_t size, std::string dest);
-
-virtual int FileCancel(std::string fname, std::string hash, uint32_t size);
-virtual int FileClearCompleted();
-
-
-virtual int FileSetBandwidthTotals(float outkB, float inkB);
-
-	private:
-
-int 	UpdateAllTransfers();
-
-	/* send requests to people */
-int     UpdateRemotePeople();
 
 /****************************************/
 /****************************************/
@@ -182,49 +124,14 @@ virtual bool    IsInMsg(std::string id);            /* friend : msg recpts*/
 
  	std::list<std::string> mInChatList, mInMsgList;
 	         
-void intCheckFileStatus(FileInfo &file);
-
 void initRsMI(RsMsgItem *msg, MessageInfo &mi);
 
 /****************************************/
 /****************************************/
-
-	public:
 /****************************************/
-	/* RsIface Networking */
-//virtual int	NetworkDHTActive(bool active);
-//virtual int	NetworkUPnPActive(bool active);
-//virtual int	NetworkDHTStatus();
-//virtual int	NetworkUPnPStatus();
-
-	private:
-/* internal */
-//int	InitNetworking(std::string);
-//int	CheckNetworking();
-
-//int	InitDHT(std::string);
-//int	CheckDHT();
-
-//int	InitUPnP();
-//int	CheckUPnP();
-
-//int     UpdateNetworkConfig(RsConfig &config);
-//int     SetExternalPorts();
-
-
-	public:
 /****************************************/
-	/* RsIface Config */
+	public:
         /* Config */
-virtual int     ConfigAddSharedDir( std::string dir );
-virtual int     ConfigRemoveSharedDir( std::string dir );
-virtual int     ConfigSetIncomingDir( std::string dir );
-
-//virtual int     ConfigSetLocalAddr( std::string ipAddr, int port );
-//virtual int     ConfigSetExtAddr( std::string ipAddr, int port );
-//virtual int     ConfigSetExtName( std::string addr );
-//virtual int     ConfigSetLanConfig( bool fire, bool forw );
-
 
 virtual int 	ConfigGetDataRates(float &inKb, float &outKb);
 virtual int     ConfigSetDataRates( int total, int indiv );

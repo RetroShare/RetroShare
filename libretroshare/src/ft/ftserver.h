@@ -90,11 +90,11 @@ CacheTransfer *getCacheTransfer();
 	/************** (Implements RsFiles) ***************************/
 	/***************************************************************/
 
-virtual int FileRequest(std::string fname, std::string hash, 
+virtual bool FileRequest(std::string fname, std::string hash, 
 				uint32_t size, std::string dest, uint32_t flags);
-virtual int FileCancel(std::string hash);
-virtual int FileControl(std::string hash, uint32_t flags);
-virtual int FileClearCompleted();
+virtual bool FileCancel(std::string hash);
+virtual bool FileControl(std::string hash, uint32_t flags);
+virtual bool FileClearCompleted();
 
 	/* get Details of File Transfers */
 virtual bool FileDownloads(std::list<std::string> &hashs);
@@ -102,9 +102,9 @@ virtual bool FileUploads(std::list<std::string> &hashs);
 virtual bool FileDetails(std::string hash, uint32_t hintflags, FileInfo &info);
 
 	/* Access ftExtraList - Details */
-virtual int  ExtraFileAdd(std::string fname, std::string hash, uint32_t size, 
+virtual bool ExtraFileAdd(std::string fname, std::string hash, uint32_t size, 
 						uint32_t period, uint32_t flags);
-virtual int  ExtraFileRemove(std::string hash, uin32_t flags);
+virtual bool ExtraFileRemove(std::string hash, uin32_t flags);
 virtual bool ExtraFileHash(std::string localpath, uint32_t period, uint32_t flags);
 virtual bool ExtraFileStatus(std::string localpath, FileInfo &info);
 
@@ -124,10 +124,14 @@ virtual bool InDirectoryCheck();
 	/* Directory Handling */
 virtual void	setDownloadDirectory(std::string path);
 virtual void	setPartialsDirectory(std::string path);
+virtual std::string getDownloadDirectory();
+virtual std::string getPartialsDirectory();
 
 virtual bool	getSharedDirectories(std::list<std::string> &dirs);
-virtual int 	addSharedDirectory(std::string dir);
-virtual int 	removeSharedDirectory(std::string dir);
+virtual bool 	addSharedDirectory(std::string dir);
+virtual bool 	removeSharedDirectory(std::string dir);
+
+
 virtual int 	reScanDirs();
 virtual int 	check_dBUpdate();
 
