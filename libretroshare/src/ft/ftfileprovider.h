@@ -36,37 +36,31 @@
 class ftFileProvider
 {
 public:
-
 	ftFileProvider(std::string path, uint64_t size, std::string hash);
 	virtual ~ftFileProvider();
-
-	/* array already allocated -
-	 * just move chunk_size bytes to void *data buffer.
-	 */
-virtual bool 	getFileData(uint64_t offset, uint32_t chunk_size, void *data);
-
-	/* File Info */
-std::string getHash();
-uint64_t getFileSize();
-
-
+	virtual bool 	getFileData(uint64_t offset, uint32_t chunk_size, void *data);
+	std::string getHash();
+	uint64_t getFileSize();
 protected:
 	virtual int initializeFileAttrs();
-	std::string file_name;
-	std::string hash;
 	uint64_t    total_size;
-
+	std::string hash;
+	std::string file_name;
 	FILE *fd;
 
-	/* Statistics */
+	/* 
+	 * Structure to gather statistics FIXME: lastRequestor - figure out a 
+	 * way to get last requestor (peerID)
+	 */
 	std::string lastRequestor;
 	uint64_t   req_loc;
 	uint32_t   req_size;
 	time_t     lastTS;   
-/* Mutex Required for stuff below */
 
+	/* 
+         * Mutex Required for stuff below 
+         */
 	RsMutex ftPMutex;
-
 };
 
 

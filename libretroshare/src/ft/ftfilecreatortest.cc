@@ -1,33 +1,8 @@
 #include "ftfilecreator.h"
 
 main(){
-	/*Testing default file chunker*/
-	uint32_t total_size = 1000000; /*100KB*/
-	ftFileChunker fc(total_size);
-	fc.setMonitorPeriod(10);
-	fc.splitFile();
-	std::cout << "Starting fc monitor thread\n";
-	fc.start();
-	
-	
-	/*Simulate calls from transfer module*/
 	uint64_t offset;
-	uint32_t csize = 40000;      /* 40KB*/
-	if (fc.getMissingChunk(offset, csize)){
-		std::cout << "Missing Chunk's offset=" << offset << " chunk_size=" << csize << std::endl;
-	}
-	sleep(5);
-	csize = 10000;
-	if (fc.getMissingChunk(offset, csize)){
-		std::cout << "Missing Chunk's offset=" << offset << " chunk_size=" << csize << std::endl;
-	}
-	
-	csize = 15000;             /* Ask more than the multiple of std_chunk_size*/
-	if (fc.getMissingChunk(offset, csize)){
-		std::cout << "Missing Chunk's offset=" << offset << " chunk_size=" << csize << std::endl;
-	}
-	
-	sleep(10);
+	uint32_t csize;
 	/*Test file creator*/
 	ftFileCreator fcreator("somefile",100000,"hash","default");
 	csize = 40000;
@@ -45,7 +20,8 @@ main(){
 		std::cout << "Missing Chunk's offset=" << offset << " chunk_size=" << csize << std::endl;
 	}
 	
-	/* Test file creator adding data to file out-of-order*/
+	
+	std::cout << "Test file creator adding data to file out-of-order\n";
 	char* alpha = "abcdefghij";
 	std::cerr << "Call to addFileData =" << fcreator.addFileData(10,10,alpha );
 	char* numerical = "1234567890";
@@ -106,7 +82,6 @@ main(){
 		std::cout << "getMissing chunk returned nothing" << std::endl;	
 	}
 
-	fc.join();
 	free(allA);
 	free(allB);
 }

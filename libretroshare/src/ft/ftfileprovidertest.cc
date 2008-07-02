@@ -1,6 +1,6 @@
 #include "ftfileprovider.h"
 
-main(){
+int main(){
 	ftFileProvider fp("dummy.txt",1,"ABCDEF");
 	char data[2];
 	long offset = 0;
@@ -29,4 +29,5 @@ main(){
 		}
 		offset+=2;
 	}
+	return 1;
 }

@@ -46,21 +46,30 @@ public:
 	
 	~ftFileCreator();
 
-	/* overloaded from FileProvider */
-//virtual bool 	getFileData(uint64_t offset, uint32_t chunk_size, void *data);
-int initializeFileAttrs(); //not override?
+	/*
+	 * overloaded from FileProvider FIXME
+	 * virtual bool 	getFileData(uint64_t offset, uint32_t chunk_size, void *data);
+	 *
+	 */
+		
+	/*
+	 * FIXME: initializeFileAttrs
+         * Should this be a over-ridden version of ftfile provider?
+	 * What happens in the case of simultaneous upload and download?
+	 */
 
-	/* creation functions for FileCreator */
-bool	getMissingChunk(uint64_t &offset, uint32_t &chunk);
-bool 	addFileData(uint64_t offset, uint32_t chunk_size, void *data);
+ 	int initializeFileAttrs(); 
+	/* 
+	 * creation functions for FileCreator 
+         */
+	bool	getMissingChunk(uint64_t &offset, uint32_t &chunk);
+	bool 	addFileData(uint64_t offset, uint32_t chunk_size, void *data);
 
 private:
-	/* structure to track missing chunks */
+	/* 
+         * structure to track missing chunks 
+         */
 	
-	/* structure to hold*/
-
-//	std::string save_path; use file_name from parent
-//	uint64_t total_size;
 	uint64_t recv_size;
 	std::string hash;
 	ftFileChunker *fileChunker;
@@ -74,14 +83,18 @@ private:
 */
 class ftFileChunker : public RsThread {
 public:
-	/* Does this require hash?? */
+	/* 
+	 * FIXME Does filechunker require hash?? 
+         */
 	ftFileChunker(uint64_t size);
 	virtual ~ftFileChunker();
-	/* Breaks up the file into evenly sized chunks 
-	   Initializes all chunks to never_requested	
-	*/
-    int splitFile();
-	virtual void run();
+
+	/* 
+	 * Breaks up the file into evenly sized chunks 
+	 * Initializes all chunks to never_requested	
+	 */
+    	int splitFile();
+	virtual	void	run();
 	virtual bool	getMissingChunk(uint64_t &offset, uint32_t &chunk);
 	bool 	getMissingChunkRandom(uint64_t &offset, uint32_t &chunk);
 	int 	notifyReceived(uint64_t offset, uint32_t chunk_size);
@@ -97,7 +110,6 @@ protected:
 	RsMutex chunkerMutex; /********** STACK LOCKED MTX ******/
 };
 
-
 class ftFileRandomizeChunker : public ftFileChunker {
 public:
 	ftFileRandomizeChunker(uint64_t size);
@@ -105,7 +117,6 @@ public:
 	~ftFileRandomizeChunker();
 
 };
-
 
 class ftChunk {
 public:
@@ -115,7 +126,7 @@ public:
 	uint64_t max_chunk_size;
 	time_t   timestamp;
 	Status chunk_status;	
-	
+	~ftChunk();
 };
 
 #endif // FT_FILE_PROVIDER_HEADER
