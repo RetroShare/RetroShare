@@ -1,6 +1,7 @@
 
 #include "RemoteDirModel.h"
-#include "rsiface.h"
+#include "rsfiles.h"
+
 #include <QPalette>
 
 
@@ -35,7 +36,7 @@
      else
      	flags |= DIR_FLAGS_LOCAL;
 
-     if (!rsicontrol->RequestDirDetails(ref, details, flags))
+     if (!rsFiles->RequestDirDetails(ref, details, flags))
      {
      	/* error */
 #ifdef RDM_DEBUG
@@ -82,7 +83,7 @@
      else
      	flags |= DIR_FLAGS_LOCAL;
 
-     if (!rsicontrol->RequestDirDetails(ref, details, flags))
+     if (!rsFiles->RequestDirDetails(ref, details, flags))
      {
 #ifdef RDM_DEBUG
         std::cerr << "lookup failed -> 0";
@@ -135,7 +136,7 @@
      else
      	flags |= DIR_FLAGS_LOCAL;
 
-     if (!rsicontrol->RequestDirDetails(ref, details, flags))
+     if (!rsFiles->RequestDirDetails(ref, details, flags))
      {
      	return QVariant();
      }
@@ -387,7 +388,7 @@
      	else
      		flags |= DIR_FLAGS_LOCAL;
 
-     	if (!rsicontrol->RequestDirDetails(ref, details, flags))
+     	if (!rsFiles->RequestDirDetails(ref, details, flags))
      	{
 #ifdef RDM_DEBUG
      		std::cerr << "lookup failed -> invalid";
@@ -451,7 +452,7 @@
      	else
      		flags |= DIR_FLAGS_LOCAL;
 
-     	if (!rsicontrol->RequestDirDetails(ref, details, flags))
+     	if (!rsFiles->RequestDirDetails(ref, details, flags))
      	{
 #ifdef RDM_DEBUG
      		std::cerr << "Failed Lookup -> invalid";
@@ -496,7 +497,7 @@
      	else
      		flags |= DIR_FLAGS_LOCAL;
 
-     	if (!rsicontrol->RequestDirDetails(ref, details, flags))
+     	if (!rsFiles->RequestDirDetails(ref, details, flags))
      	{
 		return (Qt::ItemIsSelectable); // Error.
      	}
@@ -555,7 +556,7 @@ void RemoteDirModel::update (const QModelIndex &index )
 {
 	//std::cerr << "Directory Request(" << id << ") : ";
 	//std::cerr << path << std::endl;
-	//rsicontrol -> RequestDirectories(id, path, 1);
+	//rsFiles -> RequestDirectories(id, path, 1);
 }
 
 void RemoteDirModel::downloadSelected(QModelIndexList list)
@@ -587,19 +588,25 @@ void RemoteDirModel::downloadSelected(QModelIndexList list)
 			continue; /* don't try to download local stuff */
 		}
 
-     		if (!rsicontrol->RequestDirDetails(ref, details, flags))
+     		if (!rsFiles->RequestDirDetails(ref, details, flags))
      		{
 			continue;
      		}
 		/* only request if it is a file */
 		if (details.type == DIR_TYPE_FILE)
 		{
-			rsicontrol -> FileRequest(details.name, details.hash, 
-						details.count, "");
+			rsFiles -> FileRequest(details.name, details.hash, 
+						details.count, "", 0);
 		}
 	}
 }
 
+/****************************************************************************
+ * OLD RECOMMEND SYSTEM - DISABLED
+ *
+ */
+
+#if 0
 
 void RemoteDirModel::recommendSelected(QModelIndexList list)
 {
@@ -626,7 +633,7 @@ void RemoteDirModel::recommendSelected(QModelIndexList list)
      			flags |= DIR_FLAGS_LOCAL;
 		}
 
-     		if (!rsicontrol->RequestDirDetails(ref, details, flags))
+     		if (!rsFiles->RequestDirDetails(ref, details, flags))
      		{
 			continue;
      		}
@@ -637,7 +644,7 @@ void RemoteDirModel::recommendSelected(QModelIndexList list)
 		std::cerr << "Size: " << details.count << std::endl;
 		std::cerr << "Path: " << details.path << std::endl;
 
-		rsicontrol -> FileRecommend(details.name, details.hash, details.count);
+		rsFiles -> FileRecommend(details.name, details.hash, details.count);
 	}
 	std::cerr << "::::::::::::Done FileRecommend" << std::endl;
 }
@@ -650,7 +657,7 @@ void RemoteDirModel::recommendSelectedOnly(QModelIndexList list)
 	{
 		std::cerr << "Cannot recommend remote! (should download)" << std::endl;
 	}
-     	rsicontrol->ClearInRecommend();
+     	rsFiles->ClearInRecommend();
 
 	/* Fire off requests */
 	QModelIndexList::iterator it;
@@ -670,7 +677,7 @@ void RemoteDirModel::recommendSelectedOnly(QModelIndexList list)
      			flags |= DIR_FLAGS_LOCAL;
 		}
 
-     		if (!rsicontrol->RequestDirDetails(ref, details, flags))
+     		if (!rsFiles->RequestDirDetails(ref, details, flags))
      		{
 			continue;
      		}
@@ -681,15 +688,20 @@ void RemoteDirModel::recommendSelectedOnly(QModelIndexList list)
 		std::cerr << "Size: " << details.count << std::endl;
 		std::cerr << "Path: " << details.path << std::endl;
 
-		rsicontrol -> FileRecommend(details.name, details.hash, details.count);
-     		rsicontrol -> SetInRecommend(details.name, true);
+		rsFiles -> FileRecommend(details.name, details.hash, details.count);
+     		rsFiles -> SetInRecommend(details.name, true);
 	}
 	std::cerr << "::::::::::::Done FileRecommend" << std::endl;
 }
 
+#endif
+/****************************************************************************
+ * OLD RECOMMEND SYSTEM - DISABLED
+ ******/
+
 void RemoteDirModel::openSelected(QModelIndexList list)
 {
-	recommendSelected(list);
+	//recommendSelected(list);
 }
 
 
@@ -711,7 +723,7 @@ void RemoteDirModel::getFilePaths(QModelIndexList list, std::list<std::string> &
      		uint32_t flags = DIR_FLAGS_DETAILS;
      		flags |= DIR_FLAGS_LOCAL;
 
-     		if (!rsicontrol->RequestDirDetails(ref, details, flags))
+     		if (!rsFiles->RequestDirDetails(ref, details, flags))
      		{
 			std::cerr << "getFilePaths() Bad Request" << std::endl;
 			continue;

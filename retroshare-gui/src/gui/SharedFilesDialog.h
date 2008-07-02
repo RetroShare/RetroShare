@@ -56,16 +56,16 @@ private slots:
   void shareddirtreeWidgetCostumPopupMenu( QPoint point );
   
   void downloadRemoteSelected();
-  void addMsgRemoteSelected();
+//  void addMsgRemoteSelected();
 
-  void recommendfile();
+//  void recommendfile();
   void playselectedfiles();
   void openfile();
   void openfolder();
 
-  void recommendFileSetOnly();
-  void recommendFilesTo( std::string rsid );
-  void recommendFilesToMsg( std::string rsid );
+//  void recommendFileSetOnly();
+//  void recommendFilesTo( std::string rsid );
+//  void recommendFilesToMsg( std::string rsid );
 
 signals:
   void playFiles(QStringList files);

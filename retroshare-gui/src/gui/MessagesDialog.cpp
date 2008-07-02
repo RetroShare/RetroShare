@@ -28,6 +28,7 @@
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsmsgs.h"
+#include "rsiface/rsfiles.h"
 #include <sstream>
 
 #include <QContextMenuEvent>
@@ -282,7 +283,7 @@ void MessagesDialog::getallrecommended()
 	for(fit = fnames.begin(), hit = hashes.begin(), sit = sizes.begin(); 
 		fit != fnames.end(); fit++, hit++, sit++)
 	{
-        	rsicontrol -> FileRequest(*fit, *hit, *sit, "");
+        	rsFiles -> FileRequest(*fit, *hit, *sit, "", 0);
 	}
 }
 

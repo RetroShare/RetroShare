@@ -25,6 +25,7 @@
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
+#include "rsiface/rsfiles.h"
 #include "rsiface/RemoteDirModel.h"
 #include "util/RsAction.h"
 #include "msgs/ChanMsgDialog.h"
@@ -135,7 +136,7 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 void SharedFilesDialog::checkUpdate()
 {
         /* update */
-	if (rsicontrol->InDirectoryCheck())
+	if (rsFiles->InDirectoryCheck())
 	{
 		ui.hashLabel->setPixmap(QPixmap(IMAGE_HASH_BUSY));
 		/*QMovie *movie = new QMovie(IMAGE_PROGRESS);
@@ -153,7 +154,7 @@ void SharedFilesDialog::checkUpdate()
 
 void SharedFilesDialog::forceCheck()
 {
-	rsicontrol->ForceDirectoryCheck();
+	rsFiles->ForceDirectoryCheck();
 	return;
 }
 
@@ -191,32 +192,6 @@ void SharedFilesDialog::downloadRemoteSelected()
 }
 
 
-void SharedFilesDialog::addMsgRemoteSelected()
-{
-  /* call back to the model (which does all the interfacing? */
-
-  std::cerr << "Recommending Files";
-  std::cerr << std::endl;
-
-  QItemSelectionModel *qism = ui.remoteDirTreeView->selectionModel();
-  model -> recommendSelected(qism->selectedIndexes());
-
-
-}
-
-
-
-void SharedFilesDialog::recommendfile()
-{
-  /* call back to the model (which does all the interfacing? */
-
-  std::cerr << "Recommending Files";
-  std::cerr << std::endl;
-
-  QItemSelectionModel *qism = ui.localDirTreeView->selectionModel();
-  localModel -> recommendSelected(qism->selectedIndexes());
-}
-
 
 void SharedFilesDialog::playselectedfiles()
 {
@@ -235,7 +210,7 @@ void SharedFilesDialog::playselectedfiles()
   for(it = paths.begin(); it != paths.end(); it++)
   {
   	std::string fullpath;
-  	rsicontrol->ConvertSharedFilePath(*it, fullpath);
+  	rsFiles->ConvertSharedFilePath(*it, fullpath);
 	fullpaths.push_back(QString::fromStdString(fullpath));
 
   	std::cerr << "Playing: " << fullpath;
@@ -243,6 +218,34 @@ void SharedFilesDialog::playselectedfiles()
   }
 
   playFiles(fullpaths);
+}
+
+
+#if 0
+
+void SharedFilesDialog::addMsgRemoteSelected()
+{
+  /* call back to the model (which does all the interfacing? */
+
+  std::cerr << "Recommending Files";
+  std::cerr << std::endl;
+
+  QItemSelectionModel *qism = ui.remoteDirTreeView->selectionModel();
+  model -> recommendSelected(qism->selectedIndexes());
+
+
+}
+
+
+void SharedFilesDialog::recommendfile()
+{
+  /* call back to the model (which does all the interfacing? */
+
+  std::cerr << "Recommending Files";
+  std::cerr << std::endl;
+
+  QItemSelectionModel *qism = ui.localDirTreeView->selectionModel();
+  localModel -> recommendSelected(qism->selectedIndexes());
 }
 
 
@@ -308,6 +311,7 @@ void SharedFilesDialog::recommendFilesToMsg( std::string rsid )
   nMsgDialog->show();
 }
 
+#endif
 
 
 void SharedFilesDialog::openfile()
@@ -364,9 +368,9 @@ void SharedFilesDialog::shareddirtreeWidgetCostumPopupMenu( QPoint point )
       openfolderAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Play File(s)" ), this );
       connect( openfolderAct , SIGNAL( triggered() ), this, SLOT( playselectedfiles() ) );
 
+#if 0
       openfileAct = new QAction(QIcon(IMAGE_ATTACHMENT), tr( "Add to Recommend List" ), this );
       connect( openfileAct , SIGNAL( triggered() ), this, SLOT( recommendfile() ) );
-      
      
 	/* now we're going to ask who to recommend it to...
 	 * First Level.
@@ -416,12 +420,14 @@ void SharedFilesDialog::shareddirtreeWidgetCostumPopupMenu( QPoint point )
 		/* create list of ids */
 
 	}
+#endif
+
 
         contextMnu2.addAction( openfolderAct);
-        contextMnu2.addAction( openfileAct);
-        contextMnu2.addSeparator(); 
-        contextMnu2.addMenu( recMenu);
-        contextMnu2.addMenu( msgMenu);
+        //contextMnu2.addAction( openfileAct);
+        //contextMnu2.addSeparator(); 
+        //contextMnu2.addMenu( recMenu);
+        //contextMnu2.addMenu( msgMenu);
 
 
         contextMnu2.exec( mevent2->globalPos() );

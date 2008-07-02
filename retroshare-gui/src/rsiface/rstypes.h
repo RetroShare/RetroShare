@@ -105,9 +105,6 @@ class RsConfig
 	std::string		ownId;
 	std::string		ownName;
 
-	std::list<std::string>   sharedDirList;
-	std::string		 incomingDir;
-
 	std::string		localAddr;
 	int			localPort;
 	std::string		extAddr;

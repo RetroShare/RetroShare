@@ -36,7 +36,7 @@
 #include <QStandardItemModel>
 
 #include <sstream>
-#include "rsiface/rsiface.h"
+#include "rsiface/rsfiles.h"
 
 /* Images for context menu icons */
 #define IMAGE_INFO                 ":/images/fileinfo.png"
@@ -198,9 +198,7 @@ void TransfersDialog::playSelectedTransfer()
 	std::cerr << "TransfersDialog::playSelectedTransfer()" << std::endl;
 
         /* get the shared directories */
-	rsiface->lockData(); /* Lock Interface */
-															        std::string incomingdir = rsiface->getConfig().incomingDir;
-																rsiface->unlockData(); /* UnLock Interface */
+	std::string incomingdir = rsFiles->getDownloadDirectory();
 
 	/* create the List of Files */
 	QStringList playList;
@@ -371,33 +369,32 @@ void TransfersDialog::insertTransfers()
 		delUploadItem(i);
 	}
 	
-	
-	//nun aktuelle DownloadListe hinzufügen
-	rsiface->lockData(); /* Lock Interface */
 
-	std::list<FileTransferInfo>::const_iterator it;
-	const std::list<FileTransferInfo> &transfers = rsiface->getTransferList();
+	/* get the download and upload lists */
+	std::list<std::string> downHashes;
+	std::list<std::string> upHashes;
+
+	rsFiles->FileDownloads(downHashes);
+	rsFiles->FileUploads(upHashes);
 
 	uint32_t dlCount = 0;
 	uint32_t ulCount = 0;
 
-	for(it = transfers.begin(); it != transfers.end(); it++) 
+	std::list<std::string>::iterator it;
+	for(it = downHashes.begin(); it != downHashes.end(); it++)
 	{
+		FileInfo info;
+		if (!rsFiles->FileDetails(*it, 0, info))
+		{
+			continue;
+		}
 		
 		symbol  	= "";
-		coreId		= "";
-		name    	= QString::fromStdString(it->fname);
-		sources  	= QString::fromStdString(it->source);
+		coreId		= QString::fromStdString(info.hash);
+		name    	= QString::fromStdString(info.fname);
+		sources  	= QString::fromStdString(info.source);
 
-		/* Replace ID with HASH -> as thats what we need to cancel! */
-		//std::ostringstream out;
-		//out << it->id;
-		//coreId		= QString::fromStdString(it->hashout.str());
-		coreId		= QString::fromStdString(it->hash);
-
-		sources = QString::fromStdString(it->source);
-
-		switch(it->downloadStatus) 
+		switch(info.downloadStatus) 
 		{
 
 	/******** XXX HAND CODED! 
@@ -427,35 +424,78 @@ void TransfersDialog::insertTransfers()
 		
         	}
         
-		dlspeed  	= it->tfRate * 1024.0;
-		fileSize 	= it->size;
-		completed 	= it->transfered;
-		progress 	= it->transfered * 100.0 / it->size;
-		remaining   = (it->size - it->transfered) / (it->tfRate * 1024.0);
+		dlspeed  	= info.tfRate * 1024.0;
+		fileSize 	= info.size;
+		completed 	= info.transfered;
+		progress 	= info.transfered * 100.0 / info.size;
+		remaining   = (info.size - info.transfered) / (info.tfRate * 1024.0);
 	
-		if (it->download)
-		{
-			addItem(symbol, name, coreId, fileSize, progress, 
-					dlspeed, sources,  status, completed, remaining);
+		addItem(symbol, name, coreId, fileSize, progress, 
+				dlspeed, sources,  status, completed, remaining);
 
-			/* if found in selectedIds -> select again */
-			if (selectedIds.end() != std::find(selectedIds.begin(), selectedIds.end(), it->hash))
-			{
-				selection->select(DLListModel->index(dlCount, 0), 
-					QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent);
-
-			}
-			dlCount++;
-		}
-		else
+		/* if found in selectedIds -> select again */
+		if (selectedIds.end() != std::find(selectedIds.begin(), selectedIds.end(), info.hash))
 		{
-			addUploadItem(symbol, name, coreId, fileSize, progress, 
-					dlspeed, sources,  status, completed, remaining);
-			ulCount++;
+			selection->select(DLListModel->index(dlCount, 0), 
+				QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent);
+
 		}
+		dlCount++;
 	}
 
-	rsiface->unlockData(); /* UnLock Interface */
+	for(it = upHashes.begin(); it != upHashes.end(); it++)
+	{
+		FileInfo info;
+		if (!rsFiles->FileDetails(*it, 0, info))
+		{
+			continue;
+		}
+		
+		symbol  	= "";
+		coreId		= QString::fromStdString(info.hash);
+		name    	= QString::fromStdString(info.fname);
+		sources  	= QString::fromStdString(info.source);
+
+		switch(info.downloadStatus) 
+		{
+
+	/******** XXX HAND CODED! 
+#define FT_STATE_FAILED         0
+#define FT_STATE_OKAY           1
+#define FT_STATE_WAITING        2
+#define FT_STATE_DOWNLOADING    3
+#define FT_STATE_COMPLETE       4
+	*******************/
+
+			case 0: /* FAILED */
+				status = "Failed";
+				break;
+			case 1: /* OKAY */
+				status = "Okay";
+				break;
+			case 2: /* WAITING */
+				status = "Waiting";
+				break;
+			case 3: /* DOWNLOADING */
+				status = "Downloading";
+				break;
+		    	case 4: /* COMPLETE */
+			default:
+				status = "Complete";
+				break;
+		
+        	}
+        
+		dlspeed  	= info.tfRate * 1024.0;
+		fileSize 	= info.size;
+		completed 	= info.transfered;
+		progress 	= info.transfered * 100.0 / info.size;
+		remaining   = (info.size - info.transfered) / (info.tfRate * 1024.0);
+	
+		addUploadItem(symbol, name, coreId, fileSize, progress, 
+				dlspeed, sources,  status, completed, remaining);
+		ulCount++;
+	}
 }
 
 void TransfersDialog::cancel()
@@ -468,17 +508,15 @@ void TransfersDialog::cancel()
 			 * but otherwise, not exact filename .... BUG
 			 */
 			std::string name = (qname.trimmed()).toStdString();
-			// TODO
-			rsicontrol->FileCancel(name, id, 0); /* name, *hash*, size */
-			//std::cerr << "TranfersDialog::cancel(): " << name << ":" << id << ":" << 0 << std::endl;
+			rsFiles->FileCancel(id); /* hash */
 		}
 	}
 }
 
 void TransfersDialog::clearcompleted()
 {
-    std::cerr << "TransfersDialog::clearcompleted()" << std::endl;
-	rsicontrol->FileClearCompleted();
+    	std::cerr << "TransfersDialog::clearcompleted()" << std::endl;
+   	rsFiles->FileClearCompleted();
 }
 
 double TransfersDialog::getProgress(int row, QStandardItemModel *model)

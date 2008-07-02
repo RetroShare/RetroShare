@@ -38,8 +38,12 @@ class RemoteDirModel : public QAbstractItemModel
 
 	/* Callback from GUI */
      void downloadSelected(QModelIndexList list);
+
+#if 0  /****** REMOVED ******/
      void recommendSelected(QModelIndexList list);
      void recommendSelectedOnly(QModelIndexList list);
+#endif 
+
      void openSelected(QModelIndexList list);
 
      void getFilePaths(QModelIndexList list, std::list<std::string> &fullpaths);

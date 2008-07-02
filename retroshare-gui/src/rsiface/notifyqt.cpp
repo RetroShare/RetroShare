@@ -345,23 +345,6 @@ void NotifyQt::displayChannels()
 
 void NotifyQt::displayTransfers()
 {
-	iface->lockData(); /* Lock Interface */
-
-	std::list<FileTransferInfo>::const_iterator it;
-	const std::list<FileTransferInfo> &tlist = iface->getTransferList();
-	
-	for(it = tlist.begin(); it != tlist.end(); it++)
-	{
-	std::ostringstream out;
-	out << "Transfer: ";
-	out << it ->fname << " ";
-	out << it ->path << " ";
-	out << std::endl;
-	std::cerr << out.str();
-	}
-	
-	iface->unlockData(); /* UnLock Interface */
-	
 	/* Do the GUI */
 	if (tDialog)
 		tDialog->insertTransfers();

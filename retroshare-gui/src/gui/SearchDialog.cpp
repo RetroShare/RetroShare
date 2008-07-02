@@ -24,6 +24,7 @@
 #include "SearchDialog.h"
 #include "rsiface/rsiface.h"
 #include "rsiface/rsexpr.h"
+#include "rsiface/rsfiles.h"
 
 #include <iostream>
 #include <sstream>
@@ -226,10 +227,10 @@ void SearchDialog::download()
         // call the download
 	if (item->text(SR_ID_COL) != "Local")
 	{
-        	rsicontrol -> FileRequest((item->text(SR_NAME_COL)).toStdString(), 
+        	rsFiles -> FileRequest((item->text(SR_NAME_COL)).toStdString(), 
                                   (item->text(SR_HASH_COL)).toStdString(), 
                                   (item->text(SR_SIZE_COL)).toInt(), 
-                                  "");
+                                  "", 0);
 	}
 	else
 	{
@@ -378,7 +379,7 @@ void SearchDialog::advancedSearch(Expression* expression)
 
 	/* call to core */
 	std::list<FileDetail> results;
-	rsicontrol -> SearchBoolExp(expression, results);
+	rsFiles -> SearchBoolExp(expression, results);
 
         /* abstraction to allow reusee of tree rendering code */
         resultsToTree((advSearchDialog->getSearchAsString()).toStdString(), results);
@@ -412,7 +413,7 @@ void SearchDialog::searchKeywords()
 	std::list<FileDetail> initialResults;
 	std::list<FileDetail> * finalResults = 0;
 	
-	rsicontrol -> SearchKeywords(words, initialResults);
+	rsFiles -> SearchKeywords(words, initialResults);
 	/* which extensions do we use? */
 	QString qExt, qName;
 	int extIndex;

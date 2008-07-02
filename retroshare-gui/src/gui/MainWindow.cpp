@@ -47,6 +47,7 @@
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
+#include "rsiface/rsfiles.h"
 
 #include "gui/connect/InviteDialog.h"
 #include "gui/connect/AddFriendDialog.h"
@@ -455,8 +456,7 @@ void MainWindow::addSharedDirectory()
     std::string dir = qdir.toStdString();
     if (dir != "")
     {
-        rsicontrol -> ConfigAddSharedDir(dir);
-        //rsicontrol -> ConfigSave();
+        rsFiles -> addSharedDirectory(dir);
     }
 
 }

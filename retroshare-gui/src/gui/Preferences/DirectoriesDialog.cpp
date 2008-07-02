@@ -21,7 +21,7 @@
 
 
 #include <rshare.h>
-#include "rsiface/rsiface.h"
+#include "rsiface/rsfiles.h"
 #include "DirectoriesDialog.h"
 
 
@@ -56,12 +56,9 @@ DirectoriesDialog::save(QString &errmsg)
 /** Loads the settings for this page */
 void DirectoriesDialog::load()
 {
-
-	/* get the shared directories */
-        rsiface->lockData(); /* Lock Interface */
-	
 	std::list<std::string>::const_iterator it;
-	const std::list<std::string> &dirs = rsiface->getConfig().sharedDirList;
+	std::list<std::string> dirs;
+	rsFiles->getSharedDirectories(dirs);
 	
 	/* get a link to the table */
 	QListWidget *listWidget = ui.dirList;
@@ -75,9 +72,7 @@ void DirectoriesDialog::load()
 		listWidget->addItem(QString::fromStdString(*it));
 	}
 
-	ui.incomingDir->setText(QString::fromStdString(rsiface->getConfig().incomingDir));
-	
-	rsiface->unlockData(); /* UnLock Interface */
+	ui.incomingDir->setText(QString::fromStdString(rsFiles->getDownloadDirectory()));
 	
 	listWidget->update(); /* update display */
 
@@ -96,7 +91,7 @@ void DirectoriesDialog::addShareDirectory()
 	std::string dir = qdir.toStdString();
 	if (dir != "")
 	{
-		rsicontrol -> ConfigAddSharedDir(dir);
+		rsFiles->addSharedDirectory(dir);
 		load();
 	}
 }
@@ -109,7 +104,7 @@ void DirectoriesDialog::removeShareDirectory()
 	QListWidgetItem *qdir = listWidget -> currentItem();
 	if (qdir)
 	{
-		rsicontrol -> ConfigRemoveSharedDir( qdir->text().toStdString());
+		rsFiles->removeSharedDirectory( qdir->text().toStdString());
 		load();
 	}
 }
@@ -122,7 +117,7 @@ void DirectoriesDialog::setIncomingDirectory()
 	std::string dir = qdir.toStdString();
 	if (dir != "")
 	{
-		rsicontrol->ConfigSetIncomingDir(dir);
+		rsFiles->setDownloadDirectory(dir);
 	}
 	load();
 }
