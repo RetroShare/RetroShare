@@ -662,6 +662,11 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 	mConfigMgr->loadConfiguration();
 
+	/* NOTE: CacheStrapper's load causes Cache Files to be
+	 * loaded into all the CacheStores/Sources. This happens
+	 * after all the other configurations have happened.
+	 */
+
 	/**************************************************************************/
 	/* Hack Old Configuration into new System (first load only) */
 	/**************************************************************************/

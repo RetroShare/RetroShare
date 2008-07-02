@@ -188,8 +188,8 @@ bool p3Qblog::loadBlogFile(std::string filename, std::string src)
 			delete item;
 		}
 					/* check timestamp */
-		else if (((time_t) newBlog->timeStamp < min) || 
-				((time_t) newBlog->timeStamp > max))
+		else if (((time_t) newBlog->sendTime < min) || 
+				((time_t) newBlog->sendTime > max))
 		{
 			#ifdef QBLOG_DEBUG
 			std::cerr << "p3Qblog::loadBlogFile() Outside TimeRange (deleting):";
@@ -227,16 +227,16 @@ bool p3Qblog::addBlog(RsQblogMsg *newBlog)
 	{
 		RsStackMutex Stack(mBlogMtx);
 		
-		mUsrBlogSet[newBlog->PeerId()].insert(std::make_pair(newBlog->timeStamp, newBlog->blogMsg));
+		mUsrBlogSet[newBlog->PeerId()].insert(std::make_pair(newBlog->sendTime, newBlog->message));
 		
 		#ifdef QBLOG_DEBUG
 		std::cerr << "p3Qblog::addBlog()";
 		std::cerr << std::endl;
 		std::cerr << "\tpeerId" << newBlog->PeerId();
 		std::cerr << std::endl;
-		std::cerr << "\tmUsrBlogSet: time" << newBlog->timeStamp;
+		std::cerr << "\tmUsrBlogSet: time" << newBlog->sendTime;
 		std::cerr << std::endl;
-		std::cerr << "\tmUsrBlogSet: blog" << newBlog->blogMsg;
+		std::cerr << "\tmUsrBlogSet: blog" << newBlog->message;
 		std::cerr << std::endl;
 		#endif 
 		mPostsUpdated = false; // need to figure how this should work/ wherre this should be placed
@@ -472,16 +472,16 @@ bool p3Qblog::sendBlog(const std::wstring &msg)
 		RsQblogMsg *blog = new RsQblogMsg();
 		blog->clear();
 		
-		blog->timeStamp = blogTimeStamp;
-		blog->blogMsg = msg;
+		blog->sendTime = blogTimeStamp;
+		blog->message = msg;
 
 		
 		#ifdef QBLOG_DEBUG
 		std::cerr << "p3Qblog::sendBlogFile()";
 		std::cerr << std::endl;
-		std::cerr << "\tblogItem->timeStamp" << blog->timeStamp;
+		std::cerr << "\tblogItem->sendTime" << blog->sendTime;
 		std::cerr << std::endl;
-		std::cerr << "\tblogItem->blogMsg.second" << blog->blogMsg;
+		std::cerr << "\tblogItem->message" << blog->message;
 		std::cerr << std::endl;
 		#endif
 		

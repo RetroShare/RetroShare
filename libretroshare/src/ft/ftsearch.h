@@ -1,10 +1,9 @@
-
 /*
- * "$Id: rstypes.cc,v 1.2 2007-04-07 08:41:00 rmf24 Exp $"
+ * libretroshare/src/ft: ftsearch.h
  *
- * RetroShare C++ Interface.
+ * File Transfer for RetroShare.
  *
- * Copyright 2004-2006 by Robert Fernie.
+ * Copyright 2008 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,24 +23,29 @@
  *
  */
 
+#ifndef FT_SEARCH_HEADER
+#define FT_SEARCH_HEADER
 
-/* Insides of RetroShare interface.
- * only prints stuff out at the moment
+/* 
+ * ftSearch
+ *
+ * This is a generic search interface - used by ft* to find files.
+ * The derived class will search for Caches/Local/ExtraList/Remote entries.
+ *
  */
 
 #include "rsiface/rstypes.h"
-#include <iostream>
-#include <sstream>
-#include <iomanip>
+
+class ftSearch
+{
+
+	public:
+
+	ftSearch() { return; }
+virtual bool	search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info);
+
+};
 
 
-/**********************************************************************
- * NOTE NOTE NOTE ...... XXX
- * BUG in MinGW .... %hhx in sscanf overwrites 32bits, instead of 8bits.
- * this means that scanf(.... &(data[15])) is running off the 
- * end of the buffer, and hitting data[15-18]...
- * To work around this bug we are reading into proper int32s
- * and then copying the data over...
- *
-**********************************************************************/
+
 
