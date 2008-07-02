@@ -30,13 +30,15 @@
  * ftFileProvider.
  *
  */
-
+#include <iostream>
+#include <stdint.h>
+#include "util/rsthreads.h"
 class ftFileProvider
 {
 public:
 
 	ftFileProvider(std::string path, uint64_t size, std::string hash);
-	~ftFileProvider();
+	virtual ~ftFileProvider();
 
 	/* array already allocated -
 	 * just move chunk_size bytes to void *data buffer.
@@ -49,7 +51,7 @@ uint64_t getFileSize();
 
 
 protected:
-
+	virtual int initializeFileAttrs();
 	std::string file_name;
 	std::string hash;
 	uint64_t    total_size;
@@ -61,6 +63,10 @@ protected:
 	uint64_t   req_loc;
 	uint32_t   req_size;
 	time_t     lastTS;   
+/* Mutex Required for stuff below */
+
+	RsMutex ftPMutex;
+
 };
 
 

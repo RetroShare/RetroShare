@@ -7,18 +7,22 @@ RS_TOP_DIR = ..
 include $(RS_TOP_DIR)/scripts/config.mk
 ###############################################################
 
-RSOBJ =   
+RSOBJ =  ftfileprovider.o ftfilecreator.o
 
-TESTOBJ  = #ftcachetest.o
+TESTOBJ  = ftfileprovidertest.o ftfilecreatortest.o
 
-TESTS  = #ftcachetest
+TESTS  = ftfileprovidertest ftfilecreatortest
 
 all: librs tests
 
-#ftcachetest : ftcachetest.o $(OBJ)
-#	$(CC) $(CFLAGS) -o ftcachetest ftcachetest.o $(OBJ) $(LIBS)
+ftfilecreatortest : ftfilecreatortest.o $(RSOBJ)
+	$(CC) $(CFLAGS) -o ftfilecreatortest ftfilecreatortest.o $(RSOBJ) $(LIBS)
+	
+ftfileprovidertest : ftfileprovidertest.o $(RSOBJ)
+	$(CC) $(CFLAGS) -o ftfileprovidertest ftfileprovidertest.o $(RSOBJ) $(LIBS)
 
 ###############################################################
 include $(RS_TOP_DIR)/scripts/rules.mk
 ###############################################################
+
 
