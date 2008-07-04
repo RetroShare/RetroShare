@@ -599,13 +599,13 @@ p, li { white-space: pre-wrap; }
          <enum>Qt::CustomContextMenu</enum>
         </property>
         <property name="acceptDrops" >
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="dragEnabled" >
          <bool>true</bool>
         </property>
         <property name="dragDropMode" >
-         <enum>QAbstractItemView::DragDrop</enum>
+         <enum>QAbstractItemView::DragOnly</enum>
         </property>
         <property name="alternatingRowColors" >
          <bool>false</bool>

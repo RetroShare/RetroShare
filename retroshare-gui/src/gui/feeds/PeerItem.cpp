@@ -41,7 +41,7 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, std::string peerId, uint
   /* general ones */
   connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
   connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
-  connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
+  //connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
 
   /* specific ones */
   connect( chatButton, SIGNAL( clicked( void ) ), this, SLOT( openChat ( void ) ) );
@@ -125,7 +125,10 @@ void PeerItem::updateItemStatic()
 	{
 		/* disable buttons */
 		clearButton->setEnabled(false);
-		gotoButton->setEnabled(false);
+		//gotoButton->setEnabled(false);
+
+		/* disable buttons */
+		clearButton->hide();
 	}
 }
 

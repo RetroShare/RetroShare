@@ -20,19 +20,19 @@
  ****************************************************************/
 #include <QtGui>
 
-#include "BlogMsgItem.h"
-
+#include "ChanNewItem.h"
 #include "FeedHolder.h"
-#include "SubFileItem.h"
+
+#include "rsiface/rschannels.h"
 
 #include <iostream>
 
 #define DEBUG_ITEM 1
 
 /** Constructor */
-BlogMsgItem::BlogMsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId, std::string msgId, bool isHome)
+ChanNewItem::ChanNewItem(FeedHolder *parent, uint32_t feedId, std::string chanId, bool isHome, bool isNew)
 :QWidget(NULL), mParent(parent), mFeedId(feedId),
-	mPeerId(peerId), mMsgId(msgId), mIsHome(isHome)
+	mChanId(chanId), mIsHome(isHome), mIsNew(isNew)
 {
   /* Invoke the Qt Designer generated object setup routine */
   setupUi(this);
@@ -43,7 +43,7 @@ BlogMsgItem::BlogMsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId
   //connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
 
   /* specific ones */
-  connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( playMedia ( void ) ) );
+  connect( subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeChannel ( void ) ) );
 
   small();
   updateItemStatic();
@@ -51,78 +51,81 @@ BlogMsgItem::BlogMsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId
 }
 
 
-void BlogMsgItem::updateItemStatic()
+void ChanNewItem::updateItemStatic()
 {
+	if (!rsChannels)
+		return;
+
+
 	/* fill in */
 #ifdef DEBUG_ITEM
-	std::cerr << "BlogMsgItem::updateItemStatic()";
+	std::cerr << "ChanNewItem::updateItemStatic()";
 	std::cerr << std::endl;
 #endif
 
-	msgLabel->setText("FFFFFFFFFFF AAAAAAAAAAAAAAA \n HHHHHHHHHHH HHHHHHHHHHHHHHHHH");
-	titleLabel->setText("Channel Feed: Best Channel Ever");
-	subjectLabel->setText("Brand new exciting Ever");
-
-	/* add Files */
-	int total = (int) (10.0 * (rand() / (RAND_MAX + 1.0)));
-	int i;
-
-	for(i = 0; i < total; i++)
+	ChannelInfo ci;
+	if (rsChannels->getChannelInfo(mChanId, ci))
 	{
-		/* add file */
-		SubFileItem *fi = new SubFileItem("dummyHash", "dummyFileName", 1283918);
-		mFileItems.push_back(fi);
+		nameLabel->setText(QString::fromStdWString(ci.channelName));
 
-		QLayout *layout = expandFrame->layout();
-		layout->addWidget(fi);
+		descLabel->setText(QString::fromStdWString(ci.channelDesc));
+
+		if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED)
+		{
+			subscribeButton->setEnabled(false);
+			//postButton->setEnabled(true);
+		}
+		else
+		{
+			subscribeButton->setEnabled(true);
+			//postButton->setEnabled(false);
+		}
+			
+
+		/* should also check the other flags */
+	}
+	else
+	{
+		nameLabel->setText("Unknown Channel");
+		titleLabel->setText("Channel ???");
+		descLabel->setText("");
 	}
 
-	playButton->setEnabled(false);
-	
+	if (mIsNew)
+	{
+		titleLabel->setText("New Channel");
+	}
+	else
+	{
+		titleLabel->setText("Updated Channel");
+	}
+
 	if (mIsHome)
 	{
 		/* disable buttons */
 		clearButton->setEnabled(false);
 		//gotoButton->setEnabled(false);
-		
-		clearButton->hide();
 	}
 }
 
 
-void BlogMsgItem::updateItem()
+void ChanNewItem::updateItem()
 {
 	/* fill in */
 #ifdef DEBUG_ITEM
-	std::cerr << "BlogMsgItem::updateItem()";
+	std::cerr << "ChanNewItem::updateItem()";
 	std::cerr << std::endl;
 #endif
-	int msec_rate = 10000;
 
-	/* Very slow Tick to check when all files are downloaded */
-	std::list<SubFileItem *>::iterator it;
-	for(it = mFileItems.begin(); it != mFileItems.end(); it++)
-	{
-		if (!(*it)->done())
-		{
-			/* loop again */
-	  		QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
-			return;
-		}
-	}
-	if (mFileItems.size() > 0)
-	{
-		playButton->setEnabled(true);
-	}
 }
 
 
-void BlogMsgItem::small()
+void ChanNewItem::small()
 {
 	expandFrame->hide();
 }
 
-void BlogMsgItem::toggle()
+void ChanNewItem::toggle()
 {
 	if (expandFrame->isHidden())
 	{
@@ -135,10 +138,10 @@ void BlogMsgItem::toggle()
 }
 
 
-void BlogMsgItem::removeItem()
+void ChanNewItem::removeItem()
 {
 #ifdef DEBUG_ITEM
-	std::cerr << "BlogMsgItem::removeItem()";
+	std::cerr << "ChanNewItem::removeItem()";
 	std::cerr << std::endl;
 #endif
 	hide();
@@ -149,10 +152,10 @@ void BlogMsgItem::removeItem()
 }
 
 
-void BlogMsgItem::gotoHome()
+void ChanNewItem::gotoHome()
 {
 #ifdef DEBUG_ITEM
-	std::cerr << "BlogMsgItem::gotoHome()";
+	std::cerr << "ChanNewItem::gotoHome()";
 	std::cerr << std::endl;
 #endif
 }
@@ -160,12 +163,31 @@ void BlogMsgItem::gotoHome()
 /*********** SPECIFIC FUNCTIOSN ***********************/
 
 
-void BlogMsgItem::playMedia()
+void ChanNewItem::unsubscribeChannel()
 {
 #ifdef DEBUG_ITEM
-	std::cerr << "BlogMsgItem::playMedia()";
+	std::cerr << "ChanNewItem::unsubscribeChannel()";
 	std::cerr << std::endl;
 #endif
+	if (rsChannels)
+	{
+		rsChannels->channelSubscribe(mChanId, false);
+	}
+	updateItemStatic();
+}
+
+
+void ChanNewItem::subscribeChannel()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "ChanNewItem::subscribeChannel()";
+	std::cerr << std::endl;
+#endif
+	if (rsChannels)
+	{
+		rsChannels->channelSubscribe(mChanId, true);
+	}
+	updateItemStatic();
 }
 
 

@@ -40,7 +40,7 @@ ForumNewItem::ForumNewItem(FeedHolder *parent, uint32_t feedId, std::string foru
   /* general ones */
   connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
   connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
-  connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
+  //connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
 
   /* specific ones */
   connect( subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeForum ( void ) ) );
@@ -106,7 +106,7 @@ void ForumNewItem::updateItemStatic()
 	{
 		/* disable buttons */
 		clearButton->setEnabled(false);
-		gotoButton->setEnabled(false);
+		//gotoButton->setEnabled(false);
 	}
 }
 

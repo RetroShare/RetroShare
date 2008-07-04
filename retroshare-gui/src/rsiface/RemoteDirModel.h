@@ -11,11 +11,7 @@ class RemoteDirModel : public QAbstractItemModel
      Q_OBJECT
 
  public:
-     RemoteDirModel(bool mode, QObject *parent = 0)
-         : QAbstractItemModel(parent), 
-           RemoteMode(mode), 
-	   nIndex(1), indexSet(1)   /* ass zero index cant be used */
-	 {}  
+     RemoteDirModel(bool mode, QObject *parent = 0);
 
 	/* These are all overloaded Virtual Functions */
      int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -52,6 +48,12 @@ class RemoteDirModel : public QAbstractItemModel
 
      void collapsed ( const QModelIndex & index ) { update(index); } 
      void expanded ( const QModelIndex & index ) { update(index); }
+
+  /* Drag and Drop Functionality */
+  public:
+
+virtual QMimeData * mimeData ( const QModelIndexList & indexes ) const;
+virtual QStringList mimeTypes () const;
 
  private:
      void update (const QModelIndex &index );

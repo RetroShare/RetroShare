@@ -40,7 +40,7 @@ ForumMsgItem::ForumMsgItem(FeedHolder *parent, uint32_t feedId, std::string foru
   /* general ones */
   connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
   connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
-  connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
+  //connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
 
   /* specific ones */
   connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeForum ( void ) ) );
@@ -144,8 +144,12 @@ void ForumMsgItem::updateItemStatic()
 	{
 		/* disable buttons */
 		clearButton->setEnabled(false);
-		gotoButton->setEnabled(false);
+		//gotoButton->setEnabled(false);
+
+		clearButton->hide();
 	}
+
+	unsubscribeButton->hide();
 }
 
 

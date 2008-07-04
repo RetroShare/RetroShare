@@ -43,7 +43,10 @@ public:
   /** Default Destructor */
 
 	void addAttachment(std::string path);
+	void addAttachment(std::string hash, std::string fname, uint64_t size);
+
 	void addDestination(uint32_t type, std::string grpId, std::string inReplyTo);
+	void setMsgType(uint32_t type);
 
 protected:
 virtual void dragEnterEvent(QDragEnterEvent *event);
@@ -56,6 +59,8 @@ private slots:
 	void sendMsg();
 
 private:
+
+void parseRsFileListAttachments(std::string attachList);
 
 void sendMessage(uint32_t type, std::string grpId, std::string inReplyTo, 
          std::wstring subject, std::wstring msg, std::list<FileInfo> &files);

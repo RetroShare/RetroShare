@@ -2,12 +2,20 @@
 #include "RemoteDirModel.h"
 #include "rsfiles.h"
 
-#include <QPalette>
+#include <QtGui>
 
 
 #include <iostream>
 #include <sstream>
 #include <math.h>
+
+RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
+        : QAbstractItemModel(parent),
+         RemoteMode(mode), nIndex(1), indexSet(1)   /* ass zero index cant be used */
+{
+	setSupportedDragActions(Qt::CopyAction);
+}
+
 
 
  bool RemoteDirModel::hasChildren(const QModelIndex &parent) const
@@ -518,9 +526,9 @@
 	else // (details.type == DIR_TYPE_FILE)
 	{
      		return ( Qt::ItemIsSelectable | 
+			Qt::ItemIsDragEnabled |
 			Qt::ItemIsEnabled);
 
-//			Qt::ItemIsDragEnabled |
 
 	}
 }
@@ -751,6 +759,102 @@ void RemoteDirModel::getFilePaths(QModelIndexList list, std::list<std::string> &
 		}
 	}
 	std::cerr << "::::::::::::Done getFilePaths" << std::endl;
+}
+
+  /* Drag and Drop Functionality */
+QMimeData * RemoteDirModel::mimeData ( const QModelIndexList & indexes ) const
+{
+	/* extract from each the member text */
+	std::string  text;
+	QModelIndexList::const_iterator it;
+	std::map<std::string, uint64_t> drags;
+	std::map<std::string, uint64_t>::iterator dit;
+
+	for(it = indexes.begin(); it != indexes.end(); it++)
+	{
+		void *ref = it -> internalPointer();
+
+     		DirDetails details;
+     		uint32_t flags = DIR_FLAGS_DETAILS;
+     		if (RemoteMode)
+		{
+     			flags |= DIR_FLAGS_REMOTE;
+		}
+     		else
+		{
+     			flags |= DIR_FLAGS_LOCAL;
+		}
+
+     		if (!rsFiles->RequestDirDetails(ref, details, flags))
+     		{
+			continue;
+     		}
+
+		std::cerr << "::::::::::::FileDrag:::: " << std::endl;
+		std::cerr << "Name: " << details.name << std::endl;
+		std::cerr << "Hash: " << details.hash << std::endl;
+		std::cerr << "Size: " << details.count << std::endl;
+		std::cerr << "Path: " << details.path << std::endl;
+
+		if (details.type != DIR_TYPE_FILE)
+		{
+			std::cerr << "RemoteDirModel::mimeData() Not File" << std::endl;
+			continue; /* not file! */
+		}
+
+		if (drags.end() != (dit = drags.find(details.hash)))
+		{
+			std::cerr << "RemoteDirModel::mimeData() Duplicate" << std::endl;
+			continue; /* duplicate */
+		}
+
+		drags[details.hash] = details.count;
+
+		std::string line = details.name;
+		line += "/";
+		line += details.hash;
+		line += "/";
+
+		{
+			std::ostringstream out;
+			out << details.count;
+			line += out.str();
+			line += "/";
+		}
+
+		if (RemoteMode)
+		{
+			line += "Remote";
+		}
+		else
+		{
+			line += "Local";
+		}
+		line += "/\n";
+
+		text += line;
+	}
+
+	std::cerr << "Created MimeData:";
+	std::cerr << std::endl;
+
+	std::cerr << text;
+	std::cerr << std::endl;
+
+	QMimeData *data = new QMimeData();
+	data->setData("application/x-rsfilelist", QByteArray(text.c_str()));
+
+	return data;
+
+
+}
+
+QStringList RemoteDirModel::mimeTypes () const
+{
+	QStringList list;
+	list.push_back("application/x-rsfilelist");
+
+	return list;
 }
 
 

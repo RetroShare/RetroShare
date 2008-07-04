@@ -1075,7 +1075,7 @@ p, li { white-space: pre-wrap; }
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <widget class="QTreeWidget" name="searchResultWidget" >
+       <widget class="SearchTreeWidget" name="searchResultWidget" >
         <property name="sizePolicy" >
          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
           <horstretch>1</horstretch>
@@ -1084,6 +1084,12 @@ p, li { white-space: pre-wrap; }
         </property>
         <property name="contextMenuPolicy" >
          <enum>Qt::CustomContextMenu</enum>
+        </property>
+        <property name="dragEnabled" >
+         <bool>true</bool>
+        </property>
+        <property name="dragDropMode" >
+         <enum>QAbstractItemView::DragOnly</enum>
         </property>
         <property name="sortingEnabled" >
          <bool>true</bool>
@@ -1159,6 +1165,13 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SearchTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>gui/SearchTreeWidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="images.qrc" />
  </resources>

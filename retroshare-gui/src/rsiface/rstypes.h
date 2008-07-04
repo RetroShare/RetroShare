@@ -201,7 +201,7 @@ class DirDetails
 	std::string name;
 	std::string hash;
 	std::string path;
-	uint32_t count;
+	uint64_t count;
 	uint32_t age;
 	uint32_t rank;
 
@@ -215,7 +215,7 @@ class FileDetail
 	std::string name;
 	std::string hash;
 	std::string path;
-	uint32_t size;
+	uint64_t size;
 	uint32_t age;
 	uint32_t rank;
 };

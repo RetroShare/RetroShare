@@ -43,6 +43,8 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 
   	connect(chanButton, SIGNAL(clicked()), this, SLOT(createChannel()));
   	connect(postButton, SIGNAL(clicked()), this, SLOT(sendMsg()));
+  	connect(subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeChannel ( void ) ) );
+  	connect(unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
 
 	/*************** Setup Left Hand Side (List of Channels) ****************/
 
@@ -453,4 +455,38 @@ void ChannelFeed::updateChannelMsgs()
 		mMsgLayout->addWidget(cmi);
 	}
 }
+
+
+
+
+
+void ChannelFeed::unsubscribeChannel()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "ChannelFeed::unsubscribeChannel()";
+	std::cerr << std::endl;
+#endif
+	if (rsChannels)
+	{
+		rsChannels->channelSubscribe(mChannelId, false);
+	}
+	updateChannelMsgs();
+}
+
+
+void ChannelFeed::subscribeChannel()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "ChannelFeed::subscribeChannel()";
+	std::cerr << std::endl;
+#endif
+	if (rsChannels)
+	{
+		rsChannels->channelSubscribe(mChannelId, true);
+	}
+	updateChannelMsgs();
+}
+
+
+
 

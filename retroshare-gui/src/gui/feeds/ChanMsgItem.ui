@@ -43,7 +43,7 @@
       <item>
        <layout class="QHBoxLayout" >
         <item>
-         <widget class="QPushButton" name="gotoButton" >
+         <widget class="QPushButton" name="clearButton" >
           <property name="sizePolicy" >
            <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
             <horstretch>0</horstretch>
@@ -51,13 +51,13 @@
            </sizepolicy>
           </property>
           <property name="toolTip" >
-           <string>Goto Section</string>
+           <string>Remove Item</string>
           </property>
           <property name="text" >
            <string/>
           </property>
           <property name="icon" >
-           <iconset resource="images.qrc" >:/images/add-friend24.png</iconset>
+           <iconset resource="images.qrc" >:/images/close_normal.png</iconset>
           </property>
          </widget>
         </item>
@@ -114,41 +114,6 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="clearButton" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip" >
-           <string>Delete FeedItem</string>
-          </property>
-          <property name="text" >
-           <string/>
-          </property>
-          <property name="icon" >
-           <iconset resource="images.qrc" >:/images/close_normal.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
          <widget class="QPushButton" name="expandButton" >
           <property name="sizePolicy" >
            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
@@ -171,13 +136,6 @@
       </item>
       <item>
        <layout class="QHBoxLayout" >
-        <item>
-         <widget class="QLabel" name="label_2" >
-          <property name="text" >
-           <string>Subject</string>
-          </property>
-         </widget>
-        </item>
         <item>
          <widget class="QLabel" name="subjectLabel" >
           <property name="sizePolicy" >

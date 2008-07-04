@@ -72,6 +72,7 @@ HEADERS +=  rshare.h \
             gui/NetworkView.h \
             gui/MessengerWindow.h \
             gui/PeersDialog.h \
+            gui/SearchTreeWidget.h \
             gui/SearchDialog.h \
             gui/SharedFilesDialog.h \
             gui/StatisticDialog.h \
@@ -153,14 +154,19 @@ HEADERS +=  rshare.h \
             gui/elastic/edge.h \
             gui/elastic/node.h \
             gui/NewsFeed.h \
+            gui/PeersFeed.h \
+            gui/MsgFeed.h \
+            gui/TransferFeed.h \
             gui/ChannelFeed.h \
 	    gui/GeneralMsgDialog.h \
             gui/feeds/FeedHolder.h \
             gui/feeds/ForumNewItem.h \
             gui/feeds/ForumMsgItem.h \
             gui/feeds/PeerItem.h \
+            gui/feeds/MsgItem.h \
             gui/feeds/ChanGroupItem.h \
             gui/feeds/ChanMenuItem.h \
+            gui/feeds/ChanNewItem.h \
             gui/feeds/ChanMsgItem.h \
             gui/feeds/BlogMsgItem.h \
             gui/feeds/SubFileItem.h \
@@ -229,13 +235,18 @@ FORMS +=    gui/ChatDialog.ui \
             gui/channels/MyChannelsDialog.ui \
             gui/channels/MySubscriptionsDialog.ui \
             gui/NewsFeed.ui \
+            gui/PeersFeed.ui \
+            gui/MsgFeed.ui \
+            gui/TransferFeed.ui \
             gui/ChannelFeed.ui \
 	    gui/GeneralMsgDialog.ui \
             gui/feeds/ForumNewItem.ui \
             gui/feeds/ForumMsgItem.ui \
             gui/feeds/PeerItem.ui \
+            gui/feeds/MsgItem.ui \
             gui/feeds/ChanGroupItem.ui \
             gui/feeds/ChanMenuItem.ui \
+            gui/feeds/ChanNewItem.ui \
             gui/feeds/ChanMsgItem.ui \
             gui/feeds/BlogMsgItem.ui \
             gui/feeds/SubFileItem.ui \
@@ -270,6 +281,7 @@ SOURCES += main.cpp \
             gui/NetworkView.cpp \
             gui/MessengerWindow.cpp \
             gui/PeersDialog.cpp \
+            gui/SearchTreeWidget.cpp \
             gui/SearchDialog.cpp \
             gui/SharedFilesDialog.cpp \
             gui/StatisticDialog.cpp \
@@ -342,13 +354,18 @@ SOURCES += main.cpp \
             gui/elastic/edge.cpp \
             gui/elastic/node.cpp \
             gui/NewsFeed.cpp \
+            gui/PeersFeed.cpp \
+            gui/MsgFeed.cpp \
+            gui/TransferFeed.cpp \
             gui/ChannelFeed.cpp \
 	    gui/GeneralMsgDialog.cpp \
             gui/feeds/ForumNewItem.cpp \
             gui/feeds/ForumMsgItem.cpp \
             gui/feeds/PeerItem.cpp \
+            gui/feeds/MsgItem.cpp \
             gui/feeds/ChanGroupItem.cpp \
             gui/feeds/ChanMenuItem.cpp \
+            gui/feeds/ChanNewItem.cpp \
             gui/feeds/ChanMsgItem.cpp \
             gui/feeds/BlogMsgItem.cpp \
             gui/feeds/SubFileItem.cpp \

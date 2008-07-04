@@ -19,81 +19,51 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef _CHANNEL_FEED_DIALOG_H
-#define _CHANNEL_FEED_DIALOG_H
+#ifndef _TRANSFER_FEED_DIALOG_H
+#define _TRANSFER_FEED_DIALOG_H
 
 #include "mainpage.h"
-#include "ui_ChannelFeed.h"
+#include "ui_TransferFeed.h"
 
 #include "gui/feeds/FeedHolder.h"
 
-class ChanGroupItem;
-class ChanMenuItem;
-class ChanMsgItem;
+class SubFileItem;
 
-class ChannelFeed : public MainPage, public FeedHolder, private Ui::ChannelFeed
+class TransferFeed : public MainPage, public FeedHolder, private Ui::TransferFeed
 {
   Q_OBJECT
 
 public:
   /** Default Constructor */
-  ChannelFeed(QWidget *parent = 0);
+  TransferFeed(QWidget *parent = 0);
   /** Default Destructor */
 
-
+	/* FeedHolder Functions (for FeedItem functionality) */
 virtual void deleteFeedItem(QWidget *item, uint32_t type);
 virtual void openChat(std::string peerId);
 virtual void openMsg(uint32_t type, std::string grpId, std::string inReplyTo);
 
-public slots:
-
-	void selectChannel( std::string );
-
 private slots:
-
-	void checkUpdate();
-
-	void createChannel();
-	void sendMsg();
-
-	void channelSelection();
-
-	void subscribeChannel();
-	void unsubscribeChannel();
+ 
+	void updateMode();
+	void updateAll();
+	void updateDownloads();
+	void updateUploads();
 
 private:
 
-	void updateChannelList();
-	void updateChannelListOwn(std::list<std::string> &ids);
-	void updateChannelListSub(std::list<std::string> &ids);
-	void updateChannelListPop(std::list<std::string> &ids);
-	void updateChannelListOther(std::list<std::string> &ids);
+  QLayout *mDownloadsLayout;
+  QLayout *mUploadsLayout;
 
-	void updateChannelMsgs();
-
-	std::string mChannelId; /* current Channel */
-
-	/* Layout Pointers */
-	QBoxLayout *mGroupLayout;
-	QBoxLayout *mMsgLayout;
-
-	/* Group Headers */
-	ChanGroupItem *mGroupOwn;
-	ChanGroupItem *mGroupSub;
-	ChanGroupItem *mGroupPop;
-	ChanGroupItem *mGroupOther;
-
-	/* lists of feedItems */
-	std::list<ChanMenuItem *> mChannelListOwn;
-	std::list<ChanMenuItem *> mChannelListSub;
-	std::list<ChanMenuItem *> mChannelListPop;
-	std::list<ChanMenuItem *> mChannelListOther;
-
-	std::list<ChanMsgItem *> mChanMsgItems;
+  /* lists of feedItems */
+  uint32_t			mMode;
+  std::map<std::string, SubFileItem *> 	mDownloads;
+  std::map<std::string, SubFileItem *> 	mUploads;
 
 };
 
 
 
 #endif
+
 

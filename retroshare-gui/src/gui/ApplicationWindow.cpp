@@ -49,6 +49,9 @@
 #include "BlogDialog.h"
 #include "CalDialog.h"
 #include "NewsFeed.h"
+#include "PeersFeed.h"
+#include "TransferFeed.h"
+#include "MsgFeed.h"
 #include "ChannelFeed.h"
 
 /* for smplayer */
@@ -112,18 +115,30 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
                       createPageAction(QIcon(IMAGE_NEWSFEED), tr("News Feed"), grp));
                      
-    ForumsDialog *forumsDialog = NULL;
-    ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_NETWORK), tr("Forums"), grp));
+    PeersFeed *peersFeed = NULL;
+    ui.stackPages->add(peersFeed = new PeersFeed(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_NEWSFEED), tr("Peers"), grp));
                      
-    ChannelFeed *channelFeed = NULL;
-    ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_CHANNELS), tr("Channel Feed"), grp));
+    TransferFeed *transferFeed = NULL;
+    ui.stackPages->add(transferFeed = new TransferFeed(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_NEWSFEED), tr("Transfers"), grp));
+                     
+    MsgFeed *msgFeed = NULL;
+    ui.stackPages->add(msgFeed = new MsgFeed(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_NEWSFEED), tr("Messages"), grp));
                      
     BlogDialog *blogDialog = NULL;
     ui.stackPages->add(blogDialog = new BlogDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_NETWORK), tr("Blog Feed"), grp));
 
+    ChannelFeed *channelFeed = NULL;
+    ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_CHANNELS), tr("Channel Feed"), grp));
+
+    ForumsDialog *forumsDialog = NULL;
+    ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_NETWORK), tr("Forums"), grp));
+                     
     GamesDialog *gamesDialog = NULL;
     ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_GAMES), tr("Games Launcher"), grp));

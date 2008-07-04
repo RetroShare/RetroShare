@@ -42,7 +42,7 @@ ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, std::string chanId
   /* general ones */
   connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
   connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
-  connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
+  //connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
 
   /* specific ones */
   connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( playMedia ( void ) ) );
@@ -107,9 +107,14 @@ void ChanMsgItem::updateItemStatic()
 	{
 		/* disable buttons */
 		clearButton->setEnabled(false);
-		gotoButton->setEnabled(false);
+		//gotoButton->setEnabled(false);
 		unsubscribeButton->setEnabled(false);
+
+		clearButton->hide();
 	}
+
+	/* don't really want this at all! */
+	unsubscribeButton->hide();
 }
 
 
@@ -133,7 +138,10 @@ void ChanMsgItem::updateItem()
 			return;
 		}
 	}
-	playButton->setEnabled(true);
+	if (mFileItems.size() > 0)
+	{
+		playButton->setEnabled(true);
+	}
 }
 
 

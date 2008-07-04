@@ -26,11 +26,13 @@
 
 #include "rsiface/rsnotify.h"
 
+#include "feeds/ChanNewItem.h"
 #include "feeds/ChanMsgItem.h"
 #include "feeds/ForumNewItem.h"
 #include "feeds/ForumMsgItem.h"
 #include "feeds/PeerItem.h"
 #include "feeds/BlogMsgItem.h"
+#include "feeds/MsgItem.h"
 
 
 #include "GeneralMsgDialog.h"
@@ -42,6 +44,7 @@ const uint32_t NEWSFEED_FORUMMSGLIST = 	0x0003;
 const uint32_t NEWSFEED_CHANNEWLIST = 	0x0004;
 const uint32_t NEWSFEED_CHANMSGLIST = 	0x0005;
 const uint32_t NEWSFEED_BLOGMSGLIST = 	0x0006;
+const uint32_t NEWSFEED_MESSAGELIST = 	0x0007;
 
 /** Constructor */
 NewsFeed::NewsFeed(QWidget *parent)
@@ -206,6 +209,14 @@ void	NewsFeed::addFeedItemPeerNew(RsFeedItem &fi)
 
 void	NewsFeed::addFeedItemChanNew(RsFeedItem &fi)
 {
+	/* make new widget */
+	ChanNewItem *cni = new ChanNewItem(this, NEWSFEED_CHANNEWLIST, fi.mId1, false, true);
+
+	/* store in list */
+
+	/* add to layout */
+	mLayout->addWidget(cni);
+
 	std::cerr << "NewsFeed::addFeedItemChanNew()";
 	std::cerr << std::endl;
 }
@@ -213,6 +224,14 @@ void	NewsFeed::addFeedItemChanNew(RsFeedItem &fi)
 
 void	NewsFeed::addFeedItemChanUpdate(RsFeedItem &fi)
 {
+	/* make new widget */
+	ChanNewItem *cni = new ChanNewItem(this, NEWSFEED_CHANNEWLIST, fi.mId1, false, false);
+
+	/* store in list */
+
+	/* add to layout */
+	mLayout->addWidget(cni);
+
 	std::cerr << "NewsFeed::addFeedItemChanUpdate()";
 	std::cerr << std::endl;
 }
@@ -305,6 +324,14 @@ void	NewsFeed::addFeedItemChatNew(RsFeedItem &fi)
 
 void	NewsFeed::addFeedItemMessage(RsFeedItem &fi)
 {
+	/* make new widget */
+	MsgItem *mi = new MsgItem(this, NEWSFEED_MESSAGELIST, fi.mId1, false);
+
+	/* store in list */
+
+	/* add to layout */
+	mLayout->addWidget(mi);
+
 	std::cerr << "NewsFeed::addFeedItemMessage()";
 	std::cerr << std::endl;
 }

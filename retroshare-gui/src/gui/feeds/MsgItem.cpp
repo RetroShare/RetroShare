@@ -20,19 +20,21 @@
  ****************************************************************/
 #include <QtGui>
 
-#include "BlogMsgItem.h"
+#include "MsgItem.h"
 
 #include "FeedHolder.h"
 #include "SubFileItem.h"
+
+#include "rsiface/rsmsgs.h"
+#include "rsiface/rspeers.h"
 
 #include <iostream>
 
 #define DEBUG_ITEM 1
 
 /** Constructor */
-BlogMsgItem::BlogMsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId, std::string msgId, bool isHome)
-:QWidget(NULL), mParent(parent), mFeedId(feedId),
-	mPeerId(peerId), mMsgId(msgId), mIsHome(isHome)
+MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, std::string msgId, bool isHome)
+:QWidget(NULL), mParent(parent), mFeedId(feedId), mMsgId(msgId), mIsHome(isHome)
 {
   /* Invoke the Qt Designer generated object setup routine */
   setupUi(this);
@@ -44,6 +46,8 @@ BlogMsgItem::BlogMsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId
 
   /* specific ones */
   connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( playMedia ( void ) ) );
+  connect( deleteButton, SIGNAL( clicked( void ) ), this, SLOT( deleteMsg ( void ) ) );
+  connect( replyButton, SIGNAL( clicked( void ) ), this, SLOT( replyMsg ( void ) ) );
 
   small();
   updateItemStatic();
@@ -51,26 +55,77 @@ BlogMsgItem::BlogMsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId
 }
 
 
-void BlogMsgItem::updateItemStatic()
+void MsgItem::updateItemStatic()
 {
 	/* fill in */
 #ifdef DEBUG_ITEM
-	std::cerr << "BlogMsgItem::updateItemStatic()";
+	std::cerr << "MsgItem::updateItemStatic()";
 	std::cerr << std::endl;
 #endif
 
-	msgLabel->setText("FFFFFFFFFFF AAAAAAAAAAAAAAA \n HHHHHHHHHHH HHHHHHHHHHHHHHHHH");
-	titleLabel->setText("Channel Feed: Best Channel Ever");
-	subjectLabel->setText("Brand new exciting Ever");
+	MessageInfo mi;
 
-	/* add Files */
-	int total = (int) (10.0 * (rand() / (RAND_MAX + 1.0)));
-	int i;
+	if (!rsMsgs) 
+		return;
 
-	for(i = 0; i < total; i++)
+	if (!rsMsgs->getMessage(mMsgId, mi))
+		return;
+
+	/* get peer Id */
+	mPeerId = mi.srcId;
+
+	QString title;
+        QString timestamp;
+	QString srcName = QString::fromStdString(rsPeers->getPeerName(mi.srcId));
+
+	{
+		QDateTime qtime;
+		qtime.setTime_t(mi.ts);
+                timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
+	}
+
+	if (!mIsHome)
+	{
+		title = "Message From: ";
+	}
+	else
+	{
+		/* subject */
+		uint32_t box = mi.msgflags & RS_MSG_BOXMASK;
+		switch(box)
+		{
+			case RS_MSG_SENTBOX:
+				title = "Sent Msg: ";
+				replyButton->setEnabled(false);
+				break;
+			case RS_MSG_DRAFTBOX:
+				title = "Draft Msg: ";
+				replyButton->setEnabled(false);
+				break;
+			case RS_MSG_OUTBOX:
+				title = "Pending Msg: ";
+				//deleteButton->setEnabled(false);
+				replyButton->setEnabled(false);
+				break;
+			default:
+			case RS_MSG_INBOX:
+				title = "";
+				break;
+		}
+	}
+	title += srcName + " @ " + timestamp;
+
+
+	titleLabel->setText(title);
+	subjectLabel->setText(QString::fromStdWString(mi.title));
+		
+	msgLabel->setText(QString::fromStdWString(mi.msg));
+
+	std::list<FileInfo>::iterator it;
+	for(it = mi.files.begin(); it != mi.files.end(); it++)
 	{
 		/* add file */
-		SubFileItem *fi = new SubFileItem("dummyHash", "dummyFileName", 1283918);
+		SubFileItem *fi = new SubFileItem(it->hash, it->fname, it->size);
 		mFileItems.push_back(fi);
 
 		QLayout *layout = expandFrame->layout();
@@ -84,17 +139,22 @@ void BlogMsgItem::updateItemStatic()
 		/* disable buttons */
 		clearButton->setEnabled(false);
 		//gotoButton->setEnabled(false);
-		
+
+		/* hide buttons */
 		clearButton->hide();
+	}
+	else
+	{
+		//deleteButton->setEnabled(false);
 	}
 }
 
 
-void BlogMsgItem::updateItem()
+void MsgItem::updateItem()
 {
 	/* fill in */
 #ifdef DEBUG_ITEM
-	std::cerr << "BlogMsgItem::updateItem()";
+	std::cerr << "MsgItem::updateItem()";
 	std::cerr << std::endl;
 #endif
 	int msec_rate = 10000;
@@ -117,12 +177,12 @@ void BlogMsgItem::updateItem()
 }
 
 
-void BlogMsgItem::small()
+void MsgItem::small()
 {
 	expandFrame->hide();
 }
 
-void BlogMsgItem::toggle()
+void MsgItem::toggle()
 {
 	if (expandFrame->isHidden())
 	{
@@ -135,10 +195,10 @@ void BlogMsgItem::toggle()
 }
 
 
-void BlogMsgItem::removeItem()
+void MsgItem::removeItem()
 {
 #ifdef DEBUG_ITEM
-	std::cerr << "BlogMsgItem::removeItem()";
+	std::cerr << "MsgItem::removeItem()";
 	std::cerr << std::endl;
 #endif
 	hide();
@@ -149,10 +209,10 @@ void BlogMsgItem::removeItem()
 }
 
 
-void BlogMsgItem::gotoHome()
+void MsgItem::gotoHome()
 {
 #ifdef DEBUG_ITEM
-	std::cerr << "BlogMsgItem::gotoHome()";
+	std::cerr << "MsgItem::gotoHome()";
 	std::cerr << std::endl;
 #endif
 }
@@ -160,10 +220,38 @@ void BlogMsgItem::gotoHome()
 /*********** SPECIFIC FUNCTIOSN ***********************/
 
 
-void BlogMsgItem::playMedia()
+void MsgItem::deleteMsg()
 {
 #ifdef DEBUG_ITEM
-	std::cerr << "BlogMsgItem::playMedia()";
+	std::cerr << "MsgItem::deleteMsg()";
+	std::cerr << std::endl;
+#endif
+	if (rsMsgs)
+	{
+		rsMsgs->MessageDelete(mMsgId);
+
+		hide(); /* will be cleaned up next refresh */
+	}
+}
+
+void MsgItem::replyMsg()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "MsgItem::replyMsg()";
+	std::cerr << std::endl;
+#endif
+	if (mParent)
+	{
+		mParent->openMsg(FEEDHOLDER_MSG_MESSAGE, mPeerId, mMsgId);
+        }
+}
+
+
+
+void MsgItem::playMedia()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "MsgItem::playMedia()";
 	std::cerr << std::endl;
 #endif
 }

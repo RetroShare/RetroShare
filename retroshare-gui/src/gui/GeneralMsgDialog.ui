@@ -20,6 +20,9 @@
     <layout class="QHBoxLayout" >
      <item>
       <widget class="QComboBox" name="typeComboBox" >
+       <property name="acceptDrops" >
+        <bool>true</bool>
+       </property>
        <item>
         <property name="text" >
          <string>Friend</string>
@@ -97,6 +100,9 @@
    </item>
    <item>
     <widget class="QFrame" name="destFrame" >
+     <property name="acceptDrops" >
+      <bool>true</bool>
+     </property>
      <property name="frameShape" >
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -170,6 +176,9 @@
        <width>16</width>
        <height>60</height>
       </size>
+     </property>
+     <property name="acceptDrops" >
+      <bool>true</bool>
      </property>
      <property name="toolTip" >
       <string>Drag and Drop Files from Search Results</string>
