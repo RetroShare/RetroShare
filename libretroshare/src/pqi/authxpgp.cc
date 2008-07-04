@@ -1205,6 +1205,7 @@ bool AuthXPGP::ProcessXPGP(XPGP *xpgp, std::string &id)
 	mToSaveCerts = true;
 	xpgpMtx.unlock(); /**** UNLOCK ****/
 
+#if 0
 	/******************** notify of new Cert **************************/
 	pqiNotify *pqinotify = getPqiNotify();
 	if (pqinotify)
@@ -1212,6 +1213,7 @@ bool AuthXPGP::ProcessXPGP(XPGP *xpgp, std::string &id)
 		pqinotify->AddFeedItem(RS_FEED_ITEM_PEER_NEW, xpgpid, "","");
 	}
 	/******************** notify of new Cert **************************/
+#endif
 
 	id = xpgpid;
 

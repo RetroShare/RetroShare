@@ -1061,6 +1061,7 @@ void p3ConnectMgr::tickMonitors()
 						notify->AddFeedItem(RS_FEED_ITEM_PEER_CONNECT, peer.id, "", "");
 					}
 				}
+#if 0
 				if (peer.actions & RS_PEER_DISCONNECTED)
 				{
 					pqiNotify *notify = getPqiNotify();
@@ -1071,6 +1072,7 @@ void p3ConnectMgr::tickMonitors()
 
 					}
 				}
+#endif
 			}
 		}
 		/* do the Others as well! */

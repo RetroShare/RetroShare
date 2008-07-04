@@ -149,6 +149,10 @@ int 	p3MsgService::incomingMsgs()
 			{
 				notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId(), 
 						"New Message from: ");
+
+				std::ostringstream out;
+				out << mi->msgId;
+				notify->AddFeedItem(RS_FEED_ITEM_MESSAGE, out.str(), "", "");
 			}
 		}
 

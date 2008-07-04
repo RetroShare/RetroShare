@@ -1102,6 +1102,8 @@ bool    p3GroupDistrib::subscribeToGroup(std::string grpId, bool subscribe)
 		if (!(git->second.flags & RS_DISTRIB_SUBSCRIBED)) 
 		{
 			git->second.flags |= RS_DISTRIB_SUBSCRIBED;
+
+			locked_notifyGroupChanged(git->second);
 			mGroupsRepublish = true;
 		}
 	}
@@ -1110,6 +1112,8 @@ bool    p3GroupDistrib::subscribeToGroup(std::string grpId, bool subscribe)
 		if (git->second.flags & RS_DISTRIB_SUBSCRIBED)
 		{
 			git->second.flags &= (~RS_DISTRIB_SUBSCRIBED);
+
+			locked_notifyGroupChanged(git->second);
 			mGroupsRepublish = true;
 		}
 	}
