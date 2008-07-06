@@ -609,5 +609,9 @@ void p3Qblog::tick()
 	{
 		if(!postBlogs())
 			std::cerr << "p3Qblog::tick():" << "tick failed!";
+
+		/* drbob: added to stop infinite qblog output */
+		RsStackMutex stack(mBlogMtx);
+		mPostsUpdated = true;
 	}
 }
