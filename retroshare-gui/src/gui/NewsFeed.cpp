@@ -63,7 +63,7 @@ NewsFeed::NewsFeed(QWidget *parent)
 
 
      	QScrollArea *scrollArea = new QScrollArea;
-        scrollArea->setBackgroundRole(QPalette::Dark);
+        //scrollArea->setBackgroundRole(QPalette::Dark);
 	scrollArea->setWidget(middleWidget);
 	scrollArea->setWidgetResizable(true);
 	scrollArea->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );

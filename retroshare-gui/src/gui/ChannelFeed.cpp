@@ -67,7 +67,7 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	middleWidget->setLayout(mGroupLayout);
 
      	QScrollArea *scrollArea = new QScrollArea;
-        scrollArea->setBackgroundRole(QPalette::Dark);
+        //scrollArea->setBackgroundRole(QPalette::Dark);
 	scrollArea->setWidget(middleWidget);
 	scrollArea->setWidgetResizable(true);
 	scrollArea->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
@@ -86,7 +86,7 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	middleWidget2->setLayout(mMsgLayout);
 
      	QScrollArea *scrollArea2 = new QScrollArea;
-        scrollArea2->setBackgroundRole(QPalette::Dark);
+        //scrollArea2->setBackgroundRole(QPalette::Dark);
 	scrollArea2->setWidget(middleWidget2);
 	scrollArea2->setWidgetResizable(true);
 	scrollArea2->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
