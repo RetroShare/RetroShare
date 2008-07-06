@@ -49,6 +49,23 @@ const uint32_t RS_FILE_CTRL_STREAM_AUDIO = 0x0005;
 const uint32_t RS_FILE_CTRL_STREAM_VIDEO = 0x0006;
 
 
+/************************************
+ * Used To indicate where to search.
+ */
+
+const uint32_t RS_FILE_HINTS_MASK	 = 0x00ff;
+
+const uint32_t RS_FILE_HINTS_CACHE	 = 0x0001;
+const uint32_t RS_FILE_HINTS_EXTRA	 = 0x0002;
+const uint32_t RS_FILE_HINTS_LOCAL	 = 0x0004;
+const uint32_t RS_FILE_HINTS_REMOTE	 = 0x0008;
+const uint32_t RS_FILE_HINTS_DOWNLOAD	 = 0x0010;
+const uint32_t RS_FILE_HINTS_UPLOAD	 = 0x0020;
+
+const uint32_t RS_FILE_HINTS_SPEC_ONLY	 = 0x1000;
+
+
+
 const uint32_t RS_FILE_EXTRA_DELETE	 = 0x0010;
 
 

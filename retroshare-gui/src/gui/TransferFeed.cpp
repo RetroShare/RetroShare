@@ -202,9 +202,17 @@ void  TransferFeed::updateDownloads()
 	/* add in new ones */
 	for(it = toAdd.begin(); it != toAdd.end(); it++)
 	{
-  		SubFileItem *fi = new SubFileItem(*it, "FileName", 123498);
-		mDownloads[*it] = fi;
-		mDownloadsLayout->addWidget(fi);
+		FileInfo fi;
+		uint32_t hintflags = RS_FILE_HINTS_DOWNLOAD 
+					| RS_FILE_HINTS_SPEC_ONLY;
+
+		if (rsFiles->FileDetails(*it, hintflags, fi))
+		{
+  			SubFileItem *sfi = new SubFileItem(*it, fi.fname, 
+				fi.size, SFI_STATE_DOWNLOAD, fi.source);
+			mDownloads[*it] = sfi;
+			mDownloadsLayout->addWidget(sfi);
+		}
 	}
 }
 
@@ -284,9 +292,17 @@ void  TransferFeed::updateUploads()
 	/* add in new ones */
 	for(it = toAdd.begin(); it != toAdd.end(); it++)
 	{
-  		SubFileItem *fi = new SubFileItem(*it, "FileName", 123498);
-		mUploads[*it] = fi;
-		mUploadsLayout->addWidget(fi);
+		FileInfo fi;
+		uint32_t hintflags = RS_FILE_HINTS_UPLOAD 
+					| RS_FILE_HINTS_SPEC_ONLY;
+
+		if (rsFiles->FileDetails(*it, hintflags, fi))
+		{
+  			SubFileItem *sfi = new SubFileItem(*it, fi.fname, 
+				fi.size, SFI_STATE_UPLOAD, fi.source);
+			mUploads[*it] = sfi;
+			mUploadsLayout->addWidget(sfi);
+		}
 	}
 }
 

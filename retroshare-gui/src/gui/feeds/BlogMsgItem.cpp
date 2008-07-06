@@ -59,9 +59,9 @@ void BlogMsgItem::updateItemStatic()
 	std::cerr << std::endl;
 #endif
 
-	msgLabel->setText("FFFFFFFFFFF AAAAAAAAAAAAAAA \n HHHHHHHHHHH HHHHHHHHHHHHHHHHH");
-	titleLabel->setText("Channel Feed: Best Channel Ever");
-	subjectLabel->setText("Brand new exciting Ever");
+	msgLabel->setText("What did you expect? \nThe Blogs will be up and running shortly!");
+	titleLabel->setText("Blog Feed: Jacki @ Friday");
+	subjectLabel->setText("Brand new exciting Blog stuff");
 
 	/* add Files */
 	int total = (int) (10.0 * (rand() / (RAND_MAX + 1.0)));
@@ -70,7 +70,7 @@ void BlogMsgItem::updateItemStatic()
 	for(i = 0; i < total; i++)
 	{
 		/* add file */
-		SubFileItem *fi = new SubFileItem("dummyHash", "dummyFileName", 1283918);
+		SubFileItem *fi = new SubFileItem("dummyHash", "dummy_File", 1283918, SFI_STATE_REMOTE, mPeerId);
 		mFileItems.push_back(fi);
 
 		QLayout *layout = expandFrame->layout();

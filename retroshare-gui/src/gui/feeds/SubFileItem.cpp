@@ -22,26 +22,129 @@
 
 #include "SubFileItem.h"
 
+#include "rsiface/rsfiles.h"
+
 #include <iostream>
 
 #define DEBUG_ITEM 1
 
+/*******************************************************************
+ * SubFileItem fully controls the file transfer from the gui side
+ *
+ * Display: (In order)
+ *
+ * 1) HASHING
+ * 2) REMOTE / DOWNLOAD
+ * 3) LOCAL
+ * 4) LOCAL / UPLOAD
+ *
+ * Behaviours:
+ * a) Addition to General Dialog (1), (2), (3)
+ *   (i) (1), request Hash -> (3).
+ *   (ii) (2), download complete -> (3)
+ *   (iii) (3) 
+ *
+ * b) Message/Blog/Channel (2), (3)
+ *   (i) (2), download complete -> (3)
+ *   (ii) (3)
+ *
+ * c) Transfers (2), (4)
+ *   (i) (2)
+ *   (ii) (3)
+ *
+ *
+ */
+
+
+
+const uint32_t SFI_DEFAULT_PERIOD 	= (30 * 3600 * 24); /* 30 Days */
+
 /** Constructor */
-SubFileItem::SubFileItem(std::string hash, std::string name, uint64_t size)
-:QWidget(NULL), mFileHash(hash), mFileName(name), mFileSize(size)
+SubFileItem::SubFileItem(std::string hash, std::string name, uint64_t size, 
+						uint32_t flags, std::string srcId)
+:QWidget(NULL), mFileHash(hash), mFileName(name), mFileSize(size), mSrcId(srcId)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  setupUi(this);
+  	/* Invoke the Qt Designer generated object setup routine */
+  	setupUi(this);
 
+	mMode = flags & SFI_MASK_STATE;
+	mType = flags & SFI_MASK_TYPE;
+
+	if (mMode == SFI_STATE_EXTRA)
+	{
+		mMode = SFI_STATE_ERROR;
+	}
+	/* all other states are possible */
+
+	if (!rsFiles) 
+	{
+		mMode = SFI_STATE_ERROR;
+	}
+
+	Setup();
+}
+
+/** Constructor */
+SubFileItem::SubFileItem(std::string path)
+:QWidget(NULL), mPath(path), mFileSize(0)
+{
+  	/* Invoke the Qt Designer generated object setup routine */
+  	setupUi(this);
+
+	mMode = SFI_STATE_EXTRA;
+	mType = SFI_TYPE_ATTACH;
+
+	/* ask for Files to hash/prepare it for us */
+	if ((!rsFiles) || (rsFiles->ExtraFileHash(path, SFI_DEFAULT_PERIOD, 0)))
+	{
+		mMode = SFI_STATE_ERROR;
+	}
+
+	Setup();
+}
+
+
+void SubFileItem::Setup()
+{
   connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
-  connect( cancelButton, SIGNAL( clicked( void ) ), this, SLOT( cancel ( void ) ) );
   connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( play ( void ) ) );
+  connect( downloadButton, SIGNAL( clicked( void ) ), this, SLOT( download ( void ) ) );
+  connect( cancelButton, SIGNAL( clicked( void ) ), this, SLOT( cancel ( void ) ) );
+  connect( saveButton, SIGNAL( clicked( void ) ), this, SLOT( save ( void ) ) );
 
-  amountDone = 1000;
+  /* once off check - if remote, check if we have it 
+   * NB: This check might be expensive - and it'll happen often!
+   */
+  if (mMode == SFI_STATE_REMOTE)
+  {
+	FileInfo fi;
+	uint32_t hintflags = RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL
+					| RS_FILE_HINTS_SPEC_ONLY;
+
+	/* look up path */
+	if (rsFiles->FileDetails(mFileHash, hintflags, fi))
+	{
+		mMode = SFI_STATE_LOCAL;
+		mPath = fi.path;
+	}
+  }
 
   small();
   updateItemStatic();
   updateItem();
+
+
+}
+
+
+bool SubFileItem::done()
+{
+	return (mMode >= SFI_STATE_LOCAL);
+}
+
+bool SubFileItem::ready()
+{
+	return (mMode >= SFI_STATE_REMOTE);
 }
 
 void SubFileItem::updateItemStatic()
@@ -52,34 +155,162 @@ void SubFileItem::updateItemStatic()
 	std::cerr << std::endl;
 #endif
 
-	QString filename = "Biggest_File.txt";
-	fileLabel->setText(filename);
-	fileLabel->setToolTip(filename);
-
-	playButton->setEnabled(false);
+	QString filename = QString::fromStdString(mFileName);
+	mDivisor = 1;
 
 	if (mFileSize > 10000000) /* 10 Mb */
 	{
 		progressBar->setRange(0, mFileSize / 1000000);
 		progressBar->setFormat("%v MB");
+		mDivisor = 1000000;
 	}
 	else if (mFileSize > 10000) /* 10 Kb */
 	{
 		progressBar->setRange(0, mFileSize / 1000);
 		progressBar->setFormat("%v kB");
+		mDivisor = 1000;
 	}
 	else 
 	{
 		progressBar->setRange(0, mFileSize);
 		progressBar->setFormat("%v B");
+		mDivisor = 1;
 	}
-}
 
-bool SubFileItem::done()
-{
-	return (amountDone >= mFileSize);
-}
+	/* get full path for local file */
+	// TMP DISABLED FOR DEMONSTRATOR.... XXX
+#if 0
+	if ((mMode == SFI_STATE_LOCAL) || (mMode == SFI_STATE_UPLOAD))
+	{
+		if (mPath == "")
+		{
+			FileInfo fi;
+			uint32_t hintflags = RS_FILE_HINTS_UPLOAD | RS_FILE_HINTS_LOCAL
+								| RS_FILE_HINTS_SPEC_ONLY;
 
+			/* look up path */
+			if (!rsFiles->FileDetails(mFileHash, hintflags, fi))
+			{
+				mMode = SFI_STATE_ERROR;
+			}
+			else
+			{
+				// XXX CHECK VALID PATH!
+				mPath = fi.path;
+			}
+		}
+	}
+#endif
+
+	/* do buttons + display */
+	switch (mMode)
+	{
+		case SFI_STATE_ERROR:
+			progressBar->setRange(0, 100);
+			progressBar->setFormat("ERROR");
+
+			playButton->setEnabled(false);
+			downloadButton->setEnabled(false);
+			cancelButton->setEnabled(false);
+			expandButton->setEnabled(false);
+		
+			progressBar->setValue(0);
+			filename = "[ERROR] " + filename;
+
+			break;
+
+		case SFI_STATE_EXTRA:
+			filename = QString::fromStdString(mPath);
+
+			progressBar->setRange(0, 100);
+			progressBar->setFormat("HASHING");
+
+			playButton->setEnabled(false);
+			downloadButton->setEnabled(false);
+			cancelButton->setEnabled(false);
+			expandButton->setEnabled(false);
+
+			progressBar->setValue(0);
+			filename = "[EXTRA] " + filename;
+
+			break;
+
+		case SFI_STATE_REMOTE:
+			playButton->setEnabled(false);
+			downloadButton->setEnabled(true);
+			cancelButton->setEnabled(false);
+			expandButton->setEnabled(false);
+
+			progressBar->setValue(0);
+			filename = "[REMOTE] " + filename;
+
+			break;
+
+		case SFI_STATE_DOWNLOAD:
+			playButton->setEnabled(false);
+			downloadButton->setEnabled(false);
+			cancelButton->setEnabled(true);
+			expandButton->setEnabled(true);
+			filename = "[DOWNLOAD] " + filename;
+
+			break;
+
+		case SFI_STATE_LOCAL:
+			playButton->setEnabled(true);
+			downloadButton->setEnabled(false);
+			cancelButton->setEnabled(false);
+			expandButton->setEnabled(false);
+
+			progressBar->setValue(mFileSize / mDivisor);
+			filename = "[LOCAL] " + filename;
+
+			break;
+
+		case SFI_STATE_UPLOAD:
+			playButton->setEnabled(true);
+			downloadButton->setEnabled(false);
+			cancelButton->setEnabled(false);
+			expandButton->setEnabled(true);
+			filename = "[UPLOAD] " + filename;
+
+			break;
+	}
+
+	saveButton->hide();
+
+	switch(mType)
+	{
+		case SFI_TYPE_CHANNEL:
+		{
+			saveButton->show();
+			if (mMode == SFI_STATE_LOCAL)
+			{
+				saveButton->setEnabled(true);
+			}
+			else
+			{
+				saveButton->setEnabled(false);
+			}
+		}
+			break;
+		case SFI_TYPE_ATTACH:
+		{
+			playButton->hide();
+			downloadButton->hide();
+			cancelButton->setEnabled(true);
+			cancelButton->setToolTip("Remove Attachment");
+			expandButton->hide();
+		}
+			break;
+		default:
+			break;
+	}
+
+
+	fileLabel->setText(filename);
+	fileLabel->setToolTip(filename);
+
+}
 
 void SubFileItem::updateItem()
 {
@@ -88,34 +319,146 @@ void SubFileItem::updateItem()
 	std::cerr << "SubFileItem::updateItem()";
 	std::cerr << std::endl;
 #endif
+
+	/* Extract File Details */
+	/* Update State if necessary */
+
+	FileInfo fi;
+	bool stateChanged = false;
 	int msec_rate = 1000;
 
-	uint64_t divisor = 1;
-	if (mFileSize > 10000000) /* 10 Mb */
+	if ((mMode == SFI_STATE_ERROR) || (mMode == SFI_STATE_LOCAL))
 	{
-		divisor = 1000000;
+		/* ignore - dead file, or done */
 	}
-	else if (mFileSize > 10000) /* 10 Kb */
+	else if (mMode == SFI_STATE_EXTRA)
 	{
-		divisor = 1000;
-	}
+		/* check for file status */
+		if (rsFiles->ExtraFileStatus(mPath, fi))
+		{
+			mMode = SFI_STATE_LOCAL;
 
-	if (amountDone < mFileSize)
-	{
-		amountDone *= 1.1;
+			/* fill in file details */
+			mFileName = fi.fname;
+			mFileSize = fi.size;
+			mFileHash = fi.hash;
 
-		progressBar->setValue(amountDone / divisor);
-	  	QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
+			/* have path already! */
+
+			stateChanged = true;
+		}
 	}
 	else
 	{
-		/* complete! */
-		amountDone = mFileSize + 1;
-		progressBar->setValue(mFileSize / divisor);
-		playButton->setEnabled(true);
+		uint32_t hintflags = 0;
+		switch(mMode)
+		{
+			case SFI_STATE_REMOTE:
+				hintflags = RS_FILE_HINTS_DOWNLOAD | RS_FILE_HINTS_SPEC_ONLY;
+				break;
+			case SFI_STATE_DOWNLOAD:
+				hintflags = RS_FILE_HINTS_DOWNLOAD | RS_FILE_HINTS_SPEC_ONLY;
+				break;
+			case SFI_STATE_UPLOAD:
+				hintflags = RS_FILE_HINTS_UPLOAD | RS_FILE_HINTS_SPEC_ONLY;
+				break;
+		}
+
+		bool detailsOk = rsFiles->FileDetails(mFileHash, hintflags, fi);
+
+		/* have details - see if state has changed */
+		switch(mMode)
+		{
+			case SFI_STATE_REMOTE:
+				/* is it downloading? */
+				if (detailsOk)
+				{
+					/* downloading */
+					mMode = SFI_STATE_DOWNLOAD;
+					stateChanged = true;
+				}
+				break;
+			case SFI_STATE_DOWNLOAD:
+
+				if (!detailsOk)
+				{
+					mMode = SFI_STATE_REMOTE;
+					stateChanged = true;
+				}
+				else
+				{
+					/* has it completed? */
+					if (fi.avail == mFileSize)
+					{
+						/* save path */
+						/* update progress */
+						mMode = SFI_STATE_LOCAL;
+						mPath = fi.path;
+						stateChanged = true;
+					}
+					progressBar->setValue(fi.avail / mDivisor);
+				}
+				break;
+			case SFI_STATE_UPLOAD:
+
+				if (detailsOk)
+				{
+					progressBar->setValue(fi.avail / mDivisor);
+				}
+
+				/* update progress */
+				break;
+		}
+
 	}
-		
+
+	/****** update based on new state ******/
+	if (stateChanged)
+	{
+		updateItemStatic();
+	}
+
+	uint32_t repeat = 0;
+	switch (mMode)
+	{
+		case SFI_STATE_ERROR:
+			repeat = 0;
+			break;
+
+		case SFI_STATE_EXTRA:
+			repeat = 1;
+			msec_rate = 5000; /* slow */
+			break;
+
+		case SFI_STATE_REMOTE:
+			repeat = 1;
+			msec_rate = 30000; /* very slow */
+			break;
+
+		case SFI_STATE_DOWNLOAD:
+			repeat = 1;
+			msec_rate = 2000; /* should be download rate dependent */
+			break;
+
+		case SFI_STATE_LOCAL:
+			repeat = 0;
+			break;
+
+		case SFI_STATE_UPLOAD:
+			repeat = 1;
+			msec_rate = 2000; /* should be download rate dependent */
+			break;
+	}
+
+	
+	if (repeat)
+	{
+	  	QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
+	}
+
 }
+
+
 
 
 void SubFileItem::small()
@@ -150,6 +493,15 @@ void SubFileItem::cancel()
 	std::cerr << "SubFileItem::cancel()";
 	std::cerr << std::endl;
 #endif
+	/* Only occurs - if it is downloading */
+	if (mType == SFI_TYPE_ATTACH)
+	{
+		hide();
+	}
+	else
+	{
+		rsFiles->FileCancel(mFileHash);
+	}
 }
 
 
@@ -157,6 +509,40 @@ void SubFileItem::play()
 {
 #ifdef DEBUG_ITEM
 	std::cerr << "SubFileItem::play()";
+	std::cerr << std::endl;
+#endif
+	/* Only occurs - if it is local / uploading (have mPath set) */
+	rsFiles->FileCancel(mFileHash);
+}
+
+void SubFileItem::download()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "SubFileItem::download()";
+	std::cerr << std::endl;
+#endif
+
+	if (mType == SFI_TYPE_CHANNEL)
+	{
+		/* send request via rsChannels -> as it knows how to do it properly */
+		//std::string grpId = mSrcId;
+		//rsChannels->FileRequest(mFileName, mFileHash, mFileSize, grpId);
+	}
+	else
+	{
+		//rsFile->FileRequest(mFileName, mFileHash, mFileSize, "", 0, mSrcId);
+	}
+
+	// TEMP
+	rsFiles->FileRequest(mFileName, mFileHash, mFileSize, "", 0);
+
+}
+
+
+void SubFileItem::save()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "SubFileItem::save()";
 	std::cerr << std::endl;
 #endif
 }

@@ -60,7 +60,12 @@
        </property>
        <item>
         <property name="text" >
-         <string>Friends Only</string>
+         <string>Friends</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Online Friends</string>
         </property>
        </item>
        <item>

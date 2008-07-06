@@ -43,7 +43,8 @@ public:
   /** Default Destructor */
 
 	void addAttachment(std::string path);
-	void addAttachment(std::string hash, std::string fname, uint64_t size);
+	void addAttachment(std::string hash, std::string fname, uint64_t size, 
+						bool local, std::string srcId);
 
 	void addDestination(uint32_t type, std::string grpId, std::string inReplyTo);
 	void setMsgType(uint32_t type);
@@ -53,6 +54,7 @@ virtual void dragEnterEvent(QDragEnterEvent *event);
 virtual void dropEvent(QDropEvent *event);
 
 private slots:
+	void checkAttachmentReady();
 	void updateGroupId();
 	void newDestination();
 	void cancelMsg();
@@ -69,6 +71,8 @@ void sendMessage(uint32_t type, std::string grpId, std::string inReplyTo,
 	/* maps of files and destinations */
 	std::list<SubDestItem *> mDestinations;
 	std::list<SubFileItem *> mAttachments;
+
+	bool mCheckAttachment;
 };
 
 

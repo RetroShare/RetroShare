@@ -30,8 +30,9 @@
 #include "GeneralMsgDialog.h"
 
 const uint32_t PEERSFEED_MODE_FRIENDS 	= 0x0000;
-const uint32_t PEERSFEED_MODE_FOF 	= 0x0001;
-const uint32_t PEERSFEED_MODE_ALL 	= 0x0002;
+const uint32_t PEERSFEED_MODE_ONLINE	= 0x0001;
+const uint32_t PEERSFEED_MODE_FOF 	= 0x0002;
+const uint32_t PEERSFEED_MODE_ALL 	= 0x0003;
 
 /** Constructor */
 PeersFeed::PeersFeed(QWidget *parent)
@@ -126,6 +127,10 @@ void  PeersFeed::updatePeers()
 	if (mMode == PEERSFEED_MODE_FRIENDS)
 	{
 		rsPeers->getFriendList(peers);
+	}
+	else if (mMode == PEERSFEED_MODE_ONLINE)
+	{
+		rsPeers->getOnlineList(peers);
 	}
 	else if (mMode == PEERSFEED_MODE_ALL)
 	{

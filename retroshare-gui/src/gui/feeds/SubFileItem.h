@@ -26,37 +26,70 @@
 
 #include <string>
 
+const uint32_t SFI_MASK_STATE  		= 0x000f;
+const uint32_t SFI_MASK_TYPE   		= 0x00f0;
+const uint32_t SFI_MASK_FT     		= 0x0f00;
+
+const uint32_t SFI_STATE_ERROR 		= 0x0001;
+const uint32_t SFI_STATE_EXTRA 		= 0x0002;
+const uint32_t SFI_STATE_REMOTE 	= 0x0003;
+const uint32_t SFI_STATE_DOWNLOAD 	= 0x0004;
+const uint32_t SFI_STATE_LOCAL 		= 0x0005;
+const uint32_t SFI_STATE_UPLOAD 	= 0x0006;
+
+const uint32_t SFI_TYPE_CHANNEL 	= 0x0010;
+const uint32_t SFI_TYPE_ATTACH 		= 0x0020;
+
 class SubFileItem : public QWidget, private Ui::SubFileItem
 {
   Q_OBJECT
 
 public:
   	/** Default Constructor */
-  	SubFileItem(std::string hash, std::string name, uint64_t size);
+  	SubFileItem(std::string localpath);
+	SubFileItem(std::string hash, std::string name, uint64_t size,
+					uint32_t flags, std::string srcId);
 
   	/** Default Destructor */
 
   	void small();
-  	bool done();
 
 	std::string FileHash() { return mFileHash; }
 	std::string FileName() { return mFileName; }
 	uint64_t    FileSize() { return mFileSize; }
+	std::string FilePath() { return mPath; }
 
-void updateItemStatic();
+	void updateItemStatic();
+
+  	bool done();
+	bool ready();
+
+public  slots:
+	void download();
 
 private slots:
-	/* default stuff */
+	void toggle();
+
   	void cancel();
 	void play();
-	void toggle();
+	void save();
 
 	void updateItem();
 
 private:
+
+	void Setup();
+
+
+	std::string mPath;
 	std::string mFileHash;
 	std::string mFileName;
 	uint64_t    mFileSize;
+	std::string mSrcId;
+
+	uint32_t    mMode;
+	uint32_t    mType;
+	uint64_t    mDivisor;
 
 	/* for display purposes */
 	float amountDone;

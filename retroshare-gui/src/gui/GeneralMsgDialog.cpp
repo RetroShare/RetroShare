@@ -36,7 +36,7 @@
 
 /** Constructor */
 GeneralMsgDialog::GeneralMsgDialog(QWidget *parent, uint32_t type)
-: QDialog (parent)
+: QDialog (parent), mCheckAttachment(true)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	setupUi(this);
@@ -234,12 +234,12 @@ void GeneralMsgDialog::parseRsFileListAttachments(std::string attachList)
 			std::cerr << "Item Ok" << std::endl;
 			if (source == "Local")
 			{
-				addAttachment(hash, fname, size);
+				addAttachment(hash, fname, size, true, "");
 			}
 			else
 			{
 				// TEMP NOT ALLOWED UNTIL FT WORKING.
-				//addAttachment(hash, fname, size);
+				addAttachment(hash, fname, size, false, source);
 			}
 
 		}
@@ -252,21 +252,38 @@ void GeneralMsgDialog::parseRsFileListAttachments(std::string attachList)
 }
 
 
-void GeneralMsgDialog::addAttachment(std::string hash, std::string fname, uint64_t size)
+void GeneralMsgDialog::addAttachment(std::string hash, std::string fname, uint64_t size, bool local, std::string srcId)
 {
 	/* add a SubFileItem to the attachment section */
 	std::cerr << "GeneralMsgDialog::addAttachment()";
 	std::cerr << std::endl;
 
 	/* add widget in for new destination */
-	SubFileItem *file = new SubFileItem(hash, fname, size);
+
+	uint32_t flags = SFI_TYPE_ATTACH;
+	if (local)
+	{
+		flags |= SFI_STATE_LOCAL;
+	}
+	else
+	{
+		flags |= SFI_STATE_REMOTE;
+		// TMP REMOVED REMOTE ADD FOR DEMONSTRATOR
+		return;
+	}
+
+	SubFileItem *file = new SubFileItem(hash, fname, size, flags, srcId);
 
 	mAttachments.push_back(file);
 	QLayout *layout = fileFrame->layout();
 	layout->addWidget(file);
 
-	return;
+	if (mCheckAttachment)
+	{
+		checkAttachmentReady();
+	}
 
+	return;
 }
 
 
@@ -277,14 +294,52 @@ void GeneralMsgDialog::addAttachment(std::string path)
 	std::cerr << std::endl;
 
 	/* add widget in for new destination */
-	SubFileItem *file = new SubFileItem("unknownHash", path, 12000);
+	SubFileItem *file = new SubFileItem(path);
 
 	mAttachments.push_back(file);
 	QLayout *layout = fileFrame->layout();
 	layout->addWidget(file);
 
+	if (mCheckAttachment)
+	{
+		checkAttachmentReady();
+	}
+
 	return;
 
+}
+
+void GeneralMsgDialog::checkAttachmentReady()
+{
+	std::list<SubFileItem *>::iterator fit;
+
+	mCheckAttachment = false;
+
+	for(fit = mAttachments.begin(); fit != mAttachments.end(); fit++)
+	{
+		if (!(*fit)->isHidden())
+		{
+			if (!(*fit)->ready())
+			{
+				/* 
+				 */
+				buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+				break;
+
+
+				return;
+			}
+		}
+	}
+
+	if (fit == mAttachments.end())
+	{
+		buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+	}
+
+	/* repeat... */
+	int msec_rate = 1000;
+	QTimer::singleShot( msec_rate, this, SLOT(checkAttachmentReady(void)));
 }
 
 
@@ -475,6 +530,16 @@ void GeneralMsgDialog::sendMsg()
 			fi.size = (*fit)->FileSize();
 
 			files.push_back(fi);
+
+			/* commence downloads - if we don't have the file */
+			if (!(*fit)->done())
+			{
+				if ((*fit)->ready())
+				{
+					(*fit)->download();
+				}
+				// Skips unhashed files.
+			}
 		}
 	}
 
