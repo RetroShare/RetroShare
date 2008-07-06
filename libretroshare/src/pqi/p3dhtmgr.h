@@ -43,13 +43,14 @@
 
 
 /* for DHT peer STATE */
-#define DHT_PEER_INIT           0
-#define DHT_PEER_SEARCH         1
-#define DHT_PEER_FOUND          2
+#define DHT_PEER_OFF            0
+#define DHT_PEER_INIT           1
+#define DHT_PEER_SEARCH         2
+#define DHT_PEER_FOUND          3
 
 /* for DHT peer STATE (ownEntry) */
-#define DHT_PEER_ADDR_KNOWN     3
-#define DHT_PEER_PUBLISHED      4
+#define DHT_PEER_ADDR_KNOWN     4
+#define DHT_PEER_PUBLISHED      5
 
 /* Interface with Real DHT Implementation */
 #define DHT_MODE_SEARCH         1

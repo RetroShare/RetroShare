@@ -212,6 +212,16 @@ bool p3DhtMgr::findPeer(std::string id)
 	it = peers.find(id);
 	if (it != peers.end())
 	{
+		/* reset some of it */
+		it->second.state = DHT_PEER_INIT;
+
+		// No point destroying a valid address!.
+		//it->second.type = DHT_ADDR_INVALID;
+
+		// Reset notify 
+		it->second.notifyPending = 0;
+		it->second.notifyTS = 0;
+
 		return true;
 	}
 
@@ -250,8 +260,8 @@ bool p3DhtMgr::dropPeer(std::string id)
 		return false;
 	}
 
-	/* remove */
-	peers.erase(it);
+	/* leave it in there - just switch to off */
+	it->second.state = DHT_PEER_OFF;
 
 	return true;
 }
@@ -270,6 +280,12 @@ bool p3DhtMgr::notifyPeer(std::string id)
 	{
 		return false;
 	}
+	/* ignore OFF peers */
+	if (it->second.state == DHT_PEER_OFF)
+	{
+		return false;
+	}
+
 
 	time_t now = time(NULL);
 
@@ -305,23 +321,23 @@ bool p3DhtMgr::getPeerStatus(std::string id,
 			struct sockaddr_in &raddr, 
 			uint32_t &type, uint32_t &state)
 {
-	dhtMtx.lock(); /* LOCK MUTEX */
+	RsStackMutex stack(dhtMtx); /* LOCK MUTEX */
 
 	std::map<std::string, dhtPeerEntry>::iterator it;
 	it = peers.find(id);
 
-	bool found = it != peers.end();
-	if (found)
+	/* ignore OFF peers */
+	if ((it == peers.end()) || (it->second.state == DHT_PEER_OFF))
 	{
-		laddr = it->second.laddr;
-		raddr = it->second.raddr;
-		type = it->second.type;
-		state = it->second.type;
+		return false;
 	}
 
-	dhtMtx.unlock(); /* UNLOCK MUTEX */
+	laddr = it->second.laddr;
+	raddr = it->second.raddr;
+	type = it->second.type;
+	state = it->second.type;
 
-	return found;
+	return true;
 }
 
 /********************************* STUN HANDLING  **********************************
@@ -697,6 +713,12 @@ int p3DhtMgr::checkPeerDHTKeys()
 	
 	for(it = peers.begin(); it != peers.end(); it++)
 	{
+		/* ignore OFF peers */
+		if (it->second.state == DHT_PEER_OFF)
+		{
+			continue;
+		}
+
 		time_t delta = now - it->second.lastTS;
 		if (it->second.state < DHT_PEER_FOUND)
 		{
@@ -777,6 +799,12 @@ int p3DhtMgr::checkNotifyDHT()
 	/* find the first with a notify flag */
 	for(it = peers.begin(); it != peers.end(); it++)
 	{
+		/* ignore OFF peers */
+		if (it->second.state == DHT_PEER_OFF)
+		{
+			continue;
+		}
+
 		if (it->second.notifyPending)
 		{
 			if (it->second.state == DHT_PEER_FOUND)
@@ -1523,7 +1551,8 @@ bool p3DhtMgr::dhtResultNotify(std::string idhash)
 	/* update data */
 	std::string peerid;
 
-	if (it != peers.end())
+	/* ignore OFF peers */
+	if ((it != peers.end()) && (it->second.state != DHT_PEER_OFF))
 	{
 #ifdef DHT_DEBUG
 		std::cerr << "p3DhtMgr::dhtResult() NOTIFY for id: " << it->first << std::endl;
@@ -1573,7 +1602,8 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 	for(it = peers.begin(); (it != peers.end()) && ((it->second).hash1 != idhash); it++);
 
 	/* update data */
-	if (it != peers.end())
+	/* ignore OFF peers */
+	if ((it != peers.end()) && (it->second.state != DHT_PEER_OFF))
 	{
 #ifdef DHT_DEBUG
 		std::cerr << "p3DhtMgr::dhtResult() SEARCH for id: " << it->first << std::endl;

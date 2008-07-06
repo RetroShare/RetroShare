@@ -83,6 +83,20 @@ static const int kRsFiStatusDone = 2;
 	double tfRate; /* kbytes */
 	bool download;
 	int  downloadStatus; /* 0 = Err, 1 = Ok, 2 = Done */
+
+	/* ENTRIES USED BY SFI ***
+	 *
+	 * path,
+	 * fname, 
+	 * hash, 
+	 * size, 
+	 * avail, 
+	 *
+	 * source?
+	 *
+	 */
+	
+
 };
 
 class FileTransferInfo: public FileInfo

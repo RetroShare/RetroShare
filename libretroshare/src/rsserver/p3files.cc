@@ -68,6 +68,7 @@ int     p3Files::UpdateAllTransfers()
 		ti.size  = (*it) -> file.filesize;
 
 		ti.transfered = (*it) -> transferred;
+		ti.avail = ti.transfered;
 		/* other ones!!! */
 		ti.tfRate = (*it) -> crate / 1000;
 		ti.download = (*it) -> in;
