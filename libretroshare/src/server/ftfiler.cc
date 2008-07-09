@@ -37,6 +37,10 @@
 
 const int ftfilerzone = 86539;
 
+/****
+ * #define FT_DEBUG 1
+ ***/
+
 /* 
  * PQI Filer
  *
@@ -84,6 +88,7 @@ int     ftfiler::getFile(std::string name, std::string hash,
 			uint64_t size, std::string destpath)
 {
 	/* add to local queue */
+#ifdef FT_DEBUG 
 	{
 		std::ostringstream out;
 		out << "ftfiler::getFile(): ";
@@ -92,14 +97,17 @@ int     ftfiler::getFile(std::string name, std::string hash,
 		out << std::endl;
 		pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
 	}
+#endif
 
 	/* check for duplicates */
 	ftFileStatus *state = findRecvFileItem(hash);
 	if (state)
 	{
+#ifdef FT_DEBUG 
 		std::ostringstream out;
 		out << "ftfiler::getFile() - duplicate, giving push!";
 		pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
+#endif
 
 		/* if duplicate - give download a push! */
 		/* do this by flagging last transfer at 0.
@@ -119,11 +127,13 @@ int     ftfiler::getFile(std::string name, std::string hash,
 	state = new ftFileStatus(name, hash, size, "", FT_MODE_STD);
 	if (initiateFileTransfer(state))
 	{
+#ifdef FT_DEBUG 
 		std::ostringstream out;
 		out << "ftfiler::getFile() ";
 		out << "adding to recvFiles queue";
 		pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
 
+#endif
 		recvFiles.push_back(state);
 	}
 	return 1;
@@ -132,6 +142,7 @@ int     ftfiler::getFile(std::string name, std::string hash,
 bool    ftfiler::RequestCacheFile(std::string id, std::string destpath, std::string hash, uint64_t size)
 {
 	/* add to local queue */
+#ifdef FT_DEBUG 
 	{
 		std::ostringstream out;
 		out << "ftfiler::getCacheFile(): ";
@@ -141,14 +152,17 @@ bool    ftfiler::RequestCacheFile(std::string id, std::string destpath, std::str
 		out << std::endl;
 		pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
 	}
+#endif
 
 	/* check for duplicates */
 	ftFileStatus *state = findRecvFileItem(hash);
 	if (state)
 	{
+#ifdef FT_DEBUG 
 		std::ostringstream out;
 		out << "ftfiler::getFile() - duplicate, giving push!";
 		pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
+#endif
 
 		/* if duplicate - give download a push! */
 		/* do this by flagging last transfer at 0.
@@ -166,10 +180,12 @@ bool    ftfiler::RequestCacheFile(std::string id, std::string destpath, std::str
 	state = new ftFileStatus(id, hash, hash, size, destpath, FT_MODE_CACHE);
 	if (initiateFileTransfer(state))
 	{
+#ifdef FT_DEBUG 
 		std::ostringstream out;
 		out << "ftfiler::getFile() ";
 		out << "adding to recvFiles queue";
 		pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
+#endif
 
 		recvFiles.push_back(state);
 	}
@@ -180,11 +196,13 @@ bool    ftfiler::CancelCacheFile(RsPeerId id, std::string path,
 				std::string hash, uint64_t size)
 {
 	/* clean up old transfer - just remove it (no callback) */
+#ifdef FT_DEBUG 
 	{
 		std::ostringstream out;
 		out << "ftfiler::CancelCacheFile() Looking for: " << hash;
 		pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
 	}
+#endif
 
 	/* iterate through fileItems and check for this one */
 	std::list<ftFileStatus *>::iterator it;
@@ -194,6 +212,7 @@ bool    ftfiler::CancelCacheFile(RsPeerId id, std::string path,
 			(size==(*it)->size) &&
 			((*it)->ftMode == FT_MODE_CACHE))
 		{
+#ifdef FT_DEBUG 
 			std::ostringstream out;
 			out << "ftfiler::CancelCacheFile() ";
 			out << "Match ftFileStatus: " << hash;
@@ -202,6 +221,8 @@ bool    ftfiler::CancelCacheFile(RsPeerId id, std::string path,
 
 			std::cerr << "Clearing Failed Cache Transfer: " << (*it)->name;
 			std::cerr << std::endl;
+#endif
+
 			delete (*it);
 			it = recvFiles.erase(it);
 
@@ -209,10 +230,12 @@ bool    ftfiler::CancelCacheFile(RsPeerId id, std::string path,
 		}
 	}
 
+#ifdef FT_DEBUG 
 	std::cerr << "************* ERROR *****************";
 	std::cerr << std::endl;
 	std::cerr << "ftfiler::CancelCacheFile() Failed to Find: " << hash;
 	std::cerr << std::endl;
+#endif
 	return false;
 }
 
@@ -220,11 +243,13 @@ bool    ftfiler::CancelCacheFile(RsPeerId id, std::string path,
 
 ftFileStatus *ftfiler::findRecvFileItem(std::string hash)
 {
+#ifdef FT_DEBUG 
 	{
 		std::ostringstream out;
 		out << "ftfiler::findRecvFileItem() Looking for: " << hash;
 		pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
 	}
+#endif
 
 	/* iterate through fileItems and check for this one */
 	std::list<ftFileStatus *>::iterator it;
@@ -232,10 +257,12 @@ ftFileStatus *ftfiler::findRecvFileItem(std::string hash)
 	{
 		if  (hash==(*it)->hash)
 		{
+#ifdef FT_DEBUG 
 			std::ostringstream out;
 			out << "ftfiler::findRecvFileItem() ";
 			out << "Match ftFileStatus: " << hash;
 			pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
+#endif
 			/* same */
 			return (*it);
 		}
@@ -250,21 +277,25 @@ int     ftfiler::cancelFile(std::string hash)
 {
 	/* flag as cancelled */
 	/* iterate through fileItems and check for this one */
+#ifdef FT_DEBUG 
 	{
 		std::ostringstream out;
 		out << "ftfiler::cancelFile() hash: " << hash << std::endl;
 		pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
 	}
+#endif
 
 	std::list<ftFileStatus *>::iterator it;
 	for(it = recvFiles.begin(); it != recvFiles.end(); it++)
 	{
 		if (hash==(*it)->hash)
 		{
+#ifdef FT_DEBUG 
 			std::ostringstream out;
 			out << "ftfiler::cancelFile() ";
 			out << "Found file: " << hash;
 			pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
+#endif
 
 			/* same */
 			(*it)->status = (PQIFILE_FAIL | PQIFILE_FAIL_CANCEL);
@@ -272,12 +303,14 @@ int     ftfiler::cancelFile(std::string hash)
 		}
 	}
 
+#ifdef FT_DEBUG 
 	{
 		std::ostringstream out;
 		out << "ftfiler::cancelFile() ";
 		out << "couldn't match ftFileStatus!";
 		pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
 	}
+#endif
 	return 0;
 }
 
@@ -285,8 +318,10 @@ int	ftfiler::clearFailedTransfers()
 {
 	/* remove all the failed items */
 	/* iterate through fileItems and check for this one */
+#ifdef FT_DEBUG 
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::clearFailedTransfers()");
+#endif
 
 	std::list<ftFileStatus *>::iterator it;
 	int cleared = 0;
@@ -294,10 +329,12 @@ int	ftfiler::clearFailedTransfers()
 	{
 		if ((*it)->status & PQIFILE_FAIL)
 		{
+#ifdef FT_DEBUG 
 			std::ostringstream out;
 			out << "ftfiler::clearFailedTransfers() ";
 			out << "removing item: " << (*it) -> name;
 			pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
+#endif
 
 			/* same */
 			ftFileStatus *cfile = (*it);
@@ -307,11 +344,13 @@ int	ftfiler::clearFailedTransfers()
 		}
 		else if ((*it)->status & PQIFILE_COMPLETE)
 		{
+#ifdef FT_DEBUG 
 			std::ostringstream out;
 			out << "ftfiler::clearFailedTransfers() ";
 			out << "removing Completed item: ";
 			out << (*it) -> name;
 			pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
+#endif
 
 			/* same */
 			ftFileStatus *cfile = (*it);
@@ -325,20 +364,26 @@ int	ftfiler::clearFailedTransfers()
 		}
 	}
 
+#ifdef FT_DEBUG 
 	{
 		std::ostringstream out;
 		out << "ftfiler::clearFailedTransfers() cleared: ";
 		out << cleared;
 		pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
 	}
+#endif
 
 	return 1;
 }
 
 std::list<RsFileTransfer *> ftfiler::getStatus()
 {
+
+#ifdef FT_DEBUG 
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::getTransferStatus()");
+#endif
+
 	std::list<RsFileTransfer *>  stateList;
 
 	/* iterate through all files to recv */
@@ -525,8 +570,11 @@ int 	ftfiler::recvFileInfo(ftFileRequest *in)
 
 int ftfiler::handleFileError(std::string hash, uint32_t err)
 {
+#ifdef FT_DEBUG 
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::handleFileError()");
+#endif
+
 	/* get out the error */
 	if (err & PQIFILE_NOT_ONLINE)
 	{
@@ -541,8 +589,11 @@ int ftfiler::handleFileError(std::string hash, uint32_t err)
 
 int ftfiler::handleFileNotOnline(std::string hash)
 {
+#ifdef FT_DEBUG 
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::handleFileNotOnline()");
+#endif
+
 	/* flag recvFile item as not Online */
 	ftFileStatus *s = findRecvFileItem(hash);
 	if ((!s) || (s -> status & PQIFILE_FAIL))
@@ -558,8 +609,11 @@ int ftfiler::handleFileNotOnline(std::string hash)
 
 int ftfiler::handleFileNotAvailable(std::string hash)
 {
+#ifdef FT_DEBUG 
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::handleFileNotAvailable()");
+#endif
+
 	/* error - flag recvFile item with FAILED */
 	ftFileStatus *s = findRecvFileItem(hash);
 	if (!s)
@@ -575,21 +629,28 @@ int ftfiler::handleFileNotAvailable(std::string hash)
 int ftfiler::handleFileData(std::string hash, uint64_t offset, 
 				void *data, uint32_t datalen)
 {
+#ifdef FT_DEBUG 
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::handleFileData()");
+#endif
+
 	/* find the right ftFileStatus */
 	ftFileStatus *recv = findRecvFileItem(hash);
 	if (!recv)
 	{
+#ifdef FT_DEBUG 
         	pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	       		       "ftfiler::handleFileData() no matching ftFileStatus (current download)");
+#endif
 		return 0;
 	}
 
 	if(recv->status & PQIFILE_FAIL)
 	{
+#ifdef FT_DEBUG 
         	pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	       		       "ftfiler::handleFileData() marked as FAIL");
+#endif
 		return 0;
 	}
 
@@ -613,8 +674,10 @@ int ftfiler::handleFileData(std::string hash, uint64_t offset,
 
 int ftfiler::handleFileRequest(std::string id, std::string hash, uint64_t offset, uint32_t chunk)
 {
+#ifdef FT_DEBUG 
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::handleFileRequest()");
+#endif
 	/* see if in cache */
 	/* if yes send out chunk */
 	if (handleFileCacheRequest(id, hash, offset, chunk))
@@ -627,8 +690,10 @@ int ftfiler::handleFileRequest(std::string id, std::string hash, uint64_t offset
 	if (!new_file)
 	{
 		/* bad file */
+#ifdef FT_DEBUG 
         	pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	        	      "ftfiler::handleFileRequest() Failed to Load File-sendNotAvail");
+#endif
 		return 0;
 		//sendFileNotAvail(in);
 	}
@@ -640,8 +705,10 @@ int ftfiler::handleFileRequest(std::string id, std::string hash, uint64_t offset
 
 int ftfiler::handleFileCacheRequest(std::string id, std::string hash, uint64_t offset, uint32_t chunk)
 {
+#ifdef FT_DEBUG 
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::handleFileCacheRequest()");
+#endif
 	/* check if in cache */
 	bool found = false;
 	ftFileStatus *s;
@@ -675,8 +742,10 @@ int ftfiler::handleFileCacheRequest(std::string id, std::string hash, uint64_t o
 
 int	ftfiler::tick()
 {
+#ifdef FT_DEBUG 
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::tick()");
+#endif
 	/* check the status of recved files */
 	queryInactive();
 
@@ -690,11 +759,12 @@ int	ftfiler::tick()
 
 void	ftfiler::queryInactive()
 {
+#ifdef FT_DEBUG 
 	std::ostringstream out;
 
 	out << "ftfiler::queryInactive()";
 	out << std::endl;
-
+#endif
 
 
 	/* iterate through all files to recv */
@@ -706,6 +776,7 @@ void	ftfiler::queryInactive()
 		switch((*it) -> status)
 		{
 		case PQIFILE_NOT_ONLINE:
+#ifdef FT_DEBUG 
 			out << "File: " << (*it)->name << " Not Online: ";
 			out << "Delta: " << (ts - (*it)->lastTS) << std::endl;
 			out << " LDelta: " << (*it)->lastDelta;
@@ -713,6 +784,7 @@ void	ftfiler::queryInactive()
 			out << " Total: " << (*it)->total_size;
 			out << " LChunk: " << (*it)->req_size;
 			out << std::endl;
+#endif
 
 			if (ts - ((*it)->lastTS) > PQIFILE_OFFLINE_CHECK)
 			{
@@ -721,6 +793,7 @@ void	ftfiler::queryInactive()
 			}
 			break;
 		case PQIFILE_DOWNLOADING:
+#ifdef FT_DEBUG 
 			out << "File: " << (*it)->name << " Downloading: ";
 			out << " Delta: " << (ts - (*it)->lastTS) << std::endl;
 			out << " LDelta: " << (*it)->lastDelta;
@@ -728,6 +801,7 @@ void	ftfiler::queryInactive()
 			out << " Total: " << (*it)->total_size;
 			out << " LChunk: " << (*it)->req_size;
 			out << std::endl;
+#endif
 
 			if (ts - ((*it)->lastTS) > PQIFILE_DOWNLOAD_CHECK)
 			{
@@ -735,6 +809,7 @@ void	ftfiler::queryInactive()
 			}
 			break;
 		default:
+#ifdef FT_DEBUG 
 			out << "File: " << (*it)->name << " Other mode: " << (*it)->status;
 			out << " Delta: " << (ts - (*it)->lastTS) << std::endl;
 			out << " LDelta: " << (*it)->lastDelta;
@@ -742,6 +817,7 @@ void	ftfiler::queryInactive()
 			out << " Total: " << (*it)->total_size;
 			out << " LChunk: " << (*it)->req_size;
 			out << std::endl;
+#endif
 			/* nothing */
 			break;
 		}
@@ -749,8 +825,10 @@ void	ftfiler::queryInactive()
 		/* remove/increment */
 		if (((*it) -> status == PQIFILE_COMPLETE) && ((*it)->ftMode == FT_MODE_CACHE))
 		{
+#ifdef FT_DEBUG 
 			std::cerr << "Clearing Completed Cache File: " << (*it)->name;
 			std::cerr << std::endl;
+#endif
 			delete (*it);
 			it = recvFiles.erase(it);
 		}
@@ -767,8 +845,10 @@ void	ftfiler::queryInactive()
 	{
 		if (now - (*it)->lastTS > CACHE_FILE_TIMEOUT)
 		{
+#ifdef FT_DEBUG 
 			std::cerr << "Clearing Timed-out Cache File: " << (*it)->name;
 			std::cerr << std::endl;
+#endif
 			delete (*it);
 			it = fileCache.erase(it);
 		}
@@ -778,7 +858,9 @@ void	ftfiler::queryInactive()
 		}
 	}
 			
+#ifdef FT_DEBUG 
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
+#endif
 }
 
 
@@ -791,8 +873,10 @@ int 	ftfiler::requestData(ftFileStatus *item)
 	 * well.
 	 */
 
+#ifdef FT_DEBUG 
 	std::ostringstream out;
 	out << "ftfiler::requestData()" << std::endl;
+#endif
 
 	/* get the time since last request */
 	int tm = time(NULL);
@@ -821,8 +905,10 @@ int 	ftfiler::requestData(ftFileStatus *item)
 		default:
 			break;
 	}
+#ifdef FT_DEBUG 
 	out << "max rate: " << max_rate;
 	out << std::endl;
+#endif
 
 	/* not finished */
 	if (item->recv_size < item->req_loc + item->req_size)
@@ -834,17 +920,23 @@ int 	ftfiler::requestData(ftFileStatus *item)
 			 */
 			/* start again slowly */
 			item->req_size = (int) (0.1 * max_rate);
+#ifdef FT_DEBUG 
 			out << "Timeout: switching to Offline.";
 			out << std::endl;
+#endif
 			item->status = PQIFILE_NOT_ONLINE;
 		}
 		else
 		{
+#ifdef FT_DEBUG 
 			out << "Pause: Not Finished";
 			out << std::endl;
+#endif
 			/* pause */
 		}
+#ifdef FT_DEBUG 
         	pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
+#endif
 		return 0;
 	}
 
@@ -852,9 +944,11 @@ int 	ftfiler::requestData(ftFileStatus *item)
 	if (delta <= PQIFILE_DOWNLOAD_MIN_DELTA)
 	{
 		/* pause */
+#ifdef FT_DEBUG 
 		out << "Small Delta -> Pause";
 		out << std::endl;
         	pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
+#endif
 		return 0;
 	}
 
@@ -862,8 +956,10 @@ int 	ftfiler::requestData(ftFileStatus *item)
 	/* calc rate */
 	float bytes_psec = item -> req_size / delta;
 	item -> rate = 0.7 * item -> rate + 0.3 * bytes_psec;
+#ifdef FT_DEBUG 
 	out << "delta: " << delta << " bytes: " << bytes_psec << " rate: " << item -> rate;
 	out << std::endl;
+#endif
 
 	if (item->lastDelta <= PQIFILE_DOWNLOAD_TOO_FAST)
 	{
@@ -881,11 +977,13 @@ int 	ftfiler::requestData(ftFileStatus *item)
 		if (item->req_size > max_rate * PQIFILE_DOWNLOAD_CHECK)
 			item->req_size = (int) (max_rate * PQIFILE_DOWNLOAD_CHECK);
 
+#ifdef FT_DEBUG 
 		out << "Small Delta: " << ldelta_f << " (sec), rate: " << tf_p_sec;
 		out << std::endl;
 		out << "Small Delta Incrementing req_size from: " << data_tf;
 		out << " to :" <<  item->req_size;
 		out << std::endl;
+#endif
 
 	}
 	else if (item->lastDelta > PQIFILE_DOWNLOAD_TOO_SLOW)
@@ -899,11 +997,13 @@ int 	ftfiler::requestData(ftFileStatus *item)
 
 		item -> req_size -= (int) (1.25 * extra_tf);
 
+#ifdef FT_DEBUG 
 		out << "Long Delta: " << ldelta_f << " (sec), rate: " << tf_p_sec;
 		out << std::endl;
 		out << "Long Delta Decrementing req_size from: " << data_tf;
 		out << " to :" <<  item->req_size;
 		out << std::endl;
+#endif
 	}
 
 	/* make the packet */
@@ -926,9 +1026,11 @@ int 	ftfiler::requestData(ftFileStatus *item)
 		}
 	}
 
+#ifdef FT_DEBUG 
 	out << "Making Packet: offset: " << item->req_loc << " size: " << item->req_size;
 	out << std::endl;
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
+#endif
 
 	ftFileRequest *req = generateFileRequest(item);
 	out_queue.push_back(req);
@@ -947,28 +1049,38 @@ int 	ftfiler::requestData(ftFileStatus *item)
 
 int	ftfiler::generateFileData(ftFileStatus *s, std::string id, uint64_t offset, uint32_t chunk)
 {
+#ifdef FT_DEBUG 
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::generateFileData()");
+#endif
 
 	if ((!s) || (!s->fd) || (s->status & PQIFILE_FAIL))
 	{
+#ifdef FT_DEBUG 
         	pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	       		       "ftfiler::generateFileData() Bad Status");
+#endif
 		if (!s)
 		{
+#ifdef FT_DEBUG 
         		pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	       		       "ftfiler::generateFileData() Bad Status (!s)");
+#endif
 		}
 		if (!s->fd)
 		{
+#ifdef FT_DEBUG 
         		pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	       		       "ftfiler::generateFileData() Bad Status (!s->fd)");
+#endif
 		}
 		if (s->status & PQIFILE_FAIL)
 		{
+#ifdef FT_DEBUG 
 			std::ostringstream out;
 	       		out << "ftfiler::generateFileData() Bad Status (s->status): " << s->status;
         		pqioutput(PQL_DEBUG_BASIC, ftfilerzone,out.str());
+#endif
 		}
 
 		/* return an error */
@@ -985,6 +1097,7 @@ int	ftfiler::generateFileData(ftFileStatus *s, std::string id, uint64_t offset, 
 		tosend = s -> total_size - base_loc;
 	}
 
+#ifdef FT_DEBUG 
 	{
 		std::ostringstream out;
 		out << "ftfiler::generateFileData() Sending " << tosend;
@@ -992,6 +1105,7 @@ int	ftfiler::generateFileData(ftFileStatus *s, std::string id, uint64_t offset, 
 		out << "\tFrom File:" << s -> name;
         	pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
 	}
+#endif
 
 	if (tosend > 0)
 	{
@@ -1002,11 +1116,11 @@ int	ftfiler::generateFileData(ftFileStatus *s, std::string id, uint64_t offset, 
 		/* read the data */
 		if (1 != fread(data, tosend, 1, s->fd))
 		{
+#ifdef FT_DEBUG 
 			std::ostringstream out;
-
 			out << "ftfiler::generateFileData() Failed to get data!";
-
         		pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
+#endif
 
 			free(data);
 			return 0;
@@ -1038,12 +1152,15 @@ int	ftfiler::generateFileData(ftFileStatus *s, std::string id, uint64_t offset, 
 
 ftFileRequest *ftfiler::generateFileRequest(ftFileStatus *s)
 {
+#ifdef FT_DEBUG 
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::generatePQFileRequest()");
+#endif
 
 	ftFileRequest *fr = new ftFileRequest(s->id, s->hash, 
 				s->size, s->req_loc, s->req_size);
 
+#ifdef FT_DEBUG 
 	std::ostringstream out;
 
 	out << "ftfiler::generateFileRequest() for: " << s->name << std::endl;
@@ -1051,6 +1168,7 @@ ftFileRequest *ftfiler::generateFileRequest(ftFileStatus *s)
 	out << fr->chunk << std::endl;
 
  	pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
+#endif
 
 	// timestamp request.
 	s->lastTS = time(NULL);
@@ -1072,8 +1190,10 @@ const std::string PARTIAL_DIR = "partials";
 
 std::string ftfiler::determineTmpFilePath(ftFileStatus *s)
 {
+#ifdef FT_DEBUG 
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::determineTmpFilePath()");
+#endif
 
 	/* get the download path */
 	// savePath = ".";
@@ -1090,8 +1210,10 @@ std::string ftfiler::determineTmpFilePath(ftFileStatus *s)
 
 std::string ftfiler::determineDestFilePath(ftFileStatus *s)
 {
+#ifdef FT_DEBUG 
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::determineDestFilePath()");
+#endif
 
 	/* should be three different options here:
 	 * (1) relative to baseSavePath (default)
@@ -1134,27 +1256,33 @@ std::string ftfiler::determineDestFilePath(ftFileStatus *s)
 
 int ftfiler::initiateFileTransfer(ftFileStatus *s)
 {
+#ifdef FT_DEBUG 
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::initiateFileTransfer()");
+#endif
 
 
 	std::string partialpath = saveBasePath + "/";
 	partialpath += PARTIAL_DIR;
 	if (!RsDirUtil::checkCreateDirectory(partialpath))
 	{
+#ifdef FT_DEBUG 
 		{
 		  std::ostringstream out;
 		  out << "ftfiler::initiateFileTransfer() Cannot create partial directory: " << partialpath;
         	  pqioutput(PQL_ALERT, ftfilerzone, out.str());
 		}
+#endif
 
 		std::string tmppath = mEmergencyIncomingDir;
 		if (!RsDirUtil::checkCreateDirectory(tmppath))
 		{
+#ifdef FT_DEBUG 
 		  	std::ostringstream out;
 			out << "ftfiler::initiateFileTransfer() Cannot create EmergencyIncomingDir: ";
 			out << tmppath;
         		pqioutput(PQL_ALERT, ftfilerzone, out.str());
+#endif
 			exit(1);
 		}
 
@@ -1166,18 +1294,22 @@ int ftfiler::initiateFileTransfer(ftFileStatus *s)
 
 		if (!RsDirUtil::checkCreateDirectory(tmppath))
 		{
+#ifdef FT_DEBUG 
 		  	std::ostringstream out;
 			out << "ftfiler::initiateFileTransfer() Cannot create EmergencyIncomingPartialsDir: ";
 			out << tmppath;
         		pqioutput(PQL_ALERT, ftfilerzone, out.str());
+#endif
 			exit(1);
 		}
 
+#ifdef FT_DEBUG 
 		{
 		  std::ostringstream out;
 		  out << "ftfiler::initiateFileTransfer() Using Emergency Download Directory: " << saveBasePath;
         	  pqioutput(PQL_ALERT, ftfilerzone, out.str());
 		}
+#endif
 
 		pqiNotify *notify = getPqiNotify();
 		if (notify)
@@ -1209,8 +1341,10 @@ int ftfiler::initiateFileTransfer(ftFileStatus *s)
 		}
 		else
 		{
+#ifdef FT_DEBUG 
 			std::cerr << "ftfiler::initiateFileTransfer() Notify not exist!";
 			std::cerr << std::endl;
+#endif
 			exit(1);
 		}
 	}
@@ -1218,17 +1352,20 @@ int ftfiler::initiateFileTransfer(ftFileStatus *s)
 	/* check if the file exists */
 	s->file_name = determineTmpFilePath(s);
 
+#ifdef FT_DEBUG 
 	{
 		std::ostringstream out;
 		out << "ftfiler::initiateFileTransfer() Filename: ";
 		out << s->file_name;
         	pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
 	}
+#endif
 
 	/* attempt to open file */
 	FILE *fd = fopen(s->file_name.c_str(), "r+b");
 	if (!fd)
 	{
+#ifdef FT_DEBUG 
 		{
 		std::ostringstream out;
 		out << "ftfiler::initiateFileTransfer() Failed to open (r+b): ";
@@ -1236,15 +1373,18 @@ int ftfiler::initiateFileTransfer(ftFileStatus *s)
 		out << " Will try to create file";
         	pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
 		}
+#endif
 
 		/* open in writing mode */
 		fd = fopen(s->file_name.c_str(), "w+b");
 		if (!fd)
 		{
+#ifdef FT_DEBUG 
 			std::ostringstream out;
 			out << "ftfiler::initiateFileTransfer() Failed to open (w+b): ";
 			out << s->file_name << " Error:" << errno;
         		pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
+#endif
 		
 			/* failed to open the file */
 			s->status = (PQIFILE_FAIL | PQIFILE_FAIL_NOT_OPEN);
@@ -1258,8 +1398,10 @@ int ftfiler::initiateFileTransfer(ftFileStatus *s)
 	/* move to the end */
 	if (0 != fseek(fd, 0L, SEEK_END))
 	{
+#ifdef FT_DEBUG 
         	pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::initiateFileTransfer() Seek Failed");
+#endif
 		s->status = (PQIFILE_FAIL | PQIFILE_FAIL_NOT_SEEK);
 		return 0;
 	}
@@ -1299,8 +1441,10 @@ int ftfiler::resetFileTransfer(ftFileStatus *state)
 		state->sources.clear();
 		if (!lookupRemoteHash(state->hash, state->sources))
 		{
+#ifdef FT_DEBUG 
         		pqioutput(PQL_WARNING, ftfilerzone,
 	              		"ftfiler::resetFileTransfer() Failed to locate Peers");
+#endif
 		}
 		if (state->sources.size() == 0)
 		{
@@ -1328,8 +1472,10 @@ int ftfiler::resetFileTransfer(ftFileStatus *state)
 
 int ftfiler::addFileData(ftFileStatus *s, uint64_t idx, void *data, uint32_t size)
 {
+#ifdef FT_DEBUG 
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::addFileData()");
+#endif
 
         //std::cerr << "ftfiler::addFileData() PreStatus" << std::endl;
 	//printFtFileStatus(s, std::cerr);
@@ -1337,27 +1483,33 @@ int ftfiler::addFileData(ftFileStatus *s, uint64_t idx, void *data, uint32_t siz
 	/* check the status */
 	if ((!s) || (!s->fd) || (s->status & PQIFILE_FAIL))
 	{
+#ifdef FT_DEBUG 
         	pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	       		       "ftfiler::addFileData() Bad Status");
+#endif
 		return 0;
 	}
 
 	/* check its at the correct location */
 	if ((idx != s->recv_size) || (s->recv_size + size > s->total_size))
 	{
+#ifdef FT_DEBUG 
 		std::ostringstream out;
 		out << "ftfiler::addFileData() Bad Data Location" << std::endl;
 		out << " recv_size: " << s->recv_size << " offset: " << idx;
 		out << " total_size: " << s->total_size << " size: " << size;
         	pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
+#endif
 		return 0;
 	}
 
 	/* go to the end of the file */
 	if (0 != fseek(s->fd, 0L, SEEK_END))
 	{
+#ifdef FT_DEBUG 
         	pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	       		       "ftfiler::addFileData() Bad fseek");
+#endif
 		s->status = (PQIFILE_FAIL | PQIFILE_FAIL_NOT_SEEK);
 		return 0;
 	}
@@ -1365,8 +1517,10 @@ int ftfiler::addFileData(ftFileStatus *s, uint64_t idx, void *data, uint32_t siz
 	/* add the data */
 	if (1 != fwrite(data, size, 1, s->fd))
 	{
+#ifdef FT_DEBUG 
         	pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	       		       "ftfiler::addFileData() Bad fwrite");
+#endif
 		s->status = (PQIFILE_FAIL | PQIFILE_FAIL_NOT_WRITE);
 		return 0;
 	}
@@ -1382,8 +1536,10 @@ int ftfiler::addFileData(ftFileStatus *s, uint64_t idx, void *data, uint32_t siz
 
 	if (s->recv_size == s->total_size)
 	{
+#ifdef FT_DEBUG 
         	pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	       		       "ftfiler::addFileData() File Complete!");
+#endif
 		s->status = PQIFILE_COMPLETE;
 
 		/* HANDLE COMPLETION HERE */
@@ -1453,8 +1609,10 @@ int ftfiler::completeFileTransfer(ftFileStatus *s)
 
 ftFileStatus *ftfiler::createFileCache(std::string hash)
 {
+#ifdef FT_DEBUG 
         pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::createFileCache()");
+#endif
 
 	ftFileStatus *s = new ftFileStatus(hash, hash, 0, "", FT_MODE_UPLOAD);
 
@@ -1473,8 +1631,10 @@ ftFileStatus *ftfiler::createFileCache(std::string hash)
 
 	if ((!found) || (s->file_name.length() < 1))
 	{
+#ifdef FT_DEBUG 
         	pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::createFileCache() Failed to Find File");
+#endif
 		/* failed to open the file */
 		s->status = (PQIFILE_FAIL | PQIFILE_FAIL_BAD_PATH);
 		delete s;
@@ -1486,10 +1646,12 @@ ftFileStatus *ftfiler::createFileCache(std::string hash)
 	FILE *fd = fopen(s->file_name.c_str(), "rb");
 	if (!fd)
 	{
+#ifdef FT_DEBUG 
 		std::stringstream out;
 		out << "ftfiler::createFileCache() Failed to Open the File" << std::endl;
 		out << "\tFull Path:" << s->file_name.c_str() << std::endl;
         	pqioutput(PQL_DEBUG_BASIC, ftfilerzone, out.str());
+#endif
 		/* failed to open the file */
 		s->status = (PQIFILE_FAIL | PQIFILE_FAIL_NOT_OPEN);
 		delete s;
@@ -1500,8 +1662,10 @@ ftFileStatus *ftfiler::createFileCache(std::string hash)
 	/* move to the end */
 	if (0 != fseek(fd, 0L, SEEK_END))
 	{
+#ifdef FT_DEBUG 
         	pqioutput(PQL_DEBUG_BASIC, ftfilerzone,
 	              "ftfiler::createFileCache() Fseek Failed");
+#endif
 
 		s->status = (PQIFILE_FAIL | PQIFILE_FAIL_NOT_OPEN);
 		delete s;

@@ -42,7 +42,9 @@ const std::string openDHT_Agent  = "RS-HTTP-V0.4";
 #define MAX_DHT_ATTEMPTS	10 /* attempts per search/publish */
 #define MIN_DHT_SERVERS		5
 
-#define OPENDHT_DEBUG		1
+/****
+ * #define OPENDHT_DEBUG		1
+ ****/
 
 bool OpenDHTClient::checkServerFile(std::string filename)
 {
@@ -488,7 +490,9 @@ bool OpenDHTClient::searchKey(std::string key, std::list<std::string> &values)
 			if (isspace(value[i]))
 			{
 				value.erase(i,1);
+#ifdef	OPENDHT_DEBUG
 				std::cerr << "Cleanup Result:" << value << ":END:" << std::endl;
+#endif
 			}
 			else
 			{
@@ -498,10 +502,12 @@ bool OpenDHTClient::searchKey(std::string key, std::list<std::string> &values)
 
 		if (value.length() > 0)
 		{
-			std::cerr << "openDHT_searchKey() Value:" << value << ":END:" << std::endl;
 			std::string result = convertFromBase64(value);
-			std::cerr << "openDHT_searchKey() Result: 0x" << RsUtil::BinToHex(result) << ":END:" << std::endl;
 			values.push_back(result);
+#ifdef	OPENDHT_DEBUG
+			std::cerr << "openDHT_searchKey() Value:" << value << ":END:" << std::endl;
+			std::cerr << "openDHT_searchKey() Result: 0x" << RsUtil::BinToHex(result) << ":END:" << std::endl;
+#endif
 		}
 
 		/* the answer should be between loc and end */
@@ -541,19 +547,23 @@ bool OpenDHTClient::openDHT_sendMessage(std::string msg, std::string &response)
 		else
 		{
 			/* no address */
+#ifdef	OPENDHT_DEBUG
 			std::cerr << "OpenDHTClient::openDHT_sendMessage()";
 			std::cerr << " ERROR: No Address";
 			std::cerr << std::endl;
+#endif
 			setServerFailed(host);
 
 			return false;
 		}
 	}
 
+#ifdef	OPENDHT_DEBUG
 	std::cerr << "OpenDHTClient::openDHT_sendMessage()";
 	std::cerr << " Connecting to:" << host << ":" << port;
 	std::cerr << " (" << inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port) << ")";
 	std::cerr << std::endl;
+#endif
 
 	/* create request */
 	std::string putheader = createHttpHeader(host, port, openDHT_Agent, msg.length());
@@ -566,20 +576,24 @@ bool OpenDHTClient::openDHT_sendMessage(std::string msg, std::string &response)
 	if (err)
 	{
 		unix_close(sockfd);
+#ifdef	OPENDHT_DEBUG
 		std::cerr << "OpenDHTClient::openDHT_sendMessage()";
 		std::cerr << " ERROR: Failed to Connect";
 		std::cerr << std::endl;
+#endif
 
 		setServerFailed(host);
 
 		return false;
 	}
 
+#ifdef	OPENDHT_DEBUG
 	std::cerr << "HTTP message *******************" << std::endl;
 	std::cerr << putheader;
 	std::cerr << msg;
 	std::cerr << std::endl;
 	std::cerr << "HTTP message *******************" << std::endl;
+#endif
 
 	/* send data */
 	int sendsize = strlen(putheader.c_str());
@@ -587,35 +601,43 @@ bool OpenDHTClient::openDHT_sendMessage(std::string msg, std::string &response)
 	if (sendsize != size)
 	{
 		unix_close(sockfd);
+#ifdef	OPENDHT_DEBUG
 		std::cerr << "OpenDHTClient::openDHT_sendMessage()";
 		std::cerr << " ERROR: Failed to Send(1)";
 		std::cerr << std::endl;
+#endif
 
 		setServerFailed(host);
 
 		return false;
 	}
+#ifdef	OPENDHT_DEBUG
 	std::cerr << "OpenDHTClient::openDHT_sendMessage()";
 	std::cerr << " Send(1):" << size;
 	std::cerr << std::endl;
+#endif
 
 	sendsize = strlen(msg.c_str());
 	size = send(sockfd, msg.c_str(), sendsize, 0);
 	if (sendsize != size)
 	{
 		unix_close(sockfd);
+#ifdef	OPENDHT_DEBUG
 		std::cerr << "OpenDHTClient::openDHT_sendMessage()";
 		std::cerr << " ERROR: Failed to Send(2)";
 		std::cerr << std::endl;
+#endif
 
 		setServerFailed(host);
 
 		return false;
 	}
 
+#ifdef	OPENDHT_DEBUG
 	std::cerr << "OpenDHTClient::openDHT_sendMessage()";
 	std::cerr << " Send(2):" << size;
 	std::cerr << std::endl;
+#endif
 
 	/* now wait for the response */
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
@@ -631,19 +653,24 @@ bool OpenDHTClient::openDHT_sendMessage(std::string msg, std::string &response)
 	uint32_t idx = 0;
 	while(0 < (size = recv(sockfd, &(inbuf[idx]), recvsize - idx, 0)))
 	{
+#ifdef	OPENDHT_DEBUG
 		std::cerr << "OpenDHTClient::openDHT_sendMessage()";
 		std::cerr << " Recvd Chunk:" << size;
 		std::cerr << std::endl;
+#endif
 		idx += size;
 	}
 
+#ifdef	OPENDHT_DEBUG
 	std::cerr << "OpenDHTClient::openDHT_sendMessage()";
 	std::cerr << " Recvd Msg:" << idx;
+#endif
 
 	response = std::string(inbuf, idx);
 	free(inbuf);
 
 	/* print it out */
+#ifdef	OPENDHT_DEBUG
 	std::cerr << "HTTP What We Sent ***************" << std::endl;
 	std::cerr << putheader;
 	std::cerr << msg;
@@ -652,6 +679,7 @@ bool OpenDHTClient::openDHT_sendMessage(std::string msg, std::string &response)
 	std::cerr << response;
 	std::cerr << std::endl;
 	std::cerr << "HTTP response *******************" << std::endl;
+#endif
 
 	unix_close(sockfd);
 
@@ -672,17 +700,21 @@ bool OpenDHTClient::openDHT_getDHTList(std::string &response)
 	if (!LookupDNSAddr(host, addr))
 	{
 		/* no address */
+#ifdef	OPENDHT_DEBUG
 		std::cerr << "OpenDHTClient::openDHT_getDHTList()";
 		std::cerr << " ERROR: No Address";
 		std::cerr << std::endl;
+#endif
 
 		return false;
 	}
 
+#ifdef	OPENDHT_DEBUG
 	std::cerr << "OpenDHTClient::openDHT_getDHTList()";
 	std::cerr << " Connecting to:" << host << ":" << port;
 	std::cerr << " (" << inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port) << ")";
 	std::cerr << std::endl;
+#endif
 
 	/* create request */
 	std::string putheader = createHttpHeaderGET(host, port, "servers.txt", openDHT_Agent, 0);
@@ -695,17 +727,21 @@ bool OpenDHTClient::openDHT_getDHTList(std::string &response)
 	if (err)
 	{
 		unix_close(sockfd);
+#ifdef	OPENDHT_DEBUG
 		std::cerr << "OpenDHTClient::openDHT_getDHTList()";
 		std::cerr << " ERROR: Failed to Connect";
 		std::cerr << std::endl;
+#endif
 
 		return false;
 	}
 
+#ifdef	OPENDHT_DEBUG
 	std::cerr << "HTTP message *******************" << std::endl;
 	std::cerr << putheader;
 	std::cerr << std::endl;
 	std::cerr << "HTTP message *******************" << std::endl;
+#endif
 
 	/* send data */
 	int sendsize = strlen(putheader.c_str());
@@ -713,15 +749,19 @@ bool OpenDHTClient::openDHT_getDHTList(std::string &response)
 	if (sendsize != size)
 	{
 		unix_close(sockfd);
+#ifdef	OPENDHT_DEBUG
 		std::cerr << "OpenDHTClient::openDHT_getDHTList()";
 		std::cerr << " ERROR: Failed to Send(1)";
 		std::cerr << std::endl;
+#endif
 
 		return false;
 	}
+#ifdef	OPENDHT_DEBUG
 	std::cerr << "OpenDHTClient::openDHT_getDHTList()";
 	std::cerr << " Send(1):" << size;
 	std::cerr << std::endl;
+#endif
 
 	/* now wait for the response */
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
@@ -737,23 +777,29 @@ bool OpenDHTClient::openDHT_getDHTList(std::string &response)
 	uint32_t idx = 0;
 	while(0 < (size = recv(sockfd, &(inbuf[idx]), recvsize - idx, 0)))
 	{
+#ifdef	OPENDHT_DEBUG
 		std::cerr << "OpenDHTClient::openDHT_getDHTList()";
 		std::cerr << " Recvd Chunk:" << size;
 		std::cerr << std::endl;
+#endif
 		idx += size;
 	}
 
+#ifdef	OPENDHT_DEBUG
 	std::cerr << "OpenDHTClient::openDHT_getDHTList()";
 	std::cerr << " Recvd Msg:" << idx;
+#endif
 
 	response = std::string(inbuf, idx);
 	free(inbuf);
 
 	/* print it out */
+#ifdef	OPENDHT_DEBUG
 	std::cerr << "HTTP response *******************" << std::endl;
 	std::cerr << response;
 	std::cerr << std::endl;
 	std::cerr << "HTTP response *******************" << std::endl;
+#endif
 
 	unix_close(sockfd);
 

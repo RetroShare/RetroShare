@@ -33,7 +33,9 @@
 
 #include "pqi/pqibin.h"
 
-#define DISTRIB_DEBUG 1
+/*****
+ * #define DISTRIB_DEBUG 1
+ ****/
 
 RSA *extractPublicKey(RsTlvSecurityKey &key);
 RSA *extractPrivateKey(RsTlvSecurityKey &key);

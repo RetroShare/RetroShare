@@ -516,7 +516,9 @@ void 	FileIndexMonitor::updateCycle()
 
 	/* print out the new directory structure */
 
+#ifdef FIM_DEBUG
 	fi.printFileIndex(std::cerr);
+#endif
 
 	/* now if we have changed things -> restore file/hash it/and 
 	 * tell the CacheSource
@@ -671,7 +673,9 @@ bool    FileIndexMonitor::internal_setSharedDirectories()
 				unique = true;
 				/* add it! */
 				directoryMap[tst_dir.c_str()] = root_dir;
+#ifdef FIM_DEBUG
 				std::cerr << "Added [" << tst_dir << "] => " << root_dir << std::endl;
+#endif
 			}
 		}
 	}

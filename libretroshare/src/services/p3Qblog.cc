@@ -35,7 +35,9 @@ const uint32_t RANK_MAX_FWD_OFFSET = (60 * 60 * 24 * 2); /* 2 Days */
 
 const uint32_t FRIEND_QBLOG_REPOST_PERIOD = 60; /* every minute for testing */
 
-#define QBLOG_DEBUG 1
+/****
+ * #define QBLOG_DEBUG 1
+ ****/
 
 p3Qblog::p3Qblog(p3ConnectMgr *connMgr, 
 		uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
@@ -530,8 +532,8 @@ void p3Qblog::loadDummy(void)
 	mConnMgr->getFriendList(peers); // retrieve peers list from core
 	if(peers.empty())
 	{
-		for(int i = 0; i < 50; i++)
-			std::cerr << "nothing in peer list!!!" << std::endl;
+		//for(int i = 0; i < 50; i++)
+		//	std::cerr << "nothing in peer list!!!" << std::endl;
 	}
 	
 	

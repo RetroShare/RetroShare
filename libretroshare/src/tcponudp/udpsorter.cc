@@ -642,7 +642,9 @@ bool    UdpSorter::checkStunKeepAlive()
 #endif
 	  }
 
+#ifdef DEBUG_UDP_SORTER
 	  locked_printStunList();
+#endif
 
 	}
 
@@ -679,7 +681,9 @@ bool    UdpSorter::locked_recvdStun(const struct sockaddr_in &remote, const stru
 		}
 	}
 
+#ifdef DEBUG_UDP_SORTER
 	locked_printStunList();
+#endif
 
 	if (!eaddrKnown)
 	{
@@ -754,6 +758,7 @@ bool    UdpSorter::locked_checkExternalAddress()
 
 bool    UdpSorter::locked_printStunList()
 {
+#ifdef DEBUG_UDP_SORTER
 	std::ostringstream out;
 
 	time_t now = time(NULL);
@@ -774,6 +779,7 @@ bool    UdpSorter::locked_printStunList()
 	}
 
 	std::cerr << out.str();
+#endif
 
 	return true;
 }

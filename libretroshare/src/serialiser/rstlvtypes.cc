@@ -270,7 +270,7 @@ bool     RsTlvPeerIdSet::GetTlv(void *data, uint32_t size, uint32_t *offset) /* 
 
 	if (size < tlvend)    /* check size */
 		return false; /* not enough space */
-std::cout << "yeah!!!" << std::endl;
+
 	if (tlvtype != TLV_TYPE_PEERSET) /* check type */
 		return false;
 

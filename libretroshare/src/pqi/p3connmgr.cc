@@ -851,10 +851,12 @@ bool p3ConnectMgr::stunCheck()
 
 void    p3ConnectMgr::stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags)
 {
+#ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::stunStatus()";
 	std::cerr << " id: " << RsUtil::BinToHex(id) << " raddr: " << inet_ntoa(raddr.sin_addr);
 	std::cerr << ":" << ntohs(raddr.sin_port);
 	std::cerr << std::endl;
+#endif
 
 	connMtx.lock();   /*   LOCK MUTEX */
 
@@ -1263,19 +1265,22 @@ bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr,
 	it = mFriendList.find(id);
 	if (it == mFriendList.end())
 	{
-		
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::connectAttempt() FAILED Not in FriendList!";
 		std::cerr << " id: " << id;
 		std::cerr << std::endl;
+#endif
 
 		return false;
 	}
 
 	if (it->second.connAddrs.size() < 1)
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::connectAttempt() FAILED No ConnectAddresses";
 		std::cerr << " id: " << id;
 		std::cerr << std::endl;
+#endif
 		return false;
 	}
 	
@@ -1289,6 +1294,7 @@ bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr,
 	period = it->second.currentConnAddr.period;
 	type = it->second.currentConnAddr.type;
 
+#ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::connectAttempt() Success: ";
 	std::cerr << " id: " << id;
 	std::cerr << std::endl;
@@ -1298,6 +1304,7 @@ bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr,
 	std::cerr << " period: " << period;
 	std::cerr << " type: " << type;
 	std::cerr << std::endl;
+#endif
 
 	return true;
 }
@@ -1323,12 +1330,14 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags)
 		return false;
 	}
 
+#ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::connectResult() Success: ";
 	std::cerr << " id: " << id;
 	std::cerr << std::endl;
 	std::cerr << " Success: " << success;
 	std::cerr << " flags: " << flags;
 	std::cerr << std::endl;
+#endif
 
 	it->second.inConnAttempt = false;
 
@@ -1340,12 +1349,14 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags)
 
 		/* update address (will come through from DISC) */
 
+#ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::connectAttempt() Success: ";
 	std::cerr << " id: " << id;
 	std::cerr << std::endl;
 	std::cerr << " Success: " << success;
 	std::cerr << " flags: " << flags;
 	std::cerr << std::endl;
+#endif
 
 
 		/* change state */
@@ -1419,6 +1430,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
       {
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
+#ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::peerStatus()";
 	std::cerr << " id: " << id;
 	std::cerr << " laddr: " << inet_ntoa(laddr.sin_addr);
@@ -1429,6 +1441,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
 	std::cerr << " flags: " << flags;
 	std::cerr << " source: " << source;
 	std::cerr << std::endl;
+#endif
 
 	/* look up the id */
 	it = mFriendList.find(id);
@@ -1440,17 +1453,23 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		if (it == mOthersList.end())
 		{
 			/* not found - ignore */
+#ifdef CONN_DEBUG
 			std::cerr << "p3ConnectMgr::peerStatus() Peer Not Found - Ignore";
 			std::cerr << std::endl;
+#endif
 			return;
 		}
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::peerStatus() Peer is in mOthersList";
 		std::cerr << std::endl;
+#endif
 	}
 
+#ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::peerStatus() Current Peer State:" << std::endl;
 	printConnectState(it->second);
 	std::cerr << std::endl;
+#endif
 
 	/* update the status */
 
@@ -1580,9 +1599,11 @@ void    p3ConnectMgr::peerStatus(std::string id,
 
 	if (!isFriend)
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::peerStatus() NOT FRIEND ";
 		std::cerr << " id: " << id;
 		std::cerr << std::endl;
+#endif
 
 		return;
 	}
@@ -1590,9 +1611,11 @@ void    p3ConnectMgr::peerStatus(std::string id,
 	/* if already connected -> done */
 	if (it->second.state & RS_PEER_S_CONNECTED)
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::peerStatus() PEER ONLINE ALREADY ";
 		std::cerr << " id: " << id;
 		std::cerr << std::endl;
+#endif
 
 		return;
 	}
@@ -1600,6 +1623,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
 
 	/* are the addresses different? */
 
+#ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::peerStatus()";
 	std::cerr << " id: " << id;
 	std::cerr << " laddr: " << inet_ntoa(laddr.sin_addr);
@@ -1610,6 +1634,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
 	std::cerr << " flags: " << flags;
 	std::cerr << " source: " << source;
 	std::cerr << std::endl;
+#endif
 
 #ifndef P3CONNMGR_NO_AUTO_CONNECTION 
 
@@ -1644,6 +1669,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		pca.type = RS_NET_CONN_TCP_LOCAL;
 		pca.addr = details.laddr;
 
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::peerStatus() ADDING TCP_LOCAL ADDR: ";
 		std::cerr << " id: " << id;
 		std::cerr << " laddr: " << inet_ntoa(pca.addr.sin_addr);
@@ -1653,11 +1679,13 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		std::cerr << " type: " << pca.type;
 		std::cerr << " source: " << source;
 		std::cerr << std::endl;
+#endif
 	
 		it->second.connAddrs.push_back(pca);
 	}
 	else
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::peerStatus() Not adding Local Connect (Diff Network)";
 		std::cerr << " id: " << id;
 		std::cerr << " laddr: " << inet_ntoa(details.laddr.sin_addr);
@@ -1665,6 +1693,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		std::cerr << " own.laddr: " << inet_ntoa(ownState.localaddr.sin_addr);
 		std::cerr << ": " << ntohs(ownState.localaddr.sin_port);
 		std::cerr << std::endl;
+#endif
 	}
 
 
@@ -1680,6 +1709,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		pca.type = RS_NET_CONN_TCP_EXTERNAL;
 		pca.addr = details.raddr;
 
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::peerStatus() ADDING TCP_REMOTE ADDR: ";
 		std::cerr << " id: " << id;
 		std::cerr << " laddr: " << inet_ntoa(pca.addr.sin_addr);
@@ -1689,17 +1719,20 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		std::cerr << " type: " << pca.type;
 		std::cerr << " source: " << source;
 		std::cerr << std::endl;
+#endif
 
 		it->second.connAddrs.push_back(pca);
 	}
 	else
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::peerStatus() Not adding Remote Connect (Type != E or Invalid Network)";
 		std::cerr << " id: " << id;
 		std::cerr << " raddr: " << inet_ntoa(details.raddr.sin_addr);
 		std::cerr << ": " << ntohs(details.raddr.sin_port);
 		std::cerr << " type: " << details.type;
 		std::cerr << std::endl;
+#endif
 	}
 
 #endif  // P3CONNMGR_NO_TCP_CONNECTIONS
@@ -1719,6 +1752,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
 
 	if (it->second.inConnAttempt)
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::peerStatus() ALREADY IN CONNECT ATTEMPT: ";
 		std::cerr << " id: " << id;
 		std::cerr << std::endl;
@@ -1728,6 +1762,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		std::cerr << "p3ConnectMgr::peerStatus() Resulting Peer State:" << std::endl;
 		printConnectState(it->second);
 		std::cerr << std::endl;
+#endif
 
 		return;
 	}
@@ -1736,40 +1771,50 @@ void    p3ConnectMgr::peerStatus(std::string id,
 	/* start a connection attempt */
 	if (it->second.connAddrs.size() > 0)
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::peerStatus() Started CONNECT ATTEMPT! ";
 		std::cerr << " id: " << id;
 		std::cerr << std::endl;
+#endif
 
 		it->second.actions |= RS_PEER_CONNECT_REQ;
 		mStatusChanged = true;
 	}
 	else
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::peerStatus() No addr suitable for CONNECT ATTEMPT! ";
 		std::cerr << " id: " << id;
 		std::cerr << std::endl;
+#endif
 	}
 
+#ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::peerStatus() Resulting Peer State:" << std::endl;
 	printConnectState(it->second);
 	std::cerr << std::endl;
+#endif
 
 }
 
 void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in raddr,
                        							uint32_t source)
 {
+#ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::peerConnectRequest()";
 	std::cerr << " id: " << id;
 	std::cerr << " raddr: " << inet_ntoa(raddr.sin_addr);
 	std::cerr << ":" << ntohs(raddr.sin_port);
 	std::cerr << " source: " << source;
 	std::cerr << std::endl;
+#endif
 
 	/******************** TCP PART *****************************/
 
+#ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::peerConnectRequest() Try TCP first";
 	std::cerr << std::endl;
+#endif
 
 	retryConnectTCP(id);
 
@@ -1779,8 +1824,10 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in radd
 
 	if (ownState.netMode & RS_NET_MODE_UNREACHABLE)
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::peerConnectRequest() Unreachable - no UDP connection";
 		std::cerr << std::endl;
+#endif
 		return;
 	}
 
@@ -1796,20 +1843,26 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in radd
 		if (it == mOthersList.end())
 		{
 			/* not found - ignore */
+#ifdef CONN_DEBUG
 			std::cerr << "p3ConnectMgr::peerConnectRequest() Peer Not Found - Ignore";
 			std::cerr << std::endl;
+#endif
 			return;
 		}
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::peerConnectRequest() Peer is in mOthersList - Ignore";
 		std::cerr << std::endl;
+#endif
 		return;
 	}
 
 	/* if already connected -> done */
 	if (it->second.state & RS_PEER_S_CONNECTED)
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::peerConnectRequest() Already connected - Ignore";
 		std::cerr << std::endl;
+#endif
 		return;
 	}
 
@@ -1827,25 +1880,33 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in radd
 		if (source == RS_CB_DHT)
 		{
 			pca.period = P3CONNMGR_UDP_DHT_DELAY; 
+#ifdef CONN_DEBUG
 			std::cerr << "p3ConnectMgr::peerConnectRequest() source = DHT ";
 			std::cerr << std::endl;
+#endif
 		}
 		else if (source == RS_CB_PROXY)
 		{
+#ifdef CONN_DEBUG
 			std::cerr << "p3ConnectMgr::peerConnectRequest() source = PROXY ";
 			std::cerr << std::endl;
+#endif
 			pca.period = P3CONNMGR_UDP_PROXY_DELAY; 
 		}
 		else
 		{
+#ifdef CONN_DEBUG
 			std::cerr << "p3ConnectMgr::peerConnectRequest() source = UNKNOWN ";
 			std::cerr << std::endl;
+#endif
 			/* error! */
 			pca.period = P3CONNMGR_UDP_PROXY_DELAY; 
 		}
 
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::peerConnectRequest() period = " << pca.period;
 		std::cerr << std::endl;
+#endif
 
 		pca.addr = raddr;
 
@@ -1862,18 +1923,22 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in radd
 	/* start a connection attempt */
 	if (it->second.connAddrs.size() > 0)
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::peerConnectRequest() Started CONNECT ATTEMPT! ";
 		std::cerr << " id: " << id;
 		std::cerr << std::endl;
+#endif
 
 		it->second.actions |= RS_PEER_CONNECT_REQ;
 		mStatusChanged = true;
 	}
 	else
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::peerConnectRequest() No addr suitable for CONNECT ATTEMPT! ";
 		std::cerr << " id: " << id;
 		std::cerr << std::endl;
+#endif
 	}
 }
 
@@ -2125,24 +2190,30 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 	/* push addresses onto stack */
+#ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::retryConnectTCP()";
 	std::cerr << " id: " << id;
 	std::cerr << std::endl;
+#endif
 
 	/* look up the id */
         std::map<std::string, peerConnectState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::retryConnectTCP() Peer is not Friend";
 		std::cerr << std::endl;
+#endif
 		return false;
 	}
 
 	/* if already connected -> done */
 	if (it->second.state & RS_PEER_S_CONNECTED)
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::retryConnectTCP() Peer Already Connected";
 		std::cerr << std::endl;
+#endif
 		return true;
 	}
 
@@ -2162,10 +2233,12 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 			&(it->second.localaddr.sin_addr))))
 
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::retryConnectTCP() Local Address Valid: ";
 		std::cerr << inet_ntoa(it->second.localaddr.sin_addr);
 		std::cerr << ":" << ntohs(it->second.localaddr.sin_port);
 		std::cerr << std::endl;
+#endif
 
 		bool localExists = false;
 		if ((it->second.inConnAttempt) && 
@@ -2187,8 +2260,10 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 
 		if (!localExists)
 		{
+#ifdef CONN_DEBUG
 			std::cerr << "p3ConnectMgr::retryConnectTCP() Adding Local Addr to Queue";
 			std::cerr << std::endl;
+#endif
 
 			/* add the local address */
 			peerConnectAddress pca;
@@ -2200,8 +2275,10 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 		}
 		else
 		{
+#ifdef CONN_DEBUG
 			std::cerr << "p3ConnectMgr::retryConnectTCP() Local Addr already in Queue";
 			std::cerr << std::endl;
+#endif
 		}
 	}
 
@@ -2212,10 +2289,12 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 	/* always try external */
 	if (isValidNet(&(it->second.serveraddr.sin_addr)))
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::retryConnectTCP() Ext Address Valid: ";
 		std::cerr << inet_ntoa(it->second.serveraddr.sin_addr);
 		std::cerr << ":" << ntohs(it->second.serveraddr.sin_port);
 		std::cerr << std::endl;
+#endif
 
 
 		bool remoteExists = false;
@@ -2238,8 +2317,10 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 
 		if (!remoteExists)
 		{
+#ifdef CONN_DEBUG
 			std::cerr << "p3ConnectMgr::retryConnectTCP() Adding Ext Addr to Queue";
 			std::cerr << std::endl;
+#endif
 
 			/* add the remote address */
 			peerConnectAddress pca;
@@ -2251,8 +2332,10 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 		}
 		else
 		{
+#ifdef CONN_DEBUG
 			std::cerr << "p3ConnectMgr::retryConnectTCP() Ext Addr already in Queue";
 			std::cerr << std::endl;
+#endif
 		}
 	}
 
@@ -2270,18 +2353,22 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 	/* start a connection attempt */
 	if (it->second.connAddrs.size() > 0)
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::retryConnectTCP() Started CONNECT ATTEMPT! ";
 		std::cerr << " id: " << id;
 		std::cerr << std::endl;
+#endif
 
 		it->second.actions |= RS_PEER_CONNECT_REQ;
 		mStatusChanged = true;
 	}
 	else
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::retryConnectTCP() No addr suitable for CONNECT ATTEMPT! ";
 		std::cerr << " id: " << id;
 		std::cerr << std::endl;
+#endif
 	}
 	return true; 
 }
@@ -2292,25 +2379,31 @@ bool   p3ConnectMgr::retryConnectNotify(std::string id)
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 	/* push addresses onto stack */
+#ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::retryConnectNotify()";
 	std::cerr << " id: " << id;
 	std::cerr << std::endl;
+#endif
 
 	/* look up the id */
         std::map<std::string, peerConnectState>::iterator it;
 
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::retryConnectNotify() Peer is not Friend";
 		std::cerr << std::endl;
+#endif
 		return false;
 	}
 
 	/* if already connected -> done */
 	if (it->second.state & RS_PEER_S_CONNECTED)
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::retryConnectNotify() Peer Already Connected";
 		std::cerr << std::endl;
+#endif
 		return true;
 	}
 
@@ -2319,15 +2412,19 @@ bool   p3ConnectMgr::retryConnectNotify(std::string id)
 
 	if (ownState.netMode & RS_NET_MODE_UNREACHABLE)
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::retryConnectNotify() UNREACHABLE so no Notify!";
 		std::cerr << " id: " << id;
 		std::cerr << std::endl;
+#endif
 	}
 	else
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::retryConnectNotify() Notifying Peer";
 		std::cerr << " id: " << id;
 		std::cerr << std::endl;
+#endif
 
 		/* attempt UDP connection */
 		mDhtMgr->notifyPeer(id);
@@ -2497,8 +2594,10 @@ bool p3ConnectMgr::getDHTEnabled()
 
 bool 	p3ConnectMgr::checkNetAddress()
 {
+#ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::checkNetAddress()";
 	std::cerr << std::endl;
+#endif
 
 	std::list<std::string> addrs = getLocalInterfaces();
 	std::list<std::string>::iterator it;
@@ -2508,13 +2607,17 @@ bool 	p3ConnectMgr::checkNetAddress()
 	bool found = false;
 	for(it = addrs.begin(); (!found) && (it != addrs.end()); it++)
 	{
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::checkNetAddress() Local Interface: " << *it;
 		std::cerr << std::endl;
+#endif
 
 		if ((*it) == inet_ntoa(ownState.localaddr.sin_addr))
 		{
+#ifdef CONN_DEBUG
 			std::cerr << "p3ConnectMgr::checkNetAddress() Matches Existing Address! FOUND = true";
 			std::cerr << std::endl;
+#endif
 			found = true;
 		}
 	}
@@ -2528,9 +2631,11 @@ bool 	p3ConnectMgr::checkNetAddress()
 	{
 		ownState.localaddr.sin_addr = getPreferredInterface();
 
+#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::checkNetAddress() Local Address Not Found: Using Preferred Interface: ";
 		std::cerr << inet_ntoa(ownState.localaddr.sin_addr);
 		std::cerr << std::endl;
+#endif
 	
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
@@ -2568,10 +2673,12 @@ bool 	p3ConnectMgr::checkNetAddress()
 	ownState.localaddr.sin_family = AF_INET;
 	ownState.serveraddr.sin_family = AF_INET;
 
+#ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::checkNetAddress() Final Local Address: ";
 	std::cerr << inet_ntoa(ownState.localaddr.sin_addr);
 	std::cerr << ":" << ntohs(ownState.localaddr.sin_port);
 	std::cerr << std::endl;
+#endif
   
 	return 1;
 }

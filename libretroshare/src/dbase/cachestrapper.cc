@@ -30,9 +30,9 @@
 #include <sstream>
 #include <iomanip>
 
-/***
-#define CS_DEBUG 1
-***/
+/****
+ * #define CS_DEBUG 1
+ ***/
 
 bool operator<(const CacheId &a, const CacheId &b)
 {
@@ -329,7 +329,10 @@ bool	CacheStore::getAllStoredCaches(std::list<CacheData> &data)
 	 */
 void	CacheStore::availableCache(const CacheData &data)
 {
+#ifdef CS_DEBUG
 	std::cerr << "CacheStore::availableCache() :" << data << std::endl;
+#endif
+
 	/* basic checks */
 	lockData(); /* LOCK MUTEX */
 
@@ -369,7 +372,10 @@ void	CacheStore::availableCache(const CacheData &data)
 	/* called when the download is completed ... updates internal data */
 void 	CacheStore::downloadedCache(const CacheData &data)
 {
+#ifdef CS_DEBUG
 	std::cerr << "CacheStore::downloadedCache() :" << data << std::endl;
+#endif
+
 	/* updates data */
 	if (!loadCache(data))
 	{
@@ -379,7 +385,9 @@ void 	CacheStore::downloadedCache(const CacheData &data)
 	/* called when the download is completed ... updates internal data */
 void 	CacheStore::failedCache(const CacheData &data)
 {
+#ifdef CS_DEBUG
 	std::cerr << "CacheStore::failedCache() :" << data << std::endl;
+#endif
 	return;
 }
 
@@ -388,7 +396,9 @@ void 	CacheStore::failedCache(const CacheData &data)
 bool    CacheStore::fetchCache(const CacheData &data)
 {
 	/* should we fetch it? */
+#ifdef CS_DEBUG
 	std::cerr << "CacheStore::fetchCache() tofetch?:" << data << std::endl;
+#endif
 
 	CacheData incache = data;
 
@@ -401,11 +411,15 @@ bool    CacheStore::fetchCache(const CacheData &data)
 
 	if (haveCache)
 	{
+#ifdef CS_DEBUG
 		std::cerr << "CacheStore::fetchCache() Already have it: false" << std::endl;
+#endif
 		return false;
 	}
 
+#ifdef CS_DEBUG
 	std::cerr << "CacheStore::fetchCache() Missing this cache: true" << std::endl;
+#endif
 	return true;
 }
 
@@ -415,11 +429,16 @@ int     CacheStore::nameCache(CacheData &data)
 	/* name it... */
 	lockData(); /* LOCK MUTEX */
 
-
+#ifdef CS_DEBUG
 	std::cerr << "CacheStore::nameCache() for:" << data << std::endl;
+#endif
+
 	data.name = data.hash;
 	data.path = getCacheDir();
+
+#ifdef CS_DEBUG
 	std::cerr << "CacheStore::nameCache() done:" << data << std::endl;
+#endif
 
 	unlockData(); /* UNLOCK MUTEX */
 
@@ -430,7 +449,9 @@ int     CacheStore::nameCache(CacheData &data)
 int     CacheStore::loadCache(const CacheData &data)
 {
 	/* attempt to load -> dummy function */
+#ifdef CS_DEBUG
 	std::cerr << "CacheStore::loadCache() Dummy Load for:" << data << std::endl;
+#endif
 
 	lockData(); /* LOCK MUTEX */
 
@@ -994,11 +1015,13 @@ bool CacheTransfer::RequestCache(CacheData &data, CacheStore *cbStore)
 /* to be overloaded */
 bool CacheTransfer::RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size)
 {
+#ifdef CS_DEBUG
 	std::cerr << "CacheTransfer::RequestCacheFile() : from:" << id << " #";
 	std::cerr << hash << " size: " << size;
 	std::cerr << " savepath: " << path << std::endl;
 	std::cerr << "CacheTransfer::RequestCacheFile() Dummy... saying completed";
 	std::cerr << std::endl;
+#endif
 
 	/* just tell them we've completed! */
 	CompletedCache(hash);
@@ -1008,11 +1031,13 @@ bool CacheTransfer::RequestCacheFile(RsPeerId id, std::string path, std::string 
 /* to be overloaded */
 bool CacheTransfer::CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size)
 {
+#ifdef CS_DEBUG
 	std::cerr << "CacheTransfer::CancelCacheFile() : from:" << id << " #";
 	std::cerr << hash << " size: " << size;
 	std::cerr << " savepath: " << path << std::endl;
 	std::cerr << "CacheTransfer::CancelCacheFile() Dummy fn";
 	std::cerr << std::endl;
+#endif
 
 	return true;
 }

@@ -1364,9 +1364,11 @@ int	LoadCheckXPGPandGetName(const char *cert_file, std::string &userName, std::s
 	FILE *tmpfp = fopen(cert_file, "r");
 	if (tmpfp == NULL)
 	{
+#ifdef XPGP_DEBUG
 		std::cerr << "sslroot::LoadCheckAndGetXPGPName()";
 		std::cerr << " Failed to open Certificate File:" << cert_file;
 		std::cerr << std::endl;
+#endif
 		return 0;
 	}
 
@@ -1604,7 +1606,9 @@ std::list<std::string> getXPGPsigners(XPGP *cert)
 		XPGP_SIGNATURE *sig = sk_XPGP_SIGNATURE_value(cert->signs,i);
 		std::string str = getX509CNString(sig->issuer);
 		signers.push_back(str);
+#ifdef XPGP_DEBUG
 		std::cerr << "XPGPsigners(" << i << ")" << str << std::endl;
+#endif
 	}
 	return signers;
 }
@@ -1767,7 +1771,6 @@ bool    AuthXPGP::saveCertificates()
 				conftxt += "\n";
 				conftxt += hash;
 				conftxt += "\n";
-				std::cerr << std::endl;
 			}
 		}
 	}
@@ -1786,34 +1789,48 @@ bool    AuthXPGP::saveCertificates()
 
 	if (0 == EVP_SignInit_ex(mdctx, EVP_sha1(), NULL))
 	{
+#ifdef XPGP_DEBUG
 		std::cerr << "EVP_SignInit Failure!" << std::endl;
+#endif
 	}
 
 	if (0 == EVP_SignUpdate(mdctx, conftxt.c_str(), conftxt.length()))
 	{
+#ifdef XPGP_DEBUG
 		std::cerr << "EVP_SignUpdate Failure!" << std::endl;
+#endif
 	}
 
 
 	if (0 == EVP_SignFinal(mdctx, signature, &signlen, pkey))
 	{
+#ifdef XPGP_DEBUG
 		std::cerr << "EVP_SignFinal Failure!" << std::endl;
+#endif
 	}
 
+#ifdef XPGP_DEBUG
 	std::cerr << "Conf Signature is(" << signlen << "): ";
+#endif
 	for(i = 0; i < signlen; i++) 
 	{
+#ifdef XPGP_DEBUG
 		fprintf(stderr, "%02x", signature[i]);
+#endif
 		conftxt += signature[i];
 	}
+#ifdef XPGP_DEBUG
 	std::cerr << std::endl;
+#endif
 
 	FILE *cfd = fopen(configfile.c_str(), "wb");
 	int wrec;
 	if (1 != (wrec = fwrite(conftxt.c_str(), conftxt.length(), 1, cfd)))
 	{
+#ifdef XPGP_DEBUG
 		std::cerr << "Error writing: " << configfile << std::endl;
 		std::cerr << "Wrote: " << wrec << "/" << 1 << " Records" << std::endl;
+#endif
 	}
 
 	EVP_MD_CTX_destroy(mdctx);
@@ -1889,8 +1906,10 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 	FILE *cfd = fopen(configfile.c_str(), "rb");
 	if (cfd == NULL)
 	{
+#ifdef XPGP_DEBUG
 		std::cerr << "Unable to Load Configuration File!" << std::endl;
 		std::cerr << "File: " << configfile << std::endl;
+#endif
 		return false;
 	}
 
@@ -1925,11 +1944,13 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 		{
 			if (EOF == (c = fgetc(cfd)))
 			{
+#ifdef XPGP_DEBUG
 				std::cerr << "Error Reading Signature of: ";
 				std::cerr << fname;
 				std::cerr << std::endl;
 				std::cerr << "ABorting Load!";
 				std::cerr << std::endl;
+#endif
 				return -1;
 			}
 			unsigned char uc = (unsigned char) c;
@@ -1937,9 +1958,12 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 		}
 		if ('\n' != (c = fgetc(cfd)))
 		{
+#ifdef XPGP_DEBUG
 			std::cerr << "Warning Mising seperator" << std::endl;
+#endif
 		}
 
+#ifdef XPGP_DEBUG
 		std::cerr << "Read fname:" << fname << std::endl;
 		std::cerr << "Signature:" << std::endl;
 		for(i = 0; i < signlen; i++) 
@@ -1948,6 +1972,7 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 		}
 		std::cerr << std::endl;
 		std::cerr << std::endl;
+#endif
 
 		// push back.....
 		fnames.push_back(fname);
@@ -1982,11 +2007,13 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 		{
 			if (EOF == (c = fgetc(cfd)))
 			{
+#ifdef XPGP_DEBUG
 				std::cerr << "Error Reading Value of: ";
 				std::cerr << opt;
 				std::cerr << std::endl;
 				std::cerr << "ABorting Load!";
 				std::cerr << std::endl;
+#endif
 				return -1;
 			}
 			// remove zeros on strings...
@@ -1998,11 +2025,15 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 		}
 		if ('\n' != (c = fgetc(cfd)))
 		{
+#ifdef XPGP_DEBUG
 			std::cerr << "Warning Mising seperator" << std::endl;
+#endif
 		}
 
+#ifdef XPGP_DEBUG
 		std::cerr << "Read OPT:" << opt;
 		std::cerr << " Val:" << val << std::endl;
+#endif
 
 		// push back.....
 		tmpsettings[opt] = val;
@@ -2029,8 +2060,10 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 			c = fgetc(cfd);
 			if (c == EOF)
 			{
+#ifdef XPGP_DEBUG
 				std::cerr << "Error Reading Conf Signature:";
 				std::cerr << std::endl;
+#endif
 				return 1;
 			}
 			unsigned char uc = (unsigned char) c;
@@ -2038,12 +2071,14 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 		}
 	}
 
+#ifdef XPGP_DEBUG
 	std::cerr << "Configuration File Signature: " << std::endl;
 	for(i = 0; i < signlen; i++) 
 	{
 		fprintf(stderr, "%02x", (unsigned char) name[i]);
 	}
 	std::cerr << std::endl;
+#endif
 
 
 	// when we get here - should have the final signature in the buffer.
@@ -2057,28 +2092,36 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 
 	if (0 == EVP_SignInit(mdctx, EVP_sha1()))
 	{
+#ifdef XPGP_DEBUG
+#endif
 		std::cerr << "EVP_SignInit Failure!" << std::endl;
 	}
 
 	if (0 == EVP_SignUpdate(mdctx, conftxt.c_str(), conftxt.length()))
 	{
+#ifdef XPGP_DEBUG
 		std::cerr << "EVP_SignUpdate Failure!" << std::endl;
+#endif
 	}
 
 	if (0 == EVP_SignFinal(mdctx, conf_signature, &signlen, pkey))
 	{
+#ifdef XPGP_DEBUG
 		std::cerr << "EVP_SignFinal Failure!" << std::endl;
+#endif
 	}
 
 	EVP_MD_CTX_destroy(mdctx);
 	fclose(cfd);
 
+#ifdef XPGP_DEBUG
 	std::cerr << "Recalced File Signature: " << std::endl;
 	for(i = 0; i < signlen; i++) 
 	{
 		fprintf(stderr, "%02x", conf_signature[i]);
 	}
 	std::cerr << std::endl;
+#endif
 
 	bool same = true;
 	for(i = 0; i < signlen; i++)
@@ -2091,8 +2134,10 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 
 	if (same == false)
 	{
+#ifdef XPGP_DEBUG
 		std::cerr << "ERROR VALIDATING CONFIGURATION!" << std::endl;
 		std::cerr << "PLEASE FIX!" << std::endl;
+#endif
 		return false;
 	}
 
@@ -2107,8 +2152,10 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 			std::string id;
 			if (ProcessXPGP(xpgp, id))
 			{
+#ifdef XPGP_DEBUG
 				std::cerr << "Loaded Certificate: " << id;
 				std::cerr << std::endl;
+#endif
 			}
 		}
 	}

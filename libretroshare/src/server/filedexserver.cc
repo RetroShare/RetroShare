@@ -318,9 +318,11 @@ int filedexserver::FileCacheSave()
 	std::map<CacheId, CacheData> ids;
 	std::map<CacheId, CacheData>::iterator it;
 
+#ifdef SERVER_DEBUG 
 	std::cerr << "filedexserver::FileCacheSave() listCaches:" << std::endl;
 	fimon->listCaches(std::cerr);
 	fimon->cachesAvailable(pid, ids);
+#endif
 
 	std::string localCacheFile;
 	std::string localCacheHash;
@@ -482,10 +484,12 @@ int     filedexserver::handleInputQueues()
 			ci -> cacheType  = (it->second).cid.type;
 			ci -> cacheSubId =  (it->second).cid.subid;
 
+#ifdef SERVER_DEBUG 
 			std::ostringstream out2;
 			out2 << "Outgoing CacheStrapper Update -> RsCacheItem:" << std::endl;
 			ci -> print(out2);
 			std::cerr << out2.str() << std::endl;
+#endif
 
 			//pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, out2.str());
 			pqisi -> SendSearchResult(ci);
@@ -523,8 +527,8 @@ int     filedexserver::handleInputQueues()
 	i_init = i;
 	while((fd = pqisi -> GetFileData()) != NULL )
 	{
-		//std::cerr << "filedexserver::handleInputQueues() Recvd ftFiler Data" << std::endl;
 #ifdef SERVER_DEBUG 
+		//std::cerr << "filedexserver::handleInputQueues() Recvd ftFiler Data" << std::endl;
 		std::ostringstream out;
 		if (i == i_init)
 		{

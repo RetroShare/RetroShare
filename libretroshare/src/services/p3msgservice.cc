@@ -320,9 +320,10 @@ bool    p3MsgService::loadConfiguration(std::string &loadHash)
 			{
 				RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-				std::cerr << "MSG_PENDING";
-				std::cerr << std::endl;
-				mitem->print(std::cerr);
+				//std::cerr << "MSG_PENDING";
+				//std::cerr << std::endl;
+				//mitem->print(std::cerr);
+
 				msgOutgoing[mitem->msgId] = mitem;
 			}
 			else
@@ -760,8 +761,8 @@ RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, std::string to)
 		msg -> attachment.items.push_back(mfi);
 	}
 
-	std::cerr << "p3MsgService::initMIRsMsg()" << std::endl;
-	msg->print(std::cerr);
+	//std::cerr << "p3MsgService::initMIRsMsg()" << std::endl;
+	//msg->print(std::cerr);
 	return msg;
 }
 

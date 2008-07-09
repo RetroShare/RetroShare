@@ -34,6 +34,10 @@
 #include <iostream>
 #include <algorithm>
 
+/****
+ * #define RSDIR_DEBUG 1
+ ****/
+
 std::string 	RsDirUtil::getTopDir(std::string dir)
 {
 	std::string top;
@@ -123,7 +127,6 @@ std::string RsDirUtil::removeRootDirs(std::string path, std::string root)
 {
 	/* too tired */
 	std::string notroot;
-	//std::cerr << "remoteRootDir( TODO! )";
 
 	unsigned int i = 0, j = 0;
 
@@ -209,23 +212,31 @@ bool	RsDirUtil::checkCreateDirectory(std::string dir)
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 		{
+#ifdef RSDIR_DEBUG 
 		  std::cerr << "check_create_directory() Fatal Error --";
 		  std::cerr <<std::endl<< "\tcannot create:" <<dir<<std::endl;
+#endif
 		  return 0;
 		}
 
+#ifdef RSDIR_DEBUG 
 		std::cerr << "check_create_directory()";
 		std::cerr <<std::endl<< "\tcreated:" <<dir<<std::endl;
+#endif
 	} 
 	else if (!S_ISDIR(buf.st_mode))
 	{
 		// Some other type - error.
+#ifdef RSDIR_DEBUG 
 		std::cerr<<"check_create_directory() Fatal Error --";
 		std::cerr<<std::endl<<"\t"<<dir<<" is nor Directory"<<std::endl;
+#endif
 		return 0;
 	}
+#ifdef RSDIR_DEBUG 
 	std::cerr << "check_create_directory()";
 	std::cerr <<std::endl<< "\tDir Exists:" <<dir<<std::endl;
+#endif
 	return 1;
 }
 

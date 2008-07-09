@@ -31,6 +31,9 @@ const int pqipersonzone = 82371;
 #include "pqi/pqidebug.h"
 #include <sstream>
 
+/****
+ * #define PERSON_DEBUG
+ ****/
 
 pqiperson::pqiperson(std::string id, pqipersongrp *pg)
 	:PQInterface(id), active(false), activepqi(NULL), 
@@ -345,6 +348,7 @@ int 	pqiperson::stoplistening()
 
 int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, uint32_t period, uint32_t timeout)
 {
+#ifdef PERSON_DEBUG
 	{
 	  std::ostringstream out;
 	  out << "pqiperson::connect() Id: " << PeerId();
@@ -358,25 +362,30 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, 
 	  std::cerr << out.str();
 	  //pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
 	}
+#endif
 
 	std::map<uint32_t, pqiconnect *>::iterator it;
 	
 	it = kids.find(type);
 	if (it == kids.end())
 	{
+#ifdef PERSON_DEBUG
 	  	std::ostringstream out;
 	  	out << "pqiperson::connect()";
 	  	out << " missing pqiconnect";
 	  	out << std::endl;
 	  	std::cerr << out.str();
 	  	//pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
+#endif
 		return 0;
 	}
 
 	/* set the parameters */
 	(it->second)->reset();
 
+#ifdef PERSON_DEBUG
 	std::cerr << "pqiperson::connect() setting connect_parameters" << std::endl;
+#endif
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_DELAY, delay);
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_PERIOD, period);
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_TIMEOUT, timeout);

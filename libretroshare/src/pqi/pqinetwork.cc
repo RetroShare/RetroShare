@@ -37,6 +37,10 @@
 #include <iomanip>
 static const int pqinetzone = 96184;
 
+/*****
+ * #define NET_DEBUG 1
+ ****/
+
 #ifdef WINDOWS_SYS   /* Windows - define errno */
 
 int errno;
@@ -360,8 +364,10 @@ in_addr_t inet_network(const char *inet_name)
 	struct in_addr addr;
 	if (inet_aton(inet_name, &addr))
 	{
+#ifdef NET_DEBUG
 //		std::cerr << "inet_network(" << inet_name << ") : ";
 //		std::cerr << inet_ntoa(addr) << std::endl;
+#endif
 		return ntohl(inet_netof(addr));
 	}
 	return 0xffffffff;
@@ -387,59 +393,66 @@ in_addr_t pqi_inet_netof(struct in_addr addr)
 	unsigned long bbit = haddr & 0xffff0000UL;
 	unsigned long cbit = haddr & 0xffffff00UL;
 
+#ifdef NET_DEBUG
 	std::cerr << "inet_netof(" << inet_ntoa(addr) << ") ";
+#endif
+
 	if (!((haddr >> 31) | 0x0UL)) // MSB = 0
 	{
+#ifdef NET_DEBUG
 		std::cerr << " Type A " << std::endl;
 		std::cerr << "\tShifted(31): " << (haddr >> 31);
 		std::cerr << " Xord(0x0UL): " <<
 			!((haddr >> 31) | 0x0UL) << std::endl;
+#endif
 
 		return htonl(abit);
-		//return abit;
 	}
 	else if (!((haddr >> 30) ^ 0x2UL)) // 2MSBs = 10
 	{
+#ifdef NET_DEBUG
 		std::cerr << " Type B " << std::endl;
 		std::cerr << "\tShifted(30): " << (haddr >> 30);
 		std::cerr << " Xord(0x2UL): " <<
 			!((haddr >> 30) | 0x2UL) << std::endl;
+#endif
 
 		return htonl(bbit);
-		//return bbit;
 	}
 	else if (!((haddr >> 29) ^ 0x6UL)) // 3MSBs = 110
 	{
+#ifdef NET_DEBUG
 		std::cerr << " Type C " << std::endl;
 		std::cerr << "\tShifted(29): " << (haddr >> 29);
 		std::cerr << " Xord(0x6UL): " <<
 			!((haddr >> 29) | 0x6UL) << std::endl;
+#endif
 
 		return htonl(cbit);
-		//return cbit;
 	}
 	else if (!((haddr >> 28) ^ 0xeUL)) // 4MSBs = 1110
 	{
+#ifdef NET_DEBUG
 		std::cerr << " Type Multicast " << std::endl;
 		std::cerr << "\tShifted(28): " << (haddr >> 28);
 		std::cerr << " Xord(0xeUL): " <<
 			!((haddr >> 29) | 0xeUL) << std::endl;
+#endif
 
 		return addr.s_addr; // return full address.
-		//return haddr;
 	}
 	else if (!((haddr >> 27) ^ 0x1eUL)) // 5MSBs = 11110
 	{
+#ifdef NET_DEBUG
 		std::cerr << " Type Reserved " << std::endl;
 		std::cerr << "\tShifted(27): " << (haddr >> 27);
 		std::cerr << " Xord(0x1eUL): " <<
 			!((haddr >> 27) | 0x1eUL) << std::endl;
+#endif
 
 		return addr.s_addr; // return full address.
-		//return haddr;
 	}
 	return htonl(abit);
-	//return abit;
 }
 
 int sockaddr_cmp(struct sockaddr_in &addr1, struct sockaddr_in &addr2 )
@@ -455,12 +468,14 @@ int sockaddr_cmp(struct sockaddr_in &addr1, struct sockaddr_in &addr2 )
 
 int inaddr_cmp(struct sockaddr_in addr1, struct sockaddr_in addr2 )
 {
+#ifdef NET_DEBUG
 	std::ostringstream out;
 	out << "inaddr_cmp(" << inet_ntoa(addr1.sin_addr);
 	out << "-" << addr1.sin_addr.s_addr;
 	out << "," << inet_ntoa(addr2.sin_addr);
 	out << "-" << addr2.sin_addr.s_addr << ")" << std::endl;
 	pqioutput(PQL_DEBUG_BASIC, pqinetzone, out.str());
+#endif
 
 
 	if (addr1.sin_addr.s_addr == addr2.sin_addr.s_addr)
@@ -474,8 +489,10 @@ int inaddr_cmp(struct sockaddr_in addr1, struct sockaddr_in addr2 )
 
 int inaddr_cmp(struct sockaddr_in addr1, unsigned long addr2)
 {
+#ifdef NET_DEBUG
 	struct in_addr inaddr_tmp;
 	inaddr_tmp.s_addr = addr2;
+
 	std::ostringstream out;
 	out << "inaddr_cmp2(" << inet_ntoa(addr1.sin_addr);
 	out << " vs " << inet_ntoa(inaddr_tmp);
@@ -483,6 +500,7 @@ int inaddr_cmp(struct sockaddr_in addr1, unsigned long addr2)
 	out << std::hex << std::setw(10) << addr1.sin_addr.s_addr;
 	out << " vs "   << std::setw(10) << addr2 << ")" << std::endl;
 	pqioutput(PQL_DEBUG_BASIC, pqinetzone, out.str());
+#endif
 
 	if (addr1.sin_addr.s_addr == addr2)
 	{
@@ -569,16 +587,21 @@ struct in_addr getPreferredInterface() // returns best addr.
 
 bool    sameNet(struct in_addr *addr, struct in_addr *addr2)
 {
+#ifdef NET_DEBUG
 	std::cerr << "sameNet: " << inet_ntoa(*addr);
 	std::cerr << " VS " << inet_ntoa(*addr2);
 	std::cerr << std::endl;
+#endif
 	struct in_addr addrnet, addrnet2;
 
 	addrnet.s_addr = inet_netof(*addr);
 	addrnet2.s_addr = inet_netof(*addr2);
+
+#ifdef NET_DEBUG
 	std::cerr << " (" << inet_ntoa(addrnet);
 	std::cerr << " =?= " << inet_ntoa(addrnet2);
 	std::cerr << ")" << std::endl;
+#endif
 
 	in_addr_t address1 = htonl(addr->s_addr);
 	in_addr_t address2 = htonl(addr2->s_addr);
@@ -634,30 +657,41 @@ bool LookupDNSAddr(std::string name, struct sockaddr_in &addr)
 	sprintf(service, "%d", ntohs(addr.sin_port));
 
 	/* set it to IPV4 */
+#ifdef NET_DEBUG
 	std::cerr << "LookupDNSAddr() name: " << name << " service: " << service << std::endl;
+#endif
 
  	int err = 0;
 	if (0 != (err = getaddrinfo(name.c_str(), service, hints, &res)))
 	{
+#ifdef NET_DEBUG
 		std::cerr << "LookupDNSAddr() getaddrinfo failed!" << std::endl;
 		std::cerr << "Error: " << gai_strerror(err)  << std::endl;
+#endif
 		return false;
 	}
 	
 	if ((res) && (res->ai_family == AF_INET)) 
 	{
-		std::cerr << "LookupDNSAddr() getaddrinfo found address" << std::endl;
 		addr = *((struct sockaddr_in *) res->ai_addr);
+		freeaddrinfo(res); 
+
+#ifdef NET_DEBUG
+		std::cerr << "LookupDNSAddr() getaddrinfo found address" << std::endl;
 		std::cerr << "addr: " << inet_ntoa(addr.sin_addr) << std::endl;
 		std::cerr << "port: " << ntohs(addr.sin_port) << std::endl;
-		freeaddrinfo(res); 
+#endif
 		return true;
 	}
 	
+#ifdef NET_DEBUG
 	std::cerr << "getaddrinfo failed - no address" << std::endl;
+#endif
 
 #endif
-	std::cerr << "getaddrinfo disabled" << std::endl;
+#ifdef NET_DEBUG
+	//std::cerr << "getaddrinfo disabled" << std::endl;
+#endif
 	return false;
 }
 
@@ -674,7 +708,10 @@ int unix_close(int fd)
 #ifndef WINDOWS_SYS // ie UNIX
 	ret = close(fd);
 #else
+
+#ifdef NET_DEBUG
 	std::cerr << "unix_close()" << std::endl;
+#endif
 	ret = closesocket(fd);
 	/* translate error */
 #endif
@@ -688,7 +725,11 @@ int unix_socket(int domain, int type, int protocol)
 
 /******************* WINDOWS SPECIFIC PART ******************/
 #ifdef WINDOWS_SYS  // WINDOWS
+
+#ifdef NET_DEBUG
 	std::cerr << "unix_socket()" << std::endl;
+#endif
+
 	if ((unsigned) osock == INVALID_SOCKET)
 	{
 		// Invalidate socket Unix style.
@@ -708,11 +749,18 @@ int unix_fcntl_nonblock(int fd)
 /******************* WINDOWS SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS // ie UNIX
 	ret = fcntl(fd, F_SETFL, O_NONBLOCK);
+
+#ifdef NET_DEBUG
 	std::cerr << "unix_fcntl_nonblock():" << ret << " errno:" << errno << std::endl;
+#endif
+
 #else
 	unsigned long int on = 1;
 	ret = ioctlsocket(fd, FIONBIO, &on);
+
+#ifdef NET_DEBUG
 	std::cerr << "unix_fcntl_nonblock()" << std::endl;
+#endif
 	if (ret != 0)
 	{
 		/* store unix-style error
@@ -732,7 +780,10 @@ int unix_connect(int fd, const struct sockaddr *serv_addr, socklen_t addrlen)
 
 /******************* WINDOWS SPECIFIC PART ******************/
 #ifdef WINDOWS_SYS // WINDOWS
+
+#ifdef NET_DEBUG
 	std::cerr << "unix_connect()" << std::endl;
+#endif
 	if (ret != 0)
 	{
 		errno = WinToUnixError(WSAGetLastError());
@@ -756,7 +807,9 @@ int unix_getsockopt_error(int sockfd, int *err)
 	int optlen = 4;
 	ret=getsockopt(sockfd, SOL_SOCKET, SO_ERROR, (char *) err, &optlen);
 	/* translate */
+#ifdef NET_DEBUG
 	std::cerr << "unix_getsockopt_error() returned: " << (int) err << std::endl;
+#endif
 	if (*err != 0)
 	{
 		*err = WinToUnixError(*err);
@@ -771,7 +824,9 @@ int unix_getsockopt_error(int sockfd, int *err)
 
 int	WinToUnixError(int error)
 {
+#ifdef NET_DEBUG
 	std::cerr << "WinToUnixError(" << error << ")" << std::endl;
+#endif
 	switch(error)
 	{
 		case WSAEINPROGRESS:
@@ -796,8 +851,10 @@ int	WinToUnixError(int error)
 			return ECONNRESET;
 			break;
 		default:
+#ifdef NET_DEBUG
 			std::cerr << "WinToUnixError(" << error << ") Code Unknown!";
 			std::cerr << std::endl;
+#endif
 			break;
 	}
 	return ECONNREFUSED; /* sensible default? */

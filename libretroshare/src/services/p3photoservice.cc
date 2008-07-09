@@ -32,7 +32,9 @@
 
 std::string generateRandomShowId();
 
-#define PHOTO_DEBUG 1
+/****
+ * #define PHOTO_DEBUG 1
+ ****/
 
 
 PhotoSet::PhotoSet()

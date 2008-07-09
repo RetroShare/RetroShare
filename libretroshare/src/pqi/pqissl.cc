@@ -257,16 +257,16 @@ int 	pqissl::reset()
 
 bool 	pqissl::connect_parameter(uint32_t type, uint32_t value)
 {
-	std::cerr << "pqissl::connect_parameter() type: " << type << "value: " << value << std::endl;
+	//std::cerr << "pqissl::connect_parameter() type: " << type << "value: " << value << std::endl;
         if (type == NET_PARAM_CONNECT_DELAY)
 	{
-		std::cerr << "pqissl::connect_parameter() DELAY: " << value << std::endl;
+		//std::cerr << "pqissl::connect_parameter() DELAY: " << value << std::endl;
 		mConnectDelay = value;
 		return true;
 	}
         else if (type == NET_PARAM_CONNECT_TIMEOUT)
 	{
-		std::cerr << "pqissl::connect_parameter() TIMEOUT: " << value << std::endl;
+		//std::cerr << "pqissl::connect_parameter() TIMEOUT: " << value << std::endl;
 		mConnectTimeout = value;
 		return true;
 	}
@@ -604,7 +604,7 @@ int 	pqissl::Initiate_Connection()
 	}
 
 	mTimeoutTS = time(NULL) + mConnectTimeout;
-	std::cerr << "Setting Connect Timeout " << mConnectTimeout << " Seconds into Future " << std::endl;
+	//std::cerr << "Setting Connect Timeout " << mConnectTimeout << " Seconds into Future " << std::endl;
 
 	if (0 != (err = unix_connect(osock, (struct sockaddr *) &addr, sizeof(addr))))
 	{
@@ -655,7 +655,7 @@ int 	pqissl::Initiate_Connection()
 
   		pqioutput(PQL_WARNING, pqisslzone, out.str());
 		// extra output for the moment.
-		std::cerr << out.str();
+		//std::cerr << out.str();
 
 		return -1;
 	}
@@ -701,10 +701,10 @@ int 	pqissl::Basic_Connection_Complete()
 		"pqissl::Basic_Connection_Complete() Connection Timed Out!");
 		/* as sockfd is valid, this should close it all up */
 		
-		std::cerr << "pqissl::Basic_Connection_Complete() Connection Timed Out!";
-		std::cerr << std::endl;
-	  	std::cerr << "pqissl::Basic_Connection_Complete() Timeout Period: " << mConnectTimeout;
-		std::cerr << std::endl;
+		//std::cerr << "pqissl::Basic_Connection_Complete() Connection Timed Out!";
+		//std::cerr << std::endl;
+	  	//std::cerr << "pqissl::Basic_Connection_Complete() Timeout Period: " << mConnectTimeout;
+		//std::cerr << std::endl;
 		reset();
 		return -1;
 	}

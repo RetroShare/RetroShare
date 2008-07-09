@@ -36,8 +36,6 @@
  * #define P3DHTMGR_USE_LOCAL_UDP_CONN 1  // For Testing only 
  ****/
 
-#define DHT_DEBUG 1
-
 /**** DHT State Variables ****
  * TODO:
  * (1) notify call in.
@@ -950,7 +948,9 @@ int p3DhtMgr::checkStunState()
 		/* if we run out of stun peers -> get some more */
 		if (stunIds.size() < 1)
 		{
+#ifdef DHT_DEBUG
 			std::cerr << "WARNING: out of Stun Peers - switching to Active Now" << std::endl;
+#endif
 			mDhtState = DHT_STATE_ACTIVE;
 			dhtMtx.unlock(); /* UNLOCK MUTEX */
 
@@ -980,7 +980,9 @@ int p3DhtMgr::checkStunState_Active()
 	if (moreIds)
 	/* if we run out of stun peers -> get some more */
 	{
+#ifdef DHT_DEBUG
 		std::cerr << "WARNING: out of Stun Peers - getting more" << std::endl;
+#endif
 		getDhtBootstrapList();
 	}
 	
@@ -1320,7 +1322,9 @@ bool p3DhtMgr::dhtPublish(std::string idhash,
 
 bool p3DhtMgr::dhtNotify(std::string idhash, std::string ownIdHash, std::string sign)
 {
+#ifdef DHT_DEBUG
 	std::cerr << "p3DhtMgr::dhtNotify()" << std::endl;
+#endif
 
 	std::ostringstream value;
 	value << "RSDHT:" << std::setw(2) << std::setfill('0') << DHT_MODE_NOTIFY << ":";
@@ -1332,7 +1336,9 @@ bool p3DhtMgr::dhtNotify(std::string idhash, std::string ownIdHash, std::string 
 
 bool p3DhtMgr::dhtSearch(std::string idhash, uint32_t mode)
 {
+#ifdef DHT_DEBUG
 	std::cerr << "p3DhtMgr::dhtSearch()" << std::endl;
+#endif
 
 	/* call to the real DHT */
 	return searchDHT(idhash);
@@ -1341,7 +1347,9 @@ bool p3DhtMgr::dhtSearch(std::string idhash, uint32_t mode)
 
 bool p3DhtMgr::dhtBootstrap(std::string storehash, std::string ownIdHash, std::string sign)
 {
+#ifdef DHT_DEBUG
 	std::cerr << "p3DhtMgr::dhtBootstrap()" << std::endl;
+#endif
 
 	std::ostringstream value;
 	value << "RSDHT:" << std::setw(2) << std::setfill('0') << DHT_MODE_BOOTSTRAP << ":";

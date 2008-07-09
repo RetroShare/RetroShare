@@ -147,34 +147,23 @@ bool     RsRankSerialiser::serialiseLink(RsRankLinkMsg *item, void *data, uint32
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
-	std::cerr << "RsRankLinkSerialiser::serialiseLink() Header: " << ok << std::endl;
-	std::cerr << "RsRankLinkSerialiser::serialiseLink() Size: " << tlvsize << std::endl;
-
 	/* skip the header */
 	offset += 8;
 
 	/* add mandatory parts first */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GENID, item->rid);
-	std::cerr << "RsRankLinkSerialiser::serialiseLink() rid: " << ok << std::endl;
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, item->pid);
-	std::cerr << "RsRankLinkSerialiser::serialiseLink() pid: " << ok << std::endl;
 
 	ok &= setRawUInt32(data, tlvsize, &offset, item->timestamp);
-	std::cerr << "RsRankLinkSerialiser::serialiseLink() timestamp: " << ok << std::endl;
 
 	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_TITLE, item->title);
-	std::cerr << "RsRankLinkSerialiser::serialiseLink() Title: " << ok << std::endl;
 	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_COMMENT, item->comment);
-	std::cerr << "RsRankLinkSerialiser::serialiseLink() Comment: " << ok << std::endl;
 
 	ok &= setRawUInt32(data, tlvsize, &offset, *((uint32_t *) &(item->score)));
-	std::cerr << "RsRankLinkSerialiser::serialiseLink() timestamp: " << ok << std::endl;
 
 	ok &= setRawUInt32(data, tlvsize, &offset, item->linktype);
-	std::cerr << "RsRankLinkSerialiser::serialiseLink() linktype: " << ok << std::endl;
 
 	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_LINK, item->link);
-	std::cerr << "RsRankLinkSerialiser::serialiseLink() Link: " << ok << std::endl;
 
 	if (offset != tlvsize)
 	{

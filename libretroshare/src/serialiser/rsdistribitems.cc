@@ -234,41 +234,26 @@ bool     RsDistribSerialiser::serialiseGrp(RsDistribGrp *item, void *data, uint3
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
-	std::cerr << "RsDistribSerialiser::serialiseGrp() Header: " << ok << std::endl;
-	std::cerr << "RsDistribSerialiser::serialiseGrp() Size: " << tlvsize << std::endl;
-
 	/* skip the header */
 	offset += 8;
 
 	/* RsDistribGrp */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
-	std::cerr << "RsDistribSerialiser::serialiseGrp() grpId: " << ok << std::endl;
 	ok &= setRawUInt32(data, tlvsize, &offset, item->timestamp);
-	std::cerr << "RsDistribSerialiser::serialiseGrp() timestamp: " << ok << std::endl;
 	ok &= setRawUInt32(data, tlvsize, &offset, item->grpFlags);
-	std::cerr << "RsDistribSerialiser::serialiseGrp() grpFlags: " << ok << std::endl;
 
 	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_NAME, item->grpName);
-	std::cerr << "RsDistribSerialiser::serialiseGrp() grpName: " << ok << std::endl;
 	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_COMMENT, item->grpDesc);
-	std::cerr << "RsDistribSerialiser::serialiseGrp() grpDesc: " << ok << std::endl;
 	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_CATEGORY, item->grpCategory);
-	std::cerr << "RsDistribSerialiser::serialiseGrp() grpCategory: " << ok << std::endl;
 
 	ok &= setRawUInt32(data, tlvsize, &offset, item->grpControlFlags);
-	std::cerr << "RsDistribSerialiser::serialiseGrp() grpControlFlags: " << ok << std::endl;
 	ok &= item->grpControlList.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsDistribSerialiser::serialiseGrp() grpControlList: " << ok << std::endl;
 
 	ok &= item->grpPixmap.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsDistribSerialiser::serialiseGrp() grpPixmap: " << ok << std::endl;
 
 	ok &= item->adminKey.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsDistribSerialiser::serialiseGrp() adminKey: " << ok << std::endl;
 	ok &= item->publishKeys.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsDistribSerialiser::serialiseGrp() publishKeys: " << ok << std::endl;
 	ok &= item->adminSignature.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsDistribSerialiser::serialiseGrp() adminSignature: " << ok << std::endl;
 
 	if (offset != tlvsize)
 	{
@@ -371,18 +356,13 @@ bool     RsDistribSerialiser::serialiseGrpKey(RsDistribGrpKey *item, void *data,
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
-	std::cerr << "RsDistribSerialiser::serialiseGrpKey() Header: " << ok << std::endl;
-	std::cerr << "RsDistribSerialiser::serialiseGrpKey() Size: " << tlvsize << std::endl;
-
 	/* skip the header */
 	offset += 8;
 
 	/* RsDistribGrp */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
-	std::cerr << "RsDistribSerialiser::serialiseGrpKey() grpId: " << ok << std::endl;
 
 	ok &= item->key.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsDistribSerialiser::serialiseGrpKey() key: " << ok << std::endl;
 
 	if (offset != tlvsize)
 	{
@@ -477,30 +457,20 @@ bool     RsDistribSerialiser::serialiseSignedMsg(RsDistribSignedMsg *item, void 
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
-	std::cerr << "RsDistribSerialiser::serialiseSignedMsg() Header: " << ok << std::endl;
-	std::cerr << "RsDistribSerialiser::serialiseSignedMsg() Size: " << tlvsize << std::endl;
-
 	/* skip the header */
 	offset += 8;
 
 	/* RsDistribSignedMsg */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
-	std::cerr << "RsDistribSerialiser::serialiseSignedMsg() grpId: " << ok << std::endl;
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSGID, item->msgId);
-	std::cerr << "RsDistribSerialiser::serialiseSignedMsg() msgId: " << ok << std::endl;
 
 	ok &= setRawUInt32(data, tlvsize, &offset, item->flags);
-	std::cerr << "RsDistribSerialiser::serialiseSignedMsg() flags: " << ok << std::endl;
 	ok &= setRawUInt32(data, tlvsize, &offset, item->timestamp);
-	std::cerr << "RsDistribSerialiser::serialiseSignedMsg() timestamp: " << ok << std::endl;
 
 	ok &= item->packet.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsDistribSerialiser::serialiseSignedMsg() packet: " << ok << std::endl;
 
 	ok &= item->publishSignature.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsDistribSerialiser::serialiseSignedMsg() publishSignature: " << ok << std::endl;
 	ok &= item->personalSignature.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsDistribSerialiser::serialiseSignedMsg() personalSignature: " << ok << std::endl;
 
 	if (offset != tlvsize)
 	{

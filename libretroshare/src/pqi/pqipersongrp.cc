@@ -32,8 +32,8 @@
 const int pqipersongrpzone = 354;
 
 /****
-#define DEBUG_TICK 1
-****/
+ *#define PGRP_DEBUG 1
+ ****/
 
 // handle the tunnel services.
 int pqipersongrp::tickServiceRecv()
@@ -114,7 +114,7 @@ int	pqipersongrp::tick()
 	if (tickServiceSend())
 	{
 		i = 1;
-#ifdef DEBUG_TICK
+#ifdef PGRP_DEBUG
                 std::cerr << "pqipersongrp::tick() moreToTick from tickServiceSend()" << std::endl;
 #endif
 	}
@@ -122,7 +122,7 @@ int	pqipersongrp::tick()
 	if (pqihandler::tick()) /* does actual Send/Recv */
 	{
 		i = 1;
-#ifdef DEBUG_TICK
+#ifdef PGRP_DEBUG
                 std::cerr << "pqipersongrp::tick() moreToTick from pqihandler::tick()" << std::endl;
 #endif
 	}
@@ -131,7 +131,7 @@ int	pqipersongrp::tick()
 	if (tickServiceRecv())
 	{
 		i = 1;
-#ifdef DEBUG_TICK
+#ifdef PGRP_DEBUG
                 std::cerr << "pqipersongrp::tick() moreToTick from tickServiceRecv()" << std::endl;
 #endif
 	}
@@ -279,8 +279,10 @@ int     pqipersongrp::addPeer(std::string id)
 		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, out.str());
 	}
 
+#ifdef PGRP_DEBUG
 	std::cerr << " pqipersongrp::addPeer() id: " << id;
 	std::cerr << std::endl;
+#endif
 
 	SearchModule *sm = NULL;
 	std::map<std::string, SearchModule *>::iterator it;
@@ -312,8 +314,10 @@ int     pqipersongrp::removePeer(std::string id)
 {
 	std::map<std::string, SearchModule *>::iterator it;
 
+#ifdef PGRP_DEBUG
 	std::cerr << " pqipersongrp::removePeer() id: " << id;
 	std::cerr << std::endl;
+#endif
 
 	it = mods.find(id);
 	if (it != mods.end())
@@ -333,8 +337,10 @@ int     pqipersongrp::removePeer(std::string id)
 int     pqipersongrp::connectPeer(std::string id)
 {
 	/* get status from p3connectMgr */
+#ifdef PGRP_DEBUG
 	std::cerr << " pqipersongrp::connectPeer() id: " << id << " does nothing yet! ";
 	std::cerr << std::endl;
+#endif
 
 	std::map<std::string, SearchModule *>::iterator it;
 	it = mods.find(id);
@@ -359,17 +365,21 @@ int     pqipersongrp::connectPeer(std::string id)
 
 	if (!mConnMgr->connectAttempt(id, addr, delay, period, type))
 	{
+#ifdef PGRP_DEBUG
 		std::cerr << " pqipersongrp::connectPeer() No Net Address";
 		std::cerr << std::endl;
+#endif
 		return 0;
 	}
 
+#ifdef PGRP_DEBUG
 	std::cerr << " pqipersongrp::connectPeer() connectAttempt data id: " << id;
 	std::cerr << " addr: " << inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port);
 	std::cerr << " delay: " << delay;
 	std::cerr << " period: " << period;
 	std::cerr << " type: " << type;
 	std::cerr << std::endl;
+#endif
 
 
 	uint32_t ptype;
@@ -377,15 +387,19 @@ int     pqipersongrp::connectPeer(std::string id)
 	{
 		ptype = PQI_CONNECT_TCP;
 		timeout = RS_TCP_STD_TIMEOUT_PERIOD; 
+#ifdef PGRP_DEBUG
 		std::cerr << " pqipersongrp::connectPeer() connecting with TCP: Timeout :" << timeout;
 		std::cerr << std::endl;
+#endif
 	}
 	else if (type & RS_NET_CONN_UDP_ALL)
 	{
 		ptype = PQI_CONNECT_UDP;
 		timeout = period * 2;
+#ifdef PGRP_DEBUG
 		std::cerr << " pqipersongrp::connectPeer() connecting with UDP: Timeout :" << timeout;
 		std::cerr << std::endl;
+#endif
 	}
 	else
 		return 0;
