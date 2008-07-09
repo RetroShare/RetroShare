@@ -29,7 +29,9 @@
 
 #include <iostream>
 
-#define DEBUG_ITEM 1
+/****
+ * #define DEBUG_ITEM 1
+ ****/
 
 /** Constructor */
 SubDestItem::SubDestItem(uint32_t type, std::string groupId, std::string inReplyTo)

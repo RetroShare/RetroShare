@@ -28,7 +28,9 @@
 #include <iostream>
 #include <sstream>
 
-#define DEBUG_ITEM 1
+/*****
+ * #define DEBUG_ITEM 1
+ ****/
 
 /** Constructor */
 PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, std::string peerId, uint32_t type, bool isHome)

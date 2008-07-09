@@ -4,10 +4,13 @@
 
 #include <QtGui>
 
-
 #include <iostream>
 #include <sstream>
 #include <math.h>
+
+/*****
+ * #define RDM_DEBUG
+ ****/
 
 RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
         : QAbstractItemModel(parent),
@@ -544,7 +547,9 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 /* Callback from */
  void RemoteDirModel::preMods()
  {
+#ifdef RDM_DEBUG
 	std::cerr << "RemoteDirModel::preMods()" << std::endl;
+#endif
 	//modelAboutToBeReset();
 	reset();
 	layoutAboutToBeChanged();
@@ -553,7 +558,9 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 /* Callback from */
  void RemoteDirModel::postMods()
  {
+#ifdef RDM_DEBUG
 	std::cerr << "RemoteDirModel::postMods()" << std::endl;
+#endif
 	//modelReset();
 	layoutChanged();
 	//reset();
@@ -562,8 +569,10 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 
 void RemoteDirModel::update (const QModelIndex &index )
 {
+#ifdef RDM_DEBUG
 	//std::cerr << "Directory Request(" << id << ") : ";
 	//std::cerr << path << std::endl;
+#endif
 	//rsFiles -> RequestDirectories(id, path, 1);
 }
 
@@ -571,7 +580,9 @@ void RemoteDirModel::downloadSelected(QModelIndexList list)
 {
 	if (!RemoteMode)
 	{
+#ifdef RDM_DEBUG
 		std::cerr << "Cannot download from local" << std::endl;
+#endif
 	}
 
 	/* so for all the selected .... get the name out, 
@@ -618,10 +629,14 @@ void RemoteDirModel::downloadSelected(QModelIndexList list)
 
 void RemoteDirModel::recommendSelected(QModelIndexList list)
 {
+#ifdef RDM_DEBUG
 	std::cerr << "recommendSelected()" << std::endl;
+#endif
 	if (RemoteMode)
 	{
+#ifdef RDM_DEBUG
 		std::cerr << "Cannot recommend remote! (should download)" << std::endl;
+#endif
 	}
 	/* Fire off requests */
 	QModelIndexList::iterator it;
@@ -646,24 +661,32 @@ void RemoteDirModel::recommendSelected(QModelIndexList list)
 			continue;
      		}
 
+#ifdef RDM_DEBUG
 		std::cerr << "::::::::::::FileRecommend:::: " << std::endl;
 		std::cerr << "Name: " << details.name << std::endl;
 		std::cerr << "Hash: " << details.hash << std::endl;
 		std::cerr << "Size: " << details.count << std::endl;
 		std::cerr << "Path: " << details.path << std::endl;
+#endif
 
 		rsFiles -> FileRecommend(details.name, details.hash, details.count);
 	}
+#ifdef RDM_DEBUG
 	std::cerr << "::::::::::::Done FileRecommend" << std::endl;
+#endif
 }
 
 
 void RemoteDirModel::recommendSelectedOnly(QModelIndexList list)
 {
+#ifdef RDM_DEBUG
 	std::cerr << "recommendSelectedOnly()" << std::endl;
+#endif
 	if (RemoteMode)
 	{
+#ifdef RDM_DEBUG
 		std::cerr << "Cannot recommend remote! (should download)" << std::endl;
+#endif
 	}
      	rsFiles->ClearInRecommend();
 
@@ -690,16 +713,20 @@ void RemoteDirModel::recommendSelectedOnly(QModelIndexList list)
 			continue;
      		}
 
+#ifdef RDM_DEBUG
 		std::cerr << "::::::::::::FileRecommend:::: " << std::endl;
 		std::cerr << "Name: " << details.name << std::endl;
 		std::cerr << "Hash: " << details.hash << std::endl;
 		std::cerr << "Size: " << details.count << std::endl;
 		std::cerr << "Path: " << details.path << std::endl;
+#endif
 
 		rsFiles -> FileRecommend(details.name, details.hash, details.count);
      		rsFiles -> SetInRecommend(details.name, true);
 	}
+#ifdef RDM_DEBUG
 	std::cerr << "::::::::::::Done FileRecommend" << std::endl;
+#endif
 }
 
 #endif
@@ -715,10 +742,14 @@ void RemoteDirModel::openSelected(QModelIndexList list)
 
 void RemoteDirModel::getFilePaths(QModelIndexList list, std::list<std::string> &fullpaths)
 {
+#ifdef RDM_DEBUG
 	std::cerr << "RemoteDirModel::getFilePaths()" << std::endl;
+#endif
 	if (RemoteMode)
 	{
+#ifdef RDM_DEBUG
 		std::cerr << "No File Paths for remote files" << std::endl;
+#endif
 		return;
 	}
 	/* translate */
@@ -733,32 +764,42 @@ void RemoteDirModel::getFilePaths(QModelIndexList list, std::list<std::string> &
 
      		if (!rsFiles->RequestDirDetails(ref, details, flags))
      		{
+#ifdef RDM_DEBUG
 			std::cerr << "getFilePaths() Bad Request" << std::endl;
+#endif
 			continue;
      		}
 
 		if (details.type != DIR_TYPE_FILE)
 		{
+#ifdef RDM_DEBUG
 			std::cerr << "getFilePaths() Not File" << std::endl;
+#endif
 			continue; /* not file! */
 		}
 
+#ifdef RDM_DEBUG
 		std::cerr << "::::::::::::File Details:::: " << std::endl;
 		std::cerr << "Name: " << details.name << std::endl;
 		std::cerr << "Hash: " << details.hash << std::endl;
 		std::cerr << "Size: " << details.count << std::endl;
 		std::cerr << "Path: " << details.path << std::endl;
+#endif
 
 		std::string filepath = details.path + "/";
 		filepath += details.name;
 
+#ifdef RDM_DEBUG
 		std::cerr << "Constructed FilePath: " << filepath << std::endl;
+#endif
 		if (fullpaths.end() == std::find(fullpaths.begin(), fullpaths.end(), filepath))
 		{
 			fullpaths.push_back(filepath);
 		}
 	}
+#ifdef RDM_DEBUG
 	std::cerr << "::::::::::::Done getFilePaths" << std::endl;
+#endif
 }
 
   /* Drag and Drop Functionality */
@@ -790,21 +831,27 @@ QMimeData * RemoteDirModel::mimeData ( const QModelIndexList & indexes ) const
 			continue;
      		}
 
+#ifdef RDM_DEBUG
 		std::cerr << "::::::::::::FileDrag:::: " << std::endl;
 		std::cerr << "Name: " << details.name << std::endl;
 		std::cerr << "Hash: " << details.hash << std::endl;
 		std::cerr << "Size: " << details.count << std::endl;
 		std::cerr << "Path: " << details.path << std::endl;
+#endif
 
 		if (details.type != DIR_TYPE_FILE)
 		{
+#ifdef RDM_DEBUG
 			std::cerr << "RemoteDirModel::mimeData() Not File" << std::endl;
+#endif
 			continue; /* not file! */
 		}
 
 		if (drags.end() != (dit = drags.find(details.hash)))
 		{
+#ifdef RDM_DEBUG
 			std::cerr << "RemoteDirModel::mimeData() Duplicate" << std::endl;
+#endif
 			continue; /* duplicate */
 		}
 
@@ -835,11 +882,13 @@ QMimeData * RemoteDirModel::mimeData ( const QModelIndexList & indexes ) const
 		text += line;
 	}
 
+#ifdef RDM_DEBUG
 	std::cerr << "Created MimeData:";
 	std::cerr << std::endl;
 
 	std::cerr << text;
 	std::cerr << std::endl;
+#endif
 
 	QMimeData *data = new QMimeData();
 	data->setData("application/x-rsfilelist", QByteArray(text.c_str()));

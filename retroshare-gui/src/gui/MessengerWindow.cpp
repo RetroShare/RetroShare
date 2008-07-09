@@ -64,6 +64,10 @@
 #define IMAGE_ON                 ":/images/contract_hover.png"
 #define IMAGE_OFF                ":/images/expand_hover.png"
 
+/******
+ * #define MSG_DEBUG 1
+ *****/
+
 
 /** Constructor */
 MessengerWindow::MessengerWindow(QWidget * parent)
@@ -299,11 +303,15 @@ void MessengerWindow::connectfriend2()
     std::string id = (i -> text(4)).toStdString();
     if (rsPeers->isOnline(id))
     {
+#ifdef MSG_DEBUG 
 	std::cerr << "MessengerWindow::connectfriend2() Already online" << std::endl;
+#endif
     }
     else
     {
+#ifdef MSG_DEBUG 
 	std::cerr << "MessengerWindow::connectfriend2() Trying" << std::endl;
+#endif
 	rsPeers->connectAttempt(getMessengerPeerRsCertId(i));
     }
 }
@@ -400,7 +408,9 @@ void MessengerWindow::chatfriend2()
 void MessengerWindow::sendMessage()
 {
 	bool isOnline;
+#ifdef MSG_DEBUG 
     std::cerr << "SharedFilesDialog::msgfriend()" << std::endl;
+#endif
 
     QTreeWidgetItem *i = getCurrentPeer(isOnline);
 
@@ -431,7 +441,9 @@ QTreeWidgetItem *MessengerWindow::getCurrentPeer(bool &isOnline)
         QTreeWidgetItem *item = peerWidget -> currentItem();
         if (!item)
         {
+#ifdef MSG_DEBUG 
 		std::cerr << "Invalid Current Item" << std::endl;
+#endif
 		return NULL;
 	}
 
@@ -440,7 +452,9 @@ QTreeWidgetItem *MessengerWindow::getCurrentPeer(bool &isOnline)
 	if ((!parent) ||
 	    (parent == peerWidget->invisibleRootItem()))
 	{
+#ifdef MSG_DEBUG 
 		std::cerr << "Selected Parent Invalid Item" << std::endl;
+#endif
 		return NULL;
 	}
 
@@ -453,10 +467,14 @@ void MessengerWindow::removefriend2()
 {
 	bool isOnline;
     QTreeWidgetItem *c = getCurrentPeer(isOnline);
+#ifdef MSG_DEBUG 
     std::cerr << "MessengerWindow::removefriend2()" << std::endl;
+#endif
 	if (!c)
 	{
+#ifdef MSG_DEBUG 
         	std::cerr << "MessengerWindow::removefriend2() Noone Selected -- sorry" << std::endl;
+#endif
 		return;
 	}
 	rsPeers->removeFriend(getMessengerPeerRsCertId(c));

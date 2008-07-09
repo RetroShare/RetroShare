@@ -26,7 +26,9 @@
 
 #include <iostream>
 
-#define DEBUG_ITEM 1
+/****
+ * #define DEBUG_ITEM 1
+ ****/
 
 /*******************************************************************
  * SubFileItem fully controls the file transfer from the gui side

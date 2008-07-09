@@ -27,7 +27,9 @@
 
 #include <iostream>
 
-#define DEBUG_ITEM 1
+/****
+ * #define DEBUG_ITEM 1
+ ****/
 
 /** Constructor */
 BlogMsgItem::BlogMsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId, std::string msgId, bool isHome)

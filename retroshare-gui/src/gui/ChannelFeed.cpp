@@ -33,6 +33,9 @@
 
 #include "GeneralMsgDialog.h"
 
+/****
+ * #define CHAN_DEBUG
+ ***/
 
 /** Constructor */
 ChannelFeed::ChannelFeed(QWidget *parent)
@@ -125,8 +128,10 @@ void ChannelFeed::channelSelection()
 
 void ChannelFeed::sendMsg()
 {
+#ifdef CHAN_DEBUG
 	std::cerr << "ChannelFeed::sendMsg()";
 	std::cerr << std::endl;
+#endif
 
 	if (mChannelId != "")
 	{
@@ -134,8 +139,10 @@ void ChannelFeed::sendMsg()
 	}
 	else
 	{
+#ifdef CHAN_DEBUG
 		std::cerr << "ChannelFeed::sendMsg() no Channel Selected!";
 		std::cerr << std::endl;
+#endif
 	}
 
 }
@@ -158,8 +165,10 @@ void ChannelFeed::openChat(std::string peerId)
 
 void ChannelFeed::openMsg(uint32_t type, std::string grpId, std::string inReplyTo)
 {
+#ifdef CHAN_DEBUG
 	std::cerr << "ChannelFeed::openMsg()";
 	std::cerr << std::endl;
+#endif
 	GeneralMsgDialog *msgDialog = new GeneralMsgDialog(NULL);
 
 
@@ -304,8 +313,10 @@ void ChannelFeed::updateChannelListOwn(std::list<std::string> &ids)
 	int index = topIndex + 1;
 	for (iit = ids.begin(); iit != ids.end(); iit++, index++)
 	{
+#ifdef CHAN_DEBUG
 		std::cerr << "ChannelFeed::updateChannelListOwn(): " << *iit << " at: " << index;
 		std::cerr << std::endl;
+#endif
 
 		ChanMenuItem *cmi = new ChanMenuItem(*iit);
 		mChannelListOwn.push_back(cmi);
@@ -331,8 +342,10 @@ void ChannelFeed::updateChannelListSub(std::list<std::string> &ids)
 	int index = topIndex + 1;
 	for (iit = ids.begin(); iit != ids.end(); iit++, index++)
 	{
+#ifdef CHAN_DEBUG
 		std::cerr << "ChannelFeed::updateChannelListSub(): " << *iit << " at: " << index;
 		std::cerr << std::endl;
+#endif
 
 		ChanMenuItem *cmi = new ChanMenuItem(*iit);
 		mChannelListSub.push_back(cmi);
@@ -358,8 +371,10 @@ void ChannelFeed::updateChannelListPop(std::list<std::string> &ids)
 	int index = topIndex + 1;
 	for (iit = ids.begin(); iit != ids.end(); iit++, index++)
 	{
+#ifdef CHAN_DEBUG
 		std::cerr << "ChannelFeed::updateChannelListPop(): " << *iit << " at: " << index;
 		std::cerr << std::endl;
+#endif
 
 		ChanMenuItem *cmi = new ChanMenuItem(*iit);
 		mChannelListPop.push_back(cmi);
@@ -386,8 +401,10 @@ void ChannelFeed::updateChannelListOther(std::list<std::string> &ids)
 	int index = topIndex + 1;
 	for (iit = ids.begin(); iit != ids.end(); iit++, index++)
 	{
+#ifdef CHAN_DEBUG
 		std::cerr << "ChannelFeed::updateChannelListOther(): " << *iit << " at: " << index;
 		std::cerr << std::endl;
+#endif
 
 		ChanMenuItem *cmi = new ChanMenuItem(*iit);
 		mChannelListOther.push_back(cmi);
@@ -462,7 +479,7 @@ void ChannelFeed::updateChannelMsgs()
 
 void ChannelFeed::unsubscribeChannel()
 {
-#ifdef DEBUG_ITEM
+#ifdef CHAN_DEBUG
 	std::cerr << "ChannelFeed::unsubscribeChannel()";
 	std::cerr << std::endl;
 #endif
@@ -476,7 +493,7 @@ void ChannelFeed::unsubscribeChannel()
 
 void ChannelFeed::subscribeChannel()
 {
-#ifdef DEBUG_ITEM
+#ifdef CHAN_DEBUG
 	std::cerr << "ChannelFeed::subscribeChannel()";
 	std::cerr << std::endl;
 #endif

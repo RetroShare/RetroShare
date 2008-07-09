@@ -54,6 +54,10 @@
 #define IMAGE_SUX			    ":/images/filerating2.png"
 #define IMAGE_BADLINK			":/images/filerating1.png"
 
+/******
+ * #define LINKS_DEBUG 1
+ *****/
+
 /** Constructor */
 LinksDialog::LinksDialog(QWidget *parent)
 : MainPage(parent)
@@ -303,7 +307,9 @@ void  LinksDialog::updateLinks()
 	std::list<std::string>::iterator rit;
 	std::list<RsRankComment>::iterator cit;
 
+#ifdef LINKS_DEBUG 
 	std::cerr << "LinksDialog::updateLinks()" << std::endl;
+#endif
 
 	/* Work out the number/entries to show */
 	uint32_t count = rsRanks->getRankingsCount();
@@ -488,12 +494,17 @@ void  LinksDialog::updateLinks()
 
 void LinksDialog::openLink ( QTreeWidgetItem * item, int column )
 {
+#ifdef LINKS_DEBUG 
 	std::cerr << "LinksDialog::openLink()" << std::endl;
+#endif
 
 	/* work out the ids */
 	if (!item)
 	{
+
+#ifdef LINKS_DEBUG 
 		std::cerr << "LinksDialog::openLink() Failed Item" << std::endl;
+#endif
 		return;
 	}
 
@@ -504,11 +515,15 @@ void LinksDialog::openLink ( QTreeWidgetItem * item, int column )
 	if (parent)
 	{
 		/* a child comment -> ignore double click */
+#ifdef LINKS_DEBUG 
 		std::cerr << "LinksDialog::openLink() Failed Child" << std::endl;
+#endif
 		return;
 	}
 
+#ifdef LINKS_DEBUG 
 	std::cerr << "LinksDialog::openLink() " << (item->text(2)).toStdString() << std::endl;
+#endif
 	/* open a browser */
 	QUrl url(item->text(2));
 	QDesktopServices::openUrl ( url );
@@ -536,8 +551,10 @@ void  LinksDialog::changedItem(QTreeWidgetItem *curr, QTreeWidgetItem *prev)
 		rid = (parent->text(4)).toStdString();
 		pid = (curr->text(4)).toStdString();
 
+#ifdef LINKS_DEBUG 
 		std::cerr << "LinksDialog::changedItem() Rid: " << rid << " Pid: " << pid;
 		std::cerr << std::endl;
+#endif
 
 		updateComments(rid, pid);
 	}
@@ -545,8 +562,10 @@ void  LinksDialog::changedItem(QTreeWidgetItem *curr, QTreeWidgetItem *prev)
 	{
 		rid = (curr->text(4)).toStdString();
 
+#ifdef LINKS_DEBUG 
 		std::cerr << "LinksDialog::changedItem() Rid: " << rid << " Pid: NULL";
 		std::cerr << std::endl;
+#endif
 
 		updateComments(rid, "");
 	}
@@ -805,10 +824,13 @@ QTreeWidgetItem *LinksDialog::getCurrentLine()
         QTreeWidgetItem *item = peerWidget -> currentItem();
         if (!item)
         {
+#ifdef LINKS_DEBUG 
 		std::cerr << "Invalid Current Item" << std::endl;
+#endif
 		return NULL;
 	}
 
+#ifdef LINKS_DEBUG 
 	/* Display the columns of this item. */
 	std::ostringstream out;
         out << "CurrentPeerItem: " << std::endl;
@@ -819,6 +841,8 @@ QTreeWidgetItem *LinksDialog::getCurrentLine()
 		out << "\t" << i << ":" << txt.toStdString() << std::endl;
 	}
 	std::cerr << out.str();
+#endif
+
 	return item;
 }
 
@@ -839,7 +863,9 @@ void LinksDialog::voteup_anon()
 	}
 
 	QString link = QString::fromStdWString(detail.link);
+#ifdef LINKS_DEBUG 
 	std::cerr << "LinksDialog::voteup_anon() : " << link.toStdString() << std::endl;
+#endif
 	// need a proper anon sharing option.
 	rsRanks->anonRankMsg(mLinkId, detail.link, detail.title);
 }
@@ -863,7 +889,9 @@ void LinksDialog::voteup_score(int score)
 
 	QString link = QString::fromStdWString(detail.link);
 	std::wstring comment;
+#ifdef LINKS_DEBUG 
 	std::cerr << "LinksDialog::voteup_score() : " << link.toStdString() << std::endl;
+#endif
 
 
 	std::list<RsRankComment>::iterator cit;

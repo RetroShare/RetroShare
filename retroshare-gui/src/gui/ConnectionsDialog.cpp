@@ -50,6 +50,10 @@
 
 RsCertId getNeighRsCertId(QTreeWidgetItem *i);
 
+/****
+ * #define CONN_DEBUG 1
+ ****/
+
 /** Constructor */
 ConnectionsDialog::ConnectionsDialog(QWidget *parent)
 : MainPage(parent), connectdialog(NULL)
@@ -123,7 +127,9 @@ void ConnectionsDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 /** Shows Peer Information/Auth Dialog */
 void ConnectionsDialog::peerdetails()
 {
+#ifdef CONN_DEBUG
     std::cerr << "ConnectionsDialog::peerdetails()" << std::endl;
+#endif
 
     QTreeWidgetItem *wi = getCurrentNeighbour();
     if (!wi)
@@ -139,7 +145,10 @@ void ConnectionsDialog::peerdetails()
 /** Shows Peer Information/Auth Dialog */
 void ConnectionsDialog::showpeerdetails(std::string id)
 {
+#ifdef CONN_DEBUG
     std::cerr << "ConnectionsDialog::showpeerdetails()" << std::endl;
+#endif
+
     if ((connectdialog) && (connectdialog -> loadPeer(id)))
     {
     	connectdialog->show();
@@ -338,7 +347,9 @@ QTreeWidgetItem *ConnectionsDialog::getCurrentNeighbour()
         QTreeWidgetItem *item = connectWidget -> currentItem();
         if (!item) 
         {
+#ifdef CONN_DEBUG
                 std::cerr << "Invalid Current Item" << std::endl;
+#endif
                 return NULL;
         }
     
@@ -351,7 +362,9 @@ QTreeWidgetItem *ConnectionsDialog::getCurrentNeighbour()
                 QString txt = item -> text(i);
                 out << "\t" << i << ":" << txt.toStdString() << std::endl;
         }
+#ifdef CONN_DEBUG
         std::cerr << out.str();
+#endif
         return item;
 }   
 
@@ -372,7 +385,9 @@ RsCertId getNeighRsCertId(QTreeWidgetItem *i)
 
 std::string ConnectionsDialog::loadneighbour()
 {
+#ifdef CONN_DEBUG
         std::cerr << "ConnectionsDialog::loadneighbour()" << std::endl;
+#endif
         QString fileName = QFileDialog::getOpenFileName(this, tr("Select Certificate"), "",
 	                                             tr("Certificates (*.pqi *.pem)"));
 
@@ -388,7 +403,9 @@ std::string ConnectionsDialog::loadneighbour()
 void ConnectionsDialog::addneighbour()
 {
         QTreeWidgetItem *c = getCurrentNeighbour();
+#ifdef CONN_DEBUG
         std::cerr << "ConnectionsDialog::addneighbour()" << std::endl;
+#endif
         /*
         rsServer->NeighAddFriend(getNeighRsCertId(c));
         */
@@ -397,7 +414,9 @@ void ConnectionsDialog::addneighbour()
 void ConnectionsDialog::authneighbour()
 {
         QTreeWidgetItem *c = getCurrentNeighbour();
+#ifdef CONN_DEBUG
         std::cerr << "ConnectionsDialog::authneighbour()" << std::endl;
+#endif
         /*
 	RsAuthId code;
         rsServer->NeighAuthFriend(getNeighRsCertId(c), code);

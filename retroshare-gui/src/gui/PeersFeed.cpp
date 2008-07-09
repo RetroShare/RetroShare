@@ -34,6 +34,11 @@ const uint32_t PEERSFEED_MODE_ONLINE	= 0x0001;
 const uint32_t PEERSFEED_MODE_FOF 	= 0x0002;
 const uint32_t PEERSFEED_MODE_ALL 	= 0x0003;
 
+
+/*****
+ * #define PEERS_DEBUG  1
+ ****/
+
 /** Constructor */
 PeersFeed::PeersFeed(QWidget *parent)
 : MainPage (parent)
@@ -77,20 +82,27 @@ PeersFeed::PeersFeed(QWidget *parent)
 /* FeedHolder Functions (for FeedItem functionality) */
 void PeersFeed::deleteFeedItem(QWidget *item, uint32_t type)
 {
+#ifdef PEERS_DEBUG  
 	std::cerr << "PeersFeed::deleteFeedItem()";
 	std::cerr << std::endl;
+#endif
 }
 
 void PeersFeed::openChat(std::string peerId)
 {
+#ifdef PEERS_DEBUG  
 	std::cerr << "PeersFeed::openChat()";
 	std::cerr << std::endl;
+#endif
 }
 
 void PeersFeed::openMsg(uint32_t type, std::string grpId, std::string inReplyTo)
 {
+#ifdef PEERS_DEBUG  
 	std::cerr << "PeersFeed::openMsg()";
 	std::cerr << std::endl;
+#endif
+
 	GeneralMsgDialog *msgDialog = new GeneralMsgDialog(NULL);
 
 

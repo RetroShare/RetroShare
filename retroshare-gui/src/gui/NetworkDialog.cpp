@@ -52,6 +52,10 @@
 
 RsCertId getNeighRsCertId(QTreeWidgetItem *i);
 
+/******
+ * #define NET_DEBUG 1
+ *****/
+
 /** Constructor */
 NetworkDialog::NetworkDialog(QWidget *parent)
 : MainPage(parent), connectdialog(NULL)
@@ -139,7 +143,9 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 /** Shows Peer Information/Auth Dialog */
 void NetworkDialog::peerdetails()
 {
+#ifdef NET_DEBUG 
     std::cerr << "ConnectionsDialog::peerdetails()" << std::endl;
+#endif
 
     QTreeWidgetItem *wi = getCurrentNeighbour();
     if (!wi)
@@ -155,7 +161,9 @@ void NetworkDialog::peerdetails()
 /** Shows Peer Information/Auth Dialog */
 void NetworkDialog::showpeerdetails(std::string id)
 {
+#ifdef NET_DEBUG 
     std::cerr << "ConnectionsDialog::showpeerdetails()" << std::endl;
+#endif
     if ((connectdialog) && (connectdialog -> loadPeer(id)))
     {
     	connectdialog->show();
@@ -392,7 +400,9 @@ QTreeWidgetItem *NetworkDialog::getCurrentNeighbour()
         QTreeWidgetItem *item = connectWidget -> currentItem();
         if (!item) 
         {
+#ifdef NET_DEBUG 
                 std::cerr << "Invalid Current Item" << std::endl;
+#endif
                 return NULL;
         }
     
@@ -418,7 +428,9 @@ RsCertId getNeighRsCertId(QTreeWidgetItem *i)
 
 std::string NetworkDialog::loadneighbour()
 {
+#ifdef NET_DEBUG 
         std::cerr << "ConnectionsDialog::loadneighbour()" << std::endl;
+#endif
         QString fileName = QFileDialog::getOpenFileName(this, tr("Select Certificate"), "",
 	                                             tr("Certificates (*.pqi *.pem)"));
 
@@ -434,7 +446,9 @@ std::string NetworkDialog::loadneighbour()
 void NetworkDialog::addneighbour()
 {
         QTreeWidgetItem *c = getCurrentNeighbour();
+#ifdef NET_DEBUG 
         std::cerr << "ConnectionsDialog::addneighbour()" << std::endl;
+#endif
         /*
         rsServer->NeighAddFriend(getNeighRsCertId(c));
         */
@@ -443,7 +457,9 @@ void NetworkDialog::addneighbour()
 void NetworkDialog::authneighbour()
 {
         QTreeWidgetItem *c = getCurrentNeighbour();
+#ifdef NET_DEBUG 
         std::cerr << "ConnectionsDialog::authneighbour()" << std::endl;
+#endif
         /*
 	RsAuthId code;
         rsServer->NeighAuthFriend(getNeighRsCertId(c), code);

@@ -27,7 +27,9 @@
 
 #include <iostream>
 
-#define DEBUG_ITEM 1
+/****
+ * #define DEBUG_ITEM 1
+ ****/
 
 /** Constructor */
 ChanNewItem::ChanNewItem(FeedHolder *parent, uint32_t feedId, std::string chanId, bool isHome, bool isNew)

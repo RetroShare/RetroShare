@@ -46,6 +46,10 @@ const uint32_t NEWSFEED_CHANMSGLIST = 	0x0005;
 const uint32_t NEWSFEED_BLOGMSGLIST = 	0x0006;
 const uint32_t NEWSFEED_MESSAGELIST = 	0x0007;
 
+/*****
+ * #define NEWS_DEBUG  1
+ ****/
+
 /** Constructor */
 NewsFeed::NewsFeed(QWidget *parent)
 : MainPage (parent)
@@ -154,8 +158,11 @@ void	NewsFeed::addFeedItemPeerConnect(RsFeedItem &fi)
 	/* add to layout */
 	mLayout->addWidget(pi);
 
+#ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemPeerConnect()";
 	std::cerr << std::endl;
+#endif
+
 }
 
 
@@ -171,8 +178,10 @@ void	NewsFeed::addFeedItemPeerDisconnect(RsFeedItem &fi)
 
 
 
+#ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemPeerDisconnect()";
 	std::cerr << std::endl;
+#endif
 }
 
 
@@ -187,8 +196,10 @@ void	NewsFeed::addFeedItemPeerHello(RsFeedItem &fi)
 	mLayout->addWidget(pi);
 
 
+#ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemPeerHello()";
 	std::cerr << std::endl;
+#endif
 }
 
 
@@ -202,8 +213,10 @@ void	NewsFeed::addFeedItemPeerNew(RsFeedItem &fi)
 	/* add to layout */
 	mLayout->addWidget(pi);
 
+#ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemPeerNew()";
 	std::cerr << std::endl;
+#endif
 }
 
 
@@ -217,8 +230,10 @@ void	NewsFeed::addFeedItemChanNew(RsFeedItem &fi)
 	/* add to layout */
 	mLayout->addWidget(cni);
 
+#ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemChanNew()";
 	std::cerr << std::endl;
+#endif
 }
 
 
@@ -232,8 +247,10 @@ void	NewsFeed::addFeedItemChanUpdate(RsFeedItem &fi)
 	/* add to layout */
 	mLayout->addWidget(cni);
 
+#ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemChanUpdate()";
 	std::cerr << std::endl;
+#endif
 }
 
 
@@ -247,8 +264,10 @@ void	NewsFeed::addFeedItemChanMsg(RsFeedItem &fi)
 	/* add to layout */
 	mLayout->addWidget(cm);
 
+#ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemChanMsg()";
 	std::cerr << std::endl;
+#endif
 }
 
 
@@ -264,8 +283,10 @@ void	NewsFeed::addFeedItemForumNew(RsFeedItem &fi)
 	mLayout->addWidget(fni);
 
 
+#ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemForumNew()";
 	std::cerr << std::endl;
+#endif
 }
 
 
@@ -280,8 +301,10 @@ void	NewsFeed::addFeedItemForumUpdate(RsFeedItem &fi)
 	/* add to layout */
 	mLayout->addWidget(fni);
 
+#ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemForumUpdate()";
 	std::cerr << std::endl;
+#endif
 }
 
 
@@ -295,8 +318,10 @@ void	NewsFeed::addFeedItemForumMsg(RsFeedItem &fi)
 	/* add to layout */
 	mLayout->addWidget(fm);
 
+#ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemForumMsg()";
 	std::cerr << std::endl;
+#endif
 }
 
 
@@ -310,15 +335,19 @@ void	NewsFeed::addFeedItemBlogMsg(RsFeedItem &fi)
 	/* add to layout */
 	mLayout->addWidget(bm);
 
+#ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemBlogMsg()";
 	std::cerr << std::endl;
+#endif
 }
 
 
 void	NewsFeed::addFeedItemChatNew(RsFeedItem &fi)
 {
+#ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemChatNew()";
 	std::cerr << std::endl;
+#endif
 }
 
 
@@ -332,15 +361,19 @@ void	NewsFeed::addFeedItemMessage(RsFeedItem &fi)
 	/* add to layout */
 	mLayout->addWidget(mi);
 
+#ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemMessage()";
 	std::cerr << std::endl;
+#endif
 }
 
 
 void	NewsFeed::addFeedItemFilesNew(RsFeedItem &fi)
 {
+#ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemFilesNew()";
 	std::cerr << std::endl;
+#endif
 }
 
 
@@ -349,20 +382,26 @@ void	NewsFeed::addFeedItemFilesNew(RsFeedItem &fi)
 /* FeedHolder Functions (for FeedItem functionality) */
 void NewsFeed::deleteFeedItem(QWidget *item, uint32_t type)
 {
+#ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::deleteFeedItem()";
 	std::cerr << std::endl;
+#endif
 }
 
 void NewsFeed::openChat(std::string peerId)
 {
+#ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::openChat()";
 	std::cerr << std::endl;
+#endif
 }
 
 void NewsFeed::openMsg(uint32_t type, std::string grpId, std::string inReplyTo)
 {
+#ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::openMsg()";
 	std::cerr << std::endl;
+#endif
 	GeneralMsgDialog *msgDialog = new GeneralMsgDialog(NULL);
 
 

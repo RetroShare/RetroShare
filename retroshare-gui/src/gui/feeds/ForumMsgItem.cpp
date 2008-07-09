@@ -27,7 +27,9 @@
 
 #include <iostream>
 
-#define DEBUG_ITEM 1
+/****
+ * #define DEBUG_ITEM 1
+ ****/
 
 /** Constructor */
 ForumMsgItem::ForumMsgItem(FeedHolder *parent, uint32_t feedId, std::string forumId, std::string postId, bool isHome)

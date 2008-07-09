@@ -25,7 +25,9 @@
 
 #include <iostream>
 
-#define DEBUG_ITEM 1
+/****
+ * #define DEBUG_ITEM 1
+ ****/
 
 /** Constructor */
 ChanMenuItem::ChanMenuItem(std::string chanId)

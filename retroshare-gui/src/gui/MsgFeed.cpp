@@ -29,6 +29,10 @@
 #include "rsiface/rsmsgs.h"
 #include "rsiface/rspeers.h"
 
+/*****
+ * #define MSG_DEBUG  1
+ ****/
+
 /** Constructor */
 MsgFeed::MsgFeed(QWidget *parent)
 : MainPage (parent)
@@ -78,20 +82,27 @@ MsgFeed::MsgFeed(QWidget *parent)
 /* FeedHolder Functions (for FeedItem functionality) */
 void MsgFeed::deleteFeedItem(QWidget *item, uint32_t type)
 {
+#ifdef MSG_DEBUG
 	std::cerr << "MsgFeed::deleteFeedItem()";
 	std::cerr << std::endl;
+#endif
 }
 
 void MsgFeed::openChat(std::string peerId)
 {
+#ifdef MSG_DEBUG
 	std::cerr << "MsgFeed::openChat()";
 	std::cerr << std::endl;
+#endif
 }
 
 void MsgFeed::openMsg(uint32_t type, std::string grpId, std::string inReplyTo)
 {
+#ifdef MSG_DEBUG
 	std::cerr << "MsgFeed::openMsg()";
 	std::cerr << std::endl;
+#endif
+
 	GeneralMsgDialog *msgDialog = new GeneralMsgDialog(NULL);
 
 
@@ -103,8 +114,11 @@ void MsgFeed::openMsg(uint32_t type, std::string grpId, std::string inReplyTo)
 
 void MsgFeed::newMsg()
 {
+#ifdef MSG_DEBUG
 	std::cerr << "MsgFeed::newMsg()";
 	std::cerr << std::endl;
+#endif
+
 	GeneralMsgDialog *msgDialog = new GeneralMsgDialog(NULL);
 
 	msgDialog->setMsgType(FEEDHOLDER_MSG_MESSAGE);
@@ -156,8 +170,10 @@ void  MsgFeed::updateSort()
 	
 void 	MsgFeed::updatePeerIds()
 {
+#ifdef MSG_DEBUG
 	std::cerr << "MsgFeed::updatePeerIds()";
 	std::cerr << std::endl;
+#endif
 	
 	int selectIdx = 0; /* ALL */
 	std::string peerId;

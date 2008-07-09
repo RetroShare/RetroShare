@@ -20,6 +20,10 @@
 #include <iostream>
 #include <sstream>
 
+/*****
+ * #define NOTIFY_DEBUG
+ ****/
+
 void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
 {
 	(void) list;
@@ -37,7 +41,10 @@ void NotifyQt::notifyChat()
 void NotifyQt::notifyListChange(int list, int type)
 {
 	(void) type;
+
+#ifdef NOTIFY_DEBUG
 	std::cerr << "NotifyQt::notifyListChange()" << std::endl;
+#endif
 	switch(list)
 	{
 		case NOTIFY_LIST_NEIGHBOURS:
@@ -70,7 +77,9 @@ void NotifyQt::notifyListChange(int list, int type)
 
 void NotifyQt::notifyListPreChange(int list, int type)
 {
+#ifdef NOTIFY_DEBUG
 	std::cerr << "NotifyQt::notifyListPreChange()" << std::endl;
+#endif
 	switch(list)
 	{
 		case NOTIFY_LIST_NEIGHBOURS:
@@ -263,10 +272,12 @@ void NotifyQt::preDisplayDirectories()
 {
 	//iface->lockData(); /* Lock Interface */
 
+#ifdef NOTIFY_DEBUG
 	std::ostringstream out;
 	out << "NotifyQt::preDisplayDirectories()" << std::endl;
 
 	std::cerr << out.str();
+#endif
 
 	//iface->unlockData(); /* UnLock Interface */
 
@@ -282,10 +293,12 @@ void NotifyQt::displayDirectories()
 {
 	//iface->lockData(); /* Lock Interface */
 
+#ifdef NOTIFY_DEBUG
 	std::ostringstream out;
 	out << "NotifyQt::displayDirectories()" << std::endl;
 
 	std::cerr << out.str();
+#endif
 
 	//iface->unlockData(); /* UnLock Interface */
 
@@ -302,8 +315,10 @@ void NotifyQt::displaySearch()
 {
 	iface->lockData(); /* Lock Interface */
 
+#ifdef NOTIFY_DEBUG
 	std::ostringstream out;
 	std::cerr << out.str();
+#endif
 
 	iface->unlockData(); /* UnLock Interface */
 }
@@ -319,8 +334,10 @@ void NotifyQt::displayChat()
 {
 	iface->lockData(); /* Lock Interface */
 
+#ifdef NOTIFY_DEBUG
 	std::ostringstream out;
 	std::cerr << out.str();
+#endif
 
 	iface->unlockData(); /* UnLock Interface */
 
@@ -333,8 +350,10 @@ void NotifyQt::displayChannels()
 {
 	iface->lockData(); /* Lock Interface */
 
+#ifdef NOTIFY_DEBUG
 	std::ostringstream out;
 	std::cerr << out.str();
+#endif
 
 	iface->unlockData(); /* UnLock Interface */
 

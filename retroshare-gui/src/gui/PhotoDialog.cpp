@@ -69,6 +69,11 @@
 #define PHOTO_LIST_COL_PEERID   6
 #define PHOTO_LIST_COL_PHOTOID  7
 
+/******
+ * #define PHOTO_DEBUG 1
+ *****/
+
+
 
 /** Constructor */
 PhotoDialog::PhotoDialog(QWidget *parent)
@@ -267,7 +272,9 @@ void PhotoDialog::addShows(std::string id)
 
 void PhotoDialog::updatePhotoList()
 {
+#ifdef PHOTO_DEBUG 
 	std::cerr << "PhotoDialog::updatePhotoList()" << std::endl;
+#endif
 
 	/* get current item */
 	QTreeWidgetItem *item = ui.peerTreeWidget->currentItem();
@@ -275,7 +282,9 @@ void PhotoDialog::updatePhotoList()
 	if (!item)
 	{
 		/* leave current list */
+#ifdef PHOTO_DEBUG 
 		std::cerr << "PhotoDialog::updatePhotoList() No Current item -> leave" << std::endl;
+#endif
 		return;
 	}
 
@@ -286,11 +295,15 @@ void PhotoDialog::updatePhotoList()
 	if ((mCurrentPID == pid) && (mCurrentSID == sid))
 	{
 		/* still good */
+#ifdef PHOTO_DEBUG 
 		std::cerr << "PhotoDialog::updatePhotoList() List still good!" << std::endl;
+#endif
 		return;
 	}
 
+#ifdef PHOTO_DEBUG 
 	std::cerr << "PhotoDialog::updatePhotoList() pid: " << pid << " sid: " << sid << std::endl;
+#endif
 	/* get the list of photos */
 
 	ui.photoTreeWidget->clear();
@@ -298,7 +311,9 @@ void PhotoDialog::updatePhotoList()
 
 	if (sid != "")
 	{
+#ifdef PHOTO_DEBUG 
 		std::cerr << "PhotoDialog::updatePhotoList() SID -> showing show" << std::endl;
+#endif
 		/* load up show list */
 		RsPhotoShowDetails detail;
 		rsPhoto->getShowDetails(pid, sid, detail);
@@ -311,7 +326,9 @@ void PhotoDialog::updatePhotoList()
 
 			if (!rsPhoto->getPhotoDetails(pid, sit->photoId, photoDetail))
 			{
+#ifdef PHOTO_DEBUG 
 	std::cerr << "PhotoDialog::updatePhotoList() getPhotoDetails: " << sit->photoId << " FAILED" << std::endl;
+#endif
 				continue;
 			}
 
@@ -350,7 +367,9 @@ void PhotoDialog::updatePhotoList()
 	}
 	else
 	{
+#ifdef PHOTO_DEBUG 
 		std::cerr << "PhotoDialog::updatePhotoList() No SID -> show all" << std::endl;
+#endif
 
 		std::list<std::string> photoIds;
 		std::list<std::string>::iterator pit;
@@ -361,7 +380,9 @@ void PhotoDialog::updatePhotoList()
 
 			if (!rsPhoto->getPhotoDetails(pid, *pit, photoDetail))
 			{
+#ifdef PHOTO_DEBUG 
 	std::cerr << "PhotoDialog::updatePhotoList() getPhotoDetails: " << *pit << " FAILED" << std::endl;
+#endif
 				continue;
 			}
 
@@ -396,7 +417,9 @@ void PhotoDialog::updatePhotoList()
 					QString::fromStdString(photoDetail.hash));
 
 
+#ifdef PHOTO_DEBUG 
 			std::cerr << "PhotoDialog::updatePhotoList() added Item: " << *pit << std::endl;
+#endif
 			items.append(photoItem);
 		}
 
@@ -428,11 +451,14 @@ QTreeWidgetItem *PhotoDialog::getCurrentLine()
         QTreeWidgetItem *item = peerWidget -> currentItem();
         if (!item)
         {
+#ifdef PHOTO_DEBUG 
 		std::cerr << "Invalid Current Item" << std::endl;
+#endif
 		return NULL;
 	}
 
 	/* Display the columns of this item. */
+#ifdef PHOTO_DEBUG 
 	std::ostringstream out;
         out << "CurrentPeerItem: " << std::endl;
 
@@ -442,13 +468,16 @@ QTreeWidgetItem *PhotoDialog::getCurrentLine()
 		out << "\t" << i << ":" << txt.toStdString() << std::endl;
 	}
 	std::cerr << out.str();
+#endif
 	return item;
 }
 
 void PhotoDialog::removePhoto()
 {
 	QTreeWidgetItem *c = getCurrentLine();
+#ifdef PHOTO_DEBUG 
 	std::cerr << "PhotoDialog::removePhoto()" << std::endl;
+#endif
 }
 
 

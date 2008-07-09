@@ -57,6 +57,11 @@
 #define IMAGE_ONLINE             ":/images/donline.png"
 #define IMAGE_OFFLINE            ":/images/dhidden.png"
 
+/******
+ * #define PEERS_DEBUG 1
+ *****/
+
+
 /** Constructor */
 PeersDialog::PeersDialog(QWidget *parent)
 : MainPage(parent), chatDialog(NULL)
@@ -321,10 +326,15 @@ std::string getPeerRsCertId(QTreeWidgetItem *i)
 void PeersDialog::exportfriend()
 {
         QTreeWidgetItem *c = getCurrentPeer();
+
+#ifdef PEERS_DEBUG 
         std::cerr << "PeersDialog::exportfriend()" << std::endl;
+#endif
 	if (!c)
 	{
+#ifdef PEERS_DEBUG 
         	std::cerr << "PeersDialog::exportfriend() Noone Selected -- sorry" << std::endl;
+#endif
 		return;
 	}
 
@@ -335,8 +345,10 @@ void PeersDialog::exportfriend()
 	std::string file = fileName.toStdString();
 	if (file != "")
 	{
+#ifdef PEERS_DEBUG 
         	std::cerr << "PeersDialog::exportfriend() Saving to: " << file << std::endl;
         	std::cerr << std::endl;
+#endif
 		if (rsPeers)
 		{
 			rsPeers->SaveCertificateToFile(id, file);
@@ -387,7 +399,9 @@ void PeersDialog::chatfriend()
 
 void PeersDialog::msgfriend()
 {
+#ifdef PEERS_DEBUG 
     std::cerr << "SharedFilesDialog::msgfriend()" << std::endl;
+#endif
 
     QTreeWidgetItem *i = getCurrentPeer();
 
@@ -418,10 +432,13 @@ QTreeWidgetItem *PeersDialog::getCurrentPeer()
         QTreeWidgetItem *item = peerWidget -> currentItem();
         if (!item)
         {
+#ifdef PEERS_DEBUG 
 		std::cerr << "Invalid Current Item" << std::endl;
+#endif
 		return NULL;
 	}
 
+#ifdef PEERS_DEBUG 
 	/* Display the columns of this item. */
 	std::ostringstream out;
         out << "CurrentPeerItem: " << std::endl;
@@ -432,6 +449,7 @@ QTreeWidgetItem *PeersDialog::getCurrentPeer()
 		out << "\t" << i << ":" << txt.toStdString() << std::endl;
 	}
 	std::cerr << out.str();
+#endif
 	return item;
 }
 
@@ -450,10 +468,14 @@ QTreeWidgetItem *PeersDialog::getCurrentPeer()
 void PeersDialog::removefriend()
 {
         QTreeWidgetItem *c = getCurrentPeer();
+#ifdef PEERS_DEBUG 
         std::cerr << "PeersDialog::removefriend()" << std::endl;
+#endif
 	if (!c)
 	{
+#ifdef PEERS_DEBUG 
         	std::cerr << "PeersDialog::removefriend() Noone Selected -- sorry" << std::endl;
+#endif
 		return;
 	}
 
@@ -467,7 +489,9 @@ void PeersDialog::removefriend()
 void PeersDialog::allowfriend()
 {
 	QTreeWidgetItem *c = getCurrentPeer();
+#ifdef PEERS_DEBUG 
 	std::cerr << "PeersDialog::allowfriend()" << std::endl;
+#endif
 	/*
 	bool accept = true;
 	rsServer->FriendStatus(getPeerRsCertId(c), accept);
@@ -478,10 +502,14 @@ void PeersDialog::allowfriend()
 void PeersDialog::connectfriend()
 {
 	QTreeWidgetItem *c = getCurrentPeer();
+#ifdef PEERS_DEBUG 
 	std::cerr << "PeersDialog::connectfriend()" << std::endl;
+#endif
 	if (!c)
 	{
+#ifdef PEERS_DEBUG 
         	std::cerr << "PeersDialog::connectfriend() Noone Selected -- sorry" << std::endl;
+#endif
 		return;
 	}
 
@@ -494,7 +522,9 @@ void PeersDialog::connectfriend()
 void PeersDialog::setaddressfriend()
 {
 	QTreeWidgetItem *c = getCurrentPeer();
+#ifdef PEERS_DEBUG 
 	std::cerr << "PeersDialog::setaddressfriend()" << std::endl;
+#endif
 
 	/* need to get the input address / port */
 	/*
@@ -507,7 +537,9 @@ void PeersDialog::setaddressfriend()
 void PeersDialog::trustfriend()
 {
 	QTreeWidgetItem *c = getCurrentPeer();
+#ifdef PEERS_DEBUG 
 	std::cerr << "PeersDialog::trustfriend()" << std::endl;
+#endif
 	/*
 	bool trust = true;
 	rsServer->FriendTrust(getPeerRsCertId(c), trust);
@@ -520,7 +552,9 @@ void PeersDialog::trustfriend()
 void PeersDialog::configurefriend()
 {
 	/* display Dialog */
+#ifdef PEERS_DEBUG 
 	std::cerr << "PeersDialog::configurefriend()" << std::endl;
+#endif
 	QTreeWidgetItem *c = getCurrentPeer();
 
 

@@ -28,6 +28,11 @@
 
 #include "rsiface/rsfiles.h"
 
+
+/*****
+ * #define TRANSFER_DEBUG  1
+ ****/
+
 /** Constructor */
 TransferFeed::TransferFeed(QWidget *parent)
 : MainPage (parent)
@@ -92,20 +97,27 @@ TransferFeed::TransferFeed(QWidget *parent)
 /* FeedHolder Functions (for FeedItem functionality) */
 void TransferFeed::deleteFeedItem(QWidget *item, uint32_t type)
 {
+#ifdef TRANSFER_DEBUG  
 	std::cerr << "TransferFeed::deleteFeedItem()";
 	std::cerr << std::endl;
+#endif
 }
 
 void TransferFeed::openChat(std::string peerId)
 {
+#ifdef TRANSFER_DEBUG  
 	std::cerr << "TransferFeed::openChat()";
 	std::cerr << std::endl;
+#endif
 }
 
 void TransferFeed::openMsg(uint32_t type, std::string grpId, std::string inReplyTo)
 {
+#ifdef TRANSFER_DEBUG  
 	std::cerr << "TransferFeed::openMsg()";
 	std::cerr << std::endl;
+#endif
+
 	GeneralMsgDialog *msgDialog = new GeneralMsgDialog(NULL);
 
 
