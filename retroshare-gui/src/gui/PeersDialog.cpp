@@ -256,13 +256,15 @@ void  PeersDialog::insertPeers()
 			status.append(QString::fromStdString("/" + RsStatusString(statusInfo.status)));
 		}
 
-		item -> setText(1, status);
+		//item -> setText(1, status);
+		item -> setText(1, QString::fromStdString(detail.autoconnect));
 
 		/* (1) Person */
 		item -> setText(2, QString::fromStdString(detail.name));
 
 		/* (2) Auto Connect */
-		item -> setText(3, QString::fromStdString(detail.autoconnect));
+		//item -> setText(3, QString::fromStdString(detail.autoconnect));
+		item -> setText(3, status);
 
 		/* (3) Trust Level */
                 item -> setText(4,QString::fromStdString(
