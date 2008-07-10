@@ -423,26 +423,22 @@ void PeersDialog::chatfriend()
     	return;
     }
 
-    /*if (detail.state & RS_PEER_STATE_CONNECTED)
-    {*/
-    	/* must reference ChatDialog */
-    	if (chatDialog)
-    	{
-    		chatDialog->getPrivateChat(id, name, true);
-    	}
-    /*}
+    if (detail.state & RS_PEER_STATE_CONNECTED)
+    {
+    	getPrivateChat(id, name, true);
+    }
     else
-    {*/
+    {
     	/* info dialog */
-     //  QMessageBox::StandardButton sb = QMessageBox::question ( NULL, 
-	//		"Friend Not Online", 
-	//"Your Friend is offline \nDo you want to send them a Message instead",
-	//		        (QMessageBox::Yes | QMessageBox::No));
-	/*if (sb == QMessageBox::Yes)
+       QMessageBox::StandardButton sb = QMessageBox::question ( NULL, 
+			"Friend Not Online", 
+	"Your Friend is offline \nDo you want to send them a Message instead",
+			        (QMessageBox::Yes | QMessageBox::No));
+	if (sb == QMessageBox::Yes)
 	{
 		msgfriend();
 	}
-    }*/
+    }
     return;
 }
 
@@ -643,7 +639,9 @@ void PeersDialog::insertChat()
 	for(it = newchat.begin(); it != newchat.end(); it++)
 	{
 		std::string msg(it->msg.begin(), it->msg.end());
-		std::cerr << "ChatDialog::insertChat(): " << msg << std::endl;
+#ifdef PEERS_DEBUG 
+		std::cerr << "PeersDialog::insertChat(): " << msg << std::endl;
+#endif
 
 		/* are they private? */
 		if (it->chatflags & RS_CHAT_PRIVATE)
@@ -717,7 +715,9 @@ void PeersDialog::sendMsg()
 	ci.chatflags = RS_CHAT_PUBLIC;
 
 	std::string msg(ci.msg.begin(), ci.msg.end());
-	std::cerr << "ChatDialog::sendMsg(): " << msg << std::endl;
+#ifdef PEERS_DEBUG 
+	std::cerr << "PeersDialog::sendMsg(): " << msg << std::endl;
+#endif
 
 	rsMsgs -> ChatSend(ci);
 	ui.lineEdit->clear();
@@ -799,7 +799,9 @@ void  PeersDialog::insertSendList()
 
 void PeersDialog::toggleSendItem( QTreeWidgetItem *item, int col )
 {
+#ifdef PEERS_DEBUG 
 	std::cerr << "ToggleSendItem()" << std::endl;
+#endif
 
 	/* extract id */
 	std::string id = (item -> text(4)).toStdString();

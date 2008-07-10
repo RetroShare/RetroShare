@@ -577,7 +577,7 @@ void  ChanMsgDialog::cancelMessage()
 /* First the Msg (People) ones */
 void ChanMsgDialog::togglePersonItem( QTreeWidgetItem *item, int col )
 {
-        std::cerr << "TogglePersonItem()" << std::endl;
+        //std::cerr << "TogglePersonItem()" << std::endl;
 
         /* extract id */
         std::string id = (item -> text(1)).toStdString();
@@ -594,7 +594,7 @@ void ChanMsgDialog::togglePersonItem( QTreeWidgetItem *item, int col )
 /* Second  the Channel ones */
 void ChanMsgDialog::toggleChannelItem( QTreeWidgetItem *item, int col )
 {
-        std::cerr << "ToggleChannelItem()" << std::endl;
+        //std::cerr << "ToggleChannelItem()" << std::endl;
 
         /* extract id */
         std::string id = (item -> text(2)).toStdString();
@@ -611,7 +611,7 @@ void ChanMsgDialog::toggleChannelItem( QTreeWidgetItem *item, int col )
 /* This is actually for both */
 void ChanMsgDialog::toggleRecommendItem( QTreeWidgetItem *item, int col )
 {
-        std::cerr << "ToggleRecommendItem()" << std::endl;
+        //std::cerr << "ToggleRecommendItem()" << std::endl;
 
         /* extract name */
         std::string id = (item -> text(0)).toStdString();

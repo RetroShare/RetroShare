@@ -44,6 +44,9 @@
 
 #include <sstream>
 
+/*****
+ * #define CHAT_DEBUG 1
+ *****/
 
 /** Default constructor */
 PopupChatDialog::PopupChatDialog(std::string id, std::string name, 
@@ -163,7 +166,9 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 	  RsPeerDetails detail;
 	  if (!rsPeers->getPeerDetails(dialogId, detail))
 	  {
+#ifdef CHAT_DEBUG 
 		std::cerr << "WARNING CANNOT GET PEER INFO!!!!" << std::endl;
+#endif
 	  }
 	  else if (detail.state & RS_PEER_STATE_CONNECTED)
 	  {
@@ -250,7 +255,9 @@ void PopupChatDialog::sendChat()
         ci.msg = chatWidget->toHtml().toStdWString();
         ci.chatflags = RS_CHAT_PRIVATE;
 
+#ifdef CHAT_DEBUG 
 std::cout << "PopupChatDialog:sendChat " << styleHtm.toStdString() << std::endl;
+#endif
 
 	addChatMsg(&ci);
 
@@ -380,7 +387,9 @@ void PopupChatDialog::addSmiley()
 
 QString PopupChatDialog::loadEmptyStyle()
 {
+#ifdef CHAT_DEBUG 
         std::cout << "PopupChatDialog:loadEmptyStyle " << styleHtm.toStdString() << std::endl;
+#endif
 	QString ret;
 	QFile file(styleHtm);
 	//file.open(QIODevice::ReadOnly);
@@ -397,14 +406,18 @@ QString PopupChatDialog::loadEmptyStyle()
 			css.close();
 		}
 		else {
+#ifdef CHAT_DEBUG 
 			std::cerr << "PopupChatDialog:loadEmptyStyle " << "Missing file of default css " << std::endl;
+#endif
 			tmp = "";
 		}
 		ret.replace("%css-style%", tmp);
 		return ret;
        	}
 	else {
+#ifdef CHAT_DEBUG 
                 std::cerr << "PopupChatDialog:loadEmptyStyle " << "Missing file of default style " << std::endl;
+#endif
 		ret="%timestamp% %name% \n %message% ";
 		return ret;
 	}

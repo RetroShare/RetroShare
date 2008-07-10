@@ -31,7 +31,7 @@
 
 #include "chat/PopupChatDialog.h"
 #include "msgs/ChanMsgDialog.h"
-#include "ChatDialog.h"
+#include "PeersDialog.h"
 #include "connect/ConfCertDialog.h"
 #include "util/PixmapMerging.h"
 #include "LogoBar.h"
@@ -359,7 +359,7 @@ void MessengerWindow::closeEvent (QCloseEvent * event)
 
 
 
-void MessengerWindow::setChatDialog(ChatDialog *cd)
+void MessengerWindow::setChatDialog(PeersDialog *cd)
 {
   chatDialog = cd;
 }

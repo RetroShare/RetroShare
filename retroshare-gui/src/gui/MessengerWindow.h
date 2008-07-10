@@ -29,7 +29,7 @@
 #include <config/rsharesettings.h>
 
 class LogoBar;
-class ChatDialog;
+class PeersDialog;
 
 class MessengerWindow : public QWidget
 {
@@ -41,7 +41,7 @@ public:
   /** Default Destructor */
 
   void  insertPeers();
-  void setChatDialog(ChatDialog *cd);
+  void setChatDialog(PeersDialog *cd);
   
   NetworkDialog *networkDialog2;
 
@@ -93,7 +93,7 @@ private:
   /* (2) Utility Fns */
   QTreeWidgetItem *getCurrentPeer(bool &isOnline);
   
-  ChatDialog *chatDialog;
+  PeersDialog *chatDialog;
 
   /** Define the popup menus for the Context menu */
   QMenu* contextMnu;

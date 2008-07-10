@@ -198,8 +198,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
   //                   createPageAction(QIcon(IMAGE_STATISTIC), tr("Statistics"), grp));
 
     /* also an empty list of chat windows */
-    peersDialog->setChatDialog(chatDialog);
-    messengerWindow->setChatDialog(chatDialog);
+    messengerWindow->setChatDialog(peersDialog);
 
     /* Create the toolbar */
     ui.toolBar->addActions(grp->actions());
@@ -691,8 +690,15 @@ void MainWindow::showsmplayer()
 
 void MainWindow::playFiles(QStringList files)
 {
+	std::cerr << "MainWindow::playFiles()" << std::endl;
+
 	showsmplayer();
+
+	std::cerr << "MainWindow::playFiles() showsmplayer() done" << std::endl;
+
 	mSMPlayer->gui()->openFiles(files);
+
+	std::cerr << "MainWindow::playFiles() done" << std::endl;
 }
 
 

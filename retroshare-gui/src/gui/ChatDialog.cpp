@@ -145,7 +145,7 @@ void ChatDialog::insertChat()
 	for(it = newchat.begin(); it != newchat.end(); it++)
 	{
 		std::string msg(it->msg.begin(), it->msg.end());
-		std::cerr << "ChatDialog::insertChat(): " << msg << std::endl;
+		//std::cerr << "ChatDialog::insertChat(): " << msg << std::endl;
 
 		/* are they private? */
 		if (it->chatflags & RS_CHAT_PRIVATE)
@@ -219,7 +219,7 @@ void ChatDialog::sendMsg()
 	ci.chatflags = RS_CHAT_PUBLIC;
 
 	std::string msg(ci.msg.begin(), ci.msg.end());
-	std::cerr << "ChatDialog::sendMsg(): " << msg << std::endl;
+	//std::cerr << "ChatDialog::sendMsg(): " << msg << std::endl;
 
 	rsMsgs -> ChatSend(ci);
 	ui.lineEdit->clear();
@@ -301,7 +301,7 @@ void  ChatDialog::insertSendList()
 
 void ChatDialog::toggleSendItem( QTreeWidgetItem *item, int col )
 {
-	std::cerr << "ToggleSendItem()" << std::endl;
+	//std::cerr << "ToggleSendItem()" << std::endl;
 
 	/* extract id */
 	std::string id = (item -> text(4)).toStdString();

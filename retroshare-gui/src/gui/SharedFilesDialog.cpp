@@ -218,6 +218,9 @@ void SharedFilesDialog::playselectedfiles()
   }
 
   playFiles(fullpaths);
+
+  std::cerr << "SharedFilesDialog::playselectedfiles() Completed";
+  std::cerr << std::endl;
 }
 
 
