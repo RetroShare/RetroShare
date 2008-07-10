@@ -28,7 +28,9 @@
 #include <sstream>
 #include <iomanip>
 
-#define SERV_DEBUG 1
+/*****
+ * #define SERV_DEBUG 1
+ ****/
 
 void    p3Service::addSerialType(RsSerialType *st)
 {

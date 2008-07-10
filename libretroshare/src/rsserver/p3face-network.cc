@@ -35,7 +35,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "pqi/pqidebug.h"
+#include "util/rsdebug.h"
 
 #include <sys/time.h>
 #include <time.h>

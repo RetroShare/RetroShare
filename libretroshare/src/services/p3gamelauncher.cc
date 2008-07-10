@@ -25,7 +25,7 @@
 
 #include "services/p3gamelauncher.h"
 #include "services/p3gameservice.h"
-#include "pqi/pqidebug.h"
+#include "util/rsdebug.h"
 #include "pqi/p3connmgr.h"
 #include <sstream>
 #include <iomanip>

@@ -28,7 +28,7 @@
 #include "pqi/pqipersongrp.h"
 
 const int pqipersonzone = 82371;
-#include "pqi/pqidebug.h"
+#include "util/rsdebug.h"
 #include <sstream>
 
 /****

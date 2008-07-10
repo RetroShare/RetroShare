@@ -7,7 +7,7 @@ RS_TOP_DIR = ..
 include $(RS_TOP_DIR)/scripts/config.mk
 ###############################################################
 
-BASE_OBJ = pqidebug.o pqisecurity.o pqinetwork.o 
+BASE_OBJ = pqisecurity.o pqinetwork.o 
 #pqi_base.o 
 
 LOOP_OBJ = pqiloopback.o 

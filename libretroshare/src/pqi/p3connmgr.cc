@@ -25,10 +25,15 @@
 
 #include "pqi/p3connmgr.h"
 #include "tcponudp/tou.h"
+
 #include "util/rsprint.h"
+#include "util/rsdebug.h"
+const int p3connectzone = 3431;
 
 #include "serialiser/rsconfigitems.h"
 #include "pqi/pqinotify.h"
+
+#include <sstream>
 
 /* Network setup States */
 
@@ -56,7 +61,6 @@ const uint32_t MAX_UPNP_INIT = 		10; /* seconds UPnP timeout */
 /****
  * #define P3CONNMGR_NO_AUTO_CONNECTION 1
  ***/
-
 
 const uint32_t P3CONNMGR_TCP_DEFAULT_DELAY = 2; /* 2 Seconds? is it be enough! */
 const uint32_t P3CONNMGR_UDP_DHT_DELAY     = DHT_NOTIFY_PERIOD + 60; /* + 1 minute for DHT POST */
@@ -623,6 +627,13 @@ void p3ConnectMgr::netUdpCheck()
 			}
 			else // if (extAddrStable)
 			{
+				/* Check if extAddr == intAddr (Not Firewalled) */
+				if ((0 == inaddr_cmp(iaddr, extAddr)) &&
+					isExternalNet(&(extAddr.sin_addr)))
+				{
+					mode |= RS_NET_CONN_TCP_EXTERNAL;
+				}
+
 				mode |= RS_NET_CONN_UDP_DHT_SYNC;
 			}
 
@@ -1442,6 +1453,20 @@ void    p3ConnectMgr::peerStatus(std::string id,
 	std::cerr << " source: " << source;
 	std::cerr << std::endl;
 #endif
+	{
+		/* Log */
+		std::ostringstream out;
+		out << "p3ConnectMgr::peerStatus()";
+		out << " id: " << id;
+		out << " laddr: " << inet_ntoa(laddr.sin_addr);
+		out << " lport: " << ntohs(laddr.sin_port);
+		out << " raddr: " << inet_ntoa(raddr.sin_addr);
+		out << " rport: " << ntohs(raddr.sin_port);
+		out << " type: " << type;
+		out << " flags: " << flags;
+		out << " source: " << source;
+		rslog(RSL_WARNING, p3connectzone, out.str());
+	}
 
 	/* look up the id */
 	it = mFriendList.find(id);
@@ -1605,6 +1630,12 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		std::cerr << std::endl;
 #endif
 
+		{
+			/* Log */
+			std::ostringstream out;
+			out << "p3ConnectMgr::peerStatus() NO CONNECT (not friend)";
+			rslog(RSL_WARNING, p3connectzone, out.str());
+		}
 		return;
 	}
 
@@ -1616,6 +1647,12 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		std::cerr << " id: " << id;
 		std::cerr << std::endl;
 #endif
+		{
+			/* Log */
+			std::ostringstream out;
+			out << "p3ConnectMgr::peerStatus() NO CONNECT (already connected!)";
+			rslog(RSL_WARNING, p3connectzone, out.str());
+		}
 
 		return;
 	}
@@ -1680,6 +1717,20 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		std::cerr << " source: " << source;
 		std::cerr << std::endl;
 #endif
+		{
+			/* Log */
+			std::ostringstream out;
+			out << "p3ConnectMgr::peerStatus() PushBack Local TCP Address: ";
+			out << " id: " << id;
+			out << " laddr: " << inet_ntoa(pca.addr.sin_addr);
+			out << ":" << ntohs(pca.addr.sin_port);
+			out << " type: " << pca.type;
+			out << " delay: " << pca.delay;
+			out << " period: " << pca.period;
+			out << " ts: " << pca.ts;
+			out << " source: " << source;
+			rslog(RSL_WARNING, p3connectzone, out.str());
+		}
 	
 		it->second.connAddrs.push_back(pca);
 	}
@@ -1712,14 +1763,28 @@ void    p3ConnectMgr::peerStatus(std::string id,
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::peerStatus() ADDING TCP_REMOTE ADDR: ";
 		std::cerr << " id: " << id;
-		std::cerr << " laddr: " << inet_ntoa(pca.addr.sin_addr);
-		std::cerr << " lport: " << ntohs(pca.addr.sin_port);
+		std::cerr << " raddr: " << inet_ntoa(pca.addr.sin_addr);
+		std::cerr << " rport: " << ntohs(pca.addr.sin_port);
 		std::cerr << " delay: " << pca.delay;
 		std::cerr << " period: " << pca.period;
 		std::cerr << " type: " << pca.type;
 		std::cerr << " source: " << source;
 		std::cerr << std::endl;
 #endif
+		{
+			/* Log */
+			std::ostringstream out;
+			out << "p3ConnectMgr::peerStatus() PushBack Remote TCP Address: ";
+			out << " id: " << id;
+			out << " raddr: " << inet_ntoa(pca.addr.sin_addr);
+			out << ":" << ntohs(pca.addr.sin_port);
+			out << " type: " << pca.type;
+			out << " delay: " << pca.delay;
+			out << " period: " << pca.period;
+			out << " ts: " << pca.ts;
+			out << " source: " << source;
+			rslog(RSL_WARNING, p3connectzone, out.str());
+		}
 
 		it->second.connAddrs.push_back(pca);
 	}
@@ -1808,6 +1873,16 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in radd
 	std::cerr << " source: " << source;
 	std::cerr << std::endl;
 #endif
+	{
+		/* Log */
+		std::ostringstream out;
+		out << "p3ConnectMgr::peerConnectRequest()";
+		out << " id: " << id;
+		out << " raddr: " << inet_ntoa(raddr.sin_addr);
+		out << ":" << ntohs(raddr.sin_port);
+		out << " source: " << source;
+		rslog(RSL_WARNING, p3connectzone, out.str());
+	}
 
 	/******************** TCP PART *****************************/
 
@@ -1909,6 +1984,20 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in radd
 #endif
 
 		pca.addr = raddr;
+
+		{
+			/* Log */
+			std::ostringstream out;
+			out << "p3ConnectMgr::peerConnectRequest() PushBack UDP Address: ";
+			out << " id: " << id;
+			out << " raddr: " << inet_ntoa(pca.addr.sin_addr);
+			out << ":" << ntohs(pca.addr.sin_port);
+			out << " type: " << pca.type;
+			out << " delay: " << pca.delay;
+			out << " period: " << pca.period;
+			out << " ts: " << pca.ts;
+			rslog(RSL_WARNING, p3connectzone, out.str());
+		}
 
 		/* push to the back ... TCP ones should be tried first */
 		it->second.connAddrs.push_back(pca);
@@ -2270,7 +2359,21 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 			pca.ts = now;
 			pca.type = RS_NET_CONN_TCP_LOCAL;
 			pca.addr = it->second.localaddr;
-
+	
+			{
+				/* Log */
+				std::ostringstream out;
+				out << "p3ConnectMgr::retryConnectTCP() PushBack Local TCP Address: ";
+				out << " id: " << id;
+				out << " raddr: " << inet_ntoa(pca.addr.sin_addr);
+				out << ":" << ntohs(pca.addr.sin_port);
+				out << " type: " << pca.type;
+				out << " delay: " << pca.delay;
+				out << " period: " << pca.period;
+				out << " ts: " << pca.ts;
+				rslog(RSL_WARNING, p3connectzone, out.str());
+			}
+	
 			it->second.connAddrs.push_back(pca);
 		}
 		else
@@ -2327,6 +2430,20 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 			pca.ts = now;
 			pca.type = RS_NET_CONN_TCP_EXTERNAL;
 			pca.addr = it->second.serveraddr;
+
+			{
+				/* Log */
+				std::ostringstream out;
+				out << "p3ConnectMgr::retryConnectTCP() PushBack Ext TCP Address: ";
+				out << " id: " << id;
+				out << " raddr: " << inet_ntoa(pca.addr.sin_addr);
+				out << ":" << ntohs(pca.addr.sin_port);
+				out << " type: " << pca.type;
+				out << " delay: " << pca.delay;
+				out << " period: " << pca.period;
+				out << " ts: " << pca.ts;
+				rslog(RSL_WARNING, p3connectzone, out.str());
+			}
 
 			it->second.connAddrs.push_back(pca);
 		}
@@ -2425,6 +2542,13 @@ bool   p3ConnectMgr::retryConnectNotify(std::string id)
 		std::cerr << " id: " << id;
 		std::cerr << std::endl;
 #endif
+		{
+			/* Log */
+			std::ostringstream out;
+			out  << "p3ConnectMgr::retryConnectNotify() Notifying Peer";
+			out  << " id: " << id;
+			rslog(RSL_WARNING, p3connectzone, out.str());
+		}
 
 		/* attempt UDP connection */
 		mDhtMgr->notifyPeer(id);

@@ -89,7 +89,7 @@ void intNotifyChangeCert(RsCertId &id)
 #include <iostream>
 #include <sstream>
 
-#include "pqi/pqidebug.h"
+#include "util/rsdebug.h"
 const int fltksrvrzone = 25915;
 
 #include <sys/time.h>

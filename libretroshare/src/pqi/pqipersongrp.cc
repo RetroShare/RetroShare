@@ -25,7 +25,7 @@
 
 #include "pqi/pqipersongrp.h"
 #include "pqi/p3connmgr.h"
-#include "pqi/pqidebug.h"
+#include "util/rsdebug.h"
 
 #include <sstream>
 

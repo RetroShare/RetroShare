@@ -36,9 +36,9 @@
 #include <errno.h>
 #include <openssl/err.h>
 
-#include "pqi/pqidebug.h"
 #include <sstream>
 
+#include "util/rsdebug.h"
 #include "util/rsnet.h"
 
 const int pqissludpzone = 3144;
@@ -63,7 +63,7 @@ pqissludp::pqissludp(PQInterface *parent, p3AuthMgr *am, p3ConnectMgr *cm)
 
 pqissludp::~pqissludp()
 { 
-        pqioutput(PQL_ALERT, pqissludpzone,  
+        rslog(RSL_ALERT, pqissludpzone,  
             "pqissludp::~pqissludp -> destroying pqissludp");
 
 	/* must call reset from here, so that the
@@ -102,13 +102,13 @@ int	pqissludp::attach()
 	sockfd = tou_socket(0,0,0);
 	if (0 > sockfd)
 	{
-  		pqioutput(PQL_WARNING, pqissludpzone, 
+  		rslog(RSL_WARNING, pqissludpzone, 
 		  "pqissludp::attach() failed to create a socket");
 		return -1;
 	}
 
 	// setup remote address
-  	pqioutput(PQL_WARNING, pqissludpzone, 
+  	rslog(RSL_WARNING, pqissludpzone, 
 		  "pqissludp::attach() Opened Local Udp Socket");
 	
 	return 1;
@@ -123,7 +123,7 @@ int 	pqissludp::Initiate_Connection()
 	attach(); /* open socket */
 	remote_addr.sin_family = AF_INET;
 
-  	pqioutput(PQL_DEBUG_BASIC, pqissludpzone, 
+  	rslog(RSL_DEBUG_BASIC, pqissludpzone, 
 	  "pqissludp::Initiate_Connection() Attempting Outgoing Connection....");
 
 	/* decide if we're active or passive */
@@ -138,29 +138,37 @@ int 	pqissludp::Initiate_Connection()
 
 	if (waiting != WAITING_DELAY)
 	{
-  		pqioutput(PQL_WARNING, pqissludpzone, 
+  		rslog(RSL_WARNING, pqissludpzone, 
 		 "pqissludp::Initiate_Connection() Already Attempt in Progress!");
 		return -1;
 	}
 
-  	pqioutput(PQL_DEBUG_BASIC, pqissludpzone, 
+	if (sockfd < 0)
+	{
+  		rslog(RSL_ALERT, pqissludpzone, 
+		 "pqissludp::Initiate_Connection() Socket Creation Failed!");
+		waiting = WAITING_FAIL_INTERFACE;
+		return -1;
+	}
+
+  	rslog(RSL_DEBUG_BASIC, pqissludpzone, 
 	  "pqissludp::Initiate_Connection() Opening Socket");
 
 	{
 		std::ostringstream out;
 		out << "pqissludp::Initiate_Connection() ";
-		out << "Connecting To: " << inet_ntoa(remote_addr.sin_addr) << ":";
-		out << ntohs(remote_addr.sin_port) << std::endl;
+		out << "Connecting To: " << PeerId();
+		out << " via: " << inet_ntoa(remote_addr.sin_addr) << ":";
+		out << ntohs(remote_addr.sin_port) << " ";
 		if (sslmode)
 		{
-			out << "Using ACTIVE Connect Mode (SSL_Connect)";
+			out << "ACTIVE Connect (SSL_Connect)";
 		}
 		else
 		{
-			out << "Using PASSIVE Connect Mode (SSL_Accept)";
+			out << "PASSIVE Connect (SSL_Accept)";
 		}
-		out << std::endl;
-  		pqioutput(PQL_WARNING, pqissludpzone, out.str());
+  		rslog(RSL_WARNING, pqissludpzone, out.str());
 	}
 
 	if (remote_addr.sin_addr.s_addr == 0)
@@ -170,25 +178,16 @@ int 	pqissludp::Initiate_Connection()
 		out << "Invalid (0.0.0.0) Remote Address,";
 		out << " Aborting Connect.";
 		out << std::endl;
-  		pqioutput(PQL_WARNING, pqissludpzone, out.str());
+  		rslog(RSL_WARNING, pqissludpzone, out.str());
 		waiting = WAITING_FAIL_INTERFACE;
 
 		reset();
 		return -1;
 	}
 
-	{ 
-		std::ostringstream out;
-		out << "Connecting to ";
-		out << PeerId() << " via ";
-		out << inet_ntoa(remote_addr.sin_addr);
-		out << ":" << ntohs(remote_addr.sin_port);
-  		pqioutput(PQL_DEBUG_BASIC, pqissludpzone, out.str());
-	}
-
 	mTimeoutTS = time(NULL) + mConnectTimeout;
-	std::cerr << "Setting Connect Timeout " << mConnectTimeout << " Seconds into Future " << std::endl;
-	std::cerr << " Connect Period is:" << mConnectPeriod <<  std::endl;
+	//std::cerr << "Setting Connect Timeout " << mConnectTimeout << " Seconds into Future " << std::endl;
+	//std::cerr << " Connect Period is:" << mConnectPeriod <<  std::endl;
 
 	/* <===================== UDP Difference *******************/
 	if (0 != (err = tou_connect(sockfd, (struct sockaddr *) &remote_addr, 
@@ -196,9 +195,6 @@ int 	pqissludp::Initiate_Connection()
 	/* <===================== UDP Difference *******************/
 	{
 		int tou_err = tou_errno(sockfd);
-		std::cerr << "pqissludp::Initiate_Connection() connect returns:";
-		std::cerr << err << " -> errno: " << tou_err << " error: ";
-		std::cerr << socket_errorType(tou_err) << std::endl;
 		
 		std::ostringstream out;
 		out << "pqissludp::Initiate_Connection()";
@@ -209,13 +205,13 @@ int 	pqissludp::Initiate_Connection()
 			waiting = WAITING_SOCK_CONNECT;
 
 			out << " EINPROGRESS Waiting for Socket Connection";
-  		        pqioutput(PQL_WARNING, pqissludpzone, out.str());
+  		        rslog(RSL_WARNING, pqissludpzone, out.str());
   
 			return 0;
 		}
 		else if ((tou_err == ENETUNREACH) || (tou_err == ETIMEDOUT))
 		{
-			out << "ENETUNREACHABLE: cert" << PeerId();
+			out << "ENETUNREACHABLE: cert: " << PeerId();
 			out << std::endl;
 
 			// Then send unreachable message.
@@ -226,20 +222,21 @@ int 	pqissludp::Initiate_Connection()
 		out << "Error: Connection Failed: " << tou_err;
 		out << " - " << socket_errorType(tou_err) << std::endl;
 
+  		rslog(RSL_WARNING, pqissludpzone, out.str());
+
 		reset();
 
-  		pqioutput(PQL_WARNING, pqissludpzone, out.str());
 		return -1;
 	}
 	else
 	{
-  		pqioutput(PQL_WARNING, pqissludpzone,
+  		rslog(RSL_DEBUG_BASIC, pqissludpzone,
 		 "pqissludp::Init_Connection() connect returned 0");
 	}
 
 	waiting = WAITING_SOCK_CONNECT;
 
-	pqioutput(PQL_DEBUG_BASIC, pqissludpzone, 
+	rslog(RSL_DEBUG_BASIC, pqissludpzone, 
 	  "pqissludp::Initiate_Connection() Waiting for Socket Connect");
 
 	return 1;
@@ -248,20 +245,21 @@ int 	pqissludp::Initiate_Connection()
 /********* VERY DIFFERENT **********/
 int 	pqissludp::Basic_Connection_Complete()
 {
-	pqioutput(PQL_DEBUG_BASIC, pqissludpzone, 
+	rslog(RSL_DEBUG_BASIC, pqissludpzone, 
 	  "pqissludp::Basic_Connection_Complete()...");
 
 
 	if (time(NULL) > mTimeoutTS)
 	{
-		pqioutput(PQL_DEBUG_BASIC, pqissludpzone, 
-	  		"pqissludp::Basic_Connection_Complete() Connection Timed Out!");
+		std::ostringstream out;
+	  	out << "pqissludp::Basic_Connection_Complete() Connection Timed Out. ";
+		out << "Peer: " << PeerId() << " Period: ";
+		out << mConnectTimeout;
+
+		rslog(RSL_WARNING, pqissludpzone, out.str());
+
 		/* as sockfd is valid, this should close it all up */
 
-	  	std::cerr << "pqissludp::Basic_Connection_Complete() Connection Timed Out!";
-		std::cerr << std::endl;
-	  	std::cerr << "pqissludp::Basic_Connection_Complete() Timeout Period: " << mConnectTimeout;
-		std::cerr << std::endl;
 		reset();
 		return -1;
 	}
@@ -269,14 +267,12 @@ int 	pqissludp::Basic_Connection_Complete()
 
 	if (waiting != WAITING_SOCK_CONNECT)
 	{
-		pqioutput(PQL_DEBUG_BASIC, pqissludpzone, 
+		rslog(RSL_DEBUG_BASIC, pqissludpzone, 
 	  		"pqissludp::Basic_Connection_Complete() Wrong Mode");
 		return -1;
 	}
 
 	
-
-
 	/* new approach is to check for an error */
 	/* check for an error */
 	int err;
@@ -286,17 +282,25 @@ int 	pqissludp::Basic_Connection_Complete()
 		{
 
 			std::ostringstream out;
-	  	  	out << "pqissludp::Basic_Connection_Complete()";
-			out << "EINPROGRESS: cert" << PeerId();
-  		        pqioutput(PQL_WARNING, pqissludpzone, out.str());
+	  	  	out << "pqissludp::Basic_Connection_Complete() ";
+			out << "EINPROGRESS: cert: " << PeerId();
+  		        rslog(RSL_DEBUG_BASIC, pqissludpzone, out.str());
 
 		}
 		else if ((err == ENETUNREACH) || (err == ETIMEDOUT))
 		{
 			std::ostringstream out;
-	  	  	out << "pqissludp::Basic_Connection_Complete()";
-			out << "ENETUNREACH/ETIMEDOUT: cert";
-			out << PeerId() << std::endl;
+	  	  	out << "pqissludp::Basic_Connection_Complete() ";
+			out << "ENETUNREACH/ETIMEDOUT: cert: ";
+			out << PeerId();
+	  		rslog(RSL_WARNING, pqissludpzone, out.str());
+
+			/* is the second one needed? */
+			std::ostringstream out2;
+		  	out2 << "pqissludp::Basic_Connection_Complete() ";
+			out2 << "Error: Connection Failed: " << err;
+			out2 << " - " << socket_errorType(err);
+	  		rslog(RSL_DEBUG_BASIC, pqissludpzone, out2.str());
 
 			net_unreachable |= net_attempt;
 
@@ -305,10 +309,6 @@ int 	pqissludp::Basic_Connection_Complete()
 			// Then send unreachable message.
 			waiting = WAITING_FAIL_INTERFACE;
 
-		  	out << "pqissludp::Basic_Connection_Complete()";
-			out << "Error: Connection Failed: " << err;
-			out << " - " << socket_errorType(err);
-	  		pqioutput(PQL_WARNING, pqissludpzone, out.str());
 			return -1;
 		}
 	}
@@ -317,14 +317,18 @@ int 	pqissludp::Basic_Connection_Complete()
 	if (tou_connected(sockfd))
 	/* <===================== UDP Difference *******************/
 	{
-  		pqioutput(PQL_WARNING, pqissludpzone, 
-	  	  "pqissludp::Basic_Connection_Complete() Connection Complete!");
+		std::ostringstream out;
+	  	out << "pqissludp::Basic_Connection_Complete() ";
+		out << "Connection Complete: cert: ";
+		out << PeerId();
+	  	rslog(RSL_WARNING, pqissludpzone, out.str());
+
 		return 1;
 	}
 	else
 	{
 		// not ready return -1;
-  		pqioutput(PQL_WARNING, pqissludpzone, 
+  		rslog(RSL_DEBUG_BASIC, pqissludpzone, 
 	  	  "pqissludp::Basic_Connection_Complete() Not Yet Ready!");
 		return 0;
 	}
@@ -340,7 +344,7 @@ int 	pqissludp::Basic_Connection_Complete()
 // used everywhere
 int pqissludp::net_internal_close(int fd)
 {
-  	pqioutput(PQL_ALERT, pqissludpzone, 
+  	rslog(RSL_ALERT, pqissludpzone, 
 	  	  "pqissludp::net_internal_close() -> tou_close()");
 	return tou_close(fd);
 }
@@ -348,7 +352,7 @@ int pqissludp::net_internal_close(int fd)
 // install udp BIO. 
 int pqissludp::net_internal_SSL_set_fd(SSL *ssl, int fd)
 {
-  	pqioutput(PQL_DEBUG_BASIC, pqissludpzone, 
+  	rslog(RSL_DEBUG_BASIC, pqissludpzone, 
 	  	  "pqissludp::net_internal_SSL_set_fd()");
 
 	/* create the bio's */
@@ -362,7 +366,7 @@ int pqissludp::net_internal_SSL_set_fd(SSL *ssl, int fd)
 
 int pqissludp::net_internal_fcntl_nonblock(int fd)
 {
-  	pqioutput(PQL_DEBUG_BASIC, pqissludpzone, 
+  	rslog(RSL_DEBUG_BASIC, pqissludpzone, 
 	  	  "pqissludp::net_internal_fcntl_nonblock()");
 	return 0;
 }
@@ -383,7 +387,7 @@ int pqissludp::listen()
 	{
 		std::ostringstream out;
 		out << "pqissludp::listen() (NULLOP)";
-		pqioutput(PQL_ALERT, pqissludpzone, out.str());
+		rslog(RSL_DEBUG_BASIC, pqissludpzone, out.str());
 	}
 	return 1; //udpproxy->listen();
 }
@@ -393,7 +397,7 @@ int pqissludp::stoplistening()
 	{
 		std::ostringstream out;
 		out << "pqissludp::stoplistening() (NULLOP)";
-		pqioutput(PQL_ALERT, pqissludpzone, out.str());
+		rslog(RSL_DEBUG_BASIC, pqissludpzone, out.str());
 	}
 	return 1; //udpproxy->stoplistening();
 }
@@ -401,10 +405,13 @@ int pqissludp::stoplistening()
 
 bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 {
-	std::cerr << "pqissludp::connect_parameter() type: " << type << "value: " << value << std::endl;
+	//std::cerr << "pqissludp::connect_parameter() type: " << type << "value: " << value << std::endl;
 	if (type == NET_PARAM_CONNECT_PERIOD)
 	{
-		std::cerr << "pqissludp::connect_parameter() PERIOD: " << value << std::endl;
+		std::ostringstream out;
+		out << "pqissludp::connect_parameter() Peer: " << PeerId() << " PERIOD: " << value;
+		rslog(RSL_WARNING, pqissludpzone, out.str());
+
 		mConnectPeriod = value;
 		return true;
 	}
@@ -419,7 +426,7 @@ bool 	pqissludp::moretoread()
 		std::ostringstream out;
 		out << "pqissludp::moretoread()";
 		out << "  polling socket (" << sockfd << ")";
-		pqioutput(PQL_DEBUG_ALL, pqissludpzone, out.str());
+		rslog(RSL_DEBUG_ALL, pqissludpzone, out.str());
 	}
 
 	/* check for more to read first ... if nothing... check error
@@ -428,13 +435,13 @@ bool 	pqissludp::moretoread()
 	if (tou_maxread(sockfd))
 	/* <===================== UDP Difference *******************/
 	{
-		pqioutput(PQL_DEBUG_BASIC, pqissludpzone, 
+		rslog(RSL_DEBUG_BASIC, pqissludpzone, 
 			"pqissludp::moretoread() Data to Read!");
 		return 1;
 	}
 
 	/* else check the error */
-	pqioutput(PQL_DEBUG_ALL, pqissludpzone, 
+	rslog(RSL_DEBUG_ALL, pqissludpzone, 
 		"pqissludp::moretoread() No Data to Read!");
 
 	int err;
@@ -445,8 +452,8 @@ bool 	pqissludp::moretoread()
 
 			std::ostringstream out;
 	  	  	out << "pqissludp::moretoread() ";
-			out << "EAGAIN/EINPROGRESS: cert" << PeerId();
-  		        pqioutput(PQL_WARNING, pqissludpzone, out.str());
+			out << "EAGAIN/EINPROGRESS: cert " << PeerId();
+  		        rslog(RSL_DEBUG_BASIC, pqissludpzone, out.str());
 			return 0;
 
 		}
@@ -454,27 +461,27 @@ bool 	pqissludp::moretoread()
 		{
 			std::ostringstream out;
 	  	  	out << "pqissludp::moretoread() ";
-			out << "ENETUNREACH/ETIMEDOUT: cert";
+			out << "ENETUNREACH/ETIMEDOUT: cert ";
 			out << PeerId();
-  		        pqioutput(PQL_WARNING, pqissludpzone, out.str());
+  		        rslog(RSL_WARNING, pqissludpzone, out.str());
 
 		}
 		else if (err == EBADF)
 		{
 			std::ostringstream out;
 	  	  	out << "pqissludp::moretoread() ";
-			out << "EBADF: cert";
+			out << "EBADF: cert ";
 			out << PeerId();
-  		        pqioutput(PQL_WARNING, pqissludpzone, out.str());
+  		        rslog(RSL_WARNING, pqissludpzone, out.str());
 
 		}
 		else 
 		{
 			std::ostringstream out;
 	  	  	out << "pqissludp::moretoread() ";
-			out << " Unknown ERROR: " << err << ": cert";
+			out << " Unknown ERROR: " << err << ": cert ";
 			out << PeerId();
-  		        pqioutput(PQL_WARNING, pqissludpzone, out.str());
+  		        rslog(RSL_WARNING, pqissludpzone, out.str());
 
 		}
 
@@ -483,7 +490,7 @@ bool 	pqissludp::moretoread()
 	}
 
 	/* otherwise - not error - strange! */
-	pqioutput(PQL_DEBUG_BASIC, pqissludpzone, 
+	rslog(RSL_DEBUG_BASIC, pqissludpzone, 
 		"pqissludp::moretoread() No Data + No Error (really nothing)");
 
 	return 0;
@@ -493,7 +500,7 @@ bool 	pqissludp::moretoread()
 
 bool 	pqissludp::cansend()
 {
-	pqioutput(PQL_DEBUG_ALL, pqissludpzone, 
+	rslog(RSL_DEBUG_ALL, pqissludpzone, 
 		"pqissludp::cansend() polling socket!");
 
 	/* <===================== UDP Difference *******************/

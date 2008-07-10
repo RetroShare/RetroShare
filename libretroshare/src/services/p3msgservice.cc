@@ -26,12 +26,12 @@
 
 #include "pqi/pqibin.h"
 #include "pqi/pqiarchive.h"
-#include "pqi/pqidebug.h"
 #include "pqi/p3connmgr.h"
 
 #include "services/p3msgservice.h"
 #include "pqi/pqinotify.h"
 
+#include "util/rsdebug.h"
 #include "util/rsdir.h"
 
 #include <sstream>
@@ -209,7 +209,7 @@ int     p3MsgService::checkOutgoingMessages()
 		if (toSend)
 		{
 			/* send msg */
-			pqioutput(PQL_ALERT, msgservicezone, 
+			pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
 				"p3MsgService::checkOutGoingMessages() Sending out message");
 			/* remove the pending flag */
 			(mit->second)->msgFlags &= ~RS_MSG_FLAGS_PENDING;
@@ -219,7 +219,7 @@ int     p3MsgService::checkOutgoingMessages()
 		}
 		else
 		{
-			pqioutput(PQL_ALERT, msgservicezone, 
+			pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
 				"p3MsgService::checkOutGoingMessages() Delaying until available...");
 		}
 	}

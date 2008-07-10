@@ -1,7 +1,7 @@
 /*
  * "$Id: pqidebug.cc,v 1.6 2007-02-18 21:46:49 rmf24 Exp $"
  *
- * 3P/PQI network interface for RetroShare.
+ * 3P/RS network interface for RetroShare.
  *
  * Copyright 2004-2006 by Robert Fernie.
  *
@@ -26,28 +26,35 @@
 
 
 
-#include "pqi/pqidebug.h"
+#include "util/rsdebug.h"
+#include "util/rsthreads.h"
 
 #include <map>
 #include <stdio.h>
 
-const int PQI_DEBUG_STDERR 	= 1;  /* stuff goes to stderr */
-const int PQI_DEBUG_LOGFILE 	= 2;  /* stuff goes to logfile */
-const int PQI_DEBUG_LOGCRASH 	= 3;  /* minimal logfile stored after crashes */
-const int PQI_DEBUG_LOGC_MAX 	= 1000;  /* max length of carshfile log */
-const int PQI_DEBUG_LOGC_MIN_SAVE = 100;  /* max length of carshfile log */
+const int RS_DEBUG_STDERR 	= 1;  /* stuff goes to stderr */
+const int RS_DEBUG_LOGFILE 	= 2;  /* stuff goes to logfile */
+const int RS_DEBUG_LOGCRASH 	= 3;  /* minimal logfile stored after crashes */
+const int RS_DEBUG_LOGC_MAX 	= 100000;  /* max length of crashfile log */
+const int RS_DEBUG_LOGC_MIN_SAVE = 100;    /* min length of crashfile log */
 
 static std::map<int, int> zoneLevel;
-static int defaultLevel = PQL_WARNING;
+static int defaultLevel = RSL_WARNING;
 static FILE *ofd = stderr;
 
-static int debugMode = PQI_DEBUG_STDERR;
+static int debugMode = RS_DEBUG_STDERR;
 static int lineCount = 0;
 static std::string crashfile;
 static int debugTS = 0;
 
+static RsMutex logMtx;
+
+int locked_setDebugFile(const char *fname);
+int locked_getZoneLevel(int zone);
+
 int setDebugCrashMode(const char *cfile)
 {
+	RsStackMutex stack(logMtx); /******** LOCKED ****************/
 	crashfile = cfile;
 	/* if the file exists - then we crashed, save it */
 	FILE *tmpin = fopen(crashfile.c_str(), "r");
@@ -55,7 +62,7 @@ int setDebugCrashMode(const char *cfile)
 	{
 	  /* see how long it is */
 	  fseek(tmpin, 0, SEEK_END);
-	  if (ftell(tmpin) > PQI_DEBUG_LOGC_MIN_SAVE)
+	  if (ftell(tmpin) > RS_DEBUG_LOGC_MIN_SAVE)
 	  {
 		std::string crashfile_save = crashfile + "-save";
 		fprintf(stderr, "Detected Old Crash File: %s\n", crashfile.c_str());
@@ -95,10 +102,10 @@ int setDebugCrashMode(const char *cfile)
 	  }
 	}
 
-	if (0 < setDebugFile(crashfile.c_str()))
+	if (0 < locked_setDebugFile(crashfile.c_str()))
 	{
 		fprintf(stderr, "Switching To CrashLog Mode!\n");
-		debugMode = PQI_DEBUG_LOGCRASH;
+		debugMode = RS_DEBUG_LOGCRASH;
 		lineCount = 0;
 		debugTS = time(NULL);
 	}
@@ -109,8 +116,9 @@ int setDebugCrashMode(const char *cfile)
 /* this is called when we exit normally */
 int clearDebugCrashLog()
 {
+	RsStackMutex stack(logMtx); /******** LOCKED ****************/
 	/* check we are in crashLog Mode */
-	if (debugMode != PQI_DEBUG_LOGCRASH)
+	if (debugMode != RS_DEBUG_LOGCRASH)
 	{
 		fprintf(stderr, "Not in CrashLog Mode - nothing to clear!\n");
 		return 1;
@@ -120,7 +128,7 @@ int clearDebugCrashLog()
 	/* shutdown crashLog Mode */
 	fclose(ofd);
 	ofd = stderr;
-	debugMode = PQI_DEBUG_STDERR;
+	debugMode = RS_DEBUG_STDERR;
 
 	/* just open the file, and then close */
 	FILE *tmpin = fopen(crashfile.c_str(), "w");
@@ -133,16 +141,22 @@ int clearDebugCrashLog()
 
 int setDebugFile(const char *fname)
 {
+	RsStackMutex stack(logMtx); /******** LOCKED ****************/
+	return locked_setDebugFile(fname);
+}
+
+int locked_setDebugFile(const char *fname)
+{
 	if (NULL != (ofd = fopen(fname, "w")))
 	{
 		fprintf(stderr, "Logging redirected to %s\n", fname);
-		debugMode = PQI_DEBUG_LOGFILE;
+		debugMode = RS_DEBUG_LOGFILE;
 		return 1;
 	}
 	else
 	{
 		ofd = stderr;
-		debugMode = PQI_DEBUG_STDERR;
+		debugMode = RS_DEBUG_STDERR;
 		fprintf(stderr, "Logging redirect to %s FAILED\n", fname);
 		return -1;
 	}
@@ -151,17 +165,25 @@ int setDebugFile(const char *fname)
 
 int setOutputLevel(int lvl)
 {
+	RsStackMutex stack(logMtx); /******** LOCKED ****************/
 	return defaultLevel = lvl;
 }
 
 int setZoneLevel(int lvl, int zone)
 {
+	RsStackMutex stack(logMtx); /******** LOCKED ****************/
 	zoneLevel[zone] = lvl;
 	return zone;
 }
 
 
 int getZoneLevel(int zone)
+{
+	RsStackMutex stack(logMtx); /******** LOCKED ****************/
+	return locked_getZoneLevel(zone);
+}
+
+int locked_getZoneLevel(int zone)
 {
 	std::map<int, int>::iterator it = zoneLevel.find(zone);
 	if (it == zoneLevel.end())
@@ -171,27 +193,28 @@ int getZoneLevel(int zone)
 	return it -> second;
 }
 
-int pqioutput(unsigned int lvl, int zone, std::string msg)
+int rslog(unsigned int lvl, int zone, std::string msg)
 {
-	if ((signed) lvl <= getZoneLevel(zone))
+	RsStackMutex stack(logMtx); /******** LOCKED ****************/
+	if ((signed) lvl <= locked_getZoneLevel(zone))
 	{
 		time_t t = time(NULL);
 
-		if (debugMode == PQI_DEBUG_LOGCRASH)
+		if (debugMode == RS_DEBUG_LOGCRASH)
 		{
-			if (lineCount > PQI_DEBUG_LOGC_MAX)
+			if (lineCount > RS_DEBUG_LOGC_MAX)
 			{
 				/* restarting logging */
 				fprintf(stderr, "Rolling over the CrashLog\n");
 				fclose(ofd);
 				ofd = NULL;
-				if (0 < setDebugFile(crashfile.c_str()))
+				if (0 < locked_setDebugFile(crashfile.c_str()))
 				{
 					fprintf(ofd, "Debug CrashLog:");
 					fprintf(ofd, " retroShare uptime %ld secs\n", 
 						t-debugTS);
 
-					debugMode = PQI_DEBUG_LOGCRASH;
+					debugMode = RS_DEBUG_LOGCRASH;
 					lineCount = 0;
 				}
 				else

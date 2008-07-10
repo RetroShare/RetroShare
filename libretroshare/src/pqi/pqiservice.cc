@@ -24,15 +24,22 @@
  */
 
 #include "pqi/pqiservice.h"
-#include "pqi/pqidebug.h"
+#include "util/rsdebug.h"
 #include <sstream>
 
 const int pqiservicezone = 60478;
 
+/****
+ * #define SERVICE_DEBUG 1
+ ****/
+
 p3ServiceServer::p3ServiceServer()
 {
+
+#ifdef  SERVICE_DEBUG
 	pqioutput(PQL_DEBUG_BASIC, pqiservicezone, 
 		"p3ServiceServer::p3ServiceServer()");
+#endif
 
         rrit = services.begin();
 	return;
@@ -40,8 +47,10 @@ p3ServiceServer::p3ServiceServer()
 
 int	p3ServiceServer::addService(pqiService *ts)
 {
+#ifdef  SERVICE_DEBUG
 	pqioutput(PQL_DEBUG_BASIC, pqiservicezone, 
 		"p3ServiceServer::addService()");
+#endif
 
 	std::map<uint32_t, pqiService *>::iterator it;
 	it = services.find(ts -> getType());
@@ -58,6 +67,7 @@ int	p3ServiceServer::addService(pqiService *ts)
 
 int	p3ServiceServer::incoming(RsRawItem *item)
 {
+#ifdef  SERVICE_DEBUG
 	pqioutput(PQL_DEBUG_BASIC, pqiservicezone, 
 		"p3ServiceServer::incoming()");
 
@@ -73,13 +83,16 @@ int	p3ServiceServer::incoming(RsRawItem *item)
 		out << std::endl;
 		pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out.str());
 	}
+#endif
 
 	std::map<uint32_t, pqiService *>::iterator it;
 	it = services.find(item -> PacketId() & 0xffffff00);
 	if (it == services.end())
 	{
+#ifdef  SERVICE_DEBUG
 		pqioutput(PQL_DEBUG_BASIC, pqiservicezone, 
 		"p3ServiceServer::incoming() Service: No Service - deleting");
+#endif
 
 		// delete it.
 		delete item;
@@ -89,10 +102,12 @@ int	p3ServiceServer::incoming(RsRawItem *item)
 	}
 
 	{
+#ifdef  SERVICE_DEBUG
 		std::ostringstream out;
 		out << "p3ServiceServer::incoming() Sending to";
 		out << it -> second << std::endl;
 		pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out.str());
+#endif
 
 		return (it->second) -> receive(item);
 	}
@@ -105,8 +120,11 @@ int	p3ServiceServer::incoming(RsRawItem *item)
 
 RsRawItem *p3ServiceServer::outgoing()
 {
+
+#ifdef  SERVICE_DEBUG
 	pqioutput(PQL_DEBUG_ALL, pqiservicezone, 
 		"p3ServiceServer::outgoing()");
+#endif
 
 	if (rrit != services.end())
 	{
@@ -126,6 +144,8 @@ RsRawItem *p3ServiceServer::outgoing()
 	{
 		if (NULL != (item = (rrit -> second) -> send()))
 		{
+
+#ifdef  SERVICE_DEBUG
 			std::ostringstream out;
 			out << "p3ServiceServer::outgoing() Got Item From:";
 			out << rrit -> second << std::endl;
@@ -133,6 +153,8 @@ RsRawItem *p3ServiceServer::outgoing()
 			item -> print(out);
 			out << std::endl;
 			pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out.str());
+#endif
+
 			return item;
 		}
 	}
@@ -142,6 +164,8 @@ RsRawItem *p3ServiceServer::outgoing()
 	{
 		if (NULL != (item = (rrit -> second) -> send()))
 		{
+
+#ifdef  SERVICE_DEBUG
 			std::ostringstream out;
 			out << "p3ServiceServer::outgoing() Got Item From:";
 			out << rrit -> second << std::endl;
@@ -149,6 +173,8 @@ RsRawItem *p3ServiceServer::outgoing()
 			item -> print(out);
 			out << std::endl;
 			pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out.str());
+#endif
+
 			return item;
 		}
 	}
@@ -159,19 +185,25 @@ RsRawItem *p3ServiceServer::outgoing()
 
 int	p3ServiceServer::tick()
 {
+
+#ifdef  SERVICE_DEBUG
 	pqioutput(PQL_DEBUG_ALL, pqiservicezone, 
 		"p3ServiceServer::tick()");
+#endif
 
 	std::map<uint32_t, pqiService *>::iterator it;
 
 	// from the beginning to where we started.
 	for(it = services.begin();it != services.end(); it++)
 	{
+
+#ifdef  SERVICE_DEBUG
 		std::ostringstream out;
 		out << "p3ServiceServer::service id:" << it -> first;
 		out << " -> Service: " << it -> second;
 		out << std::endl;
 		pqioutput(PQL_DEBUG_ALL, pqiservicezone, out.str());
+#endif
 
 		// now we should actually tick the service.
 		(it -> second) -> tick();

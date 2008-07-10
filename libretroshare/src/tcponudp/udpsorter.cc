@@ -32,6 +32,9 @@
 #include <sstream>
 #include <iomanip>
 
+#include "util/rsdebug.h"
+const int rsudpsorterzone = 28477;
+
 static const int STUN_TTL = 64;
 
 /*
@@ -86,6 +89,10 @@ void UdpSorter::recvPkt(void *data, int size, struct sockaddr_in &from)
 		std::cerr << "UdpSorter::recvPkt() Peer Unknown!";
 		std::cerr << std::endl;
 #endif
+		std::ostringstream out;
+		out << "UdpSorter::recvPkt() ";
+		out << "from unknown: " << from;
+		rslog(RSL_WARNING,rsudpsorterzone,out.str());
 	}
 	else
 	{
@@ -233,6 +240,11 @@ bool UdpSorter::locked_handleStunPkt(void *data, int size, struct sockaddr_in &f
 		std::cerr << inet_ntoa(from.sin_addr) << ":" << ntohs(from.sin_port);
 		std::cerr << std::endl;
 #endif
+		{
+			std::ostringstream out;
+			out << "UdpSorter::handleStunPkt() got Request from: " << from;
+			rslog(RSL_WARNING,rsudpsorterzone,out.str());
+		}
 
 		/* generate a response */
 		int len;
@@ -266,6 +278,13 @@ bool UdpSorter::locked_handleStunPkt(void *data, int size, struct sockaddr_in &f
 			std::cerr << inet_ntoa(eAddr.sin_addr) << ":" << ntohs(eAddr.sin_port);
 			std::cerr << std::endl;
 #endif
+			{
+				std::ostringstream out;
+				out << "UdpSorter::handleStunPkt() got Response from: " << from;
+				out << " Ext Addr: " << eAddr;
+				rslog(RSL_WARNING,rsudpsorterzone,out.str());
+			}
+
 			locked_recvdStun(from, eAddr);
 
 			return true;

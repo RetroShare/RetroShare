@@ -31,7 +31,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "pqi/pqidebug.h"
+#include "util/rsdebug.h"
 const int p3facemsgzone = 11453;
 
 #include <sys/time.h>
@@ -57,7 +57,7 @@ int     RsServer::SetInChat(std::string id, bool in)             /* friend : cha
 	/* so we send this.... */
 	lockRsCore();     /* LOCK */
 
-	std::cerr << "Set InChat(" << id << ") to " << (in ? "True" : "False") << std::endl;
+	//std::cerr << "Set InChat(" << id << ") to " << (in ? "True" : "False") << std::endl;
 	std::list<std::string>::iterator it;
 	it = std::find(mInChatList.begin(), mInChatList.end(), id);
 	if (it == mInChatList.end())
@@ -98,7 +98,7 @@ int     RsServer::SetInMsg(std::string id, bool in)             /* friend : msgs
 	/* so we send this.... */
 	lockRsCore();     /* LOCK */
 
-	std::cerr << "Set InMsg(" << id << ") to " << (in ? "True" : "False") << std::endl;
+	//std::cerr << "Set InMsg(" << id << ") to " << (in ? "True" : "False") << std::endl;
 	std::list<std::string>::iterator it;
 	it = std::find(mInMsgList.begin(), mInMsgList.end(), id);
 	if (it == mInMsgList.end())
@@ -207,7 +207,7 @@ int     RsServer::SetInRecommend(std::string id, bool in)        /* file : recom
 	  {
 		/* set flag */
 		it -> inRecommend = in;
-		std::cerr << "Set InRecommend (" << id << ") to " << (in ? "True" : "False") << std::endl;
+		//std::cerr << "Set InRecommend (" << id << ") to " << (in ? "True" : "False") << std::endl;
 	  }
 	}
 	

@@ -1,9 +1,9 @@
 /*
- * "$Id: pqidebug.h,v 1.4 2007-02-18 21:46:49 rmf24 Exp $"
+ * libretroshare/src/util: rsdebug.h
  *
- * 3P/PQI network interface for RetroShare.
+ * Debug interface for RetroShare.
  *
- * Copyright 2004-2006 by Robert Fernie.
+ * Copyright 2004-2008 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,17 +24,22 @@
  */
 
 
+/* Moved from pqi/ to util/ so it can be used more generally.
+ */
 
-#ifndef PQI_LOG_DEBUG_H
-#define PQI_LOG_DEBUG_H
+#ifndef RS_LOG_DEBUG_H
+#define RS_LOG_DEBUG_H
 
-#define PQL_NONE     	-1
-#define PQL_ALERT     	 1
-#define PQL_ERROR	 3
-#define PQL_WARNING	 5
-#define PQL_DEBUG_ALERT  6
-#define PQL_DEBUG_BASIC	 8
-#define PQL_DEBUG_ALL	10
+
+
+#define RSL_NONE     	-1
+#define RSL_ALERT     	 1
+#define RSL_ERROR	 3
+#define RSL_WARNING	 5
+#define RSL_DEBUG_ALERT  6
+#define RSL_DEBUG_BASIC	 8
+#define RSL_DEBUG_ALL	10
+
 
 #include <string>
 
@@ -44,6 +49,25 @@ int clearDebugCrashLog();
 int setDebugFile(const char *fname);
 int setOutputLevel(int lvl);
 int setZoneLevel(int lvl, int zone);
-int pqioutput(unsigned int lvl, int zone, std::string msg);
+int rslog(unsigned int lvl, int zone, std::string msg);
+
+
+
+/*
+ * retaining old #DEFINES and functions for backward compatibility.
+ */
+
+//int pqioutput(unsigned int lvl, int zone, std::string msg);
+#define pqioutput rslog
+
+#define PQL_NONE   	RSL_NONE     	
+#define PQL_ALERT 	RSL_ALERT     
+#define PQL_ERROR 	RSL_ERROR
+#define PQL_WARNING 	RSL_WARNING
+#define PQL_DEBUG_ALERT RSL_DEBUG_ALERT 
+#define PQL_DEBUG_BASIC	RSL_DEBUG_BASIC
+#define PQL_DEBUG_ALL 	RSL_DEBUG_ALL
+
+
 
 #endif

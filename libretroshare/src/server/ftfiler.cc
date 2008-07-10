@@ -28,8 +28,8 @@
 
 #include "server/ftfiler.h"
 #include "util/rsdir.h"
+#include "util/rsdebug.h"
 
-#include "pqi/pqidebug.h"
 #include "pqi/pqinotify.h"
 
 #include <errno.h>

@@ -874,8 +874,10 @@ XPGP *AuthXPGP::loadXPGPFromFile(std::string fname, std::string hash)
 	// load certificates from file.
 	if (pcertfp == NULL)
 	{
+#ifdef AUTHXPGP_DEBUG
 		std::cerr << "sslroot::loadcertificate() Bad File: " << fname;
 		std::cerr << " Cannot be Hashed!" << std::endl;
+#endif
 		return NULL;
 	}
 
@@ -900,7 +902,9 @@ XPGP *AuthXPGP::loadXPGPFromFile(std::string fname, std::string hash)
 		char inall[maxsize];
 		if (0 == (rbytes = fread(inall, 1, maxsize, pcertfp)))
 		{
+#ifdef AUTHXPGP_DEBUG
 			std::cerr << "Error Reading Peer Record!" << std::endl;
+#endif
 			return NULL;
 		}
 		//std::cerr << "Read " << rbytes << std::endl;
@@ -928,8 +932,10 @@ XPGP *AuthXPGP::loadXPGPFromFile(std::string fname, std::string hash)
 		bool same = true;
 		if (signlen != hash.length())
 		{
+#ifdef AUTHXPGP_DEBUG
 				std::cerr << "Different Length Signatures... ";
 				std::cerr << "Cannot Load Certificate!" << std::endl;
+#endif
 				fclose(pcertfp);
 				return NULL;
 		}
@@ -939,18 +945,24 @@ XPGP *AuthXPGP::loadXPGPFromFile(std::string fname, std::string hash)
 			if (signature[i] != (unsigned char) hash[i])
 			{
 				same = false;
+#ifdef AUTHXPGP_DEBUG
 				std::cerr << "Invalid Signature... ";
 				std::cerr << "Cannot Load Certificate!" << std::endl;
+#endif
 				fclose(pcertfp);
 				return NULL;
 			}
 		}
+#ifdef AUTHXPGP_DEBUG
 		std::cerr << "Verified Signature for: " << fname;
 		std::cerr << std::endl;
+#endif
 	}
 	else
 	{
+#ifdef AUTHXPGP_DEBUG
 		std::cerr << "Not checking cert signature" << std::endl;
+#endif
 	}
 
 	fseek(pcertfp, 0, SEEK_SET); /* rewind */
@@ -960,7 +972,9 @@ XPGP *AuthXPGP::loadXPGPFromFile(std::string fname, std::string hash)
 	if (pc != NULL)
 	{
 		// read a certificate.
+#ifdef AUTHXPGP_DEBUG
 		std::cerr << "Loaded Certificate: " << pc -> name << std::endl;
+#endif
 	}
 	else // (pc == NULL)
 	{
@@ -984,12 +998,16 @@ bool  	AuthXPGP::saveXPGPToFile(XPGP *xpgp, std::string fname, std::string &hash
 	FILE *setfp = fopen(fname.c_str(), "wb");
 	if (setfp == NULL)
 	{
+#ifdef AUTHXPGP_DEBUG
 		std::cerr << "sslroot::savecertificate() Bad File: " << fname;
 		std::cerr << " Cannot be Written!" << std::endl;
+#endif
 		return false;
 	}
 
+#ifdef AUTHXPGP_DEBUG
 	std::cerr << "Writing out Cert...:" << xpgp->name << std::endl;
+#endif
 	PEM_write_XPGP(setfp, xpgp);
 
 	fclose(setfp);
@@ -998,8 +1016,10 @@ bool  	AuthXPGP::saveXPGPToFile(XPGP *xpgp, std::string fname, std::string &hash
 	setfp = fopen(fname.c_str(), "rb");
 	if (setfp == NULL)
 	{
+#ifdef AUTHXPGP_DEBUG
 		std::cerr << "sslroot::savecertificate() Bad File: " << fname;
 		std::cerr << " Opened for ReHash!" << std::endl;
+#endif
 		return false;
 	}
 
@@ -1011,10 +1031,14 @@ bool  	AuthXPGP::saveXPGPToFile(XPGP *xpgp, std::string fname, std::string &hash
 	char inall[maxsize];
 	if (0 == (rbytes = fread(inall, 1, maxsize, setfp)))
 	{
+#ifdef AUTHXPGP_DEBUG
 		std::cerr << "Error Writing Peer Record!" << std::endl;
+#endif
 		return -1;
 	}
+#ifdef AUTHXPGP_DEBUG
 	std::cerr << "Read " << rbytes << std::endl;
+#endif
 
 	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
 
@@ -1033,17 +1057,25 @@ bool  	AuthXPGP::saveXPGPToFile(XPGP *xpgp, std::string fname, std::string &hash
 		std::cerr << "EVP_SignFinal Failure!" << std::endl;
 	}
 
+#ifdef AUTHXPGP_DEBUG
 	std::cerr << "Saved Cert: " << xpgp->name;
 	std::cerr << std::endl;
+#endif
 
+#ifdef AUTHXPGP_DEBUG
 	std::cerr << "Cert + Setting Signature is(" << signlen << "): ";
+#endif
 	std::string signstr;
 	for(uint32_t i = 0; i < signlen; i++) 
 	{
+#ifdef AUTHXPGP_DEBUG
 		fprintf(stderr, "%02x", signature[i]);
+#endif
 		signstr += signature[i];
 	}
+#ifdef AUTHXPGP_DEBUG
 	std::cerr << std::endl;
+#endif
 
 	hash = signstr;
 	fclose(setfp);

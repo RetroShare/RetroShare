@@ -29,9 +29,10 @@
 
 #include "pqi/pqibin.h"
 #include "pqi/pqiarchive.h"
-#include "pqi/pqidebug.h"
 
+#include "util/rsdebug.h"
 #include "util/rsdir.h"
+
 #include <sstream>
 #include <iomanip>
 

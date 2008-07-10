@@ -35,8 +35,8 @@
 #include "pqi/pqisslpersongrp.h"
 #include "pqi/pqiloopback.h"
 #include "pqi/p3cfgmgr.h"
-#include "pqi/pqidebug.h"
 
+#include "util/rsdebug.h"
 #include "util/rsdir.h"
 
 #include "upnp/upnphandler.h"
@@ -591,7 +591,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 	mRanking = new p3Ranking(mConnMgr, RS_SERVICE_TYPE_RANK,     /* declaration of cache enable service rank */
 			mCacheStrapper, mCacheTransfer, 
-			localcachedir, remotecachedir, 3600 * 24 * 30);
+			localcachedir, remotecachedir, 3600 * 24 * 30 * 6); // 6 Months
 
         CachePair cp(mRanking, mRanking, CacheId(RS_SERVICE_TYPE_RANK, 0));
 	mCacheStrapper -> addCachePair(cp);				/* end of declaration */
@@ -609,7 +609,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 	mQblog = new p3Qblog(mConnMgr, RS_SERVICE_TYPE_QBLOG, 			/* ...then for Qblog */
 			mCacheStrapper, mCacheTransfer,	
-			localcachedir, remotecachedir, 3600 * 24 * 30);
+			localcachedir, remotecachedir, 3600 * 24 * 30 * 6); // 6 Months
 
 	CachePair cp3(mQblog, mQblog, CacheId(RS_SERVICE_TYPE_QBLOG, 0));
 	mCacheStrapper -> addCachePair(cp3);

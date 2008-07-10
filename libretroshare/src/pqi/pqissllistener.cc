@@ -34,7 +34,7 @@
 #include <errno.h>
 #include <openssl/err.h>
 
-#include "pqi/pqidebug.h"
+#include "util/rsdebug.h"
 #include <sstream>
 
 const int pqissllistenzone = 49787;

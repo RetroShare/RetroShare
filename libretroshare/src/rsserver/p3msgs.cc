@@ -29,14 +29,14 @@
 #include <iostream>
 #include <sstream>
 
-#include "pqi/pqidebug.h"
+#include "util/rsdir.h"
+#include "util/rsdebug.h"
 const int p3facemsgzone = 11453;
 
 #include <sys/time.h>
 #include <time.h>
 
 #include "rsiface/rstypes.h"
-#include "util/rsdir.h"
 #include "rsserver/p3msgs.h"
 
 #include "services/p3msgservice.h"
@@ -74,8 +74,8 @@ bool p3Msgs::MessageSend(MessageInfo &info)
 /****************************************/
 bool p3Msgs::MessageDelete(std::string mid)
 {
-	std::cerr << "p3Msgs::MessageDelete() ";
-	std::cerr << "mid: " << mid << std::endl;
+	//std::cerr << "p3Msgs::MessageDelete() ";
+	//std::cerr << "mid: " << mid << std::endl;
 
 	mMsgSrv -> removeMsgId(mid);
 
@@ -84,8 +84,8 @@ bool p3Msgs::MessageDelete(std::string mid)
 
 bool p3Msgs::MessageRead(std::string mid)
 {
-	std::cerr << "p3Msgs::MessageRead() ";
-	std::cerr << "mid: " << mid << std::endl;
+	//std::cerr << "p3Msgs::MessageRead() ";
+	//std::cerr << "mid: " << mid << std::endl;
 
 	mMsgSrv -> markMsgIdRead(mid);
 
@@ -150,14 +150,14 @@ void p3Msgs::initRsChatInfo(RsChatItem *c, ChatInfo &i)
 	i.msg  = c -> message;
         if (c -> chatFlags & RS_CHAT_FLAG_PRIVATE)
 	{
-		std::cerr << "RsServer::initRsChatInfo() Chat Private!!!";
 		i.chatflags = RS_CHAT_PRIVATE;
+		//std::cerr << "RsServer::initRsChatInfo() Chat Private!!!";
 	}
 	else
 	{
 		i.chatflags = RS_CHAT_PUBLIC;
-		std::cerr << "RsServer::initRsChatInfo() Chat Public!!!";
+		//std::cerr << "RsServer::initRsChatInfo() Chat Public!!!";
 	}
-	std::cerr << std::endl;
+	//std::cerr << std::endl;
 }
 

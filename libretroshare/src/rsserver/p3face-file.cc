@@ -34,7 +34,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "pqi/pqidebug.h"
+#include "util/rsdebug.h"
 const int p3facefilezone = 11452;
 
 #include <sys/time.h>

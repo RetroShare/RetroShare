@@ -38,7 +38,7 @@ const uint32_t AUTODISC_LDI_SUBTYPE_RPLY = 0x02;
 
 #include <sstream>
 
-#include "pqi/pqidebug.h"
+#include "util/rsdebug.h"
 #include "util/rsprint.h"
 
 const int pqidisczone = 2482;

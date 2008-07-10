@@ -7,7 +7,7 @@ RS_TOP_DIR = ..
 include $(RS_TOP_DIR)/scripts/config.mk
 ###############################################################
 
-RSOBJ = rsthreads.o  rsdir.o rsprint.o rsnet.o
+RSOBJ = rsthreads.o  rsdir.o rsprint.o rsnet.o rsdebug.o
 
 TESTOBJ  = dirtest.o dir2test.o 
 

@@ -32,7 +32,7 @@
 #include <errno.h>
 #include <iostream>
 
-#include "pqi/pqidebug.h"
+#include "util/rsdebug.h"
 #include <sstream>
 #include <iomanip>
 static const int pqinetzone = 96184;

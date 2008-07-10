@@ -23,11 +23,13 @@
  *
  */
 
+#include <sstream>
+
+#include "util/rsdebug.h"
+
 #include "pqi/pqisslpersongrp.h"
-#include "pqi/pqidebug.h"
 #include "pqi/p3authmgr.h"
 
-#include <sstream>
 
 const int pqipersongrpzone = 354;
 
