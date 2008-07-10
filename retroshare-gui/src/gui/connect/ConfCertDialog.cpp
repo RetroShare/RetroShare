@@ -86,6 +86,7 @@ void ConfCertDialog::loadDialog()
 	ui.name->setText(QString::fromStdString(detail.name));
 	ui.orgloc->setText(QString::fromStdString(detail.org));
 	ui.country->setText(QString::fromStdString(detail.location));
+    ui.peerid->setText(QString::fromStdString(detail.id));
 	
 	/* set local address */
 	ui.localAddress->setText(QString::fromStdString(detail.localAddr));

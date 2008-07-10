@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>510</width>
-    <height>445</height>
+    <width>516</width>
+    <height>472</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -570,6 +570,20 @@ p, li { white-space: pre-wrap; }
           </item>
           <item row="2" column="1" >
            <widget class="QLineEdit" name="country" >
+            <property name="readOnly" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" >
+           <widget class="QLabel" name="label_6" >
+            <property name="text" >
+             <string>Peer ID</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1" >
+           <widget class="QLineEdit" name="peerid" >
             <property name="readOnly" >
              <bool>true</bool>
             </property>
