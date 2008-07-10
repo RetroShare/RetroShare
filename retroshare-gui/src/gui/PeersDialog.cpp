@@ -28,6 +28,7 @@
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsstatus.h"
+#include "rsiface/rsmsgs.h"
 
 #include "chat/PopupChatDialog.h"
 #include "msgs/ChanMsgDialog.h"
@@ -37,6 +38,13 @@
 #include <iostream>
 #include <sstream>
 
+#include <QTextCodec>
+#include <QTextEdit>
+#include <QTextCursor>
+#include <QTextList>
+#include <QTextStream>
+#include <QTextDocumentFragment>
+
 #include <QContextMenuEvent>
 #include <QMenu>
 #include <QCursor>
@@ -45,6 +53,7 @@
 #include <QPixmap>
 #include <QMessageBox>
 #include <QHeaderView>
+#include <QtGui/QKeyEvent>
 
 
 /* Images for context menu icons */
@@ -54,8 +63,8 @@
 #define IMAGE_CHAT               ":/images/chat.png"
 #define IMAGE_MSG                ":/images/message-mail.png"
 /* Images for Status icons */
-#define IMAGE_ONLINE             ":/images/donline.png"
-#define IMAGE_OFFLINE            ":/images/dhidden.png"
+#define IMAGE_ONLINE             ":/images/user/identity24.png"
+#define IMAGE_OFFLINE            ":/images/user/identityoffline24.png"
 
 /******
  * #define PEERS_DEBUG 1
@@ -79,21 +88,62 @@ PeersDialog::PeersDialog(QWidget *parent)
    	_header->setResizeMode (0, QHeaderView::Custom);
 	_header->setResizeMode (1, QHeaderView::Interactive);
 	_header->setResizeMode (2, QHeaderView::Interactive);
-	_header->setResizeMode (3, QHeaderView::Interactive);
+	/*_header->setResizeMode (3, QHeaderView::Interactive);
 	_header->setResizeMode (4, QHeaderView::Interactive);
 	_header->setResizeMode (5, QHeaderView::Interactive);
 	_header->setResizeMode (6, QHeaderView::Interactive);
-	_header->setResizeMode (7, QHeaderView::Interactive);
+	_header->setResizeMode (7, QHeaderView::Interactive);*/
 
     
 	_header->resizeSection ( 0, 25 );
 	_header->resizeSection ( 1, 100 );
 	_header->resizeSection ( 2, 100 );
-	_header->resizeSection ( 3, 120 );
+	/*_header->resizeSection ( 3, 120 );
 	_header->resizeSection ( 4, 100 );
 	_header->resizeSection ( 5, 230 );
 	_header->resizeSection ( 6, 120 );
-	_header->resizeSection ( 7, 220 );
+	_header->resizeSection ( 7, 220 );*/
+	
+	  
+  loadEmoticonsgroupchat();
+  
+  //setWindowIcon(QIcon(QString(":/images/rstray3.png")));
+
+  connect(ui.lineEdit, SIGNAL(textChanged ( ) ), this, SLOT(checkChat( ) ));
+  connect(ui.Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
+  connect(ui.emoticonBtn, SIGNAL(clicked()), this, SLOT(smileyWidgetgroupchat()));
+
+   
+  //connect( ui.msgSendList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgSendListCostumPopupMenu( QPoint ) ) );
+  connect( ui.msgText, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(displayInfoChatMenu(const QPoint&)));
+ 
+  connect(ui.textboldChatButton, SIGNAL(clicked()), this, SLOT(setFont()));  
+  connect(ui.textunderlineChatButton, SIGNAL(clicked()), this, SLOT(setFont()));  
+  connect(ui.textitalicChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
+  connect(ui.fontsButton, SIGNAL(clicked()), this, SLOT(getFont()));  
+  connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(setColor()));
+   
+  ui.fontsButton->setIcon(QIcon(QString(":/images/fonts.png")));
+  
+  _currentColor = Qt::black;
+  QPixmap pxm(24,24);
+  pxm.fill(_currentColor);
+  ui.colorChatButton->setIcon(pxm);
+  
+  mCurrentFont = QFont("Comic Sans MS", 12);
+  ui.lineEdit->setFont(mCurrentFont);
+  
+  setChatInfo(tr("Welcome to RetroShare's group chat."), QString::fromUtf8("blue"));
+  
+  QMenu * grpchatmenu = new QMenu();
+  grpchatmenu->addAction(ui.actionClearChat);
+  ui.menuButton->setMenu(grpchatmenu);
+  
+  _underline = false;
+
+  QTimer *timer = new QTimer(this);
+  timer->connect(timer, SIGNAL(timeout()), this, SLOT(insertChat()));
+  timer->start(500); /* half a second */
 
 
 
@@ -176,7 +226,7 @@ void  PeersDialog::insertPeers()
 
         /* remove old items ??? */
 	peerWidget->clear();
-	peerWidget->setColumnCount(8);
+	peerWidget->setColumnCount(3);
 	
 
         QList<QTreeWidgetItem *> items;
@@ -259,7 +309,7 @@ void  PeersDialog::insertPeers()
 			/* bright green */
 			for(i = 1; i < 8; i++)
 			{
-			  item -> setBackground(i,QBrush(Qt::green));
+			  //item -> setBackground(i,QBrush(Qt::green));
 			  item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
 			}
 		}
@@ -287,7 +337,7 @@ void  PeersDialog::insertPeers()
 			{
 				for(i = 1; i < 8; i++)
 				{
-				  item -> setBackground(i,QBrush(Qt::lightGray));
+				  //item -> setBackground(i,QBrush(Qt::lightGray));
 				  item -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
 				}
 			}
@@ -373,26 +423,26 @@ void PeersDialog::chatfriend()
     	return;
     }
 
-    if (detail.state & RS_PEER_STATE_CONNECTED)
-    {
+    /*if (detail.state & RS_PEER_STATE_CONNECTED)
+    {*/
     	/* must reference ChatDialog */
     	if (chatDialog)
     	{
     		chatDialog->getPrivateChat(id, name, true);
     	}
-    }
+    /*}
     else
-    {
+    {*/
     	/* info dialog */
-        QMessageBox::StandardButton sb = QMessageBox::question ( NULL, 
-			"Friend Not Online", 
-	"Your Friend is offline \nDo you want to send them a Message instead",
-			        (QMessageBox::Yes | QMessageBox::No));
-	if (sb == QMessageBox::Yes)
+     //  QMessageBox::StandardButton sb = QMessageBox::question ( NULL, 
+	//		"Friend Not Online", 
+	//"Your Friend is offline \nDo you want to send them a Message instead",
+	//		        (QMessageBox::Yes | QMessageBox::No));
+	/*if (sb == QMessageBox::Yes)
 	{
 		msgfriend();
 	}
-    }
+    }*/
     return;
 }
 
@@ -572,4 +622,349 @@ void PeersDialog::configurefriend()
 }
 
 
+void PeersDialog::insertChat()
+{
+	if (!rsMsgs->chatAvailable())
+	{
+		return;
+	}
+
+	std::list<ChatInfo> newchat;
+	if (!rsMsgs->getNewChat(newchat))
+	{
+		return;
+	}
+
+    QTextEdit *msgWidget = ui.msgText;
+	std::list<ChatInfo>::iterator it;
+
+
+	/* add in lines at the bottom */
+	for(it = newchat.begin(); it != newchat.end(); it++)
+	{
+		std::string msg(it->msg.begin(), it->msg.end());
+		std::cerr << "ChatDialog::insertChat(): " << msg << std::endl;
+
+		/* are they private? */
+		if (it->chatflags & RS_CHAT_PRIVATE)
+		{
+			PopupChatDialog *pcd = getPrivateChat(it->rsid, it->name, true);
+			pcd->addChatMsg(&(*it));
+			continue;
+		}
+
+		std::ostringstream out;
+		QString currenttxt = msgWidget->toHtml();
+		QString extraTxt;
+
+        QString timestamp = QDateTime::currentDateTime().toString("hh:mm:ss");
+        QString name = QString::fromStdString(it->name);
+        QString line = "<span style=\"color:#C00000\">" + timestamp + "</span>" +			
+            		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span>";
+            		
+        extraTxt += line;
+
+        extraTxt += QString::fromStdWString(it->msg);
+        
+        /* add it everytime */
+		currenttxt += extraTxt;
+		
+		QHashIterator<QString, QString> i(smileys);
+	    while(i.hasNext())
+	    {
+			i.next();
+			currenttxt.replace(i.key(), "<img src=\"" + i.value() + "\">");
+	    }
+
+		
+        msgWidget->setHtml(currenttxt);
+        
+
+		QScrollBar *qsb =  msgWidget->verticalScrollBar();
+		qsb -> setValue(qsb->maximum());
+	}
+}
+
+void PeersDialog::checkChat()
+{
+	/* if <return> at the end of the text -> we can send it! */
+        QTextEdit *chatWidget = ui.lineEdit;
+        std::string txt = chatWidget->toPlainText().toStdString();
+	if ('\n' == txt[txt.length()-1])
+	{
+		//std::cerr << "Found <return> found at end of :" << txt << ": should send!";
+		//std::cerr << std::endl;
+		if (txt.length()-1 == txt.find('\n')) /* only if on first line! */
+		{
+			/* should remove last char ... */
+			sendMsg();
+		}
+	}
+	else
+	{
+		//std::cerr << "No <return> found in :" << txt << ":";
+		//std::cerr << std::endl;
+	}
+}
+
+void PeersDialog::sendMsg()
+{
+    QTextEdit *lineWidget = ui.lineEdit;
+
+	ChatInfo ci;
+	//ci.msg = lineWidget->Text().toStdWString();
+	ci.msg = lineWidget->toHtml().toStdWString();
+	ci.chatflags = RS_CHAT_PUBLIC;
+
+	std::string msg(ci.msg.begin(), ci.msg.end());
+	std::cerr << "ChatDialog::sendMsg(): " << msg << std::endl;
+
+	rsMsgs -> ChatSend(ci);
+	ui.lineEdit->clear();
+	setFont();
+
+	/* redraw send list */
+	insertSendList();
+
+}
+
+void  PeersDialog::insertSendList()
+{
+	std::list<std::string> peers;
+	std::list<std::string>::iterator it;
+
+	if (!rsPeers)
+	{
+		/* not ready yet! */
+		return;
+	}
+
+	rsPeers->getOnlineList(peers);
+
+        /* get a link to the table */
+        //QTreeWidget *sendWidget = ui.msgSendList;
+	QList<QTreeWidgetItem *> items;
+
+	for(it = peers.begin(); it != peers.end(); it++)
+	{
+
+		RsPeerDetails details;
+		if (!rsPeers->getPeerDetails(*it, details))
+		{
+			continue; /* BAD */
+		}
+
+		/* make a widget per friend */
+           	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
+
+		/* add all the labels */
+		/* (0) Person */
+		item -> setText(0, QString::fromStdString(details.name));
+
+		item -> setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+		//item -> setFlags(Qt::ItemIsUserCheckable);
+
+		item -> setCheckState(0, Qt::Checked);
+
+		if (rsicontrol->IsInChat(*it))
+		{
+			item -> setCheckState(0, Qt::Checked);
+		}
+		else
+		{
+			item -> setCheckState(0, Qt::Unchecked);
+		}
+
+		/* disable for the moment */
+		item -> setFlags(Qt::ItemIsUserCheckable);
+		item -> setCheckState(0, Qt::Checked);
+
+		/* add to the list */
+		items.append(item);
+	}
+
+        /* remove old items */
+	//sendWidget->clear();
+	//sendWidget->setColumnCount(1);
+
+	/* add the items in! */
+	//sendWidget->insertTopLevelItems(0, items);
+
+	//sendWidget->update(); /* update display */
+}
+
+
+/* to toggle the state */
+
+
+void PeersDialog::toggleSendItem( QTreeWidgetItem *item, int col )
+{
+	std::cerr << "ToggleSendItem()" << std::endl;
+
+	/* extract id */
+	std::string id = (item -> text(4)).toStdString();
+
+	/* get state */
+	bool inChat = (Qt::Checked == item -> checkState(0)); /* alway column 0 */
+
+	/* call control fns */
+
+	rsicontrol -> SetInChat(id, inChat);
+	return;
+}
+
+PopupChatDialog *PeersDialog::getPrivateChat(std::string id, std::string name, bool show)
+{
+   /* see if it exists already */
+   PopupChatDialog *popupchatdialog = NULL;
+
+   std::map<std::string, PopupChatDialog *>::iterator it;
+   if (chatDialogs.end() != (it = chatDialogs.find(id)))
+   {
+   	/* exists already */
+   	popupchatdialog = it->second;
+   }
+   else 
+   {
+   	popupchatdialog = new PopupChatDialog(id, name);
+	chatDialogs[id] = popupchatdialog;
+   }
+
+   if (show)
+   {
+   	popupchatdialog->show();
+   }
+
+   return popupchatdialog;
+
+}
+
+void PeersDialog::clearOldChats()
+{
+	/* nothing yet */
+
+}
+
+void PeersDialog::setColor()
+{
+	
+    	bool ok;
+ 	QRgb color = QColorDialog::getRgba(ui.lineEdit->textColor().rgba(), &ok, this);
+ 	if (ok) {
+ 	        _currentColor = QColor(color);
+ 	        QPixmap pxm(24,24);
+	        pxm.fill(_currentColor);
+	        ui.colorChatButton->setIcon(pxm);
+ 	}
+	setFont();
+}
+
+void PeersDialog::getFont()
+{
+    bool ok;
+    mCurrentFont = QFontDialog::getFont(&ok, mCurrentFont, this);
+    setFont();
+}
+
+void PeersDialog::setFont()
+{
+  mCurrentFont.setBold(ui.textboldChatButton->isChecked());
+  mCurrentFont.setUnderline(ui.textunderlineChatButton->isChecked());
+  mCurrentFont.setItalic(ui.textitalicChatButton->isChecked());
+  ui.lineEdit->setFont(mCurrentFont);
+  ui.lineEdit->setTextColor(_currentColor);
+
+  ui.lineEdit->setFocus();
+  
+}
+
+void PeersDialog::underline() 
+{
+ 	        _underline = !_underline;
+ 	        ui.lineEdit->setFontUnderline(_underline);
+}
+ 
+
+// Update Chat Info information
+void PeersDialog::setChatInfo(QString info, QColor color) 
+{
+  static unsigned int nbLines = 0;
+  ++nbLines;
+  // Check log size, clear it if too big
+  if(nbLines > 200) {
+    ui.msgText->clear();
+    nbLines = 1;
+  }
+  ui.msgText->append(QString::fromUtf8("<font color='grey'>")+ QTime::currentTime().toString(QString::fromUtf8("hh:mm:ss")) + QString::fromUtf8("</font> - <font color='") + color.name() +QString::fromUtf8("'><i>") + info + QString::fromUtf8("</i></font>"));
+}
+
+void PeersDialog::on_actionClearChat_triggered() 
+{
+  ui.msgText->clear();
+}
+
+void PeersDialog::displayInfoChatMenu(const QPoint& pos) 
+{
+  // Log Menu
+  QMenu myChatMenu(this);
+  myChatMenu.addAction(ui.actionClearChat);
+  // XXX: Why mapToGlobal() is not enough?
+  myChatMenu.exec(mapToGlobal(pos)+QPoint(0,80));
+}
+
+void PeersDialog::loadEmoticonsgroupchat()
+{
+	QDir smdir(QApplication::applicationDirPath() + "/emoticons/kopete");
+	QFileInfoList sminfo = smdir.entryInfoList(QStringList() << "*.gif" << "*.png", QDir::Files, QDir::Name);
+	foreach(QFileInfo info, sminfo)
+	{
+		QString smcode = info.fileName().replace(".gif", "");
+		QString smstring;
+		for(int i = 0; i < 9; i+=3)
+		{
+			smstring += QString((char)smcode.mid(i,3).toInt());
+		}
+		//qDebug(smstring.toAscii());
+		smileys.insert(smstring, info.absoluteFilePath());
+	}
+}
+
+void PeersDialog::smileyWidgetgroupchat()
+{ 
+	qDebug("MainWindow::smileyWidget()");
+	QWidget *smWidget = new QWidget;
+	smWidget->setWindowTitle("Emoticons");
+	smWidget->setWindowIcon(QIcon(QString(":/images/rstray3.png")));
+	smWidget->setFixedSize(256,256);
+
+	
+	
+	int x = 0, y = 0;
+	
+	QHashIterator<QString, QString> i(smileys);
+	while(i.hasNext())
+	{
+		i.next();
+		QPushButton *smButton = new QPushButton("", smWidget);
+		smButton->setGeometry(x*24, y*24, 24,24);
+		smButton->setIconSize(QSize(24,24));
+		smButton->setIcon(QPixmap(i.value()));
+		smButton->setToolTip(i.key());
+		//smButton->setFixedSize(24,24);
+		++x;
+		if(x > 4)
+		{
+			x = 0;
+			y++;
+		}
+		connect(smButton, SIGNAL(clicked()), this, SLOT(addSmileys()));
+	}
+	
+	smWidget->show();
+}
+
+void PeersDialog::addSmileys()
+{
+	ui.lineEdit->setText(ui.lineEdit->toHtml() + qobject_cast<QPushButton*>(sender())->toolTip());
+}
 

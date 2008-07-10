@@ -24,12 +24,15 @@
 
 #include <QFileDialog>
 
-//#include <config/rsharesettings.h>
+#include "chat/PopupChatDialog.h"
 
 #include "mainpage.h"
 #include "ui_PeersDialog.h"
 
-
+class QFont;
+class QAction;
+class QTextEdit;
+class QTextCharFormat;
 class ChatDialog;
 
 class PeersDialog : public MainPage 
@@ -40,12 +43,28 @@ public:
   /** Default Constructor */
   PeersDialog(QWidget *parent = 0);
   /** Default Destructor */
+  
+  PopupChatDialog *getPrivateChat(std::string id, std::string name, bool show);
+  void clearOldChats();
+  
+  void loadEmoticonsgroupchat();
 
   void  insertPeers();
 
   void setChatDialog(ChatDialog *cd);
 
+public slots:
 
+	void toggleSendItem( QTreeWidgetItem *item, int col );
+
+  void insertChat();
+  void setChatInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));
+  
+  void smileyWidgetgroupchat();
+  void addSmileys();
+  
+    void on_actionClearChat_triggered();
+  void displayInfoChatMenu(const QPoint& pos);
 
 
 private slots:
@@ -68,6 +87,17 @@ private slots:
   void connectfriend();
   void setaddressfriend();
   void trustfriend();
+  
+  void setColor();      
+  void insertSendList();
+  void checkChat();
+  void sendMsg();
+  
+  //void privchat();
+  
+  void setFont();
+  void getFont();
+  void underline(); 
 
   
 private:
@@ -92,6 +122,15 @@ private:
   QAction* removefriendAct;
 
   QTreeWidget *peertreeWidget;
+  
+  QColor _currentColor;
+  bool _underline;
+
+  QHash<QString, QString> smileys;
+
+  std::map<std::string, PopupChatDialog *> chatDialogs;
+
+  QFont mCurrentFont; /* how the text will come out */
 
   /** Qt Designer generated object */
   Ui::PeersDialog ui;

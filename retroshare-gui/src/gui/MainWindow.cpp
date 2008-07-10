@@ -59,7 +59,7 @@
 
 /* Images for toolbar icons */
 #define IMAGE_NETWORK           ":/images/network32.png"
-#define IMAGE_PEERS         	":/images/peers_24x24.png"
+#define IMAGE_PEERS         	":/images/groupchat.png"
 #define IMAGE_SEARCH    	    ":/images/filefind.png"
 #define IMAGE_TRANSFERS      	":/images/ktorrent32.png"
 #define IMAGE_LINKS             ":/images/ktorrent.png"
@@ -169,8 +169,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(sharedfilesDialog = new SharedFilesDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_FILES), tr("Files"), grp));
                      
-    ui.stackPages->add(chatDialog = new ChatDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_CHAT), tr("Chat"), grp));
+    //ui.stackPages->add(chatDialog = new ChatDialog(ui.stackPages),
+    //                   createPageAction(QIcon(IMAGE_CHAT), tr("Chat"), grp));
 
     ui.stackPages->add(messagesDialog = new MessagesDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));

@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>436</width>
-    <height>261</height>
+    <width>825</width>
+    <height>516</height>
    </rect>
   </property>
   <property name="palette" >
@@ -493,57 +493,11 @@
    <enum>Qt::NoContextMenu</enum>
   </property>
   <layout class="QGridLayout" >
-   <property name="leftMargin" >
-    <number>6</number>
-   </property>
-   <property name="topMargin" >
-    <number>1</number>
-   </property>
-   <property name="rightMargin" >
-    <number>6</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>1</number>
-   </property>
-   <property name="horizontalSpacing" >
-    <number>1</number>
-   </property>
-   <property name="verticalSpacing" >
-    <number>1</number>
-   </property>
-   <item row="0" column="0" >
+   <item rowspan="3" row="0" column="0" >
     <layout class="QGridLayout" >
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <property name="horizontalSpacing" >
-      <number>0</number>
-     </property>
      <property name="verticalSpacing" >
       <number>0</number>
      </property>
-     <item row="0" column="1" >
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
      <item row="0" column="0" >
       <layout class="QGridLayout" >
        <property name="leftMargin" >
@@ -570,7 +524,7 @@
           <string/>
          </property>
          <property name="pixmap" >
-          <pixmap resource="images.qrc" >:/images/peers_16x16.png</pixmap>
+          <pixmap resource="images.qrc" >:/images/user/friends24.png</pixmap>
          </property>
         </widget>
        </item>
@@ -586,6 +540,19 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </item>
+     <item row="0" column="1" >
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>201</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
      <item row="1" column="0" colspan="2" >
       <widget class="QTreeWidget" name="peertreeWidget" >
        <property name="contextMenuPolicy" >
@@ -596,8 +563,8 @@ p, li { white-space: pre-wrap; }
        </property>
        <property name="iconSize" >
         <size>
-         <width>16</width>
-         <height>16</height>
+         <width>24</width>
+         <height>24</height>
         </size>
        </property>
        <property name="itemsExpandable" >
@@ -621,36 +588,404 @@ p, li { white-space: pre-wrap; }
          <string>Person</string>
         </property>
        </column>
-       <column>
-        <property name="text" >
-         <string>Auto Connect</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Trust Level</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Peer Address</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Last Contact</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Person Id</string>
-        </property>
-       </column>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="0" column="1" >
+    <layout class="QGridLayout" >
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>0</number>
+     </property>
+     <property name="verticalSpacing" >
+      <number>0</number>
+     </property>
+     <item row="0" column="0" >
+      <layout class="QGridLayout" >
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing" >
+        <number>6</number>
+       </property>
+       <item row="0" column="1" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>181</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="0" >
+        <layout class="QGridLayout" >
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
+         </property>
+         <property name="horizontalSpacing" >
+          <number>6</number>
+         </property>
+         <property name="verticalSpacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" >
+          <widget class="QLabel" name="label_3" >
+           <property name="text" >
+            <string/>
+           </property>
+           <property name="pixmap" >
+            <pixmap resource="images.qrc" >:/images/chat.png</pixmap>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QLabel" name="label_12" >
+           <property name="font" >
+            <font>
+             <pointsize>10</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text" >
+            <string>Live Group Chat:</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QTextBrowser" name="msgText" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="contextMenuPolicy" >
+        <enum>Qt::DefaultContextMenu</enum>
+       </property>
+       <property name="undoRedoEnabled" >
+        <bool>false</bool>
+       </property>
+       <property name="readOnly" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="1" >
+    <layout class="QGridLayout" >
+     <item row="0" column="0" >
+      <layout class="QGridLayout" >
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing" >
+        <number>6</number>
+       </property>
+       <item row="0" column="0" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>321</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="4" >
+        <widget class="QPushButton" name="textitalicChatButton" >
+         <property name="minimumSize" >
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="maximumSize" >
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="toolTip" >
+          <string>Underline</string>
+         </property>
+         <property name="text" >
+          <string/>
+         </property>
+         <property name="icon" >
+          <iconset resource="images.qrc" >:/images/edit-italic.png</iconset>
+         </property>
+         <property name="checkable" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3" >
+        <widget class="QPushButton" name="textunderlineChatButton" >
+         <property name="minimumSize" >
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="maximumSize" >
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="toolTip" >
+          <string>Italic</string>
+         </property>
+         <property name="text" >
+          <string/>
+         </property>
+         <property name="icon" >
+          <iconset resource="images.qrc" >:/images/edit-underline.png</iconset>
+         </property>
+         <property name="checkable" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2" >
+        <widget class="QPushButton" name="textboldChatButton" >
+         <property name="minimumSize" >
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="maximumSize" >
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="toolTip" >
+          <string>Bold</string>
+         </property>
+         <property name="text" >
+          <string/>
+         </property>
+         <property name="icon" >
+          <iconset resource="images.qrc" >:/images/edit-bold.png</iconset>
+         </property>
+         <property name="checkable" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="6" >
+        <widget class="QPushButton" name="colorChatButton" >
+         <property name="minimumSize" >
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="maximumSize" >
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="toolTip" >
+          <string>Text Color</string>
+         </property>
+         <property name="text" >
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5" >
+        <widget class="QPushButton" name="fontsButton" >
+         <property name="minimumSize" >
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="maximumSize" >
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="toolTip" >
+          <string>Font</string>
+         </property>
+         <property name="text" >
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="QPushButton" name="emoticonBtn" >
+         <property name="minimumSize" >
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="maximumSize" >
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="text" >
+          <string/>
+         </property>
+         <property name="icon" >
+          <iconset resource="images.qrc" >:/images/emoticons/kopete/kopete020.png</iconset>
+         </property>
+         <property name="iconSize" >
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="7" >
+        <widget class="QPushButton" name="menuButton" >
+         <property name="minimumSize" >
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="maximumSize" >
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="text" >
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QTextEdit" name="lineEdit" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Maximum" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>16777215</width>
+         <height>100</height>
+        </size>
+       </property>
+       <property name="sizeIncrement" >
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="baseSize" >
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="1" >
+    <layout class="QGridLayout" >
+     <item row="0" column="0" >
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>321</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QPushButton" name="Sendbtn" >
+       <property name="text" >
+        <string>Send</string>
+       </property>
       </widget>
      </item>
     </layout>
    </item>
   </layout>
+  <action name="actionClearChat" >
+   <property name="text" >
+    <string>Clear Chat History</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="images.qrc" />
