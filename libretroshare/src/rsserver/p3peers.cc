@@ -378,20 +378,20 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 	{
 		if (pcs.connecttype == RS_NET_CONN_TCP_ALL)
 		{
-			autostr << "TCP";
+			autostr << "Connected: TCP";
 		}
 		else if (pcs.connecttype == RS_NET_CONN_UDP_ALL)
 		{
-			autostr << "UDP";
+			autostr << "Connected: UDP";
 		}
 		else 
 		{
-			autostr << "Unknown Connect Method!";
+			autostr << "Connected: Unknown";
 		}
 	}
 	else
 	{
-		autostr << "Idle";
+		autostr << RsPeerStateString(pcs.state);
 	}
 
 	d.autoconnect = autostr.str();
