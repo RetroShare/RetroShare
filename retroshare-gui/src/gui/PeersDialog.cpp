@@ -65,6 +65,8 @@
 /* Images for Status icons */
 #define IMAGE_ONLINE             ":/images/user/identity24.png"
 #define IMAGE_OFFLINE            ":/images/user/identityoffline24.png"
+#define IMAGE_OFFLINE2           ":/images/user/identitylightgrey24.png"
+
 
 /******
  * #define PEERS_DEBUG 1
@@ -347,8 +349,8 @@ void  PeersDialog::insertPeers()
 			{
 				for(i = 1; i < 8; i++)
 				{
-				  item -> setBackground(i,QBrush(Qt::gray));
-				  item -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
+				  //item -> setBackground(i,QBrush(Qt::gray));
+				  item -> setIcon(0,(QIcon(IMAGE_OFFLINE2)));
 				}
 			}
 		}
