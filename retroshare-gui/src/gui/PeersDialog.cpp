@@ -106,6 +106,13 @@ PeersDialog::PeersDialog(QWidget *parent)
 	_header->resizeSection ( 6, 120 );
 	_header->resizeSection ( 7, 220 );*/
 	
+    // set header text aligment
+	QTreeWidgetItem * headerItem = ui.peertreeWidget->headerItem();
+	headerItem->setTextAlignment(0, Qt::AlignHCenter | Qt::AlignVCenter);
+	headerItem->setTextAlignment(1, Qt::AlignHCenter | Qt::AlignVCenter);
+	headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
+
+	
 	  
   loadEmoticonsgroupchat();
   
