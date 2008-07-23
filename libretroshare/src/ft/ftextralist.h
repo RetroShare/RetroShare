@@ -53,15 +53,45 @@
  *
  */
 
+#include <list>
+#include <map>
+#include <string>
+
+#include "util/rsthreads.h"
+#include "rsiface/rsfiles.h"
+#include "pqi/p3cfgmgr.h"
+
 class FileDetails
 {
 	public:
+	FileDetails()
+{
+	return;
+}
 
+	FileDetails(std::string path, uint32_t p, uint32_t f)
+{
+	info.path = path;
+	period = p;
+	flags = f;
+}
+	
+	FileDetails(FileInfo &i, uint32_t p, uint32_t f)
+{
+	info = i;
+	period = p;
+	flags = f;
+}
+
+	FileInfo info;
+
+#if 0   /*** WHAT IS NEEDED ***/
 	std::list<std::string> sources;
 	std::string path;
 	std::string fname;
 	std::string hash;
 	uint64_t size;
+#endif
 
 	uint32_t start;
 	uint32_t period;
@@ -72,7 +102,13 @@ const uint32_t FT_DETAILS_CLEANUP	= 0x0100; 	/* remove when it expires */
 const uint32_t FT_DETAILS_LOCAL		= 0x0001;
 const uint32_t FT_DETAILS_REMOTE	= 0x0002;
 
-class ftExtraList: public p3Config
+#warning CONFIG_FT_EXTRA_LIST Not defined in p3cfgmgr.h
+
+const uint32_t CONFIG_FT_EXTRA_LIST 	= 1;
+const uint32_t CLEANUP_PERIOD		= 600; /* 10 minutes */
+
+
+class ftExtraList: public RsThread, public p3Config
 {
 
 	public:
@@ -101,6 +137,11 @@ bool	 	hashExtraFileDone(std::string path, FileInfo &info);
 bool		searchExtraFiles(std::string hash, FileInfo &info);
 
 		/***
+		 * Thread Main Loop 
+		 **/
+virtual void run(); 
+
+		/***
 		 * Configuration - store extra files.
 		 *
 		 **/
@@ -111,12 +152,19 @@ virtual bool    loadList(std::list<RsItem *> load);
 
 	private:
 
+		/* Worker Functions */
+void	hashAFile();
+bool	cleanupOldFiles();
+
 		RsMutex extMutex;
 
-		std::map<std::string, std::string> hashedList; /* path -> hash ( not saved ) */
-		std::map<std::string, FileInfo> files;
+		std::list<FileDetails> mToHash;
+
+		std::map<std::string, std::string> mHashedList; /* path -> hash ( not saved ) */
+		std::map<std::string, FileDetails> mFiles;
 };
 
 
 
 
+#endif

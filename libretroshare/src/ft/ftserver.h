@@ -39,27 +39,25 @@
  *
  */
 
-#include "pqi/pqi.h"
-#include "pqi/pqiindic.h"
-#include "serialiser/rsconfigitems.h"
 #include <map>
-#include <deque>
 #include <list>
-#include <map>
 #include <iostream>
 
-#include "rsiface/rsiface.h"
+#include "rsiface/rsfiles.h"
+#include "dbase/cachestrapper.h"
 
 #include "pqi/p3cfgmgr.h"
+
 
 class p3ConnectMgr;
 class p3AuthMgr;
 
 class CacheStrapper;
-class ftfiler;
 class FileIndexStore;
 class FileIndexMonitor;
 
+class ftController;
+class ftExtraList;
 
 class ftServer: public RsFiles
 {
@@ -104,7 +102,7 @@ virtual bool FileDetails(std::string hash, uint32_t hintflags, FileInfo &info);
 	/* Access ftExtraList - Details */
 virtual bool ExtraFileAdd(std::string fname, std::string hash, uint32_t size, 
 						uint32_t period, uint32_t flags);
-virtual bool ExtraFileRemove(std::string hash, uin32_t flags);
+virtual bool ExtraFileRemove(std::string hash, uint32_t flags);
 virtual bool ExtraFileHash(std::string localpath, uint32_t period, uint32_t flags);
 virtual bool ExtraFileStatus(std::string localpath, FileInfo &info);
 
@@ -131,22 +129,19 @@ virtual bool	getSharedDirectories(std::list<std::string> &dirs);
 virtual bool 	addSharedDirectory(std::string dir);
 virtual bool 	removeSharedDirectory(std::string dir);
 
-
 virtual int 	reScanDirs();
 virtual int 	check_dBUpdate();
-
-std::string	getSaveDir();
-void		setSaveDir(std::string d);
-void    	setEmergencySaveDir(std::string s);
-
-void		setConfigDir(std::string d) { config_dir = d; }
-bool		getSaveIncSearch();
-void		setSaveIncSearch(bool v);
-
 
 	/***************************************************************/
 	/*************** Control Interface *****************************/
 	/***************************************************************/
+
+	/***************************************************************/
+	/*************** Data Transfer Interface ***********************/
+	/***************************************************************/
+
+bool	requestData(std::string peerId, std::string hash, 
+				uint64_t offset, uint32_t size);
 
         /******************* p3 Config Overload ************************/
 	protected:

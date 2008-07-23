@@ -26,6 +26,7 @@
 
 
 #include "rsthreads.h"
+#include <unistd.h>    /* for usleep() */
 
 extern "C" void* rsthread_init(void* p)
 {
@@ -56,4 +57,43 @@ pthread_t  createThread(RsThread &thread)
 }
 
 
+RsQueueThread::RsQueueThread(uint32_t min, uint32_t max, double relaxFactor )
+	:mMinSleep(min), mMaxSleep(max), mRelaxFactor(relaxFactor)
+{
+
+
+}
+
+void RsQueueThread::run()
+{
+	while(1)
+	{
+		bool doneWork = false;
+		while(workQueued() && doWork())
+		{
+			doneWork = true;
+		}
+		time_t now = time(NULL);
+		if (doneWork)
+		{
+			mLastWork = now;
+			mLastSleep = (uint32_t) 
+				(mMinSleep + (mLastSleep - mMinSleep) / 2.0);
+		}
+		else
+		{
+			uint32_t deltaT = now - mLastWork;
+			double frac = deltaT / mRelaxFactor;
+			
+			mLastSleep += (uint32_t) 
+				((mMaxSleep-mMinSleep) * (frac + 0.05));
+			if (mLastSleep > mMaxSleep)
+			{
+				mLastSleep = mMaxSleep;
+			}
+		}
+
+		usleep(1000 * mLastSleep);
+	}
+}
 

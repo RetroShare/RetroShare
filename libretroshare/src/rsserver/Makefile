@@ -19,9 +19,9 @@ RSOBJ = p3peers.o \
 	p3face-msgs.o \
 	rsiface.o \
 	p3files.o  \
+	rstypes.o 
 
 #	p3face-file.o \
-#	rstypes.o \
 #	pqistrings.o \
 #	p3face-people.o 
 #	p3face-network.o \

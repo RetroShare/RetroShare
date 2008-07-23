@@ -28,6 +28,7 @@
 
 
 #include <pthread.h>
+#include <inttypes.h>
 
 /* RsIface Thread Wrappers */
 
@@ -72,6 +73,25 @@ virtual void run() = 0; /* called once the thread is started */
 
 	pthread_t mTid;
         RsMutex   mMutex;
+};
+
+
+class RsQueueThread
+{
+	RsQueueThread(uint32_t min, uint32_t max, double relaxFactor );
+virtual ~RsQueueThread() { return; }
+
+virtual void run();
+
+virtual bool workQueued() = 0;
+virtual bool doWork() = 0;
+
+	private:
+	uint32_t mMinSleep; /* ms */
+	uint32_t mMaxSleep; /* ms */
+	uint32_t mLastSleep; /* ms */
+	time_t   mLastWork;  /* secs */
+	float    mRelaxFactor; 
 };
 
 

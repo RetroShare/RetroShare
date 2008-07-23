@@ -37,7 +37,7 @@
 
 #include <map>
 #include <list>
-#include <ftFileCreator.h>
+#include "ft/ftfilecreator.h"
 
 class Request
 {
@@ -47,7 +47,7 @@ class Request
 
 class peerInfo
 {
-  std:string peerId;
+  std::string peerId;
   uint16_t state;
   uint32_t desiredRate;
   Request lastRequest;
@@ -71,21 +71,26 @@ public:
   bool completeFileTransfer();
 
   //interface to client module
-  bool recvFileData(uint64_t offset, uint32_t chunk_size, void *data);
-  void requestData(std::hash, uint64_t offset, uint32_t chunk_size);
+  bool recvFileData(std::string peerId, uint64_t offset, 
+			uint32_t chunk_size, void *data);
+  void requestData(std::string hash, uint64_t offset, uint32_t chunk_size);
 
   //interface to file creator
   bool getChunk(uint64_t &offset, uint32_t &chunk_size);
   bool storeData(uint64_t offset, uint32_t chunk_size);
 
   void tick();
-  
+
+  /* add by DrBob for interfaces */
+  std::string hash() { return mHash; }
+  uint64_t    size() { return mSize; }
+ 
 public:
   ftFileCreator* fc;
 
 private:
-  std::string hash;
-  uint64_t    size;
+  std::string mHash;
+  uint64_t    mSize;
   uint32_t    dataRate;   //data transfer rate for current file
   uint16_t    state;      //file transfer state
   std::list<std::string> onlinePeerList;

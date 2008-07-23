@@ -23,59 +23,8 @@
  *
  */
 
-#ifndef FT_FILE_EXTRA_LIST_HEADER
-#define FT_FILE_EXTRA_LIST_HEADER
-
-/* 
- * ftFileExtraList
- *
- * This maintains a list of 'Extra Files' to share with peers.
- *
- * Files are added via:
- * 1) For Files which have been hashed already:
- * 	addExtraFile(std::string path, std::string hash, uint64_t size, uint32_t period, uint32_t flags);
- *
- * 2) For Files to be hashed:
- * 	hashExtraFile(std::string path, uint32_t period, uint32_t flags);
- *
- * Results of Hashing can be retrieved via:
- * 	hashExtraFileDone(std::string path, std::string &hash, uint64_t &size);
- *
- * Files can be searched for via:
- * 	searchExtraFiles(std::string hash, ftFileDetail file);
- *
- * This Class is Mutexed protected, and has a thread in it which checks the files periodically. 
- * If a file is found to have changed... It is discarded from the list - and not updated.
- *
- * this thread is also used to hash added files.
- *
- * The list of extra files is stored using the configuration system.
- *
- */
-
-class FileDetails
-{
-	public:
-
-	std::list<std::string> sources;
-	std::string path;
-	std::string fname;
-	std::string hash;
-	uint64_t size;
-
-	uint32_t start;
-	uint32_t period;
-	uint32_t flags;
-};
-
-const uint32_t FT_DETAILS_CLEANUP	= 0x0100; 	/* remove when it expires */
-const uint32_t FT_DETAILS_LOCAL		= 0x0001;
-const uint32_t FT_DETAILS_REMOTE	= 0x0002;
-
-class ftExtraList: public p3Config
-{
-
-	public:
+#include "ft/ftextralist.h"
+#include "util/rsdir.h"
 
 ftExtraList::ftExtraList()
 	:p3Config(CONFIG_FT_EXTRA_LIST)
@@ -128,25 +77,31 @@ void ftExtraList::run()
 void ftExtraList::hashAFile()
 {
 	/* extract entry from the queue */
-	std::string path;
+	FileDetails details;
 
 	{
 		RsStackMutex stack(extMutex);
-		path = mToHash.front();
+		details = mToHash.front();
 		mToHash.pop_front();
 	}
 
 	/* hash it! */
-	if (hashFile(path, details))
+	std::string name, hash;
+	uint64_t size;
+	if (RsDirUtil::hashFile(details.info.path, details.info.fname, 
+				details.info.hash, details.info.size))
 	{
+		RsStackMutex stack(extMutex);
+
+		details.start = time(NULL);
+
 		/* stick it in the available queue */
-		addExtraFile(path, hash, size, period, flags);
+		mFiles[details.info.hash] = details;
 
 		/* add to the path->hash map */
-		addNewlyHashed(path, details);
+		mHashedList[details.info.path] = details.info.hash;
 	}
 }
-
 
 		/***
 		 * If the File is alreay Hashed, then just add it in.
@@ -157,6 +112,19 @@ bool	ftExtraList::addExtraFile(std::string path, std::string hash,
 {
 	RsStackMutex stack(extMutex);
 
+	FileDetails details;
+
+	details.info.path = path;
+	details.info.fname = RsDirUtil::getTopDir(path);
+	details.info.hash = hash;
+	details.info.size = size;
+
+	details.start = time(NULL);
+	details.flags = flags;
+	details.period = period;
+
+	/* stick it in the available queue */
+	mFiles[details.info.hash] = details;
 
 }
 
@@ -165,6 +133,8 @@ bool	ftExtraList::cleanupOldFiles()
 {
 	RsStackMutex stack(extMutex);
 
+	time_t now = time(NULL);
+
 	std::list<std::string> toRemove;
 	std::list<std::string>::iterator rit;
 
@@ -172,7 +142,7 @@ bool	ftExtraList::cleanupOldFiles()
 	for(it = mFiles.begin(); it != mFiles.end(); it++)
 	{
 		/* check timestamps */
-		if (it->
+		if (it->second.start + it->second.period < now)
 		{
 			toRemove.push_back(it->first);
 		}
@@ -208,7 +178,7 @@ bool 	ftExtraList::hashExtraFile(std::string path, uint32_t period, uint32_t fla
 	return true;
 }
 
-bool	ftExtraList::hashExtraFileDone(std::string path, FileDetails &details)
+bool	ftExtraList::hashExtraFileDone(std::string path, FileInfo &info)
 {
 	std::string hash;
 	{
@@ -222,14 +192,14 @@ bool	ftExtraList::hashExtraFileDone(std::string path, FileDetails &details)
 		}
 		hash = it->second;
 	}
-	return searchExtraFiles(hash, details);
+	return searchExtraFiles(hash, info);
 }
 
 	/***
 	 * Search Function - used by File Transfer 
 	 *
 	 **/
-bool	ftExtraList::searchExtraFiles(std::string hash, FileDetails &details)
+bool	ftExtraList::searchExtraFiles(std::string hash, FileInfo &info)
 {
 	RsStackMutex stack(extMutex);
 
@@ -240,7 +210,7 @@ bool	ftExtraList::searchExtraFiles(std::string hash, FileDetails &details)
 		return false;
 	}
 
-	details = fit->second;
+	info = fit->second.info;
 	return true;
 }
 

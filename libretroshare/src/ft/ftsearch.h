@@ -34,7 +34,7 @@
  *
  */
 
-#include "rsiface/rstypes.h"
+#include "rsiface/rsfiles.h" // includes rsiface/rstypes.h too!
 
 class ftSearch
 {
@@ -42,10 +42,21 @@ class ftSearch
 	public:
 
 	ftSearch() { return; }
-virtual bool	search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info);
+virtual ~ftSearch() { return; }
+virtual bool	search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) = 0;
 
 };
 
 
+class ftSearchDummy
+{
+	ftSearchDummy() { return; }
+virtual ~ftSearchDummy() { return; }
+virtual bool	search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info)
+{
+	return false;
+}
 
+};
 
+#endif

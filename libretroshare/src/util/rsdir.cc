@@ -196,6 +196,31 @@ int	RsDirUtil::breakupDirList(std::string path,
 
 
 
+bool	RsDirUtil::checkDirectory(std::string dir)
+{
+	struct stat buf;
+	int val = stat(dir.c_str(), &buf);
+	if (val == -1)
+	{
+#ifdef RSDIR_DEBUG 
+		std::cerr << "RsDirUtil::checkDirectory() ";
+		std::cerr << dir << " doesn't exist" << std::endl;
+#endif
+		return false;
+	} 
+	else if (!S_ISDIR(buf.st_mode))
+	{
+		// Some other type - error.
+#ifdef RSDIR_DEBUG 
+		std::cerr << "RsDirUtil::checkDirectory() ";
+		std::cerr << dir << " is not Directory" << std::endl;
+#endif
+		return false;
+	}
+	return true;
+}
+
+
 bool	RsDirUtil::checkCreateDirectory(std::string dir)
 {
 	struct stat buf;
@@ -289,10 +314,23 @@ bool 	RsDirUtil::cleanupDirectory(std::string cleandir, std::list<std::string> k
 	return true;
 }
 
+/* slightly nicer helper function */
+bool RsDirUtil::hashFile(std::string filepath, 
+		std::string &name, std::string &hash, uint64_t &size)
+{
+	if (getFileHash(filepath, hash, size))
+	{
+		/* extract file name */
+		name = RsDirUtil::getTopDir(filepath);
+		return true;
+	}
+	return false;
+}
+
+
 #include <openssl/sha.h>
 #include <sstream>
 #include <iomanip>
-
 
 /* Function to hash, and get details of a file */
 bool RsDirUtil::getFileHash(std::string filepath, 

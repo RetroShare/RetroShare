@@ -54,7 +54,8 @@ virtual void run();
 	/***************************************************************/
 
 bool 	FileRequest(std::string fname, std::string hash, 
-			uint32_t size, std::string dest, uint32_t flags);
+			uint64_t size, std::string dest, uint32_t flags, 
+			std::list<std::string> sourceIds);
 
 bool 	FileCancel(std::string hash);
 bool 	FileControl(std::string hash, uint32_t flags);
@@ -64,8 +65,8 @@ bool 	FileClearCompleted();
 bool 	FileDownloads(std::list<std::string> &hashs);
 
 	/* Directory Handling */
-void 	setDownloadDirectory(std::string path);
-void 	setPartialsDirectory(std::string path);
+bool 	setDownloadDirectory(std::string path);
+bool 	setPartialsDirectory(std::string path);
 std::string getDownloadDirectory();
 std::string getPartialsDirectory();
 bool 	FileDetails(std::string hash, FileInfo &info);
