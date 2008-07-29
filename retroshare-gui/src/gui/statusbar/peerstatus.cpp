@@ -43,7 +43,7 @@ PeerStatus::PeerStatus(QWidget *parent)
     hbox->setSpacing(6);
     
     iconLabel = new QLabel( this );
-    iconLabel->setPixmap(QPixmap::QPixmap(":/images/user.png"));
+    iconLabel->setPixmap(QPixmap::QPixmap(":/images/user/identity16.png"));
     // iconLabel doesn't change over time, so we didn't need a minimum size
     hbox->addWidget(iconLabel);
     

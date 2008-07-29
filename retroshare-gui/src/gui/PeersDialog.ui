@@ -671,7 +671,7 @@ p, li { white-space: pre-wrap; }
             <string/>
            </property>
            <property name="pixmap" >
-            <pixmap resource="images.qrc" >:/images/chat.png</pixmap>
+            <pixmap resource="images.qrc" >:/images/user/agt_forum24.png</pixmap>
            </property>
           </widget>
          </item>
