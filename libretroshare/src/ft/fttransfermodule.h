@@ -37,7 +37,13 @@
 
 #include <map>
 #include <list>
-#include "ft/ftfilecreator.h"
+#include <ftFileCreator.h>
+
+const int  PQIPEER_INIT                 = 0x0000;
+const int  PQIPEER_NOT_ONLINE           = 0x0001;
+const int  PQIPEER_DOWNLOADING          = 0x0002;
+const int  PQIPEER_IDLE                 = 0x0004;
+const int  PQIPEER_SUSPEND              = 0x0010;
 
 class Request
 {
@@ -47,54 +53,63 @@ class Request
 
 class peerInfo
 {
-  std::string peerId;
-  uint16_t state;
+  std:string peerId;
+  uint32_t state;
   uint32_t desiredRate;
   Request lastRequest;
   uint32_t actualRate;
+  
+  //current file data request
+  uint64_t req_loc;
+  uint32_t req_size;
+  
+  time_t lastTS;
 };
 
 class ftTransferModule 
 {
 public:
-  ftTransferModule(std::string hash, uint64_t size);
+  ftTransferModule(ftFileCreator *fc,ftClientModule *cm);
   ~ftTransferModule();
 
   //interface to download controller
-  bool setFileSources(std::list<peerInfo> availableSrcs);
-  bool requestFile(std::list<std::string> onlineSrcs, uint32_t dataRate);
-  bool changePeerState(std::string peerId, uint16_t newState);
-  uint32_t getDataRate();
-  bool setDataRate(uint32_t dataRate);
+  bool setFileSources(std::list<std::string> peerIds);
+  bool setPeerState(std::string peerId,uint32_t state,uint32_t maxRate);  //state = ONLINE/OFFLINE
+  uint32_t getDataRate(std::string peerId);
   bool stopTransfer();
   bool resumeTransfer();
   bool completeFileTransfer();
 
   //interface to client module
-  bool recvFileData(std::string peerId, uint64_t offset, 
-			uint32_t chunk_size, void *data);
-  void requestData(std::string hash, uint64_t offset, uint32_t chunk_size);
+  bool recvFileData(uint64_t offset, uint32_t chunk_size, void *data);  //called by ftClientModule when data arrives
+  void requestData(uint64_t offset, uint32_t chunk_size);
 
-  //interface to file creator
+  //interface to file creator , just wrapper functions that call the ftFileCreator
   bool getChunk(uint64_t &offset, uint32_t &chunk_size);
-  bool storeData(uint64_t offset, uint32_t chunk_size);
+  bool storeData(uint64_t offset, uint32_t chunk_size, void *data);
 
-  void tick();
-
+  //internal used functions
+  void queryInactive();
+  
+  int tick();
+  
   /* add by DrBob for interfaces */
   std::string hash() { return mHash; }
   uint64_t    size() { return mSize; }
- 
+  
 public:
-  ftFileCreator* fc;
+  ftFileCreator  *mFileCreator;
+  ftClientModule *mClientModule;
 
 private:
   std::string mHash;
   uint64_t    mSize;
-  uint32_t    dataRate;   //data transfer rate for current file
-  uint16_t    state;      //file transfer state
-  std::list<std::string> onlinePeerList;
-  std::map<std::string,peerInfo> availablePeerList;
+  std::list<std::string>         mFileSources;
+  std::map<std::string,peerInfo> mOnlinePeers;
+  	
+  uint64_t mOffset;
+  uint32_t mChunkSize;	
+  bool     mFlag;  //1:transfer complete, 0: not complete
 };
 
 #endif  //FT_TRANSFER_MODULE_HEADER
