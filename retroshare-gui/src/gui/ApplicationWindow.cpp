@@ -61,11 +61,12 @@
 
 /* Images for toolbar icons */
 #define IMAGE_NETWORK           ":/images/network32.png"
-#define IMAGE_PEERS         	":/images/peers_24x24.png"
+#define IMAGE_PEERS         	":/images/groupchat.png"
 #define IMAGE_SEARCH    	    ":/images/filefind.png"
 #define IMAGE_TRANSFERS      	":/images/ktorrent.png"
 #define IMAGE_FILES   	        ":/images/folder_green.png"
-#define IMAGE_CHANNELS       	":/images/konsole.png"
+#define IMAGE_FORUMS   	        ":/images/user/agt_forum24.png"
+#define IMAGE_CHANNELS       	":/images/channels.png"
 #define IMAGE_PREFERENCES       ":/images/settings16.png"
 #define IMAGE_CHAT          	":/images/chats_24x24.png"
 #define IMAGE_RETROSHARE        ":/images/RetroShare16.png"
@@ -79,7 +80,9 @@
 #define IMAGE_CLOSE             ":/images/close_normal.png"
 #define IMAGE_SMPLAYER          ":/images/smplayer_icon32.png"
 #define IMAGE_CALENDAR          ":/images/calendar.png"
-#define IMAGE_NEWSFEED           ":/images/konsole.png"
+#define IMAGE_NEWSFEED          ":/images/konqsidebar_news24.png"
+#define IMAGE_LINKS             ":/images/ktorrent.png"
+#define IMAGE_MESSAGES          ":/images/evolution.png"
 
 
 /* Keys for UI Preferences */
@@ -117,15 +120,15 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
                      
     PeersFeed *peersFeed = NULL;
     ui.stackPages->add(peersFeed = new PeersFeed(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_NEWSFEED), tr("Peers"), grp));
+                      createPageAction(QIcon(IMAGE_PEERS), tr("Peers"), grp));
                      
     TransferFeed *transferFeed = NULL;
     ui.stackPages->add(transferFeed = new TransferFeed(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_NEWSFEED), tr("Transfers"), grp));
+                      createPageAction(QIcon(IMAGE_LINKS), tr("Transfers"), grp));
                      
     MsgFeed *msgFeed = NULL;
     ui.stackPages->add(msgFeed = new MsgFeed(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_NEWSFEED), tr("Messages"), grp));
+                      createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
                      
     BlogDialog *blogDialog = NULL;
     ui.stackPages->add(blogDialog = new BlogDialog(ui.stackPages),
@@ -137,7 +140,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
 
     ForumsDialog *forumsDialog = NULL;
     ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_NETWORK), tr("Forums"), grp));
+                       createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
                      
     GamesDialog *gamesDialog = NULL;
     ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
