@@ -180,8 +180,8 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
     ui.comboSize->setCurrentIndex(ui.comboSize->findText(QString::number(QApplication::font().pointSize())));
     
     ui.boldbtn->setIcon(QIcon(QString(":/images/textedit/textbold.png")));
-    ui.underlinebtn->setIcon(QIcon(QString(":/images/textedit/textitalic.png")));
-    ui.italicbtn->setIcon(QIcon(QString(":/images/textedit/textunder.png")));
+    ui.underlinebtn->setIcon(QIcon(QString(":/images/textedit/textunder.png")));
+    ui.italicbtn->setIcon(QIcon(QString(":/images/textedit/textitalic.png")));
     ui.textalignmentbtn->setIcon(QIcon(QString(":/images/textedit/textcenter.png")));
     ui.imagebtn->setIcon(QIcon(QString(":/images/lphoto24.png")));
     ui.actionContactsView->setIcon(QIcon(":/images/contacts24.png"));

@@ -500,22 +500,10 @@
      </property>
      <item row="0" column="0" >
       <layout class="QGridLayout" >
-       <property name="leftMargin" >
+       <property name="margin" >
         <number>0</number>
        </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <property name="horizontalSpacing" >
-        <number>6</number>
-       </property>
-       <property name="verticalSpacing" >
+       <property name="spacing" >
         <number>6</number>
        </property>
        <item row="0" column="0" >
@@ -545,7 +533,7 @@ p, li { white-space: pre-wrap; }
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>201</width>
          <height>20</height>
@@ -594,42 +582,18 @@ p, li { white-space: pre-wrap; }
    </item>
    <item row="0" column="1" >
     <layout class="QGridLayout" >
-     <property name="leftMargin" >
+     <property name="margin" >
       <number>0</number>
      </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <property name="horizontalSpacing" >
-      <number>0</number>
-     </property>
-     <property name="verticalSpacing" >
+     <property name="spacing" >
       <number>0</number>
      </property>
      <item row="0" column="0" >
       <layout class="QGridLayout" >
-       <property name="leftMargin" >
+       <property name="margin" >
         <number>0</number>
        </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <property name="horizontalSpacing" >
-        <number>6</number>
-       </property>
-       <property name="verticalSpacing" >
+       <property name="spacing" >
         <number>6</number>
        </property>
        <item row="0" column="1" >
@@ -637,7 +601,7 @@ p, li { white-space: pre-wrap; }
          <property name="orientation" >
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>181</width>
            <height>20</height>
@@ -647,22 +611,10 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="0" column="0" >
         <layout class="QGridLayout" >
-         <property name="leftMargin" >
+         <property name="margin" >
           <number>0</number>
          </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <property name="horizontalSpacing" >
-          <number>6</number>
-         </property>
-         <property name="verticalSpacing" >
+         <property name="spacing" >
           <number>6</number>
          </property>
          <item row="0" column="0" >
@@ -718,22 +670,10 @@ p, li { white-space: pre-wrap; }
     <layout class="QGridLayout" >
      <item row="0" column="0" >
       <layout class="QGridLayout" >
-       <property name="leftMargin" >
+       <property name="margin" >
         <number>0</number>
        </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <property name="horizontalSpacing" >
-        <number>6</number>
-       </property>
-       <property name="verticalSpacing" >
+       <property name="spacing" >
         <number>6</number>
        </property>
        <item row="0" column="0" >
@@ -741,7 +681,7 @@ p, li { white-space: pre-wrap; }
          <property name="orientation" >
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>321</width>
            <height>20</height>
@@ -764,13 +704,14 @@ p, li { white-space: pre-wrap; }
           </size>
          </property>
          <property name="toolTip" >
-          <string>Underline</string>
+          <string>Italic</string>
          </property>
          <property name="text" >
           <string/>
          </property>
          <property name="icon" >
-          <iconset resource="images.qrc" >:/images/edit-italic.png</iconset>
+          <iconset resource="images.qrc" >
+           <normaloff>:/images/edit-italic.png</normaloff>:/images/edit-italic.png</iconset>
          </property>
          <property name="checkable" >
           <bool>true</bool>
@@ -792,13 +733,14 @@ p, li { white-space: pre-wrap; }
           </size>
          </property>
          <property name="toolTip" >
-          <string>Italic</string>
+          <string>Underline</string>
          </property>
          <property name="text" >
           <string/>
          </property>
          <property name="icon" >
-          <iconset resource="images.qrc" >:/images/edit-underline.png</iconset>
+          <iconset resource="images.qrc" >
+           <normaloff>:/images/edit-underline.png</normaloff>:/images/edit-underline.png</iconset>
          </property>
          <property name="checkable" >
           <bool>true</bool>
@@ -826,7 +768,8 @@ p, li { white-space: pre-wrap; }
           <string/>
          </property>
          <property name="icon" >
-          <iconset resource="images.qrc" >:/images/edit-bold.png</iconset>
+          <iconset resource="images.qrc" >
+           <normaloff>:/images/edit-bold.png</normaloff>:/images/edit-bold.png</iconset>
          </property>
          <property name="checkable" >
           <bool>true</bool>
@@ -895,7 +838,8 @@ p, li { white-space: pre-wrap; }
           <string/>
          </property>
          <property name="icon" >
-          <iconset resource="images.qrc" >:/images/emoticons/kopete/kopete020.png</iconset>
+          <iconset resource="images.qrc" >
+           <normaloff>:/images/emoticons/kopete/kopete020.png</normaloff>:/images/emoticons/kopete/kopete020.png</iconset>
          </property>
          <property name="iconSize" >
           <size>
@@ -963,7 +907,7 @@ p, li { white-space: pre-wrap; }
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>321</width>
          <height>20</height>
