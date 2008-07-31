@@ -140,6 +140,7 @@
         <file>images/kdmconfig.png</file>
         <file>images/konsole.png</file>
         <file>images/konqsidebar_news24.png</file>
+        <file>images/konversation.png</file>
         <file>images/ksysguard.png</file>
         <file>images/ktorrent.png</file>
         <file>images/ktorrent32.png</file>
@@ -228,6 +229,7 @@
         <file>images/user/identitylightgrey24.png</file>
         <file>images/user/agt_forum24.png</file>
         <file>images/up.png</file>
+        <file>images/underconstruction.png</file>
         <file>images/user.png</file>
         <file>images/webcache_24x24.png</file>
         <file>layouts/default.ui</file>

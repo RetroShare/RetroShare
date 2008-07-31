@@ -86,6 +86,7 @@
 #define IMAGE_ADDSHARE          ":/images/directoryadd_24x24_shadow.png"
 #define IMAGE_OPTIONS           ":/images/settings.png"
 #define IMAGE_QUIT              ":/images/exit_24x24.png"
+#define IMAGE_UNFINISHED        ":/images/underconstruction.png"
 
 /* Keys for UI Preferences */
 #define UI_PREF_PROMPT_ON_QUIT  "UIOptions/ConfirmOnQuit"
@@ -212,11 +213,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(transfersDialog, SIGNAL(playFiles( QStringList )), this, SLOT(playFiles( QStringList )));
 
 #ifdef RS_RELEASE_VERSION    
-    //addAction(new QAction(QIcon(IMAGE_BLOCK), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
+    //addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 
 
 #else
-    addAction(new QAction(QIcon(IMAGE_BLOCK), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
+    addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 
     toolAct = ui.toolBarservice->toggleViewAction();
     toolAct->setText("Service");

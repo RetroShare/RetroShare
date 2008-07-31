@@ -83,6 +83,7 @@
 #define IMAGE_NEWSFEED          ":/images/konqsidebar_news24.png"
 #define IMAGE_LINKS             ":/images/ktorrent.png"
 #define IMAGE_MESSAGES          ":/images/evolution.png"
+#define IMAGE_BLOGS          ":/images/konversation.png"
 
 
 /* Keys for UI Preferences */
@@ -132,7 +133,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
                      
     BlogDialog *blogDialog = NULL;
     ui.stackPages->add(blogDialog = new BlogDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_NETWORK), tr("Blog Feed"), grp));
+                      createPageAction(QIcon(IMAGE_BLOGS), tr("Blog Feed"), grp));
 
     ChannelFeed *channelFeed = NULL;
     ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
