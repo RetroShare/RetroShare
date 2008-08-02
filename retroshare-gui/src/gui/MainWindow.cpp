@@ -87,6 +87,9 @@
 #define IMAGE_OPTIONS           ":/images/settings.png"
 #define IMAGE_QUIT              ":/images/exit_24x24.png"
 #define IMAGE_UNFINISHED        ":/images/underconstruction.png"
+#define IMAGE_MINIMIZE          ":/images/window_nofullscreen.png"
+#define IMAGE_MAXIMIZE          ":/images/window_fullscreen.png"
+
 
 /* Keys for UI Preferences */
 #define UI_PREF_PROMPT_ON_QUIT  "UIOptions/ConfirmOnQuit"
@@ -295,8 +298,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     menu->addAction(_prefsAct);
     menu->addAction(_smplayerAct);
     menu->addSeparator();
-    menu->addAction(tr("Minimize"), this, SLOT(showMinimized()));
-    menu->addAction(tr("Maximize"), this, SLOT(showMaximized()));
+    menu->addAction(QIcon(IMAGE_MINIMIZE), tr("Minimize"), this, SLOT(showMinimized()));
+    menu->addAction(QIcon(IMAGE_MAXIMIZE), tr("Maximize"), this, SLOT(showMaximized()));
     menu->addSeparator();
     menu->addAction(QIcon(IMAGE_CLOSE), tr("&Quit"), this, SLOT(doQuit()));
     // End of Icon Menu
