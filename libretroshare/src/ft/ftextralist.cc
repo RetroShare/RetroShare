@@ -26,6 +26,8 @@
 #include "ft/ftextralist.h"
 #include "util/rsdir.h"
 
+#define DEBUG_ELIST	1
+
 ftExtraList::ftExtraList()
 	:p3Config(CONFIG_FT_EXTRA_LIST)
 {
@@ -41,6 +43,11 @@ void ftExtraList::run()
 
 	while (1)
 	{
+#ifdef  DEBUG_ELIST
+		std::cerr << "ftExtraList::run() Iteration";
+		std::cerr << std::endl;
+#endif
+
 		now = time(NULL);
 
 		{
@@ -76,14 +83,28 @@ void ftExtraList::run()
 
 void ftExtraList::hashAFile()
 {
+#ifdef  DEBUG_ELIST
+	std::cerr << "ftExtraList::hashAFile()";
+	std::cerr << std::endl;
+#endif
+
 	/* extract entry from the queue */
 	FileDetails details;
 
 	{
 		RsStackMutex stack(extMutex);
+
+		if (mToHash.size() == 0)
+			return;
+
 		details = mToHash.front();
 		mToHash.pop_front();
 	}
+
+#ifdef  DEBUG_ELIST
+	std::cerr << "Hashing: " << details.info.path;
+	std::cerr << std::endl;
+#endif
 
 	/* hash it! */
 	std::string name, hash;
@@ -110,6 +131,16 @@ void ftExtraList::hashAFile()
 bool	ftExtraList::addExtraFile(std::string path, std::string hash, 
 				uint64_t size, uint32_t period, uint32_t flags)
 {
+#ifdef  DEBUG_ELIST
+	std::cerr << "ftExtraList::addExtraFile() path: " << path;
+	std::cerr << " hash: " << hash;
+	std::cerr << " size: " << size;
+	std::cerr << " period: " << period;
+	std::cerr << " flags: " << flags;
+
+	std::cerr << std::endl;
+#endif
+
 	RsStackMutex stack(extMutex);
 
 	FileDetails details;
@@ -126,11 +157,42 @@ bool	ftExtraList::addExtraFile(std::string path, std::string hash,
 	/* stick it in the available queue */
 	mFiles[details.info.hash] = details;
 
+	return true;
 }
+
+bool ftExtraList::removeExtraFile(std::string hash, uint32_t flags)
+{
+#ifdef  DEBUG_ELIST
+	std::cerr << "ftExtraList::removeExtraFile()";
+	std::cerr << " hash: " << hash;
+	std::cerr << " flags: " << flags;
+
+	std::cerr << std::endl;
+#endif
+
+	RsStackMutex stack(extMutex);
+
+	std::map<std::string, FileDetails>::iterator it;
+	it = mFiles.find(hash);
+	if (it == mFiles.end())
+	{
+		return false;
+	}
+
+	mFiles.erase(it);
+
+	return true;
+}
+
 
 	
 bool	ftExtraList::cleanupOldFiles()
 {
+#ifdef  DEBUG_ELIST
+	std::cerr << "ftExtraList::cleanupOldFiles()";
+	std::cerr << std::endl;
+#endif
+
 	RsStackMutex stack(extMutex);
 
 	time_t now = time(NULL);
@@ -159,6 +221,7 @@ bool	ftExtraList::cleanupOldFiles()
 			}
 		}
 	}
+	return true;
 }
 
 
@@ -169,6 +232,14 @@ bool	ftExtraList::cleanupOldFiles()
 
 bool 	ftExtraList::hashExtraFile(std::string path, uint32_t period, uint32_t flags)
 {
+#ifdef  DEBUG_ELIST
+	std::cerr << "ftExtraList::hashExtraFile() path: " << path;
+	std::cerr << " period: " << period;
+	std::cerr << " flags: " << flags;
+
+	std::cerr << std::endl;
+#endif
+
 	/* add into queue */
 	RsStackMutex stack(extMutex);
 
@@ -180,6 +251,11 @@ bool 	ftExtraList::hashExtraFile(std::string path, uint32_t period, uint32_t fla
 
 bool	ftExtraList::hashExtraFileDone(std::string path, FileInfo &info)
 {
+#ifdef  DEBUG_ELIST
+	std::cerr << "ftExtraList::hashExtraFileDone()";
+	std::cerr << std::endl;
+#endif
+
 	std::string hash;
 	{
 		/* Find in the path->hash map */
@@ -192,19 +268,25 @@ bool	ftExtraList::hashExtraFileDone(std::string path, FileInfo &info)
 		}
 		hash = it->second;
 	}
-	return searchExtraFiles(hash, info);
+	return search(hash, 0, 0, info);
 }
 
 	/***
 	 * Search Function - used by File Transfer 
 	 *
 	 **/
-bool	ftExtraList::searchExtraFiles(std::string hash, FileInfo &info)
+bool    ftExtraList::search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const
 {
+
+#ifdef  DEBUG_ELIST
+	std::cerr << "ftExtraList::search()";
+	std::cerr << std::endl;
+#endif
+
 	RsStackMutex stack(extMutex);
 
 	/* find hash */
-	std::map<std::string, FileDetails>::iterator fit;
+	std::map<std::string, FileDetails>::const_iterator fit;
 	if (mFiles.end() == (fit = mFiles.find(hash)))
 	{
 		return false;

@@ -23,57 +23,142 @@
  *
  */
 
-#ifndef FT_FILE_SEARCH_HEADERd
-#define FT_FILE_SEARCH_HEADER
-
-/* 
- * ftFileSearch
- *
- * This is actually implements the ftSearch Interface.
- *
- */
-
 #include "ft/ftfilesearch.h"
-#include "dbase/cachestrapper.h"
-#include "dbase/fimonitor.h"
-#include "dbase/fistore.h"
 
-bool	ftFileSearch::search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info)
+const uint32_t MAX_SEARCHS = 24; /* lower 24 bits of hint */
+
+ftFileSearch::ftFileSearch()
+	:mSearchs(MAX_SEARCHS)
 {
-
-#if 0
-	/* actual search depends on the hints */
-	if (hintflags | CACHE)
+	uint32_t i;
+	for(i = 0; i < MAX_SEARCHS; i++)
 	{
-		mCacheStrapper->..
+		mSearchs[i] = NULL;		
 	}
+}
 
-	if (hintflags | LOCAL)
-	{
+bool	ftFileSearch::addSearchMode(ftSearch *search, uint32_t hintflags)
+{
+	hintflags &= 0x00ffffff;
 
-	}
-
-	if (hintflags | EXTRA)
-	{
-
-
-	}
-
-	if (hintflags | REMOTE)
-	{
-
-	}
-
-	private:
-
-	CacheStrapper *mCacheStrapper;
-	ftExtraList *mExtraList;
-	FileIndexMonitor *mFileMonitor;
-	FileIndexStore   *mFileStore;
+#ifndef DEBUG_SEARCH
+	std::cerr << "ftSearchDummy::addSearchMode() : " << hintflags;
+	std::cerr << std::endl;
 #endif
 
+	uint32_t i;
+	for  (i = 0; i < MAX_SEARCHS; i++)
+	{
+		uint32_t hints = hintflags >> i;
+		if (hints & 0x0001)
+		{
+			/* has the flag */
+			mSearchs[i] = search;
+
+#ifndef DEBUG_SEARCH
+			std::cerr << "ftSearchDummy::addSearchMode() to slot ";
+			std::cerr << i;
+			std::cerr << std::endl;
+#endif
+
+			return true;
+		}
+	}
+
+#ifndef DEBUG_SEARCH
+	std::cerr << "ftSearchDummy::addSearchMode() Failed";
+	std::cerr << std::endl;
+#endif
+
+	return false;
+}
+
+bool	ftFileSearch::search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const
+{
+	uint32_t hints, i;
+
+#ifndef DEBUG_SEARCH
+	std::cerr << "ftFileSearch::search(" << hash << ", " << size; 
+	std::cerr << ", " << hintflags << ");";
+	std::cerr << std::endl;
+#endif
+	
+	for  (i = 0; i < MAX_SEARCHS; i++)
+	{
+		hints = hintflags >> i;
+		if (hints & 0x0001)
+		{
+			/* has the flag */
+			ftSearch *search = mSearchs[i];
+			if (search)
+			{
+#ifndef DEBUG_SEARCH
+				std::cerr << "ftFileSearch::search() SLOT: ";
+				std::cerr << i;
+				std::cerr << std::endl;
+#endif
+				if (search->search(hash, size, hintflags, info))
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	/* if we haven't found it by now! - check if SPEC_ONLY flag is set */
+	if (hintflags & RS_FILE_HINTS_SPEC_ONLY)
+	{
+#ifndef DEBUG_SEARCH
+		std::cerr << "ftFileSearch::search() SPEC_ONLY: Failed";
+		std::cerr << std::endl;
+#endif
+		return false;
+	}
+
+#ifndef DEBUG_SEARCH
+	std::cerr << "ftSearchDummy::search() Searching Others:";
+	std::cerr << std::endl;
+#endif
+
+	/* if we don't have the SPEC_ONLY flag, 
+	 * we check through all the others 
+	 */
+	for  (i = 0; i < MAX_SEARCHS; i++)
+	{
+		hints = hintflags >> i;
+		if (hints & 0x0001)
+		{
+			continue;
+		}
+
+		/* has the flag */
+		ftSearch *search = mSearchs[i];
+		if (search)
+		{
+
+#ifndef DEBUG_SEARCH
+			std::cerr << "ftFileSearch::search() SLOT: " << i;
+			std::cerr << std::endl;
+#endif
+			if (search->search(hash, size, hintflags, info))
+			{
+				return true;
+			}
+		}
+	}
+	/* found nothing */
+	return false;
 }
 
 
+bool 	ftSearchDummy::search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const
+{
+#ifndef DEBUG_SEARCH
+	std::cerr << "ftSearchDummy::search(" << hash << ", " << size; 
+	std::cerr << ", " << hintflags << ");";
+	std::cerr << std::endl;
+#endif
+        return false;
+}
 
 

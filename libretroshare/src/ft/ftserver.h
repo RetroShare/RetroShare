@@ -43,9 +43,11 @@
 #include <list>
 #include <iostream>
 
+#include "ft/ftdata.h"
 #include "rsiface/rsfiles.h"
 #include "dbase/cachestrapper.h"
 
+#include "pqi/pqi.h"
 #include "pqi/p3cfgmgr.h"
 
 
@@ -58,8 +60,11 @@ class FileIndexMonitor;
 
 class ftController;
 class ftExtraList;
+class ftFileSearch;
 
-class ftServer: public RsFiles
+class ftDataMultiplex;
+
+class ftServer: public RsFiles, public ftDataSend
 {
 
 	public:
@@ -68,58 +73,75 @@ class ftServer: public RsFiles
 	/******************** Setup ************************************/
 	/***************************************************************/
 
-	ftServer(CacheStrapper *cStrapper) { return; }
+	ftServer(CacheStrapper *cStrapper, p3ConnectMgr *connMgr);
 
 	/* Assign important variables */
 void	setConfigDirectory(std::string path);
 
 void	setPQInterface(PQInterface *pqi);
 
-	/* Final Setup (once everything is assigned) */
-void	SetupFtServer();
 
 	/* add Config Items (Extra, Controller) */
 void	addConfigComponents(p3ConfigMgr *mgr);
 
+CacheStrapper *getCacheStrapper();
 CacheTransfer *getCacheTransfer();
+
+	/* Final Setup (once everything is assigned) */
+void	SetupFtServer();
+void	StartupThreads();
 
 	/***************************************************************/
 	/*************** Control Interface *****************************/
 	/************** (Implements RsFiles) ***************************/
 	/***************************************************************/
 
+/***
+ * Control of Downloads
+ ***/
 virtual bool FileRequest(std::string fname, std::string hash, 
-				uint32_t size, std::string dest, uint32_t flags);
+			uint32_t size, std::string dest, uint32_t flags);
 virtual bool FileCancel(std::string hash);
 virtual bool FileControl(std::string hash, uint32_t flags);
 virtual bool FileClearCompleted();
 
-	/* get Details of File Transfers */
+/***
+ * Download/Upload Details 
+ ***/
 virtual bool FileDownloads(std::list<std::string> &hashs);
 virtual bool FileUploads(std::list<std::string> &hashs);
 virtual bool FileDetails(std::string hash, uint32_t hintflags, FileInfo &info);
 
-	/* Access ftExtraList - Details */
+/***
+ * Extra List Access
+ ***/
 virtual bool ExtraFileAdd(std::string fname, std::string hash, uint32_t size, 
-						uint32_t period, uint32_t flags);
+			uint32_t period, uint32_t flags);
 virtual bool ExtraFileRemove(std::string hash, uint32_t flags);
-virtual bool ExtraFileHash(std::string localpath, uint32_t period, uint32_t flags);
+virtual bool ExtraFileHash(std::string localpath, 
+			uint32_t period, uint32_t flags);
 virtual bool ExtraFileStatus(std::string localpath, FileInfo &info);
 
-	/* Directory Listing */
+
+/***
+ * Directory Listing / Search Interface
+ ***/
 virtual int RequestDirDetails(std::string uid, std::string path, DirDetails &details);
 virtual int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags);
 
-	/* Search Interface */
 virtual int SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results);
 virtual int SearchBoolExp(Expression * exp, std::list<FileDetail> &results);
 
-	/* Utility Functions */
+/***
+ * Utility Functions 
+ ***/
 virtual bool ConvertSharedFilePath(std::string path, std::string &fullpath);
 virtual void ForceDirectoryCheck();
 virtual bool InDirectoryCheck();
 
-	/* Directory Handling */
+/***
+ * Directory Handling 
+ ***/
 virtual void	setDownloadDirectory(std::string path);
 virtual void	setPartialsDirectory(std::string path);
 virtual std::string getDownloadDirectory();
@@ -129,8 +151,6 @@ virtual bool	getSharedDirectories(std::list<std::string> &dirs);
 virtual bool 	addSharedDirectory(std::string dir);
 virtual bool 	removeSharedDirectory(std::string dir);
 
-virtual int 	reScanDirs();
-virtual int 	check_dBUpdate();
 
 	/***************************************************************/
 	/*************** Control Interface *****************************/
@@ -139,9 +159,20 @@ virtual int 	check_dBUpdate();
 	/***************************************************************/
 	/*************** Data Transfer Interface ***********************/
 	/***************************************************************/
+public:
+virtual bool    sendData(std::string peerId, std::string hash, uint64_t size,
+                        uint64_t offset, uint32_t chunksize, void *data);
+virtual bool    sendDataRequest(std::string peerId, 
+			std::string hash, uint64_t size,
+                        uint64_t offset, uint32_t chunksize);
 
-bool	requestData(std::string peerId, std::string hash, 
-				uint64_t offset, uint32_t size);
+	/*************** Internal Transfer Fns *************************/
+virtual int tick();
+
+private:
+bool	handleInputQueues();
+bool	handleCacheData();
+bool	handleFileData();
 
         /******************* p3 Config Overload ************************/
 	protected:
@@ -155,18 +186,34 @@ bool  loadConfigMap(std::map<std::string, std::string> &configMap);
         /******************* p3 Config Overload ************************/
 
 /*************************** p3 Config Overload ********************/
+
+	private:
+
+	/**** INTERNAL FUNCTIONS ***/
+virtual int 	reScanDirs();
+virtual int 	check_dBUpdate();
+
 	private:
 
 	/* no need for Mutex protection - 
 	 * as each component is protected independently.
 	 */
 
+        P3Interface *mP3iface;     /* XXX THIS NEEDS PROTECTION */
+        p3AuthMgr    *mAuthMgr;
+        p3ConnectMgr *mConnMgr;
+
 	CacheStrapper *mCacheStrapper;
+
 	ftController  *mFtController;
 	ftExtraList   *mFtExtra;
 
-        FileIndexStore *fiStore;
-	FileIndexMonitor *fimon;
+	ftDataMultiplex *mFtDataplex;
+
+        FileIndexStore *mFiStore;
+	FileIndexMonitor *mFiMon;
+
+	ftFileSearch   *mFtSearch;
 
 	RsMutex srvMutex;
 	std::string mConfigPath;

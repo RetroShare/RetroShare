@@ -76,12 +76,16 @@ virtual void run() = 0; /* called once the thread is started */
 };
 
 
-class RsQueueThread
+class RsQueueThread: public RsThread
 {
+	public:
+
 	RsQueueThread(uint32_t min, uint32_t max, double relaxFactor );
 virtual ~RsQueueThread() { return; }
 
 virtual void run();
+
+	protected:
 
 virtual bool workQueued() = 0;
 virtual bool doWork() = 0;

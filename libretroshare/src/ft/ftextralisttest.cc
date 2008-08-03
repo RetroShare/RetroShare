@@ -142,7 +142,7 @@ void	displayExtraListDetails(ftExtraList *eList, std::list<std::string> toHash, 
 	for(it = hashed.begin(); it != hashed.end(); it++)
 	{
 		FileInfo info;
-		if (eList->searchExtraFiles(*it, info))
+		if (eList->search(*it, 0, 0, info))
 		{
 			std::cerr << "displayExtraListDetails() Found Hash: " << *it;
 			std::cerr << std::endl;

@@ -11,6 +11,16 @@ ftFileProvider::~ftFileProvider(){
 	}
 }
 
+std::string ftFileProvider::getHash()
+{
+	return hash;
+}
+
+uint64_t ftFileProvider::getFileSize()
+{
+	return total_size;
+}
+
 bool ftFileProvider::getFileData(uint64_t offset, uint32_t chunk_size, void *data)
 {
         RsStackMutex stack(ftPMutex); /********** STACK LOCKED MTX ******/

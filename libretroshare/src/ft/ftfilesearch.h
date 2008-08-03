@@ -29,36 +29,31 @@
 /* 
  * ftFileSearch
  *
- * This is actually implements the ftSearch Interface.
+ * This is implements an array of ftSearch Interfaces.
  *
  */
 
-#include "ft/ftsearch.h"
+#include <vector>
 
-class CacheStrapper;
-class ftExtraList;
-class FileIndexMonitor;
-class FileIndexStore;
+#include "ft/ftsearch.h"
 
 class ftFileSearch: public ftSearch
 {
 
 	public:
 
-	ftFileSearch(CacheStrapper *c, ftExtraList *x, FileIndexMonitor *m, FileIndexStore *s)
-	:mCacheStrapper(c), mExtraList(x), mFileMonitor(m), mFileStore(s) { return; }
+	ftFileSearch();
 
-virtual bool	search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info);
+bool    addSearchMode(ftSearch *search, uint32_t hintflags);
+virtual bool    search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
 
 	private:
 
-	CacheStrapper *mCacheStrapper;
-	ftExtraList *mExtraList;
-	FileIndexMonitor *mFileMonitor;
-	FileIndexStore   *mFileStore;
+	// should have a mutex to protect vector....
+	// but not really necessary as it is const most of the time.
 
+	std::vector<ftSearch *> mSearchs;
 };
 
 
-
-
+#endif

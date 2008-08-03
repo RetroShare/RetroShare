@@ -57,6 +57,7 @@
 #include <map>
 #include <string>
 
+#include "ft/ftsearch.h"
 #include "util/rsthreads.h"
 #include "rsiface/rsfiles.h"
 #include "pqi/p3cfgmgr.h"
@@ -108,7 +109,7 @@ const uint32_t CONFIG_FT_EXTRA_LIST 	= 1;
 const uint32_t CLEANUP_PERIOD		= 600; /* 10 minutes */
 
 
-class ftExtraList: public RsThread, public p3Config
+class ftExtraList: public RsThread, public p3Config, public ftSearch
 {
 
 	public:
@@ -122,6 +123,8 @@ class ftExtraList: public RsThread, public p3Config
 bool		addExtraFile(std::string path, std::string hash, 
 				uint64_t size, uint32_t period, uint32_t flags);
 
+bool		removeExtraFile(std::string hash, uint32_t flags);
+
 		/***
 		 * Hash file, and add to the files, 
 		 * file is removed after period.
@@ -132,9 +135,10 @@ bool	 	hashExtraFileDone(std::string path, FileInfo &info);
 
 		/***
 		 * Search Function - used by File Transfer 
+		 * implementation of ftSearch.
 		 *
 		 **/
-bool		searchExtraFiles(std::string hash, FileInfo &info);
+virtual bool    search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
 
 		/***
 		 * Thread Main Loop 
@@ -156,7 +160,7 @@ virtual bool    loadList(std::list<RsItem *> load);
 void	hashAFile();
 bool	cleanupOldFiles();
 
-		RsMutex extMutex;
+		mutable RsMutex extMutex;
 
 		std::list<FileDetails> mToHash;
 

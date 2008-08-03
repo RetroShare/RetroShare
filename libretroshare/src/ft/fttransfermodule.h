@@ -37,7 +37,12 @@
 
 #include <map>
 #include <list>
-#include <ftFileCreator.h>
+#include <string>
+
+#include "ft/ftfilecreator.h"
+#include "ft/ftdatamultiplex.h"
+
+#include "util/rsthreads.h"
 
 const int  PQIPEER_INIT                 = 0x0000;
 const int  PQIPEER_NOT_ONLINE           = 0x0001;
@@ -47,13 +52,15 @@ const int  PQIPEER_SUSPEND              = 0x0010;
 
 class Request
 {
+	public:
   uint64_t offset;
   uint32_t chunkSize;
 };
 
 class peerInfo
 {
-  std:string peerId;
+	public:
+  std::string peerId;
   uint32_t state;
   uint32_t desiredRate;
   Request lastRequest;
@@ -69,7 +76,7 @@ class peerInfo
 class ftTransferModule 
 {
 public:
-  ftTransferModule(ftFileCreator *fc,ftClientModule *cm);
+  ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm);
   ~ftTransferModule();
 
   //interface to download controller
@@ -80,35 +87,40 @@ public:
   bool resumeTransfer();
   bool completeFileTransfer();
 
-  //interface to client module
-  bool recvFileData(uint64_t offset, uint32_t chunk_size, void *data);  //called by ftClientModule when data arrives
-  void requestData(uint64_t offset, uint32_t chunk_size);
+  //interface to multiplex module
+  bool recvFileData(std::string peerId, uint64_t offset, 
+			uint32_t chunk_size, void *data);
+  void requestData(std::string peerId, uint64_t offset, uint32_t chunk_size);
 
-  //interface to file creator , just wrapper functions that call the ftFileCreator
+  //interface to file creator
   bool getChunk(uint64_t &offset, uint32_t &chunk_size);
   bool storeData(uint64_t offset, uint32_t chunk_size, void *data);
 
-  //internal used functions
-  void queryInactive();
-  
   int tick();
-  
-  /* add by DrBob for interfaces */
+
   std::string hash() { return mHash; }
   uint64_t    size() { return mSize; }
-  
-public:
-  ftFileCreator  *mFileCreator;
-  ftClientModule *mClientModule;
+ 
+  //internal used functions
+  void queryInactive();
+  void adjustSpeed();
 
 private:
+
+  /* These have independent Mutexes / are const locally (no Mutex protection)*/
+  ftFileCreator *mFileCreator;
+  ftDataMultiplex *mMultiplexor;
+
   std::string mHash;
   uint64_t    mSize;
+
+  RsMutex tfMtx; /* below is mutex protected */
+
   std::list<std::string>         mFileSources;
   std::map<std::string,peerInfo> mOnlinePeers;
   	
   uint64_t mOffset;
-  uint32_t mChunkSize;	
+  uint32_t mChunkSize;
   bool     mFlag;  //1:transfer complete, 0: not complete
 };
 

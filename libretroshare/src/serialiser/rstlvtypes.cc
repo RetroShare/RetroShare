@@ -33,6 +33,10 @@
 #include <iomanip>
 #include <iostream>
 
+void  	RsTlvItem::TlvShallowClear()
+{
+	TlvClear(); /* unless overloaded! */
+}
 
 std::ostream &RsTlvItem::printBase(std::ostream &out, std::string clsName, uint16_t indent)
 {
@@ -102,6 +106,11 @@ void RsTlvBinaryData::TlvClear()
 	{
 		free(bin_data);
 	}
+	TlvShallowClear();
+}
+
+void  	RsTlvBinaryData::TlvShallowClear()
+{
 	bin_data = NULL;
 	bin_len = 0;
 }

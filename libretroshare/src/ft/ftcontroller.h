@@ -38,6 +38,10 @@
  *
  */
 
+class ftFileCreator;
+class ftTransferModule;
+class ftFileProvider;
+
 class ftController: public CacheTransfer, public RsThread, public pqiMonitor, public p3Config
 {
 	public:
@@ -96,8 +100,8 @@ virtual bool    loadList(std::list<RsItem *> load);
 
 	RsMutex ctrlMutex;
 
-	std::list<FileDetails> incomingQueue;
-	std::map<std::string, FileDetails> mCompleted;
+	std::list<FileInfo> incomingQueue;
+	std::map<std::string, FileInfo> mCompleted;
 
 	std::map<std::string, ftTransferModule *> mTransfers;
 	std::map<std::string, ftFileCreator *> mFileCreators;

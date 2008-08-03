@@ -61,11 +61,15 @@ class ftRequest
 {
 	public:
 
-	ftRequest(uint32_t type, std::string peerId, std::string hash, uint64_t offset, uint32_t chunk, void *data);
+	ftRequest(uint32_t type, std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunk, void *data);
+
+	ftRequest()
+	:mType(0), mSize(0), mOffset(0), mChunk(0), mData(NULL) { return; }
 
 	uint32_t mType;
 	std::string mPeerId;
 	std::string mHash;
+	uint64_t mSize;
 	uint64_t mOffset;
 	uint32_t mChunk;
 	void *mData;
@@ -73,7 +77,7 @@ class ftRequest
 
 	
 
-class ftDataMultiplex: public ftDataRecv
+class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 {
 
 	public:
@@ -89,36 +93,48 @@ bool	removeTransferModule(ftTransferModule *mod, ftFileCreator *f);
 	/*************** SEND INTERFACE (calls ftDataSend) *******************/
 
 	/* Client Send */
-bool	sendDataRequest(std::string peerId, std::string hash, uint64_t offset, uint32_t size);
+bool	sendDataRequest(std::string peerId, std::string hash, uint64_t size, 
+			uint64_t offset, uint32_t chunksize);
 
 	/* Server Send */
-bool	sendData(std::string peerId, std::string hash, uint64_t offset, uint32_t size, void *data);
+bool	sendData(std::string peerId, std::string hash, uint64_t size, 
+			uint64_t offset, uint32_t chunksize, void *data);
 
 
 	/*************** RECV INTERFACE (provides ftDataRecv) ****************/
 
 	/* Client Recv */
-virtual bool	recvData(std::string peerId, std::string hash, uint64_t offset, uint32_t size, void *data);
+virtual bool	recvData(std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data);
 
 	/* Server Recv */
-virtual bool	recvDataRequest(std::string peerId, std::string hash, uint64_t offset, uint32_t size);
+virtual bool	recvDataRequest(std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunksize);
 
+
+	protected:
+
+	/* Overloaded from RsQueueThread */
+virtual bool workQueued();
+virtual bool doWork();
 
 	private:
 
 	/* Handling Job Queues */
 bool    handleRecvData(std::string peerId,
-                std::string hash, uint64_t offset, uint32_t size, void *data);
+                std::string hash, uint64_t size, 
+		uint64_t offset, uint32_t chunksize, void *data);
 
 bool    handleRecvDataRequest(std::string peerId,
-                        std::string hash, uint64_t offset, uint32_t size);
+                        std::string hash, uint64_t size,
+			uint64_t offset, uint32_t chunksize);
 
 bool    handleSearchRequest(std::string peerId,
-                        std::string hash, uint64_t offset, uint32_t size);
+                        std::string hash, uint64_t size,
+			uint64_t offset, uint32_t chunksize);
 
 	/* We end up doing the actual server job here */
 bool    locked_handleServerRequest(ftFileProvider *provider, 
-	std::string peerId, std::string hash, uint64_t offset, uint32_t size);
+	std::string peerId, std::string hash, uint64_t size, 
+	uint64_t offset, uint32_t chunksize);
 
 	RsMutex dataMtx;
 
