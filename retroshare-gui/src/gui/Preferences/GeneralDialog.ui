@@ -553,7 +553,7 @@ p, li { white-space: pre-wrap; }
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>40</width>
          <height>20</height>
@@ -600,7 +600,7 @@ p, li { white-space: pre-wrap; }
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>300</width>
          <height>16</height>
@@ -688,7 +688,7 @@ p, li { white-space: pre-wrap; }
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>181</width>
          <height>20</height>
@@ -732,6 +732,51 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="text" >
      <string>Remove Auto Login</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_2" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>280</y>
+     <width>441</width>
+     <height>80</height>
+    </rect>
+   </property>
+   <property name="title" >
+    <string>System tray</string>
+   </property>
+   <widget class="QCheckBox" name="chkShowOnStartup" >
+    <property name="geometry" >
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>401</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>Show MainWindow at Startup</string>
+    </property>
+    <property name="checked" >
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkStartMinimized" >
+    <property name="geometry" >
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>401</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>Start minimized</string>
+    </property>
+    <property name="checked" >
+     <bool>true</bool>
     </property>
    </widget>
   </widget>

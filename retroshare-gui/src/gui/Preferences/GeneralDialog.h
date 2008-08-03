@@ -33,6 +33,7 @@
 #include "configpage.h"
 #include "ui_GeneralDialog.h"
 
+
 class GeneralDialog : public ConfigPage 
 {
   Q_OBJECT
@@ -46,7 +47,7 @@ public:
   bool save(QString &errmsg);
   /** Loads the settings for this page */
   void load();
-
+  bool startMinimized() const;
 
 private slots:
 

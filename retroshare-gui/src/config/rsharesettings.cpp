@@ -44,7 +44,7 @@
 #define SETTING_SHEETNAME           "SheetName"
 
 #define SETTING_DATA_DIRECTORY      "DataDirectory"
-
+#define SETTING_SHOW_MAINWINDOW_AT_START  "ShowMainWindowAtStart"
 #define SETTING_BWGRAPH_FILTER        "StatisticDialog/BWLineFilter"
 #define SETTING_BWGRAPH_OPACITY       "StatisticDialog/Opacity"
 #define SETTING_BWGRAPH_ALWAYS_ON_TOP "StatisticDialog/AlwaysOnTop"
@@ -84,6 +84,7 @@ RshareSettings::RshareSettings()
 : QSettings(SETTINGS_FILE, QSettings::IniFormat)
 { 
   setDefault(SETTING_STYLE, DEFAULT_STYLE); 
+  setDefault(SETTING_SHOW_MAINWINDOW_AT_START, true);
 }
 
 /** Sets the default value of <b>key</b> to be <b>val</b>. */
@@ -208,7 +209,20 @@ void RshareSettings::setBWGraphAlwaysOnTop(bool alwaysOnTop)
   setValue(SETTING_BWGRAPH_ALWAYS_ON_TOP, alwaysOnTop);
 }
 
+/** Returns true if RetroShare's main window should be visible when the
+ * application starts. */
+bool
+RshareSettings::showMainWindowAtStart()
+{
+  return value(SETTING_SHOW_MAINWINDOW_AT_START).toBool();
+}
 
+/** Sets whether to show RetroShare's main window when the application starts. */
+void
+RshareSettings::setShowMainWindowAtStart(bool show)
+{
+  setValue(SETTING_SHOW_MAINWINDOW_AT_START, show);
+}
 
 /** Saving Generic Widget Size / Location */
 

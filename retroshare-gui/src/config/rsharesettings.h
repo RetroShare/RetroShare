@@ -82,6 +82,12 @@ public:
   void setSheetName(QString sheet);
   /** Gets the stylesheet */
   QString getSheetName();
+  
+  /** Returns true if RetroShare's main window should be visible when the
+  * application starts. */
+  bool showMainWindowAtStart();
+  /** Sets whether to show Vidalia's main window when the application starts. */
+  void setShowMainWindowAtStart(bool show);
 
   
     /* Get the destination log file. */

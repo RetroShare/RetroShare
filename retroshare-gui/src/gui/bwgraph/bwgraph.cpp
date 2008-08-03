@@ -24,6 +24,8 @@
 #include <rshare.h>
 #include <control/bandwidthevent.h>
 #include "bwgraph.h"
+#include "rsiface/rsiface.h"
+
 
 #define BWGRAPH_LINE_SEND       (1u<<0)
 #define BWGRAPH_LINE_RECV       (1u<<1)
@@ -93,6 +95,18 @@ BandwidthGraph::customEvent(QEvent *event)
     BandwidthEvent *bw = (BandwidthEvent *)event;
     updateGraph(bw->bytesRead(), bw->bytesWritten());
   }
+}
+
+void 
+BandwidthGraph::timerEvent( QTimerEvent * )
+{
+ 	/* set users/friends/network */
+	float downKb = 0;
+	float upKb = 0;
+	rsicontrol -> ConfigGetDataRates(downKb, upKb);
+
+  updateGraph(downKb,upKb);
+
 }
 
 /** Binds events to actions. */

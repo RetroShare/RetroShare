@@ -52,6 +52,7 @@ public slots:
 protected:
   /** Called to deliver a bandwidth update event from Tor. */
   void customEvent(QEvent *event);
+  void timerEvent(QTimerEvent*);
   
 private slots:
   /** Adds new data to the graph */

@@ -22,7 +22,7 @@
 
 #include "rshare.h"
 #include "GeneralDialog.h"
-
+#include <QSystemTrayIcon>
 
 /** Constructor */
 GeneralDialog::GeneralDialog(QWidget *parent)
@@ -49,7 +49,19 @@ GeneralDialog::GeneralDialog(QWidget *parent)
   ui.styleSheetCombo->setCurrentIndex(ui.styleSheetCombo->findText("Default"));
   //loadStyleSheet("Default");
   loadqss(); 
+  
+  if (QSystemTrayIcon::isSystemTrayAvailable()){
 
+    /* Check if we are supposed to show our main window on startup */
+    ui.chkShowOnStartup->setChecked(_settings->showMainWindowAtStart());
+    if (ui.chkShowOnStartup->isChecked())
+      show();
+  } else {
+    /* Don't let people hide the main window, since that's all they have. */
+    ui.chkShowOnStartup->hide();
+    //show();
+  }
+    
 }
 
 /** Destructor */
@@ -69,6 +81,9 @@ GeneralDialog::save(QString &errmsg)
   _settings->setLanguageCode(languageCode);
   _settings->setInterfaceStyle(ui.cmboStyle->currentText());
   _settings->setSheetName(ui.styleSheetCombo->currentText());
+  
+  _settings->setValue(QString::fromUtf8("StartMinimized"), startMinimized());
+
  
   /* Set to new style */
   Rshare::setStyle(ui.cmboStyle->currentText());
@@ -85,6 +100,8 @@ GeneralDialog::load()
   index = ui.cmboStyle->findData(Rshare::style().toLower());
   ui.cmboStyle->setCurrentIndex(index);
   
+  ui.checkStartMinimized->setChecked(_settings->value(QString::fromUtf8("StartMinimized"), false).toBool());
+
   
   ui.styleSheetCombo->setCurrentIndex(ui.styleSheetCombo->findText(_settings->getSheetName())); 
   
@@ -131,4 +148,9 @@ void GeneralDialog::loadqss()
   ui.styleSheetCombo->addItem(st.fileName().remove(".qss"));
  }
  
+}
+
+bool GeneralDialog::startMinimized() const {
+  if(ui.checkStartMinimized->isChecked()) return true;
+  return ui.checkStartMinimized->isChecked();
 }

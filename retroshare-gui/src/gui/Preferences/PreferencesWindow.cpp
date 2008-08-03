@@ -61,8 +61,8 @@ PreferencesWindow::PreferencesWindow(QWidget *parent, Qt::WFlags flags)
   //ui.stackPages->add(new CryptographyDialog(ui.stackPages),
   //                   createPageAction(QIcon(IMAGE_CRYPTOGRAPHY), tr("Cryptography"), grp));
                      
-  ui.stackPages->add(new LogDialog(ui.stackPages),
-                     createPageAction(QIcon(IMAGE_ABOUT), tr("About"), grp));
+  //ui.stackPages->add(new LogDialog(ui.stackPages),
+  //                   createPageAction(QIcon(IMAGE_ABOUT), tr("About"), grp));
                      
   
   /* Create the toolbar */

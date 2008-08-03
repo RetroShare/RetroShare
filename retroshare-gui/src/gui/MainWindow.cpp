@@ -63,7 +63,7 @@
 #define IMAGE_SEARCH    	    ":/images/filefind.png"
 #define IMAGE_TRANSFERS      	":/images/ktorrent32.png"
 #define IMAGE_LINKS             ":/images/knewsticker24.png"
-#define IMAGE_FILES   	        ":/images/folder_green.png"
+#define IMAGE_FILES   	        ":/images/fileshare24.png"
 #define IMAGE_CHANNELS       	":/images/channels.png"
 #define IMAGE_PREFERENCES       ":/images/settings16.png"
 #define IMAGE_CHAT          	":/images/groupchat.png"
