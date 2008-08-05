@@ -1,11 +1,11 @@
 .QWidget {
-   background-image: url(:qss/ed2k/little-back.png);
+   background-image: url(qss/ed2k/little-back.png);
 }
 
 
 /* Customize the toolbar. */
 QToolBar {
-    border-image: url(:qss/ed2k/backed2k.png);
+    border-image: url(qss/ed2k/backed2k.png);
 
 }
 
@@ -17,44 +17,19 @@ QPushButton {
 
 QPushButton
 {
-border-image: url(:qss/ed2k/button-down.png) ;
+border-image: url(qss/ed2k/button-down.png) ;
 }
 
 QPushButton:hover 
 {
-border-image: url(:qss/ed2k/button-hover.png);
+border-image: url(qss/ed2k/button-hover.png);
 }
 
 QPushButton:pressed 
 {
-border-image: url(:qss/ed2k/button-up.png) ;
+border-image: url(qss/ed2k/button-up.png) ;
 } 
 
-
-QPushButton#addfriendButton {
-	min-height: 34px;
-      min-width: 48px;
-}
-
-QPushButton#invitefriendButton {
-	min-height: 34px;
-      min-width: 48px;
-}
-
-QPushButton#addshareButton {
-	min-height: 34px;
-      min-width: 48px;
-}
-
-QPushButton#optionsButton {
-	min-height: 34px;
-      min-width: 48px;
-}
-
-QPushButton#quitButton {
-	min-height: 34px;
-      min-width: 48px;
-}
 
 QPushButton#okButton {
 	min-height: 27px;
@@ -71,3 +46,78 @@ QPushButton#cancelprefButton {
 	min-height: 25px;
       min-width: 75px;
 }
+
+QPushButton#applyButton {
+
+	  min-height: 25px;
+	  max-height: 25px;
+      min-width: 75px;
+}
+
+QPushButton#cancelprefButton {
+	  min-height: 27px;
+      min-width: 75px;
+}
+
+QPushButton#Sendbtn {
+
+	  min-height: 25px;
+      min-width: 77px;
+}
+
+QPushButton#sendButton {
+
+	  min-height: 25px;
+      min-width: 77px;
+}
+
+QPushButton#newmessageButton{
+
+	  min-height: 27px;
+      min-width: 47px;
+}
+
+QPushButton#replymessageButton{
+
+	  min-height: 27px;
+      min-width: 47px;
+}
+
+QPushButton#removemessageButton{
+
+	  min-height: 27px;
+      min-width: 47px;
+}
+
+QPushButton#printbutton
+{
+
+	  min-height: 27px;
+      min-width: 47px;
+}
+
+QPushButton#afcancelButton
+{
+	  min-height: 25px;
+      min-width: 75px;
+}
+
+QPushButton#refreshButton
+{
+	  min-height: 25px;
+      min-width: 75px;
+}
+
+QPushButton#checkButton
+{
+	  min-height: 25px;
+      min-width: 75px;
+}
+
+
+QPushButton#nviewsettingsButton
+{
+	  min-height: 25px;
+      min-width: 75px;
+}
+

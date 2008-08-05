@@ -1,10 +1,9 @@
 
 /* Customize the toolbar. */
 QToolBar {
-    border-image: url(qss/silver/silver.png);
+    border-image: url(qss/wx/wx.png);
 
 }
-
 
 
 QPushButton#okButton {
@@ -30,3 +29,5 @@ QPushButton#applyButton {
 	  max-height: 25px;
       min-width: 75px;
 }
+
+

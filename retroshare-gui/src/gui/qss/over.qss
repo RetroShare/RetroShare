@@ -5,7 +5,7 @@
 /* Customize the toolbar. */
 QToolBar {
 
-    border-image: url(:qss/over/backover.png);
+    border-image: url(qss/over/backover.png);
 
 }
 
@@ -18,44 +18,20 @@ QPushButton {
 
 QPushButton
 {
-border-image: url(:qss/over/greenbot.png) ;
+border-image: url(qss/over/greenbot.png) ;
 }
 
 QPushButton:hover 
 {
-border-image: url(:qss/over/greenhover.png);
+border-image: url(qss/over/greenhover.png);
 }
 
 QPushButton:pressed 
 {
 color: white;
-border-image: url(:qss/over/greentop.png) ;
+border-image: url(qss/over/greentop.png) ;
 } 
 
-QPushButton#addfriendButton {
-	min-height: 34px;
-      min-width: 48px;
-}
-
-QPushButton#invitefriendButton {
-	min-height: 34px;
-      min-width: 48px;
-}
-
-QPushButton#addshareButton {
-	min-height: 34px;
-      min-width: 48px;
-}
-
-QPushButton#optionsButton {
-	min-height: 34px;
-      min-width: 48px;
-}
-
-QPushButton#quitButton {
-	min-height: 34px;
-      min-width: 48px;
-}
 
 QPushButton#okButton {
 	min-height: 27px;
@@ -67,9 +43,77 @@ QPushButton#cancelButton {
       min-width: 75px;
 }
 
+QPushButton#applyButton {
+
+	  min-height: 25px;
+	  max-height: 25px;
+      min-width: 75px;
+}
+
 QPushButton#cancelprefButton {
-      color: white;
-	min-height: 25px;
+	  min-height: 27px;
+      min-width: 75px;
+}
+
+QPushButton#Sendbtn {
+
+	  min-height: 25px;
+      min-width: 77px;
+}
+
+QPushButton#sendButton {
+
+	  min-height: 25px;
+      min-width: 77px;
+}
+
+QPushButton#newmessageButton{
+
+	  min-height: 27px;
+      min-width: 47px;
+}
+
+QPushButton#replymessageButton{
+
+	  min-height: 27px;
+      min-width: 47px;
+}
+
+QPushButton#removemessageButton{
+
+	  min-height: 27px;
+      min-width: 47px;
+}
+
+QPushButton#printbutton
+{
+
+	  min-height: 27px;
+      min-width: 47px;
+}
+
+QPushButton#afcancelButton
+{
+	  min-height: 25px;
+      min-width: 75px;
+}
+
+QPushButton#refreshButton
+{
+	  min-height: 25px;
+      min-width: 75px;
+}
+
+QPushButton#checkButton
+{
+	  min-height: 25px;
+      min-width: 75px;
+}
+
+
+QPushButton#nviewsettingsButton
+{
+	  min-height: 25px;
       min-width: 75px;
 }
 

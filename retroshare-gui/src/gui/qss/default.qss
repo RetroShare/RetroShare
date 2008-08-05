@@ -4,10 +4,43 @@
 
 /* Customize the toolbar. */
 QToolBar {
+    border-image: url(qss/default/retrotoolbar.png);
+
+}
+
+/* Customize the Menu Bar. */
+QMenuBar {
     border-image: url(:/qss/default/retrotoolbar.png);
 
 }
 
 
+QPushButton#okButton {
 
+	  min-height: 27px;
+      min-width: 77px;
+      max-width: 77px;
+}
 
+QPushButton#cancelprefButton {
+
+	  min-height: 27px;
+      min-width: 77px;
+      max-width: 77px;
+}
+
+QPushButton#applyButton {
+
+	  min-height: 25px;
+	  max-height: 25px;
+      min-width: 77px;
+      max-width: 77px;
+}
+
+QPushButton#cancelButton {
+
+	  min-height: 25px;
+	  max-height: 25px;
+      min-width: 77px;
+      max-width: 77px;
+}
