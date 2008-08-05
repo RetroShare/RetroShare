@@ -1,8 +1,8 @@
 /****************************************************************
  * This file is distributed under the following license:
  *
- * Copyright (c) 2006-2007, crypton
- * Copyright (c) 2006, Matt Edman, Justin Hipple
+ * Copyright (c) 2008, defnax
+ * Copyright (c) 2008, Matt Edman, Justin Hipple
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -20,11 +20,13 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-/** 
- * \file vmessagebox.cpp
- * \version $Id: vmessagebox.cpp 990 2006-06-08 03:31:27Z edmanm $
- */
+/*
+** \file vmessagebox.cpp
+** \version $Id: vmessagebox.cpp 2362 2008-02-29 04:30:11Z edmanm $
+** \brief Provides a custom Vidalia mesage box
+*/
 
+#include "html.h"
 #include "vmessagebox.h"
 
 
@@ -70,11 +72,11 @@ int
 VMessageBox::selected(int ret, int button0, int button1, int button2)
 {
   if (ret == 0) {
-    return button0;
+    return (button0 & QMessageBox::ButtonMask);
   } else if (ret == 1) {
-    return button1;
+    return (button1 & QMessageBox::ButtonMask);
   }
-  return button2;
+  return (button2 & QMessageBox::ButtonMask);
 }
 
 /** Converts a Button enum value to a translated string. */
@@ -92,6 +94,9 @@ VMessageBox::buttonText(int btn)
     case Retry:   text = tr("Retry"); break;
     case ShowLog: text = tr("Show Log"); break;
     case ShowSettings: text = tr("Show Settings"); break;
+    case Continue: text = tr("Continue"); break;
+    case Quit:     text = tr("Quit"); break;
+    case Browse:   text = tr("Browse"); break;
     default: break;
   }
   return text;
@@ -105,7 +110,7 @@ int
 VMessageBox::critical(QWidget *parent, QString caption, QString text,
                       int button0, int button1, int button2)
 {
-  int ret = QMessageBox::critical(parent, caption, text,
+  int ret = QMessageBox::critical(parent, caption, p(text),
               VMessageBox::buttonText(button0), 
               VMessageBox::buttonText(button1), 
               VMessageBox::buttonText(button2),
@@ -122,7 +127,7 @@ int
 VMessageBox::question(QWidget *parent, QString caption, QString text,
                       int button0, int button1, int button2)
 {
-  int ret = QMessageBox::question(parent, caption, text,
+  int ret = QMessageBox::question(parent, caption, p(text),
               VMessageBox::buttonText(button0), 
               VMessageBox::buttonText(button1), 
               VMessageBox::buttonText(button2),
@@ -139,7 +144,7 @@ int
 VMessageBox::information(QWidget *parent, QString caption, QString text,
                          int button0, int button1, int button2)
 {
-  int ret = QMessageBox::information(parent, caption, text,
+  int ret = QMessageBox::information(parent, caption, p(text),
               VMessageBox::buttonText(button0), 
               VMessageBox::buttonText(button1), 
               VMessageBox::buttonText(button2),
@@ -156,7 +161,7 @@ int
 VMessageBox::warning(QWidget *parent, QString caption, QString text,
                      int button0, int button1, int button2)
 {
-  int ret = QMessageBox::warning(parent, caption, text,
+  int ret = QMessageBox::warning(parent, caption, p(text),
               VMessageBox::buttonText(button0), 
               VMessageBox::buttonText(button1), 
               VMessageBox::buttonText(button2),

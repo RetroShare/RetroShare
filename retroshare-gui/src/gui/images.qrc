@@ -5,6 +5,7 @@
         <file>help/thanks.html</file>
         <file>images/browse-looking.gif</file>
         <file>images/addfriendlabel.png</file>
+        <file>images/back.png</file>
         <file>images/backgroundl.png</file>
         <file>images/blockdevice.png</file>
         <file>images/blockdevice2.png</file>
@@ -31,6 +32,7 @@
         <file>images/attachment.png</file>
         <file>images/avatar_background.png</file>
         <file>images/backgroundimage.png</file>
+        <file>images/button_cancel.png</file>
 	<file>images/calendar.png</file>
         <file>images/chat.png</file>
         <file>images/chat/bar_end.png</file>
@@ -127,11 +129,14 @@
         <file>images/folder_doments.png</file>
         <file>images/folder_green.png</file>
         <file>images/folder_green16.png</file>
+        <file>images/forward.png</file>
         <file>images/friendsfolder24.png</file>
         <file>images/kgames.png</file>
         <file>images/graph-area.png</file>
         <file>images/graph-line.png</file>
         <file>images/groupchat.png</file>
+        <file>images/gohome.png</file>
+        <file>images/help.png</file>
         <file>images/hide_toolbox_frame.png</file>
         <file>images/highlight.png</file>
         <file>images/hi16-app-ktorrent.png</file>

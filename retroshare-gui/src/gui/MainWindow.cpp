@@ -89,7 +89,7 @@
 #define IMAGE_UNFINISHED        ":/images/underconstruction.png"
 #define IMAGE_MINIMIZE          ":/images/window_nofullscreen.png"
 #define IMAGE_MAXIMIZE          ":/images/window_fullscreen.png"
-
+#define IMG_HELP                ":/images/help.png"
 
 /* Keys for UI Preferences */
 #define UI_PREF_PROMPT_ON_QUIT  "UIOptions/ConfirmOnQuit"
@@ -297,6 +297,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 #endif
     menu->addAction(_prefsAct);
     menu->addAction(_smplayerAct);
+    menu->addAction(_helpAct);
     menu->addSeparator();
     menu->addAction(QIcon(IMAGE_MINIMIZE), tr("Minimize"), this, SLOT(showMinimized()));
     menu->addAction(QIcon(IMAGE_MAXIMIZE), tr("Maximize"), this, SLOT(showMaximized()));
@@ -519,6 +520,9 @@ void MainWindow::createActions()
     
     _smplayerAct = new QAction(QIcon(IMAGE_SMPLAYER), tr("SMPlayer"), this);
     connect(_smplayerAct, SIGNAL(triggered()),this, SLOT(showsmplayer()));
+    
+    _helpAct = new QAction(QIcon(IMG_HELP), tr("Help"), this);
+    connect(_helpAct, SIGNAL(triggered()), this, SLOT(showHelpDialog()));
          
           
     //connect(ui.btntoggletoolbox, SIGNAL(toggled(bool)), this, SLOT(showToolboxFrame(bool)));
@@ -709,6 +713,23 @@ void MainWindow::showabout()
 {
     static HelpDialog *helpdlg = new HelpDialog(this); 
 	helpdlg->show(); 
+}
+
+/** Displays the help browser and displays the most recently viewed help
+ * topic. */
+void MainWindow::showHelpDialog()
+{
+  showHelpDialog(QString());
+}
+
+
+/**< Shows the help browser and displays the given help <b>topic</b>. */
+void MainWindow::showHelpDialog(const QString &topic)
+{
+  static HelpBrowser *helpBrowser = 0;
+  if (!helpBrowser)
+    helpBrowser = new HelpBrowser(this);
+  helpBrowser->showWindow(topic);
 }
 
 void MainWindow::setStyle()

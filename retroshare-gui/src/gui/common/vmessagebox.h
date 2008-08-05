@@ -1,8 +1,8 @@
 /****************************************************************
  * This file is distributed under the following license:
  *
- * Copyright (c) 2006-2007, crypton
- * Copyright (c) 2006, Matt Edman, Justin Hipple
+ * Copyright (c) 2008, defnax
+ * Copyright (c) 2008, Matt Edman, Justin Hipple
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -20,10 +20,11 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-/** 
- * \file vmessagebox.h
- * \version $Id: vmessagebox.h 990 2006-06-08 03:31:27Z edmanm $
- */
+/*
+** \file vmessagebox.h
+** \version $Id: vmessagebox.h 2362 2008-02-29 04:30:11Z edmanm $
+** \brief Provides a custom Vidalia mesage box
+*/
 
 #ifndef _VMESSAGEBOX_H
 #define _VMESSAGEBOX_H
@@ -46,7 +47,10 @@ public:
     Help,
     Retry,
     ShowLog,
-    ShowSettings
+    ShowSettings,
+    Continue,
+    Quit,
+    Browse
   };
   
   /** Default constructor. */

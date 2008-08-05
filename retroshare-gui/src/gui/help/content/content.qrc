@@ -1,0 +1,13 @@
+<RCC>
+  <qresource prefix="/help">
+    <!-- English -->
+    <file>en/contents.xml</file>
+    <file>en/index.html</file>
+    <file>en/links.html</file>
+    <!-- German -->
+    <file>de/contents.xml</file>
+    <file>de/index.html</file>
+    <file>de/links.html</file>
+  </qresource>
+</RCC>
+

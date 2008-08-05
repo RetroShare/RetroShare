@@ -42,6 +42,7 @@
 #include "Preferences/PreferencesWindow.h"
 #include "Settings/gsettingswin.h"
 #include "bwgraph/bwgraph.h"
+#include "help/browser/helpbrowser.h"
 #include "games/qbackgammon/bgwindow.h"
 #include "toplevel.h"
 
@@ -132,6 +133,12 @@ private slots:
     void showApplWindow();
 	void showsmplayer();
 	void showabout();
+	
+	/** Displays the help browser and displays the most recently viewed help
+    * topic. */
+    void showHelpDialog();
+    /** Called when a child window requests the given help <b>topic</b>. */
+    void showHelpDialog(const QString &topic);
 
 
     void showSettings();
@@ -169,6 +176,7 @@ private:
     QAction* _bandwidthAct;
     QAction* _messengerwindowAct;
     QAction* _smplayerAct;
+    QAction* _helpAct;
     
     /** A BandwidthGraph object which handles monitoring RetroShare bandwidth usage */
     BandwidthGraph* _bandwidthGraph;

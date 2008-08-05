@@ -30,6 +30,7 @@ DEPENDPATH += . \
             gui\common\
             gui\Settings \
             gui\toaster \
+            gui\help\browser \
             gui\authdlg \
             gui\elastic
             
@@ -130,7 +131,10 @@ HEADERS +=  rshare.h \
             gui/toaster/RetroStyleLabelProxy.h \
             gui/common/vmessagebox.h \
             gui/common/rwindow.h \
+            gui/common/html.h \
             gui/MessagesDialog.h \
+            gui/help/browser/helpbrowser.h \
+            gui/help/browser/helptextbrowser.h \
             gui/Settings/gsettingswin.h \
             gui/Settings/GeneralPage.h \
             gui/Settings/DirectoriesPage.h \
@@ -197,6 +201,7 @@ FORMS +=    gui/ChatDialog.ui \
             gui/SharedFilesDialog.ui \
             gui/StatisticDialog.ui \
             gui/MessagesDialog.ui \
+            gui/help/browser/helpbrowser.ui \
             gui/HelpDialog.ui \
             gui/bwgraph/bwgraph.ui \
 	    gui/profile/ProfileView.ui \
@@ -286,6 +291,8 @@ SOURCES += main.cpp \
             gui/SharedFilesDialog.cpp \
             gui/StatisticDialog.cpp \
             gui/MessagesDialog.cpp \
+            gui/help/browser/helpbrowser.cpp \
+            gui/help/browser/helptextbrowser.cpp \
             gui/HelpDialog.cpp \
             gui/LogoBar.cpp \
             gui/xprogressbar.cpp \
@@ -326,7 +333,8 @@ SOURCES += main.cpp \
             gui/Preferences/ServerDialog.cpp \
             gui/Preferences/ConfirmQuitDialog.cpp \
             gui/common/vmessagebox.cpp \
-            gui/common/rwindow.cpp \         
+            gui/common/rwindow.cpp \ 
+            gui/common/html.cpp \        
             gui/Settings/gsettingswin.cpp \
             gui/Settings/GeneralPage.cpp \
             gui/Settings/DirectoriesPage.cpp \
@@ -371,7 +379,7 @@ SOURCES += main.cpp \
             gui/feeds/SubFileItem.cpp \
             gui/feeds/SubDestItem.cpp \
             
-RESOURCES += gui/images.qrc lang/lang.qrc games/qcheckers/qcheckers.qrc apps/smplayer/icons.qrc
+RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc games/qcheckers/qcheckers.qrc apps/smplayer/icons.qrc
 TRANSLATIONS +=  \
             lang/retroshare_en.ts \
             lang/retroshare_de.ts \

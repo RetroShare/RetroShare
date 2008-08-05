@@ -1,0 +1,52 @@
+<!--
+  This file is distributed under the following license:
+ 
+  Copyright (c) 2008, defnax
+  Copyright (c) 2008, Matt Edman, Justin Hipple
+
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  
+  02110-1301, USA.
+-->
+
+<!-- 
+  The Contents element is the root element in the XML file listing the
+  available help topics. Available attributes:
+    id    (optional) Short id for the home topic. Defaults to "home"
+    name  The display value shown in the topic listing
+    html  An html file containing the root help page
+-->
+<!ELEMENT Contents (Topic*)>
+<!ATTLIST Contents
+  id CDATA "home"
+  name CDATA #REQUIRED
+  html CDATA #REQUIRED
+>
+
+<!--
+  Every available help topic will have a Topic element. Its attributes are:
+    id      The short id for this help topic
+    name    The display value shown in the topic listing
+    html    An html file containing help information for this topic
+    section (optional) A section in the html file for this topic, specified
+                       using anchors
+-->
+<!ELEMENT Topic (Topic*)>
+<!ATTLIST Topic
+  id CDATA #REQUIRED
+  name CDATA #REQUIRED
+  html CDATA #REQUIRED
+  section CDATA #IMPLIED
+>
+
