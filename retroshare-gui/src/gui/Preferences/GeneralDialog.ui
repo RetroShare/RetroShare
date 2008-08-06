@@ -721,17 +721,17 @@ p, li { white-space: pre-wrap; }
    <property name="title" >
     <string>Login</string>
    </property>
-   <widget class="QPushButton" name="autoButton" >
+   <widget class="QCheckBox" name="autologincheckBox" >
     <property name="geometry" >
      <rect>
       <x>10</x>
       <y>20</y>
-      <width>151</width>
-      <height>31</height>
+      <width>141</width>
+      <height>18</height>
      </rect>
     </property>
     <property name="text" >
-     <string>Remove Auto Login</string>
+     <string>Auto Login</string>
     </property>
    </widget>
   </widget>
@@ -785,7 +785,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>cmboLanguage</tabstop>
   <tabstop>cmboStyle</tabstop>
   <tabstop>styleSheetCombo</tabstop>
-  <tabstop>autoButton</tabstop>
  </tabstops>
  <resources>
   <include location="../images.qrc" />
