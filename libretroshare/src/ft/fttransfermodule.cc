@@ -32,6 +32,9 @@ const uint32_t PQIPEER_DOWNLOAD_TOO_FAST = 8; /* 8 secs */
 const uint32_t PQIPEER_DOWNLOAD_TOO_SLOW = 12; /* 12 secs */
 const uint32_t PQIPEER_DOWNLOAD_MIN_DELTA = 5; /* 5 secs */
 
+const uint32_t TRANSFER_START_MIN = 500;  /* 500 byte  min limit */
+const uint32_t TRANSFER_START_MAX = 10000; /* 10000 byte max limit */
+
 ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm)
 	:mFileCreator(fc), mMultiplexor(dm), mFlag(0)
 {
@@ -112,6 +115,16 @@ bool ftTransferModule::recvFileData(std::string peerId, uint64_t offset,
 	std::cerr << " chunksize: " << chunk_size;
 	std::cerr << std::endl;
 #endif
+  std::map<std::string,peerInfo>::iterator mit;
+  mit = mOnlinePeers.find(peerId);
+  if (mit == mOnlinePeers.end())
+    return false;
+  if ((mit->second).state != PQIPEER_DOWNLOADING)
+    return false;
+  if (offset != ((mit->second).offset + (mit->second).receivedSize))
+    return false;
+  (mit->second).receivedSize += chunk_size;
+  (mit->second).state = PQIPEER_IDLE;
 
 	return storeData(offset, chunk_size, data);
 }
@@ -123,7 +136,7 @@ void ftTransferModule::requestData(std::string peerId, uint64_t offset, uint32_t
 
 bool ftTransferModule::getChunk(uint64_t &offset, uint32_t &chunk_size)
 {
-  mFileCreator->getMissingChunk(offset, chunk_size);
+  return mFileCreator->getMissingChunk(offset, chunk_size);
 }
 
 bool ftTransferModule::storeData(uint64_t offset, uint32_t chunk_size,void *data)
@@ -140,7 +153,8 @@ void ftTransferModule::queryInactive()
 #endif
 
   int ts = time(NULL);
-  
+  int offset,size,delta;  
+
   std::map<std::string,peerInfo>::iterator mit;
   for(mit = mOnlinePeers.begin(); mit != mOnlinePeers.end(); mit++)
   {
@@ -150,14 +164,14 @@ void ftTransferModule::queryInactive()
       case PQIPEER_NOT_ONLINE:
       	if (ts - ((mit->second).lastTS) > PQIPEER_OFFLINE_CHECK)
       	{//start to request data
-      		getChunk(mOffset,mChunkSize);
-      		if (mChunkSize != 0)  
+          size = TRANSFER_START_MIN;
+      		if (getChunk(offset,size))  
       		{ 
-      			(mit->second).req_loc = mOffset;
-      			(mit->second).req_size = mChunkSize;
+      			(mit->second).offset = offset;
+      			(mit->second).chunkSize = size;
       			(mit->second).lastTS = ts;
       			(mit->second).state = PQIPEER_DOWNLOADING;
-      			requestData(mit->first, mOffset,mChunkSize);
+      			requestData(mit->first, offset,size);
       		}
       	  else mFlag = 1;
       	}
@@ -166,21 +180,33 @@ void ftTransferModule::queryInactive()
       //file request has been sent to peer side, but no response received yet  
       case PQIPEER_DOWNLOADING:
       	if (ts - ((mit->second).lastTS) > PQIPEER_DOWNLOAD_CHECK)
-      		requestData(mit->first, (mit->second).req_loc,(mit->second).req_size);  //give a push
+      		requestData(mit->first, (mit->second).offset,(mit->second).size);  //give a push
+
+        actualRate += (mit->second).actualRate;
         break;
       
       //file response has been received or peer side is just ready for download  
       case PQIPEER_IDLE:
-     		getChunk(mOffset,mChunkSize);
-     		if (mChunkSize != 0)  
+     		(mit->second).actualRate = (mit->second).size/(ts-(mit-second).lastTS);
+        if ((mit->second).actualRate < (mit->second).desireRate)
+        {
+          size = (mit->second).size *2 ;
+        }
+        else
+        {
+          size = (mit->second).size * 0.9 ;
+        }
+     		if (getChunk(offset,size))  
      		{
-     			(mit->second).req_loc = mOffset;
-     			(mit->second).req_size = mChunkSize;
+     			(mit->second).offset = offset;
+     			(mit->second).size = size;
      			(mit->second).lastTS = ts;
      			(mit->second).state = PQIPEER_DOWNLOADING;
-     			requestData(mit->first, mOffset,mChunkSize);
+     			requestData(mit->first,offset,size);
      		}
-     	  else mFlag = 1;        	
+     	  else mFlag = 1;      
+
+        actualRate += (mit->second).actualRate;
       	break;
       
       //file transfer has been stopped
@@ -233,6 +259,23 @@ int ftTransferModule::tick()
 
 void ftTransferModule::adjustSpeed()
 {
+  std::map<std::string,peerInfo>::iterator mit;
+  for(mit = mOnlinePeers.begin(); mit != mOnlinePeers.end(); mit++)
+  {
+    if (((mit->second).state == PQIPEER_DOWNLOADING) 
+        || ((mit->second).state == PQIPEER_IDLE))
+    {
+        if (actualRate < desiredRate) && ((mit->second).actualRate >= (mit->second).desiredRate)
+        {
+          (mit->second).desiredRate *= 1.1;
+        }
+
+        if (actualRate > desiredRate) && ((mit->second).actualRate < (mit->second).desiredRate)
+        {
+          (mit->second).desiredRate *= 0.9;
+        }
+    }
+  }
 	return;
 }
 

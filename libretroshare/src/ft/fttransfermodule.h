@@ -63,13 +63,15 @@ class peerInfo
   std::string peerId;
   uint32_t state;
   uint32_t desiredRate;
-  Request lastRequest;
   uint32_t actualRate;
   
   //current file data request
-  uint64_t req_loc;
-  uint32_t req_size;
-  
+  uint64_t offset;
+  uint32_t chunkSize;
+
+  //already received data size
+  uint32_t receivedSize;
+
   time_t lastTS;
 };
 
@@ -119,9 +121,9 @@ private:
   std::list<std::string>         mFileSources;
   std::map<std::string,peerInfo> mOnlinePeers;
   	
-  uint64_t mOffset;
-  uint32_t mChunkSize;
   bool     mFlag;  //1:transfer complete, 0: not complete
+  uint32_t desiredRate;
+  uint32_t actualRate;
 };
 
 #endif  //FT_TRANSFER_MODULE_HEADER
