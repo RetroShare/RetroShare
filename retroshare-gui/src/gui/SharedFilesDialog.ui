@@ -499,10 +499,7 @@
    <enum>Qt::NoContextMenu</enum>
   </property>
   <layout class="QGridLayout" >
-   <property name="horizontalSpacing" >
-    <number>1</number>
-   </property>
-   <property name="verticalSpacing" >
+   <property name="spacing" >
     <number>1</number>
    </property>
    <item row="0" column="0" >
@@ -514,22 +511,10 @@
       <layout class="QHBoxLayout" >
        <item>
         <layout class="QGridLayout" >
-         <property name="leftMargin" >
+         <property name="margin" >
           <number>0</number>
          </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <property name="horizontalSpacing" >
-          <number>6</number>
-         </property>
-         <property name="verticalSpacing" >
+         <property name="spacing" >
           <number>6</number>
          </property>
          <item row="0" column="0" >
@@ -559,7 +544,7 @@ p, li { white-space: pre-wrap; }
          <property name="orientation" >
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>271</width>
            <height>20</height>
@@ -595,6 +580,12 @@ p, li { white-space: pre-wrap; }
         <enum>Qt::Horizontal</enum>
        </property>
        <widget class="QTreeView" name="localDirTreeView" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="contextMenuPolicy" >
          <enum>Qt::CustomContextMenu</enum>
         </property>
@@ -618,6 +609,12 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
        <widget class="QTreeView" name="remoteDirTreeView" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+          <horstretch>4</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="contextMenuPolicy" >
          <enum>Qt::CustomContextMenu</enum>
         </property>

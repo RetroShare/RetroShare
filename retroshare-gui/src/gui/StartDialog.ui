@@ -434,49 +434,37 @@
    <string>RetroShare</string>
   </property>
   <property name="windowIcon" >
-   <iconset resource="images.qrc" >:/images/rstray3.png</iconset>
+   <iconset resource="images.qrc" >
+    <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
   <property name="styleSheet" >
-   <string>.QWidget {
+   <string notr="true" >.QWidget {
    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 lightgray, stop:1 darkgray);
  }</string>
   </property>
   <widget class="QWidget" name="centralwidget" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>239</width>
+     <height>404</height>
+    </rect>
+   </property>
    <layout class="QGridLayout" >
-    <property name="leftMargin" >
-     <number>0</number>
-    </property>
-    <property name="topMargin" >
-     <number>0</number>
-    </property>
-    <property name="rightMargin" >
-     <number>0</number>
-    </property>
-    <property name="bottomMargin" >
-     <number>0</number>
-    </property>
     <property name="verticalSpacing" >
+     <number>0</number>
+    </property>
+    <property name="margin" >
      <number>0</number>
     </property>
     <item row="0" column="0" >
      <layout class="QGridLayout" >
-      <property name="leftMargin" >
+      <property name="margin" >
        <number>0</number>
       </property>
-      <property name="topMargin" >
-       <number>0</number>
-      </property>
-      <property name="rightMargin" >
-       <number>0</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>0</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing" >
+      <property name="spacing" >
        <number>6</number>
       </property>
       <item row="0" column="0" >
@@ -484,7 +472,7 @@
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
         </property>
-        <property name="sizeHint" >
+        <property name="sizeHint" stdset="0" >
          <size>
           <width>40</width>
           <height>20</height>
@@ -495,7 +483,7 @@
       <item row="0" column="1" >
        <widget class="QToolButton" name="toolButton" >
         <property name="styleSheet" >
-         <string>QToolButton{
+         <string notr="true" >QToolButton{
 border-image: url(:/images/avatar_background.png);
 
 }
@@ -505,7 +493,8 @@ border-image: url(:/images/avatar_background.png);
          <string/>
         </property>
         <property name="icon" >
-         <iconset resource="images.qrc" >:/images/retrosharelogo1.png</iconset>
+         <iconset resource="images.qrc" >
+          <normaloff>:/images/retrosharelogo1.png</normaloff>:/images/retrosharelogo1.png</iconset>
         </property>
         <property name="iconSize" >
          <size>
@@ -523,7 +512,7 @@ border-image: url(:/images/avatar_background.png);
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
         </property>
-        <property name="sizeHint" >
+        <property name="sizeHint" stdset="0" >
          <size>
           <width>40</width>
           <height>20</height>
@@ -535,22 +524,10 @@ border-image: url(:/images/avatar_background.png);
     </item>
     <item row="1" column="0" >
      <layout class="QGridLayout" >
-      <property name="leftMargin" >
+      <property name="margin" >
        <number>6</number>
       </property>
-      <property name="topMargin" >
-       <number>6</number>
-      </property>
-      <property name="rightMargin" >
-       <number>6</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>6</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>0</number>
-      </property>
-      <property name="verticalSpacing" >
+      <property name="spacing" >
        <number>0</number>
       </property>
       <item row="2" column="0" >
@@ -600,22 +577,10 @@ border-image: url(:/images/avatar_background.png);
     </item>
     <item row="2" column="0" >
      <layout class="QGridLayout" >
-      <property name="leftMargin" >
+      <property name="margin" >
        <number>6</number>
       </property>
-      <property name="topMargin" >
-       <number>6</number>
-      </property>
-      <property name="rightMargin" >
-       <number>6</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>6</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>0</number>
-      </property>
-      <property name="verticalSpacing" >
+      <property name="spacing" >
        <number>0</number>
       </property>
       <item row="0" column="0" >
@@ -633,7 +598,7 @@ border-image: url(:/images/avatar_background.png);
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
         </property>
-        <property name="sizeHint" >
+        <property name="sizeHint" stdset="0" >
          <size>
           <width>40</width>
           <height>20</height>
@@ -645,22 +610,10 @@ border-image: url(:/images/avatar_background.png);
     </item>
     <item row="3" column="0" >
      <layout class="QGridLayout" >
-      <property name="leftMargin" >
+      <property name="margin" >
        <number>0</number>
       </property>
-      <property name="topMargin" >
-       <number>0</number>
-      </property>
-      <property name="rightMargin" >
-       <number>0</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>0</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing" >
+      <property name="spacing" >
        <number>6</number>
       </property>
       <item row="0" column="2" >
@@ -668,7 +621,7 @@ border-image: url(:/images/avatar_background.png);
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
         </property>
-        <property name="sizeHint" >
+        <property name="sizeHint" stdset="0" >
          <size>
           <width>71</width>
           <height>20</height>
@@ -681,7 +634,7 @@ border-image: url(:/images/avatar_background.png);
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
         </property>
-        <property name="sizeHint" >
+        <property name="sizeHint" stdset="0" >
          <size>
           <width>61</width>
           <height>20</height>
@@ -700,22 +653,10 @@ border-image: url(:/images/avatar_background.png);
     </item>
     <item row="4" column="0" >
      <layout class="QGridLayout" >
-      <property name="leftMargin" >
+      <property name="margin" >
        <number>9</number>
       </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>9</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>9</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing" >
+      <property name="spacing" >
        <number>6</number>
       </property>
       <item row="0" column="2" >
@@ -723,7 +664,7 @@ border-image: url(:/images/avatar_background.png);
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
         </property>
-        <property name="sizeHint" >
+        <property name="sizeHint" stdset="0" >
          <size>
           <width>40</width>
           <height>20</height>
@@ -736,7 +677,7 @@ border-image: url(:/images/avatar_background.png);
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
         </property>
-        <property name="sizeHint" >
+        <property name="sizeHint" stdset="0" >
          <size>
           <width>40</width>
           <height>20</height>
@@ -747,7 +688,7 @@ border-image: url(:/images/avatar_background.png);
       <item row="0" column="1" >
        <widget class="QPushButton" name="createaccountButton" >
         <property name="text" >
-         <string>Create a Account</string>
+         <string>You have a Profile?</string>
         </property>
        </widget>
       </item>
@@ -758,7 +699,7 @@ border-image: url(:/images/avatar_background.png);
       <property name="orientation" >
        <enum>Qt::Vertical</enum>
       </property>
-      <property name="sizeHint" >
+      <property name="sizeHint" stdset="0" >
        <size>
         <width>20</width>
         <height>40</height>

@@ -3,7 +3,7 @@
 #include "rsfiles.h"
 
 #include <QtGui>
-
+#include <QIcon>
 #include <iostream>
 #include <sstream>
 #include <math.h>
@@ -152,11 +152,11 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
      	return QVariant();
      }
 
-     if (role == Qt::BackgroundRole)
-     {
+     /*if (role == Qt::BackgroundRole)
+     {*/
      	/*** colour entries based on rank/age/count **/
      	/*** rank (0-10) ***/
-	uint32_t r = details.rank;
+	/*uint32_t r = details.rank;
 	if (r > 10) r = 10;
 	r = 200 + r * 5; /* 0->250 */
 
@@ -196,7 +196,7 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 	 *
 	 */
 
-	uint32_t g =  (uint32_t) log2 ( 1.0 + ( details.age / 100 ) ) * 4;
+	/*uint32_t g =  (uint32_t) log2 ( 1.0 + ( details.age / 100 ) ) * 4;
 	if (g > 250) g = 250;
 	g = 250 - g;
 
@@ -224,7 +224,28 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 	{
 		return QVariant();
 	}
-     }
+     }*/
+     
+    if (role == Qt::DecorationRole)
+    {
+
+    if (details.type == DIR_TYPE_PERSON)
+	{
+		//setData(QIcon(":/images/user/identity16.png"));
+		QIcon icon1(":/images/user/identity16.png");
+		return icon1;
+	}
+	else if (details.type == DIR_TYPE_DIR)
+	{		
+		//setData(QIcon(":/images/folder_green16.png"));
+		QIcon icon(":/images/folder16.png");
+		return icon;		
+	}
+	else
+	{
+		return QVariant();
+	}
+	 }
 
      /*************
      Qt::EditRole
