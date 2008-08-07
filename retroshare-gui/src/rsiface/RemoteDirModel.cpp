@@ -241,6 +241,63 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 		QIcon icon(":/images/folder16.png");
 		return icon;		
 	}
+	else if (details.type == DIR_TYPE_FILE) /* File */
+	{
+		// extensions predefined
+		QString name;
+		QString ext = QFileInfo(name).suffix();
+		if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif"
+		        || ext == "bmp" || ext == "ico" || ext == "svg")
+		{
+			//setIcon(0, QIcon(":/images/FileTypePicture.png"));
+			QIcon icon(":/images/FileTypePicture.png");
+		    return icon;
+		}
+		else if (ext == "avi" || ext == "mpg" || ext == "mpeg" || ext == "wmv")
+		{
+			//setIcon(0, QIcon(":/images/videofile.png"));
+			QIcon icon(":/images/FileTypeVideo.png");
+		    return icon;
+		}
+		else if (ext == "ogg" || ext == "mp3" || ext == "wav" || ext == "wma")
+		{
+			//setIcon(0, QIcon(":/images/soundfile.png"));
+			QIcon icon(":/images/FileTypeAudio.png");
+		    return icon;
+		}
+		else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz"
+		         || ext == "rar" || ext == "rpm" || ext == "deb")
+		{
+			//setIcon(0, QIcon(":/images/compressedfile.png"));
+			QIcon icon(":/images/FileTypeArchive.png");
+		    return icon;
+		}
+		else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h")
+		{
+			//setIcon(0, QIcon(":/images/txtfile.png"));
+			QIcon icon(":/images/FileTypeDocument.png");
+		    return icon;
+		}
+		else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls"
+		         || ext == "sxc" || ext == "odt" || ext == "ods")
+		{
+			//setIcon(0, QIcon(":/images/docfile.png"));
+		    QIcon icon(":/images/FileTypeDocument.png");
+		    return icon;
+		}
+		else if (ext == "html" || ext == "htm" || ext == "php")
+		{
+			//setIcon(0, QIcon(":/images/netfile.png"));
+			QIcon icon(":/images/FileTypeDocument.png");
+		    return icon;
+		}
+		else
+		{
+			//setIcon(0, QIcon(":/images/file.png"));
+			QIcon icon(":/images/FileTypeAny.png");
+		    return icon;
+		}
+	}
 	else
 	{
 		return QVariant();
