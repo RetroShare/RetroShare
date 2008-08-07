@@ -78,6 +78,7 @@
         <file>images/down.png</file>
         <file>images/down_24x24.png</file>
         <file>images/download.png</file>
+        <file>images/download16.png</file>
         <file>images/dphone.png</file>
         <file>images/edit-bold.png</file>
         <file>images/edit-italic.png</file>
@@ -186,6 +187,7 @@
         <file>images/peers_16x16.png</file>
         <file>images/peers_24x24.png</file>
         <file>images/print24.png</file>
+        <file>images/player_play.png</file>
         <file>images/removefriend16.png</file>
         <file>images/replymail-pressed.png</file>
         <file>images/replymail24-hover.png</file>

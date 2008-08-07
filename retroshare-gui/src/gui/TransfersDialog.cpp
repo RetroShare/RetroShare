@@ -42,7 +42,7 @@
 #define IMAGE_INFO                 ":/images/fileinfo.png"
 #define IMAGE_CANCEL               ":/images/delete.png"
 #define IMAGE_CLEARCOMPLETED       ":/images/deleteall.png"
-#define IMAGE_PLAY		   ":/images/start.png"
+#define IMAGE_PLAY		           ":/images/player_play.png"
 
 /** Constructor */
 TransfersDialog::TransfersDialog(QWidget *parent)

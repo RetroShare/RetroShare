@@ -45,7 +45,8 @@
 #include <QLabel>
 
 /* Images for context menu icons */
-#define IMAGE_DOWNLOAD       ":/images/start.png"
+#define IMAGE_DOWNLOAD       ":/images/download16.png"
+#define IMAGE_PLAY           ":/images/start.png"
 #define IMAGE_HASH_BUSY      ":/images/settings.png"
 #define IMAGE_HASH_DONE      ":/images/friendsfolder24.png"
 #define IMAGE_MSG            ":/images/message-mail.png"
@@ -368,7 +369,7 @@ void SharedFilesDialog::shareddirtreeWidgetCostumPopupMenu( QPoint point )
       QMenu contextMnu2( this );
       QMouseEvent *mevent2 = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
-      openfolderAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Play File(s)" ), this );
+      openfolderAct = new QAction(QIcon(IMAGE_PLAY), tr( "Play File(s)" ), this );
       connect( openfolderAct , SIGNAL( triggered() ), this, SLOT( playselectedfiles() ) );
 
 #if 0
