@@ -64,8 +64,9 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   
 
 
-    connect(ui.checkButton, SIGNAL(clicked()), this, SLOT(forceCheck()));
+  connect(ui.checkButton, SIGNAL(clicked()), this, SLOT(forceCheck()));
 
+  connect(ui.frameButton, SIGNAL(toggled(bool)), this, SLOT(showFrame(bool)));
 
   connect( ui.localDirTreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( shareddirtreeWidgetCostumPopupMenu( QPoint ) ) );
 
@@ -114,11 +115,18 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 	r_header->setResizeMode (1, QHeaderView::Interactive);
 	r_header->setResizeMode (2, QHeaderView::Interactive);
 	r_header->setResizeMode (3, QHeaderView::Interactive);
+	
+	r_header->setStretchLastSection(false);
+	r_header->setResizeMode(0, QHeaderView::Stretch);
    
 	r_header->resizeSection ( 0, 210 );
 	r_header->resizeSection ( 1, 100 );
 	r_header->resizeSection ( 2, 100 );
 	r_header->resizeSection ( 3, 100 );
+	
+	l_header->setHighlightSections(false);
+	r_header->setHighlightSections(false);
+
 
   /* Set Multi Selection */
   ui.remoteDirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -439,3 +447,20 @@ void SharedFilesDialog::shareddirtreeWidgetCostumPopupMenu( QPoint point )
 
 }
 
+/**
+ Toggles the Lokal TreeView on and off, changes toggle button text
+ */
+void SharedFilesDialog::showFrame(bool show)
+{
+    if (show) {
+        ui.frame->setVisible(true);
+        ui.frameButton->setChecked(true);
+        ui.frameButton->setToolTip(tr("Hide Lokal Direrectories"));
+        ui.frameButton->setIcon(QIcon(tr(":images/hide_toolbox_frame.png")));
+    } else {
+        ui.frame->setVisible(false);
+        ui.frameButton->setChecked(false);
+        ui.frameButton->setToolTip(tr("Show Lokal Directories"));
+        ui.frameButton->setIcon(QIcon(tr(":images/show_toolbox_frame.png")));
+    }
+}

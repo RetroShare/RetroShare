@@ -58,6 +58,9 @@ private slots:
   void downloadRemoteSelected();
 //  void addMsgRemoteSelected();
 
+  void showFrame(bool show);
+
+
 //  void recommendfile();
   void playselectedfiles();
   void openfile();
