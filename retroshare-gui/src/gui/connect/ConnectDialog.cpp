@@ -42,7 +42,7 @@ ConnectDialog::ConnectDialog(QWidget *parent, Qt::WFlags flags)
   // Create the status bar
   statusBar()->showMessage("Peer Informations");
 
-  setFixedSize(QSize(330, 412));
+  //setFixedSize(QSize(330, 412));
   
   connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(closeinfodlg()));
   connect(ui.okButton, SIGNAL(clicked()), this, SLOT(authAttempt()));

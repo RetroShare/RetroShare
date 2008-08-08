@@ -52,6 +52,7 @@
         <file>images/chat/hide_avatar_frame.png</file>
         <file>images/chat/show_avatar_frame.png</file>
         <file>images/chats_24x24.png</file>
+        <file>images/cancel.png</file>
         <file>images/close-down.png</file>
         <file>images/close_normal.png</file>
         <file>images/console-small-down.png</file>
@@ -243,6 +244,7 @@
         <file>images/user/identitylightgrey24.png</file>
         <file>images/user/agt_forum24.png</file>
         <file>images/user/identity32.png</file>
+        <file>images/user/add_user16.png</file>g
         <file>images/up.png</file>
         <file>images/underconstruction.png</file>
         <file>images/user.png</file>

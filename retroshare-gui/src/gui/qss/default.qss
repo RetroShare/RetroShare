@@ -17,14 +17,15 @@ QMenuBar {
 
 QPushButton#okButton {
 
-	  min-height: 27px;
+      max-height: 25px
+	  min-height: 25px;
       min-width: 77px;
-      max-width: 77px;
+      /*max-width: 77px;*/
 }
 
 QPushButton#cancelprefButton {
 
-	  min-height: 27px;
+	  min-height: 25px;
       min-width: 77px;
       max-width: 77px;
 }
