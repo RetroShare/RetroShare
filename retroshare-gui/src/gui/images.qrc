@@ -3,6 +3,7 @@
         <file>help/authors.html</file>
         <file>help/licence.html</file>
         <file>help/thanks.html</file>
+        <file>images/accepted16.png</file>
         <file>images/browse-looking.gif</file>
         <file>images/addfriendlabel.png</file>
         <file>images/back.png</file>
@@ -13,6 +14,7 @@
         <file>images/channeldelete.png</file>
         <file>images/channelsubscribe.png</file>
         <file>images/contacts24.png</file>
+        <file>images/denied16.png</file>
         <file>images/FileTypeAny.png</file>
         <file>images/FileTypeArchive.png</file>
         <file>images/FileTypeAudio.png</file>

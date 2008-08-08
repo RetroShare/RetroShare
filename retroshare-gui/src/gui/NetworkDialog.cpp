@@ -47,8 +47,8 @@
 #define IMAGE_PEERDETAILS    ":/images/peerdetails_16x16.png"
 #define IMAGE_AUTH           ":/images/encrypted16.png"
 /* Images for Status icons */
-#define IMAGE_AUTHED         ":/images/dauthed.png"
-#define IMAGE_DENIED         ":/images/ddeny.png"
+#define IMAGE_AUTHED         ":/images/accepted16.png"
+#define IMAGE_DENIED         ":/images/denied16.png"
 
 RsCertId getNeighRsCertId(QTreeWidgetItem *i);
 
@@ -85,7 +85,6 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 	_header->setResizeMode (7, QHeaderView::Interactive);
 	_header->setResizeMode (8, QHeaderView::Interactive);
 	_header->setResizeMode (9, QHeaderView::Interactive);
-	_header->setResizeMode (10, QHeaderView::Interactive);
     
 	_header->resizeSection ( 0, 25 );
 	_header->resizeSection ( 1, 100 );
@@ -97,6 +96,19 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 	_header->resizeSection ( 7, 100 );
 	_header->resizeSection ( 8, 100 );
 	_header->resizeSection ( 9, 100 );
+	
+	// set header text aligment
+	QTreeWidgetItem * headerItem = ui.connecttreeWidget->headerItem();
+	headerItem->setTextAlignment(0, Qt::AlignHCenter | Qt::AlignVCenter);
+	headerItem->setTextAlignment(1, Qt::AlignHCenter | Qt::AlignVCenter);
+    headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
+	headerItem->setTextAlignment(3, Qt::AlignHCenter | Qt::AlignVCenter);
+	headerItem->setTextAlignment(4, Qt::AlignHCenter | Qt::AlignVCenter);
+	headerItem->setTextAlignment(5, Qt::AlignHCenter | Qt::AlignVCenter);
+	headerItem->setTextAlignment(6, Qt::AlignHCenter | Qt::AlignVCenter);
+	headerItem->setTextAlignment(7, Qt::AlignHCenter | Qt::AlignVCenter);
+	headerItem->setTextAlignment(8, Qt::AlignHCenter | Qt::AlignVCenter);
+	headerItem->setTextAlignment(9, Qt::AlignHCenter | Qt::AlignVCenter);
 	
 	 networkview = new NetworkView(ui.networkviewTab);
 	 QVBoxLayout *layout = new QVBoxLayout;
@@ -320,7 +332,7 @@ void NetworkDialog::insertConnect()
 			}
 		}
 
-		item -> setText(10, QString::fromStdString(detail.authcode));
+		//item -> setText(10, QString::fromStdString(detail.authcode));
 
 		/* change background */
 		int i;
@@ -329,7 +341,7 @@ void NetworkDialog::insertConnect()
                 	if (detail.lastConnect < 10000) /* 3 hours? */
 			{
 				/* bright green */
-				for(i = 1; i < 11; i++)
+				for(i = 1; i <10; i++)
 				{
 				  item -> setBackground(i,QBrush(Qt::darkGreen));
 				  item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
@@ -337,7 +349,7 @@ void NetworkDialog::insertConnect()
 			}
 			else
 			{
-				for(i = 1; i < 11; i++)
+				for(i = 1; i < 10; i++)
 				{
 				  item -> setBackground(i,QBrush(Qt::darkGreen));
 				  item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
@@ -348,7 +360,7 @@ void NetworkDialog::insertConnect()
 		{
                 	if (detail.trustLvl > RS_TRUST_LVL_MARGINAL)
 			{
-				for(i = 1; i < 11; i++)
+				for(i = 1; i < 10; i++)
 				{
 				  item -> setBackground(i,QBrush(Qt::cyan));
 				  item -> setIcon(0,(QIcon(IMAGE_DENIED)));
@@ -356,7 +368,7 @@ void NetworkDialog::insertConnect()
 			}
                 	else if (detail.lastConnect < 10000) /* 3 hours? */
 			{
-				for(i = 1; i < 11; i++)
+				for(i = 1; i < 10; i++)
 				{
 				  item -> setBackground(i,QBrush(Qt::yellow));
 				  item -> setIcon(0,(QIcon(IMAGE_DENIED)));
@@ -364,7 +376,7 @@ void NetworkDialog::insertConnect()
 			}
 			else
 			{
-				for(i = 1; i < 11; i++)
+				for(i = 1; i < 10; i++)
 				{
 				  item -> setBackground(i,QBrush(Qt::gray));
 				  item -> setIcon(0,(QIcon(IMAGE_DENIED)));
@@ -379,7 +391,7 @@ void NetworkDialog::insertConnect()
 
 	/* remove old items ??? */
 	connectWidget->clear();
-	connectWidget->setColumnCount(11);	
+	connectWidget->setColumnCount(10);	
 
 	/* add the items in! */
 	connectWidget->insertTopLevelItems(0, items);

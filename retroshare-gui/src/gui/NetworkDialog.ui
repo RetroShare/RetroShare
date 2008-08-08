@@ -34,43 +34,30 @@
       <number>0</number>
      </property>
      <widget class="QWidget" name="networkTab" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>564</width>
+        <height>411</height>
+       </rect>
+      </property>
       <attribute name="title" >
        <string>Network</string>
       </attribute>
       <layout class="QGridLayout" >
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
        <property name="verticalSpacing" >
+        <number>0</number>
+       </property>
+       <property name="margin" >
         <number>0</number>
        </property>
        <item row="0" column="0" >
         <layout class="QGridLayout" >
-         <property name="leftMargin" >
+         <property name="margin" >
           <number>0</number>
          </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <property name="horizontalSpacing" >
-          <number>6</number>
-         </property>
-         <property name="verticalSpacing" >
+         <property name="spacing" >
           <number>6</number>
          </property>
          <item row="0" column="0" >
@@ -79,7 +66,7 @@
             <string/>
            </property>
            <property name="pixmap" >
-            <pixmap resource="images.qrc" >:/images/network16.png</pixmap>
+            <pixmap>:/images/network16.png</pixmap>
            </property>
           </widget>
          </item>
@@ -98,7 +85,7 @@ p, li { white-space: pre-wrap; }
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>40</width>
              <height>20</height>
@@ -198,11 +185,6 @@ p, li { white-space: pre-wrap; }
            <string>Cert Id</string>
           </property>
          </column>
-         <column>
-          <property name="text" >
-           <string>Auth Code</string>
-          </property>
-         </column>
         </widget>
        </item>
        <item row="2" column="0" >
@@ -220,6 +202,14 @@ p, li { white-space: pre-wrap; }
           <number>0</number>
          </property>
          <widget class="QWidget" name="log_tab" >
+          <property name="geometry" >
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>558</width>
+            <height>115</height>
+           </rect>
+          </property>
           <attribute name="title" >
            <string>Log</string>
           </attribute>
@@ -227,16 +217,7 @@ p, li { white-space: pre-wrap; }
            <property name="spacing" >
             <number>6</number>
            </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
+           <property name="margin" >
             <number>0</number>
            </property>
            <item>
@@ -265,6 +246,14 @@ p, li { white-space: pre-wrap; }
       </layout>
      </widget>
      <widget class="QWidget" name="networkviewTab" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>564</width>
+        <height>411</height>
+       </rect>
+      </property>
       <attribute name="title" >
        <string>Network View</string>
       </attribute>
