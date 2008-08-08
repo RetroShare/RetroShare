@@ -39,7 +39,7 @@ QtToaster::QtToaster(QWidget * toaster, QFrame * toasterWindowFrame)
 
 	WidgetBackgroundImage::setBackgroundImage(toasterWindowFrame, ":images/toaster/toaster-backrs4.png", WidgetBackgroundImage::AdjustSize);
 
-	_toaster->resize(181, 116);
+	_toaster->resize(184, 128);
 }
 
 void QtToaster::setTimeOnTop(unsigned time) {

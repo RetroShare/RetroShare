@@ -5,27 +5,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>370</width>
+    <width>388</width>
     <height>221</height>
    </rect>
   </property>
   <layout class="QGridLayout" >
-   <property name="leftMargin" >
+   <property name="margin" >
     <number>0</number>
    </property>
-   <property name="topMargin" >
-    <number>0</number>
-   </property>
-   <property name="rightMargin" >
-    <number>0</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>0</number>
-   </property>
-   <property name="horizontalSpacing" >
-    <number>0</number>
-   </property>
-   <property name="verticalSpacing" >
+   <property name="spacing" >
     <number>0</number>
    </property>
    <item row="0" column="0" >
@@ -36,43 +24,19 @@
      <property name="frameShadow" >
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" >
-      <property name="leftMargin" >
-       <number>0</number>
-      </property>
-      <property name="topMargin" >
-       <number>0</number>
-      </property>
-      <property name="rightMargin" >
-       <number>0</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>0</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>0</number>
-      </property>
+     <layout class="QGridLayout" name="gridLayout_2" >
       <property name="verticalSpacing" >
+       <number>0</number>
+      </property>
+      <property name="margin" >
        <number>0</number>
       </property>
       <item row="0" column="0" >
        <layout class="QGridLayout" >
-        <property name="leftMargin" >
+        <property name="margin" >
          <number>0</number>
         </property>
-        <property name="topMargin" >
-         <number>0</number>
-        </property>
-        <property name="rightMargin" >
-         <number>0</number>
-        </property>
-        <property name="bottomMargin" >
-         <number>0</number>
-        </property>
-        <property name="horizontalSpacing" >
-         <number>0</number>
-        </property>
-        <property name="verticalSpacing" >
+        <property name="spacing" >
          <number>0</number>
         </property>
         <item row="0" column="2" >
@@ -90,7 +54,8 @@
            </size>
           </property>
           <property name="icon" >
-           <iconset resource="../images.qrc" >:/images/close-down.png</iconset>
+           <iconset resource="../images.qrc" >
+            <normaloff>:/images/close-down.png</normaloff>:/images/close-down.png</iconset>
           </property>
           <property name="iconSize" >
            <size>
@@ -108,7 +73,7 @@
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>225</width>
             <height>22</height>
@@ -120,26 +85,32 @@
       </item>
       <item row="1" column="0" >
        <layout class="QGridLayout" >
+        <property name="spacing" >
+         <number>0</number>
+        </property>
         <item row="0" column="0" >
          <spacer>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeType" >
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>121</width>
-            <height>61</height>
+            <height>48</height>
            </size>
           </property>
          </spacer>
         </item>
         <item row="0" column="1" >
-         <widget class="QLabel" name="label" >
+         <widget class="QLabel" name="pixmaplabel" >
           <property name="text" >
            <string/>
           </property>
           <property name="pixmap" >
-           <pixmap resource="../images.qrc" >:/images/kdmconfig.png</pixmap>
+           <pixmap resource="../images.qrc" >:/images/user/identity32.png</pixmap>
           </property>
          </widget>
         </item>
@@ -148,10 +119,13 @@
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeType" >
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>111</width>
-            <height>71</height>
+            <height>48</height>
            </size>
           </property>
          </spacer>
@@ -159,16 +133,19 @@
        </layout>
       </item>
       <item row="2" column="0" >
-       <layout class="QGridLayout" >
-        <item row="0" column="0" >
+       <layout class="QGridLayout" name="gridLayout" >
+        <property name="horizontalSpacing" >
+         <number>6</number>
+        </property>
+        <item rowspan="2" row="0" column="0" >
          <spacer>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>137</width>
-            <height>41</height>
+            <height>58</height>
            </size>
           </property>
          </spacer>
@@ -180,18 +157,25 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="2" >
+        <item rowspan="2" row="0" column="2" >
          <spacer>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>136</width>
-            <height>31</height>
+            <height>58</height>
            </size>
           </property>
          </spacer>
+        </item>
+        <item row="1" column="1" >
+         <widget class="QLabel" name="messageLabel" >
+          <property name="text" >
+           <string/>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -200,7 +184,7 @@
         <property name="orientation" >
          <enum>Qt::Vertical</enum>
         </property>
-        <property name="sizeHint" >
+        <property name="sizeHint" stdset="0" >
          <size>
           <width>368</width>
           <height>61</height>

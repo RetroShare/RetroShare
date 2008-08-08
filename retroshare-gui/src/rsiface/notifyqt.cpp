@@ -13,6 +13,7 @@
 #include "gui/ChannelsDialog.h"
 #include "gui/MessengerWindow.h"
 
+#include "gui/toaster/OnlineToaster.h"
 #include "gui/toaster/MessageToaster.h"
 #include "gui/toaster/ChatToaster.h"
 #include "gui/toaster/CallToaster.h"
@@ -213,9 +214,9 @@ static  time_t lastTs = 0;
 				default:
 				case RS_POPUP_CONNECT:
 				{
-					MessageToaster * msgToaster = new MessageToaster();
-					msgToaster->setMessage(QString::fromStdString(realmsg));
-					msgToaster->show();
+					OnlineToaster * onlineToaster = new OnlineToaster();
+					onlineToaster->setMessage(QString::fromStdString(realmsg));
+					onlineToaster->show();
 				}
 					break;
 			}

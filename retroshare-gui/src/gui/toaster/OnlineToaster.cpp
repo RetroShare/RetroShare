@@ -46,7 +46,7 @@ OnlineToaster::~OnlineToaster() {
 }
 
 void OnlineToaster::setMessage(const QString & message) {
-	_ui->messageButton->setText(message);
+	_ui->messageLabel->setText(message);
 }
 
 void OnlineToaster::setPixmap(const QPixmap & pixmap) {

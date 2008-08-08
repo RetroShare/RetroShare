@@ -124,6 +124,7 @@ HEADERS +=  rshare.h \
             gui/Preferences/ServerDialog.h \          
             gui/Preferences/ConfirmQuitDialog.h \
             gui/toaster/MessageToaster.h \
+            gui/toaster/OnlineToaster.h \
             gui/toaster/ChatToaster.h \
             gui/toaster/CallToaster.h \
             gui/toaster/QtToaster.h \
@@ -226,6 +227,7 @@ FORMS +=    gui/ChatDialog.ui \
             gui/toaster/CallToaster.ui \
             gui/toaster/ChatToaster.ui \
             gui/toaster/MessageToaster.ui \
+            gui/toaster/OnlineToaster.ui \
             gui/Settings/settings.ui \
             gui/Settings/GeneralPage.ui \
             gui/Settings/DirectoriesPage.ui \
@@ -344,6 +346,7 @@ SOURCES += main.cpp \
             gui/toaster/ChatToaster.cpp \
             gui/toaster/MessageToaster.cpp \
             gui/toaster/CallToaster.cpp \
+            gui/toaster/OnlineToaster.cpp \
             gui/toaster/QtToaster.cpp \
             gui/authdlg/AuthorizationDialog.cpp \
             gui/advsearch/advancedsearchdialog.cpp \
