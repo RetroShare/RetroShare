@@ -32,7 +32,7 @@
 
 /* Images for toolbar icons */
 #define IMAGE_PREFERENCES       ":/images/locale.png"
-#define IMAGE_WEBCACHES        	":/images/webcache_24x24.png"
+#define IMAGE_SERVER        	":/images/server_24x24.png"
 #define IMAGE_DIRECTORIES    	":/images/folder_doments.png"
 #define IMAGE_CRYPTOGRAPHY      ":/images/cryptography_24x24.png"
 #define IMAGE_LOG   			":/images/log_24x24.png"
@@ -53,7 +53,7 @@ PreferencesWindow::PreferencesWindow(QWidget *parent, Qt::WFlags flags)
                      createPageAction(QIcon(IMAGE_PREFERENCES), tr("General"), grp));
                      
   ui.stackPages->add(new ServerDialog(ui.stackPages),
-                    createPageAction(QIcon(IMAGE_WEBCACHES), tr("Server"), grp));
+                    createPageAction(QIcon(IMAGE_SERVER), tr("Server"), grp));
   
   ui.stackPages->add(new DirectoriesDialog(ui.stackPages),
                      createPageAction(QIcon(IMAGE_DIRECTORIES), tr("Directories"), grp)); 
