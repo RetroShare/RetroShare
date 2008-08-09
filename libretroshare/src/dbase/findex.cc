@@ -946,7 +946,7 @@ int DirEntry::saveEntry(std::ostringstream &oss)
 }
 
 
-int FileIndex::searchHash(std::string hash, std::list<FileEntry *> &results)
+int FileIndex::searchHash(std::string hash, std::list<FileEntry *> &results) const
 {
 	DirEntry *ndir = NULL;
 	std::list<DirEntry *> dirlist;
@@ -978,7 +978,7 @@ int FileIndex::searchHash(std::string hash, std::list<FileEntry *> &results)
 }
 
 
-int FileIndex::searchTerms(std::list<std::string> terms, std::list<FileEntry *> &results)
+int FileIndex::searchTerms(std::list<std::string> terms, std::list<FileEntry *> &results) const
 {
 	DirEntry *ndir = NULL;
 	std::list<DirEntry *> dirlist;
@@ -1029,7 +1029,7 @@ int FileIndex::searchTerms(std::list<std::string> terms, std::list<FileEntry *> 
 	return 0;
 }
 
-int FileIndex::searchBoolExp(Expression * exp, std::list<FileEntry *> &results) 
+int FileIndex::searchBoolExp(Expression * exp, std::list<FileEntry *> &results)  const
 {
 	DirEntry *ndir = NULL;
 	std::list<DirEntry *> dirlist;

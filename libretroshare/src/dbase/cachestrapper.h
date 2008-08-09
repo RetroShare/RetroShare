@@ -165,7 +165,7 @@ uint16_t    getCacheType()   { return cacheType;  }
 void 	listCaches(std::ostream &out);
 
 	/* search */
-bool    findCache(std::string hash, CacheData &data);
+bool    findCache(std::string hash, CacheData &data) const;
 
 	protected:
 
@@ -174,15 +174,15 @@ bool    findCache(std::string hash, CacheData &data);
 	CacheStrapper *mStrapper;
 
 	/*** MUTEX LOCKING */
-void	lockData();
-void	unlockData();
+void	lockData() const;
+void	unlockData() const;
 
 	CacheSet caches;
 
 	private:
 
 	std::string cacheDir;
-	RsMutex cMutex;
+	mutable RsMutex cMutex;
 };
 
 
@@ -221,8 +221,8 @@ void 	listCaches(std::ostream &out);
 
 	protected:
 	/*** MUTEX LOCKING */
-void	lockData();
-void	unlockData();
+void	lockData()   const;
+void	unlockData() const;
 
 	/* This function is called to store Cache Entry in the CacheStore Table.
 	 * it must be called from within a Mutex Lock....
@@ -242,7 +242,7 @@ bool    locked_getStoredCache(CacheData &data);
 
 	std::string cacheDir;
 
-	RsMutex cMutex;
+	mutable RsMutex cMutex;
 
 	std::map<RsPeerId, CacheSet> caches;
 
@@ -299,7 +299,7 @@ void    handleCacheQuery(RsPeerId id, std::map<CacheId, CacheData> &data);
 
 
 	/* search through CacheSources. */
-bool    findCache(std::string hash, CacheData &data);
+bool    findCache(std::string hash, CacheData &data) const;
 
 	/* display */
 void 	listCaches(std::ostream &out);

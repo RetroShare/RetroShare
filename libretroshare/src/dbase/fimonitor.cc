@@ -57,7 +57,7 @@ FileIndexMonitor::~FileIndexMonitor()
 }
 
 bool    FileIndexMonitor::findLocalFile(std::string hash, 
-				std::string &fullpath, uint64_t &size)
+				std::string &fullpath, uint64_t &size) const
 {
 	std::list<FileEntry *> results;
 	bool ok = false;
@@ -80,7 +80,7 @@ bool    FileIndexMonitor::findLocalFile(std::string hash,
 #endif
 		std::string shpath =  RsDirUtil::removeRootDir(de->path);
 		std::string basedir = RsDirUtil::getRootDir(de->path);
-		std::string realroot = findRealRoot(basedir);
+		std::string realroot = locked_findRealRoot(basedir);
 
 		/* construct full name */
 		if (realroot.length() > 0)
@@ -119,7 +119,7 @@ bool    FileIndexMonitor::convertSharedFilePath(std::string path, std::string &f
 
 	std::string shpath =  RsDirUtil::removeRootDir(path);
 	std::string basedir = RsDirUtil::getRootDir(path);
-	std::string realroot = findRealRoot(basedir);
+	std::string realroot = locked_findRealRoot(basedir);
 
 	/* construct full name */
 	if (realroot.length() > 0)
@@ -280,7 +280,7 @@ void 	FileIndexMonitor::updateCycle()
 		std::string rootdir = RsDirUtil::getRootDir(olddir->path);
 		std::string remdir  = RsDirUtil::removeRootDir(olddir->path);
 
-		std::string realroot = findRealRoot(rootdir);
+		std::string realroot = locked_findRealRoot(rootdir);
 
 		std::string realpath = realroot;
 		if (remdir != "")
@@ -603,6 +603,22 @@ void    FileIndexMonitor::setSharedDirectories(std::list<std::string> dirs)
 }
 
 	/* interface */
+void    FileIndexMonitor::getSharedDirectories(std::list<std::string> &dirs)
+{
+	fiMutex.lock(); { /* LOCKED DIRS */
+
+	/* get actual list (not pending stuff) */
+	std::map<std::string, std::string>::const_iterator it;
+	for(it = directoryMap.begin(); it != directoryMap.end(); it++)
+	{
+		dirs.push_back(it->second);
+	}
+
+	} fiMutex.unlock(); /* UNLOCKED DIRS */
+}
+
+
+	/* interface */
 void    FileIndexMonitor::forceDirectoryCheck()
 {
 	fiMutex.lock(); { /* LOCKED DIRS */
@@ -700,7 +716,7 @@ bool    FileIndexMonitor::internal_setSharedDirectories()
 	
 
 /* lookup directory function */
-std::string FileIndexMonitor::findRealRoot(std::string rootdir)
+std::string FileIndexMonitor::locked_findRealRoot(std::string rootdir) const
 {
 	/**** MUST ALREADY BE LOCKED ****/ 
 	std::string realroot = "";
@@ -708,7 +724,7 @@ std::string FileIndexMonitor::findRealRoot(std::string rootdir)
 	std::map<std::string, std::string>::const_iterator cit;
 	if (directoryMap.end()== (cit=directoryMap.find(rootdir)))
 	{
-		std::cerr << "FileIndexMonitor::findRealRoot() Invalid RootDir: ";
+		std::cerr << "FileIndexMonitor::locked_findRealRoot() Invalid RootDir: ";
 		std::cerr << rootdir << std::endl;
 	}
 	else

@@ -69,7 +69,7 @@ CacheSource::CacheSource(uint16_t t, bool m, CacheStrapper *cs, std::string cach
 	}
 
 	/* Mutex Stuff -> to be done... */
-void    CacheSource::lockData()
+void    CacheSource::lockData() const
 {
 #ifdef CS_DEBUG
 	std::cerr << "CacheSource::lockData()" << std::endl;
@@ -77,7 +77,7 @@ void    CacheSource::lockData()
 	cMutex.lock();
 }
 
-void    CacheSource::unlockData()
+void    CacheSource::unlockData() const
 {
 #ifdef CS_DEBUG
 	std::cerr << "CacheSource::unlockData()" << std::endl;
@@ -154,12 +154,12 @@ bool    CacheSource::cachesAvailable(RsPeerId pid, std::map<CacheId, CacheData> 
 }
 
 
-bool    CacheSource::findCache(std::string hash, CacheData &data)
+bool    CacheSource::findCache(std::string hash, CacheData &data) const
 {
 	lockData(); /* LOCK MUTEX */
 
 	bool found = false;
-	CacheSet::iterator it;
+	CacheSet::const_iterator it;
 	for(it = caches.begin(); it != caches.end(); it++)
 	{
 		if (hash == (it->second).hash)
@@ -205,7 +205,7 @@ CacheStore::CacheStore(uint16_t t, bool m,
 	}
 
 	/* Mutex Stuff -> to be done... */
-void    CacheStore::lockData()
+void    CacheStore::lockData() const
 {
 #ifdef CS_DEBUG
 	std::cerr << "CacheStore::lockData()" << std::endl;
@@ -213,7 +213,7 @@ void    CacheStore::lockData()
 	cMutex.lock();
 }
 
-void    CacheStore::unlockData()
+void    CacheStore::unlockData() const
 {
 #ifdef CS_DEBUG
 	std::cerr << "CacheStore::unlockData()" << std::endl;
@@ -685,10 +685,10 @@ void    CacheStrapper::listPeerStatus(std::ostream &out)
 }
 
 
-bool    CacheStrapper::findCache(std::string hash, CacheData &data)
+bool    CacheStrapper::findCache(std::string hash, CacheData &data) const
 {
 	/* can overwrite for more control! */
-	std::map<uint16_t, CachePair>::iterator it;
+	std::map<uint16_t, CachePair>::const_iterator it;
 	for(it = caches.begin(); it != caches.end(); it++)
 	{
 		if ((it->second).source->findCache(hash, data))

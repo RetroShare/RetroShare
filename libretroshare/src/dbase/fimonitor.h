@@ -72,7 +72,7 @@ class FileIndexMonitor: public CacheSource, public RsThread
 virtual ~FileIndexMonitor();
 
 	/* external interface for filetransfer */
-bool    findLocalFile(std::string hash, std::string &fullpath, uint64_t &size);
+bool    findLocalFile(std::string hash, std::string &fullpath, uint64_t &size) const;
 
 	/* external interface for local access to files */
 bool    convertSharedFilePath(std::string path, std::string &fullpath);
@@ -89,6 +89,8 @@ virtual void 	run(); /* overloaded from RsThread */
 void 	updateCycle();
 
 void    setSharedDirectories(std::list<std::string> dirs);
+void    getSharedDirectories(std::list<std::string> &dirs);
+
 void    setPeriod(int insecs);
 void    forceDirectoryCheck();
 bool	inDirectoryCheck();
@@ -97,12 +99,12 @@ bool	inDirectoryCheck();
 	private:
 
 	/* the mutex should be locked before calling... these. */
-std::string findRealRoot(std::string base);        /* To Implement */
+std::string locked_findRealRoot(std::string base) const;
 bool 	hashFile(std::string path, FileEntry &fi); /* To Implement */
 
 	/* data */
 
-	RsMutex fiMutex;
+	mutable RsMutex fiMutex;
 
 	FileIndex fi;
 

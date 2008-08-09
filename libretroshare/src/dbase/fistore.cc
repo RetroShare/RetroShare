@@ -140,12 +140,12 @@ int FileIndexStore::loadCache(const CacheData &data)
 }
 
 	/* Search Interface - For Directory Access */
-int FileIndexStore::RequestDirDetails(std::string uid, std::string path, DirDetails &details)
+int FileIndexStore::RequestDirDetails(std::string uid, std::string path, DirDetails &details) const
 {
 	/* lock it up */
 	lockData();
 
-	std::map<RsPeerId, FileIndex *>::iterator it;
+	std::map<RsPeerId, FileIndex *>::const_iterator it;
 	it = indices.find(uid);
 	bool found = true;
 	if (it == indices.end())
@@ -164,11 +164,11 @@ int FileIndexStore::RequestDirDetails(std::string uid, std::string path, DirDeta
 	return found;
 }
 
-int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)
+int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) const
 {
 	lockData();
 	bool found = true;
-	std::map<RsPeerId, FileIndex *>::iterator pit;
+	std::map<RsPeerId, FileIndex *>::const_iterator pit;
 
 	/* so cast *ref to a DirEntry */
 	FileEntry *file = (FileEntry *) ref;
@@ -339,10 +339,10 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 }
 
 
-int FileIndexStore::SearchHash(std::string hash, std::list<FileDetail> &results)
+int FileIndexStore::SearchHash(std::string hash, std::list<FileDetail> &results) const
 {
 	lockData();
-	std::map<RsPeerId, FileIndex *>::iterator pit;
+	std::map<RsPeerId, FileIndex *>::const_iterator pit;
 	std::list<FileEntry *>::iterator rit; 
 	std::list<FileEntry *> firesults;
 
@@ -378,10 +378,10 @@ int FileIndexStore::SearchHash(std::string hash, std::list<FileDetail> &results)
 }
 
 
-int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results)
+int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results) const
 {
 	lockData();
-	std::map<RsPeerId, FileIndex *>::iterator pit;
+	std::map<RsPeerId, FileIndex *>::const_iterator pit;
 	std::list<FileEntry *>::iterator rit; 
 	std::list<FileEntry *> firesults;
 
@@ -438,10 +438,10 @@ int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<Fi
 }
 
 
-int FileIndexStore::searchBoolExp(Expression * exp, std::list<FileDetail> &results)
+int FileIndexStore::searchBoolExp(Expression * exp, std::list<FileDetail> &results) const
 {
 	lockData();
-	std::map<RsPeerId, FileIndex *>::iterator pit;
+	std::map<RsPeerId, FileIndex *>::const_iterator pit;
 	std::list<FileEntry *>::iterator rit; 
 	std::list<FileEntry *> firesults;
 

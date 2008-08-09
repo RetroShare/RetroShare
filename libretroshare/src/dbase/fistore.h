@@ -71,18 +71,18 @@ virtual ~FileIndexStore();
 virtual int loadCache(const CacheData &data);	  /* actual load, once data available */
 
 	/* Search Interface - For FileTransfer Lookup */
-	int SearchHash(std::string hash, std::list<FileDetail> &results);
+	int SearchHash(std::string hash, std::list<FileDetail> &results) const;
 
 	/* Search Interface - For Search Interface */
-	int SearchKeywords(std::list<std::string> terms, std::list<FileDetail> &results);
+	int SearchKeywords(std::list<std::string> terms, std::list<FileDetail> &results) const;
 
 	/* Search Interface - for Adv Search Interface */
-	int searchBoolExp(Expression * exp, std::list<FileDetail> &results);
+	int searchBoolExp(Expression * exp, std::list<FileDetail> &results) const;
 
 
 	/* Search Interface - For Directory Access */
-	int RequestDirDetails(std::string uid, std::string path, DirDetails &details);
-	int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags);
+	int RequestDirDetails(std::string uid, std::string path, DirDetails &details) const;
+	int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) const;
 
 	private:
 	int AboutToModify();

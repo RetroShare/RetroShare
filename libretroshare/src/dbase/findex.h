@@ -217,9 +217,9 @@ int 	loadIndex(std::string filename, std::string expectedHash, uint64_t size);
 int 	saveIndex(std::string filename, std::string &fileHash, uint64_t &size);
 
 	/* search through this index */
-int 	searchTerms(std::list<std::string> terms, std::list<FileEntry *> &results);
-int 	searchHash(std::string hash, std::list<FileEntry *> &results);
-int     searchBoolExp(Expression * exp, std::list<FileEntry *> &results);
+int 	searchTerms(std::list<std::string> terms, std::list<FileEntry *> &results) const;
+int 	searchHash(std::string hash, std::list<FileEntry *> &results) const;
+int     searchBoolExp(Expression * exp, std::list<FileEntry *> &results) const;
 
 	PersonEntry *root;
 };
