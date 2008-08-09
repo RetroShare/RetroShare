@@ -77,11 +77,11 @@ bool	ftDataMultiplex::addTransferModule(ftTransferModule *mod, ftFileCreator *f)
 	return true;
 }
 		
-bool	ftDataMultiplex::removeTransferModule(ftTransferModule *mod, ftFileCreator *f)
+bool	ftDataMultiplex::removeTransferModule(std::string hash)
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 	std::map<std::string, ftClient>::iterator it;
-	if (mClients.end() == (it = mClients.find(mod->hash())))
+	if (mClients.end() == (it = mClients.find(hash)))
 	{
 		/* error */
 		return false;
@@ -90,6 +90,51 @@ bool	ftDataMultiplex::removeTransferModule(ftTransferModule *mod, ftFileCreator 
 	return true;
 }
 
+
+bool    ftDataMultiplex::FileUploads(std::list<std::string> &hashs)
+{
+	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
+	std::map<std::string, ftFileProvider *>::iterator sit;
+	for(sit = mServers.begin(); sit != mServers.end(); sit++)
+	{
+		hashs.push_back(sit->first);
+	}
+	return true;
+}
+	
+bool    ftDataMultiplex::FileDownloads(std::list<std::string> &hashs)
+{
+	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
+	std::map<std::string, ftClient>::iterator cit;
+	for(cit = mClients.begin(); cit != mClients.end(); cit++)
+	{
+		hashs.push_back(cit->first);
+	}
+	return true;
+}
+
+
+bool    ftDataMultiplex::FileDetails(std::string hash, uint32_t hintsflag, FileInfo &info)
+{
+	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
+	std::map<std::string, ftFileProvider *>::iterator sit;
+	sit = mServers.find(hash);
+	if (sit != mServers.end())
+	{
+		(sit->second)->FileDetails(info);
+		return true;
+	}
+
+	std::map<std::string, ftClient>::iterator cit;
+	if (mClients.end() != (cit = mClients.find(hash)))
+	{
+		//(cit->second).mModule->FileDetails(info);
+		(cit->second).mCreator->FileDetails(info);
+		return true;
+	}
+	
+	return false;
+}
 
 	/* data interface */
 

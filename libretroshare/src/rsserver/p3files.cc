@@ -141,8 +141,8 @@ bool p3Files::FileControl(std::string hash, uint32_t flags)
 	return false;
 }
 
-bool p3Files::FileRequest(std::string fname, std::string hash, 
-			uint32_t size, std::string dest, uint32_t flags)
+bool p3Files::FileRequest(std::string fname, std::string hash, uint32_t size, 
+	std::string dest, uint32_t flags, std::list<std::string> srcIds)
 {
 	lockRsCore(); /* LOCKED */
 

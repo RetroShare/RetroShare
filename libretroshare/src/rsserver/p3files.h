@@ -57,8 +57,9 @@ virtual bool FileUploads(std::list<std::string> &hashs);
 virtual bool FileDetails(std::string hash, uint32_t hintflags, FileInfo &info);
 
 /* 2) Control of Downloads. */
-virtual bool FileRequest(std::string fname, std::string hash, 
-		uint32_t size, std::string dest, uint32_t flags);
+virtual bool FileRequest(std::string fname, std::string hash, uint32_t size, 
+			std::string dest, uint32_t flags,
+			std::list<std::string> srcIds);
 virtual bool FileCancel(std::string hash);
 virtual bool FileControl(std::string hash, uint32_t flags);
 virtual bool FileClearCompleted();

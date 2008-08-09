@@ -45,6 +45,8 @@ class ftSearch;
 #include "util/rsthreads.h"
 
 #include "ft/ftdata.h"
+#include "rsiface/rsfiles.h"
+
 
 class ftClient
 {
@@ -86,9 +88,13 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 
 	/* ftController Interface */
 bool	addTransferModule(ftTransferModule *mod, ftFileCreator *f);
-bool	removeTransferModule(ftTransferModule *mod, ftFileCreator *f);
+bool	removeTransferModule(std::string hash);
 
 	/* data interface */
+        /* get Details of File Transfers */
+bool    FileUploads(std::list<std::string> &hashs);
+bool    FileDownloads(std::list<std::string> &hashs);
+bool    FileDetails(std::string hash, uint32_t hintsflag, FileInfo &info);
 
 	/*************** SEND INTERFACE (calls ftDataSend) *******************/
 

@@ -41,13 +41,41 @@
 class ftFileCreator;
 class ftTransferModule;
 class ftFileProvider;
+class ftSearch;
+class ftDataMultiplex;
+
+#include "dbase/cachestrapper.h"
+#include "util/rsthreads.h"
+#include "pqi/pqimonitor.h"
+#include "pqi/p3cfgmgr.h"
+
+#include "rsiface/rsfiles.h"
+
+#include <map>
+
+class ftFileControl
+{
+	public:
+
+	ftFileControl();
+        ftFileControl(std::string fname, uint64_t size, std::string hash, 
+		uint32_t flags, ftFileCreator *fc, ftTransferModule *tm);
+
+	ftTransferModule * mTransfer;
+	ftFileCreator *    mCreator;
+	uint32_t	   mState;
+	std::string	   mHash;
+	std::string	   mName;
+	uint64_t	   mSize;
+};
+
 
 class ftController: public CacheTransfer, public RsThread, public pqiMonitor, public p3Config
 {
 	public:
 
 	/* Setup */
-	ftController(std::string configDir);
+	ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string configDir);
 
 void	setFtSearch(ftSearch *);
 
@@ -59,7 +87,7 @@ virtual void run();
 
 bool 	FileRequest(std::string fname, std::string hash, 
 			uint64_t size, std::string dest, uint32_t flags, 
-			std::list<std::string> sourceIds);
+			std::list<std::string> &sourceIds);
 
 bool 	FileCancel(std::string hash);
 bool 	FileControl(std::string hash, uint32_t flags);
@@ -93,18 +121,24 @@ virtual bool    loadList(std::list<RsItem *> load);
 	private:
 
 	/* RunTime Functions */
+void 	checkDownloadQueue();
+bool 	completeFile(std::string hash);
 
 	/* pointers to other components */
 
 	ftSearch *mSearch; 
+	ftDataMultiplex *mDataplex;
 
 	RsMutex ctrlMutex;
 
 	std::list<FileInfo> incomingQueue;
 	std::map<std::string, FileInfo> mCompleted;
 
-	std::map<std::string, ftTransferModule *> mTransfers;
-	std::map<std::string, ftFileCreator *> mFileCreators;
+
+        std::map<std::string, ftFileControl> mDownloads;
+
+	//std::map<std::string, ftTransferModule *> mTransfers;
+	//std::map<std::string, ftFileCreator *> mFileCreators;
 
 	std::string mConfigPath;
 	std::string mDownloadPath;

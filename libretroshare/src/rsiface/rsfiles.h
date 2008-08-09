@@ -38,16 +38,19 @@ extern RsFiles  *rsFiles;
 
 class Expression;
 
-const uint32_t RS_FILE_CTRL_PAUSE	 = 0x0100;
-const uint32_t RS_FILE_CTRL_START	 = 0x0200;
+/* These are used mainly by ftController at the moment */
+const uint32_t RS_FILE_CTRL_PAUSE	 = 0x00000100;
+const uint32_t RS_FILE_CTRL_START	 = 0x00000200;
 
-const uint32_t RS_FILE_CTRL_TRICKLE	 = 0x0001;
-const uint32_t RS_FILE_CTRL_SLOW	 = 0x0002;
-const uint32_t RS_FILE_CTRL_STANDARD	 = 0x0003;
-const uint32_t RS_FILE_CTRL_FAST	 = 0x0004;
-const uint32_t RS_FILE_CTRL_STREAM_AUDIO = 0x0005;
-const uint32_t RS_FILE_CTRL_STREAM_VIDEO = 0x0006;
+const uint32_t RS_FILE_RATE_TRICKLE	 = 0x00000001;
+const uint32_t RS_FILE_RATE_SLOW	 = 0x00000002;
+const uint32_t RS_FILE_RATE_STANDARD	 = 0x00000003;
+const uint32_t RS_FILE_RATE_FAST	 = 0x00000004;
+const uint32_t RS_FILE_RATE_STREAM_AUDIO = 0x00000005;
+const uint32_t RS_FILE_RATE_STREAM_VIDEO = 0x00000006;
 
+const uint32_t RS_FILE_PEER_ONLINE 	 = 0x00001000;
+const uint32_t RS_FILE_PEER_OFFLINE 	 = 0x00002000;
 
 /************************************
  * Used To indicate where to search.
@@ -86,8 +89,8 @@ virtual ~RsFiles() { return; }
 /***
  *  Control of Downloads.
  ***/
-virtual bool FileRequest(std::string fname, std::string hash, 
-		uint32_t size, std::string dest, uint32_t flags) = 0;
+virtual bool FileRequest(std::string fname, std::string hash, uint32_t size, 
+		std::string dest, uint32_t flags, std::list<std::string> srcIds) = 0;
 virtual bool FileCancel(std::string hash) = 0;
 virtual bool FileControl(std::string hash, uint32_t flags) = 0;
 virtual bool FileClearCompleted() = 0;

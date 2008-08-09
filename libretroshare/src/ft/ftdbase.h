@@ -1,0 +1,75 @@
+/*
+ * libretroshare/src/ft: ftdbase.h
+ *
+ * File Transfer for RetroShare.
+ *
+ * Copyright 2008 by Robert Fernie.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare@lunamutt.com".
+ *
+ */
+
+#ifndef FT_DBASE_INTERFACE_HEADER
+#define FT_DBASE_INTERFACE_HEADER
+
+/* 
+ * ftdbase.
+ *
+ * Wrappers for the Cache/FiStore/FiMonitor classes.
+ * So they work in the ft world.
+ */
+
+#include "ft/ftsearch.h"
+
+#include "dbase/fistore.h"
+#include "dbase/fimonitor.h"
+#include "dbase/cachestrapper.h"
+
+
+class ftFiStore: public FileIndexStore, public ftSearch
+{
+	public:
+	ftFiStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in,
+                        RsPeerId ownid, std::string cachedir);
+
+	/* overloaded search function */
+virtual bool search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
+};
+
+class ftFiMonitor: public FileIndexMonitor, public ftSearch
+{
+	public:
+	ftFiMonitor(CacheStrapper *cs, std::string cachedir, std::string pid);
+
+	/* overloaded search function */
+virtual bool search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
+
+};
+
+class ftCacheStrapper: public CacheStrapper, public ftSearch
+{
+	public:
+	ftCacheStrapper(p3AuthMgr *am, p3ConnectMgr *cm);
+
+	/* overloaded search function */
+virtual bool search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
+
+};
+
+
+#endif
+

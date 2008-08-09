@@ -108,7 +108,7 @@ void ftExtraList::hashAFile()
 
 	/* hash it! */
 	std::string name, hash;
-	uint64_t size;
+	//uint64_t size;
 	if (RsDirUtil::hashFile(details.info.path, details.info.fname, 
 				details.info.hash, details.info.size))
 	{
@@ -204,7 +204,7 @@ bool	ftExtraList::cleanupOldFiles()
 	for(it = mFiles.begin(); it != mFiles.end(); it++)
 	{
 		/* check timestamps */
-		if (it->second.start + it->second.period < now)
+		if (it->second.start + it->second.period < (unsigned) now)
 		{
 			toRemove.push_back(it->first);
 		}

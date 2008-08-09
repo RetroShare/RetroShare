@@ -1,5 +1,7 @@
 #include "ftfileprovider.h"
 
+#include "util/rsdir.h"
+
 ftFileProvider::ftFileProvider(std::string path, uint64_t size, std::string
 hash) : total_size(size), hash(hash), file_name(path), fd(NULL) {
 		
@@ -20,6 +22,19 @@ uint64_t ftFileProvider::getFileSize()
 {
 	return total_size;
 }
+
+bool    ftFileProvider::FileDetails(FileInfo &info)
+{
+	info.hash = hash;
+	info.size = total_size;
+	info.path = file_name;
+	info.fname = RsDirUtil::getTopDir(file_name);
+
+	/* Use req_loc / req_size to estimate data rate */
+
+	return true;
+}
+
 
 bool ftFileProvider::getFileData(uint64_t offset, uint32_t chunk_size, void *data)
 {

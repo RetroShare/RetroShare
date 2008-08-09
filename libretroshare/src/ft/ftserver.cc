@@ -32,22 +32,24 @@ const int ftserverzone = 29539;
 #include "ft/ftcontroller.h"
 #include "ft/ftdatamultiplex.h"
 
-#include "dbase/cachestrapper.h"
-#include "dbase/fimonitor.h"
-#include "dbase/fistore.h"
+
+// Includes CacheStrapper / FiMonitor / FiStore for us.
+
+#include "ft/ftdbase.h"
 
 #include "pqi/pqi.h"
 #include "pqi/p3connmgr.h"
+
+#include "serialiser/rsserviceids.h"
 
 #include <iostream>
 #include <sstream>
 
 	/* Setup */
-ftServer::ftServer(CacheStrapper *cStrapper, p3ConnectMgr *connMgr)
-	:mCacheStrapper(cStrapper), mConnMgr(connMgr)
+ftServer::ftServer(p3AuthMgr *authMgr, p3ConnectMgr *connMgr)
+	:mAuthMgr(authMgr), mConnMgr(connMgr)
 {
-
-
+	mCacheStrapper = new ftCacheStrapper(authMgr, connMgr);
 }
 
 void	ftServer::setConfigDirectory(std::string path)
@@ -69,19 +71,16 @@ void	ftServer::addConfigComponents(p3ConfigMgr *mgr)
 }
 
 	/* Final Setup (once everything is assigned) */
-void ftServer::SetupFtServer()
+void ftServer::SetupFtServer(NotifyBase *cb)
 {
-	/* make Controller */
-	mFtController = new ftController(config_dir);
-	NotifyBase *cb = getNotify();
 
 	/* setup FiStore/Monitor */
-	std::string localcachedir = config_dir + "/cache/local";
-	std::string remotecachedir = config_dir + "/cache/remote";
+	std::string localcachedir = mConfigPath + "/cache/local";
+	std::string remotecachedir = mConfigPath + "/cache/remote";
 	std::string ownId = mConnMgr->getOwnId();
 
-	mFiStore = new FileIndexStore(mCacheStrapper, mFtController, cb, ownId, remotecachedir);
-        mFiMon = new FileIndexMonitor(mCacheStrapper, localcachedir, ownId);
+	mFiStore = new ftFiStore(mCacheStrapper, mFtController, cb, ownId, remotecachedir);
+        mFiMon = new ftFiMonitor(mCacheStrapper, localcachedir, ownId);
 
 	/* now add the set to the cachestrapper */
 	CachePair cp(mFiMon, mFiStore, CacheId(RS_SERVICE_TYPE_FILE_INDEX, 0));
@@ -91,15 +90,22 @@ void ftServer::SetupFtServer()
 	mFtExtra = new ftExtraList();
 
 	mFtSearch = new ftFileSearch();
-	//mFtSearch->addSearchMode(mCacheStrapper, RS_FILE_HINTS_CACHE);
+	mFtSearch->addSearchMode(mCacheStrapper, RS_FILE_HINTS_CACHE);
 	mFtSearch->addSearchMode(mFtExtra, RS_FILE_HINTS_EXTRA);
-	//mFtSearch->addSearchMode(mFiMon, RS_FILE_HINTS_LOCAL);
-	//mFtSearch->addSearchMode(mFiStore, RS_FILE_HINTS_REMOTE);
+	mFtSearch->addSearchMode(mFiMon, RS_FILE_HINTS_LOCAL);
+	mFtSearch->addSearchMode(mFiStore, RS_FILE_HINTS_REMOTE);
 
+	/* Transport */
+        mFtDataplex = new ftDataMultiplex(this, mFtSearch);
+
+	/* make Controller */
+	mFtController = new ftController(mCacheStrapper, mFtDataplex, mConfigPath);
 	mFtController -> setFtSearch(mFtSearch);
-	mFtController -> setSaveBasePath(save_dir);
+	std::string tmppath = "./";
+	mFtController->setPartialsDirectory(tmppath);
+	mFtController->setDownloadDirectory(tmppath);
 
-        mFtDataplex = ftDataMultiplex(this, mFtSearch);
+	mConnMgr->addMonitor(mFtController);
 	
 	return;
 }
@@ -147,10 +153,11 @@ CacheTransfer *ftServer::getCacheTransfer()
 	/********************** Controller Access **********************/
 	/***************************************************************/
 
-bool ftServer::FileRequest(std::string fname, std::string hash, 
-				uint32_t size, std::string dest, uint32_t flags)
+bool ftServer::FileRequest(std::string fname, std::string hash, uint32_t size, 
+	std::string dest, uint32_t flags, std::list<std::string> srcIds)
 {
-	return mFtController->FileRequest(fname, hash, size, dest, flags);
+	return mFtController->FileRequest(fname, hash, size, 
+						dest, flags, srcIds);
 }
 
 bool ftServer::FileCancel(std::string hash)
@@ -168,11 +175,6 @@ bool ftServer::FileClearCompleted()
 	return mFtController->FileClearCompleted();
 }
 
-	/* get Details of File Transfers */
-bool ftServer::FileDownloads(std::list<std::string> &hashs)
-{
-	return mFtController->FileDownloads(hashs);
-}
 
 	/* Directory Handling */
 void ftServer::setDownloadDirectory(std::string path)
@@ -200,9 +202,14 @@ std::string ftServer::getPartialsDirectory()
 	/************************* Other Access ************************/
 	/***************************************************************/
 
+bool ftServer::FileDownloads(std::list<std::string> &hashs)
+{
+	return mFtDataplex->FileDownloads(hashs);
+}
+
 bool ftServer::FileUploads(std::list<std::string> &hashs)
 {
-	return mFtDataplex->FileUploads(hashes);
+	return mFtDataplex->FileUploads(hashs);
 }
 
 bool ftServer::FileDetails(std::string hash, uint32_t hintflags, FileInfo &info)
@@ -210,16 +217,16 @@ bool ftServer::FileDetails(std::string hash, uint32_t hintflags, FileInfo &info)
 	bool found = false;
 	if (hintflags | RS_FILE_HINTS_DOWNLOAD)
 	{
-		found = mFtController->FileDetails(hash, info);
+		found = mFtDataplex->FileDetails(hash, hintflags, info);
 	}
 	else if (hintflags | RS_FILE_HINTS_UPLOAD)
 	{
-		found = mFtDataplex->FileDetails(hash, info);
+		found = mFtDataplex->FileDetails(hash, hintflags, info);
 	}
 
 	if (!found)
 	{
-		mFtSearch->FileDetails(hash, hintflags, info);
+		mFtSearch->search(hash, 0, hintflags, info);
 	}
 	return found;
 }
@@ -301,17 +308,43 @@ bool    ftServer::InDirectoryCheck()
 	
 bool	ftServer::getSharedDirectories(std::list<std::string> &dirs)
 {
-	return mFiMon->getSharedDirectories(dirs);
+	mFiMon->getSharedDirectories(dirs);
+	return true;
+}
+
+bool	ftServer::setSharedDirectories(std::list<std::string> &dirs)
+{
+	mFiMon->setSharedDirectories(dirs);
+	return true;
 }
 
 bool 	ftServer::addSharedDirectory(std::string dir)
 {
-	return mFiMon->addSharedDirectory(dir);
+	std::list<std::string> dirList;
+	mFiMon->getSharedDirectories(dirList);
+	dirList.push_back(dir);
+
+	mFiMon->setSharedDirectories(dirList);
+	return true;
 }
 
 bool 	ftServer::removeSharedDirectory(std::string dir)
 {
-	return mFiMon->removeSharedDirectory(dir);
+	std::list<std::string> dirList;
+	std::list<std::string>::iterator it;
+
+	mFiMon->getSharedDirectories(dirList);
+
+	if (dirList.end() != (it = 
+		std::find(dirList.begin(), dirList.end(), dir)))
+	{
+		return false;
+	}
+
+	dirList.erase(it);
+	mFiMon->setSharedDirectories(dirList);
+
+	return true;
 }
 
 
@@ -324,7 +357,6 @@ bool 	ftServer::removeSharedDirectory(std::string dir)
 	/**************** Config Interface *****************************/
 	/***************************************************************/
 
-	protected:
         /* Key Functions to be overloaded for Full Configuration */
 RsSerialiser *ftServer::setupSerialiser()
 {
@@ -372,6 +404,8 @@ bool	ftServer::sendDataRequest(std::string peerId, std::string hash,
 	rfi->chunksize  = chunksize; /* ftr->chunk; */
 
 	mP3iface->SendFileRequest(rfi);
+
+	return true;
 }
 
 const uint32_t	MAX_FT_CHUNK  = 32 * 1024; /* 32K */
@@ -425,6 +459,8 @@ bool	ftServer::sendData(std::string peerId, std::string hash, uint64_t size,
 
 	/* clean up data */
 	free(data);
+
+	return true;
 }
 
 
@@ -432,9 +468,6 @@ int	ftServer::tick()
 {
 	rslog(RSL_DEBUG_BASIC, ftserverzone, 
 		"filedexserver::tick()");
-
-	/* the new Cache Hack() */
-	FileStoreTick();
 
 	if (mP3iface == NULL)
 	{
@@ -471,6 +504,8 @@ bool    ftServer::handleInputQueues()
 {
 	handleCacheData();
 	handleFileData();
+	return true;
+
 }
 
 bool     ftServer::handleCacheData()
@@ -554,6 +589,7 @@ bool     ftServer::handleCacheData()
 			mP3iface -> SendSearchResult(ci);
 		}
 	}
+	return true;
 }
 
 

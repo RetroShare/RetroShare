@@ -7,13 +7,17 @@ RS_TOP_DIR = ..
 include $(RS_TOP_DIR)/scripts/config.mk
 ###############################################################
 
-RSOBJ =  ftdata.o ftfileprovider.o ftfilecreator.o ftextralist.o ftdatamultiplex.o ftfilesearch.o fttransfermodule.o 
+RSOBJ =  ftdata.o ftfileprovider.o ftfilecreator.o ftextralist.o ftdatamultiplex.o ftfilesearch.o fttransfermodule.o ftdbase.o ftserver.o 
 
-#ftserver.o
+#ftcontroller.o pqitestor.o
 
-TESTOBJ  = ftfileprovidertest.o ftfilecreatortest.o ftextralisttest.o ftdataplextest.o
 
-TESTS  = ftfileprovidertest ftfilecreatortest ftextralisttest ftdataplextest
+TESTOBJ  = ftfileprovidertest.o ftfilecreatortest.o ftextralisttest.o ftdataplextest.o 
+#ftserver1test.o
+
+
+TESTS  = ftfileprovidertest ftfilecreatortest ftextralisttest ftdataplextest 
+#ftserver1test
 
 all: librs tests
 
@@ -28,6 +32,9 @@ ftextralisttest : ftextralisttest.o
 
 ftdataplextest : ftdataplextest.o 
 	$(CC) $(CFLAGS) -o ftdataplextest ftdataplextest.o $(LIBS)
+
+ftserver1test : ftserver1test.o 
+	$(CC) $(CFLAGS) -o ftserver1test ftserver1test.o $(LIBS)
 
 ###############################################################
 include $(RS_TOP_DIR)/scripts/rules.mk

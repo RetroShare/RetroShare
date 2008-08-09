@@ -45,7 +45,7 @@
 
 #include "ft/ftdata.h"
 #include "rsiface/rsfiles.h"
-#include "dbase/cachestrapper.h"
+//#include "dbase/cachestrapper.h"
 
 #include "pqi/pqi.h"
 #include "pqi/p3cfgmgr.h"
@@ -55,8 +55,12 @@ class p3ConnectMgr;
 class p3AuthMgr;
 
 class CacheStrapper;
-class FileIndexStore;
-class FileIndexMonitor;
+class CacheTransfer;
+
+class NotifyBase; /* needed by FiStore */
+class ftCacheStrapper;
+class ftFiStore;
+class ftFiMonitor;
 
 class ftController;
 class ftExtraList;
@@ -73,7 +77,7 @@ class ftServer: public RsFiles, public ftDataSend
 	/******************** Setup ************************************/
 	/***************************************************************/
 
-	ftServer(CacheStrapper *cStrapper, p3ConnectMgr *connMgr);
+	ftServer(p3AuthMgr *authMgr, p3ConnectMgr *connMgr);
 
 	/* Assign important variables */
 void	setConfigDirectory(std::string path);
@@ -88,7 +92,9 @@ CacheStrapper *getCacheStrapper();
 CacheTransfer *getCacheTransfer();
 
 	/* Final Setup (once everything is assigned) */
-void	SetupFtServer();
+//void	SetupFtServer();
+void    SetupFtServer(NotifyBase *cb);
+
 void	StartupThreads();
 
 	/***************************************************************/
@@ -99,8 +105,8 @@ void	StartupThreads();
 /***
  * Control of Downloads
  ***/
-virtual bool FileRequest(std::string fname, std::string hash, 
-			uint32_t size, std::string dest, uint32_t flags);
+virtual bool FileRequest(std::string fname, std::string hash, uint32_t size, 
+	std::string dest, uint32_t flags, std::list<std::string> srcIds);
 virtual bool FileCancel(std::string hash);
 virtual bool FileControl(std::string hash, uint32_t flags);
 virtual bool FileClearCompleted();
@@ -148,6 +154,7 @@ virtual std::string getDownloadDirectory();
 virtual std::string getPartialsDirectory();
 
 virtual bool	getSharedDirectories(std::list<std::string> &dirs);
+virtual bool	setSharedDirectories(std::list<std::string> &dirs);
 virtual bool 	addSharedDirectory(std::string dir);
 virtual bool 	removeSharedDirectory(std::string dir);
 
@@ -203,15 +210,15 @@ virtual int 	check_dBUpdate();
         p3AuthMgr    *mAuthMgr;
         p3ConnectMgr *mConnMgr;
 
-	CacheStrapper *mCacheStrapper;
+	ftCacheStrapper *mCacheStrapper;
+        ftFiStore 	*mFiStore;
+	ftFiMonitor   	*mFiMon;
 
 	ftController  *mFtController;
 	ftExtraList   *mFtExtra;
 
 	ftDataMultiplex *mFtDataplex;
 
-        FileIndexStore *mFiStore;
-	FileIndexMonitor *mFiMon;
 
 	ftFileSearch   *mFtSearch;
 

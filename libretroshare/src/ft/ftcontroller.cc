@@ -23,9 +23,6 @@
  *
  */
 
-#ifndef FT_CONTROLLER_HEADER
-#define FT_CONTROLLER_HEADER
-
 /* 
  * ftController
  *
@@ -38,20 +35,34 @@
  *
  */
 
-class ftController: public CacheTransfer, public RsThread, public pqiMonitor, public p3Config
+#include "ft/ftcontroller.h"
+
+#include "ft/ftfilecreator.h"
+#include "ft/fttransfermodule.h"
+#include "ft/ftsearch.h"
+#include "ft/ftdatamultiplex.h"
+
+#include "util/rsdir.h"
+
+#include "pqi/p3connmgr.h"
+
+
+#warning CONFIG_FT_CONTROL Not defined in p3cfgmgr.h
+
+const uint32_t CONFIG_FT_CONTROL  = 1;
+
+ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string configDir)
+	:CacheTransfer(cs), p3Config(CONFIG_FT_CONTROL)
 {
-	public:
+	/* TODO */
+}
 
-	/* Setup */
-	ftController::ftController(std::string configDir);
-
-void	ftController::setFtSearch(ftSearch *search)
+void ftController::setFtSearch(ftSearch *search)
 {
 	mSearch = search;
 }
 
-
-virtual void ftController::run()
+void ftController::run()
 {
 	/* check the queues */
 }
@@ -68,6 +79,9 @@ void ftController::checkDownloadQueue()
 
 bool ftController::completeFile(std::string hash)
 {
+
+#if 0
+
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
 	std::map<std::string, ftFileControl>::iterator it;
@@ -88,8 +102,7 @@ bool ftController::completeFile(std::string hash)
 
 	/* done - cleanup */
 	fc->mTransfer->done();
-	mClientModule->removeTransferModule(fc->mTransfer);
-	mServerModule->removeFileCreator(fc->mCreator);
+	mDataplex->removeTransferModule(fc->mTransfer->hash());
 	
 	delete fc->mTransfer;
 	fc->mTransfer = NULL;
@@ -97,13 +110,15 @@ bool ftController::completeFile(std::string hash)
 	delete fc->mCreator;
 	fc->mCreator = NULL;
 
-	fc->state = COMPLETE;
+	fc->mState = COMPLETE;
 
 	/* switch map */
-	mCompleted[fc->hash] = *fc;
+	mCompleted[fc->mHash] = *fc;
 	mDownloads.erase(it);
 
 	return true;
+
+#endif
 }
 
 	/***************************************************************/
@@ -112,11 +127,18 @@ bool ftController::completeFile(std::string hash)
 
 bool 	ftController::FileRequest(std::string fname, std::string hash, 
 			uint64_t size, std::string dest, uint32_t flags, 
-			std::list<std::string> srcIds)
+			std::list<std::string> &srcIds)
 {
-	/* check if we have the file */
 
-	if (ftSearch->findFile(LOCAL))
+#if 0 /*** FIX ME !!!**************/
+
+	/* check if we have the file */
+	FileInfo info;
+
+	if (mSearch->search(hash, size, 
+		RS_FILE_HINTS_LOCAL | 
+		RS_FILE_HINTS_EXTRA | 
+		RS_FILE_HINTS_SPEC_ONLY, info))
 	{
 		/* have it already */
 		/* add in as completed transfer */
@@ -124,9 +146,11 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	}
 
 	/* do a source search - for any extra sources */
-	if (ftSearch->findFile(REMOTE))
+	if (mSearch->search(hash, size, 
+		RS_FILE_HINTS_REMOTE |
+		RS_FILE_HINTS_SPEC_ONLY, info))
 	{
-
+		/* do something with results */
 	}
 
 	std::map<std::string, ftTransferModule *> mTransfers;
@@ -136,27 +160,28 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	std::string savepath = mDownloadPath + "/" + fname;
 	std::string chunker = "";
 	ftFileCreator *fc = new ftFileCreator(savepath, size, hash, chunker);
-	ftTransferModule = *tm = new ftTransferModule(fc, mClientModule);
+	ftTransferModule *tm = new ftTransferModule(fc, mDataplex);
 
 	/* add into maps */
 	ftFileControl ftfc(fname, size, hash, flags, fc, tm);
 
 	/* add to ClientModule */
-	mClientModule->addTransferModule(tm);
+	mDataplex->addTransferModule(tm, fc);
 
 	/* now add source peers (and their current state) */
 	tm->setFileSources(srcIds);
 
 	/* get current state for transfer module */
+	std::list<std::string>::iterator it;
 	for(it = srcIds.begin(); it != srcIds.end(); it++)
 	{
 		if (mConnMgr->isOnline(*it))
 		{
-			tm->setPeer(*it, TRICKLE | ONLINE);
+			tm->setPeer(*it, RS_FILE_RATE_TRICKLE | RS_FILE_PEER_ONLINE);
 		}
 		else
 		{
-			tm->setPeer(*it, OFFLINE);
+			tm->setPeer(*it, RS_FILE_PEER_OFFLINE);
 		}
 	}
 
@@ -165,12 +190,26 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	mDownloads[hash] = ftfc;
 	mSlowQueue.push_back(hash);
 
+#endif
+
 }
 
 
-bool 	ftController::FileCancel(std::string hash);
-bool 	ftController::FileControl(std::string hash, uint32_t flags);
-bool 	ftController::FileClearCompleted();
+bool 	ftController::FileCancel(std::string hash)
+{
+	/* TODO */
+	return false;
+}
+
+bool 	ftController::FileControl(std::string hash, uint32_t flags)
+{
+	return false;
+}
+
+bool 	ftController::FileClearCompleted()
+{
+	return false;
+}
 
 	/* get Details of File Transfers */
 bool 	ftController::FileDownloads(std::list<std::string> &hashs)
@@ -180,7 +219,7 @@ bool 	ftController::FileDownloads(std::list<std::string> &hashs)
 	std::map<std::string, ftFileControl>::iterator it;
 	for(it = mDownloads.begin(); it != mDownloads.end(); it++)
 	{
-		hashes.push_back(it->second.hash);
+		hashs.push_back(it->second.mHash);
 	}
 	return true;
 }
@@ -200,8 +239,10 @@ bool 	ftController::setDownloadDirectory(std::string path)
 	return false;
 }
 
-bool 	ftController::setPartialsDirectory(std::string path);
+bool 	ftController::setPartialsDirectory(std::string path)
 {
+#if 0 /*** FIX ME !!!**************/
+
 	/* check it is not a subdir of download / shared directories (BAD) - TODO */
 
 	/* check if it exists */
@@ -220,7 +261,9 @@ bool 	ftController::setPartialsDirectory(std::string path);
 		}
 		return true;
 	}
+
 	return false;
+#endif
 }
 
 std::string ftController::getDownloadDirectory()
@@ -266,6 +309,9 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 	 */
 void    ftController::statusChange(const std::list<pqipeer> &plist)
 {
+
+#if 0 /*** FIX ME !!!**************/
+
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
 	/* add online to all downloads */
@@ -278,11 +324,11 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 		{
 			if (pit->actions | RS_PEER_CONNECTED)
 			{
-				((it->second).tm)->setPeer(ONLINE | TRICKLE);
+				((it->second).mTransfer)->setPeer(RS_FILE_PEER_ONLINE | RS_FILE_RATE_TRICKLE);
 			}
 			else if (pit->actions | RS_PEER_DISCONNECTED)
 			{
-				((it->second).tm)->setPeer(OFFLINE);
+				((it->second).mTransfer)->setPeer(RS_FILE_PEER_OFFLINE);
 			}
 		}
 	}
@@ -294,71 +340,33 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 		{
 			/* add in */
 
-			((it->second).tm)->setPeer(ONLINE | TRICKLE);
+			((it->second).mTransfer)->setPeer(RS_FILE_PEER_ONLINE | RS_FILE_RATE_TRICKLE);
 		}
 		else if (pit->actions | RS_PEER_DISCONNECTED)
 		{
-			((it->second).tm)->setPeer(OFFLINE);
+			((it->second).mTransfer)->setPeer(RS_FILE_PEER_OFFLINE);
 		}
 	}
 
+#endif
+
+}
+	/* p3Config Interface */
+RsSerialiser *ftController::setupSerialiser()
+{
+	return NULL;
+}
+
+std::list<RsItem *> ftController::saveList(bool &cleanup)
+{
+	std::list<RsItem *> emptyList;
+	return emptyList;
+}
+
+	
+bool    ftController::loadList(std::list<RsItem *> load)
+{
+	return false;
 }
 
 
-
-	/* p3Config Interface */
-        protected:
-virtual RsSerialiser *setupSerialiser();
-virtual std::list<RsItem *> saveList(bool &cleanup);
-virtual bool    loadList(std::list<RsItem *> load);
-
-	private:
-
-	/* RunTime Functions */
-
-	/* pointers to other components */
-
-	ftSearch *mSearch; 
-
-	RsMutex ctrlMutex;
-
-	std::list<FileDetails> incomingQueue;
-	std::map<std::string, FileDetails> mCompleted;
-
-class ftFileControl
-{
-	public:
-
-	ftFileControl(std::string fname, uint64_t size, std::string hash, 
-			uint32_t flags, ftFileCreator *fc, ftTransferModule *tm);
-
-	std::string mName, 
-	uint64_t    mSize;
-	std::string mHash, 
-	uint32_t    mFlags;
-	ftFileCreator *mCreator;
-	ftTransferModule *mTransfer;
-};
-
-class ftPeerControl
-{
-	std::string peerId;
-	std::map<std::string, uint32_t> priority;
-	uint32_t currentBandwidth;
-	uint32_t maxBandwidth;
-};
-
-	std::map<std::string, ftFileControl> 	mDownloads;
-
-	/* A Bunch of Queues */
-	std::map<std::string, std::string>  mStreamQueue;
-	std::map<std::string, std::string>  mFastQueue;
-	std::list<std::string>		mSlowQueue;
-	std::list<std::string>		mTrickleQueue;
-
-	std::string mConfigPath;
-	std::string mDownloadPath;
-	std::string mPartialPath;
-};
-
-#endif
