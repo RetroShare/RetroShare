@@ -553,7 +553,7 @@
       <property name="orientation" >
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="QWidget" name="" >
+      <widget class="QWidget" name="layoutWidget" >
        <layout class="QVBoxLayout" >
         <item>
          <layout class="QHBoxLayout" >
@@ -664,22 +664,10 @@
          <layout class="QHBoxLayout" >
           <item>
            <layout class="QGridLayout" >
-            <property name="leftMargin" >
+            <property name="margin" >
              <number>0</number>
             </property>
-            <property name="topMargin" >
-             <number>0</number>
-            </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
-             <number>0</number>
-            </property>
-            <property name="horizontalSpacing" >
-             <number>6</number>
-            </property>
-            <property name="verticalSpacing" >
+            <property name="spacing" >
              <number>6</number>
             </property>
             <item row="0" column="1" >
@@ -721,7 +709,8 @@ p, li { white-space: pre-wrap; }
                <string/>
               </property>
               <property name="icon" >
-               <iconset resource="images.qrc" >:/images/add_24x24.png</iconset>
+               <iconset resource="images.qrc" >
+                <normaloff>:/images/add_24x24.png</normaloff>:/images/add_24x24.png</iconset>
               </property>
              </widget>
             </item>
@@ -732,7 +721,7 @@ p, li { white-space: pre-wrap; }
             <property name="orientation" >
              <enum>Qt::Horizontal</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0" >
              <size>
               <width>351</width>
               <height>20</height>
@@ -746,7 +735,8 @@ p, li { white-space: pre-wrap; }
              <string>Prev</string>
             </property>
             <property name="icon" >
-             <iconset resource="images.qrc" >:/images/up.png</iconset>
+             <iconset resource="images.qrc" >
+              <normaloff>:/images/back.png</normaloff>:/images/back.png</iconset>
             </property>
            </widget>
           </item>
@@ -756,7 +746,8 @@ p, li { white-space: pre-wrap; }
              <string>Next</string>
             </property>
             <property name="icon" >
-             <iconset resource="images.qrc" >:/images/start.png</iconset>
+             <iconset resource="images.qrc" >
+              <normaloff>:/images/forward.png</normaloff>:/images/forward.png</iconset>
             </property>
            </widget>
           </item>

@@ -137,6 +137,13 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     ui.printbutton->setMenu(printmenu);
 
 #endif
+    /* Set header resize modes and initial section sizes */
+	QHeaderView * msgwheader = ui.forumTreeWidget->header () ;
+	msgwheader->setResizeMode (0, QHeaderView::Interactive);
+    
+	msgwheader->resizeSection ( 0, 170 );
+
+  
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
