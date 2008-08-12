@@ -49,6 +49,9 @@
 #define IMAGE_DOWNLOAD       ":/images/start.png"
 #define IMAGE_DOWNLOADALL    ":/images/startall.png"
 
+/* Images for TreeWidget */
+#define IMAGE_FOLDER         ":/images/folder16.png"
+#define IMAGE_FORUM          ":/images/konversation16.png"
 
 /** Constructor */
 ForumsDialog::ForumsDialog(QWidget *parent)
@@ -349,6 +352,7 @@ void ForumsDialog::insertForums()
 			// Id.
 			item -> setText(4, QString::fromStdString(it->forumId));
 			AdminList.append(item);
+			item -> setIcon(0,(QIcon(IMAGE_FORUM)));
 		}
 		else if (flags & RS_DISTRIB_SUBSCRIBED)
 		{
@@ -382,6 +386,7 @@ void ForumsDialog::insertForums()
 			// Id.
 			item -> setText(4, QString::fromStdString(it->forumId));
 			SubList.append(item);
+			item -> setIcon(0,(QIcon(IMAGE_FORUM)));
 		}
 		else
 		{
@@ -452,10 +457,12 @@ void ForumsDialog::insertForums()
 			if (it->pop < popLimit)
 			{
 				OtherList.append(item);
+				item -> setIcon(0,(QIcon(IMAGE_FORUM)));
 			}
 			else
 			{
 				PopList.append(item);
+				item -> setIcon(0,(QIcon(IMAGE_FORUM)));
 			}
 		}
 	}
@@ -464,21 +471,25 @@ void ForumsDialog::insertForums()
         QList<QTreeWidgetItem *> TopList;
         QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 	item -> setText(0, tr("Your Forums"));
+	item -> setIcon(0,(QIcon(IMAGE_FOLDER)));
 	item -> addChildren(AdminList);
 	TopList.append(item);
 
         item = new QTreeWidgetItem((QTreeWidget*)0);
 	item -> setText(0, tr("Subscribed Forums"));
+	item -> setIcon(0,(QIcon(IMAGE_FOLDER)));
 	item -> addChildren(SubList);
 	TopList.append(item);
 
         item = new QTreeWidgetItem((QTreeWidget*)0);
 	item -> setText(0, tr("Popular Forums"));
+	item -> setIcon(0,(QIcon(IMAGE_FOLDER)));
 	item -> addChildren(PopList);
 	TopList.append(item);
 
         item = new QTreeWidgetItem((QTreeWidget*)0);
 	item -> setText(0, tr("Other Forums"));
+	item -> setIcon(0,(QIcon(IMAGE_FOLDER)));
 	item -> addChildren(OtherList);
 	TopList.append(item);
 

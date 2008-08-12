@@ -65,7 +65,7 @@
 #define IMAGE_SEARCH    	    ":/images/filefind.png"
 #define IMAGE_TRANSFERS      	":/images/ktorrent.png"
 #define IMAGE_FILES   	        ":/images/folder_green.png"
-#define IMAGE_FORUMS   	        ":/images/user/agt_forum24.png"
+#define IMAGE_FORUMS   	        ":/images/konversation.png"
 #define IMAGE_CHANNELS       	":/images/channels.png"
 #define IMAGE_PREFERENCES       ":/images/settings16.png"
 #define IMAGE_CHAT          	":/images/chats_24x24.png"
@@ -83,7 +83,7 @@
 #define IMAGE_NEWSFEED          ":/images/konqsidebar_news24.png"
 #define IMAGE_LINKS             ":/images/ktorrent.png"
 #define IMAGE_MESSAGES          ":/images/evolution.png"
-#define IMAGE_BLOGS          ":/images/konversation.png"
+#define IMAGE_BLOGS          ":/images/kblogger.png"
 
 
 /* Keys for UI Preferences */
