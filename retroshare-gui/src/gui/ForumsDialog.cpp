@@ -52,6 +52,13 @@
 /* Images for TreeWidget */
 #define IMAGE_FOLDER         ":/images/folder16.png"
 #define IMAGE_FORUM          ":/images/konversation16.png"
+#define IMAGE_SUBSCRIBE      ":/images/accepted16.png"
+#define IMAGE_UNSUBSCRIBE    ":/images/cancel.png"
+#define IMAGE_INFO           ":/images/info16.png"
+#define IMAGE_NEWFORUM       ":/images/new_forum16.png"
+
+
+
 
 /** Constructor */
 ForumsDialog::ForumsDialog(QWidget *parent)
@@ -163,21 +170,22 @@ void ForumsDialog::forumListCustomPopupMenu( QPoint point )
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
-      QAction *subForumAct = new QAction(QIcon(IMAGE_MESSAGE), tr( "Subscribe to Forum" ), this );
+      QAction *subForumAct = new QAction(QIcon(IMAGE_SUBSCRIBE), tr( "Subscribe to Forum" ), this );
       connect( subForumAct , SIGNAL( triggered() ), this, SLOT( subscribeToForum() ) );
       
-      QAction *unsubForumAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Unsubscribe to Forum" ), this );
+      QAction *unsubForumAct = new QAction(QIcon(IMAGE_UNSUBSCRIBE), tr( "Unsubscribe to Forum" ), this );
       connect( unsubForumAct , SIGNAL( triggered() ), this, SLOT( unsubscribeToForum() ) );
       
-      QAction *newForumAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "New Forum" ), this );
+      QAction *newForumAct = new QAction(QIcon(IMAGE_NEWFORUM), tr( "New Forum" ), this );
       connect( newForumAct , SIGNAL( triggered() ), this, SLOT( newforum() ) );
 
-      QAction *detailsForumAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Show Forum Details" ), this );
+      QAction *detailsForumAct = new QAction(QIcon(IMAGE_INFO), tr( "Show Forum Details" ), this );
       connect( detailsForumAct , SIGNAL( triggered() ), this, SLOT( showForumDetails() ) );
 
       contextMnu.clear();
       contextMnu.addAction( subForumAct );
       contextMnu.addAction( unsubForumAct );
+      contextMnu.addSeparator();
       contextMnu.addAction( newForumAct );
       contextMnu.addAction( detailsForumAct );
       contextMnu.exec( mevent->globalPos() );

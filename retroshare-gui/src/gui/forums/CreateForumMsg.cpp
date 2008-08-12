@@ -22,18 +22,23 @@
 
 #include "CreateForumMsg.h"
 
+#include <config/rsharesettings.h>
+
 #include "rsiface/rsforums.h"
 
 /** Constructor */
 CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
-: QWidget(NULL), mForumId(fId), mParentId(pId)
+: QMainWindow(NULL), mForumId(fId), mParentId(pId)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
   
+  RshareSettings config;
+  config.loadWidgetInformation(this);
+  
   // connect up the buttons.
-  connect( ui.cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancelMsg( ) ) );
-  connect( ui.postButton, SIGNAL( clicked ( bool ) ), this, SLOT( createMsg( ) ) );
+  connect( ui.postmessage_action, SIGNAL( triggered (bool) ), this, SLOT( cancelMsg( ) ) );
+  connect( ui.close_action, SIGNAL( triggered (bool) ), this, SLOT( createMsg( ) ) );
 
   newMsg();
 
@@ -72,5 +77,8 @@ void  CreateForumMsg::cancelMsg()
 {
 	close();
 	return;
+	        
+	RshareSettings config;
+	config.saveWidgetInformation(this);
 }
 

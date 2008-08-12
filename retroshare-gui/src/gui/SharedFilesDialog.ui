@@ -565,6 +565,9 @@ p, li { white-space: pre-wrap; }
    </item>
    <item row="1" column="0" >
     <layout class="QGridLayout" name="_2" >
+     <property name="spacing" >
+      <number>0</number>
+     </property>
      <item row="0" column="0" >
       <widget class="QPushButton" name="frameButton" >
        <property name="minimumSize" >
@@ -582,13 +585,20 @@ p, li { white-space: pre-wrap; }
        <property name="text" >
         <string/>
        </property>
+       <property name="icon" >
+        <iconset resource="images.qrc" >
+         <normaloff>:/images/hide_toolbox_frame.png</normaloff>:/images/hide_toolbox_frame.png</iconset>
+       </property>
        <property name="iconSize" >
         <size>
-         <width>16</width>
+         <width>14</width>
          <height>31</height>
         </size>
        </property>
        <property name="checkable" >
+        <bool>true</bool>
+       </property>
+       <property name="checked" >
         <bool>true</bool>
        </property>
       </widget>

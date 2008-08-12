@@ -28,7 +28,7 @@
 
 #include "ui_CreateForumMsg.h"
 
-class CreateForumMsg : public QWidget
+class CreateForumMsg : public QMainWindow
 {
   Q_OBJECT
 

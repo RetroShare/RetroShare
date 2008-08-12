@@ -179,6 +179,7 @@
         <file>images/mail_reply.png</file>
         <file>images/mail_send.png</file>
         <file>images/mail_new.png</file>
+        <file>images/mail_send24.png</file>
         <file>images/message-mail.png</file>
         <file>images/message-mail-read.png</file>m
         <file>images/message-news.png</file>
@@ -191,6 +192,7 @@
         <file>images/new-account.png</file>
         <file>images/new-contact.png</file>
         <file>images/new-mail-alert.png</file>
+        <file>images/new_forum16.png</file>
         <file>images/nopic.png</file>
         <file>images/package_games1.png</file>
         <file>images/peerdetails_16x16.png</file>
