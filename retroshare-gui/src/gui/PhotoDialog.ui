@@ -56,7 +56,7 @@ p, li { white-space: pre-wrap; }
     </spacer>
    </item>
    <item row="1" column="0" colspan="3" >
-    <widget class="QSplitter" name="splitter_2" >
+    <widget class="QSplitter" name="photoSplitter" >
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
@@ -143,14 +143,21 @@ p, li { white-space: pre-wrap; }
            </property>
            <property name="icon" >
             <iconset resource="images.qrc" >
-             <normaloff>:/images/add_24x24.png</normaloff>:/images/add_24x24.png</iconset>
+             <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="addButton" >
+           <property name="toolTip" >
+            <string>Add Photo(s)</string>
+           </property>
            <property name="text" >
             <string>Add Photo(s)</string>
+           </property>
+           <property name="icon" >
+            <iconset resource="images.qrc" >
+             <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
            </property>
           </widget>
          </item>
@@ -178,6 +185,10 @@ p, li { white-space: pre-wrap; }
           <widget class="QPushButton" name="updateButton" >
            <property name="text" >
             <string>Update Details</string>
+           </property>
+           <property name="icon" >
+            <iconset resource="images.qrc" >
+             <normaloff>:/images/quick_restart24.png</normaloff>:/images/quick_restart24.png</iconset>
            </property>
           </widget>
          </item>

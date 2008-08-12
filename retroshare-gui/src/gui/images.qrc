@@ -4,6 +4,7 @@
         <file>help/licence.html</file>
         <file>help/thanks.html</file>
         <file>images/accepted16.png</file>
+        <file>images/add_image24.png</file>
         <file>images/browse-looking.gif</file>
         <file>images/addfriendlabel.png</file>
         <file>images/back.png</file>
@@ -36,7 +37,7 @@
         <file>images/avatar_background.png</file>
         <file>images/backgroundimage.png</file>
         <file>images/button_cancel.png</file>
-	<file>images/calendar.png</file>
+	    <file>images/calendar.png</file>
         <file>images/chat.png</file>
         <file>images/chat/bar_end.png</file>
         <file>images/chat/bar_fill.png</file>
@@ -83,9 +84,11 @@
         <file>images/download.png</file>
         <file>images/download16.png</file>
         <file>images/dphone.png</file>
+        <file>images/edit_add24.png</file>
         <file>images/edit-bold.png</file>
         <file>images/edit-italic.png</file>
         <file>images/edit-underline.png</file>
+        <file>images/edit_remove24.png</file>
         <file>images/encrypted16.png</file>
         <file>images/encrypted48.png</file>
         <file>images/evolution.png</file>
@@ -175,6 +178,7 @@
         <file>images/mail_get.png</file>
         <file>images/mail_reply.png</file>
         <file>images/mail_send.png</file>
+        <file>images/mail_new.png</file>
         <file>images/message-mail.png</file>
         <file>images/message-mail-read.png</file>m
         <file>images/message-news.png</file>
@@ -194,6 +198,7 @@
         <file>images/peers_24x24.png</file>
         <file>images/print24.png</file>
         <file>images/player_play.png</file>
+        <file>images/quick_restart24.png</file>
         <file>images/removefriend16.png</file>
         <file>images/replymail-pressed.png</file>
         <file>images/replymail24-hover.png</file>

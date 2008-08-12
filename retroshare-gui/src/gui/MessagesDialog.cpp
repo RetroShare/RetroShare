@@ -230,6 +230,8 @@ void MessagesDialog::togglefileview()
 		newSizeList.push_back(listSize + recommendSize / 3);
 		newSizeList.push_back(msgSize + recommendSize * 2 / 3);
 		newSizeList.push_back(0);
+		ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+	    ui.expandFilesButton->setToolTip("Expand");
 	}
 	else
 	{
@@ -239,6 +241,8 @@ void MessagesDialog::togglefileview()
 		newSizeList.push_back(nlistSize);
 		newSizeList.push_back(nMsgSize);
 		newSizeList.push_back(totalSize * 1 / 3);
+	    ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+	    ui.expandFilesButton->setToolTip("Hide");
 	}
 
 	ui.msgSplitter->setSizes(newSizeList);

@@ -45,11 +45,14 @@
 /* Images for context menu icons */
 #define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
 #define IMAGE_EXPIORTFRIEND      ":/images/exportpeers_16x16.png"
+#define IMAGE_REMOVE             ":/images/cancel.png"
 #define IMAGE_CHAT               ":/images/chat.png"
 /* Images for Status icons */
 #define IMAGE_ONLINE             ":/images/donline.png"
 #define IMAGE_OFFLINE            ":/images/dhidden.png"
 #define IMAGE_PEER               ":/images/user/identity16.png"
+#define IMAGE_PHOTOS              ":/images/image16.png"
+
 
 #define PHOTO_ICON_SIZE		90
 
@@ -90,6 +93,7 @@ PhotoDialog::PhotoDialog(QWidget *parent)
 
   connect( ui.photoTreeWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem * , int ) ), this, SLOT( showPhoto( QTreeWidgetItem *, int ) ) );
   connect( ui.addButton, SIGNAL( clicked( ) ), this, SLOT( addPhotos( ) ) );
+  connect( ui.expandButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
 
   /* hide the Tree +/- */
   ui.photoTreeWidget -> setRootIsDecorated( false );
@@ -155,13 +159,68 @@ void PhotoDialog::photoTreeWidgetCustomPopupMenu( QPoint point )
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
-      QAction *rm = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Remove" ), this );
+      QAction *rm = new QAction(QIcon(IMAGE_REMOVE), tr( "Remove" ), this );
       connect( rm , SIGNAL( triggered() ), this, SLOT( removePhoto() ) );
 
       contextMnu.clear();
       contextMnu.addAction(rm);
       contextMnu.addSeparator(); 
       contextMnu.exec( mevent->globalPos() );
+}
+
+void PhotoDialog::togglefileview()
+{
+	/* if msg header visible -> hide by changing splitter 
+	 * three widgets...
+	 */
+
+	QList<int> sizeList = ui.photoSplitter->sizes();
+	QList<int>::iterator it;
+
+	int listSize = 0;
+	int msgSize = 0;
+	int i = 0;
+
+	for(it = sizeList.begin(); it != sizeList.end(); it++, i++)
+	{
+		if (i == 0)
+		{
+			listSize = (*it);
+		}
+		else if (i == 1)
+		{
+			msgSize = (*it);
+		}
+	}
+
+	int totalSize = listSize + msgSize;
+
+	bool toShrink = true;
+	if (msgSize < (int) totalSize / 10)
+	{
+		toShrink = false;
+	}
+
+	QList<int> newSizeList;
+	if (toShrink)
+	{
+		newSizeList.push_back(totalSize);
+		newSizeList.push_back(0);
+		ui.expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+	    ui.expandButton->setToolTip("Expand");
+	}
+	else
+	{
+		/* no change */
+		int nlistSize = (totalSize / 2);
+		int nMsgSize = (totalSize / 2);
+		newSizeList.push_back(nlistSize);
+		newSizeList.push_back(nMsgSize);
+	    ui.expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+	    ui.expandButton->setToolTip("Hide");
+	}
+
+	ui.photoSplitter->setSizes(newSizeList);
 }
 
 void PhotoDialog::insertShowLists()
@@ -202,6 +261,7 @@ void PhotoDialog::addShows(std::string id)
 	allItem->setText(PHOTO_PEER_COL_PID, QString::fromStdString(id));
 	allItem->setText(PHOTO_PEER_COL_SID, "");
 	allItem->setText(PHOTO_PEER_COL_PHOTOID, "");
+	allItem->setIcon(0,(QIcon(IMAGE_PHOTOS)));
 
 	peerItem->addChild(allItem);
 
@@ -216,6 +276,7 @@ void PhotoDialog::addShows(std::string id)
 		photoItem->setText(PHOTO_PEER_COL_PID, QString::fromStdString(id));
 		photoItem->setText(PHOTO_PEER_COL_SID, "");
 		photoItem->setText(PHOTO_PEER_COL_PHOTOID, QString::fromStdString(*it));
+		photoItem->setIcon(0,(QIcon(IMAGE_PHOTOS)));
 
 		allItem->addChild(photoItem);
 	}

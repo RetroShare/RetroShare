@@ -558,6 +558,20 @@
         <item>
          <layout class="QHBoxLayout" >
           <item>
+           <widget class="QPushButton" name="newmessageButton" >
+            <property name="toolTip" >
+             <string>New Message</string>
+            </property>
+            <property name="text" >
+             <string/>
+            </property>
+            <property name="icon" >
+             <iconset resource="images.qrc" >
+              <normaloff>:/images/mail_new.png</normaloff>:/images/mail_new.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLabel" name="label_17" >
             <property name="sizePolicy" >
              <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
@@ -710,7 +724,7 @@ p, li { white-space: pre-wrap; }
               </property>
               <property name="icon" >
                <iconset resource="images.qrc" >
-                <normaloff>:/images/add_24x24.png</normaloff>:/images/add_24x24.png</iconset>
+                <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
               </property>
              </widget>
             </item>

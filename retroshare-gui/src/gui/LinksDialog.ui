@@ -38,7 +38,7 @@ p, li { white-space: pre-wrap; }
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>461</width>
        <height>20</height>
@@ -86,7 +86,8 @@ p, li { white-space: pre-wrap; }
           <string/>
          </property>
          <property name="icon" >
-          <iconset resource="images.qrc" >:/images/add_24x24.png</iconset>
+          <iconset resource="images.qrc" >
+           <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
          </property>
         </widget>
        </item>
@@ -95,7 +96,7 @@ p, li { white-space: pre-wrap; }
          <property name="orientation" >
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>16</width>
            <height>20</height>
@@ -146,7 +147,7 @@ p, li { white-space: pre-wrap; }
          <property name="orientation" >
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>16</width>
            <height>20</height>
@@ -197,7 +198,7 @@ p, li { white-space: pre-wrap; }
          <property name="orientation" >
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>16</width>
            <height>20</height>
@@ -243,7 +244,7 @@ p, li { white-space: pre-wrap; }
          <property name="orientation" >
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>16</width>
            <height>20</height>
@@ -315,7 +316,7 @@ p, li { white-space: pre-wrap; }
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>311</width>
              <height>32</height>
@@ -397,7 +398,8 @@ p, li { white-space: pre-wrap; }
              <string>+2 Great!</string>
             </property>
             <property name="icon" >
-             <iconset resource="images.qrc" >:/images/filerating5.png</iconset>
+             <iconset resource="images.qrc" >
+              <normaloff>:/images/filerating5.png</normaloff>:/images/filerating5.png</iconset>
             </property>
            </item>
            <item>
@@ -405,7 +407,8 @@ p, li { white-space: pre-wrap; }
              <string>+1 Good</string>
             </property>
             <property name="icon" >
-             <iconset resource="images.qrc" >:/images/filerating4.png</iconset>
+             <iconset resource="images.qrc" >
+              <normaloff>:/images/filerating4.png</normaloff>:/images/filerating4.png</iconset>
             </property>
            </item>
            <item>
@@ -413,7 +416,8 @@ p, li { white-space: pre-wrap; }
              <string>0 Okay</string>
             </property>
             <property name="icon" >
-             <iconset resource="images.qrc" >:/images/filerating3.png</iconset>
+             <iconset resource="images.qrc" >
+              <normaloff>:/images/filerating3.png</normaloff>:/images/filerating3.png</iconset>
             </property>
            </item>
            <item>
@@ -421,7 +425,8 @@ p, li { white-space: pre-wrap; }
              <string>-1 Sux</string>
             </property>
             <property name="icon" >
-             <iconset resource="images.qrc" >:/images/filerating2.png</iconset>
+             <iconset resource="images.qrc" >
+              <normaloff>:/images/filerating2.png</normaloff>:/images/filerating2.png</iconset>
             </property>
            </item>
            <item>
@@ -429,7 +434,8 @@ p, li { white-space: pre-wrap; }
              <string>-2 Bad Link</string>
             </property>
             <property name="icon" >
-             <iconset resource="images.qrc" >:/images/filerating1.png</iconset>
+             <iconset resource="images.qrc" >
+              <normaloff>:/images/filerating1.png</normaloff>:/images/filerating1.png</iconset>
             </property>
            </item>
           </widget>

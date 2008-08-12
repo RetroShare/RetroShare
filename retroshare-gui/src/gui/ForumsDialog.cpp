@@ -64,6 +64,7 @@ ForumsDialog::ForumsDialog(QWidget *parent)
   connect( ui.threadTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( threadListCustomPopupMenu( QPoint ) ) );
 
   connect(ui.newForumButton, SIGNAL(clicked()), this, SLOT(newforum()));
+  connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(createmessage()));
 
 
   connect( ui.forumTreeWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem *, QTreeWidgetItem *) ), this,
@@ -138,10 +139,16 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 
 #endif
     /* Set header resize modes and initial section sizes */
-	QHeaderView * msgwheader = ui.forumTreeWidget->header () ;
-	msgwheader->setResizeMode (0, QHeaderView::Interactive);
+	QHeaderView * ftheader = ui.forumTreeWidget->header () ;
+	ftheader->setResizeMode (0, QHeaderView::Interactive);
     
-	msgwheader->resizeSection ( 0, 170 );
+	ftheader->resizeSection ( 0, 170 );
+	
+	/* Set header resize modes and initial section sizes */
+	QHeaderView * ttheader = ui.threadTreeWidget->header () ;
+   	ttheader->setResizeMode (0, QHeaderView::Interactive);
+  
+	ttheader->resizeSection ( 0, 170 );
 
   
 
@@ -182,7 +189,7 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
-      QAction *replyAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Reply" ), this );
+      QAction *replyAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply" ), this );
       connect( replyAct , SIGNAL( triggered() ), this, SLOT( createmessage() ) );
       
       QAction *viewAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr( "View Whole Thread" ), this );
@@ -256,6 +263,8 @@ void ForumsDialog::togglefileview()
 	{
 		newSizeList.push_back(totalSize);
 		newSizeList.push_back(0);
+		ui.expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+	    ui.expandButton->setToolTip("Expand");
 	}
 	else
 	{
@@ -264,6 +273,8 @@ void ForumsDialog::togglefileview()
 		int nMsgSize = (totalSize / 2);
 		newSizeList.push_back(nlistSize);
 		newSizeList.push_back(nMsgSize);
+	    ui.expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+	    ui.expandButton->setToolTip("Hide");
 	}
 
 	ui.msgSplitter->setSizes(newSizeList);

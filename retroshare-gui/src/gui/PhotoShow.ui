@@ -131,7 +131,7 @@
          <property name="orientation" >
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>40</width>
            <height>20</height>
@@ -169,7 +169,7 @@
          <property name="orientation" >
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>40</width>
            <height>20</height>
@@ -188,6 +188,10 @@
         <widget class="QPushButton" name="backButton" >
          <property name="text" >
           <string>Back</string>
+         </property>
+         <property name="icon" >
+          <iconset resource="images.qrc" >
+           <normaloff>:/images/back.png</normaloff>:/images/back.png</iconset>
          </property>
         </widget>
        </item>
@@ -210,6 +214,10 @@
          <property name="text" >
           <string>Forward</string>
          </property>
+         <property name="icon" >
+          <iconset resource="images.qrc" >
+           <normaloff>:/images/forward.png</normaloff>:/images/forward.png</iconset>
+         </property>
         </widget>
        </item>
        <item>
@@ -217,7 +225,7 @@
          <property name="orientation" >
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>40</width>
            <height>20</height>
@@ -231,6 +239,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="images.qrc" />
+ </resources>
  <connections/>
 </ui>

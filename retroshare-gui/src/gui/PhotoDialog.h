@@ -53,6 +53,9 @@ private slots:
   void addPhotos();
 
   void checkUpdate();
+  
+   /* handle splitter */
+  void togglefileview();
 
   void showPhoto( QTreeWidgetItem *item, int column);
 
