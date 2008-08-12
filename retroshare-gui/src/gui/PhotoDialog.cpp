@@ -49,6 +49,7 @@
 /* Images for Status icons */
 #define IMAGE_ONLINE             ":/images/donline.png"
 #define IMAGE_OFFLINE            ":/images/dhidden.png"
+#define IMAGE_PEER               ":/images/user/identity16.png"
 
 #define PHOTO_ICON_SIZE		90
 
@@ -96,32 +97,12 @@ PhotoDialog::PhotoDialog(QWidget *parent)
   QSize iconSize(PHOTO_ICON_SIZE,PHOTO_ICON_SIZE);
   ui.photoTreeWidget->setIconSize(iconSize);
   
-    /* Set header resize modes and initial section sizes */
-//	QHeaderView * _header = ui.peertreeWidget->header () ;
-//   	_header->setResizeMode (0, QHeaderView::Custom);
-//	_header->setResizeMode (1, QHeaderView::Interactive);
-//	_header->setResizeMode (2, QHeaderView::Interactive);
-//	_header->setResizeMode (3, QHeaderView::Interactive);
-//	_header->setResizeMode (4, QHeaderView::Interactive);
-//	_header->setResizeMode (5, QHeaderView::Interactive);
-//	_header->setResizeMode (6, QHeaderView::Interactive);
-//	_header->setResizeMode (7, QHeaderView::Interactive);
-//	_header->setResizeMode (8, QHeaderView::Interactive);
-//	_header->setResizeMode (9, QHeaderView::Interactive);
-//	_header->setResizeMode (10, QHeaderView::Interactive);
-//	_header->setResizeMode (11, QHeaderView::Interactive);
-//    
-//	_header->resizeSection ( 0, 25 );
-//	_header->resizeSection ( 1, 100 );
-//	_header->resizeSection ( 2, 100 );
-//	_header->resizeSection ( 3, 100 );
-//	_header->resizeSection ( 4, 100 );
-//	_header->resizeSection ( 5, 200 );
-//	_header->resizeSection ( 6, 100 );
-//	_header->resizeSection ( 7, 100 );
-//	_header->resizeSection ( 8, 100 );
-//	_header->resizeSection ( 9, 100 );
-//	_header->resizeSection ( 10, 100 );
+  /* Set header resize modes and initial section sizes */
+  QHeaderView * ptw_header = ui.peerTreeWidget->header () ;
+  ptw_header->setResizeMode (0, QHeaderView::Interactive);
+
+  ptw_header->resizeSection ( 0, 175 );
+
 
 
 	/* Set a GUI update timer - much cleaner than
@@ -212,6 +193,7 @@ void PhotoDialog::addShows(std::string id)
 	peerItem->setText(PHOTO_PEER_COL_PID, QString::fromStdString(id));
 	peerItem->setText(PHOTO_PEER_COL_SID, "");
 	peerItem->setText(PHOTO_PEER_COL_PHOTOID, "");
+	peerItem->setIcon(0,(QIcon(IMAGE_PEER)));
 
 	ui.peerTreeWidget->insertTopLevelItem(0, peerItem);
 
