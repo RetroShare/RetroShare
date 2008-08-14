@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>516</width>
+    <width>661</width>
     <height>289</height>
    </rect>
   </property>
@@ -515,23 +515,14 @@
     <number>1</number>
    </property>
    <property name="verticalSpacing" >
-    <number>1</number>
+    <number>0</number>
    </property>
    <item row="0" column="0" >
     <layout class="QVBoxLayout" >
      <property name="spacing" >
-      <number>6</number>
-     </property>
-     <property name="leftMargin" >
       <number>0</number>
      </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
+     <property name="margin" >
       <number>0</number>
      </property>
      <item>
@@ -539,16 +530,7 @@
        <property name="spacing" >
         <number>6</number>
        </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
+       <property name="margin" >
         <number>0</number>
        </property>
        <item>
@@ -556,16 +538,7 @@
          <property name="spacing" >
           <number>6</number>
          </property>
-         <property name="leftMargin" >
-          <number>5</number>
-         </property>
-         <property name="topMargin" >
-          <number>5</number>
-         </property>
-         <property name="rightMargin" >
-          <number>5</number>
-         </property>
-         <property name="bottomMargin" >
+         <property name="margin" >
           <number>5</number>
          </property>
          <item>
@@ -595,7 +568,8 @@
             <string/>
            </property>
            <property name="icon" >
-            <iconset resource="images.qrc" >:/images/advsearch_24x24.png</iconset>
+            <iconset resource="images.qrc" >
+             <normaloff>:/images/advsearch_24x24.png</normaloff>:/images/advsearch_24x24.png</iconset>
            </property>
            <property name="iconSize" >
             <size>
@@ -613,7 +587,7 @@
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>20</width>
              <height>0</height>
@@ -647,16 +621,7 @@
           <property name="spacing" >
            <number>0</number>
           </property>
-          <property name="leftMargin" >
-           <number>0</number>
-          </property>
-          <property name="topMargin" >
-           <number>0</number>
-          </property>
-          <property name="rightMargin" >
-           <number>0</number>
-          </property>
-          <property name="bottomMargin" >
+          <property name="margin" >
            <number>0</number>
           </property>
           <item>
@@ -677,16 +642,7 @@
              <property name="spacing" >
               <number>0</number>
              </property>
-             <property name="leftMargin" >
-              <number>0</number>
-             </property>
-             <property name="topMargin" >
-              <number>0</number>
-             </property>
-             <property name="rightMargin" >
-              <number>0</number>
-             </property>
-             <property name="bottomMargin" >
+             <property name="margin" >
               <number>0</number>
              </property>
              <item>
@@ -694,16 +650,7 @@
                <property name="spacing" >
                 <number>6</number>
                </property>
-               <property name="leftMargin" >
-                <number>0</number>
-               </property>
-               <property name="topMargin" >
-                <number>0</number>
-               </property>
-               <property name="rightMargin" >
-                <number>0</number>
-               </property>
-               <property name="bottomMargin" >
+               <property name="margin" >
                 <number>0</number>
                </property>
                <item>
@@ -724,7 +671,7 @@
                  <property name="orientation" >
                   <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>10</width>
                    <height>20</height>
@@ -769,7 +716,7 @@
                  <property name="sizeType" >
                   <enum>QSizePolicy::Fixed</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>16</width>
                    <height>32</height>
@@ -794,7 +741,8 @@ p, li { white-space: pre-wrap; }
                    <string>Any</string>
                   </property>
                   <property name="icon" >
-                   <iconset resource="images.qrc" >:/images/FileTypeAny.png</iconset>
+                   <iconset resource="images.qrc" >
+                    <normaloff>:/images/FileTypeAny.png</normaloff>:/images/FileTypeAny.png</iconset>
                   </property>
                  </item>
                  <item>
@@ -802,7 +750,8 @@ p, li { white-space: pre-wrap; }
                    <string>Audio</string>
                   </property>
                   <property name="icon" >
-                   <iconset resource="images.qrc" >:/images/FileTypeAudio.png</iconset>
+                   <iconset resource="images.qrc" >
+                    <normaloff>:/images/FileTypeAudio.png</normaloff>:/images/FileTypeAudio.png</iconset>
                   </property>
                  </item>
                  <item>
@@ -810,7 +759,8 @@ p, li { white-space: pre-wrap; }
                    <string>Video</string>
                   </property>
                   <property name="icon" >
-                   <iconset resource="images.qrc" >:/images/FileTypeVideo.png</iconset>
+                   <iconset resource="images.qrc" >
+                    <normaloff>:/images/FileTypeVideo.png</normaloff>:/images/FileTypeVideo.png</iconset>
                   </property>
                  </item>
                  <item>
@@ -818,7 +768,8 @@ p, li { white-space: pre-wrap; }
                    <string>Images</string>
                   </property>
                   <property name="icon" >
-                   <iconset resource="images.qrc" >:/images/FileTypePicture.png</iconset>
+                   <iconset resource="images.qrc" >
+                    <normaloff>:/images/FileTypePicture.png</normaloff>:/images/FileTypePicture.png</iconset>
                   </property>
                  </item>
                  <item>
@@ -826,7 +777,8 @@ p, li { white-space: pre-wrap; }
                    <string>Programs</string>
                   </property>
                   <property name="icon" >
-                   <iconset resource="images.qrc" >:/images/FileTypeProgram.png</iconset>
+                   <iconset resource="images.qrc" >
+                    <normaloff>:/images/FileTypeProgram.png</normaloff>:/images/FileTypeProgram.png</iconset>
                   </property>
                  </item>
                  <item>
@@ -834,7 +786,8 @@ p, li { white-space: pre-wrap; }
                    <string>Archives</string>
                   </property>
                   <property name="icon" >
-                   <iconset resource="images.qrc" >:/images/FileTypeArchive.png</iconset>
+                   <iconset resource="images.qrc" >
+                    <normaloff>:/images/FileTypeArchive.png</normaloff>:/images/FileTypeArchive.png</iconset>
                   </property>
                  </item>
                  <item>
@@ -842,7 +795,8 @@ p, li { white-space: pre-wrap; }
                    <string>Documents</string>
                   </property>
                   <property name="icon" >
-                   <iconset resource="images.qrc" >:/images/FileTypeDocument.png</iconset>
+                   <iconset resource="images.qrc" >
+                    <normaloff>:/images/FileTypeDocument.png</normaloff>:/images/FileTypeDocument.png</iconset>
                   </property>
                  </item>
                 </widget>
@@ -852,7 +806,7 @@ p, li { white-space: pre-wrap; }
                  <property name="orientation" >
                   <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>16</width>
                    <height>20</height>
@@ -881,7 +835,8 @@ p, li { white-space: pre-wrap; }
                   <string/>
                  </property>
                  <property name="icon" >
-                  <iconset resource="images.qrc" >:/images/find.png</iconset>
+                  <iconset resource="images.qrc" >
+                   <normaloff>:/images/find.png</normaloff>:/images/find.png</iconset>
                  </property>
                  <property name="iconSize" >
                   <size>
@@ -917,16 +872,7 @@ p, li { white-space: pre-wrap; }
              <property name="spacing" >
               <number>0</number>
              </property>
-             <property name="leftMargin" >
-              <number>0</number>
-             </property>
-             <property name="topMargin" >
-              <number>0</number>
-             </property>
-             <property name="rightMargin" >
-              <number>0</number>
-             </property>
-             <property name="bottomMargin" >
+             <property name="margin" >
               <number>0</number>
              </property>
              <item>
@@ -934,16 +880,7 @@ p, li { white-space: pre-wrap; }
                <property name="spacing" >
                 <number>6</number>
                </property>
-               <property name="leftMargin" >
-                <number>0</number>
-               </property>
-               <property name="topMargin" >
-                <number>0</number>
-               </property>
-               <property name="rightMargin" >
-                <number>0</number>
-               </property>
-               <property name="bottomMargin" >
+               <property name="margin" >
                 <number>0</number>
                </property>
                <item>
@@ -961,7 +898,7 @@ p, li { white-space: pre-wrap; }
                  <property name="sizeType" >
                   <enum>QSizePolicy::Expanding</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>50</width>
                    <height>20</height>
@@ -998,16 +935,7 @@ p, li { white-space: pre-wrap; }
          <property name="spacing" >
           <number>6</number>
          </property>
-         <property name="leftMargin" >
-          <number>5</number>
-         </property>
-         <property name="topMargin" >
-          <number>5</number>
-         </property>
-         <property name="rightMargin" >
-          <number>5</number>
-         </property>
-         <property name="bottomMargin" >
+         <property name="margin" >
           <number>5</number>
          </property>
          <item>
@@ -1037,7 +965,8 @@ p, li { white-space: pre-wrap; }
             <string/>
            </property>
            <property name="icon" >
-            <iconset resource="images.qrc" >:/images/down_24x24.png</iconset>
+            <iconset resource="images.qrc" >
+             <normaloff>:/images/down_24x24.png</normaloff>:/images/down_24x24.png</iconset>
            </property>
            <property name="iconSize" >
             <size>
@@ -1052,7 +981,7 @@ p, li { white-space: pre-wrap; }
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>20</width>
              <height>0</height>

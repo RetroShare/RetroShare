@@ -6,15 +6,30 @@
     <x>0</x>
     <y>0</y>
     <width>607</width>
-    <height>674</height>
+    <height>429</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" >
+   <property name="spacing" >
+    <number>0</number>
+   </property>
+   <property name="margin" >
+    <number>0</number>
+   </property>
    <item>
     <layout class="QHBoxLayout" >
+     <property name="leftMargin" >
+      <number>9</number>
+     </property>
+     <property name="topMargin" >
+      <number>6</number>
+     </property>
+     <property name="rightMargin" >
+      <number>9</number>
+     </property>
      <item>
       <widget class="QPushButton" name="chanButton" >
        <property name="font" >
@@ -27,7 +42,14 @@
         <string>Create Channel</string>
        </property>
        <property name="icon" >
-        <iconset resource="images.qrc" >:/images/network32.png</iconset>
+        <iconset resource="images.qrc" >
+         <normaloff>:/images/add_channel24.png</normaloff>:/images/add_channel24.png</iconset>
+       </property>
+       <property name="iconSize" >
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -36,7 +58,7 @@
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>151</width>
          <height>28</height>
@@ -46,11 +68,17 @@
      </item>
      <item>
       <widget class="QLabel" name="iconLabel" >
+       <property name="minimumSize" >
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
        <property name="text" >
         <string/>
        </property>
        <property name="pixmap" >
-        <pixmap resource="images.qrc" >:/images/contacts24.png</pixmap>
+        <pixmap resource="images.qrc" >:/images/channels24.png</pixmap>
        </property>
       </widget>
      </item>
@@ -75,7 +103,7 @@
        <property name="sizeType" >
         <enum>QSizePolicy::Fixed</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>20</width>
          <height>20</height>
@@ -91,6 +119,12 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="minimumSize" >
+        <size>
+         <width>26</width>
+         <height>26</height>
+        </size>
+       </property>
        <property name="toolTip" >
         <string>Post To Channel</string>
        </property>
@@ -98,7 +132,8 @@
         <string/>
        </property>
        <property name="icon" >
-        <iconset resource="images.qrc" >:/images/mail_send.png</iconset>
+        <iconset resource="images.qrc" >
+         <normaloff>:/images/mail_send.png</normaloff>:/images/mail_send.png</iconset>
        </property>
       </widget>
      </item>
@@ -110,7 +145,7 @@
        <property name="sizeType" >
         <enum>QSizePolicy::Fixed</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>20</width>
          <height>20</height>
@@ -126,6 +161,12 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="minimumSize" >
+        <size>
+         <width>26</width>
+         <height>26</height>
+        </size>
+       </property>
        <property name="toolTip" >
         <string>Subscribe To Channel</string>
        </property>
@@ -133,7 +174,8 @@
         <string/>
        </property>
        <property name="icon" >
-        <iconset resource="images.qrc" >:/images/directoryadd_24x24_shadow.png</iconset>
+        <iconset resource="images.qrc" >
+         <normaloff>:/images/directoryadd_24x24_shadow.png</normaloff>:/images/directoryadd_24x24_shadow.png</iconset>
        </property>
       </widget>
      </item>
@@ -145,6 +187,12 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="minimumSize" >
+        <size>
+         <width>26</width>
+         <height>26</height>
+        </size>
+       </property>
        <property name="toolTip" >
         <string>Unsubcribe To Channel</string>
        </property>
@@ -152,7 +200,8 @@
         <string/>
        </property>
        <property name="icon" >
-        <iconset resource="images.qrc" >:/images/directoryremove_24x24_shadow.png</iconset>
+        <iconset resource="images.qrc" >
+         <normaloff>:/images/directoryremove_24x24_shadow.png</normaloff>:/images/directoryremove_24x24_shadow.png</iconset>
        </property>
       </widget>
      </item>

@@ -5,6 +5,9 @@
         <file>help/thanks.html</file>
         <file>images/accepted16.png</file>
         <file>images/add_image24.png</file>
+        <file>images/add_channel64.png</file>
+        <file>images/add_channel24.png</file>
+        <file>images/add_channel32.png</file>
         <file>images/browse-looking.gif</file>
         <file>images/addfriendlabel.png</file>
         <file>images/back.png</file>
@@ -14,6 +17,9 @@
         <file>images/channels.png</file>        
         <file>images/channeldelete.png</file>
         <file>images/channelsubscribe.png</file>
+        <file>images/channels16.png</file>
+        <file>images/channels24.png</file>
+        <file>images/channels32.png</file>
         <file>images/contacts24.png</file>
         <file>images/denied16.png</file>
         <file>images/FileTypeAny.png</file>
@@ -26,7 +32,6 @@
         <file>images/FileTypeVideo.png</file>
         <file>images/fonts.png</file>
         <file>images/folder16.png</file>
-        <file>images/RetroShare16.png</file>
         <file>images/add-friend24.png</file>
         <file>images/add-share24.png</file>
         <file>images/add_24x24.png</file>
@@ -157,6 +162,7 @@
         <file>images/kblogger.png</file>
         <file>images/kdmconfig.png</file>
         <file>images/konsole.png</file>
+        <file>images/konqsidebar_news16.png</file>
         <file>images/konqsidebar_news24.png</file>
         <file>images/konversation.png</file>
         <file>images/konversation16.png</file>
@@ -207,6 +213,7 @@
         <file>images/replymail24.png</file>
         <file>images/reset.png</file>
         <file>images/retro4.png</file>
+        <file>images/RetroShare16.png</file>
         <file>images/retrosharelogo1.png</file>
         <file>images/retrosharelogo2.png</file>
         <file>images/rs-2.png</file>
@@ -258,7 +265,6 @@
         <file>images/up.png</file>
         <file>images/underconstruction.png</file>
         <file>images/user.png</file>
-        <file>images/webcache_24x24.png</file>
         <file>images/window_fullscreen.png</file>
         <file>images/window_nofullscreen.png</file>
         <file>layouts/default.ui</file>

@@ -14,7 +14,7 @@
   </property>
   <layout class="QGridLayout" >
    <property name="topMargin" >
-    <number>0</number>
+    <number>6</number>
    </property>
    <property name="verticalSpacing" >
     <number>0</number>

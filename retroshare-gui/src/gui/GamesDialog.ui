@@ -14,7 +14,7 @@
   </property>
   <layout class="QGridLayout" >
    <property name="topMargin" >
-    <number>0</number>
+    <number>6</number>
    </property>
    <property name="verticalSpacing" >
     <number>0</number>
@@ -44,7 +44,7 @@ p, li { white-space: pre-wrap; }
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>431</width>
        <height>20</height>
@@ -117,7 +117,7 @@ p, li { white-space: pre-wrap; }
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>40</width>
              <height>20</height>
@@ -136,7 +136,8 @@ p, li { white-space: pre-wrap; }
             <string>Create New Game</string>
            </property>
            <property name="icon" >
-            <iconset resource="images.qrc" >:/images/kbackgammon.png</iconset>
+            <iconset resource="images.qrc" >
+             <normaloff>:/images/kbackgammon.png</normaloff>:/images/kbackgammon.png</iconset>
            </property>
           </widget>
          </item>
@@ -157,7 +158,7 @@ p, li { white-space: pre-wrap; }
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>40</width>
              <height>20</height>
@@ -244,7 +245,8 @@ p, li { white-space: pre-wrap; }
           <string>Delete</string>
          </property>
          <property name="icon" >
-          <iconset resource="images.qrc" >:/images/reset.png</iconset>
+          <iconset resource="images.qrc" >
+           <normaloff>:/images/reset.png</normaloff>:/images/reset.png</iconset>
          </property>
         </widget>
        </item>
@@ -259,7 +261,8 @@ p, li { white-space: pre-wrap; }
           <string>Invite</string>
          </property>
          <property name="icon" >
-          <iconset resource="images.qrc" >:/images/dadd.png</iconset>
+          <iconset resource="images.qrc" >
+           <normaloff>:/images/dadd.png</normaloff>:/images/dadd.png</iconset>
          </property>
         </widget>
        </item>
@@ -274,7 +277,8 @@ p, li { white-space: pre-wrap; }
           <string>Move Player</string>
          </property>
          <property name="icon" >
-          <iconset resource="images.qrc" >:/images/up.png</iconset>
+          <iconset resource="images.qrc" >
+           <normaloff>:/images/up.png</normaloff>:/images/up.png</iconset>
          </property>
         </widget>
        </item>
@@ -289,7 +293,8 @@ p, li { white-space: pre-wrap; }
           <string>Move Player</string>
          </property>
          <property name="icon" >
-          <iconset resource="images.qrc" >:/images/down_24x24.png</iconset>
+          <iconset resource="images.qrc" >
+           <normaloff>:/images/down_24x24.png</normaloff>:/images/down_24x24.png</iconset>
          </property>
         </widget>
        </item>
@@ -304,7 +309,8 @@ p, li { white-space: pre-wrap; }
           <string>Play Game</string>
          </property>
          <property name="icon" >
-          <iconset resource="images.qrc" >:/images/startall.png</iconset>
+          <iconset resource="images.qrc" >
+           <normaloff>:/images/startall.png</normaloff>:/images/startall.png</iconset>
          </property>
         </widget>
        </item>

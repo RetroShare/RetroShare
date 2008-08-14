@@ -16,8 +16,26 @@
    <string/>
   </property>
   <layout class="QVBoxLayout" >
+   <property name="spacing" >
+    <number>0</number>
+   </property>
+   <property name="margin" >
+    <number>0</number>
+   </property>
    <item>
     <layout class="QHBoxLayout" >
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <property name="leftMargin" >
+      <number>9</number>
+     </property>
+     <property name="topMargin" >
+      <number>6</number>
+     </property>
+     <property name="rightMargin" >
+      <number>9</number>
+     </property>
      <item>
       <widget class="QLabel" name="label" >
        <property name="font" >
@@ -55,7 +73,7 @@
        <property name="sizeType" >
         <enum>QSizePolicy::Preferred</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>20</width>
          <height>20</height>
@@ -90,7 +108,7 @@
        <property name="sizeType" >
         <enum>QSizePolicy::Preferred</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>20</width>
          <height>20</height>
@@ -127,7 +145,7 @@
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>40</width>
          <height>20</height>
@@ -150,7 +168,8 @@
         <string>Post Blog</string>
        </property>
        <property name="icon" >
-        <iconset resource="images.qrc" >:/images/mail_send.png</iconset>
+        <iconset resource="images.qrc" >
+         <normaloff>:/images/mail_send.png</normaloff>:/images/mail_send.png</iconset>
        </property>
       </widget>
      </item>
