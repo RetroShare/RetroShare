@@ -11,7 +11,11 @@
 -->
 
 <Contents name="RetroShare Help" html="index.html">
-
+  <Topic id="config" name="Configuring RetroShare" html="config.html">
+    <Topic id="general" name="General Settings" html="config.html" section="general"/>
+    <Topic id="server" name="Server Settings" html="config.html" section="server"/>
+    <Topic id="directories" name="Directories Settings" html="config.html" section="directories"/>
+  </Topic>
   <Topic id="links" name="Helpful Links" html="links.html"/>
 </Contents>
 

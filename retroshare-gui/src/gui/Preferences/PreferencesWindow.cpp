@@ -38,7 +38,7 @@
 #define IMAGE_LOG   			":/images/log_24x24.png"
 #define IMAGE_ABOUT 			":/images/informations_24x24.png"
 #define IMAGE_SAVE			    ":/images/media-floppy.png"
-
+#define IMAGE_HELP              ":/images/help24.png"
 
 /** Constructor */
 PreferencesWindow::PreferencesWindow(QWidget *parent, Qt::WFlags flags)
@@ -56,23 +56,16 @@ PreferencesWindow::PreferencesWindow(QWidget *parent, Qt::WFlags flags)
                     createPageAction(QIcon(IMAGE_SERVER), tr("Server"), grp));
   
   ui.stackPages->add(new DirectoriesDialog(ui.stackPages),
-                     createPageAction(QIcon(IMAGE_DIRECTORIES), tr("Directories"), grp)); 
-                     
-  //ui.stackPages->add(new CryptographyDialog(ui.stackPages),
-  //                   createPageAction(QIcon(IMAGE_CRYPTOGRAPHY), tr("Cryptography"), grp));
-                     
-  //ui.stackPages->add(new LogDialog(ui.stackPages),
-  //                   createPageAction(QIcon(IMAGE_ABOUT), tr("About"), grp));
-                     
+                     createPageAction(QIcon(IMAGE_DIRECTORIES), tr("Directories"), grp));                      
   
   /* Create the toolbar */
   ui.toolBar->addActions(grp->actions());
   ui.toolBar->addSeparator();
   connect(grp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *)));
  
-   /* Create and bind the Save button */  
-  //addAction(new QAction(QIcon(IMAGE_SAVE), tr("Save"), ui.toolBar), 
-  //          SLOT(saveChanges()));
+  /* Create and bind the Help button */
+  QAction *helpAct = new QAction(QIcon(IMAGE_HELP), tr("Help"), ui.toolBar);
+  addAction(helpAct, SLOT(showHelp()));
 
   /* Select the first action */
   grp->actions()[0]->setChecked(true);
@@ -80,6 +73,12 @@ PreferencesWindow::PreferencesWindow(QWidget *parent, Qt::WFlags flags)
   
    connect(ui.okButton, SIGNAL(clicked( bool )), this, SLOT( saveChanges()) );
    connect(ui.cancelprefButton, SIGNAL(clicked( bool )), this, SLOT( cancelpreferences()) );
+   
+#if defined(Q_WS_WIN)
+  helpAct->setShortcut(QString("F1"));
+#else
+  helpAct->setShortcut(QString("Ctrl+?"));
+#endif
 
 }
 
@@ -178,13 +177,59 @@ PreferencesWindow::cancelpreferences()
   QMainWindow::close();
 }
 
-void PreferencesWindow::closeEvent (QCloseEvent * event)
+void 
+PreferencesWindow::closeEvent (QCloseEvent * event)
 {
     hide();
     event->ignore();
 }
 
+/** Displays the help browser and displays the most recently viewed help
+ * topic. */
+void 
+PreferencesWindow::showHelp()
+{
+  showHelp(QString());
+}
 
+
+/**< Shows the help browser and displays the given help <b>topic</b>. */
+void 
+PreferencesWindow::showHelp(const QString &topic)
+{
+  static HelpBrowser *helpBrowser = 0;
+  if (!helpBrowser)
+    helpBrowser = new HelpBrowser(this);
+  helpBrowser->showWindow(topic);
+}
+
+
+/** Shows help information for whichever settings page the user is currently
+ * viewing. */
+/*void
+PreferencesWindow::help()
+{
+  Page currentPage = static_cast<Page>(ui.stackPages->currentIndex());
+  
+  switch (currentPage) {
+    case General:
+      help("config.general"); break;
+    case Server:
+      help("server"); break;
+    case Directories:
+      help("config.server"); break;
+    default:
+      help("config.general"); break;
+  }
+}*/
+
+/** Called when a ConfigPage in the dialog requests help on a specific
+ * <b>topic</b>. */
+/*void
+PreferencesWindow::help(const QString &topic)
+{
+  emit helpRequested(topic);
+}*/
 
 
 

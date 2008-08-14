@@ -25,12 +25,12 @@
 #include <QMainWindow>
 #include <QFileDialog>
 
-
 #include "GeneralDialog.h"
 #include "DirectoriesDialog.h"
 #include "ServerDialog.h"
 #include "CryptographyDialog.h"
 #include "LogDialog.h"
+#include "gui/help/browser/helpbrowser.h"
 
 
 
@@ -57,29 +57,42 @@ public:
   //~PreferencesWindow();
 
 protected:
-  void closeEvent (QCloseEvent * event);
+	void closeEvent (QCloseEvent * event);
 
 public slots:
-  /** Called when this dialog is to be displayed */
-  void show();
-  /** Shows the config dialog with focus set to the given page. */
-  void show(Page page);
+	/** Called when this dialog is to be displayed */
+	void show();
+	/** Shows the config dialog with focus set to the given page. */
+	void show(Page page);
 
 private slots:
 
     /** Called when user clicks "Save Settings" */
-  void saveChanges();
-  /**void preferences();*/
+    void saveChanges();
+	/**void preferences();*/
   
-  void cancelpreferences();
+	void cancelpreferences();
+  
+	/** Called when a ConfigPage in the dialog requests help on a specific
+	* <b>topic</b>. */
+	//void help(const QString &topic);
+	/** Shows general help information for whichever settings page the user is
+	* currently viewing. */
+	//void help();
+  	
+  	/** Displays the help browser and displays the most recently viewed help
+    * topic. */
+    void showHelp();
+    /** Called when a child window requests the given help <b>topic</b>. */
+    void showHelp(const QString &topic);
 
 private:
-  /** Loads the current configuration settings */
-  void loadSettings();
-  /** Creates a new action for a config page. */
-  QAction* createPageAction(QIcon img, QString text, QActionGroup *group);
-  /** Adds a new action to the toolbar. */
-  void addAction(QAction *action, const char *slot = 0);
+	/** Loads the current configuration settings */
+	void loadSettings();
+	/** Creates a new action for a config page. */
+	QAction* createPageAction(QIcon img, QString text, QActionGroup *group);
+	/** Adds a new action to the toolbar. */
+	void addAction(QAction *action, const char *slot = 0);
 
   /** Qt Designer generated object */
   Ui::PreferencesWindow ui;

@@ -60,6 +60,11 @@ public slots:
   /** Show this window. This method really just exists for subclasses to 
    * override, since QMainWindow::show() is non-virtual. */
   virtual void showWindow() { QMainWindow::show(); }
+  
+signals:
+  /** Emitted when a RWindow requests help information on the specified
+   * <b>topic</b>. */
+  void helpRequested(const QString &topic);
 
 private:
   QString _name;  /**< Name associated with this window. */
