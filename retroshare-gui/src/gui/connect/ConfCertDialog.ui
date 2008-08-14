@@ -527,10 +527,7 @@
           <item row="0" column="0" >
            <widget class="QLabel" name="label_10" >
             <property name="text" >
-             <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Name:&lt;/p>&lt;/body>&lt;/html></string>
+             <string>Name:</string>
             </property>
            </widget>
           </item>
@@ -544,10 +541,7 @@ p, li { white-space: pre-wrap; }
           <item row="1" column="0" >
            <widget class="QLabel" name="label_11" >
             <property name="text" >
-             <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Org / Loc:&lt;/p>&lt;/body>&lt;/html></string>
+             <string>Org / Loc:</string>
             </property>
            </widget>
           </item>
@@ -561,10 +555,7 @@ p, li { white-space: pre-wrap; }
           <item row="2" column="0" >
            <widget class="QLabel" name="label_8" >
             <property name="text" >
-             <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Country/State:&lt;/p>&lt;/body>&lt;/html></string>
+             <string>Country/State:</string>
             </property>
            </widget>
           </item>
@@ -706,10 +697,7 @@ p, li { white-space: pre-wrap; }
               <item row="0" column="1" >
                <widget class="QLabel" name="label_4" >
                 <property name="text" >
-                 <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Port:&lt;/p>&lt;/body>&lt;/html></string>
+                 <string>Port:</string>
                 </property>
                </widget>
               </item>
@@ -727,20 +715,14 @@ p, li { white-space: pre-wrap; }
           <item row="1" column="0" >
            <widget class="QLabel" name="label_2" >
             <property name="text" >
-             <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">External Address:&lt;/p>&lt;/body>&lt;/html></string>
+             <string>External Address:</string>
             </property>
            </widget>
           </item>
           <item row="2" column="0" >
            <widget class="QLabel" name="label_3" >
             <property name="text" >
-             <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">External Name&lt;/p>&lt;/body>&lt;/html></string>
+             <string>External Name</string>
             </property>
            </widget>
           </item>

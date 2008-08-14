@@ -37,10 +37,8 @@
       <bool>false</bool>
      </property>
      <property name="html" >
-      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
-&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:8pt;">&lt;/p>&lt;/body>&lt;/html></string>
+       <string>
+       </string>
      </property>
      <property name="acceptRichText" >
       <bool>true</bool>
@@ -533,11 +531,10 @@ p, li { white-space: pre-wrap; }
       <string>background-image: url(:/images/addfriendlabel.png)</string>
      </property>
      <property name="text" >
-      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:8pt;">&lt;span style=" font-size:16pt;">Add a new Friend&lt;/span>&lt;br />&lt;br />&lt;span style=" font-size:10pt;">To add a new Friend, cut and paste their email &lt;/span>&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:10pt;">invitation into the box below, and click done.&lt;/p>&lt;/body>&lt;/html></string>
+      <string> Add a new Friend
+To add a new Friend, cut and paste their email 
+invitation into the box below, and click done.
+      </string>
      </property>
      <property name="alignment" >
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
