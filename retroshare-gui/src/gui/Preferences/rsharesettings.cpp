@@ -34,7 +34,6 @@
 #include <QMainWindow>
 
 #if defined(Q_WS_WIN)
-#include <util/registry.h>
 #include <util/win32.h>
 #endif
 

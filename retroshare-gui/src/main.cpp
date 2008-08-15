@@ -31,8 +31,8 @@
 #include <gui/qskinobject/qskinobject.h>
 ****/
 
-#include <util/process.h>
-#include <util/string.h>
+//#include <util/process.h>
+#include <util/stringutil.h>
 #include "rsiface/rsiface.h"
 
 #include "rsiface/notifyqt.h"
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
 		
 	}*/
    /* Run Retroshare */
-  int ret = rshare.run();
+   //int ret = rshare.run();
 
 	/* Startup a Timer to keep the gui's updated */
 	QTimer *timer = new QTimer(w);
@@ -162,7 +162,9 @@ int main(int argc, char *argv[])
         timer->start(1000);
 	
   /* dive into the endless loop */
-  return ret;
+  // return ret;
+  return rshare.exec();
+
 }
 
 

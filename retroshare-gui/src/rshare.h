@@ -77,8 +77,7 @@ public:
   static bool setStyle(QString styleKey = QString());
     /** Sets the current GUI stylesheet. */
   static bool setSheet(QString sheet = QString());
-  /** Shows the specified help topic, or the default if empty. */
-  //static void help(QString topic = QString());
+
 
   /** Returns the current language. */
   static QString language() { return _language; }
