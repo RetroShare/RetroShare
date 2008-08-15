@@ -25,6 +25,7 @@
 #include <gui/MainWindow.h>
 #include <gui/StartDialog.h>
 #include <gui/GenCertDialog.h>
+#include <Gui/Preferences/Rsharesettings.h>
 
 /*** WINDOWS DON'T LIKE THIS - REDEFINES VER numbers.
 #include <gui/qskinobject/qskinobject.h>
@@ -144,22 +145,24 @@ int main(int argc, char *argv[])
         notify->setChannelsDialog(w->channelsDialog);
         notify->setMessengerWindow(w->messengerWindow);
 
-	/* only show window, if not startMinimised */
-  	if (!startMinimised)
+	/* only show window, if not startMinimized */
+  	/*if (!startMinimised)
 	{
 		
 		w->show();
 		//skinWindow->show();
 		
-	}
+	}*/
+   /* Run Retroshare */
+  int ret = rshare.run();
 
 	/* Startup a Timer to keep the gui's updated */
 	QTimer *timer = new QTimer(w);
 	timer -> connect(timer, SIGNAL(timeout()), notify, SLOT(UpdateGUI()));
         timer->start(1000);
 	
-	/* dive into the endless loop */
-  return rshare.exec();
+  /* dive into the endless loop */
+  return ret;
 }
 
 

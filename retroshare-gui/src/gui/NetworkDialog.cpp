@@ -28,7 +28,6 @@
 #include "NetworkDialog.h"
 #include "NetworkView.h"
 #include "connect/ConnectDialog.h"
-#include "authdlg/AuthorizationDialog.h"
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 #include <sstream>
@@ -138,16 +137,12 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
       peerdetailsAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Make Friend / Peer Details" ), this );
       connect( peerdetailsAct , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
       
-      //authAct = new QAction(QIcon(IMAGE_AUTH), tr( "Authenticate" ), this );
-      //connect( authAct , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
-      
       loadcertAct = new QAction(QIcon(IMAGE_LOADCERT), tr( "Load Certificate" ), this );
       connect( loadcertAct , SIGNAL( triggered() ), this, SLOT( loadneighbour() ) );
 
 
       contextMnu.clear();
       contextMnu.addAction( peerdetailsAct);
-      //contextMnu.addAction( authAct);
       contextMnu.addAction( loadcertAct);
       contextMnu.exec( mevent->globalPos() );
 }
@@ -181,23 +176,6 @@ void NetworkDialog::showpeerdetails(std::string id)
     	connectdialog->show();
     }
 }
-
-/** Shows Connect Dialog */
-void NetworkDialog::showAuthDialog()
-{
-    static AuthorizationDialog *authorizationdialog = new AuthorizationDialog();
-    QTreeWidgetItem *wi = getCurrentNeighbour();
-    if (!wi)
-    	return;
-
-    RsCertId id = getNeighRsCertId(wi);
-    std::ostringstream out;
-    out << id;
-    authorizationdialog->setAuthCode(out.str(), wi->text(9).toStdString());
-    authorizationdialog->show();
-}
-
-
 
 
 /** Open a QFileDialog to browse for a pem/pqi file. */

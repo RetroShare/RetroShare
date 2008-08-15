@@ -53,7 +53,6 @@ public:
   void insertTransfers();
 
 private slots:
-  void showDownInfoWindow();
   
   /** Create the context popup menu and it's submenus */
   void downloadListCostumPopupMenu( QPoint point );

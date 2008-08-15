@@ -53,7 +53,7 @@ private slots:
   void toggleShowOnStartup(bool checked);
   
 private:
-  /** A VidaliaSettings object used for saving/loading settings */
+  /** A RetroShare Settings object used for saving/loading settings */
   RshareSettings* _settings;
   
 

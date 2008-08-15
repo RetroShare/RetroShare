@@ -43,7 +43,7 @@ GeneralDialog::GeneralDialog(QWidget *parent)
   } else {
     /* Don't let people hide the main window, since that's all they have. */
     ui.chkShowOnStartup->hide();
-    //show();
+    show();
   }
   /* Hide platform specific features */
 #ifndef Q_WS_WIN
@@ -64,6 +64,9 @@ GeneralDialog::save(QString &errmsg)
   Q_UNUSED(errmsg);
   
   _settings->setValue(QString::fromUtf8("StartMinimized"), startMinimized());
+  
+  _settings->setRunRetroshareOnBoot(
+  ui.chkRunRetroshareAtSystemStartup->isChecked());
 
   return true;
 }

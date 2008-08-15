@@ -53,8 +53,6 @@ public slots:
 
 private slots:
 
-  void showAuthDialog();
-
   void peerdetails();
   /** Create the context popup menu and it's submenus */
   void connecttreeWidgetCostumPopupMenu( QPoint point );

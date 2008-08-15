@@ -23,15 +23,12 @@ DEPENDPATH += . \
             gui\bwgraph \
             gui\chat \
             gui\connect \
-            gui\filehash \
             gui\images \              
-            gui\moreinfo \
             gui\Preferences \
             gui\common\
             gui\Settings \
             gui\toaster \
             gui\help\browser \
-            gui\authdlg \
             gui\elastic
             
 INCLUDEPATH += . \
@@ -80,9 +77,7 @@ HEADERS +=  rshare.h \
             gui/LogoBar.h \
             gui/xprogressbar.h \
             lang/languagesupport.h \
-            util/process.h \
-            util/registry.h \
-            util/string.h \
+            util/stringutil.h \
             util/win32.h \
             util/RetroStyleLabel.h \
             util/dllexport.h \
@@ -99,6 +94,7 @@ HEADERS +=  rshare.h \
             util/rsversion.h \
             util/RsAction.h \
             util/printpreview.h \
+            util/log.h \
             gui/bwgraph/bwgraph.h \
 	    gui/profile/ProfileView.h \
 	    gui/profile/ProfileEdit.h \
@@ -110,9 +106,7 @@ HEADERS +=  rshare.h \
             gui/connect/AddFriendWizard.h \
             gui/msgs/ChanMsgDialog.h \
             gui/msgs/ChanCreateDialog.h \
-            gui/filehash/FileHashDialog.h \
             gui/images/retroshare_win.rc.h \
-            gui/moreinfo/moreinfo.h \ 
             gui/Preferences/configpage.h \
             gui/Preferences/configpagestack.h \
             gui/Preferences/CryptographyDialog.h \
@@ -143,7 +137,6 @@ HEADERS +=  rshare.h \
             gui/Settings/ServerPage.h \
             gui/Settings/NetworkPage.h \
             gui/statusbar/peerstatus.h \
-            gui/authdlg/AuthorizationDialog.h \
             gui/advsearch/advancedsearchdialog.h \
             gui/advsearch/expressionwidget.h \
             gui/advsearch/guiexprelement.h \
@@ -216,8 +209,6 @@ FORMS +=    gui/ChatDialog.ui \
             gui/connect/AddFriendWizard.ui \
             gui/msgs/ChanMsgDialog.ui \
             gui/msgs/ChanCreateDialog.ui \
-            gui/filehash/FileHashDialog.ui \
-            gui/moreinfo/moreinfo.ui \ 
             gui/Preferences/CryptographyDialog.ui \
             gui/Preferences/DirectoriesDialog.ui \
             gui/Preferences/AppearanceDialog.ui \
@@ -234,7 +225,6 @@ FORMS +=    gui/ChatDialog.ui \
             gui/Settings/DirectoriesPage.ui \
             gui/Settings/ServerPage.ui \
             gui/Settings/NetworkPage.ui \
-            gui/authdlg/AuthorizationDialog.ui \
             gui/advsearch/advancedsearchdialog.ui \
             gui/advsearch/expressionwidget.ui \
             gui/channels/ChannelsDialog.ui \
@@ -299,9 +289,7 @@ SOURCES += main.cpp \
             gui/LogoBar.cpp \
             gui/xprogressbar.cpp \
             lang/languagesupport.cpp \
-            util/process.cpp \
-            util/registry.cpp \
-            util/string.cpp \
+            util/stringutil.cpp \
             util/win32.cpp \
             util/RetroStyleLabel.cpp \
             util/WidgetBackgroundImage.cpp \
@@ -313,6 +301,7 @@ SOURCES += main.cpp \
             util/rsversion.cpp \
             util/RsAction.cpp \
             util/printpreview.cpp \
+            util/log.cpp \
             gui/bwgraph/bwgraph.cpp \
 	    gui/profile/ProfileView.cpp \
 	    gui/profile/ProfileEdit.cpp \
@@ -324,8 +313,6 @@ SOURCES += main.cpp \
             gui/connect/AddFriendWizard.cpp \
             gui/msgs/ChanMsgDialog.cpp \
             gui/msgs/ChanCreateDialog.cpp \
-            gui/filehash/FileHashDialog.cpp \
-            gui/moreinfo/moreinfo.cpp \ 
             gui/Preferences/configpagestack.cpp \
             gui/Preferences/CryptographyDialog.cpp \
             gui/Preferences/DirectoriesDialog.cpp \
@@ -350,7 +337,6 @@ SOURCES += main.cpp \
             gui/toaster/CallToaster.cpp \
             gui/toaster/OnlineToaster.cpp \
             gui/toaster/QtToaster.cpp \
-            gui/authdlg/AuthorizationDialog.cpp \
             gui/advsearch/advancedsearchdialog.cpp \
             gui/advsearch/expressionwidget.cpp \
             gui/advsearch/guiexprelement.cpp \

@@ -39,6 +39,8 @@
 #define IMAGE_ABOUT 			":/images/informations_24x24.png"
 #define IMAGE_SAVE			    ":/images/media-floppy.png"
 #define IMAGE_HELP              ":/images/help24.png"
+#define IMAGE_APPEARRANCE       ":/images/looknfeel.png"
+
 
 /** Constructor */
 PreferencesWindow::PreferencesWindow(QWidget *parent, Qt::WFlags flags)
@@ -59,7 +61,7 @@ PreferencesWindow::PreferencesWindow(QWidget *parent, Qt::WFlags flags)
                      createPageAction(QIcon(IMAGE_DIRECTORIES), tr("Directories"), grp));
                      
   ui.stackPages->add(new AppearanceDialog(ui.stackPages),
-                     createPageAction(QIcon(IMAGE_DIRECTORIES), tr("AppearanceDialog"), grp));
+                     createPageAction(QIcon(IMAGE_APPEARRANCE), tr("Appearance"), grp));
   
   /*foreach (ConfigPage *page, ui.stackPages->pages()) {
     connect(page, SIGNAL(helpRequested(QString)),

@@ -22,7 +22,6 @@
 
 #include "rshare.h"
 #include "TransfersDialog.h"
-#include "moreinfo/moreinfo.h"
 #include "DLListDelegate.h"
 #include "ULListDelegate.h"
 
@@ -186,8 +185,6 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       contextMnu.addSeparator();     
 
       contextMnu.addAction( cancelAct);
-//      contextMnu.addSeparator();     
-//      contextMnu.addAction( showdowninfoAct);
       contextMnu.addSeparator();
       contextMnu.addAction( clearcompletedAct);
       contextMnu.exec( mevent->globalPos() );
@@ -223,13 +220,6 @@ void TransfersDialog::playSelectedTransfer()
 	playFiles(playList);
 }
 
-
-/** Shows Downloads Informations */
-void TransfersDialog::showDownInfoWindow()
-{
-    moreinfo *detailsdlg = new moreinfo();
-    detailsdlg->show();
-} 
 
 void TransfersDialog::updateProgress(int value)
 {

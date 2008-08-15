@@ -23,9 +23,14 @@
 
 
 #include <QDir>
+#include <QTimer>
 #include <QTextStream>
 #include <QStyleFactory>
-#include <util/string.h>
+#include <gui/common/vmessagebox.h>
+#include <gui/common/html.h>
+#include <util/stringutil.h>
+#include <stdlib.h>
+
 #include <lang/languagesupport.h>
 #include "gui/Preferences/rsharesettings.h"
 
@@ -34,20 +39,48 @@
 /* Available command-line arguments. */
 #define ARG_LANGUAGE   		"lang"    		/**< Argument specifying language.    */
 #define ARG_GUISTYLE   		"style"  	 	/**< Argument specfying GUI style.    */
-#define ARG_GUISTYLESHEET   "stylesheet"   /**< Argument specfying GUI style.    */
+#define ARG_GUISTYLESHEET   "stylesheet"    /**< Argument specfying GUI style.    */
 #define ARG_RESET      		"reset"   		/**< Reset Rshare's saved settings.  */
 #define ARG_DATADIR    		"datadir" 		/**< Directory to use for data files. */
+#define ARG_LOGFILE    		"logfile"       /**< Location of our logfile.         */
+#define ARG_LOGLEVEL   		"loglevel"      /**< Log verbosity.                   */
 
 
 /* Static member variables */
 QMap<QString, QString> Rshare::_args; /**< List of command-line arguments.  */
 QString Rshare::_style;               /**< The current GUI style.           */
 QString Rshare::_language;            /**< The current language.            */
-QString Rshare::_stylesheet;          /**< The current GUI style.           */
+QString Rshare::_stylesheet;          /**< The current GUI stylesheet.      */
+Log Rshare::_log;
 bool Rshare::useConfigDir;           
 QString Rshare::configDir;           
 
-
+/** Catches debugging messages from Qt and sends them to RetroShare's logs. If Qt
+ * emits a QtFatalMsg, we will write the message to the log and then abort().
+ */
+void
+Rshare::qt_msg_handler(QtMsgType type, const char *s)
+{
+  QString msg(s);
+  switch (type) {
+    case QtDebugMsg:
+      rDebug("QtDebugMsg: %1").arg(msg);
+      break;
+    case QtWarningMsg:
+      rNotice("QtWarningMsg: %1").arg(msg);
+      break;
+    case QtCriticalMsg:
+      rWarn("QtCriticalMsg: %1").arg(msg);
+      break;
+    case QtFatalMsg:
+      rError("QtFatalMsg: %1").arg(msg);
+      break;
+  }
+  if (type == QtFatalMsg) {
+    rError("Fatal Qt error. Aborting.");
+    abort();
+  }
+}
 
 /** Constructor. Parses the command-line arguments, resets Rshare's
  * configuration (if requested), and sets up the GUI style and language
@@ -55,6 +88,8 @@ QString Rshare::configDir;
 Rshare::Rshare(QStringList args, int &argc, char **argv, QString dir)
 : QApplication(argc, argv)
 {
+  qInstallMsgHandler(qt_msg_handler);
+
   /* Read in all our command-line arguments. */
   parseArguments(args);
 
@@ -63,6 +98,19 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, QString dir)
     RshareSettings settings;
     settings.reset();
   }
+  
+  /* Handle the -loglevel and -logfile options. */
+  if (_args.contains(ARG_LOGFILE))
+    _log.open(_args.value(ARG_LOGFILE));
+  if (_args.contains(ARG_LOGLEVEL)) {
+    _log.setLogLevel(Log::stringToLogLevel(
+                      _args.value(ARG_LOGLEVEL)));
+    if (!_args.contains(ARG_LOGFILE))
+      _log.open(stdout);
+  }
+  if (!_args.contains(ARG_LOGLEVEL) && 
+      !_args.contains(ARG_LOGFILE))
+    _log.setLogLevel(Log::Off);
 
   /* config directory */
   useConfigDir = false;
@@ -93,6 +141,24 @@ Rshare::~Rshare()
 
 }
 
+/** Enters the main event loop and waits until exit() is called. The signal
+ * running() will be emitted when the event loop has started. */
+int
+Rshare::run()
+{
+  QTimer::singleShot(0, rApp, SLOT(onEventLoopStarted()));
+  return rApp->exec();
+}
+
+/** Called when the application's main event loop has started. This method
+ * will emit the running() signal to indicate that the application's event
+ * loop is running. */
+void
+Rshare::onEventLoopStarted()
+{
+  emit running();
+}
+
 #if defined(Q_OS_WIN)
 /** On Windows, we need to catch the WM_QUERYENDSESSION message
  * so we know that it is time to shutdown. */
@@ -107,29 +173,63 @@ Rshare::winEventFilter(MSG *msg, long *result)
 #endif
 
 /** Display usage information regarding command-line arguments. */
-void
+/*void
 Rshare::printUsage(QString errmsg)
 {
-  QTextStream out(stdout);
+  QTextStream out(stdout);*/
 
   /* If there was an error message, print it out. */
-  if (!errmsg.isEmpty()) {
+  /*if (!errmsg.isEmpty()) {
     out << "** " << errmsg << " **" << endl << endl;
-  }
+  }*/
 
   /* Now print the application usage */
-  out << "Usage: " << endl;
-  out << "\t" << qApp->arguments().at(0) << " [options]"    << endl;
+  //out << "Usage: " << endl;
+  //out << "\t" << qApp->arguments().at(0) << " [options]"    << endl;
 
   /* And available options */
-  out << endl << "Available Options:"                                   << endl;
-  out << "\t-"ARG_RESET"\t\tResets ALL stored Rshare settings."        << endl;
-  out << "\t-"ARG_DATADIR"\tSets the directory Rshare uses for data files"<< endl;
-  out << "\t-"ARG_GUISTYLE"\t\tSets Rshare's interface style."         << endl;
-  out << "\t-"ARG_GUISTYLESHEET"\t\tSets Rshare's stylesheet."         << endl;
-  out << "\t\t\t[" << QStyleFactory::keys().join("|") << "]"            << endl;
-  out << "\t-"ARG_LANGUAGE"\t\tSets Rshare's language."                << endl;
-  out << "\t\t\t[" << LanguageSupport::languageCodes().join("|") << "]" << endl;
+  //out << endl << "Available Options:"                                   << endl;
+  //out << "\t-"ARG_RESET"\t\tResets ALL stored Rshare settings."        << endl;
+  //out << "\t-"ARG_DATADIR"\tSets the directory Rshare uses for data files"<< endl;
+  //out << "\t-"ARG_GUISTYLE"\t\tSets Rshare's interface style."         << endl;
+  //out << "\t-"ARG_GUISTYLESHEET"\t\tSets Rshare's stylesheet."         << endl;
+  //out << "\t\t\t[" << QStyleFactory::keys().join("|") << "]"            << endl;
+  //out << "\t-"ARG_LANGUAGE"\t\tSets Rshare's language."                << endl;
+  //out << "\t\t\t[" << LanguageSupport::languageCodes().join("|") << "]" << endl;
+//}
+
+/** Displays usage information for command-line args. */
+void
+Rshare::showUsageMessageBox()
+{
+  QString usage;
+  QTextStream out(&usage);
+
+  out << "Available Options:" << endl;
+  out << "<table>";
+  //out << trow(tcol("-"ARG_HELP) + 
+  //            tcol(tr("Displays this usage message and exits.")));
+  out << trow(tcol("-"ARG_RESET) +
+              tcol(tr("Resets ALL stored RetroShare settings.")));
+  out << trow(tcol("-"ARG_DATADIR" &lt;dir&gt;") +
+              tcol(tr("Sets the directory RetroShare uses for data files.")));
+  out << trow(tcol("-"ARG_LOGFILE" &lt;file&gt;") +
+              tcol(tr("Sets the name and location of RetroShare's logfile.")));
+  out << trow(tcol("-"ARG_LOGLEVEL" &lt;level&gt;") +
+              tcol(tr("Sets the verbosity of Vidalia's logging.") +
+                   "<br>[" + Log::logLevels().join("|") +"]"));
+  out << trow(tcol("-"ARG_GUISTYLE" &lt;style&gt;") +
+              tcol(tr("Sets RetroShare's interface style.") +
+                   "<br>[" + QStyleFactory::keys().join("|") + "]"));
+  out << trow(tcol("-"ARG_GUISTYLESHEET" &lt;stylesheet&gt;") +
+              tcol(tr("Sets RetroShare's interface stylesheets.")));                   
+  out << trow(tcol("-"ARG_LANGUAGE" &lt;language&gt;") + 
+              tcol(tr("Sets RetroShare's language.") +
+                   "<br>[" + LanguageSupport::languageCodes().join("|") + "]"));
+  out << "</table>";
+
+  VMessageBox::information(0, 
+    tr("RetroShare Usage Information"), usage, VMessageBox::Ok);
 }
 
 /** Returns true if the specified argument expects a value. */
@@ -139,7 +239,9 @@ Rshare::argNeedsValue(QString argName)
   return (argName == ARG_GUISTYLE ||
 		  argName == ARG_GUISTYLESHEET ||
           argName == ARG_LANGUAGE ||
-          argName == ARG_DATADIR);
+          argName == ARG_DATADIR  ||        
+          argName == ARG_LOGFILE  ||
+          argName == ARG_LOGLEVEL);
 
 }
 
@@ -173,10 +275,6 @@ Rshare::parseArguments(QStringList args)
 bool
 Rshare::validateArguments(QString &errmsg)
 {
-  /* If they want help, just return false now 
-  if (_args.contains(ARG_HELP)) {
-    return false;
-  }*/
   /* Check for a language that Retroshare recognizes. */
   if (_args.contains(ARG_LANGUAGE) &&
       !LanguageSupport::isValidLanguageCode(_args.value(ARG_LANGUAGE))) {
@@ -188,6 +286,19 @@ Rshare::validateArguments(QString &errmsg)
       !QStyleFactory::keys().contains(_args.value(ARG_GUISTYLE),
                                       Qt::CaseInsensitive)) {
     errmsg = tr("Invalid GUI style specified: ") + _args.value(ARG_GUISTYLE);
+    return false;
+  }
+  /* Check for a valid log level */
+  if (_args.contains(ARG_LOGLEVEL) &&
+      !Log::logLevels().contains(_args.value(ARG_LOGLEVEL))) {
+    errmsg = tr("Invalid log level specified: ") + _args.value(ARG_LOGLEVEL);
+    return false;
+  }
+  /* Check for a writable log file */
+  if (_args.contains(ARG_LOGFILE) && !_log.isOpen()) {
+    errmsg = tr("Unable to open log file '%1': %2")
+                           .arg(_args.value(ARG_LOGFILE))
+                           .arg(_log.errorString());
     return false;
   }
   return true;
@@ -242,22 +353,10 @@ Rshare::setSheet(QString sheet)
     sheet = settings.getSheetName();
   }
   /* Apply the specified GUI stylesheet */
-  /*if (QApplication::setSheet(sheet)) {*/
     _stylesheet = sheet;
     return true;
-  /*}
-  return false;*/
  
 }
-
-
-/** Displays the help page associated with the specified topic. If no topic is
- * specified, then the default help page will be displayed. */
-/**void
-Rshare::help(QString topic)
-{
-  _help->show(topic);
-}*/
 
 /** Returns the directory RetroShare uses for its data files. */
 QString
@@ -299,7 +398,6 @@ Rshare::createDataDirectory(QString *errmsg)
   return true;
 }
 
-
 /** Set Rshare's data directory - externally */
 bool Rshare::setConfigDirectory(QString dir)
 {
@@ -308,5 +406,11 @@ bool Rshare::setConfigDirectory(QString dir)
   return true;
 }
 
+/** Writes <b>msg</b> with severity <b>level</b> to Vidalia's log. */
+Log::LogMessage
+Rshare::log(Log::LogLevel level, QString msg)
+{
+  return _log.log(level, msg);
+}
 
 

@@ -107,6 +107,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Invoke the Qt Designer generated QObject setup routine */
     ui.setupUi(this);
     
+    /* Create RshareSettings object */
+    _settings = new RshareSettings();
+    
     setWindowTitle(tr("RetroShare %1").arg(retroshareVersion())); 
 
     mSMPlayer = NULL;
@@ -115,6 +118,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 	
     // Setting icons
     this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+    
+    /*if(!_settings->value(QString::fromUtf8("StartMinimized"), false).toBool()) {
+    show();
+    }*/
 	
     /* Create all the dialogs of which we only want one instance */
     _bandwidthGraph = new BandwidthGraph();
@@ -516,9 +523,7 @@ void MainWindow::createActions()
     _helpAct = new QAction(QIcon(IMG_HELP), tr("Help"), this);
     connect(_helpAct, SIGNAL(triggered()), this, SLOT(showHelpDialog()));
          
-          
-    //connect(ui.btntoggletoolbox, SIGNAL(toggled(bool)), this, SLOT(showToolboxFrame(bool)));
-  
+            
 }
 
 /** If the user attempts to quit the app, a check-warning is issued. This warning can be 

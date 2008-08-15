@@ -34,11 +34,20 @@
 #include <QMap>
 #include <QString>
 
+#include "util/log.h"
 #include "gui/Preferences/rsharesettings.h"
-
 
 /** Rshare's version string */
 #define RSHARE_VERSION    "0.7"
+
+/** Pointer to this RetroShare application instance. */
+#define rApp  ((Rshare *)qApp)
+
+#define rDebug(fmt)   (rApp->log(Log::Debug, (fmt)))
+#define rInfo(fmt)    (rApp->log(Log::Info, (fmt)))
+#define rNotice(fmt)  (rApp->log(Log::Notice, (fmt)))
+#define rWarn(fmt)    (rApp->log(Log::Warn, (fmt)))
+#define rError(fmt)   (rApp->log(Log::Error, (fmt)))
 
 
 class Rshare : public QApplication
@@ -56,7 +65,11 @@ public:
   /** Validates that all arguments were well-formed. */
   bool validateArguments(QString &errmsg);
   /** Prints usage information to the given text stream. */
-  void printUsage(QString errmsg = QString());
+  //void printUsage(QString errmsg = QString());
+  /** Displays usage information for command-line args. */
+  static void showUsageMessageBox();
+  /** Returns true if the user wants to see usage information. */
+  static bool showUsage();
 
   /** Sets the current language. */
   static bool setLanguage(QString languageCode = QString());
@@ -84,10 +97,20 @@ public:
   /** Creates Rshare's data directory, if it doesn't already exist. */
   static bool createDataDirectory(QString *errmsg);
   
+  /** Writes <b>msg</b> with severity <b>level</b> to RetroShare's log. */
+  static Log::LogMessage log(Log::LogLevel level, QString msg);
+  
   /** Creates Rshare's data directory, if it doesn't already exist. */
   static bool setConfigDirectory(QString dir);
   
+  /** Enters the main event loop and waits until exit() is called. The signal
+  * running() will be emitted when the event loop has started. */
+  static int run();
+  
 signals:
+  /** Emitted when the application is running and the main event loop has
+   * started. */ 
+  void running();
   /** Signals that the application needs to shutdown now. */
   void shutdown();
 
@@ -97,7 +120,18 @@ protected:
   bool winEventFilter(MSG *msg, long *result);
 #endif
 
+private slots:
+  /** Called when the application's main event loop has started. This method
+   * will emit the running() signal to indicate that the application's event
+   * loop is running. */
+  void onEventLoopStarted();
+  
+
 private:
+  /** Catches debugging messages from Qt and sends them to 
+   * RetroShare's logs. */
+  static void qt_msg_handler(QtMsgType type, const char *msg);
+
   /** Parse the list of command-line arguments. */
   void parseArguments(QStringList args);
   /** Returns true if the specified arguments wants a value. */
@@ -105,8 +139,9 @@ private:
 
   static QMap<QString, QString> _args; /**< List of command-line arguments.  */
   static QString _style;               /**< The current GUI style.           */
-  static QString _stylesheet;          /**< The current GUI stylesheet.           */
+  static QString _stylesheet;          /**< The current GUI stylesheet.      */
   static QString _language;            /**< The current language.            */
+  static Log _log; 					/**< Logs debugging messages to file or stdout. */
 
   static bool    useConfigDir;
   static QString configDir;

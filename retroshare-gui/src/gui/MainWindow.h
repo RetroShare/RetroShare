@@ -53,7 +53,7 @@
 
 #include "ui_MainWindow.h"
 
-#include "../config/rsharesettings.h"
+#include "Preferences/rsharesettings.h"
 
 class SMPlayer;
 
@@ -147,12 +147,6 @@ private slots:
     void showSettings();
     void setStyle();
     
-    /** Called when console button is toggled */
-    //void showConsoleFrame(bool show);
-	
-    /** Called when console button is toggled */
-    //void showToolboxFrame(bool show);
-    
     /** Called when user attempts to quit via quit button*/
     void doQuit();
     
@@ -186,6 +180,8 @@ private:
     
     PreferencesWindow* _preferencesWindow;
     
+    /** A RetroShareSettings object used for saving/loading settings */
+    RshareSettings* _settings;
     
     /** Creates a new action for a Main page. */
     QAction* createPageAction(QIcon img, QString text, QActionGroup *group);
