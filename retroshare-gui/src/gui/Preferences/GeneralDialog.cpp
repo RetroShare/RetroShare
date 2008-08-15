@@ -81,9 +81,15 @@ GeneralDialog::load()
   
 }
  
-
-
 bool GeneralDialog::startMinimized() const {
   if(ui.checkStartMinimized->isChecked()) return true;
   return ui.checkStartMinimized->isChecked();
+}
+
+/** Called when the "show on startup" checkbox is toggled. */
+void
+GeneralDialog::toggleShowOnStartup(bool checked)
+{
+  //RshareSettings _settings;
+  _settings->setShowMainWindowAtStart(checked);
 }

@@ -49,7 +49,8 @@ public:
 
 private slots:
 
-
+  /** Called when the "show on startup" checkbox is toggled. */
+  void toggleShowOnStartup(bool checked);
   
 private:
   /** A VidaliaSettings object used for saving/loading settings */
