@@ -22,6 +22,7 @@
 
 #include "rshare.h"
 #include "GeneralDialog.h"
+#include <util/stringutil.h>
 #include <QSystemTrayIcon>
 
 /** Constructor */
@@ -60,9 +61,7 @@ GeneralDialog::~GeneralDialog()
 /** Saves the changes on this page */
 bool
 GeneralDialog::save(QString &errmsg)
-{
-  Q_UNUSED(errmsg);
-  
+{  
   _settings->setValue(QString::fromUtf8("StartMinimized"), startMinimized());
   
   _settings->setRunRetroshareOnBoot(
@@ -74,11 +73,9 @@ GeneralDialog::save(QString &errmsg)
 /** Loads the settings for this page */
 void
 GeneralDialog::load()
-{
-  
+{  
   ui.chkRunRetroshareAtSystemStartup->setChecked(
   _settings->runRetroshareOnBoot());
-
  
   ui.checkStartMinimized->setChecked(_settings->value(QString::fromUtf8("StartMinimized"), false).toBool());
   

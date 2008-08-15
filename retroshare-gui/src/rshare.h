@@ -33,6 +33,7 @@
 #include <QApplication>
 #include <QMap>
 #include <QString>
+#include <QKeySequence>
 
 #include "util/log.h"
 #include "gui/Preferences/rsharesettings.h"
@@ -105,6 +106,11 @@ public:
   /** Enters the main event loop and waits until exit() is called. The signal
   * running() will be emitted when the event loop has started. */
   static int run();
+  
+  /** Creates and binds a shortcut such that when <b>key</b> is pressed in
+  * <b>sender</b>'s context, <b>receiver</b>'s <b>slot</b> will be called. */
+  static void createShortcut(const QKeySequence &key, QWidget *sender,
+                             QWidget *receiver, const char *slot);
   
 signals:
   /** Emitted when the application is running and the main event loop has

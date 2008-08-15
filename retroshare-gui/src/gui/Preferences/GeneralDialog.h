@@ -22,6 +22,7 @@
 
 #ifndef _GENERALDIALOG_H
 #define _GENERALDIALOG_H
+
 #include <QtGui>
 #include <QFileDialog>
 #include <QLineEdit>
@@ -54,7 +55,7 @@ private slots:
   
 private:
   /** A RetroShare Settings object used for saving/loading settings */
-  RshareSettings* _settings;
+  RshareSettings *_settings;
   
 
   

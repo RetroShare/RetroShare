@@ -28,7 +28,7 @@
 #include <QWidget>
 #include <QVariant>
 #include <QMainWindow>
-#include <gui/Preferences/rsharesettings.h>
+#include <gui/Preferences/rsettings.h>
 
 
 class RWindow : public QMainWindow
@@ -68,8 +68,7 @@ signals:
 
 private:
   QString _name;  /**< Name associated with this window. */
-  RshareSettings* _settings; /**< Object used to store window properties */
-  bool _previouslyShown; /**< True if show() has been called for this window. */
+  RSettings* _settings; /**< Object used to store window properties */
 };
 
 #endif

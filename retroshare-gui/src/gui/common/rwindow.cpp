@@ -23,11 +23,11 @@
 
 #include <QPoint>
 #include <QSize>
-#include <QPalette>
 #include <QShortcut>
 #include <QByteArray>
 #include <QKeySequence>
 #include <QDesktopWidget>
+#include <rshare.h>
 #include "rwindow.h"
 
 
@@ -36,8 +36,7 @@ RWindow::RWindow(QString name, QWidget *parent, Qt::WFlags flags)
  : QMainWindow(parent, flags)
 {
   _name     = name;
-  _settings = new RshareSettings();
-  _previouslyShown = false;
+  _settings = new RSettings(name);
 }
 
 /** Destructor. */
@@ -51,8 +50,7 @@ RWindow::~RWindow()
 void
 RWindow::setShortcut(QString shortcut, const char *slot)
 {
-  QShortcut *s = new QShortcut(QKeySequence(shortcut), this, slot, 0);
-  Q_UNUSED(s);
+  rApp->createShortcut(QKeySequence(shortcut), this, this, slot);
 }
 
 /** Saves the size and location of the window. */
@@ -73,7 +71,10 @@ RWindow::restoreWindowState()
 {
 #if QT_VERSION >= 0x040200
   QByteArray geometry = getSetting("Geometry", QByteArray()).toByteArray();
-  restoreGeometry(geometry);
+  if (geometry.isEmpty())
+    adjustSize();
+  else
+    restoreGeometry(geometry);
 #else
   QRect screen = QDesktopWidget().availableGeometry();
 
@@ -115,25 +116,14 @@ void
 RWindow::setVisible(bool visible)
 {
   if (visible) {
-    /* If this is the first time this window is shown, restore its window
-     * position and size. */
-    if (!_previouslyShown) {
-#if !defined (Q_WS_WIN)
-      /* Use the standard palette on non-Windows, overriding whatever was 
-       * specified in the .ui file for this dialog. */
-      setPalette(QPalette());
-#endif
-    
-      restoreWindowState();
-      _previouslyShown = true;
-    }
-
     /* Bring the window to the top, if it's already open. Otherwise, make the
      * window visible. */
     if (isVisible()) {
       activateWindow();
       setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
       raise();
+    } else {
+      restoreWindowState();
     }
   } else {
     /* Save the last size and position of this window. */

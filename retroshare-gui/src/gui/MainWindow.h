@@ -59,7 +59,7 @@ class SMPlayer;
 
 class PeerStatus;
 
-class MainWindow : public QMainWindow
+class MainWindow : public RWindow
 {
   Q_OBJECT
 
