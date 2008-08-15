@@ -34,6 +34,8 @@
 #include <QMap>
 #include <QString>
 
+#include "gui/Preferences/rsharesettings.h"
+
 
 /** Rshare's version string */
 #define RSHARE_VERSION    "0.7"

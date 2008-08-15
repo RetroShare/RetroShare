@@ -65,7 +65,7 @@
 #define IMAGE_LINKS             ":/images/knewsticker24.png"
 #define IMAGE_FILES   	        ":/images/fileshare24.png"
 #define IMAGE_CHANNELS       	":/images/channels.png"
-#define IMAGE_PREFERENCES       ":/images/settings16.png"
+#define IMAGE_PREFERENCES       ":/images/kcmsystem24.png"
 #define IMAGE_CHAT          	":/images/groupchat.png"
 #define IMAGE_RETROSHARE        ":/images/rstray3.png"
 #define IMAGE_ABOUT             ":/images/informations_24x24.png"
@@ -111,10 +111,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     mSMPlayer = NULL;
   
-    /* Hide Console frame */
-    //showConsoleFrame(false);
-    //connect(ui.btnToggleConsole, SIGNAL(toggled(bool)), this, SLOT(showConsoleFrame(bool)));	
-
 	ui.toolBarservice->hide();
 	
     // Setting icons
@@ -123,6 +119,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Create all the dialogs of which we only want one instance */
     _bandwidthGraph = new BandwidthGraph();
     messengerWindow = new MessengerWindow();
+    _preferencesWindow = new PreferencesWindow();
     messengerWindow->hide();
     //messengerWindow->show();
     applicationWindow = new ApplicationWindow();
@@ -137,13 +134,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(ui.actionSMPlayer, SIGNAL(triggered()), this, SLOT( showsmplayer()) );
     connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT( showabout()) );
     connect(ui.actionColor, SIGNAL(triggered()), this, SLOT( setStyle()) );
-
-    
-    /** Games ToolBox*/
-	//connect(ui.qbackgammonButton, SIGNAL(clicked( bool )), this, SLOT( startgammon()) );
-	//connect(ui.qcheckersButton, SIGNAL(clicked( bool )), this, SLOT( startqcheckers()) );
-	 
-        
+   	 
+       
     /** adjusted quit behaviour: trigger a warning that can be switched off in the saved
         config file RetroShare.conf */
    connect(ui.actionQuit, SIGNAL(triggered()), this, SLOT(doQuit()));
@@ -465,11 +457,11 @@ void MainWindow::addSharedDirectory()
 }
 
 /** Shows Preferences */
-void MainWindow::showPreferencesWindow()
+/*void MainWindow::showPreferencesWindow()
 {
     static PreferencesWindow* preferencesWindow = new PreferencesWindow(this);
     preferencesWindow->show();
-}
+}*/
 
 /** Shows Options */
 void MainWindow::showSettings()
@@ -497,10 +489,10 @@ void MainWindow::showApplWindow()
 /** Destructor. */
 MainWindow::~MainWindow()
 {
-    delete _prefsAct;
     delete _bandwidthGraph;
     delete _messengerwindowAct;
     delete _smplayerAct;
+    delete _preferencesWindow;
 }
 
 /** Create and bind actions to events. Setup for initial
@@ -614,43 +606,6 @@ void MainWindow::toggleVisibilitycontextmenu()
         show();
 }
 
-
-/**
-Toggles the Console pane on and off, changes toggle button text
- */
-/*void MainWindow::showConsoleFrame(bool show)
-{
-    if (show) {
-        ui.frmConsole->setVisible(true);
-        ui.btnToggleConsole->setChecked(true);
-        ui.btnToggleConsole->setToolTip(tr("Hide Console"));
-    } else {
-        ui.frmConsole->setVisible(false);
-        ui.btnToggleConsole->setChecked(false);
-        ui.btnToggleConsole->setToolTip(tr("Show Console"));
-    }
-}*/
-
-/**
- Toggles the ToolBox on and off, changes toggle button text
- */
-/*void MainWindow::showToolboxFrame(bool show)
-{
-    if (show) {
-        ui.toolboxframe->setVisible(true);
-        ui.btntoggletoolbox->setChecked(true);
-        ui.btntoggletoolbox->setToolTip(tr("Hide ToolBox"));
-        ui.btntoggletoolbox->setIcon(QIcon(tr(":images/hide_toolbox_frame.png")));
-    } else {
-        ui.toolboxframe->setVisible(false);
-        ui.btntoggletoolbox->setChecked(false);
-        ui.btntoggletoolbox->setToolTip(tr("Show ToolBox"));
-        ui.btntoggletoolbox->setIcon(QIcon(tr(":images/show_toolbox_frame.png")));
-    }
-}*/
-
-
-
 void MainWindow::loadStyleSheet(const QString &sheetName)
 {
     /** internal Stylesheets **/
@@ -744,5 +699,12 @@ void MainWindow::setStyle()
  
 }
 
+/** Creates and displays the Configuration dialog with the current page set to
+ * <b>page</b>. */
+void
+MainWindow::showPreferencesWindow(PreferencesWindow::Page page)
+{
+  _preferencesWindow->showWindow(page);
+}
 
 

@@ -97,16 +97,14 @@ RWindow::restoreWindowState()
 QVariant
 RWindow::getSetting(QString setting, QVariant defaultValue)
 {
-  QString key = _name + "/" + setting;
-  return _settings->value(key, defaultValue);
+  return _settings->value(setting, defaultValue);
 }
 
 /** Saves a value associated with a property name for this window object. */
 void
 RWindow::saveSetting(QString prop, QVariant value)
 {
-  QString key = _name + "/" + prop;
-  _settings->setValue(key, value);
+  _settings->setValue(prop, value);
 }
 
 /** Overloaded QWidget::setVisible(). If this window is already visible and

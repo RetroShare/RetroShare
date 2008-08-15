@@ -58,6 +58,77 @@ win32_get_folder_location(int folder, QString defaultPath)
   return defaultPath;
 }
 
+/** Returns the value in keyName at keyLocation. 
+ *  Returns an empty QString if the keyName doesn't exist */
+QString
+win32_registry_get_key_value(QString keyLocation, QString keyName)
+{
+  HKEY key;
+  char data[255] = {0};
+  DWORD size = sizeof(data);
+
+  /* Open the key for reading (opens new key if it doesn't exist) */
+  if (RegOpenKeyExA(HKEY_CURRENT_USER,
+                    qPrintable(keyLocation), 
+                    0L, KEY_READ, &key) == ERROR_SUCCESS) {
+    
+    /* Key exists, so read the value into data */
+    RegQueryValueExA(key, qPrintable(keyName), 
+                    NULL, NULL, (LPBYTE)data, &size);
+  }
+
+  /* Close anything that was opened */
+  RegCloseKey(key);
+
+  return QString(data);
+}
+
+/** Creates and/or sets the key to the specified value */
+void
+win32_registry_set_key_value(QString keyLocation, QString keyName, QString keyValue)
+{
+  HKEY key;
+  
+  /* Open the key for writing (opens new key if it doesn't exist */
+  if (RegOpenKeyExA(HKEY_CURRENT_USER,
+                   qPrintable(keyLocation),
+                   0, KEY_WRITE, &key) != ERROR_SUCCESS) {
+
+    /* Key didn't exist, so write the newly opened key */
+    RegCreateKeyExA(HKEY_CURRENT_USER,
+                   qPrintable(keyLocation),
+                   0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL,
+                   &key, NULL);
+  }
+
+  /* Save the value in the key */
+  RegSetValueExA(key, qPrintable(keyName), 0, REG_SZ, 
+                (BYTE *)qPrintable(keyValue),
+                (DWORD)keyValue.length() + 1); // include null terminator
+
+  /* Close the key */
+  RegCloseKey(key);
+}
+
+/** Removes the key from the registry if it exists */
+void
+win32_registry_remove_key(QString keyLocation, QString keyName)
+{
+  HKEY key;
+  
+  /* Open the key for writing (opens new key if it doesn't exist */
+  if (RegOpenKeyExA(HKEY_CURRENT_USER,
+                   qPrintable(keyLocation),
+                   0, KEY_SET_VALUE, &key) == ERROR_SUCCESS) {
+  
+    /* Key exists so delete it */
+    RegDeleteValueA(key, qPrintable(keyName));
+  }
+
+  /* Close anything that was opened */
+  RegCloseKey(key);
+}
+
 /** Gets the location of the user's %PROGRAMFILES% folder. */
 QString
 win32_program_files_folder()

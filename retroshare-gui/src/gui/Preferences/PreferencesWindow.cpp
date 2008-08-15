@@ -31,7 +31,7 @@
 #define FONT        QFont(tr("Arial"), 8)
 
 /* Images for toolbar icons */
-#define IMAGE_PREFERENCES       ":/images/locale.png"
+#define IMAGE_PREFERENCES       ":/images/kcmsystem24.png"
 #define IMAGE_SERVER        	":/images/server_24x24.png"
 #define IMAGE_DIRECTORIES    	":/images/folder_doments.png"
 #define IMAGE_CRYPTOGRAPHY      ":/images/cryptography_24x24.png"
@@ -42,7 +42,7 @@
 
 /** Constructor */
 PreferencesWindow::PreferencesWindow(QWidget *parent, Qt::WFlags flags)
-: QMainWindow(parent, flags)
+: RWindow("PreferencesWindow", parent, flags)
 {
   /* Invoke the Qt Designer generated QObject setup routine */
   ui.setupUi(this);
@@ -56,7 +56,15 @@ PreferencesWindow::PreferencesWindow(QWidget *parent, Qt::WFlags flags)
                     createPageAction(QIcon(IMAGE_SERVER), tr("Server"), grp));
   
   ui.stackPages->add(new DirectoriesDialog(ui.stackPages),
-                     createPageAction(QIcon(IMAGE_DIRECTORIES), tr("Directories"), grp));                      
+                     createPageAction(QIcon(IMAGE_DIRECTORIES), tr("Directories"), grp));
+                     
+  ui.stackPages->add(new AppearanceDialog(ui.stackPages),
+                     createPageAction(QIcon(IMAGE_DIRECTORIES), tr("AppearanceDialog"), grp));
+  
+  /*foreach (ConfigPage *page, ui.stackPages->pages()) {
+    connect(page, SIGNAL(helpRequested(QString)),
+            this, SLOT(help(QString)));
+  } */                     
   
   /* Create the toolbar */
   ui.toolBar->addActions(grp->actions());
@@ -103,11 +111,11 @@ PreferencesWindow::addAction(QAction *action, const char *slot)
 }
 
 /** Overloads the default show so we can load settings */
-void
+/*void
 PreferencesWindow::show()
-{
+{*/
   /* Load saved settings */
-  loadSettings();
+  /*loadSettings();
 
   if (!this->isVisible()) {
     QMainWindow::show();
@@ -116,15 +124,16 @@ PreferencesWindow::show()
     setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
     QMainWindow::raise();
   }
-}
+}*/
 
-/** Shows the config dialog with focus set to the given page. */
+/** Shows the Preferences dialog with focus set to the given page. */
 void
-PreferencesWindow::show(Page page)
+PreferencesWindow::showWindow(Page page)
 {
+  /* Load saved settings */
+  loadSettings();
   /* Show the dialog. */
-  show();
-
+  RWindow::showWindow();
   /* Set the focus to the specified page. */
   ui.stackPages->setCurrentIndex((int)page);
 }
@@ -215,9 +224,9 @@ PreferencesWindow::help()
     case General:
       help("config.general"); break;
     case Server:
-      help("server"); break;
-    case Directories:
       help("config.server"); break;
+    case Directories:
+      help("config.directories"); break;
     default:
       help("config.general"); break;
   }

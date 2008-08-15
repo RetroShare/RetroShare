@@ -19,23 +19,25 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef _DIRECTORIESDIALOG_H
-#define _DIRECTORIESDIALOG_H
+#ifndef _LOGDIALOG_H
+#define _LOGDIALOG_H
 
 #include <QFileDialog>
+#include <QStyleFactory>
 
 #include "rsharesettings.h"
+#include <lang/languagesupport.h>
 
 #include "configpage.h"
-#include "ui_DirectoriesDialog.h"
+#include "ui_AppearanceDialog.h"
 
-class DirectoriesDialog : public ConfigPage 
+class AppearanceDialog : public ConfigPage 
 {
   Q_OBJECT
 
 public:
   /** Default Constructor */
-  DirectoriesDialog(QWidget *parent = 0);
+  AppearanceDialog(QWidget *parent = 0);
   /** Default Destructor */
 
   /** Saves the changes on this page */
@@ -45,16 +47,18 @@ public:
 
 private slots:
 
-	void addShareDirectory();
-	void removeShareDirectory();
-	void setIncomingDirectory();
+  void on_styleSheetCombo_activated(const QString &styleSheetName);
+
   
 private:
   /** A RshareSettings object used for saving/loading settings */
   RshareSettings* _settings;
+  
+  void loadStyleSheet(const QString &sheetName);
+  void loadqss();
 
   /** Qt Designer generated object */
-  Ui::DirectoriesDialog ui;
+  Ui::AppearanceDialog ui;
 };
 
 #endif

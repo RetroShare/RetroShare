@@ -24,11 +24,9 @@
 #define _GENERALDIALOG_H
 #include <QtGui>
 #include <QFileDialog>
-#include <QStyleFactory>
 #include <QLineEdit>
 
-#include <config/rsharesettings.h>
-#include <lang/languagesupport.h>
+#include "rsharesettings.h"
 
 #include "configpage.h"
 #include "ui_GeneralDialog.h"
@@ -51,15 +49,13 @@ public:
 
 private slots:
 
-  void on_styleSheetCombo_activated(const QString &styleSheetName);
 
   
 private:
   /** A VidaliaSettings object used for saving/loading settings */
   RshareSettings* _settings;
   
-  void loadStyleSheet(const QString &sheetName);
-  void loadqss();
+
   
   /** Qt Designer generated object */
   Ui::GeneralDialog ui;

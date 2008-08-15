@@ -34,22 +34,6 @@ GeneralDialog::GeneralDialog(QWidget *parent)
  /* Create RshareSettings object */
   _settings = new RshareSettings();
   
-  connect(ui.styleSheetCombo, SIGNAL(clicked()), this, SLOT(loadStyleSheet()));
-
-  /* Populate combo boxes */
-  foreach (QString code, LanguageSupport::languageCodes()) {
-    ui.cmboLanguage->addItem(QIcon(":/images/flags/" + code + ".png"),
-                             LanguageSupport::languageName(code),
-                             code);
-  }
-  foreach (QString style, QStyleFactory::keys()) {
-    ui.cmboStyle->addItem(style, style.toLower());
-  }
-  
-  ui.styleSheetCombo->setCurrentIndex(ui.styleSheetCombo->findText("Default"));
-  //loadStyleSheet("Default");
-  loadqss(); 
-  
   if (QSystemTrayIcon::isSystemTrayAvailable()){
 
     /* Check if we are supposed to show our main window on startup */
@@ -61,7 +45,10 @@ GeneralDialog::GeneralDialog(QWidget *parent)
     ui.chkShowOnStartup->hide();
     //show();
   }
-    
+  /* Hide platform specific features */
+#ifndef Q_WS_WIN
+  ui.chkRunRetroshareAtSystemStartup->setVisible(false);
+#endif    
 }
 
 /** Destructor */
@@ -75,18 +62,9 @@ bool
 GeneralDialog::save(QString &errmsg)
 {
   Q_UNUSED(errmsg);
-  QString languageCode =
-    LanguageSupport::languageCode(ui.cmboLanguage->currentText());
-  
-  _settings->setLanguageCode(languageCode);
-  _settings->setInterfaceStyle(ui.cmboStyle->currentText());
-  _settings->setSheetName(ui.styleSheetCombo->currentText());
   
   _settings->setValue(QString::fromUtf8("StartMinimized"), startMinimized());
 
- 
-  /* Set to new style */
-  Rshare::setStyle(ui.cmboStyle->currentText());
   return true;
 }
   
@@ -94,61 +72,16 @@ GeneralDialog::save(QString &errmsg)
 void
 GeneralDialog::load()
 {
-  int index = ui.cmboLanguage->findData(_settings->getLanguageCode());
-  ui.cmboLanguage->setCurrentIndex(index);
   
-  index = ui.cmboStyle->findData(Rshare::style().toLower());
-  ui.cmboStyle->setCurrentIndex(index);
-  
-  ui.checkStartMinimized->setChecked(_settings->value(QString::fromUtf8("StartMinimized"), false).toBool());
+  ui.chkRunRetroshareAtSystemStartup->setChecked(
+  _settings->runRetroshareOnBoot());
 
-  
-  ui.styleSheetCombo->setCurrentIndex(ui.styleSheetCombo->findText(_settings->getSheetName())); 
-  
-    /** load saved internal styleSheet **/
-    //QFile file(":/qss/" + (_settings->getSheetName().toLower()) + ".qss");
-    
-    /** load saved extern Stylesheets **/
-    QFile file(QApplication::applicationDirPath() + "/qss/" + (_settings->getSheetName().toLower()) + ".qss");
-    
-    file.open(QFile::ReadOnly);
-    QString styleSheet = QLatin1String(file.readAll());
-    qApp->setStyleSheet(styleSheet);
-
-}
-
-void GeneralDialog::on_styleSheetCombo_activated(const QString &sheetName)
-{
-    loadStyleSheet(sheetName);
-}
-
-void GeneralDialog::loadStyleSheet(const QString &sheetName)
-{
-     /** internal Stylesheets **/
-    //QFile file(":/qss/" + sheetName.toLower() + ".qss");
-    
-    /** extern Stylesheets **/
-    QFile file(QApplication::applicationDirPath() + "/qss/" + sheetName.toLower() + ".qss");
-    
-    file.open(QFile::ReadOnly);
-    QString styleSheet = QLatin1String(file.readAll());
-
-    
-    qApp->setStyleSheet(styleSheet);
-    
-}
-
-void GeneralDialog::loadqss()
-{
-
- QFileInfoList slist = QDir(QApplication::applicationDirPath() + "/qss/").entryInfoList();
- foreach(QFileInfo st, slist)
- {
-  if(st.fileName() != "." && st.fileName() != ".." && st.isFile())
-  ui.styleSheetCombo->addItem(st.fileName().remove(".qss"));
- }
  
+  ui.checkStartMinimized->setChecked(_settings->value(QString::fromUtf8("StartMinimized"), false).toBool());
+  
 }
+ 
+
 
 bool GeneralDialog::startMinimized() const {
   if(ui.checkStartMinimized->isChecked()) return true;

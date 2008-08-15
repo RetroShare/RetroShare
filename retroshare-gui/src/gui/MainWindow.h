@@ -128,7 +128,7 @@ private slots:
     void addFriend();
     void inviteFriend();
     void addSharedDirectory();
-    void showPreferencesWindow();
+    //void showPreferencesWindow();
     void showMessengerWindow();
     void showApplWindow();
 	void showsmplayer();
@@ -140,6 +140,9 @@ private slots:
     /** Called when a child window requests the given help <b>topic</b>. */
     void showHelpDialog(const QString &topic);
 
+    /** Creates and displays the Configuration dialog with the current page set
+    * to <b>page</b>. */
+    void showPreferencesWindow(PreferencesWindow::Page page = PreferencesWindow::General);
 
     void showSettings();
     void setStyle();

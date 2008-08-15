@@ -24,7 +24,7 @@
 
 #include <QFileDialog>
 
-#include <config/rsharesettings.h>
+#include "rsharesettings.h"
 
 #include "configpage.h"
 #include "ui_ServerDialog.h"

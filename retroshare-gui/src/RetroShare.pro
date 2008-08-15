@@ -44,7 +44,6 @@ HEADERS +=  rshare.h \
             rsiface/rstypes.h \
             rsiface/notifyqt.h \
             rsiface/RemoteDirModel.h \
-            config/rshareSettings.h \
             control/bandwidthevent.h \
             control/eventtype.h \
             gui/DLListDelegate.h \
@@ -118,11 +117,13 @@ HEADERS +=  rshare.h \
             gui/Preferences/configpagestack.h \
             gui/Preferences/CryptographyDialog.h \
             gui/Preferences/DirectoriesDialog.h \
-            gui/Preferences/LogDialog.h \
+            gui/Preferences/AppearanceDialog.h \
             gui/Preferences/GeneralDialog.h \
             gui/Preferences/PreferencesWindow.h \
             gui/Preferences/ServerDialog.h \          
             gui/Preferences/ConfirmQuitDialog.h \
+            gui/Preferences/rsharesettings.h \
+            gui/Preferences/rsettings.h \
             gui/toaster/MessageToaster.h \
             gui/toaster/OnlineToaster.h \
             gui/toaster/ChatToaster.h \
@@ -219,7 +220,7 @@ FORMS +=    gui/ChatDialog.ui \
             gui/moreinfo/moreinfo.ui \ 
             gui/Preferences/CryptographyDialog.ui \
             gui/Preferences/DirectoriesDialog.ui \
-            gui/Preferences/LogDialog.ui \
+            gui/Preferences/AppearanceDialog.ui \
             gui/Preferences/GeneralDialog.ui \
             gui/Preferences/PreferencesWindow.ui \
             gui/Preferences/ServerDialog.ui \
@@ -263,7 +264,6 @@ SOURCES += main.cpp \
             rshare.cpp \
             rsiface/notifyqt.cpp \
             rsiface/RemoteDirModel.cpp \
-            config/rshareSettings.cpp \
             gui/DLListDelegate.cpp \
             gui/ULListDelegate.cpp \
             gui/StartDialog.cpp \
@@ -329,11 +329,13 @@ SOURCES += main.cpp \
             gui/Preferences/configpagestack.cpp \
             gui/Preferences/CryptographyDialog.cpp \
             gui/Preferences/DirectoriesDialog.cpp \
-            gui/Preferences/LogDialog.cpp \
+            gui/Preferences/AppearanceDialog.cpp \
             gui/Preferences/GeneralDialog.cpp \
             gui/Preferences/PreferencesWindow.cpp \
             gui/Preferences/ServerDialog.cpp \
             gui/Preferences/ConfirmQuitDialog.cpp \
+            gui/Preferences/rsharesettings.cpp \
+            gui/Preferences/rsettings.cpp \
             gui/common/vmessagebox.cpp \
             gui/common/rwindow.cpp \ 
             gui/common/html.cpp \        

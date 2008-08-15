@@ -24,6 +24,9 @@
 #ifndef _WIN32_H
 #define _WIN32_H
 
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <QHash>
 #include <QString>
 
 /** Retrieves the location of the user's %PROGRAMFILES% folder. */
@@ -31,6 +34,15 @@ QString win32_program_files_folder();
 
 /** Retrieves the location of the user's %APPDATA% folder. */
 QString win32_app_data_folder();
+
+/** Returns value of keyName or empty QString if keyName doesn't exist */
+QString win32_registry_get_key_value(QString keyLocation, QString keyName);
+
+/** Creates and/or sets the key to the specified value */
+void win32_registry_set_key_value(QString keyLocation, QString keyName, QString keyValue);
+
+/** Removes the key from the registry if it exists */
+void win32_registry_remove_key(QString keyLocation, QString keyName);
 
 #endif
 

@@ -29,14 +29,14 @@
 #include "DirectoriesDialog.h"
 #include "ServerDialog.h"
 #include "CryptographyDialog.h"
-#include "LogDialog.h"
+#include "AppearanceDialog.h"
 #include "gui/help/browser/helpbrowser.h"
-
+#include <gui/common/rwindow.h>
 
 
 #include "ui_PreferencesWindow.h"
 
-class PreferencesWindow : public QMainWindow
+class PreferencesWindow : public RWindow
 {
   Q_OBJECT
 
@@ -44,10 +44,9 @@ public:
   /** Preferences dialog pages. */
   enum Page {
     General 	  	= 0,  /** Preferences page. */
-    Directories  	= 1,  /** Directories page. */
-    Server   	 	= 2,  /** Server page. */
-    Cryptography  	= 3,  /** Cryptography  page. */
-    About      		= 4   /** About page. */
+    Server,  			  /** Server page. */
+    Directories,           /** Directories page. */
+    Appearance				/** Appearance page. */
 
   };
 
@@ -61,9 +60,9 @@ protected:
 
 public slots:
 	/** Called when this dialog is to be displayed */
-	void show();
-	/** Shows the config dialog with focus set to the given page. */
-	void show(Page page);
+	//void show();
+	/** Shows the Preferences dialog with focus set to the given page. */
+	void showWindow(Page page);
 
 private slots:
 

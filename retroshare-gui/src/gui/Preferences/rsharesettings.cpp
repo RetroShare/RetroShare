@@ -56,7 +56,7 @@
 
 #if defined(Q_OS_WIN32)
 #define STARTUP_REG_KEY        "Software\\Microsoft\\Windows\\CurrentVersion\\Run"
-#define Rshare_REG_KEY         "RetroShare" 
+#define RETROSHARE_REG_KEY         "RetroShare" 
 #endif
 
 /* Default bandwidth graph settings */
@@ -67,7 +67,6 @@
 
 /** Default Constructor */
 RshareSettings::RshareSettings()
-: QSettings(SETTINGS_FILE, QSettings::IniFormat)
 { 
 #if defined(Q_WS_MAC)
   setDefault(SETTING_STYLE, "macintosh (aqua)");
@@ -186,7 +185,7 @@ bool
 RshareSettings::runRetroshareOnBoot()
 {
 #if defined(Q_WS_WIN)
-  if (!win32_registry_get_key_value(STARTUP_REG_KEY, Rshare_REG_KEY).isEmpty()) {
+  if (!win32_registry_get_key_value(STARTUP_REG_KEY, RETROSHARE_REG_KEY).isEmpty()) {
     return true;
   } else {
     return false;
@@ -203,12 +202,12 @@ RshareSettings::setRunRetroshareOnBoot(bool run)
 {
 #if defined(Q_WS_WIN)
   if (run) {
-    win32_registry_set_key_value(STARTUP_REG_KEY, Rshare_REG_KEY,
+    win32_registry_set_key_value(STARTUP_REG_KEY, RETROSHARE_REG_KEY,
         QString("\"" +
                 QDir::convertSeparators(QCoreApplication::applicationFilePath())) +
                 "\"");
   } else {
-    win32_registry_remove_key(STARTUP_REG_KEY, Rshare_REG_KEY);
+    win32_registry_remove_key(STARTUP_REG_KEY, RETROSHARE_REG_KEY);
   }
 #else
   /* Platforms othe rthan windows aren't supported yet */

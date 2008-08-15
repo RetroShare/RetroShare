@@ -28,7 +28,7 @@
 #include <QWidget>
 #include <QVariant>
 #include <QMainWindow>
-#include <config/rsharesettings.h>
+#include <gui/Preferences/rsharesettings.h>
 
 
 class RWindow : public QMainWindow
