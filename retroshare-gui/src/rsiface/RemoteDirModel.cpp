@@ -692,6 +692,8 @@ void RemoteDirModel::downloadSelected(QModelIndexList list)
 		/* only request if it is a file */
 		if (details.type == DIR_TYPE_FILE)
 		{
+			std::cerr << "RemoteDirModel::downloadSelected() Calling File Request";
+			std::cerr << std::endl;
 			rsFiles -> FileRequest(details.name, details.hash, 
 						details.count, "", 0);
 		}

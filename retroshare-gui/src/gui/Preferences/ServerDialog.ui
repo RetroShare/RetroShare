@@ -484,17 +484,6 @@
     </disabled>
    </palette>
   </property>
-  <property name="font" >
-   <font>
-    <family>Arial</family>
-    <pointsize>8</pointsize>
-    <weight>50</weight>
-    <italic>false</italic>
-    <bold>false</bold>
-    <underline>false</underline>
-    <strikeout>false</strikeout>
-   </font>
-  </property>
   <property name="contextMenuPolicy" >
    <enum>Qt::NoContextMenu</enum>
   </property>
@@ -523,7 +512,7 @@
       <property name="bottomMargin" >
        <number>2</number>
       </property>
-      <item row="1" column="0" >
+      <item row="0" column="0" >
        <layout class="QVBoxLayout" >
         <item>
          <widget class="QComboBox" name="netModeComboBox" >
@@ -592,104 +581,141 @@
      <property name="title" >
       <string>Server Status And Network Settings</string>
      </property>
-     <layout class="QGridLayout" >
-      <property name="leftMargin" >
-       <number>4</number>
-      </property>
-      <property name="topMargin" >
-       <number>4</number>
-      </property>
-      <property name="rightMargin" >
-       <number>4</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>4</number>
-      </property>
-      <item row="0" column="0" >
-       <layout class="QVBoxLayout" >
+     <layout class="QVBoxLayout" >
+      <item>
+       <layout class="QGridLayout" >
+        <item rowspan="6" row="0" column="0" >
+         <widget class="QTextEdit" name="netStatusBox" />
+        </item>
+        <item row="0" column="1" >
+         <widget class="QCheckBox" name="checkBox" >
+          <property name="text" >
+           <string>Network Okay</string>
+          </property>
+          <property name="checkable" >
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" >
+         <widget class="QCheckBox" name="checkBox_6" >
+          <property name="text" >
+           <string>UPnP Active</string>
+          </property>
+          <property name="checkable" >
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" >
+         <widget class="QCheckBox" name="checkBox_5" >
+          <property name="text" >
+           <string>DHT Okay</string>
+          </property>
+          <property name="checkable" >
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1" >
+         <widget class="QCheckBox" name="checkBox_2" >
+          <property name="text" >
+           <string>Found Ext IP Addr</string>
+          </property>
+          <property name="checkable" >
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1" >
+         <widget class="QCheckBox" name="checkBox_3" >
+          <property name="text" >
+           <string>UDP Connections</string>
+          </property>
+          <property name="checkable" >
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1" >
+         <widget class="QCheckBox" name="checkBox_4" >
+          <property name="text" >
+           <string>TCP server</string>
+          </property>
+          <property name="checkable" >
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" >
         <item>
-         <layout class="QHBoxLayout" >
+         <layout class="QVBoxLayout" >
           <item>
-           <widget class="QLabel" name="label_6" >
+           <widget class="QLabel" name="label" >
             <property name="text" >
-             <string>Network Status</string>
+             <string>Local Address</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QTextEdit" name="netStatusBox" />
+           <widget class="QLabel" name="label_2" >
+            <property name="text" >
+             <string>External Address</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" >
-          <item>
-           <layout class="QVBoxLayout" >
-            <item>
-             <widget class="QLabel" name="label" >
-              <property name="text" >
-               <string>Local Address</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_2" >
-              <property name="text" >
-               <string>External Address</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+         <layout class="QGridLayout" >
+          <item row="0" column="0" >
+           <widget class="QLineEdit" name="localAddress" />
           </item>
-          <item>
-           <layout class="QGridLayout" >
-            <item row="0" column="0" >
-             <widget class="QLineEdit" name="localAddress" />
-            </item>
-            <item row="0" column="1" >
-             <widget class="QLabel" name="label_5" >
-              <property name="text" >
-               <string>Port:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2" >
-             <widget class="QSpinBox" name="localPort" >
-              <property name="minimum" >
-               <number>0</number>
-              </property>
-              <property name="maximum" >
-               <number>65535</number>
-              </property>
-              <property name="value" >
-               <number>7812</number>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" >
-             <widget class="QLineEdit" name="extAddress" />
-            </item>
-            <item row="1" column="1" >
-             <widget class="QLabel" name="label_4" >
-              <property name="text" >
-               <string>Port:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2" >
-             <widget class="QSpinBox" name="extPort" >
-              <property name="minimum" >
-               <number>0</number>
-              </property>
-              <property name="maximum" >
-               <number>65535</number>
-              </property>
-              <property name="value" >
-               <number>7812</number>
-              </property>
-             </widget>
-            </item>
-           </layout>
+          <item row="0" column="1" >
+           <widget class="QLabel" name="label_5" >
+            <property name="text" >
+             <string>Port:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2" >
+           <widget class="QSpinBox" name="localPort" >
+            <property name="minimum" >
+             <number>0</number>
+            </property>
+            <property name="maximum" >
+             <number>65535</number>
+            </property>
+            <property name="value" >
+             <number>7812</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLineEdit" name="extAddress" />
+          </item>
+          <item row="1" column="1" >
+           <widget class="QLabel" name="label_4" >
+            <property name="text" >
+             <string>Port:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2" >
+           <widget class="QSpinBox" name="extPort" >
+            <property name="minimum" >
+             <number>0</number>
+            </property>
+            <property name="maximum" >
+             <number>65535</number>
+            </property>
+            <property name="value" >
+             <number>7812</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>

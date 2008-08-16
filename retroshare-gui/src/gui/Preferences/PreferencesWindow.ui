@@ -478,17 +478,6 @@
     </disabled>
    </palette>
   </property>
-  <property name="font" >
-   <font>
-    <family>Arial</family>
-    <pointsize>10</pointsize>
-    <weight>50</weight>
-    <italic>false</italic>
-    <bold>false</bold>
-    <underline>false</underline>
-    <strikeout>false</strikeout>
-   </font>
-  </property>
   <property name="contextMenuPolicy" >
    <enum>Qt::NoContextMenu</enum>
   </property>
@@ -509,20 +498,26 @@
   </property>
   <widget class="QWidget" name="centralwidget" >
    <layout class="QGridLayout" >
-    <property name="margin" >
+    <property name="leftMargin" >
      <number>6</number>
     </property>
-    <property name="spacing" >
+    <property name="topMargin" >
+     <number>6</number>
+    </property>
+    <property name="rightMargin" >
+     <number>6</number>
+    </property>
+    <property name="bottomMargin" >
+     <number>6</number>
+    </property>
+    <property name="horizontalSpacing" >
+     <number>3</number>
+    </property>
+    <property name="verticalSpacing" >
      <number>3</number>
     </property>
     <item row="2" column="0" >
      <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
       <item row="0" column="1" >
        <widget class="QPushButton" name="cancelprefButton" >
         <property name="minimumSize" >
@@ -1072,14 +1067,17 @@
     </size>
    </property>
    <attribute name="toolBarArea" >
-    <number>4</number>
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
    </attribute>
   </widget>
  </widget>
  <customwidgets>
   <customwidget>
    <class>ConfigPageStack</class>
-   <extends>QStackedPageWidget</extends>
+   <extends>QWidget</extends>
    <header>gui/Preferences/configpagestack.h</header>
   </customwidget>
  </customwidgets>

@@ -30,6 +30,8 @@
  * #define DEBUG_ITEM 1
  ****/
 
+#define DEBUG_ITEM 1
+
 /*******************************************************************
  * SubFileItem fully controls the file transfer from the gui side
  *
@@ -536,6 +538,8 @@ void SubFileItem::download()
 	}
 
 	// TEMP
+	std::cerr << "SubFileItem::download() Calling File Request";
+	std::cerr << std::endl;
 	rsFiles->FileRequest(mFileName, mFileHash, mFileSize, "", 0);
 
 }

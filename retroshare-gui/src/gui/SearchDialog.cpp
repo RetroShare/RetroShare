@@ -227,6 +227,8 @@ void SearchDialog::download()
         // call the download
 	if (item->text(SR_ID_COL) != "Local")
 	{
+		std::cerr << "SearchDialog::download() Calling File Request";
+		std::cerr << std::endl;
         	rsFiles -> FileRequest((item->text(SR_NAME_COL)).toStdString(), 
                                   (item->text(SR_HASH_COL)).toStdString(), 
                                   (item->text(SR_SIZE_COL)).toInt(), 

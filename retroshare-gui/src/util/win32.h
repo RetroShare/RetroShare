@@ -24,8 +24,6 @@
 #ifndef _WIN32_H
 #define _WIN32_H
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
 #include <QHash>
 #include <QString>
 

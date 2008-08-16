@@ -287,6 +287,9 @@ void MessagesDialog::getallrecommended()
 	for(fit = fnames.begin(), hit = hashes.begin(), sit = sizes.begin(); 
 		fit != fnames.end(); fit++, hit++, sit++)
 	{
+		std::cerr << "MessagesDialog::getallrecommended() Calling File Request";
+		std::cerr << std::endl;
+
         	rsFiles -> FileRequest(*fit, *hit, *sit, "", 0);
 	}
 }

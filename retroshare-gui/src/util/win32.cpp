@@ -20,6 +20,13 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#ifdef WIN32
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+#endif
+
 #if 0
 #include <windows.h>
 #include <shlobj.h>
@@ -63,6 +70,7 @@ win32_get_folder_location(int folder, QString defaultPath)
 QString
 win32_registry_get_key_value(QString keyLocation, QString keyName)
 {
+#ifdef WIN32
   HKEY key;
   char data[255] = {0};
   DWORD size = sizeof(data);
@@ -81,12 +89,16 @@ win32_registry_get_key_value(QString keyLocation, QString keyName)
   RegCloseKey(key);
 
   return QString(data);
+#else
+  return QString();
+#endif
 }
 
 /** Creates and/or sets the key to the specified value */
 void
 win32_registry_set_key_value(QString keyLocation, QString keyName, QString keyValue)
 {
+#ifdef WIN32
   HKEY key;
   
   /* Open the key for writing (opens new key if it doesn't exist */
@@ -108,12 +120,14 @@ win32_registry_set_key_value(QString keyLocation, QString keyName, QString keyVa
 
   /* Close the key */
   RegCloseKey(key);
+#endif
 }
 
 /** Removes the key from the registry if it exists */
 void
 win32_registry_remove_key(QString keyLocation, QString keyName)
 {
+#ifdef WIN32
   HKEY key;
   
   /* Open the key for writing (opens new key if it doesn't exist */
@@ -127,6 +141,7 @@ win32_registry_remove_key(QString keyLocation, QString keyName)
 
   /* Close anything that was opened */
   RegCloseKey(key);
+#endif
 }
 
 /** Gets the location of the user's %PROGRAMFILES% folder. */
