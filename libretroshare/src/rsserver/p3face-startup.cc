@@ -546,7 +546,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	rsNotify = new p3Notify();
 
 	mConnMgr = new p3ConnectMgr(mAuthMgr);
-	p3UpnpMgr *mUpnpMgr = new upnphandler();
+	pqiNetAssistFirewall *mUpnpMgr = new upnphandler();
 	p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr, config->basedir);
 
 	CacheStrapper *mCacheStrapper = new CacheStrapper(mAuthMgr, mConnMgr);
@@ -637,8 +637,8 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 	/**************************************************************************/
 
-	mConnMgr->setDhtMgr(mDhtMgr);
-	mConnMgr->setUpnpMgr(mUpnpMgr);
+	mConnMgr->addNetAssistConnect(1, mDhtMgr);
+	mConnMgr->addNetAssistFirewall(1, mUpnpMgr);
 
 	/**************************************************************************/
 	/* need to Monitor too! */

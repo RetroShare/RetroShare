@@ -391,7 +391,7 @@ int main(int argc, char **argv)
 
 
 	std::cerr << "Switching on DhtTester()" << std::endl;
-	dhtTester.setDhtOn(true);
+	dhtTester.enable(true);
 
 	/* wait loop */
 	while(1)

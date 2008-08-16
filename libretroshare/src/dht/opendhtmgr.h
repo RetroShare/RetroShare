@@ -42,8 +42,8 @@ class OpenDHTMgr: public p3DhtMgr
         protected:
 
 	/********** OVERLOADED FROM p3DhtMgr ***************/
-virtual bool    init();
-virtual bool    shutdown();
+virtual bool    dhtInit();
+virtual bool    dhtShutdown();
 virtual bool    dhtActive();
 virtual int     status(std::ostream &out);
 

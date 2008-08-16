@@ -24,6 +24,7 @@
  */
 
 #include "pqi/p3connmgr.h"
+#include "pqi/p3dhtmgr.h" // Only need it for constants.
 #include "tcponudp/tou.h"
 
 #include "util/rsprint.h"
@@ -62,6 +63,7 @@ const uint32_t MAX_UPNP_INIT = 		10; /* seconds UPnP timeout */
  * #define P3CONNMGR_NO_AUTO_CONNECTION 1
  ***/
 
+#define CONN_DEBUG 1
 const uint32_t P3CONNMGR_TCP_DEFAULT_DELAY = 2; /* 2 Seconds? is it be enough! */
 const uint32_t P3CONNMGR_UDP_DHT_DELAY     = DHT_NOTIFY_PERIOD + 60; /* + 1 minute for DHT POST */
 const uint32_t P3CONNMGR_UDP_PROXY_DELAY   = 30;  /* 30 seconds (NOT IMPLEMENTED YET!) */
@@ -105,7 +107,7 @@ peerConnectState::peerConnectState()
 
 p3ConnectMgr::p3ConnectMgr(p3AuthMgr *am)
 	:p3Config(CONFIG_TYPE_PEERS), 
-	mAuthMgr(am), mDhtMgr(NULL), mUpnpMgr(NULL), mNetStatus(RS_NET_UNKNOWN), 
+	mAuthMgr(am), mNetStatus(RS_NET_UNKNOWN), 
 	mStunStatus(0), mStunFound(0), mStunMoreRequired(true), 
 	mStatusChanged(false)
 {
@@ -167,7 +169,7 @@ void p3ConnectMgr::setOwnNetConfig(uint32_t netMode, uint32_t visState)
 	/* if we've started up - then tweak Dht On/Off */
 	if (mNetStatus != RS_NET_UNKNOWN)
 	{
-		mDhtMgr->setDhtOn(!(ownState.visState & RS_VIS_STATE_NODHT));
+		enableNetAssistFirewall(!(ownState.visState & RS_VIS_STATE_NODHT));
 	}
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
@@ -307,8 +309,10 @@ bool p3ConnectMgr::shutdown() /* blocking shutdown call */
 
 	if (upnpActive)
 	{
-		mUpnpMgr->shutdownUPnP();
+		netAssistFirewallShutdown();
 	}
+	netAssistConnectShutdown();
+
 	return true;
 }
 
@@ -465,7 +469,7 @@ void p3ConnectMgr::netDhtInit()
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
 
-	mDhtMgr->setDhtOn(!(vs & RS_VIS_STATE_NODHT));
+	enableNetAssistFirewall(!(vs & RS_VIS_STATE_NODHT));
 }
 
 
@@ -490,10 +494,8 @@ void p3ConnectMgr::netUpnpInit()
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
 
-	mUpnpMgr->setInternalPort(iport);
-	mUpnpMgr->setExternalPort(eport);
-
-	mUpnpMgr->enableUPnP(true);
+	netAssistFirewallPorts(iport, eport);
+	enableNetAssistFirewall(true);
 }
 
 void p3ConnectMgr::netUpnpCheck()
@@ -506,7 +508,7 @@ void p3ConnectMgr::netUpnpCheck()
 	connMtx.unlock(); /* UNLOCK MUTEX */
 
 	struct sockaddr_in extAddr;
-	int upnpState = mUpnpMgr->getUPnPActive();
+	int upnpState = netAssistFirewallActive();
 
 	if ((upnpState < 0) ||
 	   ((upnpState == 0) && (delta > MAX_UPNP_INIT)))
@@ -525,7 +527,7 @@ void p3ConnectMgr::netUpnpCheck()
 		connMtx.unlock(); /* UNLOCK MUTEX */
 	}
 	else if ((upnpState > 0) &&
-		mUpnpMgr->getExternalAddress(extAddr))
+		netAssistExtAddress(extAddr))
 	{
 		/* switch to UDP startup */
 		connMtx.lock();   /*   LOCK MUTEX */
@@ -644,12 +646,12 @@ void p3ConnectMgr::netUdpCheck()
 
 		if (extValid)
 		{
-			mDhtMgr->setExternalInterface(iaddr, extAddr, mode);
+			netAssistSetAddress(iaddr, extAddr, mode);
 		}
 		else
 		{
 			/* mode = 0 for error */
-			mDhtMgr->setExternalInterface(iaddr, extAddr, mode);
+			netAssistSetAddress(iaddr, extAddr, mode);
 		}
 
 		/* flag unreachables! */
@@ -809,11 +811,13 @@ void p3ConnectMgr::stunInit()
 
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
+	netAssistStun(true);
+
 	/* push stun list to DHT */
 	std::list<std::string>::iterator it;
 	for(it = mStunList.begin(); it != mStunList.end(); it++)
 	{
-		mDhtMgr->addStun(*it);
+		netAssistAddStun(*it);
 	}
 	mStunStatus = RS_STUN_DHT;
 	mStunFound = 0;
@@ -849,7 +853,7 @@ bool p3ConnectMgr::stunCheck()
 	if (udpExtAddressCheck() && (stunOk))
 	{
 		/* set external UDP address */
-		mDhtMgr->doneStun();
+		netAssistStun(false);
 
 		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
@@ -1338,17 +1342,14 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags)
 	it = mFriendList.find(id);
 	if (it == mFriendList.end())
 	{
+#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr::connectResult() Failed, missing Friend ";
+		std::cerr << " id: " << id;
+		std::cerr << std::endl;
+#endif
 		return false;
 	}
 
-#ifdef CONN_DEBUG
-	std::cerr << "p3ConnectMgr::connectResult() Success: ";
-	std::cerr << " id: " << id;
-	std::cerr << std::endl;
-	std::cerr << " Success: " << success;
-	std::cerr << " flags: " << flags;
-	std::cerr << std::endl;
-#endif
 
 	it->second.inConnAttempt = false;
 
@@ -1356,17 +1357,17 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags)
 	{
 		/* remove other attempts */
 		it->second.connAddrs.clear();
-		mDhtMgr->dropPeer(id);
+		netAssistFriend(id, false);
 
 		/* update address (will come through from DISC) */
 
 #ifdef CONN_DEBUG
-	std::cerr << "p3ConnectMgr::connectAttempt() Success: ";
-	std::cerr << " id: " << id;
-	std::cerr << std::endl;
-	std::cerr << " Success: " << success;
-	std::cerr << " flags: " << flags;
-	std::cerr << std::endl;
+		std::cerr << "p3ConnectMgr::connectResult() Connect!: ";
+		std::cerr << " id: " << id;
+		std::cerr << std::endl;
+		std::cerr << " Success: " << success;
+		std::cerr << " flags: " << flags;
+		std::cerr << std::endl;
 #endif
 
 
@@ -1380,6 +1381,15 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags)
 		return true;
 	}
 
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::connectResult() Disconnect/Fail: ";
+	std::cerr << " id: " << id;
+	std::cerr << std::endl;
+	std::cerr << " Success: " << success;
+	std::cerr << " flags: " << flags;
+	std::cerr << std::endl;
+#endif
+
 	/* if currently connected -> flag as failed */
 	if (it->second.state & RS_PEER_S_CONNECTED)
 	{
@@ -1388,14 +1398,14 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags)
 
 		it->second.lastcontact = time(NULL);  /* time of disconnect */
 
-		mDhtMgr->findPeer(id);
+		netAssistFriend(id, true);
 		if (it->second.visState & RS_VIS_STATE_NODHT)
 		{
 			/* hidden from DHT world */
 		}
 		else
 		{
-			mDhtMgr->findPeer(id);
+			//netAssistFriend(id, true);
 		}
 
 	}
@@ -2103,11 +2113,11 @@ bool p3ConnectMgr::addFriend(std::string id, uint32_t netMode, uint32_t visState
 		if (it->second.visState & RS_VIS_STATE_NODHT)
 		{
 			/* hidden from DHT world */
-			mDhtMgr->dropPeer(id);
+			netAssistFriend(id, false);
 		}
 		else
 		{
-			mDhtMgr->findPeer(id);
+			netAssistFriend(id, true);
 		}
 
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
@@ -2152,7 +2162,7 @@ bool p3ConnectMgr::addFriend(std::string id, uint32_t netMode, uint32_t visState
 	mStatusChanged = true;
 
 	/* expect it to be a standard DHT */
-	mDhtMgr->findPeer(id);
+	netAssistFriend(id, true);
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
@@ -2168,7 +2178,7 @@ bool p3ConnectMgr::removeFriend(std::string id)
 	std::cerr << std::endl;
 #endif
 
-	mDhtMgr->dropPeer(id);
+	netAssistFriend(id, false);
 
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
@@ -2551,7 +2561,7 @@ bool   p3ConnectMgr::retryConnectNotify(std::string id)
 		}
 
 		/* attempt UDP connection */
-		mDhtMgr->notifyPeer(id);
+		netAssistNotify(id);
 	}
 
 	return true; 
@@ -2682,11 +2692,11 @@ bool    p3ConnectMgr::setVisState(std::string id, uint32_t visState)
 		if (it->second.visState & RS_VIS_STATE_NODHT)
 		{
 			/* hidden from DHT world */
-			mDhtMgr->dropPeer(id);
+			netAssistFriend(id, false);
 		}
 		else
 		{
-			mDhtMgr->findPeer(id);
+			netAssistFriend(id, true);
 		}
 	}
 
@@ -2696,22 +2706,6 @@ bool    p3ConnectMgr::setVisState(std::string id, uint32_t visState)
 }
 
 
-
-
-bool p3ConnectMgr::getUPnPState()
-{
-	return mUpnpMgr->getUPnPActive();
-}
-
-bool p3ConnectMgr::getUPnPEnabled()
-{
-	return mUpnpMgr->getUPnPEnabled();
-}
-
-bool p3ConnectMgr::getDHTEnabled()
-{
-	return mDhtMgr->getDhtOn();
-}
 
 
 /*******************************************************************/
@@ -3015,6 +3009,193 @@ bool  p3ConnectMgr::addBootstrapStunPeers()
 
 	return true;
 }
+
+/************************ INTERFACES ***********************/
+
+
+bool p3ConnectMgr::enableNetAssistFirewall(bool on)
+{
+	std::map<uint32_t, pqiNetAssistFirewall *>::iterator it;
+	for(it = mFwAgents.begin(); it != mFwAgents.end(); it++)
+	{
+		(it->second)->enable(on);
+	}
+	return true;
+}
+
+
+bool p3ConnectMgr::netAssistFirewallEnabled()
+{
+	std::map<uint32_t, pqiNetAssistFirewall *>::iterator it;
+	for(it = mFwAgents.begin(); it != mFwAgents.end(); it++)
+	{
+		if ((it->second)->getEnabled())
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool p3ConnectMgr::netAssistFirewallActive()
+{
+	std::map<uint32_t, pqiNetAssistFirewall *>::iterator it;
+	for(it = mFwAgents.begin(); it != mFwAgents.end(); it++)
+	{
+		if ((it->second)->getActive())
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool p3ConnectMgr::netAssistFirewallShutdown()
+{
+	std::map<uint32_t, pqiNetAssistFirewall *>::iterator it;
+	for(it = mFwAgents.begin(); it != mFwAgents.end(); it++)
+	{
+		(it->second)->shutdown();
+	}
+	return true;
+}
+
+bool p3ConnectMgr::netAssistFirewallPorts(uint16_t iport, uint16_t eport)
+{
+	std::map<uint32_t, pqiNetAssistFirewall *>::iterator it;
+	for(it = mFwAgents.begin(); it != mFwAgents.end(); it++)
+	{
+		(it->second)->setInternalPort(iport);
+		(it->second)->setExternalPort(eport);
+	}
+	return true;
+}
+
+
+bool p3ConnectMgr::netAssistExtAddress(struct sockaddr_in &extAddr)
+{
+	std::map<uint32_t, pqiNetAssistFirewall *>::iterator it;
+	for(it = mFwAgents.begin(); it != mFwAgents.end(); it++)
+	{
+		if ((it->second)->getActive())
+		{
+			if ((it->second)->getExternalAddress(extAddr))
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool p3ConnectMgr::enableNetAssistConnect(bool on)
+{
+	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
+	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	{
+		(it->second)->enable(on);
+	}
+	return true;
+}
+
+bool p3ConnectMgr::netAssistConnectEnabled()
+{
+	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
+	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	{
+		if ((it->second)->getEnabled())
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool p3ConnectMgr::netAssistConnectActive()
+{
+	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
+	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	{
+		if ((it->second)->getActive())
+
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool p3ConnectMgr::netAssistConnectShutdown()
+{
+	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
+	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	{
+		(it->second)->shutdown();
+	}
+	return true;
+}
+
+bool p3ConnectMgr::netAssistFriend(std::string id, bool on)
+{
+	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
+	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	{
+		if (on)
+		{
+			(it->second)->findPeer(id);
+		}
+		else
+		{
+			(it->second)->dropPeer(id);
+		}
+	}
+	return true;
+}
+
+bool p3ConnectMgr::netAssistAddStun(std::string id)
+{
+	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
+	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	{
+		(it->second)->addStun(id);
+	}
+	return true;
+}
+
+
+bool p3ConnectMgr::netAssistStun(bool on)
+{
+	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
+	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	{
+		(it->second)->enableStun(on);
+	}
+	return true;
+}
+
+bool p3ConnectMgr::netAssistNotify(std::string id)
+{
+	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
+	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	{
+		(it->second)->notifyPeer(id);
+	}
+	return true;
+}
+
+
+bool p3ConnectMgr::netAssistSetAddress( struct sockaddr_in &laddr,
+					struct sockaddr_in &eaddr,
+					uint32_t mode)
+{
+	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
+	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	{
+		(it->second)->setExternalInterface(laddr, eaddr, mode);
+	}
+	return true;
+}
+
 
 
 

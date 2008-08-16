@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 
 
 	std::cerr << "Switching on DhtTester()" << std::endl;
-	dhtTester.setDhtOn(true);
+	dhtTester.enable(true);
 
 	std::cerr << "Adding a List of Peers" << std::endl;
 	std::list<std::string>::iterator it;

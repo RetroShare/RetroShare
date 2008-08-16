@@ -8,7 +8,9 @@
 
 /* platform independent networking... */
 #include "pqi/pqinetwork.h"
-#include "pqi/p3upnpmgr.h"
+#include "pqi/pqiassist.h"
+
+#include "util/rsthreads.h"
 
 class upnpentry
 {
@@ -42,20 +44,20 @@ class upnpforward
 
 class uPnPConfigData;
 
-class upnphandler: public p3UpnpMgr
+class upnphandler: public pqiNetAssistFirewall
 {
 	public:
 
 	upnphandler();
 virtual	~upnphandler();
 
-	/* External Interface */
-virtual void    enableUPnP(bool active);
-virtual void    shutdownUPnP();
-virtual void 	restartUPnP();
+	/* External Interface (pqiNetAssistFirewall) */
+virtual void    enable(bool active);
+virtual void    shutdown();
+virtual void 	restart();
 
-virtual bool    getUPnPEnabled();
-virtual bool    getUPnPActive();
+virtual bool    getEnabled();
+virtual bool    getActive();
 
 virtual void    setInternalPort(unsigned short iport_in);
 virtual void    setExternalPort(unsigned short eport_in);

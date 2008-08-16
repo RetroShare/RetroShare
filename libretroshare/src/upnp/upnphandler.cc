@@ -412,7 +412,7 @@ upnphandler::~upnphandler()
 }
 
 	/* RsIface */
-void  upnphandler::enableUPnP(bool active)
+void  upnphandler::enable(bool active)
 {
 	dataMtx.lock();   /***  LOCK MUTEX  ***/
 
@@ -443,7 +443,7 @@ void  upnphandler::enableUPnP(bool active)
 }
 
 
-void    upnphandler::shutdownUPnP()
+void    upnphandler::shutdown()
 {
 	/* blocking call to shutdown upnp */
 
@@ -451,7 +451,7 @@ void    upnphandler::shutdownUPnP()
 }
 
 
-void    upnphandler::restartUPnP()
+void    upnphandler::restart()
 {
 	/* non-blocking call to shutdown upnp, and startup again. */
 	background_setup_upnp(true, true);
@@ -459,7 +459,7 @@ void    upnphandler::restartUPnP()
 
 
 
-bool    upnphandler::getUPnPEnabled()
+bool    upnphandler::getEnabled()
 {
 	dataMtx.lock();   /***  LOCK MUTEX  ***/
 
@@ -470,7 +470,7 @@ bool    upnphandler::getUPnPEnabled()
 	return on;
 }
 
-bool    upnphandler::getUPnPActive()
+bool    upnphandler::getActive()
 {
 	dataMtx.lock();   /***  LOCK MUTEX  ***/
 

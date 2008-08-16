@@ -23,11 +23,12 @@
  *
  */
 
-#include "pqi/p3dhtmgr.h"
-#include "pqi/p3connmgr.h"
-#include <openssl/sha.h>
 #include <sstream>
 #include <iomanip>
+#include <openssl/sha.h>
+
+#include "pqi/p3dhtmgr.h"
+#include "pqi/p3connmgr.h"
 
 #include "util/rsprint.h"
 #include "util/rsdebug.h"
@@ -87,7 +88,7 @@ dhtPeerEntry::dhtPeerEntry()
 }
 
 p3DhtMgr::p3DhtMgr(std::string id, pqiConnectCb *cb)
-	:connCb(cb), mStunRequired(true) 
+	:pqiNetAssistConnect(id, cb), mStunRequired(true) 
 {
 	/* setup own entry */
 	dhtMtx.lock(); /* LOCK MUTEX */
@@ -115,7 +116,21 @@ p3DhtMgr::p3DhtMgr(std::string id, pqiConnectCb *cb)
 	return;
 }
 
-void    p3DhtMgr::setDhtOn(bool on)
+	/* OVERLOADED from pqiNetAssistConnect
+	 */
+
+void	p3DhtMgr::shutdown()
+{
+	/* ??? */
+
+}
+
+void 	p3DhtMgr::restart()
+{
+	/* ??? */
+}
+
+void    p3DhtMgr::enable(bool on)
 {
 	dhtMtx.lock(); /* LOCK MUTEX */
 
@@ -125,7 +140,7 @@ void    p3DhtMgr::setDhtOn(bool on)
 	dhtMtx.unlock(); /* UNLOCK MUTEX */
 }
 
-bool    p3DhtMgr::getDhtOn()
+bool    p3DhtMgr::getEnabled()
 {
 	dhtMtx.lock(); /* LOCK MUTEX */
 
@@ -136,7 +151,7 @@ bool    p3DhtMgr::getDhtOn()
 	return on;
 }
 
-bool    p3DhtMgr::getDhtActive()
+bool    p3DhtMgr::getActive()
 {
 	dhtMtx.lock(); /* LOCK MUTEX */
 
@@ -392,16 +407,19 @@ bool p3DhtMgr::addStun(std::string id)
 	return true;
 }
 
-bool p3DhtMgr::doneStun()
+bool p3DhtMgr::enableStun(bool on)
 {
 	dhtMtx.lock(); /* LOCK MUTEX */
 
 	mDhtModifications = true;
 
-	/* clear up */
-	stunIds.clear();
+	if (!on)
+	{
+		/* clear up */
+		stunIds.clear();
+	}
 
-	mStunRequired = false;
+	mStunRequired = on;
 
 	dhtMtx.unlock(); /* UNLOCK MUTEX */
 
@@ -920,9 +938,9 @@ int p3DhtMgr::checkNotifyDHT()
 
 	/* feedback to say we started it! */
 #ifdef P3DHTMGR_USE_LOCAL_UDP_CONN
-	connCb->peerConnectRequest(peer.id, peer.laddr, RS_CB_DHT);
+	mConnCb->peerConnectRequest(peer.id, peer.laddr, RS_CB_DHT);
 #else
-	connCb->peerConnectRequest(peer.id, peer.raddr, RS_CB_DHT);
+	mConnCb->peerConnectRequest(peer.id, peer.raddr, RS_CB_DHT);
 #endif
 
 	return DHT_MIN_PERIOD; 
@@ -1197,7 +1215,7 @@ void p3DhtMgr::checkDHTStatus()
 #ifdef DHT_DEBUG
 		std::cerr << "p3DhtMgr::checkDhtStatus() toShutdown = true -> shutdown()" << std::endl;
 #endif
-		if (shutdown())
+		if (dhtShutdown())
 		{
 			clearDhtData();
 
@@ -1215,9 +1233,9 @@ void p3DhtMgr::checkDHTStatus()
 	if (toStartup)
 	{
 #ifdef DHT_DEBUG
-		std::cerr << "p3DhtMgr::checkDhtStatus() toStartup = true -> init()" << std::endl;
+		std::cerr << "p3DhtMgr::checkDhtStatus() toStartup = true -> dhtInit()" << std::endl;
 #endif
-		if (init())
+		if (dhtInit())
 		{
 
 			dhtMtx.lock(); /* LOCK MUTEX */
@@ -1287,15 +1305,15 @@ int  p3DhtMgr::status(std::ostream &out)
 
 
 
-bool p3DhtMgr::init()
+bool p3DhtMgr::dhtInit()
 {
-	std::cerr << "p3DhtMgr::init() DUMMY FN" << std::endl;
+	std::cerr << "p3DhtMgr::dhtInit() DUMMY FN" << std::endl;
 	return true;	
 }
 
-bool p3DhtMgr::shutdown()
+bool p3DhtMgr::dhtShutdown()
 {
-	std::cerr << "p3DhtMgr::shutdown() DUMMY FN" << std::endl;
+	std::cerr << "p3DhtMgr::dhtShutdown() DUMMY FN" << std::endl;
 	return true;	
 }
 
@@ -1734,13 +1752,13 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 
 	if (doCb)
 	{
-		connCb->peerStatus(ent.id, ent.laddr, ent.raddr, 
+		mConnCb->peerStatus(ent.id, ent.laddr, ent.raddr, 
 				ent.type, 0, RS_CB_DHT);
 	}
 
 	if (doStun)
 	{
-		connCb->stunStatus(idhash, raddr, type, stunFlags);
+		mConnCb->stunStatus(idhash, raddr, type, stunFlags);
 	}
 			
 	return true;

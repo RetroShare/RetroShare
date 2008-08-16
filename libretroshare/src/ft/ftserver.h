@@ -197,8 +197,8 @@ bool  loadConfigMap(std::map<std::string, std::string> &configMap);
 	private:
 
 	/**** INTERNAL FUNCTIONS ***/
-virtual int 	reScanDirs();
-virtual int 	check_dBUpdate();
+//virtual int 	reScanDirs();
+//virtual int 	check_dBUpdate();
 
 	private:
 

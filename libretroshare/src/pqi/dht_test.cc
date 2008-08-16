@@ -229,7 +229,7 @@ int main()
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	std::cerr << "Switching on DhtTester()" << std::endl;
-	dhtTester.setDhtOn(true);
+	dhtTester.enable(true);
 
 	std::cerr << "Adding a List of Peers" << std::endl;
 	for(int i = 0; i < NumOfPeers; i++)

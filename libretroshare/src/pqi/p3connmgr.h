@@ -27,9 +27,11 @@
 #define MRK_PQI_CONNECTION_MANAGER_HEADER
 
 #include "pqi/pqimonitor.h"
-#include "pqi/p3dhtmgr.h"
-#include "pqi/p3upnpmgr.h"
 #include "pqi/p3authmgr.h"
+
+//#include "pqi/p3dhtmgr.h"
+//#include "pqi/p3upnpmgr.h"
+#include "pqi/pqiassist.h"
 
 #include "pqi/p3cfgmgr.h"
 
@@ -160,8 +162,9 @@ class p3ConnectMgr: public pqiConnectCb, public p3Config
 void 	tick();
 
 	/*************** Setup ***************************/
-void	setDhtMgr(p3DhtMgr *dmgr) 	{ mDhtMgr = dmgr; }
-void	setUpnpMgr(p3UpnpMgr *umgr)	{ mUpnpMgr = umgr; }
+void	addNetAssistConnect(uint32_t type, pqiNetAssistConnect *);
+void	addNetAssistFirewall(uint32_t type, pqiNetAssistFirewall *);
+
 bool	checkNetAddress(); /* check our address is sensible */
 
 	/*************** External Control ****************/
@@ -221,6 +224,30 @@ bool 	connectResult(std::string id, bool success, uint32_t flags);
 
 
 protected:
+	/****************** Internal Interface *******************/
+virtual bool enableNetAssistFirewall(bool on);
+virtual bool netAssistFirewallEnabled();
+virtual bool netAssistFirewallActive();
+virtual bool netAssistFirewallShutdown();
+
+virtual bool enableNetAssistConnect(bool on);
+virtual bool netAssistConnectEnabled();
+virtual bool netAssistConnectActive();
+virtual bool netAssistConnectShutdown();
+
+		/* Assist Firewall */
+bool netAssistExtAddress(struct sockaddr_in &extAddr);
+bool netAssistFirewallPorts(uint16_t iport, uint16_t eport);
+
+		/* Assist Connect */
+virtual bool netAssistFriend(std::string id, bool on);
+virtual bool netAssistAddStun(std::string id);
+virtual bool netAssistStun(bool on);
+virtual bool netAssistNotify(std::string id);
+virtual bool netAssistSetAddress( struct sockaddr_in &laddr,
+                                        struct sockaddr_in &eaddr,
+					uint32_t mode);
+
 
 	/* Internal Functions */
 void 	statusTick();
@@ -286,8 +313,9 @@ void 	addPeer(RsPeerConfigItem *item);
 private:
 
 	p3AuthMgr *mAuthMgr;
-	p3DhtMgr *mDhtMgr;
-	p3UpnpMgr *mUpnpMgr;
+
+	std::map<uint32_t, pqiNetAssistFirewall *> mFwAgents;
+	std::map<uint32_t, pqiNetAssistConnect  *> mDhts;
 
 	RsMutex connMtx; /* protects below */
 
@@ -323,3 +351,7 @@ void addPeer(std::string id, std::string name); /* tmp fn */
 };
 
 #endif // MRK_PQI_CONNECTION_MANAGER_HEADER
+
+
+
+

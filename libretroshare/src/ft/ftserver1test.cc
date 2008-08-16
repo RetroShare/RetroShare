@@ -1,0 +1,238 @@
+/*
+ * libretroshare/src/ft: ftserver1test.cc
+ *
+ * File Transfer for RetroShare.
+ *
+ * Copyright 2008 by Robert Fernie.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare@lunamutt.com".
+ *
+ */
+
+/*
+ * Test for Whole Basic system.....
+ *
+ * Put it all together, and make it compile.
+ */
+
+#include "ft/ftserver.h"
+
+#include "ft/ftextralist.h"
+#include "ft/ftdatamultiplex.h"
+#include "ft/ftfilesearch.h"
+
+#include "pqi/p3authmgr.h"
+#include "pqi/p3connmgr.h"
+
+#include "ft/pqitestor.h"
+
+
+
+
+
+
+
+void	do_random_server_test(ftDataMultiplex *mplex, ftExtraList *eList, std::list<std::string> &files);
+
+
+void usage(char *name)
+{
+	std::cerr << "Usage: " << name << " [-p <period>] [-d <dperiod>] <path> [<path2> ... ] ";
+	std::cerr << std::endl;
+}
+	
+int main(int argc, char **argv)
+{
+        int c;
+        uint32_t period = 1;
+        uint32_t dPeriod = 600; /* default 10 minutes */
+
+        std::list<std::string> fileList;
+	std::list<std::string> peerIds;
+	std::list<ftServer *> mFtServers;
+
+        while(-1 != (c = getopt(argc, argv, "d:p:")))
+        {
+                switch (c)
+                {
+                case 'p':
+                        peerIds.push_back(optarg);
+                        break;
+                case 'd':
+                        dPeriod = atoi(optarg);
+                        break;
+                default:
+                        usage(argv[0]);
+                        break;
+                }
+        }
+
+	if (optind >= argc)
+	{
+		std::cerr << "Missing Files" << std::endl;
+		usage(argv[0]);
+	}
+
+	for(; optind < argc; optind++)
+	{
+		std::cerr << "Adding: " << argv[optind] << std::endl;
+		fileList.push_back(std::string(argv[optind]));
+	}
+
+	/* We need to setup a series 2 - 4 different ftServers....
+	 *
+	 * Each one needs:
+	 *
+	 *
+	 * A List of peerIds...
+	 */
+
+	std::list<std::string>::const_iterator it, jit;
+
+	std::list<pqiAuthDetails> baseFriendList, friendList;
+	std::list<pqiAuthDetails>::iterator fit;
+
+	PQIHub *testHub = new PQIHub();
+	testHub->start();
+
+	/* Setup Base Friend Info */
+	for(it = peerIds.begin(); it != peerIds.end(); it++)
+	{
+		pqiAuthDetails pad;
+		pad.id = *it;
+		pad.name = *it;
+		pad.trustLvl = 5;
+		pad.ownsign = true;
+		pad.trusted = false;
+
+		baseFriendList.push_back(pad);
+
+		std::cerr << "ftserver1test::setup peer: " << *it;
+		std::cerr << std::endl;
+	}
+
+	for(it = peerIds.begin(); it != peerIds.end(); it++)
+	{
+		friendList = baseFriendList;
+		/* remove current one */
+		for(fit = friendList.begin(); fit != friendList.end(); fit++)
+		{
+			if (fit->id == *it)
+			{
+				friendList.erase(fit);
+				break;
+			}
+		}
+
+		p3AuthMgr *authMgr = new p3DummyAuthMgr(*it, friendList);
+		p3ConnectMgr *connMgr = new p3ConnectMgr(authMgr);
+
+		for(fit = friendList.begin(); fit != friendList.end(); fit++)
+		{
+			/* add as peer to authMgr */
+			connMgr->addFriend(fit->id);
+		}
+
+		PQIPipe *pipe = new PQIPipe(*it);
+
+		/* add server */
+		ftServer *server;
+		server = new ftServer(authMgr, connMgr);
+
+		PQInterface *pqi = NULL;
+		server->setPQInterface(pipe);
+
+		NotifyBase *base = NULL;
+		server->SetupFtServer(base);
+
+		testHub->addPQIPipe(*it, pipe, connMgr);
+		server->StartupThreads();
+
+		//server->start();
+		/* setup any extra bits */
+		server->setSharedDirectories(fileList);
+
+	}
+
+	/* stick your real test here */
+	while(1)
+	{
+		std::cerr << "ftserver1test::sleep()";
+		std::cerr << std::endl;
+		sleep(1);
+	}
+}
+
+
+#if 0
+
+uint32_t do_random_server_iteration(ftDataMultiplex *mplex, ftExtraList *eList, std::list<std::string> &files)
+{
+	std::cerr << "do_random_server_iteration()";
+	std::cerr << std::endl;
+
+	std::list<std::string>::iterator it;
+	uint32_t i = 0;
+	for(it = files.begin(); it != files.end(); it++)
+	{
+		FileInfo info;
+		if (eList->hashExtraFileDone(*it, info))
+		{
+			std::cerr << "Hash Done for: " << *it;
+			std::cerr << std::endl;
+			std::cerr << info << std::endl;
+
+			std::cerr << "Requesting Data Packet";
+			std::cerr << std::endl;
+
+        		/* Server Recv */
+                	uint64_t offset = 10000;
+			uint32_t chunk = 20000;
+			mplex->recvDataRequest("Peer", info.hash, info.size, offset, chunk);
+			
+			i++;
+		}
+		else
+		{
+			std::cerr << "do_random_server_iteration() Hash Not Done for: " << *it;
+			std::cerr << std::endl;
+		}
+	}
+
+	return i;
+
+}
+
+
+void	do_random_server_test(ftDataMultiplex *mplex, ftExtraList *eList, std::list<std::string> &files)
+{
+	std::cerr << "do_random_server_test()";
+	std::cerr << std::endl;
+
+	uint32_t size = files.size();
+	while(size > do_random_server_iteration(mplex, eList, files))
+	{
+		std::cerr << "do_random_server_test() sleep";
+		std::cerr << std::endl;
+
+		sleep(10);
+	}
+}
+
+
+#endif
+

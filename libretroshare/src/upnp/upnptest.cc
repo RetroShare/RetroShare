@@ -64,20 +64,20 @@ int main(int argc, char **argv)
 	if (i % 120 == 10)
 	{
 		/* start up a forward */
-		upnp.enableUPnP(true);
+		upnp.enable(true);
 
 	}
 
 	if (i % 120 == 60)
 	{
 		/* shutdown a forward */
-		upnp.restartUPnP();
+		upnp.restart();
 	}
 
 	if (i % 120 == 100)
 	{
 		/* shutdown a forward */
-		upnp.shutdownUPnP();
+		upnp.shutdown();
 	}
 
 	}

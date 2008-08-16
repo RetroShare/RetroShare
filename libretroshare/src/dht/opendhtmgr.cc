@@ -107,7 +107,7 @@ OpenDHTMgr::OpenDHTMgr(std::string ownId, pqiConnectCb* cb, std::string configdi
 
 
         /********** OVERLOADED FROM p3DhtMgr ***************/
-bool    OpenDHTMgr::init()
+bool    OpenDHTMgr::dhtInit()
 {
 	std::string configpath = mConfigDir;
 
@@ -134,7 +134,7 @@ bool    OpenDHTMgr::init()
 	return true;
 }
 
-bool    OpenDHTMgr::shutdown()
+bool    OpenDHTMgr::dhtShutdown()
 {
 	/* do nothing */
 	if (mClient)

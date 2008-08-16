@@ -36,6 +36,8 @@
 #include "util/rsthreads.h"
 #include "pqi/pqimonitor.h"
 
+#include "pqi/pqiassist.h"
+
 /* All other #defs are in .cc */
 #define DHT_ADDR_INVALID        0xff
 #define DHT_ADDR_TCP            0x01
@@ -90,7 +92,7 @@ class dhtPeerEntry
 	std::string hash2; /* SHA1 Hash of reverse Id */
 };
 
-class p3DhtMgr: public RsThread
+class p3DhtMgr: public pqiNetAssistConnect, public RsThread
 {
 	/* 
 	 */
@@ -102,32 +104,38 @@ class p3DhtMgr: public RsThread
 	 * for the DHT, and must be non-blocking and return quickly
 	 */
 
-void	setDhtOn(bool on);
-bool	getDhtOn();
-bool	getDhtActive();
+	/* OVERLOADED From pqiNetAssistConnect. */
 
-void	setBootstrapAllowed(bool on);
-bool 	getBootstrapAllowed();
+virtual void enable(bool on);
+virtual void shutdown();
+virtual void restart();
+
+virtual bool getEnabled(); /* on */
+virtual bool getActive();  /* actually working */
+
+virtual void	setBootstrapAllowed(bool on);
+virtual bool 	getBootstrapAllowed();
 
 	/* set key data */
-bool 	setExternalInterface(struct sockaddr_in laddr,
+virtual bool 	setExternalInterface(struct sockaddr_in laddr,
 			struct sockaddr_in raddr, uint32_t type);
 
 	/* add / remove peers */
-bool 	findPeer(std::string id);
-bool 	dropPeer(std::string id);
+virtual bool 	findPeer(std::string id);
+virtual bool 	dropPeer(std::string id);
 
 	/* post DHT key saying we should connect (callback when done) */
-bool 	notifyPeer(std::string id); 
+virtual bool 	notifyPeer(std::string id); 
 
 	/* extract current peer status */
-bool 	getPeerStatus(std::string id, 
+virtual bool 	getPeerStatus(std::string id, 
 			struct sockaddr_in &laddr, struct sockaddr_in &raddr, 
 			uint32_t &type, uint32_t &mode);
 
 	/* stun */
-bool 	addStun(std::string id);
-bool 	doneStun();
+virtual bool 	enableStun(bool on);
+virtual bool 	addStun(std::string id);
+	//doneStun();
 
 	/********** Higher Level DHT Work Functions ************************
 	 * These functions translate from the strings/addresss to 
@@ -177,8 +185,8 @@ virtual bool resultDHT(std::string key, std::string value);
 
 	protected:
 
-virtual bool    init();
-virtual bool    shutdown();
+virtual bool    dhtInit();
+virtual bool	dhtShutdown();
 virtual bool    dhtActive();
 virtual int     status(std::ostream &out);
 
@@ -214,7 +222,7 @@ std::string BootstrapId(uint32_t bin);
 std::string randomBootstrapId();
 
 	/* other feedback through callback */
-	pqiConnectCb *connCb;
+	// use pqiNetAssistConnect.. version pqiConnectCb *connCb;
 
 	/* protected by Mutex */
 	RsMutex dhtMtx;
