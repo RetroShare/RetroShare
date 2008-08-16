@@ -3013,6 +3013,12 @@ bool  p3ConnectMgr::addBootstrapStunPeers()
 /************************ INTERFACES ***********************/
 
 
+void p3ConnectMgr::addNetAssistFirewall(uint32_t id, pqiNetAssistFirewall *fwAgent)
+{
+	mFwAgents[id] = fwAgent;
+}
+
+
 bool p3ConnectMgr::enableNetAssistFirewall(bool on)
 {
 	std::map<uint32_t, pqiNetAssistFirewall *>::iterator it;
@@ -3086,6 +3092,12 @@ bool p3ConnectMgr::netAssistExtAddress(struct sockaddr_in &extAddr)
 		}
 	}
 	return false;
+}
+
+
+void p3ConnectMgr::addNetAssistConnect(uint32_t id, pqiNetAssistConnect *dht)
+{
+	mDhts[id] = dht;
 }
 
 bool p3ConnectMgr::enableNetAssistConnect(bool on)
@@ -3196,6 +3208,21 @@ bool p3ConnectMgr::netAssistSetAddress( struct sockaddr_in &laddr,
 	return true;
 }
 
+
+bool    p3ConnectMgr::getUPnPState()
+{
+	return netAssistFirewallActive();
+}
+
+bool	p3ConnectMgr::getUPnPEnabled()
+{
+	return netAssistFirewallEnabled();
+}
+
+bool	p3ConnectMgr::getDHTEnabled()
+{
+	return netAssistConnectEnabled();
+}
 
 
 

@@ -144,6 +144,15 @@ bool p3Files::FileControl(std::string hash, uint32_t flags)
 bool p3Files::FileRequest(std::string fname, std::string hash, uint32_t size, 
 	std::string dest, uint32_t flags, std::list<std::string> srcIds)
 {
+	std::cerr << "p3Files::FileRequest()";
+	std::cerr << std::endl;
+	std::cerr << "name:" << fname;
+	std::cerr << std::endl;
+	std::cerr << "size:" << size;
+	std::cerr << std::endl;
+	std::cerr << "dest:" << dest;
+	std::cerr << std::endl;
+
 	lockRsCore(); /* LOCKED */
 
 	std::cerr << "p3Files::FileRequest(" << fname << ", ";
@@ -152,6 +161,8 @@ bool p3Files::FileRequest(std::string fname, std::string hash, uint32_t size,
 	int ret = mServer -> getFile(fname, hash, size, dest);
 
 	unlockRsCore(); /* UNLOCKED */
+	std::cerr << "p3Files::FileRequest() Done";
+	std::cerr << std::endl;
 
 	return ret;
 }
