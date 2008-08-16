@@ -174,6 +174,7 @@ private:
     QAction* _messengerwindowAct;
     QAction* _smplayerAct;
     QAction* _helpAct;
+    QAction* _appAct;
     
     /** A BandwidthGraph object which handles monitoring RetroShare bandwidth usage */
     BandwidthGraph* _bandwidthGraph;

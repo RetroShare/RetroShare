@@ -13,6 +13,21 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>6</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>6</number>
+   </property>
+   <property name="spacing" >
+    <number>0</number>
+   </property>
    <item row="0" column="0" >
     <widget class="QTabWidget" name="tab_calendar" >
      <property name="tabShape" >
@@ -25,6 +40,14 @@
       <enum>Qt::ElideNone</enum>
      </property>
      <widget class="QWidget" name="localCal" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>734</width>
+        <height>501</height>
+       </rect>
+      </property>
       <attribute name="title" >
        <string>Local Calendars</string>
       </attribute>
@@ -212,7 +235,7 @@
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>40</width>
              <height>20</height>
@@ -239,6 +262,14 @@
       </layout>
      </widget>
      <widget class="QWidget" name="peerCal" >
+      <property name="geometry" >
+       <rect>
+        <x>26</x>
+        <y>45</y>
+        <width>760</width>
+        <height>509</height>
+       </rect>
+      </property>
       <attribute name="title" >
        <string>Peer Calendars</string>
       </attribute>

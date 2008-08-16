@@ -41,6 +41,8 @@ BlogDialog::BlogDialog(QWidget *parent)
 	
 	/* mLayout -> to add widgets to */
 	mLayout = new QVBoxLayout;
+	//mLayout->setSpacing(0);
+	//mLayout->setMargin(0);
 	
 	QWidget *middleWidget = new QWidget();
 	middleWidget->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
@@ -54,6 +56,8 @@ BlogDialog::BlogDialog(QWidget *parent)
 	
 	QVBoxLayout *layout2 = new QVBoxLayout;
 	layout2->addWidget(scrollArea);
+	layout2->setSpacing(0);
+	layout2->setMargin(0);
 	
 	frame->setLayout(layout2);
 	

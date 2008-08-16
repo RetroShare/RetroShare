@@ -60,6 +60,8 @@ TransferFeed::TransferFeed(QWidget *parent)
 
 	QVBoxLayout *layout2 = new QVBoxLayout;
 	layout2->addWidget(scrollArea);
+	layout2->setSpacing(0);
+	layout2->setMargin(0);
 	
      	frameDown->setLayout(layout2);
   }
@@ -82,6 +84,8 @@ TransferFeed::TransferFeed(QWidget *parent)
 
 	QVBoxLayout *layout2 = new QVBoxLayout;
 	layout2->addWidget(scrollArea);
+	layout2->setSpacing(0);
+	layout2->setMargin(0);
 	
      	frameUp->setLayout(layout2);
   }

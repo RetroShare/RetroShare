@@ -66,14 +66,16 @@ NewsFeed::NewsFeed(QWidget *parent)
 	middleWidget->setLayout(mLayout);
 
 
-     	QScrollArea *scrollArea = new QScrollArea;
-        //scrollArea->setBackgroundRole(QPalette::Dark);
+		QScrollArea *scrollArea = new QScrollArea;
+		//scrollArea->setBackgroundRole(QPalette::Dark);
 	scrollArea->setWidget(middleWidget);
 	scrollArea->setWidgetResizable(true);
 	scrollArea->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
 
 	QVBoxLayout *layout2 = new QVBoxLayout;
 	layout2->addWidget(scrollArea);
+	layout2->setSpacing(0);
+	layout2->setMargin(0);
 	
      	frame->setLayout(layout2);
 

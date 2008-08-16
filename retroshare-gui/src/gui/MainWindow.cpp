@@ -120,7 +120,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
     
     /*if(!_settings->value(QString::fromUtf8("StartMinimized"), false).toBool()) {
-    show();
+	show();
     }*/
 	
     /* Create all the dialogs of which we only want one instance */
@@ -293,6 +293,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 #ifdef RS_RELEASE_VERSION    
 #else
     menu->addAction(_bandwidthAct);
+    menu->addAction(_appAct);
 #endif
     menu->addAction(_prefsAct);
     menu->addAction(_smplayerAct);
@@ -516,6 +517,9 @@ void MainWindow::createActions()
           
     _messengerwindowAct = new QAction(QIcon(IMAGE_RSM16), tr("Open Messenger"), this);
     connect(_messengerwindowAct, SIGNAL(triggered()),this, SLOT(showMessengerWindow()));
+    
+    _appAct = new QAction(QIcon(IMAGE_UNFINISHED), tr("Applications"), this);
+    connect(_appAct, SIGNAL(triggered()),this, SLOT(showApplWindow()));
     
     _smplayerAct = new QAction(QIcon(IMAGE_SMPLAYER), tr("SMPlayer"), this);
     connect(_smplayerAct, SIGNAL(triggered()),this, SLOT(showsmplayer()));

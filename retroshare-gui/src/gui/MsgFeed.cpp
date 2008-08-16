@@ -62,6 +62,8 @@ MsgFeed::MsgFeed(QWidget *parent)
 
 	QVBoxLayout *layout2 = new QVBoxLayout;
 	layout2->addWidget(scrollArea);
+	layout2->setSpacing(0);
+	layout2->setMargin(0);
 	
      	frame->setLayout(layout2);
 

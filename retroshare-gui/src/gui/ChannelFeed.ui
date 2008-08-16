@@ -22,13 +22,13 @@
    <item>
     <layout class="QHBoxLayout" >
      <property name="leftMargin" >
-      <number>9</number>
+      <number>0</number>
      </property>
      <property name="topMargin" >
       <number>6</number>
      </property>
      <property name="rightMargin" >
-      <number>9</number>
+      <number>0</number>
      </property>
      <item>
       <widget class="QPushButton" name="chanButton" >

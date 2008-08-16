@@ -22,13 +22,13 @@
    <item row="0" column="0" >
     <layout class="QGridLayout" name="gridLayout" >
      <property name="leftMargin" >
-      <number>9</number>
+      <number>0</number>
      </property>
      <property name="topMargin" >
       <number>6</number>
      </property>
      <property name="rightMargin" >
-      <number>9</number>
+      <number>0</number>
      </property>
      <property name="horizontalSpacing" >
       <number>6</number>

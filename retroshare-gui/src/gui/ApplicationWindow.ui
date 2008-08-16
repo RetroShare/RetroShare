@@ -503,10 +503,19 @@
     </rect>
    </property>
    <layout class="QGridLayout" >
-    <property name="horizontalSpacing" >
+    <property name="leftMargin" >
+     <number>6</number>
+    </property>
+    <property name="topMargin" >
      <number>0</number>
     </property>
-    <property name="margin" >
+    <property name="rightMargin" >
+     <number>6</number>
+    </property>
+    <property name="bottomMargin" >
+     <number>0</number>
+    </property>
+    <property name="horizontalSpacing" >
      <number>0</number>
     </property>
     <item row="0" column="0" >
