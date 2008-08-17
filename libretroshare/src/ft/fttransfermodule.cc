@@ -43,7 +43,7 @@ ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm)
 
 	// Dummy for Testing (should be handled independantly for 
 	// each peer.
-	mChunkSize = 10000;
+	//mChunkSize = 10000;
 	return;
 }
 
@@ -100,7 +100,7 @@ uint32_t ftTransferModule::getDataRate(std::string peerId)
   if (mit == mOnlinePeers.end())
     return 0;
   else
-    return (mit->second).actualRate;
+    return (uint32_t) (mit->second).actualRate;
 }
 
 
@@ -136,12 +136,12 @@ void ftTransferModule::requestData(std::string peerId, uint64_t offset, uint32_t
 
 bool ftTransferModule::getChunk(uint64_t &offset, uint32_t &chunk_size)
 {
-  return mFileCreator->getMissingChunk(offset, chunk_size);
+  	return mFileCreator->getMissingChunk(offset, chunk_size);
 }
 
 bool ftTransferModule::storeData(uint64_t offset, uint32_t chunk_size,void *data)
 {
-	mFileCreator -> addFileData(offset, chunk_size, data);
+	return mFileCreator -> addFileData(offset, chunk_size, data);
 }
 
 void ftTransferModule::queryInactive()
@@ -153,7 +153,9 @@ void ftTransferModule::queryInactive()
 #endif
 
   int ts = time(NULL);
-  int offset,size,delta;  
+  uint64_t offset;
+  uint32_t size;
+  int delta;  
 
   std::map<std::string,peerInfo>::iterator mit;
   for(mit = mOnlinePeers.begin(); mit != mOnlinePeers.end(); mit++)
@@ -180,26 +182,26 @@ void ftTransferModule::queryInactive()
       //file request has been sent to peer side, but no response received yet  
       case PQIPEER_DOWNLOADING:
       	if (ts - ((mit->second).lastTS) > PQIPEER_DOWNLOAD_CHECK)
-      		requestData(mit->first, (mit->second).offset,(mit->second).size);  //give a push
+      		requestData(mit->first, (mit->second).offset,(mit->second).chunkSize);  //give a push
 
         actualRate += (mit->second).actualRate;
         break;
       
       //file response has been received or peer side is just ready for download  
       case PQIPEER_IDLE:
-     		(mit->second).actualRate = (mit->second).size/(ts-(mit-second).lastTS);
-        if ((mit->second).actualRate < (mit->second).desireRate)
+     		(mit->second).actualRate = (mit->second).chunkSize/(ts-(mit->second).lastTS);
+        if ((mit->second).actualRate < (mit->second).desiredRate)
         {
-          size = (mit->second).size *2 ;
+          size = (mit->second).chunkSize * 2 ;
         }
         else
         {
-          size = (mit->second).size * 0.9 ;
+          size = (uint32_t ) ((mit->second).chunkSize * 0.9) ;
         }
      		if (getChunk(offset,size))  
      		{
      			(mit->second).offset = offset;
-     			(mit->second).size = size;
+     			(mit->second).chunkSize = size;
      			(mit->second).lastTS = ts;
      			(mit->second).state = PQIPEER_DOWNLOADING;
      			requestData(mit->first,offset,size);
@@ -244,7 +246,8 @@ bool ftTransferModule::resumeTransfer()
 
 bool ftTransferModule::completeFileTransfer()
 {
-}	
+	return true;
+}
 
 int ftTransferModule::tick()
 {
@@ -265,12 +268,12 @@ void ftTransferModule::adjustSpeed()
     if (((mit->second).state == PQIPEER_DOWNLOADING) 
         || ((mit->second).state == PQIPEER_IDLE))
     {
-        if (actualRate < desiredRate) && ((mit->second).actualRate >= (mit->second).desiredRate)
+        if ((actualRate < desiredRate) && ((mit->second).actualRate >= (mit->second).desiredRate))
         {
           (mit->second).desiredRate *= 1.1;
         }
 
-        if (actualRate > desiredRate) && ((mit->second).actualRate < (mit->second).desiredRate)
+        if ((actualRate > desiredRate) && ((mit->second).actualRate < (mit->second).desiredRate))
         {
           (mit->second).desiredRate *= 0.9;
         }

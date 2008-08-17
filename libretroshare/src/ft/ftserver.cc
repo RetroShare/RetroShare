@@ -45,6 +45,12 @@ const int ftserverzone = 29539;
 #include <iostream>
 #include <sstream>
 
+/***
+ * #define SERVER_DEBUG 1
+ ***/
+
+#define SERVER_DEBUG 1
+
 	/* Setup */
 ftServer::ftServer(p3AuthMgr *authMgr, p3ConnectMgr *connMgr)
 	:mAuthMgr(authMgr), mConnMgr(connMgr)
@@ -55,11 +61,22 @@ ftServer::ftServer(p3AuthMgr *authMgr, p3ConnectMgr *connMgr)
 void	ftServer::setConfigDirectory(std::string path)
 {
 	mConfigPath = path;
+
+	/* Must update the sub classes ... if they exist
+	 * TODO.
+	 */
+
+	std::string localcachedir = mConfigPath + "/cache/local";
+	std::string remotecachedir = mConfigPath + "/cache/remote";
+
+	//mFiStore -> setCacheDir(remotecachedir);
+        //mFiMon -> setCacheDir(localcachedir);
+
 }
 
-void	ftServer::setPQInterface(PQInterface *pqi)
+void	ftServer::setP3Interface(P3Interface *pqi)
 {
-	
+	mP3iface = pqi;
 }
 
 	/* Control Interface */
@@ -79,21 +96,9 @@ void ftServer::SetupFtServer(NotifyBase *cb)
 	std::string remotecachedir = mConfigPath + "/cache/remote";
 	std::string ownId = mConnMgr->getOwnId();
 
-	mFiStore = new ftFiStore(mCacheStrapper, mFtController, cb, ownId, remotecachedir);
-        mFiMon = new ftFiMonitor(mCacheStrapper, localcachedir, ownId);
-
-	/* now add the set to the cachestrapper */
-	CachePair cp(mFiMon, mFiStore, CacheId(RS_SERVICE_TYPE_FILE_INDEX, 0));
-	mCacheStrapper -> addCachePair(cp);
-
-	/* extras List */
+	/* search/extras List */
 	mFtExtra = new ftExtraList();
-
 	mFtSearch = new ftFileSearch();
-	mFtSearch->addSearchMode(mCacheStrapper, RS_FILE_HINTS_CACHE);
-	mFtSearch->addSearchMode(mFtExtra, RS_FILE_HINTS_EXTRA);
-	mFtSearch->addSearchMode(mFiMon, RS_FILE_HINTS_LOCAL);
-	mFtSearch->addSearchMode(mFiStore, RS_FILE_HINTS_REMOTE);
 
 	/* Transport */
         mFtDataplex = new ftDataMultiplex(this, mFtSearch);
@@ -105,8 +110,26 @@ void ftServer::SetupFtServer(NotifyBase *cb)
 	mFtController->setPartialsDirectory(tmppath);
 	mFtController->setDownloadDirectory(tmppath);
 
+
+	/* Make Cache Source/Store */
+	mFiStore = new ftFiStore(mCacheStrapper, mFtController, cb, ownId, remotecachedir);
+        mFiMon = new ftFiMonitor(mCacheStrapper, localcachedir, ownId);
+
+	/* now add the set to the cachestrapper */
+	CachePair cp(mFiMon, mFiStore, CacheId(RS_SERVICE_TYPE_FILE_INDEX, 0));
+	mCacheStrapper -> addCachePair(cp);
+
+
+	/* complete search setup */
+	mFtSearch->addSearchMode(mCacheStrapper, RS_FILE_HINTS_CACHE);
+	mFtSearch->addSearchMode(mFtExtra, RS_FILE_HINTS_EXTRA);
+	mFtSearch->addSearchMode(mFiMon, RS_FILE_HINTS_LOCAL);
+	mFtSearch->addSearchMode(mFiStore, RS_FILE_HINTS_REMOTE);
+
+
 	mConnMgr->addMonitor(mFtController);
-	
+        mConnMgr->addMonitor(mCacheStrapper);
+
 	return;
 }
 
@@ -126,11 +149,11 @@ void    ftServer::StartupThreads()
 	//mFiMon->setSharedDirectories(dbase_dirs);
 	mFiMon->start();
 
-	/* start own thread */
-	//start();
-
 	/* Controller thread */
 	mFtController->start();
+
+	/* start own thread */
+	start();
 }
 
 CacheStrapper *ftServer::getCacheStrapper()
@@ -141,6 +164,14 @@ CacheStrapper *ftServer::getCacheStrapper()
 CacheTransfer *ftServer::getCacheTransfer()
 {
 	return mFtController;
+}
+
+void	ftServer::run()
+{
+	while(1)
+	{
+		sleep(1);
+	}
 }
 
 
@@ -471,6 +502,10 @@ int	ftServer::tick()
 
 	if (mP3iface == NULL)
 	{
+#ifdef SERVER_DEBUG
+		std::cerr << "ftServer::tick() ERROR: mP3iface == NULL";
+#endif
+
 		std::ostringstream out;
 		rslog(RSL_DEBUG_BASIC, ftserverzone, 
 			"filedexserver::tick() Invalid Interface()");
@@ -518,10 +553,14 @@ bool     ftServer::handleCacheData()
 	int i = 0;
 	int i_init = 0;
 
-	//std::cerr << "filedexserver::handleInputQueues()" << std::endl;
+#ifdef SERVER_DEBUG 
+	std::cerr << "ftServer::handleCacheData()" << std::endl;
+#endif
 	while((ci = mP3iface -> GetSearchResult()) != NULL)
 	{
-		//std::cerr << "filedexserver::handleInputQueues() Recvd SearchResult (CacheResponse!)" << std::endl;
+
+#ifdef SERVER_DEBUG 
+		std::cerr << "ftServer::handleCacheData() Recvd SearchResult (CacheResponse!)" << std::endl;
 		std::ostringstream out;
 		if (i++ == i_init)
 		{
@@ -529,6 +568,7 @@ bool     ftServer::handleCacheData()
 		}
 		ci -> print(out);
 		rslog(RSL_DEBUG_BASIC, ftserverzone, out.str());
+#endif
 
 		/* these go to the CacheStrapper! */
 		CacheData data;
@@ -548,11 +588,13 @@ bool     ftServer::handleCacheData()
 	i_init = i;
 	while((cr = mP3iface -> RequestedSearch()) != NULL)
 	{
+#ifdef SERVER_DEBUG 
 		/* just delete these */
 		std::ostringstream out;
 		out << "Requested Search:" << std::endl;
 		cr -> print(out);
 		rslog(RSL_DEBUG_BASIC, ftserverzone, out.str());
+#endif
 		delete cr;
 	}
 
@@ -606,7 +648,7 @@ bool    ftServer::handleFileData()
 	while((fr = mP3iface -> GetFileRequest()) != NULL )
 	{
 #ifdef SERVER_DEBUG 
-		std::cerr << "filedexserver::handleInputQueues() Recvd ftFiler Request" << std::endl;
+		std::cerr << "ftServer::handleFileData() Recvd ftFiler Request" << std::endl;
 		std::ostringstream out;
 		if (i == i_init)
 		{
@@ -631,7 +673,7 @@ FileInfo(ffr);
 	while((fd = mP3iface -> GetFileData()) != NULL )
 	{
 #ifdef SERVER_DEBUG 
-		//std::cerr << "filedexserver::handleInputQueues() Recvd ftFiler Data" << std::endl;
+		std::cerr << "ftServer::handleFileData() Recvd ftFiler Data" << std::endl;
 		std::ostringstream out;
 		if (i == i_init)
 		{

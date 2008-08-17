@@ -47,12 +47,30 @@
 #include "pqi/p3connmgr.h"
 
 
+#define CONTROL_DEBUG 1
+
 #warning CONFIG_FT_CONTROL Not defined in p3cfgmgr.h
 
 const uint32_t CONFIG_FT_CONTROL  = 1;
 
+ftFileControl::ftFileControl()
+	:mTransfer(NULL), mCreator(NULL), 
+	 mState(0), mSize(0), mFlags(0)
+{
+	return;
+}
+
+ftFileControl::ftFileControl(std::string fname, uint64_t size, 
+		std::string hash, uint32_t flags, 
+		ftFileCreator *fc, ftTransferModule *tm)
+	:mTransfer(tm), mCreator(fc), mState(0), mHash(hash),
+	 mName(fname), mSize(size), mFlags(0)
+{
+	return;
+}
+
 ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string configDir)
-	:CacheTransfer(cs), p3Config(CONFIG_FT_CONTROL)
+	:CacheTransfer(cs), p3Config(CONFIG_FT_CONTROL), mDataplex(dm)
 {
 	/* TODO */
 }
@@ -65,6 +83,20 @@ void ftController::setFtSearch(ftSearch *search)
 void ftController::run()
 {
 	/* check the queues */
+	std::cerr << "ftController::run()";
+	std::cerr << std::endl;
+
+	/* tick the transferModules */
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
+	std::map<std::string, ftFileControl>::iterator it;
+	for(it = mDownloads.begin(); it != mDownloads.end(); it++)
+	{
+		std::cerr << "\tTicking: " << it->first;
+		std::cerr << std::endl;
+
+		(it->second.mTransfer)->tick();
+	}
 }
 
 
@@ -129,28 +161,47 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 			uint64_t size, std::string dest, uint32_t flags, 
 			std::list<std::string> &srcIds)
 {
-
-#if 0 /*** FIX ME !!!**************/
-
 	/* check if we have the file */
 	FileInfo info;
+	std::list<std::string>::iterator it;
 
-	if (mSearch->search(hash, size, 
-		RS_FILE_HINTS_LOCAL | 
-		RS_FILE_HINTS_EXTRA | 
-		RS_FILE_HINTS_SPEC_ONLY, info))
+#ifdef CONTROL_DEBUG
+	std::cerr << "ftController::FileRequest(" << fname << ",";
+	std::cerr << hash << "," << size << "," << dest << ",";
+	std::cerr << flags << ",<";
+
+	for(it = srcIds.begin(); it != srcIds.end(); it++)
 	{
-		/* have it already */
-		/* add in as completed transfer */
-		return true;
+		std::cerr << *it << ",";
 	}
+	std::cerr << ">)";
+	std::cerr << std::endl;
+#endif
 
-	/* do a source search - for any extra sources */
-	if (mSearch->search(hash, size, 
-		RS_FILE_HINTS_REMOTE |
-		RS_FILE_HINTS_SPEC_ONLY, info))
+	if (flags | RS_FILE_HINTS_NO_SEARCH)
 	{
-		/* do something with results */
+		/* no search */
+
+	}
+	else 
+	{
+		if (mSearch->search(hash, size, 
+			RS_FILE_HINTS_LOCAL | 
+			RS_FILE_HINTS_EXTRA | 
+			RS_FILE_HINTS_SPEC_ONLY, info))
+		{
+			/* have it already */
+			/* add in as completed transfer */
+			return true;
+		}
+
+		/* do a source search - for any extra sources */
+		if (mSearch->search(hash, size, 
+			RS_FILE_HINTS_REMOTE |
+			RS_FILE_HINTS_SPEC_ONLY, info))
+		{
+			/* do something with results */
+		}
 	}
 
 	std::map<std::string, ftTransferModule *> mTransfers;
@@ -172,16 +223,26 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	tm->setFileSources(srcIds);
 
 	/* get current state for transfer module */
-	std::list<std::string>::iterator it;
 	for(it = srcIds.begin(); it != srcIds.end(); it++)
 	{
 		if (mConnMgr->isOnline(*it))
 		{
-			tm->setPeer(*it, RS_FILE_RATE_TRICKLE | RS_FILE_PEER_ONLINE);
+#ifdef CONTROL_DEBUG
+			std::cerr << "ftController::FileRequest()";
+			std::cerr << *it << " is Online";
+			std::cerr << std::endl;
+#endif
+			tm->setPeerState(*it, RS_FILE_RATE_TRICKLE | 
+						RS_FILE_PEER_ONLINE, 10000);
 		}
 		else
 		{
-			tm->setPeer(*it, RS_FILE_PEER_OFFLINE);
+#ifdef CONTROL_DEBUG
+			std::cerr << "ftController::FileRequest()";
+			std::cerr << *it << " is Offline";
+			std::cerr << std::endl;
+#endif
+			tm->setPeerState(*it, RS_FILE_PEER_OFFLINE,  10000);
 		}
 	}
 
@@ -189,8 +250,6 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 	mDownloads[hash] = ftfc;
 	mSlowQueue.push_back(hash);
-
-#endif
 
 }
 
@@ -367,6 +426,36 @@ std::list<RsItem *> ftController::saveList(bool &cleanup)
 bool    ftController::loadList(std::list<RsItem *> load)
 {
 	return false;
+}
+
+
+	/* Cache Interface */
+bool ftController::RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size)
+{
+#ifdef CONTROL_DEBUG
+	std::cerr << "ftController::RequestCacheFile(" << id << ",";
+	std::cerr << path << "," << hash << "," << size << ")";
+	std::cerr << std::endl;
+#endif
+
+	/* Request File */
+	std::list<std::string> ids;
+	ids.push_back(id);
+
+	FileRequest(hash, hash, size, path, 
+		RS_FILE_HINTS_CACHE | RS_FILE_HINTS_NO_SEARCH, ids);
+}
+
+
+bool ftController::CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size)
+{
+#ifdef CONTROL_DEBUG
+	std::cerr << "ftController::CancelCacheFile(" << id << ",";
+	std::cerr << path << "," << hash << "," << size << ")";
+	std::cerr << std::endl;
+#endif
+
+
 }
 
 

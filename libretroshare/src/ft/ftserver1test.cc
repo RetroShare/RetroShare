@@ -38,11 +38,12 @@
 #include "pqi/p3authmgr.h"
 #include "pqi/p3connmgr.h"
 
+#include "util/rsdebug.h"
+
 #include "ft/pqitestor.h"
+#include "util/rsdir.h"
 
-
-
-
+#include <sstream>
 
 
 
@@ -59,13 +60,15 @@ int main(int argc, char **argv)
 {
         int c;
         uint32_t period = 1;
-        uint32_t dPeriod = 600; /* default 10 minutes */
+        uint32_t debugLevel = 5;
+	bool debugStderr = true;
 
         std::list<std::string> fileList;
 	std::list<std::string> peerIds;
-	std::list<ftServer *> mFtServers;
+	std::map<std::string, ftServer *> mFtServers;
+	std::map<std::string, p3ConnectMgr *> mConnMgrs;
 
-        while(-1 != (c = getopt(argc, argv, "d:p:")))
+        while(-1 != (c = getopt(argc, argv, "d:p:s")))
         {
                 switch (c)
                 {
@@ -73,13 +76,19 @@ int main(int argc, char **argv)
                         peerIds.push_back(optarg);
                         break;
                 case 'd':
-                        dPeriod = atoi(optarg);
+                        debugLevel = atoi(optarg);
+                        break;
+                case 's':
+                        debugStderr = true;
                         break;
                 default:
                         usage(argv[0]);
                         break;
                 }
         }
+
+	/* do logging */
+  	setOutputLevel(debugLevel);
 
 	if (optind >= argc)
 	{
@@ -106,7 +115,7 @@ int main(int argc, char **argv)
 	std::list<pqiAuthDetails> baseFriendList, friendList;
 	std::list<pqiAuthDetails>::iterator fit;
 
-	PQIHub *testHub = new PQIHub();
+	P3Hub *testHub = new P3Hub();
 	testHub->start();
 
 	/* Setup Base Friend Info */
@@ -125,6 +134,14 @@ int main(int argc, char **argv)
 		std::cerr << std::endl;
 	}
 
+	std::ostringstream pname;
+	pname << "/tmp/rstst-" << time(NULL);
+
+	std::string basepath = pname.str();
+	RsDirUtil::checkCreateDirectory(basepath);
+
+
+
 	for(it = peerIds.begin(); it != peerIds.end(); it++)
 	{
 		friendList = baseFriendList;
@@ -140,6 +157,8 @@ int main(int argc, char **argv)
 
 		p3AuthMgr *authMgr = new p3DummyAuthMgr(*it, friendList);
 		p3ConnectMgr *connMgr = new p3ConnectMgr(authMgr);
+		mConnMgrs[*it] = connMgr;
+
 
 		for(fit = friendList.begin(); fit != friendList.end(); fit++)
 		{
@@ -147,33 +166,62 @@ int main(int argc, char **argv)
 			connMgr->addFriend(fit->id);
 		}
 
-		PQIPipe *pipe = new PQIPipe(*it);
+		P3Pipe *pipe = new P3Pipe(); //(*it);
 
 		/* add server */
 		ftServer *server;
 		server = new ftServer(authMgr, connMgr);
+		mFtServers[*it] = server;
 
-		PQInterface *pqi = NULL;
-		server->setPQInterface(pipe);
+		server->setP3Interface(pipe);
+
+		std::string configpath = basepath + "/" + *it;
+		RsDirUtil::checkCreateDirectory(configpath);
+
+		std::string cachepath = configpath + "/cache";
+		RsDirUtil::checkCreateDirectory(cachepath);
+
+		std::string localpath = cachepath + "/local";
+		RsDirUtil::checkCreateDirectory(localpath);
+		
+		std::string remotepath = cachepath + "/remote";
+		RsDirUtil::checkCreateDirectory(remotepath);
+
+		server->setConfigDirectory(configpath);
 
 		NotifyBase *base = NULL;
 		server->SetupFtServer(base);
 
-		testHub->addPQIPipe(*it, pipe, connMgr);
+		testHub->addP3Pipe(*it, pipe, connMgr);
 		server->StartupThreads();
 
-		//server->start();
 		/* setup any extra bits */
 		server->setSharedDirectories(fileList);
 
 	}
 
 	/* stick your real test here */
+	std::map<std::string, ftServer *>::iterator sit;
+	std::map<std::string, p3ConnectMgr *>::iterator cit;
+
 	while(1)
 	{
 		std::cerr << "ftserver1test::sleep()";
 		std::cerr << std::endl;
 		sleep(1);
+
+		/* tick the connmgrs */
+		for(sit = mFtServers.begin(); sit != mFtServers.end(); sit++)
+		{
+			/* update */
+			(sit->second)->tick();
+		}
+
+		for(cit = mConnMgrs.begin(); cit != mConnMgrs.end(); cit++)
+		{
+			/* update */
+			(cit->second)->tick();
+		}
 	}
 }
 

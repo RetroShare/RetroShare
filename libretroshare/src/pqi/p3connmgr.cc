@@ -1190,6 +1190,34 @@ bool p3ConnectMgr::isFriend(std::string id)
 	return (mFriendList.end() != mFriendList.find(id));
 }
 
+bool p3ConnectMgr::isOnline(std::string id)
+{
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+        std::map<std::string, peerConnectState>::iterator it;
+	if (mFriendList.end() != (it = mFriendList.find(id)))
+	{
+#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr::isOnline(" << id;
+		std::cerr << ") is Friend, Online: ";
+		std::cerr << (it->second.state & RS_PEER_S_CONNECTED);
+		std::cerr << std::endl;
+#endif
+		return (it->second.state & RS_PEER_S_CONNECTED);
+	}
+	else
+	{
+#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr::isOnline(" << id;
+		std::cerr << ") is Not Friend";
+		std::cerr << std::endl;
+#endif
+		/* not a friend */
+	}
+
+	return false;
+}
+
 bool p3ConnectMgr::getFriendNetStatus(std::string id, peerConnectState &state)
 {
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/

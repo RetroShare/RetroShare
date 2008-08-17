@@ -68,7 +68,7 @@ class ftFileSearch;
 
 class ftDataMultiplex;
 
-class ftServer: public RsFiles, public ftDataSend
+class ftServer: public RsFiles, public ftDataSend, public RsThread
 {
 
 	public:
@@ -82,8 +82,7 @@ class ftServer: public RsFiles, public ftDataSend
 	/* Assign important variables */
 void	setConfigDirectory(std::string path);
 
-void	setPQInterface(PQInterface *pqi);
-
+void	setP3Interface(P3Interface *pqi);
 
 	/* add Config Items (Extra, Controller) */
 void	addConfigComponents(p3ConfigMgr *mgr);
@@ -96,6 +95,9 @@ CacheTransfer *getCacheTransfer();
 void    SetupFtServer(NotifyBase *cb);
 
 void	StartupThreads();
+
+	/* own thread */
+virtual void	run();
 
 	/***************************************************************/
 	/*************** Control Interface *****************************/

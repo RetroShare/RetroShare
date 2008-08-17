@@ -566,35 +566,6 @@ int     filedexserver::handleOutputQueues()
 	//std::cerr << "filedexserver::handleOutputQueues()" << std::endl;
 	int i = 0;
 
-
-#if 0 /* no more cache queries -> results are pushed */
-
-	std::list<RsPeerId> ids;
-        std::list<RsPeerId>::iterator pit;
-
-	mCacheStrapper->sendCacheQuery(ids, time(NULL));
-	for(pit = ids.begin(); pit != ids.end(); pit++)
-	{
-		//std::cerr << "filedexserver::handleOutputQueues() Cache Query for: " << (*pit) << std::endl;
-
-		/* now create one! */
-		RsCacheRequest *cr = new RsCacheRequest();
-		cr->PeerId(*pit);
-
-		std::ostringstream out;
-		if (i++ == 0)
-		{
-			out << "Outgoing CacheStrapper -> SearchItem:" << std::endl;
-		}
-		cr -> print(out);
-		pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, out.str());
-
-		/* send it off */
-		pqisi -> SearchSpecific(cr);
-	}
-#endif
-
-
 	/* now see if the filer has any data */
 	ftFileRequest *ftr;
 	while((ftr = ftFiler -> sendFileInfo()) != NULL)

@@ -27,12 +27,12 @@
 #include "pqi/p3connmgr.h"
 
 
-PQIHub::PQIHub()
+P3Hub::P3Hub()
 {
 	return;
 }
 
-void	PQIHub::addPQIPipe(std::string id, PQIPipe *pqi, p3ConnectMgr *mgr)
+void	P3Hub::addP3Pipe(std::string id, P3Pipe *pqi, p3ConnectMgr *mgr)
 {
 	hubItem item(id, pqi, mgr);
 
@@ -46,20 +46,20 @@ void	PQIHub::addPQIPipe(std::string id, PQIPipe *pqi, p3ConnectMgr *mgr)
 	mPeers[id] = item;
 
 	/* tell all the other peers we are connected */
-	std::cerr << "PQIHub::addPQIPipe()";
+	std::cerr << "P3Hub::addPQIPipe()";
 	std::cerr << std::endl;
 
 }
 
 
-void 	PQIHub::run()
+void 	P3Hub::run()
 {
 	RsItem *item;
 	std::list<RsItem *> recvdQ;
 	std::list<RsItem *>::iterator lit;
 	while(1)
 	{
-		std::cerr << "PQIHub::run()";
+		std::cerr << "P3Hub::run()";
 		std::cerr << std::endl;
 
 		std::map<std::string, hubItem>::iterator it;
@@ -67,9 +67,12 @@ void 	PQIHub::run()
 		{
 			while (NULL != (item = it->second.mPQI->PopSentItem()))
 			{
-				std::cerr << "PQIHub::run() recvd msg from: ";
+				std::cerr << "P3Hub::run() recvd msg from: ";
 				std::cerr << it->first;
 				std::cerr << std::endl;
+				item->print(std::cerr, 10);
+				std::cerr << std::endl;
+
 				recvdQ.push_back(item);
 			}
 		}
@@ -83,12 +86,17 @@ void 	PQIHub::run()
 				std::cerr << "Failed to Find destination: " << pId;
 				std::cerr << std::endl;
 			}
-			std::cerr << "PQIHub::run() sending msg to: ";
+			std::cerr << "P3Hub::run() sending msg to: ";
 			std::cerr << it->first;
+			std::cerr << std::endl;
+			(*lit)->print(std::cerr, 10);
 			std::cerr << std::endl;
 
 			(it->second).mPQI->PushRecvdItem(*lit);
 		}
+
+		recvdQ.clear();
+
 
 
 		/* Tick the Connection Managers (normally done by rsserver)
@@ -158,4 +166,181 @@ RsItem *PQIPipe::GetItem()
 	return item;
 }
 
+
+
+
+/***** P3Pipe here *****/
+
+
+
+
+int P3Pipe::SendAllItem(RsItem *item)
+{
+	RsStackMutex stack(pipeMtx); /***** LOCK MUTEX ****/
+
+	mSentItems.push_back(item);
+
+	return 1;
+}
+
+RsItem *P3Pipe::PopSentItem()
+{
+	RsStackMutex stack(pipeMtx); /***** LOCK MUTEX ****/
+
+	if (mSentItems.size() == 0)
+	{
+		return NULL;
+	}
+
+	RsItem *item = mSentItems.front();
+	mSentItems.pop_front();
+	
+	return item;
+}
+
+int P3Pipe::PushRecvdItem(RsItem *item)
+{
+	RsStackMutex stack(pipeMtx); /***** LOCK MUTEX ****/
+
+	RsCacheRequest *rcr;
+	RsCacheItem *rci;
+	RsFileRequest *rfr;
+	RsFileData *rfd;
+	RsRawItem *rri;
+
+	if (NULL != (rcr = dynamic_cast<RsCacheRequest *>(item)))
+	{
+		mRecvdRsCacheRequests.push_back(rcr);
+	}
+	else if (NULL != (rci = dynamic_cast<RsCacheItem *>(item)))
+	{
+		mRecvdRsCacheItems.push_back(rci);
+	}
+	else if (NULL != (rfr = dynamic_cast<RsFileRequest *>(item)))
+	{
+		mRecvdRsFileRequests.push_back(rfr);
+	}
+	else if (NULL != (rfd = dynamic_cast<RsFileData *>(item)))
+	{
+		mRecvdRsFileDatas.push_back(rfd);
+	}
+	else if (NULL != (rri = dynamic_cast<RsRawItem *>(item)))
+	{
+		mRecvdRsRawItems.push_back(rri);
+	}
+
+	return 1;
+}
+
+int	P3Pipe::SearchSpecific(RsCacheRequest *item)
+{
+	SendAllItem(item);
+	return 1;
+}
+
+int     P3Pipe::SendSearchResult(RsCacheItem *item)
+{
+	SendAllItem(item);
+	return 1;
+}
+
+int     P3Pipe::SendFileRequest(RsFileRequest *item)
+{
+	SendAllItem(item);
+	return 1;
+}
+
+int     P3Pipe::SendFileData(RsFileData *item)
+{
+	SendAllItem(item);
+	return 1;
+}
+
+int	P3Pipe::SendRsRawItem(RsRawItem *item)
+{
+	SendAllItem(item);
+	return 1;
+}
+
+	// Cache Requests
+RsCacheRequest *P3Pipe::RequestedSearch()
+{
+	RsStackMutex stack(pipeMtx); /***** LOCK MUTEX ****/
+
+	if (mRecvdRsCacheRequests.size() == 0)
+	{
+		return NULL;
+	}
+
+	RsCacheRequest *item = mRecvdRsCacheRequests.front();
+	mRecvdRsCacheRequests.pop_front();
+	
+	return item;
+}
+
+
+	// Cache Results
+RsCacheItem *P3Pipe::GetSearchResult()
+{
+	RsStackMutex stack(pipeMtx); /***** LOCK MUTEX ****/
+
+	if (mRecvdRsCacheItems.size() == 0)
+	{
+		return NULL;
+	}
+
+	RsCacheItem *item = mRecvdRsCacheItems.front();
+	mRecvdRsCacheItems.pop_front();
+	
+	return item;
+}
+
+
+	// FileTransfer.
+RsFileRequest *P3Pipe::GetFileRequest()
+{
+	RsStackMutex stack(pipeMtx); /***** LOCK MUTEX ****/
+
+	if (mRecvdRsFileRequests.size() == 0)
+	{
+		return NULL;
+	}
+
+	RsFileRequest *item = mRecvdRsFileRequests.front();
+	mRecvdRsFileRequests.pop_front();
+	
+	return item;
+}
+
+
+RsFileData *P3Pipe::GetFileData()
+{
+	RsStackMutex stack(pipeMtx); /***** LOCK MUTEX ****/
+
+	if (mRecvdRsFileDatas.size() == 0)
+	{
+		return NULL;
+	}
+
+	RsFileData *item = mRecvdRsFileDatas.front();
+	mRecvdRsFileDatas.pop_front();
+	
+	return item;
+}
+
+
+RsRawItem *P3Pipe::GetRsRawItem()
+{
+	RsStackMutex stack(pipeMtx); /***** LOCK MUTEX ****/
+
+	if (mRecvdRsRawItems.size() == 0)
+	{
+		return NULL;
+	}
+
+	RsRawItem *item = mRecvdRsRawItems.front();
+	mRecvdRsRawItems.pop_front();
+	
+	return item;
+}
 

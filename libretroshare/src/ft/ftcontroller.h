@@ -67,6 +67,7 @@ class ftFileControl
 	std::string	   mHash;
 	std::string	   mName;
 	uint64_t	   mSize;
+	uint32_t	   mFlags;
 };
 
 
@@ -102,6 +103,15 @@ bool 	setPartialsDirectory(std::string path);
 std::string getDownloadDirectory();
 std::string getPartialsDirectory();
 bool 	FileDetails(std::string hash, FileInfo &info);
+
+	/***************************************************************/
+	/********************** Cache Transfer *************************/
+	/***************************************************************/
+
+protected:
+
+virtual bool RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size); 
+virtual bool CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
 
 	/***************************************************************/
 	/********************** Controller Access **********************/
@@ -143,6 +153,46 @@ bool 	completeFile(std::string hash);
 	std::string mConfigPath;
 	std::string mDownloadPath;
 	std::string mPartialPath;
+
+	/**** SPEED QUEUES ****/
+	std::list<std::string> mSlowQueue;
+	std::list<std::string> mStreamQueue;
+	std::list<std::string> mFastQueue;
 };
 
 #endif
+
+#if 0
+class CacheTransfer
+{
+	public:
+	CacheTransfer(CacheStrapper *cs) :strapper(cs) { return; }
+virtual ~CacheTransfer() {}
+
+	/* upload side of things .... searches through CacheStrapper. */
+bool    FindCacheFile(std::string hash, std::string &path, uint64_t &size);
+
+
+	/* At the download side RequestCache() => overloaded RequestCacheFile()
+	 * the class should then call CompletedCache() or FailedCache()
+	 */
+
+bool RequestCache(CacheData &data, CacheStore *cbStore); /* request from CacheStore */
+
+	protected:
+	/* to be overloaded */
+virtual bool RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size); 
+virtual bool CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
+
+bool CompletedCache(std::string hash);                   /* internal completion -> does cb */
+bool FailedCache(std::string hash);                      /* internal completion -> does cb */
+
+	private:
+
+	CacheStrapper *strapper;
+
+	std::map<std::string, CacheData>    cbData;
+	std::map<std::string, CacheStore *> cbStores;
+};
+#endif
+

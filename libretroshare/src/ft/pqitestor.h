@@ -43,6 +43,8 @@
 class hubItem;
 class PQIPipe;
 class PQIHub;
+class P3Pipe;
+class P3Hub;
 class p3ConnectMgr;
 
 
@@ -52,21 +54,21 @@ class hubItem
 	hubItem()
 	:mPQI(NULL), mConnMgr(NULL) { return; }
 
-	hubItem(std::string id, PQIPipe *pqi, p3ConnectMgr *mgr)
+	hubItem(std::string id, P3Pipe *pqi, p3ConnectMgr *mgr)
 	:mPeerId(id), mPQI(pqi), mConnMgr(mgr) { return; }
 
 	std::string mPeerId;
-	PQIPipe *mPQI;
+	P3Pipe *mPQI;
 	p3ConnectMgr *mConnMgr;
 };
 
 
-class PQIHub: public RsThread
+class P3Hub: public RsThread
 {
 	public:
 
-	PQIHub();
-void 	addPQIPipe(std::string id, PQIPipe *, p3ConnectMgr *mgr);
+	P3Hub();
+void 	addP3Pipe(std::string id, P3Pipe *, p3ConnectMgr *mgr);
 
 virtual	void run();
 
@@ -97,6 +99,48 @@ private:
 	std::list<RsItem *> mSentItems; 
 	std::list<RsItem *> mRecvdItems; 
 
+};
+
+class P3Pipe: public P3Interface
+{
+public:
+	P3Pipe() {return; }
+virtual ~P3Pipe() {return; }
+
+virtual int	tick() { return 1; }
+virtual int	status() { return 1; }
+
+	/* Overloaded from P3Interface */
+virtual int	SearchSpecific(RsCacheRequest *item);
+virtual int     SendSearchResult(RsCacheItem *item);
+virtual int     SendFileRequest(RsFileRequest *item);
+virtual int     SendFileData(RsFileData *item);
+virtual int	SendRsRawItem(RsRawItem *item);
+
+virtual RsCacheRequest *RequestedSearch();
+virtual RsCacheItem *GetSearchResult();
+virtual RsFileRequest *GetFileRequest();
+virtual RsFileData *GetFileData();
+virtual RsRawItem *GetRsRawItem();
+
+	/* Lower Interface for PQIHub */
+
+RsItem *PopSentItem();
+int 	PushRecvdItem(RsItem *item);
+
+	private:
+
+int 	SendAllItem(RsItem *item);
+
+	RsMutex pipeMtx;
+
+	std::list<RsItem *> mSentItems; 
+
+	std::list<RsCacheRequest *> mRecvdRsCacheRequests;
+	std::list<RsCacheItem *> mRecvdRsCacheItems;
+	std::list<RsFileRequest *> mRecvdRsFileRequests;
+	std::list<RsFileData *> mRecvdRsFileDatas;
+	std::list<RsRawItem *> mRecvdRsRawItems;
 };
 
 

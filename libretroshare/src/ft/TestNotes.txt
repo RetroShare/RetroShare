@@ -1,0 +1,38 @@
+
+Features that need to be tested, and which test checks it.
+-----------------------------------------------------------
+
+(*) Transfer Related
+
+(*) Search Related
+
+(*) ExtraList Related
+
+(*) Cache Related
+
+(*) Config / Storage.
+   Change Config Directory works dynamically. (no restart required).
+
+
+(*) Miscelleous
+
+
+
+-----------------------------------------------------------
+-----------------------------------------------------------
+Actual Tests, and what they check.
+-----------------------------------------------------------
+
+ftserver1test.cc
+==================
+
+Used to develop test framework.
+Tests.
+	1) Test Framework.				OK
+	2) File Indexing.				OK
+	3) Cache Packet Exchange.			OK
+	4) Cache downloads (including loopback).	FAILS
+	5) FileIndex Store loading.
+	6) Basic Search.
+
+

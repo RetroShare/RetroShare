@@ -197,6 +197,7 @@ const std::string getOwnId();
 bool	getOwnNetStatus(peerConnectState &state);
 
 bool	isFriend(std::string id);
+bool	isOnline(std::string id);
 bool	getFriendNetStatus(std::string id, peerConnectState &state);
 bool	getOthersNetStatus(std::string id, peerConnectState &state);
 

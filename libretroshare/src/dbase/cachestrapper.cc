@@ -34,6 +34,8 @@
  * #define CS_DEBUG 1
  ***/
 
+#define CS_DEBUG 1
+
 bool operator<(const CacheId &a, const CacheId &b)
 {
         if (a.type == b.type)
