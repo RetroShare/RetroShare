@@ -153,7 +153,8 @@ int main(int argc, char *argv[])
 		//skinWindow->show();
 		
 	}*/
-   /* Run Retroshare */
+   
+    /* Run Retroshare */
    //int ret = rshare.run();
 
 	/* Startup a Timer to keep the gui's updated */

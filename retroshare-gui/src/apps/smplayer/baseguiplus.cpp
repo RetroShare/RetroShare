@@ -155,6 +155,7 @@ void BaseGuiPlus::closeWindow() {
 		BaseGui::closeWindow();
 	}
 	//tray->hide();
+	hide();
 
 }
 

@@ -13,10 +13,7 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" >
-   <property name="topMargin" >
-    <number>0</number>
-   </property>
-   <property name="bottomMargin" >
+   <property name="margin" >
     <number>0</number>
    </property>
    <item row="0" column="0" >
@@ -42,6 +39,9 @@
       </property>
       <item>
        <layout class="QHBoxLayout" >
+        <property name="spacing" >
+         <number>6</number>
+        </property>
         <item>
          <widget class="QPushButton" name="clearButton" >
           <property name="sizePolicy" >
@@ -57,7 +57,8 @@
            <string/>
           </property>
           <property name="icon" >
-           <iconset resource="images.qrc" >:/images/close_normal.png</iconset>
+           <iconset resource="../images.qrc" >
+            <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
           </property>
          </widget>
         </item>
@@ -69,7 +70,7 @@
           <property name="sizeType" >
            <enum>QSizePolicy::Preferred</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>16</width>
             <height>26</height>
@@ -105,7 +106,7 @@
           <property name="sizeType" >
            <enum>QSizePolicy::Preferred</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>1000</width>
             <height>20</height>
@@ -128,7 +129,8 @@
            <string/>
           </property>
           <property name="icon" >
-           <iconset resource="images.qrc" >:/images/add_24x24.png</iconset>
+           <iconset resource="../images.qrc" >
+            <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
           </property>
          </widget>
         </item>
@@ -164,7 +166,7 @@
           <property name="sizeType" >
            <enum>QSizePolicy::Preferred</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>500</width>
             <height>20</height>
@@ -187,7 +189,8 @@
            <string/>
           </property>
           <property name="icon" >
-           <iconset resource="images.qrc" >:/images/startall.png</iconset>
+           <iconset resource="../images.qrc" >
+            <normaloff>:/images/startall.png</normaloff>:/images/startall.png</iconset>
           </property>
          </widget>
         </item>
@@ -226,6 +229,7 @@
  </widget>
  <resources>
   <include location="images.qrc" />
+  <include location="../images.qrc" />
  </resources>
  <connections/>
 </ui>
