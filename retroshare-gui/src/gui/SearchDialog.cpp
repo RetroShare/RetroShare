@@ -229,10 +229,11 @@ void SearchDialog::download()
 	{
 		std::cerr << "SearchDialog::download() Calling File Request";
 		std::cerr << std::endl;
+		std::list<std::string> srcIds;
         	rsFiles -> FileRequest((item->text(SR_NAME_COL)).toStdString(), 
                                   (item->text(SR_HASH_COL)).toStdString(), 
                                   (item->text(SR_SIZE_COL)).toInt(), 
-                                  "", 0);
+                                  "", 0, srcIds);
 	}
 	else
 	{

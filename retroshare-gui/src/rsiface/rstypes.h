@@ -105,6 +105,10 @@ class FileTransferInfo: public FileInfo
 	FileTransferInfo() { return; }
 };
 
+
+std::ostream &operator<<(std::ostream &out, const FileInfo &info);
+
+
 /* matched to the uPnP states */
 #define UPNP_STATE_UNINITIALISED  0
 #define UPNP_STATE_UNAVAILABILE   1

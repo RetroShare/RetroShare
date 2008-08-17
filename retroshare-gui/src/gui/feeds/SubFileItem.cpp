@@ -540,7 +540,9 @@ void SubFileItem::download()
 	// TEMP
 	std::cerr << "SubFileItem::download() Calling File Request";
 	std::cerr << std::endl;
-	rsFiles->FileRequest(mFileName, mFileHash, mFileSize, "", 0);
+	std::list<std::string> srcIds;
+	srcIds.push_back(mSrcId);
+	rsFiles->FileRequest(mFileName, mFileHash, mFileSize, "", 0, srcIds);
 
 }
 

@@ -152,11 +152,12 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
      	return QVariant();
      }
 
+#if 0
      /*if (role == Qt::BackgroundRole)
      {*/
      	/*** colour entries based on rank/age/count **/
      	/*** rank (0-10) ***/
-	/*uint32_t r = details.rank;
+	/ *uint32_t r = details.rank;
 	if (r > 10) r = 10;
 	r = 200 + r * 5; /* 0->250 */
 
@@ -225,6 +226,7 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 		return QVariant();
 	}
      }*/
+#endif
      
     if (role == Qt::DecorationRole)
     {
@@ -694,8 +696,10 @@ void RemoteDirModel::downloadSelected(QModelIndexList list)
 		{
 			std::cerr << "RemoteDirModel::downloadSelected() Calling File Request";
 			std::cerr << std::endl;
+			std::list<std::string> srcIds;
+			srcIds.push_back(details.id);
 			rsFiles -> FileRequest(details.name, details.hash, 
-						details.count, "", 0);
+						details.count, "", 0, srcIds);
 		}
 	}
 }
