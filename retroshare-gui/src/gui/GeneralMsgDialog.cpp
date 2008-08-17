@@ -55,10 +55,10 @@ GeneralMsgDialog::GeneralMsgDialog(QWidget *parent, uint32_t type)
 	 * */
 
 	typeComboBox->clear();
-	typeComboBox->addItem("Message");
-	typeComboBox->addItem("Forum");
-	typeComboBox->addItem("Channel");
-	typeComboBox->addItem("Blog");
+	typeComboBox->addItem(QIcon(QString(":/images/evolution.png")),tr("Message"));
+	typeComboBox->addItem(QIcon(QString(":/images/konversation16.png")),tr("Forum"));
+	typeComboBox->addItem(QIcon(QString(":/images/channels16.png")),tr("Channel"));
+	typeComboBox->addItem(QIcon(QString(":/images/kblogger.png")),tr("Blog"));
 
 	typeComboBox->setCurrentIndex(type);
 

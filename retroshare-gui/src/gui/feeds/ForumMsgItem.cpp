@@ -177,6 +177,8 @@ void ForumMsgItem::toggle()
 	if (prevFrame->isHidden())
 	{
 		prevFrame->show();
+		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+	    expandButton->setToolTip("Hide");
 		if (!mIsTop)
 		{
 			nextFrame->show();
@@ -186,6 +188,8 @@ void ForumMsgItem::toggle()
 	{
 		prevFrame->hide();
 		nextFrame->hide();
+		expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+	    expandButton->setToolTip("Expand");
 	}
 }
 

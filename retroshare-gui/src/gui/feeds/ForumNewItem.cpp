@@ -134,10 +134,14 @@ void ForumNewItem::toggle()
 	if (expandFrame->isHidden())
 	{
 		expandFrame->show();
+		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+	    expandButton->setToolTip("Hide");
 	}
 	else
 	{
 		expandFrame->hide();
+		expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+	    expandButton->setToolTip("Expand");
 	}
 }
 

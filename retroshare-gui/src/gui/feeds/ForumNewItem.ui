@@ -57,7 +57,8 @@
            <string/>
           </property>
           <property name="icon" >
-           <iconset resource="images.qrc" >:/images/close_normal.png</iconset>
+           <iconset resource="../images.qrc" >
+            <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
           </property>
          </widget>
         </item>
@@ -69,7 +70,7 @@
           <property name="sizeType" >
            <enum>QSizePolicy::Preferred</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>16</width>
             <height>26</height>
@@ -105,7 +106,7 @@
           <property name="sizeType" >
            <enum>QSizePolicy::Fixed</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>20</width>
             <height>20</height>
@@ -128,7 +129,7 @@
           <property name="sizeType" >
            <enum>QSizePolicy::Expanding</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>500</width>
             <height>20</height>
@@ -151,7 +152,8 @@
            <string/>
           </property>
           <property name="icon" >
-           <iconset resource="images.qrc" >:/images/directoryadd_24x24_shadow.png</iconset>
+           <iconset resource="../images.qrc" >
+            <normaloff>:/images/directoryadd_24x24_shadow.png</normaloff>:/images/directoryadd_24x24_shadow.png</iconset>
           </property>
          </widget>
         </item>
@@ -163,7 +165,7 @@
           <property name="sizeType" >
            <enum>QSizePolicy::Fixed</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>20</width>
             <height>20</height>
@@ -186,7 +188,8 @@
            <string/>
           </property>
           <property name="icon" >
-           <iconset resource="images.qrc" >:/images/add_24x24.png</iconset>
+           <iconset resource="../images.qrc" >
+            <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
           </property>
          </widget>
         </item>
@@ -204,16 +207,7 @@
          <property name="spacing" >
           <number>0</number>
          </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
+         <property name="margin" >
           <number>0</number>
          </property>
          <item>
@@ -224,7 +218,7 @@
               <string/>
              </property>
              <property name="pixmap" >
-              <pixmap resource="images.qrc" >:/images/contacts24.png</pixmap>
+              <pixmap resource="../images.qrc" >:/images/contacts24.png</pixmap>
              </property>
             </widget>
            </item>
@@ -244,6 +238,19 @@
            </item>
           </layout>
          </item>
+         <item>
+          <spacer name="verticalSpacer" >
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0" >
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
         </layout>
        </widget>
       </item>
@@ -253,7 +260,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="images.qrc" />
+  <include location="../images.qrc" />
  </resources>
  <connections/>
 </ui>

@@ -57,7 +57,8 @@
            <string/>
           </property>
           <property name="icon" >
-           <iconset resource="images.qrc" >:/images/close_normal.png</iconset>
+           <iconset resource="../images.qrc" >
+            <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
           </property>
          </widget>
         </item>
@@ -69,7 +70,7 @@
           <property name="sizeType" >
            <enum>QSizePolicy::Preferred</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>16</width>
             <height>26</height>
@@ -105,7 +106,7 @@
           <property name="sizeType" >
            <enum>QSizePolicy::Preferred</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>500</width>
             <height>20</height>
@@ -128,7 +129,8 @@
            <string/>
           </property>
           <property name="icon" >
-           <iconset resource="images.qrc" >:/images/add_24x24.png</iconset>
+           <iconset resource="../images.qrc" >
+            <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
           </property>
          </widget>
         </item>
@@ -164,7 +166,7 @@
           <property name="sizeType" >
            <enum>QSizePolicy::Expanding</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>200</width>
             <height>20</height>
@@ -187,7 +189,7 @@
           <property name="sizeType" >
            <enum>QSizePolicy::Preferred</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>200</width>
             <height>20</height>
@@ -210,7 +212,8 @@
            <string/>
           </property>
           <property name="icon" >
-           <iconset resource="images.qrc" >:/images/mail_delete.png</iconset>
+           <iconset resource="../images.qrc" >
+            <normaloff>:/images/mail_delete.png</normaloff>:/images/mail_delete.png</iconset>
           </property>
          </widget>
         </item>
@@ -222,7 +225,7 @@
           <property name="sizeType" >
            <enum>QSizePolicy::Fixed</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>20</width>
             <height>20</height>
@@ -245,7 +248,8 @@
            <string/>
           </property>
           <property name="icon" >
-           <iconset resource="images.qrc" >:/images/replymail24.png</iconset>
+           <iconset resource="../images.qrc" >
+            <normaloff>:/images/replymail24.png</normaloff>:/images/replymail24.png</iconset>
           </property>
          </widget>
         </item>
@@ -302,7 +306,7 @@
              <property name="sizeType" >
               <enum>QSizePolicy::Preferred</enum>
              </property>
-             <property name="sizeHint" >
+             <property name="sizeHint" stdset="0" >
               <size>
                <width>40</width>
                <height>20</height>
@@ -335,7 +339,7 @@
              <property name="sizeType" >
               <enum>QSizePolicy::Preferred</enum>
              </property>
-             <property name="sizeHint" >
+             <property name="sizeHint" stdset="0" >
               <size>
                <width>40</width>
                <height>20</height>
@@ -367,7 +371,7 @@
              <property name="sizeType" >
               <enum>QSizePolicy::Preferred</enum>
              </property>
-             <property name="sizeHint" >
+             <property name="sizeHint" stdset="0" >
               <size>
                <width>40</width>
                <height>20</height>
@@ -419,7 +423,7 @@
              <property name="sizeType" >
               <enum>QSizePolicy::Preferred</enum>
              </property>
-             <property name="sizeHint" >
+             <property name="sizeHint" stdset="0" >
               <size>
                <width>40</width>
                <height>20</height>
@@ -451,7 +455,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="images.qrc" />
+  <include location="../images.qrc" />
  </resources>
  <connections/>
 </ui>
