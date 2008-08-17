@@ -51,6 +51,9 @@
 
 /* Images for TreeWidget */
 #define IMAGE_FOLDER         ":/images/folder16.png"
+#define IMAGE_FOLDERGREEN    ":/images/folder_green.png"
+#define IMAGE_FOLDERRED      ":/images/folder_red.png"
+#define IMAGE_FOLDERYELLOW   ":/images/folder_yellow.png"
 #define IMAGE_FORUM          ":/images/konversation16.png"
 #define IMAGE_SUBSCRIBE      ":/images/accepted16.png"
 #define IMAGE_UNSUBSCRIBE    ":/images/cancel.png"
@@ -503,19 +506,19 @@ void ForumsDialog::insertForums()
 
         item = new QTreeWidgetItem((QTreeWidget*)0);
 	item -> setText(0, tr("Subscribed Forums"));
-	item -> setIcon(0,(QIcon(IMAGE_FOLDER)));
+	item -> setIcon(0,(QIcon(IMAGE_FOLDERRED)));
 	item -> addChildren(SubList);
 	TopList.append(item);
 
         item = new QTreeWidgetItem((QTreeWidget*)0);
 	item -> setText(0, tr("Popular Forums"));
-	item -> setIcon(0,(QIcon(IMAGE_FOLDER)));
+	item -> setIcon(0,(QIcon(IMAGE_FOLDERGREEN)));
 	item -> addChildren(PopList);
 	TopList.append(item);
 
         item = new QTreeWidgetItem((QTreeWidget*)0);
 	item -> setText(0, tr("Other Forums"));
-	item -> setIcon(0,(QIcon(IMAGE_FOLDER)));
+	item -> setIcon(0,(QIcon(IMAGE_FOLDERYELLOW)));
 	item -> addChildren(OtherList);
 	TopList.append(item);
 

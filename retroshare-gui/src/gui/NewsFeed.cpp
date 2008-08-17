@@ -59,6 +59,8 @@ NewsFeed::NewsFeed(QWidget *parent)
 
 	/* mLayout -> to add widgets to */
 	mLayout = new QVBoxLayout;
+	mLayout->setSpacing(0);
+	mLayout->setMargin(0);
 
 	QWidget *middleWidget = new QWidget();
 	//middleWidget->setSizePolicy( QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
