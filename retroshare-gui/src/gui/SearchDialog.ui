@@ -1035,12 +1035,12 @@ p, li { white-space: pre-wrap; }
         </column>
         <column>
          <property name="text" >
-          <string>Hash</string>
+          <string>Sources</string>
          </property>
         </column>
         <column>
          <property name="text" >
-          <string>Sources</string>
+          <string>Hash</string>
          </property>
         </column>
        </widget>
