@@ -53,6 +53,8 @@
 #include "TransferFeed.h"
 #include "MsgFeed.h"
 #include "ChannelFeed.h"
+#include "LibraryDialog.h"
+
 
 /* for smplayer */
 #include "smplayer.h"
@@ -83,7 +85,8 @@
 #define IMAGE_NEWSFEED          ":/images/konqsidebar_news24.png"
 #define IMAGE_LINKS             ":/images/ktorrent.png"
 #define IMAGE_MESSAGES          ":/images/evolution.png"
-#define IMAGE_BLOGS          ":/images/kblogger.png"
+#define IMAGE_BLOGS             ":/images/kblogger.png"
+#define IMAGE_LIBRARY           ":/images/library.png"
 
 
 /* Keys for UI Preferences */
@@ -150,6 +153,10 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     PhotoDialog *photoDialog = NULL;
     ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), grp));
+                      
+    LibraryDialog *libraryDialog = NULL;
+    ui.stackPages->add(libraryDialog = new LibraryDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Library"), grp));
                      
     CalDialog *calDialog = NULL;
     ui.stackPages->add(calDialog = new CalDialog(ui.stackPages),

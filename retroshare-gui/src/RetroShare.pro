@@ -48,7 +48,7 @@ HEADERS +=  rshare.h \
             gui/StartDialog.h \
             gui/ChatDialog.h \
             gui/BlogDialog.h \
-	    gui/CalDialog.h \
+	        gui/CalDialog.h \
             gui/NetworkDialog.h \
             gui/GenCertDialog.h \
             gui/TransfersDialog.h \
@@ -63,6 +63,7 @@ HEADERS +=  rshare.h \
             gui/PhotoDialog.h \
             gui/PhotoShow.h \
             gui/LinksDialog.h \
+            gui/LibraryDialog.h \
             gui/ForumsDialog.h \
             gui/forums/CreateForum.h \
             gui/forums/CreateForumMsg.h \
@@ -72,6 +73,7 @@ HEADERS +=  rshare.h \
             gui/SearchTreeWidget.h \
             gui/SearchDialog.h \
             gui/SharedFilesDialog.h \
+            gui/ShareFilesDialog.h \
             gui/StatisticDialog.h \
             gui/HelpDialog.h \
             gui/LogoBar.h \
@@ -186,6 +188,7 @@ FORMS +=    gui/ChatDialog.ui \
             gui/PhotoDialog.ui \
             gui/PhotoShow.ui \
             gui/LinksDialog.ui \
+            gui/LibraryDialog.ui \
             gui/ForumsDialog.ui \
             gui/forums/CreateForum.ui \
             gui/forums/CreateForumMsg.ui \
@@ -194,6 +197,7 @@ FORMS +=    gui/ChatDialog.ui \
             gui/PeersDialog.ui \
             gui/SearchDialog.ui \
             gui/SharedFilesDialog.ui \
+            gui/ShareFilesDialog.ui \
             gui/StatisticDialog.ui \
             gui/MessagesDialog.ui \
             gui/help/browser/helpbrowser.ui \
@@ -272,6 +276,7 @@ SOURCES += main.cpp \
             gui/PhotoDialog.cpp \
             gui/PhotoShow.cpp \
             gui/LinksDialog.cpp \
+            gui/LibraryDialog.cpp \
             gui/ForumsDialog.cpp \
             gui/forums/CreateForum.cpp \
             gui/forums/CreateForumMsg.cpp \
@@ -281,6 +286,7 @@ SOURCES += main.cpp \
             gui/SearchTreeWidget.cpp \
             gui/SearchDialog.cpp \
             gui/SharedFilesDialog.cpp \
+            gui/ShareFilesDialog.cpp \
             gui/StatisticDialog.cpp \
             gui/MessagesDialog.cpp \
             gui/help/browser/helpbrowser.cpp \
