@@ -26,7 +26,7 @@
 #include <QDateTime>
 //#include <QEvent>
 
-#include <config/rsharesettings.h>
+#include <gui/Preferences/rsharesettings.h>
 
 #include "mainpage.h"
 #include "ui_StatisticDialog.h"

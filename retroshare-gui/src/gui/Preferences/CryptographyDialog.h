@@ -24,7 +24,7 @@
 
 #include <QFileDialog>
 
-#include <config/rsharesettings.h>
+#include <gui/Preferences/rsharesettings.h>
 
 #include "configpage.h"
 #include "ui_CryptographyDialog.h"

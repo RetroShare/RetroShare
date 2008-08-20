@@ -26,7 +26,7 @@
 #include "mainpage.h"
 #include "ui_MessengerWindow.h"
 #include "NetworkDialog.h"
-#include <config/rsharesettings.h>
+#include <gui/Preferences/rsharesettings.h>
 
 class LogoBar;
 class PeersDialog;

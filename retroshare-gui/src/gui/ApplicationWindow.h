@@ -31,7 +31,7 @@
 
 #include "ui_ApplicationWindow.h"
 
-#include "../config/rsharesettings.h"
+#include "gui/Preferences/rsharesettings.h"
 
 class ApplicationWindow : public QMainWindow
 {

@@ -26,7 +26,7 @@
 #include <QMainWindow>
 #include <QMap>
 #include <QPointer>
-#include <config/rsharesettings.h>
+#include <gui/Preferences/rsharesettings.h>
 
 #include "ui_ChanMsgDialog.h"
 

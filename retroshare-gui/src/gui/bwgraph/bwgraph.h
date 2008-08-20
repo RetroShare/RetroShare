@@ -27,8 +27,7 @@
 #include <QDateTime>
 #include <QEvent>
 
-#include <config/rsharesettings.h>
-//#include <control/rscontrol.h>
+#include <gui/Preferences/rsharesettings.h>
 #include <gui/common/rwindow.h>
 
 #include "ui_bwgraph.h"

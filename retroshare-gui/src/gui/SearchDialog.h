@@ -32,7 +32,7 @@
 #include "mainpage.h"
 #include "ui_SearchDialog.h"
 #include "advsearch/advancedsearchdialog.h"
-#include "../config/rsharesettings.h"
+#include "Preferences/rsharesettings.h"
 
 class FileDetail;
 

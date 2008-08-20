@@ -26,7 +26,7 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsmsgs.h"
 
-#include <config/rsharesettings.h>
+#include <gui/Preferences/rsharesettings.h>
 
 #include <sstream>
 

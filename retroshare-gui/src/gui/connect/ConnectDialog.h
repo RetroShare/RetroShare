@@ -23,7 +23,7 @@
 #ifndef _CONNECTDIALOG_H
 #define _CONNECTDIALOG_H
 
-#include <config/rsharesettings.h>
+#include <gui/Preferences/rsharesettings.h>
 
 #include "ui_ConnectDialog.h"
 
