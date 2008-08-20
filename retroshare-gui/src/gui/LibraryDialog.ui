@@ -672,5 +672,22 @@
  <resources>
   <include location="images.qrc" />
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>organizertreeView</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>organizerListView</receiver>
+   <slot>setCurrentIndex(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>139</x>
+     <y>230</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>439</x>
+     <y>238</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

@@ -14,7 +14,6 @@ TARGET +=
 
 DEPENDPATH += . \
             rsiface \
-            config \
             control \
             gui \
             lang \
@@ -25,7 +24,8 @@ DEPENDPATH += . \
             gui\connect \
             gui\images \              
             gui\Preferences \
-            gui\common\
+            gui\common \
+            gui\library \
             gui\Settings \
             gui\toaster \
             gui\help\browser \
@@ -106,6 +106,7 @@ HEADERS +=  rshare.h \
             gui/connect/InviteDialog.h \
             gui/connect/AddFriendDialog.h \
             gui/connect/AddFriendWizard.h \
+            gui/library/FindWindow.h \ 
             gui/msgs/ChanMsgDialog.h \
             gui/msgs/ChanCreateDialog.h \
             gui/images/retroshare_win.rc.h \
@@ -331,7 +332,8 @@ SOURCES += main.cpp \
             gui/Preferences/rsettings.cpp \
             gui/common/vmessagebox.cpp \
             gui/common/rwindow.cpp \ 
-            gui/common/html.cpp \        
+            gui/common/html.cpp \ 
+            gui/library/FindWindow.cpp \        
             gui/Settings/gsettingswin.cpp \
             gui/Settings/GeneralPage.cpp \
             gui/Settings/DirectoriesPage.cpp \

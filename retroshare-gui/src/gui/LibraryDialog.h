@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2008, crypton
+ *  Copyright (C) 2008, defnax
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -41,7 +41,7 @@ public:
   LibraryDialog(QWidget *parent = 0);
   /** Default Destructor */
 
-
+  	QString filePass();
 
 private slots:
 
@@ -53,6 +53,7 @@ private slots:
 	void CallShowDetailsBtn_library();
 	void CallCreateAlbumBtn_library();
 	void CallDeleteAlbumBtn_library();		
+    void CallFindBtn_library();
 
 
 

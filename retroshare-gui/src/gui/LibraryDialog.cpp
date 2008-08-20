@@ -31,6 +31,7 @@
 
 #include "util/RsAction.h"
 #include "msgs/ChanMsgDialog.h"
+#include "library/FindWindow.h"
 
 #include <iostream>
 #include <sstream>
@@ -58,6 +59,8 @@
 #define IMAGE_PROGRESS       ":/images/browse-looking.gif"
 #define IMAGE_LIBRARY        ":/images/library.png"
 
+QString fileToFind;
+
 
 /** Constructor */
 LibraryDialog::LibraryDialog(QWidget *parent)
@@ -73,7 +76,8 @@ LibraryDialog::LibraryDialog(QWidget *parent)
 	ui.organizertreeView->setModel(dmodel);
 	ui.organizerListView->setModel(dmodel);
 	ui.organizerListView->setSpacing(10);
-	QDir DwnlFolder,ShrFolder;
+	QDir retroshareLib;
+	retroshareLib.mkdir("RetroShare Library");
 	
 	
 	connect(ui.shareFiles_btn,SIGNAL(clicked()),this, SLOT(CallShareFilesBtn_library()));
@@ -98,10 +102,14 @@ LibraryDialog::LibraryDialog(QWidget *parent)
 
 void LibraryDialog::PopulateList()
 {
+	QDir dir;
+	QString libPath;
+
 	QDirModel *dirmodel=new QDirModel(this);
-	ui.organizertreeView->setModel(dirmodel);
-	QModelIndex cmodel=dirmodel->index(QDir::rootPath());
-	ui.organizertreeView->setRootIndex(cmodel); 
+	//ui.organizertreeView->setModel(dirmodel);
+	libPath=dir.currentPath();
+	//QModelIndex cmodel=dirmodel->index(QDir::rootPath());
+	//ui.organizertreeView->setRootIndex(cmodel); 
 }
 
 
@@ -131,4 +139,15 @@ void LibraryDialog::CallDeleteAlbumBtn_library()
 	//QMessageBox::information(this, tr("RetroShare"),tr("Will be Introducing this .. soon- Delete Album in Library"));
 }
 
+QString LibraryDialog::filePass()
+{
+	fileToFind=ui.findEditmain->text();
+	return fileToFind;
+}
 
+void LibraryDialog::CallFindBtn_library()
+{
+	filePass();
+	FindWindow *files = new FindWindow(this);
+	files->show();
+}

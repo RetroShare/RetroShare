@@ -54,7 +54,7 @@
        </widget>
       </item>
       <item row="1" column="4" >
-       <widget class="QPushButton" name="pushButton_4" >
+       <widget class="QPushButton" name="cancel_pushButton" >
         <property name="text" >
          <string>Cancel</string>
         </property>
@@ -71,18 +71,18 @@
  <resources/>
  <connections>
   <connection>
-   <sender>pushButton_4</sender>
+   <sender>cancel_pushButton</sender>
    <signal>clicked()</signal>
-   <receiver>sharedFile_dialog</receiver>
+   <receiver>ShareFilesDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>495</x>
-     <y>290</y>
+     <x>499</x>
+     <y>283</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>495</x>
-     <y>319</y>
+     <x>278</x>
+     <y>157</y>
     </hint>
    </hints>
   </connection>
