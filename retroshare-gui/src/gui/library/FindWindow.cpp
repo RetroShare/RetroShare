@@ -1,11 +1,32 @@
+/****************************************************************
+ *  RetroShare is distributed under the following license:
+ *
+ *  Copyright (C) 2008, defnax
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License
+ *  as published by the Free Software Foundation; either version 2
+ *  of the License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Boston, MA  02110-1301, USA.
+ ****************************************************************/
+
 #include <QtGui>
-//#include "ui_window.h"
-#include "findwindow.h"
-#include "mainwindowimpl.h"
+//#include "ui_findwindow.h"
+#include "FindWindow.h"
+#include "gui/LibraryDialog.h"
 
 extern QString fileToFind;
 
- Window::Window(QWidget *parent)
+ FindWindow::FindWindow(QWidget *parent)
      : QDialog(parent)
  {
      browseButton = createButton(tr("&Browse..."), SLOT(browse()));
@@ -43,7 +64,7 @@ extern QString fileToFind;
      resize(700, 300);
  }
 
- void Window::browse()
+ void FindWindow::browse()
  {
      QString directory = QFileDialog::getExistingDirectory(this,
                                 tr("Find Files"), QDir::currentPath());
@@ -53,7 +74,7 @@ extern QString fileToFind;
      }
  }
 
- void Window::find()
+ void FindWindow::find()
  {
      filesTable->setRowCount(0);
 
@@ -91,7 +112,7 @@ extern QString fileToFind;
    			}
    		}
  }
-QStringList Window::findFiles(  QDir &directory,  QStringList &files,
+QStringList FindWindow::findFiles(  QDir &directory,  QStringList &files,
                                 QString &text)
  {
         QStringList foundFiles;
@@ -114,7 +135,7 @@ QStringList Window::findFiles(  QDir &directory,  QStringList &files,
      return foundFiles;
  }
 
- void Window::showFiles(const QDir &directory, const QStringList &files)
+ void FindWindow::showFiles(const QDir &directory, const QStringList &files)
  {
      for (int i = 0; i < files.size(); ++i) {
          QFile file(directory.absoluteFilePath(files[i]));
@@ -135,7 +156,7 @@ QStringList Window::findFiles(  QDir &directory,  QStringList &files,
      filesFoundLabel->setText(tr("%1 file(s) found").arg(files.size()));
  }
 
-void Window::showFolders(const QDir &directory, const QStringList &folders)
+void FindWindow::showFolders(const QDir &directory, const QStringList &folders)
  {
      for (int i = 0; i < folders.size(); ++i) {
          QDir folder(directory.absoluteFilePath(folders[i]));
@@ -152,14 +173,14 @@ void Window::showFolders(const QDir &directory, const QStringList &folders)
     return ;
  }
 
- QPushButton *Window::createButton(const QString &text, const char *member)
+ QPushButton *FindWindow::createButton(const QString &text, const char *member)
  {
      QPushButton *button = new QPushButton(text);
      connect(button, SIGNAL(clicked()), this, member);
      return button;
  }
 
- QComboBox *Window::createComboBox(const QString &text)
+ QComboBox *FindWindow::createComboBox(const QString &text)
  {
      QComboBox *comboBox = new QComboBox;
      comboBox->setEditable(true);
@@ -168,7 +189,7 @@ void Window::showFolders(const QDir &directory, const QStringList &folders)
      return comboBox;
  }
 
- void Window::createFilesTable()
+ void FindWindow::createFilesTable()
  {
      filesTable = new QTableWidget(0, 2);
      QStringList labels;
