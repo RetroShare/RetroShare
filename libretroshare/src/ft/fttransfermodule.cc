@@ -131,16 +131,32 @@ bool ftTransferModule::recvFileData(std::string peerId, uint64_t offset,
 
 void ftTransferModule::requestData(std::string peerId, uint64_t offset, uint32_t chunk_size)
 {
+	std::cerr << "ftTransferModule::requestData()";
+	std::cerr << " peerId: " << peerId;
+	std::cerr << " offset: " << offset;
+	std::cerr << " chunk_size: " << chunk_size;
+	std::cerr << std::endl;
+
   mMultiplexor->sendDataRequest(peerId, mHash, mSize, offset,chunk_size);
 }
 
 bool ftTransferModule::getChunk(uint64_t &offset, uint32_t &chunk_size)
 {
+	std::cerr << "ftTransferModule::getChunk()";
+	std::cerr << " offset: " << offset;
+	std::cerr << " chunk_size: " << chunk_size;
+	std::cerr << std::endl;
+
   	return mFileCreator->getMissingChunk(offset, chunk_size);
 }
 
 bool ftTransferModule::storeData(uint64_t offset, uint32_t chunk_size,void *data)
 {
+	std::cerr << "ftTransferModule::storeData()";
+	std::cerr << " offset: " << offset;
+	std::cerr << " chunk_size: " << chunk_size;
+	std::cerr << std::endl;
+
 	return mFileCreator -> addFileData(offset, chunk_size, data);
 }
 
@@ -150,6 +166,7 @@ void ftTransferModule::queryInactive()
   std::ostringstream out;
   out<<"ftTransferModule::queryInactive()";
   out<<std:endl;
+  std::cerr << out.str();
 #endif
 
   int ts = time(NULL);

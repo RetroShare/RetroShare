@@ -83,19 +83,25 @@ void ftController::setFtSearch(ftSearch *search)
 void ftController::run()
 {
 	/* check the queues */
-	std::cerr << "ftController::run()";
-	std::cerr << std::endl;
 
-	/* tick the transferModules */
-	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
-
-	std::map<std::string, ftFileControl>::iterator it;
-	for(it = mDownloads.begin(); it != mDownloads.end(); it++)
+	while(1)
 	{
-		std::cerr << "\tTicking: " << it->first;
+		sleep(1);
+
+		std::cerr << "ftController::run()";
 		std::cerr << std::endl;
 
-		(it->second.mTransfer)->tick();
+		/* tick the transferModules */
+		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
+		std::map<std::string, ftFileControl>::iterator it;
+		for(it = mDownloads.begin(); it != mDownloads.end(); it++)
+		{
+			std::cerr << "\tTicking: " << it->first;
+			std::cerr << std::endl;
+
+			(it->second.mTransfer)->tick();
+		}
 	}
 }
 
@@ -223,17 +229,30 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	tm->setFileSources(srcIds);
 
 	/* get current state for transfer module */
+	std::string ownId = mConnMgr->getOwnId();
 	for(it = srcIds.begin(); it != srcIds.end(); it++)
 	{
-		if (mConnMgr->isOnline(*it))
+		if (*it == ownId)
+		{
+#ifdef CONTROL_DEBUG
+			std::cerr << "ftController::FileRequest()";
+			std::cerr << *it << " is Self - set high rate";
+			std::cerr << std::endl;
+#endif
+			//tm->setPeerState(*it, RS_FILE_RATE_FAST | 
+			//			RS_FILE_PEER_ONLINE, 100000);
+			tm->setPeerState(*it, PQIPEER_IDLE, 10000);
+		}
+		else if (mConnMgr->isOnline(*it))
 		{
 #ifdef CONTROL_DEBUG
 			std::cerr << "ftController::FileRequest()";
 			std::cerr << *it << " is Online";
 			std::cerr << std::endl;
 #endif
-			tm->setPeerState(*it, RS_FILE_RATE_TRICKLE | 
-						RS_FILE_PEER_ONLINE, 10000);
+			//tm->setPeerState(*it, RS_FILE_RATE_TRICKLE | 
+			//			RS_FILE_PEER_ONLINE, 10000);
+			tm->setPeerState(*it, PQIPEER_IDLE, 10000);
 		}
 		else
 		{
@@ -242,7 +261,8 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 			std::cerr << *it << " is Offline";
 			std::cerr << std::endl;
 #endif
-			tm->setPeerState(*it, RS_FILE_PEER_OFFLINE,  10000);
+			//tm->setPeerState(*it, RS_FILE_PEER_OFFLINE,  10000);
+			tm->setPeerState(*it, PQIPEER_NOT_ONLINE,  10000);
 		}
 	}
 

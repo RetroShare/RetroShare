@@ -119,13 +119,11 @@ void ftServer::SetupFtServer(NotifyBase *cb)
 	CachePair cp(mFiMon, mFiStore, CacheId(RS_SERVICE_TYPE_FILE_INDEX, 0));
 	mCacheStrapper -> addCachePair(cp);
 
-
 	/* complete search setup */
 	mFtSearch->addSearchMode(mCacheStrapper, RS_FILE_HINTS_CACHE);
 	mFtSearch->addSearchMode(mFtExtra, RS_FILE_HINTS_EXTRA);
 	mFtSearch->addSearchMode(mFiMon, RS_FILE_HINTS_LOCAL);
 	mFtSearch->addSearchMode(mFiStore, RS_FILE_HINTS_REMOTE);
-
 
 	mConnMgr->addMonitor(mFtController);
         mConnMgr->addMonitor(mCacheStrapper);
@@ -257,7 +255,7 @@ bool ftServer::FileDetails(std::string hash, uint32_t hintflags, FileInfo &info)
 
 	if (!found)
 	{
-		mFtSearch->search(hash, 0, hintflags, info);
+		found = mFtSearch->search(hash, 0, hintflags, info);
 	}
 	return found;
 }

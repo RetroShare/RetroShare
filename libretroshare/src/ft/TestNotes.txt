@@ -35,4 +35,20 @@ Tests.
 	5) FileIndex Store loading.
 	6) Basic Search.
 
+ftserver2test.cc
+==================
+
+Test out the ExtraList functions.
+Demonstrates the use of libretroshare/src/util/utest.h
+
+Tests.
+	1) Load ExtraList path				OK
+	2) Hashing of ExtraList File			OK
+	3) ExtraHashDone.				OK
+	4) Local Search for ExtraList Data.		OK
+	5) Remote Search of ExtraList (should Fail) 	OK
+	6) Transfer of ExtraList File (Local)		TODO
+	7) Transfer of ExtraList File (Remote)		TODO
+
+
 

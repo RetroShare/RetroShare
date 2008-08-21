@@ -1211,6 +1211,9 @@ bool p3ConnectMgr::isOnline(std::string id)
 		std::cerr << "p3ConnectMgr::isOnline(" << id;
 		std::cerr << ") is Not Friend";
 		std::cerr << std::endl;
+		std::cerr << "p3ConnectMgr::isOnline() OwnId: ";
+		std::cerr << mAuthMgr->OwnId();
+		std::cerr << std::endl;
 #endif
 		/* not a friend */
 	}

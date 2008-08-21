@@ -55,8 +55,8 @@ void	P3Hub::addP3Pipe(std::string id, P3Pipe *pqi, p3ConnectMgr *mgr)
 void 	P3Hub::run()
 {
 	RsItem *item;
-	std::list<RsItem *> recvdQ;
-	std::list<RsItem *>::iterator lit;
+	std::list<std::pair<std::string, RsItem *> > recvdQ;
+	std::list<std::pair<std::string, RsItem *> >::iterator lit;
 	while(1)
 	{
 		std::cerr << "P3Hub::run()";
@@ -73,26 +73,38 @@ void 	P3Hub::run()
 				item->print(std::cerr, 10);
 				std::cerr << std::endl;
 
-				recvdQ.push_back(item);
+					
+				recvdQ.push_back(make_pair(it->first, item));
 			}
 		}
 
 		/* now send out */
 		for(lit = recvdQ.begin(); lit != recvdQ.end(); lit++)
 		{
-			std::string pId = (*lit)->PeerId();
-			if (mPeers.end() == (it = mPeers.find(pId)))
+			std::string srcId = lit->first;
+			std::string destId = (lit->second)->PeerId();
+			if (mPeers.end() == (it = mPeers.find(destId)))
 			{
-				std::cerr << "Failed to Find destination: " << pId;
+				std::cerr << "Failed to Find destination: " << destId;
 				std::cerr << std::endl;
-			}
-			std::cerr << "P3Hub::run() sending msg to: ";
-			std::cerr << it->first;
-			std::cerr << std::endl;
-			(*lit)->print(std::cerr, 10);
-			std::cerr << std::endl;
+				std::cerr << "Deleting Packet";
+				std::cerr << std::endl;
 
-			(it->second).mPQI->PushRecvdItem(*lit);
+				delete (lit->second);
+
+			}
+			else
+			{
+				/* now we have dest, set source Id */
+				(lit->second)->PeerId(srcId);
+				std::cerr << "P3Hub::run() sending msg to: ";
+				std::cerr << it->first;
+				std::cerr << std::endl;
+				(lit->second)->print(std::cerr, 10);
+				std::cerr << std::endl;
+
+				(it->second).mPQI->PushRecvdItem(lit->second);
+			}
 		}
 
 		recvdQ.clear();
