@@ -32,7 +32,7 @@ const uint32_t PQIPEER_DOWNLOAD_TOO_FAST = 8; /* 8 secs */
 const uint32_t PQIPEER_DOWNLOAD_TOO_SLOW = 12; /* 12 secs */
 const uint32_t PQIPEER_DOWNLOAD_MIN_DELTA = 5; /* 5 secs */
 
-const uint32_t TRANSFER_START_MIN = 500;  /* 500 byte  min limit */
+const uint32_t TRANSFER_START_MIN = 10000;  /* 10000 byte  min limit */
 const uint32_t TRANSFER_START_MAX = 10000; /* 10000 byte max limit */
 
 ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm)
@@ -73,16 +73,24 @@ bool ftTransferModule::setPeerState(std::string peerId,uint32_t state,uint32_t m
     it++;
   }
 
-  if (!found) mFileSources.push_back(*it);
+  if (!found) mFileSources.push_back(peerId);
 
   std::map<std::string,peerInfo>::iterator mit;
   mit = mOnlinePeers.find(peerId);
   if (mit == mOnlinePeers.end())
   {
     peerInfo pInfo;
+    /* Initialise it properly */
+    pInfo.peerId = peerId;
     pInfo.state = state;
+    pInfo.offset = 0;
+    pInfo.chunkSize = TRANSFER_START_MIN;
+    pInfo.receivedSize = 0;
+    pInfo.lastTS = 0;
+    pInfo.actualRate = 0;
     pInfo.desiredRate = maxRate;
     mOnlinePeers[peerId] = pInfo;
+
   }
   else
   {
@@ -143,11 +151,18 @@ void ftTransferModule::requestData(std::string peerId, uint64_t offset, uint32_t
 bool ftTransferModule::getChunk(uint64_t &offset, uint32_t &chunk_size)
 {
 	std::cerr << "ftTransferModule::getChunk()";
-	std::cerr << " offset: " << offset;
+	std::cerr << " Request: offset: " << offset;
 	std::cerr << " chunk_size: " << chunk_size;
 	std::cerr << std::endl;
 
-  	return mFileCreator->getMissingChunk(offset, chunk_size);
+  	bool val = mFileCreator->getMissingChunk(offset, chunk_size);
+
+	std::cerr << "ftTransferModule::getChunk()";
+	std::cerr << " Answer: offset: " << offset;
+	std::cerr << " chunk_size: " << chunk_size;
+	std::cerr << std::endl;
+
+	return val;
 }
 
 bool ftTransferModule::storeData(uint64_t offset, uint32_t chunk_size,void *data)

@@ -39,6 +39,8 @@
 const uint32_t DMULTIPLEX_MIN	= 10; /* 1ms sleep */
 const uint32_t DMULTIPLEX_MAX   = 1000; /* 1 sec sleep */
 const double   DMULTIPLEX_RELAX = 0.5; /* ??? */
+
+#define MPLEX_DEBUG 1
  
 ftClient::ftClient(ftTransferModule *module, ftFileCreator *creator)
 	:mModule(module), mCreator(creator)
@@ -144,6 +146,10 @@ bool    ftDataMultiplex::FileDetails(std::string hash, uint32_t hintsflag, FileI
 bool	ftDataMultiplex::sendDataRequest(std::string peerId, 
 	std::string hash, uint64_t size, uint64_t offset, uint32_t chunksize)
 {
+#ifdef MPLEX_DEBUG
+	std::cerr << "ftDataMultiplex::sendDataRequest() Client Send";
+	std::cerr << std::endl;
+#endif
 	return mDataSend->sendDataRequest(peerId,hash,size,offset,chunksize);
 }
 
@@ -152,6 +158,10 @@ bool	ftDataMultiplex::sendData(std::string peerId,
 		std::string hash, uint64_t size, 
 		uint64_t offset, uint32_t chunksize, void *data)
 {
+#ifdef MPLEX_DEBUG
+	std::cerr << "ftDataMultiplex::sendData() Server Send";
+	std::cerr << std::endl;
+#endif
 	return mDataSend->sendData(peerId,hash,size,offset,chunksize,data);
 }
 
@@ -163,6 +173,10 @@ bool	ftDataMultiplex::recvData(std::string peerId,
 	std::string hash, uint64_t size, 
 	uint64_t offset, uint32_t chunksize, void *data)
 {
+#ifdef MPLEX_DEBUG
+	std::cerr << "ftDataMultiplex::recvData() Client Recv";
+	std::cerr << std::endl;
+#endif
 	/* Store in Queue */
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 	mRequestQueue.push_back(
@@ -177,6 +191,10 @@ bool	ftDataMultiplex::recvDataRequest(std::string peerId,
 		std::string hash, uint64_t size, 
 		uint64_t offset, uint32_t chunksize)
 {
+#ifdef MPLEX_DEBUG
+	std::cerr << "ftDataMultiplex::recvDataRequest() Server Recv";
+	std::cerr << std::endl;
+#endif
 	/* Store in Queue */
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 	mRequestQueue.push_back(

@@ -215,7 +215,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 
 	/* add in new item for download */
 	std::string savepath = mDownloadPath + "/" + fname;
-	std::string chunker = "";
+	std::string chunker = "default";
 	ftFileCreator *fc = new ftFileCreator(savepath, size, hash, chunker);
 	ftTransferModule *tm = new ftTransferModule(fc, mDataplex);
 

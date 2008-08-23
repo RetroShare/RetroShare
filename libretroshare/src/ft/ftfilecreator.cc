@@ -1,5 +1,7 @@
 #include "ftfilecreator.h"
 
+#define FILE_DEBUG 1
+
 /***********************************************************
 *
 *	ftFileCreator methods
@@ -7,7 +9,7 @@
 ***********************************************************/
 
 ftFileCreator::ftFileCreator(std::string path, uint64_t size, std::string
-hash, std::string chunker="default"): ftFileProvider(path,size,hash) 
+hash, std::string chunker): ftFileProvider(path,size,hash) 
 {
 	/* 
          * FIXME any inits to do?
@@ -136,6 +138,10 @@ ftFileCreator::~ftFileCreator()
 
 bool ftFileCreator::getMissingChunk(uint64_t &offset, uint32_t &chunk) 
 {
+#ifdef FILE_DEBUG
+	std::cerr << "ftFileCreator::getMissingChunk(???," << chunk << ")";
+	std::cerr << std::endl;
+#endif
 	return fileChunker->getMissingChunk(offset, chunk);
 }
 
@@ -179,14 +185,31 @@ int ftFileChunker::splitFile(){
 	uint64_t rem = file_size % std_chunk_size;
 	unsigned int index=0;
 	uint64_t max_chunk_size = file_size - (index * std_chunk_size);
+
+
+#ifdef FILE_DEBUG
+	std::cerr << "ftFileChunker::splitFile()";
+	std::cerr << std::endl;
+	std::cerr << "\tnum_chunks: " << num_chunks;
+	std::cerr << std::endl;
+	std::cerr << "\trem: " << rem;
+	std::cerr << std::endl;
+#endif
 	
+	time_t now = time(NULL);
 	for(index=0;index<num_chunks;index++)
 	{
   		uint64_t offset = index * std_chunk_size;
-		time_t now = time(NULL);
 		max_chunk_size = file_size - (index * std_chunk_size);
 		ftChunk *f = new ftChunk(offset,max_chunk_size,now, ftChunk::AVAIL);
 		allocationTable.push_back(f);
+	}
+
+	if (rem != 0)
+	{
+		ftChunk *f = new ftChunk(file_size-rem,rem,now, ftChunk::AVAIL);
+		allocationTable.push_back(f);
+		num_chunks++;
 	}
 
 	/*
@@ -212,29 +235,77 @@ bool ftFileChunker::getMissingChunk(uint64_t &offset, uint32_t &chunk)
 	int chunks_after = 0;
 	int chunks_rem = 0;
 
+#ifdef FILE_DEBUG
+	std::cerr << "ftFileChunker::getMissingChunk(???," << chunk << ")";
+	std::cerr << std::endl;
+#endif
+
 	/*
 	 * This signals file completion 
          * FIXME Does it need to be more explicit
 	 */
  
 	if(aggregate_status == num_chunks * ftChunk::RECEIVED)
+	{
+#ifdef FILE_DEBUG
+		std::cerr << "completed ??";
+		std::cerr << std::endl;
+#endif
 		return found;
+	}
+
 
 	while(i<allocationTable.size()) 
 	{
+
+#ifdef FILE_DEBUG
+		std::cerr << "ftFileChunker checking allocTable(" << i << ")";
+		std::cerr << " of " << allocationTable.size();
+		std::cerr << std::endl;
+#endif
+		
 		if(allocationTable.at(i)->max_chunk_size >=chunk)
 		{
+
+#ifdef FILE_DEBUG
+			std::cerr << "ftFileChunker pre alloc(" << i << ")";
+			std::cerr << std::endl;
+			std::cerr << "\toffset: " << allocationTable.at(i)->offset;
+			std::cerr << std::endl;
+			std::cerr << "\tmax_chunk: " << allocationTable.at(i)->max_chunk_size;
+			std::cerr << std::endl;
+			std::cerr << "\treq_chunk: " << chunk;
+			std::cerr << std::endl;
+#endif
+
+
 			offset = allocationTable.at(i)->offset;
 			chunks_after = chunk/std_chunk_size; //10KB
+
 			/*
 			 * FIXME Handling remaining chunk < 10KB
 			 */
+
+			//if (chunk <
 			chunks_rem   = chunk % std_chunk_size;
 			chunk -= chunks_rem;
 			/*std::cout << "Found " << chunk <<  " at " << i <<  " "<< chunks_after << std::endl;*/
 			allocationTable.at(i)->max_chunk_size=0;
 			allocationTable.at(i)->timestamp = time(NULL);
 			allocationTable.at(i)->chunk_status = ftChunk::ALLOCATED;
+
+
+#ifdef FILE_DEBUG
+			std::cerr << "ftFileChunker postalloc(" << i << ")";
+			std::cerr << std::endl;
+			std::cerr << "\tchunks_after: " << chunks_after;
+			std::cerr << std::endl;
+			std::cerr << "\tchunks_rem: " << chunks_after;
+			std::cerr << std::endl;
+			std::cerr << "\tchunk: " << chunks_after;
+			std::cerr << std::endl;
+#endif
+
 			found = true;
 			break;
 		}
@@ -278,12 +349,18 @@ bool ftFileChunker::getMissingChunk(uint64_t &offset, uint32_t &chunk)
 		 * update all previous chunks max available size
 		 * Expensive? Can it be smarter FIXME
 		 */
-		
+
+		/* drbob: Think this is wrong?
+		 * disabling...
+		 *
 		for(unsigned int j=0;j<i;j++)
 		{
 			if (allocationTable.at(j)->max_chunk_size >0)
 				allocationTable.at(j)->max_chunk_size -= chunk;
 		}
+		 *
+		 */
+
 	
 		for(unsigned int j=i;j<i+chunks_after;j++)
 		{
