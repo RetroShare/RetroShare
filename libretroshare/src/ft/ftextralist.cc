@@ -61,8 +61,12 @@ void ftExtraList::run()
 			/* Hash a file */
 			hashAFile();
 
+#ifdef WIN32
+			Sleep(1);
+#else
 			/* microsleep */
 			usleep(10);
+#endif
 		}
 		else
 		{
@@ -74,7 +78,11 @@ void ftExtraList::run()
 			}
 
 			/* sleep */
+#ifdef WIN32
+			Sleep(1000);
+#else
 			sleep(1);
+#endif
 		}
 	}
 }

@@ -86,7 +86,11 @@ void ftController::run()
 
 	while(1)
 	{
+#ifdef WIN32
+		Sleep(1000);
+#else
 		sleep(1);
+#endif
 
 		std::cerr << "ftController::run()";
 		std::cerr << std::endl;

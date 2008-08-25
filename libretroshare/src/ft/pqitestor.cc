@@ -115,7 +115,11 @@ void 	P3Hub::run()
 		 */
 
 		/* sleep a bit */
+#ifdef WIN32
+		Sleep(1000);
+#else
 		sleep(1);
+#endif
 	}
 }
 

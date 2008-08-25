@@ -312,38 +312,62 @@ bool ftFileChunker::getMissingChunk(uint64_t &offset, uint32_t &chunk)
 		i++;
 	}
 
+	/* if we get here, there is no available chunk bigger 
+	 * than requested ... 
+	 * NB: Request size should be a larger than std_chunk_size.
+	 * So Edge (sub chunk allocation) condition is handled here.
+	 *
+	 * Find largest remaining chunk.
+	 */
+
 	if (!found) 
 	{
 		i=0;
-		uint64_t min = allocationTable.at(i)->max_chunk_size - chunk;
-		uint64_t diff = min;
-		int mini = -1;
+		uint64_t max = allocationTable.at(i)->max_chunk_size;
+		uint64_t size = max;
+		int maxi = -1;
 		while(i<allocationTable.size()) 
 		{
-			diff = allocationTable.at(i)->max_chunk_size-chunk;
-			if(diff <= min && diff >0)
+			size = allocationTable.at(i)->max_chunk_size;
+			if(size > max)
 			{
-				min = allocationTable.at(i)->max_chunk_size - chunk;
-				mini = i;
+				max = allocationTable.at(i)->max_chunk_size;
+				maxi = i;
 			}
 			i++;
 		}
-		if (mini > -1) //mini or min
+		if (maxi > -1) //maxi or max
 		{
-			offset = allocationTable.at(mini)->offset;
-			chunk  = allocationTable.at(mini)->max_chunk_size;	
+			offset = allocationTable.at(maxi)->offset;
+			chunk  = allocationTable.at(maxi)->max_chunk_size;	
 			chunks_after = chunk/std_chunk_size; //10KB
-			chunks_rem   = chunk % std_chunk_size;
-			chunk -= chunks_rem;
-			allocationTable.at(mini)->max_chunk_size=0;
-			allocationTable.at(mini)->timestamp = time(NULL);
-			allocationTable.at(mini)->chunk_status = ftChunk::ALLOCATED;
+
+			/* Handle end condition ...
+			 * max_chunk_size < std_chunk_size
+			 * Trim if not end condition.
+			 */
+			if (chunks_after > 0)
+			{
+				chunks_rem   = chunk % std_chunk_size;
+				chunk -= chunks_rem;
+			}
+			else
+			{
+				/* end condition */
+				chunks_after = 1;
+			}
+
+			allocationTable.at(maxi)->max_chunk_size=0;
+			allocationTable.at(maxi)->timestamp = time(NULL);
+			allocationTable.at(maxi)->chunk_status = ftChunk::ALLOCATED;
 			found = true;		
 		}
 		
 	} //if not found 
 
-	if (found) {
+
+	if (found)
+	{
 		std::cout << "Chunks remaining " << chunks_rem << std::endl;
 		/*
 		 * update all previous chunks max available size
@@ -386,11 +410,50 @@ bool ftFileChunker::getMissingChunk(uint64_t &offset, uint32_t &chunk)
 int ftFileChunker::monitor() 
 {
 	int reset = 0;
+	uint32_t prev_size = 0;
+	uint32_t size = 0;
+
 	std::cout<<"Running monitor.."<<std::endl;
-	for(unsigned int j=0;j<allocationTable.size();j++){
- 		if(allocationTable.at(j)->chunk_status == ftChunk::ALLOCATED && allocationTable.at(j)->timestamp - time(NULL) > 30){
+
+	RsStackMutex stack(chunkerMutex); /********** STACK LOCKED MTX ******/
+	for(unsigned int j=allocationTable.size()-1 ;j>= 0;)
+	{
+ 		if((allocationTable.at(j)->chunk_status == ftChunk::ALLOCATED) && 
+		   (allocationTable.at(j)->timestamp - time(NULL) > 30))
+		{
 			allocationTable.at(j)->chunk_status = ftChunk::AVAIL;
+			if (j == allocationTable.size()-1)
+			{
+				/* at end */
+				prev_size = 0;
+				size = file_size % std_chunk_size;
+				if (size == 0)
+				{
+					size = std_chunk_size;
+				}
+			}
+			else
+			{
+				prev_size = allocationTable.at(j+1)->max_chunk_size;
+				size = std_chunk_size;
+			}
+
+			allocationTable.at(j)->max_chunk_size = size + prev_size;
+			prev_size = allocationTable.at(j)->max_chunk_size;
+			
+			for(j--; j >= 0; j--)
+			{
+				if (allocationTable.at(j)->chunk_status != ftChunk::AVAIL)
+					break;
+			
+				allocationTable.at(j)->max_chunk_size += prev_size;
+				prev_size = allocationTable.at(j)->max_chunk_size;
 				reset++;
+			}
+		}
+		else
+		{
+			j--;
 		}
 	}
 	return reset;
