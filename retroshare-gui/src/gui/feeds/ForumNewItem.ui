@@ -53,6 +53,9 @@
           <property name="toolTip" >
            <string>Remove Item</string>
           </property>
+          <property name="styleSheet" >
+           <string notr="true" />
+          </property>
           <property name="text" >
            <string/>
           </property>
@@ -93,6 +96,9 @@
             <bold>true</bold>
            </font>
           </property>
+          <property name="styleSheet" >
+           <string notr="true" />
+          </property>
           <property name="text" >
            <string>Connected</string>
           </property>
@@ -116,6 +122,9 @@
         </item>
         <item>
          <widget class="QLabel" name="nameLabel" >
+          <property name="styleSheet" >
+           <string notr="true" />
+          </property>
           <property name="text" >
            <string>name</string>
           </property>
@@ -214,6 +223,10 @@
           <layout class="QHBoxLayout" >
            <item>
             <widget class="QLabel" name="iconLabel" >
+             <property name="styleSheet" >
+              <string notr="true" >   background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 lightgray, stop:1 darkgray);</string>
+             </property>
              <property name="text" >
               <string/>
              </property>
@@ -229,6 +242,10 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="styleSheet" >
+              <string notr="true" >   background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 lightgray, stop:1 darkgray);</string>
              </property>
              <property name="text" >
               <string>Description 

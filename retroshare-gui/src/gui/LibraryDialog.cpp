@@ -71,14 +71,8 @@ LibraryDialog::LibraryDialog(QWidget *parent)
   
   	
   	PopulateList();
-  	
-  	QDirModel * dmodel=new QDirModel(this);
-	ui.organizertreeView->setModel(dmodel);
-	ui.organizerListView->setModel(dmodel);
-	ui.organizerListView->setSpacing(10);
-	QDir retroshareLib;
-	retroshareLib.mkdir("RetroShare Library");
 	
+	connect(ui.organizerListView, SIGNAL(rightButtonClicked(QModelIndex,QPoint)), this, SLOT(ListLibrarymenu(QModelIndex,QPoint)));
 	
 	connect(ui.shareFiles_btn,SIGNAL(clicked()),this, SLOT(CallShareFilesBtn_library()));
 	connect(ui.tileView_btn_library,SIGNAL(clicked()),this, SLOT(CallTileViewBtn_library()));
@@ -100,16 +94,89 @@ LibraryDialog::LibraryDialog(QWidget *parent)
 #endif
 }
 
+
 void LibraryDialog::PopulateList()
 {
-	QDir dir;
-	QString libPath;
+	QDir DwnlFolder,ShrFolder,retroshareLib,treePath;
+	retroshareLib.mkdir("RetroShare Library");
+	DwnlFolder.mkdir("RetroShare Library/Download");
+	ShrFolder.mkdir("RetroShare Library/SharedFolder");
+	LibShared=treePath.currentPath();
+	LibShared.append("/RetroShare Library");
+	QDirModel * dmodel=new QDirModel;
+	ui.organizertreeView->setModel(dmodel);
+	ui.organizertreeView->setRootIndex(dmodel->index(LibShared));
+	ui.organizerListView->setModel(dmodel);
+	ui.organizerListView->setViewMode(QListView::ListMode);
+	ui.organizerListView->setWordWrap (true);
 
-	QDirModel *dirmodel=new QDirModel(this);
-	//ui.organizertreeView->setModel(dirmodel);
-	libPath=dir.currentPath();
-	//QModelIndex cmodel=dirmodel->index(QDir::rootPath());
-	//ui.organizertreeView->setRootIndex(cmodel); 
+}
+
+
+void LibraryDialog::ListLibrarymenu(QModelIndex index,QPoint pos) 
+{
+	ind=index;
+	if(index.isValid())
+	{
+		bool indexselected=true;
+		QMenu rmenu(this);
+		rmenu.move(pos);
+		if(indexselected)
+		rmenu.addAction(QIcon(""),tr("Play"), this, SLOT(PlayFrmList()));
+		if(indexselected)
+		rmenu.addAction(QIcon(""),tr("Copy"), this, SLOT(copyFile()));
+		if(indexselected)
+		rmenu.addAction(QIcon(""),tr("Delete"), this, SLOT(DeleteFile()));
+		if(indexselected)
+		rmenu.addAction(QIcon(""),tr("Rename"), this, SLOT(RenameFile()));
+		rmenu.exec();
+	}
+	else
+		return;
+}
+
+void LibraryDialog::PlayFrmList() 
+{
+	QDirModel *dmodel=new QDirModel;
+	QModelIndex parentIndex = dmodel->index(LibShared+"/Download");
+    QModelIndex index = dmodel->index(ind.row(), 0, parentIndex);
+    QString text = dmodel->data(index, Qt::DisplayRole).toString();
+    
+    filechose.clear();
+    QDir dir;
+    filechose.append(LibShared+"/Download/");
+    filechose.append(text);
+    if(filechose.contains("avi")|| filechose.contains("MP3")||filechose.contains("mp3")|| filechose.contains("wmv")||filechose.contains("wav")|| filechose.contains("dat")|| filechose.contains("mov")|| filechose.contains("mpeg")|| filechose.contains("mpg"))
+    {
+    	player();
+	}
+    else 
+    	QMessageBox::information(this,"Information", "Not Supported By the Player");
+}
+
+void LibraryDialog::copyFile()
+{
+	
+}
+
+void LibraryDialog::DeleteFile()
+{
+	
+}
+
+void LibraryDialog::RenameFile()
+{
+	ui.organizerListView->openPersistentEditor (ind);
+	progtime=new QTimer(this);
+	progtime->start(100000);
+	connect(progtime, SIGNAL(timeout()), this, SLOT(StopRename()));
+	
+}
+
+void LibraryDialog::StopRename()
+{
+	ui.organizerListView->closePersistentEditor(ind);
+	progtime->stop();
 }
 
 
@@ -151,3 +218,25 @@ void LibraryDialog::CallFindBtn_library()
 	FindWindow *files = new FindWindow(this);
 	files->show();
 }
+
+void LibraryDialog:: player()
+{
+	QString avi;
+	avi.append(filechose);
+	QStringList argu;
+	QString smlayer="./smplayer";
+	argu<<avi;
+	QProcess *retroshareplayer=new QProcess(this);
+	retroshareplayer->start(smlayer,argu);
+	
+}
+
+void LibraryDialog::browseFile()
+ {
+	QDir dir;
+	 QString pathseted =dir.currentPath();
+	 pathseted.append("/RetroShare Library/Download");
+     filechose = QFileDialog::getOpenFileName(this, tr("Open File..."),
+    		 	pathseted, tr("Media-Files (*.avi *.mp3 *.wmv *.wav *.dat *.mov *.mpeg);;All Files (*)"));
+     //movieEdit->setText(filechose);
+ }

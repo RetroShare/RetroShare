@@ -526,6 +526,9 @@
       </item>
       <item row="1" column="1" colspan="4" >
        <widget class="QListView" name="organizerListView" >
+        <property name="contextMenuPolicy" >
+         <enum>Qt::DefaultContextMenu</enum>
+        </property>
         <property name="movement" >
          <enum>QListView::Free</enum>
         </property>
@@ -675,9 +678,9 @@
  <connections>
   <connection>
    <sender>organizertreeView</sender>
-   <signal>clicked(QModelIndex)</signal>
+   <signal>doubleClicked(QModelIndex)</signal>
    <receiver>organizerListView</receiver>
-   <slot>setCurrentIndex(QModelIndex)</slot>
+   <slot>setRootIndex(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>139</x>
