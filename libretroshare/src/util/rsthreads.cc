@@ -92,8 +92,11 @@ void RsQueueThread::run()
 				mLastSleep = mMaxSleep;
 			}
 		}
-
+#ifdef WIN32
+		Sleep(mLastSleep);
+#else
 		usleep(1000 * mLastSleep);
+#endif
 	}
 }
 

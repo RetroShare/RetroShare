@@ -32,6 +32,10 @@
  *
  */
 
+#ifdef WIN32
+#include "util/rswin.h"
+#endif
+
 #include "ft/ftextralist.h"
 #include "ft/ftdatamultiplex.h"
 #include "ft/ftfilesearch.h"
@@ -93,7 +97,7 @@ int main(int argc, char **argv)
 	ftDataSend *ftds = new ftDataSendDummy();
 
 	/* setup Actual Test bit */
-	ftDataMultiplex *ftmplex = new ftDataMultiplex(ftds, ftfs);
+	ftDataMultiplex *ftmplex = new ftDataMultiplex("ownId", ftds, ftfs);
 	ftmplex->start();
 
 	/* Setup Search with some valid results */

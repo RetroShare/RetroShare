@@ -37,6 +37,7 @@
 /****
  * #define RSDIR_DEBUG 1
  ****/
+#define RSDIR_DEBUG 1
 
 std::string 	RsDirUtil::getTopDir(std::string dir)
 {

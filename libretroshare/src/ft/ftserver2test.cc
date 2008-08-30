@@ -27,6 +27,11 @@
  * ftServer2Test - Demonstrates how to check for test stuff.
  */
 
+#ifdef WIN32
+#include "util/rswin.h"
+#endif
+
+
 #include "ft/ftserver.h"
 
 #include "ft/ftextralist.h"
@@ -82,6 +87,29 @@ int main(int argc, char **argv)
 	ftServer *mLoadServer = NULL;
 	std::list<ftServer *> mOtherServers;
         std::list<std::string>::iterator eit;
+
+#ifdef PTW32_STATIC_LIB
+         pthread_win32_process_attach_np();
+#endif   
+
+#ifdef WIN32
+        // Windows Networking Init.
+        WORD wVerReq = MAKEWORD(2,2);
+        WSADATA wsaData;
+
+        if (0 != WSAStartup(wVerReq, &wsaData))
+        {
+                std::cerr << "Failed to Startup Windows Networking";
+                std::cerr << std::endl;
+        }
+        else
+        {
+                std::cerr << "Started Windows Networking";
+                std::cerr << std::endl;
+        }
+
+#endif
+
 
         while(-1 != (c = getopt(argc, argv, "asd:p:e:")))
         {
@@ -156,7 +184,7 @@ int main(int argc, char **argv)
 	}
 
 	std::ostringstream pname;
-	pname << "/tmp/rstst-" << time(NULL);
+	pname << "./tmp/rstst-" << time(NULL);
 
 	std::string basepath = pname.str();
 	RsDirUtil::checkCreateDirectory(basepath);

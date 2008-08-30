@@ -311,14 +311,27 @@ bool 	ftController::FileDownloads(std::list<std::string> &hashs)
 	/* Directory Handling */
 bool 	ftController::setDownloadDirectory(std::string path)
 {
+#ifdef CONTROL_DEBUG
+	std::cerr << "ftController::setDownloadDirectory(" << path << ")";
+	std::cerr << std::endl;
+#endif
 	/* check if it exists */
         if (RsDirUtil::checkCreateDirectory(path))
 	{
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
 		mDownloadPath = path;
+#ifdef CONTROL_DEBUG
+		std::cerr << "ftController::setDownloadDirectory() Okay!";
+		std::cerr << std::endl;
+#endif
 		return true;
 	}
+
+#ifdef CONTROL_DEBUG
+	std::cerr << "ftController::setDownloadDirectory() Failed";
+	std::cerr << std::endl;
+#endif
 	return false;
 }
 

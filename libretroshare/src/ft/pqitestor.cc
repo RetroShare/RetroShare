@@ -54,6 +54,9 @@ void	P3Hub::addP3Pipe(std::string id, P3Pipe *pqi, p3ConnectMgr *mgr)
 
 void 	P3Hub::run()
 {
+	std::cerr << "P3Hub::run()";
+	std::cerr << std::endl;
+
 	RsItem *item;
 	std::list<std::pair<std::string, RsItem *> > recvdQ;
 	std::list<std::pair<std::string, RsItem *> >::iterator lit;

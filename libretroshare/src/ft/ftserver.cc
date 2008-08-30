@@ -101,12 +101,12 @@ void ftServer::SetupFtServer(NotifyBase *cb)
 	mFtSearch = new ftFileSearch();
 
 	/* Transport */
-        mFtDataplex = new ftDataMultiplex(this, mFtSearch);
+        mFtDataplex = new ftDataMultiplex(ownId, this, mFtSearch);
 
 	/* make Controller */
 	mFtController = new ftController(mCacheStrapper, mFtDataplex, mConfigPath);
 	mFtController -> setFtSearch(mFtSearch);
-	std::string tmppath = "./";
+	std::string tmppath = ".";
 	mFtController->setPartialsDirectory(tmppath);
 	mFtController->setDownloadDirectory(tmppath);
 
@@ -149,6 +149,9 @@ void    ftServer::StartupThreads()
 
 	/* Controller thread */
 	mFtController->start();
+
+	/* Dataplex */
+	mFtDataplex->start();
 
 	/* start own thread */
 	start();

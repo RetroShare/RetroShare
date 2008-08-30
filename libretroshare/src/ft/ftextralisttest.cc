@@ -23,6 +23,10 @@
  *
  */
 
+#ifdef WIN32
+#include "util/rswin.h"
+#endif
+
 #include "ft/ftextralist.h"
 
 extern "C" void* runExtraList(void* p)
@@ -37,6 +41,7 @@ extern "C" void* runExtraList(void* p)
 	{
 		//eList->tick();
 		sleep(1);
+
 	}
 
         delete eList;
@@ -113,6 +118,7 @@ int main(int argc, char **argv)
 	while(1)
 	{
 		sleep(period);
+
 		displayExtraListDetails(eList,  toHash, hashed);
 	}
 }

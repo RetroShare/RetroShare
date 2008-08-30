@@ -14,6 +14,18 @@ hash, std::string chunker): ftFileProvider(path,size,hash)
 	/* 
          * FIXME any inits to do?
          */
+
+#ifdef FILE_DEBUG
+	std::cerr << "ftFileCreator()";
+	std::cerr << std::endl;
+	std::cerr << "\tpath: " << path;
+	std::cerr << std::endl;
+	std::cerr << "\tsize: " << size;
+	std::cerr << std::endl;
+	std::cerr << "\thash: " << hash;
+	std::cerr << std::endl;
+#endif
+	
 	initialize(chunker);
 }
 
@@ -36,7 +48,10 @@ int ftFileCreator::initializeFileAttrs()
 	/* 
 	 * check if the file exists 
 	 */
-	std::cout << "ftFileProvider::initializeFileAttrs() Filename: " << file_name;
+#ifdef FILE_DEBUG
+	std::cerr << "ftFileCreator::initializeFileAttrs() Filename: " << file_name;
+       	std::cerr << std::endl;
+#endif
 	
 	/* 
          * attempt to open file in writing mode
@@ -45,7 +60,9 @@ int ftFileCreator::initializeFileAttrs()
 	fd = fopen(file_name.c_str(), "w+b");
 	if (!fd)
 	{
-		std::cout << "ftFileProvider::initializeFileAttrs() Failed to open (w+b): " << file_name << std::endl;
+#ifdef FILE_DEBUG
+		std::cerr << "ftFileCreator::initializeFileAttrs() Failed to open (w+b): " << file_name << std::endl;
+#endif
 		return 0;
 
 	}
@@ -56,23 +73,38 @@ int ftFileCreator::initializeFileAttrs()
 	 */
 	if (0 != fseek(fd, 0L, SEEK_END))
 	{
-        	std::cerr << "ftFileProvider::initializeFileAttrs() Seek Failed" << std::endl;
+        	std::cerr << "ftFileCreator::initializeFileAttrs() Seek Failed" << std::endl;
 		return 0;
 	}
 	/* 
 	 * get the file length 
 	 */
 	recv_size  = ftell(fd); 	
+
+#ifdef FILE_DEBUG
+	std::cerr << "ftFileCreator::initializeFileAttrs() recv_size: " << recv_size << std::endl;
+#endif
 	return 1;
 }
 
 bool ftFileCreator::addFileData(uint64_t offset, uint32_t chunk_size, void *data)
 {
+#ifdef FILE_DEBUG
+	std::cerr << "ftFileCreator::addFileData(";
+	std::cerr << offset;
+	std::cerr << ", " << chunk_size;
+	std::cerr << ", " << data << ")";
+	std::cerr << std::endl;
+#endif
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 	/* check the status */
 
 	if (fd==NULL) 
 	{
+#ifdef FILE_DEBUG
+		std::cerr << "ftFileCreator::addFileData() initialising";
+		std::cerr << std::endl;
+#endif
 		int init = initializeFileAttrs();
 		if (init ==0) {
 			std::cerr <<"Initialization Failed" << std::endl;
@@ -116,6 +148,13 @@ bool ftFileCreator::addFileData(uint64_t offset, uint32_t chunk_size, void *data
 
 	pos = ftell(fd);
 	
+#ifdef FILE_DEBUG
+	std::cerr << "ftFileCreator::addFileData() added Data...";
+	std::cerr << std::endl;
+	std::cerr << "recvd: " << recv_size;
+	std::cerr << " pos: " << pos;
+	std::cerr << std::endl;
+#endif
 	/* 
 	 * Notify ftFileChunker about chunks received 
 	 */
@@ -190,9 +229,15 @@ int ftFileChunker::splitFile(){
 #ifdef FILE_DEBUG
 	std::cerr << "ftFileChunker::splitFile()";
 	std::cerr << std::endl;
+	std::cerr << "\tfile_size: " << file_size;
+	std::cerr << std::endl;
+	std::cerr << "\tstd_chunk_size: " << std_chunk_size;
+	std::cerr << std::endl;
 	std::cerr << "\tnum_chunks: " << num_chunks;
 	std::cerr << std::endl;
 	std::cerr << "\trem: " << rem;
+	std::cerr << std::endl;
+	std::cerr << "\tmax_chunk_size: " << max_chunk_size;
 	std::cerr << std::endl;
 #endif
 	
@@ -322,12 +367,26 @@ bool ftFileChunker::getMissingChunk(uint64_t &offset, uint32_t &chunk)
 
 	if (!found) 
 	{
+#ifdef FILE_DEBUG
+		std::cerr << "ftFileChunker::getMissingChuck() FULL CHUNK not found";
+		std::cerr << std::endl;
+#endif
 		i=0;
 		uint64_t max = allocationTable.at(i)->max_chunk_size;
 		uint64_t size = max;
 		int maxi = -1;
+		if (max > 0)
+		{
+			maxi = 0;
+		}
+
 		while(i<allocationTable.size()) 
 		{
+#ifdef FILE_DEBUG
+			std::cerr << "Checking(" << i << ") " << 
+				allocationTable.at(i)->max_chunk_size;
+			std::cerr << std::endl;
+#endif
 			size = allocationTable.at(i)->max_chunk_size;
 			if(size > max)
 			{
@@ -338,6 +397,12 @@ bool ftFileChunker::getMissingChunk(uint64_t &offset, uint32_t &chunk)
 		}
 		if (maxi > -1) //maxi or max
 		{
+
+#ifdef FILE_DEBUG
+			std::cerr << "Biggest Avail Chunk: " << max;
+			std::cerr << std::endl;
+#endif
+
 			offset = allocationTable.at(maxi)->offset;
 			chunk  = allocationTable.at(maxi)->max_chunk_size;	
 			chunks_after = chunk/std_chunk_size; //10KB
@@ -361,6 +426,7 @@ bool ftFileChunker::getMissingChunk(uint64_t &offset, uint32_t &chunk)
 			allocationTable.at(maxi)->timestamp = time(NULL);
 			allocationTable.at(maxi)->chunk_status = ftChunk::ALLOCATED;
 			found = true;		
+			i = maxi;
 		}
 		
 	} //if not found 
@@ -368,6 +434,9 @@ bool ftFileChunker::getMissingChunk(uint64_t &offset, uint32_t &chunk)
 
 	if (found)
 	{
+		// i represents index to chunk(s) we will use.
+		// chunks_after is the count of how many we will use.
+
 		std::cout << "Chunks remaining " << chunks_rem << std::endl;
 		/*
 		 * update all previous chunks max available size
@@ -399,6 +468,15 @@ bool ftFileChunker::getMissingChunk(uint64_t &offset, uint32_t &chunk)
 		}
 		
 	}
+	else
+	{
+#ifdef FILE_DEBUG
+		std::cerr << "ftFileChunker::getMissingChuck() not found";
+		std::cerr << std::endl;
+#endif
+	}
+
+
 	return found;
 }
 
@@ -491,10 +569,32 @@ int ftFileChunker::notifyReceived(uint64_t offset, uint32_t chunk_size)
 {
 	RsStackMutex stack(chunkerMutex); /********** STACK LOCKED MTX ******/
 	int index = offset / std_chunk_size;
+
+	/* should receive a multiple of chunk_size.... */
+	uint32_t chunks = chunk_size / std_chunk_size;
+	uint32_t rem_chunk = chunk_size % std_chunk_size;
+	
+#ifdef FILE_DEBUG
+	std::cerr << "ftFileChunkerr::notifyReceived(";
+	std::cerr << offset;
+	std::cerr << ", " << chunk_size << ")";
+	std::cerr << std::endl;
+	std::cerr << "\t# complete chunks: " << chunks;
+	std::cerr << std::endl;
+	std::cerr << "\trem_chunk: " << rem_chunk;
+	std::cerr << std::endl;
+#endif
 	
 	if(allocationTable.at(index)->chunk_status == ftChunk::ALLOCATED){
 		allocationTable.at(index)->chunk_status = ftChunk::RECEIVED;
 		aggregate_status += ftChunk::RECEIVED;
+
+#ifdef FILE_DEBUG
+		std::cerr << "ftFileChunkerr::notifyReceived()";
+		std::cerr << " flagged as RECVD";
+		std::cerr << std::endl;
+#endif
+
 	}
 	return aggregate_status;
 }

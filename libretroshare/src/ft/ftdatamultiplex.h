@@ -84,7 +84,7 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 
 	public:
 
-	ftDataMultiplex(ftDataSend *server, ftSearch *search);
+	ftDataMultiplex(std::string ownId, ftDataSend *server, ftSearch *search);
 
 	/* ftController Interface */
 bool	addTransferModule(ftTransferModule *mod, ftFileCreator *f);
@@ -153,6 +153,7 @@ bool    locked_handleServerRequest(ftFileProvider *provider,
 
 	ftDataSend *mDataSend;
 	ftSearch   *mSearch;
+	std::string mOwnId;
 };
 
 #endif

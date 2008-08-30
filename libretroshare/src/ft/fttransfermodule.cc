@@ -157,10 +157,19 @@ bool ftTransferModule::getChunk(uint64_t &offset, uint32_t &chunk_size)
 
   	bool val = mFileCreator->getMissingChunk(offset, chunk_size);
 
-	std::cerr << "ftTransferModule::getChunk()";
-	std::cerr << " Answer: offset: " << offset;
-	std::cerr << " chunk_size: " << chunk_size;
-	std::cerr << std::endl;
+	if (val)
+	{
+		std::cerr << "ftTransferModule::getChunk()";
+		std::cerr << " Answer: offset: " << offset;
+		std::cerr << " chunk_size: " << chunk_size;
+		std::cerr << std::endl;
+	}
+	else
+	{
+		std::cerr << "ftTransferModule::getChunk()";
+		std::cerr << " Answer: No Chunk Available";
+		std::cerr << std::endl;
+	}
 
 	return val;
 }

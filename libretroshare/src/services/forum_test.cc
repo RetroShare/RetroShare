@@ -56,7 +56,11 @@ int main(int argc, char **argv)
 	int i;
 	for(i = 0; i < 10; i++)
 	{
+#ifdef WIN32
+		Sleep(1000);
+#else
 		sleep(1);
+#endif
 		forum->tick();
 	}
 
@@ -76,29 +80,61 @@ int testForums(p3Forums *forum)
 	std::string fId1 = forum->createForum(L"Forum 1", L"first forum", RS_DISTRIB_PUBLIC);
 
 	forum->tick(); /* expect group publish */
-	sleep(1);
+#ifdef WIN32
+		Sleep(1000);
+#else
+		sleep(1);
+#endif
 	forum->tick();
-	sleep(1);
+#ifdef WIN32
+		Sleep(1000);
+#else
+		sleep(1);
+#endif
 
 	std::string fId2 = forum->createForum(L"Forum 2", L"next first forum", RS_DISTRIB_PRIVATE);
 
 	forum->tick(); /* expect group publish */
-	sleep(1);
+#ifdef WIN32
+		Sleep(1000);
+#else
+		sleep(1);
+#endif
 	forum->tick();
-	sleep(1);
+#ifdef WIN32
+		Sleep(1000);
+#else
+		sleep(1);
+#endif
 
 	std::string mId1 = forum->createForumMsg(fId2, "", L"Forum 2 Msg 1", L"first forum msg");
 
 	forum->tick(); /* expect msg publish */
-	sleep(1);
+#ifdef WIN32
+		Sleep(1000);
+#else
+		sleep(1);
+#endif
 	forum->tick();
-	sleep(1);
+#ifdef WIN32
+		Sleep(1000);
+#else
+		sleep(1);
+#endif
 
 	std::string mId2 = forum->createForumMsg(fId2, "", L"Forum 2 Msg 2", L"second forum msg");
 
 	forum->tick(); /* expect msg publish */
-	sleep(1);
+#ifdef WIN32
+		Sleep(1000);
+#else
+		sleep(1);
+#endif
 	forum->tick();
-	sleep(1);
+#ifdef WIN32
+		Sleep(1000);
+#else
+		sleep(1);
+#endif
 }
 

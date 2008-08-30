@@ -29,6 +29,10 @@
  * Put it all together, and make it compile.
  */
 
+#ifdef WIN32
+#include "util/rswin.h"
+#endif
+
 #include "ft/ftserver.h"
 
 #include "ft/ftextralist.h"
@@ -68,6 +72,29 @@ int main(int argc, char **argv)
 	std::map<std::string, ftServer *> mFtServers;
 	std::map<std::string, p3ConnectMgr *> mConnMgrs;
 
+#ifdef PTW32_STATIC_LIB
+         pthread_win32_process_attach_np();
+#endif 
+
+#ifdef WIN32
+        // Windows Networking Init.
+        WORD wVerReq = MAKEWORD(2,2);
+        WSADATA wsaData;
+ 
+        if (0 != WSAStartup(wVerReq, &wsaData))
+        {
+                std::cerr << "Failed to Startup Windows Networking";
+                std::cerr << std::endl;
+        }
+        else
+        {
+                std::cerr << "Started Windows Networking";
+                std::cerr << std::endl;
+        }
+
+#endif
+
+
         while(-1 != (c = getopt(argc, argv, "d:p:s")))
         {
                 switch (c)
@@ -95,12 +122,14 @@ int main(int argc, char **argv)
 		std::cerr << "Missing Files" << std::endl;
 		usage(argv[0]);
 	}
+	std::cerr << "Point 1" << std::endl;
 
 	for(; optind < argc; optind++)
 	{
 		std::cerr << "Adding: " << argv[optind] << std::endl;
 		fileList.push_back(std::string(argv[optind]));
 	}
+	std::cerr << "Point 2" << std::endl;
 
 	/* We need to setup a series 2 - 4 different ftServers....
 	 *
@@ -115,8 +144,10 @@ int main(int argc, char **argv)
 	std::list<pqiAuthDetails> baseFriendList, friendList;
 	std::list<pqiAuthDetails>::iterator fit;
 
+	std::cerr << "Point 3" << std::endl;
 	P3Hub *testHub = new P3Hub();
 	testHub->start();
+	std::cerr << "Point 4" << std::endl;
 
 	/* Setup Base Friend Info */
 	for(it = peerIds.begin(); it != peerIds.end(); it++)
@@ -133,13 +164,15 @@ int main(int argc, char **argv)
 		std::cerr << "ftserver1test::setup peer: " << *it;
 		std::cerr << std::endl;
 	}
+	std::cerr << "Point 5" << std::endl;
 
 	std::ostringstream pname;
-	pname << "/tmp/rstst-" << time(NULL);
+	pname << "./tmp/rstst-" << time(NULL);
 
 	std::string basepath = pname.str();
 	RsDirUtil::checkCreateDirectory(basepath);
 
+	std::cerr << "Point 6" << std::endl;
 
 
 	for(it = peerIds.begin(); it != peerIds.end(); it++)
