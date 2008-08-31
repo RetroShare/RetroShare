@@ -25,6 +25,7 @@
 #include "rsiface/rsiface.h"
 #include "rsiface/rsexpr.h"
 #include "rsiface/rsfiles.h"
+#include "rsiface/rspeers.h"
 
 #include <iostream>
 #include <sstream>
@@ -479,24 +480,30 @@ void SearchDialog::resultsToTree(std::string txt, std::list<FileDetail> results)
 		QTreeWidgetItem *item = new QTreeWidgetItem();
 		item->setText(SR_NAME_COL, QString::fromStdString(it->name));
 		item->setText(SR_HASH_COL, QString::fromStdString(it->hash));
-		item->setText(SR_ID_COL, QString::fromStdString(it->id));
 		item->setText(SR_SEARCH_ID_COL, QString::fromStdString(out.str()));
 		/*
 		 * to facilitate downlaods we need to save the file size too
 		 */
-                QVariant * variant = new QVariant(it->size);
-                item->setText(SR_SIZE_COL, QString(variant->toString()));
+		QVariant * variant = new QVariant(it->size);
+		item->setText(SR_SIZE_COL, QString(variant->toString()));
 
+		// I kept the color code green=online, grey=offline
+		// Qt::blue is very dark and hardly compatible with the black text on it.
+		//
 		if (it->id == "Local")
 		{
-			/* colour green? */
-			item->setBackground(2, QBrush(Qt::green));
+			item->setText(SR_ID_COL, QString::fromStdString(it->id));
+			item->setBackground(2, QBrush(Qt::red)); /* colour green? */
 		}
-		else
+		else 
 		{
-			/* colour blue? */
-			item->setBackground(2, QBrush(Qt::blue));
+			item->setText(SR_ID_COL, QString::fromStdString( rsPeers->getPeerName(it->id)));
+			if(rsPeers->isOnline(it->id))
+				item->setBackground(2, QBrush(Qt::green));
+			else
+				item->setBackground(2, QBrush(Qt::lightGray));
 		}
+
 		ui.searchResultWidget->addTopLevelItem(item);
 	}
 
