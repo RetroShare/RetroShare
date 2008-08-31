@@ -131,19 +131,33 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 {
 
+    QTreeWidgetItem *wi = getCurrentNeighbour();
+    if (!wi)
+    	return;
+
+//		 return ;
+
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
-
-      peerdetailsAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Make Friend / Peer Details" ), this );
-      connect( peerdetailsAct , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
-      
-      loadcertAct = new QAction(QIcon(IMAGE_LOADCERT), tr( "Load Certificate" ), this );
-      connect( loadcertAct , SIGNAL( triggered() ), this, SLOT( loadneighbour() ) );
-
-
       contextMnu.clear();
-      contextMnu.addAction( peerdetailsAct);
-      contextMnu.addAction( loadcertAct);
+
+		if(wi->text(9).toStdString() == rsPeers->getOwnId())
+		{
+			peerdetailsAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Peer Details" ), this );
+			connect( peerdetailsAct , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
+			contextMnu.addAction( peerdetailsAct);
+		}
+		else
+		{
+			peerdetailsAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Make Friend / Peer Details" ), this );
+			connect( peerdetailsAct , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
+			contextMnu.addAction( peerdetailsAct);
+
+			loadcertAct = new QAction(QIcon(IMAGE_LOADCERT), tr( "Load Certificate" ), this );
+			connect( loadcertAct , SIGNAL( triggered() ), this, SLOT( loadneighbour() ) );
+			contextMnu.addAction( loadcertAct);
+		}
+
       contextMnu.exec( mevent->globalPos() );
 }
 
@@ -365,6 +379,33 @@ void NetworkDialog::insertConnect()
 
 		/* add to the list */
 		items.append(item);
+	}
+
+	// add self to network.
+	RsPeerDetails pd ;
+	if(rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) 
+	{
+		QTreeWidgetItem *self_item = new QTreeWidgetItem((QTreeWidget*)0);
+
+		self_item->setText(1,"Accept");
+		self_item->setText(2,"Good");
+		self_item->setText(3,"0");
+		self_item->setText(4,QString::fromStdString(pd.name)) ;
+
+		std::ostringstream out;
+		out << pd.localAddr << ":" << pd.localPort << "/" << pd.extAddr << ":" << pd.extPort;
+		self_item->setText(5, QString::fromStdString(out.str()));
+		self_item->setText(6, QString::fromStdString(pd.org));
+		self_item->setText(7, QString::fromStdString(pd.location));
+		self_item->setText(8, QString::fromStdString(pd.email));
+		self_item->setText(9, QString::fromStdString(pd.id));
+
+		for(int i=1;i<10;++i)
+		{
+			self_item->setBackground(i,QBrush(Qt::darkGreen));
+		}
+		self_item->setIcon(0,(QIcon(IMAGE_AUTHED)));
+		items.append(self_item);
 	}
 
 	/* remove old items ??? */
