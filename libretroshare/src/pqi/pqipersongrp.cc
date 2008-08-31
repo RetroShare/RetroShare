@@ -190,6 +190,7 @@ int     pqipersongrp::restart_listener()
 int	pqipersongrp::setConfig(p3GeneralConfig *cfg)
 {
 	config = cfg;
+	return 1;
 }
 
 static const std::string pqih_ftr("PQIH_FTR");

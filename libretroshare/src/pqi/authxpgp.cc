@@ -24,6 +24,7 @@
  */
 
 #include "authxpgp.h"
+#include "cleanupxpgp.h"
 
 #include "pqinetwork.h"
 
@@ -465,7 +466,14 @@ bool AuthXPGP::LoadCertificateFromString(std::string pem, std::string &id)
 	std::cerr << std::endl;
 #endif
 
-	XPGP *xpgp = loadXPGPFromPEM(pem);
+#ifdef AUTHXPGP_DEBUG
+	std::cerr << "AuthXPGP::LoadCertificateFromString() Cleaning up Certificate First!";
+	std::cerr << std::endl;
+#endif
+
+	std::string cleancert = cleanUpCertificate(pem);
+
+	XPGP *xpgp = loadXPGPFromPEM(cleancert);
 	if (!xpgp)
 		return false;
 

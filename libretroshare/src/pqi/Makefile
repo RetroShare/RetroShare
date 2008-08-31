@@ -16,7 +16,7 @@ MGR_OBJ = pqimonitor.o p3dhtmgr.o p3connmgr.o p3cfgmgr.o p3authmgr.o
 GRP_OBJ = pqiperson.o pqihandler.o pqiservice.o pqipersongrp.o  
 
 ifdef PQI_USE_XPGP
-	SSL_OBJ = authxpgp.o   
+	SSL_OBJ = authxpgp.o cleanupxpgp.o  
 else
 	SSL_OBJ  = sslcert.o  
 endif
