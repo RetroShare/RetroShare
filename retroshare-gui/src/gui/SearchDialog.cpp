@@ -484,7 +484,7 @@ void SearchDialog::resultsToTree(std::string txt, std::list<FileDetail> results)
 		/*
 		 * to facilitate downlaods we need to save the file size too
 		 */
-		QVariant * variant = new QVariant(it->size);
+		QVariant * variant = new QVariant((qulonglong)it->size);
 		item->setText(SR_SIZE_COL, QString(variant->toString()));
 
 		// I kept the color code green=online, grey=offline
