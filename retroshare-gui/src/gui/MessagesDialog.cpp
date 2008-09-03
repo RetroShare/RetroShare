@@ -65,6 +65,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   
   connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(newmessage()));
   connect(ui.removemessageButton, SIGNAL(clicked()), this, SLOT(removemessage()));
+  connect(ui.replymessageButton, SIGNAL(clicked()), this, SLOT(replytomessage()));
   //connect(ui.printbutton, SIGNAL(clicked()), this, SLOT(print()));
   connect(ui.actionPrint, SIGNAL(triggered()), this, SLOT(print()));
   connect(ui.actionPrintPreview, SIGNAL(triggered()), this, SLOT(printpreview()));
@@ -107,7 +108,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     ui.printbutton->setIcon(QIcon(QString(":/images/print24.png")));
     
     /*Disabled Reply Button */
-    ui.replymessageButton->setEnabled(false);
+    //ui.replymessageButton->setEnabled(false);
     
     QMenu * printmenu = new QMenu();
     printmenu->addAction(ui.actionPrint);
@@ -183,7 +184,37 @@ void MessagesDialog::replytomessage()
 {
 	/* put msg on msgBoard, and switch to it. */
 
+	std::string cid;
+	std::string mid;
 
+	if(!getCurrentMsg(cid, mid))
+		return ;
+
+	mCurrCertId = cid;
+	mCurrMsgId  = mid;
+
+	MessageInfo msgInfo;
+	if (!rsMsgs -> getMessage(mid, msgInfo))
+		return ;
+
+	ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+	/* fill it in */
+	//std::cerr << "MessagesDialog::newmessage()" << std::endl;
+	nMsgDialog->newMsg();
+	nMsgDialog->insertTitleText( (QString("Re: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
+
+	QTextDocument doc ;
+	doc.setHtml(QString::fromStdWString(msgInfo.msg)) ;
+	std::string cited_text(doc.toPlainText().toStdString()) ;
+
+	std::string::size_type i=0 ;
+	while( (i=cited_text.find_first_of('\n',i+1)) < cited_text.size())
+		cited_text.replace(i,1,std::string("\n> ")) ;
+
+	nMsgDialog->insertMsgText( std::string("> ") + cited_text ) ;
+	nMsgDialog->addRecipient( msgInfo.srcId ) ;
+	nMsgDialog->show();
+	nMsgDialog->activateWindow();
 }
 
 void MessagesDialog::togglefileview()
