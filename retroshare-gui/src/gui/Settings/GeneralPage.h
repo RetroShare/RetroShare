@@ -26,7 +26,7 @@
 #include <QStyleFactory>
 #include <QLineEdit>
 
-#include "config/rsharesettings.h"
+#include "gui/Preferences/rsharesettings.h"
 #include "lang/languagesupport.h"
 
 # include <QtGui/QWidget>

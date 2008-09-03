@@ -22,7 +22,7 @@
 
 #include "CreateForumMsg.h"
 
-#include <config/rsharesettings.h>
+#include <gui/Preferences/rsharesettings.h>
 
 #include "rsiface/rsforums.h"
 

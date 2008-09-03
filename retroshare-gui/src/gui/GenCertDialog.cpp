@@ -22,7 +22,7 @@
 
 #include <rshare.h>
 #include "GenCertDialog.h"
-#include "config/rsharesettings.h"
+#include "gui/Preferences/rsharesettings.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <util/WidgetBackgroundImage.h>
