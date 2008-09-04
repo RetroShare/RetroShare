@@ -41,6 +41,7 @@ public:
  void insertMsgTxtAndFiles();
 
 
+ virtual void keyPressEvent(QKeyEvent *) ;
 private slots:
 
   /** Create the context popup menu and it's submenus */

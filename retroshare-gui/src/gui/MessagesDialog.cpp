@@ -115,11 +115,24 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     printmenu->addAction(ui.actionPrintPreview);
     ui.printbutton->setMenu(printmenu);
 
+	 ui.msgWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
+}
+
+void MessagesDialog::keyPressEvent(QKeyEvent *e)
+{
+	if(e->key() == Qt::Key_Delete)
+	{
+		removemessage() ;
+		e->accept() ;
+	}
+	else
+		MainPage::keyPressEvent(e) ;
 }
 
 void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
@@ -128,21 +141,31 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
+      contextMnu.clear();
+
       newmsgAct = new QAction(QIcon(IMAGE_MESSAGE), tr( "New Message" ), this );
       connect( newmsgAct , SIGNAL( triggered() ), this, SLOT( newmessage() ) );
       
-      replytomsgAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply to Message" ), this );
-      connect( replytomsgAct , SIGNAL( triggered() ), this, SLOT( replytomessage() ) );
-      
-      removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Message" ), this );
-      connect( removemsgAct , SIGNAL( triggered() ), this, SLOT( removemessage() ) );
-      
+		int nn = ui.msgWidget->selectedItems().size() ;
 
+		if(nn > 1)
+		{
+			removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Messages" ), this );
+			connect( removemsgAct , SIGNAL( triggered() ), this, SLOT( removemessage() ) );
+			contextMnu.addAction( removemsgAct);
+		}
+		else if(nn == 1)
+		{
+			replytomsgAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply to Message" ), this );
+			connect( replytomsgAct , SIGNAL( triggered() ), this, SLOT( replytomessage() ) );
+			contextMnu.addAction( replytomsgAct);
 
-      contextMnu.clear();
+			removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Message" ), this );
+			connect( removemsgAct , SIGNAL( triggered() ), this, SLOT( removemessage() ) );
+			contextMnu.addAction( removemsgAct);
+		}
+
       contextMnu.addAction( newmsgAct);
-      contextMnu.addAction( replytomsgAct);
-      contextMnu.addAction( removemsgAct);
       contextMnu.exec( mevent->globalPos() );
 }
 
@@ -648,6 +671,7 @@ bool MessagesDialog::getCurrentMsg(std::string &cid, std::string &mid)
 
 void MessagesDialog::removemessage()
 {
+#ifdef TO_REMOVE
 	//std::cerr << "MessagesDialog::removemessage()" << std::endl;
 	std::string cid, mid;
 	if (!getCurrentMsg(cid, mid))
@@ -656,8 +680,12 @@ void MessagesDialog::removemessage()
 		//std::cerr << " No Message selected" << std::endl;
 		return;
 	}
+#endif
 
-	rsMsgs -> MessageDelete(mid);
+	QList<QTreeWidgetItem*> list(ui.msgWidget->selectedItems()) ; 
+
+	for(QList<QTreeWidgetItem*>::const_iterator it(list.begin());it!=list.end();++it)
+		rsMsgs->MessageDelete((*it)->text(5).toStdString());
 
 	return;
 }
