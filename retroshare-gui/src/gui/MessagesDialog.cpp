@@ -230,11 +230,7 @@ void MessagesDialog::replytomessage()
 	doc.setHtml(QString::fromStdWString(msgInfo.msg)) ;
 	std::string cited_text(doc.toPlainText().toStdString()) ;
 
-	std::string::size_type i=0 ;
-	while( (i=cited_text.find_first_of('\n',i+1)) < cited_text.size())
-		cited_text.replace(i,1,std::string("\n> ")) ;
-
-	nMsgDialog->insertMsgText( std::string("> ") + cited_text ) ;
+	nMsgDialog->insertPastedText(cited_text) ;
 	nMsgDialog->addRecipient( msgInfo.srcId ) ;
 	nMsgDialog->show();
 	nMsgDialog->activateWindow();

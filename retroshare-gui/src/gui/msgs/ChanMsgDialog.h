@@ -53,6 +53,7 @@ void  insertSendList(); /* for Msgs */
 void  insertChannelSendList(); /* for Channels */
 void  insertFileList(); /* for Both */
 void  insertTitleText(std::string title);
+void  insertPastedText(std::string msg) ;
 void  insertMsgText(std::string msg);
 void	addRecipient(std::string id) ;
 void  Create_New_Image_Tag( const QString urlremoteorlocal );
@@ -110,6 +111,7 @@ private slots:
 
  
 private:
+  void setTextColor(const QColor& col) ;
 	void setupFileActions();
 	void setupEditActions();
 	void setupViewActions();
