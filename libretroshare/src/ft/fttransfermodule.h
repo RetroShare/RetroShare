@@ -50,29 +50,71 @@ const int  PQIPEER_DOWNLOADING          = 0x0002;
 const int  PQIPEER_IDLE                 = 0x0004;
 const int  PQIPEER_SUSPEND              = 0x0010;
 
+const uint32_t PQIPEER_OFFLINE_CHECK  = 120; /* check every 2 minutes */
+const uint32_t PQIPEER_DOWNLOAD_TIMEOUT  = 60; /* time it out, -> offline after 60 secs */
+const uint32_t PQIPEER_DOWNLOAD_CHECK    = 10; /* desired delta = 10 secs */
+const uint32_t PQIPEER_DOWNLOAD_TOO_FAST = 8; /* 8 secs */
+const uint32_t PQIPEER_DOWNLOAD_TOO_SLOW = 12; /* 12 secs */
+const uint32_t PQIPEER_DOWNLOAD_MIN_DELTA = 5; /* 5 secs */
+
+const uint32_t TRANSFER_START_MIN = 10000;  /* 10000 byte  min limit */
+const uint32_t TRANSFER_START_MAX = 10000; /* 10000 byte max limit */
+/*
 class Request
 {
-	public:
-  uint64_t offset;
-  uint32_t chunkSize;
+public:
+  	uint64_t offset;
+  	uint32_t chunkSize;
 };
-
+*/
 class peerInfo
 {
-	public:
-  std::string peerId;
-  uint32_t state;
-  double desiredRate;
-  double actualRate;
+public:
+	peerInfo(std::string peerId_in,uint32_t state_in,uint32_t maxRate_in):
+		peerId(peerId_in),state(state_in),desiredRate(maxRate_in),actualRate(0),
+		offset(0),chunkSize(TRANSFER_START_MIN),receivedSize(0),lastTS(0)
+	{
+		return;
+	}
+  	std::string peerId;
+  	uint32_t state;
+  	double desiredRate;
+  	double actualRate;
 
-  //current file data request
-  uint64_t offset;
-  uint32_t chunkSize;
+  	//current file data request
+  	uint64_t offset;
+  	uint32_t chunkSize;
 
-  //already received data size
-  uint32_t receivedSize;
+  	//already received data size
+  	uint32_t receivedSize;
 
-  time_t lastTS;
+  	time_t lastTS;
+};
+
+class ftFileStatus
+{
+	enum Status {
+		PQIFILE_INIT,
+		PQIFILE_NOT_ONLINE,
+		PQIFILE_DOWNLOADING,
+		PQIFILE_PAUSE,
+		PQIFILE_COMPLETE,
+		PQIFILE_FAIL,
+		PQIFILE_FAIL_CANCEL,
+		PQIFILE_FAIL_NOT_AVAIL,
+		PQIFILE_FAIL_NOT_OPEN,
+		PQIFILE_FAIL_NOT_SEEK,
+		PQIFILE_FAIL_NOT_WRITE,
+		PQIFILE_FAIL_NOT_READ,
+		PQIFILE_FAIL_BAD_PATH
+	};
+public:
+	ftFileStatus(std::string hash_in):hash(hash_in),stat(PQIFILE_INIT)
+	{
+		return;
+	}
+	std::string hash;
+	Status stat;
 };
 
 class ftTransferModule 
@@ -85,8 +127,9 @@ public:
   bool setFileSources(std::list<std::string> peerIds);
   bool setPeerState(std::string peerId,uint32_t state,uint32_t maxRate);  //state = ONLINE/OFFLINE
   uint32_t getDataRate(std::string peerId);
-  bool stopTransfer();
+  bool pauseTransfer();
   bool resumeTransfer();
+  bool cancelTransfer();
   bool completeFileTransfer();
 
   //interface to multiplex module
@@ -124,6 +167,8 @@ private:
   bool     mFlag;  //1:transfer complete, 0: not complete
   double desiredRate;
   double actualRate;
+
+  ftFileStatus mFileStatus; //used for pause/resume file transfer
 };
 
 #endif  //FT_TRANSFER_MODULE_HEADER

@@ -280,13 +280,57 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 
 bool 	ftController::FileCancel(std::string hash)
 {
-	/* TODO */
-	return false;
+#ifdef CONTROL_DEBUG
+	std::cerr << "ftController::FileCancel" << std::endl;
+#endif
+	/*check if the file in the download map*/
+	std::map<std::string,ftFileControl>::iterator mit;
+	mit=mDownloads.find(hash);
+	if (mit==mDownloads.end())
+	{
+#ifdef CONTROL_DEBUG
+		std::cerr<<"ftController::FileCancel file is not found in mDownloads"<<std::endl;
+#endif
+		return false;
+	}
+
+	/*find the point to transfer module*/
+	ftTransferModule* ft=(mit->second).mTransfer;
+	ft->cancelTransfer();
+	return true;
 }
 
 bool 	ftController::FileControl(std::string hash, uint32_t flags)
 {
-	return false;
+#ifdef CONTROL_DEBUG
+	std::cerr << "ftController::FileControl(" << hash << ",";
+	std::cerr << flags << ")"<<std::endl;
+#endif
+	/*check if the file in the download map*/
+	std::map<std::string,ftFileControl>::iterator mit;
+	mit=mDownloads.find(hash);
+	if (mit==mDownloads.end())
+	{
+#ifdef CONTROL_DEBUG
+		std::cerr<<"ftController::FileControl file is not found in mDownloads"<<std::endl;
+#endif
+		return false;
+	}
+
+	/*find the point to transfer module*/
+	ftTransferModule* ft=(mit->second).mTransfer;
+	switch (flags)
+	{
+		case RS_FILE_CTRL_PAUSE:
+			ft->stopTransfer();
+			break;
+		case RS_FILE_CTRL_START:
+			ft->resumeTransfer();
+			break;
+		default:
+			return false;
+	}
+	return true;
 }
 
 bool 	ftController::FileClearCompleted()
