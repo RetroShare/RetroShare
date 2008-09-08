@@ -70,6 +70,11 @@ public:
 class peerInfo
 {
 public:
+	peerInfo(std::string peerId_in):peerId(peerId_in),state(PQIPEER_NOT_ONLINE),desiredRate(0),actualRate(0),
+		offset(0),chunkSize(TRANSFER_START_MIN),receivedSize(0),lastTS(0)
+	{
+		return;
+	}
 	peerInfo(std::string peerId_in,uint32_t state_in,uint32_t maxRate_in):
 		peerId(peerId_in),state(state_in),desiredRate(maxRate_in),actualRate(0),
 		offset(0),chunkSize(TRANSFER_START_MIN),receivedSize(0),lastTS(0)
@@ -120,7 +125,7 @@ public:
 class ftTransferModule 
 {
 public:
-  ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm);
+  ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftController *fc);
   ~ftTransferModule();
 
   //interface to download controller
@@ -155,14 +160,15 @@ private:
   /* These have independent Mutexes / are const locally (no Mutex protection)*/
   ftFileCreator *mFileCreator;
   ftDataMultiplex *mMultiplexor;
+  ftController *mFtController;
 
   std::string mHash;
   uint64_t    mSize;
 
   RsMutex tfMtx; /* below is mutex protected */
 
-  std::list<std::string>         mFileSources;
-  std::map<std::string,peerInfo> mOnlinePeers;
+  std::list<std::string>         mOnlinePeers;
+  std::map<std::string,peerInfo> mFileSources;
   	
   bool     mFlag;  //1:transfer complete, 0: not complete
   double desiredRate;
