@@ -54,8 +54,15 @@ bool ftTransferModule::setFileSources(std::list<std::string> peerIds)
   return true;
 }
 
-bool ftTransferModule::setPeerState(std::string peerId,uint32_t state,uint32_t maxRate)  //state = ONLINE/OFFLINE
+bool ftTransferModule::setPeerState(std::string peerId,uint32_t state,uint32_t maxRate) 
 {
+#ifdef FT_DEBUG
+	std::cerr << "ftTransferModule::setPeerState()";
+	std::cerr << " peerId: " << peerId;
+	std::cerr << " state: " << state;
+	std::cerr << " maxRate: " << maxRate << std::endl;
+#endif
+
   std::map<std::string,peerInfo>::iterator mit;
   mit = mFileSources.find(peerId);
 
@@ -64,7 +71,20 @@ bool ftTransferModule::setPeerState(std::string peerId,uint32_t state,uint32_t m
   (mit->second).state=state;
   (mit->second).desiredRate=maxRate;
 
-  if (state==PQIPEER_IDLE) mOnlinePeers.push_back(peerId);
+  std::list<std::string>::iterator it;
+  it=mOnlinePeers.begin();
+  while((it!=mOnlinePeers.end())&&(*it!=peerId)) it++;
+
+  if (state!=PQIPEER_NOT_ONLINE) 
+  {
+    //change to online, add peerId in online peer list
+    if (it==mOnlinePeers.end()) mOnlinePeers.push_back(peerId);
+  }
+  else
+  {
+    //change to offline, remove peerId in online peer list
+    if (it!=mOnlinePeers.end()) mOnlinePeers.erase(it);
+  }
 
   return true;
 }
@@ -185,7 +205,7 @@ bool ftTransferModule::storeData(uint64_t offset, uint32_t chunk_size,void *data
 	return mFileCreator -> addFileData(offset, chunk_size, data);
 }
 
-void ftTransferModule::queryInactive()
+bool ftTransferModule::queryInactive()
 {
 #ifdef FT_DEBUG
         std::cerr << "ftTransferModule::queryInactive()" << std::endl;
@@ -195,7 +215,11 @@ void ftTransferModule::queryInactive()
 	  mFileStatus.stat = ftFileStatus::PQIFILE_DOWNLOADING;
 
   if (mFileStatus.stat != ftFileStatus::PQIFILE_DOWNLOADING)
-	  return;
+  {
+	  if (mFileStatus.stat == ftFileStatus::PQIFILE_FAIL_CANCEL)
+		  mFlag = 2; //file canceled by user
+	  return false;
+  }
 
   int ts = time(NULL);
   uint64_t req_offset;
@@ -270,7 +294,8 @@ void ftTransferModule::queryInactive()
         break;
     }//switch
   }//for
-  
+
+  return true; 
 }
 
 bool ftTransferModule::pauseTransfer()
@@ -317,9 +342,20 @@ bool ftTransferModule::completeFileTransfer()
 int ftTransferModule::tick()
 {
   queryInactive();
-  if (mFlag != 1) adjustSpeed();
-  else
-    completeFileTransfer();  	
+  switch (mFlag)
+  {
+	  case 0:
+		  adjustSpeed();
+		  break;
+	  case 1:
+		  completeFileTransfer();
+		  break;
+	  case 2:
+		  /* tell me what to do here */
+		  break;
+	  default:
+		  break;
+  }
     
   return 0;
 }

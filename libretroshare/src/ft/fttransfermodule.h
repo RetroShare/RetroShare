@@ -90,7 +90,7 @@ public:
   	uint64_t offset;
   	uint32_t chunkSize;
 
-  	//already received data size
+  	//already received data size for current request
   	uint32_t receivedSize;
 
   	time_t lastTS;
@@ -152,7 +152,7 @@ public:
   uint64_t    size() { return mSize; }
  
   //internal used functions
-  void queryInactive();
+  bool queryInactive();
   void adjustSpeed();
 
 private:
@@ -170,7 +170,7 @@ private:
   std::list<std::string>         mOnlinePeers;
   std::map<std::string,peerInfo> mFileSources;
   	
-  bool     mFlag;  //1:transfer complete, 0: not complete
+  uint16_t     mFlag;  //2:file canceled, 1:transfer complete, 0: not complete
   double desiredRate;
   double actualRate;
 
