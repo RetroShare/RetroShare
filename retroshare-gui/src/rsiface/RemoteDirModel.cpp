@@ -246,8 +246,8 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 	else if (details.type == DIR_TYPE_FILE) /* File */
 	{
 		// extensions predefined
-		QString name;
-		QString ext = QFileInfo(name).suffix();
+		//QString name;
+		QString ext = QFileInfo(QString::fromStdString(details.name)).suffix();
 		if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif"
 		        || ext == "bmp" || ext == "ico" || ext == "svg")
 		{
