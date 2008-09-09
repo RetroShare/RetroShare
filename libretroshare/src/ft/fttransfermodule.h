@@ -41,6 +41,7 @@
 
 #include "ft/ftfilecreator.h"
 #include "ft/ftdatamultiplex.h"
+#include "ft/ftcontroller.h"
 
 #include "util/rsthreads.h"
 
@@ -98,6 +99,7 @@ public:
 
 class ftFileStatus
 {
+public:
 	enum Status {
 		PQIFILE_INIT,
 		PQIFILE_NOT_ONLINE,
@@ -113,7 +115,8 @@ class ftFileStatus
 		PQIFILE_FAIL_NOT_READ,
 		PQIFILE_FAIL_BAD_PATH
 	};
-public:
+        
+        ftFileStatus():hash(0),stat(PQIFILE_INIT) {}
 	ftFileStatus(std::string hash_in):hash(hash_in),stat(PQIFILE_INIT)
 	{
 		return;

@@ -25,11 +25,12 @@
 
 #include "fttransfermodule.h"
 
-ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftController *fc)
-	:mFileCreator(fc), mMultiplexor(dm), mFtController(fc), mFlag(0)
+ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftController *c)
+	:mFileCreator(fc), mMultiplexor(dm), mFtController(c), mFlag(0)
 {
 	mHash = mFileCreator->getHash();
 	mSize = mFileCreator->getFileSize();
+        mFileStatus.hash = mHash;
 
 	// Dummy for Testing (should be handled independantly for 
 	// each peer.
@@ -47,8 +48,8 @@ bool ftTransferModule::setFileSources(std::list<std::string> peerIds)
   std::list<std::string>::iterator it;
   for(it = peerIds.begin(); it != peerIds.end(); it++)
   {
-    peerInfo pInfo;
-    mFileSources.insert(pair<std::string,peerInfo>(*it,pInfo));
+    peerInfo pInfo(*it);
+    mFileSources.insert(std::pair<std::string,peerInfo>(*it,pInfo));
   }
 
   return true;
@@ -335,7 +336,7 @@ bool ftTransferModule::cancelTransfer()
 
 bool ftTransferModule::completeFileTransfer()
 {
-	mFtController->completeFile(mHash);
+	//mFtController->completeFile(mHash);
 	return true;
 }
 

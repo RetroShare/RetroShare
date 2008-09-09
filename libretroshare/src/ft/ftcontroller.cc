@@ -322,7 +322,7 @@ bool 	ftController::FileControl(std::string hash, uint32_t flags)
 	switch (flags)
 	{
 		case RS_FILE_CTRL_PAUSE:
-			ft->stopTransfer();
+			ft->pauseTransfer();
 			break;
 		case RS_FILE_CTRL_START:
 			ft->resumeTransfer();

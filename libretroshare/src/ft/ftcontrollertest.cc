@@ -372,6 +372,8 @@ void *do_server_test_thread(void *data)
 	/************************* TEST 2 **********************
 	 * test ftController and ftTransferModule 
 	 */
+        ftServer *server=mFt->loadServer;
+
 	std::string fname,filehash,destination;
 	uint32_t size,flags; 
 	std::list<std::string> srcIds;
@@ -382,14 +384,24 @@ void *do_server_test_thread(void *data)
           REPORT2(false,"No otherServers available");
           exit(1);
         }
-        
-        std::list<ftServer *>iterator it;
-        it=(mFt->otherServers).front();
-        ftServer* peerServer= (*it);
        
-        fname=;
-         
-        mFt->loadServer->FileRequest(fname,filehash,filesize,destination,flags,srcIds); 
+        DirDetails details;
+        uint32_t flags = DIR_FLAGS_DETAILS |  DIR_FLAGS_REMOTE;
+        void *ref = NULL;
+ 
+        if(!server->RequestDirDetails(ref,details,flags))
+        {
+          REPORT2(false,"fail to call RequestDirDetails");
+        }        
+        
+        if (details.type == DIR_TYPE_FILE)
+        {
+          REPORT("RemoteDirModel::downloadSelected() Calling File Request");
+          std::list<std::string> srcIds;
+          srcIds.push_back(details.id);
+          server->FileRequest(details.name, details.hash,
+                     details.count, "", 0, srcIds);
+        }
 
 	exit(1);
 }

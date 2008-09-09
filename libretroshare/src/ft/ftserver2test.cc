@@ -184,7 +184,7 @@ int main(int argc, char **argv)
 	}
 
 	std::ostringstream pname;
-	pname << "./tmp/rstst-" << time(NULL);
+	pname << "/tmp/rstst-" << time(NULL);
 
 	std::string basepath = pname.str();
 	RsDirUtil::checkCreateDirectory(basepath);
