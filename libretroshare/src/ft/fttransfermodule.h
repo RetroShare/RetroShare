@@ -116,11 +116,9 @@ public:
 		PQIFILE_FAIL_BAD_PATH
 	};
         
-        ftFileStatus():hash(0),stat(PQIFILE_INIT) {}
-	ftFileStatus(std::string hash_in):hash(hash_in),stat(PQIFILE_INIT)
-	{
-		return;
-	}
+        ftFileStatus():hash(""),stat(PQIFILE_INIT) {}
+	ftFileStatus(std::string hash_in):hash(hash_in),stat(PQIFILE_INIT) {}
+
 	std::string hash;
 	Status stat;
 };

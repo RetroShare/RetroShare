@@ -39,6 +39,8 @@
 /***********
  * #define FIM_DEBUG 1
  ***********/
+ 
+#define FIM_DEBUG 1
 
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, std::string cachedir, std::string pid)
 	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cachedir), fi(pid), 
@@ -185,6 +187,8 @@ void 	FileIndexMonitor::setPeriod(int period)
 
 void 	FileIndexMonitor::run()
 {
+		std::cerr << "FileIndexMonitor::run() ";
+		std::cerr << std::endl;
 
 	updateCycle();
 
@@ -217,6 +221,8 @@ void 	FileIndexMonitor::run()
 
 void 	FileIndexMonitor::updateCycle()
 {
+		std::cerr << "FileIndexMonitor::updateCycle() ";
+		std::cerr << std::endl;
 	time_t startstamp = time(NULL);
 
 	/* iterate through all out-of-date directories */

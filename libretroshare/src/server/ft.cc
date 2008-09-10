@@ -30,6 +30,7 @@
  * #define FT_DEBUG 1
  ***/
 
+ #define FT_DEBUG 1
 
 bool	ftManager::lookupLocalHash(std::string hash, std::string &path, uint64_t &size)
 {

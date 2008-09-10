@@ -43,6 +43,9 @@ FileIndexStore::~FileIndexStore()
  * #define FIS_DEBUG2 1
  * #define FIS_DEBUG 1
  **/
+ 
+#define FIS_DEBUG2 1
+#define FIS_DEBUG 1
 
 	  /* actual load, once data available */
 int FileIndexStore::loadCache(const CacheData &data)

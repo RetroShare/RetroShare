@@ -167,7 +167,7 @@ int main(int argc, char **argv)
 	std::cerr << "Point 5" << std::endl;
 
 	std::ostringstream pname;
-	pname << "./tmp/rstst-" << time(NULL);
+	pname << "/tmp/rstst-" << time(NULL);
 
 	std::string basepath = pname.str();
 	RsDirUtil::checkCreateDirectory(basepath);
@@ -221,6 +221,8 @@ int main(int argc, char **argv)
 		RsDirUtil::checkCreateDirectory(remotepath);
 
 		server->setConfigDirectory(configpath);
+
+                sleep(60);
 
 		NotifyBase *base = NULL;
 		server->SetupFtServer(base);

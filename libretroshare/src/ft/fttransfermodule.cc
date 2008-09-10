@@ -23,6 +23,8 @@
  *
  */
 
+#define FT_DEBUG 1
+
 #include "fttransfermodule.h"
 
 ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftController *c)
@@ -45,12 +47,26 @@ bool ftTransferModule::setFileSources(std::list<std::string> peerIds)
 {
   mFileSources.clear();
 
+#ifdef FT_DEBUG
+	std::cerr << "ftTransferModule::setFileSources()";
+	std::cerr << " List of peers: " ;
+#endif
+
   std::list<std::string>::iterator it;
   for(it = peerIds.begin(); it != peerIds.end(); it++)
   {
+
+#ifdef FT_DEBUG
+	std::cerr << " \t" << *it;
+#endif
+
     peerInfo pInfo(*it);
     mFileSources.insert(std::pair<std::string,peerInfo>(*it,pInfo));
   }
+
+#ifdef FT_DEBUG
+	std::cerr << std::endl;
+#endif
 
   return true;
 }
@@ -342,6 +358,12 @@ bool ftTransferModule::completeFileTransfer()
 
 int ftTransferModule::tick()
 {
+#ifdef FT_DEBUG
+	std::cerr << "ftTransferModule::tick()";
+	std::cerr << " mFlag: " << mFlag;
+	std::cerr << std::endl;
+#endif
+
   queryInactive();
   switch (mFlag)
   {

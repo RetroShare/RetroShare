@@ -25,7 +25,7 @@
 #include <gui/MainWindow.h>
 #include <gui/StartDialog.h>
 #include <gui/GenCertDialog.h>
-#include <Gui/Preferences/Rsharesettings.h>
+//#include <Gui/Preferences/Rsharesettings.h>
 
 /*** WINDOWS DON'T LIKE THIS - REDEFINES VER numbers.
 #include <gui/qskinobject/qskinobject.h>
