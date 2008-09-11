@@ -57,6 +57,8 @@ class ftFileControl
 {
 	public:
 
+        enum {DOWNLOADING,COMPLETED};
+
 	ftFileControl();
         ftFileControl(std::string fname, uint64_t size, std::string hash, 
 		uint32_t flags, ftFileCreator *fc, ftTransferModule *tm);
@@ -93,6 +95,7 @@ bool 	FileRequest(std::string fname, std::string hash,
 bool 	FileCancel(std::string hash);
 bool 	FileControl(std::string hash, uint32_t flags);
 bool 	FileClearCompleted();
+bool 	completeFile(std::string hash);
 
 	/* get Details of File Transfers */
 bool 	FileDownloads(std::list<std::string> &hashs);
@@ -132,7 +135,7 @@ virtual bool    loadList(std::list<RsItem *> load);
 
 	/* RunTime Functions */
 void 	checkDownloadQueue();
-bool 	completeFile(std::string hash);
+//bool 	completeFile(std::string hash);
 
 	/* pointers to other components */
 
@@ -142,7 +145,7 @@ bool 	completeFile(std::string hash);
 	RsMutex ctrlMutex;
 
 	std::list<FileInfo> incomingQueue;
-	std::map<std::string, FileInfo> mCompleted;
+	std::map<std::string, ftFileControl> mCompleted;
 
 
         std::map<std::string, ftFileControl> mDownloads;

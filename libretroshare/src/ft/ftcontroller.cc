@@ -122,7 +122,7 @@ void ftController::checkDownloadQueue()
 bool ftController::completeFile(std::string hash)
 {
 
-#if 0
+#if 1 
 
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
@@ -134,16 +134,17 @@ bool ftController::completeFile(std::string hash)
 	}
 
 	/* check if finished */
-	if (!(it->second).mCreator->finished())
+	//if (!(it->second).mCreator->finished())
 	{
 		/* not done! */
-		return false;
+		//return false;
 	}
+        
 
 	ftFileControl *fc = &(it->second);
 
 	/* done - cleanup */
-	fc->mTransfer->done();
+	//fc->mTransfer->done();
 	mDataplex->removeTransferModule(fc->mTransfer->hash());
 	
 	delete fc->mTransfer;
@@ -152,7 +153,7 @@ bool ftController::completeFile(std::string hash)
 	delete fc->mCreator;
 	fc->mCreator = NULL;
 
-	fc->mState = COMPLETE;
+	fc->mState = ftFileControl::COMPLETED;
 
 	/* switch map */
 	mCompleted[fc->mHash] = *fc;
