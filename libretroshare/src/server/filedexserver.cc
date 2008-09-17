@@ -58,8 +58,6 @@ const int fldxsrvrzone = 47659;
 #define SERVER_DEBUG 1
 #define DEBUG_TICK 1
 ****/
-#define SERVER_DEBUG 1
-#define DEBUG_TICK 1
 
 filedexserver::filedexserver()
 	:p3Config(CONFIG_TYPE_FSERVER), 
@@ -285,15 +283,9 @@ void    filedexserver::setFileCallback(std::string ownId, CacheStrapper *strappe
 
 void    filedexserver::StartupMonitor()
 {
-	std::cerr << "filedexserver::StartupMonitor() err" << std::endl;
-
-	pqioutput(PQL_DEBUG_BASIC, fldxsrvrzone, 
-		"filedexserver::StartupMonitor()");
-
 	/* startup the FileMonitor (after cache load) */
-	fimon->setPeriod(100); /* 10 minutes */
-        /* start it up */
-	
+	fimon->setPeriod(600); /* 10 minutes */
+	/* start it up */
 	fimon->setSharedDirectories(dbase_dirs);
 	fimon->start();
 

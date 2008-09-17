@@ -41,8 +41,6 @@ const int ftfilerzone = 86539;
  * #define FT_DEBUG 1
  ***/
 
-#define FT_DEBUG 1
-
 /* 
  * PQI Filer
  *
