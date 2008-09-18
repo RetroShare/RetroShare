@@ -25,7 +25,7 @@
 #include <gui/MainWindow.h>
 #include <gui/StartDialog.h>
 #include <gui/GenCertDialog.h>
-#include <Gui/Preferences/Rsharesettings.h>
+#include <gui/Preferences/rsharesettings.h>
 
 /*** WINDOWS DON'T LIKE THIS - REDEFINES VER numbers.
 #include <gui/qskinobject/qskinobject.h>
@@ -52,8 +52,13 @@ int main(int argc, char *argv[])
         /* RetroShare Core Objects */
         RsInit *config = InitRsConfig();
         bool okStart = InitRetroShare(argc, argv, config);
+	
+	/*
+	Function RsConfigMinimised is not available in SVN, so I commented it out.
         bool startMinimised = RsConfigStartMinimised(config);
+	*/
 
+	bool startMinimised = false;
 
 	/* Setup The GUI Stuff */
 	Rshare rshare(args, argc, argv, 
