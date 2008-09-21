@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -45,13 +45,13 @@ ProfileView::ProfileView(QWidget *parent)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
-  
+
   connect( ui.photoLabel, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( imageCustomPopupMenu( QPoint ) ) );
   connect( ui.profileTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( profileCustomPopupMenu( QPoint ) ) );
   connect( ui.fileTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( fileCustomPopupMenu( QPoint ) ) );
   //
- 
-  // connect up the buttons. 
+
+  // connect up the buttons.
   connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(closeView()));
 
   /* Hide platform specific features */
@@ -176,7 +176,7 @@ void ProfileView::update()
 	//{
 	//	isOwnId = true;
 	//}
-	
+
 	mIsOwnId = true; /* switche on context menues */
 
 	if (!rsQblog)
@@ -185,7 +185,7 @@ void ProfileView::update()
 		return;
 	}
 
-        uint32_t PostTs;
+    uint32_t PostTs;
 	std::wstring BlogPost;
 	std::list< std::pair<std::wstring, std::wstring> > profile;
 	std::list< std::pair<std::wstring, std::wstring> >::iterator pit;
@@ -193,8 +193,6 @@ void ProfileView::update()
 	std::list<FileInfo>::iterator fit;
 
 	rsQblog -> getPeerLatestBlog(pId, PostTs, BlogPost);
-	rsQblog -> getPeerProfile(pId, profile);
-	rsQblog -> getPeerFavourites(pId, files);
 
 	ui.idLineEdit->setText(QString::fromStdString(pId));
 	ui.nameLineEdit->setText(QString::fromStdString("username"));

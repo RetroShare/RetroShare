@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -44,10 +44,10 @@ ProfileEdit::ProfileEdit(QWidget *parent)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
-  
+
   connect( ui.profileTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( profileCustomPopupMenu( QPoint ) ) );
- 
-  // connect up the buttons. 
+
+  // connect up the buttons.
   connect(ui.addButton, SIGNAL(clicked()), this, SLOT(profileEntryAdd()));
   connect(ui.moveDownButton, SIGNAL(clicked()), this, SLOT(profileEntryMoveDown()));
   connect(ui.moveUpButton, SIGNAL(clicked()), this, SLOT(profileEntryMoveUp()));
@@ -98,8 +98,6 @@ void ProfileEdit::update()
 
 	std::list< std::pair<std::wstring, std::wstring> > profile;
 	std::list< std::pair<std::wstring, std::wstring> >::iterator pit;
-
-	rsQblog -> getPeerProfile(pId, profile);
 
 	QList<QTreeWidgetItem *> itemList;
 	for(pit = profile.begin(); pit != profile.end(); pit++)

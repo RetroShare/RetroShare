@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -25,7 +25,7 @@
 #include "mainpage.h"
 #include "ui_BlogDialog.h"
 
-#include "gui/feeds/FeedHolder.h"
+#include "../gui/feeds/FeedHolder.h"
 class BlogMsgItem;
 
 
@@ -42,12 +42,12 @@ public:
 	virtual void openChat(std::string peerId);
 	virtual void openMsg(uint32_t type, std::string grpId, std::string inReplyTo);
 
-	void updateBlogsStatic(); 
+	void updateBlogsStatic();
 
 private slots:
 
-	void updateBlogs(); 
-	void postBlog(); 
+	void updateBlogs();
+	void postBlog();
 
 private:
 	void addDummyData();

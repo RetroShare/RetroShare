@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 #include <QtGui>
@@ -38,29 +38,29 @@ BlogDialog::BlogDialog(QWidget *parent)
 	setupUi(this);
 
   	connect(postButton, SIGNAL(clicked()), this, SLOT(postBlog()));
-	
+
 	/* mLayout -> to add widgets to */
 	mLayout = new QVBoxLayout;
 	//mLayout->setSpacing(0);
 	//mLayout->setMargin(0);
-	
+
 	QWidget *middleWidget = new QWidget();
 	middleWidget->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
 	middleWidget->setLayout(mLayout);
-	
+
 	QScrollArea *scrollArea = new QScrollArea;
 	//scrollArea->setBackgroundRole(QPalette::Dark);
 	scrollArea->setWidget(middleWidget);
 	scrollArea->setWidgetResizable(true);
 	scrollArea->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
-	
+
 	QVBoxLayout *layout2 = new QVBoxLayout;
 	layout2->addWidget(scrollArea);
 	layout2->setSpacing(0);
 	layout2->setMargin(0);
-	
+
 	frame->setLayout(layout2);
-	
+
 	addDummyData();
 
 	updateBlogsStatic();
@@ -83,79 +83,79 @@ void BlogDialog::updateBlogsStatic(void)
 
 #if 0
 	rsQblog->getFilterSwitch();
-	
+
 	std::map<std::string, std::string> UsrStatus;
-	
+
 	if(!rsQblog->getStatus(UsrStatus))
 		std::cerr << "failed to get usr status" << std::endl;
-	
+
 	clear(); //create a clear screen
-	 
+
 	/* retrieve usr names and populate usr list bar */
-	
-	std::list<std::string> usrList; 
+
+	std::list<std::string> usrList;
 	QString TempVar; // to convert numerics to string note: tbd find way to avoid temporary
-	
+
 	if (!rsPeers)
 	{
 		/* not ready yet! */
 		return;
 	}
-	
+
 	if(!rsPeers->getFriendList(usrList))
 		std::cerr << "failed to get friend list";
-	
-	
+
+
 	usrList.push_back(rsPeers->getOwnId()); // add your id
-	
+
 	/* populate the blog msgs screen */
-	
+
 	std::map< std::string, std::multimap<long int, std::string> > blogs; // to store blogs
-	
+
 	if(!rsQblog->getBlogs(blogs))
 		std::cerr << "failed to get blogs" << std::endl;
-	
+
 	/* print usr name and their blogs to screen */
 	for(std::list<std::string>::iterator it = usrList.begin(); it !=usrList.end(); it++)
-	{	
+	{
 
 
 		TempVar = rsPeers->getPeerName(*it).c_str(); // store usr name in temporary
 		blogText->setTextColor(QColor(255, 0, 0, 255));
-		blogText->setCurrentFont(mUsrFont); // make bold for username		
+		blogText->setCurrentFont(mUsrFont); // make bold for username
 		blogText->append("\n" + TempVar); // write usr name to screen
 		std::cerr << "creating usr tree" << std::endl;
-		
+
 		/*print blog time-posted/msgs to screen*/
-		
-		std::multimap<long int, std::string>::reverse_iterator blogIt =  blogs[*it].rbegin(); 
-		
+
+		std::multimap<long int, std::string>::reverse_iterator blogIt =  blogs[*it].rbegin();
+
 		if(blogs[*it].empty())
 		{
 			std::cerr << "usr blog empty!"  << std::endl;
-			continue; 	
+			continue;
 		}
-	
+
 		for( ; blogIt != blogs[*it].rend(); blogIt++)
-		{	
+		{
 			std::cerr << "now printing blogs" << std::endl;
 			time_t postedTime = blogIt->first;
 			time(&postedTime); //convert to human readable time
-			blogText->setTextColor(QColor(255, 0, 0, 255)); // 
+			blogText->setTextColor(QColor(255, 0, 0, 255)); //
 			blogText->setCurrentFont(mUsrFont); // make bold for posted date
-			blogText->append("\nPosted: " + QString (ctime(&postedTime))); // print time of blog to screen 
+			blogText->append("\nPosted: " + QString (ctime(&postedTime))); // print time of blog to screen
 			blogText->setCurrentFont(mCurrentFont); // reset the font for blog messages
 			blogText->setTextColor(QColor(0, 0, 0, 255)); // set back color to black
-			blogText->append(blogIt->second.c_str()); // print blog msg to screen 
-		}	
-			
-	}	
+			blogText->append(blogIt->second.c_str()); // print blog msg to screen
+		}
+
+	}
 
 #endif
 
 }
-	
-	
+
+
 void BlogDialog::addDummyData()
 {
 	BlogMsgItem *bm1 = new BlogMsgItem(this, 0, "peerId", "msgId", true);
@@ -189,6 +189,7 @@ void BlogDialog::openChat(std::string peerId)
 
 void BlogDialog::postBlog()
 {
+
 	openMsg(FEEDHOLDER_MSG_BLOG, "", "");
 }
 
