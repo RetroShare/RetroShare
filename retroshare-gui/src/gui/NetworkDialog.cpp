@@ -294,7 +294,22 @@ void NetworkDialog::insertConnect()
 		/* (3) Last Connect */
 		{
 			std::ostringstream out;
-			out << detail.lastConnect;
+			// Show anouncement if a friend never was connected.
+			if (detail.lastConnect==0 ) {
+				if(detail.state & RS_PEER_STATE_FRIEND) {
+					out << "Friend never seen";
+				} else {
+					out << "0"; // Is zero
+				}
+			} else {
+				// Dont Show a timestamp in RS calculate the day
+				time_t seconds;
+				seconds=detail.lastConnect;
+				struct tm *tmnow= localtime(&seconds);
+				out << setfill ("0");
+				out << tmnow->tm_hour << ":" << tmnow->tm_min << ":" << tmnow->tm_sec << " ";
+				out << tmnow->tm_mday << "." << tmnow->tm_mon + 1 << "." << tmnow->tm_year + 1900;
+			}
                 	item -> setText(3, QString::fromStdString(out.str()));
 		}
 
@@ -328,55 +343,44 @@ void NetworkDialog::insertConnect()
 
 		/* change background */
 		int i;
-		if (detail.state & RS_PEER_STATE_FRIEND)
+		
+		// I dont know why the setBackground and Icon functions called 10 times,
+		// but this loop dont needed to be implemented in every single switch.
+		for(i = 1; i <10; i++)
 		{
-                	if (detail.lastConnect < 10000) /* 3 hours? */
+			if (detail.state & RS_PEER_STATE_FRIEND)
 			{
-				/* bright green */
-				for(i = 1; i <10; i++)
+				if (detail.lastConnect < 10000) /* 3 hours? */
 				{
-				  item -> setBackground(i,QBrush(Qt::darkGreen));
-				  item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
+					/* bright green */
+						item -> setBackground(i,QBrush(Qt::darkGreen));
+						item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
+				}
+				else
+				{
+						item -> setBackground(i,QBrush(Qt::darkGreen));
+						item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
 				}
 			}
 			else
 			{
-				for(i = 1; i < 10; i++)
+				if (detail.trustLvl > RS_TRUST_LVL_MARGINAL)
 				{
-				  item -> setBackground(i,QBrush(Qt::darkGreen));
-				  item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
+						item -> setBackground(i,QBrush(Qt::cyan));
+						item -> setIcon(0,(QIcon(IMAGE_DENIED)));
 				}
-			}
+				else if (detail.lastConnect < 10000) /* 3 hours? */
+				{
+						item -> setBackground(i,QBrush(Qt::yellow));
+						item -> setIcon(0,(QIcon(IMAGE_DENIED)));
+				}
+				else
+				{
+						item -> setBackground(i,QBrush(Qt::gray));
+						item -> setIcon(0,(QIcon(IMAGE_DENIED)));
+				}
+        		}
 		}
-		else
-		{
-                	if (detail.trustLvl > RS_TRUST_LVL_MARGINAL)
-			{
-				for(i = 1; i < 10; i++)
-				{
-				  item -> setBackground(i,QBrush(Qt::cyan));
-				  item -> setIcon(0,(QIcon(IMAGE_DENIED)));
-				}
-			}
-                	else if (detail.lastConnect < 10000) /* 3 hours? */
-			{
-				for(i = 1; i < 10; i++)
-				{
-				  item -> setBackground(i,QBrush(Qt::yellow));
-				  item -> setIcon(0,(QIcon(IMAGE_DENIED)));
-				}
-			}
-			else
-			{
-				for(i = 1; i < 10; i++)
-				{
-				  item -> setBackground(i,QBrush(Qt::gray));
-				  item -> setIcon(0,(QIcon(IMAGE_DENIED)));
-				}
-			}
-		}
-			
-
 		/* add to the list */
 		items.append(item);
 	}
