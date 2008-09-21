@@ -77,7 +77,7 @@
 
 // COMMENT THIS FOR UNFINISHED SERVICES
 /****
-#define RS_RELEASE 1  
+#define RS_RELEASE 1
 ****/
 
 /**************** PQI_USE_XPGP ******************/
@@ -136,7 +136,7 @@ RsInit *InitRsConfig()
 	strcpy(config->logfname, "");
 
 	config -> autoLogin      = true; // Always on now.
-	config -> startMinimised = false; 
+	config -> startMinimised = false;
 	config -> passwd         = "";
 	config -> havePasswd     = false;
 	config -> haveDebugLevel = false;
@@ -208,7 +208,7 @@ int InitRetroShare(int argc, char **argv, RsInit *config)
     */
    #ifdef PTW32_STATIC_LIB
       #include <pthread.h>
-   #endif 
+   #endif
 
 int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 {
@@ -226,8 +226,8 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
   char dupline[cmdlen+1];
   strcpy(dupline, wholeline);
 
-  /* break wholeline down .... 
-   * NB. This is very simplistic, and will not 
+  /* break wholeline down ....
+   * NB. This is very simplistic, and will not
    * handle multiple spaces, or quotations etc, only for debugging purposes
    */
   argv[0] = dupline;
@@ -251,13 +251,13 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
  */
   #ifdef PTW32_STATIC_LIB
 	 pthread_win32_process_attach_np();
-  #endif 
+  #endif
 
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	int c;
-	/* getopt info: every availiable option is listet here. if it is followed by a ':' it 
+	/* getopt info: every availiable option is listet here. if it is followed by a ':' it
 	   needs an argument. If it is followed by a '::' the argument is optional.
 	*/
 	while((c = getopt(argc, argv,"hesamui:p:c:w:l:d:")) != -1)
@@ -355,7 +355,7 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 	// set the default Debug Level...
 	if (config->haveDebugLevel)
 	{
-		if ((config->debugLevel > 0) && 
+		if ((config->debugLevel > 0) &&
 			(config->debugLevel <= PQL_DEBUG_ALL))
 		{
 			std::cerr << "Setting Debug Level to: ";
@@ -372,7 +372,7 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 	}
 
 	// set the debug file.
-	if (config->haveLogFile) 
+	if (config->haveLogFile)
 	{
 		setDebugFile(config->logfname);
 	}
@@ -440,10 +440,10 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
 	/* do a null init to allow the SSL libray to startup! */
-	getAuthMgr() -> InitAuth(NULL, NULL, NULL); 
+	getAuthMgr() -> InitAuth(NULL, NULL, NULL);
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
-	getAuthMgr() -> InitAuth(NULL, NULL, NULL, NULL); 
+	getAuthMgr() -> InitAuth(NULL, NULL, NULL, NULL);
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
@@ -463,7 +463,7 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 }
 
 
-/* 
+/*
  * The Real RetroShare Startup Function.
  */
 
@@ -476,7 +476,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	/* (1) Load up own certificate (DONE ALREADY) - just CHECK */
 	/**************************************************************************/
 
-	mAuthMgr = getAuthMgr(); 
+	mAuthMgr = getAuthMgr();
 
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
@@ -516,7 +516,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	/**************************************************************************/
 
 	// Load up Certificates, and Old Configuration (if present)
-	
+
 	std::string certConfigFile = config->basedir.c_str();
 	std::string certNeighDir   = config->basedir.c_str();
 	std::string emergencySaveDir = config->basedir.c_str();
@@ -590,7 +590,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	std::string remotecachedir = config_dir + "/cache/remote";
 
 	mRanking = new p3Ranking(mConnMgr, RS_SERVICE_TYPE_RANK,     /* declaration of cache enable service rank */
-			mCacheStrapper, mCacheTransfer, 
+			mCacheStrapper, mCacheTransfer,
 			localcachedir, remotecachedir, 3600 * 24 * 30 * 6); // 6 Months
 
         CachePair cp(mRanking, mRanking, CacheId(RS_SERVICE_TYPE_RANK, 0));
@@ -601,37 +601,38 @@ int RsServer::StartupRetroShare(RsInit *config)
 	pqih -> addService(gameLauncher);
 
 	p3PhotoService *photoService = new p3PhotoService(RS_SERVICE_TYPE_PHOTO,   /* .... for photo service */
-			mCacheStrapper, mCacheTransfer, 
+			mCacheStrapper, mCacheTransfer,
 			localcachedir, remotecachedir);
 
         CachePair cp2(photoService, photoService, CacheId(RS_SERVICE_TYPE_PHOTO, 0));
 	mCacheStrapper -> addCachePair(cp2);
 
 	mQblog = new p3Qblog(mConnMgr, RS_SERVICE_TYPE_QBLOG, 			/* ...then for Qblog */
-			mCacheStrapper, mCacheTransfer,	
+			mCacheStrapper, mCacheTransfer,
 			localcachedir, remotecachedir, 3600 * 24 * 30 * 6); // 6 Months
 
 	CachePair cp3(mQblog, mQblog, CacheId(RS_SERVICE_TYPE_QBLOG, 0));
 	mCacheStrapper -> addCachePair(cp3);
-	
+
+
 	p3Forums *mForums = new p3Forums(RS_SERVICE_TYPE_FORUM,
-			mCacheStrapper, mCacheTransfer, 
+			mCacheStrapper, mCacheTransfer,
 			localcachedir, remotecachedir);
 
         CachePair cp4(mForums, mForums, CacheId(RS_SERVICE_TYPE_FORUM, 0));
 	mCacheStrapper -> addCachePair(cp4);
 	pqih -> addService(mForums);  /* This must be also ticked as a service */
-	
+
 	p3Channels *mChannels = new p3Channels(RS_SERVICE_TYPE_CHANNEL,
-			mCacheStrapper, mCacheTransfer, 
+			mCacheStrapper, mCacheTransfer,
 			localcachedir, remotecachedir, localcachedir);
 
         CachePair cp5(mChannels, mChannels, CacheId(RS_SERVICE_TYPE_CHANNEL, 0));
 	mCacheStrapper -> addCachePair(cp5);
 	pqih -> addService(mChannels);  /* This must be also ticked as a service */
-	
+
 #else
-	mQblog = NULL;
+	//mQblog = NULL;
 	//mForums = NULL;
 #endif
 
@@ -650,7 +651,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 	/**************************************************************************/
 
-	mConfigMgr->addConfiguration("server.cfg", server); 
+	mConfigMgr->addConfiguration("server.cfg", server);
 	mConfigMgr->addConfiguration("peers.cfg", mConnMgr);
 	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
@@ -797,7 +798,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	rsChannels = mChannels;
 	rsStatus = new p3Status();
 	rsQblog = new p3Blog(mQblog);
-	
+
 #else
 	rsGameLauncher = NULL;
 	rsPhoto = NULL;
@@ -856,14 +857,14 @@ int LoadCertificates(RsInit *config, bool autoLoginNT)
 
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
-	if (0 < authMgr -> InitAuth(config->load_cert.c_str(), 
-				config->load_key.c_str(), 
+	if (0 < authMgr -> InitAuth(config->load_cert.c_str(),
+				config->load_key.c_str(),
 				config->passwd.c_str()))
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
-	if (0 < authMgr -> InitAuth(config->load_cert.c_str(), 
-				config->load_key.c_str(), 
-				ca_loc.c_str(), 
+	if (0 < authMgr -> InitAuth(config->load_cert.c_str(),
+				config->load_key.c_str(),
+				ca_loc.c_str(),
 				config->passwd.c_str()))
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
@@ -936,12 +937,12 @@ bool LoadPassword(RsInit *config, std::string passwd)
  * (2) returns false if fails, with error msg to errString.
  */
 
-bool RsGenerateCertificate(RsInit *config, 
-			std::string name, 
-			std::string org, 
-			std::string loc, 
-			std::string country, 
-			std::string passwd, 
+bool RsGenerateCertificate(RsInit *config,
+			std::string name,
+			std::string org,
+			std::string loc,
+			std::string country,
+			std::string passwd,
 			std::string &errString)
 {
 	// In the XPGP world this is easy...
@@ -951,13 +952,13 @@ bool RsGenerateCertificate(RsInit *config,
 	// then load as if they had entered a passwd.
 
 	// check password.
-	if (passwd.length() < 4) 	
+	if (passwd.length() < 4)
 	{
 		errString = "Password is Unsatisfactory (must be 4+ chars)";
 		return false;
 	}
 
-	if (name.length() < 3) 	
+	if (name.length() < 3)
 	{
 		errString = "Name is too short (must be 3+ chars)";
 		return false;
@@ -968,7 +969,7 @@ bool RsGenerateCertificate(RsInit *config,
 	// Create the filename.
 	std::string basename = config->basedir + config->dirSeperator;
 	basename += configKeyDir + config->dirSeperator;
-	basename += "user"; 
+	basename += "user";
 
 	std::string key_name = basename + "_pk.pem";
 	std::string cert_name = basename + "_cert.pem";
@@ -976,13 +977,13 @@ bool RsGenerateCertificate(RsInit *config,
 
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
-	if (!generate_xpgp(cert_name.c_str(), key_name.c_str(), 
+	if (!generate_xpgp(cert_name.c_str(), key_name.c_str(),
 			passwd.c_str(),
-			name.c_str(), 
-			"", //ui -> gen_email -> value(), 
+			name.c_str(),
+			"", //ui -> gen_email -> value(),
 			org.c_str(),
 			loc.c_str(),
-			"", //ui -> gen_state -> value(), 
+			"", //ui -> gen_state -> value(),
 			country.c_str(),
 			nbits))
 #else /* X509 Certificates */
@@ -995,7 +996,7 @@ bool RsGenerateCertificate(RsInit *config,
 		return false;
 	}
 
-	/* set the load passwd to the gen version 
+	/* set the load passwd to the gen version
 	 * and try to load it!
 	 */
 
@@ -1022,7 +1023,7 @@ bool RsGenerateCertificate(RsInit *config,
 void load_check_basedir(RsInit *config)
 {
 	// get the default configuration location.
-	
+
 	if (config->basedir == "")
 	{
 		// if unix. homedir + /.pqiPGPrc
@@ -1122,7 +1123,7 @@ void load_check_basedir(RsInit *config)
 	}
 
 	// have a config directories.
-	
+
 	// Check for config file.
 	std::string initfile = config->basedir + config->dirSeperator;
 	initfile += configInitFile;
@@ -1149,7 +1150,7 @@ void load_check_basedir(RsInit *config)
 		fclose(ifd);
 	}
 
-	// we have now 
+	// we have now
 	// 1) checked or created the config dirs.
 	// 2) loaded the config_init file - if possible.
 	return;
@@ -1205,7 +1206,7 @@ int	check_create_directory(std::string dir)
 
 		std::cerr << "check_create_directory()";
 		std::cerr <<std::endl<< "\tcreated:" <<dir<<std::endl;
-	} 
+	}
 	else if (!S_ISDIR(buf.st_mode))
 	{
 		// Some other type - error.
@@ -1297,7 +1298,7 @@ typedef struct _CRYPTPROTECT_PROMPTSTRUCT {
   DWORD dwPromptFlags;
   HWND hwndApp;
   LPCWSTR szPrompt;
-} CRYPTPROTECT_PROMPTSTRUCT, 
+} CRYPTPROTECT_PROMPTSTRUCT,
  *PCRYPTPROTECT_PROMPTSTRUCT;
 
 /* definitions for the two functions */
@@ -1309,7 +1310,7 @@ extern BOOL WINAPI CryptProtectData(
   PVOID pvReserved,
   /* PVOID prompt, */
   /* CRYPTPROTECT_PROMPTSTRUCT* pPromptStruct, */
-  CRYPTPROTECT_PROMPTSTRUCT* pPromptStruct, 
+  CRYPTPROTECT_PROMPTSTRUCT* pPromptStruct,
   DWORD dwFlags,
   DATA_BLOB* pDataOut
 );
@@ -1322,7 +1323,7 @@ extern BOOL WINAPI CryptUnprotectData(
   PVOID pvReserved,
   /* PVOID prompt, */
   /* CRYPTPROTECT_PROMPTSTRUCT* pPromptStruct, */
-  CRYPTPROTECT_PROMPTSTRUCT* pPromptStruct, 
+  CRYPTPROTECT_PROMPTSTRUCT* pPromptStruct,
   DWORD dwFlags,
   DATA_BLOB* pDataOut
 );
@@ -1354,13 +1355,13 @@ bool  RsStoreAutoLogin(RsInit *config)
 	DWORD cbDataInput = strlen((char *)pbDataInput)+1;
 	BYTE *pbDataEnt   =(BYTE *)  strdup(entropy.c_str());
 	DWORD cbDataEnt   = strlen((char *)pbDataEnt)+1;
-	DataIn.pbData = pbDataInput;    
-	DataIn.cbData = cbDataInput; 
-	DataEnt.pbData = pbDataEnt;    
-	DataEnt.cbData = cbDataEnt; 
+	DataIn.pbData = pbDataInput;
+	DataIn.cbData = cbDataInput;
+	DataEnt.pbData = pbDataEnt;
+	DataEnt.cbData = cbDataEnt;
 	LPWSTR pDescrOut = NULL;
 
-        CRYPTPROTECT_PROMPTSTRUCT prom; 
+        CRYPTPROTECT_PROMPTSTRUCT prom;
 
         prom.cbSize = sizeof(prom);
         prom.dwPromptFlags = 0;
@@ -1407,7 +1408,7 @@ bool  RsStoreAutoLogin(RsInit *config)
 		{
 			fwrite(DataOut.pbData, 1, DataOut.cbData, fp);
 			fclose(fp);
-			
+
      			std::cerr << "AutoLogin Data saved: ";
      			std::cerr << std::endl;
 		}
@@ -1459,7 +1460,7 @@ bool  RsTryAutoLogin(RsInit *config)
 
 	BYTE *pbDataEnt   =(BYTE *)  strdup(entropy.c_str());
 	DWORD cbDataEnt   = strlen((char *)pbDataEnt)+1;
-	DataEnt.pbData = pbDataEnt;    
+	DataEnt.pbData = pbDataEnt;
 	DataEnt.cbData = cbDataEnt;
 
 	char *dataptr = NULL;
@@ -1497,11 +1498,11 @@ bool  RsTryAutoLogin(RsInit *config)
 
 	BYTE *pbDataInput =(BYTE *) dataptr;
 	DWORD cbDataInput = datalen;
-	DataIn.pbData = pbDataInput;    
+	DataIn.pbData = pbDataInput;
 	DataIn.cbData = cbDataInput;
 
 
-        CRYPTPROTECT_PROMPTSTRUCT prom; 
+        CRYPTPROTECT_PROMPTSTRUCT prom;
 
         prom.cbSize = sizeof(prom);
         prom.dwPromptFlags = 0;
@@ -1509,7 +1510,7 @@ bool  RsTryAutoLogin(RsInit *config)
 
 	bool isDecrypt = CryptUnprotectData(
        		&DataIn,
-		NULL, 
+		NULL,
        		&DataEnt,  /* entropy.c_str(), */
         	NULL,                 // Reserved
         	&prom,                 // Opt. Prompt
@@ -1568,7 +1569,7 @@ bool  RsClearAutoLogin(std::string basedir)
 	{
 		fwrite(" ", 1, 1, fp);
 		fclose(fp);
-		
+
      		std::cerr << "AutoLogin Data cleared! ";
      		std::cerr << std::endl;
 		return true;

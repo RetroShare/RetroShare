@@ -29,8 +29,8 @@
  *
  */
 
-#include "rsiface/rsQblog.h"
-#include "services/p3Qblog.h"
+#include "../rsiface/rsQblog.h"
+#include "../services/p3Qblog.h"
 
 /*!
  * Interface class using composition (p3Qblog is an attribute)
@@ -39,26 +39,18 @@
 class p3Blog : public RsQblog
 {
 	public:
-	
+
 		p3Blog(p3Qblog* qblog);
 		virtual ~p3Blog();
-	
-		virtual bool setFilterSwitch(bool &filterSwitch);
-		virtual bool getFilterSwitch(void);
-		virtual bool addToFilter(std::string &usrId);
-		virtual bool removeFiltFriend(std::string &usrId);
+
 		virtual bool sendBlog(const std::wstring &msg);
 		virtual bool getBlogs(std::map< std::string, std::multimap<long int, std::wstring> > &blogs);
-		virtual bool setFavorites(FileInfo favFile);
-		virtual bool setProfile(std::pair<std::wstring, std::wstring> entry);
 		virtual bool getPeerLatestBlog(std::string id, uint32_t &ts, std::wstring &post);
-		virtual bool getPeerProfile(std::string id, std::list< std::pair<std::wstring, std::wstring> > &entries);
-		virtual bool getPeerFavourites(std::string id, std::list<FileInfo> &favs);
-		
+
 	private:
-		
+
 		/// to make rsCore blog-service calls
-		p3Qblog* mQblog;		
+		p3Qblog* mQblog;
 };
 
 

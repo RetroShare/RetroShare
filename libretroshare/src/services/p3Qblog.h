@@ -25,7 +25,7 @@
  * Please report all bugs and problems to "retroshare@lunamutt.com".
  *
  */
- 
+
 
 #include <iostream>
 #include <string>
@@ -42,7 +42,6 @@
 #include "rsiface/rstypes.h"
 
 class RsQblogMsg; /* to populate maps of blogs */
-class RsQblogProfile; /* to populate profile information */
 
 /*!
  * contains definitions of the interface and blog information to be manipulated
@@ -54,105 +53,90 @@ class RsQblogProfile; /* to populate profile information */
     	 * overloads extractor to make printing wstrings easier
     	 */
     	friend std::ostream &operator<<(std::ostream &out, const std::wstring);
- 	
+
  	public:
- 	
-		p3Qblog(p3ConnectMgr *connMgr, 
+
+		p3Qblog(p3ConnectMgr *connMgr,
 		uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
-		std::string sourcedir, std::string storedir, 
+		std::string sourcedir, std::string storedir,
 		uint32_t storePeriod);
  		virtual ~p3Qblog ();
- 		
+
  	public:
- 		
+
  		/******************************* CACHE SOURCE / STORE Interface *********************/
 
-		/// overloaded functions from Cache Source 
+		/// overloaded functions from Cache Source
 		virtual bool    loadLocalCache(const CacheData &data);
 
-		/// overloaded functions from Cache Store 
+		/// overloaded functions from Cache Store
 		virtual int    loadCache(const CacheData &data);
 
 		/******************************* CACHE SOURCE / STORE Interface *********************/
- 	
+
  	public:
- 	
-		virtual bool setFilterSwitch(bool &filterSwitch);
-		virtual bool getFilterSwitch(void);
-		virtual bool addToFilter(std::string &usrId);
-    	virtual bool removeFiltFriend(std::string &usrId);
+
     	virtual bool sendBlog(const std::wstring &msg);
     	virtual bool getBlogs(std::map< std::string, std::multimap<long int, std::wstring> > &blogs);
     	virtual bool getPeerLatestBlog(std::string id, uint32_t &ts, std::wstring &post);
-		virtual bool getPeerProfile(std::string id, std::list< std::pair<std::wstring, std::wstring> > &entries);
-		virtual bool getPeerFavourites(std::string id, std::list<FileInfo> &favs);
-		virtual bool setFavorites(FileInfo favFile);
-		virtual bool setProfile(std::pair<std::wstring, std::wstring> entry);
-    
-    	
+
     	/**
     	 * to be run by server, update method
     	 */
     	void tick();
 
   	private:
-  
+
 /********************* begining of private utility methods **************************/
-  	
+
   		/*
-    	 * to load and transform cache source to normal attribute format of a blog message 
+    	 * to load and transform cache source to normal attribute format of a blog message
     	 * @param filename
-    	 * @param source 
+    	 * @param source
     	 */
     	bool loadBlogFile(std::string filename, std::string src);
-    	
+
     	/*
-    	 * add a blog item to maps 
+    	 * add a blog item to maps
     	 * @param newBlog a blog item from a peer or yourself
     	 */
     	bool addBlog(RsQblogMsg  *newBlog);
-    	
+
     	/*
     	 * post our blog to our friends, connectivity method
     	 */
     	bool postBlogs(void);
-    	
+
     	/*
     	 * sort usr/blog maps in time order
     	 */
     	bool sort(void);
-    	
+
 
 /************************* end of private methods **************************/
-  	
+
   		/// handles connection to peers
   		p3ConnectMgr *mConnMgr;
 		/// for locking files provate members below
 		RsMutex mBlogMtx;
 		/// the current usr
  		std::string mOwnId;
-  		/// contains the list of ids usr only wants to see
-  		std::list<std::string> mFilterList; 
-  		/// determines whether filter is activated or not
- 		bool mFilterSwitch; 
-		/// contain usrs and their blogs 
- 		std::map< std::string, std::multimap<long int, std::wstring> > mUsrBlogSet; 
+		/// contain usrs and their blogs
+ 		std::map< std::string, std::multimap<long int, std::wstring> > mUsrBlogSet;
  		///fills up above sets
  		std::list<RsQblogMsg*> mBlogs;
- 		///profile information
- 		std::map<std::string, RsQblogProfile > mProfiles; 
  		///how long to keep posts
  		uint32_t mStorePeriod;
  		/// to track blog updates
- 		bool mPostsUpdated; 
+ 		bool mPostsUpdated;
  		///  to track profile updates
  		bool mProfileUpdated;
- 		
+
  		/*
  		 * load dummy data
  		 */
- 		void loadDummy(void); 	
- 	
+ 		void loadDummy(void);
+
  };
 
 #endif /*P3QBLOG_H_*/

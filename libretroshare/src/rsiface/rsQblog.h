@@ -25,15 +25,15 @@
  * Please report all bugs and problems to "retroshare@lunamutt.com".
  *
  */
- 
+
  #include <iostream>
  #include <string>
  #include <list>
  #include <map>
 
-#include "rsiface/rstypes.h"
- 
- 
+ #include "../rsiface/rstypes.h"
+
+
 /* delcare interafce for everyone o use */
 class RsQblog;
 extern RsQblog *rsQblog;
@@ -42,60 +42,23 @@ extern RsQblog *rsQblog;
  class RsQblog
  {
  	public:
- 	
- 	
+
+
 		RsQblog() { return; }
 		virtual ~RsQblog() { return; }
-	 	
-	 	 
-	 	/**
-	 	 * choose whether to filter or not
-	 	 * @param filterSwitch
-	 	 */
-	 	virtual bool setFilterSwitch(bool &filterSwitch) = 0;
-	 	
-	 	
-	 	/**
-	 	 * retrieve usrs filterSwitch status
-	 	 */
-	 	virtual bool getFilterSwitch(void) = 0;
-	 	
-	 	/**
-	 	 * add user id to filter list 
-	 	 * @param usr id to add to filter list
-	 	 */
-	 	virtual bool addToFilter(std::string &usrId) = 0;
-	 	
-	 	/**
-	 	 * remove friend from filter list
-	 	 * @param id The user's frined's id
-	 	 */
-	 	virtual bool removeFiltFriend(std::string &usrId) = 0;
-	 	   
+
+
 	 	/**
 	 	 * send blog info, will send to a data structure for transmission
 	     * @param msg The msg the usr wants to send
 	     */
 	    virtual bool sendBlog(const std::wstring &msg) = 0;
-	 	   
+
 	 	/**
 	 	  * retrieve blog of a usr
 	 	  * @param blogs contains the blog msgs of usr along with time posted for sorting
 	 	  */
 	 	virtual bool getBlogs(std::map< std::string, std::multimap<long int, std::wstring> > &blogs) = 0;
- 	  
- 	   /**
- 	  	* set usr profile, send an empty second pair to delete entry
- 	  	* @param entry profile entry
- 	  	*/
- 	  	virtual bool setProfile(std::pair<std::wstring, std::wstring> entry) = 0;
- 	  	 
- 	  	/**
- 	  	 * add fav file, send file info with only name to delete that entry
- 	  	 * @param entry file info entry
- 	  	 */
-    	virtual bool setFavorites(FileInfo favFile) = 0; 
-
 
 		/**
 		 * Stuff DrBob Added for Profile View!
@@ -107,22 +70,8 @@ extern RsQblog *rsQblog;
 	 	 * @param ts Timestamp of the Blog Post.
 	 	 * @param post the actual Blog Post.
 	 	 */
-
 	 	virtual bool getPeerLatestBlog(std::string id, uint32_t &ts, std::wstring &post) = 0;
 
-	 	/**
-	 	 * get users Profile.
-	 	 * @param id the user id
-	 	 * @param entries set of profile information.
-	 	 */
-	 	virtual bool getPeerProfile(std::string id, std::list< std::pair<std::wstring, std::wstring> > &entries) = 0;
-	 	/**
-	 	 * get users fav files
-	 	 * @param id the user whose info you want.
-	 	 * @param favs list of Files 
-	 	 */
-	 	virtual bool getPeerFavourites(std::string id, std::list<FileInfo> &favs) = 0;
-	 	
  };
 
 #endif /*RSQBLOG_H_*/
