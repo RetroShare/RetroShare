@@ -482,6 +482,13 @@ void p3Qblog::loadDummy(void)
 	return;
 }
 
+bool p3Qblog::getPeerLatestBlog(std::string id, uint32_t &ts, std::wstring &post)
+{
+	#ifdef QBLOG_DEBUG
+	std::cerr << "p3Qblog::getPeerLatestBlog(): " << "not implemented yet" << std::endl;
+	#endif
+	return false;
+}
 
 
 bool p3Qblog::sort(void)
