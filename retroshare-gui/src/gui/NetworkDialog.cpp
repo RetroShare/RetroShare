@@ -306,7 +306,7 @@ void NetworkDialog::insertConnect()
 				time_t seconds;
 				seconds=detail.lastConnect;
 				struct tm *tmnow= localtime(&seconds);
-				out << setfill ("0");
+				// out << setfill ("0"); why does this not work?
 				out << tmnow->tm_hour << ":" << tmnow->tm_min << ":" << tmnow->tm_sec << " ";
 				out << tmnow->tm_mday << "." << tmnow->tm_mon + 1 << "." << tmnow->tm_year + 1900;
 			}
