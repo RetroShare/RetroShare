@@ -301,16 +301,15 @@ void NetworkDialog::insertConnect()
 				} else {
 					out << "0"; // Is zero
 				}
+				item -> setText(3, QString::fromStdString(out.str()));
 			} else {
 				// Dont Show a timestamp in RS calculate the day
-				time_t seconds;
-				seconds=detail.lastConnect;
-				struct tm *tmnow= localtime(&seconds);
-				// out << setfill ("0"); why does this not work?
-				out << tmnow->tm_hour << ":" << tmnow->tm_min << ":" << tmnow->tm_sec << " ";
-				out << tmnow->tm_mday << "." << tmnow->tm_mon + 1 << "." << tmnow->tm_year + 1900;
+				QDateTime datum = QDateTime::fromTime_t(detail.lastConnect);
+				// out << datum.toString(Qt::LocalDate);
+				QString stime = datum.toString(Qt::LocalDate);
+				
+				item -> setText(3, stime);
 			}
-                	item -> setText(3, QString::fromStdString(out.str()));
 		}
 
         	/* (4) Person */
