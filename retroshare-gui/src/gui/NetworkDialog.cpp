@@ -325,7 +325,7 @@ void NetworkDialog::insertConnect()
 				out << detail.extPort;
 			} else {
 				// No Trust => no IP Information
-				out << "";
+				out << "0.0.0.0:0/0.0.0.0:0";
 			}
                 	item -> setText(5, QString::fromStdString(out.str()));
 		}
@@ -345,45 +345,49 @@ void NetworkDialog::insertConnect()
 
 		//item -> setText(10, QString::fromStdString(detail.authcode));
 
-		/* change background */
-		int i;
+		/**
+		* Determinated the Background Color
+		*/
+		QColor backgrndcolor;
 		
-		// I dont know why the setBackground and Icon functions called 10 times,
-		// but this loop dont needed to be implemented in every single switch.
-		for(i = 1; i <10; i++)
+		if (detail.state & RS_PEER_STATE_FRIEND)
 		{
-			if (detail.state & RS_PEER_STATE_FRIEND)
+			if (detail.lastConnect < 10000) /* 3 hours? */
 			{
-				if (detail.lastConnect < 10000) /* 3 hours? */
-				{
-					/* bright green */
-						item -> setBackground(i,QBrush(Qt::darkGreen));
-						item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
-				}
-				else
-				{
-						item -> setBackground(i,QBrush(Qt::darkGreen));
-						item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
-				}
+				/* bright green */
+				backgrndcolor=Qt::darkGreen;
+				item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
 			}
 			else
 			{
-				if (detail.trustLvl > RS_TRUST_LVL_MARGINAL)
-				{
-						item -> setBackground(i,QBrush(Qt::cyan));
-						item -> setIcon(0,(QIcon(IMAGE_DENIED)));
-				}
-				else if (detail.lastConnect < 10000) /* 3 hours? */
-				{
-						item -> setBackground(i,QBrush(Qt::yellow));
-						item -> setIcon(0,(QIcon(IMAGE_DENIED)));
-				}
-				else
-				{
-						item -> setBackground(i,QBrush(Qt::gray));
-						item -> setIcon(0,(QIcon(IMAGE_DENIED)));
-				}
-        		}
+				backgrndcolor=Qt::darkGreen;
+				item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
+			}
+		}
+		else
+		{
+			if (detail.trustLvl > RS_TRUST_LVL_MARGINAL)
+			{
+				backgrndcolor=Qt::cyan;
+				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
+			}
+			else if (detail.lastConnect < 10000) /* 3 hours? */
+			{
+				backgrndcolor=Qt::yellow;
+				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
+			}
+			else
+			{
+				backgrndcolor=Qt::gray;
+				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
+			}
+		}
+
+		// Color each Background column in the Network Tab except the first one => 1-9
+		// whith the determinated color
+		for(int i = 1; i <10; i++)
+		{
+			item -> setBackground(i,QBrush(backgrndcolor));
 		}
 		/* add to the list */
 		items.append(item);
@@ -408,6 +412,7 @@ void NetworkDialog::insertConnect()
 		self_item->setText(8, QString::fromStdString(pd.email));
 		self_item->setText(9, QString::fromStdString(pd.id));
 
+		// Color each Background column in the Network Tab except the first one => 1-9
 		for(int i=1;i<10;++i)
 		{
 			self_item->setBackground(i,QBrush(Qt::darkGreen));
