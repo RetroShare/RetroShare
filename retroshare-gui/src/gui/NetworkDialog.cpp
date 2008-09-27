@@ -298,30 +298,35 @@ void NetworkDialog::insertConnect()
 			if (detail.lastConnect==0 ) {
 				if(detail.state & RS_PEER_STATE_FRIEND) {
 					out << "Friend never seen";
+					item -> setText(3, QString::fromStdString(out.str()));
 				} else {
-					out << "0"; // Is zero
+					// Show that there is no Trust
+					item -> setText(3, QString::fromStdString(RsPeerTrustString(detail.trustLvl)));
 				}
-				item -> setText(3, QString::fromStdString(out.str()));
 			} else {
 				// Dont Show a timestamp in RS calculate the day
 				QDateTime datum = QDateTime::fromTime_t(detail.lastConnect);
 				// out << datum.toString(Qt::LocalDate);
 				QString stime = datum.toString(Qt::LocalDate);
-				
 				item -> setText(3, stime);
 			}
 		}
-
+		
         	/* (4) Person */
 		item -> setText(4, QString::fromStdString(detail.name));
 		
 		/* (5) Peer Address */
 		{
 			std::ostringstream out;
-			out << detail.localAddr << ":";
-			out << detail.localPort << "/";
-			out << detail.extAddr << ":";
-			out << detail.extPort;
+			if(detail.state & RS_PEER_STATE_FRIEND) {
+				out << detail.localAddr << ":";
+				out << detail.localPort << "/";
+				out << detail.extAddr << ":";
+				out << detail.extPort;
+			} else {
+				// No Trust => no IP Information
+				out << "";
+			}
                 	item -> setText(5, QString::fromStdString(out.str()));
 		}
 
