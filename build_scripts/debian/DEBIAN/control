@@ -1,0 +1,13 @@
+Package: retroshare
+Version: 0.4.06b
+Depends: zlib1g,libqt4-core,libqt4-gui
+Section: net
+Priority: extra
+Architecture: i386
+Installed-Size: 10000
+Maintainer: Thomas Eimers <retroshare@notdefine.de>
+Description: Retroshare Instant Messenger
+ RetroShare Instant Messenger is the next generation sharing network, which provides:
+ Reliable Identification and Authentication of your trusted friends (RSA-Keys).
+ Because you connect direct and enryepted only to your trusted friends, it is a fast and safe transfer of files.
+ See http://retroshare.sourceforge.net for more details.

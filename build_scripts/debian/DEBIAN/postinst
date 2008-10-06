@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+if [ "$1" = "configure" ]
+then
+echo "Configure."
+cp /usr/share/retroshare/retroshare.desktop "$HOME/Desktop"
+fi
+echo type \'retroshare\' as normal user for runnig Retroshare !
+
+exit 0

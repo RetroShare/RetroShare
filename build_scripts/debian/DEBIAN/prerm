@@ -1,0 +1,21 @@
+#!/bin/sh
+set -e
+if [ \( "$1" = "upgrade" \) ]
+then
+    echo Remeber: Your public keys and settings are in your home directory .pqiPGPrc !
+fi
+
+if [ \( "$1" = "remove" \) ]
+then
+    echo Remeber: Your public keys in your home directory .pqiPHPrc will be deleted !
+    echo Type CTRL+C if you whish to abort, continue with ENTER
+    read weiter
+    if [ -d "$HOME/.pqiPGPrc" ] ; then
+        rm "$HOME/.pqiPGPrc/" --preserve-root -r
+    fi
+
+    if [ -e "$HOME/Desktop/retroshare.desktop" ] ; then
+        rm "$HOME/Desktop/retroshare.desktop"
+    fi
+fi
+exit 0
