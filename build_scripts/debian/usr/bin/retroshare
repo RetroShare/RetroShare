@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ ! -d "$HOME/.pqiPGPrc" ] ; then
+    mkdir "$HOME/.pqiPGPrc"
+fi
+
+# Now RS use OpenDHT
+# It is posible, that the User has a .pqi configuration, but no kadc.ini
+#if [ -e "$HOME/.pqiPGPrc/kadc.ini" ] ; then
+#    echo -n ""
+#else
+#    cp /usr/share/retroshare/kadc.ini "$HOME/.pqiPGPrc/"
+#fi
+
+/usr/bin/RetroShare
