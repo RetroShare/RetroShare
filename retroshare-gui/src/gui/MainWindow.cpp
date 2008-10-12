@@ -261,9 +261,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 #endif
     peerstatus = new PeerStatus();
     statusBar()->addWidget(peerstatus);
-    //statusBar()->addWidget(statusPeers = new QLabel(tr("Online: 0 |Friends: 0|Network: 0")));
-    statusBar()->addPermanentWidget(statusRates = new QLabel(tr("Down: 0.0 | Up: 0.0 ")));
-    //statusBar()->addPermanentWidget(statusPeers = new QLabel(tr("Online: 0 |Friends: 0|Network: 0")));
+    statusBar()->addPermanentWidget(statusRates = new QLabel(tr("<strong>Down:</strong> 0.00 | <strong>Up:</strong> 0.00 ")));
 
 
     //servicegrp->actions()[0]->setChecked(true);
@@ -329,7 +327,7 @@ void MainWindow::updateStatus()
 	rsicontrol -> ConfigGetDataRates(downKb, upKb);
 
 	std::ostringstream out;
-	out << "Down: " << std::setprecision(2) << std::fixed << downKb << " (kB/s) |  Up: " << std::setprecision(2) << std::fixed <<  upKb << " (kB/s) ";
+	out << "<strong>Down:</strong> " << std::setprecision(2) << std::fixed << downKb << " (kB/s) |  <strong>Up:</strong> " << std::setprecision(2) << std::fixed <<  upKb << " (kB/s) ";
 
 	/* set uploads/download rates */
 	if (statusRates)
