@@ -1,8 +1,7 @@
 #!/bin/sh
 
 version="0.4.10b"
-arch="amd64"
-#arch="i386"
+arch=`dpkg --print-architecture`
 
 echo
 echo Building retroshare debian package version $version for Ubuntu $arch. 
