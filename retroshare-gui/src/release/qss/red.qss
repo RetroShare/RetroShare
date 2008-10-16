@@ -10,7 +10,10 @@ QToolBar {
 
 }
 
-
+QPushButton {
+         background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 red, stop: 1 darkred);
+}
 
 QPushButton#okButton {
 	min-height: 27px;
@@ -38,11 +41,11 @@ QPushButton#applyButton {
 
 QLabel
 {
-color: #E84427;
+color: white;
 }
 
 QToolButton {
-      color: yellow;
+      color: white;
 }
 
      QTabWidget::tab-bar {
@@ -75,3 +78,9 @@ QToolButton {
      QTabBar::tab:!selected {
          margin-top: 2px; /* make non-selected tabs look smaller */
      }
+     
+QStatusBar{
+    border-image: url(qss/red/red.png);
+
+}
+     

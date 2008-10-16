@@ -1,0 +1,48 @@
+.QWidget {
+   background-color: black;
+
+}
+
+
+/* Customize the toolbar. */
+QToolBar {
+    border-image: url(qss/uus/uus.png);
+
+
+}
+
+
+
+QPushButton#okButton {
+	min-height: 27px;
+      min-width: 77px;
+}
+
+QPushButton#cancelprefButton {
+	  min-height: 27px;
+      min-width: 77px;
+}
+
+QPushButton#cancelButton {
+	  min-height: 25px;
+	  max-height: 25px;
+      min-width: 75px;
+}
+
+
+QPushButton#applyButton {
+
+	  min-height: 25px;
+	  max-height: 25px;
+      min-width: 75px;
+}
+
+QLabel
+{
+color: white;
+}
+
+QStatusBar{
+    border-image: url(qss/uus/uus.png);
+
+}
