@@ -1,5 +1,8 @@
 .QWidget {
-   background-color: black;
+   /*background-color: black;*/
+   
+   	 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #376D85, stop: 0.4 #185772);
 
 }
 
@@ -11,7 +14,31 @@ QToolBar {
 
 }
 
+     /* Style the tab using the tab sub-control. Note that
+         it reads QTabBar _not_ QTabWidget */
+     QTabBar::tab {
+         background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #BDDF7D, stop: 1 #49881F);
+         border: 2px solid #BDDF7D;
+         border-bottom-color: #49881F; /* same as the pane color */
+         border-top-left-radius: 4px;
+         border-top-right-radius: 4px;
+         min-width: 8ex;
+         padding: 2px;
 
+     }
+     
+     QTabBar::tab:!selected {
+         margin-top: 2px; /* make non-selected tabs look smaller */
+     }
+
+QHeaderView::section {
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #BDDF7D, stop: 1 #49881F);
+     color: white;
+     padding-left: 4px;
+     border: 1px solid #6c6c6c;
+ }
 
 QPushButton#okButton {
 	min-height: 27px;
@@ -46,3 +73,9 @@ QStatusBar{
     border-image: url(qss/uus/uus.png);
 
 }
+
+QMenu {
+	 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #376D85, stop: 0.4 #185772);
+     border: 1px solid black;
+ }
