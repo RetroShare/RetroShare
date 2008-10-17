@@ -11,7 +11,6 @@
 QToolBar {
     border-image: url(qss/uus/uus.png);
 
-
 }
 
      /* Style the tab using the tab sub-control. Note that
@@ -76,6 +75,21 @@ QStatusBar{
 
 QMenu {
 	 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 #376D85, stop: 0.4 #185772);
+                                     stop: 0 #376D85, stop: 1 #185772);
      border: 1px solid black;
  }
+ 
+QMenu::item:selected { /* when user selects item using mouse or keyboard */
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #BDDF7D, stop: 1 #49881F);
+}
+
+QListWidget::item:selected { /* when user selects item using mouse or keyboard */
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #BDDF7D, stop: 1 #49881F);
+}
+
+QTreeWidget::item:selected { /* when user selects item using mouse or keyboard */
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #BDDF7D, stop: 1 #49881F);
+}

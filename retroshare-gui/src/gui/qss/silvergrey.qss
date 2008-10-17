@@ -63,3 +63,32 @@ QHeaderView::section {
      QTabBar::tab:!selected {
          margin-top: 2px; /* make non-selected tabs look smaller */
      }
+     
+QMenu {
+	 background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 lightgray, stop:1 darkgray);
+     border: 1px solid black;
+ }
+
+QMenu::item {
+     /* sets background of menu item. set this to something non-transparent
+         if you want menu color and menu item color to be different */
+     background-color: transparent;
+ }
+
+QMenu::item:selected { /* when user selects item using mouse or keyboard */
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 #6F6F6F, stop:1 #979797);
+ }
+ 
+QListWidget::item:selected { /* when user selects item using mouse or keyboard */
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 #6F6F6F, stop:1 #979797);
+}
+
+QTreeWidget::item:selected { /* when user selects item using mouse or keyboard */
+   background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 #6F6F6F, stop:1 #979797);
+}
+
+

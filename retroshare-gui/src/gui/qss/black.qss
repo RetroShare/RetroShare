@@ -197,4 +197,29 @@ QCheckBox::indicator:checked:hover {
     image: url(qss/black/checkBox_hoverAndSelected.png);
 }
 
+QMenu {
+     background-color: #F9F9F9;
 
+ }
+
+     
+QMenu::item {
+     /* sets background of menu item. set this to something non-transparent
+         if you want menu color and menu item color to be different */
+     background-color: transparent;
+ }
+
+QMenu::item:selected { /* when user selects item using mouse or keyboard */
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 #848D9B, stop:1 #394152);
+ }
+ 
+QListWidget::item:selected { /* when user selects item using mouse or keyboard */
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 #848D9B, stop:1 #394152);
+}
+
+QTreeWidget::item:selected { /* when user selects item using mouse or keyboard */
+   background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 #848D9B, stop:1 #394152);
+}

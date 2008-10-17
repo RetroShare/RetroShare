@@ -67,7 +67,7 @@ QToolButton {
 
 	QTabBar::tab:selected, QTabBar::tab:hover {
          background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 darkred, stop: 0.4 red);
+                                     stop: 0 darkred, stop: 1 red);
      }
 
      QTabBar::tab:selected {
@@ -86,16 +86,28 @@ QStatusBar{
 
 QMenu {
 	 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 darkred, stop: 0.4 red);
+                                     stop: 0 red, stop: 1 darkred);
      border: 1px solid black;
  }
 
- QMenu::item {
+QMenu::item {
      /* sets background of menu item. set this to something non-transparent
          if you want menu color and menu item color to be different */
      background-color: transparent;
  }
 
- QMenu::item:selected { /* when user selects item using mouse or keyboard */
-     background-color: #654321;
+QMenu::item:selected { /* when user selects item using mouse or keyboard */
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #FFD200, stop: 1 #FF6400);
  }
+ 
+QListWidget::item:selected { /* when user selects item using mouse or keyboard */
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 red, stop: 1 darkred);
+}
+
+QTreeWidget::item:selected { /* when user selects item using mouse or keyboard */
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 red, stop: 1 darkred);
+}
+
