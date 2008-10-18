@@ -137,11 +137,21 @@ class RsConfig
 
 	int			promptAtBoot; /* popup the password prompt */
 
+	/* older data types */
 	bool			DHTActive;
 	bool			uPnPActive;
 
 	int			uPnPState;
 	int			DHTPeers;
+
+	/* Flags for Network Status */
+	bool 			netOk;     /* That we've talked to someone! */
+	bool			netUpnpOk; /* upnp is enabled and active */
+	bool			netDhtOk;  /* response from dht */
+	bool			netExtOk;  /* know our external address */
+	bool			netUdpOk;  /* recvd stun / udp packets */
+	bool			netTcpOk;  /* recvd incoming tcp */
+	bool			netResetReq;
 };
 
 /********************** For Search Interface *****************/

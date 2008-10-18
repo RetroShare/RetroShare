@@ -28,6 +28,8 @@
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 
+#include <QTimer>
+
 
 
 /** Constructor */
@@ -41,6 +43,10 @@ ServerDialog::ServerDialog(QWidget *parent)
   _settings = new RshareSettings();
 
   connect( ui.netModeComboBox, SIGNAL( activated ( int ) ), this, SLOT( toggleUPnP( ) ) );
+
+   QTimer *timer = new QTimer(this);
+   timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
+   timer->start(1000);
 
 
   /* Hide platform specific features */
@@ -109,15 +115,69 @@ void ServerDialog::load()
 	}
 	ui.discComboBox->setCurrentIndex(netIndex);
 
+	rsiface->lockData(); /* Lock Interface */
 
-	/* set the addresses */
+	ui.totalRate->setValue(rsiface->getConfig().maxDataRate);
+	ui.indivRate->setValue(rsiface->getConfig().maxIndivDataRate);
+
+	rsiface->unlockData(); /* UnLock Interface */
+
+	toggleUPnP();
+
+	//ui.check_net->setCheckable(true);
+	ui.check_upnp->setCheckable(true);
+	ui.check_dht->setCheckable(true);
+	ui.check_ext->setCheckable(true);
+	ui.check_udp->setCheckable(true);
+	ui.check_tcp->setCheckable(true);
+
+	//ui.check_net->setEnabled(false);
+	ui.check_upnp->setEnabled(false);
+	ui.check_dht->setEnabled(false);
+	ui.check_ext->setEnabled(false);
+	ui.check_udp->setEnabled(false);
+	ui.check_tcp->setEnabled(false);
+
+	ui.radio_nonet->setEnabled(false);
+	ui.radio_netLimited->setEnabled(false);
+	ui.radio_netUdp->setEnabled(false);
+	ui.radio_netServer->setEnabled(false);
+
+	/* Addresses must be set here - otherwise can't edit it */
 		/* set local address */
 	ui.localAddress->setText(QString::fromStdString(detail.localAddr));
 	ui.localPort -> setValue(detail.localPort);
 		/* set the server address */
 	ui.extAddress->setText(QString::fromStdString(detail.extAddr));
 	ui.extPort -> setValue(detail.extPort);
+}
 
+
+/** Loads the settings for this page */
+void ServerDialog::updateStatus()
+{
+
+	/* load up configuration from rsPeers */
+	RsPeerDetails detail;
+	if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
+	{
+		return;
+	}
+
+	/* only update if can't edit */
+	if (!ui.localPort->isEnabled())
+	{
+		/* set local address */
+		ui.localPort -> setValue(detail.localPort);
+		ui.extPort -> setValue(detail.extPort);
+	}
+
+	/* set local address */
+	ui.localAddress->setText(QString::fromStdString(detail.localAddr));
+	/* set the server address */
+	ui.extAddress->setText(QString::fromStdString(detail.extAddr));
+
+#if 0
 	/* set status */
 	std::ostringstream out;
 	out << "Attempted Network Mode: ";
@@ -131,6 +191,7 @@ void ServerDialog::load()
 			break;
 		default:
 		case RS_NETMODE_UPNP:
+
 			out << "Automatic: UPnP Forwarded Port";
 			break;
 	}
@@ -178,7 +239,6 @@ void ServerDialog::load()
 	out << std::endl;
 
 
-
 	if (detail.netMode == RS_NETMODE_UNREACHABLE)
 	{
 		ui.netStatusBox->setTextColor( Qt::red );
@@ -190,16 +250,46 @@ void ServerDialog::load()
 
 	ui.netStatusBox->setText(QString::fromStdString(out.str()));
 	ui.netStatusBox ->setReadOnly(true);
+#endif 
 
 	rsiface->lockData(); /* Lock Interface */
 
-	ui.totalRate->setValue(rsiface->getConfig().maxDataRate);
-	ui.indivRate->setValue(rsiface->getConfig().maxIndivDataRate);
+	/* now the extra bit .... switch on check boxes */
+	const RsConfig &config = rsiface->getConfig();
+
+	//ui.check_net->setChecked(config.netOk);
+	ui.check_upnp->setChecked(config.netUpnpOk);
+	ui.check_dht->setChecked(config.netDhtOk);
+	ui.check_ext->setChecked(config.netExtOk);
+	ui.check_udp->setChecked(config.netUdpOk);
+	ui.check_tcp->setChecked(config.netTcpOk);
+
+	if (config.netExtOk)
+	{
+		if (config.netUpnpOk || config.netTcpOk)
+		{
+			ui.radio_netServer->setChecked(true);
+		}
+		else
+		{
+			ui.radio_netUdp->setChecked(true);
+		}
+	}
+	else if (config.netOk)
+	{
+		ui.radio_netLimited->setChecked(true);
+	}
+	else
+	{
+		ui.radio_nonet->setChecked(true);
+	}
+		
 
 	rsiface->unlockData(); /* UnLock Interface */
 
-	toggleUPnP();
+
 }
+
 
 void ServerDialog::toggleUPnP()
 {
@@ -217,9 +307,9 @@ void ServerDialog::toggleUPnP()
 		//ui.discComboBox->setEnabled(true);
 		ui.discComboBox->setEnabled(false);
 
-		ui.localAddress->setEnabled(true);
+		ui.localAddress->setEnabled(false);
 		ui.localPort  -> setEnabled(true);
-		ui.extAddress -> setEnabled(true);
+		ui.extAddress -> setEnabled(false);
 		ui.extPort    -> setEnabled(true);
 	}
 	else

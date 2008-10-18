@@ -151,13 +151,13 @@ int main(int argc, char *argv[])
         notify->setMessengerWindow(w->messengerWindow);
 
 	/* only show window, if not startMinimized */
-  	/*if (!startMinimised)
+  	if (!startMinimised)
 	{
 		
 		w->show();
 		//skinWindow->show();
 		
-	}*/
+	}
    
     /* Run Retroshare */
    //int ret = rshare.run();

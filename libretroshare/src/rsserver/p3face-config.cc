@@ -124,6 +124,15 @@ int RsServer::UpdateAllConfig()
 	config.maxIndivDataRate  = (int) pqih -> getMaxIndivRate(true);/* kb */
 	config.promptAtBoot = true; /* popup the password prompt */      
 
+	/* update network configuration */
+
+	config.netOk =   mConnMgr->getNetStatusOk();
+	config.netUpnpOk = mConnMgr->getNetStatusUpnpOk();
+	config.netDhtOk = mConnMgr->getNetStatusDhtOk();
+	config.netExtOk = mConnMgr->getNetStatusExtOk();
+	config.netUdpOk = mConnMgr->getNetStatusUdpOk();
+	config.netTcpOk = mConnMgr->getNetStatusTcpOk();
+
 	/* update DHT/UPnP config */
 
 	config.uPnPState  = mConnMgr->getUPnPState();

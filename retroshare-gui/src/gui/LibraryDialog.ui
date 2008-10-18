@@ -487,17 +487,17 @@
   <property name="contextMenuPolicy" >
    <enum>Qt::NoContextMenu</enum>
   </property>
-  <layout class="QGridLayout" name="gridLayout" >
+  <layout class="QGridLayout" >
    <item row="0" column="0" >
     <widget class="QGroupBox" name="groupBox_5" >
      <property name="title" >
       <string>Library</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_8" >
+     <layout class="QGridLayout" >
       <item row="0" column="1" colspan="2" >
        <widget class="QLabel" name="label_3" >
         <property name="styleSheet" >
-         <string notr="true" >background-color: rgb(253, 252, 248);</string>
+         <string>background-color: rgb(253, 252, 248);</string>
         </property>
         <property name="text" >
          <string>Exploring My RetroShare Library</string>
@@ -543,7 +543,7 @@
       <item row="2" column="1" >
        <widget class="QPushButton" name="createAlbum_btn_library" >
         <property name="styleSheet" >
-         <string notr="true" />
+         <string/>
         </property>
         <property name="text" >
          <string>Create Album</string>
@@ -556,7 +556,7 @@
       <item row="2" column="2" >
        <widget class="QPushButton" name="deleteAlbum_btn_library" >
         <property name="styleSheet" >
-         <string notr="true" />
+         <string/>
         </property>
         <property name="text" >
          <string>Delete Album</string>
@@ -572,7 +572,7 @@
       <item row="2" column="4" >
        <widget class="QPushButton" name="find_btn_library" >
         <property name="styleSheet" >
-         <string notr="true" >pushButton_41:hover{ color : white;}</string>
+         <string>pushButton_41:hover{ color : white;}</string>
         </property>
         <property name="text" >
          <string>Find</string>
@@ -591,22 +591,14 @@
          <number>1</number>
         </property>
         <widget class="QWidget" name="tab_13" >
-         <property name="geometry" >
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>226</width>
-           <height>345</height>
-          </rect>
-         </property>
          <attribute name="title" >
           <string>Folder</string>
          </attribute>
-         <layout class="QFormLayout" name="formLayout" >
+         <layout class="QGridLayout" >
           <item row="0" column="0" >
            <widget class="QComboBox" name="comboBox" >
             <property name="styleSheet" >
-             <string notr="true" >border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));</string>
+             <string>border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));</string>
             </property>
             <item>
              <property name="text" >
@@ -628,18 +620,10 @@
          </layout>
         </widget>
         <widget class="QWidget" name="tab_14" >
-         <property name="geometry" >
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>238</width>
-           <height>390</height>
-          </rect>
-         </property>
          <attribute name="title" >
           <string>Organizer</string>
          </attribute>
-         <layout class="QGridLayout" name="gridLayout_25" >
+         <layout class="QGridLayout" >
           <item row="0" column="0" >
            <widget class="QTreeView" name="organizertreeView" >
             <property name="font" >
@@ -653,7 +637,7 @@
           <item row="1" column="0" >
            <widget class="QPushButton" name="shareFiles_btn" >
             <property name="styleSheet" >
-             <string notr="true" >border-color: rgb(0, 0, 0);</string>
+             <string>border-color: rgb(0, 0, 0);</string>
             </property>
             <property name="text" >
              <string>Share Files..</string>

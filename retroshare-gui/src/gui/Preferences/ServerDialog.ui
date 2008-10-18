@@ -518,17 +518,17 @@
          <widget class="QComboBox" name="netModeComboBox" >
           <item>
            <property name="text" >
-            <string>Automatic (Firewalled)</string>
+            <string>Automatic</string>
            </property>
           </item>
           <item>
            <property name="text" >
-            <string>Firewalled  + No UPnP</string>
+            <string>Firewalled</string>
            </property>
           </item>
           <item>
            <property name="text" >
-            <string>External (Forwarded) Port</string>
+            <string>Forwarded Port</string>
            </property>
           </item>
          </widget>
@@ -579,77 +579,88 @@
       </sizepolicy>
      </property>
      <property name="title" >
-      <string>Server Status And Network Settings</string>
+      <string>Network Configuration</string>
      </property>
-     <layout class="QVBoxLayout" >
-      <item>
-       <layout class="QGridLayout" >
-        <item rowspan="6" row="0" column="0" >
-         <widget class="QTextEdit" name="netStatusBox" />
-        </item>
-        <item row="0" column="1" >
-         <widget class="QCheckBox" name="checkBox" >
-          <property name="text" >
-           <string>Network Okay</string>
-          </property>
-          <property name="checkable" >
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1" >
-         <widget class="QCheckBox" name="checkBox_6" >
-          <property name="text" >
-           <string>UPnP Active</string>
-          </property>
-          <property name="checkable" >
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1" >
-         <widget class="QCheckBox" name="checkBox_5" >
-          <property name="text" >
-           <string>DHT Okay</string>
-          </property>
-          <property name="checkable" >
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1" >
-         <widget class="QCheckBox" name="checkBox_2" >
-          <property name="text" >
-           <string>Found Ext IP Addr</string>
-          </property>
-          <property name="checkable" >
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1" >
-         <widget class="QCheckBox" name="checkBox_3" >
-          <property name="text" >
-           <string>UDP Connections</string>
-          </property>
-          <property name="checkable" >
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="1" >
-         <widget class="QCheckBox" name="checkBox_4" >
-          <property name="text" >
-           <string>TCP server</string>
-          </property>
-          <property name="checkable" >
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <widget class="QRadioButton" name="radio_nonet" >
+        <property name="text" >
+         <string>No Conectivity</string>
+        </property>
+       </widget>
       </item>
-      <item>
+      <item row="0" column="1" >
+       <widget class="QCheckBox" name="check_udp" >
+        <property name="text" >
+         <string>UDP Connections</string>
+        </property>
+        <property name="checkable" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QRadioButton" name="radio_netLimited" >
+        <property name="text" >
+         <string>Limited</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QCheckBox" name="check_ext" >
+        <property name="text" >
+         <string>Stable External IP Addrress</string>
+        </property>
+        <property name="checkable" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item rowspan="2" row="2" column="0" >
+       <widget class="QRadioButton" name="radio_netUdp" >
+        <property name="text" >
+         <string>Udp</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" >
+       <widget class="QCheckBox" name="check_dht" >
+        <property name="text" >
+         <string>DHT Okay</string>
+        </property>
+        <property name="checkable" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" >
+       <widget class="QCheckBox" name="check_upnp" >
+        <property name="text" >
+         <string>UPnP Active</string>
+        </property>
+        <property name="checkable" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" >
+       <widget class="QRadioButton" name="radio_netServer" >
+        <property name="text" >
+         <string>Retroshare Server</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1" >
+       <widget class="QCheckBox" name="check_tcp" >
+        <property name="text" >
+         <string>TCP server</string>
+        </property>
+        <property name="checkable" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="2" >
        <layout class="QHBoxLayout" >
         <item>
          <layout class="QVBoxLayout" >
@@ -671,9 +682,6 @@
         </item>
         <item>
          <layout class="QGridLayout" >
-          <item row="0" column="0" >
-           <widget class="QLineEdit" name="localAddress" />
-          </item>
           <item row="0" column="1" >
            <widget class="QLabel" name="label_5" >
             <property name="text" >
@@ -694,9 +702,6 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0" >
-           <widget class="QLineEdit" name="extAddress" />
-          </item>
           <item row="1" column="1" >
            <widget class="QLabel" name="label_4" >
             <property name="text" >
@@ -716,6 +721,12 @@
              <number>7812</number>
             </property>
            </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLineEdit" name="extAddress" />
+          </item>
+          <item row="0" column="0" >
+           <widget class="QLineEdit" name="localAddress" />
           </item>
          </layout>
         </item>
@@ -834,7 +845,6 @@
  <tabstops>
   <tabstop>localAddress</tabstop>
   <tabstop>localPort</tabstop>
-  <tabstop>extAddress</tabstop>
   <tabstop>extPort</tabstop>
   <tabstop>totalRate</tabstop>
   <tabstop>indivRate</tabstop>

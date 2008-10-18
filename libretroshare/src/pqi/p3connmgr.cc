@@ -64,6 +64,7 @@ const uint32_t MAX_UPNP_INIT = 		10; /* seconds UPnP timeout */
  ***/
 
 #define CONN_DEBUG 1
+
 const uint32_t P3CONNMGR_TCP_DEFAULT_DELAY = 2; /* 2 Seconds? is it be enough! */
 const uint32_t P3CONNMGR_UDP_DHT_DELAY     = DHT_NOTIFY_PERIOD + 60; /* + 1 minute for DHT POST */
 const uint32_t P3CONNMGR_UDP_PROXY_DELAY   = 30;  /* 30 seconds (NOT IMPLEMENTED YET!) */
@@ -169,7 +170,7 @@ void p3ConnectMgr::setOwnNetConfig(uint32_t netMode, uint32_t visState)
 	/* if we've started up - then tweak Dht On/Off */
 	if (mNetStatus != RS_NET_UNKNOWN)
 	{
-		enableNetAssistFirewall(!(ownState.visState & RS_VIS_STATE_NODHT));
+		enableNetAssistConnect(!(ownState.visState & RS_VIS_STATE_NODHT));
 	}
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
@@ -231,6 +232,17 @@ void p3ConnectMgr::setOwnNetConfig(uint32_t netMode, uint32_t visState)
  *
  */
 
+void p3ConnectMgr::netStatusReset()
+{
+	netFlagOk = true;
+	netFlagUpnpOk = false;
+	netFlagDhtOk = false;
+	netFlagExtOk = false;
+	netFlagUdpOk = false;
+	netFlagTcpOk = false;
+	netFlagResetReq = false;
+}
+
 void p3ConnectMgr::netStartup()
 {
 	/* startup stuff */
@@ -246,6 +258,7 @@ void p3ConnectMgr::netStartup()
 	netDhtInit();
 	netUdpInit();
 	netStunInit();
+	netStatusReset();
 
 	/* decide which net setup mode we're going into 
 	 */
@@ -469,7 +482,7 @@ void p3ConnectMgr::netDhtInit()
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
 
-	enableNetAssistFirewall(!(vs & RS_VIS_STATE_NODHT));
+	enableNetAssistConnect(!(vs & RS_VIS_STATE_NODHT));
 }
 
 
@@ -531,6 +544,14 @@ void p3ConnectMgr::netUpnpCheck()
 	{
 		/* switch to UDP startup */
 		connMtx.lock();   /*   LOCK MUTEX */
+
+		/* Set Net Status flags ....
+		 * we now have external upnp address. Golden!
+		 * don't set netOk flag until have seen some traffic.
+		 */
+
+		netFlagUpnpOk = true;
+		netFlagExtOk = true;
 
 		mUpnpAddrValid = true;
 		mUpnpExtAddr = extAddr;
@@ -777,6 +798,15 @@ bool p3ConnectMgr::udpExtAddressCheck()
 		std::cerr << " stable: " << mStunAddrStable;
 		std::cerr << std::endl;
 #endif
+
+		/* update net Status flags ....
+		 * we've got stun information via udp...
+		 * so up is okay, and ext address is known stable or not.
+		 */
+
+		if (mStunAddrStable)
+			netFlagExtOk = true;
+		netFlagUdpOk = true;
 
 		return true;
 	}
@@ -1552,6 +1582,11 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		/* If we get a info -> then they are online */
 		it->second.state |= RS_PEER_S_ONLINE;
 		it->second.lastavailable = now;
+
+		/* if we are recieving these - the dht is definitely up.
+		 */
+
+		netFlagDhtOk = true;
 	}
 	else if (source == RS_CB_DISC)
 	{
@@ -3256,6 +3291,41 @@ bool	p3ConnectMgr::getDHTEnabled()
 }
 
 
+
+bool	p3ConnectMgr::getNetStatusOk()
+{
+	return netFlagOk;
+}
+
+bool	p3ConnectMgr::getNetStatusUpnpOk()
+{
+	return netFlagUpnpOk;
+}
+
+bool	p3ConnectMgr::getNetStatusDhtOk()
+{
+	return netFlagDhtOk;
+}
+
+bool	p3ConnectMgr::getNetStatusExtOk()
+{
+	return netFlagExtOk;
+}
+
+bool	p3ConnectMgr::getNetStatusUdpOk()
+{
+	return netFlagUdpOk;
+}
+
+bool	p3ConnectMgr::getNetStatusTcpOk()
+{
+	return netFlagTcpOk;
+}
+
+bool	p3ConnectMgr::getNetResetReq()
+{
+	return netFlagResetReq;
+}
 
 
 

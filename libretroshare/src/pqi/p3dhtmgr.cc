@@ -48,6 +48,8 @@ const int p3dhtzone = 3892;
  *
  */
 
+#define DHT_DEBUG 1
+
 /**** DHT State Variables ****/
 
 #define DHT_STATE_OFF		0

@@ -43,6 +43,9 @@ public:
   /** Loads the settings for this page */
   void load();
 
+public slots:
+  void updateStatus();
+
 private slots:
   void saveAddresses();
   void toggleUPnP();

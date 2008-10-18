@@ -81,6 +81,13 @@ const uint32_t RS_NET_CONN_UDP_ALL 		= 0x00f0;
 const uint32_t RS_NET_CONN_TCP_LOCAL 		= 0x0001;
 const uint32_t RS_NET_CONN_TCP_EXTERNAL 	= 0x0002;
 const uint32_t RS_NET_CONN_UDP_DHT_SYNC 	= 0x0010;
+const uint32_t RS_NET_CONN_UDP_PEER_SYNC 	= 0x0020; /* coming soon */
+
+/* extra flags */
+// not sure if needed yet.
+//const uint32_t RS_NET_CONN_PEERAGE 		= 0x0f00;
+//const uint32_t RS_NET_CONN_SERVER		= 0x0100; /* TCP only */
+//const uint32_t RS_NET_CONN_PEER			= 0x0200; /* all UDP */
 
 
 /* flags of peerStatus */
@@ -176,6 +183,14 @@ bool    getUPnPState();
 bool	getUPnPEnabled();
 bool	getDHTEnabled();
 
+bool	getNetStatusOk();
+bool	getNetStatusUpnpOk();
+bool	getNetStatusDhtOk();
+bool	getNetStatusExtOk();
+bool	getNetStatusUdpOk();
+bool	getNetStatusTcpOk();
+bool	getNetResetReq();
+
 void 	setOwnNetConfig(uint32_t netMode, uint32_t visState);
 bool 	setLocalAddress(std::string id, struct sockaddr_in addr);
 bool 	setExtAddress(std::string id, struct sockaddr_in addr);
@@ -260,7 +275,7 @@ void 	netDhtInit();
 void 	netUdpInit();
 void 	netStunInit();
 
-
+void 	netStatusReset();
 
 
 void	netInit();
@@ -337,6 +352,15 @@ private:
 	bool mStunAddrStable;
 	struct sockaddr_in mUpnpExtAddr;
 	struct sockaddr_in mStunExtAddr;
+
+	/* network status flags (read by rsiface) */
+	bool netFlagOk;
+	bool netFlagUpnpOk;
+	bool netFlagDhtOk;
+	bool netFlagExtOk;
+	bool netFlagUdpOk;
+	bool netFlagTcpOk;
+	bool netFlagResetReq;
 
 
 	/* these are protected for testing */
