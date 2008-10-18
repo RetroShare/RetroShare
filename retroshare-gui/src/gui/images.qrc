@@ -278,8 +278,6 @@
         <file>images/window_fullscreen.png</file>
         <file>images/window_nofullscreen.png</file>
         <file>layouts/default.ui</file>
-        <file>qss/arachnophobia.qss</file>
-        <file>qss/arachnophobia/background.png</file>
         <file>qss/black.qss</file>
         <file>qss/black/backgroundblack.png</file>
         <file>qss/black/border.png</file>
