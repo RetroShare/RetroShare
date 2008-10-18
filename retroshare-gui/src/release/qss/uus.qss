@@ -13,9 +13,9 @@ QToolBar {
 
 }
 
-     /* Style the tab using the tab sub-control. Note that
+/* Style the tab using the tab sub-control. Note that
          it reads QTabBar _not_ QTabWidget */
-     QTabBar::tab {
+QTabBar::tab {
          background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #BDDF7D, stop: 1 #49881F);
          border: 2px solid #BDDF7D;
@@ -27,8 +27,22 @@ QToolBar {
 
      }
      
-     QTabBar::tab:!selected {
+QTabBar::tab:!selected {
          margin-top: 2px; /* make non-selected tabs look smaller */
+
+     }
+     
+QTabBar::tab:selected, QTabBar::tab:hover {
+
+         background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #F0F8CB, stop: 1 #F0F8CD);
+
+     }
+
+QTabBar::tab:selected {
+         border-color: #9B9B9B;
+         background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #F5FFBC, stop: 1 #609C08);
      }
 
 QHeaderView::section {
@@ -63,6 +77,26 @@ QPushButton#applyButton {
       min-width: 75px;
 }
 
+QPushButton {
+         background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #BDDF7D, stop: 1 #49881F);
+         border:   qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #BDDF7D, stop: 1 #49881F);               
+}         
+
+
+QPushButton::hover {
+         background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #F0F8CB, stop: 1 #F0F8CD);
+}
+
+QPushButton::pressed {
+         background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #F5FFBC, stop: 1 #609C08);
+}
+
+
+
 QLabel
 {
 color: white;
@@ -92,4 +126,10 @@ QListWidget::item:selected { /* when user selects item using mouse or keyboard *
 QTreeWidget::item:selected { /* when user selects item using mouse or keyboard */
      background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #BDDF7D, stop: 1 #49881F);
+
+}
+
+QToolTip{
+	 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #376D85, stop: 0.4 #185772);
 }
