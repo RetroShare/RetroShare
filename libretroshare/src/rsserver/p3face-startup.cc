@@ -713,6 +713,9 @@ int RsServer::StartupRetroShare(RsInit *config)
 	{
 		struct sockaddr_in laddr;
 
+		/* clean sockaddr before setting values (MaxOSX) */
+		sockaddr_clear(&laddr);
+		
 		laddr.sin_family = AF_INET;
 		laddr.sin_port = htons(config->port);
 
