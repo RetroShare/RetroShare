@@ -37,5 +37,26 @@ QPushButton#applyButton {
 
 
 
+QMenu::item:selected { /* when user selects item using mouse or keyboard */
 
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #E3EFFF, stop: 1 #87ADE4);
+}
 
+QListWidget::item:selected { /* when user selects item using mouse or keyboard */
+
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #E3EFFF, stop: 1 #87ADE4);
+}
+
+QTreeWidget::item:selected { /* when user selects item using mouse or keyboard */
+
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #E3EFFF, stop: 1 #87ADE4);                                     
+}
+
+QStatusBar{
+       
+   	 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #E3EFFF, stop: 1 #87ADE4);
+}

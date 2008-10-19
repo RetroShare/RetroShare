@@ -73,7 +73,7 @@ QMenu {
 QMenu::item {
      /* sets background of menu item. set this to something non-transparent
          if you want menu color and menu item color to be different */
-     background-color: transparent;
+     /*background-color: transparent;*/
  }
 
 QMenu::item:selected { /* when user selects item using mouse or keyboard */
@@ -87,8 +87,13 @@ QListWidget::item:selected { /* when user selects item using mouse or keyboard *
 }
 
 QTreeWidget::item:selected { /* when user selects item using mouse or keyboard */
-   background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 #6F6F6F, stop:1 #979797);
 }
 
+QTreeView::item:selected { /* when user selects item using mouse or keyboard */
 
+     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                       stop:0 #6F6F6F, stop:1 #979797);
+
+}

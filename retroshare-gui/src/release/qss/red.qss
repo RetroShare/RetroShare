@@ -10,6 +10,21 @@ QToolBar {
 
 }
 
+/* it works only at the moment with vista Thema on XP*/
+QToolButton::hover {
+         background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #FFD200, stop: 1 #FF6400);
+                            
+
+}
+
+QToolButton::pressed {
+         background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #FFD200, stop: 1 #FF6400);
+                            
+
+}
+
 QPushButton {
          background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 red, stop: 1 darkred);
@@ -45,7 +60,7 @@ color: white;
 }
 
 QToolButton {
-      color: white;
+      color: black;
 }
 
      QTabWidget::tab-bar {
@@ -111,3 +126,9 @@ QTreeWidget::item:selected { /* when user selects item using mouse or keyboard *
                                      stop: 0 red, stop: 1 darkred);
 }
 
+QTreeView::item:selected { /* when user selects item using mouse or keyboard */
+
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 red, stop: 1 darkred);
+
+}

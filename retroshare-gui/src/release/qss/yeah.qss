@@ -87,6 +87,13 @@ QListWidget::item:selected { /* when user selects item using mouse or keyboard *
 }
 
 QTreeWidget::item:selected { /* when user selects item using mouse or keyboard */
-   background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 #FBC957, stop:1 #D79704);
+}
+
+TreeView::item:selected { /* when user selects item using mouse or keyboard */
+
+     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #FBC957, stop: 1 #D79704);
+
 }
