@@ -12,10 +12,10 @@ RSOBJ =  ftdata.o ftfileprovider.o ftfilecreator.o ftextralist.o \
 	ftcontroller.o pqitestor.o
 
 
-TESTOBJ  = ftfileprovidertest.o ftfilecreatortest.o ftextralisttest.o ftdataplextest.o ftserver1test.o ftserver2test.o
+TESTOBJ  = ftfileprovidertest.o ftfilecreatortest.o ftextralisttest.o ftdataplextest.o ftserver1test.o ftserver2test.o fttransfermoduletest.o
 
 
-TESTS  = ftfileprovidertest ftfilecreatortest ftextralisttest ftdataplextest ftserver1test ftserver2test
+TESTS  = ftfileprovidertest ftfilecreatortest ftextralisttest ftdataplextest ftserver1test ftserver2test fttransfermoduletest
 
 all: librs tests
 
@@ -24,6 +24,9 @@ ftfilecreatortest : ftfilecreatortest.o
 	
 ftfileprovidertest : ftfileprovidertest.o 
 	$(CC) $(CFLAGS) -o ftfileprovidertest ftfileprovidertest.o $(LIBS)
+
+fttransfermoduletest : fttransfermoduletest.o 
+	$(CC) $(CFLAGS) -o fttransfermoduletest fttransfermoduletest.o $(LIBS)
 
 ftextralisttest : ftextralisttest.o 
 	$(CC) $(CFLAGS) -o ftextralisttest ftextralisttest.o $(LIBS)

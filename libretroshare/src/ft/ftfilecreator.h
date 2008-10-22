@@ -33,100 +33,56 @@
  *
  */
 #include "ftfileprovider.h"
-#include "util/rsthreads.h"
-#include <queue>
+#include <map>
 class ftChunk;
-class ftFileChunker;
 
 class ftFileCreator: public ftFileProvider
 {
 public:
 
-	ftFileCreator(std::string savepath, uint64_t size, std::string hash,std::string chunker);
+	ftFileCreator(std::string savepath, uint64_t size, std::string hash, uint64_t recvd);
 	
 	~ftFileCreator();
 
-	/*
-	 * overloaded from FileProvider FIXME
-	 * virtual bool 	getFileData(uint64_t offset, uint32_t chunk_size, void *data);
-	 *
-	 */
+	 /* overloaded from FileProvider */
+virtual bool 	getFileData(uint64_t offset, uint32_t chunk_size, void *data);
+	uint64_t getRecvd();
 		
-	/*
-	 * FIXME: initializeFileAttrs
-         * Should this be a over-ridden version of ftfile provider?
-	 * What happens in the case of simultaneous upload and download?
-	 */
 
- 	int initializeFileAttrs(); 
 	/* 
 	 * creation functions for FileCreator 
          */
+
 	bool	getMissingChunk(uint64_t &offset, uint32_t &chunk);
 	bool 	addFileData(uint64_t offset, uint32_t chunk_size, void *data);
 
+protected:
+
+virtual int initializeFileAttrs(); 
+
 private:
+
+	int 	notifyReceived(uint64_t offset, uint32_t chunk_size);
 	/* 
          * structure to track missing chunks 
          */
 	
-	uint64_t recv_size;
-	std::string hash;
-	ftFileChunker *fileChunker;
-	void initialize(std::string);
-	RsMutex ftcMutex;
-};
+	uint64_t mStart;
+	uint64_t mEnd;
 
-/*
-	This class can either be specialized to follow a different splitting
-	policy or have an argument to indicate different policies
-*/
-class ftFileChunker : public RsThread {
-public:
-	/* 
-	 * FIXME Does filechunker require hash?? 
-         */
-	ftFileChunker(uint64_t size);
-	virtual ~ftFileChunker();
-
-	/* 
-	 * Breaks up the file into evenly sized chunks 
-	 * Initializes all chunks to never_requested	
-	 */
-    	int splitFile();
-	virtual	void	run();
-	virtual bool	getMissingChunk(uint64_t &offset, uint32_t &chunk);
-	bool 	getMissingChunkRandom(uint64_t &offset, uint32_t &chunk);
-	int 	notifyReceived(uint64_t offset, uint32_t chunk_size);
-	int     monitor();
-	void 	setMonitorPeriod(int period);
-protected: 
-	uint64_t file_size;
-	uint64_t num_chunks;
-	uint64_t std_chunk_size;
-	std::vector<ftChunk*> allocationTable;
-	unsigned int aggregate_status;
-	int monitorPeriod;
-	RsMutex chunkerMutex; /********** STACK LOCKED MTX ******/
-};
-
-class ftFileRandomizeChunker : public ftFileChunker {
-public:
-	ftFileRandomizeChunker(uint64_t size);
-	virtual bool	getMissingChunk(uint64_t &offset, uint32_t &chunk);
-	~ftFileRandomizeChunker();
+	std::map<uint64_t, ftChunk> mChunks;
 
 };
 
 class ftChunk {
 public:
-	enum Status {AVAIL, ALLOCATED, RECEIVED};
-	ftChunk(uint64_t,uint64_t,time_t,Status);
-	uint64_t offset;
-	uint64_t max_chunk_size;
-	time_t   timestamp;
-	Status chunk_status;	
+	ftChunk(uint64_t,uint64_t,time_t);
+	ftChunk():offset(0), chunk(0), ts(0) {}
 	~ftChunk();
+
+	uint64_t offset;
+	uint64_t chunk;
+	time_t   ts;
 };
 
-#endif // FT_FILE_PROVIDER_HEADER
+#endif // FT_FILE_CREATOR_HEADER

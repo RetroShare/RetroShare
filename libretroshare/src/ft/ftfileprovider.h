@@ -40,15 +40,18 @@ class ftFileProvider
 public:
 	ftFileProvider(std::string path, uint64_t size, std::string hash);
 	virtual ~ftFileProvider();
+
 	virtual bool 	getFileData(uint64_t offset, uint32_t chunk_size, void *data);
 	virtual bool    FileDetails(FileInfo &info);
 	std::string getHash();
 	uint64_t getFileSize();
+	bool fileOk();
 
 
 protected:
-	virtual int initializeFileAttrs();
-	uint64_t    total_size;
+virtual	int initializeFileAttrs(); /* does for both */
+
+	uint64_t    mSize;
 	std::string hash;
 	std::string file_name;
 	FILE *fd;
@@ -65,7 +68,7 @@ protected:
 	/* 
          * Mutex Required for stuff below 
          */
-	RsMutex ftPMutex;
+	RsMutex ftcMutex;
 };
 
 

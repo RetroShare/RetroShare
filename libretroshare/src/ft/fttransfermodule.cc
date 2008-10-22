@@ -140,16 +140,35 @@ bool ftTransferModule::recvFileData(std::string peerId, uint64_t offset,
   mit = mFileSources.find(peerId);
 
   if (mit == mFileSources.end())
-    return false;
+  {
+#ifdef FT_DEBUG
+	std::cerr << "ftTransferModule::recvFileData()";
+	std::cerr << " peer not found in sources";
+	std::cerr << std::endl;
+#endif
+    	return false;
+  }
 
   if ((mit->second).state != PQIPEER_DOWNLOADING)
-    return false;
+  {
+#ifdef FT_DEBUG
+	std::cerr << "ftTransferModule::recvFileData()";
+	std::cerr << " peer not downloading???";
+	std::cerr << std::endl;
+#endif
+    	//return false;
+  }
 
   if (offset != ((mit->second).offset + (mit->second).receivedSize))
   {
     //fix me
     //received data not expected
-    return false;
+#ifdef FT_DEBUG
+	std::cerr << "ftTransferModule::recvFileData()";
+	std::cerr << " offset != offset + recvdSize";
+	std::cerr << std::endl;
+#endif
+    	return false;
   }
 
   (mit->second).receivedSize += chunk_size;

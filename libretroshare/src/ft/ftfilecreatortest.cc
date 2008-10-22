@@ -1,87 +1,89 @@
 #include "ftfilecreator.h"
 
-main(){
-	uint64_t offset;
-	uint32_t csize;
-	/*Test file creator*/
-	ftFileCreator fcreator("somefile",100000,"hash","default");
-	csize = 40000;
-	if (fcreator.getMissingChunk(offset, csize)){
-		std::cout << "Missing Chunk's offset=" << offset << " chunk_size=" << csize << std::endl;
-	}
-	
-	csize = 10000;
-	if (fcreator.getMissingChunk(offset, csize)){
-		std::cout << "Missing Chunk's offset=" << offset << " chunk_size=" << csize << std::endl;
-	}
-	
-	csize = 15000;
-	if (fcreator.getMissingChunk(offset, csize)){
-		std::cout << "Missing Chunk's offset=" << offset << " chunk_size=" << csize << std::endl;
-	}
-	
-	
-	std::cout << "Test file creator adding data to file out-of-order\n";
-	char* alpha = "abcdefghij";
-	std::cerr << "Call to addFileData =" << fcreator.addFileData(10,10,alpha );
-	char* numerical = "1234567890";
-	std::cerr << "Call to addFileData =" << fcreator.addFileData(0,10,numerical );
-	
+#include "util/utest.h"
 
-	/* Test file creator can write out of order/randomized chunker */
-	ftFileCreator franc("somefile1",50000,"hash", "randomize");
-	csize = 30000;
-	if (franc.getMissingChunk(offset, csize)){
-		std::cout << "Offset " << offset << " Csize " << csize << std::endl;
-	}
+INITTEST();
 
-	char* allA = (char*) malloc(csize);
-	for(int i=0;i<csize;i++)
-		allA[i]='a';
-	
-	std::cerr << "ADD DATA RETUNED " << franc.addFileData(offset,csize,allA );
+static int test_timeout(ftFileCreator *creator);
+static int test_fill(ftFileCreator *creator);
 
-	csize = 10000;
-	if (franc.getMissingChunk(offset, csize)){
-		std::cout << "Offset " << offset << " Csize " << csize << std::endl;
-	}
-	
-	char* allB = (char*) malloc(csize);
-	for(int i=0;i<csize;i++)
-		allB[i]='b';
+int main()
+{
+	/* use ftcreator to create a file on tmp drive */
+	ftFileCreator fcreator("/tmp/rs-ftfc-test.dta",100000,"hash",0);
 
+	test_timeout(&fcreator);
+	test_fill(&fcreator);
 
+        FINALREPORT("RsTlvItem Stack Tests");
 
-	std::cerr << "ADD DATA RETUNED " << franc.addFileData(offset,csize,allB );
-	
-	if (franc.getMissingChunk(offset, csize)){
-		std::cout << "Offset " << offset << " Csize " << csize << std::endl;
-	}
-	else {
-		std::cout << "getMissing chunk returned nothing" << std::endl;	
-	}
-	
-	
-	csize = 10000;
-	if (franc.getMissingChunk(offset, csize)){
-		std::cout << "Offset " << offset << " Csize " << csize << std::endl;
-	}
-	
-	char* allC = (char*) malloc(csize);
-	for(int i=0;i<csize;i++)
-		allC[i]='c';
-
-
-
-	std::cerr << "ADD DATA RETUNED " << franc.addFileData(offset,csize,allC );
-	
-	if (franc.getMissingChunk(offset, csize)){
-		std::cout << "Offset " << offset << " Csize " << csize << std::endl;
-	}
-	else {
-		std::cout << "getMissing chunk returned nothing" << std::endl;	
-	}
-
-	free(allA);
-	free(allB);
+        return TESTRESULT();
 }
+
+
+int test_timeout(ftFileCreator *creator)
+{
+	uint32_t chunk = 1000;
+	uint64_t offset = 0;
+	int max_timeout = 30;
+	int max_offset = chunk * max_timeout;
+	int i;
+	std::cerr << "60 second test of chunk queue.";
+	std::cerr << std::endl;
+
+	for(i = 0; i < max_timeout; i++)
+	{
+		creator->getMissingChunk(offset, chunk);
+		std::cerr << "Allocated Offset: " << offset << " chunk: " << chunk << std::endl;
+
+                CHECK(offset < max_offset);
+		sleep(1);
+	}
+
+	std::cerr << "Expect Repeats now";
+	std::cerr << std::endl;
+
+	for(i = 0; i < max_timeout; i++)
+	{
+		creator->getMissingChunk(offset, chunk);
+		std::cerr << "Allocated Offset: " << offset << " chunk: " << chunk << std::endl;
+
+                CHECK(offset < max_offset);
+		sleep(1);
+	}
+        REPORT("Chunk Queue");
+
+	return 1;
+}
+
+
+int test_fill(ftFileCreator *creator)
+{
+	uint32_t chunk = 1000;
+	uint64_t offset = 0;
+
+	uint64_t init_size = creator->getFileSize();
+	uint64_t init_trans = creator->getRecvd();
+	std::cerr << "Initial FileSize: " << init_size << std::endl;
+	std::cerr << "Initial Transferred:" << init_trans << std::endl;
+
+	while(creator->getMissingChunk(offset, chunk))
+	{
+		/* give it too them */
+		void *data = malloc(chunk);
+		creator->addFileData(offset, chunk, data);
+		free(data);
+	}
+
+	uint64_t end_size = creator->getFileSize();
+	uint64_t end_trans = creator->getRecvd();
+	std::cerr << "End FileSize: " << end_size << std::endl;
+	std::cerr << "End Transferred:" << end_trans << std::endl;
+        CHECK(init_size == end_size);
+        CHECK(end_trans == end_size);
+
+        REPORT("Test Fill");
+
+	return 1;
+}
+

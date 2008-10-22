@@ -1,33 +1,72 @@
 #include "ftfileprovider.h"
+#include "ftfilecreator.h"
 
-int main(){
-	ftFileProvider fp("dummy.txt",1,"ABCDEF");
-	char data[2];
-	long offset = 0;
-	for (int i=0;i<10;i++) {
-		
-		if (fp.getFileData(offset,2,&data)){
-			std::cout <<"Recv data " << data[0] <<  std::endl;	
+#include "util/utest.h"
+
+
+INITTEST()
+
+int main()
+{
+
+	/* create a random file */
+	uint64_t size = 100000;
+	uint32_t max_chunk = 10000;
+	uint32_t chunk = 1000;
+	uint64_t offset = 0;
+
+	std::string filename  = "/tmp/ft_test.dta";
+	std::string filename2 = "/tmp/ft_test.dta.dup";
+
+	/* use creator to make it */
+
+	void *data = malloc(max_chunk);
+	
+	ftFileCreator *creator = new ftFileCreator(filename, size, "hash", 0);
+	for(offset = 0; offset != size; offset += chunk)
+	{
+		if (!creator->addFileData(offset, chunk, data))
+		{
+			FAILED("Create Test Data File");
+			std::cerr << "Failed to add data (CREATE)";
+			std::cerr << std::endl;
 		}
-		else {
-			std::cout <<"Recv no data." << std::endl;
-		}
-		offset+=2;
 	}
+	delete creator;
 	
-	
-	ftFileProvider fp1("dummy1.txt",3,"ABCDEF");
-	char data1[3];
-	offset = 0;
-	for (int i=0;i<10;i++) {
-		
-		if (fp1.getFileData(offset,2,&data1)){
-			std::cout <<"Recv data " << data1[0] <<  std::endl;	
+	std::cerr << "Created file: " << filename << " of size: " << size;
+	std::cerr << std::endl;
+
+	/* load it with file provider */
+	creator = new ftFileCreator(filename2, size, "hash", 0);
+	ftFileProvider *provider = new ftFileProvider(filename, size, "hash");
+
+	/* create duplicate with file creator */
+
+	while(creator->getMissingChunk(offset, chunk))
+	{
+		if (!provider->getFileData(offset, chunk, data))
+		{
+			FAILED("Read from Test Data File");
+			std::cerr << "Failed to get data";
+			std::cerr << std::endl;
 		}
-		else {
-			std::cout <<"Revc no data" << std::endl;
+
+		if (!creator->addFileData(offset, chunk, data))
+		{
+			FAILED("Write to Duplicate");
+			std::cerr << "Failed to add data";
+			std::cerr << std::endl;
 		}
-		offset+=2;
+
+		std::cerr << "Transferred: " << chunk << " @ " << offset;
+		std::cerr << std::endl;
+
+
+		/* reset chunk size */
+		chunk = (uint64_t) max_chunk * (rand() / (1.0 + RAND_MAX));
+
+		std::cerr << "ChunkSize = " << chunk << std::endl;
 	}
 	return 1;
 }

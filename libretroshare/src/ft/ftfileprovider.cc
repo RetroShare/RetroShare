@@ -3,8 +3,8 @@
 #include "util/rsdir.h"
 
 ftFileProvider::ftFileProvider(std::string path, uint64_t size, std::string
-hash) : total_size(size), hash(hash), file_name(path), fd(NULL) {
-		
+hash) : mSize(size), hash(hash), file_name(path), fd(NULL) 
+{
 }
 
 ftFileProvider::~ftFileProvider(){
@@ -13,20 +13,29 @@ ftFileProvider::~ftFileProvider(){
 	}
 }
 
+bool	ftFileProvider::fileOk()
+{
+        RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+	return (fd != NULL);
+}
+
 std::string ftFileProvider::getHash()
 {
+        RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 	return hash;
 }
 
 uint64_t ftFileProvider::getFileSize()
 {
-	return total_size;
+        RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+	return mSize;
 }
 
 bool    ftFileProvider::FileDetails(FileInfo &info)
 {
+        RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 	info.hash = hash;
-	info.size = total_size;
+	info.size = mSize;
 	info.path = file_name;
 	info.fname = RsDirUtil::getTopDir(file_name);
 
@@ -38,17 +47,15 @@ bool    ftFileProvider::FileDetails(FileInfo &info)
 
 bool ftFileProvider::getFileData(uint64_t offset, uint32_t chunk_size, void *data)
 {
-        RsStackMutex stack(ftPMutex); /********** STACK LOCKED MTX ******/
-	if (fd==NULL) 
-	{
-		int init = initializeFileAttrs();
-		if (init ==0) 
-		{
-			std::cerr <<"Initialization Failed" << std::endl;
-			return 0;
-		}
-	}
-	
+	/* dodgey checking outside of mutex...
+	 * much check again inside FileAttrs().
+	 */
+	if (fd == NULL)
+		if (!initializeFileAttrs())
+			return false;
+
+        RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+
 	/*
 	 * Use private data, which has a pointer to file, total size etc
 	 */
@@ -59,9 +66,9 @@ bool ftFileProvider::getFileData(uint64_t offset, uint32_t chunk_size, void *dat
 	int data_size    = chunk_size;
 	long base_loc    = offset;
 	
-	if (base_loc + data_size > total_size)
+	if (base_loc + data_size > mSize)
 	{
-		data_size = total_size - base_loc;
+		data_size = mSize - base_loc;
 		std::cerr <<"Chunk Size greater than total file size, adjusting chunk size " << data_size << std::endl;
 	}
 
@@ -108,6 +115,14 @@ bool ftFileProvider::getFileData(uint64_t offset, uint32_t chunk_size, void *dat
 
 int ftFileProvider::initializeFileAttrs()
 {
+	std::cerr << "ftFileProvider::initializeFileAttrs() Filename: ";
+	std::cerr << file_name;        	
+
+	
+        RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+	if (fd)
+		return 1;
+
 	/* 
          * check if the file exists 
          */
@@ -130,7 +145,6 @@ int ftFileProvider::initializeFileAttrs()
 
 	}
 
-
 	/*
          * if it opened, find it's length 
 	 * move to the end 
@@ -142,6 +156,9 @@ int ftFileProvider::initializeFileAttrs()
 		return 0;
 	}
 
-	total_size = ftell(fd);
+	uint64_t recvdsize = ftell(fd);
+
+        std::cerr << "ftFileProvider::initializeFileAttrs() File Expected Size: " << mSize << " RecvdSize: " << recvdsize << std::endl;
+	
 	return 1;
 }
