@@ -82,11 +82,11 @@ HelpTextBrowser::setSource(const QUrl &url)
     /* External link. Prompt the user for a response. */
     int ret = VMessageBox::question(this,
                 tr("Opening External Link"),
-                p(tr("Vidalia can open the link you selected in your default "
+                p(tr("RetroShare can open the link you selected in your default "
                      "Web browser. If your browser is not currently "
                      "configured to use Tor then the request will not be "
                      "anonymous.")) +
-                p(tr("Do you want Vidalia to open the link in your Web "
+                p(tr("Do you want Retroshare to open the link in your Web "
                      "browser?")),
                 VMessageBox::Yes|VMessageBox::Default, 
                 VMessageBox::Cancel|VMessageBox::Cancel);
@@ -98,7 +98,7 @@ HelpTextBrowser::setSource(const QUrl &url)
     if (!ok) {
       VMessageBox::information(this,
         tr("Unable to Open Link"),
-        tr("Vidalia was unable to open the selected link in your Web browser. "
+        tr("RetroShare was unable to open the selected link in your Web browser. "
            "You can still copy the URL and paste it into your browser."),
         VMessageBox::Ok);
     }
