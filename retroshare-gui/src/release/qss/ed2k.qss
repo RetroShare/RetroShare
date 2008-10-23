@@ -121,3 +121,8 @@ QPushButton#nviewsettingsButton
       min-width: 75px;
 }
 
+QFrame#messengerframetop{
+         
+    border-image: url(qss/ed2k/backed2k.png);
+
+}

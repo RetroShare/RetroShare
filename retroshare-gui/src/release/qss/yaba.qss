@@ -98,3 +98,11 @@ QTreeView::item:selected { /* when user selects item using mouse or keyboard */
                                      stop: 0 #FBC957, stop: 1 #D79704);
 
 }
+
+QFrame#messengerframetop{
+         
+        border-image: url(qss/yaba/yaba.png);
+         
+        /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #F7B552, stop: 1 #FF5E07);*/
+}

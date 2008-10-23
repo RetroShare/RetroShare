@@ -223,3 +223,10 @@ QTreeWidget::item:selected { /* when user selects item using mouse or keyboard *
    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 #848D9B, stop:1 #394152);
 }
+
+QFrame#messengerframetop{
+         
+       border-image: url(qss/black/backgroundblack.png);
+
+}
+						
