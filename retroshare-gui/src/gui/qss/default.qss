@@ -1,5 +1,6 @@
 .QWidget {
    background-color: #ECF3F6;
+   
 }
 
 /* Customize the toolbar. */
@@ -8,11 +9,6 @@ QToolBar {
 
 }
 
-/* Customize the Menu Bar. */
-QMenuBar {
-    border-image: url(:/qss/default/retrotoolbar.png);
-
-}
 
 
 QPushButton#okButton {
@@ -44,4 +40,10 @@ QPushButton#cancelButton {
 	  max-height: 25px;
       min-width: 77px;
       max-width: 77px;
+}
+
+QFrame#messengerframetop{
+         
+       border-image: url(qss/default/rsdefault.png);
+
 }

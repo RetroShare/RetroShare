@@ -155,3 +155,11 @@ QToolTip{
 	 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #376D85, stop: 0.4 #185772);
 }
+
+QFrame#messengerframetop{
+         
+        border-image: url(qss/uus/uus.png);
+         
+        /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #F7B552, stop: 1 #FF5E07);*/
+}

@@ -71,7 +71,7 @@
 
 /** Constructor */
 MessengerWindow::MessengerWindow(QWidget * parent)
-: QWidget(parent)
+: QMainWindow(parent)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);

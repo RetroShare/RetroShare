@@ -123,3 +123,8 @@ background-color: #66ff33;
 }
 
 
+QFrame#messengerframetop{
+         
+    border-image: url(qss/over/backover.png);
+
+}

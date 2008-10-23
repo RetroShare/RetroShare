@@ -31,7 +31,7 @@
 class LogoBar;
 class PeersDialog;
 
-class MessengerWindow : public QWidget
+class MessengerWindow : public QMainWindow
 {
   Q_OBJECT
 

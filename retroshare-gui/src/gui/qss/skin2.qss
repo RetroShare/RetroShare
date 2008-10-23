@@ -30,3 +30,7 @@ QPushButton#applyButton {
 	  max-height: 25px;
       min-width: 75px;
 }
+QFrame#messengerframetop{
+         
+    border-image: url(qss/skin2/background.png);
+}
