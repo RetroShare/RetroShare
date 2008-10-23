@@ -34,3 +34,9 @@ QFrame#messengerframetop{
          
     border-image: url(qss/skin2/background.png);
 }
+
+QFrame#Chatbuttonframe{
+         
+    border-image: url(qss/skin2/background.png);
+
+}

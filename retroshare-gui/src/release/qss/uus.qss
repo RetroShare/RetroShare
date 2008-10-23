@@ -93,23 +93,22 @@ QPushButton#applyButton {
 }
 
 QPushButton {
-         background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+         /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #BDDF7D, stop: 1 #49881F);
          border:   qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 #BDDF7D, stop: 1 #49881F);               
+                                     stop: 0 #BDDF7D, stop: 1 #49881F);*/               
 }         
 
 
 QPushButton::hover {
-         background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 #F0F8CB, stop: 1 #F0F8CD);
+         /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #F0F8CB, stop: 1 #F0F8CD);*/
 }
 
 QPushButton::pressed {
-         background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 #F5FFBC, stop: 1 #609C08);
+         /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #F5FFBC, stop: 1 #609C08);*/
 }
-
 
 
 QLabel
@@ -152,8 +151,7 @@ QTreeView::item:selected { /* when user selects item using mouse or keyboard */
 }
 
 QToolTip{
-	 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 #376D85, stop: 0.4 #185772);
+	 background-color: black;
 }
 
 QFrame#messengerframetop{
@@ -162,4 +160,11 @@ QFrame#messengerframetop{
          
         /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #F7B552, stop: 1 #FF5E07);*/
+}
+
+QFrame#Chatbuttonframe{
+         
+        background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #BDDF7D, stop: 1 #49881F);
+
 }

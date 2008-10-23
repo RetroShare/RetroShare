@@ -133,9 +133,13 @@ border-image: url(qss/black/button_hover.png);
 
 QPushButton:pressed 
 {
-border-image: url(qss/black/button_pressed.png) ;
+border-image: url(qss/black/button_pressedAndHover.png) ;
 } 
 
+QPushButton:checked 
+{
+border-image: url(qss/black/button_pressed.png) ;
+} 
 
 QSplitter
 {
@@ -230,3 +234,8 @@ QFrame#messengerframetop{
 
 }
 						
+QFrame#Chatbuttonframe{
+         
+       border-image: url(qss/black/backgroundblack.png);
+
+}						

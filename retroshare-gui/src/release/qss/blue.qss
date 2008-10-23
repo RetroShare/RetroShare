@@ -66,3 +66,9 @@ QFrame#messengerframetop{
     border-image: url(qss/blue/blue.png);
 
 }
+
+QFrame#Chatbuttonframe{
+         
+    border-image: url(qss/blue/blue.png);
+
+}

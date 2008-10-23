@@ -26,8 +26,8 @@ QToolButton::pressed {
 }
 
 QPushButton {
-         background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 red, stop: 1 darkred);
+        /* background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 red, stop: 1 darkred);*/
 }
 
 QPushButton#okButton {
@@ -99,6 +99,10 @@ QStatusBar{
 
 }
 
+QToolTip{
+	 background-color: #3E1716;
+}
+
 QMenu {
 	 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 red, stop: 1 darkred);
@@ -139,4 +143,10 @@ QFrame#messengerframetop{
 
         /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #F7B552, stop: 1 #FF5E07);*/
+}
+
+QFrame#Chatbuttonframe{
+         
+        border-image: url(qss/red/red.png);
+
 }

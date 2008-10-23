@@ -43,3 +43,9 @@ QFrame#messengerframetop{
        border-image: url(qss/qlive/qb.png);
 
 }
+
+QFrame#Chatbuttonframe{
+         
+       border-image: url(qss/qlive/qb.png);
+
+}
