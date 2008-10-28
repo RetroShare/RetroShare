@@ -1,46 +1,47 @@
 
-Compiling + Running RetroShare (V0.3.0)
--------------------------------------------------------------
+Compiling + Running RetroShare (V0.4.xxx)
+------------------------------------------------------------------------------------------
 
 Quick Requirements:
----------------------------------------------
+------------------------------------------------------------------------------------------
 Libraries/Tools:
 	C/C++ Compiler. (standard on Linux/cygwin)
 	OpenSSL-0.9.7g-xpgp
-	KadC Dht library
-	Qt-4.2 development libraries.
-      qskinobject library (Required when compile with QT 4.3.x)
+	Qt-4.3 development libraries.
 
 RetroShare Source Code: ( from sf.net/projects/retroshare)
 	Qt-GUI-XXX.tgz
-	retroshare-src-v0.3.XXX.tgz 
+	retroshare-src-v0.4.XXX.tgz 
 
 Windows Requirements:
 	Cygwin (Windows Only)
 	Pthreads (Windows Only)
 	Zlib (Windows Only)
----------------------------------------------
+		
+------------------------------------------------------------------------------------------
+Build Scripts are avaible on SVN for Debian and Ubuntu:
+http://retroshare.svn.sourceforge.net/viewvc/retroshare/trunk/build_scripts/
+
 
 OpenSSL-0.9.7g-xpgp is available at:
 http://www.lunamutt.com/retroshare/openssl-0.9.7g-xpgp-0.1c.tgz
 
-KadC (latest) is available from sourceforge.net
 
 Download/Compile as per instructions...
 
----------------------------------------------
+------------------------------------------------------------------------------------------
 
 Compiling Linux
----------------------------------------------
+------------------------------------------------------------------------------------------
 
 (1) compile openSSL-0.9.7g-xpgp.
 
-(2) compile KadC. (and correct the library)
+(2) compile miniupnpc
 
 (4) Modify ./make.opts 
 	(4a) modify the Makefile so that:  OS=Linux or OS=Win
 	(4c) Define SSL_DIR to point to openSSL-0.9.7g-xpgp.
-	(4c) Define KADC_DIR to point to KadC
+	(4c) Define UPNPC_DIR to point to miniupnpc
 
 (5) type: make
 	This builds ./lib/libretroshare.a,
@@ -50,10 +51,10 @@ Compiling Linux
 	compiled in ./rsiface/retroshare-nogui, 
 	you can run this to check that its working.
 
----------------------------------------------
+------------------------------------------------------------------------------------------
 
 Compiling Linux (Alternative Instructions from Bharath)
----------------------------------------------
+------------------------------------------------------------------------------------------
 here's how to compiled retroshare on ubuntu linux: 
  
  compile openssl: 
@@ -63,8 +64,8 @@ here's how to compiled retroshare on ubuntu linux:
  make 
  make test 
   
- compile KadC: 
- 1. Get KadC library from http://kadc.sourceforge.net/  
+ compile miniupnpc: 
+ 1. Get miniupnpc library from http://miniupnp.free.fr/files/download.php?file=miniupnpc-1.0.tar.gz  
  2. run: 
  make 
    
@@ -76,18 +77,23 @@ here's how to compiled retroshare on ubuntu linux:
  1. set directories in make.opt: 
  RS_DIR=/home/dev/rs-v0.3.0-pr8/src  
  SSL_DIR=/home/dev/openssl-0.9.7g-xpgp-0.1c 
- KADC_DIR=/home/dev/KadC 
+ UPNPC_DIR=/home/dev/miniupnpc
+  
  2. comment out the directory declarations uncer Cygwin since that will override your directory declarations from 1. 
- 3. change RSLIBS = -L$(LIBDIR) -lretroshare -L$(SSL_DIR) -lssl -lcrypto -lpthread -lKadC  
+ 3. change RSLIBS = -L$(LIBDIR) -lretroshare -L$(SSL_DIR) -lssl -lcrypto -lpthread -lminiupnpc  
     to 
-  RSLIBS = -L$(LIBDIR) -lretroshare -L$(SSL_DIR) -lssl -lcrypto -lpthread -L$(KADC_DIR) -lKadC 
+  RSLIBS = -L$(LIBDIR) -lretroshare -L$(SSL_DIR) -lssl -lcrypto -lpthread -L$(UPNPC_DIR) -lminiupnpc 
  4. run: 
      make 
       
 Hope this helps.
 
----------------------------------------------
-Compiling the skinobject (only Required when compile with QT 4.3.x)
+
+------------------------------------------------------------------------------------------
+
+Compiling the skinobject (only Required when its enabled then compile with QT 4.3.x)
+------------------------------------------------------------------------------------------
+
 
 1. Download skinobject from https://sourceforge.net/projects/qskinwindows/
 
@@ -106,7 +112,7 @@ make
 example(linux):
 
 TARGET = RetroShare 
-RSLIBS = -L/path/to/your/retroshare/libs/directory/ -lretroshare -lKadC -lKadC -lminiupnpc -lskin -lssl -lcrypto 
+RSLIBS = -L/path/to/your/retroshare/libs/directory/ -lretroshare -lminiupnpc -lskin -lssl -lcrypto 
 LIBS = $(RSLIBS) 
 
 example (Windows):
@@ -115,48 +121,51 @@ win32
 {
     RC_FILE = gui/images/retroshare_win.rc
 
-    "LIBS += -L"../../winlibs" -lretroshare -lssl -lcrypto -lpthreadGC2d -lKadC -lminiupnpc -lz -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lskin -lgdi32
+    "LIBS += -L"../../winlibs" -lretroshare -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lskin -lgdi32
     CONFIG += qt release"
 }
 
----------------------------------------------
+------------------------------------------------------------------------------------------
+
 Compiling QCheckers game
-_____________________________________________
+------------------------------------------------------------------------------------------
 
 1.qmake
 2.make
 3.Copy the libqcheckers.a to your retroshare libs directory.
 5.then add to LIBS= -lqcheckers to the RetroShare.pro file:
 
-example(linux):
+Example(linux):
 
-RSLIBS = -L/path/to/your/retroshare/libs/directory/ -lretroshare -lKadC -lKadC -lminiupnpc -lskin -lqcheckers -lssl -lcrypto 
+RSLIBS = -L/path/to/your/retroshare/libs/directory/ -lretroshare -lminiupnpc -lskin -lqcheckers -lssl -lcrypto 
 LIBS = $(RSLIBS) 
 
-example (Windows):
+Example (Windows):
 
 win32 
 {
     RC_FILE = gui/images/retroshare_win.rc
 
-    "LIBS += -L"../../winlibs" -lretroshare -lssl -lcrypto -lpthreadGC2d -lKadC -lminiupnpc -lz -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lskin -lqcheckers -lgdi32
+    "LIBS += -L"../../winlibs" -lretroshare -lssl -lcrypto -lpthreadGC2d  -lminiupnpc -lz -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lskin -lqcheckers -lgdi32
     CONFIG += qt release"
 }
 
----------------------------------------------
+
+------------------------------------------------------------------------------------------
+
 Compiling SMPlayer
-_____________________________________________
+------------------------------------------------------------------------------------------
 
 1.qmake
 2.make
 3.Copy the libsmplayer.a to your retroshare libs directory.
-5.then add to LIBS  -lsmplayer to the RetroShare.pro file:
-_____________________________________________
+5.then add to LIBS  -lsmplayer to the RetroShare.pro file.
 
----------------------------------------------
+
+------------------------------------------------------------------------------------------
+
 Compiling the Qt GUI
-_____________________________________________
-
+------------------------------------------------------------------------------------------
 (1) untar the Qt-GUI source package. run qmake, 
 
 	tar -xvzf Qt-GUI-XXXX.tgz
@@ -169,7 +178,7 @@ _____________________________________________
 	doesn't have the links to the retroshare
 	libraries. It should something like this:
 
-RSLIBS  = -L/home/dev/prog/devel/rs-v0.3.0XXX/src/lib -lretroshare -lKadC
+RSLIBS  = -L/home/dev/prog/devel/rs-v0.3.0XXX/src/lib -lretroshare -lminiupnpc
 SSLLIBS = -L/home/dev/prog/devel/openssl-0.9.7g-xpgp -lssl -lcrypto
 LIBS          = $(SUBLIBS)  $(RSLIBS) $(SSLLIBS)  -L/usr/lib -lQtXml -lQtGui -lQtNetwork -lQtCore -lpthread
 
