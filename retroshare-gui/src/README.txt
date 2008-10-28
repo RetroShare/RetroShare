@@ -101,7 +101,7 @@ make
 
 4.Copy the libskin.a to your retroshare libs directory.
 
-5.then add to LIBS= -lskin to the RetroShare.pro file:
+5.then add to LIBS= -lskin -lgdi32 to the RetroShare.pro file:
 
 example(linux):
 
@@ -188,27 +188,42 @@ WIN XP Compilation.
 ------------------------------------------------
 
 This much harder, and more perilous than the
-Linux compilation: It requires both the cygwin
-and the mingw compilers...
-
-Need:
-	Cygwin development environment
-	Qt4.2 opensource development kit + MinGw.
-	source code for all libraries.
-
-In Brief:
-UNDER Cygwin:
-	(1) Compile openssl-xpgp.
-	(2) Compile pthreads.
-	(3) Compile zlib.
-	(4) Compile KadC. (there are some tweaks, 
-		needed to the code)
-
-	(5) Compile retroshare-v0.3.0
-
-UNDER Mingw:
-      (6) Compile qskinobject (only under QT 4.3.x)
-	(7) Compile the Qt-Gui.
+Linux compilation: It requires both the cygwin 
+and the mingw compilers... 
+ 
+Need: 
+	Cygwin development environment: 
+	http://www.cygwin.com/cygwin/setup.exe 
+ 
+	Qt4.3.x opensource development kit + MinGw: 
+	http://wftp.tu-chemnitz.de/pub/Qt/qt/source/qt-win-opensource-4.3.5-mingw.exe  
+ 
+	source code for all libraries.: 
+	http://downloads.sourceforge.net/retroshare/retroshare-pkg-linux-src-v0.4.09b.tgz? 
+ 
+	retroshare-pkg-linux-src-v0.4.09b.tgz are Libraries included: 
+ 
+	openssl-0.9.7g-xpgp-0.1c.tgz 
+	miniupnpc-1.0.tar.gz 
+	smplayer-svn-280308.tgz 
+ 
+	Libraries for Windows needs: 
+	pthreads: 	http://sourceware.org/pthreads-win32/ 
+	zlib: 		http://www.zlib.net/ 
+ 
+ 
+In Brief: 
+UNDER Cygwin: 
+	(1) Compile openssl-xpgp. 
+	(2) Compile miniunpnc 
+	(3) Compile pthreads. 
+	(4) Compile zlib. 
+ 
+	(5) Compile retroshare-v0.4.x 
+ 
+UNDER Mingw: 
+	(6) Compile SMPlayer    ( qmake + make ) 
+	(7) Compile the Qt-Gui. ( qmake + make )
 
 
 Email me if you're having trouble:
