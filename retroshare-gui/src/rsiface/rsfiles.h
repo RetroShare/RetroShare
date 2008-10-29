@@ -69,9 +69,13 @@ const uint32_t RS_FILE_HINTS_REMOTE	 = 0x00000008;
 const uint32_t RS_FILE_HINTS_DOWNLOAD	 = 0x00000010;
 const uint32_t RS_FILE_HINTS_UPLOAD	 = 0x00000020;
 
+
 const uint32_t RS_FILE_HINTS_SPEC_ONLY	 = 0x01000000;
 const uint32_t RS_FILE_HINTS_NO_SEARCH   = 0x02000000;
 
+/* Callback Codes */
+//const uint32_t RS_FILE_HINTS_CACHE	 = 0x00000001; // ALREADY EXISTS
+const uint32_t RS_FILE_HINTS_MEDIA	 = 0x00001000;
 
 const uint32_t RS_FILE_EXTRA_DELETE	 = 0x0010;
 
@@ -90,7 +94,7 @@ virtual ~RsFiles() { return; }
 /***
  *  Control of Downloads.
  ***/
-virtual bool FileRequest(std::string fname, std::string hash, uint32_t size, 
+virtual bool FileRequest(std::string fname, std::string hash, uint64_t size, 
 		std::string dest, uint32_t flags, std::list<std::string> srcIds) = 0;
 virtual bool FileCancel(std::string hash) = 0;
 virtual bool FileControl(std::string hash, uint32_t flags) = 0;
@@ -107,7 +111,7 @@ virtual bool FileDetails(std::string hash, uint32_t hintflags, FileInfo &info) =
 /***
  * Extra List Access
  ***/
-virtual bool ExtraFileAdd(std::string fname, std::string hash, uint32_t size,
+virtual bool ExtraFileAdd(std::string fname, std::string hash, uint64_t size,
 				uint32_t period, uint32_t flags) = 0;
 virtual bool ExtraFileRemove(std::string hash, uint32_t flags) = 0;
 virtual bool ExtraFileHash(std::string localpath, 
