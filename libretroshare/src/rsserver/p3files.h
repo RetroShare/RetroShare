@@ -57,7 +57,7 @@ virtual bool FileUploads(std::list<std::string> &hashs);
 virtual bool FileDetails(std::string hash, uint32_t hintflags, FileInfo &info);
 
 /* 2) Control of Downloads. */
-virtual bool FileRequest(std::string fname, std::string hash, uint32_t size, 
+virtual bool FileRequest(std::string fname, std::string hash, uint64_t size, 
 			std::string dest, uint32_t flags,
 			std::list<std::string> srcIds);
 virtual bool FileCancel(std::string hash);
@@ -66,7 +66,7 @@ virtual bool FileClearCompleted();
 
 /* 3) Addition of Extra Files... From File System */
 
-virtual bool ExtraFileAdd(std::string fname, std::string hash, uint32_t size,
+virtual bool ExtraFileAdd(std::string fname, std::string hash, uint64_t size,
 				uint32_t period, uint32_t flags);
 virtual bool ExtraFileRemove(std::string hash, uint32_t flags);
 virtual bool ExtraFileHash(std::string localpath, 

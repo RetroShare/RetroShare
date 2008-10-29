@@ -141,7 +141,7 @@ bool p3Files::FileControl(std::string hash, uint32_t flags)
 	return false;
 }
 
-bool p3Files::FileRequest(std::string fname, std::string hash, uint32_t size, 
+bool p3Files::FileRequest(std::string fname, std::string hash, uint64_t size, 
 	std::string dest, uint32_t flags, std::list<std::string> srcIds)
 {
 	std::cerr << "p3Files::FileRequest()";
@@ -200,7 +200,7 @@ bool p3Files::FileClearCompleted()
 
 /* 3) Addition of Extra Files... From File System (Dummy at the moment) */
 
-bool p3Files::ExtraFileAdd(std::string fname, std::string hash, uint32_t size,
+bool p3Files::ExtraFileAdd(std::string fname, std::string hash, uint64_t size,
 				uint32_t period, uint32_t flags)
 {
 	return false;
