@@ -21,6 +21,14 @@ int main()
 	/* use creator to make it */
 
 	void *data = malloc(max_chunk);
+	for(int i = 0; i < max_chunk; i++)
+	{ 
+		((uint8_t *) data)[i] = 'a' + i % 27;
+		if (i % 27 == 26)
+		{
+			((uint8_t *) data)[i] = '\n';
+		}
+	}
 	
 	ftFileCreator *creator = new ftFileCreator(filename, size, "hash", 0);
 	for(offset = 0; offset != size; offset += chunk)
@@ -45,6 +53,17 @@ int main()
 
 	while(creator->getMissingChunk(offset, chunk))
 	{
+		if (chunk == 0)
+		{
+			std::cerr << "All currently allocated .... waiting";
+			std::cerr << std::endl;
+			sleep(1);
+			/* reset chunk size */
+			chunk = (uint64_t) max_chunk * (rand() / (1.0 + RAND_MAX));
+			std::cerr << "ChunkSize = " << chunk << std::endl;
+			continue;
+		}
+
 		if (!provider->getFileData(offset, chunk, data))
 		{
 			FAILED("Read from Test Data File");

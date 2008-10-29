@@ -214,6 +214,12 @@ int main(int argc, char **argv)
 		std::string cachepath = configpath + "/cache";
 		RsDirUtil::checkCreateDirectory(cachepath);
 
+		std::string partialspath = configpath + "/partials";
+		RsDirUtil::checkCreateDirectory(partialspath);
+
+		std::string downloadpath = configpath + "/downloads";
+		RsDirUtil::checkCreateDirectory(downloadpath);
+
 		std::string localpath = cachepath + "/local";
 		RsDirUtil::checkCreateDirectory(localpath);
 		
@@ -222,7 +228,7 @@ int main(int argc, char **argv)
 
 		server->setConfigDirectory(configpath);
 
-                sleep(60);
+                //sleep(60);
 
 		NotifyBase *base = NULL;
 		server->SetupFtServer(base);
@@ -231,6 +237,8 @@ int main(int argc, char **argv)
 		server->StartupThreads();
 
 		/* setup any extra bits */
+		server->setPartialsDirectory(partialspath);
+		server->setDownloadDirectory(downloadpath);
 		server->setSharedDirectories(fileList);
 
 	}

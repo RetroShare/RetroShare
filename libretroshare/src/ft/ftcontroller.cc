@@ -60,12 +60,16 @@ ftFileControl::ftFileControl()
 	return;
 }
 
-ftFileControl::ftFileControl(std::string fname, uint64_t size, 
-		std::string hash, uint32_t flags, 
-		ftFileCreator *fc, ftTransferModule *tm)
-	:mTransfer(tm), mCreator(fc), mState(0), mHash(hash),
-	 mName(fname), mSize(size), mFlags(0)
+ftFileControl::ftFileControl(std::string fname, 
+		std::string tmppath, std::string dest, 
+		uint64_t size, std::string hash, uint32_t flags, 
+		ftFileCreator *fc, ftTransferModule *tm, uint32_t cb)
+	:mName(fname), mCurrentPath(tmppath), mDestination(dest),
+	 mTransfer(tm), mCreator(fc), mState(0), mHash(hash),
+	 mSize(size), mFlags(0), mDoCallback(false), mCallbackCode(cb)
 {
+	if (cb)
+		mDoCallback = true;
 	return;
 }
 
@@ -96,17 +100,30 @@ void ftController::run()
 		std::cerr << std::endl;
 
 		/* tick the transferModules */
-		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
-
-		std::map<std::string, ftFileControl>::iterator it;
-		for(it = mDownloads.begin(); it != mDownloads.end(); it++)
+		std::list<std::string> done;
+		std::list<std::string>::iterator it;
 		{
+		  RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
+		  std::map<std::string, ftFileControl>::iterator it;
+		  for(it = mDownloads.begin(); it != mDownloads.end(); it++)
+		  {
 			std::cerr << "\tTicking: " << it->first;
 			std::cerr << std::endl;
 
-			(it->second.mTransfer)->tick();
+			if (it->second.mTransfer)
+				(it->second.mTransfer)->tick();
+		  }
 		}
+
+		RsStackMutex stack2(doneMutex);	
+		for(it = mDone.begin(); it != mDone.end(); it++)
+		{
+			completeFile(*it);
+		}
+		mDone.clear();
 	}
+
 }
 
 
@@ -119,41 +136,104 @@ void ftController::checkDownloadQueue()
 
 }
 
+bool ftController::FlagFileComplete(std::string hash)
+{
+	RsStackMutex stack2(doneMutex);	
+	mDone.push_back(hash);
+
+	std::cerr << "ftController:FlagFileComplete(" << hash << ")";
+	std::cerr << std::endl;
+
+	return true;
+}
+
 bool ftController::completeFile(std::string hash)
 {
-
-#if 1 
-
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
+	std::cerr << "ftController:completeFile(" << hash << ")";
+	std::cerr << std::endl;
 
 	std::map<std::string, ftFileControl>::iterator it;
 	it = mDownloads.find(hash);
 	if (it == mDownloads.end())
 	{
+		std::cerr << "ftController:completeFile(" << hash << ")";
+		std::cerr << " Not Found!";
+		std::cerr << std::endl;
 		return false;
 	}
 
 	/* check if finished */
-	//if (!(it->second).mCreator->finished())
+	if (!(it->second).mCreator->finished())
 	{
 		/* not done! */
-		//return false;
+		std::cerr << "ftController:completeFile(" << hash << ")";
+		std::cerr << " Transfer Not Done";
+		std::cerr << std::endl;
+
+		std::cerr << "FileSize: ";
+		std::cerr << (it->second).mCreator->getFileSize();
+		std::cerr << " and Recvd: ";
+		std::cerr << (it->second).mCreator->getRecvd();
+
+		return false;
 	}
         
 
 	ftFileControl *fc = &(it->second);
 
 	/* done - cleanup */
-	//fc->mTransfer->done();
-	mDataplex->removeTransferModule(fc->mTransfer->hash());
-	
-	delete fc->mTransfer;
-	fc->mTransfer = NULL;
 
-	delete fc->mCreator;
-	fc->mCreator = NULL;
+	mDataplex->removeTransferModule(fc->mTransfer->hash());
+
+	if (fc->mTransfer)
+	{
+		delete fc->mTransfer;
+		fc->mTransfer = NULL;
+	}
+
+	if (fc->mCreator)
+	{
+		delete fc->mCreator;
+		fc->mCreator = NULL;
+	}
 
 	fc->mState = ftFileControl::COMPLETED;
+
+	/* Move to Correct Location */
+        if (0 == rename(fc->mCurrentPath.c_str(), fc->mDestination.c_str()))
+        {
+                /* correct the file_name */
+                fc->mCurrentPath = fc->mDestination;
+        }
+        else
+        {
+		fc->mState = ftFileControl::ERROR_COMPLETION;
+        }
+
+
+	/* If it has a callback - do it now */
+	if (fc->mDoCallback)
+	{
+	  switch (fc->mCallbackCode)
+	  {
+	    case CB_CODE_CACHE:
+		/* callback */
+		if (fc->mState == ftFileControl::COMPLETED)
+		{
+			CompletedCache(fc->mHash);
+		}
+		else
+		{
+			FailedCache(fc->mHash);
+		}
+		break;
+	    case CB_CODE_MEDIA:
+		break;
+	  }
+	}
+	
 
 	/* switch map */
 	mCompleted[fc->mHash] = *fc;
@@ -161,7 +241,6 @@ bool ftController::completeFile(std::string hash)
 
 	return true;
 
-#endif
 }
 
 	/***************************************************************/
@@ -189,10 +268,20 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	std::cerr << std::endl;
 #endif
 
-	if (flags | RS_FILE_HINTS_NO_SEARCH)
+	bool doCallback = false;
+	uint32_t callbackCode = 0;
+	if (flags & RS_FILE_HINTS_NO_SEARCH)
 	{
+#ifdef CONTROL_DEBUG
+		std::cerr << "ftController::FileRequest() Flags for NO_SEARCH ";
+		std::cerr << std::endl;
+#endif
 		/* no search */
-
+		if (flags & RS_FILE_HINTS_CACHE)
+		{
+			doCallback = true;
+			callbackCode = CB_CODE_CACHE;
+		}
 	}
 	else 
 	{
@@ -203,6 +292,12 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 		{
 			/* have it already */
 			/* add in as completed transfer */
+#ifdef CONTROL_DEBUG
+			std::cerr << "ftController::FileRequest() Matches Local File";
+			std::cerr << std::endl;
+			std::cerr << "\tNo need to download";
+			std::cerr << std::endl;
+#endif
 			return true;
 		}
 
@@ -212,19 +307,54 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 			RS_FILE_HINTS_SPEC_ONLY, info))
 		{
 			/* do something with results */
+#ifdef CONTROL_DEBUG
+			std::cerr << "ftController::FileRequest() Found Other Sources";
+			std::cerr << std::endl;
+#endif
+
+			/* if the sources don't exist already - add in */
+			for(it = info.peerIds.begin(); it != info.peerIds.end(); it++)
+			{
+				std::cerr << "\tSource: " << *it;
+				std::cerr << std::endl;
+
+				if (srcIds.end() == std::find(
+					srcIds.begin(), srcIds.end(), *it))
+				{
+					srcIds.push_back(*it);
+
+					std::cerr << "\tAdding in: " << *it;
+					std::cerr << std::endl;
+				}
+			}	
+		}
+
+		if (flags & RS_FILE_HINTS_MEDIA)
+		{
+			doCallback = true;
+			callbackCode = CB_CODE_MEDIA;
 		}
 	}
 
-	std::map<std::string, ftTransferModule *> mTransfers;
-	std::map<std::string, ftFileCreator *> mFileCreators;
+	//std::map<std::string, ftTransferModule *> mTransfers;
+	//std::map<std::string, ftFileCreator *> mFileCreators;
 
 	/* add in new item for download */
-	std::string savepath = mDownloadPath + "/" + fname;
+	std::string savepath = mPartialsPath + "/" + hash;
+	std::string destination = dest + "/" + fname;
+
+	/* if no destpath - send to download directory */
+	if (dest == "")
+	{
+		destination = mDownloadPath + "/" + fname;
+	}
+	
 	ftFileCreator *fc = new ftFileCreator(savepath, size, hash, 0);
 	ftTransferModule *tm = new ftTransferModule(fc, mDataplex,this);
 
 	/* add into maps */
-	ftFileControl ftfc(fname, size, hash, flags, fc, tm);
+	ftFileControl ftfc(fname, savepath, destination,  
+			size, hash, flags, fc, tm, callbackCode);
 
 	/* add to ClientModule */
 	mDataplex->addTransferModule(tm, fc);
@@ -275,6 +405,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	mDownloads[hash] = ftfc;
 	mSlowQueue.push_back(hash);
 
+	return true;
 }
 
 
@@ -381,7 +512,6 @@ bool 	ftController::setDownloadDirectory(std::string path)
 
 bool 	ftController::setPartialsDirectory(std::string path)
 {
-#if 0 /*** FIX ME !!!**************/
 
 	/* check it is not a subdir of download / shared directories (BAD) - TODO */
 
@@ -391,19 +521,20 @@ bool 	ftController::setPartialsDirectory(std::string path)
 	{
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-		mPartialPath = path;
+		mPartialsPath = path;
 
+#if 0 /*** FIX ME !!!**************/
 		/* move all existing files! */
 		std::map<std::string, ftFileControl>::iterator it;
 		for(it = mDownloads.begin(); it != mDownloads.end(); it++)
 		{
 			(it->second).mCreator->changePartialDirectory(mPartialPath);
 		}
+#endif
 		return true;
 	}
 
 	return false;
-#endif
 }
 
 std::string ftController::getDownloadDirectory()
@@ -417,7 +548,7 @@ std::string ftController::getPartialsDirectory()
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	return mPartialPath;
+	return mPartialsPath;
 }
 
 bool 	ftController::FileDetails(std::string hash, FileInfo &info)
@@ -525,6 +656,8 @@ bool ftController::RequestCacheFile(RsPeerId id, std::string path, std::string h
 
 	FileRequest(hash, hash, size, path, 
 		RS_FILE_HINTS_CACHE | RS_FILE_HINTS_NO_SEARCH, ids);
+
+	return true;
 }
 
 
@@ -536,7 +669,7 @@ bool ftController::CancelCacheFile(RsPeerId id, std::string path, std::string ha
 	std::cerr << std::endl;
 #endif
 
-
+	return true;
 }
 
 

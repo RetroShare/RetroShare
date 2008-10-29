@@ -23,7 +23,9 @@
  *
  */
 
-#define FT_DEBUG 1
+/*******
+ * #define FT_DEBUG 1
+ ******/
 
 #include "fttransfermodule.h"
 
@@ -133,6 +135,7 @@ bool ftTransferModule::recvFileData(std::string peerId, uint64_t offset,
 	std::cerr << " peerId: " << peerId;
 	std::cerr << " offset: " << offset;
 	std::cerr << " chunksize: " << chunk_size;
+	std::cerr << " data: " << data;
 	std::cerr << std::endl;
 #endif
 
@@ -271,33 +274,21 @@ bool ftTransferModule::queryInactive()
     {
     	//Peer side has change from online to offline during transfer
       case PQIPEER_NOT_ONLINE:
-/*      	
-        if (ts - (pInfo->lastTS) > PQIPEER_OFFLINE_CHECK)
-      	{//start to request data
-          req_size = TRANSFER_START_MIN;
-          if (getChunk(req_offset,req_size))  
-      	  { 
-      		pInfo->offset = req_offset;
-      		pInfo->chunkSize = req_size;
-      		pInfo->lastTS = ts;
-      		pInfo->state = PQIPEER_DOWNLOADING;
-      		requestData(peerId, req_offset,req_size);
-      	  }
-      	  else mFlag = 1;
-      	}
-*/
         break;
       
       //file request has been sent to peer side, but no response received yet  
       case PQIPEER_DOWNLOADING:
-      	if (ts - (pInfo->lastTS) > PQIPEER_DOWNLOAD_CHECK)
-      	  requestData(peerId, pInfo->offset,pInfo->chunkSize);  //give a push
+      	if (ts - (pInfo->lastTS) < PQIPEER_DOWNLOAD_CHECK)
+	{
+	  /* if not timed out yet.... ignore */
+	  actualRate += pInfo->actualRate;
+	  break;
+	}
 
-        actualRate += pInfo->actualRate;
+	/* otherwise fall through to request it again (with getChunk);
+	 */
 
-        break;
-      
-      //file response has been received or peer side is just ready for download  
+      //file response received or peer side is just ready for download  
       case PQIPEER_IDLE:
      	pInfo->actualRate = pInfo->chunkSize/(ts-(pInfo->lastTS));
         if (pInfo->actualRate < pInfo->desiredRate/2)
@@ -309,13 +300,22 @@ bool ftTransferModule::queryInactive()
           req_size = (uint32_t ) (pInfo->chunkSize * 0.9) ;
         }
 
-     	if (getChunk(req_offset,req_size))  
-     	{
+        if (getChunk(req_offset,req_size))
+      	{ 
+	  if (req_size > 0)
+	  {
      		pInfo->offset = req_offset;
      		pInfo->chunkSize = req_size;
      		pInfo->lastTS = ts;
      		pInfo->state = PQIPEER_DOWNLOADING;
+		pInfo->receivedSize = 0;
      		requestData(peerId,req_offset,req_size);
+	  }
+	  else
+	  {
+		std::cerr << "transfermodule::Waiting for data to be available";
+		std::cerr << std::endl;
+	  }
      	}
         else mFlag = 1;      
 
@@ -371,7 +371,11 @@ bool ftTransferModule::cancelTransfer()
 
 bool ftTransferModule::completeFileTransfer()
 {
-	//mFtController->completeFile(mHash);
+	std::cerr << "ftTransferModule::completeFileTransfer()";
+	std::cerr << std::endl;
+
+	if (mFtController)
+		mFtController->FlagFileComplete(mHash);
 	return true;
 }
 

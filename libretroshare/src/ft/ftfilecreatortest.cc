@@ -36,7 +36,7 @@ int test_timeout(ftFileCreator *creator)
 		creator->getMissingChunk(offset, chunk);
 		std::cerr << "Allocated Offset: " << offset << " chunk: " << chunk << std::endl;
 
-                CHECK(offset < max_offset);
+                CHECK(offset <= max_offset);
 		sleep(1);
 	}
 
@@ -45,11 +45,11 @@ int test_timeout(ftFileCreator *creator)
 
 	for(i = 0; i < max_timeout; i++)
 	{
+		sleep(1);
 		creator->getMissingChunk(offset, chunk);
 		std::cerr << "Allocated Offset: " << offset << " chunk: " << chunk << std::endl;
 
-                CHECK(offset < max_offset);
-		sleep(1);
+                CHECK(offset <= max_offset);
 	}
         REPORT("Chunk Queue");
 
@@ -69,10 +69,33 @@ int test_fill(ftFileCreator *creator)
 
 	while(creator->getMissingChunk(offset, chunk))
 	{
-		/* give it too them */
+		if (chunk == 0)
+		{
+			std::cerr << "Missing Data already Alloced... wait";
+			std::cerr << std::endl;
+			sleep(1);
+			chunk = 1000;
+			continue;
+		}
+
+		/* give it to them */
 		void *data = malloc(chunk);
+		/* fill with ascending numbers */
+		for(int i = 0; i < chunk; i++)
+		{
+			((uint8_t *) data)[i] = 'a' + i % 27;
+			if (i % 27 == 26)
+			{
+				((uint8_t *) data)[i] = '\n';
+			}
+		}
+
 		creator->addFileData(offset, chunk, data);
 		free(data);
+
+		usleep(250000); /* 1/4 of sec */
+		chunk = 1000; /* reset chunk size */
+
 	}
 
 	uint64_t end_size = creator->getFileSize();

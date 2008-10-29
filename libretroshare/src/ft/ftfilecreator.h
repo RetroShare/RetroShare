@@ -46,6 +46,7 @@ public:
 
 	 /* overloaded from FileProvider */
 virtual bool 	getFileData(uint64_t offset, uint32_t chunk_size, void *data);
+	bool	finished() { return getRecvd() == getFileSize(); }
 	uint64_t getRecvd();
 		
 

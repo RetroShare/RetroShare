@@ -87,6 +87,14 @@ void	ftServer::addConfigComponents(p3ConfigMgr *mgr)
 	/* NOT SURE ABOUT THIS ONE */
 }
 
+std::string ftServer::OwnId()
+{
+	std::string ownId;
+	if (mConnMgr)
+		ownId = mConnMgr->getOwnId();
+	return ownId;
+}
+
 	/* Final Setup (once everything is assigned) */
 void ftServer::SetupFtServer(NotifyBase *cb)
 {
@@ -189,7 +197,7 @@ void	ftServer::run()
 	/********************** Controller Access **********************/
 	/***************************************************************/
 
-bool ftServer::FileRequest(std::string fname, std::string hash, uint32_t size, 
+bool ftServer::FileRequest(std::string fname, std::string hash, uint64_t size, 
 	std::string dest, uint32_t flags, std::list<std::string> srcIds)
 {
 	return mFtController->FileRequest(fname, hash, size, 
@@ -271,7 +279,7 @@ bool ftServer::FileDetails(std::string hash, uint32_t hintflags, FileInfo &info)
 	/******************* ExtraFileList Access **********************/
 	/***************************************************************/
 
-bool  ftServer::ExtraFileAdd(std::string fname, std::string hash, uint32_t size, 
+bool  ftServer::ExtraFileAdd(std::string fname, std::string hash, uint64_t size, 
 						uint32_t period, uint32_t flags)
 {
 	return mFtExtra->addExtraFile(fname, hash, size, period, flags);
@@ -456,6 +464,14 @@ bool	ftServer::sendData(std::string peerId, std::string hash, uint64_t size,
 	uint64_t offset = 0;
 	uint32_t chunk;
 
+#ifdef SERVER_DEBUG 
+	std::cerr << "ftServer::sendData() to " << peerId << std::endl;
+	std::cerr << "hash: " << hash;
+	std::cerr << " offset: " << offset;
+	std::cerr << " chunk: " << chunk;
+	std::cerr << " data: " << data;
+	std::cerr << std::endl;
+#endif
 
 	while(tosend > 0)
 	{
@@ -486,6 +502,17 @@ bool	ftServer::sendData(std::string peerId, std::string hash, uint64_t size,
 		/* file data */
 		rfd->fd.binData.setBinData(
 			&(((uint8_t *) data)[offset]), chunk);
+
+		/* print the data pointer */
+#ifdef SERVER_DEBUG 
+		std::cerr << "ftServer::sendData() Packet: " << std::endl;
+		std::cerr << " offset: " << rfd->fd.file_offset;
+		std::cerr << " chunk: " << chunk;
+		std::cerr << " len: " << rfd->fd.binData.bin_len;
+		std::cerr << " data: " << rfd->fd.binData.bin_data;
+		std::cerr << std::endl;
+#endif
+
 
 		mP3iface->SendFileData(rfd);
 
@@ -679,6 +706,11 @@ FileInfo(ffr);
 	{
 #ifdef SERVER_DEBUG 
 		std::cerr << "ftServer::handleFileData() Recvd ftFiler Data" << std::endl;
+		std::cerr << "hash: " << fd->fd.file.hash;
+		std::cerr << " length: " << fd->fd.binData.bin_len;
+		std::cerr << " data: " << fd->fd.binData.bin_data;
+		std::cerr << std::endl;
+
 		std::ostringstream out;
 		if (i == i_init)
 		{
@@ -698,7 +730,7 @@ FileInfo(ffr);
 
 		/* we've stolen the data part -> so blank before delete 
 		 */
-		fd->fd.TlvShallowClear();
+		fd->fd.binData.TlvShallowClear();
 		delete fd;
 	}
 

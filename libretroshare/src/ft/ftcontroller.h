@@ -53,23 +53,34 @@ class ftDataMultiplex;
 
 #include <map>
 
+
+const uint32_t CB_CODE_CACHE = 0x0001;
+const uint32_t CB_CODE_MEDIA = 0x0002;
+
+const uint32_t FC_TRANSFER_COMPLETE = 0x0001;
+
 class ftFileControl
 {
 	public:
 
-        enum {DOWNLOADING,COMPLETED};
+        enum {DOWNLOADING,COMPLETED,ERROR_COMPLETION};
 
 	ftFileControl();
-        ftFileControl(std::string fname, uint64_t size, std::string hash, 
-		uint32_t flags, ftFileCreator *fc, ftTransferModule *tm);
+        ftFileControl(std::string fname, std::string tmppath, std::string dest, 
+		uint64_t size, std::string hash, uint32_t flags, 
+		ftFileCreator *fc, ftTransferModule *tm, uint32_t cb_flags);
 
+	std::string	   mName;
+	std::string	   mCurrentPath; /* current full path (including name) */
+	std::string	   mDestination; /* final full path (including name) */
 	ftTransferModule * mTransfer;
 	ftFileCreator *    mCreator;
 	uint32_t	   mState;
 	std::string	   mHash;
-	std::string	   mName;
 	uint64_t	   mSize;
 	uint32_t	   mFlags;
+	bool		   mDoCallback;
+	uint32_t	   mCallbackCode;
 };
 
 
@@ -95,7 +106,7 @@ bool 	FileRequest(std::string fname, std::string hash,
 bool 	FileCancel(std::string hash);
 bool 	FileControl(std::string hash, uint32_t flags);
 bool 	FileClearCompleted();
-bool 	completeFile(std::string hash);
+bool 	FlagFileComplete(std::string hash);
 
 	/* get Details of File Transfers */
 bool 	FileDownloads(std::list<std::string> &hashs);
@@ -135,7 +146,7 @@ virtual bool    loadList(std::list<RsItem *> load);
 
 	/* RunTime Functions */
 void 	checkDownloadQueue();
-//bool 	completeFile(std::string hash);
+bool 	completeFile(std::string hash);
 
 	/* pointers to other components */
 
@@ -155,12 +166,16 @@ void 	checkDownloadQueue();
 
 	std::string mConfigPath;
 	std::string mDownloadPath;
-	std::string mPartialPath;
+	std::string mPartialsPath;
 
 	/**** SPEED QUEUES ****/
 	std::list<std::string> mSlowQueue;
 	std::list<std::string> mStreamQueue;
 	std::list<std::string> mFastQueue;
+
+	/* callback list (for File Completion) */
+	RsMutex doneMutex;
+	std::list<std::string> mDone;
 };
 
 #endif

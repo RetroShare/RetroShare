@@ -79,7 +79,8 @@ bool ftFileProvider::getFileData(uint64_t offset, uint32_t chunk_size, void *dat
                  */
 		fseek(fd, base_loc, SEEK_SET);
 
-		void *data = malloc(chunk_size);
+		// Data space allocated by caller.
+		//void *data = malloc(chunk_size);
 		
 		/* 
 		 * read the data 
@@ -117,7 +118,7 @@ int ftFileProvider::initializeFileAttrs()
 {
 	std::cerr << "ftFileProvider::initializeFileAttrs() Filename: ";
 	std::cerr << file_name;        	
-
+	std::cerr << std::endl;
 	
         RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 	if (fd)
@@ -128,8 +129,8 @@ int ftFileProvider::initializeFileAttrs()
          */
 	
 	{
-		std::cout <<
-		 "ftFileProvider::initializeFileAttrs() Filename: " << file_name;        	
+		std::cerr << "ftFileProvider::initializeFileAttrs() trying (r+b) ";        	
+		std::cerr << std::endl;
 	}
 
 	/* 
@@ -139,8 +140,8 @@ int ftFileProvider::initializeFileAttrs()
 	fd = fopen(file_name.c_str(), "r+b");
 	if (!fd)
 	{
-		std::cout <<
-		    "ftFileProvider::initializeFileAttrs() Failed to open (r+b): "<< file_name << std::endl;
+		std::cerr << "ftFileProvider::initializeFileAttrs() Failed to open (r+b): ";
+		std::cerr << file_name << std::endl;
 		return 0;
 
 	}

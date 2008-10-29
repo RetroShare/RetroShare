@@ -26,6 +26,9 @@
 #include "ft/pqitestor.h"
 #include "pqi/p3connmgr.h"
 
+/******
+ *#define HUB_DEBUG
+ *****/
 
 P3Hub::P3Hub()
 {
@@ -46,35 +49,45 @@ void	P3Hub::addP3Pipe(std::string id, P3Pipe *pqi, p3ConnectMgr *mgr)
 	mPeers[id] = item;
 
 	/* tell all the other peers we are connected */
+
+#ifdef HUB_DEBUG
 	std::cerr << "P3Hub::addPQIPipe()";
 	std::cerr << std::endl;
+#endif
 
 }
 
 
 void 	P3Hub::run()
 {
+#ifdef HUB_DEBUG
 	std::cerr << "P3Hub::run()";
 	std::cerr << std::endl;
+#endif
 
 	RsItem *item;
 	std::list<std::pair<std::string, RsItem *> > recvdQ;
 	std::list<std::pair<std::string, RsItem *> >::iterator lit;
 	while(1)
 	{
+#ifdef HUB_DEBUG
 		std::cerr << "P3Hub::run()";
 		std::cerr << std::endl;
+#endif
 
 		std::map<std::string, hubItem>::iterator it;
 		for(it = mPeers.begin(); it != mPeers.end(); it++)
 		{
 			while (NULL != (item = it->second.mPQI->PopSentItem()))
 			{
+#ifdef HUB_DEBUG
 				std::cerr << "P3Hub::run() recvd msg from: ";
 				std::cerr << it->first;
+				std::cerr << " for " << item->PeerId();
 				std::cerr << std::endl;
 				item->print(std::cerr, 10);
 				std::cerr << std::endl;
+#endif
 
 					
 				recvdQ.push_back(make_pair(it->first, item));
@@ -88,10 +101,12 @@ void 	P3Hub::run()
 			std::string destId = (lit->second)->PeerId();
 			if (mPeers.end() == (it = mPeers.find(destId)))
 			{
+#ifdef HUB_DEBUG
 				std::cerr << "Failed to Find destination: " << destId;
 				std::cerr << std::endl;
 				std::cerr << "Deleting Packet";
 				std::cerr << std::endl;
+#endif
 
 				delete (lit->second);
 
@@ -100,11 +115,14 @@ void 	P3Hub::run()
 			{
 				/* now we have dest, set source Id */
 				(lit->second)->PeerId(srcId);
-				std::cerr << "P3Hub::run() sending msg to: ";
-				std::cerr << it->first;
+#ifdef HUB_DEBUG
+				std::cerr << "P3Hub::run() sending msg from: ";
+				std::cerr << srcId << "to: ";
+				std::cerr << destId;
 				std::cerr << std::endl;
 				(lit->second)->print(std::cerr, 10);
 				std::cerr << std::endl;
+#endif
 
 				(it->second).mPQI->PushRecvdItem(lit->second);
 			}

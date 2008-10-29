@@ -1,6 +1,9 @@
 #include "ftfilecreator.h"
+#include <errno.h>
 
-#define FILE_DEBUG 1
+/*******
+ * #define FILE_DEBUG 1
+ ******/
 
 #define CHUNK_MAX_AGE 30
 
@@ -97,9 +100,15 @@ bool ftFileCreator::addFileData(uint64_t offset, uint32_t chunk_size, void *data
 	/* 
 	 * add the data 
  	 */
+	//void *data2 = malloc(chunk_size);
+        //std::cerr << "data2: " << data2 << std::endl;
+	//if (1 != fwrite(data2, chunk_size, 1, this->fd))
+
 	if (1 != fwrite(data, chunk_size, 1, this->fd))
 	{
         	std::cerr << "ftFileCreator::addFileData() Bad fwrite" << std::endl;
+        	std::cerr << "ERRNO: " << errno << std::endl;
+
 		return 0;
 	}
 
@@ -127,6 +136,7 @@ int ftFileCreator::initializeFileAttrs()
 {
 	std::cerr << "ftFileCreator::initializeFileAttrs() Filename: ";
 	std::cerr << file_name;        	
+	std::cerr << std::endl;
 
 	/* 
          * check if the file exists 
@@ -143,8 +153,8 @@ int ftFileCreator::initializeFileAttrs()
 		return 1;
 
 	{
-		std::cout <<
-		 "ftFileCreator::initializeFileAttrs() Filename: " << file_name;        	
+		std::cerr << "ftFileCreator::initializeFileAttrs() opening w+b";
+		std::cerr << std::endl;
 	}
 
 	/* 
@@ -154,8 +164,8 @@ int ftFileCreator::initializeFileAttrs()
 	fd = fopen(file_name.c_str(), "w+b");
 	if (!fd)
 	{
-		std::cout <<
-		    "ftFileCreator::initializeFileAttrs() Failed to open (w+b): "<< file_name << std::endl;
+		std::cerr << "ftFileCreator::initializeFileAttrs()";
+		std::cerr << " Failed to open (w+b): "<< file_name << std::endl;
 		return 0;
 
 	}
@@ -192,9 +202,14 @@ int ftFileCreator::notifyReceived(uint64_t offset, uint32_t chunk_size)
 	/* find the chunk */
 	std::map<uint64_t, ftChunk>::iterator it;
 	it = mChunks.find(offset);
+	bool isFirst = false;
 	if (it == mChunks.end())
 	{
 		return 0; /* ignoring */
+	}
+	else if (it == mChunks.begin())
+	{
+		isFirst = true;
 	}
 
 	ftChunk chunk = it->second;
@@ -208,20 +223,25 @@ int ftFileCreator::notifyReceived(uint64_t offset, uint32_t chunk_size)
 		mChunks[chunk.offset] = chunk;
 	}
 
-	/* if we've cleaned up chunks, must update counters */
-	it = mChunks.find(chunk.offset);
-	if (it == mChunks.end())
+	/* update how much has been completed */
+	if (isFirst)
+	{
+		mStart = offset + chunk_size;
+	}
+
+	if (mChunks.size() == 0)
 	{
 		mStart = mEnd;
 	}
-	else if (it == mChunks.begin())
-	{	
-		mStart += it->second.offset;
-	}
 
-
+	/* otherwise there is another earlier block to go
+	 */
 	return 1;
 }
+
+/* Returns true if more to get 
+ * But can return size = 0, if we are still waiting for the data.
+ */
 
 bool ftFileCreator::getMissingChunk(uint64_t &offset, uint32_t &chunk) 
 {
@@ -271,8 +291,12 @@ bool ftFileCreator::getMissingChunk(uint64_t &offset, uint32_t &chunk)
 	offset = mEnd;
 	mEnd += chunk;
 
-	mChunks[offset] = ftChunk(offset, chunk, ts);
-	return true;
+	if (chunk > 0)
+	{
+		mChunks[offset] = ftChunk(offset, chunk, ts);
+	}
+
+	return true; /* cos more data to get */
 }
 
 /***********************************************************

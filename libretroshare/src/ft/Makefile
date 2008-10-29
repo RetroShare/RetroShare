@@ -12,10 +12,10 @@ RSOBJ =  ftdata.o ftfileprovider.o ftfilecreator.o ftextralist.o \
 	ftcontroller.o pqitestor.o
 
 
-TESTOBJ  = ftfileprovidertest.o ftfilecreatortest.o ftextralisttest.o ftdataplextest.o ftserver1test.o ftserver2test.o fttransfermoduletest.o
+TESTOBJ  = ftfileprovidertest.o ftfilecreatortest.o ftextralisttest.o ftdataplextest.o ftserver1test.o ftserver2test.o fttransfermoduletest.o ftserver3test.o
 
 
-TESTS  = ftfileprovidertest ftfilecreatortest ftextralisttest ftdataplextest ftserver1test ftserver2test fttransfermoduletest
+TESTS  = ftfileprovidertest ftfilecreatortest ftextralisttest ftdataplextest ftserver1test ftserver2test fttransfermoduletest ftserver3test
 
 all: librs tests
 
@@ -39,6 +39,9 @@ ftserver1test : ftserver1test.o
 
 ftserver2test : ftserver2test.o 
 	$(CC) $(CFLAGS) -o ftserver2test ftserver2test.o $(LIBS)
+
+ftserver3test : ftserver3test.o 
+	$(CC) $(CFLAGS) -o ftserver3test ftserver3test.o $(LIBS)
 
 ###############################################################
 include $(RS_TOP_DIR)/scripts/rules.mk

@@ -1,5 +1,5 @@
 /*
- * libretroshare/src/ft: ftserver1test.cc
+ * libretroshare/src/ft: ftserver3test.cc
  *
  * File Transfer for RetroShare.
  *
@@ -24,14 +24,20 @@
  */
 
 /*
- * ftServer2Test - Demonstrates how to check for test stuff.
- * This tests hashing of files using extraList.
+ * ftServer3Test - Test of the file transfer from a server level.
+ * Steps:
+ * 1) load shared directories into others, and let them be 
+      transferred between clients.
+ * 2) search for local item on others.
+ * 3) request item on load server.
+	should transfer from all others simultaneously.
  */
 
 #ifdef WIN32
 #include "util/rswin.h"
 #endif
 
+#include "rsiface/rsexpr.h"
 
 #include "ft/ftserver.h"
 
@@ -67,7 +73,7 @@ extern "C" void *do_server_test_thread(void *p);
 
 void usage(char *name)
 {
-	std::cerr << "Usage: " << name << " [-sa] [-p <peerId>] [-d <debugLvl>] [-e <extrafile>] [<path> [<path2> ... ]] ";
+	std::cerr << "Usage: " << name << " [-soa] [-p <peerId>] [-d <debugLvl>] [-e <extrafile>] [<path> [<path2> ... ]] ";
 	std::cerr << std::endl;
 }
 	
@@ -78,6 +84,7 @@ int main(int argc, char **argv)
         uint32_t debugLevel = 5;
 	bool debugStderr = true;
 	bool loadAll = false;
+	bool loadOthers = false;
 
         std::list<std::string> fileList;
         std::list<std::string> extraList;
@@ -112,7 +119,7 @@ int main(int argc, char **argv)
 #endif
 
 
-        while(-1 != (c = getopt(argc, argv, "asd:p:e:")))
+        while(-1 != (c = getopt(argc, argv, "aosd:p:e:")))
         {
                 switch (c)
                 {
@@ -130,6 +137,9 @@ int main(int argc, char **argv)
                         break;
                 case 'a':
                         loadAll = true;
+                        break;
+                case 'o':
+                        loadOthers = true;
                         break;
                 default:
                         usage(argv[0]);
@@ -222,13 +232,16 @@ int main(int argc, char **argv)
 		ftServer *server;
 		server = new ftServer(authMgr, connMgr);
 		mFtServers[*it] = server;
+		bool isOther;
 		if (!mLoadServer)
 		{
 			mLoadServer = server;
+			isOther = false;
 		}
 		else
 		{
 			mOtherServers.push_back(server);
+			isOther = true;
 		}
 
 
@@ -261,11 +274,10 @@ int main(int argc, char **argv)
 		server->StartupThreads();
 
 		/* setup any extra bits */
-		/* everyone gets download directories */
                 server->setPartialsDirectory(partialspath);
                 server->setDownloadDirectory(downloadpath);
 
-		if (loadAll)
+		if ((loadAll) || (isOther && loadOthers))
 		{
 			server->setSharedDirectories(fileList);
 			for(eit = extraList.begin(); eit != extraList.end(); eit++)
@@ -276,7 +288,7 @@ int main(int argc, char **argv)
 
 	}
 
-	if (mLoadServer)
+	if ((mLoadServer) && (!loadOthers))
 	{
 		mLoadServer->setSharedDirectories(fileList);
 		for(eit = extraList.begin(); eit != extraList.end(); eit++)
@@ -337,21 +349,108 @@ void *do_server_test_thread(void *data)
 	std::cerr << "do_server_test_thread() running";
 	std::cerr << std::endl;
 
-	/************************* TEST 1 **********************
-	 * Check that the extra List has been processed.
+	/* search Others for a suitable file 
+	 * (Tests GUI search functionality)
 	 */
-	time_t start = time(NULL);
-
-	FileInfo info, info2;
-	time_t now = time(NULL);
-        std::list<std::string>::iterator eit;
-	for(eit = mFt->extraList.begin(); eit != mFt->extraList.end(); eit++)
+	if (mFt->otherServers.size() < 1)
 	{
-		while(!mFt->loadServer->ExtraFileStatus(*eit, info))
-		{
+		std::cerr << "no Other Servers to search on";
+		std::cerr << std::endl;
+		exit(1);
+		return NULL;
+	}
 
-			/* max of 30 seconds */
-			now = time(NULL);
+
+	for(int i = 0; i < 60; i++)
+	{
+		std::cerr << "Waiting 60 seconds to share caches";
+		std::cerr << std::endl;
+		sleep(1);
+	}
+
+	ftServer *oServer = *(mFt->otherServers.begin());
+	std::string oId = oServer->OwnId();
+
+	/* create Expression */
+	uint64_t minFileSize = 10000;
+	//SizeExpression se(Greater, minFileSize);
+	SizeExpression se(Smaller, minFileSize);
+	Expression *expr = &se;
+
+	std::list<FileDetail> results;
+	std::list<FileDetail>::iterator it;
+
+	oServer->SearchBoolExp(expr, results);
+
+	if (results.size() < 1)
+	{
+		std::cerr << "no Shared Files > " << minFileSize;
+		std::cerr << std::endl;
+		exit(1);
+		return NULL;
+	}
+
+	/* find the first remote entry */
+	FileDetail sFile;
+	bool foundFile = false;
+	for(it = results.begin(); 
+		(it != results.end()); it++)
+	{
+		std::cerr << "Shared File: " << it->name;
+		std::cerr << std::endl;
+
+		if (!foundFile) 
+		{
+			if (it->id != mFt->loadServer->OwnId())
+			{
+				std::cerr << "Selected: " << it->name;
+				std::cerr << std::endl;
+				foundFile = true;
+				sFile = *it;
+			}
+			else
+			{
+				std::cerr << "LoadId: ";
+				std::cerr << mFt->loadServer->OwnId();
+				std::cerr << "FileId: ";
+				std::cerr << it->id;
+				std::cerr << std::endl;
+			}
+		}
+	}
+	
+	if (!foundFile)
+	{
+		std::cerr << "Not Found Suitable File";
+		std::cerr << std::endl;
+	}
+
+
+	/*** Now Download it! ***/
+	std::list<std::string> srcIds;
+	//srcIds.push_back(sFile.id);
+	srcIds.push_back(oId);
+	if (foundFile)
+	{
+		mFt->loadServer->FileRequest(sFile.name, sFile.hash, 
+			sFile.size, "", 0, srcIds);
+	}
+
+	/* Give it a while to transfer */
+	for(int i = 0; i < 10; i++)
+	{
+		std::cerr << "Waiting 10 seconds to transfer";
+		std::cerr << std::endl;
+		sleep(10);
+	}
+
+#if 0
+	bool 
+	while(!mFt->loadServer->ExtraFileStatus(*eit, info))
+	{
+
+		/* max of 30 seconds */
+		now = time(NULL);
 			if (now - start > 30)
 			{
 				/* FAIL */
@@ -405,8 +504,9 @@ void *do_server_test_thread(void *data)
 
 		REPORT("Testing with Extra File");
 	}
+#endif
 
-	FINALREPORT("ExtraList Hashing, Searching and Downloading");
+	FINALREPORT("Shared Directories, Bool Search, multi-source transfers");
 	exit(1);
 }
 

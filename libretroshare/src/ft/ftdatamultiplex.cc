@@ -40,7 +40,9 @@ const uint32_t DMULTIPLEX_MIN	= 10; /* 1ms sleep */
 const uint32_t DMULTIPLEX_MAX   = 1000; /* 1 sec sleep */
 const double   DMULTIPLEX_RELAX = 0.5; /* ??? */
 
-#define MPLEX_DEBUG 1
+/******
+ * #define MPLEX_DEBUG 1
+ *****/
  
 ftClient::ftClient(ftTransferModule *module, ftFileCreator *creator)
 	:mModule(module), mCreator(creator)
@@ -386,12 +388,29 @@ bool	ftDataMultiplex::locked_handleServerRequest(ftFileProvider *provider,
 			uint64_t offset, uint32_t chunksize)
 {
 	void *data = malloc(size);
+
+#ifdef MPLEX_DEBUG
+	std::cerr << "ftDataMultiplex::locked_handleServerRequest()";
+	std::cerr << "\t peer: " << peerId << " hash: " << hash;
+	std::cerr << " size: " << size;
+	std::cerr << std::endl;
+	std::cerr << "\t offset: " << offset;
+	std::cerr << " chunksize: " << chunksize << " data: " << data;
+	std::cerr << std::endl;
+#endif
+
 	if (provider->getFileData(offset, chunksize, data))
 	{
 		/* send data out */
 		sendData(peerId, hash, size, offset, chunksize, data);
 		return true;
 	}
+#ifdef MPLEX_DEBUG
+	std::cerr << "ftDataMultiplex::locked_handleServerRequest()";
+	std::cerr << " FAILED";
+	std::cerr << std::endl;
+#endif
+
 	return false;
 }
 
