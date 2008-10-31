@@ -529,56 +529,29 @@
        <property name="spacing" >
         <number>6</number>
        </property>
-       <item row="0" column="2" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0" >
-          <size>
-           <width>81</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="1" column="0" colspan="3" >
-        <widget class="QTextBrowser" name="textBrowser" >
+       <item row="0" column="0" colspan="3" >
+        <widget class="QTextBrowser" name="about" >
          <property name="html" >
           <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
 &lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
 &lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://retroshare.wiki.sourceforge.net/help_tab">&lt;span style=" text-decoration: underline; color:#0000ff;">This Page in the retroshare Wiki&lt;/span>&lt;/a>&lt;br />&lt;br />The About/Help Tab is regularly updated from the Wiki page.&lt;br />&lt;br />External Links to more information:&lt;br />&lt;/p>
-&lt;ul style="-qt-list-indent: 1;">&lt;li style=" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://retroshare.sourceforge.net">&lt;span style=" text-decoration: underline; color:#0000ff;">Retroshare Webpage&lt;/span>&lt;/a>&lt;/li>
-&lt;li style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://retroshare.wiki.sourceforge.net/">&lt;span style=" text-decoration: underline; color:#0000ff;">Retroshare Wiki&lt;/span>&lt;/a>&lt;/li>
-&lt;li style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://sourceforge.net/projects/retroshare/">&lt;span style=" text-decoration: underline; color:#0000ff;">Retroshare Project Page&lt;/span>&lt;/a>&lt;/li>
-&lt;li style=" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://www.lunamutt.com">&lt;span style=" text-decoration: underline; color:#0000ff;">Lunamutt Homepage.&lt;/span>&lt;/a>&lt;/li>&lt;/ul>&lt;/body>&lt;/html></string>
+&lt;p align="center" style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
+&lt;p align="justify" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt; font-weight:600;">RetroShare is a Open Source cross-platform, private and secure decentralised commmunication platform.	&lt;/p>
+&lt;p align="justify" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt; font-weight:600;">It lets you share securely your friends, using a web-of-trust to authenticate peers and OpenSSL to encrypt all communication. &lt;/p>
+&lt;p align="justify" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt; font-weight:600;">RetroShare provides filesharing, chat, messages and channels&lt;/p>
+&lt;p align="center" style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt; font-weight:600;">&lt;/p>
+&lt;p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt; font-weight:600;">&lt;img src=":/images/retrosharelogo2.png" />&lt;/p>
+&lt;p align="center" style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;">Usefull External Links to more information:&lt;/p>
+&lt;ul style="-qt-list-indent: 1;">&lt;li align="justify" style=" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://retroshare.sourceforge.net">&lt;span style=" text-decoration: underline; color:#0000ff;">Retroshare Webpage&lt;/span>&lt;/a>&lt;/li>
+&lt;li align="justify" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://retroshare.wiki.sourceforge.net/">&lt;span style=" text-decoration: underline; color:#0000ff;">Retroshare Wiki&lt;/span>&lt;/a>&lt;/li>
+&lt;li style=" text-decoration: underline; color:#0000ff;" align="justify" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://retroshare.sourceforge.net/forum/">RetroShare's Forum&lt;/a>&lt;/li>
+&lt;li align="justify" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://sourceforge.net/projects/retroshare/">&lt;span style=" text-decoration: underline; color:#0000ff;">Retroshare Project Page&lt;/span>&lt;/a>&lt;/li>
+&lt;li align="justify" style=" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://www.lunamutt.com">&lt;span style=" text-decoration: underline; color:#0000ff;">Lunamutt Homepage.&lt;/span>&lt;/a>&lt;/li>&lt;/ul>&lt;/body>&lt;/html></string>
          </property>
          <property name="openExternalLinks" >
           <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <widget class="QLabel" name="label_3" >
-         <property name="text" >
-          <string/>
-         </property>
-         <property name="pixmap" >
-          <pixmap resource="images.qrc" >:/images/retrosharelogo1.png</pixmap>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="label_4" >
-         <property name="text" >
-          <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
-&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;">
-&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Retroshare is a private and secure decentralised commmunication platform.&lt;br />You can use it chat, send messages and share files with your friends.&lt;/span>&lt;br />&lt;br />&lt;/p>&lt;/body>&lt;/html></string>
          </property>
         </widget>
        </item>
@@ -837,7 +810,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>authors</tabstop>
   <tabstop>license</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>textBrowser</tabstop>
  </tabstops>
  <resources>
   <include location="images.qrc" />
