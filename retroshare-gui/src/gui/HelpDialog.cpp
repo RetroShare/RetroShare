@@ -63,7 +63,7 @@ HelpDialog::HelpDialog(QWidget *parent)
         ui.thanks->setText(in.readAll());
    }
    
-   ui.label_4->setMinimumWidth(20);
+   ui.label_2->setMinimumWidth(20);
 
 
   /* Hide platform specific features */
