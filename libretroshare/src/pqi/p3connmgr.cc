@@ -63,7 +63,6 @@ const uint32_t MAX_UPNP_INIT = 		10; /* seconds UPnP timeout */
  * #define P3CONNMGR_NO_AUTO_CONNECTION 1
  ***/
 
-#define CONN_DEBUG 1
 
 const uint32_t P3CONNMGR_TCP_DEFAULT_DELAY = 2; /* 2 Seconds? is it be enough! */
 const uint32_t P3CONNMGR_UDP_DHT_DELAY     = DHT_NOTIFY_PERIOD + 60; /* + 1 minute for DHT POST */

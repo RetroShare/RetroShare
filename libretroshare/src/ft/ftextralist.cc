@@ -44,8 +44,8 @@ void ftExtraList::run()
 	while (1)
 	{
 #ifdef  DEBUG_ELIST
-		std::cerr << "ftExtraList::run() Iteration";
-		std::cerr << std::endl;
+		//std::cerr << "ftExtraList::run() Iteration";
+		//std::cerr << std::endl;
 #endif
 
 		now = time(NULL);

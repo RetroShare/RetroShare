@@ -165,7 +165,16 @@ int main(int argc, char **argv)
 	std::list<pqiAuthDetails> baseFriendList, friendList;
 	std::list<pqiAuthDetails>::iterator fit;
 
-	P3Hub *testHub = new P3Hub();
+
+	/* Add in serialiser */
+
+        RsSerialiser *rss = new RsSerialiser();
+        rss->addSerialType(new RsFileItemSerialiser());
+        rss->addSerialType(new RsCacheItemSerialiser());
+        rss->addSerialType(new RsServiceSerialiser());
+
+
+	P3Hub *testHub = new P3Hub(0, rss);
 	testHub->start();
 
 	/* Setup Base Friend Info */

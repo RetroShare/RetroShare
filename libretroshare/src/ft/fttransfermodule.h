@@ -132,6 +132,8 @@ public:
   //interface to download controller
   bool setFileSources(std::list<std::string> peerIds);
   bool setPeerState(std::string peerId,uint32_t state,uint32_t maxRate);  //state = ONLINE/OFFLINE
+  bool getFileSources(std::list<std::string> &peerIds);
+  bool getPeerState(std::string peerId,uint32_t &state,uint32_t &tfRate);  
   uint32_t getDataRate(std::string peerId);
   bool pauseTransfer();
   bool resumeTransfer();

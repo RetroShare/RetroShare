@@ -51,7 +51,8 @@ LIBDIR = $(RS_TOP_DIR)/lib
 LIBRS = $(LIBDIR)/libretroshare.a
 
 INCLUDE = -I $(RS_TOP_DIR) 
-CFLAGS = -Wall -O3 
+#CFLAGS = -Wall -O3 
+CFLAGS = -Wall -g
 
 # Flags for architecture builds. 
 ifdef MAC_I386_BUILD

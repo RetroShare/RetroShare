@@ -37,6 +37,9 @@
  * #define FI_DEBUG 1
  ****/
 
+#define FI_DEBUG 1
+#define FI_DEBUG_ALL 1
+
 
 DirEntry::~DirEntry()
 {
@@ -609,7 +612,7 @@ int  	FileIndex::removeOldDirectory(std::string fpath, std::string name, time_t 
 {
 	/* path is to parent */
 #ifdef FI_DEBUG_ALL
-		std::cerr << "FileIndex::removeOldDir() Path: \"";
+		std::cerr << "FileIndex::removeOldDirectory() Path: \"";
 		std::cerr << fpath << "\"" << " + \"" << name << "\"";
 		std::cerr << std::endl;
 #endif
@@ -617,11 +620,21 @@ int  	FileIndex::removeOldDirectory(std::string fpath, std::string name, time_t 
 	/* because of this find - we cannot get a child of 
 	 * root (which is what we want!)
 	 */
+
 	DirEntry *parent = root->findDirectory(fpath);
+	/* for root directory case ... no subdir. */
+	if (fpath == "")
+	{
+#ifdef FI_DEBUG
+		std::cerr << "FileIndex::removeOldDirectory() removing a root dir";
+		std::cerr << std::endl;
+#endif
+		parent = root;
+	}
 
 	if (!parent) {
 #ifdef FI_DEBUG
-		std::cerr << "FileIndex::removeOldDir() NULL parent";
+		std::cerr << "FileIndex::removeOldDirectory() NULL parent";
 		std::cerr << std::endl;
 #endif
 		return 0;

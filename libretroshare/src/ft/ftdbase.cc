@@ -91,10 +91,20 @@ bool ftFiStore::search(std::string hash, uint64_t size, uint32_t hintflags, File
 					info.fname = it->name;
 					info.size = it->size;
 					info.hash = it->hash;
+			
 				}
-				info.peerIds.push_back(it->id);	
+
+				TransferInfo ti;
+				ti.peerId = it->id;
+				ti.name = it->name;
+				ti.tfRate = 0;
+				info.peers.push_back(ti);
 			}
 		}
+
+		/****	DEPENDS ON SOURCES!
+		info.downloadStatus = FT_STATE_COMPLETE:
+		****/
 
 		/* if the first flag is cleared, we've definitely
 		 * had a full match!.

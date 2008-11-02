@@ -26,7 +26,8 @@
  *
  */
 
-#include "server/filedexserver.h"
+//#include "server/filedexserver.h"
+#include "ft/ftserver.h";
 //#include "pqi/pqissl.h"
 
 #include "pqi/p3cfgmgr.h"
@@ -156,7 +157,8 @@ int UpdateAllConfig();
 
 	// The real Server Parts.
 
-	filedexserver *server;
+	//filedexserver *server;
+	ftServer *ftserver;
 
 	p3ConnectMgr *mConnMgr;
 	p3AuthMgr    *mAuthMgr;

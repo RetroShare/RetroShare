@@ -32,7 +32,7 @@
 #include <iostream>
 #include <sstream>
 
-RsFiles *rsFiles = NULL;
+//RsFiles *rsFiles = NULL;
 
 void	p3Files::lockRsCore()
 {

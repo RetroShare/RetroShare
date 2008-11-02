@@ -28,8 +28,19 @@
 //#include <getopt.h>
 
 #include "dbase/cachestrapper.h"
-#include "server/ftfiler.h"
-#include "server/filedexserver.h"
+#ifdef USE_OLD_FT
+	#include "server/ftfiler.h"
+	#include "server/filedexserver.h"
+#else
+	#include "ft/ftserver.h"
+	#include "ft/ftcontroller.h"
+#endif
+
+/* global variable now points straight to 
+ * ft/ code so variable defined here.
+ */
+
+RsFiles *rsFiles = NULL;
 
 #include "pqi/pqipersongrp.h"
 #include "pqi/pqisslpersongrp.h"
@@ -520,15 +531,18 @@ int RsServer::StartupRetroShare(RsInit *config)
 	std::string certConfigFile = config->basedir.c_str();
 	std::string certNeighDir   = config->basedir.c_str();
 	std::string emergencySaveDir = config->basedir.c_str();
+	std::string emergencyPartialsDir = config->basedir.c_str();
 	if (certConfigFile != "")
 	{
 		certConfigFile += "/";
 		certNeighDir += "/";
 		emergencySaveDir += "/";
+		emergencyPartialsDir += "/";
 	}
 	certConfigFile += configConfFile;
 	certNeighDir +=   configCertDir;
 	emergencySaveDir += "Downloads";
+	emergencyPartialsDir += "Partials";
 
 	/* if we've loaded an old format file! */
         bool oldFormat = false;
@@ -549,12 +563,13 @@ int RsServer::StartupRetroShare(RsInit *config)
 	pqiNetAssistFirewall *mUpnpMgr = new upnphandler();
 	p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr, config->basedir);
 
-	CacheStrapper *mCacheStrapper = new CacheStrapper(mAuthMgr, mConnMgr);
-	ftfiler       *mCacheTransfer = new ftfiler(mCacheStrapper);
-
 	SecurityPolicy *none = secpolicy_create();
 	pqih = new pqisslpersongrp(none, flags);
 	//pqih = new pqipersongrpDummy(none, flags);
+
+#ifdef USE_OLD_FT
+	CacheStrapper *mCacheStrapper = new CacheStrapper(mAuthMgr, mConnMgr);
+	ftfiler       *mCacheTransfer = new ftfiler(mCacheStrapper);
 
 	// filedex server.
 	server = new filedexserver();
@@ -571,6 +586,25 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 	rsFiles = new p3Files(server, this, mAuthMgr);
 
+#else
+/****** New Ft Server **** !!! */
+        ftserver = new ftServer(mAuthMgr, mConnMgr);
+        ftserver->setP3Interface(pqih); 
+	ftserver->setConfigDirectory(config->basedir);
+
+        ftserver->SetupFtServer(&(getNotify()));
+	CacheStrapper *mCacheStrapper = ftserver->getCacheStrapper();
+	CacheTransfer *mCacheTransfer = ftserver->getCacheTransfer();
+
+        /* setup any extra bits (Default Paths) */
+        ftserver->setPartialsDirectory(emergencyPartialsDir);
+        ftserver->setDownloadDirectory(emergencySaveDir);
+
+	/* This should be set by config ... there is no default */
+        //ftserver->setSharedDirectories(fileList);
+
+	rsFiles = ftserver;
+#endif
 
 	mConfigMgr = new p3ConfigMgr(mAuthMgr, config->basedir, "rs-v0.4.cfg", "rs-v0.4.sgn");
 	mGeneralConfig = new p3GeneralConfig();
@@ -649,9 +683,22 @@ int RsServer::StartupRetroShare(RsInit *config)
 	mConnMgr->addMonitor(ad);
 	mConnMgr->addMonitor(msgSrv);
 
+	/* must also add the controller as a Monitor...
+	 * a little hack to get it to work.
+	 */
+#ifdef USE_OLD_FT
+#else
+	mConnMgr->addMonitor(((ftController *) mCacheTransfer));
+#endif
+
+
 	/**************************************************************************/
 
+#ifdef USE_OLD_FT
 	mConfigMgr->addConfiguration("server.cfg", server);
+#else
+	//mConfigMgr->addConfiguration("ftserver.cfg", ftserver);
+#endif
 	mConfigMgr->addConfiguration("peers.cfg", mConnMgr);
 	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
@@ -767,13 +814,12 @@ int RsServer::StartupRetroShare(RsInit *config)
 	/* Start up Threads */
 	/**************************************************************************/
 
+#ifdef USE_OLD_FT
 	server->StartupMonitor();
-	mDhtMgr->start();
-
-
-#ifdef PQI_USE_CHANNELS
-	server->setP3Channel(pqih->getP3Channel());
+#else
+        ftserver->StartupThreads();
 #endif
+	mDhtMgr->start();
 
 	// create loopback device, and add to pqisslgrp.
 

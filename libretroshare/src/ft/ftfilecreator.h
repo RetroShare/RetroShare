@@ -63,7 +63,8 @@ virtual int initializeFileAttrs();
 
 private:
 
-	int 	notifyReceived(uint64_t offset, uint32_t chunk_size);
+	bool 	locked_printChunkMap();
+	int 	locked_notifyReceived(uint64_t offset, uint32_t chunk_size);
 	/* 
          * structure to track missing chunks 
          */

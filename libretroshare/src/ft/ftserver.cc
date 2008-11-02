@@ -452,7 +452,9 @@ bool	ftServer::sendDataRequest(std::string peerId, std::string hash,
 	return true;
 }
 
-const uint32_t	MAX_FT_CHUNK  = 32 * 1024; /* 32K */
+//const uint32_t	MAX_FT_CHUNK  = 32 * 1024; /* 32K */
+//const uint32_t	MAX_FT_CHUNK  = 16 * 1024; /* 16K */
+const uint32_t	MAX_FT_CHUNK  = 8 * 1024; /* 16K */
 
 	/* Server Send */
 bool	ftServer::sendData(std::string peerId, std::string hash, uint64_t size,
@@ -467,8 +469,8 @@ bool	ftServer::sendData(std::string peerId, std::string hash, uint64_t size,
 #ifdef SERVER_DEBUG 
 	std::cerr << "ftServer::sendData() to " << peerId << std::endl;
 	std::cerr << "hash: " << hash;
-	std::cerr << " offset: " << offset;
-	std::cerr << " chunk: " << chunk;
+	std::cerr << " offset: " << baseoffset;
+	std::cerr << " chunk: " << chunksize;
 	std::cerr << " data: " << data;
 	std::cerr << std::endl;
 #endif
@@ -527,6 +529,10 @@ bool	ftServer::sendData(std::string peerId, std::string hash, uint64_t size,
 }
 
 
+/* NB: The rsCore lock must be activated before calling this.
+ * This Lock should be moved lower into the system...
+ * most likely destination is in ftServer.
+ */
 int	ftServer::tick()
 {
 	rslog(RSL_DEBUG_BASIC, ftserverzone, 
@@ -586,7 +592,7 @@ bool     ftServer::handleCacheData()
 	int i_init = 0;
 
 #ifdef SERVER_DEBUG 
-	std::cerr << "ftServer::handleCacheData()" << std::endl;
+	//std::cerr << "ftServer::handleCacheData()" << std::endl;
 #endif
 	while((ci = mP3iface -> GetSearchResult()) != NULL)
 	{

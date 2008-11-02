@@ -155,7 +155,11 @@ int RsServer::UpdateAllConfig()
 void    RsServer::ConfigFinalSave()
 {
 	/* force saving of transfers */
+#ifdef USE_OLD_FT
 	server->saveFileTransferStatus();
+#else
+	//ftserver->saveFileTransferStatus();
+#endif
 
 	mAuthMgr->FinalSaveCertificates();
 	mConfigMgr->completeConfiguration();

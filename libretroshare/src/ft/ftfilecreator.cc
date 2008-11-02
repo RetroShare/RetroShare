@@ -5,6 +5,8 @@
  * #define FILE_DEBUG 1
  ******/
 
+#define FILE_DEBUG 1
+
 #define CHUNK_MAX_AGE 30
 
 
@@ -42,12 +44,15 @@ hash, uint64_t recvd): ftFileProvider(path,size,hash)
 bool    ftFileCreator::getFileData(uint64_t offset, 
                 uint32_t chunk_size, void *data)
 {
-	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
-	if (offset + chunk_size > mStart)
 	{
+	  RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+	  if (offset + chunk_size > mStart)
+	  {
 		/* don't have the data */
 		return false;
-	}
+	  }
+        }
+
 	return ftFileProvider::getFileData(offset, chunk_size, data);
 }
 
@@ -64,6 +69,7 @@ bool ftFileCreator::addFileData(uint64_t offset, uint32_t chunk_size, void *data
 	std::cerr << offset;
 	std::cerr << ", " << chunk_size;
 	std::cerr << ", " << data << ")";
+	std::cerr << " this: " << this;
 	std::cerr << std::endl;
 #endif
 	/* dodgey checking outside of mutex...
@@ -123,7 +129,7 @@ bool ftFileCreator::addFileData(uint64_t offset, uint32_t chunk_size, void *data
 	/* 
 	 * Notify ftFileChunker about chunks received 
 	 */
-	notifyReceived(offset,chunk_size);
+	locked_notifyReceived(offset,chunk_size);
 
 	/* 
 	 * FIXME HANDLE COMPLETION HERE - Any better way?
@@ -136,6 +142,7 @@ int ftFileCreator::initializeFileAttrs()
 {
 	std::cerr << "ftFileCreator::initializeFileAttrs() Filename: ";
 	std::cerr << file_name;        	
+	std::cerr << " this: " << this;
 	std::cerr << std::endl;
 
 	/* 
@@ -195,9 +202,15 @@ ftFileCreator::~ftFileCreator()
 }
 
 
-int ftFileCreator::notifyReceived(uint64_t offset, uint32_t chunk_size) 
+int ftFileCreator::locked_notifyReceived(uint64_t offset, uint32_t chunk_size) 
 {
 	/* ALREADY LOCKED */
+#ifdef FILE_DEBUG
+	std::cerr << "ftFileCreator::locked_notifyReceived( " << offset;
+	std::cerr << ", " << chunk_size << " )";
+	std::cerr << " this: " << this;
+	std::cerr << std::endl;
+#endif
 
 	/* find the chunk */
 	std::map<uint64_t, ftChunk>::iterator it;
@@ -205,6 +218,13 @@ int ftFileCreator::notifyReceived(uint64_t offset, uint32_t chunk_size)
 	bool isFirst = false;
 	if (it == mChunks.end())
 	{
+#ifdef FILE_DEBUG
+		std::cerr << "ftFileCreator::locked_notifyReceived() ";
+		std::cerr << " Failed to match to existing chunk - ignoring";
+		std::cerr << std::endl;
+
+		locked_printChunkMap();
+#endif
 		return 0; /* ignoring */
 	}
 	else if (it == mChunks.begin())
@@ -246,14 +266,21 @@ int ftFileCreator::notifyReceived(uint64_t offset, uint32_t chunk_size)
 bool ftFileCreator::getMissingChunk(uint64_t &offset, uint32_t &chunk) 
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
-	std::cerr << "ffc::getMissingChunk(...,"<< chunk << ")"<< std::endl;
+#ifdef FILE_DEBUG
+	std::cerr << "ffc::getMissingChunk(...,"<< chunk << ")";
+	std::cerr << " this: " << this;
+	std::cerr << std::endl;
+	locked_printChunkMap();
+#endif
 
 	/* check start point */
 
 	if (mStart == mSize)
 	{
+#ifdef FILE_DEBUG
 		std::cerr << "ffc::getMissingChunk() File Done";
 		std::cerr << std::endl;
+#endif
 		return false;
 	}
 
@@ -267,8 +294,10 @@ bool ftFileCreator::getMissingChunk(uint64_t &offset, uint32_t &chunk)
 		/* very simple algorithm */
 		if (it->second.ts < old)
 		{
+#ifdef FILE_DEBUG
 			std::cerr << "ffc::getMissingChunk() ReAlloc";
 			std::cerr << std::endl;
+#endif
 
 			/* retry this one */
 			it->second.ts = ts;
@@ -279,10 +308,12 @@ bool ftFileCreator::getMissingChunk(uint64_t &offset, uint32_t &chunk)
 		}
 	}
 
+#ifdef FILE_DEBUG
 	std::cerr << "ffc::getMissingChunk() new Alloc";
 	std::cerr << "  mStart: " << mStart << " mEnd: " << mEnd;
 	std::cerr << "mSize: " << mSize;
 	std::cerr << std::endl;
+#endif
 
 	/* else allocate a new chunk */
 	if (mSize - mEnd < chunk)
@@ -293,10 +324,46 @@ bool ftFileCreator::getMissingChunk(uint64_t &offset, uint32_t &chunk)
 
 	if (chunk > 0)
 	{
+#ifdef FILE_DEBUG
+		std::cerr << "ffc::getMissingChunk() Allocated " << chunk;
+		std::cerr << " offset: " << offset;
+		std::cerr << std::endl;
+		std::cerr << "  mStart: " << mStart << " mEnd: " << mEnd;
+		std::cerr << "mSize: " << mSize;
+		std::cerr << std::endl;
+#endif
+
 		mChunks[offset] = ftChunk(offset, chunk, ts);
 	}
 
 	return true; /* cos more data to get */
+}
+
+
+bool ftFileCreator::locked_printChunkMap()
+{
+#ifdef FILE_DEBUG
+	std::cerr << "ftFileCreator::locked_printChunkMap()";
+	std::cerr << " this: " << this;
+	std::cerr << std::endl;
+#endif
+
+	/* check start point */
+	std::cerr << "Size: " << mSize << " Start: " << mStart << " End: " << mEnd;
+	std::cerr << std::endl;
+	std::cerr << "\tOutstanding Chunks (in the middle)";
+	std::cerr << std::endl;
+
+	std::map<uint64_t, ftChunk>::iterator it;
+	time_t ts = time(NULL);
+	for(it = mChunks.begin(); it != mChunks.end(); it++)
+	{
+		std::cerr << "\tChunk [" << it->second.offset << "] size: ";
+		std::cerr << it->second.chunk;
+		std::cerr << "  Age: " << ts - it->second.ts;
+		std::cerr << std::endl;
+	}
+	return true; 
 }
 
 /***********************************************************

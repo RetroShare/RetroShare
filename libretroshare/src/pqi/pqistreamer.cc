@@ -540,21 +540,25 @@ int	pqistreamer::handleincoming()
 				std::string title =
 					"Warning: Bad Packet Read";
 			
-				std::string msg;
-				msg +=  "               **** WARNING ****     \n";
-				msg +=  "Retroshare has caught a BAD Packet Read";
-				msg +=  "\n";
-				msg +=  "This is normally caused by connecting to an";
-				msg +=  " OLD version of Retroshare";
-				msg +=  "\n";
-				msg +=  "\n";
-				msg +=  "Please get your friends to upgrade to the latest version";
-				msg +=  "\n";
-				msg +=  "\n";
-				msg +=  "If you are sure the error was not caused by an old version";
-				msg +=  "\n";
-				msg +=  "Please report the problem to Retroshare's developers";
-				msg +=  "\n";
+	  			std::ostringstream msgout;
+				msgout <<  "               **** WARNING ****     \n";
+				msgout <<  "Retroshare has caught a BAD Packet Read";
+				msgout <<  "\n";
+				msgout <<  "This is normally caused by connecting to an";
+				msgout <<  " OLD version of Retroshare";
+				msgout <<  "\n";
+				msgout <<  "(M:" << maxlen << " B:" << blen << " E:" << extralen << ")\n";
+				msgout <<  "\n";
+				msgout <<  "\n";
+				msgout <<  "Please get your friends to upgrade to the latest version";
+				msgout <<  "\n";
+				msgout <<  "\n";
+				msgout <<  "If you are sure the error was not caused by an old version";
+				msgout <<  "\n";
+				msgout <<  "Please report the problem to Retroshare's developers";
+				msgout <<  "\n";
+
+				std::string msg = msgout.str();
 				notify->AddSysMessage(0, RS_SYS_WARNING, title, msg);
 			}
 			bio->close();	
@@ -580,13 +584,17 @@ int	pqistreamer::handleincoming()
 					std::string title =
 						"Warning: Error Completing Read";
 			
-					std::string msg;
-					msg +=  "               **** WARNING ****     \n";
-					msg +=  "Retroshare has experienced an unexpected Read ERROR";
-					msg +=  "\n";
-					msg +=  "Please contact the developers.";
-					msg +=  "\n";
+	  				std::ostringstream msgout;
+					msgout <<  "               **** WARNING ****     \n";
+					msgout <<  "Retroshare has experienced an unexpected Read ERROR";
+					msgout <<  "\n";
+					msgout <<  "(M:" << maxlen << " B:" << blen;
+					msgout <<  " E:" << extralen << " R:" << tmplen << ")\n";
+					msgout <<  "\n";
+					msgout <<  "Please contact the developers.";
+					msgout <<  "\n";
 
+					std::string msg = msgout.str();
 					notify->AddSysMessage(0, RS_SYS_WARNING, title, msg);
 				}
 				bio->close();	

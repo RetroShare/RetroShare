@@ -145,7 +145,7 @@ int main(int argc, char **argv)
 	std::list<pqiAuthDetails>::iterator fit;
 
 	std::cerr << "Point 3" << std::endl;
-	P3Hub *testHub = new P3Hub();
+	P3Hub *testHub = new P3Hub(0, NULL);
 	testHub->start();
 	std::cerr << "Point 4" << std::endl;
 

@@ -39,6 +39,7 @@
 /***********
  * #define FIM_DEBUG 1
  ***********/
+#define FIM_DEBUG 1
 
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, std::string cachedir, std::string pid)
 	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cachedir), fi(pid), 
@@ -595,6 +596,17 @@ void 	FileIndexMonitor::updateCycle()
 void    FileIndexMonitor::setSharedDirectories(std::list<std::string> dirs)
 {
 	fiMutex.lock(); { /* LOCKED DIRS */
+
+#ifdef FIM_DEBUG
+	std::list<std::string>::iterator it;
+	std::cerr << "FileIndexMonitor::setSharedDirectories() :\n";
+	for(it = dirs.begin(); it != dirs.end(); it++)
+	{
+		std::cerr << "\t" << *it;
+		std::cerr <<  std::endl;
+	}
+#endif
+
 
 	pendingDirs = true;
 	pendingDirList = dirs;

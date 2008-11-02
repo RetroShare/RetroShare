@@ -96,8 +96,10 @@ void ftController::run()
 		sleep(1);
 #endif
 
-		std::cerr << "ftController::run()";
-		std::cerr << std::endl;
+#ifdef CONTROL_DEBUG
+		//std::cerr << "ftController::run()";
+		//std::cerr << std::endl;
+#endif
 
 		/* tick the transferModules */
 		std::list<std::string> done;
@@ -254,6 +256,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	/* check if we have the file */
 	FileInfo info;
 	std::list<std::string>::iterator it;
+	std::list<TransferInfo>::iterator pit;
 
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController::FileRequest(" << fname << ",";
@@ -313,17 +316,17 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 #endif
 
 			/* if the sources don't exist already - add in */
-			for(it = info.peerIds.begin(); it != info.peerIds.end(); it++)
+			for(pit = info.peers.begin(); pit != info.peers.end(); pit++)
 			{
-				std::cerr << "\tSource: " << *it;
+				std::cerr << "\tSource: " << pit->peerId;
 				std::cerr << std::endl;
 
 				if (srcIds.end() == std::find(
-					srcIds.begin(), srcIds.end(), *it))
+					srcIds.begin(), srcIds.end(), pit->peerId))
 				{
-					srcIds.push_back(*it);
+					srcIds.push_back(pit->peerId);
 
-					std::cerr << "\tAdding in: " << *it;
+					std::cerr << "\tAdding in: " << pit->peerId;
 					std::cerr << std::endl;
 				}
 			}	
@@ -563,6 +566,75 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 	}
 
 	/* extract details */
+	info.hash = hash;
+	info.fname = it->second.mName;
+
+	/* get list of sources from transferModule */
+	std::list<std::string> peerIds;
+	std::list<std::string>::iterator pit;
+
+	it->second.mTransfer->getFileSources(peerIds);
+
+	double totalRate;
+	uint32_t tfRate;
+	uint32_t state;
+
+	bool isDownloading = false;
+	bool isSuspended = false;
+
+	for(pit = peerIds.begin(); pit != peerIds.end(); pit++)
+	{
+		if (it->second.mTransfer->getPeerState(*pit, state, tfRate))
+		{
+			TransferInfo ti;
+			switch(state)
+			{
+			  case PQIPEER_INIT:
+				ti.status = FT_STATE_OKAY;
+				break;
+			  case PQIPEER_NOT_ONLINE:
+				ti.status = FT_STATE_WAITING;
+				break;
+			  case PQIPEER_DOWNLOADING:
+				isDownloading = true;
+				ti.status = FT_STATE_DOWNLOADING;
+				break;
+			  case PQIPEER_IDLE:
+				ti.status = FT_STATE_OKAY;
+				break;
+			  default:
+			  case PQIPEER_SUSPEND:
+				isSuspended = true;
+				ti.status = FT_STATE_FAILED;
+				break;
+			}
+
+			ti.tfRate = tfRate / 1024.0;
+			ti.peerId = *pit;
+			info.peers.push_back(ti);
+			totalRate += tfRate / 1024.0;
+		}
+	}
+
+	if ((it->second).mCreator->finished())
+	{
+		info.downloadStatus = FT_STATE_COMPLETE;
+	}
+	else if (isDownloading)
+	{
+		info.downloadStatus = FT_STATE_DOWNLOADING;
+	}
+	else if (isSuspended)
+	{
+		info.downloadStatus = FT_STATE_FAILED;
+	}
+	else 
+	{
+		info.downloadStatus = FT_STATE_WAITING;
+	}
+	info.tfRate = totalRate;
+	info.size = (it->second).mSize;
+	info.transfered  = (it->second).mCreator->getRecvd();
 
 	return true;
 

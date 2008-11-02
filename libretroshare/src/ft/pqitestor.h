@@ -67,13 +67,18 @@ class P3Hub: public RsThread
 {
 	public:
 
-	P3Hub();
+	P3Hub(uint32_t flags, RsSerialiser *rss);
 void 	addP3Pipe(std::string id, P3Pipe *, p3ConnectMgr *mgr);
 
 virtual	void run();
 
 	private:
+
+RsItem* SerialiserPass(RsItem *inItem);
+
 	std::map<std::string, hubItem> mPeers;
+	RsSerialiser *mSerialiser;
+	bool mUseSerialiser;
 };
 
 

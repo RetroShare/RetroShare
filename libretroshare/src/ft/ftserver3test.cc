@@ -175,7 +175,14 @@ int main(int argc, char **argv)
 	std::list<pqiAuthDetails> baseFriendList, friendList;
 	std::list<pqiAuthDetails>::iterator fit;
 
-	P3Hub *testHub = new P3Hub();
+	/* Add in Serialiser Test
+	 */
+        RsSerialiser *rss = new RsSerialiser();
+        rss->addSerialType(new RsFileItemSerialiser());
+        rss->addSerialType(new RsCacheItemSerialiser());
+        rss->addSerialType(new RsServiceSerialiser());
+
+	P3Hub *testHub = new P3Hub(0, rss);
 	testHub->start();
 
 	/* Setup Base Friend Info */
@@ -317,8 +324,8 @@ int main(int argc, char **argv)
 
 	while(1)
 	{
-		std::cerr << "ftserver2test::sleep()";
-		std::cerr << std::endl;
+		//std::cerr << "ftserver3test::sleep()";
+		//std::cerr << std::endl;
 		sleep(1);
 
 		/* tick the connmgrs */
@@ -372,7 +379,7 @@ void *do_server_test_thread(void *data)
 	std::string oId = oServer->OwnId();
 
 	/* create Expression */
-	uint64_t minFileSize = 10000;
+	uint64_t minFileSize = 100000;
 	//SizeExpression se(Greater, minFileSize);
 	SizeExpression se(Smaller, minFileSize);
 	Expression *expr = &se;
@@ -437,9 +444,9 @@ void *do_server_test_thread(void *data)
 	}
 
 	/* Give it a while to transfer */
-	for(int i = 0; i < 10; i++)
+	for(int i = 0; i < 300; i++)
 	{
-		std::cerr << "Waiting 10 seconds to transfer";
+		std::cerr << "Waited " << i * 10 << " seconds for transfer";
 		std::cerr << std::endl;
 		sleep(10);
 	}

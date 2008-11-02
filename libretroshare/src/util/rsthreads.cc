@@ -28,6 +28,14 @@
 #include "rsthreads.h"
 #include <unistd.h>    /* for usleep() */
 
+/*******
+ * #define DEBUG_THREADS 1
+ *******/
+
+#ifdef DEBUG_THREADS
+	#include <iostream>
+#endif
+
 extern "C" void* rsthread_init(void* p)
 {
   RsThread *thread = (RsThread *) p;
@@ -79,6 +87,12 @@ void RsQueueThread::run()
 			mLastWork = now;
 			mLastSleep = (uint32_t) 
 				(mMinSleep + (mLastSleep - mMinSleep) / 2.0);
+#ifdef DEBUG_THREADS
+			std::cerr << "RsQueueThread::run() done work: sleeping for: " << mLastSleep;
+			std::cerr << " ms";
+			std::cerr << std::endl;
+#endif
+
 		}
 		else
 		{
@@ -91,6 +105,11 @@ void RsQueueThread::run()
 			{
 				mLastSleep = mMaxSleep;
 			}
+#ifdef DEBUG_THREADS
+			std::cerr << "RsQueueThread::run() no work: sleeping for: " << mLastSleep;
+			std::cerr << " ms";
+			std::cerr << std::endl;
+#endif
 		}
 #ifdef WIN32
 		Sleep(mLastSleep);

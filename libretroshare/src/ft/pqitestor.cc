@@ -27,11 +27,18 @@
 #include "pqi/p3connmgr.h"
 
 /******
- *#define HUB_DEBUG
+ *#define HUB_DEBUG 1
  *****/
 
-P3Hub::P3Hub()
+#define HUB_DEBUG 1
+
+P3Hub::P3Hub(uint32_t flags, RsSerialiser *rss)
+	:mSerialiser(rss), mUseSerialiser(false)
 {
+	if (rss)
+	{
+		mUseSerialiser = true;
+	}
 	return;
 }
 
@@ -55,6 +62,54 @@ void	P3Hub::addP3Pipe(std::string id, P3Pipe *pqi, p3ConnectMgr *mgr)
 	std::cerr << std::endl;
 #endif
 
+}
+
+RsItem	*P3Hub::SerialiserPass(RsItem *inItem)
+{
+	/* pass through serialiser */
+
+	RsItem *item = NULL;
+
+        uint32_t pktsize = mSerialiser->size(inItem);
+        void *ptr = malloc(pktsize);
+
+#ifdef HUB_DEBUG
+	std::cerr << "P3Hub::SerialiserPass() Expected Size: " << pktsize;
+	std::cerr << std::endl;
+#endif
+
+        if (!mSerialiser->serialise(inItem, ptr, &pktsize))
+	{
+
+#ifdef HUB_DEBUG
+		std::cerr << "P3Hub::SerialiserPass() serialise Failed";
+		std::cerr << std::endl;
+#endif
+
+	}
+	else
+	{
+
+#ifdef HUB_DEBUG
+		std::cerr << "P3Hub::SerialiserPass() serialise success, size: " << pktsize;
+		std::cerr << std::endl;
+#endif
+
+        	item = mSerialiser->deserialise(ptr, &pktsize);
+		item->PeerId(inItem->PeerId());
+
+		if (!item)
+		{
+#ifdef HUB_DEBUG
+			std::cerr << "P3Hub::SerialiserPass() deSerialise Failed";
+			std::cerr << std::endl;
+#endif
+		}
+	}
+
+	delete inItem;
+	free(ptr);
+	return item;
 }
 
 
@@ -89,8 +144,16 @@ void 	P3Hub::run()
 				std::cerr << std::endl;
 #endif
 
-					
-				recvdQ.push_back(make_pair(it->first, item));
+				if (mUseSerialiser)
+				{
+					item = SerialiserPass(item);
+				}
+
+				/* serialiser might hav munched it. */
+				if (item)
+				{
+					recvdQ.push_back(make_pair(it->first, item));
+				}
 			}
 		}
 
