@@ -32,7 +32,13 @@ bool upnphandler::initUPnPState()
 	/* allocate memory */
 	uPnPConfigData *upcd = new uPnPConfigData;
 
+#if MINIUPNPC_VERSION >= 11
+	/* Starting from version 1.1, miniupnpc api has a new parameter (int sameport) */
+	upcd->devlist = upnpDiscover(2000, NULL, NULL, 0);
+#else
 	upcd->devlist = upnpDiscover(2000, NULL, NULL);
+#endif 
+
 	if(upcd->devlist)
 	{
 		struct UPNPDev * device;

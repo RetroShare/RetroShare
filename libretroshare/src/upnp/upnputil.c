@@ -141,8 +141,14 @@ bool SetRedirectAndTest(struct UPNPUrls * urls,
 		printf("GetExternalIPAddress failed.\n");
 
 // Unix at the moment!	
+#if MINIUPNPC_VERSION >= 12
+        /* Starting from miniupnpc version 1.2, lease duration parameter is gone */
+	r = UPNP_AddPortMapping(urls->controlURL, data->servicetype,
+	                        eport, iport, iaddr, 0, proto);
+#else
 	r = UPNP_AddPortMapping(urls->controlURL, data->servicetype,
 	                        eport, iport, iaddr, 0, 0, proto);
+#endif
 
 //	r = UPNP_AddPortMapping(urls->controlURL, data->servicetype,
 //	                        eport, iport, iaddr, 0, leaseDuration, proto);
