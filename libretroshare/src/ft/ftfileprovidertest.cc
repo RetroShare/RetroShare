@@ -2,7 +2,7 @@
 #include "ftfilecreator.h"
 
 #include "util/utest.h"
-
+#include <stdlib.h>
 
 INITTEST()
 

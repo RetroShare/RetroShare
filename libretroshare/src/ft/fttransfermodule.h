@@ -126,7 +126,7 @@ public:
 class ftTransferModule 
 {
 public:
-  ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftController *fc);
+  ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftController *c);
   ~ftTransferModule();
 
   //interface to download controller

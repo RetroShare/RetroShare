@@ -1,6 +1,7 @@
 #include "ftfileprovider.h"
 
 #include "util/rsdir.h"
+#include <stdlib.h>
 
 ftFileProvider::ftFileProvider(std::string path, uint64_t size, std::string
 hash) : mSize(size), hash(hash), file_name(path), fd(NULL) 
