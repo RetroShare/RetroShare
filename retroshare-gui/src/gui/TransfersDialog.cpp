@@ -373,47 +373,93 @@ void TransfersDialog::insertTransfers()
 	std::list<std::string>::iterator it;
 	for(it = downHashes.begin(); it != downHashes.end(); it++)
 	{
-		FileInfo info;
-		if (!rsFiles->FileDetails(*it, 0, info))
-		{
-			continue;
-		}
-		
+	  FileInfo info;
+	  if (!rsFiles->FileDetails(*it, 0, info))
+	  {
+		continue;
+	  }
+
+	  std::list<TransferInfo>::iterator pit;
+	  for(pit = info.peers.begin(); pit != info.peers.end(); pit++)
+	  {
 		symbol  	= "";
 		coreId		= QString::fromStdString(info.hash);
 		name    	= QString::fromStdString(info.fname);
-		sources  	= QString::fromStdString(info.source);
+		sources		= QString::fromStdString(pit->peerId);
 
-		switch(info.downloadStatus) 
+		switch(pit->status)
 		{
-
-	/******** XXX HAND CODED! 
-#define FT_STATE_FAILED         0
-#define FT_STATE_OKAY           1
-#define FT_STATE_WAITING        2
-#define FT_STATE_DOWNLOADING    3
-#define FT_STATE_COMPLETE       4
-	*******************/
-
-			case 0: /* FAILED */
+			case FT_STATE_FAILED: 
 				status = "Failed";
 				break;
-			case 1: /* OKAY */
+			case FT_STATE_OKAY: 
 				status = "Okay";
 				break;
-			case 2: /* WAITING */
+			case FT_STATE_WAITING:
 				status = "Waiting";
 				break;
-			case 3: /* DOWNLOADING */
+			case FT_STATE_DOWNLOADING:
 				status = "Downloading";
 				break;
-		    	case 4: /* COMPLETE */
+		    	case FT_STATE_COMPLETE: 
 			default:
 				status = "Complete";
 				break;
 		
         	}
+
+		if (info.downloadStatus == FT_STATE_COMPLETE)
+		{
+			status = "Complete";
+		}
         
+		dlspeed  	= pit->tfRate * 1024.0;
+		fileSize 	= info.size;
+		completed 	= info.transfered;
+		progress 	= info.transfered * 100.0 / info.size;
+		remaining   = (info.size - info.transfered) / (info.tfRate * 1024.0);
+	
+		addItem(symbol, name, coreId, fileSize, progress, 
+				dlspeed, sources,  status, completed, remaining);
+
+		/* if found in selectedIds -> select again */
+		if (selectedIds.end() != std::find(selectedIds.begin(), selectedIds.end(), info.hash))
+		{
+			selection->select(DLListModel->index(dlCount, 0), 
+				QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent);
+
+		}
+		dlCount++;
+	  }
+	  /* alternative ... if no peers there stick it in anyway */
+	  if (info.peers.size() == 0)
+	  {
+		symbol  	= "";
+		coreId		= QString::fromStdString(info.hash);
+		name    	= QString::fromStdString(info.fname);
+		sources		= QString::fromStdString("Unknown");
+
+		switch(info.downloadStatus)
+		{
+			case FT_STATE_FAILED: 
+				status = "Failed";
+				break;
+			case FT_STATE_OKAY: 
+				status = "Okay";
+				break;
+			case FT_STATE_WAITING:
+				status = "Waiting";
+				break;
+			case FT_STATE_DOWNLOADING:
+				status = "Downloading";
+				break;
+		    	case FT_STATE_COMPLETE: 
+			default:
+				status = "Complete";
+				break;
+		
+        	}
+
 		dlspeed  	= info.tfRate * 1024.0;
 		fileSize 	= info.size;
 		completed 	= info.transfered;
@@ -431,51 +477,90 @@ void TransfersDialog::insertTransfers()
 
 		}
 		dlCount++;
+	  }
 	}
 
 	for(it = upHashes.begin(); it != upHashes.end(); it++)
 	{
-		FileInfo info;
-		if (!rsFiles->FileDetails(*it, 0, info))
-		{
-			continue;
-		}
-		
+	  FileInfo info;
+	  if (!rsFiles->FileDetails(*it, 0, info))
+	  {
+		continue;
+	  }
+
+	  std::list<TransferInfo>::iterator pit;
+	  for(pit = info.peers.begin(); pit != info.peers.end(); pit++)
+	  {
 		symbol  	= "";
 		coreId		= QString::fromStdString(info.hash);
 		name    	= QString::fromStdString(info.fname);
-		sources  	= QString::fromStdString(info.source);
+		sources		= QString::fromStdString(pit->peerId);
 
-		switch(info.downloadStatus) 
+		switch(pit->status)
 		{
-
-	/******** XXX HAND CODED! 
-#define FT_STATE_FAILED         0
-#define FT_STATE_OKAY           1
-#define FT_STATE_WAITING        2
-#define FT_STATE_DOWNLOADING    3
-#define FT_STATE_COMPLETE       4
-	*******************/
-
-			case 0: /* FAILED */
+			case FT_STATE_FAILED: 
 				status = "Failed";
 				break;
-			case 1: /* OKAY */
+			case FT_STATE_OKAY: 
 				status = "Okay";
 				break;
-			case 2: /* WAITING */
+			case FT_STATE_WAITING:
 				status = "Waiting";
 				break;
-			case 3: /* DOWNLOADING */
+			case FT_STATE_DOWNLOADING:
 				status = "Downloading";
 				break;
-		    	case 4: /* COMPLETE */
+		    	case FT_STATE_COMPLETE: 
 			default:
 				status = "Complete";
 				break;
 		
         	}
+
+		if (info.downloadStatus == FT_STATE_COMPLETE)
+		{
+			status = "Complete";
+		}
         
+		dlspeed  	= pit->tfRate * 1024.0;
+		fileSize 	= info.size;
+		completed 	= info.transfered;
+		progress 	= info.transfered * 100.0 / info.size;
+		remaining   = (info.size - info.transfered) / (info.tfRate * 1024.0);
+	
+		addUploadItem(symbol, name, coreId, fileSize, progress, 
+				dlspeed, sources,  status, completed, remaining);
+		ulCount++;
+	  }
+
+	  if (info.peers.size() == 0)
+	  {
+		symbol  	= "";
+		coreId		= QString::fromStdString(info.hash);
+		name    	= QString::fromStdString(info.fname);
+		sources		= QString::fromStdString("Unknown");
+
+		switch(info.downloadStatus)
+		{
+			case FT_STATE_FAILED: 
+				status = "Failed";
+				break;
+			case FT_STATE_OKAY: 
+				status = "Okay";
+				break;
+			case FT_STATE_WAITING:
+				status = "Waiting";
+				break;
+			case FT_STATE_DOWNLOADING:
+				status = "Downloading";
+				break;
+		    	case FT_STATE_COMPLETE: 
+			default:
+				status = "Complete";
+				break;
+		
+        	}
+
 		dlspeed  	= info.tfRate * 1024.0;
 		fileSize 	= info.size;
 		completed 	= info.transfered;
@@ -485,6 +570,7 @@ void TransfersDialog::insertTransfers()
 		addUploadItem(symbol, name, coreId, fileSize, progress, 
 				dlspeed, sources,  status, completed, remaining);
 		ulCount++;
+	  }
 	}
 }
 

@@ -37,6 +37,22 @@ typedef std::string   RsChanId;
 typedef std::string   RsMsgId; 
 typedef std::string   RsAuthId; 
 
+const uint32_t FT_STATE_FAILED		= 0x0000;
+const uint32_t FT_STATE_OKAY		= 0x0001;
+const uint32_t FT_STATE_WAITING 	= 0x0002;
+const uint32_t FT_STATE_DOWNLOADING 	= 0x0003;
+const uint32_t FT_STATE_COMPLETE 	= 0x0004;
+
+class TransferInfo
+{
+	public:
+	/**** Need Some of these Fields ****/
+	std::string peerId;
+	std::string name; /* if has alternative name? */
+	double tfRate; /* kbytes */
+	int  status; /* FT_STATE_... */
+};
+
 
 class FileInfo
 {
@@ -75,36 +91,12 @@ static const int kRsFiStatusDone = 2;
 	double rank;
 	int age;
 
-	/* Old FileTransferInfo Entries */
-	public:
-	std::string source;
-	std::list<std::string> peerIds;
-	int transfered;
-	double tfRate; /* kbytes */
-	bool download;
-	int  downloadStatus; /* 0 = Err, 1 = Ok, 2 = Done */
-
-	/* ENTRIES USED BY SFI ***
-	 *
-	 * path,
-	 * fname, 
-	 * hash, 
-	 * size, 
-	 * avail, 
-	 *
-	 * source?
-	 *
-	 */
-	
-
+	/* Transfer Stuff */
+	uint64_t transfered;
+	double   tfRate; /* in kbytes */
+	uint32_t  downloadStatus; /* 0 = Err, 1 = Ok, 2 = Done */
+	std::list<TransferInfo> peers;
 };
-
-class FileTransferInfo: public FileInfo
-{
-	public:
-	FileTransferInfo() { return; }
-};
-
 
 std::ostream &operator<<(std::ostream &out, const FileInfo &info);
 

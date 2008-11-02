@@ -51,7 +51,8 @@ GraphWidget::GraphWidget(QWidget *parent)
 #if 0
     QGraphicsScene *scene = new QGraphicsScene(this);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
-    scene->setSceneRect(-200, -200, 400, 400);
+    //scene->setSceneRect(-200, -200, 400, 400);
+    scene->setSceneRect(-200, -200, 1000, 1000);
     setScene(scene);
 
     centerNode = new Node(this, 1, "You");
@@ -66,7 +67,8 @@ GraphWidget::GraphWidget(QWidget *parent)
     setTransformationAnchor(AnchorUnderMouse);
     setResizeAnchor(AnchorViewCenter);
     scale(0.8, 0.8);
-    setMinimumSize(400, 400);
+    //setMinimumSize(400, 400);
+    //setMinimumSize(1000, 1000);
     setWindowTitle(tr("Elastic Nodes"));
 
     clearGraph();
@@ -81,20 +83,13 @@ bool GraphWidget::clearGraph()
 
     QGraphicsScene *scene = new QGraphicsScene(this);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
-    scene->setSceneRect(-200, -200, 400, 400);
+    //scene->setSceneRect(-200, -200, 400, 400);
+    scene->setSceneRect(-200, -200, 1000, 1000);
     setScene(scene);
-    //setCacheMode(CacheBackground);
-    //setRenderHint(QPainter::Antialiasing);
-    //setTransformationAnchor(AnchorUnderMouse);
-    //setResizeAnchor(AnchorViewCenter);
 
     centerNode = new Node(this, 1, "OwnId", "You");
     scene->addItem(centerNode);
     centerNode->setPos(0, 0);
-
-    //scale(0.8, 0.8);
-    //setMinimumSize(400, 400);
-    //setWindowTitle(tr("Elastic Nodes"));
 
     if (oldscene)
     {

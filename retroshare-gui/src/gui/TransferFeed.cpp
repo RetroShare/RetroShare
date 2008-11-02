@@ -224,8 +224,13 @@ void  TransferFeed::updateDownloads()
 
 		if (rsFiles->FileDetails(*it, hintflags, fi))
 		{
+			// XXX HACK _ TOFIX >>>> fi.source);
+
   			SubFileItem *sfi = new SubFileItem(*it, fi.fname, 
-				fi.size, SFI_STATE_DOWNLOAD, fi.source);
+				fi.size, SFI_STATE_DOWNLOAD, "");
+
+			// XXX HACK _ TOFIX >>>> fi.source);
+
 			mDownloads[*it] = sfi;
 			mDownloadsLayout->addWidget(sfi);
 		}
@@ -314,8 +319,13 @@ void  TransferFeed::updateUploads()
 
 		if (rsFiles->FileDetails(*it, hintflags, fi))
 		{
+			// XXX HACK _ TOFIX >>>> fi.source);
+
   			SubFileItem *sfi = new SubFileItem(*it, fi.fname, 
-				fi.size, SFI_STATE_UPLOAD, fi.source);
+				fi.size, SFI_STATE_UPLOAD, "");
+
+			// XXX HACK _ TOFIX >>>> fi.source);
+
 			mUploads[*it] = sfi;
 			mUploadsLayout->addWidget(sfi);
 		}
