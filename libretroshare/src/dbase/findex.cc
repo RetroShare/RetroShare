@@ -26,6 +26,8 @@
 #include "rsiface/rsexpr.h"
 #include "util/rsdir.h"
 
+#include <stdlib.h>
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <iomanip>

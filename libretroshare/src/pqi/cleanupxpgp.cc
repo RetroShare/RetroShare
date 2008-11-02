@@ -25,7 +25,7 @@
 
 #include "cleanupxpgp.h"
 #include <iostream>
-
+#include <string.h>  #strlen
 
 /*
 Method for cleaning up the certificate. This method removes any unnecessay white spaces and unnecessary

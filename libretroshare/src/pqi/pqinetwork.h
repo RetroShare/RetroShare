@@ -105,7 +105,7 @@ std::ostream &showSocketError(std::ostream &out);
 
 std::string socket_errorType(int err);
 int sockaddr_cmp(struct sockaddr_in &addr1, struct sockaddr_in &addr2 );
-int inaddr_cmp(struct sockaddr_in addr1, struct sockaddr_in addr1 );
+int inaddr_cmp(struct sockaddr_in addr1, struct sockaddr_in addr2 );
 int inaddr_cmp(struct sockaddr_in addr1, unsigned long);
 
 struct in_addr getPreferredInterface(); // returns best addr.

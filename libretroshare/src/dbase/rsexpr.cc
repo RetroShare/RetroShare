@@ -26,6 +26,7 @@
 
 #include "dbase/findex.h"
 #include "rsiface/rsexpr.h"
+#include <algorithm>
 #include <functional>
 
 
