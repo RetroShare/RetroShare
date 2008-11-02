@@ -61,7 +61,7 @@ RSCFLAGS = -Wall -g $(INCLUDE)
 BIOCC  = gcc
 
 # Linux flags
-BIOCFLAGS =  -I $(SSL_DIR)/include -DOPENSSL_THREADS -D_REENTRANT -DDSO_DLFCN -DHAVE_DLFCN_H -DOPENSSL_NO_KRB5 -DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -m486 -Wall -DSHA1_ASM -DMD5_ASM -DRMD160_ASM  
+BIOCFLAGS =  -I $(SSL_DIR)/include -DOPENSSL_THREADS -D_REENTRANT -DDSO_DLFCN -DHAVE_DLFCN_H -DOPENSSL_NO_KRB5 -DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -march=i686 -Wall -DSHA1_ASM -DMD5_ASM -DRMD160_ASM  
 
 #########################################################################
 # OS specific Linking.
