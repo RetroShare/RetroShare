@@ -21,6 +21,7 @@
 #include <QtGui>
 
 #include <iostream>
+#include <algorithm>
 
 #include "rsiface/rschannels.h"
 

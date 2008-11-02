@@ -36,6 +36,7 @@
 
 #include <sstream>
 #include "rsiface/rsfiles.h"
+#include <algorithm>
 
 /* Images for context menu icons */
 #define IMAGE_INFO                 ":/images/fileinfo.png"

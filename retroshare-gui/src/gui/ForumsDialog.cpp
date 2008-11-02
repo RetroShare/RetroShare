@@ -29,6 +29,7 @@
 #include "rsiface/rsmsgs.h"
 #include "rsiface/rsforums.h"
 #include <sstream>
+#include <algorithm>
 
 #include <QContextMenuEvent>
 #include <QMenu>

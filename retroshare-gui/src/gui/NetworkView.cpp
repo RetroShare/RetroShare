@@ -28,6 +28,7 @@
 #include <QGraphicsItem>
 
 #include <iostream>
+#include <algorithm>
 
 /** Constructor */
 NetworkView::NetworkView(QWidget *parent)

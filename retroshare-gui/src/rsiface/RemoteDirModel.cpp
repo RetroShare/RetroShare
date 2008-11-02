@@ -7,6 +7,7 @@
 #include <iostream>
 #include <sstream>
 #include <math.h>
+#include <algorithm>
 
 /*****
  * #define RDM_DEBUG

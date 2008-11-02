@@ -25,6 +25,7 @@
 #include <QtGui/QMouseEvent>
 
 #include <exception>
+#include <typeinfo>
 
 MouseMoveEventFilter::MouseMoveEventFilter(QObject * receiver, const char * member)
 	: EventFilter(receiver, member) {
