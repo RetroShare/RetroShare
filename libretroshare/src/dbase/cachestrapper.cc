@@ -34,6 +34,7 @@
  * #define CS_DEBUG 1
  ***/
 
+#define CS_DEBUG 1
 
 bool operator<(const CacheId &a, const CacheId &b)
 {
@@ -209,7 +210,7 @@ CacheStore::CacheStore(uint16_t t, bool m,
 void    CacheStore::lockData() const
 {
 #ifdef CS_DEBUG
-	std::cerr << "CacheStore::lockData()" << std::endl;
+//	std::cerr << "CacheStore::lockData()" << std::endl;
 #endif
 	cMutex.lock();
 }
@@ -217,7 +218,7 @@ void    CacheStore::lockData() const
 void    CacheStore::unlockData() const
 {
 #ifdef CS_DEBUG
-	std::cerr << "CacheStore::unlockData()" << std::endl;
+//	std::cerr << "CacheStore::unlockData()" << std::endl;
 #endif
 	cMutex.unlock();
 }
@@ -1050,15 +1051,29 @@ bool CacheTransfer::CompletedCache(std::string hash)
 	std::map<std::string, CacheData>::iterator dit;
 	std::map<std::string, CacheStore *>::iterator sit;
 
+#ifdef CS_DEBUG
+	std::cerr << "CacheTransfer::CompletedCache(" << hash << ")";
+	std::cerr << std::endl;
+#endif
+
 	/* find in store.... */
 	sit = cbStores.find(hash);
 	dit = cbData.find(hash);
 
 	if ((sit == cbStores.end()) || (dit == cbData.end()))
 	{
+#ifdef CS_DEBUG
+		std::cerr << "CacheTransfer::CompletedCache() Failed to find it";
+		std::cerr << std::endl;
+#endif
+
 		return false;
 	}
 	
+#ifdef CS_DEBUG
+	std::cerr << "CacheTransfer::CompletedCache() callback to store";
+	std::cerr << std::endl;
+#endif
 	/* callback */
 	(sit -> second) -> downloadedCache(dit->second);
 

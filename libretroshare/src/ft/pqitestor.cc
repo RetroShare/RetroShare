@@ -30,8 +30,6 @@
  *#define HUB_DEBUG 1
  *****/
 
-#define HUB_DEBUG 1
-
 P3Hub::P3Hub(uint32_t flags, RsSerialiser *rss)
 	:mSerialiser(rss), mUseSerialiser(false)
 {

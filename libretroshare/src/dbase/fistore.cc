@@ -44,6 +44,8 @@ FileIndexStore::~FileIndexStore()
  * #define FIS_DEBUG 1
  **/
 
+#define FIS_DEBUG 1
+
 	  /* actual load, once data available */
 int FileIndexStore::loadCache(const CacheData &data)
 {
@@ -353,6 +355,10 @@ int FileIndexStore::SearchHash(std::string hash, std::list<FileDetail> &results)
 #endif
 	for(pit = indices.begin(); pit != indices.end(); pit++)
 	{
+#ifdef FIS_DEBUG
+		std::cerr << "FileIndexStore::SearchHash() Searching: Peer ";
+		std::cerr << pit->first << std::endl;
+#endif
 		firesults.clear();
 
 		(pit->second)->searchHash(hash, firesults);
@@ -372,6 +378,12 @@ int FileIndexStore::SearchHash(std::string hash, std::list<FileDetail> &results)
 		}
 
 	}
+
+
+#ifdef FIS_DEBUG
+	std::cerr << "FileIndexStore::SearchHash() Found " << results.size();
+	std::cerr << " Results from " << indices.size() << " Peers" << std::endl;
+#endif
 
 	unlockData();
 	return results.size();

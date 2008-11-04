@@ -218,22 +218,49 @@ bool ftController::completeFile(std::string hash)
 	/* If it has a callback - do it now */
 	if (fc->mDoCallback)
 	{
+#ifdef CONTROL_DEBUG
+	  std::cerr << "ftController::completeFile() doing Callback";
+	  std::cerr << std::endl;
+#endif
+
 	  switch (fc->mCallbackCode)
 	  {
 	    case CB_CODE_CACHE:
 		/* callback */
 		if (fc->mState == ftFileControl::COMPLETED)
 		{
+#ifdef CONTROL_DEBUG
+	  		std::cerr << "ftController::completeFile() doing Callback : Success";
+	  		std::cerr << std::endl;
+#endif
+			
 			CompletedCache(fc->mHash);
 		}
 		else
 		{
+#ifdef CONTROL_DEBUG
+	  		std::cerr << "ftController::completeFile() Cache Callback : Failed";
+	  		std::cerr << std::endl;
+#endif
 			FailedCache(fc->mHash);
 		}
 		break;
 	    case CB_CODE_MEDIA:
+#ifdef CONTROL_DEBUG
+		std::cerr << "ftController::completeFile() NULL MEDIA callback";
+		std::cerr << std::endl;
+#endif
 		break;
 	  }
+	}
+	else
+	{
+#ifdef CONTROL_DEBUG
+		std::cerr << "ftController::completeFile() No callback";
+		std::cerr << std::endl;
+#endif
+
+
 	}
 	
 
@@ -248,6 +275,8 @@ bool ftController::completeFile(std::string hash)
 	/***************************************************************/
 	/********************** Controller Access **********************/
 	/***************************************************************/
+
+const uint32_t FT_CNTRL_STANDARD_RATE = 100 * 1024;
 
 bool 	ftController::FileRequest(std::string fname, std::string hash, 
 			uint64_t size, std::string dest, uint32_t flags, 
@@ -378,7 +407,8 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 #endif
 			//tm->setPeerState(*it, RS_FILE_RATE_FAST | 
 			//			RS_FILE_PEER_ONLINE, 100000);
-			tm->setPeerState(*it, PQIPEER_IDLE, 10000);
+			//tm->setPeerState(*it, PQIPEER_IDLE, 10000);
+			tm->setPeerState(*it, PQIPEER_IDLE, FT_CNTRL_STANDARD_RATE);
 		}
 		else if (mConnMgr->isOnline(*it))
 		{
@@ -389,7 +419,8 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 #endif
 			//tm->setPeerState(*it, RS_FILE_RATE_TRICKLE | 
 			//			RS_FILE_PEER_ONLINE, 10000);
-			tm->setPeerState(*it, PQIPEER_IDLE, 10000);
+			//tm->setPeerState(*it, PQIPEER_IDLE, 10000);
+			tm->setPeerState(*it, PQIPEER_IDLE, FT_CNTRL_STANDARD_RATE);
 		}
 		else
 		{
@@ -399,7 +430,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 			std::cerr << std::endl;
 #endif
 			//tm->setPeerState(*it, RS_FILE_PEER_OFFLINE,  10000);
-			tm->setPeerState(*it, PQIPEER_NOT_ONLINE,  10000);
+			tm->setPeerState(*it, PQIPEER_NOT_ONLINE, FT_CNTRL_STANDARD_RATE);
 		}
 	}
 
@@ -410,6 +441,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 
 	return true;
 }
+
 
 
 bool 	ftController::FileCancel(std::string hash)

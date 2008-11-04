@@ -34,6 +34,12 @@
  * #define TLV_FI_DEBUG 1
  **/
 
+
+RsTlvFileItem::RsTlvFileItem()
+{
+	TlvClear();
+}
+
 void RsTlvFileItem::TlvClear()
 {
 	filesize = 0;

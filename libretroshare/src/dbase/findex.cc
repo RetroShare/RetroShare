@@ -963,6 +963,10 @@ int DirEntry::saveEntry(std::ostringstream &oss)
 
 int FileIndex::searchHash(std::string hash, std::list<FileEntry *> &results) const
 {
+#ifdef FI_DEBUG
+	std::cerr << "FileIndex::searchHash(" << hash << ")";
+	std::cerr << std::endl; 
+#endif
 	DirEntry *ndir = NULL;
 	std::list<DirEntry *> dirlist;
 	dirlist.push_back(root);
@@ -985,6 +989,11 @@ int FileIndex::searchHash(std::string hash, std::list<FileEntry *> &results) con
 			if (hash == (fit->second)->hash)
 			{
 				results.push_back(fit->second);
+#ifdef FI_DEBUG
+				std::cerr << "FileIndex::searchHash(" << hash << ")";
+				std::cerr << " found: " << fit->second->name;
+				std::cerr << std::endl; 
+#endif
 			}
 		}
 	}

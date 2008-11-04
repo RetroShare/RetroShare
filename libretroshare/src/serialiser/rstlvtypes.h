@@ -87,7 +87,7 @@ bool    setBinData(void *data, uint16_t size);
 class RsTlvFileItem: public RsTlvItem
 {
 	public:
-	 RsTlvFileItem() { return; }
+	 RsTlvFileItem();
 virtual ~RsTlvFileItem() { return; }
 virtual uint16_t TlvSize();
 virtual void	 TlvClear();

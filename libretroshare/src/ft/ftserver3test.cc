@@ -352,6 +352,7 @@ INITTEST();
 void *do_server_test_thread(void *data)
 {
 	TestData *mFt = (TestData *) data;
+	time_t startTS = time(NULL);
 
 	std::cerr << "do_server_test_thread() running";
 	std::cerr << std::endl;
@@ -368,9 +369,10 @@ void *do_server_test_thread(void *data)
 	}
 
 
-	for(int i = 0; i < 60; i++)
+	for(int i = 0; i < 90; i++)
 	{
-		std::cerr << "Waiting 60 seconds to share caches";
+		int age = time(NULL) - startTS;
+		std::cerr << "Waited " << age << " seconds to share caches";
 		std::cerr << std::endl;
 		sleep(1);
 	}
@@ -436,7 +438,8 @@ void *do_server_test_thread(void *data)
 	/*** Now Download it! ***/
 	std::list<std::string> srcIds;
 	//srcIds.push_back(sFile.id);
-	srcIds.push_back(oId);
+	// Don't add srcId - to test whether the search works - or not
+	//srcIds.push_back(oId);
 	if (foundFile)
 	{
 		mFt->loadServer->FileRequest(sFile.name, sFile.hash, 
@@ -444,74 +447,13 @@ void *do_server_test_thread(void *data)
 	}
 
 	/* Give it a while to transfer */
-	for(int i = 0; i < 300; i++)
+	for(int i = 0; i < 100; i++)
 	{
-		std::cerr << "Waited " << i * 10 << " seconds for transfer";
+		int age = time(NULL) - startTS;
+		std::cerr << "Waited " << age << " seconds for tranfer";
 		std::cerr << std::endl;
-		sleep(10);
+		sleep(1);
 	}
-
-#if 0
-	bool 
-	while(!mFt->loadServer->ExtraFileStatus(*eit, info))
-	{
-
-		/* max of 30 seconds */
-		now = time(NULL);
-			if (now - start > 30)
-			{
-				/* FAIL */
-				REPORT2( false, "Extra File Hashing");
-			}
-
-			sleep(1);
-		}
-
-		/* Got ExtraFileStatus */
-		REPORT("Successfully Found ExtraFile");
-
-		/* now we can try a search (should succeed) */
-		uint32_t hintflags = 0;
-		if (mFt->loadServer->FileDetails(info.hash, hintflags, info2))
-		{
-			CHECK(info2.hash == info.hash);
-			CHECK(info2.size == info.size);
-			CHECK(info2.fname == info.fname);
-		}
-		else
-		{
-			REPORT2( false, "Search for Extra File (Basic)");
-		}
-
-		/* search with flags (should succeed) */
-		hintflags = RS_FILE_HINTS_EXTRA;
-		if (mFt->loadServer->FileDetails(info.hash, hintflags, info2))
-		{
-			CHECK(info2.hash == info.hash);
-			CHECK(info2.size == info.size);
-			CHECK(info2.fname == info.fname);
-		}
-		else
-		{
-			REPORT2( false, "Search for Extra File (Extra Flag)");
-		}
-
-		/* search with other flags (should fail) */
-		hintflags = RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY;
-		if (mFt->loadServer->FileDetails(info.hash, hintflags, info2))
-		{
-			REPORT2( false, "Search for Extra File (Fail Flags)");
-		}
-		else
-		{
-			REPORT("Search for Extra File (Fail Flags)");
-		}
-
-		/* if we try to download it ... should just find existing one*/
-
-		REPORT("Testing with Extra File");
-	}
-#endif
 
 	FINALREPORT("Shared Directories, Bool Search, multi-source transfers");
 	exit(1);

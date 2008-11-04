@@ -31,6 +31,24 @@
 
 #include "fttransfermodule.h"
 
+/*************************************************************************
+ * Notes on file transfer strategy.
+ * Care must be taken not to overload pipe. best way is to time requests.
+ * and according adjust data rate.
+ *
+ * each peer gets a 'max_rate' which is decided on the type of transfer.
+ *  - trickle ...
+ *  - stream ...
+ *  - max ...
+ *
+ * Each peer is independently managed.
+ *
+ * via the functions:
+ *
+ */
+
+const double FT_TM_MAX_PEER_RATE = 1024 * 1024; /* 1MB/s */
+
 ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftController *c)
 	:mFileCreator(fc), mMultiplexor(dm), mFtController(c), mFlag(0)
 {
@@ -43,6 +61,8 @@ ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftCon
 	// Dummy for Testing (should be handled independantly for 
 	// each peer.
 	//mChunkSize = 10000;
+	desiredRate = 1000000; /* 1MB/s ??? */
+	actualRate = 0;
 	return;
 }
 
@@ -108,10 +128,10 @@ bool ftTransferModule::setPeerState(std::string peerId,uint32_t state,uint32_t m
 
   (mit->second).state=state;
   (mit->second).desiredRate=maxRate;
+  (mit->second).actualRate=maxRate; /* should give big kick in right direction */
 
   std::list<std::string>::iterator it;
-  it=mOnlinePeers.begin();
-  while((it!=mOnlinePeers.end())&&(*it!=peerId)) it++;
+  it = std::find(mOnlinePeers.begin(), mOnlinePeers.end(), peerId);
 
   if (state!=PQIPEER_NOT_ONLINE) 
   {
@@ -180,48 +200,30 @@ bool ftTransferModule::recvFileData(std::string peerId, uint64_t offset,
 	std::cerr << std::endl;
 #endif
 
+  bool ok = false;
+
   {
   	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
 
-  std::map<std::string,peerInfo>::iterator mit;
-  mit = mFileSources.find(peerId);
+  	std::map<std::string,peerInfo>::iterator mit;
+  	mit = mFileSources.find(peerId);
 
-  if (mit == mFileSources.end())
-  {
+  	if (mit == mFileSources.end())
+  	{
 #ifdef FT_DEBUG
-	std::cerr << "ftTransferModule::recvFileData()";
-	std::cerr << " peer not found in sources";
-	std::cerr << std::endl;
+		std::cerr << "ftTransferModule::recvFileData()";
+		std::cerr << " peer not found in sources";
+		std::cerr << std::endl;
 #endif
-    	return false;
-  }
+    		return false;
+  	}
+	ok = locked_recvPeerData(mit->second, offset, chunk_size, data);
 
-  if ((mit->second).state != PQIPEER_DOWNLOADING)
-  {
-#ifdef FT_DEBUG
-	std::cerr << "ftTransferModule::recvFileData()";
-	std::cerr << " peer not downloading???";
-	std::cerr << std::endl;
-#endif
-    	//return false;
-  }
-
-  if (offset != ((mit->second).offset + (mit->second).receivedSize))
-  {
-    //fix me
-    //received data not expected
-#ifdef FT_DEBUG
-	std::cerr << "ftTransferModule::recvFileData()";
-	std::cerr << " offset != offset + recvdSize";
-	std::cerr << std::endl;
-#endif
-    	return false;
-  }
-
-  (mit->second).receivedSize += chunk_size;
-  (mit->second).state = PQIPEER_IDLE;
   } /***** STACK MUTEX END ****/
-  return storeData(offset, chunk_size, data);
+
+  if (ok)
+  	storeData(offset, chunk_size, data);
+  return ok;
 }
 
 void ftTransferModule::requestData(std::string peerId, uint64_t offset, uint32_t chunk_size)
@@ -298,96 +300,22 @@ bool ftTransferModule::queryInactive()
         std::cerr << "ftTransferModule::queryInactive()" << std::endl;
 #endif
 
-  if (mFileStatus.stat == ftFileStatus::PQIFILE_INIT)
-	  mFileStatus.stat = ftFileStatus::PQIFILE_DOWNLOADING;
+  	if (mFileStatus.stat == ftFileStatus::PQIFILE_INIT)
+		mFileStatus.stat = ftFileStatus::PQIFILE_DOWNLOADING;
 
-  if (mFileStatus.stat != ftFileStatus::PQIFILE_DOWNLOADING)
-  {
-	  if (mFileStatus.stat == ftFileStatus::PQIFILE_FAIL_CANCEL)
-		  mFlag = 2; //file canceled by user
-	  return false;
-  }
-
-  int ts = time(NULL);
-  uint64_t req_offset;
-  uint32_t req_size;
-  int delta;  
-
-  std::map<std::string,peerInfo>::iterator mit;
-  for(mit = mFileSources.begin(); mit != mFileSources.end(); mit++)
-  {
-    std::string peerId = mit->first;
-    peerInfo* pInfo = &mit->second;
-    switch (pInfo->state) 
-    {
-    	//Peer side has change from online to offline during transfer
-      case PQIPEER_NOT_ONLINE:
-        break;
-      
-      //file request has been sent to peer side, but no response received yet  
-      case PQIPEER_DOWNLOADING:
-      	if (ts - (pInfo->lastTS) < PQIPEER_DOWNLOAD_CHECK)
-	{
-	  /* if not timed out yet.... ignore */
-	  actualRate += pInfo->actualRate;
-	  break;
+  	if (mFileStatus.stat != ftFileStatus::PQIFILE_DOWNLOADING)
+  	{
+		if (mFileStatus.stat == ftFileStatus::PQIFILE_FAIL_CANCEL)
+			mFlag = 2; //file canceled by user
+		return false;
 	}
 
-	/* otherwise fall through to request it again (with getChunk);
-	 */
-
-      //file response received or peer side is just ready for download  
-      case PQIPEER_IDLE:
-     	pInfo->actualRate = pInfo->chunkSize/(ts-(pInfo->lastTS));
-
-        if (pInfo->actualRate < pInfo->desiredRate)
-	{
-        	if (pInfo->actualRate < pInfo->desiredRate/2)
-        	{
-          		req_size = pInfo->chunkSize * 2 ;
-        	}
-        	else
-        	{
-          		req_size = (uint32_t ) (pInfo->chunkSize * 1.1) ;
-		}
-        }
-       	else
-       	{
-          req_size = (uint32_t ) (pInfo->chunkSize * 0.9) ;
-        }
-
-        if (getChunk(req_offset,req_size))
-      	{ 
-	  if (req_size > 0)
-	  {
-     		pInfo->offset = req_offset;
-     		pInfo->chunkSize = req_size;
-     		pInfo->lastTS = ts;
-     		pInfo->state = PQIPEER_DOWNLOADING;
-		pInfo->receivedSize = 0;
-     		requestData(peerId,req_offset,req_size);
-	  }
-	  else
-	  {
-		std::cerr << "transfermodule::Waiting for data to be available";
-		std::cerr << std::endl;
-	  }
-     	}
-        else mFlag = 1;      
-
-        actualRate += pInfo->actualRate;
-      	break;
-      
-      //file transfer has been stopped
-      case PQIPEER_SUSPEND:
-        break;
-
-      default:
-        break;
-    }//switch
-  }//for
-
-  return true; 
+  	std::map<std::string,peerInfo>::iterator mit;
+  	for(mit = mFileSources.begin(); mit != mFileSources.end(); mit++)
+  	{
+		locked_tickPeerTransfer(mit->second);
+	}
+  	return true; 
 }
 
 bool ftTransferModule::pauseTransfer()
@@ -442,10 +370,27 @@ bool ftTransferModule::completeFileTransfer()
 int ftTransferModule::tick()
 {
 #ifdef FT_DEBUG
+  {
+  	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
+
 	std::cerr << "ftTransferModule::tick()";
 	std::cerr << " mFlag: " << mFlag;
+	std::cerr << " mHash: " << mHash;
+	std::cerr << " mSize: " << mSize;
 	std::cerr << std::endl;
+
+	std::cerr << "Peers: ";
+  	std::map<std::string,peerInfo>::iterator it;
+  	for(it = mFileSources.begin(); it != mFileSources.end(); it++)
+	{
+		std::cerr << " " << it->first;
+	}
+	std::cerr << std::endl;
+		
+		
+  }
 #endif
+
 
   queryInactive();
 
@@ -480,43 +425,119 @@ void ftTransferModule::adjustSpeed()
 
   std::map<std::string,peerInfo>::iterator mit;
 
-#ifdef FT_DEBUG
-	std::cerr << "ftTransferModule::adjustSpeed()";
-	std::cerr << " Initial Desired Rate: " << desiredRate << " Actual Rate: " << actualRate;
-	std::cerr << std::endl;
-#endif
 
-
-
+  actualRate = 0;
   for(mit = mFileSources.begin(); mit != mFileSources.end(); mit++)
   {
-    if (((mit->second).state == PQIPEER_DOWNLOADING) 
-        || ((mit->second).state == PQIPEER_IDLE))
-    {
-
 #ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::adjustSpeed()";
-	std::cerr << "\t" << mit->first << " Desired Rate: " << desiredRate << " Actual Rate: " << actualRate;
+	std::cerr << "Peer: " << mit->first; 
+	std::cerr << " Desired Rate: " << (mit->second).desiredRate;
+	std::cerr << " Actual Rate: " << (mit->second).actualRate;
 	std::cerr << std::endl;
 #endif
-
-        if ((actualRate < desiredRate) && ((mit->second).actualRate >= (mit->second).desiredRate))
-        {
-          (mit->second).desiredRate *= 1.1;
-        }
-
-        if ((actualRate > desiredRate) && ((mit->second).actualRate < (mit->second).desiredRate))
-        {
-          (mit->second).desiredRate *= 0.9;
-        }
-    }
+    actualRate += mit->second.actualRate;
   }
+
 #ifdef FT_DEBUG
-	std::cerr << "ftTransferModule::adjustSpeed()";
-	std::cerr << " Initial Desired Rate: " << desiredRate << " Actual Rate: " << actualRate;
+	std::cerr << "ftTransferModule::adjustSpeed() Totals:";
+	std::cerr << "Desired Rate: " << desiredRate << " Actual Rate: " << actualRate;
 	std::cerr << std::endl;
 #endif
-	return;
+
+  return;
 }
 
+
+/*******************************************************************************
+ * Actual Peer Transfer Management Code.
+ *
+ * request very tick, at rate
+ *
+ *
+ **/
+
+const uint32_t FT_TM_MINIMUM_CHUNK = 1024; /* ie 1Kb / sec */
+const uint32_t FT_TM_RESTART_DOWNLOAD = 60; /* 60 seconds */
+const uint32_t FT_TM_DOWNLOAD_TIMEOUT = 5; /* 5 seconds */
+
+bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
+{
+	/* how long has it been? */
+	time_t ts = time(NULL);
+
+	int ageRecv = ts - info.recvTS;
+	int ageReq = ts - info.lastTS;
+
+	if (ageReq > FT_TM_RESTART_DOWNLOAD)
+	{
+		info.state = PQIPEER_DOWNLOADING;
+		info.recvTS = ts; /* reset to activate */
+		ageRecv = 0;
+	}
+
+	if (ageRecv > FT_TM_DOWNLOAD_TIMEOUT)
+	{
+		info.state = PQIPEER_IDLE;
+		return false;
+	}
+
+	/* update rate */
+	info.actualRate = info.actualRate * 0.75 + 0.25 * info.lastTransfers;
+	info.lastTransfers = 0;
+
+	/* request at 10% more than actual rate */
+	uint32_t next_req = info.actualRate * 1.1;
+
+	if (next_req > info.desiredRate * 1.1)
+		next_req = info.desiredRate * 1.1;
+
+	if (next_req > FT_TM_MAX_PEER_RATE)
+		next_req = FT_TM_MAX_PEER_RATE;
+
+	if (next_req < FT_TM_MINIMUM_CHUNK)
+		next_req = FT_TM_MINIMUM_CHUNK;
+
+	info.lastTS = ts;
+	
+	/* do request */
+	uint64_t req_offset = 0;
+	if (getChunk(req_offset,next_req))
+	{
+		if (next_req > 0)
+		{
+			info.state = PQIPEER_DOWNLOADING;
+			requestData(info.peerId,req_offset,next_req);
+		}
+		else
+		{
+			std::cerr << "transfermodule::Waiting for available data";
+			std::cerr << std::endl;
+		}
+	}
+        else mFlag = 1;      
+}
+
+	
+	
+  //interface to client module
+bool ftTransferModule::locked_recvPeerData(peerInfo &info, uint64_t offset, 
+			uint32_t chunk_size, void *data)
+{
+#ifdef FT_DEBUG
+	std::cerr << "ftTransferModule::locked_recvPeerData()";
+	std::cerr << " peerId: " << info.peerId;
+	std::cerr << " offset: " << offset;
+	std::cerr << " chunksize: " << chunk_size;
+	std::cerr << " data: " << data;
+	std::cerr << std::endl;
+#endif
+
+  time_t ts = time(NULL);
+  info.recvTS = ts;
+  info.state = PQIPEER_DOWNLOADING;
+  info.lastTransfers += chunk_size;
+
+  return true;
+}
 

@@ -44,6 +44,8 @@ const double   DMULTIPLEX_RELAX = 0.5; /* ??? */
  * #define MPLEX_DEBUG 1
  *****/
  
+#define MPLEX_DEBUG 1
+
 ftClient::ftClient(ftTransferModule *module, ftFileCreator *creator)
 	:mModule(module), mCreator(creator)
 {
@@ -120,11 +122,24 @@ bool    ftDataMultiplex::FileDownloads(std::list<std::string> &hashs)
 
 bool    ftDataMultiplex::FileDetails(std::string hash, uint32_t hintsflag, FileInfo &info)
 {
+#ifdef MPLEX_DEBUG
+	std::cerr << "ftDataMultiplex::FileDetails(";
+	std::cerr << hash << ", " << hintsflag << ")";
+	std::cerr << std::endl;
+#endif
+
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 	std::map<std::string, ftFileProvider *>::iterator sit;
 	sit = mServers.find(hash);
 	if (sit != mServers.end())
 	{
+
+#ifdef MPLEX_DEBUG
+		std::cerr << "ftDataMultiplex::FileDetails()";
+		std::cerr << " Found ftFileProvider!";
+		std::cerr << std::endl;
+#endif
+
 		(sit->second)->FileDetails(info);
 		return true;
 	}
@@ -132,10 +147,23 @@ bool    ftDataMultiplex::FileDetails(std::string hash, uint32_t hintsflag, FileI
 	std::map<std::string, ftClient>::iterator cit;
 	if (mClients.end() != (cit = mClients.find(hash)))
 	{
+
+#ifdef MPLEX_DEBUG
+		std::cerr << "ftDataMultiplex::FileDetails()";
+		std::cerr << " Found ftFileCreator!";
+		std::cerr << std::endl;
+#endif
+
 		//(cit->second).mModule->FileDetails(info);
 		(cit->second).mCreator->FileDetails(info);
 		return true;
 	}
+
+#ifdef MPLEX_DEBUG
+	std::cerr << "ftDataMultiplex::FileDetails()";
+	std::cerr << " Found nothing";
+	std::cerr << std::endl;
+#endif
 	
 	return false;
 }
@@ -410,6 +438,7 @@ bool	ftDataMultiplex::locked_handleServerRequest(ftFileProvider *provider,
 	std::cerr << " FAILED";
 	std::cerr << std::endl;
 #endif
+	free(data);
 
 	return false;
 }
@@ -420,6 +449,13 @@ bool	ftDataMultiplex::handleSearchRequest(std::string peerId,
 			uint64_t offset, uint32_t chunksize)
 {
 
+
+#ifdef MPLEX_DEBUG
+	std::cerr << "ftDataMultiplex::handleSearchRequest(";
+	std::cerr << peerId << ", " << hash << ", " << size << "...)";
+	std::cerr << std::endl;
+#endif
+
 	{
 		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
@@ -427,6 +463,13 @@ bool	ftDataMultiplex::handleSearchRequest(std::string peerId,
 		std::map<std::string, time_t>::iterator bit;
 		if (mUnknownHashs.end() != (bit = mUnknownHashs.find(hash)))
 		{
+
+#ifdef MPLEX_DEBUG
+		std::cerr << "ftDataMultiplex::handleSearchRequest(";
+		std::cerr << " Found Ignore Hash ... done";
+		std::cerr << std::endl;
+#endif
+
 			/* We've previously rejected this one, so ignore */
 			return false;
 		}
@@ -439,6 +482,7 @@ bool	ftDataMultiplex::handleSearchRequest(std::string peerId,
 	 * (anywhere but remote really)
 	 */
 
+
 	FileInfo info;
 	uint32_t hintflags = (RS_FILE_HINTS_CACHE |
 				RS_FILE_HINTS_EXTRA |
@@ -447,6 +491,13 @@ bool	ftDataMultiplex::handleSearchRequest(std::string peerId,
 
 	if (mSearch->search(hash, size, hintflags, info))
 	{
+
+#ifdef MPLEX_DEBUG
+		std::cerr << "ftDataMultiplex::handleSearchRequest(";
+		std::cerr << " Found Local File, sharing...";
+		std::cerr << std::endl;
+#endif
+
 
 		/* setup a new provider */
 		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
@@ -459,6 +510,14 @@ bool	ftDataMultiplex::handleSearchRequest(std::string peerId,
 		/* handle request finally */
 		locked_handleServerRequest(provider,
 					peerId, hash, size, offset, chunksize);
+
+
+		/* now we should should check if any further requests for the same
+		 * file exists ... (can happen with caches!)
+		 *
+		 * but easier to check pre-search....
+		 */
+
 		return true;
 	}
 	return false;
