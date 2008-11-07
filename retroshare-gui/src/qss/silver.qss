@@ -1,0 +1,71 @@
+
+/* Customize the toolbar. */
+QToolBar {
+    border-image: url(qss/silver/silver.png);
+
+}
+
+
+
+QPushButton#okButton {
+	min-height: 27px;
+      min-width: 77px;
+}
+
+QPushButton#cancelprefButton {
+	  min-height: 27px;
+      min-width: 77px;
+}
+
+QPushButton#cancelButton {
+	  min-height: 25px;
+	  max-height: 25px;
+      min-width: 75px;
+}
+
+
+QPushButton#applyButton {
+
+	  min-height: 25px;
+	  max-height: 25px;
+      min-width: 75px;
+}
+
+QMenu::item:selected { /* when user selects item using mouse or keyboard */
+
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #F9F9FF, stop: 1 #9F9DB9);
+}
+
+QListWidget::item:selected { /* when user selects item using mouse or keyboard */
+
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #F9F9FF, stop: 1 #9F9DB9);
+}
+
+QTreeWidget::item:selected { /* when user selects item using mouse or keyboard */
+
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #F9F9FF, stop: 1 #9F9DB9);                                     
+}
+
+QStatusBar{
+       
+   	 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #F9F9FF, stop: 1 #9F9DB9);
+}
+
+QFrame#messengerframetop{
+         
+        border-image: url(qss/silver/silver.png);
+
+         
+        /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #F7B552, stop: 1 #FF5E07);*/
+}
+
+QFrame#Chatbuttonframe{
+         
+        border-image: url(qss/silver/silver.png);
+
+}

@@ -1,0 +1,23 @@
+.QWidget {
+   background-color: #ECF3F6;
+   
+}
+
+/* Customize the toolbar. */
+QToolBar {
+    border-image: url(qss/default/retrotoolbar.png);
+
+}
+
+
+QFrame#messengerframetop{
+         
+       border-image: url(qss/default/rsdefault.png);
+
+}
+
+QFrame#Chatbuttonframe{
+         
+       border-image: url(qss/default/rsdefault.png);
+
+}
