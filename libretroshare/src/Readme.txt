@@ -1,5 +1,6 @@
+=======================================================================================
 README for RetroShare
-===============================
+=======================================================================================
 
 RetroShare web site . . . . http://retroshare.sourceforge.net/
 Documentation . . . . . . . http://retroshare.sourceforge.net/doc.html
@@ -7,27 +8,33 @@ Support . . . . . . . . . . http://retroshare.sourceforge.net/support.html
 Forums  . . . . . . . . . . http://retroshare.sourceforge.net/forum/
 Wiki  . . . . . . . . . . . http://retroshare.sourceforge.net/wiki/
 The Developers site . . . . http://retroshare.sourceforge.net/developers.html
+Project site  . . . . . . . https://sourceforge.net/projects/retroshare
+
+Contact:  . . . . . . . . . retroshare@lunamutt.com ,defnax@users.sourceforge.net
 
 
 Compiling + Running RetroShare (V0.4.xxx)
-------------------------------------------------------------------------------------------
+=========================================================================================
+REQUIREMENTS
+=========================================================================================
 
-Quick Requirements:
-------------------------------------------------------------------------------------------
 Libraries/Tools:
-	C/C++ Compiler. (standard on Linux/cygwin)
-	OpenSSL-0.9.7g-xpgp
-	miniupnpc
-	Qt-4.3 development libraries.
+	* C/C++ Compiler. 	  	(standard on Linux/cygwin)
+	* OpenSSL-0.9.7g-xpgp 	http://www.lunamutt.com/retroshare/openssl-0.9.7g-xpgp-0.1c.tgz
+	* miniupnpc           	http://miniupnp.free.fr/files/download.php?file=miniupnpc-1.0.tar.gz
+	* Qt >= 4.3.x 		  	http://trolltech.com/downloads/opensource
 
 RetroShare Source Code: ( from sf.net/projects/retroshare)
-	Qt-GUI-XXX.tgz
-	retroshare-src-v0.4.XXX.tgz 
+	* Qt-GUI-XXX.tgz
+	* retroshare-src-v0.4.XXX.tgz 
+	
+Latest RetroShare sources from (SVN) sourceforge.net:	
+    svn co https://retroshare.svn.sourceforge.net/svnroot/retroshare retroshare  
 
 Windows Requirements:
-	Cygwin (Windows Only)
-	Pthreads (Windows Only)
-	Zlib (Windows Only)
+	* Cygwin (Windows Only) 	http://www.cygwin.com/cygwin/setup.exe 
+	* Pthreads (Windows Only)   http://sourceware.org/pthreads-win32/ 
+	* Zlib (Windows Only)       http://www.zlib.net/
 		
 ------------------------------------------------------------------------------------------
 Build Scripts are avaible on SVN for Debian and Ubuntu:
@@ -46,7 +53,7 @@ http://downloads.sourceforge.net/retroshare/retroshare-pkg-linux-src-v0.4.09b.tg
 Download/Compile as per instructions...
 
 ------------------------------------------------------------------------------------------
-
+==========================================================================================
 Howto Compile under Unix/Linux
 ==========================================================================================
 Directory layout
@@ -392,7 +399,7 @@ UNDER Cygwin:
  
 UNDER Mingw:
   
-    (6) Compile QChekers    ( qmake + make ) 
+    (6) Compile QCheckers    ( qmake + make ) 
 	(7) Compile SMPlayer    ( qmake + make ) 
 	(8) Compile the Qt-Gui. ( qmake + make )
 
