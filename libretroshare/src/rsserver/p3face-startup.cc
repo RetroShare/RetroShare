@@ -645,6 +645,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	std::string config_dir = config->basedir;
         std::string localcachedir = config_dir + "/cache/local";
 	std::string remotecachedir = config_dir + "/cache/remote";
+	std::string channelsdir = config_dir + "/channels";
 
 	mRanking = new p3Ranking(mConnMgr, RS_SERVICE_TYPE_RANK,     /* declaration of cache enable service rank */
 			mCacheStrapper, mCacheTransfer,
@@ -681,8 +682,8 @@ int RsServer::StartupRetroShare(RsInit *config)
 	pqih -> addService(mForums);  /* This must be also ticked as a service */
 
 	p3Channels *mChannels = new p3Channels(RS_SERVICE_TYPE_CHANNEL,
-			mCacheStrapper, mCacheTransfer,
-			localcachedir, remotecachedir, localcachedir);
+			mCacheStrapper, mCacheTransfer, rsFiles,
+			localcachedir, remotecachedir, channelsdir);
 
         CachePair cp5(mChannels, mChannels, CacheId(RS_SERVICE_TYPE_CHANNEL, 0));
 	mCacheStrapper -> addCachePair(cp5);

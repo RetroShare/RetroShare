@@ -561,19 +561,6 @@ void	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, std::string src, bool l
 		return;
 	}
 
-	/* check for duplicate message */
-	std::map<std::string, RsDistribMsg *>::iterator mit;
-	if ((git->second).msgs.end() != (git->second).msgs.find(newMsg->msgId))
-	{
-#ifdef DISTRIB_DEBUG
-		std::cerr << "p3GroupDistrib::loadMsg() Msg already exists" << std::endl;
-		std::cerr << std::endl;
-#endif
-		/* if already there -> remove */
-		delete newMsg;
-		return;
-	}
-
 	/****************** check the msg ******************/
 	if (!locked_validateDistribSignedMsg(git->second, newMsg))
 	{
@@ -584,6 +571,26 @@ void	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, std::string src, bool l
 		delete newMsg;
 		return;
 	}
+
+	/* check for duplicate message 
+	 *
+	 * do this after validate - because we are calling
+	 * duplicateMsg... only want to do if is good.
+	 */
+	std::map<std::string, RsDistribMsg *>::iterator mit;
+	mit = (git->second).msgs.find(newMsg->msgId);
+	if (mit != (git->second).msgs.end())
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::loadMsg() Msg already exists" << std::endl;
+		std::cerr << std::endl;
+#endif
+		/* if already there -> remove */
+		locked_eventDuplicateMsg(&(git->second), mit->second, src);
+		delete newMsg;
+		return;
+	}
+
 
 	/* convert Msg */
 	RsDistribMsg *msg = unpackDistribSignedMsg(newMsg);
@@ -617,7 +624,7 @@ void	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, std::string src, bool l
 #endif
 
 	/* Callback for any derived classes to play with */
-	locked_eventNewMsg(msg);
+	locked_eventNewMsg(&(git->second), msg, src);
 
 	/* else if group = subscribed | listener -> publish */
 	/* if it has come from us... then it has been published already */

@@ -100,7 +100,9 @@ virtual bool forumSubscribe(std::string fId, bool subscribe);
 /***************************************************************************************/
 
 virtual bool locked_eventUpdateGroup(GroupInfo  *, bool isNew);
-virtual bool locked_eventNewMsg(RsDistribMsg *);
+virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string);
+virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string);
+
 
 
 /****************************************/

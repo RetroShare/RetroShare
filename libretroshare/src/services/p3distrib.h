@@ -280,7 +280,8 @@ RsDistribMsg *locked_getGroupMsg(std::string grpId, std::string msgId);
 /***************************************************************************************/
 
 virtual bool locked_eventUpdateGroup(GroupInfo  *, bool isNew) = 0;
-virtual bool locked_eventNewMsg(RsDistribMsg *) = 0;
+virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string id) = 0;
+virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string id) = 0;
 
 /***************************************************************************************/
 /********************************* p3Config ********************************************/

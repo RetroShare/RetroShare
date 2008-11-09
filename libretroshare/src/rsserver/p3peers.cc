@@ -31,6 +31,15 @@
 #include <fstream>
 #include <sstream>
 
+/**************** PQI_USE_XPGP ******************/
+#if defined(PQI_USE_XPGP)
+        #include "pqi/authxpgp.h"
+#else /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+	#include "pqi/authssl.h"
+#endif /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+
 
 RsPeers *rsPeers = NULL;
 

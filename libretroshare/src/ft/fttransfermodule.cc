@@ -469,6 +469,14 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 	int ageRecv = ts - info.recvTS;
 	int ageReq = ts - info.lastTS;
 
+	/* if offline - ignore */
+	if ((info.state == PQIPEER_SUSPEND) ||
+	    (info.state == PQIPEER_NOT_ONLINE))
+	{
+
+		return false;
+	}
+
 	if (ageReq > FT_TM_RESTART_DOWNLOAD)
 	{
 		info.state = PQIPEER_DOWNLOADING;

@@ -68,13 +68,24 @@ RsChannels *rsChannels = NULL;
 #define CHANNEL_STOREPERIOD 10000
 #define CHANNEL_PUBPERIOD   600
 
-p3Channels::p3Channels(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
-	                std::string srcdir, std::string storedir, std::string chanDir)
+p3Channels::p3Channels(uint16_t type, CacheStrapper *cs, 
+		CacheTransfer *cft, RsFiles *files, 
+                std::string srcdir, std::string storedir, std::string chanDir)
 	:p3GroupDistrib(type, cs, cft, srcdir, storedir, 
 			CONFIG_TYPE_CHANNELS, CHANNEL_STOREPERIOD, CHANNEL_PUBPERIOD), 
+	mRsFiles(files), 
 	mChannelsDir(chanDir)
 { 
 	//loadDummyData();
+	
+	/* create chanDir */
+	if (!RsDirUtil::checkCreateDirectory(mChannelsDir))
+	{
+		std::cerr << "p3Channels() Failed to create Channels Directory: ";
+		std::cerr << mChannelsDir;
+		std::cerr << std::endl;
+	}
+
 	return; 
 }
 
@@ -269,6 +280,24 @@ RsDistribGrp *p3Channels::locked_createPrivateDistribGrp(GroupInfo &info)
 
 bool p3Channels::channelSubscribe(std::string cId, bool subscribe)
 {
+	std::cerr << "p3Channels::channelSubscribe() ";
+	std::cerr << cId;
+	std::cerr << std::endl;
+
+        if (subscribe)
+	{
+		std::string channeldir = mChannelsDir + "/" + cId;
+
+		/* create chanDir */
+		if (!RsDirUtil::checkCreateDirectory(channeldir))
+		{
+			std::cerr << "p3Channels::channelSubscribe()";
+			std::cerr << " Failed to create Channels Directory: ";
+			std::cerr << channeldir;
+			std::cerr << std::endl;
+		}
+	}
+
 	return subscribeToGroup(cId, subscribe);
 }
 
@@ -285,6 +314,10 @@ bool p3Channels::locked_eventUpdateGroup(GroupInfo  *info, bool isNew)
 	std::string msgId;
 	std::string nullId;
 
+	std::cerr << "p3Channels::locked_eventUpdateGroup() ";
+	std::cerr << grpId;
+	std::cerr << std::endl;
+
 	if (isNew)
 	{
 		getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_NEW, grpId, msgId, nullId);
@@ -294,17 +327,134 @@ bool p3Channels::locked_eventUpdateGroup(GroupInfo  *info, bool isNew)
 		getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_UPDATE, grpId, msgId, nullId);
 	}
 
+        if (info->flags & RS_DISTRIB_SUBSCRIBED)
+	{
+		std::string channeldir = mChannelsDir + "/" + grpId;
+
+		std::cerr << "p3Channels::locked_eventUpdateGroup() ";
+		std::cerr << " creating directory: " << channeldir;
+		std::cerr << std::endl;
+
+		/* create chanDir */
+		if (!RsDirUtil::checkCreateDirectory(channeldir))
+		{
+			std::cerr << "p3Channels::locked_eventUpdateGroup() ";
+			std::cerr << "Failed to create Channels Directory: ";
+			std::cerr << channeldir;
+			std::cerr << std::endl;
+		}
+	}
+
+
 	return true;
 }
 
-bool p3Channels::locked_eventNewMsg(RsDistribMsg *msg)
+/* only download in the first week of channel
+ * older stuff can be manually downloaded.
+ */
+
+const uint32_t DOWNLOAD_PERIOD = 7 * 24 * 3600; 
+
+bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id)
 {
 	std::string grpId = msg->grpId;
 	std::string msgId = msg->msgId;
 	std::string nullId;
 
-	getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_MSG, grpId, msgId, nullId);
+
+	std::cerr << "p3Channels::locked_eventDuplicateMsg() ";
+	std::cerr << " grpId: " << grpId << " msgId: " << msgId;
+	std::cerr << " peerId: " << id;
+	std::cerr << std::endl;
+
+
+	RsChannelMsg *chanMsg = dynamic_cast<RsChannelMsg *>(msg);
+	if (!chanMsg)
+	{
+		return true;
+	}
+
+	/* request the files 
+	 * NB: This will result in duplicates.
+	 * it is upto ftserver/ftcontroller/ftextralist
+	 *
+	 * download, then add to 
+	 *
+	 * */
+
+        //bool download = (grp->flags & (RS_DISTRIB_ADMIN | 
+	//		RS_DISTRIB_PUBLISH | RS_DISTRIB_SUBSCRIBED))
+        bool download = (grp->flags & RS_DISTRIB_SUBSCRIBED);
+
+	/* check subscribed */
+	if (!download)
+	{
+		return true;
+	}
+
+	/* check age */
+	time_t age = time(NULL) - msg->timestamp;
+
+	if (age > DOWNLOAD_PERIOD)
+	{
+		return true;
+	}
+
+	/* Iterate through files */
+	std::list<RsTlvFileItem>::iterator fit;
+	for(fit = chanMsg->attachment.items.begin(); 
+		fit != chanMsg->attachment.items.end(); fit++)
+	{
+		std::string fname = fit->name;
+		std::string hash  = fit->hash;
+		uint64_t size     = fit->filesize;
+		std::string channelname = grpId;
+		std::string localpath = mChannelsDir + "/" + channelname;
+		uint32_t flags = RS_FILE_HINTS_EXTRA;
+		std::list<std::string> srcIds;
+
+		srcIds.push_back(id);
+
+		/* download it ... and flag for ExtraList 
+		 * don't do pre-search check as FileRequest does it better
+		 */
+
+		std::cerr << "p3Channels::locked_eventDuplicateMsg() ";
+		std::cerr << " Downloading: " << fname;
+		std::cerr << " to: " << localpath;
+		std::cerr << " from: " << id;
+		std::cerr << std::endl;
+
+		mRsFiles->FileRequest(fname, hash, size, 
+					localpath, flags, srcIds);
+	}
+
+
 	return true;
+}
+
+
+bool p3Channels::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id)
+{
+	std::string grpId = msg->grpId;
+	std::string msgId = msg->msgId;
+	std::string nullId;
+
+	std::cerr << "p3Channels::locked_eventNewMsg() ";
+	std::cerr << " grpId: " << grpId;
+	std::cerr << " msgId: " << msgId;
+	std::cerr << " peerId: " << id;
+	std::cerr << std::endl;
+
+	getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_MSG, grpId, msgId, nullId);
+
+	/* request the files 
+	 * NB: This could result in duplicates.
+	 * which must be handled by ft side.
+	 *
+	 * this is exactly what DuplicateMsg does.
+	 * */
+	return locked_eventDuplicateMsg(grp, msg, id);
 }
 
 

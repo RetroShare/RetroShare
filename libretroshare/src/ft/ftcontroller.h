@@ -42,6 +42,7 @@ class ftFileCreator;
 class ftTransferModule;
 class ftFileProvider;
 class ftSearch;
+class ftExtraList;
 class ftDataMultiplex;
 
 #include "dbase/cachestrapper.h"
@@ -55,7 +56,8 @@ class ftDataMultiplex;
 
 
 const uint32_t CB_CODE_CACHE = 0x0001;
-const uint32_t CB_CODE_MEDIA = 0x0002;
+const uint32_t CB_CODE_EXTRA = 0x0002;
+const uint32_t CB_CODE_MEDIA = 0x0004;
 
 const uint32_t FC_TRANSFER_COMPLETE = 0x0001;
 
@@ -91,7 +93,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 	/* Setup */
 	ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string configDir);
 
-void	setFtSearch(ftSearch *);
+void	setFtSearchNExtra(ftSearch *, ftExtraList *);
 
 virtual void run();
 
@@ -152,6 +154,7 @@ bool 	completeFile(std::string hash);
 
 	ftSearch *mSearch; 
 	ftDataMultiplex *mDataplex;
+	ftExtraList *mExtraList;
 
 	RsMutex ctrlMutex;
 

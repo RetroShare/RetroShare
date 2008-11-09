@@ -113,7 +113,7 @@ void ftServer::SetupFtServer(NotifyBase *cb)
 
 	/* make Controller */
 	mFtController = new ftController(mCacheStrapper, mFtDataplex, mConfigPath);
-	mFtController -> setFtSearch(mFtSearch);
+	mFtController -> setFtSearchNExtra(mFtSearch, mFtExtra);
 	std::string tmppath = ".";
 	mFtController->setPartialsDirectory(tmppath);
 	mFtController->setDownloadDirectory(tmppath);
@@ -261,7 +261,10 @@ bool ftServer::FileDetails(std::string hash, uint32_t hintflags, FileInfo &info)
 	bool found = false;
 	if (hintflags | RS_FILE_HINTS_DOWNLOAD)
 	{
-		found = mFtDataplex->FileDetails(hash, hintflags, info);
+		//found = mFtDataplex->FileDetails(hash, hintflags, info);
+		//
+		// Use Controller for download searches.
+		found = mFtController->FileDetails(hash, info);
 	}
 	else if (hintflags | RS_FILE_HINTS_UPLOAD)
 	{

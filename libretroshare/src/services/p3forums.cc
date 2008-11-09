@@ -376,8 +376,12 @@ bool p3Forums::locked_eventUpdateGroup(GroupInfo  *info, bool isNew)
 
 	return true;
 }
+bool p3Forums::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id)
+{
+	return true;
+}
 
-bool p3Forums::locked_eventNewMsg(RsDistribMsg *msg)
+bool p3Forums::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id)
 {
 	std::string grpId = msg->grpId;
 	std::string msgId = msg->msgId;

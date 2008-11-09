@@ -77,6 +77,8 @@ const uint32_t RS_FILE_HINTS_NO_SEARCH   = 0x02000000;
 //const uint32_t RS_FILE_HINTS_CACHE	 = 0x00000001; // ALREADY EXISTS
 const uint32_t RS_FILE_HINTS_MEDIA	 = 0x00001000;
 
+const uint32_t RS_FILE_HINTS_BACKGROUND	 = 0x00002000; // To download slowly.
+
 const uint32_t RS_FILE_EXTRA_DELETE	 = 0x0010;
 
 

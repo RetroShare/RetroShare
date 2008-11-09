@@ -41,6 +41,7 @@
 #include "ft/fttransfermodule.h"
 #include "ft/ftsearch.h"
 #include "ft/ftdatamultiplex.h"
+#include "ft/ftextralist.h"
 
 #include "util/rsdir.h"
 
@@ -79,9 +80,10 @@ ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string c
 	/* TODO */
 }
 
-void ftController::setFtSearch(ftSearch *search)
+void ftController::setFtSearchNExtra(ftSearch *search, ftExtraList *list)
 {
 	mSearch = search;
+	mExtraList = list;
 }
 
 void ftController::run()
@@ -151,7 +153,18 @@ bool ftController::FlagFileComplete(std::string hash)
 
 bool ftController::completeFile(std::string hash)
 {
-	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	/* variables... so we can drop mutex later */
+	std::string path;
+        uint64_t    size = 0;
+	uint32_t    state = 0;
+	uint32_t    period = 0;
+	uint32_t    flags = 0;
+
+	bool doCallback = false;
+	uint32_t callbackCode = 0;
+
+
+      { RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
 	std::cerr << "ftController:completeFile(" << hash << ")";
 	std::cerr << std::endl;
@@ -206,35 +219,68 @@ bool ftController::completeFile(std::string hash)
 	/* Move to Correct Location */
         if (0 == rename(fc->mCurrentPath.c_str(), fc->mDestination.c_str()))
         {
+#ifdef CONTROL_DEBUG
+	  	std::cerr << "ftController::completeFile() renaming to: ";
+		std::cerr << fc->mDestination;
+	  	std::cerr << std::endl;
+#endif
+
                 /* correct the file_name */
                 fc->mCurrentPath = fc->mDestination;
         }
         else
         {
+#ifdef CONTROL_DEBUG
+	  	std::cerr << "ftController::completeFile() FAILED mv to: ";
+		std::cerr << fc->mDestination;
+	  	std::cerr << std::endl;
+#endif
+
 		fc->mState = ftFileControl::ERROR_COMPLETION;
         }
 
+	/* switch map */
+	mCompleted[fc->mHash] = *fc;
+	mDownloads.erase(it);
+
+
+	/* for extralist additions */
+	path    = fc->mDestination;
+	//hash    = fc->mHash;
+        size    = fc->mSize;
+	state   = fc->mState;
+	period  = 30 * 24 * 3600; /* 30 days */
+	flags   = 0;
+
+	doCallback = fc->mDoCallback;
+	callbackCode = fc->mCallbackCode;
+
+      } /******* UNLOCKED ********/
+
+
+	/******************** NO Mutex from Now ********************
+	 * cos Callback can end up back in this class.
+	 ***********************************************************/
 
 	/* If it has a callback - do it now */
-	if (fc->mDoCallback)
+	if (doCallback)
 	{
 #ifdef CONTROL_DEBUG
 	  std::cerr << "ftController::completeFile() doing Callback";
 	  std::cerr << std::endl;
 #endif
-
-	  switch (fc->mCallbackCode)
+	  switch (callbackCode)
 	  {
 	    case CB_CODE_CACHE:
 		/* callback */
-		if (fc->mState == ftFileControl::COMPLETED)
+		if (state == ftFileControl::COMPLETED)
 		{
 #ifdef CONTROL_DEBUG
 	  		std::cerr << "ftController::completeFile() doing Callback : Success";
 	  		std::cerr << std::endl;
 #endif
 			
-			CompletedCache(fc->mHash);
+			CompletedCache(hash);
 		}
 		else
 		{
@@ -242,8 +288,18 @@ bool ftController::completeFile(std::string hash)
 	  		std::cerr << "ftController::completeFile() Cache Callback : Failed";
 	  		std::cerr << std::endl;
 #endif
-			FailedCache(fc->mHash);
+			FailedCache(hash);
 		}
+		break;
+	    case CB_CODE_EXTRA:
+#ifdef CONTROL_DEBUG
+		std::cerr << "ftController::completeFile() adding to ExtraList";
+		std::cerr << std::endl;
+#endif
+
+		mExtraList->addExtraFile(path, hash, size, period, flags);
+
+
 		break;
 	    case CB_CODE_MEDIA:
 #ifdef CONTROL_DEBUG
@@ -263,11 +319,6 @@ bool ftController::completeFile(std::string hash)
 
 	}
 	
-
-	/* switch map */
-	mCompleted[fc->mHash] = *fc;
-	mDownloads.erase(it);
-
 	return true;
 
 }
@@ -277,6 +328,7 @@ bool ftController::completeFile(std::string hash)
 	/***************************************************************/
 
 const uint32_t FT_CNTRL_STANDARD_RATE = 100 * 1024;
+const uint32_t FT_CNTRL_SLOW_RATE     = 10  * 1024;
 
 bool 	ftController::FileRequest(std::string fname, std::string hash, 
 			uint64_t size, std::string dest, uint32_t flags, 
@@ -300,6 +352,60 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	std::cerr << std::endl;
 #endif
 
+	uint32_t rate = 0;
+	if (flags & RS_FILE_HINTS_BACKGROUND)
+	{
+		rate = FT_CNTRL_SLOW_RATE;
+	}
+	else
+	{
+		rate = FT_CNTRL_STANDARD_RATE;
+	}
+
+	/* First check if the file is already being downloaded.... 
+	 * This is important as some guis request duplicate files regularly.
+	 */
+
+	std::map<std::string, ftFileControl>::iterator dit;
+	dit = mDownloads.find(hash);
+	if (dit != mDownloads.end())
+	{
+		/* we already have it! */
+
+#ifdef CONTROL_DEBUG
+		std::cerr << "ftController::FileRequest() Already Downloading File";
+		std::cerr << std::endl;
+		std::cerr << "\tNo need to download";
+		std::cerr << std::endl;
+#endif
+		/* but we should add this peer - if they don't exist!
+		 * (needed for channels).
+		 */
+
+		for(it = srcIds.begin(); it != srcIds.end(); it++)
+		{
+			uint32_t i, j;
+			if ((dit->second).mTransfer->getPeerState(*it, i, j))
+			{
+#ifdef CONTROL_DEBUG
+				std::cerr << "ftController::FileRequest() Peer Existing";
+				std::cerr << std::endl;
+#endif
+				continue; /* already added peer */
+			}
+
+#ifdef CONTROL_DEBUG
+			std::cerr << "ftController::FileRequest() Adding Peer: " << *it;
+			std::cerr << std::endl;
+#endif
+			/* add peer */
+			(dit->second).mTransfer->setPeerState(*it, 
+					PQIPEER_IDLE, rate);
+
+			return true;
+		}
+	}
+
 	bool doCallback = false;
 	uint32_t callbackCode = 0;
 	if (flags & RS_FILE_HINTS_NO_SEARCH)
@@ -313,6 +419,11 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 		{
 			doCallback = true;
 			callbackCode = CB_CODE_CACHE;
+		}
+		else if (flags & RS_FILE_HINTS_EXTRA)
+		{
+			doCallback = true;
+			callbackCode = CB_CODE_EXTRA;
 		}
 	}
 	else 
@@ -361,7 +472,12 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 			}	
 		}
 
-		if (flags & RS_FILE_HINTS_MEDIA)
+		if (flags & RS_FILE_HINTS_EXTRA)
+		{
+			doCallback = true;
+			callbackCode = CB_CODE_EXTRA;
+		}
+		else if (flags & RS_FILE_HINTS_MEDIA)
 		{
 			doCallback = true;
 			callbackCode = CB_CODE_MEDIA;
@@ -408,7 +524,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 			//tm->setPeerState(*it, RS_FILE_RATE_FAST | 
 			//			RS_FILE_PEER_ONLINE, 100000);
 			//tm->setPeerState(*it, PQIPEER_IDLE, 10000);
-			tm->setPeerState(*it, PQIPEER_IDLE, FT_CNTRL_STANDARD_RATE);
+			tm->setPeerState(*it, PQIPEER_IDLE, rate);
 		}
 		else if (mConnMgr->isOnline(*it))
 		{
@@ -420,7 +536,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 			//tm->setPeerState(*it, RS_FILE_RATE_TRICKLE | 
 			//			RS_FILE_PEER_ONLINE, 10000);
 			//tm->setPeerState(*it, PQIPEER_IDLE, 10000);
-			tm->setPeerState(*it, PQIPEER_IDLE, FT_CNTRL_STANDARD_RATE);
+			tm->setPeerState(*it, PQIPEER_IDLE, rate);
 		}
 		else
 		{
@@ -430,7 +546,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 			std::cerr << std::endl;
 #endif
 			//tm->setPeerState(*it, RS_FILE_PEER_OFFLINE,  10000);
-			tm->setPeerState(*it, PQIPEER_NOT_ONLINE, FT_CNTRL_STANDARD_RATE);
+			tm->setPeerState(*it, PQIPEER_IDLE, rate);
 		}
 	}
 
@@ -514,6 +630,10 @@ bool 	ftController::FileDownloads(std::list<std::string> &hashs)
 	{
 		hashs.push_back(it->second.mHash);
 	}
+	for(it = mCompleted.begin(); it != mCompleted.end(); it++)
+	{
+		hashs.push_back(it->second.mHash);
+	}
 	return true;
 }
 
@@ -590,11 +710,21 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
+	bool completed = false;
 	std::map<std::string, ftFileControl>::iterator it;
 	it = mDownloads.find(hash);
 	if (it == mDownloads.end())
 	{
-		return false;
+		/* search completed files too */
+		it = mCompleted.find(hash);
+		if (it == mCompleted.end())
+		{
+			/* Note: mTransfer & mCreator 
+			 * are both NULL
+			 */
+			return false;
+		}
+		completed = true;
 	}
 
 	/* extract details */
@@ -605,7 +735,10 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 	std::list<std::string> peerIds;
 	std::list<std::string>::iterator pit;
 
-	it->second.mTransfer->getFileSources(peerIds);
+	if (!completed)
+	{
+		it->second.mTransfer->getFileSources(peerIds);
+	}
 
 	double totalRate;
 	uint32_t tfRate;
@@ -648,7 +781,7 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 		}
 	}
 
-	if ((it->second).mCreator->finished())
+	if ((completed) || ((it->second).mCreator->finished()))
 	{
 		info.downloadStatus = FT_STATE_COMPLETE;
 	}
@@ -666,7 +799,15 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 	}
 	info.tfRate = totalRate;
 	info.size = (it->second).mSize;
-	info.transfered  = (it->second).mCreator->getRecvd();
+
+	if (completed)
+	{
+		info.transfered  = info.size;
+	}
+	else
+	{
+		info.transfered  = (it->second).mCreator->getRecvd();
+	}
 
 	return true;
 

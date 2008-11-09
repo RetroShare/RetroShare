@@ -27,6 +27,7 @@
  */
 
 #include "rsiface/rschannels.h"
+#include "rsiface/rsfiles.h"
 #include "services/p3distrib.h"
 
 #include "serialiser/rstlvtypes.h"
@@ -37,7 +38,7 @@ class p3Channels: public p3GroupDistrib, public RsChannels
 {
 	public:
 
-	p3Channels(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
+	p3Channels(uint16_t type, CacheStrapper *cs, CacheTransfer *cft, RsFiles *files,
 		std::string srcdir, std::string storedir, std::string channelsdir);
 virtual ~p3Channels();
 
@@ -62,7 +63,8 @@ virtual bool channelSubscribe(std::string cId, bool subscribe);
 /***************************************************************************************/
 
 virtual bool locked_eventUpdateGroup(GroupInfo  *, bool isNew);
-virtual bool locked_eventNewMsg(RsDistribMsg *);
+virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string);
+virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string);
 
 /****************************************/
 /********* Overloaded Functions *********/
@@ -78,6 +80,7 @@ virtual RsDistribGrp *locked_createPrivateDistribGrp(GroupInfo &info);
 
 	private:
 
+	RsFiles *mRsFiles;
 	std::string mChannelsDir;
 
 };

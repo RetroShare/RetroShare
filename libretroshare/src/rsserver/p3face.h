@@ -27,7 +27,7 @@
  */
 
 //#include "server/filedexserver.h"
-#include "ft/ftserver.h";
+#include "ft/ftserver.h"
 //#include "pqi/pqissl.h"
 
 #include "pqi/p3cfgmgr.h"
