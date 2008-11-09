@@ -77,6 +77,9 @@ SubFileItem::SubFileItem(std::string hash, std::string name, uint64_t size,
 	{
 		mMode = SFI_STATE_ERROR;
 	}
+	/**** Enable ****
+	*****/
+
 	/* all other states are possible */
 
 	if (!rsFiles) 
@@ -98,7 +101,7 @@ SubFileItem::SubFileItem(std::string path)
 	mType = SFI_TYPE_ATTACH;
 
 	/* ask for Files to hash/prepare it for us */
-	if ((!rsFiles) || (rsFiles->ExtraFileHash(path, SFI_DEFAULT_PERIOD, 0)))
+	if ((!rsFiles) || (!rsFiles->ExtraFileHash(path, SFI_DEFAULT_PERIOD, 0)))
 	{
 		mMode = SFI_STATE_ERROR;
 	}

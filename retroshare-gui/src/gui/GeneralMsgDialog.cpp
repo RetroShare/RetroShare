@@ -31,6 +31,7 @@
 #include "rsiface/rsforums.h"
 #include "rsiface/rschannels.h"
 #include "rsiface/rsmsgs.h"
+#include "rsiface/rsfiles.h"
 
 #include <iostream>
 
@@ -151,6 +152,7 @@ void GeneralMsgDialog::dropEvent(QDropEvent *event)
 
 			if (localpath.size() > 0)
 			{
+
 				addAttachment(localpath);
 			}
 		}
@@ -292,6 +294,13 @@ void GeneralMsgDialog::addAttachment(std::string path)
 	/* add a SubFileItem to the attachment section */
 	std::cerr << "GeneralMsgDialog::addAttachment()";
 	std::cerr << std::endl;
+
+	/* add to ExtraList here, 
+	 * use default TIMEOUT of 30 days (time to fetch it).
+	 */
+	//uint32_t period = 30 * 24 * 60 * 60;
+	//uint32_t flags = 0;
+	//rsFiles->ExtraFileHash(localpath, period, flags);
 
 	/* add widget in for new destination */
 	SubFileItem *file = new SubFileItem(path);

@@ -340,6 +340,7 @@ void MessagesDialog::getallrecommended()
 		std::cerr << "MessagesDialog::getallrecommended() Calling File Request";
 		std::cerr << std::endl;
 		std::list<std::string> srcIds;
+		srcIds.push_back(msgInfo.srcId);
         	rsFiles -> FileRequest(*fit, *hit, *sit, "", 0, srcIds);
 	}
 }

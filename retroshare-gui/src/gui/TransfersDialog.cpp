@@ -375,7 +375,7 @@ void TransfersDialog::insertTransfers()
 	for(it = downHashes.begin(); it != downHashes.end(); it++)
 	{
 	  FileInfo info;
-	  if (!rsFiles->FileDetails(*it, 0, info))
+	  if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info))
 	  {
 		continue;
 	  }
@@ -484,7 +484,7 @@ void TransfersDialog::insertTransfers()
 	for(it = upHashes.begin(); it != upHashes.end(); it++)
 	{
 	  FileInfo info;
-	  if (!rsFiles->FileDetails(*it, 0, info))
+	  if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_UPLOAD, info))
 	  {
 		continue;
 	  }
