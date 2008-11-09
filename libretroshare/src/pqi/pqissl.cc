@@ -104,7 +104,7 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3AuthMgr *am, p3ConnectM
 	mAuthMgr((AuthXPGP *) am), mConnMgr(cm)
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
-	mAuthMgr(am), mConnMgr(cm)
+	mAuthMgr((AuthSSL *) am), mConnMgr(cm)
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
@@ -1075,6 +1075,7 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
 	mAuthMgr->FailedCertificateXPGP(peercert, false);
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
+	mAuthMgr->FailedCertificate(peercert, false);
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
@@ -1111,7 +1112,7 @@ int 	pqissl::Authorise_SSL_Connection()
 	waiting = WAITING_NOT;
 
 	// Get the Peer Certificate....
-	AuthXPGP *authXPGP = (AuthXPGP *) getAuthMgr();
+	//AuthXPGP *authXPGP = (AuthXPGP *) getAuthMgr();
 
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
@@ -1147,7 +1148,7 @@ int 	pqissl::Authorise_SSL_Connection()
 	certCorrect = mAuthMgr->CheckCertificateXPGP(PeerId(), peercert);
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
-
+	certCorrect = mAuthMgr->CheckCertificate(PeerId(), peercert);
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 

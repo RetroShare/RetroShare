@@ -14,14 +14,7 @@ LOOP_OBJ = pqiloopback.o
 STREAM_OBJ = pqistreamer.o pqiarchive.o pqibin.o
 MGR_OBJ = pqimonitor.o p3dhtmgr.o p3connmgr.o p3cfgmgr.o p3authmgr.o
 GRP_OBJ = pqiperson.o pqihandler.o pqiservice.o pqipersongrp.o  
-
-ifdef PQI_USE_XPGP
-	SSL_OBJ = authxpgp.o cleanupxpgp.o  
-else
-	SSL_OBJ  = sslcert.o  
-endif
-
-SSL_OBJ  += pqissl.o pqissllistener.o pqisslpersongrp.o
+SSL_OBJ  = pqissl.o pqissllistener.o pqisslpersongrp.o
 UDP_OBJ  = pqissludp.o
 
 OTHER_OBJ = p3notify.o
@@ -34,11 +27,19 @@ RSOBJ = $(BASE_OBJ) $(LOOP_OBJ) \
 	$(GRP_OBJ) \
 	$(OTHER_OBJ)
 
-TESTOBJ  = xpgp_id.o net_test.o dht_test.o net_test1.o
+TESTOBJ  = net_test.o dht_test.o net_test1.o
 #conn_test.o
 
-TESTS  = xpgp_id net_test dht_test net_test1
+TESTS  = net_test dht_test net_test1
 #conn_test
+
+ifdef PQI_USE_XPGP
+	SSL_OBJ += authxpgp.o cleanupxpgp.o  
+	TESTOBJ += xpgp_id.o
+	TESTS   += xpgp_id
+else
+	#SSL_OBJ  = sslcert.o  
+endif
 
 
 all: librs tests

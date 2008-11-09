@@ -96,7 +96,7 @@ RsFiles *rsFiles = NULL;
 	#include "pqi/authxpgp.h"
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
-
+	#include "pqi/authssl.h"
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
@@ -436,6 +436,10 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 	std::string userName;
 	std::string userId;
 	bool existingUser = false;
+
+	/* do a null init to allow the SSL libray to startup! */
+/**************** PQI_USE_XPGP ******************/
+#if defined(PQI_USE_XPGP)
 	if (LoadCheckXPGPandGetName(config->load_cert.c_str(), userName, userId))
 	{
 		std::cerr << "Existing Name: " << userName << std::endl;
@@ -446,6 +450,17 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 	{
 		std::cerr << "No Existing User" << std::endl;
 	}
+#else /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+
+	/* here we need to decide if existing user is okay....
+	 * obviously - it can't be until we have functions
+	 * to do it!
+	 */
+
+#endif /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+
 
 	/* do a null init to allow the SSL libray to startup! */
 /**************** PQI_USE_XPGP ******************/
@@ -454,7 +469,7 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 	getAuthMgr() -> InitAuth(NULL, NULL, NULL);
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
-	getAuthMgr() -> InitAuth(NULL, NULL, NULL, NULL);
+	getAuthMgr() -> InitAuth(NULL, NULL, NULL);
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
@@ -494,7 +509,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	if (1 != mAuthMgr -> InitAuth(NULL, NULL, NULL))
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
-	if (1 != mAuthMgr -> InitAuth(NULL, NULL, NULL, NULL))
+	if (1 != mAuthMgr -> InitAuth(NULL, NULL, NULL))
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 	{
@@ -549,7 +564,15 @@ int RsServer::StartupRetroShare(RsInit *config)
 	std::map<std::string, std::string> oldConfigMap;
 
 	mAuthMgr -> setConfigDirectories(certConfigFile, certNeighDir);
+
+/**************** PQI_USE_XPGP ******************/
+#if defined(PQI_USE_XPGP)
 	((AuthXPGP *) mAuthMgr) -> loadCertificates(oldFormat, oldConfigMap);
+#else /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+	mAuthMgr -> loadCertificates();
+#endif /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
 
 
 	/**************************************************************************/
@@ -726,6 +749,13 @@ int RsServer::StartupRetroShare(RsInit *config)
 	/**************************************************************************/
 	/* Hack Old Configuration into new System (first load only) */
 	/**************************************************************************/
+
+/**************** PQI_USE_XPGP ******************/
+#if defined(PQI_USE_XPGP)
+#else /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+#endif /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
 
 	if (oldFormat)
 	{
@@ -911,10 +941,13 @@ int LoadCertificates(RsInit *config, bool autoLoginNT)
 				config->passwd.c_str()))
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
+	/* The SSL + PGP version will require
+	 *  Id of pgp account + password
+	 * padding with NULLs
+	 */
+
 	if (0 < authMgr -> InitAuth(config->load_cert.c_str(),
-				config->load_key.c_str(),
-				ca_loc.c_str(),
-				config->passwd.c_str()))
+				NULL, config->passwd.c_str()))
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
@@ -953,7 +986,15 @@ bool ValidateCertificate(RsInit *config, std::string &userName)
 	std::string userId;
 	if (fname != "")
 	{
+/**************** PQI_USE_XPGP ******************/
+#if defined(PQI_USE_XPGP)
 		return LoadCheckXPGPandGetName(fname.c_str(), userName, userId);
+#else /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+		/* check against authmanagers private keys */
+#endif /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+
 	}
 	return false;
 }
@@ -961,7 +1002,15 @@ bool ValidateCertificate(RsInit *config, std::string &userName)
 bool ValidateTrustedUser(RsInit *config, std::string fname, std::string &userName)
 {
 	std::string userId;
-	bool valid = LoadCheckXPGPandGetName(fname.c_str(), userName, userId);
+	bool valid = false;
+/**************** PQI_USE_XPGP ******************/
+#if defined(PQI_USE_XPGP)
+	valid = LoadCheckXPGPandGetName(fname.c_str(), userName, userId);
+#else /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+#endif /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+
 	if (valid)
 	{
 		config -> load_trustedpeer = true;
@@ -1038,6 +1087,11 @@ bool RsGenerateCertificate(RsInit *config,
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 	/* UNTIL THIS IS FILLED IN CANNOT GENERATE X509 REQ */
+	/* What should happen here - is a new openpgp certificate
+	 * is created, with a retroshare subkey, 
+	 * this is then used to generate a self-signed certificate 
+	 */
+	//mAuthMgr->createUser( );
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 	{

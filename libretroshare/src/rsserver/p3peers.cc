@@ -758,17 +758,11 @@ std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail)
 
 /********** TRANSLATION ****/
 
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-        #include "pqi/authxpgp.h"
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
 uint32_t RsPeerTranslateTrust(uint32_t trustLvl)
 {
+/**************** PQI_USE_XPGP ******************/
+#if defined(PQI_USE_XPGP)
 	switch(trustLvl)
 	{
 		case TRUST_SIGN_OWN:
@@ -788,6 +782,11 @@ uint32_t RsPeerTranslateTrust(uint32_t trustLvl)
 			return RS_TRUST_LVL_UNKNOWN;
 			break;
 	}
+#else /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+#endif /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+
 	return RS_TRUST_LVL_UNKNOWN;
 }
 

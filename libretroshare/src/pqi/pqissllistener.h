@@ -44,7 +44,7 @@
 #include "pqi/authxpgp.h"
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
-//#include "pqi/sslcert.h"
+#include "pqi/authssl.h"
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
@@ -103,7 +103,8 @@ int     Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_in *inaddr);
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
-	p3AuthMgr *mAuthMgr;
+	AuthSSL *mAuthMgr;
+	//p3AuthMgr *mAuthMgr;
 
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/

@@ -45,6 +45,7 @@
 #include "pqi/authxpgp.h"
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
+#include "pqi/authssl.h"
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
@@ -208,6 +209,10 @@ virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd)
 
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
+
+	//p3AuthMgr *mAuthMgr;
+	AuthSSL *mAuthMgr;
+
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 

@@ -13,12 +13,21 @@
 #include <openssl/evp.h>
 #include <openssl/x509.h>
 #include <openssl/x509v3.h>
-#include <openssl/xPGP.h>
+
+
+/**************** PQI_USE_XPGP ******************/
+#if defined(PQI_USE_XPGP)
+	#include <openssl/xPGP.h>
+#else /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+
+#endif /* X509 Certificates */
+/**************** PQI_USE_XPGP ******************/
+
 #include <openssl/ssl.h>
 
 #include <openssl/err.h>
 #include <openssl/rand.h>
-#include <openssl/fips.h>
 
 static BIO *bio_err=NULL;
 
