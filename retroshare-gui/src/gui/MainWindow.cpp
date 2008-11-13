@@ -27,6 +27,7 @@
 #include <QIcon>
 #include <QPixmap>
 
+#include "ChannelFeed.h"
 #include "LinksDialog.h"
 #include "GamesDialog.h"
 #include "PhotoDialog.h"
@@ -98,6 +99,8 @@
 /*****
  * #define RS_RELEASE_VERSION    1
  ****/
+
+#define RS_RELEASE_VERSION    1
 
  
 /** Constructor */
@@ -178,16 +181,23 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
                        createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
                        
     LinksDialog *linksDialog = NULL;
-    ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
-			createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
 
 
 #ifdef RS_RELEASE_VERSION    
     channelsDialog = NULL;
+
+    ChannelFeed *channelFeed = NULL;
+    ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_CHANNELS), tr("Channel Feed"), grp));
+
 #else
     channelsDialog = NULL;
-//    ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
-//                       createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
+    ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
+			createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
+
+    ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
+
 #endif
 
     //ui.stackPages->add(new HelpDialog(ui.stackPages),

@@ -69,6 +69,8 @@ void BlogMsgItem::updateItemStatic()
 	int total = (int) (10.0 * (rand() / (RAND_MAX + 1.0)));
 	int i;
 
+	total = 0;
+
 	for(i = 0; i < total; i++)
 	{
 		/* add file */
