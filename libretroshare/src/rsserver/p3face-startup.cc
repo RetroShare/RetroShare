@@ -28,13 +28,8 @@
 //#include <getopt.h>
 
 #include "dbase/cachestrapper.h"
-#ifdef USE_OLD_FT
-	#include "server/ftfiler.h"
-	#include "server/filedexserver.h"
-#else
-	#include "ft/ftserver.h"
-	#include "ft/ftcontroller.h"
-#endif
+#include "ft/ftserver.h"
+#include "ft/ftcontroller.h"
 
 /* global variable now points straight to 
  * ft/ code so variable defined here.
@@ -90,6 +85,8 @@ RsFiles *rsFiles = NULL;
 /****
 #define RS_RELEASE 1
 ****/
+
+#define RS_RELEASE 1
 
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
@@ -590,27 +587,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	pqih = new pqisslpersongrp(none, flags);
 	//pqih = new pqipersongrpDummy(none, flags);
 
-#ifdef USE_OLD_FT
-	CacheStrapper *mCacheStrapper = new CacheStrapper(mAuthMgr, mConnMgr);
-	ftfiler       *mCacheTransfer = new ftfiler(mCacheStrapper);
-
-	// filedex server.
-	server = new filedexserver();
-	server->setConfigDir(config->basedir.c_str());
-	server->setSaveDir(config->homePath.c_str()); /* Default Save Dir - config will overwrite */
-
-	server->setSearchInterface(pqih, mAuthMgr, mConnMgr);
-	server->setFileCallback(ownId, mCacheStrapper, mCacheTransfer, &(getNotify()));
-	server->setEmergencySaveDir(emergencySaveDir); /* (after setFileCallback()) if saveDir invalid */
-
-	/*
-	 * *** TMP NEW INTERFACE FOR FILES - until ftServer comes online ***
-	 */
-
-	rsFiles = new p3Files(server, this, mAuthMgr);
-
-#else
-/****** New Ft Server **** !!! */
+	/****** New Ft Server **** !!! */
         ftserver = new ftServer(mAuthMgr, mConnMgr);
         ftserver->setP3Interface(pqih); 
 	ftserver->setConfigDirectory(config->basedir);
@@ -625,9 +602,8 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 	/* This should be set by config ... there is no default */
         //ftserver->setSharedDirectories(fileList);
-
 	rsFiles = ftserver;
-#endif
+
 
 	mConfigMgr = new p3ConfigMgr(mAuthMgr, config->basedir, "rs-v0.4.cfg", "rs-v0.4.sgn");
 	mGeneralConfig = new p3GeneralConfig();
@@ -647,6 +623,10 @@ int RsServer::StartupRetroShare(RsInit *config)
 	std::string remotecachedir = config_dir + "/cache/remote";
 	std::string channelsdir = config_dir + "/channels";
 
+
+
+#ifndef RS_RELEASE
+
 	mRanking = new p3Ranking(mConnMgr, RS_SERVICE_TYPE_RANK,     /* declaration of cache enable service rank */
 			mCacheStrapper, mCacheTransfer,
 			localcachedir, remotecachedir, 3600 * 24 * 30 * 6); // 6 Months
@@ -654,7 +634,8 @@ int RsServer::StartupRetroShare(RsInit *config)
         CachePair cp(mRanking, mRanking, CacheId(RS_SERVICE_TYPE_RANK, 0));
 	mCacheStrapper -> addCachePair(cp);				/* end of declaration */
 
-#ifndef RS_RELEASE
+
+
 	p3GameLauncher *gameLauncher = new p3GameLauncher(mConnMgr);
 	pqih -> addService(gameLauncher);
 
@@ -690,8 +671,21 @@ int RsServer::StartupRetroShare(RsInit *config)
 	pqih -> addService(mChannels);  /* This must be also ticked as a service */
 
 #else
-	//mQblog = NULL;
-	//mForums = NULL;
+	/* In the release - so we can test it seperately from 
+	 * rest of services...
+	 */
+
+	p3Channels *mChannels = new p3Channels(RS_SERVICE_TYPE_CHANNEL,
+			mCacheStrapper, mCacheTransfer, rsFiles,
+			localcachedir, remotecachedir, channelsdir);
+
+        CachePair cp5(mChannels, mChannels, CacheId(RS_SERVICE_TYPE_CHANNEL, 0));
+	mCacheStrapper -> addCachePair(cp5);
+	pqih -> addService(mChannels);  /* This must be also ticked as a service */
+
+	mRanking = NULL;
+	mQblog = NULL;
+
 #endif
 
 	/**************************************************************************/
@@ -710,26 +704,22 @@ int RsServer::StartupRetroShare(RsInit *config)
 	/* must also add the controller as a Monitor...
 	 * a little hack to get it to work.
 	 */
-#ifdef USE_OLD_FT
-#else
 	mConnMgr->addMonitor(((ftController *) mCacheTransfer));
-#endif
 
 
 	/**************************************************************************/
 
-#ifdef USE_OLD_FT
-	mConfigMgr->addConfiguration("server.cfg", server);
-#else
 	//mConfigMgr->addConfiguration("ftserver.cfg", ftserver);
-#endif
+	//
 	mConfigMgr->addConfiguration("peers.cfg", mConnMgr);
 	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
 	mConfigMgr->addConfiguration("cache.cfg", mCacheStrapper);
-	mConfigMgr->addConfiguration("ranklink.cfg", mRanking);
 #ifndef RS_RELEASE
+	mConfigMgr->addConfiguration("ranklink.cfg", mRanking);
 	mConfigMgr->addConfiguration("forums.cfg", mForums);
+	mConfigMgr->addConfiguration("channels.cfg", mChannels);
+#else
 	mConfigMgr->addConfiguration("channels.cfg", mChannels);
 #endif
 
@@ -845,11 +835,8 @@ int RsServer::StartupRetroShare(RsInit *config)
 	/* Start up Threads */
 	/**************************************************************************/
 
-#ifdef USE_OLD_FT
-	server->StartupMonitor();
-#else
         ftserver->StartupThreads();
-#endif
+
 	mDhtMgr->start();
 
 	// create loopback device, and add to pqisslgrp.
@@ -868,7 +855,6 @@ int RsServer::StartupRetroShare(RsInit *config)
 	rsPeers = new p3Peers(mConnMgr, mAuthMgr);
 	rsMsgs  = new p3Msgs(mAuthMgr, msgSrv, chatSrv);
 	rsDisc  = new p3Discovery(ad);
-	rsRanks = new p3Rank(mRanking);
 
 
 #ifndef RS_RELEASE
@@ -878,14 +864,17 @@ int RsServer::StartupRetroShare(RsInit *config)
 	rsChannels = mChannels;
 	rsStatus = new p3Status();
 	rsQblog = new p3Blog(mQblog);
+	rsRanks = new p3Rank(mRanking);
 
 #else
 	rsGameLauncher = NULL;
 	rsPhoto = NULL;
 	rsForums = NULL;
 	rsChannels = NULL;
+	rsChannels = mChannels;
 	rsStatus = NULL;
 	rsQblog = NULL;
+	rsRanks = NULL;
 #endif
 
 

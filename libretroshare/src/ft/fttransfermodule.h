@@ -45,42 +45,25 @@
 
 #include "util/rsthreads.h"
 
-const int  PQIPEER_INIT                 = 0x0000;
-const int  PQIPEER_NOT_ONLINE           = 0x0001;
-const int  PQIPEER_DOWNLOADING          = 0x0002;
-const int  PQIPEER_IDLE                 = 0x0004;
-const int  PQIPEER_SUSPEND              = 0x0010;
+const uint32_t  PQIPEER_INIT                 = 0x0000;
+const uint32_t  PQIPEER_NOT_ONLINE           = 0x0001;
+const uint32_t  PQIPEER_DOWNLOADING          = 0x0002;
+const uint32_t  PQIPEER_IDLE                 = 0x0004;
+const uint32_t  PQIPEER_SUSPEND              = 0x0010;
 
-const uint32_t PQIPEER_OFFLINE_CHECK  = 120; /* check every 2 minutes */
-const uint32_t PQIPEER_DOWNLOAD_TIMEOUT  = 60; /* time it out, -> offline after 60 secs */
-const uint32_t PQIPEER_DOWNLOAD_CHECK    = 10; /* desired delta = 10 secs */
-const uint32_t PQIPEER_DOWNLOAD_TOO_FAST = 8; /* 8 secs */
-const uint32_t PQIPEER_DOWNLOAD_TOO_SLOW = 12; /* 12 secs */
-const uint32_t PQIPEER_DOWNLOAD_MIN_DELTA = 5; /* 5 secs */
-
-const uint32_t TRANSFER_START_MIN = 10000;  /* 10000 byte  min limit */
-const uint32_t TRANSFER_START_MAX = 10000; /* 10000 byte max limit */
-/*
-class Request
-{
-public:
-  	uint64_t offset;
-  	uint32_t chunkSize;
-};
-*/
 class peerInfo
 {
 public:
 	peerInfo(std::string peerId_in):peerId(peerId_in),state(PQIPEER_NOT_ONLINE),desiredRate(0),actualRate(0),
-		offset(0),chunkSize(TRANSFER_START_MIN),receivedSize(0),lastTS(0),
-		recvTS(0), lastTransfers(0)
+		offset(0),chunkSize(0),receivedSize(0),lastTS(0),
+		recvTS(0), lastTransfers(0), nResets(0)
 	{
 		return;
 	}
 	peerInfo(std::string peerId_in,uint32_t state_in,uint32_t maxRate_in):
 		peerId(peerId_in),state(state_in),desiredRate(maxRate_in),actualRate(0),
-		offset(0),chunkSize(TRANSFER_START_MIN),receivedSize(0),lastTS(0),
-		recvTS(0), lastTransfers(0)
+		offset(0),chunkSize(0),receivedSize(0),lastTS(0),
+		recvTS(0), lastTransfers(0), nResets(0)
 	{
 		return;
 	}
@@ -99,6 +82,7 @@ public:
   	time_t lastTS; /* last Request */
 	time_t recvTS; /* last Recv */
 	uint32_t lastTransfers; /* data recvd in last second */
+	uint32_t nResets; /* count to disable non-existant files */
 };
 
 class ftFileStatus
@@ -135,6 +119,7 @@ public:
 
   //interface to download controller
   bool setFileSources(std::list<std::string> peerIds);
+  bool addFileSource(std::string peerId);
   bool setPeerState(std::string peerId,uint32_t state,uint32_t maxRate);  //state = ONLINE/OFFLINE
   bool getFileSources(std::list<std::string> &peerIds);
   bool getPeerState(std::string peerId,uint32_t &state,uint32_t &tfRate);  

@@ -64,8 +64,9 @@ bool ftFileProvider::getFileData(uint64_t offset, uint32_t chunk_size, void *dat
 	/* 
 	 * FIXME: Warning of comparison between unsigned and signed int?
 	 */
-	int data_size    = chunk_size;
-	long base_loc    = offset;
+
+	uint32_t data_size    = chunk_size;
+	uint64_t base_loc     = offset;
 	
 	if (base_loc + data_size > mSize)
 	{
@@ -138,13 +139,22 @@ int ftFileProvider::initializeFileAttrs()
          * attempt to open file 
          */
 	
-	fd = fopen(file_name.c_str(), "r+b");
+	fd = fopen(file_name.c_str(), "rb");
 	if (!fd)
 	{
 		std::cerr << "ftFileProvider::initializeFileAttrs() Failed to open (r+b): ";
 		std::cerr << file_name << std::endl;
-		return 0;
 
+		/* try opening read only */
+		fd = fopen(file_name.c_str(), "rb");
+		if (!fd)
+		{
+			std::cerr << "ftFileProvider::initializeFileAttrs() Failed to open (rb): ";
+			std::cerr << file_name << std::endl;
+	
+			/* try opening read only */
+			return 0;
+		}
 	}
 
 	/*

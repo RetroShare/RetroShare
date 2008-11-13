@@ -347,6 +347,10 @@ virtual bool    locked_choosePublishKey(GroupInfo &info);
 //virtual RsDistribGrp *locked_createPublicDistribGrp(GroupInfo &info);
 //virtual RsDistribGrp *locked_createPrivateDistribGrp(GroupInfo &info);
 
+	protected:
+	/* root version of this function must be called */
+virtual void    locked_notifyGroupChanged(GroupInfo &info);
+
 /***************************************************************************************/
 /***************************** Utility Functions ***************************************/
 /***************************************************************************************/
@@ -365,10 +369,6 @@ std::string HashRsItem(const RsItem *item);
 void	printGroups(std::ostream &out);
 
 bool 	groupsChanged(std::list<std::string> &groupIds);
-
-	protected:
-
-void    locked_notifyGroupChanged(GroupInfo &info);
 
 /***************************************************************************************/
 /***************************************************************************************/

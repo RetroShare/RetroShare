@@ -7,7 +7,7 @@
 
 #define FILE_DEBUG 1
 
-#define CHUNK_MAX_AGE 30
+#define CHUNK_MAX_AGE 20
 
 
 /***********************************************************
@@ -147,20 +147,19 @@ int ftFileCreator::initializeFileAttrs()
 
 	/* 
          * check if the file exists 
+	 * cant use FileProviders verion because that opens readonly.
          */
 
-	if (ftFileProvider::initializeFileAttrs())
-	{
-		return 1;
-	}
-
-	
         RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 	if (fd)
 		return 1;
 
+	/* 
+         * check if the file exists 
+         */
+	
 	{
-		std::cerr << "ftFileCreator::initializeFileAttrs() opening w+b";
+		std::cerr << "ftFileCreator::initializeFileAttrs() trying (r+b) ";        	
 		std::cerr << std::endl;
 	}
 
@@ -168,14 +167,27 @@ int ftFileCreator::initializeFileAttrs()
          * attempt to open file 
          */
 	
-	fd = fopen(file_name.c_str(), "w+b");
+	fd = fopen(file_name.c_str(), "r+b");
 	if (!fd)
 	{
-		std::cerr << "ftFileCreator::initializeFileAttrs()";
-		std::cerr << " Failed to open (w+b): "<< file_name << std::endl;
-		return 0;
+		std::cerr << "ftFileCreator::initializeFileAttrs() Failed to open (r+b): ";
+		std::cerr << file_name << std::endl;
 
+		std::cerr << "ftFileCreator::initializeFileAttrs() opening w+b";
+		std::cerr << std::endl;
+
+		/* try opening for write */
+		fd = fopen(file_name.c_str(), "w+b");
+		if (!fd)
+		{
+			std::cerr << "ftFileCreator::initializeFileAttrs()";
+			std::cerr << " Failed to open (w+b): "<< file_name << std::endl;
+			return 0;
+		}
 	}
+
+
+
 
 	/*
          * if it opened, find it's length 

@@ -62,9 +62,11 @@ virtual bool channelSubscribe(std::string cId, bool subscribe);
 /****************** Event Feedback (Overloaded form p3distrib) *************************/
 /***************************************************************************************/
 
+	protected:
 virtual bool locked_eventUpdateGroup(GroupInfo  *, bool isNew);
 virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string);
 virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string);
+
 
 /****************************************/
 /********* Overloaded Functions *********/
@@ -75,6 +77,7 @@ virtual bool    locked_checkDistribMsg(RsDistribMsg *msg);
 virtual RsDistribGrp *locked_createPublicDistribGrp(GroupInfo &info);
 virtual RsDistribGrp *locked_createPrivateDistribGrp(GroupInfo &info);
 
+virtual void locked_notifyGroupChanged(GroupInfo &info);
 
 /****************************************/
 

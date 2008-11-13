@@ -1299,16 +1299,7 @@ bool    p3GroupDistrib::loadList(std::list<RsItem *> load)
 			std::string gid = newGrp -> grpId;
 			loadGroup(newGrp);
 
-			/* flag as SUBSCRIBER */
-			RsStackMutex stack(distribMtx); /******* STACK LOCKED MUTEX ***********/
-
-			std::map<std::string, GroupInfo>::iterator it;
-			it = mGroups.find(gid);
-
-			if (it != mGroups.end())
-			{
-				it->second.flags |= RS_DISTRIB_SUBSCRIBED;
-			}
+			subscribeToGroup(gid, true);
 		}
 		else if ((newKey = dynamic_cast<RsDistribGrpKey *>(*lit)))
 		{

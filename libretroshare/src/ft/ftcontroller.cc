@@ -352,6 +352,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	std::cerr << std::endl;
 #endif
 
+	std::string ownId = mConnMgr->getOwnId();
 	uint32_t rate = 0;
 	if (flags & RS_FILE_HINTS_BACKGROUND)
 	{
@@ -398,12 +399,20 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 			std::cerr << "ftController::FileRequest() Adding Peer: " << *it;
 			std::cerr << std::endl;
 #endif
-			/* add peer */
-			(dit->second).mTransfer->setPeerState(*it, 
-					PQIPEER_IDLE, rate);
-
-			return true;
+			(dit->second).mTransfer->addFileSource(*it);
+			setPeerState(dit->second.mTransfer, *it, 
+				rate, mConnMgr->isOnline(*it));
 		}
+
+		if (srcIds.size() == 0)
+		{
+#ifdef CONTROL_DEBUG
+			std::cerr << "ftController::FileRequest() WARNING: No Src Peers";
+			std::cerr << std::endl;
+#endif
+		}
+
+		return true;
 	}
 
 	bool doCallback = false;
@@ -504,6 +513,13 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	ftFileControl ftfc(fname, savepath, destination,  
 			size, hash, flags, fc, tm, callbackCode);
 
+#ifdef CONTROL_DEBUG
+	std::cerr << "ftController::FileRequest() Created ftFileCreator @: " << fc;
+	std::cerr << std::endl;
+	std::cerr << "ftController::FileRequest() Created ftTransModule @: " << tm;
+	std::cerr << std::endl;
+#endif
+
 	/* add to ClientModule */
 	mDataplex->addTransferModule(tm, fc);
 
@@ -511,43 +527,13 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	tm->setFileSources(srcIds);
 
 	/* get current state for transfer module */
-	std::string ownId = mConnMgr->getOwnId();
 	for(it = srcIds.begin(); it != srcIds.end(); it++)
 	{
-		if (*it == ownId)
-		{
 #ifdef CONTROL_DEBUG
-			std::cerr << "ftController::FileRequest()";
-			std::cerr << *it << " is Self - set high rate";
-			std::cerr << std::endl;
+		std::cerr << "ftController::FileRequest() adding peer: " << *it;
+		std::cerr << std::endl;
 #endif
-			//tm->setPeerState(*it, RS_FILE_RATE_FAST | 
-			//			RS_FILE_PEER_ONLINE, 100000);
-			//tm->setPeerState(*it, PQIPEER_IDLE, 10000);
-			tm->setPeerState(*it, PQIPEER_IDLE, rate);
-		}
-		else if (mConnMgr->isOnline(*it))
-		{
-#ifdef CONTROL_DEBUG
-			std::cerr << "ftController::FileRequest()";
-			std::cerr << *it << " is Online";
-			std::cerr << std::endl;
-#endif
-			//tm->setPeerState(*it, RS_FILE_RATE_TRICKLE | 
-			//			RS_FILE_PEER_ONLINE, 10000);
-			//tm->setPeerState(*it, PQIPEER_IDLE, 10000);
-			tm->setPeerState(*it, PQIPEER_IDLE, rate);
-		}
-		else
-		{
-#ifdef CONTROL_DEBUG
-			std::cerr << "ftController::FileRequest()";
-			std::cerr << *it << " is Offline";
-			std::cerr << std::endl;
-#endif
-			//tm->setPeerState(*it, RS_FILE_PEER_OFFLINE,  10000);
-			tm->setPeerState(*it, PQIPEER_IDLE, rate);
-		}
+		setPeerState(tm, *it, rate, mConnMgr->isOnline(*it));
 	}
 
 	/* only need to lock before to fiddle with own variables */
@@ -555,6 +541,39 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	mDownloads[hash] = ftfc;
 	mSlowQueue.push_back(hash);
 
+	return true;
+}
+
+
+bool 	ftController::setPeerState(ftTransferModule *tm, std::string id, 
+						uint32_t maxrate, bool online)
+{
+	if (id == mConnMgr->getOwnId())
+	{
+#ifdef CONTROL_DEBUG
+		std::cerr << "ftController::setPeerState() is Self";
+		std::cerr << std::endl;
+#endif
+		tm->setPeerState(id, PQIPEER_IDLE, maxrate);
+	}
+	else if (online)
+	{
+#ifdef CONTROL_DEBUG
+		std::cerr << "ftController::setPeerState()";
+		std::cerr <<  " Peer is Online";
+		std::cerr << std::endl;
+#endif
+		tm->setPeerState(id, PQIPEER_IDLE, maxrate);
+	}
+	else
+	{
+#ifdef CONTROL_DEBUG
+		std::cerr << "ftController::setPeerState()";
+		std::cerr << " Peer is Offline";
+		std::cerr << std::endl;
+#endif
+		tm->setPeerState(id, PQIPEER_NOT_ONLINE, maxrate);
+	}
 	return true;
 }
 
@@ -825,47 +844,57 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 	 */
 void    ftController::statusChange(const std::list<pqipeer> &plist)
 {
-
-#if 0 /*** FIX ME !!!**************/
-
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	uint32_t rate = FT_CNTRL_STANDARD_RATE;
 
 	/* add online to all downloads */
 	std::map<std::string, ftFileControl>::iterator it;
 	std::list<pqipeer>::const_iterator pit;
 
-	for(it = mDownloads.begin(); it != mDownloads.end(); it++)
-	{
-		for(pit = plist.begin(); pit != plist.end(); pit++)
-		{
-			if (pit->actions | RS_PEER_CONNECTED)
-			{
-				((it->second).mTransfer)->setPeer(RS_FILE_PEER_ONLINE | RS_FILE_RATE_TRICKLE);
-			}
-			else if (pit->actions | RS_PEER_DISCONNECTED)
-			{
-				((it->second).mTransfer)->setPeer(RS_FILE_PEER_OFFLINE);
-			}
-		}
-	}
-
-	/* modify my list of peers */
-	for(pit = plist.begin(); pit != plist.end(); pit++)
-	{
-		if (pit->actions | RS_PEER_CONNECTED)
-		{
-			/* add in */
-
-			((it->second).mTransfer)->setPeer(RS_FILE_PEER_ONLINE | RS_FILE_RATE_TRICKLE);
-		}
-		else if (pit->actions | RS_PEER_DISCONNECTED)
-		{
-			((it->second).mTransfer)->setPeer(RS_FILE_PEER_OFFLINE);
-		}
-	}
-
+#ifdef CONTROL_DEBUG
+	std::cerr << "ftController::statusChange()";
+	std::cerr << std::endl;
 #endif
 
+	for(it = mDownloads.begin(); it != mDownloads.end(); it++)
+	{
+#ifdef CONTROL_DEBUG
+		std::cerr << "ftController::statusChange() Updating Hash:";
+		std::cerr << it->first;
+		std::cerr << std::endl;
+#endif
+		for(pit = plist.begin(); pit != plist.end(); pit++)
+		{
+#ifdef CONTROL_DEBUG
+			std::cerr << "Peer: " << pit->id;
+#endif
+			if (pit->actions & RS_PEER_CONNECTED)
+			{
+#ifdef CONTROL_DEBUG
+				std::cerr << " is Newly Connected!";
+				std::cerr << std::endl;
+#endif
+				setPeerState(it->second.mTransfer, pit->id, rate, true);
+			}
+			else if (pit->actions & RS_PEER_DISCONNECTED)
+			{
+#ifdef CONTROL_DEBUG
+				std::cerr << " is Just disconnected!";
+				std::cerr << std::endl;
+#endif
+				setPeerState(it->second.mTransfer, pit->id, rate, false);
+			}
+			else
+			{
+#ifdef CONTROL_DEBUG
+				std::cerr << " had something happen to it: ";
+				std::cerr << pit-> actions;
+				std::cerr << std::endl;
+#endif
+				setPeerState(it->second.mTransfer, pit->id, rate, false);
+			}
+		}
+	}
 }
 	/* p3Config Interface */
 RsSerialiser *ftController::setupSerialiser()

@@ -37,11 +37,8 @@
 
 /****
  * #define FI_DEBUG 1
+ * #define FI_DEBUG_ALL 1
  ****/
-
-#define FI_DEBUG 1
-#define FI_DEBUG_ALL 1
-
 
 DirEntry::~DirEntry()
 {

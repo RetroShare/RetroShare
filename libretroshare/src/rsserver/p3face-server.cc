@@ -27,10 +27,6 @@
 
 #include "rsserver/p3face.h"
 
-#ifdef USE_OLD_FT
-#include "rsserver/p3files.h" // TMP FOR HACK!
-#endif
-
 #include "tcponudp/tou.h"
 #include <sstream>
 
@@ -121,11 +117,7 @@ void 	RsServer::run()
 /******************************** RUN SERVER *****************/
 		lockRsCore();
 
-#ifdef USE_OLD_FT
-		int moreToTick = server -> tick();
-#else
 		int moreToTick = ftserver -> tick();
-#endif
 
 #ifdef	DEBUG_TICK
 		std::cerr << "RsServer::run() ftserver->tick(): moreToTick: " << moreToTick << std::endl;
@@ -201,16 +193,6 @@ void 	RsServer::run()
 				// currently Dummy Functions.
 				//std::cerr << "RsServer::run() UpdateAllTransfers()" << std::endl;
 
-#ifdef USE_OLD_FT
-				//
-				// TMP HACK.
-				p3Files *p3f = (p3Files *) rsFiles;
-				if (p3f)
-				{
-					p3f -> UpdateAllTransfers();
-				}
-#endif
-
 			        //std::cerr << "RsServer::run() ";
 				//std::cerr << "UpdateRemotePeople()"<<std::endl;
 				//UpdateRemotePeople();
@@ -258,12 +240,8 @@ void 	RsServer::run()
 			{
 				loop = 0;
 
-				/* force saving FileTransferStatus */
-#ifdef USE_OLD_FT
-				ftserver->saveFileTransferStatus();
-#else
+				/* force saving FileTransferStatus TODO */
 				//ftserver->saveFileTransferStatus();
-#endif
 
 				/* see if we need to resave certs */
 				mAuthMgr->CheckSaveCertificates(); 

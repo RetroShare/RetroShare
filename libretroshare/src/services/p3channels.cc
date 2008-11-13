@@ -284,20 +284,6 @@ bool p3Channels::channelSubscribe(std::string cId, bool subscribe)
 	std::cerr << cId;
 	std::cerr << std::endl;
 
-        if (subscribe)
-	{
-		std::string channeldir = mChannelsDir + "/" + cId;
-
-		/* create chanDir */
-		if (!RsDirUtil::checkCreateDirectory(channeldir))
-		{
-			std::cerr << "p3Channels::channelSubscribe()";
-			std::cerr << " Failed to create Channels Directory: ";
-			std::cerr << channeldir;
-			std::cerr << std::endl;
-		}
-	}
-
 	return subscribeToGroup(cId, subscribe);
 }
 
@@ -316,6 +302,7 @@ bool p3Channels::locked_eventUpdateGroup(GroupInfo  *info, bool isNew)
 
 	std::cerr << "p3Channels::locked_eventUpdateGroup() ";
 	std::cerr << grpId;
+	std::cerr << " flags:" << info->flags;
 	std::cerr << std::endl;
 
 	if (isNew)
@@ -328,6 +315,7 @@ bool p3Channels::locked_eventUpdateGroup(GroupInfo  *info, bool isNew)
 	}
 
         if (info->flags & RS_DISTRIB_SUBSCRIBED)
+        //	|| (info->flags & RS_DISTRIB_SUBSCRIBED))
 	{
 		std::string channeldir = mChannelsDir + "/" + grpId;
 
@@ -455,6 +443,34 @@ bool p3Channels::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, std::stri
 	 * this is exactly what DuplicateMsg does.
 	 * */
 	return locked_eventDuplicateMsg(grp, msg, id);
+}
+
+
+void p3Channels::locked_notifyGroupChanged(GroupInfo &grp)
+{
+	/* create directory if needed */
+        if (grp.flags & RS_DISTRIB_SUBSCRIBED)
+	{
+		std::string channeldir = mChannelsDir + "/" + grp.grpId;
+
+		/* create chanDir */
+		if (!RsDirUtil::checkCreateDirectory(channeldir))
+		{
+			std::cerr << "p3Channels::channelSubscribe()";
+			std::cerr << " Failed to create Channels Directory: ";
+			std::cerr << channeldir;
+			std::cerr << std::endl;
+		}
+		else
+		{
+			std::cerr << "p3Channels::channelSubscribe()";
+			std::cerr << " Created: ";
+			std::cerr << channeldir;
+			std::cerr << std::endl;
+		}
+	}
+
+	return p3GroupDistrib::locked_notifyGroupChanged(grp);
 }
 
 

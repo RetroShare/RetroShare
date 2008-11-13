@@ -48,6 +48,7 @@
  */
 
 const double FT_TM_MAX_PEER_RATE = 1024 * 1024; /* 1MB/s */
+const uint32_t FT_TM_MAX_RESETS  = 5;
 
 ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftController *c)
 	:mFileCreator(fc), mMultiplexor(dm), mFtController(c), mFlag(0)
@@ -111,6 +112,38 @@ bool ftTransferModule::getFileSources(std::list<std::string> &peerIds)
     return true;
 }
 
+bool ftTransferModule::addFileSource(std::string peerId)
+{
+  RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
+  std::map<std::string,peerInfo>::iterator mit;
+  mit = mFileSources.find(peerId);
+
+  if (mit == mFileSources.end())
+  {
+  	/* add in new source */
+  	peerInfo pInfo(peerId);
+    	mFileSources.insert(std::pair<std::string,peerInfo>(peerId,pInfo));
+	mit = mFileSources.find(peerId);
+
+#ifdef FT_DEBUG
+	std::cerr << "ftTransferModule::addFileSource()";
+	std::cerr << " adding peer: " << peerId << " to sourceList";
+	std::cerr << std::endl;
+#endif
+
+  }
+  else
+  {
+#ifdef FT_DEBUG
+	std::cerr << "ftTransferModule::addFileSource()";
+	std::cerr << " peer: " << peerId << " already there";
+	std::cerr << std::endl;
+#endif
+  }
+
+}
+
+
 bool ftTransferModule::setPeerState(std::string peerId,uint32_t state,uint32_t maxRate) 
 {
   	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
@@ -124,7 +157,17 @@ bool ftTransferModule::setPeerState(std::string peerId,uint32_t state,uint32_t m
   std::map<std::string,peerInfo>::iterator mit;
   mit = mFileSources.find(peerId);
 
-  if (mit == mFileSources.end()) return false;
+  if (mit == mFileSources.end())
+  {
+  	/* add in new source */
+
+#ifdef FT_DEBUG
+	std::cerr << "ftTransferModule::setPeerState()";
+	std::cerr << " adding new peer to sourceList";
+	std::cerr << std::endl;
+#endif
+	return false;
+  }
 
   (mit->second).state=state;
   (mit->second).desiredRate=maxRate;
@@ -458,8 +501,24 @@ void ftTransferModule::adjustSpeed()
  **/
 
 const uint32_t FT_TM_MINIMUM_CHUNK = 1024; /* ie 1Kb / sec */
-const uint32_t FT_TM_RESTART_DOWNLOAD = 60; /* 60 seconds */
+const uint32_t FT_TM_RESTART_DOWNLOAD = 10; /* 10 seconds */
 const uint32_t FT_TM_DOWNLOAD_TIMEOUT = 5; /* 5 seconds */
+
+/* NOTEs on this function...
+ * 1) This is the critical function for deciding the rate at which ft takes place.
+ * 2) Some of the peers might not have the file... care must be taken avoid deadlock.
+ *
+ * Eg. A edge case which fails badly.
+ *     Small 1K file (one chunk), with 3 sources (A,B,C). A doesn't have file.
+ *      (a) request data from A. B & C pause cos no more data needed.
+ *	(b) all timeout, chunk reset... then back to request again (a) and repeat.
+ *	(c) all timeout x 5 and are disabled.... no transfer, while B&C had it all the time.
+ *
+ *  To solve this we might need random waiting periods, so each peer can 
+ *  be tried.
+ *
+ *
+ */
 
 bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 {
@@ -477,11 +536,31 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 		return false;
 	}
 
-	if (ageReq > FT_TM_RESTART_DOWNLOAD)
+	if (ageReq > FT_TM_RESTART_DOWNLOAD * (info.nResets + 1))
 	{
+		if (info.nResets > 1) /* 3rd timeout */
+		{
+			/* 90% chance of return false...
+			 * will mean variations in which peer
+			 * starts first. hopefully stop deadlocks.
+			 */
+			if (rand() % 10 != 0)
+			{
+				return false;
+			}
+		}
+
 		info.state = PQIPEER_DOWNLOADING;
 		info.recvTS = ts; /* reset to activate */
+		info.nResets++;
 		ageRecv = 0;
+
+		if (info.nResets >= FT_TM_MAX_RESETS)
+		{
+			/* for this file anyway */
+			info.state = PQIPEER_NOT_ONLINE;
+			return false;
+		}
 	}
 
 	if (ageRecv > FT_TM_DOWNLOAD_TIMEOUT)
@@ -543,6 +622,7 @@ bool ftTransferModule::locked_recvPeerData(peerInfo &info, uint64_t offset,
 
   time_t ts = time(NULL);
   info.recvTS = ts;
+  info.nResets = 0;
   info.state = PQIPEER_DOWNLOADING;
   info.lastTransfers += chunk_size;
 

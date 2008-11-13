@@ -150,6 +150,9 @@ virtual bool    loadList(std::list<RsItem *> load);
 void 	checkDownloadQueue();
 bool 	completeFile(std::string hash);
 
+bool    setPeerState(ftTransferModule *tm, std::string id,
+                        uint32_t maxrate, bool online);
+
 	/* pointers to other components */
 
 	ftSearch *mSearch; 
