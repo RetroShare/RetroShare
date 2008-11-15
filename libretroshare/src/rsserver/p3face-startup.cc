@@ -624,9 +624,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	std::string channelsdir = config_dir + "/channels";
 
 
-
-#ifndef RS_RELEASE
-
+	//mRanking = NULL;
 	mRanking = new p3Ranking(mConnMgr, RS_SERVICE_TYPE_RANK,     /* declaration of cache enable service rank */
 			mCacheStrapper, mCacheTransfer,
 			localcachedir, remotecachedir, 3600 * 24 * 30 * 6); // 6 Months
@@ -634,7 +632,24 @@ int RsServer::StartupRetroShare(RsInit *config)
         CachePair cp(mRanking, mRanking, CacheId(RS_SERVICE_TYPE_RANK, 0));
 	mCacheStrapper -> addCachePair(cp);				/* end of declaration */
 
+	p3Forums *mForums = new p3Forums(RS_SERVICE_TYPE_FORUM,
+			mCacheStrapper, mCacheTransfer,
+			localcachedir, remotecachedir);
 
+        CachePair cp4(mForums, mForums, CacheId(RS_SERVICE_TYPE_FORUM, 0));
+	mCacheStrapper -> addCachePair(cp4);
+	pqih -> addService(mForums);  /* This must be also ticked as a service */
+
+	p3Channels *mChannels = new p3Channels(RS_SERVICE_TYPE_CHANNEL,
+			mCacheStrapper, mCacheTransfer, rsFiles,
+			localcachedir, remotecachedir, channelsdir);
+
+        CachePair cp5(mChannels, mChannels, CacheId(RS_SERVICE_TYPE_CHANNEL, 0));
+	mCacheStrapper -> addCachePair(cp5);
+	pqih -> addService(mChannels);  /* This must be also ticked as a service */
+
+
+#ifndef RS_RELEASE
 
 	p3GameLauncher *gameLauncher = new p3GameLauncher(mConnMgr);
 	pqih -> addService(gameLauncher);
@@ -654,38 +669,8 @@ int RsServer::StartupRetroShare(RsInit *config)
 	mCacheStrapper -> addCachePair(cp3);
 
 
-	p3Forums *mForums = new p3Forums(RS_SERVICE_TYPE_FORUM,
-			mCacheStrapper, mCacheTransfer,
-			localcachedir, remotecachedir);
-
-        CachePair cp4(mForums, mForums, CacheId(RS_SERVICE_TYPE_FORUM, 0));
-	mCacheStrapper -> addCachePair(cp4);
-	pqih -> addService(mForums);  /* This must be also ticked as a service */
-
-	p3Channels *mChannels = new p3Channels(RS_SERVICE_TYPE_CHANNEL,
-			mCacheStrapper, mCacheTransfer, rsFiles,
-			localcachedir, remotecachedir, channelsdir);
-
-        CachePair cp5(mChannels, mChannels, CacheId(RS_SERVICE_TYPE_CHANNEL, 0));
-	mCacheStrapper -> addCachePair(cp5);
-	pqih -> addService(mChannels);  /* This must be also ticked as a service */
-
 #else
-	/* In the release - so we can test it seperately from 
-	 * rest of services...
-	 */
-
-	p3Channels *mChannels = new p3Channels(RS_SERVICE_TYPE_CHANNEL,
-			mCacheStrapper, mCacheTransfer, rsFiles,
-			localcachedir, remotecachedir, channelsdir);
-
-        CachePair cp5(mChannels, mChannels, CacheId(RS_SERVICE_TYPE_CHANNEL, 0));
-	mCacheStrapper -> addCachePair(cp5);
-	pqih -> addService(mChannels);  /* This must be also ticked as a service */
-
-	mRanking = NULL;
 	mQblog = NULL;
-
 #endif
 
 	/**************************************************************************/
@@ -715,14 +700,14 @@ int RsServer::StartupRetroShare(RsInit *config)
 	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
 	mConfigMgr->addConfiguration("cache.cfg", mCacheStrapper);
-#ifndef RS_RELEASE
+
 	mConfigMgr->addConfiguration("ranklink.cfg", mRanking);
 	mConfigMgr->addConfiguration("forums.cfg", mForums);
 	mConfigMgr->addConfiguration("channels.cfg", mChannels);
-#else
-	mConfigMgr->addConfiguration("channels.cfg", mChannels);
-#endif
 
+#ifndef RS_RELEASE
+#else
+#endif
 
 	ftserver->addConfiguration(mConfigMgr);
 
@@ -861,25 +846,21 @@ int RsServer::StartupRetroShare(RsInit *config)
 	rsMsgs  = new p3Msgs(mAuthMgr, msgSrv, chatSrv);
 	rsDisc  = new p3Discovery(ad);
 
+	rsForums = mForums;
+	rsChannels = mChannels;
+	rsRanks = new p3Rank(mRanking);
 
 #ifndef RS_RELEASE
 	rsGameLauncher = gameLauncher;
 	rsPhoto = new p3Photo(photoService);
-	rsForums = mForums;
-	rsChannels = mChannels;
 	rsStatus = new p3Status();
 	rsQblog = new p3Blog(mQblog);
-	rsRanks = new p3Rank(mRanking);
 
 #else
 	rsGameLauncher = NULL;
 	rsPhoto = NULL;
-	rsForums = NULL;
-	rsChannels = NULL;
-	rsChannels = mChannels;
 	rsStatus = NULL;
 	rsQblog = NULL;
-	rsRanks = NULL;
 #endif
 
 
