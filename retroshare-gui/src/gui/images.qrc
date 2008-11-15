@@ -42,7 +42,7 @@
         <file>images/avatar_background.png</file>
         <file>images/backgroundimage.png</file>
         <file>images/button_cancel.png</file>
-	    <file>images/calendar.png</file>
+	<file>images/calendar.png</file>
         <file>images/chat.png</file>
         <file>images/chat/bar_end.png</file>
         <file>images/chat/bar_fill.png</file>
@@ -99,6 +99,7 @@
         <file>images/evolution.png</file>
         <file>images/exit_24x24.png</file>
         <file>images/expand_hover.png</file>
+	<file>images/expand_frame.png</file>
         <file>images/exportpeers_16x16.png</file>
         <file>images/filefind.png</file>
         <file>images/fileinfo.png</file>
@@ -156,6 +157,7 @@
         <file>images/help.png</file>
         <file>images/help24.png</file>
         <file>images/hide_toolbox_frame.png</file>
+	<file>images/hide_frame.png</file>
         <file>images/highlight.png</file>
         <file>images/hi16-app-ktorrent.png</file>
         <file>images/image16.png</file>

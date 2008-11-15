@@ -42,6 +42,8 @@ ChanMenuItem::ChanMenuItem(std::string chanId)
   small();
   updateItemStatic();
   updateItem();
+  expandButton->setIcon(QIcon(QString(":/images/hide_frame.png")));
+
 }
 
 
@@ -88,10 +90,15 @@ void ChanMenuItem::toggle()
 	if (expandFrame->isHidden())
 	{
 		expandFrame->show();
+	        expandButton->setIcon(QIcon(QString(":/images/expand_frame.png")));
+		expandButton->setToolTip("Hide");
 	}
 	else
 	{
 		expandFrame->hide();
+	        expandButton->setIcon(QIcon(QString(":/images/hide_frame.png")));
+		expandButton->setToolTip("Expand");
+
 	}
 }
 
