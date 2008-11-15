@@ -28,6 +28,7 @@
 #include <QPixmap>
 
 #include "ChannelFeed.h"
+#include "ForumsDialog.h"
 #include "LinksDialog.h"
 #include "GamesDialog.h"
 #include "PhotoDialog.h"
@@ -66,6 +67,7 @@
 #define IMAGE_LINKS             ":/images/knewsticker24.png"
 #define IMAGE_FILES   	        ":/images/fileshare24.png"
 #define IMAGE_CHANNELS       	":/images/channels.png"
+#define IMAGE_FORUMS            ":/images/konversation.png"
 #define IMAGE_PREFERENCES       ":/images/kcmsystem24.png"
 #define IMAGE_CHAT          	":/images/groupchat.png"
 #define IMAGE_RETROSHARE        ":/images/rstray3.png"
@@ -102,7 +104,6 @@
 
 #define RS_RELEASE_VERSION    1
 
- 
 /** Constructor */
 MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     : RWindow("MainWindow", parent, flags)
@@ -185,10 +186,16 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
 #ifdef RS_RELEASE_VERSION    
     channelsDialog = NULL;
+    ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
+			createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
 
     ChannelFeed *channelFeed = NULL;
     ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
                       createPageAction(QIcon(IMAGE_CHANNELS), tr("Channel Feed"), grp));
+
+    ForumsDialog *forumsDialog = NULL;
+    ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
 
 #else
     channelsDialog = NULL;
@@ -197,6 +204,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
+
+    ForumsDialog *forumsDialog = NULL;
+    ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
 
 #endif
 

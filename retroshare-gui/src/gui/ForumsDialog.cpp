@@ -204,7 +204,7 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
       QAction *replyAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply" ), this );
       connect( replyAct , SIGNAL( triggered() ), this, SLOT( createmessage() ) );
       
-      QAction *viewAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr( "View Whole Thread" ), this );
+      QAction *viewAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr( "Start New Thread" ), this );
       connect( viewAct , SIGNAL( triggered() ), this, SLOT( showthread() ) );
 
       contextMnu.clear();

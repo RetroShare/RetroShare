@@ -138,13 +138,13 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(blogDialog = new BlogDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_BLOGS), tr("Blog Feed"), grp));
 
-    ChannelFeed *channelFeed = NULL;
-    ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_CHANNELS), tr("Channel Feed"), grp));
-
-    ForumsDialog *forumsDialog = NULL;
-    ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
+//    ChannelFeed *channelFeed = NULL;
+//    ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
+//                      createPageAction(QIcon(IMAGE_CHANNELS), tr("Channel Feed"), grp));
+//
+//    ForumsDialog *forumsDialog = NULL;
+//    ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
+//                       createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
                      
     GamesDialog *gamesDialog = NULL;
     ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),

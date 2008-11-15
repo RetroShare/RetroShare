@@ -13,26 +13,17 @@
    <string>Post Forum Message</string>
   </property>
   <property name="windowIcon" >
-   <iconset resource="../images.qrc" >
-    <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
+   <iconset resource="../images.qrc" >:/images/rstray3.png</iconset>
   </property>
   <property name="toolButtonStyle" >
    <enum>Qt::ToolButtonTextUnderIcon</enum>
   </property>
   <widget class="QWidget" name="centralwidget" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>52</y>
-     <width>441</width>
-     <height>301</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="gridLayout" >
+   <layout class="QGridLayout" >
     <item row="0" column="0" >
      <layout class="QVBoxLayout" >
       <item>
-       <layout class="QHBoxLayout" name="_2" >
+       <layout class="QHBoxLayout" >
         <item>
          <widget class="QLabel" name="label_2" >
           <property name="text" >
@@ -41,12 +32,16 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="forumName" />
+         <widget class="QLineEdit" name="forumName" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="_3" >
+       <layout class="QHBoxLayout" >
         <item>
          <widget class="QLabel" name="label" >
           <property name="text" >
@@ -60,7 +55,7 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="_4" >
+       <layout class="QHBoxLayout" >
         <item>
          <widget class="QLabel" name="label_5" >
           <property name="text" >
@@ -73,7 +68,7 @@
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" stdset="0" >
+          <property name="sizeHint" >
            <size>
             <width>40</width>
             <height>20</height>
@@ -98,14 +93,6 @@
    </layout>
   </widget>
   <widget class="QToolBar" name="toolBar" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>441</width>
-     <height>52</height>
-    </rect>
-   </property>
    <property name="windowTitle" >
     <string>toolBar</string>
    </property>
@@ -120,8 +107,7 @@
   </widget>
   <action name="postmessage_action" >
    <property name="icon" >
-    <iconset resource="../images.qrc" >
-     <normaloff>:/images/mail_send24.png</normaloff>:/images/mail_send24.png</iconset>
+    <iconset resource="../images.qrc" >:/images/mail_send24.png</iconset>
    </property>
    <property name="text" >
     <string>Post Forum Msg</string>
@@ -129,8 +115,7 @@
   </action>
   <action name="close_action" >
    <property name="icon" >
-    <iconset resource="../images.qrc" >
-     <normaloff>:/images/button_cancel.png</normaloff>:/images/button_cancel.png</iconset>
+    <iconset resource="../images.qrc" >:/images/button_cancel.png</iconset>
    </property>
    <property name="text" >
     <string>Close</string>

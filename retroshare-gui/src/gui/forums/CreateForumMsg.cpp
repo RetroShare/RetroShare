@@ -37,8 +37,8 @@ CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
   config.loadWidgetInformation(this);
   
   // connect up the buttons.
-  connect( ui.postmessage_action, SIGNAL( triggered (bool) ), this, SLOT( cancelMsg( ) ) );
-  connect( ui.close_action, SIGNAL( triggered (bool) ), this, SLOT( createMsg( ) ) );
+  connect( ui.postmessage_action, SIGNAL( triggered (bool) ), this, SLOT( createMsg( ) ) );
+  connect( ui.close_action, SIGNAL( triggered (bool) ), this, SLOT( cancelMsg( ) ) );
 
   newMsg();
 
@@ -48,6 +48,26 @@ CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
 void  CreateForumMsg::newMsg()
 {
 	/* clear all */
+	ForumInfo fi;
+	if (rsForums->getForumInfo(mForumId, fi))
+	{
+		ForumMsgInfo msg;
+
+		QString name = QString::fromStdWString(fi.forumName);
+		QString subj;
+		if ((mParentId != "") && (rsForums->getForumMessage(
+				mForumId, mParentId, msg)))
+		{
+			name += " In Reply to: ";
+			name += QString::fromStdWString(msg.title);
+			subj = "Re: " + QString::fromStdWString(msg.title);
+		}
+
+		ui.forumName->setText(name);
+		ui.forumSubject->setText(subj);
+	}
+
+	ui.forumMessage->setText("");
 }
 
 void  CreateForumMsg::createMsg()
@@ -65,6 +85,9 @@ void  CreateForumMsg::createMsg()
 
 	msgInfo.title = name.toStdWString();
 	msgInfo.msg = desc.toStdWString();
+
+	if ((msgInfo.msg == L"") && (msgInfo.title == L""))
+		return; /* do nothing */
 
 	rsForums->ForumMessageSend(msgInfo);
 
