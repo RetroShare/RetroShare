@@ -1,4 +1,5 @@
 #include <math.h>
+#include <QTimer>
 #include <QWheelEvent>
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
@@ -20,6 +21,13 @@ TrustView::TrustView()
 	QObject::connect(zoomHS,SIGNAL(valueChanged(int)),this,SLOT(updateZoom(int))) ;
 	QObject::connect(updatePB,SIGNAL(clicked()),this,SLOT(update())) ;
 	QObject::connect(trustTableTW,SIGNAL(cellClicked(int,int)),this,SLOT(selectCell(int,int))) ;
+
+	updatePB->setToolTip(QString("This table normaly auto-updates every 10 seconds.")) ;
+
+	QTimer *timer = new QTimer ;
+
+	QObject::connect(timer,SIGNAL(timeout()),this,SLOT(update())) ;
+	timer->start(10000) ;
 
 	update() ;
 }
@@ -76,7 +84,7 @@ void TrustView::updateZoom(int z)
 	for(int i=0;i<trustTableTW->rowCount();++i)
 		trustTableTW->setRowHeight(i,row_s) ;
 
-	cout << "updated zoom" << endl;
+//	cout << "updated zoom" << endl;
 }
 
 int TrustView::getRowColId(const string& name)
@@ -89,7 +97,7 @@ int TrustView::getRowColId(const string& name)
 	if(itpr == nameToRow.end())
 	{
 		i = trustTableTW->columnCount() ;
-		cout << "  -> peer not in table. Creating entry # " << i << endl ;
+//		cout << "  -> peer not in table. Creating entry # " << i << endl ;
 
 		trustTableTW->insertColumn(i) ;
 		trustTableTW->insertRow(i) ;
@@ -123,39 +131,19 @@ void TrustView::update()
 
 	RsPeerDetails details ;
 
-#ifdef A_VIRER
-	// Build rows and columns
-	//
-	for(list<string>::const_iterator it(neighs.begin()); it != neighs.end(); it++)
-	{
-		cout << "Looking for peer " << *it << endl ;
-
-		if(!rsPeers->getPeerDetails(*it,details)) 
-		{
-			cout << "  -> no details" << endl ;
-			continue ;
-		}
-
-		cout << "  -> name = " << details.name << endl ;
-
-		int i = getRowColId( details.name ) ;
-
-	}
-#endif
-
 	// Fill everything
 	for(list<string>::const_iterator it1(neighs.begin()); it1 != neighs.end(); ++it1)
 	{
 		if(!rsPeers->getPeerDetails(*it1,details)) 
 			continue ;
 
-		cout << "treating neigh = " << details.name << endl ;
-		cout << "  signers = " ;
+//		cout << "treating neigh = " << details.name << endl ;
+//		cout << "  signers = " ;
 		int i = getRowColId(details.name) ;
 
 		for(list<string>::const_iterator it2(details.signers.begin());it2!=details.signers.end();++it2) 
 		{
-			cout << *it2 << " " ;
+//			cout << *it2 << " " ;
 			// Signers are identified by there name, so if we have twice the same signers, this gets crappy.
 
 			int j = getRowColId(*it2) ;
@@ -167,7 +155,7 @@ void TrustView::update()
 			else
 				trustTableTW->item(i,j)->setText(trr) ;
 		}
-		cout << endl ;
+//		cout << endl ;
 	}
 	// assign colors
 	for(int i=0;i<trustTableTW->rowCount();++i)
