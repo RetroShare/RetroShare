@@ -34,6 +34,7 @@
  */
 
 #include "ft/ftsearch.h"
+#include "pqi/p3cfgmgr.h"
 
 #include "dbase/fistore.h"
 #include "dbase/fimonitor.h"
@@ -50,13 +51,26 @@ class ftFiStore: public FileIndexStore, public ftSearch
 virtual bool search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
 };
 
-class ftFiMonitor: public FileIndexMonitor, public ftSearch
+class ftFiMonitor: public FileIndexMonitor, public ftSearch, public p3Config
 {
 	public:
 	ftFiMonitor(CacheStrapper *cs, std::string cachedir, std::string pid);
 
 	/* overloaded search function */
 virtual bool search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
+
+	/* overloaded set dirs enables config indication */
+virtual void setSharedDirectories(std::list<std::string> dirList);
+
+	/***
+	* Configuration - store shared directories
+	*/
+	protected:
+
+virtual RsSerialiser *setupSerialiser();
+virtual std::list<RsItem *> saveList(bool &cleanup);
+virtual bool    loadList(std::list<RsItem *> load);
+	
 
 };
 

@@ -380,13 +380,40 @@ bool 	ftServer::removeSharedDirectory(std::string dir)
 	std::list<std::string> dirList;
 	std::list<std::string>::iterator it;
 
+#ifdef SERVER_DEBUG 
+	std::cerr << "ftServer::removeSharedDirectory(" << dir << ")";
+	std::cerr << std::endl;
+#endif
+
 	mFiMon->getSharedDirectories(dirList);
 
-	if (dirList.end() != (it = 
+#ifdef SERVER_DEBUG 
+	for(it = dirList.begin(); it != dirList.end(); it++)
+	{
+		std::cerr << "ftServer::removeSharedDirectory()";
+		std::cerr << " existing: " << *it;
+		std::cerr << std::endl;
+	}
+#endif
+
+	if (dirList.end() == (it = 
 		std::find(dirList.begin(), dirList.end(), dir)))
 	{
+#ifdef SERVER_DEBUG 
+		std::cerr << "ftServer::removeSharedDirectory()";
+		std::cerr << " Cannot Find Directory... Fail";
+		std::cerr << std::endl;
+#endif
+
 		return false;
 	}
+
+
+#ifdef SERVER_DEBUG 
+	std::cerr << "ftServer::removeSharedDirectory()";
+	std::cerr << " Updating Directories";
+	std::cerr << std::endl;
+#endif
 
 	dirList.erase(it);
 	mFiMon->setSharedDirectories(dirList);
@@ -755,4 +782,22 @@ FileInfo(ffr);
  **********************************
  *********************************/
 
+ /***************************** CONFIG ****************************/
+
+bool    ftServer::addConfiguration(p3ConfigMgr *cfgmgr)
+{
+	/* add all the subbits to config mgr */
+	cfgmgr->addConfiguration("ft_shared.cfg", mFiMon);
+	cfgmgr->addConfiguration("ft_extra.cfg", mFtExtra);
+	cfgmgr->addConfiguration("ft_transfers.cfg", mFtController);
+	
+	return true;
+}
+
+bool	ftServer::ResumeTransfers()
+{
+	mFtController->ResumeTransfers();
+
+	return true;
+}
 

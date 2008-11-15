@@ -65,8 +65,9 @@ const uint32_t CONFIG_TYPE_MSGS 	= 0x0004;
 const uint32_t CONFIG_TYPE_CACHE_OLDID 	= 0x0005;
 
 /* new FileTransfer */
-const uint32_t CONFIG_TYPE_EXTRALIST 	= 0x0008;
-const uint32_t CONFIG_TYPE_CONTROL 	= 0x0009;
+const uint32_t CONFIG_TYPE_FT_SHARED 	= 0x0007;
+const uint32_t CONFIG_TYPE_FT_EXTRA_LIST= 0x0008;
+const uint32_t CONFIG_TYPE_FT_CONTROL 	= 0x0009;
 
 /* wish these ids where higher...
  * may move when switch to v0.5

@@ -26,6 +26,8 @@
 #include "ft/ftdbase.h"
 #include "util/rsdir.h"
 
+#include "serialiser/rsconfigitems.h"
+
 #define DB_DEBUG 1
 
 ftFiStore::ftFiStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in,
@@ -118,7 +120,7 @@ bool ftFiStore::search(std::string hash, uint64_t size, uint32_t hintflags, File
 
 		
 ftFiMonitor::ftFiMonitor(CacheStrapper *cs, std::string cachedir, std::string pid)
-	:FileIndexMonitor(cs, cachedir, pid)
+	:FileIndexMonitor(cs, cachedir, pid), p3Config(CONFIG_TYPE_FT_SHARED)
 {
 	return;
 }
@@ -153,6 +155,96 @@ bool ftFiMonitor::search(std::string hash, uint64_t size, uint32_t hintflags, Fi
 
 	return false;
 };
+
+/******* LOAD / SAVE CONFIG List.
+ *
+ *
+ *
+ *
+ */
+
+RsSerialiser *ftFiMonitor::setupSerialiser()
+{
+	RsSerialiser *rss = new RsSerialiser();
+
+	/* add in the types we need! */
+	rss->addSerialType(new RsFileConfigSerialiser());
+	return rss;
+}
+
+std::list<RsItem *> ftFiMonitor::saveList(bool &cleanup)
+{
+	std::list<RsItem *> sList;
+
+	cleanup = true;
+
+#ifdef  DB_DEBUG
+	std::cerr << "ftFiMonitor::saveList()";
+	std::cerr << std::endl;
+#endif
+
+	/* get list of directories */
+	std::list<std::string> dirList;
+	std::list<std::string>::iterator it;
+
+	getSharedDirectories(dirList);
+
+	for(it = dirList.begin(); it != dirList.end(); it++)
+	{
+		RsFileConfigItem *fi = new RsFileConfigItem();
+		fi->file.path = *it;
+
+		sList.push_back(fi);
+	}
+
+	return sList;
+}
+
+
+bool    ftFiMonitor::loadList(std::list<RsItem *> load)
+{
+	/* for each item, check it exists .... 
+	 * - remove any that are dead (or flag?) 
+	 */
+
+#ifdef  DEBUG_ELIST
+	std::cerr << "ftFiMonitor::loadList()";
+	std::cerr << std::endl;
+#endif
+
+	time_t ts = time(NULL);
+
+	std::list<std::string> dirList;
+
+	std::list<RsItem *>::iterator it;
+	for(it = load.begin(); it != load.end(); it++)
+	{
+		RsFileConfigItem *fi = dynamic_cast<RsFileConfigItem *>(*it);
+		if (!fi)
+		{
+			delete (*it);
+			continue;
+		}
+
+		/* ensure that it exists? */
+
+		dirList.push_back(fi->file.path);
+	}
+
+	/* set directories */
+	setSharedDirectories(dirList);
+	return true;
+}
+
+void	ftFiMonitor::setSharedDirectories(std::list<std::string> dirList)
+{
+	FileIndexMonitor::setSharedDirectories(dirList);
+
+	/* flag for config */
+	IndicateConfigChanged();
+}
+
+
 
 ftCacheStrapper::ftCacheStrapper(p3AuthMgr *am, p3ConnectMgr *cm)
 	:CacheStrapper(am, cm)

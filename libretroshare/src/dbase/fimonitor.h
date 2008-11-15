@@ -88,7 +88,7 @@ bool 	updateCache(const CacheData &data);     /* we call when we have a new cach
 virtual void 	run(); /* overloaded from RsThread */
 void 	updateCycle();
 
-void    setSharedDirectories(std::list<std::string> dirs);
+virtual void    setSharedDirectories(std::list<std::string> dirs);
 void    getSharedDirectories(std::list<std::string> &dirs);
 
 void    setPeriod(int insecs);

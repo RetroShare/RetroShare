@@ -24,12 +24,13 @@
  */
 
 #include "ft/ftextralist.h"
+#include "serialiser/rsconfigitems.h"
 #include "util/rsdir.h"
 
 #define DEBUG_ELIST	1
 
 ftExtraList::ftExtraList()
-	:p3Config(CONFIG_FT_EXTRA_LIST)
+	:p3Config(CONFIG_TYPE_FT_EXTRA_LIST)
 {
 	return;
 }
@@ -122,13 +123,13 @@ void ftExtraList::hashAFile()
 	{
 		RsStackMutex stack(extMutex);
 
-		details.start = time(NULL);
-
 		/* stick it in the available queue */
 		mFiles[details.info.hash] = details;
 
 		/* add to the path->hash map */
 		mHashedList[details.info.path] = details.info.hash;
+	
+		IndicateConfigChanged();
 	}
 }
 
@@ -157,13 +158,13 @@ bool	ftExtraList::addExtraFile(std::string path, std::string hash,
 	details.info.fname = RsDirUtil::getTopDir(path);
 	details.info.hash = hash;
 	details.info.size = size;
-
-	details.start = time(NULL);
+	details.info.age = time(NULL) + period; /* if time > this... cleanup */
 	details.flags = flags;
-	details.period = period;
 
 	/* stick it in the available queue */
 	mFiles[details.info.hash] = details;
+
+	IndicateConfigChanged();
 
 	return true;
 }
@@ -189,6 +190,8 @@ bool ftExtraList::removeExtraFile(std::string hash, uint32_t flags)
 
 	mFiles.erase(it);
 
+	IndicateConfigChanged();
+
 	return true;
 }
 
@@ -212,7 +215,7 @@ bool	ftExtraList::cleanupOldFiles()
 	for(it = mFiles.begin(); it != mFiles.end(); it++)
 	{
 		/* check timestamps */
-		if (it->second.start + it->second.period < (unsigned) now)
+		if (it->second.info.age < (unsigned) now)
 		{
 			toRemove.push_back(it->first);
 		}
@@ -225,13 +228,24 @@ bool	ftExtraList::cleanupOldFiles()
 		{
 			if (mFiles.end() != (it = mFiles.find(*rit)))
 			{
+				cleanupEntry(it->second.info.path, it->second.flags);
 				mFiles.erase(it);
 			}
 		}
+		IndicateConfigChanged();
 	}
 	return true;
 }
 
+
+bool	ftExtraList::cleanupEntry(std::string path, uint32_t flags)
+{
+	if (flags & RS_FILE_CONFIG_CLEANUP_DELETE)
+	{
+		/* Delete the file? - not yet! */
+	}
+	return true;
+}
 
 		/***
 		 * Hash file, and add to the files, 
@@ -252,6 +266,7 @@ bool 	ftExtraList::hashExtraFile(std::string path, uint32_t period, uint32_t fla
 	RsStackMutex stack(extMutex);
 
 	FileDetails details(path, period, flags);
+	details.info.age = time(NULL) + period;
 	mToHash.push_back(details);
 
 	return true;
@@ -291,8 +306,6 @@ bool    ftExtraList::search(std::string hash, uint64_t size, uint32_t hintflags,
 	std::cerr << std::endl;
 #endif
 
-	RsStackMutex stack(extMutex);
-
 	/* find hash */
 	std::map<std::string, FileDetails>::const_iterator fit;
 	if (mFiles.end() == (fit = mFiles.find(hash)))
@@ -312,17 +325,114 @@ bool    ftExtraList::search(std::string hash, uint64_t size, uint32_t hintflags,
 
 RsSerialiser *ftExtraList::setupSerialiser()
 {
-	return NULL;
+	RsSerialiser *rss = new RsSerialiser();
+
+	/* add in the types we need! */
+	rss->addSerialType(new RsFileConfigSerialiser());
+	return rss;
 }
 
 std::list<RsItem *> ftExtraList::saveList(bool &cleanup)
 {
 	std::list<RsItem *> sList;
+
+	cleanup = true;
+
+	/* called after each item is added */
+
+	/* create a list of fileitems with
+	 * age used to specify its timeout.
+	 */
+
+#ifdef  DEBUG_ELIST
+	std::cerr << "ftExtraList::saveList()";
+	std::cerr << std::endl;
+#endif
+
+	RsStackMutex stack(extMutex);
+
+
+	std::map<std::string, FileDetails>::const_iterator it;
+	for(it = mFiles.begin(); it != mFiles.end(); it++)
+	{
+		RsFileConfigItem *fi = new RsFileConfigItem();
+		fi->file.path        = (it->second).info.path;
+		fi->file.name        = (it->second).info.fname;
+		fi->file.hash        = (it->second).info.hash;
+		fi->file.filesize    = (it->second).info.size;
+		fi->file.age         = (it->second).info.age;
+		fi->flags            = (it->second).flags;
+
+		sList.push_back(fi);
+	}
+
 	return sList;
 }
 
+
 bool    ftExtraList::loadList(std::list<RsItem *> load)
 {
+	/* for each item, check it exists .... 
+	 * - remove any that are dead (or flag?) 
+	 */
+
+#ifdef  DEBUG_ELIST
+	std::cerr << "ftExtraList::loadList()";
+	std::cerr << std::endl;
+#endif
+
+	time_t ts = time(NULL);
+
+
+	std::list<RsItem *>::iterator it;
+	for(it = load.begin(); it != load.end(); it++)
+	{
+
+		RsFileConfigItem *fi = dynamic_cast<RsFileConfigItem *>(*it);
+		if (!fi)
+		{
+			delete (*it);
+			continue;
+		}
+
+		/* open file */
+		FILE *fd = fopen(fi->file.path.c_str(), "rb");
+		if (fd == NULL)
+		{
+			delete (*it);
+			continue;
+		}
+
+		fclose(fd);
+
+		if (ts > fi->file.age)
+		{
+			/* to old */
+			cleanupEntry(fi->file.path, fi->flags);
+			delete (*it);
+		}
+
+		/* add into system */
+		FileDetails file;
+
+		RsStackMutex stack(extMutex);
+	
+		FileDetails details;
+	
+		details.info.path = fi->file.path;
+		details.info.fname = fi->file.name;
+		details.info.hash = fi->file.hash;
+		details.info.size = fi->file.filesize;
+		details.info.age = fi->file.age; /* time that we remove it. */
+		details.flags = fi->flags;
+	
+		/* stick it in the available queue */
+		mFiles[details.info.hash] = details;
+		delete (*it);
+
+		/* short sleep */
+		usleep(1000); /* 1000 per second */
+	}
 	return true;
 }
 

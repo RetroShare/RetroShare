@@ -31,34 +31,46 @@
 #define RSSERIAL_DEBUG 1
 ***/
 
+#define RSSERIAL_DEBUG 1
+
 #include <iostream>
 
 /*************************************************************************/
 
-uint32_t    RsFileTransferSerialiser::size(RsItem *i)
+uint32_t    RsFileConfigSerialiser::size(RsItem *i)
 {
 	RsFileTransfer *rft;
+	RsFileConfigItem *rfi;
 
 	if (NULL != (rft = dynamic_cast<RsFileTransfer *>(i)))
 	{
 		return sizeTransfer(rft);
 	}
+	if (NULL != (rfi = dynamic_cast<RsFileConfigItem *>(i)))
+	{
+		return sizeFileItem(rfi);
+	}
 	return 0;
 }
 
 /* serialise the data to the buffer */
-bool    RsFileTransferSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
+bool    RsFileConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 {
 	RsFileTransfer *rft;
+	RsFileConfigItem *rfi;
 
 	if (NULL != (rft = dynamic_cast<RsFileTransfer *>(i)))
 	{
 		return serialiseTransfer(rft, data, pktsize);
 	}
+	if (NULL != (rfi = dynamic_cast<RsFileConfigItem *>(i)))
+	{
+		return serialiseFileItem(rfi, data, pktsize);
+	}
 	return false;
 }
 
-RsItem *RsFileTransferSerialiser::deserialise(void *data, uint32_t *pktsize)
+RsItem *RsFileConfigSerialiser::deserialise(void *data, uint32_t *pktsize)
 {
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
@@ -72,8 +84,11 @@ RsItem *RsFileTransferSerialiser::deserialise(void *data, uint32_t *pktsize)
 
 	switch(getRsItemSubType(rstype))
 	{
-		case RS_PKT_SUBTYPE_DEFAULT:
+		case RS_PKT_SUBTYPE_FILE_TRANSFER:
 			return deserialiseTransfer(data, pktsize);
+			break;
+		case RS_PKT_SUBTYPE_FILE_ITEM:
+			return deserialiseFileItem(data, pktsize);
 			break;
 		default:
 			return NULL;
@@ -137,8 +152,40 @@ std::ostream &RsFileTransfer::print(std::ostream &out, uint16_t indent)
 
 }
 
+/*************************************************************************/
+/*************************************************************************/
 
-uint32_t    RsFileTransferSerialiser::sizeTransfer(RsFileTransfer *item)
+RsFileConfigItem::~RsFileConfigItem()
+{
+	return;
+}
+
+void 	RsFileConfigItem::clear()
+{
+
+	file.TlvClear();
+	flags = 0;
+}
+
+std::ostream &RsFileConfigItem::print(std::ostream &out, uint16_t indent)
+{
+        printRsItemBase(out, "RsFileConfigItem", indent);
+	uint16_t int_Indent = indent + 2;
+	file.print(out, int_Indent);
+
+        printIndent(out, int_Indent);
+        out << "flags: " << flags << std::endl;
+
+        printRsItemEnd(out, "RsFileConfigItem", indent);
+        return out;
+
+}
+
+/*************************************************************************/
+/*************************************************************************/
+
+
+uint32_t    RsFileConfigSerialiser::sizeTransfer(RsFileTransfer *item)
 {
 	uint32_t s = 8; /* header */
 	s += item->file.TlvSize();
@@ -155,7 +202,7 @@ uint32_t    RsFileTransferSerialiser::sizeTransfer(RsFileTransfer *item)
 	return s;
 }
 
-bool     RsFileTransferSerialiser::serialiseTransfer(RsFileTransfer *item, void *data, uint32_t *pktsize)
+bool     RsFileConfigSerialiser::serialiseTransfer(RsFileTransfer *item, void *data, uint32_t *pktsize)
 {
 	uint32_t tlvsize = sizeTransfer(item);
 	uint32_t offset = 0;
@@ -170,8 +217,8 @@ bool     RsFileTransferSerialiser::serialiseTransfer(RsFileTransfer *item, void 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
 #ifdef RSSERIAL_DEBUG
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() Header: " << ok << std::endl;
-	std::cerr << "RsFileTransferSerialiser::serialiseTransfer() Size: " << tlvsize << std::endl;
+	std::cerr << "RsFileConfigSerialiser::serialiseTransfer() Header: " << ok << std::endl;
+	std::cerr << "RsFileConfigSerialiser::serialiseTransfer() Size: " << tlvsize << std::endl;
 #endif
 
 	/* skip the header */
@@ -197,14 +244,14 @@ bool     RsFileTransferSerialiser::serialiseTransfer(RsFileTransfer *item, void 
 	{
 		ok = false;
 #ifdef RSSERIAL_DEBUG
-		std::cerr << "RsFileTransferSerialiser::serialiseTransfer() Size Error! " << std::endl;
+		std::cerr << "RsFileConfigSerialiser::serialiseTransfer() Size Error! " << std::endl;
 #endif
 	}
 
 	return ok;
 }
 
-RsFileTransfer *RsFileTransferSerialiser::deserialiseTransfer(void *data, uint32_t *pktsize)
+RsFileTransfer *RsFileConfigSerialiser::deserialiseTransfer(void *data, uint32_t *pktsize)
 {
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
@@ -216,7 +263,7 @@ RsFileTransfer *RsFileTransferSerialiser::deserialiseTransfer(void *data, uint32
 	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
 		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
 		(RS_PKT_TYPE_FILE_CONFIG  != getRsItemType(rstype)) ||
-		(RS_PKT_SUBTYPE_DEFAULT != getRsItemSubType(rstype)))
+		(RS_PKT_SUBTYPE_FILE_TRANSFER != getRsItemSubType(rstype)))
 	{
 		return NULL; /* wrong type */
 	}
@@ -267,6 +314,111 @@ RsFileTransfer *RsFileTransferSerialiser::deserialiseTransfer(void *data, uint32
 
 	return item;
 }
+
+/*************************************************************************/
+/*************************************************************************/
+
+
+uint32_t    RsFileConfigSerialiser::sizeFileItem(RsFileConfigItem *item)
+{
+	uint32_t s = 8; /* header */
+	s += item->file.TlvSize();
+	s += 4;
+
+	return s;
+}
+
+bool     RsFileConfigSerialiser::serialiseFileItem(RsFileConfigItem *item, void *data, uint32_t *pktsize)
+{
+	uint32_t tlvsize = sizeFileItem(item);
+	uint32_t offset = 0;
+
+	if (*pktsize < tlvsize)
+		return false; /* not enough space */
+
+	*pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsFileConfigSerialiser::serialiseFileItem() Header: " << ok << std::endl;
+	std::cerr << "RsFileConfigSerialiser::serialiseFileItem() Size: " << tlvsize << std::endl;
+#endif
+
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+	ok &= item->file.SetTlv(data, tlvsize, &offset);
+
+	ok &= setRawUInt32(data, tlvsize, &offset, item->flags);
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsFileConfigSerialiser::serialiseFileItem() Size Error! " << std::endl;
+#endif
+	}
+
+	return ok;
+}
+
+RsFileConfigItem *RsFileConfigSerialiser::deserialiseFileItem(void *data, uint32_t *pktsize)
+{
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+	uint32_t offset = 0;
+
+
+	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
+		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
+		(RS_PKT_TYPE_FILE_CONFIG  != getRsItemType(rstype)) ||
+		(RS_PKT_SUBTYPE_FILE_ITEM != getRsItemSubType(rstype)))
+	{
+		return NULL; /* wrong type */
+	}
+
+	if (*pktsize < rssize)    /* check size */
+		return NULL; /* not enough data */
+
+	/* set the packet length */
+	*pktsize = rssize;
+
+	bool ok = true;
+
+	/* ready to load */
+	RsFileConfigItem *item = new RsFileConfigItem();
+	item->clear();
+
+	/* skip the header */
+	offset += 8;
+
+	/* get mandatory parts first */
+	ok &= item->file.GetTlv(data, rssize, &offset);
+	ok &= getRawUInt32(data, rssize, &offset, &(item->flags));
+
+	if (offset != rssize)
+	{
+		/* error */
+		delete item;
+		return NULL;
+	}
+
+	if (!ok)
+	{
+		delete item;
+		return NULL;
+	}
+
+	return item;
+}
+
+
 
 
 /*************************************************************************/

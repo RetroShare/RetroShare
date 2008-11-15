@@ -179,6 +179,10 @@ virtual bool    sendDataRequest(std::string peerId,
 	/*************** Internal Transfer Fns *************************/
 virtual int tick();
 
+	/* Configuration */
+bool	addConfiguration(p3ConfigMgr *cfgmgr);
+bool	ResumeTransfers();
+
 private:
 bool	handleInputQueues();
 bool	handleCacheData();

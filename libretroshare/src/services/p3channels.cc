@@ -65,8 +65,11 @@ std::ostream &operator<<(std::ostream &out, const ChannelMsgInfo &info)
 RsChannels *rsChannels = NULL;
 
 
-#define CHANNEL_STOREPERIOD 10000
-#define CHANNEL_PUBPERIOD   600
+/* Channels will be initially stored for 1 year
+ * remember 2^16 = 64K max units in store period.
+ * PUBPERIOD * 2^16 = max STORE PERIOD */
+#define CHANNEL_STOREPERIOD (90*24*3600)    /*  30 * 24 * 3600 - secs in a year */
+#define CHANNEL_PUBPERIOD   600              /* 10 minutes ... (max = 455 days) */
 
 p3Channels::p3Channels(uint16_t type, CacheStrapper *cs, 
 		CacheTransfer *cft, RsFiles *files, 

@@ -723,6 +723,10 @@ int RsServer::StartupRetroShare(RsInit *config)
 	mConfigMgr->addConfiguration("channels.cfg", mChannels);
 #endif
 
+
+	ftserver->addConfiguration(mConfigMgr);
+
+
 	/**************************************************************************/
 
 
@@ -836,6 +840,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	/**************************************************************************/
 
         ftserver->StartupThreads();
+	ftserver->ResumeTransfers();
 
 	mDhtMgr->start();
 
@@ -893,6 +898,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 	/* Startup this thread! */
         createThread(*this);
+
 
 	return 1;
 }

@@ -595,21 +595,43 @@ void 	FileIndexMonitor::updateCycle()
 	/* interface */
 void    FileIndexMonitor::setSharedDirectories(std::list<std::string> dirs)
 {
-	fiMutex.lock(); { /* LOCKED DIRS */
 
-#ifdef FIM_DEBUG
+	std::list<std::string> checkeddirs;
+
 	std::list<std::string>::iterator it;
+#ifdef FIM_DEBUG
 	std::cerr << "FileIndexMonitor::setSharedDirectories() :\n";
-	for(it = dirs.begin(); it != dirs.end(); it++)
-	{
-		std::cerr << "\t" << *it;
-		std::cerr <<  std::endl;
-	}
 #endif
 
+	for(it = dirs.begin(); it != dirs.end(); it++)
+	{
+
+#ifdef FIM_DEBUG
+		std::cerr << "\t" << *it;
+		std::cerr <<  std::endl;
+#endif
+
+		/* check if dir exists before adding in */
+		std::string path = (*it);
+		DIR *dir = opendir(path.c_str());
+		if (!dir)
+		{
+#ifdef FIM_DEBUG
+			std::cerr << "FileIndexMonitor::setSharedDirectories()";
+			std::cerr << " Ignoring NonExistant SharedDir: " << path << std::endl;
+#endif
+		}
+		else
+		{
+			checkeddirs.push_back(path);
+		}
+		closedir(dir);
+	}
+
+	fiMutex.lock(); { /* LOCKED DIRS */
 
 	pendingDirs = true;
-	pendingDirList = dirs;
+	pendingDirList = checkeddirs;
 
 	} fiMutex.unlock(); /* UNLOCKED DIRS */
 }
@@ -619,12 +641,21 @@ void    FileIndexMonitor::getSharedDirectories(std::list<std::string> &dirs)
 {
 	fiMutex.lock(); { /* LOCKED DIRS */
 
-	/* get actual list (not pending stuff) */
-	std::map<std::string, std::string>::const_iterator it;
-	for(it = directoryMap.begin(); it != directoryMap.end(); it++)
+	/* must provide pendingDirs, as other parts depend on instanteous response */
+	if (pendingDirs)
 	{
-		dirs.push_back(it->second);
+		dirs = pendingDirList;
 	}
+	else
+	{
+		/* get actual list (not pending stuff) */
+		std::map<std::string, std::string>::const_iterator it;
+		for(it = directoryMap.begin(); it != directoryMap.end(); it++)
+		{
+			dirs.push_back(it->second);
+		}
+	}
+
 
 	} fiMutex.unlock(); /* UNLOCKED DIRS */
 }

@@ -687,7 +687,7 @@ RsSerialiser *filedexserver::setupSerialiser()
 	RsSerialiser *rss = new RsSerialiser();
 
 	/* add in the types we need! */
-	rss->addSerialType(new RsFileTransferSerialiser());
+	rss->addSerialType(new RsFileConfigSerialiser());
 	rss->addSerialType(new RsGeneralConfigSerialiser());
 
 	return rss;

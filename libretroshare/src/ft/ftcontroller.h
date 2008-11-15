@@ -51,6 +51,7 @@ class ftDataMultiplex;
 #include "pqi/p3cfgmgr.h"
 
 #include "rsiface/rsfiles.h"
+#include "serialiser/rsconfigitems.h"
 
 #include <map>
 
@@ -94,6 +95,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 	ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string configDir);
 
 void	setFtSearchNExtra(ftSearch *, ftExtraList *);
+bool	ResumeTransfers();
 
 virtual void run();
 
@@ -120,6 +122,7 @@ std::string getDownloadDirectory();
 std::string getPartialsDirectory();
 bool 	FileDetails(std::string hash, FileInfo &info);
 
+
 	/***************************************************************/
 	/********************** Cache Transfer *************************/
 	/***************************************************************/
@@ -143,6 +146,8 @@ virtual void    statusChange(const std::list<pqipeer> &plist);
 virtual RsSerialiser *setupSerialiser();
 virtual std::list<RsItem *> saveList(bool &cleanup);
 virtual bool    loadList(std::list<RsItem *> load);
+bool	loadConfigMap(std::map<std::string, std::string> &configMap);
+
 
 	private:
 
@@ -179,44 +184,13 @@ bool    setPeerState(ftTransferModule *tm, std::string id,
 	std::list<std::string> mStreamQueue;
 	std::list<std::string> mFastQueue;
 
+	/* Config Load */
+	std::list<RsFileTransfer *> mResumeTransferList;
+
 	/* callback list (for File Completion) */
 	RsMutex doneMutex;
 	std::list<std::string> mDone;
 };
 
-#endif
-
-#if 0
-class CacheTransfer
-{
-	public:
-	CacheTransfer(CacheStrapper *cs) :strapper(cs) { return; }
-virtual ~CacheTransfer() {}
-
-	/* upload side of things .... searches through CacheStrapper. */
-bool    FindCacheFile(std::string hash, std::string &path, uint64_t &size);
-
-
-	/* At the download side RequestCache() => overloaded RequestCacheFile()
-	 * the class should then call CompletedCache() or FailedCache()
-	 */
-
-bool RequestCache(CacheData &data, CacheStore *cbStore); /* request from CacheStore */
-
-	protected:
-	/* to be overloaded */
-virtual bool RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size); 
-virtual bool CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
-
-bool CompletedCache(std::string hash);                   /* internal completion -> does cb */
-bool FailedCache(std::string hash);                      /* internal completion -> does cb */
-
-	private:
-
-	CacheStrapper *strapper;
-
-	std::map<std::string, CacheData>    cbData;
-	std::map<std::string, CacheStore *> cbStores;
-};
 #endif
 

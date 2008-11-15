@@ -47,12 +47,10 @@
 
 #include "pqi/p3connmgr.h"
 
+#include "serialiser/rsconfigitems.h"
+
 
 #define CONTROL_DEBUG 1
-
-#warning CONFIG_FT_CONTROL Not defined in p3cfgmgr.h
-
-const uint32_t CONFIG_FT_CONTROL  = 1;
 
 ftFileControl::ftFileControl()
 	:mTransfer(NULL), mCreator(NULL), 
@@ -75,7 +73,7 @@ ftFileControl::ftFileControl(std::string fname,
 }
 
 ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string configDir)
-	:CacheTransfer(cs), p3Config(CONFIG_FT_CONTROL), mDataplex(dm)
+	:CacheTransfer(cs), p3Config(CONFIG_TYPE_FT_CONTROL), mDataplex(dm)
 {
 	/* TODO */
 }
@@ -319,6 +317,7 @@ bool ftController::completeFile(std::string hash)
 
 	}
 	
+	IndicateConfigChanged(); /* completed transfer -> save */
 	return true;
 
 }
@@ -367,6 +366,8 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	 * This is important as some guis request duplicate files regularly.
 	 */
 
+  { RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
 	std::map<std::string, ftFileControl>::iterator dit;
 	dit = mDownloads.find(hash);
 	if (dit != mDownloads.end())
@@ -402,6 +403,8 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 			(dit->second).mTransfer->addFileSource(*it);
 			setPeerState(dit->second.mTransfer, *it, 
 				rate, mConnMgr->isOnline(*it));
+
+			IndicateConfigChanged(); /* new peer for transfer -> save */
 		}
 
 		if (srcIds.size() == 0)
@@ -414,6 +417,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 
 		return true;
 	}
+  } /******* UNLOCKED ********/
 
 	bool doCallback = false;
 	uint32_t callbackCode = 0;
@@ -497,14 +501,20 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	//std::map<std::string, ftFileCreator *> mFileCreators;
 
 	/* add in new item for download */
-	std::string savepath = mPartialsPath + "/" + hash;
-	std::string destination = dest + "/" + fname;
+	std::string savepath;
+	std::string destination;
+
+  { RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
+	savepath = mPartialsPath + "/" + hash;
+	destination = dest + "/" + fname;
 
 	/* if no destpath - send to download directory */
 	if (dest == "")
 	{
 		destination = mDownloadPath + "/" + fname;
 	}
+  } /******* UNLOCKED ********/
 	
 	ftFileCreator *fc = new ftFileCreator(savepath, size, hash, 0);
 	ftTransferModule *tm = new ftTransferModule(fc, mDataplex,this);
@@ -536,11 +546,13 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 		setPeerState(tm, *it, rate, mConnMgr->isOnline(*it));
 	}
 
-	/* only need to lock before to fiddle with own variables */
+
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 	mDownloads[hash] = ftfc;
 	mSlowQueue.push_back(hash);
 
+
+	IndicateConfigChanged(); /* completed transfer -> save */
 	return true;
 }
 
@@ -749,6 +761,7 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 	/* extract details */
 	info.hash = hash;
 	info.fname = it->second.mName;
+	info.path = RsDirUtil::removeTopDir(it->second.mDestination); /* remove fname */
 
 	/* get list of sources from transferModule */
 	std::list<std::string> peerIds;
@@ -896,24 +909,6 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 		}
 	}
 }
-	/* p3Config Interface */
-RsSerialiser *ftController::setupSerialiser()
-{
-	return NULL;
-}
-
-std::list<RsItem *> ftController::saveList(bool &cleanup)
-{
-	std::list<RsItem *> emptyList;
-	return emptyList;
-}
-
-	
-bool    ftController::loadList(std::list<RsItem *> load)
-{
-	return false;
-}
-
 
 	/* Cache Interface */
 bool ftController::RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size)
@@ -946,4 +941,202 @@ bool ftController::CancelCacheFile(RsPeerId id, std::string path, std::string ha
 	return true;
 }
 
+const std::string download_dir_ss("DOWN_DIR");
+const std::string partial_dir_ss("PART_DIR");
+
+
+	/* p3Config Interface */
+RsSerialiser *ftController::setupSerialiser()
+{
+	RsSerialiser *rss = new RsSerialiser();
+
+	/* add in the types we need! */
+	rss->addSerialType(new RsFileConfigSerialiser());
+	rss->addSerialType(new RsGeneralConfigSerialiser());
+
+	return rss;
+}
+
+
+std::list<RsItem *> ftController::saveList(bool &cleanup)
+{
+	std::list<RsItem *> saveData;
+
+	/* it can delete them! */
+	cleanup = true;
+
+	/* create a key/value set for most of the parameters */
+	std::map<std::string, std::string> configMap;
+	std::map<std::string, std::string>::iterator mit;
+	std::list<std::string>::iterator it;
+
+	/* basic control parameters */
+	configMap[download_dir_ss] = getDownloadDirectory();
+	configMap[partial_dir_ss] = getPartialsDirectory();
+
+	RsConfigKeyValueSet *rskv = new RsConfigKeyValueSet();
+
+	/* Convert to TLV */
+	for(mit = configMap.begin(); mit != configMap.end(); mit++)
+	{
+		RsTlvKeyValue kv;
+		kv.key = mit->first;
+		kv.value = mit->second;
+
+		rskv->tlvkvs.pairs.push_back(kv);
+	}
+
+	/* Add KeyValue to saveList */
+	saveData.push_back(rskv);
+
+	/* get list of Downloads ....
+	 * strip out Caches / ExtraList / Channels????
+	 * (anything with a callback?)
+	 * - most systems will restart missing files.
+	 */
+
+
+	/* get Details of File Transfers */
+	std::list<std::string> hashs;
+	FileDownloads(hashs);
+
+	for(it = hashs.begin(); it != hashs.end(); it++)
+	{
+		/* stack mutex released each loop */
+  		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
+		std::map<std::string, ftFileControl>::iterator fit;
+		fit = mDownloads.find(*it);
+		if (fit == mDownloads.end())
+		{
+			continue;
+		}
+
+		/* ignore callback ones */
+		if (fit->second.mDoCallback)
+		{
+			continue;
+		}
+
+		if ((fit->second).mCreator->finished())
+		{
+			continue;
+		}
+
+		/* make RsFileTransfer item for save list */
+		RsFileTransfer *rft = new RsFileTransfer();
+
+		/* what data is important? */
+
+		rft->file.name = fit->second.mName;
+		rft->file.hash  = fit->second.mHash;  
+		rft->file.filesize = fit->second.mSize;
+		rft->file.path = RsDirUtil::removeTopDir(fit->second.mDestination); /* remove fname */
+		//rft->flags = fit->second.mFlags;
+
+		fit->second.mTransfer->getFileSources(rft->allPeerIds.ids);
+
+		saveData.push_back(rft);
+	}
+
+	/* list completed! */
+	return saveData;
+}
+
+
+bool ftController::loadList(std::list<RsItem *> load)
+{
+	std::list<RsItem *>::iterator it;
+	std::list<RsTlvKeyValue>::iterator kit;
+	RsConfigKeyValueSet *rskv;
+	RsFileTransfer      *rsft;
+
+#ifdef CONTROL_DEBUG 
+	std::cerr << "ftController::loadList() Item Count: " << load.size();
+	std::cerr << std::endl;
+#endif
+
+	for(it = load.begin(); it != load.end(); it++)
+	{
+		/* switch on type */
+		if (NULL != (rskv = dynamic_cast<RsConfigKeyValueSet *>(*it)))
+		{
+			/* make into map */
+			std::map<std::string, std::string> configMap;
+			for(kit = rskv->tlvkvs.pairs.begin();
+				kit != rskv->tlvkvs.pairs.end(); kit++)
+			{
+				configMap[kit->key] = kit->value;
+			}
+
+			loadConfigMap(configMap);
+			/* cleanup */
+			delete (*it);
+
+		}
+		else if (NULL != (rsft = dynamic_cast<RsFileTransfer *>(*it)))
+		{
+  			RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
+			/* save to the preLoad list */
+			mResumeTransferList.push_back(rsft);
+		}
+		else
+		{
+			/* cleanup */
+			delete (*it);
+		}
+	}
+	return true;
+
+}
+
+bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
+{
+	std::map<std::string, std::string>::iterator mit;
+
+	std::string str_true("true");
+	std::string empty("");
+	std::string dir = "notempty";
+
+	if (configMap.end() != (mit = configMap.find(download_dir_ss)))
+	{
+		setDownloadDirectory(mit->second);
+	}
+
+	if (configMap.end() != (mit = configMap.find(partial_dir_ss)))
+	{
+		//setPartialsDirectory(mit->second);
+	}
+
+	return true;
+}
+
+
+bool 	ftController::ResumeTransfers()
+{
+	std::list<RsFileTransfer *> resumeList;
+	std::list<RsFileTransfer *>::iterator it;
+
+  { RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	resumeList = mResumeTransferList;
+	mResumeTransferList.clear();
+  }
+	
+	for(it = resumeList.begin(); it != resumeList.end(); it++)
+	{
+		/* do File request */
+		std::string fname = (*it)->file.name;
+		std::string hash = (*it)->file.hash;  
+		uint64_t size = (*it)->file.filesize;
+		std::string dest = (*it)->file.path;
+		uint32_t flags = 0; //(*it)->flags;
+		std::list<std::string> srcIds = (*it)->allPeerIds.ids;
+
+		FileRequest(fname,hash,size,dest,flags,srcIds);
+
+		delete (*it);
+	}
+	return true;
+}
 

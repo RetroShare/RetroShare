@@ -103,9 +103,6 @@ const uint32_t FT_DETAILS_CLEANUP	= 0x0100; 	/* remove when it expires */
 const uint32_t FT_DETAILS_LOCAL		= 0x0001;
 const uint32_t FT_DETAILS_REMOTE	= 0x0002;
 
-#warning CONFIG_FT_EXTRA_LIST Not defined in p3cfgmgr.h
-
-const uint32_t CONFIG_FT_EXTRA_LIST 	= 1;
 const uint32_t CLEANUP_PERIOD		= 600; /* 10 minutes */
 
 
@@ -159,6 +156,7 @@ virtual bool    loadList(std::list<RsItem *> load);
 		/* Worker Functions */
 void	hashAFile();
 bool	cleanupOldFiles();
+bool    cleanupEntry(std::string path, uint32_t flags);
 
 		mutable RsMutex extMutex;
 

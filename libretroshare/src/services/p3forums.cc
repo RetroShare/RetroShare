@@ -69,8 +69,11 @@ std::ostream &operator<<(std::ostream &out, const ForumMsgInfo &info)
 RsForums *rsForums = NULL;
 
 
-#define FORUM_STOREPERIOD 10000
-#define FORUM_PUBPERIOD   600
+/* Forums will be initially stored for 1 year 
+ * remember 2^16 = 64K max units in store period.
+ * PUBPERIOD * 2^16 = max STORE PERIOD */
+#define FORUM_STOREPERIOD (365*24*3600)    /* 365 * 24 * 3600 - secs in a year */
+#define FORUM_PUBPERIOD   600 		   /* 10 minutes ... (max = 455 days) */
 
 p3Forums::p3Forums(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
 	                std::string srcdir, std::string storedir)
