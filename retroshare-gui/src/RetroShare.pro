@@ -68,6 +68,7 @@ HEADERS +=  rshare.h \
             gui/forums/CreateForum.h \
             gui/forums/CreateForumMsg.h \
             gui/NetworkView.h \
+            gui/TrustView.h \
             gui/MessengerWindow.h \
             gui/PeersDialog.h \
             gui/SearchTreeWidget.h \
@@ -194,6 +195,7 @@ FORMS +=    gui/ChatDialog.ui \
             gui/forums/CreateForum.ui \
             gui/forums/CreateForumMsg.ui \
             gui/NetworkView.ui \
+            gui/TrustView.ui \
             gui/MessengerWindow.ui \
             gui/PeersDialog.ui \
             gui/SearchDialog.ui \
@@ -282,6 +284,7 @@ SOURCES += main.cpp \
             gui/forums/CreateForum.cpp \
             gui/forums/CreateForumMsg.cpp \
             gui/NetworkView.cpp \
+            gui/TrustView.cpp \
             gui/MessengerWindow.cpp \
             gui/PeersDialog.cpp \
             gui/SearchTreeWidget.cpp \
@@ -365,7 +368,7 @@ SOURCES += main.cpp \
             gui/MsgFeed.cpp \
             gui/TransferFeed.cpp \
             gui/ChannelFeed.cpp \
-	    gui/GeneralMsgDialog.cpp \
+			gui/GeneralMsgDialog.cpp \
             gui/feeds/ForumNewItem.cpp \
             gui/feeds/ForumMsgItem.cpp \
             gui/feeds/PeerItem.cpp \
@@ -432,7 +435,7 @@ win32 {
 }
 
 !win32 {
-    LIBS += -L../../../../lib -lretroshare -lminiupnpc -lssl -lcrypto
+    LIBS += -L../../../../lib -lretroshare -lminiupnpc ../../../../lib/libssl.a ../../../../lib/libcrypto.a
     LIBS += -lqcheckers -lsmplayer 
 }
 

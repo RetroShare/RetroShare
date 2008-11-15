@@ -27,6 +27,7 @@
 #include "util/rsversion.h"
 #include "NetworkDialog.h"
 #include "NetworkView.h"
+#include "TrustView.h"
 #include "connect/ConnectDialog.h"
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
@@ -109,12 +110,14 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 	headerItem->setTextAlignment(8, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(9, Qt::AlignHCenter | Qt::AlignVCenter);
 	
-	 networkview = new NetworkView(ui.networkviewTab);
-	 QVBoxLayout *layout = new QVBoxLayout;
-     layout->addWidget(networkview);
-     ui.networkviewTab->setLayout(layout);
-     layout->setSpacing( 0 );
-     layout->setMargin( 0 );
+	networkview = new NetworkView(ui.networkviewTab);
+	QVBoxLayout *layout = new QVBoxLayout;
+	layout->addWidget(networkview);
+	ui.networkviewTab->setLayout(layout);
+	layout->setSpacing( 0 );
+	layout->setMargin( 0 );
+
+	ui.networkTab->addTab(new TrustView(),QString("Trust table"));
      
     // Set Log infos
     setLogInfo(tr("RetroShare %1 started.", "e.g: RetroShare v0.x started.").arg(retroshareVersion()));
