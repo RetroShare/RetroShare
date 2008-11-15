@@ -1,4 +1,27 @@
 
+Changes for v0.4.x
+
+*
+* Create channels directory correctly.
+* Added File Transfers to Config List.
+* Connected statusChange() monitor callback.
+* Fixed file sources in transfermodule.
+* Fixed up transfer restarts / sleeps.
+* Enabled opening files read only.
+* More bugfixes for file transfer.
+* Added File Transfer / ExtraList to channels.
+* Fixed mutex deadlock.
+* Added slow transfer for background tf.
+* Added checks to FileRequest to accumulate peers.
+* Added ExtraList callback
+* Show Date in Network Tab using QT functions.
+* Added multiple selection to the msgWidget QTreeView and setup context menu in accordance
+* Added Delete key function to easily delete messages
+* Enabled (and implemented) response to message
+* Enabled for Uploads progess xprogressbar
+* Added for Files Treeview File Typ icons 
+* Added for Files Treeview Folder icons
+* Added Help System Dialog
 
 
 Changes for V0.4.10b 
