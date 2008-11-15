@@ -145,7 +145,7 @@ Section $(sec_main) sec_main
   SetOutPath "$INSTDIR\"
   File /r "release\RetroShare.exe"
   File /r "release\mingwm10.dll"
-  File /r "release\changelog.txt"
+  File /r "changelog.txt"
 
   
 

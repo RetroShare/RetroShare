@@ -1,0 +1,118 @@
+
+
+
+Changes for V0.4.10b 
+* Cleaned up Mac Fonts 
+* Improvements to ft - but still in development. 
+* Various GUI tweaks. Changes for V0.4.10a (Development release) 
+* BUGFIX for multiple reconnect attempts. 
+* Addition of new NewsFeed System 
+* Addition of Basic Calendar Interface (Unfinished) 
+* Addition of Forums / Channels (Demo) 
+* Improvements to Blog System (Unfinished) 
+* Partial Fixes for GCC4.4 compilation. 
+
+Changes for V0.4.09b 
+* Tweaked Status Bar. 
+* Added Icons and Sorting to Links Cloud 
+* Updated default chat html/css 
+* Fixed Chat from Messenger Window. Changes for V0.4.09a (STANDARD RELEASE) 
+* BUGFIX for Determining External Address. 
+* Fixed AutoLogin. 
+* Fixed Toaster. 
+* Added Status Bar functionality (data rates, peers online) 
+* Fixed Transfer Display (data rates, file name, peer name) Changes for V0.4.08a 
+* Addition of Chat Styles. 
+* Improved Link Cloud Rankings + Bugfixes. 
+* Moved Link Cloud to MainWindow. Changes for V0.4.07b 
+* Full Mutex protection for ConnectionMgr 
+* Context Menus for Link Cloud 
+* Share Anonymously in Link Cloud. 
+* Beginnings of qBlog and Status added. Changes for V0.4.07a 
+* New implementation for Link Cloud. 
+* dummy Forum system. 
+* Added NonRelease features back in Changes for V0.4.06d 
+* BUGFIX: mutex not being released if UPNP unavailable. 
+
+Changes for V0.4.06c 
+* Fixed Upnp Issues. 
+* Various GUI/stylesheet tweaks Changes for V0.4.06b 
+* Added Fonts + Bold/Italic to Group Chat. 
+* Fixed Color/Font issues for Chats 
+* Fixed Server and Peer Config windows. 
+* Enabled saving of data rate limits. 
+* Fixed Lost certificates issue(!) 
+* Tweaked Tick rate parameters. 
+* Improved Chat Delays (under a second now) 
+
+Changes for V0.4.06a 
+* Reduced CPU requirements by removing some debug. 
+* Fixed Memory Leaks (serialiser + file transfer) 
+* Fixed Application Quit when window is closed. 
+* Fixed Unread Msgs bug. 
+* Reinstated variable Tick rate (reduces CPU load). 
+* Added "Stop Retroshare" message to installer. Changes for V0.4.05a 
+* HTML Chat and Messages. 
+* emoticons, bold, italic, fonts, colors for chat 
+* save, print, pdf functions for messages. 
+* New Side Toolbar. 
+* Switched Link Cloud to share Friends Links. 
+* BUGFIX: Added Emergency Dir if existing Incoming fails. 
+* BUGFIX: Added notify for connection to RS V0.3.X. 
+* Fixed Online/Offline Message Forwarding. 
+* Added Check Files, and Icon to indicate Hashing State. 
+* Added <play> functions to Transfers + LocalSharedDirs. 
+* Included MPlayer in release. * reenabled skins. 
+* new Multi-Language Installer. 
+
+Changes for V0.4.04a 
+* Fixed UPnP on Windows platform. 
+* added TIMEOUTS for TCP connections (5 secs) 
+* GUI display of connection type (UDP/TCP) 
+* Increased default data rates (100/500 kb/s) 
+* Removed Default bootstrap Ids. Changes for V0.4.03c 
+* NEW: HTML Messaging! 
+* NEW: Msg Composing Window. 
+* NEW: Contacts docking window. 
+
+Changes for V0.4.03b 
+* BUGFIX: EXT PORT notification. 
+* BUGFIX: Save Config after Signature of Peer. 
+* BUGFIX: Config MetaFile + Sig saved in correct directory. 
+* BUGFIX: ForceExtPort initialised correctly. 
+* Improvements to Chat Layout 
+* New Log Display in Network Tab. 
+* Show/Hide Network View Settings. 
+
+Changes for V0.4.03a: 
+* Modifications to the Chat. 
+* new Icons for new GUi bits. 
+* Network View has been done with elastic forces between nodes. 
+* Network View have been added to Network Tab. 
+* New Automatic Bootstrap system. 
+* BUGFIX for reconnection attempts. 
+* BUGFIX for UDP + TCP simulateous connections. 
+* Added Bootstrap Monitoring tools
+
+Changes for V0.3.52a:
+* New improved search system.
+* New Translations.
+* Fixed Bugs in UPnP
+* Can now remove Shared Directories.
+* Attached the 'Recommend to' Context Menus.
+* New Timestamps in Chats / Messages.
+* Notification of Offline Peer in Chats.
+* Example Games (not networked yet)
+* Updated About Text.
+
+Changes for V0.3.51a
+ * Fixed 2-3 hour crash bug.
+ * Fixed On-Off Reconnect behaviour
+
+Changes for V0.3.x Development 
+We have available for those interested in retroshare: 
+(1) New Source release for Linux! V0.3.12B, The compilation script can also compile from SVN. 
+(2) deb installation files for debian/etch and kubuntu/feisty 
+(3) Language pack for those interested in translating.
+
+  
