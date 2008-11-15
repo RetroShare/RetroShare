@@ -4,7 +4,9 @@
 Changes for V0.4.10b 
 * Cleaned up Mac Fonts 
 * Improvements to ft - but still in development. 
-* Various GUI tweaks. Changes for V0.4.10a (Development release) 
+* Various GUI tweaks. 
+
+Changes for V0.4.10a 
 * BUGFIX for multiple reconnect attempts. 
 * Addition of new NewsFeed System 
 * Addition of Basic Calendar Interface (Unfinished) 
