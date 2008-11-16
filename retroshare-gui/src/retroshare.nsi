@@ -163,7 +163,7 @@ Section  $(sec_data) sec_data
   ; We're not ready for external skins...
   ; Set Section qss need to remove svn path
   SetOutPath "$INSTDIR\qss\"
-  File /r release\qss\*.*   
+  File /r qss\*.*   
   
   ; Set Section emoticons need to remove svn path
   ; SetOutPath "$INSTDIR\emoticons\"
@@ -175,11 +175,11 @@ Section  $(sec_data) sec_data
 
   ; Add emoticons
   SetOutPath "$INSTDIR\emoticons\kopete\"
-  File /r release\emoticons\kopete\*.*   
+  File /r emoticons\kopete\*.*   
 	
   ; Add Chat Style
   SetOutPath "$INSTDIR\style\"
-  File /r release\style\*.*   
+  File /r style\*.*   
 	
 SectionEnd
 
