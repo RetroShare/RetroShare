@@ -158,6 +158,9 @@ void TrustView::update()
 //		cout << endl ;
 	}
 	// assign colors
+	vector<int> ni(trustTableTW->rowCount(),0) ;
+	vector<int> nj(trustTableTW->columnCount(),0) ;
+
 	for(int i=0;i<trustTableTW->rowCount();++i)
 		for(int j=0;j<trustTableTW->columnCount();++j)
 		{
@@ -170,10 +173,14 @@ void TrustView::update()
 			//
 			if(i_ij != NULL)
 			{
+				++ni[i] ;
+				++nj[j] ;
+
 				if(i_ji == NULL)
 				{
 					i_ij->setBackgroundColor(Qt::yellow) ;
 					i_ij->setToolTip(trustTableTW->horizontalHeaderItem(i)->text() + QString(" is trusted (one way) by " )+trustTableTW->verticalHeaderItem(j)->text()) ;
+					i_ij->setText(QString("Half")) ;
 				}
 				else
 				{
@@ -186,10 +193,16 @@ void TrustView::update()
 					{
 						i_ij->setBackgroundColor(Qt::green) ;
 						i_ij->setToolTip(trustTableTW->horizontalHeaderItem(i)->text() + " and " +trustTableTW->verticalHeaderItem(j)->text() + QString(" trust each others") ) ;
+						i_ij->setText(QString("Full")) ;
 					}
 				}
 			}
 		}
+	for(int i=0;i<trustTableTW->rowCount();++i)
+		trustTableTW->verticalHeaderItem(i)->setToolTip(trustTableTW->verticalHeaderItem(i)->text()+" is trusted by " + QString::number(ni[i]) + " peers, including him(her)self.") ; 
+
+	for(int j=0;j<trustTableTW->columnCount();++j)
+		trustTableTW->horizontalHeaderItem(j)->setToolTip(trustTableTW->horizontalHeaderItem(j)->text()+" trusts " + QString::number(nj[j]) + " peers, including him(her)self.") ; 
 }
 
 
