@@ -169,7 +169,7 @@ void SearchDialog::initialiseFileTypeMappings()
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_AUDIO, 
 		"aac aif iff m3u mid midi mp3 mpa ogg ra ram wav wma");
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_VIDEO, 
-		"3gp asf asx avi mov mp4 mpeg mpg qt rm swf vob wmv");
+		"3gp asf asx avi mov mp4 mkv flv mpeg mpg qt rm swf vob wmv");
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_PICTURE, 
 		"3dm 3dmf ai bmp drw dxf eps gif ico indd jpe jpeg jpg mng pcx pcc pct pgm "
 		"pix png psd psp qxd qxprgb sgi svg tga tif tiff xbm xcf");

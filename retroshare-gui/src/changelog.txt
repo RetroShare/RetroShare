@@ -1,7 +1,17 @@
 
 Changes for v0.4.x
 
-*
+
+* Bugfixes in CreateForumMsg 
+* Added auto update feature to the trust matrix
+* Implemented a big trust table where people can see who trusts who, and who is trusted by who.
+* Added Configurations to new file transfer.
+* Enabled config in p3file-startup.cc
+* Enabled resumeTransfers
+* Added new RsFileConfigItem to serialiser.
+* Extended ftFiMonitor to use Configuration.
+* Bug fix to add/remove Shared Dirs.
+* Increased Channel/forum periods to 3/12 months.
 * Create channels directory correctly.
 * Added File Transfers to Config List.
 * Connected statusChange() monitor callback.

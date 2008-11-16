@@ -256,7 +256,9 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 			QIcon icon(":/images/FileTypePicture.png");
 		    return icon;
 		}
-		else if (ext == "avi" || ext == "mpg" || ext == "mpeg" || ext == "wmv")
+		else if (ext == "avi" || ext == "mpg" || ext == "mpeg" || ext == "wmv"
+			|| ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov"
+			|| ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp")
 		{
 			//setIcon(0, QIcon(":/images/videofile.png"));
 			QIcon icon(":/images/FileTypeVideo.png");
