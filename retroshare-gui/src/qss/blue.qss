@@ -72,3 +72,34 @@ QFrame#Chatbuttonframe{
     border-image: url(qss/blue/blue.png);
 
 }
+
+QLabel#subjectText{
+	font: bold 12px;
+
+}
+
+QLabel#subjectlabel{
+	font: bold 12px;
+
+}
+
+QLabel#fromlabel{
+	font: bold 12px;
+
+}
+
+QLabel#datelabel{
+	font: bold 12px;
+
+}
+
+QLabel#tolabel{
+	font: bold 12px;
+
+}
+
+QLabel#fromText{
+	font: bold ;
+	color: blue;
+
+}

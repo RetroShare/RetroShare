@@ -187,7 +187,7 @@ static  time_t lastTs = 0;
 		{
 			/* id the name */
 			std::string name = rsPeers->getPeerName(id);
-			std::string realmsg = msg + name;
+			std::string realmsg = msg + "<strong>" + name + "</strong>";
 			switch(type)
 			{
 				case RS_POPUP_MSG:

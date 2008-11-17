@@ -109,3 +109,34 @@ QFrame#Chatbuttonframe{
    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 #6F6F6F, stop:1 #979797);
 }
+
+QLabel#subjectText{
+	font: bold 12px;
+
+}
+
+QLabel#subjectlabel{
+	font: bold 12px;
+
+}
+
+QLabel#fromlabel{
+	font: bold 12px;
+
+}
+
+QLabel#datelabel{
+	font: bold 12px;
+
+}
+
+QLabel#tolabel{
+	font: bold 12px;
+
+}
+
+QLabel#fromText{
+	font: bold ;
+	color: blue;
+
+}

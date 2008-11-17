@@ -46,7 +46,7 @@ MessageToaster::~MessageToaster() {
 }
 
 void MessageToaster::setMessage(const QString & message) {
-	_ui->messageButton->setText(message);
+	_ui->messagelabel2->setText(message);
 }
 
 void MessageToaster::setPixmap(const QPixmap & pixmap) {

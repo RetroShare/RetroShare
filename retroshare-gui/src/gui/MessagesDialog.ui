@@ -504,7 +504,7 @@
   <property name="contextMenuPolicy" >
    <enum>Qt::DefaultContextMenu</enum>
   </property>
-  <layout class="QGridLayout" name="gridLayout" >
+  <layout class="QGridLayout" >
    <item row="0" column="0" >
     <widget class="QPushButton" name="newmessageButton" >
      <property name="minimumSize" >
@@ -526,7 +526,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">New Message&lt;/p>&lt;/body>&lt;/html></string>
      </property>
      <property name="styleSheet" >
-      <string notr="true" />
+      <string/>
      </property>
      <property name="text" >
       <string/>
@@ -563,7 +563,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">reply to selected message&lt;/p>&lt;/body>&lt;/html></string>
      </property>
      <property name="styleSheet" >
-      <string notr="true" />
+      <string/>
      </property>
      <property name="text" >
       <string/>
@@ -597,7 +597,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">remove selected message&lt;/p>&lt;/body>&lt;/html></string>
      </property>
      <property name="styleSheet" >
-      <string notr="true" />
+      <string/>
      </property>
      <property name="text" >
       <string/>
@@ -646,7 +646,7 @@ p, li { white-space: pre-wrap; }
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" >
       <size>
        <width>602</width>
        <height>24</height>
@@ -698,8 +698,7 @@ p, li { white-space: pre-wrap; }
         <string>Inbox</string>
        </property>
        <property name="icon" >
-        <iconset resource="images.qrc" >
-         <normaloff>:/images/folder-inbox.png</normaloff>:/images/folder-inbox.png</iconset>
+        <iconset resource="images.qrc" >:/images/folder-inbox.png</iconset>
        </property>
       </item>
       <item>
@@ -707,8 +706,7 @@ p, li { white-space: pre-wrap; }
         <string>Outbox</string>
        </property>
        <property name="icon" >
-        <iconset resource="images.qrc" >
-         <normaloff>:/images/folder-outbox.png</normaloff>:/images/folder-outbox.png</iconset>
+        <iconset resource="images.qrc" >:/images/folder-outbox.png</iconset>
        </property>
       </item>
       <item>
@@ -716,8 +714,7 @@ p, li { white-space: pre-wrap; }
         <string>Draft</string>
        </property>
        <property name="icon" >
-        <iconset resource="images.qrc" >
-         <normaloff>:/images/folder-draft.png</normaloff>:/images/folder-draft.png</iconset>
+        <iconset resource="images.qrc" >:/images/folder-draft.png</iconset>
        </property>
       </item>
       <item>
@@ -725,8 +722,7 @@ p, li { white-space: pre-wrap; }
         <string>Sent</string>
        </property>
        <property name="icon" >
-        <iconset resource="images.qrc" >
-         <normaloff>:/images/folder-sent.png</normaloff>:/images/folder-sent.png</iconset>
+        <iconset resource="images.qrc" >:/images/folder-sent.png</iconset>
        </property>
       </item>
      </widget>
@@ -758,8 +754,7 @@ p, li { white-space: pre-wrap; }
          <string/>
         </property>
         <property name="icon" >
-         <iconset resource="images.qrc" >
-          <normaloff>:/images/attachment.png</normaloff>:/images/attachment.png</iconset>
+         <iconset resource="images.qrc" >:/images/attachment.png</iconset>
         </property>
        </column>
        <column>
@@ -782,6 +777,18 @@ p, li { white-space: pre-wrap; }
        <layout class="QVBoxLayout" >
         <item>
          <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
           <item>
            <layout class="QVBoxLayout" >
             <item>
@@ -792,7 +799,7 @@ p, li { white-space: pre-wrap; }
               <property name="sizeType" >
                <enum>QSizePolicy::Preferred</enum>
               </property>
-              <property name="sizeHint" stdset="0" >
+              <property name="sizeHint" >
                <size>
                 <width>20</width>
                 <height>40</height>
@@ -804,8 +811,14 @@ p, li { white-space: pre-wrap; }
           </item>
           <item>
            <layout class="QGridLayout" >
+            <property name="horizontalSpacing" >
+             <number>0</number>
+            </property>
+            <property name="verticalSpacing" >
+             <number>3</number>
+            </property>
             <item row="0" column="0" >
-             <widget class="QLabel" name="label_16" >
+             <widget class="QLabel" name="subjectlabel" >
               <property name="sizePolicy" >
                <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
                 <horstretch>0</horstretch>
@@ -815,7 +828,7 @@ p, li { white-space: pre-wrap; }
               <property name="minimumSize" >
                <size>
                 <width>60</width>
-                <height>10</height>
+                <height>12</height>
                </size>
               </property>
               <property name="maximumSize" >
@@ -847,7 +860,7 @@ p, li { white-space: pre-wrap; }
               <property name="minimumSize" >
                <size>
                 <width>0</width>
-                <height>10</height>
+                <height>12</height>
                </size>
               </property>
               <property name="maximumSize" >
@@ -862,7 +875,7 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item row="1" column="0" >
-             <widget class="QLabel" name="label_7" >
+             <widget class="QLabel" name="fromlabel" >
               <property name="sizePolicy" >
                <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
                 <horstretch>0</horstretch>
@@ -872,7 +885,7 @@ p, li { white-space: pre-wrap; }
               <property name="minimumSize" >
                <size>
                 <width>60</width>
-                <height>10</height>
+                <height>12</height>
                </size>
               </property>
               <property name="maximumSize" >
@@ -904,7 +917,7 @@ p, li { white-space: pre-wrap; }
               <property name="minimumSize" >
                <size>
                 <width>0</width>
-                <height>10</height>
+                <height>12</height>
                </size>
               </property>
               <property name="maximumSize" >
@@ -919,7 +932,7 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item row="2" column="0" >
-             <widget class="QLabel" name="label_12" >
+             <widget class="QLabel" name="datelabel" >
               <property name="sizePolicy" >
                <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
                 <horstretch>0</horstretch>
@@ -929,7 +942,7 @@ p, li { white-space: pre-wrap; }
               <property name="minimumSize" >
                <size>
                 <width>60</width>
-                <height>10</height>
+                <height>12</height>
                </size>
               </property>
               <property name="maximumSize" >
@@ -961,7 +974,7 @@ p, li { white-space: pre-wrap; }
               <property name="minimumSize" >
                <size>
                 <width>0</width>
-                <height>10</height>
+                <height>12</height>
                </size>
               </property>
               <property name="maximumSize" >
@@ -976,7 +989,7 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item row="3" column="0" >
-             <widget class="QLabel" name="label_14" >
+             <widget class="QLabel" name="tolabel" >
               <property name="sizePolicy" >
                <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
                 <horstretch>0</horstretch>
@@ -986,7 +999,7 @@ p, li { white-space: pre-wrap; }
               <property name="minimumSize" >
                <size>
                 <width>60</width>
-                <height>10</height>
+                <height>12</height>
                </size>
               </property>
               <property name="maximumSize" >
@@ -1018,7 +1031,7 @@ p, li { white-space: pre-wrap; }
               <property name="minimumSize" >
                <size>
                 <width>0</width>
-                <height>10</height>
+                <height>12</height>
                </size>
               </property>
               <property name="maximumSize" >
@@ -1050,10 +1063,22 @@ p, li { white-space: pre-wrap; }
          <layout class="QHBoxLayout" >
           <item>
            <layout class="QGridLayout" >
-            <property name="margin" >
+            <property name="leftMargin" >
              <number>0</number>
             </property>
-            <property name="spacing" >
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>6</number>
+            </property>
+            <property name="verticalSpacing" >
              <number>6</number>
             </property>
             <item row="0" column="1" >
@@ -1095,8 +1120,7 @@ p, li { white-space: pre-wrap; }
                <string/>
               </property>
               <property name="icon" >
-               <iconset resource="images.qrc" >
-                <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
+               <iconset resource="images.qrc" >:/images/edit_remove24.png</iconset>
               </property>
              </widget>
             </item>
@@ -1107,7 +1131,7 @@ p, li { white-space: pre-wrap; }
             <property name="orientation" >
              <enum>Qt::Horizontal</enum>
             </property>
-            <property name="sizeHint" stdset="0" >
+            <property name="sizeHint" >
              <size>
               <width>351</width>
               <height>20</height>
@@ -1127,8 +1151,7 @@ p, li { white-space: pre-wrap; }
              <string/>
             </property>
             <property name="icon" >
-             <iconset resource="images.qrc" >
-              <normaloff>:/images/down.png</normaloff>:/images/down.png</iconset>
+             <iconset resource="images.qrc" >:/images/down.png</iconset>
             </property>
            </widget>
           </item>

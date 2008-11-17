@@ -4,7 +4,7 @@
 
 /* Customize the toolbar. */
 QToolBar {
-    border-image: url(qss/black/backgroundblack.png);
+    border-image: url(:qss/black/backgroundblack.png);
 
 }
 
@@ -123,17 +123,17 @@ QPushButton#nviewsettingsButton
 
 QPushButton
 {
-border-image: url(qss/black/button.png) ;
+border-image: url(:qss/black/button.png) ;
 }
 
 QPushButton:hover 
 {
-border-image: url(qss/black/button_hover.png);
+border-image: url(:qss/black/button_hover.png);
 }
 
 QPushButton:pressed 
 {
-border-image: url(qss/black/button_pressed.png) ;
+border-image: url(:qss/black/button_pressed.png) ;
 } 
 
 
@@ -144,7 +144,7 @@ background-color: #F9F9F9;
 
 QLineEdit
 {
-border-image: url(qss/black/border.png) 4;
+border-image: url(:qss/black/border.png) 4;
 border-width: 3;
 }
 
@@ -162,39 +162,39 @@ font: bold;
 
 
 QRadioButton::indicator::unchecked {
-    image: url(qss/black/checkBox.png);
+    image: url(:qss/black/checkBox.png);
 }
 
 QRadioButton::indicator:unchecked:hover {
-    image: url(qss/black/checkBox_hover.png);
+    image: url(:qss/black/checkBox_hover.png);
 }
 
 
 
 QRadioButton::indicator::checked {
-    image: url(qss/black/checkBox_selected.png);
+    image: url(:qss/black/checkBox_selected.png);
 }
 
 QRadioButton::indicator:checked:hover {
-    image: url(qss/black/checkBox_hoverAndSelected.png);
+    image: url(:qss/black/checkBox_hoverAndSelected.png);
 }
 
 
 QCheckBox::indicator:unchecked {
-    image: url(qss/black/checkBox.png);
+    image: url(:qss/black/checkBox.png);
 }
 
 QCheckBox::indicator:unchecked:hover {
-    image: url(qss/black/checkBox_hover.png);
+    image: url(:qss/black/checkBox_hover.png);
 }
 
 
 QCheckBox::indicator:checked {
-    image: url(qss/black/checkBox_selected.png);
+    image: url(:qss/black/checkBox_selected.png);
 }
 
 QCheckBox::indicator:checked:hover {
-    image: url(qss/black/checkBox_hoverAndSelected.png);
+    image: url(:qss/black/checkBox_hoverAndSelected.png);
 }
 
 QMenu {
@@ -225,8 +225,8 @@ QTreeWidget::item:selected { /* when user selects item using mouse or keyboard *
 }
 
 QFrame#messengerframetop{
-         
-       border-image: url(qss/black/backgroundblack.png);
+
+       border-image: url(:qss/black/backgroundblack.png);
 
 }
 						
