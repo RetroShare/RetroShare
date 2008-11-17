@@ -2,7 +2,7 @@
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.4.10a"
+!define VERSION "0.4.11a"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
 
 ; Main Install settings
@@ -99,31 +99,31 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
 
     
     LangString sec_main ${LANG_GERMAN} "Programmdateien"
-    LangString sec_data ${LANG_GERMAN} "Skins für das Programm"
+    LangString sec_data ${LANG_GERMAN} "Skins fï¿½r das Programm"
     LangString sec_mplayer ${LANG_GERMAN} "MPlayer "
     LangString sec_shortcuts ${LANG_GERMAN} "Shortcuts"
-    LangString sec_link ${LANG_GERMAN} "Dateiverknüpfungen"
+    LangString sec_link ${LANG_GERMAN} "Dateiverknï¿½pfungen"
     LangString sec_autostart ${LANG_GERMAN} "Auto Startup"
 	LangString DESC_sec_main ${LANG_GERMAN} "Installiert die erforderlichen Programmdateien."
 	LangString DESC_sec_data ${LANG_GERMAN} "Installiert RetroShare Skins"
-	LangString DESC_sec_mplayer ${LANG_GERMAN} "Installiert MPlayer das für SMPlayer erforderlich ist"
-    LangString DESC_sec_shortcuts ${LANG_GERMAN} "Erstellt eine RetroShare Verknüpfung im Startmenü, Desktop oder im Schnellstarter."
-    LangString DESC_sec_link ${LANG_GERMAN} "RetroShare mit .pqi Dateien verknüpfen"
+	LangString DESC_sec_mplayer ${LANG_GERMAN} "Installiert MPlayer das fï¿½r SMPlayer erforderlich ist"
+    LangString DESC_sec_shortcuts ${LANG_GERMAN} "Erstellt eine RetroShare Verknï¿½pfung im Startmenï¿½, Desktop oder im Schnellstarter."
+    LangString DESC_sec_link ${LANG_GERMAN} "RetroShare mit .pqi Dateien verknï¿½pfen"
     LangString DESC_sec_autostart ${LANG_GERMAN} "Beim Neustart automatisch RetroShare starten und sich anmelden"
     LangString LANGUAGEID ${LANG_GERMAN} "1031"
     
     
-    LangString sec_main ${LANG_TURKISH} "Program Dosyalarý"
+    LangString sec_main ${LANG_TURKISH} "Program Dosyalarï¿½"
     LangString sec_data ${LANG_TURKISH} "Program Skinleri"
     LangString sec_mplayer ${LANG_TURKISH} "MPlayer "
     LangString sec_shortcuts ${LANG_TURKISH} "Shortcut'lar"
     LangString sec_link ${LANG_TURKISH} ".pqi Dosya Kaydet"
     LangString sec_autostart ${LANG_TURKISH} "Otomatik calistir ve baglan"
-	LangString DESC_sec_main ${LANG_TURKISH} "Program dosyalarýný kurar."
+	LangString DESC_sec_main ${LANG_TURKISH} "Program dosyalarï¿½nï¿½ kurar."
 	LangString DESC_sec_data ${LANG_TURKISH} "RetroShare Skin'leri kurar"
 	LangString DESC_sec_mplayer ${LANG_TURKISH} "Mplayer SMPlayer icin gereklidir"
     LangString DESC_sec_shortcuts ${TURKISH} "Shortcut yap Start menu , Desktop veya Quicklaunchbar icin."
-    LangString DESC_sec_link ${LANG_TURKISH} "RetroShare .pqi almasý için kaydettirir"
+    LangString DESC_sec_link ${LANG_TURKISH} "RetroShare .pqi almasï¿½ iï¿½in kaydettirir"
     LangString DESC_sec_autostart ${LANG_TURKISH} "Isletim sistemi acildiginda Otomatik olarak calistir ve baglan"
     LangString LANGUAGEID ${LANG_TURKISH} "1055"
     
@@ -333,7 +333,7 @@ FunctionEnd
 
 LangString ^UninstallLink ${LANG_ENGLISH} "Uninstall"
 LangString ^UninstallLink ${LANG_GERMAN} "Deinstallieren"
-LangString ^UninstallLink ${LANG_TURKISH} "Kaldýr"
+LangString ^UninstallLink ${LANG_TURKISH} "Kaldï¿½r"
 
 
 
