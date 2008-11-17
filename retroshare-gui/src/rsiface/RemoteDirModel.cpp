@@ -234,20 +234,30 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 
     if (details.type == DIR_TYPE_PERSON)
 	{
-		//setData(QIcon(":/images/user/identity16.png"));
-		QIcon icon1(":/images/user/identity16.png");
-		return icon1;
+		switch(coln)
+		{
+			case 0:
+		QIcon icon(":/images/user/identity16.png");
+		return icon;
+		break;
+		}
 	}
 	else if (details.type == DIR_TYPE_DIR)
 	{		
-		//setData(QIcon(":/images/folder_green16.png"));
-		QIcon icon(":/images/folder16.png");
-		return icon;		
+		switch(coln)
+		{
+			case 0:
+		return(QIcon(":/images/folder16.png"));	
+		break;
+		}
 	}
 	else if (details.type == DIR_TYPE_FILE) /* File */
 	{
 		// extensions predefined
 		//QString name;
+		switch(coln)
+		{
+			case 0:
 		QString ext = QFileInfo(QString::fromStdString(details.name)).suffix();
 		if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif"
 		        || ext == "bmp" || ext == "ico" || ext == "svg")
@@ -287,7 +297,7 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 		         || ext == "sxc" || ext == "odt" || ext == "ods")
 		{
 			//setIcon(0, QIcon(":/images/docfile.png"));
-		    QIcon icon(":/images/FileTypeDocument.png");
+		    	QIcon icon(":/images/FileTypeDocument.png");
 		    return icon;
 		}
 		else if (ext == "html" || ext == "htm" || ext == "php")
@@ -301,6 +311,8 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 			//setIcon(0, QIcon(":/images/file.png"));
 			QIcon icon(":/images/FileTypeAny.png");
 		    return icon;
+		}
+		break;
 		}
 	}
 	else
@@ -368,8 +380,10 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 			case 3:
 		{
 			std::ostringstream out;
-			out << details.age;
-			return QString::fromStdString(out.str());
+			QDateTime datum = QDateTime::fromTime_t(details.age);
+			QString stime = datum.toString(Qt::LocalDate);
+			//out << details.age;
+			return QString(stime);
 		}
 			break;
 			default:
