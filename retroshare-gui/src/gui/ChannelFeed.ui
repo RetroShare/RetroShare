@@ -5,9 +5,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>637</width>
-    <height>470</height>
+    <width>676</width>
+    <height>452</height>
    </rect>
+  </property>
+  <property name="sizeIncrement" >
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="baseSize" >
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle" >
    <string>Form</string>
@@ -194,13 +206,19 @@
      </property>
      <property name="maximumSize" >
       <size>
-       <width>240</width>
+       <width>220</width>
        <height>16777215</height>
       </size>
      </property>
      <property name="sizeIncrement" >
       <size>
        <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="baseSize" >
+      <size>
+       <width>220</width>
        <height>0</height>
       </size>
      </property>
@@ -215,8 +233,8 @@
    <item row="1" column="2" colspan="8" >
     <widget class="QFrame" name="msgFrame" >
      <property name="sizePolicy" >
-      <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
-       <horstretch>0</horstretch>
+      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+       <horstretch>1</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
