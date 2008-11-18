@@ -48,11 +48,13 @@
 #define UI_PREF_ADVANCED_SEARCH  "UIOptions/AdvancedSearch"
 
 /* indicies for search results item columns SR_ = Search Result */
-#define SR_NAME_COL         0
-#define SR_SIZE_COL         1
-#define SR_ID_COL           2
-#define SR_HASH_COL         3
-#define SR_SEARCH_ID_COL    4
+/* indicies for search results item columns SR_ = Search Result */
+#define SR_ICON_COL         0
+#define SR_NAME_COL         1
+#define SR_SIZE_COL         2
+#define SR_ID_COL           3
+#define SR_HASH_COL         4
+#define SR_SEARCH_ID_COL    5
 
 /* indicies for search summary item columns SS_ = Search Summary */
 #define SS_TEXT_COL         0
@@ -138,23 +140,26 @@ SearchDialog::SearchDialog(QWidget *parent)
     _smheader->resizeSection ( 1, 75 );
     _smheader->resizeSection ( 2, 75 );
 
-    ui.searchResultWidget->setColumnCount(4);
+    ui.searchResultWidget->setColumnCount(5);
     _smheader = ui.searchResultWidget->header () ;   
-    _smheader->setResizeMode (0, QHeaderView::Interactive);
+    _smheader->setResizeMode (0, QHeaderView::Custom);
     _smheader->setResizeMode (1, QHeaderView::Interactive);
     _smheader->setResizeMode (2, QHeaderView::Interactive);
     _smheader->setResizeMode (3, QHeaderView::Interactive);
     
-    _smheader->resizeSection ( 0, 270 );
-    _smheader->resizeSection ( 1, 75 );
+    _smheader->resizeSection ( 0, 20 );
+    _smheader->resizeSection ( 1, 270 );
     _smheader->resizeSection ( 2, 75 );
-    _smheader->resizeSection ( 3, 240 );
+    _smheader->resizeSection ( 3, 75 );
+    _smheader->resizeSection ( 4, 240 );
     
     // set header text aligment
 	QTreeWidgetItem * headerItem = ui.searchResultWidget->headerItem();
-	headerItem->setTextAlignment(1, Qt::AlignRight   | Qt::AlignRight);
-	headerItem->setTextAlignment(2, Qt::AlignRight | Qt::AlignRight);
-   
+	headerItem->setTextAlignment(2, Qt::AlignRight   | Qt::AlignRight);
+	headerItem->setTextAlignment(3, Qt::AlignRight | Qt::AlignRight);
+     
+	ui.searchResultWidget->sortItems(SR_NAME_COL, Qt::AscendingOrder);
+
 
 
 /* Hide platform specific features */
@@ -482,6 +487,51 @@ void SearchDialog::resultsToTree(std::string txt, std::list<FileDetail> results)
 		item->setText(SR_NAME_COL, QString::fromStdString(it->name));
 		item->setText(SR_HASH_COL, QString::fromStdString(it->hash));
 		item->setText(SR_SEARCH_ID_COL, QString::fromStdString(out.str()));
+
+		QString ext = QFileInfo(QString::fromStdString(it->name)).suffix();
+		if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif"
+		        || ext == "bmp" || ext == "ico" || ext == "svg")
+		{
+			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypePicture.png"));
+		}
+		else if (ext == "avi" || ext == "mpg" || ext == "mpeg" || ext == "wmv"
+			|| ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov"
+			|| ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp")
+		{
+			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeVideo.png"));
+		}
+		else if (ext == "ogg" || ext == "mp3" || ext == "wav" || ext == "wma")
+		{
+			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeAudio.png"));
+		}
+		else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz"
+		         || ext == "rar" || ext == "rpm" || ext == "deb")
+		{
+			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeArchive.png"));
+		}
+		else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h")
+		{
+			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeDocument.png"));
+		}
+		else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls"
+		         || ext == "sxc" || ext == "odt" || ext == "ods")
+		{
+			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeDocument.png"));
+
+		}
+		else if (ext == "html" || ext == "htm" || ext == "php")
+		{
+			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeDocument.png"));
+
+		}
+		else
+		{
+			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeAny.png"));
+
+		}
+
+		
+
 		/*
 		 * to facilitate downlaods we need to save the file size too
 		 */
@@ -497,15 +547,15 @@ void SearchDialog::resultsToTree(std::string txt, std::list<FileDetail> results)
 		if (it->id == "Local")
 		{
 			item->setText(SR_ID_COL, QString::fromStdString(it->id));
-			item->setBackground(2, QBrush(Qt::red)); /* colour green? */
+			item->setBackground(3, QBrush(Qt::red)); /* colour green? */
 		}
 		else 
 		{
 			item->setText(SR_ID_COL, QString::fromStdString( rsPeers->getPeerName(it->id)));
 			if(rsPeers->isOnline(it->id))
-				item->setBackground(2, QBrush(Qt::green));
+				item->setBackground(3, QBrush(Qt::green));
 			else
-				item->setBackground(2, QBrush(Qt::lightGray));
+				item->setBackground(3, QBrush(Qt::lightGray));
 		}
 
 		ui.searchResultWidget->addTopLevelItem(item);
