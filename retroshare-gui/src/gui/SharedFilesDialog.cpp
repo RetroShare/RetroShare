@@ -105,7 +105,7 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 	l_header->setResizeMode (3, QHeaderView::Interactive);
    
 	l_header->resizeSection ( 0, 210 );
-	l_header->resizeSection ( 1, 100 );
+	l_header->resizeSection ( 1, 70 );
 	l_header->resizeSection ( 2, 100 );
 	l_header->resizeSection ( 3, 100 );
 	
@@ -120,7 +120,7 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 	r_header->setResizeMode(0, QHeaderView::Stretch);
    
 	r_header->resizeSection ( 0, 210 );
-	r_header->resizeSection ( 1, 100 );
+	r_header->resizeSection ( 1, 70 );
 	r_header->resizeSection ( 2, 100 );
 	r_header->resizeSection ( 3, 100 );
 	
