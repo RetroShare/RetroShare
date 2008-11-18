@@ -26,6 +26,7 @@
 #include "rsiface/rsexpr.h"
 #include "rsiface/rsfiles.h"
 #include "rsiface/rspeers.h"
+#include "util/misc.h"
 
 #include <iostream>
 #include <sstream>
@@ -484,8 +485,10 @@ void SearchDialog::resultsToTree(std::string txt, std::list<FileDetail> results)
 		/*
 		 * to facilitate downlaods we need to save the file size too
 		 */
-		QVariant * variant = new QVariant((qulonglong)it->size);
-		item->setText(SR_SIZE_COL, QString(variant->toString()));
+		//QVariant * variant = new QVariant((qulonglong)it->size);
+		//item->setText(SR_SIZE_COL, QString(variant->toString()));
+		item->setText(SR_SIZE_COL, misc::friendlyUnit(it->size));
+
 
 		// I kept the color code green=online, grey=offline
 		// Qt::blue is very dark and hardly compatible with the black text on it.
