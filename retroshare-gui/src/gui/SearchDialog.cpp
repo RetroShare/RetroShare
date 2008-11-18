@@ -145,7 +145,7 @@ SearchDialog::SearchDialog(QWidget *parent)
     _smheader->setResizeMode (2, QHeaderView::Interactive);
     _smheader->setResizeMode (3, QHeaderView::Interactive);
     
-    _smheader->resizeSection ( 0, 200 );
+    _smheader->resizeSection ( 0, 270 );
     _smheader->resizeSection ( 1, 75 );
     _smheader->resizeSection ( 2, 75 );
     _smheader->resizeSection ( 3, 240 );
@@ -488,6 +488,7 @@ void SearchDialog::resultsToTree(std::string txt, std::list<FileDetail> results)
 		//QVariant * variant = new QVariant((qulonglong)it->size);
 		//item->setText(SR_SIZE_COL, QString(variant->toString()));
 		item->setText(SR_SIZE_COL, misc::friendlyUnit(it->size));
+		item->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 
 
 		// I kept the color code green=online, grey=offline
