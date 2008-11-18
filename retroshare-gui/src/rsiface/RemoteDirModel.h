@@ -5,6 +5,7 @@
 #include <vector>
 #include <list>
 #include <string>
+#include "util/misc.h"
 
 class RemoteDirModel : public QAbstractItemModel
  {
@@ -98,6 +99,7 @@ virtual QStringList mimeTypes () const;
 
      mutable int nIndex;
      mutable std::vector<RemoteIndex> indexSet;
+
  };
 
 #endif

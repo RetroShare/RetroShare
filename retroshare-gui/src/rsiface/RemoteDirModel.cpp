@@ -8,6 +8,7 @@
 #include <sstream>
 #include <math.h>
 #include <algorithm>
+#include "util/misc.h"
 
 /*****
  * #define RDM_DEBUG
@@ -18,6 +19,8 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
          RemoteMode(mode), nIndex(1), indexSet(1)   /* ass zero index cant be used */
 {
 	setSupportedDragActions(Qt::CopyAction);
+
+
 }
 
 
@@ -237,8 +240,7 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 		switch(coln)
 		{
 			case 0:
-		QIcon icon(":/images/user/identity16.png");
-		return icon;
+		return(QIcon(":/images/user/identity16.png"));	
 		break;
 		}
 	}
@@ -366,8 +368,9 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 			case 1:
 		{
 			std::ostringstream out;
-			out << details.count;
-			return QString::fromStdString(out.str());
+			//out << details.count;
+			//return QString::fromStdString(out.str());
+			return  misc::friendlyUnit(details.count);
 		}
 			break;
 			case 2:
@@ -380,10 +383,8 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 			case 3:
 		{
 			std::ostringstream out;
-			QDateTime datum = QDateTime::fromTime_t(details.age);
-			QString stime = datum.toString(Qt::LocalDate);
 			//out << details.age;
-			return QString(stime);
+			return  misc::userFriendlyDuration(details.age);
 		}
 			break;
 			default:
@@ -1006,5 +1007,7 @@ QStringList RemoteDirModel::mimeTypes () const
 
 	return list;
 }
+
+
 
 

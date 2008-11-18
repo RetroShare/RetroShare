@@ -98,6 +98,7 @@ HEADERS +=  rshare.h \
             util/RsAction.h \
             util/printpreview.h \
             util/log.h \
+            util/misc.h \
             gui/bwgraph/bwgraph.h \
 	    gui/profile/ProfileView.h \
 	    gui/profile/ProfileEdit.h \
