@@ -44,8 +44,6 @@ const double   DMULTIPLEX_RELAX = 0.5; /* ??? */
  * #define MPLEX_DEBUG 1
  *****/
  
-#define MPLEX_DEBUG 1
-
 ftClient::ftClient(ftTransferModule *module, ftFileCreator *creator)
 	:mModule(module), mCreator(creator)
 {

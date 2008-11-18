@@ -50,6 +50,10 @@
 const double FT_TM_MAX_PEER_RATE = 1024 * 1024; /* 1MB/s */
 const uint32_t FT_TM_MAX_RESETS  = 5;
 
+const uint32_t FT_TM_MINIMUM_CHUNK = 1024; /* ie 1Kb / sec */
+const uint32_t FT_TM_RESTART_DOWNLOAD = 20; /* 20 seconds */
+const uint32_t FT_TM_DOWNLOAD_TIMEOUT = 18; /* 18 seconds */
+
 ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftController *c)
 	:mFileCreator(fc), mMultiplexor(dm), mFtController(c), mFlag(0)
 {
@@ -500,9 +504,6 @@ void ftTransferModule::adjustSpeed()
  *
  **/
 
-const uint32_t FT_TM_MINIMUM_CHUNK = 1024; /* ie 1Kb / sec */
-const uint32_t FT_TM_RESTART_DOWNLOAD = 10; /* 10 seconds */
-const uint32_t FT_TM_DOWNLOAD_TIMEOUT = 5; /* 5 seconds */
 
 /* NOTEs on this function...
  * 1) This is the critical function for deciding the rate at which ft takes place.
@@ -574,7 +575,7 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 	info.lastTransfers = 0;
 
 	/* request at 10% more than actual rate */
-	uint32_t next_req = info.actualRate * 1.1;
+	uint32_t next_req = info.actualRate * 1.25;
 
 	if (next_req > info.desiredRate * 1.1)
 		next_req = info.desiredRate * 1.1;

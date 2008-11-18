@@ -27,7 +27,9 @@
 #include "serialiser/rsconfigitems.h"
 #include "util/rsdir.h"
 
-#define DEBUG_ELIST	1
+/******
+ * #define DEBUG_ELIST	1
+ *****/
 
 ftExtraList::ftExtraList()
 	:p3Config(CONFIG_TYPE_FT_EXTRA_LIST)

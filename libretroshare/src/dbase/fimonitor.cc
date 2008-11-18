@@ -39,7 +39,6 @@
 /***********
  * #define FIM_DEBUG 1
  ***********/
-#define FIM_DEBUG 1
 
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, std::string cachedir, std::string pid)
 	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cachedir), fi(pid), 

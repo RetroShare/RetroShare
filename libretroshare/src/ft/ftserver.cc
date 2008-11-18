@@ -49,8 +49,6 @@ const int ftserverzone = 29539;
  * #define SERVER_DEBUG 1
  ***/
 
-#define SERVER_DEBUG 1
-
 	/* Setup */
 ftServer::ftServer(p3AuthMgr *authMgr, p3ConnectMgr *connMgr)
 	:mAuthMgr(authMgr), mConnMgr(connMgr)
