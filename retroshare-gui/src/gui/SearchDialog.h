@@ -101,12 +101,14 @@ private:
     
 /** Contains the mapping of filetype combobox to filetype extensions */
     static const int FILETYPE_IDX_ANY;
+    static const int FILETYPE_IDX_ARCHIVE;
     static const int FILETYPE_IDX_AUDIO;
-    static const int FILETYPE_IDX_VIDEO;
+    static const int FILETYPE_IDX_CDIMAGE;
+    static const int FILETYPE_IDX_DOCUMENT;
     static const int FILETYPE_IDX_PICTURE;
     static const int FILETYPE_IDX_PROGRAM;
-    static const int FILETYPE_IDX_ARCHIVE;
-    static const int FILETYPE_IDX_DOCUMENT;
+    static const int FILETYPE_IDX_VIDEO;
+
     
     static QMap<int, QString> * FileTypeExtensionMap;
     static bool initialised;

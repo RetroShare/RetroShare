@@ -289,6 +289,18 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 			QIcon icon(":/images/FileTypeArchive.png");
 		    return icon;
 		}
+		else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com"
+			|| ext == "bin" || ext == "exe" || ext == "js" || ext == "pif"
+			|| ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws")
+		{
+		    return(QIcon(":/images/FileTypeProgram.png"));
+		}
+		else if (ext == "iso" || ext == "nrg" || ext == "mdf" )
+		{
+			//setIcon(0, QIcon(":/images/txtfile.png"));
+			QIcon icon(":/images/FileTypeCDImage.png");
+		    return icon;
+		}
 		else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h")
 		{
 			//setIcon(0, QIcon(":/images/txtfile.png"));
@@ -419,7 +431,20 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 	}
    } /* end of DisplayRole */
    return QVariant();
+
+	if (role == Qt::TextAlignmentRole)
+	{
+		if(coln == 1)
+		{
+			return int( Qt::AlignLeft | Qt::AlignVCenter);
+		}
+	
+
+	}
+	return QVariant();
  }
+
+
 
  QVariant RemoteDirModel::headerData(int section, Qt::Orientation orientation,
                                       int role) const

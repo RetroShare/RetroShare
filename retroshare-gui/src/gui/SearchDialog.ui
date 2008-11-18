@@ -799,6 +799,14 @@ p, li { white-space: pre-wrap; }
                  </item>
                  <item>
                   <property name="text" >
+                   <string>Archive</string>
+                  </property>
+                  <property name="icon" >
+                   <iconset resource="images.qrc" >:/images/FileTypeArchive.png</iconset>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text" >
                    <string>Audio</string>
                   </property>
                   <property name="icon" >
@@ -807,15 +815,23 @@ p, li { white-space: pre-wrap; }
                  </item>
                  <item>
                   <property name="text" >
-                   <string>Video</string>
+                   <string>CD-Image</string>
                   </property>
                   <property name="icon" >
-                   <iconset resource="images.qrc" >:/images/FileTypeVideo.png</iconset>
+                   <iconset resource="images.qrc" >:/images/FileTypeCDImage.png</iconset>
                   </property>
                  </item>
                  <item>
                   <property name="text" >
-                   <string>Images</string>
+                   <string>Document</string>
+                  </property>
+                  <property name="icon" >
+                   <iconset resource="images.qrc" >:/images/FileTypeDocument.png</iconset>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text" >
+                   <string>Picture</string>
                   </property>
                   <property name="icon" >
                    <iconset resource="images.qrc" >:/images/FileTypePicture.png</iconset>
@@ -823,7 +839,7 @@ p, li { white-space: pre-wrap; }
                  </item>
                  <item>
                   <property name="text" >
-                   <string>Programs</string>
+                   <string>Program</string>
                   </property>
                   <property name="icon" >
                    <iconset resource="images.qrc" >:/images/FileTypeProgram.png</iconset>
@@ -831,18 +847,10 @@ p, li { white-space: pre-wrap; }
                  </item>
                  <item>
                   <property name="text" >
-                   <string>Archives</string>
+                   <string>Video</string>
                   </property>
                   <property name="icon" >
-                   <iconset resource="images.qrc" >:/images/FileTypeArchive.png</iconset>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text" >
-                   <string>Documents</string>
-                  </property>
-                  <property name="icon" >
-                   <iconset resource="images.qrc" >:/images/FileTypeDocument.png</iconset>
+                   <iconset resource="images.qrc" >:/images/FileTypeVideo.png</iconset>
                   </property>
                  </item>
                 </widget>
@@ -1112,6 +1120,11 @@ p, li { white-space: pre-wrap; }
         <column>
          <property name="text" >
           <string>Sources</string>
+         </property>
+        </column>
+        <column>
+         <property name="text" >
+          <string>Type</string>
          </property>
         </column>
         <column>

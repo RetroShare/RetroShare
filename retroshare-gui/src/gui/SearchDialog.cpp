@@ -53,8 +53,9 @@
 #define SR_NAME_COL         1
 #define SR_SIZE_COL         2
 #define SR_ID_COL           3
-#define SR_HASH_COL         4
-#define SR_SEARCH_ID_COL    5
+#define SR_TYPE_COL         4
+#define SR_HASH_COL         5
+#define SR_SEARCH_ID_COL    6
 
 /* indicies for search summary item columns SS_ = Search Summary */
 #define SS_TEXT_COL         0
@@ -64,12 +65,13 @@
 /* static members */
 /* These indices MUST be identical to their equivalent indices in the combobox */
 const int SearchDialog::FILETYPE_IDX_ANY = 0;
-const int SearchDialog::FILETYPE_IDX_AUDIO = 1;
-const int SearchDialog::FILETYPE_IDX_VIDEO = 2;
-const int SearchDialog::FILETYPE_IDX_PICTURE = 3;
-const int SearchDialog::FILETYPE_IDX_PROGRAM = 4;
-const int SearchDialog::FILETYPE_IDX_ARCHIVE = 5;
-const int SearchDialog::FILETYPE_IDX_DOCUMENT = 6;
+const int SearchDialog::FILETYPE_IDX_ARCHIVE = 1;
+const int SearchDialog::FILETYPE_IDX_AUDIO = 2;
+const int SearchDialog::FILETYPE_IDX_CDIMAGE = 3;
+const int SearchDialog::FILETYPE_IDX_DOCUMENT = 4;
+const int SearchDialog::FILETYPE_IDX_PICTURE = 5;
+const int SearchDialog::FILETYPE_IDX_PROGRAM = 6;
+const int SearchDialog::FILETYPE_IDX_VIDEO = 7;
 QMap<int, QString> * SearchDialog::FileTypeExtensionMap = new QMap<int, QString>();
 bool SearchDialog::initialised = false;
  
@@ -140,7 +142,7 @@ SearchDialog::SearchDialog(QWidget *parent)
     _smheader->resizeSection ( 1, 75 );
     _smheader->resizeSection ( 2, 75 );
 
-    ui.searchResultWidget->setColumnCount(5);
+    ui.searchResultWidget->setColumnCount(6);
     _smheader = ui.searchResultWidget->header () ;   
     _smheader->setResizeMode (0, QHeaderView::Custom);
     _smheader->setResizeMode (1, QHeaderView::Interactive);
@@ -148,10 +150,12 @@ SearchDialog::SearchDialog(QWidget *parent)
     _smheader->setResizeMode (3, QHeaderView::Interactive);
     
     _smheader->resizeSection ( 0, 20 );
-    _smheader->resizeSection ( 1, 270 );
+    _smheader->resizeSection ( 1, 220 );
     _smheader->resizeSection ( 2, 75 );
     _smheader->resizeSection ( 3, 75 );
-    _smheader->resizeSection ( 4, 240 );
+    _smheader->resizeSection ( 4, 75 );
+    _smheader->resizeSection ( 5, 240 );
+
     
     // set header text aligment
 	QTreeWidgetItem * headerItem = ui.searchResultWidget->headerItem();
@@ -174,17 +178,19 @@ void SearchDialog::initialiseFileTypeMappings()
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_ANY, "");
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_AUDIO, 
 		"aac aif iff m3u mid midi mp3 mpa ogg ra ram wav wma");
-	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_VIDEO, 
-		"3gp asf asx avi mov mp4 mkv flv mpeg mpg qt rm swf vob wmv");
+	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_ARCHIVE, 
+		"7z bz2 gz pkg rar sea sit sitx tar zip");
+	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_CDIMAGE, 
+		"iso nrg mdf");
+	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_DOCUMENT, 
+		"doc odt ott rtf pdf ps txt log msg wpd wps" );	
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_PICTURE, 
 		"3dm 3dmf ai bmp drw dxf eps gif ico indd jpe jpeg jpg mng pcx pcc pct pgm "
 		"pix png psd psp qxd qxprgb sgi svg tga tif tiff xbm xcf");
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_PROGRAM, 
 		"app bat cgi com bin exe js pif py pl sh vb ws ");
-	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_ARCHIVE, 
-		"7z bz2 gz pkg rar sea sit sitx tar zip");
-	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_DOCUMENT, 
-		"doc odt ott rtf pdf ps txt log msg wpd wps" );	
+	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_VIDEO, 
+		"3gp asf asx avi mov mp4 mkv flv mpeg mpg qt rm swf vob wmv");
 	SearchDialog::initialised = true;
 }
 
@@ -493,41 +499,57 @@ void SearchDialog::resultsToTree(std::string txt, std::list<FileDetail> results)
 		        || ext == "bmp" || ext == "ico" || ext == "svg")
 		{
 			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypePicture.png"));
+			item->setText(SR_TYPE_COL, QString::fromUtf8("Picture"));
 		}
 		else if (ext == "avi" || ext == "mpg" || ext == "mpeg" || ext == "wmv"
 			|| ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov"
 			|| ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp")
 		{
 			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeVideo.png"));
+			item->setText(SR_TYPE_COL, QString::fromUtf8("Video"));
 		}
 		else if (ext == "ogg" || ext == "mp3" || ext == "wav" || ext == "wma")
 		{
 			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeAudio.png"));
+			item->setText(SR_TYPE_COL, QString::fromUtf8("Audio"));
 		}
 		else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz"
 		         || ext == "rar" || ext == "rpm" || ext == "deb")
 		{
 			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeArchive.png"));
+			item->setText(SR_TYPE_COL, QString::fromUtf8("Archive"));
+		}
+		else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com"
+			|| ext == "bin" || ext == "exe" || ext == "js" || ext == "pif"
+			|| ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws")
+		{
+			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeProgram.png"));
+			item->setText(SR_TYPE_COL, QString::fromUtf8("Program"));
+		}
+		else if (ext == "iso" || ext == "nrg" || ext == "mdf" )
+		{
+			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeCDImage.png"));
+			item->setText(SR_TYPE_COL, QString::fromUtf8("CD-Image"));
 		}
 		else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h")
 		{
 			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeDocument.png"));
+			item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
 		}
 		else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls"
 		         || ext == "sxc" || ext == "odt" || ext == "ods")
 		{
 			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeDocument.png"));
-
+			item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
 		}
 		else if (ext == "html" || ext == "htm" || ext == "php")
 		{
 			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeDocument.png"));
-
+			item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
 		}
 		else
 		{
 			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeAny.png"));
-
 		}
 
 		
