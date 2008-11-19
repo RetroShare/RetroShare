@@ -326,8 +326,8 @@ bool ftController::completeFile(std::string hash)
 	/********************** Controller Access **********************/
 	/***************************************************************/
 
-const uint32_t FT_CNTRL_STANDARD_RATE = 100 * 1024;
-const uint32_t FT_CNTRL_SLOW_RATE     = 10  * 1024;
+const uint32_t FT_CNTRL_STANDARD_RATE = 1024 * 1024;
+const uint32_t FT_CNTRL_SLOW_RATE     = 10   * 1024;
 
 bool 	ftController::FileRequest(std::string fname, std::string hash, 
 			uint64_t size, std::string dest, uint32_t flags, 

@@ -63,7 +63,9 @@ public:
 	peerInfo(std::string peerId_in,uint32_t state_in,uint32_t maxRate_in):
 		peerId(peerId_in),state(state_in),desiredRate(maxRate_in),actualRate(0),
 		offset(0),chunkSize(0),receivedSize(0),lastTS(0),
-		recvTS(0), lastTransfers(0), nResets(0)
+		recvTS(0), lastTransfers(0), nResets(0), 
+		rtt(0), rttActive(false), rttStart(0), rttOffset(0),
+		mRateIncrease(1)
 	{
 		return;
 	}
@@ -83,6 +85,13 @@ public:
 	time_t recvTS; /* last Recv */
 	uint32_t lastTransfers; /* data recvd in last second */
 	uint32_t nResets; /* count to disable non-existant files */
+
+	/* rrt rate control */
+	uint32_t rtt;       /* last rtt */
+	bool     rttActive; /* have we initialised an rtt measurement */
+	time_t	 rttStart;  /* ts of request */
+	uint64_t rttOffset; /* end of request */
+	float    mRateIncrease; /* current rate */
 };
 
 class ftFileStatus
