@@ -46,7 +46,7 @@ bool    ftFileProvider::FileDetails(FileInfo &info)
 }
 
 
-bool ftFileProvider::getFileData(uint64_t offset, uint32_t chunk_size, void *data)
+bool ftFileProvider::getFileData(uint64_t offset, uint32_t &chunk_size, void *data)
 {
 	/* dodgey checking outside of mutex...
 	 * much check again inside FileAttrs().
@@ -71,6 +71,7 @@ bool ftFileProvider::getFileData(uint64_t offset, uint32_t chunk_size, void *dat
 	if (base_loc + data_size > mSize)
 	{
 		data_size = mSize - base_loc;
+		chunk_size = mSize - base_loc;
 		std::cerr <<"Chunk Size greater than total file size, adjusting chunk size " << data_size << std::endl;
 	}
 

@@ -40,7 +40,7 @@ hash, uint64_t recvd): ftFileProvider(path,size,hash)
 }
 
 bool    ftFileCreator::getFileData(uint64_t offset, 
-                uint32_t chunk_size, void *data)
+                uint32_t &chunk_size, void *data)
 {
 	{
 	  RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
