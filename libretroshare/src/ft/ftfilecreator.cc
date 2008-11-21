@@ -201,6 +201,10 @@ int ftFileCreator::initializeFileAttrs()
 	uint64_t recvdsize = ftell(fd);
 
         std::cerr << "ftFileCreator::initializeFileAttrs() File Expected Size: " << mSize << " RecvdSize: " << recvdsize << std::endl;
+
+	/* start from there! */
+	mStart = recvdsize;
+	mEnd = recvdsize;
 	
 	return 1;
 }

@@ -294,57 +294,15 @@ bool p3Channels::channelSubscribe(std::string cId, bool subscribe)
 /***************************************************************************************/
 /****************** Event Feedback (Overloaded form p3distrib) *************************/
 /***************************************************************************************/
-
-#include "pqi/pqinotify.h"
-
-bool p3Channels::locked_eventUpdateGroup(GroupInfo  *info, bool isNew)
-{
-	std::string grpId = info->grpId;
-	std::string msgId;
-	std::string nullId;
-
-	std::cerr << "p3Channels::locked_eventUpdateGroup() ";
-	std::cerr << grpId;
-	std::cerr << " flags:" << info->flags;
-	std::cerr << std::endl;
-
-	if (isNew)
-	{
-		getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_NEW, grpId, msgId, nullId);
-	}
-	else
-	{
-		getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_UPDATE, grpId, msgId, nullId);
-	}
-
-        if (info->flags & RS_DISTRIB_SUBSCRIBED)
-        //	|| (info->flags & RS_DISTRIB_SUBSCRIBED))
-	{
-		std::string channeldir = mChannelsDir + "/" + grpId;
-
-		std::cerr << "p3Channels::locked_eventUpdateGroup() ";
-		std::cerr << " creating directory: " << channeldir;
-		std::cerr << std::endl;
-
-		/* create chanDir */
-		if (!RsDirUtil::checkCreateDirectory(channeldir))
-		{
-			std::cerr << "p3Channels::locked_eventUpdateGroup() ";
-			std::cerr << "Failed to create Channels Directory: ";
-			std::cerr << channeldir;
-			std::cerr << std::endl;
-		}
-	}
-
-
-	return true;
-}
-
 /* only download in the first week of channel
  * older stuff can be manually downloaded.
  */
 
 const uint32_t DOWNLOAD_PERIOD = 7 * 24 * 3600; 
+
+/* This is called when we receive a msg, and also recalled
+ * on a subscription to a channel..
+ */
 
 bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id)
 {
@@ -368,9 +326,6 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 	/* request the files 
 	 * NB: This will result in duplicates.
 	 * it is upto ftserver/ftcontroller/ftextralist
-	 *
-	 * download, then add to 
-	 *
 	 * */
 
         //bool download = (grp->flags & (RS_DISTRIB_ADMIN | 
@@ -408,6 +363,8 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 
 		/* download it ... and flag for ExtraList 
 		 * don't do pre-search check as FileRequest does it better
+		 *
+		 * FileRequest will ignore request if file is already indexed.
 		 */
 
 		std::cerr << "p3Channels::locked_eventDuplicateMsg() ";
@@ -424,6 +381,7 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 	return true;
 }
 
+#include "pqi/pqinotify.h"
 
 bool p3Channels::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id)
 {
@@ -449,31 +407,62 @@ bool p3Channels::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, std::stri
 }
 
 
-void p3Channels::locked_notifyGroupChanged(GroupInfo &grp)
+
+
+void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
 {
-	/* create directory if needed */
-        if (grp.flags & RS_DISTRIB_SUBSCRIBED)
+	std::string grpId = grp.grpId;
+	std::string msgId;
+	std::string nullId;
+
+	std::cerr << "p3Channels::locked_eventUpdateGroup() ";
+	std::cerr << grpId;
+	std::cerr << " flags:" << grp.flags;
+	std::cerr << std::endl;
+
+	switch(flags)
 	{
-		std::string channeldir = mChannelsDir + "/" + grp.grpId;
+		case GRP_NEW_UPDATE:
+			getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_NEW, grpId, msgId, nullId);
+			break;
+		case GRP_UPDATE:
+			getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_UPDATE, grpId, msgId, nullId);
+			break;
+		case GRP_LOAD_KEY:
+			break;
+		case GRP_NEW_MSG:
+			break;
+		case GRP_SUBSCRIBED:
+			break;
+
+	{
+		std::string channeldir = mChannelsDir + "/" + grpId;
+
+		std::cerr << "p3Channels::locked_notifyGroupChanged() ";
+		std::cerr << " creating directory: " << channeldir;
+		std::cerr << std::endl;
 
 		/* create chanDir */
 		if (!RsDirUtil::checkCreateDirectory(channeldir))
 		{
-			std::cerr << "p3Channels::channelSubscribe()";
-			std::cerr << " Failed to create Channels Directory: ";
+			std::cerr << "p3Channels::locked_notifyGroupChanged() ";
+			std::cerr << "Failed to create Channels Directory: ";
 			std::cerr << channeldir;
 			std::cerr << std::endl;
 		}
-		else
-		{
-			std::cerr << "p3Channels::channelSubscribe()";
-			std::cerr << " Created: ";
-			std::cerr << channeldir;
-			std::cerr << std::endl;
-		}
+
+		/* check if downloads need to be started? */
 	}
 
-	return p3GroupDistrib::locked_notifyGroupChanged(grp);
+			break;
+		case GRP_UNSUBSCRIBED:
+
+		/* won't stop downloads... */
+
+			break;
+	}
+
+	return p3GroupDistrib::locked_notifyGroupChanged(grp, flags);
 }
 
 

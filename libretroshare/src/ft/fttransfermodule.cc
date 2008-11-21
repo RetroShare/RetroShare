@@ -148,7 +148,7 @@ bool ftTransferModule::addFileSource(std::string peerId)
 	std::cerr << std::endl;
 #endif
   }
-
+  return true;
 }
 
 
@@ -542,7 +542,7 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 		return false;
 	}
 
-	if (ageReq > FT_TM_RESTART_DOWNLOAD * (info.nResets + 1))
+	if (ageReq > (int) (FT_TM_RESTART_DOWNLOAD * (info.nResets + 1)))
 	{
 		if (info.nResets > 1) /* 3rd timeout */
 		{
@@ -569,7 +569,7 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 		}
 	}
 
-	if (ageRecv > FT_TM_DOWNLOAD_TIMEOUT)
+	if (ageRecv > (int) FT_TM_DOWNLOAD_TIMEOUT)
 	{
 		info.state = PQIPEER_IDLE;
 		return false;

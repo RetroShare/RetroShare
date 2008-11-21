@@ -73,7 +73,7 @@ ftFileControl::ftFileControl(std::string fname,
 }
 
 ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string configDir)
-	:CacheTransfer(cs), p3Config(CONFIG_TYPE_FT_CONTROL), mDataplex(dm)
+	:CacheTransfer(cs), p3Config(CONFIG_TYPE_FT_CONTROL), mDataplex(dm), mFtActive(false)
 {
 	/* TODO */
 }
@@ -100,6 +100,20 @@ void ftController::run()
 		//std::cerr << "ftController::run()";
 		//std::cerr << std::endl;
 #endif
+		bool doPending = false;
+		{
+		  	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+			doPending = (mFtActive) && (!mFtPendingDone);
+		}
+
+		if (doPending)
+		{
+			if (!handleAPendingRequest())
+			{
+		  		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+				mFtPendingDone = true;
+			}
+		}
 
 		/* tick the transferModules */
 		std::list<std::string> done;
@@ -124,6 +138,7 @@ void ftController::run()
 			completeFile(*it);
 		}
 		mDone.clear();
+
 	}
 
 }
@@ -329,10 +344,51 @@ bool ftController::completeFile(std::string hash)
 const uint32_t FT_CNTRL_STANDARD_RATE = 1024 * 1024;
 const uint32_t FT_CNTRL_SLOW_RATE     = 10   * 1024;
 
+bool	ftController::activate()
+{
+  	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	mFtActive = true;
+	mFtPendingDone = false;
+	return true;
+}
+
+bool	ftController::handleAPendingRequest()
+{
+	ftPendingRequest req;
+  { RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
+	if (mPendingRequests.size() < 1)
+	{
+		return false;
+	}
+	req = mPendingRequests.front();
+	mPendingRequests.pop_front();
+  }
+	FileRequest(req.mName, req.mHash, req.mSize, req.mDest, req.mFlags, req.mSrcIds);
+	return true;
+}
+
+
 bool 	ftController::FileRequest(std::string fname, std::string hash, 
 			uint64_t size, std::string dest, uint32_t flags, 
 			std::list<std::string> &srcIds)
 {
+	/* If file transfer is not enabled ....
+	 * save request for later. This will also
+	 * mean that we will have to copy local files, 
+	 * or have a callback which says: local file.
+	 */
+
+  { RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	if (!mFtActive)
+	{
+		/* store in pending queue */
+		ftPendingRequest req(fname, hash, size, dest, flags, srcIds);
+		mPendingRequests.push_back(req);
+		return true;
+	}
+  }
+
 	/* check if we have the file */
 	FileInfo info;
 	std::list<std::string>::iterator it;
@@ -1070,22 +1126,22 @@ bool ftController::loadList(std::list<RsItem *> load)
 			}
 
 			loadConfigMap(configMap);
-			/* cleanup */
-			delete (*it);
 
 		}
 		else if (NULL != (rsft = dynamic_cast<RsFileTransfer *>(*it)))
 		{
   			RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-			/* save to the preLoad list */
-			mResumeTransferList.push_back(rsft);
+			/* This will get stored on a waiting list - until the 
+			 * config files are fully loaded
+			 */
+			FileRequest(rsft->file.name, rsft->file.hash, rsft->file.filesize, 
+				rsft->file.path, 0, rsft->allPeerIds.ids);
+
 		}
-		else
-		{
-			/* cleanup */
-			delete (*it);
-		}
+
+		/* cleanup */
+		delete (*it);
 	}
 	return true;
 
@@ -1109,34 +1165,6 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
 		//setPartialsDirectory(mit->second);
 	}
 
-	return true;
-}
-
-
-bool 	ftController::ResumeTransfers()
-{
-	std::list<RsFileTransfer *> resumeList;
-	std::list<RsFileTransfer *>::iterator it;
-
-  { RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
-	resumeList = mResumeTransferList;
-	mResumeTransferList.clear();
-  }
-	
-	for(it = resumeList.begin(); it != resumeList.end(); it++)
-	{
-		/* do File request */
-		std::string fname = (*it)->file.name;
-		std::string hash = (*it)->file.hash;  
-		uint64_t size = (*it)->file.filesize;
-		std::string dest = (*it)->file.path;
-		uint32_t flags = 0; //(*it)->flags;
-		std::list<std::string> srcIds = (*it)->allPeerIds.ids;
-
-		FileRequest(fname,hash,size,dest,flags,srcIds);
-
-		delete (*it);
-	}
 	return true;
 }
 

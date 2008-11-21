@@ -99,7 +99,7 @@ virtual bool forumSubscribe(std::string fId, bool subscribe);
 /****************** Event Feedback (Overloaded form p3distrib) *************************/
 /***************************************************************************************/
 
-virtual bool locked_eventUpdateGroup(GroupInfo  *, bool isNew);
+virtual void locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags);
 virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string);
 virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string);
 

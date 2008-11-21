@@ -434,9 +434,11 @@ void	p3GroupDistrib::loadGroup(RsDistribGrp *newGrp)
 	else
 	{
 		/* Callback for any derived classes */
-		locked_eventUpdateGroup(&(it->second), isNew);
 
-		locked_notifyGroupChanged(it->second);
+		if (isNew)
+			locked_notifyGroupChanged(it->second, GRP_NEW_UPDATE);
+		else
+			locked_notifyGroupChanged(it->second, GRP_UPDATE);
 	}
 
 #ifdef DISTRIB_DEBUG
@@ -511,7 +513,7 @@ void	p3GroupDistrib::loadGroupKey(RsDistribGrpKey *newKey)
 
 	if (updateOk)
 	{
-		locked_notifyGroupChanged(it->second);
+		locked_notifyGroupChanged(it->second, GRP_LOAD_KEY);
 	}
 
 #ifdef DISTRIB_DEBUG
@@ -638,14 +640,18 @@ void	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, std::string src, bool l
 	}
 	else
 	{
+		/* Note it makes it very difficult to republish msg - if we have
+		 * deleted the signed version... The load of old messages will occur
+		 * at next startup. And publication will happen then too.
+		 */
+
 #ifdef DISTRIB_DEBUG
 		std::cerr << "p3GroupDistrib::loadMsg() Deleted Original Msg (No Publish)";
 		std::cerr << std::endl;
 #endif
 		delete newMsg;
 	}
-
-	locked_notifyGroupChanged(git->second);
+	locked_notifyGroupChanged(git->second, GRP_NEW_MSG);
 }
 
 
@@ -1112,8 +1118,28 @@ bool    p3GroupDistrib::subscribeToGroup(std::string grpId, bool subscribe)
 		{
 			git->second.flags |= RS_DISTRIB_SUBSCRIBED;
 
-			locked_notifyGroupChanged(git->second);
+			locked_notifyGroupChanged(git->second, GRP_SUBSCRIBED);
 			mGroupsRepublish = true;
+
+			/* reprocess groups messages .... so actions can be taken (by inherited) 
+			 * This could be an very expensive operation! .... but they asked for it.
+			 * 
+			 * Hopefully a LoadList call will have on existing messages!
+			 */
+
+			std::map<std::string, RsDistribMsg *>::iterator mit;
+			std::list<std::string>::iterator pit;
+
+			/* assume that each peer can provide all of them */
+			for(mit = git->second.msgs.begin();
+				mit != git->second.msgs.end(); mit++)
+			{
+				for(pit = git->second.sources.begin();
+					pit != git->second.sources.end(); pit++)
+				{
+					locked_eventDuplicateMsg(&(git->second), mit->second, *pit);
+				}
+			}
 		}
 	}
 	else 
@@ -1122,7 +1148,7 @@ bool    p3GroupDistrib::subscribeToGroup(std::string grpId, bool subscribe)
 		{
 			git->second.flags &= (~RS_DISTRIB_SUBSCRIBED);
 
-			locked_notifyGroupChanged(git->second);
+			locked_notifyGroupChanged(git->second, GRP_UNSUBSCRIBED);
 			mGroupsRepublish = true;
 		}
 	}
@@ -2562,7 +2588,7 @@ std::ostream &operator<<(std::ostream &out, const GroupInfo &info)
 	return out;
 }
 
-void 	p3GroupDistrib::locked_notifyGroupChanged(GroupInfo &info)
+void 	p3GroupDistrib::locked_notifyGroupChanged(GroupInfo &info, uint32_t flags)
 {
 	mGroupsChanged = true;
 	info.grpChanged = true;

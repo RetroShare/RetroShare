@@ -362,23 +362,30 @@ bool p3Forums::forumSubscribe(std::string fId, bool subscribe)
 
 #include "pqi/pqinotify.h"
 
-bool p3Forums::locked_eventUpdateGroup(GroupInfo  *info, bool isNew)
+void p3Forums::locked_notifyGroupChanged(GroupInfo  &grp, uint32_t flags)
 {
-	std::string grpId = info->grpId;
+	std::string grpId = grp.grpId;
 	std::string msgId;
 	std::string nullId;
 
-	if (isNew)
-	{
-		getPqiNotify()->AddFeedItem(RS_FEED_ITEM_FORUM_NEW, grpId, msgId, nullId);
-	}
-	else
-	{
-		getPqiNotify()->AddFeedItem(RS_FEED_ITEM_FORUM_UPDATE, grpId, msgId, nullId);
-	}
-
-	return true;
+        switch(flags)
+        {
+                case GRP_NEW_UPDATE:
+                        getPqiNotify()->AddFeedItem(RS_FEED_ITEM_FORUM_NEW, grpId, msgId, nullId);
+                        break;
+                case GRP_UPDATE:
+                        getPqiNotify()->AddFeedItem(RS_FEED_ITEM_FORUM_UPDATE, grpId, msgId, nullId);
+                        break;
+                case GRP_LOAD_KEY:
+                        break;
+                case GRP_NEW_MSG:
+                        break;
+                case GRP_SUBSCRIBED:
+                        break;
+        }
+	return p3GroupDistrib::locked_notifyGroupChanged(grp, flags);
 }
+
 bool p3Forums::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id)
 {
 	return true;

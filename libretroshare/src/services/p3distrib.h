@@ -194,6 +194,14 @@ class GroupCache
 	uint16_t cacheSubId;
 };
 
+	/* Flags for locked_notifyGroupChanged() ***/
+
+const uint32_t GRP_NEW_UPDATE   = 0x0001;
+const uint32_t GRP_UPDATE       = 0x0002;
+const uint32_t GRP_LOAD_KEY     = 0x0003;
+const uint32_t GRP_NEW_MSG      = 0x0004;
+const uint32_t GRP_SUBSCRIBED   = 0x0005;
+const uint32_t GRP_UNSUBSCRIBED = 0x0006;
 
 class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, public nullService
 {
@@ -279,7 +287,9 @@ RsDistribMsg *locked_getGroupMsg(std::string grpId, std::string msgId);
 /***************************** Event Feedback ******************************************/
 /***************************************************************************************/
 
-virtual bool locked_eventUpdateGroup(GroupInfo  *, bool isNew) = 0;
+	protected:
+	/* root version of this function must be called */
+virtual void locked_notifyGroupChanged(GroupInfo &info, uint32_t flags);
 virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string id) = 0;
 virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string id) = 0;
 
@@ -347,9 +357,6 @@ virtual bool    locked_choosePublishKey(GroupInfo &info);
 //virtual RsDistribGrp *locked_createPublicDistribGrp(GroupInfo &info);
 //virtual RsDistribGrp *locked_createPrivateDistribGrp(GroupInfo &info);
 
-	protected:
-	/* root version of this function must be called */
-virtual void    locked_notifyGroupChanged(GroupInfo &info);
 
 /***************************************************************************************/
 /***************************** Utility Functions ***************************************/

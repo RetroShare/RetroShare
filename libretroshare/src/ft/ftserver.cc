@@ -794,7 +794,7 @@ bool    ftServer::addConfiguration(p3ConfigMgr *cfgmgr)
 
 bool	ftServer::ResumeTransfers()
 {
-	mFtController->ResumeTransfers();
+	mFtController->activate();
 
 	return true;
 }

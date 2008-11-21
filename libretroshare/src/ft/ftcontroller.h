@@ -86,6 +86,25 @@ class ftFileControl
 	uint32_t	   mCallbackCode;
 };
 
+class ftPendingRequest
+{
+        public:
+        ftPendingRequest(std::string fname, std::string hash,
+                        uint64_t size, std::string dest, uint32_t flags,
+                        std::list<std::string> &srcIds)
+        : mName(fname), mHash(hash), mSize(size),
+        mDest(dest), mFlags(flags),mSrcIds(srcIds) { return; }
+
+        ftPendingRequest() : mSize(0), mFlags(0) { return; }
+
+        std::string mName;
+        std::string mHash;
+        uint64_t mSize;
+        std::string mDest;
+        uint32_t mFlags;
+        std::list<std::string> mSrcIds;
+};
+
 
 class ftController: public CacheTransfer, public RsThread, public pqiMonitor, public p3Config
 {
@@ -95,7 +114,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 	ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string configDir);
 
 void	setFtSearchNExtra(ftSearch *, ftExtraList *);
-bool	ResumeTransfers();
+bool    activate();
 
 virtual void run();
 
@@ -154,6 +173,7 @@ bool	loadConfigMap(std::map<std::string, std::string> &configMap);
 	/* RunTime Functions */
 void 	checkDownloadQueue();
 bool 	completeFile(std::string hash);
+bool    handleAPendingRequest();
 
 bool    setPeerState(ftTransferModule *tm, std::string id,
                         uint32_t maxrate, bool online);
@@ -184,13 +204,14 @@ bool    setPeerState(ftTransferModule *tm, std::string id,
 	std::list<std::string> mStreamQueue;
 	std::list<std::string> mFastQueue;
 
-	/* Config Load */
-	std::list<RsFileTransfer *> mResumeTransferList;
-
 	/* callback list (for File Completion) */
 	RsMutex doneMutex;
 	std::list<std::string> mDone;
+
+	/* List to Pause File transfers until Caches are properly loaded */
+	bool mFtActive;
+        bool mFtPendingDone;
+	std::list<ftPendingRequest> mPendingRequests;
 };
 
 #endif
-

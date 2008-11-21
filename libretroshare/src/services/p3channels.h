@@ -63,7 +63,7 @@ virtual bool channelSubscribe(std::string cId, bool subscribe);
 /***************************************************************************************/
 
 	protected:
-virtual bool locked_eventUpdateGroup(GroupInfo  *, bool isNew);
+virtual void locked_notifyGroupChanged(GroupInfo &info, uint32_t flags);
 virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string);
 virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string);
 
@@ -77,7 +77,6 @@ virtual bool    locked_checkDistribMsg(RsDistribMsg *msg);
 virtual RsDistribGrp *locked_createPublicDistribGrp(GroupInfo &info);
 virtual RsDistribGrp *locked_createPrivateDistribGrp(GroupInfo &info);
 
-virtual void locked_notifyGroupChanged(GroupInfo &info);
 
 /****************************************/
 

@@ -13,14 +13,14 @@ LIB_X86=libretroshare_x86.a
 
 MAC_SCRIPT="./scripts/config-macosx.mk"
 
-echo cp lib/$LIB lib/$LIB_PPC
-cp lib/$LIB lib/$LIB_PPC
+echo cp lib/$LIB lib/$LIB_PPC librs
+cp lib/$LIB lib/$LIB_PPC librs
 
 echo make clobber
 make clobber
 
-echo make "MAC_I386_BUILD=1"
-make "MAC_I386_BUILD=1"
+echo make "MAC_I386_BUILD=1" librs
+make "MAC_I386_BUILD=1" librs
 
 echo cp lib/$LIB lib/$LIB_X86
 cp lib/$LIB lib/$LIB_X86
