@@ -3,6 +3,8 @@
 #include "util/utest.h"
 #include <stdlib.h>
 
+#include "util/rswin.h"
+
 INITTEST();
 
 static int test_timeout(ftFileCreator *creator);
@@ -93,8 +95,15 @@ int test_fill(ftFileCreator *creator)
 
 		creator->addFileData(offset, chunk, data);
 		free(data);
-
+#ifndef WINDOWS_SYS
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 		usleep(250000); /* 1/4 of sec */
+#else
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+		Sleep(250); /* 1/4 of sec */
+#endif
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+
 		chunk = 1000; /* reset chunk size */
 
 	}

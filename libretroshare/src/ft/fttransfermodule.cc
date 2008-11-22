@@ -602,18 +602,47 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 
 	/* request at more than current rate */
 	uint32_t next_req = info.actualRate * (1.0 + info.mRateIncrease);
+#ifdef FT_DEBUG
+
+	std::cerr << "locked_tickPeerTransfer() actual rate: " << actualRate;
+	std::cerr << std::endl;
+#endif
 
 	if (next_req > info.desiredRate * 1.1)
+	{
 		next_req = info.desiredRate * 1.1;
+#ifdef FT_DEBUG
+		std::cerr << "locked_tickPeerTransfer() Reached MaxRate: next_req: " << next_req;
+		std::cerr << std::endl;
+#endif
+	}
+
 
 	if (next_req > FT_TM_MAX_PEER_RATE)
+	{
 		next_req = FT_TM_MAX_PEER_RATE;
+#ifdef FT_DEBUG
+		std::cerr << "locked_tickPeerTransfer() Reached AbsMaxRate: next_req: " << next_req;
+		std::cerr << std::endl;
+#endif
+	}
+
 
 	if (next_req < FT_TM_MINIMUM_CHUNK)
+	{
 		next_req = FT_TM_MINIMUM_CHUNK;
+#ifdef FT_DEBUG
+		std::cerr << "locked_tickPeerTransfer() small chunk: next_req: " << next_req;
+		std::cerr << std::endl;
+#endif
+	}
 
 	info.lastTS = ts;
 
+#ifdef FT_DEBUG
+	std::cerr << "locked_tickPeerTransfer() desired  next_req: " << next_req;
+	std::cerr << std::endl;
+#endif
 	
 	/* do request */
 	uint64_t req_offset = 0;

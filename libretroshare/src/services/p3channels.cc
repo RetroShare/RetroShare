@@ -415,26 +415,34 @@ void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
 	std::string msgId;
 	std::string nullId;
 
-	std::cerr << "p3Channels::locked_eventUpdateGroup() ";
+	std::cerr << "p3Channels::locked_notifyGroupChanged() ";
 	std::cerr << grpId;
-	std::cerr << " flags:" << grp.flags;
+	std::cerr << " flags:" << flags;
 	std::cerr << std::endl;
 
 	switch(flags)
 	{
 		case GRP_NEW_UPDATE:
+			std::cerr << "p3Channels::locked_notifyGroupChanged() NEW UPDATE";
+			std::cerr << std::endl;
 			getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_NEW, grpId, msgId, nullId);
 			break;
 		case GRP_UPDATE:
+			std::cerr << "p3Channels::locked_notifyGroupChanged() UPDATE";
+			std::cerr << std::endl;
 			getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_UPDATE, grpId, msgId, nullId);
 			break;
 		case GRP_LOAD_KEY:
+			std::cerr << "p3Channels::locked_notifyGroupChanged() LOAD_KEY";
+			std::cerr << std::endl;
 			break;
 		case GRP_NEW_MSG:
+			std::cerr << "p3Channels::locked_notifyGroupChanged() NEW MSG";
+			std::cerr << std::endl;
 			break;
 		case GRP_SUBSCRIBED:
-			break;
-
+			std::cerr << "p3Channels::locked_notifyGroupChanged() SUBSCRIBED";
+			std::cerr << std::endl;
 	{
 		std::string channeldir = mChannelsDir + "/" + grpId;
 
@@ -456,9 +464,16 @@ void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
 
 			break;
 		case GRP_UNSUBSCRIBED:
+			std::cerr << "p3Channels::locked_notifyGroupChanged() UNSUBSCRIBED";
+			std::cerr << std::endl;
 
 		/* won't stop downloads... */
 
+			break;
+
+		default:
+			std::cerr << "p3Channels::locked_notifyGroupChanged() Unknown DEFAULT";
+			std::cerr << std::endl;
 			break;
 	}
 

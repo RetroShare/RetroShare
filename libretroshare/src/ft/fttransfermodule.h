@@ -56,7 +56,9 @@ class peerInfo
 public:
 	peerInfo(std::string peerId_in):peerId(peerId_in),state(PQIPEER_NOT_ONLINE),desiredRate(0),actualRate(0),
 		offset(0),chunkSize(0),receivedSize(0),lastTS(0),
-		recvTS(0), lastTransfers(0), nResets(0)
+		recvTS(0), lastTransfers(0), nResets(0), 
+		rtt(0), rttActive(false), rttStart(0), rttOffset(0),
+		mRateIncrease(1)
 	{
 		return;
 	}

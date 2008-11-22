@@ -433,7 +433,16 @@ bool    ftExtraList::loadList(std::list<RsItem *> load)
 		delete (*it);
 
 		/* short sleep */
+#ifndef WINDOWS_SYS
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 		usleep(1000); /* 1000 per second */
+
+#else
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+		Sleep(1);
+#endif
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+
 	}
 	return true;
 }

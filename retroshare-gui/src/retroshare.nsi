@@ -2,7 +2,7 @@
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.4.11a"
+!define VERSION "0.4.11b"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
 
 ; Main Install settings
@@ -163,7 +163,7 @@ Section  $(sec_data) sec_data
   ; We're not ready for external skins...
   ; Set Section qss need to remove svn path
   SetOutPath "$INSTDIR\qss\"
-  File /r qss\*.*   
+  File /r release\qss\*.*   
   
   ; Set Section emoticons need to remove svn path
   ; SetOutPath "$INSTDIR\emoticons\"
@@ -175,11 +175,11 @@ Section  $(sec_data) sec_data
 
   ; Add emoticons
   SetOutPath "$INSTDIR\emoticons\kopete\"
-  File /r emoticons\kopete\*.*   
+  File /r release\emoticons\kopete\*.*   
 	
   ; Add Chat Style
   SetOutPath "$INSTDIR\style\"
-  File /r style\*.*   
+  File /r release\style\*.*   
 	
 SectionEnd
 

@@ -4,6 +4,8 @@
 #include "util/utest.h"
 #include <stdlib.h>
 
+#include "util/rswin.h"
+
 INITTEST()
 
 int main()
