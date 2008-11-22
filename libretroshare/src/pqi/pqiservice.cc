@@ -35,6 +35,7 @@ const int pqiservicezone = 60478;
 
 p3ServiceServer::p3ServiceServer()
 {
+	RsStackMutex stack(srvMtx); /********* LOCKED *********/
 
 #ifdef  SERVICE_DEBUG
 	pqioutput(PQL_DEBUG_BASIC, pqiservicezone, 
@@ -47,6 +48,8 @@ p3ServiceServer::p3ServiceServer()
 
 int	p3ServiceServer::addService(pqiService *ts)
 {
+	RsStackMutex stack(srvMtx); /********* LOCKED *********/
+
 #ifdef  SERVICE_DEBUG
 	pqioutput(PQL_DEBUG_BASIC, pqiservicezone, 
 		"p3ServiceServer::addService()");
@@ -67,6 +70,8 @@ int	p3ServiceServer::addService(pqiService *ts)
 
 int	p3ServiceServer::incoming(RsRawItem *item)
 {
+	RsStackMutex stack(srvMtx); /********* LOCKED *********/
+
 #ifdef  SERVICE_DEBUG
 	pqioutput(PQL_DEBUG_BASIC, pqiservicezone, 
 		"p3ServiceServer::incoming()");
@@ -120,6 +125,7 @@ int	p3ServiceServer::incoming(RsRawItem *item)
 
 RsRawItem *p3ServiceServer::outgoing()
 {
+	RsStackMutex stack(srvMtx); /********* LOCKED *********/
 
 #ifdef  SERVICE_DEBUG
 	pqioutput(PQL_DEBUG_ALL, pqiservicezone, 
@@ -185,6 +191,8 @@ RsRawItem *p3ServiceServer::outgoing()
 
 int	p3ServiceServer::tick()
 {
+
+	RsStackMutex stack(srvMtx); /********* LOCKED *********/
 
 #ifdef  SERVICE_DEBUG
 	pqioutput(PQL_DEBUG_ALL, pqiservicezone, 

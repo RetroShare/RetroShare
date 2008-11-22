@@ -35,6 +35,13 @@ const int pqipersongrpzone = 354;
  *#define PGRP_DEBUG 1
  ****/
 
+/* MUTEX NOTES:
+ * Functions like GetRsRawItem() lock itself (pqihandler) and
+ * likewise ServiceServer and ConfigMgr mutex themselves.
+ * This means the only things we need to worry about are:
+ *  pqilistener and when accessing pqihandlers data.
+ */
+
 // handle the tunnel services.
 int pqipersongrp::tickServiceRecv()
 {
@@ -76,13 +83,13 @@ int pqipersongrp::tickServiceSend()
 
 	p3ServiceServer::tick();
 
-	while(NULL != (pqi = outgoing()))
+	while(NULL != (pqi = outgoing())) /* outgoing has own locking */
 	{
 		++i;
 		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, 
 			"pqipersongrp::tickTunnelServer() OutGoing RsItem");
 
-		SendRsRawItem(pqi);
+		SendRsRawItem(pqi); /* Locked by pqihandler */
 	}
 	if (0 < i)
 	{
@@ -105,10 +112,13 @@ int	pqipersongrp::tick()
 	 * but not to important.
 	 */
 
+  { RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 	if (pqil)
 	{
 		pqil -> tick();
 	}
+  } /* UNLOCKED */
+
 	int i = 0;
 
 	if (tickServiceSend())
@@ -141,10 +151,13 @@ int	pqipersongrp::tick()
 
 int	pqipersongrp::status()
 {
+  { RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 	if (pqil)
 	{
 		pqil -> status();
 	}
+  } /* UNLOCKED */
+
 	return pqihandler::status();
 }
 
@@ -164,6 +177,7 @@ int	pqipersongrp::init_listener()
 		peerConnectState state;
 		mConnMgr->getOwnNetStatus(state);
 
+  		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 		pqil = createListener(state.localaddr);
 	}
 	return 1;
@@ -174,10 +188,18 @@ int     pqipersongrp::restart_listener()
 	// stop it, 
 	// change the address.
 	// restart.
-	if (pqil)
+	bool haveListener = false;
+  { RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+  	haveListener = (pqil != NULL);
+  } /* UNLOCKED */
+
+
+	if (haveListener)
 	{
 		peerConnectState state;
 		mConnMgr->getOwnNetStatus(state);
+  
+  		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
 		pqil -> resetlisten();
 		pqil -> setListenAddr(state.localaddr);
@@ -186,7 +208,9 @@ int     pqipersongrp::restart_listener()
 	return 1;
 }
 
-
+/* NOT bothering to protect Config with a mutex.... it is not going to change
+ * and has its own internal mutexs.
+ */
 int	pqipersongrp::setConfig(p3GeneralConfig *cfg)
 {
 	config = cfg;
@@ -286,6 +310,7 @@ int     pqipersongrp::addPeer(std::string id)
 #endif
 
 	SearchModule *sm = NULL;
+  { RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 	std::map<std::string, SearchModule *>::iterator it;
 	it = mods.find(id);
 	if (it != mods.end())
@@ -306,6 +331,7 @@ int     pqipersongrp::addPeer(std::string id)
 	// reset it to start it working.
 	pqip -> reset();
 	pqip -> listen();
+  } /* UNLOCKED */
 
 	return AddSearchModule(sm);
 }
@@ -319,6 +345,8 @@ int     pqipersongrp::removePeer(std::string id)
 	std::cerr << " pqipersongrp::removePeer() id: " << id;
 	std::cerr << std::endl;
 #endif
+
+  	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
 	it = mods.find(id);
 	if (it != mods.end())
@@ -343,6 +371,7 @@ int     pqipersongrp::connectPeer(std::string id)
 	std::cerr << std::endl;
 #endif
 
+  { RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 	std::map<std::string, SearchModule *>::iterator it;
 	it = mods.find(id);
 	if (it == mods.end())
@@ -406,6 +435,9 @@ int     pqipersongrp::connectPeer(std::string id)
 		return 0;
 
 	p->connect(ptype, addr, delay, period, timeout);
+
+  } /* UNLOCKED */
+
 
 	/* */
 	return 1;

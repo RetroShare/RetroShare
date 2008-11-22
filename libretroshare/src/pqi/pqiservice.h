@@ -28,6 +28,7 @@
 #define PQI_SERVICE_HEADER
 
 #include "pqi/pqi_base.h"
+#include "util/rsthreads.h"
 
 // PQI Service, is a generic lower layer on which services can run on.
 // 
@@ -90,6 +91,7 @@ int	tick();
 
 private:
 
+	RsMutex srvMtx; 
 std::map<uint32_t, pqiService *> services;
 std::map<uint32_t, pqiService *>::iterator rrit;
 

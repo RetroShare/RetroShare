@@ -39,6 +39,8 @@ const int pqihandlerzone = 34283;
 
 pqihandler::pqihandler(SecurityPolicy *Global)
 {
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+
 	// The global security....
 	// if something is disabled here...
 	// cannot be enabled by module.
@@ -62,9 +64,12 @@ pqihandler::pqihandler(SecurityPolicy *Global)
 
 int	pqihandler::tick()
 {
+	int moreToTick = 0;
+
+  { RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+
 	// tick all interfaces...
 	std::map<std::string, SearchModule *>::iterator it;
-	int moreToTick = 0;
 	for(it = mods.begin(); it != mods.end(); it++)
 	{
 		if (0 < ((it -> second) -> pqi) -> tick())
@@ -76,13 +81,14 @@ int	pqihandler::tick()
 		}
 	}
 	// get the items, and queue them correctly
-	if (0 < GetItems())
+	if (0 < locked_GetItems())
 	{
 #ifdef DEBUG_TICK
                	std::cerr << "pqihandler::tick() moreToTick from GetItems()" << std::endl;
 #endif
 		moreToTick = 1;
 	}
+  } /****** UNLOCK ******/
 
 	UpdateRates();
 	return moreToTick;
@@ -92,6 +98,7 @@ int	pqihandler::tick()
 int	pqihandler::status()
 {
 	std::map<std::string, SearchModule *>::iterator it;
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
 	{ // for output
 		std::ostringstream out;
@@ -121,6 +128,7 @@ int	pqihandler::status()
 
 bool	pqihandler::AddSearchModule(SearchModule *mod)
 {
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 	// if peerid used -> error.
 	std::map<std::string, SearchModule *>::iterator it;
 	if (mod->peerid != mod->pqi->PeerId())
@@ -167,6 +175,7 @@ bool	pqihandler::AddSearchModule(SearchModule *mod)
 
 bool	pqihandler::RemoveSearchModule(SearchModule *mod)
 {
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 	std::map<std::string, SearchModule *>::iterator it;
 	for(it = mods.begin(); it != mods.end(); it++)
 	{
@@ -180,7 +189,7 @@ bool	pqihandler::RemoveSearchModule(SearchModule *mod)
 }
 
 // dummy output check
-int	pqihandler::checkOutgoingRsItem(RsItem *item, int global)
+int	pqihandler::locked_checkOutgoingRsItem(RsItem *item, int global)
 {
 	pqioutput(PQL_WARNING, pqihandlerzone, 
 	  "pqihandler::checkOutgoingPQItem() NULL fn");
@@ -192,6 +201,8 @@ int	pqihandler::checkOutgoingRsItem(RsItem *item, int global)
 // generalised output
 int	pqihandler::HandleRsItem(RsItem *item, int allowglobal)
 {
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+
 	std::map<std::string, SearchModule *>::iterator it;
 	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
 	  "pqihandler::HandleRsItem()");
@@ -208,7 +219,7 @@ int	pqihandler::HandleRsItem(RsItem *item, int allowglobal)
 		return -1;
 	}
 
-	if (!checkOutgoingRsItem(item, allowglobal))
+	if (!locked_checkOutgoingRsItem(item, allowglobal))
 	{
 		std::ostringstream out;
 	  	out <<	"pqihandler::HandleRsItem() checkOutgoingPQItem";
@@ -294,7 +305,7 @@ int     pqihandler::SendRsRawItem(RsRawItem *ns)
 // system that is completely biased and slow...
 // someone please fix.
 
-int pqihandler::GetItems()
+int pqihandler::locked_GetItems()
 {
 	std::map<std::string, SearchModule *>::iterator it;
 
@@ -331,7 +342,7 @@ int pqihandler::GetItems()
 					item->PeerId(mod->pqi->PeerId());
 				}
 
-				SortnStoreItem(item);
+				locked_SortnStoreItem(item);
 				count++;
 			}
 		}
@@ -361,7 +372,7 @@ int pqihandler::GetItems()
 
 
 
-void pqihandler::SortnStoreItem(RsItem *item)
+void pqihandler::locked_SortnStoreItem(RsItem *item)
 {
 	/* get class type / subtype out of the item */
 	uint8_t vers    = item -> PacketVersion();
@@ -463,6 +474,8 @@ void pqihandler::SortnStoreItem(RsItem *item)
 // much like the input stuff.
 RsCacheItem *pqihandler::GetSearchResult()
 {
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+
 	if (in_result.size() != 0)
 	{
 		RsCacheItem *fi = dynamic_cast<RsCacheItem *>(in_result.front());
@@ -475,6 +488,8 @@ RsCacheItem *pqihandler::GetSearchResult()
 
 RsCacheRequest *pqihandler::RequestedSearch()
 {
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+
 	if (in_search.size() != 0)
 	{
 		RsCacheRequest *fi = dynamic_cast<RsCacheRequest *>(in_search.front());
@@ -487,6 +502,8 @@ RsCacheRequest *pqihandler::RequestedSearch()
 
 RsFileRequest *pqihandler::GetFileRequest()
 {
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+
 	if (in_request.size() != 0)
 	{
 		RsFileRequest *fi = dynamic_cast<RsFileRequest *>(in_request.front());
@@ -499,6 +516,8 @@ RsFileRequest *pqihandler::GetFileRequest()
 
 RsFileData *pqihandler::GetFileData()
 {
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+
 	if (in_data.size() != 0)
 	{
 		RsFileData *fi = dynamic_cast<RsFileData *>(in_data.front());
@@ -511,6 +530,8 @@ RsFileData *pqihandler::GetFileData()
 
 RsRawItem *pqihandler::GetRsRawItem()
 {
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+
 	if (in_service.size() != 0)
 	{
 		RsRawItem *fi = dynamic_cast<RsRawItem *>(in_service.front());
@@ -546,6 +567,9 @@ int     pqihandler::UpdateRates()
 
 	int maxxed_in = 0;
 	int maxxed_out = 0;
+
+	/* Lock once rates have been retrieved */
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
 	// loop through modules....
 	for(it = mods.begin(); it != mods.end(); it++)
@@ -586,7 +610,7 @@ int     pqihandler::UpdateRates()
 	//std::cerr << " Excess B/W " << extra_bw_out;
 	//std::cerr << " Available B/W " << avail_out << std::endl;
 
-	StoreCurrentRates(used_bw_in, used_bw_out);
+	locked_StoreCurrentRates(used_bw_in, used_bw_out);
 
 	if (used_bw_in > avail_in)
 	{
@@ -714,11 +738,13 @@ int     pqihandler::UpdateRates()
 
 void    pqihandler::getCurrentRates(float &in, float &out)
 {
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+
 	in = rateTotal_in;
 	out = rateTotal_out;
 }
 
-void    pqihandler::StoreCurrentRates(float in, float out)
+void    pqihandler::locked_StoreCurrentRates(float in, float out)
 {
 	rateTotal_in = in;
 	rateTotal_out = out;

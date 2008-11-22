@@ -29,6 +29,8 @@
 #include "pqi/pqi.h"
 #include "pqi/pqisecurity.h"
 
+#include "util/rsthreads.h"
+
 #include <map>
 #include <list>
 
@@ -85,12 +87,14 @@ void	getCurrentRates(float &in, float &out);
 	/* check to be overloaded by those that can
 	 * generates warnings otherwise
 	 */
-virtual int checkOutgoingRsItem(RsItem *item, int global);
 
 int	HandleRsItem(RsItem *ns, int allowglobal);
 
-int	GetItems();
-void	SortnStoreItem(RsItem *item);
+virtual int locked_checkOutgoingRsItem(RsItem *item, int global);
+int	locked_GetItems();
+void	locked_SortnStoreItem(RsItem *item);
+
+	RsMutex coreMtx; /* MUTEX */
 
 	std::map<std::string, SearchModule *> mods;
 	SecurityPolicy *globsec;
@@ -103,7 +107,7 @@ void	SortnStoreItem(RsItem *item);
 
 	// rate control.
 int	UpdateRates();
-void	StoreCurrentRates(float in, float out);
+void	locked_StoreCurrentRates(float in, float out);
 
 	float rateIndiv_in;
 	float rateIndiv_out;
@@ -116,6 +120,7 @@ void	StoreCurrentRates(float in, float out);
 
 inline void pqihandler::setMaxIndivRate(bool in, float val)
 {
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 	if (in)
 		rateIndiv_in = val;
 	else
@@ -125,6 +130,7 @@ inline void pqihandler::setMaxIndivRate(bool in, float val)
 
 inline float pqihandler::getMaxIndivRate(bool in)
 {
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 	if (in)
 		return rateIndiv_in;
 	else
@@ -133,6 +139,7 @@ inline float pqihandler::getMaxIndivRate(bool in)
 
 inline void pqihandler::setMaxRate(bool in, float val)
 {
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 	if (in)
 		rateMax_in = val;
 	else
@@ -142,6 +149,7 @@ inline void pqihandler::setMaxRate(bool in, float val)
 
 inline float pqihandler::getMaxRate(bool in)
 {
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 	if (in)
 		return rateMax_in;
 	else
