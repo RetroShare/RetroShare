@@ -1,7 +1,21 @@
 
-Changes for v0.4.x
+Changes for v0.4.11b
 
-
+* Bugfixes for 'sleep' issues under windows.
+* Extra debugging for transfer module.
+* Fixed channel directory creation. (extra 'break' statement)
+* Fixed very slow transfers on Windows platform (uninitialised variable)
+* Added Mutex protection to the core comms (pqihandler + pqipersongrp).
+* Added a Mutex to the ServiceServer.
+* Fixed, transfer start when subscribing to channel.
+* Cleaned up p3distrib callbacks.
+* Added holdQueue for transfer startup in controller. 
+* Fixed partial resume.
+* Updated Mac script to only build library.
+* Fixed compatibility bug in file transfer...
+* Can now communicate between V0.4.9b and V0.4.11+
+* Improvements to the file transfer algorithm.
+* Increased max individual file speed to 1MB/s
 * Bugfixes in CreateForumMsg 
 * Added auto update feature to the trust matrix
 * Implemented a big trust table where people can see who trusts who, and who is trusted by who.
