@@ -1,0 +1,6 @@
+RetroShare Todo list:
+
+
+* start minimized [enabel,disable start minimized](Options->General)
+* Auto Login [enabel,disable Auto Login](Options->General)
+* collapse sources in Downloads [similar ares,emule](TransfersDialog)
