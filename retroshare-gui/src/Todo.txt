@@ -4,3 +4,14 @@ RetroShare Todo list:
 * start minimized [enabel,disable start minimized](Options->General)
 * Auto Login [enabel,disable Auto Login](Options->General)
 * collapse sources in Downloads [similar ares,emule](TransfersDialog)
+* enable/disable Toasters from (Options->General)
+
+TODO on channels:
+  * Connect Save button.
+  * Connect Play Button (must get smplayer working properly first).
+  * Improve GUI display of channels (sorting order etc).
+  * Display Channels popularity.
+  * Channel Info only redistributed after a restart (To FIX).
+  * Updates not 100% reliable.
+  * should delete downloaded files after one month (save space).
+  * Probably other bugs too. 
