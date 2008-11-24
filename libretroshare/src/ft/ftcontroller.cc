@@ -1130,7 +1130,10 @@ bool ftController::loadList(std::list<RsItem *> load)
 		}
 		else if (NULL != (rsft = dynamic_cast<RsFileTransfer *>(*it)))
 		{
-  			RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+//			csoler: I'm suppressing this lock since there is a double lock below 
+//					in FileRequest, line 382.
+//  			RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+//  			
 
 			/* This will get stored on a waiting list - until the 
 			 * config files are fully loaded
