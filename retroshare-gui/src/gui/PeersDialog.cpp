@@ -267,6 +267,7 @@ void  PeersDialog::insertPeers()
 
 		//item -> setText(1, status);
 		item -> setText(1, QString::fromStdString(detail.autoconnect));
+		item -> setTextAlignment(1, Qt::AlignCenter | Qt::AlignVCenter );
 
 		/* (1) Person */
 		item -> setText(2, QString::fromStdString(detail.name));

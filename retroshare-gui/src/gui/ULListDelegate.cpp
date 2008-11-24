@@ -145,7 +145,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			painter->drawText(option.rect.translated(pixmap.size().width(), 0), Qt::AlignLeft, index.data().toString());
 			break;
 		case USTATUS:
-			painter->drawText(option.rect.translated(pixmap.size().width(), 0), Qt::AlignLeft, index.data().toString());
+			painter->drawText(option.rect.translated(pixmap.size().width(), 0), Qt::AlignCenter, index.data().toString());
 			break;
 		default:
 			painter->drawText(option.rect, Qt::AlignCenter, index.data().toString());
