@@ -3,8 +3,10 @@ RetroShare Todo list:
 
 * start minimized [enabel,disable start minimized](Options->General)
 * Auto Login [enabel,disable Auto Login](Options->General)
-* collapse sources in Downloads [similar ares,emule](TransfersDialog)
 * enable/disable Toasters from (Options->General)
+
+* collapse sources in Downloads [similar ares,emule](TransfersDialog)
+* Contacts Manager(Adressbook) for Messages ( similar Thunderbirds Adressbook feature)
 
 TODO on channels:
   * Connect Save button.
