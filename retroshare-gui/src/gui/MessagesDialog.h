@@ -54,6 +54,8 @@ void updateMessages ( QTreeWidgetItem * item, int column );
   void newmessage();
 
   void replytomessage();
+  void forwardmessage();
+
   void print();
   void printpreview();
   
@@ -79,6 +81,7 @@ private:
    /** Defines the actions for the context menu */
   QAction* newmsgAct;
   QAction* replytomsgAct;
+  QAction* forwardmsgAct;
   QAction* removemsgAct;
 
   QAction* getRecAct;

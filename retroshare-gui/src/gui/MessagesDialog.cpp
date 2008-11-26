@@ -44,11 +44,12 @@
 
 
 /* Images for context menu icons */
-#define IMAGE_MESSAGE        ":/images/folder-draft.png"
-#define IMAGE_MESSAGEREPLY   ":/images/mail_reply.png"
-#define IMAGE_MESSAGEREMOVE  ":/images/mail_delete.png"
-#define IMAGE_DOWNLOAD       ":/images/start.png"
-#define IMAGE_DOWNLOADALL    ":/images/startall.png"
+#define IMAGE_MESSAGE		   ":/images/folder-draft.png"
+#define IMAGE_MESSAGEREPLY	   ":/images/mail_reply.png"
+#define IMAGE_MESSAGEFORWARD	   ":/images/mail_forward.png"
+#define IMAGE_MESSAGEREMOVE 	   ":/images/message-mail-imapdelete.png"
+#define IMAGE_DOWNLOAD    	   ":/images/start.png"
+#define IMAGE_DOWNLOADALL          ":/images/startall.png"
 
 
 /** Constructor */
@@ -66,6 +67,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(newmessage()));
   connect(ui.removemessageButton, SIGNAL(clicked()), this, SLOT(removemessage()));
   connect(ui.replymessageButton, SIGNAL(clicked()), this, SLOT(replytomessage()));
+  connect(ui.forwardmessageButton, SIGNAL(clicked()), this, SLOT(forwardmessage()));
+
   //connect(ui.printbutton, SIGNAL(clicked()), this, SLOT(print()));
   connect(ui.actionPrint, SIGNAL(triggered()), this, SLOT(print()));
   connect(ui.actionPrintPreview, SIGNAL(triggered()), this, SLOT(printpreview()));
@@ -103,19 +106,21 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 	msglheader->resizeSection ( 3, 200 );
 	
 	ui.newmessageButton->setIcon(QIcon(QString(":/images/folder-draft24-pressed.png")));
-    ui.replymessageButton->setIcon(QIcon(QString(":/images/replymail-pressed.png")));
-    ui.removemessageButton->setIcon(QIcon(QString(":/images/deletemail-pressed.png")));
-    ui.printbutton->setIcon(QIcon(QString(":/images/print24.png")));
-    
-    /*Disabled Reply Button */
-    //ui.replymessageButton->setEnabled(false);
-    
+    	ui.replymessageButton->setIcon(QIcon(QString(":/images/replymail-pressed.png")));
+	ui.forwardmessageButton->setIcon(QIcon(QString(":/images/mailforward24-hover.png")));
+    	ui.removemessageButton->setIcon(QIcon(QString(":/images/deletemail-pressed.png")));
+    	ui.printbutton->setIcon(QIcon(QString(":/images/print24.png")));
+
+	ui.forwardmessageButton->setToolTip(tr("Forward selected Message"));
+ 
+
     QMenu * printmenu = new QMenu();
     printmenu->addAction(ui.actionPrint);
     printmenu->addAction(ui.actionPrintPreview);
     ui.printbutton->setMenu(printmenu);
 
 	 ui.msgWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
+	 ui.msgWidget->sortItems( 3, Qt::DescendingOrder );
 
 
   /* Hide platform specific features */
@@ -159,6 +164,12 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
 			replytomsgAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply to Message" ), this );
 			connect( replytomsgAct , SIGNAL( triggered() ), this, SLOT( replytomessage() ) );
 			contextMnu.addAction( replytomsgAct);
+
+			forwardmsgAct = new QAction(QIcon(IMAGE_MESSAGEFORWARD), tr( "Forward Message" ), this );
+			connect( forwardmsgAct , SIGNAL( triggered() ), this, SLOT( forwardmessage() ) );
+			contextMnu.addAction( forwardmsgAct);
+
+			contextMnu.addSeparator(); 
 
 			removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Message" ), this );
 			connect( removemsgAct , SIGNAL( triggered() ), this, SLOT( removemessage() ) );
@@ -225,12 +236,49 @@ void MessagesDialog::replytomessage()
 	//std::cerr << "MessagesDialog::newmessage()" << std::endl;
 	nMsgDialog->newMsg();
 	nMsgDialog->insertTitleText( (QString("Re: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
+	nMsgDialog->setWindowTitle(tr("Re: ") + QString::fromStdWString(msgInfo.title) ) ;
+
 
 	QTextDocument doc ;
 	doc.setHtml(QString::fromStdWString(msgInfo.msg)) ;
 	std::string cited_text(doc.toPlainText().toStdString()) ;
 
 	nMsgDialog->insertPastedText(cited_text) ;
+	nMsgDialog->addRecipient( msgInfo.srcId ) ;
+	nMsgDialog->show();
+	nMsgDialog->activateWindow();
+}
+
+void MessagesDialog::forwardmessage()
+{
+	/* put msg on msgBoard, and switch to it. */
+
+	std::string cid;
+	std::string mid;
+
+	if(!getCurrentMsg(cid, mid))
+		return ;
+
+	mCurrCertId = cid;
+	mCurrMsgId  = mid;
+
+	MessageInfo msgInfo;
+	if (!rsMsgs -> getMessage(mid, msgInfo))
+		return ;
+
+	ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+	/* fill it in */
+	//std::cerr << "MessagesDialog::newmessage()" << std::endl;
+	nMsgDialog->newMsg();
+	nMsgDialog->insertTitleText( (QString("Fwd: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
+	nMsgDialog->setWindowTitle(tr("Fwd: ") + QString::fromStdWString(msgInfo.title) ) ;
+
+
+	QTextDocument doc ;
+	doc.setHtml(QString::fromStdWString(msgInfo.msg)) ;
+	std::string cited_text(doc.toPlainText().toStdString()) ;
+
+	nMsgDialog->insertForwardPastedText(cited_text) ;
 	nMsgDialog->addRecipient( msgInfo.srcId ) ;
 	nMsgDialog->show();
 	nMsgDialog->activateWindow();
@@ -459,6 +507,7 @@ void MessagesDialog::insertMessages()
 			std::ostringstream out;
 			out << it -> count;
 			item -> setText(0, QString::fromStdString(out.str()));
+			item -> setTextAlignment( 0, Qt::AlignCenter );
 		}
 
 		item -> setText(4, QString::fromStdString(it->srcId));

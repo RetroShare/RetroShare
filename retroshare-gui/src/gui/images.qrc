@@ -192,11 +192,14 @@
         <file>images/mail_delete.png</file>
         <file>images/mail_get.png</file>
         <file>images/mail_reply.png</file>
+	<file>images/mail_forward.png</file>
         <file>images/mail_send.png</file>
         <file>images/mail_new.png</file>
         <file>images/mail_send24.png</file>
+        <file>images/mailforward24-hover.png</file>
         <file>images/message-mail.png</file>
-        <file>images/message-mail-read.png</file>m
+        <file>images/message-mail-read.png</file>
+	<file>images/message-mail-imapdelete.png</file>
         <file>images/message-news.png</file>
         <file>images/message.png</file>
         <file>images/messenger.png</file>

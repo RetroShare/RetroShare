@@ -514,6 +514,15 @@ void  ChanMsgDialog::insertPastedText(std::string msg)
 	ui.msgText->setHtml(QString("<HTML><font color=\"blue\">")+QString::fromStdString(std::string("> ") + msg)+"</font><br/><br/></HTML>") ;
 }
 
+void  ChanMsgDialog::insertForwardPastedText(std::string msg)
+{
+	std::string::size_type i=0 ;
+	while( (i=msg.find_first_of('\n',i+1)) < msg.size())
+		msg.replace(i,1,std::string("\n<BR/>> ")) ;
+
+	ui.msgText->setHtml(QString("<HTML><blockquote ><font color=\"blue\">")+QString::fromStdString(std::string("") + msg)+"</font><br/><br/></blockquote></HTML>") ;
+}
+
 void  ChanMsgDialog::insertMsgText(std::string msg)
 {
 	ui.msgText->setText(QString::fromStdString(msg));
