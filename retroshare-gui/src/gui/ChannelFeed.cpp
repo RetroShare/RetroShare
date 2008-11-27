@@ -118,6 +118,7 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 void ChannelFeed::createChannel()
 {
 	CreateForum *cf = new CreateForum(NULL, false);
+	cf->setWindowTitle(tr("Create Channel"));
 	cf->show();
 }
 

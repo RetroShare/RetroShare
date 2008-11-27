@@ -94,62 +94,8 @@ ForumsDialog::ForumsDialog(QWidget *parent)
   timer->start(1000);
 
 
-#if 0
-  connect( ui.msgWidget, SIGNAL( itemClicked ( QTreeWidgetItem *, int) ), this, SLOT( updateMessages ( QTreeWidgetItem *, int) ) );
-  connect( ui.listWidget, SIGNAL( currentRowChanged ( int) ), this, SLOT( changeBox ( int) ) );
-  
-  connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(newmessage()));
-  connect(ui.removemessageButton, SIGNAL(clicked()), this, SLOT(removemessage()));
-  //connect(ui.printbutton, SIGNAL(clicked()), this, SLOT(print()));
-  //connect(ui.actionPrint, SIGNAL(triggered()), this, SLOT(print()));
-  //connect(ui.actionPrintPreview, SIGNAL(triggered()), this, SLOT(printpreview()));
 
-  connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getallrecommended()));
-  
-
-  mCurrCertId = "";
-  mCurrMsgId  = "";
-  
-  /* hide the Tree +/- */
-  ui.msgList->setRootIsDecorated( false );
-  ui.msgWidget->setRootIsDecorated( false );
-  
-  /* Set header resize modes and initial section sizes */
-  QHeaderView * msgwheader = ui.msgWidget->header () ;
-  msgwheader->setResizeMode (0, QHeaderView::Custom);
-  msgwheader->setResizeMode (3, QHeaderView::Interactive);
-    
-  msgwheader->resizeSection ( 0, 24 );
-  msgwheader->resizeSection ( 2, 250 );
-  msgwheader->resizeSection ( 3, 140 );
-  
-    /* Set header resize modes and initial section sizes */
-	QHeaderView * msglheader = ui.msgList->header () ;
-   	msglheader->setResizeMode (0, QHeaderView::Interactive);
-	msglheader->setResizeMode (1, QHeaderView::Interactive);
-	msglheader->setResizeMode (2, QHeaderView::Interactive);
-	msglheader->setResizeMode (3, QHeaderView::Interactive);
-  
-	msglheader->resizeSection ( 0, 200 );
-	msglheader->resizeSection ( 1, 100 );
-	msglheader->resizeSection ( 2, 100 );
-	msglheader->resizeSection ( 3, 200 );
-	
-	ui.newmessageButton->setIcon(QIcon(QString(":/images/folder-draft24-pressed.png")));
-    ui.replymessageButton->setIcon(QIcon(QString(":/images/replymail-pressed.png")));
-    ui.removemessageButton->setIcon(QIcon(QString(":/images/deletemail-pressed.png")));
-    ui.printbutton->setIcon(QIcon(QString(":/images/print24.png")));
-    
-    /*Disabled Reply Button */
-    ui.replymessageButton->setEnabled(false);
-    
-    QMenu * printmenu = new QMenu();
-    printmenu->addAction(ui.actionPrint);
-    printmenu->addAction(ui.actionPrintPreview);
-    ui.printbutton->setMenu(printmenu);
-
-#endif
-    /* Set header resize modes and initial section sizes */
+    	/* Set header resize modes and initial section sizes */
 	QHeaderView * ftheader = ui.forumTreeWidget->header () ;
 	ftheader->setResizeMode (0, QHeaderView::Interactive);
     
@@ -160,6 +106,7 @@ ForumsDialog::ForumsDialog(QWidget *parent)
    	ttheader->setResizeMode (0, QHeaderView::Interactive);
   
 	ttheader->resizeSection ( 0, 170 );
+	ttheader->resizeSection ( 1, 170 );
 
   
 
@@ -276,7 +223,7 @@ void ForumsDialog::togglefileview()
 		newSizeList.push_back(totalSize);
 		newSizeList.push_back(0);
 		ui.expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-	    ui.expandButton->setToolTip("Expand");
+	    	ui.expandButton->setToolTip("Expand");
 	}
 	else
 	{
@@ -285,8 +232,8 @@ void ForumsDialog::togglefileview()
 		int nMsgSize = (totalSize / 2);
 		newSizeList.push_back(nlistSize);
 		newSizeList.push_back(nMsgSize);
-	    ui.expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
-	    ui.expandButton->setToolTip("Hide");
+	    	ui.expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+	    	ui.expandButton->setToolTip("Hide");
 	}
 
 	ui.msgSplitter->setSizes(newSizeList);

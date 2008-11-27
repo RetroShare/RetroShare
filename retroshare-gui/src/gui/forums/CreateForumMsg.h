@@ -28,6 +28,12 @@
 
 #include "ui_CreateForumMsg.h"
 
+class QAction;
+class QComboBox;
+class QFontComboBox;
+class QTextEdit;
+class QTextCharFormat;
+
 class CreateForumMsg : public QMainWindow
 {
   Q_OBJECT
@@ -35,18 +41,67 @@ class CreateForumMsg : public QMainWindow
 public:
   CreateForumMsg(std::string fId, std::string pId);
 
-void  newMsg(); /* cleanup */
+  void  newMsg(); /* cleanup */
 
 private slots:
 
 	/* actions to take.... */
-void  createMsg();
-void  cancelMsg();
+  void  createMsg();
+  void  cancelMsg();
+
+  void fileNew();
+  void fileOpen();
+  bool fileSave();
+  bool fileSaveAs();
+  void filePrint(); 
+
+  //void filePrintPreview();
+  void filePrintPdf();
+
+  void textBold();
+  void textUnderline();
+  void textItalic();
+  void textFamily(const QString &f);
+  void textSize(const QString &p);
+  void textStyle(int styleIndex);
+  void textColor();
+  void textAlign(QAction *a);
+
+  void currentCharFormatChanged(const QTextCharFormat &format);
+  void cursorPositionChanged();
+  
+  void clipboardDataChanged();
 
 private:
 
-  std::string mForumId;
-  std::string mParentId;
+  	std::string mForumId;
+  	std::string mParentId;
+
+    	void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
+    	void fontChanged(const QFont &f);
+    	void colorChanged(const QColor &c);
+    	void alignmentChanged(Qt::Alignment a);
+
+	bool load(const QString &f);
+    	bool maybeSave();
+	
+	void setCurrentFileName(const QString &fileName);
+
+
+  	QAction *actionSave,
+		*actionAlignLeft,
+        *actionAlignCenter,
+        *actionAlignRight,
+        *actionAlignJustify,
+        *actionUndo,
+        *actionRedo,
+        *actionCut,
+        *actionCopy,
+        *actionPaste;
+  	
+	QString fileName;
+
+
 
   /** Qt Designer generated object */
   Ui::CreateForumMsg ui;
