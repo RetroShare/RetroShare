@@ -24,6 +24,7 @@
 #define _CREATE_FORUM_MSG_DIALOG_H
 
 #include <QWidget>
+#include <QMainWindow>
 #include <string>
 
 #include "ui_CreateForumMsg.h"
@@ -39,15 +40,19 @@ class CreateForumMsg : public QMainWindow
   Q_OBJECT
 
 public:
-  CreateForumMsg(std::string fId, std::string pId);
+  CreateForumMsg(std::string fId, std::string pId, QWidget *parent = 0, Qt::WFlags flags = 0);
 
   void  newMsg(); /* cleanup */
+
+public slots:
+
+  void  createMsg();
+  void  cancelMsg();
 
 private slots:
 
 	/* actions to take.... */
-  void  createMsg();
-  void  cancelMsg();
+
 
   void fileNew();
   void fileOpen();
@@ -76,6 +81,12 @@ private:
 
   	std::string mForumId;
   	std::string mParentId;
+
+  	void setTextColor(const QColor& col) ;
+	void setupFileActions();
+	void setupEditActions();
+	void setupViewActions();
+	void setupInsertActions();
 
     	void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
     	void fontChanged(const QFont &f);

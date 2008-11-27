@@ -282,7 +282,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 #endif
     peerstatus = new PeerStatus();
     statusBar()->addWidget(peerstatus);
-    statusBar()->addPermanentWidget(statusRates = new QLabel(tr("<strong>Down:</strong> 0.00 | <strong>Up:</strong> 0.00 ")));
+    statusBar()->addPermanentWidget(statusRates = new QLabel(tr("<strong>Down:</strong> 0.00 (kB/s) | <strong>Up:</strong> 0.00 (kB/s) ")));
 
 
     //servicegrp->actions()[0]->setChecked(true);

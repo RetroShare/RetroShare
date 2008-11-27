@@ -47,7 +47,7 @@ PeerStatus::PeerStatus(QWidget *parent)
     // iconLabel doesn't change over time, so we didn't need a minimum size
     hbox->addWidget(iconLabel);
     
-    statusPeers = new QLabel( tr("Online: 0 |Friends: 0|Network: 0"), this );
+    statusPeers = new QLabel( tr("Online: 0  | Friends: 0  | Network: 0 "), this );
 	//statusPeers->setMinimumSize( statusPeers->frameSize().width() + 0, 0 );
     hbox->addWidget(statusPeers);
     

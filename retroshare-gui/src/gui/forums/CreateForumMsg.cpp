@@ -50,14 +50,22 @@
 #include <QTextDocumentFragment>
 
 /** Constructor */
-CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
-: QMainWindow(NULL), mForumId(fId), mParentId(pId)
+CreateForumMsg::CreateForumMsg(std::string fId, std::string pId, QWidget *parent, Qt::WFlags flags)
+: QMainWindow(parent, flags), mForumId(fId), mParentId(pId)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
+
+  setupFileActions();
+  setupEditActions();
+  setupViewActions();
+  setupInsertActions();
   
   RshareSettings config;
   config.loadWidgetInformation(this);
+
+  setAttribute ( Qt::WA_DeleteOnClose, true );
+
   
   // connect up the buttons.
   connect( ui.postmessage_action, SIGNAL( triggered (bool) ), this, SLOT( createMsg( ) ) );
@@ -520,3 +528,105 @@ bool CreateForumMsg::maybeSave()
     return true;
 }
 
+void CreateForumMsg::setupFileActions()
+{
+    QMenu *menu = new QMenu(tr("&File"), this);
+    menuBar()->addMenu(menu);
+
+    QAction *a;
+
+    a = new QAction(QIcon(":/images/textedit/filenew.png"), tr("&New"), this);
+    a->setShortcut(QKeySequence::New);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileNew()));
+    menu->addAction(a);
+
+    a = new QAction(QIcon(":/images/textedit/fileopen.png"), tr("&Open..."), this);
+    a->setShortcut(QKeySequence::Open);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
+    menu->addAction(a);
+
+    menu->addSeparator();
+
+    actionSave = a = new QAction(QIcon(":/images/textedit/filesave.png"), tr("&Save"), this);
+    a->setShortcut(QKeySequence::Save);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileSave()));
+    a->setEnabled(false);
+    menu->addAction(a);
+
+    a = new QAction(tr("Save &As..."), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
+    menu->addAction(a);
+    menu->addSeparator();
+
+    a = new QAction(QIcon(":/images/textedit/fileprint.png"), tr("&Print..."), this);
+    a->setShortcut(QKeySequence::Print);
+    connect(a, SIGNAL(triggered()), this, SLOT(filePrint()));
+    menu->addAction(a);
+
+    /*a = new QAction(QIcon(":/images/textedit/fileprint.png"), tr("Print Preview..."), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(filePrintPreview()));
+    menu->addAction(a);*/
+
+    a = new QAction(QIcon(":/images/textedit/exportpdf.png"), tr("&Export PDF..."), this);
+    a->setShortcut(Qt::CTRL + Qt::Key_D);
+    connect(a, SIGNAL(triggered()), this, SLOT(filePrintPdf()));
+    menu->addAction(a);
+
+    menu->addSeparator();
+
+    a = new QAction(tr("&Quit"), this);
+    a->setShortcut(Qt::CTRL + Qt::Key_Q);
+    connect(a, SIGNAL(triggered()), this, SLOT(close()));
+    menu->addAction(a);
+}
+
+void CreateForumMsg::setupEditActions()
+{
+    QMenu *menu = new QMenu(tr("&Edit"), this);
+    menuBar()->addMenu(menu);
+
+    QAction *a;
+    a = actionUndo = new QAction(QIcon(":/images/textedit/editundo.png"), tr("&Undo"), this);
+    a->setShortcut(QKeySequence::Undo);
+    menu->addAction(a);
+    a = actionRedo = new QAction(QIcon(":/images/textedit/editredo.png"), tr("&Redo"), this);
+    a->setShortcut(QKeySequence::Redo);
+    menu->addAction(a);
+    menu->addSeparator();
+    a = actionCut = new QAction(QIcon(":/images/textedit/editcut.png"), tr("Cu&t"), this);
+    a->setShortcut(QKeySequence::Cut);
+    menu->addAction(a);
+    a = actionCopy = new QAction(QIcon(":/images/textedit/editcopy.png"), tr("&Copy"), this);
+    a->setShortcut(QKeySequence::Copy);
+    menu->addAction(a);
+    a = actionPaste = new QAction(QIcon(":/images/textedit/editpaste.png"), tr("&Paste"), this);
+    a->setShortcut(QKeySequence::Paste);
+    menu->addAction(a);
+    actionPaste->setEnabled(!QApplication::clipboard()->text().isEmpty());
+}
+
+void CreateForumMsg::setupViewActions()
+{
+    QMenu *menu = new QMenu(tr("&View"), this);
+    menuBar()->addMenu(menu);
+
+    QAction *a;
+
+    a = new QAction(QIcon(""), tr("&Contacts Sidebar"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(toggleContacts()));
+    menu->addAction(a);
+
+}
+
+void CreateForumMsg::setupInsertActions()
+{
+    QMenu *menu = new QMenu(tr("&Insert"), this);
+    menuBar()->addMenu(menu);
+
+    QAction *a;
+
+    a = new QAction(QIcon(""), tr("&Image"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(addImage()));
+    menu->addAction(a);
+
+}
