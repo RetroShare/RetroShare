@@ -197,6 +197,30 @@ bool ftExtraList::removeExtraFile(std::string hash, uint32_t flags)
 	return true;
 }
 
+bool ftExtraList::moveExtraFile(std::string fname, std::string hash, uint64_t size,
+                                std::string destpath)
+{
+	RsStackMutex stack(extMutex);
+
+	std::map<std::string, FileDetails>::iterator it;
+	it = mFiles.find(hash);
+	if (it == mFiles.end())
+	{
+		return false;
+	}
+
+	std::string path = destpath + '/' + fname;
+	if (0 == rename(it->second.info.path.c_str(), path.c_str()))
+	{
+		/* rename */
+		it->second.info.path = path;
+		it->second.info.fname = fname;
+		IndicateConfigChanged();
+	}
+
+	return true;
+}
+
 
 	
 bool	ftExtraList::cleanupOldFiles()

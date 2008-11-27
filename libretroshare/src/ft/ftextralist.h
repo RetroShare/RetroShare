@@ -121,6 +121,9 @@ bool		addExtraFile(std::string path, std::string hash,
 				uint64_t size, uint32_t period, uint32_t flags);
 
 bool		removeExtraFile(std::string hash, uint32_t flags);
+bool 		moveExtraFile(std::string fname, std::string hash, uint64_t size,
+                                std::string destpath);
+
 
 		/***
 		 * Hash file, and add to the files, 

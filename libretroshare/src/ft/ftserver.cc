@@ -301,6 +301,13 @@ bool ftServer::ExtraFileStatus(std::string localpath, FileInfo &info)
 	return mFtExtra->hashExtraFileDone(localpath, info);
 }
 
+bool ftServer::ExtraFileMove(std::string fname, std::string hash, uint64_t size,
+                                std::string destpath)
+{
+	return mFtExtra->moveExtraFile(fname, hash, size, destpath);
+}
+
+
 	/***************************************************************/
 	/******************** Directory Listing ************************/
 	/***************************************************************/
