@@ -98,11 +98,17 @@ LibraryDialog::LibraryDialog(QWidget *parent)
 void LibraryDialog::PopulateList()
 {
 	QDir DwnlFolder,ShrFolder,retroshareLib,treePath;
+
+#if 0
 	retroshareLib.mkdir("RetroShare Library");
 	DwnlFolder.mkdir("RetroShare Library/Download");
 	ShrFolder.mkdir("RetroShare Library/SharedFolder");
 	LibShared=treePath.currentPath();
 	LibShared.append("/RetroShare Library");
+#else
+	LibShared=treePath.currentPath();
+#endif
+
 	QDirModel * dmodel=new QDirModel;
 	ui.organizertreeView->setModel(dmodel);
 	ui.organizertreeView->setRootIndex(dmodel->index(LibShared));

@@ -558,6 +558,28 @@ void SubFileItem::save()
 	std::cerr << "SubFileItem::save()";
 	std::cerr << std::endl;
 #endif
+
+	if (mType == SFI_TYPE_CHANNEL)
+	{
+		/* only enable these function for Channels. */
+
+		/* find out where they want to save it */
+		QString startpath = "";
+ 		QString dir = QFileDialog::getExistingDirectory(this, tr("Save Channel File"),
+						 startpath,
+                                                 QFileDialog::ShowDirsOnly
+                                                 | QFileDialog::DontResolveSymlinks);
+
+		std::string destpath = dir.toStdString();
+
+		if (destpath != "")
+		{
+			rsFiles->ExtraFileMove(mFileName, mFileHash, mFileSize, destpath);
+		}
+	}
+	else
+	{
+	}
 }
 
 

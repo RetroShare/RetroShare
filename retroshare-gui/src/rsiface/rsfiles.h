@@ -119,6 +119,9 @@ virtual bool ExtraFileRemove(std::string hash, uint32_t flags) = 0;
 virtual bool ExtraFileHash(std::string localpath, 
 				uint32_t period, uint32_t flags) = 0;
 virtual bool ExtraFileStatus(std::string localpath, FileInfo &info) = 0;
+virtual bool ExtraFileMove(std::string fname, std::string hash, uint64_t size,
+				std::string destpath) = 0;
+
 
 
 /***

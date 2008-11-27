@@ -61,6 +61,10 @@ void ChanMenuItem::updateItemStatic()
 	{
 		titleLabel->setText(QString::fromStdWString(ci.channelName));
 		descLabel->setText(QString::fromStdWString(ci.channelDesc));
+		pop_lcd->display((int) ci.pop);
+		/* TODO */
+		fetches_lcd->display(9999);
+		avail_lcd->display(9999);
 	}
 	else
 	{
@@ -77,6 +81,7 @@ void ChanMenuItem::updateItem()
 	std::cerr << "ChanMenuItem::updateItem()";
 	std::cerr << std::endl;
 #endif
+
 }
 
 

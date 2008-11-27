@@ -53,6 +53,9 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	/*************** Setup Left Hand Side (List of Channels) ****************/
 
 	mGroupLayout = new QVBoxLayout;
+	mGroupLayout->setSpacing(0);
+	mGroupLayout->setMargin(0);
+	mGroupLayout->setContentsMargins(0,0,0,0);
 
 	mGroupOwn = new ChanGroupItem("Own Channels");
 	mGroupSub = new ChanGroupItem("Subscribed Channels");
@@ -80,12 +83,17 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	layout2->addWidget(scrollArea);
 	layout2->setSpacing(0);
 	layout2->setMargin(0);
+	layout2->setContentsMargins(0,0,0,0);
+
 	
      	chanFrame->setLayout(layout2);
 
 	/*************** Setup Left Hand Side (List of Channels) ****************/
 
 	mMsgLayout = new QVBoxLayout;
+	mMsgLayout->setSpacing(0);
+	mMsgLayout->setMargin(0);
+	mMsgLayout->setContentsMargins(0,0,0,0);
 
 	QWidget *middleWidget2 = new QWidget();
 	middleWidget2->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
@@ -101,6 +109,8 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	layout3->addWidget(scrollArea2);
 	layout3->setSpacing(0);
 	layout3->setMargin(0);
+	layout3->setContentsMargins(0,0,0,0);
+
 
      	msgFrame->setLayout(layout3);
 
