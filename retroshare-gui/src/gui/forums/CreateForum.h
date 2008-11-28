@@ -36,6 +36,10 @@ public:
 
 void  newForum(); /* cleanup */
 
+public slots:
+  /** Overloaded QWidget.show */
+  void show();
+
 private slots:
 
 	/* actions to take.... */

@@ -19,6 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QMessageBox>
 
 #include "CreateForum.h"
 
@@ -38,6 +39,15 @@ CreateForum::CreateForum(QWidget *parent, bool isForum)
 
   newForum();
 
+}
+
+void CreateForum::show()
+{
+  //loadSettings();
+  if(!this->isVisible()) {
+    QWidget::show();
+
+  }
 }
 
 
@@ -74,6 +84,16 @@ void  CreateForum::createForum()
 	QString name = ui.forumName->text();
 	QString desc = ui.forumDesc->toPlainText(); //toHtml();
 	uint32_t flags = 0;
+
+	if(name.isEmpty())
+	{	/* error message */
+		int ret = QMessageBox::warning(this, tr("RetroShare"),
+                   tr("Please add a Name"),
+                   QMessageBox::Ok, QMessageBox::Ok);
+                   
+		return; //Don't add  a empty name!!
+	}
+	else
 
 	if (ui.typePublic->isChecked())
 	{
