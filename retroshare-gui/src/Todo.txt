@@ -16,4 +16,6 @@ TODO on channels:
   * Channel Info only redistributed after a restart (To FIX).
   * Updates not 100% reliable.
   * should delete downloaded files after one month (save space).
-  * Probably other bugs too. 
+  * Probably other bugs too.
+  * Image/Picture support for Channels
+  * Images for Channel Name to can set via combobox or use different method(max size 24x24).
