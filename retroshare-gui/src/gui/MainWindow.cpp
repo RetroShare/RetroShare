@@ -60,9 +60,9 @@
 #define FONT        QFont(tr("Arial"), 8)
 
 /* Images for toolbar icons */
-#define IMAGE_NETWORK           ":/images/network32.png"
+#define IMAGE_NETWORK           ":/images/retrosharelogo1.png"
 #define IMAGE_PEERS         	":/images/groupchat.png"
-#define IMAGE_SEARCH    	    ":/images/filefind.png"
+#define IMAGE_SEARCH    	":/images/filefind.png"
 #define IMAGE_TRANSFERS      	":/images/ktorrent32.png"
 #define IMAGE_LINKS             ":/images/knewsticker24.png"
 #define IMAGE_FILES   	        ":/images/fileshare24.png"
@@ -78,7 +78,7 @@
 #define IMAGE_RSM32             ":/images/kdmconfig.png"
 #define IMAGE_RSM16             ":/images/rsmessenger16.png"
 #define IMAGE_CLOSE             ":/images/close_normal.png"
-#define IMAGE_SMPLAYER		    ":/images/smplayer_icon32.png"
+#define IMAGE_SMPLAYER		":/images/smplayer_icon32.png"
 #define IMAGE_BLOCK         	":/images/blockdevice.png"
 #define IMAGE_COLOR         	":/images/highlight.png"
 #define IMAGE_GAMES             ":/images/kgames.png"

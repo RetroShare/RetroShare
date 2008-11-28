@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>533</width>
-    <height>398</height>
+    <width>527</width>
+    <height>410</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -20,8 +20,17 @@
   </property>
   <widget class="QWidget" name="centralwidget" >
    <layout class="QGridLayout" >
+    <property name="horizontalSpacing" >
+     <number>2</number>
+    </property>
+    <property name="verticalSpacing" >
+     <number>1</number>
+    </property>
     <item row="0" column="0" >
      <layout class="QHBoxLayout" >
+      <property name="spacing" >
+       <number>6</number>
+      </property>
       <item>
        <widget class="QLabel" name="label_2" >
         <property name="text" >
@@ -40,6 +49,9 @@
     </item>
     <item row="1" column="0" >
      <layout class="QHBoxLayout" >
+      <property name="spacing" >
+       <number>6</number>
+      </property>
       <item>
        <widget class="QLabel" name="label" >
         <property name="text" >
@@ -85,6 +97,12 @@
     </item>
     <item row="3" column="0" >
      <layout class="QGridLayout" >
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>0</number>
+      </property>
       <item row="0" column="0" >
        <widget class="QComboBox" name="comboStyle" />
       </item>
@@ -102,14 +120,14 @@
        <widget class="QPushButton" name="boldbtn" >
         <property name="minimumSize" >
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>28</width>
+          <height>28</height>
          </size>
         </property>
         <property name="maximumSize" >
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>28</width>
+          <height>28</height>
          </size>
         </property>
         <property name="toolTip" >
@@ -127,14 +145,14 @@
        <widget class="QPushButton" name="underlinebtn" >
         <property name="minimumSize" >
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>28</width>
+          <height>28</height>
          </size>
         </property>
         <property name="maximumSize" >
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>28</width>
+          <height>28</height>
          </size>
         </property>
         <property name="toolTip" >
@@ -152,14 +170,14 @@
        <widget class="QPushButton" name="italicbtn" >
         <property name="minimumSize" >
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>28</width>
+          <height>28</height>
          </size>
         </property>
         <property name="maximumSize" >
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>28</width>
+          <height>28</height>
          </size>
         </property>
         <property name="toolTip" >
@@ -177,14 +195,14 @@
        <widget class="QPushButton" name="colorbtn" >
         <property name="minimumSize" >
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>28</width>
+          <height>28</height>
          </size>
         </property>
         <property name="maximumSize" >
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>28</width>
+          <height>28</height>
          </size>
         </property>
         <property name="toolTip" >
@@ -199,14 +217,14 @@
        <widget class="QPushButton" name="textalignmentbtn" >
         <property name="minimumSize" >
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>28</width>
+          <height>28</height>
          </size>
         </property>
         <property name="maximumSize" >
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>28</width>
+          <height>28</height>
          </size>
         </property>
         <property name="toolTip" >
@@ -255,7 +273,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>533</width>
+     <width>527</width>
      <height>30</height>
     </rect>
    </property>

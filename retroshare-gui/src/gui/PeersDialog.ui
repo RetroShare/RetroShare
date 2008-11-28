@@ -532,6 +532,9 @@ p, li { white-space: pre-wrap; }
        <property name="acceptDrops" >
         <bool>false</bool>
        </property>
+       <property name="autoScroll" >
+        <bool>false</bool>
+       </property>
        <property name="iconSize" >
         <size>
          <width>24</width>

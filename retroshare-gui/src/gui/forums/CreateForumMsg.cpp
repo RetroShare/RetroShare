@@ -610,11 +610,11 @@ void CreateForumMsg::setupViewActions()
     QMenu *menu = new QMenu(tr("&View"), this);
     menuBar()->addMenu(menu);
 
-    QAction *a;
+    //QAction *a;
 
-    a = new QAction(QIcon(""), tr("&Contacts Sidebar"), this);
+    /*a = new QAction(QIcon(""), tr("&Contacts Sidebar"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleContacts()));
-    menu->addAction(a);
+    menu->addAction(a);*/
 
 }
 
@@ -623,10 +623,11 @@ void CreateForumMsg::setupInsertActions()
     QMenu *menu = new QMenu(tr("&Insert"), this);
     menuBar()->addMenu(menu);
 
-    QAction *a;
+    //QAction *a;
 
-    a = new QAction(QIcon(""), tr("&Image"), this);
+    /*a = new QAction(QIcon(""), tr("&Image"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(addImage()));
-    menu->addAction(a);
+    menu->addAction(a);*/
 
 }
+

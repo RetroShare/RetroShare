@@ -154,6 +154,7 @@ PeersDialog::PeersDialog(QWidget *parent)
   timer->connect(timer, SIGNAL(timeout()), this, SLOT(insertChat()));
   timer->start(500); /* half a second */
 
+	ui.peertreeWidget->sortItems( 1, Qt::AscendingOrder );
 
 
   /* Hide platform specific features */

@@ -147,6 +147,7 @@
         <file>images/folder_yellow.png</file>
         <file>images/folder_green16.png</file>
         <file>images/folder_open.png</file>
+	<file>images/folder_video.png</file>
         <file>images/forward.png</file>
         <file>images/friendsfolder24.png</file>
         <file>images/kgames.png</file>
@@ -228,6 +229,7 @@
         <file>images/RetroShare16.png</file>
         <file>images/retrosharelogo1.png</file>
         <file>images/retrosharelogo2.png</file>
+        <file>images/retrosharelogo32.png</file>
         <file>images/rs-2.png</file>
         <file>images/rsmessenger16.png</file>
         <file>images/rsmessenger32.png</file>
