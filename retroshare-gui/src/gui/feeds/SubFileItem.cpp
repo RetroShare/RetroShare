@@ -282,6 +282,11 @@ void SubFileItem::updateItemStatic()
 			break;
 	}
 
+	/* TMP Disable of Play Button - until media player 
+	 * issues are sorted.
+	 */
+
+	playButton->setEnabled(false);
 	saveButton->hide();
 
 	switch(mType)
