@@ -23,9 +23,7 @@
  *
  */
 
-/*******
- * #define FT_DEBUG 1
- ******/
+#define FT_DEBUG 1
 
 #include "fttransfermodule.h"
 
@@ -411,9 +409,10 @@ bool ftTransferModule::cancelTransfer()
 
 bool ftTransferModule::completeFileTransfer()
 {
+#ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::completeFileTransfer()";
 	std::cerr << std::endl;
-
+#endif
 	if (mFtController)
 		mFtController->FlagFileComplete(mHash);
 	return true;
@@ -454,14 +453,13 @@ int ftTransferModule::tick()
 
   switch (flags)
   {
-	  case 0:
+	  case 0: //file transfer not complete
 		  adjustSpeed();
 		  break;
-	  case 1:
+	  case 1: //file transfer complete
 		  completeFileTransfer();
 		  break;
-	  case 2:
-		  /* tell me what to do here */
+	  case 2: //file transfer canceled
 		  break;
 	  default:
 		  break;

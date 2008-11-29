@@ -279,7 +279,7 @@ bool ftController::completeFile(std::string hash)
 	if (doCallback)
 	{
 #ifdef CONTROL_DEBUG
-	  std::cerr << "ftController::completeFile() doing Callback";
+	  std::cerr << "ftController::completeFile() doing Callback, callbackCode:" << callbackCode;
 	  std::cerr << std::endl;
 #endif
 	  switch (callbackCode)
@@ -663,9 +663,44 @@ bool 	ftController::FileCancel(std::string hash)
 		return false;
 	}
 
+	/* check if finished */
+	if ((mit->second).mCreator->finished())
+	{
+#ifdef CONTROL_DEBUG
+		std::cerr << "ftController:FileCancel(" << hash << ")";
+		std::cerr << " Transfer Already finished";
+		std::cerr << std::endl;
+
+		std::cerr << "FileSize: ";
+		std::cerr << (mit->second).mCreator->getFileSize();
+		std::cerr << " and Recvd: ";
+		std::cerr << (mit->second).mCreator->getRecvd();
+#endif
+		return false;
+	}
+
 	/*find the point to transfer module*/
 	ftTransferModule* ft=(mit->second).mTransfer;
 	ft->cancelTransfer();
+
+	ftFileControl *fc = &(mit->second);
+	mDataplex->removeTransferModule(fc->mTransfer->hash());
+
+	if (fc->mTransfer)
+	{
+		delete fc->mTransfer;
+		fc->mTransfer = NULL;
+	}
+
+	if (fc->mCreator)
+	{
+		delete fc->mCreator;
+		fc->mCreator = NULL;
+	}
+
+	fc->mState = ftFileControl::ERROR_COMPLETION;
+	mDownloads.erase(mit);
+
 	return true;
 }
 
