@@ -19,23 +19,9 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout" >
      <item>
-      <widget class="QCheckBox" name="trustInconsistencyCB" >
-       <property name="text" >
-        <string>Show trust inconsistencies</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="Line" name="line" >
        <property name="orientation" >
         <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="updatePB" >
-       <property name="text" >
-        <string>Update</string>
        </property>
       </widget>
      </item>
@@ -53,6 +39,20 @@
        </property>
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="updatePB" >
+       <property name="text" >
+        <string>Update</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="showingLabel" >
+       <property name="text" >
+        <string>Showing: whole network</string>
        </property>
       </widget>
      </item>

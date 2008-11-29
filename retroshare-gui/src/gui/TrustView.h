@@ -16,6 +16,7 @@ class TrustView: public QWidget, public Ui::TrustView
 		void update() ;
 		void updateZoom(int) ;
 		void selectCell(int,int) ;
+		void hideShowPeers(int) ;
 
 	private:
 		void getCellSize(int z,int& cell_width,int& cell_height) const ;

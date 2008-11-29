@@ -1,6 +1,7 @@
 #include <math.h>
 #include <QTimer>
 #include <QWheelEvent>
+#include <QHeaderView>
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 
@@ -14,13 +15,15 @@ TrustView::TrustView()
 	setupUi(this) ;
 
 	trustTableTW->setMouseTracking(true) ;
-	trustInconsistencyCB->setEnabled(false) ;
+//	trustInconsistencyCB->setEnabled(false) ;
 
 	zoomHS->setValue(100) ;
 
 	QObject::connect(zoomHS,SIGNAL(valueChanged(int)),this,SLOT(updateZoom(int))) ;
 	QObject::connect(updatePB,SIGNAL(clicked()),this,SLOT(update())) ;
 	QObject::connect(trustTableTW,SIGNAL(cellClicked(int,int)),this,SLOT(selectCell(int,int))) ;
+	QObject::connect(trustTableTW->verticalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(hideShowPeers(int))) ;
+	QObject::connect(trustTableTW->horizontalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(hideShowPeers(int))) ;
 
 	updatePB->setToolTip(QString("This table normaly auto-updates every 10 seconds.")) ;
 
@@ -48,6 +51,9 @@ void TrustView::selectCell(int row,int col)
 	static int last_row = -1 ;
 	static int last_col = -1 ;
 
+	cout << "row = " << row << ", column = " << col << endl;
+	if(row == 0 || col == 0)
+		cout << "***********************************************" << endl ;
 	if(last_row > -1)
 	{
 		int col_s,row_s ;
@@ -61,10 +67,15 @@ void TrustView::selectCell(int row,int col)
 	{
 		trustTableTW->setColumnWidth(col,_base_cell_width) ;
 		trustTableTW->setRowHeight(row,_base_cell_height) ;
-	}
 
-	last_col = col ;
-	last_row = row ;
+		last_col = col ;
+		last_row = row ;
+	}
+	else
+	{
+		last_col = -1 ;
+		last_row = -1 ;
+	}
 }
 
 void TrustView::getCellSize(int z,int& col_s,int& row_s) const
@@ -203,6 +214,43 @@ void TrustView::update()
 
 	for(int j=0;j<trustTableTW->columnCount();++j)
 		trustTableTW->horizontalHeaderItem(j)->setToolTip(trustTableTW->horizontalHeaderItem(j)->text()+" trusts " + QString::number(nj[j]) + " peers, including him(her)self.") ; 
+
+}
+
+void TrustView::hideShowPeers(int col)
+{
+	// Choose what to show/hide
+	//
+
+	static int last_col = -1 ;
+	
+	if(col == last_col)
+	{
+		for(int i=0;i<trustTableTW->rowCount();++i)
+		{
+			trustTableTW->setColumnHidden(i,false) ;
+			trustTableTW->setRowHidden(i,false) ;
+		}
+		last_col = -1 ;
+
+		showingLabel->setText(QString("Showing: whole network")) ;
+	}
+	else
+	{
+		for(int i=0;i<trustTableTW->rowCount();++i)
+			if(trustTableTW->item(i,col) == NULL && trustTableTW->item(col,i) == NULL) 
+			{
+				trustTableTW->setColumnHidden(i,true) ;
+				trustTableTW->setRowHidden(i,true) ;
+			}
+			else
+			{
+				trustTableTW->setColumnHidden(i,false) ;
+				trustTableTW->setRowHidden(i,false) ;
+			}
+		last_col = col ;
+		showingLabel->setText(QString("Showing: peers connected to ")+trustTableTW->verticalHeaderItem(col)->text()) ;
+	}
 }
 
 
