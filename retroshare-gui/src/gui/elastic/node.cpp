@@ -42,6 +42,7 @@
 #include "edge.h"
 #include "node.h"
 #include "graphwidget.h"
+#include <math.h>
 
 Node::Node(GraphWidget *graphWidget, uint32_t t, std::string id_in, std::string n)
     : graph(graphWidget), ntype(t), id(id_in), name(n),
@@ -87,8 +88,9 @@ void Node::calculateForces()
         }
     }
 
+
     // Now subtract all forces pulling items together
-    double weight = (edgeList.size() + 1) * 10;
+    double weight = sqrt(edgeList.size() + 1) * 10;
     foreach (Edge *edge, edgeList) {
         QPointF pos;
         if (edge->sourceNode() == this)
@@ -98,14 +100,25 @@ void Node::calculateForces()
         xvel += pos.x() / weight;
         yvel += pos.y() / weight;
     }
-    
+
+    // push away from edges too.
+    QRectF sceneRect = scene()->sceneRect();
+    int mid_x = (sceneRect.left() + sceneRect.right()) / 2;
+    int mid_y = (sceneRect.top() + sceneRect.bottom()) / 2;
+
     if (qAbs(xvel) < 0.1 && qAbs(yvel) < 0.1)
         xvel = yvel = 0;
 
-    QRectF sceneRect = scene()->sceneRect();
     newPos = pos() + QPointF(xvel, yvel);
     newPos.setX(qMin(qMax(newPos.x(), sceneRect.left() + 10), sceneRect.right() - 10));
     newPos.setY(qMin(qMax(newPos.y(), sceneRect.top() + 10), sceneRect.bottom() - 10));
+
+    if (ntype == ELASTIC_NODE_TYPE_OWN)
+    {
+	/* own one always goes in the middle */
+	newPos.setX(mid_x);
+	newPos.setY(mid_y);
+    }
 }
 
 bool Node::advance()

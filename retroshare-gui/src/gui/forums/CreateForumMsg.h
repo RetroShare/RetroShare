@@ -24,95 +24,29 @@
 #define _CREATE_FORUM_MSG_DIALOG_H
 
 #include <QWidget>
-#include <QMainWindow>
 #include <string>
 
 #include "ui_CreateForumMsg.h"
-
-class QAction;
-class QComboBox;
-class QFontComboBox;
-class QTextEdit;
-class QTextCharFormat;
 
 class CreateForumMsg : public QMainWindow
 {
   Q_OBJECT
 
 public:
-  CreateForumMsg(std::string fId, std::string pId, QWidget *parent = 0, Qt::WFlags flags = 0);
+  CreateForumMsg(std::string fId, std::string pId);
 
-  void  newMsg(); /* cleanup */
-
-public slots:
-
-  void  createMsg();
-  void  cancelMsg();
+void  newMsg(); /* cleanup */
 
 private slots:
 
 	/* actions to take.... */
-
-
-  void fileNew();
-  void fileOpen();
-  bool fileSave();
-  bool fileSaveAs();
-  void filePrint(); 
-
-  //void filePrintPreview();
-  void filePrintPdf();
-
-  void textBold();
-  void textUnderline();
-  void textItalic();
-  void textFamily(const QString &f);
-  void textSize(const QString &p);
-  void textStyle(int styleIndex);
-  void textColor();
-  void textAlign(QAction *a);
-
-  void currentCharFormatChanged(const QTextCharFormat &format);
-  void cursorPositionChanged();
-  
-  void clipboardDataChanged();
+void  createMsg();
+void  cancelMsg();
 
 private:
 
-  	std::string mForumId;
-  	std::string mParentId;
-
-  	void setTextColor(const QColor& col) ;
-	void setupFileActions();
-	void setupEditActions();
-	void setupViewActions();
-	void setupInsertActions();
-
-    	void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
-    	void fontChanged(const QFont &f);
-    	void colorChanged(const QColor &c);
-    	void alignmentChanged(Qt::Alignment a);
-
-	bool load(const QString &f);
-    	bool maybeSave();
-	
-	void setCurrentFileName(const QString &fileName);
-
-
-  	QAction *actionSave,
-		*actionAlignLeft,
-        *actionAlignCenter,
-        *actionAlignRight,
-        *actionAlignJustify,
-        *actionUndo,
-        *actionRedo,
-        *actionCut,
-        *actionCopy,
-        *actionPaste;
-  	
-	QString fileName;
-
-
+  std::string mForumId;
+  std::string mParentId;
 
   /** Qt Designer generated object */
   Ui::CreateForumMsg ui;
