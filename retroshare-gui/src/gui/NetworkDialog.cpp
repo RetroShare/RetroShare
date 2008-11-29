@@ -117,7 +117,7 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 	layout->setSpacing( 0 );
 	layout->setMargin( 0 );
 
-	ui.networkTab->addTab(new TrustView(),QString("Trust table"));
+	ui.networkTab->addTab(new TrustView(),QString("Trust matrix"));
      
     // Set Log infos
     setLogInfo(tr("RetroShare %1 started.", "e.g: RetroShare v0.x started.").arg(retroshareVersion()));
