@@ -158,6 +158,24 @@ class GPGAuthMgr: public p3AuthMgr
   bool SignData(const void *data, const uint32_t len, std::string &sign);
 
 /*********************************************************************************/
+/************************* PGP Specific functions ********************************/
+/*********************************************************************************/
+
+/*
+ * These support the authentication process.
+ *
+ */
+
+/*
+ *
+ */
+
+bool checkSignature(std::string id, std::string hash, std::string signature);
+
+
+
+
+/*********************************************************************************/
 /************************* OTHER FUNCTIONS ***************************************/
 /*********************************************************************************/
 /*****
@@ -181,6 +199,15 @@ class GPGAuthMgr: public p3AuthMgr
 	gpgme_engine_info_t INFO;
 	gpgme_ctx_t CTX;
 };
+
+/*****
+ *
+ * Support Functions for OpenSSL verification.
+ *
+ */
+
+int verify_pgp_callback(int preverify_ok, X509_STORE_CTX *ctx);
+
 
 #endif
 

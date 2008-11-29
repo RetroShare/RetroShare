@@ -27,12 +27,17 @@
 #include <QIcon>
 #include <QPixmap>
 
-#include "ChannelFeed.h"
-#include "ForumsDialog.h"
+
+#include "NetworkView.h"
 #include "LinksDialog.h"
-#include "GamesDialog.h"
 #include "PhotoDialog.h"
-#include "channels/channelsDialog.h"
+#include "ForumsDialog.h"
+#include "NewsFeed.h"
+#include "PeersFeed.h"
+#include "TransferFeed.h"
+#include "MsgFeed.h"
+#include "ChannelFeed.h"
+
 
 #include <rshare.h>
 #include "MainWindow.h"
@@ -93,6 +98,7 @@
 #define IMAGE_MINIMIZE          ":/images/window_nofullscreen.png"
 #define IMAGE_MAXIMIZE          ":/images/window_fullscreen.png"
 #define IMG_HELP                ":/images/help.png"
+#define IMAGE_NEWSFEED          ":/images/konqsidebar_news24.png"
 
 /* Keys for UI Preferences */
 #define UI_PREF_PROMPT_ON_QUIT  "UIOptions/ConfirmOnQuit"
@@ -160,26 +166,40 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     QActionGroup *grp = new QActionGroup(this);
 
 
-    ui.stackPages->add(networkDialog = new NetworkDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_NETWORK), tr("Network"), grp));
+    NewsFeed *newsFeed = NULL;
+    ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
+		createPageAction(QIcon(IMAGE_NEWSFEED), tr("News Feed"), grp));
+
   
     ui.stackPages->add(peersDialog = new PeersDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_PEERS), tr("Friends"), grp));
-                                        
+
+    //PeersFeed *peersFeed = NULL;
+    //ui.stackPages->add(peersFeed = new PeersFeed(ui.stackPages),
+    //		createPageAction(QIcon(IMAGE_PEERS), tr("Peers"), grp));
+	
     ui.stackPages->add(searchDialog = new SearchDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_SEARCH), tr("Search"), grp));
                      
     ui.stackPages->add(transfersDialog = new TransfersDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_TRANSFERS), tr("Transfers"), grp));
+                      createPageAction(QIcon(IMAGE_TRANSFERS), tr("Transfers"), grp));
                      
+    //TransferFeed *transferFeed = NULL;
+    //ui.stackPages->add(transferFeed = new TransferFeed(ui.stackPages),
+    //		createPageAction(QIcon(IMAGE_LINKS), tr("Transfers"), grp));
+	
     ui.stackPages->add(sharedfilesDialog = new SharedFilesDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_FILES), tr("Files"), grp));
                      
     //ui.stackPages->add(chatDialog = new ChatDialog(ui.stackPages),
     //                   createPageAction(QIcon(IMAGE_CHAT), tr("Chat"), grp));
 
+    //MsgFeed *msgFeed = NULL;
+    //ui.stackPages->add(msgFeed = new MsgFeed(ui.stackPages),
+    //		createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
+
     ui.stackPages->add(messagesDialog = new MessagesDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
+                      createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
                        
     LinksDialog *linksDialog = NULL;
 
@@ -197,6 +217,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
 
+	
 #else
     channelsDialog = NULL;
     ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
@@ -210,6 +231,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
                        createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
 
 #endif
+
+    ui.stackPages->add(networkDialog = new NetworkDialog(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_NETWORK), tr("Network"), grp));
+
 
     //ui.stackPages->add(new HelpDialog(ui.stackPages),
     //                   createPageAction(QIcon(IMAGE_ABOUT), tr("About/Help"), grp));
@@ -540,8 +565,8 @@ void MainWindow::createActions()
     _appAct = new QAction(QIcon(IMAGE_UNFINISHED), tr("Applications"), this);
     connect(_appAct, SIGNAL(triggered()),this, SLOT(showApplWindow()));
     
-    _smplayerAct = new QAction(QIcon(IMAGE_SMPLAYER), tr("SMPlayer"), this);
-    connect(_smplayerAct, SIGNAL(triggered()),this, SLOT(showsmplayer()));
+    //_smplayerAct = new QAction(QIcon(IMAGE_SMPLAYER), tr("SMPlayer"), this);
+    //connect(_smplayerAct, SIGNAL(triggered()),this, SLOT(showsmplayer()));
     
     _helpAct = new QAction(QIcon(IMG_HELP), tr("Help"), this);
     connect(_helpAct, SIGNAL(triggered()), this, SLOT(showHelpDialog()));
@@ -668,14 +693,17 @@ void MainWindow::startqcheckers()
 /** Shows smplayer */
 void MainWindow::showsmplayer()
 {    
-    static SMPlayer * smplayer = 0;
-    
+    return;
+
     if (mSMPlayer == 0) 
     {
     	mSMPlayer = new SMPlayer(QString::null, this);
+    	mSMPlayer->gui()->hide();
     }
-    mSMPlayer->gui()->show();
-
+    else
+    {
+    	mSMPlayer->gui()->show();
+    }
 }
 
 void MainWindow::playFiles(QStringList files)
@@ -686,7 +714,8 @@ void MainWindow::playFiles(QStringList files)
 
 	std::cerr << "MainWindow::playFiles() showsmplayer() done" << std::endl;
 
-	mSMPlayer->gui()->openFiles(files);
+	if (mSMPlayer)
+		mSMPlayer->gui()->openFiles(files);
 
 	std::cerr << "MainWindow::playFiles() done" << std::endl;
 }
