@@ -926,10 +926,12 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 	if (completed)
 	{
 		info.transfered  = info.size;
+		info.avail = info.transfered;
 	}
 	else
 	{
 		info.transfered  = (it->second).mCreator->getRecvd();
+		info.avail = info.transfered;
 	}
 
 	return true;

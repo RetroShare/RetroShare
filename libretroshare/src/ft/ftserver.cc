@@ -246,7 +246,9 @@ std::string ftServer::getPartialsDirectory()
 
 bool ftServer::FileDownloads(std::list<std::string> &hashs)
 {
-	return mFtDataplex->FileDownloads(hashs);
+	return mFtController->FileDownloads(hashs);
+	/* this only contains downloads.... not completed */
+	//return mFtDataplex->FileDownloads(hashs);
 }
 
 bool ftServer::FileUploads(std::list<std::string> &hashs)
@@ -257,14 +259,14 @@ bool ftServer::FileUploads(std::list<std::string> &hashs)
 bool ftServer::FileDetails(std::string hash, uint32_t hintflags, FileInfo &info)
 {
 	bool found = false;
-	if (hintflags | RS_FILE_HINTS_DOWNLOAD)
+	if (hintflags & RS_FILE_HINTS_DOWNLOAD)
 	{
 		//found = mFtDataplex->FileDetails(hash, hintflags, info);
 		//
 		// Use Controller for download searches.
 		found = mFtController->FileDetails(hash, info);
 	}
-	else if (hintflags | RS_FILE_HINTS_UPLOAD)
+	else if (hintflags & RS_FILE_HINTS_UPLOAD)
 	{
 		found = mFtDataplex->FileDetails(hash, hintflags, info);
 	}
