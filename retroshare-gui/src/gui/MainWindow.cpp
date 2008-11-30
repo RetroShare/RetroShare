@@ -340,7 +340,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     menu->addAction(_appAct);
 #endif
     menu->addAction(_prefsAct);
-    menu->addAction(_smplayerAct);
+    //menu->addAction(_smplayerAct);
     menu->addAction(_helpAct);
     menu->addSeparator();
     menu->addAction(QIcon(IMAGE_MINIMIZE), tr("Minimize"), this, SLOT(showMinimized()));
@@ -543,7 +543,7 @@ MainWindow::~MainWindow()
 {
     delete _bandwidthGraph;
     delete _messengerwindowAct;
-    delete _smplayerAct;
+    //delete _smplayerAct;
     delete _preferencesWindow;
 }
 
@@ -695,6 +695,7 @@ void MainWindow::showsmplayer()
 {    
     return;
 
+#if 0
     if (mSMPlayer == 0) 
     {
     	mSMPlayer = new SMPlayer(QString::null, this);
@@ -704,12 +705,25 @@ void MainWindow::showsmplayer()
     {
     	mSMPlayer->gui()->show();
     }
+#endif
 }
 
 void MainWindow::playFiles(QStringList files)
 {
-	std::cerr << "MainWindow::playFiles()" << std::endl;
+	std::cerr << "MainWindow::playFiles() Can only play first currently" << std::endl;
+	QStringList::iterator it;
+	it = files.begin();
+	if (it == files.end())
+	{
+		return;
+	}
+	std::string path = (*it).toStdString();
+	std::cerr << "MainWindow::playFiles() opening: " << path << std::endl;
 
+	openFile(path);
+	return;
+
+#if 0
 	showsmplayer();
 
 	std::cerr << "MainWindow::playFiles() showsmplayer() done" << std::endl;
@@ -718,6 +732,7 @@ void MainWindow::playFiles(QStringList files)
 		mSMPlayer->gui()->openFiles(files);
 
 	std::cerr << "MainWindow::playFiles() done" << std::endl;
+#endif
 }
 
 
@@ -762,6 +777,70 @@ void
 MainWindow::showPreferencesWindow(PreferencesWindow::Page page)
 {
   _preferencesWindow->showWindow(page);
+}
+
+
+
+void openFile(std::string path)
+{
+	bool isAbs = true;
+	QString surl("file://");
+
+#if defined(Q_OS_WIN)
+	/* check that it is an absolute path */
+	if (path.size() < 4)
+	{
+		std::cerr << "[WIN] openPath() Very Small path ignoring: " << path;
+		std::cerr << std::endl;
+		return
+	}
+
+	if ((path[1] == ':') && (path.[2] == '\'))
+	{
+		isAbs = true;
+	}
+#else
+
+	/* check that it is an absolute path */
+	if (path.size() < 1)
+	{
+		std::cerr << "[UNIX] openPath() Very Small path ignoring: " << path;
+		std::cerr << std::endl;
+		return;
+	}
+
+	if (path[0] == '/')
+	{
+		isAbs = true;
+	}
+#endif
+
+	if (!isAbs)
+	{
+
+#define ROOT_PATH_SIZE 1024
+
+		char rootdir[ROOT_PATH_SIZE];
+		if (NULL == getcwd(rootdir, ROOT_PATH_SIZE))
+		{
+			std::cerr << "openPath() get Abs Failed: " << path;
+			std::cerr << std::endl;
+			return;
+		}
+
+		std::string rdir(rootdir);
+		surl += QString::fromStdString(rdir);
+		surl += '/';
+	}
+
+	surl += QString::fromStdString(path);
+	std::cerr << "openPath() opening AbsPath Url: " << surl.toStdString();
+	std::cerr << std::endl;
+
+	QUrl url(surl);
+	QDesktopServices::openUrl(url);
+
+	return;
 }
 
 

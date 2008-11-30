@@ -59,6 +59,8 @@ class SMPlayer;
 
 class PeerStatus;
 
+void openFile(std::string path);
+
 class MainWindow : public RWindow
 {
   Q_OBJECT

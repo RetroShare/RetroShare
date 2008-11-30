@@ -24,12 +24,14 @@
 
 #include "rsiface/rsfiles.h"
 
+/* hack for openFile() */
+#include "gui/MainWindow.h"
+
 #include <iostream>
 
 /****
  * #define DEBUG_ITEM 1
  ****/
-
 
 /*******************************************************************
  * SubFileItem fully controls the file transfer from the gui side
@@ -121,6 +123,11 @@ void SubFileItem::Setup()
   /* once off check - if remote, check if we have it 
    * NB: This check might be expensive - and it'll happen often!
    */
+#ifdef DEBUG_ITEM
+  std::cerr << "SubFileItem::Setup(): " << mFileName;
+  std::cerr << std::endl;
+#endif
+
   if (mMode == SFI_STATE_REMOTE)
   {
 	FileInfo fi;
@@ -130,6 +137,12 @@ void SubFileItem::Setup()
 	/* look up path */
 	if (rsFiles->FileDetails(mFileHash, hintflags, fi))
 	{
+#ifdef DEBUG_ITEM
+		std::cerr << "SubFileItem::Setup() STATE=>Local Found File";
+		std::cerr << std::endl;
+		std::cerr << "SubFileItem::Setup() path: " << fi.path;
+		std::cerr << std::endl;
+#endif
 		mMode = SFI_STATE_LOCAL;
 		mPath = fi.path;
 	}
@@ -157,7 +170,7 @@ void SubFileItem::updateItemStatic()
 {
 	/* fill in */
 #ifdef DEBUG_ITEM
-	std::cerr << "SubFileItem::updateItemStatic()";
+	std::cerr << "SubFileItem::updateItemStatic(): " << mFileName;
 	std::cerr << std::endl;
 #endif
 
@@ -184,10 +197,12 @@ void SubFileItem::updateItemStatic()
 	}
 
 	/* get full path for local file */
-	// TMP DISABLED FOR DEMONSTRATOR.... XXX
-#if 0
 	if ((mMode == SFI_STATE_LOCAL) || (mMode == SFI_STATE_UPLOAD))
 	{
+#ifdef DEBUG_ITEM
+		std::cerr << "SubFileItem::updateItemStatic() STATE=Local/Upload checking path";
+		std::cerr << std::endl;
+#endif
 		if (mPath == "")
 		{
 			FileInfo fi;
@@ -198,15 +213,21 @@ void SubFileItem::updateItemStatic()
 			if (!rsFiles->FileDetails(mFileHash, hintflags, fi))
 			{
 				mMode = SFI_STATE_ERROR;
+#ifdef DEBUG_ITEM
+			std::cerr << "SubFileItem::updateItemStatic() STATE=>Error No Details";
+			std::cerr << std::endl;
+#endif
 			}
 			else
 			{
-				// XXX CHECK VALID PATH!
+#ifdef DEBUG_ITEM
+			std::cerr << "SubFileItem::updateItemStatic() Updated Path";
+			std::cerr << std::endl;
+#endif
 				mPath = fi.path;
 			}
 		}
 	}
-#endif
 
 	/* do buttons + display */
 	switch (mMode)
@@ -282,11 +303,6 @@ void SubFileItem::updateItemStatic()
 			break;
 	}
 
-	/* TMP Disable of Play Button - until media player 
-	 * issues are sorted.
-	 */
-
-	playButton->setEnabled(false);
 	saveButton->hide();
 
 	switch(mType)
@@ -327,7 +343,7 @@ void SubFileItem::updateItem()
 {
 	/* fill in */
 #ifdef DEBUG_ITEM
-	std::cerr << "SubFileItem::updateItem()";
+	std::cerr << "SubFileItem::updateItem():" << mFileName;
 	std::cerr << std::endl;
 #endif
 
@@ -340,13 +356,25 @@ void SubFileItem::updateItem()
 
 	if ((mMode == SFI_STATE_ERROR) || (mMode == SFI_STATE_LOCAL))
 	{
+#ifdef DEBUG_ITEM
+		std::cerr << "SubFileItem::updateItem() STATE=Local/Error ignore";
+		std::cerr << std::endl;
+#endif
 		/* ignore - dead file, or done */
 	}
 	else if (mMode == SFI_STATE_EXTRA)
 	{
+#ifdef DEBUG_ITEM
+		std::cerr << "SubFileItem::updateItem() STATE=Extra File";
+		std::cerr << std::endl;
+#endif
 		/* check for file status */
 		if (rsFiles->ExtraFileStatus(mPath, fi))
 		{
+#ifdef DEBUG_ITEM
+			std::cerr << "SubFileItem::updateItem() STATE=>Local";
+			std::cerr << std::endl;
+#endif
 			mMode = SFI_STATE_LOCAL;
 
 			/* fill in file details */
@@ -381,18 +409,34 @@ void SubFileItem::updateItem()
 		switch(mMode)
 		{
 			case SFI_STATE_REMOTE:
+#ifdef DEBUG_ITEM
+				std::cerr << "SubFileItem::updateItem() STATE=Remote";
+				std::cerr << std::endl;
+#endif
 				/* is it downloading? */
 				if (detailsOk)
 				{
+#ifdef DEBUG_ITEM
+					std::cerr << "SubFileItem::updateItem() STATE=>Download";
+					std::cerr << std::endl;
+#endif
 					/* downloading */
 					mMode = SFI_STATE_DOWNLOAD;
 					stateChanged = true;
 				}
 				break;
 			case SFI_STATE_DOWNLOAD:
+#ifdef DEBUG_ITEM
+					std::cerr << "SubFileItem::updateItem() STATE=Download";
+					std::cerr << std::endl;
+#endif
 
 				if (!detailsOk)
 				{
+#ifdef DEBUG_ITEM
+					std::cerr << "SubFileItem::updateItem() STATE=>Remote";
+					std::cerr << std::endl;
+#endif
 					mMode = SFI_STATE_REMOTE;
 					stateChanged = true;
 				}
@@ -401,6 +445,10 @@ void SubFileItem::updateItem()
 					/* has it completed? */
 					if (fi.avail == mFileSize)
 					{
+#ifdef DEBUG_ITEM
+						std::cerr << "SubFileItem::updateItem() STATE=>Local";
+						std::cerr << std::endl;
+#endif
 						/* save path */
 						/* update progress */
 						mMode = SFI_STATE_LOCAL;
@@ -411,6 +459,10 @@ void SubFileItem::updateItem()
 				}
 				break;
 			case SFI_STATE_UPLOAD:
+#ifdef DEBUG_ITEM
+				std::cerr << "SubFileItem::updateItem() STATE=Upload";
+				std::cerr << std::endl;
+#endif
 
 				if (detailsOk)
 				{
@@ -464,6 +516,10 @@ void SubFileItem::updateItem()
 	
 	if (repeat)
 	{
+#ifdef DEBUG_ITEM
+		std::cerr << "SubFileItem::updateItem() callback for update!";
+		std::cerr << std::endl;
+#endif
 	  	QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
 	}
 
@@ -519,11 +575,12 @@ void SubFileItem::cancel()
 void SubFileItem::play()
 {
 #ifdef DEBUG_ITEM
-	std::cerr << "SubFileItem::play()";
+	std::cerr << "SubFileItem::play() :" << mPath;
 	std::cerr << std::endl;
 #endif
-	/* Only occurs - if it is local / uploading (have mPath set) */
-	rsFiles->FileCancel(mFileHash);
+
+	openFile(mPath);
+
 }
 
 void SubFileItem::download()

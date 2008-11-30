@@ -118,6 +118,7 @@ void ChanMsgItem::updateItemStatic()
 
 	/* don't really want this at all! */
 	unsubscribeButton->hide();
+	playButton->hide();
 }
 
 
@@ -141,10 +142,16 @@ void ChanMsgItem::updateItem()
 			return;
 		}
 	}
+
+	/***
+	 * At this point cannot create a playlist....
+	 * so can't enable play for all.
+
 	if (mFileItems.size() > 0)
 	{
 		playButton->setEnabled(true);
 	}
+	***/
 }
 
 
