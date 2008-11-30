@@ -52,7 +52,7 @@
      <property name="html" >
       <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Helvetica'; font-size:10pt; font-weight:400; font-style:normal;">
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
 &lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:8pt;">&lt;/p>&lt;/body>&lt;/html></string>
      </property>
      <property name="acceptRichText" >
@@ -62,6 +62,12 @@ p, li { white-space: pre-wrap; }
    </item>
    <item row="0" column="0" colspan="7" >
     <widget class="QLabel" name="invitefriendLabel" >
+     <property name="maximumSize" >
+      <size>
+       <width>16777215</width>
+       <height>93</height>
+      </size>
+     </property>
      <property name="palette" >
       <palette>
        <active>
@@ -478,13 +484,13 @@ p, li { white-space: pre-wrap; }
       </palette>
      </property>
      <property name="styleSheet" >
-      <string>background-image: url(:/images/invitefriendlabel.png)</string>
+      <string>background-image: url(:/images/invitefriendlabel.png);</string>
      </property>
      <property name="text" >
       <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:8pt;">&lt;span style=" font-size:16pt;">Invite a Friend&lt;/span>&lt;br />&lt;br />&lt;span style=" font-size:10pt;">To Invite your friends to join you with Retroshare: &lt;/span>&lt;/p>
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:8pt;">&lt;span style=" font-size:16pt; font-weight:600; color:#32cd32;">Invite a Friend&lt;/span>&lt;br />&lt;span style=" font-size:10pt;">To Invite your friends to join you with Retroshare: &lt;/span>&lt;/p>
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:10pt;">Cut and paste the text below into an email.&lt;/p>
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:10pt;">and send it to all your friends!&lt;/p>&lt;/body>&lt;/html></string>
      </property>

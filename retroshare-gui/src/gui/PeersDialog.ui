@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>825</width>
+    <width>721</width>
     <height>516</height>
    </rect>
   </property>
@@ -526,6 +526,18 @@ p, li { white-space: pre-wrap; }
      </item>
      <item row="1" column="0" colspan="2" >
       <widget class="QTreeWidget" name="peertreeWidget" >
+       <property name="minimumSize" >
+        <size>
+         <width>250</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>1677215</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="contextMenuPolicy" >
         <enum>Qt::CustomContextMenu</enum>
        </property>

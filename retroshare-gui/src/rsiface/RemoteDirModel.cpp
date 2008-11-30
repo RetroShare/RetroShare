@@ -249,7 +249,16 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 		switch(coln)
 		{
 			case 0:
-		return(QIcon(":/images/folder16.png"));	
+		QString ext = QFileInfo(QString::fromStdString(details.name)).suffix();
+		if (ext == "avi" || ext == "mpg" || ext == "movie")
+		{
+			QIcon icon(":/images/folder_video.png");
+		    	return icon;
+		}
+		else
+		{
+			return(QIcon(":/images/folder16.png"));	
+		}
 		break;
 		}
 	}

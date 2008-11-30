@@ -94,6 +94,29 @@ void AddFriendWizard::on_nextButton_clicked()
             if ( ui.keyradioButton->isChecked() )
             {
                 ui.textstackedWidget->setCurrentWidget(ui.keypage); 
+		/* something complicated ;) */
+
+		
+       		 std::string id;
+
+		/* get the text from the window */
+		/* load into string */
+		std::string certstr  = ui.keyText->toPlainText().toStdString();
+
+		/* ask retroshare to load */
+		if ((cDialog) && (rsPeers->LoadCertificateFromString(certstr, id)))
+		{
+			close();
+			cDialog->showpeerdetails(id);
+		}
+		else
+		{
+			/* error message */
+			int ret = QMessageBox::warning(this, tr("RetroShare"),
+                	   tr("Certificate Load Failed"),
+               		    QMessageBox::Ok, QMessageBox::Ok);
+		}
+		
 
             }
             if ( ui.pqipemradioButton->isChecked() )
