@@ -698,9 +698,28 @@ bool 	ftController::FileCancel(std::string hash)
 		fc->mCreator = NULL;
 	}
 
-	fc->mState = ftFileControl::ERROR_COMPLETION;
+        /* delete the temporary file */
+        if (0 == remove(fc->mCurrentPath.c_str()))
+        {
+#ifdef CONTROL_DEBUG
+                std::cerr << "ftController::FileCancel() remove temporary file ";
+                std::cerr << fc->mCurrentPath;
+                std::cerr << std::endl;
+#endif
+        }
+        else
+        {
+#ifdef CONTROL_DEBUG
+                std::cerr << "ftController::FileCancel() fail to remove file ";
+                std::cerr << fc->mCurrentPath;
+                std::cerr << std::endl;
+#endif
+        }
+
+	//fc->mState = ftFileControl::ERROR_COMPLETION;
 	mDownloads.erase(mit);
 
+        IndicateConfigChanged(); /* completed transfer -> save */
 	return true;
 }
 
