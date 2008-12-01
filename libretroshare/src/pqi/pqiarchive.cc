@@ -66,7 +66,7 @@ const int PQIARCHIVE_TYPE_PQITEM = 0x0001;
 
 pqiarchive::pqiarchive(RsSerialiser *rss, BinInterface *bio_in, int bio_flags_in)
 	:PQInterface(""), rsSerialiser(rss), bio(bio_in), bio_flags(bio_flags_in),
-        nextPkt(NULL), nextPktTS(0), firstPktTS(0), initTS(0)
+        nextPkt(NULL), nextPktTS(0), firstPktTS(0), initTS(0),realTime(false)
 {
         {
 	  std::ostringstream out;
