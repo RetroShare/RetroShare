@@ -1,3 +1,48 @@
+Changes for v0.4.11c
+
+* suppressed uninitialized memory read.
+* remove temporary file when cancel file transfer
+* Bugfixes for correct Channels display.
+* Corrected search in ftserver.
+* Updated avail in controller FileDetails.
+* Fixed Channel: SubFileItem display and play.
+* added openFile function to MainWindow. (uses QtDesktopServices)
+* disabled PlayAll in ChanMsgItem (as we can't do this).
+* enabled play() once files downloaded. 
+* tested play audio/video files on MacOSX
+* Fixed Add Friend and Invite Frieds Dialogs
+* Set  minimum size for Channels frame
+* Set minimum size for Friends TreeWidget
+* add code for cancen file transfer
+* Tweaked tabs and order. 
+* Added NewsFeed.
+* Added Template functions for ssl+xpgp code.
+* changed trust table name into trust matrix
+* Tuned the matrix to show sub-networks
+* Added a function to  not allow to create a Forum/Channel without a Name.
+* Fixed sorting in Friends
+* disabled auto scroll for Friends Widgett
+* added retroshare own logo for Network icon
+* Fixed layouts/margins/spacings of the Create Forum Message Dialog
+* Fixed Create Forum Message Dialog 
+* Fixed some Displaying isues for statusbar
+* Enabled save() function in SubFileItems.
+* Improved Channel Menu Item: added Icon and popularity.
+* Reduced most of the margins in Channel Feed.
+* updated libretroshare interface files.
+* Added Function to move an 'extraFile' to another location.This will be used to retrieve channel files.
+* set correct WindowsTitle for Create Channel
+* Added Forward Message Button with Forward feature 
+* set for Reply Message/Forward Message correct WindowTitle from  Message Title
+* Added for Forward Message insertForwardPastedText() function to add Forwarded Message in  a <blockquote>
+* suppressed double mutex lock
+* added files gpgauthmgr.cc and gpgauthmgr.h this provides the new GPG implementation 
+* added API to store all GPG keys in a map
+* added APIs to get GPG certificate IDs
+* added APIs to get Details from the Certificates
+* set Text Alignments for some columns to Center
+* missing file for defining sleep() etc under windows.
+* fixed SharedFiles columns
 
 Changes for v0.4.11b
 
