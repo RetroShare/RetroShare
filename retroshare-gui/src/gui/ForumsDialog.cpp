@@ -573,8 +573,11 @@ void ForumsDialog::insertThreads()
 			QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
 			item -> setText(0, timestamp);
 		}
+		ForumMsgInfo msginfo ;
+		rsForums->getForumMessage(fId,tit->msgId,msginfo) ;
+
 		item->setText(1, QString::fromStdWString(tit->title));
-		item->setText(2, "author");
+		item->setText(2, QString::fromStdString(msginfo.srcId));
 		item->setText(3, "signed");
 		item->setText(4, QString::fromStdString(tit->parentId));
 		item->setText(5, QString::fromStdString(tit->msgId));
@@ -622,8 +625,11 @@ void ForumsDialog::insertThreads()
 						QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
 						child -> setText(0, timestamp);
 					}
+					ForumMsgInfo msginfo ;
+					rsForums->getForumMessage(fId,mit->msgId,msginfo) ;
+
 					child->setText(1, QString::fromStdWString(mit->title));
-					child->setText(2, "author");
+					child->setText(2, QString::fromStdString(msginfo.srcId));
 					child->setText(3, "signed");
 					child->setText(4, QString::fromStdString(mit->parentId));
 					child->setText(5, QString::fromStdString(mit->msgId));

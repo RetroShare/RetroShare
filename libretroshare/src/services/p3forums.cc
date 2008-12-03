@@ -23,6 +23,7 @@
  *
  */
 
+#include "rsiface/rspeers.h"
 #include "services/p3forums.h"
 
 uint32_t convertToInternalFlags(uint32_t extFlags);
@@ -232,7 +233,7 @@ bool p3Forums::getForumMessage(std::string fId, std::string mId, ForumMsgInfo &i
 		
 	info.title = fmsg->title;
 	info.msg  = fmsg->msg;
-	info.srcId = "SRC";
+	info.srcId = rsPeers->getPeerName(fmsg->srcId);
 
 	return true;
 }
@@ -285,6 +286,7 @@ std::string p3Forums::createForumMsg(std::string fId, std::string pId,
 
 	fmsg->title = title;
 	fmsg->msg   = msg;
+	fmsg->srcId = rsPeers->getOwnId();
 	fmsg->timestamp = time(NULL);
 
 	std::string msgId = publishMsg(fmsg, true);
