@@ -33,6 +33,7 @@
 #include <iostream>
 #include <sstream>
 
+#include <QDesktopServices>
 #include <QContextMenuEvent>
 #include <QMenu>
 #include <QCursor>
@@ -111,13 +112,12 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 	
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * r_header = ui.remoteDirTreeView->header () ;   
-	r_header->setResizeMode (0, QHeaderView::Interactive);
-	r_header->setResizeMode (1, QHeaderView::Custom);
-	r_header->setResizeMode (2, QHeaderView::Custom);
-	r_header->setResizeMode (3, QHeaderView::Custom);
+	r_header->setResizeMode (0, QHeaderView::Stretch);
+	r_header->setResizeMode (1, QHeaderView::Fixed);
+	r_header->setResizeMode (2, QHeaderView::Fixed);
+	r_header->setResizeMode (3, QHeaderView::Fixed);
 	
 	r_header->setStretchLastSection(false);
-	r_header->setResizeMode(0, QHeaderView::Stretch);
    
 	r_header->resizeSection ( 0, 210 );
 	r_header->resizeSection ( 1, 70 );
@@ -224,6 +224,7 @@ void SharedFilesDialog::playselectedfiles()
 
   	std::cerr << "Playing: " << fullpath;
   	std::cerr << std::endl;
+
   }
 
   playFiles(fullpaths);

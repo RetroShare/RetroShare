@@ -487,18 +487,33 @@
   <property name="contextMenuPolicy" >
    <enum>Qt::NoContextMenu</enum>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2" >
-   <property name="spacing" >
+  <layout class="QGridLayout" >
+   <property name="horizontalSpacing" >
+    <number>0</number>
+   </property>
+   <property name="verticalSpacing" >
     <number>0</number>
    </property>
    <item row="0" column="0" colspan="2" >
     <layout class="QHBoxLayout" >
      <item>
       <layout class="QGridLayout" >
-       <property name="margin" >
+       <property name="leftMargin" >
         <number>0</number>
        </property>
-       <property name="spacing" >
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing" >
         <number>6</number>
        </property>
        <item row="0" column="0" >
@@ -528,7 +543,7 @@ p, li { white-space: pre-wrap; }
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" >
         <size>
          <width>271</width>
          <height>20</height>
@@ -553,8 +568,11 @@ p, li { white-space: pre-wrap; }
     </layout>
    </item>
    <item row="1" column="0" >
-    <layout class="QGridLayout" name="_2" >
-     <property name="spacing" >
+    <layout class="QGridLayout" >
+     <property name="horizontalSpacing" >
+      <number>0</number>
+     </property>
+     <property name="verticalSpacing" >
       <number>0</number>
      </property>
      <item row="0" column="0" >
@@ -575,8 +593,7 @@ p, li { white-space: pre-wrap; }
         <string/>
        </property>
        <property name="icon" >
-        <iconset resource="images.qrc" >
-         <normaloff>:/images/hide_toolbox_frame.png</normaloff>:/images/hide_toolbox_frame.png</iconset>
+        <iconset resource="images.qrc" >:/images/hide_toolbox_frame.png</iconset>
        </property>
        <property name="iconSize" >
         <size>
@@ -597,7 +614,7 @@ p, li { white-space: pre-wrap; }
        <property name="orientation" >
         <enum>Qt::Vertical</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" >
         <size>
          <width>14</width>
          <height>321</height>
@@ -622,11 +639,23 @@ p, li { white-space: pre-wrap; }
       <property name="frameShadow" >
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QGridLayout" name="gridLayout" >
-       <property name="margin" >
+      <layout class="QGridLayout" >
+       <property name="leftMargin" >
         <number>0</number>
        </property>
-       <property name="spacing" >
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>0</number>
+       </property>
+       <property name="verticalSpacing" >
         <number>0</number>
        </property>
        <item row="0" column="0" >
@@ -679,6 +708,9 @@ p, li { white-space: pre-wrap; }
        <enum>QAbstractItemView::DragOnly</enum>
       </property>
       <property name="alternatingRowColors" >
+       <bool>false</bool>
+      </property>
+      <property name="itemsExpandable" >
        <bool>false</bool>
       </property>
       <property name="sortingEnabled" >
