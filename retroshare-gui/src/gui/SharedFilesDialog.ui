@@ -710,8 +710,11 @@ p, li { white-space: pre-wrap; }
       <property name="alternatingRowColors" >
        <bool>false</bool>
       </property>
+      <property name="autoExpandDelay" >
+       <number>0</number>
+      </property>
       <property name="itemsExpandable" >
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="sortingEnabled" >
        <bool>true</bool>
