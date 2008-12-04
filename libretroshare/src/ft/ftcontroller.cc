@@ -758,6 +758,11 @@ bool 	ftController::FileControl(std::string hash, uint32_t flags)
 
 bool 	ftController::FileClearCompleted()
 {
+#ifdef CONTROL_DEBUG
+	std::cerr << "ftController::FileClearCompleted()" <<std::endl;
+#endif
+        mCompleted.clear();
+        IndicateConfigChanged(); 
 	return false;
 }
 
