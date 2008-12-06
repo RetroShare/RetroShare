@@ -63,7 +63,7 @@ void  CreateForum::newForum()
 		ui.typeEncrypted->setEnabled(false);
 
 		ui.msgAnon->setChecked(true);
-		ui.msgAuth->setEnabled(false);
+		//ui.msgAuth->setEnabled(false);
 	}
 	else
 	{

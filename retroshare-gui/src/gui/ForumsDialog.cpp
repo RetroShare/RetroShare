@@ -295,7 +295,7 @@ void ForumsDialog::insertForums()
 	for(it = forumList.begin(); it != forumList.end(); it++)
 	{
 		/* sort it into Publish (Own), Subscribed, Popular and Other */
-		uint32_t flags = it->forumFlags;
+		uint32_t flags = it->subscribeFlags;
 
 		if (flags & RS_DISTRIB_ADMIN)
 		{
@@ -310,7 +310,13 @@ void ForumsDialog::insertForums()
 
            		QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
-			item -> setText(0, QString::fromStdWString(it->forumName));
+			QString name = QString::fromStdWString(it->forumName);
+			if (it->forumFlags & RS_DISTRIB_AUTHEN_REQ)
+			{
+				name += " (AUTHD)";
+			}
+			item -> setText(0, name);
+
 			/* (1) Popularity */
 			{
 				std::ostringstream out;
@@ -344,7 +350,13 @@ void ForumsDialog::insertForums()
 
            		QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
-			item -> setText(0, QString::fromStdWString(it->forumName));
+			QString name = QString::fromStdWString(it->forumName);
+			if (it->forumFlags & RS_DISTRIB_AUTHEN_REQ)
+			{
+				name += " (AUTHD)";
+			}
+			item -> setText(0, name);
+
 			/* (1) Popularity */
 			{
 				std::ostringstream out;
@@ -391,7 +403,7 @@ void ForumsDialog::insertForums()
 	for(it = forumList.begin(); it != forumList.end(); it++)
 	{
 		/* ignore the ones we've done already */
-		uint32_t flags = it->forumFlags;
+		uint32_t flags = it->subscribeFlags;
 
 		if (flags & RS_DISTRIB_ADMIN)
 		{
@@ -412,7 +424,13 @@ void ForumsDialog::insertForums()
 
            		QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
-			item -> setText(0, QString::fromStdWString(it->forumName));
+			QString name = QString::fromStdWString(it->forumName);
+			if (it->forumFlags & RS_DISTRIB_AUTHEN_REQ)
+			{
+				name += " (AUTHD)";
+			}
+			item -> setText(0, name);
+
 			/* (1) Popularity */
 			{
 				std::ostringstream out;
@@ -577,7 +595,7 @@ void ForumsDialog::insertThreads()
 		rsForums->getForumMessage(fId,tit->msgId,msginfo) ;
 
 		item->setText(1, QString::fromStdWString(tit->title));
-		item->setText(2, QString::fromStdString(msginfo.srcId));
+		item->setText(2, QString::fromStdString(rsPeers->getPeerName(msginfo.srcId)));
 		item->setText(3, "signed");
 		item->setText(4, QString::fromStdString(tit->parentId));
 		item->setText(5, QString::fromStdString(tit->msgId));
@@ -629,7 +647,8 @@ void ForumsDialog::insertThreads()
 					rsForums->getForumMessage(fId,mit->msgId,msginfo) ;
 
 					child->setText(1, QString::fromStdWString(mit->title));
-					child->setText(2, QString::fromStdString(msginfo.srcId));
+					//child->setText(2, QString::fromStdString(msginfo.srcId));
+					child->setText(2, QString::fromStdString(rsPeers->getPeerName(msginfo.srcId)));
 					child->setText(3, "signed");
 					child->setText(4, QString::fromStdString(mit->parentId));
 					child->setText(5, QString::fromStdString(mit->msgId));

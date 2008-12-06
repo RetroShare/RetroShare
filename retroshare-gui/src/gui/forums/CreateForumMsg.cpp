@@ -65,6 +65,18 @@ void  CreateForumMsg::newMsg()
 
 		ui.forumName->setText(name);
 		ui.forumSubject->setText(subj);
+
+		if (fi.forumFlags & RS_DISTRIB_AUTHEN_REQ)
+		{
+			ui.signBox->setChecked(true);
+			//ui.signBox->setEnabled(false);
+			// For Testing.
+			ui.signBox->setEnabled(true);
+		}
+		else
+		{
+			ui.signBox->setEnabled(true);
+		}
 	}
 
 	ui.forumMessage->setText("");
@@ -85,6 +97,11 @@ void  CreateForumMsg::createMsg()
 
 	msgInfo.title = name.toStdWString();
 	msgInfo.msg = desc.toStdWString();
+
+	if (ui.signBox->isChecked())
+	{
+		msgInfo.msgflags = RS_DISTRIB_AUTHEN_REQ;
+	}
 
 	if ((msgInfo.msg == L"") && (msgInfo.title == L""))
 		return; /* do nothing */
