@@ -127,6 +127,14 @@ virtual bool TrustCertificate(std::string id, bool trust);
 	/* Sign / Encrypt / Verify Data (TODO) */
 virtual bool 	SignData(std::string input, std::string &sign);
 virtual bool 	SignData(const void *data, const uint32_t len, std::string &sign);
+	/* for proper signatures! */
+virtual bool 	SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen);
+virtual bool 	SignDataBin(const void *data, const uint32_t len,
+                        unsigned char *sign, unsigned int *signlen);
+
+virtual bool 	VerifySignBin(std::string pid,
+                        const void *data, const uint32_t len,
+                        unsigned char *sign, unsigned int signlen);
 
 	/*********** Overloaded Functions from p3AuthMgr **********/
 

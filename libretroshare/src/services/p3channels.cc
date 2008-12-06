@@ -73,9 +73,10 @@ RsChannels *rsChannels = NULL;
 
 p3Channels::p3Channels(uint16_t type, CacheStrapper *cs, 
 		CacheTransfer *cft, RsFiles *files, 
-                std::string srcdir, std::string storedir, std::string chanDir)
+                std::string srcdir, std::string storedir, std::string chanDir, 
+		p3AuthMgr *mgr)
 	:p3GroupDistrib(type, cs, cft, srcdir, storedir, 
-			CONFIG_TYPE_CHANNELS, CHANNEL_STOREPERIOD, CHANNEL_PUBPERIOD), 
+			CONFIG_TYPE_CHANNELS, CHANNEL_STOREPERIOD, CHANNEL_PUBPERIOD, mgr), 
 	mRsFiles(files), 
 	mChannelsDir(chanDir)
 { 

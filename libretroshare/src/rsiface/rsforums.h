@@ -43,6 +43,8 @@ class ForumInfo
 	std::wstring forumDesc;
 
 	uint32_t forumFlags;
+	uint32_t subscribeFlags;
+
 	uint32_t pop;
 
 	time_t lastPost;

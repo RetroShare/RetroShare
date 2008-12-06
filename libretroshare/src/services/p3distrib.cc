@@ -37,6 +37,8 @@
  * #define DISTRIB_DEBUG 1
  ****/
 
+#define DISTRIB_DEBUG 1
+
 RSA *extractPublicKey(RsTlvSecurityKey &key);
 RSA *extractPrivateKey(RsTlvSecurityKey &key);
 void 	setRSAPublicKey(RsTlvSecurityKey &key, RSA *rsa_pub);
@@ -47,11 +49,13 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 		CacheStrapper *cs, CacheTransfer *cft,
 		std::string sourcedir, std::string storedir, 
 		uint32_t configId, 
-		uint32_t storePeriod, uint32_t pubPeriod)
+		uint32_t storePeriod, uint32_t pubPeriod, 
+		p3AuthMgr *mgr)
 
 	:CacheSource(subtype, true, cs, sourcedir), 
 	CacheStore(subtype, true, cs, cft, storedir), 
 	p3Config(configId), nullService(subtype),
+	mAuthMgr(mgr),
 	mStorePeriod(storePeriod), 
 	mPubPeriod(pubPeriod), 
 	mLastPublishTime(0),
@@ -63,6 +67,7 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 	/* force publication of groups (cleared if local cache file found) */
 	mGroupsRepublish = true;
 
+	mOwnId = mAuthMgr->OwnId();
 	return;
 }
 
@@ -1702,25 +1707,16 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 	signedMsg->publishSignature.signData.setBinData(sigbuf, siglen);
 	signedMsg->publishSignature.keyId = gi->publishKeyId;
 
-#if 0
 	if (personalSign)
 	{
-		/* calc and check signature */
-		EVP_MD_CTX *mdctx2 = EVP_MD_CTX_create();
-
-		EVP_SignInit(mdctx2, EVP_sha1());
-		EVP_SignUpdate(mdctx2, data, size);
-
-		unsigned int siglen = EVP_PKEY_size(personal_admin);
+		unsigned int siglen = EVP_PKEY_size(publishKey);
         	unsigned char sigbuf[siglen];
-		int ans = EVP_SignFinal(mdctx2, sigbuf, &siglen, personal_admin);
-
-		signedMsg->personalSignature.signData.setBinData(sigbuf, siglen);
-		signedMsg->personalSignature.keyId = ownId;
-	
-		EVP_MD_CTX_destroy(mdctx2);
+		if (mAuthMgr->SignDataBin(data, size, sigbuf, &siglen))
+		{
+			signedMsg->personalSignature.signData.setBinData(sigbuf, siglen);
+			signedMsg->personalSignature.keyId = mAuthMgr->OwnId();
+		}
 	}
-#endif
 
 	/* clean up */
 	delete serialType;
@@ -2434,9 +2430,43 @@ bool 	p3GroupDistrib::locked_validateDistribSignedMsg(
 
 	/* now verify Personal signature */
 #ifdef DISTRIB_DEBUG
-	std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Personal Signature TODO";
+	std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Personal Signature";
 	std::cerr << std::endl;
 #endif
+
+	if (mAuthMgr->isValid(newMsg->personalSignature.keyId))
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Peer Known";
+		std::cerr << std::endl;
+#endif
+		unsigned int personalsiglen = 
+				newMsg->personalSignature.signData.bin_len;
+        	unsigned char *personalsigbuf = (unsigned char *) 
+				newMsg->personalSignature.signData.bin_data;
+
+		if (!mAuthMgr->VerifySignBin(
+			newMsg->personalSignature.keyId,
+			newMsg->packet.bin_data, newMsg->packet.bin_len,
+			personalsigbuf, personalsiglen))
+		{
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() VerifySign Failed";
+			std::cerr << std::endl;
+#endif
+			signOk = 0;
+		}
+	} 
+	else if ((info.grpFlags & RS_DISTRIB_AUTHEN_MASK)
+					& RS_DISTRIB_AUTHEN_REQ)
+	{
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Fail - No Personal Sign on AUTH grp";
+			std::cerr << std::endl;
+#endif
+		/* must know the signer */
+		signOk = 0;
+	}
 
 	if (signOk == 1)
 	{

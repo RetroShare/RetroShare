@@ -23,7 +23,6 @@
  *
  */
 
-#include "rsiface/rspeers.h"
 #include "services/p3forums.h"
 
 uint32_t convertToInternalFlags(uint32_t extFlags);
@@ -77,9 +76,11 @@ RsForums *rsForums = NULL;
 #define FORUM_PUBPERIOD   600 		   /* 10 minutes ... (max = 455 days) */
 
 p3Forums::p3Forums(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
-	                std::string srcdir, std::string storedir)
+	                std::string srcdir, std::string storedir, 
+			p3AuthMgr *mgr)
 	:p3GroupDistrib(type, cs, cft, srcdir, storedir, 
-			CONFIG_TYPE_FORUMS, FORUM_STOREPERIOD, FORUM_PUBPERIOD), 
+		CONFIG_TYPE_FORUMS, FORUM_STOREPERIOD, FORUM_PUBPERIOD, 
+		mgr), 
 	mForumsChanged(false)
 { 
 	//loadDummyData();
@@ -111,8 +112,9 @@ bool p3Forums::getForumInfo(std::string fId, ForumInfo &fi)
 	fi.forumId = gi->grpId;
 	fi.forumName = gi->grpName;
 	fi.forumDesc = gi->grpDesc;
+	fi.forumFlags = gi->grpFlags;
 
-	fi.forumFlags = gi->flags;
+	fi.subscribeFlags = gi->flags;
 
 	fi.pop = gi->sources.size();
 	fi.lastPost = gi->lastPost;
@@ -233,15 +235,20 @@ bool p3Forums::getForumMessage(std::string fId, std::string mId, ForumMsgInfo &i
 		
 	info.title = fmsg->title;
 	info.msg  = fmsg->msg;
-	info.srcId = rsPeers->getPeerName(fmsg->srcId);
+	// should only use actual signature ....
+	//info.srcId = fmsg->srcId;
+	info.srcId = fmsg->personalSignature.keyId;
 
 	return true;
 }
 
 bool p3Forums::ForumMessageSend(ForumMsgInfo &info)
 {
+	bool signIt = (info.msgflags == RS_DISTRIB_AUTHEN_REQ);
 
-	createForumMsg(info.forumId, info.parentId, info.title, info.msg);
+	createForumMsg(info.forumId, info.parentId, 
+		info.title, info.msg, signIt);
+
 	return true;
 }
 
@@ -255,7 +262,7 @@ std::string p3Forums::createForum(std::wstring forumName, std::wstring forumDesc
 }
 
 std::string p3Forums::createForumMsg(std::string fId, std::string pId, 
-				std::wstring title, std::wstring msg)
+				std::wstring title, std::wstring msg, bool signIt)
 {
 
 	RsForumMsg *fmsg = new RsForumMsg();
@@ -286,10 +293,13 @@ std::string p3Forums::createForumMsg(std::string fId, std::string pId,
 
 	fmsg->title = title;
 	fmsg->msg   = msg;
-	fmsg->srcId = rsPeers->getOwnId();
+	if (signIt)
+	{
+		fmsg->srcId = mAuthMgr->OwnId();
+	}
 	fmsg->timestamp = time(NULL);
 
-	std::string msgId = publishMsg(fmsg, true);
+	std::string msgId = publishMsg(fmsg, signIt);
 	return msgId;
 }
 
@@ -431,8 +441,8 @@ void    p3Forums::loadDummyData()
 	fi.lastPost = now - 1234;
 
 	forumId = createForum(fi.forumName, fi.forumDesc, fi.forumFlags);
-	msgId = createForumMsg(forumId, "", L"WELCOME TO Forum1", L"Hello!");
-	msgId = createForumMsg(forumId, msgId, L"Love this forum", L"Hello2!");
+	msgId = createForumMsg(forumId, "", L"WELCOME TO Forum1", L"Hello!", true);
+	msgId = createForumMsg(forumId, msgId, L"Love this forum", L"Hello2!", true);
 
 	return; 
 

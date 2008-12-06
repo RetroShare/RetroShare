@@ -39,7 +39,7 @@ class p3Channels: public p3GroupDistrib, public RsChannels
 	public:
 
 	p3Channels(uint16_t type, CacheStrapper *cs, CacheTransfer *cft, RsFiles *files,
-		std::string srcdir, std::string storedir, std::string channelsdir);
+		std::string srcdir, std::string storedir, std::string channelsdir, p3AuthMgr *mgr);
 virtual ~p3Channels();
 
 /****************************************/

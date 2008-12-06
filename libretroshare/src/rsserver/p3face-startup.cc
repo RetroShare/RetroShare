@@ -634,7 +634,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 	p3Forums *mForums = new p3Forums(RS_SERVICE_TYPE_FORUM,
 			mCacheStrapper, mCacheTransfer,
-			localcachedir, remotecachedir);
+			localcachedir, remotecachedir, mAuthMgr);
 
         CachePair cp4(mForums, mForums, CacheId(RS_SERVICE_TYPE_FORUM, 0));
 	mCacheStrapper -> addCachePair(cp4);
@@ -642,7 +642,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 	p3Channels *mChannels = new p3Channels(RS_SERVICE_TYPE_CHANNEL,
 			mCacheStrapper, mCacheTransfer, rsFiles,
-			localcachedir, remotecachedir, channelsdir);
+			localcachedir, remotecachedir, channelsdir, mAuthMgr);
 
         CachePair cp5(mChannels, mChannels, CacheId(RS_SERVICE_TYPE_CHANNEL, 0));
 	mCacheStrapper -> addCachePair(cp5);

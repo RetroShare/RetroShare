@@ -310,6 +310,18 @@ bool GPGAuthMgr::SignData(const void *data, const uint32_t len, std::string &sig
 }
 
 
+bool GPGAuthMgr::SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen)
+{
+	return false;
+}
+
+bool GPGAuthMgr::SignDataBin(const void *data, const uint32_t len,
+                        unsigned char *sign, unsigned int *signlen)
+{
+	return false;
+}
+
+
 
 
 

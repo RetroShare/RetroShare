@@ -29,6 +29,7 @@
 #include "pqi/pqi.h"
 #include "pqi/pqistreamer.h"
 #include "pqi/p3cfgmgr.h"
+#include "pqi/p3authmgr.h"
 #include "services/p3service.h"
 #include "dbase/cachestrapper.h"
 #include "serialiser/rsforumitems.h"
@@ -211,7 +212,8 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		CacheStrapper *cs, CacheTransfer *cft,
 		std::string sourcedir, std::string storedir, 
 		uint32_t configId, 
-		uint32_t storePeriod, uint32_t pubPeriod);
+		uint32_t storePeriod, uint32_t pubPeriod, 
+		p3AuthMgr *mgr);
 
 
 /***************************************************************************************/
@@ -388,6 +390,7 @@ bool 	groupsChanged(std::list<std::string> &groupIds);
 
 	RsMutex distribMtx; /* Protects All Data Below */
 	std::string mOwnId;
+	p3AuthMgr *mAuthMgr;
 
 	private:	
 	

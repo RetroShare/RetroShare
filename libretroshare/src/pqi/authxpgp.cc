@@ -360,8 +360,16 @@ bool    AuthXPGP::isValid(std::string id)
 	std::cerr << std::endl;
 #endif
 	xpgpMtx.lock();   /***** LOCK *****/
+	bool valid = false;
 
-	bool valid = (mCerts.end() != mCerts.find(id));
+	if (id == mOwnId)
+	{
+		valid = true;
+	}
+	else
+	{
+		valid = (mCerts.end() != mCerts.find(id));
+	}
 
 	xpgpMtx.unlock(); /**** UNLOCK ****/
 
@@ -847,11 +855,115 @@ bool AuthXPGP::SignData(const void *data, const uint32_t len, std::string &sign)
 	return true;
 }
 
+	
+bool AuthXPGP::SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen)
+{
+	return SignDataBin(input.c_str(), input.length(), sign, signlen);
+}
+
+bool AuthXPGP::SignDataBin(const void *data, const uint32_t len, 
+			unsigned char *sign, unsigned int *signlen)
+{
+
+	RsStackMutex stack(xpgpMtx);   /***** STACK LOCK MUTEX *****/
+
+	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+	unsigned int req_signlen = EVP_PKEY_size(pkey);
+	if (req_signlen > *signlen)
+	{
+		/* not enough space */
+		std::cerr << "SignDataBin() Not Enough Sign SpacegnInit Failure!" << std::endl;
+		return false;
+	}
+	
+
+		
+
+	if (0 == EVP_SignInit(mdctx, EVP_sha1()))
+	{
+		std::cerr << "EVP_SignInit Failure!" << std::endl;
+
+		EVP_MD_CTX_destroy(mdctx);
+		return false;
+	}
+
+	if (0 == EVP_SignUpdate(mdctx, data, len))
+	{
+		std::cerr << "EVP_SignUpdate Failure!" << std::endl;
+
+		EVP_MD_CTX_destroy(mdctx);
+		return false;
+	}
+
+	if (0 == EVP_SignFinal(mdctx, sign, signlen, pkey))
+	{
+		std::cerr << "EVP_SignFinal Failure!" << std::endl;
+
+		EVP_MD_CTX_destroy(mdctx);
+		return false;
+	}
+
+	EVP_MD_CTX_destroy(mdctx);
+	return true;
+}
+
+
+bool AuthXPGP::VerifySignBin(std::string pid, 
+			const void *data, const uint32_t len,
+                       	unsigned char *sign, unsigned int signlen)
+{
+	RsStackMutex stack(xpgpMtx);   /***** STACK LOCK MUTEX *****/
+
+	/* find the peer */
+	
+	xpgpcert *peer;
+	if (pid == mOwnId)
+	{
+		peer = mOwnCert;
+	}
+	else if (!locked_FindCert(pid, &peer))
+	{
+		std::cerr << "VerifySignBin() no peer" << std::endl;
+		return false;
+	}
+
+	EVP_PKEY *peerkey = peer->certificate->key->key->pkey;
+	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+	
+	if (0 == EVP_VerifyInit(mdctx, EVP_sha1()))
+	{
+		std::cerr << "EVP_VerifyInit Failure!" << std::endl;
+
+		EVP_MD_CTX_destroy(mdctx);
+		return false;
+	}
+
+	if (0 == EVP_VerifyUpdate(mdctx, data, len))
+	{
+		std::cerr << "EVP_VerifyUpdate Failure!" << std::endl;
+
+		EVP_MD_CTX_destroy(mdctx);
+		return false;
+	}
+
+	if (0 == EVP_VerifyFinal(mdctx, sign, signlen, peerkey))
+	{
+		std::cerr << "EVP_VerifyFinal Failure!" << std::endl;
+
+		EVP_MD_CTX_destroy(mdctx);
+		return false;
+	}
+
+	EVP_MD_CTX_destroy(mdctx);
+	return true;
+}
+
+
+
+
 
 
 	/**** NEW functions we've added ****/
-
-
 
 
 	/**** AUX Functions ****/

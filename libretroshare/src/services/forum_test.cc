@@ -58,7 +58,8 @@ int main(int argc, char **argv)
 	std::string srcdir = "./";
 	std::string storedir = "./";
 
-	p3Forums *forum = new p3Forums(type, cs, cft, srcdir, storedir);
+	p3AuthMgr *dAuthMgr = new p3DummyAuthMgr();
+	p3Forums *forum = new p3Forums(type, cs, cft, srcdir, storedir, dAuthMgr);
 
 	testForums(forum);
 
@@ -116,7 +117,7 @@ int testForums(p3Forums *forum)
 		sleep(1);
 #endif
 
-	std::string mId1 = forum->createForumMsg(fId2, "", L"Forum 2 Msg 1", L"first forum msg");
+	std::string mId1 = forum->createForumMsg(fId2, "", L"Forum 2 Msg 1", L"first forum msg", true);
 
 	forum->tick(); /* expect msg publish */
 #ifdef WIN32
@@ -131,7 +132,7 @@ int testForums(p3Forums *forum)
 		sleep(1);
 #endif
 
-	std::string mId2 = forum->createForumMsg(fId2, "", L"Forum 2 Msg 2", L"second forum msg");
+	std::string mId2 = forum->createForumMsg(fId2, "", L"Forum 2 Msg 2", L"second forum msg", false);
 
 	forum->tick(); /* expect msg publish */
 #ifdef WIN32

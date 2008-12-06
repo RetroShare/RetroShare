@@ -268,4 +268,23 @@ bool p3DummyAuthMgr::SignData(const void *data, const uint32_t len, std::string 
 	return false;
 }
 
+bool p3DummyAuthMgr::SignDataBin(std::string input, 
+		unsigned char *sign, unsigned int *signlen)
+{
+	return false;
+}
+
+bool p3DummyAuthMgr::SignDataBin(const void *data, const uint32_t len,
+                        unsigned char *sign, unsigned int *signlen)
+{
+	return false;
+}
+
+bool p3DummyAuthMgr::VerifySignBin(std::string pid, 
+			const void *data, const uint32_t len,
+                       	unsigned char *sign, unsigned int signlen)
+{
+	return false;
+}
+
 

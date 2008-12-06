@@ -123,6 +123,13 @@ virtual bool TrustCertificate(std::string id, bool trust) = 0;
 		/* Sign / Encrypt / Verify Data (TODO) */
 virtual bool    SignData(std::string input, std::string &sign) = 0;
 virtual bool    SignData(const void *data, const uint32_t len, std::string &sign) = 0;
+virtual bool    SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen) = 0;
+virtual bool    SignDataBin(const void *data, const uint32_t len,
+                        unsigned char *sign, unsigned int *signlen) = 0;
+
+virtual bool    VerifySignBin(std::string pid, 
+				const void *data, const uint32_t len,
+                        	unsigned char *sign, unsigned int signlen) = 0;
 
 //virtual	bool encryptData(std::string recipientId, std::string plaindata, std::string &result);
 
@@ -180,6 +187,13 @@ virtual bool TrustCertificate(std::string id, bool trust);
 
 virtual bool SignData(std::string input, std::string &sign);
 virtual bool SignData(const void *data, const uint32_t len, std::string &sign);
+virtual bool    SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen);
+virtual bool    SignDataBin(const void *data, const uint32_t len,
+                        unsigned char *sign, unsigned int *signlen);
+
+virtual bool    VerifySignBin(std::string pid, 
+				const void *data, const uint32_t len,
+                        	unsigned char *sign, unsigned int signlen);
 
 	std::string mOwnId;
 	std::map<std::string, pqiAuthDetails> mPeerList;

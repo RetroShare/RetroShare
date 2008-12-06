@@ -73,7 +73,7 @@ class p3Forums: public p3GroupDistrib, public RsForums
 	public:
 
 	p3Forums(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
-		std::string srcdir, std::string storedir);
+		std::string srcdir, std::string storedir, p3AuthMgr *mgr);
 virtual ~p3Forums();
 
 void	loadDummyData();
@@ -119,8 +119,8 @@ virtual RsDistribGrp *locked_createPrivateDistribGrp(GroupInfo &info);
 
 /****************************************/
 
-std::string createForumMsg(std::string fid, std::string pid, 
-				std::wstring title, std::wstring msg);
+std::string createForumMsg(std::string fId, std::string pId,
+                     std::wstring title, std::wstring msg, bool signIt);
 
 	private:
 
