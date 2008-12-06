@@ -1,4 +1,5 @@
-RetroShare Todo list:
+RetroShare Todo list
+====================================================================
 
 
 * start minimized [enabel,disable start minimized](Options->General)
@@ -8,15 +9,18 @@ RetroShare Todo list:
 * collapse sources in Downloads [similar ares,emule](TransfersDialog)
 * Contacts Manager(Adressbook) for Messages ( similar Thunderbirds Adressbook feature)
 
-TODO on Shared Files:
+* Proxy support
+
+TODO on Shared Files
+=====================================================================
 
 * Hide Shared Files for different Friends(allowing to give rights for folders) 
 * Show Shared Files for different Friends(allowing to give rights for folders) 
 * Special Shared Files for special Friends ( This Share will be shown only to a Friend which i set.)(allowing to give rights for folders) 
 
-TODO on channels:
+TODO on channels
+====================================================================
 
-* Connect Save button.
 * Connect Play Button (must get smplayer working properly first).
 * Improve GUI display of channels (sorting order etc).
 * Display Channels popularity.
@@ -25,4 +29,18 @@ TODO on channels:
 * should delete downloaded files after one month (save space).
 * Probably other bugs too.
 * Image/Picture support for Channels
-* Images for Channel Name to can set via combobox or use different method(max size 24x24).
+* Images for Channel Name to can set via combobox or use different File Type(max size 24x24).
+
+TODO on Messages
+======================================================================
+
+- One of the next improvements we want to add is extensions to messages to handle:
+   * Longer Messages (break into chunks.)
+   * verification that the message was received.
+   * Ability to send to anyone in your network - not just your friends.
+   * Signed messages. (+ encrypted?)
+   * Special Messages 
+	- Introductions.
+	- friend requests.
+	- share channel/forum keys (enables private forums / group channels )
+
