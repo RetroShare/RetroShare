@@ -4,8 +4,8 @@ echo make clobber
 make clobber 
 #
 ## make the standard version (PPC)
-echo make
-make
+echo make librs
+make librs
 #
 LIB=libretroshare.a
 LIB_PPC=libretroshare_ppc.a
