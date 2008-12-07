@@ -61,6 +61,7 @@
 
 #include <sstream>
 #include <iomanip>
+#include <unistd.h>
 
 #define FONT        QFont(tr("Arial"), 8)
 
@@ -792,10 +793,10 @@ void openFile(std::string path)
 	{
 		std::cerr << "[WIN] openPath() Very Small path ignoring: " << path;
 		std::cerr << std::endl;
-		return
+		return;
 	}
 
-	if ((path[1] == ':') && (path.[2] == '\'))
+	if ((path[1] == ':') && ((path[2] == '\\') || (path[2] == '/')))
 	{
 		isAbs = true;
 	}
