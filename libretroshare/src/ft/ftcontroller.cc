@@ -49,8 +49,9 @@
 
 #include "serialiser/rsconfigitems.h"
 
-
-#define CONTROL_DEBUG 1
+/******
+ * #define CONTROL_DEBUG 1
+ *****/
 
 ftFileControl::ftFileControl()
 	:mTransfer(NULL), mCreator(NULL), 
@@ -124,8 +125,11 @@ void ftController::run()
 		  std::map<std::string, ftFileControl>::iterator it;
 		  for(it = mDownloads.begin(); it != mDownloads.end(); it++)
 		  {
+
+#ifdef CONTROL_DEBUG
 			std::cerr << "\tTicking: " << it->first;
 			std::cerr << std::endl;
+#endif
 
 			if (it->second.mTransfer)
 				(it->second.mTransfer)->tick();

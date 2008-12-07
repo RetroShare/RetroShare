@@ -47,6 +47,7 @@ const int ftserverzone = 29539;
 
 /***
  * #define SERVER_DEBUG 1
+ * #define DEBUG_TICK   1
  ***/
 
 	/* Setup */
@@ -612,10 +613,15 @@ int	ftServer::tick()
 // This function needs to be divided up.
 bool    ftServer::handleInputQueues()
 {
-	handleCacheData();
-	handleFileData();
-	return true;
+	bool moreToTick = false;
 
+	if (handleCacheData())
+		moreToTick = true;
+
+	if (handleFileData())
+		moreToTick = true;
+
+	return moreToTick;
 }
 
 bool     ftServer::handleCacheData()
@@ -704,9 +710,11 @@ bool     ftServer::handleCacheData()
 
 			//rslog(RSL_DEBUG_BASIC, ftserverzone, out2.str());
 			mP3iface -> SendSearchResult(ci);
+		
+			i++;
 		}
 	}
-	return true;
+	return (i > 0);
 }
 
 
@@ -740,7 +748,6 @@ bool    ftServer::handleFileData()
 
 FileInfo(ffr);
 		delete fr;
-
 	}
 
 	// now File Data.
