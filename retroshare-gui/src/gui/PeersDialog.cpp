@@ -29,11 +29,14 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsstatus.h"
 #include "rsiface/rsmsgs.h"
+#include "rsiface/rsnotify.h"
 
 #include "chat/PopupChatDialog.h"
 #include "msgs/ChanMsgDialog.h"
 #include "ChatDialog.h"
 #include "connect/ConfCertDialog.h"
+
+#include "gui/Preferences/rsharesettings.h"
 
 #include <iostream>
 #include <sstream>
@@ -438,7 +441,7 @@ void PeersDialog::chatfriend()
 
     if (detail.state & RS_PEER_STATE_CONNECTED)
     {
-    	getPrivateChat(id, name, true);
+    	getPrivateChat(id, name, RS_CHAT_REOPEN);
     }
     else
     {
@@ -647,6 +650,9 @@ void PeersDialog::insertChat()
     QTextEdit *msgWidget = ui.msgText;
 	std::list<ChatInfo>::iterator it;
 
+        /** A RshareSettings object used for saving/loading settings */
+        RshareSettings settings;
+        uint chatflags = settings.getChatFlags();
 
 	/* add in lines at the bottom */
 	for(it = newchat.begin(); it != newchat.end(); it++)
@@ -659,7 +665,7 @@ void PeersDialog::insertChat()
 		/* are they private? */
 		if (it->chatflags & RS_CHAT_PRIVATE)
 		{
-			PopupChatDialog *pcd = getPrivateChat(it->rsid, it->name, true);
+			PopupChatDialog *pcd = getPrivateChat(it->rsid, it->name, chatflags);
 			pcd->addChatMsg(&(*it));
 			continue;
 		}
@@ -828,10 +834,19 @@ void PeersDialog::toggleSendItem( QTreeWidgetItem *item, int col )
 	return;
 }
 
-PopupChatDialog *PeersDialog::getPrivateChat(std::string id, std::string name, bool show)
+PopupChatDialog *PeersDialog::getPrivateChat(std::string id, std::string name, uint chatflags)
 {
    /* see if it exists already */
    PopupChatDialog *popupchatdialog = NULL;
+   bool show = false;
+
+   if (chatflags & RS_CHAT_REOPEN)
+   {
+  	show = true;
+	std::cerr << "reopen flag so: enable SHOW popupchatdialog()";
+	std::cerr << std::endl;
+   }
+
 
    std::map<std::string, PopupChatDialog *>::iterator it;
    if (chatDialogs.end() != (it = chatDialogs.find(id)))
@@ -843,16 +858,51 @@ PopupChatDialog *PeersDialog::getPrivateChat(std::string id, std::string name, b
    {
    	popupchatdialog = new PopupChatDialog(id, name);
 	chatDialogs[id] = popupchatdialog;
+
+	if (chatflags & RS_CHAT_OPEN_NEW)
+	{
+		std::cerr << "new chat so: enable SHOW popupchatdialog()";
+		std::cerr << std::endl;
+
+		show = true;
+	}
    }
 
    if (show)
    {
-   	popupchatdialog->show();
+	std::cerr << "SHOWING popupchatdialog()";
+	std::cerr << std::endl;
+
+	popupchatdialog->show();
    }
 
-   return popupchatdialog;
+   /* now only do these if the window is visible */
+   if (popupchatdialog->isVisible())
+   {
+	   if (chatflags & RS_CHAT_FOCUS)
+	   {
+		std::cerr << "focus chat flag so: GETFOCUS popupchatdialog()";
+		std::cerr << std::endl;
 
+		popupchatdialog->getfocus();
+	   }
+	   else
+	   {
+		std::cerr << "no focus chat flag so: FLASH popupchatdialog()";
+		std::cerr << std::endl;
+
+		popupchatdialog->flash();
+	   }
+   }	  
+   else
+   {
+	std::cerr << "not visible ... so leave popupchatdialog()";
+	std::cerr << std::endl;
+   }
+	
+   return popupchatdialog;
 }
+
 
 void PeersDialog::clearOldChats()
 {

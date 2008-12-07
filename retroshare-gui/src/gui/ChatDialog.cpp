@@ -26,6 +26,7 @@
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsmsgs.h"
+#include "rsiface/rsnotify.h"
 
 #include "chat/PopupChatDialog.h"
 #include <sstream>
@@ -137,20 +138,27 @@ void ChatDialog::insertChat()
 		return;
 	}
 
-    QTextEdit *msgWidget = ui.msgText;
+    	QTextEdit *msgWidget = ui.msgText;
 	std::list<ChatInfo>::iterator it;
 
+
+        /** A RshareSettings object used for saving/loading settings */
+        RshareSettings settings;
+        uint chatflags = settings.getChatFlags();
 
 	/* add in lines at the bottom */
 	for(it = newchat.begin(); it != newchat.end(); it++)
 	{
 		std::string msg(it->msg.begin(), it->msg.end());
-		//std::cerr << "ChatDialog::insertChat(): " << msg << std::endl;
+		std::cerr << "ChatDialog::insertChat(): " << msg << std::endl;
 
 		/* are they private? */
 		if (it->chatflags & RS_CHAT_PRIVATE)
 		{
-			PopupChatDialog *pcd = getPrivateChat(it->rsid, it->name, true);
+			std::cerr << "ChatDialog::insert(Private)Chat(): ";
+			std::cerr << "Flags(" << chatflags << ") " << msg << std::endl;
+
+			PopupChatDialog *pcd = getPrivateChat(it->rsid, it->name, chatflags);
 			pcd->addChatMsg(&(*it));
 			continue;
 		}
@@ -322,10 +330,19 @@ void ChatDialog::privchat()
 
 
 
-PopupChatDialog *ChatDialog::getPrivateChat(std::string id, std::string name, bool show)
+PopupChatDialog *ChatDialog::getPrivateChat(std::string id, std::string name, uint chatflags)
 {
    /* see if it exists already */
    PopupChatDialog *popupchatdialog = NULL;
+   bool show = false;
+
+   if (chatflags & RS_CHAT_REOPEN)
+   {
+  	show = true;
+	std::cerr << "reopen flag so: enable SHOW popupchatdialog()";
+	std::cerr << std::endl;
+   }
+
 
    std::map<std::string, PopupChatDialog *>::iterator it;
    if (chatDialogs.end() != (it = chatDialogs.find(id)))
@@ -337,15 +354,49 @@ PopupChatDialog *ChatDialog::getPrivateChat(std::string id, std::string name, bo
    {
    	popupchatdialog = new PopupChatDialog(id, name);
 	chatDialogs[id] = popupchatdialog;
+
+	if (chatflags & RS_CHAT_OPEN_NEW)
+	{
+		std::cerr << "new chat so: enable SHOW popupchatdialog()";
+		std::cerr << std::endl;
+
+		show = true;
+	}
    }
 
    if (show)
    {
-   	popupchatdialog->show();
+	std::cerr << "SHOWING popupchatdialog()";
+	std::cerr << std::endl;
+
+	popupchatdialog->show();
    }
 
-   return popupchatdialog;
+   /* now only do these if the window is visible */
+   if (popupchatdialog->isVisible())
+   {
+	   if (chatflags & RS_CHAT_FOCUS)
+	   {
+		std::cerr << "focus chat flag so: GETFOCUS popupchatdialog()";
+		std::cerr << std::endl;
 
+		popupchatdialog->getfocus();
+	   }
+	   else
+	   {
+		std::cerr << "no focus chat flag so: FLASH popupchatdialog()";
+		std::cerr << std::endl;
+
+		popupchatdialog->flash();
+	   }
+   }	  
+   else
+   {
+	std::cerr << "not visible ... so leave popupchatdialog()";
+	std::cerr << std::endl;
+   }
+	
+   return popupchatdialog;
 }
 
 void ChatDialog::clearOldChats()

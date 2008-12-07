@@ -44,7 +44,7 @@ public:
   PeersDialog(QWidget *parent = 0);
   /** Default Destructor */
   
-  PopupChatDialog *getPrivateChat(std::string id, std::string name, bool show);
+  PopupChatDialog *getPrivateChat(std::string id, std::string name, uint chatflags);
   void clearOldChats();
   
   void loadEmoticonsgroupchat();

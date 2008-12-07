@@ -59,6 +59,9 @@ public:
 public slots:
   /** Overloaded QWidget.show */
   void show(); 
+
+  void getfocus();
+  void flash(); 
   	
   void smileyWidget();
   void addSmiley();

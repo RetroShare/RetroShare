@@ -120,6 +120,7 @@ HEADERS +=  rshare.h \
             gui/Preferences/GeneralDialog.h \
             gui/Preferences/PreferencesWindow.h \
             gui/Preferences/ServerDialog.h \          
+            gui/Preferences/NotifyDialog.h \          
             gui/Preferences/ConfirmQuitDialog.h \
             gui/Preferences/rsharesettings.h \
             gui/Preferences/rsettings.h \
@@ -223,6 +224,7 @@ FORMS +=    gui/ChatDialog.ui \
             gui/Preferences/GeneralDialog.ui \
             gui/Preferences/PreferencesWindow.ui \
             gui/Preferences/ServerDialog.ui \
+            gui/Preferences/NotifyDialog.ui \          
             gui/Preferences/ConfirmQuitDialog.ui \
             gui/toaster/CallToaster.ui \
             gui/toaster/ChatToaster.ui \
@@ -331,6 +333,7 @@ SOURCES += main.cpp \
             gui/Preferences/GeneralDialog.cpp \
             gui/Preferences/PreferencesWindow.cpp \
             gui/Preferences/ServerDialog.cpp \
+            gui/Preferences/NotifyDialog.cpp \          
             gui/Preferences/ConfirmQuitDialog.cpp \
             gui/Preferences/rsharesettings.cpp \
             gui/Preferences/rsettings.cpp \

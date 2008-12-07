@@ -99,6 +99,15 @@ public:
   /** Sets whether the bandwidth graph is always on top. */
   void setBWGraphAlwaysOnTop(bool alwaysOnTop);
   
+  uint getNewsFeedFlags();
+  void setNewsFeedFlags(uint flags);
+
+  uint getChatFlags();
+  void setChatFlags(uint flags);
+
+  uint getNotifyFlags();
+  void setNotifyFlags(uint flags);
+
 
         //! Save placement, state and size information of a window.
         void saveWidgetInformation(QWidget *widget);

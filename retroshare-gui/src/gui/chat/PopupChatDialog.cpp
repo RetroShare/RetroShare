@@ -137,9 +137,31 @@ void PopupChatDialog::show()
   if(!this->isVisible()) {
     QMainWindow::show();
   } else {
-    QMainWindow::activateWindow();
-    setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
-    QMainWindow::raise();
+    //QMainWindow::activateWindow();
+    //setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
+    //QMainWindow::raise();
+  }
+  
+}
+
+void PopupChatDialog::getfocus()
+{
+
+  QMainWindow::activateWindow();
+  setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
+  QMainWindow::raise();
+}
+
+void PopupChatDialog::flash()
+{
+
+  if(!this->isVisible()) {
+    //QMainWindow::show();
+  } else {
+    // Want to reduce the interference on other applications.
+    //QMainWindow::activateWindow();
+    //setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
+    //QMainWindow::raise();
   }
   
 }

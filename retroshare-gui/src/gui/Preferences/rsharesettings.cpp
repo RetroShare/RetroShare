@@ -30,6 +30,8 @@
 
 #include "rsharesettings.h"
 
+#include "rsiface/rsnotify.h"
+
 #include <QWidget>
 #include <QMainWindow>
 
@@ -48,6 +50,10 @@
 #define SETTING_BWGRAPH_FILTER        "StatisticDialog/BWLineFilter"
 #define SETTING_BWGRAPH_OPACITY       "StatisticDialog/Opacity"
 #define SETTING_BWGRAPH_ALWAYS_ON_TOP "StatisticDialog/AlwaysOnTop"
+
+#define SETTING_NEWSFEED_FLAGS		"NewsFeedFlags"
+#define SETTING_CHAT_FLAGS		"ChatFlags"
+#define SETTING_NOTIFY_FLAGS		"NotifyFlags"
 
 /* Default Retroshare Settings */
 #define DEFAULT_OPACITY             100
@@ -87,6 +93,25 @@ RshareSettings::RshareSettings()
   setDefault(SETTING_LANGUAGE, LanguageSupport::defaultLanguageCode());
   setDefault(SETTING_SHEETNAME, true); 
   setDefault(SETTING_SHOW_MAINWINDOW_AT_START, true);
+
+  /* defaults here are not ideal.... but dusent matter */
+
+  uint defChat = (RS_CHAT_OPEN_NEW |
+		RS_CHAT_REOPEN );
+		// This is not default... RS_CHAT_FOCUS.
+
+  uint defNotify = (RS_POPUP_CONNECT | RS_POPUP_MSG |
+                	RS_POPUP_CHAT | RS_POPUP_CALL);
+
+  uint defNewsFeed = (RS_FEED_TYPE_PEER | RS_FEED_TYPE_CHAN |
+                RS_FEED_TYPE_FORUM | RS_FEED_TYPE_BLOG |
+                RS_FEED_TYPE_CHAT | RS_FEED_TYPE_MSG |
+                RS_FEED_TYPE_FILES);
+
+  setDefault(SETTING_NEWSFEED_FLAGS, defNewsFeed);
+  setDefault(SETTING_CHAT_FLAGS, defChat);
+  setDefault(SETTING_NOTIFY_FLAGS, defNotify);
+
 }
 
 
@@ -177,6 +202,37 @@ void
 RshareSettings::setShowMainWindowAtStart(bool show)
 {
   setValue(SETTING_SHOW_MAINWINDOW_AT_START, show);
+}
+
+/** Setting for Notify / Chat and NewsFeeds **/
+uint RshareSettings::getNewsFeedFlags()
+{
+  return value(SETTING_NEWSFEED_FLAGS).toUInt();
+}
+
+void RshareSettings::setNewsFeedFlags(uint flags)
+{
+  setValue(SETTING_NEWSFEED_FLAGS, flags);
+}
+
+uint RshareSettings::getChatFlags()
+{
+  return value(SETTING_CHAT_FLAGS).toUInt();
+}
+
+void RshareSettings::setChatFlags(uint flags)
+{
+  setValue(SETTING_CHAT_FLAGS, flags);
+}
+
+uint RshareSettings::getNotifyFlags()
+{
+  return value(SETTING_NOTIFY_FLAGS).toUInt();
+}
+
+void RshareSettings::setNotifyFlags(uint flags)
+{
+  setValue(SETTING_NOTIFY_FLAGS, flags);
 }
 
 /** Returns true if Vidalia is set to run on system boot. */

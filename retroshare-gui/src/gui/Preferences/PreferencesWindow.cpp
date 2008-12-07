@@ -63,6 +63,9 @@ PreferencesWindow::PreferencesWindow(QWidget *parent, Qt::WFlags flags)
   ui.stackPages->add(new AppearanceDialog(ui.stackPages),
                      createPageAction(QIcon(IMAGE_APPEARRANCE), tr("Appearance"), grp));
   
+  ui.stackPages->add(new NotifyDialog(ui.stackPages),
+                     createPageAction(QIcon(IMAGE_APPEARRANCE), tr("Notify"), grp));
+  
   /*foreach (ConfigPage *page, ui.stackPages->pages()) {
     connect(page, SIGNAL(helpRequested(QString)),
             this, SLOT(help(QString)));

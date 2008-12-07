@@ -34,6 +34,7 @@
 #include "feeds/BlogMsgItem.h"
 #include "feeds/MsgItem.h"
 
+#include "Preferences/rsharesettings.h"
 
 #include "GeneralMsgDialog.h"
 
@@ -89,11 +90,14 @@ NewsFeed::NewsFeed(QWidget *parent)
 
 
 
-
 void NewsFeed::updateFeed()
 {
 	if (!rsNotify)
 		return;
+
+  	/** A RshareSettings object used for saving/loading settings */
+  	RshareSettings settings;
+	uint flags = settings.getNewsFeedFlags();
 
 	/* check for new messages */
 	RsFeedItem fi;
@@ -102,49 +106,63 @@ void NewsFeed::updateFeed()
 		switch(fi.mType)
 		{
 			case RS_FEED_ITEM_PEER_CONNECT:
-				addFeedItemPeerConnect(fi);
+				if (flags & RS_FEED_TYPE_PEER)
+					addFeedItemPeerConnect(fi);
 				break;
 			case RS_FEED_ITEM_PEER_DISCONNECT:
-				addFeedItemPeerDisconnect(fi);
+				if (flags & RS_FEED_TYPE_PEER)
+					addFeedItemPeerDisconnect(fi);
 				break;
 			case RS_FEED_ITEM_PEER_NEW:
-				addFeedItemPeerNew(fi);
+				if (flags & RS_FEED_TYPE_PEER)
+					addFeedItemPeerNew(fi);
 				break;
 			case RS_FEED_ITEM_PEER_HELLO:
-				addFeedItemPeerHello(fi);
+				if (flags & RS_FEED_TYPE_PEER)
+					addFeedItemPeerHello(fi);
 				break;
 
 			case RS_FEED_ITEM_CHAN_NEW:
-				addFeedItemChanNew(fi);
+				if (flags & RS_FEED_TYPE_CHAN)
+					addFeedItemChanNew(fi);
 				break;
 			case RS_FEED_ITEM_CHAN_UPDATE:
-				addFeedItemChanUpdate(fi);
+				if (flags & RS_FEED_TYPE_CHAN)
+					addFeedItemChanUpdate(fi);
 				break;
 			case RS_FEED_ITEM_CHAN_MSG:
-				addFeedItemChanMsg(fi);
+				if (flags & RS_FEED_TYPE_CHAN)
+					addFeedItemChanMsg(fi);
 				break;
 
 			case RS_FEED_ITEM_FORUM_NEW:
-				addFeedItemForumNew(fi);
+				if (flags & RS_FEED_TYPE_FORUM)
+					addFeedItemForumNew(fi);
 				break;
 			case RS_FEED_ITEM_FORUM_UPDATE:
-				addFeedItemForumUpdate(fi);
+				if (flags & RS_FEED_TYPE_FORUM)
+					addFeedItemForumUpdate(fi);
 				break;
 			case RS_FEED_ITEM_FORUM_MSG:
-				addFeedItemForumMsg(fi);
+				if (flags & RS_FEED_TYPE_FORUM)
+					addFeedItemForumMsg(fi);
 				break;
 
 			case RS_FEED_ITEM_BLOG_MSG:
-				addFeedItemBlogMsg(fi);
+				if (flags & RS_FEED_TYPE_BLOG)
+					addFeedItemBlogMsg(fi);
 				break;
 			case RS_FEED_ITEM_CHAT_NEW:
-				addFeedItemChatNew(fi);
+				if (flags & RS_FEED_TYPE_CHAT)
+					addFeedItemChatNew(fi);
 				break;
 			case RS_FEED_ITEM_MESSAGE:
-				addFeedItemMessage(fi);
+				if (flags & RS_FEED_TYPE_MSG)
+					addFeedItemMessage(fi);
 				break;
 			case RS_FEED_ITEM_FILES_NEW:
-				addFeedItemFilesNew(fi);
+				if (flags & RS_FEED_TYPE_FILES)
+					addFeedItemFilesNew(fi);
 				break;
 			default:
 				break;

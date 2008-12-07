@@ -18,6 +18,8 @@
 #include "gui/toaster/ChatToaster.h"
 #include "gui/toaster/CallToaster.h"
 
+#include "gui/Preferences/rsharesettings.h"
+
 #include <iostream>
 #include <sstream>
 
@@ -185,34 +187,41 @@ static  time_t lastTs = 0;
 		
 		if (rsNotify->NotifyPopupMessage(type, id, msg))
 		{
+			RshareSettings settings;
+			uint popupflags = settings.getNotifyFlags();
+
 			/* id the name */
 			std::string name = rsPeers->getPeerName(id);
 			std::string realmsg = msg + "<strong>" + name + "</strong>";
 			switch(type)
 			{
 				case RS_POPUP_MSG:
+				if (popupflags & RS_POPUP_MSG)
 				{
 					MessageToaster * msgToaster = new MessageToaster();
 					msgToaster->setMessage(QString::fromStdString(realmsg));
 					msgToaster->show();
-					break;
 				}
+					break;
 				case RS_POPUP_CHAT:
+				if (popupflags & RS_POPUP_CHAT)
 				{
 					ChatToaster * chatToaster = new ChatToaster();
 					chatToaster->setMessage(QString::fromStdString(realmsg));
 					chatToaster->show();
-					break;
 				}
+					break;
 				case RS_POPUP_CALL:
+				if (popupflags & RS_POPUP_CALL)
 				{
 					CallToaster * callToaster = new CallToaster();
 					callToaster->setMessage(QString::fromStdString(realmsg));
 					callToaster->show();
-					break;
 				}
+					break;
 				default:
 				case RS_POPUP_CONNECT:
+				if (popupflags & RS_POPUP_CONNECT)
 				{
 					OnlineToaster * onlineToaster = new OnlineToaster();
 					onlineToaster->setMessage(QString::fromStdString(realmsg));
