@@ -13,8 +13,8 @@ LIB_X86=libretroshare_x86.a
 
 MAC_SCRIPT="./scripts/config-macosx.mk"
 
-echo cp lib/$LIB lib/$LIB_PPC librs
-cp lib/$LIB lib/$LIB_PPC librs
+echo cp lib/$LIB lib/$LIB_PPC 
+cp lib/$LIB lib/$LIB_PPC 
 
 echo make clobber
 make clobber

@@ -52,7 +52,12 @@ const int ftserverzone = 29539;
 
 	/* Setup */
 ftServer::ftServer(p3AuthMgr *authMgr, p3ConnectMgr *connMgr)
-	:mAuthMgr(authMgr), mConnMgr(connMgr)
+	: mP3iface(NULL),
+	mAuthMgr(authMgr), mConnMgr(connMgr),
+		mCacheStrapper(NULL),
+		mFiStore(NULL), mFiMon(NULL),
+		mFtController(NULL), mFtExtra(NULL),
+		mFtDataplex(NULL), mFtSearch(NULL)
 {
 	mCacheStrapper = new ftCacheStrapper(authMgr, connMgr);
 }
@@ -317,11 +322,35 @@ bool ftServer::ExtraFileMove(std::string fname, std::string hash, uint64_t size,
 
 int ftServer::RequestDirDetails(std::string uid, std::string path, DirDetails &details)
 {
+#ifdef SERVER_DEBUG 
+	std::cerr << "ftServer::RequestDirDetails(uid:" << uid;
+	std::cerr << ", path:" << path << ", ...) -> mFiStore";
+	std::cerr << std::endl;
+
+	if (!mFiStore)
+	{
+		std::cerr << "mFiStore not SET yet = FAIL";
+		std::cerr << std::endl;
+	}
+
+#endif
 	return mFiStore->RequestDirDetails(uid, path, details);
 }
 	
 int ftServer::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)
 {
+#ifdef SERVER_DEBUG 
+	std::cerr << "ftServer::RequestDirDetails(ref:" << ref;
+	std::cerr << ", flags:" << flags << ", ...) -> mFiStore";
+	std::cerr << std::endl;
+
+	if (!mFiStore)
+	{
+		std::cerr << "mFiStore not SET yet = FAIL";
+		std::cerr << std::endl;
+	}
+
+#endif
 	return mFiStore->RequestDirDetails(ref, details, flags);
 }
 	
@@ -332,6 +361,17 @@ int ftServer::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)
 
 int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results)
 {
+#ifdef SERVER_DEBUG 
+	std::cerr << "ftServer::SearchKeywords()";
+	std::cerr << std::endl;
+
+	if (!mFiStore)
+	{
+		std::cerr << "mFiStore not SET yet = FAIL";
+		std::cerr << std::endl;
+	}
+
+#endif
 	return mFiStore->SearchKeywords(keywords, results);
 }
 	

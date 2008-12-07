@@ -167,6 +167,11 @@ int FileIndexStore::RequestDirDetails(std::string uid, std::string path, DirDeta
 int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) const
 {
 	lockData();
+
+#ifdef FIS_DEBUG
+	std::cerr << "FileIndexStore::RequestDirDetails() ref=" << ref << " flags: " << flags << std::endl;
+#endif
+
 	bool found = true;
 	std::map<RsPeerId, FileIndex *>::const_iterator pit;
 
