@@ -10,6 +10,7 @@ RetroShare Todo list
 * Contacts Manager(Adressbook) for Messages ( similar Thunderbirds Adressbook feature)
 
 * Proxy support
+* DynDNS support
 
 TODO on Shared Files
 =====================================================================
