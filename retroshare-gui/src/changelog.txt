@@ -1,3 +1,30 @@
+
+Changes for v0.4.11d
+
+* Bugfix for launching desktop support.
+* Small fix to universal script and some extra debugging.
+* switched off some debugging.
+* fixed tickrate slow down (when no activity)
+* added extra flags to interface.
+* Added NewsFeed / Popup / Chat Configuration options.
+* Gui modifications to support authenticated forums.
+* Added Authenticated Forums.
+* add Sign / Verify functions to authxpgp
+* sign/verify messages, and control flags for p3distrib/p3forums.
+* add authmgr to p3distrib etc.
+* added AUTH flags to rsforums interface.
+* implement function for clearCompleted on filetransfer panel
+* added display for author of forum posts
+* suppressed uninitialized memory read.
+* remove temporary file when cancel file transfer
+* Bugfixes for correct Channels display.
+* Corrected search in ftserver.
+* Updated avail in controller FileDetails.
+* Fixed Channel: SubFileItem display and play.
+* added openFile function to MainWindow. (uses QtDesktopServices)
+* disabled PlayAll in ChanMsgItem (as we can't do this).
+* enabled play() once files downloaded. 
+
 Changes for v0.4.11c
 
 * suppressed uninitialized memory read.
