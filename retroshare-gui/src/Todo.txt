@@ -12,6 +12,8 @@ RetroShare Todo list
 * Proxy support
 * DynDNS support
 
+* partial multi source download ("swarming")
+
 * Groups feature
  - to can generate not only one network with your friends, to can make different groups with RetroShare
  - mean you can have different groups in your network, your friends doesnt known about that.
