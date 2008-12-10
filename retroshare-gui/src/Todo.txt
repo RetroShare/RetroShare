@@ -12,6 +12,15 @@ RetroShare Todo list
 * Proxy support
 * DynDNS support
 
+* Groups feature
+ - to can generate not only one network with your friends, to can make different groups with RetroShare
+ - mean you can have different groups in your network, your friends doesnt known about that.
+ - each group has a "Group Name"
+ - you can set for different Groups different Shared Files with Privilegs(readable/hidden)
+ - for each group a own Puplic Chat( which will be generated automaticly if the group member joined/connected)
+ - modify Fiends Dialog to support Groups feature(for dynamic new groupchats needs tabs for right side Chats)
+	
+
 TODO on Shared Files
 =====================================================================
 
