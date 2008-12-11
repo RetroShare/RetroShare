@@ -40,9 +40,9 @@ ShareManager::ShareManager(QWidget *parent, Qt::WFlags flags)
   connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
 
 	ui.addButton->setToolTip(tr("Add a Share Directory"));
-	ui.addButton->setStatusTip(tr("Add a Share Directory"));
 	ui.removeButton->setToolTip(tr("Remove selected Shared Directory"));
-	ui.removeButton->setStatusTip(tr("Remove selected Shared Directory"));
+	
+	load();
 
 }
 /** Loads the settings for this page */
