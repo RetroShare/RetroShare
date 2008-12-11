@@ -48,7 +48,7 @@ HEADERS +=  rshare.h \
             gui/StartDialog.h \
             gui/ChatDialog.h \
             gui/BlogDialog.h \
-	        gui/CalDialog.h \
+	    gui/CalDialog.h \
             gui/NetworkDialog.h \
             gui/GenCertDialog.h \
             gui/TransfersDialog.h \
@@ -75,6 +75,7 @@ HEADERS +=  rshare.h \
             gui/SearchDialog.h \
             gui/SharedFilesDialog.h \
             gui/ShareFilesDialog.h \
+            gui/ShareManager.h \
             gui/StatisticDialog.h \
             gui/HelpDialog.h \
             gui/LogoBar.h \
@@ -203,6 +204,7 @@ FORMS +=    gui/ChatDialog.ui \
             gui/SearchDialog.ui \
             gui/SharedFilesDialog.ui \
             gui/ShareFilesDialog.ui \
+	    gui/ShareManager.ui \
             gui/StatisticDialog.ui \
             gui/MessagesDialog.ui \
             gui/help/browser/helpbrowser.ui \
@@ -294,6 +296,7 @@ SOURCES += main.cpp \
             gui/SearchDialog.cpp \
             gui/SharedFilesDialog.cpp \
             gui/ShareFilesDialog.cpp \
+            gui/ShareManager.cpp \
             gui/StatisticDialog.cpp \
             gui/MessagesDialog.cpp \
             gui/help/browser/helpbrowser.cpp \

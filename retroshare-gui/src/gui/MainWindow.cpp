@@ -37,6 +37,7 @@
 #include "TransferFeed.h"
 #include "MsgFeed.h"
 #include "ChannelFeed.h"
+#include "ShareManager.h"
 
 
 #include <rshare.h>
@@ -146,7 +147,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 	/** Left Side ToolBar**/
     connect(ui.actionAdd_Friend, SIGNAL(triggered() ), this , SLOT( addFriend() ) );
     connect(ui.actionInvite_Friend, SIGNAL(triggered() ), this , SLOT( inviteFriend() ) );
-    connect(ui.actionAdd_Share, SIGNAL(triggered() ), this , SLOT( addSharedDirectory() ) );
+    connect(ui.actionAdd_Share, SIGNAL(triggered() ), this , SLOT( openShareManager() ) );
     connect(ui.actionOptions, SIGNAL(triggered()), this, SLOT( showPreferencesWindow()) );
     connect(ui.actionMessenger, SIGNAL(triggered()), this, SLOT( showMessengerWindow()) );
     connect(ui.actionSMPlayer, SIGNAL(triggered()), this, SLOT( showsmplayer()) );
@@ -506,6 +507,14 @@ void MainWindow::addSharedDirectory()
     {
         rsFiles -> addSharedDirectory(dir);
     }
+
+}
+
+/** Shows Preferences */
+void MainWindow::openShareManager()
+{
+    static ShareManager* sharemanager = new ShareManager(this);
+    sharemanager->show();
 
 }
 

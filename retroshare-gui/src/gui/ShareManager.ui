@@ -1,0 +1,116 @@
+<ui version="4.0" >
+ <class>ShareManager</class>
+ <widget class="QDialog" name="ShareManager" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>525</width>
+    <height>312</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Add Share Manager</string>
+  </property>
+  <property name="windowIcon" >
+   <iconset resource="images.qrc" >:/images/rstray3.png</iconset>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" colspan="4" >
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>Shared Folder Manager</string>
+     </property>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <widget class="QListWidget" name="shareddirList" />
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QPushButton" name="addButton" >
+     <property name="minimumSize" >
+      <size>
+       <width>34</width>
+       <height>34</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>200</width>
+       <height>200</height>
+      </size>
+     </property>
+     <property name="text" >
+      <string>Add</string>
+     </property>
+     <property name="icon" >
+      <iconset resource="images.qrc" >:/images/add-share24.png</iconset>
+     </property>
+     <property name="iconSize" >
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QPushButton" name="removeButton" >
+     <property name="minimumSize" >
+      <size>
+       <width>34</width>
+       <height>34</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>200</width>
+       <height>200</height>
+      </size>
+     </property>
+     <property name="text" >
+      <string>Remove</string>
+     </property>
+     <property name="icon" >
+      <iconset resource="images.qrc" >:/images/directoryremove_24x24_shadow.png</iconset>
+     </property>
+     <property name="iconSize" >
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>101</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="3" >
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="images.qrc" />
+ </resources>
+ <connections/>
+</ui>

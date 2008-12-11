@@ -135,6 +135,7 @@ private slots:
     void showApplWindow();
 	void showsmplayer();
 	void showabout();
+	void openShareManager();
 	
 	/** Displays the help browser and displays the most recently viewed help
     * topic. */
