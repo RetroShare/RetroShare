@@ -14,6 +14,9 @@ RetroShare Todo list
 
 * partial multi source download ("swarming")
 
+* setCacheDirectory/getCacheDirectory (Customizable Directories for cache folder)
+* setChannelsDirectory/getChannelsDirectory (Customizable Directories for channels folder)
+
 * Groups feature
  - to can generate not only one network with your friends, to can make different groups with RetroShare
  - mean you can have different groups in your network, your friends doesnt known about that.
