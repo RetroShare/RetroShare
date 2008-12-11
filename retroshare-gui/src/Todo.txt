@@ -26,8 +26,8 @@ RetroShare Todo list
 TODO on Shared Files
 =====================================================================
 
-* Share Manager with can Share Files and can set Rights for Shared Files to Groups/Friends ( a replacement for Add a Share on Left side ToolBar)
-* Share Virtual Folders, can create Virtual Folders for Shared Files
+* Share Manager: can set Rights for Shared Files to Groups/Friends 
+* Share Virtual Folders, can create Virtual Folders for Shared Files in Share Manager
 * Hide Shared Files for different Friends(allowing to give rights for folders) 
 * Show Shared Files for different Friends(allowing to give rights for folders) 
 * Special Shared Files for special Friends ( This Share will be shown only to a Friend which i set.)(allowing to give rights for folders) 
