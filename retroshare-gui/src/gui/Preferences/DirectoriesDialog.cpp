@@ -38,6 +38,8 @@ DirectoriesDialog::DirectoriesDialog(QWidget *parent)
   connect(ui.addButton, SIGNAL(clicked( bool ) ), this , SLOT( addShareDirectory() ) );
   connect(ui.removeButton, SIGNAL(clicked( bool ) ), this , SLOT( removeShareDirectory() ) );
   connect(ui.incomingButton, SIGNAL(clicked( bool ) ), this , SLOT( setIncomingDirectory() ) );
+  connect(ui.partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );
+
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -73,6 +75,7 @@ void DirectoriesDialog::load()
 	}
 
 	ui.incomingDir->setText(QString::fromStdString(rsFiles->getDownloadDirectory()));
+	ui.partialsDir->setText(QString::fromStdString(rsFiles->getPartialsDirectory()));
 	
 	listWidget->update(); /* update display */
 
@@ -84,8 +87,9 @@ void DirectoriesDialog::addShareDirectory()
 
 	/* select a dir
 	 */
- 	QString qdir = QFileDialog::getExistingDirectory(this, tr("Add Shared Directory"), "",
-				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+
+
+ 	QString qdir = QFileDialog::getOpenFileName(this, tr("Add Shared Directory"),tr("All Files (*)"));
 	
 	/* add it to the server */
 	std::string dir = qdir.toStdString();
@@ -111,7 +115,7 @@ void DirectoriesDialog::removeShareDirectory()
 
 void DirectoriesDialog::setIncomingDirectory()
 {
- 	QString qdir = QFileDialog::getExistingDirectory(this, tr("Add Shared Directory"), "",
+ 	QString qdir = QFileDialog::getExistingDirectory(this, tr("Set Incoming Directory"), "",
 				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 	
 	std::string dir = qdir.toStdString();
@@ -122,4 +126,16 @@ void DirectoriesDialog::setIncomingDirectory()
 	load();
 }
 
+void DirectoriesDialog::setPartialsDirectory()
+{
+ 	QString qdir = QFileDialog::getExistingDirectory(this, tr("Set Partials Directory"), "",
+				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+	
+	std::string dir = qdir.toStdString();
+	if (dir != "")
+	{
+		rsFiles->setPartialsDirectory(dir);
+	}
+	load();
+}
 

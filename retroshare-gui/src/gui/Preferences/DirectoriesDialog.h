@@ -48,6 +48,8 @@ private slots:
 	void addShareDirectory();
 	void removeShareDirectory();
 	void setIncomingDirectory();
+	void setPartialsDirectory();
+
   
 private:
   /** A RshareSettings object used for saving/loading settings */
