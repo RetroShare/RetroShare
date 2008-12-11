@@ -258,7 +258,6 @@ bool ftController::completeFile(std::string hash)
 
 	/* switch map */
 	mCompleted[fc->mHash] = *fc;
-	mDownloads.erase(it);
 
 
 	/* for extralist additions */
@@ -272,6 +271,7 @@ bool ftController::completeFile(std::string hash)
 	doCallback = fc->mDoCallback;
 	callbackCode = fc->mCallbackCode;
 
+	mDownloads.erase(it);
       } /******* UNLOCKED ********/
 
 
