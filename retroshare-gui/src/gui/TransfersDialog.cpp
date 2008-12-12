@@ -36,6 +36,7 @@
 
 #include <sstream>
 #include "rsiface/rsfiles.h"
+#include "rsiface/rspeers.h"
 #include <algorithm>
 
 /* Images for context menu icons */
@@ -386,7 +387,7 @@ void TransfersDialog::insertTransfers()
 		symbol  	= "";
 		coreId		= QString::fromStdString(info.hash);
 		name    	= QString::fromStdString(info.fname);
-		sources		= QString::fromStdString(pit->peerId);
+		sources		= QString::fromStdString(rsPeers->getPeerName(pit->peerId));
 
 		switch(pit->status)
 		{
@@ -495,7 +496,7 @@ void TransfersDialog::insertTransfers()
 		symbol  	= "";
 		coreId		= QString::fromStdString(info.hash);
 		name    	= QString::fromStdString(info.fname);
-		sources		= QString::fromStdString(pit->peerId);
+		sources		= QString::fromStdString(rsPeers->getPeerName(pit->peerId));
 
 		switch(pit->status)
 		{
