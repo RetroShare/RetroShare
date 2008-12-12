@@ -57,6 +57,9 @@
 #define SR_HASH_COL         5
 #define SR_SEARCH_ID_COL    6
 
+#define SR_UID_COL          7
+#define SR_REALSIZE_COL         8
+
 /* indicies for search summary item columns SS_ = Search Summary */
 #define SS_TEXT_COL         0
 #define SS_COUNT_COL        1
@@ -124,6 +127,8 @@ SearchDialog::SearchDialog(QWidget *parent)
 
     /* hide the Tree +/- */
     ui.searchResultWidget -> setRootIsDecorated( false );
+    ui.searchResultWidget -> setColumnHidden( SR_UID_COL,true );
+    ui.searchResultWidget -> setColumnHidden( SR_REALSIZE_COL,true );
     ui.searchSummaryWidget -> setRootIsDecorated( false );
 
     /* make it extended selection */
@@ -243,10 +248,16 @@ void SearchDialog::download()
 		std::cerr << "SearchDialog::download() Calling File Request";
 		std::cerr << std::endl;
 		std::list<std::string> srcIds;
+		srcIds.push_back(item->text(SR_UID_COL).toStdString()) ;
+
         	rsFiles -> FileRequest((item->text(SR_NAME_COL)).toStdString(), 
                                   (item->text(SR_HASH_COL)).toStdString(), 
-                                  (item->text(SR_SIZE_COL)).toInt(), 
+                                  (item->text(SR_REALSIZE_COL)).toInt(), 
                                   "", 0, srcIds);
+
+			std::cout << "isuing file request from search dialog: -" << (item->text(SR_NAME_COL)).toStdString() << "-" << (item->text(SR_HASH_COL)).toStdString() << "-" << (item->text(SR_REALSIZE_COL)).toInt() << "-ids=" ;
+			for(std::list<std::string>::const_iterator it(srcIds.begin());it!=srcIds.end();++it)
+				std::cout << *it << "-" << std::endl ;
 	}
 	else
 	{
@@ -560,6 +571,7 @@ void SearchDialog::resultsToTree(std::string txt, std::list<FileDetail> results)
 		//QVariant * variant = new QVariant((qulonglong)it->size);
 		//item->setText(SR_SIZE_COL, QString(variant->toString()));
 		item->setText(SR_SIZE_COL, misc::friendlyUnit(it->size));
+		item->setText(SR_REALSIZE_COL, QString::number(it->size));
 		item->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 
 
@@ -569,11 +581,13 @@ void SearchDialog::resultsToTree(std::string txt, std::list<FileDetail> results)
 		if (it->id == "Local")
 		{
 			item->setText(SR_ID_COL, QString::fromStdString(it->id));
+			item->setText(SR_UID_COL, QString::fromStdString(rsPeers->getOwnId()));
 			item->setBackground(3, QBrush(Qt::red)); /* colour green? */
 		}
 		else 
 		{
 			item->setText(SR_ID_COL, QString::fromStdString( rsPeers->getPeerName(it->id)));
+			item->setText(SR_UID_COL, QString::fromStdString( it->id));
 			if(rsPeers->isOnline(it->id))
 				item->setBackground(3, QBrush(Qt::green));
 			else
