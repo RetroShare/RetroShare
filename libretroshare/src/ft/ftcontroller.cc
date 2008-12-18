@@ -257,7 +257,10 @@ bool ftController::completeFile(std::string hash)
         }
 
 	/* switch map */
-	mCompleted[fc->mHash] = *fc;
+        if (fc->mFlags & RS_FILE_HINTS_CACHE) /* clean up completed cache files automatically */ 
+        {
+	        mCompleted[fc->mHash] = *fc;
+        }
 
 
 	/* for extralist additions */
