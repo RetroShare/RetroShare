@@ -134,6 +134,9 @@ virtual bool	getPeerDetails(std::string id, RsPeerDetails &d) = 0;
 virtual	bool addFriend(std::string id)        			= 0;
 virtual	bool removeFriend(std::string id)  			= 0;
 
+	/* get/set third party info about who trusts me */
+virtual bool isTrustingMe(std::string id) const = 0 ;
+
 	/* Network Stuff */
 virtual	bool connectAttempt(std::string id)			= 0;
 virtual	bool setLocalAddress(std::string id, std::string addr, uint16_t port) = 0;

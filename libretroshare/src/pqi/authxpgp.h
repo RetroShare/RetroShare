@@ -102,6 +102,10 @@ virtual bool    isAuthenticated(std::string id);
 virtual	std::string getName(std::string id);
 virtual bool    getDetails(std::string id, pqiAuthDetails &details);
 	
+	/* first party trust info */
+virtual bool isTrustingMe(std::string id) ;
+virtual void addTrustingPeer(std::string id) ;
+
 	/* High Level Load/Save Configuration */
 virtual bool FinalSaveCertificates();
 virtual bool CheckSaveCertificates();
@@ -183,6 +187,7 @@ bool 	locked_FindCert(std::string id, xpgpcert **cert);
 	bool mConfigSaveActive;
 	std::map<std::string, xpgpcert *> mCerts;
 
+	std::list<std::string> _trusting_peers ;
 };
 
 /* Helper Functions */

@@ -140,6 +140,7 @@ virtual bool ConvertSharedFilePath(std::string path, std::string &fullpath) = 0;
 virtual void ForceDirectoryCheck() = 0;
 virtual bool InDirectoryCheck() = 0;
 
+
 /***
  * Directory Control
  ***/

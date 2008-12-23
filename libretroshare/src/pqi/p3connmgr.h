@@ -92,10 +92,11 @@ const uint32_t RS_NET_CONN_UDP_PEER_SYNC 	= 0x0020; /* coming soon */
 
 /* flags of peerStatus */
 const uint32_t RS_NET_FLAGS_USE_DISC		= 0x0001;
-const uint32_t RS_NET_FLAGS_USE_DHT		= 0x0002;
-const uint32_t RS_NET_FLAGS_ONLINE		= 0x0004;
+const uint32_t RS_NET_FLAGS_USE_DHT			= 0x0002;
+const uint32_t RS_NET_FLAGS_ONLINE			= 0x0004;
 const uint32_t RS_NET_FLAGS_EXTERNAL_ADDR	= 0x0008;
 const uint32_t RS_NET_FLAGS_STABLE_UDP		= 0x0010;
+const uint32_t RS_NET_FLAGS_TRUSTS_ME 		= 0x0020;
 
 const uint32_t RS_TCP_STD_TIMEOUT_PERIOD	= 5; /* 5 seconds! */
 

@@ -224,6 +224,11 @@ bool    p3Peers::isOnline(std::string id)
 	return false;
 }
 
+bool    p3Peers::isTrustingMe(std::string id) const
+{
+	return mAuthMgr->isTrustingMe(id) ;
+}
+
 bool    p3Peers::isFriend(std::string id)
 {
 #ifdef P3PEERS_DEBUG

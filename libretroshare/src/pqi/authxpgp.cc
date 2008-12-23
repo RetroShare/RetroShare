@@ -267,6 +267,32 @@ int     AuthXPGP::setConfigDirectories(std::string configfile, std::string neigh
 	return 1;
 }
 	
+bool AuthXPGP::isTrustingMe(std::string id) 
+{
+	xpgpMtx.lock();   /***** LOCK *****/
+
+	bool res = false ;
+	
+	for(std::list<std::string>::const_iterator it(_trusting_peers.begin());it!=_trusting_peers.end() && !res;++it)
+		if( *it == id )
+			res = true ;
+
+	xpgpMtx.unlock(); /**** UNLOCK ****/
+
+	return res ;
+}
+void AuthXPGP::addTrustingPeer(std::string id)
+{
+	if( !isTrustingMe(id) )
+	{
+		xpgpMtx.lock();   /***** LOCK *****/
+
+		_trusting_peers.push_back(id) ;
+
+		xpgpMtx.unlock(); /**** UNLOCK ****/
+	}
+}
+
 std::string AuthXPGP::OwnId()
 {
 #ifdef AUTHXPGP_DEBUG
@@ -1546,6 +1572,7 @@ int	LoadCheckXPGPandGetName(const char *cert_file, std::string &userName, std::s
 		valid = false;
 	}
 
+	std::cout << getXPGPInfo(xpgp) << std::endl ;
 	// clean up.
 	XPGP_free(xpgp);
 

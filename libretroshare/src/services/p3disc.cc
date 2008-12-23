@@ -24,6 +24,7 @@
  */
 
 
+#include "rsiface/rspeers.h"
 #include "services/p3disc.h"
 
 #include "pqi/p3authmgr.h"
@@ -53,10 +54,11 @@ static int convertTRangeToTDelta(int trange);
 
 const uint32_t P3DISC_FLAGS_USE_DISC 		= 0x0001;
 const uint32_t P3DISC_FLAGS_USE_DHT 		= 0x0002;
-const uint32_t P3DISC_FLAGS_EXTERNAL_ADDR 	= 0x0004;
+const uint32_t P3DISC_FLAGS_EXTERNAL_ADDR	= 0x0004;
 const uint32_t P3DISC_FLAGS_STABLE_UDP	 	= 0x0008;
 const uint32_t P3DISC_FLAGS_PEER_ONLINE 	= 0x0010;
 const uint32_t P3DISC_FLAGS_OWN_DETAILS 	= 0x0020;
+const uint32_t P3DISC_FLAGS_PEER_TRUSTS_ME= 0x0040;
 
 
 /*****
@@ -296,13 +298,13 @@ void p3disc::sendOwnDetails(std::string to)
 
 	// Then send message.
 	{
-#ifdef P3DISC_DEBUG
+//#ifdef P3DISC_DEBUG
 	  	  std::ostringstream out;
 		  out << "p3disc::sendOwnDetails()";
 		  out << "Constructing a RsDiscItem Message!" << std::endl;
 		  out << "Sending to: " << to;
 		  std::cerr << out.str() << std::endl;
-#endif
+//#endif
 	}
 
 	// Construct a message
@@ -368,13 +370,13 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 
 	/* send it off */
 	{
-#ifdef P3DISC_DEBUG
+//#ifdef P3DISC_DEBUG
 		std::ostringstream out;
 		out << "p3disc::sendPeerDetails()";
 		out << " Sending details of: " << about;
 		out << " to: " << to << std::endl;
 		std::cerr << out.str() << std::endl;
-#endif
+//#endif
 	}
 
 
@@ -433,6 +435,21 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 		di->discFlags |= P3DISC_FLAGS_PEER_ONLINE;
 	}
 
+	// Add 3rd party trust info
+	// We look at peers that trust 'to', by looking into 'to''s tigners list. The problem is that
+	// signers are accessible through their names instead of their id, so there is ambiguity if too peers
+	// have the same names. @DrBob: that would be cool to save signers using their ids...
+	//
+	RsPeerDetails pd ;
+	std::string name = rsPeers->getPeerName(about) ;
+	if(rsPeers->getPeerDetails(to,pd)) 
+		for(std::list<std::string>::const_iterator it(pd.signers.begin());it!=pd.signers.end();++it)
+			if(*it == name)
+			{
+				di->discFlags |= P3DISC_FLAGS_PEER_TRUSTS_ME;
+				std::cerr << "   Peer " << about << "(" << name << ")" << " is trusting " << to << ", sending info." << std::endl ;
+			}
+
 	uint32_t certLen = 0;
 
 	unsigned char **binptr = (unsigned char **) &(di -> certDER.bin_data);
@@ -466,9 +483,9 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 /*************************************************************************************/
 void p3disc::recvPeerOwnMsg(RsDiscItem *item)
 {
-#ifdef P3DISC_DEBUG
+//#ifdef P3DISC_DEBUG
 	std::cerr << "p3disc::recvPeerOwnMsg() From: " << item->PeerId() << std::endl;
-#endif
+//#endif
 
 	/* tells us their exact address (mConnectMgr can ignore if it looks wrong) */
 	uint32_t type = 0; 
@@ -523,11 +540,11 @@ void p3disc::recvPeerOwnMsg(RsDiscItem *item)
 void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 {
 
-#ifdef P3DISC_DEBUG
+//#ifdef P3DISC_DEBUG
 	std::cerr << "p3disc::recvPeerFriendMsg() From: " << item->PeerId();
 	std::cerr << " About " << item->aboutId;
 	std::cerr << std::endl;
-#endif
+//#endif
 
 	/* tells us their exact address (mConnectMgr can ignore if it looks wrong) */
 
@@ -543,17 +560,14 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 	uint32_t flags = 0; 
 
 	/* translate flags */
-	if (item->discFlags & P3DISC_FLAGS_USE_DISC)
+	if (item->discFlags & P3DISC_FLAGS_USE_DISC) 	flags |= RS_NET_FLAGS_USE_DISC;
+	if (item->discFlags & P3DISC_FLAGS_USE_DHT) 		flags |= RS_NET_FLAGS_USE_DHT;
+	if (item->discFlags & P3DISC_FLAGS_PEER_ONLINE) flags |= RS_NET_FLAGS_ONLINE;
+	if (item->discFlags & P3DISC_FLAGS_PEER_TRUSTS_ME) 	
 	{
-		flags |= RS_NET_FLAGS_USE_DISC;
-	}
-	if (item->discFlags & P3DISC_FLAGS_USE_DHT)
-	{
-		flags |= RS_NET_FLAGS_USE_DHT;
-	}
-	if (item->discFlags & P3DISC_FLAGS_PEER_ONLINE)
-	{
-		flags |= RS_NET_FLAGS_ONLINE;
+		std::cerr << "  Found a peer that trust me: " << peerId << " (" << rsPeers->getPeerName(peerId) << ")" << std::endl ;
+		flags |= RS_NET_FLAGS_TRUSTS_ME;
+		mAuthMgr->addTrustingPeer(peerId) ;
 	}
 
 	/* generate type */
@@ -573,13 +587,10 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 	/* only valid certs, and not ourselves */
 	if ((loaded) && (peerId != mConnMgr->getOwnId()))
 	{
-		mConnMgr->peerStatus(peerId, item->laddr, 
-					item->saddr, type, flags, RS_CB_DISC);
+		mConnMgr->peerStatus(peerId, item->laddr, item->saddr, type, flags, RS_CB_DISC);
 
 		std::string hashid1 = RsUtil::HashId(peerId, false);
-		mConnMgr->stunStatus(hashid1, item->saddr, type, 
-						RS_STUN_FRIEND_OF_FRIEND);
-
+		mConnMgr->stunStatus(hashid1, item->saddr, type, RS_STUN_FRIEND_OF_FRIEND);
 	}
 
 	addDiscoveryData(item->PeerId(), peerId, item->laddr, item->saddr, item->discFlags, time(NULL));

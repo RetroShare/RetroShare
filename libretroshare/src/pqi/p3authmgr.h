@@ -101,6 +101,10 @@ virtual bool CheckSaveCertificates() = 0;
 virtual bool saveCertificates() = 0;
 virtual bool loadCertificates() = 0;
 
+		/* first party trust info */
+virtual bool isTrustingMe(std::string id) = 0;
+virtual void addTrustingPeer(std::string id) = 0;
+
 		/* Load/Save certificates */
 
 virtual bool LoadCertificateFromString(std::string pem, std::string &id)  = 0;
@@ -169,6 +173,10 @@ virtual bool FinalSaveCertificates();
 virtual bool CheckSaveCertificates();
 virtual bool saveCertificates();
 virtual bool loadCertificates();
+
+		/* first party trust info */
+virtual bool isTrustingMe(std::string id) ;
+virtual void addTrustingPeer(std::string id) ;
 
 		/* Load/Save certificates */
 virtual bool LoadCertificateFromString(std::string pem, std::string &id);

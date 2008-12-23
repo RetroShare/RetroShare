@@ -23,6 +23,7 @@
  *
  */
 
+#include <iostream>
 #include "pqi/p3authmgr.h"
 
 pqiAuthDetails::pqiAuthDetails()
@@ -51,6 +52,16 @@ p3DummyAuthMgr::p3DummyAuthMgr()
 
 	mPeerList[mOwnId] = ownDetails;
 
+}
+
+bool p3DummyAuthMgr::isTrustingMe(std::string id) 
+{
+	std::cerr << "isTrustingMe is not implemented in p3DummyAuthMgr. Look into authxpgp.cc." << std::endl ;
+	return false ;
+}
+void p3DummyAuthMgr::addTrustingPeer(std::string id)
+{
+	std::cerr << "addTrustingPeer is not implemented in p3DummyAuthMgr. Look into authxpgp.cc." << std::endl ;
 }
 
 p3DummyAuthMgr::p3DummyAuthMgr(std::string ownId, std::list<pqiAuthDetails> peers)

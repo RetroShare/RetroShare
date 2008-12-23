@@ -57,6 +57,9 @@ virtual bool	getPeerDetails(std::string id, RsPeerDetails &d);
 virtual	bool addFriend(std::string id);
 virtual	bool removeFriend(std::string id);
 
+	/* get/set third party info about who trusts me */
+virtual bool isTrustingMe(std::string id) const ;
+
 	/* Network Stuff */
 virtual	bool connectAttempt(std::string id);
 virtual	bool setLocalAddress(std::string id, std::string addr, uint16_t port);
