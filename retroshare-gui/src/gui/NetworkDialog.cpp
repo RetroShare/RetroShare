@@ -49,6 +49,7 @@
 /* Images for Status icons */
 #define IMAGE_AUTHED         ":/images/accepted16.png"
 #define IMAGE_DENIED         ":/images/denied16.png"
+#define IMAGE_TRUSTED        ":/images/rs-2.png"
 
 RsCertId getNeighRsCertId(QTreeWidgetItem *i);
 
@@ -372,7 +373,7 @@ void NetworkDialog::insertConnect()
 			if (rsPeers->isTrustingMe(detail.id))
 			{
 				backgrndcolor=Qt::magenta;
-				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
+				item -> setIcon(0,(QIcon(IMAGE_TRUSTED)));
 			}
 			else if (detail.trustLvl > RS_TRUST_LVL_MARGINAL)
 			{
