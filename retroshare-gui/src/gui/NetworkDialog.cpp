@@ -369,7 +369,12 @@ void NetworkDialog::insertConnect()
 		}
 		else
 		{
-			if (detail.trustLvl > RS_TRUST_LVL_MARGINAL)
+			if (rsPeers->isTrustingMe(detail.id))
+			{
+				backgrndcolor=Qt::magenta;
+				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
+			}
+			else if (detail.trustLvl > RS_TRUST_LVL_MARGINAL)
 			{
 				backgrndcolor=Qt::cyan;
 				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
