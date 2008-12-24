@@ -292,8 +292,7 @@ void NetworkDialog::insertConnect()
                 	item -> setText(1, tr("Deny"));
 		}
 
-                item -> setText(2,QString::fromStdString(
-				RsPeerTrustString(detail.trustLvl)));
+		item -> setText(2,QString::fromStdString( RsPeerTrustString(detail.trustLvl)));
 
 		/* (3) Last Connect */
 		{
@@ -374,6 +373,9 @@ void NetworkDialog::insertConnect()
 			{
 				backgrndcolor=Qt::magenta;
 				item -> setIcon(0,(QIcon(IMAGE_TRUSTED)));
+				item -> setText(2,QString("Trusts me"));
+				for(int k=0;k<8;++k)
+					item -> setToolTip(k,QString::fromStdString(detail.name) + QString(tr(" is trusting you. \nRight-click and select 'make friend' to be able to connect."))) ;
 			}
 			else if (detail.trustLvl > RS_TRUST_LVL_MARGINAL)
 			{
