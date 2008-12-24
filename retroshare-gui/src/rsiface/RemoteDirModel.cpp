@@ -277,7 +277,7 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 			QIcon icon(":/images/FileTypePicture.png");
 		    return icon;
 		}
-		else if (ext == "avi" || ext == "mpg" || ext == "mpeg" || ext == "wmv"
+		else if (ext == "avi" || ext == "AVI" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "ogm"
 			|| ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov"
 			|| ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp")
 		{
@@ -285,13 +285,13 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 			QIcon icon(":/images/FileTypeVideo.png");
 		    return icon;
 		}
-		else if (ext == "ogg" || ext == "mp3" || ext == "wav" || ext == "wma")
+		else if (ext == "ogg" || ext == "mp3" || ext == "wav" || ext == "wma" || ext == "xpm")
 		{
 			//setIcon(0, QIcon(":/images/soundfile.png"));
 			QIcon icon(":/images/FileTypeAudio.png");
 		    return icon;
 		}
-		else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz"
+		else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "7z"
 		         || ext == "rar" || ext == "rpm" || ext == "deb")
 		{
 			//setIcon(0, QIcon(":/images/compressedfile.png"));
