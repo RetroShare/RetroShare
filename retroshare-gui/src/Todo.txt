@@ -11,6 +11,7 @@ RetroShare Todo list
 
 * Proxy support
 * DynDNS support
+* Plugin Interface(Developers can write then plugins for RetroShare, like Plugins for Tools,apps,games,...)
 
 * partial multi source download ("swarming")
 
