@@ -61,3 +61,14 @@ TODO on Messages
 	- friend requests.
 	- share channel/forum keys (enables private forums / group channels )
 
+TODO on Privat Chat
+======================================================================
+
+* Send files via drag and drop over Privat Chat Window
+* Send File from Privat Chat Window over Filemenu/Button 
+
+* Conference , can invite other Friends in a Privat Chat
+* Send a recorded voice message
+* VOIP
+
+
