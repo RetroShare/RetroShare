@@ -22,9 +22,17 @@
 
 #include "rsiface/rsfiles.h"
 
-
+#include <QContextMenuEvent>
+#include <QMenu>
+#include <QCursor>
+#include <QPoint>
+#include <QMouseEvent>
+#include <QPixmap>
 
 #include <QMessageBox>
+
+/* Images for context menu icons */
+#define IMAGE_CANCEL               ":/images/delete.png"
 
 /** Default constructor */
 ShareManager::ShareManager(QWidget *parent, Qt::WFlags flags)
@@ -39,12 +47,31 @@ ShareManager::ShareManager(QWidget *parent, Qt::WFlags flags)
   connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
 
+  connect( ui.shareddirList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( shareddirListCostumPopupMenu( QPoint ) ) );
+
+
 	ui.addButton->setToolTip(tr("Add a Share Directory"));
 	ui.removeButton->setToolTip(tr("Remove selected Shared Directory"));
 	
 	load();
 
 }
+
+void ShareManager::shareddirListCostumPopupMenu( QPoint point )
+{
+
+      QMenu contextMnu( this );
+      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
+
+      removeAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Remove" ), this );
+      connect( removeAct , SIGNAL( triggered() ), this, SLOT( removeShareDirectory() ) );
+
+
+      contextMnu.clear();
+      contextMnu.addAction( removeAct );
+      contextMnu.exec( mevent->globalPos() );
+}
+
 /** Loads the settings for this page */
 void ShareManager::load()
 {

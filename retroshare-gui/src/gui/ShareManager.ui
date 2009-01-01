@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Add Share Manager</string>
+   <string>RetroShare Share Manager</string>
   </property>
   <property name="windowIcon" >
    <iconset resource="images.qrc" >:/images/rstray3.png</iconset>
@@ -60,7 +60,11 @@ p, li { white-space: pre-wrap; }
      </property>
      <layout class="QGridLayout" >
       <item row="0" column="0" >
-       <widget class="QListWidget" name="shareddirList" />
+       <widget class="QListWidget" name="shareddirList" >
+        <property name="contextMenuPolicy" >
+         <enum>Qt::CustomContextMenu</enum>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

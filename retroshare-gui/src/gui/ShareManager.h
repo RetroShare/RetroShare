@@ -40,13 +40,25 @@ public:
   /** Loads the settings for this page */
   void load();
 public slots:
+
 protected:
+
 private slots:
 
-	void addShareDirectory();
-	void removeShareDirectory();
+  /** Create the context popup menu and it's submenus */
+  void shareddirListCostumPopupMenu( QPoint point );
+
+  void addShareDirectory();
+  void removeShareDirectory();
   
 private:
+
+
+
+  /** Define the popup menus for the Context menu */
+  QMenu* contextMnu;
+    /** Defines the actions for the context menu */
+  QAction* removeAct;
 
   /** Qt Designer generated object */
   Ui::ShareManager ui;
