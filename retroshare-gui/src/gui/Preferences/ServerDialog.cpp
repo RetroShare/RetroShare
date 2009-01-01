@@ -48,6 +48,9 @@ ServerDialog::ServerDialog(QWidget *parent)
    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
    timer->start(1000);
 
+	load();
+	updateStatus();
+
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN

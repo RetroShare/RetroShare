@@ -21,13 +21,21 @@
 
 #include "DirectoriesPage.h"
 #include "rshare.h"
+#include "rsiface/rsfiles.h"
+
 
 DirectoriesPage::DirectoriesPage(QWidget * parent, Qt::WFlags flags)
     : QWidget(parent, flags)
 {
-    ui.setupUi(this);
+    setupUi(this);
     setAttribute(Qt::WA_QuitOnClose, false);
 
+	load();
+  
+    //connect(addshareButton, SIGNAL(clicked( ) ), this , SLOT( addShareDirectory() ) );
+    connect(removeButton, SIGNAL(clicked( bool ) ), this , SLOT( removeShareDirectory() ) );
+    connect(incomingButton, SIGNAL(clicked( bool ) ), this , SLOT( setIncomingDirectory() ) );
+    connect(partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );
  
 }
 
@@ -42,13 +50,91 @@ DirectoriesPage::closeEvent (QCloseEvent * event)
 bool
 DirectoriesPage::save(QString &errmsg)
 {
+	return true;
 
 }
   
 /** Loads the settings for this page */
-void
-DirectoriesPage::load()
+void DirectoriesPage::load()
+{
+	std::list<std::string>::const_iterator it;
+	std::list<std::string> dirs;
+	rsFiles->getSharedDirectories(dirs);
+	
+	/* get a link to the table */
+	QListWidget *listWidget = dirList;
+	
+	/* remove old items ??? */
+	listWidget->clear();
+	
+	for(it = dirs.begin(); it != dirs.end(); it++)
+	{
+		/* (0) Dir Name */
+		listWidget->addItem(QString::fromStdString(*it));
+	}
+
+	incomingDir->setText(QString::fromStdString(rsFiles->getDownloadDirectory()));
+	partialsDir->setText(QString::fromStdString(rsFiles->getPartialsDirectory()));
+	
+	listWidget->update(); /* update display */
+
+
+}
+
+void DirectoriesPage::on_addshareButton_clicked()
 {
 
+	/* select a dir
+	 */
+
+
+ 	QString qdir = QFileDialog::getOpenFileName(this, tr("Add Shared Directory"),tr("All Files (*)"));
+	
+	/* add it to the server */
+	std::string dir = qdir.toStdString();
+	if (dir != "")
+	{
+		rsFiles->addSharedDirectory(dir);
+		load();
+	}
+}
+
+void DirectoriesPage::removeShareDirectory()
+{
+	/* id current dir */
+	/* ask for removal */
+	QListWidget *listWidget = dirList;
+	QListWidgetItem *qdir = listWidget -> currentItem();
+	if (qdir)
+	{
+		rsFiles->removeSharedDirectory( qdir->text().toStdString());
+		load();
+	}
+}
+
+void DirectoriesPage::setIncomingDirectory()
+{
+ 	QString qdir = QFileDialog::getExistingDirectory(this, tr("Set Incoming Directory"), "",
+				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+	
+	std::string dir = qdir.toStdString();
+	if (dir != "")
+	{
+		rsFiles->setDownloadDirectory(dir);
+	}
+	load();
+}
+
+void DirectoriesPage::setPartialsDirectory()
+{
+ 	QString qdir = QFileDialog::getExistingDirectory(this, tr("Set Partials Directory"), "",
+				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+	
+	std::string dir = qdir.toStdString();
+	if (dir != "")
+	{
+		rsFiles->setPartialsDirectory(dir);
+	}
+	load();
 }
 

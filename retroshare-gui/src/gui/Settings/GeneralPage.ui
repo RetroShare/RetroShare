@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>364</height>
+    <width>430</width>
+    <height>296</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -15,168 +15,124 @@
   <property name="windowIcon" >
    <iconset/>
   </property>
-  <widget class="QGroupBox" name="grpStyle" >
-   <property name="geometry" >
-    <rect>
-     <x>10</x>
-     <y>80</y>
-     <width>381</width>
-     <height>55</height>
-    </rect>
+  <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>6</number>
    </property>
-   <property name="contextMenuPolicy" >
-    <enum>Qt::NoContextMenu</enum>
+   <property name="topMargin" >
+    <number>6</number>
    </property>
-   <property name="toolTip" >
-    <string/>
+   <property name="rightMargin" >
+    <number>6</number>
    </property>
-   <property name="title" >
-    <string>Style</string>
+   <property name="bottomMargin" >
+    <number>6</number>
    </property>
-   <widget class="QWidget" name="layoutWidget" >
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>24</y>
-      <width>351</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" >
-     <property name="margin" >
-      <number>0</number>
+   <property name="horizontalSpacing" >
+    <number>0</number>
+   </property>
+   <property name="verticalSpacing" >
+    <number>0</number>
+   </property>
+   <item row="0" column="0" >
+    <widget class="QGroupBox" name="grpLogin" >
+     <property name="minimumSize" >
+      <size>
+       <width>0</width>
+       <height>48</height>
+      </size>
      </property>
-     <property name="spacing" >
-      <number>6</number>
+     <property name="title" >
+      <string>Login</string>
      </property>
-     <item row="0" column="0" >
-      <widget class="QComboBox" name="cmboStyle" >
-       <property name="minimumSize" >
-        <size>
-         <width>150</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="contextMenuPolicy" >
-        <enum>Qt::NoContextMenu</enum>
-       </property>
-       <property name="toolTip" >
-        <string>Choose RetroShare's interface style</string>
-       </property>
-       <property name="editable" >
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1" >
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="grpLanguage" >
-   <property name="geometry" >
-    <rect>
-     <x>10</x>
-     <y>0</y>
-     <width>381</width>
-     <height>75</height>
-    </rect>
-   </property>
-   <property name="contextMenuPolicy" >
-    <enum>Qt::NoContextMenu</enum>
-   </property>
-   <property name="title" >
-    <string>Language</string>
-   </property>
-   <widget class="QLabel" name="label" >
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>27</y>
-      <width>591</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="contextMenuPolicy" >
-     <enum>Qt::NoContextMenu</enum>
-    </property>
-    <property name="text" >
-     <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;/head>&lt;body style=" white-space: pre-wrap; font-family:Arial; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Changes to language will only take effect after restarting RetroShare!&lt;/p>&lt;/body>&lt;/html></string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="layoutWidget_2" >
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>44</y>
-      <width>351</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" >
-     <property name="margin" >
-      <number>0</number>
+     <widget class="QCheckBox" name="autologincheckBox" >
+      <property name="geometry" >
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>141</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Auto Login</string>
+      </property>
+     </widget>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="minimumSize" >
+      <size>
+       <width>0</width>
+       <height>80</height>
+      </size>
      </property>
-     <property name="spacing" >
-      <number>6</number>
+     <property name="title" >
+      <string>Misc</string>
      </property>
-     <item row="0" column="1" >
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>300</width>
-         <height>16</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="0" column="0" >
-      <widget class="QComboBox" name="cmboLanguage" >
-       <property name="minimumSize" >
-        <size>
-         <width>150</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="contextMenuPolicy" >
-        <enum>Qt::NoContextMenu</enum>
-       </property>
-       <property name="toolTip" >
-        <string>Choose the language used in RetroShare</string>
-       </property>
-       <property name="editable" >
-        <bool>false</bool>
-       </property>
-       <property name="iconSize" >
-        <size>
-         <width>24</width>
-         <height>16</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
+     <widget class="QCheckBox" name="chkShowOnStartup" >
+      <property name="geometry" >
+       <rect>
+        <x>10</x>
+        <y>40</y>
+        <width>401</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Show MainWindow at Startup</string>
+      </property>
+      <property name="checked" >
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkStartMinimized" >
+      <property name="geometry" >
+       <rect>
+        <x>10</x>
+        <y>60</y>
+        <width>401</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Start minimized</string>
+      </property>
+      <property name="checked" >
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chkRunRetroshareAtSystemStartup" >
+      <property name="geometry" >
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>411</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Start RetroShare when my system starts</string>
+      </property>
+     </widget>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>391</width>
+       <height>61</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
  </widget>
- <tabstops>
-  <tabstop>cmboLanguage</tabstop>
-  <tabstop>cmboStyle</tabstop>
- </tabstops>
  <resources>
   <include location="../images.qrc" />
  </resources>

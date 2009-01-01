@@ -34,6 +34,8 @@
 
 class GeneralPage: public QWidget
 {
+  Q_OBJECT
+
     public:
         GeneralPage(QWidget * parent = 0, Qt::WFlags flags = 0);
         ~GeneralPage() {}
@@ -42,6 +44,12 @@ class GeneralPage: public QWidget
     bool save(QString &errmsg);
     /** Loads the settings for this page */
     void load();
+  bool startMinimized() const;
+
+private slots:
+
+  /** Called when the "show on startup" checkbox is toggled. */
+  void toggleShowOnStartup(bool checked);
 
     private:
        /** A VidaliaSettings object used for saving/loading settings */

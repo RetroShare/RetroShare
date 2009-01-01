@@ -22,29 +22,36 @@
 
 #include "GeneralPage.h"
 #include "rshare.h"
+#include <util/stringutil.h>
+
+#include <QSystemTrayIcon>
 
 GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
     : QWidget(parent, flags)
 {
     ui.setupUi(this);
     setAttribute(Qt::WA_QuitOnClose, false);
-    setWindowTitle(windowTitle() + QLatin1String(" - Gloster 2"));
+    setWindowTitle(windowTitle() + QLatin1String(" - General"));
 
-    //GConfig config;
-    //config.loadWidgetInformation(this);
     
      /* Create RshareSettings object */
    _settings = new RshareSettings();
 
-   /* Populate combo boxes */
-   foreach (QString code, LanguageSupport::languageCodes()) {
-     ui.cmboLanguage->addItem(QIcon(":/images/flags/" + code + ".png"),
-                             LanguageSupport::languageName(code),
-                             code);
-   }
-   foreach (QString style, QStyleFactory::keys()) {
-    ui.cmboStyle->addItem(style, style.toLower());
-   }
+  if (QSystemTrayIcon::isSystemTrayAvailable()){
+
+    /* Check if we are supposed to show our main window on startup */
+    ui.chkShowOnStartup->setChecked(_settings->showMainWindowAtStart());
+    if (ui.chkShowOnStartup->isChecked())
+      show();
+  } else {
+    /* Don't let people hide the main window, since that's all they have. */
+    ui.chkShowOnStartup->hide();
+    show();
+  }
+  /* Hide platform specific features */
+#ifndef Q_WS_WIN
+  ui.chkRunRetroshareAtSystemStartup->setVisible(false);
+#endif    
 }
 
 void
@@ -62,14 +69,11 @@ bool
 GeneralPage::save(QString &errmsg)
 {
   Q_UNUSED(errmsg);
-  QString languageCode =
-    LanguageSupport::languageCode(ui.cmboLanguage->currentText());
+  _settings->setValue(QString::fromUtf8("StartMinimized"), startMinimized());
   
-  _settings->setLanguageCode(languageCode);
-  _settings->setInterfaceStyle(ui.cmboStyle->currentText());
- 
-  /* Set to new style */
-  Rshare::setStyle(ui.cmboStyle->currentText());
+  _settings->setRunRetroshareOnBoot(
+  ui.chkRunRetroshareAtSystemStartup->isChecked());
+
   return true;
 }
   
@@ -77,10 +81,23 @@ GeneralPage::save(QString &errmsg)
 void
 GeneralPage::load()
 {
-  int index = ui.cmboLanguage->findData(_settings->getLanguageCode());
-  ui.cmboLanguage->setCurrentIndex(index);
-  
-  index = ui.cmboStyle->findData(Rshare::style().toLower());
-  ui.cmboStyle->setCurrentIndex(index);
+  ui.chkRunRetroshareAtSystemStartup->setChecked(
+  _settings->runRetroshareOnBoot());
+ 
+  ui.checkStartMinimized->setChecked(_settings->value(QString::fromUtf8("StartMinimized"), false).toBool());
 }
+
+bool GeneralPage::startMinimized() const {
+  if(ui.checkStartMinimized->isChecked()) return true;
+  return ui.checkStartMinimized->isChecked();
+}
+
+/** Called when the "show on startup" checkbox is toggled. */
+void
+GeneralPage::toggleShowOnStartup(bool checked)
+{
+  //RshareSettings _settings;
+  _settings->setShowMainWindowAtStart(checked);
+}
+
 

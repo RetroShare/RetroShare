@@ -22,25 +22,40 @@
 #ifndef DIRECTORIESPAGE_H
 # define DIRECTORIESPAGE_H
 
-# include <QtGui/QWidget>
+#include <QFileDialog>
+#include <QWidget>
+#include <QtGui>
+
+
 # include "ui_DirectoriesPage.h"
 
-class DirectoriesPage: public QWidget
+class DirectoriesPage: public QWidget, private Ui::DirectoriesPage
 {
+  Q_OBJECT
+
     public:
         DirectoriesPage(QWidget * parent = 0, Qt::WFlags flags = 0);
-        ~DirectoriesPage() {}
+      //  ~DirectoriesPage() {}
         
     /** Saves the changes on this page */
     bool save(QString &errmsg);
     /** Loads the settings for this page */
     void load();
 
+
+
+    private slots:
+	void on_addshareButton_clicked();
+	void removeShareDirectory();
+	void setIncomingDirectory();
+	void setPartialsDirectory();
+
+
     private:
     
        void closeEvent (QCloseEvent * event);
         
-       Ui::DirectoriesPage ui;
+       
 };
 
 #endif // !GENERALPAGE_H

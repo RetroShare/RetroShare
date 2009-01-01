@@ -77,9 +77,13 @@ GSettingsWin::setNewPage(int page)
     else if (page == Directories)
         text = tr("Directories");
     else if (page == Server)
+
         text = tr("Server");
 
     pageName->setText(tr("%1").arg(text));
     stackedWidget->setCurrentIndex(page);
     listWidget->setCurrentRow(page);
 }
+
+
+

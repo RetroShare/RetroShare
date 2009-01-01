@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>456</width>
-    <height>356</height>
+    <width>452</width>
+    <height>349</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -501,197 +501,195 @@
   <property name="contextMenuPolicy" >
    <enum>Qt::NoContextMenu</enum>
   </property>
-  <widget class="QGroupBox" name="groupBox_2" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>200</y>
-     <width>441</width>
-     <height>72</height>
-    </rect>
+  <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>6</number>
    </property>
-   <property name="title" >
-    <string>Incoming Directory</string>
+   <property name="topMargin" >
+    <number>6</number>
    </property>
-   <layout class="QGridLayout" >
-    <item row="0" column="0" >
-     <widget class="QLineEdit" name="incomingDir" >
-      <property name="readOnly" >
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1" >
-     <widget class="QPushButton" name="incomingButton" >
-      <property name="minimumSize" >
-       <size>
-        <width>31</width>
-        <height>31</height>
-       </size>
-      </property>
-      <property name="maximumSize" >
-       <size>
-        <width>31</width>
-        <height>31</height>
-       </size>
-      </property>
-      <property name="text" >
-       <string/>
-      </property>
-      <property name="icon" >
-       <iconset resource="../images.qrc" >:/images/directoryselect_24x24_shadow.png</iconset>
-      </property>
-      <property name="iconSize" >
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QGroupBox" name="groupBox" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>441</width>
-     <height>200</height>
-    </rect>
+   <property name="rightMargin" >
+    <number>6</number>
    </property>
-   <property name="title" >
-    <string>Shared Directories</string>
+   <property name="bottomMargin" >
+    <number>6</number>
    </property>
-   <widget class="QListWidget" name="dirList" >
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>381</width>
-      <height>171</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="addButton" >
-    <property name="geometry" >
-     <rect>
-      <x>400</x>
-      <y>20</y>
-      <width>34</width>
-      <height>34</height>
-     </rect>
-    </property>
-    <property name="minimumSize" >
-     <size>
-      <width>34</width>
-      <height>34</height>
-     </size>
-    </property>
-    <property name="maximumSize" >
-     <size>
-      <width>34</width>
-      <height>34</height>
-     </size>
-    </property>
-    <property name="text" >
-     <string/>
-    </property>
-    <property name="icon" >
-     <iconset resource="../images.qrc" >:/images/directoryadd_24x24_shadow.png</iconset>
-    </property>
-    <property name="iconSize" >
-     <size>
-      <width>24</width>
-      <height>24</height>
-     </size>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="removeButton" >
-    <property name="geometry" >
-     <rect>
-      <x>400</x>
-      <y>60</y>
-      <width>34</width>
-      <height>34</height>
-     </rect>
-    </property>
-    <property name="minimumSize" >
-     <size>
-      <width>34</width>
-      <height>34</height>
-     </size>
-    </property>
-    <property name="maximumSize" >
-     <size>
-      <width>34</width>
-      <height>34</height>
-     </size>
-    </property>
-    <property name="text" >
-     <string/>
-    </property>
-    <property name="icon" >
-     <iconset resource="../images.qrc" >:/images/directoryremove_24x24_shadow.png</iconset>
-    </property>
-    <property name="iconSize" >
-     <size>
-      <width>24</width>
-      <height>24</height>
-     </size>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="groupBox_3" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>270</y>
-     <width>441</width>
-     <height>72</height>
-    </rect>
+   <property name="horizontalSpacing" >
+    <number>0</number>
    </property>
-   <property name="title" >
-    <string>Partials Direcrtory</string>
+   <property name="verticalSpacing" >
+    <number>0</number>
    </property>
-   <layout class="QGridLayout" >
-    <item row="0" column="0" >
-     <widget class="QLineEdit" name="partialsDir" >
-      <property name="readOnly" >
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1" >
-     <widget class="QPushButton" name="partialButton" >
-      <property name="minimumSize" >
-       <size>
-        <width>31</width>
-        <height>31</height>
-       </size>
-      </property>
-      <property name="maximumSize" >
-       <size>
-        <width>31</width>
-        <height>31</height>
-       </size>
-      </property>
-      <property name="text" >
-       <string/>
-      </property>
-      <property name="icon" >
-       <iconset resource="../images.qrc" >:/images/directoryselect_24x24_shadow.png</iconset>
-      </property>
-      <property name="iconSize" >
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
+   <item row="0" column="0" >
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>Shared Directories</string>
+     </property>
+     <layout class="QGridLayout" >
+      <item rowspan="3" row="0" column="0" >
+       <widget class="QListWidget" name="dirList" />
+      </item>
+      <item row="0" column="1" >
+       <widget class="QPushButton" name="addButton" >
+        <property name="minimumSize" >
+         <size>
+          <width>34</width>
+          <height>34</height>
+         </size>
+        </property>
+        <property name="maximumSize" >
+         <size>
+          <width>34</width>
+          <height>34</height>
+         </size>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+        <property name="icon" >
+         <iconset resource="../images.qrc" >:/images/directoryadd_24x24_shadow.png</iconset>
+        </property>
+        <property name="iconSize" >
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QPushButton" name="removeButton" >
+        <property name="minimumSize" >
+         <size>
+          <width>34</width>
+          <height>34</height>
+         </size>
+        </property>
+        <property name="maximumSize" >
+         <size>
+          <width>34</width>
+          <height>34</height>
+         </size>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+        <property name="icon" >
+         <iconset resource="../images.qrc" >:/images/directoryremove_24x24_shadow.png</iconset>
+        </property>
+        <property name="iconSize" >
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>20</width>
+          <height>71</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="title" >
+      <string>Incoming Directory</string>
+     </property>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <widget class="QLineEdit" name="incomingDir" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QPushButton" name="incomingButton" >
+        <property name="minimumSize" >
+         <size>
+          <width>31</width>
+          <height>31</height>
+         </size>
+        </property>
+        <property name="maximumSize" >
+         <size>
+          <width>31</width>
+          <height>31</height>
+         </size>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+        <property name="icon" >
+         <iconset resource="../images.qrc" >:/images/directoryselect_24x24_shadow.png</iconset>
+        </property>
+        <property name="iconSize" >
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QGroupBox" name="groupBox_3" >
+     <property name="title" >
+      <string>Partials Direcrtory</string>
+     </property>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <widget class="QLineEdit" name="partialsDir" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QPushButton" name="partialButton" >
+        <property name="minimumSize" >
+         <size>
+          <width>31</width>
+          <height>31</height>
+         </size>
+        </property>
+        <property name="maximumSize" >
+         <size>
+          <width>31</width>
+          <height>31</height>
+         </size>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+        <property name="icon" >
+         <iconset resource="../images.qrc" >:/images/directoryselect_24x24_shadow.png</iconset>
+        </property>
+        <property name="iconSize" >
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <tabstops>
   <tabstop>incomingDir</tabstop>

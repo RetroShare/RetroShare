@@ -10,9 +10,7 @@
    </rect>
   </property>
   <property name="sizePolicy" >
-   <sizepolicy>
-    <hsizetype>7</hsizetype>
-    <vsizetype>7</vsizetype>
+   <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -500,91 +498,7 @@
   <property name="contextMenuPolicy" >
    <enum>Qt::NoContextMenu</enum>
   </property>
-  <widget class="QGroupBox" name="groupBox" >
-   <property name="geometry" >
-    <rect>
-     <x>10</x>
-     <y>0</y>
-     <width>371</width>
-     <height>81</height>
-    </rect>
-   </property>
-   <property name="title" >
-    <string>Rate Options</string>
-   </property>
-   <widget class="QLabel" name="label" >
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>141</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>Max Total Data Rate (KB/S):</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2" >
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>50</y>
-      <width>116</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Rate per Person (KB/S):&lt;/p>&lt;/body>&lt;/html></string>
-    </property>
-   </widget>
-   <widget class="QDoubleSpinBox" name="doubleSpinBox_2" >
-    <property name="geometry" >
-     <rect>
-      <x>280</x>
-      <y>50</y>
-      <width>62</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="decimals" >
-     <number>1</number>
-    </property>
-    <property name="maximum" >
-     <double>256.000000000000000</double>
-    </property>
-    <property name="value" >
-     <double>5.000000000000000</double>
-    </property>
-   </widget>
-   <widget class="QDoubleSpinBox" name="doubleSpinBox" >
-    <property name="geometry" >
-     <rect>
-      <x>280</x>
-      <y>20</y>
-      <width>62</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="decimals" >
-     <number>1</number>
-    </property>
-    <property name="maximum" >
-     <double>356.000000000000000</double>
-    </property>
-    <property name="value" >
-     <double>20.000000000000000</double>
-    </property>
-   </widget>
-  </widget>
  </widget>
- <tabstops>
-  <tabstop>doubleSpinBox</tabstop>
-  <tabstop>doubleSpinBox_2</tabstop>
- </tabstops>
  <resources>
   <include location="../images.qrc" />
  </resources>

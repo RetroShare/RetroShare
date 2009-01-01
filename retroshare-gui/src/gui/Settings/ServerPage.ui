@@ -5,14 +5,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>399</width>
-    <height>389</height>
+    <width>437</width>
+    <height>388</height>
    </rect>
   </property>
   <property name="sizePolicy" >
-   <sizepolicy>
-    <hsizetype>7</hsizetype>
-    <vsizetype>7</vsizetype>
+   <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -500,200 +498,421 @@
   <property name="contextMenuPolicy" >
    <enum>Qt::NoContextMenu</enum>
   </property>
-  <widget class="QPushButton" name="pushButton" >
-   <property name="geometry" >
-    <rect>
-     <x>10</x>
-     <y>160</y>
-     <width>181</width>
-     <height>23</height>
-    </rect>
+  <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>6</number>
    </property>
-   <property name="text" >
-    <string>Change + Restart Server</string>
+   <property name="topMargin" >
+    <number>6</number>
    </property>
-  </widget>
-  <widget class="QGroupBox" name="groupBox" >
-   <property name="geometry" >
-    <rect>
-     <x>10</x>
-     <y>0</y>
-     <width>381</width>
-     <height>101</height>
-    </rect>
+   <property name="rightMargin" >
+    <number>6</number>
    </property>
-   <property name="title" >
-    <string>Server Settings</string>
+   <property name="bottomMargin" >
+    <number>6</number>
    </property>
-   <widget class="QLabel" name="label_2" >
-    <property name="geometry" >
-     <rect>
-      <x>12</x>
-      <y>61</y>
-      <width>80</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">External Adress:&lt;/p>&lt;/body>&lt;/html></string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label" >
-    <property name="geometry" >
-     <rect>
-      <x>12</x>
-      <y>21</y>
-      <width>66</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Lokal Adress:&lt;/p>&lt;/body>&lt;/html></string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="layoutWidget" >
-    <property name="geometry" >
-     <rect>
-      <x>98</x>
-      <y>10</y>
-      <width>271</width>
-      <height>81</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" >
-     <property name="margin" >
+   <property name="horizontalSpacing" >
+    <number>0</number>
+   </property>
+   <property name="verticalSpacing" >
+    <number>0</number>
+   </property>
+   <item row="0" column="0" >
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title" >
+      <string>Network Configuration (takes effect after restart)</string>
+     </property>
+     <layout class="QHBoxLayout" >
+      <item>
+       <layout class="QVBoxLayout" >
+        <item>
+         <widget class="QComboBox" name="netModeComboBox" >
+          <item>
+           <property name="text" >
+            <string>Automatic</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Firewalled</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Forwarded Port</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="QComboBox" name="dhtComboBox" >
+            <item>
+             <property name="text" >
+              <string>DHT Enabled</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>DHT Disabled</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="discComboBox" >
+            <item>
+             <property name="text" >
+              <string>Discovery Enabled</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Discovery Disabled</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QTabWidget" name="networktabWidget" >
+     <property name="currentIndex" >
       <number>0</number>
      </property>
-     <property name="spacing" >
-      <number>6</number>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>Network Configuration</string>
+      </attribute>
+      <layout class="QGridLayout" >
+       <item row="0" column="0" >
+        <widget class="QGroupBox" name="groupBox" >
+         <property name="title" >
+          <string>Network Configuration</string>
+         </property>
+         <layout class="QGridLayout" >
+          <item row="0" column="0" >
+           <layout class="QHBoxLayout" >
+            <item>
+             <layout class="QVBoxLayout" >
+              <item>
+               <widget class="QLabel" name="label" >
+                <property name="text" >
+                 <string>Local Address</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_2" >
+                <property name="text" >
+                 <string>External Address</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QGridLayout" >
+              <item row="0" column="0" >
+               <widget class="QLineEdit" name="localAddress" />
+              </item>
+              <item row="0" column="1" >
+               <widget class="QLabel" name="label_5" >
+                <property name="text" >
+                 <string>Port:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2" >
+               <widget class="QSpinBox" name="localPort" >
+                <property name="minimum" >
+                 <number>0</number>
+                </property>
+                <property name="maximum" >
+                 <number>65535</number>
+                </property>
+                <property name="value" >
+                 <number>7812</number>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0" >
+               <widget class="QLineEdit" name="extAddress" />
+              </item>
+              <item row="1" column="1" >
+               <widget class="QLabel" name="label_4" >
+                <property name="text" >
+                 <string>Port:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="2" >
+               <widget class="QSpinBox" name="extPort" >
+                <property name="minimum" >
+                 <number>0</number>
+                </property>
+                <property name="maximum" >
+                 <number>65535</number>
+                </property>
+                <property name="value" >
+                 <number>7812</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>381</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2" >
+      <attribute name="title" >
+       <string>Network Status</string>
+      </attribute>
+      <layout class="QGridLayout" >
+       <item row="0" column="0" >
+        <layout class="QHBoxLayout" >
+         <item>
+          <layout class="QVBoxLayout" >
+           <item>
+            <widget class="QRadioButton" name="radio_nonet" >
+             <property name="text" >
+              <string>No Conectivity</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radio_netLimited" >
+             <property name="text" >
+              <string>Limited</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radio_netUdp" >
+             <property name="text" >
+              <string>Udp</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radio_netServer" >
+             <property name="text" >
+              <string>Retroshare Server</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" >
+           <item>
+            <widget class="QCheckBox" name="check_udp" >
+             <property name="text" >
+              <string>UDP Connections</string>
+             </property>
+             <property name="checkable" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="check_ext" >
+             <property name="text" >
+              <string>Stable External IP Addrress</string>
+             </property>
+             <property name="checkable" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="check_dht" >
+             <property name="text" >
+              <string>DHT Okay</string>
+             </property>
+             <property name="checkable" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="check_upnp" >
+             <property name="text" >
+              <string>UPnP Active</string>
+             </property>
+             <property name="checkable" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="check_tcp" >
+             <property name="text" >
+              <string>TCP server</string>
+             </property>
+             <property name="checkable" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QGroupBox" name="groupBox_3" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <item row="0" column="0" >
-      <layout class="QGridLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
-       <item row="0" column="0" >
-        <widget class="QLineEdit" name="lineEdit" />
-       </item>
-       <item row="0" column="1" >
-        <widget class="QLabel" name="label_4" >
-         <property name="text" >
-          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Port:&lt;/p>&lt;/body>&lt;/html></string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2" >
-        <widget class="QSpinBox" name="spinBox_2" >
-         <property name="maximum" >
-          <number>65535</number>
-         </property>
-         <property name="minimum" >
-          <number>1</number>
-         </property>
-         <property name="value" >
-          <number>7812</number>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="1" column="0" >
-      <layout class="QGridLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
-       <item row="0" column="2" >
-        <widget class="QSpinBox" name="spinBox_3" >
-         <property name="maximum" >
-          <number>65535</number>
-         </property>
-         <property name="minimum" >
-          <number>1</number>
-         </property>
-         <property name="value" >
-          <number>7812</number>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <widget class="QLabel" name="label_3" >
-         <property name="text" >
-          <string>Port:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" >
-        <widget class="QLineEdit" name="lineEdit_2" />
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="groupBox_2" >
-   <property name="geometry" >
-    <rect>
-     <x>10</x>
-     <y>100</y>
-     <width>381</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="title" >
-    <string>Misc</string>
-   </property>
-   <widget class="QCheckBox" name="checkBox" >
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>131</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>behinde Firewall</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="checkBox_2" >
-    <property name="geometry" >
-     <rect>
-      <x>130</x>
-      <y>20</y>
-      <width>151</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>Forwarded External Port</string>
-    </property>
-   </widget>
-  </widget>
+     <property name="title" >
+      <string>Transfer Rates</string>
+     </property>
+     <layout class="QHBoxLayout" >
+      <item>
+       <layout class="QHBoxLayout" >
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_14" >
+          <property name="text" >
+           <string>Total Rate (KB/s) </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="totalRate" >
+          <property name="minimum" >
+           <number>1</number>
+          </property>
+          <property name="maximum" >
+           <number>12500</number>
+          </property>
+          <property name="value" >
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" >
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_12" >
+          <property name="text" >
+           <string>Per Person  </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="indivRate" >
+          <property name="minimum" >
+           <number>1</number>
+          </property>
+          <property name="maximum" >
+           <number>12500</number>
+          </property>
+          <property name="value" >
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
  </widget>
- <tabstops>
-  <tabstop>lineEdit</tabstop>
-  <tabstop>spinBox_2</tabstop>
-  <tabstop>lineEdit_2</tabstop>
-  <tabstop>spinBox_3</tabstop>
-  <tabstop>checkBox</tabstop>
-  <tabstop>checkBox_2</tabstop>
-  <tabstop>pushButton</tabstop>
- </tabstops>
  <resources>
   <include location="../images.qrc" />
  </resources>

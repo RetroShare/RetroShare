@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>636</width>
-    <height>418</height>
+    <width>409</width>
+    <height>373</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -488,6 +488,24 @@
    <enum>Qt::NoContextMenu</enum>
   </property>
   <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>6</number>
+   </property>
+   <property name="topMargin" >
+    <number>6</number>
+   </property>
+   <property name="rightMargin" >
+    <number>6</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>6</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>0</number>
+   </property>
+   <property name="verticalSpacing" >
+    <number>0</number>
+   </property>
    <item row="0" column="0" >
     <widget class="QGroupBox" name="groupBox_2" >
      <property name="sizePolicy" >
@@ -572,180 +590,214 @@
     </widget>
    </item>
    <item row="1" column="0" >
-    <widget class="QGroupBox" name="groupBox" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+    <widget class="QTabWidget" name="tabWidget" >
+     <property name="currentIndex" >
+      <number>0</number>
      </property>
-     <property name="title" >
-      <string>Network Configuration</string>
-     </property>
-     <layout class="QVBoxLayout" >
-      <item>
-       <layout class="QHBoxLayout" >
-        <item>
-         <layout class="QVBoxLayout" >
-          <item>
-           <widget class="QRadioButton" name="radio_nonet" >
-            <property name="text" >
-             <string>No Conectivity</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="radio_netLimited" >
-            <property name="text" >
-             <string>Limited</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="radio_netUdp" >
-            <property name="text" >
-             <string>Udp</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="radio_netServer" >
-            <property name="text" >
-             <string>Retroshare Server</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" >
-          <item>
-           <widget class="QCheckBox" name="check_udp" >
-            <property name="text" >
-             <string>UDP Connections</string>
-            </property>
-            <property name="checkable" >
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="check_ext" >
-            <property name="text" >
-             <string>Stable External IP Addrress</string>
-            </property>
-            <property name="checkable" >
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="check_dht" >
-            <property name="text" >
-             <string>DHT Okay</string>
-            </property>
-            <property name="checkable" >
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="check_upnp" >
-            <property name="text" >
-             <string>UPnP Active</string>
-            </property>
-            <property name="checkable" >
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="check_tcp" >
-            <property name="text" >
-             <string>TCP server</string>
-            </property>
-            <property name="checkable" >
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" >
-        <item>
-         <layout class="QVBoxLayout" >
-          <item>
-           <widget class="QLabel" name="label" >
-            <property name="text" >
-             <string>Local Address</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_2" >
-            <property name="text" >
-             <string>External Address</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>Network Configuration</string>
+      </attribute>
+      <layout class="QGridLayout" >
+       <item row="0" column="0" >
+        <widget class="QGroupBox" name="groupBox" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title" >
+          <string>Network Configuration</string>
+         </property>
          <layout class="QGridLayout" >
           <item row="0" column="0" >
-           <widget class="QLineEdit" name="localAddress" />
-          </item>
-          <item row="0" column="1" >
-           <widget class="QLabel" name="label_5" >
-            <property name="text" >
-             <string>Port:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2" >
-           <widget class="QSpinBox" name="localPort" >
-            <property name="minimum" >
-             <number>0</number>
-            </property>
-            <property name="maximum" >
-             <number>65535</number>
-            </property>
-            <property name="value" >
-             <number>7812</number>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" >
+            <item>
+             <layout class="QVBoxLayout" >
+              <item>
+               <widget class="QLabel" name="label" >
+                <property name="text" >
+                 <string>Local Address</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_2" >
+                <property name="text" >
+                 <string>External Address</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QGridLayout" >
+              <item row="0" column="0" >
+               <widget class="QLineEdit" name="localAddress" />
+              </item>
+              <item row="0" column="1" >
+               <widget class="QLabel" name="label_5" >
+                <property name="text" >
+                 <string>Port:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2" >
+               <widget class="QSpinBox" name="localPort" >
+                <property name="minimum" >
+                 <number>0</number>
+                </property>
+                <property name="maximum" >
+                 <number>65535</number>
+                </property>
+                <property name="value" >
+                 <number>7812</number>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0" >
+               <widget class="QLineEdit" name="extAddress" />
+              </item>
+              <item row="1" column="1" >
+               <widget class="QLabel" name="label_4" >
+                <property name="text" >
+                 <string>Port:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="2" >
+               <widget class="QSpinBox" name="extPort" >
+                <property name="minimum" >
+                 <number>0</number>
+                </property>
+                <property name="maximum" >
+                 <number>65535</number>
+                </property>
+                <property name="value" >
+                 <number>7812</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
           </item>
           <item row="1" column="0" >
-           <widget class="QLineEdit" name="extAddress" />
-          </item>
-          <item row="1" column="1" >
-           <widget class="QLabel" name="label_4" >
-            <property name="text" >
-             <string>Port:</string>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
             </property>
-           </widget>
-          </item>
-          <item row="1" column="2" >
-           <widget class="QSpinBox" name="extPort" >
-            <property name="minimum" >
-             <number>0</number>
+            <property name="sizeHint" >
+             <size>
+              <width>301</width>
+              <height>20</height>
+             </size>
             </property>
-            <property name="maximum" >
-             <number>65535</number>
-            </property>
-            <property name="value" >
-             <number>7812</number>
-            </property>
-           </widget>
+           </spacer>
           </item>
          </layout>
-        </item>
-       </layout>
-      </item>
-     </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2" >
+      <attribute name="title" >
+       <string>Network Status</string>
+      </attribute>
+      <layout class="QGridLayout" >
+       <item row="0" column="0" >
+        <layout class="QHBoxLayout" >
+         <item>
+          <layout class="QVBoxLayout" >
+           <item>
+            <widget class="QRadioButton" name="radio_nonet" >
+             <property name="text" >
+              <string>No Conectivity</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radio_netLimited" >
+             <property name="text" >
+              <string>Limited</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radio_netUdp" >
+             <property name="text" >
+              <string>Udp</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radio_netServer" >
+             <property name="text" >
+              <string>Retroshare Server</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" >
+           <item>
+            <widget class="QCheckBox" name="check_udp" >
+             <property name="text" >
+              <string>UDP Connections</string>
+             </property>
+             <property name="checkable" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="check_ext" >
+             <property name="text" >
+              <string>Stable External IP Addrress</string>
+             </property>
+             <property name="checkable" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="check_dht" >
+             <property name="text" >
+              <string>DHT Okay</string>
+             </property>
+             <property name="checkable" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="check_upnp" >
+             <property name="text" >
+              <string>UPnP Active</string>
+             </property>
+             <property name="checkable" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="check_tcp" >
+             <property name="text" >
+              <string>TCP server</string>
+             </property>
+             <property name="checkable" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item row="2" column="0" >

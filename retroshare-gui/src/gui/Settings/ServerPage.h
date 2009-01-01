@@ -27,6 +27,8 @@
 
 class ServerPage: public QWidget
 {
+  Q_OBJECT
+
     public:
         ServerPage(QWidget * parent = 0, Qt::WFlags flags = 0);
         ~ServerPage() {}
@@ -35,6 +37,13 @@ class ServerPage: public QWidget
     bool save(QString &errmsg);
     /** Loads the settings for this page */
     void load();
+
+public slots:
+  void updateStatus();
+
+private slots:
+  void saveAddresses();
+  void toggleUPnP();
 
     private:
     
