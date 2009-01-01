@@ -82,7 +82,10 @@ MessengerWindow::MessengerWindow(QWidget * parent)
 	connect( ui.messengertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messengertreeWidgetCostumPopupMenu( QPoint ) ) );
 
 	connect( ui.avatarButton, SIGNAL(clicked()), SLOT(changeAvatarClicked()));
-    connect( ui.addIMAccountButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend2() ) );
+    	connect( ui.addIMAccountButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend2() ) );
+
+    	connect( ui.messengertreeWidget, SIGNAL(itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend2()));
+
 
   
 	/* to hide the header  */

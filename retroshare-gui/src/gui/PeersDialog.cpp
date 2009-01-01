@@ -84,6 +84,7 @@ PeersDialog::PeersDialog(QWidget *parent)
   ui.setupUi(this);
 
   connect( ui.peertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( peertreeWidgetCostumPopupMenu( QPoint ) ) );
+  connect( ui.peertreeWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend()));
 
   /* hide the Tree +/- */
   ui.peertreeWidget -> setRootIsDecorated( false );
