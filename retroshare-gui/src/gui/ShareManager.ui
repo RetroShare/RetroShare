@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>525</width>
-    <height>312</height>
+    <width>492</width>
+    <height>370</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -17,6 +17,43 @@
   </property>
   <layout class="QGridLayout" >
    <item row="0" column="0" colspan="4" >
+    <layout class="QGridLayout" >
+     <item row="0" column="0" >
+      <widget class="QLabel" name="piclabel" >
+       <property name="minimumSize" >
+        <size>
+         <width>48</width>
+         <height>48</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>48</width>
+         <height>48</height>
+        </size>
+       </property>
+       <property name="text" >
+        <string/>
+       </property>
+       <property name="pixmap" >
+        <pixmap resource="images.qrc" >:/images/fileshare48.png</pixmap>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QLabel" name="label_2" >
+       <property name="text" >
+        <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:16pt; font-weight:600; color:#32cd32;">Share Manager&lt;/span>&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:16pt;">&lt;span style=" font-size:10pt;">Add a new Folder to Share with your Friends or remove a Shared Folder.&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0" colspan="4" >
     <widget class="QGroupBox" name="groupBox" >
      <property name="title" >
       <string>Shared Folder Manager</string>
@@ -28,12 +65,12 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="0" >
+   <item row="2" column="0" >
     <widget class="QPushButton" name="addButton" >
      <property name="minimumSize" >
       <size>
-       <width>34</width>
-       <height>34</height>
+       <width>27</width>
+       <height>0</height>
       </size>
      </property>
      <property name="maximumSize" >
@@ -45,9 +82,6 @@
      <property name="text" >
       <string>Add</string>
      </property>
-     <property name="icon" >
-      <iconset resource="images.qrc" >:/images/add-share24.png</iconset>
-     </property>
      <property name="iconSize" >
       <size>
        <width>24</width>
@@ -56,12 +90,12 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1" >
+   <item row="2" column="1" >
     <widget class="QPushButton" name="removeButton" >
      <property name="minimumSize" >
       <size>
-       <width>34</width>
-       <height>34</height>
+       <width>0</width>
+       <height>0</height>
       </size>
      </property>
      <property name="maximumSize" >
@@ -73,18 +107,15 @@
      <property name="text" >
       <string>Remove</string>
      </property>
-     <property name="icon" >
-      <iconset resource="images.qrc" >:/images/directoryremove_24x24_shadow.png</iconset>
-     </property>
      <property name="iconSize" >
       <size>
-       <width>24</width>
-       <height>24</height>
+       <width>16</width>
+       <height>16</height>
       </size>
      </property>
     </widget>
    </item>
-   <item row="1" column="2" >
+   <item row="2" column="2" >
     <spacer>
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
@@ -97,7 +128,7 @@
      </property>
     </spacer>
    </item>
-   <item row="1" column="3" >
+   <item row="2" column="3" >
     <widget class="QDialogButtonBox" name="buttonBox" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
