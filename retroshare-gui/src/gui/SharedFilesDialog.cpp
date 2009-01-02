@@ -73,6 +73,11 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 
   connect( ui.remoteDirTreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( shareddirtreeviewCostumPopupMenu( QPoint ) ) );
 
+  connect( ui.remoteDirTreeView, SIGNAL( doubleClicked(const QModelIndex&)), this, SLOT( downloadRemoteSelected()));
+  connect( ui.downloadButton, SIGNAL( clicked()), this, SLOT( downloadRemoteSelected()));
+
+
+
 /*
   connect( ui.remoteDirTreeView, SIGNAL( itemExpanded( QTreeWidgetItem * ) ), 
 	this, SLOT( checkForLocalDirRequest( QTreeWidgetItem * ) ) );
@@ -202,6 +207,7 @@ void SharedFilesDialog::downloadRemoteSelected()
 
   QItemSelectionModel *qism = ui.remoteDirTreeView->selectionModel();
   model -> downloadSelected(qism->selectedIndexes());
+
 
 }
 
@@ -470,3 +476,4 @@ void SharedFilesDialog::showFrame(bool show)
         ui.frameButton->setIcon(QIcon(tr(":images/show_toolbox_frame.png")));
     }
 }
+

@@ -42,8 +42,9 @@ public:
   /** Default Destructor */
 
 	/* For handling the model updates */
-void  preModDirectories(bool update_local);
-void     ModDirectories(bool update_local);
+  void  preModDirectories(bool update_local);
+  void  ModDirectories(bool update_local);
+
 
 private slots:
 
