@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>516</width>
-    <height>472</height>
+    <width>491</width>
+    <height>427</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -580,6 +580,20 @@
             </property>
            </widget>
           </item>
+          <item row="4" column="0" >
+           <widget class="QLabel" name="label_7" >
+            <property name="text" >
+             <string>Last Contact</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1" >
+           <widget class="QLineEdit" name="lastcontact" >
+            <property name="readOnly" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -729,7 +743,14 @@
          </layout>
         </widget>
        </item>
-       <item row="2" column="0" >
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>Trust Settings</string>
+      </attribute>
+      <layout class="QGridLayout" >
+       <item row="0" column="0" >
         <widget class="QGroupBox" name="groupBox_3" >
          <property name="title" >
           <string>Trust Settings</string>
@@ -765,6 +786,19 @@
           </item>
          </layout>
         </widget>
+       </item>
+       <item row="1" column="0" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>451</width>
+           <height>131</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -818,9 +852,6 @@
   <tabstop>extAddress</tabstop>
   <tabstop>extPort</tabstop>
   <tabstop>extName</tabstop>
-  <tabstop>trustLvl</tabstop>
-  <tabstop>signBox</tabstop>
-  <tabstop>trustBox</tabstop>
   <tabstop>cancelButton</tabstop>
   <tabstop>applyButton</tabstop>
  </tabstops>

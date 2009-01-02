@@ -23,6 +23,9 @@
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 
+#include <QTime>
+
+
 /* Define the format used for displaying the date and time */
 #define DATETIME_FMT  "MMM dd hh:mm:ss"
 
@@ -86,7 +89,11 @@ void ConfCertDialog::loadDialog()
 	ui.name->setText(QString::fromStdString(detail.name));
 	ui.orgloc->setText(QString::fromStdString(detail.org));
 	ui.country->setText(QString::fromStdString(detail.location));
-    ui.peerid->setText(QString::fromStdString(detail.id));
+        ui.peerid->setText(QString::fromStdString(detail.id));
+	// Dont Show a timestamp in RS calculate the day
+	QDateTime date = QDateTime::fromTime_t(detail.lastConnect);
+	QString stime = date.toString(Qt::LocalDate);
+        ui.lastcontact-> setText(stime);
 	
 	/* set local address */
 	ui.localAddress->setText(QString::fromStdString(detail.localAddr));
