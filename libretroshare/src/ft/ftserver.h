@@ -149,6 +149,7 @@ virtual int SearchBoolExp(Expression * exp, std::list<FileDetail> &results);
 virtual bool ConvertSharedFilePath(std::string path, std::string &fullpath);
 virtual void ForceDirectoryCheck();
 virtual bool InDirectoryCheck();
+virtual void setFileHashingCallback( void(*cb)(const std::string&));
 
 /***
  * Directory Handling 

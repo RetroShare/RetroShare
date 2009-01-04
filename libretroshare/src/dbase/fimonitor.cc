@@ -43,7 +43,7 @@
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, std::string cachedir, std::string pid)
 	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cachedir), fi(pid), 
 		pendingDirs(false), pendingForceCacheWrite(false), 
-		mForceCheck(false), mInCheck(false)
+		mForceCheck(false), mInCheck(false),_hashing_info_callback(NULL)
 
 {
 	updatePeriod = 60;
@@ -184,8 +184,10 @@ void 	FileIndexMonitor::setPeriod(int period)
 }
 
 void 	FileIndexMonitor::run()
+//void 	FileIndexMonitor::run(std::string& current_job)
 {
 
+//	updateCycle(current_job);
 	updateCycle();
 
 	while(1)
@@ -210,11 +212,13 @@ void 	FileIndexMonitor::run()
 			}
 		}
 
+//		updateCycle(current_job);
 		updateCycle();
 	}
 }
 
 
+//void 	FileIndexMonitor::updateCycle(std::string& current_job)
 void 	FileIndexMonitor::updateCycle()
 {
 	time_t startstamp = time(NULL);
@@ -473,6 +477,8 @@ void 	FileIndexMonitor::updateCycle()
                 /* update files */
                 for(hit = filesToHash.begin(); hit != filesToHash.end(); hit++)
                 {
+//						 currentJob = "Hashing file " + realpath ;
+
 			if (hashFile(realpath, (*hit)))
 			{
 				/* lock dirs */
@@ -501,6 +507,7 @@ void 	FileIndexMonitor::updateCycle()
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
                 }
+//					 currentJob = "" ;
         }
 
 	fiMutex.lock(); { /* LOCKED DIRS */
@@ -589,6 +596,8 @@ void 	FileIndexMonitor::updateCycle()
 		RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
 		mInCheck = false;
 	}
+	if(_hashing_info_callback != NULL)
+		(*_hashing_info_callback)("") ;
 }
 
 	/* interface */
@@ -787,6 +796,9 @@ bool FileIndexMonitor::hashFile(std::string fullpath, FileEntry &fent)
 	SHA_CTX *sha_ctx = new SHA_CTX;
 	unsigned char sha_buf[SHA_DIGEST_LENGTH];
 	unsigned char gblBuf[512];
+
+	if(_hashing_info_callback != NULL)
+		(*_hashing_info_callback)("Hashing "+f_hash) ;
 
 #ifdef FIM_DEBUG
 	std::cerr << "File to hash = " << f_hash << std::endl;

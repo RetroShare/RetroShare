@@ -85,6 +85,8 @@ bool 	updateCache(const CacheData &data);     /* we call when we have a new cach
 
 
 	/* the FileIndexMonitor inner workings */
+//virtual void 	run(std::string& currentJob); /* overloaded from RsThread */
+//void 	updateCycle(std::string& currentJob);
 virtual void 	run(); /* overloaded from RsThread */
 void 	updateCycle();
 
@@ -94,6 +96,7 @@ void    getSharedDirectories(std::list<std::string> &dirs);
 void    setPeriod(int insecs);
 void    forceDirectoryCheck();
 bool	inDirectoryCheck();
+void		setFileHashingCallback(void (*cb)(const std::string&)) { _hashing_info_callback = cb ; }
 	/* util fns */
 
 	private:
@@ -122,6 +125,7 @@ bool 	hashFile(std::string path, FileEntry &fi); /* To Implement */
 	std::list<std::string> pendingDirList;
 bool    internal_setSharedDirectories();
 
+	void (*_hashing_info_callback)(const std::string&) ;
 };
 
 

@@ -400,6 +400,10 @@ bool    ftServer::InDirectoryCheck()
 {
 	return mFiMon->inDirectoryCheck();
 }
+void ftServer::setFileHashingCallback( void (*cb)(const std::string&) )
+{
+	mFiMon->setFileHashingCallback( cb ) ;
+}
 	
 bool	ftServer::getSharedDirectories(std::list<std::string> &dirs)
 {
