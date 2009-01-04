@@ -119,14 +119,18 @@
 static QLabel *hash_info_label = NULL ;
 static void displayHashingInfo(const std::string& s)
 {
-	if(hash_info_label != NULL)
-		if(s == "")
-			hash_info_label->hide() ;
-		else
-		{
-			hash_info_label->show() ;
-			hash_info_label->setText(QString::fromStdString(s)) ;
-		}
+	return ;
+
+	// I disabled this, because it's causing core dumps. I'll see what I can do.
+	
+//	if(hash_info_label != NULL)
+//		if(s == "")
+//			hash_info_label->hide() ;
+//		else
+//		{
+//			hash_info_label->show() ;
+//			hash_info_label->setText(QString::fromStdString(s)) ;
+//		}
 }
 
 /** Constructor */
