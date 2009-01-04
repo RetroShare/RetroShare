@@ -1,11 +1,15 @@
 #!/bin/sh
 
 ###################### PARAMETERS ####################
-version="0.4.11b"
+version="0.4.11d"
 arch=`dpkg --print-architecture`
 packager="Cyril Soler <csoler@users.sourceforge.net>"
 ######################################################
 
+echo attempting to get svn revision number...
+svn=`svn info | grep 'Revision:' | cut -d\  -f2`
+echo done.
+version="$version"."$svn"
 echo
 echo Building retroshare debian package version $version for Ubuntu $arch. 
 echo Please check that:
