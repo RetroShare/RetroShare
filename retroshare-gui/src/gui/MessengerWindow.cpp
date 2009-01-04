@@ -81,7 +81,7 @@ MessengerWindow::MessengerWindow(QWidget * parent)
 
 	connect( ui.messengertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messengertreeWidgetCostumPopupMenu( QPoint ) ) );
 
-	connect( ui.avatarButton, SIGNAL(clicked()), SLOT(changeAvatarClicked()));
+	connect( ui.avatarButton, SIGNAL(clicked()), SLOT(getPicture()));
     	connect( ui.addIMAccountButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend2() ) );
 
     	connect( ui.messengertreeWidget, SIGNAL(itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend2()));
@@ -532,3 +532,14 @@ LogoBar & MessengerWindow::getLogoBar() const {
 	return *_rsLogoBarmessenger;
 }
 
+void MessengerWindow::getPicture()
+{
+	QString fileName = QFileDialog::getOpenFileName(this, "Load File",
+							QDir::homePath(),
+							"Pictures (*.png *.xpm *.jpg)");
+	if(!fileName.isEmpty())
+	{
+		picture = QPixmap(fileName).scaled(72,72, Qt::KeepAspectRatio);
+		ui.avatarButton->setIcon(picture);
+	}
+}

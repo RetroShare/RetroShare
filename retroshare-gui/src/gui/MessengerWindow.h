@@ -45,6 +45,7 @@ public:
   
   NetworkDialog *networkDialog2;
 
+  QPixmap picture;
 
 
 public slots:
@@ -74,6 +75,9 @@ private slots:
   void configurefriend2();
   
   void addFriend2();
+
+   void getPicture();
+
 
   /** RsServer Friend Calls */
   void allowfriend2();

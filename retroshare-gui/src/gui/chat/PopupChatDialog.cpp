@@ -62,9 +62,12 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   
   styleHtm = appDir + "/style/chat/default.htm";
   
-  /* Hide ToolBox frame */
-  showAvatarFrame(true);
+  /* Hide Avatar frame */
+  showAvatarFrame(false);
+
   connect(ui.avatarFrameButton, SIGNAL(toggled(bool)), this, SLOT(showAvatarFrame(bool)));
+
+  connect(ui.actionAvatar, SIGNAL(triggered()),this, SLOT(getAvatar()));
 
   connect(ui.chattextEdit, SIGNAL(textChanged ( ) ), this, SLOT(checkChat( ) ));
   
@@ -468,4 +471,16 @@ void PopupChatDialog::changeStyle()
 	QTextCursor cursor = ui.textBrowser->textCursor();
 	cursor.movePosition(QTextCursor::End);
 	ui.textBrowser->setTextCursor(cursor);
+}
+
+void PopupChatDialog::getAvatar()
+{
+	QString fileName = QFileDialog::getOpenFileName(this, "Load File",
+							QDir::homePath(),
+							"Pictures (*.png *.xpm *.jpg)");
+	if(!fileName.isEmpty())
+	{
+		picture = QPixmap(fileName).scaled(82,82, Qt::KeepAspectRatio);
+		ui.myavatarlabel->setPixmap(picture);
+	}
 }

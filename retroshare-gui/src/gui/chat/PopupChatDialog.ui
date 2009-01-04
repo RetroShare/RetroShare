@@ -6,29 +6,24 @@
     <x>0</x>
     <y>0</y>
     <width>484</width>
-    <height>401</height>
+    <height>437</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>12</y>
-     <width>484</width>
-     <height>368</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="gridLayout_2" >
+   <layout class="QGridLayout" >
     <property name="rightMargin" >
      <number>0</number>
     </property>
     <property name="bottomMargin" >
      <number>0</number>
     </property>
-    <property name="spacing" >
+    <property name="horizontalSpacing" >
+     <number>0</number>
+    </property>
+    <property name="verticalSpacing" >
      <number>0</number>
     </property>
     <item row="0" column="0" >
@@ -78,18 +73,18 @@
         <widget class="QLabel" name="avatarlabel" >
          <property name="minimumSize" >
           <size>
-           <width>70</width>
-           <height>70</height>
+           <width>116</width>
+           <height>116</height>
           </size>
          </property>
          <property name="maximumSize" >
           <size>
-           <width>70</width>
-           <height>70</height>
+           <width>116</width>
+           <height>116</height>
           </size>
          </property>
          <property name="styleSheet" >
-          <string notr="true" >QLabel{
+          <string>QLabel{
 border-image: url(:/images/mystatus_bg.png);
 
 }</string>
@@ -107,7 +102,7 @@ border-image: url(:/images/mystatus_bg.png);
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" >
           <size>
            <width>61</width>
            <height>141</height>
@@ -119,18 +114,18 @@ border-image: url(:/images/mystatus_bg.png);
         <widget class="QLabel" name="myavatarlabel" >
          <property name="minimumSize" >
           <size>
-           <width>70</width>
-           <height>70</height>
+           <width>116</width>
+           <height>116</height>
           </size>
          </property>
          <property name="maximumSize" >
           <size>
-           <width>70</width>
-           <height>70</height>
+           <width>116</width>
+           <height>116</height>
           </size>
          </property>
          <property name="styleSheet" >
-          <string notr="true" >QLabel{
+          <string>QLabel{
 border-image: url(:/images/mystatus_bg.png);
 
 }</string>
@@ -151,10 +146,10 @@ border-image: url(:/images/mystatus_bg.png);
          <property name="sizeType" >
           <enum>QSizePolicy::Fixed</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" >
           <size>
            <width>61</width>
-           <height>41</height>
+           <height>30</height>
           </size>
          </property>
         </spacer>
@@ -197,7 +192,7 @@ border-image: url(:/images/mystatus_bg.png);
         <property name="orientation" >
          <enum>Qt::Vertical</enum>
         </property>
-        <property name="sizeHint" stdset="0" >
+        <property name="sizeHint" >
          <size>
           <width>14</width>
           <height>321</height>
@@ -209,13 +204,19 @@ border-image: url(:/images/mystatus_bg.png);
     </item>
     <item row="1" column="0" >
      <widget class="QFrame" name="Chatbuttonframe" >
+      <property name="minimumSize" >
+       <size>
+        <width>16</width>
+        <height>46</height>
+       </size>
+      </property>
       <property name="frameShape" >
        <enum>QFrame::StyledPanel</enum>
       </property>
       <property name="frameShadow" >
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QGridLayout" name="gridLayout" >
+      <layout class="QGridLayout" >
        <property name="topMargin" >
         <number>9</number>
        </property>
@@ -227,7 +228,7 @@ border-image: url(:/images/mystatus_bg.png);
          <property name="orientation" >
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" >
           <size>
            <width>190</width>
            <height>25</height>
@@ -318,8 +319,7 @@ p, li { white-space: pre-wrap; }
           <string/>
          </property>
          <property name="icon" >
-          <iconset>
-           <normaloff>C:/Dokumente und Einstellungen/Linux/.designer/backup</normaloff>C:/Dokumente und Einstellungen/Linux/.designer/backup</iconset>
+          <iconset>C:/Dokumente und Einstellungen/Linux/.designer/backup</iconset>
          </property>
          <property name="checkable" >
           <bool>false</bool>
@@ -347,8 +347,7 @@ p, li { white-space: pre-wrap; }
           <string/>
          </property>
          <property name="icon" >
-          <iconset>
-           <normaloff>C:/Dokumente und Einstellungen/Linux/.designer/backup</normaloff>C:/Dokumente und Einstellungen/Linux/.designer/backup</iconset>
+          <iconset>C:/Dokumente und Einstellungen/Linux/.designer/backup</iconset>
          </property>
          <property name="checkable" >
           <bool>false</bool>
@@ -376,8 +375,7 @@ p, li { white-space: pre-wrap; }
           <string/>
          </property>
          <property name="icon" >
-          <iconset>
-           <normaloff>C:/Dokumente und Einstellungen/Linux/.designer/backup</normaloff>C:/Dokumente und Einstellungen/Linux/.designer/backup</iconset>
+          <iconset>C:/Dokumente und Einstellungen/Linux/.designer/backup</iconset>
          </property>
          <property name="checkable" >
           <bool>false</bool>
@@ -405,8 +403,7 @@ p, li { white-space: pre-wrap; }
           <string/>
          </property>
          <property name="icon" >
-          <iconset>
-           <normaloff>C:/Dokumente und Einstellungen/Linux/.designer/backup</normaloff>C:/Dokumente und Einstellungen/Linux/.designer/backup</iconset>
+          <iconset>C:/Dokumente und Einstellungen/Linux/.designer/backup</iconset>
          </property>
          <property name="checkable" >
           <bool>false</bool>
@@ -467,7 +464,7 @@ p, li { white-space: pre-wrap; }
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
         </property>
-        <property name="sizeHint" stdset="0" >
+        <property name="sizeHint" >
          <size>
           <width>351</width>
           <height>20</height>
@@ -486,27 +483,16 @@ p, li { white-space: pre-wrap; }
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusbar" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>380</y>
-     <width>484</width>
-     <height>21</height>
-    </rect>
-   </property>
-  </widget>
+  <widget class="QStatusBar" name="statusbar" />
   <widget class="QToolBar" name="toolBar" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>484</width>
-     <height>12</height>
-    </rect>
-   </property>
    <property name="windowTitle" >
     <string>toolBar</string>
+   </property>
+   <property name="iconSize" >
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
    </property>
    <attribute name="toolBarArea" >
     <enum>TopToolBarArea</enum>
@@ -514,6 +500,7 @@ p, li { white-space: pre-wrap; }
    <attribute name="toolBarBreak" >
     <bool>false</bool>
    </attribute>
+   <addaction name="actionAvatar" />
   </widget>
   <action name="actionBold" >
    <property name="text" >
@@ -535,7 +522,20 @@ p, li { white-space: pre-wrap; }
     <string>Strike</string>
    </property>
   </action>
+  <action name="actionAvatar" >
+   <property name="icon" >
+    <iconset resource="../images.qrc" >:/images/add_image24.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Avatar</string>
+   </property>
+   <property name="toolTip" >
+    <string>Set your Avatar Picture</string>
+   </property>
+  </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../images.qrc" />
+ </resources>
  <connections/>
 </ui>

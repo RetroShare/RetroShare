@@ -55,6 +55,10 @@ public:
   void loadEmoticons();
 
   QString loadEmptyStyle(); 
+
+
+   QPixmap picture;
+
    
 public slots:
   /** Overloaded QWidget.show */
@@ -81,6 +85,9 @@ private slots:
  
   void checkChat();
   void sendChat();
+
+  void getAvatar();
+
   
   
 private:
@@ -103,6 +110,8 @@ private:
    QString emptyStyle;
    QStringList history;
    QString wholeChat;
+
+
   
   /** Qt Designer generated object */
   Ui::PopupChatDialog ui;
