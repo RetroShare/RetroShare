@@ -137,11 +137,24 @@ QListWidget::item:selected { /* when user selects item using mouse or keyboard *
                                      stop: 0 #BDDF7D, stop: 1 #49881F);
 }
 
+QTreeWidget {
+	 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #376D85, stop: 1 #185772);
+
+ }
+ 
+
 QTreeWidget::item:selected { /* when user selects item using mouse or keyboard */
      background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #BDDF7D, stop: 1 #49881F);
 
 }
+
+QTreeView {
+	 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #376D85, stop: 1 #185772);
+
+ }
 
 QTreeView::item:selected { /* when user selects item using mouse or keyboard */
 
@@ -197,5 +210,12 @@ QLabel#tolabel{
 QLabel#fromText{
 	font: bold ;
 	color: blue;
+
+}
+
+QStatusBar {
+    
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #BDDF7D, stop: 1 #49881F);
 
 }

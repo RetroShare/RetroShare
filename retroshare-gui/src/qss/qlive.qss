@@ -24,6 +24,12 @@ QListWidget::item:selected { /* when user selects item using mouse or keyboard *
      background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #F6F9FA, stop: 1 #C6D3E5);
 }
+QTreeWidget {
+	 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #77AEF1, stop: 0.4 #86BBF7);
+
+ }
+
 
 QTreeWidget::item:selected { /* when user selects item using mouse or keyboard */
      background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,

@@ -97,12 +97,27 @@ QListWidget::item:selected { /* when user selects item using mouse or keyboard *
                                      stop: 0 #F7B552, stop: 1 #FF5E07);
 }
 
+
+QTreeWidget { /* when user selects item using mouse or keyboard */
+
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #F7B552, stop: 1 #FF5E07);
+                                     
+
+}
 QTreeWidget::item:selected { /* when user selects item using mouse or keyboard */
 
-     /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 #F7B552, stop: 1 #FF5E07);*/
+
                                      
      border-image: url(qss/gofast/border.png);
+
+}
+
+QTreeView { /* when user selects item using mouse or keyboard */
+
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #F7B552, stop: 1 #FF5E07);
+                                     
 
 }
 
