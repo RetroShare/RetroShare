@@ -27,6 +27,7 @@
 #include <QDialog>
 
 #include "ui_PopupChatDialog.h"
+#include <gui/Preferences/rsharesettings.h>
 
 #include "rsiface/rsiface.h"
 
@@ -53,6 +54,8 @@ public:
   void addChatMsg(ChatInfo *ci);
   
   void loadEmoticons();
+  void loadEmoticons2();
+
 
   QString loadEmptyStyle(); 
 

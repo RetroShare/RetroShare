@@ -57,6 +57,9 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 {
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
+
+  RshareSettings config;
+  config.loadWidgetInformation(this);
   
   loadEmoticons();
   
@@ -171,6 +174,9 @@ void PopupChatDialog::flash()
 
 void PopupChatDialog::closeEvent (QCloseEvent * event)
 {
+    RshareSettings config;
+    config.saveWidgetInformation(this);
+
     hide();
     event->ignore();
 }
@@ -212,11 +218,19 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
         QString name = QString::fromStdString(ci ->name);        
         QString message = QString::fromStdWString(ci -> msg);
 
-        QHashIterator<QString, QString> i(smileys);
+        /*QHashIterator<QString, QString> i(smileys);
 	while(i.hasNext())
 	{
 		i.next();
 		message.replace(i.key(), "<img src=\"" + i.value() + "\">");
+	}*/
+
+	QHashIterator<QString, QString> i(smileys);
+	while(i.hasNext())
+	{
+		i.next();
+		foreach(QString code, i.key().split("|"))
+			message.replace(code, "<img src=\"" + i.value() + "\" />");
 	}
 	history /*<< nickColor << color << font << fontSize*/ << timestamp << name << message;
 	
@@ -354,7 +368,7 @@ void PopupChatDialog::setFont()
 
 }
 
-void PopupChatDialog::loadEmoticons()
+void PopupChatDialog::loadEmoticons2()
 {
 	QDir smdir(QApplication::applicationDirPath() + "/emoticons/kopete");
 	//QDir smdir(":/gui/images/emoticons/kopete");
@@ -371,6 +385,57 @@ void PopupChatDialog::loadEmoticons()
 		smileys.insert(smstring, info.absoluteFilePath());
 	}
 }
+
+void PopupChatDialog::loadEmoticons()
+{
+	QString sm_codes;
+	QFile sm_file(QApplication::applicationDirPath() + "/emoticons/emotes.acs");
+	sm_file.open(QIODevice::ReadOnly);
+	sm_codes = sm_file.readAll();
+	sm_file.close();
+	sm_codes.remove("\n");
+	sm_codes.remove("\r");
+	int i = 0;
+	QString smcode;
+	QString smfile;
+	while(sm_codes[i] != '{')
+	{
+		i++;
+		
+	}
+	while (i < sm_codes.length()-2)
+	{
+		smcode = "";
+		smfile = "";
+		while(sm_codes[i] != '\"')
+		{
+			i++;
+		}
+		i++;
+		while (sm_codes[i] != '\"')
+		{
+			smcode += sm_codes[i];
+			i++;
+			
+		}
+		i++;
+		
+		while(sm_codes[i] != '\"')
+		{
+			i++;
+		}
+		i++;
+		while(sm_codes[i] != '\"' && sm_codes[i+1] != ';')
+		{
+			smfile += sm_codes[i];
+			i++;
+		}
+		i++;
+		if(!smcode.isEmpty() && !smfile.isEmpty())
+			smileys.insert(smcode, smfile);
+	}
+}
+
 
 void PopupChatDialog::smileyWidget()
 { 
@@ -407,7 +472,7 @@ void PopupChatDialog::smileyWidget()
 
 void PopupChatDialog::addSmiley()
 {
-	ui.chattextEdit->setText(ui.chattextEdit->toHtml() + qobject_cast<QPushButton*>(sender())->toolTip());
+	ui.chattextEdit->setText(ui.chattextEdit->toPlainText() + qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
 }
 
 QString PopupChatDialog::loadEmptyStyle()
