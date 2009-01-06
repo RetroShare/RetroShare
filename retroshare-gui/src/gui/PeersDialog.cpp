@@ -688,11 +688,12 @@ void PeersDialog::insertChat()
 		currenttxt += extraTxt;
 		
 		QHashIterator<QString, QString> i(smileys);
-	    while(i.hasNext())
-	    {
+		while(i.hasNext())
+		{
 			i.next();
-			currenttxt.replace(i.key(), "<img src=\"" + i.value() + "\">");
-	    }
+			foreach(QString code, i.key().split("|"))
+				currenttxt.replace(code, "<img src=\"" + i.value() + "\" />");
+		}
 
 		
         msgWidget->setHtml(currenttxt);
@@ -980,18 +981,51 @@ void PeersDialog::displayInfoChatMenu(const QPoint& pos)
 
 void PeersDialog::loadEmoticonsgroupchat()
 {
-	QDir smdir(QApplication::applicationDirPath() + "/emoticons/kopete");
-	QFileInfoList sminfo = smdir.entryInfoList(QStringList() << "*.gif" << "*.png", QDir::Files, QDir::Name);
-	foreach(QFileInfo info, sminfo)
+	QString sm_codes;
+	QFile sm_file(QApplication::applicationDirPath() + "/emoticons/emotes.acs");
+	sm_file.open(QIODevice::ReadOnly);
+	sm_codes = sm_file.readAll();
+	sm_file.close();
+	sm_codes.remove("\n");
+	sm_codes.remove("\r");
+	int i = 0;
+	QString smcode;
+	QString smfile;
+	while(sm_codes[i] != '{')
 	{
-		QString smcode = info.fileName().replace(".gif", "");
-		QString smstring;
-		for(int i = 0; i < 9; i+=3)
+		i++;
+		
+	}
+	while (i < sm_codes.length()-2)
+	{
+		smcode = "";
+		smfile = "";
+		while(sm_codes[i] != '\"')
 		{
-			smstring += QString((char)smcode.mid(i,3).toInt());
+			i++;
 		}
-		//qDebug(smstring.toAscii());
-		smileys.insert(smstring, info.absoluteFilePath());
+		i++;
+		while (sm_codes[i] != '\"')
+		{
+			smcode += sm_codes[i];
+			i++;
+			
+		}
+		i++;
+		
+		while(sm_codes[i] != '\"')
+		{
+			i++;
+		}
+		i++;
+		while(sm_codes[i] != '\"' && sm_codes[i+1] != ';')
+		{
+			smfile += sm_codes[i];
+			i++;
+		}
+		i++;
+		if(!smcode.isEmpty() && !smfile.isEmpty())
+			smileys.insert(smcode, smfile);
 	}
 }
 
@@ -1031,6 +1065,6 @@ void PeersDialog::smileyWidgetgroupchat()
 
 void PeersDialog::addSmileys()
 {
-	ui.lineEdit->setText(ui.lineEdit->toHtml() + qobject_cast<QPushButton*>(sender())->toolTip());
+	ui.lineEdit->setText(ui.lineEdit->toHtml() + qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
 }
 
