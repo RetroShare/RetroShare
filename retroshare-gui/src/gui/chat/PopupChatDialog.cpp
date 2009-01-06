@@ -109,8 +109,8 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   ui.textunderlineButton->setCheckable(true);
   ui.textitalicButton->setCheckable(true);
   
-  /*Disabled style Button when will switch style RetroShare will crash need to be fix */
-  ui.styleButton->setEnabled(false);
+  /*Disabled style Button when will switch chat style RetroShare will crash need to be fix */
+  //ui.styleButton->setEnabled(false);
    
   /*QMenu * fontmenu = new QMenu();
   fontmenu->addAction(ui.actionBold);
