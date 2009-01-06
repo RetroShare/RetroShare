@@ -29,16 +29,22 @@
 DirectoriesDialog::DirectoriesDialog(QWidget *parent)
 : ConfigPage(parent)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  ui.setupUi(this);
+  	/* Invoke the Qt Designer generated object setup routine */
+  	ui.setupUi(this);
 
- /* Create RshareSettings object */
-  _settings = new RshareSettings();
+ 	/* Create RshareSettings object */
+  	_settings = new RshareSettings();
 
-  connect(ui.addButton, SIGNAL(clicked( bool ) ), this , SLOT( addShareDirectory() ) );
-  connect(ui.removeButton, SIGNAL(clicked( bool ) ), this , SLOT( removeShareDirectory() ) );
-  connect(ui.incomingButton, SIGNAL(clicked( bool ) ), this , SLOT( setIncomingDirectory() ) );
-  connect(ui.partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );
+  	connect(ui.addButton, SIGNAL(clicked( bool ) ), this , SLOT( addShareDirectory() ) );
+  	connect(ui.removeButton, SIGNAL(clicked( bool ) ), this , SLOT( removeShareDirectory() ) );
+  	connect(ui.incomingButton, SIGNAL(clicked( bool ) ), this , SLOT( setIncomingDirectory() ) );
+  	connect(ui.partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );
+
+    	ui.addButton->setToolTip(tr("Add a Share Directory"));
+    	ui.removeButton->setToolTip(tr("Remove Shared Directory"));
+    	ui.incomingButton->setToolTip(tr("Browse"));
+    	ui.partialButton->setToolTip(tr("Erowse"));
+
 
 
   /* Hide platform specific features */
@@ -88,8 +94,10 @@ void DirectoriesDialog::addShareDirectory()
 	/* select a dir
 	 */
 
-
- 	QString qdir = QFileDialog::getOpenFileName(this, tr("Add Shared Directory"),tr("All Files (*)"));
+	int ind;
+ 	QString qdir = QFileDialog::getExistingDirectory(this, tr("Add Shared Directory"), "", 	 
+ 	                            QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+        ind=qdir.lastIndexOf("/");
 	
 	/* add it to the server */
 	std::string dir = qdir.toStdString();

@@ -114,6 +114,7 @@ void ShareManager::addShareDirectory()
 	{
 		rsFiles->addSharedDirectory(dir);
 		load();
+        	messageBoxOk("Shared Directory Added!");
 	}
 }
 
@@ -123,13 +124,30 @@ void ShareManager::removeShareDirectory()
 	/* ask for removal */
 	QListWidget *listWidget = ui.shareddirList;
 	QListWidgetItem *qdir = listWidget -> currentItem();
+
+	QString queryWrn;
+	queryWrn.clear();
+	queryWrn.append("Do You Want to Delete ? ");
 	if (qdir)
 	{
-		rsFiles->removeSharedDirectory( qdir->text().toStdString());
-		load();
+		if ((QMessageBox::question(this, tr("Warning!"),queryWrn,QMessageBox::Ok|QMessageBox::No, QMessageBox::Ok))== QMessageBox::Ok)
+		{
+			rsFiles->removeSharedDirectory( qdir->text().toStdString());
+			load();
+		}
+		else
+		return;
+
 	}
 }
 
+bool  ShareManager::messageBoxOk(QString msg)
+ {
+    QMessageBox mb("Share Manager InfoBox!",msg,QMessageBox::Information,QMessageBox::Ok,0,0);
+    mb.setButtonText( QMessageBox::Ok, "OK" );
+    mb.exec();
+    return true;
+ }
 
 
 

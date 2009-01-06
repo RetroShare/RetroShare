@@ -109,7 +109,7 @@ void ShareFilesDialog::remove_File()
 
 bool  ShareFilesDialog::messageBoxOk(QString msg)
  {
-    QMessageBox mb("files and itz names!",msg,QMessageBox::Information,QMessageBox::Ok,0,0);
+    QMessageBox mb("Share Manager MessageBox",msg,QMessageBox::Information,QMessageBox::Ok,0,0);
     mb.setButtonText( QMessageBox::Ok, "OK" );
     mb.exec();
     return true;

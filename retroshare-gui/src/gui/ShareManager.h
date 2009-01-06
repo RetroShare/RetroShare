@@ -39,6 +39,8 @@ public:
 
   /** Loads the settings for this page */
   void load();
+  bool messageBoxOk(QString);
+
 public slots:
 
 protected:
