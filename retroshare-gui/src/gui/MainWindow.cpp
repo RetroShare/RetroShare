@@ -174,6 +174,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(ui.actionSMPlayer, SIGNAL(triggered()), this, SLOT( showsmplayer()) );
     connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT( showabout()) );
     connect(ui.actionColor, SIGNAL(triggered()), this, SLOT( setStyle()) );
+    connect(ui.actionSettings, SIGNAL(triggered()), this, SLOT( showSettings()) );
+
    	 
        
     /** adjusted quit behaviour: trigger a warning that can be switched off in the saved
@@ -359,6 +361,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
             menu->addAction(QIcon(IMAGE_RETROSHARE), tr("Show/Hide"), this, SLOT(toggleVisibilitycontextmenu()));
     menu->addSeparator();
     menu->addAction(_messengerwindowAct);
+    menu->addAction(_messagesAct);
+
 
     /* bandwidth only in development version */
 #ifdef RS_RELEASE_VERSION    
@@ -453,7 +457,7 @@ void MainWindow::addActionservice(QAction *actionservice, const char *slot)
 }
 
 /** Overloads the default show so we can load settings */
-void MainWindow::show()
+/*void MainWindow::show()
 {
   
     if (!this->isVisible()) {
@@ -463,15 +467,17 @@ void MainWindow::show()
         setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
         QMainWindow::raise();
     }
-}
+}*/
 
 
-/** Shows the config dialog with focus set to the given page. */
-void MainWindow::show(Page page)
+/** Shows the MainWindow with focus set to the given page. */
+void MainWindow::showWindow(Page page)
 {
     /* Show the dialog. */
-    show();
+    //show();
 
+    /* Show the dialog. */
+    RWindow::showWindow();
     /* Set the focus to the specified page. */
     ui.stackPages->setCurrentIndex((int)page);
 }
@@ -521,7 +527,7 @@ void MainWindow::inviteFriend()
 
 }
 
-/** Shows Preferences */
+/** Add a Share */
 void MainWindow::addSharedDirectory()
 {
     /* Same Code as in Preferences Window (add Share) */
@@ -538,7 +544,7 @@ void MainWindow::addSharedDirectory()
 
 }
 
-/** Shows Preferences */
+/** Shows Share Manager */
 void MainWindow::openShareManager()
 {
     static ShareManager* sharemanager = new ShareManager(this);
@@ -546,12 +552,21 @@ void MainWindow::openShareManager()
 
 }
 
-/** Shows Preferences */
-/*void MainWindow::showPreferencesWindow()
+/** Creates and displays the Configuration dialog with the current page set to
+ * <b>page</b>. */
+void
+MainWindow::showPreferencesWindow(PreferencesWindow::Page page)
 {
-    static PreferencesWindow* preferencesWindow = new PreferencesWindow(this);
-    preferencesWindow->show();
-}*/
+  _preferencesWindow->showWindow(page);
+}
+
+/** Shows Messages Dialog */
+void
+MainWindow::showMess(MainWindow::Page page)
+{
+  showWindow(page);
+}
+
 
 /** Shows Options */
 void MainWindow::showSettings()
@@ -599,6 +614,9 @@ void MainWindow::createActions()
           
     _messengerwindowAct = new QAction(QIcon(IMAGE_RSM16), tr("Open Messenger"), this);
     connect(_messengerwindowAct, SIGNAL(triggered()),this, SLOT(showMessengerWindow()));
+
+    _messagesAct = new QAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this);
+    connect(_messagesAct, SIGNAL(triggered()),this, SLOT(showMess()));
     
     _appAct = new QAction(QIcon(IMAGE_UNFINISHED), tr("Applications"), this);
     connect(_appAct, SIGNAL(triggered()),this, SLOT(showApplWindow()));
@@ -808,15 +826,6 @@ void MainWindow::setStyle()
  qApp->setStyleSheet(/*widgetSheet + */toolSheet + menuSheet);
  
 }
-
-/** Creates and displays the Configuration dialog with the current page set to
- * <b>page</b>. */
-void
-MainWindow::showPreferencesWindow(PreferencesWindow::Page page)
-{
-  _preferencesWindow->showWindow(page);
-}
-
 
 
 void openFile(std::string path)

@@ -69,14 +69,14 @@ public:
     /** Main dialog pages. */
     enum Page {
         Network            = 0,  /** Network page. */
-        Friends            = 1,  /** Peers page. */
-        SharedDirectories  = 2,  /** Shared Directories page. */
-        Search 		       = 3,  /** Search page. */
-        Transfers          = 4,  /** Transfers page. */
-        Chat               = 5,  /** Chat page. */
-        Messages           = 6,  /** Messages page. */
-        Channels           = 7,  /** Channels page. */
-        Statistics         = 8  /** Statistic page. */
+        Friends,              	 /** Peers page. */
+	Search,			 /** Search page. */
+        Transfers, 		 /** Transfers page. */
+        SharedDirectories,   	 /** Shared Directories page. */
+        Messages,  		 /** Messages page. */
+        Links,  		 /** Links page. */
+        Channels,  		 /** Channels page. */
+        Forums		         /** Forums page. */
         
     };
 
@@ -108,9 +108,9 @@ public:
 
 public slots:
     /** Called when this dialog is to be displayed */
-    void show();
+    //void show();
     /** Shows the config dialog with focus set to the given page. */
-    void show(Page page);
+    void showWindow(Page page);
   
     void startgammon();
     void startqcheckers();
@@ -146,6 +146,8 @@ private slots:
     /** Creates and displays the Configuration dialog with the current page set
     * to <b>page</b>. */
     void showPreferencesWindow(PreferencesWindow::Page page = PreferencesWindow::General);
+    void showMess(MainWindow::Page page = MainWindow::Messages);
+
 
     void showSettings();
     void setStyle();
@@ -175,6 +177,7 @@ private:
     QAction* _prefsAct;
     QAction* _bandwidthAct;
     QAction* _messengerwindowAct;
+    QAction* _messagesAct;
     QAction* _smplayerAct;
     QAction* _helpAct;
     QAction* _appAct;

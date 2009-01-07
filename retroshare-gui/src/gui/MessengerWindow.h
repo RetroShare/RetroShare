@@ -27,17 +27,19 @@
 #include "ui_MessengerWindow.h"
 #include "NetworkDialog.h"
 #include <gui/Preferences/rsharesettings.h>
+#include <gui/common/rwindow.h>
 
 class LogoBar;
 class PeersDialog;
+//class MainWindow;
 
-class MessengerWindow : public QMainWindow
+class MessengerWindow : public RWindow
 {
   Q_OBJECT
 
 public:
   /** Default Constructor */
-  MessengerWindow(QWidget *parent = 0);
+  MessengerWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default Destructor */
 
   void  insertPeers();
@@ -76,7 +78,10 @@ private slots:
   
   void addFriend2();
 
-   void getPicture();
+  void getPicture();
+
+  //void showMessages(MainWindow::Page page = MainWindow::Messages);
+
 
 
   /** RsServer Friend Calls */
@@ -98,6 +103,9 @@ private:
   QTreeWidgetItem *getCurrentPeer(bool &isOnline);
   
   PeersDialog *chatDialog;
+
+  //MainWindow* mainWindow;
+
 
   /** Define the popup menus for the Context menu */
   QMenu* contextMnu;

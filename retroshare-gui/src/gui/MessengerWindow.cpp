@@ -28,6 +28,7 @@
 
 #include "rshare.h"
 #include "MessengerWindow.h"
+//#include "MainWindow.h"
 
 #include "chat/PopupChatDialog.h"
 #include "msgs/ChanMsgDialog.h"
@@ -70,18 +71,20 @@
 
 
 /** Constructor */
-MessengerWindow::MessengerWindow(QWidget * parent)
-: QMainWindow(parent)
+MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
+: RWindow("MessengerWindow", parent, flags)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
   
-	RshareSettings config;
-	config.loadWidgetInformation(this);
+	//RshareSettings config;
+	//config.loadWidgetInformation(this);
 
 	connect( ui.messengertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messengertreeWidgetCostumPopupMenu( QPoint ) ) );
 
 	connect( ui.avatarButton, SIGNAL(clicked()), SLOT(getPicture()));
+	connect( ui.mailButton, SIGNAL(clicked()), SLOT(showMessages()));
+
     	connect( ui.addIMAccountButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend2() ) );
 
     	connect( ui.messengertreeWidget, SIGNAL(itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend2()));
@@ -91,7 +94,7 @@ MessengerWindow::MessengerWindow(QWidget * parent)
 	/* to hide the header  */
 	ui.messengertreeWidget->header()->hide(); 
  
-    /* Set header resize modes and initial section sizes */
+        /* Set header resize modes and initial section sizes */
 	ui.messengertreeWidget->setColumnCount(1);
 
 	QHeaderView * _header = ui.messengertreeWidget->header () ;   
@@ -101,6 +104,9 @@ MessengerWindow::MessengerWindow(QWidget * parent)
 	//_header->setResizeMode (3, QHeaderView::Interactive);
 
 	_header->resizeSection ( 0, 200 );   
+
+    	/* Create all the dialogs of which we only want one instance */
+    	//_mainWindow = new MainWindow();
  
 	//LogoBar
 	_rsLogoBarmessenger = NULL;
@@ -353,13 +359,18 @@ void MessengerWindow::show()
 
 void MessengerWindow::closeEvent (QCloseEvent * event)
 {
-	RshareSettings config;
-	config.saveWidgetInformation(this);
+	//RshareSettings config;
+	//config.saveWidgetInformation(this);
 
     hide();
     event->ignore();
 }
 
+/** Shows Messages */
+/*void MessengerWindow::showMessages(MainWindow::Page page)
+{
+    mainWindow->showWindow(page);
+}*/
 
 
 void MessengerWindow::setChatDialog(PeersDialog *cd)

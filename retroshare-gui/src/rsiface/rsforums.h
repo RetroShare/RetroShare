@@ -34,6 +34,9 @@
 #include "rsiface/rstypes.h"
 #include "rsiface/rsdistrib.h" /* For FLAGS */
 
+#define RS_FORUMMSG_NEW       0x0010 
+
+
 class ForumInfo 
 {
 	public:
