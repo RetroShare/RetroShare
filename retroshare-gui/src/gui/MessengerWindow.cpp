@@ -539,7 +539,7 @@ void MessengerWindow::getPicture()
 							"Pictures (*.png *.xpm *.jpg)");
 	if(!fileName.isEmpty())
 	{
-		picture = QPixmap(fileName).scaled(72,72, Qt::KeepAspectRatio);
+		picture = QPixmap(fileName).scaled(53,53, Qt::IgnoreAspectRatio);
 		ui.avatarButton->setIcon(picture);
 	}
 }
