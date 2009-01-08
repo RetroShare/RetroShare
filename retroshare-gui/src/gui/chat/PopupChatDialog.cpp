@@ -239,7 +239,7 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 				    .replace(font)
 				    .replace(fontSize)*/
 				    .replace("%timestamp%", timestamp)
-                    .replace("%name%", name)
+                    		    .replace("%name%", name)
 				    .replace("%message%", message);
 
 	ui.textBrowser->setHtml(ui.textBrowser->toHtml() + formatMsg + "\n");
