@@ -163,23 +163,19 @@ Section  $(sec_data) sec_data
   ; We're not ready for external skins...
   ; Set Section qss need to remove svn path
   SetOutPath "$INSTDIR\qss\"
-  File /r release\qss\*.*   
-  
-  ; Set Section emoticons need to remove svn path
-  ; SetOutPath "$INSTDIR\emoticons\"
-  ; File /r release\emoticons\*.*  
+  File /r qss\*.*   
   
   ; Set Section skin
   ; SetOutPath "$INSTDIR\skin\"
   ; File /r release\skin\*.* 
 
   ; Add emoticons
-  SetOutPath "$INSTDIR\emoticons\kopete\"
-  File /r release\emoticons\kopete\*.*   
+  SetOutPath "$INSTDIR\emoticons\"
+  File /r emoticons\*.*   
 	
   ; Add Chat Style
   SetOutPath "$INSTDIR\style\"
-  File /r release\style\*.*   
+  File /r style\*.*   
 	
 SectionEnd
 
@@ -193,7 +189,7 @@ Section $(sec_mplayer) sec_mplayer
 	
   ; Set Section Files and Shortcuts
   SetOutPath "$INSTDIR\mplayer"
-  File /r "mplayer\MPlayer-1.0rc2\*.*"
+  File /r "mplayer\*.*"
 
 
 SectionEnd
@@ -236,11 +232,17 @@ Section  Quicklaunchbar SEC0003
 SectionEnd
 SectionGroupEnd        
 
+;Section $(sec_autostart) sec_autostart
+
+;  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "RetroRun"   "$INSTDIR\${APPNAME}.exe -a"
+  
+;SectionEnd
+
 Section $(sec_autostart) sec_autostart
 
-  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "RetroRun"   "$INSTDIR\${APPNAME}.exe -a"
-  
+  CreateShortCut "$SMSTARTUP\${APPNAME}.lnk" "$INSTDIR\RetroShare.exe" "" "$INSTDIR\RetroShare.exe" 0
 SectionEnd
+
 
 Section -FinishSection
 
