@@ -1,0 +1,648 @@
+<ui version="4.0" >
+ <class>MessagesPopupDialog</class>
+ <widget class="QMainWindow" name="MessagesPopupDialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>777</width>
+    <height>582</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Messages</string>
+  </property>
+  <property name="windowIcon" >
+   <iconset resource="images.qrc" >:/images/rstray3.png</iconset>
+  </property>
+  <property name="toolButtonStyle" >
+   <enum>Qt::ToolButtonTextUnderIcon</enum>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <layout class="QGridLayout" >
+    <item row="0" column="0" >
+     <widget class="QSplitter" name="splitter_2" >
+      <property name="orientation" >
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QListWidget" name="messageslistWidget" >
+       <property name="maximumSize" >
+        <size>
+         <width>120</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="lineWidth" >
+        <number>1</number>
+       </property>
+       <property name="midLineWidth" >
+        <number>0</number>
+       </property>
+       <property name="resizeMode" >
+        <enum>QListView::Fixed</enum>
+       </property>
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <property name="gridSize" >
+        <size>
+         <width>100</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="modelColumn" >
+        <number>0</number>
+       </property>
+       <property name="uniformItemSizes" >
+        <bool>false</bool>
+       </property>
+       <property name="wordWrap" >
+        <bool>false</bool>
+       </property>
+       <item>
+        <property name="text" >
+         <string>Inbox</string>
+        </property>
+        <property name="icon" >
+         <iconset resource="images.qrc" >:/images/folder-inbox.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Outbox</string>
+        </property>
+        <property name="icon" >
+         <iconset resource="images.qrc" >:/images/folder-outbox.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Draft</string>
+        </property>
+        <property name="icon" >
+         <iconset resource="images.qrc" >:/images/folder-draft.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Sent</string>
+        </property>
+        <property name="icon" >
+         <iconset resource="images.qrc" >:/images/folder-sent.png</iconset>
+        </property>
+       </item>
+      </widget>
+      <widget class="QSplitter" name="msgSplitter" >
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <widget class="QTreeWidget" name="messagesWidget" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+          <horstretch>0</horstretch>
+          <verstretch>5</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="contextMenuPolicy" >
+         <enum>Qt::CustomContextMenu</enum>
+        </property>
+        <property name="indentation" >
+         <number>16</number>
+        </property>
+        <property name="sortingEnabled" >
+         <bool>true</bool>
+        </property>
+        <property name="columnCount" >
+         <number>4</number>
+        </property>
+        <column>
+         <property name="text" >
+          <string/>
+         </property>
+        </column>
+        <column>
+         <property name="text" >
+          <string>From</string>
+         </property>
+        </column>
+        <column>
+         <property name="text" >
+          <string>Subject</string>
+         </property>
+        </column>
+        <column>
+         <property name="text" >
+          <string>Date</string>
+         </property>
+        </column>
+       </widget>
+       <widget class="QWidget" name="layoutWidget" >
+        <layout class="QVBoxLayout" >
+         <item>
+          <layout class="QHBoxLayout" >
+           <property name="spacing" >
+            <number>6</number>
+           </property>
+           <property name="leftMargin" >
+            <number>0</number>
+           </property>
+           <property name="topMargin" >
+            <number>0</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>0</number>
+           </property>
+           <item>
+            <layout class="QVBoxLayout" >
+             <item>
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeType" >
+                <enum>QSizePolicy::Preferred</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QGridLayout" >
+             <property name="horizontalSpacing" >
+              <number>0</number>
+             </property>
+             <property name="verticalSpacing" >
+              <number>3</number>
+             </property>
+             <item row="0" column="0" >
+              <widget class="QLabel" name="subjectlabel" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize" >
+                <size>
+                 <width>60</width>
+                 <height>12</height>
+                </size>
+               </property>
+               <property name="maximumSize" >
+                <size>
+                 <width>16777215</width>
+                 <height>10</height>
+                </size>
+               </property>
+               <property name="font" >
+                <font>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text" >
+                <string>Subject:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1" >
+              <widget class="QLabel" name="subjectText" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                 <horstretch>2</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize" >
+                <size>
+                 <width>0</width>
+                 <height>12</height>
+                </size>
+               </property>
+               <property name="maximumSize" >
+                <size>
+                 <width>16777215</width>
+                 <height>10</height>
+                </size>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0" >
+              <widget class="QLabel" name="fromlabel" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize" >
+                <size>
+                 <width>60</width>
+                 <height>12</height>
+                </size>
+               </property>
+               <property name="maximumSize" >
+                <size>
+                 <width>16777215</width>
+                 <height>10</height>
+                </size>
+               </property>
+               <property name="font" >
+                <font>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text" >
+                <string>From:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1" >
+              <widget class="QLabel" name="fromText" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                 <horstretch>2</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize" >
+                <size>
+                 <width>0</width>
+                 <height>12</height>
+                </size>
+               </property>
+               <property name="maximumSize" >
+                <size>
+                 <width>16777215</width>
+                 <height>10</height>
+                </size>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" >
+              <widget class="QLabel" name="datelabel" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize" >
+                <size>
+                 <width>60</width>
+                 <height>12</height>
+                </size>
+               </property>
+               <property name="maximumSize" >
+                <size>
+                 <width>16777215</width>
+                 <height>10</height>
+                </size>
+               </property>
+               <property name="font" >
+                <font>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text" >
+                <string>Date:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1" >
+              <widget class="QLabel" name="dateText" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                 <horstretch>2</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize" >
+                <size>
+                 <width>0</width>
+                 <height>12</height>
+                </size>
+               </property>
+               <property name="maximumSize" >
+                <size>
+                 <width>16777215</width>
+                 <height>10</height>
+                </size>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0" >
+              <widget class="QLabel" name="tolabel" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize" >
+                <size>
+                 <width>60</width>
+                 <height>12</height>
+                </size>
+               </property>
+               <property name="maximumSize" >
+                <size>
+                 <width>16777215</width>
+                 <height>10</height>
+                </size>
+               </property>
+               <property name="font" >
+                <font>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text" >
+                <string>To:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1" >
+              <widget class="QLabel" name="toText" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                 <horstretch>2</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize" >
+                <size>
+                 <width>0</width>
+                 <height>12</height>
+                </size>
+               </property>
+               <property name="maximumSize" >
+                <size>
+                 <width>16777215</width>
+                 <height>10</height>
+                </size>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QTextBrowser" name="messagesText" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>10</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" >
+           <item>
+            <layout class="QGridLayout" >
+             <property name="leftMargin" >
+              <number>0</number>
+             </property>
+             <property name="topMargin" >
+              <number>0</number>
+             </property>
+             <property name="rightMargin" >
+              <number>0</number>
+             </property>
+             <property name="bottomMargin" >
+              <number>0</number>
+             </property>
+             <property name="horizontalSpacing" >
+              <number>6</number>
+             </property>
+             <property name="verticalSpacing" >
+              <number>6</number>
+             </property>
+             <item row="0" column="1" >
+              <widget class="QLabel" name="label_6" >
+               <property name="text" >
+                <string/>
+               </property>
+               <property name="pixmap" >
+                <pixmap/>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2" >
+              <widget class="QLabel" name="label_2" >
+               <property name="text" >
+                <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:10pt; font-weight:600;">Recommended Files&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="3" >
+              <widget class="QLabel" name="filesText" >
+               <property name="font" >
+                <font>
+                 <pointsize>10</pointsize>
+                 <italic>true</italic>
+                </font>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0" >
+              <widget class="QPushButton" name="expandFilesButton" >
+               <property name="text" >
+                <string/>
+               </property>
+               <property name="icon" >
+                <iconset resource="images.qrc" >:/images/edit_add24.png</iconset>
+               </property>
+               <property name="iconSize" >
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>351</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="downloadButton" >
+             <property name="toolTip" >
+              <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Download all Recommended Files&lt;/p>&lt;/body>&lt;/html></string>
+             </property>
+             <property name="text" >
+              <string/>
+             </property>
+             <property name="icon" >
+              <iconset resource="images.qrc" >:/images/down.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QTreeWidget" name="messagesList" >
+        <property name="contextMenuPolicy" >
+         <enum>Qt::CustomContextMenu</enum>
+        </property>
+        <property name="sortingEnabled" >
+         <bool>true</bool>
+        </property>
+        <column>
+         <property name="text" >
+          <string>File Name</string>
+         </property>
+        </column>
+        <column>
+         <property name="text" >
+          <string>Size</string>
+         </property>
+        </column>
+        <column>
+         <property name="text" >
+          <string>Sources</string>
+         </property>
+        </column>
+        <column>
+         <property name="text" >
+          <string>Hash</string>
+         </property>
+        </column>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>777</width>
+     <height>30</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar" />
+  <widget class="QToolBar" name="toolBar" >
+   <property name="windowTitle" >
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionCompose" />
+   <addaction name="separator" />
+   <addaction name="actionReplyMessage" />
+   <addaction name="actionForwardMessage" />
+   <addaction name="actionRemove" />
+   <addaction name="separator" />
+   <addaction name="actionPrintMenu" />
+  </widget>
+  <action name="actionCompose" >
+   <property name="icon" >
+    <iconset resource="images.qrc" >:/images/folder-draft24.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Compose</string>
+   </property>
+  </action>
+  <action name="actionReplyMessage" >
+   <property name="icon" >
+    <iconset resource="images.qrc" >:/images/replymail24.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Reply</string>
+   </property>
+  </action>
+  <action name="actionForwardMessage" >
+   <property name="icon" >
+    <iconset resource="images.qrc" >:/images/mailforward24-hover.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Forward</string>
+   </property>
+  </action>
+  <action name="actionRemove" >
+   <property name="icon" >
+    <iconset resource="images.qrc" >:/images/deletemail24.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Remove</string>
+   </property>
+  </action>
+  <action name="actionPrintMenu" >
+   <property name="icon" >
+    <iconset resource="images.qrc" >:/images/print24.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Print</string>
+   </property>
+  </action>
+  <action name="actionPrintPreview" >
+   <property name="text" >
+    <string>PrintPreview</string>
+   </property>
+  </action>
+  <action name="actionPrint" >
+   <property name="text" >
+    <string>Print</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="images.qrc" />
+ </resources>
+ <connections/>
+</ui>

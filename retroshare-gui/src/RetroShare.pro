@@ -136,6 +136,7 @@ HEADERS +=  rshare.h \
             gui/common/rwindow.h \
             gui/common/html.h \
             gui/MessagesDialog.h \
+            gui/MessagesPopupDialog.h \
             gui/help/browser/helpbrowser.h \
             gui/help/browser/helptextbrowser.h \
             gui/Settings/gsettingswin.h \
@@ -207,6 +208,7 @@ FORMS +=    gui/ChatDialog.ui \
 	    gui/ShareManager.ui \
             gui/StatisticDialog.ui \
             gui/MessagesDialog.ui \
+            gui/MessagesPopupDialog.ui \
             gui/help/browser/helpbrowser.ui \
             gui/HelpDialog.ui \
             gui/bwgraph/bwgraph.ui \
@@ -299,6 +301,7 @@ SOURCES += main.cpp \
             gui/ShareManager.cpp \
             gui/StatisticDialog.cpp \
             gui/MessagesDialog.cpp \
+            gui/MessagesPopupDialog.cpp \
             gui/help/browser/helpbrowser.cpp \
             gui/help/browser/helptextbrowser.cpp \
             gui/HelpDialog.cpp \

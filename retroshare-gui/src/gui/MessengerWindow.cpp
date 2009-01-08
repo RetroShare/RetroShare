@@ -39,6 +39,8 @@
 #include "util/Widget.h"
 #include "gui/connect/InviteDialog.h"
 #include "gui/connect/AddFriendDialog.h"
+#include "MessagesPopupDialog.h"
+#include "ShareManager.h"
 
 #include <iostream>
 #include <sstream>
@@ -83,7 +85,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 	connect( ui.messengertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messengertreeWidgetCostumPopupMenu( QPoint ) ) );
 
 	connect( ui.avatarButton, SIGNAL(clicked()), SLOT(getPicture()));
-	connect( ui.mailButton, SIGNAL(clicked()), SLOT(showMessages()));
+	connect( ui.shareButton, SIGNAL(clicked()), SLOT(openShareManager()));
 
     	connect( ui.addIMAccountButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend2() ) );
 
@@ -366,10 +368,25 @@ void MessengerWindow::closeEvent (QCloseEvent * event)
     event->ignore();
 }
 
+/** Shows MessagesPopupDialog */
+void MessengerWindow::showMessagesPopup()
+{
+    static MessagesPopupDialog* messagespopup = new MessagesPopupDialog(this);
+    messagespopup->show();
+}
+
+/** Shows Share Manager */
+void MessengerWindow::openShareManager()
+{
+    static ShareManager* sharemanager = new ShareManager(this);
+    sharemanager->show();
+
+}
+
 /** Shows Messages */
 /*void MessengerWindow::showMessages(MainWindow::Page page)
 {
-    mainWindow->showWindow(page);
+    showWindow(page);
 }*/
 
 

@@ -80,6 +80,11 @@ private slots:
 
   void getPicture();
 
+  void openShareManager();
+
+  void showMessagesPopup();
+
+
   //void showMessages(MainWindow::Page page = MainWindow::Messages);
 
 

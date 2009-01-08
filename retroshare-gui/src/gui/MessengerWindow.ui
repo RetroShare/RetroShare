@@ -236,13 +236,13 @@ p, li { white-space: pre-wrap; }
            <number>2</number>
           </property>
           <property name="topMargin" >
-           <number>2</number>
+           <number>0</number>
           </property>
           <property name="rightMargin" >
            <number>2</number>
           </property>
           <property name="bottomMargin" >
-           <number>2</number>
+           <number>0</number>
           </property>
           <property name="horizontalSpacing" >
            <number>0</number>
@@ -251,21 +251,27 @@ p, li { white-space: pre-wrap; }
            <number>0</number>
           </property>
           <item row="0" column="0" >
-           <widget class="QPushButton" name="mailButton" >
+           <widget class="QToolButton" name="shareButton" >
             <property name="toolTip" >
-             <string>Open your Messages Inbox</string>
+             <string>Share Files for your Friends</string>
             </property>
-            <property name="text" >
+            <property name="styleSheet" >
              <string/>
             </property>
+            <property name="text" >
+             <string>...</string>
+            </property>
             <property name="icon" >
-             <iconset resource="images.qrc" >:/images/evolution.png</iconset>
+             <iconset resource="images.qrc" >:/images/friendsfolder24.png</iconset>
             </property>
             <property name="iconSize" >
              <size>
               <width>24</width>
               <height>24</height>
              </size>
+            </property>
+            <property name="autoRaise" >
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -276,8 +282,8 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="sizeHint" >
              <size>
-              <width>161</width>
-              <height>20</height>
+              <width>211</width>
+              <height>34</height>
              </size>
             </property>
            </spacer>
@@ -339,12 +345,12 @@ p, li { white-space: pre-wrap; }
          <string/>
         </property>
         <property name="icon" >
-         <iconset resource="images.qrc" >:/images/dadd.png</iconset>
+         <iconset resource="images.qrc" >:/images/user/add_user24.png</iconset>
         </property>
         <property name="iconSize" >
          <size>
-          <width>22</width>
-          <height>22</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="toolButtonStyle" >
