@@ -4,37 +4,26 @@ RetroShare Todo list
 
 * start minimized [enabel,disable start minimized](Options->General)
 * Auto Login [enabel,disable Auto Login](Options->General)
-* enable/disable Toasters from (Options->General)
+* enable/disable Toasters from (Options->Notify)
 
 * collapse sources in Downloads [similar ares,emule](TransfersDialog)
 * Contacts Manager(Adressbook) for Messages ( similar Thunderbirds Adressbook feature)
 
 * Proxy support
 * DynDNS support
-* Plugin Interface(Developers can write then plugins for RetroShare, like Plugins for Tools,apps,games,...)
 
 * partial multi source download ("swarming")
 
 * setCacheDirectory/getCacheDirectory (Customizable Directories for cache folder)
 * setChannelsDirectory/getChannelsDirectory (Customizable Directories for channels folder)
 
-* Groups feature
- - to can generate not only one network with your friends, to can make different groups with RetroShare
- - mean you can have different groups in your network, your friends doesnt known about that.
- - each group has a "Group Name"
- - you can set for different Groups different Shared Files with Privilegs(readable/hidden)
- - for each group a own Puplic Chat( which will be generated automaticly if the group member joined/connected)
- - modify Fiends Dialog to support Groups feature(for dynamic new groupchats needs tabs for right side Chats)
-	
 
 TODO on Shared Files
 =====================================================================
 
 * Share Manager: can set Rights for Shared Files to Groups/Friends 
 * Share Virtual Folders, can create Virtual Folders for Shared Files in Share Manager
-* Hide Shared Files for different Friends(allowing to give rights for folders) 
-* Show Shared Files for different Friends(allowing to give rights for folders) 
-* Special Shared Files for special Friends ( This Share will be shown only to a Friend which i set.)(allowing to give rights for folders) 
+* Hide/Show Shared Files for different Friends(allowing to give rights for folders) 
 
 TODO on channels
 ====================================================================
@@ -71,5 +60,20 @@ TODO on Privat Chat
 * Conference , can invite other Friends in a Privat Chat
 * Send a recorded voice message
 * VOIP
+* Video Chat 
 
+TODO  on Messenger Window
+======================================================================================
+* Share a Personal Messages with your Contacts( It will be displayed after nicknames, similar MSN)
+* Filter for Search a Friend in Messenger
+* set Status from Combobox and send my status to other Friends
+* get Status for every Friend and set the correct Icon.
 
+* Groups Folder Tree for Messenger,generate different groups(groupname) and invite special Friends in your Group.
+* Favorites Folder Tree, you can move your Favorite Friends to this Favorite section.
+* Each Tree Shows the counts like example:
+
+Favorites(1/4)
+Groups(0/1)
+Online(4)
+Offline(12)
