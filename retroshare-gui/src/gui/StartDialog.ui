@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>239</width>
-    <height>404</height>
+    <width>268</width>
+    <height>535</height>
    </rect>
   </property>
   <property name="palette" >
@@ -444,25 +444,29 @@
  }</string>
   </property>
   <widget class="QWidget" name="centralwidget" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>239</width>
-     <height>404</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" >
-    <property name="verticalSpacing" >
+   <layout class="QGridLayout" name="gridLayout_4" >
+    <property name="leftMargin" >
      <number>0</number>
     </property>
-    <property name="margin" >
+    <property name="rightMargin" >
      <number>0</number>
     </property>
-    <item row="0" column="0" >
+    <property name="bottomMargin" >
+     <number>0</number>
+    </property>
+    <item row="0" column="0" colspan="4" >
      <layout class="QGridLayout" >
-      <property name="margin" >
+      <property name="leftMargin" >
        <number>0</number>
+      </property>
+      <property name="topMargin" >
+       <number>6</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>6</number>
       </property>
       <property name="spacing" >
        <number>6</number>
@@ -494,7 +498,7 @@ border-image: url(:/images/avatar_background.png);
         </property>
         <property name="icon" >
          <iconset resource="images.qrc" >
-          <normaloff>:/images/retrosharelogo1.png</normaloff>:/images/retrosharelogo1.png</iconset>
+          <normaloff>:/images/user/personal64.png</normaloff>:/images/user/personal64.png</iconset>
         </property>
         <property name="iconSize" >
          <size>
@@ -522,79 +526,10 @@ border-image: url(:/images/avatar_background.png);
       </item>
      </layout>
     </item>
-    <item row="1" column="0" >
-     <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>6</number>
-      </property>
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <item row="2" column="0" >
-       <widget class="QLabel" name="label_4" >
-        <property name="text" >
-         <string>Password:</string>
-        </property>
-       </widget>
-      </item>
+    <item row="1" column="0" colspan="4" >
+     <layout class="QGridLayout" name="gridLayout_2" >
       <item row="0" column="0" >
-       <widget class="QLabel" name="label_3" >
-        <property name="text" >
-         <string>Name:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" >
-       <widget class="QLineEdit" name="loadName" >
-        <property name="minimumSize" >
-         <size>
-          <width>20</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="readOnly" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" >
-       <widget class="QLineEdit" name="loadPasswd" >
-        <property name="minimumSize" >
-         <size>
-          <width>20</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="echoMode" >
-         <enum>QLineEdit::Password</enum>
-        </property>
-        <property name="readOnly" >
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="2" column="0" >
-     <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>6</number>
-      </property>
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <item row="0" column="0" >
-       <widget class="QCheckBox" name="autoBox" >
-        <property name="text" >
-         <string>Auto-login</string>
-        </property>
-        <property name="checked" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" >
-       <spacer>
+       <spacer name="horizontalSpacer" >
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
         </property>
@@ -606,29 +541,193 @@ border-image: url(:/images/avatar_background.png);
         </property>
        </spacer>
       </item>
-     </layout>
-    </item>
-    <item row="3" column="0" >
-     <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
+      <item row="0" column="1" >
+       <widget class="QLabel" name="label" >
+        <property name="minimumSize" >
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize" >
+         <size>
+          <width>16777215</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="text" >
+         <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;span style=" font-size:18pt; color:#55aaff;">Login&lt;/span>&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt; color:#55aaff;">&lt;/p>&lt;/body>&lt;/html></string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="2" >
-       <spacer>
+       <spacer name="horizontalSpacer_2" >
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0" >
          <size>
-          <width>71</width>
+          <width>48</width>
           <height>20</height>
          </size>
         </property>
        </spacer>
       </item>
+     </layout>
+    </item>
+    <item rowspan="3" row="2" column="0" >
+     <spacer name="horizontalSpacer_4" >
+      <property name="orientation" >
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0" >
+       <size>
+        <width>25</width>
+        <height>208</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="2" column="1" colspan="2" >
+     <widget class="QLabel" name="label_2" >
+      <property name="text" >
+       <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;span style=" font-size:10pt;">You can login with your Default&lt;/span>&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;">RetroShare profile.&lt;/p>
+&lt;p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;">You have a Profile?&lt;/p>&lt;/body>&lt;/html></string>
+      </property>
+     </widget>
+    </item>
+    <item rowspan="3" row="2" column="3" >
+     <spacer name="horizontalSpacer_3" >
+      <property name="orientation" >
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0" >
+       <size>
+        <width>24</width>
+        <height>198</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="3" column="1" >
+     <spacer name="horizontalSpacer_5" >
+      <property name="orientation" >
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0" >
+       <size>
+        <width>75</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="3" column="2" >
+     <widget class="QPushButton" name="createaccountButton" >
+      <property name="toolTip" >
+       <string>Generate now a Profile</string>
+      </property>
+      <property name="text" >
+       <string>generate now a profile</string>
+      </property>
+      <property name="flat" >
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1" colspan="2" >
+     <widget class="QGroupBox" name="groupBox" >
+      <property name="title" >
+       <string/>
+      </property>
+      <layout class="QGridLayout" name="gridLayout" >
+       <item row="0" column="0" colspan="2" >
+        <widget class="QLabel" name="label_3" >
+         <property name="text" >
+          <string>Name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2" >
+        <widget class="QLineEdit" name="loadName" >
+         <property name="minimumSize" >
+          <size>
+           <width>20</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="readOnly" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2" >
+        <widget class="QLabel" name="label_4" >
+         <property name="text" >
+          <string>Password:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" colspan="2" >
+        <widget class="QLineEdit" name="loadPasswd" >
+         <property name="minimumSize" >
+          <size>
+           <width>20</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="echoMode" >
+          <enum>QLineEdit::Password</enum>
+         </property>
+         <property name="readOnly" >
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" >
+        <widget class="QCheckBox" name="autoBox" >
+         <property name="text" >
+          <string>Auto-login</string>
+         </property>
+         <property name="checked" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>98</width>
+           <height>17</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="5" column="0" colspan="4" >
+     <layout class="QGridLayout" name="gridLayout_3" >
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
       <item row="0" column="0" >
        <spacer>
         <property name="orientation" >
@@ -647,18 +746,14 @@ border-image: url(:/images/avatar_background.png);
         <property name="text" >
          <string>Log In</string>
         </property>
+        <property name="default" >
+         <bool>true</bool>
+        </property>
+        <property name="flat" >
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
-     </layout>
-    </item>
-    <item row="4" column="0" >
-     <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>9</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
       <item row="0" column="2" >
        <spacer>
         <property name="orientation" >
@@ -666,35 +761,15 @@ border-image: url(:/images/avatar_background.png);
         </property>
         <property name="sizeHint" stdset="0" >
          <size>
-          <width>40</width>
+          <width>71</width>
           <height>20</height>
          </size>
         </property>
        </spacer>
-      </item>
-      <item row="0" column="0" >
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0" >
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="1" >
-       <widget class="QPushButton" name="createaccountButton" >
-        <property name="text" >
-         <string>You have a Profile?</string>
-        </property>
-       </widget>
       </item>
      </layout>
     </item>
-    <item row="5" column="0" >
+    <item row="6" column="0" colspan="4" >
      <spacer>
       <property name="orientation" >
        <enum>Qt::Vertical</enum>
@@ -707,7 +782,7 @@ border-image: url(:/images/avatar_background.png);
       </property>
      </spacer>
     </item>
-    <item row="6" column="0" >
+    <item row="7" column="0" colspan="4" >
      <widget class="QFrame" name="callBarFrame" >
       <property name="minimumSize" >
        <size>
