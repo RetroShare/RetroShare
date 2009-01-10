@@ -14,7 +14,7 @@
         <file>images/backgroundl.png</file>
         <file>images/blockdevice.png</file>
         <file>images/blockdevice2.png</file>
-        <file>images/channels.png</file>        
+        <file>images/channels.png</file>
         <file>images/channeldelete.png</file>
         <file>images/channelsubscribe.png</file>
         <file>images/channels16.png</file>
@@ -277,7 +277,8 @@
         <file>images/user/identitylightgrey24.png</file>
         <file>images/user/agt_forum24.png</file>
         <file>images/user/identity32.png</file>
-        <file>images/user/add_user16.png</file>g
+        <file>images/user/add_user16.png</file>
+        <file>images/user/personal64.png</file>
         <file>images/up.png</file>
         <file>images/underconstruction.png</file>
         <file>images/user.png</file>

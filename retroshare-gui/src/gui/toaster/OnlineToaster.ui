@@ -5,15 +5,27 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>388</width>
-    <height>221</height>
+    <width>330</width>
+    <height>168</height>
    </rect>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
+   <property name="leftMargin" >
     <number>0</number>
    </property>
-   <property name="spacing" >
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>0</number>
+   </property>
+   <property name="verticalSpacing" >
     <number>0</number>
    </property>
    <item row="0" column="0" >
@@ -24,19 +36,43 @@
      <property name="frameShadow" >
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2" >
-      <property name="verticalSpacing" >
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
        <number>0</number>
       </property>
-      <property name="margin" >
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>0</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>0</number>
+      </property>
+      <property name="verticalSpacing" >
        <number>0</number>
       </property>
       <item row="0" column="0" >
        <layout class="QGridLayout" >
-        <property name="margin" >
+        <property name="leftMargin" >
          <number>0</number>
         </property>
-        <property name="spacing" >
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
+        <property name="horizontalSpacing" >
+         <number>0</number>
+        </property>
+        <property name="verticalSpacing" >
          <number>0</number>
         </property>
         <item row="0" column="2" >
@@ -54,8 +90,7 @@
            </size>
           </property>
           <property name="icon" >
-           <iconset resource="../images.qrc" >
-            <normaloff>:/images/close-down.png</normaloff>:/images/close-down.png</iconset>
+           <iconset resource="../images.qrc" >:/images/close-down.png</iconset>
           </property>
           <property name="iconSize" >
            <size>
@@ -73,7 +108,7 @@
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" stdset="0" >
+          <property name="sizeHint" >
            <size>
             <width>225</width>
             <height>22</height>
@@ -85,32 +120,100 @@
       </item>
       <item row="1" column="0" >
        <layout class="QGridLayout" >
-        <property name="spacing" >
+        <property name="leftMargin" >
+         <number>4</number>
+        </property>
+        <property name="rightMargin" >
+         <number>4</number>
+        </property>
+        <property name="horizontalSpacing" >
          <number>0</number>
+        </property>
+        <property name="verticalSpacing" >
+         <number>0</number>
+        </property>
+        <item rowspan="3" row="0" column="0" >
+         <widget class="QLabel" name="pixmaplabel" >
+          <property name="minimumSize" >
+           <size>
+            <width>74</width>
+            <height>74</height>
+           </size>
+          </property>
+          <property name="maximumSize" >
+           <size>
+            <width>74</width>
+            <height>74</height>
+           </size>
+          </property>
+          <property name="styleSheet" >
+           <string>border-image: url(:/images/avatar_background.png);</string>
+          </property>
+          <property name="text" >
+           <string/>
+          </property>
+          <property name="pixmap" >
+           <pixmap resource="../images.qrc" >:/images/user/personal64.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>121</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="1" >
+         <widget class="QPushButton" name="messageButton" >
+          <property name="text" >
+           <string>Peer Online</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>121</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0" >
+       <layout class="QGridLayout" >
+        <property name="topMargin" >
+         <number>6</number>
         </property>
         <item row="0" column="0" >
          <spacer>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Expanding</enum>
-          </property>
-          <property name="sizeHint" stdset="0" >
+          <property name="sizeHint" >
            <size>
-            <width>121</width>
-            <height>48</height>
+            <width>81</width>
+            <height>20</height>
            </size>
           </property>
          </spacer>
         </item>
         <item row="0" column="1" >
-         <widget class="QLabel" name="pixmaplabel" >
+         <widget class="QLabel" name="messageLabel" >
           <property name="text" >
            <string/>
-          </property>
-          <property name="pixmap" >
-           <pixmap resource="../images.qrc" >:/images/user/identity32.png</pixmap>
           </property>
          </widget>
         </item>
@@ -119,63 +222,13 @@
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Expanding</enum>
-          </property>
-          <property name="sizeHint" stdset="0" >
+          <property name="sizeHint" >
            <size>
-            <width>111</width>
-            <height>48</height>
+            <width>131</width>
+            <height>20</height>
            </size>
           </property>
          </spacer>
-        </item>
-       </layout>
-      </item>
-      <item row="2" column="0" >
-       <layout class="QGridLayout" name="gridLayout" >
-        <property name="horizontalSpacing" >
-         <number>6</number>
-        </property>
-        <item rowspan="2" row="0" column="0" >
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0" >
-           <size>
-            <width>137</width>
-            <height>58</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="1" >
-         <widget class="QPushButton" name="messageButton" >
-          <property name="text" >
-           <string>Peer Online</string>
-          </property>
-         </widget>
-        </item>
-        <item rowspan="2" row="0" column="2" >
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0" >
-           <size>
-            <width>136</width>
-            <height>58</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="1" column="1" >
-         <widget class="QLabel" name="messageLabel" >
-          <property name="text" >
-           <string/>
-          </property>
-         </widget>
         </item>
        </layout>
       </item>
@@ -184,9 +237,9 @@
         <property name="orientation" >
          <enum>Qt::Vertical</enum>
         </property>
-        <property name="sizeHint" stdset="0" >
+        <property name="sizeHint" >
          <size>
-          <width>368</width>
+          <width>384</width>
           <height>61</height>
          </size>
         </property>
