@@ -90,7 +90,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   statusBar()->showMessage(QString::fromStdString(statusstr.str()));
   ui.textBrowser->setOpenExternalLinks ( false );
 
-  QString title = QString::fromStdString(name) + " :" + tr(" RetroShare - Chat")  ;
+  QString title = QString::fromStdString(name) + " :" + tr(" RetroShare - Encrypted Chat")  ;
   setWindowTitle(title);
   
   //set the default avatar
@@ -472,7 +472,7 @@ void PopupChatDialog::smileyWidget()
 
 void PopupChatDialog::addSmiley()
 {
-	ui.chattextEdit->setText(ui.chattextEdit->toPlainText() + qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
+	ui.chattextEdit->setText(ui.chattextEdit->toHtml() + qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
 }
 
 QString PopupChatDialog::loadEmptyStyle()
