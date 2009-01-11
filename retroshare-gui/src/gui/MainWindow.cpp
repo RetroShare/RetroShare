@@ -143,7 +143,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Create RshareSettings object */
     _settings = new RshareSettings();
     
-    setWindowTitle(tr("RetroShare %1").arg(retroshareVersion())); 
+    setWindowTitle(tr("RetroShare %1 RetroShare a private and secure decentralised commmunication platform").arg(retroshareVersion())); 
 
     mSMPlayer = NULL;
   
