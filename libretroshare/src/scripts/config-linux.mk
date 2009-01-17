@@ -65,8 +65,13 @@ RSCFLAGS = -Wall -g $(INCLUDE)
 # For the SSL BIO compilation. (Copied from OpenSSL compilation flags)
 BIOCC  = gcc
 
+# march=i686 causes problems while 64Bit compiling, GCC tries to generate Output for a m64 machine, but the marchi686
+# doesnt allow the instructionfs for that.
+#
+# gcc docu: http://gcc.gnu.org/onlinedocs/gcc-4.0.3/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
+
 # Linux flags
-BIOCFLAGS =  -I $(SSL_DIR)/include ${DEFINES} -DOPENSSL_THREADS -D_REENTRANT -DDSO_DLFCN -DHAVE_DLFCN_H -DOPENSSL_NO_KRB5 -DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -march=i686 -Wall -DSHA1_ASM -DMD5_ASM -DRMD160_ASM  
+BIOCFLAGS =  -I $(SSL_DIR)/include ${DEFINES} -DOPENSSL_THREADS -D_REENTRANT -DDSO_DLFCN -DHAVE_DLFCN_H -DOPENSSL_NO_KRB5 -DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -Wall -DSHA1_ASM -DMD5_ASM -DRMD160_ASM  
 
 #########################################################################
 # OS specific Linking.
