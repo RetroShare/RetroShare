@@ -39,7 +39,7 @@ bool    ftFileProvider::FileDetails(FileInfo &info)
 	info.size = mSize;
 	info.path = file_name;
 	info.fname = RsDirUtil::getTopDir(file_name);
-
+        info.lastTS = lastTS;
 	/* Use req_loc / req_size to estimate data rate */
 
 	return true;

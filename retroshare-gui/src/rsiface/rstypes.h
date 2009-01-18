@@ -96,6 +96,8 @@ static const int kRsFiStatusDone = 2;
 	double   tfRate; /* in kbytes */
 	uint32_t  downloadStatus; /* 0 = Err, 1 = Ok, 2 = Done */
 	std::list<TransferInfo> peers;
+
+        time_t lastTS;
 };
 
 std::ostream &operator<<(std::ostream &out, const FileInfo &info);

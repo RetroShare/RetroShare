@@ -183,6 +183,30 @@ void	ftServer::run()
 {
 	while(1)
 	{
+	        //scan the uploads list in ftdatamultiplex and delete the items which time out
+         	time_t now = time(NULL);
+                FileInfo info;
+                std::list<std::string> toDels;
+                std::map<std::string, ftFileProvider *>::iterator sit;
+                for(sit = mFtDataplex->mServers.begin(); sit != mFtDataplex->mServers.end(); sit++)
+                {
+                  if (FileDetails(sit->first,RS_FILE_HINTS_UPLOAD,info))
+                  {
+                    if ((now - info.lastTS) > 5)
+                    {
+                      toDels.push_back(sit->first);
+                    }
+                  } 
+                }
+
+                std::list<std::string>::iterator it;
+                for (it = toDels.begin();it != toDels.end(); it++)
+                {
+                    sit = mFtDataplex->mServers.find(*it); 
+                    mFtDataplex->mServers.erase(sit);
+                    delete sit->second;
+                }
+	
 #ifdef WIN32
 		Sleep(1000);
 #else

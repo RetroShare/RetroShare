@@ -154,6 +154,8 @@ bool    locked_handleServerRequest(ftFileProvider *provider,
 	ftDataSend *mDataSend;
 	ftSearch   *mSearch;
 	std::string mOwnId;
+
+        friend class ftServer;
 };
 
 #endif
