@@ -464,28 +464,40 @@ bool OpenDHTClient::searchKey(std::string key, std::list<std::string> &values)
 #endif
 	}
 
+#ifdef	OPENDHT_DEBUG
+		std::cerr << "Parsing expression :$$$$$$$$$-" << response << "-$$$$$$$$" << std::endl ;
+#endif
 
 	/* search through the response for <base64> ... </base64> */
 
-	uint32_t start = 0;
-	uint32_t loc = 0;
-	uint32_t end = 0;
+	std::string::size_type start = 0;
+	std::string::size_type loc = 0;
+	std::string::size_type end = 0;
 
 	while(1)
 	{
 		loc = response.find("<base64>", start);
 		if (loc == std::string::npos)
 			return true; /* finished */
+#ifdef	OPENDHT_DEBUG
+		std::cerr << "found loc=" << loc << std::endl ;
+#endif
 		loc += 8; /* shift to end of <base64> */
 
 		end = response.find("</base64>", loc);
 		if (end == std::string::npos)
 			return true; /* finished */
+#ifdef	OPENDHT_DEBUG
+		std::cerr << "found end=" << end << std::endl ;
+#endif
 
 		std::string value = response.substr(loc, end-loc);
+#ifdef	OPENDHT_DEBUG
+		std::cerr << "found value=" << value << std::endl ;
+#endif
 
 		/* clear out whitespace */
-		for(uint32_t i = 0; i < value.length();)
+		for(std::string::size_type i = 0; i < value.length();)
 		{
 			if (isspace(value[i]))
 			{
