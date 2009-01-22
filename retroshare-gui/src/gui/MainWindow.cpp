@@ -112,27 +112,6 @@
 
 #define RS_RELEASE_VERSION    1
 
-// This static function is a callback passed to the file hashing thread. As it is called
-// from a separate thread without locks, it should not perturbate the interface. That's why
-// I'm only using show()/hide() and setText() instead of add/remove widgets.
-//
-static QLabel *hash_info_label = NULL ;
-static void displayHashingInfo(const std::string& s)
-{
-	return ;
-
-	// I disabled this, because it's causing core dumps. I'll see what I can do.
-	
-//	if(hash_info_label != NULL)
-//		if(s == "")
-//			hash_info_label->hide() ;
-//		else
-//		{
-//			hash_info_label->show() ;
-//			hash_info_label->setText(QString::fromStdString(s)) ;
-//		}
-}
-
 /** Constructor */
 MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     : RWindow("MainWindow", parent, flags)
@@ -333,9 +312,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     peerstatus = new PeerStatus();
     statusBar()->addWidget(peerstatus);
 
-	 hash_info_label = new QLabel("") ;
-    statusBar()->addPermanentWidget(hash_info_label);
-	 hash_info_label->hide() ;
+	 _hashing_info_label = new QLabel("") ;
+    statusBar()->addPermanentWidget(_hashing_info_label);
+	 _hashing_info_label->hide() ;
 
     statusBar()->addPermanentWidget(statusRates = new QLabel(tr("<strong>Down:</strong> 0.00 (kB/s) | <strong>Up:</strong> 0.00 (kB/s) ")));
 
@@ -393,11 +372,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     QTimer *timer = new QTimer(this);
     timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
     timer->start(5113);
-
-	 // Here we're setting the callback responsible for displaying what's happening to 
-	 // file hashing.
-	 //
-	 rsFiles->setFileHashingCallback(displayHashingInfo) ;
 }
 
 void MainWindow::updateStatus()
@@ -417,6 +391,17 @@ void MainWindow::updateStatus()
     	if (peerstatus)
 		peerstatus->setPeerStatus();
 
+}
+
+void MainWindow::updateHashingInfo(const QString& s)
+{
+	if(s == "")
+		_hashing_info_label->hide() ;
+	else
+	{
+		_hashing_info_label->setText("Hashing file " + s) ;
+		_hashing_info_label->show() ;
+	}
 }
 
 /** Creates a new action associated with a config page. */

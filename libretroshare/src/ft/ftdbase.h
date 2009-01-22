@@ -54,13 +54,13 @@ virtual bool search(std::string hash, uint64_t size, uint32_t hintflags, FileInf
 class ftFiMonitor: public FileIndexMonitor, public ftSearch, public p3Config
 {
 	public:
-	ftFiMonitor(CacheStrapper *cs, std::string cachedir, std::string pid);
+	ftFiMonitor(CacheStrapper *cs,NotifyBase *cb_in, std::string cachedir, std::string pid);
 
 	/* overloaded search function */
-virtual bool search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
+	virtual bool search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
 
 	/* overloaded set dirs enables config indication */
-virtual void setSharedDirectories(std::list<std::string> dirList);
+	virtual void setSharedDirectories(std::list<std::string> dirList);
 
 	/***
 	* Configuration - store shared directories

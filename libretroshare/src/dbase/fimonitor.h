@@ -59,6 +59,7 @@ std::string FileIndexMonitor::findRealRoot(std::string base);
 
 ******************************************************************************************/
 
+class NotifyBase ;
 
 
 /******************************************************************************************
@@ -68,7 +69,7 @@ std::string FileIndexMonitor::findRealRoot(std::string base);
 class FileIndexMonitor: public CacheSource, public RsThread
 {
 	public:
-	FileIndexMonitor(CacheStrapper *cs, std::string cachedir, std::string pid);
+	FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in, std::string cachedir, std::string pid);
 virtual ~FileIndexMonitor();
 
 	/* external interface for filetransfer */
@@ -96,7 +97,7 @@ void    getSharedDirectories(std::list<std::string> &dirs);
 void    setPeriod(int insecs);
 void    forceDirectoryCheck();
 bool	inDirectoryCheck();
-void		setFileHashingCallback(void (*cb)(const std::string&)) { _hashing_info_callback = cb ; }
+
 	/* util fns */
 
 	private:
@@ -123,9 +124,9 @@ bool 	hashFile(std::string path, FileEntry &fi); /* To Implement */
 	bool mInCheck;
 
 	std::list<std::string> pendingDirList;
-bool    internal_setSharedDirectories();
+	bool    internal_setSharedDirectories();
 
-	void (*_hashing_info_callback)(const std::string&) ;
+	NotifyBase *cb ;
 };
 
 

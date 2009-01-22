@@ -45,10 +45,14 @@ virtual void notifyListPreChange(int list, int type);
 virtual void notifyListChange(int list, int type);
 virtual void notifyErrorMsg(int list, int sev, std::string msg);
 virtual void notifyChat();
+virtual void notifyHashingInfo(std::string fileinfo);
+
+	signals:
+		void hashingInfo(const QString&) const ;
 
 	public slots:
 
-void	UpdateGUI(); /* called by timer */
+		void	UpdateGUI(); /* called by timer */
 
 	private:
 

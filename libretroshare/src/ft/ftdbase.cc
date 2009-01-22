@@ -119,8 +119,8 @@ bool ftFiStore::search(std::string hash, uint64_t size, uint32_t hintflags, File
 }
 
 		
-ftFiMonitor::ftFiMonitor(CacheStrapper *cs, std::string cachedir, std::string pid)
-	:FileIndexMonitor(cs, cachedir, pid), p3Config(CONFIG_TYPE_FT_SHARED)
+ftFiMonitor::ftFiMonitor(CacheStrapper *cs,NotifyBase *cb_in, std::string cachedir, std::string pid)
+	:FileIndexMonitor(cs,cb_in, cachedir, pid), p3Config(CONFIG_TYPE_FT_SHARED)
 {
 	return;
 }

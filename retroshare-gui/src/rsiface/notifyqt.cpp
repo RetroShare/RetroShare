@@ -36,6 +36,11 @@ void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
 	return;
 }
 
+void NotifyQt::notifyHashingInfo(std::string fileinfo)
+{
+	emit hashingInfo(QString::fromStdString(fileinfo)) ;
+}
+
 void NotifyQt::notifyChat()
 {
 	return;

@@ -30,6 +30,7 @@ const int ftserverzone = 29539;
 #include "ft/ftextralist.h"
 #include "ft/ftfilesearch.h"
 #include "ft/ftcontroller.h"
+#include "ft/ftfileprovider.h"
 #include "ft/ftdatamultiplex.h"
 
 
@@ -125,7 +126,7 @@ void ftServer::SetupFtServer(NotifyBase *cb)
 
 	/* Make Cache Source/Store */
 	mFiStore = new ftFiStore(mCacheStrapper, mFtController, cb, ownId, remotecachedir);
-        mFiMon = new ftFiMonitor(mCacheStrapper, localcachedir, ownId);
+	mFiMon = new ftFiMonitor(mCacheStrapper,cb, localcachedir, ownId);
 
 	/* now add the set to the cachestrapper */
 	CachePair cp(mFiMon, mFiStore, CacheId(RS_SERVICE_TYPE_FILE_INDEX, 0));
@@ -423,10 +424,6 @@ void    ftServer::ForceDirectoryCheck()
 bool    ftServer::InDirectoryCheck()
 {
 	return mFiMon->inDirectoryCheck();
-}
-void ftServer::setFileHashingCallback( void (*cb)(const std::string&) )
-{
-	mFiMon->setFileHashingCallback( cb ) ;
 }
 	
 bool	ftServer::getSharedDirectories(std::list<std::string> &dirs)

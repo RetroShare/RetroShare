@@ -116,6 +116,7 @@ public slots:
     void startqcheckers();
 
     void playFiles(QStringList files);
+	 void updateHashingInfo(const QString&) ;
 
 private slots:
 
@@ -211,6 +212,8 @@ private:
        
     /** Qt Designer generated object */
     Ui::MainWindow ui;
+
+	 QLabel *_hashing_info_label ;
 };
 
 #endif

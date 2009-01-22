@@ -199,6 +199,7 @@ class NotifyBase
 	virtual void notifyListChange(int list, int type) { (void) list; (void) type; return; }
 	virtual void notifyErrorMsg(int list, int sev, std::string msg) { (void) list; (void) sev; (void) msg; return; }
 	virtual void notifyChat() { return; }
+	virtual void notifyHashingInfo(std::string fileinfo) { (void)fileinfo; return ; }
 };
 
 const int NOTIFY_LIST_NEIGHBOURS = 1;

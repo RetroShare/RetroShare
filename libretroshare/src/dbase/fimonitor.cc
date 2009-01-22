@@ -24,6 +24,8 @@
 #include "dbase/fimonitor.h"
 #include "util/rsdir.h"
 #include "serialiser/rsserviceids.h"
+#include "rsiface/rsiface.h"
+#include "rsiface/rsnotify.h"
 
 #include <iostream>
 #include <sstream>
@@ -40,10 +42,10 @@
  * #define FIM_DEBUG 1
  ***********/
 
-FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, std::string cachedir, std::string pid)
+FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in,std::string cachedir, std::string pid)
 	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cachedir), fi(pid), 
 		pendingDirs(false), pendingForceCacheWrite(false), 
-		mForceCheck(false), mInCheck(false),_hashing_info_callback(NULL)
+		mForceCheck(false), mInCheck(false),cb(cb_in)
 
 {
 	updatePeriod = 60;
@@ -596,8 +598,7 @@ void 	FileIndexMonitor::updateCycle()
 		RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
 		mInCheck = false;
 	}
-	if(_hashing_info_callback != NULL)
-		(*_hashing_info_callback)("") ;
+	cb->notifyHashingInfo("") ;
 }
 
 	/* interface */
@@ -797,8 +798,7 @@ bool FileIndexMonitor::hashFile(std::string fullpath, FileEntry &fent)
 	unsigned char sha_buf[SHA_DIGEST_LENGTH];
 	unsigned char gblBuf[512];
 
-	if(_hashing_info_callback != NULL)
-		(*_hashing_info_callback)("Hashing "+f_hash) ;
+	cb->notifyHashingInfo(fent.name) ;
 
 #ifdef FIM_DEBUG
 	std::cerr << "File to hash = " << f_hash << std::endl;

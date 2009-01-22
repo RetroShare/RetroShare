@@ -141,14 +141,19 @@ int main(int argc, char *argv[])
 	//skinWindow->setCentralWidget(w);
 	
 	/* Attach the Dialogs, to the Notify Class */
-        notify->setNetworkDialog(w->networkDialog);
-        notify->setPeersDialog(w->peersDialog);
-        notify->setDirDialog(w->sharedfilesDialog);
-        notify->setTransfersDialog(w->transfersDialog);
-        notify->setChatDialog(w->chatDialog);
-        notify->setMessagesDialog(w->messagesDialog);
-        notify->setChannelsDialog(w->channelsDialog);
-        notify->setMessengerWindow(w->messengerWindow);
+	notify->setNetworkDialog(w->networkDialog);
+	notify->setPeersDialog(w->peersDialog);
+	notify->setDirDialog(w->sharedfilesDialog);
+	notify->setTransfersDialog(w->transfersDialog);
+	notify->setChatDialog(w->chatDialog);
+	notify->setMessagesDialog(w->messagesDialog);
+	notify->setChannelsDialog(w->channelsDialog);
+	notify->setMessengerWindow(w->messengerWindow);
+
+	// I'm using a signal to transfer the hashing info to the mainwindow, because Qt schedules signals properly to
+	// avoid clashes between infos from threads.
+	//
+	QObject::connect(notify,SIGNAL(hashingInfo(const QString&)),w,SLOT(updateHashingInfo(const QString&))) ;
 
 	/* only show window, if not startMinimized */
   	if (!startMinimised)

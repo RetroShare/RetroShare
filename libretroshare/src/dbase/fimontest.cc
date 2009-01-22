@@ -72,7 +72,7 @@ int main(int argc, char **argv)
 
 	sleep(1);
 
-	FileIndexMonitor mon(NULL, "", "OWN ID");
+	FileIndexMonitor mon(NULL,NULL, "", "OWN ID");
 
 	/* setup monitor */
 	mon.setPeriod(period);
