@@ -295,7 +295,16 @@ Section "Uninstall"
   ; Don't remove the directory, otherwise
   ; we lose the XPGP keys.
   ; Should make this an option though...
-  Delete $APPDATA\RetroShare\kadc.ini
+  Delete "$APPDATA\${APPNAME}\kadc.ini"
+  Delete "$APPDATA\${APPNAME}\*.cfg"
+  Delete "$APPDATA\${APPNAME}\*.conf"
+  Delete "$APPDATA\${APPNAME}\*.log-save"
+  Delete "$APPDATA\${APPNAME}\*.log"
+  Delete "$APPDATA\${APPNAME}\*.failed"
+
+  RMDir /r "$APPDATA\${APPNAME}\cache"
+  RMDir /r "$APPDATA\${APPNAME}\Partials"
+
 
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\${APPNAME}\*.*"
@@ -308,10 +317,12 @@ Section "Uninstall"
 
   ; Remove directories used
   RMDir "$SMPROGRAMS\${APPNAME}"
-  RMDir "$INSTDIR"
-  RMDir "$INSTDIR\mplayer"
-  RMDir "$INSTDIR\smplayer"
-  RMDir "$INSTDIR\qss"
+  RMDir /r "$INSTDIR"
+  RMDir /r "$INSTDIR\mplayer"
+  RMDir /r "$INSTDIR\smplayer"
+  RMDir /r "$INSTDIR\qss"
+  RMDir /r "$INSTDIR\emoticons"
+  RMDir /r "$INSTDIR\style"
 
 SectionEnd
 
