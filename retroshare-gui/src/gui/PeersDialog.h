@@ -81,6 +81,7 @@ private slots:
   void msgfriend();
 
   void configurefriend();
+  void viewprofile();
 
   /** RsServer Friend Calls */
   void allowfriend();
@@ -117,6 +118,7 @@ private:
   QAction* chatAct;
   QAction* msgAct;
   QAction* connectfriendAct;
+  QAction* profileviewAct;
   QAction* configurefriendAct;
   QAction* exportfriendAct;
   QAction* removefriendAct;

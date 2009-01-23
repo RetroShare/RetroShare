@@ -76,6 +76,8 @@ private:
   std::string pId;
   bool mIsOwnId;
 
+  QPixmap picture;
+
 
   /** Qt Designer generated object */
   Ui::ProfileView ui;

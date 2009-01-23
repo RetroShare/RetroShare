@@ -35,6 +35,8 @@
 #include "msgs/ChanMsgDialog.h"
 #include "ChatDialog.h"
 #include "connect/ConfCertDialog.h"
+#include "profile/ProfileView.h"
+
 
 #include "gui/Preferences/rsharesettings.h"
 
@@ -65,6 +67,7 @@
 #define IMAGE_PEERINFO           ":/images/peerdetails_16x16.png"
 #define IMAGE_CHAT               ":/images/chat.png"
 #define IMAGE_MSG                ":/images/message-mail.png"
+#define IMAGE_CONNECT            ":/images/connect_friend.png"
 /* Images for Status icons */
 #define IMAGE_ONLINE             ":/images/user/identity24.png"
 #define IMAGE_OFFLINE            ":/images/user/identityoffline24.png"
@@ -139,7 +142,7 @@ PeersDialog::PeersDialog(QWidget *parent)
   ui.fontsButton->setIcon(QIcon(QString(":/images/fonts.png")));
   
   _currentColor = Qt::black;
-  QPixmap pxm(24,24);
+  QPixmap pxm(16,16);
   pxm.fill(_currentColor);
   ui.colorChatButton->setIcon(pxm);
   
@@ -185,11 +188,14 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       msgAct = new QAction(QIcon(IMAGE_MSG), tr( "Message Friend" ), this );
       connect( msgAct , SIGNAL( triggered() ), this, SLOT( msgfriend() ) );
 
-      connectfriendAct = new QAction( tr( "Connect To Friend" ), this );
+      connectfriendAct = new QAction(QIcon(IMAGE_CONNECT), tr( "Connect To Friend" ), this );
       connect( connectfriendAct , SIGNAL( triggered() ), this, SLOT( connectfriend() ) );
       
       configurefriendAct = new QAction(QIcon(IMAGE_PEERINFO), tr( "Peer Details" ), this );
       connect( configurefriendAct , SIGNAL( triggered() ), this, SLOT( configurefriend() ) );
+
+      profileviewAct = new QAction(QIcon(IMAGE_PEERINFO), tr( "Profile View" ), this );
+      connect( profileviewAct , SIGNAL( triggered() ), this, SLOT( viewprofile() ) );
       
       exportfriendAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Export Friend" ), this );
       connect( exportfriendAct , SIGNAL( triggered() ), this, SLOT( exportfriend() ) );
@@ -203,6 +209,7 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       contextMnu.addAction( msgAct);
       contextMnu.addSeparator(); 
       contextMnu.addAction( configurefriendAct);
+      //contextMnu.addAction( profileviewAct);
       contextMnu.addSeparator();
       contextMnu.addAction( connectfriendAct); 
       contextMnu.addAction( exportfriendAct);
@@ -919,7 +926,7 @@ void PeersDialog::setColor()
  	QRgb color = QColorDialog::getRgba(ui.lineEdit->textColor().rgba(), &ok, this);
  	if (ok) {
  	        _currentColor = QColor(color);
- 	        QPixmap pxm(24,24);
+ 	        QPixmap pxm(16,16);
 	        pxm.fill(_currentColor);
 	        ui.colorChatButton->setIcon(pxm);
  	}
@@ -1068,3 +1075,23 @@ void PeersDialog::addSmileys()
 	ui.lineEdit->setText(ui.lineEdit->toHtml() + qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
 }
 
+/* GUI stuff -> don't do anything directly with Control */
+void PeersDialog::viewprofile()
+{
+	/* display Dialog */
+
+	QTreeWidgetItem *c = getCurrentPeer();
+
+
+	static ProfileView *profileview = new ProfileView();
+
+
+	if (!c)
+		return;
+
+	/* set the Id */
+	std::string id = getPeerRsCertId(c);
+
+	profileview -> setPeerId(id);
+	profileview -> show();
+}

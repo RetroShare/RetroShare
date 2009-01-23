@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Form</string>
+   <string>Profile Edit</string>
   </property>
   <property name="layoutDirection" >
    <enum>Qt::LeftToRight</enum>
@@ -58,7 +58,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="" >
+     <widget class="QWidget" name="layoutWidget" >
       <layout class="QGridLayout" >
        <item row="0" column="0" colspan="2" >
         <widget class="QLabel" name="label_7" >
@@ -140,7 +140,8 @@
         <string>Add Entry</string>
        </property>
        <property name="icon" >
-        <iconset resource="../images.qrc" >:/images/add_24x24.png</iconset>
+        <iconset resource="../images.qrc" >
+         <normaloff>:/images/add_24x24.png</normaloff>:/images/add_24x24.png</iconset>
        </property>
       </widget>
      </item>
@@ -149,7 +150,7 @@
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>71</width>
          <height>28</height>
@@ -166,7 +167,8 @@
         <string>Move</string>
        </property>
        <property name="icon" >
-        <iconset resource="../images.qrc" >:/images/down.png</iconset>
+        <iconset resource="../images.qrc" >
+         <normaloff>:/images/down.png</normaloff>:/images/down.png</iconset>
        </property>
       </widget>
      </item>
@@ -176,7 +178,8 @@
         <string>Move</string>
        </property>
        <property name="icon" >
-        <iconset resource="../images.qrc" >:/images/up.png</iconset>
+        <iconset resource="../images.qrc" >
+         <normaloff>:/images/up.png</normaloff>:/images/up.png</iconset>
        </property>
       </widget>
      </item>
@@ -185,7 +188,7 @@
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>71</width>
          <height>28</height>
@@ -202,7 +205,8 @@
         <string>Close Editor</string>
        </property>
        <property name="icon" >
-        <iconset resource="../images.qrc" >:/images/close_normal.png</iconset>
+        <iconset resource="../images.qrc" >
+         <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
        </property>
       </widget>
      </item>

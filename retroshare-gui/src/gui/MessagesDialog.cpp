@@ -441,6 +441,7 @@ void MessagesDialog::insertMessages()
 		case 0:
 		default:
 			msgbox = RS_MSG_INBOX;
+
 			break;
 	}
 
@@ -471,6 +472,7 @@ void MessagesDialog::insertMessages()
 			//std::cerr << std::endl;
 			continue;
 		}
+
 		/* make a widget per friend */
            	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
@@ -524,7 +526,7 @@ void MessagesDialog::insertMessages()
 				QFont qf = item->font(i);
 				qf.setBold(true);
 				item->setFont(i, qf);
-			    item -> setIcon(2, (QIcon(":/images/message-mail.png")));
+			        item -> setIcon(2, (QIcon(":/images/message-mail.png")));
 
 				//std::cerr << "Setting Item BOLD!" << std::endl;
 			}

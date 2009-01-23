@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>462</width>
-    <height>380</height>
+    <height>475</height>
    </rect>
   </property>
   <property name="palette" >
@@ -505,11 +505,31 @@
      <x>0</x>
      <y>0</y>
      <width>462</width>
-     <height>359</height>
+     <height>453</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2" >
     <item row="0" column="0" colspan="3" >
+     <widget class="QLabel" name="label_8" >
+      <property name="minimumSize" >
+       <size>
+        <width>0</width>
+        <height>70</height>
+       </size>
+      </property>
+      <property name="styleSheet" >
+       <string notr="true" >background-image: url(:/images/addfriendlabel.png)</string>
+      </property>
+      <property name="text" >
+       <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:16pt; font-weight:600; color:#000000;">		Make Friend&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="3" >
      <widget class="QGroupBox" name="groupBox" >
       <property name="title" >
        <string>Peer Details</string>
@@ -598,14 +618,14 @@
       </layout>
      </widget>
     </item>
-    <item row="1" column="0" >
+    <item row="2" column="0" >
      <widget class="QLabel" name="label_7" >
       <property name="text" >
        <string>AUTH CODE:</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="1" >
+    <item row="2" column="1" >
      <widget class="QLineEdit" name="Ledit_name" >
       <property name="sizePolicy" >
        <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
@@ -615,7 +635,7 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="2" >
+    <item row="2" column="2" >
      <spacer>
       <property name="orientation" >
        <enum>Qt::Horizontal</enum>
@@ -631,7 +651,7 @@
       </property>
      </spacer>
     </item>
-    <item row="2" column="0" colspan="3" >
+    <item row="3" column="0" colspan="3" >
      <layout class="QHBoxLayout" >
       <property name="spacing" >
        <number>6</number>
@@ -697,9 +717,9 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>359</y>
+     <y>453</y>
      <width>462</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

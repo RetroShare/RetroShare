@@ -139,6 +139,7 @@
         <file>images/folder-draft24-pressed.png</file>
         <file>images/folder-draft24.png</file>
         <file>images/folder-inbox.png</file>
+	<file>images/folder-inbox-new.png</file>
         <file>images/folder-outbox.png</file>
         <file>images/folder-sent.png</file>
         <file>images/folder_doments.png</file>
@@ -167,6 +168,7 @@
         <file>images/informations_24x24.png</file>
         <file>images/invite-friend24.png</file>
         <file>images/invitefriendlabel.png</file>
+        <file>images/connect_friend.png</file>
         <file>images/kbackgammon.png</file>
         <file>images/kblogger.png</file>
         <file>images/kcmsystem24.png</file>
@@ -279,6 +281,7 @@
         <file>images/user/identity32.png</file>
         <file>images/user/add_user16.png</file>
         <file>images/user/personal64.png</file>
+        <file>images/user/kuser24.png</file>
         <file>images/up.png</file>
         <file>images/underconstruction.png</file>
         <file>images/user.png</file>

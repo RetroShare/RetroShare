@@ -53,6 +53,8 @@ ProfileView::ProfileView(QWidget *parent)
 
   // connect up the buttons.
   connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(closeView()));
+  connect(ui.profileditButton, SIGNAL(clicked()), this, SLOT(profileEdit()));
+
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -241,7 +243,14 @@ void ProfileView::update()
 /* Image Context Menu */
 void ProfileView::selectimagefile()
 {
-	return;
+	QString fileName = QFileDialog::getOpenFileName(this, "Load File",
+							QDir::homePath(),
+							"Pictures (*.png *.xpm *.jpg)");
+	if(!fileName.isEmpty())
+	{
+		picture = QPixmap(fileName).scaled(108,108, Qt::IgnoreAspectRatio);
+		ui.photoLabel->setPixmap(picture);
+	}
 }
 
 void ProfileView::clearimage()
