@@ -502,20 +502,22 @@
    <string>Details</string>
   </property>
   <property name="windowIcon" >
-   <iconset resource="../images.qrc" >:/images/rstray3.png</iconset>
+   <iconset resource="../images.qrc" >
+    <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
   <layout class="QGridLayout" >
    <item row="0" column="0" >
     <widget class="QTabWidget" name="stabWidget" >
      <property name="currentIndex" >
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
        <string>Details</string>
       </attribute>
       <attribute name="icon" >
-       <iconset resource="../images.qrc" >:/images/peerdetails_16x16.png</iconset>
+       <iconset resource="../images.qrc" >
+        <normaloff>:/images/peerdetails_16x16.png</normaloff>:/images/peerdetails_16x16.png</iconset>
       </attribute>
       <layout class="QGridLayout" >
        <item row="0" column="0" >
@@ -615,36 +617,15 @@
             <property name="spacing" >
              <number>6</number>
             </property>
-            <property name="leftMargin" >
-             <number>0</number>
-            </property>
-            <property name="topMargin" >
-             <number>0</number>
-            </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
+            <property name="margin" >
              <number>0</number>
             </property>
             <item>
              <layout class="QGridLayout" >
-              <property name="leftMargin" >
+              <property name="margin" >
                <number>0</number>
               </property>
-              <property name="topMargin" >
-               <number>0</number>
-              </property>
-              <property name="rightMargin" >
-               <number>0</number>
-              </property>
-              <property name="bottomMargin" >
-               <number>0</number>
-              </property>
-              <property name="horizontalSpacing" >
-               <number>6</number>
-              </property>
-              <property name="verticalSpacing" >
+              <property name="spacing" >
                <number>6</number>
               </property>
               <item row="0" column="2" >
@@ -674,22 +655,10 @@
             </item>
             <item>
              <layout class="QGridLayout" >
-              <property name="leftMargin" >
+              <property name="margin" >
                <number>0</number>
               </property>
-              <property name="topMargin" >
-               <number>0</number>
-              </property>
-              <property name="rightMargin" >
-               <number>0</number>
-              </property>
-              <property name="bottomMargin" >
-               <number>0</number>
-              </property>
-              <property name="horizontalSpacing" >
-               <number>6</number>
-              </property>
-              <property name="verticalSpacing" >
+              <property name="spacing" >
                <number>6</number>
               </property>
               <item row="0" column="0" >
@@ -749,35 +718,53 @@
       <attribute name="title" >
        <string>Trust Settings</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
+      <layout class="QVBoxLayout" name="verticalLayout_2" >
+       <item>
         <widget class="QGroupBox" name="groupBox_3" >
          <property name="title" >
           <string>Trust Settings</string>
          </property>
-         <layout class="QGridLayout" >
-          <item row="0" column="0" >
-           <widget class="QLabel" name="label_9" >
-            <property name="text" >
-             <string>Trust Level</string>
-            </property>
-           </widget>
+         <layout class="QVBoxLayout" name="verticalLayout" >
+          <item>
+           <layout class="QGridLayout" name="gridLayout" >
+            <item row="0" column="0" >
+             <widget class="QLabel" name="label_9" >
+              <property name="text" >
+               <string>Trust Level</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" >
+             <widget class="QLineEdit" name="trustLvl" >
+              <property name="readOnly" >
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QLabel" name="label_12" >
+              <property name="text" >
+               <string>Trusting me</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <widget class="QLineEdit" name="_isTrustingMeTF" >
+              <property name="readOnly" >
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
-          <item row="0" column="1" >
-           <widget class="QLineEdit" name="trustLvl" >
-            <property name="readOnly" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1" >
+          <item>
            <widget class="QCheckBox" name="signBox" >
             <property name="text" >
              <string>Sign The Certificate</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="1" >
+          <item>
            <widget class="QCheckBox" name="trustBox" >
             <property name="text" >
              <string>Trust Their Signature</string>
@@ -787,12 +774,12 @@
          </layout>
         </widget>
        </item>
-       <item row="1" column="0" >
+       <item>
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>451</width>
            <height>131</height>
@@ -811,7 +798,7 @@
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>311</width>
          <height>20</height>

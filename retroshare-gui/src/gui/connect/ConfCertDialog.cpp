@@ -115,6 +115,11 @@ void ConfCertDialog::loadDialog()
 
 	ui.trustLvl->setText(QString::fromStdString(RsPeerTrustString(detail.trustLvl)));
 
+	if(rsPeers->isOnline(detail.id) || rsPeers->isTrustingMe(detail.id))
+		ui._isTrustingMeTF->setText("Yes");
+	else
+		ui._isTrustingMeTF->setText("No");
+
 	if (detail.ownsign)
 	{
 		ui.signBox -> setCheckState(Qt::Checked);
