@@ -62,8 +62,6 @@ const uint32_t CB_CODE_MEDIA = 0x0004;
 
 const uint32_t FC_TRANSFER_COMPLETE = 0x0001;
 
-const uint32_t MAX_NUMBER_OF_DOWNLOADING_FILE = 0x0002; //will be controller by user later
-
 class ftFileControl
 {
 	public:
@@ -192,8 +190,7 @@ bool    setPeerState(ftTransferModule *tm, std::string id,
 	std::map<std::string, ftFileControl> mCompleted;
 
 
-        std::map<std::string, ftFileControl> mDownloads; //include downloading and pending downloading
-        std::list<std::string> mDownloadingQueue; //only include downloading file hashs
+        std::map<std::string, ftFileControl> mDownloads;
 
 	//std::map<std::string, ftTransferModule *> mTransfers;
 	//std::map<std::string, ftFileCreator *> mFileCreators;

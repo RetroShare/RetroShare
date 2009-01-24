@@ -119,28 +119,20 @@ void ftController::run()
 		/* tick the transferModules */
 		std::list<std::string> done;
 		std::list<std::string>::iterator it;
-                std::map<std::string,ftFileControl>::iterator mit;
-                if (mDownloadingQueue.size() > 0)
 		{
 		  RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-		  for(it = mDownloadingQueue.begin(); it != mDownloadingQueue.end(); it++)
+		  std::map<std::string, ftFileControl>::iterator it;
+		  for(it = mDownloads.begin(); it != mDownloads.end(); it++)
 		  {
 
 #ifdef CONTROL_DEBUG
-			std::cerr << "\tTicking: " << *it;
+			std::cerr << "\tTicking: " << it->first;
 			std::cerr << std::endl;
 #endif
-                        mit = mDownloads.find(*it);
-                        if (mit != mDownloads.end())
-                        {
-			  if (mit->second.mTransfer)
-				(mit->second.mTransfer)->tick();
-                        }
-                        else
-                        {
-                          mDownloadingQueue.erase(it);
-                        }
+
+			if (it->second.mTransfer)
+				(it->second.mTransfer)->tick();
 		  }
 		}
 
@@ -150,9 +142,7 @@ void ftController::run()
 			completeFile(*it);
 		}
 		mDone.clear();
-                
-                /* adjust the Downloading queue*/
-                checkDownloadQueue();
+
 	}
 
 }
@@ -162,26 +152,9 @@ void ftController::run()
 /* Called every 10 seconds or so */
 void ftController::checkDownloadQueue()
 {
-        uint32_t cnt = MAX_NUMBER_OF_DOWNLOADING_FILE - mDownloadingQueue.size();
-        if (cnt <= 0) return;
-        
-        RsStackMutex stack(ctrlMutex);
-        std::map<std::string,ftFileControl>::iterator mit;
-        mit = mDownloads.begin();
-        while (cnt-- > 0)
-        {
-                while ((mit != mDownloads.end()) && (mit->second.mState != ftFileControl::DOWNLOADING))
-                    { mit++ ; }
+	/* */
 
-                if (mit != mDownloads.end())
-                {
-                   mDownloadingQueue.push_back(mit->first);
-                }
-                else
-                {
-                  cnt = 0; 
-                }
-        }
+
 }
 
 bool ftController::FlagFileComplete(std::string hash)
@@ -302,7 +275,6 @@ bool ftController::completeFile(std::string hash)
 	callbackCode = fc->mCallbackCode;
 
 	mDownloads.erase(it);
-        mDownloadingQueue.remove(it->first);
       } /******* UNLOCKED ********/
 
 
@@ -642,10 +614,6 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	mDownloads[hash] = ftfc;
 	mSlowQueue.push_back(hash);
 
-        if (mDownloadingQueue.size() < MAX_NUMBER_OF_DOWNLOADING_FILE)
-        {
-                mDownloadingQueue.push_back(hash);
-        }
 
 	IndicateConfigChanged(); /* completed transfer -> save */
 	return true;
@@ -757,8 +725,6 @@ bool 	ftController::FileCancel(std::string hash)
 
 	//fc->mState = ftFileControl::ERROR_COMPLETION;
 	mDownloads.erase(mit);
-        
-        mDownloadingQueue.remove(mit->first);
 
         IndicateConfigChanged(); /* completed transfer -> save */
 	return true;
