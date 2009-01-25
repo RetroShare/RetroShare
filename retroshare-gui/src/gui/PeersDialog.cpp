@@ -992,7 +992,11 @@ void PeersDialog::displayInfoChatMenu(const QPoint& pos)
 void PeersDialog::loadEmoticonsgroupchat()
 {
 	QString sm_codes;
+	#if defined(Q_OS_WIN32)
+	QFile sm_file(QApplication::applicationDirPath() + "/emoticons/emotes.acs");
+	#else
 	QFile sm_file(QString(":/emoticons/emotes.acs"));
+	#endif
 	if(!sm_file.open(QIODevice::ReadOnly))
 	{
 		std::cerr << "Could not open resouce file :/emoticons/emotes.acs" << endl ;
@@ -1039,7 +1043,11 @@ void PeersDialog::loadEmoticonsgroupchat()
 		}
 		i++;
 		if(!smcode.isEmpty() && !smfile.isEmpty())
+			#if defined(Q_OS_WIN32)
+		    smileys.insert(smcode, smfile);
+	        #else
 			smileys.insert(smcode, ":/"+smfile);
+			#endif
 	}
 }
 
