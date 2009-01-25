@@ -333,7 +333,10 @@ void  PeersDialog::insertPeers()
 			/* bright green */
 			for(i = 1; i < 8; i++)
 			{
-			  //item -> setBackground(i,QBrush(Qt::green));
+				// CsoLer: I uncommented the color because it's really confortable
+				// to be able to see at some distance that people are connected.
+				// The blue/gray icons need a close look indeed.
+			  item -> setBackground(i,QBrush(Qt::green));
 			  item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
 			}
 		}
@@ -989,8 +992,12 @@ void PeersDialog::displayInfoChatMenu(const QPoint& pos)
 void PeersDialog::loadEmoticonsgroupchat()
 {
 	QString sm_codes;
-	QFile sm_file(QApplication::applicationDirPath() + "/emoticons/emotes.acs");
-	sm_file.open(QIODevice::ReadOnly);
+	QFile sm_file(QString(":/emoticons/emotes.acs"));
+	if(!sm_file.open(QIODevice::ReadOnly))
+	{
+		std::cerr << "Could not open resouce file :/emoticons/emotes.acs" << endl ;
+		return ;
+	}
 	sm_codes = sm_file.readAll();
 	sm_file.close();
 	sm_codes.remove("\n");
