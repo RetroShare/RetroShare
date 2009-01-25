@@ -389,8 +389,12 @@ void PopupChatDialog::loadEmoticons2()
 void PopupChatDialog::loadEmoticons()
 {
 	QString sm_codes;
-	QFile sm_file(QApplication::applicationDirPath() + "/emoticons/emotes.acs");
-	sm_file.open(QIODevice::ReadOnly);
+	QFile sm_file(QString(":/emoticons/emotes.acs"));
+	if(!sm_file.open(QIODevice::ReadOnly))
+	{
+		std::cout << "error opening ressource file" << std::endl ;
+		return ;
+	}
 	sm_codes = sm_file.readAll();
 	sm_file.close();
 	sm_codes.remove("\n");
