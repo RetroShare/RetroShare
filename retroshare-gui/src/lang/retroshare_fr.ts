@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS><TS version="1.1" language="fr">
+<defaultcodec></defaultcodec>
 <context>
     <name></name>
     <message>
@@ -1498,17 +1499,17 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/Preferences/ConfirmQuitDialog.ui" line="27"/>
         <source>Exit RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation>Quitter RetroShare</translation>
     </message>
     <message>
         <location filename="../gui/Preferences/ConfirmQuitDialog.ui" line="130"/>
         <source>You are about to exit the RetroShare application and therefore stop all transfers. &lt;br&gt;&lt;br&gt;Are you sure you want to stop and exit RetroShare?</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous êtes sur le point de quitter RetroShare. Cela stoppe tous les transfers en cours.&lt;br&gt;&lt;br&gt;Etes vous sûrs de vouloir quitter ?</translation>
     </message>
     <message>
         <location filename="../gui/Preferences/ConfirmQuitDialog.ui" line="168"/>
         <source>Do not show this message again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ne plus afficher ce message.</translation>
     </message>
 </context>
 <context>
@@ -4100,12 +4101,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="138"/>
         <source>Send Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Envoyer</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="156"/>
         <source>Remove Friend</source>
-        <translation type="unfinished">Enlever un ami</translation>
+        <translation>Supprimer</translation>
     </message>
 </context>
 <context>

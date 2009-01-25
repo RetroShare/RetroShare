@@ -161,10 +161,13 @@ void SharedFilesDialog::checkUpdate()
 		/*QMovie *movie = new QMovie(IMAGE_PROGRESS);
         ui.hashLabel->setMovie(movie);
         movie->start();*/
+
+//		ui.hashLabel->setToolTip(QString::fromStdString(rsFiles->currentJobInfo())) ;
 	}
 	else
 	{
 		ui.hashLabel->setPixmap(QPixmap(IMAGE_HASH_DONE));
+		ui.hashLabel->setToolTip("") ;
 	}
 
 	return;

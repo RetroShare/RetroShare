@@ -392,7 +392,7 @@ void PopupChatDialog::loadEmoticons()
 	#if defined(Q_OS_WIN32)
 	QFile sm_file(QApplication::applicationDirPath() + "/emoticons/emotes.acs");
 	#else
-	QFile sm_file(QString(":/emoticons/emotes.acs"));
+	QFile sm_file(QString(":/smileys/emotes.acs"));
 	#endif
 	if(!sm_file.open(QIODevice::ReadOnly))
 	{

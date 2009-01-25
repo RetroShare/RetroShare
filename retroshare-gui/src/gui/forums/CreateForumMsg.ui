@@ -13,7 +13,8 @@
    <string>Post Forum Message</string>
   </property>
   <property name="windowIcon" >
-   <iconset resource="../images.qrc" >:/images/rstray3.png</iconset>
+   <iconset resource="../images.qrc" >
+    <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
   <property name="toolButtonStyle" >
    <enum>Qt::ToolButtonTextUnderIcon</enum>
@@ -68,7 +69,7 @@
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>40</width>
             <height>20</height>
@@ -80,6 +81,9 @@
          <widget class="QCheckBox" name="signBox" >
           <property name="text" >
            <string>Sign Message</string>
+          </property>
+          <property name="checked" >
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -107,7 +111,8 @@
   </widget>
   <action name="postmessage_action" >
    <property name="icon" >
-    <iconset resource="../images.qrc" >:/images/mail_send24.png</iconset>
+    <iconset resource="../images.qrc" >
+     <normaloff>:/images/mail_send24.png</normaloff>:/images/mail_send24.png</iconset>
    </property>
    <property name="text" >
     <string>Post Forum Msg</string>
@@ -115,7 +120,8 @@
   </action>
   <action name="close_action" >
    <property name="icon" >
-    <iconset resource="../images.qrc" >:/images/button_cancel.png</iconset>
+    <iconset resource="../images.qrc" >
+     <normaloff>:/images/button_cancel.png</normaloff>:/images/button_cancel.png</iconset>
    </property>
    <property name="text" >
     <string>Close</string>

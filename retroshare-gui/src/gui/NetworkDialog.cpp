@@ -373,7 +373,7 @@ void NetworkDialog::insertConnect()
 			{
 				backgrndcolor=Qt::magenta;
 				item -> setIcon(0,(QIcon(IMAGE_TRUSTED)));
-				item -> setText(2,QString("Trusts me"));
+				item -> setText(2,QString("Is trusting you"));
 				for(int k=0;k<8;++k)
 					item -> setToolTip(k,QString::fromStdString(detail.name) + QString(tr(" is trusting you. \nRight-click and select 'make friend' to be able to connect."))) ;
 			}
