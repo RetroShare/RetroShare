@@ -312,8 +312,23 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     peerstatus = new PeerStatus();
     statusBar()->addWidget(peerstatus);
 
-	 _hashing_info_label = new QLabel("") ;
-    statusBar()->addPermanentWidget(_hashing_info_label);
+	 QWidget *widget = new QWidget();
+    QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
+    sizePolicy.setHorizontalStretch(0);
+    sizePolicy.setVerticalStretch(0);
+    sizePolicy.setHeightForWidth(widget->sizePolicy().hasHeightForWidth());
+    widget->setSizePolicy(sizePolicy);
+    QHBoxLayout *horizontalLayout = new QHBoxLayout(widget);
+	 horizontalLayout->setContentsMargins(0, 0, 0, 0);
+    horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+	 _hashing_info_label = new QLabel(widget) ;
+    _hashing_info_label->setObjectName(QString::fromUtf8("label"));
+
+    horizontalLayout->addWidget(_hashing_info_label);
+    QSpacerItem *horizontalSpacer = new QSpacerItem(1000, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    horizontalLayout->addItem(horizontalSpacer);
+
+    statusBar()->addPermanentWidget(widget);
 	 _hashing_info_label->hide() ;
 
     statusBar()->addPermanentWidget(statusRates = new QLabel(tr("<strong>Down:</strong> 0.00 (kB/s) | <strong>Up:</strong> 0.00 (kB/s) ")));
