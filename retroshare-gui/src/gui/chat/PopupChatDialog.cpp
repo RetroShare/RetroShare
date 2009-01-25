@@ -436,7 +436,7 @@ void PopupChatDialog::loadEmoticons()
 		}
 		i++;
 		if(!smcode.isEmpty() && !smfile.isEmpty())
-			smileys.insert(smcode, smfile);
+			smileys.insert(smcode, ":/"+smfile);
 	}
 }
 

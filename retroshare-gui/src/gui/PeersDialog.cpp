@@ -1039,7 +1039,7 @@ void PeersDialog::loadEmoticonsgroupchat()
 		}
 		i++;
 		if(!smcode.isEmpty() && !smfile.isEmpty())
-			smileys.insert(smcode, smfile);
+			smileys.insert(smcode, ":/"+smfile);
 	}
 }
 
