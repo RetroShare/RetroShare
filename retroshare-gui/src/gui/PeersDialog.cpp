@@ -336,7 +336,11 @@ void  PeersDialog::insertPeers()
 				// CsoLer: I uncommented the color because it's really confortable
 				// to be able to see at some distance that people are connected.
 				// The blue/gray icons need a close look indeed.
-			  item -> setBackground(i,QBrush(Qt::green));
+			  //item -> setBackground(i,QBrush(Qt::green))
+			  item -> setTextColor(i,(Qt::darkBlue));
+			  QFont font ;
+                          font.setBold(true);
+			  item -> setFont(i,font);
 			  item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
 			}
 		}
