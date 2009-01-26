@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>395</width>
-    <height>389</height>
+    <height>392</height>
    </rect>
   </property>
   <property name="palette" >
@@ -496,7 +496,8 @@
    <string>RetroShare setup</string>
   </property>
   <property name="windowIcon" >
-   <iconset resource="images.qrc" >:/images/rstray3.png</iconset>
+   <iconset resource="images.qrc" >
+    <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
   <layout class="QGridLayout" >
    <property name="margin" >
@@ -510,7 +511,7 @@
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>20</width>
        <height>40</height>
@@ -990,11 +991,12 @@
       </palette>
      </property>
      <property name="text" >
-      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+      <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:16pt;">Generate a new profile&lt;/span>&lt;br />&lt;br />Please fill in the information which will&lt;br />allow your RetroShare to connect to&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Friends.&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:16pt;">Generate a new profile&lt;/span>&lt;br />&lt;br />&lt;span style=" font-size:9pt;">Please fill in the information which will&lt;br />allow your RetroShare to connect to&lt;/span>&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt;">Friends.&lt;/p>&lt;/body>&lt;/html></string>
      </property>
      <property name="alignment" >
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -1018,10 +1020,7 @@ p, li { white-space: pre-wrap; }
      <item row="4" column="0" >
       <widget class="QLabel" name="label_6" >
        <property name="text" >
-        <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Organisation:&lt;/p>&lt;/body>&lt;/html></string>
+        <string>Organisation:</string>
        </property>
       </widget>
      </item>
@@ -1085,7 +1084,7 @@ p, li { white-space: pre-wrap; }
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>211</width>
          <height>20</height>
@@ -1118,10 +1117,7 @@ p, li { white-space: pre-wrap; }
        <item row="0" column="0" >
         <widget class="QLabel" name="label_10" >
          <property name="text" >
-          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Friend&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+          <string>Friend</string>
          </property>
         </widget>
        </item>
@@ -1151,10 +1147,7 @@ p, li { white-space: pre-wrap; }
      <item row="0" column="0" >
       <widget class="QLabel" name="label_5" >
        <property name="text" >
-        <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Name:&lt;/p>&lt;/body>&lt;/html></string>
+        <string>Name:</string>
        </property>
       </widget>
      </item>
