@@ -76,7 +76,7 @@ void PeerStatus::setPeerStatus()
 	int others = 1 + ids.size();
 
 	std::ostringstream out2;
-	out2 << "<span style=\"color:#008000\"><strong>Online: </strong></span>" << online << " | <span style=\"color:#0000FF\"><strong>Friends: </strong></span>" << friends << " | <span style=\"color:FF0033\"><strong>Network: </strong></span>" << others << " ";
+	out2 << "<span style=\"color:#008000\"><strong>Online: </strong></span>" << online << " | <span style=\"color:#0000FF\"><strong>Friends: </strong></span>" << friends << " | <span style=\"color:#FF0033\"><strong>Network: </strong></span>" << others << " ";
 
 
 	if (statusPeers)
