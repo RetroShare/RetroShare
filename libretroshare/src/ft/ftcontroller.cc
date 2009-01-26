@@ -215,9 +215,16 @@ bool ftController::completeFile(std::string hash)
 
 	ftFileControl *fc = &(it->second);
 
+	// (csoler) I've postponed this to the end of the block because deleting the 
+	// element from the map calls the destructor of fc->mTransfer, which 
+	// makes fc to point to nothing and causes random behavior/crashes.
+	//
+	// mDataplex->removeTransferModule(fc->mTransfer->hash());
+	//
 	/* done - cleanup */
 
-	mDataplex->removeTransferModule(fc->mTransfer->hash());
+	// (csoler) I'm copying this because "delete fc->mTransfer" deletes the hash string!
+	std::string hash_to_suppress(fc->mTransfer->hash());	
 
 	if (fc->mTransfer)
 	{
@@ -274,6 +281,7 @@ bool ftController::completeFile(std::string hash)
 	doCallback = fc->mDoCallback;
 	callbackCode = fc->mCallbackCode;
 
+	mDataplex->removeTransferModule(hash_to_suppress) ;
 	mDownloads.erase(it);
       } /******* UNLOCKED ********/
 

@@ -204,8 +204,8 @@ void	ftServer::run()
                 for (it = toDels.begin();it != toDels.end(); it++)
                 {
                     sit = mFtDataplex->mServers.find(*it); 
-                    mFtDataplex->mServers.erase(sit);
                     delete sit->second;
+                    mFtDataplex->mServers.erase(sit);
                 }
 	
 #ifdef WIN32
