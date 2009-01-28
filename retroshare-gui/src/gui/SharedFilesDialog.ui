@@ -487,27 +487,18 @@
   <property name="contextMenuPolicy" >
    <enum>Qt::NoContextMenu</enum>
   </property>
-  <layout class="QGridLayout" >
-   <item row="0" column="0" colspan="3" >
+  <layout class="QGridLayout" name="gridLayout_3" >
+   <property name="spacing" >
+    <number>0</number>
+   </property>
+   <item row="0" column="0" colspan="2" >
     <layout class="QHBoxLayout" >
      <item>
       <layout class="QGridLayout" >
-       <property name="leftMargin" >
+       <property name="margin" >
         <number>0</number>
        </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <property name="horizontalSpacing" >
-        <number>6</number>
-       </property>
-       <property name="verticalSpacing" >
+       <property name="spacing" >
         <number>6</number>
        </property>
        <item row="0" column="0" >
@@ -537,7 +528,7 @@ p, li { white-space: pre-wrap; }
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>271</width>
          <height>20</height>
@@ -561,95 +552,88 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="1" column="0" >
-    <layout class="QGridLayout" >
-     <property name="horizontalSpacing" >
+   <item row="1" column="0" colspan="2" >
+    <widget class="QTabWidget" name="filestabWidget" >
+     <property name="currentIndex" >
       <number>0</number>
      </property>
-     <property name="verticalSpacing" >
-      <number>0</number>
-     </property>
-     <item row="0" column="0" >
-      <widget class="QPushButton" name="frameButton" >
-       <property name="minimumSize" >
-        <size>
-         <width>14</width>
-         <height>31</height>
-        </size>
-       </property>
-       <property name="maximumSize" >
-        <size>
-         <width>14</width>
-         <height>31</height>
-        </size>
-       </property>
-       <property name="text" >
-        <string/>
-       </property>
-       <property name="icon" >
-        <iconset resource="images.qrc" >:/images/hide_toolbox_frame.png</iconset>
-       </property>
-       <property name="iconSize" >
-        <size>
-         <width>14</width>
-         <height>31</height>
-        </size>
-       </property>
-       <property name="checkable" >
-        <bool>true</bool>
-       </property>
-       <property name="checked" >
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0" >
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>14</width>
-         <height>321</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item row="1" column="1" colspan="2" >
-    <widget class="QSplitter" name="splitter" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="handleWidth" >
-      <number>5</number>
-     </property>
-     <widget class="QFrame" name="frame" >
-      <property name="frameShape" >
-       <enum>QFrame::StyledPanel</enum>
+     <widget class="QWidget" name="tab" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>526</width>
+        <height>322</height>
+       </rect>
       </property>
-      <property name="frameShadow" >
-       <enum>QFrame::Raised</enum>
+      <attribute name="title" >
+       <string>Friends Share</string>
+      </attribute>
+      <attribute name="icon" >
+       <iconset resource="images.qrc" >
+        <normaloff>:/images/fileshare16.png</normaloff>:/images/fileshare16.png</iconset>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item row="0" column="0" >
+        <widget class="QTreeView" name="remoteDirTreeView" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+           <horstretch>4</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="contextMenuPolicy" >
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
+         <property name="dragEnabled" >
+          <bool>true</bool>
+         </property>
+         <property name="dragDropMode" >
+          <enum>QAbstractItemView::DragOnly</enum>
+         </property>
+         <property name="alternatingRowColors" >
+          <bool>false</bool>
+         </property>
+         <property name="autoExpandDelay" >
+          <number>0</number>
+         </property>
+         <property name="itemsExpandable" >
+          <bool>true</bool>
+         </property>
+         <property name="sortingEnabled" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>526</width>
+        <height>300</height>
+       </rect>
       </property>
-      <layout class="QGridLayout" >
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
+      <attribute name="title" >
+       <string>My Shared Files</string>
+      </attribute>
+      <attribute name="icon" >
+       <iconset resource="images.qrc" >
+        <normaloff>:/images/folder16.png</normaloff>:/images/folder16.png</iconset>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2" >
        <property name="horizontalSpacing" >
         <number>0</number>
        </property>
-       <property name="verticalSpacing" >
+       <property name="margin" >
         <number>0</number>
        </property>
        <item row="0" column="0" >
@@ -685,38 +669,9 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </widget>
-     <widget class="QTreeView" name="remoteDirTreeView" >
-      <property name="sizePolicy" >
-       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-        <horstretch>4</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="contextMenuPolicy" >
-       <enum>Qt::CustomContextMenu</enum>
-      </property>
-      <property name="dragEnabled" >
-       <bool>true</bool>
-      </property>
-      <property name="dragDropMode" >
-       <enum>QAbstractItemView::DragOnly</enum>
-      </property>
-      <property name="alternatingRowColors" >
-       <bool>false</bool>
-      </property>
-      <property name="autoExpandDelay" >
-       <number>0</number>
-      </property>
-      <property name="itemsExpandable" >
-       <bool>true</bool>
-      </property>
-      <property name="sortingEnabled" >
-       <bool>true</bool>
-      </property>
-     </widget>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2" >
+   <item row="2" column="0" >
     <widget class="QPushButton" name="downloadButton" >
      <property name="minimumSize" >
       <size>
@@ -737,16 +692,17 @@ p, li { white-space: pre-wrap; }
       <string>Download</string>
      </property>
      <property name="icon" >
-      <iconset resource="images.qrc" >:/images/download16.png</iconset>
+      <iconset resource="images.qrc" >
+       <normaloff>:/images/download16.png</normaloff>:/images/download16.png</iconset>
      </property>
     </widget>
    </item>
-   <item row="2" column="2" >
+   <item row="2" column="1" >
     <spacer>
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>391</width>
        <height>20</height>

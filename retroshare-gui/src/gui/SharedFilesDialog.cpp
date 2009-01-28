@@ -67,7 +67,7 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 
   connect(ui.checkButton, SIGNAL(clicked()), this, SLOT(forceCheck()));
 
-  connect(ui.frameButton, SIGNAL(toggled(bool)), this, SLOT(showFrame(bool)));
+  //connect(ui.frameButton, SIGNAL(toggled(bool)), this, SLOT(showFrame(bool)));
 
   connect( ui.localDirTreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( shareddirtreeWidgetCostumPopupMenu( QPoint ) ) );
 
@@ -464,7 +464,7 @@ void SharedFilesDialog::shareddirtreeWidgetCostumPopupMenu( QPoint point )
 
 /**
  Toggles the Lokal TreeView on and off, changes toggle button text
- */
+ 
 void SharedFilesDialog::showFrame(bool show)
 {
     if (show) {
@@ -478,5 +478,5 @@ void SharedFilesDialog::showFrame(bool show)
         ui.frameButton->setToolTip(tr("Show Lokal Directories"));
         ui.frameButton->setIcon(QIcon(tr(":images/show_toolbox_frame.png")));
     }
-}
+}*/
 

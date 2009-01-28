@@ -64,7 +64,7 @@
 #include <iomanip>
 #include <unistd.h>
 
-#define FONT        QFont(tr("Arial"), 8)
+#define FONT        QFont(tr("Arial"), 9)
 
 /* Images for toolbar icons */
 #define IMAGE_NETWORK           ":/images/retrosharelogo1.png"
