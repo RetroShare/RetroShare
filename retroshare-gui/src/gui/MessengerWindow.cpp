@@ -25,10 +25,10 @@
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
+#include "rsiface/rsmsgs.h"
 
 #include "rshare.h"
 #include "MessengerWindow.h"
-//#include "MainWindow.h"
 
 #include "chat/PopupChatDialog.h"
 #include "msgs/ChanMsgDialog.h"
@@ -44,7 +44,6 @@
 
 #include <iostream>
 #include <sstream>
-
 
 #include <QContextMenuEvent>
 #include <QMenu>
@@ -84,7 +83,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 
 	connect( ui.messengertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messengertreeWidgetCostumPopupMenu( QPoint ) ) );
 
-	connect( ui.avatarButton, SIGNAL(clicked()), SLOT(getPicture()));
+	connect( ui.avatarButton, SIGNAL(clicked()), SLOT(getAvatar()));
 	connect( ui.shareButton, SIGNAL(clicked()), SLOT(openShareManager()));
 
     	connect( ui.addIMAccountButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend2() ) );
@@ -119,18 +118,9 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 	ui.statuscomboBox->setMinimumWidth(20);
 	ui.messagecomboBox->setMinimumWidth(20);
 	ui.searchlineEdit->setMinimumWidth(20);
- 
- 	/* The background palette breaks MessengerWindow in Linux...
-	 * so it is disabled until a solution is found.
-	 */
 
-#if 0
-  	QPixmap Backpixmap((QString)":/images/backgroundimage.png");
+  	updateAvatar();
 
-	//QBrush BackBrush(Backpixmap);
-	QPalette BackPalette(BackBrush, BackBrush, BackBrush, BackBrush, BackBrush, BackBrush, BackBrush, BackBrush, BackBrush);
-	this->setPalette(BackPalette);                             //Set Background
-#endif
   
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -395,9 +385,6 @@ void MessengerWindow::setChatDialog(PeersDialog *cd)
   chatDialog = cd;
 }
 
-
-
-
 void MessengerWindow::chatfriend2()
 {
     bool isOnline;
@@ -461,7 +448,6 @@ void MessengerWindow::sendMessage()
     nMsgDialog->newMsg();
     nMsgDialog->show();
 }
-
 
 QTreeWidgetItem *MessengerWindow::getCurrentPeer(bool &isOnline)
 {
@@ -546,28 +532,49 @@ void MessengerWindow::addFriend2()
 #endif
 }
 
-void MessengerWindow::updateAvatar() 
-{
-	std::string backgroundPixmapFilename = ":/images/retrosharelogo1.png";
-	std::string foregroundPixmapData = ":/images/nopic.png";
-	//std::string foregroundPixmapData = _cUserProfile->getUserProfile().getIcon().getData();
-
-	ui.avatarButton->setIcon(PixmapMerging::merge(foregroundPixmapData, backgroundPixmapFilename));
-}
-
-
 LogoBar & MessengerWindow::getLogoBar() const {
 	return *_rsLogoBarmessenger;
 }
 
-void MessengerWindow::getPicture()
+void MessengerWindow::updateAvatar()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, "Load File",
-							QDir::homePath(),
-							"Pictures (*.png *.xpm *.jpg)");
+	unsigned char *data = NULL;
+	int size = 0 ;
+
+	rsMsgs->getOwnAvatarData(data,size); 
+
+	std::cerr << "Image size = " << size << std::endl ;
+
+	if(size == 0)
+	   std::cerr << "Got no image" << std::endl ;
+
+	// set the image
+	QPixmap pix ;
+	pix.loadFromData(data,size,"JPG") ;
+	ui.avatarButton->setIcon(pix); // writes image into ba in JPG format
+
+	delete[] data ;
+}
+
+void MessengerWindow::getAvatar()
+{
+	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg)");
 	if(!fileName.isEmpty())
 	{
-		picture = QPixmap(fileName).scaled(53,53, Qt::IgnoreAspectRatio);
-		ui.avatarButton->setIcon(picture);
+		picture = QPixmap(fileName).scaled(82,82, Qt::IgnoreAspectRatio);
+
+		std::cerr << "Sending avatar image down the pipe" << std::endl ;
+
+		// send avatar down the pipe for other peers to get it.
+		QByteArray ba;
+		QBuffer buffer(&ba);
+		buffer.open(QIODevice::WriteOnly);
+		picture.save(&buffer, "JPG"); // writes image into ba in JPG format
+
+		std::cerr << "Image size = " << ba.size() << std::endl ;
+
+		rsMsgs->setOwnAvatarData((unsigned char *)(ba.data()),ba.size()) ;	// last char 0 included.
+
+		updateAvatar() ;
 	}
 }

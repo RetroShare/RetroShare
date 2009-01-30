@@ -78,16 +78,13 @@ private slots:
   
   void addFriend2();
 
-  void getPicture();
+  void getAvatar();
 
   void openShareManager();
 
   void showMessagesPopup();
 
-
   //void showMessages(MainWindow::Page page = MainWindow::Messages);
-
-
 
   /** RsServer Friend Calls */
   void allowfriend2();

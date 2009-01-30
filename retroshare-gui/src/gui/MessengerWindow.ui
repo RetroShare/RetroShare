@@ -13,26 +13,23 @@
    <string>RetroShare  Messenger</string>
   </property>
   <property name="windowIcon" >
-   <iconset resource="images.qrc" >:/images/rstray3.png</iconset>
+   <iconset resource="images.qrc" >
+    <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>30</y>
+     <width>270</width>
+     <height>481</height>
+    </rect>
+   </property>
    <layout class="QGridLayout" >
-    <property name="leftMargin" >
+    <property name="margin" >
      <number>0</number>
     </property>
-    <property name="topMargin" >
-     <number>0</number>
-    </property>
-    <property name="rightMargin" >
-     <number>0</number>
-    </property>
-    <property name="bottomMargin" >
-     <number>0</number>
-    </property>
-    <property name="horizontalSpacing" >
-     <number>0</number>
-    </property>
-    <property name="verticalSpacing" >
+    <property name="spacing" >
      <number>0</number>
     </property>
     <item row="0" column="0" >
@@ -56,32 +53,39 @@
        <property name="bottomMargin" >
         <number>2</number>
        </property>
-       <property name="horizontalSpacing" >
-        <number>0</number>
-       </property>
-       <property name="verticalSpacing" >
+       <property name="spacing" >
         <number>0</number>
        </property>
        <item row="0" column="0" colspan="2" >
         <layout class="QGridLayout" >
          <item row="0" column="0" >
           <widget class="QToolButton" name="avatarButton" >
-           <property name="toolTip" >
-            <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">&#xd;
-p, li { white-space: pre-wrap; }&#xd;
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">&#xd;
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Click to change your avatar&lt;/p>&lt;/body>&lt;/html></string>
-           </property>
-           <property name="styleSheet" >
-            <string>border-image: url(:/images/mystatus_bg.png);</string>
-           </property>
-           <property name="icon" >
-            <iconset resource="images.qrc" >:/images/retrosharelogo1.png</iconset>
-           </property>
-           <property name="iconSize" >
+           <property name="minimumSize" >
             <size>
              <width>70</width>
              <height>70</height>
+            </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>70</width>
+             <height>70</height>
+            </size>
+           </property>
+           <property name="toolTip" >
+            <string>Click to Change your Avatar</string>
+           </property>
+           <property name="styleSheet" >
+            <string notr="true" >border-image: url(:/images/mystatus_bg.png);</string>
+           </property>
+           <property name="icon" >
+            <iconset resource="images.qrc" >
+             <normaloff>:/images/user/personal64.png</normaloff>:/images/user/personal64.png</iconset>
+           </property>
+           <property name="iconSize" >
+            <size>
+             <width>50</width>
+             <height>50</height>
             </size>
            </property>
            <property name="autoRaise" >
@@ -91,22 +95,10 @@ p, li { white-space: pre-wrap; }&#xd;
          </item>
          <item row="0" column="1" >
           <layout class="QGridLayout" >
-           <property name="leftMargin" >
+           <property name="margin" >
             <number>4</number>
            </property>
-           <property name="topMargin" >
-            <number>4</number>
-           </property>
-           <property name="rightMargin" >
-            <number>4</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>4</number>
-           </property>
-           <property name="horizontalSpacing" >
-            <number>6</number>
-           </property>
-           <property name="verticalSpacing" >
+           <property name="spacing" >
             <number>6</number>
            </property>
            <item row="0" column="0" >
@@ -135,7 +127,8 @@ p, li { white-space: pre-wrap; }
                <string>Online</string>
               </property>
               <property name="icon" >
-               <iconset resource="images.qrc" >:/images/donline.png</iconset>
+               <iconset resource="images.qrc" >
+                <normaloff>:/images/donline.png</normaloff>:/images/donline.png</iconset>
               </property>
              </item>
              <item>
@@ -143,7 +136,8 @@ p, li { white-space: pre-wrap; }
                <string>Busy</string>
               </property>
               <property name="icon" >
-               <iconset resource="images.qrc" >:/images/dbusy.png</iconset>
+               <iconset resource="images.qrc" >
+                <normaloff>:/images/dbusy.png</normaloff>:/images/dbusy.png</iconset>
               </property>
              </item>
              <item>
@@ -151,7 +145,8 @@ p, li { white-space: pre-wrap; }
                <string>Be right Back</string>
               </property>
               <property name="icon" >
-               <iconset resource="images.qrc" >:/images/dbrb.png</iconset>
+               <iconset resource="images.qrc" >
+                <normaloff>:/images/dbrb.png</normaloff>:/images/dbrb.png</iconset>
               </property>
              </item>
              <item>
@@ -159,7 +154,8 @@ p, li { white-space: pre-wrap; }
                <string>Away</string>
               </property>
               <property name="icon" >
-               <iconset resource="images.qrc" >:/images/daway.png</iconset>
+               <iconset resource="images.qrc" >
+                <normaloff>:/images/daway.png</normaloff>:/images/daway.png</iconset>
               </property>
              </item>
              <item>
@@ -167,7 +163,8 @@ p, li { white-space: pre-wrap; }
                <string>In a Call</string>
               </property>
               <property name="icon" >
-               <iconset resource="images.qrc" >:/images/dphone.png</iconset>
+               <iconset resource="images.qrc" >
+                <normaloff>:/images/dphone.png</normaloff>:/images/dphone.png</iconset>
               </property>
              </item>
              <item>
@@ -175,7 +172,8 @@ p, li { white-space: pre-wrap; }
                <string>Out of lunch</string>
               </property>
               <property name="icon" >
-               <iconset resource="images.qrc" >:/images/dlunch.png</iconset>
+               <iconset resource="images.qrc" >
+                <normaloff>:/images/dlunch.png</normaloff>:/images/dlunch.png</iconset>
               </property>
              </item>
              <item>
@@ -183,7 +181,8 @@ p, li { white-space: pre-wrap; }
                <string>Apear Offline</string>
               </property>
               <property name="icon" >
-               <iconset resource="images.qrc" >:/images/dhidden.png</iconset>
+               <iconset resource="images.qrc" >
+                <normaloff>:/images/dhidden.png</normaloff>:/images/dhidden.png</iconset>
               </property>
              </item>
             </widget>
@@ -211,13 +210,14 @@ p, li { white-space: pre-wrap; }
           <string>Share Files for your Friends</string>
          </property>
          <property name="styleSheet" >
-          <string/>
+          <string notr="true" />
          </property>
          <property name="text" >
           <string>...</string>
          </property>
          <property name="icon" >
-          <iconset resource="images.qrc" >:/images/friendsfolder24.png</iconset>
+          <iconset resource="images.qrc" >
+           <normaloff>:/images/friendsfolder24.png</normaloff>:/images/friendsfolder24.png</iconset>
          </property>
          <property name="iconSize" >
           <size>
@@ -235,7 +235,7 @@ p, li { white-space: pre-wrap; }
          <property name="orientation" >
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>221</width>
            <height>20</height>
@@ -248,22 +248,10 @@ p, li { white-space: pre-wrap; }
     </item>
     <item row="1" column="0" >
      <layout class="QGridLayout" >
-      <property name="leftMargin" >
+      <property name="margin" >
        <number>9</number>
       </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>9</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>9</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing" >
+      <property name="spacing" >
        <number>6</number>
       </property>
       <item row="1" column="0" colspan="2" >
@@ -297,7 +285,8 @@ p, li { white-space: pre-wrap; }
          <string/>
         </property>
         <property name="icon" >
-         <iconset resource="images.qrc" >:/images/user/add_user24.png</iconset>
+         <iconset resource="images.qrc" >
+          <normaloff>:/images/user/add_user24.png</normaloff>:/images/user/add_user24.png</iconset>
         </property>
         <property name="iconSize" >
          <size>
