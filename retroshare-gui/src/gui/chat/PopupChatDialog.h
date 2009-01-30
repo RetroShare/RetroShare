@@ -96,6 +96,8 @@ private slots:
 private:
 
   void colorChanged(const QColor &c);
+  void updatePeerAvatar(const std::string&);
+  void updateAvatar();
   
    QAction     *actionTextBold;
    QAction     *actionTextUnderline;

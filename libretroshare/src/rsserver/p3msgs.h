@@ -36,38 +36,43 @@ class RsChatItem;
 
 class p3Msgs: public RsMsgs 
 {
-	public:
+   public:
 
-	p3Msgs(p3AuthMgr *p3a, p3MsgService *p3m, p3ChatService *p3c)
-	:mAuthMgr(p3a), mMsgSrv(p3m), mChatSrv(p3c) { return; }
-virtual ~p3Msgs() { return; }
+	  p3Msgs(p3AuthMgr *p3a, p3MsgService *p3m, p3ChatService *p3c)
+		 :mAuthMgr(p3a), mMsgSrv(p3m), mChatSrv(p3c) { return; }
+	  virtual ~p3Msgs() { return; }
 
-/****************************************/
-	/* Message Items */
+	  /****************************************/
+	  /* Message Items */
 
-virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList);
-virtual bool getMessage(std::string mId, MessageInfo &msg);
+	  virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList);
+	  virtual bool getMessage(std::string mId, MessageInfo &msg);
 
-virtual	bool MessageSend(MessageInfo &info);
-virtual bool MessageDelete(std::string mid);
-virtual bool MessageRead(std::string mid);
+	  virtual	bool MessageSend(MessageInfo &info);
+	  virtual bool MessageDelete(std::string mid);
+	  virtual bool MessageRead(std::string mid);
 
-/****************************************/
-	/* Chat */
-virtual bool    chatAvailable();
-virtual	bool 	ChatSend(ChatInfo &ci);
-virtual	bool	getNewChat(std::list<ChatInfo> &chats);
+	  // gets avatar from peer id in jpeg format.
+	  virtual void getAvatarData(std::string pid,unsigned char *& data,int& size);
+	  virtual void setOwnAvatarData(const unsigned char *data,int size);
+	  virtual void getOwnAvatarData(unsigned char *& data,int& size);
 
-/****************************************/
+	  /****************************************/
+	  /* Chat */
+	  virtual bool    chatAvailable();
+	  virtual	bool 	ChatSend(ChatInfo &ci);
+	  virtual	bool	getNewChat(std::list<ChatInfo> &chats);
+
+	  /****************************************/
 
 
-	private:
+   private:
 
-void initRsChatInfo(RsChatItem *c, ChatInfo &i);
+	  void initRsChatInfo(RsChatItem *c, ChatInfo &i);
 
-	p3AuthMgr     *mAuthMgr;
-	p3MsgService  *mMsgSrv;
-	p3ChatService *mChatSrv;
+	  p3AuthMgr     *mAuthMgr;
+	  p3MsgService  *mMsgSrv;
+	  p3ChatService *mChatSrv;
 };
 
 

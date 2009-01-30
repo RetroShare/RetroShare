@@ -146,18 +146,41 @@ void p3Msgs::initRsChatInfo(RsChatItem *c, ChatInfo &i)
 {
 	i.rsid = c -> PeerId();
 	i.name = mAuthMgr->getName(i.rsid);
-
+	i.chatflags = 0 ;
 	i.msg  = c -> message;
-        if (c -> chatFlags & RS_CHAT_FLAG_PRIVATE)
+
+	if (c -> chatFlags & RS_CHAT_FLAG_PRIVATE)
 	{
-		i.chatflags = RS_CHAT_PRIVATE;
+		i.chatflags |= RS_CHAT_PRIVATE;
 		//std::cerr << "RsServer::initRsChatInfo() Chat Private!!!";
 	}
 	else
 	{
-		i.chatflags = RS_CHAT_PUBLIC;
+		i.chatflags |= RS_CHAT_PUBLIC;
 		//std::cerr << "RsServer::initRsChatInfo() Chat Public!!!";
 	}
 	//std::cerr << std::endl;
+
+	if(c->chatFlags & RS_CHAT_FLAG_AVATAR_AVAILABLE)
+	{
+	   std::cerr << "p3msgs::initRsChatInfo(): new avatar available for peer " << i.rsid << ". Sending above." << std::endl ;
+	   i.chatflags |= RS_CHAT_AVATAR_AVAILABLE;
+	}
 }
+
+void p3Msgs::getOwnAvatarData(unsigned char *& data,int& size)
+{
+	mChatSrv->getOwnAvatarJpegData(data,size) ;
+}
+
+void p3Msgs::setOwnAvatarData(const unsigned char *data,int size)
+{
+	mChatSrv->setOwnAvatarJpegData(data,size) ;
+}
+
+void p3Msgs::getAvatarData(std::string pid,unsigned char *& data,int& size)
+{
+	mChatSrv->getAvatarJpegData(pid,data,size) ;
+}
+
 

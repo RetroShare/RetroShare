@@ -125,7 +125,8 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   colorChanged(mCurrentColor);
   setFont();
 
-
+  updateAvatar() ;
+  updatePeerAvatar(id) ;
 }
 
 /** Destructor. */
@@ -154,7 +155,7 @@ void PopupChatDialog::getfocus()
 {
 
   QMainWindow::activateWindow();
-  setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
+  setWindowState((windowState() & (~Qt::WindowMinimized)) | Qt::WindowActive);
   QMainWindow::raise();
 }
 
@@ -247,6 +248,12 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 	QTextCursor cursor = ui.textBrowser->textCursor();
 	cursor.movePosition(QTextCursor::End);
 	ui.textBrowser->setTextCursor(cursor);
+
+	if(ci->chatflags & RS_CHAT_AVATAR_AVAILABLE)
+	{
+	   std::cerr << "received msg saying an avatar for peer " << ci->rsid << " is available." << std::endl ;
+	   updatePeerAvatar(ci->rsid) ;
+	}
 }
 
 void PopupChatDialog::checkChat()
@@ -551,14 +558,71 @@ void PopupChatDialog::changeStyle()
 	ui.textBrowser->setTextCursor(cursor);
 }
 
+void PopupChatDialog::updatePeerAvatar(const std::string& peer_id)
+{
+	unsigned char *data = NULL;
+	int size = 0 ;
+
+	std::cerr << "Requesting avatar image for peer " << peer_id << std::endl ;
+
+	rsMsgs->getAvatarData(peer_id,data,size); 
+
+	std::cerr << "Image size = " << size << std::endl ;
+
+	if(size == 0)
+	{
+	   std::cerr << "Got no image" << std::endl ;
+		return ;
+	}
+
+	// set the image
+	QPixmap pix ;
+	pix.loadFromData(data,size,"JPG") ;
+	ui.avatarlabel->setPixmap(pix); // writes image into ba in JPG format
+
+	delete[] data ;
+}
+
+void PopupChatDialog::updateAvatar()
+{
+	unsigned char *data = NULL;
+	int size = 0 ;
+
+	rsMsgs->getOwnAvatarData(data,size); 
+
+	std::cerr << "Image size = " << size << std::endl ;
+
+	if(size == 0)
+	   std::cerr << "Got no image" << std::endl ;
+
+	// set the image
+	QPixmap pix ;
+	pix.loadFromData(data,size,"JPG") ;
+	ui.myavatarlabel->setPixmap(pix); // writes image into ba in JPG format
+
+	delete[] data ;
+}
+
 void PopupChatDialog::getAvatar()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, "Load File",
-							QDir::homePath(),
-							"Pictures (*.png *.xpm *.jpg)");
+	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg)");
 	if(!fileName.isEmpty())
 	{
 		picture = QPixmap(fileName).scaled(82,82, Qt::KeepAspectRatio);
-		ui.myavatarlabel->setPixmap(picture);
+
+		std::cerr << "Sending avatar image down the pipe" << std::endl ;
+
+		// send avatar down the pipe for other peers to get it.
+		QByteArray ba;
+		QBuffer buffer(&ba);
+		buffer.open(QIODevice::WriteOnly);
+		picture.save(&buffer, "JPG"); // writes image into ba in JPG format
+
+		std::cerr << "Image size = " << ba.size() << std::endl ;
+
+		rsMsgs->setOwnAvatarData((unsigned char *)(ba.data()),ba.size()) ;	// last char 0 included.
+
+		updateAvatar() ;
 	}
 }
+

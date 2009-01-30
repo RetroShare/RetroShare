@@ -35,8 +35,10 @@
 /**************************************************************************/
 
 /* chat Flags */
-const uint32_t RS_CHAT_FLAG_PRIVATE = 0x0001;
-
+const uint32_t RS_CHAT_FLAG_PRIVATE 		 = 0x0001;
+const uint32_t RS_CHAT_FLAG_REQUESTS_AVATAR	 = 0x0002;
+const uint32_t RS_CHAT_FLAG_CONTAINS_AVATAR	 = 0x0004;
+const uint32_t RS_CHAT_FLAG_AVATAR_AVAILABLE = 0x0008;
 
 class RsChatItem: public RsItem
 {

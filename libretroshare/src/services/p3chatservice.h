@@ -39,23 +39,47 @@
 #include "services/p3service.h"
 #include "pqi/p3connmgr.h"
 
-
 class p3ChatService: public p3Service
 {
 	public:
-	p3ChatService(p3ConnectMgr *cm);
+		p3ChatService(p3ConnectMgr *cm);
 
-	/* overloaded */
-virtual int   tick();
-virtual int   status();
+		/* overloaded */
+		virtual int   tick();
+		virtual int   status();
 
-int	sendChat(std::wstring msg);
-int	sendPrivateChat(std::wstring msg, std::string id);
+		int	sendChat(std::wstring msg);
+		int	sendPrivateChat(std::wstring msg, std::string id);
 
-std::list<RsChatItem *> getChatQueue(); 
+		/// gets the peer's avatar in jpeg format, if available. Null otherwise. Also asks the peer to send
+		/// its avatar, if not already available. Creates a new unsigned char array. It's the caller's
+		/// responsibility to delete this ones used.
+		///
+		void getAvatarJpegData(const std::string& peer_id,unsigned char *& data,int& size) ;
+
+		/// Sets the avatar data and size. Data is copied, so should be destroyed by the caller.
+		void setOwnAvatarJpegData(const unsigned char *data,int size) ;
+		void getOwnAvatarJpegData(unsigned char *& data,int& size) ;
+
+		std::list<RsChatItem *> getChatQueue(); 
 
 	private:
-	p3ConnectMgr *mConnMgr;
+		class AvatarInfo ;
+
+		/// Send avatar info to peer in jpeg format.
+		void sendAvatarJpegData(const std::string& peer_id) ;
+
+		/// Receive the avatar in a chat item, with RS_CHAT_RECEIVE_AVATAR flag.
+		void receiveAvatarJpegData(RsChatItem *ci) ;
+
+		/// Sends a request for an avatar to the peer of given id
+		void sendAvatarRequest(const std::string& peer_id) ;
+
+		p3ConnectMgr *mConnMgr;
+
+		AvatarInfo *_own_avatar ;
+		std::map<std::string,AvatarInfo *> _avatars ;
 };
 
 #endif // SERVICE_CHAT_HEADER
+
