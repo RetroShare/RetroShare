@@ -90,8 +90,9 @@ class MsgInfoSummary
 
 };
 
-#define RS_CHAT_PUBLIC 		0x0001
-#define RS_CHAT_PRIVATE 	0x0002
+#define RS_CHAT_PUBLIC 				0x0001
+#define RS_CHAT_PRIVATE 			0x0002
+#define RS_CHAT_AVATAR_AVAILABLE 	0x0004
 
 class ChatInfo 
 {
@@ -130,6 +131,12 @@ virtual bool MessageRead(std::string mid)                   = 0;
 virtual bool    chatAvailable() 			   = 0;
 virtual	bool 	ChatSend(ChatInfo &ci)                     = 0;
 virtual	bool	getNewChat(std::list<ChatInfo> &chats)	   = 0;
+
+// get avatar data for peer pid
+virtual void getAvatarData(std::string pid,unsigned char *& data,int& size) = 0 ;
+// set own avatar data 
+virtual void setOwnAvatarData(const unsigned char *data,int size) = 0 ;
+virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 
 /****************************************/
 
