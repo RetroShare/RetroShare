@@ -95,6 +95,7 @@
         <file>images/edit-underline.png</file>
         <file>images/edit_remove24.png</file>
         <file>images/encrypted16.png</file>
+        <file>images/encrypted22.png</file>
         <file>images/encrypted48.png</file>
         <file>images/evolution.png</file>
         <file>images/exit_24x24.png</file>
@@ -138,6 +139,7 @@
         <file>images/folder-draft24-hover.png</file>
         <file>images/folder-draft24-pressed.png</file>
         <file>images/folder-draft24.png</file>
+        <file>images/folder_inbox64.png</file>
         <file>images/folder-inbox.png</file>
 	<file>images/folder-inbox-new.png</file>
         <file>images/folder-outbox.png</file>

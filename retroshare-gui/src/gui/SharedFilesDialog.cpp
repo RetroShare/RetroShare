@@ -110,28 +110,25 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 	l_header->setResizeMode (2, QHeaderView::Interactive);
 	l_header->setResizeMode (3, QHeaderView::Interactive);
    
-	l_header->resizeSection ( 0, 210 );
+	l_header->resizeSection ( 0, 490 );
 	l_header->resizeSection ( 1, 70 );
-	l_header->resizeSection ( 2, 100 );
+	l_header->resizeSection ( 2, 60 );
 	l_header->resizeSection ( 3, 100 );
 	
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * r_header = ui.remoteDirTreeView->header () ;   
-	#if defined(Q_OS_WIN32)
+
 	r_header->setResizeMode (0, QHeaderView::Interactive);
-	r_header->setStretchLastSection(true);
-	#else
-	r_header->setResizeMode (0, QHeaderView::Stretch);
 	r_header->setStretchLastSection(false);
-	#endif
+
 	r_header->setResizeMode (1, QHeaderView::Fixed);
 	r_header->setResizeMode (2, QHeaderView::Fixed);
 	r_header->setResizeMode (3, QHeaderView::Fixed);
 	
    
-	r_header->resizeSection ( 0, 250 );
+	r_header->resizeSection ( 0, 490 );
 	r_header->resizeSection ( 1, 70 );
-	r_header->resizeSection ( 2, 100 );
+	r_header->resizeSection ( 2, 60 );
 	r_header->resizeSection ( 3, 100 );
 	
 	l_header->setHighlightSections(false);

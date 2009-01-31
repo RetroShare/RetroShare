@@ -429,8 +429,8 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 		}
 			break;
 			case 2:
-		//return QString("");
-		return QString::fromStdString(details.path);
+		return QString("");
+		//return QString::fromStdString(details.path);
 			break;
 
 			default:
@@ -479,11 +479,11 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 		case 0:
 			if (RemoteMode)
 			{
-				return QString("Remote Directories");
+				return QString("Friends Directories");
 			}
 			else
 			{
-				return QString("Local Directories");
+				return QString("My Directories");
 			}
 			break;
 		case 1:
