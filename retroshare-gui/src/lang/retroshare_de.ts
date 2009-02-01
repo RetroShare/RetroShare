@@ -4099,7 +4099,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MainWindow.cpp" line="618"/>
         <source>Open Messages</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne Email</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="621"/>
