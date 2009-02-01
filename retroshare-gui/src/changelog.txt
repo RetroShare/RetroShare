@@ -1,3 +1,67 @@
+Changes for v0.4.12
+
+* Removed streching for Remote Directories
+* Added icon Label for Messages Toaster
+* Set userfriendly Column names for Remote/local Directories to Friends Directories and My Directories
+* Removed not needed path show in Rank
+* Set Qt::IgnoreAspectRatio for pictures
+* Added for MessengerWindow the new getAvatar and updateAvatar function
+* Added protocol for Avatar exchange in private chat.
+* Redesign SharedFiles dialog with Tabs 
+* Set Font Size for MainWindow ToolBar to 9
+* Corrected two nasty bugs in file transfer which caused random core dumps (at least on ubuntu 32 and 64 bits)
+* Fixed font formating MAC OS X releated
+* Set colors for Online, Friends, Network and set First Tab of Peer Details to first
+* Set for Online Toaster Peer Online Bold and set TextColor
+* Fixed directory problem wirh emoticons
+* Added darkBlue TextColor for Connected Friend, Set TextColor Bold
+* Put emoticon images and .acs file into qrc image file
+* Suppressed line with pouty.png which caused a bug by altering actual html code.
+* Added a layout to hashing info widget to get it left-aligned
+* Regression of ft/ftcontroler.{h,cc} to svn=932 because the 933 commit (download queue) causes a large scope bug.
+* Added to remove when deinstalling RetroShare to delete from APPDATA cache,Partials folder, *.cfg,*.log and *.conf files
+* Added a "Trusts me" text field to the peer details dialog
+* Replaced toText in MessagesDialog QTextEdit with QTextBrowser to get use a scrollbar 
+* Set context menu icon for Connect To Friend
+* Fixed OnlineToaster's Picture Label Layout
+* Set for Make Friend a Header Image and Text
+* Added a display for file hashing activity using notifyQt class
+* Corrected a bug in openDHT for 64 bits systems
+* Added a Menu Entry for KDE/Gnome/XFCe
+* Updated Changelog for .deb Packages
+* Fixed time out unused uploads
+* Removed march=i686 commandline options, causes problems while 64Bit compiling.
+* Fixed error: ‘UINT_MAX’ was not declared in this scope
+* Added a Doxygen configuration file in order to help me sort out libretroshare...
+* Redesign Login Dialog
+* Redesign Online Toaster
+* Switched to use autostart,it will be bether then Run with Registry
+* Added for Messenger Window Share Manager Button
+* Added for systray contextmenu Open Messages
+* Set for MessengerWindow to use RWindow now
+* Set for the Avatar Button a Background image
+* Set for Avatar Pictures to use IgnoreAspectRatio
+* Added QMessagesBox feature for the ShareManager's Add/Remove
+* Fixed DirectoriesDialogs's Add Folder method.
+* Set ToolTips for The DirectoriesDialogs's Buttons
+* Added a callback in MainWindow.cpp to display info about hashed files.
+* Added a callback to fimonitor to be able to keep track of file hashing
+* Added svn version number in build script
+* Added basic set avatar picture for MessengerWindow and Privat Chat
+* Added second tab in Peer Details for Trust Settings
+* Added Last Contact info to Peer Details
+* Added doubleclick download feature
+* Update Preferences and Settings forms
+* Added context menu for Share Manager to can remove a Shared Directory
+* Update RemoteDirModel's extension's
+* Added tool tip and info to peer that trust you, in NetworkDialog
+* small improvement in display of 3rd party trust info
+* Added the infrastructure for propagating trust info through third parties
+* Added to clean up completed cache files automatically
+* Added to display peer names in transfers dialog
+* Added two hidden columns in searchresultTableWidget to store the real size and srcId hash
+* Added for Partials Directory to Directories
+* Added New Share Manager
 
 Changes for v0.4.11d
 
