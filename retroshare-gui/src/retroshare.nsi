@@ -2,7 +2,7 @@
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.4.11d"
+!define VERSION "0.4.12"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
 
 ; Main Install settings
@@ -143,8 +143,13 @@ Section $(sec_main) sec_main
 	
   ; Set Section Files and Shortcuts
   SetOutPath "$INSTDIR\"
-  File /r "release\RetroShare.exe"
-  File /r "release\mingwm10.dll"
+  File /r "RetroShare.exe"
+  File /r "mingwm10.dll"
+  File /r "pthreadGCE2.dll"
+  File /r "QtCore4.dll"
+  File /r "QtGui4.dll"
+  File /r "QtNetwork4.dll"
+  File /r "QtXml4.dll"
   File /r "changelog.txt"
 
   
