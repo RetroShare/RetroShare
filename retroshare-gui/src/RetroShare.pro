@@ -1,5 +1,5 @@
-CONFIG += qt gui uic qrc
-QT     += network xml
+CONFIG += qt gui uic qrc uitools
+QT     += network xml script
 TEMPLATE = app
 TARGET = RetroShare
 
@@ -16,7 +16,9 @@ linux-g++ {
 	LIBS += ../../../../lib/linux-g++/libminiupnpc.a 
 	LIBS += ../../../../lib/linux-g++/libssl.a 
 	LIBS += ../../../../lib/linux-g++/libcrypto.a
-	LIBS += -lz
+    LIBS += ../../../../lib/linux-g++/libsmplayer.a
+    LIBS += ../../../../lib/linux-g++/libqcheckers.a    
+    LIBS += -lz
 }
 
 #################### Cross compilation for windows under Linux ###################
@@ -131,6 +133,8 @@ HEADERS +=  rshare.h \
             gui/HelpDialog.h \
             gui/LogoBar.h \
             gui/xprogressbar.h \
+            gui/PluginsPage.h  \
+            gui/plugins/PluginInterface.h \
             lang/languagesupport.h \
             util/stringutil.h \
             util/win32.h \
@@ -358,6 +362,7 @@ SOURCES += main.cpp \
             gui/HelpDialog.cpp \
             gui/LogoBar.cpp \
             gui/xprogressbar.cpp \
+            gui/PluginsPage.cpp \
             lang/languagesupport.cpp \
             util/stringutil.cpp \
             util/win32.cpp \
