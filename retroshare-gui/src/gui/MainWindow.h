@@ -38,6 +38,7 @@
 #include "StatisticDialog.h"
 #include "MessengerWindow.h"
 #include "ApplicationWindow.h"
+#include "PluginsPage.h"
 
 #include "Preferences/PreferencesWindow.h"
 #include "Settings/gsettingswin.h"
@@ -76,7 +77,8 @@ public:
         Messages,  		 /** Messages page. */
         Links,  		 /** Links page. */
         Channels,  		 /** Channels page. */
-        Forums		         /** Forums page. */
+        Forums	,	         /** Forums page. */
+        Plugins
         
     };
 
@@ -103,6 +105,7 @@ public:
     //StatisticDialog   *statisticDialog;
     MessengerWindow   *messengerWindow;
     ApplicationWindow   *applicationWindow;
+    PluginsPage*   pluginsPage ;
 
     SMPlayer * mSMPlayer;
 

@@ -169,6 +169,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Create the Main pages and actions */
     QActionGroup *grp = new QActionGroup(this);
 
+    ui.stackPages->add(pluginsPage = new PluginsPage(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_NETWORK), tr("Plugins"), grp));
 
     NewsFeed *newsFeed = NULL;
     ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
