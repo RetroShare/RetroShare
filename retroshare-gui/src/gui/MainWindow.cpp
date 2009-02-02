@@ -112,7 +112,7 @@
  * #define RS_RELEASE_VERSION    1
  ****/
 
-#define RS_RELEASE_VERSION    1
+//#define RS_RELEASE_VERSION    1
 
 /** Constructor */
 MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
@@ -128,15 +128,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     mSMPlayer = NULL;
   
-	ui.toolBarservice->hide();
+    ui.toolBarservice->hide();
 	
     // Setting icons
     this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
     
-    /*if(!_settings->value(QString::fromUtf8("StartMinimized"), false).toBool()) {
-	show();
-    }*/
-	
     /* Create all the dialogs of which we only want one instance */
     _bandwidthGraph = new BandwidthGraph();
     messengerWindow = new MessengerWindow();
@@ -155,7 +151,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(ui.actionSMPlayer, SIGNAL(triggered()), this, SLOT( showsmplayer()) );
     connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT( showabout()) );
     connect(ui.actionColor, SIGNAL(triggered()), this, SLOT( setStyle()) );
-    connect(ui.actionSettings, SIGNAL(triggered()), this, SLOT( showSettings()) );
+    //connect(ui.actionSettings, SIGNAL(triggered()), this, SLOT( showSettings()) );
 
    	 
        
@@ -171,8 +167,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Create the Main pages and actions */
     QActionGroup *grp = new QActionGroup(this);
 
-    ui.stackPages->add(pluginsPage = new PluginsPage(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
+    //ui.stackPages->add(pluginsPage = new PluginsPage(ui.stackPages),
+    //                   createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
 
     NewsFeed *newsFeed = NULL;
     ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),

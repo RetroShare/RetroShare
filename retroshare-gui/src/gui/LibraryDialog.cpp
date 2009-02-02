@@ -27,7 +27,8 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsfiles.h"
 #include "rsiface/RemoteDirModel.h"
-#include "ShareFilesDialog.h"
+#include "ShareManager.h"
+
 
 #include "util/RsAction.h"
 #include "msgs/ChanMsgDialog.h"
@@ -188,8 +189,9 @@ void LibraryDialog::StopRename()
 
 void LibraryDialog::CallShareFilesBtn_library()
 {
-	ShareFilesDialog *sf=new ShareFilesDialog(this,0);
-	sf->show();
+    static ShareManager* sharemanager = new ShareManager(this);
+    sharemanager->show();
+
 }
 
 void LibraryDialog::CallTileViewBtn_library()

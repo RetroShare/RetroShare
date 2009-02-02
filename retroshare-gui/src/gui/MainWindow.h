@@ -38,7 +38,7 @@
 #include "StatisticDialog.h"
 #include "MessengerWindow.h"
 #include "ApplicationWindow.h"
-#include "PluginsPage.h"
+//#include "PluginsPage.h"
 
 #include "Preferences/PreferencesWindow.h"
 #include "Settings/gsettingswin.h"
@@ -77,8 +77,8 @@ public:
         Messages,  		 /** Messages page. */
         Links,  		 /** Links page. */
         Channels,  		 /** Channels page. */
-        Forums	,	         /** Forums page. */
-        Plugins
+        Forums  	         /** Forums page. */
+
         
     };
 
@@ -93,19 +93,19 @@ public:
     * Notify Class...
     */
     
-    NetworkDialog *networkDialog;
+    NetworkDialog     *networkDialog;
     PeersDialog       *peersDialog;
     SearchDialog      *searchDialog;
     TransfersDialog   *transfersDialog;
     ChatDialog        *chatDialog;
     MessagesDialog    *messagesDialog;
-    ChannelsDialog   *channelsDialog;
+    ChannelsDialog    *channelsDialog;
     SharedFilesDialog *sharedfilesDialog;
     //GroupsDialog      *groupsDialog;
     //StatisticDialog   *statisticDialog;
     MessengerWindow   *messengerWindow;
     ApplicationWindow   *applicationWindow;
-    PluginsPage*   pluginsPage ;
+    //PluginsPage*   pluginsPage ;
 
     SMPlayer * mSMPlayer;
 
@@ -134,7 +134,6 @@ private slots:
     void addFriend();
     void inviteFriend();
     void addSharedDirectory();
-    //void showPreferencesWindow();
     void showMessengerWindow();
     void showApplWindow();
 	void showsmplayer();
@@ -159,8 +158,6 @@ private slots:
     /** Called when user attempts to quit via quit button*/
     void doQuit();
     
-    //void toggleViewAction ();
-
 
 
 protected:
@@ -212,11 +209,11 @@ private:
 
     QLabel *statusRates;
     PeerStatus *peerstatus;
-       
+
+    QLabel *_hashing_info_label ;
+    
     /** Qt Designer generated object */
     Ui::MainWindow ui;
-
-	 QLabel *_hashing_info_label ;
 };
 
 #endif

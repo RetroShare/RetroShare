@@ -48,7 +48,6 @@
 #include "channels/channelsDialog.h"
 #include "BlogDialog.h"
 #include "CalDialog.h"
-#include "NewsFeed.h"
 #include "PeersFeed.h"
 #include "TransferFeed.h"
 #include "MsgFeed.h"
@@ -87,6 +86,8 @@
 #define IMAGE_MESSAGES          ":/images/evolution.png"
 #define IMAGE_BLOGS             ":/images/kblogger.png"
 #define IMAGE_LIBRARY           ":/images/library.png"
+#define IMAGE_PLUGINS           ":/images/extension_32.png"
+
 
 
 /* Keys for UI Preferences */
@@ -102,6 +103,9 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     ui.setupUi(this);
     
     setWindowTitle(tr("RetroShare %1").arg(retroshareVersion()));
+
+    RshareSettings config;
+    config.loadWidgetInformation(this);
   
     // Setting icons
     this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
@@ -118,10 +122,14 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
  //   ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
  //                        createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
  
-    NewsFeed *newsFeed = NULL;
-    ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_NEWSFEED), tr("News Feed"), grp));
-                     
+    //NewsFeed *newsFeed = NULL;
+    //ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
+    //                  createPageAction(QIcon(IMAGE_NEWSFEED), tr("News Feed"), grp));
+      
+    PluginsPage *pluginsPage = NULL;
+    ui.stackPages->add(pluginsPage = new PluginsPage(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
+               
     PeersFeed *peersFeed = NULL;
     ui.stackPages->add(peersFeed = new PeersFeed(ui.stackPages),
                       createPageAction(QIcon(IMAGE_PEERS), tr("Peers"), grp));
@@ -238,6 +246,9 @@ void ApplicationWindow::createActions()
 
 void ApplicationWindow::closeEvent(QCloseEvent *e)
 {
+    RshareSettings config;
+    config.saveWidgetInformation(this);
+
     hide();
     e->ignore();
 }

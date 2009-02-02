@@ -27,6 +27,8 @@
 #include <QFileDialog>
 
 #include "ExampleDialog.h"
+#include "PluginsPage.h"
+
 #include "Settings/gsettingswin.h"
 
 #include "ui_ApplicationWindow.h"
