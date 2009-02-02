@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc uitools
+CONFIG += qt gui uic qrc uitools 
 QT     += network xml script
 TEMPLATE = app
 TARGET = RetroShare
@@ -16,8 +16,15 @@ linux-g++ {
 	LIBS += ../../../../lib/linux-g++/libminiupnpc.a 
 	LIBS += ../../../../lib/linux-g++/libssl.a 
 	LIBS += ../../../../lib/linux-g++/libcrypto.a
-    LIBS += ../../../../lib/linux-g++/libsmplayer.a
-    LIBS += ../../../../lib/linux-g++/libqcheckers.a    
+    LIBS += -lz
+}
+linux-g++-64 {
+	OBJECTS_DIR = temp/linux-g++-64/obj
+
+	LIBS += ../../../../lib/linux-g++-64/libretroshare.a 
+	LIBS += ../../../../lib/linux-g++-64/libminiupnpc.a 
+	LIBS += ../../../../lib/linux-g++-64/libssl.a 
+	LIBS += ../../../../lib/linux-g++-64/libcrypto.a
     LIBS += -lz
 }
 
