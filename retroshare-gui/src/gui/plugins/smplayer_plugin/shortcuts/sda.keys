@@ -1,0 +1,175 @@
+open_file	Ctrl+F
+open_directory	Shift+F
+open_playlist	Ctrl+P
+open_vcd	Ctrl+V
+open_audio_cd	Ctrl+M
+open_dvd	Ctrl+D
+open_dvd_folder	Shift+D
+open_url	Shift+O
+close	Q
+clear_recents	
+play	
+play_or_pause	P
+pause	
+pause_and_frame_step	O
+stop	Esc
+frame_step	
+rewind1	Left
+rewind2	PgUp
+rewind3	Home
+forward1	Right
+forward2	PgDown
+forward3	End
+repeat	
+jump_to	J
+normal_speed	\
+halve_speed	Ctrl+[
+double_speed	Ctrl+]
+dec_speed	[
+inc_speed	]
+dec_speed_4	Shift+{
+inc_speed_4	Shift+}
+dec_speed_1	
+inc_speed_1	
+fullscreen	Alt+Return
+compact	Tab
+video_equalizer	V
+screenshot	S
+on_top	F3
+flip	^
+postprocessing	!
+autodetect_phase	@
+deblock	#
+dering	$
+add_noise	~
+add_letterbox	`
+upscaling	%
+audio_equalizer	E
+mute	M
+decrease_volume	-
+increase_volume	=
+dec_audio_delay	;
+inc_audio_delay	'
+load_audio_file	X
+unload_audio_file	Ctrl+X
+extrastereo_filter	)
+karaoke_filter	(
+volnorm_filter	*
+load_subs	L
+unload_subs	Ctrl+L
+dec_sub_delay	Ctrl+;
+inc_sub_delay	Ctrl+'
+dec_sub_pos	Ctrl+F11
+inc_sub_pos	Ctrl+F12
+dec_sub_scale	F11
+inc_sub_scale	F12
+dec_sub_step	Alt+Left
+inc_sub_step	Alt+Right
+use_ass_lib	U
+use_closed_caption	Ctrl+U
+use_forced_subs_only	Shift+U
+show_find_sub_dialog	
+upload_subtitles	
+show_playlist	Space
+show_file_properties	Return
+frame_counter	F
+motion_vectors	G
+show_preferences	F2
+show_mplayer_log	F9
+show_smplayer_log	F10
+faq	
+cl_options	F1
+tips	
+about_qt	
+about_smplayer	
+play_next	Down
+play_prev	Up
+move_up	Ctrl+Up
+move_down	Ctrl+Down
+move_left	Ctrl+Left
+move_right	Ctrl+Right
+inc_zoom	Z
+dec_zoom	Shift+Z
+reset_zoom	Ctrl+Z
+exit_fullscreen	
+next_osd	
+dec_contrast	1
+inc_contrast	2
+dec_brightness	3
+inc_brightness	4
+dec_hue	5
+inc_hue	6
+dec_saturation	7
+inc_saturation	8
+dec_gamma	9
+inc_gamma	0
+next_audio	T
+next_subtitle	Ctrl+T
+next_chapter	/
+prev_chapter	.
+toggle_double_size	Ctrl+Return
+reset_video_equalizer	Shift+E
+reset_audio_equalizer	Ctrl+E
+show_context_menu	Shift+F10
+osd_none	Ctrl+Backspace
+osd_seek	Shift+Backspace
+osd_timer	
+osd_total	Backspace
+denoise_none	Ctrl+N
+denoise_normal	N
+denoise_soft	Shift+N
+size_50	Ctrl+5
+size_75	Ctrl+7
+size_100	Ctrl+0
+size_125	
+size_150	Ctrl+1
+size_175	
+size_200	Ctrl+2
+size_300	Ctrl+3
+size_400	Ctrl+4
+deinterlace_none	Ctrl+I
+deinterlace_l5	
+deinterlace_yadif0	Shift+I
+deinterlace_yadif1	I
+deinterlace_lb	
+deinterlace_kern	
+channels_stereo	Ctrl+C
+channels_surround	Shift+C
+channels_ful51	C
+stereo	Ctrl+A
+left_channel	A
+right_channel	Shift+A
+aspect_detect	Ctrl+W
+aspect_4:3	Shift+W
+aspect_5:4	
+aspect_14:9	
+aspect_16:9	W
+aspect_16:10	
+aspect_2.35:1	
+aspect_none	
+rotate_none	Ctrl+R
+rotate_clockwise	R
+rotate_counterclockwise	Shift+R
+rotate_clockwise_flip	
+rotate_counterclockwise_flip	
+quit	Ctrl+Q
+show_tray_icon	F4
+restore/hide	H
+pl_open	Ctrl+O
+pl_save	Ctrl+S
+pl_play	Shift+P
+pl_next	Shift+Down
+pl_prev	Shift+Up
+pl_move_up	Alt+Up
+pl_move_down	Alt+Down
+pl_repeat	F7
+pl_shuffle	F8
+pl_preferences	Shift+F2
+pl_add_current	Shift+Ins
+pl_add_files	Ins
+pl_add_directory	Ctrl+Ins
+pl_remove_selected	Del
+pl_remove_all	Ctrl+Del
+pl_edit	Shift+Del
+show_main_toolbar	F5
+show_language_toolbar	F6

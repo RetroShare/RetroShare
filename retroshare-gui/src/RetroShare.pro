@@ -91,7 +91,6 @@ DEPENDPATH += . \
             gui\elastic
             
 INCLUDEPATH += . \
-		apps/smplayer
 
 # Input
 HEADERS +=  rshare.h \

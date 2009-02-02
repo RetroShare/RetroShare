@@ -1,1 +1,0 @@
-#define SVN_REVISION "SVN-rUNKNOWN"
