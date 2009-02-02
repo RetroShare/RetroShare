@@ -195,8 +195,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(sharedfilesDialog = new SharedFilesDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_FILES), tr("Files"), grp));
                      
-    //ui.stackPages->add(chatDialog = new ChatDialog(ui.stackPages),
-    //                   createPageAction(QIcon(IMAGE_CHAT), tr("Chat"), grp));
 
     //MsgFeed *msgFeed = NULL;
     //ui.stackPages->add(msgFeed = new MsgFeed(ui.stackPages),
@@ -227,8 +225,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
 			createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
 
-    ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
+    ChannelFeed *channelFeed = NULL;
+    ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
 
     ForumsDialog *forumsDialog = NULL;
     ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
@@ -239,9 +238,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(networkDialog = new NetworkDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_NETWORK), tr("Network"), grp));
 
-
-    //ui.stackPages->add(new HelpDialog(ui.stackPages),
-    //                   createPageAction(QIcon(IMAGE_ABOUT), tr("About/Help"), grp));
                      
   //ui.stackPages->add(groupsDialog = new GroupsDialog(ui.stackPages),
   //                   createPageAction(QIcon(), tr("Groups"), grp));
