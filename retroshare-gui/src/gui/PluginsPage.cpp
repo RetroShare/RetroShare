@@ -118,27 +118,39 @@ PluginsPage::PluginsPage(QWidget *parent )
             QRegExp rx_qs(".*js");
             
             ti = scfList.indexOf(rx_qs);
-            QFile scriptFile( spDir.absoluteFilePath( scfList.at(ti) ) );
-            scriptFile.open(QIODevice::ReadOnly);
-            engine->evaluate(scriptFile.readAll());
-            scriptFile.close();
+
+				if(ti > -1)
+				{
+					QFile scriptFile( spDir.absoluteFilePath( scfList.at(ti) ) );
+					scriptFile.open(QIODevice::ReadOnly);
+					engine->evaluate(scriptFile.readAll());
+					scriptFile.close();
+				}
 
             QUiLoader loader;
             QRegExp rx_ui(".*ui");
-            ti = scfList.indexOf(rx_ui) ;
-            QFile uiFile( spDir.absoluteFilePath( scfList.at(ti) ) );
-            qDebug() << "ui file is " << scfList.at(ti) ;
-            uiFile.open(QIODevice::ReadOnly);
-            
-            QWidget *ui = loader.load(&uiFile);
-            uiFile.close();
+				QWidget *ui = NULL ;
 
-            QScriptValue ctor = engine->evaluate("Plugin");
-            QScriptValue scriptUi = engine->newQObject(ui, QScriptEngine::ScriptOwnership);
-            QScriptValue calc = ctor.construct(QScriptValueList() << scriptUi);
+				if(ti > -1)
+				{
+					ti = scfList.indexOf(rx_ui) ;
+					QFile uiFile( spDir.absoluteFilePath( scfList.at(ti) ) );
+					qDebug() << "ui file is " << scfList.at(ti) ;
+					uiFile.open(QIODevice::ReadOnly);
+
+					ui = loader.load(&uiFile);
+					uiFile.close();
+				}
 
             if (!ui)
                 qDebug() << "ui is null :(" ;
+				else
+				{
+					QScriptValue ctor = engine->evaluate("Plugin");
+					QScriptValue scriptUi = engine->newQObject(ui, QScriptEngine::ScriptOwnership);
+					QScriptValue calc = ctor.construct(QScriptValueList() << scriptUi);
+				}
+
 
             //ui->show();
             pluginTabs->addTab(ui,"Script plugin");            
