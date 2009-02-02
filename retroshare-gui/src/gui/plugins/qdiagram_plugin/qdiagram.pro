@@ -23,13 +23,13 @@ SOURCES     += DiagramPlugin.cpp
 #===============================================================================
 
 
-HEADERS = diagrampathitem.h \
+HEADERS += diagrampathitem.h \
     diagramdrawitem.h \
     mainwindow.h \
     diagramitem.h \
     diagramscene.h \
     diagramtextitem.h
-SOURCES = diagrampathitem.cpp \
+SOURCES += diagrampathitem.cpp \
     diagramdrawitem.cpp \
     mainwindow.cpp \
     diagramitem.cpp \

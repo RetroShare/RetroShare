@@ -23,7 +23,7 @@ DiagramPlugin::pluginName() const
 QWidget*
 DiagramPlugin::pluginWidget(QWidget * parent )
 {
-    MainWindow* window = new MainWindow(parent);
+    MainWindow* window = new MainWindow();
     //window->openImage(":/images/example.jpg");
 
     return window;
