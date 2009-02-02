@@ -54,7 +54,6 @@ win32 {
 	MOC_DIR = temp/moc
 
     LIBS += -L"../../../../lib" -lretroshare -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
-    LIBS += -lqcheckers -lsmplayer 
     LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -gdi32
     LIBS += -lole32 -lwinmm
 

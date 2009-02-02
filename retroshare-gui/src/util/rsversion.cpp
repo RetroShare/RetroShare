@@ -23,7 +23,7 @@
 
 //#define USE_SVN_VERSIONS 1
 
-#define VERSION "0.4.11d"
+#define VERSION "0.4.12a"
 
 #if USE_SVN_VERSIONS
 #include "svn_revision.h"
