@@ -101,6 +101,8 @@
 #define IMAGE_MAXIMIZE          ":/images/window_fullscreen.png"
 #define IMG_HELP                ":/images/help.png"
 #define IMAGE_NEWSFEED          ":/images/konqsidebar_news24.png"
+#define IMAGE_PLUGINS           ":/images/extension_32.png"
+
 
 /* Keys for UI Preferences */
 #define UI_PREF_PROMPT_ON_QUIT  "UIOptions/ConfirmOnQuit"
@@ -170,7 +172,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     QActionGroup *grp = new QActionGroup(this);
 
     ui.stackPages->add(pluginsPage = new PluginsPage(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_NETWORK), tr("Plugins"), grp));
+                       createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
 
     NewsFeed *newsFeed = NULL;
     ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
