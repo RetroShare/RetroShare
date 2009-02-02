@@ -91,8 +91,7 @@ DEPENDPATH += . \
             gui\elastic
             
 INCLUDEPATH += . \
-			games/qcheckers \
-			apps/smplayer
+		apps/smplayer
 
 # Input
 HEADERS +=  rshare.h \
@@ -437,7 +436,7 @@ SOURCES += main.cpp \
             gui/MsgFeed.cpp \
             gui/TransferFeed.cpp \
             gui/ChannelFeed.cpp \
-			gui/GeneralMsgDialog.cpp \
+	    gui/GeneralMsgDialog.cpp \
             gui/feeds/ForumNewItem.cpp \
             gui/feeds/ForumMsgItem.cpp \
             gui/feeds/PeerItem.cpp \
@@ -451,7 +450,6 @@ SOURCES += main.cpp \
             gui/feeds/SubDestItem.cpp \
             
 RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc 
-#RESOURCES += games/qcheckers/qcheckers.qrc apps/smplayer/icons.qrc
 
 TRANSLATIONS +=  \
             lang/retroshare_en.ts \
