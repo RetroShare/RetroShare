@@ -724,36 +724,37 @@ void RemoteDirModel::downloadSelected(QModelIndexList list)
 	/* Fire off requests */
 	QModelIndexList::iterator it;
 	for(it = list.begin(); it != list.end(); it++)
-	{
-		void *ref = it -> internalPointer();
+		if(it->column()==1)
+		{
+			void *ref = it -> internalPointer();
 
-     		DirDetails details;
-     		uint32_t flags = DIR_FLAGS_DETAILS;
-     		if (RemoteMode)
-		{
-     			flags |= DIR_FLAGS_REMOTE;
-		}
-     		else
-		{
-     			flags |= DIR_FLAGS_LOCAL;
-			continue; /* don't try to download local stuff */
-		}
+			DirDetails details;
+			uint32_t flags = DIR_FLAGS_DETAILS;
+			if (RemoteMode)
+			{
+				flags |= DIR_FLAGS_REMOTE;
+			}
+			else
+			{
+				flags |= DIR_FLAGS_LOCAL;
+				continue; /* don't try to download local stuff */
+			}
 
-     		if (!rsFiles->RequestDirDetails(ref, details, flags))
-     		{
-			continue;
-     		}
-		/* only request if it is a file */
-		if (details.type == DIR_TYPE_FILE)
-		{
-			std::cerr << "RemoteDirModel::downloadSelected() Calling File Request";
-			std::cerr << std::endl;
-			std::list<std::string> srcIds;
-			srcIds.push_back(details.id);
-			rsFiles -> FileRequest(details.name, details.hash, 
+			if (!rsFiles->RequestDirDetails(ref, details, flags))
+			{
+				continue;
+			}
+			/* only request if it is a file */
+			if (details.type == DIR_TYPE_FILE)
+			{
+				std::cerr << "RemoteDirModel::downloadSelected() Calling File Request";
+				std::cerr << std::endl;
+				std::list<std::string> srcIds;
+				srcIds.push_back(details.id);
+				rsFiles -> FileRequest(details.name, details.hash, 
 						details.count, "", 0, srcIds);
+			}
 		}
-	}
 }
 
 /****************************************************************************
