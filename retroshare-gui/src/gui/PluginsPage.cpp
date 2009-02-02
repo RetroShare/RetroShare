@@ -37,7 +37,9 @@ PluginsPage::PluginsPage(QWidget *parent )
     pluginPanelLayout->addWidget(pluginTabs);
     
     QLabel* lbl1 = new QLabel();
-    lbl1->setText("If you see only this tab, it's a bug :( If you see this tub and calculator, it's a bug too");
+    QString defMess = "If you see only this tab, it's a bug :(\n";
+            defMess+= "If you see this tub and calculator, it's a bug too";
+    lbl1->setText(defMess);
     pluginTabs->addTab(lbl1, "LLL");//Rshare::dataDirectory());
     //"L #1");
     
@@ -45,23 +47,13 @@ PluginsPage::PluginsPage(QWidget *parent )
     //lbl2->setText("Label #2");
     //pluginTabs->addTab(lbl2, "L #2; for debugging purposes");
 
-    QDir pluginsDir(Rshare::dataDirectory());
+    QDir pluginsDir(Rshare::dataDirectory() + "/plugins");
 
-// this piece of code is magical and untested ;
-// but on Windows it works
-#if defined(Q_OS_WIN)
-    if (pluginsDir.dirName().toLower() == "debug" || pluginsDir.dirName().toLower() == "release")
-        pluginsDir.cdUp();
-#elif defined(Q_OS_MAC)
-    if (pluginsDir.dirName() == "MacOS") {
-        pluginsDir.cdUp();
-        pluginsDir.cdUp();
-        pluginsDir.cdUp();
+    if ( !pluginsDir.exists() )
+    {
+        lbl1->setText("failed to locate 'plugins' directory. Nothing to load" );
+        return ;
     }
-#endif
-// eof magick
-
-    pluginsDir.cd("plugins");
 
     foreach (QString fileName, pluginsDir.entryList(QDir::Files))
     {
@@ -95,9 +87,17 @@ PluginsPage::PluginsPage(QWidget *parent )
     }
 
     // script plugins loading; warning, code is dirty; will be changed later
-    engine = new QScriptEngine;
+    engine = new QScriptEngine(parent);
 
-    pluginsDir.cd("../script_plugins");
+    pluginsDir.setPath(Rshare::dataDirectory() + "/script_plugins");
+
+    if ( !pluginsDir.exists() )
+    {
+        QString tmps = lbl1->text();
+        tmps += " Failed to locate 'script_plugins' directory. " ;
+        lbl1->setText( tmps);
+        return ;
+    }
     
     
  
@@ -155,7 +155,7 @@ PluginsPage::PluginsPage(QWidget *parent )
             //ui->show();
             pluginTabs->addTab(ui,"Script plugin");            
         }
-        //What has a head like a cat, feet like a cat, a tail like a cat, but isn't a cat?
+        
     }
     
 }
@@ -165,6 +165,6 @@ PluginsPage::PluginsPage(QWidget *parent )
 PluginsPage::~PluginsPage()
 {
     // nothing to do here at this moment
-    delete engine;
+    //delete engine;
 
 }
