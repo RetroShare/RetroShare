@@ -46,7 +46,7 @@
 #include "HelpDialog.h"
 
 #include "games/qbackgammon/bgwindow.h"
-#include "smplayer.h"
+//#include "smplayer.h"
 
 #include "statusbar/peerstatus.h"
 #include "Preferences/PreferencesWindow.h"
@@ -740,9 +740,10 @@ void MainWindow::startgammon()
 
 void MainWindow::startqcheckers()
 {
+#if 0
     myTopLevel* top = new myTopLevel();
     top->show();
-    
+#endif
 }
 
 
