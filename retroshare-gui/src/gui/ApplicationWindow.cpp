@@ -303,6 +303,7 @@ void ApplicationWindow::loadStyleSheet(const QString &sheetName)
 /** Shows smplayer */
 void ApplicationWindow::showsmplayer()
 {
+#if 0
     static SMPlayer * smplayer = 0;
     
     if (smplayer == 0) {
@@ -310,5 +311,6 @@ void ApplicationWindow::showsmplayer()
     }
 		    
     smplayer->gui()->show();
+#endif
 }
 
