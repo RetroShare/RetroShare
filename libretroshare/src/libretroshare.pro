@@ -10,7 +10,12 @@ linux-g++ {
 	QMAKE_CXXFLAGS *= -fomit-frame-pointer -Wall 
 	QMAKE_CC = g++
 }
-
+linux-g++-64 {
+	OBJECTS_DIR = temp/linux-g++-64/obj
+	DESTDIR = lib.linux-g++-64
+	QMAKE_CXXFLAGS *= -fomit-frame-pointer -Wall 
+	QMAKE_CC = g++
+}
 #################### Cross compilation for windows under Linux ####################
 
 win32-x-g++ {	
