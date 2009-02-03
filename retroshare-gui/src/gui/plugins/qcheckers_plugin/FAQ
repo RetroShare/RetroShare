@@ -1,0 +1,49 @@
+What is my IP address?
+----------------------
+Run ifconfig and loop for the eth0/ppp0/ippp0 entry. The second line starts
+with "inet addr". That's your IP address!
+
+
+How to create a themes?
+-----------------------
+There are two places you can put your own theme directories:
+$SHARE/themes or $HOME/.kcheckers/themes. $SHARE is /usr/local/kcheckers on
+default. simply create a directory there that contains the following files:
+    tile1.png		- unused tiles.
+    tile2.png		- where men are placed.
+    frame.png		- around selected man.
+    manblack.png	-
+    manwhite.png	-
+    kingblack.png	-
+    kingwhite.png	-
+    theme		- the first line should be the default/english name
+			- of the theme. This will be used if the correct locale
+			- name should not be found.
+			- Locale specific names can be provided with the
+			- following syntax: [locale]=Theme Name.
+			- Example theme file:
+			- Line 1) This is a default theme name
+			- Line 2) [de_DE]=Das ist Deutsch
+			- Line 2) [en]=This is English
+Directory name will be shown as theme name. All pictures are the same size.
+
+
+My theme is not loaded. Why?
+----------------------------
+Start kcheckers in a x-terminal. Watch out for errors otherwise send me your
+compressed theme directory.
+
+
+PDN.
+----
+Because draught is a fast (compared to chess) game there are less situations
+one will save a game. Nevertheless, this is possible in kcheckers.
+
+Now, imagine you want to see how a match on the last WCM was played. You simply
+open the PDN file, select the game you are interested in from the list and
+click move after a move and watch how the men on the board are moved.
+
+If you want to continue a game at certain position, no problem, click on the
+"Continue" button in toolbar. But consider who is next on turn, what kind of
+game (against computer or human) you are playing.
+
