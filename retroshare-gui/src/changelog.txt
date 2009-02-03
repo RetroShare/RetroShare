@@ -1,5 +1,6 @@
 Changes for v0.4.12a
 
+* Implemented plugin system: first demo version
 * Removed streching for Remote Directories
 * Added icon Label for Messages Toaster
 * Set userfriendly Column names for Remote/local Directories to Friends Directories and My Directories
