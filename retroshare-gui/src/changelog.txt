@@ -1,4 +1,4 @@
-Changes for v0.4.12
+Changes for v0.4.12a
 
 * Removed streching for Remote Directories
 * Added icon Label for Messages Toaster
