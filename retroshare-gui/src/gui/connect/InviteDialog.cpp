@@ -67,7 +67,7 @@ void InviteDialog::emailbutton()
 
 	std::string mailstr = "mailto:";
 
-	mailstr += "&subject=RetroShare Invite";
+        mailstr += "?subject=RetroShare Invite";
 	mailstr += "&body=";
 	mailstr += ui.emailText->toPlainText().toStdString();
 
@@ -107,12 +107,8 @@ void InviteDialog::setInfo(std::string invite)
 
 void InviteDialog::savecertbutton(void)
 {
-	std::string filename = rsPeers->getPeerName(rsPeers->getOwnId()); // file name will be user name
-	filename += ".pqi"; // append retroshare cert extension
-	QString qdir = QFileDialog::getExistingDirectory(this, tr("Please Choose Directory to Save Certificate"), "",
-            false); // get current directory
-    
-    qdir += tr(filename.c_str()); // append file name to directory
-	rsPeers->SaveCertificateToFile(rsPeers->getOwnId(), qdir.toStdString()); // save to file
+
+        QString qdir = QFileDialog::getSaveFileName(this, "Please choose a filename", QDir::homePath(), "RetroShare Certificate (*.pqi)");
+        rsPeers->SaveCertificateToFile(rsPeers->getOwnId(), qdir.toStdString()); // save to file
 }
 		     
