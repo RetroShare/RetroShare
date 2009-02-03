@@ -1,6 +1,6 @@
 #=== this part is common (similar) for all plugin projects =====================
 TEMPLATE      = lib
-CONFIG       += plugin debug
+CONFIG       += plugin release
 
 # this is directory, where PluginInterface.h is located
 INCLUDEPATH  += ../

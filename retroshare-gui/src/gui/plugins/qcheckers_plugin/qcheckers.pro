@@ -1,6 +1,6 @@
 #=== this part is common (similar) for all plugin projects =====================
 TEMPLATE      = lib
-CONFIG       += plugin debug
+CONFIG       += plugin release
 
 # this is directory, where PluginInterface.h is located
 INCLUDEPATH  += ../
@@ -14,7 +14,7 @@ MOC_DIR = temp/moc
 
 
 # the name of the result file; 
-TARGET        = $$qtLibraryTarget(qdiagram_plugin)
+TARGET        = $$qtLibraryTarget(qcheckers_plugin)
 
 HEADERS     += ../PluginInterface.h  \
                QCheckersPlugin.h
@@ -39,7 +39,6 @@ SOURCES	+= pdn.cc \
 RESOURCES = qcheckers.qrc
 
 
-TARGET		= qcheckers
 #PREFIX		= $$system(grep 'define PREFIX' common.h | cut -d'"' -f2)
 #SHARE_PATH	= $$system(grep 'define SHARE_PATH' common.h | cut -d'"' -f2)
 
