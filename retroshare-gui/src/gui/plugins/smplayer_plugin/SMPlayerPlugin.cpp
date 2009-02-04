@@ -24,8 +24,8 @@ QWidget*
 SMPlayerPlugin::pluginWidget(QWidget * parent )
 {
     	SMPlayer *smplayer = new SMPlayer();
-    	smplayer->start();
-        //return smplayer;
+//    	smplayer->start();
+        return smplayer->gui();
 }
 
 
