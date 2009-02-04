@@ -29,13 +29,22 @@ win32-x-g++ {
 
 	INCLUDEPATH *= /usr/i586-mingw32msvc/include ${HOME}/.wine/drive_c/pthreads/include/
 }
+################################# Windows ##########################################
 
+win32 {
+    OBJECTS_DIR = temp/obj
+	MOC_DIR = temp/moc
+    DEFINES *= WINDOWS_SYS WIN32
+	DEFINES *= STATICLIB
+	
+	INCLUDEPATH *= ../../../../pthreads-w32-2-8-0-release
+}
 ################################### COMMON stuff ##################################
 
 DEFINES *=  PQI_USE_XPGP MINIUPNPC_VERSION=10
 
-SSL_DIR=../../../../src/openssl-0.9.7g-xpgp-0.1c
-UPNPC_DIR=../../../../src/miniupnpc-1.0
+SSL_DIR=../../../../openssl-0.9.7g-xpgp-0.1c
+UPNPC_DIR=../../../../miniupnpc-1.0
 
 INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR}
 
@@ -119,7 +128,6 @@ HEADERS += dbase/cachestrapper.h \
            pqi/pqistreamer.h \
            pqi/sslcert.h \
            pqi/xpgpcert.h \
-           rsiface/notifytxt.h \
            rsiface/rschannels.h \
            rsiface/rsdisc.h \
            rsiface/rsdistrib.h \
