@@ -409,7 +409,7 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 		}
 			break;
 			default:
-		return QString::fromStdString("FILE");
+		return QString(tr("FILE"));
 			break;
 		}
 	}
@@ -434,7 +434,7 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 			break;
 
 			default:
-		return QString::fromStdString("DIR");
+		return QString(tr("DIR"));
 			break;
 		}
 	}
@@ -479,21 +479,21 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 		case 0:
 			if (RemoteMode)
 			{
-				return QString("Friends Directories");
+				return QString(tr("Friends Directories"));
 			}
 			else
 			{
-				return QString("My Directories");
+				return QString(tr("My Directories"));
 			}
 			break;
 		case 1:
-			return QString("Size");
+			return QString(tr("Size"));
 			break;
 		case 2:
-			return QString("Rank");
+			return QString(tr("Rank"));
 			break;
 		case 3:
-			return QString("Age");
+			return QString(tr("Age"));
 			break;
 	}
         return QString("Column %1").arg(section);
