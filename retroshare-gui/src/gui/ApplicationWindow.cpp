@@ -56,7 +56,7 @@
 
 
 /* for smplayer */
-#include "smplayer.h"
+//#include "smplayer.h"
 
 #define FONT        QFont(tr("Arial"), 8)
 
