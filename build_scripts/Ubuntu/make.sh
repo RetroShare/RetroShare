@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ###################### PARAMETERS ####################
-version="0.4.11d"
+version="0.4.12"
 arch=`dpkg --print-architecture`
 packager="Cyril Soler <csoler@users.sourceforge.net>"
 ######################################################
@@ -52,15 +52,15 @@ if ! test -f ../../retroshare-gui/src/RetroShare; then
 	echo
 	exit ;
 fi
-if ! test -f ../../libretroshare/src/rsiface/retroshare-nogui; then
-	echo Can not find executable ../../libretroshare/src/rsiface/retroshare-nogui. Please fix this.
+if ! test -f ../../retroshare-nogui/src/retroshare-nogui; then
+	echo Can not find executable ../../retroshare-nogui/src/retroshare-nogui. Please fix this.
 	echo
 	exit ;
 fi
 echo Stripping executables...
 cp ../../retroshare-gui/src/RetroShare              retroshare/usr/bin/
 strip retroshare/usr/bin/RetroShare
-cp ../../libretroshare/src/rsiface/retroshare-nogui retroshare/usr/bin/
+cp ../../retroshare-nogui/src/retroshare-nogui retroshare/usr/bin/
 strip retroshare/usr/bin/retroshare-nogui
 
 # compute md5 sums
