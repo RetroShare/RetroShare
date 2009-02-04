@@ -47,6 +47,8 @@ public:
 	uint64_t getFileSize();
 	bool fileOk();
 
+	void setPeerId(const std::string& id) ;
+
 
 protected:
 virtual	int initializeFileAttrs(); /* does for both */
@@ -63,7 +65,8 @@ virtual	int initializeFileAttrs(); /* does for both */
 	std::string lastRequestor;
 	uint64_t   req_loc;
 	uint32_t   req_size;
-	time_t     lastTS;   
+	clock_t    lastTS;   
+	float 	  transfer_rate ;
 
 	/* 
          * Mutex Required for stuff below 

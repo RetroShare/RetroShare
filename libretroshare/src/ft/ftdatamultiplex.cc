@@ -427,6 +427,8 @@ bool	ftDataMultiplex::locked_handleServerRequest(ftFileProvider *provider,
 
 	if (provider->getFileData(offset, chunksize, data))
 	{
+		// setup info
+		provider->setPeerId(peerId) ;
 		/* send data out */
 		sendData(peerId, hash, size, offset, chunksize, data);
 		return true;

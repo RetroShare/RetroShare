@@ -1,17 +1,25 @@
+#include <sys/times.h>
 #include "ftfileprovider.h"
 
 #include "util/rsdir.h"
 #include <stdlib.h>
 
 ftFileProvider::ftFileProvider(std::string path, uint64_t size, std::string
-hash) : mSize(size), hash(hash), file_name(path), fd(NULL) 
+hash) : mSize(size), hash(hash), file_name(path), fd(NULL),transfer_rate(0)
 {
+	lastTS = times(NULL) ;
 }
 
 ftFileProvider::~ftFileProvider(){
 	if (fd!=NULL) {
 		fclose(fd);
 	}
+}
+
+void ftFileProvider::setPeerId(const std::string& id)
+{
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+	lastRequestor = id ;
 }
 
 bool	ftFileProvider::fileOk()
@@ -34,12 +42,22 @@ uint64_t ftFileProvider::getFileSize()
 
 bool    ftFileProvider::FileDetails(FileInfo &info)
 {
-        RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 	info.hash = hash;
 	info.size = mSize;
 	info.path = file_name;
 	info.fname = RsDirUtil::getTopDir(file_name);
-        info.lastTS = lastTS;
+	info.transfered = req_loc ;
+	info.status = FT_STATE_DOWNLOADING ;
+
+	info.peers.clear() ;
+
+	TransferInfo inf ;
+	inf.peerId = lastRequestor ;
+	inf.tfRate = transfer_rate/1024.0 ;
+	inf.status = FT_STATE_DOWNLOADING ;
+	info.peers.push_back(inf) ;
+
 	/* Use req_loc / req_size to estimate data rate */
 
 	return true;
@@ -55,7 +73,7 @@ bool ftFileProvider::getFileData(uint64_t offset, uint32_t &chunk_size, void *da
 		if (!initializeFileAttrs())
 			return false;
 
-        RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
 	/*
 	 * Use private data, which has a pointer to file, total size etc
@@ -105,9 +123,14 @@ bool ftFileProvider::getFileData(uint64_t offset, uint32_t &chunk_size, void *da
 		 * (d) timestamp
 		 */
 
-		time_t now = time(NULL);		
+		clock_t now = times(NULL);		
 		req_loc = offset;
 		req_size = data_size;
+
+		transfer_rate = req_size / (float)(std::max(sysconf(_SC_CLK_TCK),(long int)now - (long int)lastTS) / (float)sysconf(_SC_CLK_TCK)) ;	// in bytes/s. Average over two samples
+
+		std::cout << "req_size = " << req_size << ", now="<< now << ", lastTS=" << lastTS << ", lastTS-now=" << now-lastTS << ", speed = " << transfer_rate << ", clk=" << sysconf(_SC_CLK_TCK) << std::endl ;
+
 		lastTS = now;
 	}
 	else {
