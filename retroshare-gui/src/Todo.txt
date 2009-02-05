@@ -18,62 +18,7 @@ RetroShare Todo list
 * setChannelsDirectory/getChannelsDirectory (Customizable Directories for channels folder)
 
 
-TODO on Shared Files
-=====================================================================
+See the Rest of the Projects list and Todo list on Wiki:
+http://retroshare.sourceforge.net/wiki/index.php/Development
 
-* Share Manager: can set Rights for Shared Files to Groups/Friends 
-* Share Virtual Folders, can create Virtual Folders for Shared Files in Share Manager
-* Hide/Show Shared Files for different Friends(allowing to give rights for folders) 
-
-TODO on channels
-====================================================================
-
-* Connect Play Button (must get smplayer working properly first).
-* Improve GUI display of channels (sorting order etc).
-* Display Channels popularity.
-* Channel Info only redistributed after a restart (To FIX).
-* Updates not 100% reliable.
-* should delete downloaded files after one month (save space).
-* Probably other bugs too.
-* Image/Picture support for Channels
-* Images for Channel Name to can set via combobox or use different File Type(max size 24x24).
-
-TODO on Messages
-======================================================================
-
-- One of the next improvements we want to add is extensions to messages to handle:
-   * Longer Messages (break into chunks.)
-   * verification that the message was received.
-   * Ability to send to anyone in your network - not just your friends.
-   * Signed messages. (+ encrypted?)
-   * Special Messages 
-	- Introductions.
-	- friend requests.
-	- share channel/forum keys (enables private forums / group channels )
-
-TODO on Privat Chat
-======================================================================
-
-* Send files via drag and drop over Privat Chat Window
-* Send File from Privat Chat Window over Filemenu/Button 
-
-* Conference , can invite other Friends in a Privat Chat
-* Send a recorded voice message
-* VOIP
-* Video Chat 
-
-TODO  on Messenger Window
-======================================================================================
-* Share a Personal Messages with your Contacts( It will be displayed after nicknames, similar MSN)
-* Filter for Search a Friend in Messenger
-* set Status from Combobox and send my status to other Friends
-* get Status for every Friend and set the correct Icon.
-
-* Groups Folder Tree for Messenger,generate different groups(groupname) and invite special Friends in your Group.
-* Favorites Folder Tree, you can move your Favorite Friends to this Favorite section.
-* Each Tree Shows the counts like example:
-
-Favorites(1/4)
-Groups(0/1)
-Online(4)
-Offline(12)
+http://retroshare.sourceforge.net/wiki/index.php/To_do_list
