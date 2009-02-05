@@ -258,9 +258,14 @@ Section $(sec_main) sec_main
   ; Set Section Files and Shortcuts
   SetOutPath "$INSTDIR\"
   File /r "release\RetroShare.exe"
-  File /r "mingwm10.dll"
+  File /r "D:\MinGW\bin\mingwm10.dll"
+  File /r "pthreadGCE2.dll"
+  File /r "D:\Qt\4.4.3\bin\QtCore4.dll"
+  File /r "D:\Qt\4.4.3\bin\QtGui4.dll"
+  File /r "D:\Qt\4.4.3\bin\QtNetwork4.dll"
+  File /r "D:\Qt\4.4.3\bin\QtXml4.dll"
+  File /r "D:\Qt\4.4.3\bin\QtScript4.dll"
   File /r "changelog.txt"
-
   
 
 SectionEnd
