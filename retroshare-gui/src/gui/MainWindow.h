@@ -45,7 +45,6 @@
 #include "bwgraph/bwgraph.h"
 #include "help/browser/helpbrowser.h"
 #include "games/qbackgammon/bgwindow.h"
-#include "toplevel.h"
 
 #include "Preferences/ConfirmQuitDialog.h"
 
