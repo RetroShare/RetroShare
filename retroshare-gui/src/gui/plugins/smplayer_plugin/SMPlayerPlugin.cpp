@@ -1,9 +1,27 @@
 //#include <QApplication>
 //#include <QString>
-//#include <QPushButton>
+#include <QVBoxLayout>
 
 #include "SMPlayerPlugin.h"
 #include "smplayer.h"
+
+SMPlayerPluginWidget::SMPlayerPluginWidget(QWidget* parent,
+                                           Qt::WindowFlags flags  )
+                     :QFrame(parent)                     
+{
+    player = new SMPlayer();
+
+    lay = new QVBoxLayout(this);
+    lay->addWidget( player->gui() );
+}
+
+SMPlayerPluginWidget::~SMPlayerPluginWidget()
+{
+    delete player;
+}
+
+
+//==============================================================================
 
 QString
 SMPlayerPlugin::pluginDescription() const
@@ -23,9 +41,8 @@ SMPlayerPlugin::pluginName() const
 QWidget*
 SMPlayerPlugin::pluginWidget(QWidget * parent )
 {
-    	SMPlayer *smplayer = new SMPlayer();
-//    	smplayer->start();
-        return smplayer->gui();
+    SMPlayerPluginWidget* wd = new SMPlayerPluginWidget(parent);
+    return wd ;
 }
 
 

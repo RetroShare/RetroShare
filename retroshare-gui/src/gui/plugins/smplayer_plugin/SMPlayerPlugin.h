@@ -5,6 +5,8 @@
 
 #include <QString>
 #include <QWidget>
+#include <QFrame>
+class QVBoxLayout;
 
 #include <PluginInterface.h>
 
@@ -12,6 +14,18 @@
 
 class SMPlayer;
 
+class SMPlayerPluginWidget: public QFrame
+{
+    Q_OBJECT
+
+    public:
+        SMPlayerPluginWidget(QWidget* parent,  Qt::WindowFlags flags = 0 );
+        ~SMPlayerPluginWidget();
+
+    protected:
+        SMPlayer* player;        
+        QVBoxLayout* lay;
+};
 
 class SMPlayerPlugin: public QObject, public PluginInterface
 {
