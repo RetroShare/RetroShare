@@ -65,8 +65,12 @@ virtual	int initializeFileAttrs(); /* does for both */
 	std::string lastRequestor;
 	uint64_t   req_loc;
 	uint32_t   req_size;
-	clock_t    lastTS;   
+	time_t    lastTS;   
+	clock_t    lastTS_t;   
+
+	// these two are used for speed estimation
 	float 	  transfer_rate ;
+	uint32_t		total_size ;
 
 	/* 
          * Mutex Required for stuff below 

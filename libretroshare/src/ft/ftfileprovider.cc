@@ -5,9 +5,9 @@
 #include <stdlib.h>
 
 ftFileProvider::ftFileProvider(std::string path, uint64_t size, std::string
-hash) : mSize(size), hash(hash), file_name(path), fd(NULL),transfer_rate(0)
+hash) : mSize(size), hash(hash), file_name(path), fd(NULL),transfer_rate(0),total_size(0)
 {
-	lastTS = times(NULL) ;
+	lastTS = time(NULL) ;
 }
 
 ftFileProvider::~ftFileProvider(){
@@ -48,14 +48,31 @@ bool    ftFileProvider::FileDetails(FileInfo &info)
 	info.path = file_name;
 	info.fname = RsDirUtil::getTopDir(file_name);
 	info.transfered = req_loc ;
+	info.lastTS = lastTS;
 	info.status = FT_STATE_DOWNLOADING ;
 
 	info.peers.clear() ;
 
 	TransferInfo inf ;
 	inf.peerId = lastRequestor ;
-	inf.tfRate = transfer_rate/1024.0 ;
 	inf.status = FT_STATE_DOWNLOADING ;
+
+	long int clk = sysconf(_SC_CLK_TCK) ;
+	time_t now = time(NULL) ;
+
+	clock_t now_t = times(NULL) ;
+
+	long int diff = (long int)now_t - (long int)lastTS_t ;	// in bytes/s. Average over multiple samples
+
+	if(diff > 100)
+	{
+		transfer_rate = total_size / (float)diff * clk ;
+		total_size = 0 ;
+		lastTS_t = now_t ;
+	}
+
+	inf.tfRate = transfer_rate/1024.0 ;
+	info.tfRate = transfer_rate/1024.0 ;
 	info.peers.push_back(inf) ;
 
 	/* Use req_loc / req_size to estimate data rate */
@@ -123,15 +140,11 @@ bool ftFileProvider::getFileData(uint64_t offset, uint32_t &chunk_size, void *da
 		 * (d) timestamp
 		 */
 
-		clock_t now = times(NULL);		
+		time_t now = time(NULL);		
 		req_loc = offset;
+		lastTS = now ;
 		req_size = data_size;
-
-		transfer_rate = req_size / (float)(std::max(sysconf(_SC_CLK_TCK),(long int)now - (long int)lastTS) / (float)sysconf(_SC_CLK_TCK)) ;	// in bytes/s. Average over two samples
-
-		std::cout << "req_size = " << req_size << ", now="<< now << ", lastTS=" << lastTS << ", lastTS-now=" << now-lastTS << ", speed = " << transfer_rate << ", clk=" << sysconf(_SC_CLK_TCK) << std::endl ;
-
-		lastTS = now;
+		total_size += req_size ;
 	}
 	else {
 		std::cerr << "No data to read" << std::endl;
