@@ -137,6 +137,8 @@ HEADERS +=  rshare.h \
             gui/LogoBar.h \
             gui/xprogressbar.h \
             gui/PluginsPage.h  \
+            gui/PluginManagerWidget.h \
+            gui/PluginManager.h      \
             gui/plugins/PluginInterface.h \
             lang/languagesupport.h \
             util/stringutil.h \
@@ -364,6 +366,8 @@ SOURCES += main.cpp \
             gui/LogoBar.cpp \
             gui/xprogressbar.cpp \
             gui/PluginsPage.cpp \
+            gui/PluginManagerWidget.cpp \
+            gui/PluginManager.cpp      \
             lang/languagesupport.cpp \
             util/stringutil.cpp \
             util/win32.cpp \
