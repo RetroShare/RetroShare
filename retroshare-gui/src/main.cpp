@@ -34,7 +34,6 @@
 //#include <util/process.h>
 #include <util/stringutil.h>
 #include "rsiface/rsiface.h"
-
 #include "rsiface/notifyqt.h"
 
 RsIface   *rsiface    = NULL;
