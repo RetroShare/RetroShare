@@ -1,4 +1,4 @@
-<RCC>
+ <RCC>
     <qresource prefix="/" >
         <file>help/authors.html</file>
         <file>help/licence.html</file>
@@ -153,6 +153,7 @@
         <file>images/folder_green16.png</file>
         <file>images/folder_open.png</file>
 	<file>images/folder_video.png</file>
+	<file>images/folder_blueshared.png</file>
         <file>images/forward.png</file>
         <file>images/friendsfolder24.png</file>
         <file>images/kgames.png</file>
@@ -249,6 +250,9 @@
         <file>images/start.png</file>
         <file>images/startall.png</file>
         <file>images/server_24x24.png</file>
+        <file>images/loader/16-loader.gif</file>
+        <file>images/loader/32-loader.gif</file>
+        <file>images/loader/progress.gif</file>
         <file>images/textedit/textbold.png</file>
         <file>images/textedit/textitalic.png</file>
         <file>images/textedit/textunder.png</file>

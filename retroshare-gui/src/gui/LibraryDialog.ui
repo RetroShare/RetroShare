@@ -493,159 +493,272 @@
      <property name="title" >
       <string>Library</string>
      </property>
-     <layout class="QGridLayout" >
-      <item row="0" column="1" colspan="2" >
-       <widget class="QLabel" name="label_3" >
-        <property name="styleSheet" >
-         <string>background-color: rgb(253, 252, 248);</string>
+     <layout class="QGridLayout" name="gridLayout_5" >
+      <item row="0" column="0" >
+       <widget class="QSplitter" name="splitter" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="text" >
-         <string>Exploring My RetroShare Library</string>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
         </property>
-       </widget>
-      </item>
-      <item row="0" column="3" >
-       <widget class="QPushButton" name="tileView_btn_library" >
-        <property name="text" >
-         <string>Tile view</string>
-        </property>
-        <property name="flat" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="4" >
-       <widget class="QPushButton" name="showDetails_btn_library" >
-        <property name="text" >
-         <string>Show Details</string>
-        </property>
-        <property name="flat" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" colspan="4" >
-       <widget class="QListView" name="organizerListView" >
-        <property name="contextMenuPolicy" >
-         <enum>Qt::DefaultContextMenu</enum>
-        </property>
-        <property name="movement" >
-         <enum>QListView::Free</enum>
-        </property>
-        <property name="viewMode" >
-         <enum>QListView::IconMode</enum>
-        </property>
-        <property name="selectionRectVisible" >
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" >
-       <widget class="QPushButton" name="createAlbum_btn_library" >
-        <property name="styleSheet" >
-         <string/>
-        </property>
-        <property name="text" >
-         <string>Create Album</string>
-        </property>
-        <property name="flat" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="2" >
-       <widget class="QPushButton" name="deleteAlbum_btn_library" >
-        <property name="styleSheet" >
-         <string/>
-        </property>
-        <property name="text" >
-         <string>Delete Album</string>
-        </property>
-        <property name="flat" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="3" >
-       <widget class="QLineEdit" name="findEditmain" />
-      </item>
-      <item row="2" column="4" >
-       <widget class="QPushButton" name="find_btn_library" >
-        <property name="styleSheet" >
-         <string>pushButton_41:hover{ color : white;}</string>
-        </property>
-        <property name="text" >
-         <string>Find</string>
-        </property>
-        <property name="flat" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item rowspan="3" row="0" column="0" >
-       <widget class="QTabWidget" name="tabWidget_2" >
-        <property name="tabShape" >
-         <enum>QTabWidget::Triangular</enum>
-        </property>
-        <property name="currentIndex" >
-         <number>1</number>
-        </property>
-        <widget class="QWidget" name="tab_13" >
-         <attribute name="title" >
-          <string>Folder</string>
-         </attribute>
-         <layout class="QGridLayout" >
-          <item row="0" column="0" >
-           <widget class="QComboBox" name="comboBox" >
-            <property name="styleSheet" >
-             <string>border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));</string>
-            </property>
-            <item>
-             <property name="text" >
-              <string>All File Types</string>
+        <widget class="QTabWidget" name="tabWidget_2" >
+         <property name="tabShape" >
+          <enum>QTabWidget::Triangular</enum>
+         </property>
+         <property name="currentIndex" >
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="tab_13" >
+          <property name="geometry" >
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>201</width>
+            <height>385</height>
+           </rect>
+          </property>
+          <attribute name="title" >
+           <string>Folder</string>
+          </attribute>
+          <layout class="QGridLayout" name="gridLayout" >
+           <item row="0" column="0" >
+            <widget class="QTreeView" name="fodlertreeView" />
+           </item>
+           <item row="1" column="0" >
+            <widget class="QComboBox" name="comboBox" >
+             <property name="styleSheet" >
+              <string notr="true" >border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));</string>
              </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>Application</string>
+             <item>
+              <property name="text" >
+               <string>All File Types</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="images.qrc" >
+                <normaloff>:/images/FileTypeAny.png</normaloff>:/images/FileTypeAny.png</iconset>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Application</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="images.qrc" >
+                <normaloff>:/images/FileTypeProgram.png</normaloff>:/images/FileTypeProgram.png</iconset>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Archive</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="images.qrc" >
+                <normaloff>:/images/FileTypeArchive.png</normaloff>:/images/FileTypeArchive.png</iconset>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tab_14" >
+          <property name="geometry" >
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>201</width>
+            <height>385</height>
+           </rect>
+          </property>
+          <attribute name="title" >
+           <string>Organizer</string>
+          </attribute>
+          <layout class="QGridLayout" >
+           <item row="0" column="0" >
+            <widget class="QTreeView" name="organizertreeView" >
+             <property name="font" >
+              <font>
+               <family>Utopia</family>
+               <pointsize>8</pointsize>
+              </font>
              </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>Archive</string>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QPushButton" name="shareFiles_btn" >
+             <property name="maximumSize" >
+              <size>
+               <width>16777215</width>
+               <height>23</height>
+              </size>
              </property>
-            </item>
-           </widget>
-          </item>
-         </layout>
+             <property name="styleSheet" >
+              <string notr="true" >border-color: rgb(0, 0, 0);</string>
+             </property>
+             <property name="text" >
+              <string>Share Files..</string>
+             </property>
+             <property name="icon" >
+              <iconset resource="images.qrc" >
+               <normaloff>:/images/add-share24.png</normaloff>:/images/add-share24.png</iconset>
+             </property>
+             <property name="iconSize" >
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="flat" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </widget>
-        <widget class="QWidget" name="tab_14" >
-         <attribute name="title" >
-          <string>Organizer</string>
-         </attribute>
-         <layout class="QGridLayout" >
+        <widget class="QWidget" name="" >
+         <layout class="QGridLayout" name="gridLayout_4" >
           <item row="0" column="0" >
-           <widget class="QTreeView" name="organizertreeView" >
-            <property name="font" >
-             <font>
-              <family>Utopia</family>
-              <pointsize>8</pointsize>
-             </font>
+           <layout class="QGridLayout" name="gridLayout_2" >
+            <property name="verticalSpacing" >
+             <number>0</number>
             </property>
-           </widget>
+            <item row="0" column="0" >
+             <widget class="QLabel" name="label_3" >
+              <property name="text" >
+               <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;img src=":/images/folder_blueshared.png" /> Exploring My RetroShare Library&lt;/p>&lt;/body>&lt;/html></string>
+              </property>
+              <property name="pixmap" >
+               <pixmap resource="images.qrc" >:/images/folder_blueshared.png</pixmap>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" >
+             <widget class="QPushButton" name="tileView_btn_library" >
+              <property name="maximumSize" >
+               <size>
+                <width>16777215</width>
+                <height>24</height>
+               </size>
+              </property>
+              <property name="text" >
+               <string>Tile view</string>
+              </property>
+              <property name="flat" >
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2" >
+             <widget class="QPushButton" name="showDetails_btn_library" >
+              <property name="text" >
+               <string>Show Details</string>
+              </property>
+              <property name="flat" >
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" colspan="3" >
+             <widget class="QListView" name="organizerListView" >
+              <property name="contextMenuPolicy" >
+               <enum>Qt::DefaultContextMenu</enum>
+              </property>
+              <property name="movement" >
+               <enum>QListView::Free</enum>
+              </property>
+              <property name="viewMode" >
+               <enum>QListView::IconMode</enum>
+              </property>
+              <property name="selectionRectVisible" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="1" column="0" >
-           <widget class="QPushButton" name="shareFiles_btn" >
-            <property name="styleSheet" >
-             <string>border-color: rgb(0, 0, 0);</string>
-            </property>
-            <property name="text" >
-             <string>Share Files..</string>
-            </property>
-            <property name="flat" >
-             <bool>true</bool>
-            </property>
-           </widget>
+           <layout class="QGridLayout" name="gridLayout_3" >
+            <item row="0" column="0" >
+             <widget class="QPushButton" name="createAlbum_btn_library" >
+              <property name="maximumSize" >
+               <size>
+                <width>16777215</width>
+                <height>24</height>
+               </size>
+              </property>
+              <property name="styleSheet" >
+               <string notr="true" />
+              </property>
+              <property name="text" >
+               <string>Create Album</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="images.qrc" >
+                <normaloff>:/images/directoryadd_24x24_shadow.png</normaloff>:/images/directoryadd_24x24_shadow.png</iconset>
+              </property>
+              <property name="flat" >
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" >
+             <widget class="QPushButton" name="deleteAlbum_btn_library" >
+              <property name="maximumSize" >
+               <size>
+                <width>16777215</width>
+                <height>24</height>
+               </size>
+              </property>
+              <property name="styleSheet" >
+               <string notr="true" />
+              </property>
+              <property name="text" >
+               <string>Delete Album</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="images.qrc" >
+                <normaloff>:/images/directoryremove_24x24_shadow.png</normaloff>:/images/directoryremove_24x24_shadow.png</iconset>
+              </property>
+              <property name="flat" >
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2" >
+             <widget class="QLineEdit" name="findEditmain" />
+            </item>
+            <item row="0" column="3" >
+             <widget class="QPushButton" name="find_btn_library" >
+              <property name="maximumSize" >
+               <size>
+                <width>16777215</width>
+                <height>24</height>
+               </size>
+              </property>
+              <property name="styleSheet" >
+               <string notr="true" >pushButton_41:hover{ color : white;}</string>
+              </property>
+              <property name="text" >
+               <string>Find</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="images.qrc" >
+                <normaloff>:/images/find.png</normaloff>:/images/find.png</iconset>
+              </property>
+              <property name="flat" >
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
