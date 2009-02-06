@@ -481,341 +481,244 @@
   <property name="contextMenuPolicy" >
    <enum>Qt::NoContextMenu</enum>
   </property>
-  <layout class="QGridLayout" >
-   <item rowspan="3" row="0" column="0" >
-    <layout class="QGridLayout" >
-     <property name="verticalSpacing" >
+  <layout class="QGridLayout" name="gridLayout_4" >
+   <item row="0" column="0" >
+    <widget class="QTabWidget" name="PeerstabWidget" >
+     <property name="font" >
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="currentIndex" >
       <number>0</number>
      </property>
-     <item row="0" column="0" >
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <widget class="QLabel" name="label" >
-         <property name="text" >
-          <string/>
-         </property>
-         <property name="pixmap" >
-          <pixmap resource="images.qrc" >:/images/user/friends24.png</pixmap>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <widget class="QLabel" name="label_2" >
-         <property name="text" >
-          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:9pt; font-weight:600;">Friends&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="0" column="1" >
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>201</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="1" column="0" colspan="2" >
-      <widget class="QTreeWidget" name="peertreeWidget" >
-       <property name="minimumSize" >
-        <size>
-         <width>250</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize" >
-        <size>
-         <width>1677215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="contextMenuPolicy" >
-        <enum>Qt::CustomContextMenu</enum>
-       </property>
-       <property name="acceptDrops" >
-        <bool>false</bool>
-       </property>
-       <property name="autoScroll" >
-        <bool>false</bool>
-       </property>
-       <property name="iconSize" >
-        <size>
-         <width>24</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="itemsExpandable" >
-        <bool>true</bool>
-       </property>
-       <property name="sortingEnabled" >
-        <bool>true</bool>
-       </property>
-       <column>
-        <property name="text" >
-         <string>#</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Status</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Person</string>
-        </property>
-       </column>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="0" column="1" >
-    <layout class="QGridLayout" >
-     <property name="horizontalSpacing" >
-      <number>0</number>
+     <property name="iconSize" >
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
      </property>
-     <property name="verticalSpacing" >
-      <number>0</number>
-     </property>
-     <item row="0" column="0" >
-      <layout class="QGridLayout" >
-       <item row="0" column="1" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>181</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
+     <widget class="QWidget" name="friendstab" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>699</width>
+        <height>457</height>
+       </rect>
+      </property>
+      <attribute name="title" >
+       <string>Friends</string>
+      </attribute>
+      <attribute name="icon" >
+       <iconset resource="images.qrc" >
+        <normaloff>:/images/user/friends24.png</normaloff>:/images/user/friends24.png</iconset>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_3" >
+       <property name="bottomMargin" >
+        <number>0</number>
+       </property>
+       <property name="verticalSpacing" >
+        <number>0</number>
+       </property>
        <item row="0" column="0" >
-        <layout class="QGridLayout" >
-         <item row="0" column="0" >
-          <widget class="QLabel" name="label_3" >
-           <property name="text" >
-            <string/>
-           </property>
-           <property name="pixmap" >
-            <pixmap resource="images.qrc" >:/images/user/agt_forum24.png</pixmap>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1" >
-          <widget class="QLabel" name="label_12" >
-           <property name="font" >
-            <font>
-             <pointsize>10</pointsize>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text" >
-            <string>Live Group Chat:</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </item>
-     <item row="1" column="0" >
-      <widget class="QTextBrowser" name="msgText" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="contextMenuPolicy" >
-        <enum>Qt::DefaultContextMenu</enum>
-       </property>
-       <property name="undoRedoEnabled" >
-        <bool>false</bool>
-       </property>
-       <property name="readOnly" >
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="1" column="1" >
-    <layout class="QGridLayout" >
-     <item row="0" column="0" >
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>321</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="4" >
-        <widget class="QPushButton" name="textitalicChatButton" >
-         <property name="minimumSize" >
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
+        <widget class="QFrame" name="friendsframe" >
          <property name="maximumSize" >
           <size>
-           <width>24</width>
-           <height>24</height>
+           <width>16777215</width>
+           <height>48</height>
           </size>
          </property>
-         <property name="toolTip" >
-          <string>Italic</string>
+         <property name="layoutDirection" >
+          <enum>Qt::LeftToRight</enum>
          </property>
-         <property name="text" >
-          <string/>
+         <property name="frameShape" >
+          <enum>QFrame::StyledPanel</enum>
          </property>
-         <property name="icon" >
-          <iconset resource="images.qrc" >:/images/edit-italic.png</iconset>
+         <property name="frameShadow" >
+          <enum>QFrame::Raised</enum>
          </property>
-         <property name="checkable" >
-          <bool>true</bool>
-         </property>
+         <layout class="QGridLayout" name="gridLayout_2" >
+          <property name="topMargin" >
+           <number>3</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>3</number>
+          </property>
+          <property name="horizontalSpacing" >
+           <number>-1</number>
+          </property>
+          <property name="verticalSpacing" >
+           <number>0</number>
+          </property>
+          <item row="0" column="0" >
+           <widget class="QToolButton" name="toolButtonchat" >
+            <property name="minimumSize" >
+             <size>
+              <width>26</width>
+              <height>26</height>
+             </size>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>26</width>
+              <height>26</height>
+             </size>
+            </property>
+            <property name="text" >
+             <string/>
+            </property>
+            <property name="icon" >
+             <iconset resource="images.qrc" >
+              <normaloff>:/images/chat.png</normaloff>:/images/chat.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QToolButton" name="toolButtonmessage" >
+            <property name="minimumSize" >
+             <size>
+              <width>26</width>
+              <height>26</height>
+             </size>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>26</width>
+              <height>26</height>
+             </size>
+            </property>
+            <property name="text" >
+             <string/>
+            </property>
+            <property name="icon" >
+             <iconset resource="images.qrc" >
+              <normaloff>:/images/message-mail.png</normaloff>:/images/message-mail.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2" >
+           <widget class="QToolButton" name="toolButtondetails" >
+            <property name="minimumSize" >
+             <size>
+              <width>26</width>
+              <height>26</height>
+             </size>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>26</width>
+              <height>26</height>
+             </size>
+            </property>
+            <property name="text" >
+             <string/>
+            </property>
+            <property name="icon" >
+             <iconset resource="images.qrc" >
+              <normaloff>:/images/peerdetails_16x16.png</normaloff>:/images/peerdetails_16x16.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4" >
+           <widget class="QToolButton" name="toolButtonexport" >
+            <property name="minimumSize" >
+             <size>
+              <width>26</width>
+              <height>26</height>
+             </size>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>26</width>
+              <height>26</height>
+             </size>
+            </property>
+            <property name="text" >
+             <string/>
+            </property>
+            <property name="icon" >
+             <iconset resource="images.qrc" >
+              <normaloff>:/images/exportpeers_16x16.png</normaloff>:/images/exportpeers_16x16.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="5" >
+           <widget class="QToolButton" name="toolButtonconnect" >
+            <property name="minimumSize" >
+             <size>
+              <width>26</width>
+              <height>26</height>
+             </size>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>26</width>
+              <height>26</height>
+             </size>
+            </property>
+            <property name="text" >
+             <string/>
+            </property>
+            <property name="icon" >
+             <iconset resource="images.qrc" >
+              <normaloff>:/images/connect_friend.png</normaloff>:/images/connect_friend.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="6" >
+           <widget class="QToolButton" name="toolButtonremove" >
+            <property name="minimumSize" >
+             <size>
+              <width>26</width>
+              <height>26</height>
+             </size>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>26</width>
+              <height>26</height>
+             </size>
+            </property>
+            <property name="text" >
+             <string/>
+            </property>
+            <property name="icon" >
+             <iconset resource="images.qrc" >
+              <normaloff>:/images/removefriend16.png</normaloff>:/images/removefriend16.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="7" >
+           <spacer name="horizontalSpacer" >
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </widget>
        </item>
-       <item row="0" column="3" >
-        <widget class="QPushButton" name="textunderlineChatButton" >
-         <property name="minimumSize" >
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
+       <item rowspan="2" row="0" column="1" >
+        <widget class="QTabWidget" name="chattabWidget" >
+         <property name="font" >
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
          </property>
-         <property name="maximumSize" >
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolTip" >
-          <string>Underline</string>
-         </property>
-         <property name="text" >
-          <string/>
-         </property>
-         <property name="icon" >
-          <iconset resource="images.qrc" >:/images/edit-underline.png</iconset>
-         </property>
-         <property name="checkable" >
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2" >
-        <widget class="QPushButton" name="textboldChatButton" >
-         <property name="minimumSize" >
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="maximumSize" >
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolTip" >
-          <string>Bold</string>
-         </property>
-         <property name="text" >
-          <string/>
-         </property>
-         <property name="icon" >
-          <iconset resource="images.qrc" >:/images/edit-bold.png</iconset>
-         </property>
-         <property name="checkable" >
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="6" >
-        <widget class="QPushButton" name="colorChatButton" >
-         <property name="minimumSize" >
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="maximumSize" >
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolTip" >
-          <string>Text Color</string>
-         </property>
-         <property name="text" >
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="5" >
-        <widget class="QPushButton" name="fontsButton" >
-         <property name="minimumSize" >
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="maximumSize" >
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="toolTip" >
-          <string>Font</string>
-         </property>
-         <property name="text" >
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <widget class="QPushButton" name="emoticonBtn" >
-         <property name="minimumSize" >
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="maximumSize" >
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="text" >
-          <string/>
-         </property>
-         <property name="icon" >
-          <iconset resource="images.qrc" >:/images/emoticons/kopete/kopete020.png</iconset>
+         <property name="currentIndex" >
+          <number>0</number>
          </property>
          <property name="iconSize" >
           <size>
@@ -823,82 +726,362 @@ p, li { white-space: pre-wrap; }
            <height>24</height>
           </size>
          </property>
+         <widget class="QWidget" name="tab" >
+          <property name="geometry" >
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>416</width>
+            <height>407</height>
+           </rect>
+          </property>
+          <attribute name="title" >
+           <string>Live Group Chat</string>
+          </attribute>
+          <attribute name="icon" >
+           <iconset resource="images.qrc" >
+            <normaloff>:/images/user/agt_forum24.png</normaloff>:/images/user/agt_forum24.png</iconset>
+          </attribute>
+          <layout class="QGridLayout" name="gridLayout" >
+           <property name="bottomMargin" >
+            <number>3</number>
+           </property>
+           <item row="0" column="0" >
+            <widget class="QTextBrowser" name="msgText" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="contextMenuPolicy" >
+              <enum>Qt::DefaultContextMenu</enum>
+             </property>
+             <property name="undoRedoEnabled" >
+              <bool>false</bool>
+             </property>
+             <property name="readOnly" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
+              <layout class="QGridLayout" >
+               <item row="0" column="0" >
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0" >
+                  <size>
+                   <width>321</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="0" column="4" >
+                <widget class="QPushButton" name="textitalicChatButton" >
+                 <property name="minimumSize" >
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize" >
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="toolTip" >
+                  <string>Italic</string>
+                 </property>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                 <property name="icon" >
+                  <iconset resource="images.qrc" >
+                   <normaloff>:/images/edit-italic.png</normaloff>:/images/edit-italic.png</iconset>
+                 </property>
+                 <property name="checkable" >
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="3" >
+                <widget class="QPushButton" name="textunderlineChatButton" >
+                 <property name="minimumSize" >
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize" >
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="toolTip" >
+                  <string>Underline</string>
+                 </property>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                 <property name="icon" >
+                  <iconset resource="images.qrc" >
+                   <normaloff>:/images/edit-underline.png</normaloff>:/images/edit-underline.png</iconset>
+                 </property>
+                 <property name="checkable" >
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2" >
+                <widget class="QPushButton" name="textboldChatButton" >
+                 <property name="minimumSize" >
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize" >
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="toolTip" >
+                  <string>Bold</string>
+                 </property>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                 <property name="icon" >
+                  <iconset resource="images.qrc" >
+                   <normaloff>:/images/edit-bold.png</normaloff>:/images/edit-bold.png</iconset>
+                 </property>
+                 <property name="checkable" >
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="6" >
+                <widget class="QPushButton" name="colorChatButton" >
+                 <property name="minimumSize" >
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize" >
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="toolTip" >
+                  <string>Text Color</string>
+                 </property>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="5" >
+                <widget class="QPushButton" name="fontsButton" >
+                 <property name="minimumSize" >
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize" >
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="toolTip" >
+                  <string>Font</string>
+                 </property>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1" >
+                <widget class="QPushButton" name="emoticonBtn" >
+                 <property name="minimumSize" >
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize" >
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                 <property name="icon" >
+                  <iconset resource="images.qrc" >
+                   <normaloff>:/images/emoticons/kopete/kopete020.png</normaloff>:/images/emoticons/kopete/kopete020.png</iconset>
+                 </property>
+                 <property name="iconSize" >
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="7" >
+                <widget class="QPushButton" name="menuButton" >
+                 <property name="minimumSize" >
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize" >
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="1" column="0" >
+              <widget class="QTextEdit" name="lineEdit" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Maximum" hsizetype="Expanding" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize" >
+                <size>
+                 <width>16777215</width>
+                 <height>100</height>
+                </size>
+               </property>
+               <property name="sizeIncrement" >
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="baseSize" >
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="2" column="0" >
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0" >
+                <size>
+                 <width>321</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="1" >
+              <widget class="QPushButton" name="Sendbtn" >
+               <property name="text" >
+                <string>Send</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </item>
-       <item row="0" column="7" >
-        <widget class="QPushButton" name="menuButton" >
+       <item row="1" column="0" >
+        <widget class="QTreeWidget" name="peertreeWidget" >
          <property name="minimumSize" >
           <size>
-           <width>24</width>
-           <height>24</height>
+           <width>250</width>
+           <height>0</height>
           </size>
          </property>
          <property name="maximumSize" >
           <size>
+           <width>1677215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="font" >
+          <font>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="contextMenuPolicy" >
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
+         <property name="acceptDrops" >
+          <bool>false</bool>
+         </property>
+         <property name="autoScroll" >
+          <bool>false</bool>
+         </property>
+         <property name="iconSize" >
+          <size>
            <width>24</width>
            <height>24</height>
           </size>
          </property>
-         <property name="text" >
-          <string/>
+         <property name="itemsExpandable" >
+          <bool>true</bool>
          </property>
+         <property name="sortingEnabled" >
+          <bool>true</bool>
+         </property>
+         <column>
+          <property name="text" >
+           <string>#</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Status</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Person</string>
+          </property>
+         </column>
         </widget>
        </item>
       </layout>
-     </item>
-     <item row="1" column="0" >
-      <widget class="QTextEdit" name="lineEdit" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Maximum" hsizetype="Expanding" >
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="maximumSize" >
-        <size>
-         <width>16777215</width>
-         <height>100</height>
-        </size>
-       </property>
-       <property name="sizeIncrement" >
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="baseSize" >
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="2" column="1" >
-    <layout class="QGridLayout" >
-     <item row="0" column="0" >
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>321</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="0" column="1" >
-      <widget class="QPushButton" name="Sendbtn" >
-       <property name="text" >
-        <string>Send</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+     </widget>
+    </widget>
    </item>
   </layout>
   <action name="actionClearChat" >

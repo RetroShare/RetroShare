@@ -123,7 +123,13 @@ PeersDialog::PeersDialog(QWidget *parent)
 	  
   loadEmoticonsgroupchat();
   
-  //setWindowIcon(QIcon(QString(":/images/rstray3.png")));
+  connect(ui.toolButtonchat, SIGNAL(clicked()), this, SLOT(chatfriend()));  
+  connect(ui.toolButtonmessage, SIGNAL(clicked()), this, SLOT(msgfriend()));  
+  connect(ui.toolButtondetails, SIGNAL(clicked()), this, SLOT(connectfriend()));  
+  connect(ui.toolButtonconnect, SIGNAL(clicked()), this, SLOT(configurefriend()));  
+  connect(ui.toolButtonexport, SIGNAL(clicked()), this, SLOT(exportfriend()));  
+  connect(ui.toolButtonremove, SIGNAL(clicked()), this, SLOT(removefriend()));  
+
 
   connect(ui.lineEdit, SIGNAL(textChanged ( ) ), this, SLOT(checkChat( ) ));
   connect(ui.Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
