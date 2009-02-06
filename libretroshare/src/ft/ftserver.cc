@@ -193,8 +193,11 @@ void	ftServer::run()
                 {
                   if (FileDetails(sit->first,RS_FILE_HINTS_UPLOAD,info))
                   {
-                    if ((now - info.lastTS) > 5)
+                    if ((now - info.lastTS) > 10)
                     {
+#ifdef SERVER_DEBUG 
+							  std::cout << "info.lastTS = " << info.lastTS << ", now=" << now << std::endl ;
+#endif
                       toDels.push_back(sit->first);
                     }
                   } 
@@ -204,8 +207,12 @@ void	ftServer::run()
                 for (it = toDels.begin();it != toDels.end(); it++)
                 {
                     sit = mFtDataplex->mServers.find(*it); 
-                    delete sit->second;
-                    mFtDataplex->mServers.erase(sit);
+
+						  if(mFtDataplex->mServers.end() != sit)
+						  {
+							  delete sit->second;
+							  mFtDataplex->mServers.erase(sit);
+						  }
                 }
 	
 #ifdef WIN32
@@ -229,6 +236,7 @@ void	ftServer::run()
 bool ftServer::FileRequest(std::string fname, std::string hash, uint64_t size, 
 	std::string dest, uint32_t flags, std::list<std::string> srcIds)
 {
+   std::cerr << "Requesting " << fname << std::endl ;
 	return mFtController->FileRequest(fname, hash, size, 
 						dest, flags, srcIds);
 }

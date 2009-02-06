@@ -7,10 +7,13 @@
 ftFileProvider::ftFileProvider(std::string path, uint64_t size, std::string
 hash) : mSize(size), hash(hash), file_name(path), fd(NULL),transfer_rate(0),total_size(0)
 {
+	std::cout << "Creating file provider for " << hash << std::endl ;
 	lastTS = time(NULL) ;
+	lastTS_t = times(NULL) ;
 }
 
 ftFileProvider::~ftFileProvider(){
+	std::cout << "Destroying file provider for " << hash << std::endl ;
 	if (fd!=NULL) {
 		fclose(fd);
 	}
@@ -57,20 +60,6 @@ bool    ftFileProvider::FileDetails(FileInfo &info)
 	inf.peerId = lastRequestor ;
 	inf.status = FT_STATE_DOWNLOADING ;
 
-	long int clk = sysconf(_SC_CLK_TCK) ;
-	time_t now = time(NULL) ;
-
-	clock_t now_t = times(NULL) ;
-
-	long int diff = (long int)now_t - (long int)lastTS_t ;	// in bytes/s. Average over multiple samples
-
-	if(diff > 100)
-	{
-		transfer_rate = total_size / (float)diff * clk ;
-		total_size = 0 ;
-		lastTS_t = now_t ;
-	}
-
 	inf.tfRate = transfer_rate/1024.0 ;
 	info.tfRate = transfer_rate/1024.0 ;
 	info.peers.push_back(inf) ;
@@ -91,10 +80,6 @@ bool ftFileProvider::getFileData(uint64_t offset, uint32_t &chunk_size, void *da
 			return false;
 
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
-
-	/*
-	 * Use private data, which has a pointer to file, total size etc
-	 */
 
 	/* 
 	 * FIXME: Warning of comparison between unsigned and signed int?
@@ -140,9 +125,25 @@ bool ftFileProvider::getFileData(uint64_t offset, uint32_t &chunk_size, void *da
 		 * (d) timestamp
 		 */
 
-		time_t now = time(NULL);		
+		long int clk = sysconf(_SC_CLK_TCK) ;
+		clock_t now_t = times(NULL) ;
+
+		long int diff = (long int)now_t - (long int)lastTS_t ;	// in bytes/s. Average over multiple samples
+
+		std::cout << "diff = " << diff << std::endl ;
+
+		if(diff > 200)
+		{
+			transfer_rate = total_size / (float)diff * clk ;
+#ifdef DEBUG_FT_FILE_PROVIDER
+			std::cout << "updated TR = " << transfer_rate << ", total_size=" << total_size << std::endl ;
+#endif
+			lastTS_t = now_t ;
+			total_size = 0 ;
+		}
+
 		req_loc = offset;
-		lastTS = now ;
+		lastTS = time(NULL) ;
 		req_size = data_size;
 		total_size += req_size ;
 	}
