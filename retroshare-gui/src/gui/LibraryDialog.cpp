@@ -67,8 +67,8 @@ QString fileToFind;
 LibraryDialog::LibraryDialog(QWidget *parent)
 : MainPage(parent)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  ui.setupUi(this);
+  	/* Invoke the Qt Designer generated object setup routine */
+  	ui.setupUi(this);
   
   	
   	PopulateList();
@@ -82,7 +82,10 @@ LibraryDialog::LibraryDialog(QWidget *parent)
 	connect(ui.deleteAlbum_btn_library,SIGNAL(clicked()),this, SLOT(CallDeleteAlbumBtn_library()));
 	connect(ui.find_btn_library,SIGNAL(clicked()),this, SLOT(CallFindBtn_library()));
 
-  
+  	  /* Set header resize modes and initial section sizes  */
+	QHeaderView * organizerheader = ui.organizertreeView->header();   
+   
+	organizerheader->resizeSection ( 0, 250 );
   
 
 	QTimer *timer = new QTimer(this);
@@ -107,7 +110,7 @@ void LibraryDialog::PopulateList()
 	LibShared=treePath.currentPath();
 	LibShared.append("/RetroShare Library");
 #else
-	LibShared=treePath.currentPath();
+	LibShared=Rshare::dataDirectory();
 #endif
 
 	QDirModel * dmodel=new QDirModel;
