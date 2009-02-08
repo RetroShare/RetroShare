@@ -1,4 +1,3 @@
-#include <sys/times.h>
 #include "ftfileprovider.h"
 
 #include "util/rsdir.h"
@@ -7,13 +6,17 @@
 ftFileProvider::ftFileProvider(std::string path, uint64_t size, std::string
 hash) : mSize(size), hash(hash), file_name(path), fd(NULL),transfer_rate(0),total_size(0)
 {
+#ifdef DEBUG_FT_FILE_PROVIDER
 	std::cout << "Creating file provider for " << hash << std::endl ;
+#endif
 	lastTS = time(NULL) ;
-	lastTS_t = times(NULL) ;
+	lastTS_t = lastTS ;
 }
 
 ftFileProvider::~ftFileProvider(){
+#ifdef DEBUG_FT_FILE_PROVIDER
 	std::cout << "Destroying file provider for " << hash << std::endl ;
+#endif
 	if (fd!=NULL) {
 		fclose(fd);
 	}
@@ -125,16 +128,17 @@ bool ftFileProvider::getFileData(uint64_t offset, uint32_t &chunk_size, void *da
 		 * (d) timestamp
 		 */
 
-		long int clk = sysconf(_SC_CLK_TCK) ;
-		clock_t now_t = times(NULL) ;
+		time_t now_t = time(NULL) ;
 
 		long int diff = (long int)now_t - (long int)lastTS_t ;	// in bytes/s. Average over multiple samples
 
+#ifdef DEBUG_FT_FILE_PROVIDER
 		std::cout << "diff = " << diff << std::endl ;
+#endif
 
-		if(diff > 200)
+		if(diff > 3)
 		{
-			transfer_rate = total_size / (float)diff * clk ;
+			transfer_rate = total_size / (float)diff ;
 #ifdef DEBUG_FT_FILE_PROVIDER
 			std::cout << "updated TR = " << transfer_rate << ", total_size=" << total_size << std::endl ;
 #endif

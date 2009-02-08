@@ -65,8 +65,8 @@ virtual	int initializeFileAttrs(); /* does for both */
 	std::string lastRequestor;
 	uint64_t   req_loc;
 	uint32_t   req_size;
-	time_t    lastTS;   
-	clock_t    lastTS_t;   
+	time_t    lastTS;   		// used for checking if it's alive
+	time_t    lastTS_t;   	// used for estimating transfer rate.
 
 	// these two are used for speed estimation
 	float 	  transfer_rate ;
