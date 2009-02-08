@@ -572,14 +572,13 @@ std::string p3Peers::GetRetroshareInvite()
 
 	std::string certstr ;
 	FILE *fcert = fopen(RsInit::load_cert.c_str(), "r");
-	char *line = NULL;
-	size_t len = 0 ;
+	char c ;
 
 	if(fcert == NULL)
 		return "Error: could not open certificate file." ;
 
-	while(getline(&line,&len,fcert) > 0)
-		certstr += std::string(line) ;
+	while( (c=fgetc(fcert))!=EOF)
+		certstr.push_back(c) ;
 	fclose(fcert) ;
 
 	std::string name = mAuthMgr->getName(ownId);
