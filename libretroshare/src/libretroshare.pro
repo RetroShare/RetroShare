@@ -34,20 +34,25 @@ win32-x-g++ {
 win32 {
     OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
-    DEFINES *= WINDOWS_SYS WIN32
-	DEFINES *= STATICLIB
-	
-	INCLUDEPATH *= ../../../../pthreads-w32-2-8-0-release
+    DEFINES = WINDOWS_SYS WIN32
+	DESTDIR = lib
+	  
+	#SSL_DIR = ../../../../openssl-0.9.7g-xpgp-0.1c/include
+	#UPNPC_DIR = ../../../../miniupnpc-1.0
+	PTHREADS_DIR = ../../../../pthreads-w32-2-8-0-release
+    ZLIB_DIR = ../../../../zlib-1.2.3
+        
+    #INCLUDEPATH += . $${SSL_DIR} $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR}
+    INCLUDEPATH += . $${PTHREADS_DIR} $${ZLIB_DIR}
 }
 ################################### COMMON stuff ##################################
 
 DEFINES *=  PQI_USE_XPGP MINIUPNPC_VERSION=10
 
-SSL_DIR=../../../../openssl-0.9.7g-xpgp-0.1c
-UPNPC_DIR=../../../../miniupnpc-1.0
+SSL_DIR = ../../../../openssl-0.9.7g-xpgp-0.1c
+UPNPC_DIR = ../../../../miniupnpc-1.0
 
 INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR}
-
 
 #DEPENDPATH += . \
 #              util \
