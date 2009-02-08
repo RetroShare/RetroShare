@@ -41,7 +41,7 @@ class StartDialog : public QMainWindow
 
 public:
   /** Default constructor */
-  StartDialog(RsInit *config, QWidget *parent = 0, Qt::WFlags flags = 0);
+  StartDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default destructor */
   //~StartDialog();
 
@@ -82,8 +82,6 @@ private:
   QSkinObject *skinobject;
 #endif
 **************/
-
-  RsInit *rsConfig;
 
   bool reqNewCert;
 };

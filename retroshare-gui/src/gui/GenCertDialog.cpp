@@ -21,6 +21,7 @@
 
 
 #include <rshare.h>
+#include <rsiface/rsinit.h>
 #include "GenCertDialog.h"
 #include "gui/Preferences/rsharesettings.h"
 #include <QFileDialog>
@@ -33,8 +34,8 @@
 
 
 /** Default constructor */
-GenCertDialog::GenCertDialog(RsInit *conf, QWidget *parent, Qt::WFlags flags)
-  : QDialog(parent, flags), rsConfig(conf)
+GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
+  : QDialog(parent, flags)
 {
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
@@ -124,7 +125,7 @@ void GenCertDialog::genPerson()
 		return;
 	}
 
-	bool okGen = RsGenerateCertificate(rsConfig, genName, genOrg, genLoc, genCountry, passwd, err);
+	bool okGen = RsInit::RsGenerateCertificate(genName, genOrg, genLoc, genCountry, passwd, err);
 
 	if (okGen)
 	{
@@ -155,7 +156,7 @@ void GenCertDialog::selectFriend()
 
 	std::string fname, userName;
 	fname = fileName.toStdString();
-	if (ValidateTrustedUser(rsConfig, fname, userName))
+	if (RsInit::ValidateTrustedUser(fname, userName))
 	{
 		ui.genFriend -> setText(QString::fromStdString(userName));
 	}
@@ -177,7 +178,7 @@ void GenCertDialog::checkChanged(int i)
 		/* invalidate selection */
 		std::string fname = "";
 		std::string userName = "";
-		ValidateTrustedUser(rsConfig, fname, userName);
+		RsInit::ValidateTrustedUser(fname, userName);
 		ui.genFriend -> setText("<None Selected>");
 	}
 }
@@ -187,7 +188,7 @@ void GenCertDialog::loadCertificates()
 {
 	bool autoSave = false; 
 	/* Final stage of loading */
-	if (LoadCertificates(rsConfig, autoSave))
+	if (RsInit::LoadCertificates(autoSave))
 	{
 		close();
 	}

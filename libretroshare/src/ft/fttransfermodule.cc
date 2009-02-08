@@ -667,7 +667,9 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 			std::cerr << std::endl;
 		}
 	}
-        else mFlag = 1;      
+	else mFlag = 1;      
+
+	return true ;
 
 	return true;
 }

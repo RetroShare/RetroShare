@@ -24,8 +24,10 @@
  */
 
 #include "rsserver/p3peers.h"
+#include "rsserver/p3face.h"
 #include "pqi/p3connmgr.h"
 #include "pqi/p3authmgr.h"
+#include <rsiface/rsinit.h>
 
 #include <iostream>
 #include <fstream>
@@ -566,7 +568,20 @@ std::string p3Peers::GetRetroshareInvite()
 #endif
 
 	std::string ownId = mAuthMgr->OwnId();
-	std::string certstr = mAuthMgr->SaveCertificateToString(ownId);
+	//std::string certstr = mAuthMgr->SaveCertificateToString(ownId);
+
+	std::string certstr ;
+	FILE *fcert = fopen(RsInit::load_cert.c_str(), "r");
+	char *line = NULL;
+	size_t len = 0 ;
+
+	if(fcert == NULL)
+		return "Error: could not open certificate file." ;
+
+	while(getline(&line,&len,fcert) > 0)
+		certstr += std::string(line) ;
+	fclose(fcert) ;
+
 	std::string name = mAuthMgr->getName(ownId);
 	
 	std::ostringstream out;

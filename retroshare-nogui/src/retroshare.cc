@@ -26,6 +26,7 @@
 
 
 #include "rsiface/rsiface.h"   /* definition of iface */
+#include "rsiface/rsinit.h"   /* definition of iface */
 
 #include "notifytxt.h"
 
@@ -69,15 +70,15 @@ int main(int argc, char **argv)
 	 *   LoadPassword(...) set password for existing certificate.
 	 **/
 
-	RsInit *config = InitRsConfig();
-	InitRetroShare(argc, argv, config);
+	RsInit::InitRsConfig();
+	RsInit::InitRetroShare(argc, argv);
 
 	 /* load password should be called at this point: LoadPassword()
 	  * otherwise loaded from commandline.
 	  */
 
 	 /* Key + Certificate are loaded into libretroshare */
-	LoadCertificates(config, false);
+	RsInit::LoadCertificates(false);
 
 	/* Now setup the libretroshare interface objs 
 	 * You will need to create you own NotifyXXX class
@@ -91,8 +92,9 @@ int main(int argc, char **argv)
 
 	/* Start-up libretroshare server threads */
 
-	rsServer -> StartupRetroShare(config);
-	CleanupRsConfig(config);
+	rsServer -> StartupRetroShare();
+	RsInit::passwd = "" ;
+	//CleanupRsConfig(config);
 	
 	/* pass control to the GUI */
 	while(1)

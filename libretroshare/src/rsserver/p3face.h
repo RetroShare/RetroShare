@@ -48,10 +48,10 @@
 
 /* The init functions are actually Defined in p3face-startup.cc
  */
-RsInit *InitRsConfig();
-void    CleanupRsConfig(RsInit *);
-int InitRetroShare(int argc, char **argv, RsInit *config);
-int LoadCertificates(RsInit *config);
+//RsInit *InitRsConfig();
+//void    CleanupRsConfig(RsInit *);
+//int InitRetroShare(int argc, char **argv, RsInit *config);
+//int LoadCertificates(RsInit *config);
 
 RsControl *createRsControl(RsIface &iface, NotifyBase &notify);
 
@@ -59,128 +59,130 @@ RsControl *createRsControl(RsIface &iface, NotifyBase &notify);
 class RsServer: public RsControl, public RsThread
 {
 	public:
-/****************************************/
-	/* p3face-startup.cc: init... */
-virtual	int StartupRetroShare(RsInit *config);
+		/****************************************/
+		/* p3face-startup.cc: init... */
+		virtual	int StartupRetroShare();
 
 	public:
-/****************************************/
-	/* p3face.cc: main loop / util fns / locking. */
+		/****************************************/
+		/* p3face.cc: main loop / util fns / locking. */
 
-	RsServer(RsIface &i, NotifyBase &callback);
-	virtual ~RsServer();
+		RsServer(RsIface &i, NotifyBase &callback);
+		virtual ~RsServer();
 
-        /* Thread Fn: Run the Core */
-virtual void run();
+		/* Thread Fn: Run the Core */
+		virtual void run();
 
 	public: // no longer private:!!!
-	/* locking stuff */
-void    lockRsCore() 
-	{ 
-	//	std::cerr << "RsServer::lockRsCore()" << std::endl;
-		coreMutex.lock(); 
-	}
+		/* locking stuff */
+		void    lockRsCore() 
+		{ 
+			//	std::cerr << "RsServer::lockRsCore()" << std::endl;
+			coreMutex.lock(); 
+		}
 
-void    unlockRsCore() 
-	{ 
-	//	std::cerr << "RsServer::unlockRsCore()" << std::endl;
-		coreMutex.unlock(); 
-	}
+		void    unlockRsCore() 
+		{ 
+			//	std::cerr << "RsServer::unlockRsCore()" << std::endl;
+			coreMutex.unlock(); 
+		}
 
 	private:
 
-	/* mutex */
-	RsMutex coreMutex;
+		/* mutex */
+		RsMutex coreMutex;
 
-	/* General Internal Helper Functions
-	   (Must be Locked)
-         */
+		/* General Internal Helper Functions
+			(Must be Locked)
+		 */
 #if 0
-cert   *intFindCert(RsCertId id);
-RsCertId intGetCertId(cert *c);
+		cert   *intFindCert(RsCertId id);
+		RsCertId intGetCertId(cert *c);
 #endif
 
-/****************************************/
-/****************************************/
-	/* p3face-msg Operations */
+		/****************************************/
+		/****************************************/
+		/* p3face-msg Operations */
 
 	public:
-/* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
-virtual int     SetInChat(std::string id, bool in);         /* friend : chat msgs */
-virtual int     SetInMsg(std::string id, bool in);          /* friend : msg receipients */ 
-virtual int     SetInBroadcast(std::string id, bool in);    /* channel : channel broadcast */
-virtual int     SetInSubscribe(std::string id, bool in);    /* channel : subscribed channels */
-virtual int     SetInRecommend(std::string id, bool in);    /* file : recommended file */
-virtual int     ClearInChat();
-virtual int     ClearInMsg();
-virtual int     ClearInBroadcast();
-virtual int     ClearInSubscribe();
-virtual int     ClearInRecommend();
+		virtual const std::string& certificateFileName() ;
 
-virtual bool    IsInChat(std::string id);           /* friend : chat msgs */
-virtual bool    IsInMsg(std::string id);            /* friend : msg recpts*/
+		/* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
+		virtual int     SetInChat(std::string id, bool in);         /* friend : chat msgs */
+		virtual int     SetInMsg(std::string id, bool in);          /* friend : msg receipients */ 
+		virtual int     SetInBroadcast(std::string id, bool in);    /* channel : channel broadcast */
+		virtual int     SetInSubscribe(std::string id, bool in);    /* channel : subscribed channels */
+		virtual int     SetInRecommend(std::string id, bool in);    /* file : recommended file */
+		virtual int     ClearInChat();
+		virtual int     ClearInMsg();
+		virtual int     ClearInBroadcast();
+		virtual int     ClearInSubscribe();
+		virtual int     ClearInRecommend();
+
+		virtual bool    IsInChat(std::string id);           /* friend : chat msgs */
+		virtual bool    IsInMsg(std::string id);            /* friend : msg recpts*/
 
 
 	private:
 
- 	std::list<std::string> mInChatList, mInMsgList;
-	         
-void initRsMI(RsMsgItem *msg, MessageInfo &mi);
+		std::list<std::string> mInChatList, mInMsgList;
 
-/****************************************/
-/****************************************/
-/****************************************/
-/****************************************/
+		void initRsMI(RsMsgItem *msg, MessageInfo &mi);
+
+		/****************************************/
+		/****************************************/
+		/****************************************/
+		/****************************************/
 	public:
-        /* Config */
+		/* Config */
 
-virtual int 	ConfigGetDataRates(float &inKb, float &outKb);
-virtual int     ConfigSetDataRates( int total, int indiv );
-virtual int     ConfigSetBootPrompt( bool on );
+		virtual int 	ConfigGetDataRates(float &inKb, float &outKb);
+		virtual int     ConfigSetDataRates( int total, int indiv );
+		virtual int     ConfigSetBootPrompt( bool on );
 
-virtual void    ConfigFinalSave( );
+		virtual void    ConfigFinalSave( );
 
-/************* Rs shut down function: in upnp 'port lease time' bug *****************/
+		/************* Rs shut down function: in upnp 'port lease time' bug *****************/
 
-/**
- * This function is responsible for ensuring Retroshare exits in a legal state:
- * i.e. releases all held resources and saves current configuration
- */
-virtual void 	rsGlobalShutDown( ); 
+		/**
+		 * This function is responsible for ensuring Retroshare exits in a legal state:
+		 * i.e. releases all held resources and saves current configuration
+		 */
+		virtual void 	rsGlobalShutDown( ); 
 	private:
-int UpdateAllConfig();
+		int UpdateAllConfig();
 
-/****************************************/
+		/****************************************/
 
 
 	private: 
 
-	// The real Server Parts.
+		// The real Server Parts.
 
-	//filedexserver *server;
-	ftServer *ftserver;
+		//filedexserver *server;
+		ftServer *ftserver;
 
-	p3ConnectMgr *mConnMgr;
-	p3AuthMgr    *mAuthMgr;
+		p3ConnectMgr *mConnMgr;
+		p3AuthMgr    *mAuthMgr;
 
-	pqipersongrp *pqih;
+		pqipersongrp *pqih;
 
-	//sslroot *sslr;
+		//sslroot *sslr;
 
-	/* services */
-	p3disc *ad;
-	p3MsgService  *msgSrv;
-	p3ChatService *chatSrv;
+		/* services */
+		p3disc *ad;
+		p3MsgService  *msgSrv;
+		p3ChatService *chatSrv;
 
-	/* caches (that need ticking) */
-	p3Ranking *mRanking;
-	p3Qblog *mQblog;
+		/* caches (that need ticking) */
+		p3Ranking *mRanking;
+		p3Qblog *mQblog;
 
-	/* Config */
-	p3ConfigMgr     *mConfigMgr;
-	p3GeneralConfig *mGeneralConfig;
+		/* Config */
+		p3ConfigMgr     *mConfigMgr;
+		p3GeneralConfig *mGeneralConfig;
 
-	// Worker Data.....
+		// Worker Data.....
 
 };
 
@@ -189,54 +191,5 @@ int UpdateAllConfig();
  */
 
 std::string make_path_unix(std::string winpath);
-
-
-
-/* Initialisation Class (not publicly disclosed to RsIFace) */
-
-class RsInit
-{
-        public:
-        /* Commandline/Directory options */
-
-        /* Key Parameters that must be set before
-         * RetroShare will start up:
-         */
-        std::string load_cert;
-        std::string load_key;
-        std::string passwd;
-
-        bool havePasswd; /* for Commandline password */
-        bool autoLogin;  /* autoLogin allowed */
-	bool startMinimised; /* Icon or Full Window */
-
-        /* Win/Unix Differences */
-        char dirSeperator;
-
-        /* Directories */
-        std::string basedir;
-        std::string homePath;
-
-        /* Listening Port */
-	bool forceExtPort;
-        bool forceLocalAddr;
-        unsigned short port;
-        char inet[256];
-
-        /* Logging */
-        bool haveLogFile;
-        bool outStderr;
-        bool haveDebugLevel;
-        int  debugLevel;
-        char logfname[1024];
-
-        bool firsttime_run;
-        bool load_trustedpeer;
-        std::string load_trustedpeer_file;
-
-        bool udpListenerOnly;
-};
-
-
 
 #endif

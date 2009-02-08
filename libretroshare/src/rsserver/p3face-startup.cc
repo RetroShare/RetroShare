@@ -45,6 +45,7 @@ RsFiles *rsFiles = NULL;
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
 
+#include "rsiface/rsinit.h"
 #include "upnp/upnphandler.h"
 #include "dht/opendhtmgr.h"
 
@@ -108,10 +109,44 @@ static const std::string configCaFile = "cacerts.pem";
 static const std::string configLogFileName = "retro.log";
 static const std::string configHelpName = "retro.htm";
 
+std::string RsInit::load_cert;
+std::string RsInit::load_key;
+std::string RsInit::passwd;
+
+bool RsInit::havePasswd; 		/* for Commandline password */
+bool RsInit::autoLogin;  		/* autoLogin allowed */
+bool RsInit::startMinimised; /* Icon or Full Window */
+
+/* Win/Unix Differences */
+char RsInit::dirSeperator;
+
+/* Directories */
+std::string RsInit::basedir;
+std::string RsInit::homePath;
+
+/* Listening Port */
+bool RsInit::forceExtPort;
+bool RsInit::forceLocalAddr;
+unsigned short RsInit::port;
+char RsInit::inet[256];
+
+/* Logging */
+bool RsInit::haveLogFile;
+bool RsInit::outStderr;
+bool RsInit::haveDebugLevel;
+int  RsInit::debugLevel;
+char RsInit::logfname[1024];
+
+bool RsInit::firsttime_run;
+bool RsInit::load_trustedpeer;
+std::string RsInit::load_trustedpeer_file;
+
+bool RsInit::udpListenerOnly;
+
 
 /* Helper Functions */
-void load_check_basedir(RsInit *config);
-int  create_configinit(RsInit *config);
+//void load_check_basedir(RsInit *config);
+//int  create_configinit(RsInit *config);
 
 RsControl *createRsControl(RsIface &iface, NotifyBase &notify)
 {
@@ -119,47 +154,45 @@ RsControl *createRsControl(RsIface &iface, NotifyBase &notify)
 	return srv;
 }
 
-void    CleanupRsConfig(RsInit *config)
-{
-	delete config;
-}
+//void    CleanupRsConfig(RsInit *config)
+//{
+//	delete config;
+//}
 
 static std::string getHomePath();
 
 
 
-RsInit *InitRsConfig()
+void RsInit::InitRsConfig()
 {
-	RsInit *config = new RsInit();
+	load_trustedpeer = false;
+	firsttime_run = false;
+	port = 7812; // default port.
+	forceLocalAddr = false;
+	haveLogFile    = false;
+	outStderr      = false;
+	forceExtPort   = false;
 
-	config -> load_trustedpeer = false;
-	config -> firsttime_run = false;
-	config -> port = 7812; // default port.
-	config -> forceLocalAddr = false;
-	config -> haveLogFile    = false;
-	config -> outStderr      = false;
-	config -> forceExtPort   = false;
+	strcpy(inet, "127.0.0.1");
+	strcpy(logfname, "");
 
-	strcpy(config->inet, "127.0.0.1");
-	strcpy(config->logfname, "");
-
-	config -> autoLogin      = true; // Always on now.
-	config -> startMinimised = false;
-	config -> passwd         = "";
-	config -> havePasswd     = false;
-	config -> haveDebugLevel = false;
-	config -> debugLevel	= PQL_WARNING;
-	config -> udpListenerOnly = false;
+	autoLogin      = true; // Always on now.
+	startMinimised = false;
+	passwd         = "";
+	havePasswd     = false;
+	haveDebugLevel = false;
+	debugLevel	= PQL_WARNING;
+	udpListenerOnly = false;
 
 #ifndef WINDOWS_SYS
-	config -> dirSeperator = '/'; // For unix.
+	dirSeperator = '/'; // For unix.
 #else
-	config -> dirSeperator = '\\'; // For windows.
+	dirSeperator = '\\'; // For windows.
 #endif
 
 	/* setup the homePath (default save location) */
 
-	config -> homePath = getHomePath();
+	homePath = getHomePath();
 
 	/* Setup the Debugging */
 	// setup debugging for desired zones.
@@ -188,26 +221,21 @@ RsInit *InitRsConfig()
 	//setZoneLevel(PQL_DEBUG_BASIC, 25915); // fltkserver
 	//setZoneLevel(PQL_DEBUG_BASIC, 47659); // fldxsrvr
 	//setZoneLevel(PQL_DEBUG_BASIC, 49787); // pqissllistener
-
-	return config;
 }
 
-const char *RsConfigDirectory(RsInit *config)
+const char *RsInit::RsConfigDirectory()
 {
-	return (config->basedir).c_str();
+	return basedir.c_str();
 }
 
-bool	RsConfigStartMinimised(RsInit *config)
+bool	RsInit::setStartMinimised()
 {
-	return config->startMinimised;
+	return startMinimised;
 }
-
-//int InitRetroShare(int argc, char **argv, RsInit *config)
-//{
 
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
-int InitRetroShare(int argc, char **argv, RsInit *config)
+int RsInit::InitRetroShare(int argc, char **argv)
 {
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #else
@@ -218,7 +246,7 @@ int InitRetroShare(int argc, char **argv, RsInit *config)
       #include <pthread.h>
    #endif
 
-int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
+int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
 {
 
   /* THIS IS A HACK TO ALLOW WINDOWS TO ACCEPT COMMANDLINE ARGUMENTS */
@@ -228,7 +256,7 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 
   int argc;
   char *argv[MAX_ARGS];
-  char *wholeline = GetCommandLine();
+  char *wholeline = (char*)GetCommandLine();
   int cmdlen = strlen(wholeline);
   // duplicate line, so we can put in spaces..
   char dupline[cmdlen+1];
@@ -273,64 +301,64 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 		switch (c)
 		{
 			case 'a':
-				config->autoLogin = true;
-				config->startMinimised = true;
+				autoLogin = true;
+				startMinimised = true;
 				std::cerr << "AutoLogin Allowed / Start Minimised On";
 				std::cerr << std::endl;
 				break;
 			case 'm':
-				config->startMinimised = true;
+				startMinimised = true;
 				std::cerr << "Start Minimised On";
 				std::cerr << std::endl;
 				break;
 			case 'l':
-				strncpy(config->logfname, optarg, 1024);
-				std::cerr << "LogFile (" << config->logfname;
+				strncpy(logfname, optarg, 1024);
+				std::cerr << "LogFile (" << logfname;
 				std::cerr << ") Selected" << std::endl;
-				config->haveLogFile = true;
+				haveLogFile = true;
 				break;
 			case 'w':
-				config->passwd = optarg;
-				std::cerr << "Password Specified(" << config->passwd;
+				passwd = optarg;
+				std::cerr << "Password Specified(" << passwd;
 				std::cerr << ") Selected" << std::endl;
-				config->havePasswd = true;
+				havePasswd = true;
 				break;
 			case 'i':
-				strncpy(config->inet, optarg, 256);
-				std::cerr << "New Inet Addr(" << config->inet;
+				strncpy(inet, optarg, 256);
+				std::cerr << "New Inet Addr(" << inet;
 				std::cerr << ") Selected" << std::endl;
-				config->forceLocalAddr = true;
+				forceLocalAddr = true;
 				break;
 			case 'p':
-				config->port = atoi(optarg);
-				std::cerr << "New Listening Port(" << config->port;
+				port = atoi(optarg);
+				std::cerr << "New Listening Port(" << port;
 				std::cerr << ") Selected" << std::endl;
 				break;
 			case 'c':
-				config->basedir = optarg;
+				basedir = optarg;
 				std::cerr << "New Base Config Dir(";
-				std::cerr << config->basedir;
+				std::cerr << basedir;
 				std::cerr << ") Selected" << std::endl;
 				break;
 			case 's':
-				config->outStderr = true;
-				config->haveLogFile = false;
+				outStderr = true;
+				haveLogFile = false;
 				std::cerr << "Output to Stderr";
 				std::cerr << std::endl;
 				break;
 			case 'd':
-				config->haveDebugLevel = true;
-				config->debugLevel = atoi(optarg);
+				haveDebugLevel = true;
+				debugLevel = atoi(optarg);
 				std::cerr << "Opt for new Debug Level";
 				std::cerr << std::endl;
 				break;
 			case 'u':
-				config->udpListenerOnly = true;
+				udpListenerOnly = true;
 				std::cerr << "Opt for only udpListener";
 				std::cerr << std::endl;
 				break;
 			case 'e':
-				config->forceExtPort = true;
+				forceExtPort = true;
 				std::cerr << "Opt for External Port Mode";
 				std::cerr << std::endl;
 				break;
@@ -361,28 +389,28 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 
 
 	// set the default Debug Level...
-	if (config->haveDebugLevel)
+	if (haveDebugLevel)
 	{
-		if ((config->debugLevel > 0) &&
-			(config->debugLevel <= PQL_DEBUG_ALL))
+		if ((debugLevel > 0) &&
+			(debugLevel <= PQL_DEBUG_ALL))
 		{
 			std::cerr << "Setting Debug Level to: ";
-			std::cerr << config->debugLevel;
+			std::cerr << debugLevel;
 			std::cerr << std::endl;
-  			setOutputLevel(config->debugLevel);
+  			setOutputLevel(debugLevel);
 		}
 		else
 		{
 			std::cerr << "Ignoring Invalid Debug Level: ";
-			std::cerr << config->debugLevel;
+			std::cerr << debugLevel;
 			std::cerr << std::endl;
 		}
 	}
 
 	// set the debug file.
-	if (config->haveLogFile)
+	if (haveLogFile)
 	{
-		setDebugFile(config->logfname);
+		setDebugFile(logfname);
 	}
 
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
@@ -408,7 +436,7 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	// first check config directories, and set bootstrap values.
-	load_check_basedir(config);
+	load_check_basedir();
 
 	// SWITCH off the SIGPIPE - kills process on Linux.
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
@@ -437,7 +465,7 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 	/* do a null init to allow the SSL libray to startup! */
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
-	if (LoadCheckXPGPandGetName(config->load_cert.c_str(), userName, userId))
+	if (LoadCheckXPGPandGetName(load_cert.c_str(), userName, userId))
 	{
 		std::cerr << "Existing Name: " << userName << std::endl;
 		std::cerr << "Existing Id: " << userId << std::endl;
@@ -473,11 +501,11 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 	/* if existing user, and havePasswd .... we can skip the login prompt */
 	if (existingUser)
 	{
-		if (config -> havePasswd)
+		if (havePasswd)
 		{
 			return 1;
 		}
-		if (RsTryAutoLogin(config))
+		if (RsTryAutoLogin())
 		{
 			return 1;
 		}
@@ -486,11 +514,12 @@ int InitRetroShare(int argcIgnored, char **argvIgnored, RsInit *config)
 }
 
 
+const std::string& RsServer::certificateFileName() { return RsInit::load_cert ; }
 /*
  * The Real RetroShare Startup Function.
  */
 
-int RsServer::StartupRetroShare(RsInit *config)
+int RsServer::StartupRetroShare()
 {
 	/**************************************************************************/
 	/* STARTUP procedure */
@@ -523,15 +552,15 @@ int RsServer::StartupRetroShare(RsInit *config)
 	/**************************************************************************/
 
 	/* set the debugging to crashMode */
-	if ((!config->haveLogFile) && (!config->outStderr))
+	if ((!RsInit::haveLogFile) && (!RsInit::outStderr))
 	{
-		std::string crashfile = config->basedir + config->dirSeperator;
+		std::string crashfile = RsInit::basedir + RsInit::dirSeperator;
 		crashfile += configLogFileName;
 		setDebugCrashMode(crashfile.c_str());
 	}
 
 	unsigned long flags = 0;
-	if (config->udpListenerOnly)
+	if (RsInit::udpListenerOnly)
 	{
 		flags |= PQIPERSON_NO_LISTENER;
 	}
@@ -540,10 +569,10 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 	// Load up Certificates, and Old Configuration (if present)
 
-	std::string certConfigFile = config->basedir.c_str();
-	std::string certNeighDir   = config->basedir.c_str();
-	std::string emergencySaveDir = config->basedir.c_str();
-	std::string emergencyPartialsDir = config->basedir.c_str();
+	std::string certConfigFile = RsInit::basedir.c_str();
+	std::string certNeighDir   = RsInit::basedir.c_str();
+	std::string emergencySaveDir = RsInit::basedir.c_str();
+	std::string emergencyPartialsDir = RsInit::basedir.c_str();
 	if (certConfigFile != "")
 	{
 		certConfigFile += "/";
@@ -581,7 +610,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 	mConnMgr = new p3ConnectMgr(mAuthMgr);
 	pqiNetAssistFirewall *mUpnpMgr = new upnphandler();
-	p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr, config->basedir);
+	p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr, RsInit::basedir);
 
 	SecurityPolicy *none = secpolicy_create();
 	pqih = new pqisslpersongrp(none, flags);
@@ -590,7 +619,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	/****** New Ft Server **** !!! */
         ftserver = new ftServer(mAuthMgr, mConnMgr);
         ftserver->setP3Interface(pqih); 
-	ftserver->setConfigDirectory(config->basedir);
+	ftserver->setConfigDirectory(RsInit::basedir);
 
         ftserver->SetupFtServer(&(getNotify()));
 	CacheStrapper *mCacheStrapper = ftserver->getCacheStrapper();
@@ -605,7 +634,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	rsFiles = ftserver;
 
 
-	mConfigMgr = new p3ConfigMgr(mAuthMgr, config->basedir, "rs-v0.4.cfg", "rs-v0.4.sgn");
+	mConfigMgr = new p3ConfigMgr(mAuthMgr, RsInit::basedir, "rs-v0.4.cfg", "rs-v0.4.sgn");
 	mGeneralConfig = new p3GeneralConfig();
 
 	/* create Services */
@@ -618,8 +647,8 @@ int RsServer::StartupRetroShare(RsInit *config)
 	pqih -> addService(chatSrv);
 
 	/* create Cache Services */
-	std::string config_dir = config->basedir;
-        std::string localcachedir = config_dir + "/cache/local";
+	std::string config_dir = RsInit::basedir;
+	std::string localcachedir = config_dir + "/cache/local";
 	std::string remotecachedir = config_dir + "/cache/remote";
 	std::string channelsdir = config_dir + "/channels";
 
@@ -766,7 +795,7 @@ int RsServer::StartupRetroShare(RsInit *config)
 	/* Force Any Configuration before Startup (After Load) */
 	/**************************************************************************/
 
-	if (config->forceLocalAddr)
+	if (RsInit::forceLocalAddr)
 	{
 		struct sockaddr_in laddr;
 
@@ -774,28 +803,28 @@ int RsServer::StartupRetroShare(RsInit *config)
 		sockaddr_clear(&laddr);
 		
 		laddr.sin_family = AF_INET;
-		laddr.sin_port = htons(config->port);
+		laddr.sin_port = htons(RsInit::port);
 
 		// universal
-		laddr.sin_addr.s_addr = inet_addr(config->inet);
+		laddr.sin_addr.s_addr = inet_addr(RsInit::inet);
 
 		mConnMgr->setLocalAddress(ownId, laddr);
 	}
 
-	if (config->forceExtPort)
+	if (RsInit::forceExtPort)
 	{
 		mConnMgr->setOwnNetConfig(RS_NET_MODE_EXT, RS_VIS_STATE_STD);
 	}
 
 #if 0
 	/* must load the trusted_peer before setting up the pqipersongrp */
-	if (config->firsttime_run)
+	if (firsttime_run)
 	{
 		/* at this point we want to load and start the trusted peer -> if selected */
-		if (config->load_trustedpeer)
+		if (load_trustedpeer)
 		{
 			/* sslroot does further checks */
-        		sslr -> loadInitialTrustedPeer(config->load_trustedpeer_file);
+        		sslr -> loadInitialTrustedPeer(load_trustedpeer_file);
 		}
 	}
 #endif
@@ -865,17 +894,17 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 
 	/* put a welcome message in! */
-	if (config->firsttime_run)
+	if (RsInit::firsttime_run)
 	{
 		msgSrv->loadWelcomeMsg();
 	}
 
 	// load up the help page
-	std::string helppage = config->basedir + config->dirSeperator;
+	std::string helppage = RsInit::basedir + RsInit::dirSeperator;
 	helppage += configHelpName;
 
 	/* for DHT/UPnP stuff */
-	//InitNetworking(config->basedir + "/kadc.ini");
+	//InitNetworking(basedir + "/kadc.ini");
 
 	/* Startup this thread! */
         createThread(*this);
@@ -886,36 +915,34 @@ int RsServer::StartupRetroShare(RsInit *config)
 
 
 
-int LoadCertificates(RsInit *config, bool autoLoginNT)
+int RsInit::LoadCertificates(bool autoLoginNT)
 {
-	if (config->load_cert == "")
+	if (load_cert == "")
 	{
 	  std::cerr << "RetroShare needs a certificate" << std::endl;
 	  return 0;
 	}
 
-	if (config->load_key == "")
+	if (load_key == "")
 	{
 	  std::cerr << "RetroShare needs a key" << std::endl;
 	  return 0;
 	}
 
-	if ((!config->havePasswd) || (config->passwd == ""))
+	if ((!havePasswd) || (passwd == ""))
 	{
 	  std::cerr << "RetroShare needs a Password" << std::endl;
 	  return 0;
 	}
 
-	std::string ca_loc = config->basedir + config->dirSeperator;
+	std::string ca_loc = basedir + dirSeperator;
 	ca_loc += configCaFile;
 
 	p3AuthMgr *authMgr = getAuthMgr();
 
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
-	if (0 < authMgr -> InitAuth(config->load_cert.c_str(),
-				config->load_key.c_str(),
-				config->passwd.c_str()))
+	if (0 < authMgr -> InitAuth(load_cert.c_str(), load_key.c_str(),passwd.c_str()))
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 	/* The SSL + PGP version will require
@@ -923,8 +950,7 @@ int LoadCertificates(RsInit *config, bool autoLoginNT)
 	 * padding with NULLs
 	 */
 
-	if (0 < authMgr -> InitAuth(config->load_cert.c_str(),
-				NULL, config->passwd.c_str()))
+	if (0 < authMgr -> InitAuth(load_cert.c_str(), NULL, passwd.c_str()))
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
@@ -934,11 +960,11 @@ int LoadCertificates(RsInit *config, bool autoLoginNT)
 			std::cerr << "RetroShare will AutoLogin next time";
 			std::cerr << std::endl;
 
-			RsStoreAutoLogin(config);
+			RsStoreAutoLogin();
 		}
 		/* wipe password */
-		config->passwd = "";
-		create_configinit(config);
+		passwd = "";
+		create_configinit();
 		return 1;
 	}
 
@@ -957,9 +983,9 @@ int LoadCertificates(RsInit *config, bool autoLoginNT)
  */
 
 /* Assistance for Login */
-bool ValidateCertificate(RsInit *config, std::string &userName)
+bool RsInit::ValidateCertificate(std::string &userName)
 {
-	std::string fname = config->load_cert;
+	std::string fname = load_cert;
 	std::string userId;
 	if (fname != "")
 	{
@@ -976,7 +1002,7 @@ bool ValidateCertificate(RsInit *config, std::string &userName)
 	return false;
 }
 
-bool ValidateTrustedUser(RsInit *config, std::string fname, std::string &userName)
+bool RsInit::ValidateTrustedUser(std::string fname, std::string &userName)
 {
 	std::string userId;
 	bool valid = false;
@@ -990,20 +1016,20 @@ bool ValidateTrustedUser(RsInit *config, std::string fname, std::string &userNam
 
 	if (valid)
 	{
-		config -> load_trustedpeer = true;
-		config -> load_trustedpeer_file = fname;
+		load_trustedpeer = true;
+		load_trustedpeer_file = fname;
 	}
 	else
 	{
-		config -> load_trustedpeer = false;
+		load_trustedpeer = false;
 	}
 	return valid;
 }
 
-bool LoadPassword(RsInit *config, std::string passwd)
+bool RsInit::LoadPassword(std::string _passwd)
 {
-	config -> passwd = passwd;
-	config -> havePasswd = true;
+	passwd = _passwd;
+	havePasswd = true;
 	return true;
 }
 
@@ -1012,7 +1038,7 @@ bool LoadPassword(RsInit *config, std::string passwd)
  * (2) returns false if fails, with error msg to errString.
  */
 
-bool RsGenerateCertificate(RsInit *config,
+bool RsInit::RsGenerateCertificate(
 			std::string name,
 			std::string org,
 			std::string loc,
@@ -1042,8 +1068,8 @@ bool RsGenerateCertificate(RsInit *config,
 	int nbits = 2048;
 
 	// Create the filename.
-	std::string basename = config->basedir + config->dirSeperator;
-	basename += configKeyDir + config->dirSeperator;
+	std::string basename = basedir + dirSeperator;
+	basename += configKeyDir + dirSeperator;
 	basename += "user";
 
 	std::string key_name = basename + "_pk.pem";
@@ -1081,11 +1107,11 @@ bool RsGenerateCertificate(RsInit *config,
 	 */
 
 	/* if we get here .... then save details to the configuration class */
-	config -> load_cert = cert_name;
-	config -> load_key  = key_name;
-	config -> passwd = passwd;
-	config -> havePasswd = true;
-	config -> firsttime_run = true;
+	load_cert = cert_name;
+	load_key  = key_name;
+	passwd = passwd;
+	havePasswd = true;
+	firsttime_run = true;
 
 	{
 		std::ostringstream out;
@@ -1100,11 +1126,11 @@ bool RsGenerateCertificate(RsInit *config,
 
 
 
-void load_check_basedir(RsInit *config)
+void RsInit::load_check_basedir()
 {
 	// get the default configuration location.
 
-	if (config->basedir == "")
+	if (basedir == "")
 	{
 		// if unix. homedir + /.pqiPGPrc
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
@@ -1119,8 +1145,8 @@ void load_check_basedir(RsInit *config)
 			std::cerr << "\tcannot determine $HOME dir" <<std::endl;
 			exit(1);
 		}
-		config->basedir = h;
-		config->basedir += "/.pqiPGPrc";
+		basedir = h;
+		basedir += "/.pqiPGPrc";
 #else
 		char *h = getenv("APPDATA");
 		std::cerr << "retroShare::basedir() -> $APPDATA = ";
@@ -1137,41 +1163,41 @@ void load_check_basedir(RsInit *config)
 			std::cerr << "load_check_basedir() getEnv Error --Win95/98?";
 		  	std::cerr << std::endl;
 
-			config->basedir="C:\\Retro";
+			basedir="C:\\Retro";
 
 		}
 		else
 		{
-			config->basedir = h;
+			basedir = h;
 		}
 
-		if (!RsDirUtil::checkCreateDirectory(config->basedir))
+		if (!RsDirUtil::checkCreateDirectory(basedir))
 		{
 			std::cerr << "Cannot Create BaseConfig Dir" << std::endl;
 			exit(1);
 		}
-		config->basedir += "\\RetroShare";
+		basedir += "\\RetroShare";
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 	}
 
 
-	std::string subdir1 = config->basedir + config->dirSeperator;
+	std::string subdir1 = basedir + dirSeperator;
 	std::string subdir2 = subdir1;
 	subdir1 += configKeyDir;
 	subdir2 += configCertDir;
 
-	std::string subdir3 = config->basedir + config->dirSeperator;
+	std::string subdir3 = basedir + dirSeperator;
 	subdir3 += "cache";
 
-	std::string subdir4 = subdir3 + config->dirSeperator;
-	std::string subdir5 = subdir3 + config->dirSeperator;
+	std::string subdir4 = subdir3 + dirSeperator;
+	std::string subdir5 = subdir3 + dirSeperator;
 	subdir4 += "local";
 	subdir5 += "remote";
 
 	// fatal if cannot find/create.
 	std::cerr << "Checking For Directories" << std::endl;
-	if (!RsDirUtil::checkCreateDirectory(config->basedir))
+	if (!RsDirUtil::checkCreateDirectory(basedir))
 	{
 		std::cerr << "Cannot Create BaseConfig Dir" << std::endl;
 		exit(1);
@@ -1205,7 +1231,7 @@ void load_check_basedir(RsInit *config)
 	// have a config directories.
 
 	// Check for config file.
-	std::string initfile = config->basedir + config->dirSeperator;
+	std::string initfile = basedir + dirSeperator;
 	initfile += configInitFile;
 
 	// open and read in the lines.
@@ -1217,15 +1243,15 @@ void load_check_basedir(RsInit *config)
 	{
 		if (NULL != fgets(path, 1024, ifd))
 		{
-			for(i = 0; (path[i] != '\0') && (path[i] != '\n'); i++);
+			for(i = 0; (path[i] != '\0') && (path[i] != '\n'); i++) {}
 			path[i] = '\0';
-			config->load_cert = path;
+			load_cert = path;
 		}
 		if (NULL != fgets(path, 1024, ifd))
 		{
-			for(i = 0; (path[i] != '\0') && (path[i] != '\n'); i++);
+			for(i = 0; (path[i] != '\0') && (path[i] != '\n'); i++) {}
 			path[i] = '\0';
-			config->load_key = path;
+			load_key = path;
 		}
 		fclose(ifd);
 	}
@@ -1236,10 +1262,10 @@ void load_check_basedir(RsInit *config)
 	return;
 }
 
-int	create_configinit(RsInit *config)
+int	RsInit::create_configinit()
 {
 	// Check for config file.
-	std::string initfile = config->basedir + config->dirSeperator;
+	std::string initfile = basedir + dirSeperator;
 	initfile += configInitFile;
 
 	// open and read in the lines.
@@ -1247,13 +1273,13 @@ int	create_configinit(RsInit *config)
 
 	if (ifd != NULL)
 	{
-		fprintf(ifd, "%s\n", config->load_cert.c_str());
-		fprintf(ifd, "%s\n", config->load_key.c_str());
+		fprintf(ifd, "%s\n", load_cert.c_str());
+		fprintf(ifd, "%s\n", load_key.c_str());
 		fclose(ifd);
 
 		std::cerr << "Creating Init File: " << initfile << std::endl;
-		std::cerr << "\tLoad Cert: " << config->load_cert << std::endl;
-		std::cerr << "\tLoad Key: " <<  config->load_key << std::endl;
+		std::cerr << "\tLoad Cert: " << load_cert << std::endl;
+		std::cerr << "\tLoad Key: " <<  load_key << std::endl;
 
 		return 1;
 	}
@@ -1302,7 +1328,7 @@ int	check_create_directory(std::string dir)
 #endif
 
 
-std::string getHomePath()
+std::string RsInit::getHomePath()
 {
 	std::string home;
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
@@ -1362,7 +1388,7 @@ std::string make_path_unix(std::string path)
 
 
 #include <windows.h>
-#include <Wincrypt.h>
+#include <wincrypt.h>
 #include <iomanip>
 
 /*
@@ -1372,7 +1398,7 @@ class CRYPTPROTECT_PROMPTSTRUCT;
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+#ifdef A_VIRER
 typedef struct _CRYPTPROTECT_PROMPTSTRUCT {
   DWORD cbSize;
   DWORD dwPromptFlags;
@@ -1380,6 +1406,7 @@ typedef struct _CRYPTPROTECT_PROMPTSTRUCT {
   LPCWSTR szPrompt;
 } CRYPTPROTECT_PROMPTSTRUCT,
  *PCRYPTPROTECT_PROMPTSTRUCT;
+#endif
 
 /* definitions for the two functions */
 __declspec (dllimport)
@@ -1417,7 +1444,7 @@ extern BOOL WINAPI CryptUnprotectData(
 
 
 
-bool  RsStoreAutoLogin(RsInit *config)
+bool  RsInit::RsStoreAutoLogin()
 {
 	std::cerr << "RsStoreAutoLogin()" << std::endl;
 	/* Windows only */
@@ -1426,12 +1453,12 @@ bool  RsStoreAutoLogin(RsInit *config)
 	return false;
 #else
 	/* store password encrypted in a file */
-	std::string entropy = config->load_cert;
+	std::string entropy = load_cert;
 
 	DATA_BLOB DataIn;
 	DATA_BLOB DataEnt;
 	DATA_BLOB DataOut;
-	BYTE *pbDataInput = (BYTE *) strdup(config->passwd.c_str());
+	BYTE *pbDataInput = (BYTE *) strdup(passwd.c_str());
 	DWORD cbDataInput = strlen((char *)pbDataInput)+1;
 	BYTE *pbDataEnt   =(BYTE *)  strdup(entropy.c_str());
 	DWORD cbDataEnt   = strlen((char *)pbDataEnt)+1;
@@ -1476,8 +1503,8 @@ bool  RsStoreAutoLogin(RsInit *config)
 		**********/
 
 		/* save the data to the file */
-		std::string passwdfile = config->basedir;
-		passwdfile += config->dirSeperator;
+		std::string passwdfile = basedir;
+		passwdfile += dirSeperator;
 		passwdfile += "help.dta";
 
      		//std::cerr << "Save to: " << passwdfile;
@@ -1511,7 +1538,7 @@ bool  RsStoreAutoLogin(RsInit *config)
 
 
 
-bool  RsTryAutoLogin(RsInit *config)
+bool  RsInit::RsTryAutoLogin()
 {
 	std::cerr << "RsTryAutoLogin()" << std::endl;
 	/* Windows only */
@@ -1520,18 +1547,18 @@ bool  RsTryAutoLogin(RsInit *config)
 	return false;
 #else
 	/* Require a AutoLogin flag in the config to do this */
-	if (!config->autoLogin)
+	if (!autoLogin)
 	{
 		return false;
 	}
 
 	/* try to load from file */
-	std::string entropy = config->load_cert;
+	std::string entropy = load_cert;
 	/* get the data out */
 
 	/* open the data to the file */
-	std::string passwdfile = config->basedir;
-	passwdfile += config->dirSeperator;
+	std::string passwdfile = basedir;
+	passwdfile += dirSeperator;
 	passwdfile += "help.dta";
 
 	DATA_BLOB DataIn;
@@ -1611,8 +1638,8 @@ bool  RsTryAutoLogin(RsInit *config)
 		{
      		  //std::cerr << "The decrypted data is: " << DataOut.pbData;
 		  //std::cerr << std::endl;
-		  config -> passwd = (char *) DataOut.pbData;
-		  config -> havePasswd = true;
+		  passwd = (char *) DataOut.pbData;
+		  havePasswd = true;
 		}
 	}
 	else
@@ -1635,7 +1662,7 @@ bool  RsTryAutoLogin(RsInit *config)
 	return false;
 }
 
-bool  RsClearAutoLogin(std::string basedir)
+bool  RsInit::RsClearAutoLogin(std::string basedir)
 {
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS /* UNIX */

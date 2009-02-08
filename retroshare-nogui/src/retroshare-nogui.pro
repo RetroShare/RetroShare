@@ -35,7 +35,10 @@ win32-x-g++ {
 	LIBS += -L${HOME}/.wine/drive_c/pthreads/lib -lpthreadGCE2
 	LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32 -gdi32
 	LIBS += -lole32 -lwinmm
+
 	RC_FILE = gui/images/retroshare_win.rc
+
+	DEFINES *= WIN32
 }
 
 #################################### Windows #####################################

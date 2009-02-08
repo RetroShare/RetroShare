@@ -33,6 +33,7 @@
 
 //#include <util/process.h>
 #include <util/stringutil.h>
+#include "rsiface/rsinit.h"
 #include "rsiface/rsiface.h"
 #include "rsiface/notifyqt.h"
 
@@ -49,8 +50,8 @@ int main(int argc, char *argv[])
 	rsiface = NULL;
 
         /* RetroShare Core Objects */
-        RsInit *config = InitRsConfig();
-        bool okStart = InitRetroShare(argc, argv, config);
+	RsInit::InitRsConfig();
+	bool okStart = RsInit::InitRetroShare(argc, argv);
 	
 	/*
 	Function RsConfigMinimised is not available in SVN, so I commented it out.
@@ -61,84 +62,83 @@ int main(int argc, char *argv[])
 
 	/* Setup The GUI Stuff */
 	Rshare rshare(args, argc, argv, 
-		QString(RsConfigDirectory(config)));
+		QString(RsInit::RsConfigDirectory()));
 
 	/* Login Dialog */
   	if (!okStart)
 	{
-                /* check for existing Certificate */
-                std::string userName;
-   
-   		StartDialog *sd = NULL;
+		/* check for existing Certificate */
+		std::string userName;
+
+		StartDialog *sd = NULL;
 		bool genCert = false;
-                if (ValidateCertificate(config, userName))
+		if (RsInit::ValidateCertificate(userName))
 		{
-		  sd = new StartDialog(config);
-		  sd->show();
+			sd = new StartDialog();
+			sd->show();
 
-		  while(sd -> isVisible())
-		  {
-			rshare.processEvents();
+			while(sd -> isVisible())
+			{
+				rshare.processEvents();
 #ifdef WIN32
-			Sleep(10);
+				Sleep(10);
 #else // __LINUX__
-			usleep(10000);
+				usleep(10000);
 #endif
-		  }
+			}
 
-		  /* if we're logged in */
-		  genCert = sd->requestedNewCert();
+			/* if we're logged in */
+			genCert = sd->requestedNewCert();
 		}
 		else
 		{
-		  genCert = true;
+			genCert = true;
 		}
 
 		if (genCert)
 		{
-		  GenCertDialog *gd = new GenCertDialog(config);
+			GenCertDialog *gd = new GenCertDialog();
 
-		  gd->show();
+			gd->show();
 
-		  while(gd -> isVisible())
-		  {
-			rshare.processEvents();
+			while(gd -> isVisible())
+			{
+				rshare.processEvents();
 #ifdef WIN32
-			Sleep(10);
+				Sleep(10);
 #else // __LINUX__
-			usleep(10000);
+				usleep(10000);
 #endif
-		  }
+			}
 		}
-
-
 	}
 	else
 	{
 		/* don't save auto login details */
-        	LoadCertificates(config, false);
+		RsInit::LoadCertificates(false);
 	}
 
-        NotifyQt   *notify = new NotifyQt();
-        RsIface *iface = createRsIface(*notify);
-        RsControl *rsServer = createRsControl(*iface, *notify);
+	NotifyQt   *notify = new NotifyQt();
+	RsIface *iface = createRsIface(*notify);
+	RsControl *rsServer = createRsControl(*iface, *notify);
 
-        notify->setRsIface(iface);
+	notify->setRsIface(iface);
 
 	/* save to the global variables */
 	rsiface = iface;
 	rsicontrol = rsServer;
 
-        rsServer -> StartupRetroShare(config);
-        CleanupRsConfig(config);
+	rsServer->StartupRetroShare();
+	RsInit::passwd="" ;
+	//        CleanupRsConfig(config);
 
-  	MainWindow *w = new MainWindow;
+	MainWindow *w = new MainWindow;
 	//QMainWindow *skinWindow = new QMainWindow();
-	
+
 	//skinWindow->resize(w->size().width()+15,w->size().width()+15);
 	//skinWindow->setWindowTitle(w->windowTitle());
 	//skinWindow->setCentralWidget(w);
-	
+
 	/* Attach the Dialogs, to the Notify Class */
 	notify->setNetworkDialog(w->networkDialog);
 	notify->setPeersDialog(w->peersDialog);
@@ -155,25 +155,25 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(hashingInfo(const QString&)),w,SLOT(updateHashingInfo(const QString&))) ;
 
 	/* only show window, if not startMinimized */
-  	if (!startMinimised)
+	if (!startMinimised)
 	{
-		
+
 		w->show();
 		//skinWindow->show();
-		
+
 	}
-   
-    /* Run Retroshare */
-   //int ret = rshare.run();
+
+	/* Run Retroshare */
+	//int ret = rshare.run();
 
 	/* Startup a Timer to keep the gui's updated */
 	QTimer *timer = new QTimer(w);
 	timer -> connect(timer, SIGNAL(timeout()), notify, SLOT(UpdateGUI()));
-        timer->start(1000);
-	
-  /* dive into the endless loop */
-  // return ret;
-  return rshare.exec();
+	timer->start(1000);
+
+	/* dive into the endless loop */
+	// return ret;
+	return rshare.exec();
 
 }
 

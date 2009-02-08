@@ -102,6 +102,9 @@ void InviteDialog::emailbutton()
 
 void InviteDialog::setInfo(std::string invite)
 {
+//	ui.emailText->setCurrentFont(QFont("TypeWriter",10)) ;
+//	ui.emailText->currentFont().setLetterSpacing(QFont::AbsoluteSpacing,1) ;
+//	ui.emailText->currentFont().setStyleHint(QFont::TypeWriter,QFont::Courier) ;
 	ui.emailText->setText(QString::fromStdString(invite));
 }
 

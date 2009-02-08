@@ -20,6 +20,7 @@
  ****************************************************************/
 
 #include <rshare.h>
+#include <rsiface/rsinit.h>
 #include "StartDialog.h"
 #include "GenCertDialog.h"
 #include "LogoBar.h"
@@ -33,8 +34,8 @@
 
 
 /** Default constructor */
-StartDialog::StartDialog(RsInit *conf, QWidget *parent, Qt::WFlags flags)
-  : QMainWindow(parent, flags), rsConfig(conf), reqNewCert(false)
+StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
+  : QMainWindow(parent, flags), reqNewCert(false)
 {
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
@@ -69,7 +70,7 @@ StartDialog::StartDialog(RsInit *conf, QWidget *parent, Qt::WFlags flags)
   /* load the Certificate File name */
   std::string userName;
 
-  if (ValidateCertificate(rsConfig, userName))
+  if (RsInit::ValidateCertificate(userName))
   {
   	/* just need to enter password */
 	ui.loadName->setText(QString::fromStdString(userName));
@@ -120,7 +121,7 @@ void StartDialog::closeinfodlg()
 void StartDialog::loadPerson()
 {
 	std::string passwd = ui.loadPasswd->text().toStdString();
-	LoadPassword(rsConfig, passwd);
+	RsInit::LoadPassword(passwd);
 	loadCertificates();
 }
 
@@ -128,7 +129,7 @@ void StartDialog::loadCertificates()
 {
 	bool autoSave = (Qt::Checked == ui.autoBox -> checkState());
 	/* Final stage of loading */
-	if (LoadCertificates(rsConfig, autoSave))
+	if (RsInit::LoadCertificates(autoSave))
 	{
 		close();
 	}

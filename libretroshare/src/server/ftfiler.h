@@ -78,11 +78,11 @@ public:
 	}
 ****/
 
-	ftFileStatus(std::string name_in, std::string hash_in, uint64_t size_in, 
-					std::string destpath_in, uint32_t mode_in)
+	ftFileStatus(const std::string& name_in, const std::string& hash_in, uint64_t size_in, 
+					const std::string& destpath_in, uint32_t mode_in)
 	:name(name_in), hash(hash_in), destpath(destpath_in), size(size_in), ftMode(mode_in),
 	status(PQIFILE_INIT), mode(0), rate(0), fd(NULL), total_size(0), recv_size(0),
-	req_loc(0), req_size(0), lastTS(0), lastDelta(0)
+	req_loc(0), req_size(0), lastTS(0), lastDelta(0),file_name(""),id("")
 	{
 		/* not set ...
 		 * id,
@@ -92,11 +92,11 @@ public:
 		return;
 	}
 
-	ftFileStatus(std::string id_in, std::string name_in, std::string hash_in, uint64_t size_in, 
-					std::string destpath_in, uint32_t mode_in)
+	ftFileStatus(const std::string& id_in, const std::string& name_in, const std::string& hash_in, uint64_t size_in, 
+					const std::string& destpath_in, uint32_t mode_in)
 	:id(id_in), name(name_in), hash(hash_in), destpath(destpath_in), size(size_in), ftMode(mode_in),
 	status(PQIFILE_INIT), mode(0), rate(0), fd(NULL), total_size(0), recv_size(0),
-	req_loc(0), req_size(0), lastTS(0), lastDelta(0)
+	req_loc(0), req_size(0), lastTS(0), lastDelta(0),file_name("")
 	{
 		/* not set ...
 		 * id,

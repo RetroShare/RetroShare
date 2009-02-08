@@ -35,7 +35,7 @@ class GenCertDialog : public QDialog
 
 public:
   /** Default constructor */
-  GenCertDialog(RsInit *config, QWidget *parent = 0, Qt::WFlags flags = 0);
+  GenCertDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default destructor */
 
   //~GenCertDialog();
@@ -63,8 +63,6 @@ private:
 
   /** Qt Designer generated object */
   Ui::GenCertDialog ui;
-
-  RsInit *rsConfig;
 };
 
 #endif
