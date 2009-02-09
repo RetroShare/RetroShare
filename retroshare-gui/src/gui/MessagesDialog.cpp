@@ -320,7 +320,7 @@ void MessagesDialog::forwardmessage()
 	std::string cited_text(doc.toPlainText().toStdString()) ;
 
 	nMsgDialog->insertForwardPastedText(cited_text) ;
-	nMsgDialog->addRecipient( msgInfo.srcId ) ;
+	//nMsgDialog->addRecipient( msgInfo.srcId ) ;
 	nMsgDialog->show();
 	nMsgDialog->activateWindow();
 }
