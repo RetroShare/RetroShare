@@ -5,21 +5,19 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QWidget>
+#include <QTextEdit>
 
 #include <QFileDialog>
 
 #include <QDebug>
+#include <QObject>
+
+#include "PluginManagerWidget.h"
 
 //=============================================================================
 //=============================================================================
 //=============================================================================
-
-enum { 
-   LBS_Load , // load button state : load (it will send signal 'needToLoad')
-   LBS_Unload // load button state: unload
-};
-
-PluginFrame::PluginFrame(QWidget * parent, QString pluginName)
+PluginFrame::PluginFrame( QString pluginName, QWidget * parent)
                     :QFrame(parent)
 {
    plgName = pluginName;
@@ -31,20 +29,18 @@ PluginFrame::PluginFrame(QWidget * parent, QString pluginName)
    nameLabel->setAlignment(Qt::AlignHCenter);
    labelsLay->addWidget(nameLabel);
    descrLabel =  new QLabel();
-   descrLabel->setText("plugin description  will appear here someday");
+   descrLabel->setText("# # # # # # # # # #");
+//	 "plugin description  will appear here someday");
    descrLabel->setWordWrap(true);
    labelsLay->addWidget(descrLabel);
 
    // buttons
    buttonsLay = new QVBoxLayout() ;
-   loadBtn = new QPushButton;
-   loadBtn->setText( tr("Load") );
-   loadBtnState = LBS_Load;
-   connect( loadBtn, SIGNAL( clicked() ) ,
-	    this   , SLOT  ( loadButtonClicked() ) );
-   buttonsLay->addWidget( loadBtn );
+
    removeBtn = new QPushButton() ;
    removeBtn->setText( tr("Remove") ) ;
+   connect( removeBtn, SIGNAL( clicked() ) ,
+	        this     , SLOT  ( removeButtonClicked() ) )    ;
    buttonsLay->addWidget( removeBtn ) ;
 
    //all together
@@ -53,10 +49,6 @@ PluginFrame::PluginFrame(QWidget * parent, QString pluginName)
    mainLay->addLayout(buttonsLay);
 
    this->setFrameStyle(QFrame::Box | QFrame::Raised);
-
-
-   //hlay->addWidget(lbl);
-
 }
 
 //=============================================================================
@@ -69,43 +61,17 @@ PluginFrame::~PluginFrame()
 //=============================================================================
 
 void
-PluginFrame::loadButtonClicked()
-{
-    if (loadBtnState == LBS_Load)
-    {
-       emit needToLoad(plgName);
-       return;
-    }
-
-    if ( loadBtnState == LBS_Unload)
-    {
-	emit needToUnload(plgName);
-	loadBtn->setText( tr("Load") );
-	loadBtnState = LBS_Load ;
-    }
-}
-
-//=============================================================================
-
-void
 PluginFrame::removeButtonClicked()
 {
-   emit needToRemove( plgName );
+    emit needToRemove( plgName );
 }
 
 //=============================================================================
 
-void
-PluginFrame::successfulLoad(QString pluginName, QWidget* wd)
+QString
+PluginFrame::getPluginName()
 {
-   qDebug() << "  " << "PluginFrame::successfulLoad for " << pluginName 
-            << " -- " << plgName  ;
-   if (pluginName == plgName )
-   {
-      qDebug() << "so...";
-      loadBtn->setText( tr("Unload") );  
-      loadBtnState = LBS_Unload ;
-   }
+    return plgName ;
 }
 
 //=============================================================================
@@ -114,41 +80,65 @@ PluginFrame::successfulLoad(QString pluginName, QWidget* wd)
 
 PluginManagerWidget::PluginManagerWidget(QWidget * parent)
                     :QFrame(parent)
-{   
-    vlay = new QVBoxLayout(this);
+{  
+    qDebug() << "  " << "PluginManagerWidget::PluginManagerWidget here"; 
 
-    instPlgLay = new QHBoxLayout();
-    instPlgButton = new QPushButton();
+    mainLayout = new QVBoxLayout(this);
+
+  //===
+    installPluginLayout = new QHBoxLayout();
+    installPluginButton = new QPushButton();
     
-    instPlgButton->setText("Install New Plugin...");
-    connect( instPlgButton, SIGNAL( clicked() ),
-	    this          , SLOT(   instPlgButtonClicked() ) );
-    instPlgLay->addWidget(instPlgButton);
-    instPlgSpacer = new QSpacerItem(283, 20, 
-                          QSizePolicy::Expanding, QSizePolicy::Minimum);
-    instPlgLay->addItem(instPlgSpacer);
+    installPluginButton->setText("Install New Plugin...");
+    connect( installPluginButton, SIGNAL( clicked() ),
+             this               , SLOT(   installPluginButtonClicked() ) );
+    installPluginLayout->addWidget(installPluginButton);
+    installPluginSpacer = new QSpacerItem(283, 20, 
+                                  QSizePolicy::Expanding, QSizePolicy::Minimum);
+    installPluginLayout->addItem(installPluginSpacer);
 
-    vlay->addLayout( instPlgLay );
+    mainLayout->addLayout( installPluginLayout );
+    
+  //===
+    pluginFramesContainer = new QFrame();
+    pluginFramesLayout = new QVBoxLayout(pluginFramesContainer);
+    
+    mainLayout->addWidget(pluginFramesContainer);
+    
+  //===
+    errorsConsole = new QTextEdit();
+    
+    mainLayout->addWidget( errorsConsole );
+   
+    qDebug() << "  " << "PluginManagerWidget::PluginManagerWidget done"; 
 }
 
 //=============================================================================
 
 PluginManagerWidget::~PluginManagerWidget()
 {
+    //nothing to do here
 }
 
 //=============================================================================
 
 void
-PluginManagerWidget::addPluginWidget(PluginFrame* pf)
+PluginManagerWidget::registerNewPlugin(QString pluginName)
 {
-    vlay->addWidget(pf);
+    qDebug() << "  " << "PluginManagerWidget::registerNewPlugin "<< pluginName; 
+
+    PluginFrame* pf = new PluginFrame(pluginName, pluginFramesContainer) ;
+    
+    connect( pf  , SIGNAL( needToRemove(QString)),
+             this, SIGNAL( removeRequested(QString) ) );
+    
+    pluginFramesLayout->addWidget(pf);
 }
 
 //=============================================================================
 
 void
-PluginManagerWidget::instPlgButtonClicked()
+PluginManagerWidget::installPluginButtonClicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this, 
 	                       tr("Open Plugin to install"),
@@ -156,7 +146,42 @@ PluginManagerWidget::instPlgButtonClicked()
 			       tr("Plugins (*.so *.dll)"));
     if (!fileName.isNull())
     {
-       emit needToLoadFileWithPlugin(fileName);
+       emit installPluginRequested(fileName);
     }
 }
+
+//=============================================================================
+
+void
+PluginManagerWidget::removePluginFrame(QString pluginName)
+{
+    foreach(QObject* ob, pluginFramesContainer->children())
+    {
+        PluginFrame* pf = qobject_cast<PluginFrame*> (ob);
+        if (pf)
+        {
+            if (pf->getPluginName() == pluginName )
+	        {
+                pf->setParent(0);
+	            delete pf;
+		        return ;
+	        }
+	    }
+    }
+
+    // normally unreachable place
+    QString em = QString("Widget for plugin %1 not found on plugins frame")
+                    .arg( pluginName ) ;
+    acceptErrorMessage( em );    
+}
+
+//=============================================================================
+
+void 
+PluginManagerWidget::acceptErrorMessage(QString errorMessage)
+{
+    errorsConsole->append( errorMessage );
+}
+
+//=============================================================================
 

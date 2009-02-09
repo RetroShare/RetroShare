@@ -11,6 +11,7 @@ class QHBoxLayout;
 class QVBoxLayout;
 class QPushButton;
 class QSpacerItem;
+class QTextEdit;
 
 //=============================================================================
    
@@ -19,26 +20,20 @@ class PluginFrame : public QFrame
     Q_OBJECT
 
 public:
-    PluginFrame(QWidget* parent ,  QString pluginName );
+    PluginFrame( QString pluginName, QWidget* parent =0 );
     virtual ~PluginFrame();
 
-signals:
-    void needToLoad(QString pluginName);
-    void needToUnload(QString pluginName);
-    void needToRemove(QString pluginName);
+    QString getPluginName();
 
-public slots:
-    void successfulLoad(QString pluginName, QWidget* wd=0);
+signals:
+    void needToRemove(QString pluginName);
     
 protected slots:
-    void loadButtonClicked() ;
     void removeButtonClicked();
 
 protected:
     QString plgName;
 
-    QPushButton* loadBtn;
-    unsigned char loadBtnState;
     QPushButton* removeBtn;
     QVBoxLayout* buttonsLay;
 
@@ -52,28 +47,46 @@ protected:
 
 //=============================================================================
 
+//! GUI representation of the PluginManager class
+
+//!     This is something like GUI for PluginManager class. Or you can think
+//! about PluginManagerWidget as a view, and a PluginManager as a model. 
+//! Instances should be created only by PluginManager class; maybe later i'll
+//! hide constructor in some way. Parent (or somebody else) can delete it.
+//! Widget itself can be used anywere, in some 'settings' dialogs. 
 class PluginManagerWidget: public QFrame
 {
     Q_OBJECT
 
 public:
-    PluginManagerWidget(QWidget* parent);
+    PluginManagerWidget(QWidget* parent =0);
     virtual ~PluginManagerWidget();
 
-    void addPluginWidget(PluginFrame* pf);
+    void registerNewPlugin(QString pluginName);
+    void removePluginFrame(QString pluginName);
 
 signals:
-    void needToLoadFileWithPlugin(QString fileName) ;
+    void removeRequested(QString pluginName);
+    void installPluginRequested(QString fileName) ;
 
-protected:
-    QVBoxLayout* vlay;
-
-    QPushButton* instPlgButton;
-    QHBoxLayout* instPlgLay;
-    QSpacerItem* instPlgSpacer;
+public slots:
+    void acceptErrorMessage(QString errorMessage);
 
 protected slots:
-   void instPlgButtonClicked();
+    
+protected:
+    QVBoxLayout* mainLayout;
+    QFrame*      pluginFramesContainer;
+    QVBoxLayout* pluginFramesLayout;
+
+    QPushButton* installPluginButton;
+    QHBoxLayout* installPluginLayout;
+    QSpacerItem* installPluginSpacer;
+
+    QTextEdit* errorsConsole;
+
+protected slots:
+    void installPluginButtonClicked();
 };
 			   
 //=============================================================================

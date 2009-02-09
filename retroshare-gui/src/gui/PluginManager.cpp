@@ -7,31 +7,45 @@
 #include <QWidget> //a strange thing: it compiles without this header, but 
                   //then segfaults in some place
 
+#include <QApplication>
+
 #include "PluginManager.h"
+#include "PluginManagerWidget.h"
 #include "plugins/PluginInterface.h"
+#include "rshare.h"
+
+//=============================================================================
+//=============================================================================
+//=============================================================================
 
 PluginManager::PluginManager()
 {
+    baseFolder =  //qApp->applicationDirPath()+"///plugins" ;
+Rshare::dataDirectory() + "/plugins" ;
+    lastError = "No error.";
 
+    viewWidget = 0;
+
+//    defaultLoad();
 }
+
+//=============================================================================
       
 void      
-PluginManager::defaultLoad( QString baseDir )
-{
-    QDir workDir(baseDir);
-/*  //=== find a file with last loaded plugins =====
-    QStringList lastLoaded;
-    QFile llFile( workDir.absolutePath()+"last_loaded.txt" )  ;
-    if ( llFile.open(QIODevice::ReadOnly) ) 
-    {
-       QString tmps;
-       QTextStream stream( &llFile ); // Set the stream to read from myFile
-       tmps = stream.readLine(); 
+PluginManager::defaultLoad(  )
+{   
+   qDebug() << "  " << "Default load started" ;
 
-       lastLoaded = tmps.split(";");
-       llFile.close();
+    QDir workDir(baseFolder);
+
+    if ( !workDir.exists() )
+    {
+        QString em= QString("base folder %1 doesn't exist, default load failed")
+	              .arg( baseFolder );
+        emit errorAppeared( em ); 
+	return ;
     }
-*/
+
   //=== get current available plugins =====
     QStringList currAvailable = workDir.entryList(QDir::Files);
 #if defined(Q_OS_WIN)    
@@ -49,7 +63,12 @@ PluginManager::defaultLoad( QString baseDir )
     foreach(QString pluginFileName, currAvailable)
     {
        QString fullfn( workDir.absoluteFilePath( pluginFileName ) );
-       readPluginFromFile( fullfn);       
+       QString newName;
+       int ti = readPluginInformation( fullfn, newName);
+       if (! ti )
+       {
+           acceptPlugin(fullfn, newName);
+       }
     }//    foreach(QString pluginFileName, currAvailable)
 
     qDebug() << "  " << "names are " << names;
@@ -57,58 +76,34 @@ PluginManager::defaultLoad( QString baseDir )
 
 //=============================================================================
 
-void
-PluginManager::readPluginFromFile(QString fullFileName)
+int
+PluginManager::readPluginInformation(QString fullFileName, QString& pluginName)
 {
     qDebug() << "  " << "processing file " << fullFileName;
 
-    QString errMess;
-    PluginInterface* plugin = loadPluginInterface(fullFileName, errMess) ;
-
-    QString plName = "Name undefined" ;
-    QWidget* plWidget = 0;
+    PluginInterface* plugin = loadPluginInterface(fullFileName) ;
+    pluginName = "Undefined name" ;
     if (plugin)
     {
-        plName = plugin->pluginName();
-        qDebug() << "  " << "got pluginName:"  << plName;
-/*               
-	 //=== load widget (only  if this plugin was loaded last time)  
-	   if ( lastLoaded.indexOf( pluginFileName) >= 0)
-	   {
-	       plWidget = plugin->pluginWidget() ;
-               if (plWidget)
-	       {
-                   // all was good, 
-                   qDebug() << "  " << "got widget..." ;
-                   emit loadDone( plName, plWidget);
-               }
-               else
-               {
-                   errMess = "Plugin Object can't create widget"  ;
-	       }
-           }
-*/
-       delete plugin;
- 
-       names.append(plName);
-//       int tpi = (int)plWidget;
-       widgets.append(plWidget);
-       fileNames.append(fullFileName);
-
-       emit installComplete(plName);
+        pluginName = plugin->pluginName();
+        qDebug() << "  " << "got pluginName:"  << pluginName;
+        delete plugin;
+        return 0 ;
     }
     else
     {
-        emit installFailed( plName, errMess);
+       //do not emit anything, cuz error message already was sent 
+      //from loadPluginInterface(..)
+        return 1; //this means, some rrror appeared
     }
 }
 
 //=============================================================================
 
 PluginInterface* 
-PluginManager::loadPluginInterface(QString fileName, QString& errorMessage)
+PluginManager::loadPluginInterface(QString fileName)
 {
-    errorMessage = "Default Error Message" ;
+    QString errorMessage = "Default Error Message" ;
     PluginInterface* plugin = 0 ;
     QPluginLoader* plLoader = new QPluginLoader(fileName);
 
@@ -116,181 +111,217 @@ PluginManager::loadPluginInterface(QString fileName, QString& errorMessage)
     if (pluginObject)
     {
         //qDebug() << "  " << "loaded..." ;
-	plugin = qobject_cast<PluginInterface*> (pluginObject) ;
+        plugin = qobject_cast<PluginInterface*> (pluginObject) ;
 	   
         if (plugin)
         {
             errorMessage = "No error" ;            
         }
         else
-	{
-	    errorMessage = "Cast to 'PluginInterface*' failed";         
-	}        
+        {
+            errorMessage = "Cast to 'PluginInterface*' failed";         
+            emit errorAppeared( errorMessage );
+        }        
     }
     else
     {
-       errorMessage = "Istance wasn't created: " + plLoader->errorString() ;
+        errorMessage = "Istance wasn't created: " + plLoader->errorString() ;
+        emit errorAppeared( errorMessage );
     }
 
-
     delete plLoader; // plugin instance will not be deleted with this action
-
     return plugin;
 }
 
-/*
-plName = plugin->pluginName();
-//	       names.append(plddName);
-	       qDebug() << "  " << "got pluginName:"  << plName;
-               
-	     //=== load widget (only  if this plugin was loaded last time)  
-	       if ( lastLoaded.indexOf( pluginFileName) >= 0)
-	       {
-	           QWidget* pw = plugin->pluginWidget() ;
-                   if (pw)
-	           {
-		       // all was good, 
-		       qDebug() << "  " << "got widget..." ;
-		       plState = PS_Loaded;
-		       emit loadDone( plName, pw);
-		   }
-		   else
-		   {
-		      errMess = "Plugin Object can't create widget"  ;
-		      plState = PS_Failed ;
-		   }
-	       }
-	       else
-	       {
-		  plState = PS_Viewed ; //this is no error, all's normal
-	       }
-
-	   }
-	   
-
-//	       delete pluginObject;
-       }
-       else
-       {
-	  errMess = "Instance wasn't created: " + plLoader->errorString() ;
-       }
-
-
-}
-*/
 //=============================================================================
 
 PluginManager:: ~PluginManager()
-{
-   // delete all widgets
-   foreach(QWidget* wp, widgets)
-   {
-      if (wp)
-	 delete wp;
-   }   
-}
-
-//=============================================================================
-
-QStringList 
-PluginManager::availablePlugins()
-{
-    return names;
-}
-//=============================================================================
-    
-QStringList 
-PluginManager::loadedPlugins()
-{
-
-}
-     
-bool 
-PluginManager::isLoaded(QString pluginName)
-{
+{   
 }
 
 //=============================================================================
 
 void 
-PluginManager::loadPlugin(QString pluginName)
+PluginManager::acceptPlugin(QString fileName, QString pluginName)
 {
-   qDebug() << "" << "PluginManager::loadPlugin called for" << pluginName;
+    qDebug() << "  " << "accepting plugin " << pluginName;
 
-   int plIndex = names.indexOf( pluginName ) ;
-   if (plIndex >=0 )
-   {
-      QWidget* plWidget = widgets.at(plIndex);
-     //=== first, check if we loaded it before
-      if ( plWidget )
-      {
-	 emit loadFailed( pluginName,
-	                  "Error: plugin already loaded") ;
-	 return ;
-      }
+    names.append(pluginName);
+    fileNames.append(fileName);
 
-    //=== next, load it's interface
-      QString fn = fileNames.at(plIndex);
-      QString errMess;
-      PluginInterface* pliface = loadPluginInterface(fn, errMess);
-      if (pliface)
-      {
+    if (viewWidget)
+       viewWidget->registerNewPlugin( pluginName );
+
+    emit newPluginRegistered( pluginName );
+}
+
+//=============================================================================
+
+QWidget* 
+PluginManager::pluginWidget(QString pluginName)
+{
+    QWidget* result = 0;
+    int plIndex = names.indexOf( pluginName ) ;
+    if (plIndex >=0 )
+    {
+    //=== load plugin's interface
+        QString fn = fileNames.at(plIndex);
+        PluginInterface* pliface = loadPluginInterface(fn);
+        if (pliface)
+        {
        //=== now, get a widget
-	 plWidget = pliface->pluginWidget() ;
-         if (plWidget)
-         {
-           // all was good,
-             qDebug() << "  " << "got plg widget..." ;
-             emit loadDone( pluginName, plWidget );
-	     widgets[plIndex] = plWidget;
-	     return;
-         }
-	 else
-	 {
-	    emit loadFailed(pluginName, 
-		            "Error: instance can't create a widget");
-	    return;
-	 }
-      }
-      else
-      {
-          emit loadFailed( pluginName,
-	      	           tr("Error: failed to load interface for ") 
-			     + pluginName +"("+errMess+")");
-	  return;
-      }      
-   }
-   else
-   {
-       emit loadFailed( pluginName, 
-	                tr("Error: know nothing about plugin ") + pluginName );
+            result = pliface->pluginWidget() ;
+            if (result)
+            {
+             // all was good,
+                qDebug() << "  " << "got plg widget..." ;
+		return result;
+            }
+            else
+            {
+                QString em=QString("Error: instance '%1'can't create a widget")
+                            .arg( pluginName );
+                emit errorAppeared( em );
+		return 0;
+            }
+        }
+        else
+        {
+            // do nothing here...
+        }
+    }
+    else
+    {
+        QString em = QString("Error: no plugin with name '%1' found")
+                        .arg(pluginName);
+        emit errorAppeared( em );
+    }      
+}
 
-       qDebug() << "  " << "error: request to load " << pluginName
-	                << " failed (unknown file)" ;
-       return;
-   }
+//=============================================================================
 
+QWidget* 
+PluginManager::getViewWidget(QWidget* parent )
+{
+    if (viewWidget)
+        return viewWidget;
+    
+  //=== else, create the viewWidget and return it
+  //
+    viewWidget = new PluginManagerWidget();
+    
+    foreach(QString pn, names)
+    {
+       qDebug() << "  " << "reg new plg " << pn;
+       viewWidget->registerNewPlugin( pn );
+    }
+    
+    connect(this      , SIGNAL( errorAppeared(QString) )    ,
+            viewWidget, SLOT( acceptErrorMessage( QString)));
+    
+    connect(viewWidget, SIGNAL( destroyed() )    ,
+            this      , SLOT( viewWidgetDestroyed( )));
+
+    connect(viewWidget, SIGNAL( installPluginRequested(QString)),
+	    this      , SLOT(   installPlugin( QString)));
+
+    connect(viewWidget, SIGNAL( removeRequested( QString ) ),
+	    this      , SLOT(   removePlugin(QString )));
+	    
+    
+
+
+    qDebug() << "  PluginManager::getViewWidget done";
+
+    return viewWidget;
 }
 
 //=============================================================================
 
 void
-PluginManager::unloadPlugin(QString pluginName)
-{
-    qDebug() << "  " << "PluginManager::unloadPlugin called for" << pluginName;
+PluginManager::viewWidgetDestroyed(QObject* obj )
+{ 
+    qDebug() << "  PluginManager::viewWidgetDestroyed is here";
+    
+    viewWidget = 0;
+}
 
+//=============================================================================
+
+void 
+PluginManager::removePlugin(QString pluginName)
+{
+    QWidget* result = 0;
     int plIndex = names.indexOf( pluginName ) ;
     if (plIndex >=0 )
     {
-        QWidget* plWidget =  widgets.at(plIndex);
-	qDebug() << "in pm is " << (void *)plWidget;
-	if ( plWidget )
-	{   //                    
-	    widgets[plIndex] = 0;//(QWidget*)0;
-	    qDebug() << "111" ;
-	    delete plWidget;
-	    qDebug() << "222" ;
+        QString fn = fileNames.at(plIndex);
+        if (QDir::isRelativePath(fn))
+	    fn = QDir(baseFolder).path() + QDir::separator() + fn ;
+
+        QFile fl(fn);
+        if (!fl.remove())
+        {
+	    QString em = QString("Error: failed to revove file %1"
+	                         "(uninstalling plugin '%2')")
+                            .arg(fn).arg(pluginName);
+            emit errorAppeared( em);
+        }
+        else
+        {
+            if (viewWidget)
+	        viewWidget->removePluginFrame( pluginName);
 	}
+    }
+    else
+    {
+       QString em = QString("Error(uninstall): no plugin with name '%1' found")
+		      .arg(pluginName);
+       emit errorAppeared( em );
+    }
+}
+
+//=============================================================================
+
+void
+PluginManager::installPlugin(QString fileName)
+{
+    qDebug() << "  " << "PluginManager::installPlugin is here" ;
+   
+    if (!QFile::exists( fileName) )
+    {       
+       QString em = QString("Error(installation): flugin file %1 doesn't exist")
+ 		      .arg( fileName );
+
+       emit errorAppeared( em );
+       return ;
+    }
+
+    QString pn;
+    if (! readPluginInformation(fileName, pn))
+    {
+        QFile sf( fileName) ;
+        QString newFileName = baseFolder + QDir::separator() +
+	                      QFileInfo( fileName).fileName();
+        if ( QFile::copy( fileName, newFileName ) )
+        {
+            QString pn;
+            int ti = readPluginInformation( newFileName , pn );
+            if (! ti )
+            {
+                acceptPlugin(newFileName, pn);
+            }
+        } //    
+	else
+	{
+	    QString em = QString("Error: can't copy %1 as %2")
+	                    .arg(fileName, newFileName) ;
+            emit errorAppeared( em );
+	}
+    }
+    else
+    {
+//       do nothing here: read plugin information emits its own error
     }
 }
 

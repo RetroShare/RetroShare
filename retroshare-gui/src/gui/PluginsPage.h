@@ -1,17 +1,12 @@
 #ifndef _PLUGINS_PAGE_H_
 #define _PLUGINS_PAGE_H_
 
-//#include <QFileDialog>
-
-
-
 #include "mainpage.h"
 
 #include <QGroupBox>
 #include <QString>
 #include <QDir>
 
-//class QGroupBox;
 class QVBoxLayout;
 class QTabWidget;
 class QFrame;
@@ -21,9 +16,15 @@ class QSpacerItem;
 
 class QScriptEngine;
 
-class PluginManagerWidget;
 class PluginManager;
 
+
+//! A demo widget for showing plugin engine in action :)
+
+//!     In current version this is just a container for PluginManagerWidget and
+//! loaded plugin widgets. All specific actions moved to
+//! PluginManagerWidget class. It contains a PluginManager instance, but it's
+//! supposed that in future a pluginManager will become a global variable
 class PluginsPage : public MainPage 
 {
     Q_OBJECT
@@ -35,44 +36,29 @@ public:
     virtual ~PluginsPage() ;
 
 public slots:
-    void loadDone(QString pluginName, QWidget* pluginWidget);
-    void loadFailed(QString pluginName, QString errorMessage);
+    //! A slot for processing new plugin registration events.
 
-    void installComplete(QString pluginName);
-    void installFailed(QString pluginFileName, QString errorMessage);
-    
-    void unloadPlugin(QString pluginName);
+    //!     Every page, which supports plugins, has to process
+    //! the PluginManager::newPluginRegistered signal. Suppose, the page knows,
+    //! that there is a possible plugin "PuzzleGame"; Then, the page  should
+    //! compare received pluginName with "PuzzleGame", and request the plugin
+    //! widget with PluginManager::pluginWidget(..) method
+    void pluginRegistered(QString pluginName);
 
 protected:
     QVBoxLayout* pluginPageLayout;
     QGroupBox* pluginPanel;
     QVBoxLayout* pluginPanelLayout;
   
-    QTextEdit* errlogConsole;
-
-//    QPushButton* instPlgButton;
-//    QHBoxLayout* insPlgLay;
-//    QSpacerItem* instPlgSpacer;
-
-
-    
-       
+    //! Plugin widgets will be loaded into this tabs
     QTabWidget* pluginTabs ;
+    
     QVBoxLayout* pmLay;
     QFrame* pmFrame;
     QSpacerItem* pmSpacer;
-    QString errorStrLog;
-    PluginManagerWidget* pluginManagerWidget;
-//  QFrame* pluginControlsContainer;    
+
+    //! This should be global, every page should have access to it
     PluginManager* pluginManager;
-   //QScriptEngine* engine;
-
-    int loadBinaryPlugins(const QDir directory);//tring& errorString);
-    int loadScriptPlugins(const QString directory, QString& errorString);
-
-    int loadBinaryPlugin(const QString fileName, QString& errorString);
-    int loadScriptPlugin(const QString dirName, QString& errorString);
-
 };
 
 #endif
