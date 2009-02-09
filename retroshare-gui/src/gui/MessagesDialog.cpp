@@ -46,11 +46,11 @@
 /* Images for context menu icons */
 #define IMAGE_MESSAGE		   ":/images/folder-draft.png"
 #define IMAGE_MESSAGEREPLY	   ":/images/mail_reply.png"
+#define IMAGE_MESSAGEREPLYALL      ":/images/mail_replyall.png"
 #define IMAGE_MESSAGEFORWARD	   ":/images/mail_forward.png"
 #define IMAGE_MESSAGEREMOVE 	   ":/images/message-mail-imapdelete.png"
 #define IMAGE_DOWNLOAD    	   ":/images/start.png"
 #define IMAGE_DOWNLOADALL          ":/images/startall.png"
-
 
 /** Constructor */
 MessagesDialog::MessagesDialog(QWidget *parent)
@@ -67,6 +67,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(newmessage()));
   connect(ui.removemessageButton, SIGNAL(clicked()), this, SLOT(removemessage()));
   connect(ui.replymessageButton, SIGNAL(clicked()), this, SLOT(replytomessage()));
+  connect(ui.replyallmessageButton, SIGNAL(clicked()), this, SLOT(replyallmessage()));
   connect(ui.forwardmessageButton, SIGNAL(clicked()), this, SLOT(forwardmessage()));
 
   //connect(ui.printbutton, SIGNAL(clicked()), this, SLOT(print()));
@@ -107,12 +108,13 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 	
 	ui.newmessageButton->setIcon(QIcon(QString(":/images/folder-draft24-pressed.png")));
     	ui.replymessageButton->setIcon(QIcon(QString(":/images/replymail-pressed.png")));
+	ui.replyallmessageButton->setIcon(QIcon(QString(":/images/replymailall24-hover.png")));
 	ui.forwardmessageButton->setIcon(QIcon(QString(":/images/mailforward24-hover.png")));
     	ui.removemessageButton->setIcon(QIcon(QString(":/images/deletemail-pressed.png")));
     	ui.printbutton->setIcon(QIcon(QString(":/images/print24.png")));
 
 	ui.forwardmessageButton->setToolTip(tr("Forward selected Message"));
- 
+ 	ui.replyallmessageButton->setToolTip(tr("Replay to All"));
 
     QMenu * printmenu = new QMenu();
     printmenu->addAction(ui.actionPrint);
@@ -165,6 +167,10 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
 			connect( replytomsgAct , SIGNAL( triggered() ), this, SLOT( replytomessage() ) );
 			contextMnu.addAction( replytomsgAct);
 
+			replyallmsgAct = new QAction(QIcon(IMAGE_MESSAGEREPLYALL), tr( "Reply to All" ), this );
+			connect( replyallmsgAct , SIGNAL( triggered() ), this, SLOT( replyallmessage() ) );
+			contextMnu.addAction( replyallmsgAct);
+
 			forwardmsgAct = new QAction(QIcon(IMAGE_MESSAGEFORWARD), tr( "Forward Message" ), this );
 			connect( forwardmsgAct , SIGNAL( triggered() ), this, SLOT( forwardmessage() ) );
 			contextMnu.addAction( forwardmsgAct);
@@ -215,6 +221,41 @@ void MessagesDialog::newmessage()
 }
 
 void MessagesDialog::replytomessage()
+{
+	/* put msg on msgBoard, and switch to it. */
+
+	std::string cid;
+	std::string mid;
+
+	if(!getCurrentMsg(cid, mid))
+		return ;
+
+	mCurrCertId = cid;
+	mCurrMsgId  = mid;
+
+	MessageInfo msgInfo;
+	if (!rsMsgs -> getMessage(mid, msgInfo))
+		return ;
+
+	ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+	/* fill it in */
+	//std::cerr << "MessagesDialog::newmessage()" << std::endl;
+	nMsgDialog->newMsg();
+	nMsgDialog->insertTitleText( (QString("Re: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
+	nMsgDialog->setWindowTitle(tr("Re: ") + QString::fromStdWString(msgInfo.title) ) ;
+
+
+	QTextDocument doc ;
+	doc.setHtml(QString::fromStdWString(msgInfo.msg)) ;
+	std::string cited_text(doc.toPlainText().toStdString()) ;
+
+	nMsgDialog->insertPastedText(cited_text) ;
+	nMsgDialog->addRecipient( msgInfo.srcId ) ;
+	nMsgDialog->show();
+	nMsgDialog->activateWindow();
+}
+
+void MessagesDialog::replyallmessage()
 {
 	/* put msg on msgBoard, and switch to it. */
 

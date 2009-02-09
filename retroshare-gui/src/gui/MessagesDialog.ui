@@ -576,7 +576,7 @@ p, li { white-space: pre-wrap; }
      </property>
     </widget>
    </item>
-   <item row="1" column="2" >
+   <item row="1" column="3" >
     <widget class="QPushButton" name="forwardmessageButton" >
      <property name="minimumSize" >
       <size>
@@ -601,72 +601,7 @@ p, li { white-space: pre-wrap; }
      </property>
     </widget>
    </item>
-   <item row="1" column="3" >
-    <widget class="QPushButton" name="removemessageButton" >
-     <property name="minimumSize" >
-      <size>
-       <width>28</width>
-       <height>28</height>
-      </size>
-     </property>
-     <property name="maximumSize" >
-      <size>
-       <width>28</width>
-       <height>28</height>
-      </size>
-     </property>
-     <property name="toolTip" >
-      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">remove selected message&lt;/p>&lt;/body>&lt;/html></string>
-     </property>
-     <property name="styleSheet" >
-      <string notr="true" />
-     </property>
-     <property name="text" >
-      <string/>
-     </property>
-     <property name="iconSize" >
-      <size>
-       <width>24</width>
-       <height>24</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="4" >
-    <widget class="QPushButton" name="printbutton" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize" >
-      <size>
-       <width>28</width>
-       <height>28</height>
-      </size>
-     </property>
-     <property name="maximumSize" >
-      <size>
-       <width>28</width>
-       <height>28</height>
-      </size>
-     </property>
-     <property name="text" >
-      <string/>
-     </property>
-     <property name="iconSize" >
-      <size>
-       <width>24</width>
-       <height>24</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="5" >
+   <item row="1" column="7" >
     <spacer>
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
@@ -679,7 +614,7 @@ p, li { white-space: pre-wrap; }
      </property>
     </spacer>
    </item>
-   <item row="2" column="0" colspan="6" >
+   <item row="2" column="0" colspan="8" >
     <widget class="QSplitter" name="splitter_2" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
@@ -1195,6 +1130,90 @@ p, li { white-space: pre-wrap; }
      </widget>
     </widget>
    </item>
+   <item row="1" column="2" >
+    <widget class="QPushButton" name="replyallmessageButton" >
+     <property name="minimumSize" >
+      <size>
+       <width>28</width>
+       <height>28</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>28</width>
+       <height>28</height>
+      </size>
+     </property>
+     <property name="text" >
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="4" >
+    <widget class="QPushButton" name="removemessageButton" >
+     <property name="minimumSize" >
+      <size>
+       <width>28</width>
+       <height>28</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>28</width>
+       <height>28</height>
+      </size>
+     </property>
+     <property name="toolTip" >
+      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">remove selected message&lt;/p>&lt;/body>&lt;/html></string>
+     </property>
+     <property name="styleSheet" >
+      <string notr="true" />
+     </property>
+     <property name="text" >
+      <string/>
+     </property>
+     <property name="iconSize" >
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="5" >
+    <widget class="QPushButton" name="printbutton" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize" >
+      <size>
+       <width>28</width>
+       <height>28</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>28</width>
+       <height>28</height>
+      </size>
+     </property>
+     <property name="text" >
+      <string/>
+     </property>
+     <property name="iconSize" >
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+    </widget>
+   </item>
   </layout>
   <action name="actionPrint" >
    <property name="text" >
@@ -1210,7 +1229,6 @@ p, li { white-space: pre-wrap; }
  <tabstops>
   <tabstop>newmessageButton</tabstop>
   <tabstop>replymessageButton</tabstop>
-  <tabstop>removemessageButton</tabstop>
   <tabstop>listWidget</tabstop>
   <tabstop>msgWidget</tabstop>
   <tabstop>msgText</tabstop>
