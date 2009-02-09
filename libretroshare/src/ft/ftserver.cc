@@ -203,18 +203,9 @@ void	ftServer::run()
                   } 
                 }
 
-                std::list<std::string>::iterator it;
-                for (it = toDels.begin();it != toDels.end(); it++)
-                {
-                    sit = mFtDataplex->mServers.find(*it); 
-
-						  if(mFtDataplex->mServers.end() != sit)
-						  {
-							  delete sit->second;
-							  mFtDataplex->mServers.erase(sit);
-						  }
-                }
-	
+					 if(!toDels.empty())
+						 mFtDataplex->deleteServers(toDels) ;
+ 	
 #ifdef WIN32
 		Sleep(1000);
 #else

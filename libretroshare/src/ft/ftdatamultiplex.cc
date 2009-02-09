@@ -443,6 +443,21 @@ bool	ftDataMultiplex::locked_handleServerRequest(ftFileProvider *provider,
 	return false;
 }
 
+void ftDataMultiplex::deleteServers(const std::list<std::string>& serv)
+{
+	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
+
+	for(std::list<std::string>::const_iterator it=serv.begin();it != serv.end(); it++)
+	{
+		std::map<std::string,ftFileProvider *>::iterator sit = mServers.find(*it); 
+
+		if(mServers.end() != sit)
+		{
+			delete sit->second;
+			mServers.erase(sit);
+		}
+	}
+}
 
 bool	ftDataMultiplex::handleSearchRequest(std::string peerId, 
 			std::string hash, uint64_t size, 
