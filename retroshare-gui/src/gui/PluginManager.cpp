@@ -283,7 +283,7 @@ PluginManager::unloadPlugin(QString pluginName)
     if (plIndex >=0 )
     {
         QWidget* plWidget =  widgets.at(plIndex);
-	qDebug() << "in pm is " << (int)plWidget;
+	qDebug() << "in pm is " << (void *)plWidget;
 	if ( plWidget )
 	{   //                    
 	    widgets[plIndex] = 0;//(QWidget*)0;
