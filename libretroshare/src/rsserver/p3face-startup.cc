@@ -1043,7 +1043,7 @@ bool RsInit::RsGenerateCertificate(
 			std::string org,
 			std::string loc,
 			std::string country,
-			std::string passwd,
+			std::string password,
 			std::string &errString)
 {
 	// In the XPGP world this is easy...
@@ -1053,7 +1053,7 @@ bool RsInit::RsGenerateCertificate(
 	// then load as if they had entered a passwd.
 
 	// check password.
-	if (passwd.length() < 4)
+	if (password.length() < 4)
 	{
 		errString = "Password is Unsatisfactory (must be 4+ chars)";
 		return false;
@@ -1079,7 +1079,7 @@ bool RsInit::RsGenerateCertificate(
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
 	if (!generate_xpgp(cert_name.c_str(), key_name.c_str(),
-			passwd.c_str(),
+			password.c_str(),
 			name.c_str(),
 			"", //ui -> gen_email -> value(),
 			org.c_str(),
@@ -1109,7 +1109,7 @@ bool RsInit::RsGenerateCertificate(
 	/* if we get here .... then save details to the configuration class */
 	load_cert = cert_name;
 	load_key  = key_name;
-	passwd = passwd;
+	passwd = password;
 	havePasswd = true;
 	firsttime_run = true;
 
