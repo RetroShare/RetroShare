@@ -126,9 +126,9 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     //ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
     //                  createPageAction(QIcon(IMAGE_NEWSFEED), tr("News Feed"), grp));
       
-    PluginsPage *pluginsPage = NULL;
-    ui.stackPages->add(pluginsPage = new PluginsPage(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
+    //PluginsPage *pluginsPage = NULL;
+    //ui.stackPages->add(pluginsPage = new PluginsPage(ui.stackPages),
+    //                   createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
                
     PeersFeed *peersFeed = NULL;
     ui.stackPages->add(peersFeed = new PeersFeed(ui.stackPages),
