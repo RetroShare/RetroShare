@@ -353,12 +353,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     menu->addSeparator();
     menu->addAction(_messengerwindowAct);
     menu->addAction(_messagesAct);
-
+    menu->addAction(_bandwidthAct);
 
     /* bandwidth only in development version */
 #ifdef RS_RELEASE_VERSION    
 #else
-    menu->addAction(_bandwidthAct);
     menu->addAction(_appAct);
 #endif
     menu->addAction(_prefsAct);

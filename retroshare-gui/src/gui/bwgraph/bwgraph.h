@@ -26,6 +26,7 @@
 
 #include <QDateTime>
 #include <QEvent>
+#include <QTimer>
 
 #include <gui/Preferences/rsharesettings.h>
 #include <gui/common/rwindow.h>
@@ -66,6 +67,9 @@ private slots:
   void cancelChanges();
   /** Called when the reset button is pressed */
   void reset();
+
+  void updategraphstatus();
+
   
 private:
   /** Create and bind actions to events **/

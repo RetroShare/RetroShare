@@ -26,6 +26,9 @@
 #include "bwgraph.h"
 #include "rsiface/rsiface.h"
 
+#include <sstream>
+#include <iomanip>
+#include <unistd.h>
 
 #define BWGRAPH_LINE_SEND       (1u<<0)
 #define BWGRAPH_LINE_RECV       (1u<<1)
@@ -84,6 +87,10 @@ BandwidthGraph::BandwidthGraph(QWidget *parent, Qt::WFlags flags)
 #if defined(Q_WS_X11)
   ui.frmOpacity->setVisible(false);
 #endif
+
+    QTimer *timer = new QTimer(this);
+    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updategraphstatus()));
+    timer->start(5113);
 }
 
 /** Custom event handler. Checks if the event is a bandwidth update event. If it
@@ -101,11 +108,23 @@ void
 BandwidthGraph::timerEvent( QTimerEvent * )
 {
  	/* set users/friends/network */
+	/*float downKb = 0;
+	float upKb = 0;
+	rsicontrol -> ConfigGetDataRates(downKb, upKb);
+
+  updateGraph(downKb,upKb);*/
+
+}
+
+void 
+BandwidthGraph::updategraphstatus( )
+{
+ 	/* set users/friends/network */
 	float downKb = 0;
 	float upKb = 0;
 	rsicontrol -> ConfigGetDataRates(downKb, upKb);
 
-  updateGraph(downKb,upKb);
+        updateGraph(downKb,upKb);
 
 }
 
@@ -134,7 +153,7 @@ void
 BandwidthGraph::updateGraph(quint64 bytesRead, quint64 bytesWritten)
 {
   /* Graph only cares about kilobytes */
-  ui.frmGraph->addPoints(bytesRead/1024.0, bytesWritten/1024.0);
+  ui.frmGraph->addPoints(bytesRead/*/1024.0*/, bytesWritten/*/1024.0*/);
 }
 
 /** Loads the saved Bandwidth Graph settings. */
