@@ -232,6 +232,13 @@ void ChanMsgDialog::channelstreeViewCostumPopupMenu( QPoint point )
 
 void ChanMsgDialog::closeEvent (QCloseEvent * event)
 {
+  //=== uncheck all repecient's boxes =======
+    QTreeWidget *sendWidget = ui.msgSendList;
+
+	for(int i=0;i<sendWidget->topLevelItemCount();++i)
+		sendWidget->topLevelItem(i)->setCheckState(0,Qt::Unchecked) ;
+
+    
     event->accept();
     return;
 
@@ -597,8 +604,8 @@ void ChanMsgDialog::addRecipient(std::string id)
 	for(int i=0;i<sendWidget->topLevelItemCount();++i)
 		if(sendWidget->topLevelItem(i)->text(1).toStdString() == id)
 			sendWidget->topLevelItem(i)->setCheckState(0,Qt::Checked) ;
-		else
-			sendWidget->topLevelItem(i)->setCheckState(0,Qt::Unchecked) ;
+		//else
+			//sendWidget->topLevelItem(i)->setCheckState(0,Qt::Unchecked) ;
 }
 
 /* First the Msg (People) ones */

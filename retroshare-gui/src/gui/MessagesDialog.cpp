@@ -30,6 +30,10 @@
 #include "rsiface/rsmsgs.h"
 #include "rsiface/rsfiles.h"
 #include <sstream>
+#include <list>
+#include <iostream>
+#include <string>
+
 
 #include <QContextMenuEvent>
 #include <QMenu>
@@ -286,6 +290,16 @@ void MessagesDialog::replyallmessage()
 
 	nMsgDialog->insertPastedText(cited_text) ;
 	nMsgDialog->addRecipient( msgInfo.srcId ) ;
+    
+    std::list<std::string> tl ( msgInfo.msgto );
+
+    for( std::list<std::string>::iterator tli = tl.begin();
+         tli!= tl.end() ;
+         tli++ )
+    {
+        nMsgDialog->addRecipient( *tli ) ;
+    }    
+    
 	nMsgDialog->show();
 	nMsgDialog->activateWindow();
 }

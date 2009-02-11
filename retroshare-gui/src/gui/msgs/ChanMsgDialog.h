@@ -56,7 +56,7 @@ void  insertTitleText(std::string title);
 void  insertPastedText(std::string msg) ;
 void  insertForwardPastedText(std::string msg);
 void  insertMsgText(std::string msg);
-void	addRecipient(std::string id) ;
+void  addRecipient(std::string id) ;
 void  Create_New_Image_Tag( const QString urlremoteorlocal );
  QSettings setter;
 
