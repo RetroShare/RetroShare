@@ -167,8 +167,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Create the Main pages and actions */
     QActionGroup *grp = new QActionGroup(this);
 
-    //ui.stackPages->add(pluginsPage = new PluginsPage(ui.stackPages),
-    //                   createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
 
     NewsFeed *newsFeed = NULL;
     ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
@@ -237,6 +235,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     ui.stackPages->add(networkDialog = new NetworkDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_NETWORK), tr("Network"), grp));
+
+    ui.stackPages->add(pluginsPage = new PluginsPage(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
 
                      
   //ui.stackPages->add(groupsDialog = new GroupsDialog(ui.stackPages),
