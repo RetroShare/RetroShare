@@ -32,7 +32,7 @@ Latest RetroShare sources from (SVN) sourceforge.net:
     svn co https://retroshare.svn.sourceforge.net/svnroot/retroshare retroshare  
 
 Windows Requirements:
-	* Cygwin (Windows Only) 	http://www.cygwin.com/cygwin/setup.exe 
+	* Cygwin (Windows Only) 	  http://www.cygwin.com/cygwin/setup.exe 
 	* Pthreads (Windows Only)   http://sourceware.org/pthreads-win32/ 
 	* Zlib (Windows Only)       http://www.zlib.net/
 		
@@ -162,50 +162,6 @@ Under construction - do not use this yet
 cd test ../util/shlib_wrap.sh ssltest
 
 
-Build qcheckers game as a library
-===================================
-
-RetroShare includes certain games as a demo of network gaming. Unfortunately, you must compile games even if you don't plan to play them. There's currently no way to compile retroshare without games.
-
-Obtain qcheckers patched source The easiest way is to download retroshare source bundle and extract only qcheckers patched source.
-
-$ wget http://downloads.sourceforge.net/retroshare/retroshare-pkg-linux-src-v0.4.09b.tgz
-$ tar -xzvf retroshare-pkg-linux-src-v0.4.09b.tgz "*qcheckers-svn14.tgz"
-$ mv retroshare-package-v0.4.09b/tar/qcheckers-svn14.tgz ~/src
-$ tar -xzvf qcheckers-svn14.tgz
-
-
-Build
------------------
-
-$ cd ~/src/qcheckers-svn14
-$ qmake
-$ make
-...
-$ cp src/libqcheckers.a ~/lib
-
-
-Build smplayer as a library
-=================================
-
-Obtain smplayer patched source The easiest way is to download retroshare source bundle and extract smplayer patched source only.
-
-$ wget http://downloads.sourceforge.net/retroshare/retroshare-pkg-linux-src-v0.4.09b.tgz
-$ tar xzvf retroshare-pkg-linux-src-v0.4.09b.tgz "*smplayer-svn-280308.tgz"
-$ mv retroshare-package-v0.4.09b/tar/smplayer-svn-280308.tgz ~/src
-$ tar -xzvf smplayer-svn-280308.tgz
-
-
-Build
-----------------------------------
-
-$ cd ~/src/smplayer
-$ qmake
-$ make
-...
-$ cp lib/libsmplayer.a ~/lib
-
-
 Build RetroShare
 ===================================================
 Obtain latest retroshare sources from SVN
@@ -260,7 +216,7 @@ Check that all the libraries are compiled and path to libraries folder in RetroS
 
 $ cd ~/src/retroshare/retroshare-gui/src
 $ ls ../../../../lib   <--- that's my -L path from RetroShare.pro
-libcrypto.a     libqcheckers.a   libsmplayer.a
+libcrypto.a
 libminiupnpc.a  libretroshare.a  libssl.a
 
 If some libraries are not there, you probably forgot to copy them. If path to lib is wrong, correct it in RetroShare.pro.
@@ -323,41 +279,7 @@ win32
     CONFIG += qt release"
 }
 
-------------------------------------------------------------------------------------------
 
-Compiling QCheckers game
-------------------------------------------------------------------------------------------
-
-1.qmake
-2.make
-3.Copy the libqcheckers.a to your retroshare libs directory.
-5.then add to LIBS= -lqcheckers to the RetroShare.pro file:
-
-Example(linux):
-
-RSLIBS = -L/path/to/your/retroshare/libs/directory/ -lretroshare -lminiupnpc -lskin -lqcheckers -lssl -lcrypto 
-LIBS = $(RSLIBS) 
-
-Example (Windows):
-
-win32 
-{
-    RC_FILE = gui/images/retroshare_win.rc
-
-    "LIBS += -L"../../winlibs" -lretroshare -lssl -lcrypto -lpthreadGC2d  -lminiupnpc -lz -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lskin -lqcheckers -lgdi32
-    CONFIG += qt release"
-}
-
-
-------------------------------------------------------------------------------------------
-
-Compiling SMPlayer
-------------------------------------------------------------------------------------------
-
-1.qmake
-2.make
-3.Copy the libsmplayer.a to your retroshare libs directory.
-5.then add to LIBS  -lsmplayer to the RetroShare.pro file.
 
 
 WIN XP Compilation.
@@ -371,8 +293,8 @@ Need:
 	Cygwin development environment: 
 	http://www.cygwin.com/cygwin/setup.exe 
  
-	Qt4.3.x opensource development kit + MinGw: 
-	http://wftp.tu-chemnitz.de/pub/Qt/qt/source/qt-win-opensource-4.3.5-mingw.exe  
+	Qt4.4.x opensource development kit + MinGw: 
+	http://wftp.tu-chemnitz.de/pub/Qt/qt/source/qt-win-opensource-4.4.3-mingw.exe  
  
 	source code for all libraries.: 
 	http://downloads.sourceforge.net/retroshare/retroshare-pkg-linux-src-v0.4.09b.tgz? 
@@ -380,12 +302,11 @@ Need:
 	retroshare-pkg-linux-src-v0.4.09b.tgz are Libraries included: 
  
 	openssl-0.9.7g-xpgp-0.1c.tgz 
-	miniupnpc-1.0.tar.gz 
-	smplayer-svn-280308.tgz 
+	miniupnpc-1.0.tar.gz
  
 	Libraries for Windows needs: 
-	pthreads: 	http://sourceware.org/pthreads-win32/ 
-	zlib: 		http://www.zlib.net/ 
+	pthreads: ftp://sourceware.org/pub/pthreads-win32/pthreads-w32-2-8-0-release.tar.gz 
+	zlib: 		http://www.zlib.net/zlib-1.2.3.tar.gz 
  
  
 In Brief: 
@@ -399,9 +320,7 @@ UNDER Cygwin:
  
 UNDER Mingw:
   
-    (6) Compile QCheckers    ( qmake + make ) 
-	(7) Compile SMPlayer    ( qmake + make ) 
-	(8) Compile the Qt-Gui. ( qmake + make )
+	(6) Compile the Qt-Gui. ( qmake + make )
 
 
 Email me if you're having trouble:
