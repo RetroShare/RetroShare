@@ -181,109 +181,110 @@ bool ftController::completeFile(std::string hash)
 	uint32_t callbackCode = 0;
 
 
-      { RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	{ 
+		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	std::cerr << "ftController:completeFile(" << hash << ")";
-	std::cerr << std::endl;
-
-	std::map<std::string, ftFileControl>::iterator it;
-	it = mDownloads.find(hash);
-	if (it == mDownloads.end())
-	{
 		std::cerr << "ftController:completeFile(" << hash << ")";
-		std::cerr << " Not Found!";
-		std::cerr << std::endl;
-		return false;
-	}
-
-	/* check if finished */
-	if (!(it->second).mCreator->finished())
-	{
-		/* not done! */
-		std::cerr << "ftController:completeFile(" << hash << ")";
-		std::cerr << " Transfer Not Done";
 		std::cerr << std::endl;
 
-		std::cerr << "FileSize: ";
-		std::cerr << (it->second).mCreator->getFileSize();
-		std::cerr << " and Recvd: ";
-		std::cerr << (it->second).mCreator->getRecvd();
+		std::map<std::string, ftFileControl>::iterator it;
+		it = mDownloads.find(hash);
+		if (it == mDownloads.end())
+		{
+			std::cerr << "ftController:completeFile(" << hash << ")";
+			std::cerr << " Not Found!";
+			std::cerr << std::endl;
+			return false;
+		}
 
-		return false;
-	}
-        
+		/* check if finished */
+		if (!(it->second).mCreator->finished())
+		{
+			/* not done! */
+			std::cerr << "ftController:completeFile(" << hash << ")";
+			std::cerr << " Transfer Not Done";
+			std::cerr << std::endl;
 
-	ftFileControl *fc = &(it->second);
+			std::cerr << "FileSize: ";
+			std::cerr << (it->second).mCreator->getFileSize();
+			std::cerr << " and Recvd: ";
+			std::cerr << (it->second).mCreator->getRecvd();
 
-	// (csoler) I've postponed this to the end of the block because deleting the 
-	// element from the map calls the destructor of fc->mTransfer, which 
-	// makes fc to point to nothing and causes random behavior/crashes.
-	//
-	// mDataplex->removeTransferModule(fc->mTransfer->hash());
-	//
-	/* done - cleanup */
+			return false;
+		}
 
-	// (csoler) I'm copying this because "delete fc->mTransfer" deletes the hash string!
-	std::string hash_to_suppress(fc->mTransfer->hash());	
 
-	if (fc->mTransfer)
-	{
-		delete fc->mTransfer;
-		fc->mTransfer = NULL;
-	}
+		ftFileControl *fc = &(it->second);
 
-	if (fc->mCreator)
-	{
-		delete fc->mCreator;
-		fc->mCreator = NULL;
-	}
+		// (csoler) I've postponed this to the end of the block because deleting the 
+		// element from the map calls the destructor of fc->mTransfer, which 
+		// makes fc to point to nothing and causes random behavior/crashes.
+		//
+		// mDataplex->removeTransferModule(fc->mTransfer->hash());
+		//
+		/* done - cleanup */
 
-	fc->mState = ftFileControl::COMPLETED;
+		// (csoler) I'm copying this because "delete fc->mTransfer" deletes the hash string!
+		std::string hash_to_suppress(fc->mTransfer->hash());	
 
-	/* Move to Correct Location */
-        if (0 == rename(fc->mCurrentPath.c_str(), fc->mDestination.c_str()))
-        {
+		if (fc->mTransfer)
+		{
+			delete fc->mTransfer;
+			fc->mTransfer = NULL;
+		}
+
+		if (fc->mCreator)
+		{
+			delete fc->mCreator;
+			fc->mCreator = NULL;
+		}
+
+		fc->mState = ftFileControl::COMPLETED;
+
+		/* Move to Correct Location */
+		if (0 == rename(fc->mCurrentPath.c_str(), fc->mDestination.c_str()))
+		{
 #ifdef CONTROL_DEBUG
-	  	std::cerr << "ftController::completeFile() renaming to: ";
-		std::cerr << fc->mDestination;
-	  	std::cerr << std::endl;
+			std::cerr << "ftController::completeFile() renaming to: ";
+			std::cerr << fc->mDestination;
+			std::cerr << std::endl;
 #endif
 
-                /* correct the file_name */
-                fc->mCurrentPath = fc->mDestination;
-        }
-        else
-        {
+			/* correct the file_name */
+			fc->mCurrentPath = fc->mDestination;
+		}
+		else
+		{
 #ifdef CONTROL_DEBUG
-	  	std::cerr << "ftController::completeFile() FAILED mv to: ";
-		std::cerr << fc->mDestination;
-	  	std::cerr << std::endl;
+			std::cerr << "ftController::completeFile() FAILED mv to: ";
+			std::cerr << fc->mDestination;
+			std::cerr << std::endl;
 #endif
 
-		fc->mState = ftFileControl::ERROR_COMPLETION;
-        }
+			fc->mState = ftFileControl::ERROR_COMPLETION;
+		}
 
-	/* switch map */
-        if (fc->mFlags & RS_FILE_HINTS_CACHE) /* clean up completed cache files automatically */ 
-        {
-	        mCompleted[fc->mHash] = *fc;
-        }
+		/* switch map */
+		if (fc->mFlags & RS_FILE_HINTS_CACHE) /* clean up completed cache files automatically */ 
+		{
+			mCompleted[fc->mHash] = *fc;
+		}
 
 
-	/* for extralist additions */
-	path    = fc->mDestination;
-	//hash    = fc->mHash;
-        size    = fc->mSize;
-	state   = fc->mState;
-	period  = 30 * 24 * 3600; /* 30 days */
-	flags   = 0;
+		/* for extralist additions */
+		path    = fc->mDestination;
+		//hash    = fc->mHash;
+		size    = fc->mSize;
+		state   = fc->mState;
+		period  = 30 * 24 * 3600; /* 30 days */
+		flags   = 0;
 
-	doCallback = fc->mDoCallback;
-	callbackCode = fc->mCallbackCode;
+		doCallback = fc->mDoCallback;
+		callbackCode = fc->mCallbackCode;
 
-	mDataplex->removeTransferModule(hash_to_suppress) ;
-	mDownloads.erase(it);
-      } /******* UNLOCKED ********/
+		mDataplex->removeTransferModule(hash_to_suppress) ;
+		mDownloads.erase(it);
+	} /******* UNLOCKED ********/
 
 
 	/******************** NO Mutex from Now ********************
@@ -394,15 +395,16 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	 * or have a callback which says: local file.
 	 */
 
-  { RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
-	if (!mFtActive)
-	{
-		/* store in pending queue */
-		ftPendingRequest req(fname, hash, size, dest, flags, srcIds);
-		mPendingRequests.push_back(req);
-		return true;
+	{ 
+		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+		if (!mFtActive)
+		{
+			/* store in pending queue */
+			ftPendingRequest req(fname, hash, size, dest, flags, srcIds);
+			mPendingRequests.push_back(req);
+			return true;
+		}
 	}
-  }
 
 	/* check if we have the file */
 	FileInfo info;
@@ -902,9 +904,9 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 		it->second.mTransfer->getFileSources(peerIds);
 	}
 
-	double totalRate;
-	uint32_t tfRate;
-	uint32_t state;
+	double totalRate = 0;
+	uint32_t tfRate = 0;
+	uint32_t state = 0;
 
 	bool isDownloading = false;
 	bool isSuspended = false;
