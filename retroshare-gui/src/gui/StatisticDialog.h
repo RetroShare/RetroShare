@@ -24,7 +24,7 @@
 
 #include <QFileDialog>
 #include <QDateTime>
-//#include <QEvent>
+#include <QEvent>
 #include <QTimer>
 
 
@@ -47,8 +47,10 @@ public:
   /** Default Destructor */
   ~StatisticDialog();
 protected:
-  /** Called to deliver a bandwidth update event from Tor. */
-//  void customEvent(QEvent *event);
+  /** Called to deliver a bandwidth update event from RetroShare. */
+  void customEvent(QEvent *event);
+  void timerEvent(QTimerEvent*);
+
 
 private slots:
   /** Adds new data to the graph */
@@ -64,8 +66,6 @@ private slots:
   /** Called when the reset button is pressed */
   void reset();
 
-  void updategraph2status();
-
   
 private:
   /** Create and bind actions to events **/
@@ -73,9 +73,7 @@ private:
   /** Loads the saved Bandwidth Graph settings */
   void loadSettings();
  
-  /** A TorControl object used to talk to Tor. */
-  //  TorControl* _torControl;
-  /** A VidaliaSettings object that handles getting/saving settings */
+  /** A RetroShareSettings object that handles getting/saving settings */
   RshareSettings* _settings;
 
   /** Qt Designer generated object */

@@ -19,12 +19,21 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
 #include "rshare.h"
 #include "StatisticDialog.h"
-//#include <control/bandwidthevent.h>
+#include <control/bandwidthevent.h>
 #include "rsiface/rsiface.h"
 
+#include <QTime>
+#include <QHeaderView>
+
+/* Define the format used for displaying the date and time */
+#define DATETIME_FMT  "yyyy MM dd hh:mm:ss"
+
+QTime UpTime;
+int UpDays;
+bool dayChange;
+static int Timer=0;
 
 /** Constructor */
 StatisticDialog::StatisticDialog(QWidget *parent)
@@ -39,11 +48,26 @@ StatisticDialog::StatisticDialog(QWidget *parent)
   /* Bind events to actions */
   createActions();
 
+   UpDays=0;
+   dayChange=false;
+   UpTime.start();
+
   /* Initialize Sent/Receive data counters */
   reset();
   
   /* Hide Bandwidth Graph Settings frame */
   showSettingsFrame(false);
+
+   /* Set header resize modes and initial section sizes */
+   QHeaderView * _stheader = ui.treeWidget-> header();
+   _stheader->resizeSection ( 0, 210 );
+
+  QAbstractItemModel * model =ui.treeWidget->model();
+  QModelIndex ind2;
+  // set Times --> Session --> Since
+  ind2=model->index(4,0).child(0,0).child(1,1);
+  model->setData(ind2,QDateTime::currentDateTime()
+			    .toString(DATETIME_FMT));
 
   /* Turn off opacity group on unsupported platforms */
 #if defined(Q_WS_WIN)
@@ -56,9 +80,8 @@ StatisticDialog::StatisticDialog(QWidget *parent)
   ui.frmOpacity->setVisible(false);
 #endif
 
-    QTimer *timer = new QTimer(this);
-    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updategraph2status()));
-    timer->start(5113);
+  Timer=startTimer(REFRESH_RATE);
+
 }
 
 /** Default destructor */
@@ -69,7 +92,7 @@ StatisticDialog::~StatisticDialog()
 
 /**
  Custom event handler. Checks if the event is a bandwidth update event. If it
- is, it will add the data point to the history and updates the graph.
+ is, it will add the data point to the history and updates the graph.*/
 
 void
 StatisticDialog::customEvent(QEvent *event)
@@ -78,7 +101,40 @@ StatisticDialog::customEvent(QEvent *event)
     BandwidthEvent *bw = (BandwidthEvent *)event;
     updateGraph(bw->bytesRead(), bw->bytesWritten());
   }
-}*/
+}
+
+void StatisticDialog::timerEvent( QTimerEvent * )
+{
+  QAbstractItemModel * model =ui.treeWidget->model();
+  QModelIndex ind1;
+  // set download --> session bytes
+  //ind1=model->index(1,0).child(0,0).child(0,1);
+  //model->setData(ind1,totalToString(TotBytesDownloaded/1024.0));
+  // set upload --> session bytes
+  //ind1=model->index(2,0).child(0,0).child(0,1);
+  //model->setData(ind1,totalToString(TotBytesUploaded/1024.0));
+
+  // set Times --> Session --> Uptime
+  ind1=model->index(4,0).child(0,0).child(0,1);
+  if(! dayChange && (UpTime.elapsed()/1000 > 60*60*23)) dayChange=true;
+  if( dayChange && (UpTime.elapsed() <10000)) {dayChange=false;UpDays++;}
+
+  QTime elapsed;
+  elapsed= QTime(0,0,0).addMSecs(UpTime.elapsed());
+  if( UpDays>0)
+      model->setData(ind1,QString(tr("%1 days ")).arg(UpDays)+elapsed.toString("hh:mm:ss"));
+  else
+      model->setData(ind1,elapsed.toString("hh:mm:ss"));
+
+ 	/* set users/friends/network */
+	float downKb = 0;
+	float upKb = 0;
+	rsicontrol -> ConfigGetDataRates(downKb, upKb);
+
+        updateGraph(downKb,upKb);
+  //
+
+}
 
 /**
  Binds events to actions
@@ -112,17 +168,6 @@ StatisticDialog::updateGraph(quint64 bytesRead, quint64 bytesWritten)
   ui.frmGraph->addPoints(bytesRead, bytesWritten);
 }
 
-void 
-StatisticDialog::updategraph2status( )
-{
- 	/* set users/friends/network */
-	float downKb = 0;
-	float upKb = 0;
-	rsicontrol -> ConfigGetDataRates(downKb, upKb);
-
-        updateGraph(downKb,upKb);
-
-}
 
 /**
  Loads the saved Bandwidth Graph settings
