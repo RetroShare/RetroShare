@@ -23,6 +23,7 @@
 #include "rshare.h"
 #include "StatisticDialog.h"
 //#include <control/bandwidthevent.h>
+#include "rsiface/rsiface.h"
 
 
 /** Constructor */
@@ -37,10 +38,6 @@ StatisticDialog::StatisticDialog(QWidget *parent)
 
   /* Bind events to actions */
   createActions();
-
-  /* Ask Tor to notify us about bandwidth updates */
-//  _torControl = Vidalia::torControl();
-//  _torControl->setEvent(TorEvents::Bandwidth, this, true);
 
   /* Initialize Sent/Receive data counters */
   reset();
@@ -58,6 +55,10 @@ StatisticDialog::StatisticDialog(QWidget *parent)
 #if defined(Q_WS_X11)
   ui.frmOpacity->setVisible(false);
 #endif
+
+    QTimer *timer = new QTimer(this);
+    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updategraph2status()));
+    timer->start(5113);
 }
 
 /** Default destructor */
@@ -108,7 +109,19 @@ void
 StatisticDialog::updateGraph(quint64 bytesRead, quint64 bytesWritten)
 {
   /* Graph only cares about kilobytes */
-  ui.frmGraph->addPoints(bytesRead/1024.0, bytesWritten/1024.0);
+  ui.frmGraph->addPoints(bytesRead, bytesWritten);
+}
+
+void 
+StatisticDialog::updategraph2status( )
+{
+ 	/* set users/friends/network */
+	float downKb = 0;
+	float upKb = 0;
+	rsicontrol -> ConfigGetDataRates(downKb, upKb);
+
+        updateGraph(downKb,upKb);
+
 }
 
 /**
@@ -223,20 +236,5 @@ StatisticDialog::setOpacity(int value)
 #endif
 }
 
-/** 
- Overloads the default show() slot so we can set opacity
 
-void
-StatisticDialog::show()
-{
-  loadSettings();
-  if(!this->isVisible()) {
-    QMainWindow::show();
-  } else {
-    QMainWindow::activateWindow();
-    setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
-    QMainWindow::raise();
-  }
-}
-*/
 

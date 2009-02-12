@@ -53,6 +53,7 @@
 #include "MsgFeed.h"
 #include "ChannelFeed.h"
 #include "LibraryDialog.h"
+#include "StatisticDialog.h"
 
 
 /* for smplayer */
@@ -63,7 +64,7 @@
 /* Images for toolbar icons */
 #define IMAGE_NETWORK           ":/images/network32.png"
 #define IMAGE_PEERS         	":/images/groupchat.png"
-#define IMAGE_SEARCH    	    ":/images/filefind.png"
+#define IMAGE_SEARCH    	":/images/filefind.png"
 #define IMAGE_TRANSFERS      	":/images/ktorrent.png"
 #define IMAGE_FILES   	        ":/images/folder_green.png"
 #define IMAGE_FORUMS   	        ":/images/konversation.png"
@@ -72,7 +73,7 @@
 #define IMAGE_CHAT          	":/images/chats_24x24.png"
 #define IMAGE_RETROSHARE        ":/images/RetroShare16.png"
 #define IMAGE_ABOUT             ":/images/informations_24x24.png"
-#define IMAGE_STATISTIC         ":/images/utilities-system-monitor.png"
+#define IMAGE_STATISTIC         ":/images/ksysguard32.png"
 #define IMAGE_GAMES             ":/images/kgames.png"
 #define IMAGE_PHOTO             ":/images/lphoto.png"
 #define IMAGE_BWGRAPH           ":/images/ksysguard.png"
@@ -126,9 +127,9 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     //ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
     //                  createPageAction(QIcon(IMAGE_NEWSFEED), tr("News Feed"), grp));
       
-    //PluginsPage *pluginsPage = NULL;
-    //ui.stackPages->add(pluginsPage = new PluginsPage(ui.stackPages),
-    //                   createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
+    StatisticDialog *statisticDialog = NULL;
+    ui.stackPages->add(statisticDialog = new StatisticDialog(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_STATISTIC), tr("Statistics"), grp));
                
     PeersFeed *peersFeed = NULL;
     ui.stackPages->add(peersFeed = new PeersFeed(ui.stackPages),

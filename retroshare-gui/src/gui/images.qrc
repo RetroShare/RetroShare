@@ -183,6 +183,7 @@
         <file>images/konversation.png</file>
         <file>images/konversation16.png</file>
         <file>images/ksysguard.png</file>
+	<file>images/ksysguard32.png</file>
         <file>images/ktorrent.png</file>
         <file>images/ktorrent32.png</file>
         <file>images/knewsticker24.png</file>
@@ -209,6 +210,7 @@
         <file>images/message-mail.png</file>
         <file>images/message-mail-read.png</file>
 	<file>images/message-mail-imapdelete.png</file>
+	<file>images/message-mail-replied-read.png</file>
         <file>images/message-news.png</file>
         <file>images/message.png</file>
         <file>images/messenger.png</file>
