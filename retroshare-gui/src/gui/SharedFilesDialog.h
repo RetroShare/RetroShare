@@ -41,12 +41,13 @@ public:
   SharedFilesDialog(QWidget *parent = 0);
   /** Default Destructor */
 
-	/* For handling the model updates */
-  void  preModDirectories(bool update_local);
-  void  ModDirectories(bool update_local);
 
 
 private slots:
+
+	/* For handling the model updates */
+  void  preModDirectories(bool update_local);
+  void  postModDirectories(bool update_local);
 
   void checkUpdate();
   void forceCheck();

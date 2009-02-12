@@ -359,27 +359,21 @@ void SharedFilesDialog::openfolder()
 
 void  SharedFilesDialog::preModDirectories(bool update_local)
 {
+	std::cerr << "SharedFilesDialog::preModDirectories called with update_local = " << update_local << std::endl ;
 	if (update_local)
-	{
 		localModel->preMods();
-	}
 	else
-	{
 		model->preMods();
-	}
 }
 
 
-void  SharedFilesDialog::ModDirectories(bool update_local)
+void  SharedFilesDialog::postModDirectories(bool update_local)
 {
+	std::cerr << "SharedFilesDialog::postModDirectories called with update_local = " << update_local << std::endl ;
 	if (update_local)
-	{
 		localModel->postMods();
-	}
 	else
-	{
 		model->postMods();
-	}
 }
 
 

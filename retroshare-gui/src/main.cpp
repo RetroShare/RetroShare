@@ -153,6 +153,8 @@ int main(int argc, char *argv[])
 	// avoid clashes between infos from threads.
 	//
 	QObject::connect(notify,SIGNAL(hashingInfo(const QString&)),w,SLOT(updateHashingInfo(const QString&))) ;
+	QObject::connect(notify,SIGNAL(filesPreMod(          bool)),w->sharedfilesDialog,SLOT(preModDirectories(bool))) ;
+	QObject::connect(notify,SIGNAL(filesPostMod(         bool)),w->sharedfilesDialog,SLOT(postModDirectories(bool))) ;
 
 	/* only show window, if not startMinimized */
 	if (!startMinimised)

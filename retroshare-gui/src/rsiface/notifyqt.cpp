@@ -62,7 +62,8 @@ void NotifyQt::notifyListChange(int list, int type)
 			//displayFriends();
 			break;
 		case NOTIFY_LIST_DIRLIST:
-			displayDirectories();
+			emit filesPostMod(false) ;	/* Remote */
+			emit filesPostMod(true) ;  /* Local */
 			break;
 		case NOTIFY_LIST_SEARCHLIST:
 			//displaySearch();
@@ -97,7 +98,8 @@ void NotifyQt::notifyListPreChange(int list, int type)
 			//preDisplayFriends();
 			break;
 		case NOTIFY_LIST_DIRLIST:
-			preDisplayDirectories();
+			emit filesPreMod(false) ;	/* remote */
+			emit filesPreMod(true) ;	/* local */
 			break;
 		case NOTIFY_LIST_SEARCHLIST:
 			//preDisplaySearch();
@@ -278,53 +280,6 @@ void NotifyQt::displayFriends()
 	if (mWindow)
 		mWindow->insertPeers();
 }
-
-
-
-
-
-void NotifyQt::preDisplayDirectories()
-{
-	//iface->lockData(); /* Lock Interface */
-
-#ifdef NOTIFY_DEBUG
-	std::ostringstream out;
-	out << "NotifyQt::preDisplayDirectories()" << std::endl;
-
-	std::cerr << out.str();
-#endif
-
-	//iface->unlockData(); /* UnLock Interface */
-
-	if (dDialog)
-	{
-		dDialog->preModDirectories(false);  /* Remote */
-		dDialog->preModDirectories(true);   /* Local */
-	}
-}
-
-
-void NotifyQt::displayDirectories()
-{
-	//iface->lockData(); /* Lock Interface */
-
-#ifdef NOTIFY_DEBUG
-	std::ostringstream out;
-	out << "NotifyQt::displayDirectories()" << std::endl;
-
-	std::cerr << out.str();
-#endif
-
-	//iface->unlockData(); /* UnLock Interface */
-
-
-	if (dDialog)
-	{
-		dDialog->ModDirectories(false);  /* Remote */
-		dDialog->ModDirectories(true);   /* Local */
-	}
-}
-
 
 void NotifyQt::displaySearch()
 {
