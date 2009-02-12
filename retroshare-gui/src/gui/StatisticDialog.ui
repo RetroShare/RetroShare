@@ -522,31 +522,83 @@
         <string>Statistics</string>
        </property>
       </column>
+      <column>
+       <property name="text" >
+        <string>Now</string>
+       </property>
+      </column>
+      <item>
+       <property name="text" >
+        <string>Transfer</string>
+       </property>
+       <property name="icon" >
+        <iconset resource="images.qrc" >
+         <normaloff>:/images/transferupdown.png</normaloff>:/images/transferupdown.png</iconset>
+       </property>
+       <property name="text" >
+        <string/>
+       </property>
+       <item>
+        <property name="text" >
+         <string>Session UL:DL Ratio:</string>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Cumulative UL:DL Ratio</string>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+       </item>
+      </item>
       <item>
        <property name="text" >
         <string>Download</string>
        </property>
        <property name="icon" >
-        <iconset>
-         <normaloff>:/images/downloads_24x24.png</normaloff>:/images/downloads_24x24.png</iconset>
+        <iconset resource="images.qrc" >
+         <normaloff>:/images/download.png</normaloff>:/images/download.png</iconset>
+       </property>
+       <property name="text" >
+        <string/>
        </property>
        <item>
         <property name="text" >
          <string>Session:</string>
         </property>
+        <property name="icon" >
+         <iconset resource="images.qrc" >
+          <normaloff>:/images/StatisticsDetail.png</normaloff>:/images/StatisticsDetail.png</iconset>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
         <item>
          <property name="text" >
           <string>Downloaded:</string>
+         </property>
+         <property name="text" >
+          <string/>
          </property>
         </item>
         <item>
          <property name="text" >
           <string>Average Downloadspeed:</string>
          </property>
+         <property name="text" >
+          <string/>
+         </property>
         </item>
         <item>
          <property name="text" >
           <string>Count of Downloads:</string>
+         </property>
+         <property name="text" >
+          <string/>
          </property>
         </item>
        </item>
@@ -554,14 +606,27 @@
         <property name="text" >
          <string>Overall</string>
         </property>
+        <property name="icon" >
+         <iconset resource="images.qrc" >
+          <normaloff>:/images/StatsCumulative.png</normaloff>:/images/StatsCumulative.png</iconset>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
         <item>
          <property name="text" >
           <string>Downloaded:</string>
+         </property>
+         <property name="text" >
+          <string/>
          </property>
         </item>
         <item>
          <property name="text" >
           <string>Count of Downloads:</string>
+         </property>
+         <property name="text" >
+          <string/>
          </property>
         </item>
        </item>
@@ -571,26 +636,45 @@
         <string>Upload</string>
        </property>
        <property name="icon" >
-        <iconset>
-         <normaloff>:/images/uploads_24x24.png</normaloff>:/images/uploads_24x24.png</iconset>
+        <iconset resource="images.qrc" >
+         <normaloff>:/images/up.png</normaloff>:/images/up.png</iconset>
+       </property>
+       <property name="text" >
+        <string/>
        </property>
        <item>
         <property name="text" >
          <string>Session</string>
         </property>
+        <property name="icon" >
+         <iconset resource="images.qrc" >
+          <normaloff>:/images/StatisticsDetail.png</normaloff>:/images/StatisticsDetail.png</iconset>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
         <item>
          <property name="text" >
           <string>Uploaded:</string>
+         </property>
+         <property name="text" >
+          <string/>
          </property>
         </item>
         <item>
          <property name="text" >
           <string>Average Uploadspeed:</string>
          </property>
+         <property name="text" >
+          <string/>
+         </property>
         </item>
         <item>
          <property name="text" >
           <string>Count of Uploads:</string>
+         </property>
+         <property name="text" >
+          <string/>
          </property>
         </item>
        </item>
@@ -598,14 +682,27 @@
         <property name="text" >
          <string>Overall</string>
         </property>
+        <property name="icon" >
+         <iconset resource="images.qrc" >
+          <normaloff>:/images/StatsCumulative.png</normaloff>:/images/StatsCumulative.png</iconset>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
         <item>
          <property name="text" >
           <string>Uploaded</string>
+         </property>
+         <property name="text" >
+          <string/>
          </property>
         </item>
         <item>
          <property name="text" >
           <string>Count of Uploads:</string>
+         </property>
+         <property name="text" >
+          <string/>
          </property>
         </item>
        </item>
@@ -615,21 +712,37 @@
         <string>Connections:</string>
        </property>
        <property name="icon" >
-        <iconset>
-         <normaloff>:/images/connections_24x24.png</normaloff>:/images/connections_24x24.png</iconset>
+        <iconset resource="images.qrc" >
+         <normaloff>:/images/connect_friend.png</normaloff>:/images/connect_friend.png</iconset>
+       </property>
+       <property name="text" >
+        <string/>
        </property>
        <item>
         <property name="text" >
          <string>Session</string>
         </property>
+        <property name="icon" >
+         <iconset resource="images.qrc" >
+          <normaloff>:/images/StatisticsDetail.png</normaloff>:/images/StatisticsDetail.png</iconset>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
         <item>
          <property name="text" >
           <string>Connections:</string>
+         </property>
+         <property name="text" >
+          <string/>
          </property>
         </item>
         <item>
          <property name="text" >
           <string>Peers:</string>
+         </property>
+         <property name="text" >
+          <string/>
          </property>
         </item>
        </item>
@@ -637,39 +750,87 @@
         <property name="text" >
          <string>Overall</string>
         </property>
+        <property name="icon" >
+         <iconset resource="images.qrc" >
+          <normaloff>:/images/StatsCumulative.png</normaloff>:/images/StatsCumulative.png</iconset>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
         <item>
          <property name="text" >
           <string>Connections:</string>
+         </property>
+         <property name="text" >
+          <string/>
          </property>
         </item>
         <item>
          <property name="text" >
           <string>Peers:</string>
          </property>
+         <property name="text" >
+          <string/>
+         </property>
         </item>
        </item>
       </item>
       <item>
        <property name="text" >
-        <string>Misc</string>
+        <string>Time Statistics</string>
+       </property>
+       <property name="icon" >
+        <iconset resource="images.qrc" >
+         <normaloff>:/images/kalarm.png</normaloff>:/images/kalarm.png</iconset>
+       </property>
+       <property name="text" >
+        <string/>
        </property>
        <item>
         <property name="text" >
-         <string>Session:</string>
+         <string>Session</string>
+        </property>
+        <property name="icon" >
+         <iconset resource="images.qrc" >
+          <normaloff>:/images/StatisticsDetail.png</normaloff>:/images/StatisticsDetail.png</iconset>
+        </property>
+        <property name="text" >
+         <string/>
         </property>
         <item>
          <property name="text" >
-          <string>Uptime:</string>
+          <string>Uptime</string>
+         </property>
+         <property name="text" >
+          <string/>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Since:</string>
+         </property>
+         <property name="text" >
+          <string/>
          </property>
         </item>
        </item>
        <item>
         <property name="text" >
-         <string>Overall:</string>
+         <string>Cumulative</string>
+        </property>
+        <property name="icon" >
+         <iconset resource="images.qrc" >
+          <normaloff>:/images/StatsCumulative.png</normaloff>:/images/StatsCumulative.png</iconset>
+        </property>
+        <property name="text" >
+         <string/>
         </property>
         <item>
          <property name="text" >
           <string>Uptime</string>
+         </property>
+         <property name="text" >
+          <string/>
          </property>
         </item>
        </item>
@@ -678,29 +839,51 @@
        <property name="text" >
         <string>Records</string>
        </property>
+       <property name="icon" >
+        <iconset resource="images.qrc" >
+         <normaloff>:/images/records.png</normaloff>:/images/records.png</iconset>
+       </property>
+       <property name="text" >
+        <string/>
+       </property>
        <item>
         <property name="text" >
          <string>Uploadspeed:</string>
+        </property>
+        <property name="text" >
+         <string/>
         </property>
        </item>
        <item>
         <property name="text" >
          <string>Downloadspeed:</string>
         </property>
+        <property name="text" >
+         <string/>
+        </property>
        </item>
        <item>
         <property name="text" >
          <string>Connections:</string>
+        </property>
+        <property name="text" >
+         <string/>
         </property>
        </item>
        <item>
         <property name="text" >
          <string>Peers:</string>
         </property>
+        <property name="text" >
+         <string/>
+        </property>
        </item>
        <item>
         <property name="text" >
          <string>Uptime:</string>
+        </property>
+        <property name="text" >
+         <string/>
         </property>
        </item>
       </item>

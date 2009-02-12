@@ -21,6 +21,12 @@
         <file>images/channels24.png</file>
         <file>images/channels32.png</file>
         <file>images/contacts24.png</file>
+        <file>images/connection.png</file>
+        <file>images/Client0.png</file>
+        <file>images/Client1.png</file>
+        <file>images/Client2.png</file>
+        <file>images/Client3.png</file>
+        <file>images/Client4.png</file>
         <file>images/denied16.png</file>
         <file>images/FileTypeAny.png</file>
         <file>images/FileTypeArchive.png</file>
@@ -42,7 +48,7 @@
         <file>images/avatar_background.png</file>
         <file>images/backgroundimage.png</file>
         <file>images/button_cancel.png</file>
-	<file>images/calendar.png</file>
+	      <file>images/calendar.png</file>
         <file>images/chat.png</file>
         <file>images/chat/bar_end.png</file>
         <file>images/chat/bar_fill.png</file>
@@ -100,11 +106,14 @@
         <file>images/evolution.png</file>
         <file>images/exit_24x24.png</file>
         <file>images/expand_hover.png</file>
-	<file>images/expand_frame.png</file>
+        <file>images/expand_frame.png</file>
         <file>images/exportpeers_16x16.png</file>
         <file>images/extension_32.png</file>
         <file>images/filefind.png</file>
         <file>images/fileinfo.png</file>
+        <file>images/filename.png</file>
+        <file>images/filepriority.png</file>
+        <file>images/filecomments.png</file>
         <file>images/filerating0.png</file>
         <file>images/filerating1.png</file>
         <file>images/filerating2.png</file>
@@ -113,7 +122,7 @@
         <file>images/filerating5.png</file>
         <file>images/fileshare16.png</file>
         <file>images/fileshare24.png</file>
-	<file>images/fileshare48.png</file>
+        <file>images/fileshare48.png</file>
         <file>images/find.png</file>
         <file>images/emoticons/kopete/kopete020.png</file>
         <file>images/flags/af.png</file>
@@ -142,7 +151,7 @@
         <file>images/folder-draft24.png</file>
         <file>images/folder_inbox64.png</file>
         <file>images/folder-inbox.png</file>
-	<file>images/folder-inbox-new.png</file>
+        <file>images/folder-inbox-new.png</file>
         <file>images/folder-outbox.png</file>
         <file>images/folder-sent.png</file>
         <file>images/folder_doments.png</file>
@@ -152,8 +161,8 @@
         <file>images/folder_yellow.png</file>
         <file>images/folder_green16.png</file>
         <file>images/folder_open.png</file>
-	<file>images/folder_video.png</file>
-	<file>images/folder_blueshared.png</file>
+        <file>images/folder_video.png</file>
+        <file>images/folder_blueshared.png</file>
         <file>images/forward.png</file>
         <file>images/friendsfolder24.png</file>
         <file>images/kgames.png</file>
@@ -164,7 +173,7 @@
         <file>images/help.png</file>
         <file>images/help24.png</file>
         <file>images/hide_toolbox_frame.png</file>
-	<file>images/hide_frame.png</file>
+        <file>images/hide_frame.png</file>
         <file>images/highlight.png</file>
         <file>images/hi16-app-ktorrent.png</file>
         <file>images/image16.png</file>
@@ -173,6 +182,7 @@
         <file>images/invite-friend24.png</file>
         <file>images/invitefriendlabel.png</file>
         <file>images/connect_friend.png</file>
+        <file>images/kalarm.png</file>
         <file>images/kbackgammon.png</file>
         <file>images/kblogger.png</file>
         <file>images/kcmsystem24.png</file>
@@ -183,7 +193,7 @@
         <file>images/konversation.png</file>
         <file>images/konversation16.png</file>
         <file>images/ksysguard.png</file>
-	<file>images/ksysguard32.png</file>
+        <file>images/ksysguard32.png</file>
         <file>images/ktorrent.png</file>
         <file>images/ktorrent32.png</file>
         <file>images/knewsticker24.png</file>
@@ -202,15 +212,15 @@
         <file>images/mail_get.png</file>
         <file>images/mail_reply.png</file>
         <file>images/mail_replyall.png</file>
-	<file>images/mail_forward.png</file>
+	      <file>images/mail_forward.png</file>
         <file>images/mail_send.png</file>
         <file>images/mail_new.png</file>
         <file>images/mail_send24.png</file>
         <file>images/mailforward24-hover.png</file>
         <file>images/message-mail.png</file>
         <file>images/message-mail-read.png</file>
-	<file>images/message-mail-imapdelete.png</file>
-	<file>images/message-mail-replied-read.png</file>
+	      <file>images/message-mail-imapdelete.png</file>
+	      <file>images/message-mail-replied-read.png</file>
         <file>images/message-news.png</file>
         <file>images/message.png</file>
         <file>images/messenger.png</file>
@@ -228,8 +238,14 @@
         <file>images/peers_16x16.png</file>
         <file>images/peers_24x24.png</file>
         <file>images/print24.png</file>
+        <file>images/priorityauto.png</file>
+        <file>images/priorityhigh.png</file>
+        <file>images/prioritylow.png</file>
+        <file>images/priorityquestion.png</file>
+        <file>images/pause.png</file>
         <file>images/player_play.png</file>
         <file>images/quick_restart24.png</file>
+        <file>images/records.png</file>
         <file>images/removefriend16.png</file>
         <file>images/replymail-pressed.png</file>
         <file>images/replymail24-hover.png</file>
@@ -252,8 +268,13 @@
         <file>images/show_toolbox_frame.png</file>
         <file>images/smplayer_icon32.png</file>
         <file>images/start.png</file>
+        <file>images/stop.png</file>
+        <file>images/StatsCumulative.png</file>
+        <file>images/StatisticsDetail.png</file>
         <file>images/startall.png</file>
         <file>images/server_24x24.png</file>
+        <file>images/transferupdown.png</file>
+        <file>images/uploads.png</file>
         <file>images/loader/16-loader.gif</file>
         <file>images/loader/32-loader.gif</file>
         <file>images/loader/progress.gif</file>
