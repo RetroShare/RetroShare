@@ -1,3 +1,21 @@
+Changes for v0.4.12b
+
+* Suppressed an initialized memory read
+* Changed PreMods() and postMods() functions into signals in notifyqt
+* Added functionality for Bandwidth Graph
+* Suppressed bug when creating new certificate
+* Added Reply to all Button for Messages
+* Changed pointer cast from int to void
+* Changed retroshare invite so that it does not contain signatures anymore.
+* Small fix to upload transfer rates
+* Plugin system: plugin management features added (loading and unloading)
+* Fixed bugs in upload speed computation
+* Added info for upload peers and rate in Transfer tab
+* Enabled translations for QString's in RemoteDirModel
+* Fixed Bug: incorrect creation of the plugin
+* Fixed Launch Email Bug
+* Fixed Save cert to File
+
 Changes for v0.4.12a
 
 * Implemented plugin system: first demo version
