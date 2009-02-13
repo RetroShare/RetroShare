@@ -382,7 +382,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     QTimer *timer = new QTimer(this);
     timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
-    timer->start(5113);
+    timer->start(1000);
 }
 
 void MainWindow::updateStatus()
