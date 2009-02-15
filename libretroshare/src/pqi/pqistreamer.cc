@@ -59,6 +59,9 @@ pqistreamer::pqistreamer(RsSerialiser *rss, std::string id, BinInterface *bio_in
 	pkt_rpend_size = getRsPktMaxSize();
 	pkt_rpending = malloc(pkt_rpend_size);
 
+	// avoid uninitialized (and random) memory read.
+	bzero(pkt_rpending,pkt_rpend_size) ;
+
 	// 100 B/s (minimal)
 	setMaxRate(true, 0.1);
 	setMaxRate(false, 0.1);
@@ -297,6 +300,8 @@ int	pqistreamer::queue_outpqi(RsItem *pqi)
 
         uint32_t pktsize = rsSerialiser->size(pqi);
 	void *ptr = malloc(pktsize);
+
+//	std::cerr << "serializing packet of size " << pktsize << std::endl ;
 	if (rsSerialiser->serialise(pqi, ptr, &pktsize))
 	{
 		if (isCntrl)
@@ -359,6 +364,7 @@ int	pqistreamer::handleoutgoing()
 	int sentbytes = 0;
 	int len;
 	int ss;
+//	std::cerr << "pqistreamer: maxbytes=" << maxbytes<< std::endl ; 
 
 	std::list<void *>::iterator it;
 
@@ -373,6 +379,7 @@ int	pqistreamer::handleoutgoing()
 
 			std::ostringstream out;
 			out << "pqistreamer::handleoutgoing() Not active -> Clearing Pkt!";
+//			std::cerr << out.str() ;
 	  		pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
 		}
 		for(it = out_data.begin(); it != out_data.end(); )
@@ -382,6 +389,7 @@ int	pqistreamer::handleoutgoing()
 
 			std::ostringstream out;
 			out << "pqistreamer::handleoutgoing() Not active -> Clearing DPkt!";
+//			std::cerr << out.str() ;
 	  		pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
 		}
 
@@ -435,6 +443,7 @@ int	pqistreamer::handleoutgoing()
 			{
 				out << "Problems with Send Data!";
 				out << std::endl;
+				std::cerr << out.str() ;
 	  			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
 
 				outSentBytes(sentbytes);
@@ -443,7 +452,8 @@ int	pqistreamer::handleoutgoing()
 				return -1;
 			}
 
-			out << " Success!" << std::endl;
+			out << " Success!" << ", sent " << len << " bytes" << std::endl;
+//			std::cerr << out.str() ;
 	  		pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
 
 			free(pkt_wpending);
@@ -576,6 +586,7 @@ int	pqistreamer::handleincoming()
 				std::ostringstream out;
 				out << "Error Completing Read (read ";
 				out << tmplen << "/" << extralen << ")" << std::endl;
+//				std::cerr << out.str() ;
 	  			pqioutput(PQL_ALERT, pqistreamerzone, out.str());
 
 				pqiNotify *notify = getPqiNotify();
@@ -619,9 +630,11 @@ int	pqistreamer::handleincoming()
 		  std::ostringstream out;
 		  out << "Read Data Block -> Incoming Pkt(";
 		  out << blen + extralen << ")" << std::endl;
+//		  std::cerr << out.str() ;
 		  pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
 		}
 
+//		std::cerr << "Deserializing packet of size " << pktlen <<std::endl ;
 		RsItem *pkt = rsSerialiser->deserialise(block, &pktlen);
 
 		if ((pkt != NULL) && (0  < handleincomingitem(pkt)))
@@ -638,6 +651,7 @@ int	pqistreamer::handleincoming()
 		}
 	}
 
+//	std::cerr << "pqistreamer:: total bytes read = " << readbytes << std::endl ;
 	inReadBytes(readbytes);
 	return 0;
 }

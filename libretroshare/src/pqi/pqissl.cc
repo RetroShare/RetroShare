@@ -1401,7 +1401,7 @@ int 	pqissl::readdata(void *data, int len)
 	{
 		int tmppktlen = SSL_read(ssl_connection, (void*)((unsigned long int)data+(unsigned long int)total_len), len-total_len);
 
-		std::cerr <<"pqissl: read " << tmppktlen+total_len << " bytes. expected " << len << ", still " << len-(tmppktlen+total_len) << " to read"<< std::endl ;
+//		std::cerr <<"pqissl: read " << tmppktlen+total_len << " bytes. expected " << len << ", still " << len-(tmppktlen+total_len) << " to read"<< std::endl ;
 		// need to catch errors.....
 		if (tmppktlen <= 0) // probably needs a reset.
 		{
