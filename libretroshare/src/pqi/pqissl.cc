@@ -1396,99 +1396,109 @@ int 	pqissl::senddata(void *data, int len)
 
 int 	pqissl::readdata(void *data, int len)
 {
-	int tmppktlen = SSL_read(ssl_connection, data, len);
-	if (len != tmppktlen)
+	int total_len = 0 ;
+	do
+	{
+		int tmppktlen = SSL_read(ssl_connection, (void*)((unsigned long int)data+(unsigned long int)total_len), len-total_len);
+
+		std::cerr <<"pqissl: read " << tmppktlen+total_len << " bytes. expected " << len << ", still " << len-(tmppktlen+total_len) << " to read"<< std::endl ;
+		// need to catch errors.....
+		if (tmppktlen <= 0) // probably needs a reset.
+		{
+			std::ostringstream out;
+			out << "pqissl::readdata()";
+			out << " No Data Read ... Probably a Bad Connection" << std::endl; 
+			int error = SSL_get_error(ssl_connection, tmppktlen);
+			unsigned long err2 =  ERR_get_error();
+
+			printSSLError(ssl_connection, tmppktlen, error, err2, out);
+
+			if ((error == SSL_ERROR_ZERO_RETURN) && (err2 == 0))
+			{
+				/* this code will be called when
+				 * (1) moretoread -> returns true. +
+				 * (2) SSL_read fails.
+				 *
+				 * There are two ways this can happen:
+				 * (1) there is a little data on the socket, but not enough
+				 * for a full SSL record, so there legimitately is no error, and the moretoread()
+				 * was correct, but the read fails.
+				 *
+				 * (2) the socket has been closed correctly. this leads to moretoread() -> true, 
+				 * and ZERO error.... we catch this case by counting how many times
+				 * it occurs in a row (cos the other one will not).
+				 */
+
+				++n_read_zero;
+				out << "SSL_ERROR_ZERO_RETURN -- ";
+				out << std::endl;
+				out << " Has socket closed been properly closed? nReadZero: " << n_read_zero;
+				out << std::endl;
+
+				if (PQISSL_MAX_READ_ZERO_COUNT < n_read_zero)
+				{
+					out << "Count passed Limit, shutting down!";
+					reset();
+				}
+
+				rslog(RSL_ALERT, pqisslzone, out.str());
+				return 0;
+			}
+
+			/* the only real error we expect */
+			if (error == SSL_ERROR_SYSCALL)
+			{
+				out << "SSL_read() SSL_ERROR_SYSCALL";
+				out << std::endl;
+				out << "Socket Closed Abruptly.... Resetting PQIssl";
+				out << std::endl;
+				rslog(RSL_ALERT, pqisslzone, out.str());
+				reset();
+				return -1;
+			}
+			else if (error == SSL_ERROR_WANT_WRITE)
+			{
+				out << "SSL_read() SSL_ERROR_WANT_WRITE";
+				out << std::endl;
+				rslog(RSL_ALERT, pqisslzone, out.str());
+				return -1;
+			}
+			else if (error == SSL_ERROR_WANT_READ)
+			{
+				out << "SSL_read() SSL_ERROR_WANT_READ";
+				out << std::endl;
+				rslog(RSL_ALERT, pqisslzone, out.str());
+				return -1;
+			}
+			else
+			{
+				out << "SSL_read() UNKNOWN ERROR: " << error;
+				out << std::endl;
+				out << "\tResetting!";
+				rslog(RSL_ALERT, pqisslzone, out.str());
+				reset();
+				return -1;
+			}
+
+			rslog(RSL_ALERT, pqisslzone, out.str());
+			//exit(1);
+		}
+		else
+			total_len+=tmppktlen ;
+	} while(total_len < len) ;
+
+	if (len != total_len)
 	{
 		std::ostringstream out;
 		out << "pqissl::readdata()";
 		out << " Full Packet Not read!" << std::endl; 
 		out << " -> Expected len(" << len << ") actually read(";
-		out << tmppktlen << ")" << std::endl;
+		out << total_len << ")" << std::endl;
+		std::cerr << out.str() ;
 		rslog(RSL_WARNING, pqisslzone, out.str());
 	}
-	// need to catch errors.....
-	if (tmppktlen <= 0) // probably needs a reset.
-	{
-		std::ostringstream out;
-		out << "pqissl::readdata()";
-		out << " No Data Read ... Probably a Bad Connection" << std::endl; 
-		int error = SSL_get_error(ssl_connection, tmppktlen);
-		unsigned long err2 =  ERR_get_error();
-
-		printSSLError(ssl_connection, tmppktlen, error, err2, out);
-
-		if ((error == SSL_ERROR_ZERO_RETURN) && (err2 == 0))
-		{
-			/* this code will be called when
-			 * (1) moretoread -> returns true. +
-			 * (2) SSL_read fails.
-			 *
-			 * There are two ways this can happen:
-			 * (1) there is a little data on the socket, but not enough
-			 * for a full SSL record, so there legimitately is no error, and the moretoread()
-			 * was correct, but the read fails.
-			 *
-			 * (2) the socket has been closed correctly. this leads to moretoread() -> true, 
-			 * and ZERO error.... we catch this case by counting how many times
-			 * it occurs in a row (cos the other one will not).
-			 */
-
-			++n_read_zero;
-	        	out << "SSL_ERROR_ZERO_RETURN -- ";
-			out << std::endl;
-			out << " Has socket closed been properly closed? nReadZero: " << n_read_zero;
-			out << std::endl;
-
-			if (PQISSL_MAX_READ_ZERO_COUNT < n_read_zero)
-			{
-				out << "Count passed Limit, shutting down!";
-				reset();
-			}
-				
-			rslog(RSL_ALERT, pqisslzone, out.str());
-			return 0;
-		}
-
-		/* the only real error we expect */
-		if (error == SSL_ERROR_SYSCALL)
-		{
-			out << "SSL_read() SSL_ERROR_SYSCALL";
-			out << std::endl;
-	        	out << "Socket Closed Abruptly.... Resetting PQIssl";
-			out << std::endl;
-			rslog(RSL_ALERT, pqisslzone, out.str());
-			reset();
-			return -1;
-		}
-		else if (error == SSL_ERROR_WANT_WRITE)
-		{
-			out << "SSL_read() SSL_ERROR_WANT_WRITE";
-			out << std::endl;
-			rslog(RSL_ALERT, pqisslzone, out.str());
-			return -1;
-		}
-		else if (error == SSL_ERROR_WANT_READ)
-		{
-			out << "SSL_read() SSL_ERROR_WANT_READ";
-			out << std::endl;
-			rslog(RSL_ALERT, pqisslzone, out.str());
-			return -1;
-		}
-		else
-		{
-			out << "SSL_read() UNKNOWN ERROR: " << error;
-			out << std::endl;
-	        	out << "\tResetting!";
-			rslog(RSL_ALERT, pqisslzone, out.str());
-			reset();
-			return -1;
-		}
-
-		rslog(RSL_ALERT, pqisslzone, out.str());
-		//exit(1);
-	}
 	n_read_zero = 0;
-	return tmppktlen;
+	return len;//tmppktlen;
 }
 
 
