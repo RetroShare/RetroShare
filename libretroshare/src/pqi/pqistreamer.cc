@@ -60,7 +60,7 @@ pqistreamer::pqistreamer(RsSerialiser *rss, std::string id, BinInterface *bio_in
 	pkt_rpending = malloc(pkt_rpend_size);
 
 	// avoid uninitialized (and random) memory read.
-	bzero(pkt_rpending,pkt_rpend_size) ;
+	memset(pkt_rpending,0,pkt_rpend_size) ;
 
 	// 100 B/s (minimal)
 	setMaxRate(true, 0.1);
