@@ -511,14 +511,6 @@
       <number>0</number>
      </property>
      <widget class="QWidget" name="tab" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>714</width>
-        <height>451</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>About</string>
       </attribute>
@@ -545,7 +537,7 @@ p, li { white-space: pre-wrap; }
 &lt;p align="center" style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;">Usefull External Links to more information:&lt;/p>
 &lt;ul style="-qt-list-indent: 1;">&lt;li align="justify" style=" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://retroshare.sourceforge.net">&lt;span style=" text-decoration: underline; color:#0000ff;">Retroshare Webpage&lt;/span>&lt;/a>&lt;/li>
-&lt;li align="justify" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://retroshare.wiki.sourceforge.net/">&lt;span style=" text-decoration: underline; color:#0000ff;">Retroshare Wiki&lt;/span>&lt;/a>&lt;/li>
+&lt;li align="justify" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://retroshare.sourceforge.net/wiki/index.php/Main_Page">&lt;span style=" text-decoration: underline; color:#0000ff;">Retroshare Wiki&lt;/span>&lt;/a>&lt;/li>
 &lt;li style=" text-decoration: underline; color:#0000ff;" align="justify" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://retroshare.sourceforge.net/forum/">RetroShare's Forum&lt;/a>&lt;/li>
 &lt;li align="justify" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://sourceforge.net/projects/retroshare/">&lt;span style=" text-decoration: underline; color:#0000ff;">Retroshare Project Page&lt;/span>&lt;/a>&lt;/li>
 &lt;li align="justify" style=" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="http://www.lunamutt.com">&lt;span style=" text-decoration: underline; color:#0000ff;">Lunamutt Homepage.&lt;/span>&lt;/a>&lt;/li>&lt;/ul>&lt;/body>&lt;/html></string>
@@ -558,14 +550,6 @@ p, li { white-space: pre-wrap; }
       </layout>
      </widget>
      <widget class="QWidget" name="tab_2" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>714</width>
-        <height>451</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>Authors</string>
       </attribute>
@@ -615,14 +599,6 @@ p, li { white-space: pre-wrap; }
       </layout>
      </widget>
      <widget class="QWidget" name="tab_3" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>714</width>
-        <height>451</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>Thanks to</string>
       </attribute>
@@ -662,14 +638,6 @@ p, li { white-space: pre-wrap; }
       </layout>
      </widget>
      <widget class="QWidget" name="tab_4" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>714</width>
-        <height>451</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>Translation</string>
       </attribute>
@@ -711,14 +679,6 @@ p, li { white-space: pre-wrap; }
       </layout>
      </widget>
      <widget class="QWidget" name="tab_5" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>714</width>
-        <height>451</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>License Agreement</string>
       </attribute>
