@@ -371,7 +371,7 @@ bool   setRsItemHeader(void *data, uint32_t size, uint32_t type, uint32_t pktsiz
 
 uint32_t getRsItemId(void *data)
 {
-	uint32_t type;
+	uint32_t type = 0;
 	uint32_t offset = 0;
 	getRawUInt32(data, 4, &offset, &type);
 	return type;
@@ -380,7 +380,7 @@ uint32_t getRsItemId(void *data)
 
 uint32_t getRsItemSize(void *data)
 {
-	uint32_t size;
+	uint32_t size = 0;
 	uint32_t offset = 4;
 	getRawUInt32(data, 8, &offset, &size);
 	return size;

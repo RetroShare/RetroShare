@@ -141,7 +141,8 @@ int RsServer::UpdateAllConfig()
 	config.DHTActive  = mConnMgr->getDHTEnabled();
 
 	/* Notify of Changes */
-	iface.setChanged(RsIface::Config);
+//	iface.setChanged(RsIface::Config);
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CONFIG, NOTIFY_TYPE_MOD);
 
 	/* unlock Mutexes */
 	iface.unlockData(); /* UNLOCK */

@@ -75,13 +75,14 @@ int main(int argc, char **argv)
 	}
 
 	/* cleanup */
-        CRYPTO_cleanup_all_ex_data();
-        ERR_free_strings();
-        ERR_remove_state(0);
-        EVP_cleanup();
-        //CRYPTO_mem_leaks(bio_err);
-        if (bio_err != NULL) BIO_free(bio_err);
+	CRYPTO_cleanup_all_ex_data();
+	ERR_free_strings();
+	ERR_remove_state(0);
+	EVP_cleanup();
+	//CRYPTO_mem_leaks(bio_err);
+	if (bio_err != NULL) BIO_free(bio_err);
 
+	return 1;
 }
 
 
@@ -146,5 +147,6 @@ int testForums(p3Forums *forum)
 #else
 		sleep(1);
 #endif
+		return 1 ;
 }
 

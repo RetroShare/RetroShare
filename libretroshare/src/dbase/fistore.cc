@@ -322,20 +322,32 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 			/* cannot be null -> no files at root level */
 			parent=file->parent;
 		}
+		// Well, yes, it can be null, beleive me. In such a case it may be that
+		// file is a person entry.
 
-		/* NEW add path (to dir - if dir, or parent dir - if file? */
-		details.path = parent->path;
-
-		while(parent->parent)
-			parent = parent->parent;
-		
-		/* we should end up on the PersonEntry */
-		if (NULL == (person = dynamic_cast<PersonEntry *>(parent)))
+		if(parent==NULL)
 		{
-			std::cerr << "Major Error- Not PersonEntry!";
-			exit(1);
+			if(NULL == (person = dynamic_cast<PersonEntry *>(file))) 
+			{
+				std::cerr << "Major Error- Not PersonEntry!";
+				exit(1);
+			}
 		}
+		else
+		{
+			/* NEW add path (to dir - if dir, or parent dir - if file? */
+			details.path = parent->path;
 
+			while(parent->parent)
+				parent = parent->parent;
+
+			/* we should end up on the PersonEntry */
+			if (NULL == (person = dynamic_cast<PersonEntry *>(parent)))
+			{
+				std::cerr << "Major Error- Not PersonEntry!";
+				exit(1);
+			}
+		}
 		details.id = person->id;
 	}
 

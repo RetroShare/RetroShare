@@ -85,7 +85,7 @@ ForumsDialog::ForumsDialog(QWidget *parent)
   //	SLOT( changedThread( QTreeWidgetItem *, QTreeWidgetItem * ) ) );
 
   connect( ui.threadTreeWidget, SIGNAL( itemSelectionChanged() ), this, SLOT( changedThread2() ) );
-  connect( ui.viewBox, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( changedThread2() ) );
+  connect( ui.viewBox, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( insertThreads() ) );
   
   connect(ui.expandButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
 

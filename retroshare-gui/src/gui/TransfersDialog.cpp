@@ -70,6 +70,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     DLDelegate = new DLListDelegate();
     ui.downloadList->setItemDelegate(DLDelegate);
 	
+	 ui.downloadList->setAutoScroll(false) ;
   
   	//Selection Setup
 	selection = ui.downloadList->selectionModel();
@@ -108,6 +109,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     ULDelegate = new ULListDelegate();
     ui.uploadsList->setItemDelegate(ULDelegate);
     
+	 ui.uploadsList->setAutoScroll(false) ;
     ui.uploadsList->setRootIsDecorated(false);
   
   	//Selection Setup

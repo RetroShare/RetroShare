@@ -480,9 +480,9 @@ void RsServer::intNotifyChangeCert(RsCertId &id)
 	/* send the notify message */
 	if (mods)
 	{
-	  NotifyBase &cb = getNotify();
-	  cb.notifyListChange(NOTIFY_LIST_NEIGHBOURS, NOTIFY_TYPE_MOD);
-	  cb.notifyListChange(NOTIFY_LIST_FRIENDS, NOTIFY_TYPE_MOD);
+		std::cerr << "************** Notifying neighbor change *******************" << std::endl ;
+	  getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS, NOTIFY_TYPE_MOD);
+	  getNotify().notifyListChange(NOTIFY_LIST_FRIENDS, NOTIFY_TYPE_MOD);
 	}
 }
 
@@ -668,6 +668,7 @@ int  RsServer::UpdateAllNetwork()
 {
 	/* PreNotify of the Change */
 	NotifyBase &cb = getNotify();
+		std::cerr << "************** Notifying neighbor change 2 *******************" << std::endl ;
         cb.notifyListPreChange(NOTIFY_LIST_NEIGHBOURS, NOTIFY_TYPE_MOD);
 
 	lockRsCore(); /* LOCK */
@@ -709,6 +710,7 @@ int  RsServer::UpdateAllNetwork()
 	unlockRsCore(); /* UNLOCK */
 
 	/* Now Notify of the Change */
+		std::cerr << "************** Notifying neighbor change 3 *******************" << std::endl ;
         cb.notifyListChange(NOTIFY_LIST_NEIGHBOURS, NOTIFY_TYPE_MOD);
 
 	return ret;

@@ -42,10 +42,10 @@ public:
   NetworkDialog(QWidget *parent = 0);
   /** Default Destructor */
 
-  void  insertConnect();
   void  showpeerdetails(std::string id);
 
 public slots:
+  void  insertConnect();
   std::string loadneighbour();
   /* void loadneighbour(); */
   void setLogInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));

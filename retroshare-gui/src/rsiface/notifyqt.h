@@ -51,9 +51,14 @@ class NotifyQt: public QObject, public NotifyBase
 		// It's beneficial to send info to the GUI using signals, because signals are thread-safe
 		// as they get queued by Qt.
 		//
-		void hashingInfo(const QString&) const ;
-		void filesPreMod(bool) const ;
-		void filesPostMod(bool) const ;
+		void hashingInfoChanged(const QString&) const ;
+		void filesPreModChanged(bool) const ;
+		void filesPostModChanged(bool) const ;
+		void transfersChanged() const ;
+		void friendsChanged() const ;
+		void neighborsChanged() const ;
+		void messagesChanged() const ;
+		void configChanged() const ;
 
 	public slots:
 

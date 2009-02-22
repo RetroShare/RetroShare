@@ -24,6 +24,7 @@
  */
 
 
+#include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 #include "services/p3disc.h"
 
@@ -298,13 +299,13 @@ void p3disc::sendOwnDetails(std::string to)
 
 	// Then send message.
 	{
-//#ifdef P3DISC_DEBUG
+#ifdef P3DISC_DEBUG
 	  	  std::ostringstream out;
 		  out << "p3disc::sendOwnDetails()";
 		  out << "Constructing a RsDiscItem Message!" << std::endl;
 		  out << "Sending to: " << to;
 		  std::cerr << out.str() << std::endl;
-//#endif
+#endif
 	}
 
 	// Construct a message
@@ -370,13 +371,13 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 
 	/* send it off */
 	{
-//#ifdef P3DISC_DEBUG
+#ifdef P3DISC_DEBUG
 		std::ostringstream out;
 		out << "p3disc::sendPeerDetails()";
 		out << " Sending details of: " << about;
 		out << " to: " << to << std::endl;
 		std::cerr << out.str() << std::endl;
-//#endif
+#endif
 	}
 
 
@@ -447,13 +448,19 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 			if(*it == name)
 			{
 				di->discFlags |= P3DISC_FLAGS_PEER_TRUSTS_ME;
+#ifdef P3DISC_DEBUG
 				std::cerr << "   Peer " << about << "(" << name << ")" << " is trusting " << to << ", sending info." << std::endl ;
+#endif
 			}
 
 	uint32_t certLen = 0;
 
 	unsigned char **binptr = (unsigned char **) &(di -> certDER.bin_data);
+
 	mAuthMgr->SaveCertificateToBinary(about, binptr, &certLen);
+#ifdef P3DISC_DEBUG
+	std::cerr << "Saved certificate to binary in p3discReply. Length=" << certLen << std::endl ;
+#endif
 	if (certLen > 0)
 	{
 		di -> certDER.bin_len = certLen;
@@ -483,9 +490,9 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 /*************************************************************************************/
 void p3disc::recvPeerOwnMsg(RsDiscItem *item)
 {
-//#ifdef P3DISC_DEBUG
+#ifdef P3DISC_DEBUG
 	std::cerr << "p3disc::recvPeerOwnMsg() From: " << item->PeerId() << std::endl;
-//#endif
+#endif
 
 	/* tells us their exact address (mConnectMgr can ignore if it looks wrong) */
 	uint32_t type = 0; 
@@ -530,8 +537,7 @@ void p3disc::recvPeerOwnMsg(RsDiscItem *item)
 	/* now reply with all details */
 	respondToPeer(item->PeerId());
 
-	addDiscoveryData(item->PeerId(), item->PeerId(), 
-			item->laddr, item->saddr, item->discFlags, time(NULL));
+	addDiscoveryData(item->PeerId(), item->PeerId(), item->laddr, item->saddr, item->discFlags, time(NULL));
 
 	/* cleanup (handled by caller) */
 }
@@ -540,11 +546,11 @@ void p3disc::recvPeerOwnMsg(RsDiscItem *item)
 void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 {
 
-//#ifdef P3DISC_DEBUG
+#ifdef P3DISC_DEBUG
 	std::cerr << "p3disc::recvPeerFriendMsg() From: " << item->PeerId();
 	std::cerr << " About " << item->aboutId;
 	std::cerr << std::endl;
-//#endif
+#endif
 
 	/* tells us their exact address (mConnectMgr can ignore if it looks wrong) */
 
@@ -595,6 +601,8 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 
 	addDiscoveryData(item->PeerId(), peerId, item->laddr, item->saddr, item->discFlags, time(NULL));
 
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS, NOTIFY_TYPE_MOD);
+	
 	/* cleanup (handled by caller) */
 }
 
@@ -604,8 +612,7 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 /*************************************************************************************/
 
 
-int	p3disc::addDiscoveryData(std::string fromId, std::string aboutId, 
-		struct sockaddr_in laddr, struct sockaddr_in raddr, uint32_t flags, time_t ts)
+int	p3disc::addDiscoveryData(std::string fromId, std::string aboutId, struct sockaddr_in laddr, struct sockaddr_in raddr, uint32_t flags, time_t ts)
 {
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
 

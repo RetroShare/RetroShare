@@ -109,19 +109,25 @@ int     p3ChatService::sendChat(std::wstring msg)
 class p3ChatService::AvatarInfo
 {
    public: 
+	  AvatarInfo() 
+	  {
+		  _peer_is_new = false ;			// true when the peer has a new avatar
+		  _own_is_new = false ;				// true when I myself a new avatar to send to this peer.
+	  }
+
 	  AvatarInfo(const unsigned char *jpeg_data,int size)
 	  {
 		 int n_c = size ;
-		 int p   = sizeof(wchar_t) ;
+		 int p   = 2 ;// minimum value for sizeof(wchar_t) over win/mac/linux ;
 		 int n   = n_c/p + 1 ;
 
 		 _jpeg_wstring = std::wstring(n,0) ;
 
 		 for(int i=0;i<n;++i)
 		 {
-			wchar_t h = jpeg_data[p*i] ;
+			wchar_t h = jpeg_data[p*i+p-1] ;
 
-			for(int j=1;j<p;++j)
+			for(int j=p-2;j>=0;--j)
 			{
 			   h = h << 8 ;
 			   h += jpeg_data[p*i+j] ;
@@ -135,7 +141,7 @@ class p3ChatService::AvatarInfo
 
 	  void toUnsignedChar(unsigned char *& data,int& size) const
 	  {
-		 int p 	= sizeof(wchar_t) ;
+		 int p 	= 2 ;// minimum value for sizeof(wchar_t) over win/mac/linux ;
 		 int n 	= _jpeg_wstring.size() ;
 		 int n_c	= p*n ;
 
@@ -146,7 +152,7 @@ class p3ChatService::AvatarInfo
 		 {
 			wchar_t h = _jpeg_wstring[i] ;
 
-			for(int j=p-1;j>=0;--j)
+			for(int j=0;j<p;++j)
 			{
 			   data[p*i+j] = (unsigned char)(h & 0xff) ;
 			   h = h >> 8 ;
@@ -177,16 +183,23 @@ int     p3ChatService::sendPrivateChat(std::wstring msg, std::string id)
 
 	std::map<std::string,AvatarInfo*>::iterator it = _avatars.find(id) ; 
 
+	if(it == _avatars.end())
+	{
+		_avatars[id] = new AvatarInfo ;
+		it = _avatars.find(id) ;
+	}
 	if(it != _avatars.end() && it->second->_own_is_new)
 	{
+#ifdef CHAT_DEBUG
 	   std::cerr << "p3ChatService::sendPrivateChat: new avatar never sent to peer " << id << ". Setting <new> flag to packet." << std::endl; 
+#endif
 
 	   ci->chatFlags |= RS_CHAT_FLAG_AVATAR_AVAILABLE ;
 	   it->second->_own_is_new = false ;
 	}
 
-	std::cerr << "Sending msg to peer " << id << ", flags = " << ci->chatFlags << std::endl ;
 #ifdef CHAT_DEBUG
+	std::cerr << "Sending msg to peer " << id << ", flags = " << ci->chatFlags << std::endl ;
 	std::cerr << "p3ChatService::sendPrivateChat() Item:";
 	std::cerr << std::endl;
 	ci->print(std::cerr);
@@ -212,8 +225,8 @@ std::list<RsChatItem *> p3ChatService::getChatQueue()
 		std::cerr << std::endl;
 		ci->print(std::cerr);
 		std::cerr << std::endl;
-#endif
 		std::cerr << "Got msg. Flags = " << ci->chatFlags << std::endl ;
+#endif
 
 		if(ci->chatFlags & RS_CHAT_FLAG_CONTAINS_AVATAR)			// no msg here. Just an avatar.
 			receiveAvatarJpegData(ci) ;

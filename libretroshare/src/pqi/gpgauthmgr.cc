@@ -155,6 +155,7 @@ std::string GPGAuthMgr::OwnId()
 
 bool	GPGAuthMgr::getAllList(std::list<std::string> &ids)
 {
+	std::cout << "344444555533333333" << std::endl ;
 	std::map<std::string, pqiAuthDetails>::iterator it;
 	for(it = mKeyList.begin(); it != mKeyList.end(); it++)
 	{

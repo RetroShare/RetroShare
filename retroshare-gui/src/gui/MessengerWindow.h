@@ -42,7 +42,6 @@ public:
   MessengerWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default Destructor */
 
-  void  insertPeers();
   void setChatDialog(PeersDialog *cd);
   
   NetworkDialog *networkDialog2;
@@ -51,6 +50,7 @@ public:
 
 
 public slots:
+  void  insertPeers();
   /** Called when this dialog is to be displayed */
   void show();
   

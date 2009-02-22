@@ -38,7 +38,7 @@ void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
 
 void NotifyQt::notifyHashingInfo(std::string fileinfo)
 {
-	emit hashingInfo(QString::fromStdString(fileinfo)) ;
+	emit hashingInfoChanged(QString::fromStdString(fileinfo)) ;
 }
 
 void NotifyQt::notifyChat()
@@ -56,27 +56,30 @@ void NotifyQt::notifyListChange(int list, int type)
 	switch(list)
 	{
 		case NOTIFY_LIST_NEIGHBOURS:
-			//displayNeighbours();
+			emit neighborsChanged();
 			break;
 		case NOTIFY_LIST_FRIENDS:
-			//displayFriends();
+			emit friendsChanged() ;
 			break;
 		case NOTIFY_LIST_DIRLIST:
-			emit filesPostMod(false) ;	/* Remote */
-			emit filesPostMod(true) ;  /* Local */
+			emit filesPostModChanged(false) ;	/* Remote */
+			emit filesPostModChanged(true) ;  /* Local */
 			break;
 		case NOTIFY_LIST_SEARCHLIST:
 			//displaySearch();
 			break;
 		case NOTIFY_LIST_MESSAGELIST:
-			//displayMessages();
+			emit messagesChanged() ;
 			break;
 		case NOTIFY_LIST_CHANNELLIST:
 			//displayChannels();
 			break;
 		case NOTIFY_LIST_TRANSFERLIST:
-			//displayTransfers();
+			emit transfersChanged() ;
 			break;
+		case NOTIFY_LIST_CONFIG:
+			emit configChanged() ;
+			break ;
 		default:
 			break;
 	}
@@ -95,11 +98,11 @@ void NotifyQt::notifyListPreChange(int list, int type)
 			//preDisplayNeighbours();
 			break;
 		case NOTIFY_LIST_FRIENDS:
-			//preDisplayFriends();
+			emit friendsChanged() ;
 			break;
 		case NOTIFY_LIST_DIRLIST:
-			emit filesPreMod(false) ;	/* remote */
-			emit filesPreMod(true) ;	/* local */
+			emit filesPreModChanged(false) ;	/* remote */
+			emit filesPreModChanged(true) ;	/* local */
 			break;
 		case NOTIFY_LIST_SEARCHLIST:
 			//preDisplaySearch();
@@ -127,63 +130,31 @@ void NotifyQt::notifyListPreChange(int list, int type)
 
 void NotifyQt::UpdateGUI()
 {
-	iface->lockData(); /* Lock Interface */
-
-	/* make local -> so we can release iface */
-	bool uNeigh = iface->hasChanged(RsIface::Neighbour);
-	bool uFri   = iface->hasChanged(RsIface::Friend);
-	bool uTrans = iface->hasChanged(RsIface::Transfer);
-	//bool uChat  = iface->hasChanged(RsIface::Chat);
-	bool uMsg   = iface->hasChanged(RsIface::Message);
-	bool uChan  = iface->hasChanged(RsIface::Channel);
-	bool uRecom = iface->hasChanged(RsIface::Recommend);
-	bool uConf  = iface->hasChanged(RsIface::Config);
-
-	iface->unlockData(); /* UnLock Interface */
-
 	/* hack to force updates until we've fixed that part */
-static  time_t lastTs = 0;
+	static  time_t lastTs = 0;
 
-	if (time(NULL) > lastTs + 5)
+	if (time(NULL) > lastTs)					// always update, every 1 sec.
 	{
-		lastTs = time(NULL);
-
-		uNeigh = true;
-		uFri = true;
-		uTrans = true;
-		//uChat = true;
-		uMsg = true;
-		uChan = true;
-		uRecom = true;
-		uConf = true;
+		emit transfersChanged();
+		emit friendsChanged() ;
 	}
 
-	if (uNeigh)
-		displayNeighbours();
-
-	if (uFri)
-		displayFriends();
-
-	if (uTrans)
-		displayTransfers();
-
-	//if (uChat)
-	//	displayChat();
-
-	if (uMsg)
-		displayMessages();
-
-	if (uChan)
+	if (time(NULL) > lastTs + 5)				// update every 5 seconds. I don't know what to do with these.
+	{
 		displayChannels();
+	}
+
+	static bool already_updated = false ;	// these only update once at start because they may already have been set before 
+														// the gui is running, then they get updated by callbacks.
+	if(!already_updated)
+	{
+		emit messagesChanged() ;
+		emit neighborsChanged();
+		emit configChanged();
+
+		already_updated = true ;
+	}
 	
-	/* TODO
-	if (uRecom)
-		displayRecommends();
-
-	if (uConf)
-		displayConfig();
-	*/
-
 	/* Finally Check for PopupMessages / System Error Messages */
 
 	if (rsNotify)
@@ -265,22 +236,6 @@ static  time_t lastTs = 0;
 	}
 }
 			
-			
-void NotifyQt::displayNeighbours()
-{
-	/* Do the GUI */
-	if (cDialog)
-		cDialog->insertConnect();
-}
-
-void NotifyQt::displayFriends()
-{
-	if (pDialog)
-		pDialog->insertPeers();
-	if (mWindow)
-		mWindow->insertPeers();
-}
-
 void NotifyQt::displaySearch()
 {
 	iface->lockData(); /* Lock Interface */
@@ -291,13 +246,6 @@ void NotifyQt::displaySearch()
 #endif
 
 	iface->unlockData(); /* UnLock Interface */
-}
-
-
-void NotifyQt::displayMessages()
-{
-	if (mDialog)
- 		mDialog -> insertMessages();
 }
 
 void NotifyQt::displayChat()

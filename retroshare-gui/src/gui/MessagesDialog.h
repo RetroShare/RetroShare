@@ -35,21 +35,19 @@ public:
   /** Default Constructor */
   MessagesDialog(QWidget *parent = 0);
   /** Default Destructor */
-
-
- void insertMessages();
  void insertMsgTxtAndFiles();
-
-
  virtual void keyPressEvent(QKeyEvent *) ;
+
+public slots:
+ void insertMessages();
 private slots:
 
   /** Create the context popup menu and it's submenus */
   void messageslistWidgetCostumPopupMenu( QPoint point ); 
   void msgfilelistWidgetCostumPopupMenu(QPoint);  
 
-void changeBox( int newrow );
-void updateMessages ( QTreeWidgetItem * item, int column );
+  void changeBox( int newrow );
+  void updateCurrentMessage ( QTreeWidgetItem * item, QTreeWidgetItem * item2 );
 
   void newmessage();
 
@@ -61,7 +59,6 @@ void updateMessages ( QTreeWidgetItem * item, int column );
   void printpreview();
   
   void removemessage();
-  void markMsgAsRead();  
   
   void getcurrentrecommended();
   void getallrecommended();
@@ -72,6 +69,7 @@ void updateMessages ( QTreeWidgetItem * item, int column );
 private:
 
   bool getCurrentMsg(std::string &cid, std::string &mid);
+  void setMsgAsRead(QTreeWidgetItem *);
 
   std::string mCurrCertId;
   std::string mCurrMsgId;

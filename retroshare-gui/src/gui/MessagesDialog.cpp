@@ -65,7 +65,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
   connect( ui.msgWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messageslistWidgetCostumPopupMenu( QPoint ) ) );
   connect( ui.msgList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgfilelistWidgetCostumPopupMenu( QPoint ) ) );
-  connect( ui.msgWidget, SIGNAL( itemClicked ( QTreeWidgetItem *, int) ), this, SLOT( updateMessages ( QTreeWidgetItem *, int) ) );
+  connect( ui.msgWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem *,QTreeWidgetItem * ) ), this, SLOT( updateCurrentMessage( QTreeWidgetItem *, QTreeWidgetItem *) ) );
   connect( ui.listWidget, SIGNAL( currentRowChanged ( int) ), this, SLOT( changeBox ( int) ) );
   
   connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(newmessage()));
@@ -448,11 +448,9 @@ void MessagesDialog::getallrecommended()
 	}
 }
 
-void MessagesDialog::changeBox( int newrow )
+void MessagesDialog::changeBox(int)
 {
-	//std::cerr << "MessagesDialog::changeBox()" << std::endl;
-	insertMessages();
-	insertMsgTxtAndFiles();
+	insertMessages();				// show current msg list
 }
 
 void MessagesDialog::insertMessages()
@@ -463,7 +461,7 @@ void MessagesDialog::insertMessages()
 	rsMsgs -> getMessageSummaries(msgList);
 
 	/* get a link to the table */
-        QTreeWidget *msgWidget = ui.msgWidget;
+	QTreeWidget *msgWidget = ui.msgWidget;
 
 	/* get the MsgId of the current one ... */
 
@@ -500,7 +498,7 @@ void MessagesDialog::insertMessages()
 			break;
 	}
 
-        QList<QTreeWidgetItem *> items;
+	QList<QTreeWidgetItem *> items;
 	for(it = msgList.begin(); it != msgList.end(); it++)
 	{
 		/* check the message flags, to decide which
@@ -529,7 +527,7 @@ void MessagesDialog::insertMessages()
 		}
 
 		/* make a widget per friend */
-           	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
+		QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
 		/* So Text should be:
 		 * (1) Msg / Broadcast
@@ -581,7 +579,7 @@ void MessagesDialog::insertMessages()
 				QFont qf = item->font(i);
 				qf.setBold(true);
 				item->setFont(i, qf);
-			        item -> setIcon(2, (QIcon(":/images/message-mail.png")));
+				item -> setIcon(2, (QIcon(":/images/message-mail.png")));
 
 				//std::cerr << "Setting Item BOLD!" << std::endl;
 			}
@@ -601,12 +599,27 @@ void MessagesDialog::insertMessages()
 	}
 }
 
-void MessagesDialog::updateMessages( QTreeWidgetItem * item, int column )
+void MessagesDialog::updateCurrentMessage( QTreeWidgetItem *item ,  QTreeWidgetItem * )
 {
-	//std::cerr << "MessagesDialog::insertMsgTxtAndFiles()" << std::endl;
 	insertMsgTxtAndFiles();
+	setMsgAsRead(item) ;
 }
 
+void MessagesDialog::setMsgAsRead(QTreeWidgetItem *item)
+{
+	if(item == NULL)
+		return ;
+
+	for(int i = 0; i < 10; i++)
+	{
+		QFont qf = item->font(i);
+		qf.setBold(false);
+		item->setFont(i, qf);
+	}
+
+	std::string mid(item->text(5).toStdString());
+	rsMsgs->MessageRead(mid);
+}
 
 void MessagesDialog::insertMsgTxtAndFiles()
 {
@@ -654,7 +667,7 @@ void MessagesDialog::insertMsgTxtAndFiles()
 		return;
 	}
 
-        const std::list<FileInfo> &recList = msgInfo.files;
+	const std::list<FileInfo> &recList = msgInfo.files;
 	std::list<FileInfo>::const_iterator it;
 
 	/* get a link to the table */
@@ -662,18 +675,18 @@ void MessagesDialog::insertMsgTxtAndFiles()
 
 	/* get the MessageInfo */
 
-        tree->clear(); 
-        tree->setColumnCount(5); 
+	tree->clear(); 
+	tree->setColumnCount(5); 
 
-        QList<QTreeWidgetItem *> items;
+	QList<QTreeWidgetItem *> items;
 	for(it = recList.begin(); it != recList.end(); it++)
 	{
 		/* make a widget per person */
-           	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
+		QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 		/* (0) Filename */
 		item -> setText(0, QString::fromStdString(it->fname));
 		//std::cerr << "Msg FileItem(" << it->fname.length() << ") :" << it->fname << std::endl;
-			
+
 		/* (1) Size */
 		{
 			std::ostringstream out;
@@ -686,9 +699,9 @@ void MessagesDialog::insertMsgTxtAndFiles()
 			out << it->rank;
 			item -> setText(2, QString::fromStdString(out.str()));
 		}
-			
+
 		item -> setText(3, QString::fromStdString(it->hash));
-			
+
 		/* add to the list */
 		items.append(item);
 	}
@@ -747,11 +760,7 @@ void MessagesDialog::insertMsgTxtAndFiles()
 	}
 
 	std::cerr << "MessagesDialog::insertMsgTxtAndFiles() Msg Displayed OK!" << std::endl;
-
-	/* finally mark message as read! */
-	rsMsgs -> MessageRead(mid);
 }
-
 
 bool MessagesDialog::getCurrentMsg(std::string &cid, std::string &mid)
 {
@@ -774,39 +783,21 @@ bool MessagesDialog::getCurrentMsg(std::string &cid, std::string &mid)
 
 void MessagesDialog::removemessage()
 {
-#ifdef TO_REMOVE
-	//std::cerr << "MessagesDialog::removemessage()" << std::endl;
-	std::string cid, mid;
-	if (!getCurrentMsg(cid, mid))
-	{
-		//std::cerr << "MessagesDialog::removemessage()";
-		//std::cerr << " No Message selected" << std::endl;
-		return;
-	}
-#endif
-
 	QList<QTreeWidgetItem*> list(ui.msgWidget->selectedItems()) ; 
+
+	int maxrow = -1 ;
+	for(QList<QTreeWidgetItem*>::const_iterator it(list.begin());it!=list.end();++it)
+		maxrow = std::max(maxrow,ui.msgWidget->indexOfTopLevelItem(*it)) ;
+
+	QTreeWidgetItem *next = ui.msgWidget->topLevelItem(maxrow+1) ;
 
 	for(QList<QTreeWidgetItem*>::const_iterator it(list.begin());it!=list.end();++it)
 		rsMsgs->MessageDelete((*it)->text(5).toStdString());
 
-	return;
-}
+	if(next != NULL)
+		ui.msgWidget->setCurrentItem(next) ;
 
-
-void MessagesDialog::markMsgAsRead()
-{
-	//std::cerr << "MessagesDialog::markMsgAsRead()" << std::endl;
-	std::string cid, mid;
-	if (!getCurrentMsg(cid, mid))
-	{
-		//std::cerr << "MessagesDialog::markMsgAsRead()";
-		//std::cerr << " No Message selected" << std::endl;
-		return;
-	}
-
-	rsMsgs -> MessageRead(mid);
-
+	insertMessages();
 	return;
 }
 

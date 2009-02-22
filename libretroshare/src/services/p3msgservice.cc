@@ -24,6 +24,8 @@
  */
 
 
+#include "rsiface/rsiface.h"
+
 #include "pqi/pqibin.h"
 #include "pqi/pqiarchive.h"
 #include "pqi/p3connmgr.h"
@@ -121,8 +123,11 @@ int 	p3MsgService::incomingMsgs()
 {
 	RsMsgItem *mi;
 	int i = 0;
+	bool changed = false ;
+
 	while((mi = (RsMsgItem *) recvItem()) != NULL)
 	{
+		changed = true ;
 		++i;
 		mi -> recvTime = time(NULL);
 		mi -> msgFlags = RS_MSG_FLAGS_NEW;
@@ -162,6 +167,9 @@ int 	p3MsgService::incomingMsgs()
 
 		/**** STACK UNLOCKED ***/
 	}
+	if(changed)
+		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+
 	return 1;
 }
 
@@ -472,56 +480,70 @@ bool    p3MsgService::removeMsgId(std::string mid)
 {
   	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	uint32_t msgId = atoi(mid.c_str());
+	bool changed = false ;
 
-	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-
-	mit = imsg.find(msgId);
-	if (mit != imsg.end())
 	{
-		RsMsgItem *mi = mit->second;
-		imsg.erase(mit);
-		delete mi;
-		msgChanged.IndicateChanged();
+		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+		mit = imsg.find(msgId);
+		if (mit != imsg.end())
+		{
+			changed = true ;
+			RsMsgItem *mi = mit->second;
+			imsg.erase(mit);
+			delete mi;
+	//		msgChanged.IndicateChanged();
 
-		return true;
+			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+			return true;
+		}
+
+		mit = msgOutgoing.find(msgId);
+		if (mit != msgOutgoing.end())
+		{
+			changed = true ;
+			RsMsgItem *mi = mit->second;
+			msgOutgoing.erase(mit);
+			delete mi;
+	//		msgChanged.IndicateChanged();
+
+			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+			return true;
+		}
 	}
 
-	mit = msgOutgoing.find(msgId);
-	if (mit != msgOutgoing.end())
-	{
-		RsMsgItem *mi = mit->second;
-		msgOutgoing.erase(mit);
-		delete mi;
-		msgChanged.IndicateChanged();
-
-		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-
-		return true;
-	}
+	if(changed)
+		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
 
 	return false;
 }
 
 bool    p3MsgService::markMsgIdRead(std::string mid)
 {
-  	std::map<uint32_t, RsMsgItem *>::iterator mit;
+	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	uint32_t msgId = atoi(mid.c_str());
+	bool changed = false ;
 
-	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-
-	mit = imsg.find(msgId);
-	if (mit != imsg.end())
 	{
-		RsMsgItem *mi = mit->second;
-		mi -> msgFlags &= ~(RS_MSG_FLAGS_NEW);
-		msgChanged.IndicateChanged();
-	
-		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-		return true;
+		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+		mit = imsg.find(msgId);
+		if (mit != imsg.end())
+		{
+			changed = true ;
+			RsMsgItem *mi = mit->second;
+			mi -> msgFlags &= ~(RS_MSG_FLAGS_NEW);
+
+			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+		}
 	}
-	return false;
+
+	if(changed)				// no need to notify, because the msg is always 
+		return true; 		// marked as read from the gui itself, so the gui 
+	else 						// can mark it as read.
+		return false;
 }
 
 /****************************************/

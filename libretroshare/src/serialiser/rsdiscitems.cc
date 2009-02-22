@@ -352,24 +352,21 @@ bool     RsDiscSerialiser::serialiseReply(RsDiscReply *item, void *data, uint32_
 	offset += 8;
 
 	/* add mandatory parts first */
-	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, 
-					TLV_TYPE_IPV4_LOCAL, &(item->laddr));
-	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, 
-					TLV_TYPE_IPV4_REMOTE, &(item->saddr));
+	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->laddr));
+	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->saddr));
 	ok &= setRawUInt16(data, tlvsize, &offset, item->contact_tf);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->discFlags);
 
-	ok &= SetTlvString(data, tlvsize, &offset, 
-					TLV_TYPE_STR_PEERID, item->aboutId);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, item->aboutId);
 
 	ok &= item->certDER.SetTlv(data, tlvsize, &offset);
 
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef RSSERIAL_DEBUG 
+//#ifdef RSSERIAL_DEBUG 
 		std::cerr << "RsDiscSerialiser::serialiseReply() Size Error! " << std::endl;
-#endif
+//#endif
 	}
 
 	return ok;

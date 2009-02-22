@@ -39,35 +39,33 @@ class QStandardItemModel;
 
 class TransfersDialog : public MainPage
 {
-  Q_OBJECT
+	Q_OBJECT
 
-public:
-  /** Default Constructor */
-  TransfersDialog(QWidget *parent = 0);
-  /** Default Destructor */
-  ~TransfersDialog();
+	public:
+		/** Default Constructor */
+		TransfersDialog(QWidget *parent = 0);
+		/** Default Destructor */
+		~TransfersDialog();
 
+	public slots:
+		void insertTransfers();
 
+	private slots:
 
+		/** Create the context popup menu and it's submenus */
+		void downloadListCostumPopupMenu( QPoint point );
 
-  void insertTransfers();
+		void cancel();
+		/** removes finished Downloads**/
+		void clearcompleted();
+		void playSelectedTransfer(); 
 
-private slots:
-  
-  /** Create the context popup menu and it's submenus */
-  void downloadListCostumPopupMenu( QPoint point );
-  
-  void cancel();
-  /** removes finished Downloads**/
-  void clearcompleted();
-  void playSelectedTransfer(); 
+	signals:
+		void playFiles(QStringList files);
 
-signals:
-  void playFiles(QStringList files);
-
-private:
-  		QStandardItemModel *DLListModel;
-  		QStandardItemModel *ULListModel;
+	private:
+		QStandardItemModel *DLListModel;
+		QStandardItemModel *ULListModel;
 		QItemSelectionModel *selection;
 		DLListDelegate *DLDelegate;
 		ULListDelegate *ULDelegate;
@@ -78,26 +76,26 @@ private:
 		qlonglong completed, remaining;
 
 
-  /** Create the actions on the tray menu or menubar */
-  void createActions();
+		/** Create the actions on the tray menu or menubar */
+		void createActions();
 
-  /** Define the popup menus for the Context menu */
-  QMenu* contextMnu;
-  /** Defines the actions for the context menu */
-  QAction* showdowninfoAct;
-  QAction* cancelAct;
-  QAction* clearcompletedAct;
+		/** Define the popup menus for the Context menu */
+		QMenu* contextMnu;
+		/** Defines the actions for the context menu */
+		QAction* showdowninfoAct;
+		QAction* cancelAct;
+		QAction* clearcompletedAct;
 
-  QTreeView *downloadList;
+		QTreeView *downloadList;
 
-  /** Adds a new action to the toolbar. */
-  void addAction(QAction *action, const char *slot = 0);
+		/** Adds a new action to the toolbar. */
+		void addAction(QAction *action, const char *slot = 0);
 
-  /** Qt Designer generated object */
-  Ui::TransfersDialog ui;
-  
-public slots:
-		int addItem(QString symbol, QString name, QString coreID, qlonglong size, double progress, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining);
+		/** Qt Designer generated object */
+		Ui::TransfersDialog ui;
+
+		public slots:
+			int addItem(QString symbol, QString name, QString coreID, qlonglong size, double progress, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining);
 		void delItem(int row);
 
 		int addUploadItem(QString symbol, QString name, QString coreID, qlonglong size, double progress, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining);
@@ -105,7 +103,7 @@ public slots:
 
 		void editItem(int row, int column, QVariant data);
 		void updateProgress(int value);
-		
+
 		double getProgress(int row, QStandardItemModel *model);
 		double getSpeed(int row, QStandardItemModel *model);
 		QString getFileName(int row, QStandardItemModel *model);

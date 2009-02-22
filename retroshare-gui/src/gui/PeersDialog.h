@@ -48,13 +48,11 @@ public:
   void clearOldChats();
   
   void loadEmoticonsgroupchat();
-
-  void  insertPeers();
-
   void setChatDialog(ChatDialog *cd);
 
 public slots:
 
+  void  insertPeers();
 	void toggleSendItem( QTreeWidgetItem *item, int col );
 
   void insertChat();

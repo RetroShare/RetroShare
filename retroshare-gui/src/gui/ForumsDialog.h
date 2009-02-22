@@ -33,11 +33,11 @@ public:
   ForumsDialog(QWidget *parent = 0);
 
  void insertForums();
- void insertThreads();
  void insertPost();
 
 private slots:
 
+ void insertThreads();
   /** Create the context popup menu and it's submenus */
   void forumListCustomPopupMenu( QPoint point ); 
   void threadListCustomPopupMenu( QPoint point );  
