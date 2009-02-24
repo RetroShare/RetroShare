@@ -54,7 +54,7 @@ win32 {
 	MOC_DIR = temp/moc
 
     LIBS += -L"../../../../lib" -lretroshare -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
-    LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -gdi32
+    LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
     LIBS += -lole32 -lwinmm
 
 	RC_FILE = gui/images/retroshare_win.rc
