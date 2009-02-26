@@ -46,6 +46,8 @@
  * The startup routine's are defined in rsiface.h
  */
 
+RsControl *rsicontrol ;
+
 int main(int argc, char **argv)
 {
 	/* Retroshare startup is configured using an RsInit object.
@@ -93,6 +95,8 @@ int main(int argc, char **argv)
 	/* Start-up libretroshare server threads */
 
 	rsServer -> StartupRetroShare();
+
+	rsicontrol = rsServer ;
 	RsInit::passwd = "" ;
 	//CleanupRsConfig(config);
 	
