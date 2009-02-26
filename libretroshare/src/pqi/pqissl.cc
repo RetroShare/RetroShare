@@ -33,6 +33,7 @@
 #include "util/rsnet.h"
 #include "util/rsdebug.h"
 
+#include <unistd.h>
 #include <errno.h>
 #include <openssl/err.h>
 
@@ -1341,7 +1342,14 @@ int	pqissl::accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr) // initiat
 
 int 	pqissl::senddata(void *data, int len)
 {
-	int tmppktlen = SSL_write(ssl_connection, data, len);
+	int tmppktlen ;
+	int nbtries = 0 ;
+#ifdef WIN32	
+	while( (tmppktlen = SSL_write(ssl_connection, data, len)) == -1 && nbtries++ < 50) Sleep(300);
+#else
+	while( (tmppktlen = SSL_write(ssl_connection, data, len)) == -1 && nbtries++ < 50) usleep(300000);
+#endif
+
 	if (len != tmppktlen)
 	{
 		std::ostringstream out;
@@ -1359,6 +1367,7 @@ int 	pqissl::senddata(void *data, int len)
 			out << std::endl;
 	        	out << "Socket Closed Abruptly.... Resetting PQIssl";
 			out << std::endl;
+			std::cerr << out.str() ;
 			rslog(RSL_ALERT, pqisslzone, out.str());
 			reset();
 			return -1;
@@ -1368,6 +1377,7 @@ int 	pqissl::senddata(void *data, int len)
 			out << "SSL_write() SSL_ERROR_WANT_WRITE";
 			out << std::endl;
 			rslog(RSL_ALERT, pqisslzone, out.str());
+			std::cerr << out.str() ;
 			return -1;
 		}
 		else if (err == SSL_ERROR_WANT_READ)
@@ -1375,6 +1385,7 @@ int 	pqissl::senddata(void *data, int len)
 			out << "SSL_write() SSL_ERROR_WANT_READ";
 			out << std::endl;
 			rslog(RSL_ALERT, pqisslzone, out.str());
+			std::cerr << out.str() ;
 			return -1;
 		}
 		else
@@ -1385,6 +1396,7 @@ int 	pqissl::senddata(void *data, int len)
 			out << std::endl;
 	        	out << "\tResetting!";
 			out << std::endl;
+			std::cerr << out.str() ;
 			rslog(RSL_ALERT, pqisslzone, out.str());
 
 			reset();
@@ -1442,6 +1454,7 @@ int 	pqissl::readdata(void *data, int len)
 				}
 
 				rslog(RSL_ALERT, pqisslzone, out.str());
+				std::cerr << out.str() << std::endl ;
 				return 0;
 			}
 
@@ -1454,6 +1467,7 @@ int 	pqissl::readdata(void *data, int len)
 				out << std::endl;
 				rslog(RSL_ALERT, pqisslzone, out.str());
 				reset();
+				std::cerr << out.str() << std::endl ;
 				return -1;
 			}
 			else if (error == SSL_ERROR_WANT_WRITE)
@@ -1461,6 +1475,7 @@ int 	pqissl::readdata(void *data, int len)
 				out << "SSL_read() SSL_ERROR_WANT_WRITE";
 				out << std::endl;
 				rslog(RSL_ALERT, pqisslzone, out.str());
+				std::cerr << out.str() << std::endl ;
 				return -1;
 			}
 			else if (error == SSL_ERROR_WANT_READ)
@@ -1468,6 +1483,7 @@ int 	pqissl::readdata(void *data, int len)
 				out << "SSL_read() SSL_ERROR_WANT_READ";
 				out << std::endl;
 				rslog(RSL_ALERT, pqisslzone, out.str());
+				std::cerr << out.str() << std::endl ;
 				return -1;
 			}
 			else
@@ -1476,6 +1492,7 @@ int 	pqissl::readdata(void *data, int len)
 				out << std::endl;
 				out << "\tResetting!";
 				rslog(RSL_ALERT, pqisslzone, out.str());
+				std::cerr << out.str() << std::endl ;
 				reset();
 				return -1;
 			}

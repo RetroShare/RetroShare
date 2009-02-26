@@ -436,12 +436,14 @@ int	pqistreamer::handleoutgoing()
 		if (pkt_wpending)
 		{
 			std::ostringstream out;
-			out << "Sending Out Pkt!";
 			// write packet.
 			len = getRsItemSize(pkt_wpending);
+
+			out << "Sending Out Pkt of size " << len << " !";
+
 			if (len != (ss = bio->senddata(pkt_wpending, len)))
 			{
-				out << "Problems with Send Data!";
+				out << "Problems with Send Data! (only " << ss << " bytes sent" << ", total pkt size=" << len ;
 				out << std::endl;
 				std::cerr << out.str() ;
 	  			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
@@ -586,7 +588,7 @@ int	pqistreamer::handleincoming()
 				std::ostringstream out;
 				out << "Error Completing Read (read ";
 				out << tmplen << "/" << extralen << ")" << std::endl;
-//				std::cerr << out.str() ;
+				std::cerr << out.str() ;
 	  			pqioutput(PQL_ALERT, pqistreamerzone, out.str());
 
 				pqiNotify *notify = getPqiNotify();
@@ -606,7 +608,8 @@ int	pqistreamer::handleincoming()
 					msgout <<  "\n";
 
 					std::string msg = msgout.str();
-					notify->AddSysMessage(0, RS_SYS_WARNING, title, msg);
+					std::cout << msg << std::endl ;
+//					notify->AddSysMessage(0, RS_SYS_WARNING, title, msg);
 				}
 				bio->close();	
 				return -1;
