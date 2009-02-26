@@ -10,6 +10,8 @@ echo attempting to get svn revision number...
 svn=`svn info | grep 'Revision:' | cut -d\  -f2`
 echo done.
 version="$version"."$svn"
+pkgname=RetroShare_"$version"_ubuntu_"$arch".deb
+
 echo
 echo Building retroshare debian package version $version for Ubuntu $arch. 
 echo Please check that:
@@ -18,7 +20,7 @@ echo "    "- you have compiled libretroshare and retroshare-gui in ../../libretr
 echo "                                                        "and ../../retroshare-gui/src/
 echo "    "- you have updated version numbers in ../../retroshare-gui/src/util/rsversion.cpp
 echo "                                      "and ../../retroshare-gui/src/retroshare.nsi
-echo "    "- version and name will be: RetroShare_"$version"_ubuntu_hardy_"$arch".deb
+echo "    "- version and name will be: $pkgname
 
 if ! test `whoami` = "root" ; then
 	echo Please run this script as root.
@@ -68,9 +70,8 @@ echo Computing/setting md5 sums...
 cd retroshare
 find usr -type f -exec md5sum {} \; > DEBIAN/md5sums
 cd ..
-echo Creating package RetroShare_"$version"_ubuntu_hardy_"$arch".deb
-
-dpkg-deb -b retroshare RetroShare_"$version"_ubuntu_hardy_"$arch".deb
+echo Creating package $pkgname 
+dpkg-deb -b retroshare $pkgname 
 
 # cleaning
 echo Cleaning...
