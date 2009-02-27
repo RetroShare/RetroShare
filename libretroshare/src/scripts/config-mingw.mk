@@ -1,9 +1,9 @@
 ####
 #Define OS.
 #
-OS = Linux
+#OS = Linux
 #OS = Cygwin
-#OS = Win # MinGw.
+OS = Win # MinGw.
 #
 #
 #
@@ -51,12 +51,12 @@ else
 
     #MinGw....
     MINGW_SRC_ROOT=c:\home\rmfern\prog\MinGW
-    SSL_DIR=$(MINGW_SRC_ROOT)\openssl-0.9.7g
-    FLTK_DIR=$(MINGW_SRC_ROOT)\FLTK-1.1.6
-    PTHREADS_DIR=$(MINGW_SRC_ROOT)\pthreads\pthreads.2
-    KADC_DIR=$(MINGW_SRC_ROOT)\debug\KadC-2006-Oct-19
+    SSL_DIR=$(MINGW_SRC_ROOT)\openssl-0.9.7g-xpgp-0.1c
+    PTHREADS_DIR=$(MINGW_SRC_ROOT)\pthreads-w32-2-8-0-release
     ZLIB_DIR=$(MINGW_SRC_ROOT)\zlib-1.2.3
-    UPNPC_DIR=$(MINGW_SRC_ROOT)\miniupnpc-20070515
+    UPNPC_DIR=$(MINGW_SRC_ROOT)\miniupnpc-1.0
+    KADC_DIR=$(MINGW_SRC_ROOT)\debug\KadC-2006-Oct-19
+    FLTK_DIR=$(MINGW_SRC_ROOT)\FLTK-1.1.6
 
   endif
 
