@@ -1409,12 +1409,30 @@ int 	pqissl::senddata(void *data, int len)
 int 	pqissl::readdata(void *data, int len)
 {
 	int total_len = 0 ;
+
+	// There is a do, because packets can be splitted into multiple ssl buffers
+	// when they are larger than 16384 bytes. Such packets have to be read in 
+	// multiple slices.
 	do
 	{
-		int tmppktlen = SSL_read(ssl_connection, (void*)((unsigned long int)data+(unsigned long int)total_len), len-total_len);
+		static const int max_tries = 50 ;
+		int nbtries = 0 ;
+		int tmppktlen  ;
 
-//		std::cerr <<"pqissl: read " << tmppktlen+total_len << " bytes. expected " << len << ", still " << len-(tmppktlen+total_len) << " to read"<< std::endl ;
-		// need to catch errors.....
+		// This is a loop to prevent loosing a connexion just because there is a
+		// lag in the network. This happens quite often actually. The total time
+		// to wait if nothing happens is 50*20ms = 1 sec, which is not so much.
+		// This current version seems to work fine. 
+		//
+		while( -1 == (tmppktlen = SSL_read(ssl_connection, (void*)((unsigned long int)data+(unsigned long int)total_len), len-total_len)) && nbtries++ < max_tries)
+#ifdef WIN32
+			Sleep(20) ;
+#else
+			usleep(20000) ;
+#endif
+
+		// Need to catch errors.....
+		//
 		if (tmppktlen <= 0) // probably needs a reset.
 		{
 			std::ostringstream out;
