@@ -75,8 +75,15 @@ public:
   
   /** Returns true if RetroShare should start on system boot. */
   bool runRetroshareOnBoot();
+
   /** Set whether to run RetroShare on system boot. */
   void setRunRetroshareOnBoot(bool run);
+
+  /** Returns the chat avatar. Returns a null image if no avatar is saved. */
+  QImage getChatAvatar() const ;
+
+  /** set the chat avatar. Returns a null image if no avatar is saved. */
+  void setChatAvatar(const QImage&) ;
 
   
   /* Get the destination log file. */

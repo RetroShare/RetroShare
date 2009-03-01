@@ -1,5 +1,5 @@
-CONFIG += qt gui uic qrc uitools 
-QT     += network xml script
+CONFIG += qt gui uic qrc resources uitools
+QT     += network xml script 
 TEMPLATE = app
 TARGET = RetroShare
 
@@ -16,6 +16,7 @@ linux-g++ {
 	LIBS += ../../../../lib/linux-g++/libminiupnpc.a 
 	LIBS += ../../../../lib/linux-g++/libssl.a 
 	LIBS += ../../../../lib/linux-g++/libcrypto.a
+	LIBS += -lQtUiTools
     LIBS += -lz
 }
 linux-g++-64 {
@@ -39,8 +40,11 @@ win32-x-g++ {
 	LIBS += ../../../../lib/win32-x-g++/libminiupnpc.a 
 	LIBS += ../../../../lib/win32-x-g++/libz.a 
 	LIBS += -L${HOME}/.wine/drive_c/pthreads/lib -lpthreadGCE2
+	LIBS += -lQtUiTools
 	LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32 -gdi32
 	LIBS += -lole32 -lwinmm
+
+	DEFINES *= WIN32
 
 	RC_FILE = gui/images/retroshare_win.rc
 }

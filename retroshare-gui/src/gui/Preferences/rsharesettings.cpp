@@ -54,6 +54,7 @@
 #define SETTING_NEWSFEED_FLAGS		"NewsFeedFlags"
 #define SETTING_CHAT_FLAGS		"ChatFlags"
 #define SETTING_NOTIFY_FLAGS		"NotifyFlags"
+#define SETTING_CHAT_AVATAR			"ChatAvatar"
 
 /* Default Retroshare Settings */
 #define DEFAULT_OPACITY             100
@@ -114,6 +115,15 @@ RshareSettings::RshareSettings()
 
 }
 
+/** Gets/sets the currently saved chat avatar. */
+QImage RshareSettings::getChatAvatar() const
+{
+  return value(SETTING_CHAT_AVATAR).value<QImage>();
+}
+void RshareSettings::setChatAvatar(const QImage& I)
+{
+  setValue(SETTING_CHAT_AVATAR,I) ;
+}
 
 /** Gets the currently preferred language code for Rshare. */
 QString RshareSettings::getLanguageCode()

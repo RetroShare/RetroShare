@@ -86,7 +86,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 
   // Create the status bar
   std::ostringstream statusstr;
-  statusstr << "Chatting with: " << dialogName << " !!! " << id;
+  statusstr << "Chatting with " << dialogName << " (" << id << ")" ;
   statusBar()->showMessage(QString::fromStdString(statusstr.str()));
   ui.textBrowser->setOpenExternalLinks ( false );
 
@@ -606,6 +606,7 @@ void PopupChatDialog::updateAvatar()
 void PopupChatDialog::getAvatar()
 {
 	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg)");
+
 	if(!fileName.isEmpty())
 	{
 		picture = QPixmap(fileName).scaled(82,82, Qt::IgnoreAspectRatio);

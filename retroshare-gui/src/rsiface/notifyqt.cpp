@@ -144,6 +144,8 @@ void NotifyQt::UpdateGUI()
 		displayChannels();
 	}
 
+	lastTs = time(NULL) ;
+
 	static bool already_updated = false ;	// these only update once at start because they may already have been set before 
 														// the gui is running, then they get updated by callbacks.
 	if(!already_updated)
