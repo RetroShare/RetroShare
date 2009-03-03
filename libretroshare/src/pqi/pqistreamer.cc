@@ -58,6 +58,7 @@ pqistreamer::pqistreamer(RsSerialiser *rss, std::string id, BinInterface *bio_in
 	/* allocated once */
 	pkt_rpend_size = getRsPktMaxSize();
 	pkt_rpending = malloc(pkt_rpend_size);
+	reading_state = reading_state_initial ;
 
 	// avoid uninitialized (and random) memory read.
 	memset(pkt_rpending,0,pkt_rpend_size) ;
@@ -68,20 +69,20 @@ pqistreamer::pqistreamer(RsSerialiser *rss, std::string id, BinInterface *bio_in
 	setRate(true, 0);
 	setRate(false, 0);
 
-        {
-	  std::ostringstream out;
-	  out << "pqistreamer::pqistreamer()";
-          out << " Initialisation!" << std::endl;
-	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
+	{
+		std::ostringstream out;
+		out << "pqistreamer::pqistreamer()";
+		out << " Initialisation!" << std::endl;
+		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
 	}
 
 	if (!bio_in)
-        {
-	  std::ostringstream out;
-	  out << "pqistreamer::pqistreamer()";
-          out << " NULL bio, FATAL ERROR!" << std::endl;
-	  pqioutput(PQL_ALERT, pqistreamerzone, out.str());
-	  exit(1);
+	{
+		std::ostringstream out;
+		out << "pqistreamer::pqistreamer()";
+		out << " NULL bio, FATAL ERROR!" << std::endl;
+		pqioutput(PQL_ALERT, pqistreamerzone, out.str());
+		exit(1);
 	}
 
 	return;
@@ -89,28 +90,28 @@ pqistreamer::pqistreamer(RsSerialiser *rss, std::string id, BinInterface *bio_in
 
 pqistreamer::~pqistreamer()
 {
-        {
-	  std::ostringstream out;
-	  out << "pqistreamer::~pqistreamer()";
-          out << " Destruction!" << std::endl;
-	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
+	{
+		std::ostringstream out;
+		out << "pqistreamer::~pqistreamer()";
+		out << " Destruction!" << std::endl;
+		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
 	}
 
 	if (bio_flags & BIN_FLAGS_NO_CLOSE)
 	{
-	  std::ostringstream out;
-	  out << "pqistreamer::~pqistreamer()";
-          out << " Not Closing BinInterface!" << std::endl;
-	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
+		std::ostringstream out;
+		out << "pqistreamer::~pqistreamer()";
+		out << " Not Closing BinInterface!" << std::endl;
+		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
 	}
 	else if (bio)
 	{
-	  std::ostringstream out;
-	  out << "pqistreamer::~pqistreamer()";
-          out << " Deleting BinInterface!" << std::endl;
-	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
+		std::ostringstream out;
+		out << "pqistreamer::~pqistreamer()";
+		out << " Deleting BinInterface!" << std::endl;
+		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
 
-	  delete bio;
+		delete bio;
 	}
 
 	/* clean up serialiser */
@@ -354,17 +355,17 @@ int 	pqistreamer::handleincomingitem(RsItem *pqi)
 
 int	pqistreamer::handleoutgoing()
 {
-        {
-	  std::ostringstream out;
-	  out << "pqistreamer::handleoutgoing()";
-	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
+	{
+		std::ostringstream out;
+		out << "pqistreamer::handleoutgoing()";
+		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
 	}
 
 	int maxbytes = outAllowedBytes();
 	int sentbytes = 0;
 	int len;
 	int ss;
-//	std::cerr << "pqistreamer: maxbytes=" << maxbytes<< std::endl ; 
+	//	std::cerr << "pqistreamer: maxbytes=" << maxbytes<< std::endl ; 
 
 	std::list<void *>::iterator it;
 
@@ -379,8 +380,8 @@ int	pqistreamer::handleoutgoing()
 
 			std::ostringstream out;
 			out << "pqistreamer::handleoutgoing() Not active -> Clearing Pkt!";
-//			std::cerr << out.str() ;
-	  		pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
+			//			std::cerr << out.str() ;
+			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
 		}
 		for(it = out_data.begin(); it != out_data.end(); )
 		{
@@ -389,8 +390,8 @@ int	pqistreamer::handleoutgoing()
 
 			std::ostringstream out;
 			out << "pqistreamer::handleoutgoing() Not active -> Clearing DPkt!";
-//			std::cerr << out.str() ;
-	  		pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
+			//			std::cerr << out.str() ;
+			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
 		}
 
 		/* also remove the pending packets */
@@ -403,7 +404,7 @@ int	pqistreamer::handleoutgoing()
 		outSentBytes(sentbytes);
 		return 0;
 	}
-	
+
 	// a very simple round robin
 
 	bool sent = true;
@@ -446,17 +447,17 @@ int	pqistreamer::handleoutgoing()
 				out << "Problems with Send Data! (only " << ss << " bytes sent" << ", total pkt size=" << len ;
 				out << std::endl;
 				std::cerr << out.str() ;
-	  			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
+				pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
 
 				outSentBytes(sentbytes);
-				// pkt_wpending will keep til next time.
+				// pkt_wpending will kept til next time.
 				// ensuring exactly the same data is written (openSSL requirement).
 				return -1;
 			}
 
 			out << " Success!" << ", sent " << len << " bytes" << std::endl;
-//			std::cerr << out.str() ;
-	  		pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
+			//			std::cerr << out.str() ;
+			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
 
 			free(pkt_wpending);
 			pkt_wpending = NULL;
@@ -472,15 +473,15 @@ int	pqistreamer::handleoutgoing()
 
 /* Handles reading from input stream.
  */
-
+#ifdef OLD_VERSION
 int	pqistreamer::handleincoming()
 {
 	int readbytes = 0;
 
-        {
-	  std::ostringstream out;
-	  out << "pqistreamer::handleincoming()";
-	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
+	{
+		std::ostringstream out;
+		out << "pqistreamer::handleincoming()";
+		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
 	}
 
 	if (!(bio->isactive()))
@@ -505,8 +506,8 @@ int	pqistreamer::handleincoming()
 		// read the basic block (minimum packet size)
 		if (blen != (tmplen = bio->readdata(block, blen)))
 		{
-	  		pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, 
-				"pqistreamer::handleincoming() Didn't read BasePkt!");
+			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, 
+					"pqistreamer::handleincoming() Didn't read BasePkt!");
 
 			// error.... (either blocked or failure)
 			inReadBytes(readbytes);
@@ -514,8 +515,8 @@ int	pqistreamer::handleincoming()
 			{
 
 				// most likely blocked!
-	  			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, 
-					"pqistreamer::handleincoming() read blocked");
+				pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, 
+						"pqistreamer::handleincoming() read blocked");
 
 				return 0;
 			}
@@ -523,8 +524,8 @@ int	pqistreamer::handleincoming()
 			{
 				// assume the worse, that 
 				// the stream is bust ... and jump away.
-	  			pqioutput(PQL_WARNING, pqistreamerzone, 
-					"pqistreamer::handleincoming() Error in bio read");
+				pqioutput(PQL_WARNING, pqistreamerzone, 
+						"pqistreamer::handleincoming() Error in bio read");
 				return -1;
 			}
 			else // tmplen > 0
@@ -533,7 +534,7 @@ int	pqistreamer::handleincoming()
 				std::ostringstream out;
 				out << "pqistreamer::handleincoming() Incomplete ";
 				out << "(Strange) read of " << tmplen << " bytes";
-	  			pqioutput(PQL_ALERT, pqistreamerzone, out.str());
+				pqioutput(PQL_ALERT, pqistreamerzone, out.str());
 				return -1;
 			}
 		}
@@ -544,15 +545,15 @@ int	pqistreamer::handleincoming()
 		int extralen = getRsItemSize(block) - blen;
 		if (extralen > maxlen - blen)
 		{
-	  		pqioutput(PQL_ALERT, pqistreamerzone, "ERROR: Read Packet too Big!");
+			pqioutput(PQL_ALERT, pqistreamerzone, "ERROR: Read Packet too Big!");
 
 			pqiNotify *notify = getPqiNotify();
 			if (notify)
 			{
 				std::string title =
 					"Warning: Bad Packet Read";
-			
-	  			std::ostringstream msgout;
+
+				std::ostringstream msgout;
 				msgout <<  "               **** WARNING ****     \n";
 				msgout <<  "Retroshare has caught a BAD Packet Read";
 				msgout <<  "\n";
@@ -589,15 +590,15 @@ int	pqistreamer::handleincoming()
 				out << "Error Completing Read (read ";
 				out << tmplen << "/" << extralen << ")" << std::endl;
 				std::cerr << out.str() ;
-	  			pqioutput(PQL_ALERT, pqistreamerzone, out.str());
+				pqioutput(PQL_ALERT, pqistreamerzone, out.str());
 
 				pqiNotify *notify = getPqiNotify();
 				if (notify)
 				{
 					std::string title =
 						"Warning: Error Completing Read";
-			
-	  				std::ostringstream msgout;
+
+					std::ostringstream msgout;
 					msgout <<  "               **** WARNING ****     \n";
 					msgout <<  "Retroshare has experienced an unexpected Read ERROR";
 					msgout <<  "\n";
@@ -609,7 +610,12 @@ int	pqistreamer::handleincoming()
 
 					std::string msg = msgout.str();
 					std::cout << msg << std::endl ;
-//					notify->AddSysMessage(0, RS_SYS_WARNING, title, msg);
+					std::cout << "block = " 
+						<< (int)(((unsigned char*)block)[0]) << " " 
+						<< (int)(((unsigned char*)block)[1]) << " " 
+						<< (int)(((unsigned char*)block)[2]) << " " 
+						<< (int)(((unsigned char*)block)[3])  << std::endl ;
+					//					notify->AddSysMessage(0, RS_SYS_WARNING, title, msg);
 				}
 				bio->close();	
 				return -1;
@@ -630,35 +636,229 @@ int	pqistreamer::handleincoming()
 
 		// create packet, based on header.
 		{
-		  std::ostringstream out;
-		  out << "Read Data Block -> Incoming Pkt(";
-		  out << blen + extralen << ")" << std::endl;
-//		  std::cerr << out.str() ;
-		  pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
+			std::ostringstream out;
+			out << "Read Data Block -> Incoming Pkt(";
+			out << blen + extralen << ")" << std::endl;
+			//		  std::cerr << out.str() ;
+			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
 		}
 
-//		std::cerr << "Deserializing packet of size " << pktlen <<std::endl ;
+		//		std::cerr << "Deserializing packet of size " << pktlen <<std::endl ;
 		RsItem *pkt = rsSerialiser->deserialise(block, &pktlen);
 
 		if ((pkt != NULL) && (0  < handleincomingitem(pkt)))
 		{
-	  		pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, 
-				"Successfully Read a Packet!");
+			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, 
+					"Successfully Read a Packet!");
 		}
 		else
 		{
-	  		pqioutput(PQL_ALERT, pqistreamerzone, 
-				"Failed to handle Packet!");
+			pqioutput(PQL_ALERT, pqistreamerzone, 
+					"Failed to handle Packet!");
 			inReadBytes(readbytes);
 			return -1;
 		}
 	}
 
-//	std::cerr << "pqistreamer:: total bytes read = " << readbytes << std::endl ;
+	//	std::cerr << "pqistreamer:: total bytes read = " << readbytes << std::endl ;
 	inReadBytes(readbytes);
 	return 0;
 }
+#endif
 
+int pqistreamer::handleincoming()
+{
+	int readbytes = 0;
+	static const int max_failed_read_attempts = 60 ;
+
+	{
+		std::ostringstream out;
+		out << "pqistreamer::handleincoming()";
+		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
+	}
+
+	if(!(bio->isactive()))
+	{
+		reading_state = reading_state_initial ;
+		return 0;
+	}
+
+	// enough space to read any packet.
+	int maxlen = pkt_rpend_size; 
+	void *block = pkt_rpending; 
+
+	// initial read size: basic packet.
+	int blen = getRsPktBaseSize();
+
+	int maxin = inAllowedBytes();
+
+	switch(reading_state)
+	{
+		case reading_state_initial: 			goto start_packet_read ;
+		case reading_state_packet_started:	goto continue_packet ;
+	}
+
+start_packet_read:
+	{	// scope to ensure variable visibility
+		// read the basic block (minimum packet size)
+		int tmplen;
+
+		if (blen != (tmplen = bio->readdata(block, blen)))
+		{
+			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, "pqistreamer::handleincoming() Didn't read BasePkt!");
+
+			// error.... (either blocked or failure)
+			if (tmplen == 0)
+			{
+				// most likely blocked!
+				pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, "pqistreamer::handleincoming() read blocked");
+				return 0;
+			}
+			else if (tmplen < 0)
+			{
+				// Most likely it is that the packet is pending but could not be read by pqissl because of stream flow.
+				// So we return without an error, and leave the machine state in 'start_read'.
+				//
+				pqioutput(PQL_WARNING, pqistreamerzone, "pqistreamer::handleincoming() Error in bio read");
+				return 0;
+			}
+			else // tmplen > 0
+			{
+				// strange case....This should never happen as partial reads are handled by pqissl below.
+				std::ostringstream out;
+				out << "pqistreamer::handleincoming() Incomplete ";
+				out << "(Strange) read of " << tmplen << " bytes";
+				pqioutput(PQL_ALERT, pqistreamerzone, out.str());
+				return -1;
+			}
+		}
+
+		readbytes += blen;
+		reading_state = reading_state_packet_started ;
+	}
+continue_packet:
+	{
+		// workout how much more to read.
+		int extralen = getRsItemSize(block) - blen;
+
+		if (extralen > maxlen - blen)
+		{
+			pqioutput(PQL_ALERT, pqistreamerzone, "ERROR: Read Packet too Big!");
+
+			pqiNotify *notify = getPqiNotify();
+			if (notify)
+			{
+				std::string title =
+					"Warning: Bad Packet Read";
+
+				std::ostringstream msgout;
+				msgout <<  "               **** WARNING ****     \n";
+				msgout <<  "Retroshare has caught a BAD Packet Read";
+				msgout <<  "\n";
+				msgout <<  "This is normally caused by connecting to an";
+				msgout <<  " OLD version of Retroshare";
+				msgout <<  "\n";
+				msgout <<  "(M:" << maxlen << " B:" << blen << " E:" << extralen << ")\n";
+				msgout <<  "\n";
+				msgout <<  "\n";
+				msgout <<  "Please get your friends to upgrade to the latest version";
+				msgout <<  "\n";
+				msgout <<  "\n";
+				msgout <<  "If you are sure the error was not caused by an old version";
+				msgout <<  "\n";
+				msgout <<  "Please report the problem to Retroshare's developers";
+				msgout <<  "\n";
+
+				std::string msg = msgout.str();
+				notify->AddSysMessage(0, RS_SYS_WARNING, title, msg);
+			}
+			bio->close();	
+			reading_state = reading_state_initial ;	// restart at state 1.
+			failed_read_attempts = 0 ;
+			return -1;
+
+			// Used to exit now! exit(1);
+		}
+
+		if (extralen > 0)
+		{
+			void *extradata = (void *) (((char *) block) + blen);
+			int tmplen ;
+
+			if (extralen != (tmplen = bio->readdata(extradata, extralen)))
+				if(++failed_read_attempts > max_failed_read_attempts)
+				{
+					std::ostringstream out;
+					out << "Error Completing Read (read ";
+					out << tmplen << "/" << extralen << ")" << std::endl;
+					std::cerr << out.str() ;
+					pqioutput(PQL_ALERT, pqistreamerzone, out.str());
+
+					pqiNotify *notify = getPqiNotify();
+					if (notify)
+					{
+						std::string title = "Warning: Error Completing Read";
+
+						std::ostringstream msgout;
+						msgout <<  "               **** WARNING ****     \n";
+						msgout <<  "Retroshare has experienced an unexpected Read ERROR";
+						msgout <<  "\n";
+						msgout <<  "(M:" << maxlen << " B:" << blen;
+						msgout <<  " E:" << extralen << " R:" << tmplen << ")\n";
+						msgout <<  "\n";
+						msgout <<  "Please contact the developers.";
+						msgout <<  "\n";
+
+						std::string msg = msgout.str();
+						std::cout << msg << std::endl ;
+						std::cout << "block = " 
+							<< (int)(((unsigned char*)block)[0]) << " " 
+							<< (int)(((unsigned char*)block)[1]) << " " 
+							<< (int)(((unsigned char*)block)[2]) << " " 
+							<< (int)(((unsigned char*)block)[3])  << std::endl ;
+						//					notify->AddSysMessage(0, RS_SYS_WARNING, title, msg);
+					}
+
+					bio->close();	
+					reading_state = reading_state_initial ;	// restart at state 1.
+					failed_read_attempts = 0 ;
+					return -1;
+				}
+				else
+					return 0 ;	// this is just a SSL_WANT_READ error. Don't panic, we'll re-try the read soon.
+									// we assume readdata() returned either -1 or the complete read size.
+
+			readbytes += extralen;
+		}
+
+		// create packet, based on header.
+		{
+			std::ostringstream out;
+			out << "Read Data Block -> Incoming Pkt(";
+			out << blen + extralen << ")" << std::endl;
+			//		  std::cerr << out.str() ;
+			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
+		}
+
+		//		std::cerr << "Deserializing packet of size " << pktlen <<std::endl ;
+
+		uint32_t pktlen = blen+extralen ;
+		RsItem *pkt = rsSerialiser->deserialise(block, &pktlen);
+		inReadBytes(readbytes);
+
+		if ((pkt != NULL) && (0  < handleincomingitem(pkt)))
+			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, "Successfully Read a Packet!");
+		else
+			pqioutput(PQL_ALERT, pqistreamerzone, "Failed to handle Packet!");
+
+		reading_state = reading_state_initial ;	// restart at state 1.
+	}
+
+	if(maxin > readbytes && bio->moretoread())
+		goto start_packet_read ;
+
+	return 0;
+}
 
 
 /* BandWidth Management Assistance */

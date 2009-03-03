@@ -1343,12 +1343,8 @@ int	pqissl::accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr) // initiat
 int 	pqissl::senddata(void *data, int len)
 {
 	int tmppktlen ;
-	int nbtries = 0 ;
-#ifdef WIN32	
-	while( (tmppktlen = SSL_write(ssl_connection, data, len)) == -1 && nbtries++ < 50) Sleep(300);
-#else
-	while( (tmppktlen = SSL_write(ssl_connection, data, len)) == -1 && nbtries++ < 50) usleep(300000);
-#endif
+
+	tmppktlen = SSL_write(ssl_connection, data, len) ;
 
 	if (len != tmppktlen)
 	{
@@ -1377,7 +1373,7 @@ int 	pqissl::senddata(void *data, int len)
 			out << "SSL_write() SSL_ERROR_WANT_WRITE";
 			out << std::endl;
 			rslog(RSL_ALERT, pqisslzone, out.str());
-			std::cerr << out.str() ;
+//			std::cerr << out.str() ;
 			return -1;
 		}
 		else if (err == SSL_ERROR_WANT_READ)
@@ -1415,21 +1411,9 @@ int 	pqissl::readdata(void *data, int len)
 	// multiple slices.
 	do
 	{
-		static const int max_tries = 50 ;
-		int nbtries = 0 ;
 		int tmppktlen  ;
 
-		// This is a loop to prevent loosing a connexion just because there is a
-		// lag in the network. This happens quite often actually. The total time
-		// to wait if nothing happens is 50*20ms = 1 sec, which is not so much.
-		// This current version seems to work fine. 
-		//
-		while( -1 == (tmppktlen = SSL_read(ssl_connection, (void*)((unsigned long int)data+(unsigned long int)total_len), len-total_len)) && nbtries++ < max_tries)
-#ifdef WIN32
-			Sleep(20) ;
-#else
-			usleep(20000) ;
-#endif
+		tmppktlen = SSL_read(ssl_connection, (void*)((unsigned long int)data+(unsigned long int)total_len), len-total_len) ;
 
 		// Need to catch errors.....
 		//
@@ -1472,8 +1456,8 @@ int 	pqissl::readdata(void *data, int len)
 				}
 
 				rslog(RSL_ALERT, pqisslzone, out.str());
-				std::cerr << out.str() << std::endl ;
-				return 0;
+//				std::cerr << out.str() << std::endl ;
+				return -1;
 			}
 
 			/* the only real error we expect */
@@ -1496,12 +1480,11 @@ int 	pqissl::readdata(void *data, int len)
 				std::cerr << out.str() << std::endl ;
 				return -1;
 			}
-			else if (error == SSL_ERROR_WANT_READ)
-			{
-				out << "SSL_read() SSL_ERROR_WANT_READ";
-				out << std::endl;
+			else if (error == SSL_ERROR_WANT_READ)					// SSL_WANT_READ is not a crittical error. It's just a sign that
+			{																	// the internal SSL buffer is not ready to accept more data. So -1 
+				out << "SSL_read() SSL_ERROR_WANT_READ";			// is returned, and the connexion will be retried as is on next
+				out << std::endl;											// call of readdata().
 				rslog(RSL_ALERT, pqisslzone, out.str());
-				std::cerr << out.str() << std::endl ;
 				return -1;
 			}
 			else
