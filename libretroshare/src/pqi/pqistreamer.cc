@@ -85,6 +85,8 @@ pqistreamer::pqistreamer(RsSerialiser *rss, std::string id, BinInterface *bio_in
 		exit(1);
 	}
 
+	failed_read_attempts = 0 ;						// reset failed read, as no packet is still read.
+
 	return;
 }
 
@@ -440,13 +442,13 @@ int	pqistreamer::handleoutgoing()
 			// write packet.
 			len = getRsItemSize(pkt_wpending);
 
-			out << "Sending Out Pkt of size " << len << " !";
+//			std::cout << "Sending Out Pkt of size " << len << " !" << std::endl ;
 
 			if (len != (ss = bio->senddata(pkt_wpending, len)))
 			{
 				out << "Problems with Send Data! (only " << ss << " bytes sent" << ", total pkt size=" << len ;
 				out << std::endl;
-				std::cerr << out.str() ;
+//				std::cerr << out.str() ;
 				pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
 
 				outSentBytes(sentbytes);
@@ -455,7 +457,7 @@ int	pqistreamer::handleoutgoing()
 				return -1;
 			}
 
-			out << " Success!" << ", sent " << len << " bytes" << std::endl;
+//			out << " Success!" << ", sent " << len << " bytes" << std::endl;
 			//			std::cerr << out.str() ;
 			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
 
@@ -669,7 +671,7 @@ int	pqistreamer::handleincoming()
 int pqistreamer::handleincoming()
 {
 	int readbytes = 0;
-	static const int max_failed_read_attempts = 60 ;
+	static const int max_failed_read_attempts = 100 ;
 
 	{
 		std::ostringstream out;
@@ -735,6 +737,7 @@ start_packet_read:
 
 		readbytes += blen;
 		reading_state = reading_state_packet_started ;
+		failed_read_attempts = 0 ;						// reset failed read, as the packet has been totally read.
 	}
 continue_packet:
 	{
@@ -760,6 +763,11 @@ continue_packet:
 				msgout <<  "\n";
 				msgout <<  "(M:" << maxlen << " B:" << blen << " E:" << extralen << ")\n";
 				msgout <<  "\n";
+				msgout << "block = " 
+							<< (int)(((unsigned char*)block)[0]) << " " 
+							<< (int)(((unsigned char*)block)[1]) << " " 
+							<< (int)(((unsigned char*)block)[2]) << " " 
+							<< (int)(((unsigned char*)block)[3])  << "\n" ;
 				msgout <<  "\n";
 				msgout <<  "Please get your friends to upgrade to the latest version";
 				msgout <<  "\n";
@@ -785,7 +793,13 @@ continue_packet:
 			void *extradata = (void *) (((char *) block) + blen);
 			int tmplen ;
 
+			memset( extradata,0,extralen ) ;	// for checking later
+
 			if (extralen != (tmplen = bio->readdata(extradata, extralen)))
+			{
+				if(tmplen > 0)
+					std::cerr << "Incomplete packet read ! This is a real problem ;-)" << std::endl ;
+
 				if(++failed_read_attempts > max_failed_read_attempts)
 				{
 					std::ostringstream out;
@@ -827,6 +841,7 @@ continue_packet:
 				else
 					return 0 ;	// this is just a SSL_WANT_READ error. Don't panic, we'll re-try the read soon.
 									// we assume readdata() returned either -1 or the complete read size.
+			}
 
 			readbytes += extralen;
 		}
@@ -852,6 +867,7 @@ continue_packet:
 			pqioutput(PQL_ALERT, pqistreamerzone, "Failed to handle Packet!");
 
 		reading_state = reading_state_initial ;	// restart at state 1.
+		failed_read_attempts = 0 ;						// reset failed read, as the packet has been totally read.
 	}
 
 	if(maxin > readbytes && bio->moretoread())
