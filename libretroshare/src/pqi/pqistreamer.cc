@@ -191,6 +191,7 @@ RsItem *pqistreamer::GetItem()
 // // PQInterface
 int	pqistreamer::tick()
 {
+//	std::cerr << "enterign tick, state = " << reading_state << std::endl ;
         {
 	  std::ostringstream out;
 	  out << "pqistreamer::tick()";
@@ -201,7 +202,9 @@ int	pqistreamer::tick()
 	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
 	}
 
+//	std::cerr << "calling bio-> tick, state = " << reading_state << std::endl ;
 	bio->tick();
+//	std::cerr << "after bio-> tick, state = " << reading_state << std::endl ;
 
 	/* short circuit everything is bio isn't active */
 	if (!(bio->isactive()))
@@ -214,8 +217,11 @@ int	pqistreamer::tick()
 	 * that incoming will not 
 	 */
 
+//	std::cerr << "calling handle incoming, state = " << reading_state << std::endl ;
 	handleincoming();
+//	std::cerr << "returned from handle incoming, state = " << reading_state << std::endl ;
 	handleoutgoing();
+//	std::cerr << "returned from handle outgoing, state = " << reading_state << std::endl ;
 
 	/* give details of the packets */
 	{
@@ -611,8 +617,8 @@ int	pqistreamer::handleincoming()
 					msgout <<  "\n";
 
 					std::string msg = msgout.str();
-					std::cout << msg << std::endl ;
-					std::cout << "block = " 
+					std::cerr << msg << std::endl ;
+					std::cerr << "block = " 
 						<< (int)(((unsigned char*)block)[0]) << " " 
 						<< (int)(((unsigned char*)block)[1]) << " " 
 						<< (int)(((unsigned char*)block)[2]) << " " 
@@ -671,7 +677,7 @@ int	pqistreamer::handleincoming()
 int pqistreamer::handleincoming()
 {
 	int readbytes = 0;
-	static const int max_failed_read_attempts = 100 ;
+	static const int max_failed_read_attempts = 600 ;
 
 	{
 		std::ostringstream out;
@@ -682,6 +688,7 @@ int pqistreamer::handleincoming()
 	if(!(bio->isactive()))
 	{
 		reading_state = reading_state_initial ;
+		inReadBytes(readbytes);
 		return 0;
 	}
 
@@ -694,26 +701,32 @@ int pqistreamer::handleincoming()
 
 	int maxin = inAllowedBytes();
 
+//	std::cerr << "reading state = " << reading_state << std::endl ;
 	switch(reading_state)
 	{
-		case reading_state_initial: 			goto start_packet_read ;
-		case reading_state_packet_started:	goto continue_packet ;
+		case reading_state_initial: 			/*std::cerr << "jumping to start" << std::endl; */ goto start_packet_read ;
+		case reading_state_packet_started:	/*std::cerr << "jumping to middle" << std::endl;*/ goto continue_packet ;
 	}
 
 start_packet_read:
 	{	// scope to ensure variable visibility
 		// read the basic block (minimum packet size)
 		int tmplen;
+//		std::cerr << "starting packet" << std::endl ;
+		memset(block,0,blen) ;	// reset the block, to avoid uninitialized memory reads.
 
 		if (blen != (tmplen = bio->readdata(block, blen)))
 		{
 			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, "pqistreamer::handleincoming() Didn't read BasePkt!");
+
+			inReadBytes(readbytes);
 
 			// error.... (either blocked or failure)
 			if (tmplen == 0)
 			{
 				// most likely blocked!
 				pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, "pqistreamer::handleincoming() read blocked");
+//				std::cerr << "given up 1" << std::endl ;
 				return 0;
 			}
 			else if (tmplen < 0)
@@ -722,6 +735,7 @@ start_packet_read:
 				// So we return without an error, and leave the machine state in 'start_read'.
 				//
 				pqioutput(PQL_WARNING, pqistreamerzone, "pqistreamer::handleincoming() Error in bio read");
+//					std::cerr << "given up 2, state = " << reading_state << std::endl ;
 				return 0;
 			}
 			else // tmplen > 0
@@ -731,9 +745,15 @@ start_packet_read:
 				out << "pqistreamer::handleincoming() Incomplete ";
 				out << "(Strange) read of " << tmplen << " bytes";
 				pqioutput(PQL_ALERT, pqistreamerzone, out.str());
+//				std::cerr << "given up 3" << std::endl ;
 				return -1;
 			}
 		}
+//		std::cerr << "block 0 : " << (int)(((unsigned char*)block)[0]) << " " << (int)(((unsigned char*)block)[1]) << " " << (int)(((unsigned char*)block)[2]) << " " << (int)(((unsigned char*)block)[3])  
+//							<< (int)(((unsigned char*)block)[4]) << " " 
+//							<< (int)(((unsigned char*)block)[5]) << " " 
+//							<< (int)(((unsigned char*)block)[6]) << " " 
+//							<< (int)(((unsigned char*)block)[7]) << " " << std::endl ;
 
 		readbytes += blen;
 		reading_state = reading_state_packet_started ;
@@ -744,6 +764,12 @@ continue_packet:
 		// workout how much more to read.
 		int extralen = getRsItemSize(block) - blen;
 
+//		std::cerr << "continuing packet state=" << reading_state << std::endl ;
+//		std::cerr << "block 1 : " << (int)(((unsigned char*)block)[0]) << " " << (int)(((unsigned char*)block)[1]) << " " << (int)(((unsigned char*)block)[2]) << " " << (int)(((unsigned char*)block)[3])  
+//							<< (int)(((unsigned char*)block)[4]) << " " 
+//							<< (int)(((unsigned char*)block)[5]) << " " 
+//							<< (int)(((unsigned char*)block)[6]) << " " 
+//							<< (int)(((unsigned char*)block)[7]) << " " << std::endl ;
 		if (extralen > maxlen - blen)
 		{
 			pqioutput(PQL_ALERT, pqistreamerzone, "ERROR: Read Packet too Big!");
@@ -792,6 +818,7 @@ continue_packet:
 		{
 			void *extradata = (void *) (((char *) block) + blen);
 			int tmplen ;
+		memset((void*)( &(((unsigned char *)block)[blen])),0,extralen) ;	// reset the block, to avoid uninitialized memory reads.
 
 			memset( extradata,0,extralen ) ;	// for checking later
 
@@ -824,12 +851,17 @@ continue_packet:
 						msgout <<  "\n";
 
 						std::string msg = msgout.str();
-						std::cout << msg << std::endl ;
-						std::cout << "block = " 
+						std::cerr << msg << std::endl ;
+						std::cerr << "block = " 
 							<< (int)(((unsigned char*)block)[0]) << " " 
 							<< (int)(((unsigned char*)block)[1]) << " " 
 							<< (int)(((unsigned char*)block)[2]) << " " 
-							<< (int)(((unsigned char*)block)[3])  << std::endl ;
+							<< (int)(((unsigned char*)block)[3]) << " "
+							<< (int)(((unsigned char*)block)[4]) << " " 
+							<< (int)(((unsigned char*)block)[5]) << " " 
+							<< (int)(((unsigned char*)block)[6]) << " " 
+							<< (int)(((unsigned char*)block)[7]) << " "
+							<< std::endl ;
 						//					notify->AddSysMessage(0, RS_SYS_WARNING, title, msg);
 					}
 
@@ -839,8 +871,11 @@ continue_packet:
 					return -1;
 				}
 				else
+				{
+//					std::cerr << "given up 5, state = " << reading_state << std::endl ;
 					return 0 ;	// this is just a SSL_WANT_READ error. Don't panic, we'll re-try the read soon.
 									// we assume readdata() returned either -1 or the complete read size.
+				}
 			}
 
 			readbytes += extralen;
@@ -858,8 +893,16 @@ continue_packet:
 		//		std::cerr << "Deserializing packet of size " << pktlen <<std::endl ;
 
 		uint32_t pktlen = blen+extralen ;
+//		std::cerr << "deserializing. Size=" << pktlen << std::endl ;
+
+		if(pktlen == 17306)
+		{
+			FILE *f = fopen("dbug.packet.bin","w");
+			fwrite(block,pktlen,1,f) ;
+			fclose(f) ;
+			exit(-1) ;
+		}
 		RsItem *pkt = rsSerialiser->deserialise(block, &pktlen);
-		inReadBytes(readbytes);
 
 		if ((pkt != NULL) && (0  < handleincomingitem(pkt)))
 			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, "Successfully Read a Packet!");
@@ -873,6 +916,7 @@ continue_packet:
 	if(maxin > readbytes && bio->moretoread())
 		goto start_packet_read ;
 
+	inReadBytes(readbytes);
 	return 0;
 }
 
