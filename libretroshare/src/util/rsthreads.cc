@@ -68,8 +68,7 @@ pthread_t  createThread(RsThread &thread)
 RsQueueThread::RsQueueThread(uint32_t min, uint32_t max, double relaxFactor )
 	:mMinSleep(min), mMaxSleep(max), mRelaxFactor(relaxFactor)
 {
-
-
+	mLastSleep = (uint32_t)mMinSleep ;
 }
 
 void RsQueueThread::run()
@@ -85,8 +84,7 @@ void RsQueueThread::run()
 		if (doneWork)
 		{
 			mLastWork = now;
-			mLastSleep = (uint32_t) 
-				(mMinSleep + (mLastSleep - mMinSleep) / 2.0);
+			mLastSleep = (uint32_t) (mMinSleep + (mLastSleep - mMinSleep) / 2.0);
 #ifdef DEBUG_THREADS
 			std::cerr << "RsQueueThread::run() done work: sleeping for: " << mLastSleep;
 			std::cerr << " ms";
