@@ -29,6 +29,7 @@
 
 // Only dependent on the base stuff.
 #include "pqi/pqi_base.h"
+#include "util/rsthreads.h"
 
 #include <list>
 
@@ -106,6 +107,9 @@ void	inReadBytes(int );
 	int avgLastUpdate; // TS from which these are measured.
 	float avgReadCount;
 	float avgSentCount;
+
+	RsMutex streamerMtx ;
+//	pthread_t thread_id;
 };
 
 
