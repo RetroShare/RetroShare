@@ -25,7 +25,7 @@ win32-x-g++ {
 	QMAKE_CXXFLAGS *= -Wmissing-include-dirs
 	QMAKE_CC = i586-mingw32msvc-g++
 	QMAKE_LIB = i586-mingw32msvc-ar
-	DEFINES *= STATICLIB
+	DEFINES *= STATICLIB WIN32
 
 	INCLUDEPATH *= /usr/i586-mingw32msvc/include ${HOME}/.wine/drive_c/pthreads/include/
 }
@@ -49,8 +49,8 @@ win32 {
 
 DEFINES *=  PQI_USE_XPGP MINIUPNPC_VERSION=10
 
-SSL_DIR = ../../../../openssl-0.9.7g-xpgp-0.1c
-UPNPC_DIR = ../../../../miniupnpc-1.0
+SSL_DIR=../../../../src/openssl-0.9.7g-xpgp-0.1c
+UPNPC_DIR=../../../../src/miniupnpc-1.0
 
 INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR}
 
@@ -315,3 +315,13 @@ SOURCES = \
 				util/rsnet.cc \
 				util/rsprint.cc \
 				util/rsthreads.cc 
+
+# To compile for turtle hopping. I'm using this flag to avoid conflict while developping.
+# Just do a 
+#    qmake CONFIG=turtle
+
+turtle {			
+	SOURCES += services/p3turtle.cc
+	HEADERS += services/p3turtle.h
+	DEFINES *= TURTLE_HOPPING
+}
