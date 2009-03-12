@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools
+CONFIG += qt gui uic qrc resources uitools debug
 QT     += network xml script 
 TEMPLATE = app
 TARGET = RetroShare
@@ -144,6 +144,10 @@ HEADERS +=  rshare.h \
             gui/PluginManagerWidget.h \
             gui/PluginManager.h      \
             gui/plugins/PluginInterface.h \
+            gui/im_history/IMHistoryKeeper.h           \
+            gui/im_history/IMHistoryReader.h           \
+            gui/im_history/IMHistoryItem.h             \
+            gui/im_history/IMHistoryWriter.h           \
             lang/languagesupport.h \
             util/stringutil.h \
             util/win32.h \
@@ -302,7 +306,7 @@ FORMS +=    gui/ChatDialog.ui \
             gui/Settings/DirectoriesPage.ui \
             gui/Settings/ServerPage.ui \
             gui/Settings/NetworkPage.ui \
-            gui/advsearch/advancedsearchdialog.ui \
+            gui/advsearch/AdvancedSearchDialog.ui \
             gui/advsearch/expressionwidget.ui \
             gui/channels/ChannelsDialog.ui \
             gui/channels/ChannelBrowserDialog.ui \
@@ -364,6 +368,10 @@ SOURCES += main.cpp \
             gui/StatisticDialog.cpp \
             gui/MessagesDialog.cpp \
             gui/MessagesPopupDialog.cpp \
+            gui/im_history/IMHistoryKeeper.cpp        \
+            gui/im_history/IMHistoryReader.cpp        \
+            gui/im_history/IMHistoryItem.cpp          \
+            gui/im_history/IMHistoryWriter.cpp        \
             gui/help/browser/helpbrowser.cpp \
             gui/help/browser/helptextbrowser.cpp \
             gui/HelpDialog.cpp \
