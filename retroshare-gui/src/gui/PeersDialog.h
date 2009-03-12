@@ -29,6 +29,8 @@
 #include "mainpage.h"
 #include "ui_PeersDialog.h"
 
+#include "im_history/IMHistoryKeeper.h"
+
 class QFont;
 class QAction;
 class QTextEdit;
@@ -122,6 +124,8 @@ private:
   QAction* removefriendAct;
 
   QTreeWidget *peertreeWidget;
+
+  IMHistoryKeeper historyKeeper;
   
   QColor _currentColor;
   bool _underline;

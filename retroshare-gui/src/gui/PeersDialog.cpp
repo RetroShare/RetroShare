@@ -81,7 +81,9 @@
 
 /** Constructor */
 PeersDialog::PeersDialog(QWidget *parent)
-: MainPage(parent), chatDialog(NULL)
+            : MainPage(parent),
+              chatDialog(NULL),
+              historyKeeper(Rshare::dataDirectory() + "/his1.xml")
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
@@ -149,7 +151,15 @@ PeersDialog::PeersDialog(QWidget *parent)
   mCurrentFont = QFont("Comic Sans MS", 12);
   ui.lineEdit->setFont(mCurrentFont);
   
-  setChatInfo(tr("Welcome to RetroShare's group chat."), QString::fromUtf8("blue"));
+  setChatInfo(tr("Welcome to RetroShare's group chat."),
+              QString::fromUtf8("blue"));
+
+  QStringList him;
+  historyKeeper.getMessages(him, "", "THIS", 8);
+  foreach(QString mess, him)
+      ui.msgText->append(mess);
+      //setChatInfo(mess,  "green");
+              
   
   QMenu * grpchatmenu = new QMenu();
   grpchatmenu->addAction(ui.actionClearChat);
@@ -692,8 +702,11 @@ void PeersDialog::insertChat()
         QString timestamp = QDateTime::currentDateTime().toString("hh:mm:ss");
         QString name = QString::fromStdString(it->name);
         QString line = "<span style=\"color:#C00000\">" + timestamp + "</span>" +			
-            		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span>";
-            		
+            		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "fff</strong></span>";
+
+        //std::cerr << "PeersDialog::insertChat(): 1.11\n";
+        historyKeeper.addMessage(name, "THIS", QString::fromStdWString(it->msg));
+        //std::cerr << "PeersDialog::insertChat(): 1.12\n";
         extraTxt += line;
 
         extraTxt += QString::fromStdWString(it->msg);
@@ -711,6 +724,7 @@ void PeersDialog::insertChat()
 
 		
         msgWidget->setHtml(currenttxt);
+
         
 
 		QScrollBar *qsb =  msgWidget->verticalScrollBar();
@@ -749,6 +763,8 @@ void PeersDialog::sendMsg()
 	ci.msg = lineWidget->toHtml().toStdWString();
 	ci.chatflags = RS_CHAT_PUBLIC;
 
+    //historyKeeper.addMessage("THIS", "ALL", lineWidget->toHtml() );
+    
 	std::string msg(ci.msg.begin(), ci.msg.end());
 #ifdef PEERS_DEBUG 
 	std::cerr << "PeersDialog::sendMsg(): " << msg << std::endl;
