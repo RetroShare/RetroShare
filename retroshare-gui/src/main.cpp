@@ -181,7 +181,9 @@ int main(int argc, char *argv[])
 
 	/* dive into the endless loop */
 	// return ret;
-	return rshare.exec();
+    int ti = rshare.exec();
+    delete w ;
+	return ti ;
 
 }
 
