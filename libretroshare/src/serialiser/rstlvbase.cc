@@ -442,7 +442,7 @@ bool GetTlvString(void *data, uint32_t size, uint32_t *offset,
 	return true;
 }
 
-uint32_t GetTlvStringSize(std::string &in) {
+uint32_t GetTlvStringSize(const std::string &in) {
 	return 4 + in.size();
 }
 

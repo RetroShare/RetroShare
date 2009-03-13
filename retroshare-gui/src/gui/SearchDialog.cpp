@@ -26,6 +26,9 @@
 #include "rsiface/rsexpr.h"
 #include "rsiface/rsfiles.h"
 #include "rsiface/rspeers.h"
+#ifdef TURTLE_HOPPING
+#include "rsiface/rsturtle.h"
+#endif
 #include "util/misc.h"
 
 #include <iostream>
@@ -416,6 +419,12 @@ void SearchDialog::advancedSearch(Expression* expression)
 
 void SearchDialog::searchKeywords()
 {	
+#ifdef TURTLE_HOPPING
+	QString qTxt = ui.lineEdit->text();
+	std::string txt = qTxt.toStdString();
+
+	TurtleRequestId id = rsTurtle->turtleSearch(txt) ;
+#else
 	QString qTxt = ui.lineEdit->text();
 	std::string txt = qTxt.toStdString();
 
@@ -488,6 +497,7 @@ void SearchDialog::searchKeywords()
 
         /* abstraction to allow reusee of tree rendering code */
         resultsToTree(txt, *finalResults);
+#endif
 }
  
 void SearchDialog::resultsToTree(std::string txt, std::list<FileDetail> results)

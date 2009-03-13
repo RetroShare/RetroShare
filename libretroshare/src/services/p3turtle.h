@@ -49,6 +49,8 @@
 #include "pqi/pqi.h"
 #include "pqi/pqimonitor.h"
 #include "services/p3service.h"
+#include "serialiser/rsserviceids.h"
+#include "rsiface/rsturtle.h"
 
 class p3AuthMgr;
 class p3ConnectMgr;
@@ -58,7 +60,6 @@ const uint8_t RS_TURTLE_SUBTYPE_SEARCH_RESULT  = 0x02 ;
 
 static const int TURTLE_MAX_SEARCH_DEPTH = 6 ;
 
-typedef uint32_t 		TurtleRequestId ;
 typedef std::string 	TurtlePeerId ;
 typedef std::string 	TurtleFileHash ;
 typedef std::string 	TurtleFileName ;
@@ -68,9 +69,8 @@ class RsTurtleItem: public RsItem
 	public:
 		RsTurtleItem(uint8_t turtle_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_TURTLE,turtle_subtype) {}
 
-		virtual bool serialize(void *data,uint32_t& size) = 0 ;	// isn't it better that items can (de)serialize themselves ?
-		virtual RsItem *deserialize(const void *data,uint32_t size) = 0 ;
-		virtual uint32_t serial_size() const = 0 ; 
+		virtual bool serialize(void *data,uint32_t& size) = 0 ;	// Isn't it better that items can serialize themselves ?
+		virtual uint32_t serial_size() = 0 ; 							// deserialise is handled using a constructor
 
 		virtual void clear() {} 
 };
@@ -79,6 +79,7 @@ class RsTurtleSearchResultItem: public RsTurtleItem
 {
 	public:
 		RsTurtleSearchResultItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_RESULT) {}
+		RsTurtleSearchResultItem(void *data,uint32_t size) ;		// deserialization
 
 		uint16_t depth ;
 		uint8_t peer_id[16];				// peer id. This will eventually be obfuscated in some way.
@@ -90,14 +91,14 @@ class RsTurtleSearchResultItem: public RsTurtleItem
 
 	protected:
 		virtual bool serialize(void *data,uint32_t& size) ;
-		virtual RsItem *deserialize(const void *data,uint32_t size) ;
-		virtual uint32_t serial_size() const ;
+		virtual uint32_t serial_size() ;
 };
 
 class RsTurtleSearchRequestItem: public RsTurtleItem
 {
 	public:
 		RsTurtleSearchRequestItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_REQUEST) {}
+		RsTurtleSearchRequestItem(void *data,uint32_t size) ;		// deserialization
 
 		std::string match_string ;	// string to match
 		uint32_t request_id ; 		// randomly generated request id.
@@ -107,8 +108,7 @@ class RsTurtleSearchRequestItem: public RsTurtleItem
 
 	protected:
 		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual RsItem *deserialize(const void *data,uint32_t size) ;
-		virtual uint32_t serial_size() const ; 
+		virtual uint32_t serial_size() ; 
 };
 
 // Class responsible for serializing/deserializing all turtle items.
@@ -126,7 +126,7 @@ class RsTurtleSerialiser: public RsSerialType
 		{ 
 			return static_cast<RsTurtleItem *>(item)->serialize(data,*size) ; 
 		}
-		virtual RsItem *	deserialise (void *data, uint32_t *size) ;
+		virtual RsItem *deserialise (void *data, uint32_t *size) ;
 };
 
 class TurtleTunnel
@@ -137,16 +137,22 @@ class TurtleTunnel
 		uint32_t	time_stamp ;	// last time the tunnel was actually used. Used for cleaning old tunnels.
 };
 
-class p3turtle: public p3Service, public pqiMonitor
+class p3turtle: public p3Service, public pqiMonitor, public RsTurtle
 {
 	public:
-		p3turtle(p3AuthMgr *am, p3ConnectMgr *cm);
+		p3turtle(p3ConnectMgr *cm);
 
 		// Lauches a search request through the pipes, and immediately returns
 		// the request id, which will be further used by the gui to store results
 		// as they come back.
 		//
-		TurtleRequestId performSearch(const std::string& string_to_match) ;
+		virtual TurtleRequestId turtleSearch(const std::string& string_to_match) ;
+
+		// Launches a complete download file operation: diggs one or more
+		// tunnels.  Launches an exception if an error occurs during the
+		// initialization process.
+		//
+		virtual void turtleDownload(const std::string& file_hash) ;
 
 		/************* from pqiMonitor *******************/
 		// Informs the turtle router that some peers are (dis)connected. This should initiate digging new tunnels,
@@ -158,15 +164,15 @@ class p3turtle: public p3Service, public pqiMonitor
 
 		// Handles incoming and outgoing packets, sort search requests and
 		// forward info upward.
-		int	tick();
+		virtual int tick();
 
 	private:
-		inline uint32_t generateRandomRequestId() const { return lrand48() ; }
+		uint32_t generateRandomRequestId() ;
 		void autoWash() ;
 
 		/* Network Input */
 		int handleIncoming();
-		int handleOutgoing();
+//		int handleOutgoing();
 
 		// Performs a search calling local cache and search structure.
 		void performLocalSearch(const std::string& s,std::map<TurtleFileHash,TurtleFileName>& result) {}
@@ -177,16 +183,15 @@ class p3turtle: public p3Service, public pqiMonitor
 		// returns a search result upwards (possibly to the gui)
 		void returnSearchResult(RsTurtleSearchResultItem *item) ;
 
+		/* data */
+		p3ConnectMgr *mConnMgr;
+
+		RsMutex mTurtleMtx;
+
 		std::map<TurtleRequestId,TurtlePeerId> requests_origins ; 	// keeps trace of who emmitted a given request
 		std::map<TurtleFileHash,TurtleTunnel> 	file_tunnels ; 		// stores adequate tunnels for each file hash.
 
-		p3AuthMgr *mAuthMgr;
-		p3ConnectMgr *mConnMgr;
-
 		time_t _last_clean_time ;
-
-		/* data */
-		RsMutex mTurtleMtx;
 };
 
 #endif 

@@ -23,12 +23,15 @@
  *
  */
 
+#include <stdexcept>
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 
 #include "pqi/p3authmgr.h"
 #include "pqi/p3connmgr.h"
+#include "pqi/pqinotify.h"
+
 #include "p3turtle.h"
 
 #include <iostream>
@@ -47,7 +50,7 @@
 
 #define P3TURTLE_DEBUG 	1
 
-p3turtle::p3turtle(p3AuthMgr *am, p3ConnectMgr *cm) :p3Service(RS_SERVICE_TYPE_TURTLE), mAuthMgr(am), mConnMgr(cm)
+p3turtle::p3turtle(p3ConnectMgr *cm) :p3Service(RS_SERVICE_TYPE_TURTLE), mConnMgr(cm)
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
@@ -57,7 +60,7 @@ p3turtle::p3turtle(p3AuthMgr *am, p3ConnectMgr *cm) :p3Service(RS_SERVICE_TYPE_T
 int p3turtle::tick()
 {
 	handleIncoming();		// handle incoming packets
-	handleOutgoing();		// handle outgoing packets
+//	handleOutgoing();		// handle outgoing packets
 
 	// Clean every 10 sec.
 	time_t now = time(NULL) ;
@@ -78,7 +81,14 @@ void p3turtle::autoWash()
 	// look for tunnels and stored temportary info that have not been used for a while.
 }
 
-TurtleRequestId p3turtle::performSearch(const std::string& string_to_match) 
+uint32_t p3turtle::generateRandomRequestId() 
+{
+	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+
+	return lrand48() ;
+}
+
+TurtleRequestId p3turtle::turtleSearch(const std::string& string_to_match) 
 {
 	// generate a new search id.
 	
@@ -99,6 +109,14 @@ TurtleRequestId p3turtle::performSearch(const std::string& string_to_match)
 	delete item ;
 
 	return id ;
+}
+
+void p3turtle::turtleDownload(const std::string& file_hash) 
+{
+	pqiNotify *notify = getPqiNotify();
+
+	if (notify)
+		notify->AddSysMessage(0, RS_SYS_WARNING, std::string("Unimplemented"),std::string("turtle download is not yet implemented. Sorry"));
 }
 
 int p3turtle::handleIncoming()
@@ -137,6 +155,7 @@ int p3turtle::handleIncoming()
 
 void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 {
+	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 	// take a look at the item: 
 	// 	- If the item destimation is 
 
@@ -220,6 +239,7 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 
 void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 {
+	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 	// Find who actually sent the corresponding request.
 	//
 	std::map<TurtleRequestId,TurtlePeerId>::const_iterator it = requests_origins.find(item->request_id) ;
@@ -313,5 +333,165 @@ void p3turtle::statusChange(const std::list<pqipeer> &plist)
 		}
 	}
 #endif
+}
+
+#include "serialiser/rstlvbase.h"
+#include "serialiser/rsbaseserial.h"
+
+uint32_t RsTurtleSearchRequestItem::serial_size() 
+{
+	uint32_t s = 0 ;
+
+	s += 8 ; // header
+	s += GetTlvStringSize(match_string) ;
+	s += 4 ; // request_id
+	s += 2 ; // depth
+
+	return s ;
+}
+
+bool RsTurtleSearchRequestItem::serialize(void *data,uint32_t& pktsize)
+{
+	uint32_t tlvsize = serial_size();
+	uint32_t offset = 0;
+
+	if (pktsize < tlvsize)
+		return false; /* not enough space */
+
+	pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data,tlvsize,PacketId(), tlvsize);
+
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, match_string);
+	ok &= setRawUInt32(data, tlvsize, &offset, request_id);
+	ok &= setRawUInt16(data, tlvsize, &offset, depth);
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsFileConfigSerialiser::serialiseTransfer() Size Error! " << std::endl;
+#endif
+	}
+
+	return ok;
+}
+
+uint32_t RsTurtleSearchResultItem::serial_size()
+{
+	uint32_t s = 0 ;
+
+	s += 8 ; // header
+	s += 4 ; // search request id
+	s += 4 ; // number of results
+
+	for(std::map<TurtleFileHash,TurtleFileName>::const_iterator it(result.begin());it!=result.end();++it)
+	{
+		s += GetTlvStringSize(it->first) ;		// file hash
+		s += GetTlvStringSize(it->second) ;		// file name
+	}
+
+	return s ;
+}
+
+bool RsTurtleSearchResultItem::serialize(void *data,uint32_t& pktsize)
+{
+	uint32_t tlvsize = serial_size();
+	uint32_t offset = 0;
+
+	if (pktsize < tlvsize)
+		return false; /* not enough space */
+
+	pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data,tlvsize,PacketId(), tlvsize);
+
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+
+	ok &= setRawUInt32(data, tlvsize, &offset, request_id);
+	ok &= setRawUInt32(data, tlvsize, &offset, result.size());
+
+	for(std::map<TurtleFileHash,TurtleFileName>::const_iterator it(result.begin());it!=result.end();++it)
+	{
+		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_HASH_SHA1, it->first); 	// file hash
+		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, it->second); 		// file name
+	}
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsFileConfigSerialiser::serialiseTransfer() Size Error! " << std::endl;
+#endif
+	}
+
+	return ok;
+
+}
+
+RsItem *RsTurtleSerialiser::deserialise(void *data, uint32_t *size) 
+{
+	// look what we have...
+	
+	/* get the type */
+	uint32_t rstype = getRsItemId(data);
+
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_TURTLE != getRsItemService(rstype))) 
+	{
+		return NULL; /* wrong type */
+	}
+
+	switch(getRsItemSubType(rstype))
+	{
+		case RS_TURTLE_SUBTYPE_SEARCH_REQUEST:	return new RsTurtleSearchResultItem(data,*size) ;
+		case RS_TURTLE_SUBTYPE_SEARCH_RESULT:	return new RsTurtleSearchResultItem(data,*size) ;
+
+		default:
+															std::cerr << "Unknown packet type in RsTurtle!" << std::endl ;
+															return NULL ;
+	}
+}
+
+RsTurtleSearchResultItem::RsTurtleSearchResultItem(void *data,uint32_t pktsize)
+	: RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_RESULT)
+{
+	uint32_t offset = 8; // skip the header 
+	uint32_t rssize = getRsItemSize(data);
+
+	/* add mandatory parts first */
+
+	bool ok = true ;
+	uint32_t s ;
+	ok &= getRawUInt32(data, pktsize, &offset, &request_id);
+	ok &= getRawUInt32(data, pktsize, &offset, &s) ;
+
+	result.clear() ;
+
+	for(uint i=0;i<s;++i)
+	{
+		std::string hash,filename ;
+
+		ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_HASH_SHA1, hash); 	// file hash
+		ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_NAME, filename); 	// file name
+
+		result[hash]=filename ;
+	}
+
+	if (offset != rssize)
+		throw std::runtime_error("Size error while deserializing.") ;
+	if (!ok)
+		throw std::runtime_error("Unknown error while deserializing.") ;
 }
 

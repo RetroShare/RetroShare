@@ -238,7 +238,7 @@ uint32_t GetTlvUInt64Size();
 
 bool     SetTlvString(void *data, uint32_t size, uint32_t *offset, uint16_t type, std::string out);
 bool     GetTlvString(void *data, uint32_t size, uint32_t *offset, uint16_t type, std::string &in);
-uint32_t GetTlvStringSize(std::string &in);
+uint32_t GetTlvStringSize(const std::string &in);
 
 bool     SetTlvWideString(void *data, uint32_t size, uint32_t *offset, uint16_t type, std::wstring out);
 bool     GetTlvWideString(void *data, uint32_t size, uint32_t *offset, uint16_t type, std::wstring &in);

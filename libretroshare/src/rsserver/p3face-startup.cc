@@ -36,6 +36,10 @@
  */
 
 RsFiles *rsFiles = NULL;
+#ifdef TURTLE_HOPPING
+#include "rsiface/rsturtle.h"
+RsTurtle *rsTurtle = NULL ;
+#endif
 
 #include "pqi/pqipersongrp.h"
 #include "pqi/pqisslpersongrp.h"
@@ -59,6 +63,10 @@ RsFiles *rsFiles = NULL;
 #include "services/p3channels.h"
 #include "services/p3status.h"
 #include "services/p3Qblog.h"
+
+#ifdef TURTLE_HOPPING
+#include "services/p3turtle.h"
+#endif
 
 #include <list>
 #include <string>
@@ -642,6 +650,11 @@ int RsServer::StartupRetroShare()
 	msgSrv = new p3MsgService(mConnMgr);
 	chatSrv = new p3ChatService(mConnMgr);
 
+#ifdef TURTLE_HOPPING
+	p3turtle *tr = new p3turtle(mConnMgr) ;
+	rsTurtle = tr ;
+	pqih -> addService(tr);
+#endif
 	pqih -> addService(ad);
 	pqih -> addService(msgSrv);
 	pqih -> addService(chatSrv);
