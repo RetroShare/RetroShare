@@ -1,3 +1,24 @@
+Changes for v0.4.12c
+
+* Turtle dev. Worked on serialisation, mainly, and connexion to gui.
+* Finished turtle router.Next task: turtle serializer
+* Fixed bug: the MainWindow object wasn't deleted.
+* Added history support in group chat; almost stable;
+* Suppressed uninitialized memory read
+* Fixed the ssl connexion problem
+* Added another anti-lag strategy in pqissl.cc. This is to avoid connexion problems
+* Started turtle hopping implementation.
+* Added a rsicontrol global variable for compatibility with new notification method
+* Added a workarround for the packet sending problem.
+* Improved the gui to increase responsiveness (e.g. forum display, network discovery info, friends, msg deletion and selection)
+* Improved the notification model so that it uses Qt signals to avoid core dumps,
+* Update Wiki Link in Help Dialog
+* Fixed win32 compilation compatibility
+* Suppressed some debuggign output.
+* Fixed a bug with wrong packet size.
+* Set Refresh Rate for down/up speed on statusbar to 1000
+* Added Uptime and Since to Statistics
+
 Changes for v0.4.12b
 
 * Suppressed an initialized memory read
