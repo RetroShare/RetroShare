@@ -48,6 +48,10 @@
 #include "games/qbackgammon/bgwindow.h"
 //#include "smplayer.h"
 
+#ifdef TURTLE_HOPPING
+#include "gui/TurtleSearchDialog.h"
+#endif
+
 #include "statusbar/peerstatus.h"
 #include "Preferences/PreferencesWindow.h"
 #include "Settings/gsettingswin.h"
@@ -75,6 +79,7 @@
 #define IMAGE_FILES   	        ":/images/fileshare24.png"
 #define IMAGE_CHANNELS       	":/images/channels.png"
 #define IMAGE_FORUMS            ":/images/konversation.png"
+#define IMAGE_TURTLE            ":/images/turtle.png"
 #define IMAGE_PREFERENCES       ":/images/kcmsystem24.png"
 #define IMAGE_CHAT          	":/images/groupchat.png"
 #define IMAGE_RETROSHARE        ":/images/rstray3.png"
@@ -179,7 +184,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     //PeersFeed *peersFeed = NULL;
     //ui.stackPages->add(peersFeed = new PeersFeed(ui.stackPages),
     //		createPageAction(QIcon(IMAGE_PEERS), tr("Peers"), grp));
-	
+#ifdef TURTLE_HOPPING
+    ui.stackPages->add(turtleDialog = new TurtleSearchDialog(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_TURTLE), tr("Turtle"), grp));
+#endif
     ui.stackPages->add(searchDialog = new SearchDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_SEARCH), tr("Search"), grp));
                      

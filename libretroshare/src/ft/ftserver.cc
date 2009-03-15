@@ -383,7 +383,7 @@ int ftServer::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)
 	/***************************************************************/
 
 
-int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results)
+int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results,uint32_t flags)
 {
 #ifdef SERVER_DEBUG 
 	std::cerr << "ftServer::SearchKeywords()";
@@ -396,7 +396,7 @@ int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<FileDeta
 	}
 
 #endif
-	return mFiStore->SearchKeywords(keywords, results);
+	return mFiStore->SearchKeywords(keywords, results,flags);
 }
 	
 int ftServer::SearchBoolExp(Expression * exp, std::list<FileDetail> &results)

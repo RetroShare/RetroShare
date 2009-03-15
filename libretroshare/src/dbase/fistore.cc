@@ -405,7 +405,7 @@ int FileIndexStore::SearchHash(std::string hash, std::list<FileDetail> &results)
 }
 
 
-int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results) const
+int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results,uint32_t flags) const
 {
 	lockData();
 	std::map<RsPeerId, FileIndex *>::const_iterator pit;
@@ -417,48 +417,51 @@ int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<Fi
 #ifdef FIS_DEBUG
 	std::cerr << "FileIndexStore::SearchKeywords()" << std::endl;
 #endif
-	for(pit = indices.begin(); pit != indices.end(); pit++)
-	{
-		firesults.clear();
-
-		(pit->second)->searchTerms(keywords, firesults);
-		/* translate results */
-		for(rit = firesults.begin(); rit != firesults.end(); rit++)
+	if(flags & DIR_FLAGS_REMOTE)
+		for(pit = indices.begin(); pit != indices.end(); pit++)
 		{
-			FileDetail fd;
-			fd.id = pit->first;
-			fd.name = (*rit)->name;
-			fd.hash = (*rit)->hash;
-			fd.path = ""; /* TODO */
-			fd.size = (*rit)->size;
-			fd.age  = now - (*rit)->modtime;
-			fd.rank = (*rit)->pop;
+			firesults.clear();
 
-			results.push_back(fd);
+			(pit->second)->searchTerms(keywords, firesults);
+			/* translate results */
+			for(rit = firesults.begin(); rit != firesults.end(); rit++)
+			{
+				FileDetail fd;
+				fd.id = pit->first;
+				fd.name = (*rit)->name;
+				fd.hash = (*rit)->hash;
+				fd.path = ""; /* TODO */
+				fd.size = (*rit)->size;
+				fd.age  = now - (*rit)->modtime;
+				fd.rank = (*rit)->pop;
+
+				results.push_back(fd);
+			}
+
 		}
 
-	}
-	if (localindex)
-	{
-		firesults.clear();
-
-		localindex->searchTerms(keywords, firesults);
-		/* translate results */
-		for(rit = firesults.begin(); rit != firesults.end(); rit++)
+	if(flags & DIR_FLAGS_LOCAL)
+		if (localindex)
 		{
-			FileDetail fd;
-			fd.id = "Local"; //localId;
-			fd.name = (*rit)->name;
-			fd.hash = (*rit)->hash;
-			fd.path = ""; /* TODO */
-			fd.size = (*rit)->size;
-			fd.age  = now - (*rit)->modtime;
-			fd.rank = (*rit)->pop;
+			firesults.clear();
 
-			results.push_back(fd);
+			localindex->searchTerms(keywords, firesults);
+			/* translate results */
+			for(rit = firesults.begin(); rit != firesults.end(); rit++)
+			{
+				FileDetail fd;
+				fd.id = "Local"; //localId;
+				fd.name = (*rit)->name;
+				fd.hash = (*rit)->hash;
+				fd.path = ""; /* TODO */
+				fd.size = (*rit)->size;
+				fd.age  = now - (*rit)->modtime;
+				fd.rank = (*rit)->pop;
+
+				results.push_back(fd);
+			}
+
 		}
-
-	}
 
 	unlockData();
 	return results.size();

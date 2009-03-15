@@ -35,6 +35,16 @@ extern RsTurtle   *rsTurtle ;
 
 typedef uint32_t TurtleRequestId ;
 
+// This is the structure used to send back results of the turtle search 
+// to the notifyBase class.
+
+struct TurtleFileInfo
+{
+	std::string hash ;
+	std::string name ;
+	uint64_t size ;
+};
+
 // Interface class for turtle hopping.
 //
 //   This class mainly interacts with the turtle router, that is responsible

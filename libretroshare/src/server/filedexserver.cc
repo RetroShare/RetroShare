@@ -393,10 +393,9 @@ int filedexserver::RequestDirDetails(void *ref, DirDetails &details, uint32_t fl
 	return fiStore->RequestDirDetails(ref, details, flags);
 }
 
-int filedexserver::SearchKeywords(std::list<std::string> keywords, 
-					std::list<FileDetail> &results)
+int filedexserver::SearchKeywords(std::list<std::string> keywords,std::list<FileDetail> &results,uint32_t flags)
 {
-	return fiStore->SearchKeywords(keywords, results);
+	return fiStore->SearchKeywords(keywords, results,flags);
 }
 
 int filedexserver::SearchBoolExp(Expression * exp, std::list<FileDetail> &results)

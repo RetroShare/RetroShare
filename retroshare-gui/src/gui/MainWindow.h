@@ -39,6 +39,9 @@
 #include "MessengerWindow.h"
 #include "ApplicationWindow.h"
 #include "PluginsPage.h"
+#ifdef TURTLE_HOPPING
+#include "TurtleSearchDialog.h"
+#endif
 
 #include "Preferences/PreferencesWindow.h"
 #include "Settings/gsettingswin.h"
@@ -95,6 +98,9 @@ public:
     NetworkDialog     *networkDialog;
     PeersDialog       *peersDialog;
     SearchDialog      *searchDialog;
+#ifdef TURTLE_HOPPING
+    TurtleSearchDialog *turtleDialog;
+#endif
     TransfersDialog   *transfersDialog;
     ChatDialog        *chatDialog;
     MessagesDialog    *messagesDialog;

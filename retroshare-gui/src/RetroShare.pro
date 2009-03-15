@@ -17,7 +17,7 @@ linux-g++ {
 	LIBS += ../../../../lib/linux-g++/libssl.a 
 	LIBS += ../../../../lib/linux-g++/libcrypto.a
 	LIBS += -lQtUiTools
-    LIBS += -lz
+    LIBS += -lz 
 }
 linux-g++-64 {
 	OBJECTS_DIR = temp/linux-g++-64/obj
@@ -488,6 +488,17 @@ TRANSLATIONS +=  \
             lang/retroshare_sl.ts \
             lang/retroshare_sr.ts \
             lang/retroshare_se.ts
+
+# To compile for turtle hopping. I'm using this flag to avoid conflict while developping.
+# Just do a 
+#    qmake CONFIG=turtle
+
+turtle {                        
+        SOURCES += gui/TurtleSearchDialog.cpp
+        HEADERS += rsiface/rsturtle.h gui/TurtleSearchDialog.h
+        FORMS += gui/TurtleSearchDialog.ui
+        DEFINES *= TURTLE_HOPPING
+}
 
 
 

@@ -27,6 +27,7 @@
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
+#include "rsiface/rsfiles.h"
 
 #include "pqi/p3authmgr.h"
 #include "pqi/p3connmgr.h"
@@ -54,6 +55,7 @@ p3turtle::p3turtle(p3ConnectMgr *cm) :p3Service(RS_SERVICE_TYPE_TURTLE), mConnMg
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
+	srand48(time(NULL)) ;
 	addSerialType(new RsTurtleSerialiser());
 }
 
@@ -94,10 +96,20 @@ TurtleRequestId p3turtle::turtleSearch(const std::string& string_to_match)
 	
 	TurtleRequestId id = generateRandomRequestId() ;
 
-	// form a request packet
+	// Form a request packet that simulates a request from us.
 	//
 	RsTurtleSearchRequestItem *item = new RsTurtleSearchRequestItem ;
 
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "performing search. OwnId = " << mConnMgr->getOwnId() << std::endl ;
+#endif
+	while(mConnMgr->getOwnId() == "")
+	{
+		std::cerr << "... waitting for connect manager to form own id." << std::endl ;
+		sleep(1) ;
+	}
+
+	item->PeerId(mConnMgr->getOwnId()) ;
 	item->match_string = string_to_match ;
 	item->request_id = id ;
 	item->depth = 0 ;
@@ -122,8 +134,8 @@ void p3turtle::turtleDownload(const std::string& file_hash)
 int p3turtle::handleIncoming()
 {
 #ifdef P3TURTLE_DEBUG
-	std::cerr << "p3turtle::handleIncoming()";
-	std::cerr << std::endl;
+//	std::cerr << "p3turtle::handleIncoming()";
+//	std::cerr << std::endl;
 #endif
 
 	int nhandled = 0;
@@ -160,7 +172,7 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 	// 	- If the item destimation is 
 
 #ifdef P3TURTLE_DEBUG
-	std::cerr << "Received search request: " << std::endl ;
+	std::cerr << "Received search request from peer " << item->PeerId() << ": " << std::endl ;
 	item->print(std::cerr,0) ;
 #endif
 	// If the item contains an already handled search request, give up.  This
@@ -186,7 +198,7 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "  Request not from us. Performing local search" << std::endl ;
 #endif
-		std::map<TurtleFileHash,TurtleFileName> result ;
+		std::list<TurtleFileInfo> result ;
 		performLocalSearch(item->match_string,result) ;
 
 		if(!result.empty())
@@ -203,7 +215,7 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 			res_item->PeerId(item->PeerId()) ;			// send back to the same guy
 
 #ifdef P3TURTLE_DEBUG
-			std::cerr << "  " << result.size() << " matches found. Sending back to origin." << std::endl ;
+			std::cerr << "  " << result.size() << " matches found. Sending back to origin (" << res_item->PeerId() << ")." << std::endl ;
 #endif
 			sendItem(res_item) ;
 		}
@@ -215,6 +227,9 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 	{
 		std::list<std::string> onlineIds ;
 		mConnMgr->getOnlineList(onlineIds);
+#ifdef P3TURTLE_DEBUG
+				std::cerr << "  Looking for online peers" << std::endl ;
+#endif
 
 		for(std::list<std::string>::const_iterator it(onlineIds.begin());it!=onlineIds.end();++it)
 			if(*it != item->PeerId())
@@ -259,6 +274,8 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 
 	// Is this result's target actually ours ?
 	
+	++(item->depth) ;			// increase depth
+
 	if(it->second == mConnMgr->getOwnId())
 		returnSearchResult(item) ;		// Yes, so send upward.
 	else
@@ -267,8 +284,6 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 		std::cerr << "  Forwarding result back to " << it->second << std::endl;
 #endif
 		RsTurtleSearchResultItem *fwd_item = new RsTurtleSearchResultItem(*item) ;	// copy the item
-
-		++(fwd_item->depth) ;			// increase depth
 
 		// normally here, we should setup the forward adress, so that the owner's of the files found can be further reached by a tunnel.
 
@@ -281,6 +296,7 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 std::ostream& RsTurtleSearchRequestItem::print(std::ostream& o, uint16_t)
 {
 	o << "Search request:" << std::endl ;
+	o << "  direct origin: \"" << PeerId() << "\"" << std::endl ;
 	o << "  match string: \"" << match_string << "\"" << std::endl ;
 	o << "  Req. Id: " << request_id << std::endl ;
 	o << "  Depth  : " << depth << std::endl ;
@@ -292,13 +308,13 @@ std::ostream& RsTurtleSearchResultItem::print(std::ostream& o, uint16_t)
 {
 	o << "Search result:" << std::endl ;
 
-	o << "  Peer id: " << peer_id << std::endl ;
+	o << "  Peer id: " << PeerId() << std::endl ;
 	o << "  Depth  : " << depth << std::endl ;
 	o << "  Req. Id: " << request_id << std::endl ;
 	o << "  Files:" << std::endl ;
 	
-	for(std::map<TurtleFileHash,TurtleFileName>::const_iterator it(result.begin());it!=result.end();++it)
-		o << "    " << it->first << "  " << it->second << std::endl ;
+	for(std::list<TurtleFileInfo>::const_iterator it(result.begin());it!=result.end();++it)
+		o << "    " << it->hash << "  " << it->size << " " << it->name << std::endl ;
 
 	return o ;
 }
@@ -307,8 +323,11 @@ void p3turtle::returnSearchResult(RsTurtleSearchResultItem *item)
 {
 	// just cout for now, but it should be notified to the gui
 	
-	std::cerr << "Received result for search request: " << std::endl ;
-	item->print(std::cerr,0) ;
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "  Returning result for search request " << item->request_id << " upwards." << std::endl ;
+#endif
+
+	rsicontrol->getNotify().notifyTurtleSearchResult(item->request_id,item->result) ;
 }
 
 /************* from pqiMonitor *******************/
@@ -350,6 +369,61 @@ uint32_t RsTurtleSearchRequestItem::serial_size()
 	return s ;
 }
 
+uint32_t RsTurtleSearchResultItem::serial_size()
+{
+	uint32_t s = 0 ;
+
+	s += 8 ; // header
+	s += 4 ; // search request id
+	s += 2 ; // depth
+	s += 4 ; // number of results
+
+	for(std::list<TurtleFileInfo>::const_iterator it(result.begin());it!=result.end();++it)
+	{
+		s += 8 ;											// file size
+		s += GetTlvStringSize(it->hash) ;		// file hash
+		s += GetTlvStringSize(it->name) ;		// file name
+	}
+
+	return s ;
+}
+
+RsItem *RsTurtleSerialiser::deserialise(void *data, uint32_t *size) 
+{
+	// look what we have...
+	
+	/* get the type */
+	uint32_t rstype = getRsItemId(data);
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "p3turtle: deserialising packet: " << std::endl ;
+#endif
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_TURTLE != getRsItemService(rstype))) 
+	{
+#ifdef P3TURTLE_DEBUG
+		std::cerr << "  Wrong type !!" << std::endl ;
+#endif
+		return NULL; /* wrong type */
+	}
+
+	try
+	{
+		switch(getRsItemSubType(rstype))
+		{
+			case RS_TURTLE_SUBTYPE_SEARCH_REQUEST:	return new RsTurtleSearchRequestItem(data,*size) ;
+			case RS_TURTLE_SUBTYPE_SEARCH_RESULT:	return new RsTurtleSearchResultItem(data,*size) ;
+
+			default:
+																std::cerr << "Unknown packet type in RsTurtle!" << std::endl ;
+																return NULL ;
+		}
+	}
+	catch(std::exception& e)
+	{
+		std::cerr << "Exception raised: " << e.what() << std::endl ;
+		return NULL ;
+	}
+}
+
 bool RsTurtleSearchRequestItem::serialize(void *data,uint32_t& pktsize)
 {
 	uint32_t tlvsize = serial_size();
@@ -384,21 +458,24 @@ bool RsTurtleSearchRequestItem::serialize(void *data,uint32_t& pktsize)
 	return ok;
 }
 
-uint32_t RsTurtleSearchResultItem::serial_size()
+RsTurtleSearchRequestItem::RsTurtleSearchRequestItem(void *data,uint32_t pktsize)
+	: RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_REQUEST)
 {
-	uint32_t s = 0 ;
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "  type = search request" << std::endl ;
+#endif
+	uint32_t offset = 8; // skip the header 
+	uint32_t rssize = getRsItemSize(data);
+	bool ok = true ;
 
-	s += 8 ; // header
-	s += 4 ; // search request id
-	s += 4 ; // number of results
+	ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE, match_string); 	// file hash
+	ok &= getRawUInt32(data, pktsize, &offset, &request_id);
+	ok &= getRawUInt16(data, pktsize, &offset, &depth);
 
-	for(std::map<TurtleFileHash,TurtleFileName>::const_iterator it(result.begin());it!=result.end();++it)
-	{
-		s += GetTlvStringSize(it->first) ;		// file hash
-		s += GetTlvStringSize(it->second) ;		// file name
-	}
-
-	return s ;
+	if (offset != rssize)
+		throw std::runtime_error("Size error while deserializing.") ;
+	if (!ok)
+		throw std::runtime_error("Unknown error while deserializing.") ;
 }
 
 bool RsTurtleSearchResultItem::serialize(void *data,uint32_t& pktsize)
@@ -421,12 +498,14 @@ bool RsTurtleSearchResultItem::serialize(void *data,uint32_t& pktsize)
 	/* add mandatory parts first */
 
 	ok &= setRawUInt32(data, tlvsize, &offset, request_id);
+	ok &= setRawUInt16(data, tlvsize, &offset, depth);
 	ok &= setRawUInt32(data, tlvsize, &offset, result.size());
 
-	for(std::map<TurtleFileHash,TurtleFileName>::const_iterator it(result.begin());it!=result.end();++it)
+	for(std::list<TurtleFileInfo>::const_iterator it(result.begin());it!=result.end();++it)
 	{
-		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_HASH_SHA1, it->first); 	// file hash
-		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, it->second); 		// file name
+		ok &= setRawUInt64(data, tlvsize, &offset, it->size); 								// file size
+		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_HASH_SHA1, it->hash);	// file hash
+		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, it->name); 		// file name
 	}
 
 	if (offset != tlvsize)
@@ -438,35 +517,15 @@ bool RsTurtleSearchResultItem::serialize(void *data,uint32_t& pktsize)
 	}
 
 	return ok;
-
 }
 
-RsItem *RsTurtleSerialiser::deserialise(void *data, uint32_t *size) 
-{
-	// look what we have...
-	
-	/* get the type */
-	uint32_t rstype = getRsItemId(data);
-
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_TURTLE != getRsItemService(rstype))) 
-	{
-		return NULL; /* wrong type */
-	}
-
-	switch(getRsItemSubType(rstype))
-	{
-		case RS_TURTLE_SUBTYPE_SEARCH_REQUEST:	return new RsTurtleSearchResultItem(data,*size) ;
-		case RS_TURTLE_SUBTYPE_SEARCH_RESULT:	return new RsTurtleSearchResultItem(data,*size) ;
-
-		default:
-															std::cerr << "Unknown packet type in RsTurtle!" << std::endl ;
-															return NULL ;
-	}
-}
 
 RsTurtleSearchResultItem::RsTurtleSearchResultItem(void *data,uint32_t pktsize)
 	: RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_RESULT)
 {
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "  type = search result" << std::endl ;
+#endif
 	uint32_t offset = 8; // skip the header 
 	uint32_t rssize = getRsItemSize(data);
 
@@ -475,18 +534,23 @@ RsTurtleSearchResultItem::RsTurtleSearchResultItem(void *data,uint32_t pktsize)
 	bool ok = true ;
 	uint32_t s ;
 	ok &= getRawUInt32(data, pktsize, &offset, &request_id);
+	ok &= getRawUInt16(data, pktsize, &offset, &depth);
 	ok &= getRawUInt32(data, pktsize, &offset, &s) ;
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "  reuqest_id=" << request_id << ", depth=" << depth << ", s=" << s << std::endl ;
+#endif
 
 	result.clear() ;
 
 	for(uint i=0;i<s;++i)
 	{
-		std::string hash,filename ;
+		TurtleFileInfo f ;
 
-		ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_HASH_SHA1, hash); 	// file hash
-		ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_NAME, filename); 	// file name
+		ok &= getRawUInt64(data, pktsize, &offset, &(f.size)); 									// file size
+		ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_HASH_SHA1, f.hash); 	// file hash
+		ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_NAME, f.name); 			// file name
 
-		result[hash]=filename ;
+		result.push_back(f) ;
 	}
 
 	if (offset != rssize)
@@ -494,4 +558,30 @@ RsTurtleSearchResultItem::RsTurtleSearchResultItem(void *data,uint32_t pktsize)
 	if (!ok)
 		throw std::runtime_error("Unknown error while deserializing.") ;
 }
+
+void p3turtle::performLocalSearch(const std::string& s,std::list<TurtleFileInfo>& result) 
+{
+	/* call to core */
+	std::list<FileDetail> initialResults;
+	std::list<std::string> words ;
+
+	// to do: split search string into words.
+	words.push_back(s) ;
+	
+	// now, search!
+	rsFiles->SearchKeywords(words, initialResults,DIR_FLAGS_LOCAL);
+
+	result.clear() ;
+
+	for(std::list<FileDetail>::const_iterator it(initialResults.begin());it!=initialResults.end();++it)
+	{
+		TurtleFileInfo i ;
+		i.hash = it->hash ;
+		i.size = it->size ;
+		i.name = it->name ;
+
+		result.push_back(i) ;
+	}
+}
+
 

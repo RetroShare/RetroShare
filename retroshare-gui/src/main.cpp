@@ -153,6 +153,11 @@ int main(int argc, char *argv[])
 	// avoid clashes between infos from threads.
 	//
 	QObject::connect(notify,SIGNAL(hashingInfoChanged(const QString&)),w                   ,SLOT(updateHashingInfo(const QString&))) ;
+#ifdef TURTLE_HOPPING
+	qRegisterMetaType<TurtleFileInfo>("TurtleFileInfo") ;
+	std::cerr << "connecting signals and slots" << std::endl ;
+	QObject::connect(notify,SIGNAL(gotTurtleSearchResult(qulonglong,TurtleFileInfo)),w->turtleDialog,SLOT(updateFiles(qulonglong,TurtleFileInfo))) ;
+#endif
 	QObject::connect(notify,SIGNAL(filesPreModChanged(bool))          ,w->sharedfilesDialog,SLOT(preModDirectories(bool)          )) ;
 	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w->sharedfilesDialog,SLOT(postModDirectories(bool)         )) ;
 	QObject::connect(notify,SIGNAL(transfersChanged())                ,w->transfersDialog  ,SLOT(insertTransfers()                )) ;

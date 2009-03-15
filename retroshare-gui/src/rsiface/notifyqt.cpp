@@ -3,6 +3,9 @@
 #include "rsiface/rsnotify.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsphoto.h"
+#ifdef TURTLE_HOPPING
+#include <rsiface/rsturtle.h>
+#endif
 
 #include "gui/NetworkDialog.h"
 #include "gui/PeersDialog.h"
@@ -36,6 +39,18 @@ void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
 	return;
 }
 
+#ifdef TURTLE_HOPPING
+void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files) 
+{
+	std::cerr << "in notify search result..." << std::endl ;
+
+//	QList<TurtleFileInfo> qfiles ;
+
+	for(std::list<TurtleFileInfo>::const_iterator it(files.begin());it!=files.end();++it)
+		emit gotTurtleSearchResult(search_id,*it) ;
+//		qfiles.push_back(*it) ;
+}
+#endif
 void NotifyQt::notifyHashingInfo(std::string fileinfo)
 {
 	emit hashingInfoChanged(QString::fromStdString(fileinfo)) ;
@@ -56,12 +71,21 @@ void NotifyQt::notifyListChange(int list, int type)
 	switch(list)
 	{
 		case NOTIFY_LIST_NEIGHBOURS:
+#ifdef DEBUG
+			std::cerr << "received neighbrs changed" << std::endl ;
+#endif
 			emit neighborsChanged();
 			break;
 		case NOTIFY_LIST_FRIENDS:
+#ifdef DEBUG
+			std::cerr << "received friends changed" << std::endl ;
+#endif
 			emit friendsChanged() ;
 			break;
 		case NOTIFY_LIST_DIRLIST:
+#ifdef DEBUG
+			std::cerr << "received files changed" << std::endl ;
+#endif
 			emit filesPostModChanged(false) ;	/* Remote */
 			emit filesPostModChanged(true) ;  /* Local */
 			break;
@@ -69,15 +93,24 @@ void NotifyQt::notifyListChange(int list, int type)
 			//displaySearch();
 			break;
 		case NOTIFY_LIST_MESSAGELIST:
+#ifdef DEBUG
+			std::cerr << "received msg changed" << std::endl ;
+#endif
 			emit messagesChanged() ;
 			break;
 		case NOTIFY_LIST_CHANNELLIST:
 			//displayChannels();
 			break;
 		case NOTIFY_LIST_TRANSFERLIST:
+#ifdef DEBUG
+			std::cerr << "received transfer changed" << std::endl ;
+#endif
 			emit transfersChanged() ;
 			break;
 		case NOTIFY_LIST_CONFIG:
+#ifdef DEBUG
+			std::cerr << "received config changed" << std::endl ;
+#endif
 			emit configChanged() ;
 			break ;
 		default:
@@ -132,6 +165,8 @@ void NotifyQt::UpdateGUI()
 {
 	/* hack to force updates until we've fixed that part */
 	static  time_t lastTs = 0;
+
+//	std::cerr << "Got update signal t=" << lastTs << std::endl ;
 
 	if (time(NULL) > lastTs)					// always update, every 1 sec.
 	{

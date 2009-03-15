@@ -252,12 +252,12 @@ int p3Files::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)
 }
 
 
-int p3Files::SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results)
+int p3Files::SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results,uint32_t flags)
 {
         lockRsCore();     /* LOCK */
 
 	/* call to filedexmServer */
-	int val = mServer->SearchKeywords(keywords, results);
+	int val = mServer->SearchKeywords(keywords, results,flags);
 
         unlockRsCore();     /* UNLOCK */
 

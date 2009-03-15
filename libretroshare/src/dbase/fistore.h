@@ -74,7 +74,7 @@ virtual int loadCache(const CacheData &data);	  /* actual load, once data availa
 	int SearchHash(std::string hash, std::list<FileDetail> &results) const;
 
 	/* Search Interface - For Search Interface */
-	int SearchKeywords(std::list<std::string> terms, std::list<FileDetail> &results) const;
+	int SearchKeywords(std::list<std::string> terms, std::list<FileDetail> &results,uint32_t flags) const;
 
 	/* Search Interface - for Adv Search Interface */
 	int searchBoolExp(Expression * exp, std::list<FileDetail> &results) const;

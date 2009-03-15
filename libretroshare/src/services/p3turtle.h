@@ -86,7 +86,7 @@ class RsTurtleSearchResultItem: public RsTurtleItem
 
 		TurtleRequestId request_id ;	// randomly generated request id.
 
-		std::map<TurtleFileHash,TurtleFileName> result ;
+		std::list<TurtleFileInfo> result ;
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
 
 	protected:
@@ -175,7 +175,7 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle
 //		int handleOutgoing();
 
 		// Performs a search calling local cache and search structure.
-		void performLocalSearch(const std::string& s,std::map<TurtleFileHash,TurtleFileName>& result) {}
+		void performLocalSearch(const std::string& s,std::list<TurtleFileInfo>& result) ;
 
 		void handleSearchRequest(RsTurtleSearchRequestItem *item);
 		void handleSearchResult(RsTurtleSearchResultItem *item);
