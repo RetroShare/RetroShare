@@ -66,7 +66,9 @@ class NotifyQt: public QObject, public NotifyBase
 		void neighborsChanged() const ;
 		void messagesChanged() const ;
 		void configChanged() const ;
+#ifdef TURTLE_HOPPING
 		void gotTurtleSearchResult(qulonglong search_id,TurtleFileInfo file) const ;
+#endif
 
 	public slots:
 
