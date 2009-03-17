@@ -85,7 +85,7 @@ class TurtleSearchDialog : public MainPage
 
 	private:
 	/** render the results to the tree widget display */
-	void resultsToTree(std::string, std::list<FileDetail>);
+	void insertFile(const std::string& txt,qulonglong search_id, const TurtleFileInfo& file);
 
 	/** the advanced search dialog instance */
 	AdvancedSearchDialog * advSearchDialog;
