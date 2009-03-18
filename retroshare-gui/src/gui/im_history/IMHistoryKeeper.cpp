@@ -1,3 +1,24 @@
+/****************************************************************
+ *  RetroShare is distributed under the following license:
+ *
+ *  Copyright (C) 2009 The RetroShare Team, Oleksiy Bilyanskyy
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License
+ *  as published by the Free Software Foundation; either version 2
+ *  of the License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA  02110-1301, USA.
+ ****************************************************************/
+
 #include "IMHistoryKeeper.h"
 
 #include <QFile>
@@ -121,22 +142,7 @@ IMHistoryKeeper::getMessages(QStringList& messagesList,
                 break;
         }
     }
-/*
-    QList<IMHistoryItem>::iterator hii ; // history items iterator
-    for (hii = hitems.begin(); hii != hitems.end(); hii++)
-    {
-        //IMHistoryItem* hitem = *hii;
-        if ( ( (hii->sender()==fromID)&&( hii->receiver()==toID) ) ||
-             ( (hii->receiver()== fromID)&&(hii->sender()==toID) ) )
-        {
-            ril << *hii ;
-            messFound++;
-            if (messFound>=messagesCount)
-                break;
-        }
-    }
-*/
-    
+
     formStringList(ril, messagesList) ;
 
     return 0; // successful end
@@ -149,13 +155,7 @@ IMHistoryKeeper::formStringList(QList<IMHistoryItem>& itemList,
                                 QStringList& strList)
 {
     strList.clear();
-/*
-    QList<IMHistoryItem>::const_iterator hii=itemList.constBegin();
-    for(hii; hii!= itemList.constEnd(); hii++)
-    {
-        strList.append( hii->text() );
-    }
-    */
+
     QListIterator<IMHistoryItem> hii(itemList);
     hii.toBack();
     while (hii.hasPrevious() )
