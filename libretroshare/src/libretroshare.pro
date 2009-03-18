@@ -49,8 +49,8 @@ win32 {
 
 DEFINES *=  PQI_USE_XPGP MINIUPNPC_VERSION=10
 
-SSL_DIR=../../../../src/openssl-0.9.7g-xpgp-0.1c
-UPNPC_DIR=../../../../src/miniupnpc-1.0
+SSL_DIR=../../../../openssl-0.9.7g-xpgp-0.1c
+UPNPC_DIR=../../../../miniupnpc-1.0
 
 INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR}
 
