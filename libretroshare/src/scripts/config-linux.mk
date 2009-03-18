@@ -13,8 +13,8 @@ PQI_USE_XPGP = 1
 #PQI_USE_CHANNELS = 1
 #USE_FILELOOK = 1
 
-SSL_DIR=../../../../../src/openssl-0.9.7g-xpgp-0.1c
-UPNPC_DIR=../../../../../src/miniupnpc-1.0
+SSL_DIR=../../../../openssl-0.9.7g-xpgp-0.1c
+UPNPC_DIR=../../../../miniupnpc-1.0
 
 # Need to define miniupnpc version because API  changed a little between v1.0 and 1.2
 # put 10 for 1.0 and 12 for 1.2
