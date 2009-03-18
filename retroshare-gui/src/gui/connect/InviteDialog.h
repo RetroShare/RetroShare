@@ -43,9 +43,6 @@ public slots:
 protected:
 private slots:
 
-	void closebutton();
-	void cancelbutton();
-	void emailbutton();
 	/// saves your certificate to file to send to friends
 	void savecertbutton();
   

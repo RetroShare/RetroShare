@@ -28,6 +28,7 @@
 
 #include <QMessageBox>
 
+//============================================================================
 /** Default constructor */
 AddFriendDialog::AddFriendDialog(NetworkDialog *cd, QWidget *parent, Qt::WFlags flags)
   : QDialog(parent, flags), cDialog(cd)
@@ -42,68 +43,101 @@ AddFriendDialog::AddFriendDialog(NetworkDialog *cd, QWidget *parent, Qt::WFlags 
   connect(ui.fileButton, SIGNAL(clicked()), this, SLOT(filebutton()));
   connect(ui.doneButton, SIGNAL(clicked()), this, SLOT(donebutton()));
 
+  //maybe, it was already set somewere, but just in case. This settings should
+  //prevent some bugs...
+  ui.emailText->setLineWrapMode(QTextEdit::NoWrap);
+  ui.emailText->setAcceptRichText(false);
+  
   //setFixedSize(QSize(434, 462));
 }
 
+//============================================================================
+
 void AddFriendDialog::donebutton()
 {
-	/* something complicated ;) */
-        std::string id;
+    std::string id;
+    std::string certstr;
 
-	/* get the text from the window */
-	/* load into string */
-	std::string certstr  = ui.emailText->toPlainText().toStdString();
+    QString fn = ui.fileSelectEdit->text() ;
+    if (fn.isEmpty())
+    {
+        //load certificate from text box
+        certstr = ui.emailText->toPlainText().toStdString();
 
-	/* ask retroshare to load */
-	if ((cDialog) && (rsPeers->LoadCertificateFromString(certstr, id)))
-	{
-		close();
-		cDialog->showpeerdetails(id);
-	}
-	else
-	{
-		/* error message */
-		int ret = QMessageBox::warning(this, tr("RetroShare"),
-                   tr("Certificate Load Failed"),
-                   QMessageBox::Ok, QMessageBox::Ok);
-	}
+        if ((cDialog) && (rsPeers->LoadCertificateFromString(certstr, id)))
+        {
+            close();
+            cDialog->showpeerdetails(id);
+        }
+        else
+        {
+            /* error message */
+            QMessageBox::warning(this, tr("RetroShare"),
+                    tr("Certificate Load Failed"),
+                    QMessageBox::Ok, QMessageBox::Ok);
+
+            close();
+            return;
+        }
+    }
+    else
+    {
+        //=== try to load selected certificate file
+        if (QFile::exists(fn))
+        {
+            std::string fnstr = fn.toStdString();
+            if ( (cDialog) && (rsPeers->LoadCertificateFromFile(fnstr, id)) )
+            {
+                close();
+                cDialog->showpeerdetails(id);
+            }
+            else
+            {
+                QString mbxmess =
+                    QString(tr("Certificate Load Failed:something is wrong with %1 "))
+                           .arg(fn);
+
+                QMessageBox::warning(this, tr("RetroShare"),
+                                mbxmess, QMessageBox::Ok, QMessageBox::Ok);
+                close();
+                return;
+            }
+        }
+        else
+        {
+           QString mbxmess =
+               QString(tr("Certificate Load Failed:file %1 not found"))
+                      .arg(fn);
+                      
+           QMessageBox::warning(this, tr("RetroShare"),
+                                mbxmess, QMessageBox::Ok, QMessageBox::Ok);
+
+           close();
+           return;
+        }
+    }
 }
 
+//============================================================================
 
 void AddFriendDialog::afcancelbutton()
 {
 	close();
 }
 
+//============================================================================
 
 void AddFriendDialog::filebutton()
 {
+    QString fileName =
+        QFileDialog::getOpenFileName(this, tr("Select Certificate"),
+                                     "", tr("Certificates (*.pqi *.pem)"));
 
-	/* show file dialog, 
-	 * load file into screen, 
-	 * push done button!
-	 */
-        std::string id;
-	if (cDialog)
-	{
-		id = cDialog->loadneighbour();
-	}
-					  
-	/* call make Friend */
-	if (id != "")
-	{
-		close();
-		cDialog->showpeerdetails(id);
-	}
-	else
-	{
-		/* error message */
-		int ret = QMessageBox::warning(this, tr("RetroShare"),
-                   tr("Certificate Load Failed"),
-                   QMessageBox::Ok, QMessageBox::Ok);
-	}
+    if (!fileName.isNull())
+        ui.fileSelectEdit->setText(fileName);
 }
 
+//============================================================================
 
 void AddFriendDialog::setInfo(std::string invite)
 {

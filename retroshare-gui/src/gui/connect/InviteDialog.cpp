@@ -23,7 +23,9 @@
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
-#include <util/WidgetBackgroundImage.h>
+//#include <util/WidgetBackgroundImage.h>
+
+#include <QMessageBox>
 
 /** Default constructor */
 InviteDialog::InviteDialog(QWidget *parent, Qt::WFlags flags)
@@ -35,70 +37,10 @@ InviteDialog::InviteDialog(QWidget *parent, Qt::WFlags flags)
   /* add a Background image for Invite a Friend Label */
   //WidgetBackgroundImage::setBackgroundImage(ui.invitefriendLabel, ":images/new-contact.png", WidgetBackgroundImage::AdjustHeight);
 
-  connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(cancelbutton()));
-  connect(ui.emailButton, SIGNAL(clicked()), this, SLOT(emailbutton()));
-  connect(ui.doneButton, SIGNAL(clicked()), this, SLOT(closebutton()));
   connect(ui.sCertButton, SIGNAL(clicked()), this, SLOT(savecertbutton()));
  
   //setFixedSize(QSize(434, 462));
 }
-
-void InviteDialog::closebutton()
-{
-	close();
-}
-
-
-void InviteDialog::cancelbutton()
-{
-	close();
-}
-
-	/* for Win32 only */
-#if defined(Q_OS_WIN)
-#include <windows.h>
-
-#endif
-
-void InviteDialog::emailbutton()
-{
-	/* for Win32 only */
-#if defined(Q_OS_WIN)
-
-	std::string mailstr = "mailto:";
-
-        mailstr += "?subject=RetroShare Invite";
-	mailstr += "&body=";
-	mailstr += ui.emailText->toPlainText().toStdString();
-
-	/* search and replace the end of lines with: "%0D%0A" */
-
-	std::cerr << "MAIL STRING:" << mailstr.c_str() << std::endl;
-
-	size_t loc;
-	while((loc = mailstr.find("\n")) != mailstr.npos)
-	{
-		/* sdfkasdflkjh */
-		mailstr.replace(loc, 1, "%0D%0A");
-	}
-
-	HINSTANCE hInst = ShellExecuteA(0, 
-		"open",
-		mailstr.c_str(), 
-		NULL, 
-		NULL, 
-		SW_SHOW);
-
-    if(reinterpret_cast<int>(hInst) <= 32)
-    {
-	/* error */
-	std::cerr << "ShellExecute Error: " << reinterpret_cast<int>(hInst);
-	std::cerr << std::endl;
-    }
-  
-#endif
-}
-
 
 void InviteDialog::setInfo(std::string invite)
 {
@@ -110,8 +52,24 @@ void InviteDialog::setInfo(std::string invite)
 
 void InviteDialog::savecertbutton(void)
 {
-
-        QString qdir = QFileDialog::getSaveFileName(this, "Please choose a filename", QDir::homePath(), "RetroShare Certificate (*.pqi)");
-        rsPeers->SaveCertificateToFile(rsPeers->getOwnId(), qdir.toStdString()); // save to file
+    QString qdir = QFileDialog::getSaveFileName(this,
+                                                "Please choose a filename",
+                                                QDir::homePath(),
+                                                "RetroShare Certificate (*.pqi)");
+                                                
+    if ( rsPeers->SaveCertificateToFile(rsPeers->getOwnId(), qdir.toStdString()) )
+    {
+        QMessageBox::information(this, tr("RetroShare"),
+                         tr("Certificate file successfully created"),
+                         QMessageBox::Ok, QMessageBox::Ok);
+         //close the window after messagebox finished
+        close();
+    }
+    else
+    {
+        QMessageBox::information(this, tr("RetroShare"),
+                         tr("Sorry, certificate file creation failed"),
+                         QMessageBox::Ok, QMessageBox::Ok);
+    }
 }
 		     

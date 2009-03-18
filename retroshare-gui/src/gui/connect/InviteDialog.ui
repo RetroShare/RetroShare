@@ -6,57 +6,14 @@
     <x>0</x>
     <y>0</y>
     <width>577</width>
-    <height>554</height>
+    <height>273</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Invite a Friend</string>
   </property>
-  <layout class="QGridLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
-   <item row="2" column="2" >
-    <widget class="QPushButton" name="emailButton" >
-     <property name="minimumSize" >
-      <size>
-       <width>77</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="text" >
-      <string>Launch Email</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="7" >
-    <widget class="QTextEdit" name="emailText" >
-     <property name="font" >
-      <font>
-       <family>Courier New</family>
-       <pointsize>10</pointsize>
-       <kerning>false</kerning>
-      </font>
-     </property>
-     <property name="readOnly" >
-      <bool>true</bool>
-     </property>
-     <property name="html" >
-      <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
-&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Courier New'; font-size:10pt; font-weight:400; font-style:normal;">
-&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:8pt;">&lt;/p>&lt;/body>&lt;/html></string>
-     </property>
-     <property name="acceptRichText" >
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0" colspan="7" >
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
     <widget class="QLabel" name="invitefriendLabel" >
      <property name="maximumSize" >
       <size>
@@ -483,99 +440,78 @@ p, li { white-space: pre-wrap; }
       <string notr="true" >background-image: url(:/images/invitefriendlabel.png);</string>
      </property>
      <property name="text" >
-      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+      <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:8pt;">&lt;span style=" font-size:16pt; font-weight:600; color:#32cd32;">Invite a Friend&lt;/span>&lt;br />&lt;span style=" font-size:10pt;">To Invite your friends to join you with Retroshare: &lt;/span>&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:10pt;">Cut and paste the text below into an email.&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:10pt;">and send it to all your friends!&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:8pt;">&lt;span style=" font-size:16pt; font-weight:600; color:#32cd32;">Invite a Friend&lt;/span>&lt;br />&lt;span style=" font-size:10pt;">To invite your friends to your retsoshare network you have to provide them your key.  Just send them the text below&lt;/span>&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial';">&lt;/p>&lt;/body>&lt;/html></string>
      </property>
      <property name="alignment" >
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="wordWrap" >
+      <bool>true</bool>
      </property>
      <property name="indent" >
       <number>100</number>
      </property>
     </widget>
    </item>
-   <item row="2" column="0" >
-    <widget class="QPushButton" name="cancelButton" >
-     <property name="minimumSize" >
-      <size>
-       <width>77</width>
-       <height>0</height>
-      </size>
+   <item>
+    <widget class="QTextEdit" name="emailText" >
+     <property name="font" >
+      <font>
+       <family>Courier New</family>
+       <pointsize>10</pointsize>
+       <kerning>false</kerning>
+      </font>
      </property>
-     <property name="text" >
-      <string>Cancel</string>
+     <property name="readOnly" >
+      <bool>true</bool>
      </property>
-    </widget>
-   </item>
-   <item row="2" column="1" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
+     <property name="html" >
+      <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Courier New'; font-size:10pt; font-weight:400; font-style:normal;">
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:8pt;">&lt;/p>&lt;/body>&lt;/html></string>
      </property>
-     <property name="sizeHint" stdset="0" >
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="2" column="6" >
-    <widget class="QPushButton" name="doneButton" >
-     <property name="minimumSize" >
-      <size>
-       <width>77</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="text" >
-      <string>Done</string>
+     <property name="acceptRichText" >
+      <bool>false</bool>
      </property>
     </widget>
    </item>
-   <item row="2" column="4" >
-    <widget class="QPushButton" name="sCertButton" >
-     <property name="text" >
-      <string>Save Cert To File</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="3" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0" >
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="2" column="5" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0" >
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item>
+      <widget class="QLabel" name="fileSelectLabel" >
+       <property name="text" >
+        <string>Alternatively, you can save the certificate information to a file. Please, press button to do this.</string>
+       </property>
+       <property name="wordWrap" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="sCertButton" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="MinimumExpanding" hsizetype="Fixed" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text" >
+        <string>Save Cert To File</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>emailButton</tabstop>
-  <tabstop>doneButton</tabstop>
-  <tabstop>cancelButton</tabstop>
   <tabstop>emailText</tabstop>
  </tabstops>
  <resources/>
