@@ -14,11 +14,11 @@ PQI_USE_XPGP = 1
 
 ###########################################################################
 
-ALT_SRC_ROOT=/cygdrive/c/home/rmfern/prog/MinGW
-SRC_ROOT=../../../..
+ALT_SRC_ROOT=/cygdrive/c/RetroShareBuild/src
+SRC_ROOT=/cygdrive/c/RetroShareBuild/src
 
 # These never change.
-PTHREADS_DIR=$(ALT_SRC_ROOT)/pthreads/pthreads.2
+PTHREADS_DIR=$(ALT_SRC_ROOT)/pthreads-w32-2-8-0-release
 ZLIB_DIR=$(ALT_SRC_ROOT)/zlib-1.2.3
 
 # pretty stable...
