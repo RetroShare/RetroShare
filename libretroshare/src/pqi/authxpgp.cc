@@ -579,6 +579,11 @@ bool AuthXPGP::LoadCertificateFromFile(std::string filename, std::string &id)
 	return ProcessXPGP(xpgp, id);
 }
 
+//============================================================================
+
+//! Saves something to filename
+
+//! \returns true on success, false on failure
 bool AuthXPGP::SaveCertificateToFile(std::string id, std::string filename)
 {
 #ifdef AUTHXPGP_DEBUG

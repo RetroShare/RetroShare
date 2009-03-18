@@ -543,7 +543,8 @@ bool 	p3Peers::setNetworkMode(std::string id, uint32_t extNetMode)
 }
 
 
-bool 	p3Peers::setVisState(std::string id, uint32_t extVisState)
+bool
+p3Peers::setVisState(std::string id, uint32_t extVisState)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::setVisState() " << id;
@@ -559,8 +560,10 @@ bool 	p3Peers::setVisState(std::string id, uint32_t extVisState)
 	return mConnMgr->setVisState(id, visState);
 }
 
+//===========================================================================
 	/* Auth Stuff */
-std::string p3Peers::GetRetroshareInvite()
+std::string
+p3Peers::GetRetroshareInvite()
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::GetRetroshareInvite()";
@@ -584,31 +587,13 @@ std::string p3Peers::GetRetroshareInvite()
 	std::string name = mAuthMgr->getName(ownId);
 	
 	std::ostringstream out;
-	out << "You have been invited to join the retroshare";
-	out << " community by: " << name;
-	out << std::endl;
-	out << std::endl;
-	out << "Retroshare is a Friend-2-Friend network that enables you to";
-	out << " communicate securely and";
-	out << std::endl;
-	out << "privately with your friends. ";
-	out << "You can use it for chat, messages, ";
-	out << "channels, and file-sharing. ";
-	out << std::endl;
-	out << std::endl;
-	out << "Download it from: ";
-	out << "http://retroshare.sf.net";
-	out << std::endl;
-	out << std::endl;
-	out << "Thanks, ";
-	out << "  " << name << ", DrBob and the RetroShare Team!";
-	out << std::endl;
-	out << std::endl;
 	out << certstr;
 	out << std::endl;
 	
 	return out.str();
 }
+
+//===========================================================================
 
 bool 	p3Peers::LoadCertificateFromFile(std::string fname, std::string &id)
 {

@@ -28,6 +28,23 @@
 
 #include <string>
 
+//! Converts invitation to clean XPGP certificate
+
+//!  This function was used for extracting XPGP certificates  from invitation
+//!letters. Typical input was something like
+//! You have been invited to join the retroshare community by: beardog-unstable-02
+//!   
+//! Retroshare is a Friend-2-Friend network that enables you to communicate securely and privately ....
+//! ...  text stuff .....
+//!
+//!-----BEGIN XPGP CERTIFICATE-----
+//!MIICxQIBADCCAUkCAQAwHhcNMDkwMjI4MTgzODIyWhcNMTQwMjI3MTgzODIyWjCC
+//! ...more ines here...
+//!mEuhG8UmDIzC1jeTu8rTMnO+DO3FH/cek1vlfFl4t9g/xktG9U4SPLg=
+//!-----END XPGP CERTIFICATE-----
+//!  
+//! In the newer gui version, users send each other almost clean certificates,
+//! so this functon is used only to avoid possible bugs with line endings
 std::string cleanUpCertificate(std::string badCertificate);
 
 #endif
