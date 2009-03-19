@@ -46,6 +46,7 @@
 #include "util/rsdir.h"
 
 #include "pqi/p3connmgr.h"
+#include "pqi/pqinotify.h"
 
 #include "serialiser/rsconfigitems.h"
 
@@ -168,6 +169,82 @@ bool ftController::FlagFileComplete(std::string hash)
 	return true;
 }
 
+bool ftController::moveFile(const std::string& source,const std::string& dest)
+{
+	// First try a rename
+	//
+	if (0 == rename(source.c_str(), dest.c_str()))
+	{
+//#ifdef CONTROL_DEBUG
+		std::cerr << "ftController::completeFile() renaming to: ";
+		std::cerr << dest;
+		std::cerr << std::endl;
+//#endif
+
+		return true ;
+	}
+//#ifdef CONTROL_DEBUG
+	std::cerr << "ftController::completeFile() FAILED mv to: ";
+	std::cerr << dest;
+	std::cerr << std::endl;
+	std::cerr << "trying copy" << std::endl ;
+//#endif
+	// We could not rename, probably because we're dealing with different file systems. 
+	// Let's copy then.
+
+	std::string error ;
+
+	static const int BUFF_SIZE = 10485760 ; // 10 MB buffer to speed things up.
+	void *buffer = malloc(BUFF_SIZE) ;
+	FILE *in = fopen(source.c_str(),"r") ;
+
+	if(in == NULL)
+	{
+		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File copy error", "Error while copying file " + dest + "\nCannot open input file "+source);
+		return false ;
+	}
+
+	FILE *out = fopen(dest.c_str(),"w") ;
+
+	if(out == NULL)
+	{
+		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File copy error", "Error while copying file " + dest + "\nCheck for disk full, or write permission ?\nOriginal file kept under the name "+source);
+		return false ;
+	}
+
+	size_t s=0;
+	size_t T=0;
+
+	while( (s = fread(buffer,1,BUFF_SIZE,in)) > 0)
+	{
+		size_t t = fwrite(buffer,1,s,out) ;
+		T += t ;
+
+		if(t != s)
+		{
+			getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File copy error", "Error while copying file " + dest + "\nIs your disc full ?\nOriginal file kept under the name "+source);
+			return false ;
+		}
+	}
+
+	fclose(in) ;
+	fclose(out) ;
+
+	// copy was successfull, let's delete the original
+	std::cerr << "deleting original file " << source << std::endl ;
+
+	free(buffer) ;
+
+	if(0 == remove(source.c_str()))
+		return true ;
+	else
+	{
+		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File erase error", "Error while removing hash file " + dest + "\nRead-only file system ?");
+		return false ;
+	}
+}
+
+
 bool ftController::completeFile(std::string hash)
 {
 	/* variables... so we can drop mutex later */
@@ -241,28 +318,10 @@ bool ftController::completeFile(std::string hash)
 
 		fc->mState = ftFileControl::COMPLETED;
 
-		/* Move to Correct Location */
-		if (0 == rename(fc->mCurrentPath.c_str(), fc->mDestination.c_str()))
-		{
-#ifdef CONTROL_DEBUG
-			std::cerr << "ftController::completeFile() renaming to: ";
-			std::cerr << fc->mDestination;
-			std::cerr << std::endl;
-#endif
-
-			/* correct the file_name */
+		if( moveFile(fc->mCurrentPath,fc->mDestination) ) 
 			fc->mCurrentPath = fc->mDestination;
-		}
 		else
-		{
-#ifdef CONTROL_DEBUG
-			std::cerr << "ftController::completeFile() FAILED mv to: ";
-			std::cerr << fc->mDestination;
-			std::cerr << std::endl;
-#endif
-
 			fc->mState = ftFileControl::ERROR_COMPLETION;
-		}
 
 		/* switch map */
 		if (fc->mFlags & RS_FILE_HINTS_CACHE) /* clean up completed cache files automatically */ 

@@ -141,6 +141,7 @@ std::string getDownloadDirectory();
 std::string getPartialsDirectory();
 bool 	FileDetails(std::string hash, FileInfo &info);
 
+bool moveFile(const std::string& source,const std::string& dest) ;
 
 	/***************************************************************/
 	/********************** Cache Transfer *************************/
