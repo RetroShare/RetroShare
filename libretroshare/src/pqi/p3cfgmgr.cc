@@ -23,10 +23,11 @@
  *
  */
 
-
+#include "rsiface/rspeers.h"
 #include "pqi/p3cfgmgr.h"
 #include "pqi/p3authmgr.h"
 #include "pqi/pqibin.h"
+#include "pqi/pqiarchive.h"
 #include "pqi/pqistreamer.h"
 
 #include "serialiser/rsconfigitems.h"
@@ -398,10 +399,9 @@ bool	p3Config::loadConfiguration(std::string &loadHash)
 	uint32_t stream_flags = BIN_FLAGS_READABLE;
 
 	BinInterface *bio = new BinFileInterface(fname.c_str(), bioflags);
-	pqistreamer stream(setupSerialiser(), "CONFIG", bio, stream_flags);
+	pqiarchive stream(setupSerialiser(), bio, stream_flags);
 	RsItem *item = NULL;
 
-	stream.tick();
 	while(NULL != (item = stream.GetItem()))
 	{
 #ifdef CONFIG_DEBUG 
@@ -411,7 +411,6 @@ bool	p3Config::loadConfiguration(std::string &loadHash)
 		std::cerr << std::endl;
 #endif
 		load.push_back(item);
-		stream.tick();
 	}
 
 #ifdef CONFIG_DEBUG 
@@ -455,7 +454,9 @@ bool	p3Config::saveConfiguration()
 	std::list<RsItem *> toSave = saveList(cleanup);
 
 	std::string fname = Filename();
+	std::string fnametmp = Filename()+".tmp";
 
+	std::cerr << "Writting p3config file " << fname.c_str() << std::endl ;
 #ifdef CONFIG_DEBUG 
 	std::cerr << "p3Config::saveConfiguration() toSave " << toSave.size();
 	std::cerr << " Elements to File: " << fname;
@@ -463,14 +464,18 @@ bool	p3Config::saveConfiguration()
 #endif
 
 	uint32_t bioflags = BIN_FLAGS_HASH_DATA | BIN_FLAGS_WRITEABLE;
-
 	uint32_t stream_flags = BIN_FLAGS_WRITEABLE;
+
 	if (!cleanup)
 		stream_flags |= BIN_FLAGS_NO_DELETE;
 
-	BinInterface *bio = new BinFileInterface(fname.c_str(), bioflags);
-	pqistreamer stream(setupSerialiser(), "CONFIG", bio, stream_flags);
+	BinInterface *bio = new BinFileInterface(fnametmp.c_str(), bioflags);
+	pqiarchive *stream = new pqiarchive(setupSerialiser(), bio, stream_flags);
+
 	std::list<RsItem *>::iterator it;
+
+	bool written = true ;
+
 	for(it = toSave.begin(); it != toSave.end(); it++)
 	{
 #ifdef CONFIG_DEBUG 
@@ -479,19 +484,31 @@ bool	p3Config::saveConfiguration()
 		(*it)->print(std::cerr, 0);
 		std::cerr << std::endl;
 #endif
-		stream.SendItem(*it);
-		stream.tick();
+		if( (*it)->PeerId().length() == 0 )			// this is required by pqiarchive.
+			(*it)->PeerId(rsPeers->getOwnId()) ;
+
+		written = written && stream->SendItem(*it);
+
+//		std::cerr << "written = " << written << std::endl ;
 	}
-	/* final tick for anymore writing */
-	stream.tick();
 
 	/* store the hash */
 	setHash(bio->gethash());
-
 	saveDone(); /* callback to inherited class to unlock any Mutexes
 		     * protecting saveList() data
 		     */
 
+	delete stream ;
+
+	if(!written)
+		return false ;
+
+	std::cerr << "renaming " << fnametmp.c_str() << " to " << fname.c_str() << std::endl ;
+
+	if(0 != rename(fnametmp.c_str(),fname.c_str()))
+		return false ;
+
+	std::cerr << "Successfully wrote p3config file " << fname.c_str() << std::endl ;
 	/* else okay */
 	return true;
 }

@@ -143,6 +143,8 @@ int	pqiarchive::SendItem(RsItem *si)
 		return -1;
 	}
 
+//	std::cerr << "SendItem: si->PeerId()=" << si->PeerId() << std::endl ;
+
 	int ret = writePkt(si);
 	return ret; /* 0 - failure, 1 - success*/
 }
@@ -246,6 +248,7 @@ int	pqiarchive::status()
 
 int	pqiarchive::writePkt(RsItem *pqi)
 {
+//	std::cerr << "writePkt, pqi->peerId()=" << pqi->PeerId() << std::endl ;
         {
 	  std::ostringstream out;
 	  out << "pqiarchive::writePkt()";
@@ -310,6 +313,8 @@ int	pqiarchive::writePkt(RsItem *pqi)
 		std::ostringstream out;
 		out << "pqiarchive::writePkt() Invalid peerId Length!";
 		out << std::endl;
+		out << "Found " << pqi->PeerId().length() << " instead of " << PQI_PEERID_LENGTH << std::endl ;
+		out << "pqi->PeerId() = " << pqi->PeerId() << std::endl ;
 		out << "Caused By: " << std::endl;
 		pqi -> print(out);
 		pqioutput(PQL_ALERT, pqiarchivezone, out.str());

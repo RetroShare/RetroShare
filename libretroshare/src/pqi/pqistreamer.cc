@@ -500,7 +500,7 @@ int	pqistreamer::handleoutgoing()
 int pqistreamer::handleincoming()
 {
 	int readbytes = 0;
-	static const int max_failed_read_attempts = 600 ;
+	static const int max_failed_read_attempts = 2000 ;
 
 	{
 		std::ostringstream out;
@@ -557,7 +557,7 @@ start_packet_read:
 				// Most likely it is that the packet is pending but could not be read by pqissl because of stream flow.
 				// So we return without an error, and leave the machine state in 'start_read'.
 				//
-				pqioutput(PQL_WARNING, pqistreamerzone, "pqistreamer::handleincoming() Error in bio read");
+				//pqioutput(PQL_WARNING, pqistreamerzone, "pqistreamer::handleincoming() Error in bio read");
 //					std::cerr << "given up 2, state = " << reading_state << std::endl ;
 				return 0;
 			}
@@ -702,6 +702,7 @@ continue_packet:
 				}
 			}
 
+			failed_read_attempts = 0 ;
 			readbytes += extralen;
 		}
 

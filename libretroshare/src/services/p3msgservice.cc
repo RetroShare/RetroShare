@@ -265,38 +265,33 @@ bool    p3MsgService::saveConfiguration()
 	 */
 
 	std::string msgfile = Filename();
+	std::string msgfiletmp = Filename()+".tmp";
 
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
 	RsSerialiser *rss = new RsSerialiser();
 	rss->addSerialType(new RsMsgSerialiser());
 
-	BinFileInterface *out = new BinFileInterface(msgfile.c_str(), BIN_FLAGS_WRITEABLE | BIN_FLAGS_HASH_DATA);
-        pqiarchive *pa_out = new pqiarchive(rss, out, BIN_FLAGS_WRITEABLE | BIN_FLAGS_NO_DELETE);
-	bool written = false;
+	BinFileInterface *out = new BinFileInterface(msgfiletmp.c_str(), BIN_FLAGS_WRITEABLE | BIN_FLAGS_HASH_DATA);
+	pqiarchive *pa_out = new pqiarchive(rss, out, BIN_FLAGS_WRITEABLE | BIN_FLAGS_NO_DELETE);
+	bool written = true;
 
 	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	for(mit = imsg.begin(); mit != imsg.end(); mit++)
-	{
-		if (pa_out -> SendItem(mit->second))
-		{
-			written = true;
-		}
-		
-	}
+		written = written && pa_out -> SendItem(mit->second) ;
 
 	for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
-	{
-		if (pa_out -> SendItem(mit->second))
-		{
-			written = true;
-		}
-		
-	}
+		written = written && pa_out -> SendItem(mit->second) ;
 
 	setHash(out->gethash());
-
 	delete pa_out;	
+
+	if(!written)
+		return false ;
+
+	if(0 != rename(msgfiletmp.c_str(),msgfile.c_str()))
+		return false ;
+		
 	return true;
 }
 
