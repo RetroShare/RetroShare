@@ -1420,12 +1420,11 @@ int 	pqissl::readdata(void *data, int len)
 		if (tmppktlen <= 0) // probably needs a reset.
 		{
 			std::ostringstream out;
-			out << "pqissl::readdata()";
-			out << " No Data Read ... Probably a Bad Connection" << std::endl; 
+
 			int error = SSL_get_error(ssl_connection, tmppktlen);
 			unsigned long err2 =  ERR_get_error();
 
-			printSSLError(ssl_connection, tmppktlen, error, err2, out);
+			//printSSLError(ssl_connection, tmppktlen, error, err2, out);
 
 			if ((error == SSL_ERROR_ZERO_RETURN) && (err2 == 0))
 			{
@@ -1482,9 +1481,9 @@ int 	pqissl::readdata(void *data, int len)
 			}
 			else if (error == SSL_ERROR_WANT_READ)					// SSL_WANT_READ is not a crittical error. It's just a sign that
 			{																	// the internal SSL buffer is not ready to accept more data. So -1 
-				out << "SSL_read() SSL_ERROR_WANT_READ";			// is returned, and the connexion will be retried as is on next
-				out << std::endl;											// call of readdata().
-				rslog(RSL_ALERT, pqisslzone, out.str());
+//				out << "SSL_read() SSL_ERROR_WANT_READ";			// is returned, and the connexion will be retried as is on next
+//				out << std::endl;											// call of readdata().
+//				rslog(RSL_ALERT, pqisslzone, out.str());
 				return -1;
 			}
 			else
