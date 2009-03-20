@@ -129,6 +129,7 @@ void ConnectDialog::authAttempt()
 	rsPeers->AuthCertificate(authId, authCode);
 	rsPeers->addFriend(authId);
 
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS,1) ;
 	/* close it up! */
 	closeinfodlg();
 }
