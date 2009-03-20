@@ -23,6 +23,8 @@
  *
  */
 
+#include "pqi/pqibin.h"
+#include "pqi/pqiarchive.h"
 
 #include "services/p3chatservice.h"
 
@@ -37,7 +39,7 @@
  */
 
 p3ChatService::p3ChatService(p3ConnectMgr *cm)
-	:p3Service(RS_SERVICE_TYPE_CHAT), mConnMgr(cm)
+	:p3Service(RS_SERVICE_TYPE_CHAT), pqiConfig(CONFIG_TYPE_CHAT), mConnMgr(cm) 
 {
 	addSerialType(new RsChatSerialiser());
 
@@ -263,20 +265,26 @@ std::list<RsChatItem *> p3ChatService::getChatQueue()
 
 void p3ChatService::setOwnAvatarJpegData(const unsigned char *data,int size)
 {
-   std::cerr << "p3chatservice: Setting own avatar to new image." << std::endl ;
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+		std::cerr << "p3chatservice: Setting own avatar to new image." << std::endl ;
 
-   if(_own_avatar != NULL)
-	  delete _own_avatar ;
+		if(_own_avatar != NULL)
+			delete _own_avatar ;
 
-   _own_avatar = new AvatarInfo(data,size) ;
+		_own_avatar = new AvatarInfo(data,size) ;
 
-   // set the info that our avatar is new, for all peers
-   for(std::map<std::string,AvatarInfo *>::iterator it(_avatars.begin());it!=_avatars.end();++it)
-	  it->second->_own_is_new = true ;
+		// set the info that our avatar is new, for all peers
+		for(std::map<std::string,AvatarInfo *>::iterator it(_avatars.begin());it!=_avatars.end();++it)
+			it->second->_own_is_new = true ;
+	}
+
+	IndicateConfigChanged();
 }
 
 void p3ChatService::receiveAvatarJpegData(RsChatItem *ci)
 {
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
    std::cerr << "p3chatservice: received avatar jpeg data for peer " << ci->PeerId() << ". Storing it." << std::endl ;
 
    bool new_peer = (_avatars.find(ci->PeerId()) == _avatars.end()) ;
@@ -289,6 +297,7 @@ void p3ChatService::receiveAvatarJpegData(RsChatItem *ci)
 void p3ChatService::getOwnAvatarJpegData(unsigned char *& data,int& size) 
 {
 	// should be a Mutex here.
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
 	std::cerr << "p3chatservice:: own avatar requested from above. " << std::endl ;
 	// has avatar. Return it strait away.
@@ -304,6 +313,8 @@ void p3ChatService::getOwnAvatarJpegData(unsigned char *& data,int& size)
 void p3ChatService::getAvatarJpegData(const std::string& peer_id,unsigned char *& data,int& size) 
 {
 	// should be a Mutex here.
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
 	std::map<std::string,AvatarInfo *>::const_iterator it = _avatars.find(peer_id) ; 
 
 	std::cerr << "p3chatservice:: avatar requested from above. " << std::endl ;
@@ -339,28 +350,120 @@ void p3ChatService::sendAvatarRequest(const std::string& peer_id)
 	sendItem(ci);
 }
 
+RsChatItem *p3ChatService::makeOwnAvatarItem()
+{
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+	RsChatItem *ci = new RsChatItem();
+
+	ci->chatFlags = RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_CONTAINS_AVATAR ;
+	ci->sendTime = time(NULL);
+	ci->message = _own_avatar->toStdWString() ;
+
+	return ci ;
+}
+
+
 void p3ChatService::sendAvatarJpegData(const std::string& peer_id)
 {
    std::cerr << "p3chatservice: sending requested for peer " << peer_id << ", data=" << (void*)_own_avatar << std::endl ;
 
    if(_own_avatar != NULL)
-   {
-	  RsChatItem *ci = new RsChatItem();
+	{
+		RsChatItem *ci = makeOwnAvatarItem();
+		ci->PeerId(peer_id);
 
-	  ci->PeerId(peer_id);
-	  ci->chatFlags = RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_CONTAINS_AVATAR ;
-	  ci->sendTime = time(NULL);
-	  ci->message = _own_avatar->toStdWString() ;
+		// take avatar, and embed it into a std::wstring.
+		//
+		std::cerr << "p3ChatService::sending avatar image to peer" << peer_id << ", string size = " << ci->message.size() << std::endl ;
+		std::cerr << std::endl;
 
-	  // take avatar, and embed it into a std::wstring.
-	  //
-	  std::cerr << "p3ChatService::sending avatar image to peer" << peer_id << ", string size = " << ci->message.size() << std::endl ;
-	  std::cerr << std::endl;
-
-	  sendItem(ci);
-   }
+		sendItem(ci) ;
+	}
    else
 	  std::cerr << "Doing nothing" << std::endl ;
 }
+
+bool p3ChatService::loadConfiguration(std::string &loadHash)
+{
+	std::list<std::string>::iterator it;
+	std::string msgfile = Filename();
+
+	RsSerialiser *rss = new RsSerialiser();
+	rss->addSerialType(new RsChatSerialiser());
+
+	BinFileInterface *in = new BinFileInterface(msgfile.c_str(), BIN_FLAGS_READABLE | BIN_FLAGS_HASH_DATA);
+	pqiarchive *pa_in = new pqiarchive(rss, in, BIN_FLAGS_READABLE);
+	RsItem *item;
+	RsChatItem *mitem;
+
+	while((item = pa_in -> GetItem()))
+	{
+		if(NULL != (mitem = dynamic_cast<RsChatItem *>(item)))
+		{
+			RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+			_own_avatar = new AvatarInfo(mitem->message) ;
+		}
+
+		delete item;
+	}
+
+	std::string hashin = in->gethash();
+	delete pa_in;	
+
+	if (hashin != loadHash)
+	{
+		/* big error message! */
+		std::cerr << "p3ChatService::loadConfiguration() FAILED! avatar Tampered" << std::endl;
+		std::string msgfileold = msgfile + ".failed";
+
+		rename(msgfile.c_str(), msgfileold.c_str());
+
+		std::cerr << "Moving Old file to: " << msgfileold << std::endl;
+		std::cerr << "removing dodgey msgs" << std::endl;
+
+		_own_avatar = NULL ;
+
+		setHash("");
+		return false;
+	}
+
+	setHash(hashin);
+
+	return true;
+}
+
+bool p3ChatService::saveConfiguration()
+{
+	/* now we create a pqiarchive, and stream all the msgs into it */
+
+	std::string msgfile = Filename();
+	std::string msgfiletmp = Filename()+".tmp";
+
+	RsSerialiser *rss = new RsSerialiser();
+	rss->addSerialType(new RsChatSerialiser());
+
+	BinFileInterface *out = new BinFileInterface(msgfiletmp.c_str(), BIN_FLAGS_WRITEABLE | BIN_FLAGS_HASH_DATA);
+	pqiarchive *pa_out = new pqiarchive(rss, out, BIN_FLAGS_WRITEABLE);
+
+	if(_own_avatar != NULL)
+	{
+		std::cerr << "Saving avatar config to file " << msgfile << std::endl ;
+		RsChatItem *ci = makeOwnAvatarItem() ;
+		ci->PeerId(mConnMgr->getOwnId());
+
+		if(!pa_out -> SendItem(ci))
+			return false ;
+	}
+
+	setHash(out->gethash());
+	delete pa_out;	
+
+	if(0 != rename(msgfiletmp.c_str(),msgfile.c_str()))
+		return false ;
+
+	return true;
+}
+
 
 

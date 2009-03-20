@@ -39,7 +39,7 @@
 #include "services/p3service.h"
 #include "pqi/p3connmgr.h"
 
-class p3ChatService: public p3Service
+class p3ChatService: public p3Service, public pqiConfig
 {
 	public:
 		p3ChatService(p3ConnectMgr *cm);
@@ -63,7 +63,13 @@ class p3ChatService: public p3Service
 
 		std::list<RsChatItem *> getChatQueue(); 
 
+		/*** Overloaded from pqiConfig ****/
+		virtual bool    loadConfiguration(std::string &loadHash);
+		virtual bool    saveConfiguration();
+
 	private:
+		RsMutex mChatMtx;
+
 		class AvatarInfo ;
 
 		/// Send avatar info to peer in jpeg format.
@@ -74,6 +80,8 @@ class p3ChatService: public p3Service
 
 		/// Sends a request for an avatar to the peer of given id
 		void sendAvatarRequest(const std::string& peer_id) ;
+
+		RsChatItem *makeOwnAvatarItem() ;
 
 		p3ConnectMgr *mConnMgr;
 

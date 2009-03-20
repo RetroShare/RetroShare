@@ -741,6 +741,7 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("peers.cfg", mConnMgr);
 	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
+	mConfigMgr->addConfiguration("chat.cfg", chatSrv);
 	mConfigMgr->addConfiguration("cache.cfg", mCacheStrapper);
 
 	mConfigMgr->addConfiguration("ranklink.cfg", mRanking);
