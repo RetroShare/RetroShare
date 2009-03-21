@@ -153,16 +153,31 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 		}
 		else
 		{
-			peerdetailsAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Make Friend / Peer Details" ), this );
+			makefriendAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Make Friend" ), this );
+			connect( makefriendAct , SIGNAL( triggered() ), this, SLOT( makeFriend() ) );
+			contextMnu.addAction( makefriendAct);
+
+			peerdetailsAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Peer Details..." ), this );
 			connect( peerdetailsAct , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
 			contextMnu.addAction( peerdetailsAct);
 
-			loadcertAct = new QAction(QIcon(IMAGE_LOADCERT), tr( "Load Certificate" ), this );
-			connect( loadcertAct , SIGNAL( triggered() ), this, SLOT( loadneighbour() ) );
-			contextMnu.addAction( loadcertAct);
+//			loadcertAct = new QAction(QIcon(IMAGE_LOADCERT), tr( "Load Certificate" ), this );
+//			connect( loadcertAct , SIGNAL( triggered() ), this, SLOT( loadneighbour() ) );
+//			contextMnu.addAction( loadcertAct);
 		}
 
       contextMnu.exec( mevent->globalPos() );
+}
+
+void NetworkDialog::makeFriend()
+{
+	QTreeWidgetItem *wi = getCurrentNeighbour();
+	std::string authId = wi->text(9).toStdString() ;
+
+	rsPeers->AuthCertificate(authId, "");
+	rsPeers->addFriend(authId);
+
+	insertConnect() ;
 }
 
 /** Shows Peer Information/Auth Dialog */
