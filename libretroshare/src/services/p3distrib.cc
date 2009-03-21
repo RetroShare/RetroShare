@@ -202,6 +202,8 @@ void	p3GroupDistrib::loadFileGroups(std::string filename, std::string src, bool 
 	BinInterface *bio = new BinFileInterface(filename.c_str(), BIN_FLAGS_READABLE);
 	pqistreamer *streamer = createStreamer(bio, src, 0);
 
+	std::cerr << "loading file " << filename << std::endl ;
+
 	RsItem *item;
 	RsDistribGrp *newGrp;
 	RsDistribGrpKey *newKey;
@@ -266,6 +268,8 @@ void	p3GroupDistrib::loadFileMsgs(std::string filename, uint16_t cacheSubId, std
 	/* create the serialiser to load msgs */
 	BinInterface *bio = new BinFileInterface(filename.c_str(), BIN_FLAGS_READABLE);
 	pqistreamer *streamer = createStreamer(bio, src, 0);
+
+	std::cerr << "loading file " << filename << std::endl ;
 
 	RsItem *item;
 	RsDistribSignedMsg *newMsg;
@@ -740,10 +744,10 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 	out << "grpdist-t" << CacheSource::getCacheType() << "-msgs-" << time(NULL) << ".dist"; 
 
 	std::string tmpname = out.str();
-	std::string filename = path + "/" + tmpname;
+	std::string filename = path + "/" + tmpname ;
+	std::string filenametmp = path + "/" + tmpname + ".tmp";
 
-	BinInterface *bio = new BinFileInterface(filename.c_str(), 
-				BIN_FLAGS_WRITEABLE | BIN_FLAGS_HASH_DATA);
+	BinInterface *bio = new BinFileInterface(filenametmp.c_str(), BIN_FLAGS_WRITEABLE | BIN_FLAGS_HASH_DATA);
 	pqistreamer *streamer = createStreamer(bio, mOwnId, 0); /* messages are deleted! */ 
 
 	bool resave = false;
@@ -768,7 +772,6 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 
 		streamer->SendItem(*it); /* deletes it */
 		streamer->tick();
-
 	}
 
 	streamer->tick(); /* once more for good luck! */
@@ -784,6 +787,11 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 	/* cleanup */
 	mPendingPublish.clear();
 	delete streamer;
+
+	if(0 != rename(filenametmp.c_str(),filename.c_str()))
+		std::cerr << "Could not rename file " << filenametmp << " into " << filename << std::endl ;
+	else
+		std::cerr << "Successfull wrote file " << filename << std::endl ;
 
 	/* indicate not to save for a while */
 	mLastPublishTime = now;
@@ -824,9 +832,9 @@ void 	p3GroupDistrib::publishDistribGroups()
 
 	std::string tmpname = out.str();
 	std::string filename = path + "/" + tmpname;
+	std::string filenametmp = path + "/" + tmpname + ".tmp";
 
-	BinInterface *bio = new BinFileInterface(filename.c_str(), 
-				BIN_FLAGS_WRITEABLE | BIN_FLAGS_HASH_DATA);
+	BinInterface *bio = new BinFileInterface(filenametmp.c_str(), BIN_FLAGS_WRITEABLE | BIN_FLAGS_HASH_DATA);
 	pqistreamer *streamer = createStreamer(bio, mOwnId, BIN_FLAGS_NO_DELETE);
 
 	RsStackMutex stack(distribMtx); /****** STACK MUTEX LOCKED *******/
@@ -916,6 +924,11 @@ void 	p3GroupDistrib::publishDistribGroups()
 
 	/* cleanup */
 	delete streamer;
+
+	if(0 != rename(filenametmp.c_str(),filename.c_str()))
+		std::cerr << "Could not rename file " << filenametmp << " into " << filename << std::endl ;
+	else
+		std::cerr << "Successfull wrote file " << filename << std::endl ;
 
 	/* push file to CacheSource */
 	refreshCache(newCache);
