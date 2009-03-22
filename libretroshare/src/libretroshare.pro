@@ -193,6 +193,7 @@ HEADERS += dbase/cachestrapper.h \
            services/p3ranking.h \
            services/p3service.h \
            services/p3status.h \
+			  services/p3turtle.h \
            tcponudp/bio_tou.h \
            tcponudp/tcppacket.h \
            tcponudp/tcpstream.h \
@@ -255,6 +256,7 @@ SOURCES = \
 				services/p3msgservice.cc \
 				services/p3chatservice.cc \
 				services/p3service.cc \
+				services/p3turtle.cc \
 				dbase/rsexpr.cc \
 				dbase/cachestrapper.cc \
 				dbase/fistore.cc \
@@ -316,12 +318,3 @@ SOURCES = \
 				util/rsprint.cc \
 				util/rsthreads.cc 
 
-# To compile for turtle hopping. I'm using this flag to avoid conflict while developping.
-# Just do a 
-#    qmake CONFIG=turtle
-
-turtle {			
-	SOURCES += services/p3turtle.cc
-	HEADERS += services/p3turtle.h
-	DEFINES *= TURTLE_HOPPING
-}

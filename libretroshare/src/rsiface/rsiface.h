@@ -35,9 +35,7 @@ class NotifyBase;
 class RsIface;
 class RsControl;
 class RsInit;
-#ifdef TURTLE_HOPPING
 struct TurtleFileInfo ;
-#endif
 
 /* declare single RsIface for everyone to use! */
 
@@ -203,9 +201,7 @@ class NotifyBase
 	virtual void notifyErrorMsg(int list, int sev, std::string msg) { (void) list; (void) sev; (void) msg; return; }
 	virtual void notifyChat() { return; }
 	virtual void notifyHashingInfo(std::string fileinfo) { (void)fileinfo; return ; }
-#ifdef TURTLE_HOPPING
 	virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files) { (void)files; }
-#endif
 };
 
 const int NOTIFY_LIST_NEIGHBOURS   = 1;

@@ -57,6 +57,10 @@ class p3ConnectMgr;
 
 const uint8_t RS_TURTLE_SUBTYPE_SEARCH_REQUEST = 0x01 ;
 const uint8_t RS_TURTLE_SUBTYPE_SEARCH_RESULT  = 0x02 ;
+const uint8_t RS_TURTLE_SUBTYPE_OPEN_TUNNEL    = 0x03 ;
+const uint8_t RS_TURTLE_SUBTYPE_TUNNEL_OK      = 0x04 ;
+const uint8_t RS_TURTLE_SUBTYPE_CLOSE_TUNNEL   = 0x05 ;
+const uint8_t RS_TURTLE_SUBTYPE_TUNNEL_CLOSED  = 0x06 ;
 
 static const int TURTLE_MAX_SEARCH_DEPTH = 6 ;
 

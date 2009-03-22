@@ -198,27 +198,34 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "  Request not from us. Performing local search" << std::endl ;
 #endif
-		std::list<TurtleFileInfo> result ;
-		performLocalSearch(item->match_string,result) ;
-
-		if(!result.empty())
+		if(_sharing_strategy != SHARE_FRIENDS_ONLY || item->depth < 2)
 		{
-			// do something
+			std::list<TurtleFileInfo> result ;
+			performLocalSearch(item->match_string,result) ;
 
-			// forward item back
-			RsTurtleSearchResultItem *res_item = new RsTurtleSearchResultItem ;
+			if(!result.empty())
+			{
+				// do something
 
-			// perhaps we should chop search results items into several items of finite size ?
-			res_item->depth = 0 ;
-			res_item->result = result ;
-			res_item->request_id = item->request_id ;
-			res_item->PeerId(item->PeerId()) ;			// send back to the same guy
+				// forward item back
+				RsTurtleSearchResultItem *res_item = new RsTurtleSearchResultItem ;
+
+				// perhaps we should chop search results items into several items of finite size ?
+				res_item->depth = 0 ;
+				res_item->result = result ;
+				res_item->request_id = item->request_id ;
+				res_item->PeerId(item->PeerId()) ;			// send back to the same guy
 
 #ifdef P3TURTLE_DEBUG
-			std::cerr << "  " << result.size() << " matches found. Sending back to origin (" << res_item->PeerId() << ")." << std::endl ;
+				std::cerr << "  " << result.size() << " matches found. Sending back to origin (" << res_item->PeerId() << ")." << std::endl ;
 #endif
-			sendItem(res_item) ;
+				sendItem(res_item) ;
+			}
 		}
+#ifdef P3TURTLE_DEBUG
+		else
+			std::cerr << "  Rejecting local search because strategy is FRIENDS_ONLY and item depth=" << item->depth << std::endl ;
+#endif
 	}
 
 	// If search depth not too large, also forward this search request to all other peers.
