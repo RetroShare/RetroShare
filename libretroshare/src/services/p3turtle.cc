@@ -24,6 +24,7 @@
  */
 
 #include <stdexcept>
+#include <stdlib.h>
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
@@ -55,7 +56,7 @@ p3turtle::p3turtle(p3ConnectMgr *cm) :p3Service(RS_SERVICE_TYPE_TURTLE), mConnMg
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
-	srand48(time(NULL)) ;
+	srand(time(NULL)) ;
 	addSerialType(new RsTurtleSerialiser());
 }
 
@@ -87,7 +88,7 @@ uint32_t p3turtle::generateRandomRequestId()
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
-	return lrand48() ;
+	return rand() ;
 }
 
 TurtleRequestId p3turtle::turtleSearch(const std::string& string_to_match) 
@@ -106,7 +107,11 @@ TurtleRequestId p3turtle::turtleSearch(const std::string& string_to_match)
 	while(mConnMgr->getOwnId() == "")
 	{
 		std::cerr << "... waitting for connect manager to form own id." << std::endl ;
+#ifdef WIN32
+		Sleep(1000) ;
+#else
 		sleep(1) ;
+#endif
 	}
 
 	item->PeerId(mConnMgr->getOwnId()) ;
@@ -549,7 +554,7 @@ RsTurtleSearchResultItem::RsTurtleSearchResultItem(void *data,uint32_t pktsize)
 
 	result.clear() ;
 
-	for(uint i=0;i<s;++i)
+	for(int i=0;i<(int)s;++i)
 	{
 		TurtleFileInfo f ;
 

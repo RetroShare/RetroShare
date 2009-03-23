@@ -196,7 +196,7 @@ bool ftController::moveFile(const std::string& source,const std::string& dest)
 
 	static const int BUFF_SIZE = 10485760 ; // 10 MB buffer to speed things up.
 	void *buffer = malloc(BUFF_SIZE) ;
-	FILE *in = fopen(source.c_str(),"r") ;
+	FILE *in = fopen(source.c_str(),"rb") ;
 
 	if(in == NULL)
 	{
@@ -204,7 +204,7 @@ bool ftController::moveFile(const std::string& source,const std::string& dest)
 		return false ;
 	}
 
-	FILE *out = fopen(dest.c_str(),"w") ;
+	FILE *out = fopen(dest.c_str(),"wb") ;
 
 	if(out == NULL)
 	{
