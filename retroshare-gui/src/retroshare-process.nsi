@@ -4,7 +4,7 @@
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.4.12a"
+!define VERSION "0.4.12c"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
 
 
@@ -35,7 +35,7 @@ VAR KILLEXENAME
 !define MUI_LICENSEPAGE_RADIOBUTTONS
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_FINISHPAGE_LINK "Visit the RetroShare forum for the latest news and support"
-!define MUI_FINISHPAGE_LINK_LOCATION "http://sourceforge.net/forum/forum.php?forum_id=618174"
+!define MUI_FINISHPAGE_LINK_LOCATION "http://retroshare.sourceforge.net/forum/"
 !define MUI_FINISHPAGE_RUN "$INSTDIR\RetroShare.exe"
 !define MUI_FINISHPAGE_SHOWREADME $INSTDIR\changelog.txt
 !define MUI_FINISHPAGE_SHOWREADME_TEXT changelog.txt
@@ -257,7 +257,7 @@ Section $(sec_main) sec_main
 	
   ; Set Section Files and Shortcuts
   SetOutPath "$INSTDIR\"
-  File /r "release\RetroShare.exe"
+  File /r "RetroShare.exe"
   File /r "D:\MinGW\bin\mingwm10.dll"
   File /r "pthreadGCE2.dll"
   File /r "D:\Qt\4.4.3\bin\QtCore4.dll"
