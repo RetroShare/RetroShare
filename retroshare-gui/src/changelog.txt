@@ -1,5 +1,23 @@
 Changes for v0.4.12c
 
+For the sake of increased stability, internal file formats have slightly
+changed. As a result, prople using the new version will have to re-trust
+their friends. This can be done efficiently using the drop down menu in
+the network view.
+
+* Fixed win32 compatibility
+* Suppressed #ifdef TURTLE_HOPPING from libretroshare, as it s not anymore needed.
+* Added a direct make friend button in the drop down list of network dialog
+* Suppressed misleading ssl error.
+* Secured the output of .cfg files and cache files. Now closing RS or serializing errors while saving these files cannot corrupt them anymore.
+* Added a callback to notify when clicking on make friend button
+* Made own avatar persistent. Next task will be to make friends avatars persistent too
+* Fixed file moving between different file systems, which forced people to have their Incoming directory on the same file system than the Partials directory
+* Invitation text contains only certificate information; 
+* Buttons for saving/opening pqi-files become more noticeable.
+* Removed "Email" button from invite dialog. 
+* Update, during the GUI for invitation changes
+* Turtle search now connected to the gui. Next move: digg turtle tunnels for fast download.
 * Turtle dev. Worked on serialisation, mainly, and connexion to gui.
 * Finished turtle router.Next task: turtle serializer
 * Fixed bug: the MainWindow object wasn't deleted.
