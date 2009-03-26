@@ -393,5 +393,12 @@
 		  <file>smileys/wink.png</file>
 		  <file>smileys/wondering.png</file>
 		  <file>smileys/emotes.acs</file>
+
+        <file>images/connect/connectFriendWatermark.png</file>
+        <file>images/connect/connectFriendLogo.png</file>
+        <file>images/connect/connectFriendBanner.png</file>
+        <file>images/connect/info16.png</file>
+        <file>images/connect/mail_send.png</file>
+
 	  </qresource>
 </RCC>

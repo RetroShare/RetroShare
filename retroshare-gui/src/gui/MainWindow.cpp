@@ -63,6 +63,7 @@
 
 #include "gui/connect/InviteDialog.h"
 #include "gui/connect/AddFriendDialog.h"
+#include "gui/connect/ConnectFriendWizard.h"
 
 #include <sstream>
 #include <iomanip>
@@ -508,13 +509,20 @@ void MainWindow::addFriend()
     }
     virtual int NeighLoadPEMString(std::string pem, std::string &id)  = 0;
 #else
-
+/*
     static  AddFriendDialog *addDialog = 
     new AddFriendDialog(networkDialog, this);
 
     std::string invite = "";
     addDialog->setInfo(invite);
     addDialog->show();
+  */  
+
+    static ConnectFriendWizard* connwiz = new ConnectFriendWizard(this);
+    connwiz->restart();
+    connwiz->show();
+
+    //delete connwiz;
 #endif
 }
 

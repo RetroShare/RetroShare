@@ -246,6 +246,7 @@ HEADERS +=  rshare.h \
             gui/feeds/BlogMsgItem.h \
             gui/feeds/SubFileItem.h \
             gui/feeds/SubDestItem.h \
+            gui/connect/ConnectFriendWizard.h
 
 
 FORMS +=    gui/ChatDialog.ui \
@@ -463,6 +464,7 @@ SOURCES += main.cpp \
             gui/feeds/BlogMsgItem.cpp \
             gui/feeds/SubFileItem.cpp \
             gui/feeds/SubDestItem.cpp \
+            gui/connect/ConnectFriendWizard.cpp
             
 RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc 
 
