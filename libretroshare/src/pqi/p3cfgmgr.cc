@@ -29,6 +29,8 @@
 #include "pqi/pqibin.h"
 #include "pqi/pqiarchive.h"
 #include "pqi/pqistreamer.h"
+#include "pqi/pqinotify.h"
+#include <errno.h>
 
 #include "serialiser/rsconfigitems.h"
 
@@ -505,8 +507,26 @@ bool	p3Config::saveConfiguration()
 
 	std::cerr << "renaming " << fnametmp.c_str() << " to " << fname.c_str() << std::endl ;
 
-	if(0 != rename(fnametmp.c_str(),fname.c_str()))
+#ifdef WIN32
+	std::wstring from,to ;
+	for(std::string::const_iterator it = fnametmp.begin(); it!=fnametmp.end();++it) from += *it;
+	for(std::string::const_iterator it = fname   .begin(); it!=fname   .end();++it) to   += *it;
+
+	int err = !MoveFileEx(from.c_str(), to.c_str(), MOVEFILE_REPLACE_EXISTING) ;
+#else
+	int err = rename(fnametmp.c_str(),fname.c_str());
+#endif
+	if(0 != err)
+	{
+	   std::ostringstream errlog;
+#ifdef WIN32
+	   errlog << err << ", " << errno ;
+#else
+	   errlog << err << :", " << GetLastError() ;
+#endif
+	   getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + fname + ": got error "+errlog.str());
 		return false ;
+	}
 
 	std::cerr << "Successfully wrote p3config file " << fname.c_str() << std::endl ;
 	/* else okay */

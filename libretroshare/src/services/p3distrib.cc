@@ -788,7 +788,15 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 	mPendingPublish.clear();
 	delete streamer;
 
+#ifdef WIN32
+	std::wstring from,to ;
+	for(std::string::const_iterator it = filenametmp.begin(); it!=filenametmp.end();++it) from += *it;
+	for(std::string::const_iterator it = filename   .begin(); it!=filename   .end();++it) to   += *it;
+
+	if(!MoveFileEx(from.c_str(), to.c_str(), MOVEFILE_REPLACE_EXISTING)) 
+#else
 	if(0 != rename(filenametmp.c_str(),filename.c_str()))
+#endif
 		std::cerr << "Could not rename file " << filenametmp << " into " << filename << std::endl ;
 	else
 		std::cerr << "Successfull wrote file " << filename << std::endl ;
@@ -925,7 +933,15 @@ void 	p3GroupDistrib::publishDistribGroups()
 	/* cleanup */
 	delete streamer;
 
+#ifdef WIN32
+	std::wstring from,to ;
+	for(std::string::const_iterator it = filenametmp.begin(); it!=filenametmp.end();++it) from += *it;
+	for(std::string::const_iterator it = filename   .begin(); it!=filename   .end();++it) to   += *it;
+
+	if(!MoveFileEx(from.c_str(), to.c_str(), MOVEFILE_REPLACE_EXISTING)) 
+#else
 	if(0 != rename(filenametmp.c_str(),filename.c_str()))
+#endif
 		std::cerr << "Could not rename file " << filenametmp << " into " << filename << std::endl ;
 	else
 		std::cerr << "Successfull wrote file " << filename << std::endl ;
