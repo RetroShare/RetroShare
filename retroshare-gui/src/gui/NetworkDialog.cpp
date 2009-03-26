@@ -46,6 +46,7 @@
 #define IMAGE_LOADCERT       ":/images/loadcert16.png"
 #define IMAGE_PEERDETAILS    ":/images/peerdetails_16x16.png"
 #define IMAGE_AUTH           ":/images/encrypted16.png"
+#define IMAGE_MAKEFRIEND     ":/images/user/add_user16.png"
 /* Images for Status icons */
 #define IMAGE_AUTHED         ":/images/accepted16.png"
 #define IMAGE_DENIED         ":/images/denied16.png"
@@ -153,7 +154,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 		}
 		else
 		{
-			makefriendAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Make Friend" ), this );
+			makefriendAct = new QAction(QIcon(IMAGE_MAKEFRIEND), tr( "Make Friend" ), this );
 			connect( makefriendAct , SIGNAL( triggered() ), this, SLOT( makeFriend() ) );
 			contextMnu.addAction( makefriendAct);
 
