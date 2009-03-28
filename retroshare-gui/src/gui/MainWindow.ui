@@ -495,16 +495,7 @@
   </property>
   <widget class="QWidget" name="centralwidget" >
    <layout class="QGridLayout" >
-    <property name="leftMargin" >
-     <number>0</number>
-    </property>
-    <property name="topMargin" >
-     <number>0</number>
-    </property>
-    <property name="rightMargin" >
-     <number>0</number>
-    </property>
-    <property name="bottomMargin" >
+    <property name="margin" >
      <number>0</number>
     </property>
     <item row="0" column="0" >
@@ -1038,7 +1029,7 @@
     <string/>
    </property>
    <property name="allowedAreas" >
-    <set>Qt::BottomToolBarArea|Qt::LeftToolBarArea|Qt::NoToolBarArea|Qt::RightToolBarArea</set>
+    <set>Qt::BottomToolBarArea|Qt::LeftToolBarArea|Qt::RightToolBarArea</set>
    </property>
    <property name="iconSize" >
     <size>
@@ -1070,7 +1061,6 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionAdd_Friend" />
-   <addaction name="actionInvite_Friend" />
    <addaction name="actionAdd_Share" />
    <addaction name="separator" />
    <addaction name="separator" />
@@ -1087,23 +1077,17 @@
   </widget>
   <action name="actionAdd_Friend" >
    <property name="icon" >
-    <iconset resource="images.qrc" >:/images/add-friend24.png</iconset>
+    <iconset resource="images.qrc" >
+     <normaloff>:/images/add-friend24.png</normaloff>:/images/add-friend24.png</iconset>
    </property>
    <property name="text" >
     <string>Add Friend</string>
    </property>
   </action>
-  <action name="actionInvite_Friend" >
-   <property name="icon" >
-    <iconset resource="images.qrc" >:/images/invite-friend24.png</iconset>
-   </property>
-   <property name="text" >
-    <string>Invite Friend</string>
-   </property>
-  </action>
   <action name="actionAdd_Share" >
    <property name="icon" >
-    <iconset resource="images.qrc" >:/images/add-share24.png</iconset>
+    <iconset resource="images.qrc" >
+     <normaloff>:/images/add-share24.png</normaloff>:/images/add-share24.png</iconset>
    </property>
    <property name="text" >
     <string>Add Share</string>
@@ -1111,7 +1095,8 @@
   </action>
   <action name="actionOptions" >
    <property name="icon" >
-    <iconset resource="images.qrc" >:/images/kcmsystem24.png</iconset>
+    <iconset resource="images.qrc" >
+     <normaloff>:/images/kcmsystem24.png</normaloff>:/images/kcmsystem24.png</iconset>
    </property>
    <property name="text" >
     <string>Options</string>
@@ -1119,7 +1104,8 @@
   </action>
   <action name="actionQuit" >
    <property name="icon" >
-    <iconset resource="images.qrc" >:/images/exit_24x24.png</iconset>
+    <iconset resource="images.qrc" >
+     <normaloff>:/images/exit_24x24.png</normaloff>:/images/exit_24x24.png</iconset>
    </property>
    <property name="text" >
     <string>Quit</string>
@@ -1130,7 +1116,8 @@
     <bool>false</bool>
    </property>
    <property name="icon" >
-    <iconset resource="images.qrc" >:/images/highlight.png</iconset>
+    <iconset resource="images.qrc" >
+     <normaloff>:/images/highlight.png</normaloff>:/images/highlight.png</iconset>
    </property>
    <property name="text" >
     <string>Color</string>
@@ -1141,7 +1128,8 @@
   </action>
   <action name="actionSMPlayer" >
    <property name="icon" >
-    <iconset resource="images.qrc" >:/images/smplayer_icon32.png</iconset>
+    <iconset resource="images.qrc" >
+     <normaloff>:/images/smplayer_icon32.png</normaloff>:/images/smplayer_icon32.png</iconset>
    </property>
    <property name="text" >
     <string>SMPlayer</string>
@@ -1149,7 +1137,8 @@
   </action>
   <action name="actionMessenger" >
    <property name="icon" >
-    <iconset resource="images.qrc" >:/images/kdmconfig.png</iconset>
+    <iconset resource="images.qrc" >
+     <normaloff>:/images/kdmconfig.png</normaloff>:/images/kdmconfig.png</iconset>
    </property>
    <property name="text" >
     <string>Messenger</string>
@@ -1157,7 +1146,8 @@
   </action>
   <action name="actionAbout" >
    <property name="icon" >
-    <iconset resource="images.qrc" >:/images/informations_24x24.png</iconset>
+    <iconset resource="images.qrc" >
+     <normaloff>:/images/informations_24x24.png</normaloff>:/images/informations_24x24.png</iconset>
    </property>
    <property name="text" >
     <string>About</string>
@@ -1165,7 +1155,8 @@
   </action>
   <action name="actionSettings" >
    <property name="icon" >
-    <iconset resource="images.qrc" >:/images/settings.png</iconset>
+    <iconset resource="images.qrc" >
+     <normaloff>:/images/settings.png</normaloff>:/images/settings.png</iconset>
    </property>
    <property name="text" >
     <string>Settings</string>

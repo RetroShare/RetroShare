@@ -137,7 +137,7 @@ private slots:
 
     /** Toolbar fns. */
     void addFriend();
-    void inviteFriend();
+    //void inviteFriend();
     void addSharedDirectory();
     void showMessengerWindow();
     void showApplWindow();

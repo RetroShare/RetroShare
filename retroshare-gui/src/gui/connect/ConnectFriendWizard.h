@@ -16,10 +16,17 @@ class QGridLayout;
 QT_END_NAMESPACE
 
 //============================================================================
-// 
+//! A wizard for adding friends. Based on standard QWizard component
+
+//! The process of adding friends follows this scheme:
+//!         /-> Use text certificates \       /-> errorpage(if  went wrong)
+//! intro -|                           |-> ->
+//!         \-> Use *.pqi files      /        \-> fill peer details
+//!  
+//! So, there are five possible pages in this wizard.
+
 class ConnectFriendWizard : public QWizard
-{
-// 
+{// 
     Q_OBJECT
 
 public:
@@ -32,12 +39,11 @@ public:
     void accept();
 
 private slots:
-    void showHelp();
-//! 
+//    void showHelp(); // we'll have to implement it in future
 };
 
 //============================================================================
-//! 
+//!  Introduction page for "Add friend" wizard.
 class IntroPage : public QWizardPage
 {
     Q_OBJECT
@@ -54,7 +60,7 @@ private:
 };
 
 //============================================================================
-//! 
+//! Text page (for exchnging text certificates) for "Add friend" wizard.
 class TextPage : public QWizardPage
 {
     Q_OBJECT
@@ -91,7 +97,7 @@ private slots:
 };
 
 //============================================================================
-//! 
+//! A page for exchanging *.pqi files, for "Add friend" wizard.
 class CertificatePage : public QWizardPage
 {
     Q_OBJECT
@@ -121,7 +127,7 @@ private slots:
 };
 
 //============================================================================
-
+//! Page for displaying error messages (for "Add friend" wizard).
 class ErrorMessagePage : public QWizardPage
 {
     Q_OBJECT
@@ -137,7 +143,10 @@ private:
 };
 
 //============================================================================
-//! 
+//! Page for filling peer details in "Add friend" wizard.
+
+//! Warning: This page duplicates functionality of the ConnectDialo class (and
+//! also some pieces of code). TODO: remove this duplication
 class ConclusionPage : public QWizardPage
 {
     Q_OBJECT
@@ -147,7 +156,6 @@ public:
 
     void initializePage();
     int nextId() const;
- //   void setVisible(bool visible);
 
 private slots:
 //    void printButtonClicked();

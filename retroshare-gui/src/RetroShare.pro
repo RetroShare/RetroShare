@@ -174,9 +174,9 @@ HEADERS +=  rshare.h \
             gui/chat/PopupChatDialog.h \
             gui/connect/ConnectDialog.h \
             gui/connect/ConfCertDialog.h \
-            gui/connect/InviteDialog.h \
-            gui/connect/AddFriendDialog.h \
-            gui/connect/AddFriendWizard.h \
+#            gui/connect/InviteDialog.h \
+#            gui/connect/AddFriendDialog.h \
+#            gui/connect/AddFriendWizard.h \
             gui/library/FindWindow.h \ 
             gui/msgs/ChanMsgDialog.h \
             gui/msgs/ChanCreateDialog.h \
@@ -285,9 +285,9 @@ FORMS +=    gui/ChatDialog.ui \
             gui/chat/PopupChatDialog.ui \
             gui/connect/ConnectDialog.ui \
             gui/connect/ConfCertDialog.ui \
-            gui/connect/InviteDialog.ui \
-            gui/connect/AddFriendDialog.ui \
-            gui/connect/AddFriendWizard.ui \
+#            gui/connect/InviteDialog.ui \
+#            gui/connect/AddFriendDialog.ui \
+#            gui/connect/AddFriendWizard.ui \
             gui/msgs/ChanMsgDialog.ui \
             gui/msgs/ChanCreateDialog.ui \
             gui/Preferences/CryptographyDialog.ui \
@@ -401,9 +401,9 @@ SOURCES += main.cpp \
             gui/chat/PopupChatDialog.cpp \
             gui/connect/ConnectDialog.cpp \
             gui/connect/ConfCertDialog.cpp \
-            gui/connect/InviteDialog.cpp \
-            gui/connect/AddFriendDialog.cpp \
-            gui/connect/AddFriendWizard.cpp \
+#            gui/connect/InviteDialog.cpp \
+#            gui/connect/AddFriendDialog.cpp \
+#            gui/connect/AddFriendWizard.cpp \
             gui/msgs/ChanMsgDialog.cpp \
             gui/msgs/ChanCreateDialog.cpp \
             gui/Preferences/configpagestack.cpp \

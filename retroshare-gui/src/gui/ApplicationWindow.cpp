@@ -37,8 +37,8 @@
 
 #include "rsiface/rsiface.h"
 
-#include "gui/connect/InviteDialog.h"
-#include "gui/connect/AddFriendDialog.h"
+//#include "gui/connect/InviteDialog.h"
+//#include "gui/connect/AddFriendDialog.h"
 
 #include "LinksDialog.h"
 #include "GamesDialog.h"

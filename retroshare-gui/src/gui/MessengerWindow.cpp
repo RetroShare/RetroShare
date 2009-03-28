@@ -37,8 +37,10 @@
 #include "util/PixmapMerging.h"
 #include "LogoBar.h"
 #include "util/Widget.h"
-#include "gui/connect/InviteDialog.h"
-#include "gui/connect/AddFriendDialog.h"
+//#include "gui/connect/InviteDialog.h"
+//#include "gui/connect/AddFriendDialog.h"
+#include "gui/connect/ConnectFriendWizard.h"
+
 #include "MessagesPopupDialog.h"
 #include "ShareManager.h"
 
@@ -522,13 +524,21 @@ void MessengerWindow::addFriend2()
     }
     virtual int NeighLoadPEMString(std::string pem, std::string &id)  = 0;
 #else
-
+/*
     static  AddFriendDialog *addDialog2 = 
     new AddFriendDialog(networkDialog2, this);
 
     std::string invite = "";
     addDialog2->setInfo(invite);
     addDialog2->show();
+    */
+    ConnectFriendWizard* connwiz = new ConnectFriendWizard(this);
+
+    // set widget to be deleted after close
+    connwiz->setAttribute( Qt::WA_DeleteOnClose, true);
+
+
+    connwiz->show();
 #endif
 }
 

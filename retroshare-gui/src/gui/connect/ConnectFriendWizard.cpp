@@ -63,11 +63,13 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent)
     setWizardStyle(ModernStyle);
 #endif
 
-    setOption(HaveHelpButton, true);
-    connect(this, SIGNAL(helpRequested()), this, SLOT(showHelp()));
+// at this moment I don't know, what information should be in help
+//    setOption(HaveHelpButton, true); 
+//    connect(this, SIGNAL(helpRequested()), this, SLOT(showHelp()));
     
     setPixmap(QWizard::LogoPixmap,
               QPixmap(":/images/connect/connectFriendLogo.png"));
+// we have no good pictures for watermarks
 //    setPixmap(QWizard::WatermarkPixmap,
 //              QPixmap(":/images/connectFriendWatermark.png"));
     setPixmap(QWizard::BannerPixmap,
@@ -75,55 +77,6 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent)
               
     setWindowTitle(tr("Connect Friend Wizard"));
 
- //   setDefaultProperty("QTextEdit", "plainText", "textChanged");
-}
-
-//============================================================================
-//! 
-void ConnectFriendWizard::showHelp()
-{
-//    static QString lastHelpMessage;
-
-    QString message = "Sorry, help wasn't implemented :(";
-/*
-    switch (currentId()) {
-    case Page_Intro:
-        message = tr("The decision you make here will affect which page you "
-                     "get to see next.");
-        break;
-//! [10] //! [11]
-    case Page_Evaluate:
-        message = tr("Make sure to provide a valid email address, such as "
-                     "toni.buddenbrook@example.de.");
-        break;
-    case Page_Register:
-        message = tr("If you don't provide an upgrade key, you will be "
-                     "asked to fill in your details.");
-        break;
-    case Page_Details:
-        message = tr("Make sure to provide a valid email address, such as "
-                     "thomas.gradgrind@example.co.uk.");
-        break;
-    case Page_Conclusion:
-        message = tr("You must accept the terms and conditions of the "
-                     "license to proceed.");
-        break;
-//! [12] //! [13]
-    default:
-        message = tr("This help is likely not to be of any help.");
-    }
-//! [12]
-
-    if (lastHelpMessage == message)
-        message = tr("Sorry, I already gave what help I could. "
-                     "Maybe you should try asking a human?");
-*/
-//! [14]
-    QMessageBox::information(this, tr("Connect Friend Wizard Help"), message);
-//! [14]
-
-//    lastHelpMessage = message;
-//! [15]
 }
 
 //============================================================================
@@ -158,8 +111,6 @@ IntroPage::IntroPage(QWidget *parent)
     setSubTitle(tr("This wizard will help you to connect your friend "
                    "to RetroShare network. There are  two possible ways "
                    "to do this:")) ;
-    //topLabel = new QLabel(;
-    //topLabel->setWordWrap(true);
 
     textRadioButton = new QRadioButton(tr("&Enter the certificate manually"));
     certRadioButton = new QRadioButton(tr("&Use *.pqi files with "
@@ -167,7 +118,6 @@ IntroPage::IntroPage(QWidget *parent)
     textRadioButton->setChecked(true);
 
     QVBoxLayout *layout = new QVBoxLayout;
-    //layout->addWidget(topLabel);
     layout->addWidget(textRadioButton);
     layout->addWidget(certRadioButton);
     setLayout(layout);
@@ -592,15 +542,6 @@ ConclusionPage::initializePage()
             break;
     }
 
-//    std::ostringstream out;
-
-//    std::list<std::string>::iterator it;
-//    for(it = detail.signers.begin(); it != detail.signers.end(); it++)
-//    {
-//            out << rsPeers->getPeerName(*it) << " <" << *it << ">";
-//            out << std::endl;
-//    }
-
     QString ts;
     std::list<std::string>::iterator it;
     for(it = detail.signers.begin(); it != detail.signers.end(); it++)
@@ -612,10 +553,6 @@ ConclusionPage::initializePage()
             ts.append( "\n" );
     }
 
-
-    /* setup the gui */
-//---    setInfo(detail.name, trustString, detail.org,
-//---            detail.location, detail.email, out.str());
     nameEdit->setText( QString::fromStdString( detail.name ) ) ;
     trustEdit->setText(QString::fromStdString( trustString ) ) ;
     orgEdit->setText(QString::fromStdString( detail.org ) );
@@ -623,17 +560,9 @@ ConclusionPage::initializePage()
     countryEdit->setText( QString::fromStdString( detail.email ) );
     signersEdit->setPlainText( ts );
     
-    //setAuthCode(id, detail.authcode);
     authCodeEdit->setText( QString::fromStdString(detail.authcode) );
 }
 //
 //============================================================================
 //
-
-//
-//============================================================================
-
-
-
-//============================================================================
 

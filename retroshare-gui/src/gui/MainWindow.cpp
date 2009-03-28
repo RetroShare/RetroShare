@@ -61,8 +61,8 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsfiles.h"
 
-#include "gui/connect/InviteDialog.h"
-#include "gui/connect/AddFriendDialog.h"
+//#include "gui/connect/InviteDialog.h"
+//#include "gui/connect/AddFriendDialog.h"
 #include "gui/connect/ConnectFriendWizard.h"
 
 #include <sstream>
@@ -98,7 +98,7 @@
 #define IMAGE_PHOTO             ":/images/lphoto.png"
 #define IMAGE_SMPLAYER          ":/images/smplayer_icon32.png"
 #define IMAGE_ADDFRIEND         ":/images/add-friend24.png"
-#define IMAGE_INVITEFRIEND      ":/images/invite-friend24.png"
+//#define IMAGE_INVITEFRIEND      ":/images/invite-friend24.png"
 #define IMAGE_ADDSHARE          ":/images/directoryadd_24x24_shadow.png"
 #define IMAGE_OPTIONS           ":/images/settings.png"
 #define IMAGE_QUIT              ":/images/exit_24x24.png"
@@ -150,7 +150,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 	
 	/** Left Side ToolBar**/
     connect(ui.actionAdd_Friend, SIGNAL(triggered() ), this , SLOT( addFriend() ) );
-    connect(ui.actionInvite_Friend, SIGNAL(triggered() ), this , SLOT( inviteFriend() ) );
+//    connect(ui.actionInvite_Friend, SIGNAL(triggered() ), this , SLOT( inviteFriend() ) );
     connect(ui.actionAdd_Share, SIGNAL(triggered() ), this , SLOT( openShareManager() ) );
     connect(ui.actionOptions, SIGNAL(triggered()), this, SLOT( showPreferencesWindow()) );
     connect(ui.actionMessenger, SIGNAL(triggered()), this, SLOT( showMessengerWindow()) );
@@ -494,41 +494,18 @@ void MainWindow::showWindow(Page page)
 /** Add a Friend ShortCut */
 void MainWindow::addFriend()
 {
-    /* call load Certificate */
-#if 0
-    std::string id;
-    if (connectionsDialog)
-    {
-        id = connectionsDialog->loadneighbour();
-    }
+    ConnectFriendWizard* connwiz = new ConnectFriendWizard(this);
 
-    /* call make Friend */
-    if (id != "")
-    {
-        connectionsDialog->showpeerdetails(id);
-    }
-    virtual int NeighLoadPEMString(std::string pem, std::string &id)  = 0;
-#else
-/*
-    static  AddFriendDialog *addDialog = 
-    new AddFriendDialog(networkDialog, this);
+    // set widget to be deleted after close
+    connwiz->setAttribute( Qt::WA_DeleteOnClose, true); 
 
-    std::string invite = "";
-    addDialog->setInfo(invite);
-    addDialog->show();
-  */  
-
-    static ConnectFriendWizard* connwiz = new ConnectFriendWizard(this);
-    connwiz->restart();
+    
     connwiz->show();
-
-    //delete connwiz;
-#endif
 }
 
 
 /** Add a Friend ShortCut */
-void MainWindow::inviteFriend()
+/*void MainWindow::inviteFriend()
 {
     static  InviteDialog *inviteDialog = new InviteDialog(this);
 
@@ -538,7 +515,7 @@ void MainWindow::inviteFriend()
 
 
 }
-
+*/
 /** Add a Share */
 void MainWindow::addSharedDirectory()
 {
