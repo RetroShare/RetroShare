@@ -23,6 +23,7 @@
  *
  */
 
+#include "util/rsdir.h"
 #include "rsiface/rspeers.h"
 #include "pqi/p3cfgmgr.h"
 #include "pqi/p3authmgr.h"
@@ -507,22 +508,13 @@ bool	p3Config::saveConfiguration()
 
 	std::cerr << "renaming " << fnametmp.c_str() << " to " << fname.c_str() << std::endl ;
 
-#ifdef WIN32
-	std::wstring from,to ;
-	for(std::string::const_iterator it = fnametmp.begin(); it!=fnametmp.end();++it) from += *it;
-	for(std::string::const_iterator it = fname   .begin(); it!=fname   .end();++it) to   += *it;
-
-	int err = !MoveFileEx(from.c_str(), to.c_str(), MOVEFILE_REPLACE_EXISTING) ;
-#else
-	int err = rename(fnametmp.c_str(),fname.c_str());
-#endif
-	if(0 != err)
+	if(!RsDirUtil::renameFile(fnametmp,fname))
 	{
 	   std::ostringstream errlog;
 #ifdef WIN32
-	   errlog << err << ", " << errno ;
+	   errlog << "Error " << GetLastError() ;
 #else
-	   errlog << err << :", " << GetLastError() ;
+	   errlog << "Error " << errno ;
 #endif
 	   getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + fname + ": got error "+errlog.str());
 		return false ;

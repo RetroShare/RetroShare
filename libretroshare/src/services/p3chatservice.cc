@@ -23,7 +23,9 @@
  *
  */
 
+#include "util/rsdir.h"
 #include "pqi/pqibin.h"
+#include "pqi/pqinotify.h"
 #include "pqi/pqiarchive.h"
 
 #include "services/p3chatservice.h"
@@ -459,16 +461,11 @@ bool p3ChatService::saveConfiguration()
 	setHash(out->gethash());
 	delete pa_out;	
 
-#ifdef WIN32
-	std::wstring from,to ;
-	for(std::string::const_iterator it = msgfiletmp.begin(); it!=msgfiletmp.end();++it) from += *it;
-	for(std::string::const_iterator it = msgfile   .begin(); it!=msgfile   .end();++it) to   += *it;
-
-	if(!MoveFileEx(from.c_str(), to.c_str(), MOVEFILE_REPLACE_EXISTING)) 
-#else
-	if(0 != rename(msgfiletmp.c_str(),msgfile.c_str()))
-#endif
+	if(!RsDirUtil::renameFile(msgfiletmp,msgfile))
+	{
+		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + msgfile) ;
 		return false ;
+	}
 
 	return true;
 }

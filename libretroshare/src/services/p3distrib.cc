@@ -31,6 +31,8 @@
 #include "services/p3distrib.h"
 #include "serialiser/rsdistribitems.h"
 
+#include "util/rsdir.h"
+#include "pqi/pqinotify.h"
 #include "pqi/pqibin.h"
 
 /*****
@@ -788,18 +790,16 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 	mPendingPublish.clear();
 	delete streamer;
 
+	if(!RsDirUtil::renameFile(filenametmp,filename))
+	{
+		std::ostringstream errlog;
 #ifdef WIN32
-	std::wstring from,to ;
-	for(std::string::const_iterator it = filenametmp.begin(); it!=filenametmp.end();++it) from += *it;
-	for(std::string::const_iterator it = filename   .begin(); it!=filename   .end();++it) to   += *it;
-
-	if(!MoveFileEx(from.c_str(), to.c_str(), MOVEFILE_REPLACE_EXISTING)) 
+		errlog << "Error " << GetLastError() ;
 #else
-	if(0 != rename(filenametmp.c_str(),filename.c_str()))
+		errlog << "Error " << errno ;
 #endif
-		std::cerr << "Could not rename file " << filenametmp << " into " << filename << std::endl ;
-	else
-		std::cerr << "Successfull wrote file " << filename << std::endl ;
+		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + filename + ": got error "+errlog.str());
+	}
 
 	/* indicate not to save for a while */
 	mLastPublishTime = now;
@@ -933,18 +933,16 @@ void 	p3GroupDistrib::publishDistribGroups()
 	/* cleanup */
 	delete streamer;
 
+	if(!RsDirUtil::renameFile(filenametmp,filename))
+	{
+		std::ostringstream errlog;
 #ifdef WIN32
-	std::wstring from,to ;
-	for(std::string::const_iterator it = filenametmp.begin(); it!=filenametmp.end();++it) from += *it;
-	for(std::string::const_iterator it = filename   .begin(); it!=filename   .end();++it) to   += *it;
-
-	if(!MoveFileEx(from.c_str(), to.c_str(), MOVEFILE_REPLACE_EXISTING)) 
+		errlog << "Error " << GetLastError() ;
 #else
-	if(0 != rename(filenametmp.c_str(),filename.c_str()))
+		errlog << "Error " << errno ;
 #endif
-		std::cerr << "Could not rename file " << filenametmp << " into " << filename << std::endl ;
-	else
-		std::cerr << "Successfull wrote file " << filename << std::endl ;
+		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + filename + ": got error "+errlog.str());
+	}
 
 	/* push file to CacheSource */
 	refreshCache(newCache);

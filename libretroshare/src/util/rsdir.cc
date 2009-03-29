@@ -34,6 +34,13 @@
 #include <iostream>
 #include <algorithm>
 
+#if defined(WIN32) || defined(__CYGWIN__)
+#include "wtypes.h"
+#include <winioctl.h>
+#else
+#include <errno.h>
+#endif
+
 /****
  * #define RSDIR_DEBUG 1
  ****/
@@ -378,4 +385,45 @@ bool RsDirUtil::getFileHash(std::string filepath,
 	fclose(fd);
 	return true;
 }
+
+bool RsDirUtil::renameFile(const std::string& from, const std::string& to)
+{
+	int			loops = 0;
+
+#ifdef WIN32
+#ifdef MINGW
+	std::string f(from),t(to) ;
+#else
+	std::wstring f,t ;
+	for(std::string::const_iterator it = from.begin(); it!=from.end();++it) f += *it;
+	for(std::string::const_iterator it = to  .begin(); it!=to  .end();++it) t += *it;
+#endif
+
+	while (!MoveFileEx(f.c_str(), t.c_str(), MOVEFILE_REPLACE_EXISTING))
+#else
+	while (rename(from.c_str(), to.c_str()) < 0)
+#endif
+	{
+#ifdef WIN32
+		if (GetLastError() != ERROR_ACCESS_DENIED)
+#else
+		if (errno != EACCES)
+#endif
+			/* set errno? */
+			return false ;
+#ifdef WIN32
+		Sleep(100000);				/* us */
+#else
+		usleep(100000);				/* us */
+#endif
+
+		if (loops >= 30)
+			return false ;
+
+		loops++;
+	}
+
+	return true ;
+}
+
 

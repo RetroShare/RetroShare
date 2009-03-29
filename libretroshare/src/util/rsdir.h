@@ -40,6 +40,10 @@ std::string     removeTopDir(std::string dir);
 
 std::string 	removeRootDirs(std::string path, std::string root);
 
+// Renames file from to file to. Files should be on the same file system.
+//	returns true if succeed, false otherwise.
+bool		renameFile(const std::string& from,const std::string& to) ;
+
 int     	breakupDirList(std::string path,
                         	std::list<std::string> &subdirs);
 

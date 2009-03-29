@@ -289,16 +289,11 @@ bool    p3MsgService::saveConfiguration()
 	if(!written)
 		return false ;
 
-#ifdef WIN32
-	std::wstring from,to ;
-	for(std::string::const_iterator it = msgfiletmp.begin(); it!=msgfiletmp.end();++it) from += *it;
-	for(std::string::const_iterator it = msgfile   .begin(); it!=msgfile   .end();++it) to   += *it;
-
-	if(!MoveFileEx(from.c_str(), to.c_str(), MOVEFILE_REPLACE_EXISTING)) 
-#else
-	if(0 != rename(msgfiletmp.c_str(),msgfile.c_str()))
-#endif
+	if(!RsDirUtil::renameFile(msgfiletmp,msgfile))
+	{
+		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + msgfile) ;
 		return false ;
+	}
 		
 	return true;
 }
