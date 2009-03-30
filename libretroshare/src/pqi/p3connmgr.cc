@@ -2795,7 +2795,11 @@ bool 	p3ConnectMgr::checkNetAddress()
 		std::cerr << std::endl;
 #endif
 
-		if ((*it) == inet_ntoa(ownState.localaddr.sin_addr))
+		// Ive added the 'isNotLoopbackNet' to prevent re-using the lo address if this was saved in the 
+		// configuration. In such a case, lo should only be chosen from getPreferredInterface as a last resort 
+		// fallback solution.
+		//
+		if ((!isLoopbackNet(&ownState.localaddr.sin_addr)) && (*it) == inet_ntoa(ownState.localaddr.sin_addr))
 		{
 #ifdef CONN_DEBUG
 			std::cerr << "p3ConnectMgr::checkNetAddress() Matches Existing Address! FOUND = true";
