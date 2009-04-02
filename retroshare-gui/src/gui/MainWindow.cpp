@@ -623,32 +623,17 @@ void MainWindow::createActions()
     turned off for future quit events. 
 */
 void MainWindow::doQuit()
-{
-    RshareSettings rsharesettings;
-    QString key (UI_PREF_PROMPT_ON_QUIT);
-    bool doConfirm = rsharesettings.value(key, QVariant(true)).toBool();
-    if (doConfirm)
-    {
-        ConfirmQuitDialog * confirm = new ConfirmQuitDialog;
-        confirm->exec();
-        // save configuration setting
-        if (confirm->reminderCheckBox->checkState() == Qt::Checked) 
-        {
-            rsharesettings.setValue(key, QVariant(false));
-        }
-        
-        if (confirm->result() == QDialog::Accepted) 
-        {
-	    rsicontrol->rsGlobalShutDown(); 
-            qApp->quit();
-        } else {
-            delete confirm;
-        }
-        
-    } else {
-	rsicontrol->rsGlobalShutDown(); 
-        qApp->quit();
-    }
+{  
+    QString queryWrn;
+	  queryWrn.clear();
+	  queryWrn.append("Do you really want to quit and stop all transfers?");
+
+		if ((QMessageBox::question(this, tr("Really quit ? "),queryWrn,QMessageBox::Ok|QMessageBox::No, QMessageBox::Ok))== QMessageBox::Ok)
+		{
+      qApp->quit();
+		}
+		else
+		return;
 }
 
 void MainWindow::closeEvent(QCloseEvent *e)
@@ -665,7 +650,7 @@ void MainWindow::closeEvent(QCloseEvent *e)
             firstTime = false;
         }
         hide();
-        e->ignore();
+        e->ignore();p
     }
 
 }
