@@ -156,7 +156,7 @@ void form_MainWindow::createToolBar()
 	toolBar->addAction(QIcon(ICON_SETTINGS)		,"Settings"	,this,SLOT(openConfigWindow() ) );
 	toolBar->addAction(QIcon(ICON_DEBUGMESSAGES)	,"DebugMessages",this,SLOT(openDebugMessagesWindow() ) );
 	toolBar->addAction(QIcon(ICON_MYDESTINATION)	,"ME"		,this,SLOT(namingMe()));
-	toolBar->addAction(QIcon(ICON_CLOSE)		,"Close"	,this,SLOT(closeApplication()));
+	//toolBar->addAction(QIcon(ICON_CLOSE)		,"Close"	,this,SLOT(closeApplication()));
 	toolBar->addAction(QIcon(ICON_ABOUT)		,"About"	,this,SLOT(openAboutDialog()));
 }
 
