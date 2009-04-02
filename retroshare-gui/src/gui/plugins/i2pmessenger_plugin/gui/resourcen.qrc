@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/" >
+        <file>icons/Tools.gif</file>
+        <file>icons/green.png</file>
+        <file>icons/red.png</file>
+	<file>icons/send.png</file>
+        <file>icons/exit.png</file>
+        <file>icons/add_user.png</file>
+        <file>icons/settings.png</file>
+        <file>icons/status_unknown.png</file>
+        <file>icons/quick_restart.png</file>
+        <file>icons/editcopy.png</file>
+        <file>icons/window_fullscreen.png</file>
+        <file>icons/window_nofullscreen.png</file>
+        <file>icons/userblue24.png</file>
+	<file>icons/self.png</file>
+        <file>icons/socket24.png</file>
+        <file>icons/looknfeel24.png</file>
+        <file>icons/encrypted24.png</file>
+	<file>icons/yellow.png</file>
+	<file>icons/invisible.png</file>
+	<file>icons/chatty.png</file>
+	<file>icons/dnd.png</file>
+	<file>icons/xa.png</file>
+	<file>icons/about.png</file>
+    </qresource>
+</RCC>
