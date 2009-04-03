@@ -1,0 +1,249 @@
+#include "extaddrfinder.h"
+
+#include "pqi/pqinetwork.h"
+
+#ifndef WIN32
+#include <netdb.h>
+#endif
+
+#include <string.h>
+#include <string>
+#include <sstream>
+#include <iostream>
+#include <set>
+#include <vector>
+#include <algorithm>
+
+#define EXTADDRSEARCH_DEBUG
+
+static const std::string ADDR_AGENT  = "Mozilla/5.0";
+
+static std::string scan_ip(const std::string& text)
+{
+	std::set<unsigned char> digits ;
+	digits.insert('0') ; digits.insert('3') ; digits.insert('6') ;
+	digits.insert('1') ; digits.insert('4') ; digits.insert('7') ;
+	digits.insert('2') ; digits.insert('5') ; digits.insert('8') ;
+	digits.insert('9') ; 
+
+	for(int i=0;i<(int)text.size();++i)
+	{
+		while(i < (int)text.size() && digits.find(text[i])==digits.end()) ++i ;
+
+		if(i>=(int)text.size())
+			return "" ;
+
+		unsigned int a,b,c,d ;
+
+		if(sscanf(text.c_str()+i,"%u.%u.%u.%u",&a,&b,&c,&d) != 4)
+			continue ;
+
+		if(a < 256 && b<256 && c<256 && d<256)
+		{
+			std::ostringstream o ;
+			o << a << "." << b << "." << c << "." << d ;
+			return o.str();
+		}
+	}
+	return "" ;
+}
+
+static void getPage(const std::string& server_name,std::string& page)
+{
+	page = "" ;
+	int sockfd,n=0;                   // socket descriptor
+	struct sockaddr_in serveur= {0};  // server's parameters
+	struct hostent *hostinfo=NULL;    // structure for storing the server's ip
+
+	char buf[1024];
+	char request[1024];
+#ifdef EXTADDRSEARCH_DEBUG
+	std::cout << "ExtAddrFinder: connecting to " << server_name << std::endl ;
+#endif
+	// socket creation
+
+	sockfd = unix_socket(PF_INET,SOCK_STREAM,0);
+
+	serveur.sin_family = AF_INET;
+
+	// get server's ipv4 adress
+
+	hostinfo = gethostbyname(server_name.c_str()); 
+
+	if (hostinfo == NULL) /* l'hôte n'existe pas */
+	{
+		std::cerr << "ExtAddrFinder: Unknown host " << server_name << std::endl;
+		return ;
+	}
+	serveur.sin_addr = *(struct in_addr*) hostinfo->h_addr; 
+	serveur.sin_port = htons(80);
+
+#ifdef EXTADDRSEARCH_DEBUG
+	printf("Connexion attempt\n");
+#endif
+
+	if(unix_connect(sockfd,(struct sockaddr *)&serveur, sizeof(serveur)) == -1)
+	{
+		std::cerr << "ExtAddrFinder: Connexion error to " << server_name << std::endl ;
+		return ;
+	}
+#ifdef EXTADDRSEARCH_DEBUG
+	std::cerr << "ExtAddrFinder: Connexion established to " << server_name << std::endl ;
+#endif
+
+	// envoi 
+	sprintf( request, 
+			"GET / HTTP/1.0\r\n"
+			"Host: %s:%d\r\n"
+			"Connection: Close\r\n"
+			"\r\n", 
+			server_name.c_str(), 80);
+
+	if(send(sockfd,request,strlen(request),0)== -1)
+	{
+		std::cerr << "ExtAddrFinder: Could not send request to " << server_name << std::endl ;
+		return ;
+	}
+	// recéption 
+
+	while((n = recv(sockfd, buf, sizeof buf - 1, 0)) > 0)
+	{
+		buf[n] = '\0';
+		page += std::string(buf,n) ;
+	}
+	// fermeture de la socket
+
+	unix_close(sockfd);
+#ifdef EXTADDRSEARCH_DEBUG
+	std::cerr << "ExtAddrFinder: Got full page from " << server_name << std::endl ;
+#endif
+}
+
+
+extern "C" void* doExtAddrSearch(void *p)
+{
+	static const int nb_ipservers = 4 ;
+	const std::string servers[nb_ipservers] = { 
+																"checkip.dyndns.org", 
+																"www.showmyip.com", 
+																"showip.net", 
+																"www.displaymyip.com" 
+															};
+
+	std::vector<std::string> res ;
+
+	ExtAddrFinder *af = (ExtAddrFinder*)p ;
+
+	for(int i=0;i<nb_ipservers;++i)
+	{
+		std::string page ;
+
+		getPage(servers[i],page) ;
+		std::string ip = scan_ip(page) ;
+
+		if(ip != "")
+			res.push_back(ip) ;
+#ifdef EXTADDRSEARCH_DEBUG
+		std::cout << "ip found through " << servers[i] << ": \"" << ip << "\"" << std::endl ;
+#endif
+	}
+	if(res.empty())
+	{
+		pthread_exit(NULL);
+		return NULL ;
+	}
+
+	sort(res.begin(),res.end()) ; // eliminates outliers.
+
+	// thread safe copy results.
+	//
+	RsStackMutex mut(af->_addrMtx) ;
+
+	if(!inet_aton(res[res.size()/2].c_str(),&(af->_addr->sin_addr)))
+	{
+		std::cerr << "ExtAddrFinder: Could not convert " << res[res.size()/2] << " into an address." << std::endl ;
+		pthread_exit(NULL);
+		return NULL ;
+	}
+
+	*(af->_found) = true ;
+	*(af->_searching) = false ;
+
+	pthread_exit(NULL);
+	return NULL ;
+}
+
+
+void ExtAddrFinder::start_request()
+{
+	void *data = (void *)this;
+	pthread_t tid ;
+	pthread_create(&tid, 0, &doExtAddrSearch, data);
+	pthread_detach(tid); /* so memory is reclaimed in linux */
+}
+
+bool ExtAddrFinder::hasValidIP(struct sockaddr_in *addr)
+{
+#ifdef EXTADDRSEARCH_DEBUG
+	std::cerr << "ExtAddrFinder: Getting ip." << std::endl ;
+#endif
+	RsStackMutex mut(_addrMtx) ;
+
+	if(*_found)
+	{
+#ifdef EXTADDRSEARCH_DEBUG
+		std::cerr << "ExtAddrFinder: Has stored ip: responding with this ip." << std::endl ;
+#endif
+		*addr = *_addr ;
+		return true ;
+	}
+
+	if(!*_searching)
+	{
+#ifdef EXTADDRSEARCH_DEBUG
+		std::cerr << "ExtAddrFinder: No stored ip: Initiating new search." << std::endl ;
+#endif
+		*_searching = true ;
+		start_request() ;
+	}
+
+	return false ;
+}
+
+ExtAddrFinder::~ExtAddrFinder()
+{
+#ifdef EXTADDRSEARCH_DEBUG
+	std::cerr << "ExtAddrFinder: Deleting ExtAddrFinder." << std::endl ;
+#endif
+	while(!*_searching) 
+#ifdef WIN32
+		Sleep(1000) ;
+#else
+		sleep(1) ;
+#endif
+
+	RsStackMutex mut(_addrMtx) ;
+
+	delete _found ;
+	delete _searching ;
+	delete _addr ;
+}
+
+ExtAddrFinder::ExtAddrFinder()
+{
+#ifdef EXTADDRSEARCH_DEBUG
+	std::cerr << "ExtAddrFinder: Creating new ExtAddrFinder." << std::endl ;
+#endif
+	RsStackMutex mut(_addrMtx) ;
+
+	_found = new bool ;
+	*_found = false ;
+
+	_searching = new bool ;
+	*_searching = false ;
+
+	_addr = (sockaddr_in*)malloc(sizeof(sockaddr_in)) ;
+
+	start_request() ;
+}
+
