@@ -174,9 +174,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     QActionGroup *grp = new QActionGroup(this);
 
 
-    NewsFeed *newsFeed = NULL;
-    ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
-		createPageAction(QIcon(IMAGE_NEWSFEED), tr("News Feed"), grp));
+    ui.stackPages->add(networkDialog = new NetworkDialog(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_NETWORK), tr("Network"), grp));
 
   
     ui.stackPages->add(peersDialog = new PeersDialog(ui.stackPages),
@@ -242,9 +241,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
 #endif
 
-    ui.stackPages->add(networkDialog = new NetworkDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_NETWORK), tr("Network"), grp));
-
     ui.stackPages->add(pluginsPage = new PluginsPage(ui.stackPages),
                        createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
 
@@ -275,6 +271,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
 
 #else
+    NewsFeed *newsFeed = NULL;
+    ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
+		createPageAction(QIcon(IMAGE_NEWSFEED), tr("News Feed"), grp));
+
     addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 
     toolAct = ui.toolBarservice->toggleViewAction();
@@ -650,7 +650,7 @@ void MainWindow::closeEvent(QCloseEvent *e)
             firstTime = false;
         }
         hide();
-        e->ignore();p
+        e->ignore();
     }
 
 }
