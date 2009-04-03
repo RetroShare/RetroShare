@@ -37,6 +37,8 @@
 
 #include "util/rsthreads.h"
 
+class ExtAddrFinder ;
+
 	/* RS_VIS_STATE_XXXX
 	 * determines how public this peer wants to be...
 	 *
@@ -347,6 +349,7 @@ private:
 
 	std::list<pqiMonitor *> clients;
 
+	ExtAddrFinder *mExtAddrFinder ;
 
 	/* external Address determination */
 	bool mUpnpAddrValid, mStunAddrValid;

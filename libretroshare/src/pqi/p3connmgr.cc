@@ -26,6 +26,7 @@
 #include "pqi/p3connmgr.h"
 #include "pqi/p3dhtmgr.h" // Only need it for constants.
 #include "tcponudp/tou.h"
+#include "tcponudp/extaddrfinder.h"
 
 #include "util/rsprint.h"
 #include "util/rsdebug.h"
@@ -122,6 +123,7 @@ p3ConnectMgr::p3ConnectMgr(p3AuthMgr *am)
 		ownState.name = mAuthMgr->getName(ownState.id);
 		ownState.netMode = RS_NET_MODE_UDP;
 	}
+	mExtAddrFinder = NULL ;
 
 	return;
 }
@@ -404,6 +406,9 @@ void p3ConnectMgr::netTick()
 
 	uint32_t netStatus = mNetStatus;
 
+	if(mExtAddrFinder == NULL)
+		mExtAddrFinder = new ExtAddrFinder ;
+
 	connMtx.unlock(); /* UNLOCK MUTEX */
 
 	switch(netStatus)
@@ -572,7 +577,9 @@ void p3ConnectMgr::netUdpCheck()
 #ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::netUdpCheck()" << std::endl;
 #endif
-	if (udpExtAddressCheck() || (mUpnpAddrValid)) 
+	struct sockaddr_in tmpip ;
+
+	if (udpExtAddressCheck() || (mUpnpAddrValid) || mExtAddrFinder->hasValidIP(&tmpip)) 
 	{
 		bool extValid = false;
 		bool extAddrStable = false;
@@ -597,6 +604,13 @@ void p3ConnectMgr::netUdpCheck()
 			extValid = true;
 			extAddr = mStunExtAddr;
 			extAddrStable = mStunAddrStable;
+		}
+		else if(mExtAddrFinder->hasValidIP(&tmpip))
+		{
+			extValid = true;
+			extAddr = tmpip ;
+			extAddr.sin_port = iaddr.sin_port ;
+			extAddrStable = true;
 		}
 
 		if (extValid)

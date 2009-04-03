@@ -198,6 +198,7 @@ bool p3DhtMgr::setExternalInterface(
 	ownEntry.raddr = raddr;
 	ownEntry.type = type;
 	ownEntry.state = DHT_PEER_ADDR_KNOWN; /* will force republish */
+	ownEntry.lastTS = 0; /* will force republish */
 
 #ifdef DHT_DEBUG
         std::cerr << "p3DhtMgr::setExternalInterface()";
@@ -224,6 +225,7 @@ bool p3DhtMgr::setExternalInterface(
 
 	dhtMtx.unlock(); /* UNLOCK MUTEX */
 
+	checkOwnDHTKeys();
 	return true;
 }
 
