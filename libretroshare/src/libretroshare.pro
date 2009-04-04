@@ -2,6 +2,7 @@ TEMPLATE = lib
 CONFIG *= staticlib
 TARGET = retroshare
 
+DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER
 ################################# Linux ##########################################
 
 linux-g++ {
@@ -194,6 +195,7 @@ HEADERS += dbase/cachestrapper.h \
            services/p3service.h \
            services/p3status.h \
 			  services/p3turtle.h \
+			  tcponudp/extaddrfinder.h \
            tcponudp/bio_tou.h \
            tcponudp/tcppacket.h \
            tcponudp/tcpstream.h \
@@ -305,6 +307,7 @@ SOURCES = \
 				serialiser/rstlvbase.cc \
 				serialiser/rstlvtypes.cc \
 				serialiser/rsserial.cc \
+				tcponudp/extaddrfinder.cc \
 				tcponudp/bss_tou.c \
 				tcponudp/tcpstream.cc \
 				tcponudp/tou.cc \
