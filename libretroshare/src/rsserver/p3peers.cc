@@ -459,6 +459,19 @@ bool 	p3Peers::connectAttempt(std::string id)
 	return mConnMgr->retryConnect(id);
 }
 
+void p3Peers::getIPServersList(std::list<std::string>& ip_servers) 
+{
+	mConnMgr->getIPServersList(ip_servers) ;
+}
+void p3Peers::allowServerIPDetermination(bool b) 
+{
+	mConnMgr->setIPServersEnabled(b) ;
+}
+bool p3Peers::getAllowServerIPDetermination() 
+{
+	return mConnMgr->getIPServersEnabled() ;
+}
+
 bool 	p3Peers::setLocalAddress(std::string id, std::string addr_str, uint16_t port)
 {
 #ifdef P3PEERS_DEBUG

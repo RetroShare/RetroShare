@@ -49,6 +49,7 @@ public slots:
 private slots:
   void saveAddresses();
   void toggleUPnP();
+  void toggleIpDetermination(bool) ;
 
   
 private:

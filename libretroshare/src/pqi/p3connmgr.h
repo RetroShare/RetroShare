@@ -186,6 +186,10 @@ bool    getUPnPState();
 bool	getUPnPEnabled();
 bool	getDHTEnabled();
 
+bool  getIPServersEnabled() { return use_extr_addr_finder ;}
+void  setIPServersEnabled(bool b) ;
+void  getIPServersList(std::list<std::string>& ip_servers) ;
+
 bool	getNetStatusOk();
 bool	getNetStatusUpnpOk();
 bool	getNetStatusDhtOk();
@@ -350,6 +354,7 @@ private:
 	std::list<pqiMonitor *> clients;
 
 	ExtAddrFinder *mExtAddrFinder ;
+	bool use_extr_addr_finder ;
 
 	/* external Address determination */
 	bool mUpnpAddrValid, mStunAddrValid;

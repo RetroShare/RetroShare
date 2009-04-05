@@ -300,29 +300,23 @@ void NetworkDialog::insertConnect()
 
 		/* (1) Accept/Deny */
 		if (detail.state & RS_PEER_STATE_FRIEND)
-		{
-                	item -> setText(1, tr("Accept"));
-		}
+			item -> setText(1, tr("Trusted"));
 		else
-		{
-                	item -> setText(1, tr("Deny"));
-		}
+			item -> setText(1, tr("Denied"));
 
-		item -> setText(2,QString::fromStdString( RsPeerTrustString(detail.trustLvl)));
+		if (rsPeers->isTrustingMe(detail.id) || detail.lastConnect>0)
+			item -> setText(2,QString("Is trusting me"));
+		else
+			item -> setText(2,QString("Unknown"));
 
 		/* (3) Last Connect */
 		{
 			std::ostringstream out;
 			// Show anouncement if a friend never was connected.
-			if (detail.lastConnect==0 ) {
-				if(detail.state & RS_PEER_STATE_FRIEND) {
-					out << "Friend never seen";
-					item -> setText(3, QString::fromStdString(out.str()));
-				} else {
-					// Show that there is no Trust
-					item -> setText(3, QString::fromStdString(RsPeerTrustString(detail.trustLvl)));
-				}
-			} else {
+			if (detail.lastConnect==0 ) 
+				item -> setText(3, QString("Never seen"));
+			else 
+			{
 				// Dont Show a timestamp in RS calculate the day
 				QDateTime datum = QDateTime::fromTime_t(detail.lastConnect);
 				// out << datum.toString(Qt::LocalDate);
@@ -372,16 +366,11 @@ void NetworkDialog::insertConnect()
 		if (detail.state & RS_PEER_STATE_FRIEND)
 		{
 			if (detail.lastConnect < 10000) /* 3 hours? */
-			{
-				/* bright green */
-				backgrndcolor=Qt::darkGreen;
 				item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
-			}
 			else
-			{
-				backgrndcolor=Qt::darkGreen;
 				item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
-			}
+
+			backgrndcolor=Qt::green;
 		}
 		else
 		{
@@ -389,7 +378,6 @@ void NetworkDialog::insertConnect()
 			{
 				backgrndcolor=Qt::magenta;
 				item -> setIcon(0,(QIcon(IMAGE_TRUSTED)));
-				item -> setText(2,QString("Is trusting you"));
 				for(int k=0;k<8;++k)
 					item -> setToolTip(k,QString::fromStdString(detail.name) + QString(tr(" is trusting you. \nRight-click and select 'make friend' to be able to connect."))) ;
 			}
@@ -413,9 +401,8 @@ void NetworkDialog::insertConnect()
 		// Color each Background column in the Network Tab except the first one => 1-9
 		// whith the determinated color
 		for(int i = 1; i <10; i++)
-		{
 			item -> setBackground(i,QBrush(backgrndcolor));
-		}
+
 		/* add to the list */
 		items.append(item);
 	}
@@ -426,10 +413,10 @@ void NetworkDialog::insertConnect()
 	{
 		QTreeWidgetItem *self_item = new QTreeWidgetItem((QTreeWidget*)0);
 
-		self_item->setText(1,"Accept");
-		self_item->setText(2,"Good");
-		self_item->setText(3,"0");
-		self_item->setText(4,QString::fromStdString(pd.name)) ;
+		self_item->setText(1,"N/A");
+		self_item->setText(2,"N/A");
+		self_item->setText(3,"N/A");
+		self_item->setText(4,QString::fromStdString(pd.name) + " (yourself)") ;
 
 		std::ostringstream out;
 		out << pd.localAddr << ":" << pd.localPort << "/" << pd.extAddr << ":" << pd.extPort;
@@ -442,7 +429,7 @@ void NetworkDialog::insertConnect()
 		// Color each Background column in the Network Tab except the first one => 1-9
 		for(int i=1;i<10;++i)
 		{
-			self_item->setBackground(i,QBrush(Qt::darkGreen));
+			self_item->setBackground(i,QBrush(Qt::green));
 		}
 		self_item->setIcon(0,(QIcon(IMAGE_AUTHED)));
 		items.append(self_item);

@@ -292,7 +292,7 @@ CertificatePage::CertificatePage(QWidget *parent)
     userFileLabel->setWordWrap(true);
                                   
     userFileCreateButton = new QPushButton;
-    userFileCreateButton->setText("Generate certificate");
+    userFileCreateButton->setText("Export my certificate...");
     connect(userFileCreateButton, SIGNAL( clicked() ),
             this,                 SLOT( generateCertificateCalled()));
 
@@ -302,7 +302,7 @@ CertificatePage::CertificatePage(QWidget *parent)
 
     userFileFrame = new QGroupBox;
     userFileFrame->setFlat(true);
-    userFileFrame->setTitle("Generate certificate");
+    userFileFrame->setTitle("Export my certificate...");
     userFileFrame->setLayout(userFileLayout);
 
     friendFileLabel = new QLabel(tr("Specify path to your friend's "

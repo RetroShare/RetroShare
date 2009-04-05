@@ -217,10 +217,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
 			createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
 
-    ChannelFeed *channelFeed = NULL;
-    ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_CHANNELS), tr("Channel Feed"), grp));
-
     ForumsDialog *forumsDialog = NULL;
     ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
@@ -240,6 +236,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
                        createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
 
 #endif
+    NewsFeed *newsFeed = NULL;
+    ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
+		createPageAction(QIcon(IMAGE_NEWSFEED), tr("News Feed"), grp));
 
     ui.stackPages->add(pluginsPage = new PluginsPage(ui.stackPages),
                        createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
@@ -271,10 +270,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
 
 #else
-    NewsFeed *newsFeed = NULL;
-    ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
-		createPageAction(QIcon(IMAGE_NEWSFEED), tr("News Feed"), grp));
-
     addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 
     toolAct = ui.toolBarservice->toggleViewAction();

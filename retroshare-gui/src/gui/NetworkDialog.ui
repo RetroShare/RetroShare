@@ -34,14 +34,6 @@
       <number>0</number>
      </property>
      <widget class="QWidget" name="networkTab" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>564</width>
-        <height>411</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>Network</string>
       </attribute>
@@ -126,17 +118,17 @@ p, li { white-space: pre-wrap; }
          </property>
          <column>
           <property name="text" >
-           <string>#</string>
+           <string/>
           </property>
          </column>
          <column>
           <property name="text" >
-           <string>Accept</string>
+           <string>Your trust</string>
           </property>
          </column>
          <column>
           <property name="text" >
-           <string>Trust</string>
+           <string>Peer's trust</string>
           </property>
          </column>
          <column>
@@ -191,14 +183,6 @@ p, li { white-space: pre-wrap; }
           <number>0</number>
          </property>
          <widget class="QWidget" name="log_tab" >
-          <property name="geometry" >
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>558</width>
-            <height>115</height>
-           </rect>
-          </property>
           <attribute name="title" >
            <string>Log</string>
           </attribute>
@@ -235,14 +219,6 @@ p, li { white-space: pre-wrap; }
       </layout>
      </widget>
      <widget class="QWidget" name="networkviewTab" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>564</width>
-        <height>411</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>Network View</string>
       </attribute>

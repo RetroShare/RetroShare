@@ -67,6 +67,10 @@ virtual	bool setExtAddress(std::string id, std::string addr, uint16_t port);
 virtual	bool setNetworkMode(std::string id, uint32_t netMode);
 virtual bool setVisState(std::string id, uint32_t mode); 
 
+virtual void getIPServersList(std::list<std::string>& ip_servers) ;
+virtual void allowServerIPDetermination(bool) ;
+virtual bool getAllowServerIPDetermination() ;
+
 	/* Auth Stuff */
 virtual	std::string GetRetroshareInvite();
 

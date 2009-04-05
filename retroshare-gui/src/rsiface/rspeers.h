@@ -144,6 +144,10 @@ virtual	bool setExtAddress(  std::string id, std::string addr, uint16_t port) = 
 virtual	bool setNetworkMode(std::string id, uint32_t netMode) 	= 0;
 virtual bool setVisState(std::string id, uint32_t vis)		= 0;
 
+virtual void getIPServersList(std::list<std::string>& ip_servers) = 0;
+virtual void allowServerIPDetermination(bool) = 0;
+virtual bool getAllowServerIPDetermination() = 0 ;
+
 	/* Auth Stuff */
 virtual	std::string GetRetroshareInvite() 			= 0;
 

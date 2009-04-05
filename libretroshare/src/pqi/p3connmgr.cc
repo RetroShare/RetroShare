@@ -123,11 +123,23 @@ p3ConnectMgr::p3ConnectMgr(p3AuthMgr *am)
 		ownState.name = mAuthMgr->getName(ownState.id);
 		ownState.netMode = RS_NET_MODE_UDP;
 	}
-	mExtAddrFinder = NULL ;
+	use_extr_addr_finder = true ;
+	mExtAddrFinder = new ExtAddrFinder ;
 
 	return;
 }
 
+void  p3ConnectMgr::getIPServersList(std::list<std::string>& ip_servers) 
+{ 
+	mExtAddrFinder->getIPServersList(ip_servers);
+}
+
+void p3ConnectMgr::setIPServersEnabled(bool b)
+{
+	use_extr_addr_finder = b ;
+
+	std::cerr << "p3ConnectMgr: setIPServers to " << b << std::endl ; 
+}
 
 void p3ConnectMgr::setOwnNetConfig(uint32_t netMode, uint32_t visState)
 {
@@ -406,9 +418,6 @@ void p3ConnectMgr::netTick()
 
 	uint32_t netStatus = mNetStatus;
 
-	if(mExtAddrFinder == NULL)
-		mExtAddrFinder = new ExtAddrFinder ;
-
 	connMtx.unlock(); /* UNLOCK MUTEX */
 
 	switch(netStatus)
@@ -579,7 +588,7 @@ void p3ConnectMgr::netUdpCheck()
 #endif
 	struct sockaddr_in tmpip ;
 
-	if (udpExtAddressCheck() || (mUpnpAddrValid) || mExtAddrFinder->hasValidIP(&tmpip)) 
+	if (udpExtAddressCheck() || (mUpnpAddrValid) || (use_extr_addr_finder && mExtAddrFinder->hasValidIP(&tmpip))) 
 	{
 		bool extValid = false;
 		bool extAddrStable = false;
@@ -605,7 +614,7 @@ void p3ConnectMgr::netUdpCheck()
 			extAddr = mStunExtAddr;
 			extAddrStable = mStunAddrStable;
 		}
-		else if(mExtAddrFinder->hasValidIP(&tmpip))
+		else if(use_extr_addr_finder && mExtAddrFinder->hasValidIP(&tmpip))
 		{
 			extValid = true;
 			extAddr = tmpip ;

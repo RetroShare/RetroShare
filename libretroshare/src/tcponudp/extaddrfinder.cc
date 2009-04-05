@@ -120,31 +120,24 @@ static void getPage(const std::string& server_name,std::string& page)
 }
 
 
-extern "C" void* doExtAddrSearch(void *p)
+void* doExtAddrSearch(void *p)
 {
-	static const int nb_ipservers = 4 ;
-	const std::string servers[nb_ipservers] = { 
-																"checkip.dyndns.org", 
-																"www.showmyip.com", 
-																"showip.net", 
-																"www.displaymyip.com" 
-															};
-
+	
 	std::vector<std::string> res ;
 
 	ExtAddrFinder *af = (ExtAddrFinder*)p ;
 
-	for(int i=0;i<nb_ipservers;++i)
+	for(std::list<std::string>::const_iterator it(af->_ip_servers.begin());it!=af->_ip_servers.end();++it)
 	{
 		std::string page ;
 
-		getPage(servers[i],page) ;
+		getPage(*it,page) ;
 		std::string ip = scan_ip(page) ;
 
 		if(ip != "")
 			res.push_back(ip) ;
 #ifdef EXTADDRSEARCH_DEBUG
-		std::cout << "ip found through " << servers[i] << ": \"" << ip << "\"" << std::endl ;
+		std::cout << "ip found through " << *it << ": \"" << ip << "\"" << std::endl ;
 #endif
 	}
 	if(res.empty())
@@ -243,6 +236,11 @@ ExtAddrFinder::ExtAddrFinder()
 	*_searching = false ;
 
 	_addr = (sockaddr_in*)malloc(sizeof(sockaddr_in)) ;
+
+	_ip_servers.push_back(std::string( "checkip.dyndns.org" )) ;
+	_ip_servers.push_back(std::string( "www.showmyip.com"   )) ;
+	_ip_servers.push_back(std::string( "showip.net"         )) ;
+	_ip_servers.push_back(std::string( "www.displaymyip.com")) ;
 
 	start_request() ;
 }
