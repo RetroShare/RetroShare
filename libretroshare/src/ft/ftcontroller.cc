@@ -318,7 +318,10 @@ bool ftController::completeFile(std::string hash)
 
 		fc->mState = ftFileControl::COMPLETED;
 
-		if( moveFile(fc->mCurrentPath,fc->mDestination) ) 
+		// I don't know how the size can be zero, but believe me, this happens,
+		// and it causes an error on linux because then the file may not even exist.
+		//
+		if( fc->mSize > 0 && moveFile(fc->mCurrentPath,fc->mDestination) ) 
 			fc->mCurrentPath = fc->mDestination;
 		else
 			fc->mState = ftFileControl::ERROR_COMPLETION;
@@ -337,6 +340,10 @@ bool ftController::completeFile(std::string hash)
 		state   = fc->mState;
 		period  = 30 * 24 * 3600; /* 30 days */
 		flags   = 0;
+
+#ifdef CONTROL_DEBUG
+		std::cerr << "CompleteFile(): size = " << size << std::endl ;
+#endif
 
 		doCallback = fc->mDoCallback;
 		callbackCode = fc->mCallbackCode;
