@@ -390,7 +390,7 @@ bool RsDirUtil::renameFile(const std::string& from, const std::string& to)
 {
 	int			loops = 0;
 
-#ifdef WIN32
+#if defined(WIN32) || defined(MINGW) || defined(__CYGWIN__)
 #if defined(MINGW) || defined(__CYGWIN__)
 	std::string f(from),t(to) ;
 #else
