@@ -51,14 +51,19 @@ class dhtPublishData
 
 extern "C" void* doDhtPublish(void* p)
 {
+#ifdef OPENDHT_DEBUG
+	std::cerr << "in doDhtPublish(void* p)" << std::endl ;
+#endif
 	dhtPublishData *data = (dhtPublishData *) p;
-  	if ((!data) || (!data->mgr) || (!data->client))
+  	if(data == NULL) 
 	{
 		pthread_exit(NULL);
+		return NULL;
 	}
 
 	/* publish it! */
-	data->client->publishKey(data->key, data->value, data->ttl);
+	if(data->mgr != NULL && data->client != NULL)
+		data->client->publishKey(data->key, data->value, data->ttl);
 
 	delete data;
 	pthread_exit(NULL);
@@ -169,6 +174,10 @@ bool OpenDHTMgr::publishDHT(std::string key, std::string value, uint32_t ttl)
 {
 	/* launch a publishThread */
 	pthread_t tid;
+
+#ifdef OPENDHT_DEBUG
+	std::cerr << "in publishDHT(.......)" << std::endl ;
+#endif
 
 	dhtPublishData *pub = new dhtPublishData;
 	pub->mgr = this;
