@@ -208,23 +208,41 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 			std::list<TurtleFileInfo> result ;
 			performLocalSearch(item->match_string,result) ;
 
-			if(!result.empty())
-			{
-				// do something
-
-				// forward item back
-				RsTurtleSearchResultItem *res_item = new RsTurtleSearchResultItem ;
-
-				// perhaps we should chop search results items into several items of finite size ?
-				res_item->depth = 0 ;
-				res_item->result = result ;
-				res_item->request_id = item->request_id ;
-				res_item->PeerId(item->PeerId()) ;			// send back to the same guy
+			RsTurtleSearchResultItem *res_item = NULL ;
+			uint32_t item_size = 0 ;
 
 #ifdef P3TURTLE_DEBUG
-				std::cerr << "  " << result.size() << " matches found. Sending back to origin (" << res_item->PeerId() << ")." << std::endl ;
+			if(!result.empty())
+				std::cerr << "  " << result.size() << " matches found. Sending back to origin (" << item->PeerId() << ")." << std::endl ;
 #endif
-				sendItem(res_item) ;
+			while(!result.empty())
+			{
+				// Let's chop search results items into several chunks of finite size to avoid exceeding streamer's capacity.
+				//
+				static const uint32_t RSTURTLE_MAX_SEARCH_RESPONSE_SIZE = 10000 ;
+
+				if(res_item == NULL)
+				{
+					res_item = new RsTurtleSearchResultItem ;
+					item_size = 0 ;
+
+					res_item->depth = 0 ;
+					res_item->request_id = item->request_id ;
+					res_item->PeerId(item->PeerId()) ;			// send back to the same guy
+				}
+				res_item->result.push_back(result.front()) ;
+
+				item_size += 8 /* size */ + result.front().hash.size() + result.front().name.size() ;
+				result.pop_front() ;
+
+				if(item_size > RSTURTLE_MAX_SEARCH_RESPONSE_SIZE || result.empty())
+				{
+#ifdef P3TURTLE_DEBUG
+					std::cerr << "  Sending back chunk of size " << item_size << ", for " << res_item->result.size() << " elements." << std::endl ;
+#endif
+					sendItem(res_item) ;
+					res_item = NULL ;
+				}
 			}
 		}
 #ifdef P3TURTLE_DEBUG
@@ -310,7 +328,7 @@ std::ostream& RsTurtleSearchRequestItem::print(std::ostream& o, uint16_t)
 	o << "Search request:" << std::endl ;
 	o << "  direct origin: \"" << PeerId() << "\"" << std::endl ;
 	o << "  match string: \"" << match_string << "\"" << std::endl ;
-	o << "  Req. Id: " << request_id << std::endl ;
+	o << "  Req. Id: " << (void *)request_id << std::endl ;
 	o << "  Depth  : " << depth << std::endl ;
 
 	return o ;
@@ -322,7 +340,7 @@ std::ostream& RsTurtleSearchResultItem::print(std::ostream& o, uint16_t)
 
 	o << "  Peer id: " << PeerId() << std::endl ;
 	o << "  Depth  : " << depth << std::endl ;
-	o << "  Req. Id: " << request_id << std::endl ;
+	o << "  Req. Id: " << (void *)request_id << std::endl ;
 	o << "  Files:" << std::endl ;
 	
 	for(std::list<TurtleFileInfo>::const_iterator it(result.begin());it!=result.end();++it)
