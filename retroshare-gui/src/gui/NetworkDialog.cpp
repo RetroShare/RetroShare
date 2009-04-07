@@ -146,28 +146,68 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
       contextMnu.clear();
 
-		if(wi->text(9).toStdString() == rsPeers->getOwnId())
-		{
-			peerdetailsAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Peer Details" ), this );
-			connect( peerdetailsAct , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
-			contextMnu.addAction( peerdetailsAct);
-		}
-		else
-		{
-			makefriendAct = new QAction(QIcon(IMAGE_MAKEFRIEND), tr( "Make Friend" ), this );
-			connect( makefriendAct , SIGNAL( triggered() ), this, SLOT( makeFriend() ) );
-			contextMnu.addAction( makefriendAct);
+		std::string peer_id = wi->text(9).toStdString() ;
 
-			peerdetailsAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Peer Details..." ), this );
-			connect( peerdetailsAct , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
-			contextMnu.addAction( peerdetailsAct);
+			// That's what context menus are made for
+		RsPeerDetails detail;
+		if(!rsPeers->getPeerDetails(peer_id, detail))		// that is not suppose to fail.
+			return ;
 
-//			loadcertAct = new QAction(QIcon(IMAGE_LOADCERT), tr( "Load Certificate" ), this );
-//			connect( loadcertAct , SIGNAL( triggered() ), this, SLOT( loadneighbour() ) );
-//			contextMnu.addAction( loadcertAct);
-		}
+		if(peer_id != rsPeers->getOwnId())
+			if(detail.state & RS_PEER_STATE_FRIEND)
+			{
+				denyFriendAct = new QAction(QIcon(IMAGE_MAKEFRIEND), tr( "Deny friend" ), this );
 
-      contextMnu.exec( mevent->globalPos() );
+				connect( denyFriendAct , SIGNAL( triggered() ), this, SLOT( denyFriend() ) );
+				contextMnu.addAction( denyFriendAct);
+			}
+			else	// not a friend
+			{
+				if(detail.trustLvl > RS_TRUST_LVL_MARGINAL)		// it's a denied old friend.
+					makefriendAct = new QAction(QIcon(IMAGE_MAKEFRIEND), tr( "Accept friend" ), this );
+				else
+					makefriendAct = new QAction(QIcon(IMAGE_MAKEFRIEND), tr( "Make friend" ), this );
+
+				connect( makefriendAct , SIGNAL( triggered() ), this, SLOT( makeFriend() ) );
+				contextMnu.addAction( makefriendAct);
+#ifdef TODO
+				if(detail.trustLvl > RS_TRUST_LVL_MARGINAL)		// it's a denied old friend.
+				{
+					deleteCertAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Delete certificate" ), this );
+					connect( deleteCertAct, SIGNAL( triggered() ), this, SLOT( deleteCert() ) );
+					contextMnu.addAction( deleteCertAct );
+				}
+#endif
+			}
+
+		peerdetailsAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Peer details..." ), this );
+		connect( peerdetailsAct , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
+		contextMnu.addAction( peerdetailsAct);
+
+		contextMnu.exec( mevent->globalPos() );
+}
+
+void NetworkDialog::denyFriend()
+{
+	QTreeWidgetItem *wi = getCurrentNeighbour();
+	std::string peer_id = wi->text(9).toStdString() ;
+	rsPeers->removeFriend(peer_id) ;
+
+	insertConnect() ;
+}
+void NetworkDialog::deleteCert()
+{
+#ifdef TODO
+	// do whatever is needed to remove the certificate completely, hopping this
+	// will eventually remove the signature we've stamped on it.
+	std::cout << "Deleting friend !" << std::endl ;
+
+	QTreeWidgetItem *wi = getCurrentNeighbour();
+	std::string peer_id = wi->text(9).toStdString() ;
+	rsPeers->deleteCertificate(peer_id) ;
+
+	insertConnect() ;
+#endif
 }
 
 void NetworkDialog::makeFriend()
@@ -365,11 +405,7 @@ void NetworkDialog::insertConnect()
 		
 		if (detail.state & RS_PEER_STATE_FRIEND)
 		{
-			if (detail.lastConnect < 10000) /* 3 hours? */
-				item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
-			else
-				item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
-
+			item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
 			backgrndcolor=Qt::green;
 		}
 		else

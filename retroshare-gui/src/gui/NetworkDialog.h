@@ -54,6 +54,8 @@ public slots:
 private slots:
 
   void makeFriend() ;
+  void denyFriend() ;
+  void deleteCert() ;
   void peerdetails();
   /** Create the context popup menu and it's submenus */
   void connecttreeWidgetCostumPopupMenu( QPoint point );
@@ -76,6 +78,8 @@ QTreeWidgetItem *getCurrentNeighbour();
   QMenu* contextMnu;
   /** Defines the actions for the context menu */
   QAction* peerdetailsAct;
+  QAction* denyFriendAct;
+  QAction* deleteCertAct;
   QAction* makefriendAct;
   QAction* authAct;
   QAction* loadcertAct;
