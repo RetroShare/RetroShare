@@ -22,6 +22,7 @@
 
 #include "rshare.h"
 #include "SharedFilesDialog.h"
+#include "Preferences/AddFileAssotiationDialog.h"
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
@@ -29,6 +30,7 @@
 #include "rsiface/RemoteDirModel.h"
 #include "util/RsAction.h"
 #include "msgs/ChanMsgDialog.h"
+#include "Preferences/rsharesettings.h"
 
 #include <iostream>
 #include <sstream>
@@ -45,6 +47,9 @@
 #include <QMovie>
 #include <QLabel>
 
+#include <QMessageBox>
+#include <QProcess>
+
 /* Images for context menu icons */
 #define IMAGE_DOWNLOAD       ":/images/download16.png"
 #define IMAGE_PLAY           ":/images/start.png"
@@ -54,6 +59,7 @@
 #define IMAGE_ATTACHMENT     ":/images/attachment.png"
 #define IMAGE_FRIEND         ":/images/peers_16x16.png"
 #define IMAGE_PROGRESS       ":/images/browse-looking.gif"
+const QString Image_AddNewAssotiationForFile = ":/images/kcmsystem24.png";
 
 
 /** Constructor */
@@ -69,7 +75,8 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 
   //connect(ui.frameButton, SIGNAL(toggled(bool)), this, SLOT(showFrame(bool)));
 
-  connect( ui.localDirTreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( shareddirtreeWidgetCostumPopupMenu( QPoint ) ) );
+  connect( ui.localDirTreeView, SIGNAL( customContextMenuRequested( QPoint ) ),
+           this,            SLOT( sharedDirTreeWidgetContextMenu( QPoint ) ) );
 
   connect( ui.remoteDirTreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( shareddirtreeviewCostumPopupMenu( QPoint ) ) );
 
@@ -180,10 +187,9 @@ void SharedFilesDialog::forceCheck()
 
 void SharedFilesDialog::shareddirtreeviewCostumPopupMenu( QPoint point )
 {
-
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
-
+      
       downloadAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), this );
       connect( downloadAct , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelected() ) );
       
@@ -377,14 +383,24 @@ void  SharedFilesDialog::postModDirectories(bool update_local)
 }
 
 
-void SharedFilesDialog::shareddirtreeWidgetCostumPopupMenu( QPoint point )
+void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 {
+    //=== at this moment we'll show menu only for files, not for folders
+    QModelIndex midx = ui.localDirTreeView->indexAt(point);
+    if (localModel->isDir( midx ) )
+        return;
 
-      QMenu contextMnu2( this );
-      QMouseEvent *mevent2 = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
+    currentFile = localModel->data(midx,
+                                   RemoteDirModel::FileNameRole).toString();
 
-      openfolderAct = new QAction(QIcon(IMAGE_PLAY), tr( "Play File(s)" ), this );
-      connect( openfolderAct , SIGNAL( triggered() ), this, SLOT( playselectedfiles() ) );
+    QMenu contextMnu2( this );
+//      
+
+    QAction* menuAction = fileAssotiationAction(currentFile) ;
+    //new QAction(QIcon(IMAGE_PLAY), currentFile, this);
+                                  //tr( "111Play File(s)" ), this );
+//      connect( openfolderAct , SIGNAL( triggered() ), this,
+//               SLOT( playselectedfiles() ) );
 
 #if 0
       openfileAct = new QAction(QIcon(IMAGE_ATTACHMENT), tr( "Add to Recommend List" ), this );
@@ -441,18 +457,96 @@ void SharedFilesDialog::shareddirtreeWidgetCostumPopupMenu( QPoint point )
 #endif
 
 
-        contextMnu2.addAction( openfolderAct);
+    contextMnu2.addAction( menuAction );
         //contextMnu2.addAction( openfileAct);
         //contextMnu2.addSeparator(); 
         //contextMnu2.addMenu( recMenu);
         //contextMnu2.addMenu( msgMenu);
 
 
-        contextMnu2.exec( mevent2->globalPos() );
+    QMouseEvent *mevent2 = new QMouseEvent( QEvent::MouseButtonPress, point,
+                                            Qt::RightButton, Qt::RightButton,
+                                            Qt::NoModifier );
+    contextMnu2.exec( mevent2->globalPos() );
 
 
 }
 
+//============================================================================
+
+QAction*
+SharedFilesDialog::fileAssotiationAction(const QString fileName)
+{
+    QAction* result = 0;
+
+    RshareSettings* settings = new RshareSettings();
+    //QSettings* settings= new QSettings(qApp->applicationDirPath()+"/sett.ini",
+    //                            QSettings::IniFormat);
+    settings->beginGroup("FileAssotiations");
+
+    QString key = AddFileAssotiationDialog::cleanFileType(currentFile) ;
+    if ( settings->contains(key) )
+    {
+        result = new QAction(QIcon(IMAGE_PLAY), tr( "Open File" ), this );
+        connect( result , SIGNAL( triggered() ),
+                 this, SLOT( runCommandForFile() ) );
+
+        currentCommand = (settings->value( key )).toString();
+    }
+    else
+    {
+        result = new QAction(QIcon(Image_AddNewAssotiationForFile),
+                             tr( "Set command for opening this file"), this );
+        connect( result , SIGNAL( triggered() ),
+                 this,    SLOT(   tryToAddNewAssotiation() ) );
+    }
+
+    delete settings;
+
+    return result;
+}
+
+//============================================================================
+
+void
+SharedFilesDialog::runCommandForFile()
+{
+    QStringList tsl;
+    tsl.append( currentFile );
+    QProcess::execute( currentCommand, tsl);
+    //QString("%1 %2").arg(currentCommand).arg(currentFile) );
+    
+//    QString tmess = "Some command(%1) should be executed here for file %2";
+//    tmess = tmess.arg(currentCommand).arg(currentFile);
+//    QMessageBox::warning(this, tr("RetroShare"), tmess, QMessageBox::Ok);
+}
+
+//============================================================================
+
+void
+SharedFilesDialog::tryToAddNewAssotiation()
+{
+    AddFileAssotiationDialog afad(true, this);//'add file assotiations' dialog
+
+    afad.setFileType(AddFileAssotiationDialog::cleanFileType(currentFile));
+
+    int ti = afad.exec();
+
+    if (ti==QDialog::Accepted)
+    {
+        RshareSettings* settings = new RshareSettings();
+        //QSettings settings( qApp->applicationDirPath()+"/sett.ini",
+        //                    QSettings::IniFormat);
+        settings->beginGroup("FileAssotiations");
+        
+        QString currType = afad.resultFileType() ;
+        QString currCmd = afad.resultCommand() ;
+        
+        settings->setValue(currType, currCmd);
+    }
+}
+
+//============================================================================
 /**
  Toggles the Lokal TreeView on and off, changes toggle button text
  

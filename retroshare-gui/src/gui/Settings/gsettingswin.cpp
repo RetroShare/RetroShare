@@ -25,6 +25,7 @@
 #include "ServerPage.h"
 #include "NetworkPage.h"
 #include "gsettingswin.h"
+//#include "FileAssotiationsDialog.h"
 
 GSettingsWin::GSettingsWin(QWidget * parent, Qt::WFlags flags)
                             : QDialog(parent, flags)
@@ -58,6 +59,7 @@ GSettingsWin::initStackedWidget()
     stackedWidget->addWidget(new NetworkPage());
     stackedWidget->addWidget(new ServerPage());
     stackedWidget->addWidget(new DirectoriesPage());
+ //   stackedWidget->addWidget(new FileAssotiationsDialog() );
    
 
     setNewPage(General);
@@ -70,17 +72,28 @@ GSettingsWin::setNewPage(int page)
 {
     QString text;
 
-    if (page == General)
-        text = tr("General");
-    else if (page == Network)
-        text = tr("Network");
-    else if (page == Directories)
-        text = tr("Directories");
-    else if (page == Server)
-
-        text = tr("Server");
-
-    pageName->setText(tr("%1").arg(text));
+    switch (page)
+    {
+        case General:
+            text = tr("General");
+            break;
+        case Network:
+            text = tr("Network");
+            break;
+        case Directories:
+            text = tr("Directories");
+            break;
+        case Server:
+            text = tr("Server");
+            break;
+        case FileAssotiations:
+            text = tr("File assotiations");
+            break;
+        default:
+            text = tr("UnknownPage");// impossible case
+    }
+                                        
+    pageName->setText(text); //tr("%1").arg(
     stackedWidget->setCurrentIndex(page);
     listWidget->setCurrentRow(page);
 }

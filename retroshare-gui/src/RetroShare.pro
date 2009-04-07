@@ -193,6 +193,8 @@ HEADERS +=  rshare.h \
             gui/Preferences/ConfirmQuitDialog.h \
             gui/Preferences/rsharesettings.h \
             gui/Preferences/rsettings.h \
+            gui/Preferences/FileAssotiationsDialog.h \
+            gui/Preferences/AddFileAssotiationDialog.h \
             gui/toaster/MessageToaster.h \
             gui/toaster/OnlineToaster.h \
             gui/toaster/ChatToaster.h \
@@ -417,6 +419,8 @@ SOURCES += main.cpp \
             gui/Preferences/ConfirmQuitDialog.cpp \
             gui/Preferences/rsharesettings.cpp \
             gui/Preferences/rsettings.cpp \
+            gui/Preferences/FileAssotiationsDialog.cpp   \
+            gui/Preferences/AddFileAssotiationDialog.cpp \
             gui/common/vmessagebox.cpp \
             gui/common/rwindow.cpp \ 
             gui/common/html.cpp \ 

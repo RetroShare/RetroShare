@@ -40,6 +40,8 @@
 #define IMAGE_SAVE			    ":/images/media-floppy.png"
 #define IMAGE_HELP              ":/images/help24.png"
 #define IMAGE_APPEARRANCE       ":/images/looknfeel.png"
+#define IMAGE_FILE_ASSOTIATIONS ":/images/folder-draft24.png"
+
 
 
 /** Constructor */
@@ -65,6 +67,12 @@ PreferencesWindow::PreferencesWindow(QWidget *parent, Qt::WFlags flags)
   
   ui.stackPages->add(new NotifyDialog(ui.stackPages),
                      createPageAction(QIcon(IMAGE_APPEARRANCE), tr("Notify"), grp));
+
+  ui.stackPages->add(new FileAssotiationsDialog(ui.stackPages),
+                     createPageAction(QIcon(IMAGE_FILE_ASSOTIATIONS),
+                     tr("File assotiations"), grp));
+
+                     
   
   /*foreach (ConfigPage *page, ui.stackPages->pages()) {
     connect(page, SIGNAL(helpRequested(QString)),

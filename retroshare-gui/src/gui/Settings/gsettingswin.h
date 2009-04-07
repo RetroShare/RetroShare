@@ -34,7 +34,8 @@ class GSettingsWin: public QDialog, private Ui::Settings
     Q_OBJECT
 
     public:
-        enum PageType { General = 0, Network, Server, Directories  };
+        enum PageType { General = 0, Network, Server,
+                        Directories, FileAssotiations  };
 
         GSettingsWin(QWidget * parent = 0, Qt::WFlags flags = 0);
         ~GSettingsWin() {}

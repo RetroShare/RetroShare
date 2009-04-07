@@ -55,7 +55,7 @@ private slots:
   /** Create the context popup menu and it's submenus */
   void shareddirtreeviewCostumPopupMenu( QPoint point );
   
-  void shareddirtreeWidgetCostumPopupMenu( QPoint point );
+  void sharedDirTreeWidgetContextMenu( QPoint point );
   
   void downloadRemoteSelected();
 //  void addMsgRemoteSelected();
@@ -71,15 +71,19 @@ private slots:
 //  void recommendFileSetOnly();
 //  void recommendFilesTo( std::string rsid );
 //  void recommendFilesToMsg( std::string rsid );
+  void runCommandForFile();
+  void tryToAddNewAssotiation();
 
 signals:
   void playFiles(QStringList files);
 
 private:
-  /** Define the popup menus for the Context menu */
-  QMenu* contextMnu;
+  //now context menu are created again every time theu are called ( in some
+  //slots.. Maybe it's not good...
+  //** Define the popup menus for the Context menu */
+  //QMenu* contextMnu;
   
-  QMenu* contextMnu2;
+  //QMenu* contextMnu2;
   
   /** Defines the actions for the context menu for QTreeView */
   QAction* downloadAct;
@@ -99,6 +103,11 @@ private:
   /* RemoteDirModel */
   RemoteDirModel *model;
   RemoteDirModel *localModel;
+
+  QString currentCommand;
+  QString currentFile;
+
+  QAction* fileAssotiationAction(const QString fileName);
 };
 
 #endif

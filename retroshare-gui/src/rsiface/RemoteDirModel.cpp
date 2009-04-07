@@ -231,6 +231,14 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 	}
      }*/
 #endif
+
+    if (role == RemoteDirModel::FileNameRole)
+    {
+        FileInfo finfo;
+        rsFiles->FileDetails(details.hash, 0, finfo);
+        
+        return QString::fromStdString(finfo.path) ;
+    }
      
     if (role == Qt::DecorationRole)
     {
@@ -1043,6 +1051,31 @@ QStringList RemoteDirModel::mimeTypes () const
 	return list;
 }
 
+//============================================================================
+
+bool
+RemoteDirModel::isDir ( const QModelIndex & index ) const
+{
+    //if (RemoteMode) // only local files can be opened
+    //    return ;
+    void *ref = index.internalPointer();
+    if (!ref)
+        return false;
+    
+    DirDetails details;
+    uint32_t flags = DIR_FLAGS_DETAILS;
+    if (RemoteMode)
+        flags |= DIR_FLAGS_REMOTE;
+    else
+        flags |= DIR_FLAGS_LOCAL;
+
+    if (!rsFiles->RequestDirDetails(ref, details, flags))
+    {
+        return false;//not good, but....
+    }
+
+    return (details.type == DIR_TYPE_DIR) ;    
+}
 
 
 

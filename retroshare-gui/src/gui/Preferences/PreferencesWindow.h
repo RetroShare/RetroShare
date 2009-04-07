@@ -31,6 +31,7 @@
 #include "CryptographyDialog.h"
 #include "AppearanceDialog.h"
 #include "NotifyDialog.h"
+#include "FileAssotiationsDialog.h"
 #include "gui/help/browser/helpbrowser.h"
 #include <gui/common/rwindow.h>
 
@@ -48,8 +49,8 @@ public:
     Server,  			  /** Server page. */
     Directories,           /** Directories page. */
     Appearance,				/** Appearance page. */
-    Notify				/** Notify page. */
-
+    Notify,				/** Notify page. */
+    FileAssotiations    /** File assotiations page. */
   };
 
   /** Default Constructor */

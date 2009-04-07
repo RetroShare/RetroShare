@@ -8,10 +8,12 @@
 #include "util/misc.h"
 
 class RemoteDirModel : public QAbstractItemModel
- {
-     Q_OBJECT
-
- public:
+{
+    Q_OBJECT
+    
+public:
+    enum Roles{ FileNameRole = Qt::UserRole+1 };
+    
      RemoteDirModel(bool mode, QObject *parent = 0);
 
 	/* These are all overloaded Virtual Functions */
@@ -35,6 +37,9 @@ class RemoteDirModel : public QAbstractItemModel
 
 	/* Callback from GUI */
      void downloadSelected(QModelIndexList list);
+
+     bool isDir ( const QModelIndex & index ) const ;
+     //void openFile(QModelIndex fileIndex, const QString command);
 
 #if 0  /****** REMOVED ******/
      void recommendSelected(QModelIndexList list);
