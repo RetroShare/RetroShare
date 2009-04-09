@@ -161,15 +161,15 @@ void SharedFilesDialog::checkUpdate()
         /* update */
 	if (rsFiles->InDirectoryCheck())
 	{
-		ui.hashLabel->setPixmap(QPixmap(IMAGE_HASH_BUSY));
-		/*QMovie *movie = new QMovie(IMAGE_PROGRESS);
-        ui.hashLabel->setMovie(movie);
-        movie->start();*/
-
-//		ui.hashLabel->setToolTip(QString::fromStdString(rsFiles->currentJobInfo())) ;
+		//ui.hashLabel->setPixmap(QPixmap(IMAGE_HASH_BUSY));
+    QMovie *movie = new QMovie(":/images/loader/16-loader.gif");
+    ui.hashLabel->setMovie(movie);
+    movie->start();
+    movie->setSpeed(100); // 2x speed
 	}
 	else
 	{
+	  //movie->stop();
 		ui.hashLabel->setPixmap(QPixmap(IMAGE_HASH_DONE));
 		ui.hashLabel->setToolTip("") ;
 	}

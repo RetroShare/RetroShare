@@ -1,7 +1,7 @@
 /****************************************************************
- *  RShare is distributed under the following license:
+ *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2006, crypton
+ *  Copyright (C) 2006-2009, RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #define _SHAREDFILESDIALOG_H
 
 #include <QFileDialog>
+#include <QMovie>
 
 //#include <config/rsharesettings.h>
 
@@ -106,7 +107,7 @@ private:
 
   QString currentCommand;
   QString currentFile;
-
+  
   QAction* fileAssotiationAction(const QString fileName);
 };
 
