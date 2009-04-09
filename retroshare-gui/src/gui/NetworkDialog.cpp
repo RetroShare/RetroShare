@@ -156,7 +156,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 		if(peer_id != rsPeers->getOwnId())
 			if(detail.state & RS_PEER_STATE_FRIEND)
 			{
-				denyFriendAct = new QAction(QIcon(IMAGE_MAKEFRIEND), tr( "Deny friend" ), this );
+				denyFriendAct = new QAction(QIcon(IMAGE_DENIED), tr( "Deny friend" ), this );
 
 				connect( denyFriendAct , SIGNAL( triggered() ), this, SLOT( denyFriend() ) );
 				contextMnu.addAction( denyFriendAct);
