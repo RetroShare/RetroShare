@@ -1,6 +1,7 @@
 TEMPLATE = lib
-CONFIG *= staticlib
+CONFIG += static
 TARGET = retroshare
+CONFIG += release
 
 DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER
 ################################# Linux ##########################################
@@ -36,7 +37,7 @@ win32 {
 	QMAKE_CC = g++
   OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
-  DEFINES = WINDOWS_SYS WIN32 STATICLIB
+  DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW
 	DESTDIR = lib
 	  
 	SSL_DIR = ../../../../openssl-0.9.7g-xpgp-0.1c/include
