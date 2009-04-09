@@ -314,7 +314,7 @@ bool	retryConnectTCP(std::string id);
 bool	retryConnectNotify(std::string id);
 
 	/* temporary for testing */
-virtual void 	loadConfiguration() { return; }
+//virtual void 	loadConfiguration() { return; }
 
 	protected:
 /*****************************************************************/

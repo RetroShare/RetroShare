@@ -138,6 +138,7 @@ void p3ConnectMgr::setIPServersEnabled(bool b)
 {
 	use_extr_addr_finder = b ;
 
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 	std::cerr << "p3ConnectMgr: setIPServers to " << b << std::endl ; 
 }
 
@@ -267,7 +268,6 @@ void p3ConnectMgr::netStartup()
 	std::cerr << "p3ConnectMgr::netStartup()" << std::endl;
 #endif
 
-	loadConfiguration();
 	netDhtInit();
 	netUdpInit();
 	netStunInit();
@@ -414,6 +414,13 @@ void p3ConnectMgr::netTick()
 	//std::cerr << "p3ConnectMgr::netTick()" << std::endl;
 #endif
 
+	// Check whether we are stuck on loopback. This happens if RS starts when
+	// the computer is not yet connected to the internet. In such a case we
+	// periodically check for a local net address.
+	//
+	if(isLoopbackNet(&(ownState.localaddr.sin_addr)))
+		checkNetAddress() ;
+
 	connMtx.lock();   /*   LOCK MUTEX */
 
 	uint32_t netStatus = mNetStatus;
@@ -552,8 +559,7 @@ void p3ConnectMgr::netUpnpCheck()
 
 		connMtx.unlock(); /* UNLOCK MUTEX */
 	}
-	else if ((upnpState > 0) &&
-		netAssistExtAddress(extAddr))
+	else if ((upnpState > 0) && netAssistExtAddress(extAddr))
 	{
 		/* switch to UDP startup */
 		connMtx.lock();   /*   LOCK MUTEX */
@@ -2902,6 +2908,7 @@ RsSerialiser *p3ConnectMgr::setupSerialiser()
 {
 	RsSerialiser *rss = new RsSerialiser();
 	rss->addSerialType(new RsPeerConfigSerialiser());
+	rss->addSerialType(new RsGeneralConfigSerialiser()) ;
 
 	return rss;
 }
@@ -2988,6 +2995,18 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
 
 	saveData.push_back(sitem);
 
+	// Now save config for network digging strategies
+	
+	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
+
+	RsTlvKeyValue kv;
+	kv.key = "USE_EXTR_IP_FINDER" ;
+	kv.value = (use_extr_addr_finder)?"TRUE":"FALSE" ;
+	vitem->tlvkvs.pairs.push_back(kv) ;
+
+	std::cout << "Pushing item for use_extr_addr_finder = " << use_extr_addr_finder << std::endl ;
+	saveData.push_back(vitem);
+
 	return saveData;
 }
 
@@ -2998,13 +3017,13 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 	std::cerr << std::endl;
 #endif
 
-
 	/* load the list of peers */
 	std::list<RsItem *>::iterator it;
 	for(it = load.begin(); it != load.end(); it++)
 	{
 		RsPeerNetItem *pitem = dynamic_cast<RsPeerNetItem *>(*it);
 		RsPeerStunItem *sitem = dynamic_cast<RsPeerStunItem *>(*it);
+		RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet *>(*it) ;
 
 		if (pitem)
 		{
@@ -3050,6 +3069,23 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 			{
 				mStunList.push_back(*sit);
 			}
+		}
+		else if(vitem)
+		{
+			RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::loadList() General Variable Config Item:";
+			std::cerr << std::endl;
+			vitem->print(std::cerr, 10);
+			std::cerr << std::endl;
+#endif
+			if(vitem->tlvkvs.pairs.front().key == "USE_EXTR_IP_FINDER")
+			{
+				use_extr_addr_finder = (vitem->tlvkvs.pairs.front().value == "TRUE") ;
+				std::cerr << "setting use_extr_addr_finder to " << use_extr_addr_finder << std::endl ;
+			}
+			
 		}
 
 		delete (*it);
