@@ -254,8 +254,16 @@ std::string cleanUpCertificate(std::string badCertificate)
 		currBadCertIdx++;
 
 	}
-	cleanCertificate[currCleanCertIdx]='\n';
-	currCleanCertIdx++;
+    if(cleanCertificate[currCleanCertIdx-1]!='\n')
+    {
+        cleanCertificate[currCleanCertIdx]='\n';
+        currCleanCertIdx++;
+ //       std::cerr<<"zeeeee"<<std::endl;
+    }
+    else
+    {
+//        std::cerr<<"zooooo"<<std::endl;
+    }
 	/*
 	Copying the begining part of the certificate end tag. Copying
 	-----END part of the tag.
