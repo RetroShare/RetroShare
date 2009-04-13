@@ -89,7 +89,7 @@ PluginManagerWidget::PluginManagerWidget(QWidget * parent)
     installPluginLayout = new QHBoxLayout();
     installPluginButton = new QPushButton();
     
-    installPluginButton->setText("Install New Plugin...");
+    installPluginButton->setText(tr("Install New Plugin..."));
     connect( installPluginButton, SIGNAL( clicked() ),
              this               , SLOT(   installPluginButtonClicked() ) );
     installPluginLayout->addWidget(installPluginButton);
