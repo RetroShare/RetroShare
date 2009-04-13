@@ -23,6 +23,8 @@
  *
  */
 
+//====================================== General setup of the router ===================================//
+//
 // This class implements the turtle hopping router. It basically serves as
 // - a cache of turtle tunnels which are the communicating ways between distant peers.
 // 	- turtle tunnels are either end-point tunnels, or transitory points, in which case items are just
@@ -39,6 +41,108 @@
 // 	- name					// name of the file found
 // 	- search request id.	// 
 //
+// - when downloading:
+// 	- for a given hash, a set of starting tunnels is maintained. Transitory
+// 	tunnels are also maintained for other hashes as requested by distant
+// 	peers.
+//
+//============================================= Operations =============================================//
+//
+//  A download session works as follows:
+//     Initiation:
+//      1 - the user searches for files (turtle search), and selects one and clicks download.
+//      2 - In parallel:
+//           - the ft module gets a request, and searches for peers to provide this using its search modules.
+//           - the turtle router is informed that a turtle download will happen with the given hash, so 
+//             it initiates tunnels for this hash.
+//     In a loop:
+//      3 - the ft module asks the hash to the turtle searchModule, and sends file requests to the pqi 
+//           interface of this module.
+//      4 - the turtle pqi interface forwards these requests to the turtle router, which sends them to 
+//           the correct peers, selecting randomly among all the possible tunnels for this hash.
+//      5 - when a file data packet gets back, the turtle router forwards it back to the file transfer module.
+//
+//================================ connexion to the file transfer module ===============================//
+//
+//  The turtle router should provide the ft module with the necessary interface for asking files, and
+//  retreiving data:
+// 	- a search module that responds with a given fake peer id for hash request for which it has tunnels.
+// 	- a pqi interface to ask for file data
+// 	- p3turtle sends back file data packets to the file transfer module
+//
+//========================================== Tunnel usage rules ========================================//
+//
+// Tunnels should be used according to their capacity. This is an unresolved problem as for now.
+//
+//======================================= Tunnel maintenance rules =====================================//
+//
+// P3turtle should derive from pqihandler, just as p3disc, so that newly connected peers should trigger 
+// asking for new tunnels, and disconnecting peers should produce a close tunnel packet.
+//
+// 	- when a peer A connects:
+// 		- initiate new tunnels for all active file hashes (go through the list of hashes) by 
+// 		  asking to A, for the same hash and the same source. Only report tunnels for which the destination 
+// 		  endpoint is different, which should not happen in fact, because of bouncing gards.
+//
+// 	- when a peer A disconnects.
+// 		- close tunnels whose destination is beyond A by sending a close request backward.
+// 		- close tunnels whose source is beyond A by sending a forward close request.
+//
+//    - when receive open tunnel from A 
+//    	- check whether it's a bouncing request. If yes, give up.
+//       - check hash against local files.
+//          if > 0 
+//             return tunnel ok item. No need to go forward, as sub tunnels are not useful.
+//          else
+//             forward request to peers, notting source and hashes.
+//
+//    - when receive tunnel ok from A 
+//    	- no need to check whether we already have this tunnel, as bouncing gards prevent this.
+//    	- leave a trace for the tunnel, and send (forward) backward.
+//
+//    - when receive close tunnel from A 
+//    	- if I am the endpoint
+//    		- locally close the tunnel.
+//    		- respond with tunnel closed.
+//    	- otherwise, block the tunnel, and forward close tunnel to tunnel destination.
+//
+//    - when receive tunnel closed from A 
+//    	- locally close the tunnel
+//    	- forward back
+//
+// Ids management:
+//    - tunnel ids should be identical for requests between 2 same peers for the same file hash.
+//    - tunnel requests ids do not need to be identical.
+//  So:
+//  	- when issuing an open tunnel order, 
+//  		- a random request id is generated and used for packet routing
+//  		- a partial tunnel id is build, which is unique to the pair (source,file hash)
+//  	- when tunnel_ok is sent back, the tunnel id is completed so that it is unique to the
+//  		triplet (source, destination, file hash).
+//
+// For these needs, tunnels are represented by:
+// 	- their file hash. Each tunnel is only designed for transferring a single and same file.
+// 	- their local endpoints id. These are the ids of the peers in direction to the source and destination.
+// 	- the tunnel id, which is unique to the triple hash+global source+global destination.
+// 	- there is a difference between source and destination in tunnels. The source is the file asker, the 
+// 	  destination is the file provider. This helps sorting tunnels.
+// 	- a timestamp, used for cleaning unused tunnels.
+//
+// The turtle router has:
+// 	- a list of search requests and where to bounce them back.
+// 	- a list of tunnel digging requests and where to bounce them, back.
+// 	- a list of active file hashes, for which is should constantly maintain tunnels.
+// 	- a list of active tunnels, some being transitory, some being endpoints.
+//
+// Turtle router entries:
+// 	- a function for performing turtle search
+// 	- a function for downloading files.
+//
+// Questions:
+// 	- should tunnels be re-used ? nope. The only useful case would be when two peers are exchanging files, which happens quite rarely.
+// 	- at a given moment, there is at most 1 tunnel for a given triplet (hash, source, destination).
+
+
 #ifndef MRK_PQI_TURTLE_H
 #define MRK_PQI_TURTLE_H
 
@@ -67,6 +171,10 @@ static const int TURTLE_MAX_SEARCH_DEPTH = 6 ;
 typedef std::string 	TurtlePeerId ;
 typedef std::string 	TurtleFileHash ;
 typedef std::string 	TurtleFileName ;
+typedef TurtleRequestId TurtleSearchRequestId ;
+
+typedef uint32_t TurtleTunnelRequestId ;
+typedef uint32_t TurtleTunnelId ;
 
 class RsTurtleItem: public RsItem
 {
@@ -88,7 +196,7 @@ class RsTurtleSearchResultItem: public RsTurtleItem
 		uint16_t depth ;
 		uint8_t peer_id[16];				// peer id. This will eventually be obfuscated in some way.
 
-		TurtleRequestId request_id ;	// randomly generated request id.
+		TurtleSearchRequestId request_id ;	// randomly generated request id.
 
 		std::list<TurtleFileInfo> result ;
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
@@ -115,6 +223,69 @@ class RsTurtleSearchRequestItem: public RsTurtleItem
 		virtual uint32_t serial_size() ; 
 };
 
+class RsTurtleOpenTunnelItem: public RsTurtleItem
+{
+	public:
+		RsTurtleOpenTunnelItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_OPEN_TUNNEL) {}
+		RsTurtleOpenTunnelItem(void *data,uint32_t size) ;		// deserialization
+
+		TurtleFileHash file_hash ;	  // hash to match
+		uint32_t request_id ;		  // randomly generated request id.
+		uint32_t partial_tunnel_id ; // uncomplete tunnel id. Will be completed at destination.
+		uint16_t depth ;				  // Used for limiting search depth.
+
+		virtual std::ostream& print(std::ostream& o, uint16_t) ;
+
+	protected:
+		virtual bool serialize(void *data,uint32_t& size) ;	
+		virtual uint32_t serial_size() ; 
+};
+
+class RsTurtleTunnelOkItem: public RsTurtleItem
+{
+	public:
+		RsTurtleTunnelOkItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_TUNNEL_OK) {}
+		RsTurtleTunnelOkItem(void *data,uint32_t size) ;		// deserialization
+
+		uint32_t tunnel_id ;		// id of the tunnel. Should be identical for a tunnel between two same peers for the same hash.
+		uint32_t request_id ;	// randomly generated request id corresponding to the intial request.
+
+		virtual std::ostream& print(std::ostream& o, uint16_t) ;
+
+	protected:
+		virtual bool serialize(void *data,uint32_t& size) ;	
+		virtual uint32_t serial_size() ; 
+};
+
+class RsTurtleCloseTunnelItem: public RsTurtleItem
+{
+	public:
+		RsTurtleCloseTunnelItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_CLOSE_TUNNEL) {}
+		RsTurtleCloseTunnelItem(void *data,uint32_t size) ;		// deserialization
+
+		uint32_t tunnel_id ;		// id of the tunnel to close.
+
+		virtual std::ostream& print(std::ostream& o, uint16_t) ;
+	protected:
+		virtual bool serialize(void *data,uint32_t& size) ;	
+		virtual uint32_t serial_size() ; 
+};
+
+class RsTurtleTunnelClosedItem: public RsTurtleItem
+{
+	public:
+		RsTurtleTunnelClosedItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_TUNNEL_CLOSED) {}
+		RsTurtleTunnelClosedItem(void *data,uint32_t size) ;		// deserialization
+
+		uint32_t tunnel_id ;		// id of the tunnel to close.
+
+		virtual std::ostream& print(std::ostream& o, uint16_t) ;
+	protected:
+		virtual bool serialize(void *data,uint32_t& size) ;	
+		virtual uint32_t serial_size() ; 
+};
+
+
 // Class responsible for serializing/deserializing all turtle items.
 //
 class RsTurtleSerialiser: public RsSerialType
@@ -136,9 +307,9 @@ class RsTurtleSerialiser: public RsSerialType
 class TurtleTunnel
 {
 	public:
-		TurtlePeerId in ;			// where packets come from
-		TurtlePeerId out ;		// where packets should go
-		uint32_t	time_stamp ;	// last time the tunnel was actually used. Used for cleaning old tunnels.
+		TurtlePeerId local_src ;		// where packets come from. Direction to the source.
+		TurtlePeerId local_dst ;		// where packets should go. Direction to the destination.
+		uint32_t	time_stamp ;			// last time the tunnel was actually used. Used for cleaning old tunnels.
 };
 
 class p3turtle: public p3Service, public pqiMonitor, public RsTurtle
@@ -150,11 +321,16 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle
 		// the request id, which will be further used by the gui to store results
 		// as they come back.
 		//
-		virtual TurtleRequestId turtleSearch(const std::string& string_to_match) ;
+		virtual TurtleSearchRequestId turtleSearch(const std::string& string_to_match) ;
 
-		// Launches a complete download file operation: diggs one or more
+		// Initiates tunnel handling for the given file hash.
 		// tunnels.  Launches an exception if an error occurs during the
-		// initialization process.
+		// initialization process. The turtle router itself does not initiate downloads, 
+		// it only maintains tunnels for the given hash. The download should be 
+		// driven by the file transfer module. Maybe this function can do the whole thing:
+		//  - initiate tunnel handling
+		//  - send the file request to the file transfer module
+		//  - populate the file transfer module with the adequate pqi interface and search module.
 		//
 		virtual void turtleDownload(const std::string& file_hash) ;
 
@@ -166,34 +342,58 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle
 
 		/************* from pqiMonitor *******************/
 
-		// Handles incoming and outgoing packets, sort search requests and
-		// forward info upward.
+		// This function does many things:
+		// 	- It handles incoming and outgoing packets
+		// 	- it sorts search requests and forwards search results upward.
+		// 	- it cleans unused (tunnel+search) requests.
+		// 	- it maintains the pool of tunnels, for each request file hash.
+		//
 		virtual int tick();
 
 	private:
-		uint32_t generateRandomRequestId() ;
-		void autoWash() ;
+		//--------------------------- Admin/Helper functions -------------------------//
+		
+		uint32_t generatePersonalFilePrint(const TurtleFileHash&) ;	/// Generates a cyphered combination of ownId() and file hash
+		uint32_t generateRandomRequestId() ;								/// Generates a random uint32_t number.
 
-		/* Network Input */
-		int handleIncoming();
-//		int handleOutgoing();
+		void autoWash() ;															/// Auto cleaning of unused tunnels, search requests and tunnel requests.
 
-		// Performs a search calling local cache and search structure.
-		void performLocalSearch(const std::string& s,std::list<TurtleFileInfo>& result) ;
+		//------------------------------ Tunnel handling -----------------------------//
 
-		void handleSearchRequest(RsTurtleSearchRequestItem *item);
+		void diggTunnel(const TurtleFileHash& hash) ;	/// initiates tunnels from here to any peers having the given file hash
+
+		//----------------------------- Routing functions ----------------------------//
+		
+		int handleIncoming(); 					/// Main routing function
+
+		void handleSearchRequest(RsTurtleSearchRequestItem *item);		/// specific routing functions for handling particular packets.
 		void handleSearchResult(RsTurtleSearchResultItem *item);
+		void handleTunnelRequest(RsTurtleOpenTunnelItem *item);		
+		void handleTunnelResult(RsTurtleTunnelOkItem *item);		
 
-		// returns a search result upwards (possibly to the gui)
+		//------ Functions connecting the turtle router to other components.----------//
+		
+		// Performs a search calling local cache and search structure.
+		void performLocalSearch(const std::string& match_string,std::list<TurtleFileInfo>& result) ;
+
+		// Returns a search result upwards (possibly to the gui)
 		void returnSearchResult(RsTurtleSearchResultItem *item) ;
 
+		// Returns true if the file with given hash is hosted locally.
+		bool performLocalHashSearch(const TurtleFileHash& hash) ;
+
+		//--------------------------- Local variables --------------------------------//
+		
 		/* data */
 		p3ConnectMgr *mConnMgr;
 
 		RsMutex mTurtleMtx;
 
-		std::map<TurtleRequestId,TurtlePeerId> requests_origins ; 	// keeps trace of who emmitted a given request
-		std::map<TurtleFileHash,TurtleTunnel> 	file_tunnels ; 		// stores adequate tunnels for each file hash.
+		std::map<TurtleSearchRequestId,TurtlePeerId> _search_requests_origins ; 	/// keeps trace of who emmitted a given search request
+		std::map<TurtleTunnelRequestId,TurtlePeerId> _tunnel_requests_origins ; 	/// keeps trace of who emmitted a tunnel request
+
+		std::map<TurtleFileHash,std::list<TurtleTunnelId> >	_file_hashes_tunnels ;	/// stores adequate tunnels for each file hash locally asked
+		std::map<TurtleTunnelId,TurtleTunnel > 					_local_tunnels ;			/// local tunnels, stored by ids (Either transiting or ending).
 
 		time_t _last_clean_time ;
 };
