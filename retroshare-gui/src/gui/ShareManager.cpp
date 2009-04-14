@@ -114,7 +114,7 @@ void ShareManager::addShareDirectory()
 	{
 		rsFiles->addSharedDirectory(dir);
 		load();
-        	messageBoxOk("Shared Directory Added!");
+        	messageBoxOk(tr("Shared Directory Added!"));
 	}
 }
 
@@ -127,7 +127,7 @@ void ShareManager::removeShareDirectory()
 
 	QString queryWrn;
 	queryWrn.clear();
-	queryWrn.append("Do You Want to Delete ? ");
+	queryWrn.append(tr("Do You Want to Remove ? "));
 	if (qdir)
 	{
 		if ((QMessageBox::question(this, tr("Warning!"),queryWrn,QMessageBox::Ok|QMessageBox::No, QMessageBox::Ok))== QMessageBox::Ok)
