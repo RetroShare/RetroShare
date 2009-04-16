@@ -110,7 +110,7 @@ uint32_t p3turtle::generatePersonalFilePrint(const TurtleFileHash& hash)
 	uint32_t res = 0 ;
 	uint32_t decal = 0 ;
 
-	for(uint i=0;i<buff.length();++i)
+	for(int i=0;i<(int)buff.length();++i)
 	{
 		res += 7*buff[i] + decal ;
 		decal = decal*44497+15641+(res%86243) ;
