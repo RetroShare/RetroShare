@@ -14,8 +14,6 @@
 #include <vector>
 #include <algorithm>
 
-#define EXTADDRSEARCH_DEBUG
-
 static const std::string ADDR_AGENT  = "Mozilla/5.0";
 
 static std::string scan_ip(const std::string& text)
@@ -180,8 +178,6 @@ bool ExtAddrFinder::hasValidIP(struct sockaddr_in *addr)
 #ifdef EXTADDRSEARCH_DEBUG
 	std::cerr << "ExtAddrFinder: Getting ip." << std::endl ;
 #endif
-	RsStackMutex mut(_addrMtx) ;
-
 	if(*_found)
 	{
 #ifdef EXTADDRSEARCH_DEBUG
@@ -191,14 +187,26 @@ bool ExtAddrFinder::hasValidIP(struct sockaddr_in *addr)
 		return true ;
 	}
 
-	if(!*_searching)
+	if(_addrMtx.trylock()) 
 	{
+		if(!*_searching)
+		{
 #ifdef EXTADDRSEARCH_DEBUG
-		std::cerr << "ExtAddrFinder: No stored ip: Initiating new search." << std::endl ;
+			std::cerr << "ExtAddrFinder: No stored ip: Initiating new search." << std::endl ;
 #endif
-		*_searching = true ;
-		start_request() ;
+			*_searching = true ;
+			start_request() ;
+		}
+#ifdef EXTADDRSEARCH_DEBUG
+		else
+			std::cerr << "ExtAddrFinder: Already searching." << std::endl ;
+#endif
+		_addrMtx.unlock(); 
 	}
+#ifdef EXTADDRSEARCH_DEBUG
+	else
+		std::cerr << "ExtAddrFinder: (Note) Could not acquire lock. Busy." << std::endl ;
+#endif
 
 	return false ;
 }
@@ -241,7 +249,5 @@ ExtAddrFinder::ExtAddrFinder()
 	_ip_servers.push_back(std::string( "www.showmyip.com"   )) ;
 	_ip_servers.push_back(std::string( "showip.net"         )) ;
 	_ip_servers.push_back(std::string( "www.displaymyip.com")) ;
-
-	start_request() ;
 }
 
