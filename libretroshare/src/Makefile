@@ -3,7 +3,9 @@ RS_TOP_DIR = .
 include $(RS_TOP_DIR)/scripts/config.mk
 ###############################################################
 
-all: librs tests
+all: librs
+# all: librs tests
+# removed tests, because test programs have not been maintained since we switched to qmake for compiling libretroshare. 
 
 librs:
 	make -C	util librs
