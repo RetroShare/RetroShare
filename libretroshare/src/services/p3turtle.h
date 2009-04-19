@@ -199,6 +199,7 @@ class RsTurtleSearchResultItem: public RsTurtleItem
 		TurtleSearchRequestId request_id ;	// randomly generated request id.
 
 		std::list<TurtleFileInfo> result ;
+
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
 
 	protected:
@@ -304,12 +305,30 @@ class RsTurtleSerialiser: public RsSerialType
 		virtual RsItem *deserialise (void *data, uint32_t *size) ;
 };
 
+// This class is used to keep trace of requests (searches and tunnels).
+//
+class TurtleRequestInfo
+{
+	public:
+		TurtlePeerId origin ;			// where the request came from.
+		uint32_t	time_stamp ;			// last time the tunnel was actually used. Used for cleaning old tunnels.
+};
+
 class TurtleTunnel
 {
 	public:
 		TurtlePeerId local_src ;		// where packets come from. Direction to the source.
 		TurtlePeerId local_dst ;		// where packets should go. Direction to the destination.
 		uint32_t	time_stamp ;			// last time the tunnel was actually used. Used for cleaning old tunnels.
+};
+
+// This class keeps trace of the activity for the file hashes the turtle router is asked to monitor.
+//
+class TurtleFileHashInfo
+{
+	public:
+		std::list<TurtleTunnelId> tunnels ;			// list of active tunnel ids for this file hash
+		TurtleRequestId last_request ;				// last request for the tunnels of this hash
 };
 
 class p3turtle: public p3Service, public pqiMonitor, public RsTurtle
@@ -360,10 +379,11 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle
 
 		//------------------------------ Tunnel handling -----------------------------//
 
-		void diggTunnel(const TurtleFileHash& hash) ;	/// initiates tunnels from here to any peers having the given file hash
+		TurtleRequestId diggTunnel(const TurtleFileHash& hash) ;	/// initiates tunnels from here to any peers having the given file hash
 
 		//----------------------------- Routing functions ----------------------------//
 		
+		void manageTunnels() ;					/// Handle tunnel digging for current file hashes
 		int handleIncoming(); 					/// Main routing function
 
 		void handleSearchRequest(RsTurtleSearchRequestItem *item);		/// specific routing functions for handling particular packets.
@@ -389,13 +409,19 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle
 
 		RsMutex mTurtleMtx;
 
-		std::map<TurtleSearchRequestId,TurtlePeerId> _search_requests_origins ; 	/// keeps trace of who emmitted a given search request
-		std::map<TurtleTunnelRequestId,TurtlePeerId> _tunnel_requests_origins ; 	/// keeps trace of who emmitted a tunnel request
+		std::map<TurtleSearchRequestId,TurtleRequestInfo> 	_search_requests_origins ; /// keeps trace of who emmitted a given search request
+		std::map<TurtleTunnelRequestId,TurtleRequestInfo> 	_tunnel_requests_origins ; /// keeps trace of who emmitted a tunnel request
 
-		std::map<TurtleFileHash,std::list<TurtleTunnelId> >	_file_hashes_tunnels ;	/// stores adequate tunnels for each file hash locally asked
-		std::map<TurtleTunnelId,TurtleTunnel > 					_local_tunnels ;			/// local tunnels, stored by ids (Either transiting or ending).
+		std::map<TurtleFileHash,TurtleFileHashInfo>			_file_hashes_tunnels ;		/// stores adequate tunnels for each file hash locally asked
+
+		std::map<TurtleTunnelId,TurtleTunnel > 				_local_tunnels ;				/// local tunnels, stored by ids (Either transiting or ending).
 
 		time_t _last_clean_time ;
+		time_t _last_tunnel_management_time ;
+
+#ifdef P3TURTLE_DEBUG
+		void dumpState() ;
+#endif
 };
 
 #endif 

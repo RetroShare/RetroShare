@@ -231,40 +231,45 @@ void TurtleSearchDialog::searchtableWidgetCostumPopupMenu( QPoint point )
 
 void TurtleSearchDialog::download()
 {
-    /* should also be able to handle multi-selection */
-    QList<QTreeWidgetItem*> itemsForDownload = ui.searchResultWidget->selectedItems();
-    int numdls = itemsForDownload.size();
-    QTreeWidgetItem * item;
-    bool attemptDownloadLocal = false;
-    
-    for (int i = 0; i < numdls; ++i) {
-        item = itemsForDownload.at(i);
-        // call the download
-	if (item->text(SR_ID_COL) != "Local")
-	{
-		std::cerr << "TurtleSearchDialog::download() Calling File Request";
-		std::cerr << std::endl;
-		std::list<std::string> srcIds;
-		srcIds.push_back(item->text(SR_UID_COL).toStdString()) ;
+	/* should also be able to handle multi-selection */
+	QList<QTreeWidgetItem*> itemsForDownload = ui.searchResultWidget->selectedItems();
+	int numdls = itemsForDownload.size();
+	QTreeWidgetItem * item;
+	bool attemptDownloadLocal = false;
 
-        	rsFiles -> FileRequest((item->text(SR_NAME_COL)).toStdString(), 
-                                  (item->text(SR_HASH_COL)).toStdString(), 
-                                  (item->text(SR_REALSIZE_COL)).toInt(), 
-                                  "", 0, srcIds);
-
-			std::cout << "isuing file request from search dialog: -" << (item->text(SR_NAME_COL)).toStdString() << "-" << (item->text(SR_HASH_COL)).toStdString() << "-" << (item->text(SR_REALSIZE_COL)).toInt() << "-ids=" ;
-			for(std::list<std::string>::const_iterator it(srcIds.begin());it!=srcIds.end();++it)
-				std::cout << *it << "-" << std::endl ;
-	}
-	else
+	for (int i = 0; i < numdls; ++i) 
 	{
-		attemptDownloadLocal = true;
+		item = itemsForDownload.at(i);
+		// call the download
+
+		if(item->text(SR_ID_COL) != "Local")
+		{
+			std::cerr << "TurtleSearchDialog::download() Calling File Request";
+#ifdef TO_DO
+			// This is disabled, although it still works for friends files. Indeed, one must first 
+			// warn the turtle router to digg tunnels for the given hashes, then call rsFiles.
+			//
+			std::cerr << std::endl;
+			std::list<std::string> srcIds;
+			srcIds.push_back(item->text(SR_UID_COL).toStdString()) ;
+
+			rsFiles -> FileRequest((item->text(SR_NAME_COL)).toStdString(), 
+					(item->text(SR_HASH_COL)).toStdString(), 
+					(item->text(SR_REALSIZE_COL)).toInt(), 
+					"", 0, srcIds);
+#endif
+
+			std::cout << "Issuing file request from search dialog: -" 
+					<< (item->text(SR_NAME_COL)).toStdString() << "-" 
+					<< (item->text(SR_HASH_COL)).toStdString() << "-" 
+					<< (item->text(SR_REALSIZE_COL)).toInt() << std::endl ;
+
+			rsTurtle->turtleDownload(item->text(SR_HASH_COL).toStdString()) ;
+		}
 	}
-    }
-    if (attemptDownloadLocal)
-    {
-    	QMessageBox::information(0, tr("Download Notice"), tr("Skipping Local Files"));
-    }
+
+	if (attemptDownloadLocal)
+		QMessageBox::information(0, tr("Download Notice"), tr("Skipping Local Files"));
 }
 
 
@@ -469,7 +474,7 @@ void TurtleSearchDialog::insertFile(const std::string& txt,qulonglong searchId, 
 
 	for(int i = 0; i < items; i++)
 		if(ui.searchResultWidget->topLevelItem(i)->text(SR_HASH_COL) == QString::fromStdString(file.hash)
-				&& ui.searchResultWidget->topLevelItem(i)->text(SR_SEARCH_ID_COL).toInt() == searchId)
+				&& ui.searchResultWidget->topLevelItem(i)->text(SR_SEARCH_ID_COL).toInt(NULL,16) == searchId)
 		{
 			int s = ui.searchResultWidget->topLevelItem(i)->text(SR_ID_COL).toInt() ;
 			ui.searchResultWidget->topLevelItem(i)->setText(SR_ID_COL,QString::number(s+1));
@@ -544,7 +549,7 @@ void TurtleSearchDialog::insertFile(const std::string& txt,qulonglong searchId, 
 		item->setText(SR_REALSIZE_COL, QString::number(file.size));
 		item->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		item->setText(SR_ID_COL, QString::number(1));
-		item->setText(SR_SEARCH_ID_COL, QString::number(searchId));
+		item->setText(SR_SEARCH_ID_COL, QString::number(searchId,16));
 
 		ui.searchResultWidget->addTopLevelItem(item);
 	}
@@ -555,7 +560,7 @@ void TurtleSearchDialog::insertFile(const std::string& txt,qulonglong searchId, 
 	bool found2 = false ;
 
 	for(int i = 0; i < items2; i++)
-		if(ui.searchSummaryWidget->topLevelItem(i)->text(SS_SEARCH_ID_COL).toInt() == searchId)
+		if(ui.searchSummaryWidget->topLevelItem(i)->text(SS_SEARCH_ID_COL).toInt(NULL,16) == searchId)
 		{
 			if(!found)									// only increment result when it's a new item.
 			{
@@ -570,7 +575,7 @@ void TurtleSearchDialog::insertFile(const std::string& txt,qulonglong searchId, 
 		QTreeWidgetItem *item2 = new QTreeWidgetItem();
 		item2->setText(SS_TEXT_COL, QString::fromStdString(txt));
 		item2->setText(SS_COUNT_COL, QString::number(1));
-		item2->setText(SS_SEARCH_ID_COL, QString::number(searchId));
+		item2->setText(SS_SEARCH_ID_COL, QString::number(searchId,16));
 
 		ui.searchSummaryWidget->addTopLevelItem(item2);
 		ui.searchSummaryWidget->setCurrentItem(item2);
