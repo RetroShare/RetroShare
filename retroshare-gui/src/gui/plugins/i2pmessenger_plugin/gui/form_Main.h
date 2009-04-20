@@ -32,6 +32,7 @@
 #include <QFileDialog>
 
 #include "ui_form_Main.h"
+#include "gui_icons.h"
 #include "form_settingsgui.h"
 #include "form_newUser.h"
 #include "form_DebugMessages.h"
@@ -65,10 +66,11 @@ class form_MainWindow : public QMainWindow, private Ui::form_MainWindow
 			void openChatDialog ();
 		//Windows end
 		void namingMe();
+		void copyDestination();
 		void SendFile();
 		void closeApplication();
 		void eventUserChanged();
-		//void UserDoubleClicked ( QListWidgetItem * item );
+		void muteSound();
 		
 
 		void connecttreeWidgetCostumPopupMenu ( QPoint point );
@@ -84,19 +86,21 @@ class form_MainWindow : public QMainWindow, private Ui::form_MainWindow
 		void initStyle();
 		//void initTryIconMenu();
 		//void initTryIcon();
+		void initToolBars();
 
 		void fillComboBox();
-		void createToolBar();
+		
 		cCore* Core;
 		bool applicationIsClosing;
 		
 		cConnectionI2P* I2P;
 		form_newUserWindow* newUserWindow;
 		
-		//QSystemTrayIcon *trayIcon;
-        	//QAction *toggleVisibilityAction, *toolAct;
-        	//QMenu *menu;
-       
+		QSystemTrayIcon *trayIcon;
+        	QAction* toggleVisibilityAction, *toolAct;
+		QAction* toggleMuteAction;
+        	QMenu *menu;
+		bool Mute;
 
 };
 #endif

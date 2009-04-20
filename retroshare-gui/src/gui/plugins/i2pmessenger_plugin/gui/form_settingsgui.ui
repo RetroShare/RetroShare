@@ -174,6 +174,15 @@
          <normaloff>:/icons/encrypted24.png</normaloff>:/icons/encrypted24.png</iconset>
        </property>
       </item>
+      <item>
+       <property name="text" >
+        <string>Sound</string>
+       </property>
+       <property name="icon" >
+        <iconset resource="resourcen.qrc" >
+         <normaloff>:/icons/sound.png</normaloff>:/icons/sound.png</iconset>
+       </property>
+      </item>
      </widget>
     </item>
     <item row="1" column="0" colspan="3" >
@@ -299,7 +308,7 @@
     <item row="0" column="1" >
      <widget class="QStackedWidget" name="stackedWidget" >
       <property name="currentIndex" >
-       <number>0</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="basic_page" >
        <widget class="QGroupBox" name="groupBox_6" >
@@ -335,6 +344,12 @@
            <width>81</width>
            <height>22</height>
           </rect>
+         </property>
+         <property name="minimum" >
+          <number>30</number>
+         </property>
+         <property name="maximum" >
+          <number>99999</number>
          </property>
         </widget>
        </widget>
@@ -958,7 +973,7 @@ p, li { white-space: pre-wrap; }
          <rect>
           <x>10</x>
           <y>0</y>
-          <width>147</width>
+          <width>150</width>
           <height>32</height>
          </rect>
         </property>
@@ -1136,7 +1151,7 @@ p, li { white-space: pre-wrap; }
           <x>11</x>
           <y>0</y>
           <width>77</width>
-          <height>28</height>
+          <height>31</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_2" >
@@ -1217,7 +1232,7 @@ p, li { white-space: pre-wrap; }&#xd;
          <rect>
           <x>10</x>
           <y>0</y>
-          <width>98</width>
+          <width>104</width>
           <height>27</height>
          </rect>
         </property>
@@ -1244,6 +1259,358 @@ p, li { white-space: pre-wrap; }
           </widget>
          </item>
         </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="Seite" >
+       <widget class="QWidget" name="layoutWidget_2" >
+        <property name="geometry" >
+         <rect>
+          <x>10</x>
+          <y>0</y>
+          <width>104</width>
+          <height>27</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_4" >
+         <item row="0" column="0" >
+          <widget class="QLabel" name="label_24" >
+           <property name="text" >
+            <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;img src=":/icons/sound.png" />&lt;/p>&lt;/body>&lt;/html></string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QLabel" name="label_25" >
+           <property name="text" >
+            <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;span style=" font-size:12pt; font-weight:600;">Sound&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_11" >
+        <property name="geometry" >
+         <rect>
+          <x>0</x>
+          <y>40</y>
+          <width>441</width>
+          <height>381</height>
+         </rect>
+        </property>
+        <property name="title" >
+         <string>Sound Events</string>
+        </property>
+        <widget class="QGroupBox" name="groupBox_12" >
+         <property name="geometry" >
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>421</width>
+           <height>81</height>
+          </rect>
+         </property>
+         <property name="title" >
+          <string>User</string>
+         </property>
+         <widget class="QCheckBox" name="checkBoxSound" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="geometry" >
+           <rect>
+            <x>10</x>
+            <y>20</y>
+            <width>80</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text" >
+           <string>go Online</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="checkBoxSound_2" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="geometry" >
+           <rect>
+            <x>10</x>
+            <y>50</y>
+            <width>80</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text" >
+           <string>go Offline</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="txt_SoundFile" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="geometry" >
+           <rect>
+            <x>90</x>
+            <y>20</y>
+            <width>281</width>
+            <height>24</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="txt_SoundFile2" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="geometry" >
+           <rect>
+            <x>90</x>
+            <y>50</y>
+            <width>281</width>
+            <height>24</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="cmd_openFile" >
+          <property name="geometry" >
+           <rect>
+            <x>380</x>
+            <y>20</y>
+            <width>31</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text" >
+           <string>...</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="cmd_openFile_2" >
+          <property name="geometry" >
+           <rect>
+            <x>380</x>
+            <y>50</y>
+            <width>31</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text" >
+           <string>...</string>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QGroupBox" name="groupBox_13" >
+         <property name="geometry" >
+          <rect>
+           <x>10</x>
+           <y>100</y>
+           <width>421</width>
+           <height>61</height>
+          </rect>
+         </property>
+         <property name="title" >
+          <string>FileSend</string>
+         </property>
+         <widget class="QLineEdit" name="txt_SoundFile3" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="geometry" >
+           <rect>
+            <x>90</x>
+            <y>20</y>
+            <width>281</width>
+            <height>24</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="cmd_openFile_3" >
+          <property name="geometry" >
+           <rect>
+            <x>380</x>
+            <y>20</y>
+            <width>31</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text" >
+           <string>...</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="checkBoxSound_3" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="geometry" >
+           <rect>
+            <x>10</x>
+            <y>20</y>
+            <width>80</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text" >
+           <string>Finished</string>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QGroupBox" name="groupBox_14" >
+         <property name="geometry" >
+          <rect>
+           <x>10</x>
+           <y>160</y>
+           <width>421</width>
+           <height>91</height>
+          </rect>
+         </property>
+         <property name="title" >
+          <string>FileRecive</string>
+         </property>
+         <widget class="QCheckBox" name="checkBoxSound_4" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="geometry" >
+           <rect>
+            <x>10</x>
+            <y>20</y>
+            <width>80</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text" >
+           <string>Incoming</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="txt_SoundFile4" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="geometry" >
+           <rect>
+            <x>90</x>
+            <y>20</y>
+            <width>281</width>
+            <height>24</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="cmd_openFile_4" >
+          <property name="geometry" >
+           <rect>
+            <x>380</x>
+            <y>20</y>
+            <width>31</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text" >
+           <string>...</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="cmd_openFile_5" >
+          <property name="geometry" >
+           <rect>
+            <x>380</x>
+            <y>50</y>
+            <width>31</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text" >
+           <string>...</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="checkBoxSound_5" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="geometry" >
+           <rect>
+            <x>10</x>
+            <y>50</y>
+            <width>80</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text" >
+           <string>Finished</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="txt_SoundFile5" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="geometry" >
+           <rect>
+            <x>90</x>
+            <y>50</y>
+            <width>281</width>
+            <height>24</height>
+           </rect>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QGroupBox" name="groupBox_15" >
+         <property name="geometry" >
+          <rect>
+           <x>10</x>
+           <y>260</y>
+           <width>421</width>
+           <height>111</height>
+          </rect>
+         </property>
+         <property name="title" >
+          <string>Chatmessage</string>
+         </property>
+         <widget class="QPushButton" name="cmd_openFile_6" >
+          <property name="geometry" >
+           <rect>
+            <x>380</x>
+            <y>20</y>
+            <width>31</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text" >
+           <string>...</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="checkBoxSound_6" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="geometry" >
+           <rect>
+            <x>10</x>
+            <y>20</y>
+            <width>80</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text" >
+           <string>New</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="txt_SoundFile6" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="geometry" >
+           <rect>
+            <x>90</x>
+            <y>20</y>
+            <width>281</width>
+            <height>24</height>
+           </rect>
+          </property>
+         </widget>
+        </widget>
        </widget>
       </widget>
      </widget>

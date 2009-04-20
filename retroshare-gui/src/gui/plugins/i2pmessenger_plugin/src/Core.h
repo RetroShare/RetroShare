@@ -37,17 +37,18 @@
 #include "PacketManager.h"
 #include "FileTransferSend.h"
 #include "FileTransferRecive.h"
+#include "SoundManager.h"
 
 
 
-#define CLIENTVERSION "0.2.7 Beta"
+#define CLIENTVERSION "0.2.9 Beta"
 #define CLIENTNAME "I2P-Messenger (QT)"
 
 
 
 struct cConnection
 {
-	cConnection ( QString ID,QString Destination )
+	cConnection ( qint32 ID,QString Destination )
 	{
 		this->ID=ID;
 		this->Destination=Destination;
@@ -57,14 +58,13 @@ struct cConnection
 		this->ID=t.ID;
 		this->Destination=t.Destination;
 	}
-	QString ID;
+	qint32 ID;
 	QString Destination;
 };
 
 using namespace SAM_Message_Types;
 using namespace User;
 class cUserConnectThread;
-
 class cCore :public QObject
 {
 
@@ -74,15 +74,15 @@ class cCore :public QObject
 		~cCore();
 		cDebugMessageManager* get_DebugMessageHandler();
 		const QList<cUser*> get_userList();
-		bool isThisIDunknown ( QString ID );
-		bool removeUnknownID ( QString ID );
+		bool isThisIDunknown ( qint32 ID );
+		bool removeUnknownID ( qint32 ID );
 		bool isThisDestinationInunknownConnections ( QString Destination );
 
-		void removeUnknownIDCreateUserIfNeeded( const QString ID,const QString ProtocolVersion );
+		void removeUnknownIDCreateUserIfNeeded( const qint32 ID,const QString ProtocolVersion );
 
-		QString get_UserProtocolVersionByStreamID ( QString ID );
-		void set_UserProtocolVersionByStreamID ( QString ID,QString Version );
-		cUser* getUserByI2P_ID ( QString ID );
+		QString get_UserProtocolVersionByStreamID ( qint32 ID );
+		void set_UserProtocolVersionByStreamID ( qint32 ID,QString Version );
+		cUser* getUserByI2P_ID ( qint32 ID );
 		cUser* getUserByI2P_Destination ( QString Destination );
 		const QString getMyDestination() const;
 		ONLINESTATE getOnlineStatus()const;
@@ -90,35 +90,35 @@ class cCore :public QObject
 		QString get_ClientVersion(){return CLIENTVERSION;};
 		QString get_ProtocolVersion(){return Protocol->get_ProtocolVersion();};
 		void setOnlineStatus(const ONLINESTATE newStatus);
-		void startFileTransfer(QString FilePath,QString Destination);
-		void addNewFileRecive(QString ID,QString FileName,QString FileSize);
-		void StreamSendData(QString ID,QByteArray Data);
-		void StreamSendData(QString ID,QString Data);
-		void StreamClose(QString ID);
-		QString StreamConnect (QString Destination );
+		void addNewFileTransfer(QString FilePath,QString Destination);
+		void addNewFileRecive(qint32 ID,QString FileName,QString FileSize);
+		void StreamSendData(qint32 ID,QByteArray Data);
+		void StreamSendData(qint32 ID,QString Data);
+		void StreamClose(qint32 ID);
+		qint32 StreamConnect (QString Destination );
 		bool checkIfAFileTransferOrReciveisActive();
 
 		
 
 	public slots:
-		bool addNewUser (QString Name,QString I2PDestination,QString TorDestination,QString I2PStream_ID="");
-		bool deleteUserByTorDestination (const QString TorDestination );
+		bool addNewUser (QString Name,QString I2PDestination,qint32 I2PStream_ID=0);
 		bool deleteUserByI2PDestination (const QString I2PDestination );
 		bool renameuserByI2PDestination (const QString Destination, const QString newNickname);
 		void doNamingLookUP ( QString Name );
+		void MuteSound(bool t);
 		
 
 		QString get_connectionDump();
 
 	private slots:
 		// <SIGNALS FROM cConnectionI2P>
-		void StreamClosedRecived ( const SAM_Message_Types::RESULT result,QString ID,QString Message );
-		void StreamStatusRecived ( const SAM_Message_Types::RESULT result,const QString ID,QString Message );
-		void StreamConnectedRecived ( const QString Destinaton,const QString ID );
-		void StreamReadyToSendRecived ( const QString ID );
-		void StreamSendRecived ( const QString ID,const SAM_Message_Types::RESULT result,SAM_Message_Types::STATE state );
+		void StreamClosedRecived ( const SAM_Message_Types::RESULT result,qint32 ID,QString Message );
+		void StreamStatusRecived ( const SAM_Message_Types::RESULT result,const qint32 ID,QString Message );
+		void StreamConnectedRecived ( const QString Destinaton,const qint32 ID );
+		void StreamReadyToSendRecived ( const qint32 ID );
+		void StreamSendRecived ( const qint32 ID,const SAM_Message_Types::RESULT result,SAM_Message_Types::STATE state );
 		void SessionStatusRecived ( const SAM_Message_Types::RESULT result,const QString Destination,const QString Message );
-		void StreamDataRecived ( const QString ID,const QString Size,const QByteArray Data );
+		void StreamDataRecived ( const qint32 ID,const QString Size,const QByteArray Data );
 		void NamingReplyRecived ( const SAM_Message_Types::RESULT result,QString Name,QString Value="",QString Message="" );
 	signals:
 		void eventUserChanged();
@@ -136,20 +136,19 @@ class cCore :public QObject
 		ONLINESTATE currentOnlineStatus;
 		QList<cFileTransferSend*> FileSends;
 		QList<cFileTransferRecive*> FileRecives;
+		cSoundManager* SoundManager;
 
-		bool doesUserAllReadyExitsByTorDestination ( QString TorDestination );
 		bool doesUserAllReadyExitsByI2PDestination ( QString I2PDestination );
 		void init();
 		void saveUserList();
 		void loadUserList();
 		void stopCore();
 		void restartCore();
-		void closeAllActiveConenctions();
-		void deletePacketManagerByID ( QString ID );
-		bool isThisID_a_FileSendID(QString ID);
-		bool isThisID_a_FileReciveID(QString ID);
+		void closeAllActiveConnections();
+		void deletePacketManagerByID ( qint32 ID );
+		bool isThisID_a_FileSendID(qint32 ID);
+		bool isThisID_a_FileReciveID(qint32 ID);
 
 
 };
 #endif
-

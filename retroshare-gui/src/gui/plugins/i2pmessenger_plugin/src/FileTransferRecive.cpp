@@ -23,13 +23,11 @@
 
 
 
-cFileTransferRecive::cFileTransferRecive(cCore * Core, QString StreamID, QString FileName, quint64 FileSize)
+cFileTransferRecive::cFileTransferRecive(cCore * Core, qint32 StreamID, QString FileName, quint64 FileSize)
 :StreamID(StreamID),FileName(FileName),FileSize(FileSize)
 {
 	this->Core=Core;
 	allreadyRecivedSize=0;
-
-	
 }
 
 cFileTransferRecive::~ cFileTransferRecive()
@@ -38,7 +36,7 @@ cFileTransferRecive::~ cFileTransferRecive()
 	delete FileForRecive;
 }
 
-void cFileTransferRecive::StreamStatus(const SAM_Message_Types::RESULT result, const QString ID, QString Message)
+void cFileTransferRecive::StreamStatus(const SAM_Message_Types::RESULT result, const qint32 ID, QString Message)
 {
 	if(result==SAM_Message_Types::OK)
 	{
@@ -54,7 +52,7 @@ void cFileTransferRecive::StreamStatus(const SAM_Message_Types::RESULT result, c
 
 }
 
-void cFileTransferRecive::StreamClosed(const SAM_Message_Types::RESULT result, QString ID, QString Message)
+void cFileTransferRecive::StreamClosed(const SAM_Message_Types::RESULT result, qint32 ID, QString Message)
 {
 	if(allreadyRecivedSize==FileSize){
 		
@@ -129,6 +127,24 @@ void cFileTransferRecive::start()
 		Core->StreamSendData(StreamID,QString("1"));//false
 		Core->StreamClose(StreamID);
 	}
+}
+
+void cFileTransferRecive::start_withAutoAccept(QString Path)
+{
+	
+	QString SFileSize;
+	SFileSize.setNum(FileSize);
+
+		QString FilePath=Path+="/"+FileName;
+
+		if(!FilePath.isEmpty()){
+			FileForRecive= new QFile(FilePath);
+			FileForRecive->open(QIODevice::WriteOnly);
+			Core->StreamSendData(StreamID,QString("0"));//true
+	
+			Dialog= new form_fileRecive(this);
+			Dialog->show();
+		}
 }
 
 

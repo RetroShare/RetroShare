@@ -22,6 +22,7 @@
 
 #include <QtGui>
 #include <QStringList>
+#include <QTime>
 
 
 namespace User
@@ -54,18 +55,18 @@ class cUser: public QObject
 	cUser(	cProtocol* Protocol,
 		QString Name,
 		QString I2PDestination,
-		QString I2PStream_ID,
-		QString TorDestination
+		qint32 I2PStream_ID
 		);
 	
 	const QString get_Name()const;
 	const QString get_I2PDestination()const;
-	const QString get_I2PStreamID()const;
-	const QString get_TORDestination()const;
-	const QString get_TORStream_ID()const;
+	      qint32  get_I2PStreamID()const;
 	const QString get_ProtocolVersion()const;
 	const QString get_ClientName()const;
 	const QString get_ClientVersion()const;
+	      QColor  get_textColor();
+	      QFont   get_textFont();
+
 	CONNECTIONTOUSER get_ConnectionStatus()const;
 	ONLINESTATE get_OnlineState()const;
 
@@ -76,13 +77,17 @@ class cUser: public QObject
 	void set_ConnectionStatus(CONNECTIONTOUSER Status);
 	void set_OnlineState(const ONLINESTATE newState);
 	void set_Name(QString newName);
-	void set_I2PStreamID(QString ID);
+	void set_I2PStreamID(qint32 ID);
 	void set_ReadyToSend(bool b);
 	void set_ProtocolVersion(QString Version);
 	void set_HaveAllreadyOneChatWindow(bool t);
 	void set_ClientName(QString Name);
 	void set_ClientVersion(QString Version);
 	void IncomingNewChatMessage(QString newMessage);
+	void IncomingMessageFromSystem(QString newMessage);
+
+	void set_textColor(QColor textColor);
+	void set_textFont(QFont textFont);
 	
 	public slots:
 	void  sendChatMessage(QString Message);
@@ -90,17 +95,18 @@ class cUser: public QObject
 	signals:
 		void OnlineStateChanged();
 		void newMessageRecived();
+		void newIncomingMessageRecived();
+		void connectionOnline();
+		void connectionOffline();
 	private:
 	bool HaveAllreadyOneChatWindow;
 	bool newUnreadMessages;
 	void sendAllunsendedMessages();
 
 	const QString I2PDestination;
-	const QString TorDestination;
 
 	QString Name;
-	QString I2PStream_ID;
-	QString TORStream_ID;	
+	qint32 I2PStream_ID;	
 	
 	bool 	ReadyToSend;
 
@@ -112,6 +118,10 @@ class cUser: public QObject
 	QStringList Messages;
 	QStringList unsendedMessages;
 	cProtocol* Protocol;
+
+	//Settings for the chatwindow
+	QColor textColor;
+	QFont  textFont;
 };
 
 #endif 

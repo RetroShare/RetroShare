@@ -45,7 +45,7 @@ void cFileTransferSend::abbortFileSend()
 	Core->StreamClose(StreamID);
 }
 
-void cFileTransferSend::StreamStatus(const SAM_Message_Types::RESULT result, const QString ID, QString Message)
+void cFileTransferSend::StreamStatus(const SAM_Message_Types::RESULT result, const qint32 ID, QString Message)
 {
 	using namespace FileTransferProtocol;	
 
@@ -70,7 +70,7 @@ void cFileTransferSend::StreamStatus(const SAM_Message_Types::RESULT result, con
 
 }
 
-void cFileTransferSend::StreamClosed(const SAM_Message_Types::RESULT result, QString ID, QString Message)
+void cFileTransferSend::StreamClosed(const SAM_Message_Types::RESULT result, qint32 ID, QString Message)
 {
 	if(result==SAM_Message_Types::OK){
 		if(allreadySendedSize==FileSize){

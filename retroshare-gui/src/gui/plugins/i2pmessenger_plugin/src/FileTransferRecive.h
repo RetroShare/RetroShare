@@ -28,16 +28,17 @@ class cFileTransferRecive:public QObject
 {
 	Q_OBJECT
 	public:
-	cFileTransferRecive(cCore* Core,QString StreamID,QString FileName,quint64 FileSize);
+	cFileTransferRecive(cCore* Core,qint32 StreamID,QString FileName,quint64 FileSize);
 	~cFileTransferRecive();
 	void start();
+	void start_withAutoAccept(QString Path);
 
-	void StreamStatus(const SAM_Message_Types::RESULT result,const QString ID,QString Message);
-	void StreamClosed(const SAM_Message_Types::RESULT result,QString ID,QString Message);
+	void StreamStatus(const SAM_Message_Types::RESULT result,const qint32 ID,QString Message);
+	void StreamClosed(const SAM_Message_Types::RESULT result,qint32 ID,QString Message);
 	void operator << ( QByteArray t );
 	quint64 get_FileSize(){return FileSize;};
 	QString get_FileName(){return FileName;};
-	QString get_StreamID(){return StreamID;};
+	qint32 get_StreamID(){return StreamID;};
 
 	public slots:
 	void abbortFileRecive();
@@ -54,7 +55,7 @@ class cFileTransferRecive:public QObject
 	const quint64 FileSize;
 	quint64 allreadyRecivedSize;
 	const QString FileName;
-	const QString StreamID;
+	const qint32 StreamID;
 	QFile* FileForRecive;
 };
 #endif

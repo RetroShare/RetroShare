@@ -37,7 +37,10 @@ const SAM_MESSAGE I2PSamMessageAnalyser::Analyse(QString Message)
 			
 			//get ID
 			QStringList temp=list[2].split("=");
-			t.Id=temp[1];
+			QString sID=temp[1];
+			
+
+			t.ID=QStringToQint32(sID);
 			//get Size
 			temp= list[3].split("=");
 			t.Size=temp[1].remove("\n");
@@ -47,7 +50,9 @@ const SAM_MESSAGE I2PSamMessageAnalyser::Analyse(QString Message)
 
 			//GET ID
 			QStringList temp=list[2].split("=");
-			t.Id=temp[1].remove("\n");
+			QString sID=temp[1].remove("\n");
+
+			t.ID=QStringToQint32(sID);
 		}
 		else if((list[0]=="HELLO") && (list[1]=="REPLY")){
 			t.type=HELLO_REPLAY;
@@ -97,11 +102,13 @@ const SAM_MESSAGE I2PSamMessageAnalyser::Analyse(QString Message)
 				t.type=ERROR_IN_ANALYSE;
 				return t;
 			}
+
 			//----------------
 			//Get ID
 			QStringList temp=list[3].split("=");
+			QString sID=temp[1].remove("\n");
 			
-			t.Id=temp[1].remove("\n");
+			t.ID=QStringToQint32(sID);
 			//----------------
 			//Get Message 
 			if(Message.contains("MESSAGE=",Qt::CaseInsensitive)){
@@ -115,10 +122,13 @@ const SAM_MESSAGE I2PSamMessageAnalyser::Analyse(QString Message)
 			t.type=STREAM_CONNECTED;
 
 			QStringList temp=list[2].split("=");
+			QString sID;
 			t.Destination=temp[1];
 
 			temp=list[3].split("=");
-			t.Id=temp[1].remove("\n");
+			sID=temp[1].remove("\n");
+
+			t.ID=QStringToQint32(sID);
 	
 		}
 		else if((list[0].contains("STREAM")==true) && (list[1].contains("SEND")==true)){
@@ -126,7 +136,8 @@ const SAM_MESSAGE I2PSamMessageAnalyser::Analyse(QString Message)
 		
 			//get ID
 			QStringList temp=list[2].split("=");
-			t.Id=temp[1];
+			QString sID=temp[1];
+			t.ID=QStringToQint32(sID);
 			
 			//Get Result
 			if(list[3].contains("RESULT=OK",Qt::CaseInsensitive))t.result=OK;
@@ -156,7 +167,8 @@ const SAM_MESSAGE I2PSamMessageAnalyser::Analyse(QString Message)
 
 				//Get ID
 				QStringList temp=list[3].split("=");
-				t.Id=temp[1];
+				QString sID=temp[1];
+				t.ID=QStringToQint32(sID);
 			}
 			else
 			{
@@ -172,7 +184,9 @@ const SAM_MESSAGE I2PSamMessageAnalyser::Analyse(QString Message)
 
 				//Get ID
 				QStringList temp=list[2].split("=");
-				t.Id=temp[1];
+				QString sID=temp[1];
+	
+				t.ID=QStringToQint32(sID);
 
 			}
 
@@ -216,3 +230,22 @@ const SAM_MESSAGE I2PSamMessageAnalyser::Analyse(QString Message)
 				
 	return t;
 }
+
+qint32 I2PSamMessageAnalyser::QStringToQint32(QString value)
+{
+	bool OK=false;
+	qint32 iValue =value.toInt ( &OK,10 );
+
+	if(OK==false)
+	{
+		QMessageBox msgBox;
+		msgBox.setIcon(QMessageBox::Warning);
+		msgBox.setText("I2PSamMessageAnalyser");
+		msgBox.setInformativeText("cant parse value: "+value );
+		msgBox.setStandardButtons(QMessageBox::Ok);
+		msgBox.setDefaultButton(QMessageBox::Ok);
+		msgBox.exec();
+	}
+	return iValue;	
+}
+

@@ -134,33 +134,33 @@ void cConnectionI2P::readFromSocket()
 			case STREAM_STATUS:{
 				emit debugMessages(t);
 				if(sam.result==OK)
-					this->doSendStreamSessionLimit(sam.Id,0);
+					this->doSendStreamSessionLimit(sam.ID,0);
 
-				emit StreamStatusRecived(sam.result,sam.Id,sam.Message);
+				emit StreamStatusRecived(sam.result,sam.ID,sam.Message);
 				break;
 			}
 			case STREAM_CONNECTED:{
 				emit debugMessages(t);
 				
-				this->doSendStreamSessionLimit(sam.Id,0);
+				this->doSendStreamSessionLimit(sam.ID,0);
 
-				emit StreamConnectedRecived(sam.Destination,sam.Id);
+				emit StreamConnectedRecived(sam.Destination,sam.ID);
 				break;
 			}
 			case STREAM_CLOSED:{
 				emit debugMessages(t);
-				emit StreamClosedRecived(sam.result,sam.Id,sam.Message);
+				emit StreamClosedRecived(sam.result,sam.ID,sam.Message);
 				break;
 			}
 			case STREAM_SEND:{
 				emit debugMessages(t);
-				emit StreamSendRecived(sam.Id,sam.result,sam.state);
+				emit StreamSendRecived(sam.ID,sam.result,sam.state);
 				break;
 			}
 	
 			case STREAM_READY_TO_SEND:{
 				emit debugMessages(t);
-				emit StreamReadyToSendRecived(sam.Id);
+				emit StreamReadyToSendRecived(sam.ID);
 				break;
 			}
 			case NAMING_REPLY:{
@@ -175,7 +175,7 @@ void cConnectionI2P::readFromSocket()
 				
 				QByteArray Data=IncomingPackets->mid(CurrentPacket.length(),sam.Size.toLong());
 				emit debugMessages(t+Data);
-				emit StreamDataRecived(sam.Id,sam.Size,Data);
+				emit StreamDataRecived(sam.ID,sam.Size,Data);
 				IncomingPackets->remove(CurrentPacket.length(),sam.Size.toLong());
 				break;
 			}
@@ -253,46 +253,43 @@ QByteArray Message="SESSION CREATE STYLE=";
 
 }
 
-quint32 cConnectionI2P::get_NextFreeId()
+qint32 cConnectionI2P::get_NextFreeId()
 {
 	return nextFreeID++;
 }
 
-QString cConnectionI2P::doStreamConnect(QString Destination)
+qint32 cConnectionI2P::doStreamConnect(QString Destination)
 {	
 
 	ConnectionReadyCheck();
-	quint32 ID=get_NextFreeId();
-	QString IDtemp;
-	IDtemp.setNum(ID);
+	qint32 ID=get_NextFreeId();
 
 	QByteArray Message="STREAM CONNECT ID=";
-	Message+=IDtemp;
+	Message+=QString::number(ID,10);
 	Message+=" DESTINATION="+Destination+"\n";
 	
 	emit debugMessages(Message);
 	tcpSocket->write(Message);
 	tcpSocket->flush();
-	return IDtemp;
+	return ID;
 }
 
-void cConnectionI2P::doStreamClose(QString ID)
-{
-
+void cConnectionI2P::doStreamClose(qint32 ID)
+{	
 	ConnectionReadyCheck();
 	QByteArray Message="STREAM CLOSE ID=";
-	Message+=ID+"\n";
+	Message+=QString::number(ID,10)+"\n";
 
 	emit debugMessages(Message);
 	tcpSocket->write(Message);
 	tcpSocket->flush();
 }
 
-void cConnectionI2P::doSendStreamSessionLimit(QString ID,quint64 value)
+void cConnectionI2P::doSendStreamSessionLimit(qint32 ID,quint64 value)
 {	
 	ConnectionReadyCheck();
 	QByteArray Message="STREAM RECEIVE ID=";
-	Message+=ID+" LIMIT=";
+	Message+=QString::number(ID,10)+" LIMIT=";
 	if(value==0)
 		Message+="NONE\n";
 	else
@@ -305,23 +302,22 @@ void cConnectionI2P::doSendStreamSessionLimit(QString ID,quint64 value)
 	tcpSocket->write(Message);
 	tcpSocket->flush();	
 }
-void cConnectionI2P::doStreamSend(QString ID,QString Data)
+void cConnectionI2P::doStreamSend(qint32 ID,QString Data)
 {
 	QByteArray t="";
 	t.insert(0,Data);
 	doStreamSend(ID,t);
 }
-void cConnectionI2P::doStreamSend(QString ID,QByteArray Data)
+void cConnectionI2P::doStreamSend(qint32 ID,QByteArray Data)
 {
-
 	ConnectionReadyCheck();
 
 	QString Size;
 	Size.setNum(Data.length());
 
 	QByteArray Message="STREAM SEND ID=";
-	Message+=ID+" SIZE="+Size+"\n";
-	Message.append(Data);
+	Message+=QString::number(ID,10)+" SIZE="+Size+"\n";
+	Message.append(Data+="\n");
 	
 	emit debugMessages(Message);
 	tcpSocket->write(Message);

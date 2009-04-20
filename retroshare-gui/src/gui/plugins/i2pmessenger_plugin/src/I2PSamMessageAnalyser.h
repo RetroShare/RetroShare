@@ -66,7 +66,7 @@ struct SAM_MESSAGE
 {	
 	public:
 	QString Message;
-	QString Id;
+	qint32 ID;
 	QString Destination;
 	QString Size;
 	QString Name;
@@ -89,5 +89,8 @@ class I2PSamMessageAnalyser: public QObject
 	public:
 	I2PSamMessageAnalyser();
 	const SAM_MESSAGE Analyse(QString Message);
+
+	private:
+	qint32 QStringToQint32(QString value);
 };
 #endif

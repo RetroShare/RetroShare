@@ -28,12 +28,12 @@ cProtocol::cProtocol(cCore * Core){
 
 }
 
-void cProtocol::newConnectionChat(const QString ID){
+void cProtocol::newConnectionChat(const qint32 ID){
 	using namespace Protocol_Info;
 	//send the ChatSystem\tProtocolVersion
 	Core->StreamSendData(ID,FIRSTPAKETCHAT);
 }
-void cProtocol::inputKnown(const QString ID, const QByteArray Data){
+void cProtocol::inputKnown(const qint32 ID, const QByteArray Data){
 using namespace Protocol_Info;
 	
 	if(Data.length()<4) 
@@ -84,13 +84,14 @@ using namespace Protocol_Info;
 					}
 					default:
 					{
-						QMessageBox msgBox;
-						msgBox.setIcon(QMessageBox::Warning);
-						msgBox.setText("cProtocol(inputKnown)");
-						msgBox.setInformativeText("Unknown USERSTATE");
-						msgBox.setStandardButtons(QMessageBox::Ok);
-						msgBox.setDefaultButton(QMessageBox::Ok);
-						msgBox.exec();
+						QMessageBox* msgBox= new QMessageBox(NULL);
+						msgBox->setIcon(QMessageBox::Warning);
+						msgBox->setText("cProtocol(inputKnown)");
+						msgBox->setInformativeText("Unknown USERSTATE");
+						msgBox->setStandardButtons(QMessageBox::Ok);
+						msgBox->setDefaultButton(QMessageBox::Ok);
+						msgBox->setWindowModality(Qt::NonModal);
+						msgBox->show();
 
 					}
 				}
@@ -170,7 +171,7 @@ using namespace Protocol_Info;
 		//end Messages
 }
 
-QByteArray cProtocol::inputUnknown(const QString ID, const QByteArray Data){
+QByteArray cProtocol::inputUnknown(const qint32 ID, const QByteArray Data){
 using namespace Protocol_Info;
 
 	if(Core->isThisIDunknown(ID)==true){
@@ -181,26 +182,14 @@ using namespace Protocol_Info;
 
 			//dont send the firstpacket if you have connected someone
 			//(the firstpacket is sended from core::StreamStatusRecived)
-			bool OK=false;
-			int IDNumber =ID.toInt ( &OK,16 );
-			if(OK==false)
-			{
-				QMessageBox msgBox;
-				msgBox.setIcon(QMessageBox::Critical);
-				msgBox.setText("cProtocol(inputUnknown)");
-				msgBox.setInformativeText("cant parse StreamID\nHexValue: "+ID );
-				msgBox.setStandardButtons(QMessageBox::Ok);
-				msgBox.setDefaultButton(QMessageBox::Ok);
-				msgBox.exec();
-			}
-		
-			if(IDNumber<0)
+						
+			if(ID < 0)
 				newConnectionChat(ID);//someone connect you
 
 			Core->removeUnknownIDCreateUserIfNeeded(ID,version);
 			//remove Firstpacket
 			QByteArray Data2=Data;
-			Data2.remove(0,Data.indexOf("\n")+1);
+			Data2=Data2.remove(0,Data.indexOf("\n")+1);
 			
 			return Data2;
 		}
@@ -239,7 +228,7 @@ using namespace Protocol_Info;
 	return Data;
 }
 
-void cProtocol::send(const COMMANDS_TAGS TAG,const QString ID){
+void cProtocol::send(const COMMANDS_TAGS TAG,const qint32 ID){
 	using namespace Protocol_Info;
 	QString ProtocolInfoTag;
 	QString Data="";
@@ -275,7 +264,7 @@ void cProtocol::send(const COMMANDS_TAGS TAG,const QString ID){
 	Core->StreamSendData(ID,Data);
 }
 
-void cProtocol::send(const MESSAGES_TAGS TAG,const QString ID,QString Data){
+void cProtocol::send(const MESSAGES_TAGS TAG,const qint32 ID,QString Data){
 	QString ProtocolInfoTag;
 	
 	switch(TAG)

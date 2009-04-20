@@ -69,11 +69,11 @@ class cConnectionI2P :public QObject
 	public slots:	
 	void doConnect();
 	void doDisconnect();
-	QString doStreamConnect(QString Destination);//base64key	|| return the new id for the stream
-	void doStreamSend(QString ID,QByteArray Data);
-	void doStreamSend(QString ID,QString Data);
-	void doStreamClose(QString ID);
-	void doSendStreamSessionLimit(QString ID,quint64 value=0);
+	qint32 doStreamConnect(QString Destination);//base64key	|| return the new id for the stream
+	void doStreamSend(qint32 ID,QByteArray Data);
+	void doStreamSend(qint32 ID,QString Data);
+	void doStreamClose(qint32 ID);
+	void doSendStreamSessionLimit(qint32 ID,quint64 value=0);
 	void doNamingLookUP(QString Name);
 	
 	private slots:
@@ -85,18 +85,18 @@ class cConnectionI2P :public QObject
 	void debugMessages(const QString Message);
 	void HelloReplayRecived(const SAM_Message_Types::RESULT result);
 	void SessionStatusRecived(const SAM_Message_Types::RESULT result,const QString Destination,const QString Message);
-	void StreamStatusRecived(const SAM_Message_Types::RESULT result,const QString ID,QString Message);
-	void StreamConnectedRecived(const QString Destinaton,const QString ID);
-	void StreamSendRecived(const QString ID,const SAM_Message_Types::RESULT result,SAM_Message_Types::STATE state);
-	void StreamClosedRecived(const SAM_Message_Types::RESULT result,QString ID,QString Message);
-	void StreamReadyToSendRecived(const QString ID);
-	void StreamDataRecived(const QString ID,const QString Size,const QByteArray Data);
+	void StreamStatusRecived(const SAM_Message_Types::RESULT result,const qint32 ID,QString Message);
+	void StreamConnectedRecived(const QString Destinaton,const qint32 ID);
+	void StreamSendRecived(const qint32 ID,const SAM_Message_Types::RESULT result,SAM_Message_Types::STATE state);
+	void StreamClosedRecived(const SAM_Message_Types::RESULT result,qint32 ID,QString Message);
+	void StreamReadyToSendRecived(const qint32 ID);
+	void StreamDataRecived(const qint32 ID,const QString Size,const QByteArray Data);
 	void NamingReplyRecived(const SAM_Message_Types::RESULT result,QString Name,QString Value="",QString Message="");
 
 	private:
 	const QString SamHost;
 	const QString SamPort;
-	quint32 nextFreeID;
+	qint32 nextFreeID;
 	QByteArray* IncomingPackets;
 	QTcpSocket* tcpSocket;
 	I2PSamMessageAnalyser* Analyser;
@@ -109,7 +109,7 @@ class cConnectionI2P :public QObject
 	const SESSION_Types::SESSION_DIRECTION SessionDirection;
 	const QString SessionOptions;
 	void doSessionCreate();
-	quint32 get_NextFreeId();
+	qint32 get_NextFreeId();
 
 	inline void ConnectionReadyCheck()
 	{

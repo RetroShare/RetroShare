@@ -24,40 +24,11 @@ cCore::cCore(){
 }
 
 cCore::~cCore(){
-
-
-	
-	disconnect (I2P,SIGNAL(StreamClosedRecived(const SAM_Message_Types::RESULT, QString, QString)),this,
-		SLOT(StreamClosedRecived(const SAM_Message_Types::RESULT, QString, QString)));
-	
-	disconnect (I2P,SIGNAL(SessionStatusRecived(const SAM_Message_Types::RESULT, const QString, const QString)),this,
-		SLOT(SessionStatusRecived(const SAM_Message_Types::RESULT, const QString, QString)));
-
-	disconnect (I2P,SIGNAL(StreamStatusRecived(const SAM_Message_Types::RESULT, const QString, const QString)),this,
-		SLOT(StreamStatusRecived(const SAM_Message_Types::RESULT, const QString, QString)));
-
-	disconnect (I2P,SIGNAL(StreamConnectedRecived(const QString, const QString)),this,
-		SLOT(StreamConnectedRecived(const QString, const QString)));
-
-	disconnect (I2P,SIGNAL(StreamReadyToSendRecived(const QString)),this,
-		SLOT(StreamReadyToSendRecived(const QString)));
-
-	disconnect (I2P,SIGNAL(StreamSendRecived(const QString, const SAM_Message_Types::RESULT, SAM_Message_Types::STATE)),this,
-		SLOT(StreamSendRecived(const QString, const SAM_Message_Types::RESULT, SAM_Message_Types::STATE)));
-
-	disconnect(I2P,SIGNAL(StreamDataRecived(const QString,const QString,const QByteArray)),this,
-		SLOT(StreamDataRecived(const QString, const QString, const QByteArray)));
-
-	disconnect (I2P,SIGNAL(NamingReplyRecived(const SAM_Message_Types::RESULT, QString, QString, QString)),this,
-		SLOT(NamingReplyRecived(const SAM_Message_Types::RESULT, QString, QString, QString)));
-	
 	this->UserConnectThread->stop();
 	this->saveUserList();
-	this->closeAllActiveConenctions();
+	this->closeAllActiveConnections();
 	for(int i=0;i<this->users.count();i++)
 		delete users.at(i);
-		
-
 		
 	QList<cPacketManager*>::Iterator it;
 	for(it=DataPacketsManagers.begin(); it<DataPacketsManagers.end() ;++it){
@@ -67,52 +38,59 @@ cCore::~cCore(){
 	delete this->DebugMessageHandler;
 	delete this->Protocol;
 	delete this->I2P;
+	delete this->SoundManager;
 }
 
 cDebugMessageManager* cCore::get_DebugMessageHandler(){
 	return this->DebugMessageHandler;
 }
 
-bool cCore::addNewUser(QString Name,QString I2PDestination,QString TorDestination,QString I2PStream_ID){
+bool cCore::addNewUser(QString Name,QString I2PDestination,qint32 I2PStream_ID){
 	//TODO I2PDestination verify check
 	//check if user already exist
+
+	if(I2PDestination.length()!=516){
+		//Destination must be 516 length
+		return false;
+	}
+	
+	
+	if(!I2PDestination.right(4).contains("AAAA",Qt::CaseInsensitive)){
+		//the last 4 char must be "AAAA"
+		return false;
+	}
+
+
 	if(I2PDestination.length()>0)
 		if(this->doesUserAllReadyExitsByI2PDestination(I2PDestination)==true)
 			return false;
 
-	if(TorDestination.length()>0)
-		if(this->doesUserAllReadyExitsByTorDestination(TorDestination)==true)
-			return false;
 
 	//add newuser
-	cUser* newuser=new cUser(Protocol,Name,I2PDestination,I2PStream_ID,TorDestination);
+	cUser* newuser=new cUser(Protocol,Name,I2PDestination,I2PStream_ID);
+	connect(newuser,SIGNAL(newIncomingMessageRecived()),SoundManager,
+		SLOT(event_NewChatMessage()));
+
+	connect(newuser,SIGNAL(connectionOnline()),SoundManager,
+		SLOT(event_User_go_Online()));
+
+	connect(newuser,SIGNAL(connectionOffline()),SoundManager,
+		SLOT(event_User_go_Offline()));
+
 	this->users.append(newuser);
 	saveUserList();
 	
 	emit eventUserChanged();
 	return true;
 }
-bool cCore::deleteUserByTorDestination(QString TorDestination){
-/*
-	for(int i=0;i<users.count();i++){
-		if(users.at(i)->get_TORDestination()==TorDestination){
-			if(users.at(i)->get_ConnectionStatus()==ONLINE ||users.at(i)->get_ConnectionStatus()==TRYTOCONNECT)
-				I2P->doStreamClose(users.at(i)-
-			users.removeAt(i);
-			emit eventUserChanged();
-			return true;
-		}
-	}*/
-	return false;
-}
+
 bool cCore::deleteUserByI2PDestination(QString I2PDestination){
 	for(int i=0;i<users.count();i++){
 		if(users.at(i)->get_I2PDestination()==I2PDestination){
 			if(users.at(i)->get_ConnectionStatus()==ONLINE ||users.at(i)->get_ConnectionStatus()==TRYTOCONNECT)
 			{
-				deletePacketManagerByID(users.at(i)->get_I2PStreamID());
 				this->StreamClose(users.at(i)->get_I2PStreamID());
-				
+				deletePacketManagerByID(users.at(i)->get_I2PStreamID());
 			}
 			
 			users.removeAt(i);
@@ -124,16 +102,7 @@ bool cCore::deleteUserByI2PDestination(QString I2PDestination){
 	return false;
 }
 
-bool cCore::doesUserAllReadyExitsByTorDestination(const QString TorDestination){
 
-	for(int i=0;i<users.count();i++){
-		if(users.at(i)->get_TORDestination()==TorDestination) {
-			return true;
-		}
-	}
-	
-	return false;
-}
 bool cCore::doesUserAllReadyExitsByI2PDestination(const QString I2PDestination){
 	if(I2PDestination==MyDestination) return true;
 
@@ -169,37 +138,39 @@ void cCore::init(){
 	this->I2P=I2P;
 	
 	//signals from I2PConnection Core
-	connect (I2P,SIGNAL(StreamClosedRecived(const SAM_Message_Types::RESULT, QString, QString)),this,
-		SLOT(StreamClosedRecived(const SAM_Message_Types::RESULT, QString, QString)),Qt::DirectConnection);
+	connect (I2P,SIGNAL(StreamClosedRecived(const SAM_Message_Types::RESULT, qint32, QString)),this,
+		SLOT(StreamClosedRecived(const SAM_Message_Types::RESULT, qint32, QString)),Qt::DirectConnection);
 	
-	connect (I2P,SIGNAL(StreamStatusRecived(const SAM_Message_Types::RESULT, const QString, const QString)),this,
-		SLOT(StreamStatusRecived(const SAM_Message_Types::RESULT, const QString, QString)),Qt::DirectConnection);
+	connect (I2P,SIGNAL(StreamStatusRecived(const SAM_Message_Types::RESULT, const qint32, const QString)),this,
+		SLOT(StreamStatusRecived(const SAM_Message_Types::RESULT, const qint32, QString)),Qt::DirectConnection);
 
 	connect (I2P,SIGNAL(SessionStatusRecived(const SAM_Message_Types::RESULT, const QString, const QString)),this,
 		SLOT(SessionStatusRecived(const SAM_Message_Types::RESULT, const QString, QString)),Qt::DirectConnection);
 	
-	connect (I2P,SIGNAL(StreamConnectedRecived(const QString, const QString)),this,
-		SLOT(StreamConnectedRecived(const QString, const QString)),Qt::DirectConnection);
+	connect (I2P,SIGNAL(StreamConnectedRecived(const QString, const qint32)),this,
+		SLOT(StreamConnectedRecived(const QString, const qint32)),Qt::DirectConnection);
 
-	connect (I2P,SIGNAL(StreamReadyToSendRecived(const QString)),this,
-		SLOT(StreamReadyToSendRecived(const QString)),Qt::DirectConnection);
+	connect (I2P,SIGNAL(StreamReadyToSendRecived(const qint32)),this,
+		SLOT(StreamReadyToSendRecived(const qint32)),Qt::DirectConnection);
 
-	connect (I2P,SIGNAL(StreamSendRecived(const QString, const SAM_Message_Types::RESULT, SAM_Message_Types::STATE)),this,
-		SLOT(StreamSendRecived(const QString, const SAM_Message_Types::RESULT, SAM_Message_Types::STATE)),Qt::DirectConnection);
+	connect (I2P,SIGNAL(StreamSendRecived(const qint32, const SAM_Message_Types::RESULT, SAM_Message_Types::STATE)),this,
+		SLOT(StreamSendRecived(const qint32, const SAM_Message_Types::RESULT, SAM_Message_Types::STATE)),Qt::DirectConnection);
 	
-	connect (I2P,SIGNAL(StreamDataRecived(const QString, const QString, const QByteArray)),this,
-		SLOT(StreamDataRecived(const QString, const QString, const QByteArray)),Qt::DirectConnection);
+	connect (I2P,SIGNAL(StreamDataRecived(const qint32, const QString, const QByteArray)),this,
+		SLOT(StreamDataRecived(const qint32, const QString, const QByteArray)),Qt::DirectConnection);
 
 	connect (I2P,SIGNAL(NamingReplyRecived(const SAM_Message_Types::RESULT, QString, QString, QString)),this,
 		SLOT(NamingReplyRecived(const SAM_Message_Types::RESULT, QString, QString, QString)),Qt::DirectConnection);
 
+	this->SoundManager=new cSoundManager();
 	this->DebugMessageHandler= new cDebugMessageManager(I2P);
 	this->Protocol= new cProtocol(this);
 	this->loadUserList();
 	this->I2P->doConnect();
 
 	this->UserConnectThread= new cUserConnectThread(this,settings->value("Waittime_between_rechecking_offline_users","30000").toInt());
-	
+
+	delete settings;	
 }
 void cCore::saveUserList(){
      QFile file(QApplication::applicationDirPath()+"/users.config");
@@ -208,8 +179,7 @@ void cCore::saveUserList(){
 
 	for(int i=0;i<this->users.count();i++){		
 		out<<"Nick:\t"<<(users.at(i)->get_Name())<<endl
-		<<"I2PDest:\t"<<(users.at(i)->get_I2PDestination())<<endl
-		<<"TorDest:\t"<<(users.at(i)->get_TORDestination())<<endl;
+		<<"I2PDest:\t"<<(users.at(i)->get_I2PDestination())<<endl;
 	}
 	out.flush();
 	file.close();
@@ -221,25 +191,26 @@ void cCore::loadUserList(){
 
  	QTextStream in(&file);
 	in.skipWhiteSpace();
-	QString NickName;QString I2PDest;QString TorDest;
+	QString NickName;QString I2PDest;
      	while (!in.atEnd()) {
 		QString line = in.readLine();
 		QStringList temp=line.split("\t");
 	
 		if(temp[0]=="Nick:")NickName=temp[1];	
-		else if(temp[0]=="I2PDest:")I2PDest=temp[1];
-		else if(temp[0]=="TorDest:"){
-			TorDest=temp[1];
-			this->addNewUser(NickName,I2PDest,TorDest);
+		if(temp[0]=="I2PDest:"){
+			I2PDest=temp[1];
+			this->addNewUser(NickName,I2PDest);
 			NickName.clear();
 			I2PDest.clear();
-			TorDest.clear();
+		}
+		else if(temp[0]=="TorDest:"){
+			//ignore it
 		}
 	file.close();	
 	}
 }
 
-void cCore::StreamClosedRecived(const SAM_Message_Types::RESULT result,QString ID,QString Message){
+void cCore::StreamClosedRecived(const SAM_Message_Types::RESULT result,qint32 ID,QString Message){
 
 	if(isThisID_a_FileSendID(ID)){
 		//FileSend
@@ -276,23 +247,21 @@ void cCore::StreamClosedRecived(const SAM_Message_Types::RESULT result,QString I
 				result==SAM_Message_Types::TIMEOUT
 			){
 				users.at(i)->set_ConnectionStatus(OFFLINE);
-				deletePacketManagerByID(ID);
 				break;
 			}
 			else {
 				//on I2P_ERROR or PEER_NOT_FOUND
 				users.at(i)->set_ConnectionStatus(ERROR);
-				deletePacketManagerByID(ID);	
 				break;
 			}
 		}
 	}
-	
+	deletePacketManagerByID(ID);
 	emit eventUserChanged();
 	
 }
 
-void cCore::StreamStatusRecived(const SAM_Message_Types::RESULT result,const QString ID,QString Message){
+void cCore::StreamStatusRecived(const SAM_Message_Types::RESULT result,const qint32 ID,QString Message){
 	
 	if(isThisID_a_FileSendID(ID)){
 		//FileSend
@@ -300,6 +269,7 @@ void cCore::StreamStatusRecived(const SAM_Message_Types::RESULT result,const QSt
 			if(FileSends.at(i)->get_StreamID()==ID){
 				FileSends.at(i)->StreamStatus(result,ID,Message);
 				if(result!=SAM_Message_Types::OK){
+					I2P->doStreamClose(ID);
 					FileSends.removeAt(i);	
 				}
 				return;
@@ -313,6 +283,7 @@ void cCore::StreamStatusRecived(const SAM_Message_Types::RESULT result,const QSt
 			if(FileRecives.at(i)->get_StreamID()==ID){
 				FileRecives.at(i)->StreamStatus(result,ID,Message);
 				if(result!=SAM_Message_Types::OK){
+					I2P->doStreamClose(ID);
 					FileRecives.removeAt(i);
 				}
 				return;
@@ -322,41 +293,53 @@ void cCore::StreamStatusRecived(const SAM_Message_Types::RESULT result,const QSt
 	else if(this->isThisIDunknown(ID)){
 		if(result==SAM_Message_Types::OK){
 			Protocol->newConnectionChat(ID);
-			
+			return;
 		}
 		else{
 			//I2P->doStreamClose(ID);
 			removeUnknownID(ID);
-			for(int i=0;i<users.count();i++){
-				if(users.at(i)->get_I2PStreamID()==ID){
-					users.at(i)->set_ConnectionStatus(OFFLINE);
-				}
-			}
-
-
-			return;
 		}
-		return;
+		
 	}
 
 	for(int i=0;i<users.count();i++){
 		if(users.at(i)->get_I2PStreamID()==ID){
 			if(result==SAM_Message_Types::OK){
-				users.at(i)->set_ConnectionStatus(ONLINE);
 				users.at(i)->set_I2PStreamID(ID);
-                                this->Protocol->newConnectionChat(ID);
+				users.at(i)->set_ConnectionStatus(ONLINE);
+				
+                                //this->Protocol->newConnectionChat(ID);
 			}
 			else if( result==SAM_Message_Types::CANT_REACH_PEER || 
 				 result==SAM_Message_Types::TIMEOUT
 				){
-
+				
+				if(users.at(i)->get_OnlineState()!=USEROFFLINE && users.at(i)->get_OnlineState()!=USERTRYTOCONNECT)
+				{
+					users.at(i)->IncomingMessageFromSystem("The Connection is broken: "+Message+"\nConnection closed");
+					I2P->doStreamClose(ID);
+				}
+				deletePacketManagerByID(ID);
 				users.at(i)->set_ConnectionStatus(OFFLINE);
-				deletePacketManagerByID(ID);
 			}
-			else{
-				//I2P Error
-				users.at(i)->set_ConnectionStatus(ERROR);
+			else if( result==SAM_Message_Types::INVALID_KEY){
+				users.at(i)->IncomingMessageFromSystem("Invalid User - Destination: please delete the user\n");
+				
+				if(users.at(i)->get_ConnectionStatus()==ONLINE)
+					I2P->doStreamClose(ID);
+
 				deletePacketManagerByID(ID);
+				users.at(i)->set_ConnectionStatus(ERROR);
+				
+			}
+			else if(result==SAM_Message_Types::I2P_ERROR){
+				users.at(i)->IncomingMessageFromSystem("I2P_Error: "+Message);
+
+				if(users.at(i)->get_ConnectionStatus()==ONLINE)
+					I2P->doStreamClose(ID);
+				
+				deletePacketManagerByID(ID);
+				users.at(i)->set_ConnectionStatus(ERROR);
 			}
 		
 			emit eventUserChanged();
@@ -375,26 +358,24 @@ void cCore::SessionStatusRecived(const SAM_Message_Types::RESULT result,const QS
 		
 	}
 }
-void cCore::StreamConnectedRecived(const QString Destinaton,const QString ID){
+void cCore::StreamConnectedRecived(const QString Destinaton,const qint32 ID){
 	//Someone connected you
 	//this->Protocol->newConnection(ID);
 	cConnection t(ID,Destinaton);
 	this->unknownConnections.push_back(t);
 }
-bool cCore::removeUnknownID(QString ID)
+bool cCore::removeUnknownID(qint32 ID)
 {
-
 	for(int i=0;i<this->unknownConnections.size();i++){
 		if(unknownConnections.at(i).ID==ID){
 			unknownConnections.removeAt(i);
-			
 			return true;
 		}
 	}	
 	
 	return false;
 }
-QString cCore::get_UserProtocolVersionByStreamID(QString ID){
+QString cCore::get_UserProtocolVersionByStreamID(qint32 ID){
 
 	for(int i=0;i< users.size();i++)
 		if(users.at(i)->get_I2PStreamID()==ID){
@@ -404,7 +385,7 @@ QString cCore::get_UserProtocolVersionByStreamID(QString ID){
 	
 	return "";
 }
-void cCore::set_UserProtocolVersionByStreamID(QString ID,QString Version){
+void cCore::set_UserProtocolVersionByStreamID(qint32 ID,QString Version){
 
 	for(int i=0;i< users.size();i++)
 		if(users.at(i)->get_I2PStreamID()==ID){
@@ -415,7 +396,7 @@ void cCore::set_UserProtocolVersionByStreamID(QString ID,QString Version){
 	
 }
 
-void cCore::removeUnknownIDCreateUserIfNeeded(const QString ID,const QString ProtocolVersion){
+void cCore::removeUnknownIDCreateUserIfNeeded(const qint32 ID,const QString ProtocolVersion){
 	//TODO add some security thinks for adding !!! at the moment all user are allowed to connect	
 	
 	QString Destinaton;
@@ -424,46 +405,68 @@ void cCore::removeUnknownIDCreateUserIfNeeded(const QString ID,const QString Pro
 		if(unknownConnections.at(i).ID==ID){
 	
 			Destinaton=unknownConnections.at(i).Destination;
+			removeUnknownID(ID);
 			break;
 		}
 	
-	removeUnknownID(ID);
 	
-
 	if(doesUserAllReadyExitsByI2PDestination(Destinaton)==false){
-		addNewUser("Unknown",Destinaton,"",ID);
+		addNewUser("Unknown",Destinaton,ID);
 	}
 
 	for(int i=0;i<users.count();i++){
 		if(users.at(i)->get_I2PDestination()==Destinaton){	
-			if(users.at(i)->get_ConnectionStatus()==OFFLINE || users.at(i)->get_ConnectionStatus()==ERROR){
+			if(users.at(i)->get_ConnectionStatus()==OFFLINE){
 					users.at(i)->set_ProtocolVersion(ProtocolVersion);
 					users.at(i)->set_I2PStreamID(ID);
 					users.at(i)->set_ConnectionStatus(ONLINE);
+				
+					cPacketManager* newPacket=new cPacketManager(ID);
+					connect(newPacket,SIGNAL(aPacketIsComplead(const qint32, const QByteArray)),Protocol,
+					SLOT(inputKnown(const qint32,const QByteArray)));
+
+					DataPacketsManagers.push_back(newPacket);
 				}
 			else if(users.at(i)->get_ConnectionStatus()==ONLINE){		
-				//close both Streams
+					/*
+						//close both Streams
+						if(ID!=users.at(i)->get_I2PStreamID())
+						{
+							I2P->doStreamClose(ID);
+							I2P->doStreamClose(users.at(i)->get_I2PStreamID());
+						}
+					*/
+				//close new connection and use the old
 				if(ID!=users.at(i)->get_I2PStreamID())
-				{
 					I2P->doStreamClose(ID);
-					I2P->doStreamClose(users.at(i)->get_I2PStreamID());
-				}
 			}
 			else if(users.at(i)->get_ConnectionStatus()==TRYTOCONNECT){
-				//Stop the TRYTOCONNECT
+					/*
+						//Stop the TRYTOCONNECT
+						if(ID!=users.at(i)->get_I2PStreamID())
+							I2P->doStreamClose(users.at(i)->get_I2PStreamID());
+		
+						users.at(i)->set_ProtocolVersion(ProtocolVersion);
+						users.at(i)->set_I2PStreamID(ID);
+						users.at(i)->set_ConnectionStatus(ONLINE);
+					*/
+				//close the tryconnection use the new one
 				if(ID!=users.at(i)->get_I2PStreamID())
-					I2P->doStreamClose(users.at(i)->get_I2PStreamID());
-
+						I2P->doStreamClose(users.at(i)->get_I2PStreamID());
 				users.at(i)->set_ProtocolVersion(ProtocolVersion);
 				users.at(i)->set_I2PStreamID(ID);
 				users.at(i)->set_ConnectionStatus(ONLINE);
+
+				cPacketManager* newPacket=new cPacketManager(ID);
+				connect(newPacket,SIGNAL(aPacketIsComplead(const qint32, const QByteArray)),Protocol,
+				SLOT(inputKnown(const qint32,const QByteArray)));
+
+				DataPacketsManagers.push_back(newPacket);
 			}
 
-			cPacketManager* newPacket=new cPacketManager(ID);
-			connect(newPacket,SIGNAL(aPacketIsComplead(const QString, const QByteArray)),Protocol,
-			SLOT(inputKnown(const QString,const QByteArray)));
 			
-			DataPacketsManagers.push_back(newPacket);
+			
+			
 			break;
 		}
 	}
@@ -471,7 +474,7 @@ void cCore::removeUnknownIDCreateUserIfNeeded(const QString ID,const QString Pro
 	emit eventUserChanged();
 }
 
-void cCore::StreamReadyToSendRecived(const QString ID){
+void cCore::StreamReadyToSendRecived(const qint32 ID){
 	
 	//FileSendsConnections
 	for(int i=0;i<FileSends.size();i++){
@@ -490,7 +493,7 @@ void cCore::StreamReadyToSendRecived(const QString ID){
 	}
 	
 }
-void cCore::StreamSendRecived(const QString ID,const SAM_Message_Types::RESULT result,SAM_Message_Types::STATE state){
+void cCore::StreamSendRecived(const qint32 ID,const SAM_Message_Types::RESULT result,SAM_Message_Types::STATE state){
 //FIXME what do when result = FAILED ?, impl. a stack ?
 
 	//FileSendsConnections
@@ -518,8 +521,8 @@ void cCore::StreamSendRecived(const QString ID,const SAM_Message_Types::RESULT r
 const QList<cUser*> cCore::get_userList(){
 	return users;
 }
-QString cCore::StreamConnect(QString Destination){
-	QString ID;
+qint32 cCore::StreamConnect(QString Destination){
+	qint32 ID;
 	
 	ID=I2P->doStreamConnect(Destination);
 	
@@ -528,11 +531,9 @@ QString cCore::StreamConnect(QString Destination){
 	return (ID);
 }
 
-void cCore::StreamDataRecived(const QString ID,const QString Size,const QByteArray Data){
+void cCore::StreamDataRecived(const qint32 ID,const QString Size,const QByteArray Data){
 	
 	if(Data.isEmpty()==true)return;
-
-
 
 	//FileRecive
 	for(int i=0;i<FileRecives.size();i++){
@@ -552,14 +553,25 @@ void cCore::StreamDataRecived(const QString ID,const QString Size,const QByteArr
 	//unknown connection
 	if(this->isThisIDunknown(ID)){
 		QByteArray Data2=Protocol->inputUnknown(ID,Data);
-		
 		if(Data2.isEmpty()==true)
 			return;
 		else{
+			QList<cPacketManager*>::Iterator it;
+			for(it=DataPacketsManagers.begin(); it!=DataPacketsManagers.end() ;++it){
+				if((*(it))->getID()==ID){
+					//(*(it))->operator <<(Data);
+					(*(*it))<<Data2;
+					return;
+				}
+			}
+
+			/*
 			QString StringSize=QString::number(Data2.length());
 			
 			StreamDataRecived(ID,StringSize,Data2);
+			
 			return;
+			*/
 		}		
 	}
 	
@@ -569,7 +581,6 @@ void cCore::StreamDataRecived(const QString ID,const QString Size,const QByteArr
 		if((*(it))->getID()==ID){
 			//(*(it))->operator <<(Data);
 			(*(*it))<<Data;
-
 			return;
 		}
 	}
@@ -581,7 +592,7 @@ void cCore::StreamDataRecived(const QString ID,const QString Size,const QByteArr
 	//if it happen forget the Data
 }
 
-void cCore::closeAllActiveConenctions(){
+void cCore::closeAllActiveConnections(){
 	//close all known Online||TrytoConnect Connections
 
 	for(int i=0;i<users.size();i++)
@@ -594,8 +605,7 @@ void cCore::closeAllActiveConenctions(){
 
 			users.at(i)->set_ConnectionStatus(User::OFFLINE);
 			users.at(i)->set_OnlineState(USEROFFLINE);
-			
-			
+				
 		}
 	//close all unknownConnections
 	for(int i=0;i<unknownConnections.size();i++)
@@ -604,11 +614,13 @@ void cCore::closeAllActiveConenctions(){
 		removeUnknownID( unknownConnections.at(i).ID);
 	}
 
+	//DataPacketsManagers.clear();
+
 	emit eventUserChanged();
 	
 }
 
-bool cCore::isThisIDunknown(QString ID){
+bool cCore::isThisIDunknown(qint32 ID){
 
 	for(int i=0;i<this->unknownConnections.size();i++)
 		if(unknownConnections.at(i).ID==ID){
@@ -618,7 +630,7 @@ bool cCore::isThisIDunknown(QString ID){
 	
 	return false;
 }
-cUser* cCore::getUserByI2P_ID(QString ID){
+cUser* cCore::getUserByI2P_ID(qint32 ID){
 
 	for(int i=0;i<users.size();i++){
 		if(users.at(i)->get_I2PStreamID()==ID){
@@ -654,7 +666,7 @@ bool cCore::isThisDestinationInunknownConnections(QString Destination){
 	return false;
 }
 	
-void cCore::deletePacketManagerByID(QString ID){
+void cCore::deletePacketManagerByID(qint32 ID){
 	if(this->isThisIDunknown(ID)==true) 
 		return;
 	else
@@ -676,24 +688,24 @@ QString cCore::get_connectionDump(){
 
 	Message+="< Current open Unknown IDs: >\n";
 	for(int i=0;i<unknownConnections.size();i++)
-		Message+=unknownConnections.at(i).ID;
+		Message+=QString::number(unknownConnections.at(i).ID,10)+"\n";
 
 	Message+="\n\n< Current open Known IDs(packetManager): >\n";
 
 	QList<cPacketManager*>::Iterator it;
 	for(it=DataPacketsManagers.begin(); it!=DataPacketsManagers.end();++it)
-		Message+= ((*(it))->getID()+"\n");
+		Message+= (QString::number((*(it))->getID(),10)+"\n");
 
 	Message+="\n\n< Active FileTransfer: >\n";
 	for(int i=0;i<FileSends.count();i++){
 		Message+="FileName:\t\t:"+FileSends.at(i)->get_FileName()+"\n";
-		Message+="StreamID:\t\t"+FileSends.at(i)->get_StreamID()+"\n";
+		Message+="StreamID:\t\t"+QString::number(FileSends.at(i)->get_StreamID(),10)+"\n";
 	}
 
 	Message+="\n\n< Active Filerecive: >\n";
 	for(int i=0;i<FileRecives.count();i++){
 		Message+="FileName:\t\t"+FileRecives.at(i)->get_FileName()+"\n";
-		Message+="StreamID:\t\t"+FileRecives.at(i)->get_StreamID()+"\n";
+		Message+="StreamID:\t\t"+QString::number(FileRecives.at(i)->get_StreamID(),10)+"\n";
 	}
 		
 
@@ -703,7 +715,7 @@ QString cCore::get_connectionDump(){
 		Message+="ClientName:\t\t"+users.at(i)->get_ClientName()+"\n";
 		Message+="ClientVersion:\t\t"+users.at(i)->get_ClientVersion()+"\n";
 		Message+="ProtocolVersion:\t" +users.at(i)->get_ProtocolVersion()+"\n";
-		Message+="I2PStreamID:\t\t" +users.at(i)->get_I2PStreamID()+"\n";
+		Message+="I2PStreamID:\t\t" +QString::number(users.at(i)->get_I2PStreamID(),10)+"\n";
 		
 		switch(users.at(i)->get_ConnectionStatus())
 		{
@@ -828,10 +840,9 @@ void cCore::setOnlineStatus(const ONLINESTATE newStatus)
 
 void cCore::stopCore()
 {
-	closeAllActiveConenctions();
-	I2P->doDisconnect();
 	UserConnectThread->stop();
-
+	closeAllActiveConnections();
+	I2P->doDisconnect();
 }
 
 void cCore::restartCore()
@@ -840,14 +851,17 @@ void cCore::restartCore()
 	UserConnectThread->start();
 }
 
-void cCore::startFileTransfer(QString FilePath, QString Destination)
+void cCore::addNewFileTransfer(QString FilePath, QString Destination)
 {
 	cFileTransferSend * t= new cFileTransferSend(this,FilePath,Destination);
+	connect (t,SIGNAL(event_FileTransferFinishedOK()),SoundManager,
+		SLOT(event_FileSend_Finished()));
+
 	FileSends.append(t);
 
 }
 
-bool cCore::isThisID_a_FileSendID(QString ID)
+bool cCore::isThisID_a_FileSendID(qint32 ID)
 {
 	for(int i=0;i<FileSends.size();i++){
 		if(FileSends.at(i)->get_StreamID()==ID){
@@ -857,7 +871,7 @@ bool cCore::isThisID_a_FileSendID(QString ID)
 	return false;
 }
 
-bool cCore::isThisID_a_FileReciveID(QString ID)
+bool cCore::isThisID_a_FileReciveID(qint32 ID)
 {
 	for(int i=0;i<FileRecives.size();i++){
 		if(FileRecives.at(i)->get_StreamID()==ID){
@@ -867,7 +881,7 @@ bool cCore::isThisID_a_FileReciveID(QString ID)
 	return false;
 }
 
-void cCore::addNewFileRecive(QString ID, QString FileName, QString FileSize)
+void cCore::addNewFileRecive(qint32 ID, QString FileName, QString FileSize)
 {
 	if(isThisIDunknown(ID)) removeUnknownID(ID);
 
@@ -890,23 +904,28 @@ void cCore::addNewFileRecive(QString ID, QString FileName, QString FileSize)
 		this->StreamClose(ID);
 		return;
 	}
+	SoundManager->event_FileRecive_Incoming();
 	cFileTransferRecive* t= new cFileTransferRecive(this,ID,FileName,Size);
+	connect(t,SIGNAL(event_FileRecivedFinishedOK()),SoundManager,
+		SLOT(event_FileRecive_Finished()));
+
 	FileRecives.append(t);
 	t->start();
 }
 
-void cCore::StreamSendData(QString ID, QByteArray Data)
+
+void cCore::StreamSendData(qint32 ID, QByteArray Data)
 {
 	I2P->doStreamSend(ID,Data);
 }
 
 
-void cCore::StreamSendData(QString ID, QString Data)
+void cCore::StreamSendData(qint32 ID, QString Data)
 {
 	I2P->doStreamSend(ID,Data);
 }
 
-void cCore::StreamClose(QString ID)
+void cCore::StreamClose(qint32 ID)
 {
 	if(FileSends.count()>0){
 		for(int i=0;i<FileSends.count();i++){
@@ -935,3 +954,9 @@ bool cCore::checkIfAFileTransferOrReciveisActive()
 
 	return false;
 }
+
+void cCore::MuteSound(bool t)
+{
+	SoundManager->doMute(t);
+}
+

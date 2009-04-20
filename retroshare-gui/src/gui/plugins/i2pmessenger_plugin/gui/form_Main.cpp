@@ -22,25 +22,7 @@
 
 #include "form_Main.h"
 
-/*Icons */
-#define ICON_QUIT              	":/icons/exit.png"
-#define ICON_MINIMIZE          	":/icons/window_nofullscreen.png"
-#define ICON_MAXIMIZE          	":/icons/window_fullscreen.png"
-#define ICON_QTCHAT            	":/icons/userblue24.png"
-#define ICON_CLOSE             	":/icons/exit.png"
-#define ICON_NEWUSER		":/icons/add_user.png"
-#define ICON_SETTINGS		":/icons/settings.png"
-#define ICON_NEWUNREADMESSAGE   ":/icons/send.png"
-#define ICON_USER_TRYTOCONNECT	":/icons/yellow.png"
-#define ICON_USER_OFFLINE	":/icons/red.png"
-#define ICON_USER_ONLINE	":/icons/green.png"
-#define ICON_USER_WANTTOCHAT	":/icons/chatty.png"
-#define ICON_USER_AWAY		":/icons/xa.png"
-#define ICON_USER_DONT_DUSTURB	":/icons/dnd.png"
-#define ICON_USER_INVISIBLE	":/icons/invisible.png"
-#define ICON_DEBUGMESSAGES	":/icons/status_unknown.png"
-#define ICON_MYDESTINATION	":/icons/editcopy.png"
-#define ICON_ABOUT		":/icons/about.png"
+
 
 form_MainWindow::form_MainWindow(QWidget* parent)
     : QMainWindow(parent){
@@ -60,8 +42,12 @@ void form_MainWindow::init()
 
 	Core= new cCore();
 	fillComboBox();
-	createToolBar();
+	initToolBars();
 	applicationIsClosing=false;
+	
+	Mute=false;
+	
+
 	QListWidget* listWidget=this->listWidget;
 
 	connect (Core,SIGNAL(eventUserChanged()),this,
@@ -100,6 +86,7 @@ void form_MainWindow::fillComboBox()
 
 void form_MainWindow::onlineComboBoxChanged()
 {
+	QComboBox* comboBox= this->comboBox;
 	QString text=comboBox->currentText();
 
 	if(text.contains("Online",Qt::CaseInsensitive)==true){
@@ -136,6 +123,8 @@ void form_MainWindow::onlineComboBoxChanged()
 			msgBox->setDefaultButton(QMessageBox::Ok);
 			msgBox->setWindowModality(Qt::NonModal);
 			msgBox->show();
+			OnlineStateChanged();
+
 		}
 	}
 	else if(text.contains("TryToConnect",Qt::CaseInsensitive)==true){
@@ -145,7 +134,7 @@ void form_MainWindow::onlineComboBoxChanged()
 
 }
 
-void form_MainWindow::createToolBar()
+void form_MainWindow::initToolBars()
 {
 	//toolBar->setIconSize(QSize(24, 24));
 	QToolBar* toolBar=this->toolBar;
@@ -207,7 +196,7 @@ void form_MainWindow::closeApplication(){
 		emit closeAllWindows();
 	
 		delete Core;
-		//delete trayIcon;
+		delete trayIcon;
 		applicationIsClosing=true;
 		this->close();
 	}
@@ -339,16 +328,14 @@ void form_MainWindow::connecttreeWidgetCostumPopupMenu(QPoint point){
 	QAction* UserRename = new QAction("Rename",this);
 		connect(UserRename,SIGNAL(triggered()),this, SLOT(userRenameCLicked()));
 	
-	
+	QAction* CopyDestination = new QAction("Copy Destination",this);
+		connect(CopyDestination,SIGNAL(triggered()),this, SLOT(copyDestination()));
 	
 
 
 	contextMnu.clear();
 	contextMnu.addAction(UserChat);
-	contextMnu.addAction(UserDelete);
-	contextMnu.addAction(UserRename);
-	
-	
+
 	QListWidgetItem *t=listWidget->item(listWidget->currentRow()+1);
 	QString Destination =t->text();
 		
@@ -361,6 +348,11 @@ void form_MainWindow::connecttreeWidgetCostumPopupMenu(QPoint point){
 		connect(UserSendFile,SIGNAL(triggered()),this, SLOT(SendFile()));
 		contextMnu.addAction(UserSendFile);
 	}
+
+	contextMnu.addSeparator();
+	contextMnu.addAction(UserRename);
+	contextMnu.addAction(UserDelete);
+	contextMnu.addAction(CopyDestination);
 
 	contextMnu.exec( mevent->globalPos());
 }
@@ -436,28 +428,39 @@ void form_MainWindow::toggleVisibilitycontextmenu()
         show();
 }*/
 
-
 void form_MainWindow::OnlineStateChanged()
 {
 	QComboBox* comboBox = this->comboBox;
 	if(Core->getOnlineStatus()==User::USERONLINE)
 	{
 		comboBox->clear();
-		comboBox->addItem(QIcon(ICON_USER_ONLINE)	, "Online");	
-		comboBox->addItem(QIcon(ICON_USER_WANTTOCHAT)	, "WantToChat");
-		comboBox->addItem(QIcon(ICON_USER_AWAY)		, "Away");
-		comboBox->addItem(QIcon(ICON_USER_DONT_DUSTURB)	, "don't disturb");
-		comboBox->addItem(QIcon(ICON_USER_INVISIBLE)	, "Invisible");	
-		comboBox->addItem(QIcon(ICON_USER_OFFLINE)	, "Offline");
+		comboBox->addItem(QIcon(ICON_USER_ONLINE)	, "Online");		//index 0
+		comboBox->addItem(QIcon(ICON_USER_WANTTOCHAT)	, "WantToChat");	//1
+		comboBox->addItem(QIcon(ICON_USER_AWAY)		, "Away");		//2
+		comboBox->addItem(QIcon(ICON_USER_DONT_DUSTURB)	, "don't disturb");	//3
+		comboBox->addItem(QIcon(ICON_USER_INVISIBLE)	, "Invisible");		//4
+		comboBox->addItem(QIcon(ICON_USER_OFFLINE)	, "Offline");		//5
 
+		
 	}
-	else if(Core->getOnlineStatus()==User::USEROFFLINE)
-	{	
+	else if(Core->getOnlineStatus()==User::USEROFFLINE){	
 		comboBox->clear();
 		comboBox->addItem(QIcon(ICON_USER_OFFLINE)	, "Offline");
 		comboBox->addItem(QIcon(ICON_USER_TRYTOCONNECT)	, "TryToConnect");
-
+		comboBox->setCurrentIndex(0);
 	}	
+	else if(Core->getOnlineStatus()==User::USERWANTTOCHAT){
+		comboBox->setCurrentIndex(1);
+	}
+	else if(Core->getOnlineStatus()==User::USERAWAY){
+		comboBox->setCurrentIndex(2);
+	}
+	else if(Core->getOnlineStatus()==User::USERDONT_DISTURB){
+		comboBox->setCurrentIndex(3);
+	}
+	else if(Core->getOnlineStatus()==User::USERINVISIBLE){
+		comboBox->setCurrentIndex(4);
+	}
 }
 
 void form_MainWindow::openAboutDialog()
@@ -512,12 +515,18 @@ void form_MainWindow::initStyle()
 	menu = new QMenu(this);
 	QObject::connect(menu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
 	toggleVisibilityAction = 
-	menu->addAction(QIcon(ICON_QTCHAT), tr("Show/Hide"), this, SLOT(toggleVisibilitycontextmenu()));
+		menu->addAction(QIcon(ICON_QTCHAT), tr("Show/Hide"), this, SLOT(toggleVisibilitycontextmenu()));	
+
+	toggleMuteAction=
+		menu->addAction(QIcon(ICON_SOUND_ON), tr("Sound on"),this,SLOT(muteSound()));
 	menu->addSeparator();
 	//menu->addAction(QIcon(ICON_MINIMIZE), tr("Minimize"), this, SLOT(showMinimized()));
 	//menu->addAction(QIcon(ICON_MAXIMIZE), tr("Maximize"), this, SLOT(showMaximized()));
 	menu->addSeparator();
 	menu->addAction(QIcon(ICON_CLOSE), tr("&Quit"), this, SLOT(closeApplication()));
+
+	
+
 }
 
 void form_MainWindow::initTryIcon()
@@ -541,6 +550,37 @@ void form_MainWindow::SendFile()
 	QString Destination =t->text();
 	
 	if(!FilePath.isEmpty())
-		Core->startFileTransfer(FilePath,Destination);
+		Core->addNewFileTransfer(FilePath,Destination);
 	
+}
+
+void form_MainWindow::copyDestination()
+{
+	QListWidgetItem *t=listWidget->item(listWidget->currentRow()+1);
+	QString Destination =t->text();
+	
+	QClipboard *clipboard = QApplication::clipboard();
+	
+		clipboard->setText(Destination);
+		QMessageBox::information(this, "",
+                        "The Destination is in the clipboard",QMessageBox::Close);
+	
+}
+
+void form_MainWindow::muteSound()
+{
+	if(this->Mute==false)
+	{
+		toggleMuteAction->setIcon(QIcon(ICON_SOUND_OFF));
+		toggleMuteAction->setText("Sound off");
+		Mute=true;
+	}
+	else
+	{
+		toggleMuteAction->setIcon(QIcon(ICON_SOUND_ON));
+		toggleMuteAction->setText("Sound on");
+		Mute=false;
+
+	}
+	Core->MuteSound(Mute);
 }

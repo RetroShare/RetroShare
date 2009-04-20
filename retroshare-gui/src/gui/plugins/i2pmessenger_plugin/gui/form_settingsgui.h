@@ -39,6 +39,13 @@ private slots:
 	void saveSettings();
 	void on_styleCombo_activated(const QString &styleName);
 	void on_styleSheetCombo_activated(const QString &styleSheetName);
+	
+	void on_cmd_openFile();
+	void on_cmd_openFile2();
+	void on_cmd_openFile3();
+	void on_cmd_openFile4();
+	void on_cmd_openFile5();
+	void on_cmd_openFile6();
 
 private:
 	QSettings* settings;
@@ -46,5 +53,7 @@ private:
   void loadqss();
 
 };
+
+
 #endif
 

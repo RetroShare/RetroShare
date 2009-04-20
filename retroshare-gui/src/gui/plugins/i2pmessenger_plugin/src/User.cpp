@@ -23,14 +23,12 @@
 cUser::cUser(	cProtocol* Protocol,
 		QString Name,
 		QString I2PDestination,
-		QString I2PStream_ID,
-		QString TorDestination
-		):I2PDestination(I2PDestination),TorDestination(TorDestination)
+		qint32 I2PStream_ID
+		):I2PDestination(I2PDestination)
 {
 	this->Protocol=Protocol;
 	this->Name=Name;
 	this->ReadyToSend=true;
-	this->TORStream_ID="";
 	this->I2PStream_ID=I2PStream_ID;
 	this->ConnectionStatus=OFFLINE;
 	this->HaveAllreadyOneChatWindow=false;
@@ -38,6 +36,9 @@ cUser::cUser(	cProtocol* Protocol,
 	this->ClientName="";
 	this->ClientVersion="";
 	this->CurrentOnlineState=USEROFFLINE;
+
+	this->textColor=Qt::black;
+	this->textFont=QFont("Comic Sans MS", 10);
 }
 
 const QString cUser::get_Name()const{
@@ -46,14 +47,8 @@ const QString cUser::get_Name()const{
 const QString cUser::get_I2PDestination()const{
 	return this->I2PDestination;
 }
-const QString cUser::get_I2PStreamID()const{
+qint32 cUser::get_I2PStreamID()const{
 	return this->I2PStream_ID;
-}
-const QString cUser::get_TORDestination()const{
-	return this->TorDestination;
-}
-const QString cUser::get_TORStream_ID()const{
-	return this->TORStream_ID;
 }
 
 CONNECTIONTOUSER cUser::get_ConnectionStatus()const{
@@ -64,24 +59,27 @@ void cUser::set_Name(QString newName){
 	this->Name=newName;
 }
 void cUser::set_ConnectionStatus(CONNECTIONTOUSER Status){
+	
 	this->ConnectionStatus=Status;
 	
 	if(Status==ONLINE){
+		this->ConnectionStatus=Status;
 		//get some Infos from the CHATSYSTEM - client
 		Protocol->send(GET_CLIENTNAME,I2PStream_ID);
 		Protocol->send(GET_CLIENTVERSION,I2PStream_ID);
 		Protocol->send(GET_USER_ONLINESTATUS,I2PStream_ID);
+		//emit connectionOnline();
 	}
 
 	
 	if(Status==OFFLINE ||Status==ERROR)
 	{
-		I2PStream_ID="";
+		I2PStream_ID=0;
 		this->CurrentOnlineState=USEROFFLINE;
+		this->ConnectionStatus=Status;
 	}
-	//emit OnlineStateChanged();
 }
-void cUser::set_I2PStreamID(QString ID){
+void cUser::set_I2PStreamID(qint32 ID){
 	this->I2PStream_ID=ID;
 }
 void cUser::set_ReadyToSend(bool b){
@@ -95,9 +93,10 @@ const QString cUser::get_ProtocolVersion()const{
 }
 
 void cUser::IncomingNewChatMessage(QString newMessage){
-	this->Messages.push_back(Name+": "+newMessage+"<br>");	
+	this->Messages.push_back(Name+"("+ QTime::currentTime().toString("hh:mm:ss") +"): "+newMessage+"<br>");	
 	this->newUnreadMessages=true;
 	emit newMessageRecived();
+	emit newIncomingMessageRecived();
 }
 void cUser::sendChatMessage(QString Message){
 	using namespace PROTOCOL_TAGS;
@@ -108,13 +107,13 @@ void cUser::sendChatMessage(QString Message){
 		CurrentOnlineState != USERINVISIBLE
 	){
 		Protocol->send(CHATMESSAGE,I2PStream_ID,Message);
-		this->Messages.push_back("Me: "+Message+"<br>");
+		this->Messages.push_back("Me("+QTime::currentTime().toString("hh:mm:ss")  +"): "+Message+"<br>");
 		//this->Messages.push_back(Message);
 		emit newMessageRecived();
 	}
 	else{
 		
-		this->Messages.push_back("[SYSTEM]: Sending the Message when the user come online<br>When you close the client the Message is lost<br>");
+		this->Messages.push_back("[SYSTEM]("+QTime::currentTime().toString("hh:mm:ss") +"): Sending the Message when the user come online<br>When you close the client the Message is lost<br>");
 		
 		unsendedMessages.push_back(Message);
 		emit newMessageRecived();
@@ -141,7 +140,7 @@ void cUser::sendAllunsendedMessages(){
 	
 
 
-	this->Messages.push_back("[SYSTEM]: All unsended Messages where sended<br><br>");
+	this->Messages.push_back("[SYSTEM]("+QTime::currentTime().toString("hh:mm:ss")+"): All unsended Messages were sended<br><br>");
 	unsendedMessages.clear();
 	this->newUnreadMessages=true;
 	emit newMessageRecived();
@@ -161,6 +160,7 @@ void cUser::set_ClientName(QString Name)
 	ClientName=Name;
 }
 
+
 const QString cUser::get_ClientVersion() const
 {
 	return ClientVersion;
@@ -178,12 +178,47 @@ ONLINESTATE cUser::get_OnlineState() const
 
 void cUser::set_OnlineState(const ONLINESTATE newState)
 {
-	this->CurrentOnlineState=newState;
 	
-	if(	CurrentOnlineState!=USEROFFLINE && 
-		CurrentOnlineState!=USERINVISIBLE){
+	if(newState!=USEROFFLINE && 
+	   newState!=USERINVISIBLE){		
+		if(CurrentOnlineState==USEROFFLINE || CurrentOnlineState==USERINVISIBLE)
+			emit connectionOnline();
 		this->sendAllunsendedMessages();
 	}
+	else if(newState==USEROFFLINE || newState==USERINVISIBLE){
+		if(newState!=CurrentOnlineState)
+			emit connectionOffline();
 
+	}
+
+	this->CurrentOnlineState=newState;
 	emit OnlineStateChanged();
+}
+
+QColor cUser::get_textColor()
+{
+	return textColor;
+}
+
+void cUser::set_textColor(QColor textColor)
+{
+	this->textColor=textColor;
+}
+
+void cUser::set_textFont(QFont textFont)
+{
+	this->textFont=textFont;
+}
+
+QFont cUser::get_textFont()
+{
+	return textFont;
+}
+
+void cUser::IncomingMessageFromSystem(QString newMessage)
+{
+	this->Messages.push_back("[System]("+ QTime::currentTime().toString("hh:mm:ss") +"): "+newMessage+"<br>");	
+	this->newUnreadMessages=true;
+	emit newMessageRecived();
+	emit newIncomingMessageRecived();
 }

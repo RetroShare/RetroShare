@@ -30,24 +30,73 @@ void form_newUserWindow::addnewUser()
 	QString Name=lineEdit->text();
 	QString I2PDestination=textEdit->toPlainText();
 
+	if(Name.isEmpty())
+	{
+		QMessageBox* msgBox= new QMessageBox(this);
+			msgBox->setIcon(QMessageBox::Warning);
+			msgBox->setText("Adding User");
+			msgBox->setInformativeText("You must add a nick for the User\nadding abborted");
+			msgBox->setStandardButtons(QMessageBox::Ok);
+			msgBox->setDefaultButton(QMessageBox::Ok);
+			msgBox->setWindowModality(Qt::NonModal);
+			msgBox->show();
+		return;
+	}
+
+	if(I2PDestination.length()!=516)
+	{
+		QMessageBox* msgBox= new QMessageBox(this);
+			msgBox->setIcon(QMessageBox::Warning);
+			msgBox->setText("Adding User");
+			msgBox->setInformativeText("The Destination is to short (must be 516)\nadding abborted");
+			msgBox->setStandardButtons(QMessageBox::Ok);
+			msgBox->setDefaultButton(QMessageBox::Ok);
+			msgBox->setWindowModality(Qt::NonModal);
+			msgBox->show();
+
+		return;
+	}
+
+
+
+	if(!I2PDestination.right(4).contains("AAAA",Qt::CaseInsensitive)){
+		//the last 4 char must be "AAAA"
+		QMessageBox* msgBox= new QMessageBox(this);
+			msgBox->setIcon(QMessageBox::Warning);
+			msgBox->setText("Adding User");
+			msgBox->setInformativeText("The Destination must end with AAAA\nadding abborted");
+			msgBox->setStandardButtons(QMessageBox::Ok);
+			msgBox->setDefaultButton(QMessageBox::Ok);
+			msgBox->setWindowModality(Qt::NonModal);
+			msgBox->show();
+		return;
+	}
+
 
 	if(I2PDestination==Core->getMyDestination())
 	{
-		QMessageBox msgBox;
-			msgBox.setIcon(QMessageBox::Warning);
-			msgBox.setText("Adding User");
-			msgBox.setInformativeText("This Destination is yours, adding aborted !");
-			msgBox.setStandardButtons(QMessageBox::Ok);
-			msgBox.setDefaultButton(QMessageBox::Ok);
-			msgBox.exec();
+		QMessageBox* msgBox= new QMessageBox(this);
+			msgBox->setIcon(QMessageBox::Warning);
+			msgBox->setText("Adding User");
+			msgBox->setInformativeText("This Destination is yours, adding aborted !");
+			msgBox->setStandardButtons(QMessageBox::Ok);
+			msgBox->setDefaultButton(QMessageBox::Ok);
+			msgBox->setWindowModality(Qt::NonModal);
+			msgBox->show();
 		return;
 
 	}
 
-	if(Core->addNewUser(Name,I2PDestination,"","")==false)
-		QMessageBox::warning(this, tr("I2PChat"),
-                ("There allready exits one user with the same I2P,- or TorDestination"),
-                QMessageBox::Ok);
+	if(Core->addNewUser(Name,I2PDestination,0)==false){
 
-	this->close();
+		QMessageBox* msgBox= new QMessageBox(NULL);
+		msgBox->setIcon(QMessageBox::Warning);
+                msgBox->setInformativeText("There allready exits one user with the same I2P,- or TorDestination");
+		msgBox->setStandardButtons(QMessageBox::Ok);
+		msgBox->setDefaultButton(QMessageBox::Ok);
+		msgBox->setWindowModality(Qt::NonModal);
+		msgBox->show();
+
+		this->close();
+	}
 }

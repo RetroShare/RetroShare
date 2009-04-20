@@ -77,11 +77,11 @@ public:
 	cProtocol(cCore* Core);
 	QString get_ProtocolVersion(){return PROTOCOLVERSION;};
 public slots:
-	QByteArray inputUnknown(const QString ID,const QByteArray Data);
-	void inputKnown(const QString ID, const QByteArray Data);
-	void send(const MESSAGES_TAGS TAG,const QString ID,QString Data);
-	void send(const COMMANDS_TAGS TAG,const QString ID);
-	void newConnectionChat(const QString ID);
+	QByteArray inputUnknown(const qint32 ID,const QByteArray Data);
+	void inputKnown(const qint32 ID, const QByteArray Data);
+	void send(const MESSAGES_TAGS TAG,const qint32 ID,QString Data);
+	void send(const COMMANDS_TAGS TAG,const qint32 ID);
+	void newConnectionChat(const qint32 ID);
 
 signals:
 	void eventUserChanged();//also used for newchatMessage

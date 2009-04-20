@@ -21,7 +21,7 @@
 
 
 
-cPacketManager::cPacketManager ( QString ID )
+cPacketManager::cPacketManager ( qint32 ID )
 :ID ( ID ) 
 {
 	Data.clear();
@@ -32,10 +32,10 @@ cPacketManager::~cPacketManager()
 }
 void cPacketManager::operator << ( QByteArray t )
 {
-	Data.push_back ( t );
+	Data.append ( t );
 	checkifOnePacketIsComplead();
 }
-const QString cPacketManager::getID()
+qint32 cPacketManager::getID()
 {
 	return ID;
 }
@@ -51,7 +51,7 @@ void  cPacketManager::checkifOnePacketIsComplead()
 		{
 			QMessageBox msgBox;
 			msgBox.setIcon(QMessageBox::Warning);
-			msgBox.setText("cPacketManager");
+			msgBox.setText("cPacketManager ("+QString(ID)+")");
 			msgBox.setInformativeText("cant parse PacketLength\nHexValue: "+sPacketLength );
 			msgBox.setStandardButtons(QMessageBox::Ok);
 			msgBox.setDefaultButton(QMessageBox::Ok);
@@ -67,5 +67,6 @@ void  cPacketManager::checkifOnePacketIsComplead()
 			checkifOnePacketIsComplead();
 		}
 	}
+	return;
 }
 

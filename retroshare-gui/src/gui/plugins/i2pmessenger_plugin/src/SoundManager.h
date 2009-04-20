@@ -17,29 +17,45 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef PACKETMANAGER_H
-#define PACKETMANAGER_H
-
-#include <Qt>
+#ifndef SOUND_MANAGER_H
+#define SOUND_MANAGER_H
+ 
+#include <QSound>
+#include <QSettings>
 #include <QtGui>
 
-class cPacketManager :public QObject
+
+class cSoundManager :public QObject
 {
-		Q_OBJECT
-
-
+	Q_OBJECT
 	public:
-		//cPacketManager() {}
-		cPacketManager ( qint32 ID );
-		~cPacketManager();
-		void operator << ( QByteArray t );
-		qint32 getID();
+		cSoundManager();
 
-		void checkifOnePacketIsComplead();
-	signals:
-		void aPacketIsComplead ( const qint32 ID,const QByteArray CurrentPacket );
+	public slots:
+		void doMute(bool t);
+		void event_User_go_Online();
+		void event_User_go_Offline();
+		void event_FileSend_Finished();
+		void event_FileRecive_Incoming();
+		void event_FileRecive_Finished();
+		void event_NewChatMessage();
+		void reInit();
+		
+
 	private:
-		const qint32 ID;
-		QByteArray Data;
+		bool isMute;
+		QString SoundFileUser_go_Online;
+		QString SoundFileUser_go_Offline;
+		QString SoundFileFileSend_Finished;
+		QString SoundFileFileRecive_Incoming;
+		QString SoundFileFileRecive_Finished;
+		QString SoundFileNewChatMessage;
+
+		bool enable_eventUser_go_Online;
+		bool enable_eventUser_go_Offline;
+		bool enable_eventFileSend_Finished;
+		bool enable_eventFileRecive_Incoming;
+		bool enable_eventFileRecive_Finished;
+		bool enable_eventNewChatMessage;
 };
 #endif

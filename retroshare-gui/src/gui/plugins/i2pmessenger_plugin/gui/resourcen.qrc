@@ -23,5 +23,7 @@
 	<file>icons/dnd.png</file>
 	<file>icons/xa.png</file>
 	<file>icons/about.png</file>
+	<file>icons/sound.png</file>
+	<file>icons/sound_off.png</file>
     </qresource>
 </RCC>

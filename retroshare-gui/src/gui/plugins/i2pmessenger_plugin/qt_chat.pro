@@ -34,7 +34,8 @@ DEPENDPATH += . \
 
 INCLUDEPATH += . \
 
-SOURCES +=  gui/form_Main.cpp \
+SOURCES +=  src/Main.cpp \
+            gui/form_Main.cpp \
             src/Core.cpp \
             gui/form_newUser.cpp \
             gui/form_DebugMessages.cpp \
@@ -46,13 +47,14 @@ SOURCES +=  gui/form_Main.cpp \
             src/Protocol.cpp \
             gui/form_chatwidget.cpp \
             gui/form_rename.cpp \
-  	    src/PacketManager.cpp \
+            src/PacketManager.cpp \
             gui/form_settingsgui.cpp \
-  gui/form_HelpDialog.cpp \
-  src/FileTransferSend.cpp \
-  src/FileTransferRecive.cpp \
-  gui/form_fileSend.cpp \
-  gui/form_fileRecive.cpp
+            gui/form_HelpDialog.cpp \
+            src/FileTransferSend.cpp \
+            src/FileTransferRecive.cpp \
+            gui/form_fileSend.cpp \
+            gui/form_fileRecive.cpp \
+            src/SoundManager.cpp
 
 HEADERS +=  gui/form_Main.h \
             src/Core.h \
@@ -66,13 +68,15 @@ HEADERS +=  gui/form_Main.h \
             src/Protocol.h \
             gui/form_chatwidget.h \
             gui/form_rename.h \
-	    src/PacketManager.h \
-  gui/form_settingsgui.h \
-  gui/form_HelpDialog.h \
-  src/FileTransferSend.h \
-  src/FileTransferRecive.h \
-  gui/form_fileSend.h \
-  gui/form_fileRecive.h
+            src/PacketManager.h \
+            gui/form_settingsgui.h \
+            gui/form_HelpDialog.h \
+            src/FileTransferSend.h \
+            src/FileTransferRecive.h \
+            gui/form_fileSend.h \
+            gui/form_fileRecive.h \
+            src/SoundManager.h \
+            gui/gui_icons.h
 
 
 
@@ -83,11 +87,12 @@ FORMS +=    gui/form_Main.ui \
             gui/form_chatwidget.ui \
             gui/form_rename.ui \
             gui/form_settingsgui.ui \
-    gui/form_HelpDialog.ui \
-    gui/form_fileSend.ui \
-    gui/form_fileRecive.ui
+            gui/form_HelpDialog.ui \
+            gui/form_fileSend.ui \
+            gui/form_fileRecive.ui
 
 RESOURCES += gui/resourcen.qrc
+
 
 
 

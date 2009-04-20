@@ -30,7 +30,8 @@ namespace FileTransferProtocol
 };
 
 //limited to 30Kb
-#define MAXPAKETSIZE 30720
+//#define MAXPAKETSIZE 30720
+#define MAXPAKETSIZE 1024
 class cCore;
 class form_fileSend;
 class cFileTransferSend:public QObject
@@ -40,12 +41,12 @@ class cFileTransferSend:public QObject
 	public:
 	cFileTransferSend(cCore* Core,QString FilePath,QString Destination);
 	~cFileTransferSend();
-	void StreamStatus(const SAM_Message_Types::RESULT result,const QString ID,QString Message);
-	void StreamClosed(const SAM_Message_Types::RESULT result,QString ID,QString Message);
+	void StreamStatus(const SAM_Message_Types::RESULT result,const qint32 ID,QString Message);
+	void StreamClosed(const SAM_Message_Types::RESULT result,qint32 ID,QString Message);
 	void StreamReadyToSend(bool t);
 	void operator << ( QByteArray t );
 	quint64 get_FileSize(){return FileSize;};
-	QString get_StreamID(){return StreamID;};
+	qint32 get_StreamID(){return StreamID;};
 	QString get_FileName(){return FileName;};
 	
 
@@ -67,7 +68,7 @@ class cFileTransferSend:public QObject
 	qint64 FileSize;
 	qint64 allreadySendedSize;
 	const QString Destination;
-	QString StreamID;
+	qint32 StreamID;
 	QFile* FileForSend;
 	bool sendFirstPaket;
 	bool FileTransferAccepted;
