@@ -57,10 +57,10 @@ LanguageSupport::initialize()
   _languages.insert("se",    "Swedish");     
   _languages.insert("tr",    "Turkish");
   _languages.insert("fi",    "suomi");
-/****
-  _languages.insert("zh-cn", 
-    QString::fromUtf8("\347\256\200\344\275\223\345\255\227"));
-***/
+  _languages.insert("zh_CN", 
+      QString::fromUtf8("\347\256\200\344\275\223\345\255\227"));
+  _languages.insert("zh_TW", 
+      QString::fromUtf8("\347\260\241\351\253\224\345\255\227"));
 
 }
 
@@ -68,14 +68,13 @@ LanguageSupport::initialize()
 QString
 LanguageSupport::defaultLanguageCode()
 {
-  QString localeName = QLocale::system().name();
-  QString language   = localeName.mid(0, localeName.indexOf("_"));
-  if (language == "zh") {
-    language += "-" + localeName.mid(localeName.indexOf("_")+1).toLower();
-  }
-  if (!isValidLanguageCode(language)) {
+  QString language = QLocale::system().name();
+
+  if (language != "zh_CN" && language != "zh_TW")
+    language = language.mid(0, language.indexOf("_"));
+  if (!isValidLanguageCode(language))
     language = "en";
-  }
+  
   return language;
 }
 

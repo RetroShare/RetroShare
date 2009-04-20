@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools debug
+CONFIG += qt gui uic qrc resources uitools release
 QT     += network xml script 
 TEMPLATE = app
 TARGET = RetroShare
@@ -493,7 +493,9 @@ TRANSLATIONS +=  \
             lang/retroshare_dk.ts \
             lang/retroshare_sl.ts \
             lang/retroshare_sr.ts \
-            lang/retroshare_se.ts
+            lang/retroshare_se.ts \
+            lang/retroshare_zh_CN.ts \
+            lang/retroshare_zh_TW.ts
 
 # To compile for turtle hopping. I'm using this flag to avoid conflict while developping.
 # Just do a 
