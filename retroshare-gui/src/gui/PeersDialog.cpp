@@ -702,7 +702,7 @@ void PeersDialog::insertChat()
         QString timestamp = QDateTime::currentDateTime().toString("hh:mm:ss");
         QString name = QString::fromStdString(it->name);
         QString line = "<span style=\"color:#C00000\">" + timestamp + "</span>" +			
-            		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "fff</strong></span>";
+            		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span>";
 
         //std::cerr << "PeersDialog::insertChat(): 1.11\n";
         historyKeeper.addMessage(name, "THIS", QString::fromStdWString(it->msg));
