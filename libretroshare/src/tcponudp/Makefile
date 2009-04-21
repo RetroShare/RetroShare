@@ -9,7 +9,7 @@ include $(RS_TOP_DIR)/scripts/config.mk
 
 BIOOBJ = bss_tou.o 
 
-RSOBJ  = tou_net.o udplayer.o udpsorter.o udptestfn.o
+RSOBJ  = tou_net.o udplayer.o udpsorter.o udptestfn.o extaddrfinder.o
 RSOBJ += tcppacket.o tcpstream.o tou.o $(BIOOBJ)
 
 EXECS = librs  udpsock_test udpsort_test udp_server 
