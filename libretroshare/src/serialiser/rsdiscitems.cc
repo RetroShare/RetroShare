@@ -364,9 +364,9 @@ bool     RsDiscSerialiser::serialiseReply(RsDiscReply *item, void *data, uint32_
 	if (offset != tlvsize)
 	{
 		ok = false;
-//#ifdef RSSERIAL_DEBUG 
+#ifdef RSSERIAL_DEBUG 
 		std::cerr << "RsDiscSerialiser::serialiseReply() Size Error! " << std::endl;
-//#endif
+#endif
 	}
 
 	return ok;

@@ -46,7 +46,30 @@
 #include "pqi/pqinetwork.h"
 #include "pqi/p3authmgr.h"
 
-class AuthXPGP;
+class AuthSSL;
+
+class sslcert
+{
+        public:
+        sslcert(X509 *x509, std::string id);
+
+        /* certificate parameters */
+        std::string id;
+        std::string name;
+        std::string location;
+        std::string org;
+        std::string email;
+
+        std::string fpr;
+        std::list<std::string> signers;
+
+        /* Auth settings */
+        bool authed;
+
+        /* INTERNAL Parameters */
+        X509 *certificate;
+};
+
 
 class AuthSSL: public p3AuthMgr
 {
@@ -75,6 +98,11 @@ virtual bool    isValid(std::string id);
 virtual bool    isAuthenticated(std::string id);
 virtual	std::string getName(std::string id);
 virtual bool    getDetails(std::string id, pqiAuthDetails &details);
+
+        /* first party trust info (dummy) */
+virtual bool isTrustingMe(std::string id) ;
+virtual void addTrustingPeer(std::string id) ;
+
 	
 	/* High Level Load/Save Configuration */
 virtual bool FinalSaveCertificates();
@@ -94,6 +122,8 @@ virtual	bool SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *le
 	/* Signatures */
 
 virtual bool AuthCertificate(std::string uid);
+
+		/* These are dummy functions */
 virtual bool SignCertificate(std::string id);
 virtual bool RevokeCertificate(std::string id);
 virtual bool TrustCertificate(std::string id, bool trust);
@@ -101,6 +131,10 @@ virtual bool TrustCertificate(std::string id, bool trust);
 	/* Sign / Encrypt / Verify Data (TODO) */
 virtual bool 	SignData(std::string input, std::string &sign);
 virtual bool 	SignData(const void *data, const uint32_t len, std::string &sign);
+virtual bool 	SignDataBin(std::string, unsigned char*, unsigned int*);
+virtual bool    SignDataBin(const void*, uint32_t, unsigned char*, unsigned int*);
+virtual bool    VerifySignBin(std::string, const void*, uint32_t, unsigned char*, unsigned int);
+
 
 	/*********** Overloaded Functions from p3AuthMgr **********/
 
@@ -114,42 +148,39 @@ bool 	CheckCertificate(std::string peerId, X509 *x509); /* check that they are e
 	/* Special Config Loading (backwards compatibility) */
 bool  	loadCertificates(bool &oldFormat, std::map<std::string, std::string> &keyValueMap);
 
-#if 0
 	private:
 
 	/* Helper Functions */
 
-bool 	ProcessXPGP(XPGP *xpgp, std::string &id);
+bool 	ProcessX509(X509 *x509, std::string &id);
 
-XPGP *	loadXPGPFromPEM(std::string pem);
-XPGP *	loadXPGPFromFile(std::string fname, std::string hash);
-bool    saveXPGPToFile(XPGP *xpgp, std::string fname, std::string &hash);
+X509 *	loadX509FromPEM(std::string pem);
+X509 *	loadX509FromFile(std::string fname, std::string hash);
+bool    saveX509ToFile(X509 *x509, std::string fname, std::string &hash);
 
-XPGP *	loadXPGPFromDER(const uint8_t *ptr, uint32_t len);
-bool 	saveXPGPToDER(XPGP *xpgp, uint8_t **ptr, uint32_t *len);
+X509 *	loadX509FromDER(const uint8_t *ptr, uint32_t len);
+bool 	saveX509ToDER(X509 *x509, uint8_t **ptr, uint32_t *len);
 
 	/*********** LOCKED Functions ******/
-bool 	locked_FindCert(std::string id, xpgpcert **cert);
+bool 	locked_FindCert(std::string id, sslcert **cert);
 
 
 	/* Data */
-	RsMutex xpgpMtx;  /**** LOCKING */
+	RsMutex sslMtx;  /**** LOCKING */
 
 	int init;
 	std::string mCertConfigFile;
 	std::string mNeighDir;
 
 	SSL_CTX *sslctx;
-	XPGP_KEYRING *pgp_keyring;
 
 	std::string mOwnId;
-	xpgpcert *mOwnCert;
+	sslcert *mOwnCert;
 	EVP_PKEY *pkey;
 
 	bool mToSaveCerts;
 	bool mConfigSaveActive;
-	std::map<std::string, xpgpcert *> mCerts;
-#endif
+	std::map<std::string, sslcert *> mCerts;
 
 };
 
@@ -169,8 +200,8 @@ std::string getXPGPAuthCode(XPGP *xpgp);
 
 int     LoadCheckXPGPandGetName(const char *cert_file, 
 			std::string &userName, std::string &userId);
-bool 	getXPGPid(XPGP *xpgp, std::string &xpgpid);
 #endif
 
+bool 	getX509id(X509 *x509, std::string &xid);
 
-#endif // MRK_SSL_XPGP_CERT_HEADER
+#endif // MRK_AUTH_SSL_HEADER

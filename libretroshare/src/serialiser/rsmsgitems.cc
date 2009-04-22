@@ -93,10 +93,10 @@ bool     RsChatSerialiser::serialiseItem(RsChatItem *item, void *data, uint32_t 
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
-//#ifdef RSSERIAL_DEBUG
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsChatSerialiser::serialiseItem() Header: " << ok << std::endl;
 	std::cerr << "RsChatSerialiser::serialiseItem() Size: " << tlvsize << std::endl;
-//#endif
+#endif
 
 	/* skip the header */
 	offset += 8;
@@ -109,11 +109,13 @@ bool     RsChatSerialiser::serialiseItem(RsChatItem *item, void *data, uint32_t 
 	if (offset != tlvsize)
 	{
 		ok = false;
-//#ifdef RSSERIAL_DEBUG
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
-//#endif
+#endif
 	}
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "computed size: " << 256*((unsigned char*)data)[6]+((unsigned char*)data)[7] << std::endl ;
+#endif
 
 	return ok;
 }

@@ -1,5 +1,5 @@
 /*
- * libretroshare/src/pqi: authxpgp.cc
+ * libretroshare/src/pqi: authssl.cc
  *
  * 3P/PQI network interface for RetroShare.
  *
@@ -21,10 +21,15 @@
  *
  * Please report all bugs and problems to "retroshare@lunamutt.com".
  *
+ *
+ * This class is designed to provide authentication using ssl certificates
+ * only. It is intended to be wrapped by an gpgauthmgr to provide
+ * pgp + ssl web-of-trust authentication.
+ *
  */
 
-#include "authxpgp.h"
-#include "cleanupxpgp.h"
+#include "authssl.h"
+//#include "cleanupx509.h"
 
 #include "pqinetwork.h"
 
@@ -34,74 +39,59 @@
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/pem.h>
+#include <openssl/rand.h>
 
 #include <sstream>
 #include <iomanip>
-
-/******************************** TRUST LVLS
-xPGP_vfy.h:#define TRUST_SIGN_OWN               6
-xPGP_vfy.h:#define TRUST_SIGN_TRSTED    5
-xPGP_vfy.h:#define TRUST_SIGN_AUTHEN    4
-xPGP_vfy.h:#define TRUST_SIGN_BASIC     3
-xPGP_vfy.h:#define TRUST_SIGN_UNTRUSTED 2
-xPGP_vfy.h:#define TRUST_SIGN_UNKNOWN      1
-xPGP_vfy.h:#define TRUST_SIGN_NONE              0
-xPGP_vfy.h:#define TRUST_SIGN_BAD               -1
-******************************************************/
-
 
 /********************************************************************************/
 /********************************************************************************/
 /********************************************************************************/
 
 /***********
- ** #define AUTHXPGP_DEBUG	1
+ ** #define AUTHSSL_DEBUG	1
  **********/
+#define AUTHSSL_DEBUG	1
 
 // the single instance of this.
-static AuthXPGP instance_xpgproot;
+static AuthSSL instance_sslroot;
 
 p3AuthMgr *getAuthMgr()
 {
-	return &instance_xpgproot;
+	return &instance_sslroot;
 }
 
 
-xpgpcert::xpgpcert(XPGP *xpgp, std::string pid)
+sslcert::sslcert(X509 *x509, std::string pid)
 {
-	certificate = xpgp;
+	certificate = x509;
 	id = pid;
-	name = getX509CNString(xpgp->subject -> subject);
-	org = getX509OrgString(xpgp->subject -> subject);
-	location = getX509LocString(xpgp->subject -> subject);
+	name = getX509CNString(x509->cert_info->subject);
+	org = getX509OrgString(x509->cert_info->subject);
+	location = getX509LocString(x509->cert_info->subject);
 	email = "";
 
-	/* These should be filled in afterwards */
-	fpr = pid;
-
-	trustLvl = 0;
-	ownsign = false;
-	trusted = false;
+	authed = false;
 }
 
 
-AuthXPGP::AuthXPGP()
+AuthSSL::AuthSSL()
 	:init(0), sslctx(NULL), pkey(NULL), mToSaveCerts(false), mConfigSaveActive(true)
 {
 }
 
-bool AuthXPGP::active()
+bool AuthSSL::active()
 {
 	return init;
 }
 
 // args: server cert, server private key, trusted certificates.
 
-int	AuthXPGP::InitAuth(const char *cert_file, const char *priv_key_file, 
+int	AuthSSL::InitAuth(const char *cert_file, const char *priv_key_file, 
 			const char *passwd)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::InitAuth()";
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::InitAuth()";
 	std::cerr << std::endl;
 #endif
 
@@ -128,13 +118,13 @@ static  int initLib = 0;
 	}
 
 
-	// XXX TODO
 	// actions_to_seed_PRNG();
+	RAND_seed(passwd, strlen(passwd));
 
 	std::cerr << "SSL Library Init!" << std::endl;
 
 	// setup connection method
-	sslctx = SSL_CTX_new(PGPv1_method());
+	sslctx = SSL_CTX_new(TLSv1_method());
 
 	// setup cipher lists.
 	SSL_CTX_set_cipher_list(sslctx, "DEFAULT");
@@ -150,14 +140,14 @@ static  int initLib = 0;
 
 
 	// get xPGP certificate.
-	XPGP *xpgp = PEM_read_XPGP(ownfp, NULL, NULL, NULL);
+	X509 *x509 = PEM_read_X509(ownfp, NULL, NULL, NULL);
 	fclose(ownfp);
 
-	if (xpgp == NULL)
+	if (x509 == NULL)
 	{
 		return -1;
 	}
-	SSL_CTX_use_pgp_certificate(sslctx, xpgp);
+	SSL_CTX_use_certificate(sslctx, x509);
 
 	// get private key
 	FILE *pkfp = fopen(priv_key_file, "rb");
@@ -175,9 +165,9 @@ static  int initLib = 0;
 	{
 		return -1;
 	}
-	SSL_CTX_use_pgp_PrivateKey(sslctx, pkey);
+	SSL_CTX_use_PrivateKey(sslctx, pkey);
 
-	if (1 != SSL_CTX_check_pgp_private_key(sslctx))
+	if (1 != SSL_CTX_check_private_key(sslctx))
 	{
 		std::cerr << "Issues With Private Key! - Doesn't match your Cert" << std::endl;
 		std::cerr << "Check your input key/certificate:" << std::endl;
@@ -187,26 +177,18 @@ static  int initLib = 0;
 		return -1;
 	}
 
-	// make keyring.
-	pgp_keyring = createPGPContext(xpgp, pkey);
-	SSL_CTX_set_XPGP_KEYRING(sslctx, pgp_keyring);
-
-
-	// Setup the certificate. (after keyring is made!).
-	if (!XPGP_check_valid_certificate(xpgp))
-	{
-		/* bad certificate */
-		CloseAuth();
-		return -1;
-	}
-		
-	if (!getXPGPid(xpgp, mOwnId))
+	if (!getX509id(x509, mOwnId))
 	{
 		/* bad certificate */
 		CloseAuth();
 		return -1;
 	}
 
+	/* Check that Certificate is Ok ( virtual function )
+	 * for gpg/pgp or CA verification
+	 */
+
+  	validateOwnCertificate(x509, pkey);
 
 	// enable verification of certificates (PEER)
 	SSL_CTX_set_verify(sslctx, SSL_VERIFY_PEER | 
@@ -214,13 +196,7 @@ static  int initLib = 0;
 
 	std::cerr << "SSL Verification Set" << std::endl;
 
-	mOwnCert = new xpgpcert(xpgp, mOwnId);
-
-	/* add to keyring */
-	XPGP_add_certificate(pgp_keyring, mOwnCert->certificate);
-        mOwnCert->trustLvl = XPGP_auth_certificate(pgp_keyring, mOwnCert->certificate);
-	mOwnCert->trusted = true;
-	mOwnCert->ownsign = true;
+	mOwnCert = new sslcert(x509, mOwnId);
 
 	init = 1;
 	return 1;
@@ -228,10 +204,10 @@ static  int initLib = 0;
 
 
 
-bool	AuthXPGP::CloseAuth()
+bool	AuthSSL::CloseAuth()
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::CloseAuth()";
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::CloseAuth()";
 	std::cerr << std::endl;
 #endif
 	SSL_CTX_free(sslctx);
@@ -243,135 +219,119 @@ bool	AuthXPGP::CloseAuth()
 }
 
 /* Context handling  */
-SSL_CTX *AuthXPGP::getCTX()
+SSL_CTX *AuthSSL::getCTX()
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::getCTX()";
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::getCTX()";
 	std::cerr << std::endl;
 #endif
 	return sslctx;
 }
 
-int     AuthXPGP::setConfigDirectories(std::string configfile, std::string neighdir)
+int     AuthSSL::setConfigDirectories(std::string configfile, std::string neighdir)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::setConfigDirectories()";
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::setConfigDirectories()";
 	std::cerr << std::endl;
 #endif
-	xpgpMtx.lock();   /***** LOCK *****/
+	sslMtx.lock();   /***** LOCK *****/
 
 	mCertConfigFile = configfile;
 	mNeighDir = neighdir;
 
-	xpgpMtx.unlock(); /**** UNLOCK ****/
+	sslMtx.unlock(); /**** UNLOCK ****/
 	return 1;
 }
-	
-bool AuthXPGP::isTrustingMe(std::string id) 
+
+/* no trust in SSL certs */	
+bool AuthSSL::isTrustingMe(std::string id) 
 {
-	xpgpMtx.lock();   /***** LOCK *****/
-
-	bool res = false ;
-	
-	for(std::list<std::string>::const_iterator it(_trusting_peers.begin());it!=_trusting_peers.end() && !res;++it)
-		if( *it == id )
-			res = true ;
-
-	xpgpMtx.unlock(); /**** UNLOCK ****/
-
-	return res ;
+	return false;
 }
-void AuthXPGP::addTrustingPeer(std::string id)
+void AuthSSL::addTrustingPeer(std::string id)
 {
-	if( !isTrustingMe(id) )
-	{
-		xpgpMtx.lock();   /***** LOCK *****/
-
-		_trusting_peers.push_back(id) ;
-
-		xpgpMtx.unlock(); /**** UNLOCK ****/
-	}
+	return;
 }
 
-std::string AuthXPGP::OwnId()
+std::string AuthSSL::OwnId()
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::OwnId()";
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::OwnId()";
 	std::cerr << std::endl;
 #endif
-	xpgpMtx.lock();   /***** LOCK *****/
+	sslMtx.lock();   /***** LOCK *****/
 
 	std::string id = mOwnId;
 
-	xpgpMtx.unlock(); /**** UNLOCK ****/
+	sslMtx.unlock(); /**** UNLOCK ****/
 	return id;
 }
 
-bool    AuthXPGP::getAllList(std::list<std::string> &ids)
+bool    AuthSSL::getAllList(std::list<std::string> &ids)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::getAllList()";
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::getAllList()";
 	std::cerr << std::endl;
 #endif
-	xpgpMtx.lock();   /***** LOCK *****/
+	sslMtx.lock();   /***** LOCK *****/
 
 	/* iterate through both lists */
-	std::map<std::string, xpgpcert *>::iterator it;
+	std::map<std::string, sslcert *>::iterator it;
 
 	for(it = mCerts.begin(); it != mCerts.end(); it++)
 	{
 		ids.push_back(it->first);
 	}
 
-	xpgpMtx.unlock(); /**** UNLOCK ****/
+	sslMtx.unlock(); /**** UNLOCK ****/
 
 	return true;
 }
 
-bool    AuthXPGP::getAuthenticatedList(std::list<std::string> &ids)
+bool    AuthSSL::getAuthenticatedList(std::list<std::string> &ids)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::getAuthenticatedList()";
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::getAuthenticatedList()";
 	std::cerr << std::endl;
 #endif
-	xpgpMtx.lock();   /***** LOCK *****/
+	sslMtx.lock();   /***** LOCK *****/
 
 	/* iterate through both lists */
-	std::map<std::string, xpgpcert *>::iterator it;
+	std::map<std::string, sslcert *>::iterator it;
 
 	for(it = mCerts.begin(); it != mCerts.end(); it++)
 	{
-		if (it->second->trustLvl > TRUST_SIGN_BASIC)
+		if (it->second->authed)
 		{
 			ids.push_back(it->first);
 		}
 	}
 
-	xpgpMtx.unlock(); /**** UNLOCK ****/
+	sslMtx.unlock(); /**** UNLOCK ****/
 
 	return true;
 }
 
-bool    AuthXPGP::getUnknownList(std::list<std::string> &ids)
+bool    AuthSSL::getUnknownList(std::list<std::string> &ids)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::getUnknownList()";
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::getUnknownList()";
 	std::cerr << std::endl;
 #endif
-	xpgpMtx.lock();   /***** LOCK *****/
+	sslMtx.lock();   /***** LOCK *****/
 
 	/* iterate through both lists */
-	std::map<std::string, xpgpcert *>::iterator it;
+	std::map<std::string, sslcert *>::iterator it;
 
 	for(it = mCerts.begin(); it != mCerts.end(); it++)
 	{
-		if (it->second->trustLvl <= TRUST_SIGN_BASIC)
+		if (!it->second->authed)
 		{
 			ids.push_back(it->first);
 		}
 	}
 
-	xpgpMtx.unlock(); /**** UNLOCK ****/
+	sslMtx.unlock(); /**** UNLOCK ****/
 
 	return true;
 }
@@ -379,13 +339,13 @@ bool    AuthXPGP::getUnknownList(std::list<std::string> &ids)
 	/* silly question really - only valid certs get saved to map
 	 * so if in map its okay
 	 */
-bool    AuthXPGP::isValid(std::string id)
+bool    AuthSSL::isValid(std::string id)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::isValid() " << id;
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::isValid() " << id;
 	std::cerr << std::endl;
 #endif
-	xpgpMtx.lock();   /***** LOCK *****/
+	sslMtx.lock();   /***** LOCK *****/
 	bool valid = false;
 
 	if (id == mOwnId)
@@ -397,43 +357,43 @@ bool    AuthXPGP::isValid(std::string id)
 		valid = (mCerts.end() != mCerts.find(id));
 	}
 
-	xpgpMtx.unlock(); /**** UNLOCK ****/
+	sslMtx.unlock(); /**** UNLOCK ****/
 
 	return valid;
 }
 
-bool    AuthXPGP::isAuthenticated(std::string id)
+bool    AuthSSL::isAuthenticated(std::string id)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::isAuthenticated() " << id;
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::isAuthenticated() " << id;
 	std::cerr << std::endl;
 #endif
-	xpgpMtx.lock();   /***** LOCK *****/
+	sslMtx.lock();   /***** LOCK *****/
 
-	xpgpcert *cert = NULL;
+	sslcert *cert = NULL;
 	bool auth = false;
 
 	if (locked_FindCert(id, &cert))
 	{
-		auth = (cert->trustLvl > TRUST_SIGN_BASIC);
+		auth = it->second->authed;
 	}
 
-	xpgpMtx.unlock(); /**** UNLOCK ****/
+	sslMtx.unlock(); /**** UNLOCK ****/
 
 	return auth;
 }
 
-std::string AuthXPGP::getName(std::string id)
+std::string AuthSSL::getName(std::string id)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::getName() " << id;
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::getName() " << id;
 	std::cerr << std::endl;
 #endif
 	std::string name;
 
-	xpgpMtx.lock();   /***** LOCK *****/
+	sslMtx.lock();   /***** LOCK *****/
 
-	xpgpcert *cert = NULL;
+	sslcert *cert = NULL;
 	if (id == mOwnId)
 	{
 		name = mOwnCert->name;
@@ -443,21 +403,21 @@ std::string AuthXPGP::getName(std::string id)
 		name = cert->name;
 	}
 
-	xpgpMtx.unlock(); /**** UNLOCK ****/
+	sslMtx.unlock(); /**** UNLOCK ****/
 
 	return name;
 }
 
-bool    AuthXPGP::getDetails(std::string id, pqiAuthDetails &details)
+bool    AuthSSL::getDetails(std::string id, pqiAuthDetails &details)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::getDetails() " << id;
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::getDetails() " << id;
 	std::cerr << std::endl;
 #endif
-	xpgpMtx.lock();   /***** LOCK *****/
+	sslMtx.lock();   /***** LOCK *****/
 
 	bool valid = false;
-	xpgpcert *cert = NULL;
+	sslcert *cert = NULL;
 	if (id == mOwnId)
 	{
 		cert = mOwnCert;
@@ -485,7 +445,7 @@ bool    AuthXPGP::getDetails(std::string id, pqiAuthDetails &details)
 		details.trusted = cert->trusted;
 	}
 
-	xpgpMtx.unlock(); /**** UNLOCK ****/
+	sslMtx.unlock(); /**** UNLOCK ****/
 
 	return valid;
 }
@@ -493,40 +453,40 @@ bool    AuthXPGP::getDetails(std::string id, pqiAuthDetails &details)
 	
 	/* Load/Save certificates */
 	
-bool AuthXPGP::LoadCertificateFromString(std::string pem, std::string &id)
+bool AuthSSL::LoadCertificateFromString(std::string pem, std::string &id)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::LoadCertificateFromString() " << id;
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::LoadCertificateFromString() " << id;
 	std::cerr << std::endl;
 #endif
 
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::LoadCertificateFromString() Cleaning up Certificate First!";
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::LoadCertificateFromString() Cleaning up Certificate First!";
 	std::cerr << std::endl;
 #endif
 
-	std::string cleancert = cleanUpCertificate(pem);
+	std::string cleancert = cleanUpX509Certificate(pem);
 
-	XPGP *xpgp = loadXPGPFromPEM(cleancert);
-	if (!xpgp)
+	X509 *x509 = loadX509FromPEM(cleancert);
+	if (!x509)
 		return false;
 
-	return ProcessXPGP(xpgp, id);
+	return ProcessX509(x509, id);
 }
 
-std::string AuthXPGP::SaveCertificateToString(std::string id)
+std::string AuthSSL::SaveCertificateToString(std::string id)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::SaveCertificateToString() " << id;
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::SaveCertificateToString() " << id;
 	std::cerr << std::endl;
 #endif
 
 
-	xpgpMtx.lock();   /***** LOCK *****/
+	sslMtx.lock();   /***** LOCK *****/
 
 	/* get the cert first */
 	std::string certstr;
-	xpgpcert *cert = NULL;
+	sslcert *cert = NULL;
 	bool valid = false;
 
 	if (id == mOwnId)
@@ -543,7 +503,7 @@ std::string AuthXPGP::SaveCertificateToString(std::string id)
 	{
 		BIO *bp = BIO_new(BIO_s_mem());
 
-		PEM_write_bio_XPGP(bp, cert->certificate);
+		PEM_write_bio_X509(bp, cert->certificate);
 
 		/* translate the bp data to a string */
 		char *data;
@@ -556,27 +516,27 @@ std::string AuthXPGP::SaveCertificateToString(std::string id)
 		BIO_free(bp);
 	}
 
-	xpgpMtx.unlock(); /**** UNLOCK ****/
+	sslMtx.unlock(); /**** UNLOCK ****/
 
 	return certstr;
 }
 
 
 
-bool AuthXPGP::LoadCertificateFromFile(std::string filename, std::string &id)
+bool AuthSSL::LoadCertificateFromFile(std::string filename, std::string &id)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::LoadCertificateFromFile() " << id;
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::LoadCertificateFromFile() " << id;
 	std::cerr << std::endl;
 #endif
 
 	std::string nullhash;
 
-	XPGP *xpgp = loadXPGPFromFile(filename.c_str(), nullhash);
-	if (!xpgp)
+	X509 *x509 = loadX509FromFile(filename.c_str(), nullhash);
+	if (!x509)
 		return false;
 
-	return ProcessXPGP(xpgp, id);
+	return ProcessX509(x509, id);
 }
 
 //============================================================================
@@ -584,17 +544,17 @@ bool AuthXPGP::LoadCertificateFromFile(std::string filename, std::string &id)
 //! Saves something to filename
 
 //! \returns true on success, false on failure
-bool AuthXPGP::SaveCertificateToFile(std::string id, std::string filename)
+bool AuthSSL::SaveCertificateToFile(std::string id, std::string filename)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::SaveCertificateToFile() " << id;
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::SaveCertificateToFile() " << id;
 	std::cerr << std::endl;
 #endif
 
-	xpgpMtx.lock();   /***** LOCK *****/
+	sslMtx.lock();   /***** LOCK *****/
 
 	/* get the cert first */
-	xpgpcert *cert = NULL;
+	sslcert *cert = NULL;
 	bool valid = false;
 	std::string hash;
 
@@ -609,41 +569,41 @@ bool AuthXPGP::SaveCertificateToFile(std::string id, std::string filename)
 	}
 	if (valid)
 	{
-		valid = saveXPGPToFile(cert->certificate, filename, hash);
+		valid = saveX509ToFile(cert->certificate, filename, hash);
 	}
 
-	xpgpMtx.unlock(); /**** UNLOCK ****/
+	sslMtx.unlock(); /**** UNLOCK ****/
 	return valid;
 }
 
 	/**** To/From DER format ***/
 
-bool 	AuthXPGP::LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id)
+bool 	AuthSSL::LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::LoadCertificateFromFile() " << id;
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::LoadCertificateFromFile() " << id;
 	std::cerr << std::endl;
 #endif
 
-	XPGP *xpgp = loadXPGPFromDER(ptr, len);
-	if (!xpgp)
+	X509 *x509 = loadX509FromDER(ptr, len);
+	if (!x509)
 		return false;
 
-	return ProcessXPGP(xpgp, id);
+	return ProcessX509(x509, id);
 
 }
 
-bool 	AuthXPGP::SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len)
+bool 	AuthSSL::SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::SaveCertificateToBinary() " << id;
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::SaveCertificateToBinary() " << id;
 	std::cerr << std::endl;
 #endif
 
-	xpgpMtx.lock();   /***** LOCK *****/
+	sslMtx.lock();   /***** LOCK *****/
 
 	/* get the cert first */
-	xpgpcert *cert = NULL;
+	sslcert *cert = NULL;
 	bool valid = false;
 	std::string hash;
 
@@ -658,189 +618,88 @@ bool 	AuthXPGP::SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t 
 	}
 	if (valid)
 	{
-		valid = saveXPGPToDER(cert->certificate, ptr, len);
+		valid = saveX509ToDER(cert->certificate, ptr, len);
 	}
 
-	xpgpMtx.unlock(); /**** UNLOCK ****/
+	sslMtx.unlock(); /**** UNLOCK ****/
 	return valid;
 }
 
 
 	/* Signatures */
-bool AuthXPGP::SignCertificate(std::string id)
+	/* NO Signatures in SSL Certificates */
+
+bool AuthSSL::SignCertificate(std::string id)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::SignCertificate() " << id;
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::SignCertificate() NULL " << id;
 	std::cerr << std::endl;
 #endif
-
-	xpgpMtx.lock();   /***** LOCK *****/
-
-	/* get the cert first */
-	xpgpcert *cert = NULL;
-	xpgpcert *own = mOwnCert;
 	bool valid = false;
-
-	if (locked_FindCert(id, &cert))
-	{
-	  	if (0 < validateCertificateIsSignedByKey(
-				cert->certificate, own->certificate))
-		{
-#ifdef AUTHXPGP_DEBUG
-			std::cerr << "AuthXPGP::SignCertificate() Signed Already: " << id;
-			std::cerr << std::endl;
-#endif
-			cert->ownsign=true;
-		}
-		else
-		{
-#ifdef AUTHXPGP_DEBUG
-			std::cerr << "AuthXPGP::SignCertificate() Signing Cert: " << id;
-			std::cerr << std::endl;
-#endif
-			/* sign certificate */
-			XPGP_sign_certificate(pgp_keyring, cert->certificate, own->certificate);
-
-			/* reevaluate the auth of the xpgp */
-			cert->trustLvl = XPGP_auth_certificate(pgp_keyring, cert->certificate);
-			cert->ownsign = true;
-
-			mToSaveCerts = true;
-		}
-		valid = true;
-	}
-
-
-	xpgpMtx.unlock(); /**** UNLOCK ****/
 	return valid;
 }
 
-bool AuthXPGP::TrustCertificate(std::string id, bool totrust)
+bool AuthSSL::TrustCertificate(std::string id, bool totrust)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::TrustCertificate() " << id;
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::TrustCertificate() NULL " << id;
 	std::cerr << std::endl;
 #endif
-
-	xpgpMtx.lock();   /***** LOCK *****/
-
-	/* get the cert first */
-	xpgpcert *cert = NULL;
 	bool valid = false;
-
-	if (locked_FindCert(id, &cert))
-	{
-
-		/* if trusted -> untrust */
-		if (!totrust)
-		{
-			XPGP_signer_untrusted(pgp_keyring, cert->certificate);
-			cert->trusted = false;
-		}
-		else
-		{
-			/* if auth then we can trust them */
-			if (XPGP_signer_trusted(pgp_keyring, cert->certificate))
-			{
-				cert->trusted = true;
-			}
-		}
-
-		/* reevaluate the auth of the xpgp */
-		cert->trustLvl = XPGP_auth_certificate(pgp_keyring, cert->certificate);
-		valid = true;
-
-		/* resave if changed trust setting */
-		mToSaveCerts = true;
-	}
-
-	xpgpMtx.unlock(); /**** UNLOCK ****/
 	return valid;
 }
 
-bool AuthXPGP::RevokeCertificate(std::string id)
+bool AuthSSL::RevokeCertificate(std::string id)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::RevokeCertificate() " << id;
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::RevokeCertificate() NULL " << id;
 	std::cerr << std::endl;
 #endif
 
-	xpgpMtx.lock();   /***** LOCK *****/
-	xpgpMtx.unlock(); /**** UNLOCK ****/
+	sslMtx.lock();   /***** LOCK *****/
+	sslMtx.unlock(); /**** UNLOCK ****/
 
 	return false;
 }
 
 
-bool AuthXPGP::AuthCertificate(std::string id)
+bool AuthSSL::AuthCertificate(std::string id)
 {
 
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::AuthCertificate() " << id;
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::AuthCertificate() " << id;
 	std::cerr << std::endl;
 #endif
 
-	xpgpMtx.lock();   /***** LOCK *****/
+	sslMtx.lock();   /***** LOCK *****/
 
 	/* get the cert first */
-	xpgpcert *cert = NULL;
-	xpgpcert *own = mOwnCert;
+	sslcert *cert = NULL;
+	sslcert *own = mOwnCert;
 	bool valid = false;
 
 	if (locked_FindCert(id, &cert))
 	{
-		/* ADD IN LATER */
-		//if (cert->trustLvl > TRUST_SIGN_BASIC)
-		//{
-#ifdef AUTHXPGP_DEBUG
-		//	std::cerr << "AuthXPGP::AuthCertificate() Already Authed: " << id;
-		//	std::cerr << std::endl;
-#endif
-		//}
-
-	  	if (0 < validateCertificateIsSignedByKey(
-				cert->certificate, own->certificate))
-		{
-#ifdef AUTHXPGP_DEBUG
-			std::cerr << "AuthXPGP::AuthCertificate() Signed Already: " << id;
-			std::cerr << std::endl;
-#endif
-			cert->ownsign=true;
-		}
-		else
-		{
-#ifdef AUTHXPGP_DEBUG
-			std::cerr << "AuthXPGP::AuthCertificate() Signing Cert: " << id;
-			std::cerr << std::endl;
-#endif
-			/* sign certificate */
-			XPGP_sign_certificate(pgp_keyring, cert->certificate, own->certificate);
-
-			/* reevaluate the auth of the xpgp */
-			cert->trustLvl = XPGP_auth_certificate(pgp_keyring, cert->certificate);
-			cert->ownsign = true;
-
-			mToSaveCerts = true;
-		}
-		valid = true;
+		cert->authed=true;
+		mToSaveCerts = true;
 	}
 
-	xpgpMtx.unlock(); /**** UNLOCK ****/
+	sslMtx.unlock(); /**** UNLOCK ****/
 	return valid;
 }
 
 
 	/* Sign / Encrypt / Verify Data (TODO) */
 	
-bool AuthXPGP::SignData(std::string input, std::string &sign)
+bool AuthSSL::SignData(std::string input, std::string &sign)
 {
 	return SignData(input.c_str(), input.length(), sign);
 }
 
-bool AuthXPGP::SignData(const void *data, const uint32_t len, std::string &sign)
+bool AuthSSL::SignData(const void *data, const uint32_t len, std::string &sign)
 {
 
-	RsStackMutex stack(xpgpMtx);   /***** STACK LOCK MUTEX *****/
+	RsStackMutex stack(sslMtx);   /***** STACK LOCK MUTEX *****/
 
 	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
 	unsigned int signlen = EVP_PKEY_size(pkey);
@@ -887,16 +746,16 @@ bool AuthXPGP::SignData(const void *data, const uint32_t len, std::string &sign)
 }
 
 	
-bool AuthXPGP::SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen)
+bool AuthSSL::SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen)
 {
 	return SignDataBin(input.c_str(), input.length(), sign, signlen);
 }
 
-bool AuthXPGP::SignDataBin(const void *data, const uint32_t len, 
+bool AuthSSL::SignDataBin(const void *data, const uint32_t len, 
 			unsigned char *sign, unsigned int *signlen)
 {
 
-	RsStackMutex stack(xpgpMtx);   /***** STACK LOCK MUTEX *****/
+	RsStackMutex stack(sslMtx);   /***** STACK LOCK MUTEX *****/
 
 	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
 	unsigned int req_signlen = EVP_PKEY_size(pkey);
@@ -939,15 +798,15 @@ bool AuthXPGP::SignDataBin(const void *data, const uint32_t len,
 }
 
 
-bool AuthXPGP::VerifySignBin(std::string pid, 
+bool AuthSSL::VerifySignBin(std::string pid, 
 			const void *data, const uint32_t len,
                        	unsigned char *sign, unsigned int signlen)
 {
-	RsStackMutex stack(xpgpMtx);   /***** STACK LOCK MUTEX *****/
+	RsStackMutex stack(sslMtx);   /***** STACK LOCK MUTEX *****/
 
 	/* find the peer */
 	
-	xpgpcert *peer;
+	sslcert *peer;
 	if (pid == mOwnId)
 	{
 		peer = mOwnCert;
@@ -998,9 +857,9 @@ bool AuthXPGP::VerifySignBin(std::string pid,
 
 
 	/**** AUX Functions ****/
-bool AuthXPGP::locked_FindCert(std::string id, xpgpcert **cert)
+bool AuthSSL::locked_FindCert(std::string id, sslcert **cert)
 {
-	std::map<std::string, xpgpcert *>::iterator it;
+	std::map<std::string, sslcert *>::iterator it;
 
 	if (mCerts.end() != (it = mCerts.find(id)))
 	{
@@ -1011,21 +870,21 @@ bool AuthXPGP::locked_FindCert(std::string id, xpgpcert **cert)
 }
 
 
-XPGP *AuthXPGP::loadXPGPFromFile(std::string fname, std::string hash)
+X509 *AuthSSL::loadX509FromFile(std::string fname, std::string hash)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::LoadXPGPFromFile()";
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::LoadX509FromFile()";
 	std::cerr << std::endl;
 #endif
 
 	// if there is a hash - check that the file matches it before loading.
-	XPGP *pc = NULL;
+	X509 *pc = NULL;
 	FILE *pcertfp = fopen(fname.c_str(), "rb");
 
 	// load certificates from file.
 	if (pcertfp == NULL)
 	{
-#ifdef AUTHXPGP_DEBUG
+#ifdef AUTHSSL_DEBUG
 		std::cerr << "sslroot::loadcertificate() Bad File: " << fname;
 		std::cerr << " Cannot be Hashed!" << std::endl;
 #endif
@@ -1039,7 +898,7 @@ XPGP *AuthXPGP::loadXPGPFromFile(std::string fname, std::string hash)
 	 *
 	 * If however it has been transported by email....
 	 * Then we might have to correct the data (strip out crap)
-	 * from the configuration at the end. (XPGP load should work!)
+	 * from the configuration at the end. (X509 load should work!)
 	 */
 
 	if (hash.length() > 1)
@@ -1053,7 +912,7 @@ XPGP *AuthXPGP::loadXPGPFromFile(std::string fname, std::string hash)
 		char inall[maxsize];
 		if (0 == (rbytes = fread(inall, 1, maxsize, pcertfp)))
 		{
-#ifdef AUTHXPGP_DEBUG
+#ifdef AUTHSSL_DEBUG
 			std::cerr << "Error Reading Peer Record!" << std::endl;
 #endif
 			return NULL;
@@ -1083,7 +942,7 @@ XPGP *AuthXPGP::loadXPGPFromFile(std::string fname, std::string hash)
 		bool same = true;
 		if (signlen != hash.length())
 		{
-#ifdef AUTHXPGP_DEBUG
+#ifdef AUTHSSL_DEBUG
 				std::cerr << "Different Length Signatures... ";
 				std::cerr << "Cannot Load Certificate!" << std::endl;
 #endif
@@ -1096,7 +955,7 @@ XPGP *AuthXPGP::loadXPGPFromFile(std::string fname, std::string hash)
 			if (signature[i] != (unsigned char) hash[i])
 			{
 				same = false;
-#ifdef AUTHXPGP_DEBUG
+#ifdef AUTHSSL_DEBUG
 				std::cerr << "Invalid Signature... ";
 				std::cerr << "Cannot Load Certificate!" << std::endl;
 #endif
@@ -1104,26 +963,26 @@ XPGP *AuthXPGP::loadXPGPFromFile(std::string fname, std::string hash)
 				return NULL;
 			}
 		}
-#ifdef AUTHXPGP_DEBUG
+#ifdef AUTHSSL_DEBUG
 		std::cerr << "Verified Signature for: " << fname;
 		std::cerr << std::endl;
 #endif
 	}
 	else
 	{
-#ifdef AUTHXPGP_DEBUG
+#ifdef AUTHSSL_DEBUG
 		std::cerr << "Not checking cert signature" << std::endl;
 #endif
 	}
 
 	fseek(pcertfp, 0, SEEK_SET); /* rewind */
-	pc = PEM_read_XPGP(pcertfp, NULL, NULL, NULL);
+	pc = PEM_read_X509(pcertfp, NULL, NULL, NULL);
 	fclose(pcertfp);
 
 	if (pc != NULL)
 	{
 		// read a certificate.
-#ifdef AUTHXPGP_DEBUG
+#ifdef AUTHSSL_DEBUG
 		std::cerr << "Loaded Certificate: " << pc -> name << std::endl;
 #endif
 	}
@@ -1138,10 +997,10 @@ XPGP *AuthXPGP::loadXPGPFromFile(std::string fname, std::string hash)
 	return pc;
 }
 
-bool  	AuthXPGP::saveXPGPToFile(XPGP *xpgp, std::string fname, std::string &hash)
+bool  	AuthSSL::saveX509ToFile(X509 *x509, std::string fname, std::string &hash)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::saveXPGPToFile()";
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::saveX509ToFile()";
 	std::cerr << std::endl;
 #endif
 
@@ -1149,17 +1008,17 @@ bool  	AuthXPGP::saveXPGPToFile(XPGP *xpgp, std::string fname, std::string &hash
 	FILE *setfp = fopen(fname.c_str(), "wb");
 	if (setfp == NULL)
 	{
-#ifdef AUTHXPGP_DEBUG
+#ifdef AUTHSSL_DEBUG
 		std::cerr << "sslroot::savecertificate() Bad File: " << fname;
 		std::cerr << " Cannot be Written!" << std::endl;
 #endif
 		return false;
 	}
 
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "Writing out Cert...:" << xpgp->name << std::endl;
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "Writing out Cert...:" << x509->name << std::endl;
 #endif
-	PEM_write_XPGP(setfp, xpgp);
+	PEM_write_X509(setfp, x509);
 
 	fclose(setfp);
 
@@ -1167,7 +1026,7 @@ bool  	AuthXPGP::saveXPGPToFile(XPGP *xpgp, std::string fname, std::string &hash
 	setfp = fopen(fname.c_str(), "rb");
 	if (setfp == NULL)
 	{
-#ifdef AUTHXPGP_DEBUG
+#ifdef AUTHSSL_DEBUG
 		std::cerr << "sslroot::savecertificate() Bad File: " << fname;
 		std::cerr << " Opened for ReHash!" << std::endl;
 #endif
@@ -1182,12 +1041,12 @@ bool  	AuthXPGP::saveXPGPToFile(XPGP *xpgp, std::string fname, std::string &hash
 	char inall[maxsize];
 	if (0 == (rbytes = fread(inall, 1, maxsize, setfp)))
 	{
-#ifdef AUTHXPGP_DEBUG
+#ifdef AUTHSSL_DEBUG
 		std::cerr << "Error Writing Peer Record!" << std::endl;
 #endif
 		return -1;
 	}
-#ifdef AUTHXPGP_DEBUG
+#ifdef AUTHSSL_DEBUG
 	std::cerr << "Read " << rbytes << std::endl;
 #endif
 
@@ -1208,23 +1067,23 @@ bool  	AuthXPGP::saveXPGPToFile(XPGP *xpgp, std::string fname, std::string &hash
 		std::cerr << "EVP_SignFinal Failure!" << std::endl;
 	}
 
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "Saved Cert: " << xpgp->name;
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "Saved Cert: " << x509->name;
 	std::cerr << std::endl;
 #endif
 
-#ifdef AUTHXPGP_DEBUG
+#ifdef AUTHSSL_DEBUG
 	std::cerr << "Cert + Setting Signature is(" << signlen << "): ";
 #endif
 	std::string signstr;
 	for(uint32_t i = 0; i < signlen; i++) 
 	{
-#ifdef AUTHXPGP_DEBUG
+#ifdef AUTHSSL_DEBUG
 		fprintf(stderr, "%02x", signature[i]);
 #endif
 		signstr += signature[i];
 	}
-#ifdef AUTHXPGP_DEBUG
+#ifdef AUTHSSL_DEBUG
 	std::cerr << std::endl;
 #endif
 
@@ -1237,10 +1096,10 @@ bool  	AuthXPGP::saveXPGPToFile(XPGP *xpgp, std::string fname, std::string &hash
 }
 
 
-XPGP *AuthXPGP::loadXPGPFromPEM(std::string pem)
+X509 *AuthSSL::loadX509FromPEM(std::string pem)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::LoadXPGPFromPEM()";
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::LoadX509FromPEM()";
 	std::cerr << std::endl;
 #endif
 
@@ -1249,7 +1108,7 @@ XPGP *AuthXPGP::loadXPGPFromPEM(std::string pem)
 
 	BIO *bp = BIO_new_mem_buf(certstr, -1);
 
-	XPGP *pc = PEM_read_bio_XPGP(bp, NULL, NULL, NULL);
+	X509 *pc = PEM_read_bio_X509(bp, NULL, NULL, NULL);
 
 	BIO_free(bp);
 	free(certstr);
@@ -1257,28 +1116,28 @@ XPGP *AuthXPGP::loadXPGPFromPEM(std::string pem)
 	return pc;
 }
 
-XPGP *AuthXPGP::loadXPGPFromDER(const uint8_t *ptr, uint32_t len)
+X509 *AuthSSL::loadX509FromDER(const uint8_t *ptr, uint32_t len)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::LoadXPGPFromDER()";
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::LoadX509FromDER()";
 	std::cerr << std::endl;
 #endif
 
-        XPGP *tmp = NULL;
+        X509 *tmp = NULL;
         unsigned char **certptr = (unsigned char **) &ptr;
-        XPGP *xpgp = d2i_XPGP(&tmp, certptr, len);
+        X509 *x509 = d2i_X509(&tmp, certptr, len);
 
-	return xpgp;
+	return x509;
 }
 
-bool AuthXPGP::saveXPGPToDER(XPGP *xpgp, uint8_t **ptr, uint32_t *len)
+bool AuthSSL::saveX509ToDER(X509 *x509, uint8_t **ptr, uint32_t *len)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::saveXPGPToDER()";
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::saveX509ToDER()";
 	std::cerr << std::endl;
 #endif
 
-	int certlen = i2d_XPGP(xpgp, (unsigned char **) ptr);
+	int certlen = i2d_X509(x509, (unsigned char **) ptr);
 	if (certlen > 0)
 	{
 		*len = certlen;
@@ -1295,41 +1154,41 @@ bool AuthXPGP::saveXPGPToDER(XPGP *xpgp, uint8_t **ptr, uint32_t *len)
 
 
 
-bool AuthXPGP::ProcessXPGP(XPGP *xpgp, std::string &id)
+bool AuthSSL::ProcessX509(X509 *x509, std::string &id)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::ProcessXPGP()";
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::ProcessX509()";
 	std::cerr << std::endl;
 #endif
 
 	/* extract id */
-	std::string xpgpid;
+	std::string xid;
 
-	if (!XPGP_check_valid_certificate(xpgp))
+	if (!X509_check_valid_certificate(x509))
 	{
 		/* bad certificate */
-		XPGP_free(xpgp);
+		X509_free(x509);
 		return false;
 	}
 		
-	if (!getXPGPid(xpgp, xpgpid))
+	if (!getX509id(x509, xid))
 	{
 		/* bad certificate */
-		XPGP_free(xpgp);
+		X509_free(x509);
 		return false;
 	}
 
-	xpgpcert *cert = NULL;
+	sslcert *cert = NULL;
 	bool duplicate = false;
 
-	xpgpMtx.lock();   /***** LOCK *****/
+	sslMtx.lock();   /***** LOCK *****/
 
-	if (xpgpid == mOwnId)
+	if (xid == mOwnId)
 	{
 		cert = mOwnCert;
 		duplicate = true;
 	}
-	else if (locked_FindCert(xpgpid, &cert))
+	else if (locked_FindCert(xid, &cert))
 	{
 		duplicate = true;
 	}
@@ -1338,110 +1197,76 @@ bool AuthXPGP::ProcessXPGP(XPGP *xpgp, std::string &id)
 	{
 		/* have a duplicate */
 		/* check that they are exact */
-		if (0 != XPGP_cmp(cert->certificate, xpgp))
+		if (0 != X509_cmp(cert->certificate, x509))
 		{
 			/* MAJOR ERROR */
-			XPGP_free(xpgp);
-			xpgpMtx.unlock(); /**** UNLOCK ****/
+			X509_free(x509);
+			sslMtx.unlock(); /**** UNLOCK ****/
 			return false;
 		}
 
-		/* transfer new signatures */
-		XPGP_copy_known_signatures(pgp_keyring, cert->certificate, xpgp);
-		XPGP_free(xpgp);
+		X509_free(x509);
 
 		/* we accepted it! */
-		id = xpgpid;
+		id = xid;
 
-		/* update signers */
-		cert->signers = getXPGPsigners(cert->certificate);
-
-		xpgpMtx.unlock(); /**** UNLOCK ****/
+		sslMtx.unlock(); /**** UNLOCK ****/
 		return true;
 	}
 
-	xpgpMtx.unlock(); /**** UNLOCK ****/
+	sslMtx.unlock(); /**** UNLOCK ****/
 
 	/* if we get here -> its a new certificate */
-	cert = new xpgpcert(xpgp, xpgpid);
+	cert = new sslcert(x509, xid);
 
-	xpgpMtx.lock();   /***** LOCK *****/
+	sslMtx.lock();   /***** LOCK *****/
 
-	/* add to keyring */
-	XPGP_add_certificate(pgp_keyring, cert->certificate);
-	mCerts[xpgpid] = cert;	
-
-        cert -> trustLvl = XPGP_auth_certificate(pgp_keyring, cert->certificate);
-	if (cert -> trustLvl == TRUST_SIGN_TRSTED)
-	{
-		cert->trusted = true;
-		cert->ownsign = true;
-	}
-	else if (cert->trustLvl == TRUST_SIGN_OWN)
-	{
-		cert->ownsign = true;
-	}
-
-	cert->signers = getXPGPsigners(xpgp);
+	mCerts[xid] = cert;	
 
 	/* resave if new certificate */
 	mToSaveCerts = true;
-	xpgpMtx.unlock(); /**** UNLOCK ****/
+	sslMtx.unlock(); /**** UNLOCK ****/
 
 #if 0
 	/******************** notify of new Cert **************************/
 	pqiNotify *pqinotify = getPqiNotify();
 	if (pqinotify)
 	{
-		pqinotify->AddFeedItem(RS_FEED_ITEM_PEER_NEW, xpgpid, "","");
+		pqinotify->AddFeedItem(RS_FEED_ITEM_PEER_NEW, xid, "","");
 	}
 	/******************** notify of new Cert **************************/
 #endif
 
-	id = xpgpid;
+	id = xid;
 
 	return true;
 }
 
 
-bool getXPGPid(XPGP *xpgp, std::string &xpgpid)
+bool getX509id(X509 *x509, std::string &xid)
 {
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::getXPGPid()";
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::getX509id()";
 	std::cerr << std::endl;
 #endif
 
-	xpgpid = "";
-	if (xpgp == NULL)
+	xid = "";
+	if (x509 == NULL)
 	{
-#ifdef XPGP_DEBUG
-		std::cerr << "AuthXPGP::getXPGPid() NULL pointer";
+#ifdef X509_DEBUG
+		std::cerr << "AuthSSL::getX509id() NULL pointer";
 		std::cerr << std::endl;
 #endif
 		return false;
 	}
-
-	// get the first signature....
-	if (sk_XPGP_SIGNATURE_num(xpgp->signs) < 1)
-	{
-#ifdef XPGP_DEBUG
-		std::cerr << "AuthXPGP::getXPGPid() ERROR: No Signature";
-		std::cerr << std::endl;
-#endif
-		return false;
-	}
-	XPGP_SIGNATURE *xpgpsign = sk_XPGP_SIGNATURE_value(xpgp->signs, 0);
-
-	// Validate that it is a self signature.
-	// (Already Done - but not in this function)
 
 	// get the signature from the cert, and copy to the array.
-	ASN1_BIT_STRING *signature = xpgpsign->signature;
+	ASN1_BIT_STRING *signature = x509->signature;
 	int signlen = ASN1_STRING_length(signature);
 	if (signlen < CERTSIGNLEN)
 	{
-#ifdef XPGP_DEBUG
-		std::cerr << "AuthXPGP::getXPGPid() ERROR: Short Signature";
+#ifdef X509_DEBUG
+		std::cerr << "AuthSSL::getX509id() ERROR: Short Signature";
 		std::cerr << std::endl;
 #endif
 		return false;
@@ -1456,66 +1281,66 @@ bool getXPGPid(XPGP *xpgp, std::string &xpgpid)
 		id << std::hex << std::setw(2) << std::setfill('0') 
 			<< (uint16_t) (((uint8_t *) (signdata))[i]);
 	}
-	xpgpid = id.str();
+	xid = id.str();
 	return true;
 }
 
 
 
 	/* validate + get id */
-bool    AuthXPGP::ValidateCertificateXPGP(XPGP *xpgp, std::string &peerId)
+bool    AuthSSL::ValidateCertificateX509(X509 *x509, std::string &peerId)
 {
 	/* check self signed */
-	if (!XPGP_check_valid_certificate(xpgp))
+	if (!X509_check_valid_certificate(x509))
 	{
 		/* bad certificate */
 		return false;
 	}
 
-	return getXPGPid(xpgp, peerId);
+	return getX509id(x509, peerId);
 }
 
 /* store for discovery */
-bool    AuthXPGP::FailedCertificateXPGP(XPGP *xpgp, bool incoming)
+bool    AuthSSL::FailedCertificateX509(X509 *x509, bool incoming)
 {
 	std::string id;
-	return ProcessXPGP(xpgp, id);
+	return ProcessX509(x509, id);
 }
 
 /* check that they are exact match */
-bool    AuthXPGP::CheckCertificateXPGP(std::string xpgpId, XPGP *xpgp)
+bool    AuthSSL::CheckCertificateX509(std::string x509Id, X509 *x509)
 {
-	xpgpMtx.lock();   /***** LOCK *****/
+	sslMtx.lock();   /***** LOCK *****/
 
-	xpgpcert *cert = NULL;
-	if (!locked_FindCert(xpgpId, &cert))
+	sslcert *cert = NULL;
+	if (!locked_FindCert(x509Id, &cert))
 	{
 		/* not there -> error */
-		XPGP_free(xpgp);
+		X509_free(x509);
 
-		xpgpMtx.unlock(); /**** UNLOCK ****/
+		sslMtx.unlock(); /**** UNLOCK ****/
 		return false;
 	}
 	else
 	{
 		/* have a duplicate */
 		/* check that they are exact */
-		if (0 != XPGP_cmp(cert->certificate, xpgp))
+		if (0 != X509_cmp(cert->certificate, x509))
 		{
 			/* MAJOR ERROR */
-			XPGP_free(xpgp);
-			xpgpMtx.unlock(); /**** UNLOCK ****/
+			X509_free(x509);
+			sslMtx.unlock(); /**** UNLOCK ****/
 			return false;
 		}
 
 		/* transfer new signatures */
-		XPGP_copy_known_signatures(pgp_keyring, cert->certificate, xpgp);
-		XPGP_free(xpgp);
+		X509_copy_known_signatures(pgp_keyring, cert->certificate, x509);
+		X509_free(x509);
 
 		/* update signers */
-		cert->signers = getXPGPsigners(cert->certificate);
+		cert->signers = getX509signers(cert->certificate);
 
-		xpgpMtx.unlock(); /**** UNLOCK ****/
+		sslMtx.unlock(); /**** UNLOCK ****/
 		return true;
 	}
 }
@@ -1536,19 +1361,19 @@ int pem_passwd_cb(char *buf, int size, int rwflag, void *password)
 	return(strlen(buf));
 }
 
-// Not dependent on sslroot. load, and detroys the XPGP memory.
+// Not dependent on sslroot. load, and detroys the X509 memory.
 
-int	LoadCheckXPGPandGetName(const char *cert_file, std::string &userName, std::string &userId)
+int	LoadCheckX509andGetName(const char *cert_file, std::string &userName, std::string &userId)
 {
-	/* This function loads the XPGP certificate from the file, 
+	/* This function loads the X509 certificate from the file, 
 	 * and checks the certificate 
 	 */
 
 	FILE *tmpfp = fopen(cert_file, "r");
 	if (tmpfp == NULL)
 	{
-#ifdef XPGP_DEBUG
-		std::cerr << "sslroot::LoadCheckAndGetXPGPName()";
+#ifdef X509_DEBUG
+		std::cerr << "sslroot::LoadCheckAndGetX509Name()";
 		std::cerr << " Failed to open Certificate File:" << cert_file;
 		std::cerr << std::endl;
 #endif
@@ -1556,30 +1381,30 @@ int	LoadCheckXPGPandGetName(const char *cert_file, std::string &userName, std::s
 	}
 
 	// get xPGP certificate.
-	XPGP *xpgp = PEM_read_XPGP(tmpfp, NULL, NULL, NULL);
+	X509 *x509 = PEM_read_X509(tmpfp, NULL, NULL, NULL);
 	fclose(tmpfp);
 
 	// check the certificate.
 	bool valid = false;
-	if (xpgp)
+	if (x509)
 	{
-		valid = XPGP_check_valid_certificate(xpgp);
+		valid = X509_check_valid_certificate(x509);
 	}
 
 	if (valid)
 	{
 		// extract the name.
-		userName = getX509CNString(xpgp->subject->subject);
+		userName = getX509CNString(x509->subject->subject);
 	}
 
-	if (!getXPGPid(xpgp, userId))
+	if (!getX509id(x509, userId))
 	{
 		valid = false;
 	}
 
-	std::cout << getXPGPInfo(xpgp) << std::endl ;
+	std::cout << getX509Info(x509) << std::endl ;
 	// clean up.
-	XPGP_free(xpgp);
+	X509_free(x509);
 
 	if (valid)
 	{
@@ -1701,69 +1526,32 @@ std::string getX509CountryString(X509_NAME *name)
 }
 
 
-std::string getXPGPInfo(XPGP *cert)
+std::string getX509Info(X509 *cert)
 {
 	std::stringstream out;
 	long l;
 	int i,j;
 
-	out << "XPGP Certificate:" << std::endl;
-	l=XPGP_get_version(cert);
+	out << "X509 Certificate:" << std::endl;
+	l=X509_get_version(cert);
 	out << "     Version: " << l+1 << "(0x" << l << ")" << std::endl;
 	out << "     Subject: " << std::endl;
 	out << "  " << getX509NameString(cert -> subject -> subject);
 	out << std::endl;
 	out << std::endl;
 	out << "     Signatures:" << std::endl;
-
-	for(i = 0; i < sk_XPGP_SIGNATURE_num(cert->signs); i++)
-	{
-		out << "Sign[" << i << "] -> [";
-
-		XPGP_SIGNATURE *sig = sk_XPGP_SIGNATURE_value(cert->signs,i);
-	        ASN1_BIT_STRING *signature = sig->signature;
-	        int signlen = ASN1_STRING_length(signature);
-	        unsigned char *signdata = ASN1_STRING_data(signature);
-
-		/* only show the first 8 bytes */
-		if (signlen > 8)
-			signlen = 8;
-		for(j=0;j<signlen;j++)
-		{
-			out << std::hex << std::setw(2) << (int) (signdata[j]);
-			if ((j+1)%16==0)
-			{
-				out << std::endl;
-			}
-			else
-			{
-				out << ":";
-			}
-		}
-		out << "] by:";
-		out << std::endl;
-		out << getX509NameString(sig->issuer);
-		out << std::endl;
-		out << std::endl;
-	}
-
 	return out.str();
 }
 
 
 
-std::string getXPGPAuthCode(XPGP *xpgp)
+std::string getX509AuthCode(X509 *x509)
 {
 	/* get the self signature -> the first signature */
 
 	std::stringstream out;
-	if (1 >  sk_XPGP_SIGNATURE_num(xpgp->signs))
-	{
-		out.str();
-	}
 
-	XPGP_SIGNATURE *sig = sk_XPGP_SIGNATURE_value(xpgp->signs,0);
-	ASN1_BIT_STRING *signature = sig->signature;
+	ASN1_BIT_STRING *signature = x509->signature;
 	int signlen = ASN1_STRING_length(signature);
 	unsigned char *signdata = ASN1_STRING_data(signature);
 
@@ -1780,27 +1568,11 @@ std::string getXPGPAuthCode(XPGP *xpgp)
 	return out.str();
 }
 
-std::list<std::string> getXPGPsigners(XPGP *cert)
-{
-	std::list<std::string> signers;
-	int i;
-
-	for(i = 0; i < sk_XPGP_SIGNATURE_num(cert->signs); i++)
-	{
-		XPGP_SIGNATURE *sig = sk_XPGP_SIGNATURE_value(cert->signs,i);
-		std::string str = getX509CNString(sig->issuer);
-		signers.push_back(str);
-#ifdef XPGP_DEBUG
-		std::cerr << "XPGPsigners(" << i << ")" << str << std::endl;
-#endif
-	}
-	return signers;
-}
-
 // other fns
-std::string getCertName(XPGP *xpgp)
+#if 0
+std::string getCertName(X509 *x509)
 {
-	std::string name = xpgp->name;
+	std::string name = x509->name;
 	// strip out bad chars.
 	for(int i = 0; i < (signed) name.length(); i++)
 	{
@@ -1812,6 +1584,8 @@ std::string getCertName(XPGP *xpgp)
 	}
 	return name;
 }
+
+#endif
 	
 
 /********** SSL ERROR STUFF ******************************************/
@@ -1879,45 +1653,45 @@ int printSSLError(SSL *ssl, int retval, int err, unsigned long err2,
  *
  */
 
-bool	AuthXPGP::FinalSaveCertificates()
+bool	AuthSSL::FinalSaveCertificates()
 {
 	CheckSaveCertificates();
 
-	RsStackMutex stack(xpgpMtx); /***** LOCK *****/
+	RsStackMutex stack(sslMtx); /***** LOCK *****/
 	mConfigSaveActive = false;
 	return true;
 }
 
-bool	AuthXPGP::CheckSaveCertificates()
+bool	AuthSSL::CheckSaveCertificates()
 {
-	xpgpMtx.lock();   /***** LOCK *****/
+	sslMtx.lock();   /***** LOCK *****/
 
 	if ((mConfigSaveActive) && (mToSaveCerts))
 	{
 		mToSaveCerts = false;
-		xpgpMtx.unlock(); /**** UNLOCK ****/
+		sslMtx.unlock(); /**** UNLOCK ****/
 
 		saveCertificates();
 		return true;
 	}
 
-	xpgpMtx.unlock(); /**** UNLOCK ****/
+	sslMtx.unlock(); /**** UNLOCK ****/
 
 	return false;
 }
 
-bool    AuthXPGP::saveCertificates()
+bool    AuthSSL::saveCertificates()
 {
 	// construct file name.
 	// create the file in memory - hash + sign.
 	// write out data to a file.
 	
-	xpgpMtx.lock();   /***** LOCK *****/
+	sslMtx.lock();   /***** LOCK *****/
 
 	std::string configfile = mCertConfigFile;
 	std::string neighdir = mNeighDir;
 
-	xpgpMtx.unlock(); /**** UNLOCK ****/
+	sslMtx.unlock(); /**** UNLOCK ****/
 
 	/* add on the slash */
 	if (neighdir != "")
@@ -1931,27 +1705,27 @@ bool    AuthXPGP::saveCertificates()
 	std::string empty("");
 	unsigned int i;
 
-#ifdef AUTHXPGP_DEBUG
-	std::cerr << "AuthXPGP::saveCertificates()";
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::saveCertificates()";
 	std::cerr << std::endl;
 #endif
-	xpgpMtx.lock();   /***** LOCK *****/
+	sslMtx.lock();   /***** LOCK *****/
 
 	/* iterate through both lists */
-	std::map<std::string, xpgpcert *>::iterator it;
+	std::map<std::string, sslcert *>::iterator it;
 
 	for(it = mCerts.begin(); it != mCerts.end(); it++)
 	{
 		if (it->second->trustLvl > TRUST_SIGN_BASIC)
 		{
-			XPGP *xpgp = it->second->certificate;
+			X509 *x509 = it->second->certificate;
 			std::string hash;
-			std::string neighfile = neighdir + getCertName(xpgp) + ".pqi";
+			std::string neighfile = neighdir + getCertName(x509) + ".pqi";
 
-			if (saveXPGPToFile(xpgp, neighfile, hash))
+			if (saveX509ToFile(x509, neighfile, hash))
 			{
 				conftxt += "CERT ";
-				conftxt += getCertName(xpgp);
+				conftxt += getCertName(x509);
 				conftxt += "\n";
 				conftxt += hash;
 				conftxt += "\n";
@@ -1973,14 +1747,14 @@ bool    AuthXPGP::saveCertificates()
 
 	if (0 == EVP_SignInit_ex(mdctx, EVP_sha1(), NULL))
 	{
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 		std::cerr << "EVP_SignInit Failure!" << std::endl;
 #endif
 	}
 
 	if (0 == EVP_SignUpdate(mdctx, conftxt.c_str(), conftxt.length()))
 	{
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 		std::cerr << "EVP_SignUpdate Failure!" << std::endl;
 #endif
 	}
@@ -1988,22 +1762,22 @@ bool    AuthXPGP::saveCertificates()
 
 	if (0 == EVP_SignFinal(mdctx, signature, &signlen, pkey))
 	{
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 		std::cerr << "EVP_SignFinal Failure!" << std::endl;
 #endif
 	}
 
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 	std::cerr << "Conf Signature is(" << signlen << "): ";
 #endif
 	for(i = 0; i < signlen; i++) 
 	{
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 		fprintf(stderr, "%02x", signature[i]);
 #endif
 		conftxt += signature[i];
 	}
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 	std::cerr << std::endl;
 #endif
 
@@ -2011,7 +1785,7 @@ bool    AuthXPGP::saveCertificates()
 	int wrec;
 	if (1 != (wrec = fwrite(conftxt.c_str(), conftxt.length(), 1, cfd)))
 	{
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 		std::cerr << "Error writing: " << configfile << std::endl;
 		std::cerr << "Wrote: " << wrec << "/" << 1 << " Records" << std::endl;
 #endif
@@ -2020,7 +1794,7 @@ bool    AuthXPGP::saveCertificates()
 	EVP_MD_CTX_destroy(mdctx);
 	fclose(cfd);
 
-	xpgpMtx.unlock(); /**** UNLOCK ****/
+	sslMtx.unlock(); /**** UNLOCK ****/
 
 	return true;
 }
@@ -2038,7 +1812,7 @@ bool    AuthXPGP::saveCertificates()
  *
  */
 
-bool    AuthXPGP::loadCertificates()
+bool    AuthSSL::loadCertificates()
 {
 	bool oldFormat;
 	std::map<std::string, std::string> keyValueMap;
@@ -2047,12 +1821,12 @@ bool    AuthXPGP::loadCertificates()
 }
 
 /*********************
- * NOTE no need to Lock here. locking handled in ProcessXPGP()
+ * NOTE no need to Lock here. locking handled in ProcessX509()
  */
 static const uint32_t OPT_LEN = 16;
 static const uint32_t VAL_LEN = 1000;
 
-bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::string> &keyValueMap)
+bool    AuthSSL::loadCertificates(bool &oldFormat, std::map<std::string, std::string> &keyValueMap)
 {
 
 	/*******************************************
@@ -2064,12 +1838,12 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 	 * write out data to a file.
 	 *****************************************/
 
-	xpgpMtx.lock();   /***** LOCK *****/
+	sslMtx.lock();   /***** LOCK *****/
 
 	std::string configfile = mCertConfigFile;
 	std::string neighdir = mNeighDir;
 
-	xpgpMtx.unlock(); /**** UNLOCK ****/
+	sslMtx.unlock(); /**** UNLOCK ****/
 
 	/* add on the slash */
 	if (neighdir != "")
@@ -2090,7 +1864,7 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 	FILE *cfd = fopen(configfile.c_str(), "rb");
 	if (cfd == NULL)
 	{
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 		std::cerr << "Unable to Load Configuration File!" << std::endl;
 		std::cerr << "File: " << configfile << std::endl;
 #endif
@@ -2128,7 +1902,7 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 		{
 			if (EOF == (c = fgetc(cfd)))
 			{
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 				std::cerr << "Error Reading Signature of: ";
 				std::cerr << fname;
 				std::cerr << std::endl;
@@ -2142,12 +1916,12 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 		}
 		if ('\n' != (c = fgetc(cfd)))
 		{
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 			std::cerr << "Warning Mising seperator" << std::endl;
 #endif
 		}
 
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 		std::cerr << "Read fname:" << fname << std::endl;
 		std::cerr << "Signature:" << std::endl;
 		for(i = 0; i < signlen; i++) 
@@ -2191,7 +1965,7 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 		{
 			if (EOF == (c = fgetc(cfd)))
 			{
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 				std::cerr << "Error Reading Value of: ";
 				std::cerr << opt;
 				std::cerr << std::endl;
@@ -2209,12 +1983,12 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 		}
 		if ('\n' != (c = fgetc(cfd)))
 		{
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 			std::cerr << "Warning Mising seperator" << std::endl;
 #endif
 		}
 
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 		std::cerr << "Read OPT:" << opt;
 		std::cerr << " Val:" << val << std::endl;
 #endif
@@ -2244,7 +2018,7 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 			c = fgetc(cfd);
 			if (c == EOF)
 			{
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 				std::cerr << "Error Reading Conf Signature:";
 				std::cerr << std::endl;
 #endif
@@ -2255,7 +2029,7 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 		}
 	}
 
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 	std::cerr << "Configuration File Signature: " << std::endl;
 	for(i = 0; i < signlen; i++) 
 	{
@@ -2276,21 +2050,21 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 
 	if (0 == EVP_SignInit(mdctx, EVP_sha1()))
 	{
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 #endif
 		std::cerr << "EVP_SignInit Failure!" << std::endl;
 	}
 
 	if (0 == EVP_SignUpdate(mdctx, conftxt.c_str(), conftxt.length()))
 	{
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 		std::cerr << "EVP_SignUpdate Failure!" << std::endl;
 #endif
 	}
 
 	if (0 == EVP_SignFinal(mdctx, conf_signature, &signlen, pkey))
 	{
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 		std::cerr << "EVP_SignFinal Failure!" << std::endl;
 #endif
 	}
@@ -2298,7 +2072,7 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 	EVP_MD_CTX_destroy(mdctx);
 	fclose(cfd);
 
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 	std::cerr << "Recalced File Signature: " << std::endl;
 	for(i = 0; i < signlen; i++) 
 	{
@@ -2318,7 +2092,7 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 
 	if (same == false)
 	{
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 		std::cerr << "ERROR VALIDATING CONFIGURATION!" << std::endl;
 		std::cerr << "PLEASE FIX!" << std::endl;
 #endif
@@ -2330,13 +2104,13 @@ bool    AuthXPGP::loadCertificates(bool &oldFormat, std::map<std::string, std::s
 	for(it = fnames.begin(), it2 = hashes.begin(); it != fnames.end(); it++, it2++)
 	{
 		std::string neighfile = neighdir + (*it) + ".pqi";
-		XPGP *xpgp = loadXPGPFromFile(neighfile, (*it2));
-		if (xpgp != NULL)
+		X509 *x509 = loadX509FromFile(neighfile, (*it2));
+		if (x509 != NULL)
 		{
 			std::string id;
-			if (ProcessXPGP(xpgp, id))
+			if (ProcessX509(x509, id))
 			{
-#ifdef XPGP_DEBUG
+#ifdef X509_DEBUG
 				std::cerr << "Loaded Certificate: " << id;
 				std::cerr << std::endl;
 #endif

@@ -38,7 +38,7 @@ ifdef PQI_USE_XPGP
 	TESTOBJ += xpgp_id.o
 	TESTS   += xpgp_id
 else
-	#SSL_OBJ  = sslcert.o  
+	SSL_OBJ  = authssl.o  
 endif
 
 
