@@ -1,3 +1,37 @@
+
+Changes for v0.4.12d
+
+* Added partially completed authssl.cc, as we move towards openpgp authentication.
+* Tweaks, and removed debug statements.
+* Added missing files (extaddrfinder & p3turtle) to Makefiles.
+* Turtle tunnel management. In progress.
+* win32 compilation fix
+* Corrected potential mutex lock problem
+* Implemented turtle tunneling. 
+* Fixed the bug with copypasting certifcates.
+* Added new icon for Notify
+* Set correct icon for Deny Friend Context Menu
+* Added qmovie for InDirectoryCheck
+* Fixed libretroshare.pro for win32 compile
+* Polished drop down menus in the network tab
+* Added Feature: user can set commands fo opening shared files with some external applications. First revision. 
+* Added automatic slicing of search response packets so as to cope with streaming packet size requirements.
+* Added NULL gard in dhtPublish()
+* Added a checkbox to control the use of external servers for ip determination.
+* put back Network on the left
+* NetworkDialog: - set the info in columns about trust to be more explicit
+* NetworkDialog: - changed dark green into light green to comply with colors in the trust matrix (it's also more readable in light green)
+* NetworkDialog: - corrected trust strings that appeared in the Last Contact column
+* Changed "generate certificate" in connect friends wizard into "export my certificate..." which is more appropriate
+* Added missing file entry
+* Corrected compilation pb + pushed news feed out of release version + put back network in left most place.
+* Added server-based ip determination as a fallback to existing methods. Forced Dht publishing as soon as an external ip is known
+* Replaced doquit with normal QMessageBox
+* Fixed compilation fix for cygwin
+* Corrected the 127.0.0.1 persistency bug
+* Fixed file rename by using a common rsDirUtil function
+* Added Wizard for adding friends
+
 Changes for v0.4.12c
 
 For the sake of increased stability, internal file formats have slightly
