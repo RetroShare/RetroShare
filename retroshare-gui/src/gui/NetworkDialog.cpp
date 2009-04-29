@@ -119,18 +119,21 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 	layout->setSpacing( 0 );
 	layout->setMargin( 0 );
 
-	ui.networkTab->addTab(new TrustView(),QString("Trust matrix"));
+	ui.networkTab->addTab(new TrustView(),QString(tr("Trust matrix")));
      
     // Set Log infos
     setLogInfo(tr("RetroShare %1 started.", "e.g: RetroShare v0.x started.").arg(retroshareVersion()));
     
     setLogInfo(tr("Welcome to RetroShare."), QString::fromUtf8("blue"));
      
-    QMenu *menu = new QMenu("View");
+    QMenu *menu = new QMenu(tr("View"));
     menu->addAction(ui.actionTabsright); 
     menu->addAction(ui.actionTabswest);
     menu->addAction(ui.actionTabssouth); 
-    menu->addAction(ui.actionTabsnorth); 
+    menu->addAction(ui.actionTabsnorth);
+    menu->addSeparator();
+    menu->addAction(ui.actionTabsTriangular); 
+    menu->addAction(ui.actionTabsRounded);
     ui.viewButton->setMenu(menu);
     
 
@@ -352,16 +355,16 @@ void NetworkDialog::insertConnect()
 			item -> setText(1, tr("Denied"));
 
 		if (rsPeers->isTrustingMe(detail.id) || detail.lastConnect>0)
-			item -> setText(2,QString("Is trusting me"));
+			item -> setText(2, tr("Is trusting me"));
 		else
-			item -> setText(2,QString("Unknown"));
+			item -> setText(2, tr("Unknown"));
 
 		/* (3) Last Connect */
 		{
 			std::ostringstream out;
 			// Show anouncement if a friend never was connected.
 			if (detail.lastConnect==0 ) 
-				item -> setText(3, QString("Never seen"));
+				item -> setText(3, tr("Never seen"));
 			else 
 			{
 				// Dont Show a timestamp in RS calculate the day
@@ -609,4 +612,16 @@ void NetworkDialog::on_actionTabssouth_activated()
 void NetworkDialog::on_actionTabswest_activated()
 {
   ui.networkTab->setTabPosition(QTabWidget::West);
+}
+
+void NetworkDialog::on_actionTabsTriangular_activated()
+{
+  ui.networkTab->setTabShape(QTabWidget::Triangular);
+  ui.tabBottom->setTabShape(QTabWidget::Triangular);
+}
+
+void NetworkDialog::on_actionTabsRounded_activated()
+{
+  ui.networkTab->setTabShape(QTabWidget::Rounded);
+  ui.tabBottom->setTabShape(QTabWidget::Rounded);
 }

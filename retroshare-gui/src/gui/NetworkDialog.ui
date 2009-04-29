@@ -258,6 +258,16 @@ p, li { white-space: pre-wrap; }
     <string>Set Tabs Left</string>
    </property>
   </action>
+  <action name="actionTabsRounded" >
+   <property name="text" >
+    <string>Set Tabs Rounded</string>
+   </property>
+  </action>
+  <action name="actionTabsTriangular" >
+   <property name="text" >
+    <string>Set Tabs Triangular</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

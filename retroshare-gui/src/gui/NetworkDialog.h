@@ -74,6 +74,9 @@ private slots:
   void on_actionTabssouth_activated();
   void on_actionTabswest_activated();
 
+  void on_actionTabsRounded_activated();
+  void on_actionTabsTriangular_activated();
+
 
 private:
 
