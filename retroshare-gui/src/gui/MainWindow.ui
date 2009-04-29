@@ -1052,7 +1052,7 @@
     <string>toolBar_2</string>
    </property>
    <property name="allowedAreas" >
-    <set>Qt::LeftToolBarArea</set>
+    <set>Qt::LeftToolBarArea|Qt::RightToolBarArea</set>
    </property>
    <attribute name="toolBarArea" >
     <enum>LeftToolBarArea</enum>

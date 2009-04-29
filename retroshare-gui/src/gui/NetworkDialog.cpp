@@ -103,7 +103,7 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 	QTreeWidgetItem * headerItem = ui.connecttreeWidget->headerItem();
 	headerItem->setTextAlignment(0, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(1, Qt::AlignHCenter | Qt::AlignVCenter);
-    headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
+  headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(3, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(4, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(5, Qt::AlignHCenter | Qt::AlignVCenter);
@@ -126,6 +126,13 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     
     setLogInfo(tr("Welcome to RetroShare."), QString::fromUtf8("blue"));
      
+    QMenu *menu = new QMenu("View");
+    menu->addAction(ui.actionTabsright); 
+    menu->addAction(ui.actionTabswest);
+    menu->addAction(ui.actionTabssouth); 
+    menu->addAction(ui.actionTabsnorth); 
+    ui.viewButton->setMenu(menu);
+    
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -582,4 +589,24 @@ void NetworkDialog::displayInfoLogMenu(const QPoint& pos) {
   myLogMenu.addAction(ui.actionClearLog);
   // XXX: Why mapToGlobal() is not enough?
   myLogMenu.exec(mapToGlobal(pos)+QPoint(0,320));
+}
+
+void NetworkDialog::on_actionTabsright_activated()
+{
+  ui.networkTab->setTabPosition(QTabWidget::East);
+}
+
+void NetworkDialog::on_actionTabsnorth_activated()
+{
+  ui.networkTab->setTabPosition(QTabWidget::North);
+}
+
+void NetworkDialog::on_actionTabssouth_activated()
+{
+  ui.networkTab->setTabPosition(QTabWidget::South);
+}
+
+void NetworkDialog::on_actionTabswest_activated()
+{
+  ui.networkTab->setTabPosition(QTabWidget::West);
 }

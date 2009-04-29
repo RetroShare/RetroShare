@@ -85,6 +85,13 @@ p, li { white-space: pre-wrap; }
            </property>
           </spacer>
          </item>
+         <item row="0" column="3" >
+          <widget class="QPushButton" name="viewButton" >
+           <property name="text" >
+            <string>View</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item row="1" column="0" >
@@ -229,6 +236,26 @@ p, li { white-space: pre-wrap; }
   <action name="actionClearLog" >
    <property name="text" >
     <string>Clear</string>
+   </property>
+  </action>
+  <action name="actionTabsright" >
+   <property name="text" >
+    <string>Set Tabs Right</string>
+   </property>
+  </action>
+  <action name="actionTabsnorth" >
+   <property name="text" >
+    <string>Set Tabs North</string>
+   </property>
+  </action>
+  <action name="actionTabssouth" >
+   <property name="text" >
+    <string>Set Tabs South</string>
+   </property>
+  </action>
+  <action name="actionTabswest" >
+   <property name="text" >
+    <string>Set Tabs Left</string>
    </property>
   </action>
  </widget>

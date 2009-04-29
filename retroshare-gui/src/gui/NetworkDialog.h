@@ -68,6 +68,12 @@ private slots:
   
   void on_actionClearLog_triggered();
   void displayInfoLogMenu(const QPoint& pos);
+  
+  void on_actionTabsright_activated();
+  void on_actionTabsnorth_activated();
+  void on_actionTabssouth_activated();
+  void on_actionTabswest_activated();
+
 
 private:
 
