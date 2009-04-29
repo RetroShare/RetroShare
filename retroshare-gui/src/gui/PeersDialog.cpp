@@ -72,6 +72,8 @@
 #define IMAGE_ONLINE             ":/images/user/identity24.png"
 #define IMAGE_OFFLINE            ":/images/user/identityoffline24.png"
 #define IMAGE_OFFLINE2           ":/images/user/identitylightgrey24.png"
+#define IMAGE_AVAIBLE            ":/images/user/identityavaiblecyan24.png"
+#define IMAGE_CONNECT2           ":/images/reload24.png"
 
 
 /******
@@ -368,8 +370,12 @@ void  PeersDialog::insertPeers()
 			/* bright green */
 			for(i = 1; i < 8; i++)
 			{
-			  item -> setBackground(i,QBrush(Qt::cyan));
-			  item -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
+			  //item -> setBackground(i,QBrush(Qt::cyan));
+			  item -> setTextColor(i,(Qt::darkCyan));
+			  QFont font ;
+        font.setBold(true);
+			  item -> setFont(i,font);
+			  item -> setIcon(0,(QIcon(IMAGE_AVAIBLE)));
 			}
 		}
 		else 
@@ -603,6 +609,7 @@ void PeersDialog::connectfriend()
 	if (rsPeers)
 	{
 		rsPeers->connectAttempt(getPeerRsCertId(c));
+		c -> setIcon(0,(QIcon(IMAGE_CONNECT2)));
 	}
 }
 

@@ -252,12 +252,14 @@
         <file>images/replymail24-hover.png</file>
         <file>images/replymail24.png</file>
         <file>images/replymailall24-hover.png</file>
+        <file>images/reload24.png</file>
         <file>images/reset.png</file>
         <file>images/retro4.png</file>
         <file>images/RetroShare16.png</file>
         <file>images/retrosharelogo1.png</file>
         <file>images/retrosharelogo2.png</file>
         <file>images/retrosharelogo32.png</file>
+        <file>images/rs1.png</file>
         <file>images/rs-2.png</file>
         <file>images/rsmessenger16.png</file>
         <file>images/rsmessenger32.png</file>
@@ -311,6 +313,7 @@
         <file>images/user/identity24.png</file>
         <file>images/user/identityoffline24.png</file>
         <file>images/user/identitylightgrey24.png</file>
+        <file>images/user/identityavaiblecyan24.png</file>
         <file>images/user/agt_forum24.png</file>
         <file>images/user/identity32.png</file>
         <file>images/user/add_user16.png</file>

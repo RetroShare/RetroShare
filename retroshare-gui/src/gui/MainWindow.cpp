@@ -73,6 +73,7 @@
 
 /* Images for toolbar icons */
 #define IMAGE_NETWORK           ":/images/retrosharelogo1.png"
+#define IMAGE_NETWORK2           ":/images/rs1.png"
 #define IMAGE_PEERS         	":/images/groupchat.png"
 #define IMAGE_SEARCH    	":/images/filefind.png"
 #define IMAGE_TRANSFERS      	":/images/ktorrent32.png"
@@ -175,7 +176,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
 
     ui.stackPages->add(networkDialog = new NetworkDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_NETWORK), tr("Network"), grp));
+                       createPageAction(QIcon(IMAGE_NETWORK2), tr("Network"), grp));
 
   
     ui.stackPages->add(peersDialog = new PeersDialog(ui.stackPages),
