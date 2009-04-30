@@ -1052,7 +1052,7 @@
     <string>toolBar_2</string>
    </property>
    <property name="allowedAreas" >
-    <set>Qt::LeftToolBarArea|Qt::RightToolBarArea</set>
+    <set>Qt::AllToolBarAreas</set>
    </property>
    <attribute name="toolBarArea" >
     <enum>LeftToolBarArea</enum>
@@ -1172,7 +1172,6 @@
  </customwidgets>
  <resources>
   <include location="images.qrc" />
-  <include location="../games/qcheckers/qcheckers.qrc" />
  </resources>
  <connections/>
 </ui>
