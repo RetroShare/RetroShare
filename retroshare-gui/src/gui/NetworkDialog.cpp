@@ -630,7 +630,7 @@ void NetworkDialog::getNetworkStatus()
     
     if(config.netExtOk)
     {
-      setLogInfo(tr("External Address Found"), QString::fromUtf8("green"));
+      setLogInfo(tr("Stable External IP Address"), QString::fromUtf8("green"));
     }
     else
     {
