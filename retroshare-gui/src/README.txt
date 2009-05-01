@@ -22,7 +22,7 @@ Libraries/Tools:
 	* C/C++ Compiler. 	  	(standard on Linux/cygwin)
 	* OpenSSL-0.9.7g-xpgp 	http://www.lunamutt.com/retroshare/openssl-0.9.7g-xpgp-0.1c.tgz
 	* miniupnpc           	http://miniupnp.free.fr/files/download.php?file=miniupnpc-1.0.tar.gz
-	* Qt >= 4.3.x 		  	http://trolltech.com/downloads/opensource
+	* Qt >= 4.4.x 		  	http://trolltech.com/downloads/opensource
 
 RetroShare Source Code: ( from sf.net/projects/retroshare)
 	* Qt-GUI-XXX.tgz
@@ -171,33 +171,39 @@ Source release is quite old at the moment and it is a good idea to obtain source
 $ cd ~/src
 $ svn co https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk retroshare
 ...
-Checked out revision 777.
+Checked out revision 1150.
 
 This should create ~/src/retroshare/libretroshare, ~/src/retroshare/retroshare-gui etc.
 Build libretroshare
 
-Edit configuration files
+Change SSL_DIR to point to your openssl-xpgp directory. 
+Check that SSL_DIR really points to openssl-xpgp folder, because it's easy to have one "../" too much: 
 
-    * Edit ~/src/retroshare/libretroshare/src/scripts/config.mk:
-          o Change OS to be "OS = Linux" 
+libtretroshare.pro:
 
-    * Edit ~/src/retroshare/libretroshare/src/scripts/config-linux.mk:
-          o Change SSL_DIR to point to your openssl-xpgp directory. Check that SSL_DIR really points to openssl-xpgp folder, because it's easy to have one "../" too much: 
+################################### COMMON stuff ##################################
 
-$ cd scripts            <-- I'm in scripts folder
-$ ls ../../../../../src/openssl-0.9.7g-xpgp-0.1c          <-- that's my SSL_DIR
-CHANGES         INSTALL.W32   README         demos        makevms.com   test
-...
+DEFINES *=  PQI_USE_XPGP MINIUPNPC_VERSION=10
 
-    *
-          o Change UPNPC_DIR to point to your miniupnp directory
-          o Change DEFINES += -DMINIUPNPC_VERSION=12 to match your miniupnpc version (10 for 1.0 or 12 for 1.2) 
+SSL_DIR=../../../../openssl-0.9.7g-xpgp-0.1c
+UPNPC_DIR=../../../../miniupnpc-1.0
+
+INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR}
+
+
+  o Change UPNPC_DIR to point to your miniupnp directory
+  o Change DEFINES += -DMINIUPNPC_VERSION=12 to match your miniupnpc version (10 for 1.0 or 12 for 1.2) 
+
+64bit Notice:
+  o If youre using a 64bit Linux you must remove the -marchi=686 option in this line: 
+  BIOCFLAGS = -I $(SSL_DIR)/include ${DEFINES} -DOPENSSL_THREADS -D_REENTRANT -DDSO_DLFCN -DHAVE_DLFCN_H -DOPENSSL_NO_KRB5 -DL_ENDIAN -DTERMIO -O3 -fomit-frame-pointer -march=i686 -Wall -DSHA1_ASM -DMD5_ASM -DRMD160_ASM 
 
 
 Build
 -------------------------
 
 $ cd ~/src/retroshare/libretroshare/src
+$ qmake
 $ make
 ..
 $  cp lib/libretroshare.a ~/lib
@@ -206,6 +212,9 @@ Troubleshooting
 ----------------------
 You get miniupnpc errors, "error: too few arguments to function 'UPNPDev* upnpDiscover(int, const char*, const char*, int)'"
 Possible cause: you're using miniupnpc version 1.2 but config-linux.mk says 1.0
+
+Then edit in "libretroshare/src/upnp/upnputil.c" and go on line 150 and Edit to this one:
+eport, iport, iaddr, 0, proto); 
 
 
 Build retroshare GUI
