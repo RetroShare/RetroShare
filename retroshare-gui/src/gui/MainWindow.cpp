@@ -53,6 +53,7 @@
 #endif
 
 #include "statusbar/peerstatus.h"
+#include "statusbar/dhtstatus.h"
 #include "Preferences/PreferencesWindow.h"
 #include "Settings/gsettingswin.h"
 #include "util/rsversion.h"
@@ -313,17 +314,20 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 #endif
     peerstatus = new PeerStatus();
     statusBar()->addWidget(peerstatus);
+    
+    dhtstatus = new DHTStatus();
+    statusBar()->addWidget(dhtstatus);
 
-	 QWidget *widget = new QWidget();
+	  QWidget *widget = new QWidget();
     QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
     sizePolicy.setHorizontalStretch(0);
     sizePolicy.setVerticalStretch(0);
     sizePolicy.setHeightForWidth(widget->sizePolicy().hasHeightForWidth());
     widget->setSizePolicy(sizePolicy);
     QHBoxLayout *horizontalLayout = new QHBoxLayout(widget);
-	 horizontalLayout->setContentsMargins(0, 0, 0, 0);
+	  horizontalLayout->setContentsMargins(0, 0, 0, 0);
     horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-	 _hashing_info_label = new QLabel(widget) ;
+	  _hashing_info_label = new QLabel(widget) ;
     _hashing_info_label->setObjectName(QString::fromUtf8("label"));
 
     horizontalLayout->addWidget(_hashing_info_label);
@@ -331,7 +335,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     horizontalLayout->addItem(horizontalSpacer);
 
     statusBar()->addPermanentWidget(widget);
-	 _hashing_info_label->hide() ;
+	  _hashing_info_label->hide() ;
 
     statusBar()->addPermanentWidget(statusRates = new QLabel(tr("<strong>Down:</strong> 0.00 (kB/s) | <strong>Up:</strong> 0.00 (kB/s) ")));
 
@@ -404,8 +408,11 @@ void MainWindow::updateStatus()
 	if (statusRates)
     		statusRates -> setText(QString::fromStdString(out.str()));
 
-    	if (peerstatus)
-		peerstatus->setPeerStatus();
+  if (peerstatus)
+      peerstatus->setPeerStatus();
+	
+	if (dhtstatus)
+      dhtstatus->getDHTStatus();
 
 }
 

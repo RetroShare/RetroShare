@@ -61,6 +61,7 @@
 class SMPlayer;
 
 class PeerStatus;
+class DHTStatus;
 
 void openFile(std::string path);
 
@@ -214,6 +215,7 @@ private:
 
     QLabel *statusRates;
     PeerStatus *peerstatus;
+    DHTStatus *dhtstatus;
 
     QLabel *_hashing_info_label ;
     

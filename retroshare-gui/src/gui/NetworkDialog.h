@@ -24,6 +24,8 @@
 #define _CONNECTIONSDIALOG_H
 
 #include <QFileDialog>
+#include <QtGui>
+
 
 //#include <config/rsharesettings.h>
 
@@ -68,6 +70,8 @@ private slots:
   
   void on_actionClearLog_triggered();
   void displayInfoLogMenu(const QPoint& pos);
+  
+  void getNetworkStatus();
   
   void on_actionTabsright_activated();
   void on_actionTabsnorth_activated();

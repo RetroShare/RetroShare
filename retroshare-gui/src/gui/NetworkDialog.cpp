@@ -33,6 +33,7 @@
 #include "rsiface/rspeers.h"
 #include <sstream>
 
+#include <QTimer>
 #include <QTime>
 #include <QContextMenuEvent>
 #include <QMenu>
@@ -125,7 +126,7 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     setLogInfo(tr("RetroShare %1 started.", "e.g: RetroShare v0.x started.").arg(retroshareVersion()));
     
     setLogInfo(tr("Welcome to RetroShare."), QString::fromUtf8("blue"));
-     
+      
     QMenu *menu = new QMenu(tr("View"));
     menu->addAction(ui.actionTabsright); 
     menu->addAction(ui.actionTabswest);
@@ -135,6 +136,12 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     menu->addAction(ui.actionTabsTriangular); 
     menu->addAction(ui.actionTabsRounded);
     ui.viewButton->setMenu(menu);
+    
+    QTimer *timer = new QTimer(this);
+    timer->connect(timer, SIGNAL(timeout()), this, SLOT(getNetworkStatus()));
+    timer->start(100000);
+    
+    //getNetworkStatus();
     
 
   /* Hide platform specific features */
@@ -592,6 +599,83 @@ void NetworkDialog::displayInfoLogMenu(const QPoint& pos) {
   myLogMenu.addAction(ui.actionClearLog);
   // XXX: Why mapToGlobal() is not enough?
   myLogMenu.exec(mapToGlobal(pos)+QPoint(0,320));
+}
+
+void NetworkDialog::getNetworkStatus()
+{
+    rsiface->lockData(); /* Lock Interface */
+
+    /* now the extra bit .... switch on check boxes */
+    const RsConfig &config = rsiface->getConfig();
+
+    //ui.check_net->setChecked(config.netOk);
+    if(config.netUpnpOk)
+    {
+      setLogInfo(tr("UPNP is active."), QString::fromUtf8("blue"));
+    }
+    else
+    {    
+      setLogInfo(tr("UPNP NOT FOUND."), QString::fromUtf8("red"));
+    }
+
+    if(config.netDhtOk)
+    {
+      setLogInfo(tr("DHT OK"), QString::fromUtf8("green"));
+    }
+    else 
+    {
+      setLogInfo(tr("DHT is not working (down)."), QString::fromUtf8("red"));
+    }
+    
+    
+    if(config.netExtOk)
+    {
+      setLogInfo(tr("External Address Found"), QString::fromUtf8("green"));
+    }
+    else
+    {
+      setLogInfo(tr("Not Found External Address"), QString::fromUtf8("red"));
+    }
+    
+    if(config.netUdpOk)
+    {
+      setLogInfo(tr("UDP Port is Reacheable"), QString::fromUtf8("green"));
+    }
+    else
+    {
+      setLogInfo(tr("UDP Port isnt Reacheable"), QString::fromUtf8("red"));
+    }
+    
+    if(config.netTcpOk)
+    {
+      setLogInfo(tr("TCP Port is Reacheable"), QString::fromUtf8("green"));
+    }
+    else
+    {
+      setLogInfo(tr("TCP Port is not Reacheable"), QString::fromUtf8("red"));
+    }
+
+    if (config.netExtOk)
+    {
+      if (config.netUpnpOk || config.netTcpOk)
+      {
+        setLogInfo(tr("RetroShare Server"), QString::fromUtf8("green"));
+      }
+      else
+      {
+        setLogInfo(tr("UDP Server"), QString::fromUtf8("green"));
+      }
+    }
+    else if (config.netOk)
+    {
+      setLogInfo(tr("Net Limited"), QString::fromUtf8("magenta"));
+    }
+    else
+    {
+      setLogInfo(tr("No Conectivity"), QString::fromUtf8("red"));
+    }
+		
+    rsiface->unlockData(); /* UnLock Interface */
 }
 
 void NetworkDialog::on_actionTabsright_activated()
