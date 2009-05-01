@@ -54,6 +54,8 @@
 
 #include "statusbar/peerstatus.h"
 #include "statusbar/dhtstatus.h"
+#include "statusbar/natstatus.h"
+
 #include "Preferences/PreferencesWindow.h"
 #include "Settings/gsettingswin.h"
 #include "util/rsversion.h"
@@ -312,11 +314,15 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.toolBarservice->addSeparator();
 
 #endif
+    /** StatusBar section **/
     peerstatus = new PeerStatus();
     statusBar()->addWidget(peerstatus);
     
     dhtstatus = new DHTStatus();
     statusBar()->addWidget(dhtstatus);
+    
+    natstatus = new NATStatus();
+    statusBar()->addWidget(natstatus);
 
 	  QWidget *widget = new QWidget();
     QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
@@ -413,6 +419,9 @@ void MainWindow::updateStatus()
 	
 	if (dhtstatus)
       dhtstatus->getDHTStatus();
+      
+ 	if (natstatus)
+      natstatus->getNATStatus();
 
 }
 

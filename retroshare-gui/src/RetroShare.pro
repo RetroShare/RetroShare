@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools release
+CONFIG += qt gui uic qrc resources uitools debug
 QT     += network xml script 
 TEMPLATE = app
 TARGET = RetroShare
@@ -109,7 +109,7 @@ HEADERS +=  rshare.h \
             gui/StartDialog.h \
             gui/ChatDialog.h \
             gui/BlogDialog.h \
-	    gui/CalDialog.h \
+            gui/CalDialog.h \
             gui/NetworkDialog.h \
             gui/GenCertDialog.h \
             gui/TransfersDialog.h \
@@ -169,8 +169,8 @@ HEADERS +=  rshare.h \
             util/log.h \
             util/misc.h \
             gui/bwgraph/bwgraph.h \
-	    gui/profile/ProfileView.h \
-	    gui/profile/ProfileEdit.h \
+            gui/profile/ProfileView.h \
+            gui/profile/ProfileEdit.h \
             gui/chat/PopupChatDialog.h \
             gui/connect/ConnectDialog.h \
             gui/connect/ConfCertDialog.h \
@@ -215,6 +215,8 @@ HEADERS +=  rshare.h \
             gui/Settings/ServerPage.h \
             gui/Settings/NetworkPage.h \
             gui/statusbar/peerstatus.h \
+            gui/statusbar/dhtstatus.h \
+            gui/statusbar/natstatus.h \  
             gui/advsearch/advancedsearchdialog.h \
             gui/advsearch/expressionwidget.h \
             gui/advsearch/guiexprelement.h \
@@ -235,7 +237,7 @@ HEADERS +=  rshare.h \
             gui/MsgFeed.h \
             gui/TransferFeed.h \
             gui/ChannelFeed.h \
-	    gui/GeneralMsgDialog.h \
+            gui/GeneralMsgDialog.h \
             gui/feeds/FeedHolder.h \
             gui/feeds/ForumNewItem.h \
             gui/feeds/ForumMsgItem.h \
@@ -252,8 +254,8 @@ HEADERS +=  rshare.h \
 
 
 FORMS +=    gui/ChatDialog.ui \
-	    gui/BlogDialog.ui \
-	    gui/CalDialog.ui \
+            gui/BlogDialog.ui \
+            gui/CalDialog.ui \
             gui/StartDialog.ui \
             gui/GenCertDialog.ui \
             gui/NetworkDialog.ui \
@@ -275,15 +277,15 @@ FORMS +=    gui/ChatDialog.ui \
             gui/PeersDialog.ui \
             gui/SearchDialog.ui \
             gui/SharedFilesDialog.ui \
-	    gui/ShareManager.ui \
+            gui/ShareManager.ui \
             gui/StatisticDialog.ui \
             gui/MessagesDialog.ui \
             gui/MessagesPopupDialog.ui \
             gui/help/browser/helpbrowser.ui \
             gui/HelpDialog.ui \
             gui/bwgraph/bwgraph.ui \
-	    gui/profile/ProfileView.ui \
-	    gui/profile/ProfileEdit.ui \
+            gui/profile/ProfileView.ui \
+            gui/profile/ProfileEdit.ui \
             gui/chat/PopupChatDialog.ui \
             gui/connect/ConnectDialog.ui \
             gui/connect/ConfCertDialog.ui \
@@ -398,8 +400,8 @@ SOURCES += main.cpp \
             util/printpreview.cpp \
             util/log.cpp \
             gui/bwgraph/bwgraph.cpp \
-	    gui/profile/ProfileView.cpp \
-	    gui/profile/ProfileEdit.cpp \
+            gui/profile/ProfileView.cpp \
+            gui/profile/ProfileEdit.cpp \
             gui/chat/PopupChatDialog.cpp \
             gui/connect/ConnectDialog.cpp \
             gui/connect/ConfCertDialog.cpp \
@@ -430,7 +432,9 @@ SOURCES += main.cpp \
             gui/Settings/DirectoriesPage.cpp \
             gui/Settings/ServerPage.cpp \
             gui/Settings/NetworkPage.cpp \
-            gui/statusbar/peerstatus.cpp \    
+            gui/statusbar/peerstatus.cpp \  
+            gui/statusbar/dhtstatus.cpp \
+            gui/statusbar/natstatus.cpp \  
             gui/toaster/ChatToaster.cpp \
             gui/toaster/MessageToaster.cpp \
             gui/toaster/CallToaster.cpp \
@@ -456,7 +460,7 @@ SOURCES += main.cpp \
             gui/MsgFeed.cpp \
             gui/TransferFeed.cpp \
             gui/ChannelFeed.cpp \
-	    gui/GeneralMsgDialog.cpp \
+            gui/GeneralMsgDialog.cpp \
             gui/feeds/ForumNewItem.cpp \
             gui/feeds/ForumMsgItem.cpp \
             gui/feeds/PeerItem.cpp \
