@@ -1024,26 +1024,6 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <widget class="QToolBar" name="toolBarservice" >
-   <property name="windowTitle" >
-    <string/>
-   </property>
-   <property name="allowedAreas" >
-    <set>Qt::BottomToolBarArea|Qt::LeftToolBarArea|Qt::RightToolBarArea</set>
-   </property>
-   <property name="iconSize" >
-    <size>
-     <width>32</width>
-     <height>32</height>
-    </size>
-   </property>
-   <attribute name="toolBarArea" >
-    <enum>RightToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak" >
-    <bool>false</bool>
-   </attribute>
-  </widget>
   <widget class="QToolBar" name="toolBar_2" >
    <property name="enabled" >
     <bool>true</bool>

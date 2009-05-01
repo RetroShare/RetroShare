@@ -64,8 +64,6 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsfiles.h"
 
-//#include "gui/connect/InviteDialog.h"
-//#include "gui/connect/AddFriendDialog.h"
 #include "gui/connect/ConnectFriendWizard.h"
 
 #include <sstream>
@@ -116,13 +114,6 @@
 
 /* Keys for UI Preferences */
 #define UI_PREF_PROMPT_ON_QUIT  "UIOptions/ConfirmOnQuit"
-/* uncomment this for release version */
-
-/*****
- * #define RS_RELEASE_VERSION    1
- ****/
-
-//#define RS_RELEASE_VERSION    1
 
 /** Constructor */
 MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
@@ -134,12 +125,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Create RshareSettings object */
     _settings = new RshareSettings();
     
-    setWindowTitle(tr("RetroShare %1 RetroShare a private and secure decentralised commmunication platform").arg(retroshareVersion())); 
+    setWindowTitle(tr("RetroShare %1 a secure decentralised commmunication platform").arg(retroshareVersion())); 
 
     mSMPlayer = NULL;
-  
-    ui.toolBarservice->hide();
-	
+  	
     // Setting icons
     this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
     
@@ -147,14 +136,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     _bandwidthGraph = new BandwidthGraph();
     messengerWindow = new MessengerWindow();
     _preferencesWindow = new PreferencesWindow();
-    messengerWindow->hide();
-    //messengerWindow->show();
     applicationWindow = new ApplicationWindow();
     applicationWindow->hide();
 	
-	/** Left Side ToolBar**/
+    /** Left Side ToolBar**/
     connect(ui.actionAdd_Friend, SIGNAL(triggered() ), this , SLOT( addFriend() ) );
-//    connect(ui.actionInvite_Friend, SIGNAL(triggered() ), this , SLOT( inviteFriend() ) );
     connect(ui.actionAdd_Share, SIGNAL(triggered() ), this , SLOT( openShareManager() ) );
     connect(ui.actionOptions, SIGNAL(triggered()), this, SLOT( showPreferencesWindow()) );
     connect(ui.actionMessenger, SIGNAL(triggered()), this, SLOT( showMessengerWindow()) );
@@ -162,16 +148,14 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT( showabout()) );
     connect(ui.actionColor, SIGNAL(triggered()), this, SLOT( setStyle()) );
     //connect(ui.actionSettings, SIGNAL(triggered()), this, SLOT( showSettings()) );
-
    	 
        
     /** adjusted quit behaviour: trigger a warning that can be switched off in the saved
         config file RetroShare.conf */
-   connect(ui.actionQuit, SIGNAL(triggered()), this, SLOT(doQuit()));
+    connect(ui.actionQuit, SIGNAL(triggered()), this, SLOT(doQuit()));
 
     /* load the StyleSheet*/
     loadStyleSheet(Rshare::stylesheet()); 
-
 
 
     /* Create the Main pages and actions */
@@ -238,6 +222,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ForumsDialog *forumsDialog = NULL;
     ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
+                       
+    addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));                   
 
 #endif
     NewsFeed *newsFeed = NULL;
@@ -247,12 +233,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(pluginsPage = new PluginsPage(ui.stackPages),
                        createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
 
-                     
-  //ui.stackPages->add(groupsDialog = new GroupsDialog(ui.stackPages),
-  //                   createPageAction(QIcon(), tr("Groups"), grp));
-                                                              
-  //ui.stackPages->add(new StatisticDialog(ui.stackPages),
-  //                   createPageAction(QIcon(IMAGE_STATISTIC), tr("Statistics"), grp));
 
     /* also an empty list of chat windows */
     messengerWindow->setChatDialog(peersDialog);
@@ -269,51 +249,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(sharedfilesDialog, SIGNAL(playFiles( QStringList )), this, SLOT(playFiles( QStringList )));
     connect(transfersDialog, SIGNAL(playFiles( QStringList )), this, SLOT(playFiles( QStringList )));
 
-#ifdef RS_RELEASE_VERSION    
-    //addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
-
-
-#else
-    addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
-
-    toolAct = ui.toolBarservice->toggleViewAction();
-    toolAct->setText("Service");
-    toolAct->setShortcut(tr("Ctrl+T"));
-    toolAct->setIcon(QIcon(":/images/blockdevice2.png"));
-    //ui.toolBar->addAction(toolAct);
- 
-        /* Create the Service pages and actions */
-    QActionGroup *servicegrp = new QActionGroup(this);
-   
-                           
-#if 0
-    LinksDialog *linksDialog = NULL;
-    ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), servicegrp));
-
-    ChannelsDialog *channelsDialog = NULL;
-    ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
-                           createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), servicegrp));
-
-    GamesDialog *gamesDialog = NULL;
-    ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_GAMES), tr("Games"), servicegrp));
-                     
-    PhotoDialog *photoDialog = NULL;
-    ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), servicegrp)); 
-                         
-#endif
-                                      
-    
-    /* Create the toolbarservice */
-    ui.toolBarservice->addActions(servicegrp->actions());
-    ui.toolBarservice->addSeparator();
-    connect(servicegrp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *))); 
-        
-    ui.toolBarservice->addSeparator();
-
-#endif
     /** StatusBar section **/
     peerstatus = new PeerStatus();
     statusBar()->addWidget(peerstatus);
@@ -344,8 +279,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 	  _hashing_info_label->hide() ;
 
     statusBar()->addPermanentWidget(statusRates = new QLabel(tr("<strong>Down:</strong> 0.00 (kB/s) | <strong>Up:</strong> 0.00 (kB/s) ")));
-
-    //servicegrp->actions()[0]->setChecked(true);
+    /******* Status Bar end ******/
   
     /* Create the actions that will go in the tray menu */
     createActions();
@@ -464,29 +398,6 @@ void MainWindow::addAction(QAction *action, const char *slot)
     connect(action, SIGNAL(triggered()), this, slot);
 }
 
-/** Adds the given action to the toolbar and hooks its triggered() signal to
- * the specified slot (if given). */
-void MainWindow::addActionservice(QAction *actionservice, const char *slot)
-{
-    actionservice->setFont(FONT);
-    ui.toolBarservice->addAction(actionservice);
-    connect(actionservice, SIGNAL(triggered()), this, slot);
-}
-
-/** Overloads the default show so we can load settings */
-/*void MainWindow::show()
-{
-  
-    if (!this->isVisible()) {
-        QMainWindow::show();
-    } else {
-        QMainWindow::activateWindow();
-        setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
-        QMainWindow::raise();
-    }
-}*/
-
-
 /** Shows the MainWindow with focus set to the given page. */
 void MainWindow::showWindow(Page page)
 {
@@ -513,36 +424,6 @@ void MainWindow::addFriend()
 
     
     connwiz->show();
-}
-
-
-/** Add a Friend ShortCut */
-/*void MainWindow::inviteFriend()
-{
-    static  InviteDialog *inviteDialog = new InviteDialog(this);
-
-    std::string invite = rsPeers->GetRetroshareInvite();
-    inviteDialog->setInfo(invite);
-    inviteDialog->show();
-
-
-}
-*/
-/** Add a Share */
-void MainWindow::addSharedDirectory()
-{
-    /* Same Code as in Preferences Window (add Share) */
-
-    QString qdir = QFileDialog::getExistingDirectory(this, tr("Add Shared Directory"), "",
-            QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-						   
-    /* add it to the server */
-    std::string dir = qdir.toStdString();
-    if (dir != "")
-    {
-        rsFiles -> addSharedDirectory(dir);
-    }
-
 }
 
 /** Shows Share Manager */
@@ -715,23 +596,6 @@ void MainWindow::loadStyleSheet(const QString &sheetName)
     qApp->setStyleSheet(styleSheet);
     
 }
-
-void MainWindow::startgammon()
-{
-	BgWindow *bgWindow = new BgWindow(this); 
-	bgWindow->show(); 
-
-
-}
-
-void MainWindow::startqcheckers()
-{
-#if 0
-    myTopLevel* top = new myTopLevel();
-    top->show();
-#endif
-}
-
 
 /** Shows smplayer */
 void MainWindow::showsmplayer()

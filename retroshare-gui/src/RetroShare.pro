@@ -54,14 +54,18 @@ win32-x-g++ {
 win32 {
     OBJECTS_DIR = temp/obj
     RCC_DIR = temp/qrc
-	UI_DIR  = temp/ui
-	MOC_DIR = temp/moc
+    UI_DIR  = temp/ui
+    MOC_DIR = temp/moc
 
     LIBS += -L"../../../../lib" -lretroshare -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
     LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
     LIBS += -lole32 -lwinmm
 
-	RC_FILE = gui/images/retroshare_win.rc
+    RC_FILE = gui/images/retroshare_win.rc
+    
+    ## ENABLE THIS OPTION for release Version.
+    #DEFINES += RS_RELEASE_VERSION
+
 }
 
 ##################################### MacOS ######################################

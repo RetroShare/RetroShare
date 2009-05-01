@@ -75,13 +75,13 @@ public:
     enum Page {
         Network            = 0,  /** Network page. */
         Friends,              	 /** Peers page. */
-	Search,			 /** Search page. */
-        Transfers, 		 /** Transfers page. */
-        SharedDirectories,   	 /** Shared Directories page. */
-        Messages,  		 /** Messages page. */
-        Links,  		 /** Links page. */
-        Channels,  		 /** Channels page. */
-        Forums  	         /** Forums page. */
+        Search,			             /** Search page. */
+        Transfers, 		           /** Transfers page. */
+        SharedDirectories,   	   /** Shared Directories page. */
+        Messages,  		           /** Messages page. */
+        Links,  		             /** Links page. */
+        Channels,  		           /** Channels page. */
+        Forums  	               /** Forums page. */
 
         
     };
@@ -108,8 +108,6 @@ public:
     MessagesDialog    *messagesDialog;
     ChannelsDialog    *channelsDialog;
     SharedFilesDialog *sharedfilesDialog;
-    //GroupsDialog      *groupsDialog;
-    //StatisticDialog   *statisticDialog;
     MessengerWindow   *messengerWindow;
     ApplicationWindow   *applicationWindow;
     PluginsPage*   pluginsPage ;
@@ -122,11 +120,8 @@ public slots:
     /** Shows the config dialog with focus set to the given page. */
     void showWindow(Page page);
   
-    void startgammon();
-    void startqcheckers();
-
     void playFiles(QStringList files);
-	 void updateHashingInfo(const QString&) ;
+	  void updateHashingInfo(const QString&) ;
 
 private slots:
 
@@ -139,15 +134,13 @@ private slots:
 
     /** Toolbar fns. */
     void addFriend();
-    //void inviteFriend();
-    void addSharedDirectory();
     void showMessengerWindow();
     void showApplWindow();
-	void showsmplayer();
-	void showabout();
-	void openShareManager();
+    void showsmplayer();
+    void showabout();
+    void openShareManager();
 	
-	/** Displays the help browser and displays the most recently viewed help
+    /** Displays the help browser and displays the most recently viewed help
     * topic. */
     void showHelpDialog();
     /** Called when a child window requests the given help <b>topic</b>. */
