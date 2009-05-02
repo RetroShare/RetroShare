@@ -608,7 +608,6 @@ void NetworkDialog::getNetworkStatus()
     /* now the extra bit .... switch on check boxes */
     const RsConfig &config = rsiface->getConfig();
 
-    //ui.check_net->setChecked(config.netOk);
     if(config.netUpnpOk)
     {
       setLogInfo(tr("UPNP is active."), QString::fromUtf8("blue"));

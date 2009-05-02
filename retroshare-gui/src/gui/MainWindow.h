@@ -63,6 +63,7 @@ class SMPlayer;
 class PeerStatus;
 class DHTStatus;
 class NATStatus;
+class RatesStatus;
 
 void openFile(std::string path);
 
@@ -202,11 +203,11 @@ private:
     QAction *toggleVisibilityAction, *toolAct;
     QMenu *menu;
 
-    QLabel *statusRates;
+    //QLabel *statusRates;
     PeerStatus *peerstatus;
     DHTStatus *dhtstatus;
     NATStatus *natstatus;
-
+    RatesStatus *ratesstatus;
 
     QLabel *_hashing_info_label ;
     

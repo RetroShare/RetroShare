@@ -220,7 +220,8 @@ HEADERS +=  rshare.h \
             gui/Settings/NetworkPage.h \
             gui/statusbar/peerstatus.h \
             gui/statusbar/dhtstatus.h \
-            gui/statusbar/natstatus.h \  
+            gui/statusbar/natstatus.h \
+            gui/statusbar/ratesstatus.h \  
             gui/advsearch/advancedsearchdialog.h \
             gui/advsearch/expressionwidget.h \
             gui/advsearch/guiexprelement.h \
@@ -438,7 +439,8 @@ SOURCES += main.cpp \
             gui/Settings/NetworkPage.cpp \
             gui/statusbar/peerstatus.cpp \  
             gui/statusbar/dhtstatus.cpp \
-            gui/statusbar/natstatus.cpp \  
+            gui/statusbar/natstatus.cpp \
+            gui/statusbar/ratesstatus.cpp \  
             gui/toaster/ChatToaster.cpp \
             gui/toaster/MessageToaster.cpp \
             gui/toaster/CallToaster.cpp \

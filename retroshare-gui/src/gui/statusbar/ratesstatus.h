@@ -18,27 +18,27 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#ifndef PEERSTATUS_H
-#define PEERSTATUS_H
+#ifndef RATESSTATUS_H
+#define RATESSTATUS_H
 #include "gui/MainWindow.h"
 
 
 #include <QWidget>
 
 
-class PeerStatus : public QWidget
+class RatesStatus : public QWidget
 {
 Q_OBJECT
 public:
-    PeerStatus(QWidget *parent = 0);
+    RatesStatus(QWidget *parent = 0);
 
-    ~PeerStatus();
+    ~RatesStatus();
 
-    void getPeerStatus( );
+    void getRatesStatus( );
     
 
 private:
-    class QLabel *iconLabel, *statusPeers;
+    class QLabel *iconLabel, *statusRates;
 
 };
 

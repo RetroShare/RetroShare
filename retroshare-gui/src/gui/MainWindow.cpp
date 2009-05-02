@@ -27,7 +27,6 @@
 #include <QIcon>
 #include <QPixmap>
 
-
 #include "NetworkView.h"
 #include "LinksDialog.h"
 #include "PhotoDialog.h"
@@ -38,7 +37,6 @@
 #include "MsgFeed.h"
 #include "ChannelFeed.h"
 #include "ShareManager.h"
-
 
 #include <rshare.h>
 #include "MainWindow.h"
@@ -55,6 +53,7 @@
 #include "statusbar/peerstatus.h"
 #include "statusbar/dhtstatus.h"
 #include "statusbar/natstatus.h"
+#include "statusbar/ratesstatus.h"
 
 #include "Preferences/PreferencesWindow.h"
 #include "Settings/gsettingswin.h"
@@ -279,7 +278,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     statusBar()->addPermanentWidget(widget);
 	  _hashing_info_label->hide() ;
 
-    statusBar()->addPermanentWidget(statusRates = new QLabel(tr("<strong>Down:</strong> 0.00 (kB/s) | <strong>Up:</strong> 0.00 (kB/s) ")));
+    ratesstatus = new RatesStatus();
+    statusBar()->addPermanentWidget(ratesstatus);
     /******* Status Bar end ******/
   
     /* Create the actions that will go in the tray menu */
@@ -337,20 +337,12 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
 void MainWindow::updateStatus()
 {
-	/* set users/friends/network */
-	float downKb = 0;
-	float upKb = 0;
-	rsicontrol -> ConfigGetDataRates(downKb, upKb);
-
-	std::ostringstream out;
-	out << "<strong>Down:</strong> " << std::setprecision(2) << std::fixed << downKb << " (kB/s) |  <strong>Up:</strong> " << std::setprecision(2) << std::fixed <<  upKb << " (kB/s) ";
-
-	/* set uploads/download rates */
-	if (statusRates)
-    		statusRates -> setText(QString::fromStdString(out.str()));
+	
+	if (ratesstatus)
+    	ratesstatus->getRatesStatus();
 
   if (peerstatus)
-      peerstatus->setPeerStatus();
+      peerstatus->getPeerStatus();
 	
 	if (dhtstatus)
       dhtstatus->getDHTStatus();

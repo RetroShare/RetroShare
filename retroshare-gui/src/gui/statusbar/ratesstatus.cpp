@@ -18,7 +18,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include "peerstatus.h"
+#include "ratesstatus.h"
 
 #include <QtGui>
 #include <QString>
@@ -35,7 +35,7 @@
 #include <sstream>
 #include <iomanip>
 
-PeerStatus::PeerStatus(QWidget *parent)
+RatesStatus::RatesStatus(QWidget *parent)
  : QWidget(parent)
 {
     QHBoxLayout *hbox = new QHBoxLayout();
@@ -43,44 +43,53 @@ PeerStatus::PeerStatus(QWidget *parent)
     hbox->setSpacing(6);
     
     iconLabel = new QLabel( this );
-    iconLabel->setPixmap(QPixmap::QPixmap(":/images/user/identity16.png"));
+    iconLabel->setPixmap(QPixmap::QPixmap(":/images/up0down0.png"));
     // iconLabel doesn't change over time, so we didn't need a minimum size
     hbox->addWidget(iconLabel);
     
-    statusPeers = new QLabel( tr("Online: 0  | Friends: 0  | Network: 0 "), this );
+    statusRates = new QLabel( tr("<strong>Down:</strong> 0.00 (kB/s) | <strong>Up:</strong> 0.00 (kB/s) "), this );
 	  //statusPeers->setMinimumSize( statusPeers->frameSize().width() + 0, 0 );
-    hbox->addWidget(statusPeers);
+    hbox->addWidget(statusRates);
     
     setLayout( hbox );
 
 }
 
-PeerStatus::~PeerStatus()
+RatesStatus::~RatesStatus()
 {
 }
 
-void PeerStatus::getPeerStatus()
+void RatesStatus::getRatesStatus()
 {
-	/* set users/friends/network */
+    /* set users/friends/network */
+    float downKb = 0;
+    float upKb = 0;
+    rsicontrol -> ConfigGetDataRates(downKb, upKb);
 
-	std::list<std::string> ids;
-	rsPeers->getOnlineList(ids);
-	int online = ids.size();
-
-	ids.clear();
-	rsPeers->getFriendList(ids);
-	int friends = ids.size();
-
-	ids.clear();
-	rsPeers->getOthersList(ids);
-	int others = 1 + ids.size();
-
-	std::ostringstream out2;
-	out2 << "<span style=\"color:#008000\"><strong>Online: </strong></span>" << online << " | <span style=\"color:#0000FF\"><strong>Friends: </strong></span>" << friends << " | <strong>Network: </strong>" << others << " ";
+    std::ostringstream out;
+    out << "<strong>Down:</strong> " << std::setprecision(2) << std::fixed << downKb << " (kB/s) |  <strong>Up:</strong> " << std::setprecision(2) << std::fixed <<  upKb << " (kB/s) ";
 
 
-	if (statusPeers)
-    		statusPeers -> setText(QString::fromStdString(out2.str()));
+    if (statusRates)
+          statusRates -> setText(QString::fromStdString(out.str()));
+    		
+    if( upKb > 0 || downKb < 0  )
+    {
+        iconLabel->setPixmap(QPixmap::QPixmap(":/images/up1down0.png"));
+    }
+    else if( upKb = 0 || downKb > 0 )
+    {
+        iconLabel->setPixmap(QPixmap::QPixmap(":/images/up0down1.png"));
+    }
+    else if( upKb > 0 || downKb > 0 )
+    {
+        iconLabel->setPixmap(QPixmap::QPixmap(":/images/up1down1.png"));
+    }
+    else
+    {
+        iconLabel->setPixmap(QPixmap::QPixmap(":/images/up0down0.png"));
+    }
+ 		
 
 }
 
