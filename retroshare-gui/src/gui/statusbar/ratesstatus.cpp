@@ -77,14 +77,17 @@ void RatesStatus::getRatesStatus()
     {
         iconLabel->setPixmap(QPixmap::QPixmap(":/images/up1down0.png"));
     }
-    else if( upKb = 0 || downKb > 0 )
+    
+    if( upKb < 0 || downKb > 0 )
     {
         iconLabel->setPixmap(QPixmap::QPixmap(":/images/up0down1.png"));
     }
-    else if( upKb > 0 || downKb > 0 )
+    
+    if( upKb > 0 || downKb > 0 )
     {
         iconLabel->setPixmap(QPixmap::QPixmap(":/images/up1down1.png"));
     }
+        
     else
     {
         iconLabel->setPixmap(QPixmap::QPixmap(":/images/up0down0.png"));
