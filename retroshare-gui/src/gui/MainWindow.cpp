@@ -187,8 +187,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     //		createPageAction(QIcon(IMAGE_LINKS), tr("Transfers"), grp));
 	
     ui.stackPages->add(sharedfilesDialog = new SharedFilesDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_FILES), tr("Files"), grp));
-                     
+                       createPageAction(QIcon(IMAGE_FILES), tr("Files"), grp));                     
 
     //MsgFeed *msgFeed = NULL;
     //ui.stackPages->add(msgFeed = new MsgFeed(ui.stackPages),
@@ -223,8 +222,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
                        
-    addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));                   
-
 #endif
     NewsFeed *newsFeed = NULL;
     ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
@@ -233,17 +230,21 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(pluginsPage = new PluginsPage(ui.stackPages),
                        createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
 
-
-    /* also an empty list of chat windows */
-    messengerWindow->setChatDialog(peersDialog);
-
     /* Create the toolbar */
     ui.toolBar->addActions(grp->actions());
     ui.toolBar->addSeparator();
     connect(grp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *)));
+
+#ifdef RS_RELEASE_VERSION    
+#else   
+    addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));                   
+#endif
        
     /* Select the first action */
     grp->actions()[0]->setChecked(true);
+    
+    /* also an empty list of chat windows */
+    messengerWindow->setChatDialog(peersDialog);
 
     // Allow to play files from SharedFilesDialog.
     connect(sharedfilesDialog, SIGNAL(playFiles( QStringList )), this, SLOT(playFiles( QStringList )));
@@ -378,16 +379,6 @@ QAction* MainWindow::createPageAction(QIcon img, QString text, QActionGroup *gro
     action->setFont(FONT);
     return action;
 }
-
-/** Creates a new action associated with a config page. */
-QAction* MainWindow::createPageActionservice(QIcon img, QString text, QActionGroup *groupservice)
-{
-    QAction *actionservice = new QAction(img, text, groupservice);
-    actionservice->setCheckable(true);
-    actionservice->setFont(FONT);
-    return actionservice;
-}
-
 
 /** Adds the given action to the toolbar and hooks its triggered() signal to
  * the specified slot (if given). */

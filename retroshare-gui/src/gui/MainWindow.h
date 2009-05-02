@@ -151,7 +151,6 @@ private slots:
     void showPreferencesWindow(PreferencesWindow::Page page = PreferencesWindow::General);
     void showMess(MainWindow::Page page = MainWindow::Messages);
 
-
     void showSettings();
     void setStyle();
     
@@ -195,11 +194,7 @@ private:
     QAction* createPageAction(QIcon img, QString text, QActionGroup *group);
     /** Adds a new action to the toolbar. */
     void addAction(QAction *action, const char *slot = 0);
-    
-    /** Creates a new action for a Service pages. */
-    QAction* createPageActionservice(QIcon img, QString text, QActionGroup *groupservice);
-    /** Adds a new action to the toolbar. */
-    void addActionservice(QAction *actionservice, const char *slot = 0);
+        
     
     void loadStyleSheet(const QString &sheetName);
     

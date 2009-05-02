@@ -48,7 +48,7 @@ PeerStatus::PeerStatus(QWidget *parent)
     hbox->addWidget(iconLabel);
     
     statusPeers = new QLabel( tr("Online: 0  | Friends: 0  | Network: 0 "), this );
-	//statusPeers->setMinimumSize( statusPeers->frameSize().width() + 0, 0 );
+	  //statusPeers->setMinimumSize( statusPeers->frameSize().width() + 0, 0 );
     hbox->addWidget(statusPeers);
     
     setLayout( hbox );
@@ -76,7 +76,7 @@ void PeerStatus::setPeerStatus()
 	int others = 1 + ids.size();
 
 	std::ostringstream out2;
-	out2 << "<span style=\"color:#008000\"><strong>Online: </strong></span>" << online << " | <span style=\"color:#0000FF\"><strong>Friends: </strong></span>" << friends << " | <span style=\"color:#FF0033\"><strong>Network: </strong></span>" << others << " ";
+	out2 << "<span style=\"color:#008000\"><strong>Online: </strong></span>" << online << " | <span style=\"color:#0000FF\"><strong>Friends: </strong></span>" << friends << " | <strong>Network: </strong>" << others << " ";
 
 
 	if (statusPeers)
