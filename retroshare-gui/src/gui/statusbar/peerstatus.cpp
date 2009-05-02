@@ -43,7 +43,7 @@ PeerStatus::PeerStatus(QWidget *parent)
     hbox->setSpacing(6);
     
     iconLabel = new QLabel( this );
-    iconLabel->setPixmap(QPixmap::QPixmap(":/images/user/identity16.png"));
+    iconLabel->setPixmap(QPixmap::QPixmap(":/images/user/identitygray16.png"));
     // iconLabel doesn't change over time, so we didn't need a minimum size
     hbox->addWidget(iconLabel);
     
@@ -61,26 +61,36 @@ PeerStatus::~PeerStatus()
 
 void PeerStatus::getPeerStatus()
 {
-	/* set users/friends/network */
+    /* set users/friends/network */
 
-	std::list<std::string> ids;
-	rsPeers->getOnlineList(ids);
-	int online = ids.size();
+    std::list<std::string> ids;
+    rsPeers->getOnlineList(ids);
+    int online = ids.size();
 
-	ids.clear();
-	rsPeers->getFriendList(ids);
-	int friends = ids.size();
+    ids.clear();
+    rsPeers->getFriendList(ids);
+    int friends = ids.size();
 
-	ids.clear();
-	rsPeers->getOthersList(ids);
-	int others = 1 + ids.size();
+    ids.clear();
+    rsPeers->getOthersList(ids);
+    int others = 1 + ids.size();
 
-	std::ostringstream out2;
-	out2 << "<span style=\"color:#008000\"><strong>Online: </strong></span>" << online << " | <span style=\"color:#0000FF\"><strong>Friends: </strong></span>" << friends << " | <strong>Network: </strong>" << others << " ";
+    std::ostringstream out2;
+    out2 << "<span style=\"color:#008000\"><strong>Online: </strong></span>" << online << " | <span style=\"color:#0000FF\"><strong>Friends: </strong></span>" << friends << " | <strong>Network: </strong>" << others << " ";
 
 
-	if (statusPeers)
-    		statusPeers -> setText(QString::fromStdString(out2.str()));
+    if (statusPeers)
+          statusPeers -> setText(QString::fromStdString(out2.str()));
+    		
+    if (online > 0) 
+    {
+        iconLabel->setPixmap(QPixmap::QPixmap(":/images/user/identity16.png"));
+    }
+    else
+    {
+        iconLabel->setPixmap(QPixmap::QPixmap(":/images/user/identitygray16.png"));
+    }
+   		
 
 }
 
