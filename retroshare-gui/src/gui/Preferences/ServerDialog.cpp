@@ -91,6 +91,12 @@ ServerDialog::save(QString &errmsg)
 }
 
 
+/** Change of maxDataRate limits the Individual Data Rate */
+void ServerDialog::setMaximumIndivRate(int maximum) {
+  ui.indivRate->setMaximum(maximum);
+}
+
+
 /** Loads the settings for this page */
 void ServerDialog::load()
 {
@@ -137,9 +143,19 @@ void ServerDialog::load()
 	rsiface->lockData(); /* Lock Interface */
 
 	ui.totalRate->setValue(rsiface->getConfig().maxDataRate);
-	ui.indivRate->setValue(rsiface->getConfig().maxIndivDataRate);
+
+	// It makes no sense if the total Transfer rate is lower than the individual rate.
+	// Avoid this due setting uper limit for individual rate, and correct old wrong saved settings.
+	if (rsiface->getConfig().maxDataRate < rsiface->getConfig().maxIndivDataRate) {
+		ui.indivRate->setValue(rsiface->getConfig().maxDataRate);
+	} else {
+		ui.indivRate->setValue(rsiface->getConfig().maxIndivDataRate);
+	}
+	QObject::connect(ui.totalRate, SIGNAL (valueChanged(int)),
+			 this, SLOT (setMaximumIndivRate(int)));
 
 	rsiface->unlockData(); /* UnLock Interface */
+
 
 	toggleUPnP();
 
@@ -170,7 +186,6 @@ void ServerDialog::load()
 	ui.extAddress->setText(QString::fromStdString(detail.extAddr));
 	ui.extPort -> setValue(detail.extPort);
 }
-
 
 /** Loads the settings for this page */
 void ServerDialog::updateStatus()

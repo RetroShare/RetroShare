@@ -50,7 +50,7 @@ private slots:
   void saveAddresses();
   void toggleUPnP();
   void toggleIpDetermination(bool) ;
-
+  void setMaximumIndivRate(int);
   
 private:
   /** A RshareSettings object used for saving/loading settings */
