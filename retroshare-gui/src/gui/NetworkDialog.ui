@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>582</width>
+    <width>549</width>
     <height>444</height>
    </rect>
   </property>
@@ -218,6 +218,103 @@ p, li { white-space: pre-wrap; }
               <enum>Qt::CustomContextMenu</enum>
              </property>
             </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="networkstatus" >
+          <attribute name="title" >
+           <string>Network Status</string>
+          </attribute>
+          <layout class="QGridLayout" name="gridLayout" >
+           <item row="0" column="0" >
+            <layout class="QHBoxLayout" name="_2" >
+             <item>
+              <layout class="QVBoxLayout" name="_3" >
+               <item>
+                <widget class="QRadioButton" name="radio_nonet" >
+                 <property name="text" >
+                  <string>No Conectivity</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="radio_netLimited" >
+                 <property name="text" >
+                  <string>Limited</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="radio_netUdp" >
+                 <property name="text" >
+                  <string>Udp</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="radio_netServer" >
+                 <property name="text" >
+                  <string>Retroshare Server</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="_4" >
+               <item>
+                <widget class="QCheckBox" name="check_udp" >
+                 <property name="text" >
+                  <string>UDP Connections</string>
+                 </property>
+                 <property name="checkable" >
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="check_ext" >
+                 <property name="text" >
+                  <string>Stable External IP Addrress</string>
+                 </property>
+                 <property name="checkable" >
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="check_dht" >
+                 <property name="text" >
+                  <string>DHT Okay</string>
+                 </property>
+                 <property name="checkable" >
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="check_upnp" >
+                 <property name="text" >
+                  <string>UPnP Active</string>
+                 </property>
+                 <property name="checkable" >
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="check_tcp" >
+                 <property name="text" >
+                  <string>TCP server</string>
+                 </property>
+                 <property name="checkable" >
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
            </item>
           </layout>
          </widget>

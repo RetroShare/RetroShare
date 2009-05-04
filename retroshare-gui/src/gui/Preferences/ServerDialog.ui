@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>409</width>
-    <height>406</height>
+    <width>405</width>
+    <height>357</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -672,6 +672,35 @@
            </layout>
           </item>
           <item>
+           <spacer name="verticalSpacer" >
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0" >
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2" >
+      <attribute name="title" >
+       <string>IP Service</string>
+      </attribute>
+      <layout class="QGridLayout" >
+       <item row="0" column="0" >
+        <widget class="QGroupBox" name="groupBox_4" >
+         <property name="title" >
+          <string>IP check service</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout" >
+          <item row="0" column="0" >
            <widget class="QCheckBox" name="allowIpDeterminationCB" >
             <property name="toolTip" >
              <string>If you unckeck this, RetroShare can only determine your IP 
@@ -687,7 +716,7 @@ behind a firewall or a VPN.</string>
             </property>
            </widget>
           </item>
-          <item>
+          <item row="1" column="0" >
            <widget class="QListWidget" name="IPServersLV" >
             <property name="editTriggers" >
              <set>QAbstractItemView::NoEditTriggers</set>
@@ -696,103 +725,6 @@ behind a firewall or a VPN.</string>
           </item>
          </layout>
         </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tab_2" >
-      <attribute name="title" >
-       <string>Network Status</string>
-      </attribute>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <layout class="QHBoxLayout" >
-         <item>
-          <layout class="QVBoxLayout" >
-           <item>
-            <widget class="QRadioButton" name="radio_nonet" >
-             <property name="text" >
-              <string>No Conectivity</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="radio_netLimited" >
-             <property name="text" >
-              <string>Limited</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="radio_netUdp" >
-             <property name="text" >
-              <string>Udp</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="radio_netServer" >
-             <property name="text" >
-              <string>Retroshare Server</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" >
-           <item>
-            <widget class="QCheckBox" name="check_udp" >
-             <property name="text" >
-              <string>UDP Connections</string>
-             </property>
-             <property name="checkable" >
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="check_ext" >
-             <property name="text" >
-              <string>Stable External IP Addrress</string>
-             </property>
-             <property name="checkable" >
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="check_dht" >
-             <property name="text" >
-              <string>DHT Okay</string>
-             </property>
-             <property name="checkable" >
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="check_upnp" >
-             <property name="text" >
-              <string>UPnP Active</string>
-             </property>
-             <property name="checkable" >
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="check_tcp" >
-             <property name="text" >
-              <string>TCP server</string>
-             </property>
-             <property name="checkable" >
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
        </item>
       </layout>
      </widget>

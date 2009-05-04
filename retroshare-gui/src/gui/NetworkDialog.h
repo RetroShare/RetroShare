@@ -46,6 +46,8 @@ public:
 
   void  showpeerdetails(std::string id);
 
+  void load();
+  
 public slots:
   void  insertConnect();
   std::string loadneighbour();
@@ -72,6 +74,7 @@ private slots:
   void displayInfoLogMenu(const QPoint& pos);
   
   void getNetworkStatus();
+  void updateNetworkStatus();
   
   void on_actionTabsright_activated();
   void on_actionTabsnorth_activated();

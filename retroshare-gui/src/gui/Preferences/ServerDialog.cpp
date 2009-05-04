@@ -39,7 +39,7 @@ ServerDialog::ServerDialog(QWidget *parent)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
- /* Create RshareSettings object */
+  /* Create RshareSettings object */
   _settings = new RshareSettings();
 
   connect( ui.netModeComboBox, SIGNAL( activated ( int ) ), this, SLOT( toggleUPnP( ) ) );
@@ -156,25 +156,7 @@ void ServerDialog::load()
 
 
 	toggleUPnP();
-
-	//ui.check_net->setCheckable(true);
-	ui.check_upnp->setCheckable(true);
-	ui.check_dht->setCheckable(true);
-	ui.check_ext->setCheckable(true);
-	ui.check_udp->setCheckable(true);
-	ui.check_tcp->setCheckable(true);
-
-	//ui.check_net->setEnabled(false);
-	ui.check_upnp->setEnabled(false);
-	ui.check_dht->setEnabled(false);
-	ui.check_ext->setEnabled(false);
-	ui.check_udp->setEnabled(false);
-	ui.check_tcp->setEnabled(false);
-
-	ui.radio_nonet->setEnabled(false);
-	ui.radio_netLimited->setEnabled(false);
-	ui.radio_netUdp->setEnabled(false);
-	ui.radio_netServer->setEnabled(false);
+	
 
 	/* Addresses must be set here - otherwise can't edit it */
 		/* set local address */
@@ -284,40 +266,7 @@ void ServerDialog::updateStatus()
 	ui.netStatusBox ->setReadOnly(true);
 #endif 
 
-	rsiface->lockData(); /* Lock Interface */
 
-	/* now the extra bit .... switch on check boxes */
-	const RsConfig &config = rsiface->getConfig();
-
-	//ui.check_net->setChecked(config.netOk);
-	ui.check_upnp->setChecked(config.netUpnpOk);
-	ui.check_dht->setChecked(config.netDhtOk);
-	ui.check_ext->setChecked(config.netExtOk);
-	ui.check_udp->setChecked(config.netUdpOk);
-	ui.check_tcp->setChecked(config.netTcpOk);
-
-	if (config.netExtOk)
-	{
-		if (config.netUpnpOk || config.netTcpOk)
-		{
-			ui.radio_netServer->setChecked(true);
-		}
-		else
-		{
-			ui.radio_netUdp->setChecked(true);
-		}
-	}
-	else if (config.netOk)
-	{
-		ui.radio_netLimited->setChecked(true);
-	}
-	else
-	{
-		ui.radio_nonet->setChecked(true);
-	}
-		
-
-	rsiface->unlockData(); /* UnLock Interface */
 
 
 }
