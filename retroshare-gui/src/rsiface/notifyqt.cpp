@@ -267,6 +267,24 @@ void NotifyQt::UpdateGUI()
 					break;
 			}
 		}
+		if (rsNotify->NotifyLogMessage(sysid, type, title, msg))
+		{
+			/* make a log message */
+			std::string logMesString = title + " " + msg;
+			switch(type)
+			{
+				case RS_SYS_ERROR:
+					cDialog->setLogInfo(QString(logMesString.c_str()));
+					break;
+				case RS_SYS_WARNING:
+					cDialog->setLogInfo(QString(logMesString.c_str()));
+					break;
+				default:
+				case RS_SYS_INFO:
+					cDialog->setLogInfo(QString(logMesString.c_str()));
+					break;
+			}
+		}
 	}
 }
 			

@@ -55,6 +55,27 @@ bool p3Notify::NotifySysMessage(uint32_t &sysid, uint32_t &type,
 	return false;
 }
 
+	/* Output for retroshare-gui */
+bool p3Notify::NotifyLogMessage(uint32_t &sysid, uint32_t &type,
+					std::string &title, std::string &msg)
+{
+	RsStackMutex stack(noteMtx); /************* LOCK MUTEX ************/
+	if (pendingLogMsgs.size() > 0)
+	{
+		p3NotifyLogMsg smsg = pendingLogMsgs.front();
+		pendingLogMsgs.pop_front();
+
+		sysid = smsg.sysid;
+		type = smsg.type;
+		title = smsg.title;
+		msg = smsg.msg;
+
+		return true;
+	}
+
+	return false;
+}
+
 
 bool p3Notify::NotifyPopupMessage(uint32_t &ptype, std::string &name, std::string &msg)
 {
@@ -128,6 +149,23 @@ bool p3Notify::AddSysMessage(uint32_t sysid, uint32_t type,
 	smsg.msg = msg;
 
 	pendingSysMsgs.push_back(smsg);
+
+	return true;
+}
+
+bool p3Notify::AddLogMessage(uint32_t sysid, uint32_t type,
+					std::string title, std::string msg)
+{
+	RsStackMutex stack(noteMtx); /************* LOCK MUTEX ************/
+
+	p3NotifyLogMsg smsg;
+
+	smsg.sysid = sysid;
+	smsg.type = type;
+	smsg.title = title;
+	smsg.msg = msg;
+
+	pendingLogMsgs.push_back(smsg);
 
 	return true;
 }

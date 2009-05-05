@@ -41,6 +41,16 @@ class p3NotifySysMsg
 	std::string msg;
 };
 
+class p3NotifyLogMsg
+{
+	public:
+
+	uint32_t sysid;
+	uint32_t type;
+	std::string title;
+	std::string msg;
+};
+
 class p3NotifyPopupMsg
 {
 	public:
@@ -62,6 +72,7 @@ virtual ~p3Notify() { return; }
 virtual bool NotifySysMessage(uint32_t &sysid, uint32_t &type, 
 					std::string &title, std::string &msg);
 virtual bool NotifyPopupMessage(uint32_t &ptype, std::string &name, std::string &msg);
+virtual bool NotifyLogMessage(uint32_t &sysid, uint32_t &type, std::string &title, std::string &msg);
 
 	/* Control over Messages */
 virtual bool GetSysMessageList(std::map<uint32_t, std::string> &list);
@@ -75,6 +86,7 @@ virtual bool GetFeedItem(RsFeedItem &item);
 	/* Overloaded from pqiNotify */
 virtual bool AddPopupMessage(uint32_t ptype, std::string name, std::string msg);
 virtual bool AddSysMessage(uint32_t sysid, uint32_t type, std::string title, std::string msg);
+virtual bool AddLogMessage(uint32_t sysid, uint32_t type, std::string title, std::string msg);
 virtual bool AddFeedItem(uint32_t type, std::string id1, std::string id2, std::string id3);
 
 	private:
@@ -82,6 +94,7 @@ virtual bool AddFeedItem(uint32_t type, std::string id1, std::string id2, std::s
 	RsMutex noteMtx;
 
 	std::list<p3NotifySysMsg> pendingSysMsgs;
+	std::list<p3NotifyLogMsg> pendingLogMsgs;
 	std::list<p3NotifyPopupMsg> pendingPopupMsgs;
 	std::list<RsFeedItem>  pendingNewsFeed;
 };

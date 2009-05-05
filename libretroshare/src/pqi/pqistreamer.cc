@@ -628,7 +628,7 @@ continue_packet:
 				msgout <<  "\n";
 
 				std::string msg = msgout.str();
-				notify->AddSysMessage(0, RS_SYS_WARNING, title, msg);
+				notify->AddLogMessage(0, RS_SYS_WARNING, title, msg);
 			}
 			bio->close();	
 			reading_state = reading_state_initial ;	// restart at state 1.
