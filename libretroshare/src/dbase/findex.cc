@@ -757,6 +757,13 @@ int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint64_
 						(it->second)->parent = root;
 					}
 
+                                        std::map<std::string, FileEntry *>::iterator it2;
+                                        for(it2 = root->files.begin();
+                                                it2 != root->files.end(); it2++)
+                                        {
+                                                (it2->second)->parent = root;
+                                        }
+
 					break; 
 				}
 				/* pop stack */
