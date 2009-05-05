@@ -180,12 +180,6 @@ PeersDialog::PeersDialog(QWidget *parent)
 #endif
 }
 
-/*void PeersDialog::setChatDialog(ChatDialog *cd)
-{
-  chatDialog = cd;
-}*/
-
-
 void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
 {
 
@@ -663,20 +657,31 @@ void PeersDialog::configurefriend()
 	confdialog -> show();
 }
 
+void PeersDialog::updatePeerStatusString(const QString& peer_id,const QString& status_string)
+{
+	RshareSettings settings;
+	uint chatflags = settings.getChatFlags();
+
+	PopupChatDialog *pcd = getPrivateChat(peer_id.toStdString(),rsPeers->getPeerName(peer_id.toStdString()), chatflags);
+	pcd->updateStatusString(status_string);
+}
 
 void PeersDialog::insertChat()
 {
 	if (!rsMsgs->chatAvailable())
 	{
+		std::cerr << "no chat available." << std::endl ;
 		return;
 	}
 
 	std::list<ChatInfo> newchat;
 	if (!rsMsgs->getNewChat(newchat))
 	{
+		std::cerr << "could not get new chat." << std::endl ;
 		return;
 	}
 
+		std::cerr << "got new chat." << std::endl ;
     QTextEdit *msgWidget = ui.msgText;
 	std::list<ChatInfo>::iterator it;
 
