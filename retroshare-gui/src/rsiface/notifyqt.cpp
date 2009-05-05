@@ -11,7 +11,7 @@
 #include "gui/PeersDialog.h"
 #include "gui/SharedFilesDialog.h"
 #include "gui/TransfersDialog.h"
-#include "gui/ChatDialog.h"
+//#include "gui/ChatDialog.h"
 #include "gui/MessagesDialog.h"
 #include "gui/ChannelsDialog.h"
 #include "gui/MessengerWindow.h"

@@ -26,16 +26,17 @@ class NotifyQt: public QObject, public NotifyBase
 {
 	Q_OBJECT
 	public:
-		NotifyQt() {}
-//		: cDialog(NULL), pDialog(NULL),
+		NotifyQt()
+		: cDialog(NULL)
+//, pDialog(NULL),
 //		dDialog(NULL), tDialog(NULL),
 //		hDialog(NULL), mDialog(NULL),
 //		sDialog(NULL), mWindow(NULL)
-//	{ return; }
+	{ return; }
 
 		virtual ~NotifyQt() { return; }
 
-//		void setNetworkDialog(NetworkDialog *c) { cDialog = c; }
+		void setNetworkDialog(NetworkDialog *c) { cDialog = c; }
 //		void setPeersDialog(PeersDialog *p) { pDialog = p; }
 //		void setDirDialog(SharedFilesDialog *d) { dDialog = d; }
 //		void setTransfersDialog(TransfersDialog *t) { tDialog = t; }
@@ -96,7 +97,7 @@ class NotifyQt: public QObject, public NotifyBase
 //		void preDisplayTransfers();
 
 		/* so we can update windows */
-//		NetworkDialog *cDialog;
+		NetworkDialog *cDialog;
 //		PeersDialog       *pDialog;
 //		SharedFilesDialog *dDialog;
 //		TransfersDialog   *tDialog;
