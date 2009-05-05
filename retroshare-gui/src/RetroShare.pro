@@ -3,6 +3,7 @@ QT     += network xml script
 TEMPLATE = app
 TARGET = RetroShare
 
+DEFINES *= RS_RELEASE_VERSION
 RCC_DIR = temp/qrc
 UI_DIR  = temp/ui
 MOC_DIR = temp/moc
@@ -111,7 +112,7 @@ HEADERS +=  rshare.h \
             gui/DLListDelegate.h \
             gui/ULListDelegate.h \
             gui/StartDialog.h \
-            gui/ChatDialog.h \
+#           gui/ChatDialog.h \
             gui/BlogDialog.h \
             gui/CalDialog.h \
             gui/NetworkDialog.h \
@@ -258,7 +259,7 @@ HEADERS +=  rshare.h \
             gui/connect/ConnectFriendWizard.h
 
 
-FORMS +=    gui/ChatDialog.ui \
+FORMS +=   \ #ui/ChatDialog.ui \
             gui/BlogDialog.ui \
             gui/CalDialog.ui \
             gui/StartDialog.ui \
@@ -349,7 +350,7 @@ SOURCES += main.cpp \
             gui/ULListDelegate.cpp \
             gui/StartDialog.cpp \
             gui/GenCertDialog.cpp \
-            gui/ChatDialog.cpp \
+#           gui/ChatDialog.cpp \
             gui/BlogDialog.cpp \
             gui/CalDialog.cpp \
             gui/NetworkDialog.cpp \
@@ -516,6 +517,7 @@ turtle {
         HEADERS += rsiface/rsturtle.h gui/TurtleSearchDialog.h
         FORMS += gui/TurtleSearchDialog.ui
         DEFINES *= TURTLE_HOPPING
+        DEFINES *= RS_RELEASE_VERSION
 }
 
 
