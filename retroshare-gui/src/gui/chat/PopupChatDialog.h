@@ -75,6 +75,9 @@ public slots:
   
   void changeStyle();
 
+  void resetStatusBar() ;
+  void updateStatusTyping() ;
+  void updateStatusString(const QString&) ;
 protected:
   void closeEvent (QCloseEvent * event);
   
@@ -107,6 +110,7 @@ private:
    unsigned int lastChatTime;
    std::string  lastChatName;
    
+	time_t last_status_send_time ;
    QHash<QString, QString> smileys;
    QColor mCurrentColor;
    QFont  mCurrentFont;

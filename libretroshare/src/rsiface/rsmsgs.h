@@ -131,6 +131,7 @@ virtual bool MessageRead(std::string mid)                   = 0;
 virtual bool    chatAvailable() 			   = 0;
 virtual	bool 	ChatSend(ChatInfo &ci)                     = 0;
 virtual	bool	getNewChat(std::list<ChatInfo> &chats)	   = 0;
+virtual void   sendStatusString(const std::string& id,const std::string& status_string) = 0 ;
 
 // get avatar data for peer pid
 virtual void getAvatarData(std::string pid,unsigned char *& data,int& size) = 0 ;

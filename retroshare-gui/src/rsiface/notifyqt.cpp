@@ -39,16 +39,19 @@ void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
 	return;
 }
 
+void NotifyQt::notifyChatStatus(const std::string& peer_id,const std::string& status_string)
+{
+	std::cerr << "Received chat status string: " << status_string << std::endl ;
+	emit chatStatusChanged(QString::fromStdString(peer_id),QString::fromStdString(status_string)) ;
+}
+
 #ifdef TURTLE_HOPPING
 void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files) 
 {
 	std::cerr << "in notify search result..." << std::endl ;
 
-//	QList<TurtleFileInfo> qfiles ;
-
 	for(std::list<TurtleFileInfo>::const_iterator it(files.begin());it!=files.end();++it)
 		emit gotTurtleSearchResult(search_id,*it) ;
-//		qfiles.push_back(*it) ;
 }
 #endif
 void NotifyQt::notifyHashingInfo(std::string fileinfo)
@@ -56,10 +59,11 @@ void NotifyQt::notifyHashingInfo(std::string fileinfo)
 	emit hashingInfoChanged(QString::fromStdString(fileinfo)) ;
 }
 
-void NotifyQt::notifyChat()
-{
-	return;
-}
+//void NotifyQt::notifyChat()
+//{
+//	std::cerr << "Received chat notification" << std::endl ;
+//	return;
+//}
 
 void NotifyQt::notifyListChange(int list, int type)
 {
@@ -90,7 +94,6 @@ void NotifyQt::notifyListChange(int list, int type)
 			emit filesPostModChanged(true) ;  /* Local */
 			break;
 		case NOTIFY_LIST_SEARCHLIST:
-			//displaySearch();
 			break;
 		case NOTIFY_LIST_MESSAGELIST:
 #ifdef DEBUG
@@ -99,7 +102,6 @@ void NotifyQt::notifyListChange(int list, int type)
 			emit messagesChanged() ;
 			break;
 		case NOTIFY_LIST_CHANNELLIST:
-			//displayChannels();
 			break;
 		case NOTIFY_LIST_TRANSFERLIST:
 #ifdef DEBUG
@@ -128,7 +130,6 @@ void NotifyQt::notifyListPreChange(int list, int type)
 	switch(list)
 	{
 		case NOTIFY_LIST_NEIGHBOURS:
-			//preDisplayNeighbours();
 			break;
 		case NOTIFY_LIST_FRIENDS:
 			emit friendsChanged() ;
@@ -138,16 +139,12 @@ void NotifyQt::notifyListPreChange(int list, int type)
 			emit filesPreModChanged(true) ;	/* local */
 			break;
 		case NOTIFY_LIST_SEARCHLIST:
-			//preDisplaySearch();
 			break;
 		case NOTIFY_LIST_MESSAGELIST:
-			//preDisplayMessages();
 			break;
 		case NOTIFY_LIST_CHANNELLIST:
-			//preDisplayChannels();
 			break;
 		case NOTIFY_LIST_TRANSFERLIST:
-			//preDisplayTransfers();
 			break;
 		default:
 			break;
@@ -176,7 +173,7 @@ void NotifyQt::UpdateGUI()
 
 	if (time(NULL) > lastTs + 5)				// update every 5 seconds. I don't know what to do with these.
 	{
-		displayChannels();
+//		displayChannels();
 	}
 
 	lastTs = time(NULL) ;
@@ -273,88 +270,88 @@ void NotifyQt::UpdateGUI()
 	}
 }
 			
-void NotifyQt::displaySearch()
-{
-	iface->lockData(); /* Lock Interface */
+//void NotifyQt::displaySearch()
+//{
+//	iface->lockData(); /* Lock Interface */
+//
+//#ifdef NOTIFY_DEBUG
+//	std::ostringstream out;
+//	std::cerr << out.str();
+//#endif
+//
+//	iface->unlockData(); /* UnLock Interface */
+//}
 
-#ifdef NOTIFY_DEBUG
-	std::ostringstream out;
-	std::cerr << out.str();
-#endif
+//  void NotifyQt::displayChat()
+//  {
+//  	iface->lockData(); /* Lock Interface */
+//  
+//  #ifdef NOTIFY_DEBUG
+//  	std::ostringstream out;
+//  	std::cerr << out.str();
+//  #endif
+//  
+//  	iface->unlockData(); /* UnLock Interface */
+//  
+//  	if (hDialog)
+//   		hDialog -> insertChat();
+//  }
+//
+//
+//void NotifyQt::displayChannels()
+//{
+//	iface->lockData(); /* Lock Interface */
+//
+//#ifdef NOTIFY_DEBUG
+//	std::ostringstream out;
+//	std::cerr << out.str();
+//#endif
+//
+//	iface->unlockData(); /* UnLock Interface */
+//
+//	if (sDialog)
+// 		sDialog -> insertChannels();
+//}
+//
+//
+//void NotifyQt::displayTransfers()
+//{
+//	/* Do the GUI */
+//	if (tDialog)
+//		tDialog->insertTransfers();
+//}
+//
+//
+//void NotifyQt::preDisplayNeighbours()
+//{
+//
+//}
+//
+//void NotifyQt::preDisplayFriends()
+//{
+//
+//}
 
-	iface->unlockData(); /* UnLock Interface */
-}
-
-void NotifyQt::displayChat()
-{
-	iface->lockData(); /* Lock Interface */
-
-#ifdef NOTIFY_DEBUG
-	std::ostringstream out;
-	std::cerr << out.str();
-#endif
-
-	iface->unlockData(); /* UnLock Interface */
-
-	if (hDialog)
- 		hDialog -> insertChat();
-}
-
-
-void NotifyQt::displayChannels()
-{
-	iface->lockData(); /* Lock Interface */
-
-#ifdef NOTIFY_DEBUG
-	std::ostringstream out;
-	std::cerr << out.str();
-#endif
-
-	iface->unlockData(); /* UnLock Interface */
-
-	if (sDialog)
- 		sDialog -> insertChannels();
-}
-
-
-void NotifyQt::displayTransfers()
-{
-	/* Do the GUI */
-	if (tDialog)
-		tDialog->insertTransfers();
-}
-
-
-void NotifyQt::preDisplayNeighbours()
-{
-
-}
-
-void NotifyQt::preDisplayFriends()
-{
-
-}
-
-void NotifyQt::preDisplaySearch()
-{
-
-}
-
-void NotifyQt::preDisplayMessages()
-{
-
-}
-
-void NotifyQt::preDisplayChannels()
-{
-
-}
-
-void NotifyQt::preDisplayTransfers()
-{
-
-
-}
+//void NotifyQt::preDisplaySearch()
+//{
+//
+//}
+//
+//void NotifyQt::preDisplayMessages()
+//{
+//
+//}
+//
+//void NotifyQt::preDisplayChannels()
+//{
+//
+//}
+//
+//void NotifyQt::preDisplayTransfers()
+//{
+//
+//
+//}
 
 
 

@@ -32,7 +32,7 @@ class p3AuthMgr;
 class p3MsgService;
 class p3ChatService;
 
-class RsChatItem;
+class RsChatMsgItem;
 
 class p3Msgs: public RsMsgs 
 {
@@ -62,13 +62,14 @@ class p3Msgs: public RsMsgs
 	  virtual bool    chatAvailable();
 	  virtual	bool 	ChatSend(ChatInfo &ci);
 	  virtual	bool	getNewChat(std::list<ChatInfo> &chats);
+	  virtual void    sendStatusString(const std::string& peer_id,const std::string& status_string) ;
 
 	  /****************************************/
 
 
    private:
 
-	  void initRsChatInfo(RsChatItem *c, ChatInfo &i);
+	  void initRsChatInfo(RsChatMsgItem *c, ChatInfo &i);
 
 	  p3AuthMgr     *mAuthMgr;
 	  p3MsgService  *mMsgSrv;

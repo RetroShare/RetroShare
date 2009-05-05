@@ -35,51 +35,78 @@
 /**************************************************************************/
 
 /* chat Flags */
-const uint32_t RS_CHAT_FLAG_PRIVATE 		 = 0x0001;
-const uint32_t RS_CHAT_FLAG_REQUESTS_AVATAR	 = 0x0002;
-const uint32_t RS_CHAT_FLAG_CONTAINS_AVATAR	 = 0x0004;
+const uint32_t RS_CHAT_FLAG_PRIVATE 		 	= 0x0001;
+const uint32_t RS_CHAT_FLAG_REQUESTS_AVATAR	= 0x0002;
+const uint32_t RS_CHAT_FLAG_CONTAINS_AVATAR	= 0x0004;
 const uint32_t RS_CHAT_FLAG_AVATAR_AVAILABLE = 0x0008;
+
+const uint8_t RS_PKT_SUBTYPE_CHAT_STATUS = 0x02 ;	// default is 0x01
 
 class RsChatItem: public RsItem
 {
 	public:
-	RsChatItem() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_CHAT, 
-		RS_PKT_SUBTYPE_DEFAULT)
-	{ return; }
-virtual ~RsChatItem();
-virtual void clear();
-std::ostream &print(std::ostream &out, uint16_t indent = 0);
+		RsChatItem(uint8_t chat_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_CHAT,chat_subtype) {}
 
-	uint32_t chatFlags;
-	uint32_t sendTime;
+		virtual ~RsChatItem() {}
+		virtual void clear() {}
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) = 0 ;
 
-	std::wstring message;
+		virtual bool serialise(void *data,uint32_t& size) = 0 ;	// Isn't it better that items can serialize themselves ?
+		virtual uint32_t serial_size() = 0 ; 							// deserialise is handled using a constructor
+};
 
-	/* not serialised */
-	uint32_t recvTime; 
+
+class RsChatMsgItem: public RsChatItem
+{
+	public:
+		RsChatMsgItem() :RsChatItem(RS_PKT_SUBTYPE_DEFAULT) {}
+		RsChatMsgItem(void *data,uint32_t size) ; // deserialization
+
+		virtual ~RsChatMsgItem() {}
+		virtual void clear() {}
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
+		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
+
+		uint32_t chatFlags;
+		uint32_t sendTime;
+		std::wstring message;
+		/* not serialised */
+		uint32_t recvTime; 
+};
+
+// This class contains activity info for the sending peer: active, idle, typing, etc.
+//
+class RsChatStatusItem: public RsChatItem
+{
+	public:
+		RsChatStatusItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_STATUS) {}
+		RsChatStatusItem(void *data,uint32_t size) ; // deserialization
+
+		virtual ~RsChatStatusItem() {}
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
+		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
+
+		std::string status_string;
 };
 
 class RsChatSerialiser: public RsSerialType
 {
 	public:
-	RsChatSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_CHAT)
-	{ return; }
-virtual     ~RsChatSerialiser()
-	{ return; }
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
+		RsChatSerialiser() :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_CHAT) {}
 
-	private:
-
-virtual	uint32_t    sizeItem(RsChatItem *);
-virtual	bool        serialiseItem  (RsChatItem *item, void *data, uint32_t *size);
-virtual	RsChatItem *deserialiseItem(void *data, uint32_t *size);
-
-
+		virtual uint32_t 	size (RsItem *item) 
+		{ 
+			return static_cast<RsChatItem *>(item)->serial_size() ; 
+		}
+		virtual bool serialise(RsItem *item, void *data, uint32_t *size) 
+		{ 
+			return static_cast<RsChatItem *>(item)->serialise(data,*size) ; 
+		}
+		virtual RsItem *deserialise (void *data, uint32_t *size) ;
 };
 
 /**************************************************************************/

@@ -24,6 +24,7 @@
  */
 
 #include "util/rsdir.h"
+#include "rsiface/rsiface.h"
 #include "pqi/pqibin.h"
 #include "pqi/pqinotify.h"
 #include "pqi/pqiarchive.h"
@@ -90,7 +91,7 @@ int     p3ChatService::sendChat(std::wstring msg)
 
 	for(it = ids.begin(); it != ids.end(); it++)
 	{
-		RsChatItem *ci = new RsChatItem();
+		RsChatMsgItem *ci = new RsChatMsgItem();
 
 		ci->PeerId(*it);
 		ci->chatFlags = 0;
@@ -170,7 +171,21 @@ class p3ChatService::AvatarInfo
 };
 
 
-int     p3ChatService::sendPrivateChat(std::wstring msg, std::string id)
+void    p3ChatService::sendStatusString( const std::string& id , const std::string& status_string)
+{
+	RsChatStatusItem *cs = new RsChatStatusItem ;
+
+	cs->status_string = status_string ;
+	cs->PeerId(id);
+
+#ifdef CHAT_DEBUG
+	std::cerr  << "sending chat status packet:" << std::endl ;
+	cs->print(std::cerr) ;
+#endif
+	sendItem(cs);
+}
+
+int     p3ChatService::sendPrivateChat( std::wstring msg, std::string id)
 {
 	// make chat item....
 #ifdef CHAT_DEBUG
@@ -178,7 +193,7 @@ int     p3ChatService::sendPrivateChat(std::wstring msg, std::string id)
 	std::cerr << std::endl;
 #endif
 
-	RsChatItem *ci = new RsChatItem();
+	RsChatMsgItem *ci = new RsChatMsgItem();
 
 	ci->PeerId(id);
 	ci->chatFlags = RS_CHAT_FLAG_PRIVATE;
@@ -215,50 +230,70 @@ int     p3ChatService::sendPrivateChat(std::wstring msg, std::string id)
 	return 1;
 }
 
-std::list<RsChatItem *> p3ChatService::getChatQueue()
+std::list<RsChatMsgItem *> p3ChatService::getChatQueue()
 {
 	time_t now = time(NULL);
 
-	RsChatItem *ci = NULL;
-	std::list<RsChatItem *> ilist;
+	RsItem *item ;
+	std::list<RsChatMsgItem *> ilist;
 
-	while(NULL != (ci = (RsChatItem *) recvItem()))
+	while(NULL != (item=recvItem()))
 	{
 #ifdef CHAT_DEBUG
-		std::cerr << "p3ChatService::getChatQueue() Item:";
-		std::cerr << std::endl;
-		ci->print(std::cerr);
-		std::cerr << std::endl;
-		std::cerr << "Got msg. Flags = " << ci->chatFlags << std::endl ;
+		std::cerr << "p3ChatService::getChatQueue() Item:" << (void*)item << std::endl ;
+#endif
+		RsChatMsgItem *ci = dynamic_cast<RsChatMsgItem*>(item) ;
+
+		if(ci != NULL)
+		{
+#ifdef CHAT_DEBUG
+			std::cerr << "p3ChatService::getChatQueue() Item:";
+			std::cerr << std::endl;
+			ci->print(std::cerr);
+			std::cerr << std::endl;
+			std::cerr << "Got msg. Flags = " << ci->chatFlags << std::endl ;
 #endif
 
-		if(ci->chatFlags & RS_CHAT_FLAG_CONTAINS_AVATAR)			// no msg here. Just an avatar.
-			receiveAvatarJpegData(ci) ;
-		else if(ci->chatFlags & RS_CHAT_FLAG_REQUESTS_AVATAR)		// no msg here. Just an avatar request.
-			sendAvatarJpegData(ci->PeerId()) ;
-		else														// normal msg. Return it normally.
-		{
-		   // Check if new avatar is available at peer's. If so, send a request to get the avatar.
-		   if(ci->chatFlags & RS_CHAT_FLAG_AVATAR_AVAILABLE) 
-		   {
-			  std::cerr << "New avatar is available for peer " << ci->PeerId() << ", sending request" << std::endl ;
-			  sendAvatarRequest(ci->PeerId()) ;
-			  ci->chatFlags &= ~RS_CHAT_FLAG_AVATAR_AVAILABLE ;
-		   }
-
-			std::map<std::string,AvatarInfo *>::const_iterator it = _avatars.find(ci->PeerId()) ; 
-
-			std::cerr << "p3chatservice:: avatar requested from above. " << std::endl ;
-			// has avatar. Return it strait away.
-			//
-			if(it!=_avatars.end() && it->second->_peer_is_new)
+			if(ci->chatFlags & RS_CHAT_FLAG_CONTAINS_AVATAR)			// no msg here. Just an avatar.
+				receiveAvatarJpegData(ci) ;
+			else if(ci->chatFlags & RS_CHAT_FLAG_REQUESTS_AVATAR)		// no msg here. Just an avatar request.
+				sendAvatarJpegData(ci->PeerId()) ;
+			else														// normal msg. Return it normally.
 			{
-				std::cerr << "Adatar is new for peer. ending info above" << std::endl ;
-				ci->chatFlags |= RS_CHAT_FLAG_AVATAR_AVAILABLE ;
-			}
+				// Check if new avatar is available at peer's. If so, send a request to get the avatar.
+				if(ci->chatFlags & RS_CHAT_FLAG_AVATAR_AVAILABLE) 
+				{
+					std::cerr << "New avatar is available for peer " << ci->PeerId() << ", sending request" << std::endl ;
+					sendAvatarRequest(ci->PeerId()) ;
+					ci->chatFlags &= ~RS_CHAT_FLAG_AVATAR_AVAILABLE ;
+				}
 
-		   ci->recvTime = now;
-		   ilist.push_back(ci);
+				std::map<std::string,AvatarInfo *>::const_iterator it = _avatars.find(ci->PeerId()) ; 
+
+				std::cerr << "p3chatservice:: avatar requested from above. " << std::endl ;
+				// has avatar. Return it strait away.
+				//
+				if(it!=_avatars.end() && it->second->_peer_is_new)
+				{
+					std::cerr << "Adatar is new for peer. ending info above" << std::endl ;
+					ci->chatFlags |= RS_CHAT_FLAG_AVATAR_AVAILABLE ;
+				}
+
+				ci->recvTime = now;
+				ilist.push_back(ci);
+			}
+		}
+		RsChatStatusItem *cs = dynamic_cast<RsChatStatusItem*>(item) ;
+
+		if(cs != NULL)
+		{
+			// we should notify for a status string for the current peer.
+#ifdef CHAT_DEBUG
+			std::cerr << "Received status string \"" << cs->status_string << "\"" << std::endl ;
+#endif
+			rsicontrol->getNotify().notifyChatStatus(cs->PeerId(),cs->status_string) ;
+
+			delete item ;
 		}
 	}
 
@@ -284,7 +319,7 @@ void p3ChatService::setOwnAvatarJpegData(const unsigned char *data,int size)
 	IndicateConfigChanged();
 }
 
-void p3ChatService::receiveAvatarJpegData(RsChatItem *ci)
+void p3ChatService::receiveAvatarJpegData(RsChatMsgItem *ci)
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
    std::cerr << "p3chatservice: received avatar jpeg data for peer " << ci->PeerId() << ". Storing it." << std::endl ;
@@ -339,7 +374,7 @@ void p3ChatService::sendAvatarRequest(const std::string& peer_id)
 {
 	// Doesn't have avatar. Request it.
 	//
-	RsChatItem *ci = new RsChatItem();
+	RsChatMsgItem *ci = new RsChatMsgItem();
 
 	ci->PeerId(peer_id);
 	ci->chatFlags = RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_REQUESTS_AVATAR ;
@@ -352,10 +387,10 @@ void p3ChatService::sendAvatarRequest(const std::string& peer_id)
 	sendItem(ci);
 }
 
-RsChatItem *p3ChatService::makeOwnAvatarItem()
+RsChatMsgItem *p3ChatService::makeOwnAvatarItem()
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-	RsChatItem *ci = new RsChatItem();
+	RsChatMsgItem *ci = new RsChatMsgItem();
 
 	ci->chatFlags = RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_CONTAINS_AVATAR ;
 	ci->sendTime = time(NULL);
@@ -371,7 +406,7 @@ void p3ChatService::sendAvatarJpegData(const std::string& peer_id)
 
    if(_own_avatar != NULL)
 	{
-		RsChatItem *ci = makeOwnAvatarItem();
+		RsChatMsgItem *ci = makeOwnAvatarItem();
 		ci->PeerId(peer_id);
 
 		// take avatar, and embed it into a std::wstring.
@@ -396,11 +431,11 @@ bool p3ChatService::loadConfiguration(std::string &loadHash)
 	BinFileInterface *in = new BinFileInterface(msgfile.c_str(), BIN_FLAGS_READABLE | BIN_FLAGS_HASH_DATA);
 	pqiarchive *pa_in = new pqiarchive(rss, in, BIN_FLAGS_READABLE);
 	RsItem *item;
-	RsChatItem *mitem;
+	RsChatMsgItem *mitem;
 
 	while((item = pa_in -> GetItem()))
 	{
-		if(NULL != (mitem = dynamic_cast<RsChatItem *>(item)))
+		if(NULL != (mitem = dynamic_cast<RsChatMsgItem *>(item)))
 		{
 			RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
@@ -451,7 +486,7 @@ bool p3ChatService::saveConfiguration()
 	if(_own_avatar != NULL)
 	{
 		std::cerr << "Saving avatar config to file " << msgfile << std::endl ;
-		RsChatItem *ci = makeOwnAvatarItem() ;
+		RsChatMsgItem *ci = makeOwnAvatarItem() ;
 		ci->PeerId(mConnMgr->getOwnId());
 
 		if(!pa_out -> SendItem(ci))

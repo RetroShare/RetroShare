@@ -50,7 +50,7 @@ public:
   void clearOldChats();
   
   void loadEmoticonsgroupchat();
-  void setChatDialog(ChatDialog *cd);
+//  void setChatDialog(ChatDialog *cd);
 
 public slots:
 
@@ -72,6 +72,8 @@ private slots:
   /** Create the context popup menu and it's submenus */
   void peertreeWidgetCostumPopupMenu( QPoint point );
   
+  void updatePeerStatusString(const QString& peer_id,const QString& chat_status) ;
+
   /** Export friend in Friends Dialog */
   void exportfriend();
   /** Remove friend  */
@@ -109,7 +111,7 @@ private:
   /* (2) Utility Fns */
   QTreeWidgetItem *getCurrentPeer();
 
-  ChatDialog *chatDialog;
+ // ChatDialog *chatDialog;
 
 
   /** Define the popup menus for the Context menu */

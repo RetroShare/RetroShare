@@ -26,29 +26,30 @@ class NotifyQt: public QObject, public NotifyBase
 {
 	Q_OBJECT
 	public:
-		NotifyQt() : cDialog(NULL), pDialog(NULL),
-		dDialog(NULL), tDialog(NULL),
-		hDialog(NULL), mDialog(NULL),
-		sDialog(NULL), mWindow(NULL)
-	{ return; }
+		NotifyQt() {}
+//		: cDialog(NULL), pDialog(NULL),
+//		dDialog(NULL), tDialog(NULL),
+//		hDialog(NULL), mDialog(NULL),
+//		sDialog(NULL), mWindow(NULL)
+//	{ return; }
 
 		virtual ~NotifyQt() { return; }
 
-		void setNetworkDialog(NetworkDialog *c) { cDialog = c; }
-		void setPeersDialog(PeersDialog *p) { pDialog = p; }
-		void setDirDialog(SharedFilesDialog *d) { dDialog = d; }
-		void setTransfersDialog(TransfersDialog *t) { tDialog = t; }
-		void setChatDialog(ChatDialog *m)         { hDialog = m; }
-		void setMessagesDialog(MessagesDialog *m) { mDialog = m; }
-		void setChannelsDialog(ChannelsDialog *s) { sDialog = s; }
-		void setMessengerWindow(MessengerWindow *mw) { mWindow = mw; }
-
-		void setRsIface(RsIface *i) { iface = i; }
+//		void setNetworkDialog(NetworkDialog *c) { cDialog = c; }
+//		void setPeersDialog(PeersDialog *p) { pDialog = p; }
+//		void setDirDialog(SharedFilesDialog *d) { dDialog = d; }
+//		void setTransfersDialog(TransfersDialog *t) { tDialog = t; }
+//		void setChatDialog(ChatDialog *m)         { hDialog = m; }
+//		void setMessagesDialog(MessagesDialog *m) { mDialog = m; }
+//		void setChannelsDialog(ChannelsDialog *s) { sDialog = s; }
+//		void setMessengerWindow(MessengerWindow *mw) { mWindow = mw; }
+//		void setRsIface(RsIface *i) { iface = i; }
 
 		virtual void notifyListPreChange(int list, int type);
 		virtual void notifyListChange(int list, int type);
 		virtual void notifyErrorMsg(int list, int sev, std::string msg);
-		virtual void notifyChat();
+//		virtual void notifyChat();
+		virtual void notifyChatStatus(const std::string& peer_id,const std::string& status_string);
 		virtual void notifyHashingInfo(std::string fileinfo);
 #ifdef TURTLE_HOPPING
 		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& found_files);
@@ -66,6 +67,7 @@ class NotifyQt: public QObject, public NotifyBase
 		void neighborsChanged() const ;
 		void messagesChanged() const ;
 		void configChanged() const ;
+		void chatStatusChanged(const QString&,const QString&) const ;
 #ifdef TURTLE_HOPPING
 		void gotTurtleSearchResult(qulonglong search_id,TurtleFileInfo file) const ;
 #endif
@@ -76,34 +78,34 @@ class NotifyQt: public QObject, public NotifyBase
 
 	private:
 
-		void displayNeighbours();
-		void displayFriends();
+//		void displayNeighbours();
+//		void displayFriends();
 //		void displayDirectories();
-		void displaySearch();
-		void displayChat();
-		void displayMessages();
-		void displayChannels();
-		void displayTransfers();
+//		void displaySearch();
+//		void displayChat();
+//		void displayMessages();
+//		void displayChannels();
+//		void displayTransfers();
 
-		void preDisplayNeighbours();
-		void preDisplayFriends();
+//		void preDisplayNeighbours();
+//		void preDisplayFriends();
 //		void preDisplayDirectories();
-		void preDisplaySearch();
-		void preDisplayMessages();
-		void preDisplayChannels();
-		void preDisplayTransfers();
+//		void preDisplaySearch();
+//		void preDisplayMessages();
+//		void preDisplayChannels();
+//		void preDisplayTransfers();
 
 		/* so we can update windows */
-		NetworkDialog *cDialog;
-		PeersDialog       *pDialog;
-		SharedFilesDialog *dDialog;
-		TransfersDialog   *tDialog;
-		ChatDialog        *hDialog;
-		MessagesDialog    *mDialog;
-		ChannelsDialog    *sDialog;
-		MessengerWindow   *mWindow;
+//		NetworkDialog *cDialog;
+//		PeersDialog       *pDialog;
+//		SharedFilesDialog *dDialog;
+//		TransfersDialog   *tDialog;
+//		ChatDialog        *hDialog;
+//		MessagesDialog    *mDialog;
+//		ChannelsDialog    *sDialog;
+//		MessengerWindow   *mWindow;
 
-		RsIface           *iface;
+//		RsIface           *iface;
 };
 
 #endif

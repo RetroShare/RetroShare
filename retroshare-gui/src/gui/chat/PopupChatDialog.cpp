@@ -63,6 +63,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   
   loadEmoticons();
   
+  last_status_send_time = 0 ;
   styleHtm = appDir + "/style/chat/default.htm";
   
   /* Hide Avatar frame */
@@ -85,9 +86,8 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   connect(ui.styleButton, SIGNAL(clicked()), SLOT(changeStyle()));
 
   // Create the status bar
-  std::ostringstream statusstr;
-  statusstr << "Chatting with " << dialogName << " (" << id << ")" ;
-  statusBar()->showMessage(QString::fromStdString(statusstr.str()));
+  resetStatusBar() ;
+
   ui.textBrowser->setOpenExternalLinks ( false );
 
   QString title = QString::fromStdString(name) + " :" + tr(" RetroShare - Encrypted Chat")  ;
@@ -128,6 +128,30 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   updateAvatar() ;
   updatePeerAvatar(id) ;
 }
+
+void PopupChatDialog::resetStatusBar() 
+{
+	statusBar()->showMessage(QString("Chatting with ") + QString::fromStdString(dialogName) + " (" +QString::fromStdString(dialogId)+ ")") ;
+}
+
+void PopupChatDialog::updateStatusTyping()
+{
+	if(time(NULL) - last_status_send_time > 5)	// limit 'peer is typing' packets to at most every 10 sec
+	{
+		rsMsgs->sendStatusString(dialogId, rsiface->getConfig().ownName + " is typing...");
+		last_status_send_time = time(NULL) ;
+	}
+}
+
+// Called by libretroshare through notifyQt to display the peer's status
+//
+void PopupChatDialog::updateStatusString(const QString& status_string)
+{
+	statusBar()->showMessage(status_string,2000) ; // displays info for 5 secs.
+
+	QTimer::singleShot(2000,this,SLOT(resetStatusBar())) ;
+}
+
 
 /** Destructor. */
 PopupChatDialog::~PopupChatDialog()
@@ -259,23 +283,12 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 void PopupChatDialog::checkChat()
 {
 	/* if <return> at the end of the text -> we can send it! */
-        QTextEdit *chatWidget = ui.chattextEdit;
-        std::string txt = chatWidget->toPlainText().toStdString();
-	if ('\n' == txt[txt.length()-1])
-	{
-		//std::cerr << "Found <return> found at end of :" << txt << ": should send!";
-		//std::cerr << std::endl;
-		if (txt.length()-1 == txt.find('\n')) /* only if on first line! */
-		{
-			/* should remove last char ... */
-			sendChat();
-		}
-	}
+	QTextEdit *chatWidget = ui.chattextEdit;
+	std::string txt = chatWidget->toPlainText().toStdString();
+	if ('\n' == txt[txt.length()-1] && txt.length()-1 == txt.find('\n')) /* only if on first line! */
+		sendChat();
 	else
-	{
-		//std::cerr << "No <return> found in :" << txt << ":";
-		//std::cerr << std::endl;
-	}
+		updateStatusTyping() ;
 }
 
 

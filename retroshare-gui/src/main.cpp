@@ -122,7 +122,6 @@ int main(int argc, char *argv[])
 	RsIface *iface = createRsIface(*notify);
 	RsControl *rsServer = createRsControl(*iface, *notify);
 
-	notify->setRsIface(iface);
 
 	/* save to the global variables */
 	rsiface = iface;
@@ -140,14 +139,17 @@ int main(int argc, char *argv[])
 	//skinWindow->setCentralWidget(w);
 
 	/* Attach the Dialogs, to the Notify Class */
-	notify->setNetworkDialog(w->networkDialog);
-	notify->setPeersDialog(w->peersDialog);
-	notify->setDirDialog(w->sharedfilesDialog);
-	notify->setTransfersDialog(w->transfersDialog);
-	notify->setChatDialog(w->chatDialog);
-	notify->setMessagesDialog(w->messagesDialog);
-	notify->setChannelsDialog(w->channelsDialog);
-	notify->setMessengerWindow(w->messengerWindow);
+// Not needed anymore since the notify class is directly connected by Qt signals/slots to the correct widgets below.
+//
+//	notify->setRsIface(iface);
+//	notify->setNetworkDialog(w->networkDialog);
+//	notify->setPeersDialog(w->peersDialog);
+//	notify->setDirDialog(w->sharedfilesDialog);
+//	notify->setTransfersDialog(w->transfersDialog);
+//	notify->setChatDialog(w->chatDialog);
+//	notify->setMessagesDialog(w->messagesDialog);
+//	notify->setChannelsDialog(w->channelsDialog);
+//	notify->setMessengerWindow(w->messengerWindow);
 
 	// I'm using a signal to transfer the hashing info to the mainwindow, because Qt schedules signals properly to
 	// avoid clashes between infos from threads.
@@ -166,6 +168,8 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(neighborsChanged())                ,w->networkDialog    ,SLOT(insertConnect()                  )) ;
 	QObject::connect(notify,SIGNAL(messagesChanged())                 ,w->messagesDialog   ,SLOT(insertMessages()                 )) ;
 	QObject::connect(notify,SIGNAL(configChanged())                   ,w->messagesDialog   ,SLOT(displayConfig()                  )) ;
+
+	QObject::connect(notify,SIGNAL(chatStatusChanged(const QString&,const QString&)),w->peersDialog,SLOT(updatePeerStatusString(const QString&,const QString&)));
 
 	/* only show window, if not startMinimized */
 	if (!startMinimised)

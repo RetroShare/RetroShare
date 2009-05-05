@@ -109,6 +109,11 @@ bool 	p3Msgs::ChatSend(ChatInfo &ci)
 	return true;
 }
 
+void p3Msgs::sendStatusString(const std::string& peer_id,const std::string& status_string) 
+{
+	mChatSrv->sendStatusString(peer_id,status_string);
+}
+
 bool    p3Msgs::chatAvailable()
 {
 	return mChatSrv->receivedItems();
@@ -119,13 +124,13 @@ bool	p3Msgs::getNewChat(std::list<ChatInfo> &chats)
 	/* get any messages and push them to iface */
 
 	// get the items from the list.
-	std::list<RsChatItem *> clist = mChatSrv -> getChatQueue();
+	std::list<RsChatMsgItem *> clist = mChatSrv -> getChatQueue();
 	if (clist.size() < 1)
 	{
 		return false;
 	}
 
-	std::list<RsChatItem *>::iterator it;
+	std::list<RsChatMsgItem *>::iterator it;
 	for(it = clist.begin(); it != clist.end(); it++)
 	{
 		ChatInfo ci;
@@ -142,7 +147,7 @@ bool	p3Msgs::getNewChat(std::list<ChatInfo> &chats)
  * for intAddChannel / intAddChannelMsg.
  */
 
-void p3Msgs::initRsChatInfo(RsChatItem *c, ChatInfo &i)
+void p3Msgs::initRsChatInfo(RsChatMsgItem *c, ChatInfo &i)
 {
 	i.rsid = c -> PeerId();
 	i.name = mAuthMgr->getName(i.rsid);

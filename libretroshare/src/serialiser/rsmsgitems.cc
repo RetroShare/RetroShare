@@ -24,6 +24,7 @@
  *
  */
 
+#include <stdexcept>
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rsmsgitems.h"
 #include "serialiser/rstlvbase.h"
@@ -36,64 +37,118 @@
 
 /*************************************************************************/
 
-RsChatItem::~RsChatItem()
+std::ostream& RsChatMsgItem::print(std::ostream &out, uint16_t indent)
 {
-	return;
-}
-
-void 	RsChatItem::clear()
-{
-	chatFlags = 0;
-	sendTime = 0;
-	message.clear();
-}
-
-std::ostream &RsChatItem::print(std::ostream &out, uint16_t indent)
-{
-        printRsItemBase(out, "RsChatItem", indent);
+	printRsItemBase(out, "RsChatMsgItem", indent);
 	uint16_t int_Indent = indent + 2;
-        printIndent(out, int_Indent);
-        out << "QblogMs " << chatFlags << std::endl;
+	printIndent(out, int_Indent);
+	out << "QblogMs " << chatFlags << std::endl;
 
-        printIndent(out, int_Indent);
-        out << "sendTime:  " << sendTime  << std::endl;
+	printIndent(out, int_Indent);
+	out << "sendTime:  " << sendTime  << std::endl;
 
-        printIndent(out, int_Indent);
+	printIndent(out, int_Indent);
 
 	std::string cnv_message(message.begin(), message.end());
-        out << "msg:  " << cnv_message  << std::endl;
+	out << "msg:  " << cnv_message  << std::endl;
 
-        printRsItemEnd(out, "RsChatItem", indent);
-        return out;
+	printRsItemEnd(out, "RsChatMsgItem", indent);
+	return out;
 }
 
+std::ostream& RsChatStatusItem::print(std::ostream &out, uint16_t indent)
+{
+	printRsItemBase(out, "RsChatStatusItem", indent);
+	uint16_t int_Indent = indent + 2;
+	printIndent(out, int_Indent);
+	out << "Status string: " << status_string << std::endl;
 
-uint32_t    RsChatSerialiser::sizeItem(RsChatItem *item)
+	printRsItemEnd(out, "RsChatStatusItem", indent);
+	return out;
+}
+
+RsItem *RsChatSerialiser::deserialise(void *data, uint32_t *pktsize)
+{
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+#ifdef CHAT_DEBUG
+	std::cerr << "deserializing packet..."<< std::endl ;
+#endif
+	// look what we have...
+	if (*pktsize < rssize)    /* check size */
+	{
+#ifdef CHAT_DEBUG
+		std::cerr << "chat deserialisation: not enough size: pktsize=" << *pktsize << ", rssize=" << rssize << std::endl ;
+#endif
+		return NULL; /* not enough data */
+	}
+
+	/* set the packet length */
+	*pktsize = rssize;
+
+	/* ready to load */
+
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_CHAT != getRsItemService(rstype))) 
+	{
+#ifdef CHAT_DEBUG
+		std::cerr << "chat deserialisation: wrong type !" << std::endl ;
+#endif
+		return NULL; /* wrong type */
+	}
+
+	try
+	{
+		switch(getRsItemSubType(rstype))
+		{
+			case RS_PKT_SUBTYPE_DEFAULT:		return new RsChatMsgItem(data,*pktsize) ;
+			case RS_PKT_SUBTYPE_CHAT_STATUS:	return new RsChatStatusItem(data,*pktsize) ;
+			default:
+																std::cerr << "Unknown packet type in chat!" << std::endl ;
+																return NULL ;
+		}
+	}
+	catch(std::exception& e)
+	{
+		std::cerr << "Exception raised: " << e.what() << std::endl ;
+		return NULL ;
+	}
+}
+
+uint32_t RsChatMsgItem::serial_size()
 {
 	uint32_t s = 8; /* header */
 	s += 4; /* chatFlags */
 	s += 4; /* sendTime  */
-	s += GetTlvWideStringSize(item->message);
+	s += GetTlvWideStringSize(message);
+
+	return s;
+}
+
+uint32_t RsChatStatusItem::serial_size()
+{
+	uint32_t s = 8; /* header */
+	s += GetTlvStringSize(status_string); 			 /* status */
 
 	return s;
 }
 
 /* serialise the data to the buffer */
-bool     RsChatSerialiser::serialiseItem(RsChatItem *item, void *data, uint32_t *pktsize)
+bool RsChatMsgItem::serialise(void *data, uint32_t& pktsize)
 {
-	uint32_t tlvsize = sizeItem(item);
+	uint32_t tlvsize = serial_size() ;
 	uint32_t offset = 0;
 
-	if (*pktsize < tlvsize)
+	if (pktsize < tlvsize)
 		return false; /* not enough space */
 
-	*pktsize = tlvsize;
+	pktsize = tlvsize;
 
 	bool ok = true;
 
-	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
 
-#ifdef RSSERIAL_DEBUG
+#ifdef CHAT_DEBUG
 	std::cerr << "RsChatSerialiser::serialiseItem() Header: " << ok << std::endl;
 	std::cerr << "RsChatSerialiser::serialiseItem() Size: " << tlvsize << std::endl;
 #endif
@@ -102,93 +157,103 @@ bool     RsChatSerialiser::serialiseItem(RsChatItem *item, void *data, uint32_t 
 	offset += 8;
 
 	/* add mandatory parts first */
-	ok &= setRawUInt32(data, tlvsize, &offset, item->chatFlags);
-	ok &= setRawUInt32(data, tlvsize, &offset, item->sendTime);
-	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_MSG, item->message);
+	ok &= setRawUInt32(data, tlvsize, &offset, chatFlags);
+	ok &= setRawUInt32(data, tlvsize, &offset, sendTime);
+	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_MSG, message);
 
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef RSSERIAL_DEBUG
+#ifdef CHAT_DEBUG
 		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
 #endif
 	}
-#ifdef RSSERIAL_DEBUG
+#ifdef CHAT_DEBUG
 	std::cerr << "computed size: " << 256*((unsigned char*)data)[6]+((unsigned char*)data)[7] << std::endl ;
 #endif
 
 	return ok;
 }
 
-RsChatItem *RsChatSerialiser::deserialiseItem(void *data, uint32_t *pktsize)
+bool RsChatStatusItem::serialise(void *data, uint32_t& pktsize)
 {
-	/* get the type and size */
-	uint32_t rstype = getRsItemId(data);
-	uint32_t rssize = getRsItemSize(data);
-
+	uint32_t tlvsize = serial_size() ;
 	uint32_t offset = 0;
 
+	if (pktsize < tlvsize)
+		return false; /* not enough space */
 
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_TYPE_CHAT != getRsItemService(rstype)) ||
-		(RS_PKT_SUBTYPE_DEFAULT != getRsItemSubType(rstype)))
-	{
-		return NULL; /* wrong type */
-	}
-
-	if (*pktsize < rssize)    /* check size */
-		return NULL; /* not enough data */
-
-	/* set the packet length */
-	*pktsize = rssize;
+	pktsize = tlvsize;
 
 	bool ok = true;
 
-	/* ready to load */
-	RsChatItem *item = new RsChatItem();
-	item->clear();
+	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
+
+#ifdef CHAT_DEBUG
+	std::cerr << "RsChatSerialiser serialising chat status item." << std::endl;
+	std::cerr << "RsChatSerialiser::serialiseItem() Header: " << ok << std::endl;
+	std::cerr << "RsChatSerialiser::serialiseItem() Size: " << tlvsize << std::endl;
+#endif
 
 	/* skip the header */
 	offset += 8;
 
+	/* add mandatory parts first */
+	ok &= SetTlvString(data, tlvsize, &offset,TLV_TYPE_STR_MSG, status_string);
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+#ifdef CHAT_DEBUG
+		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
+#endif
+	}
+#ifdef CHAT_DEBUG
+	std::cerr << "computed size: " << 256*((unsigned char*)data)[6]+((unsigned char*)data)[7] << std::endl ;
+#endif
+
+	return ok;
+}
+
+RsChatMsgItem::RsChatMsgItem(void *data,uint32_t size)
+	: RsChatItem(RS_PKT_SUBTYPE_DEFAULT)
+{
+	uint32_t offset = 8; // skip the header 
+	uint32_t rssize = getRsItemSize(data);
+	bool ok = true ;
+
 	/* get mandatory parts first */
-	ok &= getRawUInt32(data, rssize, &offset, &(item->chatFlags));
-	ok &= getRawUInt32(data, rssize, &offset, &(item->sendTime));
-	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_MSG, item->message);
+	ok &= getRawUInt32(data, rssize, &offset, &chatFlags);
+	ok &= getRawUInt32(data, rssize, &offset, &sendTime);
+	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_MSG, message);
+
+#ifdef CHAT_DEBUG
+	std::cerr << "Building new chat msg item." << std::endl ;
+#endif
+	if (offset != rssize)
+		throw std::runtime_error("Size error while deserializing.") ;
+	if (!ok)
+		throw std::runtime_error("Unknown error while deserializing.") ;
+}
+
+RsChatStatusItem::RsChatStatusItem(void *data,uint32_t size)
+	: RsChatItem(RS_PKT_SUBTYPE_CHAT_STATUS)
+{
+	uint32_t offset = 8; // skip the header 
+	uint32_t rssize = getRsItemSize(data);
+	bool ok = true ;
+
+#ifdef CHAT_DEBUG
+	std::cerr << "Building new chat status item." << std::endl ;
+#endif
+	/* get mandatory parts first */
+	ok &= GetTlvString(data, rssize, &offset,TLV_TYPE_STR_MSG, status_string);
 
 	if (offset != rssize)
-	{
-		/* error */
-		delete item;
-		return NULL;
-	}
-
+		throw std::runtime_error("Size error while deserializing.") ;
 	if (!ok)
-	{
-		delete item;
-		return NULL;
-	}
-
-	return item;
+		throw std::runtime_error("Unknown error while deserializing.") ;
 }
-
-
-uint32_t    RsChatSerialiser::size(RsItem *item)
-{
-	return sizeItem((RsChatItem *) item);
-}
-
-bool     RsChatSerialiser::serialise(RsItem *item, void *data, uint32_t *pktsize)
-{
-	return serialiseItem((RsChatItem *) item, data, pktsize);
-}
-
-RsItem *RsChatSerialiser::deserialise(void *data, uint32_t *pktsize)
-{
-	return deserialiseItem(data, pktsize);
-}
-
-
 
 /*************************************************************************/
 
