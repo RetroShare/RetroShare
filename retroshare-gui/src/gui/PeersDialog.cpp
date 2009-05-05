@@ -33,7 +33,6 @@
 
 #include "chat/PopupChatDialog.h"
 #include "msgs/ChanMsgDialog.h"
-#include "ChatDialog.h"
 #include "connect/ConfCertDialog.h"
 #include "profile/ProfileView.h"
 
@@ -84,7 +83,6 @@
 /** Constructor */
 PeersDialog::PeersDialog(QWidget *parent)
             : MainPage(parent),
-              chatDialog(NULL),
               historyKeeper(Rshare::dataDirectory() + "/his1.xml")
 {
   /* Invoke the Qt Designer generated object setup routine */
@@ -182,10 +180,10 @@ PeersDialog::PeersDialog(QWidget *parent)
 #endif
 }
 
-void PeersDialog::setChatDialog(ChatDialog *cd)
+/*void PeersDialog::setChatDialog(ChatDialog *cd)
 {
   chatDialog = cd;
-}
+}*/
 
 
 void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
