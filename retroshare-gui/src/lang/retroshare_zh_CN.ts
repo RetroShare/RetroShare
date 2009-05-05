@@ -574,57 +574,57 @@ Released under GPL</source>
 <context>
     <name>CertificatePage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="284"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="373"/>
         <source>Certificate files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="286"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="375"/>
         <source>Use XPGP certificates saved in files.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="291"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="380"/>
         <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="309"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="398"/>
         <source>Specify path to your friend&apos;s certificate in the box below </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="336"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="425"/>
         <source>Select Certificate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="337"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="426"/>
         <source>Certificates (*.pqi *.pem)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="366"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="455"/>
         <source>RetroShare</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="361"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="450"/>
         <source>Certificate file successfully created</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="367"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="456"/>
         <source>Sorry, certificate file creation failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="400"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="489"/>
         <source>Certificate Load Failed:something is wrong with %1 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="407"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="496"/>
         <source>Certificate Load Failed:file %1 not found</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1382,52 +1382,52 @@ Do you want to save message ?</source>
 <context>
     <name>ConclusionPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="452"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="541"/>
         <source>Make Friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="454"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="543"/>
         <source>Fill details about your friend here</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="457"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="546"/>
         <source>Peer details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="461"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="550"/>
         <source>Trust:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="465"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="554"/>
         <source>Name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="469"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="558"/>
         <source>Org:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="473"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="562"/>
         <source>Loc:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="477"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="566"/>
         <source>Country:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="481"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="570"/>
         <source>Signers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="488"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="577"/>
         <source>AUTH CODE</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1613,7 +1613,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ConnectFriendWizard</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="78"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="80"/>
         <source>Connect Friend Wizard</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1843,6 +1843,24 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>DHTStatus</name>
+    <message>
+        <location filename="../gui/statusbar/dhtstatus.cpp" line="45"/>
+        <source>&lt;strong&gt;DHT:&lt;/strong&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/statusbar/dhtstatus.cpp" line="77"/>
+        <source>DHT OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/statusbar/dhtstatus.cpp" line="82"/>
+        <source>DHT DOWN</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>DLListDelegate</name>
     <message>
         <location filename="../gui/DLListDelegate.cpp" line="42"/>
@@ -1959,12 +1977,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ErrorMessagePage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="425"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="514"/>
         <source>Sorry, some error appeared</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="426"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="515"/>
         <source>Here is the error message: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -3171,22 +3189,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>IntroPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="109"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="111"/>
         <source>Add a new Friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="113"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="115"/>
         <source>This wizard will help you to connect your friend to RetroShare network. There are  two possible ways to do this:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="115"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="117"/>
         <source>&amp;Enter the certificate manually</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="117"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="119"/>
         <source>&amp;Use *.pqi files with certificates</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3477,112 +3495,87 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="133"/>
-        <source>RetroShare %1 RetroShare a private and secure decentralised commmunication platform</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MainWindow.cpp" line="178"/>
+        <location filename="../gui/MainWindow.cpp" line="165"/>
         <source>Network</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="182"/>
+        <location filename="../gui/MainWindow.cpp" line="169"/>
         <source>Friends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="189"/>
+        <location filename="../gui/MainWindow.cpp" line="176"/>
         <source>Turtle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="192"/>
+        <location filename="../gui/MainWindow.cpp" line="179"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="195"/>
+        <location filename="../gui/MainWindow.cpp" line="182"/>
         <source>Transfers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="202"/>
+        <location filename="../gui/MainWindow.cpp" line="189"/>
         <source>Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="210"/>
+        <location filename="../gui/MainWindow.cpp" line="196"/>
         <source>Messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="288"/>
+        <location filename="../gui/MainWindow.cpp" line="214"/>
         <source>Links Cloud</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="236"/>
+        <location filename="../gui/MainWindow.cpp" line="222"/>
         <source>Forums</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="292"/>
+        <location filename="../gui/MainWindow.cpp" line="218"/>
         <source>Channels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="241"/>
+        <location filename="../gui/MainWindow.cpp" line="227"/>
         <source>News Feed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="244"/>
+        <location filename="../gui/MainWindow.cpp" line="230"/>
         <source>Plugins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="273"/>
+        <location filename="../gui/MainWindow.cpp" line="239"/>
         <source>Unfinished</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="277"/>
-        <source>Ctrl+T</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MainWindow.cpp" line="296"/>
-        <source>Games</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MainWindow.cpp" line="300"/>
-        <source>Photo View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MainWindow.cpp" line="335"/>
-        <source>&lt;strong&gt;Down:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Up:&lt;/strong&gt; 0.00 (kB/s) </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MainWindow.cpp" line="356"/>
+        <location filename="../gui/MainWindow.cpp" line="302"/>
         <source>Show/Hide</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="371"/>
+        <location filename="../gui/MainWindow.cpp" line="317"/>
         <source>Minimize</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="372"/>
+        <location filename="../gui/MainWindow.cpp" line="318"/>
         <source>Maximize</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="374"/>
+        <location filename="../gui/MainWindow.cpp" line="320"/>
         <source>&amp;Quit</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3592,98 +3585,98 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="519"/>
-        <source>Add Shared Directory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MainWindow.ui" line="1102"/>
+        <location filename="../gui/MainWindow.ui" line="1082"/>
         <source>Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="595"/>
+        <location filename="../gui/MainWindow.cpp" line="476"/>
         <source>Bandwidth Graph</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="599"/>
+        <location filename="../gui/MainWindow.cpp" line="480"/>
         <source>Open Messenger</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="602"/>
+        <location filename="../gui/MainWindow.cpp" line="483"/>
         <source>Open Messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="605"/>
+        <location filename="../gui/MainWindow.cpp" line="486"/>
         <source>Applications</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="611"/>
+        <location filename="../gui/MainWindow.cpp" line="492"/>
         <source>Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="626"/>
+        <location filename="../gui/MainWindow.cpp" line="507"/>
         <source>Really quit ? </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="656"/>
+        <location filename="../gui/MainWindow.cpp" line="537"/>
         <source>Hide</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="656"/>
+        <location filename="../gui/MainWindow.cpp" line="537"/>
         <source>Show</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="1052"/>
+        <location filename="../gui/MainWindow.ui" line="1032"/>
         <source>toolBar_2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="1084"/>
+        <location filename="../gui/MainWindow.ui" line="1064"/>
         <source>Add Friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="1093"/>
+        <location filename="../gui/MainWindow.ui" line="1073"/>
         <source>Add Share</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="1111"/>
+        <location filename="../gui/MainWindow.ui" line="1091"/>
         <source>Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="1123"/>
+        <location filename="../gui/MainWindow.ui" line="1103"/>
         <source>Color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="1135"/>
+        <location filename="../gui/MainWindow.ui" line="1115"/>
         <source>SMPlayer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="1144"/>
+        <location filename="../gui/MainWindow.ui" line="1124"/>
         <source>Messenger</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="1153"/>
+        <location filename="../gui/MainWindow.ui" line="1133"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="1162"/>
+        <location filename="../gui/MainWindow.ui" line="1142"/>
         <source>Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="127"/>
+        <source>RetroShare %1 a secure decentralised commmunication platform</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4505,91 +4498,159 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>NATStatus</name>
+    <message>
+        <location filename="../gui/statusbar/natstatus.cpp" line="45"/>
+        <source>&lt;strong&gt;NAT:&lt;/strong&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/statusbar/natstatus.cpp" line="76"/>
+        <source>UPNP is active.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/statusbar/natstatus.cpp" line="81"/>
+        <source>UPNP NOT FOUND.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/statusbar/natstatus.cpp" line="87"/>
+        <source>Stable External IP Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/statusbar/natstatus.cpp" line="92"/>
+        <source>Not Found External Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/statusbar/natstatus.cpp" line="98"/>
+        <source>UDP Port is reachable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/statusbar/natstatus.cpp" line="103"/>
+        <source>UDP Port is not reachable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/statusbar/natstatus.cpp" line="109"/>
+        <source>TCP Port is reachable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/statusbar/natstatus.cpp" line="114"/>
+        <source>TCP Port is not reachable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/statusbar/natstatus.cpp" line="122"/>
+        <source>RetroShare Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/statusbar/natstatus.cpp" line="127"/>
+        <source>UDP Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/statusbar/natstatus.cpp" line="133"/>
+        <source>Net Limited</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/statusbar/natstatus.cpp" line="138"/>
+        <source>No Conectivity</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>NetworkDialog</name>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="125"/>
+        <location filename="../gui/NetworkDialog.cpp" line="126"/>
         <source>RetroShare %1 started.</source>
         <comment>e.g: RetroShare v0.x started.</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="127"/>
+        <location filename="../gui/NetworkDialog.cpp" line="128"/>
         <source>Welcome to RetroShare.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="159"/>
+        <location filename="../gui/NetworkDialog.cpp" line="176"/>
         <source>Deny friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="167"/>
+        <location filename="../gui/NetworkDialog.cpp" line="184"/>
         <source>Accept friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="169"/>
+        <location filename="../gui/NetworkDialog.cpp" line="186"/>
         <source>Make friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="176"/>
+        <location filename="../gui/NetworkDialog.cpp" line="193"/>
         <source>Delete certificate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="183"/>
+        <location filename="../gui/NetworkDialog.cpp" line="200"/>
         <source>Peer details...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="259"/>
+        <location filename="../gui/NetworkDialog.cpp" line="276"/>
         <source>Select a pem/pqi File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="276"/>
+        <location filename="../gui/NetworkDialog.cpp" line="293"/>
         <source>File Not Found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="278"/>
+        <location filename="../gui/NetworkDialog.cpp" line="295"/>
         <source>%1 does not exist. Would you like to create it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="288"/>
+        <location filename="../gui/NetworkDialog.cpp" line="305"/>
         <source>Failed to Create File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="289"/>
+        <location filename="../gui/NetworkDialog.cpp" line="306"/>
         <source>Unable to create %1 [%2]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="343"/>
+        <location filename="../gui/NetworkDialog.cpp" line="360"/>
         <source>Trusted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="345"/>
+        <location filename="../gui/NetworkDialog.cpp" line="362"/>
         <source>Denied</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="418"/>
+        <location filename="../gui/NetworkDialog.cpp" line="435"/>
         <source> is trusting you. 
 Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="528"/>
+        <location filename="../gui/NetworkDialog.cpp" line="545"/>
         <source>Select Certificate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="529"/>
+        <location filename="../gui/NetworkDialog.cpp" line="546"/>
         <source>Certificates (*.pqi *.pem)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4612,63 +4673,188 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="126"/>
+        <location filename="../gui/NetworkDialog.ui" line="133"/>
         <source>Your trust</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="131"/>
+        <location filename="../gui/NetworkDialog.ui" line="138"/>
         <source>Peer&apos;s trust</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="136"/>
+        <location filename="../gui/NetworkDialog.ui" line="143"/>
         <source>Last Contact</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="141"/>
+        <location filename="../gui/NetworkDialog.ui" line="148"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="146"/>
+        <location filename="../gui/NetworkDialog.ui" line="153"/>
         <source>Peer Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="151"/>
+        <location filename="../gui/NetworkDialog.ui" line="158"/>
         <source>Organisation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="156"/>
+        <location filename="../gui/NetworkDialog.ui" line="163"/>
         <source>Location</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="161"/>
+        <location filename="../gui/NetworkDialog.ui" line="168"/>
         <source>Country</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="166"/>
+        <location filename="../gui/NetworkDialog.ui" line="173"/>
         <source>Cert Id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="187"/>
+        <location filename="../gui/NetworkDialog.ui" line="194"/>
         <source>Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="223"/>
+        <location filename="../gui/NetworkDialog.ui" line="230"/>
         <source>Network View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="231"/>
+        <location filename="../gui/NetworkDialog.ui" line="238"/>
         <source>Clear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="123"/>
+        <source>Trust matrix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.ui" line="91"/>
+        <source>View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="365"/>
+        <source>Is trusting me</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="367"/>
+        <source>Unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="374"/>
+        <source>Never seen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="613"/>
+        <source>UPNP is active.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="617"/>
+        <source>UPNP NOT FOUND.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="622"/>
+        <source>DHT OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="626"/>
+        <source>DHT is not working (down).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="632"/>
+        <source>Stable External IP Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="636"/>
+        <source>Not Found External Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="641"/>
+        <source>UDP Port is reachable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="645"/>
+        <source>UDP Port is not reachable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="650"/>
+        <source>TCP Port is reachable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="654"/>
+        <source>TCP Port is not reachable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="661"/>
+        <source>RetroShare Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="665"/>
+        <source>UDP Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="670"/>
+        <source>Net Limited</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="674"/>
+        <source>No Conectivity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.ui" line="243"/>
+        <source>Set Tabs Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.ui" line="248"/>
+        <source>Set Tabs North</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.ui" line="253"/>
+        <source>Set Tabs South</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.ui" line="258"/>
+        <source>Set Tabs Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.ui" line="263"/>
+        <source>Set Tabs Rounded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.ui" line="268"/>
+        <source>Set Tabs Triangular</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5019,52 +5205,52 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PeersDialog</name>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="154"/>
+        <location filename="../gui/PeersDialog.cpp" line="156"/>
         <source>Welcome to RetroShare&apos;s group chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="195"/>
+        <location filename="../gui/PeersDialog.cpp" line="197"/>
         <source>Chat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="198"/>
+        <location filename="../gui/PeersDialog.cpp" line="200"/>
         <source>Message Friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="201"/>
+        <location filename="../gui/PeersDialog.cpp" line="203"/>
         <source>Connect To Friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="204"/>
+        <location filename="../gui/PeersDialog.cpp" line="206"/>
         <source>Peer Details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="207"/>
+        <location filename="../gui/PeersDialog.cpp" line="209"/>
         <source>Profile View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="210"/>
+        <location filename="../gui/PeersDialog.cpp" line="212"/>
         <source>Export Friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="213"/>
+        <location filename="../gui/PeersDialog.cpp" line="215"/>
         <source>Remove Friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="433"/>
+        <location filename="../gui/PeersDialog.cpp" line="439"/>
         <source>Save Certificate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="434"/>
+        <location filename="../gui/PeersDialog.cpp" line="440"/>
         <source>Certificates (*.pqi)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5920,6 +6106,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/advsearch/guiexprelement.cpp" line="56"/>
         <source>is in range</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RatesStatus</name>
+    <message>
+        <location filename="../gui/statusbar/ratesstatus.cpp" line="50"/>
+        <source>&lt;strong&gt;Down:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Up:&lt;/strong&gt; 0.00 (kB/s) </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6938,42 +7132,42 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TextPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="146"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="148"/>
         <source>Text certificate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="148"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="150"/>
         <source>Use text representation of the XPGP certificates.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="151"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="153"/>
         <source>The text below is your XPGP certificate. You have to provide it to your friend </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="171"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="190"/>
         <source>Run Email program</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="185"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="204"/>
         <source>Please, paste your friends XPGP certificate into the box below</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="244"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="263"/>
         <source>Connect Friend Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="246"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="265"/>
         <source>You can copy this text and send it to your friend via email, ICQ or some other way</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="268"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="357"/>
         <source>Certificate Load Failed</source>
         <translation type="unfinished"></translation>
     </message>
