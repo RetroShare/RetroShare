@@ -274,15 +274,9 @@ void NotifyQt::UpdateGUI()
 			switch(type)
 			{
 				case RS_SYS_ERROR:
-					cDialog->setLogInfo(QString(logMesString.c_str()));
-					break;
 				case RS_SYS_WARNING:
-					cDialog->setLogInfo(QString(logMesString.c_str()));
-					break;
-				default:
-				case RS_SYS_INFO:
-					cDialog->setLogInfo(QString(logMesString.c_str()));
-					break;
+				case RS_SYS_INFO:		 emit logInfoChanged(QString(logMesString.c_str()));
+				default:;
 			}
 		}
 	}

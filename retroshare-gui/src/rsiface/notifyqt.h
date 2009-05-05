@@ -68,6 +68,7 @@ class NotifyQt: public QObject, public NotifyBase
 		void neighborsChanged() const ;
 		void messagesChanged() const ;
 		void configChanged() const ;
+		void logInfoChanged(const QString&) const ;
 		void chatStatusChanged(const QString&,const QString&) const ;
 #ifdef TURTLE_HOPPING
 		void gotTurtleSearchResult(qulonglong search_id,TurtleFileInfo file) const ;

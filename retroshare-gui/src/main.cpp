@@ -170,6 +170,7 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(configChanged())                   ,w->messagesDialog   ,SLOT(displayConfig()                  )) ;
 
 	QObject::connect(notify,SIGNAL(chatStatusChanged(const QString&,const QString&)),w->peersDialog,SLOT(updatePeerStatusString(const QString&,const QString&)));
+	QObject::connect(notify,SIGNAL(logInfoChanged(const QString&)),w->networkDialog,SLOT(setLogInfo(QString))) ;
 
 	/* only show window, if not startMinimized */
 	if (!startMinimised)
