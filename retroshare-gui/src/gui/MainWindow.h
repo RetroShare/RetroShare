@@ -33,7 +33,6 @@
 #include "SearchDialog.h"
 #include "TransfersDialog.h"
 #include "MessagesDialog.h"
-#include "ChatDialog.h"
 #include "SharedFilesDialog.h"
 #include "StatisticDialog.h"
 #include "MessengerWindow.h"
