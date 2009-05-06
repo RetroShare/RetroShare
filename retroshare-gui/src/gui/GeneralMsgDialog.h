@@ -54,6 +54,7 @@ virtual void dragEnterEvent(QDragEnterEvent *event);
 virtual void dropEvent(QDropEvent *event);
 
 private slots:
+	void addExtraFile();
 	void checkAttachmentReady();
 	void updateGroupId();
 	void newDestination();

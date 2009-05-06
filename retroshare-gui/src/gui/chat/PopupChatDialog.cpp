@@ -36,6 +36,9 @@
 
 #include "rsiface/rspeers.h"
 #include "rsiface/rsmsgs.h"
+#include "rsiface/rsfiles.h"
+
+#include "gui/feeds/SubFileItem.h"
 
 #define appDir QApplication::applicationDirPath()
 
@@ -76,7 +79,8 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   connect(ui.chattextEdit, SIGNAL(textChanged ( ) ), this, SLOT(checkChat( ) ));
   
   connect(ui.sendButton, SIGNAL(clicked( ) ), this, SLOT(sendChat( ) ));
-   
+  connect(ui.addFileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
+
   connect(ui.textboldButton, SIGNAL(clicked()), this, SLOT(setFont()));  
   connect(ui.textunderlineButton, SIGNAL(clicked()), this, SLOT(setFont()));  
   connect(ui.textitalicButton, SIGNAL(clicked()), this, SLOT(setFont()));
@@ -85,10 +89,13 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   connect(ui.emoteiconButton, SIGNAL(clicked()), this, SLOT(smileyWidget()));
   connect(ui.styleButton, SIGNAL(clicked()), SLOT(changeStyle()));
 
+  connect(ui.textBrowser, SIGNAL(anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
+
   // Create the status bar
   resetStatusBar() ;
 
   ui.textBrowser->setOpenExternalLinks ( false );
+  ui.textBrowser->setOpenLinks ( false );
 
   QString title = QString::fromStdString(name) + " :" + tr(" RetroShare - Encrypted Chat")  ;
   setWindowTitle(title);
@@ -294,7 +301,7 @@ void PopupChatDialog::checkChat()
 
 void PopupChatDialog::sendChat()
 {
-        QTextEdit *chatWidget = ui.chattextEdit;
+	QTextEdit *chatWidget = ui.chattextEdit;
 
         ChatInfo ci;
         
@@ -678,3 +685,99 @@ void PopupChatDialog::getAvatar()
 	}
 }
 
+void PopupChatDialog::addExtraFile()
+{
+	// select a file
+	QString qfile = QFileDialog::getOpenFileName(this, tr("Add Extra File"), "", "", 0,
+				QFileDialog::DontResolveSymlinks);
+	std::string filePath = qfile.toStdString();
+	if (filePath != "")
+	{
+	    /* add a SubFileItem to the attachment section */
+	    std::cerr << "PopupChatDialog::addExtraFile() hashing file.";
+	    std::cerr << std::endl;
+
+	    /* add widget in for new destination */
+	    SubFileItem *file = new SubFileItem(filePath);
+	    //file->
+
+	    ui.SendLayout->addWidget(file, 1, 0);
+
+	    //when the file is local or is finished hashing, call the fileHashingFinished method to send a chat message
+	    if (file->getState() == SFI_STATE_LOCAL) {
+		fileHashingFinished(file);
+	    } else {
+		QObject::connect(file,SIGNAL(fileFinished(SubFileItem *)), SLOT(fileHashingFinished(SubFileItem *))) ;
+	    }
+
+	}
+}
+
+void PopupChatDialog::fileHashingFinished(SubFileItem* file) {
+	std::cerr << "PopupChatDialog::fileHashingFinished() started.";
+	std::cerr << std::endl;
+
+	ChatInfo ci;
+
+
+	{
+	  rsiface->lockData(); /* Lock Interface */
+	  const RsConfig &conf = rsiface->getConfig();
+
+	  ci.rsid = conf.ownId;
+	  ci.name = conf.ownName;
+
+	  rsiface->unlockData(); /* Unlock Interface */
+	}
+
+	//convert fileSize from uint_64 to string for html link
+	char fileSizeChar [100];
+	sprintf(fileSizeChar, "%lld", file->FileSize());
+	std::string fileSize = *(&fileSizeChar);
+
+	std::string mesgString = "<a href='file:?fileHash=" + (file->FileHash()) + "&fileName=" + (file->FileName()) + "&fileSize=" + fileSize + "'>" + (file->FileName()) + "</a>";
+#ifdef CHAT_DEBUG
+		std::cerr << "PopupChatDialog::anchorClicked mesgString : " << mesgString << std::endl;
+#endif
+
+	const char * messageString = mesgString.c_str ();
+
+	//convert char massageString to w_char
+	wchar_t* message;
+	    int requiredSize = mbstowcs(NULL, messageString, 0); // C4996
+	    /* Add one to leave room for the NULL terminator */
+	    message = (wchar_t *)malloc( (requiredSize + 1) * sizeof( wchar_t ));
+	    if (! message)
+	    {
+		std::cerr << ("Memory allocation failure.\n");
+	    }
+	    int size = mbstowcs( message, messageString, requiredSize + 1); // C4996
+	    if (size == (size_t) (-1))
+	    {
+	       printf("Couldn't convert string--invalid multibyte character.\n");
+	    }
+
+	ci.msg = message;
+	ci.chatflags = RS_CHAT_PRIVATE;
+
+	addChatMsg(&ci);
+
+	/* put proper destination */
+	ci.rsid = dialogId;
+	ci.name = dialogName;
+
+	rsMsgs -> ChatSend(ci);
+}
+
+void PopupChatDialog::anchorClicked (const QUrl& link ) {
+	std::string fileName = link.queryItemValue(QString("fileName")).toStdString();
+	std::string fileHash = link.queryItemValue(QString("fileHash")).toStdString();
+	uint32_t fileSize = link.queryItemValue(QString("fileSize")).toInt();
+#ifdef CHAT_DEBUG
+		std::cerr << "PopupChatDialog::anchorClicked FileRequest : fileName : " << fileName << ". fileHash : " << fileHash << ". fileSize : " << fileSize;
+		std::cerr << ". source id : " << dialogId << std::endl;
+#endif
+	std::list<std::string> srcIds;
+	srcIds.push_front(dialogId);
+	rsFiles->FileRequest(fileName, fileHash, fileSize, "", 0, srcIds);
+}

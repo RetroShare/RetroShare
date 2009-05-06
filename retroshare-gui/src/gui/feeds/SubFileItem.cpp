@@ -482,6 +482,7 @@ void SubFileItem::updateItem()
 	}
 
 	uint32_t repeat = 0;
+
 	switch (mMode)
 	{
 		case SFI_STATE_ERROR:
@@ -505,6 +506,7 @@ void SubFileItem::updateItem()
 
 		case SFI_STATE_LOCAL:
 			repeat = 0;
+			emit fileFinished(this);
 			break;
 
 		case SFI_STATE_UPLOAD:
@@ -644,4 +646,6 @@ void SubFileItem::save()
 	}
 }
 
-
+uint32_t SubFileItem::getState() {
+    return mMode;
+}

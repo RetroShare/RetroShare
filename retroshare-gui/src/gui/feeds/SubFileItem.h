@@ -63,6 +63,7 @@ public:
 
   	bool done();
 	bool ready();
+	uint32_t getState();
 
 public  slots:
 	void download();
@@ -93,6 +94,10 @@ private:
 
 	/* for display purposes */
 	float amountDone;
+
+signals:
+		void fileFinished(SubFileItem * subFileItem) const ;
+
 };
 
 

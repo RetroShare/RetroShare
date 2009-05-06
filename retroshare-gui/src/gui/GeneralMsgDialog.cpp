@@ -45,8 +45,10 @@ GeneralMsgDialog::GeneralMsgDialog(QWidget *parent, uint32_t type)
         connect(addButton, SIGNAL(clicked()), this, SLOT(newDestination()));
         connect(typeComboBox, SIGNAL(currentIndexChanged( int )), this, SLOT(updateGroupId()));
 
-        connect(buttonBox, SIGNAL(accepted()), this, SLOT(sendMsg()));
+	connect(buttonBox, SIGNAL(accepted()), this, SLOT(sendMsg()));
         connect(buttonBox, SIGNAL(rejected()), this, SLOT(cancelMsg()));
+
+	connect(addFileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
 
 	/* set the type to ...
 	 * const uint32_t GMD_TYPE_MESSAGE_IDX = 0;
@@ -286,6 +288,23 @@ void GeneralMsgDialog::addAttachment(std::string hash, std::string fname, uint64
 	}
 
 	return;
+}
+
+
+void GeneralMsgDialog::addExtraFile()
+{
+	/* add a SubFileItem to the attachment section */
+	std::cerr << "GeneralMsgDialog::addExtraFile() opening file dialog";
+	std::cerr << std::endl;
+
+	// select a file
+	QString qfile = QFileDialog::getOpenFileName(this, tr("Add Extra File"), "", "", 0,
+				QFileDialog::DontResolveSymlinks);
+	std::string filePath = qfile.toStdString();
+	if (filePath != "")
+	{
+		addAttachment(filePath);
+	}
 }
 
 
