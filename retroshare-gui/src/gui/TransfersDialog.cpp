@@ -383,6 +383,12 @@ void TransfersDialog::insertTransfers()
 		continue;
 	  }
 
+	  //if file transfer is a cache file index file, don't show it
+	  if (info.flags & CB_CODE_CACHE)
+	  {
+		continue;
+	  }
+
 	  std::list<TransferInfo>::iterator pit;
 	  for(pit = info.peers.begin(); pit != info.peers.end(); pit++)
 	  {

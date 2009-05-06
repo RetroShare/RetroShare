@@ -81,6 +81,10 @@ const uint32_t RS_FILE_HINTS_BACKGROUND	 = 0x00002000; // To download slowly.
 
 const uint32_t RS_FILE_EXTRA_DELETE	 = 0x0010;
 
+const uint32_t CB_CODE_CACHE = 0x0001;
+const uint32_t CB_CODE_EXTRA = 0x0002;
+const uint32_t CB_CODE_MEDIA = 0x0004;
+
 
 class RsFiles
 {

@@ -56,11 +56,10 @@ class ftDataMultiplex;
 #include <map>
 
 
-const uint32_t CB_CODE_CACHE = 0x0001;
-const uint32_t CB_CODE_EXTRA = 0x0002;
-const uint32_t CB_CODE_MEDIA = 0x0004;
-
 const uint32_t FC_TRANSFER_COMPLETE = 0x0001;
+
+//timeouts in seconds
+const int TIMOUT_CACHE_FILE_TRANSFER = 300;
 
 class ftFileControl
 {
@@ -84,6 +83,7 @@ class ftFileControl
 	uint32_t	   mFlags;
 	bool		   mDoCallback;
 	uint32_t	   mCallbackCode;
+	time_t		   mCreateTime;
 };
 
 class ftPendingRequest

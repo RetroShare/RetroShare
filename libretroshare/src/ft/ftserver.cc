@@ -356,7 +356,6 @@ int ftServer::RequestDirDetails(std::string uid, std::string path, DirDetails &d
 		std::cerr << "mFiStore not SET yet = FAIL";
 		std::cerr << std::endl;
 	}
-
 #endif
 	return mFiStore->RequestDirDetails(uid, path, details);
 }

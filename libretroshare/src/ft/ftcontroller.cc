@@ -67,7 +67,7 @@ ftFileControl::ftFileControl(std::string fname,
 		ftFileCreator *fc, ftTransferModule *tm, uint32_t cb)
 	:mName(fname), mCurrentPath(tmppath), mDestination(dest),
 	 mTransfer(tm), mCreator(fc), mState(0), mHash(hash),
-	 mSize(size), mFlags(0), mDoCallback(false), mCallbackCode(cb)
+	 mSize(size), mFlags(flags), mDoCallback(false), mCallbackCode(cb)
 {
 	if (cb)
 		mDoCallback = true;
@@ -88,8 +88,8 @@ void ftController::setFtSearchNExtra(ftSearch *search, ftExtraList *list)
 
 void ftController::run()
 {
-	/* check the queues */
 
+	/* check the queues */
 	while(1)
 	{
 #ifdef WIN32
@@ -99,8 +99,8 @@ void ftController::run()
 #endif
 
 #ifdef CONTROL_DEBUG
-		//std::cerr << "ftController::run()";
-		//std::cerr << std::endl;
+		std::cerr << "ftController::run()";
+		std::cerr << std::endl;
 #endif
 		bool doPending = false;
 		{
@@ -124,7 +124,8 @@ void ftController::run()
 		  RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
 		  std::map<std::string, ftFileControl>::iterator it;
-		  for(it = mDownloads.begin(); it != mDownloads.end(); it++)
+		  std::map<std::string, ftFileControl> currentDownloads = *(&mDownloads);
+		  for(it = currentDownloads.begin(); it != currentDownloads.end(); it++)
 		  {
 
 #ifdef CONTROL_DEBUG
@@ -132,8 +133,26 @@ void ftController::run()
 			std::cerr << std::endl;
 #endif
 
-			if (it->second.mTransfer)
-				(it->second.mTransfer)->tick();
+			if (it->second.mTransfer) {
+			    (it->second.mTransfer)->tick();
+
+
+			    //check if a cache file is downloaded, if the case, timeout the transfer after TIMOUT_CACHE_FILE_TRANSFER
+			    if ((it->second).mFlags & RS_FILE_HINTS_CACHE) {
+#ifdef CONTROL_DEBUG
+				std::cerr << "ftController::run() cache transfer found. age of this tranfer is :" << (int)(time(NULL) - (it->second).mCreateTime);
+				std::cerr << std::endl;
+#endif
+				if ((time(NULL) - (it->second).mCreateTime) > TIMOUT_CACHE_FILE_TRANSFER) {
+#ifdef CONTROL_DEBUG
+				std::cerr << "ftController::run() cache transfer to old. Cancelling transfer. Hash :" << (it->second).mHash;
+				std::cerr << std::endl;
+#endif
+				    this->FileCancel((it->second).mHash);
+				}
+			    }
+
+			}
 		  }
 		}
 
@@ -143,7 +162,6 @@ void ftController::run()
 			completeFile(*it);
 		}
 		mDone.clear();
-
 	}
 
 }
@@ -661,11 +679,14 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	/* add into maps */
 	ftFileControl ftfc(fname, savepath, destination,  
 			size, hash, flags, fc, tm, callbackCode);
+	ftfc.mCreateTime = time(NULL);
 
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController::FileRequest() Created ftFileCreator @: " << fc;
 	std::cerr << std::endl;
 	std::cerr << "ftController::FileRequest() Created ftTransModule @: " << tm;
+	std::cerr << std::endl;
+	std::cerr << "ftController::FileRequest() Created ftFileControl." ;
 	std::cerr << std::endl;
 #endif
 
@@ -959,6 +980,7 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 	/* extract details */
 	info.hash = hash;
 	info.fname = it->second.mName;
+	info.flags = it->second.mFlags;
 	info.path = RsDirUtil::removeTopDir(it->second.mDestination); /* remove fname */
 
 	/* get list of sources from transferModule */
