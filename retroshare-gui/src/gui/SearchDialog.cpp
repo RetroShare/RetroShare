@@ -91,23 +91,26 @@ SearchDialog::SearchDialog(QWidget *parent)
     /* initialise the filetypes mapping */
     if (!SearchDialog::initialised)
     {
-	initialiseFileTypeMappings();
+    initialiseFileTypeMappings();
     }
    
     /* Advanced search panel specifica */
     RshareSettings rsharesettings;
     QString key (UI_PREF_ADVANCED_SEARCH);
     bool useAdvanced = rsharesettings.value(key, QVariant(false)).toBool();
-    if (useAdvanced)
+    /*if (useAdvanced)
     {
         ui.toggleAdvancedSearchBtn->setChecked(true);
         ui.SimpleSearchPanel->hide();
     } else {
         ui.AdvancedSearchPanel->hide();
-    }
+    }*/
     
-    connect(ui.toggleAdvancedSearchBtn, SIGNAL(toggled(bool)), this, SLOT(toggleAdvancedSearchDialog(bool)));
-    connect(ui.focusAdvSearchDialogBtn, SIGNAL(clicked()), this, SLOT(showAdvSearchDialog())); 
+    //connect(ui.toggleAdvancedSearchBtn, SIGNAL(toggled(bool)), this, SLOT(toggleAdvancedSearchDialog(bool)));
+    //connect(ui.focusAdvSearchDialogBtn, SIGNAL(clicked()), this, SLOT(showAdvSearchDialog())); 
+    connect(ui.toggleAdvancedSearchBtn, SIGNAL(clicked()), this, SLOT(showAdvSearchDialog()));
+    connect(ui.cloaseallsearchresultsButton, SIGNAL(clicked()), this, SLOT(searchRemoveAll()));
+    connect(ui.resetButton, SIGNAL(clicked()), this, SLOT(clearKeyword()));
     
     /* End Advanced Search Panel specifics */
 
@@ -144,8 +147,8 @@ SearchDialog::SearchDialog(QWidget *parent)
     _smheader->setResizeMode (2, QHeaderView::Interactive);
     
     _smheader->resizeSection ( 0, 80 );
-    _smheader->resizeSection ( 1, 75 );
-    _smheader->resizeSection ( 2, 75 );
+    _smheader->resizeSection ( 1, 60 );
+    _smheader->resizeSection ( 2, 30 );
 
     ui.searchResultWidget->setColumnCount(6);
     _smheader = ui.searchResultWidget->header () ;   
@@ -360,6 +363,12 @@ void SearchDialog::searchRemoveAll()
 	ui.searchResultWidget->clear();
 	ui.searchSummaryWidget->clear();
 	nextSearchId = 1;
+}
+
+/** clear keywords **/
+void SearchDialog::clearKeyword()
+{
+	ui.lineEdit->clear();
 }
 
 /* *****************************************************************

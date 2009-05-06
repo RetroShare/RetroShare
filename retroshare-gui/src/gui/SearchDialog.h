@@ -66,6 +66,9 @@ private slots:
     void searchRemoveAll();
     
     void searchKeywords();
+    
+    void clearKeyword();
+
 
 /** management of the adv search dialog object when switching search modes */
     void toggleAdvancedSearchDialog(bool);
