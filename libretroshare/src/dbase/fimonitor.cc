@@ -96,11 +96,7 @@ bool    FileIndexMonitor::findLocalFile(std::string hash,
 
 			size = fe->size;
 			ok = true;
-                } else {
-                    fullpath = fe->name;
-                    size = fe->size;
-                    ok = true;
-                }
+		}
 #ifdef FIM_DEBUG
 		std::cerr << "FileIndexMonitor::findLocalFile() Found Path: " << fullpath << std::endl;
 		std::cerr << "FileIndexMonitor::findLocalFile() Found Size: " << size << std::endl;
@@ -136,13 +132,7 @@ bool    FileIndexMonitor::convertSharedFilePath(std::string path, std::string &f
 		std::cerr << "FileIndexMonitor::convertSharedFilePath() Found Path: " << fullpath << std::endl;
 #endif
 		ok = true;
-        } else {
-            fullpath = path;
-            ok = true;
- #ifdef FIM_DEBUG
-                std::cerr << "FileIndexMonitor::convertSharedFilePath() Found Path: " << fullpath << std::endl;
-#endif
-        }
+	}
 
 	} fiMutex.unlock(); /* UNLOCKED DIRS */
 

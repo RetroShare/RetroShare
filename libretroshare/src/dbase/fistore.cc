@@ -336,19 +336,7 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 		else
 		{
 			/* NEW add path (to dir - if dir, or parent dir - if file? */
-			if (NULL != (person = dynamic_cast<PersonEntry *>(parent))) {
-			    //if parent if root, then the path is inside the name; we should parse the name for the last / char
-			    int i;
-			    for(i = details.name.length(); (i > 0) && (details.name[i] != '/'); i--);
-			    if (i != 0) {
-				//the file is in a subdir, let's remove the / char and set correct path
-				details.path = details.name.substr(0,i);
-				details.name = details.name.substr(i + 1);
-			    }
-
-			} else {
-			    details.path = parent->path;
-			}
+			details.path = parent->path;
 
 			while(parent->parent)
 				parent = parent->parent;
