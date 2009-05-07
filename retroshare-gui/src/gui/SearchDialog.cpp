@@ -224,9 +224,9 @@ void SearchDialog::searchtableWidgetCostumPopupMenu( QPoint point )
     
         contextMnu->clear();
         contextMnu->addAction( downloadAct);
-        contextMnu->addSeparator();
-        contextMnu->addAction( broadcastonchannelAct);
-        contextMnu->addAction( recommendtofriendsAct);
+        //contextMnu->addSeparator();
+        //contextMnu->addAction( broadcastonchannelAct);
+        //contextMnu->addAction( recommendtofriendsAct);
       }
 
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, 
