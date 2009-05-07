@@ -126,6 +126,8 @@ SearchDialog::SearchDialog(QWidget *parent)
     
     connect ( ui.searchSummaryWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem *, QTreeWidgetItem * ) ),
                     this, SLOT( selectSearchResults( void ) ) );
+                    
+    connect( ui.searchResultWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(download()));                
    
 
     /* hide the Tree +/- */
@@ -166,11 +168,11 @@ SearchDialog::SearchDialog(QWidget *parent)
 
     
     // set header text aligment
-	QTreeWidgetItem * headerItem = ui.searchResultWidget->headerItem();
-	headerItem->setTextAlignment(2, Qt::AlignRight   | Qt::AlignRight);
-	headerItem->setTextAlignment(3, Qt::AlignRight | Qt::AlignRight);
+    QTreeWidgetItem * headerItem = ui.searchResultWidget->headerItem();
+    headerItem->setTextAlignment(2, Qt::AlignRight   | Qt::AlignRight);
+    headerItem->setTextAlignment(3, Qt::AlignRight | Qt::AlignRight);
      
-	ui.searchResultWidget->sortItems(SR_NAME_COL, Qt::AscendingOrder);
+    ui.searchResultWidget->sortItems(SR_NAME_COL, Qt::AscendingOrder);
 
 
 
