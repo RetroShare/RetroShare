@@ -138,7 +138,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 
 void PopupChatDialog::resetStatusBar() 
 {
-	statusBar()->showMessage(QString("Chatting with ") + QString::fromStdString(dialogName) + " (" +QString::fromStdString(dialogId)+ ")") ;
+	statusBar()->showMessage(tr("Chatting with ") + QString::fromStdString(dialogName) + " (" +QString::fromStdString(dialogId)+ ")") ;
 }
 
 void PopupChatDialog::updateStatusTyping()
