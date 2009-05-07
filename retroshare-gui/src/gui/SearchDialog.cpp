@@ -369,6 +369,7 @@ void SearchDialog::searchRemoveAll()
 void SearchDialog::clearKeyword()
 {
 	ui.lineEdit->clear();
+	ui.FileTypeComboBox->setCurrentIndex(0);
 }
 
 /* *****************************************************************
