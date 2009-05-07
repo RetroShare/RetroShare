@@ -1406,7 +1406,9 @@ class CRYPTPROTECT_PROMPTSTRUCT;
 #ifdef __cplusplus
 extern "C" {
 #endif
-#ifdef A_VIRER
+
+#ifdef WINDOWS_SYS
+
 typedef struct _CRYPTPROTECT_PROMPTSTRUCT {
   DWORD cbSize;
   DWORD dwPromptFlags;
@@ -1414,6 +1416,7 @@ typedef struct _CRYPTPROTECT_PROMPTSTRUCT {
   LPCWSTR szPrompt;
 } CRYPTPROTECT_PROMPTSTRUCT,
  *PCRYPTPROTECT_PROMPTSTRUCT;
+
 #endif
 
 /* definitions for the two functions */

@@ -14,14 +14,25 @@ PQI_USE_XPGP = 1
 
 ###########################################################################
 
-ALT_SRC_ROOT=/cygdrive/c/RetroShareBuild/src
-SRC_ROOT=/cygdrive/c/RetroShareBuild/src
+#### DrBobs Versions.... Please Don't Delete.
+### Comment out if needed.
 
-# These never change.
-PTHREADS_DIR=$(ALT_SRC_ROOT)/pthreads-w32-2-8-0-release
-ZLIB_DIR=$(ALT_SRC_ROOT)/zlib-1.2.3
+ALT_SRC_ROOT=/cygdrive/c/home/rmfern/prog/MinGW
+SRC_ROOT=../../../..
+
+PTHREADS_DIR=$(ALT_SRC_ROOT)/pthreads/pthreads.2
+
+###################
+
+#ALT_SRC_ROOT=/cygdrive/c/RetroShareBuild/src
+#SRC_ROOT=/cygdrive/c/RetroShareBuild/src
+
+#PTHREADS_DIR=$(ALT_SRC_ROOT)/pthreads-w32-2-8-0-release
+
+###################
 
 # pretty stable...
+ZLIB_DIR=$(ALT_SRC_ROOT)/zlib-1.2.3
 SSL_DIR=$(SRC_ROOT)/openssl-0.9.7g-xpgp-0.1c
 UPNPC_DIR=$(SRC_ROOT)/miniupnpc-1.0
 

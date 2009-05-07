@@ -97,21 +97,13 @@ RsItem *RsChatSerialiser::deserialise(void *data, uint32_t *pktsize)
 		return NULL; /* wrong type */
 	}
 
-	try
+	switch(getRsItemSubType(rstype))
 	{
-		switch(getRsItemSubType(rstype))
-		{
-			case RS_PKT_SUBTYPE_DEFAULT:		return new RsChatMsgItem(data,*pktsize) ;
-			case RS_PKT_SUBTYPE_CHAT_STATUS:	return new RsChatStatusItem(data,*pktsize) ;
-			default:
-																std::cerr << "Unknown packet type in chat!" << std::endl ;
-																return NULL ;
-		}
-	}
-	catch(std::exception& e)
-	{
-		std::cerr << "Exception raised: " << e.what() << std::endl ;
-		return NULL ;
+		case RS_PKT_SUBTYPE_DEFAULT:		return new RsChatMsgItem(data,*pktsize) ;
+		case RS_PKT_SUBTYPE_CHAT_STATUS:	return new RsChatStatusItem(data,*pktsize) ;
+		default:
+			std::cerr << "Unknown packet type in chat!" << std::endl ;
+			return NULL ;
 	}
 }
 
@@ -231,9 +223,9 @@ RsChatMsgItem::RsChatMsgItem(void *data,uint32_t size)
 	std::cerr << "Building new chat msg item." << std::endl ;
 #endif
 	if (offset != rssize)
-		throw std::runtime_error("Size error while deserializing.") ;
+		std::cerr << "Size error while deserializing." << std::endl ;
 	if (!ok)
-		throw std::runtime_error("Unknown error while deserializing.") ;
+		std::cerr << "Unknown error while deserializing." << std::endl ;
 }
 
 RsChatStatusItem::RsChatStatusItem(void *data,uint32_t size)
@@ -250,9 +242,9 @@ RsChatStatusItem::RsChatStatusItem(void *data,uint32_t size)
 	ok &= GetTlvString(data, rssize, &offset,TLV_TYPE_STR_MSG, status_string);
 
 	if (offset != rssize)
-		throw std::runtime_error("Size error while deserializing.") ;
+		std::cerr << "Size error while deserializing." << std::endl ;
 	if (!ok)
-		throw std::runtime_error("Unknown error while deserializing.") ;
+		std::cerr << "Unknown error while deserializing." << std::endl ;
 }
 
 /*************************************************************************/

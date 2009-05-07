@@ -821,6 +821,17 @@ RsItem *RsTurtleSerialiser::deserialise(void *data, uint32_t *size)
 		return NULL; /* wrong type */
 	}
 
+#ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
+	switch(getRsItemSubType(rstype))
+	{
+		case RS_TURTLE_SUBTYPE_SEARCH_REQUEST:	return new RsTurtleSearchRequestItem(data,*size) ;
+		case RS_TURTLE_SUBTYPE_SEARCH_RESULT:	return new RsTurtleSearchResultItem(data,*size) ;
+
+		default:
+		std::cerr << "Unknown packet type in RsTurtle!" << std::endl ;
+		return NULL ;
+	}
+#else
 	try
 	{
 		switch(getRsItemSubType(rstype))
@@ -840,6 +851,8 @@ RsItem *RsTurtleSerialiser::deserialise(void *data, uint32_t *size)
 		std::cerr << "Exception raised: " << e.what() << std::endl ;
 		return NULL ;
 	}
+#endif
+
 }
 
 bool RsTurtleSearchRequestItem::serialize(void *data,uint32_t& pktsize)
@@ -890,10 +903,13 @@ RsTurtleSearchRequestItem::RsTurtleSearchRequestItem(void *data,uint32_t pktsize
 	ok &= getRawUInt32(data, pktsize, &offset, &request_id);
 	ok &= getRawUInt16(data, pktsize, &offset, &depth);
 
+#ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
+#else
 	if (offset != rssize)
 		throw std::runtime_error("Size error while deserializing.") ;
 	if (!ok)
 		throw std::runtime_error("Unknown error while deserializing.") ;
+#endif
 }
 
 bool RsTurtleSearchResultItem::serialize(void *data,uint32_t& pktsize)
@@ -970,10 +986,13 @@ RsTurtleSearchResultItem::RsTurtleSearchResultItem(void *data,uint32_t pktsize)
 		result.push_back(f) ;
 	}
 
+#ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
+#else
 	if (offset != rssize)
 		throw std::runtime_error("Size error while deserializing.") ;
 	if (!ok)
 		throw std::runtime_error("Unknown error while deserializing.") ;
+#endif
 }
 
 bool RsTurtleOpenTunnelItem::serialize(void *data,uint32_t& pktsize)
@@ -1031,10 +1050,13 @@ RsTurtleOpenTunnelItem::RsTurtleOpenTunnelItem(void *data,uint32_t pktsize)
 	std::cerr << "  request_id=" << (void*)request_id << ", partial_id=" << (void*)partial_tunnel_id << ", depth=" << depth << ", hash=" << file_hash << std::endl ;
 #endif
 
+#ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
+#else
 	if (offset != rssize)
 		throw std::runtime_error("RsTurtleOpenTunnelItem::() error while deserializing.") ;
 	if (!ok)
 		throw std::runtime_error("RsTurtleOpenTunnelItem::() unknown error while deserializing.") ;
+#endif
 }
 
 bool RsTurtleTunnelOkItem::serialize(void *data,uint32_t& pktsize)
@@ -1088,10 +1110,13 @@ RsTurtleTunnelOkItem::RsTurtleTunnelOkItem(void *data,uint32_t pktsize)
 	std::cerr << "  request_id=" << (void*)request_id << ", tunnel_id=" << (void*)tunnel_id << std::endl ;
 #endif
 
+#ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
+#else
 	if (offset != rssize)
 		throw std::runtime_error("RsTurtleTunnelOkItem::() error while deserializing.") ;
 	if (!ok)
 		throw std::runtime_error("RsTurtleTunnelOkItem::() unknown error while deserializing.") ;
+#endif
 }
 
 // -----------------------------------------------------------------------------------//
