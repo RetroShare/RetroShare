@@ -66,37 +66,39 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     DLListModel->setHeaderData(REMAINING, Qt::Horizontal, tr("Remaining", "i.e: Estimated Time of Arrival / Time left"));
     DLListModel->setHeaderData(ID, Qt::Horizontal, tr("Core-ID"));
     ui.downloadList->setModel(DLListModel);
-	ui.downloadList->hideColumn(ID);
+    ui.downloadList->hideColumn(ID);
     DLDelegate = new DLListDelegate();
     ui.downloadList->setItemDelegate(DLDelegate);
 	
-	 ui.downloadList->setAutoScroll(false) ;
+    ui.downloadList->setAutoScroll(false) ;
   
   	//Selection Setup
-	selection = ui.downloadList->selectionModel();
+    selection = ui.downloadList->selectionModel();
+    
+    ui.downloadList->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
   
     /* Set header resize modes and initial section sizes Downloads TreeView*/
-//	QHeaderView * _header = ui.downloadList->header () ;
-//   	_header->setResizeMode (0, QHeaderView::Interactive); /*Name*/
-//	_header->setResizeMode (1, QHeaderView::Interactive); /*Size*/
-//	_header->setResizeMode (2, QHeaderView::Interactive); /*Progress*/
-//	_header->setResizeMode (3, QHeaderView::Interactive); /*Speed*/
-//	_header->setResizeMode (4, QHeaderView::Interactive); /*Sources*/
-//	_header->setResizeMode (5, QHeaderView::Interactive); /*Status*/
-//	_header->setResizeMode (6, QHeaderView::Interactive); /*Completed*/
-//	_header->setResizeMode (7, QHeaderView::Interactive); /*Remaining */
-//
-//    
-//	_header->resizeSection ( 0, 100 ); /*Name*/
-//	_header->resizeSection ( 1, 75 ); /*Size*/
-//	_header->resizeSection ( 2, 170 ); /*Progress*/
-//	_header->resizeSection ( 3, 75 ); /*Speed*/
-//	_header->resizeSection ( 4, 100 ); /*Sources*/
-//	_header->resizeSection ( 5, 100 ); /*Status*/
-//	_header->resizeSection ( 6, 75 ); /*Completed*/
-//	_header->resizeSection ( 7, 100 ); /*Remaining */
+    QHeaderView * _header = ui.downloadList->header () ;
+    _header->setResizeMode (NAME, QHeaderView::Interactive); 
+    _header->setResizeMode (SIZE, QHeaderView::Interactive); 
+    _header->setResizeMode (COMPLETED, QHeaderView::Interactive); 
+    _header->setResizeMode (DLSPEED, QHeaderView::Interactive); 
+    _header->setResizeMode (PROGRESS, QHeaderView::Interactive); 
+    _header->setResizeMode (SOURCES, QHeaderView::Interactive); 
+    _header->setResizeMode (STATUS, QHeaderView::Interactive); 
+    _header->setResizeMode (REMAINING, QHeaderView::Interactive); 
+    
+    _header->resizeSection ( NAME, 170 ); 
+    _header->resizeSection ( SIZE, 70 ); 
+    _header->resizeSection ( COMPLETED, 75 ); 
+    _header->resizeSection ( DLSPEED, 75 ); 
+    _header->resizeSection ( PROGRESS, 170 );
+    _header->resizeSection ( SOURCES, 90 ); 
+    _header->resizeSection ( STATUS, 100 ); 
+    _header->resizeSection ( REMAINING, 100 ); 
 	
-	// Set Upload list model
+    // Set Upload list model
     ULListModel = new QStandardItemModel(0,7);
     ULListModel->setHeaderData(UNAME, Qt::Horizontal, tr("Name", "i.e: file name"));
     ULListModel->setHeaderData(USIZE, Qt::Horizontal, tr("Size", "i.e: file size"));
@@ -109,7 +111,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     ULDelegate = new ULListDelegate();
     ui.uploadsList->setItemDelegate(ULDelegate);
     
-	 ui.uploadsList->setAutoScroll(false) ;
+    ui.uploadsList->setAutoScroll(false) ;
     ui.uploadsList->setRootIsDecorated(false);
   
   	//Selection Setup
@@ -137,6 +139,17 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 #ifdef Q_WS_WIN
 
 #endif
+}
+
+void TransfersDialog::keyPressEvent(QKeyEvent *e)
+{
+	if(e->key() == Qt::Key_Delete)
+	{
+		cancel() ;
+		e->accept() ;
+	}
+	else
+		MainPage::keyPressEvent(e) ;
 }
 
 void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
@@ -586,17 +599,32 @@ void TransfersDialog::insertTransfers()
 
 void TransfersDialog::cancel()
 {
-	for(int i = 0; i <= DLListModel->rowCount(); i++) {
-		if(selection->isRowSelected(i, QModelIndex())) {
-			std::string id = getID(i, DLListModel).toStdString();
-			QString  qname = getFileName(i, DLListModel);
-			/* XXX -> Should not have to 'trim' filename ... something wrong here..
-			 * but otherwise, not exact filename .... BUG
-			 */
-			std::string name = (qname.trimmed()).toStdString();
-			rsFiles->FileCancel(id); /* hash */
-		}
-	}
+		QString queryWrn2;
+    queryWrn2.clear();
+    queryWrn2.append("Are you sure that you want to cancel and delete these files?");
+
+    if ((QMessageBox::question(this, tr("RetroShare"),queryWrn2,QMessageBox::Ok|QMessageBox::No, QMessageBox::Ok))== QMessageBox::Ok)
+    {
+	
+	
+      for(int i = 0; i <= DLListModel->rowCount(); i++) 
+      {
+        if(selection->isRowSelected(i, QModelIndex())) 
+        {
+        std::string id = getID(i, DLListModel).toStdString();
+        QString  qname = getFileName(i, DLListModel);
+        /* XXX -> Should not have to 'trim' filename ... something wrong here..
+        * but otherwise, not exact filename .... BUG
+        */
+        std::string name = (qname.trimmed()).toStdString();
+        rsFiles->FileCancel(id); /* hash */
+
+        }
+      }
+	
+    }
+    else
+    return;
 }
 
 void TransfersDialog::clearcompleted()

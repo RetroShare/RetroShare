@@ -46,6 +46,8 @@ class TransfersDialog : public MainPage
 		TransfersDialog(QWidget *parent = 0);
 		/** Default Destructor */
 		~TransfersDialog();
+		
+		virtual void keyPressEvent(QKeyEvent *) ;
 
 	public slots:
 		void insertTransfers();
