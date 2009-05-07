@@ -96,7 +96,7 @@ private:
 	float amountDone;
 
 signals:
-		void fileFinished(SubFileItem * subFileItem) const ;
+		void fileFinished(SubFileItem * subFileItem);
 
 };
 
