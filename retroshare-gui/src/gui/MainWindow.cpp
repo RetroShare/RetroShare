@@ -226,9 +226,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
 		createPageAction(QIcon(IMAGE_NEWSFEED), tr("News Feed"), grp));
 
+#ifdef PLUGINMGR
     ui.stackPages->add(pluginsPage = new PluginsPage(ui.stackPages),
                        createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
-
+#endif
     /* Create the toolbar */
     ui.toolBar->addActions(grp->actions());
     ui.toolBar->addSeparator();

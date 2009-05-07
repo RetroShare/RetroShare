@@ -3,7 +3,7 @@
 
 #include <QWizard>
 
-QT_BEGIN_NAMESPACE
+//QT_BEGIN_NAMESPACE
 class QCheckBox;
 class QLabel;
 class QTextEdit;
@@ -13,7 +13,7 @@ class QVBoxLayout;
 class QHBoxLayout;
 class QGroupBox;
 class QGridLayout;
-QT_END_NAMESPACE
+//QT_END_NAMESPACE
 
 const std::string LOCAL_IP = "---LOCAL---";
 const std::string EXT_IP = "---EXT---";

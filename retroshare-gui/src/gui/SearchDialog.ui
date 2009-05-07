@@ -510,12 +510,12 @@
   <property name="contextMenuPolicy" >
    <enum>Qt::NoContextMenu</enum>
   </property>
-  <layout class="QGridLayout" name="gridLayout_6" >
+  <layout class="QGridLayout" >
    <property name="verticalSpacing" >
     <number>4</number>
    </property>
    <item row="0" column="0" >
-    <layout class="QGridLayout" name="gridLayout_4" >
+    <layout class="QGridLayout" >
      <item row="0" column="0" >
       <widget class="QLabel" name="label_2" >
        <property name="minimumSize" >
@@ -591,17 +591,20 @@ p, li { white-space: pre-wrap; }
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>220</width>
-        <height>123</height>
+        <width>235</width>
+        <height>131</height>
        </rect>
       </property>
       <attribute name="label" >
        <string>Keyword Search</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_3" >
+      <layout class="QGridLayout" >
        <item row="0" column="0" >
-        <layout class="QGridLayout" name="gridLayout" >
-         <property name="spacing" >
+        <layout class="QGridLayout" >
+         <property name="horizontalSpacing" >
+          <number>6</number>
+         </property>
+         <property name="verticalSpacing" >
           <number>6</number>
          </property>
          <item row="0" column="0" colspan="2" >
@@ -634,8 +637,7 @@ p, li { white-space: pre-wrap; }
              <string>Any</string>
             </property>
             <property name="icon" >
-             <iconset resource="images.qrc" >
-              <normaloff>:/images/FileTypeAny.png</normaloff>:/images/FileTypeAny.png</iconset>
+             <iconset resource="images.qrc" >:/images/FileTypeAny.png</iconset>
             </property>
            </item>
            <item>
@@ -643,8 +645,7 @@ p, li { white-space: pre-wrap; }
              <string>Archive</string>
             </property>
             <property name="icon" >
-             <iconset resource="images.qrc" >
-              <normaloff>:/images/FileTypeArchive.png</normaloff>:/images/FileTypeArchive.png</iconset>
+             <iconset resource="images.qrc" >:/images/FileTypeArchive.png</iconset>
             </property>
            </item>
            <item>
@@ -652,8 +653,7 @@ p, li { white-space: pre-wrap; }
              <string>Audio</string>
             </property>
             <property name="icon" >
-             <iconset resource="images.qrc" >
-              <normaloff>:/images/FileTypeAudio.png</normaloff>:/images/FileTypeAudio.png</iconset>
+             <iconset resource="images.qrc" >:/images/FileTypeAudio.png</iconset>
             </property>
            </item>
            <item>
@@ -661,8 +661,7 @@ p, li { white-space: pre-wrap; }
              <string>CD-Image</string>
             </property>
             <property name="icon" >
-             <iconset resource="images.qrc" >
-              <normaloff>:/images/FileTypeCDImage.png</normaloff>:/images/FileTypeCDImage.png</iconset>
+             <iconset resource="images.qrc" >:/images/FileTypeCDImage.png</iconset>
             </property>
            </item>
            <item>
@@ -670,8 +669,7 @@ p, li { white-space: pre-wrap; }
              <string>Document</string>
             </property>
             <property name="icon" >
-             <iconset resource="images.qrc" >
-              <normaloff>:/images/FileTypeDocument.png</normaloff>:/images/FileTypeDocument.png</iconset>
+             <iconset resource="images.qrc" >:/images/FileTypeDocument.png</iconset>
             </property>
            </item>
            <item>
@@ -679,8 +677,7 @@ p, li { white-space: pre-wrap; }
              <string>Picture</string>
             </property>
             <property name="icon" >
-             <iconset resource="images.qrc" >
-              <normaloff>:/images/FileTypePicture.png</normaloff>:/images/FileTypePicture.png</iconset>
+             <iconset resource="images.qrc" >:/images/FileTypePicture.png</iconset>
             </property>
            </item>
            <item>
@@ -688,8 +685,7 @@ p, li { white-space: pre-wrap; }
              <string>Program</string>
             </property>
             <property name="icon" >
-             <iconset resource="images.qrc" >
-              <normaloff>:/images/FileTypeProgram.png</normaloff>:/images/FileTypeProgram.png</iconset>
+             <iconset resource="images.qrc" >:/images/FileTypeProgram.png</iconset>
             </property>
            </item>
            <item>
@@ -697,8 +693,7 @@ p, li { white-space: pre-wrap; }
              <string>Video</string>
             </property>
             <property name="icon" >
-             <iconset resource="images.qrc" >
-              <normaloff>:/images/FileTypeVideo.png</normaloff>:/images/FileTypeVideo.png</iconset>
+             <iconset resource="images.qrc" >:/images/FileTypeVideo.png</iconset>
             </property>
            </item>
           </widget>
@@ -724,17 +719,16 @@ p, li { white-space: pre-wrap; }
             <string>Search</string>
            </property>
            <property name="icon" >
-            <iconset resource="images.qrc" >
-             <normaloff>:/images/find.png</normaloff>:/images/find.png</iconset>
+            <iconset resource="images.qrc" >:/images/find.png</iconset>
            </property>
           </widget>
          </item>
          <item row="3" column="0" >
-          <spacer name="horizontalSpacer" >
+          <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" >
             <size>
              <width>88</width>
              <height>20</height>
@@ -756,7 +750,7 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item rowspan="2" row="1" column="1" >
-    <layout class="QGridLayout" name="gridLayout_5" >
+    <layout class="QGridLayout" >
      <item row="0" column="0" colspan="4" >
       <widget class="SearchTreeWidget" name="searchResultWidget" >
        <property name="sizePolicy" >
@@ -836,8 +830,7 @@ p, li { white-space: pre-wrap; }
         <string>Download</string>
        </property>
        <property name="icon" >
-        <iconset resource="images.qrc" >
-         <normaloff>:/images/down_24x24.png</normaloff>:/images/down_24x24.png</iconset>
+        <iconset resource="images.qrc" >:/images/down_24x24.png</iconset>
        </property>
        <property name="iconSize" >
         <size>
@@ -848,11 +841,11 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item row="1" column="1" >
-      <spacer name="horizontalSpacer_2" >
+      <spacer>
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" >
         <size>
          <width>158</width>
          <height>31</height>
@@ -904,8 +897,7 @@ p, li { white-space: pre-wrap; }
         <string/>
        </property>
        <property name="icon" >
-        <iconset resource="images.qrc" >
-         <normaloff>:/images/advsearch_24x24.png</normaloff>:/images/advsearch_24x24.png</iconset>
+        <iconset resource="images.qrc" >:/images/advsearch_24x24.png</iconset>
        </property>
        <property name="iconSize" >
         <size>
@@ -943,7 +935,7 @@ p, li { white-space: pre-wrap; }
      <property name="currentIndex" >
       <number>0</number>
      </property>
-     <property name="tabSpacing" >
+     <property name="tabSpacing" stdset="0" >
       <number>6</number>
      </property>
      <widget class="QWidget" name="page_2" >
@@ -951,14 +943,14 @@ p, li { white-space: pre-wrap; }
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>220</width>
-        <height>241</height>
+        <width>224</width>
+        <height>221</height>
        </rect>
       </property>
       <attribute name="label" >
        <string>Search Activity</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_2" >
+      <layout class="QGridLayout" >
        <item row="0" column="0" >
         <widget class="QTreeWidget" name="searchSummaryWidget" >
          <property name="sizePolicy" >

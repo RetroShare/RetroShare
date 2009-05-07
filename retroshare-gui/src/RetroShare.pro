@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools debug
+CONFIG += qt gui uic qrc resources uitools pluginmgr debug
 QT     += network xml script 
 TEMPLATE = app
 TARGET = RetroShare
@@ -76,6 +76,7 @@ macx {
     # CONFIG += ppc x86 
 
     LIBS += -Wl,-search_paths_first
+    LIBS += -L"../../../../lib" -lretroshare -lssl -lcrypto -lminiupnpc -lz
 }
 
 ############################## Common stuff ######################################
@@ -145,9 +146,9 @@ HEADERS +=  rshare.h \
             gui/HelpDialog.h \
             gui/LogoBar.h \
             gui/xprogressbar.h \
-            gui/PluginsPage.h  \
-            gui/PluginManagerWidget.h \
-            gui/PluginManager.h      \
+            # gui/PluginsPage.h  \
+            # gui/PluginManagerWidget.h \
+            # gui/PluginManager.h      \
             gui/plugins/PluginInterface.h \
             gui/im_history/IMHistoryKeeper.h           \
             gui/im_history/IMHistoryReader.h           \
@@ -388,9 +389,9 @@ SOURCES += main.cpp \
             gui/HelpDialog.cpp \
             gui/LogoBar.cpp \
             gui/xprogressbar.cpp \
-            gui/PluginsPage.cpp \
-            gui/PluginManagerWidget.cpp \
-            gui/PluginManager.cpp      \
+            # gui/PluginsPage.cpp \
+            # gui/PluginManagerWidget.cpp \
+            # gui/PluginManager.cpp      \
             lang/languagesupport.cpp \
             util/stringutil.cpp \
             util/win32.cpp \
@@ -518,6 +519,24 @@ turtle {
         FORMS += gui/TurtleSearchDialog.ui
         DEFINES *= TURTLE_HOPPING
         DEFINES *= RS_RELEASE_VERSION
+}
+
+
+# Shifted Qt4.4 dependancies to here.
+#    qmake CONFIG=pluginmgr
+
+pluginmgr {                        
+
+        SOURCES += gui/PluginsPage.cpp \
+            	gui/PluginManagerWidget.cpp \
+            	gui/PluginManager.cpp      
+
+        HEADERS += gui/PluginsPage.h  \
+            	gui/PluginManagerWidget.h \
+            	gui/PluginManager.h      
+
+        DEFINES *= PLUGINMGR
+
 }
 
 
