@@ -31,7 +31,14 @@ class ConfCertDialog : public QDialog
 {
   Q_OBJECT
 
-public:
+	public:
+	  static void show(const std::string& id) ;
+
+	  static ConfCertDialog *instance() ;
+signals:
+	  void configChanged() ;
+private:
+
   /** Default constructor */
   ConfCertDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default destructor */
@@ -39,14 +46,16 @@ public:
 
 void 	loadId(std::string id);
 
+#if 0
 void setInfo(std::string name, 
 		std::string trust, 
 		std::string org,
 		std::string loc,
 		std::string country,
 		std::string signers);
+#endif
 
-public slots:
+private slots:
   /** Overloaded QWidget.show */
   void show();
 
@@ -57,6 +66,7 @@ private slots:
 
 	void closeinfodlg();
 	void applyDialog();
+	void makeFriend();
   
 private:
 
@@ -68,6 +78,7 @@ void 	loadDialog();
 std::string mId;
   /** Qt Designer generated object */
   Ui::ConfCertDialog ui;
+
 };
 
 #endif

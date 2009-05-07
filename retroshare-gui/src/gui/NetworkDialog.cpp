@@ -43,6 +43,8 @@
 #include <QPixmap>
 #include <QHeaderView>
 
+#include "connect/ConfCertDialog.h"
+
 /* Images for context menu icons */
 #define IMAGE_LOADCERT       ":/images/loadcert16.png"
 #define IMAGE_PEERDETAILS    ":/images/peerdetails_16x16.png"
@@ -247,11 +249,12 @@ void NetworkDialog::makeFriend()
 /** Shows Peer Information/Auth Dialog */
 void NetworkDialog::peerdetails()
 {
+#if 0
 #ifdef NET_DEBUG 
     std::cerr << "ConnectionsDialog::peerdetails()" << std::endl;
 #endif
 
-    QTreeWidgetItem *wi = getCurrentNeighbour();
+    QTreeWidgetItem *wi = 
     if (!wi)
     	return;
 
@@ -260,6 +263,8 @@ void NetworkDialog::peerdetails()
     out << id;
 
     showpeerdetails(out.str());
+#endif
+	 ConfCertDialog::show(getCurrentNeighbour()->text(9).toStdString());
 }
 
 /** Shows Peer Information/Auth Dialog */

@@ -637,24 +637,7 @@ void PeersDialog::trustfriend()
 /* GUI stuff -> don't do anything directly with Control */
 void PeersDialog::configurefriend()
 {
-	/* display Dialog */
-#ifdef PEERS_DEBUG 
-	std::cerr << "PeersDialog::configurefriend()" << std::endl;
-#endif
-	QTreeWidgetItem *c = getCurrentPeer();
-
-
-	static ConfCertDialog *confdialog = new ConfCertDialog();
-
-
-	if (!c)
-		return;
-
-	/* set the Id */
-	std::string id = getPeerRsCertId(c);
-
-	confdialog -> loadId(id);
-	confdialog -> show();
+	ConfCertDialog::show(getPeerRsCertId(getCurrentPeer()));
 }
 
 void PeersDialog::updatePeerStatusString(const QString& peer_id,const QString& status_string)

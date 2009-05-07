@@ -26,6 +26,7 @@
 #include <gui/StartDialog.h>
 #include <gui/GenCertDialog.h>
 #include <gui/Preferences/rsharesettings.h>
+#include <gui/connect/ConfCertDialog.h>
 
 /*** WINDOWS DON'T LIKE THIS - REDEFINES VER numbers.
 #include <gui/qskinobject/qskinobject.h>
@@ -171,6 +172,8 @@ int main(int argc, char *argv[])
 
 	QObject::connect(notify,SIGNAL(chatStatusChanged(const QString&,const QString&)),w->peersDialog,SLOT(updatePeerStatusString(const QString&,const QString&)));
 	QObject::connect(notify,SIGNAL(logInfoChanged(const QString&)),w->networkDialog,SLOT(setLogInfo(QString))) ;
+
+	QObject::connect(ConfCertDialog::instance(),SIGNAL(configChanged()),w->networkDialog,SLOT(insertConnect())) ;
 
 	/* only show window, if not startMinimized */
 	if (!startMinimised)

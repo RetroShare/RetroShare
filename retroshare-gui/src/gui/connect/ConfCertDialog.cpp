@@ -25,6 +25,12 @@
 
 #include <QTime>
 
+ConfCertDialog *ConfCertDialog::instance()
+{
+	static ConfCertDialog *confdialog = new ConfCertDialog ;
+
+	return confdialog ;
+}
 
 /* Define the format used for displaying the date and time */
 #define DATETIME_FMT  "MMM dd hh:mm:ss"
@@ -39,11 +45,19 @@ ConfCertDialog::ConfCertDialog(QWidget *parent, Qt::WFlags flags)
 
   connect(ui.applyButton, SIGNAL(clicked()), this, SLOT(applyDialog()));
   connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(closeinfodlg()));
+  connect(ui._makeFriendPB, SIGNAL(clicked()), this, SLOT(makeFriend()));
 
  
   //setFixedSize(QSize(434, 462));
 }
 
+void ConfCertDialog::show(const std::string& peer_id)
+{
+	/* set the Id */
+
+	instance()->loadId(peer_id);
+	instance()->show();
+}
 
 
 /** 
@@ -103,7 +117,7 @@ void ConfCertDialog::loadDialog()
 	ui.extPort -> setValue(detail.extPort);
 
 	/* set the url for DNS access (OLD) */
-	ui.extName->setText(QString::fromStdString(""));
+	//ui.extName->setText(QString::fromStdString(""));
 
 	/**** TODO ****/
 	//ui.chkFirewall  ->setChecked(ni->firewalled);
@@ -113,44 +127,29 @@ void ConfCertDialog::loadDialog()
 	
 	//ui.indivRate->setValue(0);
 
-	ui.trustLvl->setText(QString::fromStdString(RsPeerTrustString(detail.trustLvl)));
+	//ui.trustLvl->setText(QString::fromStdString(RsPeerTrustString(detail.trustLvl)));
 
-	if(rsPeers->isOnline(detail.id) || rsPeers->isTrustingMe(detail.id))
-		ui._isTrustingMeTF->setText("Yes");
-	else
-		ui._isTrustingMeTF->setText("No");
+	ui._peerTrustsMeCB->setChecked(rsPeers->isOnline(detail.id) || rsPeers->isTrustingMe(detail.id)) ;
+	ui._peerTrustsMeCB->setEnabled(false);
+	ui.signBox->setChecked(detail.ownsign) ;
+	ui.signBox->setEnabled(!detail.ownsign) ;
 
-	if (detail.ownsign)
-	{
-		ui.signBox -> setCheckState(Qt::Checked);
-		ui.signBox -> setEnabled(false);
-		if (detail.trusted)
-		{
-			ui.trustBox -> setCheckState(Qt::Checked);
-		}
-		else
-		{
-			ui.trustBox -> setCheckState(Qt::Unchecked);
-		}
-		ui.trustBox -> setCheckable(true);
-	}
-	else
-	{
-		ui.signBox -> setCheckState(Qt::Unchecked);
-		ui.signBox -> setEnabled(true);
+	ui._peerAcceptedCB->setChecked(detail.state & RS_PEER_STATE_FRIEND) ;
+	ui._peerAcceptedCB->setEnabled(detail.ownsign) ;
 
-		ui.trustBox -> setCheckState(Qt::Unchecked);
-		ui.trustBox -> setEnabled(false);
-	}
-
+	ui.signers->clear() ;
+	for(std::list<std::string>::const_iterator it(detail.signers.begin());it!=detail.signers.end();++it)
+		ui.signers->append(QString::fromStdString(*it)) ;
 }
 
 
 void ConfCertDialog::applyDialog()
 {
+	std::cerr << "In apply dialog" << std::endl ;
 	RsPeerDetails detail;
 	if (!rsPeers->getPeerDetails(mId, detail))
 	{
+		std::cerr << "Could not get details from " << mId << std::endl ;
 		/* fail */
 		return;
 	}
@@ -163,57 +162,26 @@ void ConfCertDialog::applyDialog()
 	bool trustChanged = false;
 
 	/* set local address */
-	if ((detail.localAddr != ui.localAddress->text().toStdString())
-		|| (detail.localPort != ui.localPort -> value()))
-	{
-		/* changed ... set it */
+	if ((detail.localAddr != ui.localAddress->text().toStdString()) || (detail.localPort != ui.localPort -> value()))
 		localChanged = true;
-	}
 
-	if ((detail.extAddr != ui.extAddress->text().toStdString())
-		|| (detail.extPort != ui.extPort -> value()))
-	{
-		/* changed ... set it */
+	if ((detail.extAddr != ui.extAddress->text().toStdString()) || (detail.extPort != ui.extPort -> value()))
 		extChanged = true;
-	}
-
-#if 0
-	if ((detail.firewalled != ui.chkFirewall  ->isChecked()) ||
-		(detail.forwardPort != ui.chkForwarded ->isChecked()))
-	{
-		/* changed ... set it */
-		fwChanged = true;
-	}
-	
-	if (ni -> maxRate != ui.indivRate->value())
-	{
-		/* nada */
-	}
-#endif
 
 	if (detail.ownsign)
 	{
-		if (detail.trusted != ui.trustBox->isChecked())
-		{
+		if (ui._peerAcceptedCB->isChecked() != ((detail.state & RS_PEER_STATE_FRIEND) > 0)) 
 			trustChanged = true;
-		}
 	}
-	else
-	{
-		if (ui.signBox->isChecked())
-		{
-			signChanged = true;
-		}
-	}
-		
+	else if (ui.signBox->isChecked())
+		signChanged = true;
+
 	/* now we can action the changes */
 	if (localChanged)
-		rsPeers->setLocalAddress(mId, 
-			ui.localAddress->text().toStdString(), ui.localPort->value());
+		rsPeers->setLocalAddress(mId, ui.localAddress->text().toStdString(), ui.localPort->value());
 
 	if (extChanged)
-		rsPeers->setExtAddress(mId, 
-			ui.extAddress->text().toStdString(), ui.extPort->value());
+		rsPeers->setExtAddress(mId,ui.extAddress->text().toStdString(), ui.extPort->value());
 
 #if 0
 	if (fwChanged)
@@ -221,20 +189,41 @@ void ConfCertDialog::applyDialog()
 						ui.chkForwarded->isChecked());
 #endif
 
-	if (trustChanged)
-		rsPeers->TrustCertificate(mId, ui.trustBox->isChecked());
-
 	if (signChanged)
+	{
+		std::cerr << "Signature changed. Signing certificate" << mId << std::endl ;
 		rsPeers->SignCertificate(mId);
+	}
+
+	if (trustChanged)
+	{
+		std::cerr << "Acceptance changed. Authing ceAuthrtificate" << mId << std::endl ;
+		if(ui._peerAcceptedCB->isChecked())
+			rsPeers->AuthCertificate(mId, "");
+		else
+			rsPeers->removeFriend(mId);
+	}
 
 	/* reload now */
 	loadDialog();
 	
 	/* close the Dialog after the Changes applied */
 	closeinfodlg();
+
+	if(trustChanged || signChanged)
+		emit configChanged() ;
 }
 
+void ConfCertDialog::makeFriend()
+{
+	ui.signBox->setChecked(true) ;
+	ui._peerAcceptedCB->setChecked(true) ;
 
+//	rsPeers->TrustCertificate(mId, ui.trustBox->isChecked());
+//	rsPeers->SignCertificate(mId);
+}
+
+#if 0
 void ConfCertDialog::setInfo(std::string name, 
 				std::string trust,
 				std::string org,
@@ -249,5 +238,6 @@ void ConfCertDialog::setInfo(std::string name,
 	//ui.country->setText(QString::fromStdString(country));
 	//ui.signers->setText(QString::fromStdString(signers));
 }
+#endif
 
 		     
