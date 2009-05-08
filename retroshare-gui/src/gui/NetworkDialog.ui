@@ -38,18 +38,39 @@
        <string>Network</string>
       </attribute>
       <layout class="QGridLayout" >
-       <property name="verticalSpacing" >
+       <property name="leftMargin" >
         <number>0</number>
        </property>
-       <property name="margin" >
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
+       </property>
+       <property name="verticalSpacing" >
         <number>0</number>
        </property>
        <item row="0" column="0" >
         <layout class="QGridLayout" >
-         <property name="margin" >
+         <property name="leftMargin" >
           <number>0</number>
          </property>
-         <property name="spacing" >
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
+         </property>
+         <property name="horizontalSpacing" >
+          <number>6</number>
+         </property>
+         <property name="verticalSpacing" >
           <number>6</number>
          </property>
          <item row="0" column="0" >
@@ -58,7 +79,7 @@
             <string/>
            </property>
            <property name="pixmap" >
-            <pixmap>:/images/network16.png</pixmap>
+            <pixmap/>
            </property>
           </widget>
          </item>
@@ -77,7 +98,7 @@ p, li { white-space: pre-wrap; }
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" >
             <size>
              <width>40</width>
              <height>20</height>
@@ -197,7 +218,16 @@ p, li { white-space: pre-wrap; }
            <property name="spacing" >
             <number>6</number>
            </property>
-           <property name="margin" >
+           <property name="leftMargin" >
+            <number>0</number>
+           </property>
+           <property name="topMargin" >
+            <number>0</number>
+           </property>
+           <property name="rightMargin" >
+            <number>0</number>
+           </property>
+           <property name="bottomMargin" >
             <number>0</number>
            </property>
            <item>
@@ -225,11 +255,11 @@ p, li { white-space: pre-wrap; }
           <attribute name="title" >
            <string>Network Status</string>
           </attribute>
-          <layout class="QGridLayout" name="gridLayout" >
+          <layout class="QGridLayout" >
            <item row="0" column="0" >
-            <layout class="QHBoxLayout" name="_2" >
+            <layout class="QHBoxLayout" >
              <item>
-              <layout class="QVBoxLayout" name="_3" >
+              <layout class="QVBoxLayout" >
                <item>
                 <widget class="QRadioButton" name="radio_nonet" >
                  <property name="text" >
@@ -261,7 +291,7 @@ p, li { white-space: pre-wrap; }
               </layout>
              </item>
              <item>
-              <layout class="QVBoxLayout" name="_4" >
+              <layout class="QVBoxLayout" >
                <item>
                 <widget class="QCheckBox" name="check_udp" >
                  <property name="text" >
@@ -321,11 +351,6 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
       </layout>
-     </widget>
-     <widget class="QWidget" name="networkviewTab" >
-      <attribute name="title" >
-       <string>Network View</string>
-      </attribute>
      </widget>
     </widget>
    </item>

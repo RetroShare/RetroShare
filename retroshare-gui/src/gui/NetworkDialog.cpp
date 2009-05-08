@@ -115,13 +115,14 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 	headerItem->setTextAlignment(8, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(9, Qt::AlignHCenter | Qt::AlignVCenter);
 	
-	networkview = new NetworkView(ui.networkviewTab);
+	/*networkview = new NetworkView(ui.networkviewTab);
 	QVBoxLayout *layout = new QVBoxLayout;
 	layout->addWidget(networkview);
 	ui.networkviewTab->setLayout(layout);
 	layout->setSpacing( 0 );
-	layout->setMargin( 0 );
+	layout->setMargin( 0 );*/
 
+  ui.networkTab->addTab(new NetworkView(),QString(tr("Network View")));
 	ui.networkTab->addTab(new TrustView(),QString(tr("Trust matrix")));
      
     // Set Log infos
