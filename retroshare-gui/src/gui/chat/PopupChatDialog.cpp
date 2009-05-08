@@ -715,7 +715,7 @@ void PopupChatDialog::addExtraFile()
 	    SubFileItem *file = new SubFileItem(filePath);
 	    //file->
 
-	    ui.SendLayout->addWidget(file, 1, 0);
+	    ui.vboxLayout->addWidget(file, 1, 0);
 
 	    //when the file is local or is finished hashing, call the fileHashingFinished method to send a chat message
 	    if (file->getState() == SFI_STATE_LOCAL) {
