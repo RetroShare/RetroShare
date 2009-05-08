@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS><TS version="1.1" language="ru">
-<defaultcodec></defaultcodec>
 <context>
     <name></name>
     <message>
@@ -425,7 +424,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../games/qbackgammon/bgwindow.cpp" line="56"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выход</translation>
     </message>
     <message>
         <location filename="../games/qbackgammon/bgwindow.cpp" line="57"/>
@@ -1027,6 +1026,11 @@ Do you want to save message ?</source>
         <source>Name:</source>
         <translation type="obsolete">Имя:</translation>
     </message>
+    <message>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="50"/>
+        <source>Apply and Close</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConfirmQuitDialog</name>
@@ -1317,7 +1321,7 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/Preferences/DirectoriesDialog.cpp" line="43"/>
         <source>Add a Share Directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Добавить Открыть каталог</translation>
     </message>
     <message>
         <location filename="../gui/Preferences/DirectoriesDialog.cpp" line="44"/>
@@ -1697,7 +1701,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/Settings/gsettingswin.cpp" line="90"/>
         <source>File assotiations</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Файл assoziation</translation>
     </message>
     <message>
         <location filename="../gui/Settings/gsettingswin.cpp" line="93"/>
@@ -2268,22 +2272,22 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Каналы</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="473"/>
+        <location filename="../gui/MainWindow.cpp" line="474"/>
         <source>Options</source>
         <translation type="unfinished">Опции</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="537"/>
+        <location filename="../gui/MainWindow.cpp" line="538"/>
         <source>Hide</source>
         <translation type="unfinished">Скрыт </translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="537"/>
+        <location filename="../gui/MainWindow.cpp" line="538"/>
         <source>Show</source>
         <translation type="unfinished">Показать </translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="325"/>
+        <location filename="../gui/MainWindow.cpp" line="326"/>
         <source>RetroShare</source>
         <translation type="unfinished">Retroshare</translation>
     </message>
@@ -2323,32 +2327,32 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Мессенджер</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="302"/>
+        <location filename="../gui/MainWindow.cpp" line="303"/>
         <source>Show/Hide</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="320"/>
+        <location filename="../gui/MainWindow.cpp" line="321"/>
         <source>&amp;Quit</source>
         <translation type="unfinished">Выход</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="476"/>
+        <location filename="../gui/MainWindow.cpp" line="477"/>
         <source>Bandwidth Graph</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="480"/>
+        <location filename="../gui/MainWindow.cpp" line="481"/>
         <source>Open Messenger</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="317"/>
+        <location filename="../gui/MainWindow.cpp" line="318"/>
         <source>Minimize</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="318"/>
+        <location filename="../gui/MainWindow.cpp" line="319"/>
         <source>Maximize</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2358,7 +2362,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Облако ссылок</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="239"/>
+        <location filename="../gui/MainWindow.cpp" line="240"/>
         <source>Unfinished</source>
         <translation type="unfinished">Еще не готово</translation>
     </message>
@@ -2373,7 +2377,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">SMPlayer</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="492"/>
+        <location filename="../gui/MainWindow.cpp" line="493"/>
         <source>Help</source>
         <translation type="unfinished">Help</translation>
     </message>
@@ -2393,12 +2397,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="483"/>
+        <location filename="../gui/MainWindow.cpp" line="484"/>
         <source>Open Messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="486"/>
+        <location filename="../gui/MainWindow.cpp" line="487"/>
         <source>Applications</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2418,12 +2422,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="230"/>
+        <location filename="../gui/MainWindow.cpp" line="231"/>
         <source>Plugins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="507"/>
+        <location filename="../gui/MainWindow.cpp" line="508"/>
         <source>Really quit ? </source>
         <translation type="unfinished"></translation>
     </message>
@@ -2933,37 +2937,37 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Загрузить сертификат </translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="282"/>
+        <location filename="../gui/NetworkDialog.cpp" line="287"/>
         <source>Select a pem/pqi File</source>
         <translation>Выберите PEM / PQI Файл </translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="299"/>
+        <location filename="../gui/NetworkDialog.cpp" line="304"/>
         <source>File Not Found</source>
         <translation>Файл не найден </translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="301"/>
+        <location filename="../gui/NetworkDialog.cpp" line="306"/>
         <source>%1 does not exist. Would you like to create it?</source>
         <translation>%1 нет. Хотите создать его? </translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="311"/>
+        <location filename="../gui/NetworkDialog.cpp" line="316"/>
         <source>Failed to Create File</source>
         <translation>Не удалось создать файл </translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="312"/>
+        <location filename="../gui/NetworkDialog.cpp" line="317"/>
         <source>Unable to create %1 [%2]</source>
         <translation>Не удается создать  %1 [%2]</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="551"/>
+        <location filename="../gui/NetworkDialog.cpp" line="556"/>
         <source>Select Certificate</source>
         <translation>Выберите сертификат</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="552"/>
+        <location filename="../gui/NetworkDialog.cpp" line="557"/>
         <source>Certificates (*.pqi *.pem)</source>
         <translation>Сертификаты (*.pqi /*.pem) </translation>
     </message>
@@ -3021,13 +3025,13 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Серт ID</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="126"/>
+        <location filename="../gui/NetworkDialog.cpp" line="128"/>
         <source>RetroShare %1 started.</source>
         <comment>e.g: RetroShare v0.x started.</comment>
         <translation>RetroShare %1 запущен.</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="128"/>
+        <location filename="../gui/NetworkDialog.cpp" line="130"/>
         <source>Welcome to RetroShare.</source>
         <translation>Добро пожаловать в RetroShare</translation>
     </message>
@@ -3062,138 +3066,138 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Очистить</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="441"/>
+        <location filename="../gui/NetworkDialog.cpp" line="446"/>
         <source> is trusting you. 
 Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="123"/>
+        <location filename="../gui/NetworkDialog.cpp" line="125"/>
         <source>Trust matrix</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="130"/>
+        <location filename="../gui/NetworkDialog.cpp" line="132"/>
         <source>View</source>
         <translation>Просмотр</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="182"/>
+        <location filename="../gui/NetworkDialog.cpp" line="184"/>
         <source>Deny friend</source>
         <translation>Запретить другу</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="190"/>
+        <location filename="../gui/NetworkDialog.cpp" line="192"/>
         <source>Accept friend</source>
         <translation>Согласен другу</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="192"/>
+        <location filename="../gui/NetworkDialog.cpp" line="194"/>
         <source>Make friend</source>
         <translation>Сделать другом</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="199"/>
+        <location filename="../gui/NetworkDialog.cpp" line="201"/>
         <source>Delete certificate</source>
         <translation>Удалить сертификат</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="206"/>
+        <location filename="../gui/NetworkDialog.cpp" line="208"/>
         <source>Peer details...</source>
         <translation>Экспертный подробнее ...</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="366"/>
+        <location filename="../gui/NetworkDialog.cpp" line="371"/>
         <source>Trusted</source>
         <translation>Доверенные</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="368"/>
+        <location filename="../gui/NetworkDialog.cpp" line="373"/>
         <source>Denied</source>
         <translation>Отвергнутые</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="371"/>
+        <location filename="../gui/NetworkDialog.cpp" line="376"/>
         <source>Is trusting me</source>
         <translation>Является ли доверять мне</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="373"/>
+        <location filename="../gui/NetworkDialog.cpp" line="378"/>
         <source>Unknown</source>
         <translation>Неизвестно</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="380"/>
+        <location filename="../gui/NetworkDialog.cpp" line="385"/>
         <source>Never seen</source>
         <translation>Никогда не видел</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="620"/>
+        <location filename="../gui/NetworkDialog.cpp" line="625"/>
         <source>UPNP is active.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="624"/>
+        <location filename="../gui/NetworkDialog.cpp" line="629"/>
         <source>UPNP NOT FOUND.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="629"/>
+        <location filename="../gui/NetworkDialog.cpp" line="634"/>
         <source>DHT OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="633"/>
+        <location filename="../gui/NetworkDialog.cpp" line="638"/>
         <source>DHT is not working (down).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="639"/>
+        <location filename="../gui/NetworkDialog.cpp" line="644"/>
         <source>Stable External IP Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="643"/>
+        <location filename="../gui/NetworkDialog.cpp" line="648"/>
         <source>Not Found External Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="648"/>
+        <location filename="../gui/NetworkDialog.cpp" line="653"/>
         <source>UDP Port is reachable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="652"/>
+        <location filename="../gui/NetworkDialog.cpp" line="657"/>
         <source>UDP Port is not reachable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="657"/>
+        <location filename="../gui/NetworkDialog.cpp" line="662"/>
         <source>TCP Port is reachable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="661"/>
+        <location filename="../gui/NetworkDialog.cpp" line="666"/>
         <source>TCP Port is not reachable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="668"/>
+        <location filename="../gui/NetworkDialog.cpp" line="673"/>
         <source>RetroShare Server</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="672"/>
+        <location filename="../gui/NetworkDialog.cpp" line="677"/>
         <source>UDP Server</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="677"/>
+        <location filename="../gui/NetworkDialog.cpp" line="682"/>
         <source>Net Limited</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="681"/>
+        <location filename="../gui/NetworkDialog.cpp" line="686"/>
         <source>No Conectivity</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3872,7 +3876,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/advsearch/guiexprelement.cpp" line="39"/>
         <source>Hash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Хэш</translation>
     </message>
 </context>
 <context>
@@ -3923,7 +3927,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../rsiface/RemoteDirModel.cpp" line="514"/>
         <source>Hash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Хэш</translation>
     </message>
 </context>
 <context>
@@ -4002,27 +4006,27 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Результаты </translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="215"/>
+        <location filename="../gui/SearchDialog.cpp" line="217"/>
         <source>Download</source>
         <translation>Скачки</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="218"/>
+        <location filename="../gui/SearchDialog.cpp" line="220"/>
         <source>Broadcast on Channel</source>
         <translation>Вещания на канале</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="221"/>
+        <location filename="../gui/SearchDialog.cpp" line="223"/>
         <source>Recommend to Friends</source>
         <translation>Рекомендовать Друзья</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="303"/>
+        <location filename="../gui/SearchDialog.cpp" line="305"/>
         <source>Remove</source>
         <translation>Удалить </translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="306"/>
+        <location filename="../gui/SearchDialog.cpp" line="308"/>
         <source>Remove All</source>
         <translation>Remove All</translation>
     </message>
@@ -4070,22 +4074,22 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Документы</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="272"/>
+        <location filename="../gui/SearchDialog.cpp" line="274"/>
         <source>Download Notice</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="272"/>
+        <location filename="../gui/SearchDialog.cpp" line="274"/>
         <source>Skipping Local Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="286"/>
+        <location filename="../gui/SearchDialog.cpp" line="288"/>
         <source>Sorry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="286"/>
+        <location filename="../gui/SearchDialog.cpp" line="288"/>
         <source>This function is not yet implemented.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4550,7 +4554,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TransfersDialog</name>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="185"/>
+        <location filename="../gui/TransfersDialog.cpp" line="191"/>
         <source>Cancel</source>
         <translation>Вернуться/Отмена</translation>
     </message>
@@ -4560,12 +4564,12 @@ p, li { white-space: pre-wrap; }
         <translation>Очистка завершена </translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="113"/>
+        <location filename="../gui/TransfersDialog.cpp" line="108"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="69"/>
+        <location filename="../gui/TransfersDialog.cpp" line="61"/>
         <source>Completed</source>
         <translation>Завершено</translation>
     </message>
@@ -4586,83 +4590,78 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Закачивается:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="108"/>
+        <location filename="../gui/TransfersDialog.cpp" line="103"/>
         <source>Name</source>
         <comment>i.e: file name</comment>
         <translation>Имя файла</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="109"/>
+        <location filename="../gui/TransfersDialog.cpp" line="104"/>
         <source>Size</source>
         <comment>i.e: file size</comment>
         <translation>Размер</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="71"/>
+        <location filename="../gui/TransfersDialog.cpp" line="63"/>
         <source>Progress</source>
         <comment>i.e: % downloaded</comment>
         <translation>Передано %</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="70"/>
+        <location filename="../gui/TransfersDialog.cpp" line="62"/>
         <source>Speed</source>
         <comment>i.e: Download speed</comment>
         <translation>Скорость</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="72"/>
+        <location filename="../gui/TransfersDialog.cpp" line="64"/>
         <source>Sources</source>
         <comment>i.e: Sources</comment>
         <translation>Источники</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="74"/>
+        <location filename="../gui/TransfersDialog.cpp" line="66"/>
         <source>Remaining</source>
         <comment>i.e: Estimated Time of Arrival / Time left</comment>
         <translation>Осталось</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="75"/>
+        <location filename="../gui/TransfersDialog.cpp" line="67"/>
         <source>Core-ID</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="110"/>
+        <location filename="../gui/TransfersDialog.cpp" line="105"/>
         <source>User Name</source>
         <comment>i.e: user name</comment>
         <translation>Имя пользователя</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="111"/>
+        <location filename="../gui/TransfersDialog.cpp" line="106"/>
         <source>Progress</source>
         <comment>i.e: % uploaded</comment>
         <translation>Progress</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="112"/>
+        <location filename="../gui/TransfersDialog.cpp" line="107"/>
         <source>Speed</source>
         <comment>i.e: upload speed</comment>
         <translation>Скорость</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="114"/>
+        <location filename="../gui/TransfersDialog.cpp" line="109"/>
         <source>Transferred</source>
         <translation>Передано</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="181"/>
+        <location filename="../gui/TransfersDialog.cpp" line="187"/>
         <source>Play</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="188"/>
-        <source>Copy retroshare Link</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../gui/TransfersDialog.cpp" line="191"/>
-        <source>Paste retroshare Link</source>
-        <translation></translation>
+        <location filename="../gui/TransfersDialog.cpp" line="606"/>
+        <source>RetroShare</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4918,7 +4917,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../util/misc.h" line="118"/>
         <source>Unknown</source>
         <comment>Unknown (size)</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Неизвестно</translation>
     </message>
     <message>
         <location filename="../util/misc.h" line="120"/>
@@ -4953,7 +4952,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../util/misc.h" line="324"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Неизвестно</translation>
     </message>
     <message>
         <location filename="../util/misc.h" line="308"/>
