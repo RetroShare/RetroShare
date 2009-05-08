@@ -315,8 +315,8 @@ void p3ChatService::setOwnAvatarJpegData(const unsigned char *data,int size)
 		for(std::map<std::string,AvatarInfo *>::iterator it(_avatars.begin());it!=_avatars.end();++it)
 			it->second->_own_is_new = true ;
 	}
-
 	IndicateConfigChanged();
+	std::cerr << "p3chatservice:setOwnAvatarJpegData() done." << std::endl ;
 }
 
 void p3ChatService::receiveAvatarJpegData(RsChatMsgItem *ci)

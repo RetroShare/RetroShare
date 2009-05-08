@@ -2,7 +2,7 @@
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.4.12a"
+!define VERSION "0.4.13a"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
 
 ; Main Install settings
@@ -40,7 +40,7 @@ SetCompressor LZMA
 !define MUI_LANGDLL_REGISTRY_KEY ${REGKEY}
 !define MUI_LANGDLL_REGISTRY_VALUENAME InstallerLanguage
 
-; !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of RetroShare. \r\n\r\nIt is recommended that you close all other applications before starting Setup. This will make it possible to update relevant system files without havinf to reboot your computer. \r\n\r\nIMPORTANT: Ensure that RetroShare is NOT RUNNING before continuing (you can exit from the taskbar menu), otherwise the installer cannot update the executables, and the installation will fail. \r\n\r\nClick Next to continue. "
+; !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of RetroShare. \r\n\r\nIt is recommended that you close all other applications before starting Setup. This will make it possible to update relevant system files without having to reboot your computer. \r\n\r\nIMPORTANT: Ensure that RetroShare is NOT RUNNING before continuing (you can exit from the taskbar menu), otherwise the installer cannot update the executables, and the installation will fail. \r\n\r\nClick Next to continue. "
 
 !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of RetroShare. \r\n\r\nIMPORTANT: Ensure that RetroShare is NOT RUNNING before continuing (you can exit from the taskbar menu), otherwise the installer cannot update the executables, and the installation will fail. \r\n\r\nClick Next to continue. "
 
@@ -144,14 +144,21 @@ Section $(sec_main) sec_main
   ; Set Section Files and Shortcuts
   SetOutPath "$INSTDIR\"
   File /r "release\RetroShare.exe"
-  File /r "D:\MinGW\bin\mingwm10.dll"
-  File /r "pthreadGCE2.dll"
-  File /r "D:\Qt\4.4.3\bin\QtCore4.dll"
-  File /r "D:\Qt\4.4.3\bin\QtGui4.dll"
-  File /r "D:\Qt\4.4.3\bin\QtNetwork4.dll"
-  File /r "D:\Qt\4.4.3\bin\QtXml4.dll"
-  File /r "D:\Qt\4.4.3\bin\QtScript4.dll"
-  File /r "changelog.txt"
+  File /r "release\mingwm10.dll"
+  File /r "release\changelog.txt"
+
+; Two Comments here: 
+; 1) Please use relative directorys ( like I have changed it to)
+; As it prevents use from needing to continually change the file.
+; 2) Better To Build as standalone exec.
+;
+;  File /r "D:\MinGW\bin\mingwm10.dll"
+;  File /r "pthreadGCE2.dll"
+;  File /r "D:\Qt\4.4.3\bin\QtCore4.dll"
+;  File /r "D:\Qt\4.4.3\bin\QtGui4.dll"
+;  File /r "D:\Qt\4.4.3\bin\QtNetwork4.dll"
+;  File /r "D:\Qt\4.4.3\bin\QtXml4.dll"
+;  File /r "D:\Qt\4.4.3\bin\QtScript4.dll"
 
   
 
@@ -169,19 +176,19 @@ Section  $(sec_data) sec_data
   ; We're not ready for external skins...
   ; Set Section qss need to remove svn path
   SetOutPath "$INSTDIR\qss\"
-  File /r qss\*.*   
+  File /r release\qss\*.*   
   
   ; Set Section skin
   ; SetOutPath "$INSTDIR\skin\"
-  ; File /r release\skin\*.* 
+  ; File /r skin\*.* 
 
   ; Add emoticons
   SetOutPath "$INSTDIR\emoticons\"
-  File /r emoticons\*.*   
+  File /r release\emoticons\*.*   
 	
   ; Add Chat Style
   SetOutPath "$INSTDIR\style\"
-  File /r style\*.*   
+  File /r release\style\*.*   
 	
 SectionEnd
 

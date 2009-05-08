@@ -30,7 +30,6 @@
 #include <gui/Preferences/rsharesettings.h>
 
 #include "rsiface/rsiface.h"
-#include "gui/feeds/SubFileItem.h"
 
 
 
@@ -75,19 +74,15 @@ public slots:
   void addSmiley();
   
   void changeStyle();
-  void fileHashingFinished(SubFileItem* file);
 
   void resetStatusBar() ;
   void updateStatusTyping() ;
   void updateStatusString(const QString&) ;
-  void anchorClicked (const QUrl &);
-
-
 protected:
   void closeEvent (QCloseEvent * event);
   
 private slots:
-  void addExtraFile();
+
   void showAvatarFrame(bool show);
 
   void setColor();    
@@ -99,6 +94,7 @@ private slots:
 
   void getAvatar();
 
+  
   
 private:
 
@@ -124,9 +120,10 @@ private:
    QStringList history;
    QString wholeChat;
 
+
+  
   /** Qt Designer generated object */
   Ui::PopupChatDialog ui;
-
 };
 
 #endif

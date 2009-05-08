@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools pluginmgr debug
+CONFIG += qt gui uic qrc resources uitools release # pluginmgr debug
 QT     += network xml script 
 TEMPLATE = app
 TARGET = RetroShare
@@ -53,10 +53,8 @@ win32-x-g++ {
 #################################### Windows #####################################
 
 win32 {
-    OBJECTS_DIR = temp/obj
-    RCC_DIR = temp/qrc
-    UI_DIR  = temp/ui
-    MOC_DIR = temp/moc
+
+	OBJECTS_DIR = temp/obj
 
     LIBS += -L"../../../../lib" -lretroshare -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
     LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
@@ -66,6 +64,7 @@ win32 {
     
     ## ENABLE THIS OPTION for release Version.
     #DEFINES += RS_RELEASE_VERSION
+
 
 }
 
