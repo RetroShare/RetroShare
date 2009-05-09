@@ -16,7 +16,6 @@ PQI_USE_XPGP = 1
 
 #### DrBobs Versions.... Please Don't Delete.
 ### Comment out if needed.
-
 ALT_SRC_ROOT=/cygdrive/c/home/rmfern/prog/MinGW
 SRC_ROOT=../../../..
 
@@ -31,8 +30,8 @@ PTHREADS_DIR=$(ALT_SRC_ROOT)/pthreads/pthreads.2
 
 ###################
 
-# pretty stable...
 ZLIB_DIR=$(ALT_SRC_ROOT)/zlib-1.2.3
+
 SSL_DIR=$(SRC_ROOT)/openssl-0.9.7g-xpgp-0.1c
 UPNPC_DIR=$(SRC_ROOT)/miniupnpc-1.0
 

@@ -28,7 +28,7 @@
 #include "pqi/p3cfgmgr.h"
 #include "pqi/p3authmgr.h"
 #include "pqi/pqibin.h"
-#include "pqi/pqiarchive.h"
+#include "pqi/pqistore.h"
 #include "pqi/pqistreamer.h"
 #include "pqi/pqinotify.h"
 #include <errno.h>
@@ -402,7 +402,7 @@ bool	p3Config::loadConfiguration(std::string &loadHash)
 	uint32_t stream_flags = BIN_FLAGS_READABLE;
 
 	BinInterface *bio = new BinFileInterface(fname.c_str(), bioflags);
-	pqiarchive stream(setupSerialiser(), bio, stream_flags);
+	pqistore stream(setupSerialiser(), bio, stream_flags);
 	RsItem *item = NULL;
 
 	while(NULL != (item = stream.GetItem()))
@@ -473,7 +473,7 @@ bool	p3Config::saveConfiguration()
 		stream_flags |= BIN_FLAGS_NO_DELETE;
 
 	BinInterface *bio = new BinFileInterface(fnametmp.c_str(), bioflags);
-	pqiarchive *stream = new pqiarchive(setupSerialiser(), bio, stream_flags);
+	pqistore *stream = new pqistore(setupSerialiser(), bio, stream_flags);
 
 	std::list<RsItem *>::iterator it;
 
@@ -487,9 +487,6 @@ bool	p3Config::saveConfiguration()
 		(*it)->print(std::cerr, 0);
 		std::cerr << std::endl;
 #endif
-		if( (*it)->PeerId().length() == 0 )			// this is required by pqiarchive.
-			(*it)->PeerId(rsPeers->getOwnId()) ;
-
 		written = written && stream->SendItem(*it);
 
 //		std::cerr << "written = " << written << std::endl ;
