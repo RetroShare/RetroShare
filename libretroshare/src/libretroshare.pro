@@ -3,8 +3,15 @@ CONFIG += static
 TARGET = retroshare
 CONFIG += release
 
-DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER
 ################################# Linux ##########################################
+
+debug {
+	DEFINES *= DEBUG
+#	DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER FT_DEBUG EXTADDRSEARCH_DEBUG
+#	DEFINES *= P3TURTLE_DEBUG CHAT_DEBUG
+	DEFINES *= CHAT_DEBUG
+	QMAKE_CXXFLAGS *= -g
+}
 
 linux-g++ {
 	OBJECTS_DIR = temp/linux-g++/obj
@@ -128,6 +135,7 @@ HEADERS += dbase/cachestrapper.h \
            pqi/pqipersongrp.h \
            pqi/pqisecurity.h \
            pqi/pqiservice.h \
+           pqi/pqistore.h \
            pqi/pqissl.h \
            pqi/pqissllistener.h \
            pqi/pqisslpersongrp.h \
@@ -276,6 +284,7 @@ SOURCES = \
 				pqi/pqisslpersongrp.cc \
 				pqi/pqissllistener.cc \
 				pqi/pqissl.cc \
+				pqi/pqistore.cc \
 				pqi/p3authmgr.cc \
 				pqi/p3cfgmgr.cc \
 				pqi/p3connmgr.cc \
