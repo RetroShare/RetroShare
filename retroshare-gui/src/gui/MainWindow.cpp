@@ -504,7 +504,7 @@ void MainWindow::doQuit()
 {  
     QString queryWrn;
 	  queryWrn.clear();
-	  queryWrn.append("Do you really want to quit and stop all transfers?");
+	  queryWrn.append(tr("Do you really want to exit RetroShare ?"));
 
 		if ((QMessageBox::question(this, tr("Really quit ? "),queryWrn,QMessageBox::Ok|QMessageBox::No, QMessageBox::Ok))== QMessageBox::Ok)
 		{

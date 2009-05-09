@@ -601,7 +601,7 @@ void TransfersDialog::cancel()
 {
 		QString queryWrn2;
     queryWrn2.clear();
-    queryWrn2.append("Are you sure that you want to cancel and delete these files?");
+    queryWrn2.append(tr("Are you sure that you want to cancel and delete these files?"));
 
     if ((QMessageBox::question(this, tr("RetroShare"),queryWrn2,QMessageBox::Ok|QMessageBox::No, QMessageBox::Ok))== QMessageBox::Ok)
     {
