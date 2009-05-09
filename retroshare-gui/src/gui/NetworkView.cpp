@@ -42,11 +42,13 @@ NetworkView::NetworkView(QWidget *parent)
 
   /* add button */
   connect( ui.refreshButton, SIGNAL( clicked( void ) ), this, SLOT( insertPeers( void ) ) );
-//connect( mScene, SIGNAL( changed ( const QList<QRectF> & ) ), this, SLOT ( changedScene( void ) ) );
+  //connect( mScene, SIGNAL( changed ( const QList<QRectF> & ) ), this, SLOT ( changedScene( void ) ) );
 
     /* Hide Settings frame */
     shownwSettingsFrame(false);
     connect( ui.nviewsettingsButton, SIGNAL(toggled(bool)), this, SLOT(shownwSettingsFrame(bool)));
+    
+    insertPeers();
 
 
   /* hide the Tree +/- */
