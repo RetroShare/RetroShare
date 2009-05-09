@@ -112,7 +112,6 @@ HEADERS +=  rshare.h \
             gui/DLListDelegate.h \
             gui/ULListDelegate.h \
             gui/StartDialog.h \
-#           gui/ChatDialog.h \
             gui/BlogDialog.h \
             gui/CalDialog.h \
             gui/NetworkDialog.h \
@@ -145,9 +144,6 @@ HEADERS +=  rshare.h \
             gui/HelpDialog.h \
             gui/LogoBar.h \
             gui/xprogressbar.h \
-            # gui/PluginsPage.h  \
-            # gui/PluginManagerWidget.h \
-            # gui/PluginManager.h      \
             gui/plugins/PluginInterface.h \
             gui/im_history/IMHistoryKeeper.h           \
             gui/im_history/IMHistoryReader.h           \
@@ -179,9 +175,6 @@ HEADERS +=  rshare.h \
             gui/chat/PopupChatDialog.h \
             gui/connect/ConnectDialog.h \
             gui/connect/ConfCertDialog.h \
-#            gui/connect/InviteDialog.h \
-#            gui/connect/AddFriendDialog.h \
-#            gui/connect/AddFriendWizard.h \
             gui/library/FindWindow.h \ 
             gui/msgs/ChanMsgDialog.h \
             gui/msgs/ChanCreateDialog.h \
@@ -259,8 +252,7 @@ HEADERS +=  rshare.h \
             gui/connect/ConnectFriendWizard.h
 
 
-FORMS +=   \ #ui/ChatDialog.ui \
-            gui/BlogDialog.ui \
+FORMS +=    gui/BlogDialog.ui \
             gui/CalDialog.ui \
             gui/StartDialog.ui \
             gui/GenCertDialog.ui \
@@ -295,9 +287,6 @@ FORMS +=   \ #ui/ChatDialog.ui \
             gui/chat/PopupChatDialog.ui \
             gui/connect/ConnectDialog.ui \
             gui/connect/ConfCertDialog.ui \
-#            gui/connect/InviteDialog.ui \
-#            gui/connect/AddFriendDialog.ui \
-#            gui/connect/AddFriendWizard.ui \
             gui/msgs/ChanMsgDialog.ui \
             gui/msgs/ChanCreateDialog.ui \
             gui/Preferences/CryptographyDialog.ui \
@@ -329,7 +318,7 @@ FORMS +=   \ #ui/ChatDialog.ui \
             gui/MsgFeed.ui \
             gui/TransferFeed.ui \
             gui/ChannelFeed.ui \
-	    gui/GeneralMsgDialog.ui \
+            gui/GeneralMsgDialog.ui \
             gui/feeds/ForumNewItem.ui \
             gui/feeds/ForumMsgItem.ui \
             gui/feeds/PeerItem.ui \
@@ -342,7 +331,7 @@ FORMS +=   \ #ui/ChatDialog.ui \
             gui/feeds/SubFileItem.ui \
             gui/feeds/SubDestItem.ui \
 
-SOURCES += main.cpp \
+SOURCES +=  main.cpp \
             rshare.cpp \
             rsiface/notifyqt.cpp \
             rsiface/RemoteDirModel.cpp \
@@ -350,7 +339,6 @@ SOURCES += main.cpp \
             gui/ULListDelegate.cpp \
             gui/StartDialog.cpp \
             gui/GenCertDialog.cpp \
-#           gui/ChatDialog.cpp \
             gui/BlogDialog.cpp \
             gui/CalDialog.cpp \
             gui/NetworkDialog.cpp \
@@ -388,9 +376,6 @@ SOURCES += main.cpp \
             gui/HelpDialog.cpp \
             gui/LogoBar.cpp \
             gui/xprogressbar.cpp \
-            # gui/PluginsPage.cpp \
-            # gui/PluginManagerWidget.cpp \
-            # gui/PluginManager.cpp      \
             lang/languagesupport.cpp \
             util/stringutil.cpp \
             util/win32.cpp \
@@ -411,9 +396,6 @@ SOURCES += main.cpp \
             gui/chat/PopupChatDialog.cpp \
             gui/connect/ConnectDialog.cpp \
             gui/connect/ConfCertDialog.cpp \
-#            gui/connect/InviteDialog.cpp \
-#            gui/connect/AddFriendDialog.cpp \
-#            gui/connect/AddFriendWizard.cpp \
             gui/msgs/ChanMsgDialog.cpp \
             gui/msgs/ChanCreateDialog.cpp \
             gui/Preferences/configpagestack.cpp \
