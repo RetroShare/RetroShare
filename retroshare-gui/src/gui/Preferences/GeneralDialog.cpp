@@ -35,17 +35,7 @@ GeneralDialog::GeneralDialog(QWidget *parent)
  /* Create RshareSettings object */
   _settings = new RshareSettings();
   
-  if (QSystemTrayIcon::isSystemTrayAvailable()){
 
-    /* Check if we are supposed to show our main window on startup */
-    ui.chkShowOnStartup->setChecked(_settings->showMainWindowAtStart());
-    if (ui.chkShowOnStartup->isChecked())
-      show();
-  } else {
-    /* Don't let people hide the main window, since that's all they have. */
-    ui.chkShowOnStartup->hide();
-    show();
-  }
   /* Hide platform specific features */
 #ifndef Q_WS_WIN
   ui.chkRunRetroshareAtSystemStartup->setVisible(false);

@@ -25,6 +25,7 @@
 #include <gui/MainWindow.h>
 #include <gui/StartDialog.h>
 #include <gui/GenCertDialog.h>
+#include <gui/Preferences/GeneralDialog.h>
 #include <gui/Preferences/rsharesettings.h>
 #include <gui/connect/ConfCertDialog.h>
 
@@ -59,7 +60,7 @@ int main(int argc, char *argv[])
         bool startMinimised = RsConfigStartMinimised(config);
 	*/
 
-	bool startMinimised = false;
+	//bool startMinimized = false;
 
 	/* Setup The GUI Stuff */
 	Rshare rshare(args, argc, argv, 
@@ -176,7 +177,9 @@ int main(int argc, char *argv[])
 	QObject::connect(ConfCertDialog::instance(),SIGNAL(configChanged()),w->networkDialog,SLOT(insertConnect())) ;
 
 	/* only show window, if not startMinimized */
-	if (!startMinimised)
+	RshareSettings  *_settings = new RshareSettings();
+
+  if(!_settings->value(QString::fromUtf8("StartMinimized"), false).toBool()) 
 	{
 
 		w->show();

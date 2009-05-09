@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>431</width>
-    <height>250</height>
+    <width>413</width>
+    <height>267</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -552,53 +552,27 @@
       </size>
      </property>
      <property name="title" >
-      <string>Misc</string>
+      <string>Startup</string>
      </property>
-     <widget class="QCheckBox" name="chkShowOnStartup" >
-      <property name="geometry" >
-       <rect>
-        <x>10</x>
-        <y>40</y>
-        <width>401</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text" >
-       <string>Show MainWindow at Startup</string>
-      </property>
-      <property name="checked" >
-       <bool>false</bool>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="checkStartMinimized" >
-      <property name="geometry" >
-       <rect>
-        <x>10</x>
-        <y>60</y>
-        <width>401</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text" >
-       <string>Start minimized</string>
-      </property>
-      <property name="checked" >
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="chkRunRetroshareAtSystemStartup" >
-      <property name="geometry" >
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>411</width>
-        <height>18</height>
-       </rect>
-      </property>
-      <property name="text" >
-       <string>Start RetroShare when my system starts</string>
-      </property>
-     </widget>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <widget class="QCheckBox" name="chkRunRetroshareAtSystemStartup" >
+        <property name="text" >
+         <string>Start RetroShare when my system starts</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QCheckBox" name="checkStartMinimized" >
+        <property name="text" >
+         <string>Start minimized</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item row="2" column="0" >
