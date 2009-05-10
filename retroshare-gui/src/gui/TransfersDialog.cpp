@@ -413,27 +413,27 @@ void TransfersDialog::insertTransfers()
 		switch(pit->status)
 		{
 			case FT_STATE_FAILED: 
-				status = "Failed";
+				status = tr("Failed");
 				break;
 			case FT_STATE_OKAY: 
-				status = "Okay";
+				status = tr("Okay");
 				break;
 			case FT_STATE_WAITING:
-				status = "Waiting";
+				status = tr("Waiting");
 				break;
 			case FT_STATE_DOWNLOADING:
-				status = "Downloading";
+				status = tr("Downloading");
 				break;
 		    	case FT_STATE_COMPLETE: 
 			default:
-				status = "Complete";
+				status = tr("Complete");
 				break;
 		
         	}
 
 		if (info.downloadStatus == FT_STATE_COMPLETE)
 		{
-			status = "Complete";
+			status = tr("Complete");
 		}
         
 		dlspeed  	= pit->tfRate * 1024.0;
@@ -460,25 +460,25 @@ void TransfersDialog::insertTransfers()
 		symbol  	= "";
 		coreId		= QString::fromStdString(info.hash);
 		name    	= QString::fromStdString(info.fname);
-		sources		= QString::fromStdString("Unknown");
+		sources		= tr("Unknown");
 
 		switch(info.downloadStatus)
 		{
 			case FT_STATE_FAILED: 
-				status = "Failed";
+				status = tr("Failed");
 				break;
 			case FT_STATE_OKAY: 
-				status = "Okay";
+				status = tr("Okay");
 				break;
 			case FT_STATE_WAITING:
-				status = "Waiting";
+				status = tr("Waiting");
 				break;
 			case FT_STATE_DOWNLOADING:
-				status = "Downloading";
+				status = tr("Downloading");
 				break;
 		    	case FT_STATE_COMPLETE: 
 			default:
-				status = "Complete";
+				status = tr("Complete");
 				break;
 		
         	}
@@ -522,20 +522,20 @@ void TransfersDialog::insertTransfers()
 		switch(pit->status)
 		{
 			case FT_STATE_FAILED: 
-				status = "Failed";
+				status = tr("Failed");
 				break;
 			case FT_STATE_OKAY: 
-				status = "Okay";
+				status = tr("Okay");
 				break;
 			case FT_STATE_WAITING:
-				status = "Waiting";
+				status = tr("Waiting");
 				break;
 			case FT_STATE_DOWNLOADING:
-				status = "Downloading";
+				status = tr("Downloading");
 				break;
 		    	case FT_STATE_COMPLETE: 
 			default:
-				status = "Complete";
+				status = tr("Complete");
 				break;
 		
         	}
@@ -561,25 +561,25 @@ void TransfersDialog::insertTransfers()
 		symbol  	= "";
 		coreId		= QString::fromStdString(info.hash);
 		name    	= QString::fromStdString(info.fname);
-		sources		= QString::fromStdString("Unknown");
+		sources		= tr("Unknown");
 
 		switch(info.downloadStatus)
 		{
 			case FT_STATE_FAILED: 
-				status = "Failed";
+				status = tr("Failed");
 				break;
 			case FT_STATE_OKAY: 
-				status = "Okay";
+				status = tr("Okay");
 				break;
 			case FT_STATE_WAITING:
-				status = "Waiting";
+				status = tr("Waiting");
 				break;
 			case FT_STATE_DOWNLOADING:
-				status = "Downloading";
+				status = tr("Uploading");
 				break;
 		    	case FT_STATE_COMPLETE: 
 			default:
-				status = "Complete";
+				status = tr("Complete");
 				break;
 		
         	}
