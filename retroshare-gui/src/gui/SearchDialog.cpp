@@ -119,7 +119,12 @@ SearchDialog::SearchDialog(QWidget *parent)
     connect( ui.lineEdit, SIGNAL( returnPressed ( void ) ), this, SLOT( searchKeywords( void ) ) );
     connect( ui.pushButtonsearch, SIGNAL( released ( void ) ), this, SLOT( searchKeywords( void ) ) );
     connect( ui.pushButtonDownload, SIGNAL( released ( void ) ), this, SLOT( download( void ) ) );
+    connect( ui.cloaseallsearchresultsButton, SIGNAL(clicked()), this, SLOT(searchRemoveAll()));
+    connect( ui.resetButton, SIGNAL(clicked()), this, SLOT(clearKeyword()));
+
     //connect( ui.searchSummaryWidget, SIGNAL( itemSelectionChanged ( void ) ), this, SLOT( selectSearchResults( void ) ) );
+    
+    connect( ui.searchResultWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(download()));
     
     connect ( ui.searchSummaryWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem *, QTreeWidgetItem * ) ),
                     this, SLOT( selectSearchResults( void ) ) );
@@ -221,9 +226,9 @@ void SearchDialog::searchtableWidgetCostumPopupMenu( QPoint point )
     
         contextMnu->clear();
         contextMnu->addAction( downloadAct);
-        contextMnu->addSeparator();
-        contextMnu->addAction( broadcastonchannelAct);
-        contextMnu->addAction( recommendtofriendsAct);
+        //contextMnu->addSeparator();
+        //contextMnu->addAction( broadcastonchannelAct);
+        //contextMnu->addAction( recommendtofriendsAct);
       }
 
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, 
@@ -361,6 +366,14 @@ void SearchDialog::searchRemoveAll()
 	ui.searchSummaryWidget->clear();
 	nextSearchId = 1;
 }
+
+/** clear keywords and ComboBox **/
+void SearchDialog::clearKeyword()
+{
+ 	ui.lineEdit->clear();
+ 	ui.FileTypeComboBox->setCurrentIndex(0);
+}
+
 
 /* *****************************************************************
         Advanced search implementation

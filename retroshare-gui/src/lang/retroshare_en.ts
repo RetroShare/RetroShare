@@ -6238,47 +6238,47 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SearchDialog</name>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1042"/>
+        <location filename="../gui/SearchDialog.ui" line="1202"/>
         <source>Download</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="215"/>
+        <location filename="../gui/SearchDialog.cpp" line="220"/>
         <source>Broadcast on Channel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="218"/>
+        <location filename="../gui/SearchDialog.cpp" line="223"/>
         <source>Recommend to Friends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="300"/>
+        <location filename="../gui/SearchDialog.cpp" line="305"/>
         <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="303"/>
+        <location filename="../gui/SearchDialog.cpp" line="308"/>
         <source>Remove All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="269"/>
+        <location filename="../gui/SearchDialog.cpp" line="274"/>
         <source>Download Notice</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="269"/>
+        <location filename="../gui/SearchDialog.cpp" line="274"/>
         <source>Skipping Local Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="283"/>
+        <location filename="../gui/SearchDialog.cpp" line="288"/>
         <source>Sorry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="283"/>
+        <location filename="../gui/SearchDialog.cpp" line="288"/>
         <source>This function is not yet implemented.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6361,43 +6361,64 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1112"/>
+        <location filename="../gui/SearchDialog.ui" line="1115"/>
         <source>Filename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1117"/>
+        <location filename="../gui/SearchDialog.ui" line="1120"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1122"/>
+        <location filename="../gui/SearchDialog.ui" line="1125"/>
         <source>Sources</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1127"/>
+        <location filename="../gui/SearchDialog.ui" line="1130"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1132"/>
+        <location filename="../gui/SearchDialog.ui" line="1135"/>
         <source>Hash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1166"/>
+        <location filename="../gui/SearchDialog.ui" line="1169"/>
         <source>KeyWords</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1171"/>
+        <location filename="../gui/SearchDialog.ui" line="1174"/>
         <source>Results</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1176"/>
+        <location filename="../gui/SearchDialog.ui" line="1179"/>
         <source>Search Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/SearchDialog.ui" line="1042"/>
+        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Reset Search Keyword and File Type&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/SearchDialog.ui" line="1196"/>
+        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Download Select&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/SearchDialog.ui" line="1225"/>
+        <source>Close All Search Results</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

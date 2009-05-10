@@ -3084,12 +3084,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/Settings/GeneralPage.ui" line="100"/>
         <source>Start minimized</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Réduire au démarrage</translation>
     </message>
     <message>
         <location filename="../gui/Settings/GeneralPage.ui" line="116"/>
         <source>Start RetroShare when my system starts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Démarrer avec Windows</translation>
     </message>
 </context>
 <context>
@@ -7131,37 +7131,37 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SearchDialog</name>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1122"/>
+        <location filename="../gui/SearchDialog.ui" line="1125"/>
         <source>Sources</source>
         <translation>Sources</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1171"/>
+        <location filename="../gui/SearchDialog.ui" line="1174"/>
         <source>Results</source>
         <translation>Résultats</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1042"/>
+        <location filename="../gui/SearchDialog.ui" line="1202"/>
         <source>Download</source>
         <translation>Réception</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="215"/>
+        <location filename="../gui/SearchDialog.cpp" line="220"/>
         <source>Broadcast on Channel</source>
         <translation>Émission sur le canal</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="218"/>
+        <location filename="../gui/SearchDialog.cpp" line="223"/>
         <source>Recommend to Friends</source>
         <translation>Recommander aux amis</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="300"/>
+        <location filename="../gui/SearchDialog.cpp" line="305"/>
         <source>Remove</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="303"/>
+        <location filename="../gui/SearchDialog.cpp" line="308"/>
         <source>Remove All</source>
         <translation>Tout supprimer</translation>
     </message>
@@ -7212,32 +7212,32 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Documents</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="269"/>
+        <location filename="../gui/SearchDialog.cpp" line="274"/>
         <source>Download Notice</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="269"/>
+        <location filename="../gui/SearchDialog.cpp" line="274"/>
         <source>Skipping Local Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="283"/>
+        <location filename="../gui/SearchDialog.cpp" line="288"/>
         <source>Sorry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="283"/>
+        <location filename="../gui/SearchDialog.cpp" line="288"/>
         <source>This function is not yet implemented.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1117"/>
+        <location filename="../gui/SearchDialog.ui" line="1120"/>
         <source>Size</source>
         <translation>Taille</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1127"/>
+        <location filename="../gui/SearchDialog.ui" line="1130"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
@@ -7297,24 +7297,45 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1112"/>
+        <location filename="../gui/SearchDialog.ui" line="1115"/>
         <source>Filename</source>
         <translation>Nom du fichier</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1132"/>
+        <location filename="../gui/SearchDialog.ui" line="1135"/>
         <source>Hash</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1166"/>
+        <location filename="../gui/SearchDialog.ui" line="1169"/>
         <source>KeyWords</source>
         <translation>Mots-clés</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1176"/>
+        <location filename="../gui/SearchDialog.ui" line="1179"/>
         <source>Search Id</source>
         <translation>Recherche Id</translation>
+    </message>
+    <message>
+        <location filename="../gui/SearchDialog.ui" line="1042"/>
+        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Reset Search Keyword and File Type&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;<byte value="x9"/>Réinitialiser la recherche des mots-clés et type de dossier&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../gui/SearchDialog.ui" line="1196"/>
+        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Download Select&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>Télécharger sélection</translation>
+    </message>
+    <message>
+        <location filename="../gui/SearchDialog.ui" line="1225"/>
+        <source>Close All Search Results</source>
+        <translation>Tout fermer</translation>
     </message>
 </context>
 <context>
@@ -7491,12 +7512,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/Settings/ServerPage.ui" line="529"/>
         <source>Network Configuration (takes effect after restart)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Configuration du réseau (prend effet après un redémarrage)</translation>
     </message>
     <message>
         <location filename="../gui/Settings/ServerPage.ui" line="538"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Automatique</translation>
     </message>
     <message>
         <location filename="../gui/Settings/ServerPage.ui" line="543"/>
@@ -7506,7 +7527,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/Settings/ServerPage.ui" line="548"/>
         <source>Forwarded Port</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Transmis Port</translation>
     </message>
     <message>
         <location filename="../gui/Settings/ServerPage.ui" line="559"/>
@@ -7531,17 +7552,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/Settings/ServerPage.ui" line="616"/>
         <source>Network Configuration</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Configuration du réseau</translation>
     </message>
     <message>
         <location filename="../gui/Settings/ServerPage.ui" line="626"/>
         <source>Local Address</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Adresse locale</translation>
     </message>
     <message>
         <location filename="../gui/Settings/ServerPage.ui" line="633"/>
         <source>External Address</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Adresse externe</translation>
     </message>
     <message>
         <location filename="../gui/Settings/ServerPage.ui" line="711"/>
@@ -7596,12 +7617,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/Settings/ServerPage.ui" line="840"/>
         <source>Total Rate (KB/s) </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Total Taux (KB/s)</translation>
     </message>
     <message>
         <location filename="../gui/Settings/ServerPage.ui" line="879"/>
         <source>Per Person  </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Par Personne</translation>
     </message>
 </context>
 <context>
@@ -8404,12 +8425,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TurtleSearchDialog.ui" line="568"/>
         <source>Toggle advanced searching on and off.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Basculer sur la recherche avancée et à l&apos;extérieur.</translation>
     </message>
     <message>
         <location filename="../gui/TurtleSearchDialog.ui" line="668"/>
         <source>&lt;h3&gt;Simple Search:&lt;/h3&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;h3&gt;Recherche simple:&lt;/h3&gt;</translation>
     </message>
     <message>
         <location filename="../gui/TurtleSearchDialog.ui" line="694"/>
@@ -8475,7 +8496,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TurtleSearchDialog.ui" line="901"/>
         <source>&lt;h3&gt;Advanced Search:&lt;/h3&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;h3&gt;Recherche avancée:&lt;/h3&gt;</translation>
     </message>
     <message>
         <location filename="../gui/TurtleSearchDialog.ui" line="933"/>

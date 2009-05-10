@@ -79,6 +79,9 @@ private slots:
 
     void selectSearchResults();
     
+    void clearKeyword();
+
+    
 private:
 /** render the results to the tree widget display */
     void resultsToTree(std::string, std::list<FileDetail>);

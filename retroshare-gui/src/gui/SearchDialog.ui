@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>661</width>
-    <height>289</height>
+    <width>654</width>
+    <height>374</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -509,15 +509,15 @@
     <number>6</number>
    </property>
    <property name="bottomMargin" >
-    <number>0</number>
+    <number>2</number>
    </property>
    <property name="horizontalSpacing" >
-    <number>1</number>
+    <number>6</number>
    </property>
    <property name="verticalSpacing" >
-    <number>0</number>
+    <number>2</number>
    </property>
-   <item row="0" column="0" >
+   <item row="0" column="0" colspan="3" >
     <layout class="QVBoxLayout" >
      <property name="spacing" >
       <number>0</number>
@@ -1019,7 +1019,7 @@ p, li { white-space: pre-wrap; }
           <number>5</number>
          </property>
          <item>
-          <widget class="QPushButton" name="pushButtonDownload" >
+          <widget class="QPushButton" name="resetButton" >
            <property name="sizePolicy" >
             <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
              <horstretch>0</horstretch>
@@ -1039,13 +1039,16 @@ p, li { white-space: pre-wrap; }
             </size>
            </property>
            <property name="toolTip" >
-            <string>Download</string>
+            <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Reset Search Keyword and File Type&lt;/p>&lt;/body>&lt;/html></string>
            </property>
            <property name="text" >
             <string/>
            </property>
            <property name="icon" >
-            <iconset resource="images.qrc" >:/images/down_24x24.png</iconset>
+            <iconset resource="images.qrc" >:/images/reset.png</iconset>
            </property>
            <property name="iconSize" >
             <size>
@@ -1180,6 +1183,48 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QPushButton" name="pushButtonDownload" >
+     <property name="minimumSize" >
+      <size>
+       <width>120</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="toolTip" >
+      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Download Select&lt;/p>&lt;/body>&lt;/html></string>
+     </property>
+     <property name="text" >
+      <string>Download</string>
+     </property>
+     <property name="icon" >
+      <iconset resource="images.qrc" >:/images/download16.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>351</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="2" >
+    <widget class="QPushButton" name="cloaseallsearchresultsButton" >
+     <property name="text" >
+      <string>Close All Search Results</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
