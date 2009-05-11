@@ -20,6 +20,7 @@
  ****************************************************************/
 
 #include <QtGui>
+#include <sys/stat.h>
 
 #include "PopupChatDialog.h"
 
@@ -849,7 +850,7 @@ void PopupChatDialog::dropEvent(QDropEvent *event)
 
 	if (event->mimeData()->hasUrls())
 	{
-		std::cerr << "GeneralMsgDialog::dropEvent() Urls:";
+		std::cerr << "PopupChatDialog::dropEvent() Urls:";
 		std::cerr << std::endl;
 
 		QList<QUrl> urls = event->mimeData()->urls();
@@ -864,8 +865,21 @@ void PopupChatDialog::dropEvent(QDropEvent *event)
 
 			if (localpath.size() > 0)
 			{
-
-				PopupChatDialog::addAttachment(localpath);
+				struct stat buf;
+				//Check that the file does exist and is not a directory
+				if ((-1 == stat(localpath.c_str(), &buf))) {
+				    std::cerr << "PopupChatDialog::dropEvent() file does not exists."<< std::endl;
+				    QMessageBox mb(tr("Drop file error."), tr("The dropped does not exist."),QMessageBox::Information,QMessageBox::Ok,0,0);
+				    mb.setButtonText( QMessageBox::Ok, "OK" );
+				    mb.exec();
+				} else if (S_ISDIR(buf.st_mode)) {
+				    std::cerr << "PopupChatDialog::dropEvent() directory not accepted."<< std::endl;
+				    QMessageBox mb(tr("Drop file error."), tr("Directory can't be dropped, only files are accepted."),QMessageBox::Information,QMessageBox::Ok,0,0);
+				    mb.setButtonText( QMessageBox::Ok, "OK" );
+				    mb.exec();
+				} else {
+				    PopupChatDialog::addAttachment(localpath);
+				}
 			}
 		}
 	}
