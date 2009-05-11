@@ -30,6 +30,7 @@
 
 #include <string>
 #include <list>
+#include <stdint.h>
 
 namespace RsDirUtil {
 

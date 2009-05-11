@@ -37,6 +37,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <openssl/sha.h>
+#include <stdio.h>
 
 /***********
  * #define FIM_DEBUG 1

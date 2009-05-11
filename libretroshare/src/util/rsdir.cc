@@ -33,6 +33,7 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+#include <stdio.h>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include "wtypes.h"

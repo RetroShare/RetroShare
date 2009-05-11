@@ -27,6 +27,8 @@
  */
 
 #include <string>
+#include <stdlib.h>
+#include <stdint.h>
 
 /*******************************************************************
  * This is at the lowlevel packing routines. They are usually 

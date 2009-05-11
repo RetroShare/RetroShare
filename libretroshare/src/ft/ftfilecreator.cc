@@ -1,5 +1,6 @@
 #include "ftfilecreator.h"
 #include <errno.h>
+#include <stdio.h>
 
 /*******
  * #define FILE_DEBUG 1

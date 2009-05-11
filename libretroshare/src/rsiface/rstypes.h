@@ -30,7 +30,7 @@
 #include <list>
 #include <iostream>
 #include <string>
-
+#include <stdint.h>
 
 typedef std::string   RsCertId;
 typedef std::string   RsChanId; 

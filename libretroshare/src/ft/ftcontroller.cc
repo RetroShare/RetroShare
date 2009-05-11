@@ -49,6 +49,7 @@
 #include "pqi/pqinotify.h"
 
 #include "serialiser/rsconfigitems.h"
+#include <stdio.h>
 
 /******
  * #define CONTROL_DEBUG 1

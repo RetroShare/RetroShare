@@ -33,6 +33,8 @@
 
 #include <string>
 #include <list>
+#include <stdlib.h>
+#include <stdint.h>
 
 //#define RS_TLV_TYPE_FILE_ITEM   0x0000
 

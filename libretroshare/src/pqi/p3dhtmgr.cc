@@ -25,6 +25,7 @@
 
 #include <sstream>
 #include <iomanip>
+#include <stdio.h>
 #include <openssl/sha.h>
 
 #include "pqi/p3dhtmgr.h"

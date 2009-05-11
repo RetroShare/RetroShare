@@ -28,6 +28,7 @@
 #include "util/rsdebug.h"
 
 #include <sstream>
+#include <stdio.h>
 
 const int pqipersongrpzone = 354;
 

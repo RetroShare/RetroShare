@@ -26,6 +26,7 @@
 #include "ft/ftextralist.h"
 #include "serialiser/rsconfigitems.h"
 #include "util/rsdir.h"
+#include <stdio.h>
 
 /******
  * #define DEBUG_ELIST	1

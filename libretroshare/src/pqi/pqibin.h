@@ -30,6 +30,7 @@
 
 #include "pqi/pqi_base.h"
 #include "pqi/pqihash.h"
+#include <stdio.h>
 
 class BinFileInterface: public BinInterface
 {

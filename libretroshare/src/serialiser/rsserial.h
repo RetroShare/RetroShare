@@ -31,7 +31,8 @@
 #include <map>
 #include <string>
 #include <iosfwd>
-
+#include <stdlib.h>
+#include <stdint.h>
 
 /*******************************************************************
  * This is the Top-Level serialiser/deserialise, 
