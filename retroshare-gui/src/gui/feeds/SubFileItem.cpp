@@ -148,7 +148,7 @@ void SubFileItem::Setup()
 	}
   }
 
-  small();
+  smaller();
   updateItemStatic();
   updateItem();
 
@@ -530,7 +530,7 @@ void SubFileItem::updateItem()
 
 
 
-void SubFileItem::small()
+void SubFileItem::smaller()
 {
 #ifdef DEBUG_ITEM
 	std::cerr << "SubFileItem::cancel()";

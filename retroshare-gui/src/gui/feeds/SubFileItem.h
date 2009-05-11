@@ -53,7 +53,7 @@ public:
 
   	/** Default Destructor */
 
-  	void small();
+  	void smaller();
 
 	std::string FileHash() { return mFileHash; }
 	std::string FileName() { return mFileName; }
