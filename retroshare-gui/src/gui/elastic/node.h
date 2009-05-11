@@ -39,6 +39,7 @@
 
 #include <QGraphicsItem>
 #include <QList>
+#include <stdint.h>
 
 #include <string>
 

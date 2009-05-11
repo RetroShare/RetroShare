@@ -25,6 +25,7 @@
 #include "ui_SubFileItem.h"
 
 #include <string>
+#include <stdint.h>
 
 const uint32_t SFI_MASK_STATE  		= 0x000f;
 const uint32_t SFI_MASK_TYPE   		= 0x00f0;

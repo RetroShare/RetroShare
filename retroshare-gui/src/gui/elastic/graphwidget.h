@@ -40,6 +40,7 @@
 #include <QtGui/QGraphicsView>
 #include <string>
 #include <map>
+#include <stdint.h>
 
 class Node;
 class Edge;

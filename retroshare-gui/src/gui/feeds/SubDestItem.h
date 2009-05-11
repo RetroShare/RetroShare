@@ -25,6 +25,7 @@
 #include "ui_SubDestItem.h"
 
 #include <string>
+#include <stdint.h>
 
 class SubDestItem : public QWidget, private Ui::SubDestItem
 {

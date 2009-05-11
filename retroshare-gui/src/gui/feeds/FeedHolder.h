@@ -23,6 +23,7 @@
 #define _FEED_HOLDER_H
 
 #include <string>
+#include <stdint.h>
 
 const uint32_t FEEDHOLDER_MSG_MESSAGE	= 0x0001;
 const uint32_t FEEDHOLDER_MSG_FORUM	= 0x0002;

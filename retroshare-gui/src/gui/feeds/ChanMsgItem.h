@@ -25,6 +25,7 @@
 #include "ui_ChanMsgItem.h"
 
 #include <string>
+#include <stdint.h>
 
 class FeedHolder;
 class SubFileItem;

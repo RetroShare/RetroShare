@@ -25,6 +25,7 @@
 #include "ui_ForumNewItem.h"
 
 #include <string>
+#include <stdint.h>
 
 class FeedHolder;
 

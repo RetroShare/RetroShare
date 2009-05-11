@@ -23,6 +23,7 @@
 #define _GENERAL_MSG_DIALOG_H
 
 #include "ui_GeneralMsgDialog.h"
+#include <stdint.h>
 
 class SubDestItem;
 class SubFileItem;

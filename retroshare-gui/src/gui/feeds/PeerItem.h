@@ -25,6 +25,7 @@
 #include "ui_PeerItem.h"
 
 #include <string>
+#include <stdint.h>
 
 const uint32_t PEER_TYPE_STD	 = 0x0001;
 const uint32_t PEER_TYPE_CONNECT = 0x0002;
