@@ -116,6 +116,9 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   ui.textboldButton->setCheckable(true);
   ui.textunderlineButton->setCheckable(true);
   ui.textitalicButton->setCheckable(true);
+
+  setAcceptDrops(true);
+  ui.chattextEdit->setAcceptDrops(false);
   
   /*Disabled style Button when will switch chat style RetroShare will crash need to be fix */
   //ui.styleButton->setEnabled(false);
@@ -707,6 +710,11 @@ void PopupChatDialog::addExtraFile()
 	std::string filePath = qfile.toStdString();
 	if (filePath != "")
 	{
+	    PopupChatDialog::addAttachment(filePath);
+	}
+}
+
+void PopupChatDialog::addAttachment(std::string filePath) {
 	    /* add a SubFileItem to the attachment section */
 	    std::cerr << "PopupChatDialog::addExtraFile() hashing file.";
 	    std::cerr << std::endl;
@@ -723,8 +731,6 @@ void PopupChatDialog::addExtraFile()
 	    } else {
 		QObject::connect(file,SIGNAL(fileFinished(SubFileItem *)), SLOT(fileHashingFinished(SubFileItem *))) ;
 	    }
-
-	}
 }
 
 void PopupChatDialog::fileHashingFinished(SubFileItem* file) {
@@ -818,4 +824,78 @@ void PopupChatDialog::anchorClicked (const QUrl& link ) {
 	    QDesktopServices::openUrl(QUrl(newAddress));
 	}
 
+}
+
+void PopupChatDialog::dropEvent(QDropEvent *event)
+{
+	if (!(Qt::CopyAction & event->possibleActions()))
+	{
+		std::cerr << "PopupChatDialog::dropEvent() Rejecting uncopyable DropAction";
+		std::cerr << std::endl;
+
+		/* can't do it */
+		return;
+	}
+
+	std::cerr << "PopupChatDialog::dropEvent() Formats";
+	std::cerr << std::endl;
+	QStringList formats = event->mimeData()->formats();
+	QStringList::iterator it;
+	for(it = formats.begin(); it != formats.end(); it++)
+	{
+		std::cerr << "Format: " << (*it).toStdString();
+		std::cerr << std::endl;
+	}
+
+	if (event->mimeData()->hasUrls())
+	{
+		std::cerr << "GeneralMsgDialog::dropEvent() Urls:";
+		std::cerr << std::endl;
+
+		QList<QUrl> urls = event->mimeData()->urls();
+		QList<QUrl>::iterator uit;
+		for(uit = urls.begin(); uit != urls.end(); uit++)
+		{
+			std::string localpath = uit->toLocalFile().toStdString();
+			std::cerr << "Whole URL: " << uit->toString().toStdString();
+			std::cerr << std::endl;
+			std::cerr << "or As Local File: " << localpath;
+			std::cerr << std::endl;
+
+			if (localpath.size() > 0)
+			{
+
+				PopupChatDialog::addAttachment(localpath);
+			}
+		}
+	}
+
+	event->setDropAction(Qt::CopyAction);
+	event->accept();
+}
+
+void PopupChatDialog::dragEnterEvent(QDragEnterEvent *event)
+{
+	/* print out mimeType */
+	std::cerr << "PopupChatDialog::dragEnterEvent() Formats";
+	std::cerr << std::endl;
+	QStringList formats = event->mimeData()->formats();
+	QStringList::iterator it;
+	for(it = formats.begin(); it != formats.end(); it++)
+	{
+		std::cerr << "Format: " << (*it).toStdString();
+		std::cerr << std::endl;
+	}
+
+	if (event->mimeData()->hasUrls())
+	{
+		std::cerr << "PopupChatDialog::dragEnterEvent() Accepting Urls";
+		std::cerr << std::endl;
+		event->acceptProposedAction();
+	}
+	else
+	{
+		std::cerr << "PopupChatDialog::dragEnterEvent() No Urls";
+		std::cerr << std::endl;
+	}
 }

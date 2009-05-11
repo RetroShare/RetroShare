@@ -85,7 +85,10 @@ public slots:
 
 protected:
   void closeEvent (QCloseEvent * event);
-  
+  virtual void dragEnterEvent(QDragEnterEvent *event);
+  virtual void dropEvent(QDropEvent *event);
+
+
 private slots:
   void addExtraFile();
   void showAvatarFrame(bool show);
@@ -105,7 +108,8 @@ private:
   void colorChanged(const QColor &c);
   void updatePeerAvatar(const std::string&);
   void updateAvatar();
-  
+  void addAttachment(std::string);
+
    QAction     *actionTextBold;
    QAction     *actionTextUnderline;
    QAction     *actionTextItalic;
@@ -126,6 +130,7 @@ private:
 
   /** Qt Designer generated object */
   Ui::PopupChatDialog ui;
+
 
 };
 
