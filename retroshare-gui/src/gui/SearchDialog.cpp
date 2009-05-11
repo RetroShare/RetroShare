@@ -91,26 +91,23 @@ SearchDialog::SearchDialog(QWidget *parent)
     /* initialise the filetypes mapping */
     if (!SearchDialog::initialised)
     {
-    initialiseFileTypeMappings();
+	initialiseFileTypeMappings();
     }
    
     /* Advanced search panel specifica */
     RshareSettings rsharesettings;
     QString key (UI_PREF_ADVANCED_SEARCH);
     bool useAdvanced = rsharesettings.value(key, QVariant(false)).toBool();
-    /*if (useAdvanced)
+    if (useAdvanced)
     {
         ui.toggleAdvancedSearchBtn->setChecked(true);
         ui.SimpleSearchPanel->hide();
     } else {
         ui.AdvancedSearchPanel->hide();
-    }*/
+    }
     
-    //connect(ui.toggleAdvancedSearchBtn, SIGNAL(toggled(bool)), this, SLOT(toggleAdvancedSearchDialog(bool)));
-    //connect(ui.focusAdvSearchDialogBtn, SIGNAL(clicked()), this, SLOT(showAdvSearchDialog())); 
-    connect(ui.toggleAdvancedSearchBtn, SIGNAL(clicked()), this, SLOT(showAdvSearchDialog()));
-    connect(ui.cloaseallsearchresultsButton, SIGNAL(clicked()), this, SLOT(searchRemoveAll()));
-    connect(ui.resetButton, SIGNAL(clicked()), this, SLOT(clearKeyword()));
+    connect(ui.toggleAdvancedSearchBtn, SIGNAL(toggled(bool)), this, SLOT(toggleAdvancedSearchDialog(bool)));
+    connect(ui.focusAdvSearchDialogBtn, SIGNAL(clicked()), this, SLOT(showAdvSearchDialog())); 
     
     /* End Advanced Search Panel specifics */
 
@@ -131,8 +128,6 @@ SearchDialog::SearchDialog(QWidget *parent)
     
     connect ( ui.searchSummaryWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem *, QTreeWidgetItem * ) ),
                     this, SLOT( selectSearchResults( void ) ) );
-                    
-    connect( ui.searchResultWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(download()));                
    
 
     /* hide the Tree +/- */
@@ -154,8 +149,8 @@ SearchDialog::SearchDialog(QWidget *parent)
     _smheader->setResizeMode (2, QHeaderView::Interactive);
     
     _smheader->resizeSection ( 0, 80 );
-    _smheader->resizeSection ( 1, 60 );
-    _smheader->resizeSection ( 2, 30 );
+    _smheader->resizeSection ( 1, 75 );
+    _smheader->resizeSection ( 2, 75 );
 
     ui.searchResultWidget->setColumnCount(6);
     _smheader = ui.searchResultWidget->header () ;   
@@ -173,11 +168,11 @@ SearchDialog::SearchDialog(QWidget *parent)
 
     
     // set header text aligment
-    QTreeWidgetItem * headerItem = ui.searchResultWidget->headerItem();
-    headerItem->setTextAlignment(2, Qt::AlignRight   | Qt::AlignRight);
-    headerItem->setTextAlignment(3, Qt::AlignRight | Qt::AlignRight);
+	QTreeWidgetItem * headerItem = ui.searchResultWidget->headerItem();
+	headerItem->setTextAlignment(2, Qt::AlignRight   | Qt::AlignRight);
+	headerItem->setTextAlignment(3, Qt::AlignRight | Qt::AlignRight);
      
-    ui.searchResultWidget->sortItems(SR_NAME_COL, Qt::AscendingOrder);
+	ui.searchResultWidget->sortItems(SR_NAME_COL, Qt::AscendingOrder);
 
 
 
@@ -372,7 +367,6 @@ void SearchDialog::searchRemoveAll()
 	nextSearchId = 1;
 }
 
-<<<<<<< HEAD:retroshare-gui/src/gui/SearchDialog.cpp
 /** clear keywords and ComboBox **/
 void SearchDialog::clearKeyword()
 {
@@ -381,16 +375,6 @@ void SearchDialog::clearKeyword()
 }
 
 
-=======
-/** clear keywords **/
-void SearchDialog::clearKeyword()
-{
-	ui.lineEdit->clear();
-	ui.FileTypeComboBox->setCurrentIndex(0);
-}
-
->>>>>>> c9de750... 
- * Rolled back Modifications to SearchDialog and PopupChatDialog.:retroshare-gui/src/gui/SearchDialog.cpp
 /* *****************************************************************
         Advanced search implementation
 *******************************************************************/
