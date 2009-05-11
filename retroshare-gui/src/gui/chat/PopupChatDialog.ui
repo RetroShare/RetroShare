@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>484</width>
-    <height>437</height>
+    <height>439</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -446,7 +446,7 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
     <item row="3" column="0" >
-     <layout class="QGridLayout" >
+     <layout class="QHBoxLayout" >
       <property name="leftMargin" >
        <number>0</number>
       </property>
@@ -456,23 +456,30 @@ p, li { white-space: pre-wrap; }
       <property name="bottomMargin" >
        <number>2</number>
       </property>
-      <property name="horizontalSpacing" >
-       <number>6</number>
-      </property>
-      <item row="0" column="0" >
+      <item>
+       <widget class="QPushButton" name="addFileButton" >
+        <property name="text" >
+         <string/>
+        </property>
+        <property name="icon" >
+         <iconset resource="../images.qrc" >:/images/add-share24.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer>
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
         </property>
         <property name="sizeHint" >
          <size>
-          <width>351</width>
+          <width>331</width>
           <height>20</height>
          </size>
         </property>
        </spacer>
       </item>
-      <item row="0" column="1" >
+      <item>
        <widget class="QPushButton" name="sendButton" >
         <property name="text" >
          <string>Send</string>
@@ -480,6 +487,9 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
      </layout>
+    </item>
+    <item row="4" column="0" >
+     <layout class="QVBoxLayout" />
     </item>
    </layout>
   </widget>
