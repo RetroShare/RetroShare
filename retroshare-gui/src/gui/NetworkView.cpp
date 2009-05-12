@@ -30,6 +30,8 @@
 #include <iostream>
 #include <algorithm>
 
+#include "gui/elastic/node.h"
+
 /** Constructor */
 NetworkView::NetworkView(QWidget *parent)
 : MainPage(parent)
@@ -154,11 +156,25 @@ void  NetworkView::insertPeers()
 
 		if (rsPeers->isFriend(*it))
 		{
-			type = 2;
+			type = ELASTIC_NODE_TYPE_FRIEND;
 		}
 		else
 		{
-			type = 3;
+                	RsPeerDetails detail;
+                	rsPeers->getPeerDetails(*it, detail);
+
+			if(detail.trustLvl > RS_TRUST_LVL_MARGINAL)
+			{
+				type = ELASTIC_NODE_TYPE_AUTHED;
+			}
+			else if (detail.trustLvl >= RS_TRUST_LVL_MARGINAL)
+			{
+				type = ELASTIC_NODE_TYPE_MARGINALAUTH;
+			}
+			else
+			{
+				type = ELASTIC_NODE_TYPE_FOF;
+			}
 		}
 
   		ui.graphicsView->addNode(type, *it, name);

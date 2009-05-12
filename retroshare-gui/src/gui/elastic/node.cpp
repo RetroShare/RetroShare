@@ -38,11 +38,13 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QStyleOption>
+#include <QMenu>
 
 #include "edge.h"
 #include "node.h"
 #include "graphwidget.h"
 #include <math.h>
+#include "rsiface/rspeers.h"
 
 Node::Node(GraphWidget *graphWidget, uint32_t t, std::string id_in, std::string n)
     : graph(graphWidget), ntype(t), id(id_in), name(n),
@@ -171,8 +173,22 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     }
     else if (ntype == ELASTIC_NODE_TYPE_FRIEND)
     {
+    	col0 = QColor(Qt::green);
+    	col1 = QColor(Qt::darkGreen);
+    }
+    else if (ntype == ELASTIC_NODE_TYPE_AUTHED)
+    {
+    	//col0 = QColor(Qt::cyan);
+    	//col1 = QColor(Qt::darkCyan);
+    	//col0 = QColor(Qt::blue);
+
     	col0 = QColor(Qt::cyan);
-    	col1 = QColor(Qt::blue);
+    	col1 = QColor(Qt::darkBlue);
+    }
+    else if (ntype == ELASTIC_NODE_TYPE_MARGINALAUTH)
+    {
+    	col0 = QColor(Qt::magenta);
+    	col1 = QColor(Qt::darkMagenta);
     }
     else
     {
@@ -229,3 +245,61 @@ void Node::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     update();
     QGraphicsItem::mouseReleaseEvent(event);
 }
+
+void Node::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+	RsPeerDetails details;
+	if (!rsPeers->getPeerDetails(id, details))
+	{
+		event->accept();
+		return;
+	}
+
+	/* no events for self */	
+	if (ntype == ELASTIC_NODE_TYPE_OWN) 
+	{
+		event->accept();
+		return;
+	}
+
+	QString menuTitle = "Menu for ";
+	menuTitle += QString::fromStdString(details.name);
+
+	QMenu menu;
+     	QAction *titleAction = menu.addAction(menuTitle);
+	titleAction->setEnabled(false);
+
+     switch(ntype)
+	{
+		case ELASTIC_NODE_TYPE_OWN:
+		{
+			break;
+		}
+		case ELASTIC_NODE_TYPE_FRIEND:
+		{
+
+     			//QAction *rmAction = menu.addAction("Remove Friend");
+     			//QAction *chatAction = menu.addAction("Chat");
+     			//QAction *msgAction = menu.addAction("Msg");
+			break;
+		}
+		case ELASTIC_NODE_TYPE_AUTHED:
+		{
+     			//QAction *addAction = menu.addAction("Add Friend");
+			break;
+		}
+		case ELASTIC_NODE_TYPE_MARGINALAUTH:
+		{
+     			//QAction *makeAction = menu.addAction("Make Friend");
+			break;
+		}
+		default:
+		case ELASTIC_NODE_TYPE_FOF:
+		{
+     			//QAction *makeAction = menu.addAction("Make Friend");
+			break;
+		}
+	}
+     QAction *selectedAction = menu.exec(event->screenPos());
+} 
+

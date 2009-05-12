@@ -45,7 +45,9 @@
 
 #define ELASTIC_NODE_TYPE_OWN		1
 #define ELASTIC_NODE_TYPE_FRIEND	2
-#define ELASTIC_NODE_TYPE_FOF		3
+#define ELASTIC_NODE_TYPE_AUTHED	3
+#define ELASTIC_NODE_TYPE_MARGINALAUTH	4
+#define ELASTIC_NODE_TYPE_FOF		5
 
 class Edge;
 class GraphWidget;
@@ -74,7 +76,8 @@ protected:
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event); 
+
 private:
     QList<Edge *> edgeList;
     QPointF newPos;
