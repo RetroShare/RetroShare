@@ -458,11 +458,20 @@ p, li { white-space: pre-wrap; }
       </property>
       <item>
        <widget class="QPushButton" name="addFileButton" >
+        <property name="toolTip" >
+         <string>Add a File for your Friend</string>
+        </property>
         <property name="text" >
          <string/>
         </property>
         <property name="icon" >
          <iconset resource="../images.qrc" >:/images/add-share24.png</iconset>
+        </property>
+        <property name="iconSize" >
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
         </property>
        </widget>
       </item>
