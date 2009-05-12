@@ -29,7 +29,6 @@
 #include "pqi/p3authmgr.h"
 #include "pqi/pqibin.h"
 #include "pqi/pqistore.h"
-#include "pqi/pqistreamer.h"
 #include "pqi/pqinotify.h"
 #include <errno.h>
 
@@ -153,11 +152,9 @@ void	p3ConfigMgr::saveConfiguration()
 	BinMemInterface *membio = new BinMemInterface(1000, bioflags);
 	RsSerialiser *rss = new RsSerialiser();
 	rss->addSerialType(new RsGeneralConfigSerialiser());
-	pqistreamer stream(rss, "CONFIG", membio, 0);
+	pqistore store(rss, "CONFIG", membio, 0);
 
-	stream.SendItem(item);
-	stream.tick();
-	stream.tick();
+	store.SendItem(item);
 
 	/* sign data */
 	std::string signature;
@@ -296,10 +293,8 @@ void	p3ConfigMgr::loadConfiguration()
 	membio->fseek(0); /* go to start */
 	RsSerialiser *rss = new RsSerialiser();
 	rss->addSerialType(new RsGeneralConfigSerialiser());
-	pqistreamer stream(rss, "CONFIG", membio, 0);
+	pqistore stream(rss, "CONFIG", membio, 0);
 
-	stream.tick();
-	stream.tick();
 	RsItem *rsitem = stream.GetItem();
 
 	RsConfigKeyValueSet *item = dynamic_cast<RsConfigKeyValueSet *>(rsitem);
@@ -402,7 +397,7 @@ bool	p3Config::loadConfiguration(std::string &loadHash)
 	uint32_t stream_flags = BIN_FLAGS_READABLE;
 
 	BinInterface *bio = new BinFileInterface(fname.c_str(), bioflags);
-	pqistore stream(setupSerialiser(), bio, stream_flags);
+	pqistore stream(setupSerialiser(), "CONFIG", bio, stream_flags);
 	RsItem *item = NULL;
 
 	while(NULL != (item = stream.GetItem()))
@@ -473,7 +468,7 @@ bool	p3Config::saveConfiguration()
 		stream_flags |= BIN_FLAGS_NO_DELETE;
 
 	BinInterface *bio = new BinFileInterface(fnametmp.c_str(), bioflags);
-	pqistore *stream = new pqistore(setupSerialiser(), bio, stream_flags);
+	pqistore *stream = new pqistore(setupSerialiser(), "CONFIG", bio, stream_flags);
 
 	std::list<RsItem *>::iterator it;
 

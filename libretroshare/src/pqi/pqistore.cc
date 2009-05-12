@@ -50,9 +50,9 @@
 
 const int pqistorezone = 9511;
 
-pqistore::pqistore(RsSerialiser *rss, BinInterface *bio_in, int bio_flags_in)
+pqistore::pqistore(RsSerialiser *rss, std::string srcId, BinInterface *bio_in, int bio_flags_in)
 	:PQInterface(""), rsSerialiser(rss), bio(bio_in), bio_flags(bio_flags_in),
-        nextPkt(NULL)
+        nextPkt(NULL), mSrcId(srcId)
 {
         {
 	  std::ostringstream out;
@@ -363,6 +363,7 @@ int     pqistore::readPkt(RsItem **item_out)
 		return 0;
 	}
 
+	item->PeerId(mSrcId);
 	*item_out = item;
 	return 1;
 }

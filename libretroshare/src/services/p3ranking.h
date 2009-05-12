@@ -28,7 +28,7 @@
 
 #include "dbase/cachestrapper.h"
 #include "pqi/pqiservice.h"
-#include "pqi/pqistreamer.h"
+#include "pqi/pqistore.h"
 #include "pqi/p3connmgr.h"
 #include "pqi/p3cfgmgr.h"
 
@@ -116,7 +116,7 @@ float 	locked_calcRank(RankGroup &grp); /* returns 0->100 */
 void	locked_reSortGroup(RankGroup &grp);
 
 void	sortAllMsgs();
-pqistreamer *createStreamer(std::string file, std::string src, bool reading);
+pqistore *createStore(std::string file, std::string src, bool reading);
 
 
 	/****************** p3Config STUFF *******************/

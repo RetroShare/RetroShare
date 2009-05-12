@@ -202,7 +202,7 @@ void	p3GroupDistrib::loadFileGroups(std::string filename, std::string src, bool 
 
 	/* create the serialiser to load info */
 	BinInterface *bio = new BinFileInterface(filename.c_str(), BIN_FLAGS_READABLE);
-	pqistreamer *streamer = createStreamer(bio, src, 0);
+	pqistore *store = createStore(bio, src, 0);
 
 	std::cerr << "loading file " << filename << std::endl ;
 
@@ -210,8 +210,7 @@ void	p3GroupDistrib::loadFileGroups(std::string filename, std::string src, bool 
 	RsDistribGrp *newGrp;
 	RsDistribGrpKey *newKey;
 
-	streamer->tick();
-	while(NULL != (item = streamer->GetItem()))
+	while(NULL != (item = store->GetItem()))
 	{
 #ifdef DISTRIB_DEBUG
 		std::cerr << "p3GroupDistrib::loadFileGroups() Got Item:";
@@ -237,11 +236,9 @@ void	p3GroupDistrib::loadFileGroups(std::string filename, std::string src, bool 
 #endif
 			delete item;
 		}
-		streamer->tick();
 	}
 
-	delete streamer;
-
+	delete store;
 
 
 	/* clear publication of groups if local cache file found */
@@ -269,15 +266,14 @@ void	p3GroupDistrib::loadFileMsgs(std::string filename, uint16_t cacheSubId, std
 
 	/* create the serialiser to load msgs */
 	BinInterface *bio = new BinFileInterface(filename.c_str(), BIN_FLAGS_READABLE);
-	pqistreamer *streamer = createStreamer(bio, src, 0);
+	pqistore *store = createStore(bio, src, 0);
 
 	std::cerr << "loading file " << filename << std::endl ;
 
 	RsItem *item;
 	RsDistribSignedMsg *newMsg;
 
-	streamer->tick();
-	while(NULL != (item = streamer->GetItem()))
+	while(NULL != (item = store->GetItem()))
 	{
 #ifdef DISTRIB_DEBUG
 		std::cerr << "p3GroupDistrib::loadFileMsgs() Got Item:";
@@ -299,7 +295,6 @@ void	p3GroupDistrib::loadFileMsgs(std::string filename, uint16_t cacheSubId, std
 			/* wrong message type */
 			delete item;
 		}
-		streamer->tick();
 	}
 
 
@@ -335,7 +330,7 @@ void	p3GroupDistrib::loadFileMsgs(std::string filename, uint16_t cacheSubId, std
 		}
 	}
 
-	delete streamer;
+	delete store;
 	return;
 }
 
@@ -750,7 +745,7 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 	std::string filenametmp = path + "/" + tmpname + ".tmp";
 
 	BinInterface *bio = new BinFileInterface(filenametmp.c_str(), BIN_FLAGS_WRITEABLE | BIN_FLAGS_HASH_DATA);
-	pqistreamer *streamer = createStreamer(bio, mOwnId, 0); /* messages are deleted! */ 
+	pqistore *store = createStore(bio, mOwnId, 0); /* messages are deleted! */ 
 
 	bool resave = false;
 	std::list<RsDistribSignedMsg *>::iterator it;
@@ -772,13 +767,10 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 			resave = true;
 		}
 
-		streamer->SendItem(*it); /* deletes it */
-		streamer->tick();
+		store->SendItem(*it); /* deletes it */
 	}
 
-	streamer->tick(); /* once more for good luck! */
-
-	/* Extract File Information from pqistreamer */
+	/* Extract File Information from pqistore */
 	newCache.path = path;
 	newCache.name = tmpname;
 
@@ -788,7 +780,7 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 
 	/* cleanup */
 	mPendingPublish.clear();
-	delete streamer;
+	delete store;
 
 	if(!RsDirUtil::renameFile(filenametmp,filename))
 	{
@@ -843,7 +835,7 @@ void 	p3GroupDistrib::publishDistribGroups()
 	std::string filenametmp = path + "/" + tmpname + ".tmp";
 
 	BinInterface *bio = new BinFileInterface(filenametmp.c_str(), BIN_FLAGS_WRITEABLE | BIN_FLAGS_HASH_DATA);
-	pqistreamer *streamer = createStreamer(bio, mOwnId, BIN_FLAGS_NO_DELETE);
+	pqistore *store = createStore(bio, mOwnId, BIN_FLAGS_NO_DELETE);
 
 	RsStackMutex stack(distribMtx); /****** STACK MUTEX LOCKED *******/
 
@@ -866,8 +858,7 @@ void 	p3GroupDistrib::publishDistribGroups()
 			if (grp)
 			{
 				/* store in Cache File */
-				streamer->SendItem(grp); /* no delete */
-				streamer->tick();
+				store->SendItem(grp); /* no delete */
 			}
 
 			/* if they have public keys, publish these too */
@@ -896,8 +887,7 @@ void 	p3GroupDistrib::publishDistribGroups()
 					pubKey->key.startTS = kit->second.startTS;
 					pubKey->key.endTS   = kit->second.endTS;
 
-					streamer->SendItem(pubKey);
-					streamer->tick();
+					store->SendItem(pubKey);
 					delete pubKey;
 				}
 				else
@@ -922,7 +912,7 @@ void 	p3GroupDistrib::publishDistribGroups()
 
 	}
 
-	/* Extract File Information from pqistreamer */
+	/* Extract File Information from pqistore */
 	newCache.path = path;
 	newCache.name = tmpname;
 
@@ -931,7 +921,7 @@ void 	p3GroupDistrib::publishDistribGroups()
 	newCache.recvd = time(NULL);
 
 	/* cleanup */
-	delete streamer;
+	delete store;
 
 	if(!RsDirUtil::renameFile(filenametmp,filename))
 	{
@@ -1381,15 +1371,15 @@ bool    p3GroupDistrib::loadList(std::list<RsItem *> load)
  * As All the child packets are Packed, we should only need RsSerialDistrib() in it.
  */
 
-pqistreamer *p3GroupDistrib::createStreamer(BinInterface *bio, std::string src, uint32_t bioflags)
+pqistore *p3GroupDistrib::createStore(BinInterface *bio, std::string src, uint32_t bioflags)
 {
 	RsSerialiser *rsSerialiser = new RsSerialiser();
 	RsSerialType *serialType = new RsDistribSerialiser();
 	rsSerialiser->addSerialType(serialType);
 
-	pqistreamer *streamer = new pqistreamer(rsSerialiser, src, bio, bioflags);
+	pqistore *store = new pqistore(rsSerialiser, src, bio, bioflags);
 
-	return streamer;
+	return store;
 }
 
 

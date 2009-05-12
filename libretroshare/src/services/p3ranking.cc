@@ -145,7 +145,7 @@ void p3Ranking::loadRankFile(std::string filename, std::string src)
 	
 	uint32_t bioflags = BIN_FLAGS_HASH_DATA | BIN_FLAGS_READABLE;
 	BinInterface *bio = new BinFileInterface(filename.c_str(), bioflags);
-	pqistreamer *stream = new pqistreamer(rsSerialiser, src, bio, 0);
+	pqistore *store = new pqistore(rsSerialiser, src, bio, 0);
 	
 	time_t now = time(NULL);
 	time_t min, max;
@@ -169,8 +169,7 @@ void p3Ranking::loadRankFile(std::string filename, std::string src)
 	RsItem *item;
 	RsRankLinkMsg *newMsg;
 
-	stream->tick(); /* Tick to read! */
-	while(NULL != (item = stream->GetItem()))
+	while(NULL != (item = store->GetItem()))
 	{
 
 #ifdef RANK_DEBUG
@@ -210,11 +209,9 @@ void p3Ranking::loadRankFile(std::string filename, std::string src)
 			newMsg->PeerId(newMsg->pid);
 			addRankMsg(newMsg);
 		}
-
-		stream->tick(); /* Tick to read! */
 	}
 
-	delete stream;
+	delete store;
 }
 
 
@@ -262,8 +259,7 @@ void p3Ranking::publishMsgs(bool own)
 	
 	uint32_t bioflags = BIN_FLAGS_HASH_DATA | BIN_FLAGS_WRITEABLE;
 	BinInterface *bio = new BinFileInterface(fname.c_str(), bioflags);
-	pqistreamer *stream = new pqistreamer(rsSerialiser, mOwnId, bio,
-					BIN_FLAGS_NO_DELETE);
+	pqistore *store = new pqistore(rsSerialiser, mOwnId, bio, BIN_FLAGS_NO_DELETE);
 	
      { 	RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
 
@@ -288,9 +284,7 @@ void p3Ranking::publishMsgs(bool own)
 				item->print(std::cerr, 10);
 				std::cerr << std::endl;
 #endif
-				stream->SendItem(item);
-				stream->tick(); /* Tick to write! */
-
+				store->SendItem(item);
 			}
 		  }
 		  else
@@ -341,8 +335,7 @@ void p3Ranking::publishMsgs(bool own)
 			msg->print(std::cerr, 10);
 			std::cerr << std::endl;
 #endif
-			stream->SendItem(msg);
-			stream->tick(); /* Tick to write! */
+			store->SendItem(msg);
 
 			/* cleanup */
 			delete msg;
@@ -363,15 +356,11 @@ void p3Ranking::publishMsgs(bool own)
 			(*ait)->print(std::cerr, 10);
 			std::cerr << std::endl;
 #endif
-			stream->SendItem(*ait);
-			stream->tick(); /* Tick to write! */
+			store->SendItem(*ait);
 		}
 	}
 
      } 	/********** STACK LOCKED MTX ******/
-
-
-	stream->tick(); /* Tick for final write! */
 
 	/* flag as new info */
 	CacheData data;
@@ -406,7 +395,7 @@ void p3Ranking::publishMsgs(bool own)
 		refreshCache(data);
 	}
 
-	delete stream;
+	delete store;
 }
 
 
@@ -1091,7 +1080,7 @@ std::string p3Ranking::anonRankMsg(std::string rid, std::wstring link, std::wstr
 
 
 
-pqistreamer *createStreamer(std::string file, std::string src, bool reading)
+pqistore *createStore(std::string file, std::string src, bool reading)
 {
 
 	RsSerialiser *rsSerialiser = new RsSerialiser();
@@ -1109,11 +1098,11 @@ pqistreamer *createStreamer(std::string file, std::string src, bool reading)
 
 	/* bin flags: READ | WRITE | HASH_DATA */
 	BinInterface *bio = new BinFileInterface(file.c_str(), bioflags);
-	/* streamer flags: NO_DELETE (yes) | NO_CLOSE (no) */
-	pqistreamer *streamer = new pqistreamer(rsSerialiser, src, bio, 
+	/* store flags: NO_DELETE (yes) | NO_CLOSE (no) */
+	pqistore *store = new pqistore(rsSerialiser, src, bio, 
 						BIN_FLAGS_NO_DELETE);
 
-	return streamer;
+	return store;
 }
 
 std::string generateRandomLinkId()

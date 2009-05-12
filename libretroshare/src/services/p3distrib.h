@@ -27,7 +27,7 @@
 #define P3_GENERIC_DISTRIB_HEADER
 
 #include "pqi/pqi.h"
-#include "pqi/pqistreamer.h"
+#include "pqi/pqistore.h"
 #include "pqi/p3cfgmgr.h"
 #include "pqi/p3authmgr.h"
 #include "services/p3service.h"
@@ -340,7 +340,7 @@ uint16_t locked_determineCacheSubId();
 virtual RsSerialType *createSerialiser() = 0;
 
 	/* Used to Create/Load Cache Files only */
-virtual pqistreamer *createStreamer(BinInterface *bio, std::string src, uint32_t bioflags);
+virtual pqistore *createStore(BinInterface *bio, std::string src, uint32_t bioflags);
 
 virtual bool    validateDistribGrp(RsDistribGrp *newGrp);
 virtual bool    locked_checkGroupInfo(GroupInfo  &info, RsDistribGrp *newGrp);

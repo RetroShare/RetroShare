@@ -28,6 +28,7 @@
 #include <utility>
 #include <ctime>
 #include <iomanip>
+#include "pqi/pqistore.h"
 #include "pqi/pqibin.h"
 #include "pqi/p3authmgr.h"
 
@@ -142,7 +143,7 @@ bool p3Qblog::loadBlogFile(std::string filename, std::string src)
 
 	uint32_t bioflags = BIN_FLAGS_HASH_DATA | BIN_FLAGS_READABLE;
 	BinInterface *bio = new BinFileInterface(filename.c_str(), bioflags);
-	pqistreamer *stream = new pqistreamer(rsSerialiser, src, bio, 0);
+	pqistore *store = new pqistore(rsSerialiser, src, bio, 0);
 
 	#ifdef QBLOG_DEBUG
 
@@ -159,8 +160,6 @@ bool p3Qblog::loadBlogFile(std::string filename, std::string src)
 	RsItem *item;
 	RsQblogMsg *newBlog;
 
-	stream->tick(); // tick to read
-
 	time_t now = time(NULL);
 	time_t min, max;
 
@@ -170,7 +169,7 @@ bool p3Qblog::loadBlogFile(std::string filename, std::string src)
 		max = now + BLOG_MAX_FWD_OFFSET;
      } 	/********** STACK LOCKED MTX ******/
 
-	while(NULL != (item = stream->GetItem()))
+	while(NULL != (item = store->GetItem()))
 	{
 		#ifdef QBLOG_DEBUG
 		std::cerr << "p3Qblog::loadBlogFile() Got Item:";
@@ -208,11 +207,9 @@ bool p3Qblog::loadBlogFile(std::string filename, std::string src)
 
 			addBlog(newBlog); // add received blog to list
 		}
-
-		stream->tick();	// tick to read
 	}
 
-	delete stream; // stream finished with/return resource
+	delete store; // store finished with/return resource
 	return true;
 }
 
@@ -273,7 +270,7 @@ bool p3Qblog::postBlogs(void)
 
 	uint32_t bioflags = BIN_FLAGS_HASH_DATA | BIN_FLAGS_WRITEABLE;
 	BinInterface *bio = new BinFileInterface(fname.c_str(), bioflags);
-	pqistreamer *stream = new pqistreamer(rsSerialiser, mOwnId, bio,
+	pqistore *store = new pqistore(rsSerialiser, mOwnId, bio,
 					BIN_FLAGS_NO_DELETE);
 
 	{
@@ -297,8 +294,7 @@ bool p3Qblog::postBlogs(void)
 				std::cerr << std::endl;
 				#endif
 
-				stream->SendItem(item);
-				stream->tick(); /* tick to write */
+				store->SendItem(item);
 			}
 			else /* if blogs belong to a friend */
 			{
@@ -312,9 +308,6 @@ bool p3Qblog::postBlogs(void)
 		}
 
 	}
-
-
-	stream->tick(); /* Tick for final write! */
 
 	/* flag as new info */
 	CacheData data;
@@ -351,7 +344,7 @@ bool p3Qblog::postBlogs(void)
 			refreshCache(data);
 		}
 
-	delete stream;
+	delete store;
 	return true;
 }
 

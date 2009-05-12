@@ -429,7 +429,7 @@ bool p3ChatService::loadConfiguration(std::string &loadHash)
 	rss->addSerialType(new RsChatSerialiser());
 
 	BinFileInterface *in = new BinFileInterface(msgfile.c_str(), BIN_FLAGS_READABLE | BIN_FLAGS_HASH_DATA);
-	pqistore *pa_in = new pqistore(rss, in, BIN_FLAGS_READABLE);
+	pqistore *pa_in = new pqistore(rss, "CHATCONFIG", in, BIN_FLAGS_READABLE);
 	RsItem *item;
 	RsChatMsgItem *mitem;
 
@@ -481,7 +481,7 @@ bool p3ChatService::saveConfiguration()
 	rss->addSerialType(new RsChatSerialiser());
 
 	BinFileInterface *out = new BinFileInterface(msgfiletmp.c_str(), BIN_FLAGS_WRITEABLE | BIN_FLAGS_HASH_DATA);
-	pqistore *pa_out = new pqistore(rss, out, BIN_FLAGS_WRITEABLE);
+	pqistore *pa_out = new pqistore(rss, "CHATCONFIG", out, BIN_FLAGS_WRITEABLE);
 
 	if(_own_avatar != NULL)
 	{

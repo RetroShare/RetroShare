@@ -41,7 +41,7 @@
 class pqistore: public PQInterface
 {
 public:
-	pqistore(RsSerialiser *rss, BinInterface *bio_in, int bio_flagsin);
+	pqistore(RsSerialiser *rss, std::string srcId, BinInterface *bio_in, int bio_flagsin);
 virtual ~pqistore();
 
 // PQInterface
@@ -65,6 +65,7 @@ int     readPkt(RsItem **item_out);
 
 	// Temp Storage for transient data.....
 	RsItem *nextPkt;
+	std::string mSrcId;
 };
 
 
