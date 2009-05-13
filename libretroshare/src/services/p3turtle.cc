@@ -399,7 +399,6 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 		// have forwarded but that it not in the list ??
 
 		std::cerr << __PRETTY_FUNCTION__ << ": search result has no peer direction!" << std::endl ;
-		delete item ;
 		return ;
 	}
 
