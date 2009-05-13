@@ -4,6 +4,9 @@ Changes for v0.4.13a
 * Enabled multiple selections via mouse,keyboard,CTRL + A ...
 * Added feature to can delete files via Qt::Key_Delete
 * Added messagebox when cancel files from Transfers
+* Modified libretroshare to compile on Cygwin / MinGW.
+* Removed exceptions from serialiser (had troubles previously on win32).
+* Modified code in startup (enable CRYPTO structure) and rsdir.
 * Remove the downloads item for file index cache transfer
 * Set fileIndex cache transfer timeout to 300sec
 * Corrected setLogInfo core dump state.
@@ -17,7 +20,7 @@ Changes for v0.4.13a
 * Added DHT status to statusbar
 * Added Network Status for Log Tab too
 * Enabled toolbar moveable to all toolbar areas.
-* Added view button for Netowork Tabs
+* Added view button for Network Tabs
 
 Changes for v0.4.12d
 
