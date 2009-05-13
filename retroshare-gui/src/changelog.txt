@@ -1,3 +1,23 @@
+Changes for v0.4.13a
+
+* Merged peer detail dialogs from network and friends tab
+* Enabled multiple selections via mouse,keyboard,CTRL + A ...
+* Added feature to can delete files via Qt::Key_Delete
+* Added messagebox when cancel files from Transfers
+* Remove the downloads item for file index cache transfer
+* Set fileIndex cache transfer timeout to 300sec
+* Corrected setLogInfo core dump state.
+* Added add the ip adress to the cert text for friend add wizard
+* Changed Bad Packet message to log in network dialog
+* Added "peer is typing" functionality to private chat.
+* Moved Network Status Tab from Preferences to NetworkDialog
+* Fixed the total Transfer rate is lower than the individual rate.
+* Added grey user icon for statusbar when no Online Friends avaible else blue
+* Added NAT status to statusbar
+* Added DHT status to statusbar
+* Added Network Status for Log Tab too
+* Enabled toolbar moveable to all toolbar areas.
+* Added view button for Netowork Tabs
 
 Changes for v0.4.12d
 
