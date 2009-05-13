@@ -202,7 +202,7 @@ void	p3GroupDistrib::loadFileGroups(std::string filename, std::string src, bool 
 
 	/* create the serialiser to load info */
 	BinInterface *bio = new BinFileInterface(filename.c_str(), BIN_FLAGS_READABLE);
-	pqistore *store = createStore(bio, src, 0);
+	pqistore *store = createStore(bio, src, BIN_FLAGS_READABLE);
 
 	std::cerr << "loading file " << filename << std::endl ;
 
@@ -266,7 +266,7 @@ void	p3GroupDistrib::loadFileMsgs(std::string filename, uint16_t cacheSubId, std
 
 	/* create the serialiser to load msgs */
 	BinInterface *bio = new BinFileInterface(filename.c_str(), BIN_FLAGS_READABLE);
-	pqistore *store = createStore(bio, src, 0);
+	pqistore *store = createStore(bio, src, BIN_FLAGS_READABLE);
 
 	std::cerr << "loading file " << filename << std::endl ;
 
@@ -745,7 +745,7 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 	std::string filenametmp = path + "/" + tmpname + ".tmp";
 
 	BinInterface *bio = new BinFileInterface(filenametmp.c_str(), BIN_FLAGS_WRITEABLE | BIN_FLAGS_HASH_DATA);
-	pqistore *store = createStore(bio, mOwnId, 0); /* messages are deleted! */ 
+	pqistore *store = createStore(bio, mOwnId, BIN_FLAGS_WRITEABLE); /* messages are deleted! */ 
 
 	bool resave = false;
 	std::list<RsDistribSignedMsg *>::iterator it;
@@ -835,7 +835,7 @@ void 	p3GroupDistrib::publishDistribGroups()
 	std::string filenametmp = path + "/" + tmpname + ".tmp";
 
 	BinInterface *bio = new BinFileInterface(filenametmp.c_str(), BIN_FLAGS_WRITEABLE | BIN_FLAGS_HASH_DATA);
-	pqistore *store = createStore(bio, mOwnId, BIN_FLAGS_NO_DELETE);
+	pqistore *store = createStore(bio, mOwnId, BIN_FLAGS_NO_DELETE | BIN_FLAGS_WRITEABLE);
 
 	RsStackMutex stack(distribMtx); /****** STACK MUTEX LOCKED *******/
 

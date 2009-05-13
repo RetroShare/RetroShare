@@ -294,7 +294,7 @@ void	p3ConfigMgr::loadConfiguration()
 	membio->fseek(0); /* go to start */
 	RsSerialiser *rss = new RsSerialiser();
 	rss->addSerialType(new RsGeneralConfigSerialiser());
-	pqistore stream(rss, "CONFIG", membio, 0);
+	pqistore stream(rss, "CONFIG", membio, BIN_FLAGS_READABLE);
 
 	RsItem *rsitem = stream.GetItem();
 
