@@ -1408,6 +1408,7 @@ extern "C" {
 #endif
 
 #ifdef WINDOWS_SYS
+#ifndef WIN_CROSS_UBUNTU
 
 typedef struct _CRYPTPROTECT_PROMPTSTRUCT {
   DWORD cbSize;
@@ -1417,6 +1418,7 @@ typedef struct _CRYPTPROTECT_PROMPTSTRUCT {
 } CRYPTPROTECT_PROMPTSTRUCT,
  *PCRYPTPROTECT_PROMPTSTRUCT;
 
+#endif
 #endif
 
 /* definitions for the two functions */
