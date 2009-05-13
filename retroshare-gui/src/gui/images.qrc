@@ -201,6 +201,8 @@
         <file>images/knewsticker24.png</file>
         <file>images/library.png</file>
         <file>images/loadcert16.png</file>
+        <file>images/ledoff1.png</file>
+        <file>images/ledon1.png</file>
         <file>images/locale.png</file>
         <file>images/looknfeel.png</file>
         <file>images/lphoto.png</file>
@@ -269,6 +271,8 @@
         <file>images/rsmessenger16.png</file>
         <file>images/rsmessenger32.png</file>
         <file>images/rstray3.png</file>
+        <file>images/rstray0.png</file>
+        <file>images/rstray1.png</file>
         <file>images/save24.png</file>
         <file>images/send24.png</file>
         <file>images/settings.png</file>
@@ -283,6 +287,7 @@
         <file>images/startall.png</file>
         <file>images/server_24x24.png</file>
         <file>images/transferupdown.png</file>
+        <file>images/typing.png</file>
         <file>images/uploads.png</file>
         <file>images/loader/16-loader.gif</file>
         <file>images/loader/32-loader.gif</file>

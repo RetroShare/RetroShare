@@ -257,88 +257,249 @@ p, li { white-space: pre-wrap; }
           </attribute>
           <layout class="QGridLayout" >
            <item row="0" column="0" >
-            <layout class="QHBoxLayout" >
-             <item>
-              <layout class="QVBoxLayout" >
-               <item>
-                <widget class="QRadioButton" name="radio_nonet" >
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
+              <layout class="QGridLayout" >
+               <item row="0" column="0" >
+                <widget class="QLabel" name="iconlabel_nonet" >
+                 <property name="maximumSize" >
+                  <size>
+                   <width>16</width>
+                   <height>16</height>
+                  </size>
+                 </property>
                  <property name="text" >
-                  <string>No Conectivity</string>
+                  <string/>
+                 </property>
+                 <property name="pixmap" >
+                  <pixmap resource="images.qrc" >:/images/ledoff1.png</pixmap>
                  </property>
                 </widget>
                </item>
-               <item>
-                <widget class="QRadioButton" name="radio_netLimited" >
+               <item row="0" column="1" >
+                <widget class="QLabel" name="textlabel_nonet" >
                  <property name="text" >
-                  <string>Limited</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="radio_netUdp" >
-                 <property name="text" >
-                  <string>Udp</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="radio_netServer" >
-                 <property name="text" >
-                  <string>Retroshare Server</string>
+                  <string>No Connectivity</string>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
-             <item>
-              <layout class="QVBoxLayout" >
-               <item>
-                <widget class="QCheckBox" name="check_udp" >
+             <item row="1" column="0" >
+              <layout class="QGridLayout" >
+               <item row="0" column="0" >
+                <widget class="QLabel" name="iconlabel_netLimited" >
+                 <property name="maximumSize" >
+                  <size>
+                   <width>16</width>
+                   <height>16</height>
+                  </size>
+                 </property>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                 <property name="pixmap" >
+                  <pixmap resource="images.qrc" >:/images/ledoff1.png</pixmap>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1" >
+                <widget class="QLabel" name="textlabel_netLimited" >
+                 <property name="text" >
+                  <string>Limited</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="2" column="0" >
+              <layout class="QGridLayout" >
+               <item row="0" column="0" >
+                <widget class="QLabel" name="iconlabel_netUdp" >
+                 <property name="maximumSize" >
+                  <size>
+                   <width>16</width>
+                   <height>16</height>
+                  </size>
+                 </property>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                 <property name="pixmap" >
+                  <pixmap resource="images.qrc" >:/images/ledoff1.png</pixmap>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1" >
+                <widget class="QLabel" name="textlabel_netUdp" >
+                 <property name="text" >
+                  <string>UDP</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="3" column="0" >
+              <layout class="QGridLayout" >
+               <item row="0" column="0" >
+                <widget class="QLabel" name="iconlabel_netServer" >
+                 <property name="maximumSize" >
+                  <size>
+                   <width>16</width>
+                   <height>16</height>
+                  </size>
+                 </property>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                 <property name="pixmap" >
+                  <pixmap resource="images.qrc" >:/images/ledoff1.png</pixmap>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1" >
+                <widget class="QLabel" name="textlabel_netServer" >
+                 <property name="text" >
+                  <string>RetroShare Server</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item row="0" column="1" >
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
+              <layout class="QGridLayout" >
+               <item row="0" column="0" >
+                <widget class="QLabel" name="iconlabel_udp" >
+                 <property name="maximumSize" >
+                  <size>
+                   <width>16</width>
+                   <height>16</height>
+                  </size>
+                 </property>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                 <property name="pixmap" >
+                  <pixmap resource="images.qrc" >:/images/ledoff1.png</pixmap>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1" >
+                <widget class="QLabel" name="textlabel_udp" >
                  <property name="text" >
                   <string>UDP Connections</string>
                  </property>
-                 <property name="checkable" >
-                  <bool>false</bool>
-                 </property>
                 </widget>
                </item>
-               <item>
-                <widget class="QCheckBox" name="check_ext" >
+              </layout>
+             </item>
+             <item row="1" column="0" >
+              <layout class="QGridLayout" >
+               <item row="0" column="0" >
+                <widget class="QLabel" name="iconlabel_ext" >
+                 <property name="maximumSize" >
+                  <size>
+                   <width>16</width>
+                   <height>16</height>
+                  </size>
+                 </property>
                  <property name="text" >
-                  <string>Stable External IP Addrress</string>
+                  <string/>
                  </property>
-                 <property name="checkable" >
-                  <bool>false</bool>
+                 <property name="pixmap" >
+                  <pixmap resource="images.qrc" >:/images/ledoff1.png</pixmap>
                  </property>
                 </widget>
                </item>
-               <item>
-                <widget class="QCheckBox" name="check_dht" >
+               <item row="0" column="1" >
+                <widget class="QLabel" name="textlabel_ext" >
                  <property name="text" >
-                  <string>DHT Okay</string>
-                 </property>
-                 <property name="checkable" >
-                  <bool>false</bool>
+                  <string>Stable External IP Address</string>
                  </property>
                 </widget>
                </item>
-               <item>
-                <widget class="QCheckBox" name="check_upnp" >
+              </layout>
+             </item>
+             <item row="2" column="0" >
+              <layout class="QGridLayout" >
+               <item row="0" column="0" >
+                <widget class="QLabel" name="iconlabel_dht" >
+                 <property name="maximumSize" >
+                  <size>
+                   <width>16</width>
+                   <height>16</height>
+                  </size>
+                 </property>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                 <property name="pixmap" >
+                  <pixmap resource="images.qrc" >:/images/ledoff1.png</pixmap>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1" >
+                <widget class="QLabel" name="textlabel_dht" >
+                 <property name="text" >
+                  <string>DHT OK</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="3" column="0" >
+              <layout class="QGridLayout" >
+               <item row="0" column="0" >
+                <widget class="QLabel" name="iconlabel_upnp" >
+                 <property name="maximumSize" >
+                  <size>
+                   <width>16</width>
+                   <height>16</height>
+                  </size>
+                 </property>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                 <property name="pixmap" >
+                  <pixmap resource="images.qrc" >:/images/ledoff1.png</pixmap>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1" >
+                <widget class="QLabel" name="textlabel_upnp" >
                  <property name="text" >
                   <string>UPnP Active</string>
                  </property>
-                 <property name="checkable" >
-                  <bool>false</bool>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="4" column="0" >
+              <layout class="QGridLayout" >
+               <item row="0" column="0" >
+                <widget class="QLabel" name="iconlabel_tcp" >
+                 <property name="maximumSize" >
+                  <size>
+                   <width>16</width>
+                   <height>16</height>
+                  </size>
+                 </property>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                 <property name="pixmap" >
+                  <pixmap resource="images.qrc" >:/images/ledoff1.png</pixmap>
                  </property>
                 </widget>
                </item>
-               <item>
-                <widget class="QCheckBox" name="check_tcp" >
+               <item row="0" column="1" >
+                <widget class="QLabel" name="textlabel_tcp" >
                  <property name="text" >
-                  <string>TCP server</string>
-                 </property>
-                 <property name="checkable" >
-                  <bool>false</bool>
+                  <string>TCP Server</string>
                  </property>
                 </widget>
                </item>
@@ -391,6 +552,8 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="images.qrc" />
+ </resources>
  <connections/>
 </ui>

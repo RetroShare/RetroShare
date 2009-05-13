@@ -150,7 +150,7 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     
     getNetworkStatus();
     updateNetworkStatus();
-    load();
+    //load();
     
 
   /* Hide platform specific features */
@@ -699,9 +699,100 @@ void NetworkDialog::updateNetworkStatus()
 
     
        /******* Network Status Tab *******/
-       
-    	//ui.check_net->setChecked(config.netOk);
-      ui.check_upnp->setChecked(config.netUpnpOk);
+             
+      if(config.netUpnpOk)
+      {
+         ui.iconlabel_upnp->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
+         ui.textlabel_upnp->setText(tr("UPnP active"));
+      }
+      else
+      {    
+         ui.iconlabel_upnp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+         ui.textlabel_upnp->setText(tr("UPnP inactive"));
+      }
+      
+      if(config.netDhtOk)
+      {
+         ui.iconlabel_dht->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
+         ui.textlabel_dht->setText(tr("DHT active"));
+      }
+      else
+      {    
+         ui.iconlabel_dht->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+         ui.textlabel_dht->setText(tr("DHT inactive"));
+      }
+      
+      if(config.netExtOk)
+      {
+         ui.iconlabel_ext->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
+         ui.textlabel_ext->setText(tr("Stabile External IP Address"));
+      }
+      else
+      {    
+         ui.iconlabel_ext->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+         ui.textlabel_ext->setText(tr("Not Found External IP Address"));
+      }
+      
+      if(config.netUdpOk)
+      {
+         ui.iconlabel_udp->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
+         ui.textlabel_udp->setText(tr("UDP Port is reachable"));
+      }
+      else
+      {    
+         ui.iconlabel_udp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+         ui.textlabel_udp->setText(tr("UDP Port is not reachable"));
+      }
+      
+      if(config.netTcpOk)
+      {
+         ui.iconlabel_tcp->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
+         ui.textlabel_tcp->setText(tr("TCP Port is reachable"));
+      }
+      else
+      {    
+         ui.iconlabel_tcp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+         ui.textlabel_tcp->setText(tr("TCP Port is not reachable"));
+      }
+      
+      if (config.netExtOk)
+      {
+        if (config.netUpnpOk || config.netTcpOk)
+        {
+           ui.iconlabel_netServer->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
+           
+           ui.iconlabel_netUdp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+           ui.iconlabel_netLimited->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+           ui.iconlabel_nonet->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+        }
+        else
+        {
+           ui.iconlabel_netUdp->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
+           
+           ui.iconlabel_netServer->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+           ui.iconlabel_netLimited->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+           ui.iconlabel_nonet->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+        }
+      }
+      else if (config.netOk)
+      {
+          ui.iconlabel_netLimited->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
+          
+          ui.iconlabel_netUdp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+          ui.iconlabel_netServer->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+          ui.iconlabel_nonet->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+      }
+      else
+      {
+          ui.iconlabel_nonet->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
+          
+          ui.iconlabel_netUdp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+          ui.iconlabel_netServer->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+          ui.iconlabel_netLimited->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+      }
+      
+      //ui.check_net->setChecked(config.netOk);
+      /*ui.check_upnp->setChecked(config.netUpnpOk);
       ui.check_dht->setChecked(config.netDhtOk);
       ui.check_ext->setChecked(config.netExtOk);
       ui.check_udp->setChecked(config.netUdpOk);
@@ -725,12 +816,12 @@ void NetworkDialog::updateNetworkStatus()
       else
       {
         ui.radio_nonet->setChecked(true);
-      }
+      }*/
 		
     rsiface->unlockData(); /* UnLock Interface */
 }
 
-void NetworkDialog::load()
+/*void NetworkDialog::load()
 {
   //ui.check_net->setCheckable(true);
 	ui.check_upnp->setCheckable(true);
@@ -750,7 +841,7 @@ void NetworkDialog::load()
 	ui.radio_netLimited->setEnabled(false);
 	ui.radio_netUdp->setEnabled(false);
 	ui.radio_netServer->setEnabled(false);
-}
+}*/
 
 void NetworkDialog::on_actionTabsright_activated()
 {

@@ -46,7 +46,7 @@ public:
 
   void  showpeerdetails(std::string id);
 
-  void load();
+  //void load();
   
 public slots:
   void  insertConnect();
