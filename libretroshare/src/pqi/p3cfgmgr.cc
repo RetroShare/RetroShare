@@ -152,7 +152,7 @@ void	p3ConfigMgr::saveConfiguration()
 	BinMemInterface *membio = new BinMemInterface(1000, bioflags);
 	RsSerialiser *rss = new RsSerialiser();
 	rss->addSerialType(new RsGeneralConfigSerialiser());
-	pqistore store(rss, "CONFIG", membio, 0);
+	pqistore store(rss, "CONFIG", membio, BIN_FLAGS_WRITEABLE);
 
 	store.SendItem(item);
 
@@ -170,7 +170,7 @@ void	p3ConfigMgr::saveConfiguration()
 	if (!membio->writetofile(filename2.c_str()))
 	{
 #ifdef CONFIG_DEBUG 
-		std::cerr << "p3ConfigMgr::saveConfiguration() Failed to Write MetaFile";
+		std::cerr << "p3ConfigMgr::saveConfiguration() Failed to Write MetaFile " << filename2 ;
 		std::cerr << std::endl;
 #endif
 	}
@@ -183,7 +183,7 @@ void	p3ConfigMgr::saveConfiguration()
 	if (!signbio->writetofile(filename1.c_str()))
 	{
 #ifdef CONFIG_DEBUG 
-		std::cerr << "p3ConfigMgr::saveConfiguration() Failed to Write MetaSignFile";
+		std::cerr << "p3ConfigMgr::saveConfiguration() Failed to Write MetaSignFile" << filename1 ;
 		std::cerr << std::endl;
 #endif
 	}
@@ -259,7 +259,8 @@ void	p3ConfigMgr::loadConfiguration()
 		std::cerr << "p3ConfigMgr::loadConfiguration() Failed to Load MetaFile";
 		std::cerr << std::endl;
 #endif
-		delete membio;
+//		delete membio;
+//		return ;
 	}
 
 	/* get signature */
