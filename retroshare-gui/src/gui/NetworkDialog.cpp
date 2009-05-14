@@ -651,20 +651,20 @@ void NetworkDialog::getNetworkStatus()
     
     if(config.netUdpOk)
     {
-      setLogInfo(tr("UDP Port is reachable"), QString::fromUtf8("green"));
+      setLogInfo(tr("UDP Port is active (UDP Connections)"), QString::fromUtf8("green"));
     }
     else
     {
-      setLogInfo(tr("UDP Port is not reachable"), QString::fromUtf8("red"));
+      setLogInfo(tr("UDP Port is not active"), QString::fromUtf8("red"));
     }
     
     if(config.netTcpOk)
     {
-      setLogInfo(tr("TCP Port is reachable"), QString::fromUtf8("green"));
+      setLogInfo(tr("TCP Port is active (TCP Server)"), QString::fromUtf8("green"));
     }
     else
     {
-      setLogInfo(tr("TCP Port is not reachable"), QString::fromUtf8("red"));
+      setLogInfo(tr("TCP Port is not active"), QString::fromUtf8("red"));
     }
 
     if (config.netExtOk)
@@ -736,23 +736,23 @@ void NetworkDialog::updateNetworkStatus()
       if(config.netUdpOk)
       {
          ui.iconlabel_udp->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
-         ui.textlabel_udp->setText(tr("UDP Port is reachable"));
+         ui.textlabel_udp->setText(tr("UDP Port is active ( UDP Connections )"));
       }
       else
       {    
          ui.iconlabel_udp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
-         ui.textlabel_udp->setText(tr("UDP Port is not reachable"));
+         ui.textlabel_udp->setText(tr("UDP Port is not active"));
       }
       
       if(config.netTcpOk)
       {
          ui.iconlabel_tcp->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
-         ui.textlabel_tcp->setText(tr("TCP Port is reachable"));
+         ui.textlabel_tcp->setText(tr("TCP Port is active (TCP Server)"));
       }
       else
       {    
          ui.iconlabel_tcp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
-         ui.textlabel_tcp->setText(tr("TCP Port is not reachable"));
+         ui.textlabel_tcp->setText(tr("TCP Port is not active"));
       }
       
       if (config.netExtOk)

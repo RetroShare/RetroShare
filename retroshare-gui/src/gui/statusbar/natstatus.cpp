@@ -119,12 +119,12 @@ void NATStatus::getNATStatus()
       if (config.netUpnpOk || config.netTcpOk)
       {
         iconLabel->setPixmap(QPixmap::QPixmap(":/images/greenled.png"));
-        iconLabel->setToolTip(tr("RetroShare Server"));
+        iconLabel->setToolTip(tr("OK | RetroShare Server"));
       }
       else
       {
         iconLabel->setPixmap(QPixmap::QPixmap(":/images/greenled.png"));
-        iconLabel->setToolTip(tr("UDP Server"));      
+        iconLabel->setToolTip(tr("OK | UDP Server"));      
       }
     }
     else if (config.netOk)
