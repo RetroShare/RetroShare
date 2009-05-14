@@ -69,7 +69,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   loadEmoticons();
   
   last_status_send_time = 0 ;
-  styleHtm = appDir + "/style/chat/default.htm";
+  styleHtm = ":/qss/chat/default.htm";
   
   /* Hide Avatar frame */
   showAvatarFrame(false);
@@ -159,9 +159,9 @@ void PopupChatDialog::updateStatusTyping()
 //
 void PopupChatDialog::updateStatusString(const QString& status_string)
 {
-	statusBar()->showMessage(status_string,2000) ; // displays info for 5 secs.
+	statusBar()->showMessage(status_string,5000) ; // displays info for 5 secs.
 
-	QTimer::singleShot(2000,this,SLOT(resetStatusBar())) ;
+	QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
 }
 
 
@@ -309,6 +309,7 @@ std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() <<
 	   std::cerr << "received msg saying an avatar for peer " << ci->rsid << " is available." << std::endl ;
 	   updatePeerAvatar(ci->rsid) ;
 	}
+	resetStatusBar() ;
 }
 
 void PopupChatDialog::checkChat()
