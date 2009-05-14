@@ -255,13 +255,19 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
         QString name = QString::fromStdString(ci ->name);        
         QString message = QString::fromStdWString(ci -> msg);
 
-	//replace url by a link
-	//first, avoid DTD link taht stands at the beginning of the string
-	QString messageSubString = message.mid(110, -1);
 	//replace http:// and www. with <a href> links
-	messageSubString.replace(QRegExp("(http://[^ <]*)|(www\\.[^ <]*)"), "<a href=\"\\1\\2\">\\1\\2</a>");
-	//rebuild the full message
-	message = message.left(109) + messageSubString;
+	QRegExp rx("(http://[^ <>]*)|(www\\.[^ <>]*)");
+	int count = 0;
+	int pos = 100; //ignor the first 100 charater because of the standard DTD ref
+	while ( (pos = rx.indexIn(message, pos)) != -1 ) {
+	    count ++;
+	    //we need to look ahead to see if it's already a well formed link
+	    if (message.mid(pos - 6, 6) != "href=\"" && message.mid(pos - 6, 6) != "href='" && message.mid(pos - 6, 6) != "ttp://" ) {
+		QString tempMessg = message.left(pos) + "<a href=\"" + rx.cap(count) + "\">" + rx.cap(count) + "</a>" + message.mid(pos + rx.matchedLength(), -1);
+		message = tempMessg;
+	    }
+	    pos += rx.matchedLength() + 15;
+	}
 
 #ifdef CHAT_DEBUG
 std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() << std::endl;
@@ -738,6 +744,14 @@ void PopupChatDialog::fileHashingFinished(SubFileItem* file) {
 	std::cerr << "PopupChatDialog::fileHashingFinished() started.";
 	std::cerr << std::endl;
 
+	//check that the file is ok tos end
+	if (file->getState() == SFI_STATE_ERROR) {
+	#ifdef CHAT_DEBUG
+		    std::cerr << "PopupChatDialog::fileHashingFinished error file is not hashed.";
+	#endif
+	    return;
+	}
+
 	ChatInfo ci;
 
 
@@ -758,25 +772,23 @@ void PopupChatDialog::fileHashingFinished(SubFileItem* file) {
 
 	std::string mesgString = "<a href='file:?fileHash=" + (file->FileHash()) + "&fileName=" + (file->FileName()) + "&fileSize=" + fileSize + "'>" + (file->FileName()) + "</a>";
 #ifdef CHAT_DEBUG
-		std::cerr << "PopupChatDialog::anchorClicked mesgString : " << mesgString << std::endl;
+	    std::cerr << "PopupChatDialog::anchorClicked mesgString : " << mesgString << std::endl;
 #endif
 
 	const char * messageString = mesgString.c_str ();
 
 	//convert char massageString to w_char
 	wchar_t* message;
-	    int requiredSize = mbstowcs(NULL, messageString, 0); // C4996
-	    /* Add one to leave room for the NULL terminator */
-	    message = (wchar_t *)malloc( (requiredSize + 1) * sizeof( wchar_t ));
-	    if (! message)
-	    {
-		std::cerr << ("Memory allocation failure.\n");
-	    }
-	    int size = mbstowcs( message, messageString, requiredSize + 1); // C4996
-	    if (size == (size_t) (-1))
-	    {
-	       printf("Couldn't convert string--invalid multibyte character.\n");
-	    }
+	int requiredSize = mbstowcs(NULL, messageString, 0); // C4996
+	/* Add one to leave room for the NULL terminator */
+	message = (wchar_t *)malloc( (requiredSize + 1) * sizeof( wchar_t ));
+	if (! message) {
+	    std::cerr << ("Memory allocation failure.\n");
+	}
+	int size = mbstowcs( message, messageString, requiredSize + 1); // C4996
+	if (size == (size_t) (-1)) {
+	   printf("Couldn't convert string--invalid multibyte character.\n");
+	}
 
 	ci.msg = message;
 	ci.chatflags = RS_CHAT_PRIVATE;
@@ -869,7 +881,7 @@ void PopupChatDialog::dropEvent(QDropEvent *event)
 				//Check that the file does exist and is not a directory
 				if ((-1 == stat(localpath.c_str(), &buf))) {
 				    std::cerr << "PopupChatDialog::dropEvent() file does not exists."<< std::endl;
-				    QMessageBox mb(tr("Drop file error."), tr("The dropped does not exist."),QMessageBox::Information,QMessageBox::Ok,0,0);
+				    QMessageBox mb(tr("Drop file error."), tr("File not found or file name not accepted."),QMessageBox::Information,QMessageBox::Ok,0,0);
 				    mb.setButtonText( QMessageBox::Ok, "OK" );
 				    mb.exec();
 				} else if (S_ISDIR(buf.st_mode)) {
