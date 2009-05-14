@@ -562,6 +562,9 @@ void SubFileItem::cancel()
 	std::cerr << "SubFileItem::cancel()";
 	std::cerr << std::endl;
 #endif
+	//set the state to error mode
+	mMode = SFI_STATE_ERROR;
+
 	/* Only occurs - if it is downloading */
 	if (mType == SFI_TYPE_ATTACH)
 	{
