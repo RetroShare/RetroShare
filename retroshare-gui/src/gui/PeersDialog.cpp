@@ -643,9 +643,9 @@ void PeersDialog::configurefriend()
 void PeersDialog::updatePeerStatusString(const QString& peer_id,const QString& status_string)
 {
 	RshareSettings settings;
-	uint chatflags = settings.getChatFlags();
+//	uint chatflags = settings.getChatFlags();
 
-	PopupChatDialog *pcd = getPrivateChat(peer_id.toStdString(),rsPeers->getPeerName(peer_id.toStdString()), chatflags);
+	PopupChatDialog *pcd = getPrivateChat(peer_id.toStdString(),rsPeers->getPeerName(peer_id.toStdString()), 0);
 	pcd->updateStatusString(status_string);
 }
 
@@ -653,7 +653,7 @@ void PeersDialog::insertChat()
 {
 	if (!rsMsgs->chatAvailable())
 	{
-		std::cerr << "no chat available." << std::endl ;
+//		std::cerr << "no chat available." << std::endl ;
 		return;
 	}
 
