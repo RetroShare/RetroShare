@@ -1508,17 +1508,17 @@ Do you want to save message ?</source>
 <context>
     <name>ConfCertDialog</name>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="808"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="805"/>
         <source>Cancel</source>
         <translation type="unfinished">Anuluj</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="657"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="654"/>
         <source>Port:</source>
         <translation type="unfinished">Port:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="721"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="718"/>
         <source>Trust Settings</source>
         <translation type="unfinished">Zaufane ustawienia</translation>
     </message>
@@ -1540,86 +1540,91 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="812"/>
         <source>OK</source>
-        <translation type="obsolete">Ok</translation>
+        <translation type="unfinished">Ok</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="527"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="524"/>
         <source>Peer Info</source>
         <translation type="unfinished">Info Peera</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="521"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="515"/>
         <source>Details</source>
         <translation type="unfinished">Detale</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="606"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="603"/>
         <source>Peer Address</source>
         <translation type="unfinished">Adres Peera</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="533"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="530"/>
         <source>Name:</source>
         <translation type="unfinished">Nazwa:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="589"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="586"/>
         <source>Last Contact</source>
         <translation type="unfinished">Ostatni kontakt</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="547"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="544"/>
         <source>Org / Loc:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="561"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="558"/>
         <source>Country/State:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="575"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="572"/>
         <source>Peer ID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="619"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="616"/>
         <source>Local Address:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="629"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="626"/>
         <source>External Address:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="730"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="727"/>
         <source>Sign this certificate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="737"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="734"/>
         <source>Accept connexions from this peer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="747"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="744"/>
         <source>Peer has signed my certficate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="757"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="754"/>
         <source>Certificate signers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="769"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="766"/>
         <source>Make friend (Sign certificate and accept)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="815"/>
-        <source>Apply and close</source>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="51"/>
+        <source>Apply and Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="712"/>
+        <source>Trust </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3129,6 +3134,25 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/elastic/graphwidget.cpp" line="72"/>
         <source>Elastic Nodes</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GroupChatToaster</name>
+    <message>
+        <location filename="../gui/toaster/GroupChatToaster.ui" line="144"/>
+        <source>border-image: url(:/images/avatar_background.png);</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/toaster/GroupChatToaster.ui" line="179"/>
+        <source>color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #49881F, stop: 1 #49881F );</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/toaster/GroupChatToaster.ui" line="183"/>
+        <source>New GroupChat Message</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4884,16 +4908,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/statusbar/natstatus.cpp" line="122"/>
-        <source>RetroShare Server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/statusbar/natstatus.cpp" line="127"/>
-        <source>UDP Server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../gui/statusbar/natstatus.cpp" line="133"/>
         <source>Net Limited</source>
         <translation type="unfinished"></translation>
@@ -4901,6 +4915,16 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/statusbar/natstatus.cpp" line="138"/>
         <source>No Conectivity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/statusbar/natstatus.cpp" line="122"/>
+        <source>OK | RetroShare Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/statusbar/natstatus.cpp" line="127"/>
+        <source>OK | UDP Server</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5105,7 +5129,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="635"/>
+        <location filename="../gui/NetworkDialog.ui" line="448"/>
         <source>DHT OK</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5115,7 +5139,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="645"/>
+        <location filename="../gui/NetworkDialog.ui" line="421"/>
         <source>Stable External IP Address</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5125,27 +5149,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="654"/>
-        <source>UDP Port is reachable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/NetworkDialog.cpp" line="658"/>
-        <source>UDP Port is not reachable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/NetworkDialog.cpp" line="663"/>
-        <source>TCP Port is reachable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/NetworkDialog.cpp" line="667"/>
-        <source>TCP Port is not reachable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/NetworkDialog.cpp" line="674"/>
+        <location filename="../gui/NetworkDialog.ui" line="363"/>
         <source>RetroShare Server</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5160,7 +5164,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="266"/>
+        <location filename="../gui/NetworkDialog.cpp" line="687"/>
         <source>No Conectivity</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5195,78 +5199,123 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="273"/>
+        <location filename="../gui/NetworkDialog.ui" line="309"/>
         <source>Limited</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="280"/>
-        <source>Udp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/NetworkDialog.ui" line="287"/>
-        <source>Retroshare Server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/NetworkDialog.ui" line="298"/>
+        <location filename="../gui/NetworkDialog.ui" line="394"/>
         <source>UDP Connections</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="308"/>
-        <source>Stable External IP Addrress</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/NetworkDialog.ui" line="318"/>
-        <source>DHT Okay</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/NetworkDialog.ui" line="328"/>
+        <location filename="../gui/NetworkDialog.ui" line="475"/>
         <source>UPnP Active</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="338"/>
-        <source>TCP server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/NetworkDialog.ui" line="360"/>
+        <location filename="../gui/NetworkDialog.ui" line="521"/>
         <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="365"/>
+        <location filename="../gui/NetworkDialog.ui" line="526"/>
         <source>Set Tabs Right</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="370"/>
+        <location filename="../gui/NetworkDialog.ui" line="531"/>
         <source>Set Tabs North</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="375"/>
+        <location filename="../gui/NetworkDialog.ui" line="536"/>
         <source>Set Tabs South</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="380"/>
+        <location filename="../gui/NetworkDialog.ui" line="541"/>
         <source>Set Tabs Left</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="385"/>
+        <location filename="../gui/NetworkDialog.ui" line="546"/>
         <source>Set Tabs Rounded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="390"/>
+        <location filename="../gui/NetworkDialog.ui" line="551"/>
         <source>Set Tabs Triangular</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="654"/>
+        <source>UDP Port is active (UDP Connections)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="744"/>
+        <source>UDP Port is not active</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="750"/>
+        <source>TCP Port is active (TCP Server)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="755"/>
+        <source>TCP Port is not active</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="706"/>
+        <source>UPnP active</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="711"/>
+        <source>UPnP inactive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="717"/>
+        <source>DHT active</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="722"/>
+        <source>DHT inactive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="728"/>
+        <source>Stabile External IP Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="733"/>
+        <source>Not Found External IP Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="739"/>
+        <source>UDP Port is active ( UDP Connections )</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.ui" line="282"/>
+        <source>No Connectivity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.ui" line="336"/>
+        <source>UDP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.ui" line="502"/>
+        <source>TCP Server</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5297,12 +5346,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NetworkView</name>
     <message>
-        <location filename="../gui/NetworkView.cpp" line="251"/>
+        <location filename="../gui/NetworkView.cpp" line="267"/>
         <source>Hide Settings</source>
         <translation type="unfinished">Ukryj ustawienia</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkView.cpp" line="255"/>
+        <location filename="../gui/NetworkView.cpp" line="271"/>
         <source>Show Settings</source>
         <translation type="unfinished">Pokaż ustawienia</translation>
     </message>
@@ -6068,42 +6117,42 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PopupChatDialog</name>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="342"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="367"/>
         <source>Hide Avatar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="343"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="368"/>
         <source>:images/hide_toolbox_frame.png</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="347"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="372"/>
         <source>Show Avatar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="348"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="373"/>
         <source>:images/show_toolbox_frame.png</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="589"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="614"/>
         <source>Open Style</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="591"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="616"/>
         <source>Styles (*.htm)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="478"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="494"/>
         <source>Send</source>
         <translation type="unfinished">Wyślij</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="93"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="102"/>
         <source> RetroShare - Encrypted Chat</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6129,17 +6178,17 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="507"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="526"/>
         <source>Bold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="517"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="536"/>
         <source>Underline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="512"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="531"/>
         <source>Italic</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6154,23 +6203,73 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="489"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="508"/>
         <source>toolBar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="522"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="541"/>
         <source>Strike</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="530"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="549"/>
         <source>Avatar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="533"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="552"/>
         <source>Set your Avatar Picture</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="146"/>
+        <source>Chatting with </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="709"/>
+        <source>Add Extra File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="811"/>
+        <source>File Request Confirmation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="811"/>
+        <source>The file has been added to your download list.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="815"/>
+        <source>File Request Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="815"/>
+        <source>The file link is malformed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="877"/>
+        <source>Drop file error.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="872"/>
+        <source>The dropped does not exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="877"/>
+        <source>Directory can&apos;t be dropped, only files are accepted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="462"/>
+        <source>Add a File for your Friend</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6584,43 +6683,38 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RemoteDirModel</name>
     <message>
-        <location filename="../rsiface/RemoteDirModel.cpp" line="497"/>
+        <location filename="../rsiface/RemoteDirModel.cpp" line="490"/>
         <source>Friends Directories</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rsiface/RemoteDirModel.cpp" line="501"/>
+        <location filename="../rsiface/RemoteDirModel.cpp" line="494"/>
         <source>My Directories</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rsiface/RemoteDirModel.cpp" line="505"/>
+        <location filename="../rsiface/RemoteDirModel.cpp" line="498"/>
         <source>Size</source>
         <translation type="unfinished">Rozmiar</translation>
     </message>
     <message>
-        <location filename="../rsiface/RemoteDirModel.cpp" line="508"/>
+        <location filename="../rsiface/RemoteDirModel.cpp" line="501"/>
         <source>Rank</source>
         <translation type="unfinished">Rząd</translation>
     </message>
     <message>
-        <location filename="../rsiface/RemoteDirModel.cpp" line="511"/>
+        <location filename="../rsiface/RemoteDirModel.cpp" line="504"/>
         <source>Age</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rsiface/RemoteDirModel.cpp" line="427"/>
+        <location filename="../rsiface/RemoteDirModel.cpp" line="420"/>
         <source>FILE</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rsiface/RemoteDirModel.cpp" line="452"/>
+        <location filename="../rsiface/RemoteDirModel.cpp" line="445"/>
         <source>DIR</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rsiface/RemoteDirModel.cpp" line="514"/>
-        <source>Hash</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6900,82 +6994,82 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ServerDialog</name>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="742"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="754"/>
         <source>Transfer Rates</source>
         <translation type="unfinished">Szybkość przesyłania</translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="653"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="665"/>
         <source>Port:</source>
         <translation type="unfinished">Port:</translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="506"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="518"/>
         <source>Network Configuration (takes effect after restart)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="515"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="527"/>
         <source>Automatic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="520"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="532"/>
         <source>Firewalled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="525"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="537"/>
         <source>Forwarded Port</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="536"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="548"/>
         <source>DHT Enabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="541"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="553"/>
         <source>DHT Disabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="550"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="562"/>
         <source>Discovery Enabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="555"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="567"/>
         <source>Discovery Disabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="599"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="611"/>
         <source>Network Configuration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="609"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="621"/>
         <source>Local Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="616"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="628"/>
         <source>External Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="694"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="706"/>
         <source>IP Service</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="700"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="712"/>
         <source>IP check service</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="706"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="718"/>
         <source>If you unckeck this, RetroShare can only determine your IP 
 when you connect to somebody. Leaving this checked helps 
 connecting when you have few friends. It also helps if you&apos;re 
@@ -6983,17 +7077,17 @@ behind a firewall or a VPN.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="712"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="724"/>
         <source>Allow RetroShare to ask my ip to these websites:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="756"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="777"/>
         <source>Total Rate (KB/s) </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="786"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="816"/>
         <source>Per Person  </source>
         <translation type="unfinished"></translation>
     </message>
