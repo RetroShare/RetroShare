@@ -104,6 +104,8 @@ private slots:
   void getFont();
   void underline(); 
 
+signals:
+  void friendsUpdated() ;
   
 private:
 

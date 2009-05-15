@@ -204,7 +204,7 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       exportfriendAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Export Friend" ), this );
       connect( exportfriendAct , SIGNAL( triggered() ), this, SLOT( exportfriend() ) );
       
-      removefriendAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Remove Friend" ), this );
+      removefriendAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Deny Friend" ), this );
       connect( removefriendAct , SIGNAL( triggered() ), this, SLOT( removefriend() ) );
 
 
@@ -567,6 +567,7 @@ void PeersDialog::removefriend()
 	if (rsPeers)
 	{
 		rsPeers->removeFriend(getPeerRsCertId(c));
+		emit friendsUpdated() ;
 	}
 }
 
