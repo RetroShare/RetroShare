@@ -692,7 +692,7 @@ void PopupChatDialog::getAvatar()
 
 	if(!fileName.isEmpty())
 	{
-		picture = QPixmap(fileName).scaled(82,82, Qt::IgnoreAspectRatio);
+		picture = QPixmap(fileName).scaled(82,82, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
 
 		std::cerr << "Sending avatar image down the pipe" << std::endl ;
 
