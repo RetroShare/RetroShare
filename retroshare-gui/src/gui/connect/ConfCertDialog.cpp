@@ -48,7 +48,7 @@ ConfCertDialog::ConfCertDialog(QWidget *parent, Qt::WFlags flags)
   connect(ui._makeFriendPB, SIGNAL(clicked()), this, SLOT(makeFriend()));
 
  
-  //setFixedSize(QSize(434, 462));
+  ui.applyButton->setToolTip(tr("Apply and Close"));
 }
 
 void ConfCertDialog::show(const std::string& peer_id)
