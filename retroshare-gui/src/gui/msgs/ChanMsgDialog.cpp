@@ -427,53 +427,40 @@ RsCertId getSenderRsCertId(QTreeWidgetItem *i)
 
 
 	/* get the list of peers from the RsIface.  */
-void  ChanMsgDialog::insertFileList()
+void  ChanMsgDialog::insertFileList(const std::list<DirDetails>& files_info)
 {
-	rsiface->lockData();   /* Lock Interface */
+//	rsiface->lockData();   /* Lock Interface */
 
+	_recList.clear() ;
 
-        const std::list<FileInfo> &recList = rsiface->getRecommendList();
-	std::list<FileInfo>::const_iterator it;
+//	const std::list<FileInfo> &recList = rsiface->getRecommendList();
+	std::list<DirDetails>::const_iterator it;
 
 	/* get a link to the table */
 	QTreeWidget *tree = ui.msgFileList;
 
-        tree->clear(); 
-        tree->setColumnCount(5); 
+	tree->clear(); 
+	tree->setColumnCount(5); 
 
-        QList<QTreeWidgetItem *> items;
-	for(it = recList.begin(); it != recList.end(); it++)
+	QList<QTreeWidgetItem *> items;
+	for(it = files_info.begin(); it != files_info.end(); it++)
 	{
-		/* make a widget per person */
-           	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
-		/* (0) Filename */
-		item -> setText(0, QString::fromStdString(it->fname));
-			
-		/* (1) Size */
-		{
-			std::ostringstream out;
-			out << it->size;
-			item -> setText(1, QString::fromStdString(out.str()));
-		}
-		/* (2) Rank */
-		{
-			std::ostringstream out;
-			out << it->rank;
-			item -> setText(2, QString::fromStdString(out.str()));
-		}
-			
-		item -> setText(3, QString::fromStdString(it->hash));
-			
-		item -> setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+		FileInfo info ;
+		info.fname = it->name ;
+		info.hash = it->hash ;
+		info.rank = it->rank ;
+		info.size = it->count ;
+		_recList.push_back(info) ;
 
-		if (it -> inRecommend)
-		{
-			item -> setCheckState(0, Qt::Checked);
-		}
-		else
-		{
-			item -> setCheckState(0, Qt::Unchecked);
-		}
+		/* make a widget per person */
+		QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
+
+		item->setText(0, QString::fromStdString(it->name));			/* (0) Filename */
+		item->setText(1, QString::number(it->count));			 		/* (1) Size */
+		item->setText(2, QString::number(it->rank));
+		item->setText(3, QString::fromStdString(it->hash));
+		item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+		item->setCheckState(0, Qt::Checked);
 
 		/* add to the list */
 		items.append(item);
@@ -482,7 +469,7 @@ void  ChanMsgDialog::insertFileList()
 	/* add the items in! */
 	tree->insertTopLevelItems(0, items);
 
-	rsiface->unlockData(); /* UnLock Interface */
+//	rsiface->unlockData(); /* UnLock Interface */
 
 	tree->update(); /* update display */
 }
@@ -504,7 +491,7 @@ void  ChanMsgDialog::newMsg()
 		insertChannelSendList();
 	}
 
-	insertFileList();
+//	insertFileList(std::list<DirDetails>());
 }
 
 void  ChanMsgDialog::insertTitleText(std::string title)
@@ -538,8 +525,6 @@ void  ChanMsgDialog::insertMsgText(std::string msg)
 
 void  ChanMsgDialog::sendMessage()
 {
-
-
 	/* construct a message */
 	MessageInfo mi;
 
@@ -549,15 +534,10 @@ void  ChanMsgDialog::sendMessage()
 
 	rsiface->lockData();   /* Lock Interface */
 
-        const std::list<FileInfo> &recList = rsiface->getRecommendList();
-	std::list<FileInfo>::const_iterator it;
-	for(it = recList.begin(); it != recList.end(); it++)
-	{
+//	const std::list<FileInfo>& recList = rsiface->getRecommendList();
+	for(std::list<FileInfo>::const_iterator it(_recList.begin()); it != _recList.end(); ++it)
 		if (it -> inRecommend)
-		{
 			mi.files.push_back(*it);
-		}
-	}
 
 	rsiface->unlockData(); /* UnLock Interface */
 

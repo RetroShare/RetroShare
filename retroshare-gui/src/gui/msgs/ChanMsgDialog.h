@@ -29,6 +29,7 @@
 #include <gui/Preferences/rsharesettings.h>
 
 #include "ui_ChanMsgDialog.h"
+#include "rsiface/rsfiles.h"
 
 class QAction;
 class QComboBox;
@@ -51,7 +52,7 @@ void  newMsg();
 	/* worker fns */
 void  insertSendList(); /* for Msgs */
 void  insertChannelSendList(); /* for Channels */
-void  insertFileList(); /* for Both */
+void  insertFileList(const std::list<DirDetails>&); /* for Both */
 void  insertTitleText(std::string title);
 void  insertPastedText(std::string msg) ;
 void  insertForwardPastedText(std::string msg);
@@ -160,6 +161,7 @@ private:
   /** Qt Designer generated object */
   Ui::ChanMsgDialog ui;
 
+  std::list<FileInfo> _recList ;
 };
 
 #endif

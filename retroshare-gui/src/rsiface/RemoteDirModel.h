@@ -5,6 +5,7 @@
 #include <vector>
 #include <list>
 #include <string>
+#include <rsiface/rsfiles.h>
 #include "util/misc.h"
 
 class RemoteDirModel : public QAbstractItemModel
@@ -41,10 +42,11 @@ public:
      bool isDir ( const QModelIndex & index ) const ;
      //void openFile(QModelIndex fileIndex, const QString command);
 
-#if 0  /****** REMOVED ******/
-     void recommendSelected(QModelIndexList list);
-     void recommendSelectedOnly(QModelIndexList list);
-#endif 
+//#if 0  /****** REMOVED ******/
+//     void recommendSelected(QModelIndexList list);
+//     void recommendSelectedOnly(QModelIndexList list);
+//#endif 
+		void getFileInfoFromIndexList(const QModelIndexList& list, std::list<DirDetails>& files_info) ;
 
      void openSelected(QModelIndexList list);
 

@@ -79,7 +79,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   connect(ui.actionPrintPreview, SIGNAL(triggered()), this, SLOT(printpreview()));
 
   connect(ui.expandFilesButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
-  connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getallrecommended()));
+  connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getcurrentrecommended()));
   
 
   mCurrCertId = "";
@@ -87,6 +87,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   
   /* hide the Tree +/- */
   ui.msgList->setRootIsDecorated( false );
+  ui.msgList->setSelectionMode( QAbstractItemView::ExtendedSelection );
   ui.msgWidget->setRootIsDecorated( false );
   
   /* Set header resize modes and initial section sizes */
@@ -197,16 +198,16 @@ void MessagesDialog::msgfilelistWidgetCostumPopupMenu( QPoint point )
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
-//      getRecAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), this );
-//      connect( getRecAct , SIGNAL( triggered() ), this, SLOT( getcurrentrecommended() ) );
+      getRecAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), this );
+      connect( getRecAct , SIGNAL( triggered() ), this, SLOT( getcurrentrecommended() ) );
       
-      getAllRecAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr( "Download All" ), this );
-      connect( getAllRecAct , SIGNAL( triggered() ), this, SLOT( getallrecommended() ) );
+//     getAllRecAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr( "Download" ), this );
+//     connect( getAllRecAct , SIGNAL( triggered() ), this, SLOT( getallrecommended() ) );
 
 
       contextMnu.clear();
-//      contextMnu.addAction( getRecAct);
-      contextMnu.addAction( getAllRecAct);
+      contextMnu.addAction( getRecAct);
+//      contextMnu.addAction( getAllRecAct);
       contextMnu.exec( mevent->globalPos() );
 }
 
@@ -405,10 +406,38 @@ void MessagesDialog::togglefileview()
 /* download the recommendations... */
 void MessagesDialog::getcurrentrecommended()
 {
-   
+	MessageInfo msgInfo;
+	if (!rsMsgs -> getMessage(mCurrMsgId, msgInfo))
+		return;
 
+	std::list<std::string> srcIds;
+	srcIds.push_back(msgInfo.srcId);
+
+	QModelIndexList list	= ui.msgList->selectionModel()->selectedIndexes();
+
+	std::map<int,FileInfo> files ;
+
+	for(QModelIndexList::const_iterator it(list.begin());it!=list.end();++it)
+	{
+		FileInfo& f(files[it->row()]) ;
+
+		switch(it->column())
+		{
+			case 0: f.fname = it->data().toString().toStdString() ;
+					  break ;
+			case 1: f.size = it->data().toString().toInt() ;
+					  break ;
+			case 3: f.hash = it->data().toString().toStdString() ;
+					  break ;
+			default: ;
+		}
+	}
+
+	for(std::map<int,FileInfo>::const_iterator it(files.begin());it!=files.end();++it)
+		rsFiles -> FileRequest(it->second.fname,it->second.hash,it->second.size, "", 0, srcIds);
 }
 
+#if 0
 void MessagesDialog::getallrecommended()
 {
 	/* get Message */
@@ -437,8 +466,7 @@ void MessagesDialog::getallrecommended()
 	std::list<std::string>::const_iterator hit;
 	std::list<int>::const_iterator sit;
 
-	for(fit = fnames.begin(), hit = hashes.begin(), sit = sizes.begin(); 
-		fit != fnames.end(); fit++, hit++, sit++)
+	for(fit = fnames.begin(), hit = hashes.begin(), sit = sizes.begin(); fit != fnames.end(); fit++, hit++, sit++)
 	{
 		std::cerr << "MessagesDialog::getallrecommended() Calling File Request";
 		std::cerr << std::endl;
@@ -447,6 +475,7 @@ void MessagesDialog::getallrecommended()
         	rsFiles -> FileRequest(*fit, *hit, *sit, "", 0, srcIds);
 	}
 }
+#endif
 
 void MessagesDialog::changeBox(int)
 {
@@ -687,20 +716,9 @@ void MessagesDialog::insertMsgTxtAndFiles()
 		item -> setText(0, QString::fromStdString(it->fname));
 		//std::cerr << "Msg FileItem(" << it->fname.length() << ") :" << it->fname << std::endl;
 
-		/* (1) Size */
-		{
-			std::ostringstream out;
-			out << it->size;
-			item -> setText(1, QString::fromStdString(out.str()));
-		}
-		/* (2) Rank */
-		{
-			std::ostringstream out;
-			out << it->rank;
-			item -> setText(2, QString::fromStdString(out.str()));
-		}
-
-		item -> setText(3, QString::fromStdString(it->hash));
+		item -> setText(1, QString::number(it->size)); /* (1) Size */
+		item -> setText(2, QString::number(0)); 			/* (2) Rank */ // what is this ???
+		item -> setText(3, QString::fromStdString(it->hash)); 
 
 		/* add to the list */
 		items.append(item);

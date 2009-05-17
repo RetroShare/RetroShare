@@ -61,7 +61,7 @@ private slots:
   void removemessage();
   
   void getcurrentrecommended();
-  void getallrecommended();
+//  void getallrecommended();
 
   /* handle splitter */
   void togglefileview();

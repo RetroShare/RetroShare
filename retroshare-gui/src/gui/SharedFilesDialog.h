@@ -70,8 +70,8 @@ private slots:
   void openfolder();
 
 //  void recommendFileSetOnly();
-//  void recommendFilesTo( std::string rsid );
-//  void recommendFilesToMsg( std::string rsid );
+  void recommendFilesTo( std::string rsid );
+  void recommendFilesToMsg( std::string rsid );
   void runCommandForFile();
   void tryToAddNewAssotiation();
 

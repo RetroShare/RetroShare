@@ -251,97 +251,103 @@ void SharedFilesDialog::playselectedfiles()
 }
 
 
-#if 0
+//#if 0
 
-void SharedFilesDialog::addMsgRemoteSelected()
-{
-  /* call back to the model (which does all the interfacing? */
-
-  std::cerr << "Recommending Files";
-  std::cerr << std::endl;
-
-  QItemSelectionModel *qism = ui.remoteDirTreeView->selectionModel();
-  model -> recommendSelected(qism->selectedIndexes());
-
-
-}
+//void SharedFilesDialog::addMsgRemoteSelected()
+//{
+//  /* call back to the model (which does all the interfacing? */
+//
+//  std::cerr << "Recommending Files";
+//  std::cerr << std::endl;
+//
+//  QItemSelectionModel *qism = ui.remoteDirTreeView->selectionModel();
+//  model -> recommendSelected(qism->selectedIndexes());
+//}
 
 
-void SharedFilesDialog::recommendfile()
-{
-  /* call back to the model (which does all the interfacing? */
-
-  std::cerr << "Recommending Files";
-  std::cerr << std::endl;
-
-  QItemSelectionModel *qism = ui.localDirTreeView->selectionModel();
-  localModel -> recommendSelected(qism->selectedIndexes());
-}
+//void SharedFilesDialog::recommendfile()
+//{
+//  /* call back to the model (which does all the interfacing? */
+//
+//  std::cerr << "Recommending Files";
+//  std::cerr << std::endl;
+//
+//  QItemSelectionModel *qism = ui.localDirTreeView->selectionModel();
+//  localModel -> recommendSelected(qism->selectedIndexes());
+//}
 
 
 
 
-void SharedFilesDialog::recommendFileSetOnly()
-{
-  /* call back to the model (which does all the interfacing? */
-
-  std::cerr << "Recommending File Set (clearing old selection)";
-  std::cerr << std::endl;
-
-  /* clear current recommend Selection done by model */
-
-  QItemSelectionModel *qism = ui.localDirTreeView->selectionModel();
-  localModel -> recommendSelectedOnly(qism->selectedIndexes());
-}
+//void SharedFilesDialog::recommendFileSetOnly()
+//{
+//  /* call back to the model (which does all the interfacing? */
+//
+//  std::cerr << "Recommending File Set (clearing old selection)";
+//  std::cerr << std::endl;
+//
+//  /* clear current recommend Selection done by model */
+//
+//  QItemSelectionModel *qism = ui.localDirTreeView->selectionModel();
+//  localModel -> recommendSelectedOnly(qism->selectedIndexes());
+//}
 
 
 void SharedFilesDialog::recommendFilesTo( std::string rsid )
 {
-  recommendFileSetOnly();
-  rsicontrol -> ClearInMsg();
-  rsicontrol -> SetInMsg(rsid, true);
- 
-  /* create a message */
-  ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+	//  recommendFileSetOnly();
+	//  rsicontrol -> ClearInMsg();
+	//  rsicontrol -> SetInMsg(rsid, true);
 
-  /* fill it in 
-   * files are receommended already
-   * just need to set peers
-   */
-  std::cerr << "SharedFilesDialog::recommendFilesTo()" << std::endl;
-  nMsgDialog->newMsg();
-  nMsgDialog->insertTitleText("Recommendation(s)");
-  nMsgDialog->insertMsgText("Recommendation(s)");
+	std::list<DirDetails> files_info ;
 
-  nMsgDialog->sendMessage();
-  nMsgDialog->close();
+	localModel->getFileInfoFromIndexList(ui.localDirTreeView->selectionModel()->selectedIndexes(),files_info);
+
+	if(files_info.empty())
+		return ;
+
+	/* create a message */
+	ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+
+	/* fill it in 
+	 * files are receommended already
+	 * just need to set peers
+	 */
+
+	nMsgDialog->insertFileList(files_info) ;
+	nMsgDialog->newMsg();
+	nMsgDialog->insertTitleText("Recommendation(s)");
+	nMsgDialog->insertMsgText(rsPeers->getPeerName(rsPeers->getOwnId())+" recommends " + ( (files_info.size()>1)?"a list of files":"a file")+" to you");
+	nMsgDialog->addRecipient(rsid) ;
+
+	nMsgDialog->sendMessage();
+	nMsgDialog->close();
 }
-
-
 
 void SharedFilesDialog::recommendFilesToMsg( std::string rsid )
 {
-  recommendFileSetOnly();
+	std::list<DirDetails> files_info ;
 
-  rsicontrol -> ClearInMsg();
-  rsicontrol -> SetInMsg(rsid, true);
+	localModel->getFileInfoFromIndexList(ui.localDirTreeView->selectionModel()->selectedIndexes(),files_info);
 
-  /* create a message */
-  ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+	if(files_info.empty())
+		return ;
 
-  /* fill it in 
-   * files are receommended already
-   * just need to set peers
-   */
-  std::cerr << "SharedFilesDialog::recommendFilesToMsg()" << std::endl;
-  nMsgDialog->newMsg();
-  nMsgDialog->insertTitleText("Recommendation(s)");
-  nMsgDialog->insertMsgText("Recommendation(s)");
+	/* create a message */
 
-  nMsgDialog->show();
+	ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+
+	nMsgDialog->insertFileList(files_info) ;
+	nMsgDialog->newMsg();
+	nMsgDialog->insertTitleText("Recommendation(s)");
+	nMsgDialog->insertMsgText("Recommendation(s)");
+	nMsgDialog->show();
+
+	std::cout << "recommending to " << rsid << std::endl ;
+	nMsgDialog->addRecipient(rsid) ;
 }
 
-#endif
+//#endif
 
 
 void SharedFilesDialog::openfile()
@@ -385,27 +391,27 @@ void  SharedFilesDialog::postModDirectories(bool update_local)
 
 void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 {
-    //=== at this moment we'll show menu only for files, not for folders
-    QModelIndex midx = ui.localDirTreeView->indexAt(point);
-    if (localModel->isDir( midx ) )
-        return;
+	//=== at this moment we'll show menu only for files, not for folders
+	QModelIndex midx = ui.localDirTreeView->indexAt(point);
+	if (localModel->isDir( midx ) )
+		return;
 
-    currentFile = localModel->data(midx,
-                                   RemoteDirModel::FileNameRole).toString();
+	currentFile = localModel->data(midx,
+			RemoteDirModel::FileNameRole).toString();
 
-    QMenu contextMnu2( this );
-//      
+	QMenu contextMnu2( this );
+	//      
 
-    QAction* menuAction = fileAssotiationAction(currentFile) ;
-    //new QAction(QIcon(IMAGE_PLAY), currentFile, this);
-                                  //tr( "111Play File(s)" ), this );
-//      connect( openfolderAct , SIGNAL( triggered() ), this,
-//               SLOT( playselectedfiles() ) );
+	QAction* menuAction = fileAssotiationAction(currentFile) ;
+	//new QAction(QIcon(IMAGE_PLAY), currentFile, this);
+	//tr( "111Play File(s)" ), this );
+	//      connect( openfolderAct , SIGNAL( triggered() ), this,
+	//               SLOT( playselectedfiles() ) );
 
-#if 0
-      openfileAct = new QAction(QIcon(IMAGE_ATTACHMENT), tr( "Add to Recommend List" ), this );
-      connect( openfileAct , SIGNAL( triggered() ), this, SLOT( recommendfile() ) );
-     
+//	openfileAct = new QAction(QIcon(IMAGE_ATTACHMENT), tr( "Add to Recommend List" ), this );
+//	connect( openfileAct , SIGNAL( triggered() ), this, SLOT( recommendfile() ) );
+
+//	#if 0
 	/* now we're going to ask who to recommend it to...
 	 * First Level.
 	 *
@@ -419,12 +425,12 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 	 *
 	 */
 
-      	QMenu *recMenu = new QMenu( tr("Recommend To "), this );
-      	recMenu->setIcon(QIcon(IMAGE_ATTACHMENT));
-      	QMenu *msgMenu = new QMenu( tr("Message Friend "), &contextMnu2 );
-      	msgMenu->setIcon(QIcon(IMAGE_MSG));
+	QMenu *recMenu = new QMenu( tr("Recommend (Automated message) To "), this );
+	recMenu->setIcon(QIcon(IMAGE_ATTACHMENT));
+	QMenu *msgMenu = new QMenu( tr("Recommend in a message to "), &contextMnu2 );
+	msgMenu->setIcon(QIcon(IMAGE_MSG));
 
-        std::list<std::string> peers;
+	std::list<std::string> peers;
 	std::list<std::string>::iterator it;
 
 	if (!rsPeers)
@@ -432,7 +438,7 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 		/* not ready yet! */
 		return;
 	}
-		
+
 	rsPeers->getFriendList(peers);
 
 	for(it = peers.begin(); it != peers.end(); it++)
@@ -443,33 +449,31 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 		 * 	msgMenu
 		 */
 
-      		RsAction *qaf1 = new RsAction( QIcon(IMAGE_FRIEND), QString::fromStdString( name ), recMenu, *it );
-      		connect( qaf1 , SIGNAL( triggeredId( std::string ) ), this, SLOT( recommendFilesTo( std::string ) ) );
-        	recMenu->addAction(qaf1);
+		RsAction *qaf1 = new RsAction( QIcon(IMAGE_FRIEND), QString::fromStdString( name ), recMenu, *it );
+		connect( qaf1 , SIGNAL( triggeredId( std::string ) ), this, SLOT( recommendFilesTo( std::string ) ) );
+		recMenu->addAction(qaf1);
 
-      		RsAction *qaf2 = new RsAction( QIcon(IMAGE_FRIEND), QString::fromStdString( name ), msgMenu, *it );
-      		connect( qaf2 , SIGNAL( triggeredId( std::string ) ), this, SLOT( recommendFilesToMsg( std::string ) ) );
-        	msgMenu->addAction(qaf2);
+		RsAction *qaf2 = new RsAction( QIcon(IMAGE_FRIEND), QString::fromStdString( name ), msgMenu, *it );
+		connect( qaf2 , SIGNAL( triggeredId( std::string ) ), this, SLOT( recommendFilesToMsg( std::string ) ) );
+		msgMenu->addAction(qaf2);
 
 		/* create list of ids */
 
 	}
-#endif
+	//#endif
 
 
-    contextMnu2.addAction( menuAction );
-        //contextMnu2.addAction( openfileAct);
-        //contextMnu2.addSeparator(); 
-        //contextMnu2.addMenu( recMenu);
-        //contextMnu2.addMenu( msgMenu);
+	contextMnu2.addAction( menuAction );
+	//contextMnu2.addAction( openfileAct);
+	contextMnu2.addSeparator(); 
+	contextMnu2.addMenu( recMenu);
+	contextMnu2.addMenu( msgMenu);
 
 
-    QMouseEvent *mevent2 = new QMouseEvent( QEvent::MouseButtonPress, point,
-                                            Qt::RightButton, Qt::RightButton,
-                                            Qt::NoModifier );
-    contextMnu2.exec( mevent2->globalPos() );
-
-
+	QMouseEvent *mevent2 = new QMouseEvent( QEvent::MouseButtonPress, point,
+			Qt::RightButton, Qt::RightButton,
+			Qt::NoModifier );
+	contextMnu2.exec( mevent2->globalPos() );
 }
 
 //============================================================================

@@ -1,3 +1,4 @@
+#include <set>
 
 #include "RemoteDirModel.h"
 #include "rsfiles.h"
@@ -770,10 +771,10 @@ void RemoteDirModel::downloadSelected(QModelIndexList list)
  *
  */
 
-#if 0
-
-void RemoteDirModel::recommendSelected(QModelIndexList list)
+void RemoteDirModel::getFileInfoFromIndexList(const QModelIndexList& list, std::list<DirDetails>& file_details)
 {
+	file_details.clear() ;
+
 #ifdef RDM_DEBUG
 	std::cerr << "recommendSelected()" << std::endl;
 #endif
@@ -784,27 +785,29 @@ void RemoteDirModel::recommendSelected(QModelIndexList list)
 #endif
 	}
 	/* Fire off requests */
-	QModelIndexList::iterator it;
-	for(it = list.begin(); it != list.end(); it++)
+	
+	std::set<std::string> already_in ;
+
+	for(QModelIndexList::const_iterator it(list.begin()); it != list.end(); ++it)
 	{
 		void *ref = it -> internalPointer();
 
-     		DirDetails details;
-     		uint32_t flags = DIR_FLAGS_DETAILS;
-     		if (RemoteMode)
+		DirDetails details;
+		uint32_t flags = DIR_FLAGS_DETAILS;
+		if (RemoteMode)
 		{
-     			flags |= DIR_FLAGS_REMOTE;
+			flags |= DIR_FLAGS_REMOTE;
 			continue; /* don't recommend remote stuff */
 		}
-     		else
+		else
 		{
-     			flags |= DIR_FLAGS_LOCAL;
+			flags |= DIR_FLAGS_LOCAL;
 		}
 
-     		if (!rsFiles->RequestDirDetails(ref, details, flags))
-     		{
+		if (!rsFiles->RequestDirDetails(ref, details, flags))
+		{
 			continue;
-     		}
+		}
 
 #ifdef RDM_DEBUG
 		std::cerr << "::::::::::::FileRecommend:::: " << std::endl;
@@ -814,14 +817,18 @@ void RemoteDirModel::recommendSelected(QModelIndexList list)
 		std::cerr << "Path: " << details.path << std::endl;
 #endif
 
-		rsFiles -> FileRecommend(details.name, details.hash, details.count);
+		if(already_in.find(details.hash) == already_in.end())
+		{
+			file_details.push_back(details) ;
+			already_in.insert(details.hash) ;
+		}
 	}
 #ifdef RDM_DEBUG
 	std::cerr << "::::::::::::Done FileRecommend" << std::endl;
 #endif
 }
 
-
+#if 0
 void RemoteDirModel::recommendSelectedOnly(QModelIndexList list)
 {
 #ifdef RDM_DEBUG
@@ -873,13 +880,13 @@ void RemoteDirModel::recommendSelectedOnly(QModelIndexList list)
 	std::cerr << "::::::::::::Done FileRecommend" << std::endl;
 #endif
 }
-
 #endif
+
 /****************************************************************************
  * OLD RECOMMEND SYSTEM - DISABLED
  ******/
 
-void RemoteDirModel::openSelected(QModelIndexList list)
+void RemoteDirModel::openSelected(QModelIndexList)
 {
 	//recommendSelected(list);
 }
