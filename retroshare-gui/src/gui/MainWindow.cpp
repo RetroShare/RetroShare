@@ -56,7 +56,7 @@
 #include "statusbar/ratesstatus.h"
 
 #include "Preferences/PreferencesWindow.h"
-#include "Settings/gsettingswin.h"
+//#include "Settings/gsettingswin.h"
 #include "util/rsversion.h"
 
 #include "rsiface/rsiface.h"
@@ -436,14 +436,14 @@ MainWindow::showMess(MainWindow::Page page)
 
 
 /** Shows Options */
-void MainWindow::showSettings()
-{
-    static GSettingsWin *win = new GSettingsWin(this);
-    if (win->isHidden())
-        win->setNewPage(0);
-    win->show();
-    win->activateWindow();
-}
+//void MainWindow::showSettings()
+//{
+//    static GSettingsWin *win = new GSettingsWin(this);
+//    if (win->isHidden())
+//        win->setNewPage(0);
+//    win->show();
+//    win->activateWindow();
+//}
 
 /** Shows Messenger window */
 void MainWindow::showMessengerWindow()

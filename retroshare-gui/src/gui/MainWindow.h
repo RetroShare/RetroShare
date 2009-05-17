@@ -43,7 +43,7 @@
 #endif
 
 #include "Preferences/PreferencesWindow.h"
-#include "Settings/gsettingswin.h"
+//#include "Settings/gsettingswin.h"
 #include "bwgraph/bwgraph.h"
 #include "help/browser/helpbrowser.h"
 #include "games/qbackgammon/bgwindow.h"
@@ -151,7 +151,7 @@ private slots:
     void showPreferencesWindow(PreferencesWindow::Page page = PreferencesWindow::General);
     void showMess(MainWindow::Page page = MainWindow::Messages);
 
-    void showSettings();
+//    void showSettings();
     void setStyle();
     
     /** Called when user attempts to quit via quit button*/
