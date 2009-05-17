@@ -531,7 +531,7 @@ void TransfersDialog::insertTransfers()
 				status = tr("Waiting");
 				break;
 			case FT_STATE_DOWNLOADING:
-				status = tr("Downloading");
+				status = tr("Uploading");
 				break;
 		    	case FT_STATE_COMPLETE: 
 			default:
@@ -540,10 +540,10 @@ void TransfersDialog::insertTransfers()
 		
         	}
 
-		if (info.downloadStatus == FT_STATE_COMPLETE)
-		{
-			status = "Complete";
-		}
+	//	if (info.downloadStatus == FT_STATE_COMPLETE)
+	//	{
+	//		status = "Complete";
+	//	}
         
 		dlspeed  	= pit->tfRate * 1024.0;
 		fileSize 	= info.size;
