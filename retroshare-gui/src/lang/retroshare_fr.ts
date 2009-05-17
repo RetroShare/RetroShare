@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="1.1" language="fr">
+<!DOCTYPE TS>
+<TS version="2.0" language="fr">
 <context>
     <name></name>
     <message>
@@ -1679,7 +1680,7 @@ Do you want to save message ?</source>
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:600; color:#000000;&quot;&gt;<byte value="x9"/><byte value="x9"/>Make Friend&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:600; color:#000000;&quot;&gt;		Make Friend&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1955,7 +1956,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/statusbar/dhtstatus.cpp" line="82"/>
         <source>DHT DOWN</source>
-        <translation></translation>
+        <translation>DHT hors service</translation>
     </message>
 </context>
 <context>
@@ -2036,12 +2037,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/Preferences/DirectoriesDialog.ui" line="607"/>
         <source>Incoming Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Dossier de réception</translation>
     </message>
     <message>
         <location filename="../gui/Preferences/DirectoriesDialog.ui" line="651"/>
         <source>Partials Direcrtory</source>
-        <translation type="unfinished"></translation>
+        <translation>Dossier de fichiers partiels</translation>
     </message>
 </context>
 <context>
@@ -2049,7 +2050,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/Settings/DirectoriesPage.ui" line="526"/>
         <source>Shared Directories</source>
-        <translation type="unfinished">Dossiers partagés</translation>
+        <translation>Dossiers partagés</translation>
     </message>
     <message>
         <location filename="../gui/Settings/DirectoriesPage.ui" line="583"/>
@@ -2064,7 +2065,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/Settings/DirectoriesPage.cpp" line="91"/>
         <source>All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tout fichiers (*)</translation>
     </message>
     <message>
         <location filename="../gui/Settings/DirectoriesPage.cpp" line="117"/>
@@ -2079,12 +2080,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/Settings/DirectoriesPage.ui" line="607"/>
         <source>Incoming Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Dossier de réception</translation>
     </message>
     <message>
         <location filename="../gui/Settings/DirectoriesPage.ui" line="651"/>
         <source>Partials Direcrtory</source>
-        <translation type="unfinished"></translation>
+        <translation>Dossier de fichiers partiels</translation>
     </message>
 </context>
 <context>
@@ -3353,7 +3354,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt; font-weight:600;&quot;&gt;RetroShare is a Open Source cross-platform, private and secure decentralised commmunication platform.<byte value="x9"/>&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt; font-weight:600;&quot;&gt;RetroShare is a Open Source cross-platform, private and secure decentralised commmunication platform.	&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt; font-weight:600;&quot;&gt;It lets you share securely your friends, using a web-of-trust to authenticate peers and OpenSSL to encrypt all communication. &lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt; font-weight:600;&quot;&gt;RetroShare provides filesharing, chat, messages and channels&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt; font-weight:600;&quot;&gt;&lt;/p&gt;
@@ -3367,7 +3368,7 @@ p, li { white-space: pre-wrap; }
 &lt;li align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://www.lunamutt.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Lunamutt Homepage.&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
-    <message encoding="UTF-8">
+    <message utf8="true">
         <location filename="../gui/HelpDialog.ui" line="575"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -3839,44 +3840,44 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;START-CONNECT&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;Connecting to your Friends &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;There are four steps to connecting to a Friend:&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Get Friend&apos;s Certificate<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Load Certificate<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Sign Certificate<byte value="x9"/>&lt;/li&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Get Friend&apos;s Certificate	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Load Certificate	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Sign Certificate	&lt;/li&gt;
 &lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Connect to Friend.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The instructions might initially appear long and daunting, however thesesteps are required to ensure that your sharing is private and secure.These steps are only required a couple of times, to add new friends, and become quite straight forward after the first time.&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (1) EXCHANGE CERTIFICATES &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Before you can connect, you need send your certificate to your friend, and get your friends certificate. Follow these steps to get your certificate:&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on Your Certificate to Select it.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on the &quot;Export Friend&quot; Button to bring up a file save dialog.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select directory to save the certificate to.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Enter desired filename. (with a file type of .pqi), and Click OK.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Email this File to your Friend. (It is recommended you put the<byte value="x9"/>certificate in a zip file before sending, as some email programs<byte value="x9"/>don&apos;t transmit the file correctly).<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Ask your friend to do the same.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Once you have received your friend&apos;s certificate, removed it<byte value="x9"/>from the zip file and saved it to disk, you can proceed to step (2).&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on Your Certificate to Select it.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on the &quot;Export Friend&quot; Button to bring up a file save dialog.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select directory to save the certificate to.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Enter desired filename. (with a file type of .pqi), and Click OK.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Email this File to your Friend. (It is recommended you put the	certificate in a zip file before sending, as some email programs	don&apos;t transmit the file correctly).	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Ask your friend to do the same.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Once you have received your friend&apos;s certificate, removed it	from the zip file and saved it to disk, you can proceed to step (2).&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Note: This exchange of certificates is only necessary to get you started.Once you are connected to some friends the exchange of certificates becomeautomated by the autoDiscovery system. See&lt;a href=&quot;#GUI-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GUI: Connecting&lt;/span&gt;&lt;/a&gt; for more information.------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (2) LOAD YOUR FRIEND&apos;S CERTIFICATE &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Import Friend&quot;<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select your friends certificate file, then click &quot;Okay&quot;. <byte value="x9"/>Their certificate should appear in the top window of the &quot;Connect&quot; Tab.&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Import Friend&quot;	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select your friends certificate file, then click &quot;Okay&quot;. 	Their certificate should appear in the top window of the &quot;Connect&quot; Tab.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (3) SIGN CERTIFICATE &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select their Certificate by clicking on their name.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Configure Friend&quot; Button. This will bring up <byte value="x9"/>a configuration window. which allows you to look at the details<byte value="x9"/>of the certificate.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click the &quot;Sign Certificate&quot; button near the bottom of the &quot;Certificate Configuration&quot; Window.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Now close the window by clicking on the &quot;Done&quot; button.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Your Friends certificate should now say &quot;Trusted (S)&quot;, <byte value="x9"/>indicating it is ready for connections.&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select their Certificate by clicking on their name.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Configure Friend&quot; Button. This will bring up 	a configuration window. which allows you to look at the details	of the certificate.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click the &quot;Sign Certificate&quot; button near the bottom of the &quot;Certificate Configuration&quot; Window.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Now close the window by clicking on the &quot;Done&quot; button.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Your Friends certificate should now say &quot;Trusted (S)&quot;, 	indicating it is ready for connections.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can only share with &quot;Trusted&quot; Peers. You must sign your Friend&apos;scertificate to prove that you know the certificate belongs to your Friend. Do not sign any/all certificates - only the people youtrust. For more information see: &lt;br /&gt;&lt;a href=&quot;#FAQ-SIGN&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: Should I Sign this Certificate?&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-TRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: What does &quot;Trust&quot; Mean?&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-WEBOFTRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: What is a Web of Trust?&lt;/span&gt;&lt;/a&gt;.  &lt;br /&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt; &lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (4) AUTOCONNECT TO PEER &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Finally You need to activate the connection:<byte value="x9"/>&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click in the Box, next to your friends Name.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; A Tick should appear in the box, a connection will be started.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; The &quot;Offline&quot; will change to &quot;Online&quot; when you have successfully<byte value="x9"/>connected.&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Finally You need to activate the connection:	&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click in the Box, next to your friends Name.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; A Tick should appear in the box, a connection will be started.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; The &quot;Offline&quot; will change to &quot;Online&quot; when you have successfully	connected.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Remember: Your initial connection attempts will fail, until your friend has signed your certificate and ticked the Auto-Connect Box.This ensures that both peers trust each other, and stops random peopleaccessing your files.&lt;br /&gt;&lt;a href=&quot;#FAQ-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: Why won&apos;t it Connect?&lt;/span&gt;&lt;/a&gt;.  &lt;br /&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;
 &lt;tr&gt;
@@ -3918,15 +3919,15 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#FAQ&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The GUI is divided up into several sections which can be accessed by clicking on the Tabs along the top of the main window. &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Connect: Manage Connections and Friends.<byte value="x9"/><byte value="x9"/>(&lt;a href=&quot;#START-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;getting started&lt;/span&gt;&lt;/a&gt; and<byte value="x9"/><byte value="x9"/>&lt;a href=&quot;#GUI-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Listing: A directory view of available files.<byte value="x9"/><byte value="x9"/>(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/><byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Search: Search for available files.<byte value="x9"/><byte value="x9"/>(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Messages: For Sending/Recving Message. (Coming Soon)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Channels: A broadcast/subscription system. (Coming Soon)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Transfer: Listing of Current and completed Transfers.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Config: Specify of share diectories and IP Addresses.<byte value="x9"/><byte value="x9"/>(&lt;a href=&quot;#GUI-CONFIG&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; About: Help and other Information.<byte value="x9"/>&lt;/li&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Connect: Manage Connections and Friends.		(&lt;a href=&quot;#START-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;getting started&lt;/span&gt;&lt;/a&gt; and		&lt;a href=&quot;#GUI-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Listing: A directory view of available files.		(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)		&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Search: Search for available files.		(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Messages: For Sending/Recving Message. (Coming Soon)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Channels: A broadcast/subscription system. (Coming Soon)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Transfer: Listing of Current and completed Transfers.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Config: Specify of share diectories and IP Addresses.		(&lt;a href=&quot;#GUI-CONFIG&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; About: Help and other Information.	&lt;/li&gt;
 &lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Chat: Accessed by the clicking on the &quot;Chat&quot; button.&lt;/li&gt;&lt;/ul&gt;
 &lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;
 &lt;tr&gt;
@@ -4056,44 +4057,44 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;START-CONNECT&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;Connecting to your Friends &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;There are four steps to connecting to a Friend:&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Get Friend&apos;s Certificate<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Load Certificate<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Sign Certificate<byte value="x9"/>&lt;/li&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Get Friend&apos;s Certificate	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Load Certificate	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Sign Certificate	&lt;/li&gt;
 &lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Connect to Friend.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The instructions might initially appear long and daunting, however thesesteps are required to ensure that your sharing is private and secure.These steps are only required a couple of times, to add new friends, and become quite straight forward after the first time.&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (1) EXCHANGE CERTIFICATES &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Before you can connect, you need send your certificate to your friend, and get your friends certificate. Follow these steps to get your certificate:&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on Your Certificate to Select it.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on the &quot;Export Friend&quot; Button to bring up a file save dialog.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select directory to save the certificate to.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Enter desired filename. (with a file type of .pqi), and Click OK.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Email this File to your Friend. (It is recommended you put the<byte value="x9"/>certificate in a zip file before sending, as some email programs<byte value="x9"/>don&apos;t transmit the file correctly).<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Ask your friend to do the same.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Once you have received your friend&apos;s certificate, removed it<byte value="x9"/>from the zip file and saved it to disk, you can proceed to step (2).&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on Your Certificate to Select it.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on the &quot;Export Friend&quot; Button to bring up a file save dialog.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select directory to save the certificate to.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Enter desired filename. (with a file type of .pqi), and Click OK.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Email this File to your Friend. (It is recommended you put the	certificate in a zip file before sending, as some email programs	don&apos;t transmit the file correctly).	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Ask your friend to do the same.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Once you have received your friend&apos;s certificate, removed it	from the zip file and saved it to disk, you can proceed to step (2).&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Note: This exchange of certificates is only necessary to get you started.Once you are connected to some friends the exchange of certificates becomeautomated by the autoDiscovery system. See&lt;a href=&quot;#GUI-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GUI: Connecting&lt;/span&gt;&lt;/a&gt; for more information.------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (2) LOAD YOUR FRIEND&apos;S CERTIFICATE &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Import Friend&quot;<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select your friends certificate file, then click &quot;Okay&quot;. <byte value="x9"/>Their certificate should appear in the top window of the &quot;Connect&quot; Tab.&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Import Friend&quot;	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select your friends certificate file, then click &quot;Okay&quot;. 	Their certificate should appear in the top window of the &quot;Connect&quot; Tab.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (3) SIGN CERTIFICATE &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select their Certificate by clicking on their name.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Configure Friend&quot; Button. This will bring up <byte value="x9"/>a configuration window. which allows you to look at the details<byte value="x9"/>of the certificate.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click the &quot;Sign Certificate&quot; button near the bottom of the &quot;Certificate Configuration&quot; Window.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Now close the window by clicking on the &quot;Done&quot; button.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Your Friends certificate should now say &quot;Trusted (S)&quot;, <byte value="x9"/>indicating it is ready for connections.&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select their Certificate by clicking on their name.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Configure Friend&quot; Button. This will bring up 	a configuration window. which allows you to look at the details	of the certificate.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click the &quot;Sign Certificate&quot; button near the bottom of the &quot;Certificate Configuration&quot; Window.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Now close the window by clicking on the &quot;Done&quot; button.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Your Friends certificate should now say &quot;Trusted (S)&quot;, 	indicating it is ready for connections.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can only share with &quot;Trusted&quot; Peers. You must sign your Friend&apos;scertificate to prove that you know the certificate belongs to your Friend. Do not sign any/all certificates - only the people youtrust. For more information see: &lt;br /&gt;&lt;a href=&quot;#FAQ-SIGN&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: Should I Sign this Certificate?&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-TRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: What does &quot;Trust&quot; Mean?&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-WEBOFTRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: What is a Web of Trust?&lt;/span&gt;&lt;/a&gt;.  &lt;br /&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt; &lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (4) AUTOCONNECT TO PEER &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Finally You need to activate the connection:<byte value="x9"/>&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click in the Box, next to your friends Name.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; A Tick should appear in the box, a connection will be started.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; The &quot;Offline&quot; will change to &quot;Online&quot; when you have successfully<byte value="x9"/>connected.&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Finally You need to activate the connection:	&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click in the Box, next to your friends Name.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; A Tick should appear in the box, a connection will be started.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; The &quot;Offline&quot; will change to &quot;Online&quot; when you have successfully	connected.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Remember: Your initial connection attempts will fail, until your friend has signed your certificate and ticked the Auto-Connect Box.This ensures that both peers trust each other, and stops random peopleaccessing your files.&lt;br /&gt;&lt;a href=&quot;#FAQ-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: Why won&apos;t it Connect?&lt;/span&gt;&lt;/a&gt;.  &lt;br /&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;
 &lt;tr&gt;
@@ -4135,15 +4136,15 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#FAQ&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The GUI is divided up into several sections which can be accessed by clicking on the Tabs along the top of the main window. &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Connect: Manage Connections and Friends.<byte value="x9"/>(&lt;a href=&quot;#START-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;getting started&lt;/span&gt;&lt;/a&gt; and<byte value="x9"/>&lt;a href=&quot;#GUI-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Listing: A directory view of available files.<byte value="x9"/>(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Search: Search for available files.<byte value="x9"/>(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Messages: For Sending/Recving Message. (Coming Soon)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Channels: A broadcast/subscription system. (Coming Soon)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Transfer: Listing of Current and completed Transfers.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Config: Specify of share diectories and IP Addresses.<byte value="x9"/>(&lt;a href=&quot;#GUI-CONFIG&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; About: Help and other Information.<byte value="x9"/>&lt;/li&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Connect: Manage Connections and Friends.	(&lt;a href=&quot;#START-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;getting started&lt;/span&gt;&lt;/a&gt; and	&lt;a href=&quot;#GUI-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Listing: A directory view of available files.	(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Search: Search for available files.	(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Messages: For Sending/Recving Message. (Coming Soon)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Channels: A broadcast/subscription system. (Coming Soon)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Transfer: Listing of Current and completed Transfers.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Config: Specify of share diectories and IP Addresses.	(&lt;a href=&quot;#GUI-CONFIG&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; About: Help and other Information.	&lt;/li&gt;
 &lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Chat: Accessed by the clicking on the &quot;Chat&quot; button.&lt;/li&gt;&lt;/ul&gt;
 &lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;
 &lt;tr&gt;
@@ -5480,7 +5481,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NetworkDialog.ui" line="38"/>
         <source>Network</source>
-        <translation type="unfinished">Réseau</translation>
+        <translation>Réseau</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="150"/>
@@ -5491,12 +5492,13 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/NetworkDialog.cpp" line="447"/>
         <source> is trusting you. 
 Right-click and select &apos;make friend&apos; to be able to connect.</source>
-        <translation type="unfinished"></translation>
+        <translation> vous fait confiance. 
+Clique droit et selction &apos;Accepter ami&apos; pour vous connecter.</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="126"/>
         <source>Trust matrix</source>
-        <translation>Trust matrice</translation>
+        <translation>Tableau de confiance</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="112"/>
@@ -5531,7 +5533,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="372"/>
         <source>Trusted</source>
-        <translation></translation>
+        <translation type="unfinished">Confiance Accordée</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="374"/>
@@ -5541,7 +5543,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="377"/>
         <source>Is trusting me</source>
-        <translation>Est-moi confiance</translation>
+        <translation>Me fait confiance</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="379"/>
@@ -5556,12 +5558,12 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="626"/>
         <source>UPNP is active.</source>
-        <translation type="unfinished"></translation>
+        <translation>UPNP activé.</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="630"/>
         <source>UPNP NOT FOUND.</source>
-        <translation type="unfinished"></translation>
+        <translation>UPNP non trouvé.</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="448"/>
@@ -5571,62 +5573,62 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="639"/>
         <source>DHT is not working (down).</source>
-        <translation type="unfinished"></translation>
+        <translation>DHT hors service.</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="421"/>
         <source>Stable External IP Address</source>
-        <translation type="unfinished"></translation>
+        <translation>Adresse externe stable</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="649"/>
         <source>Not Found External Address</source>
-        <translation type="unfinished"></translation>
+        <translation>Adresse externe non trouvée</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="363"/>
         <source>RetroShare Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Serveur RetroShare</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="678"/>
         <source>UDP Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Serveur UDP</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="683"/>
         <source>Net Limited</source>
-        <translation type="unfinished"></translation>
+        <translation>Réseau limité</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="687"/>
         <source>No Conectivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de connexion</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="125"/>
         <source>Network View</source>
-        <translation>Voir le réseau</translation>
+        <translation>Graphique du réseau</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Formulaire</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="154"/>
         <source>Your trust</source>
-        <translation type="unfinished"></translation>
+        <translation>Votre confiance</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="159"/>
         <source>Peer&apos;s trust</source>
-        <translation type="unfinished"></translation>
+        <translation>Confiance des amis</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="174"/>
         <source>Peer Address</source>
-        <translation type="unfinished"></translation>
+        <translation>Adresse</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="215"/>
@@ -5636,22 +5638,22 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="256"/>
         <source>Network Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Etat du réseau</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="309"/>
         <source>Limited</source>
-        <translation type="unfinished"></translation>
+        <translation>Limité</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="394"/>
         <source>UDP Connections</source>
-        <translation type="unfinished"></translation>
+        <translation>Connexions UDP</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="475"/>
         <source>UPnP Active</source>
-        <translation type="unfinished"></translation>
+        <translation>UPnP actif</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="521"/>
@@ -5756,7 +5758,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="502"/>
         <source>TCP Server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Serveur TCP</translation>
     </message>
 </context>
 <context>
@@ -5912,37 +5914,37 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/Preferences/NotifyDialog.ui" line="590"/>
         <source>Popups</source>
-        <translation type="unfinished"></translation>
+        <translation>Alertes</translation>
     </message>
     <message>
         <location filename="../gui/Preferences/NotifyDialog.ui" line="602"/>
         <source>Peer Connect</source>
-        <translation type="unfinished"></translation>
+        <translation>Connexion d&apos;un ami</translation>
     </message>
     <message>
         <location filename="../gui/Preferences/NotifyDialog.ui" line="616"/>
         <source>New Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouvelle discussion</translation>
     </message>
     <message>
         <location filename="../gui/Preferences/NotifyDialog.ui" line="626"/>
         <source>Private Chat Behaviour</source>
-        <translation type="unfinished"></translation>
+        <translation>Discussion privée</translation>
     </message>
     <message>
         <location filename="../gui/Preferences/NotifyDialog.ui" line="632"/>
         <source>Open Window for new Peer Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir un fenetre pour une nouvelle discussion</translation>
     </message>
     <message>
         <location filename="../gui/Preferences/NotifyDialog.ui" line="639"/>
         <source>Reopen if closed by user:</source>
-        <translation type="unfinished"></translation>
+        <translation>Réouvir si fermé par l&apos;utilisateur</translation>
     </message>
     <message>
         <location filename="../gui/Preferences/NotifyDialog.ui" line="646"/>
         <source>Grab Focus when chat arrives</source>
-        <translation type="unfinished"></translation>
+        <translation>Mettre au premier plan si un message arrive</translation>
     </message>
 </context>
 <context>
@@ -6124,22 +6126,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/statusbar/peerstatus.cpp" line="50"/>
         <source>Online: 0  | Friends: 0  | Network: 0 </source>
-        <translation>Online: 0  | Amis: 0  | Réseau: 0 </translation>
+        <translation>En ligne: 0  | Amis: 0  | Réseau: 0 </translation>
     </message>
     <message>
         <location filename="../gui/statusbar/peerstatus.cpp" line="79"/>
         <source>Online:</source>
-        <translation type="unfinished"></translation>
+        <translation>En ligne :</translation>
     </message>
     <message>
         <location filename="../gui/statusbar/peerstatus.cpp" line="79"/>
         <source>Friends:</source>
-        <translation type="unfinished"></translation>
+        <translation>Amis :</translation>
     </message>
     <message>
         <location filename="../gui/statusbar/peerstatus.cpp" line="79"/>
         <source>Network:</source>
-        <translation type="unfinished"></translation>
+        <translation>Réseau :</translation>
     </message>
 </context>
 <context>
@@ -6203,7 +6205,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersDialog.cpp" line="154"/>
         <source>Welcome to RetroShare&apos;s group chat.</source>
-        <translation>Bienvenue à RetroShare du chat en groupe.</translation>
+        <translation type="unfinished">Bienvenue à la discussion de groupe RetroShare.</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="192"/>
@@ -6753,12 +6755,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/Preferences/PreferencesWindow.cpp" line="67"/>
         <source>Appearance</source>
-        <translation></translation>
+        <translation>Apparence</translation>
     </message>
     <message>
         <location filename="../gui/Preferences/PreferencesWindow.cpp" line="70"/>
         <source>Notify</source>
-        <translation>Notifier</translation>
+        <translation>Notifications</translation>
     </message>
     <message>
         <location filename="../gui/Preferences/PreferencesWindow.cpp" line="89"/>
@@ -6768,7 +6770,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/Preferences/PreferencesWindow.cpp" line="74"/>
         <source>File assotiations</source>
-        <translation>Dossier assotiations</translation>
+        <translation>Associations des fichiers</translation>
     </message>
 </context>
 <context>
@@ -6781,12 +6783,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../util/printpreview.cpp" line="254"/>
         <source>Print</source>
-        <translation type="unfinished"></translation>
+        <translation>Imprimer</translation>
     </message>
     <message>
         <location filename="../util/printpreview.cpp" line="258"/>
         <source>&amp;Print...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Imprimer...</translation>
     </message>
     <message>
         <location filename="../util/printpreview.cpp" line="264"/>
@@ -7107,17 +7109,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/statusbar/ratesstatus.cpp" line="50"/>
         <source>&lt;strong&gt;Down:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Up:&lt;/strong&gt; 0.00 (kB/s) </source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Réception :&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Envoi :&lt;/strong&gt; 0.00 (kB/s) </translation>
     </message>
     <message>
         <location filename="../gui/statusbar/ratesstatus.cpp" line="70"/>
         <source>Down:</source>
-        <translation type="unfinished"></translation>
+        <translation>Réception :</translation>
     </message>
     <message>
         <location filename="../gui/statusbar/ratesstatus.cpp" line="70"/>
         <source>Up:</source>
-        <translation type="unfinished"></translation>
+        <translation>Envoi :</translation>
     </message>
 </context>
 <context>
@@ -7415,7 +7417,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Reset Search Keyword and File Type&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;<byte value="x9"/>Réinitialiser la recherche des mots-clés et type de dossier&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;	Réinitialiser la recherche des mots-clés et type de dossier&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/SearchDialog.ui" line="1196"/>
@@ -7524,7 +7526,7 @@ behind a firewall or a VPN.</source>
     <message>
         <location filename="../gui/Preferences/ServerDialog.ui" line="777"/>
         <source>Total Rate (KB/s) </source>
-        <translation>Total Taux (KB/s)</translation>
+        <translation>Total (KB/s)</translation>
     </message>
     <message>
         <location filename="../gui/Preferences/ServerDialog.ui" line="816"/>
@@ -7660,7 +7662,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/Settings/ServerPage.ui" line="711"/>
         <source>Network Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Etat du réseau</translation>
     </message>
     <message>
         <location filename="../gui/Settings/ServerPage.ui" line="721"/>
@@ -7869,12 +7871,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="515"/>
         <source>Friends Share</source>
-        <translation type="unfinished"></translation>
+        <translation>Partages de mes amis</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="568"/>
         <source>My Shared Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Mes Fichiers Partagés</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="631"/>
@@ -7884,7 +7886,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="658"/>
         <source>check files</source>
-        <translation type="unfinished"></translation>
+        <translation>Vérifier les fichiers</translation>
     </message>
 </context>
 <context>
@@ -7902,7 +7904,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/StartDialog.ui" line="657"/>
         <source>Name:</source>
-        <translation>Nom:</translation>
+        <translation>Nom :</translation>
     </message>
     <message>
         <location filename="../gui/StartDialog.ui" line="747"/>
@@ -7917,7 +7919,12 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-size:18pt; color:#55aaff;&quot;&gt;Login&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt; color:#55aaff;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-size:18pt; color:#55aaff;&quot;&gt;Connexion&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt; color:#55aaff;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/StartDialog.ui" line="599"/>
@@ -7928,17 +7935,23 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;You can login with your Default&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;&quot;&gt;RetroShare profile.&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;&quot;&gt;You have a Profile?&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Vous pouvez vous connecter par défaut avec votre&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;&quot;&gt;profil RetroShare.&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;&quot;&gt;Avez-vous un profil ?&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/StartDialog.ui" line="638"/>
         <source>Generate now a Profile</source>
-        <translation>maintenant générer un profil</translation>
+        <translation>Générer un profil maintenant</translation>
     </message>
     <message>
         <location filename="../gui/StartDialog.ui" line="641"/>
         <source>generate now a profile</source>
-        <translation>maintenant générer un profil</translation>
+        <translation>générer un profil maintenant</translation>
     </message>
     <message>
         <location filename="../gui/StartDialog.ui" line="677"/>
@@ -7976,7 +7989,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/StatisticDialog.ui" line="618"/>
         <source>Count of Downloads:</source>
-        <translation type="unfinished">Nombre de téléchargements:</translation>
+        <translation type="unfinished">Nombre de téléchargements :</translation>
     </message>
     <message>
         <location filename="../gui/StatisticDialog.ui" line="735"/>
@@ -8056,7 +8069,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/StatisticDialog.ui" line="843"/>
         <source>Downloadspeed:</source>
-        <translation type="unfinished">Vitesse de téléchargement:</translation>
+        <translation type="unfinished">Vitesse de téléchargement :</translation>
     </message>
     <message>
         <location filename="../gui/StatisticDialog.ui" line="930"/>
@@ -8212,7 +8225,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/SubFileItem.ui" line="194"/>
         <source>Cancel Download</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Annuler le téléchargement</translation>
     </message>
     <message>
         <location filename="../gui/feeds/SubFileItem.ui" line="213"/>
