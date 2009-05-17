@@ -84,7 +84,10 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
 	ui.loadButton -> setEnabled(false);
 	//ui.genName->setFocus(Qt::OtherFocusReason);
   }
-
+#ifndef Q_WS_WIN
+	ui.autoBox->setChecked(false) ;
+	ui.autoBox->setEnabled(false) ;
+#endif
   //ui.genFriend -> setText("<None Selected>");
 
 }

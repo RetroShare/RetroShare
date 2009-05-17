@@ -39,6 +39,8 @@ GeneralDialog::GeneralDialog(QWidget *parent)
   /* Hide platform specific features */
 #ifndef Q_WS_WIN
   ui.chkRunRetroshareAtSystemStartup->setVisible(false);
+  ui.autologincheckBox->setEnabled(false) ;
+  ui.autologincheckBox->setChecked(false) ;
 #endif    
 }
 
