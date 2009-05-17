@@ -32,7 +32,7 @@
 
 
 #include "Preferences/PreferencesWindow.h"
-#include "Settings/gsettingswin.h"
+//#include "Settings/gsettingswin.h"
 #include "util/rsversion.h"
 
 #include "rsiface/rsiface.h"
