@@ -94,7 +94,7 @@ DEPENDPATH += . \
             gui\Preferences \
             gui\common \
             gui\library \
-            gui\Settings \
+#            gui\Settings \
             gui\toaster \
             gui\help\browser \
             gui\elastic
@@ -207,11 +207,11 @@ HEADERS +=  rshare.h \
             gui/MessagesPopupDialog.h \
             gui/help/browser/helpbrowser.h \
             gui/help/browser/helptextbrowser.h \
-            gui/Settings/gsettingswin.h \
-            gui/Settings/GeneralPage.h \
-            gui/Settings/DirectoriesPage.h \
-            gui/Settings/ServerPage.h \
-            gui/Settings/NetworkPage.h \
+#            gui/Settings/gsettingswin.h \
+#            gui/Settings/GeneralPage.h \
+#            gui/Settings/DirectoriesPage.h \
+#            gui/Settings/ServerPage.h \
+#            gui/Settings/NetworkPage.h \
             gui/statusbar/peerstatus.h \
             gui/statusbar/dhtstatus.h \
             gui/statusbar/natstatus.h \
@@ -301,11 +301,11 @@ FORMS +=    gui/BlogDialog.ui \
             gui/toaster/ChatToaster.ui \
             gui/toaster/MessageToaster.ui \
             gui/toaster/OnlineToaster.ui \
-            gui/Settings/settings.ui \
-            gui/Settings/GeneralPage.ui \
-            gui/Settings/DirectoriesPage.ui \
-            gui/Settings/ServerPage.ui \
-            gui/Settings/NetworkPage.ui \
+#            gui/Settings/settings.ui \
+#            gui/Settings/GeneralPage.ui \
+#            gui/Settings/DirectoriesPage.ui \
+#            gui/Settings/ServerPage.ui \
+#            gui/Settings/NetworkPage.ui \
             gui/advsearch/AdvancedSearchDialog.ui \
             gui/advsearch/expressionwidget.ui \
             gui/channels/ChannelsDialog.ui \
@@ -415,11 +415,11 @@ SOURCES +=  main.cpp \
             gui/common/rwindow.cpp \ 
             gui/common/html.cpp \ 
             gui/library/FindWindow.cpp \        
-            gui/Settings/gsettingswin.cpp \
-            gui/Settings/GeneralPage.cpp \
-            gui/Settings/DirectoriesPage.cpp \
-            gui/Settings/ServerPage.cpp \
-            gui/Settings/NetworkPage.cpp \
+#            gui/Settings/gsettingswin.cpp \
+#            gui/Settings/GeneralPage.cpp \
+#            gui/Settings/DirectoriesPage.cpp \
+#            gui/Settings/ServerPage.cpp \
+#            gui/Settings/NetworkPage.cpp \
             gui/statusbar/peerstatus.cpp \  
             gui/statusbar/dhtstatus.cpp \
             gui/statusbar/natstatus.cpp \
