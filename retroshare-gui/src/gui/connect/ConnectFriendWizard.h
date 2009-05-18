@@ -1,6 +1,7 @@
 #ifndef __ConnectFriendWizard__
 #define __ConnectFriendWizard__
 
+#include <map>
 #include <QWizard>
 
 //QT_BEGIN_NAMESPACE
@@ -13,6 +14,8 @@ class QVBoxLayout;
 class QHBoxLayout;
 class QGroupBox;
 class QGridLayout;
+class QComboBox;
+class QTableWidget;
 //QT_END_NAMESPACE
 
 const std::string LOCAL_IP = "---LOCAL---";
@@ -34,8 +37,7 @@ class ConnectFriendWizard : public QWizard
 
 public:
 
-    enum { Page_Intro, Page_Text, Page_Cert, Page_ErrorMessage,
-           Page_Conclusion };
+    enum { Page_Intro, Page_Text, Page_Cert, Page_ErrorMessage, Page_Conclusion,Page_Foff };
 
     ConnectFriendWizard(QWidget *parent = 0);
 
@@ -60,6 +62,7 @@ private:
     QLabel *topLabel;
     QRadioButton *textRadioButton;
     QRadioButton *certRadioButton;
+    QRadioButton *foffRadioButton;
 };
 
 //============================================================================
@@ -128,6 +131,39 @@ private slots:
     void generateCertificateCalled();
     void loadFriendCert();
 };
+
+//============================================================================
+//! A page for signing certificates from some people on the network (e.g. friends 
+// of friends, people trusting me...)
+//
+class FofPage : public QWizardPage
+{
+    Q_OBJECT
+
+public:
+    FofPage(QWidget *parent = 0);
+
+    int nextId() const;
+    bool isComplete() const ;
+
+private:
+    QGroupBox* userFileFrame;
+    QLabel *userFileLabel;
+    QVBoxLayout *userFileLayout;
+    QComboBox *userSelectionCB;
+    QPushButton* makeFriendButton;
+    QTableWidget *selectedPeersTW;
+
+    QVBoxLayout* certPageLayout;    
+
+	 bool _friends_signed ;
+	 std::map<QCheckBox*,std::string> _id_boxes ;
+
+private slots:
+	void signAllSelectedUsers() ;
+	void updatePeersList(int) ;
+};
+
 
 //============================================================================
 //! Page for displaying error messages (for "Add friend" wizard).

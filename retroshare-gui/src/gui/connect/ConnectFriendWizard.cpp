@@ -31,6 +31,9 @@
 #include <QRadioButton>
 #include <QCheckBox>
 #include <QGroupBox>
+#include <QComboBox>
+#include <QTableWidget>
+#include <QHeaderView>
 
 #include <QFileDialog>
 
@@ -46,6 +49,7 @@
 #include <QDebug>
 #include <sstream>
 #include <iostream>
+#include <set>
 
 //============================================================================
 //! 
@@ -55,6 +59,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent)
     setPage(Page_Intro, new IntroPage);
     setPage(Page_Text, new TextPage);
     setPage(Page_Cert, new CertificatePage);
+    setPage(Page_Foff, new FofPage);
     setPage(Page_ErrorMessage, new ErrorMessagePage);
     setPage(Page_Conclusion, new ConclusionPage);
 
@@ -110,18 +115,19 @@ IntroPage::IntroPage(QWidget *parent)
                                "color:#32cd32;\">%1</span>");
     setTitle( titleStr.arg( tr("Add a new Friend") ) ) ;
              
-    setSubTitle(tr("This wizard will help you to connect your friend "
-                   "to RetroShare network. There are  two possible ways "
+    setSubTitle(tr("This wizard will help you to connect to your friend(s) "
+                   "to RetroShare network. There are three possible ways "
                    "to do this:")) ;
 
     textRadioButton = new QRadioButton(tr("&Enter the certificate manually"));
-    certRadioButton = new QRadioButton(tr("&Use *.pqi files with "
-                                          "certificates" ));
+    certRadioButton = new QRadioButton(tr("&Use *.pqi files with certificates" ));
+    foffRadioButton = new QRadioButton(tr("&Make friend with selected friends of my friends" ));
     textRadioButton->setChecked(true);
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(textRadioButton);
     layout->addWidget(certRadioButton);
+    layout->addWidget(foffRadioButton);
     setLayout(layout);
 }
 //
@@ -129,11 +135,9 @@ IntroPage::IntroPage(QWidget *parent)
 //
 int IntroPage::nextId() const
 {
-    if (textRadioButton->isChecked()) {
-        return ConnectFriendWizard::Page_Text;
-    } else {
-        return ConnectFriendWizard::Page_Cert;
-    }
+    if (textRadioButton->isChecked()) return ConnectFriendWizard::Page_Text;
+    if (certRadioButton->isChecked()) return ConnectFriendWizard::Page_Cert;
+    if (foffRadioButton->isChecked()) return ConnectFriendWizard::Page_Foff;
 }
 //
 //============================================================================
@@ -359,6 +363,188 @@ TextPage::nextId() const
     }
 
     return ConnectFriendWizard::Page_ErrorMessage;
+}
+//
+//============================================================================
+//============================================================================
+//============================================================================
+//
+FofPage::FofPage(QWidget *parent)
+    : QWizardPage(parent)
+{
+	_friends_signed = false ;
+    QString titleStr("<span style=\"font-size:14pt; font-weight:500;" "color:#32cd32;\">%1</span>");
+    setTitle( titleStr.arg( tr("Friends of friends") ) ) ;
+
+    setSubTitle(tr("Select now who you want to make friends with."));
+
+    userFileLabel = new QLabel(tr("Show me: ")) ;
+	 userSelectionCB = new QComboBox ;
+	 userSelectionCB->addItem(tr("Any peer I've not signed")) ;
+	 userSelectionCB->addItem(tr("Friends of my friends who already trust me")) ;
+	 userSelectionCB->addItem(tr("Signed peers showing as denied")) ;
+
+	 selectedPeersTW = new QTableWidget(0,4,NULL) ;
+	 selectedPeersTW->setHorizontalHeaderItem(0,new QTableWidgetItem(tr(""))) ;
+	 selectedPeersTW->setHorizontalHeaderItem(1,new QTableWidgetItem(tr("Peer name"))) ;
+	 selectedPeersTW->setHorizontalHeaderItem(2,new QTableWidgetItem(tr("Also signed by"))) ;
+	 selectedPeersTW->setHorizontalHeaderItem(3,new QTableWidgetItem(tr("Peer id"))) ;
+
+	 makeFriendButton = new QPushButton(tr("Make friend with these peers")) ;
+
+    userFileLayout = new QVBoxLayout;
+    userFileLayout->addWidget(userFileLabel);
+    userFileLayout->addWidget(userSelectionCB);
+    userFileLayout->addWidget(selectedPeersTW);
+    userFileLayout->addWidget(makeFriendButton);
+
+    userFileFrame = new QGroupBox;
+    userFileFrame->setFlat(true);
+    userFileFrame->setTitle("toto");
+    userFileFrame->setLayout(userFileLayout);
+
+	 setLayout(userFileLayout) ;
+
+	 connect(makeFriendButton,SIGNAL(clicked()),this,SLOT(signAllSelectedUsers())) ;
+	 connect(userSelectionCB,SIGNAL(activated(int)),this,SLOT(updatePeersList(int))) ;
+
+	 updatePeersList(0) ;
+}
+ 
+void FofPage::updatePeersList(int e) 
+{
+	rsiface->unlockData(); /* UnLock Interface */
+	std::cout << "updating peers list with e=" << e << std::endl ;
+
+	selectedPeersTW->clearContents() ;
+	selectedPeersTW->setRowCount(0) ;
+
+	std::list<std::string> ids ;
+	rsPeers->getOthersList(ids) ;
+
+	int row = 0 ;
+
+	_id_boxes.clear() ;
+
+	// We have to use this trick because signers are given by their names instead of their ids. That's a cause
+	// for some confusion when two peers have the same name. 
+	//
+	std::set<std::string> my_friends_names ;
+
+	std::list<std::string> friends_ids ;
+	rsPeers->getFriendList(friends_ids) ;
+
+	for(std::list<std::string>::const_iterator it(friends_ids.begin());it!=friends_ids.end();++it)
+		my_friends_names.insert(rsPeers->getPeerName(*it)) ;
+
+	// Now fill in the table of selected peers.
+	//
+	for(std::list<std::string>::const_iterator it(ids.begin());it!=ids.end();++it)
+	{
+		std::cerr << "examining peer " << *it << " (name=" << rsPeers->getPeerName(*it) ;
+		RsPeerDetails details ;
+
+		if(!rsPeers->getPeerDetails(*it,details))
+		{
+			std::cerr << " no details." << std::endl ;
+			continue ;
+		}
+
+		// determine common friends
+		
+		std::set<std::string> common_friends ;
+
+		for(std::list<std::string>::const_iterator it2(details.signers.begin());it2!=details.signers.end();++it2)
+			if(my_friends_names.find(*it2) != my_friends_names.end()	&& *it2 != details.name)										
+				common_friends.insert(*it2) ;
+
+		bool show = false;
+
+		switch(e)
+		{
+			case 2: // "Peers shown as denied"
+				show = details.ownsign && !(details.state & RS_PEER_STATE_FRIEND) ;
+				std::cerr << "case 2, ownsign=" << details.ownsign << ", state_friend=" << (details.state & RS_PEER_STATE_FRIEND) << ", show=" << show << std::endl ;
+				break ;
+
+			case 1: // "Unsigned peers who already signed my certificate"
+				show = rsPeers->isTrustingMe(details.id) && !(details.state & RS_PEER_STATE_FRIEND) ;
+				std::cerr << "case 1, ownsign=" << details.ownsign << ", is_trusting_me=" << rsPeers->isTrustingMe(details.id) << ", show=" << show << std::endl ;
+				break ;
+
+			case 0: // "All unsigned friends of my friends"
+				show= !details.ownsign ;
+				std::cerr << "case 0: ownsign=" << details.ownsign << ", show=" << show << std::endl ;
+				break ;
+
+			default: break ;
+		}
+
+		if(show)
+		{
+			selectedPeersTW->insertRow(row) ;
+
+			QCheckBox *cb = new QCheckBox ;
+			cb->setChecked(true) ;
+			_id_boxes[cb] = details.id ;
+
+			selectedPeersTW->setCellWidget(row,0,cb) ;
+			selectedPeersTW->setItem(row,1,new QTableWidgetItem(QString::fromStdString(details.name))) ;
+
+			QComboBox *qcb = new QComboBox ;
+
+			if(common_friends.empty())
+				qcb->addItem(tr("*** None ***")) ;
+			else
+				for(std::set<std::string>::const_iterator it2(common_friends.begin());it2!=common_friends.end();++it2)
+					qcb->addItem(QString::fromStdString(*it2));
+
+			selectedPeersTW->setCellWidget(row,2,qcb) ;
+			selectedPeersTW->setItem(row,3,new QTableWidgetItem(QString::fromStdString(details.id))) ;
+			++row ;
+		}
+	}
+	if(row>0)
+	{
+		selectedPeersTW->resizeColumnsToContents() ;
+		makeFriendButton->setEnabled(true) ;
+	}
+	else
+		makeFriendButton->setEnabled(false) ;
+
+	selectedPeersTW->verticalHeader()->hide() ;
+	selectedPeersTW->setSortingEnabled(true) ;
+}
+
+int FofPage::nextId() const
+{
+	return -1 ;
+}
+
+bool FofPage::isComplete() const
+{
+	return _friends_signed ;
+}
+
+void FofPage::signAllSelectedUsers() 
+{
+	std::cerr << "makign lots of friends !!" << std::endl ;
+
+	for(std::map<QCheckBox*,std::string>::const_iterator it(_id_boxes.begin());it!=_id_boxes.end();++it)
+		if(it->first->isChecked())
+		{
+			std::cerr << "Making friend with " << it->second << std::endl ;
+			rsPeers->AuthCertificate(it->second, "");
+			rsPeers->addFriend(it->second);
+		}
+
+	_friends_signed = true ;
+
+	userSelectionCB->setEnabled(false) ;
+	selectedPeersTW->setEnabled(false) ;
+	makeFriendButton->setEnabled(false) ;
+
+	emit completeChanged();
 }
 //
 //============================================================================
