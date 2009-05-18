@@ -544,6 +544,8 @@ void FofPage::signAllSelectedUsers()
 	selectedPeersTW->setEnabled(false) ;
 	makeFriendButton->setEnabled(false) ;
 
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS,0) ;
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FRIENDS,0) ;
 	emit completeChanged();
 }
 //
