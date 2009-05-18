@@ -730,40 +730,69 @@ void RemoteDirModel::downloadSelected(QModelIndexList list)
 	 * make it into something the RsControl can understand
 	 */
 
+	 std::vector <DirDetails> dirVec;
+
+   getDirDetailsFromSelect(list, dirVec);
+
 	/* Fire off requests */
-	QModelIndexList::iterator it;
-	for(it = list.begin(); it != list.end(); it++)
-		if(it->column()==1)
-		{
-			void *ref = it -> internalPointer();
+    for (int i = 0, n = dirVec.size(); i < n; ++i)
+    {
+        if (!RemoteMode)
+        {
+            continue; /* don't try to download local stuff */
+        }
 
-			DirDetails details;
-			uint32_t flags = DIR_FLAGS_DETAILS;
-			if (RemoteMode)
-			{
-				flags |= DIR_FLAGS_REMOTE;
-			}
-			else
-			{
-				flags |= DIR_FLAGS_LOCAL;
-				continue; /* don't try to download local stuff */
-			}
+        const DirDetails& details = dirVec[i];
 
-			if (!rsFiles->RequestDirDetails(ref, details, flags))
-			{
-				continue;
-			}
-			/* only request if it is a file */
-			if (details.type == DIR_TYPE_FILE)
-			{
-				std::cerr << "RemoteDirModel::downloadSelected() Calling File Request";
-				std::cerr << std::endl;
-				std::list<std::string> srcIds;
-				srcIds.push_back(details.id);
-				rsFiles -> FileRequest(details.name, details.hash, 
-						details.count, "", 0, srcIds);
-			}
-		}
+        /* if it is a file */
+        if (details.type == DIR_TYPE_FILE)
+        {
+            std::cerr << "RemoteDirModel::downloadSelected() Calling File Request";
+            std::cerr << std::endl;
+            std::list<std::string> srcIds;
+            srcIds.push_back(details.id);
+            rsFiles -> FileRequest(details.name, details.hash,
+                    details.count, "", 0, srcIds);
+        }
+        /* if it is a dir, copy all files included*/
+        else if (details.type == DIR_TYPE_DIR)
+        {
+
+        }
+    }
+}
+
+void RemoteDirModel::getDirDetailsFromSelect (QModelIndexList list, std::vector <DirDetails>& dirVec)
+{
+    dirVec.clear();
+
+    /* Fire off requests */
+    QModelIndexList::iterator it;
+    for(it = list.begin(); it != list.end(); it++)
+    {
+        if(it->column()==1)
+        {
+            void *ref = it -> internalPointer();
+
+            DirDetails details;
+            uint32_t flags = DIR_FLAGS_DETAILS;
+            if (RemoteMode)
+            {
+                flags |= DIR_FLAGS_REMOTE;
+            }
+            else
+            {
+                flags |= DIR_FLAGS_LOCAL;
+            }
+
+            if (!rsFiles->RequestDirDetails(ref, details, flags))
+            {
+                continue;
+            }
+
+            dirVec.push_back(details);
+        }
+    }
 }
 
 /****************************************************************************

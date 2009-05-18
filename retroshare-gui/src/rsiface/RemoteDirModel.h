@@ -7,6 +7,7 @@
 #include <string>
 #include <rsiface/rsfiles.h>
 #include "util/misc.h"
+#include "rsiface/rstypes.h"
 
 class RemoteDirModel : public QAbstractItemModel
 {
@@ -38,6 +39,8 @@ public:
 
 	/* Callback from GUI */
      void downloadSelected(QModelIndexList list);
+     
+     void getDirDetailsFromSelect (QModelIndexList list, std::vector <DirDetails>& dirVec);
 
      bool isDir ( const QModelIndex & index ) const ;
      //void openFile(QModelIndex fileIndex, const QString command);

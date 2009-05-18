@@ -22,6 +22,7 @@
 
 #include "rshare.h"
 #include "TransfersDialog.h"
+#include "RetroShareLinkAnalyzer.h"
 #include "DLListDelegate.h"
 #include "ULListDelegate.h"
 
@@ -43,7 +44,9 @@
 #define IMAGE_INFO                 ":/images/fileinfo.png"
 #define IMAGE_CANCEL               ":/images/delete.png"
 #define IMAGE_CLEARCOMPLETED       ":/images/deleteall.png"
-#define IMAGE_PLAY		           ":/images/player_play.png"
+#define IMAGE_PLAY		             ":/images/player_play.png"
+#define IMAGE_COPYLINK             ":/images/copyrslink.png"
+#define IMAGE_PASTELINK            ":/images/pasterslink.png"
 
 /** Constructor */
 TransfersDialog::TransfersDialog(QWidget *parent)
@@ -188,8 +191,14 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       		connect( playAct , SIGNAL( triggered() ), this, SLOT( playSelectedTransfer() ) );
 	}
 
-	  cancelAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Cancel" ), this );
+	    cancelAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Cancel" ), this );
       connect( cancelAct , SIGNAL( triggered() ), this, SLOT( cancel() ) );
+      
+      copylinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), this );
+      connect( copylinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) );
+      
+      pastelinkAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste retroshare Link" ), this );
+      connect( pastelinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
       
       clearcompletedAct = new QAction(QIcon(IMAGE_CLEARCOMPLETED), tr( "Clear Completed" ), this );
       connect( clearcompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
@@ -202,6 +211,9 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       contextMnu.addSeparator();     
 
       contextMnu.addAction( cancelAct);
+      contextMnu.addSeparator();
+      contextMnu.addAction( copylinkAct);
+      contextMnu.addAction( pastelinkAct);
       contextMnu.addSeparator();
       contextMnu.addAction( clearcompletedAct);
       contextMnu.exec( mevent->globalPos() );
@@ -625,6 +637,72 @@ void TransfersDialog::cancel()
     }
     else
     return;
+}
+
+void TransfersDialog::handleDownloadRequest(const QString& url){
+
+    RetroShareLinkAnalyzer analyzer (url);
+
+    if (!analyzer.isValid ())
+        return;
+
+    QVector<RetroShareLinkData> linkList;
+    analyzer.getFileInformation (linkList);
+
+    std::list<std::string> srcIds;
+
+    for (int i = 0, n = linkList.size (); i < n; ++i)
+    {
+        const RetroShareLinkData& linkData = linkList[i];
+
+        rsFiles->FileRequest (linkData.getName ().toStdString (), linkData.getHash ().toStdString (),
+            linkData.getSize ().toInt (), "", 0, srcIds);
+    }
+}
+
+void TransfersDialog::copyLink ()
+{
+    QModelIndexList lst = ui.downloadList->selectionModel ()->selectedIndexes ();
+    RetroShareLinkAnalyzer analyzer;
+
+    for (int i = 0; i < lst.count (); i++)
+    {
+        if ( lst[i].column() == 0 )
+        {
+            QModelIndex & ind = lst[i];
+            QString fhash= ind.model ()->data (ind.model ()->index (ind.row (), ID )).toString() ;
+            QString fsize= ind.model ()->data (ind.model ()->index (ind.row (), SIZE)).toString() ;
+            QString fname= ind.model ()->data (ind.model ()->index (ind.row (), NAME)).toString() ;
+
+            analyzer.setRetroShareLink (fname, fsize, fhash);
+        }
+    }
+
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(analyzer.getRetroShareLink ());
+}
+
+void TransfersDialog::pasteLink()
+{
+    QClipboard *clipboard = QApplication::clipboard();
+    RetroShareLinkAnalyzer analyzer (clipboard->text ());
+
+    if (!analyzer.isValid ())
+        return;
+
+    QVector<RetroShareLinkData> linkList;
+    analyzer.getFileInformation (linkList);
+    
+    std::list<std::string> srcIds;
+
+    for (int i = 0, n = linkList.size (); i < n; ++i)
+    {
+        const RetroShareLinkData& linkData = linkList[i];
+        //downloadFileRequested(linkData.getName (), linkData.getSize ().toInt (),
+        //    linkData.getHash (), "", -1, -1, -1, -1);
+        rsFiles->FileRequest (linkData.getName ().toStdString (), linkData.getHash ().toStdString (),
+            linkData.getSize ().toInt (), "", 0, srcIds);
+    }
 }
 
 void TransfersDialog::clearcompleted()

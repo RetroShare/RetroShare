@@ -32,9 +32,14 @@
 #include "msgs/ChanMsgDialog.h"
 #include "Preferences/rsharesettings.h"
 
+#ifndef RETROSHARE_LINK_ANALYZER
+#include "RetroShareLinkAnalyzer.h"
+#endif
+
 #include <iostream>
 #include <sstream>
 
+#include <QClipboard>
 #include <QDesktopServices>
 #include <QContextMenuEvent>
 #include <QMenu>
@@ -59,6 +64,8 @@
 #define IMAGE_ATTACHMENT     ":/images/attachment.png"
 #define IMAGE_FRIEND         ":/images/peers_16x16.png"
 #define IMAGE_PROGRESS       ":/images/browse-looking.gif"
+#define IMAGE_COPYLINK       ":/images/copyrslink.png"
+
 const QString Image_AddNewAssotiationForFile = ":/images/kcmsystem24.png";
 
 
@@ -193,12 +200,21 @@ void SharedFilesDialog::shareddirtreeviewCostumPopupMenu( QPoint point )
       downloadAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), this );
       connect( downloadAct , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelected() ) );
       
+      copyremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), this );
+      connect( copyremotelinkAct , SIGNAL( triggered() ), this, SLOT( copyLinkRemote() ) );
+
+      sendremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), this );
+      connect( sendremotelinkAct , SIGNAL( triggered() ), this, SLOT( sendremoteLinkTo(  ) ) );
+      
     //  addMsgAct = new QAction( tr( "Add to Message" ), this );
     //  connect( addMsgAct , SIGNAL( triggered() ), this, SLOT( addMsgRemoteSelected() ) );
       
 
       contextMnu.clear();
       contextMnu.addAction( downloadAct);
+      contextMnu.addSeparator();
+      contextMnu.addAction( copyremotelinkAct);
+      contextMnu.addAction( sendremotelinkAct);
    //   contextMnu.addAction( addMsgAct);
       contextMnu.exec( mevent->globalPos() );
 }
@@ -215,6 +231,106 @@ void SharedFilesDialog::downloadRemoteSelected()
   model -> downloadSelected(qism->selectedIndexes());
 
 
+}
+
+void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
+{
+    std::vector<DirDetails> dirVec;
+
+    if (remote)
+        model->getDirDetailsFromSelect(lst, dirVec);
+    else
+        localModel->getDirDetailsFromSelect(lst, dirVec);
+
+    RetroShareLinkAnalyzer analyzer;
+
+    for (int i = 0, n = dirVec.size(); i < n; ++i)
+    {
+        const DirDetails& details = dirVec[i];
+
+        if (details.type == DIR_TYPE_DIR)
+        {
+            for (std::list<DirStub>::const_iterator cit = details.children.begin();
+                cit != details.children.end(); ++cit)
+            {
+                const DirStub& dirStub = *cit;
+
+                DirDetails details;
+                uint32_t flags = DIR_FLAGS_DETAILS;
+                if (remote)
+                {
+                    flags |= DIR_FLAGS_REMOTE;
+                }
+                else
+                {
+                    flags |= DIR_FLAGS_LOCAL;
+                }
+
+                // do not recursive copy sub dirs.
+                if (!rsFiles->RequestDirDetails(dirStub.ref, details, flags) || details.type != DIR_TYPE_FILE)
+                    continue;
+
+                analyzer.setRetroShareLink (details.name.c_str(), QString::number(details.count), details.hash.c_str());
+            }
+        }
+        else
+            analyzer.setRetroShareLink (details.name.c_str(), QString::number(details.count), details.hash.c_str());
+    }
+
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(analyzer.getRetroShareLink ());
+    //QMessageBox::warning(this, tr("RetroShare"), analyzer.getKommuteLink (), QMessageBox::Ok);
+}
+
+void SharedFilesDialog::copyLinkRemote()
+{
+    QModelIndexList lst = ui.remoteDirTreeView->selectionModel ()->selectedIndexes ();
+    copyLink (lst, true);
+}
+
+void SharedFilesDialog::copyLinkLocal()
+{
+    QModelIndexList lst = ui.localDirTreeView->selectionModel ()->selectedIndexes ();
+    copyLink (lst, false);
+}
+
+void SharedFilesDialog::sendremoteLinkTo()
+{
+    copyLinkRemote ();
+
+    /* create a message */
+    ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+
+    /* fill it in
+    * files are receommended already
+    * just need to set peers
+    */
+    std::cerr << "SharedFilesDialog::sendremoteLinkTo()" << std::endl;
+    nMsgDialog->newMsg();
+    nMsgDialog->insertTitleText("RetroShare Link");
+    nMsgDialog->insertMsgText(QApplication::clipboard()->text().toStdString());
+
+    nMsgDialog->show();
+}
+
+void SharedFilesDialog::sendLinkTo( /*std::string rsid*/ )
+{
+    copyLinkLocal ();
+
+    /* create a message */
+    ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+
+
+    /* fill it in
+    * files are receommended already
+    * just need to set peers
+    */
+    std::cerr << "SharedFilesDialog::sendLinkTo()" << std::endl;
+    nMsgDialog->newMsg();
+    nMsgDialog->insertTitleText("RetroShare Link");
+    nMsgDialog->insertMsgText(QApplication::clipboard()->text().toStdString());
+
+    nMsgDialog->show();
 }
 
 
@@ -393,8 +509,8 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 {
 	//=== at this moment we'll show menu only for files, not for folders
 	QModelIndex midx = ui.localDirTreeView->indexAt(point);
-	if (localModel->isDir( midx ) )
-		return;
+	//if (localModel->isDir( midx ) )
+	//	return;
 
 	currentFile = localModel->data(midx,
 			RemoteDirModel::FileNameRole).toString();
@@ -461,10 +577,18 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 
 	}
 	//#endif
+	
+	        copylinklocalAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), this );
+          connect( copylinklocalAct , SIGNAL( triggered() ), this, SLOT( copyLinkLocal() ) );
+
+          sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), this );
+          connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( /*std::string rsid*/ ) ) );
 
 
 	contextMnu2.addAction( menuAction );
 	//contextMnu2.addAction( openfileAct);
+	contextMnu2.addAction( copylinklocalAct);
+  contextMnu2.addAction( sendlinkAct);
 	contextMnu2.addSeparator(); 
 	contextMnu2.addMenu( recMenu);
 	contextMnu2.addMenu( msgMenu);

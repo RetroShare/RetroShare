@@ -51,6 +51,8 @@ class TransfersDialog : public MainPage
 
 	public slots:
 		void insertTransfers();
+		
+		void handleDownloadRequest(const QString& url);
 
 	private slots:
 
@@ -61,6 +63,9 @@ class TransfersDialog : public MainPage
 		/** removes finished Downloads**/
 		void clearcompleted();
 		void playSelectedTransfer(); 
+		
+		void copyLink();
+    void pasteLink();
 
 	signals:
 		void playFiles(QStringList files);
@@ -87,6 +92,8 @@ class TransfersDialog : public MainPage
 		QAction* showdowninfoAct;
 		QAction* cancelAct;
 		QAction* clearcompletedAct;
+		QAction* copylinkAct;
+    QAction* pastelinkAct;
 
 		QTreeView *downloadList;
 

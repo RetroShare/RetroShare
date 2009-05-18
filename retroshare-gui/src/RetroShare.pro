@@ -135,6 +135,7 @@ HEADERS +=  rshare.h \
             gui/TrustView.h \
             gui/MessengerWindow.h \
             gui/PeersDialog.h \
+            gui/RetroShareLinkAnalyzer.h \
             gui/SearchTreeWidget.h \
             gui/SearchDialog.h \
             gui/SharedFilesDialog.h \
@@ -349,6 +350,7 @@ SOURCES +=  main.cpp \
             gui/TrustView.cpp \
             gui/MessengerWindow.cpp \
             gui/PeersDialog.cpp \
+            gui/RetroShareLinkAnalyzer.cpp \
             gui/SearchTreeWidget.cpp \
             gui/SearchDialog.cpp \
             gui/SharedFilesDialog.cpp \

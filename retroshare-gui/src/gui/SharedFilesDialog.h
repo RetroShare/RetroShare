@@ -61,6 +61,11 @@ private slots:
   void downloadRemoteSelected();
 //  void addMsgRemoteSelected();
 
+  void copyLinkRemote();
+  void copyLinkLocal();
+  void sendLinkTo();
+  void sendremoteLinkTo();
+
   //void showFrame(bool show);
 
 
@@ -86,6 +91,8 @@ private:
   
   //QMenu* contextMnu2;
   
+   void copyLink (const QModelIndexList& lst, bool remote);
+  
   /** Defines the actions for the context menu for QTreeView */
   QAction* downloadAct;
   QAction* addMsgAct;
@@ -93,6 +100,10 @@ private:
   /** Defines the actions for the context menu for QTreeWidget */
   QAction* openfileAct;
   QAction* openfolderAct;
+  QAction* copyremotelinkAct;
+  QAction* copylinklocalAct;
+  QAction* sendremotelinkAct;
+  QAction* sendlinkAct;
   
   
   QTreeView *shareddirtreeview;
