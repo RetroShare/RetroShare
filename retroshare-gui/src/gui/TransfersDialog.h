@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -46,12 +46,12 @@ class TransfersDialog : public MainPage
 		TransfersDialog(QWidget *parent = 0);
 		/** Default Destructor */
 		~TransfersDialog();
-		
+
 		virtual void keyPressEvent(QKeyEvent *) ;
 
 	public slots:
 		void insertTransfers();
-		
+
 		void handleDownloadRequest(const QString& url);
 
 	private slots:
@@ -62,8 +62,8 @@ class TransfersDialog : public MainPage
 		void cancel();
 		/** removes finished Downloads**/
 		void clearcompleted();
-		void playSelectedTransfer(); 
-		
+		void playSelectedTransfer();
+
 		void copyLink();
     void pasteLink();
 
@@ -105,6 +105,7 @@ class TransfersDialog : public MainPage
 
 		public slots:
 			int addItem(QString symbol, QString name, QString coreID, qlonglong size, double progress, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining);
+			bool addPeerToItem(int row, QString symbol, QString name, QString coreID, qlonglong fileSize, double progress, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining);
 		void delItem(int row);
 
 		int addUploadItem(QString symbol, QString name, QString coreID, qlonglong size, double progress, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining);
