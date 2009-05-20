@@ -109,6 +109,9 @@
 #define IMG_HELP                ":/images/help.png"
 #define IMAGE_NEWSFEED          ":/images/konqsidebar_news24.png"
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
+#define IMAGE_NOONLINE          ":/images/rstray0.png"
+#define IMAGE_ONEONLINE         ":/images/rstray1.png"
+#define IMAGE_TWOONLINE         ":/images/rstray2.png"
 
 
 /* Keys for UI Preferences */
@@ -326,7 +329,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setToolTip(tr("RetroShare"));
     trayIcon->setContextMenu(menu);
-    trayIcon->setIcon(QIcon(IMAGE_RETROSHARE));
+    trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
     
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, 
             SLOT(toggleVisibility(QSystemTrayIcon::ActivationReason)));
@@ -351,6 +354,27 @@ void MainWindow::updateStatus()
       
  	if (natstatus)
       natstatus->getNATStatus();
+      
+    std::list<std::string> ids;
+    rsPeers->getOnlineList(ids);
+    int online = ids.size();
+   
+    if (online == 0) 
+    {
+        trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
+    }
+    else if (online < 2) 
+    {
+        trayIcon->setIcon(QIcon(IMAGE_ONEONLINE));
+    }
+    else if (online < 3) 
+    {
+        trayIcon->setIcon(QIcon(IMAGE_TWOONLINE));
+    }
+    else
+    {
+        trayIcon->setIcon(QIcon(IMAGE_RETROSHARE));
+    }
 
 }
 
