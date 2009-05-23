@@ -36,6 +36,7 @@
 
 #include "graphwidget.h"
 #include "edge.h"
+#include "arrow.h"
 #include "node.h"
 
 #include <QDebug>
@@ -96,26 +97,10 @@ bool GraphWidget::clearGraph()
     	delete oldscene;
     }
 
-    if (oldcenterNode)
-    {
-	//delete oldcenterNode;
-    }
+    nodeMap.clear();
+    edgeList.clear();
 
-        std::list<Edge *>::iterator eit;
-        std::map<std::string, Node *>::iterator it;
-	for(eit = edgeList.begin(); eit != edgeList.end(); eit++)
-	{
-		//delete(*eit);
-	}
-	for(it = nodeMap.begin(); it != nodeMap.end(); it++)
-	{
-		//delete(it->second);
-	}
-
-	nodeMap.clear();
-	edgeList.clear();
-
-	return true;
+    return true;
 }
 
 void GraphWidget::addNode(uint32_t type, std::string id, std::string name)
@@ -161,10 +146,43 @@ void GraphWidget::addEdge(std::string id1, std::string id2)
     }
 }
 
+void GraphWidget::addArrow(std::string id1, std::string id2)
+{
+    std::map<std::string, Node *>::iterator it;
+    Node *n1 = NULL;
+    Node *n2 = NULL;
+
+    if (id1 == "")
+    {
+    	n1 = centerNode;
+    }
+    else
+    {
+    	it = nodeMap.find(id1);
+	if (it != nodeMap.end())
+	{
+		n1 = it->second;
+	}
+    }
+
+    it = nodeMap.find(id2);
+    if (it != nodeMap.end())
+    {
+	n2 = it->second;
+    }
+
+    if ((n1) && (n2))
+    {
+       Arrow *arrow = new Arrow(n1, n2);
+       scene()->addItem(arrow);
+       arrowList.push_back(arrow);
+    }
+}
+
 void GraphWidget::itemMoved()
 {
     if (!timerId)
-        timerId = startTimer(1000 / 25);
+        timerId = startTimer(1000 / 10);
 }
 
 void GraphWidget::keyPressEvent(QKeyEvent *event)

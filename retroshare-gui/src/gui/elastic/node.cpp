@@ -41,6 +41,7 @@
 #include <QMenu>
 
 #include "edge.h"
+#include "arrow.h"
 #include "node.h"
 #include "graphwidget.h"
 #include <math.h>
@@ -63,6 +64,17 @@ void Node::addEdge(Edge *edge)
 QList<Edge *> Node::edges() const
 {
     return edgeList;
+}
+
+void Node::addArrow(Arrow *arrow)
+{
+    arrowList << arrow;
+    arrow->adjust();
+}
+
+QList<Arrow *> Node::arrows() const
+{
+    return arrowList;
 }
 
 void Node::calculateForces()
@@ -99,6 +111,20 @@ void Node::calculateForces()
             pos = mapFromItem(edge->destNode(), 0, 0);
         else
             pos = mapFromItem(edge->sourceNode(), 0, 0);
+        xvel += pos.x() / weight;
+        yvel += pos.y() / weight;
+    }
+
+
+    // Now subtract all forces pulling items together
+    // alternative weight??
+    weight = sqrt(arrowList.size() + 1) * 10;
+    foreach (Arrow *arrow, arrowList) {
+        QPointF pos;
+        if (arrow->sourceNode() == this)
+            pos = mapFromItem(arrow->destNode(), 0, 0);
+        else
+            pos = mapFromItem(arrow->sourceNode(), 0, 0);
         xvel += pos.x() / weight;
         yvel += pos.y() / weight;
     }

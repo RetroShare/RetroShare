@@ -42,6 +42,7 @@ private slots:
 void peerCustomPopupMenu( QPoint point );
 
 void insertPeers();
+void insertSignatures();
 void insertConnections();
 
 void changedScene();

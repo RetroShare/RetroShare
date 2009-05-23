@@ -31,7 +31,7 @@
 #include <list>
 #include <iostream>
 #include <string>
-#include <stdint.h>
+
 
 class RsNotify;
 extern RsNotify   *rsNotify;
@@ -107,7 +107,7 @@ virtual bool NotifySysMessage(uint32_t &sysid, uint32_t &type,
 					std::string &title, std::string &msg)		= 0;
 virtual bool NotifyPopupMessage(uint32_t &ptype, std::string &name, std::string &msg) 	= 0;
 virtual bool NotifyLogMessage(uint32_t &sysid, uint32_t &type,
-							std::string &title, std::string &msg)		= 0;
+					std::string &title, std::string &msg)		= 0;
 
 	/* Control over Messages */
 virtual bool GetSysMessageList(std::map<uint32_t, std::string> &list)  			= 0;

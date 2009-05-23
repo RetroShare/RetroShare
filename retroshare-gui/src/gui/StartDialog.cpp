@@ -70,17 +70,38 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
   /* load the Certificate File name */
   std::string userName;
 
+#ifdef RS_USE_PGPSSL
+	/* get all available pgp private certificates....
+	 * mark last one as default.
+	 */
+
+	std::list<std::string> pgpIds;
+	std::list<std::string>::iterator it;
+	if (RsInit::GetLogins(pgpIds))
+	{
+		for(it = pgpIds.begin(); it != pgpIds.end(); it++)
+		{
+			const QVariant & userData = QVariant(QString::fromStdString(*it));
+			std::string name, email;
+			RsInit::GetLoginDetails(*it, name, email);
+       			ui.loadName->addItem(QString::fromStdString(name), userData);
+		}
+	}
+#else
+
   if (RsInit::ValidateCertificate(userName))
   {
   	/* just need to enter password */
-	ui.loadName->setText(QString::fromStdString(userName));
+        ui.loadName->addItem(QString::fromStdString(userName));
+	//ui.loadName->setText(QString::fromStdString(userName));
 	ui.loadPasswd->setFocus(Qt::OtherFocusReason);
 	ui.loadButton -> setEnabled(true);
   }
   else
   {
   	/* need to generate new user */
-	ui.loadName->setText("<No Existing User>");
+        ui.loadName->addItem("<No Existing User>");
+	//ui.loadName->setText("<No Existing User>");
 	ui.loadButton -> setEnabled(false);
 	//ui.genName->setFocus(Qt::OtherFocusReason);
   }
@@ -88,6 +109,8 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
 	ui.autoBox->setChecked(false) ;
 	ui.autoBox->setEnabled(false) ;
 #endif
+#endif
+
   //ui.genFriend -> setText("<None Selected>");
 
 }
@@ -124,6 +147,26 @@ void StartDialog::closeinfodlg()
 void StartDialog::loadPerson()
 {
 	std::string passwd = ui.loadPasswd->text().toStdString();
+#ifdef RS_USE_PGPSSL
+
+	std::string gpgPasswd = ui.loadGPGPasswd->text().toStdString();
+        int pgpidx = ui.loadName->currentIndex();
+        if (pgpidx < 0)
+        {
+                /* Message Dialog */
+                QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
+                                "Load Person Failure",
+                                "Missing PGP Certificate",
+                                  QMessageBox::Ok);
+                return;
+        }
+
+        QVariant data = ui.loadName->itemData(pgpidx);
+        std::string PGPId = (data.toString()).toStdString();
+
+	RsInit::LoadGPGPassword(PGPId, gpgPasswd);
+#else
+#endif
 	RsInit::LoadPassword(passwd);
 	loadCertificates();
 }

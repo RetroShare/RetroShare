@@ -31,6 +31,11 @@
 #include "connect/ConnectDialog.h"
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
+
+/* for GPGME */
+#include "rsiface/rsinit.h"
+#include <gpgme.h>
+
 #include <sstream>
 
 #include <QTimer>
@@ -180,6 +185,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 			return ;
 
 		if(peer_id != rsPeers->getOwnId())
+		{
 			if(detail.state & RS_PEER_STATE_FRIEND)
 			{
 				denyFriendAct = new QAction(QIcon(IMAGE_DENIED), tr( "Deny friend" ), this );
@@ -205,6 +211,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 				}
 #endif
 			}
+		}
 
 		peerdetailsAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Peer details..." ), this );
 		connect( peerdetailsAct , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
@@ -446,11 +453,19 @@ void NetworkDialog::insertConnect()
 				for(int k=0;k<8;++k)
 					item -> setToolTip(k,QString::fromStdString(detail.name) + QString(tr(" is trusting you. \nRight-click and select 'make friend' to be able to connect."))) ;
 			}
+#ifdef RS_USE_PGPSSL
+			else if (detail.trustLvl > GPGME_VALIDITY_MARGINAL)
+			{
+				backgrndcolor=Qt::cyan;
+				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
+			}
+#else
 			else if (detail.trustLvl > RS_TRUST_LVL_MARGINAL)
 			{
 				backgrndcolor=Qt::cyan;
 				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
 			}
+#endif
 			else if (detail.lastConnect < 10000) /* 3 hours? */
 			{
 				backgrndcolor=Qt::yellow;

@@ -49,6 +49,28 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
 
   ui.genName->setFocus(Qt::OtherFocusReason);
 
+#ifdef RS_USE_PGPSSL
+        /* get all available pgp private certificates....
+         * mark last one as default.
+         */
+	std::cerr << "Finding PGPUsers" << std::endl;
+
+        std::list<std::string> pgpIds;
+        std::list<std::string>::iterator it;
+        if (RsInit::GetLogins(pgpIds))
+        {
+                for(it = pgpIds.begin(); it != pgpIds.end(); it++)
+                {
+                        const QVariant & userData = QVariant(QString::fromStdString(*it));
+                        std::string name, email;
+                        RsInit::GetLoginDetails(*it, name, email);
+			std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
+                        ui.genPGPuser->addItem(QString::fromStdString(name), userData);
+                }
+        }
+#endif
+
+
 }
 
 /** Destructor. */
@@ -93,6 +115,27 @@ void GenCertDialog::genPerson()
 	std::string passwd2 = ui.genPasswd2->text().toStdString();
 	std::string err;
 
+
+#ifdef RS_USE_PGPSSL
+
+	std::string PGPpasswd  = ui.genPGPpassword->text().toStdString();
+	int pgpidx = ui.genPGPuser->currentIndex();
+	if (pgpidx < 0)
+	{
+		/* Message Dialog */
+		QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
+	                        "Generate ID Failure",
+			        "Missing PGP Certificate",
+			          QMessageBox::Ok);
+		return;
+	}
+
+	QVariant data = ui.genPGPuser->itemData(pgpidx);
+	std::string PGPId = (data.toString()).toStdString();
+
+#endif
+
+
 	if (genName.length() >= 3)
 	{
 		/* name passes basic test */
@@ -124,6 +167,13 @@ void GenCertDialog::genPerson()
 
 		return;
 	}
+
+
+#ifdef RS_USE_PGPSSL
+	/* Initialise the PGP user first */
+	RsInit::LoadGPGPassword(PGPId, PGPpasswd);
+#endif
+
 
 	bool okGen = RsInit::RsGenerateCertificate(genName, genOrg, genLoc, genCountry, passwd, err);
 

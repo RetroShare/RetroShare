@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>395</width>
-    <height>392</height>
+    <width>394</width>
+    <height>457</height>
    </rect>
   </property>
   <property name="palette" >
@@ -499,27 +499,8 @@
    <iconset resource="images.qrc" >
     <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
-  <layout class="QGridLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
-   <item row="2" column="0" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0" >
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="0" >
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
     <widget class="QLabel" name="loginLabel" >
      <property name="palette" >
       <palette>
@@ -1006,7 +987,7 @@ p, li { white-space: pre-wrap; }
      </property>
     </widget>
    </item>
-   <item row="1" column="0" >
+   <item>
     <layout class="QGridLayout" >
      <property name="margin" >
       <number>0</number>
@@ -1014,99 +995,96 @@ p, li { white-space: pre-wrap; }
      <property name="spacing" >
       <number>6</number>
      </property>
-     <item row="5" column="1" colspan="2" >
-      <widget class="QLineEdit" name="genLoc" />
-     </item>
      <item row="4" column="0" >
-      <widget class="QLabel" name="label_6" >
+      <widget class="QLabel" name="label_5" >
        <property name="text" >
-        <string>Organisation:</string>
+        <string>Name:</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0" colspan="3" >
+     <item row="4" column="1" colspan="2" >
+      <widget class="QLineEdit" name="genName" />
+     </item>
+     <item row="5" column="0" colspan="3" >
       <widget class="Line" name="line_4" >
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="3" column="0" >
-      <widget class="QLabel" name="label_9" >
-       <property name="text" >
-        <string>Password (Again)</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1" colspan="2" >
-      <widget class="QLineEdit" name="genPasswd" >
-       <property name="echoMode" >
-        <enum>QLineEdit::Password</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0" >
-      <widget class="QLabel" name="label_7" >
-       <property name="text" >
-        <string>Location:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0" colspan="3" >
-      <widget class="Line" name="line_2" >
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1" colspan="2" >
-      <widget class="QLineEdit" name="genOrg" />
-     </item>
-     <item row="10" column="0" colspan="3" >
-      <widget class="Line" name="line_3" >
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="0" colspan="3" >
-      <widget class="QCheckBox" name="friendBox" >
-       <property name="text" >
-        <string>Load Trusted Certificate (Optional)</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1" colspan="2" >
-      <widget class="QLineEdit" name="genName" />
-     </item>
-     <item row="11" column="0" colspan="2" >
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0" >
-        <size>
-         <width>211</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="3" column="1" colspan="2" >
-      <widget class="QLineEdit" name="genPasswd2" >
-       <property name="echoMode" >
-        <enum>QLineEdit::Password</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0" >
+     <item row="6" column="0" >
       <widget class="QLabel" name="label_2" >
        <property name="text" >
         <string>Password</string>
        </property>
       </widget>
      </item>
-     <item row="9" column="0" colspan="2" >
+     <item row="6" column="1" colspan="2" >
+      <widget class="QLineEdit" name="genPasswd" >
+       <property name="echoMode" >
+        <enum>QLineEdit::Password</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0" >
+      <widget class="QLabel" name="label_9" >
+       <property name="text" >
+        <string>Password (Again)</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1" colspan="2" >
+      <widget class="QLineEdit" name="genPasswd2" >
+       <property name="echoMode" >
+        <enum>QLineEdit::Password</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0" >
+      <widget class="QLabel" name="label_6" >
+       <property name="text" >
+        <string>Organisation:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="1" colspan="2" >
+      <widget class="QLineEdit" name="genOrg" />
+     </item>
+     <item row="9" column="0" >
+      <widget class="QLabel" name="label_7" >
+       <property name="text" >
+        <string>Location:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="1" colspan="2" >
+      <widget class="QLineEdit" name="genLoc" />
+     </item>
+     <item row="10" column="0" >
+      <widget class="QLabel" name="label_8" >
+       <property name="text" >
+        <string>Country:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="1" colspan="2" >
+      <widget class="QLineEdit" name="genCountry" />
+     </item>
+     <item row="11" column="0" colspan="3" >
+      <widget class="Line" name="line_2" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="0" colspan="3" >
+      <widget class="QCheckBox" name="friendBox" >
+       <property name="text" >
+        <string>Load Trusted Certificate (Optional)</string>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="0" colspan="2" >
       <layout class="QGridLayout" >
        <property name="margin" >
         <number>0</number>
@@ -1137,33 +1115,91 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </item>
-     <item row="6" column="0" >
-      <widget class="QLabel" name="label_8" >
-       <property name="text" >
-        <string>Country:</string>
+     <item row="14" column="0" colspan="3" >
+      <widget class="Line" name="line_3" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="0" column="0" >
-      <widget class="QLabel" name="label_5" >
-       <property name="text" >
-        <string>Name:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="11" column="2" >
+     <item row="15" column="2" >
       <widget class="QPushButton" name="genButton" >
        <property name="text" >
         <string>Generate New Certificate</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="1" colspan="2" >
-      <widget class="QLineEdit" name="genCountry" />
+     <item row="15" column="0" colspan="2" >
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>211</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="0" column="1" colspan="2" >
+      <widget class="QComboBox" name="genPGPuser" />
+     </item>
+     <item row="0" column="0" >
+      <widget class="QLabel" name="label" >
+       <property name="text" >
+        <string>OpenPGP User</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QLabel" name="label_3" >
+       <property name="text" >
+        <string>PGP Password</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" colspan="2" >
+      <widget class="QLineEdit" name="genPGPpassword" >
+       <property name="echoMode" >
+        <enum>QLineEdit::Password</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" >
+      <widget class="Line" name="line_5" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2" >
+      <widget class="Line" name="line_6" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
   </layout>
+  <zorder>loginLabel</zorder>
+  <zorder></zorder>
+  <zorder></zorder>
+  <zorder></zorder>
  </widget>
  <tabstops>
   <tabstop>genName</tabstop>

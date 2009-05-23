@@ -23,6 +23,8 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsdisc.h"
 
+#include <gpgme.h>
+
 #include <QMenu>
 #include <QMouseEvent>
 #include <QGraphicsItem>
@@ -143,60 +145,88 @@ void  NetworkView::insertPeers()
 	/* add all friends */
 	std::list<std::string> ids;
 	std::list<std::string>::iterator it;
- 	rsPeers->getOthersList(ids);
+ 	rsPeers->getPGPAllList(ids);
+	std::string ownId = rsPeers->getPGPOwnId();
 
 	std::cerr << "NetworkView::insertPeers()" << std::endl;
+
+	/* get the list of friends' issuers, as we flag them specially */
+	std::list<std::string> fids;
+ 	rsPeers->getPGPFriendList(fids);
+	
 
 	int i = 0;
 	uint32_t type = 0;
 	for(it = ids.begin(); it != ids.end(); it++, i++)
 	{
+		if (*it == ownId)
+		{
+			continue;
+		}
+
 		/* *** */
-		std::string name = rsPeers->getPeerName(*it);
-
-		if (rsPeers->isFriend(*it))
+                RsPeerDetails detail;
+		if (!rsPeers->getPeerDetails(*it, detail))
 		{
-			type = ELASTIC_NODE_TYPE_FRIEND;
+			continue;
 		}
-		else
+		switch(detail.trustLvl)
 		{
-                	RsPeerDetails detail;
-                	rsPeers->getPeerDetails(*it, detail);
-
-			if(detail.trustLvl > RS_TRUST_LVL_MARGINAL)
-			{
-				type = ELASTIC_NODE_TYPE_AUTHED;
-			}
-			else if (detail.trustLvl >= RS_TRUST_LVL_MARGINAL)
-			{
-				type = ELASTIC_NODE_TYPE_MARGINALAUTH;
-			}
-			else
-			{
+			default:
+			case GPGME_VALIDITY_UNKNOWN:
+			case GPGME_VALIDITY_UNDEFINED: 
+			case GPGME_VALIDITY_NEVER:
+				/* lots of fall through */
 				type = ELASTIC_NODE_TYPE_FOF;
-			}
-		}
+				break;
 
-  		ui.graphicsView->addNode(type, *it, name);
+			case GPGME_VALIDITY_MARGINAL:
+				/* lots of fall through */
+				type = ELASTIC_NODE_TYPE_MARGINALAUTH;
+				break;
+
+
+			case GPGME_VALIDITY_FULL:
+			case GPGME_VALIDITY_ULTIMATE:
+				/* lots of fall through */
+				type = ELASTIC_NODE_TYPE_AUTHED;
+
+				if (fids.end() != std::find(fids.begin(), fids.end(), *it))
+				{
+					type = ELASTIC_NODE_TYPE_FRIEND;
+				}	
+				break;
+		}
+  		ui.graphicsView->addNode(type, *it, detail.name);
 		std::cerr << "NetworkView::insertPeers() Added Friend: " << *it << std::endl;
 	}
 
 	insertConnections();
+	insertSignatures();
 }
 
 
 void  NetworkView::insertConnections()
 {
 	/* iterate through all friends */
-	std::list<std::string> ids;
+	std::list<std::string> fids, ids;
 	std::list<std::string>::iterator it;
-	std::map<std::string, std::list<std::string> > connLists;
 
-	std::string ownId = rsPeers->getOwnId();
- 	rsPeers->getOthersList(ids);
+	//std::string ownId = rsPeers->getGPGOwnId();
+ 	//rsPeers->getPGPAllList(ids);
+ 	rsPeers->getPGPFriendList(fids);
 
 	std::cerr << "NetworkView::insertConnections()" << std::endl;
 
+	// For the moment, only add friends.
+	for(it = fids.begin(); it != fids.end(); it++)
+	{
+  		ui.graphicsView->addEdge("", *it);
+		std::cerr << "NetworkView: Adding Edge: Self -> " << *it;
+		std::cerr << std::endl;
+	}
+
+#if 0
 	int i = 0;
 	for(it = ids.begin(); it != ids.end(); it++, i++)
 	{
@@ -249,8 +279,44 @@ void  NetworkView::insertConnections()
 			}
 		}
 	}
+#endif
+
 }
 
+void  NetworkView::insertSignatures()
+{
+	/* iterate through all friends */
+	std::list<std::string> ids;
+	std::list<std::string>::iterator it, sit;
+	std::string ownId = rsPeers->getPGPOwnId();
+
+ 	rsPeers->getPGPAllList(ids);
+
+	std::cerr << "NetworkView::insertSignatures()" << std::endl;
+
+	int i = 0;
+	for(it = ids.begin(); it != ids.end(); it++, i++)
+	{
+		RsPeerDetails detail;
+		if (!rsPeers->getPeerDetails(*it, detail))
+		{
+			continue;
+		}
+
+		for(sit = detail.signers.begin(); sit != detail.signers.end(); sit++)
+		{
+
+				if (*it != *sit)
+				{
+					std::cerr << "NetworkView: Adding Arrow: ";
+					std::cerr << *sit << " <-> " << *it;
+					std::cerr << std::endl;
+
+  					ui.graphicsView->addArrow(*sit, *it);
+				}
+		}
+	}
+}
 
 void  NetworkView::changedScene()
 {

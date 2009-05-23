@@ -34,47 +34,40 @@
 **
 ****************************************************************************/
 
-#ifndef GRAPHWIDGET_H
-#define GRAPHWIDGET_H
+#ifndef ARROW_H
+#define ARROW_H
 
-#include <QtGui/QGraphicsView>
-#include <string>
-#include <map>
-#include <stdint.h>
+#include <QGraphicsItem>
 
 class Node;
-class Edge;
-class Arrow;
 
-class GraphWidget : public QGraphicsView
+class Arrow : public QGraphicsItem
 {
-    Q_OBJECT
-
 public:
-    GraphWidget(QWidget *parent);
+    Arrow(Node *sourceNode, Node *destNode);
+    ~Arrow();
 
-    void itemMoved();
+    Node *sourceNode() const;
+    void setSourceNode(Node *node);
 
-    bool clearGraph();
-    void addNode(uint32_t type, std::string id, std::string name);
-    void addEdge(std::string id1, std::string id2);
-    void addArrow(std::string id1, std::string id2);
+    Node *destNode() const;
+    void setDestNode(Node *node);
 
+    void adjust();
+
+    enum { Type = UserType + 2 };
+    int type() const { return Type; }
+    
 protected:
-    void keyPressEvent(QKeyEvent *event);
-    void timerEvent(QTimerEvent *event);
-    void wheelEvent(QWheelEvent *event);
-    void drawBackground(QPainter *painter, const QRectF &rect);
-
-    void scaleView(qreal scaleFactor);
-
+    QRectF boundingRect() const;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    
 private:
-    int timerId;
-    Node *centerNode;
+    Node *source, *dest;
 
-    std::map<std::string, Node *> nodeMap;
-    std::list<Edge *> edgeList;
-    std::list<Arrow *> arrowList;
+    QPointF sourcePoint;
+    QPointF destPoint;
+    qreal arrowSize;
 };
 
 #endif

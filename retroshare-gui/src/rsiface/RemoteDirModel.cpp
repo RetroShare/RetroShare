@@ -556,7 +556,7 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 	std::list<DirStub>::iterator it;
 	int i = 0;
 	for(it = details.children.begin();
-		(i < row) && (it != details.children.end()); it++, i++);
+		((i < row) && (it != details.children.end())); it++, i++) ;
 
 	if (it == details.children.end()) 
 	{ 

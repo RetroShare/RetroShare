@@ -156,6 +156,7 @@ TextPage::TextPage(QWidget *parent)
     userCertLabel = new QLabel(tr("The text below is your XPGP certificate. "
                                   "You have to provide it to your friend "));
 
+    std::cerr << "TextPage() getting Invite" << std::endl;
     userCertEdit = new QTextEdit;
     std::string invite = rsPeers->GetRetroshareInvite();
 
@@ -177,6 +178,8 @@ TextPage::TextPage(QWidget *parent)
     userCertEdit->setText(QString::fromStdString(invite));
     userCertEdit->setReadOnly(true);
     userCertEdit->setMinimumHeight(200);
+
+    std::cerr << "TextPage() getting Invite: " << invite << std::endl;
 
     userCertHelpButton = new QPushButton;
     userCertHelpButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);

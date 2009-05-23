@@ -50,6 +50,7 @@
 #define ELASTIC_NODE_TYPE_FOF		5
 
 class Edge;
+class Arrow;
 class GraphWidget;
 class QGraphicsSceneMouseEvent;
 
@@ -60,6 +61,9 @@ public:
 
     void addEdge(Edge *edge);
     QList<Edge *> edges() const;
+
+    void addArrow(Arrow *arrow);
+    QList<Arrow *> arrows() const;
 
     enum { Type = UserType + 1 };
     int type() const { return Type; }
@@ -80,6 +84,7 @@ protected:
 
 private:
     QList<Edge *> edgeList;
+    QList<Arrow *> arrowList;
     QPointF newPos;
     GraphWidget *graph;
 
