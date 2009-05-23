@@ -104,7 +104,6 @@ int     Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_in *inaddr);
 /**************** PQI_USE_XPGP ******************/
 
 	AuthSSL *mAuthMgr;
-	//p3AuthMgr *mAuthMgr;
 
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/

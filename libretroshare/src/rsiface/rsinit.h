@@ -1,11 +1,16 @@
 /* Initialisation Class (not publicly disclosed to RsIFace) */
 
+/****
+ * #define RS_USE_PGPSSL 1
+ ***/
+
 class RsInit
 {
 	public:
 		/* Commandline/Directory options */
 
 		static const char *RsConfigDirectory() ;
+
 
 		static bool	setStartMinimised() ;
 		static int 	InitRetroShare(int argcIgnored, char **argvIgnored) ;
@@ -22,6 +27,16 @@ class RsInit
 		static void	InitRsConfig() ;
 
 		static std::string getHomePath() ;
+
+		/* PGPSSL init functions */
+
+#ifdef RS_USE_PGPSSL
+		static bool 	LoadGPGPassword(std::string id, std::string passwd);
+		static int 	GetLogins(std::list<std::string> &pgpIds);
+		static int 	GetLoginDetails(std::string id, std::string &name, std::string &email);
+
+		static std::string gpgPasswd;
+#endif
 
 		/* Key Parameters that must be set before
 		 * RetroShare will start up:

@@ -29,7 +29,7 @@
  */
 
 #include "authssl.h"
-//#include "cleanupx509.h"
+#include "cleanupxpgp.h"
 
 #include "pqinetwork.h"
 
@@ -48,18 +48,24 @@
 /********************************************************************************/
 /********************************************************************************/
 
+static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx);
+
 /***********
  ** #define AUTHSSL_DEBUG	1
  **********/
 #define AUTHSSL_DEBUG	1
 
-// the single instance of this.
+#ifdef PQI_USE_SSLONLY
+
+// the single instance of this, but only when SSL Only
 static AuthSSL instance_sslroot;
 
 p3AuthMgr *getAuthMgr()
 {
 	return &instance_sslroot;
 }
+
+#endif
 
 
 sslcert::sslcert(X509 *x509, std::string pid)
@@ -71,8 +77,334 @@ sslcert::sslcert(X509 *x509, std::string pid)
 	location = getX509LocString(x509->cert_info->subject);
 	email = "";
 
+	issuer = getX509CNString(x509->cert_info->issuer);
+
 	authed = false;
 }
+
+X509_REQ *GenerateX509Req(
+		std::string pkey_file, std::string passwd,
+		std::string name, std::string email, std::string org, 
+		std::string loc, std::string state, std::string country, 
+		int nbits_in, std::string &errString)
+{
+	/* generate request */
+	X509_REQ *req=X509_REQ_new();
+
+        // setup output.
+        BIO *bio_out = NULL;
+        bio_out = BIO_new(BIO_s_file());
+        BIO_set_fp(bio_out,stdout,BIO_NOCLOSE);
+
+        EVP_PKEY *pkey = NULL;
+
+        // first generate a key....
+        if ((pkey=EVP_PKEY_new()) == NULL)
+        {
+                fprintf(stderr,"GenerateX509Req: Couldn't Create Key\n");
+                return 0;
+        }
+
+        int nbits = 2048;
+        unsigned long e = 0x10001;
+
+        if ((nbits_in >= 512) && (nbits_in <= 4096))
+        {
+                nbits = nbits_in;
+        }
+        else
+        {
+                fprintf(stderr,"GenerateX509Req: strange num of nbits: %d\n", nbits_in);
+                fprintf(stderr,"GenerateX509Req: reverting to %d\n", nbits);
+        }
+
+
+        RSA *rsa = RSA_generate_key(nbits, e, NULL, NULL);
+        if ((rsa == NULL) || !EVP_PKEY_assign_RSA(pkey, rsa))
+        {
+                if(rsa) RSA_free(rsa);
+                fprintf(stderr,"GenerateX509Req: Couldn't Generate RSA Key!\n");
+                return 0;
+        }
+
+
+        // open the file.
+        FILE *out;
+        if (NULL == (out = fopen(pkey_file.c_str(), "w")))
+        {
+                fprintf(stderr,"GenerateX509Req: Couldn't Create Key File!");
+                fprintf(stderr," : %s\n", pkey_file.c_str());
+                return 0;
+        }
+
+        const EVP_CIPHER *cipher = EVP_des_ede3_cbc();
+
+        if (!PEM_write_PrivateKey(out,pkey,cipher,
+                        NULL,0,NULL,(void *) passwd.c_str()))
+        {
+                fprintf(stderr,"GenerateX509Req() Couldn't Save Private Key");
+                fprintf(stderr," : %s\n", pkey_file.c_str());
+                return 0;
+        }
+        fclose(out);
+
+        // We have now created a private key....
+        fprintf(stderr,"GenerateX509Req() Saved Private Key");
+        fprintf(stderr," : %s\n", pkey_file.c_str());
+
+        /********** Test Loading the private Key.... ************/
+        FILE *tst_in = NULL;
+        EVP_PKEY *tst_pkey = NULL;
+        if (NULL == (tst_in = fopen(pkey_file.c_str(), "rb")))
+        {
+                fprintf(stderr,"GenerateX509Req() Couldn't Open Private Key");
+                fprintf(stderr," : %s\n", pkey_file.c_str());
+                return 0;
+        }
+
+        if (NULL == (tst_pkey =
+                PEM_read_PrivateKey(tst_in,NULL,NULL,(void *) passwd.c_str())))
+        {
+                fprintf(stderr,"GenerateX509Req() Couldn't Read Private Key");
+                fprintf(stderr," : %s\n", pkey_file.c_str());
+                return 0;
+        }
+        fclose(tst_in);
+        EVP_PKEY_free(tst_pkey);
+        /********** Test Loading the private Key.... ************/
+
+	/* Fill in details: fields. 
+	req->req_info;
+	req->req_info->enc;
+	req->req_info->version;
+	req->req_info->subject;
+	req->req_info->pubkey;
+	 ****************************/
+
+	long version = 0x00;
+        unsigned long chtype = MBSTRING_ASC;
+	X509_NAME *x509_name = X509_NAME_new();
+
+        // fill in the request.
+
+        /**** X509_REQ -> Version ********************************/
+        if (!X509_REQ_set_version(req,version)) /* version 1 */
+        {
+                fprintf(stderr,"GenerateX509Req(): Couldn't Set Version!\n");
+                return 0;
+        }
+        /**** X509_REQ -> Version ********************************/
+	/**** X509_REQ -> Key     ********************************/
+
+	if (!X509_REQ_set_pubkey(req,pkey)) 
+	{
+		fprintf(stderr,"GenerateX509Req() Couldn't Set PUBKEY Version!\n");
+		return 0;
+	}
+
+	/**** SUBJECT         ********************************/
+        // create the name.
+
+        // fields to add.
+        // commonName CN
+        // emailAddress (none)
+        // organizationName O
+        // localityName L
+        // stateOrProvinceName ST
+        // countryName C
+
+        if (0 < strlen(name.c_str()))
+        {
+                X509_NAME_add_entry_by_txt(x509_name, "CN", chtype,
+                        (unsigned char *) name.c_str(), -1, -1, 0);
+        }
+        else
+        {
+                fprintf(stderr,"GenerateX509Req(): No Name -> Not creating X509 Cert Req\n");
+                return 0;
+        }
+
+	if (0 < strlen(email.c_str()))
+	{
+		//X509_NAME_add_entry_by_txt(x509_name, "Email", 0, 
+		//  (unsigned char *) ui -> gen_email -> value(), -1, -1, 0);
+		X509_NAME_add_entry_by_NID(x509_name, 48, 0, 
+			(unsigned char *) email.c_str(), -1, -1, 0);
+	}
+
+	if (0 < strlen(org.c_str()))
+	{
+		X509_NAME_add_entry_by_txt(x509_name, "O", chtype, 
+			(unsigned char *) org.c_str(), -1, -1, 0);
+	}
+
+	if (0 < strlen(loc.c_str()))
+	{
+		X509_NAME_add_entry_by_txt(x509_name, "L", chtype, 
+			(unsigned char *) loc.c_str(), -1, -1, 0);
+	}
+
+	if (0 < strlen(state.c_str()))
+	{
+		X509_NAME_add_entry_by_txt(x509_name, "ST", chtype, 
+			(unsigned char *) state.c_str(), -1, -1, 0);
+	}
+
+	if (0 < strlen(country.c_str()))
+	{
+		X509_NAME_add_entry_by_txt(x509_name, "C", chtype, 
+			(unsigned char *) country.c_str(), -1, -1, 0);
+	}
+
+	if (!X509_REQ_set_subject_name(req,x509_name))
+	{
+		fprintf(stderr,"GenerateX509Req() Couldn't Set Name to Request!\n");
+		X509_NAME_free(x509_name);
+		return 0;
+	}
+
+	X509_NAME_free(x509_name);
+	/**** SUBJECT         ********************************/
+
+	if (!X509_REQ_sign(req,pkey,EVP_sha1()))
+	{
+		fprintf(stderr,"GenerateX509Req() Failed to Sign REQ\n");
+		return 0;
+	}
+
+	return req;
+}
+
+#define SERIAL_RAND_BITS 	64
+
+X509 *SignX509Certificate(X509_NAME *issuer, EVP_PKEY *privkey, X509_REQ *req, long days)
+{
+	const EVP_MD *digest = EVP_sha1();
+	ASN1_INTEGER *serial = ASN1_INTEGER_new();
+	EVP_PKEY *tmppkey;
+	X509 *x509 = X509_new();
+	if (x509 == NULL)
+		return NULL;
+
+        BIGNUM *btmp = BN_new();
+        if (!BN_pseudo_rand(btmp, SERIAL_RAND_BITS, 0, 0))
+	{
+		fprintf(stderr,"SignX509Certificate() Failed: ");
+		fprintf(stderr," pseudo_rand\n");
+
+		return NULL;
+	}
+        if (!BN_to_ASN1_INTEGER(btmp, serial))
+	{
+		fprintf(stderr,"SignX509Certificate() Failed: ");
+		fprintf(stderr," int\n");
+
+		return NULL;
+	}
+        BN_free(btmp);
+
+	if (!X509_set_serialNumber(x509, serial)) 
+	{
+		fprintf(stderr,"SignX509Certificate() Failed: ");
+		fprintf(stderr," serialNumber\n");
+
+		return NULL;
+	}
+	ASN1_INTEGER_free(serial);
+
+	if (!X509_set_issuer_name(x509, issuer))
+	{
+		fprintf(stderr,"SignX509Certificate() Failed: ");
+		fprintf(stderr," issuer\n");
+
+		return NULL;
+	}
+
+        if (!X509_gmtime_adj(x509->cert_info->validity->notBefore, 0))
+	{
+		fprintf(stderr,"SignX509Certificate() Failed: ");
+		fprintf(stderr," notBefore\n");
+
+		return NULL;
+	}
+
+	//x509->cert_info->validity->notAfter
+        //if (!X509_gmtime_adj(X509_get_notAfter(x509), (long)60*60*24*days))
+        if (!X509_gmtime_adj(x509->cert_info->validity->notAfter, (long)60*60*24*days))
+	{
+		fprintf(stderr,"SignX509Certificate() Failed: ");
+		fprintf(stderr," notAfter\n");
+
+		return NULL;
+	}
+
+        if (!X509_set_subject_name(x509, X509_REQ_get_subject_name(req)))
+	{
+		fprintf(stderr,"SignX509Certificate() Failed: ");
+		fprintf(stderr," subject_name\n");
+
+		return NULL;
+	}
+
+
+        tmppkey = X509_REQ_get_pubkey(req);
+        if (!tmppkey || !X509_set_pubkey(x509,tmppkey))
+	{
+		fprintf(stderr,"SignX509Certificate() Failed: ");
+		fprintf(stderr," pubkey\n");
+
+		return NULL;
+	}
+
+
+	/* Cleanup Algorithm part */
+
+        X509_ALGOR *algor1 = x509->cert_info->signature;
+        X509_ALGOR *algor2 = x509->sig_alg;
+
+        X509_ALGOR *a;
+
+        a = algor1;
+        ASN1_TYPE_free(a->parameter);
+        a->parameter=ASN1_TYPE_new();
+        a->parameter->type=V_ASN1_NULL;
+
+        ASN1_OBJECT_free(a->algorithm);
+        a->algorithm=OBJ_nid2obj(digest->pkey_type);
+
+        a = algor2;
+        ASN1_TYPE_free(a->parameter);
+        a->parameter=ASN1_TYPE_new();
+        a->parameter->type=V_ASN1_NULL;
+
+        ASN1_OBJECT_free(a->algorithm);
+        a->algorithm=OBJ_nid2obj(digest->pkey_type);
+  
+
+        if (!X509_sign(x509,privkey,digest))
+	{
+		long e = ERR_get_error();
+
+		fprintf(stderr,"SignX509Certificate() Failed: ");
+		fprintf(stderr," signing Error: %ld\n", e);
+
+		fprintf(stderr,"ERR: %s, %s, %s\n", 
+			ERR_lib_error_string(e),
+			ERR_func_error_string(e),
+			ERR_reason_error_string(e));
+
+        	int inl=i2d_X509(x509,NULL);
+        	int outl=EVP_PKEY_size(privkey);
+		fprintf(stderr,"Size Check: inl: %d, outl: %d\n", inl, outl);
+
+		return NULL;
+	}
+
+	fprintf(stderr,"SignX509Certificate() Success\n");
+
+	return x509;
+}
+
 
 
 AuthSSL::AuthSSL()
@@ -145,6 +477,11 @@ static  int initLib = 0;
 
 	if (x509 == NULL)
 	{
+		std::cerr << "AuthSSL::InitAuth() PEM_read_X509() Failed";
+		std::cerr << std::endl;
+#ifdef AUTHSSL_DEBUG
+#endif
+
 		return -1;
 	}
 	SSL_CTX_use_certificate(sslctx, x509);
@@ -163,6 +500,10 @@ static  int initLib = 0;
 
 	if (pkey == NULL)
 	{
+		std::cerr << "AuthSSL::InitAuth() PEM_read_PrivateKey() Failed";
+		std::cerr << std::endl;
+#ifdef AUTHSSL_DEBUG
+#endif
 		return -1;
 	}
 	SSL_CTX_use_PrivateKey(sslctx, pkey);
@@ -179,6 +520,9 @@ static  int initLib = 0;
 
 	if (!getX509id(x509, mOwnId))
 	{
+		std::cerr << "AuthSSL::InitAuth() getX509id() Failed";
+		std::cerr << std::endl;
+
 		/* bad certificate */
 		CloseAuth();
 		return -1;
@@ -188,11 +532,22 @@ static  int initLib = 0;
 	 * for gpg/pgp or CA verification
 	 */
 
-  	validateOwnCertificate(x509, pkey);
+	if (!validateOwnCertificate(x509, pkey))
+	{
+		std::cerr << "AuthSSL::InitAuth() validateOwnCertificate() Failed";
+		std::cerr << std::endl;
+
+		/* bad certificate */
+		CloseAuth();
+		return -1;
+	}
+
 
 	// enable verification of certificates (PEER)
+	// and install verify callback.
 	SSL_CTX_set_verify(sslctx, SSL_VERIFY_PEER | 
-			SSL_VERIFY_FAIL_IF_NO_PEER_CERT, NULL);
+			SSL_VERIFY_FAIL_IF_NO_PEER_CERT, 
+				verify_x509_callback);
 
 	std::cerr << "SSL Verification Set" << std::endl;
 
@@ -202,7 +557,12 @@ static  int initLib = 0;
 	return 1;
 }
 
-
+/* Dummy function to be overloaded by real implementation */
+bool	AuthSSL::validateOwnCertificate(X509 *x509, EVP_PKEY *pkey)
+{
+	return true;
+	//return false;
+}
 
 bool	AuthSSL::CloseAuth()
 {
@@ -231,7 +591,9 @@ SSL_CTX *AuthSSL::getCTX()
 int     AuthSSL::setConfigDirectories(std::string configfile, std::string neighdir)
 {
 #ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::setConfigDirectories()";
+	std::cerr << "AuthSSL::setConfigDirectories() ";
+	std::cerr << " configfile: " << configfile;
+	std::cerr << " neighdir: " << neighdir;
 	std::cerr << std::endl;
 #endif
 	sslMtx.lock();   /***** LOCK *****/
@@ -375,7 +737,7 @@ bool    AuthSSL::isAuthenticated(std::string id)
 
 	if (locked_FindCert(id, &cert))
 	{
-		auth = it->second->authed;
+		auth = cert->authed;
 	}
 
 	sslMtx.unlock(); /**** UNLOCK ****/
@@ -408,6 +770,31 @@ std::string AuthSSL::getName(std::string id)
 	return name;
 }
 
+std::string AuthSSL::getIssuerName(std::string id)
+{
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::getIssuerName() " << id;
+	std::cerr << std::endl;
+#endif
+	std::string issuer;
+
+	sslMtx.lock();   /***** LOCK *****/
+
+	sslcert *cert = NULL;
+	if (id == mOwnId)
+	{
+		issuer = mOwnCert->issuer;
+	}
+	else if (locked_FindCert(id, &cert))
+	{
+		issuer = cert->issuer;
+	}
+
+	sslMtx.unlock(); /**** UNLOCK ****/
+
+	return issuer;
+}
+
 bool    AuthSSL::getDetails(std::string id, pqiAuthDetails &details)
 {
 #ifdef AUTHSSL_DEBUG
@@ -436,13 +823,15 @@ bool    AuthSSL::getDetails(std::string id, pqiAuthDetails &details)
 		details.email 	= cert->email;
 		details.location= cert->location;
 		details.org 	= cert->org;
+		details.issuer  = cert->issuer;
 
 		details.fpr	= cert->fpr;
 		details.signers = cert->signers;
 
-		details.trustLvl= cert->trustLvl;
-		details.ownsign = cert->ownsign;
-		details.trusted = cert->trusted;
+		//details.trustLvl= cert->trustLvl;
+		//details.ownsign = cert->ownsign;
+		//details.trusted = cert->trusted;
+		details.trusted = cert->authed;
 	}
 
 	sslMtx.unlock(); /**** UNLOCK ****/
@@ -465,7 +854,7 @@ bool AuthSSL::LoadCertificateFromString(std::string pem, std::string &id)
 	std::cerr << std::endl;
 #endif
 
-	std::string cleancert = cleanUpX509Certificate(pem);
+	std::string cleancert = cleanUpCertificate(pem);
 
 	X509 *x509 = loadX509FromPEM(cleancert);
 	if (!x509)
@@ -817,7 +1206,7 @@ bool AuthSSL::VerifySignBin(std::string pid,
 		return false;
 	}
 
-	EVP_PKEY *peerkey = peer->certificate->key->key->pkey;
+	EVP_PKEY *peerkey = peer->certificate->cert_info->key->pkey;
 	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
 	
 	if (0 == EVP_VerifyInit(mdctx, EVP_sha1()))
@@ -1124,7 +1513,7 @@ X509 *AuthSSL::loadX509FromDER(const uint8_t *ptr, uint32_t len)
 #endif
 
         X509 *tmp = NULL;
-        unsigned char **certptr = (unsigned char **) &ptr;
+        const unsigned char **certptr = (const unsigned char **) &ptr;
         X509 *x509 = d2i_X509(&tmp, certptr, len);
 
 	return x509;
@@ -1164,15 +1553,15 @@ bool AuthSSL::ProcessX509(X509 *x509, std::string &id)
 	/* extract id */
 	std::string xid;
 
-	if (!X509_check_valid_certificate(x509))
+
+
+	if (!ValidateCertificate(x509, xid))
 	{
-		/* bad certificate */
-		X509_free(x509);
-		return false;
-	}
-		
-	if (!getX509id(x509, xid))
-	{
+#ifdef AUTHSSL_DEBUG
+		std::cerr << "AuthSSL::ProcessX509() ValidateCertificate FAILED";
+		std::cerr << std::endl;
+#endif
+
 		/* bad certificate */
 		X509_free(x509);
 		return false;
@@ -1185,20 +1574,40 @@ bool AuthSSL::ProcessX509(X509 *x509, std::string &id)
 
 	if (xid == mOwnId)
 	{
+#ifdef AUTHSSL_DEBUG
+		std::cerr << "AuthSSL::ProcessX509() Cert is own id (dup)";
+		std::cerr << std::endl;
+#endif
+
 		cert = mOwnCert;
 		duplicate = true;
 	}
 	else if (locked_FindCert(xid, &cert))
 	{
+#ifdef AUTHSSL_DEBUG
+		std::cerr << "AuthSSL::ProcessX509() Found Duplicate";
+		std::cerr << std::endl;
+#endif
+
 		duplicate = true;
 	}
 
 	if (duplicate)
 	{
+#ifdef AUTHSSL_DEBUG
+		std::cerr << "AuthSSL::ProcessX509() Processing as dup";
+		std::cerr << std::endl;
+#endif
+
 		/* have a duplicate */
 		/* check that they are exact */
 		if (0 != X509_cmp(cert->certificate, x509))
 		{
+#ifdef AUTHSSL_DEBUG
+			std::cerr << "AuthSSL::ProcessX509() Not the same: MAJOR ERROR";
+			std::cerr << std::endl;
+#endif
+
 			/* MAJOR ERROR */
 			X509_free(x509);
 			sslMtx.unlock(); /**** UNLOCK ****/
@@ -1209,6 +1618,11 @@ bool AuthSSL::ProcessX509(X509 *x509, std::string &id)
 
 		/* we accepted it! */
 		id = xid;
+#ifdef AUTHSSL_DEBUG
+		std::cerr << "AuthSSL::ProcessX509() Accepted Dup";
+		std::cerr << std::endl;
+#endif
+
 
 		sslMtx.unlock(); /**** UNLOCK ****/
 		return true;
@@ -1239,6 +1653,10 @@ bool AuthSSL::ProcessX509(X509 *x509, std::string &id)
 
 	id = xid;
 
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::ProcessX509() Accepted New Cert";
+	std::cerr << std::endl;
+#endif
 	return true;
 }
 
@@ -1253,7 +1671,7 @@ bool getX509id(X509 *x509, std::string &xid)
 	xid = "";
 	if (x509 == NULL)
 	{
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 		std::cerr << "AuthSSL::getX509id() NULL pointer";
 		std::cerr << std::endl;
 #endif
@@ -1265,7 +1683,7 @@ bool getX509id(X509 *x509, std::string &xid)
 	int signlen = ASN1_STRING_length(signature);
 	if (signlen < CERTSIGNLEN)
 	{
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 		std::cerr << "AuthSSL::getX509id() ERROR: Short Signature";
 		std::cerr << std::endl;
 #endif
@@ -1288,27 +1706,36 @@ bool getX509id(X509 *x509, std::string &xid)
 
 
 	/* validate + get id */
-bool    AuthSSL::ValidateCertificateX509(X509 *x509, std::string &peerId)
+bool    AuthSSL::ValidateCertificate(X509 *x509, std::string &peerId)
 {
 	/* check self signed */
+#warning "ValidateCertificate Not Finished"
+
+#if 0
 	if (!X509_check_valid_certificate(x509))
 	{
 		/* bad certificate */
 		return false;
 	}
+#endif
+
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::ValidateCertificate() Not Finished!";
+	std::cerr << std::endl;
+#endif
 
 	return getX509id(x509, peerId);
 }
 
 /* store for discovery */
-bool    AuthSSL::FailedCertificateX509(X509 *x509, bool incoming)
+bool    AuthSSL::FailedCertificate(X509 *x509, bool incoming)
 {
 	std::string id;
 	return ProcessX509(x509, id);
 }
 
 /* check that they are exact match */
-bool    AuthSSL::CheckCertificateX509(std::string x509Id, X509 *x509)
+bool    AuthSSL::CheckCertificate(std::string x509Id, X509 *x509)
 {
 	sslMtx.lock();   /***** LOCK *****/
 
@@ -1334,11 +1761,11 @@ bool    AuthSSL::CheckCertificateX509(std::string x509Id, X509 *x509)
 		}
 
 		/* transfer new signatures */
-		X509_copy_known_signatures(pgp_keyring, cert->certificate, x509);
+		//X509_copy_known_signatures(pgp_keyring, cert->certificate, x509);
 		X509_free(x509);
 
 		/* update signers */
-		cert->signers = getX509signers(cert->certificate);
+		//cert->signers = getX509signers(cert->certificate);
 
 		sslMtx.unlock(); /**** UNLOCK ****/
 		return true;
@@ -1361,6 +1788,95 @@ int pem_passwd_cb(char *buf, int size, int rwflag, void *password)
 	return(strlen(buf));
 }
 
+
+static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx)
+{
+	AuthSSL *authssl = (AuthSSL *) getAuthMgr();
+	return authssl->VerifyX509Callback(preverify_ok, ctx);
+
+}
+
+
+int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
+{
+	char    buf[256];
+	X509   *err_cert;
+	int     err, depth;
+	//SSL    *ssl;
+	//mydata_t *mydata;
+	
+	err_cert = X509_STORE_CTX_get_current_cert(ctx);
+	err = X509_STORE_CTX_get_error(ctx);
+	depth = X509_STORE_CTX_get_error_depth(ctx);
+
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::VerifyX509Callback(preverify_ok: " << preverify_ok
+				 << " Err: " << err << " Depth: " << depth;
+	std::cerr << std::endl;
+#endif
+	
+	/*
+	* Retrieve the pointer to the SSL of the connection currently treated
+	* and the application specific data stored into the SSL object.
+	*/
+	//ssl = X509_STORE_CTX_get_ex_data(ctx, SSL_get_ex_data_X509_STORE_CTX_idx());
+	//mydata = SSL_get_ex_data(ssl, mydata_index);
+	
+	X509_NAME_oneline(X509_get_subject_name(err_cert), buf, 256);
+	
+	std::cerr << "AuthSSL::VerifyX509Callback: depth: " << depth << ":" << buf;
+	std::cerr << std::endl;
+
+
+//		X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT
+//		X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN  
+//
+//	We accept self signed certificates.
+	if (!preverify_ok && (depth == 0) && (err == X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT)) 
+	{
+		std::cerr << "AuthSSL::VerifyX509Callback() Accepting SELF_SIGNED_CERT";
+		std::cerr << std::endl;
+		preverify_ok = 1;
+	}
+
+	if (!preverify_ok) {
+		fprintf(stderr, "Verify error:num=%d:%s:depth=%d:%s\n", err,
+		X509_verify_cert_error_string(err), depth, buf);
+	}
+
+#if 0
+	else if (mydata->verbose_mode)
+	{
+		printf("depth=%d:%s\n", depth, buf);
+	}
+#endif
+	
+	/*
+	* At this point, err contains the last verification error. We can use
+	* it for something special
+	*/
+
+	if (!preverify_ok && (err == X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT))
+	{
+		X509_NAME_oneline(X509_get_issuer_name(ctx->current_cert), buf, 256);
+		printf("issuer= %s\n", buf);
+	}
+
+
+#if 0	
+	if (mydata->always_continue)
+		return 1;
+	else
+		return preverify_ok;
+#endif
+	return preverify_ok;
+
+}
+
+
+
+
+
 // Not dependent on sslroot. load, and detroys the X509 memory.
 
 int	LoadCheckX509andGetName(const char *cert_file, std::string &userName, std::string &userId)
@@ -1372,7 +1888,7 @@ int	LoadCheckX509andGetName(const char *cert_file, std::string &userName, std::s
 	FILE *tmpfp = fopen(cert_file, "r");
 	if (tmpfp == NULL)
 	{
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 		std::cerr << "sslroot::LoadCheckAndGetX509Name()";
 		std::cerr << " Failed to open Certificate File:" << cert_file;
 		std::cerr << std::endl;
@@ -1388,18 +1904,13 @@ int	LoadCheckX509andGetName(const char *cert_file, std::string &userName, std::s
 	bool valid = false;
 	if (x509)
 	{
-		valid = X509_check_valid_certificate(x509);
+		valid = ((AuthSSL *) getAuthMgr())->ValidateCertificate(x509, userId);
 	}
 
 	if (valid)
 	{
 		// extract the name.
-		userName = getX509CNString(x509->subject->subject);
-	}
-
-	if (!getX509id(x509, userId))
-	{
-		valid = false;
+		userName = getX509CNString(x509->cert_info->subject);
 	}
 
 	std::cout << getX509Info(x509) << std::endl ;
@@ -1536,7 +2047,7 @@ std::string getX509Info(X509 *cert)
 	l=X509_get_version(cert);
 	out << "     Version: " << l+1 << "(0x" << l << ")" << std::endl;
 	out << "     Subject: " << std::endl;
-	out << "  " << getX509NameString(cert -> subject -> subject);
+	out << "  " << getX509NameString(cert->cert_info->subject);
 	out << std::endl;
 	out << std::endl;
 	out << "     Signatures:" << std::endl;
@@ -1569,10 +2080,9 @@ std::string getX509AuthCode(X509 *x509)
 }
 
 // other fns
-#if 0
 std::string getCertName(X509 *x509)
 {
-	std::string name = x509->name;
+	std::string name = getX509NameString(x509->cert_info->subject);
 	// strip out bad chars.
 	for(int i = 0; i < (signed) name.length(); i++)
 	{
@@ -1585,6 +2095,7 @@ std::string getCertName(X509 *x509)
 	return name;
 }
 
+#if 0
 #endif
 	
 
@@ -1716,7 +2227,10 @@ bool    AuthSSL::saveCertificates()
 
 	for(it = mCerts.begin(); it != mCerts.end(); it++)
 	{
-		if (it->second->trustLvl > TRUST_SIGN_BASIC)
+// SAVE ALL CERTS
+#if 0
+		if (it->second->authed)
+#endif
 		{
 			X509 *x509 = it->second->certificate;
 			std::string hash;
@@ -1747,14 +2261,14 @@ bool    AuthSSL::saveCertificates()
 
 	if (0 == EVP_SignInit_ex(mdctx, EVP_sha1(), NULL))
 	{
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 		std::cerr << "EVP_SignInit Failure!" << std::endl;
 #endif
 	}
 
 	if (0 == EVP_SignUpdate(mdctx, conftxt.c_str(), conftxt.length()))
 	{
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 		std::cerr << "EVP_SignUpdate Failure!" << std::endl;
 #endif
 	}
@@ -1762,36 +2276,46 @@ bool    AuthSSL::saveCertificates()
 
 	if (0 == EVP_SignFinal(mdctx, signature, &signlen, pkey))
 	{
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 		std::cerr << "EVP_SignFinal Failure!" << std::endl;
 #endif
 	}
 
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 	std::cerr << "Conf Signature is(" << signlen << "): ";
 #endif
 	for(i = 0; i < signlen; i++) 
 	{
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 		fprintf(stderr, "%02x", signature[i]);
 #endif
 		conftxt += signature[i];
 	}
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 	std::cerr << std::endl;
 #endif
+	EVP_MD_CTX_destroy(mdctx);
 
 	FILE *cfd = fopen(configfile.c_str(), "wb");
+	if (cfd == NULL)
+	{
+#ifdef AUTHSSL_DEBUG
+		std::cerr << "Failed to open: " << configfile << std::endl;
+#endif
+		sslMtx.unlock(); /**** UNLOCK ****/
+
+		return false;
+	}
+
 	int wrec;
 	if (1 != (wrec = fwrite(conftxt.c_str(), conftxt.length(), 1, cfd)))
 	{
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 		std::cerr << "Error writing: " << configfile << std::endl;
 		std::cerr << "Wrote: " << wrec << "/" << 1 << " Records" << std::endl;
 #endif
 	}
 
-	EVP_MD_CTX_destroy(mdctx);
 	fclose(cfd);
 
 	sslMtx.unlock(); /**** UNLOCK ****/
@@ -1864,7 +2388,7 @@ bool    AuthSSL::loadCertificates(bool &oldFormat, std::map<std::string, std::st
 	FILE *cfd = fopen(configfile.c_str(), "rb");
 	if (cfd == NULL)
 	{
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 		std::cerr << "Unable to Load Configuration File!" << std::endl;
 		std::cerr << "File: " << configfile << std::endl;
 #endif
@@ -1902,7 +2426,7 @@ bool    AuthSSL::loadCertificates(bool &oldFormat, std::map<std::string, std::st
 		{
 			if (EOF == (c = fgetc(cfd)))
 			{
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 				std::cerr << "Error Reading Signature of: ";
 				std::cerr << fname;
 				std::cerr << std::endl;
@@ -1916,12 +2440,12 @@ bool    AuthSSL::loadCertificates(bool &oldFormat, std::map<std::string, std::st
 		}
 		if ('\n' != (c = fgetc(cfd)))
 		{
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 			std::cerr << "Warning Mising seperator" << std::endl;
 #endif
 		}
 
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 		std::cerr << "Read fname:" << fname << std::endl;
 		std::cerr << "Signature:" << std::endl;
 		for(i = 0; i < signlen; i++) 
@@ -1965,7 +2489,7 @@ bool    AuthSSL::loadCertificates(bool &oldFormat, std::map<std::string, std::st
 		{
 			if (EOF == (c = fgetc(cfd)))
 			{
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 				std::cerr << "Error Reading Value of: ";
 				std::cerr << opt;
 				std::cerr << std::endl;
@@ -1983,12 +2507,12 @@ bool    AuthSSL::loadCertificates(bool &oldFormat, std::map<std::string, std::st
 		}
 		if ('\n' != (c = fgetc(cfd)))
 		{
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 			std::cerr << "Warning Mising seperator" << std::endl;
 #endif
 		}
 
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 		std::cerr << "Read OPT:" << opt;
 		std::cerr << " Val:" << val << std::endl;
 #endif
@@ -2018,7 +2542,7 @@ bool    AuthSSL::loadCertificates(bool &oldFormat, std::map<std::string, std::st
 			c = fgetc(cfd);
 			if (c == EOF)
 			{
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 				std::cerr << "Error Reading Conf Signature:";
 				std::cerr << std::endl;
 #endif
@@ -2029,7 +2553,7 @@ bool    AuthSSL::loadCertificates(bool &oldFormat, std::map<std::string, std::st
 		}
 	}
 
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 	std::cerr << "Configuration File Signature: " << std::endl;
 	for(i = 0; i < signlen; i++) 
 	{
@@ -2050,21 +2574,21 @@ bool    AuthSSL::loadCertificates(bool &oldFormat, std::map<std::string, std::st
 
 	if (0 == EVP_SignInit(mdctx, EVP_sha1()))
 	{
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 #endif
 		std::cerr << "EVP_SignInit Failure!" << std::endl;
 	}
 
 	if (0 == EVP_SignUpdate(mdctx, conftxt.c_str(), conftxt.length()))
 	{
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 		std::cerr << "EVP_SignUpdate Failure!" << std::endl;
 #endif
 	}
 
 	if (0 == EVP_SignFinal(mdctx, conf_signature, &signlen, pkey))
 	{
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 		std::cerr << "EVP_SignFinal Failure!" << std::endl;
 #endif
 	}
@@ -2072,7 +2596,7 @@ bool    AuthSSL::loadCertificates(bool &oldFormat, std::map<std::string, std::st
 	EVP_MD_CTX_destroy(mdctx);
 	fclose(cfd);
 
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 	std::cerr << "Recalced File Signature: " << std::endl;
 	for(i = 0; i < signlen; i++) 
 	{
@@ -2092,7 +2616,7 @@ bool    AuthSSL::loadCertificates(bool &oldFormat, std::map<std::string, std::st
 
 	if (same == false)
 	{
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 		std::cerr << "ERROR VALIDATING CONFIGURATION!" << std::endl;
 		std::cerr << "PLEASE FIX!" << std::endl;
 #endif
@@ -2110,7 +2634,7 @@ bool    AuthSSL::loadCertificates(bool &oldFormat, std::map<std::string, std::st
 			std::string id;
 			if (ProcessX509(x509, id))
 			{
-#ifdef X509_DEBUG
+#ifdef AUTHSSL_DEBUG
 				std::cerr << "Loaded Certificate: " << id;
 				std::cerr << std::endl;
 #endif

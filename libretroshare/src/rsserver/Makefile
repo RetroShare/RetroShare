@@ -20,12 +20,6 @@ RSOBJ = p3peers.o \
 	rsiface.o \
 	rstypes.o 
 
-#	p3files.o  \
-#	p3face-file.o \
-#	pqistrings.o \
-#	p3face-people.o 
-#	p3face-network.o \
-
 #TESTOBJ  = 
 
 #TESTS  = 

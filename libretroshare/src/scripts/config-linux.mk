@@ -8,7 +8,10 @@ endif
 ############   LINUX CONFIGURATION    ########################
 
 # flags for components....
+#PQI_USE_SSLONLY = 1
 PQI_USE_XPGP = 1
+
+
 #PQI_USE_PROXY = 1
 #PQI_USE_CHANNELS = 1
 #USE_FILELOOK = 1
@@ -42,6 +45,10 @@ endif
 
 ifdef PQI_USE_XPGP
 	CFLAGS += -DPQI_USE_XPGP
+endif
+
+ifdef PQI_USE_SSLONLY
+	CFLAGS += -DPQI_USE_SSLONLY
 endif
 
 ifdef PQI_USE_PROXY
@@ -84,6 +91,7 @@ ifdef PQI_USE_XPGP
 LIBS +=  -lssl -lcrypto  -lpthread
 LIBS +=  -L$(UPNPC_DIR) -lminiupnpc
 LIBS +=  $(XLIB) -ldl -lz 
+LIBS +=  -lgpgme
 	
 RSLIBS = $(LIBS)
 

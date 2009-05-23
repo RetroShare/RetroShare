@@ -53,6 +53,12 @@ virtual bool    isFriend(std::string id);
 virtual std::string getPeerName(std::string id);
 virtual bool	getPeerDetails(std::string id, RsPeerDetails &d);
 
+                /* Using PGP Ids */
+virtual std::string getPGPOwnId();
+virtual bool    getPGPFriendList(std::list<std::string> &ids);
+virtual bool    getPGPAllList(std::list<std::string> &ids);
+
+
 	/* Add/Remove Friends */
 virtual	bool addFriend(std::string id);
 virtual	bool removeFriend(std::string id);

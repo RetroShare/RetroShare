@@ -58,6 +58,8 @@ class pqiAuthDetails
 	std::string location;
 	std::string org;
 
+	std::string issuer;
+
 	std::string fpr; /* fingerprint */
 	std::list<std::string> signers;
 
@@ -104,6 +106,10 @@ virtual bool loadCertificates() = 0;
 		/* first party trust info */
 virtual bool isTrustingMe(std::string id) = 0;
 virtual void addTrustingPeer(std::string id) = 0;
+
+		/* Extra Fns for PGP, call std versions if not overloaded */
+virtual std::string PGPOwnId() { return OwnId(); }
+virtual bool    getPGPAllList(std::list<std::string> &ids) { return getAllList(ids); };
 
 		/* Load/Save certificates */
 

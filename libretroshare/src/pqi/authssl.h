@@ -26,12 +26,20 @@
 #ifndef MRK_AUTH_SSL_HEADER
 #define MRK_AUTH_SSL_HEADER
 
-/* This is a dummy auth header.... to 
- * work with the standard OpenSSL as opposed to the patched version.
+/* 
+ * This is an implementation of SSL certificate authentication, which can be 
+ * overloaded with pgp style signatures, and web-of-trust authentication.
  *
- * It is expected to be replaced by authpgp shortly.
- * (or provide the base OpenSSL iteraction for authpgp).
- *
+ * There are several virtual functions with can be overloaded to acheive this.
+ *      SignCertificate()
+ *	AuthCertificate()
+ * 	
+ * To use as an SSL authentication system, you must use a common CA certificate.
+ * and compilation should be done with PQI_USE_XPGP off, and PQI_USE_SSLONLY on
+ *  * The pqissl stuff doesn't need to differentiate between SSL, SSL + PGP,
+ *  as its X509 certs.
+ *  * The rsserver stuff has to distinguish between all three types ;(
+ * 
  */
 
 #include <openssl/ssl.h>
@@ -60,6 +68,8 @@ class sslcert
         std::string org;
         std::string email;
 
+        std::string issuer;
+
         std::string fpr;
         std::list<std::string> signers;
 
@@ -77,11 +87,16 @@ class AuthSSL: public p3AuthMgr
 
 	/* Initialisation Functions (Unique) */
 	AuthSSL();
+bool    validateOwnCertificate(X509 *x509, EVP_PKEY *pkey);
+
 virtual bool	active();
 virtual int	InitAuth(const char *srvr_cert, const char *priv_key, 
 					const char *passwd);
 virtual bool	CloseAuth();
 virtual int     setConfigDirectories(std::string confFile, std::string neighDir);
+
+	/* Extra Function SSL only */
+std::string 	getIssuerName(std::string id);
 
 	/*********** Overloaded Functions from p3AuthMgr **********/
 	
@@ -138,15 +153,25 @@ virtual bool    VerifySignBin(std::string, const void*, uint32_t, unsigned char*
 
 	/*********** Overloaded Functions from p3AuthMgr **********/
 
+	/************* Virtual Functions from AuthSSL *************/
+
+virtual int 	VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx);
+virtual bool 	ValidateCertificate(X509 *x509, std::string &peerId); /* validate + get id */
+
+	/************* Virtual Functions from AuthSSL *************/
+
+
 	public: /* SSL specific functions used in pqissl/pqissllistener */
 SSL_CTX *getCTX();
 
-bool 	ValidateCertificate(X509 *x509, std::string &peerId); /* validate + get id */
+
 bool 	FailedCertificate(X509 *x509, bool incoming);     /* store for discovery */
 bool 	CheckCertificate(std::string peerId, X509 *x509); /* check that they are exact match */
 
 	/* Special Config Loading (backwards compatibility) */
 bool  	loadCertificates(bool &oldFormat, std::map<std::string, std::string> &keyValueMap);
+
+
 
 	private:
 
@@ -184,6 +209,16 @@ bool 	locked_FindCert(std::string id, sslcert **cert);
 
 };
 
+
+X509_REQ *GenerateX509Req(
+                std::string pkey_file, std::string passwd,
+                std::string name, std::string email, std::string org,
+                std::string loc, std::string state, std::string country,
+                int nbits_in, std::string &errString);
+
+X509 *SignX509Certificate(X509_NAME *issuer, EVP_PKEY *privkey, X509_REQ *req, long days);
+
+
 /* Helper Functions */
 int printSSLError(SSL *ssl, int retval, int err, unsigned long err2, std::ostream &out);
 std::string getX509NameString(X509_NAME *name);
@@ -195,13 +230,14 @@ std::string getX509CountryString(X509_NAME *name);
 
 #if 0
 std::list<std::string> getXPGPsigners(XPGP *cert);
-std::string getXPGPInfo(XPGP *cert);
 std::string getXPGPAuthCode(XPGP *xpgp);
 
-int     LoadCheckXPGPandGetName(const char *cert_file, 
-			std::string &userName, std::string &userId);
 #endif
 
+std::string getX509Info(X509 *cert);
 bool 	getX509id(X509 *x509, std::string &xid);
+
+int     LoadCheckX509andGetName(const char *cert_file, 
+			std::string &userName, std::string &userId);
 
 #endif // MRK_AUTH_SSL_HEADER

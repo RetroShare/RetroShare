@@ -97,7 +97,16 @@ RsTurtle *rsTurtle = NULL ;
 	#include "pqi/authxpgp.h"
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
+/**************** PQI_USE_SSLONLY ***************/
+  #if defined(PQI_USE_SSLONLY)
 	#include "pqi/authssl.h"
+  #else /* X509 Certificates */
+  /**************** PQI_USE_SSLONLY ***************/
+  /**************** SSL + OPENPGP *****************/
+	#include "pqi/authgpg.h"
+	#include "pqi/authssl.h"
+  #endif /* X509 Certificates */
+  /**************** SSL + OPENPGP *****************/
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
@@ -479,27 +488,27 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
 		std::cerr << "No Existing User" << std::endl;
 	}
 #else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
-	/* here we need to decide if existing user is okay....
-	 * obviously - it can't be until we have functions
-	 * to do it!
+/**************** PQI_USE_SSLONLY ***************/
+	/* Initial Certificate load will be X509 for SSL cases.
+	 * in the OpenPGP case, this needs to be checked too.
 	 */
 
+	if (LoadCheckX509andGetName(load_cert.c_str(), userName, userId))
+	{
+		std::cerr << "X509 Existing Name: " << userName << std::endl;
+		std::cerr << "Existing Id: " << userId << std::endl;
+		existingUser = true;
+	}
+	else
+	{
+		std::cerr << "No Existing User" << std::endl;
+	}
+
+/**************** SSL + OPENPGP *****************/
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
-
-	/* do a null init to allow the SSL libray to startup! */
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	/* do a null init to allow the SSL libray to startup! */
 	getAuthMgr() -> InitAuth(NULL, NULL, NULL);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-	getAuthMgr() -> InitAuth(NULL, NULL, NULL);
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
 	/* if existing user, and havePasswd .... we can skip the login prompt */
 	if (existingUser)
@@ -515,6 +524,74 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
 	}
 	return 0;
 }
+
+#ifdef RS_USE_PGPSSL
+int	RsInit::GetLogins(std::list<std::string> &pgpIds)
+{
+  #ifdef PQI_USE_XPGP
+	return 0;
+  #else
+    #ifdef PQI_USE_SSLONLY
+	return 0;
+    #else  // PGP+SSL
+	GPGAuthMgr *mgr = (GPGAuthMgr *) getAuthMgr();
+
+	mgr->availablePGPCertificates(pgpIds);
+	return 1;
+    #endif
+  #endif
+}
+
+int RsInit::GetLoginDetails(std::string id, std::string &name, std::string &email)
+{
+  #ifdef PQI_USE_XPGP
+	return 0;
+  #else
+    #ifdef PQI_USE_SSLONLY
+	return 0;
+    #else  // PGP+SSL
+
+	GPGAuthMgr *mgr = (GPGAuthMgr *) getAuthMgr();
+	name = id;
+	email = id;
+
+	return 1;
+    #endif
+  #endif
+}
+
+
+std::string RsInit::gpgPasswd;
+
+bool RsInit::LoadGPGPassword(std::string id, std::string _passwd)
+{
+	bool ok = false;
+	std::string gpgId = id;
+	std::string name = id;
+	gpgPasswd = _passwd;
+
+
+	GPGAuthMgr *gpgAuthMgr = (GPGAuthMgr *) getAuthMgr();
+	if (0 < gpgAuthMgr -> GPGInit(gpgId, name, gpgPasswd.c_str()))
+	{
+		ok = true;
+		std::cerr << "PGP Auth Success!";
+		std::cerr << "ID: " << id << " NAME: " << name;
+		std::cerr << std::endl;
+	}
+	else
+	{
+		std::cerr << "PGP Auth Failed!";
+		std::cerr << "ID: " << id << " NAME: " << name;
+		std::cerr << std::endl;
+	}
+	return ok;
+}
+
+#endif // RS_USE_PGPSSL
+
+
+
 
 
 const std::string& RsServer::certificateFileName() { return RsInit::load_cert ; }
@@ -594,15 +671,7 @@ int RsServer::StartupRetroShare()
 
 	mAuthMgr -> setConfigDirectories(certConfigFile, certNeighDir);
 
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	((AuthXPGP *) mAuthMgr) -> loadCertificates(oldFormat, oldConfigMap);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 	mAuthMgr -> loadCertificates();
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
 
 	/**************************************************************************/
 	/* setup classes / structures */
@@ -774,23 +843,6 @@ int RsServer::StartupRetroShare()
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
-	if (oldFormat)
-	{
-		std::cerr << "Startup() Loaded Old Certificate Format" << std::endl;
-
-		/* transfer all authenticated peers to friend list */
-		std::list<std::string> authIds;
-		mAuthMgr->getAuthenticatedList(authIds);
-
-		std::list<std::string>::iterator it;
-		for(it = authIds.begin(); it != authIds.end(); it++)
-		{
-			mConnMgr->addFriend(*it);
-		}
-
-		/* move other configuration options */
-	}
-
 	/**************************************************************************/
 	/* trigger generalConfig loading for classes that require it */
 	/**************************************************************************/
@@ -948,20 +1000,46 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 
 	p3AuthMgr *authMgr = getAuthMgr();
 
+	bool ok = false;
+
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
 	if (0 < authMgr -> InitAuth(load_cert.c_str(), load_key.c_str(),passwd.c_str()))
+	{
+		ok = true;
+	}
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
-	/* The SSL + PGP version will require
-	 *  Id of pgp account + password
-	 * padding with NULLs
-	 */
+	/* The SSL / SSL + PGP version requires, SSL init + PGP init.  */
+  /**************** PQI_USE_XPGP ******************/
+  #if defined(PQI_USE_SSLONLY)
+	if (0 < authMgr -> InitAuth(load_cert.c_str(), load_key.c_str(),passwd.c_str()))
+	{
+		ok = true;
+	}
+	else
+	{
+		std::cerr << "AuthSSL::InitAuth Failed" << std::endl;
+	}
 
-	if (0 < authMgr -> InitAuth(load_cert.c_str(), NULL, passwd.c_str()))
+  #else /* X509 Certificates */
+  /**************** PQI_USE_XPGP ******************/
+	/* The SSL / SSL + PGP version requires, SSL init + PGP init.  */
+	if (0 < authMgr -> InitAuth(load_cert.c_str(), load_key.c_str(),passwd.c_str()))
+	{
+		ok = true;
+	}
+	else
+	{
+		std::cerr << "SSL Auth Failed!";
+		std::cerr << std::endl;
+	}
+  #endif /* X509 Certificates */
+  /**************** PQI_USE_XPGP ******************/
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
+	if (ok)
 	{
 		if (autoLoginNT)
 		{
@@ -1003,6 +1081,7 @@ bool RsInit::ValidateCertificate(std::string &userName)
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 		/* check against authmanagers private keys */
+		return LoadCheckX509andGetName(fname.c_str(), userName, userId);
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
@@ -1019,6 +1098,7 @@ bool RsInit::ValidateTrustedUser(std::string fname, std::string &userName)
 	valid = LoadCheckXPGPandGetName(fname.c_str(), userName, userId);
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
+	valid = LoadCheckX509andGetName(fname.c_str(), userName, userId);
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
@@ -1040,6 +1120,7 @@ bool RsInit::LoadPassword(std::string _passwd)
 	havePasswd = true;
 	return true;
 }
+
 
 /* A little nasty fn....
  * (1) returns true, if successful, and updates config.
@@ -1083,6 +1164,7 @@ bool RsInit::RsGenerateCertificate(
 	std::string key_name = basename + "_pk.pem";
 	std::string cert_name = basename + "_cert.pem";
 
+	bool gen_ok = false;
 
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
@@ -1095,18 +1177,187 @@ bool RsInit::RsGenerateCertificate(
 			"", //ui -> gen_state -> value(),
 			country.c_str(),
 			nbits))
+	{
+		gen_ok = true;
+	}
+
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
-	/* UNTIL THIS IS FILLED IN CANNOT GENERATE X509 REQ */
-	/* What should happen here - is a new openpgp certificate
-	 * is created, with a retroshare subkey, 
-	 * this is then used to generate a self-signed certificate 
+/**************** PQI_USE_XPGP ******************/
+   #if defined(PQI_USE_SSLONLY)
+	X509_REQ *req = GenerateX509Req(
+			key_name.c_str(),
+			password.c_str(),
+			name.c_str(),
+			"", //ui -> gen_email -> value(),
+			org.c_str(),
+			loc.c_str(),
+			"", //ui -> gen_state -> value(),
+			country.c_str(),
+			nbits, errString);
+
+	/* load private key */
+	/* now convert to a self-signed certificate */
+	EVP_PKEY *privkey = NULL;
+	long days = 3000;
+
+	gen_ok = true;
+        /********** Test Loading the private Key.... ************/
+        FILE *tst_in = NULL;
+        if (NULL == (tst_in = fopen(key_name.c_str(), "rb")))
+        {
+                fprintf(stderr,"RsGenerateCert() Couldn't Open Private Key");
+                fprintf(stderr," : %s\n", key_name.c_str());
+                gen_ok = false;
+        }
+
+        if ((gen_ok) && (NULL == (privkey =
+                PEM_read_PrivateKey(tst_in,NULL,NULL,(void *) password.c_str()))))
+        {
+                fprintf(stderr,"RsGenerateCert() Couldn't Read Private Key");
+                fprintf(stderr," : %s\n", key_name.c_str());
+		gen_ok = false;
+        }
+
+	
+	X509 *cert = NULL;
+	if (gen_ok)
+	{
+		cert = SignX509Certificate(X509_REQ_get_subject_name(req), 
+						privkey,req,days);
+
+		/* Print the signed Certificate! */
+       		BIO *bio_out = NULL;
+        	bio_out = BIO_new(BIO_s_file());
+        	BIO_set_fp(bio_out,stdout,BIO_NOCLOSE);
+
+        	/* Print it out */
+        	int nmflag = 0;
+        	int reqflag = 0;
+
+        	X509_print_ex(bio_out, cert, nmflag, reqflag);
+
+        	BIO_flush(bio_out);
+        	BIO_free(bio_out);
+
+	}
+	else
+        {
+                fprintf(stderr,"RsGenerateCert() Didn't Sign Certificate\n");
+		gen_ok = false;
+        }
+
+	/* Save cert to file */
+        // open the file.
+        FILE *out = NULL;
+        if (NULL == (out = fopen(cert_name.c_str(), "w")))
+        {
+                fprintf(stderr,"RsGenerateCert() Couldn't create Cert File");
+                fprintf(stderr," : %s\n", cert_name.c_str());
+                return 0;
+        }
+
+        if (!PEM_write_X509(out,cert))
+        {
+                fprintf(stderr,"RsGenerateCert() Couldn't Save Cert");
+                fprintf(stderr," : %s\n", cert_name.c_str());
+                return 0;
+        }
+
+	if (cert)
+	{	
+		gen_ok = true;
+	}
+
+	X509_free(cert);
+	X509_REQ_free(req);
+        fclose(tst_in);
+	fclose(out);
+        EVP_PKEY_free(privkey);
+
+
+  #else /* X509 Certificates */
+  /**************** PQI_USE_XPGP ******************/
+
+
+	/* Extra step required for SSL + PGP, user must have selected
+	 * or generated a suitable key so the signing can happen.
 	 */
-	//mAuthMgr->createUser( );
+
+	X509_REQ *req = GenerateX509Req(
+			key_name.c_str(),
+			password.c_str(),
+			name.c_str(),
+			"", //ui -> gen_email -> value(),
+			org.c_str(),
+			loc.c_str(),
+			"", //ui -> gen_state -> value(),
+			country.c_str(),
+			nbits, errString);
+
+	GPGAuthMgr *mgr = (GPGAuthMgr *) getAuthMgr();
+	long days = 3000;
+	X509 *x509 = mgr->SignX509Req(req, days, "dummypassword");
+
+	X509_REQ_free(req);
+
+	/* save to file */
+	if (x509)
+	{	
+		gen_ok = true;
+
+		/* Print the signed Certificate! */
+       		BIO *bio_out = NULL;
+        	bio_out = BIO_new(BIO_s_file());
+        	BIO_set_fp(bio_out,stdout,BIO_NOCLOSE);
+
+        	/* Print it out */
+        	int nmflag = 0;
+        	int reqflag = 0;
+
+        	X509_print_ex(bio_out, x509, nmflag, reqflag);
+
+        	BIO_flush(bio_out);
+        	BIO_free(bio_out);
+
+	}
+	else
+        {
+		gen_ok = false;
+        }
+
+	if (gen_ok)
+	{
+		/* Save cert to file */
+        	// open the file.
+        	FILE *out = NULL;
+        	if (NULL == (out = fopen(cert_name.c_str(), "w")))
+        	{
+               		fprintf(stderr,"RsGenerateCert() Couldn't create Cert File");
+                	fprintf(stderr," : %s\n", cert_name.c_str());
+			gen_ok = false;
+        	}
+	
+	        if (!PEM_write_X509(out,x509))
+	        {
+	                fprintf(stderr,"RsGenerateCert() Couldn't Save Cert");
+	                fprintf(stderr," : %s\n", cert_name.c_str());
+			gen_ok = false;
+	        }
+	
+		fclose(out);
+		X509_free(x509);
+	}
+
+
+  #endif /* X509 Certificates */
+  /**************** PQI_USE_XPGP ******************/
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
+
+	if (!gen_ok)
 	{
-		errString = "Generation of XPGP Failed";
+		errString = "Generation of Certificate Failed";
 		return false;
 	}
 

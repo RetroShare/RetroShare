@@ -202,6 +202,7 @@ virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd)
 	uint32_t mConnectTimeout;
 	time_t   mTimeoutTS;
 
+	/* Need Certificate specific functions here! */
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
 
@@ -210,7 +211,6 @@ virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd)
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
-	//p3AuthMgr *mAuthMgr;
 	AuthSSL *mAuthMgr;
 
 #endif /* X509 Certificates */

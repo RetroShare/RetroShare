@@ -1112,9 +1112,6 @@ int 	pqissl::Authorise_SSL_Connection()
 	// reset switch.
 	waiting = WAITING_NOT;
 
-	// Get the Peer Certificate....
-	//AuthXPGP *authXPGP = (AuthXPGP *) getAuthMgr();
-
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
 	XPGP *peercert = SSL_get_peer_pgp_certificate(ssl_connection);

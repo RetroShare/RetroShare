@@ -78,7 +78,7 @@ class RsPeerDetails
 	std::string location;
 	std::string org;
 	
-	std::string fpr; /* fingerprint */
+	std::string fpr; /* pgp fingerprint */
 	std::string authcode; 
 	std::list<std::string> signers;
 
@@ -129,6 +129,11 @@ virtual bool    isOnline(std::string id)			= 0;
 virtual bool    isFriend(std::string id)			= 0;
 virtual std::string getPeerName(std::string id)			= 0;
 virtual bool	getPeerDetails(std::string id, RsPeerDetails &d) = 0;
+
+		/* Using PGP Ids */
+virtual std::string getPGPOwnId()				= 0;
+virtual bool    getPGPFriendList(std::list<std::string> &ids)   = 0;
+virtual bool    getPGPAllList(std::list<std::string> &ids) 	= 0;
 
 	/* Add/Remove Friends */
 virtual	bool addFriend(std::string id)        			= 0;

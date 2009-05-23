@@ -616,7 +616,14 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 	bool certOk = mAuthMgr->ValidateCertificateXPGP(peercert, newPeerId);
 #else /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
+
+	/****
+	 * As the validation is actually done before this...
+	 * we should only need to call CheckCertificate here!
+	 ****/
+
 	bool certOk = mAuthMgr->ValidateCertificate(peercert, newPeerId);
+
 #endif /* X509 Certificates */
 /**************** PQI_USE_XPGP ******************/
 
