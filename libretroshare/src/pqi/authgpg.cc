@@ -82,12 +82,39 @@ p3AuthMgr *getAuthMgr()
 }
 
 
+	
+
 gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passphrase_info, int prev_was_bad, int fd)
 {
 	const char *passwd = (const char *) hook;
+
+	if (prev_was_bad)
+		fprintf(stderr, "pgp_pwd_callback() Prev was bad!\n");
+	//fprintf(stderr, "pgp_pwd_callback() Set Password to:\"%s\"\n", passwd);
+	fprintf(stderr, "pgp_pwd_callback() Set Password\n");
+
 	write(fd, passwd, strlen(passwd));
+	write(fd, "\n", 1); /* needs a new line? */
 
 	return 0;
+}
+
+static char *PgpPassword = NULL;
+
+bool GPGAuthMgr::setPGPPassword(std::string pwd)
+{
+	/* reset it while we change it */
+	gpgme_set_passphrase_cb(CTX, NULL, NULL);
+
+	if (PgpPassword)
+		free(PgpPassword);
+	PgpPassword = (char *) malloc(pwd.length() + 1);
+	memcpy(PgpPassword, pwd.c_str(), pwd.length());
+	PgpPassword[pwd.length()] = '\0';
+
+	gpgme_set_passphrase_cb(CTX, pgp_pwd_callback, (void *) PgpPassword);
+
+	return true;
 }
 
 
@@ -140,8 +167,6 @@ GPGAuthMgr::GPGAuthMgr()
 	printAllKeys();
 	updateTrustAllKeys();
 
-static const char *realPassword = "aaaa\n";
-	gpgme_set_passphrase_cb(CTX, pgp_pwd_callback, (void *) realPassword);
 
 }
 
@@ -244,6 +269,7 @@ int	GPGAuthMgr::GPGInit(std::string ownId, std::string name, std::string passphr
 	mOwnGpgCert.user.id = ownId;
 	mOwnGpgCert.key = newKey;
 	this->passphrase = passphrase;
+	setPGPPassword(passphrase);
 
 	mOwnId = ownId;
 	gpgmeKeySelected = true;
@@ -281,7 +307,9 @@ int	GPGAuthMgr::GPGInit(std::string name, std::string comment,
 	mOwnGpgCert.user.fpr = newKey->subkeys->fpr;
 	mOwnGpgCert.user.id = newKey->subkeys->keyid;
 	mOwnGpgCert.key = newKey;
+
 	this->passphrase = passphrase;
+	setPGPPassword(passphrase);
 
 	mOwnId = mOwnGpgCert.user.id;
 	gpgmeKeySelected = true;
@@ -1017,7 +1045,7 @@ bool GPGAuthMgr::DoOwnSignature(void *data, unsigned int datalen, void *buf_sigo
 	/* now extract the data from gpgmeSig */
 	size_t len = 0; 
 	char *export_sig = gpgme_data_release_and_get_mem(gpgmeSig, &len);
-	fprintf(stderr, "GPGAuthMgr::Signature len: %d \n", len);
+	fprintf(stderr, "GPGAuthMgr::Signature len: %ld \n", len);
 	if (len < *outl)
 	{
 		*outl = len;

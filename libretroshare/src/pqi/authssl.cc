@@ -1694,7 +1694,10 @@ bool getX509id(X509 *x509, std::string &xid)
 	unsigned char *signdata = ASN1_STRING_data(signature);
 	
         std::ostringstream id;
-	for(uint32_t i = 0; i < CERTSIGNLEN; i++)
+	/* switched to the other end of the signature. for
+	 * more randomness
+	 */
+	for(uint32_t i = signlen - CERTSIGNLEN; i < signlen; i++)
 	{
 		id << std::hex << std::setw(2) << std::setfill('0') 
 			<< (uint16_t) (((uint8_t *) (signdata))[i]);

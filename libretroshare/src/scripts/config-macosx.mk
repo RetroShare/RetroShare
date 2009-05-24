@@ -27,7 +27,9 @@ ifndef MAC_I386_BUILD
 endif
 
 # flags for components....
-PQI_USE_XPGP = 1
+#PQI_USE_SSLONLY = 1
+#PQI_USE_XPGP = 1
+
 #PQI_USE_PROXY = 1
 #PQI_USE_CHANNELS = 1
 #USE_FILELOOK = 1
@@ -50,7 +52,11 @@ RANLIB = ranlib
 LIBDIR = $(RS_TOP_DIR)/lib
 LIBRS = $(LIBDIR)/libretroshare.a
 
-INCLUDE = -I $(RS_TOP_DIR) 
+OPT_DIR = /opt/local
+OPT_INCLUDE = $(OPT_DIR)/include
+OPT_LIBS = $(OPT_DIR)/lib
+
+INCLUDE = -I $(RS_TOP_DIR)  -I $(OPT_INCLUDE)
 #CFLAGS = -Wall -O3 
 CFLAGS = -Wall -g
 
@@ -69,13 +75,13 @@ CFLAGS += $(INCLUDE)
 # (but unlikely to work unless Qt Libraries are build properly)
 # CFLAGS += -isysroot /Developer/SDKs/MacOSX10.4u.sdk 
 
-
 ifdef PQI_USE_XPGP
-	INCLUDE += -I $(SSL_DIR)/include 
+        INCLUDE += -I $(SSL_DIR)/include
+        CFLAGS += -DPQI_USE_XPGP
 endif
 
-ifdef PQI_USE_XPGP
-	CFLAGS += -DPQI_USE_XPGP
+ifdef PQI_USE_SSLONLY
+        CFLAGS += -DPQI_USE_SSLONLY
 endif
 
 ifdef PQI_USE_PROXY
@@ -136,6 +142,8 @@ ifdef PQI_USE_XPGP
 	LIBS +=  -L$(SSL_DIR) 
   endif
 LIBS +=  -lssl -lcrypto  -lpthread
+LIBS += -L$(OPT_LIBS)
+LIBS +=  -lgpgme -lgpg-error
 LIBS +=  -L$(UPNPC_DIR) -lminiupnpc
 LIBS +=  $(XLIB) -ldl -lz 
 	

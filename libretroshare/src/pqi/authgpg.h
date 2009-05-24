@@ -57,6 +57,8 @@ class GPGAuthMgr: public AuthSSL
 	GPGAuthMgr();
 	~GPGAuthMgr();
 
+	bool 	setPGPPassword(std::string pwd);
+
 	X509* 	SignX509Req(X509_REQ *req, long days, std::string);
 	bool 	AuthX509(X509 *x509);
 

@@ -552,8 +552,14 @@ int RsInit::GetLoginDetails(std::string id, std::string &name, std::string &emai
     #else  // PGP+SSL
 
 	GPGAuthMgr *mgr = (GPGAuthMgr *) getAuthMgr();
-	name = id;
-	email = id;
+	pqiAuthDetails details;
+	if (!mgr->getDetails(id, details))
+	{
+		return 0;
+	}
+
+	name = details.name;
+	email = details.email;
 
 	return 1;
     #endif
