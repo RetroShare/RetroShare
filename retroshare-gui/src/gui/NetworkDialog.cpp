@@ -34,7 +34,10 @@
 
 /* for GPGME */
 #include "rsiface/rsinit.h"
-#include <gpgme.h>
+
+#ifdef RS_USE_PGPSSL
+	#include <gpgme.h>
+#endif
 
 #include <sstream>
 
