@@ -33,8 +33,9 @@
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rsserviceids.h"
 		
-const uint8_t RS_PKT_SUBTYPE_DISC_ITEM  = 0x01;
-const uint8_t RS_PKT_SUBTYPE_DISC_REPLY = 0x02;
+const uint8_t RS_PKT_SUBTYPE_DISC_ITEM   = 0x01;
+const uint8_t RS_PKT_SUBTYPE_DISC_REPLY  = 0x02;
+const uint8_t RS_PKT_SUBTYPE_DISC_ISSUER = 0x03;
 
 class RsDiscItem: public RsItem
 {
@@ -83,6 +84,22 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	RsTlvBinaryData certDER;
 };
 
+class RsDiscIssuer: public RsDiscItem
+{
+	public:
+
+	RsDiscIssuer()
+	:RsDiscItem(RS_PKT_SUBTYPE_DISC_ISSUER)
+	{ return; }
+
+virtual ~RsDiscIssuer();
+
+virtual  void clear();  
+virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+	std::string issuerCert;
+};
+
 class RsDiscSerialiser: public RsSerialType
 {
         public:
@@ -105,6 +122,10 @@ virtual RsDiscItem *deserialiseItem(void *data, uint32_t *size);
 virtual uint32_t    sizeReply(RsDiscReply *);
 virtual bool        serialiseReply   (RsDiscReply *item, void *data, uint32_t *size);
 virtual RsDiscReply *deserialiseReply(void *data, uint32_t *size);
+
+virtual uint32_t    sizeIssuer(RsDiscIssuer *);
+virtual bool        serialiseIssuer   (RsDiscIssuer *item, void *data, uint32_t *size);
+virtual RsDiscIssuer *deserialiseIssuer(void *data, uint32_t *size);
 
 };
 

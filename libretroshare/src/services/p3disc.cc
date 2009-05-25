@@ -65,6 +65,7 @@ const uint32_t P3DISC_FLAGS_PEER_TRUSTS_ME= 0x0040;
 /*****
  * #define P3DISC_DEBUG 	1
  ****/
+#define P3DISC_DEBUG 	1
 
 /*********** NOTE ***************
  *
@@ -146,6 +147,7 @@ int p3disc::handleIncoming()
 	{
 		RsDiscItem *di = NULL;
 		RsDiscReply *dri = NULL;
+		RsDiscIssuer *dii = NULL;
 
 		if (NULL == (di = dynamic_cast<RsDiscItem *> (item)))
 		{
@@ -183,6 +185,11 @@ int p3disc::handleIncoming()
 		{
 
 			recvPeerFriendMsg(dri);
+		}
+		else if (NULL != (dii = dynamic_cast<RsDiscIssuer *> (di)))
+		{
+
+			recvPeerIssuerMsg(dii);
 		}
 		else /* Ping */
 		{
@@ -266,6 +273,11 @@ void p3disc::respondToPeer(std::string id)
 
 		if (!(detail.visState & RS_VIS_STATE_NODISC))
 		{
+			/* send issuer certs ... only do this for friends at initial connections, 
+			   no need to do with onlineId list.
+			 */
+
+			sendPeerIssuer(id, *it);  
 			sendPeerDetails(id, *it); /* (dest (to), source (cert)) */
 		}
 	}
@@ -485,6 +497,53 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 }
 
 
+ /* (dest (to), source (cert)) */
+void p3disc::sendPeerIssuer(std::string to, std::string about)
+{
+	/* this is just a straight certificate (normally pgp).
+	 * but can get quite big (>100K) so will use new packet type.
+	 */
+
+	/* send it off */
+	{
+#ifdef P3DISC_DEBUG
+		std::ostringstream out;
+		out << "p3disc::sendPeerIssuer()";
+		out << " Sending details of: " << about;
+		out << " to: " << to << std::endl;
+		std::cerr << out.str() << std::endl;
+#endif
+	}
+
+	std::string aboutIssuerId = mAuthMgr->getIssuerName(about);
+	if (aboutIssuerId == "")
+	{
+		/* major error! */
+		return;
+	}
+
+	// Construct a message
+	RsDiscIssuer *di = new RsDiscIssuer();
+
+	// Fill the message
+	// Set Target as input cert.
+	di -> PeerId(to);
+
+	di -> issuerCert = mAuthMgr->SaveCertificateToString(aboutIssuerId);
+
+#ifdef P3DISC_DEBUG
+	std::cerr << "Saved certificate to string in RsDiscIssuer. " << std::endl ;
+#endif
+
+	// Send off message
+	sendItem(di);
+
+#ifdef P3DISC_DEBUG
+	std::cerr << "Sent DI Message" << std::endl;
+#endif
+}
+
+
 /*************************************************************************************/
 /*				Input Network Msgs				     */
 /*************************************************************************************/
@@ -604,6 +663,26 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS, NOTIFY_TYPE_MOD);
 	
 	/* cleanup (handled by caller) */
+}
+
+
+void p3disc::recvPeerIssuerMsg(RsDiscIssuer *item)
+{
+
+#ifdef P3DISC_DEBUG
+	std::cerr << "p3disc::recvPeerIssuerMsg() From: " << item->PeerId();
+	std::cerr << std::endl;
+#endif
+
+	/* tells us their exact address (mConnectMgr can ignore if it looks wrong) */
+
+	/* load certificate */
+	std::string peerId;
+	bool loaded = mAuthMgr->LoadCertificateFromString(item->issuerCert, peerId);
+
+	/* cleanup (handled by caller) */
+
+	return;
 }
 
 

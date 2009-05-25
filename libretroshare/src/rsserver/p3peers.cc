@@ -33,7 +33,9 @@
 #include <fstream>
 #include <sstream>
 
-#include <gpgme.h>
+#ifdef RS_USE_PGPSSL
+	#include <gpgme.h>
+#endif
 
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
@@ -306,8 +308,10 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 
 #ifdef RS_USE_PGPSSL
 	d.trustLvl 	= authDetail.trustLvl;
+	d.validLvl 	= authDetail.validLvl;
 #else
 	d.trustLvl 	= RsPeerTranslateTrust(authDetail.trustLvl);
+	d.validLvl 	= RsPeerTranslateTrust(authDetail.trustLvl);
 #endif
 
 	/* generate */

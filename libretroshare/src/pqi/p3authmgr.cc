@@ -27,7 +27,7 @@
 #include "pqi/p3authmgr.h"
 
 pqiAuthDetails::pqiAuthDetails()
-	:trustLvl(0), ownsign(false), trusted(0)
+	:trustLvl(0), validLvl(0), ownsign(false), trusted(false)
 {
 	return;
 }

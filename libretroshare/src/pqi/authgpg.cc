@@ -49,6 +49,8 @@
  *     AuthCertificate().
  *		check isPGPAuthenticated().
  *		if not - sign PGP certificate.
+ *
+ * access to local data is protected via pgpMtx.
  */
 
 #include "authgpg.h"
@@ -81,8 +83,19 @@ p3AuthMgr *getAuthMgr()
         return &instance_gpgroot;
 }
 
+gpgcert::gpgcert()
+	:key(NULL)
+{
+	return;
+}
 
-	
+gpgcert::~gpgcert()
+{
+	if (key)
+	{
+		gpgme_key_unref(key);
+	}
+}
 
 gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passphrase_info, int prev_was_bad, int fd)
 {
@@ -101,7 +114,7 @@ gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passp
 
 static char *PgpPassword = NULL;
 
-bool GPGAuthMgr::setPGPPassword(std::string pwd)
+bool GPGAuthMgr::setPGPPassword_locked(std::string pwd)
 {
 	/* reset it while we change it */
 	gpgme_set_passphrase_cb(CTX, NULL, NULL);
@@ -121,6 +134,7 @@ bool GPGAuthMgr::setPGPPassword(std::string pwd)
 GPGAuthMgr::GPGAuthMgr()
 	:gpgmeInit(false) 
 {
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
 	setlocale(LC_ALL, "");
 	gpgme_check_version(NULL);
@@ -163,11 +177,9 @@ GPGAuthMgr::GPGAuthMgr()
 	/* if we get to here -> we have inited okay */
 	gpgmeInit = true;
 
-	storeAllKeys();
-	printAllKeys();
-	updateTrustAllKeys();
-
-
+	storeAllKeys_locked();
+	printAllKeys_locked();
+	updateTrustAllKeys_locked();
 }
 
 /* This function is called when retroshare is first started
@@ -180,6 +192,8 @@ GPGAuthMgr::GPGAuthMgr()
 
 bool GPGAuthMgr::availablePGPCertificates(std::list<std::string> &ids)
 {
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
 	int i = 0;
 	gpgme_key_t KEY = NULL;
         gpg_error_t ERR;
@@ -214,9 +228,6 @@ bool GPGAuthMgr::availablePGPCertificates(std::list<std::string> &ids)
 			std::cerr << "GPGAuthMgr::availablePGPCertificates() Missing subkey" 
 				<< std::endl;
 		}
-
-		/* release key */
-		gpgme_key_release (KEY);
 	}
 
 	if (GPG_ERR_NO_ERROR != gpgme_op_keylist_end(CTX))
@@ -241,9 +252,8 @@ bool GPGAuthMgr::availablePGPCertificates(std::list<std::string> &ids)
  */
 int	GPGAuthMgr::GPGInit(std::string ownId, std::string name, std::string passphrase)
 {
-	/* For now, I'll just load the key from the keyring and create the 
-	 * self certificate. Passphrase verification needs to be done 
-	 */
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
 	gpgme_key_t newKey;
         gpg_error_t ERR;
 	
@@ -269,16 +279,20 @@ int	GPGAuthMgr::GPGInit(std::string ownId, std::string name, std::string passphr
 	mOwnGpgCert.user.id = ownId;
 	mOwnGpgCert.key = newKey;
 	this->passphrase = passphrase;
-	setPGPPassword(passphrase);
 
 	mOwnId = ownId;
 	gpgmeKeySelected = true;
+
+	setPGPPassword_locked(passphrase);
+
 	return true;
 }
 
 int	GPGAuthMgr::GPGInit(std::string name, std::string comment, 
 			std::string email, std::string passphrase)
 {
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
 	gpgme_key_t newKey;
 	gpgme_genkey_result_t result;
         gpg_error_t ERR;
@@ -309,7 +323,7 @@ int	GPGAuthMgr::GPGInit(std::string name, std::string comment,
 	mOwnGpgCert.key = newKey;
 
 	this->passphrase = passphrase;
-	setPGPPassword(passphrase);
+	setPGPPassword_locked(passphrase);
 
 	mOwnId = mOwnGpgCert.user.id;
 	gpgmeKeySelected = true;
@@ -323,9 +337,9 @@ int	GPGAuthMgr::GPGInit(std::string name, std::string comment,
 
 
 // store all keys in map mKeyList to avoid callin gpgme exe repeatedly
-bool   GPGAuthMgr::storeAllKeys()
+bool   GPGAuthMgr::storeAllKeys_locked()
 {
-	std::cerr << "GPGAuthMgr::storeAllKeys()";
+	std::cerr << "GPGAuthMgr::storeAllKeys_locked()";
 	std::cerr << std::endl;
 
 	gpg_error_t ERR;
@@ -335,6 +349,10 @@ bool   GPGAuthMgr::storeAllKeys()
 		std::cerr << std::endl;
 		return false;
 	}
+	
+	std::cerr << "GPGAuthMgr::storeAllKeys_locked() clearing existing ones";
+	std::cerr << std::endl;
+	mKeyList.clear();
 
 	/* enable SIG mode */
 	gpgme_keylist_mode_t origmode = gpgme_get_keylist_mode(CTX);
@@ -453,14 +471,15 @@ bool   GPGAuthMgr::storeAllKeys()
 
 		nu.user.trustLvl = KEY->owner_trust; 
 		nu.user.ownsign = KEY->can_sign;   
+		nu.user.validLvl = mainuid->validity;
 		nu.user.trusted = (mainuid->validity > GPGME_VALIDITY_MARGINAL); 
 
+		/* grab a reference, so the key remains */
+		gpgme_key_ref(KEY);
 		nu.key = KEY;
+
 		/* store in map */
 		mKeyList[nu.user.id] = nu;
-
-		/* release key */
-		//gpgme_key_release (KEY);
 	}
 
 	if (GPG_ERR_NO_ERROR != gpgme_op_keylist_end(CTX))
@@ -477,7 +496,7 @@ bool   GPGAuthMgr::storeAllKeys()
 }
 
 // update trust on all available keys.
-bool   GPGAuthMgr::updateTrustAllKeys()
+bool   GPGAuthMgr::updateTrustAllKeys_locked()
 {
 	gpg_error_t ERR;
 	if (!gpgmeInit)
@@ -530,31 +549,6 @@ bool   GPGAuthMgr::updateTrustAllKeys()
 			std::cerr << " Name: " << ti->name;
 			std::cerr << std::endl;
 	
-#if 0
-			if (
-	
-	
-			/* store in pqiAuthDetails */
-			gpgcert nu;
-			nu.user.id = (KEY->subkeys) ? KEY->subkeys->keyid : NULL;
-	        	nu.user.fpr= (KEY->subkeys) ? KEY->subkeys->fpr : NULL;
-	        	nu.user.name = (KEY->uids) ? KEY->uids->name : NULL;
-	        	nu.user.email = (KEY->uids) ? KEY->uids->email : NULL;		
-		//	nu.user.location = "here"; 
-		//	nu.user.org = "me.com"; 
-	
-			nu.user.trustLvl = KEY->owner_trust; 
-			nu.user.ownsign = KEY->can_sign;   
-			nu.user.trusted = KEY->can_certify; 
-	
-			nu.key = KEY;
-			/* store in map */
-			mKeyList[nu.user.id] = nu;
-	
-			/* release key */
-			//gpgme_key_release (KEY);
-#endif
-	
 		}
 	
 		std::cerr << "End of TrustList Iteration.";
@@ -573,8 +567,9 @@ bool   GPGAuthMgr::updateTrustAllKeys()
 	return true;
 
 }
-bool   GPGAuthMgr::printAllKeys()
+bool   GPGAuthMgr::printAllKeys_locked()
 {
+
 	certmap::const_iterator it;
 	for(it = mKeyList.begin(); it != mKeyList.end(); it++)
 	{
@@ -590,7 +585,7 @@ bool   GPGAuthMgr::printAllKeys()
 		std::cerr << std::endl;
 		std::cerr << "\townsign?: " << it->second.user.ownsign;
 		std::cerr << std::endl;
-		std::cerr << "\ttrusted?: " << it->second.user.trusted;
+		std::cerr << "\ttrusted/valid: " << it->second.user.trusted;
 		std::cerr << std::endl;
 		std::cerr << "\tEmail: " << it->second.user.email;
 		std::cerr << std::endl;
@@ -615,8 +610,9 @@ bool   GPGAuthMgr::printAllKeys()
 	return true;
 }
 
-bool   GPGAuthMgr::printOwnKeys()
+bool   GPGAuthMgr::printOwnKeys_locked()
 {
+
 	certmap::iterator it;
 	for(it = mKeyList.begin(); it != mKeyList.end(); it++)
 	{
@@ -637,6 +633,8 @@ bool   GPGAuthMgr::printOwnKeys()
 
 X509 *GPGAuthMgr::SignX509Req(X509_REQ *req, long days, std::string gpg_passwd)
 {
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
 	/* Transform the X509_REQ into a suitable format to
 	 * generate DIGEST hash. (for SSL to do grunt work)
 	 */
@@ -809,7 +807,7 @@ X509 *GPGAuthMgr::SignX509Req(X509_REQ *req, long days, std::string gpg_passwd)
 	std::cerr << "Digest Applied: len: " << hashoutl << std::endl;
 
 	/* NOW Sign via GPG Functions */
-	if (!DoOwnSignature(buf_hashout, hashoutl, buf_sigout, (unsigned int *) &sigoutl))
+	if (!DoOwnSignature_locked(buf_hashout, hashoutl, buf_sigout, (unsigned int *) &sigoutl))
 	{
 		sigoutl = 0;	
 		goto err;
@@ -862,6 +860,8 @@ X509 *GPGAuthMgr::SignX509Req(X509_REQ *req, long days, std::string gpg_passwd)
 
 bool GPGAuthMgr::AuthX509(X509 *x509)
 {
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
 	/* extract CN for peer Id */
 	X509_NAME *issuer = X509_get_issuer_name(x509);
 	std::string id = "";
@@ -931,7 +931,7 @@ bool GPGAuthMgr::AuthX509(X509 *x509)
 	memmove(buf_sigout, signature->data, sigoutl);
 
 	/* NOW Sign via GPG Functions */
-	if (!VerifySignature(id, buf_hashout, hashoutl, buf_sigout, (unsigned int) sigoutl))
+	if (!VerifySignature_locked(id, buf_hashout, hashoutl, buf_sigout, (unsigned int) sigoutl))
 	{
 		sigoutl = 0;	
 		goto err;
@@ -981,7 +981,7 @@ void print_pgpme_verify_summary(unsigned int summary)
 }
 
 
-bool GPGAuthMgr::DoOwnSignature(void *data, unsigned int datalen, void *buf_sigout, unsigned int *outl)
+bool GPGAuthMgr::DoOwnSignature_locked(void *data, unsigned int datalen, void *buf_sigout, unsigned int *outl)
 {
 	/* setup signers */
 	gpgme_signers_clear(CTX);
@@ -1044,8 +1044,9 @@ bool GPGAuthMgr::DoOwnSignature(void *data, unsigned int datalen, void *buf_sigo
 
 	/* now extract the data from gpgmeSig */
 	size_t len = 0; 
+	int len2 = len;
 	char *export_sig = gpgme_data_release_and_get_mem(gpgmeSig, &len);
-	fprintf(stderr, "GPGAuthMgr::Signature len: %ld \n", len);
+	fprintf(stderr, "GPGAuthMgr::Signature len: %d \n", len2);
 	if (len < *outl)
 	{
 		*outl = len;
@@ -1060,7 +1061,7 @@ bool GPGAuthMgr::DoOwnSignature(void *data, unsigned int datalen, void *buf_sigo
 
 
 /* import to GnuPG and other Certificates */
-bool GPGAuthMgr::VerifySignature(std::string id, void *data, int datalen, 
+bool GPGAuthMgr::VerifySignature_locked(std::string id, void *data, int datalen, 
                                                         void *sig, unsigned int siglen)
 {
 	gpgme_data_t gpgmeSig;
@@ -1139,6 +1140,8 @@ bool GPGAuthMgr::VerifySignature(std::string id, void *data, int datalen,
 	
 bool   GPGAuthMgr::active()
 {
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
 	return ((gpgmeInit) && (gpgmeKeySelected) && (gpgmeX509Selected));
 }
 
@@ -1148,6 +1151,7 @@ int     GPGAuthMgr::InitAuth(const char *srvr_cert, const char *priv_key,
 	/* Initialise the SSL part */
 	if (AuthSSL::InitAuth(srvr_cert, priv_key, passwd))
 	{
+		RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 		gpgmeX509Selected = true;
 		return 1;
 	}
@@ -1230,6 +1234,8 @@ std::string GPGAuthMgr::getName(std::string id)
 	std::string name = AuthSSL::getName(id);
 	if (name != "")
 	{
+		RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
 		certmap::iterator it;
 		if (mKeyList.end() != (it = mKeyList.find(id)))
 		{
@@ -1248,6 +1254,8 @@ bool	GPGAuthMgr::getDetails(std::string id, pqiAuthDetails &details)
 
 	if (AuthSSL::getDetails(id, details))
 	{
+		RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
 		certmap::iterator it;
 		if (mKeyList.end() != (it = mKeyList.find(details.issuer)))
 		{
@@ -1263,6 +1271,8 @@ bool	GPGAuthMgr::getDetails(std::string id, pqiAuthDetails &details)
 	}
 	else
 	{
+		RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
 		/* if we cannot find a ssl cert - might be a pgp cert */
 		certmap::iterator it;
 		if (mKeyList.end() != (it = mKeyList.find(id)))
@@ -1280,11 +1290,15 @@ bool	GPGAuthMgr::getDetails(std::string id, pqiAuthDetails &details)
 
 std::string GPGAuthMgr::PGPOwnId()
 {
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
 	return mOwnId;
 }
 
 bool	GPGAuthMgr::getPGPAllList(std::list<std::string> &ids)
 {
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
 	/* add an id for each pgp certificate */
 	certmap::iterator it;
 	for(it = mKeyList.begin(); it != mKeyList.end(); it++)
@@ -1296,10 +1310,12 @@ bool	GPGAuthMgr::getPGPAllList(std::list<std::string> &ids)
 
 bool	GPGAuthMgr::getPGPAuthenticatedList(std::list<std::string> &ids)
 {
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
 	certmap::iterator it;
 	for(it = mKeyList.begin(); it != mKeyList.end(); it++)
 	{
-		if (it->second.user.trustLvl > GPGME_VALIDITY_MARGINAL)
+		if (it->second.user.trusted)
 		{
 			ids.push_back(it->first);
 		}
@@ -1309,10 +1325,12 @@ bool	GPGAuthMgr::getPGPAuthenticatedList(std::list<std::string> &ids)
 
 bool	GPGAuthMgr::getPGPUnknownList(std::list<std::string> &ids)
 {
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
 	certmap::iterator it;
 	for(it = mKeyList.begin(); it != mKeyList.end(); it++)
 	{
-		if (it->second.user.trustLvl <= GPGME_VALIDITY_MARGINAL)
+		if (!(it->second.user.trusted))
 		{
 			ids.push_back(it->first);
 		}
@@ -1323,6 +1341,8 @@ bool	GPGAuthMgr::getPGPUnknownList(std::list<std::string> &ids)
 
 bool	GPGAuthMgr::isPGPValid(std::string id)
 {
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
 	certmap::iterator it;
 	return (mKeyList.end() != mKeyList.find(id));
 }
@@ -1330,10 +1350,16 @@ bool	GPGAuthMgr::isPGPValid(std::string id)
 
 bool	GPGAuthMgr::isPGPAuthenticated(std::string id)
 {
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
 	certmap::iterator it;
 	if (mKeyList.end() != (it = mKeyList.find(id)))
 	{
-		return (it->second.user.trustLvl > GPGME_VALIDITY_FULL);
+		/* trustLvl... is just that ... we are interested in validity.
+		 * which is the 'trusted' flag.
+		 */
+
+		return (it->second.user.trusted);
 	}
 	return false;
 }
@@ -1382,6 +1408,7 @@ bool GPGAuthMgr::loadCertificates()
 /* SKTAN : do not know how to use std::string id */
 std::string GPGAuthMgr::SaveCertificateToString(std::string id)
 {
+
 	if (!isPGPValid(id))
 	{
 		/* check if it is a SSL Certificate */
@@ -1393,6 +1420,8 @@ std::string GPGAuthMgr::SaveCertificateToString(std::string id)
 		std::string emptystr;
 		return emptystr;
 	}
+
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
 	std::string tmp;
 	const char *pattern[] = { NULL, NULL };
@@ -1429,6 +1458,7 @@ std::string GPGAuthMgr::SaveCertificateToString(std::string id)
 /* import to GnuPG and other Certificates */
 bool GPGAuthMgr::LoadCertificateFromString(std::string str, std::string &id)
 {
+
 	/* catch SSL Certs and pass to AuthSSL. */
         std::string sslmarker("-----BEGIN CERTIFICATE-----");
         size_t pos = str.find(sslmarker);
@@ -1438,6 +1468,7 @@ bool GPGAuthMgr::LoadCertificateFromString(std::string str, std::string &id)
 	}
 
 	/* otherwise assume it is a PGP cert */
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
 	gpgme_data_t gpgmeData;
 	if (GPG_ERR_NO_ERROR != gpgme_data_new_from_mem(&gpgmeData, str.c_str(), str.length(), 1))
@@ -1459,21 +1490,25 @@ bool GPGAuthMgr::LoadCertificateFromString(std::string str, std::string &id)
 
 	gpgme_import_result_t res = gpgme_op_import_result(CTX);
 
+	int imported = res->imported;
+
 	fprintf(stderr, "ImportCertificate(Considered: %d Imported: %d)\n", 
 					res->considered, res->imported);
 
-	fflush (NULL);
-	fputs ("Begin Result:\n", stdout);
-	showData (gpgmeData);
-	fputs ("End Result.\n", stdout);
-   
+	/* do we need to delete res??? */
+
 	gpgme_data_release (gpgmeData);
 
-	/* extract id(s)! */
+	/* extract id(s)! (only if we actually imported one) */
+	if (imported)
+	{
+		storeAllKeys_locked();
+	}
 
 	return true;
 }
 
+/*** These are passed to SSL ****/
 bool GPGAuthMgr::LoadCertificateFromFile(std::string filename, std::string &id)
 {
 	return false;
@@ -1483,14 +1518,15 @@ bool GPGAuthMgr::SaveCertificateToFile(std::string id, std::string filename)
 {
 	return false;
 }
+
 bool GPGAuthMgr::LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id)
 {
-	return false;
+	return AuthSSL::LoadCertificateFromBinary(ptr, len, id);
 }
 
 bool GPGAuthMgr::SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len)
 {
-	return false;
+	return AuthSSL::SaveCertificateToBinary(id, ptr, len);
 }
 
 /*****************************************************************
@@ -1534,14 +1570,28 @@ bool GPGAuthMgr::AuthCertificate(std::string id)
 /* These take PGP Ids */
 bool GPGAuthMgr::SignCertificate(std::string id)
 {
+
         std::cerr << "GPGAuthMgr::SignCertificate(" << id << ")";
 	std::cerr << std::endl;
 
-	return false;
+
+	if (1 != signCertificate(id))
+	{
+		return false;
+	}
+
+	/* reload stuff now ... */
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
+	storeAllKeys_locked();
+
+	return true;
 }
 
 bool GPGAuthMgr::RevokeCertificate(std::string id)
 {
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
         std::cerr << "GPGAuthMgr::RevokeCertificate(" << id << ")";
 	std::cerr << std::endl;
 
@@ -1550,6 +1600,8 @@ bool GPGAuthMgr::RevokeCertificate(std::string id)
 
 bool GPGAuthMgr::TrustCertificate(std::string id, bool trust)
 {
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
         std::cerr << "GPGAuthMgr::TrustCertificate(" << id << "," << trust << ")";
 	std::cerr << std::endl;
 
@@ -1690,6 +1742,8 @@ int GPGAuthMgr::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
 
 int	GPGAuthMgr::signCertificate(std::string id)
 {
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
 	/* The key should be in Others list and not in Peers list ?? 
 	 * Once the key is signed, it moves from Others to Peers list ??? 
 	 */
@@ -1731,11 +1785,15 @@ int	GPGAuthMgr::signCertificate(std::string id)
 /* revoke the signature on Certificate */
 int	GPGAuthMgr::revokeCertificate(std::string id)
 {
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
 	return 0;
 }
 
 int	GPGAuthMgr::trustCertificate(std::string id, int trustlvl)
 {
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
 	/* The certificate should be in Peers list ??? */
 	
 	if(!isAuthenticated(id)) {
@@ -1891,14 +1949,27 @@ static gpgme_key_t getKey(gpgme_ctx_t CTX, std::string name, std::string comment
 		
 		while(user != NULL) {
 			if((name.size() && name == user->name) && (comment.size() && comment == user->comment) && \
-				(email.size() && email == user->email)) {
+				(email.size() && email == user->email)) 
+			{
+					/* grab a reference to the key */
+        				gpgme_op_keylist_end(CTX);
+					if (GPG_ERR_NO_ERROR != gpgme_op_keylist_end(CTX))
+					{
+						std::cerr << "Error ending KeyList";
+						std::cerr << std::endl;
+					}
+					gpgme_key_ref(key);
 					return key;
 			}
 			user = user->next;
 		}
-		gpgme_key_release (key);
 	}
-	
+
+	if (GPG_ERR_NO_ERROR != gpgme_op_keylist_end(CTX))
+	{
+		std::cerr << "Error ending KeyList";
+		std::cerr << std::endl;
+	} 
 	return NULL;	
 }
 
@@ -1912,18 +1983,49 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
 	class SignParams *sparams = (class SignParams *)params->oParams;
 	const char *result = NULL;
 
+	fprintf(stderr,"keySignCallback status: %d args: %s, params->state: %d\n", status, args, params->state);
+
+	/* printf stuff out */
+	if (status == GPGME_STATUS_EOF)
+		fprintf(stderr,"keySignCallback GPGME_STATUS_EOF\n");
+	if (status == GPGME_STATUS_GOT_IT)
+		fprintf(stderr,"keySignCallback GPGME_STATUS_GOT_IT\n");
+	if (status == GPGME_STATUS_USERID_HINT)
+		fprintf(stderr,"keySignCallback GPGME_STATUS_USERID_HINT\n");
+	if (status == GPGME_STATUS_NEED_PASSPHRASE)
+		fprintf(stderr,"keySignCallback GPGME_STATUS_NEED_PASSPHRASE\n");
+	if (status == GPGME_STATUS_GOOD_PASSPHRASE)
+		fprintf(stderr,"keySignCallback GPGME_STATUS_GOOD_PASSPHRASE\n");
+	if (status == GPGME_STATUS_BAD_PASSPHRASE)
+		fprintf(stderr,"keySignCallback GPGME_STATUS_BAD_PASSPHRASE\n");
+
+	if (status == GPGME_STATUS_GET_LINE)
+		fprintf(stderr,"keySignCallback GPGME_STATUS_GET_LINE\n");
+	if (status == GPGME_STATUS_GET_BOOL)
+		fprintf(stderr,"keySignCallback GPGME_STATUS_GET_BOOL\n");
+	if (status == GPGME_STATUS_ALREADY_SIGNED)
+		fprintf(stderr,"keySignCallback GPGME_STATUS_ALREADY_SIGNED\n");
+
+
 	if(status == GPGME_STATUS_EOF ||
 		status == GPGME_STATUS_GOT_IT || 
 		status == GPGME_STATUS_USERID_HINT ||
 		status == GPGME_STATUS_NEED_PASSPHRASE || 
-		status == GPGME_STATUS_GOOD_PASSPHRASE ||
+		// status == GPGME_STATUS_GOOD_PASSPHRASE || 
 		status == GPGME_STATUS_BAD_PASSPHRASE) {
+
+
+		fprintf(stderr,"keySignCallback Error status\n");
+		ProcessPGPmeError(params->err);
+
 		return params->err;
 	}
 	
 	switch (params->state)
     	{
     		case SIGN_START:
+			fprintf(stderr,"keySignCallback SIGN_START\n");
+
       			if (status == GPGME_STATUS_GET_LINE &&
 				(!std::string("keyedit.prompt").compare(args)))
         		{
@@ -1937,6 +2039,8 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
 			}
       			break;
     		case SIGN_COMMAND:
+			fprintf(stderr,"keySignCallback SIGN_COMMAND\n");
+
       			if (status == GPGME_STATUS_GET_BOOL &&
 				(!std::string("keyedit.sign_all.okay").compare(args)))
 			{
@@ -1981,6 +2085,8 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
         		}
       			break;
     		case SIGN_UIDS:
+			fprintf(stderr,"keySignCallback SIGN_UIDS\n");
+
       			if (status == GPGME_STATUS_GET_LINE &&
 				(!std::string("sign_uid.expire").compare(args)))
 			{
@@ -2013,6 +2119,8 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
         		}
       			break;
     		case SIGN_SET_EXPIRE:
+			fprintf(stderr,"keySignCallback SIGN_SET_EXPIRE\n");
+
       			if (status == GPGME_STATUS_GET_LINE &&
 				(!std::string("sign_uid.class").compare(args)))
         		{
@@ -2026,6 +2134,8 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
         		}
       			break;
     		case SIGN_SET_CHECK_LEVEL:
+			fprintf(stderr,"keySignCallback SIGN_SET_CHECK_LEVEL\n");
+
       			if (status == GPGME_STATUS_GET_BOOL &&
 				(!std::string("sign_uid.okay").compare(args)))
         		{
@@ -2039,11 +2149,19 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
         		}
       			break;
 		case SIGN_ENTER_PASSPHRASE:
+			fprintf(stderr,"keySignCallback SIGN_ENTER_PASSPHRASE\n");
+
 			if(status == GPGME_STATUS_GET_HIDDEN &&
 				(!std::string("passphrase.enter").compare(args)))
 			{
 				params->state = SIGN_CONFIRM;
 				result = sparams->passphrase.c_str();
+			}
+			// If using pgp_pwd_callback, then never have to enter passphrase this way.
+			// must catch GOOD_PASSPHRASE to move on.
+			else if (status == GPGME_STATUS_GOOD_PASSPHRASE)
+			{
+				params->state = SIGN_CONFIRM;
 			}
 			else
 			{
@@ -2052,6 +2170,8 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
         		}
       			break;			
     		case SIGN_CONFIRM:			
+			fprintf(stderr,"keySignCallback SIGN_CONFIRM\n");
+
       			if (status == GPGME_STATUS_GET_LINE &&	
 				(!std::string("keyedit.prompt").compare(args)))
           		{
@@ -2065,6 +2185,8 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
         		}
       			break;
     		case SIGN_QUIT:
+			fprintf(stderr,"keySignCallback SIGN_QUIT\n");
+
       			if (status == GPGME_STATUS_GET_BOOL &&
 				(!std::string("keyedit.save.okay").compare(args)))
 			{
@@ -2078,6 +2200,8 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
         		}
       			break;
     		case SIGN_ERROR:
+			fprintf(stderr,"keySignCallback SIGN_ERROR\n");
+
       			if (status == GPGME_STATUS_GET_LINE &&
 				(!std::string("keyedit.prompt").compare(args)))
           		{
@@ -2091,15 +2215,22 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
 				params->err = gpg_error (GPG_ERR_GENERAL);
         		}
       			break;
+    		default:
+			fprintf(stderr,"keySignCallback UNKNOWN state\n");
+			break;
 	}
 
 	if (result)
         {
+		fprintf(stderr,"keySignCallback result:%s\n", result);
 		if (*result)
 			write (fd, result, strlen (result));
           	write (fd, "\n", 1);
         }
 	
+	fprintf(stderr,"keySignCallback Error status\n");
+	ProcessPGPmeError(params->err);
+
 	return params->err;
 }
 

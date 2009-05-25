@@ -1069,8 +1069,11 @@ bool AuthSSL::AuthCertificate(std::string id)
 
 	if (locked_FindCert(id, &cert))
 	{
+	/* ensuring this function can do nothing in PGP mode */
+#ifdef PQI_USE_SSLONLY
 		cert->authed=true;
 		mToSaveCerts = true;
+#endif
 	}
 
 	sslMtx.unlock(); /**** UNLOCK ****/
@@ -1553,18 +1556,20 @@ bool AuthSSL::ProcessX509(X509 *x509, std::string &id)
 	/* extract id */
 	std::string xid;
 
+	bool valid = ValidateCertificate(x509, xid);
 
-
-	if (!ValidateCertificate(x509, xid))
+	if (!valid)
 	{
 #ifdef AUTHSSL_DEBUG
 		std::cerr << "AuthSSL::ProcessX509() ValidateCertificate FAILED";
 		std::cerr << std::endl;
 #endif
 
-		/* bad certificate */
+#ifdef PQI_USE_SSLONLY
+		/* bad ( or unknown pgp issuer ) certificate */
 		X509_free(x509);
 		return false;
+#endif
 	}
 
 	sslcert *cert = NULL;
@@ -1603,6 +1608,7 @@ bool AuthSSL::ProcessX509(X509 *x509, std::string &id)
 		/* check that they are exact */
 		if (0 != X509_cmp(cert->certificate, x509))
 		{
+
 #ifdef AUTHSSL_DEBUG
 			std::cerr << "AuthSSL::ProcessX509() Not the same: MAJOR ERROR";
 			std::cerr << std::endl;
@@ -1632,6 +1638,7 @@ bool AuthSSL::ProcessX509(X509 *x509, std::string &id)
 
 	/* if we get here -> its a new certificate */
 	cert = new sslcert(x509, xid);
+	cert->authed = valid;
 
 	sslMtx.lock();   /***** LOCK *****/
 
@@ -2231,9 +2238,10 @@ bool    AuthSSL::saveCertificates()
 	for(it = mCerts.begin(); it != mCerts.end(); it++)
 	{
 // SAVE ALL CERTS
-#if 0
-		if (it->second->authed)
+#if PQI_USE_PQISSL
 #endif
+// Save only Authed Certs;
+		if (it->second->authed)
 		{
 			X509 *x509 = it->second->certificate;
 			std::string hash;

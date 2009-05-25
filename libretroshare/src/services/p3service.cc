@@ -195,7 +195,10 @@ RsRawItem *p3Service::send()
 	}
 
 	/* ensure PeerId is transferred */
-	raw->PeerId(si->PeerId());
+	if (raw)
+	{
+		raw->PeerId(si->PeerId());
+	}
 
 	/* cleanup */
 	delete si;

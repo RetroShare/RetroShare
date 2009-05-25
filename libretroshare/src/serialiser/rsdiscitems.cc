@@ -37,6 +37,8 @@
 #define RSSERIAL_DEBUG 1
 ***/
 
+#define RSSERIAL_DEBUG 1
+
 #include <iostream>
 
 /*************************************************************************/
@@ -45,11 +47,16 @@ uint32_t    RsDiscSerialiser::size(RsItem *i)
 {
 	RsDiscItem  *rdi;
 	RsDiscReply *rdr;
+	RsDiscIssuer *rds;
 
 	/* do reply first - as it is derived from Item */
 	if (NULL != (rdr = dynamic_cast<RsDiscReply *>(i)))
 	{
 		return sizeReply(rdr);
+	}
+	else if (NULL != (rds = dynamic_cast<RsDiscIssuer *>(i)))
+	{
+		return sizeIssuer(rds);
 	}
 	else if (NULL != (rdi = dynamic_cast<RsDiscItem *>(i)))
 	{
@@ -64,11 +71,16 @@ bool    RsDiscSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 {
 	RsDiscItem  *rdi;
 	RsDiscReply *rdr;
+	RsDiscIssuer *rds;
 
 	/* do reply first - as it is derived from Item */
 	if (NULL != (rdr = dynamic_cast<RsDiscReply *>(i)))
 	{
 		return serialiseReply(rdr, data, pktsize);
+	}
+	else if (NULL != (rds = dynamic_cast<RsDiscIssuer *>(i)))
+	{
+		return serialiseIssuer(rds, data, pktsize);
 	}
 	else if (NULL != (rdi = dynamic_cast<RsDiscItem *>(i)))
 	{
@@ -97,6 +109,9 @@ RsItem *RsDiscSerialiser::deserialise(void *data, uint32_t *pktsize)
 			break;
 		case RS_PKT_SUBTYPE_DISC_ITEM:
 			return deserialiseItem(data, pktsize);
+			break;
+		case RS_PKT_SUBTYPE_DISC_ISSUER:
+			return deserialiseIssuer(data, pktsize);
 			break;
 		default:
 			return NULL;
@@ -438,6 +453,147 @@ RsDiscReply *RsDiscSerialiser::deserialiseReply(void *data, uint32_t *pktsize)
 	{
 #ifdef RSSERIAL_DEBUG 
 		std::cerr << "RsDiscSerialiser::deserialiseReply() ok = false" << std::endl;
+#endif
+		delete item;
+		return NULL;
+	}
+
+	return item;
+}
+
+
+
+/*************************************************************************/
+
+
+RsDiscIssuer::~RsDiscIssuer()
+{
+	return;
+}
+
+void 	RsDiscIssuer::clear()
+{
+	issuerCert = "";
+}
+
+std::ostream &RsDiscIssuer::print(std::ostream &out, uint16_t indent)
+{
+        printRsItemBase(out, "RsDiscIssuer", indent);
+	uint16_t int_Indent = indent + 2;
+
+        printIndent(out, int_Indent);
+        out << "Cert String:  " << issuerCert  << std::endl;
+
+        printRsItemEnd(out, "RsDiscIssuer", indent);
+        return out;
+}
+
+
+uint32_t    RsDiscSerialiser::sizeIssuer(RsDiscIssuer *item)
+{
+	uint32_t s = 8; /* header */
+	s += 4; /* size in RawString() */
+	s += item->issuerCert.length();
+
+	return s;
+}
+
+/* serialise the data to the buffer */
+bool     RsDiscSerialiser::serialiseIssuer(RsDiscIssuer *item, void *data, uint32_t *pktsize)
+{
+	uint32_t tlvsize = sizeIssuer(item);
+	uint32_t offset = 0;
+
+	if (*pktsize < tlvsize)
+		return false; /* not enough space */
+
+	*pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+#ifdef RSSERIAL_DEBUG 
+	std::cerr << "RsDiscSerialiser::serialiseIssuer() Header: " << ok << std::endl;
+	std::cerr << "RsDiscSerialiser::serialiseIssuer() Size: " << tlvsize << std::endl;
+#endif
+
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+	ok &= setRawString(data, tlvsize, &offset, item->issuerCert);
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDiscSerialiser::serialiseIssuer() Size Error! " << std::endl;
+		std::cerr << "Offset: " << offset << " tlvsize: " << tlvsize << std::endl;
+#endif
+	}
+
+	return ok;
+}
+
+RsDiscIssuer *RsDiscSerialiser::deserialiseIssuer(void *data, uint32_t *pktsize)
+{
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+	uint32_t offset = 0;
+
+
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+		(RS_SERVICE_TYPE_DISC != getRsItemService(rstype)) ||
+		(RS_PKT_SUBTYPE_DISC_ISSUER != getRsItemSubType(rstype)))
+	{
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDiscSerialiser::deserialiseIssuer() Wrong Type" << std::endl;
+#endif
+		return NULL; /* wrong type */
+	}
+
+	if (*pktsize < rssize)    /* check size */
+	{
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDiscSerialiser::deserialiseIssuer() pktsize != rssize" << std::endl;
+		std::cerr << "Pktsize: " << *pktsize << " Rssize: " << rssize << std::endl;
+#endif
+		return NULL; /* not enough data */
+	}
+
+	/* set the packet length */
+	*pktsize = rssize;
+
+	bool ok = true;
+
+	/* ready to load */
+	RsDiscIssuer *item = new RsDiscIssuer();
+	item->clear();
+
+	/* skip the header */
+	offset += 8;
+
+	/* get mandatory parts first */
+	ok &= getRawString(data, rssize, &offset, item->issuerCert);
+
+	if (offset != rssize)
+	{
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDiscSerialiser::deserialiseIssuer() offset != rssize" << std::endl;
+		std::cerr << "Offset: " << offset << " Rssize: " << rssize << std::endl;
+#endif
+		/* error */
+		delete item;
+		return NULL;
+	}
+
+	if (!ok)
+	{
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDiscSerialiser::deserialiseIssuer() ok = false" << std::endl;
 #endif
 		delete item;
 		return NULL;

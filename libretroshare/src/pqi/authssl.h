@@ -95,8 +95,6 @@ virtual int	InitAuth(const char *srvr_cert, const char *priv_key,
 virtual bool	CloseAuth();
 virtual int     setConfigDirectories(std::string confFile, std::string neighDir);
 
-	/* Extra Function SSL only */
-std::string 	getIssuerName(std::string id);
 
 	/*********** Overloaded Functions from p3AuthMgr **********/
 	
@@ -112,6 +110,7 @@ virtual bool    getUnknownList(std::list<std::string> &ids);
 virtual bool    isValid(std::string id);
 virtual bool    isAuthenticated(std::string id);
 virtual	std::string getName(std::string id);
+virtual std::string getIssuerName(std::string id);
 virtual bool    getDetails(std::string id, pqiAuthDetails &details);
 
         /* first party trust info (dummy) */

@@ -41,6 +41,9 @@
 class gpgcert
 {
 	public:
+		gpgcert();
+		~gpgcert();
+
 		pqiAuthDetails user;
 		gpgme_key_t key;
 };
@@ -52,19 +55,30 @@ typedef std::map<std::string, gpgcert> certmap;
 	
 class GPGAuthMgr: public AuthSSL
 {
+	private:
+
+	/* Internal functions */
+	bool 	setPGPPassword_locked(std::string pwd);
+	bool 	DoOwnSignature_locked(void *, unsigned int, void *, unsigned int *);
+	bool    VerifySignature_locked(std::string id, void *data, int datalen, 
+							void *sig, unsigned int siglen);
+
+	// store all keys in map mKeyList to avoid calling gpgme exe repeatedly
+  	bool    storeAllKeys_locked();
+  	bool    updateTrustAllKeys_locked();
+
+  	bool    printAllKeys_locked();
+  	bool    printOwnKeys_locked();
+
 	public:
 
 	GPGAuthMgr();
 	~GPGAuthMgr();
 
-	bool 	setPGPPassword(std::string pwd);
 
 	X509* 	SignX509Req(X509_REQ *req, long days, std::string);
 	bool 	AuthX509(X509 *x509);
 
-	bool 	DoOwnSignature(void *, unsigned int, void *, unsigned int *);
-	bool    VerifySignature(std::string id, void *data, int datalen, 
-							void *sig, unsigned int siglen);
 
 	bool    availablePGPCertificates(std::list<std::string> &ids);
 
@@ -105,13 +119,6 @@ class GPGAuthMgr: public AuthSSL
                                         const char *passwd);
   bool    CloseAuth();
  // int     setConfigDirectories(std::string confFile, std::string neighDir);
-
-// store all keys in map mKeyList to avoid calling gpgme exe repeatedly
-  bool    storeAllKeys();
-  bool    updateTrustAllKeys();
-
-  bool    printAllKeys();
-  bool    printOwnKeys();
 
   
 
@@ -272,7 +279,8 @@ bool checkSignature(std::string id, std::string hash, std::string signature);
 
 	private:
 
-	/* Example Storage - Change as needed */
+	RsMutex pgpMtx;
+	/* Below is protected via the mutex */
 
 	certmap mKeyList;
 

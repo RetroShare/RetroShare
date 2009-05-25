@@ -99,11 +99,13 @@ void respondToPeer(std::string id);
 	/* Network Output */
 void sendOwnDetails(std::string to);
 void sendPeerDetails(std::string to, std::string about);
+void sendPeerIssuer(std::string to, std::string about);
 
 	/* Network Input */
 int  handleIncoming();
 void recvPeerOwnMsg(RsDiscItem *item);
 void recvPeerFriendMsg(RsDiscReply *item);
+void recvPeerIssuerMsg(RsDiscIssuer *item);
 
 	/* handle network shape */
 int     addDiscoveryData(std::string fromId, std::string aboutId,

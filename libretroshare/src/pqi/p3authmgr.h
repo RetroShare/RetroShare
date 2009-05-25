@@ -64,9 +64,10 @@ class pqiAuthDetails
 	std::list<std::string> signers;
 
 	uint32_t trustLvl;
+	uint32_t validLvl;
 
 	bool ownsign;
-	bool trusted;
+	bool trusted; // means valid in pgp world.
 };
 
 
@@ -95,6 +96,7 @@ virtual bool	getUnknownList(std::list<std::string> &ids) = 0;
 virtual	bool	isValid(std::string id) = 0;
 virtual	bool	isAuthenticated(std::string id) = 0;
 virtual	std::string getName(std::string id) = 0;
+virtual std::string getIssuerName(std::string id) { return getName(id); } // Default to same id.
 virtual	bool	getDetails(std::string id, pqiAuthDetails &details) = 0;
 
 		/* High Level Load/Save Configuration */

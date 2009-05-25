@@ -30,6 +30,8 @@
 #include "serialiser/rsbaseserial.h"
 #include "util/rsnet.h"
 
+#include <iostream>
+
 /* UInt16 get/set */
 
 bool getRawUInt16(void *data, uint32_t size, uint32_t *offset, uint16_t *out)
@@ -151,4 +153,56 @@ bool setRawUInt64(void *data, uint32_t size, uint32_t *offset, uint64_t in)
 }
 
 
+
+bool getRawString(void *data, uint32_t size, uint32_t *offset, std::string &outStr)
+{
+	uint32_t len = 0;
+	if (!getRawUInt32(data, size, offset, &len))
+	{
+                std::cerr << "getRawString() get size failed" << std::endl;
+		return false;
+	}
+
+	/* check there is space for string */
+	if (size < *offset + len)
+	{
+                std::cerr << "getRawString() not enough size" << std::endl;
+		return false;
+	}
+	uint8_t *buf = &(((uint8_t *) data)[*offset]);
+	for (int i = 0; i < len; i++)
+	{
+		outStr += buf[i];
+	}
+
+	(*offset) += len;
+	return true;
+}
+
+bool setRawString(void *data, uint32_t size, uint32_t *offset, std::string &inStr)
+{
+	uint32_t len = inStr.length();
+	/* first check there is space */
+	if (size < *offset + 4 + len)
+	{
+//#ifdef RSSERIAL_DEBUG
+                std::cerr << "setRawString() Not enough size" << std::endl;
+//#endif
+		return false;
+	}
+
+	if (!setRawUInt32(data, size, offset, len))
+	{
+                std::cerr << "setRawString() set size failed" << std::endl;
+		return false;
+	}
+
+	void *buf = (void *) &(((uint8_t *) data)[*offset]);
+
+	/* pack it in */
+	memcpy(buf, inStr.c_str(), len);
+
+	(*offset) += len;
+	return true;
+}
 
