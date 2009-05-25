@@ -147,7 +147,6 @@ public:
     bool isComplete() const ;
 
 private:
-    QGroupBox* userFileFrame;
     QLabel *userFileLabel;
     QVBoxLayout *userFileLayout;
     QComboBox *userSelectionCB;

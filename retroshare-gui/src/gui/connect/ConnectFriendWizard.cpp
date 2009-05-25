@@ -398,10 +398,10 @@ FofPage::FofPage(QWidget *parent)
     userFileLayout->addWidget(selectedPeersTW);
     userFileLayout->addWidget(makeFriendButton);
 
-    userFileFrame = new QGroupBox;
-    userFileFrame->setFlat(true);
-    userFileFrame->setTitle("toto");
-    userFileFrame->setLayout(userFileLayout);
+//    userFileFrame = new QGroupBox;
+//    userFileFrame->setFlat(true);
+//    userFileFrame->setTitle("toto");
+//    userFileFrame->setLayout(userFileLayout);
 
 	 setLayout(userFileLayout) ;
 
