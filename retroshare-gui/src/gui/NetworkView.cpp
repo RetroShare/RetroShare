@@ -170,7 +170,7 @@ void  NetworkView::insertPeers()
 		{
 			continue;
 		}
-		switch(detail.trustLvl)
+		switch(detail.validLvl)
 		{
 			default:
 			case GPGME_VALIDITY_UNKNOWN:

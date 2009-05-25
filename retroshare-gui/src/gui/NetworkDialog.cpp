@@ -195,7 +195,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 			}
 			else	// not a friend
 			{
-				if(detail.trustLvl > RS_TRUST_LVL_MARGINAL)		// it's a denied old friend.
+				if(detail.validLvl > RS_TRUST_LVL_MARGINAL)		// it's a denied old friend.
 					makefriendAct = new QAction(QIcon(IMAGE_MAKEFRIEND), tr( "Accept friend" ), this );
 				else
 					makefriendAct = new QAction(QIcon(IMAGE_MAKEFRIEND), tr( "Make friend" ), this );
@@ -203,7 +203,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 				connect( makefriendAct , SIGNAL( triggered() ), this, SLOT( makeFriend() ) );
 				contextMnu.addAction( makefriendAct);
 #ifdef TODO
-				if(detail.trustLvl > RS_TRUST_LVL_MARGINAL)		// it's a denied old friend.
+				if(detail.validLvl > RS_TRUST_LVL_MARGINAL)		// it's a denied old friend.
 				{
 					deleteCertAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Delete certificate" ), this );
 					connect( deleteCertAct, SIGNAL( triggered() ), this, SLOT( deleteCert() ) );
@@ -454,7 +454,7 @@ void NetworkDialog::insertConnect()
 					item -> setToolTip(k,QString::fromStdString(detail.name) + QString(tr(" is trusting you. \nRight-click and select 'make friend' to be able to connect."))) ;
 			}
 #ifdef RS_USE_PGPSSL
-			else if (detail.trustLvl > GPGME_VALIDITY_MARGINAL)
+			else if (detail.validLvl > GPGME_VALIDITY_MARGINAL)
 			{
 				backgrndcolor=Qt::cyan;
 				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
