@@ -5,24 +5,29 @@ CONFIG += release
 
 ################################# Linux ##########################################
 
+profiling {
+	QMAKE_CXXFLAGS -= -fomit-frame-pointer
+	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
+}
+
 debug {
 	DEFINES *= DEBUG
 #	DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER FT_DEBUG EXTADDRSEARCH_DEBUG
-#	DEFINES *= P3TURTLE_DEBUG CHAT_DEBUG
-	DEFINES *= CHAT_DEBUG
+#	DEFINES *= CHAT_DEBUG
+	DEFINES *= P3TURTLE_DEBUG CONTROL_DEBUG FT_DEBUG
 	QMAKE_CXXFLAGS *= -g
 }
 
 linux-g++ {
 	OBJECTS_DIR = temp/linux-g++/obj
 	DESTDIR = lib.linux-g++
-	QMAKE_CXXFLAGS *= -fomit-frame-pointer -Wall 
+	QMAKE_CXXFLAGS *= -Wall 
 	QMAKE_CC = g++
 }
 linux-g++-64 {
 	OBJECTS_DIR = temp/linux-g++-64/obj
 	DESTDIR = lib.linux-g++-64
-	QMAKE_CXXFLAGS *= -fomit-frame-pointer -Wall 
+	QMAKE_CXXFLAGS *= -Wall 
 	QMAKE_CC = g++
 }
 #################### Cross compilation for windows under Linux ####################
@@ -30,7 +35,7 @@ linux-g++-64 {
 win32-x-g++ {	
 	OBJECTS_DIR = temp/win32xgcc/obj
 	DESTDIR = lib.win32xgcc
-	DEFINES *= WINDOWS_SYS WIN32
+	DEFINES *= WINDOWS_SYS WIN32 WIN_CROSS_UBUNTU
 	QMAKE_CXXFLAGS *= -Wmissing-include-dirs
 	QMAKE_CC = i586-mingw32msvc-g++
 	QMAKE_LIB = i586-mingw32msvc-ar
@@ -202,7 +207,9 @@ HEADERS += dbase/cachestrapper.h \
            services/p3ranking.h \
            services/p3service.h \
            services/p3status.h \
-			  services/p3turtle.h \
+			  turtle/p3turtle.h \
+			  turtle/turtletypes.h \
+			  turtle/rsturtleitem.h \
 			  tcponudp/extaddrfinder.h \
            tcponudp/bio_tou.h \
            tcponudp/tcppacket.h \
@@ -266,7 +273,8 @@ SOURCES = \
 				services/p3msgservice.cc \
 				services/p3chatservice.cc \
 				services/p3service.cc \
-				services/p3turtle.cc \
+				turtle/p3turtle.cc \
+				turtle/rsturtleitem.cc \
 				dbase/rsexpr.cc \
 				dbase/cachestrapper.cc \
 				dbase/fistore.cc \

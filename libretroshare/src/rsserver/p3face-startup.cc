@@ -61,7 +61,7 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3channels.h"
 #include "services/p3status.h"
 #include "services/p3Qblog.h"
-#include "services/p3turtle.h"
+#include "turtle/p3turtle.h"
 
 #include <list>
 #include <string>
@@ -170,10 +170,6 @@ RsControl *createRsControl(RsIface &iface, NotifyBase &notify)
 //{
 //	delete config;
 //}
-
-static std::string getHomePath();
-
-
 
 void RsInit::InitRsConfig()
 {
@@ -699,7 +695,7 @@ int RsServer::StartupRetroShare()
         ftserver->setP3Interface(pqih); 
 	ftserver->setConfigDirectory(RsInit::basedir);
 
-        ftserver->SetupFtServer(&(getNotify()));
+	ftserver->SetupFtServer(&(getNotify()));
 	CacheStrapper *mCacheStrapper = ftserver->getCacheStrapper();
 	CacheTransfer *mCacheTransfer = ftserver->getCacheTransfer();
 
@@ -720,9 +716,10 @@ int RsServer::StartupRetroShare()
 	msgSrv = new p3MsgService(mConnMgr);
 	chatSrv = new p3ChatService(mConnMgr);
 
-	p3turtle *tr = new p3turtle(mConnMgr) ;
+	p3turtle *tr = new p3turtle(mConnMgr,ftserver) ;
 	rsTurtle = tr ;
 	pqih -> addService(tr);
+	ftserver->connectToTurtleRouter(tr) ;
 
 	pqih -> addService(ad);
 	pqih -> addService(msgSrv);

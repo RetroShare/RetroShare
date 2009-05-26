@@ -32,6 +32,7 @@ const int ftserverzone = 29539;
 #include "ft/ftcontroller.h"
 #include "ft/ftfileprovider.h"
 #include "ft/ftdatamultiplex.h"
+#include "turtle/p3turtle.h"
 
 
 // Includes CacheStrapper / FiMonitor / FiStore for us.
@@ -114,7 +115,7 @@ void ftServer::SetupFtServer(NotifyBase *cb)
 	mFtSearch = new ftFileSearch();
 
 	/* Transport */
-        mFtDataplex = new ftDataMultiplex(ownId, this, mFtSearch);
+	mFtDataplex = new ftDataMultiplex(ownId, this, mFtSearch);
 
 	/* make Controller */
 	mFtController = new ftController(mCacheStrapper, mFtDataplex, mConfigPath);
@@ -144,6 +145,13 @@ void ftServer::SetupFtServer(NotifyBase *cb)
 	return;
 }
 
+void ftServer::connectToTurtleRouter(p3turtle *fts)
+{
+	mTurtleRouter = fts ;
+
+	mFtSearch->addSearchMode(fts, RS_FILE_HINTS_TURTLE);
+	mFtController->setTurtleRouter(fts) ;
+}
 
 void    ftServer::StartupThreads()
 {
@@ -533,22 +541,27 @@ bool  ftServer::loadConfigMap(std::map<std::string, std::string> &configMap)
 bool	ftServer::sendDataRequest(std::string peerId, std::string hash, 
 			uint64_t size, uint64_t offset, uint32_t chunksize)
 {
-	/* create a packet */
-	/* push to networking part */
-	RsFileRequest *rfi = new RsFileRequest();
+	if(mTurtleRouter->isTurtlePeer(peerId))
+		mTurtleRouter->sendDataRequest(peerId,hash,size,offset,chunksize) ;
+	else
+	{
+		/* create a packet */
+		/* push to networking part */
+		RsFileRequest *rfi = new RsFileRequest();
 
-	/* id */
-	rfi->PeerId(peerId);
+		/* id */
+		rfi->PeerId(peerId);
 
-	/* file info */
-	rfi->file.filesize   = size;
-	rfi->file.hash       = hash; /* ftr->hash; */
+		/* file info */
+		rfi->file.filesize   = size;
+		rfi->file.hash       = hash; /* ftr->hash; */
 
-	/* offsets */
-	rfi->fileoffset = offset; /* ftr->offset; */
-	rfi->chunksize  = chunksize; /* ftr->chunk; */
+		/* offsets */
+		rfi->fileoffset = offset; /* ftr->offset; */
+		rfi->chunksize  = chunksize; /* ftr->chunk; */
 
-	mP3iface->SendFileRequest(rfi);
+		mP3iface->SendFileRequest(rfi);
+	}
 
 	return true;
 }
@@ -558,8 +571,7 @@ bool	ftServer::sendDataRequest(std::string peerId, std::string hash,
 const uint32_t	MAX_FT_CHUNK  = 8 * 1024; /* 16K */
 
 	/* Server Send */
-bool	ftServer::sendData(std::string peerId, std::string hash, uint64_t size,
-			uint64_t baseoffset, uint32_t chunksize, void *data)
+bool	ftServer::sendData(std::string peerId, std::string hash, uint64_t size, uint64_t baseoffset, uint32_t chunksize, void *data)
 {
 	/* create a packet */
 	/* push to networking part */
@@ -587,37 +599,40 @@ bool	ftServer::sendData(std::string peerId, std::string hash, uint64_t size,
 
 		/******** New Serialiser Type *******/
 
-		RsFileData *rfd = new RsFileData();
+		if(mTurtleRouter->isTurtlePeer(peerId))
+			mTurtleRouter->sendFileData(peerId,hash,size,baseoffset+offset,chunk,&(((uint8_t *) data)[offset])) ;
+		else
+		{
+			RsFileData *rfd = new RsFileData();
 
-		/* set id */
-		rfd->PeerId(peerId);
+			/* set id */
+			rfd->PeerId(peerId);
 
-		/* file info */
-		rfd->fd.file.filesize = size;
-		rfd->fd.file.hash     = hash;
-		rfd->fd.file.name     = ""; /* blank other data */
-		rfd->fd.file.path     = "";
-		rfd->fd.file.pop      = 0;
-		rfd->fd.file.age      = 0;
+			/* file info */
+			rfd->fd.file.filesize = size;
+			rfd->fd.file.hash     = hash;
+			rfd->fd.file.name     = ""; /* blank other data */
+			rfd->fd.file.path     = "";
+			rfd->fd.file.pop      = 0;
+			rfd->fd.file.age      = 0;
 
-		rfd->fd.file_offset = baseoffset + offset;
+			rfd->fd.file_offset = baseoffset + offset;
 
-		/* file data */
-		rfd->fd.binData.setBinData(
-			&(((uint8_t *) data)[offset]), chunk);
+			/* file data */
+			rfd->fd.binData.setBinData( &(((uint8_t *) data)[offset]), chunk);
 
-		/* print the data pointer */
+			mP3iface->SendFileData(rfd);
+
+			/* print the data pointer */
 #ifdef SERVER_DEBUG 
-		std::cerr << "ftServer::sendData() Packet: " << std::endl;
-		std::cerr << " offset: " << rfd->fd.file_offset;
-		std::cerr << " chunk: " << chunk;
-		std::cerr << " len: " << rfd->fd.binData.bin_len;
-		std::cerr << " data: " << rfd->fd.binData.bin_data;
-		std::cerr << std::endl;
+			std::cerr << "ftServer::sendData() Packet: " << std::endl;
+			std::cerr << " offset: " << rfd->fd.file_offset;
+			std::cerr << " chunk: " << chunk;
+			std::cerr << " len: " << rfd->fd.binData.bin_len;
+			std::cerr << " data: " << rfd->fd.binData.bin_data;
+			std::cerr << std::endl;
 #endif
-
-
-		mP3iface->SendFileData(rfd);
+		}
 
 		offset += chunk;
 		tosend -= chunk;

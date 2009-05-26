@@ -71,7 +71,7 @@ class RsTurtle
 		// tunnels.  Launches an exception if an error occurs during the
 		// initialization process.
 		//
-		virtual void turtleDownload(const std::string& file_hash) = 0 ;
+		virtual void turtleDownload(const std::string& name,const std::string& file_hash,uint64_t size) = 0 ;
 
 		// Sets the file sharing strategy. It concerns all local files. It would
 		// be better to handle this for each file, of course.

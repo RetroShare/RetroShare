@@ -44,6 +44,7 @@ class ftFileProvider;
 class ftSearch;
 class ftExtraList;
 class ftDataMultiplex;
+class p3turtle ;
 
 #include "dbase/cachestrapper.h"
 #include "util/rsthreads.h"
@@ -114,6 +115,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 	ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string configDir);
 
 void	setFtSearchNExtra(ftSearch *, ftExtraList *);
+void	setTurtleRouter(p3turtle *) ;
 bool    activate();
 
 virtual void run();
@@ -159,6 +161,7 @@ virtual bool CancelCacheFile(RsPeerId id, std::string path, std::string hash, ui
 	/* pqiMonitor callback (also provided mConnMgr pointer!) */
 	public:
 virtual void    statusChange(const std::list<pqipeer> &plist);
+void addFileSource(const std::string& hash,const std::string& peer_id) ;
 
 
 	/* p3Config Interface */
@@ -184,6 +187,7 @@ bool    setPeerState(ftTransferModule *tm, std::string id,
 	ftSearch *mSearch; 
 	ftDataMultiplex *mDataplex;
 	ftExtraList *mExtraList;
+	p3turtle *mTurtle ;
 
 	RsMutex ctrlMutex;
 

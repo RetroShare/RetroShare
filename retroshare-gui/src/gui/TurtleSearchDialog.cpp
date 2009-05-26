@@ -264,7 +264,7 @@ void TurtleSearchDialog::download()
 					<< (item->text(SR_HASH_COL)).toStdString() << "-" 
 					<< (item->text(SR_REALSIZE_COL)).toInt() << std::endl ;
 
-			rsTurtle->turtleDownload(item->text(SR_HASH_COL).toStdString()) ;
+			rsTurtle->turtleDownload(item->text(SR_NAME_COL).toStdString(),item->text(SR_HASH_COL).toStdString(),item->text(SR_REALSIZE_COL).toInt()) ;
 		}
 	}
 

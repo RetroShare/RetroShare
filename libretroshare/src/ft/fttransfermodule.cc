@@ -422,6 +422,7 @@ bool ftTransferModule::completeFileTransfer()
 
 int ftTransferModule::tick()
 {
+  queryInactive();
 #ifdef FT_DEBUG
   {
   	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
@@ -443,9 +444,6 @@ int ftTransferModule::tick()
 		
   }
 #endif
-
-
-  queryInactive();
 
   uint32_t flags = 0;
   {

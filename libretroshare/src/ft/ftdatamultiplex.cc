@@ -413,7 +413,7 @@ bool	ftDataMultiplex::locked_handleServerRequest(ftFileProvider *provider,
 		std::string peerId, std::string hash, uint64_t size, 
 			uint64_t offset, uint32_t chunksize)
 {
-	void *data = malloc(size);
+	void *data = malloc(chunksize);
 
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::locked_handleServerRequest()";

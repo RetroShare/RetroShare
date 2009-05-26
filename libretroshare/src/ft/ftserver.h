@@ -50,7 +50,6 @@
 #include "pqi/pqi.h"
 #include "pqi/p3cfgmgr.h"
 
-
 class p3ConnectMgr;
 class p3AuthMgr;
 
@@ -67,6 +66,7 @@ class ftExtraList;
 class ftFileSearch;
 
 class ftDataMultiplex;
+class p3turtle;
 
 class ftServer: public RsFiles, public ftDataSend, public RsThread
 {
@@ -94,6 +94,7 @@ std::string 	OwnId();
 	/* Final Setup (once everything is assigned) */
 //void	SetupFtServer();
 void    SetupFtServer(NotifyBase *cb);
+void    connectToTurtleRouter(p3turtle *p) ;
 
 void	StartupThreads();
 
@@ -104,6 +105,11 @@ virtual void	run();
 	/*************** Control Interface *****************************/
 	/************** (Implements RsFiles) ***************************/
 	/***************************************************************/
+
+// member access
+
+ftDataMultiplex *getMultiplexer() const { return mFtDataplex ; }
+ftController *getController() const { return mFtController ; }
 
 /***
  * Control of Downloads
@@ -227,6 +233,7 @@ bool  loadConfigMap(std::map<std::string, std::string> &configMap);
 	ftExtraList   *mFtExtra;
 
 	ftDataMultiplex *mFtDataplex;
+	p3turtle *mTurtleRouter ;
 
 
 	ftFileSearch   *mFtSearch;

@@ -76,8 +76,8 @@ virtual void clear() = 0;
 virtual std::ostream &print(std::ostream &out, uint16_t indent = 0) = 0;
 
 	/* source / destination id */
-std::string PeerId() { return peerId; }
-void        PeerId(std::string id) { peerId = id; }
+const std::string& PeerId() const { return peerId; }
+void        PeerId(const std::string& id) { peerId = id; }
 
 	/* complete id */
 uint32_t PacketId();

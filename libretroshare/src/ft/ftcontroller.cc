@@ -43,6 +43,8 @@
 #include "ft/ftdatamultiplex.h"
 #include "ft/ftextralist.h"
 
+#include "turtle/p3turtle.h"
+
 #include "util/rsdir.h"
 
 #include "pqi/p3connmgr.h"
@@ -76,15 +78,46 @@ ftFileControl::ftFileControl(std::string fname,
 }
 
 ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string configDir)
-	:CacheTransfer(cs), p3Config(CONFIG_TYPE_FT_CONTROL), mDataplex(dm), mFtActive(false)
+	:CacheTransfer(cs), p3Config(CONFIG_TYPE_FT_CONTROL), mDataplex(dm), mFtActive(false),mTurtle(NULL)
 {
 	/* TODO */
 }
 
+void ftController::setTurtleRouter(p3turtle *pt)
+{
+	mTurtle = pt ;
+}
 void ftController::setFtSearchNExtra(ftSearch *search, ftExtraList *list)
 {
 	mSearch = search;
 	mExtraList = list;
+}
+
+void ftController::addFileSource(const std::string& hash,const std::string& peer_id)
+{
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
+	std::map<std::string, ftFileControl>::iterator it;
+	std::map<std::string, ftFileControl> currentDownloads = *(&mDownloads);
+
+#ifdef CONTROL_DEBUG
+	std::cerr << "ftController: Adding source " << peer_id << " to current download hash=" << hash ;
+#endif
+	for(it = currentDownloads.begin(); it != currentDownloads.end(); it++)
+		if(it->first == hash)
+		{
+			it->second.mTransfer->addFileSource(peer_id);
+
+//			setPeerState(it->second.mTransfer, peer_id, rate, mConnMgr->isOnline(peer_id));
+
+#ifdef CONTROL_DEBUG
+			std::cerr << "... added." << std::endl ;
+#endif
+			return ;
+		}
+#ifdef CONTROL_DEBUG
+	std::cerr << "... not added: hash not found." << std::endl ;
+#endif
 }
 
 void ftController::run()
@@ -134,26 +167,35 @@ void ftController::run()
 			std::cerr << std::endl;
 #endif
 
-			if (it->second.mTransfer) {
-			    (it->second.mTransfer)->tick();
-
-
-			    //check if a cache file is downloaded, if the case, timeout the transfer after TIMOUT_CACHE_FILE_TRANSFER
-			    if ((it->second).mFlags & RS_FILE_HINTS_CACHE) {
+			if (it->second.mTransfer) 
+			{
 #ifdef CONTROL_DEBUG
-				std::cerr << "ftController::run() cache transfer found. age of this tranfer is :" << (int)(time(NULL) - (it->second).mCreateTime);
+				std::cerr << "\tTicking mTransfer: " << (void*)it->second.mTransfer;
 				std::cerr << std::endl;
 #endif
-				if ((time(NULL) - (it->second).mCreateTime) > TIMOUT_CACHE_FILE_TRANSFER) {
+				(it->second.mTransfer)->tick();
+
+
+				//check if a cache file is downloaded, if the case, timeout the transfer after TIMOUT_CACHE_FILE_TRANSFER
+				if ((it->second).mFlags & RS_FILE_HINTS_CACHE) {
 #ifdef CONTROL_DEBUG
-				std::cerr << "ftController::run() cache transfer to old. Cancelling transfer. Hash :" << (it->second).mHash;
-				std::cerr << std::endl;
+					std::cerr << "ftController::run() cache transfer found. age of this tranfer is :" << (int)(time(NULL) - (it->second).mCreateTime);
+					std::cerr << std::endl;
 #endif
-				    this->FileCancel((it->second).mHash);
+					if ((time(NULL) - (it->second).mCreateTime) > TIMOUT_CACHE_FILE_TRANSFER) {
+#ifdef CONTROL_DEBUG
+						std::cerr << "ftController::run() cache transfer to old. Cancelling transfer. Hash :" << (it->second).mHash << ", time=" << (it->second).mCreateTime << ", now = " << time(NULL) ;
+						std::cerr << std::endl;
+#endif
+						this->FileCancel((it->second).mHash);
+					}
 				}
-			    }
 
 			}
+#ifdef CONTROL_DEBUG
+			else
+				std::cerr << "No mTransfer for this hash." << std::endl ;
+#endif
 		  }
 		}
 
@@ -618,6 +660,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 		/* do a source search - for any extra sources */
 		if (mSearch->search(hash, size, 
 			RS_FILE_HINTS_REMOTE |
+			RS_FILE_HINTS_TURTLE |
 			RS_FILE_HINTS_SPEC_ONLY, info))
 		{
 			/* do something with results */
@@ -729,7 +772,7 @@ bool 	ftController::setPeerState(ftTransferModule *tm, std::string id,
 #endif
 		tm->setPeerState(id, PQIPEER_IDLE, maxrate);
 	}
-	else if (online)
+	else if (online || mTurtle->isOnline(id))
 	{
 #ifdef CONTROL_DEBUG
 		std::cerr << "ftController::setPeerState()";
@@ -1087,6 +1130,9 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 	std::map<std::string, ftFileControl>::iterator it;
 	std::list<pqipeer>::const_iterator pit;
 
+	std::list<pqipeer> vlist ;
+	mTurtle->getVirtualPeersList(vlist) ;
+
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController::statusChange()";
 	std::cerr << std::endl;
@@ -1100,6 +1146,40 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 		std::cerr << std::endl;
 #endif
 		for(pit = plist.begin(); pit != plist.end(); pit++)
+		{
+#ifdef CONTROL_DEBUG
+			std::cerr << "Peer: " << pit->id;
+#endif
+			if (pit->actions & RS_PEER_CONNECTED)
+			{
+#ifdef CONTROL_DEBUG
+				std::cerr << " is Newly Connected!";
+				std::cerr << std::endl;
+#endif
+				setPeerState(it->second.mTransfer, pit->id, rate, true);
+			}
+			else if (pit->actions & RS_PEER_DISCONNECTED)
+			{
+#ifdef CONTROL_DEBUG
+				std::cerr << " is Just disconnected!";
+				std::cerr << std::endl;
+#endif
+				setPeerState(it->second.mTransfer, pit->id, rate, false);
+			}
+			else
+			{
+#ifdef CONTROL_DEBUG
+				std::cerr << " had something happen to it: ";
+				std::cerr << pit-> actions;
+				std::cerr << std::endl;
+#endif
+				setPeerState(it->second.mTransfer, pit->id, rate, false);
+			}
+		}
+		
+		// Now also look at turtle virtual peers.
+		//
+		for(pit = vlist.begin(); pit != vlist.end(); pit++)
 		{
 #ifdef CONTROL_DEBUG
 			std::cerr << "Peer: " << pit->id;
