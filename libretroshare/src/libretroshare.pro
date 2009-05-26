@@ -167,7 +167,6 @@ HEADERS += dbase/cachestrapper.h \
            rsserver/p3peers.h \
            rsserver/p3photo.h \
            rsserver/p3rank.h \
-           rsserver/pqistrings.h \
            serialiser/rsbaseitems.h \
            serialiser/rsbaseserial.h \
            serialiser/rschannelitems.h \
