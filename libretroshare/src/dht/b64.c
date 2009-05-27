@@ -243,6 +243,7 @@ void decodeblock( unsigned char in[4], unsigned char out[3] )
 #include <sstream>
 #include <iomanip>
 #include <string>
+#include <stdint.h>
 #include "b64.h"
 
 std::string displayBlock(unsigned char *arr, unsigned int len);

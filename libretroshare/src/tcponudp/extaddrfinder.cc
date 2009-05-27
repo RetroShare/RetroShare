@@ -13,6 +13,7 @@
 #include <set>
 #include <vector>
 #include <algorithm>
+#include <stdio.h>
 
 static const std::string ADDR_AGENT  = "Mozilla/5.0";
 
