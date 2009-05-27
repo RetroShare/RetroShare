@@ -207,7 +207,17 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 
       clearcompletedAct = new QAction(QIcon(IMAGE_CLEARCOMPLETED), tr( "Clear Completed" ), this );
       connect( clearcompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
+      
+      rootisnotdecoratedAct = new QAction(QIcon(), tr( "Set Root is not Decorated" ), this );
+      connect( rootisnotdecoratedAct , SIGNAL( triggered() ), this, SLOT( rootisnotdecorated() ) );
 
+      rootisdecoratedAct = new QAction(QIcon(), tr( "Set Root is Decorated" ), this );
+      connect( rootisdecoratedAct , SIGNAL( triggered() ), this, SLOT( rootdecorated() ) );
+      
+      QMenu *viewMenu = new QMenu( tr("View"), this );
+      viewMenu->addAction(rootisnotdecoratedAct);
+		  viewMenu->addAction(rootisdecoratedAct);
+      
       contextMnu.clear();
       if (addPlayOption)
       {
@@ -221,7 +231,10 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       contextMnu.addAction( pastelinkAct);
       contextMnu.addSeparator();
       contextMnu.addAction( clearcompletedAct);
+      contextMnu.addSeparator();
+	    contextMnu.addMenu( viewMenu);
       contextMnu.exec( mevent->globalPos() );
+      
 }
 
 void TransfersDialog::playSelectedTransfer()
@@ -821,6 +834,17 @@ void TransfersDialog::clearcompleted()
     	std::cerr << "TransfersDialog::clearcompleted()" << std::endl;
    	rsFiles->FileClearCompleted();
 }
+
+void TransfersDialog::rootdecorated()
+{
+    ui.downloadList->setRootIsDecorated(true);
+}
+
+void TransfersDialog::rootisnotdecorated()
+{
+    ui.downloadList->setRootIsDecorated(false);
+}
+
 
 double TransfersDialog::getProgress(int row, QStandardItemModel *model)
 {
