@@ -207,17 +207,17 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 
       clearcompletedAct = new QAction(QIcon(IMAGE_CLEARCOMPLETED), tr( "Clear Completed" ), this );
       connect( clearcompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
-      
+
       rootisnotdecoratedAct = new QAction(QIcon(), tr( "Set Root is not Decorated" ), this );
       connect( rootisnotdecoratedAct , SIGNAL( triggered() ), this, SLOT( rootisnotdecorated() ) );
 
       rootisdecoratedAct = new QAction(QIcon(), tr( "Set Root is Decorated" ), this );
       connect( rootisdecoratedAct , SIGNAL( triggered() ), this, SLOT( rootdecorated() ) );
-      
+
       QMenu *viewMenu = new QMenu( tr("View"), this );
       viewMenu->addAction(rootisnotdecoratedAct);
 		  viewMenu->addAction(rootisdecoratedAct);
-      
+
       contextMnu.clear();
       if (addPlayOption)
       {
@@ -234,7 +234,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       contextMnu.addSeparator();
 	    contextMnu.addMenu( viewMenu);
       contextMnu.exec( mevent->globalPos() );
-      
+
 }
 
 void TransfersDialog::playSelectedTransfer()
@@ -336,7 +336,7 @@ int TransfersDialog::addItem(QString symbol, QString name, QString coreID, qlong
     }
     else if (ext == "iso" || ext == "nrg" || ext == "mdf" || ext == "img" || ext == "dmg" || ext == "bin" )
     {
-    DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/imagees/FileTypeCDImage.png")), Qt::DecorationRole);
+    DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeCDImage.png")), Qt::DecorationRole);
     }
     else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h")
     {
@@ -367,6 +367,8 @@ bool TransfersDialog::addPeerToItem(int row, QString symbol, QString name, QStri
     //set this false if you want to expand on double click
     dlItem->setEditable(false);
 
+    name.insert(0, " ");
+
     QList<QStandardItem *> items;
     QStandardItem *i1 = new QStandardItem(); i1->setData(QVariant((QString)name), Qt::DisplayRole);
     QStandardItem *i2 = new QStandardItem(); i2->setData(QVariant((qlonglong)fileSize), Qt::DisplayRole);
@@ -377,6 +379,20 @@ bool TransfersDialog::addPeerToItem(int row, QString symbol, QString name, QStri
     QStandardItem *i7 = new QStandardItem(); i7->setData(QVariant((QString)status), Qt::DisplayRole);
     QStandardItem *i8 = new QStandardItem(); i8->setData(QVariant((qlonglong)remaining), Qt::DisplayRole);
     QStandardItem *i9 = new QStandardItem(); i9->setData(QVariant((QString)coreID), Qt::DisplayRole);
+
+    /* set status icon in the name field */
+    if (status == "Downloading") {
+        i1->setData(QIcon(QString::fromUtf8(":/images/Client0.png")), Qt::DecorationRole);
+    } else if (status == "Failed") {
+        i1->setData(QIcon(QString::fromUtf8(":/images/Client1.png")), Qt::DecorationRole);
+    } else if (status == "Okay") {
+        i1->setData(QIcon(QString::fromUtf8(":/images/Client2.png")), Qt::DecorationRole);
+    } else if (status == "Waiting") {
+        i1->setData(QIcon(QString::fromUtf8(":/images/Client3.png")), Qt::DecorationRole);
+    } else if (status == "Unknown") {
+        i1->setData(QIcon(QString::fromUtf8(":/images/Client4.png")), Qt::DecorationRole);
+    } else if (status == "Complete") {
+    }
 
     items.append(i1);
     items.append(i2);
