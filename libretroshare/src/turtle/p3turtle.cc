@@ -25,6 +25,7 @@
 
 #include <stdexcept>
 #include <stdlib.h>
+#include <assert.h>
 #ifdef P3TURTLE_DEBUG
 #include <assert.h>
 #endif
@@ -48,6 +49,7 @@
 #include <cmath>
 
 #include <sstream>
+#include <stdio.h>
 
 #include "util/rsdebug.h"
 #include "util/rsprint.h"
