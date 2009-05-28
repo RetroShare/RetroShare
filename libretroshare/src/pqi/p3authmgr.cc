@@ -23,6 +23,7 @@
  *
  */
 
+#include <stdint.h>
 #include <iostream>
 #include "pqi/p3authmgr.h"
 

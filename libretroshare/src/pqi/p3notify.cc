@@ -25,6 +25,7 @@
 
 
 #include "pqi/p3notify.h"
+#include <stdint.h>
 
 /* external reference point */
 RsNotify *rsNotify = NULL;

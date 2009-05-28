@@ -31,7 +31,7 @@
 #include <list>
 #include <iostream>
 #include <string>
-
+#include <stdint.h>
 
 class RsNotify;
 extern RsNotify   *rsNotify;

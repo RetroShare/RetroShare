@@ -31,6 +31,7 @@
 
 #include <errno.h>
 #include <iostream>
+#include <stdio.h>
 
 #include "util/rsdebug.h"
 #include <sstream>
