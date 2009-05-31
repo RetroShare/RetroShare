@@ -2,7 +2,7 @@
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.4.13a"
+!define VERSION "0.4.13b"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
 
 ; Main Install settings
@@ -29,7 +29,7 @@ SetCompressor LZMA
 !define MUI_LICENSEPAGE_RADIOBUTTONS
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_FINISHPAGE_LINK "Visit the RetroShare forum for the latest news and support"
-!define MUI_FINISHPAGE_LINK_LOCATION "http://sourceforge.net/forum/forum.php?forum_id=618174"
+!define MUI_FINISHPAGE_LINK_LOCATION "http://retroshare.sourceforge.net/forum/"
 !define MUI_FINISHPAGE_RUN "$INSTDIR\RetroShare.exe"
 !define MUI_FINISHPAGE_SHOWREADME $INSTDIR\changelog.txt
 !define MUI_FINISHPAGE_SHOWREADME_TEXT changelog.txt
@@ -40,7 +40,7 @@ SetCompressor LZMA
 !define MUI_LANGDLL_REGISTRY_KEY ${REGKEY}
 !define MUI_LANGDLL_REGISTRY_VALUENAME InstallerLanguage
 
-; !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of RetroShare. \r\n\r\nIt is recommended that you close all other applications before starting Setup. This will make it possible to update relevant system files without having to reboot your computer. \r\n\r\nIMPORTANT: Ensure that RetroShare is NOT RUNNING before continuing (you can exit from the taskbar menu), otherwise the installer cannot update the executables, and the installation will fail. \r\n\r\nClick Next to continue. "
+; !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of RetroShare. \r\n\r\nIt is recommended that you close all other applications before starting Setup. This will make it possible to update relevant system files without havinf to reboot your computer. \r\n\r\nIMPORTANT: Ensure that RetroShare is NOT RUNNING before continuing (you can exit from the taskbar menu), otherwise the installer cannot update the executables, and the installation will fail. \r\n\r\nClick Next to continue. "
 
 !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of RetroShare. \r\n\r\nIMPORTANT: Ensure that RetroShare is NOT RUNNING before continuing (you can exit from the taskbar menu), otherwise the installer cannot update the executables, and the installation will fail. \r\n\r\nClick Next to continue. "
 
@@ -85,7 +85,6 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     
     LangString sec_main ${LANG_ENGLISH} "Program Files"
     LangString sec_data ${LANG_ENGLISH} "Program Skins"
-    LangString sec_mplayer ${LANG_ENGLISH} "MPlayer Engine"
     LangString sec_shortcuts ${LANG_ENGLISH} "Shortcuts"
     LangString sec_link ${LANG_ENGLISH} "File Association"
     LangString sec_autostart ${LANG_ENGLISH} "Auto Startup"
@@ -100,13 +99,11 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     
     LangString sec_main ${LANG_GERMAN} "Programmdateien"
     LangString sec_data ${LANG_GERMAN} "Skins f�r das Programm"
-    LangString sec_mplayer ${LANG_GERMAN} "MPlayer "
     LangString sec_shortcuts ${LANG_GERMAN} "Shortcuts"
     LangString sec_link ${LANG_GERMAN} "Dateiverkn�pfungen"
     LangString sec_autostart ${LANG_GERMAN} "Auto Startup"
 	LangString DESC_sec_main ${LANG_GERMAN} "Installiert die erforderlichen Programmdateien."
 	LangString DESC_sec_data ${LANG_GERMAN} "Installiert RetroShare Skins"
-	LangString DESC_sec_mplayer ${LANG_GERMAN} "Installiert MPlayer das f�r SMPlayer erforderlich ist"
     LangString DESC_sec_shortcuts ${LANG_GERMAN} "Erstellt eine RetroShare Verkn�pfung im Startmen�, Desktop oder im Schnellstarter."
     LangString DESC_sec_link ${LANG_GERMAN} "RetroShare mit .pqi Dateien verkn�pfen"
     LangString DESC_sec_autostart ${LANG_GERMAN} "Beim Neustart automatisch RetroShare starten und sich anmelden"
@@ -115,13 +112,11 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     
     LangString sec_main ${LANG_TURKISH} "Program Dosyalar�"
     LangString sec_data ${LANG_TURKISH} "Program Skinleri"
-    LangString sec_mplayer ${LANG_TURKISH} "MPlayer "
     LangString sec_shortcuts ${LANG_TURKISH} "Shortcut'lar"
     LangString sec_link ${LANG_TURKISH} ".pqi Dosya Kaydet"
     LangString sec_autostart ${LANG_TURKISH} "Otomatik calistir ve baglan"
 	LangString DESC_sec_main ${LANG_TURKISH} "Program dosyalar�n� kurar."
 	LangString DESC_sec_data ${LANG_TURKISH} "RetroShare Skin'leri kurar"
-	LangString DESC_sec_mplayer ${LANG_TURKISH} "Mplayer SMPlayer icin gereklidir"
     LangString DESC_sec_shortcuts ${TURKISH} "Shortcut yap Start menu , Desktop veya Quicklaunchbar icin."
     LangString DESC_sec_link ${LANG_TURKISH} "RetroShare .pqi almas� i�in kaydettirir"
     LangString DESC_sec_autostart ${LANG_TURKISH} "Isletim sistemi acildiginda Otomatik olarak calistir ve baglan"
@@ -144,21 +139,14 @@ Section $(sec_main) sec_main
   ; Set Section Files and Shortcuts
   SetOutPath "$INSTDIR\"
   File /r "release\RetroShare.exe"
-  File /r "release\mingwm10.dll"
-  File /r "release\changelog.txt"
-
-; Two Comments here: 
-; 1) Please use relative directorys ( like I have changed it to)
-; As it prevents use from needing to continually change the file.
-; 2) Better To Build as standalone exec.
-;
-;  File /r "D:\MinGW\bin\mingwm10.dll"
-;  File /r "pthreadGCE2.dll"
-;  File /r "D:\Qt\4.4.3\bin\QtCore4.dll"
-;  File /r "D:\Qt\4.4.3\bin\QtGui4.dll"
-;  File /r "D:\Qt\4.4.3\bin\QtNetwork4.dll"
-;  File /r "D:\Qt\4.4.3\bin\QtXml4.dll"
-;  File /r "D:\Qt\4.4.3\bin\QtScript4.dll"
+  File /r "D:\MinGW\bin\mingwm10.dll"
+  File /r "pthreadGCE2.dll"
+  File /r "D:\Qt\4.4.3\bin\QtCore4.dll"
+  File /r "D:\Qt\4.4.3\bin\QtGui4.dll"
+  File /r "D:\Qt\4.4.3\bin\QtNetwork4.dll"
+  File /r "D:\Qt\4.4.3\bin\QtXml4.dll"
+  File /r "D:\Qt\4.4.3\bin\QtScript4.dll"
+  File /r "changelog.txt"
 
   
 
@@ -176,35 +164,20 @@ Section  $(sec_data) sec_data
   ; We're not ready for external skins...
   ; Set Section qss need to remove svn path
   SetOutPath "$INSTDIR\qss\"
-  File /r release\qss\*.*   
+  File /r qss\*.*   
   
   ; Set Section skin
   ; SetOutPath "$INSTDIR\skin\"
-  ; File /r skin\*.* 
+  ; File /r release\skin\*.* 
 
   ; Add emoticons
   SetOutPath "$INSTDIR\emoticons\"
-  File /r release\emoticons\*.*   
+  File /r emoticons\*.*   
 	
   ; Add Chat Style
   SetOutPath "$INSTDIR\style\"
-  File /r release\style\*.*   
+  File /r style\*.*   
 	
-SectionEnd
-
-Section $(sec_mplayer) sec_mplayer
-
-  ;Set Section required
-  ;SectionIn RO
-
-  ; Set Section properties
-  SetOverwrite on
-	
-  ; Set Section Files and Shortcuts
-  SetOutPath "$INSTDIR\mplayer"
-  File /r "mplayer\*.*"
-
-
 SectionEnd
 
 Section $(sec_link) sec_link
@@ -275,7 +248,6 @@ SectionEnd
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${sec_main} $(DESC_sec_main)
     !insertmacro MUI_DESCRIPTION_TEXT ${sec_data} $(DESC_sec_data)
-    !insertmacro MUI_DESCRIPTION_TEXT ${sec_mplayer} $(DESC_sec_mplayer)
     !insertmacro MUI_DESCRIPTION_TEXT ${sec_shortcuts} $(DESC_sec_shortcuts)
     !insertmacro MUI_DESCRIPTION_TEXT ${sec_link} $(DESC_sec_link)
 	!insertmacro MUI_DESCRIPTION_TEXT ${sec_autostart} $(DESC_sec_autostart)
@@ -331,8 +303,6 @@ Section "Uninstall"
   ; Remove directories used
   RMDir "$SMPROGRAMS\${APPNAME}"
   RMDir /r "$INSTDIR"
-  RMDir /r "$INSTDIR\mplayer"
-  RMDir /r "$INSTDIR\smplayer"
   RMDir /r "$INSTDIR\qss"
   RMDir /r "$INSTDIR\emoticons"
   RMDir /r "$INSTDIR\style"
