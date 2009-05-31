@@ -68,7 +68,11 @@ virtual QStringList mimeTypes () const;
 
  private:
      void update (const QModelIndex &index );
+     void treeStyle();
 
+     QIcon categoryIcon;
+     QIcon peerIcon;
+    
 	class RemoteIndex
 	{
 		public:

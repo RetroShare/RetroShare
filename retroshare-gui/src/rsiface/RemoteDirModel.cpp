@@ -5,6 +5,7 @@
 
 #include <QtGui>
 #include <QIcon>
+#include <QPixmap>
 #include <iostream>
 #include <sstream>
 #include <math.h>
@@ -20,11 +21,18 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
          RemoteMode(mode), nIndex(1), indexSet(1)   /* ass zero index cant be used */
 {
 	setSupportedDragActions(Qt::CopyAction);
-
+  treeStyle();
 
 }
 
-
+void RemoteDirModel::treeStyle()
+{
+	categoryIcon.addPixmap(QPixmap(":/images/folder16.png"),
+	                     QIcon::Normal, QIcon::Off);
+	categoryIcon.addPixmap(QPixmap(":/images/folder_video.png"),
+	                     QIcon::Normal, QIcon::On);
+	peerIcon = QIcon(":/images/user/identity16.png");
+}
 
  bool RemoteDirModel::hasChildren(const QModelIndex &parent) const
  {
@@ -245,14 +253,14 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
     {
 
     if (details.type == DIR_TYPE_PERSON)
-	{
-		switch(coln)
-		{
-			case 0:
-		return(QIcon(":/images/user/identity16.png"));	
-		break;
-		}
-	}
+    {
+      switch(coln)
+      {
+        case 0:
+      return (QIcon(peerIcon));	
+      break;
+      }
+    }
 	else if (details.type == DIR_TYPE_DIR)
 	{		
 		switch(coln)
@@ -266,7 +274,7 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 		}
 		else
 		{
-			return(QIcon(":/images/folder16.png"));	
+			return(QIcon(categoryIcon));	
 		}
 		break;
 		}
