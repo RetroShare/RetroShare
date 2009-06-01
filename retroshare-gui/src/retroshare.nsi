@@ -299,6 +299,9 @@ Section "Uninstall"
   
   ; Remove Quicklaunch shortcut
   Delete "$QUICKLAUNCH\${APPNAME}.lnk"
+  
+  ; Remove Autstart 
+  Delete "$SMSTARTUP\${APPNAME}.lnk"
 
   ; Remove directories used
   RMDir "$SMPROGRAMS\${APPNAME}"
