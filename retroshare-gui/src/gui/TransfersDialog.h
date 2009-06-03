@@ -74,6 +74,8 @@ class TransfersDialog : public MainPage
 		void playFiles(QStringList files);
 
 	private:
+		QString getPeerName(const std::string& peer_id) const ;
+
 		QStandardItemModel *DLListModel;
 		QStandardItemModel *ULListModel;
 		QItemSelectionModel *selection;

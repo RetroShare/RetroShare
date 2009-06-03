@@ -611,9 +611,9 @@ void TransfersDialog::insertTransfers()
         int dlPeers = 0;
         for (pit = info.peers.begin(); pit != info.peers.end(); pit++) {
             symbol      = "";
-            name        = QString::fromStdString(rsPeers->getPeerName(pit->peerId));
+            name        = getPeerName(pit->peerId);
             //unique combination: fileName + peerName, variant: hash + peerName (too long)
-            coreId      = QString::fromStdString(info.fname + rsPeers->getPeerName(pit->peerId));
+            coreId      = QString::fromStdString(info.fname) + getPeerName(pit->peerId);
             fileSize    = info.size;
             progress    = (info.transfered * 100.0) / info.size;
             dlspeed     = pit->tfRate * 1024.0;
@@ -645,7 +645,7 @@ void TransfersDialog::insertTransfers()
                 continue;
 
             /* if peers found in selectedIds, select again */
-            if (selectedIds.end() != std::find(selectedIds.begin(), selectedIds.end(), info.fname + rsPeers->getPeerName(pit->peerId))) {
+            if (selectedIds.end() != std::find(selectedIds.begin(), selectedIds.end(), info.fname + getPeerName(pit->peerId).toStdString())) {
                 QStandardItem *dlItem = DLListModel->item(addedRow);
                 QModelIndex childIndex = DLListModel->indexFromItem(dlItem).child(dlPeers, 0);
                 selection->select(childIndex, QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent);
@@ -669,7 +669,7 @@ void TransfersDialog::insertTransfers()
 		symbol  	= "";
 		coreId		= QString::fromStdString(info.hash);
 		name    	= QString::fromStdString(info.fname);
-		sources		= QString::fromStdString(rsPeers->getPeerName(pit->peerId));
+		sources		= getPeerName(pit->peerId);
 
 		switch(pit->status)
 		{
@@ -749,6 +749,19 @@ void TransfersDialog::insertTransfers()
 	}
 }
 
+QString TransfersDialog::getPeerName(const std::string& id) const
+{
+	QString res = QString::fromStdString(rsPeers->getPeerName(id)) ;
+
+	// This is because turtle tunnels have no name (I didn't want to bother with
+	// connect mgr). In such a case their id can suitably hold for a name.
+	//
+	if(res == "")
+		return QString::fromStdString(id) ;
+	else
+		return res ;
+}
+
 void TransfersDialog::cancel()
 {
 		QString queryWrn2;
@@ -764,11 +777,13 @@ void TransfersDialog::cancel()
         if(selection->isRowSelected(i, QModelIndex()))
         {
         std::string id = getID(i, DLListModel).toStdString();
+#ifdef UNUSED
         QString  qname = getFileName(i, DLListModel);
         /* XXX -> Should not have to 'trim' filename ... something wrong here..
         * but otherwise, not exact filename .... BUG
         */
         std::string name = (qname.trimmed()).toStdString();
+#endif
         rsFiles->FileCancel(id); /* hash */
 
         }

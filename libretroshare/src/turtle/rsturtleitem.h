@@ -33,11 +33,12 @@ class RsTurtleSearchResultItem: public RsTurtleItem
 		RsTurtleSearchResultItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_RESULT) {}
 		RsTurtleSearchResultItem(void *data,uint32_t size) ;		// deserialization
 
-		uint16_t depth ;
-		uint8_t peer_id[16];				// peer id. This will eventually be obfuscated in some way.
+		TurtleSearchRequestId request_id ;	// Randomly generated request id.
 
-		TurtleSearchRequestId request_id ;	// randomly generated request id.
-
+		uint16_t depth ;							// The depth of a search result is obfuscated in this way:
+														// 	If the actual depth is 1, this field will be 1.
+														// 	If the actual depth is > 1, this field is a larger arbitrary integer. 
+														
 		std::list<TurtleFileInfo> result ;
 
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;

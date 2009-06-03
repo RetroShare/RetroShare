@@ -119,7 +119,32 @@ void ftController::addFileSource(const std::string& hash,const std::string& peer
 	std::cerr << "... not added: hash not found." << std::endl ;
 #endif
 }
+void ftController::removeFileSource(const std::string& hash,const std::string& peer_id)
+{
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
+	std::map<std::string, ftFileControl>::iterator it;
+	std::map<std::string, ftFileControl> currentDownloads = *(&mDownloads);
+
+#ifdef CONTROL_DEBUG
+	std::cerr << "ftController: Adding source " << peer_id << " to current download hash=" << hash ;
+#endif
+	for(it = currentDownloads.begin(); it != currentDownloads.end(); it++)
+		if(it->first == hash)
+		{
+			it->second.mTransfer->removeFileSource(peer_id);
+
+//			setPeerState(it->second.mTransfer, peer_id, rate, mConnMgr->isOnline(peer_id));
+
+#ifdef CONTROL_DEBUG
+			std::cerr << "... added." << std::endl ;
+#endif
+			return ;
+		}
+#ifdef CONTROL_DEBUG
+	std::cerr << "... not added: hash not found." << std::endl ;
+#endif
+}
 void ftController::run()
 {
 

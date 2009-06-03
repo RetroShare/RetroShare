@@ -259,12 +259,14 @@ void TurtleSearchDialog::download()
 					"", 0, srcIds);
 #endif
 
+			std::list<std::string> srcIds;
 			std::cout << "Issuing file request from search dialog: -" 
 					<< (item->text(SR_NAME_COL)).toStdString() << "-" 
 					<< (item->text(SR_HASH_COL)).toStdString() << "-" 
 					<< (item->text(SR_REALSIZE_COL)).toInt() << std::endl ;
 
-			rsTurtle->turtleDownload(item->text(SR_NAME_COL).toStdString(),item->text(SR_HASH_COL).toStdString(),item->text(SR_REALSIZE_COL).toInt()) ;
+			rsTurtle->monitorFileTunnels(item->text(SR_NAME_COL).toStdString(),item->text(SR_HASH_COL).toStdString(),item->text(SR_REALSIZE_COL).toInt()) ;
+			rsFiles->FileRequest(item->text(SR_NAME_COL).toStdString(),item->text(SR_HASH_COL).toStdString(),item->text(SR_REALSIZE_COL).toInt(),"",0,srcIds) ;
 		}
 	}
 

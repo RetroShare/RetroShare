@@ -161,6 +161,7 @@ class ftServer ;
 class p3AuthMgr;
 class p3ConnectMgr;
 class ftDataMultiplex;
+class RsSerialiser;
 static const int TURTLE_MAX_SEARCH_DEPTH = 6 ;
 
 // This class is used to keep trace of requests (searches and tunnels).
@@ -191,10 +192,22 @@ class TurtleFileHashInfo
 		TurtleRequestId last_request ;				// last request for the tunnels of this hash
 		
 		TurtleFileName name ;
+		time_t time_stamp ;
 		uint64_t size ;
 };
 
-class p3turtle: public p3Service, public pqiMonitor, public RsTurtle, public ftSearch
+// Subclassing:
+//
+//		Class      | Brings what      | Usage
+// 	-----------+------------------+------------------------------------------------------
+// 	p3Service  | sendItem()       | handle packet sending/receiving to/from friend peers.
+// 	pqiMonitor | configChanged()  | handle who's connecting/disconnecting to dig new tunnels
+// 	RsTurtle   | start/stop file()| brings interface for turtle service
+// 	ftSearch   | search()         | used to allow searching for monitored files.
+// 	p3Config   | ConfigChanged()  | used to load/save .cfg file for turtle variales.
+// 	-----------+------------------+------------------------------------------------------
+//
+class p3turtle: public p3Service, public pqiMonitor, public RsTurtle, public ftSearch, public p3Config
 {
 	public:
 		p3turtle(p3ConnectMgr *cm,ftServer *m);
@@ -205,16 +218,24 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle, public ftS
 		//
 		virtual TurtleSearchRequestId turtleSearch(const std::string& string_to_match) ;
 
-		// Initiates tunnel handling for the given file hash.
-		// tunnels.  Launches an exception if an error occurs during the
-		// initialization process. The turtle router itself does not initiate downloads, 
-		// it only maintains tunnels for the given hash. The download should be 
-		// driven by the file transfer module. Maybe this function can do the whole thing:
+		// Initiates tunnel handling for the given file hash.  tunnels.  Launches
+		// an exception if an error occurs during the initialization process. The
+		// turtle router itself does not initiate downloads, it only maintains
+		// tunnels for the given hash. The download should be driven by the file
+		// transfer module. Maybe this function can do the whole thing:
 		//  - initiate tunnel handling
 		//  - send the file request to the file transfer module
 		//  - populate the file transfer module with the adequate pqi interface and search module.
 		//
-		virtual void turtleDownload(const std::string& name,const std::string& file_hash,uint64_t size) ;
+		//  This function should be called in addition to ftServer::FileRequest() so that the turtle router
+		//  automatically provide tunnels for the file to download.
+		//
+		virtual void monitorFileTunnels(const std::string& name,const std::string& file_hash,uint64_t size) ;
+
+		// This should be called when canceling a file download, so that the turtle router stops
+		// handling tunnels for this file.
+		//
+		virtual void stopMonitoringFileTunnels(const std::string& file_hash) ;
 
 		/************* from pqiMonitor *******************/
 		// Informs the turtle router that some peers are (dis)connected. This should initiate digging new tunnels,
@@ -236,6 +257,11 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle, public ftS
 		// Search function. This function looks into the file hashes currently handled , and sends back info.
 		//
 		virtual bool search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const ;
+
+		/************* from p3Config *******************/
+		virtual RsSerialiser *setupSerialiser() ;
+		virtual std::list<RsItem*> saveList(bool& cleanup) ;
+		virtual bool loadList(std::list<RsItem*> load) ;
 
 		/************* Communication with ftserver *******************/
 		// Does the turtle router manages tunnels to this peer ? (this is not a
@@ -271,8 +297,9 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle, public ftS
 
 		//----------------------------- Routing functions ----------------------------//
 		
-		void manageTunnels() ;					/// Handle tunnel digging for current file hashes
-		int handleIncoming(); 					/// Main routing function
+		void manageTunnels() ;						/// Handle tunnel digging for current file hashes
+		void closeTunnel(TurtleTunnelId tid) ;	/// closes a given tunnel
+		int handleIncoming(); 						/// Main routing function
 
 		void handleSearchRequest(RsTurtleSearchRequestItem *item);		/// specific routing functions for handling particular packets.
 		void handleSearchResult(RsTurtleSearchResultItem *item);
@@ -303,18 +330,16 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle, public ftS
 
 		std::map<TurtleSearchRequestId,TurtleRequestInfo> 	_search_requests_origins ; /// keeps trace of who emmitted a given search request
 		std::map<TurtleTunnelRequestId,TurtleRequestInfo> 	_tunnel_requests_origins ; /// keeps trace of who emmitted a tunnel request
-
 		std::map<TurtleFileHash,TurtleFileHashInfo>			_incoming_file_hashes ;		/// stores adequate tunnels for each file hash locally managed
 		std::map<TurtleFileHash,FileInfo>						_outgoing_file_hashes ;		/// stores file info for each file we provide.
-
 		std::map<TurtleTunnelId,TurtleTunnel > 				_local_tunnels ;				/// local tunnels, stored by ids (Either transiting or ending).
-
 		std::map<TurtleVirtualPeerId,TurtleTunnelId>			_virtual_peers ;				/// Peers corresponding to each tunnel.
 
 		time_t _last_clean_time ;
 		time_t _last_tunnel_management_time ;
 
 		std::list<pqipeer> _online_peers;
+		bool _force_digg_new_tunnels ;			/// used to force digging new tunnels
 #ifdef P3TURTLE_DEBUG
 		void dumpState() ;
 #endif

@@ -67,11 +67,18 @@ class RsTurtle
 		//
 		virtual TurtleRequestId turtleSearch(const std::string& match_string) = 0 ;
 
-		// Launches a complete download file operation: diggs one or more
-		// tunnels.  Launches an exception if an error occurs during the
-		// initialization process.
+		// Initiates tunnel handling for the given file hash.  tunnels.  Launches
+		// an exception if an error occurs during the initialization process. The
+		// turtle router itself does not initiate downloads, it only maintains
+		// tunnels for the given hash. The download should be driven by the file
+		// transfer module by calling ftServer::FileRequest().
 		//
-		virtual void turtleDownload(const std::string& name,const std::string& file_hash,uint64_t size) = 0 ;
+		virtual void monitorFileTunnels(const std::string& name,const std::string& file_hash,uint64_t size) = 0 ;
+
+		// Tells the turtle router to stop handling tunnels for the given file hash. Traditionally this should
+		// be called after calling ftServer::fileCancel().
+		//
+		virtual void stopMonitoringFileTunnels(const std::string& file_hash) = 0 ;
 
 		// Sets the file sharing strategy. It concerns all local files. It would
 		// be better to handle this for each file, of course.

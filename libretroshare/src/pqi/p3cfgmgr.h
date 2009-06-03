@@ -69,6 +69,9 @@ const uint32_t CONFIG_TYPE_FT_SHARED 	 = 0x0007;
 const uint32_t CONFIG_TYPE_FT_EXTRA_LIST= 0x0008;
 const uint32_t CONFIG_TYPE_FT_CONTROL 	 = 0x0009;
 
+/* turtle router */
+const uint32_t CONFIG_TYPE_TURTLE	 	 = 0x0020;
+
 /* wish these ids where higher...
  * may move when switch to v0.5
  */

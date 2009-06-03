@@ -813,6 +813,7 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("ranklink.cfg", mRanking);
 	mConfigMgr->addConfiguration("forums.cfg", mForums);
 	mConfigMgr->addConfiguration("channels.cfg", mChannels);
+	mConfigMgr->addConfiguration("turtle.cfg", tr);
 
 #ifndef RS_RELEASE
 #else

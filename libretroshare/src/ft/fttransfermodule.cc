@@ -151,6 +151,27 @@ bool ftTransferModule::addFileSource(std::string peerId)
   return true;
 }
 
+bool ftTransferModule::removeFileSource(std::string peerId)
+{
+	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
+	std::map<std::string,peerInfo>::iterator mit;
+	mit = mFileSources.find(peerId);
+
+	if (mit != mFileSources.end())
+	{
+		/* add in new source */
+		mFileSources.erase(mit) ;
+#ifdef FT_DEBUG
+		std::cerr << "ftTransferModule::addFileSource(): removing peer: " << peerId << " from sourceList" << std::cerr << std::endl;
+#endif
+	}
+#ifdef FT_DEBUG
+	else
+		std::cerr << "ftTransferModule::addFileSource(): Should remove peer: " << peerId << ", but it's not in the source list. " << std::cerr << std::endl;
+#endif
+
+	return true;
+}
 
 bool ftTransferModule::setPeerState(std::string peerId,uint32_t state,uint32_t maxRate) 
 {

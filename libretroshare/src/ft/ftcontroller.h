@@ -162,6 +162,7 @@ virtual bool CancelCacheFile(RsPeerId id, std::string path, std::string hash, ui
 	public:
 virtual void    statusChange(const std::list<pqipeer> &plist);
 void addFileSource(const std::string& hash,const std::string& peer_id) ;
+void removeFileSource(const std::string& hash,const std::string& peer_id) ;
 
 
 	/* p3Config Interface */
