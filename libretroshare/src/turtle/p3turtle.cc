@@ -215,7 +215,7 @@ void p3turtle::manageTunnels()
 		}
 	}
 
-	for(uint i=0;i<hashes_to_digg.size();++i)
+	for(unsigned int i=0;i<hashes_to_digg.size();++i)
 		diggTunnel(hashes_to_digg[i]) ;
 }
 
@@ -273,7 +273,7 @@ void p3turtle::autoWash()
 				tunnels_to_close.push_back(it->first) ;
 			}
 	}
-	for(uint i=0;i<tunnels_to_close.size();++i)
+	for(unsigned int i=0;i<tunnels_to_close.size();++i)
 		closeTunnel(tunnels_to_close[i]) ;
 
 	// File hashes can only be removed by calling the 'stopMonitoringFileTunnels()' command.
@@ -316,7 +316,7 @@ void p3turtle::closeTunnel(TurtleTunnelId tid)
 
 		std::vector<TurtleTunnelId>& tunnels(_incoming_file_hashes[hash].tunnels) ;
 
-		for(uint i=0;i<tunnels.size();++i)
+		for(unsigned int i=0;i<tunnels.size();++i)
 			if(tunnels[i] == tid)
 			{
 				tunnels[i] = tunnels.back() ;
@@ -353,7 +353,7 @@ void p3turtle::stopMonitoringFileTunnels(const std::string& hash)
 	std::cerr << "p3turtle: stopping monitoring for file hash " << hash << ", and closing " << tunnels_to_remove.size() << " tunnels." << std::endl ;
 #endif
 
-	for(uint i=0;i<tunnels_to_remove.size();++i)
+	for(unsigned int i=0;i<tunnels_to_remove.size();++i)
 		closeTunnel(tunnels_to_remove[i]) ;
 
 	_incoming_file_hashes.erase(it) ;
@@ -837,7 +837,7 @@ bool p3turtle::search(std::string hash, uint64_t, uint32_t hintflags, FileInfo &
 		info.size = it->second.size;
 		info.hash = it->first;
 
-		for(uint i=0;i<it->second.tunnels.size();++i)
+		for(unsigned int i=0;i<it->second.tunnels.size();++i)
 		{
 			TransferInfo ti;
 			ti.peerId = getTurtlePeerId(it->second.tunnels[i]);
