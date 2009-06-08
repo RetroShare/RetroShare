@@ -654,7 +654,9 @@ void PeersDialog::insertChat()
 {
 	if (!rsMsgs->chatAvailable())
 	{
-//		std::cerr << "no chat available." << std::endl ;
+#ifdef PEERS_DEBUG
+		std::cerr << "no chat available." << std::endl ;
+#endif
 		return;
 	}
 

@@ -30,6 +30,7 @@
 
 #include <sstream>
 #include "util/rsdebug.h"
+#include <stdlib.h>
 const int pqihandlerzone = 34283;
 
 /****
@@ -553,184 +554,99 @@ int     pqihandler::UpdateRates()
 	float avail_in = getMaxRate(true);
 	float avail_out = getMaxRate(false);
 
-	float avg_rate_in = avail_in/num_sm;
-	float avg_rate_out = avail_out/num_sm;
-
-	float indiv_in = getMaxIndivRate(true);
-	float indiv_out = getMaxIndivRate(false);
-
 	float used_bw_in = 0;
 	float used_bw_out = 0;
-
-	float extra_bw_in = 0;
-	float extra_bw_out = 0;
-
-	int maxxed_in = 0;
-	int maxxed_out = 0;
 
 	/* Lock once rates have been retrieved */
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
-	// loop through modules....
+	int effectiveUploadsSm = 0;
+	int effectiveDownloadsSm = 0;
+	// loop through modules to get the used bandwith and the number of modules that are affectively transfering
+	//std::cerr << " Looping through modules" << std::endl;
 	for(it = mods.begin(); it != mods.end(); it++)
 	{
 		SearchModule *mod = (it -> second);
 		float crate_in = mod -> pqi -> getRate(true);
+		if (crate_in > 0.01 * avail_in || crate_in > 0.1)
+		{
+		    effectiveDownloadsSm ++;
+		}
+
 		float crate_out = mod -> pqi -> getRate(false);
+		if (crate_out > 0.01 * avail_out || crate_out > 0.1)
+		{
+		    effectiveUploadsSm ++;
+		}
 
 		used_bw_in += crate_in;
 		used_bw_out += crate_out;
-
-		if (crate_in > avg_rate_in)
-		{
-			if (mod -> pqi -> getMaxRate(true) == indiv_in)
-			{
-				maxxed_in++;
-			}
-			extra_bw_in +=  crate_in - avg_rate_in;
-		}
-		if (crate_out > avg_rate_out)
-		{
-			if (mod -> pqi -> getMaxRate(false) == indiv_out)
-			{
-				maxxed_out++;
-			}
-			extra_bw_out +=  crate_out - avg_rate_out;
-		}
-		//std::cerr << "\tSM(" << mod -> smi << ")";
-		//std::cerr << "In A: " << mod -> pqi -> getMaxRate(true);
-		//std::cerr << " C: " << crate_in;
-		//std::cerr << " && Out A: " << mod -> pqi -> getMaxRate(false);
-		//std::cerr << " C: " << crate_out << std::endl;
 	}
-	//std::cerr << "Totals (In) Used B/W " << used_bw_in;
-	//std::cerr << " Excess B/W " << extra_bw_in;
-	//std::cerr << " Available B/W " << avail_in << std::endl;
-	//std::cerr << "Totals (Out) Used B/W " << used_bw_out;
-	//std::cerr << " Excess B/W " << extra_bw_out;
-	//std::cerr << " Available B/W " << avail_out << std::endl;
+//	std::cerr << "Totals (In) Used B/W " << used_bw_in;
+//	std::cerr << " Available B/W " << avail_in;
+//	std::cerr << " Effective transfers " << effectiveDownloadsSm << std::endl;
+//	std::cerr << "Totals (Out) Used B/W " << used_bw_out;
+//	std::cerr << " Available B/W " << avail_out;
+//	std::cerr << " Effective transfers " << effectiveUploadsSm << std::endl;
 
 	locked_StoreCurrentRates(used_bw_in, used_bw_out);
 
-	if (used_bw_in > avail_in)
-	{
-		//std::cerr << "Decreasing Incoming B/W!" << std::endl;
-
-		// drop all above the avg down!
-		float fchg = (used_bw_in - avail_in) / (float) extra_bw_in;
-		for(it = mods.begin(); it != mods.end(); it++)
-		{
-			SearchModule *mod = (it -> second);
-			float crate_in = mod -> pqi -> getRate(true);
-			float new_max = avg_rate_in;
-			if (crate_in > avg_rate_in)
-			{
-				new_max = avg_rate_in + (1 - fchg) * 
-						(crate_in - avg_rate_in);
-			}
-			if (new_max > indiv_in)
-			{
-				new_max = indiv_in;
-			}
-			mod -> pqi -> setMaxRate(true, new_max);
-		}
+	//computing average rates for effective transfers
+	float max_in_effective = avail_in / num_sm;
+	if (effectiveDownloadsSm != 0) {
+	    max_in_effective = avail_in / effectiveDownloadsSm;
 	}
-	// if not maxxed already and using less than 95%
-	else if ((maxxed_in != num_sm) && (used_bw_in < 0.95 * avail_in))
-	{
-		//std::cerr << "Increasing Incoming B/W!" << std::endl;
-
-		// increase.
-		float fchg = (avail_in - used_bw_in) / avail_in;
-		for(it = mods.begin(); it != mods.end(); it++)
-		{
-			SearchModule *mod = (it -> second);
-			float crate_in = mod -> pqi -> getRate(true);
-			float max_in = mod -> pqi -> getMaxRate(true);
-
-			if (max_in == indiv_in)
-			{
-				// do nothing...
-			}
-			else
-			{
-				float new_max = max_in;
-				if (max_in < avg_rate_in)
-				{
-					new_max = avg_rate_in * (1 + fchg);
-				}
-				else if (crate_in > 0.5 * max_in)
-				{
-					new_max =  max_in * (1 + fchg);
-				}
-				if (new_max > indiv_in)
-				{
-					new_max = indiv_in;
-				}
-				mod -> pqi -> setMaxRate(true, new_max);
-			}
-		}
-
+	float max_out_effective = avail_out / num_sm;
+	if (effectiveUploadsSm != 0) {
+	    max_out_effective = avail_out / effectiveUploadsSm;
 	}
 
-
-	if (used_bw_out > avail_out)
-	{
-		//std::cerr << "Decreasing Outgoing B/W!" << std::endl;
-		// drop all above the avg down!
-		float fchg = (used_bw_out - avail_out) / (float) extra_bw_out;
-		for(it = mods.begin(); it != mods.end(); it++)
-		{
-			SearchModule *mod = (it -> second);
-			float crate_out = mod -> pqi -> getRate(false);
-			float new_max = avg_rate_out;
-			if (crate_out > avg_rate_out)
-			{
-				new_max = avg_rate_out + (1 - fchg) * 
-						(crate_out - avg_rate_out);
-			}
-			if (new_max > indiv_out)
-			{
-				new_max = indiv_out;
-			}
-			mod -> pqi -> setMaxRate(false, new_max);
-		}
+	//modify the outgoing rates if bandwith is not used well
+	float rate_out_modifier = 0;
+	if (used_bw_out / avail_out < 0.95) {
+	    rate_out_modifier = 0.001 * avail_out;
+	} else 	if (used_bw_out / avail_out > 1.05) {
+	    rate_out_modifier = - 0.001 * avail_out;
 	}
-	// if not maxxed already and using less than 95%
-	else if ((maxxed_out != num_sm) && (used_bw_out < 0.95 * avail_out))
+	if (rate_out_modifier != 0) {
+	    for(it = mods.begin(); it != mods.end(); it++)
+	    {
+		    SearchModule *mod = (it -> second);
+			mod -> pqi -> setMaxRate(false, mod -> pqi -> getMaxRate(false) + rate_out_modifier);
+	    }
+	}
+
+	//modify the incoming rates if bandwith is not used well
+	float rate_in_modifier = 0;
+	if (used_bw_in / avail_in < 0.95) {
+	    rate_in_modifier = 0.001 * avail_in;
+	} else 	if (used_bw_in / avail_in > 1.05) {
+	    rate_in_modifier = - 0.001 * avail_in;
+	}
+	if (rate_in_modifier != 0) {
+	    for(it = mods.begin(); it != mods.end(); it++)
+	    {
+		    SearchModule *mod = (it -> second);
+			mod -> pqi -> setMaxRate(true, mod -> pqi -> getMaxRate(true) + rate_in_modifier);
+	    }
+	}
+
+	//cap the rates
+	for(it = mods.begin(); it != mods.end(); it++)
 	{
-		//std::cerr << "Increasing Outgoing B/W!" << std::endl;
-		// increase.
-		float fchg = (avail_out - used_bw_out) / avail_out;
-		for(it = mods.begin(); it != mods.end(); it++)
-		{
-			SearchModule *mod = (it -> second);
-			float crate_out = mod -> pqi -> getRate(false);
-			float max_out = mod -> pqi -> getMaxRate(false);
-
-			if (max_out == indiv_out)
-			{
-				// do nothing...
-			}
-			else
-			{
-				float new_max = max_out;
-				if (max_out < avg_rate_out)
-				{
-					new_max = avg_rate_out * (1 + fchg);
-				}
-				else if (crate_out > 0.5 * max_out)
-				{
-					new_max =  max_out * (1 + fchg);
-				}
-				if (new_max > indiv_out)
-				{
-					new_max = indiv_out;
-				}
-				mod -> pqi -> setMaxRate(false, new_max);
-			}
+		SearchModule *mod = (it -> second);
+		if (mod -> pqi -> getMaxRate(false) < max_out_effective) {
+		    mod -> pqi -> setMaxRate(false, max_out_effective);
 		}
-
+		if (mod -> pqi -> getMaxRate(false) > avail_out) {
+		    mod -> pqi -> setMaxRate(false, avail_out);
+		}
+		if (mod -> pqi -> getMaxRate(true) < max_in_effective) {
+		    mod -> pqi -> setMaxRate(true, max_in_effective);
+		}
+		if (mod -> pqi -> getMaxRate(true) > avail_in) {
+		    mod -> pqi -> setMaxRate(true, avail_in);
+		}
 	}
 
 	return 1;

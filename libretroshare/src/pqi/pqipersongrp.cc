@@ -223,8 +223,7 @@ static const std::string pqih_ftr("PQIH_FTR");
 int     pqipersongrp::save_config()
 {
 	char line[512];
-	sprintf(line, "%f %f %f %f", getMaxRate(true), getMaxRate(false),
-	getMaxIndivRate(true), getMaxIndivRate(false));
+	sprintf(line, "%f %f", getMaxRate(true), getMaxRate(false));
 	if (config)
 	{
 		config -> setSetting(pqih_ftr, std::string(line));
@@ -240,14 +239,12 @@ int     pqipersongrp::load_config()
 		line = config -> getSetting(pqih_ftr);
 	}
 
-	float mri, mro, miri, miro;
-	
-	if (4 == sscanf(line.c_str(), "%f %f %f %f", &mri, &mro, &miri, &miro))
+	float mri, mro;
+
+	if (2 == sscanf(line.c_str(), "%f %f", &mri, &mro))
 	{
 		setMaxRate(true, mri);
 		setMaxRate(false, mro);
-		setMaxIndivRate(true, miri);
-		setMaxIndivRate(false, miro);
 	}
 	else
 	{
@@ -256,8 +253,6 @@ int     pqipersongrp::load_config()
 
 		setMaxRate(true,  500.0);
 		setMaxRate(false, 500.0);
-		setMaxIndivRate(true, 100.0);
-		setMaxIndivRate(false, 100.0);
 	}
 
 	return 1;

@@ -75,8 +75,9 @@ virtual int     SendRsRawItem(RsRawItem *);
 virtual RsRawItem *GetRsRawItem();
 
 	// rate control.
-void	setMaxIndivRate(bool in, float val);
-float	getMaxIndivRate(bool in);
+//indiv rate is deprecated
+//void	setMaxIndivRate(bool in, float val);
+//float	getMaxIndivRate(bool in);
 void	setMaxRate(bool in, float val);
 float	getMaxRate(bool in);
 
@@ -118,24 +119,24 @@ void	locked_StoreCurrentRates(float in, float out);
 	float rateTotal_out;
 };
 
-inline void pqihandler::setMaxIndivRate(bool in, float val)
-{
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-	if (in)
-		rateIndiv_in = val;
-	else
-		rateIndiv_out = val;
-	return;
-}
-
-inline float pqihandler::getMaxIndivRate(bool in)
-{
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-	if (in)
-		return rateIndiv_in;
-	else
-		return rateIndiv_out;
-}
+//inline void pqihandler::setMaxIndivRate(bool in, float val)
+//{
+//	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+//	if (in)
+//		rateIndiv_in = val;
+//	else
+//		rateIndiv_out = val;
+//	return;
+//}
+//
+//inline float pqihandler::getMaxIndivRate(bool in)
+//{
+//	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+//	if (in)
+//		return rateIndiv_in;
+//	else
+//		return rateIndiv_out;
+//}
 
 inline void pqihandler::setMaxRate(bool in, float val)
 {

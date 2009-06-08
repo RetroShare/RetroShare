@@ -126,7 +126,8 @@ class RsConfig
 	bool			firewalled;
 	bool			forwardPort;
 
-	int			maxDataRate;     /* kb */
+	int			maxDownloadDataRate;     /* kb */
+	int			maxUploadDataRate;     /* kb */
 	int			maxIndivDataRate; /* kb */
 
 	int			promptAtBoot; /* popup the password prompt */

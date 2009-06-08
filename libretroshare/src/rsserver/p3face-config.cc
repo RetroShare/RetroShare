@@ -41,7 +41,7 @@ const int p3facemsgzone = 11453;
 /* RsIface Config */
 /* Config */
 
-int     RsServer::ConfigSetDataRates( int total, int indiv ) /* in kbrates */
+int     RsServer::ConfigSetDataRates( int totalDownload, int totalUpload ) /* in kbrates */
 {
 	/* fill the rsiface class */
 	RsIface &iface = getIface();
@@ -50,10 +50,8 @@ int     RsServer::ConfigSetDataRates( int total, int indiv ) /* in kbrates */
 	lockRsCore();     /* LOCK */
 	iface.lockData(); /* LOCK */
 
-        pqih -> setMaxRate(true, total);
-	pqih -> setMaxRate(false, total);
-	pqih -> setMaxIndivRate(true, indiv);
-	pqih -> setMaxIndivRate(false, indiv);
+	pqih -> setMaxRate(true, totalDownload);
+	pqih -> setMaxRate(false, totalUpload);
 
 	pqih -> save_config();
 
@@ -120,8 +118,9 @@ int RsServer::UpdateAllConfig()
 	config.extPort = ntohs(pstate.serveraddr.sin_port);
 
 	/* data rates */
-	config.maxDataRate = (int) pqih -> getMaxRate(true);     /* kb */
-	config.maxIndivDataRate  = (int) pqih -> getMaxIndivRate(true);/* kb */
+	config.maxDownloadDataRate = (int) pqih -> getMaxRate(true);     /* kb */
+	config.maxUploadDataRate = (int) pqih -> getMaxRate(false);     /* kb */
+
 	config.promptAtBoot = true; /* popup the password prompt */      
 
 	/* update network configuration */

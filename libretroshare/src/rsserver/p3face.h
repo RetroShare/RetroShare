@@ -137,7 +137,7 @@ class RsServer: public RsControl, public RsThread
 		/* Config */
 
 		virtual int 	ConfigGetDataRates(float &inKb, float &outKb);
-		virtual int     ConfigSetDataRates( int total, int indiv );
+		virtual int     ConfigSetDataRates( int totalDownload, int totalUpload );
 		virtual int     ConfigSetBootPrompt( bool on );
 
 		virtual void    ConfigFinalSave( );
