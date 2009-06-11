@@ -296,6 +296,8 @@ bool ftTransferModule::recvFileData(std::string peerId, uint64_t offset,
 
   if (ok)
   	storeData(offset, chunk_size, data);
+
+  free(data) ;
   return ok;
 }
 
