@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * ftController
  *
  * Top level download controller.
@@ -58,15 +58,15 @@
  *****/
 
 ftFileControl::ftFileControl()
-	:mTransfer(NULL), mCreator(NULL), 
+	:mTransfer(NULL), mCreator(NULL),
 	 mState(0), mSize(0), mFlags(0)
 {
 	return;
 }
 
-ftFileControl::ftFileControl(std::string fname, 
-		std::string tmppath, std::string dest, 
-		uint64_t size, std::string hash, uint32_t flags, 
+ftFileControl::ftFileControl(std::string fname,
+		std::string tmppath, std::string dest,
+		uint64_t size, std::string hash, uint32_t flags,
 		ftFileCreator *fc, ftTransferModule *tm, uint32_t cb)
 	:mName(fname), mCurrentPath(tmppath), mDestination(dest),
 	 mTransfer(tm), mCreator(fc), mState(0), mHash(hash),
@@ -192,7 +192,7 @@ void ftController::run()
 			std::cerr << std::endl;
 #endif
 
-			if (it->second.mTransfer) 
+			if (it->second.mTransfer)
 			{
 #ifdef CONTROL_DEBUG
 				std::cerr << "\tTicking mTransfer: " << (void*)it->second.mTransfer;
@@ -224,7 +224,7 @@ void ftController::run()
 		  }
 		}
 
-		RsStackMutex stack2(doneMutex);	
+		RsStackMutex stack2(doneMutex);
 		for(it = mDone.begin(); it != mDone.end(); it++)
 		{
 			completeFile(*it);
@@ -246,7 +246,7 @@ void ftController::checkDownloadQueue()
 
 bool ftController::FlagFileComplete(std::string hash)
 {
-	RsStackMutex stack2(doneMutex);	
+	RsStackMutex stack2(doneMutex);
 	mDone.push_back(hash);
 
 	std::cerr << "ftController:FlagFileComplete(" << hash << ")";
@@ -275,7 +275,7 @@ bool ftController::moveFile(const std::string& source,const std::string& dest)
 	std::cerr << std::endl;
 	std::cerr << "trying copy" << std::endl ;
 //#endif
-	// We could not rename, probably because we're dealing with different file systems. 
+	// We could not rename, probably because we're dealing with different file systems.
 	// Let's copy then.
 
 	std::string error ;
@@ -344,7 +344,7 @@ bool ftController::completeFile(std::string hash)
 	uint32_t callbackCode = 0;
 
 
-	{ 
+	{
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
 		std::cerr << "ftController:completeFile(" << hash << ")";
@@ -379,8 +379,8 @@ bool ftController::completeFile(std::string hash)
 
 		ftFileControl *fc = &(it->second);
 
-		// (csoler) I've postponed this to the end of the block because deleting the 
-		// element from the map calls the destructor of fc->mTransfer, which 
+		// (csoler) I've postponed this to the end of the block because deleting the
+		// element from the map calls the destructor of fc->mTransfer, which
 		// makes fc to point to nothing and causes random behavior/crashes.
 		//
 		// mDataplex->removeTransferModule(fc->mTransfer->hash());
@@ -388,7 +388,7 @@ bool ftController::completeFile(std::string hash)
 		/* done - cleanup */
 
 		// (csoler) I'm copying this because "delete fc->mTransfer" deletes the hash string!
-		std::string hash_to_suppress(fc->mTransfer->hash());	
+		std::string hash_to_suppress(fc->mTransfer->hash());
 
 		if (fc->mTransfer)
 		{
@@ -407,13 +407,13 @@ bool ftController::completeFile(std::string hash)
 		// I don't know how the size can be zero, but believe me, this happens,
 		// and it causes an error on linux because then the file may not even exist.
 		//
-		if( fc->mSize > 0 && moveFile(fc->mCurrentPath,fc->mDestination) ) 
+		if( fc->mSize > 0 && moveFile(fc->mCurrentPath,fc->mDestination) )
 			fc->mCurrentPath = fc->mDestination;
 		else
 			fc->mState = ftFileControl::ERROR_COMPLETION;
 
 		/* switch map */
-		if (fc->mFlags & RS_FILE_HINTS_CACHE) /* clean up completed cache files automatically */ 
+		if (fc->mFlags & RS_FILE_HINTS_CACHE) /* clean up completed cache files automatically */
 		{
 			mCompleted[fc->mHash] = *fc;
 		}
@@ -460,7 +460,7 @@ bool ftController::completeFile(std::string hash)
 	  		std::cerr << "ftController::completeFile() doing Callback : Success";
 	  		std::cerr << std::endl;
 #endif
-			
+
 			CompletedCache(hash);
 		}
 		else
@@ -499,7 +499,7 @@ bool ftController::completeFile(std::string hash)
 
 
 	}
-	
+
 	IndicateConfigChanged(); /* completed transfer -> save */
 	return true;
 
@@ -537,17 +537,17 @@ bool	ftController::handleAPendingRequest()
 }
 
 
-bool 	ftController::FileRequest(std::string fname, std::string hash, 
-			uint64_t size, std::string dest, uint32_t flags, 
+bool 	ftController::FileRequest(std::string fname, std::string hash,
+			uint64_t size, std::string dest, uint32_t flags,
 			std::list<std::string> &srcIds)
 {
 	/* If file transfer is not enabled ....
 	 * save request for later. This will also
-	 * mean that we will have to copy local files, 
+	 * mean that we will have to copy local files,
 	 * or have a callback which says: local file.
 	 */
 
-	{ 
+	{
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 		if (!mFtActive)
 		{
@@ -587,7 +587,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 		rate = FT_CNTRL_STANDARD_RATE;
 	}
 
-	/* First check if the file is already being downloaded.... 
+	/* First check if the file is already being downloaded....
 	 * This is important as some guis request duplicate files regularly.
 	 */
 
@@ -626,7 +626,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 			std::cerr << std::endl;
 #endif
 			(dit->second).mTransfer->addFileSource(*it);
-			setPeerState(dit->second.mTransfer, *it, 
+			setPeerState(dit->second.mTransfer, *it,
 				rate, mConnMgr->isOnline(*it));
 
 			IndicateConfigChanged(); /* new peer for transfer -> save */
@@ -664,11 +664,11 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 			callbackCode = CB_CODE_EXTRA;
 		}
 	}
-	else 
+	else
 	{
-		if (mSearch->search(hash, size, 
-			RS_FILE_HINTS_LOCAL | 
-			RS_FILE_HINTS_EXTRA | 
+		if (mSearch->search(hash, size,
+			RS_FILE_HINTS_LOCAL |
+			RS_FILE_HINTS_EXTRA |
 			RS_FILE_HINTS_SPEC_ONLY, info))
 		{
 			/* have it already */
@@ -683,7 +683,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 		}
 
 		/* do a source search - for any extra sources */
-		if (mSearch->search(hash, size, 
+		if (mSearch->search(hash, size,
 			RS_FILE_HINTS_REMOTE |
 			RS_FILE_HINTS_TURTLE |
 			RS_FILE_HINTS_SPEC_ONLY, info))
@@ -708,7 +708,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 					std::cerr << "\tAdding in: " << pit->peerId;
 					std::cerr << std::endl;
 				}
-			}	
+			}
 		}
 
 		if (flags & RS_FILE_HINTS_EXTRA)
@@ -741,12 +741,12 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 		destination = mDownloadPath + "/" + fname;
 	}
   } /******* UNLOCKED ********/
-	
+
 	ftFileCreator *fc = new ftFileCreator(savepath, size, hash, 0);
 	ftTransferModule *tm = new ftTransferModule(fc, mDataplex,this);
 
 	/* add into maps */
-	ftFileControl ftfc(fname, savepath, destination,  
+	ftFileControl ftfc(fname, savepath, destination,
 			size, hash, flags, fc, tm, callbackCode);
 	ftfc.mCreateTime = time(NULL);
 
@@ -786,7 +786,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 }
 
 
-bool 	ftController::setPeerState(ftTransferModule *tm, std::string id, 
+bool 	ftController::setPeerState(ftTransferModule *tm, std::string id,
 						uint32_t maxrate, bool online)
 {
 	if (id == mConnMgr->getOwnId())
@@ -935,7 +935,7 @@ bool 	ftController::FileClearCompleted()
 	std::cerr << "ftController::FileClearCompleted()" <<std::endl;
 #endif
         mCompleted.clear();
-        IndicateConfigChanged(); 
+        IndicateConfigChanged();
 	return false;
 }
 
@@ -974,6 +974,7 @@ bool 	ftController::setDownloadDirectory(std::string path)
 		std::cerr << "ftController::setDownloadDirectory() Okay!";
 		std::cerr << std::endl;
 #endif
+        IndicateConfigChanged();
 		return true;
 	}
 
@@ -988,6 +989,24 @@ bool 	ftController::setPartialsDirectory(std::string path)
 {
 
 	/* check it is not a subdir of download / shared directories (BAD) - TODO */
+	{
+        RsStackMutex stack(ctrlMutex);
+
+        if (!path.find(mDownloadPath)) {
+            return false;
+        }
+
+        if (rsFiles) {
+            std::list<std::string>::iterator it;
+            std::list<std::string> dirs;
+            rsFiles->getSharedDirectories(dirs);
+            for (it = dirs.begin(); it != dirs.end(); it++) {
+                if (!path.find(*it)) {
+                    return false;
+                }
+            }
+        }
+	}
 
 	/* check if it exists */
 
@@ -1005,6 +1024,7 @@ bool 	ftController::setPartialsDirectory(std::string path)
 			(it->second).mCreator->changePartialDirectory(mPartialPath);
 		}
 #endif
+        IndicateConfigChanged();
 		return true;
 	}
 
@@ -1038,7 +1058,7 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 		it = mCompleted.find(hash);
 		if (it == mCompleted.end())
 		{
-			/* Note: mTransfer & mCreator 
+			/* Note: mTransfer & mCreator
 			 * are both NULL
 			 */
 			return false;
@@ -1114,7 +1134,7 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 	{
 		info.downloadStatus = FT_STATE_FAILED;
 	}
-	else 
+	else
 	{
 		info.downloadStatus = FT_STATE_WAITING;
 	}
@@ -1201,7 +1221,7 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 				setPeerState(it->second.mTransfer, pit->id, rate, false);
 			}
 		}
-		
+
 		// Now also look at turtle virtual peers.
 		//
 		for(pit = vlist.begin(); pit != vlist.end(); pit++)
@@ -1251,7 +1271,7 @@ bool ftController::RequestCacheFile(RsPeerId id, std::string path, std::string h
 	std::list<std::string> ids;
 	ids.push_back(id);
 
-	FileRequest(hash, hash, size, path, 
+	FileRequest(hash, hash, size, path,
 		RS_FILE_HINTS_CACHE | RS_FILE_HINTS_NO_SEARCH, ids);
 
 	return true;
@@ -1357,7 +1377,7 @@ std::list<RsItem *> ftController::saveList(bool &cleanup)
 		/* what data is important? */
 
 		rft->file.name = fit->second.mName;
-		rft->file.hash  = fit->second.mHash;  
+		rft->file.hash  = fit->second.mHash;
 		rft->file.filesize = fit->second.mSize;
 		rft->file.path = RsDirUtil::removeTopDir(fit->second.mDestination); /* remove fname */
 		//rft->flags = fit->second.mFlags;
@@ -1379,7 +1399,7 @@ bool ftController::loadList(std::list<RsItem *> load)
 	RsConfigKeyValueSet *rskv;
 	RsFileTransfer      *rsft;
 
-#ifdef CONTROL_DEBUG 
+#ifdef CONTROL_DEBUG
 	std::cerr << "ftController::loadList() Item Count: " << load.size();
 	std::cerr << std::endl;
 #endif
@@ -1402,15 +1422,15 @@ bool ftController::loadList(std::list<RsItem *> load)
 		}
 		else if (NULL != (rsft = dynamic_cast<RsFileTransfer *>(*it)))
 		{
-//			csoler: I'm suppressing this lock since there is a double lock below 
+//			csoler: I'm suppressing this lock since there is a double lock below
 //					in FileRequest, line 382.
 //  			RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
-//  			
+//
 
-			/* This will get stored on a waiting list - until the 
+			/* This will get stored on a waiting list - until the
 			 * config files are fully loaded
 			 */
-			FileRequest(rsft->file.name, rsft->file.hash, rsft->file.filesize, 
+			FileRequest(rsft->file.name, rsft->file.hash, rsft->file.filesize,
 				rsft->file.path, 0, rsft->allPeerIds.ids);
 
 		}
@@ -1437,7 +1457,7 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
 
 	if (configMap.end() != (mit = configMap.find(partial_dir_ss)))
 	{
-		//setPartialsDirectory(mit->second);
+		setPartialsDirectory(mit->second);
 	}
 
 	return true;

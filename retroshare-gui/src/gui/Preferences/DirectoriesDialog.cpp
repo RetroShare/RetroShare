@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -43,7 +43,7 @@ DirectoriesDialog::DirectoriesDialog(QWidget *parent)
     	ui.addButton->setToolTip(tr("Add a Share Directory"));
     	ui.removeButton->setToolTip(tr("Remove Shared Directory"));
     	ui.incomingButton->setToolTip(tr("Browse"));
-    	ui.partialButton->setToolTip(tr("Erowse"));
+    	ui.partialButton->setToolTip(tr("Browse"));
 
 
 
@@ -67,13 +67,13 @@ void DirectoriesDialog::load()
 	std::list<std::string>::const_iterator it;
 	std::list<std::string> dirs;
 	rsFiles->getSharedDirectories(dirs);
-	
+
 	/* get a link to the table */
 	QListWidget *listWidget = ui.dirList;
-	
+
 	/* remove old items ??? */
 	listWidget->clear();
-	
+
 	for(it = dirs.begin(); it != dirs.end(); it++)
 	{
 		/* (0) Dir Name */
@@ -82,7 +82,7 @@ void DirectoriesDialog::load()
 
 	ui.incomingDir->setText(QString::fromStdString(rsFiles->getDownloadDirectory()));
 	ui.partialsDir->setText(QString::fromStdString(rsFiles->getPartialsDirectory()));
-	
+
 	listWidget->update(); /* update display */
 
 
@@ -95,10 +95,10 @@ void DirectoriesDialog::addShareDirectory()
 	 */
 
 	int ind;
- 	QString qdir = QFileDialog::getExistingDirectory(this, tr("Add Shared Directory"), "", 	 
+ 	QString qdir = QFileDialog::getExistingDirectory(this, tr("Add Shared Directory"), "",
  	                            QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
         ind=qdir.lastIndexOf("/");
-	
+
 	/* add it to the server */
 	std::string dir = qdir.toStdString();
 	if (dir != "")
@@ -125,7 +125,7 @@ void DirectoriesDialog::setIncomingDirectory()
 {
  	QString qdir = QFileDialog::getExistingDirectory(this, tr("Set Incoming Directory"), "",
 				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-	
+
 	std::string dir = qdir.toStdString();
 	if (dir != "")
 	{
@@ -138,7 +138,7 @@ void DirectoriesDialog::setPartialsDirectory()
 {
  	QString qdir = QFileDialog::getExistingDirectory(this, tr("Set Partials Directory"), "",
 				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-	
+
 	std::string dir = qdir.toStdString();
 	if (dir != "")
 	{
