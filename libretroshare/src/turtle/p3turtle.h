@@ -35,8 +35,7 @@
 // 		dug, packets are directly forwarded to the correct peer.
 // - an entry point for search request from the interface
 // - search results, as they come back, are forwarded upwards with some additional info:
-// 	- depth					// depth of the file. This is here for debug bug will disapear for anonymity.
-// 	- peer id				// peer id owning the file. This is here for debug bug will disapear for anonymity.
+// 	- depth					// depth of the file. setup to 1 for immediate friends and 2 for long distance friends.
 // 	- hash					// hash of the file found
 // 	- name					// name of the file found
 // 	- search request id.	// 
@@ -72,12 +71,14 @@
 //
 //========================================== Tunnel usage rules ========================================//
 //
-// Tunnels should be used according to their capacity. This is an unresolved problem as for now.
+// Tunnels should be used according to their capacity. This is an unsolved problem as for now.
 //
 //======================================= Tunnel maintenance rules =====================================//
 //
 // P3turtle should derive from pqihandler, just as p3disc, so that newly connected peers should trigger 
-// asking for new tunnels, and disconnecting peers should produce a close tunnel packet.
+// asking for new tunnels, and disconnecting peers should produce a close tunnel packet. To simplify this,
+// I maintain a time stamp in tunnels, that is updated each time a file data packet travels in the tunnel.
+// Doing so, if a tunnel is not used for some time, it just disapears. Additional rules apply:
 //
 // 	- when a peer A connects:
 // 		- initiate new tunnels for all active file hashes (go through the list of hashes) by 
@@ -85,8 +86,7 @@
 // 		  endpoint is different, which should not happen in fact, because of bouncing gards.
 //
 // 	- when a peer A disconnects.
-// 		- close tunnels whose destination is beyond A by sending a close request backward.
-// 		- close tunnels whose source is beyond A by sending a forward close request.
+// 		- do nothing.
 //
 //    - when receive open tunnel from A 
 //    	- check whether it's a bouncing request. If yes, give up.
@@ -100,19 +100,10 @@
 //    	- no need to check whether we already have this tunnel, as bouncing gards prevent this.
 //    	- leave a trace for the tunnel, and send (forward) backward.
 //
-//    - when receive close tunnel from A 
-//    	- if I am the endpoint
-//    		- locally close the tunnel.
-//    		- respond with tunnel closed.
-//    	- otherwise, block the tunnel, and forward close tunnel to tunnel destination.
-//
-//    - when receive tunnel closed from A 
-//    	- locally close the tunnel
-//    	- forward back
-//
 // Ids management:
 //    - tunnel ids should be identical for requests between 2 same peers for the same file hash.
-//    - tunnel requests ids do not need to be identical.
+//    - tunnel ids should be asymetric
+//    - tunnel requests should never be identical, to allow searching multiple times for the same string.
 //  So:
 //  	- when issuing an open tunnel order, 
 //  		- a random request id is generated and used for packet routing
@@ -136,11 +127,10 @@
 //
 // Turtle router entries:
 // 	- a function for performing turtle search
-// 	- a function for downloading files.
+// 	- a function for handling tunnels for a given file hash.
 //
 // Questions:
 // 	- should tunnels be re-used ? nope. The only useful case would be when two peers are exchanging files, which happens quite rarely.
-// 	- at a given moment, there is at most 1 tunnel for a given triplet (hash, source, destination).
 
 
 #ifndef MRK_PQI_TURTLE_H
@@ -285,7 +275,7 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle, public ftS
 	private:
 		//--------------------------- Admin/Helper functions -------------------------//
 		
-		uint32_t generatePersonalFilePrint(const TurtleFileHash&) ;	/// Generates a cyphered combination of ownId() and file hash
+		uint32_t generatePersonalFilePrint(const TurtleFileHash&,bool) ;	/// Generates a cyphered combination of ownId() and file hash
 		uint32_t generateRandomRequestId() ;								/// Generates a random uint32_t number.
 
 		void autoWash() ;															/// Auto cleaning of unused tunnels, search requests and tunnel requests.

@@ -62,11 +62,10 @@
 static const time_t TUNNEL_REQUESTS_LIFE_TIME 	= 120 ;		/// life time for tunnel requests in the cache.
 static const time_t SEARCH_REQUESTS_LIFE_TIME 	= 120 ;		/// life time for search requests in the cache
 static const time_t REGULAR_TUNNEL_DIGGING_TIME = 300 ;		/// maximum interval between two tunnel digging campaigns.
-static const time_t MAXIMUM_TUNNEL_IDLE_TIME 	= 600 ;		/// maximum life time of an unused tunnel.
-static const time_t MAXIMUM_HASH_IDLE_TIME 		= 300 ;		/// maximum life time of an unused file hash.
+static const time_t MAXIMUM_TUNNEL_IDLE_TIME 	=  60 ;		/// maximum life time of an unused tunnel.
 
 p3turtle::p3turtle(p3ConnectMgr *cm,ftServer *fs) 
-	:p3Service(RS_SERVICE_TYPE_TURTLE), mConnMgr(cm), p3Config(CONFIG_TYPE_TURTLE)
+	:p3Service(RS_SERVICE_TYPE_TURTLE), p3Config(CONFIG_TYPE_TURTLE), mConnMgr(cm)
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
@@ -365,17 +364,62 @@ void p3turtle::stopMonitoringFileTunnels(const std::string& hash)
 //
 RsSerialiser *p3turtle::setupSerialiser()
 {
-	RsSerialiser *rss = new RsSerialiser();
+	RsSerialiser *rss = new RsSerialiser ;
+	rss->addSerialType(new RsTurtleSerialiser) ;
 
 	return rss ;
 }
 std::list<RsItem*> p3turtle::saveList(bool& cleanup) 
 {
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "p3turtle: saving list..." << std::endl ;
+#endif
 	cleanup = true ;
-	return std::list<RsItem*>() ;
+	std::list<RsItem*> lst ;
+
+	RsTurtleSearchResultItem *item = new RsTurtleSearchResultItem ;
+	item->PeerId("") ;
+
+	for(std::map<TurtleFileHash,TurtleFileHashInfo>::const_iterator it(_incoming_file_hashes.begin());it!=_incoming_file_hashes.end();++it)
+	{
+		TurtleFileInfo finfo ;
+		finfo.name = it->second.name ;
+		finfo.size = it->second.size ;
+		finfo.hash = it->first ;
+#ifdef P3TURTLE_DEBUG
+		std::cerr << "  Saving item " << finfo.name << ", " << finfo.hash << ", " << finfo.size << std::endl ;
+#endif
+
+		item->result.push_back(finfo) ;
+	}
+	lst.push_back(item) ;
+
+	return lst ;
 }
 bool p3turtle::loadList(std::list<RsItem*> load) 
 {
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "p3turtle: loading list..." << std::endl ;
+#endif
+	for(std::list<RsItem*>::const_iterator it(load.begin());it!=load.end();++it)
+	{
+		RsTurtleSearchResultItem *item = dynamic_cast<RsTurtleSearchResultItem*>(*it) ;
+
+#ifdef P3TURTLE_DEBUG
+		assert(item!=NULL) ;
+#endif
+		if(item == NULL)
+			continue ;
+
+		for(std::list<TurtleFileInfo>::const_iterator it2(item->result.begin());it2!=item->result.end();++it2)
+		{
+#ifdef P3TURTLE_DEBUG
+			std::cerr << "   Restarting tunneling for: " << it2->hash << "  " << it2->size << " " << it2->name << std::endl ;
+#endif
+			monitorFileTunnels(it2->name,it2->hash,it2->size) ;
+		}
+		delete item ;
+	}
 	return true ;
 }
 
@@ -390,11 +434,11 @@ uint32_t p3turtle::generateRandomRequestId()
 
 	return rand() ;
 }
-uint32_t p3turtle::generatePersonalFilePrint(const TurtleFileHash& hash) 
+uint32_t p3turtle::generatePersonalFilePrint(const TurtleFileHash& hash,bool b) 
 {
 	// whatever cooking from the file hash and OwnId that cannot be recovered.
 	// The only important thing is that the saem hash produces the same tunnel
-	// id.
+	// id. The result uses a boolean to allow generating non symmetric tunnel ids.
 
 	std::string buff(hash + mConnMgr->getOwnId()) ;
 	uint32_t res = 0 ;
@@ -403,7 +447,11 @@ uint32_t p3turtle::generatePersonalFilePrint(const TurtleFileHash& hash)
 	for(int i=0;i<(int)buff.length();++i)
 	{
 		res += 7*buff[i] + decal ;
-		decal = decal*44497+15641+(res%86243) ;
+
+		if(b)
+			decal = decal*44497+15641+(res%86243) ;
+		else
+			decal = decal*86243+15649+(res%44497) ;
 	}
 
 	return res ;
@@ -647,7 +695,6 @@ void p3turtle::handleRecvFileRequest(RsTurtleFileRequestItem *item)
 		}
 
 		TurtleTunnel& tunnel(it->second) ;
-		tunnel.time_stamp = time(NULL) ;
 
 		// Let's figure out whether this reuqest is for us or not.
 
@@ -710,6 +757,8 @@ void p3turtle::handleRecvFileData(RsTurtleFileDataItem *item)
 		}
 
 		TurtleTunnel& tunnel(it->second) ;
+
+		// Only file data transfer updates tunnels time_stamp field, to avoid maintaining tunnel that are incomplete.
 		tunnel.time_stamp = time(NULL) ;
 
 		// Let's figure out whether this reuqest is for us or not.
@@ -751,6 +800,8 @@ void p3turtle::handleRecvFileData(RsTurtleFileDataItem *item)
 		}
 	}
 	_ft_server->getMultiplexer()->recvData(vpid,hash,size,item->chunk_offset,item->chunk_size,item->chunk_data) ;
+	item->chunk_data = NULL ;	// this prevents deletion in the destructor of RsFileDataItem, because data will be deleted
+										// down _ft_server->getMultiplexer()->recvData()...in ftTransferModule::recvFileData
 }
 
 // Send a data request into the correct tunnel for the given file hash
@@ -935,7 +986,7 @@ TurtleRequestId p3turtle::diggTunnel(const TurtleFileHash& hash)
 	item->PeerId(mConnMgr->getOwnId()) ;
 	item->file_hash = hash ;
 	item->request_id = id ;
-	item->partial_tunnel_id = generatePersonalFilePrint(hash) ;
+	item->partial_tunnel_id = generatePersonalFilePrint(hash,true) ;
 	item->depth = 0 ;
 	
 	// send it 
@@ -992,7 +1043,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 				RsTurtleTunnelOkItem *res_item = new RsTurtleTunnelOkItem ;
 
 				res_item->request_id = item->request_id ;
-				res_item->tunnel_id = item->partial_tunnel_id ^ generatePersonalFilePrint(item->file_hash) ;
+				res_item->tunnel_id = item->partial_tunnel_id ^ generatePersonalFilePrint(item->file_hash,false) ;
 				res_item->PeerId(item->PeerId()) ;			
 
 				sendItem(res_item) ;
@@ -1081,26 +1132,29 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 		}
 
 		// store tunnel info.
-		if(_local_tunnels.find(item->tunnel_id) != _local_tunnels.end())
-			std::cerr << "Tunnel id " << item->tunnel_id << " is already there. Giving up !!" << std::endl ;
-
+		bool found = (_local_tunnels.find(item->tunnel_id) != _local_tunnels.end()) ;
 		TurtleTunnel& tunnel(_local_tunnels[item->tunnel_id]) ;
 
-		tunnel.local_src = it->second.origin ;
-		tunnel.local_dst = item->PeerId() ;
-		tunnel.hash = "" ;
-		tunnel.time_stamp = time(NULL) ;
+		if(found)
+			std::cerr << "Tunnel id " << (void*)item->tunnel_id << " is already there. Not storing." << std::endl ;
+		else
+		{
+			tunnel.local_src = it->second.origin ;
+			tunnel.local_dst = item->PeerId() ;
+			tunnel.hash = "" ;
+			tunnel.time_stamp = time(NULL) ;
 
 #ifdef P3TURTLE_DEBUG
-		std::cerr << "  storing tunnel info. src=" << tunnel.local_src << ", dst=" << tunnel.local_dst << ", id=" << item->tunnel_id << std::endl ;
+			std::cerr << "  storing tunnel info. src=" << tunnel.local_src << ", dst=" << tunnel.local_dst << ", id=" << item->tunnel_id << std::endl ;
 #endif
+		}
 
 		// Is this result's target actually ours ?
 
 		if(it->second.origin == mConnMgr->getOwnId())
 		{
 #ifdef P3TURTLE_DEBUG
-			std::cerr << "  Tunnel starting point. Storing id=" << item->tunnel_id << " for hash (unknown) and tunnel request id " << it->second.origin << std::endl;
+			std::cerr << "  Tunnel starting point. Storing id=" << (void*)item->tunnel_id << " for hash (unknown) and tunnel request id " << it->second.origin << std::endl;
 #endif
 			// Tunnel is ending here. Add it to the list of tunnels for the given hash.
 
@@ -1285,7 +1339,7 @@ void p3turtle::dumpState()
 		std::cerr << "    hash=0x" << it->first << ", name=" << it->second.name << ", size=" << it->second.size << ", tunnel ids =" ;
 		for(std::vector<TurtleTunnelId>::const_iterator it2(it->second.tunnels.begin());it2!=it->second.tunnels.end();++it2)
 			std::cerr << " " << (void*)*it2 ;
-		std::cerr << ", last_req=" << (void*)it->second.last_request << ", time_stamp = " << it->second.time_stamp << std::endl ;
+		std::cerr << ", last_req=" << (void*)it->second.last_request << ", time_stamp = " << it->second.time_stamp << "(" << now-it->second.time_stamp << " secs ago)" << std::endl ;
 	}
 	std::cerr << "  Active outgoing file hashes: " << _outgoing_file_hashes.size() << std::endl ;
 	for(std::map<TurtleFileHash,FileInfo>::const_iterator it(_outgoing_file_hashes.begin());it!=_outgoing_file_hashes.end();++it)
@@ -1296,7 +1350,7 @@ void p3turtle::dumpState()
 		std::cerr << "    " << (void*)it->first << ": from=" 
 					<< it->second.local_src << ", to=" << it->second.local_dst 
 					<< ", hash=0x" << it->second.hash << ", ts=" << it->second.time_stamp << " (" << now-it->second.time_stamp << " secs ago)" 
-					<< ", peer id =" << it->second.vpid << ", time_stamp=" << it->second.time_stamp << std::endl ;
+					<< ", peer id =" << it->second.vpid << std::endl ;
 
 	std::cerr << "  buffered request origins: " << std::endl ;
 	std::cerr << "    Search requests: " << _search_requests_origins.size() << std::endl ;
