@@ -287,9 +287,9 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle, public ftS
 
 		//----------------------------- Routing functions ----------------------------//
 		
-		void manageTunnels() ;						/// Handle tunnel digging for current file hashes
-		void closeTunnel(TurtleTunnelId tid) ;	/// closes a given tunnel
-		int handleIncoming(); 						/// Main routing function
+		void manageTunnels() ;									/// Handle tunnel digging for current file hashes
+		void locked_closeTunnel(TurtleTunnelId tid) ;	/// closes a given tunnel. Should be called with mutex set.
+		int handleIncoming(); 									/// Main routing function
 
 		void handleSearchRequest(RsTurtleSearchRequestItem *item);		/// specific routing functions for handling particular packets.
 		void handleSearchResult(RsTurtleSearchResultItem *item);
@@ -324,9 +324,11 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle, public ftS
 		std::map<TurtleFileHash,FileInfo>						_outgoing_file_hashes ;		/// stores file info for each file we provide.
 		std::map<TurtleTunnelId,TurtleTunnel > 				_local_tunnels ;				/// local tunnels, stored by ids (Either transiting or ending).
 		std::map<TurtleVirtualPeerId,TurtleTunnelId>			_virtual_peers ;				/// Peers corresponding to each tunnel.
+		std::vector<TurtleFileHash>								_hashes_to_remove ;			/// Hashes marked to be deleted.
 
 		time_t _last_clean_time ;
 		time_t _last_tunnel_management_time ;
+		time_t _last_tunnel_campaign_time ;
 
 		std::list<pqipeer> _online_peers;
 		bool _force_digg_new_tunnels ;			/// used to force digging new tunnels

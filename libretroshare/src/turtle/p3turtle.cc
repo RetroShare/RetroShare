@@ -63,6 +63,7 @@ static const time_t TUNNEL_REQUESTS_LIFE_TIME 	= 120 ;		/// life time for tunnel
 static const time_t SEARCH_REQUESTS_LIFE_TIME 	= 120 ;		/// life time for search requests in the cache
 static const time_t REGULAR_TUNNEL_DIGGING_TIME = 300 ;		/// maximum interval between two tunnel digging campaigns.
 static const time_t MAXIMUM_TUNNEL_IDLE_TIME 	=  60 ;		/// maximum life time of an unused tunnel.
+static const time_t TUNNEL_MANAGEMENT_LAPS_TIME	=  10 ;		/// look into tunnels regularly every 10 sec.
 
 p3turtle::p3turtle(p3ConnectMgr *cm,ftServer *fs) 
 	:p3Service(RS_SERVICE_TYPE_TURTLE), p3Config(CONFIG_TYPE_TURTLE), mConnMgr(cm)
@@ -92,17 +93,14 @@ int p3turtle::tick()
 	// 	- we digg new tunnels each time a new peer connects
 	// 	- we digg new tunnels each time a new hash is asked for
 	//
-	if(now > REGULAR_TUNNEL_DIGGING_TIME+_last_tunnel_management_time || _force_digg_new_tunnels)
+	if(now > TUNNEL_MANAGEMENT_LAPS_TIME+_last_tunnel_management_time || _force_digg_new_tunnels)
 	{
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "Calling tunnel management." << std::endl ;
 #endif
 		manageTunnels() ;
 
-		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
-
 		_last_tunnel_management_time = now ;
-		_force_digg_new_tunnels = false ;
 	}
 
 	// Clean every 10 sec.
@@ -163,7 +161,7 @@ void p3turtle::statusChange(const std::list<pqipeer> &plist) // derived from pqi
 void p3turtle::addDistantPeer(const TurtleFileHash&,TurtleTunnelId tid) 
 {
 	char buff[400] ;
-	sprintf(buff,"Turtle tunnel %8x",tid) ;
+	sprintf(buff,"Turtle tunnel %08x",tid) ;
 
 	{
 		_virtual_peers[TurtleVirtualPeerId(buff)] = tid ;
@@ -198,20 +196,34 @@ void p3turtle::getVirtualPeersList(std::list<pqipeer>& list)
 //
 void p3turtle::manageTunnels()
 {
-	// Digg new tunnels for all file hashes
+	// Collect hashes for which tunnel digging is necessary / recommended
 
 	std::vector<TurtleFileHash> hashes_to_digg ;
-
 	{
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
-		for(std::map<TurtleFileHash,TurtleFileHashInfo>::const_iterator it(_incoming_file_hashes.begin());it!=_incoming_file_hashes.end();++it)
+		time_t now = time(NULL) ;
+		bool tunnel_campain = false ;
+		if(now > _last_tunnel_campaign_time+REGULAR_TUNNEL_DIGGING_TIME)
 		{
 #ifdef P3TURTLE_DEBUG
-			std::cerr << "Tunnel management: digging new tunnels for hash " << it->first << "." << std::endl ;
+			std::cerr << "  Tunnel management: flaging all hashes for tunnels digging." << std::endl ;
 #endif
-			hashes_to_digg.push_back(it->first) ;
+			tunnel_campain = true ;
+			_last_tunnel_campaign_time = now ;
 		}
+		for(std::map<TurtleFileHash,TurtleFileHashInfo>::const_iterator it(_incoming_file_hashes.begin());it!=_incoming_file_hashes.end();++it)
+			if(it->second.tunnels.empty()		// digg new tunnels is no tunnels are available
+				|| _force_digg_new_tunnels		// digg new tunnels when forced to (e.g. a new peer has connected)
+				|| tunnel_campain)				// force digg new tunnels at regular (large) interval
+			{
+#ifdef P3TURTLE_DEBUG
+				std::cerr << "  Tunnel management: digging new tunnels for hash " << it->first << "." << std::endl ;
+#endif
+				hashes_to_digg.push_back(it->first) ;
+			}
+
+		_force_digg_new_tunnels = false ;
 	}
 
 	for(unsigned int i=0;i<hashes_to_digg.size();++i)
@@ -223,6 +235,48 @@ void p3turtle::autoWash()
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "  In autowash." << std::endl ;
 #endif
+	// Remove hashes that are marked as such.
+	//
+	{
+		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+
+		for(unsigned int i=0;i<_hashes_to_remove.size();++i)
+		{
+			std::map<TurtleFileHash,TurtleFileHashInfo>::iterator it(_incoming_file_hashes.find(_hashes_to_remove[i])) ;
+
+			if(it == _incoming_file_hashes.end()) 
+			{
+				std::cerr << "p3turtle: asked to stop monitoring file hash " << _hashes_to_remove[i] << ", but this hash is actually not handled by the turtle router." << std::endl ;
+				continue ;
+			}
+
+			// copy the list of tunnels to remove.
+#ifdef P3TURTLE_DEBUG
+			std::cerr << "p3turtle: stopping monitoring for file hash " << _hashes_to_remove[i] << ", and closing " << it->second.tunnels.size() << " tunnels (" ;
+#endif
+			std::vector<TurtleTunnelId> tunnels_to_remove ;
+
+			for(std::vector<TurtleTunnelId>::const_iterator it2(it->second.tunnels.begin());it2!=it->second.tunnels.end();++it2) 
+			{
+#ifdef P3TURTLE_DEBUG
+				std::cerr << (void*)*it2 << "," ;
+#endif
+				tunnels_to_remove.push_back(*it2) ;
+			}
+#ifdef P3TURTLE_DEBUG
+			std::cerr << ")" << std::endl ;
+#endif
+			for(unsigned int k=0;k<tunnels_to_remove.size();++k)
+				locked_closeTunnel(tunnels_to_remove[k]) ;
+
+			_incoming_file_hashes.erase(it) ;
+		}
+		if(!_hashes_to_remove.empty())
+		{
+			IndicateConfigChanged() ;	// initiates saving of handled hashes.
+			_hashes_to_remove.clear() ;
+		}
+	}
 
 	// look for tunnels and stored temporary info that have not been used for a while.
 
@@ -259,9 +313,10 @@ void p3turtle::autoWash()
 	}
 
 	// Tunnels.
-	std::vector<TurtleTunnelId> tunnels_to_close ;
 	{
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+
+		std::vector<TurtleTunnelId> tunnels_to_close ;
 
 		for(std::map<TurtleTunnelId,TurtleTunnel>::iterator it(_local_tunnels.begin());it!=_local_tunnels.end();++it)
 			if(now > (time_t)(it->second.time_stamp + MAXIMUM_TUNNEL_IDLE_TIME))
@@ -271,27 +326,25 @@ void p3turtle::autoWash()
 #endif
 				tunnels_to_close.push_back(it->first) ;
 			}
+		for(unsigned int i=0;i<tunnels_to_close.size();++i)
+			locked_closeTunnel(tunnels_to_close[i]) ;
 	}
-	for(unsigned int i=0;i<tunnels_to_close.size();++i)
-		closeTunnel(tunnels_to_close[i]) ;
 
 	// File hashes can only be removed by calling the 'stopMonitoringFileTunnels()' command.
 }
 
-void p3turtle::closeTunnel(TurtleTunnelId tid)
+void p3turtle::locked_closeTunnel(TurtleTunnelId tid)
 {
 	// This is closing a given tunnel, removing it from file sources, and from the list of tunnels of its
 	// corresponding file hash. In the original turtle4privacy paradigm, they also send back and forward 
 	// tunnel closing commands. I'm not sure this is necessary, because if a tunnel is closed somewhere, it's
 	// source is not going to be used and the tunnel will eventually disappear.
 	//
-	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
-
 	std::map<TurtleTunnelId,TurtleTunnel>::iterator it(_local_tunnels.find(tid)) ;
 
 	if(it == _local_tunnels.end())
 	{
-		std::cerr << "p3turtle: was asked to close tunnel 0x" << (void*)tid << ", which actually doesn't exist." << std::endl ;
+		std::cerr << "p3turtle: was asked to close tunnel " << (void*)tid << ", which actually doesn't exist." << std::endl ;
 		return ;
 	}
 	std::cerr << "p3turtle: Closing tunnel 0x" << (void*)tid << std::endl ;
@@ -306,7 +359,7 @@ void p3turtle::closeTunnel(TurtleTunnelId tid)
 		TurtleFileHash hash = it->second.hash ;
 
 #ifdef P3TURTLE_DEBUG
-		std::cerr << "    Tunnel is a starting point. Also removing " ;
+		std::cerr << "    Tunnel is a starting point. Also removing:" << std::endl ;
 		std::cerr << "      Virtual Peer Id " << vpid << std::endl ;
 		std::cerr << "      Associated file source." << std::endl ;
 #endif
@@ -338,24 +391,11 @@ void p3turtle::stopMonitoringFileTunnels(const std::string& hash)
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
-	std::map<TurtleFileHash,TurtleFileHashInfo>::iterator it(_incoming_file_hashes.find(hash)) ;
-
-	if(it == _incoming_file_hashes.end()) 
-	{
-		std::cerr << "p3turtle: asked to stop monitoring file hash " << hash << ", but this hash is actually not handled by the turtle router." << std::endl ;
-		return ;
-	}
-
-	// copy the list of tunnels to remove.
-	std::vector<TurtleTunnelId> tunnels_to_remove = it->second.tunnels ;
 #ifdef P3TURTLE_DEBUG
-	std::cerr << "p3turtle: stopping monitoring for file hash " << hash << ", and closing " << tunnels_to_remove.size() << " tunnels." << std::endl ;
+	std::cerr << "p3turtle: Marking hash " << hash << " to be removed during autowash." << std::endl ;
 #endif
-
-	for(unsigned int i=0;i<tunnels_to_remove.size();++i)
-		closeTunnel(tunnels_to_remove[i]) ;
-
-	_incoming_file_hashes.erase(it) ;
+	// We don't do the deletion in this process, because it can cause a race with tunnel management.
+	_hashes_to_remove.push_back(hash) ;
 }
 
 // -----------------------------------------------------------------------------------//
@@ -768,8 +808,15 @@ void p3turtle::handleRecvFileData(RsTurtleFileDataItem *item)
 			std::map<TurtleFileHash,TurtleFileHashInfo>::const_iterator it( _incoming_file_hashes.find(tunnel.hash) ) ;
 #ifdef P3TURTLE_DEBUG
 			assert(!tunnel.hash.empty()) ;
-			assert(it!=_incoming_file_hashes.end()) ;
-#endif
+#endif		
+			if(it==_incoming_file_hashes.end()) 
+			{
+#ifdef P3TURTLE_DEBUG
+				std::cerr << "No tunnel for incoming data. Maybe the tunnel is being closed." << std::endl ;
+#endif		
+				return ;
+			}
+
 			const TurtleFileHashInfo& hash_info(it->second) ;
 #ifdef P3TURTLE_DEBUG
 			std::cerr << "  This is an endpoint for this data chunk." << std::endl ;
@@ -899,7 +946,7 @@ bool p3turtle::search(std::string hash, uint64_t, uint32_t hintflags, FileInfo &
 
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "  Found these tunnels for that hash:. "<< std::endl ;
-		for(uint i=0;i<it->second.tunnels.size();++i)
+		for(unsigned int i=0;i<it->second.tunnels.size();++i)
 			std::cerr << "    " << (void*)it->second.tunnels[i] << std::endl ;
 
 		std::cerr << "  answered yes. "<< std::endl ;
