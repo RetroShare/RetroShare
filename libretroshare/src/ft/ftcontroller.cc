@@ -436,6 +436,8 @@ bool ftController::completeFile(std::string hash)
 
 		mDataplex->removeTransferModule(hash_to_suppress) ;
 		mDownloads.erase(it);
+
+		mTurtle->stopMonitoringFileTunnels(hash_to_suppress) ;
 	} /******* UNLOCKED ********/
 
 
@@ -889,10 +891,10 @@ bool 	ftController::FileCancel(std::string hash)
 #endif
         }
 
-	//fc->mState = ftFileControl::ERROR_COMPLETION;
 	mDownloads.erase(mit);
+	mTurtle->stopMonitoringFileTunnels(hash) ;
 
-        IndicateConfigChanged(); /* completed transfer -> save */
+	IndicateConfigChanged(); /* completed transfer -> save */
 	return true;
 }
 
