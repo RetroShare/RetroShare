@@ -347,7 +347,7 @@ void p3turtle::locked_closeTunnel(TurtleTunnelId tid)
 		std::cerr << "p3turtle: was asked to close tunnel " << (void*)tid << ", which actually doesn't exist." << std::endl ;
 		return ;
 	}
-	std::cerr << "p3turtle: Closing tunnel 0x" << (void*)tid << std::endl ;
+	std::cerr << "p3turtle: Closing tunnel " << (void*)tid << std::endl ;
 
 	if(it->second.local_src == mConnMgr->getOwnId())	// this is a starting tunnel. We thus remove 
 																		// 	- the virtual peer from the vpid list
@@ -368,13 +368,18 @@ void p3turtle::locked_closeTunnel(TurtleTunnelId tid)
 
 		std::vector<TurtleTunnelId>& tunnels(_incoming_file_hashes[hash].tunnels) ;
 
-		for(unsigned int i=0;i<tunnels.size();++i)
+		// Remove tunnel id from it's corresponding hash. For security we 
+		// go through the whole tab, although the tunnel id should only be listed once
+		// in this tab.
+		//
+		for(unsigned int i=0;i<tunnels.size();)
 			if(tunnels[i] == tid)
 			{
 				tunnels[i] = tunnels.back() ;
 				tunnels.pop_back() ;
-				break ;
 			}
+			else
+				++i ;
 	}
 	else if(it->second.local_dst == mConnMgr->getOwnId())	// This is a ending tunnel. We also remove the virtual peer id
 	{
@@ -867,7 +872,7 @@ void p3turtle::sendDataRequest(const std::string& peerId, const std::string& has
 	TurtleTunnelId tunnel_id = it->second ;
 	TurtleTunnel& tunnel(_local_tunnels[tunnel_id]) ;
 
-	tunnel.time_stamp = time(NULL) ;
+//	tunnel.time_stamp = time(NULL) ;
 
 #ifdef P3TURTLE_DEBUG
 	assert(hash == tunnel.hash) ;
@@ -1213,7 +1218,17 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 				if(it->second.last_request == item->request_id)
 				{
 					found = true ;
-					it->second.tunnels.push_back(item->tunnel_id) ;
+
+					// add the tunnel uniquely
+					bool found = false ;
+
+					for(unsigned int j=0;j<it->second.tunnels.size();++j)
+						if(it->second.tunnels[j] == item->tunnel_id)
+							found = true ;
+
+					if(!found)
+						it->second.tunnels.push_back(item->tunnel_id) ;
+
 					tunnel.hash = it->first ;		// because it's a local tunnel
 
 					// Adds a virtual peer to the list of online peers.
