@@ -437,6 +437,7 @@ bool    ftExtraList::loadList(std::list<RsItem *> load)
 			/* to old */
 			cleanupEntry(fi->file.path, fi->flags);
 			delete (*it);
+			continue ;
 		}
 
 		/* add into system */
