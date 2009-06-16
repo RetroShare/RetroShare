@@ -64,8 +64,6 @@ const uint32_t MAX_UPNP_INIT = 		10; /* seconds UPnP timeout */
  * #define P3CONNMGR_NO_AUTO_CONNECTION 1
  ***/
 
-#define CONN_DEBUG 1
-
 const uint32_t P3CONNMGR_TCP_DEFAULT_DELAY = 2; /* 2 Seconds? is it be enough! */
 const uint32_t P3CONNMGR_UDP_DHT_DELAY     = DHT_NOTIFY_PERIOD + 60; /* + 1 minute for DHT POST */
 const uint32_t P3CONNMGR_UDP_PROXY_DELAY   = 30;  /* 30 seconds (NOT IMPLEMENTED YET!) */
@@ -610,7 +608,14 @@ void p3ConnectMgr::netUdpCheck()
 		/* get the addr from the configuration */
 		struct sockaddr_in iaddr = ownState.localaddr;
 
-		if (mUpnpAddrValid)
+		if(use_extr_addr_finder && mExtAddrFinder->hasValidIP(&tmpip))
+		{
+			extValid = true;
+			extAddr = tmpip ;
+			extAddr.sin_port = iaddr.sin_port ;
+			extAddrStable = true;
+		}
+		else if (mUpnpAddrValid)
 		{
 			extValid = true;
 			extAddr = mUpnpExtAddr;
@@ -621,13 +626,6 @@ void p3ConnectMgr::netUdpCheck()
 			extValid = true;
 			extAddr = mStunExtAddr;
 			extAddrStable = mStunAddrStable;
-		}
-		else if(use_extr_addr_finder && mExtAddrFinder->hasValidIP(&tmpip))
-		{
-			extValid = true;
-			extAddr = tmpip ;
-			extAddr.sin_port = iaddr.sin_port ;
-			extAddrStable = true;
 		}
 
 		if (extValid)
