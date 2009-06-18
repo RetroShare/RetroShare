@@ -720,13 +720,13 @@ continue_packet:
 		uint32_t pktlen = blen+extralen ;
 //		std::cerr << "deserializing. Size=" << pktlen << std::endl ;
 
-		if(pktlen == 17306)
-		{
-			FILE *f = fopen("dbug.packet.bin","w");
-			fwrite(block,pktlen,1,f) ;
-			fclose(f) ;
-			exit(-1) ;
-		}
+//		if(pktlen == 17306)
+//		{
+//			FILE *f = fopen("dbug.packet.bin","w");
+//			fwrite(block,pktlen,1,f) ;
+//			fclose(f) ;
+//			exit(-1) ;
+//		}
 		RsItem *pkt = rsSerialiser->deserialise(block, &pktlen);
 
 		if ((pkt != NULL) && (0  < handleincomingitem(pkt)))
