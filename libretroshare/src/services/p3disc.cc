@@ -65,7 +65,6 @@ const uint32_t P3DISC_FLAGS_PEER_TRUSTS_ME= 0x0040;
 /*****
  * #define P3DISC_DEBUG 	1
  ****/
-#define P3DISC_DEBUG 	1
 
 /*********** NOTE ***************
  *
@@ -145,10 +144,11 @@ int p3disc::handleIncoming()
 	// While messages read
 	while(NULL != (item = recvItem()))
 	{
-		RsDiscItem *di = NULL;
+		RsDiscOwnItem *dio = NULL;
 		RsDiscReply *dri = NULL;
 		RsDiscIssuer *dii = NULL;
 
+#ifdef TO_REMOVE
 		if (NULL == (di = dynamic_cast<RsDiscItem *> (item)))
 		{
 
@@ -166,8 +166,7 @@ int p3disc::handleIncoming()
 
 			continue;
 		}
-		nhandled++;
-
+#endif
 		{
 #ifdef P3DISC_DEBUG
 			std::ostringstream out;
@@ -181,21 +180,26 @@ int p3disc::handleIncoming()
 
 
 		// if discovery reply then respond if haven't already.
-		if (NULL != (dri = dynamic_cast<RsDiscReply *> (di)))
+		if (NULL != (dri = dynamic_cast<RsDiscReply *> (item)))
 		{
 
 			recvPeerFriendMsg(dri);
+			nhandled++;
 		}
-		else if (NULL != (dii = dynamic_cast<RsDiscIssuer *> (di)))
+#ifdef RS_USE_PGPSSL
+		else if (NULL != (dii = dynamic_cast<RsDiscIssuer *> (item)))
 		{
 
 			recvPeerIssuerMsg(dii);
+			nhandled++;
 		}
-		else /* Ping */
+#endif
+		else if (NULL != (dio = dynamic_cast<RsDiscOwnItem *> (item))) /* Ping */
 		{
-			recvPeerOwnMsg(di);
+			recvPeerOwnMsg(dio);
+			nhandled++;
 		}
-		delete di;
+		delete item;
 	}
 	return nhandled;
 }
@@ -277,7 +281,9 @@ void p3disc::respondToPeer(std::string id)
 			   no need to do with onlineId list.
 			 */
 
+#ifdef RS_USE_PGPSSL
 			sendPeerIssuer(id, *it);  
+#endif
 			sendPeerDetails(id, *it); /* (dest (to), source (cert)) */
 		}
 	}
@@ -321,7 +327,7 @@ void p3disc::sendOwnDetails(std::string to)
 	}
 
 	// Construct a message
-	RsDiscItem *di = new RsDiscItem();
+	RsDiscOwnItem *di = new RsDiscOwnItem();
 
 	/* components:
 	 * laddr
@@ -547,7 +553,7 @@ void p3disc::sendPeerIssuer(std::string to, std::string about)
 /*************************************************************************************/
 /*				Input Network Msgs				     */
 /*************************************************************************************/
-void p3disc::recvPeerOwnMsg(RsDiscItem *item)
+void p3disc::recvPeerOwnMsg(RsDiscOwnItem *item)
 {
 #ifdef P3DISC_DEBUG
 	std::cerr << "p3disc::recvPeerOwnMsg() From: " << item->PeerId() << std::endl;

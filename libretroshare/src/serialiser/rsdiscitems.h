@@ -33,29 +33,26 @@
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rsserviceids.h"
 		
-const uint8_t RS_PKT_SUBTYPE_DISC_ITEM   = 0x01;
+const uint8_t RS_PKT_SUBTYPE_DISC_OWN    = 0x01;
 const uint8_t RS_PKT_SUBTYPE_DISC_REPLY  = 0x02;
 const uint8_t RS_PKT_SUBTYPE_DISC_ISSUER = 0x03;
 
 class RsDiscItem: public RsItem
 {
 	protected:
-	RsDiscItem(uint8_t subtype)
-        :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC, 
-                subtype)
-	{ return; }
+		RsDiscItem(uint8_t subtype) :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC, subtype) {}
+};
 
+class RsDiscOwnItem: public RsDiscItem
+{
 	public:
 
-	RsDiscItem()
-        :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC, 
-                RS_PKT_SUBTYPE_DISC_ITEM)
-	{ return; }
+	RsDiscOwnItem() :RsDiscItem(RS_PKT_SUBTYPE_DISC_OWN ) {}
 
-virtual ~RsDiscItem();
+	virtual ~RsDiscOwnItem();
 
-virtual  void clear();
-virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	virtual  void clear();
+	virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	struct sockaddr_in laddr;
 	struct sockaddr_in saddr;
@@ -79,6 +76,14 @@ virtual ~RsDiscReply();
 
 virtual  void clear();  
 virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+	struct sockaddr_in laddr;
+	struct sockaddr_in saddr;
+
+	// time frame of recent connections.
+	uint16_t contact_tf;
+	// flags...
+	uint32_t discFlags;
 
 	std::string aboutId;
 	RsTlvBinaryData certDER;
@@ -115,9 +120,9 @@ virtual RsItem *    deserialise(void *data, uint32_t *size);
 
 	private:
 
-virtual uint32_t    sizeItem(RsDiscItem *);
-virtual bool        serialiseItem  (RsDiscItem *item, void *data, uint32_t *size);
-virtual RsDiscItem *deserialiseItem(void *data, uint32_t *size);
+virtual uint32_t    sizeItem(RsDiscOwnItem *);
+virtual bool        serialiseItem  (RsDiscOwnItem *item, void *data, uint32_t *size);
+virtual RsDiscOwnItem *deserialiseOwnItem(void *data, uint32_t *size);
 
 virtual uint32_t    sizeReply(RsDiscReply *);
 virtual bool        serialiseReply   (RsDiscReply *item, void *data, uint32_t *size);

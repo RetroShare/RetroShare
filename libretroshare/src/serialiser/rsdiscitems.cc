@@ -45,7 +45,7 @@
 
 uint32_t    RsDiscSerialiser::size(RsItem *i)
 {
-	RsDiscItem  *rdi;
+	RsDiscOwnItem  *rdi;
 	RsDiscReply *rdr;
 	RsDiscIssuer *rds;
 
@@ -58,7 +58,7 @@ uint32_t    RsDiscSerialiser::size(RsItem *i)
 	{
 		return sizeIssuer(rds);
 	}
-	else if (NULL != (rdi = dynamic_cast<RsDiscItem *>(i)))
+	else if (NULL != (rdi = dynamic_cast<RsDiscOwnItem *>(i)))
 	{
 		return sizeItem(rdi);
 	}
@@ -69,7 +69,7 @@ uint32_t    RsDiscSerialiser::size(RsItem *i)
 /* serialise the data to the buffer */
 bool    RsDiscSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 {
-	RsDiscItem  *rdi;
+	RsDiscOwnItem  *rdi;
 	RsDiscReply *rdr;
 	RsDiscIssuer *rds;
 
@@ -82,7 +82,7 @@ bool    RsDiscSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 	{
 		return serialiseIssuer(rds, data, pktsize);
 	}
-	else if (NULL != (rdi = dynamic_cast<RsDiscItem *>(i)))
+	else if (NULL != (rdi = dynamic_cast<RsDiscOwnItem *>(i)))
 	{
 		return serialiseItem(rdi, data, pktsize);
 	}
@@ -107,8 +107,8 @@ RsItem *RsDiscSerialiser::deserialise(void *data, uint32_t *pktsize)
 		case RS_PKT_SUBTYPE_DISC_REPLY:
 			return deserialiseReply(data, pktsize);
 			break;
-		case RS_PKT_SUBTYPE_DISC_ITEM:
-			return deserialiseItem(data, pktsize);
+		case RS_PKT_SUBTYPE_DISC_OWN:
+			return deserialiseOwnItem(data, pktsize);
 			break;
 		case RS_PKT_SUBTYPE_DISC_ISSUER:
 			return deserialiseIssuer(data, pktsize);
@@ -122,12 +122,12 @@ RsItem *RsDiscSerialiser::deserialise(void *data, uint32_t *pktsize)
 
 /*************************************************************************/
 
-RsDiscItem::~RsDiscItem()
+RsDiscOwnItem::~RsDiscOwnItem()
 {
 	return;
 }
 
-void 	RsDiscItem::clear()
+void 	RsDiscOwnItem::clear()
 {
 	memset(&laddr, 0, sizeof(laddr));
 	memset(&saddr, 0, sizeof(laddr));
@@ -135,9 +135,9 @@ void 	RsDiscItem::clear()
 	discFlags = 0;
 }
 
-std::ostream &RsDiscItem::print(std::ostream &out, uint16_t indent)
+std::ostream &RsDiscOwnItem::print(std::ostream &out, uint16_t indent)
 {
-        printRsItemBase(out, "RsDiscItem", indent);
+        printRsItemBase(out, "RsDiscOwnItem", indent);
 	uint16_t int_Indent = indent + 2;
 
         printIndent(out, int_Indent);
@@ -155,12 +155,12 @@ std::ostream &RsDiscItem::print(std::ostream &out, uint16_t indent)
         printIndent(out, int_Indent);
         out << "DiscFlags:  " << discFlags  << std::endl;
 
-        printRsItemEnd(out, "RsDiscItem", indent);
+        printRsItemEnd(out, "RsDiscOwnItem", indent);
         return out;
 }
 
 
-uint32_t    RsDiscSerialiser::sizeItem(RsDiscItem *item)
+uint32_t    RsDiscSerialiser::sizeItem(RsDiscOwnItem *item)
 {
 	uint32_t s = 8; /* header */
 	s += GetTlvIpAddrPortV4Size(); /* laddr */
@@ -172,7 +172,7 @@ uint32_t    RsDiscSerialiser::sizeItem(RsDiscItem *item)
 }
 
 /* serialise the data to the buffer */
-bool     RsDiscSerialiser::serialiseItem(RsDiscItem *item, void *data, uint32_t *pktsize)
+bool     RsDiscSerialiser::serialiseItem(RsDiscOwnItem *item, void *data, uint32_t *pktsize)
 {
 	uint32_t tlvsize = sizeItem(item);
 	uint32_t offset = 0;
@@ -213,7 +213,7 @@ bool     RsDiscSerialiser::serialiseItem(RsDiscItem *item, void *data, uint32_t 
 	return ok;
 }
 
-RsDiscItem *RsDiscSerialiser::deserialiseItem(void *data, uint32_t *pktsize)
+RsDiscOwnItem *RsDiscSerialiser::deserialiseOwnItem(void *data, uint32_t *pktsize)
 {
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
@@ -224,7 +224,7 @@ RsDiscItem *RsDiscSerialiser::deserialiseItem(void *data, uint32_t *pktsize)
 
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
 		(RS_SERVICE_TYPE_DISC != getRsItemService(rstype)) ||
-		(RS_PKT_SUBTYPE_DISC_ITEM != getRsItemSubType(rstype)))
+		(RS_PKT_SUBTYPE_DISC_OWN != getRsItemSubType(rstype)))
 	{
 #ifdef RSSERIAL_DEBUG 
 		std::cerr << "RsDiscSerialiser::deserialiseItem() Wrong Type" << std::endl;
@@ -246,7 +246,7 @@ RsDiscItem *RsDiscSerialiser::deserialiseItem(void *data, uint32_t *pktsize)
 	bool ok = true;
 
 	/* ready to load */
-	RsDiscItem *item = new RsDiscItem();
+	RsDiscOwnItem *item = new RsDiscOwnItem();
 	item->clear();
 
 	/* skip the header */

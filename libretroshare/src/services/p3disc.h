@@ -103,7 +103,7 @@ void sendPeerIssuer(std::string to, std::string about);
 
 	/* Network Input */
 int  handleIncoming();
-void recvPeerOwnMsg(RsDiscItem *item);
+void recvPeerOwnMsg(RsDiscOwnItem *item);
 void recvPeerFriendMsg(RsDiscReply *item);
 void recvPeerIssuerMsg(RsDiscIssuer *item);
 
