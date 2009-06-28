@@ -226,7 +226,8 @@ HEADERS += dbase/cachestrapper.h \
            util/rsnet.h \
            util/rsprint.h \
            util/rsthreads.h \
-           util/rswin.h 
+           util/rswin.h \
+           util/rsversion.h 
 
 SOURCES = \
 				dht/dht_check_peers.cc \
@@ -336,5 +337,5 @@ SOURCES = \
 				util/rsdir.cc \
 				util/rsnet.cc \
 				util/rsprint.cc \
-				util/rsthreads.cc 
-
+				util/rsthreads.cc \
+				util/rsversion.cc 

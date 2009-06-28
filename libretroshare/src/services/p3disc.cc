@@ -42,6 +42,7 @@ const uint32_t AUTODISC_LDI_SUBTYPE_RPLY = 0x02;
 
 #include "util/rsdebug.h"
 #include "util/rsprint.h"
+#include "util/rsversion.h"
 
 const int pqidisczone = 2482;
 
@@ -60,6 +61,7 @@ const uint32_t P3DISC_FLAGS_STABLE_UDP	 	= 0x0008;
 const uint32_t P3DISC_FLAGS_PEER_ONLINE 	= 0x0010;
 const uint32_t P3DISC_FLAGS_OWN_DETAILS 	= 0x0020;
 const uint32_t P3DISC_FLAGS_PEER_TRUSTS_ME= 0x0040;
+const uint32_t P3DISC_FLAGS_ASK_VERSION		= 0x0080;
 
 
 /*****
@@ -147,6 +149,7 @@ int p3disc::handleIncoming()
 		RsDiscOwnItem *dio = NULL;
 		RsDiscReply *dri = NULL;
 		RsDiscIssuer *dii = NULL;
+		RsDiscVersion *dvi = NULL;
 
 #ifdef TO_REMOVE
 		if (NULL == (di = dynamic_cast<RsDiscItem *> (item)))
@@ -172,7 +175,7 @@ int p3disc::handleIncoming()
 			std::ostringstream out;
 			out << "p3disc::handleIncoming()";
 			out << " Received Message!" << std::endl;
-			di -> print(out);
+			item -> print(out);
 
 			std::cerr << out.str() << std::endl;
 #endif
@@ -194,6 +197,11 @@ int p3disc::handleIncoming()
 			nhandled++;
 		}
 #endif
+		else if (NULL != (dvi = dynamic_cast<RsDiscVersion *> (item)))
+		{
+			recvPeerVersionMsg(dvi);
+			nhandled++;
+		}
 		else if (NULL != (dio = dynamic_cast<RsDiscOwnItem *> (item))) /* Ping */
 		{
 			recvPeerOwnMsg(dio);
@@ -277,13 +285,14 @@ void p3disc::respondToPeer(std::string id)
 
 		if (!(detail.visState & RS_VIS_STATE_NODISC))
 		{
-			/* send issuer certs ... only do this for friends at initial connections, 
+			/* send issuer certs ... only do this for friends at initial connections,
 			   no need to do with onlineId list.
 			 */
 
 #ifdef RS_USE_PGPSSL
-			sendPeerIssuer(id, *it);  
+			sendPeerIssuer(id, *it);
 #endif
+
 			sendPeerDetails(id, *it); /* (dest (to), source (cert)) */
 		}
 	}
@@ -347,7 +356,7 @@ void p3disc::sendOwnDetails(std::string to)
 	di -> PeerId(to);
 	di -> laddr = detail.localaddr;
 	di -> saddr = detail.serveraddr;
-	di -> contact_tf = 0; 
+	di -> contact_tf = 0;
 
 	/* construct disc flags */
 	di -> discFlags = 0;
@@ -370,6 +379,9 @@ void p3disc::sendOwnDetails(std::string to)
 	{
 		di->discFlags |= P3DISC_FLAGS_STABLE_UDP;
 	}
+
+	// set flag - request for version
+	di->discFlags |= P3DISC_FLAGS_ASK_VERSION;
 
 	di->discFlags |= P3DISC_FLAGS_OWN_DETAILS;
 
@@ -461,7 +473,7 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 	//
 	RsPeerDetails pd ;
 	std::string name = rsPeers->getPeerName(about) ;
-	if(rsPeers->getPeerDetails(to,pd)) 
+	if(rsPeers->getPeerDetails(to,pd))
 		for(std::list<std::string>::const_iterator it(pd.signers.begin());it!=pd.signers.end();++it)
 			if(*it == name)
 			{
@@ -549,6 +561,28 @@ void p3disc::sendPeerIssuer(std::string to, std::string about)
 #endif
 }
 
+void p3disc::sendOwnVersion(std::string to)
+{
+	{
+#ifdef P3DISC_DEBUG
+		std::ostringstream out;
+		out << "p3disc::sendOwnVersion()";
+		out << " Sending rs version to: " << to << std::endl;
+		std::cerr << out.str() << std::endl;
+#endif
+	}
+
+	RsDiscVersion *di = new RsDiscVersion();
+	di->PeerId(to);
+	di->version = RsUtil::retroshareVersion();
+
+	/* send the message */
+	sendItem(di);
+
+#ifdef P3DISC_DEBUG
+	std::cerr << "Sent DI Message" << std::endl;
+#endif
+}
 
 /*************************************************************************************/
 /*				Input Network Msgs				     */
@@ -560,8 +594,8 @@ void p3disc::recvPeerOwnMsg(RsDiscOwnItem *item)
 #endif
 
 	/* tells us their exact address (mConnectMgr can ignore if it looks wrong) */
-	uint32_t type = 0; 
-	uint32_t flags = 0; 
+	uint32_t type = 0;
+	uint32_t flags = 0;
 
 	/* translate flags */
 	if (item->discFlags & P3DISC_FLAGS_USE_DISC)
@@ -591,16 +625,22 @@ void p3disc::recvPeerOwnMsg(RsDiscOwnItem *item)
 		flags |= RS_NET_FLAGS_STABLE_UDP;
 	}
 
-	mConnMgr->peerStatus(item->PeerId(), item->laddr, item->saddr, 
+	mConnMgr->peerStatus(item->PeerId(), item->laddr, item->saddr,
 				type, flags, RS_CB_PERSON);
 
 	/* also add as potential stun buddy */
 	std::string hashid1 = RsUtil::HashId(item->PeerId(), false);
-	mConnMgr->stunStatus(hashid1, item->saddr, type, 
+	mConnMgr->stunStatus(hashid1, item->saddr, type,
 				RS_STUN_ONLINE | RS_STUN_FRIEND);
 
 	/* now reply with all details */
 	respondToPeer(item->PeerId());
+
+	/*sending rs versio if i was asked*/
+	if (item->discFlags & P3DISC_FLAGS_ASK_VERSION)
+	{
+		sendOwnVersion(item->PeerId());
+	}
 
 	addDiscoveryData(item->PeerId(), item->PeerId(), item->laddr, item->saddr, item->discFlags, time(NULL));
 
@@ -627,14 +667,14 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 
 	bool loaded = mAuthMgr->LoadCertificateFromBinary(certptr, len, peerId);
 
-	uint32_t type = 0; 
-	uint32_t flags = 0; 
+	uint32_t type = 0;
+	uint32_t flags = 0;
 
 	/* translate flags */
 	if (item->discFlags & P3DISC_FLAGS_USE_DISC) 	flags |= RS_NET_FLAGS_USE_DISC;
 	if (item->discFlags & P3DISC_FLAGS_USE_DHT) 		flags |= RS_NET_FLAGS_USE_DHT;
 	if (item->discFlags & P3DISC_FLAGS_PEER_ONLINE) flags |= RS_NET_FLAGS_ONLINE;
-	if (item->discFlags & P3DISC_FLAGS_PEER_TRUSTS_ME) 	
+	if (item->discFlags & P3DISC_FLAGS_PEER_TRUSTS_ME)
 	{
 		std::cerr << "  Found a peer that trust me: " << peerId << " (" << rsPeers->getPeerName(peerId) << ")" << std::endl ;
 		flags |= RS_NET_FLAGS_TRUSTS_ME;
@@ -667,7 +707,7 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 	addDiscoveryData(item->PeerId(), peerId, item->laddr, item->saddr, item->discFlags, time(NULL));
 
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS, NOTIFY_TYPE_MOD);
-	
+
 	/* cleanup (handled by caller) */
 }
 
@@ -691,6 +731,18 @@ void p3disc::recvPeerIssuerMsg(RsDiscIssuer *item)
 	return;
 }
 
+void p3disc::recvPeerVersionMsg(RsDiscVersion *item)
+{
+#ifdef P3DISC_DEBUG
+	std::cerr << "p3disc::recvPeerVersionMsg() From: " << item->PeerId();
+	std::cerr << std::endl;
+#endif
+
+	// dont need protection
+	versions[item->PeerId()] = item->version;
+
+	return;
+}
 
 /*************************************************************************************/
 /*				Storing Network Graph				     */
@@ -734,7 +786,7 @@ int	p3disc::addDiscoveryData(std::string fromId, std::string aboutId, struct soc
 	bool authDetails = (as.id == it->second.id);
 
 	/* KEY decision about address */
-	if ((authDetails) || 
+	if ((authDetails) ||
 		((!(it->second.authoritative)) && (as.ts > it->second.ts)))
 	{
 		/* copy details to an */
@@ -780,6 +832,10 @@ bool p3disc::potentialproxies(std::string id, std::list<std::string> &proxyIds)
 	return true;
 }
 
+void p3disc::getversions(std::map<std::string, std::string> &versions)
+{
+	versions = this->versions;
+}
 
 int p3disc::idServers()
 {
@@ -808,7 +864,7 @@ int p3disc::idServers()
 		out << " -->DiscFlags: 0x" << std::hex << nit->second.discFlags;
 		out << std::dec << std::endl;
 
-		for(sit = (nit->second.neighbour_of).begin(); 
+		for(sit = (nit->second.neighbour_of).begin();
 				sit != (nit->second.neighbour_of).end(); sit++)
 		{
 			out << "\tConnected via: " << (sit->first);
@@ -869,7 +925,7 @@ int convertTRangeToTDelta(int trange)
 {
 	if (trange <= 0)
 		return -1;
-	
+
 	return (int) (pow(10.0, trange) - 1.5); // (int) xxx98.5 -> xxx98
 }
 

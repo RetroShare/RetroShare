@@ -32,10 +32,11 @@
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rsserviceids.h"
-		
+
 const uint8_t RS_PKT_SUBTYPE_DISC_OWN    = 0x01;
 const uint8_t RS_PKT_SUBTYPE_DISC_REPLY  = 0x02;
 const uint8_t RS_PKT_SUBTYPE_DISC_ISSUER = 0x03;
+const uint8_t RS_PKT_SUBTYPE_DISC_VERSION = 0x04;
 
 class RsDiscItem: public RsItem
 {
@@ -43,11 +44,13 @@ class RsDiscItem: public RsItem
 		RsDiscItem(uint8_t subtype) :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC, subtype) {}
 };
 
+
 class RsDiscOwnItem: public RsDiscItem
 {
 	public:
 
 	RsDiscOwnItem() :RsDiscItem(RS_PKT_SUBTYPE_DISC_OWN ) {}
+
 
 	virtual ~RsDiscOwnItem();
 
@@ -68,13 +71,13 @@ class RsDiscReply: public RsDiscItem
 	public:
 
 	RsDiscReply()
-	:RsDiscItem(RS_PKT_SUBTYPE_DISC_REPLY), 
+	:RsDiscItem(RS_PKT_SUBTYPE_DISC_REPLY),
 	certDER(TLV_TYPE_CERT_XPGP_DER)
 	{ return; }
 
 virtual ~RsDiscReply();
 
-virtual  void clear();  
+virtual  void clear();
 virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	struct sockaddr_in laddr;
@@ -99,10 +102,24 @@ class RsDiscIssuer: public RsDiscItem
 
 virtual ~RsDiscIssuer();
 
-virtual  void clear();  
+virtual  void clear();
 virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	std::string issuerCert;
+};
+
+class RsDiscVersion: public RsDiscItem
+{
+public:
+    RsDiscVersion() :RsDiscItem(RS_PKT_SUBTYPE_DISC_VERSION)
+    { return; }
+
+    virtual ~RsDiscVersion();
+
+    virtual void clear();
+    virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+    std::string version;
 };
 
 class RsDiscSerialiser: public RsSerialType
@@ -131,6 +148,10 @@ virtual RsDiscReply *deserialiseReply(void *data, uint32_t *size);
 virtual uint32_t    sizeIssuer(RsDiscIssuer *);
 virtual bool        serialiseIssuer   (RsDiscIssuer *item, void *data, uint32_t *size);
 virtual RsDiscIssuer *deserialiseIssuer(void *data, uint32_t *size);
+
+virtual uint32_t        sizeVersion(RsDiscVersion *);
+virtual bool            serialiseVersion(RsDiscVersion *item, void *data, uint32_t *size);
+virtual RsDiscVersion   *deserialiseVersion(void *data, uint32_t *size);
 
 };
 

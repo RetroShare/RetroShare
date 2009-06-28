@@ -48,6 +48,7 @@ uint32_t    RsDiscSerialiser::size(RsItem *i)
 	RsDiscOwnItem  *rdi;
 	RsDiscReply *rdr;
 	RsDiscIssuer *rds;
+	RsDiscVersion *rdv;
 
 	/* do reply first - as it is derived from Item */
 	if (NULL != (rdr = dynamic_cast<RsDiscReply *>(i)))
@@ -62,6 +63,10 @@ uint32_t    RsDiscSerialiser::size(RsItem *i)
 	{
 		return sizeItem(rdi);
 	}
+	else if (NULL != (rdv = dynamic_cast<RsDiscVersion *>(i)))
+	{
+		return sizeVersion(rdv);
+	}
 
 	return 0;
 }
@@ -72,6 +77,7 @@ bool    RsDiscSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 	RsDiscOwnItem  *rdi;
 	RsDiscReply *rdr;
 	RsDiscIssuer *rds;
+	RsDiscVersion *rdv;
 
 	/* do reply first - as it is derived from Item */
 	if (NULL != (rdr = dynamic_cast<RsDiscReply *>(i)))
@@ -85,6 +91,10 @@ bool    RsDiscSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 	else if (NULL != (rdi = dynamic_cast<RsDiscOwnItem *>(i)))
 	{
 		return serialiseItem(rdi, data, pktsize);
+	}
+	else if (NULL != (rdv = dynamic_cast<RsDiscVersion *>(i)))
+	{
+		return serialiseVersion(rdv, data, pktsize);
 	}
 
 	return false;
@@ -112,6 +122,9 @@ RsItem *RsDiscSerialiser::deserialise(void *data, uint32_t *pktsize)
 			break;
 		case RS_PKT_SUBTYPE_DISC_ISSUER:
 			return deserialiseIssuer(data, pktsize);
+			break;
+		case RS_PKT_SUBTYPE_DISC_VERSION:
+			return deserialiseVersion(data, pktsize);
 			break;
 		default:
 			return NULL;
@@ -186,7 +199,7 @@ bool     RsDiscSerialiser::serialiseItem(RsDiscOwnItem *item, void *data, uint32
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
-#ifdef RSSERIAL_DEBUG 
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsDiscSerialiser::serialiseItem() Header: " << ok << std::endl;
 	std::cerr << "RsDiscSerialiser::serialiseItem() Size: " << tlvsize << std::endl;
 #endif
@@ -195,9 +208,9 @@ bool     RsDiscSerialiser::serialiseItem(RsDiscOwnItem *item, void *data, uint32
 	offset += 8;
 
 	/* add mandatory parts first */
-	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, 
+	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset,
 					TLV_TYPE_IPV4_LOCAL, &(item->laddr));
-	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, 
+	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset,
 					TLV_TYPE_IPV4_REMOTE, &(item->saddr));
 	ok &= setRawUInt16(data, tlvsize, &offset, item->contact_tf);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->discFlags);
@@ -205,7 +218,7 @@ bool     RsDiscSerialiser::serialiseItem(RsDiscOwnItem *item, void *data, uint32
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef RSSERIAL_DEBUG 
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::serialiseItem() Size Error! " << std::endl;
 #endif
 	}
@@ -226,7 +239,7 @@ RsDiscOwnItem *RsDiscSerialiser::deserialiseOwnItem(void *data, uint32_t *pktsiz
 		(RS_SERVICE_TYPE_DISC != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_DISC_OWN != getRsItemSubType(rstype)))
 	{
-#ifdef RSSERIAL_DEBUG 
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialiseItem() Wrong Type" << std::endl;
 #endif
 		return NULL; /* wrong type */
@@ -234,7 +247,7 @@ RsDiscOwnItem *RsDiscSerialiser::deserialiseOwnItem(void *data, uint32_t *pktsiz
 
 	if (*pktsize < rssize)    /* check size */
 	{
-#ifdef RSSERIAL_DEBUG 
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialiseItem() Not Enough Space" << std::endl;
 #endif
 		return NULL; /* not enough data */
@@ -253,16 +266,16 @@ RsDiscOwnItem *RsDiscSerialiser::deserialiseOwnItem(void *data, uint32_t *pktsiz
 	offset += 8;
 
 	/* get mandatory parts first */
-	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, 
+	ok &= GetTlvIpAddrPortV4(data, rssize, &offset,
 					TLV_TYPE_IPV4_LOCAL, &(item->laddr));
-	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, 
+	ok &= GetTlvIpAddrPortV4(data, rssize, &offset,
 					TLV_TYPE_IPV4_REMOTE, &(item->saddr));
 	ok &= getRawUInt16(data, rssize, &offset, &(item->contact_tf));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->discFlags));
 
 	if (offset != rssize)
 	{
-#ifdef RSSERIAL_DEBUG 
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialiseItem() offset != rssize" << std::endl;
 #endif
 		/* error */
@@ -272,7 +285,7 @@ RsDiscOwnItem *RsDiscSerialiser::deserialiseOwnItem(void *data, uint32_t *pktsiz
 
 	if (!ok)
 	{
-#ifdef RSSERIAL_DEBUG 
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialiseItem() ok = false" << std::endl;
 #endif
 		delete item;
@@ -358,7 +371,7 @@ bool     RsDiscSerialiser::serialiseReply(RsDiscReply *item, void *data, uint32_
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
-#ifdef RSSERIAL_DEBUG 
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsDiscSerialiser::serialiseReply() Header: " << ok << std::endl;
 	std::cerr << "RsDiscSerialiser::serialiseReply() Size: " << tlvsize << std::endl;
 #endif
@@ -379,7 +392,7 @@ bool     RsDiscSerialiser::serialiseReply(RsDiscReply *item, void *data, uint32_
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef RSSERIAL_DEBUG 
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::serialiseReply() Size Error! " << std::endl;
 #endif
 	}
@@ -400,7 +413,7 @@ RsDiscReply *RsDiscSerialiser::deserialiseReply(void *data, uint32_t *pktsize)
 		(RS_SERVICE_TYPE_DISC != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_DISC_REPLY != getRsItemSubType(rstype)))
 	{
-#ifdef RSSERIAL_DEBUG 
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialiseReply() Wrong Type" << std::endl;
 #endif
 		return NULL; /* wrong type */
@@ -408,7 +421,7 @@ RsDiscReply *RsDiscSerialiser::deserialiseReply(void *data, uint32_t *pktsize)
 
 	if (*pktsize < rssize)    /* check size */
 	{
-#ifdef RSSERIAL_DEBUG 
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialiseReply() pktsize != rssize" << std::endl;
 #endif
 		return NULL; /* not enough data */
@@ -427,21 +440,21 @@ RsDiscReply *RsDiscSerialiser::deserialiseReply(void *data, uint32_t *pktsize)
 	offset += 8;
 
 	/* get mandatory parts first */
-	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, 
+	ok &= GetTlvIpAddrPortV4(data, rssize, &offset,
 					TLV_TYPE_IPV4_LOCAL, &(item->laddr));
-	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, 
+	ok &= GetTlvIpAddrPortV4(data, rssize, &offset,
 					TLV_TYPE_IPV4_REMOTE, &(item->saddr));
 	ok &= getRawUInt16(data, rssize, &offset, &(item->contact_tf));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->discFlags));
 
-	ok &= GetTlvString(data, rssize, &offset, 
+	ok &= GetTlvString(data, rssize, &offset,
 					TLV_TYPE_STR_PEERID, item->aboutId);
 	ok &= item->certDER.GetTlv(data, rssize, &offset);
 
 
 	if (offset != rssize)
 	{
-#ifdef RSSERIAL_DEBUG 
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialiseReply() offset != rssize" << std::endl;
 #endif
 		/* error */
@@ -451,7 +464,7 @@ RsDiscReply *RsDiscSerialiser::deserialiseReply(void *data, uint32_t *pktsize)
 
 	if (!ok)
 	{
-#ifdef RSSERIAL_DEBUG 
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialiseReply() ok = false" << std::endl;
 #endif
 		delete item;
@@ -513,7 +526,7 @@ bool     RsDiscSerialiser::serialiseIssuer(RsDiscIssuer *item, void *data, uint3
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
-#ifdef RSSERIAL_DEBUG 
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsDiscSerialiser::serialiseIssuer() Header: " << ok << std::endl;
 	std::cerr << "RsDiscSerialiser::serialiseIssuer() Size: " << tlvsize << std::endl;
 #endif
@@ -527,7 +540,7 @@ bool     RsDiscSerialiser::serialiseIssuer(RsDiscIssuer *item, void *data, uint3
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef RSSERIAL_DEBUG 
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::serialiseIssuer() Size Error! " << std::endl;
 		std::cerr << "Offset: " << offset << " tlvsize: " << tlvsize << std::endl;
 #endif
@@ -549,7 +562,7 @@ RsDiscIssuer *RsDiscSerialiser::deserialiseIssuer(void *data, uint32_t *pktsize)
 		(RS_SERVICE_TYPE_DISC != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_DISC_ISSUER != getRsItemSubType(rstype)))
 	{
-#ifdef RSSERIAL_DEBUG 
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialiseIssuer() Wrong Type" << std::endl;
 #endif
 		return NULL; /* wrong type */
@@ -557,7 +570,7 @@ RsDiscIssuer *RsDiscSerialiser::deserialiseIssuer(void *data, uint32_t *pktsize)
 
 	if (*pktsize < rssize)    /* check size */
 	{
-#ifdef RSSERIAL_DEBUG 
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialiseIssuer() pktsize != rssize" << std::endl;
 		std::cerr << "Pktsize: " << *pktsize << " Rssize: " << rssize << std::endl;
 #endif
@@ -581,7 +594,7 @@ RsDiscIssuer *RsDiscSerialiser::deserialiseIssuer(void *data, uint32_t *pktsize)
 
 	if (offset != rssize)
 	{
-#ifdef RSSERIAL_DEBUG 
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialiseIssuer() offset != rssize" << std::endl;
 		std::cerr << "Offset: " << offset << " Rssize: " << rssize << std::endl;
 #endif
@@ -592,7 +605,7 @@ RsDiscIssuer *RsDiscSerialiser::deserialiseIssuer(void *data, uint32_t *pktsize)
 
 	if (!ok)
 	{
-#ifdef RSSERIAL_DEBUG 
+#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialiseIssuer() ok = false" << std::endl;
 #endif
 		delete item;
@@ -602,6 +615,140 @@ RsDiscIssuer *RsDiscSerialiser::deserialiseIssuer(void *data, uint32_t *pktsize)
 	return item;
 }
 
+
+
+/*************************************************************************/
+
+
+RsDiscVersion::~RsDiscVersion()
+{
+    return;
+}
+void RsDiscVersion::clear()
+{
+	version = "";
+}
+
+std::ostream &RsDiscVersion::print(std::ostream &out, uint16_t indent)
+{
+    printRsItemBase(out, "RsDiscVersion", indent);
+	uint16_t int_Indent = indent + 2;
+
+    printIndent(out, int_Indent);
+    out << "Version String:  " << version  << std::endl;
+
+    printRsItemEnd(out, "RsDiscVersion", indent);
+    return out;
+}
+
+uint32_t RsDiscSerialiser::sizeVersion(RsDiscVersion *item)
+{
+    uint32_t s = 8;
+	s += GetTlvStringSize(item->version);
+
+	return s;
+}
+
+/* serialise the data to the buffer */
+bool RsDiscSerialiser::serialiseVersion(RsDiscVersion *item, void *data, uint32_t *pktsize)
+{
+    uint32_t tlvsize = sizeVersion(item);
+    uint32_t offset = 0;
+
+    if (*pktsize < tlvsize)
+        return false;   /* not enough space */
+
+    *pktsize = tlvsize;
+
+    bool ok = true;
+
+    ok &= setRsItemHeader(data, *pktsize, item->PacketId(), *pktsize);
+
+#ifdef RSSERIAL_DEBUG
+    std::cerr << "RsDiscSerialiser::serialiseVersion() Header: " << ok << std::endl;
+	std::cerr << "RsDiscSerialiser::serialiseVersion() Size: " << tlvsize << std::endl;
+#endif
+
+    /* skip the header */
+    offset += 8;
+
+    ok &= setRawString(data, tlvsize, &offset, item->version);
+
+    if (offset != tlvsize)
+    {
+        ok = false;
+#ifdef RSSERIAL_DEBUG
+        std::cerr << "RsDiscSerialiser::serialiseVersion() Size Error! " << std::endl;
+		std::cerr << "Offset: " << offset << " tlvsize: " << tlvsize << std::endl;
+#endif
+    }
+
+    return ok;
+}
+
+RsDiscVersion *RsDiscSerialiser::deserialiseVersion(void *data, uint32_t *pktsize)
+{
+    /* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+	uint32_t offset = 0;
+
+    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+		(RS_SERVICE_TYPE_DISC != getRsItemService(rstype)) ||
+		(RS_PKT_SUBTYPE_DISC_VERSION != getRsItemSubType(rstype)))
+	{
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsDiscSerialiser::deserialiseVersion() Wrong Type" << std::endl;
+#endif
+		return NULL; /* wrong type */
+	}
+
+	if (*pktsize < rssize)    /* check size */
+	{
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsDiscSerialiser::deserialiseVersion() pktsize != rssize" << std::endl;
+		std::cerr << "Pktsize: " << *pktsize << " Rssize: " << rssize << std::endl;
+#endif
+		return NULL; /* not enough data */
+	}
+
+	/* set the packet length */
+	*pktsize = rssize;
+
+	bool ok = true;
+
+	/* ready to load */
+	RsDiscVersion *item = new RsDiscVersion();
+	item->clear();
+
+	/* skip the header */
+	offset += 8;
+
+	ok &= getRawString(data, rssize, &offset, item->version);
+
+	if (offset != rssize)
+	{
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsDiscSerialiser::deserialiseVersion() offset != rssize" << std::endl;
+		std::cerr << "Offset: " << offset << " Rssize: " << rssize << std::endl;
+#endif
+		/* error */
+		delete item;
+		return NULL;
+	}
+
+	if (!ok)
+	{
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsDiscSerialiser::deserialiseVersion() ok = false" << std::endl;
+#endif
+		delete item;
+		return NULL;
+	}
+
+	return item;
+}
 
 
 /*************************************************************************/

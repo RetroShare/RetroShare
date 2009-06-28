@@ -29,6 +29,7 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
+#include <map>
 
 /* The Main Interface Class - for information about your Peers */
 class RsDisc;
@@ -42,6 +43,7 @@ class RsDisc
 virtual ~RsDisc() { return; }
 
 virtual bool	getDiscFriends(std::string id, std::list<std::string> &friends) = 0;
+virtual bool 	getDiscVersions(std::map<std::string, std::string> &versions) = 0;
 
 };
 

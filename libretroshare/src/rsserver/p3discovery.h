@@ -38,6 +38,7 @@ class p3Discovery: public RsDisc
 virtual ~p3Discovery() { return; }
 
 virtual bool	getDiscFriends(std::string id, std::list<std::string> &friends);
+virtual bool 	getDiscVersions(std::map<std::string, std::string> &versions);
 
 	private:
 

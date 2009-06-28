@@ -38,3 +38,13 @@ bool p3Discovery::getDiscFriends(std::string id, std::list<std::string> &friends
 	return false;
 }
 
+bool p3Discovery::getDiscVersions(std::map<std::string, std::string> &versions)
+{
+	if (mDisc)
+	{
+		mDisc->getversions(versions);
+		return true;
+	}
+	return false;
+}
+

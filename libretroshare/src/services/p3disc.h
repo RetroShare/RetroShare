@@ -90,6 +90,7 @@ int	tick();
 
 	/* GUI requires access */
 bool 	potentialproxies(std::string id, std::list<std::string> &proxyIds);
+void 	getversions(std::map<std::string, std::string> &versions);
 
 	private:
 
@@ -98,6 +99,7 @@ void respondToPeer(std::string id);
 
 	/* Network Output */
 void sendOwnDetails(std::string to);
+void sendOwnVersion(std::string to);
 void sendPeerDetails(std::string to, std::string about);
 void sendPeerIssuer(std::string to, std::string about);
 
@@ -106,10 +108,11 @@ int  handleIncoming();
 void recvPeerOwnMsg(RsDiscOwnItem *item);
 void recvPeerFriendMsg(RsDiscReply *item);
 void recvPeerIssuerMsg(RsDiscIssuer *item);
+void recvPeerVersionMsg(RsDiscVersion *item);
 
 	/* handle network shape */
 int     addDiscoveryData(std::string fromId, std::string aboutId,
-		struct sockaddr_in laddr, struct sockaddr_in raddr, 
+		struct sockaddr_in laddr, struct sockaddr_in raddr,
 		uint32_t flags, time_t ts);
 
 int 	idServers();
@@ -128,7 +131,7 @@ int 	idServers();
 	bool mLocalDisc;
 
 	std::map<std::string, autoneighbour> neighbours;
-
+	std::map<std::string, std::string> versions;
 };
 
 

@@ -38,6 +38,7 @@
 #include <sstream>
 #include "rsiface/rsfiles.h"
 #include "rsiface/rspeers.h"
+#include "rsiface/rsdisc.h"
 #include <algorithm>
 
 /* Images for context menu icons */
@@ -608,6 +609,10 @@ void TransfersDialog::insertTransfers()
         /* continue to next download item if no peers to add */
         if (!info.peers.size()) continue;
 
+        std::map<std::string, std::string>::iterator vit;
+        std::map<std::string, std::string> versions;
+        bool retv = rsDisc->getDiscVersions(versions);
+
         int dlPeers = 0;
         for (pit = info.peers.begin(); pit != info.peers.end(); pit++) {
             symbol      = "";
@@ -617,8 +622,10 @@ void TransfersDialog::insertTransfers()
             fileSize    = info.size;
             progress    = (info.transfered * 100.0) / info.size;
             dlspeed     = pit->tfRate * 1024.0;
-            //sources     = QString("rShare v %1").arg(tr("0.4.13a"));//TODO: take it from somewhere
             sources     = "";
+            if (retv && versions.end() != (vit = versions.find(pit->peerId))) {
+            	sources		= QString("rShare v") + QString::fromStdString(vit->second);
+            }
 
             if (info.downloadStatus == FT_STATE_COMPLETE) {
                 status = tr("Complete");
