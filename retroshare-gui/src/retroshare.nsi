@@ -2,7 +2,7 @@
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.4.13b"
+!define VERSION "0.4.13c"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
 
 ; Main Install settings
@@ -61,6 +61,7 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
  
   LicenseLangString myLicenseData 1033 "license\license.txt"
   LicenseLangString myLicenseData 1031 "license\license-GER.txt"
+  LicenseLangString myLicenseData 1036 "license\license-FR.txt"
   LicenseLangString myLicenseData 1055 "license\license-TR.txt"
 
   LicenseData $(myLicenseData)
@@ -78,6 +79,7 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
 # Installer languages
 !insertmacro MUI_LANGUAGE English
 !insertmacro MUI_LANGUAGE German
+!insertmacro MUI_LANGUAGE French
 !insertmacro MUI_LANGUAGE Turkish
 
   ;Component-selection page
@@ -90,11 +92,23 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString sec_autostart ${LANG_ENGLISH} "Auto Startup"
     LangString DESC_sec_main ${LANG_ENGLISH} "Installs the RetroShare program files."
     LangString DESC_sec_data ${LANG_ENGLISH} "Installs RetroShare Skins"
-    LangString DESC_sec_mplayer ${LANG_ENGLISH} "Insalls MPlayer required for ReroShare's SMPlayer"
     LangString DESC_sec_shortcuts ${LANG_ENGLISH} "Create RetroShare shortcut icons."
     LangString DESC_sec_link ${LANG_ENGLISH} "Associate RetroShare with .pqi file extension"
     LangString DESC_sec_autostart ${LANG_ENGLISH} "Auto-Run and Login at Startup"
     LangString LANGUAGEID ${LANG_ENGLISH} "1033"
+    
+    
+    LangString sec_main ${LANG_FRENCH} "RetroShare (obligatoire)"
+    LangString sec_data ${LANG_FRENCH} "Programme de Skins"
+    LangString sec_shortcuts ${LANG_FRENCH} "Raccourcis"
+    LangString sec_link ${LANG_FRENCH} "RetroShare fichiers Association"
+    LangString sec_startmenu ${LANG_FRENCH} "Raccourcis du menu Démarrer"
+    LangString sec_autostart ${LANG_FRENCH} "Démarrage automatique"
+    LangString DESC_sec_main ${LANG_FRENCH} "Installe les fichiers du programme."
+    LangString DESC_sec_startmenu ${LANG_FRENCH} "Crée les raccourcis du menu Démarrer"
+    LangString DESC_sec_shortcuts ${LANG_FRENCH} "Crée une icône sur le bureau."
+    LangString DESC_sec_autostart ${LANG_FRENCH} "Run and Auto-connexion au démarrage"
+    LangString LANGUAGEID ${LANG_FRENCH} "1036"
 
     
     LangString sec_main ${LANG_GERMAN} "Programmdateien"
@@ -102,8 +116,8 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString sec_shortcuts ${LANG_GERMAN} "Shortcuts"
     LangString sec_link ${LANG_GERMAN} "Dateiverkn�pfungen"
     LangString sec_autostart ${LANG_GERMAN} "Auto Startup"
-	LangString DESC_sec_main ${LANG_GERMAN} "Installiert die erforderlichen Programmdateien."
-	LangString DESC_sec_data ${LANG_GERMAN} "Installiert RetroShare Skins"
+	  LangString DESC_sec_main ${LANG_GERMAN} "Installiert die erforderlichen Programmdateien."
+	  LangString DESC_sec_data ${LANG_GERMAN} "Installiert RetroShare Skins"
     LangString DESC_sec_shortcuts ${LANG_GERMAN} "Erstellt eine RetroShare Verkn�pfung im Startmen�, Desktop oder im Schnellstarter."
     LangString DESC_sec_link ${LANG_GERMAN} "RetroShare mit .pqi Dateien verkn�pfen"
     LangString DESC_sec_autostart ${LANG_GERMAN} "Beim Neustart automatisch RetroShare starten und sich anmelden"
@@ -115,8 +129,8 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString sec_shortcuts ${LANG_TURKISH} "Shortcut'lar"
     LangString sec_link ${LANG_TURKISH} ".pqi Dosya Kaydet"
     LangString sec_autostart ${LANG_TURKISH} "Otomatik calistir ve baglan"
-	LangString DESC_sec_main ${LANG_TURKISH} "Program dosyalar�n� kurar."
-	LangString DESC_sec_data ${LANG_TURKISH} "RetroShare Skin'leri kurar"
+	  LangString DESC_sec_main ${LANG_TURKISH} "Program dosyalar�n� kurar."
+	  LangString DESC_sec_data ${LANG_TURKISH} "RetroShare Skin'leri kurar"
     LangString DESC_sec_shortcuts ${TURKISH} "Shortcut yap Start menu , Desktop veya Quicklaunchbar icin."
     LangString DESC_sec_link ${LANG_TURKISH} "RetroShare .pqi almas� i�in kaydettirir"
     LangString DESC_sec_autostart ${LANG_TURKISH} "Isletim sistemi acildiginda Otomatik olarak calistir ve baglan"
@@ -139,13 +153,13 @@ Section $(sec_main) sec_main
   ; Set Section Files and Shortcuts
   SetOutPath "$INSTDIR\"
   File /r "release\RetroShare.exe"
-  File /r "D:\MinGW\bin\mingwm10.dll"
+  File /r "D:\Qt\2009.02\mingw\mingwm10.dll"
+  File /r "D:\Qt\2009.02\qt\bin\QtCore4.dll"
+  File /r "D:\Qt\2009.02\qt\bin\QtGui4.dll"
+  File /r "D:\Qt\2009.02\qt\bin\QtNetwork4.dll"
+  File /r "D:\Qt\2009.02\qt\bin\QtXml4.dll"
+  File /r "D:\Qt\2009.02\qt\bin\QtScript4.dll"
   File /r "pthreadGCE2.dll"
-  File /r "D:\Qt\4.4.3\bin\QtCore4.dll"
-  File /r "D:\Qt\4.4.3\bin\QtGui4.dll"
-  File /r "D:\Qt\4.4.3\bin\QtNetwork4.dll"
-  File /r "D:\Qt\4.4.3\bin\QtXml4.dll"
-  File /r "D:\Qt\4.4.3\bin\QtScript4.dll"
   File /r "changelog.txt"
 
   
@@ -333,7 +347,7 @@ FunctionEnd
 LangString ^UninstallLink ${LANG_ENGLISH} "Uninstall"
 LangString ^UninstallLink ${LANG_GERMAN} "Deinstallieren"
 LangString ^UninstallLink ${LANG_TURKISH} "Kald�r"
-
+LangString ^UninstallLink ${LANG_FRENCH} "Désinstaller"
 
 
 
