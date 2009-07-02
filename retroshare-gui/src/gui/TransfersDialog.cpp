@@ -49,9 +49,12 @@
 #define IMAGE_PLAY		             ":/images/player_play.png"
 #define IMAGE_COPYLINK             ":/images/copyrslink.png"
 #define IMAGE_PASTELINK            ":/images/pasterslink.png"
-#define IMAGE_PAUSE					":/images/pause.png"
-#define IMAGE_RESUME				":/images/start.png"
-#define IMAGE_OPENFOLDER			":/images/folder_green.png"
+#define IMAGE_PAUSE					       ":/images/pause.png"
+#define IMAGE_RESUME				       ":/images/resume.png"
+#define IMAGE_OPENFOLDER			     ":/images/folderopen.png"
+#define IMAGE_OPENFILE			       ":/images/fileopen.png"
+#define IMAGE_STOP			           ":/images/stop.png"
+
 
 /** Constructor */
 TransfersDialog::TransfersDialog(QWidget *parent)
@@ -200,9 +203,21 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       		playAct = new QAction(QIcon(IMAGE_PLAY), tr( "Play" ), this );
       		connect( playAct , SIGNAL( triggered() ), this, SLOT( playSelectedTransfer() ) );
 	}
+      
+      pauseAct = new QAction(QIcon(IMAGE_PAUSE), tr("Pause"), this);
+      connect(pauseAct, SIGNAL(triggered()), this, SLOT(pauseFileTransfer()));
+
+      resumeAct = new QAction(QIcon(IMAGE_RESUME), tr("Resume"), this);
+      connect(resumeAct, SIGNAL(triggered()), this, SLOT(resumeFileTransfer()));
 
 	    cancelAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Cancel" ), this );
       connect( cancelAct , SIGNAL( triggered() ), this, SLOT( cancel() ) );
+      
+      openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
+      connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openFolderTransfer()));
+      
+      clearcompletedAct = new QAction(QIcon(IMAGE_CLEARCOMPLETED), tr( "Clear Completed" ), this );
+      connect( clearcompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
 
       copylinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), this );
       connect( copylinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) );
@@ -210,23 +225,11 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       pastelinkAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste retroshare Link" ), this );
       connect( pastelinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
 
-      clearcompletedAct = new QAction(QIcon(IMAGE_CLEARCOMPLETED), tr( "Clear Completed" ), this );
-      connect( clearcompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
-
       rootisnotdecoratedAct = new QAction(QIcon(), tr( "Set Root is not Decorated" ), this );
       connect( rootisnotdecoratedAct , SIGNAL( triggered() ), this, SLOT( rootisnotdecorated() ) );
 
       rootisdecoratedAct = new QAction(QIcon(), tr( "Set Root is Decorated" ), this );
       connect( rootisdecoratedAct , SIGNAL( triggered() ), this, SLOT( rootdecorated() ) );
-
-      pauseAct = new QAction(QIcon(IMAGE_PAUSE), tr("Pause file transfer"), this);
-      connect(pauseAct, SIGNAL(triggered()), this, SLOT(pauseFileTransfer()));
-
-      resumeAct = new QAction(QIcon(IMAGE_RESUME), tr("Resume file transfer"), this);
-      connect(resumeAct, SIGNAL(triggered()), this, SLOT(resumeFileTransfer()));
-
-      openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open transfer folder"), this);
-      connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openFolderTransfer()));
 
       QMenu *viewMenu = new QMenu( tr("View"), this );
       viewMenu->addAction(rootisnotdecoratedAct);
@@ -238,17 +241,16 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       	contextMnu.addAction(playAct);
       }
       contextMnu.addSeparator();
-
+      contextMnu.addAction( pauseAct);
+      contextMnu.addAction( resumeAct);
       contextMnu.addAction( cancelAct);
       contextMnu.addSeparator();
-      contextMnu.addAction( copylinkAct);
-      contextMnu.addAction( pastelinkAct);
+      contextMnu.addAction( openfolderAct);
       contextMnu.addSeparator();
       contextMnu.addAction( clearcompletedAct);
       contextMnu.addSeparator();
-      contextMnu.addAction(pauseAct);
-      contextMnu.addAction(resumeAct);
-      contextMnu.addAction(openfolderAct);
+      contextMnu.addAction( copylinkAct);
+      contextMnu.addAction( pastelinkAct);
       contextMnu.addSeparator();
 	    contextMnu.addMenu( viewMenu);
       contextMnu.exec( mevent->globalPos() );

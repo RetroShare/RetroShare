@@ -40,6 +40,8 @@
         <file>images/FileTypeVideo.png</file>
         <file>images/fonts.png</file>
         <file>images/folder16.png</file>
+        <file>images/folderopen.png</file>
+        <file>images/fileopen.png</file>
         <file>images/add-friend24.png</file>
         <file>images/add-share24.png</file>
         <file>images/add_24x24.png</file>
@@ -263,6 +265,7 @@
         <file>images/replymailall24-hover.png</file>
         <file>images/reload24.png</file>
         <file>images/reset.png</file>
+        <file>images/resume.png</file>
         <file>images/retro4.png</file>
         <file>images/RetroShare16.png</file>
         <file>images/retrosharelogo1.png</file>
