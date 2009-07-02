@@ -34,6 +34,7 @@
 #include <QPixmap>
 #include <QHeaderView>
 #include <QStandardItemModel>
+#include <QUrl>
 
 #include <sstream>
 #include "rsiface/rsfiles.h"
@@ -48,6 +49,9 @@
 #define IMAGE_PLAY		             ":/images/player_play.png"
 #define IMAGE_COPYLINK             ":/images/copyrslink.png"
 #define IMAGE_PASTELINK            ":/images/pasterslink.png"
+#define IMAGE_PAUSE					":/images/pause.png"
+#define IMAGE_RESUME				":/images/start.png"
+#define IMAGE_OPENFOLDER			":/images/folder_green.png"
 
 /** Constructor */
 TransfersDialog::TransfersDialog(QWidget *parent)
@@ -215,6 +219,15 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       rootisdecoratedAct = new QAction(QIcon(), tr( "Set Root is Decorated" ), this );
       connect( rootisdecoratedAct , SIGNAL( triggered() ), this, SLOT( rootdecorated() ) );
 
+      pauseAct = new QAction(QIcon(IMAGE_PAUSE), tr("Pause file transfer"), this);
+      connect(pauseAct, SIGNAL(triggered()), this, SLOT(pauseFileTransfer()));
+
+      resumeAct = new QAction(QIcon(IMAGE_RESUME), tr("Resume file transfer"), this);
+      connect(resumeAct, SIGNAL(triggered()), this, SLOT(resumeFileTransfer()));
+
+      openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open transfer folder"), this);
+      connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openFolderTransfer()));
+
       QMenu *viewMenu = new QMenu( tr("View"), this );
       viewMenu->addAction(rootisnotdecoratedAct);
 		  viewMenu->addAction(rootisdecoratedAct);
@@ -232,6 +245,10 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       contextMnu.addAction( pastelinkAct);
       contextMnu.addSeparator();
       contextMnu.addAction( clearcompletedAct);
+      contextMnu.addSeparator();
+      contextMnu.addAction(pauseAct);
+      contextMnu.addAction(resumeAct);
+      contextMnu.addAction(openfolderAct);
       contextMnu.addSeparator();
 	    contextMnu.addMenu( viewMenu);
       contextMnu.exec( mevent->globalPos() );
@@ -865,6 +882,105 @@ void TransfersDialog::pasteLink()
         rsFiles->FileRequest (linkData.getName ().toStdString (), linkData.getHash ().toStdString (),
             linkData.getSize ().toInt (), "", 0, srcIds);
     }
+}
+
+
+bool TransfersDialog::controlTransferFile(uint32_t flags)
+{
+	bool result = false;
+
+	/* scan selected transfer files or it's peers */
+	int i, imax = DLListModel->rowCount();
+	for (i = 0; i < imax; i++) {
+		bool isParentSelected = false;
+		bool isChildSelected = false;
+
+		QStandardItem *parent = DLListModel->item(i);
+		if (!parent) continue;
+		QModelIndex pindex = parent->index();
+		if (selection->isSelected(pindex)) {
+			isParentSelected = true;
+		} else {
+			int j, jmax = parent->rowCount();
+			for (j = 0; j < jmax && !isChildSelected; j++) {
+				QStandardItem *child = parent->child(j);
+				if (!child) continue;
+				QModelIndex cindex = child->index();
+				if (selection->isSelected(cindex)) {
+					isChildSelected = true;
+				}
+			}
+		}
+
+		/* if transfered file or it's peers are selected control it*/
+		if (isParentSelected || isChildSelected) {
+			QStandardItem *id = DLListModel->item(i, ID);
+			result = rsFiles->FileControl(id->data(Qt::DisplayRole).toString().toStdString(), flags);
+		}
+	}
+
+	return result;
+}
+
+void TransfersDialog::pauseFileTransfer()
+{
+	if (!controlTransferFile(RS_FILE_CTRL_PAUSE))
+	{
+		std::cerr << "pauseFileTransfer(): can't pause file transfer" << std::endl;
+	}
+}
+
+void TransfersDialog::resumeFileTransfer()
+{
+	if (!controlTransferFile(RS_FILE_CTRL_START))
+	{
+		std::cerr << "resumeFileTransfer(): can't resume file transfer" << std::endl;
+	}
+}
+
+void TransfersDialog::openFolderTransfer()
+{
+	FileInfo info;
+
+	/* scan selected transfer files or it's peers */
+	int i, imax = DLListModel->rowCount();
+	for (i = 0; i < imax; i++) {
+		bool isParentSelected = false;
+		bool isChildSelected = false;
+
+		QStandardItem *parent = DLListModel->item(i);
+		if (!parent) continue;
+		QModelIndex pindex = parent->index();
+		if (selection->isSelected(pindex)) {
+			isParentSelected = true;
+		} else {
+			int j, jmax = parent->rowCount();
+			for (j = 0; j < jmax && !isChildSelected; j++) {
+				QStandardItem *child = parent->child(j);
+				if (!child) continue;
+				QModelIndex cindex = child->index();
+				if (selection->isSelected(cindex)) {
+					isChildSelected = true;
+				}
+			}
+		}
+
+		/* retain file info for first file which is selected or has selected peers */
+		if (isParentSelected || isChildSelected) {
+			QStandardItem *id = DLListModel->item(i, ID);
+			if (!rsFiles->FileDetails(id->data(Qt::DisplayRole).toString().toStdString(), RS_FILE_HINTS_DOWNLOAD, info)) continue;
+			break;
+		}
+	}
+
+	QList<QUrl> directories;
+	directories << QUrl::fromLocalFile(QString(rsFiles->getPartialsDirectory().c_str()));
+	directories << QUrl::fromLocalFile(QString(rsFiles->getDownloadDirectory().c_str()));
+	QFileDialog dialog;
+	dialog.setSidebarUrls(directories);
+	dialog.setFileMode(QFileDialog::AnyFile);
+	dialog.setDirectory(QString(info.path.c_str()));
+	dialog.exec();
 }
 
 void TransfersDialog::clearcompleted()

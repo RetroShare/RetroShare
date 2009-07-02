@@ -66,9 +66,13 @@ class TransfersDialog : public MainPage
 
 		void copyLink();
     void pasteLink();
-    
+
     void rootdecorated();
     void rootisnotdecorated();
+
+    void pauseFileTransfer();
+    void resumeFileTransfer();
+    void openFolderTransfer();
 
 	signals:
 		void playFiles(QStringList files);
@@ -101,6 +105,11 @@ class TransfersDialog : public MainPage
     QAction* pastelinkAct;
     QAction* rootisnotdecoratedAct;
     QAction* rootisdecoratedAct;
+		QAction *pauseAct;
+		QAction *resumeAct;
+		QAction *openfolderAct;
+
+    bool controlTransferFile(uint32_t flags);
 
 		QTreeView *downloadList;
 
