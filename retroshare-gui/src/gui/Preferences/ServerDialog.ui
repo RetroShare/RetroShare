@@ -700,7 +700,7 @@ behind a firewall or a VPN.</string>
              <string>Allow RetroShare to ask my ip to these websites:</string>
             </property>
             <property name="checked">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
            </widget>
           </item>
