@@ -54,7 +54,9 @@
 #define IMAGE_OPENFOLDER			     ":/images/folderopen.png"
 #define IMAGE_OPENFILE			       ":/images/fileopen.png"
 #define IMAGE_STOP			           ":/images/stop.png"
-#define IMAGE_OPENPREVIEW			   ":/images/player_play.png"
+#define IMAGE_OPENPREVIEW			     ":/images/player_play.png"
+#define IMAGE_PREVIEW			         ":/images/preview.png"
+
 
 /** Constructor */
 TransfersDialog::TransfersDialog(QWidget *parent)
@@ -216,7 +218,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
       connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openFolderTransfer()));
 
-      openpreviewAct = new QAction(QIcon(IMAGE_OPENPREVIEW), tr("Open or Preview File"), this);
+      openpreviewAct = new QAction(QIcon(IMAGE_PREVIEW), tr("Open or Preview File"), this);
       connect(openpreviewAct, SIGNAL(triggered()), this, SLOT(openOrPreviewTransfer()));
 
       clearcompletedAct = new QAction(QIcon(IMAGE_CLEARCOMPLETED), tr( "Clear Completed" ), this );
