@@ -54,7 +54,7 @@
 #define IMAGE_OPENFOLDER			     ":/images/folderopen.png"
 #define IMAGE_OPENFILE			       ":/images/fileopen.png"
 #define IMAGE_STOP			           ":/images/stop.png"
-
+#define IMAGE_OPENPREVIEW			   ":/images/player_play.png"
 
 /** Constructor */
 TransfersDialog::TransfersDialog(QWidget *parent)
@@ -203,7 +203,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       		playAct = new QAction(QIcon(IMAGE_PLAY), tr( "Play" ), this );
       		connect( playAct , SIGNAL( triggered() ), this, SLOT( playSelectedTransfer() ) );
 	}
-      
+
       pauseAct = new QAction(QIcon(IMAGE_PAUSE), tr("Pause"), this);
       connect(pauseAct, SIGNAL(triggered()), this, SLOT(pauseFileTransfer()));
 
@@ -212,10 +212,13 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 
 	    cancelAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Cancel" ), this );
       connect( cancelAct , SIGNAL( triggered() ), this, SLOT( cancel() ) );
-      
+
       openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
       connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openFolderTransfer()));
-      
+
+      openpreviewAct = new QAction(QIcon(IMAGE_OPENPREVIEW), tr("Open or Preview File"), this);
+      connect(openpreviewAct, SIGNAL(triggered()), this, SLOT(openOrPreviewTransfer()));
+
       clearcompletedAct = new QAction(QIcon(IMAGE_CLEARCOMPLETED), tr( "Clear Completed" ), this );
       connect( clearcompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
 
@@ -246,6 +249,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       contextMnu.addAction( cancelAct);
       contextMnu.addSeparator();
       contextMnu.addAction( openfolderAct);
+      contextMnu.addAction( openpreviewAct);
       contextMnu.addSeparator();
       contextMnu.addAction( clearcompletedAct);
       contextMnu.addSeparator();
@@ -886,12 +890,10 @@ void TransfersDialog::pasteLink()
     }
 }
 
-
-bool TransfersDialog::controlTransferFile(uint32_t flags)
+void TransfersDialog::getIdOfSelectedItems(QList<QStandardItem *>& items)
 {
-	bool result = false;
+	items.clear();
 
-	/* scan selected transfer files or it's peers */
 	int i, imax = DLListModel->rowCount();
 	for (i = 0; i < imax; i++) {
 		bool isParentSelected = false;
@@ -917,8 +919,20 @@ bool TransfersDialog::controlTransferFile(uint32_t flags)
 		/* if transfered file or it's peers are selected control it*/
 		if (isParentSelected || isChildSelected) {
 			QStandardItem *id = DLListModel->item(i, ID);
-			result = rsFiles->FileControl(id->data(Qt::DisplayRole).toString().toStdString(), flags);
+			items.append(id);
 		}
+	}
+}
+
+bool TransfersDialog::controlTransferFile(uint32_t flags)
+{
+	bool result = true;
+
+	QList<QStandardItem *> items;
+	QList<QStandardItem *>::iterator it;
+	getIdOfSelectedItems(items);
+	for (it = items.begin(); it != items.end(); it ++) {
+		result &= rsFiles->FileControl((*it)->data(Qt::DisplayRole).toString().toStdString(), flags);
 	}
 
 	return result;
@@ -940,49 +954,50 @@ void TransfersDialog::resumeFileTransfer()
 	}
 }
 
-void TransfersDialog::openFolderTransfer()
+void TransfersDialog::openTransfer(bool isFolder)
 {
 	FileInfo info;
 
-	/* scan selected transfer files or it's peers */
-	int i, imax = DLListModel->rowCount();
-	for (i = 0; i < imax; i++) {
-		bool isParentSelected = false;
-		bool isChildSelected = false;
+	QList<QStandardItem *> items;
+	QList<QStandardItem *>::iterator it;
+	getIdOfSelectedItems(items);
+	for (it = items.begin(); it != items.end(); it ++) {
+		if (!rsFiles->FileDetails((*it)->data(Qt::DisplayRole).toString().toStdString(), RS_FILE_HINTS_DOWNLOAD, info)) continue;
+		break;
+	}
 
-		QStandardItem *parent = DLListModel->item(i);
-		if (!parent) continue;
-		QModelIndex pindex = parent->index();
-		if (selection->isSelected(pindex)) {
-			isParentSelected = true;
-		} else {
-			int j, jmax = parent->rowCount();
-			for (j = 0; j < jmax && !isChildSelected; j++) {
-				QStandardItem *child = parent->child(j);
-				if (!child) continue;
-				QModelIndex cindex = child->index();
-				if (selection->isSelected(cindex)) {
-					isChildSelected = true;
-				}
-			}
+	/* make path for downloaded or downloading files */
+	QFileInfo qinfo;
+	std::string path;
+	if (info.downloadStatus == FT_STATE_COMPLETE) {
+		path = rsFiles->getDownloadDirectory();
+		if (!isFolder) {
+			path = path + "/" + info.fname;
 		}
-
-		/* retain file info for first file which is selected or has selected peers */
-		if (isParentSelected || isChildSelected) {
-			QStandardItem *id = DLListModel->item(i, ID);
-			if (!rsFiles->FileDetails(id->data(Qt::DisplayRole).toString().toStdString(), RS_FILE_HINTS_DOWNLOAD, info)) continue;
-			break;
+	} else {
+		path = rsFiles->getPartialsDirectory();
+		if (!isFolder) {
+			path = path + "/" + info.hash;
 		}
 	}
 
-	QList<QUrl> directories;
-	directories << QUrl::fromLocalFile(QString(rsFiles->getPartialsDirectory().c_str()));
-	directories << QUrl::fromLocalFile(QString(rsFiles->getDownloadDirectory().c_str()));
-	QFileDialog dialog;
-	dialog.setSidebarUrls(directories);
-	dialog.setFileMode(QFileDialog::AnyFile);
-	dialog.setDirectory(QString(info.path.c_str()));
-	dialog.exec();
+	/* open or preview them with a suitable application */
+	qinfo.setFile(path.c_str());
+	if (qinfo.exists()) {
+		if (!QDesktopServices::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
+			std::cerr << "openTransfer(): can't open file " << path << std::endl;
+		}
+	}
+}
+
+void TransfersDialog::openFolderTransfer()
+{
+	openTransfer(true);
+}
+
+void TransfersDialog::openOrPreviewTransfer()
+{
+	openTransfer(false);
 }
 
 void TransfersDialog::clearcompleted()
