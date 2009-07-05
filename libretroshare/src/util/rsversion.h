@@ -10,7 +10,7 @@
 
 #include <string>
 
-#define VERSION "0.4.13a"
+#define VERSION "0.4.13d"
 
 namespace RsUtil {
 

@@ -1,3 +1,85 @@
+Changes for v0.4.13d
+*
+*
+* Added open or preview downloading files with a suitable application
+* Changend reorder transfer context menu
+* Added pause, resume and open folder actions added in context menu for Downloads
+* Added exchange of what version of retroshare our friends are using.
+* Restored backward compatibility in p3disc.
+
+Changes for v0.4.13c
+
+* Changed the order of upnp/stun and extaddrFinder to limit wrong analysis of firewalled situation
+* Bug fix about not acconting identical tunnels appropriately
+* Added missing continue which caused sigsegv
+* Added removal of turtle handling when canceling/ending a file transfer.
+* Added function for properly removing handled file hashes (turtle)
+* Made turtle tunnel ids asymetric
+* Cleaned up the documentation in p3turtle.h
+* Update tunnel time stamp only *on the way back* to avoid unsuccessful requests to update a timestamp.
+* Implemented persistence of which hashes are to be handled.
+* Fixed bug when storing incoming and partials directory
+* Added suppressed file download memory leak
+* Added new computing for download and upload rate. No more indiv rate settings
+* Added turtle tunnel management
+* Added delete autostart functionality when uninstall RetroShare on windows
+* Added functionality when collapse tree change treeicon
+* Added status icon in the name field of download peers 
+* Added view functionality to can set root decorated or not decorated for Downloads list.
+* Added integration of filetype icons on downloading files
+* First commit for the turtle download. It works without perturbating RS traffic, but still needs some (internal) smoothing
+* switched pgp password to encrypted entry
+* corrected NetworkDialog / NetworkView to use validLvl instead of trustLvl.
+* Major bugfixes to get PGP authentication finished.
+* p3disc now exchanges "Issuer" (pgp) certificates as well.
+* additional types for rsdiscitems.h
+* Bug Fix for NULL packet in p3service.cc
+* Allow unauthed SSL certificates to be added in AuthSSL - otherwise cant add new friends!
+* Only save authed SSL certificates.
+* Fixed ref/unref of PGP keys in AuthGPG
+* Added Mutex protection to AuthGPG
+* Added PGP reloading when key is imported, or signed.
+* Fixed PGP key signing.
+* Added Additional field validLvl to RsPeerDetails.
+* Corrected bug in connectFriendWizard gui
+
+Changes for v0.4.13b
+
+* Minor changes required to get the gui working with PGP, 
+* Improved NetworkView to show signatures, and friends.
+* Addition of openpgp support!
+* Added switch trayicon if online count is 0 or bigger
+* Added for FileTransfer: line is click-able, when collapsed it displays all download peers
+* Added for FileTransfer: sources column shows number of peers as online (offline)
+* Added for FileTransfer: name column for root/peer shows filename/peername
+* Added proper notification for network list update.
+* Added a make friend with friends of my friends option in the connection wizard.
+* Added Copy/Paste/Send retroshare//: file urls/links
+* Restored file recommendation feature. Improved it a little.
+* Corrected upload/download status in upload transfers
+* Disabled auto-login for non windows systems.
+* Suppressed Settings/ directory, as it_s not used at all
+* Suppressed unused smplayer action from left bar
+* set tooltip for OK Button
+* Added smooth avatar scaling
+* Setup connection so that deny friend in peers dialog updates the network view.
+* Changed popup fchat focus for typingnotification
+* Fixed don't send the extrafil link when SubFileItem is cancel (ERROR mode). Improve chat url parsing.
+* Fixed set the SubFileItem in error mode when cancelling from the GUI
+* Added a missing return after deletion of membio in case of fail read (error handling)
+* Suppressed double item deletion that happens rarely (error handling case)
+* Added More alternative colours to NetworkView.
+* Added tooltip for add file button
+* Fixed the history problem with SearchDialog
+* Refuse directory drop for extrafile
+* Added the drag'n drop file to popup chat, still a bug when adding a directory
+* Enabled double click download feature for SearchDialog
+* Enabled reseting keywords in SearchDialog
+* Enabled translation for STATUS strings
+* Fixed NetworkView lets get refresh the graph at rs start too
+* Fixed startMinized now it works
+* Enabled for the MessageBox'es translations support
+
 Changes for v0.4.13a
 
 * Merged peer detail dialogs from network and friends tab
