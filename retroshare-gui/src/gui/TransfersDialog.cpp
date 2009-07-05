@@ -253,9 +253,9 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       contextMnu.addAction( resumeAct);
       contextMnu.addAction( cancelAct);
       contextMnu.addSeparator();
-      contextMnu.addAction( openfolderAct);
       contextMnu.addAction( openfileAct);
       contextMnu.addAction( previewfileAct);
+      contextMnu.addAction( openfolderAct);
       contextMnu.addSeparator();
       contextMnu.addAction( clearcompletedAct);
       contextMnu.addSeparator();
