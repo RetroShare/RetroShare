@@ -156,17 +156,18 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString DESC_sec_autostart ${LANG_SIMPCHINESE} "启动时自动运行和登录"
     LangString LANGUAGEID ${LANG_SIMPCHINESE} "2052"
     
-    LangString sec_main ${LANG_POLISH} "Program Files"
-    LangString sec_data ${LANG_POLISH} "Program Skins"
+    LangString sec_main ${LANG_POLISH} "Pliki programu"
+    LangString sec_data ${LANG_POLISH} "Skórki"
     LangString sec_shortcuts ${LANG_POLISH} "Skróty"
-    LangString sec_link ${LANG_POLISH} "File Association"
-    LangString sec_autostart ${LANG_POLISH} "Auto Startup"
+    LangString sec_link ${LANG_POLISH} "Skojarz pliki"
+    LangString sec_autostart ${LANG_POLISH} "Automatyczne uruchamianie"
     LangString DESC_sec_main ${LANG_POLISH} "Instaluje pliki programu RetroShare"
-    LangString DESC_sec_data ${LANG_POLISH} "Installs RetroShare Skins"
-    LangString DESC_sec_shortcuts ${LANG_ENGLISH} "Create RetroShare shortcut icons."
-    LangString DESC_sec_link ${LANG_POLISH} "Associate RetroShare with .pqi file extension"
-    LangString DESC_sec_autostart ${LANG_POLISH} "Auto-Run and Login at Startup"
+    LangString DESC_sec_data ${LANG_POLISH} "Instaluje skórki programu RetroShare"
+    LangString DESC_sec_shortcuts ${LANG_POLISH} "Utwórz ikony skrótów na pulpicie, w menu start oraz na pasku szybkiego uruchamiania."
+    LangString DESC_sec_link ${LANG_POLISH} "Skojarz pliki o rozszerzeniu .pqi z RetroShare"
+    LangString DESC_sec_autostart ${LANG_POLISH} "Uruchom i zaloguj podczas startu systemu"
     LangString LANGUAGEID ${LANG_POLISH} "1045"
+    
     
 
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
