@@ -64,6 +64,7 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
   LicenseLangString myLicenseData 1036 "license\license-FR.txt"
   LicenseLangString myLicenseData 1055 "license\license-TR.txt"
   LicenseLangString myLicenseData 2052 "license\license.txt"
+  LicenseLangString myLicenseData 1045 "license\license.txt"
 
   LicenseData $(myLicenseData)
 
@@ -85,6 +86,8 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
 !insertmacro MUI_LANGUAGE French
 !insertmacro MUI_LANGUAGE Turkish
 !insertmacro MUI_LANGUAGE SimpChinese
+!insertmacro MUI_LANGUAGE Polish
+
 
   ;Component-selection page
     ;Titles
@@ -152,6 +155,18 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString DESC_sec_link ${LANG_SIMPCHINESE} "关联.pqi扩展名"
     LangString DESC_sec_autostart ${LANG_SIMPCHINESE} "启动时自动运行和登录"
     LangString LANGUAGEID ${LANG_SIMPCHINESE} "2052"
+    
+    LangString sec_main ${LANG_POLISH} "Program Files"
+    LangString sec_data ${LANG_POLISH} "Program Skins"
+    LangString sec_shortcuts ${LANG_POLISH} "Skróty"
+    LangString sec_link ${LANG_POLISH} "File Association"
+    LangString sec_autostart ${LANG_POLISH} "Auto Startup"
+    LangString DESC_sec_main ${LANG_POLISH} "Instaluje pliki programu RetroShare"
+    LangString DESC_sec_data ${LANG_POLISH} "Installs RetroShare Skins"
+    LangString DESC_sec_shortcuts ${LANG_ENGLISH} "Create RetroShare shortcut icons."
+    LangString DESC_sec_link ${LANG_POLISH} "Associate RetroShare with .pqi file extension"
+    LangString DESC_sec_autostart ${LANG_POLISH} "Auto-Run and Login at Startup"
+    LangString LANGUAGEID ${LANG_POLISH} "1045"
     
 
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
@@ -366,6 +381,7 @@ LangString ^UninstallLink ${LANG_GERMAN} "Deinstallieren"
 LangString ^UninstallLink ${LANG_TURKISH} "Kald�r"
 LangString ^UninstallLink ${LANG_FRENCH} "Désinstaller"
 LangString ^UninstallLink ${LANG_SIMPCHINESE} "卸载"
+LangString ^UninstallLink ${LANG_POLISH} "Odinstaluj"
 
 
 
