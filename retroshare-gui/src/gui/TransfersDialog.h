@@ -73,7 +73,8 @@ class TransfersDialog : public MainPage
     void pauseFileTransfer();
     void resumeFileTransfer();
     void openFolderTransfer();
-    void openOrPreviewTransfer();
+    void openTransfer();
+    void previewTransfer();
 
 	signals:
 		void playFiles(QStringList files);
@@ -109,11 +110,11 @@ class TransfersDialog : public MainPage
 		QAction *pauseAct;
 		QAction *resumeAct;
 		QAction *openfolderAct;
-		QAction *openpreviewAct;
+		QAction *openfileAct;
+		QAction *previewfileAct;
 
 	void getIdOfSelectedItems(QList<QStandardItem *>& items);
     bool controlTransferFile(uint32_t flags);
-    void openTransfer(bool isFolder);
 
 		QTreeView *downloadList;
 

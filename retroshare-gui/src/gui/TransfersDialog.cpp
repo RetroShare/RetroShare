@@ -41,6 +41,7 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsdisc.h"
 #include <algorithm>
+#include "util/misc.h"
 
 /* Images for context menu icons */
 #define IMAGE_INFO                 ":/images/fileinfo.png"
@@ -54,7 +55,6 @@
 #define IMAGE_OPENFOLDER			     ":/images/folderopen.png"
 #define IMAGE_OPENFILE			       ":/images/fileopen.png"
 #define IMAGE_STOP			           ":/images/stop.png"
-#define IMAGE_OPENPREVIEW			     ":/images/player_play.png"
 #define IMAGE_PREVIEW			         ":/images/preview.png"
 
 
@@ -218,8 +218,11 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
       connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openFolderTransfer()));
 
-      openpreviewAct = new QAction(QIcon(IMAGE_PREVIEW), tr("Open or Preview File"), this);
-      connect(openpreviewAct, SIGNAL(triggered()), this, SLOT(openOrPreviewTransfer()));
+      openfileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Open File"), this);
+      connect(openfileAct, SIGNAL(triggered()), this, SLOT(openTransfer()));
+
+      previewfileAct = new QAction(QIcon(IMAGE_PREVIEW), tr("Preview File"), this);
+      connect(previewfileAct, SIGNAL(triggered()), this, SLOT(previewTransfer()));
 
       clearcompletedAct = new QAction(QIcon(IMAGE_CLEARCOMPLETED), tr( "Clear Completed" ), this );
       connect( clearcompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
@@ -251,7 +254,8 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       contextMnu.addAction( cancelAct);
       contextMnu.addSeparator();
       contextMnu.addAction( openfolderAct);
-      contextMnu.addAction( openpreviewAct);
+      contextMnu.addAction( openfileAct);
+      contextMnu.addAction( previewfileAct);
       contextMnu.addSeparator();
       contextMnu.addAction( clearcompletedAct);
       contextMnu.addSeparator();
@@ -956,7 +960,7 @@ void TransfersDialog::resumeFileTransfer()
 	}
 }
 
-void TransfersDialog::openTransfer(bool isFolder)
+void TransfersDialog::openFolderTransfer()
 {
 	FileInfo info;
 
@@ -972,34 +976,86 @@ void TransfersDialog::openTransfer(bool isFolder)
 	QFileInfo qinfo;
 	std::string path;
 	if (info.downloadStatus == FT_STATE_COMPLETE) {
-		path = rsFiles->getDownloadDirectory();
-		if (!isFolder) {
-			path = path + "/" + info.fname;
-		}
+		path = info.path;
 	} else {
 		path = rsFiles->getPartialsDirectory();
-		if (!isFolder) {
-			path = path + "/" + info.hash;
+	}
+
+	/* open folder with a suitable application */
+	qinfo.setFile(path.c_str());
+	if (qinfo.exists() && qinfo.isDir()) {
+		if (!QDesktopServices::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
+			std::cerr << "openFolderTransfer(): can't open folder " << path << std::endl;
 		}
+	}
+}
+
+void TransfersDialog::previewTransfer()
+{
+	FileInfo info;
+
+	QList<QStandardItem *> items;
+	QList<QStandardItem *>::iterator it;
+	getIdOfSelectedItems(items);
+	for (it = items.begin(); it != items.end(); it ++) {
+		if (!rsFiles->FileDetails((*it)->data(Qt::DisplayRole).toString().toStdString(), RS_FILE_HINTS_DOWNLOAD, info)) continue;
+		break;
+	}
+
+	size_t pos = info.fname.find_last_of('.');
+	if (pos == -1) return;	/* can't identify type of file */
+
+	/* check if the file is a media file */
+	if (!misc::isPreviewable(info.fname.substr(pos + 1).c_str())) return;
+
+	/* make path for downloaded or downloading files */
+	QFileInfo qinfo;
+	std::string path;
+	if (info.downloadStatus == FT_STATE_COMPLETE) {
+		path = info.path + "/" + info.fname;
+	} else {
+		path = rsFiles->getPartialsDirectory() + "/" + info.hash;
 	}
 
 	/* open or preview them with a suitable application */
 	qinfo.setFile(path.c_str());
 	if (qinfo.exists()) {
 		if (!QDesktopServices::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
-			std::cerr << "openTransfer(): can't open file " << path << std::endl;
+			std::cerr << "previewTransfer(): can't preview file " << path << std::endl;
 		}
 	}
 }
 
-void TransfersDialog::openFolderTransfer()
+void TransfersDialog::openTransfer()
 {
-	openTransfer(true);
-}
+	FileInfo info;
 
-void TransfersDialog::openOrPreviewTransfer()
-{
-	openTransfer(false);
+	QList<QStandardItem *> items;
+	QList<QStandardItem *>::iterator it;
+	getIdOfSelectedItems(items);
+	for (it = items.begin(); it != items.end(); it ++) {
+		if (!rsFiles->FileDetails((*it)->data(Qt::DisplayRole).toString().toStdString(), RS_FILE_HINTS_DOWNLOAD, info)) continue;
+		break;
+	}
+
+	/* make path for downloaded or downloading files */
+	std::string path;
+	if (info.downloadStatus == FT_STATE_COMPLETE) {
+		path = info.path + "/" + info.fname;
+
+		/* open file with a suitable application */
+		QFileInfo qinfo;
+		qinfo.setFile(path.c_str());
+		if (qinfo.exists()) {
+			if (!QDesktopServices::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
+				std::cerr << "openTransfer(): can't open file " << path << std::endl;
+			}
+		}
+	} else {
+		/* rise a message box for incompleted download file */
+		QMessageBox::information(this, tr("Open Transfer"),
+				tr("File %1 is not completed. If it is a media file, try to preview it.").arg(info.fname.c_str()));
+	}
 }
 
 void TransfersDialog::clearcompleted()
