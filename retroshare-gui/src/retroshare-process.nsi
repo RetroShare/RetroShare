@@ -4,7 +4,7 @@
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.4.12c"
+!define VERSION "0.4.13d"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
 
 
@@ -48,7 +48,7 @@ VAR KILLEXENAME
 
 ; !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of RetroShare. \r\n\r\nIt is recommended that you close all other applications before starting Setup. This will make it possible to update relevant system files without havinf to reboot your computer. \r\n\r\nIMPORTANT: Ensure that RetroShare is NOT RUNNING before continuing (you can exit from the taskbar menu), otherwise the installer cannot update the executables, and the installation will fail. \r\n\r\nClick Next to continue. "
 
-!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of RetroShare. \r\n\r\nIMPORTANT: Ensure that RetroShare is NOT RUNNING before continuing (you can exit from the taskbar menu), otherwise the installer cannot update the executables, and the installation will fail. \r\n\r\nClick Next to continue. "
+;!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of RetroShare. \r\n\r\nIMPORTANT: Ensure that RetroShare is NOT RUNNING before continuing (you can exit from the taskbar menu), otherwise the installer cannot update the executables, and the installation will fail. \r\n\r\nClick Next to continue. "
 
 
 ; Defines the un-/installer logo of RetroShare
@@ -67,7 +67,10 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
  
   LicenseLangString myLicenseData 1033 "license\license.txt"
   LicenseLangString myLicenseData 1031 "license\license-GER.txt"
+  LicenseLangString myLicenseData 1036 "license\license-FR.txt"
   LicenseLangString myLicenseData 1055 "license\license-TR.txt"
+  LicenseLangString myLicenseData 2052 "license\license.txt"
+  LicenseLangString myLicenseData 1045 "license\license.txt"
 
   LicenseData $(myLicenseData)
 
@@ -82,56 +85,91 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
 !insertmacro MUI_UNPAGE_INSTFILES
 
 # Installer languages
+!define MUI_LANGDLL_ALLLANGUAGES
+
 !insertmacro MUI_LANGUAGE English
 !insertmacro MUI_LANGUAGE German
+!insertmacro MUI_LANGUAGE French
 !insertmacro MUI_LANGUAGE Turkish
+!insertmacro MUI_LANGUAGE SimpChinese
+!insertmacro MUI_LANGUAGE Polish
 
   ;Component-selection page
     ;Titles
     
     LangString sec_main ${LANG_ENGLISH} "Program Files"
     LangString sec_data ${LANG_ENGLISH} "Program Skins"
-    LangString sec_mplayer ${LANG_ENGLISH} "MPlayer Engine"
     LangString sec_shortcuts ${LANG_ENGLISH} "Shortcuts"
     LangString sec_link ${LANG_ENGLISH} "File Association"
     LangString sec_autostart ${LANG_ENGLISH} "Auto Startup"
     LangString DESC_sec_main ${LANG_ENGLISH} "Installs the RetroShare program files."
     LangString DESC_sec_data ${LANG_ENGLISH} "Installs RetroShare Skins"
-    LangString DESC_sec_mplayer ${LANG_ENGLISH} "Insalls MPlayer required for ReroShare's SMPlayer"
     LangString DESC_sec_shortcuts ${LANG_ENGLISH} "Create RetroShare shortcut icons."
     LangString DESC_sec_link ${LANG_ENGLISH} "Associate RetroShare with .pqi file extension"
     LangString DESC_sec_autostart ${LANG_ENGLISH} "Auto-Run and Login at Startup"
     LangString LANGUAGEID ${LANG_ENGLISH} "1033"
 
+    LangString sec_main ${LANG_FRENCH} "RetroShare"
+    LangString sec_data ${LANG_FRENCH} "Programme de Skins"
+    LangString sec_shortcuts ${LANG_FRENCH} "Raccourcis"
+    LangString sec_link ${LANG_FRENCH} "RetroShare fichiers Association"
+    LangString sec_startmenu ${LANG_FRENCH} "Raccourcis du menu Démarrer"
+    LangString sec_autostart ${LANG_FRENCH} "Démarrage automatique"
+    LangString DESC_sec_main ${LANG_FRENCH} "Installe les fichiers du programme."
+    LangString DESC_sec_data ${LANG_FRENCH} "Installe RetroShare Skins"
+    LangString DESC_sec_startmenu ${LANG_FRENCH} "Crée les raccourcis du menu Démarrer"
+    LangString DESC_sec_shortcuts ${LANG_FRENCH} "Crée une icône sur le bureau."
+    LangString DESC_sec_link ${LANG_FRENCH} "Associate RetroShare with .pqi file extension"
+    LangString DESC_sec_autostart ${LANG_FRENCH} "Run and Auto-connexion au démarrage"
+    LangString LANGUAGEID ${LANG_FRENCH} "1036"
     
     LangString sec_main ${LANG_GERMAN} "Programmdateien"
     LangString sec_data ${LANG_GERMAN} "Skins f�r das Programm"
-    LangString sec_mplayer ${LANG_GERMAN} "MPlayer "
     LangString sec_shortcuts ${LANG_GERMAN} "Shortcuts"
     LangString sec_link ${LANG_GERMAN} "Dateiverkn�pfungen"
     LangString sec_autostart ${LANG_GERMAN} "Auto Startup"
-	LangString DESC_sec_main ${LANG_GERMAN} "Installiert die erforderlichen Programmdateien."
-	LangString DESC_sec_data ${LANG_GERMAN} "Installiert RetroShare Skins"
-	LangString DESC_sec_mplayer ${LANG_GERMAN} "Installiert MPlayer das f�r SMPlayer erforderlich ist"
+    LangString DESC_sec_main ${LANG_GERMAN} "Installiert die erforderlichen Programmdateien."
+    LangString DESC_sec_data ${LANG_GERMAN} "Installiert RetroShare Skins"
     LangString DESC_sec_shortcuts ${LANG_GERMAN} "Erstellt eine RetroShare Verkn�pfung im Startmen�, Desktop oder im Schnellstarter."
     LangString DESC_sec_link ${LANG_GERMAN} "RetroShare mit .pqi Dateien verkn�pfen"
     LangString DESC_sec_autostart ${LANG_GERMAN} "Beim Neustart automatisch RetroShare starten und sich anmelden"
     LangString LANGUAGEID ${LANG_GERMAN} "1031"
     
-    
     LangString sec_main ${LANG_TURKISH} "Program Dosyalar�"
     LangString sec_data ${LANG_TURKISH} "Program Skinleri"
-    LangString sec_mplayer ${LANG_TURKISH} "MPlayer "
     LangString sec_shortcuts ${LANG_TURKISH} "Shortcut'lar"
     LangString sec_link ${LANG_TURKISH} ".pqi Dosya Kaydet"
     LangString sec_autostart ${LANG_TURKISH} "Otomatik calistir ve baglan"
-	LangString DESC_sec_main ${LANG_TURKISH} "Program dosyalar�n� kurar."
-	LangString DESC_sec_data ${LANG_TURKISH} "RetroShare Skin'leri kurar"
-	LangString DESC_sec_mplayer ${LANG_TURKISH} "Mplayer SMPlayer icin gereklidir"
+    LangString DESC_sec_main ${LANG_TURKISH} "Program dosyalar�n� kurar."
+    LangString DESC_sec_data ${LANG_TURKISH} "RetroShare Skin'leri kurar"
     LangString DESC_sec_shortcuts ${TURKISH} "Shortcut yap Start menu , Desktop veya Quicklaunchbar icin."
     LangString DESC_sec_link ${LANG_TURKISH} "RetroShare .pqi almas� i�in kaydettirir"
     LangString DESC_sec_autostart ${LANG_TURKISH} "Isletim sistemi acildiginda Otomatik olarak calistir ve baglan"
     LangString LANGUAGEID ${LANG_TURKISH} "1055"
+    
+    LangString sec_main ${LANG_SIMPCHINESE} "程序文件"
+    LangString sec_data ${LANG_SIMPCHINESE} "程序皮肤"
+    LangString sec_shortcuts ${LANG_SIMPCHINESE} "快捷方式"
+    LangString sec_link ${LANG_SIMPCHINESE} "RetroShare文件关联"
+    LangString sec_autostart ${LANG_SIMPCHINESE} "自动启动"
+    LangString DESC_sec_main ${LANG_SIMPCHINESE} "安装RetroShare程序"
+    LangString DESC_sec_data ${LANG_SIMPCHINESE} "安装RetroShare皮肤"
+    LangString DESC_sec_shortcuts ${LANG_SIMPCHINESE} "建RetroShare快捷方式"
+    LangString DESC_sec_link ${LANG_SIMPCHINESE} "关联.pqi扩展名"
+    LangString DESC_sec_autostart ${LANG_SIMPCHINESE} "启动时自动运行和登录"
+    LangString LANGUAGEID ${LANG_SIMPCHINESE} "2052"
+    
+    LangString sec_main ${LANG_POLISH} "Pliki programu"
+    LangString sec_data ${LANG_POLISH} "SkÃ³rki"
+    LangString sec_shortcuts ${LANG_POLISH} "SkrÃ³ty"
+    LangString sec_link ${LANG_POLISH} "Skojarz pliki"
+    LangString sec_autostart ${LANG_POLISH} "Automatyczne uruchamianie"
+    LangString DESC_sec_main ${LANG_POLISH} "Instaluje pliki programu RetroShare"
+    LangString DESC_sec_data ${LANG_POLISH} "Instaluje skÃ³rki programu RetroShare"
+    LangString DESC_sec_shortcuts ${LANG_POLISH} "UtwÃ³rz ikony skrÃ³tÃ³w na pulpicie, w menu start oraz na pasku szybkiego uruchamiania."
+    LangString DESC_sec_link ${LANG_POLISH} "Skojarz pliki o rozszerzeniu .pqi z RetroShare"
+    LangString DESC_sec_autostart ${LANG_POLISH} "Uruchom i zaloguj podczas startu systemu"
+    LangString LANGUAGEID ${LANG_POLISH} "1045"
     
 
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
@@ -231,18 +269,7 @@ FunctionEnd
 ; This function automatically uninstalls older versions.
 ; It is largely copied from: 
 ; http://nsis.sourceforge.net/archive/viewpage.php?pageid=326
-Function .onInit
 
-    InitPluginsDir
-    Push $R1
-    File /oname=$PLUGINSDIR\spltmp.bmp "gui\images\splash.bmp"
-    advsplash::show 1200 1000 1000 -1 $PLUGINSDIR\spltmp
-    Pop $R1
-    Pop $R1
-    !insertmacro MUI_LANGDLL_DISPLAY
-
-
-FunctionEnd
 
 Section $(sec_main) sec_main
 
@@ -257,14 +284,15 @@ Section $(sec_main) sec_main
 	
   ; Set Section Files and Shortcuts
   SetOutPath "$INSTDIR\"
-  File /r "RetroShare.exe"
-  File /r "D:\MinGW\bin\mingwm10.dll"
+  File /r "release\RetroShare.exe"
+  File /r "D:\Qt\2009.02\mingw\bin\mingwm10.dll"
+  File /r "D:\Qt\2009.02\qt\bin\QtCore4.dll"
+  File /r "D:\Qt\2009.02\qt\bin\QtGui4.dll"
+  File /r "D:\Qt\2009.02\qt\bin\QtNetwork4.dll"
+  File /r "D:\Qt\2009.02\qt\bin\QtXml4.dll"
+  File /r "D:\Qt\2009.02\qt\bin\QtScript4.dll"
   File /r "pthreadGCE2.dll"
-  File /r "D:\Qt\4.4.3\bin\QtCore4.dll"
-  File /r "D:\Qt\4.4.3\bin\QtGui4.dll"
-  File /r "D:\Qt\4.4.3\bin\QtNetwork4.dll"
-  File /r "D:\Qt\4.4.3\bin\QtXml4.dll"
-  File /r "D:\Qt\4.4.3\bin\QtScript4.dll"
+  File /r "pthreadGC2d.dll"
   File /r "changelog.txt"
   
 
@@ -296,21 +324,6 @@ Section  $(sec_data) sec_data
   SetOutPath "$INSTDIR\style\"
   File /r style\*.*   
 	
-SectionEnd
-
-Section $(sec_mplayer) sec_mplayer
-
-  ;Set Section required
-  ;SectionIn RO
-
-  ; Set Section properties
-  SetOverwrite on
-	
-  ; Set Section Files and Shortcuts
-  SetOutPath "$INSTDIR\mplayer"
-  File /r "mplayer\*.*"
-
-
 SectionEnd
 
 Section $(sec_link) sec_link
@@ -381,7 +394,6 @@ SectionEnd
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${sec_main} $(DESC_sec_main)
     !insertmacro MUI_DESCRIPTION_TEXT ${sec_data} $(DESC_sec_data)
-    !insertmacro MUI_DESCRIPTION_TEXT ${sec_mplayer} $(DESC_sec_mplayer)
     !insertmacro MUI_DESCRIPTION_TEXT ${sec_shortcuts} $(DESC_sec_shortcuts)
     !insertmacro MUI_DESCRIPTION_TEXT ${sec_link} $(DESC_sec_link)
 	!insertmacro MUI_DESCRIPTION_TEXT ${sec_autostart} $(DESC_sec_autostart)		
@@ -429,7 +441,15 @@ Section "Uninstall"
   ; Don't remove the directory, otherwise
   ; we lose the XPGP keys.
   ; Should make this an option though...
-  Delete $APPDATA\RetroShare\kadc.ini
+  Delete "$APPDATA\${APPNAME}\kadc.ini"
+  Delete "$APPDATA\${APPNAME}\*.cfg"
+  Delete "$APPDATA\${APPNAME}\*.conf"
+  Delete "$APPDATA\${APPNAME}\*.log-save"
+  Delete "$APPDATA\${APPNAME}\*.log"
+  Delete "$APPDATA\${APPNAME}\*.failed"
+
+  RMDir /r "$APPDATA\${APPNAME}\cache"
+  RMDir /r "$APPDATA\${APPNAME}\Partials"
 
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\${APPNAME}\*.*"
@@ -439,27 +459,30 @@ Section "Uninstall"
   
   ; Remove Quicklaunch shortcut
   Delete "$QUICKLAUNCH\${APPNAME}.lnk"
+  
+  ; Remove Autstart 
+  Delete "$SMSTARTUP\${APPNAME}.lnk"
 
   ; Remove directories used
   RMDir "$SMPROGRAMS\${APPNAME}"
-  RMDir "$INSTDIR"
-  RMDir "$INSTDIR\mplayer"
-  RMDir "$INSTDIR\smplayer"
-  RMDir "$INSTDIR\qss"
+  RMDir /r "$INSTDIR"
+  RMDir /r "$INSTDIR\qss"
+  RMDir /r "$INSTDIR\emoticons"
+  RMDir /r "$INSTDIR\style"
 
 SectionEnd
 
-#Function .onInit
+Function .onInit
 
-#    InitPluginsDir
-#    Push $R1
-#    File /oname=$PLUGINSDIR\spltmp.bmp "gui\images\splash.bmp"
-#    advsplash::show 1200 1000 1000 -1 $PLUGINSDIR\spltmp
-#    Pop $R1
-#    Pop $R1
-#   !insertmacro MUI_LANGDLL_DISPLAY
+    InitPluginsDir
+    Push $R1
+    File /oname=$PLUGINSDIR\spltmp.bmp "gui\images\splash.bmp"
+    advsplash::show 1200 1000 1000 -1 $PLUGINSDIR\spltmp
+    Pop $R1
+    Pop $R1
+   !insertmacro MUI_LANGDLL_DISPLAY
 
-#FunctionEnd
+FunctionEnd
 
 
 # Installer Language Strings
@@ -468,6 +491,9 @@ SectionEnd
 LangString ^UninstallLink ${LANG_ENGLISH} "Uninstall"
 LangString ^UninstallLink ${LANG_GERMAN} "Deinstallieren"
 LangString ^UninstallLink ${LANG_TURKISH} "Kald�r"
+LangString ^UninstallLink ${LANG_FRENCH} "Désinstaller"
+LangString ^UninstallLink ${LANG_SIMPCHINESE} "卸载"
+LangString ^UninstallLink ${LANG_POLISH} "Odinstaluj"
 
 
 
