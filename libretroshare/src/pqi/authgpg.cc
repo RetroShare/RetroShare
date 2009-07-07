@@ -1652,6 +1652,8 @@ bool GPGAuthMgr::ValidateCertificate(X509 *x509, std::string &peerId)
 	{
 		return getX509id(x509, peerId);
 	}
+	/* be sure to get the id anyway */
+	getX509id(x509, peerId);
 
 	return false;
 }

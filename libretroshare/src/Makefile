@@ -14,6 +14,7 @@ librs:
 	make -C pqi librs
 	make -C	dbase librs
 	make -C	services librs
+	make -C	turtle librs
 	make -C	dht librs
 	make -C	upnp librs
 	make -C	ft librs
@@ -29,6 +30,7 @@ tests:
 	make -C pqi tests
 	make -C	dbase tests
 	make -C	services tests
+	make -C	turtle tests
 	make -C	dht tests
 	make -C	upnp tests
 	make -C	ft tests
@@ -44,6 +46,7 @@ clean:
 	make -C pqi clean
 	make -C	dbase clean
 	make -C	services clean
+	make -C	turtle clean
 	make -C	dht clean
 	make -C	upnp clean
 	make -C	ft clean
@@ -59,6 +62,7 @@ clobber:
 	make -C pqi clobber
 	make -C	dbase clobber
 	make -C	services clobber
+	make -C	turtle clobber
 	make -C	dht clobber
 	make -C	upnp clobber
 	make -C	server clobber
