@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -65,6 +65,8 @@
 #define IMAGE_FRIEND         ":/images/peers_16x16.png"
 #define IMAGE_PROGRESS       ":/images/browse-looking.gif"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
+#define IMAGE_OPENFOLDER	 ":/images/folderopen.png"
+#define IMAGE_OPENFILE		 ":/images/fileopen.png"
 
 const QString Image_AddNewAssotiationForFile = ":/images/kcmsystem24.png";
 
@@ -75,7 +77,7 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
-  
+
 
 
   connect(ui.checkButton, SIGNAL(clicked()), this, SLOT(forceCheck()));
@@ -93,10 +95,10 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 
 
 /*
-  connect( ui.remoteDirTreeView, SIGNAL( itemExpanded( QTreeWidgetItem * ) ), 
+  connect( ui.remoteDirTreeView, SIGNAL( itemExpanded( QTreeWidgetItem * ) ),
 	this, SLOT( checkForLocalDirRequest( QTreeWidgetItem * ) ) );
 
-  connect( ui.localDirTreeWidget, SIGNAL( itemExpanded( QTreeWidgetItem * ) ), 
+  connect( ui.localDirTreeWidget, SIGNAL( itemExpanded( QTreeWidgetItem * ) ),
 	this, SLOT( checkForRemoteDirRequest( QTreeWidgetItem * ) ) );
 */
 
@@ -116,21 +118,21 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   connect( ui.localDirTreeView, SIGNAL( expanded(const QModelIndex & ) ),
   	localModel, SLOT(  expanded(const QModelIndex & ) ) );
 
-  
+
   /* Set header resize modes and initial section sizes  */
-	QHeaderView * l_header = ui.localDirTreeView->header () ;   
+	QHeaderView * l_header = ui.localDirTreeView->header () ;
 	l_header->setResizeMode (0, QHeaderView::Interactive);
 	l_header->setResizeMode (1, QHeaderView::Interactive);
 	l_header->setResizeMode (2, QHeaderView::Interactive);
 	l_header->setResizeMode (3, QHeaderView::Interactive);
-   
+
 	l_header->resizeSection ( 0, 490 );
 	l_header->resizeSection ( 1, 70 );
 	l_header->resizeSection ( 2, 60 );
 	l_header->resizeSection ( 3, 100 );
-	
+
 	/* Set header resize modes and initial section sizes */
-	QHeaderView * r_header = ui.remoteDirTreeView->header () ;   
+	QHeaderView * r_header = ui.remoteDirTreeView->header () ;
 
 	r_header->setResizeMode (0, QHeaderView::Interactive);
 	r_header->setStretchLastSection(false);
@@ -138,13 +140,13 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 	r_header->setResizeMode (1, QHeaderView::Fixed);
 	r_header->setResizeMode (2, QHeaderView::Fixed);
 	r_header->setResizeMode (3, QHeaderView::Fixed);
-	
-   
+
+
 	r_header->resizeSection ( 0, 490 );
 	r_header->resizeSection ( 1, 70 );
 	r_header->resizeSection ( 2, 60 );
 	r_header->resizeSection ( 3, 100 );
-	
+
 	l_header->setHighlightSections(false);
 	r_header->setHighlightSections(false);
 
@@ -196,19 +198,20 @@ void SharedFilesDialog::shareddirtreeviewCostumPopupMenu( QPoint point )
 {
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
-      
+
       downloadAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), this );
       connect( downloadAct , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelected() ) );
-      
+
       copyremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), this );
       connect( copyremotelinkAct , SIGNAL( triggered() ), this, SLOT( copyLinkRemote() ) );
 
       sendremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), this );
       connect( sendremotelinkAct , SIGNAL( triggered() ), this, SLOT( sendremoteLinkTo(  ) ) );
-      
+
+
     //  addMsgAct = new QAction( tr( "Add to Message" ), this );
     //  connect( addMsgAct , SIGNAL( triggered() ), this, SLOT( addMsgRemoteSelected() ) );
-      
+
 
       contextMnu.clear();
       contextMnu.addAction( downloadAct);
@@ -425,7 +428,7 @@ void SharedFilesDialog::recommendFilesTo( std::string rsid )
 	/* create a message */
 	ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
 
-	/* fill it in 
+	/* fill it in
 	 * files are receommended already
 	 * just need to set peers
 	 */
@@ -470,20 +473,20 @@ void SharedFilesDialog::openfile()
 {
   /* call back to the model (which does all the interfacing? */
 
-  std::cerr << "Opening File";
-  std::cerr << std::endl;
+    std::cerr << "SharedFilesDialog::openfile" << std::endl;
 
-  QItemSelectionModel *qism = ui.localDirTreeView->selectionModel();
-  model -> openSelected(qism->selectedIndexes());
-
+	QModelIndexList qmil = ui.localDirTreeView->selectionModel()->selectedIndexes();
+	localModel->openSelected(qmil, false);
 }
 
 
 void SharedFilesDialog::openfolder()
 {
+	std::cerr << "SharedFilesDialog::openfolder" << std::endl;
 
+	QModelIndexList qmil = ui.localDirTreeView->selectionModel()->selectedIndexes();
+	localModel->openSelected(qmil, true);
 }
-
 
 void  SharedFilesDialog::preModDirectories(bool update_local)
 {
@@ -516,7 +519,7 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 			RemoteDirModel::FileNameRole).toString();
 
 	QMenu contextMnu2( this );
-	//      
+	//
 
 	QAction* menuAction = fileAssotiationAction(currentFile) ;
 	//new QAction(QIcon(IMAGE_PLAY), currentFile, this);
@@ -577,21 +580,29 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 
 	}
 	//#endif
-	
+
 	        copylinklocalAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), this );
           connect( copylinklocalAct , SIGNAL( triggered() ), this, SLOT( copyLinkLocal() ) );
 
           sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), this );
           connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( /*std::string rsid*/ ) ) );
 
+	  openfileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Open File"), this);
+	  connect(openfileAct, SIGNAL(triggered()), this, SLOT(openfile()));
 
-	contextMnu2.addAction( menuAction );
-	//contextMnu2.addAction( openfileAct);
-	contextMnu2.addAction( copylinklocalAct);
-  contextMnu2.addAction( sendlinkAct);
-	contextMnu2.addSeparator(); 
-	contextMnu2.addMenu( recMenu);
-	contextMnu2.addMenu( msgMenu);
+	  openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
+	  connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openfolder()));
+
+
+	  contextMnu2.addAction( menuAction );
+	  contextMnu2.addAction( copylinklocalAct);
+	  contextMnu2.addAction( sendlinkAct);
+	  contextMnu2.addSeparator();
+	  contextMnu2.addAction( openfileAct);
+	  contextMnu2.addAction( openfolderAct);
+	  contextMnu2.addSeparator();
+	  contextMnu2.addMenu( recMenu);
+	  contextMnu2.addMenu( msgMenu);
 
 
 	QMouseEvent *mevent2 = new QMouseEvent( QEvent::MouseButtonPress, point,
@@ -643,7 +654,7 @@ SharedFilesDialog::runCommandForFile()
     tsl.append( currentFile );
     QProcess::execute( currentCommand, tsl);
     //QString("%1 %2").arg(currentCommand).arg(currentFile) );
-    
+
 //    QString tmess = "Some command(%1) should be executed here for file %2";
 //    tmess = tmess.arg(currentCommand).arg(currentFile);
 //    QMessageBox::warning(this, tr("RetroShare"), tmess, QMessageBox::Ok);
@@ -666,10 +677,10 @@ SharedFilesDialog::tryToAddNewAssotiation()
         //QSettings settings( qApp->applicationDirPath()+"/sett.ini",
         //                    QSettings::IniFormat);
         settings->beginGroup("FileAssotiations");
-        
+
         QString currType = afad.resultFileType() ;
         QString currCmd = afad.resultCommand() ;
-        
+
         settings->setValue(currType, currCmd);
     }
 }
@@ -677,7 +688,7 @@ SharedFilesDialog::tryToAddNewAssotiation()
 //============================================================================
 /**
  Toggles the Lokal TreeView on and off, changes toggle button text
- 
+
 void SharedFilesDialog::showFrame(bool show)
 {
     if (show) {

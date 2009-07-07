@@ -69,8 +69,8 @@ void RemoteDirModel::treeStyle()
 #endif
      	return false;
      }
-     	
-     if (details.type == DIR_TYPE_FILE) 
+
+     if (details.type == DIR_TYPE_FILE)
      {
 #ifdef RDM_DEBUG
         std::cerr << "lookup FILE -> false";
@@ -123,7 +123,7 @@ void RemoteDirModel::treeStyle()
 #endif
      	return 0;
      }
-	
+
      /* else PERSON/DIR*/
 #ifdef RDM_DEBUG
      std::cerr << "lookup PER/DIR #" << details.count;
@@ -151,7 +151,7 @@ void RemoteDirModel::treeStyle()
 
      /* get the data from the index */
      void *ref = index.internalPointer();
-     int coln = index.column(); 
+     int coln = index.column();
 
      DirDetails details;
      uint32_t flags = DIR_FLAGS_DETAILS;
@@ -175,8 +175,8 @@ void RemoteDirModel::treeStyle()
 	r = 200 + r * 5; /* 0->250 */
 
      	/*** age: log2(age) ***
-	 *   1 hour = 3,600       -  250      
-	 *   1 day  = 86,400      -  200 
+	 *   1 hour = 3,600       -  250
+	 *   1 day  = 86,400      -  200
 	 *   1 week = 604,800     -  100
 	 *   1 month = 2,419,200  -   50
 	 *
@@ -245,10 +245,10 @@ void RemoteDirModel::treeStyle()
     {
         FileInfo finfo;
         rsFiles->FileDetails(details.hash, 0, finfo);
-        
+
         return QString::fromStdString(finfo.path) ;
     }
-     
+
     if (role == Qt::DecorationRole)
     {
 
@@ -257,12 +257,12 @@ void RemoteDirModel::treeStyle()
       switch(coln)
       {
         case 0:
-      return (QIcon(peerIcon));	
+      return (QIcon(peerIcon));
       break;
       }
     }
 	else if (details.type == DIR_TYPE_DIR)
-	{		
+	{
 		switch(coln)
 		{
 			case 0:
@@ -274,7 +274,7 @@ void RemoteDirModel::treeStyle()
 		}
 		else
 		{
-			return(QIcon(categoryIcon));	
+			return(QIcon(categoryIcon));
 		}
 		break;
 		}
@@ -372,7 +372,7 @@ void RemoteDirModel::treeStyle()
      if (role == Qt::DisplayRole)
      {
 
-        /* 
+        /*
 	 * Person:  name,  id, 0, 0;
 	 * File  :  name,  size, rank, (0) ts
 	 * Dir   :  name,  (0) count, (0) path, (0) ts
@@ -464,7 +464,7 @@ void RemoteDirModel::treeStyle()
 		{
 			return int( Qt::AlignLeft | Qt::AlignVCenter);
 		}
-	
+
 
 	}
 	return QVariant();
@@ -519,7 +519,7 @@ void RemoteDirModel::treeStyle()
          return QString("Row %1").arg(section);
  }
 
- QModelIndex RemoteDirModel::index(int row, int column,        
+ QModelIndex RemoteDirModel::index(int row, int column,
                         const QModelIndex & parent) const
  {
 #ifdef RDM_DEBUG
@@ -528,7 +528,7 @@ void RemoteDirModel::treeStyle()
 #endif
 
 	void *ref = NULL;
-	
+
         if (parent.isValid())
 	{
 		ref = parent.internalPointer();
@@ -557,7 +557,7 @@ void RemoteDirModel::treeStyle()
      		return QModelIndex();
      	}
 
-	/* now iterate through the details to 
+	/* now iterate through the details to
 	 * get the reference number
 	 */
 
@@ -566,13 +566,13 @@ void RemoteDirModel::treeStyle()
 	for(it = details.children.begin();
 		((i < row) && (it != details.children.end())); it++, i++) ;
 
-	if (it == details.children.end()) 
-	{ 
+	if (it == details.children.end())
+	{
 #ifdef RDM_DEBUG
      		std::cerr << "wrong number of children -> invalid";
      		std::cerr << std::endl;
 #endif
-		return QModelIndex(); 
+		return QModelIndex();
 	}
 
 #ifdef RDM_DEBUG
@@ -668,7 +668,7 @@ void RemoteDirModel::treeStyle()
 	}
      	else if (details.type == DIR_TYPE_DIR)
 	{
-     		return ( Qt::ItemIsSelectable | 
+     		return ( Qt::ItemIsSelectable |
 			Qt::ItemIsEnabled);
 
 //			Qt::ItemIsDragEnabled |
@@ -677,7 +677,7 @@ void RemoteDirModel::treeStyle()
 	}
 	else // (details.type == DIR_TYPE_FILE)
 	{
-     		return ( Qt::ItemIsSelectable | 
+     		return ( Qt::ItemIsSelectable |
 			Qt::ItemIsDragEnabled |
 			Qt::ItemIsEnabled);
 
@@ -734,7 +734,7 @@ void RemoteDirModel::downloadSelected(QModelIndexList list)
 #endif
 	}
 
-	/* so for all the selected .... get the name out, 
+	/* so for all the selected .... get the name out,
 	 * make it into something the RsControl can understand
 	 */
 
@@ -822,7 +822,7 @@ void RemoteDirModel::getFileInfoFromIndexList(const QModelIndexList& list, std::
 #endif
 	}
 	/* Fire off requests */
-	
+
 	std::set<std::string> already_in ;
 
 	for(QModelIndexList::const_iterator it(list.begin()); it != list.end(); ++it)
@@ -923,11 +923,61 @@ void RemoteDirModel::recommendSelectedOnly(QModelIndexList list)
  * OLD RECOMMEND SYSTEM - DISABLED
  ******/
 
-void RemoteDirModel::openSelected(QModelIndexList)
+void RemoteDirModel::openSelected(QModelIndexList qmil, bool openFolder)
 {
-	//recommendSelected(list);
-}
+#ifdef RDM_DEBUG
+	std::cerr << "RemoteDirModel::openSelected()" << std::endl;
+#endif
 
+	if (RemoteMode) {
+#ifdef RDM_DEBUG
+	std::cerr << "Cannot open remote. Download first." << std::endl;
+#endif
+	return;
+	}
+
+	std::list<std::string> dirs_to_open;
+
+	std::list<DirDetails> files_info;
+	std::list<DirDetails>::iterator it;
+	getFileInfoFromIndexList(qmil, files_info);
+
+	for (it = files_info.begin(); it != files_info.end(); it++) {
+		if ((*it).type & DIR_TYPE_PERSON) continue;
+
+		std::string fullpath, name;
+		rsFiles->ConvertSharedFilePath((*it).path, fullpath);
+		int len = fullpath.length();
+		if (len && (fullpath[len - 1] != '/')) fullpath += '/';
+
+		if ((*it).type & DIR_TYPE_FILE) {
+			name = fullpath + (*it).name;
+		} else if ((*it).type & DIR_TYPE_DIR) {
+			name = fullpath;
+		}
+
+		if (!openFolder) {
+			if ((*it).type & DIR_TYPE_FILE) {
+				QDesktopServices::openUrl(QUrl::fromLocalFile(name.c_str()));
+			}
+		} else {
+			if (dirs_to_open.end() == std::find(dirs_to_open.begin(), dirs_to_open.end(), fullpath)) {
+				dirs_to_open.push_back(fullpath);
+			}
+		}
+	}
+
+	if (openFolder) {
+		std::list<std::string>::iterator dit;
+		for (dit = dirs_to_open.begin(); dit != dirs_to_open.end(); dit++) {
+			QDesktopServices::openUrl(QUrl::fromLocalFile((*dit).c_str()));
+		}
+	}
+
+#ifdef RDM_DEBUG
+	std::cerr << "::::::::::::Done RemoteDirModel::openSelected()" << std::endl;
+#endif
+}
 
 void RemoteDirModel::getFilePaths(QModelIndexList list, std::list<std::string> &fullpaths)
 {
@@ -1105,7 +1155,7 @@ RemoteDirModel::isDir ( const QModelIndex & index ) const
     void *ref = index.internalPointer();
     if (!ref)
         return false;
-    
+
     DirDetails details;
     uint32_t flags = DIR_FLAGS_DETAILS;
     if (RemoteMode)
@@ -1118,7 +1168,7 @@ RemoteDirModel::isDir ( const QModelIndex & index ) const
         return false;//not good, but....
     }
 
-    return (details.type == DIR_TYPE_DIR) ;    
+    return (details.type == DIR_TYPE_DIR) ;
 }
 
 
