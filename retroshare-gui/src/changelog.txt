@@ -1,6 +1,9 @@
 Changes for v0.4.13d
+
 *
-*
+* Fixed Bug - right click on local shared list won't abort the app
+* Fixed Bug for gpg connections.
+* Added open file/folder actions in local sharedfiles dialog
 * Added open or preview downloading files with a suitable application
 * Changend reorder transfer context menu
 * Added pause, resume and open folder actions added in context menu for Downloads
