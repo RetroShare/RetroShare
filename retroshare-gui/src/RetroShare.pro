@@ -64,7 +64,17 @@ macx {
 
 ############################## Common stuff ######################################
 
-LIBS += -lretroshare -lminiupnpc -lssl -lcrypto
+# On Linux systems that alredy have libssl and libcrypto it is advisable
+# to rename the patched version of SSL to something like libsslxpgp.a and libcryptoxpg.a
+
+# comment the next option if you renamed libcrtypto and libssl
+LIBS += -L"../../../../lib" -lretroshare -lminiupnpc -lssl -lcrypto
+
+# uncomment the next option if you renamed libcrtypto and libssl
+#LIBS += -L"../../../../lib" -lretroshare -lminiupnpc -lsslxpgp -lcryptoxpgp
+
+# ###########################################
+
 LIBS += -lz -lgpgme
 LIBS += -lQtUiTools
 

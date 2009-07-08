@@ -1172,7 +1172,7 @@ bool RsInit::RsGenerateCertificate(
 
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
-	if (!generate_xpgp(cert_name.c_str(), key_name.c_str(),
+        if (generate_xpgp(cert_name.c_str(), key_name.c_str(),
 			password.c_str(),
 			name.c_str(),
 			"", //ui -> gen_email -> value(),

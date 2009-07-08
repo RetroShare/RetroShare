@@ -116,7 +116,6 @@ HEADERS += dbase/cachestrapper.h \
            pqi/authssl.h \
            pqi/authxpgp.h \
            pqi/cleanupxpgp.h \
-           pqi/gpgauthmgr.h \
            pqi/p3authmgr.h \
            pqi/p3cfgmgr.h \
            pqi/p3connmgr.h \

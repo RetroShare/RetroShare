@@ -146,8 +146,9 @@ bool SetRedirectAndTest(struct UPNPUrls * urls,
 	r = UPNP_AddPortMapping(urls->controlURL, data->servicetype,
 	                        eport, iport, iaddr, 0, proto);
 #else
+        /* The lease parameter is also gone in minupnpc 1.0 */
 	r = UPNP_AddPortMapping(urls->controlURL, data->servicetype,
-	                        eport, iport, iaddr, 0, 0, proto);
+                                eport, iport, iaddr, 0, proto);
 #endif
 
 //	r = UPNP_AddPortMapping(urls->controlURL, data->servicetype,
