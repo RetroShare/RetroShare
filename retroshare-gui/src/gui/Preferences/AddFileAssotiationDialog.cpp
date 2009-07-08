@@ -190,7 +190,7 @@ AddFileAssotiationDialog::cleanFileType(QString ft)
     }
 
     //-- also, if filename still is not prepended with dot, do it
-    if ( (result.at(0)!='.')&&(! result.isEmpty()) )
+    if ((!result.isEmpty()) && (result.at(0)!='.'))
         result.prepend('.');
 
     //-- that's all
