@@ -1624,6 +1624,26 @@ bool AuthSSL::ProcessX509(X509 *x509, std::string &id)
 
 		/* we accepted it! */
 		id = xid;
+
+		if (!cert->authed)
+		{
+			cert->authed = valid;
+#ifdef AUTHSSL_DEBUG
+			std::cerr << "AuthSSL::ProcessX509() ";
+			std::cerr << "Updating Unauthed duplicate: ";
+			std::cerr << (valid ? "true" : "false");
+			std::cerr << std::endl;
+#endif
+		}
+		else
+		{
+#ifdef AUTHSSL_DEBUG
+			std::cerr << "AuthSSL::ProcessX509() ";
+			std::cerr << "Original already Valid";
+			std::cerr << std::endl;
+#endif
+		}
+
 #ifdef AUTHSSL_DEBUG
 		std::cerr << "AuthSSL::ProcessX509() Accepted Dup";
 		std::cerr << std::endl;
