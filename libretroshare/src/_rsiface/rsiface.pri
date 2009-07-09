@@ -7,7 +7,9 @@ SOURCES = $$PWP/rsinit.cc \
     $$PWP/notifybase.cc \
     $$PWP/rsifacereal.cc \
     $$PWP/rstypes.cc \
-    rsexpr.cc
+    $$PWP/rsexpr.cc \
+    $$PWP/rsforums.cc \
+    $$PWP/rschannels.cc
 HEADERS = $$PWP/rsinit.h \
     $$PWP/rsiface.h \
     $$PWP/rscontrol.h \
@@ -16,4 +18,7 @@ HEADERS = $$PWP/rsinit.h \
     $$PWP/rstypes.h \
     $$PWP/rsfiles.h \
     $$PWP/rsexpr.h \
-    $$PWP/rsgame.h
+    $$PWP/rsgame.h \
+    $$PWP/rsforums.h \
+    $$PWP/rsqblog.h \
+    $$PWP/rschannels.h

@@ -131,7 +131,8 @@ Binary Predicate for Case Insensitive search
 /*TODOS:
  *Factor locales in the comparison
  */
-struct CompareCharIC : public std::binary_function< char , char , bool>
+struct CompareCharIC :
+        public std::binary_function< char , char , bool>
 {
     bool operator () ( char ch1 , char ch2 ) const;
 };
@@ -145,26 +146,30 @@ class NameExpression: public StringExpression
 {
 public:
     NameExpression(enum StringOperator op, std::list<std::string> &t, bool ic);
+
     bool eval(FileEntry *file);
 };
 
 class PathExpression: public StringExpression
 {
 public:
-        PathExpression(enum StringOperator op, std::list<std::string> &t, bool ic);
-	bool eval(FileEntry *file);
+    PathExpression(enum StringOperator op, std::list<std::string> &t, bool ic);
+
+    bool eval(FileEntry *file);
 };
 
 class ExtExpression: public StringExpression {
 public:
-        ExtExpression(enum StringOperator op, std::list<std::string> &t, bool ic);
-	bool eval(FileEntry *file);
+    ExtExpression(enum StringOperator op, std::list<std::string> &t, bool ic);
+
+    bool eval(FileEntry *file);
 };
 
 class HashExpression: public StringExpression {
 public:
-        HashExpression(enum StringOperator op, std::list<std::string> &t);
-	bool eval(FileEntry *file);
+    HashExpression(enum StringOperator op, std::list<std::string> &t);
+
+    bool eval(FileEntry *file);
 };
 
 /******************************************************************************************
@@ -177,6 +182,7 @@ class DateExpression: public RelExpression<int>
 public:
     DateExpression(enum RelOperator op, int v);
     DateExpression(enum RelOperator op, int lv, int hv);
+
     bool eval(FileEntry *file);
 };
 
@@ -191,10 +197,10 @@ public:
 
 class PopExpression: public RelExpression<int> {
 public:
-        PopExpression(enum RelOperator op, int v);
-        PopExpression(enum RelOperator op, int lv, int hv);
+    PopExpression(enum RelOperator op, int v);
+    PopExpression(enum RelOperator op, int lv, int hv);
 
-	bool eval(FileEntry *file);
+    bool eval(FileEntry *file);
 };
 
 #endif /* RS_EXPRESSIONS_H */
