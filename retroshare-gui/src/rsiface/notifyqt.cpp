@@ -164,14 +164,15 @@ void NotifyQt::UpdateGUI()
 	static  time_t lastTs = 0;
 
 //	std::cerr << "Got update signal t=" << lastTs << std::endl ;
+        time_t currentTime = time(NULL);
 
-	if (time(NULL) > lastTs)					// always update, every 1 sec.
+        if (currentTime > lastTs)					// always update, every 1 sec.
 	{
 		emit transfersChanged();
 		emit friendsChanged() ;
 	}
 
-	if (time(NULL) > lastTs + 5)				// update every 5 seconds. I don't know what to do with these.
+        if (currentTime >= lastTs + 5)				// update every 5 seconds. I don't know what to do with these.
 	{
 //		displayChannels();
 	}

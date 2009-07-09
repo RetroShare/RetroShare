@@ -194,7 +194,7 @@ int main(int argc, char *argv[])
 	/* Startup a Timer to keep the gui's updated */
 	QTimer *timer = new QTimer(w);
 	timer -> connect(timer, SIGNAL(timeout()), notify, SLOT(UpdateGUI()));
-	timer->start(1000);
+        timer->start(1000);
 
 	/* dive into the endless loop */
 	// return ret;

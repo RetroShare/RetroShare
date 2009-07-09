@@ -21,6 +21,7 @@
 
 #include <QFile>
 #include <QFileInfo>
+#include <QCursor>
 
 #include "rshare.h"
 #include "common/vmessagebox.h"
@@ -114,7 +115,7 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 	QTreeWidgetItem * headerItem = ui.connecttreeWidget->headerItem();
 	headerItem->setTextAlignment(0, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(1, Qt::AlignHCenter | Qt::AlignVCenter);
-  headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
+        headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(3, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(4, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(5, Qt::AlignHCenter | Qt::AlignVCenter);
@@ -148,16 +149,15 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     menu->addAction(ui.actionTabsRounded);
     ui.viewButton->setMenu(menu);
     
-    QTimer *timer = new QTimer(this);
-    timer->connect(timer, SIGNAL(timeout()), this, SLOT(getNetworkStatus()));
-    timer->start(100000);
+    updateNetworkTimer = new QTimer(this);
+    updateNetworkTimer->start(5000);
+    connect(updateNetworkTimer, SIGNAL(timeout()), this, SLOT(getNetworkStatus()));
+    connect(updateNetworkTimer, SIGNAL(timeout()), this, SLOT(updateNetworkStatus()));
+
+
     
-    QTimer *timer2 = new QTimer(this);
-    timer2->connect(timer, SIGNAL(timeout()), this, SLOT(updateNetworkStatus()));
-    timer2->start(1000);
-    
-    getNetworkStatus();
-    updateNetworkStatus();
+    //getNetworkStatus();
+    //updateNetworkStatus();
     //load();
     
 
@@ -616,7 +616,8 @@ void NetworkDialog::setLogInfo(QString info, QColor color) {
     ui.infoLog->clear();
     nbLines = 1;
   }
-  ui.infoLog->append(QString::fromUtf8("<font color='grey'>")+ QTime::currentTime().toString(QString::fromUtf8("hh:mm:ss")) + QString::fromUtf8("</font> - <font color='") + color.name() +QString::fromUtf8("'><i>") + info + QString::fromUtf8("</i></font>"));
+  ui.infoLog->append(QString::fromUtf8("<font color='grey'  // XXX: Why mapToGlobal() is not enough?>")+ QTime::currentTime().toString(QString::fromUtf8("hh:mm:ss")) + QString::fromUtf8("</font> - <font color='") + color.name() +QString::fromUtf8("'><i>") + info + QString::fromUtf8("</i></font>"));
+
 }
 
 void NetworkDialog::on_actionClearLog_triggered() {
@@ -628,7 +629,8 @@ void NetworkDialog::displayInfoLogMenu(const QPoint& pos) {
   QMenu myLogMenu(this);
   myLogMenu.addAction(ui.actionClearLog);
   // XXX: Why mapToGlobal() is not enough?
-  myLogMenu.exec(mapToGlobal(pos)+QPoint(0,320));
+  // No. Simple use QCursor::pos() to retrieve the position of the cursor.
+  myLogMenu.exec(QCursor::pos());
 }
 
 void NetworkDialog::getNetworkStatus()

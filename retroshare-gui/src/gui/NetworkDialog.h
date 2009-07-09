@@ -87,28 +87,28 @@ private slots:
 
 private:
 
+    QTreeWidgetItem *getCurrentNeighbour();
 
-QTreeWidgetItem *getCurrentNeighbour();
+    /** Define the popup menus for the Context menu */
+    QMenu* contextMnu;
+    /** Defines the actions for the context menu */
+    QAction* peerdetailsAct;
+    QAction* denyFriendAct;
+    QAction* deleteCertAct;
+    QAction* makefriendAct;
+    QAction* authAct;
+    QAction* loadcertAct;
+    QTimer* updateNetworkTimer;
+    /* connection dialog */
+    ConnectDialog *connectdialog;
 
-  /** Define the popup menus for the Context menu */
-  QMenu* contextMnu;
-  /** Defines the actions for the context menu */
-  QAction* peerdetailsAct;
-  QAction* denyFriendAct;
-  QAction* deleteCertAct;
-  QAction* makefriendAct;
-  QAction* authAct;
-  QAction* loadcertAct;
-
-  /* connection dialog */
-  ConnectDialog *connectdialog;
-
-  QTreeWidget *connecttreeWidget;
+    QTreeWidget *connecttreeWidget;
   
-  class NetworkView *networkview;
+    class NetworkView *networkview;
 
-  /** Qt Designer generated object */
-  Ui::NetworkDialog ui;
+    /** Qt Designer generated object */
+    Ui::NetworkDialog ui;
+
 };
 
 #endif

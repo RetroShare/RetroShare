@@ -1,9 +1,9 @@
-CONFIG += qt gui uic qrc resources uitools release # pluginmgr debug
+CONFIG += qt gui uic qrc resources uitools debug_and_release # pluginmgr debug
 QT     += network xml script 
 TEMPLATE = app
-TARGET = RetroShare
 
-DEFINES *= RS_RELEASE_VERSION
+
+#DEFINES *= RS_RELEASE_VERSION
 RCC_DIR = temp/qrc
 UI_DIR  = temp/ui
 MOC_DIR = temp/moc
@@ -67,16 +67,17 @@ macx {
 # On Linux systems that alredy have libssl and libcrypto it is advisable
 # to rename the patched version of SSL to something like libsslxpgp.a and libcryptoxpg.a
 
-# comment the next option if you renamed libcrtypto and libssl
-LIBS += -L"../../../../lib" -lretroshare -lminiupnpc -lssl -lcrypto
-
-# uncomment the next option if you renamed libcrtypto and libssl
-#LIBS += -L"../../../../lib" -lretroshare -lminiupnpc -lsslxpgp -lcryptoxpgp
-
-# ###########################################
-
 LIBS += -lz -lgpgme
 LIBS += -lQtUiTools
+
+CONFIG(debug, debug|release) {
+    LIBS += -L"../../../../../../lib" -lretrosharedebug -lminiupnpc -lsslxpgp -lcryptoxpgp
+    TARGET = retrosharedebug
+}
+else {
+    LIBS += -L"../../../../../../lib" -lretroshare -lminiupnpc -lsslxpgp -lcryptoxpgp
+    TARGET = retroshare
+}
 
 DEPENDPATH += . \
             rsiface \
