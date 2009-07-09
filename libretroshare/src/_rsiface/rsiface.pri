@@ -7,7 +7,6 @@ SOURCES = $$PWP/rsinit.cc \
     $$PWP/notifybase.cc \
     $$PWP/rsifacereal.cc \
     $$PWP/rstypes.cc
-
 HEADERS = $$PWP/rsinit.h \
     $$PWP/rsiface.h \
     $$PWP/rscontrol.h \
