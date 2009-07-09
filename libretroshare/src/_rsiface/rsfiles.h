@@ -32,63 +32,15 @@
 #include <string>
 
 #include "rstypes.h"
+#include "rsdefs.h"
 
 class Expression;
-
-/* These are used mainly by ftController at the moment */
-const uint32_t RS_FILE_CTRL_PAUSE	 = 0x00000100;
-const uint32_t RS_FILE_CTRL_START	 = 0x00000200;
-
-const uint32_t RS_FILE_RATE_TRICKLE	 = 0x00000001;
-const uint32_t RS_FILE_RATE_SLOW	 = 0x00000002;
-const uint32_t RS_FILE_RATE_STANDARD	 = 0x00000003;
-const uint32_t RS_FILE_RATE_FAST	 = 0x00000004;
-const uint32_t RS_FILE_RATE_STREAM_AUDIO = 0x00000005;
-const uint32_t RS_FILE_RATE_STREAM_VIDEO = 0x00000006;
-
-const uint32_t RS_FILE_PEER_ONLINE 	 = 0x00001000;
-const uint32_t RS_FILE_PEER_OFFLINE 	 = 0x00002000;
-
-/************************************
- * Used To indicate where to search.
- *
- * The Order of these is very important, 
- * it specifies the search order too.
- *
- */
-
-const uint32_t RS_FILE_HINTS_MASK	 = 0x00ffffff;
-
-const uint32_t RS_FILE_HINTS_CACHE	 = 0x00000001;
-const uint32_t RS_FILE_HINTS_EXTRA	 = 0x00000002;
-const uint32_t RS_FILE_HINTS_LOCAL	 = 0x00000004;
-const uint32_t RS_FILE_HINTS_REMOTE	 = 0x00000008;
-const uint32_t RS_FILE_HINTS_DOWNLOAD= 0x00000010;
-const uint32_t RS_FILE_HINTS_UPLOAD	 = 0x00000020;
-const uint32_t RS_FILE_HINTS_TURTLE	 = 0x00000040;
-
-
-const uint32_t RS_FILE_HINTS_SPEC_ONLY	 = 0x01000000;
-const uint32_t RS_FILE_HINTS_NO_SEARCH   = 0x02000000;
-
-/* Callback Codes */
-//const uint32_t RS_FILE_HINTS_CACHE	 = 0x00000001; // ALREADY EXISTS
-const uint32_t RS_FILE_HINTS_MEDIA	 = 0x00001000;
-
-const uint32_t RS_FILE_HINTS_BACKGROUND	 = 0x00002000; // To download slowly.
-
-const uint32_t RS_FILE_EXTRA_DELETE	 = 0x0010;
-
-const uint32_t CB_CODE_CACHE = 0x0001;
-const uint32_t CB_CODE_EXTRA = 0x0002;
-const uint32_t CB_CODE_MEDIA = 0x0004;
-
 
 class RsFiles
 {
 public:
 
-//      RsFiles is pure virtual. It deon't need this:
+//      RsFiles is pure virtual. It doesn't need this:
 //	RsFiles() { return; }
 //      virtual ~RsFiles() { return; }
     RsFiles();
@@ -159,6 +111,6 @@ public:
 
 
 // Extern
-RsFiles  *rsFiles;
+extern RsFiles  *rsFiles;
 
 #endif

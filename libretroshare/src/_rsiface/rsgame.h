@@ -29,8 +29,8 @@
 
 #include "rstypes.h"
 
-
-class RsGameLauncher;
+// CHANGE: CLASS_TO_STRUCT
+struct RsGameLauncher;
 
 /* declare single RsIface for everyone to use! */
 
@@ -40,72 +40,69 @@ extern RsGameLauncher  *rsGameLauncher;
 #include <string>
 #include <inttypes.h>
 
-class RsGameInfo
+// CHANGE: CLASS_TO_STRUCT
+struct RsGameInfo
 {
-	public:
+    std::string gameId;
+    std::string serverId;
 	
-	std::string gameId;
-	std::string serverId;
-	
-	std::string gameType;
-	std::wstring gameName;
-	std::string serverName;
-	std::string status;
-	uint16_t    numPlayers;
-	
+    std::string gameType;
+    std::wstring gameName;
+    std::string serverName;
+    std::string status;
+    uint16_t    numPlayers;
 };
 	
-class RsGamePeer
+// CHANGE: CLASS_TO_STRUCT
+struct RsGamePeer
 {
-	public:
-	std::string id;
-	bool invite;
-	bool interested;
-	bool play;
+    std::string id;
+    bool invite;
+    bool interested;
+    bool play;
 };
-	
-class RsGameDetail
+
+// CHANGE:CLASS_TO_STRUCT
+struct RsGameDetail
 {
-	public:
-	std::string gameId;
-	std::string gameType;
-	std::wstring gameName;
+    std::string gameId;
+    std::string gameType;
+    std::wstring gameName;
 	
-	bool areServer;         /* are we the server? */
-	std::string serverId;   /* if not, who is? */
-	std::string serverName;
+    bool areServer;         /* are we the server? */
+    std::string serverId;   /* if not, who is? */
+    std::string serverName;
 	
-	std::string status;
+    std::string status;
 	
-	uint16_t numPlayers;
-	std::map<std::string, RsGamePeer> gamers;
-	
+    uint16_t numPlayers;
+    std::map<std::string, RsGamePeer> gamers;
 };
 
 class RsGameLauncher
 {
-        public:
+public:
 
-/* server commands */
-virtual std::string createGame(uint32_t gameType, std::wstring name) = 0;
-virtual bool    deleteGame(std::string gameId) = 0;
-virtual bool    inviteGame(std::string gameId) = 0;
-virtual bool    playGame(std::string gameId) = 0;
-//virtual bool    quitGame(std::string gameId) = 0;
+    /* server commands */
+    virtual std::string createGame(uint32_t gameType, std::wstring name) = 0;
+    virtual bool    deleteGame(std::string gameId) = 0;
+    virtual bool    inviteGame(std::string gameId) = 0;
+    virtual bool    playGame(std::string gameId) = 0;
+    //virtual bool    quitGame(std::string gameId) = 0;
 
-virtual bool    invitePeer(std::string gameId, std::string peerId) = 0;
-virtual bool    uninvitePeer(std::string gameId, std::string peerId) = 0;
-virtual bool    confirmPeer(std::string gameId, std::string peerId,
+    virtual bool    invitePeer(std::string gameId, std::string peerId) = 0;
+    virtual bool    uninvitePeer(std::string gameId, std::string peerId) = 0;
+    virtual bool    confirmPeer(std::string gameId, std::string peerId,
                                                 int16_t pos = -1) = 0;
-virtual bool    unconfirmPeer(std::string gameId, std::string peerId) = 0;
+    virtual bool    unconfirmPeer(std::string gameId, std::string peerId) = 0;
 
-/* client commands */
-virtual bool    interestedPeer(std::string gameId) = 0;
-virtual bool    uninterestedPeer(std::string gameId) = 0;
+    /* client commands */
+    virtual bool    interestedPeer(std::string gameId) = 0;
+    virtual bool    uninterestedPeer(std::string gameId) = 0;
 
-/* get details */
-virtual bool    getGameList(std::list<RsGameInfo> &gameList) = 0;
-virtual bool    getGameDetail(std::string gameId, RsGameDetail &detail) = 0;
+    /* get details */
+    virtual bool    getGameList(std::list<RsGameInfo> &gameList) = 0;
+    virtual bool    getGameDetail(std::string gameId, RsGameDetail &detail) = 0;
 
 };
 
