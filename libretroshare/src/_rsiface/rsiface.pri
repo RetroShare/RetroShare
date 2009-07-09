@@ -15,4 +15,5 @@ HEADERS = $$PWP/rsinit.h \
     $$PWP/rsifacereal.h \
     $$PWP/rstypes.h \
     $$PWP/rsfiles.h \
-    $$PWP/rsexpr.h
+    $$PWP/rsexpr.h \
+    $$PWP/rsgame.h
