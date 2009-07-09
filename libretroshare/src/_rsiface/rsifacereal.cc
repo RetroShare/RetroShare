@@ -5,28 +5,17 @@ RsIfaceReal::RsIfaceReal(NotifyBase &callback) :
 {
 }
 
-
-        RsIfaceReal(NotifyBase &callback) :
-            RsIface(callback)
-        { return; }
-
-        virtual void lockData()
-        {
-//		std::cerr << "RsIfaceReal::lockData()" << std::endl;
-                return rsIfaceMutex.lock();
-        }
-
-        virtual void unlockData()
-        {
-//		std::cerr << "RsIfaceReal::unlockData()" << std::endl;
-                return rsIfaceMutex.unlock();
-        }
-
-private:
-        RsMutex rsIfaceMutex;
-};
-
-RsIface *createRsIface(NotifyBase &cb)
+void RsIfaceReal::lockData()
 {
-        return new RsIfaceReal(cb);
+// std::cerr << "RsIfaceReal::lockData()" << std::endl;
+// return rsIfaceMutex.lock();  //Return doen't make any sense since the function returns void
+    rsIfaceMutex.lock();
 }
+
+void RsIfaceReal::unlockData()
+{
+// std::cerr << "RsIfaceReal::unlockData()" << std::endl;
+// return rsIfaceMutex.unlock();  //Return doen't make any sense since the function returns void
+    rsIfaceMutex.unlock();
+}
+

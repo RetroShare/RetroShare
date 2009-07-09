@@ -3,11 +3,14 @@ INCLUDEPATH += $$PWD \
 DEPENDPATH += $$PWD
 SOURCES = $$PWP/rsinit.cc \
     $$PWP/rsiface.cc \
-    rscontrol.cc \
-    notifybase.cc \
-    rsifacereal.cc
+    $$PWP/rscontrol.cc \
+    $$PWP/notifybase.cc \
+    $$PWP/rsifacereal.cc \
+    $$PWP/rstypes.cc
+
 HEADERS = $$PWP/rsinit.h \
     $$PWP/rsiface.h \
-    rscontrol.h \
-    notifybase.h \
-    rsifacereal.h
+    $$PWP/rscontrol.h \
+    $$PWP/notifybase.h \
+    $$PWP/rsifacereal.h \
+    $$PWP/rstypes.h

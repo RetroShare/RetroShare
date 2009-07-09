@@ -47,7 +47,6 @@ const RsConfig& RsIface::getConfig()
     return mConfig;
 }
 
-
 /* set to true */
 bool RsIface::setChanged(DataFlags set)
 {

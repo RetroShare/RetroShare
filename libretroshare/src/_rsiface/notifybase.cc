@@ -4,7 +4,6 @@ NotifyBase::NotifyBase()
 {
 }
 
-
 NotifyBase::~NotifyBase()
 {
 }
