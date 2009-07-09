@@ -56,11 +56,11 @@ void    CleanupRsConfig(RsInit *);
 int InitRetroShare(int argc, char **argv, RsInit *config);
 
 // This Functions are used for Login.
-bool ValidateCertificate(RsInit *config, std::string &userName);
-bool ValidateTrustedUser(RsInit *config, std::string fname, std::string &userName);
-bool LoadPassword(RsInit *config, std::string passwd);
-bool RsGenerateCertificate(RsInit *config, std::string name, std::string org,
-                        std::string loc, std::string country, std::string passwd, std::string &errString);
+//bool ValidateCertificate(RsInit *config, std::string &userName);
+//bool ValidateTrustedUser(RsInit *config, std::string fname, std::string &userName);
+//bool LoadPassword(RsInit *config, std::string passwd);
+//bool RsGenerateCertificate(RsInit *config, std::string name, std::string org,
+//                        std::string loc, std::string country, std::string passwd, std::string &errString);
 
 /* Auto Login Fns */
 bool  RsTryAutoLogin(RsInit *config);
