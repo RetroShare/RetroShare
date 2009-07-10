@@ -24,6 +24,7 @@
 #include "msgs/ChanMsgDialog.h"
 #include "gui/toaster/MessageToaster.h"
 #include "util/printpreview.h"
+#include "util/misc.h"
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
@@ -101,7 +102,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   
     /* Set header resize modes and initial section sizes */
 	QHeaderView * msglheader = ui.msgList->header () ;
-   	msglheader->setResizeMode (0, QHeaderView::Interactive);
+  msglheader->setResizeMode (0, QHeaderView::Interactive);
 	msglheader->setResizeMode (1, QHeaderView::Interactive);
 	msglheader->setResizeMode (2, QHeaderView::Interactive);
 	msglheader->setResizeMode (3, QHeaderView::Interactive);
@@ -112,11 +113,11 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 	msglheader->resizeSection ( 3, 200 );
 	
 	ui.newmessageButton->setIcon(QIcon(QString(":/images/folder-draft24-pressed.png")));
-    	ui.replymessageButton->setIcon(QIcon(QString(":/images/replymail-pressed.png")));
+  ui.replymessageButton->setIcon(QIcon(QString(":/images/replymail-pressed.png")));
 	ui.replyallmessageButton->setIcon(QIcon(QString(":/images/replymailall24-hover.png")));
 	ui.forwardmessageButton->setIcon(QIcon(QString(":/images/mailforward24-hover.png")));
-    	ui.removemessageButton->setIcon(QIcon(QString(":/images/deletemail-pressed.png")));
-    	ui.printbutton->setIcon(QIcon(QString(":/images/print24.png")));
+  ui.removemessageButton->setIcon(QIcon(QString(":/images/deletemail-pressed.png")));
+  ui.printbutton->setIcon(QIcon(QString(":/images/print24.png")));
 
 	ui.forwardmessageButton->setToolTip(tr("Forward selected Message"));
  	ui.replyallmessageButton->setToolTip(tr("Replay to All"));
@@ -716,7 +717,7 @@ void MessagesDialog::insertMsgTxtAndFiles()
 		item -> setText(0, QString::fromStdString(it->fname));
 		//std::cerr << "Msg FileItem(" << it->fname.length() << ") :" << it->fname << std::endl;
 
-		item -> setText(1, QString::number(it->size)); /* (1) Size */
+		item -> setText(1, misc::friendlyUnit(it->size)); /* (1) Size */
 		item -> setText(2, QString::number(0)); 			/* (2) Rank */ // what is this ???
 		item -> setText(3, QString::fromStdString(it->hash)); 
 

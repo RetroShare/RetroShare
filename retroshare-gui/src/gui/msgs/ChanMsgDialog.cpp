@@ -27,6 +27,7 @@
 #include "rsiface/rsmsgs.h"
 
 #include <gui/Preferences/rsharesettings.h>
+#include "util/misc.h"
 
 #include <sstream>
 
@@ -60,8 +61,7 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
-  
-  
+    
   setupFileActions();
   setupEditActions();
   setupViewActions();
@@ -200,9 +200,20 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
     alignmentmenu->addAction(actionAlignJustify);
     ui.textalignmentbtn->setMenu(alignmentmenu);
     
-	QPixmap pxm(24,24);
-	pxm.fill(Qt::black);
-	ui.colorbtn->setIcon(pxm);
+    QPixmap pxm(24,24);
+    pxm.fill(Qt::black);
+    ui.colorbtn->setIcon(pxm);
+	
+	  /* Set header resize modes and initial section sizes */
+    ui.msgFileList->setColumnCount(5);
+     
+    QHeaderView * _smheader = ui.msgFileList->header () ;   
+  
+    _smheader->resizeSection ( 0, 200 );
+    _smheader->resizeSection ( 1, 60 );
+    _smheader->resizeSection ( 2, 60 );
+    _smheader->resizeSection ( 3, 220 );
+    _smheader->resizeSection ( 4, 10 );
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -456,7 +467,7 @@ void  ChanMsgDialog::insertFileList(const std::list<DirDetails>& files_info)
 		QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
 		item->setText(0, QString::fromStdString(it->name));			/* (0) Filename */
-		item->setText(1, QString::number(it->count));			 		/* (1) Size */
+		item->setText(1, misc::friendlyUnit(it->count));			 		/* (1) Size */
 		item->setText(2, QString::number(it->rank));
 		item->setText(3, QString::fromStdString(it->hash));
 		item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
