@@ -1,12 +1,10 @@
-#ifndef P3BLOG_H_
-#define P3BLOG_H_
 
 /*
- * libretroshare/src/rsserver: p3blog.h
+ * "$Id: testRsChanId.cc,v 1.1 2007-02-19 20:08:30 rmf24 Exp $"
  *
  * RetroShare C++ Interface.
  *
- * Copyright 2007-2008 by Chris Evi-Parker.
+ * Copyright 2004-2007 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,29 +24,36 @@
  *
  */
 
-#include "_rsiface/rsqblog.h"
-#include "services/p3Qblog.h"
 
-/*!
- * Interface class using composition (p3Qblog is an attribute)
- *  See derived class for documentation of derived functions
- */
-class p3Blog : public RsQblog
+
+#include "_rsiface/rstypes.h"
+#include <iostream>
+#include <sstream>
+#include <string>
+
+int main()
 {
-public:
+	RsCertId id;
 
-    p3Blog(p3Qblog* qblog);
-    virtual ~p3Blog();
+	int i;
+	for(i = 0; i < 16; i++)
+	{
+		id.data[i] = i+121;
+	}
 
-    virtual bool sendBlog(const std::wstring &msg);
-    virtual bool getBlogs(std::map< std::string, std::multimap<long int, std::wstring> > &blogs);
-    virtual bool getPeerLatestBlog(std::string id, uint32_t &ts, std::wstring &post);
+	std::cerr << "Cert Id: " << id << std::endl;
 
-private:
+	std::ostringstream out;
+	out << id;
+	std::string idstr = out.str();
 
-    /// to make rsCore blog-service calls
-    p3Qblog* mQblog;
-};
+	std::cerr << "Cert Id (str): " << idstr << std::endl;
+
+	RsCertId id2(idstr);
+
+	std::cerr << "Cert Id2 (from str): " << id2 << std::endl;
+	return 1;
+}
 
 
-#endif /*P3BLOG_H_*/
+

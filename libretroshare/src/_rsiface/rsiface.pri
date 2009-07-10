@@ -1,6 +1,7 @@
 INCLUDEPATH += $$PWD \
     ../$$PWP
 DEPENDPATH += $$PWD
+
 SOURCES = $$PWP/rsinit.cc \
     $$PWP/rsiface.cc \
     $$PWP/rscontrol.cc \

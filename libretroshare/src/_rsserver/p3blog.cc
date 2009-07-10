@@ -23,7 +23,7 @@
  *
  */
 
-#include "_rsserver/p3Blog.h"
+#include "_rsserver/p3blog.h"
 
 RsQblog* rsQblog =  NULL;
 

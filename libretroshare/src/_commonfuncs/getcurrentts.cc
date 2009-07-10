@@ -1,12 +1,11 @@
-#ifndef P3BLOG_H_
-#define P3BLOG_H_
+#include "getcurrentts.h"
 
 /*
- * libretroshare/src/rsserver: p3blog.h
+ * "$Id: getcurrentts.cc,v 1.5 2007-04-15 18:45:23 rmf24 Exp $"
  *
  * RetroShare C++ Interface.
  *
- * Copyright 2007-2008 by Chris Evi-Parker.
+ * Copyright 2004-2006 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,29 +25,28 @@
  *
  */
 
-#include "_rsiface/rsqblog.h"
-#include "services/p3Qblog.h"
+#ifdef WINDOWS_SYS
+#include <time.h>
+#include <sys/timeb.h>
+#endif
+#else
+#include <sys/time.h>
+#include <time.h>
+#endif
 
-/*!
- * Interface class using composition (p3Qblog is an attribute)
- *  See derived class for documentation of derived functions
- */
-class p3Blog : public RsQblog
+static double getCurrentTS()
 {
-public:
 
-    p3Blog(p3Qblog* qblog);
-    virtual ~p3Blog();
-
-    virtual bool sendBlog(const std::wstring &msg);
-    virtual bool getBlogs(std::map< std::string, std::multimap<long int, std::wstring> > &blogs);
-    virtual bool getPeerLatestBlog(std::string id, uint32_t &ts, std::wstring &post);
-
-private:
-
-    /// to make rsCore blog-service calls
-    p3Qblog* mQblog;
-};
+#ifndef WINDOWS_SYS
+        struct timeval cts_tmp;
+        gettimeofday(&cts_tmp, NULL);
+        double cts =  (cts_tmp.tv_sec) + ((double) cts_tmp.tv_usec) / 1000000.0;
+#else
+        struct _timeb timebuf;
+        _ftime( &timebuf);
+        double cts =  (timebuf.time) + ((double) timebuf.millitm) / 1000.0;
+#endif
+        return cts;
+}
 
 
-#endif /*P3BLOG_H_*/

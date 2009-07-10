@@ -85,7 +85,7 @@ virtual pqiperson   *createPerson(std::string id, pqilistener *listener) = 0;
 	/* Overloaded RsItem Check
 	 * checks item->cid vs Person
 	 */
-virtual int checkOutgoingRsItem(RsItem *item, int global) { return 1; }
+virtual int checkOutgoingRsItem(RsItem *item, int global) { (void)item; (void)global; return 1; }
 
 	private:
 
