@@ -1,4 +1,5 @@
 include(_rsiface/rsiface.pri)
+include(_rsserver/rsserver.pri)
 TEMPLATE = lib
 CONFIG += static
 TARGET = retroshare
