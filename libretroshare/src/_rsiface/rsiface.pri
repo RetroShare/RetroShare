@@ -10,8 +10,10 @@ SOURCES = $$PWP/rsinit.cc \
     $$PWP/rsexpr.cc \
     $$PWP/rsforums.cc \
     $$PWP/rschannels.cc \
-    rsmsgs.cc \
-    rsfeeditem.cc
+    $$PWP/rsmsgs.cc \
+    $$PWP/rsfeeditem.cc \
+    $$PWP/rspeers.cc \
+    rsstatus.cc
 HEADERS = $$PWP/rsinit.h \
     $$PWP/rsiface.h \
     $$PWP/rscontrol.h \
@@ -28,5 +30,10 @@ HEADERS = $$PWP/rsinit.h \
     $$PWP/rsdistrib.h \
     $$PWP/rsmsgs.h \
     $$PWP/rsnotify.h \
-    rsfeeditem.h \
-    rsdefs.h
+    $$PWP/rsfeeditem.h \
+    $$PWP/rsdefs.h \
+    $$PWP/rspeers.h \
+    $$PWP/rsphoto.h \
+    $$PWP/rsrank.h \
+    $$PWP/rsstatus.h \
+    $$PWP/rsturtle.h

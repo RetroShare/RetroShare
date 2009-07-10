@@ -24,6 +24,7 @@
  */
 
 #include "services/p3status.h"
+#include "_rsiface/rsstatus.h"
 
 std::ostream& operator<<(std::ostream& out, const StatusInfo& si)
 {

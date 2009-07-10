@@ -1,5 +1,5 @@
-#ifndef RS_TYPES_GUI_INTERFACE_H
-#define RS_TYPES_GUI_INTERFACE_H
+#ifndef RSTYPES_H
+#define RSTYPES_H
 
 /*
  * "$Id: rstypes.h,v 1.7 2007-05-05 16:10:05 rmf24 Exp $"
@@ -43,61 +43,61 @@ const uint32_t FT_STATE_WAITING 	= 0x0002;
 const uint32_t FT_STATE_DOWNLOADING 	= 0x0003;
 const uint32_t FT_STATE_COMPLETE 	= 0x0004;
 
-class TransferInfo
+// CHANGE: CLASS_TO_STRUCT
+struct TransferInfo
 {
-        public:
-        /**** Need Some of these Fields ****/
-        std::string peerId;
-        std::string name; /* if has alternative name? */
-        double tfRate; /* kbytes */
-        int  status; /* FT_STATE_... */
+    /**** Need Some of these Fields ****/
+    std::string peerId;
+    std::string name; /* if has alternative name? */
+    double tfRate; /* kbytes */
+    int  status; /* FT_STATE_... */
 };
 
 
 class FileInfo
 {
-        /* old BaseInfo Entries */
-        public:
+/* old BaseInfo Entries */
+public:
 
-        FileInfo() :flags(0), mId(0) { return; }
-        RsCertId id; /* key for matching everything */
-        int flags; /* INFO_TAG above */
+    FileInfo() :flags(0), mId(0) {}
+    RsCertId id; /* key for matching everything */
+    int flags; /* INFO_TAG above */
 
-        /* allow this to be tweaked by the GUI Model */
-        mutable unsigned int mId; /* (GUI) Model Id -> unique number */
+    /* allow this to be tweaked by the GUI Model */
+    mutable unsigned int mId; /* (GUI) Model Id -> unique number */
 
-        /* Old FileInfo Entries */
-        public:
+/* Old FileInfo Entries */
+public:
 
-static const int kRsFiStatusNone = 0;
-static const int kRsFiStatusStall = 1;
-static const int kRsFiStatusProgress = 2;
-static const int kRsFiStatusDone = 2;
+    static const int kRsFiStatusNone = 0;
+    static const int kRsFiStatusStall = 1;
+    static const int kRsFiStatusProgress = 2;
+    static const int kRsFiStatusDone = 2;
 
-        /* FileInfo(); */
+/* FileInfo(); */
 
-        int searchId;      /* 0 if none */
-        std::string path;
-        std::string fname;
-        std::string hash;
-        std::string ext;
+    int searchId;      /* 0 if none */
+    std::string path;
+    std::string fname;
+    std::string hash;
+    std::string ext;
 
-        uint64_t size;
-        uint64_t avail; /* how much we have */
-        int status;
+    uint64_t size;
+    uint64_t avail; /* how much we have */
+    int status;
 
-        bool inRecommend;
+    bool inRecommend;
 
-        double rank;
-        int age;
+    double rank;
+    int age;
 
-        /* Transfer Stuff */
-        uint64_t transfered;
-        double   tfRate; /* in kbytes */
-        uint32_t  downloadStatus; /* 0 = Err, 1 = Ok, 2 = Done */
-        std::list<TransferInfo> peers;
+    /* Transfer Stuff */
+    uint64_t transfered;
+    double   tfRate; /* in kbytes */
+    uint32_t  downloadStatus; /* 0 = Err, 1 = Ok, 2 = Done */
+    std::list<TransferInfo> peers;
 
-        time_t lastTS;
+    time_t lastTS;
 };
 
 std::ostream &operator<<(std::ostream &out, const FileInfo &info);
@@ -111,42 +111,43 @@ std::ostream &operator<<(std::ostream &out, const FileInfo &info);
 #define UPNP_STATE_FAILED_UDP     4
 #define UPNP_STATE_ACTIVE         5
 
-class RsConfig
+// CHANGE: CLASS_TO_STRUCT
+struct RsConfig
 {
-        public:
-        std::string		ownId;
-        std::string		ownName;
 
-        std::string		localAddr;
-        int			localPort;
-        std::string		extAddr;
-        int			extPort;
-        std::string		extName;
+    std::string		ownId;
+    std::string		ownName;
 
-        bool			firewalled;
-        bool			forwardPort;
+    std::string		localAddr;
+    int			localPort;
+    std::string		extAddr;
+    int			extPort;
+    std::string		extName;
 
-        int			maxDownloadDataRate;     /* kb */
-        int			maxUploadDataRate;     /* kb */
-        int			maxIndivDataRate; /* kb */
+    bool			firewalled;
+    bool			forwardPort;
 
-        int			promptAtBoot; /* popup the password prompt */
+    int			maxDownloadDataRate;     /* kb */
+    int			maxUploadDataRate;     /* kb */
+    int			maxIndivDataRate; /* kb */
 
-        /* older data types */
-        bool			DHTActive;
-        bool			uPnPActive;
+    int			promptAtBoot; /* popup the password prompt */
 
-        int			uPnPState;
-        int			DHTPeers;
+    /* older data types */
+    bool			DHTActive;
+    bool			uPnPActive;
 
-        /* Flags for Network Status */
-        bool 			netOk;     /* That we've talked to someone! */
-        bool			netUpnpOk; /* upnp is enabled and active */
-        bool			netDhtOk;  /* response from dht */
-        bool			netExtOk;  /* know our external address */
-        bool			netUdpOk;  /* recvd stun / udp packets */
-        bool			netTcpOk;  /* recvd incoming tcp */
-        bool			netResetReq;
+    int			uPnPState;
+    int			DHTPeers;
+
+    /* Flags for Network Status */
+    bool 			netOk;     /* That we've talked to someone! */
+    bool			netUpnpOk; /* upnp is enabled and active */
+    bool			netDhtOk;  /* response from dht */
+    bool			netExtOk;  /* know our external address */
+    bool			netUdpOk;  /* recvd stun / udp packets */
+    bool			netTcpOk;  /* recvd incoming tcp */
+    bool			netResetReq;
 };
 
 /********************** For Search Interface *****************/
@@ -164,24 +165,22 @@ const int OpExactMatch  = 0x002;
 const int OpLessThan    = 0x003;
 const int OpGreaterThan = 0x004;
 
-class Condition
+// CHANGE: CLASS_TO_STRUCT
+struct Condition
 {
-        public:
-
-        std::string type;
-        int op;
-        double value;
-        std::string name;
+    std::string type;
+    int op;
+    double value;
+    std::string name;
 };
 
-class SearchRequest
+// CHANGE: CLASS_TO_STRUCT
+struct SearchRequest
 {
-        public:
-        int searchId;
-        RsCertId toId;  /* all zeros for everyone! */
-        std::list<Condition> tests;
+    int searchId;
+    RsCertId toId;  /* all zeros for everyone! */
+    std::list<Condition> tests;
 };
-
 
 /********************** For FileCache Interface *****************/
 
@@ -204,46 +203,46 @@ class SearchRequest
 #define DIR_FLAGS_DETAILS       0x0002
 #define DIR_FLAGS_CHILDREN      0x0004
 
-class DirStub
+// CHANGE: CLASS_TO_STRUCT
+struct DirStub
 {
-        public:
-        uint8_t type;
-        std::string name;
-        void *ref;
+    uint8_t type;
+    std::string name;
+    void *ref;
 };
 
-class DirDetails
+// CHANGE: CLASS_TO_STRUCT
+struct DirDetails
 {
-        public:
-        void *parent;
-        uint32_t prow; /* parent row */
+    void *parent;
+    uint32_t prow; /* parent row */
 
-        void *ref;
-        uint8_t type;
-        std::string id;
-        std::string name;
-        std::string hash;
-        std::string path;
-        uint64_t count;
-        uint32_t age;
-        uint32_t rank;
+    void *ref;
+    uint8_t type;
+    std::string id;
+    std::string name;
+    std::string hash;
+    std::string path;
+    uint64_t count;
+    uint32_t age;
+    uint32_t rank;
 
-        std::list<DirStub> children;
+    std::list<DirStub> children;
 };
 
-class FileDetail
+// CHANGE: CLASS_TO_STRUCT
+struct FileDetail
 {
-        public:
-        std::string id;
-        std::string name;
-        std::string hash;
-        std::string path;
-        uint64_t size;
-        uint32_t age;
-        uint32_t rank;
+    std::string id;
+    std::string name;
+    std::string hash;
+    std::string path;
+    uint64_t size;
+    uint32_t age;
+    uint32_t rank;
 };
 
 
-#endif
+#endif // RSTYPES_H
 
 
