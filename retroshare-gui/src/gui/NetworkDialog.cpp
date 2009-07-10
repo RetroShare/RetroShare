@@ -21,6 +21,7 @@
 
 #include <QFile>
 #include <QFileInfo>
+#include <QCursor>
 
 #include "rshare.h"
 #include "common/vmessagebox.h"
@@ -149,11 +150,11 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     ui.viewButton->setMenu(menu);
     
     QTimer *timer = new QTimer(this);
-    timer->connect(timer, SIGNAL(timeout()), this, SLOT(getNetworkStatus()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(getNetworkStatus()));
     timer->start(100000);
     
     QTimer *timer2 = new QTimer(this);
-    timer2->connect(timer, SIGNAL(timeout()), this, SLOT(updateNetworkStatus()));
+    connect(timer2, SIGNAL(timeout()), this, SLOT(updateNetworkStatus()));
     timer2->start(1000);
     
     getNetworkStatus();
@@ -628,7 +629,9 @@ void NetworkDialog::displayInfoLogMenu(const QPoint& pos) {
   QMenu myLogMenu(this);
   myLogMenu.addAction(ui.actionClearLog);
   // XXX: Why mapToGlobal() is not enough?
-  myLogMenu.exec(mapToGlobal(pos)+QPoint(0,320));
+  // myLogMenu.exec(mapToGlobal(pos)+QPoint(0,320));
+  // No. Simple use QCursor::pos() to retrieve the position of the cursor.
+  myLogMenu.exec(QCursor::pos());
 }
 
 void NetworkDialog::getNetworkStatus()
