@@ -27,12 +27,32 @@
  *
  */
 
-#ifndef RS_GPG_AUTH_HEADER
-#define RS_GPG_AUTH_HEADER
+#ifndef AUTHGPG_H
+#define AUTHGPG_H
 
 //#include "p3authmgr.h"
 #include "authssl.h"
 #include <gpgme.h>
+#include <iostream>
+#include <sstream>
+
+
+/* Turn a set of parameters into a string */
+static std::string setKeyPairParams(bool useRsa, unsigned int blen,
+                std::string name, std::string comment, std::string email,
+                std::string passphrase);
+
+static gpgme_key_t getKey(gpgme_ctx_t, std::string, std::string, std::string);
+
+static gpg_error_t keySignCallback(void *, gpgme_status_code_t,
+                                   const char *, int);
+
+static gpg_error_t trustCallback(void *, gpgme_status_code_t,
+                                 const char *, int);
+static void ProcessPGPmeError(gpgme_error_t ERR);
+
+
+
 
 /* gpgcert is the identifier for a person.
  * It is a wrapper class for a GPGme OpenPGP certificate.
@@ -382,4 +402,4 @@ public:
     }
 };
 
-#endif
+#endif // AUTHGPG_H

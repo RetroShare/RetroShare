@@ -3,6 +3,8 @@ include(_rsserver/rsserver.pri)
 include(_commonfuncs/commonfuncs.pri)
 include(_dht/dht.pri)
 include(_pqi/pqi.pri)
+include(_server/server.pri)
+include(_dbase/dbase.pri)
 
 TEMPLATE = lib
 CONFIG += static

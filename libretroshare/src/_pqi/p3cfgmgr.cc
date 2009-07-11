@@ -23,10 +23,14 @@
  *
  */
 
-
-#include "_pqi/p3cfgmgr.h"
-
-
+#include "util/rsdir.h"
+#include "rsiface/rspeers.h"
+#include "pqi/p3cfgmgr.h"
+#include "pqi/p3authmgr.h"
+#include "pqi/pqibin.h"
+#include "pqi/pqistore.h"
+#include "pqi/pqinotify.h"
+#include <errno.h>
 
 #include "serialiser/rsconfigitems.h"
 

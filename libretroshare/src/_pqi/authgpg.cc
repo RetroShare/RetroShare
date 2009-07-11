@@ -54,23 +54,8 @@
  */
 
 #include "authgpg.h"
-#include <iostream>
-#include <sstream>
 
-/* Turn a set of parameters into a string */
-static std::string setKeyPairParams(bool useRsa, unsigned int blen,
-		std::string name, std::string comment, std::string email,
-		std::string passphrase);
 
-static gpgme_key_t getKey(gpgme_ctx_t, std::string, std::string, std::string);
-
-static gpg_error_t keySignCallback(void *, gpgme_status_code_t, \
-		const char *, int);
-
-static gpg_error_t trustCallback(void *, gpgme_status_code_t, \
-		const char *, int);
-
-static void ProcessPGPmeError(gpgme_error_t ERR);
 
 /* Function to sign X509_REQ via GPGme.
  */
