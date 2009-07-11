@@ -59,7 +59,7 @@
 #define IMAGE_DOWNLOAD       ":/images/download16.png"
 #define IMAGE_PLAY           ":/images/start.png"
 #define IMAGE_HASH_BUSY      ":/images/settings.png"
-#define IMAGE_HASH_DONE      ":/images/friendsfolder24.png"
+#define IMAGE_HASH_DONE      ":/images/accepted16.png"
 #define IMAGE_MSG            ":/images/message-mail.png"
 #define IMAGE_ATTACHMENT     ":/images/attachment.png"
 #define IMAGE_FRIEND         ":/images/peers_16x16.png"
@@ -170,7 +170,7 @@ void SharedFilesDialog::checkUpdate()
         /* update */
 	if (rsFiles->InDirectoryCheck())
 	{
-		//ui.hashLabel->setPixmap(QPixmap(IMAGE_HASH_BUSY));
+		ui.checkButton->setText(tr("Checking..."));
     QMovie *movie = new QMovie(":/images/loader/16-loader.gif");
     ui.hashLabel->setMovie(movie);
     movie->start();
@@ -178,7 +178,7 @@ void SharedFilesDialog::checkUpdate()
 	}
 	else
 	{
-	  //movie->stop();
+	  ui.checkButton->setText(tr("Check files"));
 		ui.hashLabel->setPixmap(QPixmap(IMAGE_HASH_DONE));
 		ui.hashLabel->setToolTip("") ;
 	}

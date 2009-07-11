@@ -76,6 +76,9 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
+  
+  /* Create RshareSettings object */
+  _settings = new RshareSettings();
 
   connect( ui.connecttreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connecttreeWidgetCostumPopupMenu( QPoint ) ) );
 
@@ -160,6 +163,7 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     getNetworkStatus();
     updateNetworkStatus();
     //load();
+    loadtabsettings();
     
 
   /* Hide platform specific features */
@@ -864,24 +868,44 @@ void NetworkDialog::updateNetworkStatus()
 	ui.radio_netServer->setEnabled(false);
 }*/
 
-void NetworkDialog::on_actionTabsright_activated()
-{
-  ui.networkTab->setTabPosition(QTabWidget::East);
-}
-
 void NetworkDialog::on_actionTabsnorth_activated()
 {
+	_settings->beginGroup("NetworkDialog");
+	
   ui.networkTab->setTabPosition(QTabWidget::North);
+  
+  _settings->setValue("TabWidget_Position",ui.networkTab->tabPosition());
+  _settings->endGroup();
 }
 
 void NetworkDialog::on_actionTabssouth_activated()
 {
+	_settings->beginGroup("NetworkDialog");
+
   ui.networkTab->setTabPosition(QTabWidget::South);
+  
+  _settings->setValue("TabWidget_Position",ui.networkTab->tabPosition());  
+  _settings->endGroup();
 }
 
 void NetworkDialog::on_actionTabswest_activated()
 {
+	_settings->beginGroup("NetworkDialog");
+
   ui.networkTab->setTabPosition(QTabWidget::West);
+  
+  _settings->setValue("TabWidget_Position",ui.networkTab->tabPosition());  
+  _settings->endGroup();
+}
+
+void NetworkDialog::on_actionTabsright_activated()
+{
+	_settings->beginGroup("NetworkDialog");
+	
+  ui.networkTab->setTabPosition(QTabWidget::East);
+  
+  _settings->setValue("TabWidget_Position",ui.networkTab->tabPosition());  
+  _settings->endGroup();
 }
 
 void NetworkDialog::on_actionTabsTriangular_activated()
@@ -894,4 +918,35 @@ void NetworkDialog::on_actionTabsRounded_activated()
 {
   ui.networkTab->setTabShape(QTabWidget::Rounded);
   ui.tabBottom->setTabShape(QTabWidget::Rounded);
+}
+
+void NetworkDialog::loadtabsettings()
+{
+_settings->beginGroup("NetworkDialog");
+
+if(_settings->value("TabWidget_Position","0").toInt() == 0)
+{
+qDebug() << "Tab North";
+ui.networkTab->setTabPosition(QTabWidget::North);
+}
+
+else if (_settings->value("TabWidget_Position","1").toInt() == 1)
+{
+qDebug() << "Tab South";
+ui.networkTab->setTabPosition(QTabWidget::South);
+}
+
+else if (_settings->value("TabWidget_Position","2").toInt() ==2)
+{
+qDebug() << "Tab West";
+ui.networkTab->setTabPosition(QTabWidget::West);
+}
+
+else if(_settings->value("TabWidget_Position","3").toInt() ==3)
+{
+qDebug() << "Tab East";
+ui.networkTab->setTabPosition(QTabWidget::East);
+}
+
+_settings->endGroup();
 }

@@ -26,8 +26,7 @@
 #include <QFileDialog>
 #include <QtGui>
 
-
-//#include <config/rsharesettings.h>
+#include "Preferences/rsharesettings.h"
 
 #include "mainpage.h"
 #include "ui_NetworkDialog.h"
@@ -76,6 +75,8 @@ private slots:
   void getNetworkStatus();
   void updateNetworkStatus();
   
+  void loadtabsettings();
+  
   void on_actionTabsright_activated();
   void on_actionTabsnorth_activated();
   void on_actionTabssouth_activated();
@@ -86,9 +87,10 @@ private slots:
 
 
 private:
+  /** A RetroShare Settings object used for saving/loading settings */
+  RshareSettings *_settings;
 
-
-QTreeWidgetItem *getCurrentNeighbour();
+  QTreeWidgetItem *getCurrentNeighbour();
 
   /** Define the popup menus for the Context menu */
   QMenu* contextMnu;
