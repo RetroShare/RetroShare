@@ -46,7 +46,7 @@ struct dhtentry
     int status;
     int lastTs;
 };
-	
+
 class dhthandler: public RsThread, public pqiAddrStore
 {
 public:

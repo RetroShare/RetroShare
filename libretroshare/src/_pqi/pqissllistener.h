@@ -92,14 +92,14 @@ private:
 
 protected:
 
-/**************** PQI_USE_XPGP ******************/
+    /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
 
     AuthXPGP *mAuthMgr;
 
 #else /* X509 Certificates */
 
-/**************** PQI_USE_XPGP ******************/
+    /**************** PQI_USE_XPGP ******************/
     AuthSSL *mAuthMgr;
 #endif /* X509 Certificates */
 
@@ -124,7 +124,7 @@ public:
     virtual int completeConnection(int sockfd, SSL *in_connection, struct sockaddr_in &raddr);
 
 private:
-	std::map<std::string, pqissl *> listenaddr;
+    std::map<std::string, pqissl *> listenaddr;
 };
 
 

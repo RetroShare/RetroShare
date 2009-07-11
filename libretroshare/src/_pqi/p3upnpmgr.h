@@ -35,23 +35,25 @@ class p3UpnpMgr: public pqiNetAssistFirewall
 {
 public:
 
-virtual	~p3UpnpMgr() { return; }
+    virtual	~p3UpnpMgr() {
+        return;
+    }
 
-		/* External Interface */
-virtual void    enable(bool on) = 0;  /* launches thread to start it up */
-virtual void    shutdown() = 0;       /* blocking shutdown call */
-virtual void	restart() = 0;   	  /* must be called if ports change */
+    /* External Interface */
+    virtual void    enable(bool on) = 0;  /* launches thread to start it up */
+    virtual void    shutdown() = 0;       /* blocking shutdown call */
+    virtual void	restart() = 0;   	  /* must be called if ports change */
 
-virtual bool    getEnabled() = 0;
-virtual bool    getActive() = 0;
+    virtual bool    getEnabled() = 0;
+    virtual bool    getActive() = 0;
 
-		/* the address that the listening port is on */
-virtual void    setInternalPort(unsigned short iport_in) = 0;
-virtual void    setExternalPort(unsigned short eport_in) = 0;
- 
-	 	/* as determined by uPnP */
-virtual bool    getInternalAddress(struct sockaddr_in &addr) = 0;
-virtual bool    getExternalAddress(struct sockaddr_in &addr) = 0;
+    /* the address that the listening port is on */
+    virtual void    setInternalPort(unsigned short iport_in) = 0;
+    virtual void    setExternalPort(unsigned short eport_in) = 0;
+
+    /* as determined by uPnP */
+    virtual bool    getInternalAddress(struct sockaddr_in &addr) = 0;
+    virtual bool    getExternalAddress(struct sockaddr_in &addr) = 0;
 
 };
 

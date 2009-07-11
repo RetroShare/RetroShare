@@ -30,7 +30,7 @@
 
 /* My new funky browser.....
  *
- * - Designed to sort/display a tree brower 
+ * - Designed to sort/display a tree brower
  *   for search results....
  *
  *   First we need the basic interface class that
@@ -43,103 +43,137 @@
 
 class FileDisItem: public DisplayData
 {
-	public:
-	FileDisItem(PQFileItem *i, SearchItem *s) :item(i), terms(s) { return; }
+public:
+    FileDisItem(PQFileItem *i, SearchItem *s) :item(i), terms(s) {
+        return;
+    }
 
-	// a couple of functions that do the work.
-virtual	int ndix();  // Number of Indices.
-virtual std::string txt(int col);
-virtual int cmp(int col, DisplayData *);
+    // a couple of functions that do the work.
+    virtual	int ndix();  // Number of Indices.
+    virtual std::string txt(int col);
+    virtual int cmp(int col, DisplayData *);
 
-	PQFileItem *getItem() { return item;}
-	void setItem(PQFileItem *i) {item = i;}
-	SearchItem *getSearchItem() { return terms;}
-	void setSearchItem(SearchItem *s) {terms = s;}
+    PQFileItem *getItem() {
+        return item;
+    }
+    void setItem(PQFileItem *i) {
+        item = i;
+    }
+    SearchItem *getSearchItem() {
+        return terms;
+    }
+    void setSearchItem(SearchItem *s) {
+        terms = s;
+    }
 
-	private:
-	PQFileItem *item;
-	SearchItem *terms;
+private:
+    PQFileItem *item;
+    SearchItem *terms;
 };
 
 
 class PersonDisItem: public DisplayData
 {
-	public:
-	PersonDisItem(Person *i) :item(i), checked(false) { return; }
+public:
+    PersonDisItem(Person *i) :item(i), checked(false) {
+        return;
+    }
 
-	// a couple of functions that do the work.
-virtual	int ndix();  // Number of Indices.
-virtual std::string txt(int col);
-virtual int cmp(int col, DisplayData *);
-virtual int check(int n, int v = -1)
-	{
-		if (v == -1)
-			return (int) checked;
-		if (v == 0)
-			return checked = false;
-		return checked = true;
-	};
+    // a couple of functions that do the work.
+    virtual	int ndix();  // Number of Indices.
+    virtual std::string txt(int col);
+    virtual int cmp(int col, DisplayData *);
+    virtual int check(int n, int v = -1)
+    {
+        if (v == -1)
+            return (int) checked;
+        if (v == 0)
+            return checked = false;
+        return checked = true;
+    };
 
-	Person *getItem() { return item;}
-	void setItem(Person *i) {item = i;}
+    Person *getItem() {
+        return item;
+    }
+    void setItem(Person *i) {
+        item = i;
+    }
 
-	private:
-	Person *item;
-	bool checked;
+private:
+    Person *item;
+    bool checked;
 };
 
 
 class NeighDisItem: public DisplayData
 {
-	public:
-	NeighDisItem(Person *i) :item(i) { return; }
+public:
+    NeighDisItem(Person *i) :item(i) {
+        return;
+    }
 
-	// a couple of functions that do the work.
-virtual	int ndix();  // Number of Indices.
-virtual std::string txt(int col);
-virtual int cmp(int col, DisplayData *);
+    // a couple of functions that do the work.
+    virtual	int ndix();  // Number of Indices.
+    virtual std::string txt(int col);
+    virtual int cmp(int col, DisplayData *);
 
-	Person *getItem() { return item;}
-	void setItem(Person *i) {item = i;}
+    Person *getItem() {
+        return item;
+    }
+    void setItem(Person *i) {
+        item = i;
+    }
 
-	private:
-	Person *item;
+private:
+    Person *item;
 };
 
 
 class MsgDisItem: public DisplayData
 {
-	public:
-	MsgDisItem(MsgItem *i) :item(i) { return; }
+public:
+    MsgDisItem(MsgItem *i) :item(i) {
+        return;
+    }
 
-	// a couple of functions that do the work.
-virtual	int ndix();  // Number of Indices.
-virtual std::string txt(int col);
-virtual int cmp(int col, DisplayData *);
+    // a couple of functions that do the work.
+    virtual	int ndix();  // Number of Indices.
+    virtual std::string txt(int col);
+    virtual int cmp(int col, DisplayData *);
 
-	MsgItem *getItem() { return item;}
-	void setItem(MsgItem *i) {item = i;}
+    MsgItem *getItem() {
+        return item;
+    }
+    void setItem(MsgItem *i) {
+        item = i;
+    }
 
-	private:
-	MsgItem *item;
+private:
+    MsgItem *item;
 };
 
 
 class FTDisItem: public DisplayData
 {
-	public:
-	FTDisItem(FileTransferItem *i) :item(i) { return; }
+public:
+    FTDisItem(FileTransferItem *i) :item(i) {
+        return;
+    }
 
-	// a couple of functions that do the work.
-virtual	int ndix();  // Number of Indices.
-virtual std::string txt(int col);
-virtual int cmp(int col, DisplayData *);
+    // a couple of functions that do the work.
+    virtual	int ndix();  // Number of Indices.
+    virtual std::string txt(int col);
+    virtual int cmp(int col, DisplayData *);
 
-	FileTransferItem *getItem() { return item;}
-	void setItem(FileTransferItem *i) {item = i;}
+    FileTransferItem *getItem() {
+        return item;
+    }
+    void setItem(FileTransferItem *i) {
+        item = i;
+    }
 
-	private:
-	FileTransferItem *item;
+private:
+    FileTransferItem *item;
 };
 
 /* NOTE The Channel classes should be changed to just
@@ -151,67 +185,67 @@ virtual int cmp(int col, DisplayData *);
 
 class ChanDisItem: public DisplayData
 {
-	public:
-	ChanDisItem(pqichannel *i);
+public:
+    ChanDisItem(pqichannel *i);
 
-	// a couple of functions that do the work.
-virtual	int ndix();  // Number of Indices.
-virtual std::string txt(int col);
-virtual int cmp(int col, DisplayData *);
-virtual int check(int n, int v = -1)
-	{
-		if (v == -1)
-			return (int) checked;
-		if (v == 0)
-			return checked = false;
-		return checked = true;
-	};
+    // a couple of functions that do the work.
+    virtual	int ndix();  // Number of Indices.
+    virtual std::string txt(int col);
+    virtual int cmp(int col, DisplayData *);
+    virtual int check(int n, int v = -1)
+    {
+        if (v == -1)
+            return (int) checked;
+        if (v == 0)
+            return checked = false;
+        return checked = true;
+    };
 
-	public:
+public:
 
-	channelSign cs;
-	int mode;
-	std::string name;
-	float	ranking;
-	int 	msgcount;
+    channelSign cs;
+    int mode;
+    std::string name;
+    float	ranking;
+    int 	msgcount;
 
-	bool checked; // subscribed..
+    bool checked; // subscribed..
 };
 
 
 class ChanMsgDisItem: public DisplayData
 {
-	public:
-	ChanMsgDisItem(chanMsgSummary &s);
+public:
+    ChanMsgDisItem(chanMsgSummary &s);
 
-	// a couple of functions that do the work.
-virtual	int ndix();  // Number of Indices.
-virtual std::string txt(int col);
-virtual int cmp(int col, DisplayData *);
+    // a couple of functions that do the work.
+    virtual	int ndix();  // Number of Indices.
+    virtual std::string txt(int col);
+    virtual int cmp(int col, DisplayData *);
 
-	public:
+public:
 
-	std::string msg;
-	MsgHash		mh;
-	int		nofiles;
-	int		totalsize;
-	long		recvd;
+    std::string msg;
+    MsgHash		mh;
+    int		nofiles;
+    int		totalsize;
+    long		recvd;
 
 };
 
 class ChanFileDisItem: public DisplayData
 {
-	public:
-	ChanFileDisItem(std::string n, int s);
+public:
+    ChanFileDisItem(std::string n, int s);
 
-	// a couple of functions that do the work.
-virtual	int ndix();  // Number of Indices.
-virtual std::string txt(int col);
-virtual int cmp(int col, DisplayData *);
+    // a couple of functions that do the work.
+    virtual	int ndix();  // Number of Indices.
+    virtual std::string txt(int col);
+    virtual int cmp(int col, DisplayData *);
 
-	//private:
-	std::string name;
-	int size;
+    //private:
+    std::string name;
+    int size;
 };
 
 

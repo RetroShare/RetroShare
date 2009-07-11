@@ -27,56 +27,56 @@
 
 /******* Pair of Send/Recv (Only need to handle Send side) ******/
 ftDataSendPair::ftDataSendPair(ftDataRecv *recv)
-	:mDataRecv(recv) 
-{ 
-	return; 
+        :mDataRecv(recv)
+{
+    return;
 }
 
-	/* Client Send */
-bool	ftDataSendPair::sendDataRequest(std::string peerId, std::string hash, 
-			uint64_t size, uint64_t offset, uint32_t chunksize)
+/* Client Send */
+bool	ftDataSendPair::sendDataRequest(std::string peerId, std::string hash,
+                                     uint64_t size, uint64_t offset, uint32_t chunksize)
 {
-	return mDataRecv->recvDataRequest(peerId,hash,size,offset,chunksize);
+    return mDataRecv->recvDataRequest(peerId,hash,size,offset,chunksize);
 }
 
-	/* Server Send */
-bool	ftDataSendPair::sendData(std::string peerId, 
-			std::string hash, uint64_t size,
-                        uint64_t offset, uint32_t chunksize, void *data)
+/* Server Send */
+bool	ftDataSendPair::sendData(std::string peerId,
+                              std::string hash, uint64_t size,
+                              uint64_t offset, uint32_t chunksize, void *data)
 {
-	return mDataRecv->recvData(peerId, hash,size,offset,chunksize,data);
-}
-
-
-	/* Client Send */
-bool	ftDataSendDummy::sendDataRequest(std::string peerId, std::string hash, 
-			uint64_t size, uint64_t offset, uint32_t chunksize)
-{
-	return true;
-}
-
-	/* Server Send */
-bool	ftDataSendDummy::sendData(std::string peerId, 
-			std::string hash, uint64_t size,
-                        uint64_t offset, uint32_t chunksize, void *data)
-{
-	return true;
+    return mDataRecv->recvData(peerId, hash,size,offset,chunksize,data);
 }
 
 
-	/* Client Recv */
-bool	ftDataRecvDummy::recvData(std::string peerId, 
-			std::string hash, uint64_t size, 
-			uint64_t offset, uint32_t chunksize, void *data)
+/* Client Send */
+bool	ftDataSendDummy::sendDataRequest(std::string peerId, std::string hash,
+                                      uint64_t size, uint64_t offset, uint32_t chunksize)
 {
-	return true;
+    return true;
+}
+
+/* Server Send */
+bool	ftDataSendDummy::sendData(std::string peerId,
+                               std::string hash, uint64_t size,
+                               uint64_t offset, uint32_t chunksize, void *data)
+{
+    return true;
 }
 
 
-	/* Server Recv */
-bool	ftDataRecvDummy::recvDataRequest(std::string peerId, std::string hash, 
-			uint64_t size, uint64_t offset, uint32_t chunksize)
+/* Client Recv */
+bool	ftDataRecvDummy::recvData(std::string peerId,
+                               std::string hash, uint64_t size,
+                               uint64_t offset, uint32_t chunksize, void *data)
 {
-	return true;
+    return true;
+}
+
+
+/* Server Recv */
+bool	ftDataRecvDummy::recvDataRequest(std::string peerId, std::string hash,
+                                      uint64_t size, uint64_t offset, uint32_t chunksize)
+{
+    return true;
 }
 

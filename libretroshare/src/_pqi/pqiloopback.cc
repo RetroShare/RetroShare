@@ -31,60 +31,60 @@
 ***/
 
 pqiloopback::pqiloopback(std::string id)
-	:PQInterface(id)
+        :PQInterface(id)
 {
-	setMaxRate(true, 0);
-        setMaxRate(false, 0);
-	setRate(true, 0);
-	setRate(false, 0);
+    setMaxRate(true, 0);
+    setMaxRate(false, 0);
+    setRate(true, 0);
+    setRate(false, 0);
 
-	return;
+    return;
 }
 
 pqiloopback::~pqiloopback()
 {
-	return;
+    return;
 }
 
 int	pqiloopback::SendItem(RsItem *i)
 {
 
-#ifdef  LOOPBACK_DEBUG 
-	std::cerr << "pqiloopback::SendItem()";
-	std::cerr << std::endl;
-	i->print(std::cerr);
-	std::cerr << std::endl;
+#ifdef  LOOPBACK_DEBUG
+    std::cerr << "pqiloopback::SendItem()";
+    std::cerr << std::endl;
+    i->print(std::cerr);
+    std::cerr << std::endl;
 #endif
-	objs.push_back(i);
-	return 1;
+    objs.push_back(i);
+    return 1;
 }
 
 RsItem * 	pqiloopback::GetItem()
 {
-	if (objs.size() > 0)
-	{
-		RsItem *pqi = objs.front();
-		objs.pop_front();
-#ifdef  LOOPBACK_DEBUG 
-		std::cerr << "pqiloopback::GetItem()";
-		std::cerr << std::endl;
-		pqi->print(std::cerr);
-		std::cerr << std::endl;
+    if (objs.size() > 0)
+    {
+        RsItem *pqi = objs.front();
+        objs.pop_front();
+#ifdef  LOOPBACK_DEBUG
+        std::cerr << "pqiloopback::GetItem()";
+        std::cerr << std::endl;
+        pqi->print(std::cerr);
+        std::cerr << std::endl;
 #endif
-		return pqi;
-	}
-	return NULL;
+        return pqi;
+    }
+    return NULL;
 }
 
 // PQI interface.
 int 	pqiloopback::tick()
 {
-	return 0;
+    return 0;
 }
 
 int 	pqiloopback::status()
 {
-	return 0;
+    return 0;
 }
 
 

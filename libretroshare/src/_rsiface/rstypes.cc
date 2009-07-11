@@ -48,13 +48,13 @@
 
 std::ostream &operator<<(std::ostream &out, const FileInfo &info)
 {
-        out << "FileInfo: path: " << info.path;
-        out << std::endl;
-        out << "File: " << info.fname;
-        out << " Size: " << info.size;
-        out << std::endl;
-        out << "Hash: " << info.hash;
-        return out;
+    out << "FileInfo: path: " << info.path;
+    out << std::endl;
+    out << "File: " << info.fname;
+    out << " Size: " << info.size;
+    out << std::endl;
+    out << "Hash: " << info.hash;
+    return out;
 }
 
 

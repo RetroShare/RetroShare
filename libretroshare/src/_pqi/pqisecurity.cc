@@ -39,34 +39,34 @@ extern "C" {
 // currently these are all dummies.
 
 
-std::string secpolicy_print(SecurityPolicy *)
-{
-	return std::string("secpolicy_print() Implement Me Please!");
-}
+    std::string secpolicy_print(SecurityPolicy *)
+    {
+        return std::string("secpolicy_print() Implement Me Please!");
+    }
 
-SecurityPolicy *secpolicy_create()
-{
-	return (SecurityPolicy *) malloc(sizeof(SecurityPolicy));
-}
+    SecurityPolicy *secpolicy_create()
+    {
+        return (SecurityPolicy *) malloc(sizeof(SecurityPolicy));
+    }
 
-int secpolicy_delete(SecurityPolicy *p)
-{
-	free(p);
-	return 1;
-}
+    int secpolicy_delete(SecurityPolicy *p)
+    {
+        free(p);
+        return 1;
+    }
 
 
-int secpolicy_limit(SecurityPolicy *limiter,
-				SecurityPolicy *alter)
-{
-	return 1;
-}
+    int secpolicy_limit(SecurityPolicy *limiter,
+                        SecurityPolicy *alter)
+    {
+        return 1;
+    }
 
-int secpolicy_check(SecurityPolicy *, int type_transaction,
-						int direction)
-{
-	return 1;
-}
+    int secpolicy_check(SecurityPolicy *, int type_transaction,
+                        int direction)
+    {
+        return 1;
+    }
 
 
 #ifdef __cplusplus

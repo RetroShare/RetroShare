@@ -43,20 +43,24 @@ const uint8_t RS_PKT_SUBTYPE_RANK_PHOTO     = 0x05;
 
 class RsRankMsg: public RsItem
 {
-        public:
-        RsRankMsg(uint8_t subtype)
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_RANK, 
-		subtype) { return; }
-virtual ~RsRankMsg() { return; }
-virtual void clear();
-virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+public:
+    RsRankMsg(uint8_t subtype)
+            :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_RANK,
+                    subtype) {
+        return;
+    }
+    virtual ~RsRankMsg() {
+        return;
+    }
+    virtual void clear();
+    virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-	std::string rid; /* Random Id */
-	std::string pid; /* Peer Id (cannot use RsItem::PeerId - as FoF transport!) */
-        uint32_t    timestamp;
-        std::wstring title;
-        std::wstring comment;
-        int32_t     score;
+    std::string rid; /* Random Id */
+    std::string pid; /* Peer Id (cannot use RsItem::PeerId - as FoF transport!) */
+    uint32_t    timestamp;
+    std::wstring title;
+    std::wstring comment;
+    int32_t     score;
 };
 
 
@@ -66,45 +70,53 @@ const uint32_t RS_LINK_TYPE_OFF = 0x0002;
 
 class RsRankLinkMsg: public RsRankMsg
 {
-        public:
-        RsRankLinkMsg()
-	:RsRankMsg(RS_PKT_SUBTYPE_RANK_LINK3) { return; }
-virtual ~RsRankLinkMsg() { return; }
-virtual void clear();
-virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+public:
+    RsRankLinkMsg()
+            :RsRankMsg(RS_PKT_SUBTYPE_RANK_LINK3) {
+        return;
+    }
+    virtual ~RsRankLinkMsg() {
+        return;
+    }
+    virtual void clear();
+    virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-	/**** SAME as RsRankMsg ****
-	std::string rid; 
+    /**** SAME as RsRankMsg ****
+    std::string rid;
         uint32_t    timestamp;
         std::wstring title;
         std::wstring comment;
-	int32_t	    score;
-	***************************/
+    int32_t	    score;
+    ***************************/
 
-	/* Link specific Fields */
-	uint32_t    linktype; /* to be used later! */
-        std::wstring link;
+    /* Link specific Fields */
+    uint32_t    linktype; /* to be used later! */
+    std::wstring link;
 };
 
 class RsRankSerialiser: public RsSerialType
 {
-	public:
-	RsRankSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_RANK)
-	{ return; }
-virtual     ~RsRankSerialiser()
-	{ return; }
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
+public:
+    RsRankSerialiser()
+            :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_RANK)
+    {
+        return;
+    }
+    virtual     ~RsRankSerialiser()
+    {
+        return;
+    }
 
-	private:
+    virtual	uint32_t    size(RsItem *);
+    virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
+    virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
-	/* For RS_PKT_SUBTYPE_RANK_LINK */
-virtual	uint32_t    sizeLink(RsRankLinkMsg *);
-virtual	bool        serialiseLink  (RsRankLinkMsg *item, void *data, uint32_t *size);
-virtual	RsRankLinkMsg *deserialiseLink(void *data, uint32_t *size);
+private:
+
+    /* For RS_PKT_SUBTYPE_RANK_LINK */
+    virtual	uint32_t    sizeLink(RsRankLinkMsg *);
+    virtual	bool        serialiseLink  (RsRankLinkMsg *item, void *data, uint32_t *size);
+    virtual	RsRankLinkMsg *deserialiseLink(void *data, uint32_t *size);
 
 };
 

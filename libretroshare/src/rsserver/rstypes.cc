@@ -38,7 +38,7 @@
 /**********************************************************************
  * NOTE NOTE NOTE ...... XXX
  * BUG in MinGW .... %hhx in sscanf overwrites 32bits, instead of 8bits.
- * this means that scanf(.... &(data[15])) is running off the 
+ * this means that scanf(.... &(data[15])) is running off the
  * end of the buffer, and hitting data[15-18]...
  * To work around this bug we are reading into proper int32s
  * and then copying the data over...
@@ -48,13 +48,13 @@
 
 std::ostream &operator<<(std::ostream &out, const FileInfo &info)
 {
-	out << "FileInfo: path: " << info.path;
-	out << std::endl;
-	out << "File: " << info.fname;
-	out << " Size: " << info.size;
-	out << std::endl;
-	out << "Hash: " << info.hash;
-	return out;
+    out << "FileInfo: path: " << info.path;
+    out << std::endl;
+    out << "File: " << info.fname;
+    out << " Size: " << info.size;
+    out << std::endl;
+    out << "Hash: " << info.hash;
+    return out;
 }
 
 

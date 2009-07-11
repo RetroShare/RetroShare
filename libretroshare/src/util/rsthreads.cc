@@ -33,18 +33,18 @@
  *******/
 
 #ifdef DEBUG_THREADS
-	#include <iostream>
+#include <iostream>
 #endif
 
 extern "C" void* rsthread_init(void* p)
 {
-  RsThread *thread = (RsThread *) p;
-  if (!thread)
-  {
+    RsThread *thread = (RsThread *) p;
+    if (!thread)
+    {
+        return 0;
+    }
+    thread -> run();
     return 0;
-  }
-  thread -> run();
-  return 0;
 }
 
 
@@ -55,8 +55,8 @@ pthread_t  createThread(RsThread &thread)
 
     thread.mMutex.lock();
     {
-      pthread_create(&tid, 0, &rsthread_init, data);
-      thread.mTid = tid;
+        pthread_create(&tid, 0, &rsthread_init, data);
+        thread.mTid = tid;
     }
     thread.mMutex.unlock();
 
@@ -66,54 +66,54 @@ pthread_t  createThread(RsThread &thread)
 
 
 RsQueueThread::RsQueueThread(uint32_t min, uint32_t max, double relaxFactor )
-	:mMinSleep(min), mMaxSleep(max), mRelaxFactor(relaxFactor)
+        :mMinSleep(min), mMaxSleep(max), mRelaxFactor(relaxFactor)
 {
-	mLastSleep = (uint32_t)mMinSleep ;
+    mLastSleep = (uint32_t)mMinSleep ;
 }
 
 void RsQueueThread::run()
 {
-	while(1)
-	{
-		bool doneWork = false;
-		while(workQueued() && doWork())
-		{
-			doneWork = true;
-		}
-		time_t now = time(NULL);
-		if (doneWork)
-		{
-			mLastWork = now;
-			mLastSleep = (uint32_t) (mMinSleep + (mLastSleep - mMinSleep) / 2.0);
+    while (1)
+    {
+        bool doneWork = false;
+        while (workQueued() && doWork())
+        {
+            doneWork = true;
+        }
+        time_t now = time(NULL);
+        if (doneWork)
+        {
+            mLastWork = now;
+            mLastSleep = (uint32_t) (mMinSleep + (mLastSleep - mMinSleep) / 2.0);
 #ifdef DEBUG_THREADS
-			std::cerr << "RsQueueThread::run() done work: sleeping for: " << mLastSleep;
-			std::cerr << " ms";
-			std::cerr << std::endl;
+            std::cerr << "RsQueueThread::run() done work: sleeping for: " << mLastSleep;
+            std::cerr << " ms";
+            std::cerr << std::endl;
 #endif
 
-		}
-		else
-		{
-			uint32_t deltaT = now - mLastWork;
-			double frac = deltaT / mRelaxFactor;
-			
-			mLastSleep += (uint32_t) 
-				((mMaxSleep-mMinSleep) * (frac + 0.05));
-			if (mLastSleep > mMaxSleep)
-			{
-				mLastSleep = mMaxSleep;
-			}
+        }
+        else
+        {
+            uint32_t deltaT = now - mLastWork;
+            double frac = deltaT / mRelaxFactor;
+
+            mLastSleep += (uint32_t)
+                          ((mMaxSleep-mMinSleep) * (frac + 0.05));
+            if (mLastSleep > mMaxSleep)
+            {
+                mLastSleep = mMaxSleep;
+            }
 #ifdef DEBUG_THREADS
-			std::cerr << "RsQueueThread::run() no work: sleeping for: " << mLastSleep;
-			std::cerr << " ms";
-			std::cerr << std::endl;
+            std::cerr << "RsQueueThread::run() no work: sleeping for: " << mLastSleep;
+            std::cerr << " ms";
+            std::cerr << std::endl;
 #endif
-		}
+        }
 #ifdef WIN32
-		Sleep(mLastSleep);
+        Sleep(mLastSleep);
 #else
-		usleep(1000 * mLastSleep);
+        usleep(1000 * mLastSleep);
 #endif
-	}
+    }
 }
 

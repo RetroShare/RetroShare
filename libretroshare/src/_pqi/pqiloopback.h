@@ -47,8 +47,10 @@ public:
     virtual int	tick();
     virtual int	status();
 
-    virtual int     notifyEvent(NetInterface *ni, int event) { return 0; }  /* Not used */
-    private:
+    virtual int     notifyEvent(NetInterface *ni, int event) {
+        return 0;    /* Not used */
+    }
+private:
     std::list<RsItem *> objs;
 };
 

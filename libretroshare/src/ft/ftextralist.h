@@ -26,7 +26,7 @@
 #ifndef FT_FILE_EXTRA_LIST_HEADER
 #define FT_FILE_EXTRA_LIST_HEADER
 
-/* 
+/*
  * ftFileExtraList
  *
  * This maintains a list of 'Extra Files' to share with peers.
@@ -44,7 +44,7 @@
  * Files can be searched for via:
  * 	searchExtraFiles(std::string hash, ftFileDetail file);
  *
- * This Class is Mutexed protected, and has a thread in it which checks the files periodically. 
+ * This Class is Mutexed protected, and has a thread in it which checks the files periodically.
  * If a file is found to have changed... It is discarded from the list - and not updated.
  *
  * this thread is also used to hash added files.
@@ -64,39 +64,39 @@
 
 class FileDetails
 {
-	public:
-	FileDetails()
-{
-	return;
-}
+public:
+    FileDetails()
+    {
+        return;
+    }
 
-	FileDetails(std::string path, uint32_t p, uint32_t f)
-{
-	info.path = path;
-	period = p;
-	flags = f;
-}
-	
-	FileDetails(FileInfo &i, uint32_t p, uint32_t f)
-{
-	info = i;
-	period = p;
-	flags = f;
-}
+    FileDetails(std::string path, uint32_t p, uint32_t f)
+    {
+        info.path = path;
+        period = p;
+        flags = f;
+    }
 
-	FileInfo info;
+    FileDetails(FileInfo &i, uint32_t p, uint32_t f)
+    {
+        info = i;
+        period = p;
+        flags = f;
+    }
+
+    FileInfo info;
 
 #if 0   /*** WHAT IS NEEDED ***/
-	std::list<std::string> sources;
-	std::string path;
-	std::string fname;
-	std::string hash;
-	uint64_t size;
+    std::list<std::string> sources;
+    std::string path;
+    std::string fname;
+    std::string hash;
+    uint64_t size;
 #endif
 
-	uint32_t start;
-	uint32_t period;
-	uint32_t flags;
+    uint32_t start;
+    uint32_t period;
+    uint32_t flags;
 };
 
 const uint32_t FT_DETAILS_CLEANUP	= 0x0100; 	/* remove when it expires */
@@ -109,64 +109,64 @@ const uint32_t CLEANUP_PERIOD		= 600; /* 10 minutes */
 class ftExtraList: public RsThread, public p3Config, public ftSearch
 {
 
-	public:
+public:
 
-		ftExtraList();
+    ftExtraList();
 
-		/***
-		 * If the File is alreay Hashed, then just add it in.
-		 **/
+    /***
+     * If the File is alreay Hashed, then just add it in.
+     **/
 
-bool		addExtraFile(std::string path, std::string hash, 
-				uint64_t size, uint32_t period, uint32_t flags);
+    bool		addExtraFile(std::string path, std::string hash,
+                       uint64_t size, uint32_t period, uint32_t flags);
 
-bool		removeExtraFile(std::string hash, uint32_t flags);
-bool 		moveExtraFile(std::string fname, std::string hash, uint64_t size,
-                                std::string destpath);
+    bool		removeExtraFile(std::string hash, uint32_t flags);
+    bool 		moveExtraFile(std::string fname, std::string hash, uint64_t size,
+                         std::string destpath);
 
 
-		/***
-		 * Hash file, and add to the files, 
-		 * file is removed after period.
-		 **/
+    /***
+     * Hash file, and add to the files,
+     * file is removed after period.
+     **/
 
-bool 		hashExtraFile(std::string path, uint32_t period, uint32_t flags);
-bool	 	hashExtraFileDone(std::string path, FileInfo &info);
+    bool 		hashExtraFile(std::string path, uint32_t period, uint32_t flags);
+    bool	 	hashExtraFileDone(std::string path, FileInfo &info);
 
-		/***
-		 * Search Function - used by File Transfer 
-		 * implementation of ftSearch.
-		 *
-		 **/
-virtual bool    search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
+    /***
+     * Search Function - used by File Transfer
+     * implementation of ftSearch.
+     *
+     **/
+    virtual bool    search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
 
-		/***
-		 * Thread Main Loop 
-		 **/
-virtual void run(); 
+    /***
+     * Thread Main Loop
+     **/
+    virtual void run();
 
-		/***
-		 * Configuration - store extra files.
-		 *
-		 **/
-        protected:
-virtual RsSerialiser *setupSerialiser();
-virtual std::list<RsItem *> saveList(bool &cleanup);
-virtual bool    loadList(std::list<RsItem *> load);
+    /***
+     * Configuration - store extra files.
+     *
+     **/
+protected:
+    virtual RsSerialiser *setupSerialiser();
+    virtual std::list<RsItem *> saveList(bool &cleanup);
+    virtual bool    loadList(std::list<RsItem *> load);
 
-	private:
+private:
 
-		/* Worker Functions */
-void	hashAFile();
-bool	cleanupOldFiles();
-bool    cleanupEntry(std::string path, uint32_t flags);
+    /* Worker Functions */
+    void	hashAFile();
+    bool	cleanupOldFiles();
+    bool    cleanupEntry(std::string path, uint32_t flags);
 
-		mutable RsMutex extMutex;
+    mutable RsMutex extMutex;
 
-		std::list<FileDetails> mToHash;
+    std::list<FileDetails> mToHash;
 
-		std::map<std::string, std::string> mHashedList; /* path -> hash ( not saved ) */
-		std::map<std::string, FileDetails> mFiles;
+    std::map<std::string, std::string> mHashedList; /* path -> hash ( not saved ) */
+    std::map<std::string, FileDetails> mFiles;
 };
 
 

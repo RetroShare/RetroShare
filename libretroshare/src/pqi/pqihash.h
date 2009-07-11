@@ -30,60 +30,60 @@
 
 class pqihash
 {
-	public:
-	pqihash()
-{
-	
-	sha_hash = new uint8_t[SHA_DIGEST_LENGTH];
-	sha_ctx = new SHA_CTX;
-	SHA1_Init(sha_ctx);
-	doHash = true;
-}
+public:
+    pqihash()
+    {
 
-	~pqihash()
-{
-	delete[] sha_hash;
-	delete sha_ctx;
-}
+        sha_hash = new uint8_t[SHA_DIGEST_LENGTH];
+        sha_ctx = new SHA_CTX;
+        SHA1_Init(sha_ctx);
+        doHash = true;
+    }
+
+    ~pqihash()
+    {
+        delete[] sha_hash;
+        delete sha_ctx;
+    }
 
 
-void    addData(void *data, uint32_t len)
-{
-	if (doHash)
-	{
-		SHA1_Update(sha_ctx, data, len);
-	}
-}
+    void    addData(void *data, uint32_t len)
+    {
+        if (doHash)
+        {
+            SHA1_Update(sha_ctx, data, len);
+        }
+    }
 
-void 	Complete(std::string &hash)
-{
-	if (!doHash)
-	{
-		hash = endHash;
-		return;
-	}
+    void 	Complete(std::string &hash)
+    {
+        if (!doHash)
+        {
+            hash = endHash;
+            return;
+        }
 
-	SHA1_Final(sha_hash, sha_ctx);
+        SHA1_Final(sha_hash, sha_ctx);
 
-	std::ostringstream out;
-	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
-	{
-		out << std::setw(2) << std::setfill('0') << std::hex;
-		out << (unsigned int) (sha_hash[i]);
-	}
-	endHash = out.str();
-	hash = endHash;
-	doHash = false;
+        std::ostringstream out;
+        for (int i = 0; i < SHA_DIGEST_LENGTH; i++)
+        {
+            out << std::setw(2) << std::setfill('0') << std::hex;
+            out << (unsigned int) (sha_hash[i]);
+        }
+        endHash = out.str();
+        hash = endHash;
+        doHash = false;
 
-	return;
-}
+        return;
+    }
 
-	private:
+private:
 
-	bool	doHash;
-	std::string endHash;
-	uint8_t *sha_hash;
-	SHA_CTX *sha_ctx;
+    bool	doHash;
+    std::string endHash;
+    uint8_t *sha_hash;
+    SHA_CTX *sha_ctx;
 };
 
 

@@ -43,16 +43,16 @@ std::string RsStatusString(uint32_t status);
 
 class StatusInfo
 {
-	public:
-	std::string id;
-	uint32_t status;
+public:
+    std::string id;
+    uint32_t status;
 };
 
 class RsStatus
 {
-	public:
-virtual bool getStatus(std::string id, StatusInfo& statusInfo) = 0;
-virtual bool setStatus(StatusInfo& statusInfo)                 = 0;
+public:
+    virtual bool getStatus(std::string id, StatusInfo& statusInfo) = 0;
+    virtual bool setStatus(StatusInfo& statusInfo)                 = 0;
 
 };
 

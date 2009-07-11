@@ -35,7 +35,7 @@ struct RsGameLauncher;
 /* declare single RsIface for everyone to use! */
 
 extern RsGameLauncher  *rsGameLauncher;
-	
+
 #include <map>
 #include <string>
 #include <inttypes.h>
@@ -45,14 +45,14 @@ struct RsGameInfo
 {
     std::string gameId;
     std::string serverId;
-	
+
     std::string gameType;
     std::wstring gameName;
     std::string serverName;
     std::string status;
     uint16_t    numPlayers;
 };
-	
+
 // CHANGE: CLASS_TO_STRUCT
 struct RsGamePeer
 {
@@ -68,13 +68,13 @@ struct RsGameDetail
     std::string gameId;
     std::string gameType;
     std::wstring gameName;
-	
+
     bool areServer;         /* are we the server? */
     std::string serverId;   /* if not, who is? */
     std::string serverName;
-	
+
     std::string status;
-	
+
     uint16_t numPlayers;
     std::map<std::string, RsGamePeer> gamers;
 };
@@ -93,7 +93,7 @@ public:
     virtual bool    invitePeer(std::string gameId, std::string peerId) = 0;
     virtual bool    uninvitePeer(std::string gameId, std::string peerId) = 0;
     virtual bool    confirmPeer(std::string gameId, std::string peerId,
-                                                int16_t pos = -1) = 0;
+                                int16_t pos = -1) = 0;
     virtual bool    unconfirmPeer(std::string gameId, std::string peerId) = 0;
 
     /* client commands */

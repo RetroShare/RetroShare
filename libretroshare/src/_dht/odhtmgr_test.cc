@@ -42,108 +42,108 @@
 
 void usage(char *name)
 {
-	std::cerr << "USAGE: " << name << " -o OwnId [ -p PeerId1 [ -p PeerId2 [ ... ] ] ] ";
-	std::cerr << std::endl;
-	exit(1);
+    std::cerr << "USAGE: " << name << " -o OwnId [ -p PeerId1 [ -p PeerId2 [ ... ] ] ] ";
+    std::cerr << std::endl;
+    exit(1);
 }
 
 int main(int argc, char **argv)
 {
-	int c;
-	bool setOwnId = false;
-	std::string ownId;
-	std::list<std::string> peerIds;
-	
-	while(-1 != (c = getopt(argc, argv, "o:p:")))
-	{
-		switch (c)
-		{
-		case 'o':
-			ownId = optarg;
-			setOwnId = true;
-			break;
-		case 'p':
-			peerIds.push_back(std::string(optarg));
-			break;
-		default:
-			usage(argv[0]);
-			break;
-		}
-	}
+    int c;
+    bool setOwnId = false;
+    std::string ownId;
+    std::list<std::string> peerIds;
 
-	if (!setOwnId)
-	{
-		std::cerr << "Missing OwnId!";
-		usage(argv[0]);
-	}
-	
-	bool haveOwnAddress = false;
-	time_t startTime = time(NULL);
+    while (-1 != (c = getopt(argc, argv, "o:p:")))
+    {
+        switch (c)
+        {
+        case 'o':
+            ownId = optarg;
+            setOwnId = true;
+            break;
+        case 'p':
+            peerIds.push_back(std::string(optarg));
+            break;
+        default:
+            usage(argv[0]);
+            break;
+        }
+    }
 
-	pqiConnectCbDummy cbTester;
-	OpenDHTMgr  dhtTester(ownId, &cbTester, ".");
+    if (!setOwnId)
+    {
+        std::cerr << "Missing OwnId!";
+        usage(argv[0]);
+    }
 
-	/* startup dht */
-	std::cerr << "Starting up DhtTester()" << std::endl;
-	dhtTester.start();
+    bool haveOwnAddress = false;
+    time_t startTime = time(NULL);
 
-	/* wait for a little before switching on */
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+    pqiConnectCbDummy cbTester;
+    OpenDHTMgr  dhtTester(ownId, &cbTester, ".");
+
+    /* startup dht */
+    std::cerr << "Starting up DhtTester()" << std::endl;
+    dhtTester.start();
+
+    /* wait for a little before switching on */
+    /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
-        sleep(1);
+    sleep(1);
 #else
-        Sleep(1000);
+    Sleep(1000);
 #endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+    /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 
-	std::cerr << "Switching on DhtTester()" << std::endl;
-	dhtTester.enable(true);
+    std::cerr << "Switching on DhtTester()" << std::endl;
+    dhtTester.enable(true);
 
-	std::cerr << "Adding a List of Peers" << std::endl;
-	std::list<std::string>::iterator it;
-	for(it = peerIds.begin(); it != peerIds.end(); it++)
-	{
-		dhtTester.findPeer(*it);
-	}
-		
+    std::cerr << "Adding a List of Peers" << std::endl;
+    std::list<std::string>::iterator it;
+    for (it = peerIds.begin(); it != peerIds.end(); it++)
+    {
+        dhtTester.findPeer(*it);
+    }
 
-	/* wait loop */
-	while(1)
-	{
-		std::cerr << "Main waiting..." << std::endl;
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+
+    /* wait loop */
+    while (1)
+    {
+        std::cerr << "Main waiting..." << std::endl;
+        /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
-	        sleep(3);
+        sleep(3);
 #else
-		Sleep(3000);
+        Sleep(3000);
 #endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+        /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-		if (!haveOwnAddress)
-		{
-			if (time(NULL) - startTime > 20)
-			{
-				std::cerr << "Setting Own Address!" << std::endl;
-				haveOwnAddress = true;
+        if (!haveOwnAddress)
+        {
+            if (time(NULL) - startTime > 20)
+            {
+                std::cerr << "Setting Own Address!" << std::endl;
+                haveOwnAddress = true;
 
-				uint32_t type = DHT_ADDR_UDP;
+                uint32_t type = DHT_ADDR_UDP;
 
-				struct sockaddr_in laddr;
-				inet_aton("10.0.0.111", &(laddr.sin_addr));
-				laddr.sin_port = htons(7812);
-				laddr.sin_family = AF_INET;
+                struct sockaddr_in laddr;
+                inet_aton("10.0.0.111", &(laddr.sin_addr));
+                laddr.sin_port = htons(7812);
+                laddr.sin_family = AF_INET;
 
-				struct sockaddr_in raddr;
-				inet_aton("10.0.0.11", &(raddr.sin_addr));
-				raddr.sin_port = htons(7812);
-				raddr.sin_family = AF_INET;
+                struct sockaddr_in raddr;
+                inet_aton("10.0.0.11", &(raddr.sin_addr));
+                raddr.sin_port = htons(7812);
+                raddr.sin_family = AF_INET;
 
-				dhtTester.setExternalInterface(laddr, raddr, type);
-			}
-		}
+                dhtTester.setExternalInterface(laddr, raddr, type);
+            }
+        }
 
-	}
+    }
 };
 
 

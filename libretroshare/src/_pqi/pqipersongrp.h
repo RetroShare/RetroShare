@@ -35,11 +35,11 @@
 #include "pqi/p3cfgmgr.h"
 
 
-// So this is a specific implementation 
+// So this is a specific implementation
 //
 // it is designed to have one pqilistensocket + a series of pqisockets
 //
-// as an added bonus, we are going to 
+// as an added bonus, we are going to
 // make this a pqitunnelserver, to which services can be attached.
 
 const unsigned long PQIPERSON_NO_LISTENER = 	0x0001;
@@ -85,7 +85,11 @@ protected:
     /* Overloaded RsItem Check
      * checks item->cid vs Person
      */
-    virtual int checkOutgoingRsItem(RsItem *item, int global) { (void)item; (void)global; return 1; }
+    virtual int checkOutgoingRsItem(RsItem *item, int global) {
+        (void)item;
+        (void)global;
+        return 1;
+    }
 
 private:
 
@@ -102,7 +106,9 @@ class pqipersongrpDummy: public pqipersongrp
 {
 public:
     pqipersongrpDummy(SecurityPolicy *pol, unsigned long flags)
-    :pqipersongrp(pol, flags) { return; }
+            :pqipersongrp(pol, flags) {
+        return;
+    }
 
 protected:
 

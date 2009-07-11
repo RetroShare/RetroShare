@@ -38,44 +38,44 @@
 
 class dhtServer
 {
-	public:
+public:
 
-	std::string host;
-	uint16_t    port;
-	uint16_t    failed;
-	time_t      ts;
-	struct sockaddr_in addr;
+    std::string host;
+    uint16_t    port;
+    uint16_t    failed;
+    time_t      ts;
+    struct sockaddr_in addr;
 };
 
 class OpenDHTClient: public DHTClient
 {
-	public:
+public:
 
-virtual	bool publishKey(std::string key, std::string value, uint32_t ttl);
-virtual	bool searchKey(std::string key, std::list<std::string> &values);
+    virtual	bool publishKey(std::string key, std::string value, uint32_t ttl);
+    virtual	bool searchKey(std::string key, std::list<std::string> &values);
 
-	/* Fns accessing data */
-virtual bool checkServerFile(std::string filename);
-virtual bool loadServers(std::string filename);
-virtual bool loadServersFromWeb(std::string storefname);
-virtual bool loadServers(std::istream&);
+    /* Fns accessing data */
+    virtual bool checkServerFile(std::string filename);
+    virtual bool loadServers(std::string filename);
+    virtual bool loadServersFromWeb(std::string storefname);
+    virtual bool loadServers(std::istream&);
 
-virtual bool dhtActive();
+    virtual bool dhtActive();
 
-	private:
-bool 	getServer(std::string &host, uint16_t &port, struct sockaddr_in &addr);
-bool 	setServerIp(std::string host, struct sockaddr_in addr);
-void 	setServerFailed(std::string host);
+private:
+    bool 	getServer(std::string &host, uint16_t &port, struct sockaddr_in &addr);
+    bool 	setServerIp(std::string host, struct sockaddr_in addr);
+    void 	setServerFailed(std::string host);
 
-	private:
+private:
 
-	/* generic send msg */
-	bool openDHT_sendMessage(std::string msg, std::string &response);
-	bool openDHT_getDHTList(std::string &response);
+    /* generic send msg */
+    bool openDHT_sendMessage(std::string msg, std::string &response);
+    bool openDHT_getDHTList(std::string &response);
 
-	RsMutex dhtMutex;
-	std::map<std::string, dhtServer> mServers;
-	uint32_t mDHTFailCount;
+    RsMutex dhtMutex;
+    std::map<std::string, dhtServer> mServers;
+    uint32_t mDHTFailCount;
 
 };
 

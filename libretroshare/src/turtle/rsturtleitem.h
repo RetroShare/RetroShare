@@ -18,164 +18,164 @@ const uint8_t RS_TURTLE_SUBTYPE_FILE_DATA      = 0x08 ;
 
 class RsTurtleItem: public RsItem
 {
-	public:
-		RsTurtleItem(uint8_t turtle_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_TURTLE,turtle_subtype) {}
+public:
+    RsTurtleItem(uint8_t turtle_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_TURTLE,turtle_subtype) {}
 
-		virtual bool serialize(void *data,uint32_t& size) = 0 ;	// Isn't it better that items can serialize themselves ?
-		virtual uint32_t serial_size() = 0 ; 							// deserialise is handled using a constructor
+    virtual bool serialize(void *data,uint32_t& size) = 0 ;	// Isn't it better that items can serialize themselves ?
+    virtual uint32_t serial_size() = 0 ; 							// deserialise is handled using a constructor
 
-		virtual void clear() {} 
+    virtual void clear() {}
 };
 
 class RsTurtleSearchResultItem: public RsTurtleItem
 {
-	public:
-		RsTurtleSearchResultItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_RESULT) {}
-		RsTurtleSearchResultItem(void *data,uint32_t size) ;		// deserialization
+public:
+    RsTurtleSearchResultItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_RESULT) {}
+    RsTurtleSearchResultItem(void *data,uint32_t size) ;		// deserialization
 
-		TurtleSearchRequestId request_id ;	// Randomly generated request id.
+    TurtleSearchRequestId request_id ;	// Randomly generated request id.
 
-		uint16_t depth ;							// The depth of a search result is obfuscated in this way:
-														// 	If the actual depth is 1, this field will be 1.
-														// 	If the actual depth is > 1, this field is a larger arbitrary integer. 
-														
-		std::list<TurtleFileInfo> result ;
+    uint16_t depth ;							// The depth of a search result is obfuscated in this way:
+    // 	If the actual depth is 1, this field will be 1.
+    // 	If the actual depth is > 1, this field is a larger arbitrary integer.
 
-		virtual std::ostream& print(std::ostream& o, uint16_t) ;
+    std::list<TurtleFileInfo> result ;
 
-	protected:
-		virtual bool serialize(void *data,uint32_t& size) ;
-		virtual uint32_t serial_size() ;
+    virtual std::ostream& print(std::ostream& o, uint16_t) ;
+
+protected:
+    virtual bool serialize(void *data,uint32_t& size) ;
+    virtual uint32_t serial_size() ;
 };
 
 class RsTurtleSearchRequestItem: public RsTurtleItem
 {
-	public:
-		RsTurtleSearchRequestItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_REQUEST) {}
-		RsTurtleSearchRequestItem(void *data,uint32_t size) ;		// deserialization
+public:
+    RsTurtleSearchRequestItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_REQUEST) {}
+    RsTurtleSearchRequestItem(void *data,uint32_t size) ;		// deserialization
 
-		std::string match_string ;	// string to match
-		uint32_t request_id ; 		// randomly generated request id.
-		uint16_t depth ;				// Used for limiting search depth.
+    std::string match_string ;	// string to match
+    uint32_t request_id ; 		// randomly generated request id.
+    uint16_t depth ;				// Used for limiting search depth.
 
-		virtual std::ostream& print(std::ostream& o, uint16_t) ;
+    virtual std::ostream& print(std::ostream& o, uint16_t) ;
 
-	protected:
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
+protected:
+    virtual bool serialize(void *data,uint32_t& size) ;
+    virtual uint32_t serial_size() ;
 };
 
 class RsTurtleOpenTunnelItem: public RsTurtleItem
 {
-	public:
-		RsTurtleOpenTunnelItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_OPEN_TUNNEL) {}
-		RsTurtleOpenTunnelItem(void *data,uint32_t size) ;		// deserialization
+public:
+    RsTurtleOpenTunnelItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_OPEN_TUNNEL) {}
+    RsTurtleOpenTunnelItem(void *data,uint32_t size) ;		// deserialization
 
-		TurtleFileHash file_hash ;	  // hash to match
-		uint32_t request_id ;		  // randomly generated request id.
-		uint32_t partial_tunnel_id ; // uncomplete tunnel id. Will be completed at destination.
-		uint16_t depth ;				  // Used for limiting search depth.
+    TurtleFileHash file_hash ;	  // hash to match
+    uint32_t request_id ;		  // randomly generated request id.
+    uint32_t partial_tunnel_id ; // uncomplete tunnel id. Will be completed at destination.
+    uint16_t depth ;				  // Used for limiting search depth.
 
-		virtual std::ostream& print(std::ostream& o, uint16_t) ;
+    virtual std::ostream& print(std::ostream& o, uint16_t) ;
 
-	protected:
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
+protected:
+    virtual bool serialize(void *data,uint32_t& size) ;
+    virtual uint32_t serial_size() ;
 };
 
 class RsTurtleTunnelOkItem: public RsTurtleItem
 {
-	public:
-		RsTurtleTunnelOkItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_TUNNEL_OK) {}
-		RsTurtleTunnelOkItem(void *data,uint32_t size) ;		// deserialization
+public:
+    RsTurtleTunnelOkItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_TUNNEL_OK) {}
+    RsTurtleTunnelOkItem(void *data,uint32_t size) ;		// deserialization
 
-		uint32_t tunnel_id ;		// id of the tunnel. Should be identical for a tunnel between two same peers for the same hash.
-		uint32_t request_id ;	// randomly generated request id corresponding to the intial request.
+    uint32_t tunnel_id ;		// id of the tunnel. Should be identical for a tunnel between two same peers for the same hash.
+    uint32_t request_id ;	// randomly generated request id corresponding to the intial request.
 
-		virtual std::ostream& print(std::ostream& o, uint16_t) ;
+    virtual std::ostream& print(std::ostream& o, uint16_t) ;
 
-	protected:
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
+protected:
+    virtual bool serialize(void *data,uint32_t& size) ;
+    virtual uint32_t serial_size() ;
 };
 
 class RsTurtleCloseTunnelItem: public RsTurtleItem
 {
-	public:
-		RsTurtleCloseTunnelItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_CLOSE_TUNNEL) {}
-		RsTurtleCloseTunnelItem(void *data,uint32_t size) ;		// deserialization
+public:
+    RsTurtleCloseTunnelItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_CLOSE_TUNNEL) {}
+    RsTurtleCloseTunnelItem(void *data,uint32_t size) ;		// deserialization
 
-		uint32_t tunnel_id ;		// id of the tunnel to close.
+    uint32_t tunnel_id ;		// id of the tunnel to close.
 
-		virtual std::ostream& print(std::ostream& o, uint16_t) ;
-	protected:
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
+    virtual std::ostream& print(std::ostream& o, uint16_t) ;
+protected:
+    virtual bool serialize(void *data,uint32_t& size) ;
+    virtual uint32_t serial_size() ;
 };
 
 class RsTurtleTunnelClosedItem: public RsTurtleItem
 {
-	public:
-		RsTurtleTunnelClosedItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_TUNNEL_CLOSED) {}
-		RsTurtleTunnelClosedItem(void *data,uint32_t size) ;		// deserialization
+public:
+    RsTurtleTunnelClosedItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_TUNNEL_CLOSED) {}
+    RsTurtleTunnelClosedItem(void *data,uint32_t size) ;		// deserialization
 
-		uint32_t tunnel_id ;		// id of the tunnel to close.
+    uint32_t tunnel_id ;		// id of the tunnel to close.
 
-		virtual std::ostream& print(std::ostream& o, uint16_t) ;
-	protected:
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
+    virtual std::ostream& print(std::ostream& o, uint16_t) ;
+protected:
+    virtual bool serialize(void *data,uint32_t& size) ;
+    virtual uint32_t serial_size() ;
 };
 
 class RsTurtleFileRequestItem: public RsTurtleItem
 {
-	public:
-		RsTurtleFileRequestItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_FILE_REQUEST) {}
-		RsTurtleFileRequestItem(void *data,uint32_t size) ;		// deserialization
+public:
+    RsTurtleFileRequestItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_FILE_REQUEST) {}
+    RsTurtleFileRequestItem(void *data,uint32_t size) ;		// deserialization
 
-		uint32_t tunnel_id ;		// id of the tunnel to travel through
-		uint64_t chunk_offset ;
-		uint32_t chunk_size ;
+    uint32_t tunnel_id ;		// id of the tunnel to travel through
+    uint64_t chunk_offset ;
+    uint32_t chunk_size ;
 
-		virtual std::ostream& print(std::ostream& o, uint16_t) ;
-	protected:
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
+    virtual std::ostream& print(std::ostream& o, uint16_t) ;
+protected:
+    virtual bool serialize(void *data,uint32_t& size) ;
+    virtual uint32_t serial_size() ;
 };
 
 class RsTurtleFileDataItem: public RsTurtleItem
 {
-	public:
-		RsTurtleFileDataItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_FILE_DATA) {}
-		~RsTurtleFileDataItem() ;
-		RsTurtleFileDataItem(void *data,uint32_t size) ;		// deserialization
+public:
+    RsTurtleFileDataItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_FILE_DATA) {}
+    ~RsTurtleFileDataItem() ;
+    RsTurtleFileDataItem(void *data,uint32_t size) ;		// deserialization
 
-		uint32_t tunnel_id ;		// id of the tunnel to travel through
-		uint64_t chunk_offset ;	// offset in the file
-		uint32_t chunk_size ;	// size of the file chunk
-		void    *chunk_data ;	// actual data.
+    uint32_t tunnel_id ;		// id of the tunnel to travel through
+    uint64_t chunk_offset ;	// offset in the file
+    uint32_t chunk_size ;	// size of the file chunk
+    void    *chunk_data ;	// actual data.
 
-		virtual std::ostream& print(std::ostream& o, uint16_t) ;
-	protected:
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
+    virtual std::ostream& print(std::ostream& o, uint16_t) ;
+protected:
+    virtual bool serialize(void *data,uint32_t& size) ;
+    virtual uint32_t serial_size() ;
 };
 
 // Class responsible for serializing/deserializing all turtle items.
 //
 class RsTurtleSerialiser: public RsSerialType
 {
-	public:
-		RsTurtleSerialiser() : RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_TURTLE) {}
+public:
+    RsTurtleSerialiser() : RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_TURTLE) {}
 
-		virtual uint32_t 	size (RsItem *item) 
-		{ 
-			return static_cast<RsTurtleItem *>(item)->serial_size() ; 
-		}
-		virtual bool serialise(RsItem *item, void *data, uint32_t *size) 
-		{ 
-			return static_cast<RsTurtleItem *>(item)->serialize(data,*size) ; 
-		}
-		virtual RsItem *deserialise (void *data, uint32_t *size) ;
+    virtual uint32_t 	size (RsItem *item)
+    {
+        return static_cast<RsTurtleItem *>(item)->serial_size() ;
+    }
+    virtual bool serialise(RsItem *item, void *data, uint32_t *size)
+    {
+        return static_cast<RsTurtleItem *>(item)->serialize(data,*size) ;
+    }
+    virtual RsItem *deserialise (void *data, uint32_t *size) ;
 };
 

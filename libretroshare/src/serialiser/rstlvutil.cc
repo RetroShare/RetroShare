@@ -25,7 +25,7 @@
  */
 
 
-/* some utility functions mainly for debugging 
+/* some utility functions mainly for debugging
  *
  *
  *
@@ -44,22 +44,22 @@
 
 void displayRawPacket(std::ostream &out, void *data, uint32_t size)
 {
-	uint32_t i;
-	std::ostringstream sout;
-	sout << "DisplayRawPacket: Size: " << size;
-	sout << std::hex;
-	for(i = 0; i < size; i++)
-	{
-		if (i % 16 == 0)
-		{
-			sout << std::endl;
-		}
-		sout << std::setw(2) << std::setfill('0')
-			<< (int) (((unsigned char *) data)[i]) << ":";
-	}
-	sout << std::endl;
+    uint32_t i;
+    std::ostringstream sout;
+    sout << "DisplayRawPacket: Size: " << size;
+    sout << std::hex;
+    for (i = 0; i < size; i++)
+    {
+        if (i % 16 == 0)
+        {
+            sout << std::endl;
+        }
+        sout << std::setw(2) << std::setfill('0')
+        << (int) (((unsigned char *) data)[i]) << ":";
+    }
+    sout << std::endl;
 
-	out << sout.str();
+    out << sout.str();
 }
 
 
@@ -67,44 +67,44 @@ void displayRawPacket(std::ostream &out, void *data, uint32_t size)
 
 int test_SerialiseTlvItem(std::ostream &str, RsTlvItem *in, RsTlvItem *out)
 {
-	uint16_t initsize = in->TlvSize();
-	uint32_t serialOffset = 0;
-	uint32_t deserialOffset  = 0;
+    uint16_t initsize = in->TlvSize();
+    uint32_t serialOffset = 0;
+    uint32_t deserialOffset  = 0;
 
-	str << "test_SerialiseTlvItem() Testing ... Print/Serialise/Deserialise";
-	str << std::endl;
-
-
-	/* some space to serialise into */
-	unsigned char serbuffer[WHOLE_64K_SIZE];
-
-	CHECK(in->SetTlv(serbuffer, WHOLE_64K_SIZE, &serialOffset));
-
-	CHECK(serialOffset == initsize); 		/* check that the offset matches the size */
-	CHECK(in->TlvSize() == initsize);	/* check size hasn't changed */
-
-	REPORT("Serialise RsTlvItem");
-
-	/* now we try to read it back in! */
-	CHECK(out->GetTlv(serbuffer, serialOffset, &deserialOffset));
-
-	/* again check sizes */
-	CHECK(serialOffset == deserialOffset); 
-	CHECK(deserialOffset == initsize); 
-	CHECK(out->TlvSize() == initsize);
-
-	str << "Class In/Serialised/Out!" << std::endl;
-	in->print(str, 0);
-	displayRawPacket(str, serbuffer, serialOffset);
-	out->print(str, 0);
-
-	/* Can't check the actual data -> should add function */
-	REPORT("DeSerialise RsTlvFileItem");
-
-	/* print it out */
+    str << "test_SerialiseTlvItem() Testing ... Print/Serialise/Deserialise";
+    str << std::endl;
 
 
-	return 1;
+    /* some space to serialise into */
+    unsigned char serbuffer[WHOLE_64K_SIZE];
+
+    CHECK(in->SetTlv(serbuffer, WHOLE_64K_SIZE, &serialOffset));
+
+    CHECK(serialOffset == initsize); 		/* check that the offset matches the size */
+    CHECK(in->TlvSize() == initsize);	/* check size hasn't changed */
+
+    REPORT("Serialise RsTlvItem");
+
+    /* now we try to read it back in! */
+    CHECK(out->GetTlv(serbuffer, serialOffset, &deserialOffset));
+
+    /* again check sizes */
+    CHECK(serialOffset == deserialOffset);
+    CHECK(deserialOffset == initsize);
+    CHECK(out->TlvSize() == initsize);
+
+    str << "Class In/Serialised/Out!" << std::endl;
+    in->print(str, 0);
+    displayRawPacket(str, serbuffer, serialOffset);
+    out->print(str, 0);
+
+    /* Can't check the actual data -> should add function */
+    REPORT("DeSerialise RsTlvFileItem");
+
+    /* print it out */
+
+
+    return 1;
 }
 
 /* This function checks the TLV header, and steps on to the next one
@@ -112,71 +112,71 @@ int test_SerialiseTlvItem(std::ostream &str, RsTlvItem *in, RsTlvItem *out)
 
 bool test_StepThroughTlvStack(std::ostream &str, void *data, int size)
 {
-	uint32_t offset = 0;
-	uint32_t index = 0;
-	while (offset + 4 <= size)
-	{
-        	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[offset])  );
-        	uint16_t tlvsize = GetTlvSize( &(((uint8_t *) data)[offset])  );
-		str << "Tlv Entry[" << index << "] => Offset: " << offset;
-		str << " Type: " << tlvtype;
-		str << " Size: " << tlvsize;
-		str << std::endl;
+    uint32_t offset = 0;
+    uint32_t index = 0;
+    while (offset + 4 <= size)
+    {
+        uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[offset])  );
+        uint16_t tlvsize = GetTlvSize( &(((uint8_t *) data)[offset])  );
+        str << "Tlv Entry[" << index << "] => Offset: " << offset;
+        str << " Type: " << tlvtype;
+        str << " Size: " << tlvsize;
+        str << std::endl;
 
-        	offset += tlvsize;
-	}
-	CHECK(offset == size); /* we match up exactly */
+        offset += tlvsize;
+    }
+    CHECK(offset == size); /* we match up exactly */
 
-	REPORT("Step Through RsTlvStack");
-	return 1;
+    REPORT("Step Through RsTlvStack");
+    return 1;
 }
 
 
-int test_CreateTlvStack(std::ostream &str, 
-		std::vector<RsTlvItem *> items, void *data, uint32_t *totalsize)
+int test_CreateTlvStack(std::ostream &str,
+                        std::vector<RsTlvItem *> items, void *data, uint32_t *totalsize)
 {
-	/* (1) select a random item 
-	 * (2) check size -> if okay serialise onto the end
-	 * (3) loop!.
-	 */
-	uint32_t offset = 0;
-	uint32_t count = 0;
+    /* (1) select a random item
+     * (2) check size -> if okay serialise onto the end
+     * (3) loop!.
+     */
+    uint32_t offset = 0;
+    uint32_t count = 0;
 
-	while(1)
-	{
-		int idx = (int) (items.size() * (rand() / (RAND_MAX + 1.0)));
-		uint32_t tlvsize = items[idx] -> TlvSize();
+    while (1)
+    {
+        int idx = (int) (items.size() * (rand() / (RAND_MAX + 1.0)));
+        uint32_t tlvsize = items[idx] -> TlvSize();
 
-		if (offset + tlvsize > *totalsize)
-		{
-			*totalsize = offset;
-			return count;
-		}
+        if (offset + tlvsize > *totalsize)
+        {
+            *totalsize = offset;
+            return count;
+        }
 
-		str << "Stack[" << count << "]";
-		str << " Offset: " << offset;
-		str << " TlvSize: " << tlvsize;
-		str << std::endl;
-			
-		/* serialise it */
-		items[idx] -> SetTlv(data, *totalsize, &offset);
-		items[idx] -> print(str, 10);
-		count++;
-	}
-	*totalsize = offset;
-	return 0;
+        str << "Stack[" << count << "]";
+        str << " Offset: " << offset;
+        str << " TlvSize: " << tlvsize;
+        str << std::endl;
+
+        /* serialise it */
+        items[idx] -> SetTlv(data, *totalsize, &offset);
+        items[idx] -> print(str, 10);
+        count++;
+    }
+    *totalsize = offset;
+    return 0;
 }
 
 int test_TlvSet(std::vector<RsTlvItem *> items, int maxsize)
 {
-	int totalsize = maxsize;
-	void *data = malloc(totalsize);
-	uint32_t size = totalsize;
+    int totalsize = maxsize;
+    void *data = malloc(totalsize);
+    uint32_t size = totalsize;
 
-	int bytes = test_CreateTlvStack(std::cerr, items, data, &size);
-	test_StepThroughTlvStack(std::cerr, data, size);
+    int bytes = test_CreateTlvStack(std::cerr, items, data, &size);
+    test_StepThroughTlvStack(std::cerr, data, size);
 
-	return 1;
+    return 1;
 }
 
 

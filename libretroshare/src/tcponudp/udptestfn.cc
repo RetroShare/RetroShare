@@ -27,22 +27,22 @@
 
 void UdpRecvTest::recvPkt(void *data, int size, struct sockaddr_in &from)
 {
-	/* print packet information */
-	std::cerr << "UdpRecvTest::recvPkt(" << size << ") from: " << from;
-	std::cerr << std::endl;
+    /* print packet information */
+    std::cerr << "UdpRecvTest::recvPkt(" << size << ") from: " << from;
+    std::cerr << std::endl;
 }
 
 UdpPeerTest::UdpPeerTest(struct sockaddr_in &addr)
-	:raddr(addr) 
-{ 
-	return; 
+        :raddr(addr)
+{
+    return;
 }
 
 void UdpPeerTest::recvPkt(void *data, int size)
 {
-	/* print packet information */
-	std::cerr << "UdpPeerTest::recvPkt(" << size << ") from: " << raddr;
-	std::cerr << std::endl;
+    /* print packet information */
+    std::cerr << "UdpPeerTest::recvPkt(" << size << ") from: " << raddr;
+    std::cerr << std::endl;
 }
 
 

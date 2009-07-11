@@ -31,14 +31,14 @@
 #include "util/rsthreads.h"
 
 // PQI Service, is a generic lower layer on which services can run on.
-// 
-// these packets get passed through the 
+//
+// these packets get passed through the
 // server, to a service that is registered.
 //
 // example services:
 // 	proxytunnel. -> p3proxy.
 // 	sockettunnel
-// 		-> either broadcast (attach to 
+// 		-> either broadcast (attach to
 // 				open socket instead
 // 				of broadcast address)
 // 		-> or requested/signon.
@@ -54,24 +54,32 @@ class RsRawItem;
 
 class pqiService
 {
-	protected:
+protected:
 
-	pqiService(uint32_t t) // our type of packets.
-	:type(t) { return; }
+    pqiService(uint32_t t) // our type of packets.
+            :type(t) {
+        return;
+    }
 
-virtual ~pqiService() { return; }
+    virtual ~pqiService() {
+        return;
+    }
 
-	public:
-	// 
-virtual int		receive(RsRawItem *) = 0;
-virtual RsRawItem *	send() = 0;
+public:
+    //
+    virtual int		receive(RsRawItem *) = 0;
+    virtual RsRawItem *	send() = 0;
 
-uint32_t getType() { return type; }
+    uint32_t getType() {
+        return type;
+    }
 
-virtual int	tick() { return 0; }
+    virtual int	tick() {
+        return 0;
+    }
 
-	private:
-	uint32_t type;
+private:
+    uint32_t type;
 };
 
 #include <map>
@@ -80,20 +88,20 @@ virtual int	tick() { return 0; }
 class p3ServiceServer
 {
 public:
-	p3ServiceServer();
+    p3ServiceServer();
 
-int	addService(pqiService *);
+    int	addService(pqiService *);
 
-int	incoming(RsRawItem *);
-RsRawItem *outgoing();
+    int	incoming(RsRawItem *);
+    RsRawItem *outgoing();
 
-int	tick();
+    int	tick();
 
 private:
 
-	RsMutex srvMtx; 
-std::map<uint32_t, pqiService *> services;
-std::map<uint32_t, pqiService *>::iterator rrit;
+    RsMutex srvMtx;
+    std::map<uint32_t, pqiService *> services;
+    std::map<uint32_t, pqiService *>::iterator rrit;
 
 };
 

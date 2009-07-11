@@ -34,27 +34,41 @@
 
 class RsMutex
 {
-	public:
+public:
 
-	RsMutex() { pthread_mutex_init(&realMutex, NULL); }
-        ~RsMutex() { pthread_mutex_destroy(&realMutex); }
-void	lock() { pthread_mutex_lock(&realMutex); }
-void	unlock() { pthread_mutex_unlock(&realMutex); }
-bool	trylock() { return (0 == pthread_mutex_trylock(&realMutex)); }
+    RsMutex() {
+        pthread_mutex_init(&realMutex, NULL);
+    }
+    ~RsMutex() {
+        pthread_mutex_destroy(&realMutex);
+    }
+    void	lock() {
+        pthread_mutex_lock(&realMutex);
+    }
+    void	unlock() {
+        pthread_mutex_unlock(&realMutex);
+    }
+    bool	trylock() {
+        return (0 == pthread_mutex_trylock(&realMutex));
+    }
 
-	private:
-	pthread_mutex_t  realMutex;
+private:
+    pthread_mutex_t  realMutex;
 };
 
 class RsStackMutex
 {
-	public:
+public:
 
-	RsStackMutex(RsMutex &mtx): mMtx(mtx) { mMtx.lock(); }
-        ~RsStackMutex() { mMtx.unlock(); }
+    RsStackMutex(RsMutex &mtx): mMtx(mtx) {
+        mMtx.lock();
+    }
+    ~RsStackMutex() {
+        mMtx.unlock();
+    }
 
-	private:
-	RsMutex &mMtx;
+private:
+    RsMutex &mMtx;
 };
 
 class RsThread;
@@ -64,38 +78,46 @@ pthread_t  createThread(RsThread &thread);
 
 class RsThread
 {
-	public:
-	RsThread() { return; }
-virtual ~RsThread() { return; }
+public:
+    RsThread() {
+        return;
+    }
+    virtual ~RsThread() {
+        return;
+    }
 
-virtual void start() { createThread(*this); }
-virtual void run() = 0; /* called once the thread is started */
+    virtual void start() {
+        createThread(*this);
+    }
+    virtual void run() = 0; /* called once the thread is started */
 
-	pthread_t mTid;
-        RsMutex   mMutex;
+    pthread_t mTid;
+    RsMutex   mMutex;
 };
 
 
 class RsQueueThread: public RsThread
 {
-	public:
+public:
 
-	RsQueueThread(uint32_t min, uint32_t max, double relaxFactor );
-virtual ~RsQueueThread() { return; }
+    RsQueueThread(uint32_t min, uint32_t max, double relaxFactor );
+    virtual ~RsQueueThread() {
+        return;
+    }
 
-virtual void run();
+    virtual void run();
 
-	protected:
+protected:
 
-virtual bool workQueued() = 0;
-virtual bool doWork() = 0;
+    virtual bool workQueued() = 0;
+    virtual bool doWork() = 0;
 
-	private:
-	uint32_t mMinSleep; /* ms */
-	uint32_t mMaxSleep; /* ms */
-	uint32_t mLastSleep; /* ms */
-	time_t   mLastWork;  /* secs */
-	float    mRelaxFactor; 
+private:
+    uint32_t mMinSleep; /* ms */
+    uint32_t mMaxSleep; /* ms */
+    uint32_t mLastSleep; /* ms */
+    time_t   mLastWork;  /* secs */
+    float    mRelaxFactor;
 };
 
 

@@ -45,7 +45,7 @@ const uint32_t RS_POPUP_CHAT	= 0x0002;
 const uint32_t RS_POPUP_CALL	= 0x0004;
 const uint32_t RS_POPUP_CONNECT = 0x0008;
 
-/* CHAT flags are here - so they are in the same place as 
+/* CHAT flags are here - so they are in the same place as
  * other Notify flags... not used by libretroshare though
  */
 const uint32_t RS_CHAT_OPEN_NEW		= 0x0001;
@@ -82,42 +82,48 @@ const uint32_t RS_FEED_ITEM_FILES_NEW		 = RS_FEED_TYPE_FILES | 0x0001;
 class RsFeedItem
 {
 public:
-	RsFeedItem(uint32_t type, std::string id1, std::string id2, std::string id3)
-	:mType(type), mId1(id1), mId2(id2), mId3(id3)
-	{
-		return;
-	}
+    RsFeedItem(uint32_t type, std::string id1, std::string id2, std::string id3)
+            :mType(type), mId1(id1), mId2(id2), mId3(id3)
+    {
+        return;
+    }
 
-	RsFeedItem() :mType(0) { return; }
+    RsFeedItem() :mType(0) {
+        return;
+    }
 
-	uint32_t mType;
-	std::string mId1, mId2, mId3;
+    uint32_t mType;
+    std::string mId1, mId2, mId3;
 };
 
 
-class RsNotify 
+class RsNotify
 {
-	public:
+public:
 
-	RsNotify() { return; }
-virtual ~RsNotify() { return; }
+    RsNotify() {
+        return;
+    }
+    virtual ~RsNotify() {
+        return;
+    }
 
-	/* Output for retroshare-gui */
-virtual bool NotifySysMessage(uint32_t &sysid, uint32_t &type, 
-					std::string &title, std::string &msg)		= 0;
-virtual bool NotifyPopupMessage(uint32_t &ptype, std::string &name, std::string &msg) 	= 0;
-virtual bool NotifyLogMessage(uint32_t &sysid, uint32_t &type,
-					std::string &title, std::string &msg)		= 0;
+    /* Output for retroshare-gui */
+    virtual bool NotifySysMessage(uint32_t &sysid, uint32_t &type,
+                                  std::string &title, std::string &msg)		= 0;
+    virtual bool NotifyPopupMessage(uint32_t &ptype, std::string &name, std::string &msg) 	= 0;
+    virtual bool NotifyLogMessage(uint32_t &sysid, uint32_t &type,
+                                  std::string &title, std::string &msg)		= 0;
 
-	/* Control over Messages */
-virtual bool GetSysMessageList(std::map<uint32_t, std::string> &list)  			= 0;
-virtual bool GetPopupMessageList(std::map<uint32_t, std::string> &list)			= 0;
+    /* Control over Messages */
+    virtual bool GetSysMessageList(std::map<uint32_t, std::string> &list)  			= 0;
+    virtual bool GetPopupMessageList(std::map<uint32_t, std::string> &list)			= 0;
 
-virtual bool SetSysMessageMode(uint32_t sysid, uint32_t mode)				= 0;
-virtual bool SetPopupMessageMode(uint32_t ptype, uint32_t mode)				= 0;
+    virtual bool SetSysMessageMode(uint32_t sysid, uint32_t mode)				= 0;
+    virtual bool SetPopupMessageMode(uint32_t ptype, uint32_t mode)				= 0;
 
-	/* Feed Output */
-virtual bool GetFeedItem(RsFeedItem &item)						= 0;
+    /* Feed Output */
+    virtual bool GetFeedItem(RsFeedItem &item)						= 0;
 
 };
 

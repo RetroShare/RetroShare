@@ -38,7 +38,7 @@
 // 	- depth					// depth of the file. setup to 1 for immediate friends and 2 for long distance friends.
 // 	- hash					// hash of the file found
 // 	- name					// name of the file found
-// 	- search request id.	// 
+// 	- search request id.	//
 //
 // - when downloading:
 // 	- for a given hash, a set of starting tunnels is maintained. Transitory
@@ -52,12 +52,12 @@
 //      1 - the user searches for files (turtle search), and selects one and clicks download.
 //      2 - In parallel:
 //           - the ft module gets a request, and searches for peers to provide this using its search modules.
-//           - the turtle router is informed that a turtle download will happen with the given hash, so 
+//           - the turtle router is informed that a turtle download will happen with the given hash, so
 //             it initiates tunnels for this hash.
 //     In a loop:
-//      3 - the ft module asks the hash to the turtle searchModule, and sends file requests to the pqi 
+//      3 - the ft module asks the hash to the turtle searchModule, and sends file requests to the pqi
 //           interface of this module.
-//      4 - the turtle pqi interface forwards these requests to the turtle router, which sends them to 
+//      4 - the turtle pqi interface forwards these requests to the turtle router, which sends them to
 //           the correct peers, selecting randomly among all the possible tunnels for this hash.
 //      5 - when a file data packet gets back, the turtle router forwards it back to the file transfer module.
 //
@@ -75,28 +75,28 @@
 //
 //======================================= Tunnel maintenance rules =====================================//
 //
-// P3turtle should derive from pqihandler, just as p3disc, so that newly connected peers should trigger 
+// P3turtle should derive from pqihandler, just as p3disc, so that newly connected peers should trigger
 // asking for new tunnels, and disconnecting peers should produce a close tunnel packet. To simplify this,
 // I maintain a time stamp in tunnels, that is updated each time a file data packet travels in the tunnel.
 // Doing so, if a tunnel is not used for some time, it just disapears. Additional rules apply:
 //
 // 	- when a peer A connects:
-// 		- initiate new tunnels for all active file hashes (go through the list of hashes) by 
-// 		  asking to A, for the same hash and the same source. Only report tunnels for which the destination 
+// 		- initiate new tunnels for all active file hashes (go through the list of hashes) by
+// 		  asking to A, for the same hash and the same source. Only report tunnels for which the destination
 // 		  endpoint is different, which should not happen in fact, because of bouncing gards.
 //
 // 	- when a peer A disconnects.
 // 		- do nothing.
 //
-//    - when receive open tunnel from A 
+//    - when receive open tunnel from A
 //    	- check whether it's a bouncing request. If yes, give up.
 //       - check hash against local files.
-//          if > 0 
+//          if > 0
 //             return tunnel ok item. No need to go forward, as sub tunnels are not useful.
 //          else
 //             forward request to peers, notting source and hashes.
 //
-//    - when receive tunnel ok from A 
+//    - when receive tunnel ok from A
 //    	- no need to check whether we already have this tunnel, as bouncing gards prevent this.
 //    	- leave a trace for the tunnel, and send (forward) backward.
 //
@@ -105,7 +105,7 @@
 //    - tunnel ids should be asymetric
 //    - tunnel requests should never be identical, to allow searching multiple times for the same string.
 //  So:
-//  	- when issuing an open tunnel order, 
+//  	- when issuing an open tunnel order,
 //  		- a random request id is generated and used for packet routing
 //  		- a partial tunnel id is build, which is unique to the pair (source,file hash)
 //  	- when tunnel_ok is sent back, the tunnel id is completed so that it is unique to the
@@ -115,7 +115,7 @@
 // 	- their file hash. Each tunnel is only designed for transferring a single and same file.
 // 	- their local endpoints id. These are the ids of the peers in direction to the source and destination.
 // 	- the tunnel id, which is unique to the triple hash+global source+global destination.
-// 	- there is a difference between source and destination in tunnels. The source is the file asker, the 
+// 	- there is a difference between source and destination in tunnels. The source is the file asker, the
 // 	  destination is the file provider. This helps sorting tunnels.
 // 	- a timestamp, used for cleaning unused tunnels.
 //
@@ -158,32 +158,32 @@ static const int TURTLE_MAX_SEARCH_DEPTH = 6 ;
 //
 class TurtleRequestInfo
 {
-	public:
-		TurtlePeerId origin ;			// where the request came from.
-		uint32_t	time_stamp ;			// last time the tunnel was actually used. Used for cleaning old tunnels.
+public:
+    TurtlePeerId origin ;			// where the request came from.
+    uint32_t	time_stamp ;			// last time the tunnel was actually used. Used for cleaning old tunnels.
 };
 
 class TurtleTunnel
 {
-	public:
-		TurtlePeerId local_src ;		// where packets come from. Direction to the source.
-		TurtlePeerId local_dst ;		// where packets should go. Direction to the destination.
-		TurtleFileHash hash;				// for starting and ending tunnels only. Null otherwise.
-		TurtleVirtualPeerId vpid;		// same, but contains the virtual peer id for this tunnel.
-		uint32_t	time_stamp ;			// last time the tunnel was actually used. Used for cleaning old tunnels.
+public:
+    TurtlePeerId local_src ;		// where packets come from. Direction to the source.
+    TurtlePeerId local_dst ;		// where packets should go. Direction to the destination.
+    TurtleFileHash hash;				// for starting and ending tunnels only. Null otherwise.
+    TurtleVirtualPeerId vpid;		// same, but contains the virtual peer id for this tunnel.
+    uint32_t	time_stamp ;			// last time the tunnel was actually used. Used for cleaning old tunnels.
 };
 
 // This class keeps trace of the activity for the file hashes the turtle router is asked to monitor.
 //
 class TurtleFileHashInfo
 {
-	public:
-		std::vector<TurtleTunnelId> tunnels ;		// list of active tunnel ids for this file hash
-		TurtleRequestId last_request ;				// last request for the tunnels of this hash
-		
-		TurtleFileName name ;
-		time_t time_stamp ;
-		uint64_t size ;
+public:
+    std::vector<TurtleTunnelId> tunnels ;		// list of active tunnel ids for this file hash
+    TurtleRequestId last_request ;				// last request for the tunnels of this hash
+
+    TurtleFileName name ;
+    time_t time_stamp ;
+    uint64_t size ;
 };
 
 // Subclassing:
@@ -199,143 +199,143 @@ class TurtleFileHashInfo
 //
 class p3turtle: public p3Service, public pqiMonitor, public RsTurtle, public ftSearch, public p3Config
 {
-	public:
-		p3turtle(p3ConnectMgr *cm,ftServer *m);
+public:
+    p3turtle(p3ConnectMgr *cm,ftServer *m);
 
-		// Lauches a search request through the pipes, and immediately returns
-		// the request id, which will be further used by the gui to store results
-		// as they come back.
-		//
-		virtual TurtleSearchRequestId turtleSearch(const std::string& string_to_match) ;
+    // Lauches a search request through the pipes, and immediately returns
+    // the request id, which will be further used by the gui to store results
+    // as they come back.
+    //
+    virtual TurtleSearchRequestId turtleSearch(const std::string& string_to_match) ;
 
-		// Initiates tunnel handling for the given file hash.  tunnels.  Launches
-		// an exception if an error occurs during the initialization process. The
-		// turtle router itself does not initiate downloads, it only maintains
-		// tunnels for the given hash. The download should be driven by the file
-		// transfer module. Maybe this function can do the whole thing:
-		//  - initiate tunnel handling
-		//  - send the file request to the file transfer module
-		//  - populate the file transfer module with the adequate pqi interface and search module.
-		//
-		//  This function should be called in addition to ftServer::FileRequest() so that the turtle router
-		//  automatically provide tunnels for the file to download.
-		//
-		virtual void monitorFileTunnels(const std::string& name,const std::string& file_hash,uint64_t size) ;
+    // Initiates tunnel handling for the given file hash.  tunnels.  Launches
+    // an exception if an error occurs during the initialization process. The
+    // turtle router itself does not initiate downloads, it only maintains
+    // tunnels for the given hash. The download should be driven by the file
+    // transfer module. Maybe this function can do the whole thing:
+    //  - initiate tunnel handling
+    //  - send the file request to the file transfer module
+    //  - populate the file transfer module with the adequate pqi interface and search module.
+    //
+    //  This function should be called in addition to ftServer::FileRequest() so that the turtle router
+    //  automatically provide tunnels for the file to download.
+    //
+    virtual void monitorFileTunnels(const std::string& name,const std::string& file_hash,uint64_t size) ;
 
-		// This should be called when canceling a file download, so that the turtle router stops
-		// handling tunnels for this file.
-		//
-		virtual void stopMonitoringFileTunnels(const std::string& file_hash) ;
+    // This should be called when canceling a file download, so that the turtle router stops
+    // handling tunnels for this file.
+    //
+    virtual void stopMonitoringFileTunnels(const std::string& file_hash) ;
 
-		/************* from pqiMonitor *******************/
-		// Informs the turtle router that some peers are (dis)connected. This should initiate digging new tunnels,
-		// and closing other tunnels.
-		//
-		virtual void statusChange(const std::list<pqipeer> &plist);
+    /************* from pqiMonitor *******************/
+    // Informs the turtle router that some peers are (dis)connected. This should initiate digging new tunnels,
+    // and closing other tunnels.
+    //
+    virtual void statusChange(const std::list<pqipeer> &plist);
 
-		/************* from pqiMonitor *******************/
+    /************* from pqiMonitor *******************/
 
-		// This function does many things:
-		// 	- It handles incoming and outgoing packets
-		// 	- it sorts search requests and forwards search results upward.
-		// 	- it cleans unused (tunnel+search) requests.
-		// 	- it maintains the pool of tunnels, for each request file hash.
-		//
-		virtual int tick();
+    // This function does many things:
+    // 	- It handles incoming and outgoing packets
+    // 	- it sorts search requests and forwards search results upward.
+    // 	- it cleans unused (tunnel+search) requests.
+    // 	- it maintains the pool of tunnels, for each request file hash.
+    //
+    virtual int tick();
 
-		/************* from ftSearch *******************/
-		// Search function. This function looks into the file hashes currently handled , and sends back info.
-		//
-		virtual bool search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const ;
+    /************* from ftSearch *******************/
+    // Search function. This function looks into the file hashes currently handled , and sends back info.
+    //
+    virtual bool search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const ;
 
-		/************* from p3Config *******************/
-		virtual RsSerialiser *setupSerialiser() ;
-		virtual std::list<RsItem*> saveList(bool& cleanup) ;
-		virtual bool loadList(std::list<RsItem*> load) ;
+    /************* from p3Config *******************/
+    virtual RsSerialiser *setupSerialiser() ;
+    virtual std::list<RsItem*> saveList(bool& cleanup) ;
+    virtual bool loadList(std::list<RsItem*> load) ;
 
-		/************* Communication with ftserver *******************/
-		// Does the turtle router manages tunnels to this peer ? (this is not a
-		// real id, but a fake one, that the turtle router is capable of connecting with a tunnel id).
-		bool isTurtlePeer(const std::string& peer_id) const ;
+    /************* Communication with ftserver *******************/
+    // Does the turtle router manages tunnels to this peer ? (this is not a
+    // real id, but a fake one, that the turtle router is capable of connecting with a tunnel id).
+    bool isTurtlePeer(const std::string& peer_id) const ;
 
-		// Examines the peer id, finds the turtle tunnel in it, and respond yes if the tunnel is ok and operational.
-		bool isOnline(const std::string& peer_id) const ;
+    // Examines the peer id, finds the turtle tunnel in it, and respond yes if the tunnel is ok and operational.
+    bool isOnline(const std::string& peer_id) const ;
 
-		// Returns a unique peer id, corresponding to the given tunnel.
-		std::string getTurtlePeerId(TurtleTunnelId tid) const ;
-	
-		// returns the list of virtual peers for all tunnels.
-		void getVirtualPeersList(std::list<pqipeer>& list) ;
+    // Returns a unique peer id, corresponding to the given tunnel.
+    std::string getTurtlePeerId(TurtleTunnelId tid) const ;
 
-		// Send a data request into the correct tunnel for the given file hash
-		void sendDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize) ;
+    // returns the list of virtual peers for all tunnels.
+    void getVirtualPeersList(std::list<pqipeer>& list) ;
 
-		// Send file data into the correct tunnel for the given file hash
-		void sendFileData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t baseoffset, uint32_t chunksize, void *data) ;
-	private:
-		//--------------------------- Admin/Helper functions -------------------------//
-		
-		uint32_t generatePersonalFilePrint(const TurtleFileHash&,bool) ;	/// Generates a cyphered combination of ownId() and file hash
-		uint32_t generateRandomRequestId() ;								/// Generates a random uint32_t number.
+    // Send a data request into the correct tunnel for the given file hash
+    void sendDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize) ;
 
-		void autoWash() ;															/// Auto cleaning of unused tunnels, search requests and tunnel requests.
+    // Send file data into the correct tunnel for the given file hash
+    void sendFileData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t baseoffset, uint32_t chunksize, void *data) ;
+private:
+    //--------------------------- Admin/Helper functions -------------------------//
 
-		//------------------------------ Tunnel handling -----------------------------//
+    uint32_t generatePersonalFilePrint(const TurtleFileHash&,bool) ;	/// Generates a cyphered combination of ownId() and file hash
+    uint32_t generateRandomRequestId() ;								/// Generates a random uint32_t number.
 
-		TurtleRequestId diggTunnel(const TurtleFileHash& hash) ;	/// initiates tunnels from here to any peers having the given file hash
-		void addDistantPeer(const TurtleFileHash&, TurtleTunnelId) ;	/// adds info related to a new virtual peer.
+    void autoWash() ;															/// Auto cleaning of unused tunnels, search requests and tunnel requests.
 
-		//----------------------------- Routing functions ----------------------------//
-		
-		void manageTunnels() ;									/// Handle tunnel digging for current file hashes
-		void locked_closeTunnel(TurtleTunnelId tid) ;	/// closes a given tunnel. Should be called with mutex set.
-		int handleIncoming(); 									/// Main routing function
+    //------------------------------ Tunnel handling -----------------------------//
 
-		void handleSearchRequest(RsTurtleSearchRequestItem *item);		/// specific routing functions for handling particular packets.
-		void handleSearchResult(RsTurtleSearchResultItem *item);
-		void handleTunnelRequest(RsTurtleOpenTunnelItem *item);		
-		void handleTunnelResult(RsTurtleTunnelOkItem *item);		
-		void handleRecvFileRequest(RsTurtleFileRequestItem *item);		
-		void handleRecvFileData(RsTurtleFileDataItem *item);		
+    TurtleRequestId diggTunnel(const TurtleFileHash& hash) ;	/// initiates tunnels from here to any peers having the given file hash
+    void addDistantPeer(const TurtleFileHash&, TurtleTunnelId) ;	/// adds info related to a new virtual peer.
 
-		//------ Functions connecting the turtle router to other components.----------//
-		
-		// Performs a search calling local cache and search structure.
-		void performLocalSearch(const std::string& match_string,std::list<TurtleFileInfo>& result) ;
+    //----------------------------- Routing functions ----------------------------//
 
-		// Returns a search result upwards (possibly to the gui)
-		void returnSearchResult(RsTurtleSearchResultItem *item) ;
+    void manageTunnels() ;									/// Handle tunnel digging for current file hashes
+    void locked_closeTunnel(TurtleTunnelId tid) ;	/// closes a given tunnel. Should be called with mutex set.
+    int handleIncoming(); 									/// Main routing function
 
-		// Returns true if the file with given hash is hosted locally.
-		bool performLocalHashSearch(const TurtleFileHash& hash,FileInfo& info) ;
+    void handleSearchRequest(RsTurtleSearchRequestItem *item);		/// specific routing functions for handling particular packets.
+    void handleSearchResult(RsTurtleSearchResultItem *item);
+    void handleTunnelRequest(RsTurtleOpenTunnelItem *item);
+    void handleTunnelResult(RsTurtleTunnelOkItem *item);
+    void handleRecvFileRequest(RsTurtleFileRequestItem *item);
+    void handleRecvFileData(RsTurtleFileDataItem *item);
 
-		//--------------------------- Local variables --------------------------------//
-		
-		/* data */
-		p3ConnectMgr *mConnMgr;
-		ftServer *_ft_server ;
-		ftController *_ft_controller ;
+    //------ Functions connecting the turtle router to other components.----------//
 
-		mutable RsMutex mTurtleMtx;
+    // Performs a search calling local cache and search structure.
+    void performLocalSearch(const std::string& match_string,std::list<TurtleFileInfo>& result) ;
 
-		std::map<TurtleSearchRequestId,TurtleRequestInfo> 	_search_requests_origins ; /// keeps trace of who emmitted a given search request
-		std::map<TurtleTunnelRequestId,TurtleRequestInfo> 	_tunnel_requests_origins ; /// keeps trace of who emmitted a tunnel request
-		std::map<TurtleFileHash,TurtleFileHashInfo>			_incoming_file_hashes ;		/// stores adequate tunnels for each file hash locally managed
-		std::map<TurtleFileHash,FileInfo>						_outgoing_file_hashes ;		/// stores file info for each file we provide.
-		std::map<TurtleTunnelId,TurtleTunnel > 				_local_tunnels ;				/// local tunnels, stored by ids (Either transiting or ending).
-		std::map<TurtleVirtualPeerId,TurtleTunnelId>			_virtual_peers ;				/// Peers corresponding to each tunnel.
-		std::vector<TurtleFileHash>								_hashes_to_remove ;			/// Hashes marked to be deleted.
+    // Returns a search result upwards (possibly to the gui)
+    void returnSearchResult(RsTurtleSearchResultItem *item) ;
 
-		time_t _last_clean_time ;
-		time_t _last_tunnel_management_time ;
-		time_t _last_tunnel_campaign_time ;
+    // Returns true if the file with given hash is hosted locally.
+    bool performLocalHashSearch(const TurtleFileHash& hash,FileInfo& info) ;
 
-		std::list<pqipeer> _online_peers;
-		bool _force_digg_new_tunnels ;			/// used to force digging new tunnels
+    //--------------------------- Local variables --------------------------------//
+
+    /* data */
+    p3ConnectMgr *mConnMgr;
+    ftServer *_ft_server ;
+    ftController *_ft_controller ;
+
+    mutable RsMutex mTurtleMtx;
+
+    std::map<TurtleSearchRequestId,TurtleRequestInfo> 	_search_requests_origins ; /// keeps trace of who emmitted a given search request
+    std::map<TurtleTunnelRequestId,TurtleRequestInfo> 	_tunnel_requests_origins ; /// keeps trace of who emmitted a tunnel request
+    std::map<TurtleFileHash,TurtleFileHashInfo>			_incoming_file_hashes ;		/// stores adequate tunnels for each file hash locally managed
+    std::map<TurtleFileHash,FileInfo>						_outgoing_file_hashes ;		/// stores file info for each file we provide.
+    std::map<TurtleTunnelId,TurtleTunnel > 				_local_tunnels ;				/// local tunnels, stored by ids (Either transiting or ending).
+    std::map<TurtleVirtualPeerId,TurtleTunnelId>			_virtual_peers ;				/// Peers corresponding to each tunnel.
+    std::vector<TurtleFileHash>								_hashes_to_remove ;			/// Hashes marked to be deleted.
+
+    time_t _last_clean_time ;
+    time_t _last_tunnel_management_time ;
+    time_t _last_tunnel_campaign_time ;
+
+    std::list<pqipeer> _online_peers;
+    bool _force_digg_new_tunnels ;			/// used to force digging new tunnels
 #ifdef P3TURTLE_DEBUG
-		void dumpState() ;
+    void dumpState() ;
 #endif
 };
 
-#endif 
+#endif
 

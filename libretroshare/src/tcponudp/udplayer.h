@@ -30,7 +30,7 @@
 
 
 /*
-#include <netinet/in.h> 
+#include <netinet/in.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 */
@@ -53,65 +53,67 @@ std::string printPkt(void *d, int size);
 std::string printPktOffset(unsigned int offset, void *d, unsigned int size);
 
 
-/* UdpLayer ..... is the bottom layer which 
+/* UdpLayer ..... is the bottom layer which
  * just sends and receives Udp packets.
  */
 
 class UdpReceiver
 {
-	public:
-virtual void recvPkt(void *data, int size, struct sockaddr_in &from) = 0;
+public:
+    virtual void recvPkt(void *data, int size, struct sockaddr_in &from) = 0;
 };
 
 class UdpLayer: public RsThread
 {
-	public:
+public:
 
-	UdpLayer(UdpReceiver *recv, struct sockaddr_in &local);
-virtual ~UdpLayer() { return; }
+    UdpLayer(UdpReceiver *recv, struct sockaddr_in &local);
+    virtual ~UdpLayer() {
+        return;
+    }
 
-int     status(std::ostream &out);
+    int     status(std::ostream &out);
 
-	/* setup connections */
-	int openSocket();
+    /* setup connections */
+    int openSocket();
 
-	/* RsThread functions */
-virtual void run(); /* called once the thread is started */
+    /* RsThread functions */
+    virtual void run(); /* called once the thread is started */
 
-void	recv_loop(); /* uses callback to UdpReceiver */
+    void	recv_loop(); /* uses callback to UdpReceiver */
 
-	/* Higher Level Interface */
-	//int  readPkt(void *data, int *size, struct sockaddr_in &from);
-	int  sendPkt(void *data, int size, struct sockaddr_in &to, int ttl);
+    /* Higher Level Interface */
+    //int  readPkt(void *data, int *size, struct sockaddr_in &from);
+    int  sendPkt(void *data, int size, struct sockaddr_in &to, int ttl);
 
-	/* monitoring / updates */
-	int okay();
-	int tick();
+    /* monitoring / updates */
+    int okay();
+    int tick();
 
-	int close();
+    int close();
 
-	/* data */
-	/* internals */
-	protected:
+    /* data */
+    /* internals */
+protected:
 
-virtual	int receiveUdpPacket(void *data, int *size, struct sockaddr_in &from);
-virtual	int sendUdpPacket(const void *data, int size, struct sockaddr_in &to);
- 
-	int setTTL(int t);
-	int getTTL();
+    virtual	int receiveUdpPacket(void *data, int *size, struct sockaddr_in &from);
+    virtual	int sendUdpPacket(const void *data, int size, struct sockaddr_in &to);
 
-	/* low level */
-	private:
+    int setTTL(int t);
+    int getTTL();
 
-	UdpReceiver *recv;
+    /* low level */
+private:
 
-	struct sockaddr_in laddr; /* local addr */
+    UdpReceiver *recv;
 
-	int  errorState;
-	int sockfd;
-	int ttl;
+    struct sockaddr_in laddr; /* local addr */
 
-	RsMutex sockMtx;
+    int  errorState;
+    int sockfd;
+    int ttl;
+
+    RsMutex sockMtx;
 };
 
 #include <iostream>
@@ -119,67 +121,69 @@ virtual	int sendUdpPacket(const void *data, int size, struct sockaddr_in &to);
 
 class LossyUdpLayer: public UdpLayer
 {
-	public:
+public:
 
-	LossyUdpLayer(UdpReceiver *udpr, struct sockaddr_in &local, double frac)
-	:UdpLayer(udpr, local), lossFraction(frac)
-	{
-		return;
-	}
-	virtual ~LossyUdpLayer() { return; }
+    LossyUdpLayer(UdpReceiver *udpr, struct sockaddr_in &local, double frac)
+            :UdpLayer(udpr, local), lossFraction(frac)
+    {
+        return;
+    }
+    virtual ~LossyUdpLayer() {
+        return;
+    }
 
-	protected:
+protected:
 
-	virtual int receiveUdpPacket(void *data, int *size, struct sockaddr_in &from)
-	{
-		double prob = (1.0 * (rand() / (RAND_MAX + 1.0)));
+    virtual int receiveUdpPacket(void *data, int *size, struct sockaddr_in &from)
+    {
+        double prob = (1.0 * (rand() / (RAND_MAX + 1.0)));
 
-		if (prob < lossFraction)
-		{
-			/* but discard */
-			if (0 < UdpLayer::receiveUdpPacket(data, size, from))
-			{
-				std::cerr << "LossyUdpLayer::receiveUdpPacket() Dropping packet!";
-				std::cerr << std::endl;
-				std::cerr << printPkt(data, *size);
-				std::cerr << std::endl;
-				std::cerr << "LossyUdpLayer::receiveUdpPacket() Packet Dropped!";
-				std::cerr << std::endl;
-			}
+        if (prob < lossFraction)
+        {
+            /* but discard */
+            if (0 < UdpLayer::receiveUdpPacket(data, size, from))
+            {
+                std::cerr << "LossyUdpLayer::receiveUdpPacket() Dropping packet!";
+                std::cerr << std::endl;
+                std::cerr << printPkt(data, *size);
+                std::cerr << std::endl;
+                std::cerr << "LossyUdpLayer::receiveUdpPacket() Packet Dropped!";
+                std::cerr << std::endl;
+            }
 
-			size = 0;
-			return -1;
+            size = 0;
+            return -1;
 
-		}
+        }
 
-		// otherwise read normally;
-		return UdpLayer::receiveUdpPacket(data, size, from);
-	}
+        // otherwise read normally;
+        return UdpLayer::receiveUdpPacket(data, size, from);
+    }
 
 
-	virtual int sendUdpPacket(const void *data, int size, struct sockaddr_in &to)
-	{
-		double prob = (1.0 * (rand() / (RAND_MAX + 1.0)));
+    virtual int sendUdpPacket(const void *data, int size, struct sockaddr_in &to)
+    {
+        double prob = (1.0 * (rand() / (RAND_MAX + 1.0)));
 
-		if (prob < lossFraction)
-		{
-			/* discard */
+        if (prob < lossFraction)
+        {
+            /* discard */
 
-			std::cerr << "LossyUdpLayer::sendUdpPacket() Dropping packet!";
-			std::cerr << std::endl;
-			std::cerr << printPkt((void *) data, size);
-			std::cerr << std::endl;
-			std::cerr << "LossyUdpLayer::sendUdpPacket() Packet Dropped!";
-			std::cerr << std::endl;
+            std::cerr << "LossyUdpLayer::sendUdpPacket() Dropping packet!";
+            std::cerr << std::endl;
+            std::cerr << printPkt((void *) data, size);
+            std::cerr << std::endl;
+            std::cerr << "LossyUdpLayer::sendUdpPacket() Packet Dropped!";
+            std::cerr << std::endl;
 
-			return size;
-		}
+            return size;
+        }
 
-		// otherwise read normally;
-		return UdpLayer::sendUdpPacket(data, size, to);
-	}
+        // otherwise read normally;
+        return UdpLayer::sendUdpPacket(data, size, to);
+    }
 
-	double lossFraction;
+    double lossFraction;
 };
 
 #endif

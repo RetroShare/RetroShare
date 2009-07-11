@@ -41,15 +41,17 @@
  */
 class RsQblogMsg: public RsMsgItem
 {
-	public:
-	RsQblogMsg()
-	:RsMsgItem(RS_SERVICE_TYPE_QBLOG)
+public:
+    RsQblogMsg()
+            :RsMsgItem(RS_SERVICE_TYPE_QBLOG)
 
-	{ return; }
-virtual ~RsQblogMsg();
+    {
+        return;
+    }
+    virtual ~RsQblogMsg();
 
 /// inherited method from RsItem
-std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 };
 
@@ -60,12 +62,16 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 class RsQblogMsgSerialiser : public RsMsgSerialiser
 {
 
-		public:
-	RsQblogMsgSerialiser()
-	:RsMsgSerialiser(RS_SERVICE_TYPE_QBLOG)
-	{ return; }
-virtual     ~RsQblogMsgSerialiser()
-	{ return; }
+public:
+    RsQblogMsgSerialiser()
+            :RsMsgSerialiser(RS_SERVICE_TYPE_QBLOG)
+    {
+        return;
+    }
+    virtual     ~RsQblogMsgSerialiser()
+    {
+        return;
+    }
 
 };
 

@@ -28,7 +28,7 @@
 #ifndef MRK_PQI_FILER_HEADER
 #define MRK_PQI_FILER_HEADER
 
-/* 
+/*
  * PQI Filer
  *
  * This managers the file transfers.
@@ -64,44 +64,44 @@ const int TRANSFER_MODE_FAST    = 3;
 class PQFileStatus
 {
 public:
-	PQFileStatus(PQFileItem *in)
-	:fileItem(in), status(PQIFILE_INIT), fd(NULL), 
-	total_size(0), recv_size(0),
-	req_loc(0), req_size(0), lastTS(0)
-	{
-		return;
-	}
+    PQFileStatus(PQFileItem *in)
+            :fileItem(in), status(PQIFILE_INIT), fd(NULL),
+            total_size(0), recv_size(0),
+            req_loc(0), req_size(0), lastTS(0)
+    {
+        return;
+    }
 
-	~PQFileStatus()
-	{
-		if (fileItem)
-			delete fileItem;
-		if (fd)
-			fclose(fd);
-	}
+    ~PQFileStatus()
+    {
+        if (fileItem)
+            delete fileItem;
+        if (fd)
+            fclose(fd);
+    }
 
 
-/* data */
-	PQFileItem *fileItem;
-	/* transfer inprogress or not */
-	int status; 		
-	int mode;
-	float rate;
+    /* data */
+    PQFileItem *fileItem;
+    /* transfer inprogress or not */
+    int status;
+    int mode;
+    float rate;
 
-	std::string file_name;
-	FILE *fd;
-	long   total_size;
-	/* this is the simplistic case where only inorder data 
-	 * otherwise - need much more status info */
-	long   recv_size; 
+    std::string file_name;
+    FILE *fd;
+    long   total_size;
+    /* this is the simplistic case where only inorder data
+     * otherwise - need much more status info */
+    long   recv_size;
 
-	/* current file data request */
-	long   req_loc;
-	int   req_size;
+    /* current file data request */
+    long   req_loc;
+    int   req_size;
 
-	/* timestamp */
-	long lastTS;
-	int  lastDelta; /* send til all recved */
+    /* timestamp */
+    long lastTS;
+    int  lastDelta; /* send til all recved */
 };
 
 
@@ -110,76 +110,80 @@ class pqifiler
 public:
 
 #ifdef USE_FILELOOK
-	pqifiler(fileLook*);
+    pqifiler(fileLook*);
 #else
-	pqifiler(filedex*);
+    pqifiler(filedex*);
 #endif
 
-virtual ~pqifiler() { return; }
+    virtual ~pqifiler() {
+        return;
+    }
 
-/******************* GUI Interface *************************
- */
+    /******************* GUI Interface *************************
+     */
 
-int		getFile(PQFileItem *in);
-int		cancelFile(PQFileItem *i);
-int		clearFailedTransfers();
-
-
-int		tick();
-std::list<FileTransferItem *> getStatus();
-
-/************* Network Interface****************************
- */
-
-PQItem *	sendPQFileItem();
-int		recvPQFileItem(PQItem *in);
-
-void 	 	setSavePath(std::string s) { savePath = s;}
- 
-private: 
- 
-PQFileStatus   *findRecvFileItem(PQFileItem *in);
-void		queryInactive();
-
-int 		handleFileError(PQFileItem *in);
-int 		handleFileNotOnline(PQFileItem *in);
-int 		handleFileNotAvailable(PQFileItem *in);
-int 		handleFileData(PQFileItem *in);
-int 		handleFileRequest(PQFileItem *in);
-int 		handleFileCacheRequest(PQFileItem *req);
+    int		getFile(PQFileItem *in);
+    int		cancelFile(PQFileItem *i);
+    int		clearFailedTransfers();
 
 
-int 		requestData(PQFileStatus *item);
+    int		tick();
+    std::list<FileTransferItem *> getStatus();
 
-/************* PQIFILEITEM Generator ***************************
- */
+    /************* Network Interface****************************
+     */
 
-PQFileStatus *	createFileCache(PQFileItem *in);
-PQFileItem *	generatePQFileRequest(PQFileStatus *);
-int 		generateFileData(PQFileStatus *s, PQFileItem *req);
-int 		sendFileNotAvail(PQFileItem *req);
+    PQItem *	sendPQFileItem();
+    int		recvPQFileItem(PQItem *in);
 
-/************* FILE DATA HANDLING ******************************
- */
+    void 	 	setSavePath(std::string s) {
+        savePath = s;
+    }
 
-std::string 	determineFilePath(PQFileItem *item);
-int 		initiateFileTransfer(PQFileStatus *s);
-int 		resetFileTransfer(PQFileStatus *s);
-int 		addFileData(PQFileStatus *s, long idx, void *data, int size);
-
-	// Data.
 private:
-	std::list<PQFileStatus *> recvFiles;
-	std::list<PQFileStatus *> fileCache;
-	std::list<PQItem *> out_queue;
+
+    PQFileStatus   *findRecvFileItem(PQFileItem *in);
+    void		queryInactive();
+
+    int 		handleFileError(PQFileItem *in);
+    int 		handleFileNotOnline(PQFileItem *in);
+    int 		handleFileNotAvailable(PQFileItem *in);
+    int 		handleFileData(PQFileItem *in);
+    int 		handleFileRequest(PQFileItem *in);
+    int 		handleFileCacheRequest(PQFileItem *req);
+
+
+    int 		requestData(PQFileStatus *item);
+
+    /************* PQIFILEITEM Generator ***************************
+     */
+
+    PQFileStatus *	createFileCache(PQFileItem *in);
+    PQFileItem *	generatePQFileRequest(PQFileStatus *);
+    int 		generateFileData(PQFileStatus *s, PQFileItem *req);
+    int 		sendFileNotAvail(PQFileItem *req);
+
+    /************* FILE DATA HANDLING ******************************
+     */
+
+    std::string 	determineFilePath(PQFileItem *item);
+    int 		initiateFileTransfer(PQFileStatus *s);
+    int 		resetFileTransfer(PQFileStatus *s);
+    int 		addFileData(PQFileStatus *s, long idx, void *data, int size);
+
+    // Data.
+private:
+    std::list<PQFileStatus *> recvFiles;
+    std::list<PQFileStatus *> fileCache;
+    std::list<PQItem *> out_queue;
 
 #ifdef USE_FILELOOK
-	fileLook *fileIndex;
+    fileLook *fileIndex;
 #else
-	filedex *fileIndex;
+    filedex *fileIndex;
 #endif
 
-	std::string savePath;
+    std::string savePath;
 };
 
 

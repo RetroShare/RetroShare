@@ -34,59 +34,59 @@
 #include "rsiface/rstypes.h"
 #include "rsiface/rsdistrib.h" /* For FLAGS */
 
-#define RS_FORUMMSG_NEW       0x0010 
+#define RS_FORUMMSG_NEW       0x0010
 
 
-class ForumInfo 
+class ForumInfo
 {
-	public:
-        ForumInfo() {}
-	std::string forumId;
-	std::wstring forumName;
-	std::wstring forumDesc;
+public:
+    ForumInfo() {}
+    std::string forumId;
+    std::wstring forumName;
+    std::wstring forumDesc;
 
-	uint32_t forumFlags;
-	uint32_t subscribeFlags;
+    uint32_t forumFlags;
+    uint32_t subscribeFlags;
 
-	uint32_t pop;
+    uint32_t pop;
 
-	time_t lastPost;
+    time_t lastPost;
 };
 
-class ForumMsgInfo 
+class ForumMsgInfo
 {
-	public:
-	ForumMsgInfo() {}
-	std::string forumId;
-	std::string threadId;
-	std::string parentId;
-	std::string msgId;
+public:
+    ForumMsgInfo() {}
+    std::string forumId;
+    std::string threadId;
+    std::string parentId;
+    std::string msgId;
 
-	std::string srcId; /* if Authenticated -> signed here */
+    std::string srcId; /* if Authenticated -> signed here */
 
-	unsigned int msgflags;
+    unsigned int msgflags;
 
-	std::wstring title;
-	std::wstring msg;
-	time_t ts;
+    std::wstring title;
+    std::wstring msg;
+    time_t ts;
 };
 
 
-class ThreadInfoSummary 
+class ThreadInfoSummary
 {
-	public:
-	ThreadInfoSummary() {}
-	std::string forumId;
-	std::string threadId;
-	std::string parentId;
-	std::string msgId;
+public:
+    ThreadInfoSummary() {}
+    std::string forumId;
+    std::string threadId;
+    std::string parentId;
+    std::string msgId;
 
-	uint32_t msgflags;
+    uint32_t msgflags;
 
-	std::wstring title;
-	std::wstring msg;
-	int count; /* file count     */
-	time_t ts;
+    std::wstring title;
+    std::wstring msg;
+    int count; /* file count     */
+    time_t ts;
 
 };
 
@@ -94,14 +94,18 @@ std::ostream &operator<<(std::ostream &out, const ForumInfo &info);
 std::ostream &operator<<(std::ostream &out, const ThreadInfoSummary &info);
 std::ostream &operator<<(std::ostream &out, const ForumMsgInfo &info);
 
-class RsForums 
+class RsForums
 {
 public:
 
-    RsForums() { return; }
-    virtual ~RsForums() { return; }
+    RsForums() {
+        return;
+    }
+    virtual ~RsForums() {
+        return;
+    }
 
-/****************************************/
+    /****************************************/
 
     virtual bool forumsChanged(std::list<std::string> &forumIds) = 0;
 
@@ -115,7 +119,7 @@ public:
     virtual bool getForumMessage(std::string fId, std::string mId, ForumMsgInfo &msg) = 0;
     virtual bool ForumMessageSend(ForumMsgInfo &info) = 0;
     virtual bool forumSubscribe(std::string fId, bool subscribe) = 0;
-/****************************************/
+    /****************************************/
 
 };
 

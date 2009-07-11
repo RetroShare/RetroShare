@@ -36,25 +36,25 @@ extern RsRanks   *rsRanks;
 
 class RsRankComment
 {
-	public:
+public:
 
-	std::string id;
-	std::wstring comment;
-	int32_t	     score;
-	time_t	     timestamp;
+    std::string id;
+    std::wstring comment;
+    int32_t	     score;
+    time_t	     timestamp;
 };
-	
+
 class RsRankDetails
 {
-	public:
+public:
 
-	std::string rid;
-	std::wstring link;
-	std::wstring title;
-	float rank;
-	bool ownTag;
+    std::string rid;
+    std::wstring link;
+    std::wstring title;
+    float rank;
+    bool ownTag;
 
-	std::list<RsRankComment> comments;
+    std::list<RsRankComment> comments;
 };
 
 const uint32_t RS_RANK_SCORE		= 0x0001;
@@ -65,31 +65,35 @@ std::ostream &operator<<(std::ostream &out, const RsRankDetails &detail);
 
 class RsRanks
 {
-	public:
+public:
 
-	RsRanks()  { return; }
-virtual ~RsRanks() { return; }
+    RsRanks()  {
+        return;
+    }
+    virtual ~RsRanks() {
+        return;
+    }
 
-	/* needs update? */
-virtual bool updated() = 0;
+    /* needs update? */
+    virtual bool updated() = 0;
 
-	/* Set Sort Methods */
-virtual bool setSortPeriod(uint32_t period) 		= 0;
-virtual bool setSortMethod(uint32_t type)		= 0;
-virtual bool clearPeerFilter()				= 0;
-virtual bool setPeerFilter(std::list<std::string> peers) = 0;
+    /* Set Sort Methods */
+    virtual bool setSortPeriod(uint32_t period) 		= 0;
+    virtual bool setSortMethod(uint32_t type)		= 0;
+    virtual bool clearPeerFilter()				= 0;
+    virtual bool setPeerFilter(std::list<std::string> peers) = 0;
 
-	/* get Ids */
-virtual uint32_t getRankingsCount()			= 0;
-virtual float   getMaxRank()				= 0;
-virtual bool	getRankings(uint32_t first, uint32_t count, std::list<std::string> &rids) = 0;
-virtual bool	getRankDetails(std::string rid, RsRankDetails &details) = 0;
+    /* get Ids */
+    virtual uint32_t getRankingsCount()			= 0;
+    virtual float   getMaxRank()				= 0;
+    virtual bool	getRankings(uint32_t first, uint32_t count, std::list<std::string> &rids) = 0;
+    virtual bool	getRankDetails(std::string rid, RsRankDetails &details) = 0;
 
-	/* Add New Comment / Msg */
-virtual std::string newRankMsg(std::wstring link, std::wstring title, std::wstring comment, int32_t score) = 0;
-virtual bool updateComment(std::string rid, std::wstring comment, int32_t score) = 0;
+    /* Add New Comment / Msg */
+    virtual std::string newRankMsg(std::wstring link, std::wstring title, std::wstring comment, int32_t score) = 0;
+    virtual bool updateComment(std::string rid, std::wstring comment, int32_t score) = 0;
 
-virtual std::string anonRankMsg(std::string rid, std::wstring link, std::wstring title) = 0;
+    virtual std::string anonRankMsg(std::string rid, std::wstring link, std::wstring title) = 0;
 
 };
 

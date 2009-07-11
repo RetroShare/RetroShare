@@ -61,10 +61,10 @@ bool stunPeer(struct sockaddr_in toaddr, struct sockaddr_in &ansaddr);
 class StunDetails
 {
     StunDetails() :
-                lastStatus(0),
-                lastStunResult(0),
-                stunAttemps(0),
-                stunResults(0) {}
+            lastStatus(0),
+            lastStunResult(0),
+            stunAttemps(0),
+            stunResults(0) {}
 
     std::string id;
 

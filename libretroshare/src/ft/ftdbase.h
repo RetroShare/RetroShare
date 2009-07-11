@@ -26,7 +26,7 @@
 #ifndef FT_DBASE_INTERFACE_HEADER
 #define FT_DBASE_INTERFACE_HEADER
 
-/* 
+/*
  * ftdbase.
  *
  * Wrappers for the Cache/FiStore/FiMonitor classes.
@@ -43,44 +43,44 @@
 
 class ftFiStore: public FileIndexStore, public ftSearch
 {
-	public:
-	ftFiStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in,
-                        RsPeerId ownid, std::string cachedir);
+public:
+    ftFiStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in,
+              RsPeerId ownid, std::string cachedir);
 
-	/* overloaded search function */
-virtual bool search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
+    /* overloaded search function */
+    virtual bool search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
 };
 
 class ftFiMonitor: public FileIndexMonitor, public ftSearch, public p3Config
 {
-	public:
-	ftFiMonitor(CacheStrapper *cs,NotifyBase *cb_in, std::string cachedir, std::string pid);
+public:
+    ftFiMonitor(CacheStrapper *cs,NotifyBase *cb_in, std::string cachedir, std::string pid);
 
-	/* overloaded search function */
-	virtual bool search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
+    /* overloaded search function */
+    virtual bool search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
 
-	/* overloaded set dirs enables config indication */
-	virtual void setSharedDirectories(std::list<std::string> dirList);
+    /* overloaded set dirs enables config indication */
+    virtual void setSharedDirectories(std::list<std::string> dirList);
 
-	/***
-	* Configuration - store shared directories
-	*/
-	protected:
+    /***
+    * Configuration - store shared directories
+    */
+protected:
 
-virtual RsSerialiser *setupSerialiser();
-virtual std::list<RsItem *> saveList(bool &cleanup);
-virtual bool    loadList(std::list<RsItem *> load);
-	
+    virtual RsSerialiser *setupSerialiser();
+    virtual std::list<RsItem *> saveList(bool &cleanup);
+    virtual bool    loadList(std::list<RsItem *> load);
+
 
 };
 
 class ftCacheStrapper: public CacheStrapper, public ftSearch
 {
-	public:
-	ftCacheStrapper(p3AuthMgr *am, p3ConnectMgr *cm);
+public:
+    ftCacheStrapper(p3AuthMgr *am, p3ConnectMgr *cm);
 
-	/* overloaded search function */
-virtual bool search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
+    /* overloaded search function */
+    virtual bool search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
 
 };
 

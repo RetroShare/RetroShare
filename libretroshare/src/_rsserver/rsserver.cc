@@ -51,7 +51,7 @@ void RsServer::unlockRsCore()
     coreMutex.unlock();
 }
 
-        /* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
+/* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
 int RsServer::ClearInChat()
 {
     lockRsCore(); /* LOCK */
@@ -77,7 +77,7 @@ int RsServer::SetInChat(std::string id, bool in)             /* friend : chat ms
     {
         if (in)
         {
-                mInChatList.push_back(id);
+            mInChatList.push_back(id);
         }
     }
     else
@@ -118,14 +118,14 @@ int RsServer::SetInMsg(std::string id, bool in)             /* friend : msgs */
     {
         if (in)
         {
-                mInMsgList.push_back(id);
+            mInMsgList.push_back(id);
         }
     }
     else
     {
         if (!in)
         {
-                mInMsgList.erase(it);
+            mInMsgList.erase(it);
         }
     }
 
@@ -194,7 +194,7 @@ int     RsServer::ClearInRecommend()
     std::list<FileInfo> &recs = iface.mRecommendList;
     std::list<FileInfo>::iterator it;
 
-    for(it = recs.begin(); it != recs.end(); it++)
+    for (it = recs.begin(); it != recs.end(); it++)
     {
         it -> inRecommend = false;
     }
@@ -214,7 +214,7 @@ int RsServer::SetInRecommend(std::string id, bool in)        /* file : recommend
     std::list<FileInfo> &recs = iface.mRecommendList;
     std::list<FileInfo>::iterator it;
 
-    for(it = recs.begin(); it != recs.end(); it++)
+    for (it = recs.begin(); it != recs.end(); it++)
     {
         if (it -> fname == id)
         {
@@ -231,7 +231,7 @@ int RsServer::SetInRecommend(std::string id, bool in)        /* file : recommend
 
 std::string make_path_unix(std::string path)
 {
-    for(unsigned int i = 0; i < path.length(); i++)
+    for (unsigned int i = 0; i < path.length(); i++)
     {
         if (path[i] == '\\')
             path[i] = '/';
@@ -239,7 +239,7 @@ std::string make_path_unix(std::string path)
     return path;
 }
 
-        /* Thread Fn: Run the Core */
+/* Thread Fn: Run the Core */
 void 	RsServer::run()
 {
 
@@ -258,7 +258,7 @@ void 	RsServer::run()
     int min = 0;
     int loop = 0;
 
-    while(1)
+    while (1)
     {
 #ifndef WINDOWS_SYS
         usleep((int) (timeDelta * 1000000));
@@ -273,157 +273,157 @@ void 	RsServer::run()
         if (delta > timeDelta)
         {
 #ifdef	DEBUG_TICK
-                std::cerr << "Delta: " << delta << std::endl;
-                std::cerr << "Time Delta: " << timeDelta << std::endl;
-                std::cerr << "Avg Tick Rate: " << avgTickRate << std::endl;
+            std::cerr << "Delta: " << delta << std::endl;
+            std::cerr << "Time Delta: " << timeDelta << std::endl;
+            std::cerr << "Avg Tick Rate: " << avgTickRate << std::endl;
 #endif
 
-                lastts = ts;
+            lastts = ts;
 
-/******************************** RUN SERVER *****************/
-                lockRsCore();
+            /******************************** RUN SERVER *****************/
+            lockRsCore();
 
-                int moreToTick = ftserver -> tick();
+            int moreToTick = ftserver -> tick();
 
 #ifdef	DEBUG_TICK
-                std::cerr << "RsServer::run() ftserver->tick(): moreToTick: " << moreToTick << std::endl;
+            std::cerr << "RsServer::run() ftserver->tick(): moreToTick: " << moreToTick << std::endl;
 #endif
 
-                unlockRsCore();
+            unlockRsCore();
 
-                /* tick the connection Manager */
-                mConnMgr->tick();
-/******************************** RUN SERVER *****************/
+            /* tick the connection Manager */
+            mConnMgr->tick();
+            /******************************** RUN SERVER *****************/
 
-                /* adjust tick rate depending on whether there is more.
-                 */
+            /* adjust tick rate depending on whether there is more.
+             */
 
-                avgTickRate = 0.2 * timeDelta + 0.8 * avgTickRate;
+            avgTickRate = 0.2 * timeDelta + 0.8 * avgTickRate;
 
-                if (1 == moreToTick)
+            if (1 == moreToTick)
+            {
+                timeDelta = 0.9 * avgTickRate;
+                if (timeDelta > kickLimit)
                 {
-                        timeDelta = 0.9 * avgTickRate;
-                        if (timeDelta > kickLimit)
-                        {
-                                /* force next tick in one sec
-                                 * if we are reading data.
-                                 */
-                                timeDelta = kickLimit;
-                                avgTickRate = kickLimit;
-                        }
+                    /* force next tick in one sec
+                     * if we are reading data.
+                     */
+                    timeDelta = kickLimit;
+                    avgTickRate = kickLimit;
                 }
-                else
+            }
+            else
+            {
+                timeDelta = 1.1 * avgTickRate;
+            }
+
+            /* limiter */
+            if (timeDelta < minTimeDelta)
+            {
+                timeDelta = minTimeDelta;
+            }
+            else if (timeDelta > maxTimeDelta)
+            {
+                timeDelta = maxTimeDelta;
+            }
+
+            /* Fast Updates */
+
+
+            /* now we have the slow ticking stuff */
+            /* stuff ticked once a second (but can be slowed down) */
+            if ((int) ts > lastSec)
+            {
+                lastSec = (int) ts;
+
+                // Every second! (UDP keepalive).
+                tou_tick_stunkeepalive();
+
+                // every five loops (> 5 secs)
+                if (loop % 5 == 0)
                 {
-                        timeDelta = 1.1 * avgTickRate;
-                }
+                    //	update_quick_stats();
 
-                /* limiter */
-                if (timeDelta < minTimeDelta)
-                {
-                        timeDelta = minTimeDelta;
-                }
-                else if (timeDelta > maxTimeDelta)
-                {
-                        timeDelta = maxTimeDelta;
-                }
-
-                /* Fast Updates */
-
-
-                /* now we have the slow ticking stuff */
-                /* stuff ticked once a second (but can be slowed down) */
-                if ((int) ts > lastSec)
-                {
-                        lastSec = (int) ts;
-
-                        // Every second! (UDP keepalive).
-                        tou_tick_stunkeepalive();
-
-                        // every five loops (> 5 secs)
-                        if (loop % 5 == 0)
-                        {
-                                //	update_quick_stats();
-
-                                // Update All Every 5 Seconds.
-                                // These Update Functions do the locking themselves.
+                    // Update All Every 5 Seconds.
+                    // These Update Functions do the locking themselves.
 #ifdef	DEBUG_TICK
-                                std::cerr << "RsServer::run() Updates()" << std::endl;
+                    std::cerr << "RsServer::run() Updates()" << std::endl;
 #endif
 
-                                // These two have been completed!
-                                //std::cerr << "RsServer::run() UpdateAllCerts()" << std::endl;
-                                //UpdateAllCerts();
-                                //std::cerr << "RsServer::run() UpdateAllNetwork()" << std::endl;
-                                //UpdateAllNetwork();
+                    // These two have been completed!
+                    //std::cerr << "RsServer::run() UpdateAllCerts()" << std::endl;
+                    //UpdateAllCerts();
+                    //std::cerr << "RsServer::run() UpdateAllNetwork()" << std::endl;
+                    //UpdateAllNetwork();
 
-                                // currently Dummy Functions.
-                                //std::cerr << "RsServer::run() UpdateAllTransfers()" << std::endl;
+                    // currently Dummy Functions.
+                    //std::cerr << "RsServer::run() UpdateAllTransfers()" << std::endl;
 
-                                //std::cerr << "RsServer::run() ";
-                                //std::cerr << "UpdateRemotePeople()"<<std::endl;
-                                //UpdateRemotePeople();
+                    //std::cerr << "RsServer::run() ";
+                    //std::cerr << "UpdateRemotePeople()"<<std::endl;
+                    //UpdateRemotePeople();
 
-                                //std::cerr << "RsServer::run() UpdateAllFiles()" << std::endl;
-                                //UpdateAllFiles();
+                    //std::cerr << "RsServer::run() UpdateAllFiles()" << std::endl;
+                    //UpdateAllFiles();
 
-                                //std::cerr << "RsServer::run() UpdateAllConfig()" << std::endl;
-                                UpdateAllConfig();
-
-
-
-                                //std::cerr << "RsServer::run() CheckDHT()" << std::endl;
-                                //CheckNetworking();
+                    //std::cerr << "RsServer::run() UpdateAllConfig()" << std::endl;
+                    UpdateAllConfig();
 
 
-                                /* Tick slow services */
-                                if (mRanking)
-                                        mRanking->tick();
+
+                    //std::cerr << "RsServer::run() CheckDHT()" << std::endl;
+                    //CheckNetworking();
 
 
-                                if(mQblog)
-                                        mQblog->tick();
+                    /* Tick slow services */
+                    if (mRanking)
+                        mRanking->tick();
+
+
+                    if (mQblog)
+                        mQblog->tick();
 
 
 
 #if 0
-                                std::string opt;
-                                std::string val = "VALUE";
-                                {
-                                        std::ostringstream out;
-                                        out << "SEC:" << lastSec;
-                                        opt = out.str();
-                                }
+                    std::string opt;
+                    std::string val = "VALUE";
+                    {
+                        std::ostringstream out;
+                        out << "SEC:" << lastSec;
+                        opt = out.str();
+                    }
 
-                                mGeneralConfig->setSetting(opt, val);
+                    mGeneralConfig->setSetting(opt, val);
 #endif
 
-                                mConfigMgr->tick(); /* saves stuff */
+                    mConfigMgr->tick(); /* saves stuff */
 
-                        }
+                }
 
-                        // every 60 loops (> 1 min)
-                        if (++loop >= 60)
-                        {
-                                loop = 0;
+                // every 60 loops (> 1 min)
+                if (++loop >= 60)
+                {
+                    loop = 0;
 
-                                /* force saving FileTransferStatus TODO */
-                                //ftserver->saveFileTransferStatus();
+                    /* force saving FileTransferStatus TODO */
+                    //ftserver->saveFileTransferStatus();
 
-                                /* see if we need to resave certs */
-                                mAuthMgr->CheckSaveCertificates();
+                    /* see if we need to resave certs */
+                    mAuthMgr->CheckSaveCertificates();
 
-                                /* hour loop */
-                                if (++min >= 60)
-                                {
-                                        min = 0;
-                                }
-                        }
+                    /* hour loop */
+                    if (++min >= 60)
+                    {
+                        min = 0;
+                    }
+                }
 
-                        // slow update tick as well.
-                        // update();
-                } // end of slow tick.
+                // slow update tick as well.
+                // update();
+            } // end of slow tick.
 
         } // end of only once a second.
-     }
-     return;
+    }
+    return;
 }

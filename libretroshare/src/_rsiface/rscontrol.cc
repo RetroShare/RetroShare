@@ -1,8 +1,8 @@
 #include "rscontrol.h"
 
 RsControl::RsControl(RsIface &i, NotifyBase &callback) :
-                        cb(callback),
-                        rsIface(i)
+        cb(callback),
+        rsIface(i)
 {
 }
 

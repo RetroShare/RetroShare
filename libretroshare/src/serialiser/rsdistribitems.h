@@ -43,132 +43,152 @@ const uint8_t RS_PKT_SUBTYPE_DISTRIB_SIGNED_MSG  	= 0x03;
 
 class RsDistribMsg: public RsItem
 {
-        public:
-        RsDistribMsg(uint16_t servtype, uint8_t subtype)
-	:RsItem(RS_PKT_VERSION_SERVICE, servtype, subtype) { return; }
+public:
+    RsDistribMsg(uint16_t servtype, uint8_t subtype)
+            :RsItem(RS_PKT_VERSION_SERVICE, servtype, subtype) {
+        return;
+    }
 
-virtual ~RsDistribMsg() { return; }
+    virtual ~RsDistribMsg() {
+        return;
+    }
 
-virtual void clear();
-virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+    virtual void clear();
+    virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-	std::string grpId; /* Grp Id */
-	std::string parentId; /* Parent Msg Id */
-	std::string threadId; /* Thread Msg Id */
-        uint32_t    timestamp;
+    std::string grpId; /* Grp Id */
+    std::string parentId; /* Parent Msg Id */
+    std::string threadId; /* Thread Msg Id */
+    uint32_t    timestamp;
 
-	/* Not Serialised */
+    /* Not Serialised */
 
-	std::string msgId; /* Msg Id */
-	RsTlvKeySignature publishSignature;
-	RsTlvKeySignature personalSignature;
+    std::string msgId; /* Msg Id */
+    RsTlvKeySignature publishSignature;
+    RsTlvKeySignature personalSignature;
 };
 
 class RsDistribSignedMsg: public RsItem
 {
-	public:
-	RsDistribSignedMsg()
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISTRIB, RS_PKT_SUBTYPE_DISTRIB_SIGNED_MSG), 
-	packet(TLV_TYPE_BIN_SERIALISE)
-	{ return; }
+public:
+    RsDistribSignedMsg()
+            :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISTRIB, RS_PKT_SUBTYPE_DISTRIB_SIGNED_MSG),
+            packet(TLV_TYPE_BIN_SERIALISE)
+    {
+        return;
+    }
 
-virtual ~RsDistribSignedMsg() { return; }
+    virtual ~RsDistribSignedMsg() {
+        return;
+    }
 
-virtual void clear();
-virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+    virtual void clear();
+    virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-	std::string 	  grpId;
-	std::string 	  msgId;    /* from publishSignature */
-        uint32_t    	  flags;
-        uint32_t    	  timestamp;
+    std::string 	  grpId;
+    std::string 	  msgId;    /* from publishSignature */
+    uint32_t    	  flags;
+    uint32_t    	  timestamp;
 
-	RsTlvBinaryData   packet;
-	RsTlvKeySignature publishSignature;
-	RsTlvKeySignature personalSignature;
+    RsTlvBinaryData   packet;
+    RsTlvKeySignature publishSignature;
+    RsTlvKeySignature personalSignature;
 };
 
 
 class RsDistribGrp: public RsItem
 {
-        public:
+public:
 //        RsDistribGrp(uint16_t servtype, uint8_t subtype)
 //	:RsItem(RS_PKT_VERSION_SERVICE, servtype, subtype) { return; }
 
-        RsDistribGrp()
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISTRIB, RS_PKT_SUBTYPE_DISTRIB_GRP)
-	{ return; }
+    RsDistribGrp()
+            :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISTRIB, RS_PKT_SUBTYPE_DISTRIB_GRP)
+    {
+        return;
+    }
 
-virtual ~RsDistribGrp() { return; }
+    virtual ~RsDistribGrp() {
+        return;
+    }
 
-virtual void clear();
-virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+    virtual void clear();
+    virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-	std::string grpId; /* Grp Id */
-	uint32_t     timestamp; 
-	uint32_t     grpFlags;
-	std::wstring grpName; 
-	std::wstring grpDesc; 
-	std::wstring grpCategory;
+    std::string grpId; /* Grp Id */
+    uint32_t     timestamp;
+    uint32_t     grpFlags;
+    std::wstring grpName;
+    std::wstring grpDesc;
+    std::wstring grpCategory;
 
-	RsTlvImage   grpPixmap;
-	
-	uint32_t     grpControlFlags;
-	RsTlvPeerIdSet grpControlList;
+    RsTlvImage   grpPixmap;
 
-	RsTlvSecurityKey adminKey;
-	RsTlvSecurityKeySet publishKeys;
+    uint32_t     grpControlFlags;
+    RsTlvPeerIdSet grpControlList;
 
-	RsTlvKeySignature adminSignature;
+    RsTlvSecurityKey adminKey;
+    RsTlvSecurityKeySet publishKeys;
+
+    RsTlvKeySignature adminSignature;
 };
 
 
 class RsDistribGrpKey: public RsItem
 {
-	public:
+public:
 
-        RsDistribGrpKey()
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISTRIB, RS_PKT_SUBTYPE_DISTRIB_GRP_KEY)
-	{ return; }
+    RsDistribGrpKey()
+            :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISTRIB, RS_PKT_SUBTYPE_DISTRIB_GRP_KEY)
+    {
+        return;
+    }
 
-virtual ~RsDistribGrpKey() { return; }
+    virtual ~RsDistribGrpKey() {
+        return;
+    }
 
-virtual void clear();
-virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+    virtual void clear();
+    virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-	std::string grpId; /* Grp Id */
-	RsTlvSecurityKey key;
+    std::string grpId; /* Grp Id */
+    RsTlvSecurityKey key;
 };
 
-		
+
 class RsDistribSerialiser: public RsSerialType
 {
-	public:
-	RsDistribSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISTRIB)
-	{ return; }
-virtual     ~RsDistribSerialiser()
-	{ return; }
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
+public:
+    RsDistribSerialiser()
+            :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISTRIB)
+    {
+        return;
+    }
+    virtual     ~RsDistribSerialiser()
+    {
+        return;
+    }
 
-	private:
+    virtual	uint32_t    size(RsItem *);
+    virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
+    virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
-	/* For RS_PKT_SUBTYPE_DISTRIB_GRP */
-virtual	uint32_t    sizeGrp(RsDistribGrp *);
-virtual	bool        serialiseGrp  (RsDistribGrp *item, void *data, uint32_t *size);
-virtual	RsDistribGrp *deserialiseGrp(void *data, uint32_t *size);
+private:
 
-	/* For RS_PKT_SUBTYPE_DISTRIB_GRP_KEY */
-virtual	uint32_t    sizeGrpKey(RsDistribGrpKey *);
-virtual	bool        serialiseGrpKey  (RsDistribGrpKey *item, void *data, uint32_t *size);
-virtual	RsDistribGrpKey *deserialiseGrpKey(void *data, uint32_t *size);
+    /* For RS_PKT_SUBTYPE_DISTRIB_GRP */
+    virtual	uint32_t    sizeGrp(RsDistribGrp *);
+    virtual	bool        serialiseGrp  (RsDistribGrp *item, void *data, uint32_t *size);
+    virtual	RsDistribGrp *deserialiseGrp(void *data, uint32_t *size);
 
-	/* For RS_PKT_SUBTYPE_DISTRIB_SIGNED_MSG */
-virtual	uint32_t    sizeSignedMsg(RsDistribSignedMsg *);
-virtual	bool        serialiseSignedMsg  (RsDistribSignedMsg *item, void *data, uint32_t *size);
-virtual	RsDistribSignedMsg *deserialiseSignedMsg(void *data, uint32_t *size);
+    /* For RS_PKT_SUBTYPE_DISTRIB_GRP_KEY */
+    virtual	uint32_t    sizeGrpKey(RsDistribGrpKey *);
+    virtual	bool        serialiseGrpKey  (RsDistribGrpKey *item, void *data, uint32_t *size);
+    virtual	RsDistribGrpKey *deserialiseGrpKey(void *data, uint32_t *size);
+
+    /* For RS_PKT_SUBTYPE_DISTRIB_SIGNED_MSG */
+    virtual	uint32_t    sizeSignedMsg(RsDistribSignedMsg *);
+    virtual	bool        serialiseSignedMsg  (RsDistribSignedMsg *item, void *data, uint32_t *size);
+    virtual	RsDistribSignedMsg *deserialiseSignedMsg(void *data, uint32_t *size);
 
 };
 

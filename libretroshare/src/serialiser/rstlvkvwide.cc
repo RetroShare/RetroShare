@@ -22,7 +22,7 @@
  * Please report all bugs and problems to "retroshare@lunamutt.com".
  *
  */
- 
+
 #include "rstlvbase.h"
 #include "rstlvkvwide.h"
 #include "rsbaseserial.h"
@@ -35,112 +35,112 @@
 
 void RsTlvKeyValueWide::TlvClear()
 {
-	wKey.clear();
- 	wValue.clear();
+    wKey.clear();
+    wValue.clear();
 }
- 
+
 uint16_t RsTlvKeyValueWide::TlvSize()
 {
-	uint32_t s =  4; /* header size */
-	s += GetTlvWideStringSize(wKey);
-	s += GetTlvWideStringSize(wValue);
-	
-	return s;
+    uint32_t s =  4; /* header size */
+    s += GetTlvWideStringSize(wKey);
+    s += GetTlvWideStringSize(wValue);
+
+    return s;
 }
 
 std::ostream &RsTlvKeyValueWide::print(std::ostream &out, uint16_t indent)
 {
-	printBase(out, "RsTlvKeyValueWide", indent);
-	uint16_t int_Indent = indent + 2;
-	std::string cnv_str(wKey.begin(), wKey.end()); // to convert to string
-	
-	printIndent(out, int_Indent);
-	out << "wKey:" << cnv_str;
-	cnv_str.clear();
-	cnv_str.assign(wValue.begin(), wValue.end());
-	printIndent(out, int_Indent);
-	out << "wValue:" << cnv_str;
-	out << std::endl;
-	
-	printEnd(out, "RsTlvKeyValuewide", indent);
-	return out;
+    printBase(out, "RsTlvKeyValueWide", indent);
+    uint16_t int_Indent = indent + 2;
+    std::string cnv_str(wKey.begin(), wKey.end()); // to convert to string
+
+    printIndent(out, int_Indent);
+    out << "wKey:" << cnv_str;
+    cnv_str.clear();
+    cnv_str.assign(wValue.begin(), wValue.end());
+    printIndent(out, int_Indent);
+    out << "wValue:" << cnv_str;
+    out << std::endl;
+
+    printEnd(out, "RsTlvKeyValuewide", indent);
+    return out;
 }
 
 bool RsTlvKeyValueWide::SetTlv(void *data, uint32_t size, uint32_t *offset)
 {
 
-	/* must check sizes */
-	uint16_t tlvsize = TlvSize();
-	uint32_t tlvend  = *offset + tlvsize;
+    /* must check sizes */
+    uint16_t tlvsize = TlvSize();
+    uint32_t tlvend  = *offset + tlvsize;
 
-	if (size < tlvend)
-		return false; /* not enough space */
+    if (size < tlvend)
+        return false; /* not enough space */
 
-	bool ok = true;
+    bool ok = true;
 
-		/* start at data[offset] */
-	ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_WKEYVALUE, tlvsize);
+    /* start at data[offset] */
+    ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_WKEYVALUE, tlvsize);
 
 
-	
-		/* now optional ones */
-	if (wKey.length() > 0)
-		ok &= SetTlvWideString(data, tlvend, offset, TLV_TYPE_WSTR_KEY, wKey);  // no base tlv type for title?
-	if (wValue.length() > 0)
-		ok &= SetTlvWideString(data, tlvend, offset, TLV_TYPE_WSTR_VALUE, wValue); // no base tlv type for comment?
 
-	return ok;
+    /* now optional ones */
+    if (wKey.length() > 0)
+        ok &= SetTlvWideString(data, tlvend, offset, TLV_TYPE_WSTR_KEY, wKey);  // no base tlv type for title?
+    if (wValue.length() > 0)
+        ok &= SetTlvWideString(data, tlvend, offset, TLV_TYPE_WSTR_VALUE, wValue); // no base tlv type for comment?
+
+    return ok;
 }
 
 bool RsTlvKeyValueWide::GetTlv(void *data, uint32_t size, uint32_t *offset)
 {
-	if (size < *offset + 4)
-		return false;	
-	
-	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
-	uint16_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
-	uint32_t tlvend = *offset + tlvsize;
+    if (size < *offset + 4)
+        return false;
 
-	if (size < tlvend)    /* check size */
-		return false; /* not enough space */
+    uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
+    uint16_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
+    uint32_t tlvend = *offset + tlvsize;
 
-	if (tlvtype != TLV_TYPE_WKEYVALUE ) /* check type */
-		return false;
+    if (size < tlvend)    /* check size */
+        return false; /* not enough space */
 
-	bool ok = true;
+    if (tlvtype != TLV_TYPE_WKEYVALUE ) /* check type */
+        return false;
 
-	/* ready to load */
-	TlvClear();
+    bool ok = true;
 
-	/* skip the header */
-	(*offset) += 4;
+    /* ready to load */
+    TlvClear();
 
-	/* while there is TLV  */
-	while((*offset) + 2 < tlvend)
-	{
-		/* get the next type */
-		uint16_t tlvsubtype = GetTlvType( &(((uint8_t *) data)[*offset]) );
-		
-		switch(tlvsubtype)
-		{
-			case TLV_TYPE_WSTR_KEY:
-				ok &= GetTlvWideString(data, tlvend, offset, TLV_TYPE_WSTR_KEY, wKey);
-				break;
-			case TLV_TYPE_WSTR_VALUE:
-				ok &= GetTlvWideString(data, tlvend, offset,  TLV_TYPE_WSTR_VALUE, wValue);
-				break;
-			default:
-				break;
+    /* skip the header */
+    (*offset) += 4;
 
-		}
+    /* while there is TLV  */
+    while ((*offset) + 2 < tlvend)
+    {
+        /* get the next type */
+        uint16_t tlvsubtype = GetTlvType( &(((uint8_t *) data)[*offset]) );
 
-		if (!ok)
-		{
-			return false;
-		}
-	}
-   
-	return ok;
+        switch (tlvsubtype)
+        {
+        case TLV_TYPE_WSTR_KEY:
+            ok &= GetTlvWideString(data, tlvend, offset, TLV_TYPE_WSTR_KEY, wKey);
+            break;
+        case TLV_TYPE_WSTR_VALUE:
+            ok &= GetTlvWideString(data, tlvend, offset,  TLV_TYPE_WSTR_VALUE, wValue);
+            break;
+        default:
+            break;
+
+        }
+
+        if (!ok)
+        {
+            return false;
+        }
+    }
+
+    return ok;
 }
 
 /******************************************* Wide Key Value set *************************************/
@@ -148,101 +148,101 @@ bool RsTlvKeyValueWide::GetTlv(void *data, uint32_t size, uint32_t *offset)
 
 void RsTlvKeyValueWideSet::TlvClear()
 {
-	wPairs.clear();
+    wPairs.clear();
 }
 
 uint16_t RsTlvKeyValueWideSet::TlvSize()
 {
-	uint32_t s = 4; /* header size */
-	
-	std::list<RsTlvKeyValueWide>::iterator  it;
-	
-	for(it = wPairs.begin(); it != wPairs.end(); it++)
-	{
-		s += it->TlvSize();
-	}
-	
-	return s;
+    uint32_t s = 4; /* header size */
+
+    std::list<RsTlvKeyValueWide>::iterator  it;
+
+    for (it = wPairs.begin(); it != wPairs.end(); it++)
+    {
+        s += it->TlvSize();
+    }
+
+    return s;
 }
 
 std::ostream &RsTlvKeyValueWideSet::print(std::ostream &out, uint16_t indent)
 {
-	printBase(out, "RsTlvKeyValueWide", indent);
-	uint16_t int_Indent = indent + 2;
-	
-	std::list<RsTlvKeyValueWide>::iterator  it;
+    printBase(out, "RsTlvKeyValueWide", indent);
+    uint16_t int_Indent = indent + 2;
 
-	for(it = wPairs.begin(); it != wPairs.end(); it++)
-	{
-		it->print(out, int_Indent);
-	}	
-	
-	printEnd(out, "RsTlvKeyValuewide", indent);
-	return out;
+    std::list<RsTlvKeyValueWide>::iterator  it;
+
+    for (it = wPairs.begin(); it != wPairs.end(); it++)
+    {
+        it->print(out, int_Indent);
+    }
+
+    printEnd(out, "RsTlvKeyValuewide", indent);
+    return out;
 }
 
 bool RsTlvKeyValueWideSet::SetTlv(void *data, uint32_t size, uint32_t* offset)
 {
 
-	/* must check sizes */
-	uint16_t tlvsize = TlvSize();
-	uint32_t tlvend  = *offset + tlvsize;
+    /* must check sizes */
+    uint16_t tlvsize = TlvSize();
+    uint32_t tlvend  = *offset + tlvsize;
 
-	if (size < tlvend)
-		return false; /* not enough space */
+    if (size < tlvend)
+        return false; /* not enough space */
 
-	bool ok = true;
+    bool ok = true;
 
-		/* start at data[offset] */
-	ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_WKEYVALUESET, tlvsize);
-	std::list<RsTlvKeyValueWide>::iterator  it;
-	
-	for(it = wPairs.begin(); it != wPairs.end(); it++)
-	{
-		ok &= it->SetTlv(data, size, offset);
-	}
+    /* start at data[offset] */
+    ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_WKEYVALUESET, tlvsize);
+    std::list<RsTlvKeyValueWide>::iterator  it;
 
-	return ok;
+    for (it = wPairs.begin(); it != wPairs.end(); it++)
+    {
+        ok &= it->SetTlv(data, size, offset);
+    }
+
+    return ok;
 }
 
 bool RsTlvKeyValueWideSet::GetTlv(void *data, uint32_t size, uint32_t* offset)
 {
-	if (size < *offset + 4)
-		return false;	
-	
-	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
-	uint16_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
-	uint32_t tlvend = *offset + tlvsize;
+    if (size < *offset + 4)
+        return false;
 
-	if (size < tlvend)    /* check size */
-		return false; /* not enough space */
+    uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
+    uint16_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
+    uint32_t tlvend = *offset + tlvsize;
 
-	if (tlvtype != TLV_TYPE_WKEYVALUESET) /* check type */
-		return false;
+    if (size < tlvend)    /* check size */
+        return false; /* not enough space */
 
-	bool ok = true;
+    if (tlvtype != TLV_TYPE_WKEYVALUESET) /* check type */
+        return false;
 
-	/* ready to load */
-	TlvClear();
+    bool ok = true;
 
-	/* skip the header */
-	(*offset) += 4;
+    /* ready to load */
+    TlvClear();
 
-	/* while there is TLV  */
-	while((*offset) + 2 < tlvend)
-	{
+    /* skip the header */
+    (*offset) += 4;
 
-		RsTlvKeyValueWide wPair;
-		
-		ok &= wPair.GetTlv(data, size, offset);
-		
-		wPairs.push_back(wPair);
+    /* while there is TLV  */
+    while ((*offset) + 2 < tlvend)
+    {
 
-		if (!ok)
-		{
-			return false;
-		}
-	}
-   
-	return ok;
+        RsTlvKeyValueWide wPair;
+
+        ok &= wPair.GetTlv(data, size, offset);
+
+        wPairs.push_back(wPair);
+
+        if (!ok)
+        {
+            return false;
+        }
+    }
+
+    return ok;
 }

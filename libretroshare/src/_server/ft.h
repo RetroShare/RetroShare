@@ -78,13 +78,19 @@ class ftManager: public CacheTransfer
 {
 public:
     ftManager(CacheStrapper *cs)
-        :CacheTransfer(cs), fhs(NULL) { return; }
-    virtual ~ftManager() { return; }
+            :CacheTransfer(cs), fhs(NULL) {
+        return;
+    }
+    virtual ~ftManager() {
+        return;
+    }
 
-    void    setFileHashSearch(FileHashSearch *hs) { fhs = hs; }
+    void    setFileHashSearch(FileHashSearch *hs) {
+        fhs = hs;
+    }
 
     /****************** PART to be IMPLEMENTE******************/
-	/* Functions to implement */
+    /* Functions to implement */
 
     /*********** overloaded from CacheTransfer ***************/
     /* Must callback after this fn - using utility functions */
@@ -92,7 +98,7 @@ public:
     //			std::string hash, uint64_t size);
     /******************* GUI Interface ************************/
     virtual int	getFile(std::string name, std::string hash,
-			uint64_t size, std::string destpath) = 0;
+                        uint64_t size, std::string destpath) = 0;
 
     virtual int 	cancelFile(std::string hash) = 0;
     virtual int 	clearFailedTransfers() = 0;
@@ -102,7 +108,7 @@ public:
 
     /************* Network Interface****************************/
 
-    public:
+public:
     virtual void    	setSaveBasePath(std::string s) = 0;
     virtual void    	setEmergencyBasePath(std::string s) = 0;
     virtual int             recvFileInfo(ftFileRequest *in) = 0;

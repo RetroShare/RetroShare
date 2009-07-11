@@ -38,115 +38,115 @@ const int p3facemsgzone = 11453;
 #include <time.h>
 
 
-        /* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
+/* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
 int     RsServer::ClearInChat()
 {
-	lockRsCore(); /* LOCK */
+    lockRsCore(); /* LOCK */
 
-	mInChatList.clear();
+    mInChatList.clear();
 
-	unlockRsCore();   /* UNLOCK */
+    unlockRsCore();   /* UNLOCK */
 
-	return 1;
+    return 1;
 }
 
 
-        /* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
+/* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
 int     RsServer::SetInChat(std::string id, bool in)             /* friend : chat msgs */
 {
-	/* so we send this.... */
-	lockRsCore();     /* LOCK */
+    /* so we send this.... */
+    lockRsCore();     /* LOCK */
 
-	//std::cerr << "Set InChat(" << id << ") to " << (in ? "True" : "False") << std::endl;
-	std::list<std::string>::iterator it;
-	it = std::find(mInChatList.begin(), mInChatList.end(), id);
-	if (it == mInChatList.end())
-	{
-		if (in)
-		{
-			mInChatList.push_back(id);
-		}
-	}
-	else
-	{
-		if (!in)
-		{
-			mInChatList.erase(it);
-		}
-	}
+    //std::cerr << "Set InChat(" << id << ") to " << (in ? "True" : "False") << std::endl;
+    std::list<std::string>::iterator it;
+    it = std::find(mInChatList.begin(), mInChatList.end(), id);
+    if (it == mInChatList.end())
+    {
+        if (in)
+        {
+            mInChatList.push_back(id);
+        }
+    }
+    else
+    {
+        if (!in)
+        {
+            mInChatList.erase(it);
+        }
+    }
 
-	unlockRsCore();   /* UNLOCK */
+    unlockRsCore();   /* UNLOCK */
 
-	return 1;
+    return 1;
 }
 
 
 int     RsServer::ClearInMsg()
 {
-	lockRsCore(); /* LOCK */
+    lockRsCore(); /* LOCK */
 
-	mInMsgList.clear();
+    mInMsgList.clear();
 
-	unlockRsCore();   /* UNLOCK */
+    unlockRsCore();   /* UNLOCK */
 
-	return 1;
+    return 1;
 }
 
 
 int     RsServer::SetInMsg(std::string id, bool in)             /* friend : msgs */
 {
-	/* so we send this.... */
-	lockRsCore();     /* LOCK */
+    /* so we send this.... */
+    lockRsCore();     /* LOCK */
 
-	//std::cerr << "Set InMsg(" << id << ") to " << (in ? "True" : "False") << std::endl;
-	std::list<std::string>::iterator it;
-	it = std::find(mInMsgList.begin(), mInMsgList.end(), id);
-	if (it == mInMsgList.end())
-	{
-		if (in)
-		{
-			mInMsgList.push_back(id);
-		}
-	}
-	else
-	{
-		if (!in)
-		{
-			mInMsgList.erase(it);
-		}
-	}
+    //std::cerr << "Set InMsg(" << id << ") to " << (in ? "True" : "False") << std::endl;
+    std::list<std::string>::iterator it;
+    it = std::find(mInMsgList.begin(), mInMsgList.end(), id);
+    if (it == mInMsgList.end())
+    {
+        if (in)
+        {
+            mInMsgList.push_back(id);
+        }
+    }
+    else
+    {
+        if (!in)
+        {
+            mInMsgList.erase(it);
+        }
+    }
 
-	unlockRsCore();   /* UNLOCK */
-	return 1;
+    unlockRsCore();   /* UNLOCK */
+    return 1;
 }
 
 bool    RsServer::IsInChat(std::string id)  /* friend : chat msgs */
 {
-	/* so we send this.... */
-	lockRsCore();     /* LOCK */
+    /* so we send this.... */
+    lockRsCore();     /* LOCK */
 
-	std::list<std::string>::iterator it;
-	it = std::find(mInChatList.begin(), mInChatList.end(), id);
-	bool inChat = (it != mInChatList.end());
+    std::list<std::string>::iterator it;
+    it = std::find(mInChatList.begin(), mInChatList.end(), id);
+    bool inChat = (it != mInChatList.end());
 
-	unlockRsCore();   /* UNLOCK */
+    unlockRsCore();   /* UNLOCK */
 
-	return inChat;
+    return inChat;
 }
 
-	
+
 bool    RsServer::IsInMsg(std::string id)          /* friend : msg recpts*/
 {
-	/* so we send this.... */
-	lockRsCore();     /* LOCK */
+    /* so we send this.... */
+    lockRsCore();     /* LOCK */
 
-	std::list<std::string>::iterator it;
-	it = std::find(mInMsgList.begin(), mInMsgList.end(), id);
-	bool inMsg = (it != mInMsgList.end());
+    std::list<std::string>::iterator it;
+    it = std::find(mInMsgList.begin(), mInMsgList.end(), id);
+    bool inMsg = (it != mInMsgList.end());
 
-	unlockRsCore();   /* UNLOCK */
+    unlockRsCore();   /* UNLOCK */
 
-	return inMsg;
+    return inMsg;
 }
 
 
@@ -154,66 +154,66 @@ bool    RsServer::IsInMsg(std::string id)          /* friend : msg recpts*/
 
 int     RsServer::ClearInBroadcast()
 {
-	return 1;
+    return 1;
 }
 
 int     RsServer::ClearInSubscribe()
 {
-	return 1;
+    return 1;
 }
 
 int     RsServer::SetInBroadcast(std::string id, bool in)        /* channel : channel broadcast */
 {
-	return 1;
+    return 1;
 }
 
 int     RsServer::SetInSubscribe(std::string id, bool in)        /* channel : subscribed channels */
 {
-	return 1;
+    return 1;
 }
 
 int     RsServer::ClearInRecommend()
 {
-	/* find in people ... set chat flag */
-	RsIface &iface = getIface();
-	iface.lockData(); /* LOCK IFACE */
+    /* find in people ... set chat flag */
+    RsIface &iface = getIface();
+    iface.lockData(); /* LOCK IFACE */
 
-	std::list<FileInfo> &recs = iface.mRecommendList;
-	std::list<FileInfo>::iterator it;
+    std::list<FileInfo> &recs = iface.mRecommendList;
+    std::list<FileInfo>::iterator it;
 
-	for(it = recs.begin(); it != recs.end(); it++)
-	{
-	  it -> inRecommend = false;
-	}
-	
-	iface.unlockData(); /* UNLOCK IFACE */
+    for (it = recs.begin(); it != recs.end(); it++)
+    {
+        it -> inRecommend = false;
+    }
 
-	return 1;
+    iface.unlockData(); /* UNLOCK IFACE */
+
+    return 1;
 }
 
 
 int     RsServer::SetInRecommend(std::string id, bool in)        /* file : recommended file */
 {
-	/* find in people ... set chat flag */
-	RsIface &iface = getIface();
-	iface.lockData(); /* LOCK IFACE */
+    /* find in people ... set chat flag */
+    RsIface &iface = getIface();
+    iface.lockData(); /* LOCK IFACE */
 
-	std::list<FileInfo> &recs = iface.mRecommendList;
-	std::list<FileInfo>::iterator it;
+    std::list<FileInfo> &recs = iface.mRecommendList;
+    std::list<FileInfo>::iterator it;
 
-	for(it = recs.begin(); it != recs.end(); it++)
-	{
-	  if (it -> fname == id)
-	  {
-		/* set flag */
-		it -> inRecommend = in;
-		//std::cerr << "Set InRecommend (" << id << ") to " << (in ? "True" : "False") << std::endl;
-	  }
-	}
-	
-	iface.unlockData(); /* UNLOCK IFACE */
+    for (it = recs.begin(); it != recs.end(); it++)
+    {
+        if (it -> fname == id)
+        {
+            /* set flag */
+            it -> inRecommend = in;
+            //std::cerr << "Set InRecommend (" << id << ") to " << (in ? "True" : "False") << std::endl;
+        }
+    }
 
-	return 1;
+    iface.unlockData(); /* UNLOCK IFACE */
+
+    return 1;
 }
 
 

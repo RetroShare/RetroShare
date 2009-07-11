@@ -52,7 +52,7 @@ bool    RsConfigStartMinimised(RsInit *config);
 void    CleanupRsConfig(RsInit *);
 
 
-// Called First... (handles comandline options) 
+// Called First... (handles comandline options)
 int InitRetroShare(int argc, char **argv, RsInit *config);
 
 // This Functions are used for Login.
@@ -77,114 +77,130 @@ RsControl *createRsControl(RsIface &iface, NotifyBase &notify);
 class RsIface /* The Main Interface Class - create a single one! */
 {
 public:
-	RsIface(NotifyBase &callback)
-	:cb(callback) { return; }
-	virtual ~RsIface() { return; }
+    RsIface(NotifyBase &callback)
+            :cb(callback) {
+        return;
+    }
+    virtual ~RsIface() {
+        return;
+    }
 
-/****************************************/
+    /****************************************/
 
-	/* Stubs for Very Important Fns -> Locking Functions */
-virtual	void lockData() = 0;
-virtual	void unlockData() = 0;
+    /* Stubs for Very Important Fns -> Locking Functions */
+    virtual	void lockData() = 0;
+    virtual	void unlockData() = 0;
 
-	const std::list<FileInfo> &getRecommendList()
-		{ return mRecommendList; }
+    const std::list<FileInfo> &getRecommendList()
+    {
+        return mRecommendList;
+    }
 
-	const RsConfig &getConfig()
-		{ return mConfig; }
-/****************************************/
-
-
-	/* Flags to indicate used or not */
-	enum DataFlags
-	{
-		Neighbour = 0,
-		Friend = 1,
-		DirLocal = 2,  /* Not Used - QModel instead */
-		DirRemote = 3, /* Not Used - QModel instead */
-		Transfer = 4,
-		Message = 5,
-		Channel = 6,
-		Chat = 7,
-		Recommend = 8,
-		Config = 9,
-		NumOfFlags = 10
-	};
+    const RsConfig &getConfig()
+    {
+        return mConfig;
+    }
+    /****************************************/
 
 
-	/* 
-	 * Operations for flags
-	 */
+    /* Flags to indicate used or not */
+    enum DataFlags
+    {
+        Neighbour = 0,
+        Friend = 1,
+        DirLocal = 2,  /* Not Used - QModel instead */
+        DirRemote = 3, /* Not Used - QModel instead */
+        Transfer = 4,
+        Message = 5,
+        Channel = 6,
+        Chat = 7,
+        Recommend = 8,
+        Config = 9,
+        NumOfFlags = 10
+    };
 
-bool	setChanged(DataFlags set); /* set to true */
-bool	getChanged(DataFlags set); /* leaves it */
-bool	hasChanged(DataFlags set); /* resets it */
 
-	private:
+    /*
+     * Operations for flags
+     */
 
-void	fillLists(); /* create some dummy data to display */
+    bool	setChanged(DataFlags set); /* set to true */
+    bool	getChanged(DataFlags set); /* leaves it */
+    bool	hasChanged(DataFlags set); /* resets it */
 
-		/* Internals */
-	std::list<FileInfo>      mRecommendList;
+private:
 
-	bool mChanged[NumOfFlags];
+    void	fillLists(); /* create some dummy data to display */
 
-	RsConfig mConfig;
+    /* Internals */
+    std::list<FileInfo>      mRecommendList;
 
-	NotifyBase &cb;
+    bool mChanged[NumOfFlags];
 
-	/* Classes which can update the Lists! */
-	friend class RsControl;
-	friend class RsServer; 
+    RsConfig mConfig;
+
+    NotifyBase &cb;
+
+    /* Classes which can update the Lists! */
+    friend class RsControl;
+    friend class RsServer;
 };
 
 
 class RsControl /* The Main Interface Class - for controlling the server */
 {
-	public:
+public:
 
-		RsControl(RsIface &i, NotifyBase &callback)
-			:cb(callback), rsIface(i) { return; }
+    RsControl(RsIface &i, NotifyBase &callback)
+            :cb(callback), rsIface(i) {
+        return;
+    }
 
-		virtual ~RsControl() { return; }
+    virtual ~RsControl() {
+        return;
+    }
 
-		/* Real Startup Fn */
-		virtual int StartupRetroShare() = 0;
+    /* Real Startup Fn */
+    virtual int StartupRetroShare() = 0;
 
-		/****************************************/
+    /****************************************/
 
-		/* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
-		virtual int 	SetInChat(std::string id, bool in) = 0;		/* friend : chat msgs */
-		virtual int 	SetInMsg(std::string id, bool in)  = 0;		/* friend : msg receipients */
-		virtual int 	SetInBroadcast(std::string id, bool in) = 0;	/* channel : channel broadcast */
-		virtual int 	SetInSubscribe(std::string id, bool in) = 0;	/* channel : subscribed channels */
-		virtual int 	SetInRecommend(std::string id, bool in) = 0;	/* file : recommended file */
-		virtual int 	ClearInChat() = 0;
-		virtual int 	ClearInMsg() = 0;
-		virtual int 	ClearInBroadcast() = 0;
-		virtual int 	ClearInSubscribe() = 0;
-		virtual int 	ClearInRecommend() = 0;
+    /* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
+    virtual int 	SetInChat(std::string id, bool in) = 0;		/* friend : chat msgs */
+    virtual int 	SetInMsg(std::string id, bool in)  = 0;		/* friend : msg receipients */
+    virtual int 	SetInBroadcast(std::string id, bool in) = 0;	/* channel : channel broadcast */
+    virtual int 	SetInSubscribe(std::string id, bool in) = 0;	/* channel : subscribed channels */
+    virtual int 	SetInRecommend(std::string id, bool in) = 0;	/* file : recommended file */
+    virtual int 	ClearInChat() = 0;
+    virtual int 	ClearInMsg() = 0;
+    virtual int 	ClearInBroadcast() = 0;
+    virtual int 	ClearInSubscribe() = 0;
+    virtual int 	ClearInRecommend() = 0;
 
-		virtual bool 	IsInChat(std::string id) = 0;		/* friend : chat msgs */
-		virtual bool 	IsInMsg(std::string id) = 0;		/* friend : msg recpts*/
+    virtual bool 	IsInChat(std::string id) = 0;		/* friend : chat msgs */
+    virtual bool 	IsInMsg(std::string id) = 0;		/* friend : msg recpts*/
 
-		/****************************************/
-		/* Config */
+    /****************************************/
+    /* Config */
 
-		virtual int     ConfigSetDataRates( int totalDownload, int totalUpload ) = 0;
-		virtual int     ConfigGetDataRates( float &inKb, float &outKb) = 0;
-		virtual	int 	ConfigSetBootPrompt( bool on ) = 0;
-		virtual void    ConfigFinalSave( ) 			   = 0;
-		virtual void 	rsGlobalShutDown( )			   = 0;
+    virtual int     ConfigSetDataRates( int totalDownload, int totalUpload ) = 0;
+    virtual int     ConfigGetDataRates( float &inKb, float &outKb) = 0;
+    virtual	int 	ConfigSetBootPrompt( bool on ) = 0;
+    virtual void    ConfigFinalSave( ) 			   = 0;
+    virtual void 	rsGlobalShutDown( )			   = 0;
 
-		/****************************************/
+    /****************************************/
 
-		NotifyBase &getNotify() { return cb; }
-		RsIface    &getIface()  { return rsIface; }
+    NotifyBase &getNotify() {
+        return cb;
+    }
+    RsIface    &getIface()  {
+        return rsIface;
+    }
 
-	private:
-		NotifyBase &cb;
-		RsIface    &rsIface;
+private:
+    NotifyBase &cb;
+    RsIface    &rsIface;
 };
 
 
@@ -193,16 +209,40 @@ class RsControl /* The Main Interface Class - for controlling the server */
 
 class NotifyBase
 {
-	public:
-	NotifyBase() { return; }
-	virtual ~NotifyBase() { return; }
-	virtual void notifyListPreChange(int list, int type) { (void) list; (void) type; return; }
-	virtual void notifyListChange(int list, int type) { (void) list; (void) type; return; }
-	virtual void notifyErrorMsg(int list, int sev, std::string msg) { (void) list; (void) sev; (void) msg; return; }
-	virtual void notifyChat() { return; }
-	virtual void notifyChatStatus(const std::string& peer_id,const std::string& status_string) {}
-	virtual void notifyHashingInfo(std::string fileinfo) { (void)fileinfo; return ; }
-	virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files) { (void)files; }
+public:
+    NotifyBase() {
+        return;
+    }
+    virtual ~NotifyBase() {
+        return;
+    }
+    virtual void notifyListPreChange(int list, int type) {
+        (void) list;
+        (void) type;
+        return;
+    }
+    virtual void notifyListChange(int list, int type) {
+        (void) list;
+        (void) type;
+        return;
+    }
+    virtual void notifyErrorMsg(int list, int sev, std::string msg) {
+        (void) list;
+        (void) sev;
+        (void) msg;
+        return;
+    }
+    virtual void notifyChat() {
+        return;
+    }
+    virtual void notifyChatStatus(const std::string& peer_id,const std::string& status_string) {}
+    virtual void notifyHashingInfo(std::string fileinfo) {
+        (void)fileinfo;
+        return ;
+    }
+    virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files) {
+        (void)files;
+    }
 };
 
 const int NOTIFY_LIST_NEIGHBOURS   = 1;

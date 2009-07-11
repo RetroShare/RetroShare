@@ -34,70 +34,74 @@
 
 class p3NotifySysMsg
 {
-	public:
+public:
 
-	uint32_t sysid;
-	uint32_t type;
-	std::string title;
-	std::string msg;
+    uint32_t sysid;
+    uint32_t type;
+    std::string title;
+    std::string msg;
 };
 
 class p3NotifyLogMsg
 {
-	public:
+public:
 
-	uint32_t sysid;
-	uint32_t type;
-	std::string title;
-	std::string msg;
+    uint32_t sysid;
+    uint32_t type;
+    std::string title;
+    std::string msg;
 };
 
 class p3NotifyPopupMsg
 {
-	public:
+public:
 
-	uint32_t type;
-	std::string name;
-	std::string msg;
+    uint32_t type;
+    std::string name;
+    std::string msg;
 };
 
 
 class p3Notify: public RsNotify, public pqiNotify
 {
-	public:
+public:
 
-	p3Notify() { return; }
-virtual ~p3Notify() { return; }
+    p3Notify() {
+        return;
+    }
+    virtual ~p3Notify() {
+        return;
+    }
 
-	/* Output for retroshare-gui */
-virtual bool NotifySysMessage(uint32_t &sysid, uint32_t &type, 
-					std::string &title, std::string &msg);
-virtual bool NotifyPopupMessage(uint32_t &ptype, std::string &name, std::string &msg);
-virtual bool NotifyLogMessage(uint32_t &sysid, uint32_t &type, std::string &title, std::string &msg);
+    /* Output for retroshare-gui */
+    virtual bool NotifySysMessage(uint32_t &sysid, uint32_t &type,
+                                  std::string &title, std::string &msg);
+    virtual bool NotifyPopupMessage(uint32_t &ptype, std::string &name, std::string &msg);
+    virtual bool NotifyLogMessage(uint32_t &sysid, uint32_t &type, std::string &title, std::string &msg);
 
-	/* Control over Messages */
-virtual bool GetSysMessageList(std::map<uint32_t, std::string> &list);
-virtual bool GetPopupMessageList(std::map<uint32_t, std::string> &list);
+    /* Control over Messages */
+    virtual bool GetSysMessageList(std::map<uint32_t, std::string> &list);
+    virtual bool GetPopupMessageList(std::map<uint32_t, std::string> &list);
 
-virtual bool SetSysMessageMode(uint32_t sysid, uint32_t mode);
-virtual bool SetPopupMessageMode(uint32_t ptype, uint32_t mode);
+    virtual bool SetSysMessageMode(uint32_t sysid, uint32_t mode);
+    virtual bool SetPopupMessageMode(uint32_t ptype, uint32_t mode);
 
-virtual bool GetFeedItem(RsFeedItem &item);
+    virtual bool GetFeedItem(RsFeedItem &item);
 
-	/* Overloaded from pqiNotify */
-virtual bool AddPopupMessage(uint32_t ptype, std::string name, std::string msg);
-virtual bool AddSysMessage(uint32_t sysid, uint32_t type, std::string title, std::string msg);
-virtual bool AddLogMessage(uint32_t sysid, uint32_t type, std::string title, std::string msg);
-virtual bool AddFeedItem(uint32_t type, std::string id1, std::string id2, std::string id3);
+    /* Overloaded from pqiNotify */
+    virtual bool AddPopupMessage(uint32_t ptype, std::string name, std::string msg);
+    virtual bool AddSysMessage(uint32_t sysid, uint32_t type, std::string title, std::string msg);
+    virtual bool AddLogMessage(uint32_t sysid, uint32_t type, std::string title, std::string msg);
+    virtual bool AddFeedItem(uint32_t type, std::string id1, std::string id2, std::string id3);
 
-	private:
+private:
 
-	RsMutex noteMtx;
+    RsMutex noteMtx;
 
-	std::list<p3NotifySysMsg> pendingSysMsgs;
-	std::list<p3NotifyLogMsg> pendingLogMsgs;
-	std::list<p3NotifyPopupMsg> pendingPopupMsgs;
-	std::list<RsFeedItem>  pendingNewsFeed;
+    std::list<p3NotifySysMsg> pendingSysMsgs;
+    std::list<p3NotifyLogMsg> pendingLogMsgs;
+    std::list<p3NotifyPopupMsg> pendingPopupMsgs;
+    std::list<RsFeedItem>  pendingNewsFeed;
 };
 
 

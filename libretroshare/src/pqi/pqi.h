@@ -47,38 +47,50 @@
 class SearchInterface
 {
 public:
-	SearchInterface()  { return; }
+    SearchInterface()  {
+        return;
+    }
 
-virtual	~SearchInterface() { return; }
+    virtual	~SearchInterface() {
+        return;
+    }
 
-	// Cache Requests
-virtual int	SearchSpecific(RsCacheRequest *) = 0; 
-virtual RsCacheRequest *RequestedSearch() = 0;
+    // Cache Requests
+    virtual int	SearchSpecific(RsCacheRequest *) = 0;
+    virtual RsCacheRequest *RequestedSearch() = 0;
 
-	// Cache Results
-virtual int     SendSearchResult(RsCacheItem *item) = 0;
-virtual RsCacheItem *GetSearchResult() = 0;
+    // Cache Results
+    virtual int     SendSearchResult(RsCacheItem *item) = 0;
+    virtual RsCacheItem *GetSearchResult() = 0;
 
-	// FileTransfer.
-virtual RsFileRequest *GetFileRequest() = 0;
-virtual int     SendFileRequest(RsFileRequest *) = 0;
+    // FileTransfer.
+    virtual RsFileRequest *GetFileRequest() = 0;
+    virtual int     SendFileRequest(RsFileRequest *) = 0;
 
-virtual RsFileData *GetFileData() = 0;
-virtual int     SendFileData(RsFileData *) = 0;
+    virtual RsFileData *GetFileData() = 0;
+    virtual int     SendFileData(RsFileData *) = 0;
 
 };
 
 class P3Interface: public SearchInterface
 {
 public:
-	P3Interface() {return; }
-virtual ~P3Interface() {return; }
+    P3Interface() {
+        return;
+    }
+    virtual ~P3Interface() {
+        return;
+    }
 
-virtual int	tick() { return 1; }
-virtual int	status() { return 1; }
+    virtual int	tick() {
+        return 1;
+    }
+    virtual int	status() {
+        return 1;
+    }
 
-virtual int	SendRsRawItem(RsRawItem *) = 0;
-virtual RsRawItem *GetRsRawItem() = 0;
+    virtual int	SendRsRawItem(RsRawItem *) = 0;
+    virtual RsRawItem *GetRsRawItem() = 0;
 
 };
 

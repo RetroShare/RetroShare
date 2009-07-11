@@ -17,22 +17,22 @@ bool CompoundExpression::eval (FileEntry *file)
     if (Lexp == NULL or Rexp == NULL) {
         return false;
     }
-    switch (Op){
-        case AndOp:
-            return Lexp->eval(file) && Rexp->eval(file);
-        case OrOp:
-            return Lexp->eval(file) || Rexp->eval(file);
-        case XorOp:
-            return Lexp->eval(file) ^ Rexp->eval(file);
-        default:
-            return false;
+    switch (Op) {
+    case AndOp:
+        return Lexp->eval(file) && Rexp->eval(file);
+    case OrOp:
+        return Lexp->eval(file) || Rexp->eval(file);
+    case XorOp:
+        return Lexp->eval(file) ^ Rexp->eval(file);
+    default:
+        return false;
     }
 }
 
 CompoundExpression::~CompoundExpression()
 {
-                delete Lexp;
-                delete Rexp;
+    delete Lexp;
+    delete Rexp;
 }
 
 
@@ -125,96 +125,96 @@ HashExpression::HashExpression(enum StringOperator op, std::list<std::string> &t
 
 bool NameExpression::eval(FileEntry *file)
 {
-        return evalStr(file->name);
+    return evalStr(file->name);
 }
 
-bool PathExpression::eval(FileEntry *file){
-        std::string path;
-        /*Construct the path of this file*/
-        DirEntry * curr = file->parent;
-        while ( curr != NULL ){
-                path = curr->name+"/"+ path;
-                curr = curr->parent;
+bool PathExpression::eval(FileEntry *file) {
+    std::string path;
+    /*Construct the path of this file*/
+    DirEntry * curr = file->parent;
+    while ( curr != NULL ) {
+        path = curr->name+"/"+ path;
+        curr = curr->parent;
+    }
+    return evalStr(path);
+}
+
+bool ExtExpression::eval(FileEntry *file) {
+    std::string ext;
+    /*Get the part of the string after the last instance of . in the filename */
+    unsigned int index = file->name.find_last_of('.');
+    if (index != std::string::npos) {
+        ext = file->name.substr(index+1);
+        if (ext != "" ) {
+            return evalStr(ext);
         }
-        return evalStr(path);
+    }
+    return false;
 }
 
-bool ExtExpression::eval(FileEntry *file){
-        std::string ext;
-        /*Get the part of the string after the last instance of . in the filename */
-        unsigned int index = file->name.find_last_of('.');
-        if (index != std::string::npos) {
-                ext = file->name.substr(index+1);
-                if (ext != "" ){
-                        return evalStr(ext);
-                }
-        }
-        return false;
-}
-
-bool HashExpression::eval(FileEntry *file){
-        return evalStr(file->hash);
+bool HashExpression::eval(FileEntry *file) {
+    return evalStr(file->hash);
 }
 
 /*Check whether two strings are 'equal' to each other*/
 static bool StrEquals(const std::string & str1, const std::string & str2,
-                           bool IgnoreCase ){
-        if ( str1.size() != str2.size() ){
-                return false;
-        } else if (IgnoreCase) {
-                std::equal( str1.begin(), str1.end(),
-                                                   str2.begin(), CompareCharIC() );
-        }
-        return std::equal( str1.begin(), str1.end(),
-                                                   str2.begin());
+                      bool IgnoreCase ) {
+    if ( str1.size() != str2.size() ) {
+        return false;
+    } else if (IgnoreCase) {
+        std::equal( str1.begin(), str1.end(),
+                    str2.begin(), CompareCharIC() );
+    }
+    return std::equal( str1.begin(), str1.end(),
+                       str2.begin());
 }
 
 /*Check whether one string contains the other*/
 static bool StrContains( std::string & str1, std::string & str2,
-                                  bool IgnoreCase){
+                         bool IgnoreCase) {
 
-        std::string::const_iterator iter ;
-        if (IgnoreCase) {
-                iter = std::search( str1.begin(), str1.end(),
-                                                        str2.begin(), str2.end(), CompareCharIC() );
-        } else {
-                iter = std::search( str1.begin(), str1.end(),
-                                                        str2.begin(), str2.end());
-        }
+    std::string::const_iterator iter ;
+    if (IgnoreCase) {
+        iter = std::search( str1.begin(), str1.end(),
+                            str2.begin(), str2.end(), CompareCharIC() );
+    } else {
+        iter = std::search( str1.begin(), str1.end(),
+                            str2.begin(), str2.end());
+    }
 
-        return ( iter != str1.end() );
+    return ( iter != str1.end() );
 }
 
 
-bool StringExpression :: evalStr ( std::string &str ){
-        std::list<std::string>::iterator iter;
-        switch (Op) {
-                case ContainsAllStrings:
-                        for ( iter = terms.begin(); iter != terms.end(); iter++ ) {
-                                if ( StrContains (str, *iter, IgnoreCase) == false ){
-                                        return false;
-                                }
-                        }
-                        return true;
-                break;
-                case ContainsAnyStrings:
-                        for ( iter = terms.begin(); iter != terms.end(); iter++ ) {
-                                if ( StrContains (str,*iter, IgnoreCase) == true ) {
-                                        return true;
-                                }
-                        }
-                break;
-                case EqualsString:
-                        for ( iter = terms.begin(); iter != terms.end(); iter++ ) {
-                                if ( StrEquals (str,*iter, IgnoreCase) == true ) {
-                                        return true;
-                                }
-                        }
-                break;
-                default:
-                        return false;
+bool StringExpression :: evalStr ( std::string &str ) {
+    std::list<std::string>::iterator iter;
+    switch (Op) {
+    case ContainsAllStrings:
+        for ( iter = terms.begin(); iter != terms.end(); iter++ ) {
+            if ( StrContains (str, *iter, IgnoreCase) == false ) {
+                return false;
+            }
         }
+        return true;
+        break;
+    case ContainsAnyStrings:
+        for ( iter = terms.begin(); iter != terms.end(); iter++ ) {
+            if ( StrContains (str,*iter, IgnoreCase) == true ) {
+                return true;
+            }
+        }
+        break;
+    case EqualsString:
+        for ( iter = terms.begin(); iter != terms.end(); iter++ ) {
+            if ( StrEquals (str,*iter, IgnoreCase) == true ) {
+                return true;
+            }
+        }
+        break;
+    default:
         return false;
+    }
+    return false;
 }
 
 template <class T>
@@ -228,28 +228,28 @@ RelExpression::RelExpression(enum RelOperator op, T lv, T hv):
 template <class T>
 bool RelExpression<T>::evalRel(T val)
 {
-        switch (Op) {
-                case Equals:
-                        return LowerValue == val;
-                case GreaterEquals:
-                        return LowerValue >= val;
-                case Greater:
-                        return LowerValue > val;
-                case SmallerEquals:
-                        return LowerValue <= val;
-                case Smaller:
-                        return LowerValue < val;
-                case InRange:
-                        return (LowerValue <= val) && (val <= HigherValue);
-                default:
-                        return false;
-        }
+    switch (Op) {
+    case Equals:
+        return LowerValue == val;
+    case GreaterEquals:
+        return LowerValue >= val;
+    case Greater:
+        return LowerValue > val;
+    case SmallerEquals:
+        return LowerValue <= val;
+    case Smaller:
+        return LowerValue < val;
+    case InRange:
+        return (LowerValue <= val) && (val <= HigherValue);
+    default:
+        return false;
+    }
 }
 
 bool CompareCharIC::operator () ( char ch1 , char ch2 ) const
 {
     return tolower( static_cast < unsigned char > (ch1) )
-            == tolower( static_cast < unsigned char > (ch2) );
+           == tolower( static_cast < unsigned char > (ch2) );
 }
 
 

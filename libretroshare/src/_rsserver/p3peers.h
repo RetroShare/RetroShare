@@ -30,12 +30,14 @@
 #include "pqi/p3connmgr.h"
 #include "pqi/p3authmgr.h"
 
-class p3Peers: public RsPeers 
+class p3Peers: public RsPeers
 {
 public:
 
     p3Peers(p3ConnectMgr *cm, p3AuthMgr *am);
-    virtual ~p3Peers() { return; }
+    virtual ~p3Peers() {
+        return;
+    }
 
     /* Updates ... */
     virtual bool FriendsChanged();

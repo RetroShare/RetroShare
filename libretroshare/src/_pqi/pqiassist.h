@@ -33,7 +33,7 @@
 #include "_pqi/pqimonitor.h"
 
 /**********
- * This header file provides two interfaces for assisting 
+ * This header file provides two interfaces for assisting
  * the connections to friends.
  *
  * pqiNetAssistFirewall - which will provides interfaces
@@ -48,33 +48,37 @@
 
 class pqiNetAssist
 {
-	public:
+public:
 
-virtual	~pqiNetAssist() { return; }
+    virtual	~pqiNetAssist() {
+        return;
+    }
 
-		/* External Interface */
-virtual void    enable(bool on) = 0;  
-virtual void    shutdown() = 0; /* blocking call */
-virtual void	restart() = 0;
+    /* External Interface */
+    virtual void    enable(bool on) = 0;
+    virtual void    shutdown() = 0; /* blocking call */
+    virtual void	restart() = 0;
 
-virtual bool    getEnabled() = 0;
-virtual bool    getActive() = 0;
+    virtual bool    getEnabled() = 0;
+    virtual bool    getActive() = 0;
 
 };
 
 class pqiNetAssistFirewall: public pqiNetAssist
 {
-	public:
+public:
 
-virtual	~pqiNetAssistFirewall() { return; }
+    virtual	~pqiNetAssistFirewall() {
+        return;
+    }
 
-		/* the address that the listening port is on */
-virtual void    setInternalPort(unsigned short iport_in) = 0;
-virtual void    setExternalPort(unsigned short eport_in) = 0;
- 
-	 	/* as determined by uPnP */
-virtual bool    getInternalAddress(struct sockaddr_in &addr) = 0;
-virtual bool    getExternalAddress(struct sockaddr_in &addr) = 0;
+    /* the address that the listening port is on */
+    virtual void    setInternalPort(unsigned short iport_in) = 0;
+    virtual void    setExternalPort(unsigned short eport_in) = 0;
+
+    /* as determined by uPnP */
+    virtual bool    getInternalAddress(struct sockaddr_in &addr) = 0;
+    virtual bool    getExternalAddress(struct sockaddr_in &addr) = 0;
 
 };
 
@@ -83,43 +87,45 @@ virtual bool    getExternalAddress(struct sockaddr_in &addr) = 0;
 
 class pqiNetAssistConnect: public pqiNetAssist
 {
-	/* 
-	 */
-	public:
-	pqiNetAssistConnect(std::string id, pqiConnectCb *cb)
-	:mPeerId(id), mConnCb(cb) { return; }
+    /*
+     */
+public:
+    pqiNetAssistConnect(std::string id, pqiConnectCb *cb)
+            :mPeerId(id), mConnCb(cb) {
+        return;
+    }
 
-	/********** External DHT Interface ************************
-	 * These Functions are the external interface
-	 * for the DHT, and must be non-blocking and return quickly
-	 */
+    /********** External DHT Interface ************************
+     * These Functions are the external interface
+     * for the DHT, and must be non-blocking and return quickly
+     */
 
-virtual void	setBootstrapAllowed(bool on) = 0;
-virtual bool 	getBootstrapAllowed() = 0;
+    virtual void	setBootstrapAllowed(bool on) = 0;
+    virtual bool 	getBootstrapAllowed() = 0;
 
-	/* set key data */
-virtual bool 	setExternalInterface(struct sockaddr_in laddr,
-			struct sockaddr_in raddr, uint32_t type) = 0;
+    /* set key data */
+    virtual bool 	setExternalInterface(struct sockaddr_in laddr,
+                                       struct sockaddr_in raddr, uint32_t type) = 0;
 
-	/* add / remove peers */
-virtual bool 	findPeer(std::string id) = 0;
-virtual bool 	dropPeer(std::string id) = 0;
+    /* add / remove peers */
+    virtual bool 	findPeer(std::string id) = 0;
+    virtual bool 	dropPeer(std::string id) = 0;
 
-	/* post DHT key saying we should connect (callback when done) */
-virtual bool 	notifyPeer(std::string id) = 0; 
+    /* post DHT key saying we should connect (callback when done) */
+    virtual bool 	notifyPeer(std::string id) = 0;
 
-	/* extract current peer status */
-virtual bool 	getPeerStatus(std::string id, 
-			struct sockaddr_in &laddr, struct sockaddr_in &raddr, 
-			uint32_t &type, uint32_t &mode) = 0;
+    /* extract current peer status */
+    virtual bool 	getPeerStatus(std::string id,
+                                struct sockaddr_in &laddr, struct sockaddr_in &raddr,
+                                uint32_t &type, uint32_t &mode) = 0;
 
-	/* stun */
-virtual bool	enableStun(bool on)		= 0;
-virtual bool 	addStun(std::string id)		= 0;
+    /* stun */
+    virtual bool	enableStun(bool on)		= 0;
+    virtual bool 	addStun(std::string id)		= 0;
 
-	protected:
-	std::string  mPeerId;
-	pqiConnectCb *mConnCb;
+protected:
+    std::string  mPeerId;
+    pqiConnectCb *mConnCb;
 };
 
 #endif /*PQIASSIST_H */

@@ -32,22 +32,22 @@
 
 class p3Status: public RsStatus
 {
-	public:
+public:
 
-	p3Status();
-virtual ~p3Status();
+    p3Status();
+    virtual ~p3Status();
 
-/********* RsStatus ***********/
+    /********* RsStatus ***********/
 
-virtual bool getStatus(std::string id, StatusInfo& statusInfo);
-virtual bool setStatus(StatusInfo& statusInfo);
+    virtual bool getStatus(std::string id, StatusInfo& statusInfo);
+    virtual bool setStatus(StatusInfo& statusInfo);
 
-/******************************/
+    /******************************/
 
-	private:
+private:
 
-void 	loadDummyData();
-std::map<std::string, StatusInfo> mStatusInfoMap;
+    void 	loadDummyData();
+    std::map<std::string, StatusInfo> mStatusInfoMap;
 
 };
 

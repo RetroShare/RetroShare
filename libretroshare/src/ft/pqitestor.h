@@ -30,7 +30,7 @@
  * pqi Test Interface.
  */
 
-/*** 
+/***
  * Structures for ftserver simulations
  *
  ****/
@@ -50,102 +50,114 @@ class p3ConnectMgr;
 
 class hubItem
 {
-	public:
-	hubItem()
-	:mPQI(NULL), mConnMgr(NULL) { return; }
+public:
+    hubItem()
+            :mPQI(NULL), mConnMgr(NULL) {
+        return;
+    }
 
-	hubItem(std::string id, P3Pipe *pqi, p3ConnectMgr *mgr)
-	:mPeerId(id), mPQI(pqi), mConnMgr(mgr) { return; }
+    hubItem(std::string id, P3Pipe *pqi, p3ConnectMgr *mgr)
+            :mPeerId(id), mPQI(pqi), mConnMgr(mgr) {
+        return;
+    }
 
-	std::string mPeerId;
-	P3Pipe *mPQI;
-	p3ConnectMgr *mConnMgr;
+    std::string mPeerId;
+    P3Pipe *mPQI;
+    p3ConnectMgr *mConnMgr;
 };
 
 
 class P3Hub: public RsThread
 {
-	public:
+public:
 
-	P3Hub(uint32_t flags, RsSerialiser *rss);
-void 	addP3Pipe(std::string id, P3Pipe *, p3ConnectMgr *mgr);
+    P3Hub(uint32_t flags, RsSerialiser *rss);
+    void 	addP3Pipe(std::string id, P3Pipe *, p3ConnectMgr *mgr);
 
-virtual	void run();
+    virtual	void run();
 
-	private:
+private:
 
-RsItem* SerialiserPass(RsItem *inItem);
+    RsItem* SerialiserPass(RsItem *inItem);
 
-	std::map<std::string, hubItem> mPeers;
-	RsSerialiser *mSerialiser;
-	bool mUseSerialiser;
+    std::map<std::string, hubItem> mPeers;
+    RsSerialiser *mSerialiser;
+    bool mUseSerialiser;
 };
 
 
 class PQIPipe: public PQInterface
 {
 public:
-	PQIPipe(std::string peerId);
+    PQIPipe(std::string peerId);
 
-virtual int     SendItem(RsItem *);
-virtual RsItem *GetItem();
+    virtual int     SendItem(RsItem *);
+    virtual RsItem *GetItem();
 
-	// PQIHub Interface.
-RsItem *PopSentItem();
-int	PushRecvdItem(RsItem *);
+    // PQIHub Interface.
+    RsItem *PopSentItem();
+    int	PushRecvdItem(RsItem *);
 
-	/*
-	 */
+    /*
+     */
 
 private:
 
-	RsMutex pipeMtx;
+    RsMutex pipeMtx;
 
-	std::list<RsItem *> mSentItems; 
-	std::list<RsItem *> mRecvdItems; 
+    std::list<RsItem *> mSentItems;
+    std::list<RsItem *> mRecvdItems;
 
 };
 
 class P3Pipe: public P3Interface
 {
 public:
-	P3Pipe() {return; }
-virtual ~P3Pipe() {return; }
+    P3Pipe() {
+        return;
+    }
+    virtual ~P3Pipe() {
+        return;
+    }
 
-virtual int	tick() { return 1; }
-virtual int	status() { return 1; }
+    virtual int	tick() {
+        return 1;
+    }
+    virtual int	status() {
+        return 1;
+    }
 
-	/* Overloaded from P3Interface */
-virtual int	SearchSpecific(RsCacheRequest *item);
-virtual int     SendSearchResult(RsCacheItem *item);
-virtual int     SendFileRequest(RsFileRequest *item);
-virtual int     SendFileData(RsFileData *item);
-virtual int	SendRsRawItem(RsRawItem *item);
+    /* Overloaded from P3Interface */
+    virtual int	SearchSpecific(RsCacheRequest *item);
+    virtual int     SendSearchResult(RsCacheItem *item);
+    virtual int     SendFileRequest(RsFileRequest *item);
+    virtual int     SendFileData(RsFileData *item);
+    virtual int	SendRsRawItem(RsRawItem *item);
 
-virtual RsCacheRequest *RequestedSearch();
-virtual RsCacheItem *GetSearchResult();
-virtual RsFileRequest *GetFileRequest();
-virtual RsFileData *GetFileData();
-virtual RsRawItem *GetRsRawItem();
+    virtual RsCacheRequest *RequestedSearch();
+    virtual RsCacheItem *GetSearchResult();
+    virtual RsFileRequest *GetFileRequest();
+    virtual RsFileData *GetFileData();
+    virtual RsRawItem *GetRsRawItem();
 
-	/* Lower Interface for PQIHub */
+    /* Lower Interface for PQIHub */
 
-RsItem *PopSentItem();
-int 	PushRecvdItem(RsItem *item);
+    RsItem *PopSentItem();
+    int 	PushRecvdItem(RsItem *item);
 
-	private:
+private:
 
-int 	SendAllItem(RsItem *item);
+    int 	SendAllItem(RsItem *item);
 
-	RsMutex pipeMtx;
+    RsMutex pipeMtx;
 
-	std::list<RsItem *> mSentItems; 
+    std::list<RsItem *> mSentItems;
 
-	std::list<RsCacheRequest *> mRecvdRsCacheRequests;
-	std::list<RsCacheItem *> mRecvdRsCacheItems;
-	std::list<RsFileRequest *> mRecvdRsFileRequests;
-	std::list<RsFileData *> mRecvdRsFileDatas;
-	std::list<RsRawItem *> mRecvdRsRawItems;
+    std::list<RsCacheRequest *> mRecvdRsCacheRequests;
+    std::list<RsCacheItem *> mRecvdRsCacheItems;
+    std::list<RsFileRequest *> mRecvdRsFileRequests;
+    std::list<RsFileData *> mRecvdRsFileDatas;
+    std::list<RsRawItem *> mRecvdRsRawItems;
 };
 
 

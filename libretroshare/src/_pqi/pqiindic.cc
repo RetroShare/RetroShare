@@ -9,7 +9,7 @@ Indicator::Indicator(uint16_t n = 1) :
 
 void Indicator::IndicateChanged()
 {
-    for(uint16_t i = 0; i < num; i++)
+    for (uint16_t i = 0; i < num; i++)
         changeFlags[i]=true;
 }
 

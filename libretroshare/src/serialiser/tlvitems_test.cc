@@ -43,47 +43,47 @@ static int test_RsTlvStepping();
 
 int main()
 {
-	std::cerr << "RsTlvItems Tests" << std::endl;
+    std::cerr << "RsTlvItems Tests" << std::endl;
 
-	test_RsTlvBinData(); 
-	
-	FINALREPORT("RsTlvItems Tests");
+    test_RsTlvBinData();
 
-	return TESTRESULT();
+    FINALREPORT("RsTlvItems Tests");
+
+    return TESTRESULT();
 }
 
 #define BIN_LEN 523456  /* bigger than 64k */
 
 int test_RsTlvBinData()
 {
-	RsTlvBinaryData  d1(1023);
-	RsTlvBinaryData  d2(1023);
+    RsTlvBinaryData  d1(1023);
+    RsTlvBinaryData  d2(1023);
 
-	char data[BIN_LEN] = {0};
-	int i, j;
-	for(i = 0; i < BIN_LEN; i++)
-	{
-		data[i] = i%13;
-	}
+    char data[BIN_LEN] = {0};
+    int i, j;
+    for (i = 0; i < BIN_LEN; i++)
+    {
+        data[i] = i%13;
+    }
 
-	for(j = 1; j < BIN_LEN; j *= 2)
-	{
-		d1.setBinData(data, j);
-		CHECK(test_SerialiseTlvItem(std::cerr, &d1, &d2));
+    for (j = 1; j < BIN_LEN; j *= 2)
+    {
+        d1.setBinData(data, j);
+        CHECK(test_SerialiseTlvItem(std::cerr, &d1, &d2));
 
-		CHECK(d1.bin_len == d2.bin_len);
-		CHECK(0 == memcmp(d1.bin_data, d2.bin_data, d1.bin_len));
-	}
+        CHECK(d1.bin_len == d2.bin_len);
+        CHECK(0 == memcmp(d1.bin_data, d2.bin_data, d1.bin_len));
+    }
 
-	REPORT("Serialise/Deserialise RsTlvBinData");
+    REPORT("Serialise/Deserialise RsTlvBinData");
 
-	return 1;
+    return 1;
 }
 
 int test_RsTlvStepping()
 {
 
 
-	return 1;
+    return 1;
 }
 

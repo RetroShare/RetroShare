@@ -56,7 +56,7 @@ public:
     RsIface(NotifyBase &callback);
     virtual ~RsIface();
 
-/****************************************/
+    /****************************************/
 
     /* Stubs for Very Important Fns -> Locking Functions */
     virtual void lockData() = 0;
@@ -64,7 +64,7 @@ public:
 
     const std::list<FileInfo> &getRecommendList();
     const RsConfig &getConfig();
-/****************************************/
+    /****************************************/
 
 
     /* Flags to indicate used or not */
@@ -96,7 +96,7 @@ private:
 
     void fillLists(); /* create some dummy data to display */
 
-		/* Internals */
+    /* Internals */
     std::list<FileInfo> mRecommendList;
 
     bool mChanged[NumOfFlags];

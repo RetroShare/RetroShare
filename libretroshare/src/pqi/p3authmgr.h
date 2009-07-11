@@ -49,99 +49,107 @@ p3AuthMgr *getAuthMgr();
 
 class pqiAuthDetails
 {
-	public:
-	pqiAuthDetails();
+public:
+    pqiAuthDetails();
 
-	std::string id;
-	std::string name;
-	std::string email;
-	std::string location;
-	std::string org;
+    std::string id;
+    std::string name;
+    std::string email;
+    std::string location;
+    std::string org;
 
-	std::string issuer;
+    std::string issuer;
 
-	std::string fpr; /* fingerprint */
-	std::list<std::string> signers;
+    std::string fpr; /* fingerprint */
+    std::list<std::string> signers;
 
-	uint32_t trustLvl;
-	uint32_t validLvl;
+    uint32_t trustLvl;
+    uint32_t validLvl;
 
-	bool ownsign;
-	bool trusted; // means valid in pgp world.
+    bool ownsign;
+    bool trusted; // means valid in pgp world.
 };
 
 
 class p3AuthMgr
 {
-	public:
+public:
 
-virtual ~p3AuthMgr() { return; }
+    virtual ~p3AuthMgr() {
+        return;
+    }
 
-		/* initialisation -> done by derived classes */
-virtual bool    active() = 0;
-virtual int     InitAuth(const char *srvr_cert, const char *priv_key, 
-                                        const char *passwd) = 0;
-virtual bool    CloseAuth() = 0;
-virtual int     setConfigDirectories(std::string confFile, std::string neighDir) = 0;
+    /* initialisation -> done by derived classes */
+    virtual bool    active() = 0;
+    virtual int     InitAuth(const char *srvr_cert, const char *priv_key,
+                             const char *passwd) = 0;
+    virtual bool    CloseAuth() = 0;
+    virtual int     setConfigDirectories(std::string confFile, std::string neighDir) = 0;
 
-		/* get Certificate Ids */
+    /* get Certificate Ids */
 
-virtual std::string OwnId() = 0;
-virtual bool	getAllList(std::list<std::string> &ids) = 0;
-virtual bool	getAuthenticatedList(std::list<std::string> &ids) = 0;
-virtual bool	getUnknownList(std::list<std::string> &ids) = 0;
+    virtual std::string OwnId() = 0;
+    virtual bool	getAllList(std::list<std::string> &ids) = 0;
+    virtual bool	getAuthenticatedList(std::list<std::string> &ids) = 0;
+    virtual bool	getUnknownList(std::list<std::string> &ids) = 0;
 
-		/* get Details from the Certificates */
+    /* get Details from the Certificates */
 
-virtual	bool	isValid(std::string id) = 0;
-virtual	bool	isAuthenticated(std::string id) = 0;
-virtual	std::string getName(std::string id) = 0;
-virtual std::string getIssuerName(std::string id) { return getName(id); } // Default to same id.
-virtual	bool	getDetails(std::string id, pqiAuthDetails &details) = 0;
+    virtual	bool	isValid(std::string id) = 0;
+    virtual	bool	isAuthenticated(std::string id) = 0;
+    virtual	std::string getName(std::string id) = 0;
+    virtual std::string getIssuerName(std::string id) {
+        return getName(id);    // Default to same id.
+    }
+    virtual	bool	getDetails(std::string id, pqiAuthDetails &details) = 0;
 
-		/* High Level Load/Save Configuration */
-virtual bool FinalSaveCertificates() = 0;
-virtual bool CheckSaveCertificates() = 0;
-virtual bool saveCertificates() = 0;
-virtual bool loadCertificates() = 0;
+    /* High Level Load/Save Configuration */
+    virtual bool FinalSaveCertificates() = 0;
+    virtual bool CheckSaveCertificates() = 0;
+    virtual bool saveCertificates() = 0;
+    virtual bool loadCertificates() = 0;
 
-		/* first party trust info */
-virtual bool isTrustingMe(std::string id) = 0;
-virtual void addTrustingPeer(std::string id) = 0;
+    /* first party trust info */
+    virtual bool isTrustingMe(std::string id) = 0;
+    virtual void addTrustingPeer(std::string id) = 0;
 
-		/* Extra Fns for PGP, call std versions if not overloaded */
-virtual std::string PGPOwnId() { return OwnId(); }
-virtual bool    getPGPAllList(std::list<std::string> &ids) { return getAllList(ids); };
+    /* Extra Fns for PGP, call std versions if not overloaded */
+    virtual std::string PGPOwnId() {
+        return OwnId();
+    }
+    virtual bool    getPGPAllList(std::list<std::string> &ids) {
+        return getAllList(ids);
+    };
 
-		/* Load/Save certificates */
+    /* Load/Save certificates */
 
-virtual bool LoadCertificateFromString(std::string pem, std::string &id)  = 0;
-virtual std::string SaveCertificateToString(std::string id)  = 0;
-virtual bool LoadCertificateFromFile(std::string filename, std::string &id)  = 0;
-virtual bool SaveCertificateToFile(std::string id, std::string filename)  = 0;
+    virtual bool LoadCertificateFromString(std::string pem, std::string &id)  = 0;
+    virtual std::string SaveCertificateToString(std::string id)  = 0;
+    virtual bool LoadCertificateFromFile(std::string filename, std::string &id)  = 0;
+    virtual bool SaveCertificateToFile(std::string id, std::string filename)  = 0;
 
-		/* specific OpenSSL ones -> careful with pointers.... 
-		 * save will allocate space, 
-		 */
-virtual bool LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id) = 0;
-virtual bool SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len) 	= 0;
+    /* specific OpenSSL ones -> careful with pointers....
+     * save will allocate space,
+     */
+    virtual bool LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id) = 0;
+    virtual bool SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len) 	= 0;
 
-		/* Signatures */
-virtual bool AuthCertificate(std::string uid) = 0;
-virtual bool SignCertificate(std::string id) = 0;
-virtual	bool RevokeCertificate(std::string id) = 0;
-virtual bool TrustCertificate(std::string id, bool trust) = 0;
+    /* Signatures */
+    virtual bool AuthCertificate(std::string uid) = 0;
+    virtual bool SignCertificate(std::string id) = 0;
+    virtual	bool RevokeCertificate(std::string id) = 0;
+    virtual bool TrustCertificate(std::string id, bool trust) = 0;
 
-		/* Sign / Encrypt / Verify Data (TODO) */
-virtual bool    SignData(std::string input, std::string &sign) = 0;
-virtual bool    SignData(const void *data, const uint32_t len, std::string &sign) = 0;
-virtual bool    SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen) = 0;
-virtual bool    SignDataBin(const void *data, const uint32_t len,
-                        unsigned char *sign, unsigned int *signlen) = 0;
+    /* Sign / Encrypt / Verify Data (TODO) */
+    virtual bool    SignData(std::string input, std::string &sign) = 0;
+    virtual bool    SignData(const void *data, const uint32_t len, std::string &sign) = 0;
+    virtual bool    SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen) = 0;
+    virtual bool    SignDataBin(const void *data, const uint32_t len,
+                                unsigned char *sign, unsigned int *signlen) = 0;
 
-virtual bool    VerifySignBin(std::string pid, 
-				const void *data, const uint32_t len,
-                        	unsigned char *sign, unsigned int signlen) = 0;
+    virtual bool    VerifySignBin(std::string pid,
+                                  const void *data, const uint32_t len,
+                                  unsigned char *sign, unsigned int signlen) = 0;
 
 //virtual	bool encryptData(std::string recipientId, std::string plaindata, std::string &result);
 
@@ -150,69 +158,69 @@ virtual bool    VerifySignBin(std::string pid,
 
 class p3DummyAuthMgr: public p3AuthMgr
 {
-	public:
+public:
 
-	p3DummyAuthMgr();
-	p3DummyAuthMgr(std::string ownId, std::list<pqiAuthDetails> peers);
+    p3DummyAuthMgr();
+    p3DummyAuthMgr(std::string ownId, std::list<pqiAuthDetails> peers);
 
-		/* initialisation -> done by derived classes */
-virtual bool    active();
-virtual int     InitAuth(const char *srvr_cert, const char *priv_key, 
-                                        const char *passwd);
-virtual bool    CloseAuth();
-virtual int     setConfigDirectories(std::string confFile, std::string neighDir);
+    /* initialisation -> done by derived classes */
+    virtual bool    active();
+    virtual int     InitAuth(const char *srvr_cert, const char *priv_key,
+                             const char *passwd);
+    virtual bool    CloseAuth();
+    virtual int     setConfigDirectories(std::string confFile, std::string neighDir);
 
-		/* get Certificate Ids */
+    /* get Certificate Ids */
 
-virtual std::string OwnId();
-virtual bool	getAllList(std::list<std::string> &ids);
-virtual bool	getAuthenticatedList(std::list<std::string> &ids);
-virtual bool	getUnknownList(std::list<std::string> &ids);
+    virtual std::string OwnId();
+    virtual bool	getAllList(std::list<std::string> &ids);
+    virtual bool	getAuthenticatedList(std::list<std::string> &ids);
+    virtual bool	getUnknownList(std::list<std::string> &ids);
 
-		/* get Details from the Certificates */
+    /* get Details from the Certificates */
 
-virtual	bool	isValid(std::string id);
-virtual	bool	isAuthenticated(std::string id);
-virtual	std::string getName(std::string id);
-virtual	bool	getDetails(std::string id, pqiAuthDetails &details);
+    virtual	bool	isValid(std::string id);
+    virtual	bool	isAuthenticated(std::string id);
+    virtual	std::string getName(std::string id);
+    virtual	bool	getDetails(std::string id, pqiAuthDetails &details);
 
-		/* High Level Load/Save Configuration */
-virtual bool FinalSaveCertificates();
-virtual bool CheckSaveCertificates();
-virtual bool saveCertificates();
-virtual bool loadCertificates();
+    /* High Level Load/Save Configuration */
+    virtual bool FinalSaveCertificates();
+    virtual bool CheckSaveCertificates();
+    virtual bool saveCertificates();
+    virtual bool loadCertificates();
 
-		/* first party trust info */
-virtual bool isTrustingMe(std::string id) ;
-virtual void addTrustingPeer(std::string id) ;
+    /* first party trust info */
+    virtual bool isTrustingMe(std::string id) ;
+    virtual void addTrustingPeer(std::string id) ;
 
-		/* Load/Save certificates */
-virtual bool LoadCertificateFromString(std::string pem, std::string &id);
-virtual std::string SaveCertificateToString(std::string id);
-virtual bool LoadCertificateFromFile(std::string filename, std::string &id);
-virtual bool SaveCertificateToFile(std::string id, std::string filename);
+    /* Load/Save certificates */
+    virtual bool LoadCertificateFromString(std::string pem, std::string &id);
+    virtual std::string SaveCertificateToString(std::string id);
+    virtual bool LoadCertificateFromFile(std::string filename, std::string &id);
+    virtual bool SaveCertificateToFile(std::string id, std::string filename);
 
-virtual bool LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id);
-virtual bool SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len);
-		/* Signatures */
+    virtual bool LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id);
+    virtual bool SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len);
+    /* Signatures */
 
-virtual bool AuthCertificate(std::string uid);
-virtual bool SignCertificate(std::string id);
-virtual	bool RevokeCertificate(std::string id);
-virtual bool TrustCertificate(std::string id, bool trust);
+    virtual bool AuthCertificate(std::string uid);
+    virtual bool SignCertificate(std::string id);
+    virtual	bool RevokeCertificate(std::string id);
+    virtual bool TrustCertificate(std::string id, bool trust);
 
-virtual bool SignData(std::string input, std::string &sign);
-virtual bool SignData(const void *data, const uint32_t len, std::string &sign);
-virtual bool    SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen);
-virtual bool    SignDataBin(const void *data, const uint32_t len,
-                        unsigned char *sign, unsigned int *signlen);
+    virtual bool SignData(std::string input, std::string &sign);
+    virtual bool SignData(const void *data, const uint32_t len, std::string &sign);
+    virtual bool    SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen);
+    virtual bool    SignDataBin(const void *data, const uint32_t len,
+                                unsigned char *sign, unsigned int *signlen);
 
-virtual bool    VerifySignBin(std::string pid, 
-				const void *data, const uint32_t len,
-                        	unsigned char *sign, unsigned int signlen);
+    virtual bool    VerifySignBin(std::string pid,
+                                  const void *data, const uint32_t len,
+                                  unsigned char *sign, unsigned int signlen);
 
-	std::string mOwnId;
-	std::map<std::string, pqiAuthDetails> mPeerList;
+    std::string mOwnId;
+    std::map<std::string, pqiAuthDetails> mPeerList;
 };
 
 #endif

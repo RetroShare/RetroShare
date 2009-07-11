@@ -31,16 +31,30 @@
 
 class pqilistener
 {
-	public:
+public:
 
-	pqilistener() 		{ return; }
-virtual ~pqilistener() 		{ return; }
+    pqilistener() 		{
+        return;
+    }
+    virtual ~pqilistener() 		{
+        return;
+    }
 
-virtual int     tick()					{ return 1; }
-virtual int     status()				{ return 1; }
-virtual int     setListenAddr(struct sockaddr_in addr)  { return 1; }
-virtual int	setuplisten() 				{ return 1; }
-virtual int     resetlisten() 				{ return 1; }
+    virtual int     tick()					{
+        return 1;
+    }
+    virtual int     status()				{
+        return 1;
+    }
+    virtual int     setListenAddr(struct sockaddr_in addr)  {
+        return 1;
+    }
+    virtual int	setuplisten() 				{
+        return 1;
+    }
+    virtual int     resetlisten() 				{
+        return 1;
+    }
 
 };
 

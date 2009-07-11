@@ -26,7 +26,7 @@
 #ifndef FT_CONTROLLER_HEADER
 #define FT_CONTROLLER_HEADER
 
-/* 
+/*
  * ftController
  *
  * Top level download controller.
@@ -64,160 +64,164 @@ const int TIMOUT_CACHE_FILE_TRANSFER = 300;
 
 class ftFileControl
 {
-	public:
+public:
 
-        enum {DOWNLOADING,COMPLETED,ERROR_COMPLETION};
+    enum {DOWNLOADING,COMPLETED,ERROR_COMPLETION};
 
-	ftFileControl();
-        ftFileControl(std::string fname, std::string tmppath, std::string dest, 
-		uint64_t size, std::string hash, uint32_t flags, 
-		ftFileCreator *fc, ftTransferModule *tm, uint32_t cb_flags);
+    ftFileControl();
+    ftFileControl(std::string fname, std::string tmppath, std::string dest,
+                  uint64_t size, std::string hash, uint32_t flags,
+                  ftFileCreator *fc, ftTransferModule *tm, uint32_t cb_flags);
 
-	std::string	   mName;
-	std::string	   mCurrentPath; /* current full path (including name) */
-	std::string	   mDestination; /* final full path (including name) */
-	ftTransferModule * mTransfer;
-	ftFileCreator *    mCreator;
-	uint32_t	   mState;
-	std::string	   mHash;
-	uint64_t	   mSize;
-	uint32_t	   mFlags;
-	bool		   mDoCallback;
-	uint32_t	   mCallbackCode;
-	time_t		   mCreateTime;
+    std::string	   mName;
+    std::string	   mCurrentPath; /* current full path (including name) */
+    std::string	   mDestination; /* final full path (including name) */
+    ftTransferModule * mTransfer;
+    ftFileCreator *    mCreator;
+    uint32_t	   mState;
+    std::string	   mHash;
+    uint64_t	   mSize;
+    uint32_t	   mFlags;
+    bool		   mDoCallback;
+    uint32_t	   mCallbackCode;
+    time_t		   mCreateTime;
 };
 
 class ftPendingRequest
 {
-        public:
-        ftPendingRequest(std::string fname, std::string hash,
-                        uint64_t size, std::string dest, uint32_t flags,
-                        std::list<std::string> &srcIds)
-        : mName(fname), mHash(hash), mSize(size),
-        mDest(dest), mFlags(flags),mSrcIds(srcIds) { return; }
+public:
+    ftPendingRequest(std::string fname, std::string hash,
+                     uint64_t size, std::string dest, uint32_t flags,
+                     std::list<std::string> &srcIds)
+            : mName(fname), mHash(hash), mSize(size),
+            mDest(dest), mFlags(flags),mSrcIds(srcIds) {
+        return;
+    }
 
-        ftPendingRequest() : mSize(0), mFlags(0) { return; }
+    ftPendingRequest() : mSize(0), mFlags(0) {
+        return;
+    }
 
-        std::string mName;
-        std::string mHash;
-        uint64_t mSize;
-        std::string mDest;
-        uint32_t mFlags;
-        std::list<std::string> mSrcIds;
+    std::string mName;
+    std::string mHash;
+    uint64_t mSize;
+    std::string mDest;
+    uint32_t mFlags;
+    std::list<std::string> mSrcIds;
 };
 
 
 class ftController: public CacheTransfer, public RsThread, public pqiMonitor, public p3Config
 {
-	public:
+public:
 
-	/* Setup */
-	ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string configDir);
+    /* Setup */
+    ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string configDir);
 
-void	setFtSearchNExtra(ftSearch *, ftExtraList *);
-void	setTurtleRouter(p3turtle *) ;
-bool    activate();
+    void	setFtSearchNExtra(ftSearch *, ftExtraList *);
+    void	setTurtleRouter(p3turtle *) ;
+    bool    activate();
 
-virtual void run();
+    virtual void run();
 
-	/***************************************************************/
-	/********************** Controller Access **********************/
-	/***************************************************************/
+    /***************************************************************/
+    /********************** Controller Access **********************/
+    /***************************************************************/
 
-bool 	FileRequest(std::string fname, std::string hash, 
-			uint64_t size, std::string dest, uint32_t flags, 
-			std::list<std::string> &sourceIds);
+    bool 	FileRequest(std::string fname, std::string hash,
+                      uint64_t size, std::string dest, uint32_t flags,
+                      std::list<std::string> &sourceIds);
 
-bool 	FileCancel(std::string hash);
-bool 	FileControl(std::string hash, uint32_t flags);
-bool 	FileClearCompleted();
-bool 	FlagFileComplete(std::string hash);
+    bool 	FileCancel(std::string hash);
+    bool 	FileControl(std::string hash, uint32_t flags);
+    bool 	FileClearCompleted();
+    bool 	FlagFileComplete(std::string hash);
 
-	/* get Details of File Transfers */
-bool 	FileDownloads(std::list<std::string> &hashs);
+    /* get Details of File Transfers */
+    bool 	FileDownloads(std::list<std::string> &hashs);
 
-	/* Directory Handling */
-bool 	setDownloadDirectory(std::string path);
-bool 	setPartialsDirectory(std::string path);
-std::string getDownloadDirectory();
-std::string getPartialsDirectory();
-bool 	FileDetails(std::string hash, FileInfo &info);
+    /* Directory Handling */
+    bool 	setDownloadDirectory(std::string path);
+    bool 	setPartialsDirectory(std::string path);
+    std::string getDownloadDirectory();
+    std::string getPartialsDirectory();
+    bool 	FileDetails(std::string hash, FileInfo &info);
 
-bool moveFile(const std::string& source,const std::string& dest) ;
+    bool moveFile(const std::string& source,const std::string& dest) ;
 
-	/***************************************************************/
-	/********************** Cache Transfer *************************/
-	/***************************************************************/
+    /***************************************************************/
+    /********************** Cache Transfer *************************/
+    /***************************************************************/
 
 protected:
 
-virtual bool RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size); 
-virtual bool CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
+    virtual bool RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
+    virtual bool CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
 
-	/***************************************************************/
-	/********************** Controller Access **********************/
-	/***************************************************************/
+    /***************************************************************/
+    /********************** Controller Access **********************/
+    /***************************************************************/
 
-	/* pqiMonitor callback (also provided mConnMgr pointer!) */
-	public:
-virtual void    statusChange(const std::list<pqipeer> &plist);
-void addFileSource(const std::string& hash,const std::string& peer_id) ;
-void removeFileSource(const std::string& hash,const std::string& peer_id) ;
-
-
-	/* p3Config Interface */
-        protected:
-virtual RsSerialiser *setupSerialiser();
-virtual std::list<RsItem *> saveList(bool &cleanup);
-virtual bool    loadList(std::list<RsItem *> load);
-bool	loadConfigMap(std::map<std::string, std::string> &configMap);
+    /* pqiMonitor callback (also provided mConnMgr pointer!) */
+public:
+    virtual void    statusChange(const std::list<pqipeer> &plist);
+    void addFileSource(const std::string& hash,const std::string& peer_id) ;
+    void removeFileSource(const std::string& hash,const std::string& peer_id) ;
 
 
-	private:
-
-	/* RunTime Functions */
-void 	checkDownloadQueue();
-bool 	completeFile(std::string hash);
-bool    handleAPendingRequest();
-
-bool    setPeerState(ftTransferModule *tm, std::string id,
-                        uint32_t maxrate, bool online);
-
-	/* pointers to other components */
-
-	ftSearch *mSearch; 
-	ftDataMultiplex *mDataplex;
-	ftExtraList *mExtraList;
-	p3turtle *mTurtle ;
-
-	RsMutex ctrlMutex;
-
-	std::list<FileInfo> incomingQueue;
-	std::map<std::string, ftFileControl> mCompleted;
+    /* p3Config Interface */
+protected:
+    virtual RsSerialiser *setupSerialiser();
+    virtual std::list<RsItem *> saveList(bool &cleanup);
+    virtual bool    loadList(std::list<RsItem *> load);
+    bool	loadConfigMap(std::map<std::string, std::string> &configMap);
 
 
-        std::map<std::string, ftFileControl> mDownloads;
+private:
 
-	//std::map<std::string, ftTransferModule *> mTransfers;
-	//std::map<std::string, ftFileCreator *> mFileCreators;
+    /* RunTime Functions */
+    void 	checkDownloadQueue();
+    bool 	completeFile(std::string hash);
+    bool    handleAPendingRequest();
 
-	std::string mConfigPath;
-	std::string mDownloadPath;
-	std::string mPartialsPath;
+    bool    setPeerState(ftTransferModule *tm, std::string id,
+                         uint32_t maxrate, bool online);
 
-	/**** SPEED QUEUES ****/
-	std::list<std::string> mSlowQueue;
-	std::list<std::string> mStreamQueue;
-	std::list<std::string> mFastQueue;
+    /* pointers to other components */
 
-	/* callback list (for File Completion) */
-	RsMutex doneMutex;
-	std::list<std::string> mDone;
+    ftSearch *mSearch;
+    ftDataMultiplex *mDataplex;
+    ftExtraList *mExtraList;
+    p3turtle *mTurtle ;
 
-	/* List to Pause File transfers until Caches are properly loaded */
-	bool mFtActive;
-        bool mFtPendingDone;
-	std::list<ftPendingRequest> mPendingRequests;
+    RsMutex ctrlMutex;
+
+    std::list<FileInfo> incomingQueue;
+    std::map<std::string, ftFileControl> mCompleted;
+
+
+    std::map<std::string, ftFileControl> mDownloads;
+
+    //std::map<std::string, ftTransferModule *> mTransfers;
+    //std::map<std::string, ftFileCreator *> mFileCreators;
+
+    std::string mConfigPath;
+    std::string mDownloadPath;
+    std::string mPartialsPath;
+
+    /**** SPEED QUEUES ****/
+    std::list<std::string> mSlowQueue;
+    std::list<std::string> mStreamQueue;
+    std::list<std::string> mFastQueue;
+
+    /* callback list (for File Completion) */
+    RsMutex doneMutex;
+    std::list<std::string> mDone;
+
+    /* List to Pause File transfers until Caches are properly loaded */
+    bool mFtActive;
+    bool mFtPendingDone;
+    std::list<ftPendingRequest> mPendingRequests;
 };
 
 #endif

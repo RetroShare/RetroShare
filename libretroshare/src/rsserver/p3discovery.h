@@ -31,18 +31,22 @@
 
 class p3Discovery: public RsDisc
 {
-	public:
+public:
 
-	p3Discovery(p3disc *disc)
-	:mDisc(disc) { return; }
-virtual ~p3Discovery() { return; }
+    p3Discovery(p3disc *disc)
+            :mDisc(disc) {
+        return;
+    }
+    virtual ~p3Discovery() {
+        return;
+    }
 
-virtual bool	getDiscFriends(std::string id, std::list<std::string> &friends);
-virtual bool 	getDiscVersions(std::map<std::string, std::string> &versions);
+    virtual bool	getDiscFriends(std::string id, std::list<std::string> &friends);
+    virtual bool 	getDiscVersions(std::map<std::string, std::string> &versions);
 
-	private:
+private:
 
-	p3disc *mDisc;
+    p3disc *mDisc;
 };
 
 #endif

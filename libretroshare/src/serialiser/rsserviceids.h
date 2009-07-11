@@ -54,7 +54,7 @@ const uint16_t RS_SERVICE_TYPE_TURTLE      = 0x0014;
  * If you are planning on making a new service....
  * Test it out with an ID in the range from 0xf000 - 0xffff
  * And Change the ID everytime you make significant changes to the
- * data structures... 
+ * data structures...
  *
  * eg.
  * const uint16_t RS_SERVICE_TYPE_DISTRIB_O1  = 0xf110;  // First  Revision.
@@ -68,16 +68,16 @@ const uint16_t RS_SERVICE_TYPE_TURTLE      = 0x0014;
  *
  */
 
- /*! for Qblog service (Cache Only) */
+/*! for Qblog service (Cache Only) */
 const uint16_t RS_SERVICE_TYPE_QBLOG	   = 0xf010;
 
- /* Status - Service only */
+/* Status - Service only */
 const uint16_t RS_SERVICE_TYPE_STATUS      = 0xf020;
 
- /* Proxy - Service only */
+/* Proxy - Service only */
 const uint16_t RS_SERVICE_TYPE_PROXY       = 0xf030;
 
- /* Photo - Cache Only */
+/* Photo - Cache Only */
 const uint16_t RS_SERVICE_TYPE_PHOTO       = 0xf040;
 
 /* Caches based on p3distrib (Cache Only)

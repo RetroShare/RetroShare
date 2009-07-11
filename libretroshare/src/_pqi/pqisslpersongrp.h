@@ -34,7 +34,7 @@ class pqisslpersongrp: public pqipersongrp
 {
 public:
     pqisslpersongrp(SecurityPolicy *pol, unsigned long flags)
-        :pqipersongrp(pol, flags) { }
+            :pqipersongrp(pol, flags) { }
 
 protected:
 

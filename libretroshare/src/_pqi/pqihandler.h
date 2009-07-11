@@ -39,7 +39,7 @@
 
 class SearchModule
 {
-    public:
+public:
     std::string peerid;
     PQInterface *pqi;
     SecurityPolicy *sp;
@@ -77,7 +77,7 @@ public:
     virtual int     SendRsRawItem(RsRawItem *);
     virtual RsRawItem *GetRsRawItem();
 
-	// rate control.
+    // rate control.
     //indiv rate is deprecated
     //void	setMaxIndivRate(bool in, float val);
     //float	getMaxIndivRate(bool in);
@@ -104,7 +104,7 @@ protected:
 
     // Temporary storage...
     std::list<RsItem *> in_result, in_search,
-        in_request, in_data, in_service;
+    in_request, in_data, in_service;
 private:
 
     // rate control.

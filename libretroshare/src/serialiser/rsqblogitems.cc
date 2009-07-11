@@ -35,25 +35,25 @@
 
 RsQblogMsg::~RsQblogMsg(void)
 {
-	return;
+    return;
 }
 
 
 std::ostream &RsQblogMsg::print(std::ostream &out, uint16_t indent)
 {
-        printRsItemBase(out, "RsQblogMsg", indent);
-		uint16_t int_Indent = indent + 2;
+    printRsItemBase(out, "RsQblogMsg", indent);
+    uint16_t int_Indent = indent + 2;
 
-		/* print out the content of the item */
-        printIndent(out, int_Indent);
-        out << "blogMsg(send time): " << sendTime << std::endl;
-        printIndent(out, int_Indent);
-        out << "blogMsg(recvd time): " << recvTime << std::endl;
-        printIndent(out, int_Indent);
-        std::string cnv_blog(message.begin(), message.end());
-        out << "blogMsg(message): " << cnv_blog << std::endl;
-        printIndent(out, int_Indent);
-      	attachment.print(out, int_Indent);
-      	printIndent(out, int_Indent);
-        return out;
+    /* print out the content of the item */
+    printIndent(out, int_Indent);
+    out << "blogMsg(send time): " << sendTime << std::endl;
+    printIndent(out, int_Indent);
+    out << "blogMsg(recvd time): " << recvTime << std::endl;
+    printIndent(out, int_Indent);
+    std::string cnv_blog(message.begin(), message.end());
+    out << "blogMsg(message): " << cnv_blog << std::endl;
+    printIndent(out, int_Indent);
+    attachment.print(out, int_Indent);
+    printIndent(out, int_Indent);
+    return out;
 }

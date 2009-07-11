@@ -52,30 +52,30 @@
 //class MessageInfo
 struct MessgageInfo
 {
-	public:
-	MessageInfo() {}
-	std::string msgId;
-	std::string srcId;
+public:
+    MessageInfo() {}
+    std::string msgId;
+    std::string srcId;
 
-	unsigned int msgflags;
+    unsigned int msgflags;
 
-	std::list<std::string> msgto;
-	std::list<std::string> msgcc;
-	std::list<std::string> msgbcc;
+    std::list<std::string> msgto;
+    std::list<std::string> msgcc;
+    std::list<std::string> msgbcc;
 
-	std::wstring title;
-	std::wstring msg;
+    std::wstring title;
+    std::wstring msg;
 
-	std::wstring attach_title;
-	std::wstring attach_comment;
-	std::list<FileInfo> files;
-	int size;  /* total of files */
-	int count; /* file count     */
+    std::wstring attach_title;
+    std::wstring attach_comment;
+    std::list<FileInfo> files;
+    int size;  /* total of files */
+    int count; /* file count     */
 
-	int ts;
+    int ts;
 };
 
-class MsgInfoSummary 
+class MsgInfoSummary
 {
 public:
     MsgInfoSummary() {}
@@ -97,11 +97,11 @@ public:
 // CHANGE:STRUCT_FROM_CLASS
 struct ChatInfo
 {
-	public:
-	std::string rsid;
-	unsigned int chatflags;
-	std::string name;
-	std::wstring msg;
+public:
+    std::string rsid;
+    unsigned int chatflags;
+    std::string name;
+    std::wstring msg;
 };
 
 // CHANGE:EXCLUDE
@@ -111,15 +111,19 @@ struct ChatInfo
 class RsMsgs;
 extern RsMsgs   *rsMsgs;
 
-class RsMsgs 
+class RsMsgs
 {
 public:
 
-    RsMsgs() { return; }
-    virtual ~RsMsgs() { return; }
+    RsMsgs() {
+        return;
+    }
+    virtual ~RsMsgs() {
+        return;
+    }
 
-/****************************************/
-	/* Message Items */
+    /****************************************/
+    /* Message Items */
 
     virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList) = 0;
     virtual bool getMessage(std::string mId, MessageInfo &msg)  = 0;
@@ -128,8 +132,8 @@ public:
     virtual bool MessageDelete(std::string mid) = 0;
     virtual bool MessageRead(std::string mid)= 0;
 
-/****************************************/
-        /* Chat */
+    /****************************************/
+    /* Chat */
     virtual bool chatAvailable() = 0;
     virtual bool ChatSend(ChatInfo &ci)  = 0;
     virtual bool getNewChat(std::list<ChatInfo> &chats) = 0;
@@ -137,11 +141,11 @@ public:
 
 // get avatar data for peer pid
     virtual void getAvatarData(std::string pid,unsigned char *& data,int& size) = 0 ;
-// set own avatar data 
+// set own avatar data
     virtual void setOwnAvatarData(const unsigned char *data,int size) = 0 ;
     virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 
-/****************************************/
+    /****************************************/
 };
 
 

@@ -28,22 +28,26 @@
 
 #include "rsiface/rsnotify.h"  /* for ids */
 
-	/* Interface for System Notification: Implemented in rsserver */
-	/* Global Access -> so we don't need everyone to have a pointer to this! */
+/* Interface for System Notification: Implemented in rsserver */
+/* Global Access -> so we don't need everyone to have a pointer to this! */
 
 
 class pqiNotify
 {
-	public:
+public:
 
-	pqiNotify() { return; }
-virtual ~pqiNotify() { return; }
+    pqiNotify() {
+        return;
+    }
+    virtual ~pqiNotify() {
+        return;
+    }
 
-	/* Input from libretroshare */
-virtual bool AddPopupMessage(uint32_t ptype, std::string name, std::string msg) = 0;
-virtual bool AddSysMessage(uint32_t sysid, uint32_t type, std::string title, std::string msg) = 0;
-virtual bool AddLogMessage(uint32_t sysid, uint32_t type, std::string title, std::string msg) = 0;
-virtual bool AddFeedItem(uint32_t type, std::string id1, std::string id2, std::string id3) = 0;
+    /* Input from libretroshare */
+    virtual bool AddPopupMessage(uint32_t ptype, std::string name, std::string msg) = 0;
+    virtual bool AddSysMessage(uint32_t sysid, uint32_t type, std::string title, std::string msg) = 0;
+    virtual bool AddLogMessage(uint32_t sysid, uint32_t type, std::string title, std::string msg) = 0;
+    virtual bool AddFeedItem(uint32_t type, std::string id1, std::string id2, std::string id3) = 0;
 
 };
 

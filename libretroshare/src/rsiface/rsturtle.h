@@ -35,14 +35,14 @@ extern RsTurtle   *rsTurtle ;
 
 typedef uint32_t TurtleRequestId ;
 
-// This is the structure used to send back results of the turtle search 
+// This is the structure used to send back results of the turtle search
 // to the notifyBase class.
 
 struct TurtleFileInfo
 {
-	std::string hash ;
-	std::string name ;
-	uint64_t size ;
+    std::string hash ;
+    std::string name ;
+    uint64_t size ;
 };
 
 // Interface class for turtle hopping.
@@ -55,38 +55,42 @@ struct TurtleFileInfo
 //
 class RsTurtle
 {
-	public:
-		RsTurtle() { _sharing_strategy = SHARE_ENTIRE_NETWORK ;}
-		virtual ~RsTurtle() {}
+public:
+    RsTurtle() {
+        _sharing_strategy = SHARE_ENTIRE_NETWORK ;
+    }
+    virtual ~RsTurtle() {}
 
-		enum FileSharingStrategy { SHARE_ENTIRE_NETWORK, SHARE_FRIENDS_ONLY } ;
+    enum FileSharingStrategy { SHARE_ENTIRE_NETWORK, SHARE_FRIENDS_ONLY } ;
 
-		// Lauches a search request through the pipes, and immediately returns
-		// the request id, which will be further used by the gui to store results
-		// as they come back.
-		//
-		virtual TurtleRequestId turtleSearch(const std::string& match_string) = 0 ;
+    // Lauches a search request through the pipes, and immediately returns
+    // the request id, which will be further used by the gui to store results
+    // as they come back.
+    //
+    virtual TurtleRequestId turtleSearch(const std::string& match_string) = 0 ;
 
-		// Initiates tunnel handling for the given file hash.  tunnels.  Launches
-		// an exception if an error occurs during the initialization process. The
-		// turtle router itself does not initiate downloads, it only maintains
-		// tunnels for the given hash. The download should be driven by the file
-		// transfer module by calling ftServer::FileRequest().
-		//
-		virtual void monitorFileTunnels(const std::string& name,const std::string& file_hash,uint64_t size) = 0 ;
+    // Initiates tunnel handling for the given file hash.  tunnels.  Launches
+    // an exception if an error occurs during the initialization process. The
+    // turtle router itself does not initiate downloads, it only maintains
+    // tunnels for the given hash. The download should be driven by the file
+    // transfer module by calling ftServer::FileRequest().
+    //
+    virtual void monitorFileTunnels(const std::string& name,const std::string& file_hash,uint64_t size) = 0 ;
 
-		// Tells the turtle router to stop handling tunnels for the given file hash. Traditionally this should
-		// be called after calling ftServer::fileCancel().
-		//
-		virtual void stopMonitoringFileTunnels(const std::string& file_hash) = 0 ;
+    // Tells the turtle router to stop handling tunnels for the given file hash. Traditionally this should
+    // be called after calling ftServer::fileCancel().
+    //
+    virtual void stopMonitoringFileTunnels(const std::string& file_hash) = 0 ;
 
-		// Sets the file sharing strategy. It concerns all local files. It would
-		// be better to handle this for each file, of course.
+    // Sets the file sharing strategy. It concerns all local files. It would
+    // be better to handle this for each file, of course.
 
-		void setFileSharingStrategy(FileSharingStrategy f) { _sharing_strategy = f ; }
+    void setFileSharingStrategy(FileSharingStrategy f) {
+        _sharing_strategy = f ;
+    }
 
-	protected:
-		FileSharingStrategy _sharing_strategy ;
+protected:
+    FileSharingStrategy _sharing_strategy ;
 };
 
 #endif

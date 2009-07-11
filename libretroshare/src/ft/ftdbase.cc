@@ -31,129 +31,129 @@
 #define DB_DEBUG 1
 
 ftFiStore::ftFiStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in,
-                        RsPeerId ownid, std::string cachedir)
-	:FileIndexStore(cs, cft, cb_in, ownid, cachedir)
+                     RsPeerId ownid, std::string cachedir)
+        :FileIndexStore(cs, cft, cb_in, ownid, cachedir)
 {
-	return;
+    return;
 }
 
 bool ftFiStore::search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const
 {
-	/* could use hintflags to specify which bits of fileinfo to use additionally.
-	   eg. hintflags & FT_SEARCH_PEER_ID, then only return matching peers + hash.
-	   eg. hintflags & FT_SEARCH_NAME, then only return matching name + hash.
-	 *
-	 * Still to see if concept is worthwhle
-	 */
+    /* could use hintflags to specify which bits of fileinfo to use additionally.
+       eg. hintflags & FT_SEARCH_PEER_ID, then only return matching peers + hash.
+       eg. hintflags & FT_SEARCH_NAME, then only return matching name + hash.
+     *
+     * Still to see if concept is worthwhle
+     */
 
 #ifdef DB_DEBUG
-	std::cerr << "ftFiStore::search(" << hash << "," << size << "," << hintflags;
-	std::cerr << ")";
-	std::cerr << std::endl;
+    std::cerr << "ftFiStore::search(" << hash << "," << size << "," << hintflags;
+    std::cerr << ")";
+    std::cerr << std::endl;
 #endif
 
-	std::list<FileDetail> results;
-	std::list<FileDetail>::iterator it;
+    std::list<FileDetail> results;
+    std::list<FileDetail>::iterator it;
 
-	if (SearchHash(hash, results))
-	{
-		bool first = true;
-		for(it = results.begin(); it != results.end(); it++)
-		{
+    if (SearchHash(hash, results))
+    {
+        bool first = true;
+        for (it = results.begin(); it != results.end(); it++)
+        {
 #ifdef DB_DEBUG
-			std::cerr << "ftFiStore::search() found: ";
-			std::cerr << it->name << " (" << it->size;
-			std::cerr << ") @ " << it->id << " = " << hash;
-			std::cerr << std::endl;
+            std::cerr << "ftFiStore::search() found: ";
+            std::cerr << it->name << " (" << it->size;
+            std::cerr << ") @ " << it->id << " = " << hash;
+            std::cerr << std::endl;
 #endif
-			bool fullmatch = true;
+            bool fullmatch = true;
 
-			if (it->size != size)
-				fullmatch = false;
+            if (it->size != size)
+                fullmatch = false;
 
 
 #if 0
-			if (hintflags & FT_SEARCH_PEER_ID)
-			{
-				pit = std::find(info.srcIds.begin(), 
-					info.srcId.end(). it->id);
-				if (pit  == info.srcIds.end())
-				{
-					fullmatch = false;
-				}
-			}
+            if (hintflags & FT_SEARCH_PEER_ID)
+            {
+                pit = std::find(info.srcIds.begin(),
+                                info.srcId.end(). it->id);
+                if (pit  == info.srcIds.end())
+                {
+                    fullmatch = false;
+                }
+            }
 #endif
 
 
-			if (fullmatch)
-			{
-				if (first)
-				{
-					first = false;
-					info.fname = it->name;
-					info.size = it->size;
-					info.hash = it->hash;
-			
-				}
+            if (fullmatch)
+            {
+                if (first)
+                {
+                    first = false;
+                    info.fname = it->name;
+                    info.size = it->size;
+                    info.hash = it->hash;
 
-				TransferInfo ti;
-				ti.peerId = it->id;
-				ti.name = it->name;
-				ti.tfRate = 0;
-				info.peers.push_back(ti);
-			}
-		}
+                }
 
-		/****	DEPENDS ON SOURCES!
-		info.downloadStatus = FT_STATE_COMPLETE:
-		****/
+                TransferInfo ti;
+                ti.peerId = it->id;
+                ti.name = it->name;
+                ti.tfRate = 0;
+                info.peers.push_back(ti);
+            }
+        }
 
-		/* if the first flag is cleared, we've definitely
-		 * had a full match!.
-		 */
+        /****	DEPENDS ON SOURCES!
+        info.downloadStatus = FT_STATE_COMPLETE:
+        ****/
 
-		if (!first)
-			return true;
-	}
-	return false;
+        /* if the first flag is cleared, we've definitely
+         * had a full match!.
+         */
+
+        if (!first)
+            return true;
+    }
+    return false;
 }
 
-		
+
 ftFiMonitor::ftFiMonitor(CacheStrapper *cs,NotifyBase *cb_in, std::string cachedir, std::string pid)
-	:FileIndexMonitor(cs,cb_in, cachedir, pid), p3Config(CONFIG_TYPE_FT_SHARED)
+        :FileIndexMonitor(cs,cb_in, cachedir, pid), p3Config(CONFIG_TYPE_FT_SHARED)
 {
-	return;
+    return;
 }
 
 bool ftFiMonitor::search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const
 {
-	uint64_t fsize;
-	std::string path;
+    uint64_t fsize;
+    std::string path;
 
 #ifdef DB_DEBUG
-	std::cerr << "ftFiMonitor::search(" << hash << "," << size << "," << hintflags;
-	std::cerr << ")";
-	std::cerr << std::endl;
+    std::cerr << "ftFiMonitor::search(" << hash << "," << size << "," << hintflags;
+    std::cerr << ")";
+    std::cerr << std::endl;
 #endif
 
-	if (findLocalFile(hash, path, fsize))
-	{
-		/* fill in details */
+    if (findLocalFile(hash, path, fsize))
+    {
+        /* fill in details */
 #ifdef DB_DEBUG
-		std::cerr << "ftFiMonitor::search() found: ";
-		std::cerr << path;
-		std::cerr << " = " << hash << "," << fsize;
-		std::cerr << std::endl;
+        std::cerr << "ftFiMonitor::search() found: ";
+        std::cerr << path;
+        std::cerr << " = " << hash << "," << fsize;
+        std::cerr << std::endl;
 #endif
 
-		info.size = fsize;
-		info.fname = RsDirUtil::getTopDir(path);
-		info.path = path;
+        info.size = fsize;
+        info.fname = RsDirUtil::getTopDir(path);
+        info.path = path;
 
-		return true;
-	}
+        return true;
+    }
 
-	return false;
+    return false;
 };
 
 /******* LOAD / SAVE CONFIG List.
@@ -165,119 +165,119 @@ bool ftFiMonitor::search(std::string hash, uint64_t size, uint32_t hintflags, Fi
 
 RsSerialiser *ftFiMonitor::setupSerialiser()
 {
-	RsSerialiser *rss = new RsSerialiser();
+    RsSerialiser *rss = new RsSerialiser();
 
-	/* add in the types we need! */
-	rss->addSerialType(new RsFileConfigSerialiser());
-	return rss;
+    /* add in the types we need! */
+    rss->addSerialType(new RsFileConfigSerialiser());
+    return rss;
 }
 
 std::list<RsItem *> ftFiMonitor::saveList(bool &cleanup)
 {
-	std::list<RsItem *> sList;
+    std::list<RsItem *> sList;
 
-	cleanup = true;
+    cleanup = true;
 
 #ifdef  DB_DEBUG
-	std::cerr << "ftFiMonitor::saveList()";
-	std::cerr << std::endl;
+    std::cerr << "ftFiMonitor::saveList()";
+    std::cerr << std::endl;
 #endif
 
-	/* get list of directories */
-	std::list<std::string> dirList;
-	std::list<std::string>::iterator it;
+    /* get list of directories */
+    std::list<std::string> dirList;
+    std::list<std::string>::iterator it;
 
-	getSharedDirectories(dirList);
+    getSharedDirectories(dirList);
 
-	for(it = dirList.begin(); it != dirList.end(); it++)
-	{
-		RsFileConfigItem *fi = new RsFileConfigItem();
-		fi->file.path = *it;
+    for (it = dirList.begin(); it != dirList.end(); it++)
+    {
+        RsFileConfigItem *fi = new RsFileConfigItem();
+        fi->file.path = *it;
 
-		sList.push_back(fi);
-	}
+        sList.push_back(fi);
+    }
 
-	return sList;
+    return sList;
 }
 
 
 bool    ftFiMonitor::loadList(std::list<RsItem *> load)
 {
-	/* for each item, check it exists .... 
-	 * - remove any that are dead (or flag?) 
-	 */
+    /* for each item, check it exists ....
+     * - remove any that are dead (or flag?)
+     */
 
 #ifdef  DEBUG_ELIST
-	std::cerr << "ftFiMonitor::loadList()";
-	std::cerr << std::endl;
+    std::cerr << "ftFiMonitor::loadList()";
+    std::cerr << std::endl;
 #endif
 
-	time_t ts = time(NULL);
+    time_t ts = time(NULL);
 
-	std::list<std::string> dirList;
+    std::list<std::string> dirList;
 
-	std::list<RsItem *>::iterator it;
-	for(it = load.begin(); it != load.end(); it++)
-	{
-		RsFileConfigItem *fi = dynamic_cast<RsFileConfigItem *>(*it);
-		if (!fi)
-		{
-			delete (*it);
-			continue;
-		}
+    std::list<RsItem *>::iterator it;
+    for (it = load.begin(); it != load.end(); it++)
+    {
+        RsFileConfigItem *fi = dynamic_cast<RsFileConfigItem *>(*it);
+        if (!fi)
+        {
+            delete (*it);
+            continue;
+        }
 
-		/* ensure that it exists? */
+        /* ensure that it exists? */
 
-		dirList.push_back(fi->file.path);
-	}
+        dirList.push_back(fi->file.path);
+    }
 
-	/* set directories */
-	setSharedDirectories(dirList);
-	return true;
+    /* set directories */
+    setSharedDirectories(dirList);
+    return true;
 }
 
 void	ftFiMonitor::setSharedDirectories(std::list<std::string> dirList)
 {
-	FileIndexMonitor::setSharedDirectories(dirList);
+    FileIndexMonitor::setSharedDirectories(dirList);
 
-	/* flag for config */
-	IndicateConfigChanged();
+    /* flag for config */
+    IndicateConfigChanged();
 }
 
 
 
 ftCacheStrapper::ftCacheStrapper(p3AuthMgr *am, p3ConnectMgr *cm)
-	:CacheStrapper(am, cm)
+        :CacheStrapper(am, cm)
 {
-	return;
+    return;
 }
 
-	/* overloaded search function */
+/* overloaded search function */
 bool ftCacheStrapper::search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const
 {
 #ifdef DB_DEBUG
-	std::cerr << "ftCacheStrapper::search(" << hash << "," << size << "," << hintflags;
-	std::cerr << ")";
-	std::cerr << std::endl;
+    std::cerr << "ftCacheStrapper::search(" << hash << "," << size << "," << hintflags;
+    std::cerr << ")";
+    std::cerr << std::endl;
 #endif
 
-	CacheData data;
-	if (findCache(hash, data))
-	{
+    CacheData data;
+    if (findCache(hash, data))
+    {
 #ifdef DB_DEBUG
-		std::cerr << "ftCacheStrapper::search() found: ";
-		std::cerr << data.path << "/" << data.name;
-		std::cerr << " = " << data.hash << "," << data.size;
-		std::cerr << std::endl;
+        std::cerr << "ftCacheStrapper::search() found: ";
+        std::cerr << data.path << "/" << data.name;
+        std::cerr << " = " << data.hash << "," << data.size;
+        std::cerr << std::endl;
 #endif
 
-		/* ... */
-		info.size = data.size;
-		info.fname = data.name;
-		info.path = data.path + "/" + data.name;
+        /* ... */
+        info.size = data.size;
+        info.fname = data.name;
+        info.path = data.path + "/" + data.name;
 
-		return true;
-	}
-	return false;
+        return true;
+    }
+    return false;
 }
 

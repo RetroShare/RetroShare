@@ -47,96 +47,96 @@ class RsQblogMsg; /* to populate maps of blogs */
  * contains definitions of the interface and blog information to be manipulated
  * See RsQblog class for virtual methods documentation
  */
- class p3Qblog : public CacheSource, public CacheStore
- {
- 	    /**
-    	 * overloads extractor to make printing wstrings easier
-    	 */
-    	friend std::ostream &operator<<(std::ostream &out, const std::wstring);
+class p3Qblog : public CacheSource, public CacheStore
+{
+    /**
+    * overloads extractor to make printing wstrings easier
+    */
+    friend std::ostream &operator<<(std::ostream &out, const std::wstring);
 
- 	public:
+public:
 
-		p3Qblog(p3ConnectMgr *connMgr,
-		uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
-		std::string sourcedir, std::string storedir,
-		uint32_t storePeriod);
- 		virtual ~p3Qblog ();
+    p3Qblog(p3ConnectMgr *connMgr,
+            uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
+            std::string sourcedir, std::string storedir,
+            uint32_t storePeriod);
+    virtual ~p3Qblog ();
 
- 	public:
+public:
 
- 		/******************************* CACHE SOURCE / STORE Interface *********************/
+    /******************************* CACHE SOURCE / STORE Interface *********************/
 
-		/// overloaded functions from Cache Source
-		virtual bool    loadLocalCache(const CacheData &data);
+    /// overloaded functions from Cache Source
+    virtual bool    loadLocalCache(const CacheData &data);
 
-		/// overloaded functions from Cache Store
-		virtual int    loadCache(const CacheData &data);
+    /// overloaded functions from Cache Store
+    virtual int    loadCache(const CacheData &data);
 
-		/******************************* CACHE SOURCE / STORE Interface *********************/
+    /******************************* CACHE SOURCE / STORE Interface *********************/
 
- 	public:
+public:
 
-    	virtual bool sendBlog(const std::wstring &msg);
-    	virtual bool getBlogs(std::map< std::string, std::multimap<long int, std::wstring> > &blogs);
-    	virtual bool getPeerLatestBlog(std::string id, uint32_t &ts, std::wstring &post);
+    virtual bool sendBlog(const std::wstring &msg);
+    virtual bool getBlogs(std::map< std::string, std::multimap<long int, std::wstring> > &blogs);
+    virtual bool getPeerLatestBlog(std::string id, uint32_t &ts, std::wstring &post);
 
-    	/**
-    	 * to be run by server, update method
-    	 */
-    	void tick();
+    /**
+     * to be run by server, update method
+     */
+    void tick();
 
-  	private:
+private:
 
-/********************* begining of private utility methods **************************/
+    /********************* begining of private utility methods **************************/
 
-  		/*
-    	 * to load and transform cache source to normal attribute format of a blog message
-    	 * @param filename
-    	 * @param source
-    	 */
-    	bool loadBlogFile(std::string filename, std::string src);
+    /*
+    * to load and transform cache source to normal attribute format of a blog message
+    * @param filename
+    * @param source
+    */
+    bool loadBlogFile(std::string filename, std::string src);
 
-    	/*
-    	 * add a blog item to maps
-    	 * @param newBlog a blog item from a peer or yourself
-    	 */
-    	bool addBlog(RsQblogMsg  *newBlog);
+    /*
+     * add a blog item to maps
+     * @param newBlog a blog item from a peer or yourself
+     */
+    bool addBlog(RsQblogMsg  *newBlog);
 
-    	/*
-    	 * post our blog to our friends, connectivity method
-    	 */
-    	bool postBlogs(void);
+    /*
+     * post our blog to our friends, connectivity method
+     */
+    bool postBlogs(void);
 
-    	/*
-    	 * sort usr/blog maps in time order
-    	 */
-    	bool sort(void);
+    /*
+     * sort usr/blog maps in time order
+     */
+    bool sort(void);
 
 
-/************************* end of private methods **************************/
+    /************************* end of private methods **************************/
 
-  		/// handles connection to peers
-  		p3ConnectMgr *mConnMgr;
-		/// for locking files provate members below
-		RsMutex mBlogMtx;
-		/// the current usr
- 		std::string mOwnId;
-		/// contain usrs and their blogs
- 		std::map< std::string, std::multimap<long int, std::wstring> > mUsrBlogSet;
- 		///fills up above sets
- 		std::list<RsQblogMsg*> mBlogs;
- 		///how long to keep posts
- 		uint32_t mStorePeriod;
- 		/// to track blog updates
- 		bool mPostsUpdated;
- 		///  to track profile updates
- 		bool mProfileUpdated;
+    /// handles connection to peers
+    p3ConnectMgr *mConnMgr;
+    /// for locking files provate members below
+    RsMutex mBlogMtx;
+    /// the current usr
+    std::string mOwnId;
+    /// contain usrs and their blogs
+    std::map< std::string, std::multimap<long int, std::wstring> > mUsrBlogSet;
+    ///fills up above sets
+    std::list<RsQblogMsg*> mBlogs;
+    ///how long to keep posts
+    uint32_t mStorePeriod;
+    /// to track blog updates
+    bool mPostsUpdated;
+    ///  to track profile updates
+    bool mProfileUpdated;
 
- 		/*
- 		 * load dummy data
- 		 */
- 		void loadDummy(void);
+    /*
+     * load dummy data
+     */
+    void loadDummy(void);
 
- };
+};
 
 #endif /*P3QBLOG_H_*/

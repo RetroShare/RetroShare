@@ -63,7 +63,7 @@ public:
     /* p3face-startup.cc: init... */
     virtual	int StartupRetroShare();
 
-    public:
+public:
     /****************************************/
     /* p3face.cc: main loop / util fns / locking. */
 

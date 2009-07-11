@@ -28,7 +28,7 @@
 #ifndef FTFILER_H
 #define FTFILER_H
 
-/* 
+/*
  * PQI Filer
  *
  * This managers the file transfers.
@@ -68,35 +68,35 @@ const uint32_t FT_MODE_UPLOAD = 4;
 class ftFileStatus
 {
 public:
-/****
-	ftFileStatus(PQFileItem *in)
-	:fileItem(in), status(PQIFILE_INIT), fd(NULL), 
-	total_size(0), recv_size(0),
-	req_loc(0), req_size(0), lastTS(0)
-	{
-		return;
-	}
-****/
+    /****
+    	ftFileStatus(PQFileItem *in)
+    	:fileItem(in), status(PQIFILE_INIT), fd(NULL),
+    	total_size(0), recv_size(0),
+    	req_loc(0), req_size(0), lastTS(0)
+    	{
+    		return;
+    	}
+    ****/
 
     ftFileStatus(const std::string& name_in, const std::string& hash_in, uint64_t size_in,
-					const std::string& destpath_in, uint32_t mode_in)
-	:name(name_in), hash(hash_in), destpath(destpath_in), size(size_in), ftMode(mode_in),
-	status(PQIFILE_INIT), mode(0), rate(0), fd(NULL), total_size(0), recv_size(0),
-	req_loc(0), req_size(0), lastTS(0), lastDelta(0),file_name(""),id("")
+                 const std::string& destpath_in, uint32_t mode_in)
+            :name(name_in), hash(hash_in), destpath(destpath_in), size(size_in), ftMode(mode_in),
+            status(PQIFILE_INIT), mode(0), rate(0), fd(NULL), total_size(0), recv_size(0),
+            req_loc(0), req_size(0), lastTS(0), lastDelta(0),file_name(""),id("")
     {
         /* not set ...
          * id,
-		 * filename,
-		 * sources
-		 */
-		return;
+         * filename,
+         * sources
+         */
+        return;
     }
 
     ftFileStatus(const std::string& id_in, const std::string& name_in, const std::string& hash_in, uint64_t size_in,
-					const std::string& destpath_in, uint32_t mode_in)
-	:id(id_in), name(name_in), hash(hash_in), destpath(destpath_in), size(size_in), ftMode(mode_in),
-	status(PQIFILE_INIT), mode(0), rate(0), fd(NULL), total_size(0), recv_size(0),
-	req_loc(0), req_size(0), lastTS(0), lastDelta(0),file_name("")
+                 const std::string& destpath_in, uint32_t mode_in)
+            :id(id_in), name(name_in), hash(hash_in), destpath(destpath_in), size(size_in), ftMode(mode_in),
+            status(PQIFILE_INIT), mode(0), rate(0), fd(NULL), total_size(0), recv_size(0),
+            req_loc(0), req_size(0), lastTS(0), lastDelta(0),file_name("")
     {
         /* not set ...
          * id,
@@ -152,17 +152,21 @@ class ftfiler: public ftManager
 public:
 
     ftfiler(CacheStrapper *cs)
-        :ftManager(cs) { return; }
+            :ftManager(cs) {
+        return;
+    }
 
-    virtual ~ftfiler() { return; }
+    virtual ~ftfiler() {
+        return;
+    }
 
     virtual bool    RequestCacheFile(std::string id, std::string path,
-                                std::string hash, uint64_t size);
+                                     std::string hash, uint64_t size);
     virtual bool    CancelCacheFile(RsPeerId id, std::string path,
-				std::string hash, uint64_t size);
+                                    std::string hash, uint64_t size);
 
     virtual int     getFile(std::string name, std::string hash,
-	                        uint64_t size, std::string destpath);
+                            uint64_t size, std::string destpath);
 
     virtual int     cancelFile(std::string hash);
     virtual int     clearFailedTransfers();
@@ -176,19 +180,19 @@ public:
     /************* Network Interface****************************/
     virtual int            recvFileInfo(ftFileRequest *in);
     virtual ftFileRequest *sendFileInfo();
- 
+
 private:
- 
+
     virtual int 	handleFileError(std::string hash, uint32_t err);
     virtual int 	handleFileNotOnline(std::string hash);
     virtual int 	handleFileNotAvailable(std::string hash);
     virtual int 	handleFileData(std::string hash, uint64_t offset,
-				void *data, uint32_t size);
+                                void *data, uint32_t size);
 
     virtual int 	handleFileRequest(     std::string id, std::string hash,
-				uint64_t offset, uint32_t chunk);
+                                        uint64_t offset, uint32_t chunk);
     virtual int 	handleFileCacheRequest(std::string id, std::string hash,
-				uint64_t offset, uint32_t chunk);
+                                        uint64_t offset, uint32_t chunk);
 
     ftFileStatus   *findRecvFileItem(std::string hash);
     void		queryInactive();

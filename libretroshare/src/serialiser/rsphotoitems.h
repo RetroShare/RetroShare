@@ -44,88 +44,106 @@ class RsPhotoCommentItem;
 
 class RsPhotoItem: public RsItem
 {
-	public:
+public:
 
-	RsPhotoItem()
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_PHOTO, 
-		RS_PKT_SUBTYPE_PHOTO_ITEM) { return; }
-virtual ~RsPhotoItem() { return; }
-virtual void clear();
-virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+    RsPhotoItem()
+            :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_PHOTO,
+                    RS_PKT_SUBTYPE_PHOTO_ITEM) {
+        return;
+    }
+    virtual ~RsPhotoItem() {
+        return;
+    }
+    virtual void clear();
+    virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-	std::string srcId;
-	std::string photoId; /* same as hash */
-	uint64_t    size;    /* file size */
+    std::string srcId;
+    std::string photoId; /* same as hash */
+    uint64_t    size;    /* file size */
 
-	std::string name;
-	std::wstring comment;
+    std::string name;
+    std::wstring comment;
 
-	std::string location; /* TODO: change to TLV */
-	std::string date;     /* TODO: change to TLV */
+    std::string location; /* TODO: change to TLV */
+    std::string date;     /* TODO: change to TLV */
 
-	/* not serialised */
-	bool isAvailable;
-	std::string path;
+    /* not serialised */
+    bool isAvailable;
+    std::string path;
 };
 
 /* THIS must be turned into a TLV type + set (TOD) */
 class RsPhotoRefItem
 {
-	public:
-	RsPhotoRefItem();
+public:
+    RsPhotoRefItem();
 
-        std::string photoId;
-	std::wstring altComment;
-	uint32_t    deltaT; /* in 100ths of sec? */
+    std::string photoId;
+    std::wstring altComment;
+    uint32_t    deltaT; /* in 100ths of sec? */
 };
 
 class RsPhotoShowItem: public RsItem
 {
-	public:
-	RsPhotoShowItem()
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_PHOTO, 
-		RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM) { return; }
+public:
+    RsPhotoShowItem()
+            :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_PHOTO,
+                    RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM) {
+        return;
+    }
 
-virtual ~RsPhotoShowItem() { return; }
-virtual void clear();
-virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+    virtual ~RsPhotoShowItem() {
+        return;
+    }
+    virtual void clear();
+    virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-        std::string showId;
+    std::string showId;
 
-        std::string name;
-        std::wstring comment;
+    std::string name;
+    std::wstring comment;
 
-        std::string location; /* TODO -> TLV */
-        std::string date;     /* TODO -> TLV */
-        std::list<RsPhotoRefItem> photos; /* list as ordered */
+    std::string location; /* TODO -> TLV */
+    std::string date;     /* TODO -> TLV */
+    std::list<RsPhotoRefItem> photos; /* list as ordered */
 };
 
 class RsPhotoSerialiser: public RsSerialType
 {
-	public:
-	RsPhotoSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_PHOTO)
-	{ return; }
-virtual     ~RsPhotoSerialiser()
-	{ return; }
-	
-virtual	uint32_t    size(RsItem *) { return 0; }
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size) { return false; }
-virtual	RsItem *    deserialise(void *data, uint32_t *size) { return NULL; }
+public:
+    RsPhotoSerialiser()
+            :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_PHOTO)
+    {
+        return;
+    }
+    virtual     ~RsPhotoSerialiser()
+    {
+        return;
+    }
 
-	private:
+    virtual	uint32_t    size(RsItem *) {
+        return 0;
+    }
+    virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size) {
+        return false;
+    }
+    virtual	RsItem *    deserialise(void *data, uint32_t *size) {
+        return NULL;
+    }
 
-	/* For RS_PKT_SUBTYPE_PHOTO_ITEM */
+private:
+
+    /* For RS_PKT_SUBTYPE_PHOTO_ITEM */
 //virtual	uint32_t    sizeLink(RsPhotoItem *);
 //virtual	bool        serialiseLink  (RsPhotoItem *item, void *data, uint32_t *size);
 //virtual	RsPhotoItem *deserialiseLink(void *data, uint32_t *size);
 
-	/* For RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM */
+    /* For RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM */
 //virtual	uint32_t    sizeLink(RsPhotoShowItem *);
 //virtual	bool        serialiseLink  (RsPhotoShowItem *item, void *data, uint32_t *size);
 //virtual	RsPhotoShowItem *deserialiseLink(void *data, uint32_t *size);
 
-	/* For RS_PKT_SUBTYPE_PHOTO_COMMENT_ITEM */
+    /* For RS_PKT_SUBTYPE_PHOTO_COMMENT_ITEM */
 //virtual	uint32_t    sizeLink(RsPhotoCommentItem *);
 //virtual	bool        serialiseLink  (RsPhotoCommentItem *item, void *data, uint32_t *size);
 //virtual	RsPhotoCommentItem *deserialiseLink(void *data, uint32_t *size);

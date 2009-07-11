@@ -82,7 +82,7 @@ class RsPeerDetails
     std::string email;
     std::string location;
     std::string org;
-	
+
     std::string fpr; /* pgp fingerprint */
     std::string authcode;
     std::list<std::string> signers;
@@ -113,12 +113,16 @@ class RsPeerDetails
 
 std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail);
 
-class RsPeers 
+class RsPeers
 {
 public:
 
-    RsPeers()  { return; }
-    virtual ~RsPeers() { return; }
+    RsPeers()  {
+        return;
+    }
+    virtual ~RsPeers() {
+        return;
+    }
 
     /* Updates ... */
     virtual bool FriendsChanged() 					= 0;

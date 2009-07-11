@@ -88,173 +88,173 @@
 
 class dhtPeerEntry
 {
-        public:
-	dhtPeerEntry();
+public:
+    dhtPeerEntry();
 
-        std::string id;
-        uint32_t state;
-        time_t lastTS;
+    std::string id;
+    uint32_t state;
+    time_t lastTS;
 
-	uint32_t notifyPending;
-	time_t   notifyTS;
+    uint32_t notifyPending;
+    time_t   notifyTS;
 
-        struct sockaddr_in laddr, raddr;
-	uint32_t type;  /* ADDR_TYPE as defined above */
+    struct sockaddr_in laddr, raddr;
+    uint32_t type;  /* ADDR_TYPE as defined above */
 
-	std::string hash1; /* SHA1 Hash of id */
-	std::string hash2; /* SHA1 Hash of reverse Id */
+    std::string hash1; /* SHA1 Hash of id */
+    std::string hash2; /* SHA1 Hash of reverse Id */
 };
 
 class p3DhtMgr: public pqiNetAssistConnect, public RsThread
 {
-	/* 
-	 */
-	public:
-	p3DhtMgr(std::string id, pqiConnectCb *cb);
+    /*
+     */
+public:
+    p3DhtMgr(std::string id, pqiConnectCb *cb);
 
-	/********** External DHT Interface ************************
-	 * These Functions are the external interface
-	 * for the DHT, and must be non-blocking and return quickly
-	 */
+    /********** External DHT Interface ************************
+     * These Functions are the external interface
+     * for the DHT, and must be non-blocking and return quickly
+     */
 
-	/* OVERLOADED From pqiNetAssistConnect. */
+    /* OVERLOADED From pqiNetAssistConnect. */
 
-virtual void enable(bool on);
-virtual void shutdown();
-virtual void restart();
+    virtual void enable(bool on);
+    virtual void shutdown();
+    virtual void restart();
 
-virtual bool getEnabled(); /* on */
-virtual bool getActive();  /* actually working */
+    virtual bool getEnabled(); /* on */
+    virtual bool getActive();  /* actually working */
 
-virtual void	setBootstrapAllowed(bool on);
-virtual bool 	getBootstrapAllowed();
+    virtual void	setBootstrapAllowed(bool on);
+    virtual bool 	getBootstrapAllowed();
 
-	/* set key data */
-virtual bool 	setExternalInterface(struct sockaddr_in laddr,
-			struct sockaddr_in raddr, uint32_t type);
+    /* set key data */
+    virtual bool 	setExternalInterface(struct sockaddr_in laddr,
+                                       struct sockaddr_in raddr, uint32_t type);
 
-	/* add / remove peers */
-virtual bool 	findPeer(std::string id);
-virtual bool 	dropPeer(std::string id);
+    /* add / remove peers */
+    virtual bool 	findPeer(std::string id);
+    virtual bool 	dropPeer(std::string id);
 
-	/* post DHT key saying we should connect (callback when done) */
-virtual bool 	notifyPeer(std::string id); 
+    /* post DHT key saying we should connect (callback when done) */
+    virtual bool 	notifyPeer(std::string id);
 
-	/* extract current peer status */
-virtual bool 	getPeerStatus(std::string id, 
-			struct sockaddr_in &laddr, struct sockaddr_in &raddr, 
-			uint32_t &type, uint32_t &mode);
+    /* extract current peer status */
+    virtual bool 	getPeerStatus(std::string id,
+                                struct sockaddr_in &laddr, struct sockaddr_in &raddr,
+                                uint32_t &type, uint32_t &mode);
 
-	/* stun */
-virtual bool 	enableStun(bool on);
-virtual bool 	addStun(std::string id);
-	//doneStun();
+    /* stun */
+    virtual bool 	enableStun(bool on);
+    virtual bool 	addStun(std::string id);
+    //doneStun();
 
-	/********** Higher Level DHT Work Functions ************************
-	 * These functions translate from the strings/addresss to 
-	 * key/value pairs.
-	 */
-	public:
+    /********** Higher Level DHT Work Functions ************************
+     * These functions translate from the strings/addresss to
+     * key/value pairs.
+     */
+public:
 
-	/* results from DHT proper */
-virtual bool dhtResultNotify(std::string id);
-virtual bool dhtResultSearch(std::string id,
-		struct sockaddr_in &laddr, struct sockaddr_in &raddr, 
-				uint32_t type, std::string sign);
+    /* results from DHT proper */
+    virtual bool dhtResultNotify(std::string id);
+    virtual bool dhtResultSearch(std::string id,
+                                 struct sockaddr_in &laddr, struct sockaddr_in &raddr,
+                                 uint32_t type, std::string sign);
 
-virtual bool dhtResultBootstrap(std::string idhash);
+    virtual bool dhtResultBootstrap(std::string idhash);
 
-	protected:
+protected:
 
-	/* can block briefly (called only from thread) */
-virtual bool dhtPublish(std::string id,  
-		struct sockaddr_in &laddr, 
-		struct sockaddr_in &raddr, 
-				uint32_t type, std::string sign);
+    /* can block briefly (called only from thread) */
+    virtual bool dhtPublish(std::string id,
+                            struct sockaddr_in &laddr,
+                            struct sockaddr_in &raddr,
+                            uint32_t type, std::string sign);
 
-virtual bool dhtNotify(std::string peerid, std::string ownId, 
-		std::string sign);
+    virtual bool dhtNotify(std::string peerid, std::string ownId,
+                           std::string sign);
 
-virtual	bool dhtSearch(std::string id, uint32_t mode);
+    virtual	bool dhtSearch(std::string id, uint32_t mode);
 
-virtual bool dhtBootstrap(std::string storehash, std::string ownIdHash, 
-		std::string sign); /* to publish bootstrap */
-
-
-
-	/********** Actual DHT Work Functions ************************
-	 * These involve a very simple LOW-LEVEL interface ... 
-	 *
-	 * publish
-	 * search
-	 * result
-	 *
-	 */
-
-	public:
-
-	/* Feedback callback (handled here) */
-virtual bool resultDHT(std::string key, std::string value);
-
-	protected:
-
-virtual bool    dhtInit();
-virtual bool	dhtShutdown();
-virtual bool    dhtActive();
-virtual int     status(std::ostream &out);
-
-virtual bool publishDHT(std::string key, std::string value, uint32_t ttl);
-virtual	bool searchDHT(std::string key);
+    virtual bool dhtBootstrap(std::string storehash, std::string ownIdHash,
+                              std::string sign); /* to publish bootstrap */
 
 
 
-	/********** Internal DHT Threading ************************
-	 *
-	 */
+    /********** Actual DHT Work Functions ************************
+     * These involve a very simple LOW-LEVEL interface ...
+     *
+     * publish
+     * search
+     * result
+     *
+     */
 
-	public:
+public:
 
-virtual void run();
+    /* Feedback callback (handled here) */
+    virtual bool resultDHT(std::string key, std::string value);
 
-	private:
+protected:
 
-	/* search scheduling */
-void 	checkDHTStatus();
-int 	checkStunState();
-int 	checkStunState_Active(); /* when in active state */
-int 	doStun();
-int 	checkPeerDHTKeys();
-int 	checkOwnDHTKeys();
-int 	checkNotifyDHT();
+    virtual bool    dhtInit();
+    virtual bool	dhtShutdown();
+    virtual bool    dhtActive();
+    virtual int     status(std::ostream &out);
 
-void 	clearDhtData();
+    virtual bool publishDHT(std::string key, std::string value, uint32_t ttl);
+    virtual	bool searchDHT(std::string key);
 
-	/* IP Bootstrap */
-bool 	getDhtBootstrapList();
-std::string BootstrapId(uint32_t bin);
-std::string randomBootstrapId();
 
-	/* other feedback through callback */
-	// use pqiNetAssistConnect.. version pqiConnectCb *connCb;
 
-	/* protected by Mutex */
-	RsMutex dhtMtx;
+    /********** Internal DHT Threading ************************
+     *
+     */
 
-	bool 	 mDhtOn; /* User desired state */
-	bool     mDhtModifications; /* any user requests? */
+public:
 
-	dhtPeerEntry ownEntry;
-	time_t ownNotifyTS;
-	std::map<std::string, dhtPeerEntry> peers;
+    virtual void run();
 
-	std::list<std::string> stunIds;
-	bool     mStunRequired;
+private:
 
-	uint32_t mDhtState;
-	time_t   mDhtActiveTS;
+    /* search scheduling */
+    void 	checkDHTStatus();
+    int 	checkStunState();
+    int 	checkStunState_Active(); /* when in active state */
+    int 	doStun();
+    int 	checkPeerDHTKeys();
+    int 	checkOwnDHTKeys();
+    int 	checkNotifyDHT();
 
-	bool   mBootstrapAllowed;
-	time_t mLastBootstrapListTS;
+    void 	clearDhtData();
+
+    /* IP Bootstrap */
+    bool 	getDhtBootstrapList();
+    std::string BootstrapId(uint32_t bin);
+    std::string randomBootstrapId();
+
+    /* other feedback through callback */
+    // use pqiNetAssistConnect.. version pqiConnectCb *connCb;
+
+    /* protected by Mutex */
+    RsMutex dhtMtx;
+
+    bool 	 mDhtOn; /* User desired state */
+    bool     mDhtModifications; /* any user requests? */
+
+    dhtPeerEntry ownEntry;
+    time_t ownNotifyTS;
+    std::map<std::string, dhtPeerEntry> peers;
+
+    std::list<std::string> stunIds;
+    bool     mStunRequired;
+
+    uint32_t mDhtState;
+    time_t   mDhtActiveTS;
+
+    bool   mBootstrapAllowed;
+    time_t mLastBootstrapListTS;
 };
 
 

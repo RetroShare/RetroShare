@@ -42,53 +42,55 @@
  * pqiarchive provides an archive stream.
  * This stores RsItem + Person Reference + Timestamp,
  *
- * and allows Objects to be replayed or restored, 
+ * and allows Objects to be replayed or restored,
  * independently of the rest of the pqi system.
  *
  */
 
 struct pqiarchive_header
 {
-        uint32_t	type;
-        uint32_t	length;
-        uint32_t	ts;
-        uint8_t		personSig[PQI_PEERID_LENGTH];
+    uint32_t	type;
+    uint32_t	length;
+    uint32_t	ts;
+    uint8_t		personSig[PQI_PEERID_LENGTH];
 };
 
 class pqiarchive: PQInterface
 {
 public:
-	pqiarchive(RsSerialiser *rss, BinInterface *bio_in, int bio_flagsin);
-virtual ~pqiarchive();
+    pqiarchive(RsSerialiser *rss, BinInterface *bio_in, int bio_flagsin);
+    virtual ~pqiarchive();
 
 // PQInterface
-virtual int     SendItem(RsItem *);
-virtual RsItem *GetItem();
+    virtual int     SendItem(RsItem *);
+    virtual RsItem *GetItem();
 
-virtual int     tick();
-virtual int     status();
+    virtual int     tick();
+    virtual int     status();
 
-virtual void	setRealTime(bool r) { realTime = r; }
+    virtual void	setRealTime(bool r) {
+        realTime = r;
+    }
 
-std::string     gethash();
+    std::string     gethash();
 
-	private:
-int     writePkt(RsItem *item);
-int     readPkt(RsItem **item_out, long *ts);
+private:
+    int     writePkt(RsItem *item);
+    int     readPkt(RsItem **item_out, long *ts);
 
-	// Serialiser
-	RsSerialiser *rsSerialiser;
-	// Binary Interface for IO, initialisated at startup.
-	BinInterface *bio;
-	unsigned int  bio_flags; // only BIN_NO_CLOSE at the moment.
+    // Serialiser
+    RsSerialiser *rsSerialiser;
+    // Binary Interface for IO, initialisated at startup.
+    BinInterface *bio;
+    unsigned int  bio_flags; // only BIN_NO_CLOSE at the moment.
 
-	// Temp Storage for transient data.....
-	RsItem *nextPkt;
-	long  nextPktTS; /* timestamp associated with nextPkt */
-	long  firstPktTS; /* timestamp associated with first read Pkt */
-	long  initTS;    /* clock timestamp at first read */
+    // Temp Storage for transient data.....
+    RsItem *nextPkt;
+    long  nextPktTS; /* timestamp associated with nextPkt */
+    long  firstPktTS; /* timestamp associated with first read Pkt */
+    long  initTS;    /* clock timestamp at first read */
 
-	bool realTime;
+    bool realTime;
 };
 
 

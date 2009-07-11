@@ -31,7 +31,7 @@
 #include <stdint.h>
 
 /*******************************************************************
- * This is at the lowlevel packing routines. They are usually 
+ * This is at the lowlevel packing routines. They are usually
  * created in pairs - one to pack the data, the other to unpack.
  *
  * getRawXXX(void *data, uint32_t size, uint32_t *offset, XXX *out);

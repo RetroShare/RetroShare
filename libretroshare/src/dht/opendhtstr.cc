@@ -31,95 +31,95 @@
 
 std::string createHttpHeader(std::string host, uint16_t port, std::string agent, uint32_t length)
 {
-	std::ostringstream req;
+    std::ostringstream req;
 
-	req << "POST / HTTP/1.0\r\n";
-	req << "Host: " << host << ":" << port << "\r\n";
-	req << "User-Agent: " << agent << "\r\n";
-	req << "Content-Type: text/xml\r\n";
-	req << "Content-Length: " << length << "\r\n";
-	req << "\r\n";
+    req << "POST / HTTP/1.0\r\n";
+    req << "Host: " << host << ":" << port << "\r\n";
+    req << "User-Agent: " << agent << "\r\n";
+    req << "Content-Type: text/xml\r\n";
+    req << "Content-Length: " << length << "\r\n";
+    req << "\r\n";
 
-	return req.str();
+    return req.str();
 };
 
 std::string createHttpHeaderGET(std::string host, uint16_t port, std::string page, std::string agent, uint32_t length)
 {
-	std::ostringstream req;
+    std::ostringstream req;
 
-	req << "GET /" << page << " HTTP/1.0\r\n";
-	req << "Host: " << host << ":" << port << "\r\n";
-	req << "User-Agent: " << agent << "\r\n";
-	//req << "Content-Type: text/xml\r\n";
-	//req << "Content-Length: " << length << "\r\n";
-	req << "\r\n";
+    req << "GET /" << page << " HTTP/1.0\r\n";
+    req << "Host: " << host << ":" << port << "\r\n";
+    req << "User-Agent: " << agent << "\r\n";
+    //req << "Content-Type: text/xml\r\n";
+    //req << "Content-Length: " << length << "\r\n";
+    req << "\r\n";
 
-	return req.str();
+    return req.str();
 };
 
 std::string createOpenDHT_put(std::string key, std::string value, uint32_t ttl, std::string client)
 {
-	std::ostringstream req;
+    std::ostringstream req;
 
-	req << "<?xml version=\"1.0\"?>" << std::endl;
-	req << "<methodCall>" << std::endl;
-	req << "\t<methodName>put</methodName>" << std::endl;
-	req << "\t<params>" << std::endl;
+    req << "<?xml version=\"1.0\"?>" << std::endl;
+    req << "<methodCall>" << std::endl;
+    req << "\t<methodName>put</methodName>" << std::endl;
+    req << "\t<params>" << std::endl;
 
-	req << "\t\t<param><value><base64>";
-	req << convertToBase64(key);
-	req << "</base64></value></param>" << std::endl;
+    req << "\t\t<param><value><base64>";
+    req << convertToBase64(key);
+    req << "</base64></value></param>" << std::endl;
 
-	req << "\t\t<param><value><base64>";
-	req << convertToBase64(value);
-	req << "</base64></value></param>" << std::endl;
+    req << "\t\t<param><value><base64>";
+    req << convertToBase64(value);
+    req << "</base64></value></param>" << std::endl;
 
-	req << "\t\t<param><value><int>";
-	req << ttl;
-	req << "</int></value></param>" << std::endl;
+    req << "\t\t<param><value><int>";
+    req << ttl;
+    req << "</int></value></param>" << std::endl;
 
-	req << "\t\t<param><value><string>";
-	req << client;
-	req << "</string></value></param>" << std::endl;
+    req << "\t\t<param><value><string>";
+    req << client;
+    req << "</string></value></param>" << std::endl;
 
-	req << "\t</params>" << std::endl;
-	req << "</methodCall>" << std::endl;
+    req << "\t</params>" << std::endl;
+    req << "</methodCall>" << std::endl;
 
-	return req.str();
+    return req.str();
 }
 
 
 std::string createOpenDHT_get(std::string key, uint32_t maxresponse, std::string client)
 {
-	std::ostringstream req;
+    std::ostringstream req;
 
-	req << "<?xml version=\"1.0\"?>" << std::endl;
-	req << "<methodCall>" << std::endl;
-	req << "\t<methodName>get</methodName>" << std::endl;
-	req << "\t<params>" << std::endl;
+    req << "<?xml version=\"1.0\"?>" << std::endl;
+    req << "<methodCall>" << std::endl;
+    req << "\t<methodName>get</methodName>" << std::endl;
+    req << "\t<params>" << std::endl;
 
-	/* key */
-	req << "\t\t<param><value><base64>";
-	req << convertToBase64(key);
-	req << "</base64></value></param>" << std::endl;
+    /* key */
+    req << "\t\t<param><value><base64>";
+    req << convertToBase64(key);
+    req << "</base64></value></param>" << std::endl;
 
-	/* max response */
-	req << "\t\t<param><value><int>";
-	req << maxresponse;
-	req << "</int></value></param>" << std::endl;
+    /* max response */
+    req << "\t\t<param><value><int>";
+    req << maxresponse;
+    req << "</int></value></param>" << std::endl;
 
-	/* placemark (NULL) */
-	req << "\t\t<param><value><base64>";
-	req << "</base64></value></param>" << std::endl;
+    /* placemark (NULL) */
+    req << "\t\t<param><value><base64>";
+    req << "</base64></value></param>" << std::endl;
 
-	req << "\t\t<param><value><string>";
-	req << client;
-	req << "</string></value></param>" << std::endl;
+    req << "\t\t<param><value><string>";
+    req << client;
+    req << "</string></value></param>" << std::endl;
 
-	req << "\t</params>" << std::endl;
-	req << "</methodCall>" << std::endl;
+    req << "\t</params>" << std::endl;
+    req << "</methodCall>" << std::endl;
 
-	return req.str();
+    return req.str();
 }
 
 

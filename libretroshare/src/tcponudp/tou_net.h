@@ -38,57 +38,57 @@
 extern "C" {
 #endif
 
-/*******
- * This defines a (unix-like) universal networking layer
- * that should function on both windows and unix. (C - interface)
- *
- * This is of course only a subset of the full interface.
- * functions required are:
- *
- * int tounet_close(int fd);
- * int tounet_socket(int domain, int type, int protocol);
- * int tounet_bind(int  sockfd,  const  struct  sockaddr  *my_addr,  
- * 				socklen_t addrlen);
- * int tounet_fcntl(int fd, int cmd, long arg);
- * int tounet_setsockopt(int s, int level,  int  optname,  
- * 				const  void  *optval, socklen_t optlen);
- * ssize_t tounet_recvfrom(int s, void *buf, size_t len, int flags,
- *                              struct sockaddr *from, socklen_t *fromlen);
- * ssize_t tounet_sendto(int s, const void *buf, size_t len, int flags, 
- * 				const struct sockaddr *to, socklen_t tolen);
- *
- * There are some non-standard ones as well:
- * int tounet_errno();  	for internal networking errors 
- * int tounet_init();  		required for windows 
- * int tounet_checkTTL();  	a check if we can modify the ttl 
- */
+    /*******
+     * This defines a (unix-like) universal networking layer
+     * that should function on both windows and unix. (C - interface)
+     *
+     * This is of course only a subset of the full interface.
+     * functions required are:
+     *
+     * int tounet_close(int fd);
+     * int tounet_socket(int domain, int type, int protocol);
+     * int tounet_bind(int  sockfd,  const  struct  sockaddr  *my_addr,
+     * 				socklen_t addrlen);
+     * int tounet_fcntl(int fd, int cmd, long arg);
+     * int tounet_setsockopt(int s, int level,  int  optname,
+     * 				const  void  *optval, socklen_t optlen);
+     * ssize_t tounet_recvfrom(int s, void *buf, size_t len, int flags,
+     *                              struct sockaddr *from, socklen_t *fromlen);
+     * ssize_t tounet_sendto(int s, const void *buf, size_t len, int flags,
+     * 				const struct sockaddr *to, socklen_t tolen);
+     *
+     * There are some non-standard ones as well:
+     * int tounet_errno();  	for internal networking errors
+     * int tounet_init();  		required for windows
+     * int tounet_checkTTL();  	a check if we can modify the ttl
+     */
 
 
-/* the universal interface */
-int tounet_errno(); /* for internal networking errors */
-int tounet_init(); /* required for windows */
-int tounet_close(int fd);
-int tounet_socket(int domain, int type, int protocol);
-int tounet_bind(int  sockfd,  const  struct  sockaddr  *my_addr,  socklen_t addrlen);
-int tounet_fcntl(int fd, int cmd, long arg);
-int tounet_setsockopt(int s, int level,  int  optname,  
- 				const  void  *optval, socklen_t optlen);
-ssize_t tounet_recvfrom(int s, void *buf, size_t len, int flags,
-                              struct sockaddr *from, socklen_t *fromlen);
-ssize_t tounet_sendto(int s, const void *buf, size_t len, int flags, 
- 				const struct sockaddr *to, socklen_t tolen);
+    /* the universal interface */
+    int tounet_errno(); /* for internal networking errors */
+    int tounet_init(); /* required for windows */
+    int tounet_close(int fd);
+    int tounet_socket(int domain, int type, int protocol);
+    int tounet_bind(int  sockfd,  const  struct  sockaddr  *my_addr,  socklen_t addrlen);
+    int tounet_fcntl(int fd, int cmd, long arg);
+    int tounet_setsockopt(int s, int level,  int  optname,
+                          const  void  *optval, socklen_t optlen);
+    ssize_t tounet_recvfrom(int s, void *buf, size_t len, int flags,
+                            struct sockaddr *from, socklen_t *fromlen);
+    ssize_t tounet_sendto(int s, const void *buf, size_t len, int flags,
+                          const struct sockaddr *to, socklen_t tolen);
 
-/* address filling */
-int tounet_inet_aton(const char *name, struct in_addr *addr);
-/* check if we can modify the TTL on a UDP packet */
-int tounet_checkTTL(int fd);
+    /* address filling */
+    int tounet_inet_aton(const char *name, struct in_addr *addr);
+    /* check if we can modify the TTL on a UDP packet */
+    int tounet_checkTTL(int fd);
 
 
 
-/* Extra stuff to declare for windows error handling (mimics unix errno)
- */
+    /* Extra stuff to declare for windows error handling (mimics unix errno)
+     */
 
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+    /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifdef WINDOWS_SYS
 
 // Some Network functions that are missing from windows.
@@ -105,23 +105,23 @@ int tounet_checkTTL(int fd);
 //#define IPPROTO_IP 	0x0011
 //#define IP_TTL		0x0110
 
-/* define the Unix Error Codes that we use...
- * NB. we should make the same, but not necessary
- */
+    /* define the Unix Error Codes that we use...
+     * NB. we should make the same, but not necessary
+     */
 
 #include "tou_errno.h"
 
-int     tounet_w2u_errno(int error);
+    int     tounet_w2u_errno(int error);
 
-/* also put the sleep commands in here (where else to go)
- * ms uses millisecs.
- * void Sleep(int ms);
- */
-void sleep(int sec); 
-void usleep(int usec);
+    /* also put the sleep commands in here (where else to go)
+     * ms uses millisecs.
+     * void Sleep(int ms);
+     */
+    void sleep(int sec);
+    void usleep(int usec);
 
 #endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+    /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 
 #ifdef  __cplusplus

@@ -33,19 +33,23 @@
  * SearchInterface for the FileTransfer
  */
 
-#include "rsiface/rstypes.h"
+#include "_rsiface/rstypes.h"
 class FileIndexStore;
 class FileIndexMonitor;
-#include "dbase/fistore.h"
-#include "dbase/fimonitor.h"
+#include "_dbase/fistore.h"
+#include "_dbase/fimonitor.h"
 
 class FileHashSearch
 {
 public:
     FileHashSearch(FileIndexStore *s, FileIndexMonitor *m)
-    :store(s), monitor(m) { return; }
+            :store(s), monitor(m) {
+        return;
+    }
 
-    ~FileHashSearch() { return; }
+    ~FileHashSearch() {
+        return;
+    }
 
     /* Search Interface - For FileTransfer Lookup */
     int searchLocalHash(std::string hash, std::string &path, uint64_t &size);

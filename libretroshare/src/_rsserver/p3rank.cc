@@ -28,77 +28,77 @@
 RsRanks *rsRanks = NULL;
 
 p3Rank::p3Rank(p3Ranking *ranking)
-	:mRank(ranking)
+        :mRank(ranking)
 {
-	return;
+    return;
 }
 
-p3Rank::~p3Rank() 
+p3Rank::~p3Rank()
 {
-	return; 
+    return;
 }
-        /* needs update? */
+/* needs update? */
 bool p3Rank::updated()
 {
-	return mRank->updated();
+    return mRank->updated();
 }
 
-        /* Set Sort Methods */
+/* Set Sort Methods */
 bool p3Rank::setSortPeriod(uint32_t period)
 {
-	return mRank->setSortPeriod(period);
+    return mRank->setSortPeriod(period);
 }
 
 bool p3Rank::setSortMethod(uint32_t type)
 {
-	return mRank->setSortMethod(type);
+    return mRank->setSortMethod(type);
 }
 
 bool p3Rank::clearPeerFilter()
 {
-	return mRank->clearPeerFilter();
+    return mRank->clearPeerFilter();
 }
 
 bool p3Rank::setPeerFilter(std::list<std::string> peers)
 {
-	return mRank->setPeerFilter(peers);
+    return mRank->setPeerFilter(peers);
 }
 
-        /* get Ids */
+/* get Ids */
 uint32_t p3Rank::getRankingsCount()
 {
-	return mRank->getRankingsCount();
+    return mRank->getRankingsCount();
 }
 
 float   p3Rank::getMaxRank()
 {
-	return mRank->getMaxRank();
+    return mRank->getMaxRank();
 }
 
 bool    p3Rank::getRankings(uint32_t first, uint32_t count, std::list<std::string> &rids)
 {
-	return mRank->getRankings(first, count, rids);
+    return mRank->getRankings(first, count, rids);
 }
 
 bool    p3Rank::getRankDetails(std::string rid, RsRankDetails &details)
 {
-	return mRank->getRankDetails(rid, details);
+    return mRank->getRankDetails(rid, details);
 }
 
 
-        /* Add New Comment / Msg */
+/* Add New Comment / Msg */
 std::string p3Rank::newRankMsg(std::wstring link, std::wstring title, std::wstring comment, int32_t score)
 {
-	return mRank->newRankMsg(link, title, comment, score);
+    return mRank->newRankMsg(link, title, comment, score);
 }
 
 bool p3Rank::updateComment(std::string rid, std::wstring comment, int32_t score)
 {
-	return mRank->updateComment(rid, comment, score);
+    return mRank->updateComment(rid, comment, score);
 }
 
 std::string p3Rank::anonRankMsg(std::string rid, std::wstring link, std::wstring title)
 {
-	return mRank->anonRankMsg(rid, link, title);
+    return mRank->anonRankMsg(rid, link, title);
 }
 

@@ -10,13 +10,13 @@
 class RsIfaceReal: public RsIface
 {
 public:
-        RsIfaceReal(NotifyBase &callback);
+    RsIfaceReal(NotifyBase &callback);
 
-        virtual void lockData();
-        virtual void unlockData();
+    virtual void lockData();
+    virtual void unlockData();
 
 private:
-        RsMutex rsIfaceMutex;
+    RsMutex rsIfaceMutex;
 };
 
 #endif // RSIFACEREAL_H

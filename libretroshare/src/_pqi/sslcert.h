@@ -75,7 +75,7 @@ sslroot *getSSLRoot();
 
 class sslroot
 {
-    public:
+public:
     sslroot();
     int	active();
     int	setcertdir(char *path);
@@ -132,13 +132,13 @@ class sslroot
 
 
     int printCertificate(cert *, std::ostream &out);
-     /****** REMOVED!
-      *
-      *
+    /****** REMOVED!
+     *
+     *
     std::list<std::string> listCertificates();
-      *
-      *
-      ****/
+     *
+     *
+     ****/
 
     std::list<cert *> &getCertList();
 

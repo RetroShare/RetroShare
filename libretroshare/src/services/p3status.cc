@@ -28,40 +28,40 @@
 
 std::ostream& operator<<(std::ostream& out, const StatusInfo& si)
 {
-	out << "StatusInfo: " << std::endl;
-	out << "id: " << si.id << std::endl;
-	out << "status: " << si.status;
-	out << " (" << RsStatusString(si.status) << ")" << std::endl;
-	return out;
+    out << "StatusInfo: " << std::endl;
+    out << "id: " << si.id << std::endl;
+    out << "status: " << si.status;
+    out << " (" << RsStatusString(si.status) << ")" << std::endl;
+    return out;
 }
 
 std::string RsStatusString(uint32_t status)
 {
-	std::string str;
-	if (status == RS_STATUS_OFFLINE)
-	{
-		str = "Offline";
-	}
-	else if (status == RS_STATUS_AWAY)
-	{
-		str = "Away";
-	}
-	else if (status == RS_STATUS_BUSY)
-	{
-		str = "Busy";
-	}
-	else if (status == RS_STATUS_ONLINE)
-	{
-		str = "Online";
-	}
-	return str;
+    std::string str;
+    if (status == RS_STATUS_OFFLINE)
+    {
+        str = "Offline";
+    }
+    else if (status == RS_STATUS_AWAY)
+    {
+        str = "Away";
+    }
+    else if (status == RS_STATUS_BUSY)
+    {
+        str = "Busy";
+    }
+    else if (status == RS_STATUS_ONLINE)
+    {
+        str = "Online";
+    }
+    return str;
 }
 
 RsStatus *rsStatus = NULL;
 
 p3Status::p3Status()
 {
-	loadDummyData();
+    loadDummyData();
 }
 
 p3Status::~p3Status()
@@ -72,49 +72,49 @@ p3Status::~p3Status()
 
 bool p3Status::getStatus(std::string id, StatusInfo& statusInfo)
 {
-	std::map<std::string, StatusInfo>::iterator it;
-	it = mStatusInfoMap.find(id);
-	if (it == mStatusInfoMap.end())
-	{
-		return false;
-	}
+    std::map<std::string, StatusInfo>::iterator it;
+    it = mStatusInfoMap.find(id);
+    if (it == mStatusInfoMap.end())
+    {
+        return false;
+    }
 
-	statusInfo.id = (it->second).id;
-	statusInfo.status = (it->second).status;
+    statusInfo.id = (it->second).id;
+    statusInfo.status = (it->second).status;
 
-	return true;
+    return true;
 }
 
 bool p3Status::setStatus(StatusInfo& statusInfo)
 {
-	mStatusInfoMap[statusInfo.id] = statusInfo;
+    mStatusInfoMap[statusInfo.id] = statusInfo;
 
-	return true;
+    return true;
 }
 
 /******************************/
 
 void p3Status::loadDummyData()
 {
-	StatusInfo si;
+    StatusInfo si;
 
-	si.id = "id01";
-	si.status = RS_STATUS_OFFLINE;
+    si.id = "id01";
+    si.status = RS_STATUS_OFFLINE;
 
-	setStatus(si);
-	
-	si.id = "id02";
-	si.status = RS_STATUS_AWAY;
+    setStatus(si);
 
-	setStatus(si);
+    si.id = "id02";
+    si.status = RS_STATUS_AWAY;
 
-	si.id = "id03";
-	si.status = RS_STATUS_BUSY;
+    setStatus(si);
 
-	setStatus(si);
+    si.id = "id03";
+    si.status = RS_STATUS_BUSY;
 
-	si.id = "id04";
-	si.status = RS_STATUS_ONLINE;
+    setStatus(si);
 
-	setStatus(si);
+    si.id = "id04";
+    si.status = RS_STATUS_ONLINE;
+
+    setStatus(si);
 }

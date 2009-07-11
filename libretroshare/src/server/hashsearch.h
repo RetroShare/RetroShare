@@ -41,21 +41,25 @@ class FileIndexMonitor;
 
 class FileHashSearch
 {
-	public:
-	FileHashSearch(FileIndexStore *s, FileIndexMonitor *m)
-	:store(s), monitor(m) { return; }
+public:
+    FileHashSearch(FileIndexStore *s, FileIndexMonitor *m)
+            :store(s), monitor(m) {
+        return;
+    }
 
-	~FileHashSearch() { return; }
+    ~FileHashSearch() {
+        return;
+    }
 
-	/* Search Interface - For FileTransfer Lookup */
-	int searchLocalHash(std::string hash, std::string &path, uint64_t &size);
+    /* Search Interface - For FileTransfer Lookup */
+    int searchLocalHash(std::string hash, std::string &path, uint64_t &size);
 
-	int searchRemoteHash(std::string hash, std::list<FileDetail> &results);
+    int searchRemoteHash(std::string hash, std::list<FileDetail> &results);
 
-	private:
+private:
 
-	FileIndexStore   *store;
-	FileIndexMonitor *monitor;
+    FileIndexStore   *store;
+    FileIndexMonitor *monitor;
 };
 
 #endif

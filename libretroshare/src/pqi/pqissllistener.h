@@ -55,82 +55,82 @@ class pqissl;
 
 class pqissllistenbase: public pqilistener
 {
-	public:
+public:
 
 
-	pqissllistenbase(struct sockaddr_in addr, p3AuthMgr *am, p3ConnectMgr *cm);
-virtual ~pqissllistenbase();
+    pqissllistenbase(struct sockaddr_in addr, p3AuthMgr *am, p3ConnectMgr *cm);
+    virtual ~pqissllistenbase();
 
-/*************************************/
-/*       LISTENER INTERFACE         **/
+    /*************************************/
+    /*       LISTENER INTERFACE         **/
 
-virtual int 	tick();
-virtual int 	status();
-virtual int     setListenAddr(struct sockaddr_in addr);
-virtual int	setuplisten();
-virtual int     resetlisten();
+    virtual int 	tick();
+    virtual int 	status();
+    virtual int     setListenAddr(struct sockaddr_in addr);
+    virtual int	setuplisten();
+    virtual int     resetlisten();
 
-/*************************************/
+    /*************************************/
 
-int	acceptconnection();
-int	continueaccepts();
-int	continueSSL(SSL *ssl, struct sockaddr_in remote_addr, bool);
+    int	acceptconnection();
+    int	continueaccepts();
+    int	continueSSL(SSL *ssl, struct sockaddr_in remote_addr, bool);
 
 
-virtual int completeConnection(int sockfd, SSL *in_connection, struct sockaddr_in &raddr) = 0;
+    virtual int completeConnection(int sockfd, SSL *in_connection, struct sockaddr_in &raddr) = 0;
 
-	protected:
+protected:
 
-	struct sockaddr_in laddr;
+    struct sockaddr_in laddr;
 
-	private:
+private:
 
-	// fn to get cert, anyway
-int     Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_in *inaddr);
+    // fn to get cert, anyway
+    int     Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_in *inaddr);
 
-	bool active;
-	int lsock;
+    bool active;
+    int lsock;
 
-	std::map<SSL *, struct sockaddr_in> incoming_ssl;
+    std::map<SSL *, struct sockaddr_in> incoming_ssl;
 
-	protected:
+protected:
 
-/**************** PQI_USE_XPGP ******************/
+    /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
 
-	AuthXPGP *mAuthMgr;
+    AuthXPGP *mAuthMgr;
 
 #else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
+    /**************** PQI_USE_XPGP ******************/
 
-	AuthSSL *mAuthMgr;
+    AuthSSL *mAuthMgr;
 
 #endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
+    /**************** PQI_USE_XPGP ******************/
 
-	p3ConnectMgr *mConnMgr;
+    p3ConnectMgr *mConnMgr;
 
 };
 
 
 class pqissllistener: public pqissllistenbase
 {
-	public:
+public:
 
-	pqissllistener(struct sockaddr_in addr, p3AuthMgr *am, p3ConnectMgr *cm);
-virtual ~pqissllistener();
+    pqissllistener(struct sockaddr_in addr, p3AuthMgr *am, p3ConnectMgr *cm);
+    virtual ~pqissllistener();
 
-int 	addlistenaddr(std::string id, pqissl *acc);
-int	removeListenPort(std::string id);
+    int 	addlistenaddr(std::string id, pqissl *acc);
+    int	removeListenPort(std::string id);
 
 //virtual int 	tick();
-virtual int 	status();
+    virtual int 	status();
 
-virtual int completeConnection(int sockfd, SSL *in_connection, struct sockaddr_in &raddr);
+    virtual int completeConnection(int sockfd, SSL *in_connection, struct sockaddr_in &raddr);
 
-	private:
+private:
 
-	std::map<std::string, pqissl *> listenaddr;
+    std::map<std::string, pqissl *> listenaddr;
 };
 
 

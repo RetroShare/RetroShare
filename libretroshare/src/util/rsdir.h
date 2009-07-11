@@ -46,19 +46,19 @@ std::string 	removeRootDirs(std::string path, std::string root);
 bool		renameFile(const std::string& from,const std::string& to) ;
 
 int     	breakupDirList(std::string path,
-                        	std::list<std::string> &subdirs);
+                        std::list<std::string> &subdirs);
 
 bool    	checkDirectory(std::string dir);
 bool    	checkCreateDirectory(std::string dir);
 bool    	cleanupDirectory(std::string dir, std::list<std::string> keepFiles);
 
-bool 		hashFile(std::string filepath,                
-		  std::string &name, std::string &hash, uint64_t &size);
+bool 		hashFile(std::string filepath,
+                std::string &name, std::string &hash, uint64_t &size);
 
-bool 		getFileHash(std::string filepath,                
-			std::string &hash, uint64_t &size);
+bool 		getFileHash(std::string filepath,
+                   std::string &hash, uint64_t &size);
 
 }
 
-	
+
 #endif

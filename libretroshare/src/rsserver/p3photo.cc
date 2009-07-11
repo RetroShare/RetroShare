@@ -31,113 +31,113 @@ RsPhoto *rsPhoto = NULL;
 
 RsPhotoDetails::RsPhotoDetails()
 {
-	return;
+    return;
 }
 
 RsPhotoShowDetails::RsPhotoShowDetails()
 {
-	return;
+    return;
 }
 
 p3Photo::p3Photo(p3PhotoService *p3ps)
-	:mPhoto(p3ps)
-{ 
-	return; 
+        :mPhoto(p3ps)
+{
+    return;
 }
 
-p3Photo::~p3Photo() 
-{ 
-	return; 
+p3Photo::~p3Photo()
+{
+    return;
 }
 
-        /* needs update? */
+/* needs update? */
 bool p3Photo::updated()
 {
-	return mPhoto->updated();
+    return mPhoto->updated();
 }
 
-	/* access data */
+/* access data */
 bool p3Photo::getPhotoList(std::string id, std::list<std::string> &hashs)
 {
-	return mPhoto->getPhotoList(id, hashs);
+    return mPhoto->getPhotoList(id, hashs);
 }
 
 bool p3Photo::getShowList(std::string id, std::list<std::string> &showIds)
 {
-	return mPhoto -> getShowList(id, showIds);
+    return mPhoto -> getShowList(id, showIds);
 }
 
 
 bool p3Photo::getShowDetails(std::string id, std::string showId, RsPhotoShowDetails &detail)
 {
-	return mPhoto -> getShowDetails(id, showId, detail);
+    return mPhoto -> getShowDetails(id, showId, detail);
 }
 
 
 bool p3Photo::getPhotoDetails(std::string id, std::string photoId, RsPhotoDetails &detail)
 {
-	return mPhoto -> getPhotoDetails(id, photoId, detail);
+    return mPhoto -> getPhotoDetails(id, photoId, detail);
 }
 
 
-	/* add / delete */
-std::string p3Photo::createShow(std::string name) 
+/* add / delete */
+std::string p3Photo::createShow(std::string name)
 {
-	return mPhoto -> createShow(name); 
+    return mPhoto -> createShow(name);
 }
 
 bool p3Photo::deleteShow(std::string showId)
 {
-	return mPhoto -> deleteShow(showId);
+    return mPhoto -> deleteShow(showId);
 }
 
 bool p3Photo::addPhotoToShow(std::string showId, std::string photoId, int16_t index)
 {
-	return mPhoto -> addPhotoToShow(showId, photoId, index);
+    return mPhoto -> addPhotoToShow(showId, photoId, index);
 }
 
 bool p3Photo::movePhotoInShow(std::string showId, std::string photoId, int16_t index)
 {
-	return mPhoto -> movePhotoInShow(showId, photoId, index);
+    return mPhoto -> movePhotoInShow(showId, photoId, index);
 }
 
 bool p3Photo::removePhotoFromShow(std::string showId, std::string photoId)
 {
-	return mPhoto -> removePhotoFromShow(showId, photoId);
+    return mPhoto -> removePhotoFromShow(showId, photoId);
 }
 
 
 std::string p3Photo::addPhoto(std::string path) /* add from file */
 {
-	return mPhoto -> addPhoto(path); /* add from file */
+    return mPhoto -> addPhoto(path); /* add from file */
 }
 
 bool p3Photo::addPhoto(std::string srcId, std::string photoId) /* add from peers photos */
 {
-	return mPhoto -> addPhoto(srcId, photoId); /* add from peers photos */
+    return mPhoto -> addPhoto(srcId, photoId); /* add from peers photos */
 
 }
 
 bool p3Photo::deletePhoto(std::string photoId)
 {
-	return mPhoto -> deletePhoto(photoId);
+    return mPhoto -> deletePhoto(photoId);
 }
 
 
-	/* modify properties (TODO) */
+/* modify properties (TODO) */
 bool p3Photo::modifyShow(std::string showId, std::wstring name, std::wstring comment)
 {
-	return mPhoto -> modifyShow(showId, name, comment);
+    return mPhoto -> modifyShow(showId, name, comment);
 }
 
 bool p3Photo::modifyPhoto(std::string photoId, std::wstring name, std::wstring comment)
 {
-	return mPhoto -> modifyPhoto(photoId, name, comment);
+    return mPhoto -> modifyPhoto(photoId, name, comment);
 }
 
 bool p3Photo::modifyShowComment(std::string showId, std::string photoId, std::wstring comment)
 {
-	return mPhoto -> modifyShowComment(showId, photoId, comment);
+    return mPhoto -> modifyShowComment(showId, photoId, comment);
 }
 
 

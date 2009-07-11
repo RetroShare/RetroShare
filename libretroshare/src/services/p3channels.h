@@ -34,56 +34,56 @@
 #include "serialiser/rschannelitems.h"
 
 
-class p3Channels: public p3GroupDistrib, public RsChannels 
+class p3Channels: public p3GroupDistrib, public RsChannels
 {
-	public:
+public:
 
-	p3Channels(uint16_t type, CacheStrapper *cs, CacheTransfer *cft, RsFiles *files,
-		std::string srcdir, std::string storedir, std::string channelsdir, p3AuthMgr *mgr);
-virtual ~p3Channels();
+    p3Channels(uint16_t type, CacheStrapper *cs, CacheTransfer *cft, RsFiles *files,
+               std::string srcdir, std::string storedir, std::string channelsdir, p3AuthMgr *mgr);
+    virtual ~p3Channels();
 
-/****************************************/
-/********* rsChannels Interface ***********/
+    /****************************************/
+    /********* rsChannels Interface ***********/
 
-virtual bool channelsChanged(std::list<std::string> &chanIds);
+    virtual bool channelsChanged(std::list<std::string> &chanIds);
 
-virtual std::string createChannel(std::wstring chanName, std::wstring chanDesc, uint32_t chanFlags);
+    virtual std::string createChannel(std::wstring chanName, std::wstring chanDesc, uint32_t chanFlags);
 
-virtual bool getChannelInfo(std::string cId, ChannelInfo &ci);
-virtual bool getChannelList(std::list<ChannelInfo> &chanList);
-virtual bool getChannelMsgList(std::string cId, std::list<ChannelMsgSummary> &msgs);
-virtual bool getChannelMessage(std::string cId, std::string mId, ChannelMsgInfo &msg);
+    virtual bool getChannelInfo(std::string cId, ChannelInfo &ci);
+    virtual bool getChannelList(std::list<ChannelInfo> &chanList);
+    virtual bool getChannelMsgList(std::string cId, std::list<ChannelMsgSummary> &msgs);
+    virtual bool getChannelMessage(std::string cId, std::string mId, ChannelMsgInfo &msg);
 
-virtual	bool ChannelMessageSend(ChannelMsgInfo &info);
+    virtual	bool ChannelMessageSend(ChannelMsgInfo &info);
 
-virtual bool channelSubscribe(std::string cId, bool subscribe);
+    virtual bool channelSubscribe(std::string cId, bool subscribe);
 
-/***************************************************************************************/
-/****************** Event Feedback (Overloaded form p3distrib) *************************/
-/***************************************************************************************/
+    /***************************************************************************************/
+    /****************** Event Feedback (Overloaded form p3distrib) *************************/
+    /***************************************************************************************/
 
-	protected:
-virtual void locked_notifyGroupChanged(GroupInfo &info, uint32_t flags);
-virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string);
-virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string);
-
-
-/****************************************/
-/********* Overloaded Functions *********/
-
-virtual RsSerialType *createSerialiser();
-
-virtual bool    locked_checkDistribMsg(RsDistribMsg *msg);
-virtual RsDistribGrp *locked_createPublicDistribGrp(GroupInfo &info);
-virtual RsDistribGrp *locked_createPrivateDistribGrp(GroupInfo &info);
+protected:
+    virtual void locked_notifyGroupChanged(GroupInfo &info, uint32_t flags);
+    virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string);
+    virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string);
 
 
-/****************************************/
+    /****************************************/
+    /********* Overloaded Functions *********/
 
-	private:
+    virtual RsSerialType *createSerialiser();
 
-	RsFiles *mRsFiles;
-	std::string mChannelsDir;
+    virtual bool    locked_checkDistribMsg(RsDistribMsg *msg);
+    virtual RsDistribGrp *locked_createPublicDistribGrp(GroupInfo &info);
+    virtual RsDistribGrp *locked_createPrivateDistribGrp(GroupInfo &info);
+
+
+    /****************************************/
+
+private:
+
+    RsFiles *mRsFiles;
+    std::string mChannelsDir;
 
 };
 

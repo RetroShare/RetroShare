@@ -56,7 +56,7 @@ struct TransferInfo
 
 class FileInfo
 {
-/* old BaseInfo Entries */
+    /* old BaseInfo Entries */
 public:
 
     FileInfo() :flags(0), mId(0) {}
@@ -66,7 +66,7 @@ public:
     /* allow this to be tweaked by the GUI Model */
     mutable unsigned int mId; /* (GUI) Model Id -> unique number */
 
-/* Old FileInfo Entries */
+    /* Old FileInfo Entries */
 public:
 
     static const int kRsFiStatusNone = 0;
@@ -74,7 +74,7 @@ public:
     static const int kRsFiStatusProgress = 2;
     static const int kRsFiStatusDone = 2;
 
-/* FileInfo(); */
+    /* FileInfo(); */
 
     int searchId;      /* 0 if none */
     std::string path;
@@ -154,7 +154,7 @@ struct RsConfig
 
 /* This is still rough, implement later! */
 
-        /* text based ones */
+/* text based ones */
 const std::string TypeExt  = "ext";
 const std::string TypeName = "name";
 const std::string TypeHash = "hash";

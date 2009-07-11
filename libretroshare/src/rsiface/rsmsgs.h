@@ -49,44 +49,44 @@
 
 #define RS_MSG_NEW       0x0010
 
-class MessageInfo 
+class MessageInfo
 {
-	public:
-	MessageInfo() {}
-	std::string msgId;
-	std::string srcId;
+public:
+    MessageInfo() {}
+    std::string msgId;
+    std::string srcId;
 
-	unsigned int msgflags;
+    unsigned int msgflags;
 
-	std::list<std::string> msgto;
-	std::list<std::string> msgcc;
-	std::list<std::string> msgbcc;
+    std::list<std::string> msgto;
+    std::list<std::string> msgcc;
+    std::list<std::string> msgbcc;
 
-	std::wstring title;
-	std::wstring msg;
+    std::wstring title;
+    std::wstring msg;
 
-	std::wstring attach_title;
-	std::wstring attach_comment;
-	std::list<FileInfo> files;
-	int size;  /* total of files */
-	int count; /* file count     */
+    std::wstring attach_title;
+    std::wstring attach_comment;
+    std::list<FileInfo> files;
+    int size;  /* total of files */
+    int count; /* file count     */
 
-	int ts;
+    int ts;
 };
 
-class MsgInfoSummary 
+class MsgInfoSummary
 {
-	public:
-	MsgInfoSummary() {}
+public:
+    MsgInfoSummary() {}
 
-	std::string msgId;
-	std::string srcId;
+    std::string msgId;
+    std::string srcId;
 
-	uint32_t msgflags;
+    uint32_t msgflags;
 
-	std::wstring title;
-	int count; /* file count     */
-	time_t ts;
+    std::wstring title;
+    int count; /* file count     */
+    time_t ts;
 
 };
 
@@ -94,13 +94,13 @@ class MsgInfoSummary
 #define RS_CHAT_PRIVATE 			0x0002
 #define RS_CHAT_AVATAR_AVAILABLE 	0x0004
 
-class ChatInfo 
+class ChatInfo
 {
-	public:
-	std::string rsid;
-	unsigned int chatflags;
-	std::string name;
-	std::wstring msg;
+public:
+    std::string rsid;
+    unsigned int chatflags;
+    std::string name;
+    std::wstring msg;
 };
 
 std::ostream &operator<<(std::ostream &out, const MessageInfo &info);
@@ -109,37 +109,41 @@ std::ostream &operator<<(std::ostream &out, const ChatInfo &info);
 class RsMsgs;
 extern RsMsgs   *rsMsgs;
 
-class RsMsgs 
+class RsMsgs
 {
-	public:
+public:
 
-	RsMsgs() { return; }
-virtual ~RsMsgs() { return; }
+    RsMsgs() {
+        return;
+    }
+    virtual ~RsMsgs() {
+        return;
+    }
 
-/****************************************/
-	/* Message Items */
+    /****************************************/
+    /* Message Items */
 
-virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList) = 0;
-virtual bool getMessage(std::string mId, MessageInfo &msg)  = 0;
+    virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList) = 0;
+    virtual bool getMessage(std::string mId, MessageInfo &msg)  = 0;
 
-virtual	bool MessageSend(MessageInfo &info)                 = 0;
-virtual bool MessageDelete(std::string mid)                 = 0;
-virtual bool MessageRead(std::string mid)                   = 0;
+    virtual	bool MessageSend(MessageInfo &info)                 = 0;
+    virtual bool MessageDelete(std::string mid)                 = 0;
+    virtual bool MessageRead(std::string mid)                   = 0;
 
-/****************************************/
-	/* Chat */
-virtual bool    chatAvailable() 			   = 0;
-virtual	bool 	ChatSend(ChatInfo &ci)                     = 0;
-virtual	bool	getNewChat(std::list<ChatInfo> &chats)	   = 0;
-virtual void   sendStatusString(const std::string& id,const std::string& status_string) = 0 ;
+    /****************************************/
+    /* Chat */
+    virtual bool    chatAvailable() 			   = 0;
+    virtual	bool 	ChatSend(ChatInfo &ci)                     = 0;
+    virtual	bool	getNewChat(std::list<ChatInfo> &chats)	   = 0;
+    virtual void   sendStatusString(const std::string& id,const std::string& status_string) = 0 ;
 
 // get avatar data for peer pid
-virtual void getAvatarData(std::string pid,unsigned char *& data,int& size) = 0 ;
-// set own avatar data 
-virtual void setOwnAvatarData(const unsigned char *data,int size) = 0 ;
-virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
+    virtual void getAvatarData(std::string pid,unsigned char *& data,int& size) = 0 ;
+// set own avatar data
+    virtual void setOwnAvatarData(const unsigned char *data,int size) = 0 ;
+    virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 
-/****************************************/
+    /****************************************/
 
 };
 

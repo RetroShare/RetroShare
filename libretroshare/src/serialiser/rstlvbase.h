@@ -42,7 +42,7 @@
  *
  * Size is the total size of the TLV Field (including the 4 byte header)
  *
- * Like the lowlevel packing routines. They are usually 
+ * Like the lowlevel packing routines. They are usually
  * created in pairs - one to pack the data, the other to unpack.
  *
  * GetTlvXXX(void *data, uint32_t size, uint32_t *offset, XXX *out);
@@ -57,7 +57,7 @@
  * *in / *out - the data to (un)pack.
  *
  *
- * BIG TLV Fields have now been added. 
+ * BIG TLV Fields have now been added.
  * If the Tlv Type & TLV_BIGLEN_BIT
  * ---------------------------------------------------------
  * | TLV TYPE (2 bytes)| TLV LEN (4 bytes)                  |
@@ -166,7 +166,7 @@ const uint16_t TLV_TYPE_STR_KEYID     = 0x00a4;
 const uint16_t TLV_TYPE_WSTR_CATEGORY = 0x00b0;
 
 
-	/**** Binary Types ****/
+/**** Binary Types ****/
 const uint16_t TLV_TYPE_CERT_XPGP_DER = 0x0100;
 const uint16_t TLV_TYPE_CERT_X509     = 0x0101;
 const uint16_t TLV_TYPE_CERT_OPENPGP  = 0x0102;
@@ -184,7 +184,7 @@ const uint16_t TLV_TYPE_BIN_FILEDATA  = 0x0140; /* Used - ACTIVE! */
 const uint16_t TLV_TYPE_BIN_SERIALISE = 0x0150; /* Used (Generic - Distrib) */
 
 
-	/**** Compound Types ****/
+/**** Compound Types ****/
 const uint16_t TLV_TYPE_FILEITEM      = 0x1000;
 const uint16_t TLV_TYPE_FILESET       = 0x1001;
 const uint16_t TLV_TYPE_FILEDATA      = 0x1002;
@@ -195,7 +195,7 @@ const uint16_t TLV_TYPE_KEYVALUESET   = 0x1011;
 const uint16_t TLV_TYPE_WKEYVALUESET  = 0x1013;
 
 const uint16_t TLV_TYPE_PEERSET       = 0x1020;
-const uint16_t TLV_TYPE_SERVICESET    = 0x1030; 
+const uint16_t TLV_TYPE_SERVICESET    = 0x1030;
 
 const uint16_t TLV_TYPE_SECURITYKEY   = 0x1040;
 const uint16_t TLV_TYPE_SECURITYKEYSET= 0x1041;
@@ -213,8 +213,8 @@ bool     SetTlvSize(void *data, uint32_t size, uint16_t len);
 
 
 /**** Generic TLV Functions ****
- * This have the same data (int or string for example), 
- * but they can have different types eg. a string could represent a name or a path, 
+ * This have the same data (int or string for example),
+ * but they can have different types eg. a string could represent a name or a path,
  * so we include a type parameter in the arguments
  */
 

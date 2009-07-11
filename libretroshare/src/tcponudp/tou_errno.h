@@ -33,13 +33,13 @@
 extern "C" {
 #endif
 
-/*******
- * This defines the unix errno's for windows, these are
- * needed to determine error types, these are defined 
- * to be the same as the unix ones. 
- */
+    /*******
+     * This defines the unix errno's for windows, these are
+     * needed to determine error types, these are defined
+     * to be the same as the unix ones.
+     */
 
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+    /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifdef WINDOWS_SYS
 
 #define EAGAIN		11
@@ -48,7 +48,7 @@ extern "C" {
 #define EUSERS 		87
 #define ENOTSOCK 	88
 
-#define EOPNOTSUPP 	95 
+#define EOPNOTSUPP 	95
 
 #define EADDRINUSE 	98
 #define EADDRNOTAVAIL	99
@@ -66,7 +66,7 @@ extern "C" {
 
 
 #endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+    /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 #ifdef  __cplusplus
 } /* C Interface */

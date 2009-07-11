@@ -30,21 +30,21 @@
 
 class dhtSearchData
 {
-	public:
-	OpenDHTMgr *mgr;
-	DHTClient *client;
-	std::string key;
+public:
+    OpenDHTMgr *mgr;
+    DHTClient *client;
+    std::string key;
 };
 
 
 class dhtPublishData
 {
-	public:
-	OpenDHTMgr *mgr;
-	DHTClient *client;
-	std::string key;
-	std::string value;
-	uint32_t    ttl;
+public:
+    OpenDHTMgr *mgr;
+    DHTClient *client;
+    std::string key;
+    std::string value;
+    uint32_t    ttl;
 };
 
 /* Thread routines */
@@ -52,165 +52,165 @@ class dhtPublishData
 extern "C" void* doDhtPublish(void* p)
 {
 #ifdef OPENDHT_DEBUG
-	std::cerr << "in doDhtPublish(void* p)" << std::endl ;
+    std::cerr << "in doDhtPublish(void* p)" << std::endl ;
 #endif
-	dhtPublishData *data = (dhtPublishData *) p;
-  	if(data == NULL) 
-	{
-		pthread_exit(NULL);
-		return NULL;
-	}
+    dhtPublishData *data = (dhtPublishData *) p;
+    if (data == NULL)
+    {
+        pthread_exit(NULL);
+        return NULL;
+    }
 
-	/* publish it! */
-	if(data->mgr != NULL && data->client != NULL)
-		data->client->publishKey(data->key, data->value, data->ttl);
+    /* publish it! */
+    if (data->mgr != NULL && data->client != NULL)
+        data->client->publishKey(data->key, data->value, data->ttl);
 
-	delete data;
-	pthread_exit(NULL);
+    delete data;
+    pthread_exit(NULL);
 
-	return NULL;
+    return NULL;
 }
 
 
 extern "C" void* doDhtSearch(void* p)
 {
-	dhtSearchData *data = (dhtSearchData *) p;
-  	if ((!data) || (!data->mgr) || (!data->client))
-	{
-		pthread_exit(NULL);
+    dhtSearchData *data = (dhtSearchData *) p;
+    if ((!data) || (!data->mgr) || (!data->client))
+    {
+        pthread_exit(NULL);
 
-		return NULL;
-	}
+        return NULL;
+    }
 
-	/* search it! */
-	std::list<std::string> values;
+    /* search it! */
+    std::list<std::string> values;
 
-	if (data->client->searchKey(data->key, values))
-	{
-		/* callback */
-		std::list<std::string>::iterator it;
-		for(it = values.begin(); it != values.end(); it++)
-		{
-			data->mgr->resultDHT(data->key, *it);
-		}
-	}
+    if (data->client->searchKey(data->key, values))
+    {
+        /* callback */
+        std::list<std::string>::iterator it;
+        for (it = values.begin(); it != values.end(); it++)
+        {
+            data->mgr->resultDHT(data->key, *it);
+        }
+    }
 
-	delete data;
-	pthread_exit(NULL);
+    delete data;
+    pthread_exit(NULL);
 
-	return NULL;
+    return NULL;
 }
 
 
 
 
 OpenDHTMgr::OpenDHTMgr(std::string ownId, pqiConnectCb* cb, std::string configdir)
-	:p3DhtMgr(ownId, cb), mConfigDir(configdir)
+        :p3DhtMgr(ownId, cb), mConfigDir(configdir)
 {
-	return;
+    return;
 }
 
 
-        /********** OVERLOADED FROM p3DhtMgr ***************/
+/********** OVERLOADED FROM p3DhtMgr ***************/
 bool    OpenDHTMgr::dhtInit()
 {
-	std::string configpath = mConfigDir;
+    std::string configpath = mConfigDir;
 
-	/* load up DHT gateways */
-	mClient = new OpenDHTClient();
-	//mClient = new DHTClientDummy();
+    /* load up DHT gateways */
+    mClient = new OpenDHTClient();
+    //mClient = new DHTClientDummy();
 
-	std::string filename = configpath;
-	if (configpath.size() > 0)
-	{
-		filename += "/";
-	}
-	filename += "ODHTservers.txt";
+    std::string filename = configpath;
+    if (configpath.size() > 0)
+    {
+        filename += "/";
+    }
+    filename += "ODHTservers.txt";
 
-	/* check file date first */
-	if (mClient -> checkServerFile(filename))
-	{
-		return mClient -> loadServers(filename);
-	}
-	else if (!mClient -> loadServersFromWeb(filename))
-	{
-		return mClient -> loadServers(filename);
-	}
-	return true;
+    /* check file date first */
+    if (mClient -> checkServerFile(filename))
+    {
+        return mClient -> loadServers(filename);
+    }
+    else if (!mClient -> loadServersFromWeb(filename))
+    {
+        return mClient -> loadServers(filename);
+    }
+    return true;
 }
 
 bool    OpenDHTMgr::dhtShutdown()
 {
-	/* do nothing */
-	if (mClient)
-	{
-		delete mClient;
-		mClient = NULL;
-		return true;
-	}
+    /* do nothing */
+    if (mClient)
+    {
+        delete mClient;
+        mClient = NULL;
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 bool    OpenDHTMgr::dhtActive()
 {
-	/* do nothing */
-	if ((mClient) && (mClient -> dhtActive()))
-	{
-		return true;
-	}
-	return false;
+    /* do nothing */
+    if ((mClient) && (mClient -> dhtActive()))
+    {
+        return true;
+    }
+    return false;
 }
 
 int     OpenDHTMgr::status(std::ostream &out)
 {
-	/* do nothing */
-	return 1;
+    /* do nothing */
+    return 1;
 }
 
 
 /* Blocking calls (only from thread) */
 bool OpenDHTMgr::publishDHT(std::string key, std::string value, uint32_t ttl)
 {
-	/* launch a publishThread */
-	pthread_t tid;
+    /* launch a publishThread */
+    pthread_t tid;
 
 #ifdef OPENDHT_DEBUG
-	std::cerr << "in publishDHT(.......)" << std::endl ;
+    std::cerr << "in publishDHT(.......)" << std::endl ;
 #endif
 
-	dhtPublishData *pub = new dhtPublishData;
-	pub->mgr = this;
-	pub->client = mClient;
-	pub->key = key;
-	pub->value = value;
-	pub->ttl = ttl;
+    dhtPublishData *pub = new dhtPublishData;
+    pub->mgr = this;
+    pub->client = mClient;
+    pub->key = key;
+    pub->value = value;
+    pub->ttl = ttl;
 
-        void *data = (void *) pub;
-	pthread_create(&tid, 0, &doDhtPublish, data);
-	pthread_detach(tid); /* so memory is reclaimed in linux */
+    void *data = (void *) pub;
+    pthread_create(&tid, 0, &doDhtPublish, data);
+    pthread_detach(tid); /* so memory is reclaimed in linux */
 
-	return true;
+    return true;
 }
 
 bool OpenDHTMgr::searchDHT(std::string key)
 {
-	/* launch a publishThread */
-	pthread_t tid;
+    /* launch a publishThread */
+    pthread_t tid;
 
-	dhtSearchData *dht = new dhtSearchData;
-	dht->mgr = this;
-	dht->client = mClient;
-	dht->key = key;
+    dhtSearchData *dht = new dhtSearchData;
+    dht->mgr = this;
+    dht->client = mClient;
+    dht->key = key;
 
-        void *data = (void *) dht;
-	pthread_create(&tid, 0, &doDhtSearch, data);
-	pthread_detach(tid); /* so memory is reclaimed in linux */
+    void *data = (void *) dht;
+    pthread_create(&tid, 0, &doDhtSearch, data);
+    pthread_detach(tid); /* so memory is reclaimed in linux */
 
-	return true;
+    return true;
 }
 
-        /********** OVERLOADED FROM p3DhtMgr ***************/
+/********** OVERLOADED FROM p3DhtMgr ***************/
 
 
 

@@ -35,9 +35,9 @@ namespace DHT_Bootstrap {
 
 void usage(char *name)
 {
-	std::cerr << "USAGE: " << name << " -o OwnId [ -p PeerId1 [ -p PeerId2 [ ... ] ] ] ";
-	std::cerr << std::endl;
-	exit(1);
+    std::cerr << "USAGE: " << name << " -o OwnId [ -p PeerId1 [ -p PeerId2 [ ... ] ] ] ";
+    std::cerr << std::endl;
+    exit(1);
 }
 
 
@@ -52,20 +52,20 @@ pqiConnectCbStun::~pqiConnectCbStun()
 
 void pqiConnectCbStun::addPeer(std::string id)
 {
-	RsStackMutex stack(peerMtx); /**** LOCK MUTEX ***/
-	std::map<std::string, StunDetails>::iterator it;
-	it = peerMap.find(id);
-	if (it == peerMap.end())
-	{
-		StunDetails sd;
-		sd.id = id;
-		peerMap[id] = sd;
-	}
+    RsStackMutex stack(peerMtx); /**** LOCK MUTEX ***/
+    std::map<std::string, StunDetails>::iterator it;
+    it = peerMap.find(id);
+    if (it == peerMap.end())
+    {
+        StunDetails sd;
+        sd.id = id;
+        peerMap[id] = sd;
+    }
 }
 
 void pqiConnectCbStun::peerStatus(std::string id,
-                        struct sockaddr_in laddr, struct sockaddr_in raddr,
-                        uint32_t type, uint32_t mode, uint32_t source)
+                                  struct sockaddr_in laddr, struct sockaddr_in raddr,
+                                  uint32_t type, uint32_t mode, uint32_t source)
 {
 }
 
@@ -84,7 +84,7 @@ void pqiConnectCbStun::printPeerStatus()
 
     std::map<std::string, StunDetails>::iterator it;
 
-    for(it = peerMap.begin(); it != peerMap.end(); it++)
+    for (it = peerMap.begin(); it != peerMap.end(); it++)
     {
         std::cerr << RsUtil::BinToHex(it->first);
 
@@ -132,14 +132,14 @@ void pqiConnectCbStun::printPeerStatus()
             std::cerr << " " << time(NULL) - it->second.lastStatus;
             std::cerr << " secs ago ";
         }
-            std::cerr << std::endl;
+        std::cerr << std::endl;
     }
 }
 
 void pqiConnectCbStun::stunPeer(std::string id, struct sockaddr_in peeraddr)
 {
     std::cerr << "stunPeer: 0x" << RsUtil::BinToHex(id);
-	
+
     std::cerr << std::endl;
 
     /* launch a publishThread */
@@ -157,7 +157,7 @@ void pqiConnectCbStun::stunPeer(std::string id, struct sockaddr_in peeraddr)
 
 
 void pqiConnectCbStun::peerConnectRequest(std::string id,
-                        struct sockaddr_in raddr, uint32_t source)
+        struct sockaddr_in raddr, uint32_t source)
 {
 }
 
@@ -168,19 +168,19 @@ void pqiConnectCbStun::stunStatus(std::string id, struct sockaddr_in raddr, uint
     {
         RsStackMutex stack(peerMtx); /**** LOCK MUTEX ***/
 
-	std::map<std::string, StunDetails>::iterator it;
-	it = peerMap.find(id);
-	if (it == peerMap.end())
-	{
+        std::map<std::string, StunDetails>::iterator it;
+        it = peerMap.find(id);
+        if (it == peerMap.end())
+        {
             std::cerr << "peerStatus() for unknown Peer id: 0x" << RsUtil::BinToHex(id);
             std::cerr << std::endl;
             return;
-	}
-	it->second.raddr = raddr;
-	it->second.type  = type;
-	it->second.lastStatus = time(NULL);
+        }
+        it->second.raddr = raddr;
+        it->second.type  = type;
+        it->second.lastStatus = time(NULL);
 
-	it->second.stunAttempts++; /* as we are about to try! */
+        it->second.stunAttempts++; /* as we are about to try! */
     }
 
     printPeerStatus();
@@ -208,7 +208,7 @@ void pqiConnectCbStun::stunSuccess(std::string id, struct sockaddr_in toaddr, st
 
     printPeerStatus();
 }
-	
+
 }
 
 extern "C" void* doStunPeer(void* p)
@@ -222,7 +222,7 @@ extern "C" void* doStunPeer(void* p)
     /* stun it! */
     if (stunPeer(data->toaddr, data->ansaddr))
     {
-    data->stunCb->stunSuccess(data->id, data->toaddr, data->ansaddr);
+        data->stunCb->stunSuccess(data->id, data->toaddr, data->ansaddr);
     }
 
     delete data;
@@ -238,98 +238,98 @@ extern "C" void* doStunPeer(void* p)
 
 int main(int argc, char **argv)
 {
-	int c;
-	bool setOwnId = false;
-	std::string ownId;
-	std::list<std::string> peerIds;
-	
-	while(-1 != (c = getopt(argc, argv, "o:p:")))
-	{
-		switch (c)
-		{
-		case 'o':
-			ownId = optarg;
-			setOwnId = true;
-			break;
-		case 'p':
-			peerIds.push_back(std::string(optarg));
-			break;
-		default:
-			usage(argv[0]);
-			break;
-		}
-	}
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#else
-/* for static PThreads under windows... we need to init the library...
- */
-  #ifdef PTW32_STATIC_LIB
-         pthread_win32_process_attach_np();
-  #endif
+    int c;
+    bool setOwnId = false;
+    std::string ownId;
+    std::list<std::string> peerIds;
 
-        // Windows Networking Init.
-        WORD wVerReq = MAKEWORD(2,2);
-        WSADATA wsaData;
-
-        if (0 != WSAStartup(wVerReq, &wsaData))
+    while (-1 != (c = getopt(argc, argv, "o:p:")))
+    {
+        switch (c)
         {
-                std::cerr << "Failed to Startup Windows Networking";
-                std::cerr << std::endl;
+        case 'o':
+            ownId = optarg;
+            setOwnId = true;
+            break;
+        case 'p':
+            peerIds.push_back(std::string(optarg));
+            break;
+        default:
+            usage(argv[0]);
+            break;
         }
-        else
-        {
-                std::cerr << "Started Windows Networking";
-                std::cerr << std::endl;
-        }
-
-#endif
-
-	srand(time(NULL)); /* randomise! */
-
-	if (!setOwnId)
-	{
-		std::cerr << "Missing OwnId: Setting dummy Id";
-		std::cerr << std::endl;
-
-		setOwnId = true;
-		ownId = "dummyOwnId";
-	}
-
-	pqiConnectCbStun cbStun;
-	OpenDHTMgr  dhtTester(ownId, &cbStun, ".");
-
-	/* startup dht */
-	std::cerr << "Starting up DhtTester()" << std::endl;
-	dhtTester.start();
-
-	/* wait for a little before switching on */
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+    }
+    /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
-        sleep(1);
+    /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #else
-        Sleep(1000);
+    /* for static PThreads under windows... we need to init the library...
+     */
+#ifdef PTW32_STATIC_LIB
+    pthread_win32_process_attach_np();
 #endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
+    // Windows Networking Init.
+    WORD wVerReq = MAKEWORD(2,2);
+    WSADATA wsaData;
 
-	std::cerr << "Switching on DhtTester()" << std::endl;
-	dhtTester.enable(true);
+    if (0 != WSAStartup(wVerReq, &wsaData))
+    {
+        std::cerr << "Failed to Startup Windows Networking";
+        std::cerr << std::endl;
+    }
+    else
+    {
+        std::cerr << "Started Windows Networking";
+        std::cerr << std::endl;
+    }
 
-	/* wait loop */
-	while(1)
-	{
-		cbStun.printPeerStatus();
-		std::cerr << "Main waiting..." << std::endl;
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#endif
+
+    srand(time(NULL)); /* randomise! */
+
+    if (!setOwnId)
+    {
+        std::cerr << "Missing OwnId: Setting dummy Id";
+        std::cerr << std::endl;
+
+        setOwnId = true;
+        ownId = "dummyOwnId";
+    }
+
+    pqiConnectCbStun cbStun;
+    OpenDHTMgr  dhtTester(ownId, &cbStun, ".");
+
+    /* startup dht */
+    std::cerr << "Starting up DhtTester()" << std::endl;
+    dhtTester.start();
+
+    /* wait for a little before switching on */
+    /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
-	        sleep(30);
+    sleep(1);
 #else
-		Sleep(30000);
+    Sleep(1000);
 #endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-	}
+    /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+
+
+    std::cerr << "Switching on DhtTester()" << std::endl;
+    dhtTester.enable(true);
+
+    /* wait loop */
+    while (1)
+    {
+        cbStun.printPeerStatus();
+        std::cerr << "Main waiting..." << std::endl;
+        /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS
+        sleep(30);
+#else
+        Sleep(30000);
+#endif
+        /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+    }
 };
 
 
@@ -338,77 +338,77 @@ int main(int argc, char **argv)
 bool stunPeer(struct sockaddr_in toaddr, struct sockaddr_in &ansaddr)
 {
 #ifdef BOOTSTRAP_DEBUG
-        std::cerr << "stunPeer: " << toaddr << std::endl;
+    std::cerr << "stunPeer: " << toaddr << std::endl;
 #endif
-	/* open a socket */
-	int sockfd = tounet_socket(PF_INET, SOCK_DGRAM, 0);
-        if (-1 == tounet_fcntl(sockfd, F_SETFL, O_NONBLOCK))
-        {
+    /* open a socket */
+    int sockfd = tounet_socket(PF_INET, SOCK_DGRAM, 0);
+    if (-1 == tounet_fcntl(sockfd, F_SETFL, O_NONBLOCK))
+    {
 #ifdef BOOTSTRAP_DEBUG
-                std::cerr << "Failed to Make Non-Blocking" << std::endl;
+        std::cerr << "Failed to Make Non-Blocking" << std::endl;
 #endif
-        }
+    }
 
-	/* create a stun packet */
-	char stunpkt[100];
-	int  maxlen = 100;
-	int  len = maxlen;
+    /* create a stun packet */
+    char stunpkt[100];
+    int  maxlen = 100;
+    int  len = maxlen;
 
-	UdpStun_generate_stun_pkt((void *) stunpkt, &len);
+    UdpStun_generate_stun_pkt((void *) stunpkt, &len);
 
 #ifdef BOOTSTRAP_DEBUG
-        std::cerr << "stunPeer() Send packet length: " << len << std::endl;
+    std::cerr << "stunPeer() Send packet length: " << len << std::endl;
 #endif
 
-	/* send stun packet */
-        tounet_sendto(sockfd, stunpkt, len, 0, 
-                           (struct sockaddr *) &(toaddr),
-                                sizeof(toaddr));
+    /* send stun packet */
+    tounet_sendto(sockfd, stunpkt, len, 0,
+                  (struct sockaddr *) &(toaddr),
+                  sizeof(toaddr));
 
-	/* wait */
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+    /* wait */
+    /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
-	        sleep(2);
+    sleep(2);
 #else
-		Sleep(2000);
+    Sleep(2000);
 #endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+    /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-	/* check for response */
-        struct sockaddr_in fromaddr;
-        socklen_t fromsize = sizeof(fromaddr);
-        int insize = maxlen;
+    /* check for response */
+    struct sockaddr_in fromaddr;
+    socklen_t fromsize = sizeof(fromaddr);
+    int insize = maxlen;
 
-        insize = tounet_recvfrom(sockfd,stunpkt,insize,0,
-                        (struct sockaddr*)&fromaddr,&fromsize);
+    insize = tounet_recvfrom(sockfd,stunpkt,insize,0,
+                             (struct sockaddr*)&fromaddr,&fromsize);
 
-	tounet_close(sockfd);
+    tounet_close(sockfd);
 
-        if (0 >= insize)
-        {
+    if (0 >= insize)
+    {
 #ifdef BOOTSTRAP_DEBUG
-                std::cerr << "No Stun response from: " << toaddr;
-                std::cerr << std::endl;
-#endif
-		return false;
-	}
-
-	if (UdpStun_response(stunpkt, insize, ansaddr))
-	{
-#ifdef BOOTSTRAP_DEBUG
-                std::cerr << "received Stun Reply from : " << fromaddr;
-                std::cerr << std::endl;
-                std::cerr << "External Address is: " << ansaddr;
-                std::cerr << std::endl;
-#endif
-                return true;
-        }
-
-#ifdef BOOTSTRAP_DEBUG
-        std::cerr << "received Data (not Stun Reply) from : " << fromaddr;
+        std::cerr << "No Stun response from: " << toaddr;
         std::cerr << std::endl;
 #endif
         return false;
+    }
+
+    if (UdpStun_response(stunpkt, insize, ansaddr))
+    {
+#ifdef BOOTSTRAP_DEBUG
+        std::cerr << "received Stun Reply from : " << fromaddr;
+        std::cerr << std::endl;
+        std::cerr << "External Address is: " << ansaddr;
+        std::cerr << std::endl;
+#endif
+        return true;
+    }
+
+#ifdef BOOTSTRAP_DEBUG
+    std::cerr << "received Data (not Stun Reply) from : " << fromaddr;
+    std::cerr << std::endl;
+#endif
+    return false;
 }
 
 #endif // JUST_LIBRARY

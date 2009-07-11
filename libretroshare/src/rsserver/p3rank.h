@@ -31,34 +31,34 @@
 
 class p3Rank: public RsRanks
 {
-	public:
+public:
 
-	p3Rank(p3Ranking *ranking);
-virtual ~p3Rank(); 
+    p3Rank(p3Ranking *ranking);
+    virtual ~p3Rank();
 
-        /* needs update? */
-virtual bool updated();
+    /* needs update? */
+    virtual bool updated();
 
-        /* Set Sort Methods */
-virtual bool setSortPeriod(uint32_t period);
-virtual bool setSortMethod(uint32_t type);
-virtual bool clearPeerFilter();
-virtual bool setPeerFilter(std::list<std::string> peers);
+    /* Set Sort Methods */
+    virtual bool setSortPeriod(uint32_t period);
+    virtual bool setSortMethod(uint32_t type);
+    virtual bool clearPeerFilter();
+    virtual bool setPeerFilter(std::list<std::string> peers);
 
-        /* get Ids */
-virtual uint32_t getRankingsCount();
-virtual float   getMaxRank();
-virtual bool    getRankings(uint32_t first, uint32_t count, std::list<std::string> &rids);
-virtual bool    getRankDetails(std::string rid, RsRankDetails &details);
+    /* get Ids */
+    virtual uint32_t getRankingsCount();
+    virtual float   getMaxRank();
+    virtual bool    getRankings(uint32_t first, uint32_t count, std::list<std::string> &rids);
+    virtual bool    getRankDetails(std::string rid, RsRankDetails &details);
 
-        /* Add New Comment / Msg */
-virtual std::string newRankMsg(std::wstring link, std::wstring title, std::wstring comment, int32_t score);
-virtual bool updateComment(std::string rid, std::wstring comment, int32_t score);
-virtual std::string anonRankMsg(std::string rid, std::wstring link, std::wstring title);
+    /* Add New Comment / Msg */
+    virtual std::string newRankMsg(std::wstring link, std::wstring title, std::wstring comment, int32_t score);
+    virtual bool updateComment(std::string rid, std::wstring comment, int32_t score);
+    virtual std::string anonRankMsg(std::string rid, std::wstring link, std::wstring title);
 
-	private:
+private:
 
-	p3Ranking *mRank;
+    p3Ranking *mRank;
 };
 
 #endif

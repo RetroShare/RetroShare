@@ -49,9 +49,11 @@ class p3Files: public RsFiles
 public:
 
     p3Files(filedexserver *s, RsServer *c, p3AuthMgr *a)
-        :mServer(s), mCore(c), mAuthMgr(a)  {}
+            :mServer(s), mCore(c), mAuthMgr(a)  {}
 
-    virtual ~p3Files() { return; }
+    virtual ~p3Files() {
+        return;
+    }
 
     /****************************************/
     /* 1) Access to downloading / uploading files.  */
@@ -62,8 +64,8 @@ public:
 
     /* 2) Control of Downloads. */
     virtual bool FileRequest(std::string fname, std::string hash, uint64_t size,
-			std::string dest, uint32_t flags,
-                        std::list<std::string> srcIds) = 0;
+                             std::string dest, uint32_t flags,
+                             std::list<std::string> srcIds) = 0;
     virtual bool FileCancel(std::string hash) = 0;
     virtual bool FileControl(std::string hash, uint32_t flags) = 0;
     virtual bool FileClearCompleted() = 0;
@@ -71,10 +73,10 @@ public:
     /* 3) Addition of Extra Files... From File System */
 
     virtual bool ExtraFileAdd(std::string fname, std::string hash, uint64_t size,
-                                uint32_t period, uint32_t flags) = 0;
+                              uint32_t period, uint32_t flags) = 0;
     virtual bool ExtraFileRemove(std::string hash, uint32_t flags) = 0;
     virtual bool ExtraFileHash(std::string localpath,
-				uint32_t period, uint32_t flags);
+                               uint32_t period, uint32_t flags);
     virtual bool ExtraFileStatus(std::string localpath, FileInfo &info) = 0;
 
     /* 4) Search and Listing Interface */
@@ -102,7 +104,7 @@ public:
     virtual bool    removeSharedDirectory(std::string dir) = 0;
 
 
-	/* Update functions! */
+    /* Update functions! */
     int     UpdateAllTransfers() = 0;
 
 private:

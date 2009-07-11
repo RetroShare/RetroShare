@@ -37,10 +37,14 @@ extern RsDisc   *rsDisc;
 
 class RsDisc
 {
-    public:
+public:
 
-    RsDisc()  { return; }
-    virtual ~RsDisc() { return; }
+    RsDisc()  {
+        return;
+    }
+    virtual ~RsDisc() {
+        return;
+    }
 
     virtual bool	getDiscFriends(std::string id, std::list<std::string> &friends) = 0;
     virtual bool 	getDiscVersions(std::map<std::string, std::string> &versions) = 0;

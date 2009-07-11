@@ -28,10 +28,10 @@
 #ifndef XPGPCERT_H
 #define XPGPCERT_H
 
-/* This is the trial XPGP version 
+/* This is the trial XPGP version
  *
  * It has to be compiled against XPGP ssl version.
- * this is only a hacked up version, merging 
+ * this is only a hacked up version, merging
  * (so both can operate in parallel will happen later)
  *
  */
@@ -66,18 +66,20 @@ class sslroot;
 
 class cert: public Person
 {
-	public:
-	cert();
-virtual	~cert();
+public:
+    cert();
+    virtual	~cert();
 
-virtual std::string Signature();
-std::string	Hash();
-void	Hash(std::string);
-std::string	PeerId() { return Signature(); }
+    virtual std::string Signature();
+    std::string	Hash();
+    void	Hash(std::string);
+    std::string	PeerId() {
+        return Signature();
+    }
 
-	XPGP *certificate;
-	std::string hash;
-	std::string peerid;
+    XPGP *certificate;
+    std::string hash;
+    std::string peerid;
 };
 
 
@@ -92,7 +94,7 @@ public:
     int	active();
     int	setcertdir(char *path);
     int	initssl(const char *srvr_cert, const char *priv_key,
-    const char *passwd);
+                const char *passwd);
     int	closessl();
 
     /* Context handling  */

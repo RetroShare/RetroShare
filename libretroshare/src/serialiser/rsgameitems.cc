@@ -37,173 +37,173 @@
 
 RsGameItem::~RsGameItem()
 {
-	return;
+    return;
 }
 
 void 	RsGameItem::clear()
 {
-	serviceId = 0;
-	numPlayers = 0;
-	msg = 0;
+    serviceId = 0;
+    numPlayers = 0;
+    msg = 0;
 
-	gameId.clear();
-	gameComment.clear();
-	players.TlvClear();
+    gameId.clear();
+    gameComment.clear();
+    players.TlvClear();
 }
 
 std::ostream &RsGameItem::print(std::ostream &out, uint16_t indent)
 {
-        printRsItemBase(out, "RsGameItem", indent);
-	uint16_t int_Indent = indent + 2;
-        printIndent(out, int_Indent);
-        out << "serviceId: " << serviceId << std::endl;
-        printIndent(out, int_Indent);
-        out << "numPlayers:  " << numPlayers << std::endl;
-        printIndent(out, int_Indent);
-        out << "msg:  " << msg << std::endl;
+    printRsItemBase(out, "RsGameItem", indent);
+    uint16_t int_Indent = indent + 2;
+    printIndent(out, int_Indent);
+    out << "serviceId: " << serviceId << std::endl;
+    printIndent(out, int_Indent);
+    out << "numPlayers:  " << numPlayers << std::endl;
+    printIndent(out, int_Indent);
+    out << "msg:  " << msg << std::endl;
 
-        printIndent(out, int_Indent);
-        out << "gameId:  " << gameId << std::endl;
+    printIndent(out, int_Indent);
+    out << "gameId:  " << gameId << std::endl;
 
-        printIndent(out, int_Indent);
-	std::string cnv_comment(gameComment.begin(), gameComment.end());
-        out << "msg:  " << cnv_comment  << std::endl;
+    printIndent(out, int_Indent);
+    std::string cnv_comment(gameComment.begin(), gameComment.end());
+    out << "msg:  " << cnv_comment  << std::endl;
 
-        printIndent(out, int_Indent);
-        out << "Players Ids: " << std::endl;
-	players.print(out, int_Indent);
+    printIndent(out, int_Indent);
+    out << "Players Ids: " << std::endl;
+    players.print(out, int_Indent);
 
-        printRsItemEnd(out, "RsGameItem", indent);
-        return out;
+    printRsItemEnd(out, "RsGameItem", indent);
+    return out;
 }
 
 
 uint32_t    RsGameSerialiser::sizeItem(RsGameItem *item)
 {
-	uint32_t s = 8; /* header */
-	s += 4; /* serviceId */
-	s += 4; /* numPlayers  */
-	s += 4; /* msg */
-	s += GetTlvStringSize(item->gameId);
-	s += GetTlvWideStringSize(item->gameComment);
-	s += item->players.TlvSize();
+    uint32_t s = 8; /* header */
+    s += 4; /* serviceId */
+    s += 4; /* numPlayers  */
+    s += 4; /* msg */
+    s += GetTlvStringSize(item->gameId);
+    s += GetTlvWideStringSize(item->gameComment);
+    s += item->players.TlvSize();
 
-	return s;
+    return s;
 }
 
 /* serialise the data to the buffer */
 bool     RsGameSerialiser::serialiseItem(RsGameItem *item, void *data, uint32_t *pktsize)
 {
-	uint32_t tlvsize = sizeItem(item);
-	uint32_t offset = 0;
+    uint32_t tlvsize = sizeItem(item);
+    uint32_t offset = 0;
 
-	if (*pktsize < tlvsize)
-		return false; /* not enough space */
+    if (*pktsize < tlvsize)
+        return false; /* not enough space */
 
-	*pktsize = tlvsize;
+    *pktsize = tlvsize;
 
-	bool ok = true;
+    bool ok = true;
 
-	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+    ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
 #ifdef RSSERIAL_DEBUG
-	std::cerr << "RsGameSerialiser::serialiseItem() Header: " << ok << std::endl;
-	std::cerr << "RsGameSerialiser::serialiseItem() Size: " << tlvsize << std::endl;
+    std::cerr << "RsGameSerialiser::serialiseItem() Header: " << ok << std::endl;
+    std::cerr << "RsGameSerialiser::serialiseItem() Size: " << tlvsize << std::endl;
 #endif
 
-	/* skip the header */
-	offset += 8;
+    /* skip the header */
+    offset += 8;
 
-	/* add mandatory parts first */
-	ok &= setRawUInt32(data, tlvsize, &offset, item->serviceId);
-	ok &= setRawUInt32(data, tlvsize, &offset, item->numPlayers);
-	ok &= setRawUInt32(data, tlvsize, &offset, item->msg);
+    /* add mandatory parts first */
+    ok &= setRawUInt32(data, tlvsize, &offset, item->serviceId);
+    ok &= setRawUInt32(data, tlvsize, &offset, item->numPlayers);
+    ok &= setRawUInt32(data, tlvsize, &offset, item->msg);
 
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GENID, item->gameId);
-	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_COMMENT, item->gameComment);
-	ok &= item->players.SetTlv(data, tlvsize, &offset);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GENID, item->gameId);
+    ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_COMMENT, item->gameComment);
+    ok &= item->players.SetTlv(data, tlvsize, &offset);
 
-	if (offset != tlvsize)
-	{
-		ok = false;
+    if (offset != tlvsize)
+    {
+        ok = false;
 #ifdef RSSERIAL_DEBUG
-		std::cerr << "RsGameSerialiser::serialiseItem() Size Error! " << std::endl;
+        std::cerr << "RsGameSerialiser::serialiseItem() Size Error! " << std::endl;
 #endif
-	}
+    }
 
-	return ok;
+    return ok;
 }
 
 RsGameItem *RsGameSerialiser::deserialiseItem(void *data, uint32_t *pktsize)
 {
-	/* get the type and size */
-	uint32_t rstype = getRsItemId(data);
-	uint32_t tlvsize = getRsItemSize(data);
+    /* get the type and size */
+    uint32_t rstype = getRsItemId(data);
+    uint32_t tlvsize = getRsItemSize(data);
 
-	uint32_t offset = 0;
+    uint32_t offset = 0;
 
 
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_TYPE_GAME_LAUNCHER != getRsItemService(rstype)) ||
-		(RS_PKT_SUBTYPE_DEFAULT != getRsItemSubType(rstype)))
-	{
-		return NULL; /* wrong type */
-	}
+    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+            (RS_SERVICE_TYPE_GAME_LAUNCHER != getRsItemService(rstype)) ||
+            (RS_PKT_SUBTYPE_DEFAULT != getRsItemSubType(rstype)))
+    {
+        return NULL; /* wrong type */
+    }
 
-	if (*pktsize < tlvsize)    /* check size */
-		return NULL; /* not enough data */
+    if (*pktsize < tlvsize)    /* check size */
+        return NULL; /* not enough data */
 
-	/* set the packet length */
-	*pktsize = tlvsize;
+    /* set the packet length */
+    *pktsize = tlvsize;
 
-	bool ok = true;
+    bool ok = true;
 
-	/* ready to load */
-	RsGameItem *item = new RsGameItem();
-	item->clear();
+    /* ready to load */
+    RsGameItem *item = new RsGameItem();
+    item->clear();
 
-	/* skip the header */
-	offset += 8;
+    /* skip the header */
+    offset += 8;
 
-	/* add mandatory parts first */
-	ok &= getRawUInt32(data, tlvsize, &offset, &(item->serviceId));
-	ok &= getRawUInt32(data, tlvsize, &offset, &(item->numPlayers));
-	ok &= getRawUInt32(data, tlvsize, &offset, &(item->msg));
+    /* add mandatory parts first */
+    ok &= getRawUInt32(data, tlvsize, &offset, &(item->serviceId));
+    ok &= getRawUInt32(data, tlvsize, &offset, &(item->numPlayers));
+    ok &= getRawUInt32(data, tlvsize, &offset, &(item->msg));
 
-	ok &= GetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GENID, item->gameId);
-	ok &= GetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_COMMENT, item->gameComment);
-	ok &= item->players.GetTlv(data, tlvsize, &offset);
+    ok &= GetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GENID, item->gameId);
+    ok &= GetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_COMMENT, item->gameComment);
+    ok &= item->players.GetTlv(data, tlvsize, &offset);
 
-	if (offset != tlvsize)
-	{
-		/* error */
-		delete item;
-		return NULL;
-	}
+    if (offset != tlvsize)
+    {
+        /* error */
+        delete item;
+        return NULL;
+    }
 
-	if (!ok)
-	{
-		delete item;
-		return NULL;
-	}
+    if (!ok)
+    {
+        delete item;
+        return NULL;
+    }
 
-	return item;
+    return item;
 }
 
 
 uint32_t    RsGameSerialiser::size(RsItem *item)
 {
-	return sizeItem((RsGameItem *) item);
+    return sizeItem((RsGameItem *) item);
 }
 
 bool     RsGameSerialiser::serialise(RsItem *item, void *data, uint32_t *pktsize)
 {
-	return serialiseItem((RsGameItem *) item, data, pktsize);
+    return serialiseItem((RsGameItem *) item, data, pktsize);
 }
 
 RsItem *RsGameSerialiser::deserialise(void *data, uint32_t *pktsize)
 {
-	return deserialiseItem(data, pktsize);
+    return deserialiseItem(data, pktsize);
 }
 
 /*************************************************************************/

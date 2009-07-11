@@ -8,21 +8,23 @@ struct sockaddr ;
 
 class ExtAddrFinder
 {
-	public:
-		ExtAddrFinder() ;
-		~ExtAddrFinder() ;
+public:
+    ExtAddrFinder() ;
+    ~ExtAddrFinder() ;
 
-		bool hasValidIP(struct sockaddr_in *addr) ;
-		void getIPServersList(std::list<std::string>& ip_servers) { ip_servers = _ip_servers ; }
+    bool hasValidIP(struct sockaddr_in *addr) ;
+    void getIPServersList(std::list<std::string>& ip_servers) {
+        ip_servers = _ip_servers ;
+    }
 
-		void start_request() ;
+    void start_request() ;
 
-	private:
-		friend void* doExtAddrSearch(void *p) ;
+private:
+    friend void* doExtAddrSearch(void *p) ;
 
-		RsMutex _addrMtx ;
-		struct sockaddr_in *_addr ;
-		bool *_found ;
-		bool *_searching ;
-		std::list<std::string> _ip_servers ;
+    RsMutex _addrMtx ;
+    struct sockaddr_in *_addr ;
+    bool *_found ;
+    bool *_searching ;
+    std::list<std::string> _ip_servers ;
 };

@@ -38,16 +38,16 @@
 
 #include "_pqi/pqissl.h"
 
- /* So pqissludp is the special firewall breaking protocol.
-  * This class will implement the basics of streaming
-  * ssl over udp using a tcponudp library....
-  * and a small extension to ssl.
-  */
+/* So pqissludp is the special firewall breaking protocol.
+ * This class will implement the basics of streaming
+ * ssl over udp using a tcponudp library....
+ * and a small extension to ssl.
+ */
 
 class pqissludp;
 class cert;
 
-/* This provides a NetBinInterface, which is 
+/* This provides a NetBinInterface, which is
  * primarily inherited from pqissl.
  * fns declared here are different -> all others are identical.
  */
@@ -73,7 +73,9 @@ public:
     virtual bool moretoread();
     virtual bool cansend();
     /* UDP always through firewalls -> always bandwidth Limited */
-    virtual bool bandwidthLimited() { return true; }
+    virtual bool bandwidthLimited() {
+        return true;
+    }
 
     // pqissludp specific.
     // called to initiate a connection;

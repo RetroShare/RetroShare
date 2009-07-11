@@ -35,11 +35,11 @@
 #include "pqi/p3cfgmgr.h"
 
 
-// So this is a specific implementation 
+// So this is a specific implementation
 //
 // it is designed to have one pqilistensocket + a series of pqisockets
 //
-// as an added bonus, we are going to 
+// as an added bonus, we are going to
 // make this a pqitunnelserver, to which services can be attached.
 
 const unsigned long PQIPERSON_NO_LISTENER = 	0x0001;
@@ -48,68 +48,74 @@ const unsigned long PQIPERSON_ALL_BW_LIMITED =  0x0010;
 
 class pqipersongrp: public pqihandler, public pqiMonitor, public p3ServiceServer
 {
-	public:
-	pqipersongrp(SecurityPolicy *, unsigned long flags);
+public:
+    pqipersongrp(SecurityPolicy *, unsigned long flags);
 
-	/*************************** Setup *************************/
-	/* pqilistener */
-int     init_listener(); 
-int	restart_listener();
+    /*************************** Setup *************************/
+    /* pqilistener */
+    int     init_listener();
+    int	restart_listener();
 
-int     setConfig(p3GeneralConfig *cfg);
-int	save_config();
-int	load_config();
+    int     setConfig(p3GeneralConfig *cfg);
+    int	save_config();
+    int	load_config();
 
-	/*************** pqiMonitor callback ***********************/
-virtual void    statusChange(const std::list<pqipeer> &plist);
+    /*************** pqiMonitor callback ***********************/
+    virtual void    statusChange(const std::list<pqipeer> &plist);
 
-	/******************* Peer Control **************************/
-virtual int addPeer(std::string id); /* can be overloaded for testing */
-int     removePeer(std::string id);
-int     connectPeer(std::string id);
+    /******************* Peer Control **************************/
+    virtual int addPeer(std::string id); /* can be overloaded for testing */
+    int     removePeer(std::string id);
+    int     connectPeer(std::string id);
 
-	/*** callback from children ****/
-bool    notifyConnect(std::string id, uint32_t type, bool success);
+    /*** callback from children ****/
+    bool    notifyConnect(std::string id, uint32_t type, bool success);
 
-	// tick interfaces.
-virtual int tick();
-virtual int status();
+    // tick interfaces.
+    virtual int tick();
+    virtual int status();
 
-	protected:
+protected:
 
-	/********* FUNCTIONS to OVERLOAD for specialisation ********/
-virtual pqilistener *createListener(struct sockaddr_in laddr) = 0;
-virtual pqiperson   *createPerson(std::string id, pqilistener *listener) = 0;
-	/********* FUNCTIONS to OVERLOAD for specialisation ********/
+    /********* FUNCTIONS to OVERLOAD for specialisation ********/
+    virtual pqilistener *createListener(struct sockaddr_in laddr) = 0;
+    virtual pqiperson   *createPerson(std::string id, pqilistener *listener) = 0;
+    /********* FUNCTIONS to OVERLOAD for specialisation ********/
 
-	/* Overloaded RsItem Check
-	 * checks item->cid vs Person
-	 */
-virtual int checkOutgoingRsItem(RsItem *item, int global) { (void)item; (void)global; return 1; }
+    /* Overloaded RsItem Check
+     * checks item->cid vs Person
+     */
+    virtual int checkOutgoingRsItem(RsItem *item, int global) {
+        (void)item;
+        (void)global;
+        return 1;
+    }
 
-	private:
+private:
 
-	// The tunnelserver operation.
-	int tickServiceRecv();
-	int tickServiceSend();
+    // The tunnelserver operation.
+    int tickServiceRecv();
+    int tickServiceSend();
 
-	pqilistener *pqil;
-	p3GeneralConfig *config;
-	unsigned long initFlags;
+    pqilistener *pqil;
+    p3GeneralConfig *config;
+    unsigned long initFlags;
 };
 
 class pqipersongrpDummy: public pqipersongrp
 {
-	public:
-	pqipersongrpDummy(SecurityPolicy *pol, unsigned long flags)
-	:pqipersongrp(pol, flags) { return; }
+public:
+    pqipersongrpDummy(SecurityPolicy *pol, unsigned long flags)
+            :pqipersongrp(pol, flags) {
+        return;
+    }
 
-	protected:
+protected:
 
-	/********* FUNCTIONS to OVERLOAD for specialisation ********/
-virtual pqilistener *createListener(struct sockaddr_in laddr);
-virtual pqiperson   *createPerson(std::string id, pqilistener *listener);
-	/********* FUNCTIONS to OVERLOAD for specialisation ********/
+    /********* FUNCTIONS to OVERLOAD for specialisation ********/
+    virtual pqilistener *createListener(struct sockaddr_in laddr);
+    virtual pqiperson   *createPerson(std::string id, pqilistener *listener);
+    /********* FUNCTIONS to OVERLOAD for specialisation ********/
 };
 
 

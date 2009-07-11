@@ -31,13 +31,13 @@
 #include "util/rsthreads.h"
 
 /* This provides easy to use extensions to the pqiservice class provided in src/pqi.
- * 
+ *
  * We will have a number of different strains.
  *
  * (1) p3Service -> pqiService
- *    
+ *
  *    Basic service with serialisation handled by a RsSerialiser.
- * 
+ *
  * (2) p3ThreadedService -> p3service.
  *
  *    Independent thread with mutex locks for i/o Queues.
@@ -53,73 +53,78 @@ std::string generateRandomServiceId();
 
 class p3Service: public pqiService
 {
-	protected:
+protected:
 
-	p3Service(uint16_t type) 
-	:pqiService((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) type) << 8)), 
-	rsSerialiser(NULL)
-	{
-		rsSerialiser = new RsSerialiser();
-		return; 
-	}
+    p3Service(uint16_t type)
+            :pqiService((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) type) << 8)),
+            rsSerialiser(NULL)
+    {
+        rsSerialiser = new RsSerialiser();
+        return;
+    }
 
-	public:
+public:
 
-virtual ~p3Service() { delete rsSerialiser; return; }
+    virtual ~p3Service() {
+        delete rsSerialiser;
+        return;
+    }
 
-/*************** INTERFACE ******************************/
-        /* called from Thread/tick/GUI */
-int             sendItem(RsItem *);
-RsItem *        recvItem();
-bool		receivedItems();
+    /*************** INTERFACE ******************************/
+    /* called from Thread/tick/GUI */
+    int             sendItem(RsItem *);
+    RsItem *        recvItem();
+    bool		receivedItems();
 
-virtual int	tick() { return 0; }
-/*************** INTERFACE ******************************/
+    virtual int	tick() {
+        return 0;
+    }
+    /*************** INTERFACE ******************************/
 
 
-	public:
-	// overloaded pqiService interface.
-virtual int		receive(RsRawItem *);
-virtual RsRawItem *	send();
+public:
+    // overloaded pqiService interface.
+    virtual int		receive(RsRawItem *);
+    virtual RsRawItem *	send();
 
-	protected:
-void 	addSerialType(RsSerialType *);
+protected:
+    void 	addSerialType(RsSerialType *);
 
-	private:
+private:
 
-	RsMutex srvMtx;
-	/* below locked by Mutex */
+    RsMutex srvMtx;
+    /* below locked by Mutex */
 
-	RsSerialiser *rsSerialiser;
-	std::list<RsItem *> recv_queue, send_queue;
+    RsSerialiser *rsSerialiser;
+    std::list<RsItem *> recv_queue, send_queue;
 };
 
 
 class nullService: public pqiService
 {
-	protected:
+protected:
 
-	nullService(uint16_t type) 
-	:pqiService((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) type) << 8))
-	{
-		return; 
-	}
+    nullService(uint16_t type)
+            :pqiService((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) type) << 8))
+    {
+        return;
+    }
 
-//virtual int	tick() 
+//virtual int	tick()
 
-	public:
-	// overloaded NULL pqiService interface.
-virtual int		receive(RsRawItem *item)
-	{
-		/* drop any items */
-		delete item;
-		return 1;
-	}
+public:
+    // overloaded NULL pqiService interface.
+    virtual int		receive(RsRawItem *item)
+    {
+        /* drop any items */
+        delete item;
+        return 1;
+    }
 
-virtual RsRawItem *	send()
-	{
-		return NULL;
-	}
+    virtual RsRawItem *	send()
+    {
+        return NULL;
+    }
 
 };
 
@@ -128,16 +133,20 @@ virtual RsRawItem *	send()
 
 class p3ThreadedService: public p3Service, public RsThread
 {
-	protected:
+protected:
 
-	p3ThreadedService(RsSerialiser *rss, uint32_t type) 
-	:p3Service(rss, type) { return; }
+    p3ThreadedService(RsSerialiser *rss, uint32_t type)
+            :p3Service(rss, type) {
+        return;
+    }
 
-	public:
+public:
 
-virtual ~p3ThreadedService() { return; }
+    virtual ~p3ThreadedService() {
+        return;
+    }
 
-	private:
+private:
 
 };
 

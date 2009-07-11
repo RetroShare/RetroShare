@@ -20,7 +20,7 @@
  * Please report all bugs and problems to "retroshare@lunamutt.com".
  *
  */
- 
+
 #ifndef FT_TRANSFER_MODULE_HEADER
 #define FT_TRANSFER_MODULE_HEADER
 
@@ -54,136 +54,140 @@ const uint32_t  PQIPEER_SUSPEND              = 0x0010;
 class peerInfo
 {
 public:
-	peerInfo(std::string peerId_in):peerId(peerId_in),state(PQIPEER_NOT_ONLINE),desiredRate(0),actualRate(0),
-		offset(0),chunkSize(0),receivedSize(0),lastTS(0),
-		recvTS(0), lastTransfers(0), nResets(0), 
-		rtt(0), rttActive(false), rttStart(0), rttOffset(0),
-		mRateIncrease(1)
-	{
-		return;
-	}
-	peerInfo(std::string peerId_in,uint32_t state_in,uint32_t maxRate_in):
-		peerId(peerId_in),state(state_in),desiredRate(maxRate_in),actualRate(0),
-		offset(0),chunkSize(0),receivedSize(0),lastTS(0),
-		recvTS(0), lastTransfers(0), nResets(0), 
-		rtt(0), rttActive(false), rttStart(0), rttOffset(0),
-		mRateIncrease(1)
-	{
-		return;
-	}
-  	std::string peerId;
-  	uint32_t state;
-  	double desiredRate;
-  	double actualRate;
+    peerInfo(std::string peerId_in):peerId(peerId_in),state(PQIPEER_NOT_ONLINE),desiredRate(0),actualRate(0),
+            offset(0),chunkSize(0),receivedSize(0),lastTS(0),
+            recvTS(0), lastTransfers(0), nResets(0),
+            rtt(0), rttActive(false), rttStart(0), rttOffset(0),
+            mRateIncrease(1)
+    {
+        return;
+    }
+    peerInfo(std::string peerId_in,uint32_t state_in,uint32_t maxRate_in):
+            peerId(peerId_in),state(state_in),desiredRate(maxRate_in),actualRate(0),
+            offset(0),chunkSize(0),receivedSize(0),lastTS(0),
+            recvTS(0), lastTransfers(0), nResets(0),
+            rtt(0), rttActive(false), rttStart(0), rttOffset(0),
+            mRateIncrease(1)
+    {
+        return;
+    }
+    std::string peerId;
+    uint32_t state;
+    double desiredRate;
+    double actualRate;
 
-  	//current file data request
-  	uint64_t offset;
-  	uint32_t chunkSize;
+    //current file data request
+    uint64_t offset;
+    uint32_t chunkSize;
 
-  	//already received data size for current request
-  	uint32_t receivedSize;
+    //already received data size for current request
+    uint32_t receivedSize;
 
-  	time_t lastTS; /* last Request */
-	time_t recvTS; /* last Recv */
-	uint32_t lastTransfers; /* data recvd in last second */
-	uint32_t nResets; /* count to disable non-existant files */
+    time_t lastTS; /* last Request */
+    time_t recvTS; /* last Recv */
+    uint32_t lastTransfers; /* data recvd in last second */
+    uint32_t nResets; /* count to disable non-existant files */
 
-	/* rrt rate control */
-	uint32_t rtt;       /* last rtt */
-	bool     rttActive; /* have we initialised an rtt measurement */
-	time_t	 rttStart;  /* ts of request */
-	uint64_t rttOffset; /* end of request */
-	float    mRateIncrease; /* current rate */
+    /* rrt rate control */
+    uint32_t rtt;       /* last rtt */
+    bool     rttActive; /* have we initialised an rtt measurement */
+    time_t	 rttStart;  /* ts of request */
+    uint64_t rttOffset; /* end of request */
+    float    mRateIncrease; /* current rate */
 };
 
 class ftFileStatus
 {
 public:
-	enum Status {
-		PQIFILE_INIT,
-		PQIFILE_NOT_ONLINE,
-		PQIFILE_DOWNLOADING,
-		PQIFILE_PAUSE,
-		PQIFILE_COMPLETE,
-		PQIFILE_FAIL,
-		PQIFILE_FAIL_CANCEL,
-		PQIFILE_FAIL_NOT_AVAIL,
-		PQIFILE_FAIL_NOT_OPEN,
-		PQIFILE_FAIL_NOT_SEEK,
-		PQIFILE_FAIL_NOT_WRITE,
-		PQIFILE_FAIL_NOT_READ,
-		PQIFILE_FAIL_BAD_PATH
-	};
-        
-        ftFileStatus():hash(""),stat(PQIFILE_INIT) {}
-	ftFileStatus(std::string hash_in):hash(hash_in),stat(PQIFILE_INIT) {}
+    enum Status {
+        PQIFILE_INIT,
+        PQIFILE_NOT_ONLINE,
+        PQIFILE_DOWNLOADING,
+        PQIFILE_PAUSE,
+        PQIFILE_COMPLETE,
+        PQIFILE_FAIL,
+        PQIFILE_FAIL_CANCEL,
+        PQIFILE_FAIL_NOT_AVAIL,
+        PQIFILE_FAIL_NOT_OPEN,
+        PQIFILE_FAIL_NOT_SEEK,
+        PQIFILE_FAIL_NOT_WRITE,
+        PQIFILE_FAIL_NOT_READ,
+        PQIFILE_FAIL_BAD_PATH
+    };
 
-	std::string hash;
-	Status stat;
+    ftFileStatus():hash(""),stat(PQIFILE_INIT) {}
+    ftFileStatus(std::string hash_in):hash(hash_in),stat(PQIFILE_INIT) {}
+
+    std::string hash;
+    Status stat;
 };
 
-class ftTransferModule 
+class ftTransferModule
 {
 public:
-  ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftController *c);
-  ~ftTransferModule();
+    ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftController *c);
+    ~ftTransferModule();
 
-  //interface to download controller
-  bool setFileSources(std::list<std::string> peerIds);
-  bool addFileSource(std::string peerId);
-  bool removeFileSource(std::string peerId);
-  bool setPeerState(std::string peerId,uint32_t state,uint32_t maxRate);  //state = ONLINE/OFFLINE
-  bool getFileSources(std::list<std::string> &peerIds);
-  bool getPeerState(std::string peerId,uint32_t &state,uint32_t &tfRate);  
-  uint32_t getDataRate(std::string peerId);
-  bool pauseTransfer();
-  bool resumeTransfer();
-  bool cancelTransfer();
-  bool completeFileTransfer();
+    //interface to download controller
+    bool setFileSources(std::list<std::string> peerIds);
+    bool addFileSource(std::string peerId);
+    bool removeFileSource(std::string peerId);
+    bool setPeerState(std::string peerId,uint32_t state,uint32_t maxRate);  //state = ONLINE/OFFLINE
+    bool getFileSources(std::list<std::string> &peerIds);
+    bool getPeerState(std::string peerId,uint32_t &state,uint32_t &tfRate);
+    uint32_t getDataRate(std::string peerId);
+    bool pauseTransfer();
+    bool resumeTransfer();
+    bool cancelTransfer();
+    bool completeFileTransfer();
 
-  //interface to multiplex module
-  bool recvFileData(std::string peerId, uint64_t offset, 
-			uint32_t chunk_size, void *data);
-  void requestData(std::string peerId, uint64_t offset, uint32_t chunk_size);
+    //interface to multiplex module
+    bool recvFileData(std::string peerId, uint64_t offset,
+                      uint32_t chunk_size, void *data);
+    void requestData(std::string peerId, uint64_t offset, uint32_t chunk_size);
 
-  //interface to file creator
-  bool getChunk(uint64_t &offset, uint32_t &chunk_size);
-  bool storeData(uint64_t offset, uint32_t chunk_size, void *data);
+    //interface to file creator
+    bool getChunk(uint64_t &offset, uint32_t &chunk_size);
+    bool storeData(uint64_t offset, uint32_t chunk_size, void *data);
 
-  int tick();
+    int tick();
 
-  std::string hash() { return mHash; }
-  uint64_t    size() { return mSize; }
- 
-  //internal used functions
-  bool queryInactive();
-  void adjustSpeed();
+    std::string hash() {
+        return mHash;
+    }
+    uint64_t    size() {
+        return mSize;
+    }
+
+    //internal used functions
+    bool queryInactive();
+    void adjustSpeed();
 
 private:
 
-  bool locked_tickPeerTransfer(peerInfo &info);
-  bool locked_recvPeerData(peerInfo &info, uint64_t offset,
-			uint32_t chunk_size, void *data);
-  
-  
-  /* These have independent Mutexes / are const locally (no Mutex protection)*/
-  ftFileCreator *mFileCreator;
-  ftDataMultiplex *mMultiplexor;
-  ftController *mFtController;
+    bool locked_tickPeerTransfer(peerInfo &info);
+    bool locked_recvPeerData(peerInfo &info, uint64_t offset,
+                             uint32_t chunk_size, void *data);
 
-  std::string mHash;
-  uint64_t    mSize;
 
-  RsMutex tfMtx; /* below is mutex protected */
+    /* These have independent Mutexes / are const locally (no Mutex protection)*/
+    ftFileCreator *mFileCreator;
+    ftDataMultiplex *mMultiplexor;
+    ftController *mFtController;
 
-  std::list<std::string>         mOnlinePeers;
-  std::map<std::string,peerInfo> mFileSources;
-  	
-  uint16_t     mFlag;  //2:file canceled, 1:transfer complete, 0: not complete
-  double desiredRate;
-  double actualRate;
+    std::string mHash;
+    uint64_t    mSize;
 
-  ftFileStatus mFileStatus; //used for pause/resume file transfer
+    RsMutex tfMtx; /* below is mutex protected */
+
+    std::list<std::string>         mOnlinePeers;
+    std::map<std::string,peerInfo> mFileSources;
+
+    uint16_t     mFlag;  //2:file canceled, 1:transfer complete, 0: not complete
+    double desiredRate;
+    double actualRate;
+
+    ftFileStatus mFileStatus; //used for pause/resume file transfer
 };
 
 #endif  //FT_TRANSFER_MODULE_HEADER

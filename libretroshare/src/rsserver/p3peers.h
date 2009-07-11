@@ -30,69 +30,71 @@
 #include "pqi/p3connmgr.h"
 #include "pqi/p3authmgr.h"
 
-class p3Peers: public RsPeers 
+class p3Peers: public RsPeers
 {
-	public:
+public:
 
-	p3Peers(p3ConnectMgr *cm, p3AuthMgr *am);
-virtual ~p3Peers() { return; }
+    p3Peers(p3ConnectMgr *cm, p3AuthMgr *am);
+    virtual ~p3Peers() {
+        return;
+    }
 
-	/* Updates ... */
-virtual bool FriendsChanged();
-virtual bool OthersChanged();
+    /* Updates ... */
+    virtual bool FriendsChanged();
+    virtual bool OthersChanged();
 
-	/* Peer Details (Net & Auth) */
-virtual std::string getOwnId();
+    /* Peer Details (Net & Auth) */
+    virtual std::string getOwnId();
 
-virtual bool	getOnlineList(std::list<std::string> &ids);
-virtual bool	getFriendList(std::list<std::string> &ids);
-virtual bool	getOthersList(std::list<std::string> &ids);
+    virtual bool	getOnlineList(std::list<std::string> &ids);
+    virtual bool	getFriendList(std::list<std::string> &ids);
+    virtual bool	getOthersList(std::list<std::string> &ids);
 
-virtual bool    isOnline(std::string id);
-virtual bool    isFriend(std::string id);
-virtual std::string getPeerName(std::string id);
-virtual bool	getPeerDetails(std::string id, RsPeerDetails &d);
+    virtual bool    isOnline(std::string id);
+    virtual bool    isFriend(std::string id);
+    virtual std::string getPeerName(std::string id);
+    virtual bool	getPeerDetails(std::string id, RsPeerDetails &d);
 
-                /* Using PGP Ids */
-virtual std::string getPGPOwnId();
-virtual bool    getPGPFriendList(std::list<std::string> &ids);
-virtual bool    getPGPAllList(std::list<std::string> &ids);
+    /* Using PGP Ids */
+    virtual std::string getPGPOwnId();
+    virtual bool    getPGPFriendList(std::list<std::string> &ids);
+    virtual bool    getPGPAllList(std::list<std::string> &ids);
 
 
-	/* Add/Remove Friends */
-virtual	bool addFriend(std::string id);
-virtual	bool removeFriend(std::string id);
+    /* Add/Remove Friends */
+    virtual	bool addFriend(std::string id);
+    virtual	bool removeFriend(std::string id);
 
-	/* get/set third party info about who trusts me */
-virtual bool isTrustingMe(std::string id) const ;
+    /* get/set third party info about who trusts me */
+    virtual bool isTrustingMe(std::string id) const ;
 
-	/* Network Stuff */
-virtual	bool connectAttempt(std::string id);
-virtual	bool setLocalAddress(std::string id, std::string addr, uint16_t port);
-virtual	bool setExtAddress(std::string id, std::string addr, uint16_t port);
-virtual	bool setNetworkMode(std::string id, uint32_t netMode);
-virtual bool setVisState(std::string id, uint32_t mode); 
+    /* Network Stuff */
+    virtual	bool connectAttempt(std::string id);
+    virtual	bool setLocalAddress(std::string id, std::string addr, uint16_t port);
+    virtual	bool setExtAddress(std::string id, std::string addr, uint16_t port);
+    virtual	bool setNetworkMode(std::string id, uint32_t netMode);
+    virtual bool setVisState(std::string id, uint32_t mode);
 
-virtual void getIPServersList(std::list<std::string>& ip_servers) ;
-virtual void allowServerIPDetermination(bool) ;
-virtual bool getAllowServerIPDetermination() ;
+    virtual void getIPServersList(std::list<std::string>& ip_servers) ;
+    virtual void allowServerIPDetermination(bool) ;
+    virtual bool getAllowServerIPDetermination() ;
 
-	/* Auth Stuff */
-virtual	std::string GetRetroshareInvite();
+    /* Auth Stuff */
+    virtual	std::string GetRetroshareInvite();
 
-virtual	bool LoadCertificateFromFile(std::string fname, std::string &id);
-virtual	bool LoadCertificateFromString(std::string cert, std::string &id);
-virtual	bool SaveCertificateToFile(std::string id, std::string fname);
-virtual	std::string SaveCertificateToString(std::string id);
+    virtual	bool LoadCertificateFromFile(std::string fname, std::string &id);
+    virtual	bool LoadCertificateFromString(std::string cert, std::string &id);
+    virtual	bool SaveCertificateToFile(std::string id, std::string fname);
+    virtual	std::string SaveCertificateToString(std::string id);
 
-virtual	bool AuthCertificate(std::string id, std::string code);
-virtual	bool SignCertificate(std::string id);
-virtual	bool TrustCertificate(std::string id, bool trust);
+    virtual	bool AuthCertificate(std::string id, std::string code);
+    virtual	bool SignCertificate(std::string id);
+    virtual	bool TrustCertificate(std::string id, bool trust);
 
-	private:
+private:
 
-	p3ConnectMgr *mConnMgr;
-	p3AuthMgr    *mAuthMgr;
+    p3ConnectMgr *mConnMgr;
+    p3AuthMgr    *mAuthMgr;
 };
 
 #endif

@@ -28,68 +28,68 @@ extern "C" {
 
 class dhtentry
 {
-	public:
-	std::string name;
-	std::string id;
-	struct sockaddr_in addr;
-	unsigned int flags;
-	int status;
-	int lastTs;
+public:
+    std::string name;
+    std::string id;
+    struct sockaddr_in addr;
+    unsigned int flags;
+    int status;
+    int lastTs;
 };
-	
+
 class dhthandler: public RsThread, public pqiAddrStore
 {
-	public:
+public:
 
-	dhthandler(std::string inifile);
-	~dhthandler();
+    dhthandler(std::string inifile);
+    ~dhthandler();
 
-	/* RsIface */
-	/* set own tag */
-void    setOwnHash(std::string id);
-void    setOwnPort(short port);
-bool 	getExtAddr(sockaddr_in &addr, unsigned int &flags);
+    /* RsIface */
+    /* set own tag */
+    void    setOwnHash(std::string id);
+    void    setOwnPort(short port);
+    bool 	getExtAddr(sockaddr_in &addr, unsigned int &flags);
 
-	/* at startup */
-void    addFriend(std::string id);
-void    removeFriend(std::string id);
-int     dhtPeers();
+    /* at startup */
+    void    addFriend(std::string id);
+    void    removeFriend(std::string id);
+    int     dhtPeers();
 
-	/* pqiAddrStore ... called prior to connect */
-virtual bool    addrFriend(std::string id, struct sockaddr_in &addr, unsigned int &flags);
+    /* pqiAddrStore ... called prior to connect */
+    virtual bool    addrFriend(std::string id, struct sockaddr_in &addr, unsigned int &flags);
 
-int 	init();
-int 	shutdown();
-int	print();
+    int 	init();
+    int 	shutdown();
+    int	print();
 
-	/* must run thread */
-virtual void run();
+    /* must run thread */
+    virtual void run();
 
-	private:
+private:
 
-	int write_inifile();
+    int write_inifile();
 
-	bool 	networkUp(); /* get status */
+    bool 	networkUp(); /* get status */
 
-	int checkOwnStatus();
-	int checkPeerIds();
-	int publishOwnId();
-	int searchId(std::string id);
+    int checkOwnStatus();
+    int checkPeerIds();
+    int publishOwnId();
+    int searchId(std::string id);
 
-	dhtentry *finddht(std::string id);
+    dhtentry *finddht(std::string id);
 
-	/* Mutex for data below */
-	RsMutex dataMtx;
+    /* Mutex for data below */
+    RsMutex dataMtx;
 
-	dhtentry ownId;
-	std::map<std::string, dhtentry> addrs;
+    dhtentry ownId;
+    std::map<std::string, dhtentry> addrs;
 
-       	KadCcontext kcc, *pkcc;
-	KadC_status kcs;
-	std::string kadcFile;
-	bool mShutdown;
+    KadCcontext kcc, *pkcc;
+    KadC_status kcs;
+    std::string kadcFile;
+    bool mShutdown;
 
-	bool dhtOk;
+    bool dhtOk;
 };
 
 

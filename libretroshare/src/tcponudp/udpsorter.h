@@ -39,101 +39,107 @@
 
 class UdpPeer
 {
-	public:
-virtual void recvPkt(void *data, int size) = 0;
+public:
+    virtual void recvPkt(void *data, int size) = 0;
 };
 
 
-	
+
 class TouStunPeer
 {
-	public:
-	TouStunPeer()
-	:response(false), lastsend(0), failCount(0) { return; }
-	
-	TouStunPeer(std::string id_in, const struct sockaddr_in &addr)
-	:id(id_in), remote(addr), response(false), lastsend(0), failCount(0) { return; }
-	
-	std::string id;
-	struct sockaddr_in remote, eaddr;
-	bool response;
-	time_t lastsend;
-	uint32_t failCount;
+public:
+    TouStunPeer()
+            :response(false), lastsend(0), failCount(0) {
+        return;
+    }
+
+    TouStunPeer(std::string id_in, const struct sockaddr_in &addr)
+            :id(id_in), remote(addr), response(false), lastsend(0), failCount(0) {
+        return;
+    }
+
+    std::string id;
+    struct sockaddr_in remote, eaddr;
+    bool response;
+    time_t lastsend;
+    uint32_t failCount;
 };
-	
+
 
 class UdpSorter: public UdpReceiver
 {
-	public:
+public:
 
-	UdpSorter(struct sockaddr_in &local);
-virtual ~UdpSorter() { return; }
+    UdpSorter(struct sockaddr_in &local);
+    virtual ~UdpSorter() {
+        return;
+    }
 
-	/* add a TCPonUDP stream */
-int	addUdpPeer(UdpPeer *peer, const struct sockaddr_in &raddr);
-int 	removeUdpPeer(UdpPeer *peer);
+    /* add a TCPonUDP stream */
+    int	addUdpPeer(UdpPeer *peer, const struct sockaddr_in &raddr);
+    int 	removeUdpPeer(UdpPeer *peer);
 
-bool 	setStunKeepAlive(uint32_t required);
-bool    addStunPeer(const struct sockaddr_in &remote, const char *peerid);
-bool    checkStunKeepAlive();
+    bool 	setStunKeepAlive(uint32_t required);
+    bool    addStunPeer(const struct sockaddr_in &remote, const char *peerid);
+    bool    checkStunKeepAlive();
 
-bool    externalAddr(struct sockaddr_in &remote, uint8_t &stable);
+    bool    externalAddr(struct sockaddr_in &remote, uint8_t &stable);
 
-	/* Packet IO */
-		/* pass-through send packets */
-	int  sendPkt(void *data, int size, struct sockaddr_in &to, int ttl);
-		/* callback for recved data (overloaded from UdpReceiver) */
-virtual void recvPkt(void *data, int size, struct sockaddr_in &from);
+    /* Packet IO */
+    /* pass-through send packets */
+    int  sendPkt(void *data, int size, struct sockaddr_in &to, int ttl);
+    /* callback for recved data (overloaded from UdpReceiver) */
+    virtual void recvPkt(void *data, int size, struct sockaddr_in &from);
 
-int     status(std::ostream &out);
+    int     status(std::ostream &out);
 
-	/* setup connections */
-	int openSocket();
+    /* setup connections */
+    int openSocket();
 
-	/* monitoring / updates */
-	int okay();
-	int tick();
+    /* monitoring / updates */
+    int okay();
+    int tick();
 
-	int close();
+    int close();
 
-	private:
+private:
 
-	/* STUN handling */
-bool 	locked_handleStunPkt(void *data, int size, struct sockaddr_in &from);
+    /* STUN handling */
+    bool 	locked_handleStunPkt(void *data, int size, struct sockaddr_in &from);
 
-int     doStun(struct sockaddr_in stun_addr);
+    int     doStun(struct sockaddr_in stun_addr);
 
 
-	/* stun keepAlive */
-bool    locked_printStunList();
-bool    locked_recvdStun(const struct sockaddr_in &remote, const struct sockaddr_in &extaddr);
-bool    locked_checkExternalAddress();
+    /* stun keepAlive */
+    bool    locked_printStunList();
+    bool    locked_recvdStun(const struct sockaddr_in &remote, const struct sockaddr_in &extaddr);
+    bool    locked_checkExternalAddress();
 
-bool    storeStunPeer(const struct sockaddr_in &remote, const char *peerid);
+    bool    storeStunPeer(const struct sockaddr_in &remote, const char *peerid);
 
-	UdpLayer *udpLayer;
+    UdpLayer *udpLayer;
 
-	RsMutex sortMtx; /* for all class data (below) */
+    RsMutex sortMtx; /* for all class data (below) */
 
-	struct sockaddr_in laddr; /* local addr */
+    struct sockaddr_in laddr; /* local addr */
 
-	struct sockaddr_in eaddr; /* external addr */
-        bool eaddrKnown;
-	bool eaddrStable; /* if true then usable. if false -> Symmettric NAT */
+    struct sockaddr_in eaddr; /* external addr */
+    bool eaddrKnown;
+    bool eaddrStable; /* if true then usable. if false -> Symmettric NAT */
 
-	bool mStunKeepAlive;
-	time_t mStunLastRecv;
-	time_t mStunLastSend;
+    bool mStunKeepAlive;
+    time_t mStunLastRecv;
+    time_t mStunLastSend;
 
-	std::list<TouStunPeer> mStunList; /* potentials */
+    std::list<TouStunPeer> mStunList; /* potentials */
 
-	std::map<struct sockaddr_in, UdpPeer *> streams;
+    std::map<struct sockaddr_in, UdpPeer *> streams;
 
 
 
 };
 
-	/* generic stun functions */
+/* generic stun functions */
 
 bool	UdpStun_isStunPacket(void *data, int size);
 bool    UdpStun_response(void *stun_pkt, int size, struct sockaddr_in &addr);

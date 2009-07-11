@@ -54,7 +54,7 @@ int fixme(char *str, int n);
 
 struct chan_id
 {
-	int route[10];
+    int route[10];
 };
 
 typedef unsigned long SearchId;  /* unsigned 32 bits */
@@ -68,8 +68,8 @@ int     pqicid_cmp(const ChanId *cid1, ChanId *cid2);
 
 // So the basic pqi interface defines
 //
-// 1) Person -> reference object 
-// 2) RsItem 
+// 1) Person -> reference object
+// 2) RsItem
 // 3) PQInterface
 // 	which defines:
 // 		- send/recieve objs
@@ -94,7 +94,7 @@ int     pqicid_cmp(const ChanId *cid1, ChanId *cid2);
 // Person - includes
 // 1) name + signature (unique id)
 // 2) address + timestamps of connections.
-// 3) status 
+// 3) status
 // 4) groups.
 //
 // only requires certificate. to complete...
@@ -124,85 +124,87 @@ class Person
 {
 public:
 
-	Person();
-virtual	~Person();
+    Person();
+    virtual	~Person();
 
-std::string Name();
-void	Name(std::string);
+    std::string Name();
+    void	Name(std::string);
 
-	// Signature needs to be defined.
-virtual std::string Signature() { return Name(); };
+    // Signature needs to be defined.
+    virtual std::string Signature() {
+        return Name();
+    };
 
-		// These operate on the status.
-bool	Valid();
-void	Valid(bool);
-bool	Accepted();
-void	Accepted(bool);
-bool	InUse();
-void	InUse(bool);
-bool	Listening();
-void	Listening(bool);
-bool	Connected();
-void	Connected(bool);
-bool	WillListen();
-void	WillListen(bool);
-bool	WillConnect();
-void	WillConnect(bool);
-bool	Manual();
-void	Manual(bool);
-bool	Firewalled();
-void	Firewalled(bool);
-bool	Forwarded();
-void	Forwarded(bool);
-bool	Local();
-void	Local(bool);
-bool	Trusted();
-void	Trusted(bool);
+    // These operate on the status.
+    bool	Valid();
+    void	Valid(bool);
+    bool	Accepted();
+    void	Accepted(bool);
+    bool	InUse();
+    void	InUse(bool);
+    bool	Listening();
+    void	Listening(bool);
+    bool	Connected();
+    void	Connected(bool);
+    bool	WillListen();
+    void	WillListen(bool);
+    bool	WillConnect();
+    void	WillConnect(bool);
+    bool	Manual();
+    void	Manual(bool);
+    bool	Firewalled();
+    void	Firewalled(bool);
+    bool	Forwarded();
+    void	Forwarded(bool);
+    bool	Local();
+    void	Local(bool);
+    bool	Trusted();
+    void	Trusted(bool);
 
-/* GUI Flags */
-bool	InChat();
-void	InChat(bool);
-bool	InMessage();
-void	InMessage(bool);
+    /* GUI Flags */
+    bool	InChat();
+    void	InChat(bool);
+    bool	InMessage();
+    void	InMessage(bool);
 
-unsigned int	Status();
-void	Status(unsigned int s);
+    unsigned int	Status();
+    void	Status(unsigned int s);
 
-int	addGroup(std::string);
-int	removeGroup(std::string);
-bool	Group(std::string);
+    int	addGroup(std::string);
+    int	removeGroup(std::string);
+    bool	Group(std::string);
 
-int	cidpop();
-void	cidpush(int id);
+    int	cidpop();
+    void	cidpush(int id);
 
-	/* Dynamic Address Foundation */
-bool    hasDHT();
-std::string getDHTId();
-void    setDHT(struct sockaddr_in addr, unsigned int flags);
+    /* Dynamic Address Foundation */
+    bool    hasDHT();
+    std::string getDHTId();
+    void    setDHT(struct sockaddr_in addr, unsigned int flags);
 
-	// public for the moment.
-	struct sockaddr_in lastaddr, localaddr, serveraddr;
-	std::string dynDNSaddr;
+    // public for the moment.
+    struct sockaddr_in lastaddr, localaddr, serveraddr;
+    std::string dynDNSaddr;
 
-	bool dhtFound;
-	unsigned int dhtFlags;
-	struct sockaddr_in dhtaddr;
+    bool dhtFound;
+    unsigned int dhtFlags;
+    struct sockaddr_in dhtaddr;
 
-	time_t lc_timestamp; // last connect timestamp
-	time_t lr_timestamp; // last receive timestamp
+    time_t lc_timestamp; // last connect timestamp
+    time_t lr_timestamp; // last receive timestamp
 
-	time_t nc_timestamp; // next connect timestamp.
-	time_t nc_timeintvl; // next connect time interval.
+    time_t nc_timestamp; // next connect timestamp.
+    time_t nc_timeintvl; // next connect time interval.
 
-	ChanId cid; // to get to the correct pqissl.
+    ChanId cid; // to get to the correct pqissl.
 
-	int trustLvl; /* new field */
+    int trustLvl; /* new field */
 
 private:
-	std::string name;
+    std::string name;
 
-	unsigned int status;
-	std::list<std::string> groups;
+    unsigned int status;
+    std::list<std::string> groups;
 };
 
 #endif /* removing old stuff */
@@ -212,52 +214,56 @@ class RateInterface
 // controlling data rates.
 public:
 
-	RateInterface()
-	:bw_in(0), bw_out(0), bwMax_in(0), bwMax_out(0) { return; }
-virtual	~RateInterface() { return; }
+    RateInterface()
+            :bw_in(0), bw_out(0), bwMax_in(0), bwMax_out(0) {
+        return;
+    }
+    virtual	~RateInterface() {
+        return;
+    }
 
-virtual float	getRate(bool in)
-	{
-	if (in)
-		return bw_in;
-	return bw_out;
-	}
+    virtual float	getRate(bool in)
+    {
+        if (in)
+            return bw_in;
+        return bw_out;
+    }
 
-virtual float	getMaxRate(bool in)
-	{
-	if (in)
-		return bwMax_in;
-	return bwMax_out;
-	}
+    virtual float	getMaxRate(bool in)
+    {
+        if (in)
+            return bwMax_in;
+        return bwMax_out;
+    }
 
-virtual void	setMaxRate(bool in, float val)
-	{
-	if (in)
-		bwMax_in = val;
-	else
-		bwMax_out = val;
-	return;
-	}
+    virtual void	setMaxRate(bool in, float val)
+    {
+        if (in)
+            bwMax_in = val;
+        else
+            bwMax_out = val;
+        return;
+    }
 
 protected:
 
-void	setRate(bool in, float val)
-	{
-	if (in)
-		bw_in = val;
-	else
-		bw_out = val;
-	return;
-	}
+    void	setRate(bool in, float val)
+    {
+        if (in)
+            bw_in = val;
+        else
+            bw_out = val;
+        return;
+    }
 
-	private:
-float	bw_in, bw_out, bwMax_in, bwMax_out;
+private:
+    float	bw_in, bw_out, bwMax_in, bwMax_out;
 };
 
 
 /*********************** PQI INTERFACE ******************************\
  * The basic exchange interface.
- * This inherits the RateInterface, as Bandwidth control 
+ * This inherits the RateInterface, as Bandwidth control
  * is a critical to a networked application.
  *
  */
@@ -266,23 +272,35 @@ class NetInterface;
 class PQInterface: public RateInterface
 {
 public:
-	PQInterface(std::string id) :peerId(id) { return; }
-virtual	~PQInterface() { return; }
+    PQInterface(std::string id) :peerId(id) {
+        return;
+    }
+    virtual	~PQInterface() {
+        return;
+    }
 
-virtual int	SendItem(RsItem *) = 0;
-virtual RsItem *GetItem() = 0;
+    virtual int	SendItem(RsItem *) = 0;
+    virtual RsItem *GetItem() = 0;
 
 // also there are  tick + person id  functions.
-virtual int     tick() { return 0; }
-virtual int     status() { return 0; }
-virtual std::string PeerId() { return peerId; }
+    virtual int     tick() {
+        return 0;
+    }
+    virtual int     status() {
+        return 0;
+    }
+    virtual std::string PeerId() {
+        return peerId;
+    }
 
-	// the callback from NetInterface Connection Events.
-virtual int	notifyEvent(NetInterface *ni, int event) { return 0; }
+    // the callback from NetInterface Connection Events.
+    virtual int	notifyEvent(NetInterface *ni, int event) {
+        return 0;
+    }
 
-	private:
+private:
 
-	std::string peerId;
+    std::string peerId;
 };
 
 
@@ -307,27 +325,35 @@ const uint32_t PQI_CONNECT_UDP = 0x0002;
 class BinInterface
 {
 public:
-	BinInterface() { return; }
-virtual ~BinInterface() { return; }
+    BinInterface() {
+        return;
+    }
+    virtual ~BinInterface() {
+        return;
+    }
 
-virtual int     tick() = 0;
+    virtual int     tick() = 0;
 
-virtual int	senddata(void *data, int len) = 0;
-virtual int	readdata(void *data, int len) = 0;
-virtual int	netstatus() = 0;
-virtual int	isactive() = 0;
-virtual bool	moretoread() = 0;
-virtual bool 	cansend() = 0;
+    virtual int	senddata(void *data, int len) = 0;
+    virtual int	readdata(void *data, int len) = 0;
+    virtual int	netstatus() = 0;
+    virtual int	isactive() = 0;
+    virtual bool	moretoread() = 0;
+    virtual bool 	cansend() = 0;
 
-	/* method for streamer to shutdown bininterface */
-virtual int	close() = 0;
+    /* method for streamer to shutdown bininterface */
+    virtual int	close() = 0;
 
-	/* if hashing data */
-virtual std::string gethash() = 0;
-virtual uint64_t bytecount() { return 0; }
+    /* if hashing data */
+    virtual std::string gethash() = 0;
+    virtual uint64_t bytecount() {
+        return 0;
+    }
 
-		/* used by pqistreamer to limit transfers */
-virtual bool 	bandwidthLimited() { return true; }
+    /* used by pqistreamer to limit transfers */
+    virtual bool 	bandwidthLimited() {
+        return true;
+    }
 };
 
 
@@ -337,7 +363,7 @@ virtual bool 	bandwidthLimited() { return true; }
  *
  * NetInterface: very pure interface, so no tick....
  *
- * It is passed a pointer to a PQInterface *parent, 
+ * It is passed a pointer to a PQInterface *parent,
  * this is used to notify the system of Connect/Disconnect Events.
  *
  * Below are the Events for callback.
@@ -356,39 +382,51 @@ static const uint32_t NET_PARAM_CONNECT_TIMEOUT = 3;
 class NetInterface
 {
 public:
-	NetInterface(PQInterface *p_in, std::string id)
-	:p(p_in), peerId(id) { return; }
+    NetInterface(PQInterface *p_in, std::string id)
+            :p(p_in), peerId(id) {
+        return;
+    }
 
-virtual ~NetInterface() 
-	{ return; }
+    virtual ~NetInterface()
+    {
+        return;
+    }
 
 // virtual int tick() = 0; // Already defined for BinInterface.
 
-virtual int connect(struct sockaddr_in raddr) = 0; 
-virtual int listen() = 0; 
-virtual int stoplistening() = 0; 
-virtual int disconnect() = 0;
-virtual int reset() = 0;
-virtual std::string PeerId() { return peerId; }
+    virtual int connect(struct sockaddr_in raddr) = 0;
+    virtual int listen() = 0;
+    virtual int stoplistening() = 0;
+    virtual int disconnect() = 0;
+    virtual int reset() = 0;
+    virtual std::string PeerId() {
+        return peerId;
+    }
 
-virtual bool connect_parameter(uint32_t type, uint32_t value) = 0;
+    virtual bool connect_parameter(uint32_t type, uint32_t value) = 0;
 
 protected:
-PQInterface *parent() { return p; }
+    PQInterface *parent() {
+        return p;
+    }
 
 private:
-	PQInterface *p;
-	std::string peerId;
+    PQInterface *p;
+    std::string peerId;
 };
 
 
 class NetBinInterface: public NetInterface, public BinInterface
 {
 public:
-	NetBinInterface(PQInterface *parent, std::string id)
-	:NetInterface(parent, id)
-	{ return; }
-virtual ~NetBinInterface() { return; }
+    NetBinInterface(PQInterface *parent, std::string id)
+            :NetInterface(parent, id)
+    {
+        return;
+    }
+    virtual ~NetBinInterface() {
+        return;
+    }
 };
 
 #define CHAN_SIGN_SIZE 16
@@ -398,10 +436,10 @@ virtual ~NetBinInterface() { return; }
 #if 0
 class certsign
 {
-        public:
-	bool    operator<(const certsign &ref) const;
-	bool    operator==(const certsign &ref) const;
-	char    data[CERTSIGNLEN];
+public:
+    bool    operator<(const certsign &ref) const;
+    bool    operator==(const certsign &ref) const;
+    char    data[CERTSIGNLEN];
 };
 
 

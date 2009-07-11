@@ -38,19 +38,19 @@
  */
 class p3Blog : public RsQblog
 {
-	public:
+public:
 
-		p3Blog(p3Qblog* qblog);
-		virtual ~p3Blog();
+    p3Blog(p3Qblog* qblog);
+    virtual ~p3Blog();
 
-		virtual bool sendBlog(const std::wstring &msg);
-		virtual bool getBlogs(std::map< std::string, std::multimap<long int, std::wstring> > &blogs);
-		virtual bool getPeerLatestBlog(std::string id, uint32_t &ts, std::wstring &post);
+    virtual bool sendBlog(const std::wstring &msg);
+    virtual bool getBlogs(std::map< std::string, std::multimap<long int, std::wstring> > &blogs);
+    virtual bool getPeerLatestBlog(std::string id, uint32_t &ts, std::wstring &post);
 
-	private:
+private:
 
-		/// to make rsCore blog-service calls
-		p3Qblog* mQblog;
+    /// to make rsCore blog-service calls
+    p3Qblog* mQblog;
 };
 
 

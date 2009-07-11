@@ -31,18 +31,18 @@
 
 class UdpRecvTest: public UdpReceiver
 {
-	public:
-virtual void recvPkt(void *data, int size, struct sockaddr_in &from);
+public:
+    virtual void recvPkt(void *data, int size, struct sockaddr_in &from);
 };
 
 
 class UdpPeerTest: public UdpPeer
 {
-	public:
-	UdpPeerTest(struct sockaddr_in &addr);
-virtual void recvPkt(void *data, int size);
+public:
+    UdpPeerTest(struct sockaddr_in &addr);
+    virtual void recvPkt(void *data, int size);
 
-        struct sockaddr_in raddr;
+    struct sockaddr_in raddr;
 };
 
 

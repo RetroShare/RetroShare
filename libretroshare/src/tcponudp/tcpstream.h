@@ -29,7 +29,7 @@
 #define TOU_TCP_PROTO_H
 
 
-/* so the packet will contain 
+/* so the packet will contain
  * a tcp header + data.
  *
  * This is done simplistically for speed.
@@ -60,8 +60,8 @@
 
 class dataBuffer
 {
-	public:
-	uint8 data[MAX_SEG];
+public:
+    uint8 data[MAX_SEG];
 };
 
 #include <list>
@@ -70,168 +70,174 @@ class dataBuffer
 
 class TcpStream: public UdpPeer
 {
-	public:
-	/* Top-Level exposed */
+public:
+    /* Top-Level exposed */
 
-	TcpStream(UdpSorter *lyr);
-virtual ~TcpStream() { return; }
+    TcpStream(UdpSorter *lyr);
+    virtual ~TcpStream() {
+        return;
+    }
 
-	/* user interface */
-int     status(std::ostream &out);
-int     connect(const struct sockaddr_in &raddr, uint32_t conn_period);
-int 	listenfor(const struct sockaddr_in &raddr);
-bool    isConnected();
+    /* user interface */
+    int     status(std::ostream &out);
+    int     connect(const struct sockaddr_in &raddr, uint32_t conn_period);
+    int 	listenfor(const struct sockaddr_in &raddr);
+    bool    isConnected();
 
-	/* get tcp information */
-bool 	getRemoteAddress(struct sockaddr_in &raddr);
-uint8	TcpState();
-int	TcpErrorState();
+    /* get tcp information */
+    bool 	getRemoteAddress(struct sockaddr_in &raddr);
+    uint8	TcpState();
+    int	TcpErrorState();
 
-	/* stream Interface */
-int	write(char *dta, int size); /* write -> pkt -> net */
-int	read(char *dta, int size); /* net ->   pkt -> read */
+    /* stream Interface */
+    int	write(char *dta, int size); /* write -> pkt -> net */
+    int	read(char *dta, int size); /* net ->   pkt -> read */
 
-	/* check ahead for allowed bytes */
-int	write_allowed();
-int	read_pending();
+    /* check ahead for allowed bytes */
+    int	write_allowed();
+    int	read_pending();
 
-int	closeWrite(); /* non-standard, but for clean exit */
-int	close(); /* standard unix behaviour */
+    int	closeWrite(); /* non-standard, but for clean exit */
+    int	close(); /* standard unix behaviour */
 
-int	tick(); /* check iface etc */
+    int	tick(); /* check iface etc */
 
-	/* Callback Funcion from UDP Layers */
-virtual void recvPkt(void *data, int size); /* overloaded */
-
-
-
-	/* Exposed Data Counting */
-bool 	widle(); /* write idle */
-bool 	ridle(); /* read idle */
-uint32 	wbytes();
-uint32 	rbytes();
-
-	private: 
-
-	/* Internal Functions - use the Mutex (not reentrant) */
-	/* Internal Functions - that don't need mutex protection */
-
-uint32	genSequenceNo();
-bool 	isOldSequence(uint32 tst, uint32 curr);
-
-	RsMutex tcpMtx;
-
-	/* Internal Functions - only called inside mutex protection */
-
-int	cleanup();
-
-/* incoming data */
-int 	recv_check();
-int 	handleIncoming(TcpPacket *pkt);
-int 	incoming_Closed(TcpPacket *pkt);
-int 	incoming_SynSent(TcpPacket *pkt);
-int 	incoming_SynRcvd(TcpPacket *pkt);
-int 	incoming_Established(TcpPacket *pkt);
-int 	incoming_FinWait1(TcpPacket *pkt);
-int 	incoming_FinWait2(TcpPacket *pkt);
-int 	incoming_TimedWait(TcpPacket *pkt);
-int 	incoming_Closing(TcpPacket *pkt);
-int 	incoming_CloseWait(TcpPacket *pkt);
-int 	incoming_LastAck(TcpPacket *pkt);
-int 	check_InPkts();
-int 	UpdateInWinSize();
-int	int_read_pending();
-
-/* outgoing data */
-int	send();
-int 	toSend(TcpPacket *pkt, bool retrans = true);
-void 	acknowledge();
-int	retrans();
-int	sendAck();
-void 	setRemoteAddress(const struct sockaddr_in &raddr);
-
-int	getTTL() { return ttl; }
-void	setTTL(int t) { ttl = t; }
-
-/* data counting */
-uint32 	int_wbytes();
-uint32 	int_rbytes();
-
-	/* Internal Data - must have mutex to access! */
-
-	/* data (in -> pkts) && (pkts -> out) */
-
-	/* for small amounts of data */
-	uint8 inData[MAX_SEG];
-	uint32 inSize;
+    /* Callback Funcion from UDP Layers */
+    virtual void recvPkt(void *data, int size); /* overloaded */
 
 
-	/* two variable sized buffers required here */
-	uint8 outDataRead[MAX_SEG];
-	uint32 outSizeRead;
-	uint8 outDataNet[MAX_SEG];
-	uint32 outSizeNet;
 
-	/* get packed into here as size increases */
-	std::deque<dataBuffer *>   inQueue, outQueue;
+    /* Exposed Data Counting */
+    bool 	widle(); /* write idle */
+    bool 	ridle(); /* read idle */
+    uint32 	wbytes();
+    uint32 	rbytes();
 
-	/* packets waiting for acks */
-	std::list<TcpPacket *> inPkt, outPkt;
+private:
+
+    /* Internal Functions - use the Mutex (not reentrant) */
+    /* Internal Functions - that don't need mutex protection */
+
+    uint32	genSequenceNo();
+    bool 	isOldSequence(uint32 tst, uint32 curr);
+
+    RsMutex tcpMtx;
+
+    /* Internal Functions - only called inside mutex protection */
+
+    int	cleanup();
+
+    /* incoming data */
+    int 	recv_check();
+    int 	handleIncoming(TcpPacket *pkt);
+    int 	incoming_Closed(TcpPacket *pkt);
+    int 	incoming_SynSent(TcpPacket *pkt);
+    int 	incoming_SynRcvd(TcpPacket *pkt);
+    int 	incoming_Established(TcpPacket *pkt);
+    int 	incoming_FinWait1(TcpPacket *pkt);
+    int 	incoming_FinWait2(TcpPacket *pkt);
+    int 	incoming_TimedWait(TcpPacket *pkt);
+    int 	incoming_Closing(TcpPacket *pkt);
+    int 	incoming_CloseWait(TcpPacket *pkt);
+    int 	incoming_LastAck(TcpPacket *pkt);
+    int 	check_InPkts();
+    int 	UpdateInWinSize();
+    int	int_read_pending();
+
+    /* outgoing data */
+    int	send();
+    int 	toSend(TcpPacket *pkt, bool retrans = true);
+    void 	acknowledge();
+    int	retrans();
+    int	sendAck();
+    void 	setRemoteAddress(const struct sockaddr_in &raddr);
+
+    int	getTTL() {
+        return ttl;
+    }
+    void	setTTL(int t) {
+        ttl = t;
+    }
+
+    /* data counting */
+    uint32 	int_wbytes();
+    uint32 	int_rbytes();
+
+    /* Internal Data - must have mutex to access! */
+
+    /* data (in -> pkts) && (pkts -> out) */
+
+    /* for small amounts of data */
+    uint8 inData[MAX_SEG];
+    uint32 inSize;
 
 
-	uint8  state; /* stream state */
-	bool   inStreamActive;
-	bool   outStreamActive;
+    /* two variable sized buffers required here */
+    uint8 outDataRead[MAX_SEG];
+    uint32 outSizeRead;
+    uint8 outDataNet[MAX_SEG];
+    uint32 outSizeNet;
 
-	uint32 outSeqno; /* next out */
-	uint32 outAcked; /* other size has received */
-	uint32 outWinSize; /* we allowed to send */
+    /* get packed into here as size increases */
+    std::deque<dataBuffer *>   inQueue, outQueue;
 
-	uint32 inAckno; /* next expected */
-	uint32 inWinSize; /* allowing other to send */
-	uint32 rrt;
+    /* packets waiting for acks */
+    std::list<TcpPacket *> inPkt, outPkt;
 
-	/* some (initially) consts */
-	uint32 maxWinSize;
-	uint32 keepAliveTimeout;
-	double retransTimeout;
 
-	/* some timers */
-	double keepAliveTimer;
-	double lastIncomingPkt;
+    uint8  state; /* stream state */
+    bool   inStreamActive;
+    bool   outStreamActive;
 
-	/* tracking */
-	uint32 lastSentAck;
-	uint32 lastSentWinSize;
-	uint32 initOurSeqno;
-	uint32 initPeerSeqno;
+    uint32 outSeqno; /* next out */
+    uint32 outAcked; /* other size has received */
+    uint32 outWinSize; /* we allowed to send */
 
-	uint32 lastWriteTF,lastReadTF;
-	uint16 wcount, rcount;
+    uint32 inAckno; /* next expected */
+    uint32 inWinSize; /* allowing other to send */
+    uint32 rrt;
 
-	int errorState;
+    /* some (initially) consts */
+    uint32 maxWinSize;
+    uint32 keepAliveTimeout;
+    double retransTimeout;
 
-	/* RoundTripTime estimations */
-	double rtt_est;
-	double rtt_dev;
+    /* some timers */
+    double keepAliveTimer;
+    double lastIncomingPkt;
 
-	/* congestion limits */
-	uint32 congestThreshold;
-	uint32 congestWinSize;
-	uint32 congestUpdate;
+    /* tracking */
+    uint32 lastSentAck;
+    uint32 lastSentWinSize;
+    uint32 initOurSeqno;
+    uint32 initPeerSeqno;
 
-	/* existing TTL for this stream (tweaked at startup) */
-	int ttl;
+    uint32 lastWriteTF,lastReadTF;
+    uint16 wcount, rcount;
 
-	double mTTL_period;
-	double mTTL_start;
-	double mTTL_end;
+    int errorState;
 
-	struct sockaddr_in 	peeraddr;
-	bool 			peerKnown;
+    /* RoundTripTime estimations */
+    double rtt_est;
+    double rtt_dev;
 
-	/* UdpSorter (has own Mutex!) */
-	UdpSorter *udp;
+    /* congestion limits */
+    uint32 congestThreshold;
+    uint32 congestWinSize;
+    uint32 congestUpdate;
+
+    /* existing TTL for this stream (tweaked at startup) */
+    int ttl;
+
+    double mTTL_period;
+    double mTTL_start;
+    double mTTL_end;
+
+    struct sockaddr_in 	peeraddr;
+    bool 			peerKnown;
+
+    /* UdpSorter (has own Mutex!) */
+    UdpSorter *udp;
 
 };
 

@@ -58,131 +58,131 @@ RsControl *createRsControl(RsIface &iface, NotifyBase &notify);
 
 class RsServer: public RsControl, public RsThread
 {
-	public:
-		/****************************************/
-		/* p3face-startup.cc: init... */
-		virtual	int StartupRetroShare();
+public:
+    /****************************************/
+    /* p3face-startup.cc: init... */
+    virtual	int StartupRetroShare();
 
-	public:
-		/****************************************/
-		/* p3face.cc: main loop / util fns / locking. */
+public:
+    /****************************************/
+    /* p3face.cc: main loop / util fns / locking. */
 
-		RsServer(RsIface &i, NotifyBase &callback);
-		virtual ~RsServer();
+    RsServer(RsIface &i, NotifyBase &callback);
+    virtual ~RsServer();
 
-		/* Thread Fn: Run the Core */
-		virtual void run();
+    /* Thread Fn: Run the Core */
+    virtual void run();
 
-	public: // no longer private:!!!
-		/* locking stuff */
-		void    lockRsCore() 
-		{ 
-			//	std::cerr << "RsServer::lockRsCore()" << std::endl;
-			coreMutex.lock(); 
-		}
+public: // no longer private:!!!
+    /* locking stuff */
+    void    lockRsCore()
+    {
+        //	std::cerr << "RsServer::lockRsCore()" << std::endl;
+        coreMutex.lock();
+    }
 
-		void    unlockRsCore() 
-		{ 
-			//	std::cerr << "RsServer::unlockRsCore()" << std::endl;
-			coreMutex.unlock(); 
-		}
+    void    unlockRsCore()
+    {
+        //	std::cerr << "RsServer::unlockRsCore()" << std::endl;
+        coreMutex.unlock();
+    }
 
-	private:
+private:
 
-		/* mutex */
-		RsMutex coreMutex;
+    /* mutex */
+    RsMutex coreMutex;
 
-		/* General Internal Helper Functions
-			(Must be Locked)
-		 */
+    /* General Internal Helper Functions
+    	(Must be Locked)
+     */
 #if 0
-		cert   *intFindCert(RsCertId id);
-		RsCertId intGetCertId(cert *c);
+    cert   *intFindCert(RsCertId id);
+    RsCertId intGetCertId(cert *c);
 #endif
 
-		/****************************************/
-		/****************************************/
-		/* p3face-msg Operations */
+    /****************************************/
+    /****************************************/
+    /* p3face-msg Operations */
 
-	public:
-		virtual const std::string& certificateFileName() ;
+public:
+    virtual const std::string& certificateFileName() ;
 
-		/* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
-		virtual int     SetInChat(std::string id, bool in);         /* friend : chat msgs */
-		virtual int     SetInMsg(std::string id, bool in);          /* friend : msg receipients */ 
-		virtual int     SetInBroadcast(std::string id, bool in);    /* channel : channel broadcast */
-		virtual int     SetInSubscribe(std::string id, bool in);    /* channel : subscribed channels */
-		virtual int     SetInRecommend(std::string id, bool in);    /* file : recommended file */
-		virtual int     ClearInChat();
-		virtual int     ClearInMsg();
-		virtual int     ClearInBroadcast();
-		virtual int     ClearInSubscribe();
-		virtual int     ClearInRecommend();
+    /* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
+    virtual int     SetInChat(std::string id, bool in);         /* friend : chat msgs */
+    virtual int     SetInMsg(std::string id, bool in);          /* friend : msg receipients */
+    virtual int     SetInBroadcast(std::string id, bool in);    /* channel : channel broadcast */
+    virtual int     SetInSubscribe(std::string id, bool in);    /* channel : subscribed channels */
+    virtual int     SetInRecommend(std::string id, bool in);    /* file : recommended file */
+    virtual int     ClearInChat();
+    virtual int     ClearInMsg();
+    virtual int     ClearInBroadcast();
+    virtual int     ClearInSubscribe();
+    virtual int     ClearInRecommend();
 
-		virtual bool    IsInChat(std::string id);           /* friend : chat msgs */
-		virtual bool    IsInMsg(std::string id);            /* friend : msg recpts*/
-
-
-	private:
-
-		std::list<std::string> mInChatList, mInMsgList;
-
-		void initRsMI(RsMsgItem *msg, MessageInfo &mi);
-
-		/****************************************/
-		/****************************************/
-		/****************************************/
-		/****************************************/
-	public:
-		/* Config */
-
-		virtual int 	ConfigGetDataRates(float &inKb, float &outKb);
-		virtual int     ConfigSetDataRates( int totalDownload, int totalUpload );
-		virtual int     ConfigSetBootPrompt( bool on );
-
-		virtual void    ConfigFinalSave( );
-
-		/************* Rs shut down function: in upnp 'port lease time' bug *****************/
-
-		/**
-		 * This function is responsible for ensuring Retroshare exits in a legal state:
-		 * i.e. releases all held resources and saves current configuration
-		 */
-		virtual void 	rsGlobalShutDown( ); 
-	private:
-		int UpdateAllConfig();
-
-		/****************************************/
+    virtual bool    IsInChat(std::string id);           /* friend : chat msgs */
+    virtual bool    IsInMsg(std::string id);            /* friend : msg recpts*/
 
 
-	private: 
+private:
 
-		// The real Server Parts.
+    std::list<std::string> mInChatList, mInMsgList;
 
-		//filedexserver *server;
-		ftServer *ftserver;
+    void initRsMI(RsMsgItem *msg, MessageInfo &mi);
 
-		p3ConnectMgr *mConnMgr;
-		p3AuthMgr    *mAuthMgr;
+    /****************************************/
+    /****************************************/
+    /****************************************/
+    /****************************************/
+public:
+    /* Config */
 
-		pqipersongrp *pqih;
+    virtual int 	ConfigGetDataRates(float &inKb, float &outKb);
+    virtual int     ConfigSetDataRates( int totalDownload, int totalUpload );
+    virtual int     ConfigSetBootPrompt( bool on );
 
-		//sslroot *sslr;
+    virtual void    ConfigFinalSave( );
 
-		/* services */
-		p3disc *ad;
-		p3MsgService  *msgSrv;
-		p3ChatService *chatSrv;
+    /************* Rs shut down function: in upnp 'port lease time' bug *****************/
 
-		/* caches (that need ticking) */
-		p3Ranking *mRanking;
-		p3Qblog *mQblog;
+    /**
+     * This function is responsible for ensuring Retroshare exits in a legal state:
+     * i.e. releases all held resources and saves current configuration
+     */
+    virtual void 	rsGlobalShutDown( );
+private:
+    int UpdateAllConfig();
 
-		/* Config */
-		p3ConfigMgr     *mConfigMgr;
-		p3GeneralConfig *mGeneralConfig;
+    /****************************************/
 
-		// Worker Data.....
+
+private:
+
+    // The real Server Parts.
+
+    //filedexserver *server;
+    ftServer *ftserver;
+
+    p3ConnectMgr *mConnMgr;
+    p3AuthMgr    *mAuthMgr;
+
+    pqipersongrp *pqih;
+
+    //sslroot *sslr;
+
+    /* services */
+    p3disc *ad;
+    p3MsgService  *msgSrv;
+    p3ChatService *chatSrv;
+
+    /* caches (that need ticking) */
+    p3Ranking *mRanking;
+    p3Qblog *mQblog;
+
+    /* Config */
+    p3ConfigMgr     *mConfigMgr;
+    p3GeneralConfig *mGeneralConfig;
+
+    // Worker Data.....
 
 };
 

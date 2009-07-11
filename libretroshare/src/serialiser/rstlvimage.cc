@@ -35,102 +35,102 @@
  **/
 
 /************************************* RsTlvImage ************************************/
-	
+
 RsTlvImage::RsTlvImage()
-	:RsTlvItem(), image_type(0), binData(TLV_TYPE_BIN_IMAGE)
+        :RsTlvItem(), image_type(0), binData(TLV_TYPE_BIN_IMAGE)
 {
-	return;
+    return;
 }
 
 void RsTlvImage::TlvClear()
 {
-	image_type = 0;
-	binData.TlvClear();
+    image_type = 0;
+    binData.TlvClear();
 }
 
 
 uint16_t RsTlvImage::TlvSize()
 {
-	uint32_t s = 4; /* header */
+    uint32_t s = 4; /* header */
 
-	/* collect sizes for both uInts and data length */
-	s+= 4;
-	s+= binData.TlvSize();
+    /* collect sizes for both uInts and data length */
+    s+= 4;
+    s+= binData.TlvSize();
 
-	return s;
+    return s;
 }
 
 
 bool RsTlvImage::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
 {
-	/* must check sizes */
-	uint16_t tlvsize = TlvSize();
-	uint32_t tlvend  = *offset + tlvsize;
+    /* must check sizes */
+    uint16_t tlvsize = TlvSize();
+    uint32_t tlvend  = *offset + tlvsize;
 
-	if (size < tlvend)
-		return false; /* not enough space */
+    if (size < tlvend)
+        return false; /* not enough space */
 
-	bool ok = true;
+    bool ok = true;
 
-		/* start at data[offset] */
-	ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_IMAGE , tlvsize);
+    /* start at data[offset] */
+    ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_IMAGE , tlvsize);
 
-	/* add mandatory part */
-        ok &= setRawUInt32(data, tlvend, offset, image_type);
-	ok &= binData.SetTlv(data, size, offset);
+    /* add mandatory part */
+    ok &= setRawUInt32(data, tlvend, offset, image_type);
+    ok &= binData.SetTlv(data, size, offset);
 
-	return ok;
+    return ok;
 
 
 }
 
 bool RsTlvImage::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
 {
-	if (size < *offset + 4)
-	{
-		return false;
-	}
+    if (size < *offset + 4)
+    {
+        return false;
+    }
 
-	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
-	uint16_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
-	uint32_t tlvend = *offset + tlvsize;
+    uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
+    uint16_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
+    uint32_t tlvend = *offset + tlvsize;
 
-	if (size < tlvend)    /* check size */
-		return false; /* not enough space */
+    if (size < tlvend)    /* check size */
+        return false; /* not enough space */
 
-	if (tlvtype != TLV_TYPE_IMAGE) /* check type */
-		return false;
+    if (tlvtype != TLV_TYPE_IMAGE) /* check type */
+        return false;
 
-	bool ok = true;
+    bool ok = true;
 
-	/* ready to load */
-	TlvClear();
+    /* ready to load */
+    TlvClear();
 
-	/* skip the header */
-	(*offset) += 4;
+    /* skip the header */
+    (*offset) += 4;
 
-        /* add mandatory parts first */
-        ok &= getRawUInt32(data, tlvend, offset, &(image_type));
-	ok &= binData.GetTlv(data, size, offset);
+    /* add mandatory parts first */
+    ok &= getRawUInt32(data, tlvend, offset, &(image_type));
+    ok &= binData.GetTlv(data, size, offset);
 
-	return ok;
+    return ok;
 
 }
 
 /* print it out */
 std::ostream &RsTlvImage::print(std::ostream &out, uint16_t indent)
 {
-	printBase(out, "RsTlvImage", indent);
-	uint16_t int_Indent = indent + 2;
+    printBase(out, "RsTlvImage", indent);
+    uint16_t int_Indent = indent + 2;
 
-	printIndent(out, int_Indent);
-	out << "Image_Type: " << image_type;
-	out << std::endl;
+    printIndent(out, int_Indent);
+    out << "Image_Type: " << image_type;
+    out << std::endl;
 
-	binData.print(out, int_Indent);
+    binData.print(out, int_Indent);
 
-	printEnd(out, "RsTlvImage", indent);
-	return out;
+    printEnd(out, "RsTlvImage", indent);
+    return out;
 
 }
 

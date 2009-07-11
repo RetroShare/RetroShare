@@ -28,7 +28,7 @@
 #ifndef FILEDEXSERVER_H
 #define FILEDEXSERVER_H
 
-/* 
+/*
  * Slightly more complete server....
  * has a filedex pointer, which manages the local indexing/searching.
  *
@@ -75,7 +75,7 @@ public:
 
     void 	saveFileTransferStatus();
     int     getFile(std::string fname, std::string hash,
-                        uint32_t size, std::string dest);
+                    uint32_t size, std::string dest);
     void 	clear_old_transfers();
     void 	cancelTransfer(std::string fname, std::string hash, uint32_t size);
 
@@ -96,7 +96,9 @@ public:
     void		setSaveDir(std::string d);
     void    	setEmergencySaveDir(std::string s);
 
-    void		setConfigDir(std::string d) { config_dir = d; }
+    void		setConfigDir(std::string d) {
+        config_dir = d;
+    }
     bool		getSaveIncSearch();
     void		setSaveIncSearch(bool v);
 
@@ -111,7 +113,8 @@ private:
 
     std::list<std::string> dbase_dirs;
 
-    P3Interface *pqisi;MRK_PQI_FILEDEX_SERVER_HEADER
+    P3Interface *pqisi;
+    MRK_PQI_FILEDEX_SERVER_HEADER
     p3AuthMgr    *mAuthMgr;
     p3ConnectMgr *mConnMgr;
 
@@ -121,10 +124,18 @@ private:
 
 public:
     /* some more switches (here for uniform saving) */
-    int	getDHTEnabled() const { return DHTState; }
-    int getUPnPEnabled() const { return UPnPState; }
-    void setDHTEnabled(int i) {	DHTState = i; }
-    void setUPnPEnabled(int i) { UPnPState = i; }
+    int	getDHTEnabled() const {
+        return DHTState;
+    }
+    int getUPnPEnabled() const {
+        return UPnPState;
+    }
+    void setDHTEnabled(int i) {
+        DHTState = i;
+    }
+    void setUPnPEnabled(int i) {
+        UPnPState = i;
+    }
 
 private:
     int DHTState;
@@ -143,7 +154,7 @@ private:
     /*************************** p3 Config Overload ********************/
 
     /* new FileCache stuff */
-    public:
+public:
 
     int FileStoreTick();
     int FileCacheSave();
@@ -151,10 +162,10 @@ private:
     /* Setup */
     void 	initialiseFileStore();
     void    setFileCallback(std::string ownId, CacheStrapper *strapper,
-				ftfiler *ft, NotifyBase *cb);
+                            ftfiler *ft, NotifyBase *cb);
     void    StartupMonitor();
 
-	/* Controls */
+    /* Controls */
     int RequestDirDetails(std::string uid, std::string path, DirDetails &details);
     int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags);
 

@@ -26,7 +26,7 @@
  *
  */
 
-/* some utility functions mainly for debugging 
+/* some utility functions mainly for debugging
  */
 
 #include <ostream>
@@ -41,7 +41,7 @@ int test_SerialiseTlvItem(std::ostream &str, RsTlvItem *in, RsTlvItem *out);
 
 bool test_StepThroughTlvStack(std::ostream &str, void *data, int size);
 int test_CreateTlvStack(std::ostream &str,
-                std::vector<RsTlvItem *> items, void *data, int totalsize);
+                        std::vector<RsTlvItem *> items, void *data, int totalsize);
 int test_TlvSet(std::vector<RsTlvItem *> items, int maxsize);
 
 #endif

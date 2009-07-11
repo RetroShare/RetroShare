@@ -1,16 +1,16 @@
 /*
  * RetroShare FileCache Module: cachestrapper.h
- *   
+ *
  * Copyright 2004-2007 by Robert Fernie.
- *     
- * This library is free software; you can redistribute it and/or 
+ *
+ * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
  * License Version 2 as published by the Free Software Foundation.
  *
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU  
- * Library General Public License for more details. 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
  * License along with this library; if not, write to the Free Software
@@ -36,7 +36,7 @@
 /******************* CacheStrapper and Related Classes *******************
  * A generic Cache Update system.
  *
- * CacheStrapper: maintains a set of CacheSources, and CacheStores, 
+ * CacheStrapper: maintains a set of CacheSources, and CacheStores,
  *     queries and updates as new information arrives.
  *
  * CacheTransfer: Interface for FileTransfer Class to support.
@@ -68,8 +68,12 @@ typedef std::string RsPeerId;
 class CacheId
 {
 public:
-    CacheId() :type(0), subid(0) { return; }
-    CacheId(uint16_t a, uint16_t b) :type(a), subid(b) { return; }
+    CacheId() :type(0), subid(0) {
+        return;
+    }
+    CacheId(uint16_t a, uint16_t b) :type(a), subid(b) {
+        return;
+    }
     uint16_t type;
     uint16_t subid;
 };
@@ -79,16 +83,16 @@ bool operator<(const CacheId &a, const CacheId &b);
 
 class CacheData
 {
-	public:
+public:
 
-	RsPeerId pid;
-	std::string pname; /* peer name (can be used by cachestore) */
-	CacheId  cid;
-	std::string path; 
-	std::string name;
-	std::string hash;
-	uint64_t size;
-	time_t recvd;
+    RsPeerId pid;
+    std::string pname; /* peer name (can be used by cachestore) */
+    CacheId  cid;
+    std::string path;
+    std::string name;
+    std::string hash;
+    uint64_t size;
+    time_t recvd;
 };
 
 std::ostream &operator<<(std::ostream &out, const CacheData &d);
@@ -98,7 +102,9 @@ std::ostream &operator<<(std::ostream &out, const CacheData &d);
 class CacheTransfer
 {
 public:
-    CacheTransfer(CacheStrapper *cs) :strapper(cs) { return; }
+    CacheTransfer(CacheStrapper *cs) :strapper(cs) {
+        return;
+    }
     virtual ~CacheTransfer() {}
 
     /* upload side of things .... searches through CacheStrapper. */
@@ -155,9 +161,15 @@ public:
     bool 	clearCache(CacheId id);
 
     /* get private data */
-    std::string getCacheDir()    { return cacheDir;   }
-    bool        isMultiCache()   { return multiCache; }
-    uint16_t    getCacheType()   { return cacheType;  }
+    std::string getCacheDir()    {
+        return cacheDir;
+    }
+    bool        isMultiCache()   {
+        return multiCache;
+    }
+    uint16_t    getCacheType()   {
+        return cacheType;
+    }
 
     /* display */
     void 	listCaches(std::ostream &out);
@@ -177,7 +189,7 @@ protected:
 
     CacheSet caches;
 
-    private:
+private:
 
     std::string cacheDir;
     mutable RsMutex cMutex;
@@ -210,9 +222,15 @@ public:
     virtual int loadCache(const CacheData &data);	  /* actual load, once data available */
 
     /* get private data */
-    std::string getCacheDir()    { return cacheDir;   }
-    bool        isMultiCache()   { return multiCache; }
-    uint16_t    getCacheType()   { return cacheType;  }
+    std::string getCacheDir()    {
+        return cacheDir;
+    }
+    bool        isMultiCache()   {
+        return multiCache;
+    }
+    uint16_t    getCacheType()   {
+        return cacheType;
+    }
 
     /* display */
     void 	listCaches(std::ostream &out);
@@ -256,10 +274,14 @@ class CachePair
 {
 public:
     CachePair()
-        :source(NULL), store(NULL), id(0, 0) { return; }
+            :source(NULL), store(NULL), id(0, 0) {
+        return;
+    }
 
     CachePair(CacheSource *a, CacheStore *b, CacheId c)
-	:source(a), store(b), id(c) { return; }
+            :source(a), store(b), id(c) {
+        return;
+    }
 
     CacheSource *source;
     CacheStore  *store;
@@ -276,7 +298,9 @@ class CacheStrapper: public pqiMonitor, public p3Config
 {
 public:
     CacheStrapper(p3AuthMgr *am, p3ConnectMgr *cm);
-    virtual ~CacheStrapper() { return; }
+    virtual ~CacheStrapper() {
+        return;
+    }
 
     /************* from pqiMonitor *******************/
     virtual void statusChange(const std::list<pqipeer> &plist);
@@ -291,7 +315,7 @@ public:
 
     void	addCachePair(CachePair pair);
 
-        /*** I/O (2) ***/
+    /*** I/O (2) ***/
     void	recvCacheResponse(CacheData &data, time_t ts);
     void    handleCacheQuery(RsPeerId id, std::map<CacheId, CacheData> &data);
 
@@ -305,7 +329,7 @@ public:
 
 
     /* Config */
-    protected:
+protected:
 
     /* Key Functions to be overloaded for Full Configuration */
     virtual RsSerialiser *setupSerialiser();

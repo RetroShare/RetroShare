@@ -60,11 +60,11 @@ int rslog(unsigned int lvl, int zone, std::string msg);
 //int pqioutput(unsigned int lvl, int zone, std::string msg);
 #define pqioutput rslog
 
-#define PQL_NONE   	RSL_NONE     	
-#define PQL_ALERT 	RSL_ALERT     
+#define PQL_NONE   	RSL_NONE
+#define PQL_ALERT 	RSL_ALERT
 #define PQL_ERROR 	RSL_ERROR
 #define PQL_WARNING 	RSL_WARNING
-#define PQL_DEBUG_ALERT RSL_DEBUG_ALERT 
+#define PQL_DEBUG_ALERT RSL_DEBUG_ALERT
 #define PQL_DEBUG_BASIC	RSL_DEBUG_BASIC
 #define PQL_DEBUG_ALL 	RSL_DEBUG_ALL
 

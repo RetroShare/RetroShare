@@ -31,35 +31,35 @@
 
 int main()
 {
-	std::string agent = "Hand-Crafted Thread";
-	std::string keyIn = "color";
-	//std::string value = "aaaaBBBBccccDDDDe";
-	std::string value = "1234567890aaaaBBBBccccDDDDe";
-	//std::string value = "12345678901234567890aaaaBBBBccccDDDDe";
-	//std::string value = "aaa12345678901234567890aaaaBBBBccccDDDDe";
-	uint32_t    ttl   = 600;
-	std::string client= "Retroshare v0.4";
-	uint32_t   maxresp= 1024;
+    std::string agent = "Hand-Crafted Thread";
+    std::string keyIn = "color";
+    //std::string value = "aaaaBBBBccccDDDDe";
+    std::string value = "1234567890aaaaBBBBccccDDDDe";
+    //std::string value = "12345678901234567890aaaaBBBBccccDDDDe";
+    //std::string value = "aaa12345678901234567890aaaaBBBBccccDDDDe";
+    uint32_t    ttl   = 600;
+    std::string client= "Retroshare v0.4";
+    uint32_t   maxresp= 1024;
 
-	std::string key = RsUtil::HashId(keyIn, false);
+    std::string key = RsUtil::HashId(keyIn, false);
 
-	OpenDHTClient dht;
-	dht.loadServers("./servers.txt");
+    OpenDHTClient dht;
+    dht.loadServers("./servers.txt");
 
-	dht.publishKey(key, value, ttl);
+    dht.publishKey(key, value, ttl);
 
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+    /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
-        sleep(10);
+    sleep(10);
 #else
-        Sleep(10000);
+    Sleep(10000);
 #endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+    /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-	std::list<std::string> values;
-	dht.searchKey(key, values);
+    std::list<std::string> values;
+    dht.searchKey(key, values);
 
 
-	return 1;
+    return 1;
 }
 

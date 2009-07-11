@@ -33,100 +33,100 @@
 #if 0
 class RsForumGrp: public RsDistribGrp
 {
-	public:
+public:
 
-	RsForumGrp();
+    RsForumGrp();
 
-	/* orig data (from RsDistribMsg)
-	 * std::string grpId
-	 */
+    /* orig data (from RsDistribMsg)
+     * std::string grpId
+     */
 
-	std::wstring name;
-	std::wstring desc;
+    std::wstring name;
+    std::wstring desc;
 };
 
 class RsForumMsg: public RsDistribMsg
 {
-	public:
+public:
 
-	RsForumMsg();
+    RsForumMsg();
 
-	/* orig data (from RsDistribMsg)
-	 * std::string grpId
-	 * std::string msgId
-	 * std::string threadId
-	 * std::string parentId
-	 * time_t timestamp
-	 */
+    /* orig data (from RsDistribMsg)
+     * std::string grpId
+     * std::string msgId
+     * std::string threadId
+     * std::string parentId
+     * time_t timestamp
+     */
 
-	/* new data */
-	std::wstring title;
-	std::wstring msg;
-	std::string srcId;
+    /* new data */
+    std::wstring title;
+    std::wstring msg;
+    std::string srcId;
 };
 
 #endif
 
 
-class p3Forums: public p3GroupDistrib, public RsForums 
+class p3Forums: public p3GroupDistrib, public RsForums
 {
-	public:
+public:
 
-	p3Forums(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
-		std::string srcdir, std::string storedir, p3AuthMgr *mgr);
-virtual ~p3Forums();
+    p3Forums(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
+             std::string srcdir, std::string storedir, p3AuthMgr *mgr);
+    virtual ~p3Forums();
 
-void	loadDummyData();
+    void	loadDummyData();
 
-/****************************************/
-/********* rsForums Interface ***********/
+    /****************************************/
+    /********* rsForums Interface ***********/
 
-virtual bool forumsChanged(std::list<std::string> &forumIds);
+    virtual bool forumsChanged(std::list<std::string> &forumIds);
 
-virtual std::string createForum(std::wstring forumName, std::wstring forumDesc, uint32_t forumFlags);
+    virtual std::string createForum(std::wstring forumName, std::wstring forumDesc, uint32_t forumFlags);
 
-virtual bool getForumInfo(std::string fId, ForumInfo &fi);
-virtual bool getForumList(std::list<ForumInfo> &forumList);
-virtual bool getForumThreadList(std::string fId, std::list<ThreadInfoSummary> &msgs);
-virtual bool getForumThreadMsgList(std::string fId, std::string tId, std::list<ThreadInfoSummary> &msgs);
-virtual bool getForumMessage(std::string fId, std::string mId, ForumMsgInfo &msg);
+    virtual bool getForumInfo(std::string fId, ForumInfo &fi);
+    virtual bool getForumList(std::list<ForumInfo> &forumList);
+    virtual bool getForumThreadList(std::string fId, std::list<ThreadInfoSummary> &msgs);
+    virtual bool getForumThreadMsgList(std::string fId, std::string tId, std::list<ThreadInfoSummary> &msgs);
+    virtual bool getForumMessage(std::string fId, std::string mId, ForumMsgInfo &msg);
 
-virtual	bool ForumMessageSend(ForumMsgInfo &info);
+    virtual	bool ForumMessageSend(ForumMsgInfo &info);
 
-virtual bool forumSubscribe(std::string fId, bool subscribe);
+    virtual bool forumSubscribe(std::string fId, bool subscribe);
 
-/***************************************************************************************/
-/****************** Event Feedback (Overloaded form p3distrib) *************************/
-/***************************************************************************************/
+    /***************************************************************************************/
+    /****************** Event Feedback (Overloaded form p3distrib) *************************/
+    /***************************************************************************************/
 
-virtual void locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags);
-virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string);
-virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string);
+    virtual void locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags);
+    virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string);
+    virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string);
 
 
 
-/****************************************/
-/********* Overloaded Functions *********/
+    /****************************************/
+    /********* Overloaded Functions *********/
 
 //virtual RsSerialiser *setupSerialiser();
 //virtual pqistreamer *createStreamer(BinInterface *bio, std::string src, uint32_t bioflags);
-virtual RsSerialType *createSerialiser();
+    virtual RsSerialType *createSerialiser();
 
-virtual bool    locked_checkDistribMsg(RsDistribMsg *msg);
-virtual RsDistribGrp *locked_createPublicDistribGrp(GroupInfo &info);
-virtual RsDistribGrp *locked_createPrivateDistribGrp(GroupInfo &info);
-
-
-/****************************************/
-
-std::string createForumMsg(std::string fId, std::string pId,
-                     std::wstring title, std::wstring msg, bool signIt);
-
-	private:
+    virtual bool    locked_checkDistribMsg(RsDistribMsg *msg);
+    virtual RsDistribGrp *locked_createPublicDistribGrp(GroupInfo &info);
+    virtual RsDistribGrp *locked_createPrivateDistribGrp(GroupInfo &info);
 
 
+    /****************************************/
 
-bool 	mForumsChanged;
+    std::string createForumMsg(std::string fId, std::string pId,
+                               std::wstring title, std::wstring msg, bool signIt);
+
+private:
+
+
+
+    bool 	mForumsChanged;
 };
 
 

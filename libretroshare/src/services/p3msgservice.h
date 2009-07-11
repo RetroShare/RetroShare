@@ -47,70 +47,70 @@ class p3ConnectMgr;
 
 class p3MsgService: public p3Service, public pqiConfig, public pqiMonitor
 {
-	public:
-	p3MsgService(p3ConnectMgr *cm);
+public:
+    p3MsgService(p3ConnectMgr *cm);
 
-	/* External Interface */
-bool    MsgsChanged();		/* should update display */
-bool    MsgNotifications();	/* popup - messages */
-bool 	getMessageNotifications(std::list<MsgInfoSummary> &noteList);
+    /* External Interface */
+    bool    MsgsChanged();		/* should update display */
+    bool    MsgNotifications();	/* popup - messages */
+    bool 	getMessageNotifications(std::list<MsgInfoSummary> &noteList);
 
-bool 	getMessageSummaries(std::list<MsgInfoSummary> &msgList);
-bool 	getMessage(std::string mid, MessageInfo &msg);
+    bool 	getMessageSummaries(std::list<MsgInfoSummary> &msgList);
+    bool 	getMessage(std::string mid, MessageInfo &msg);
 
-bool    removeMsgId(std::string mid); 
-bool    markMsgIdRead(std::string mid);
+    bool    removeMsgId(std::string mid);
+    bool    markMsgIdRead(std::string mid);
 
-bool    MessageSend(MessageInfo &info);
+    bool    MessageSend(MessageInfo &info);
 
 
 
-void    loadWelcomeMsg(); /* startup message */
+    void    loadWelcomeMsg(); /* startup message */
 
 //std::list<RsMsgItem *> &getMsgList();
 //std::list<RsMsgItem *> &getMsgOutList();
 
-int	tick();
-int	status();
+    int	tick();
+    int	status();
 
-	/*** Overloaded from pqiConfig ****/
-virtual bool    loadConfiguration(std::string &loadHash);
-virtual bool    saveConfiguration();
-	/*** Overloaded from pqiConfig ****/
+    /*** Overloaded from pqiConfig ****/
+    virtual bool    loadConfiguration(std::string &loadHash);
+    virtual bool    saveConfiguration();
+    /*** Overloaded from pqiConfig ****/
 
-	/*** Overloaded from pqiMonitor ***/
-virtual void    statusChange(const std::list<pqipeer> &plist);
-int     checkOutgoingMessages();
-	/*** Overloaded from pqiMonitor ***/
+    /*** Overloaded from pqiMonitor ***/
+    virtual void    statusChange(const std::list<pqipeer> &plist);
+    int     checkOutgoingMessages();
+    /*** Overloaded from pqiMonitor ***/
 
-	private:
+private:
 
-uint32_t getNewUniqueMsgId();
-int     sendMessage(RsMsgItem *item);
-int 	incomingMsgs();
+    uint32_t getNewUniqueMsgId();
+    int     sendMessage(RsMsgItem *item);
+    int 	incomingMsgs();
 
-void 	initRsMI(RsMsgItem *msg, MessageInfo &mi);
-void 	initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis);
-RsMsgItem *initMIRsMsg(MessageInfo &info, std::string to);
+    void 	initRsMI(RsMsgItem *msg, MessageInfo &mi);
+    void 	initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis);
+    RsMsgItem *initMIRsMsg(MessageInfo &info, std::string to);
 
-	p3ConnectMgr *mConnMgr;
+    p3ConnectMgr *mConnMgr;
 
-	/* Mutex Required for stuff below */
+    /* Mutex Required for stuff below */
 
-	RsMutex mMsgMtx;
+    RsMutex mMsgMtx;
 
-		/* stored list of messages */
-	std::map<uint32_t, RsMsgItem *> imsg;
-		/* ones that haven't made it out yet! */
-	std::map<uint32_t, RsMsgItem *> msgOutgoing; 
+    /* stored list of messages */
+    std::map<uint32_t, RsMsgItem *> imsg;
+    /* ones that haven't made it out yet! */
+    std::map<uint32_t, RsMsgItem *> msgOutgoing;
 
-		/* List of notifications to post via Toaster */
-	std::list<MsgInfoSummary> msgNotifications;
+    /* List of notifications to post via Toaster */
+    std::list<MsgInfoSummary> msgNotifications;
 
-	Indicator msgChanged;
-	uint32_t mMsgUniqueId;
+    Indicator msgChanged;
+    uint32_t mMsgUniqueId;
 
-	std::string config_dir;
+    std::string config_dir;
 };
 
 #endif // MESSAGE_SERVICE_HEADER

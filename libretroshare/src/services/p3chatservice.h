@@ -27,7 +27,7 @@
 #ifndef SERVICE_CHAT_HEADER
 #define SERVICE_CHAT_HEADER
 
-/* 
+/*
  * The basic Chat service.
  *
  */
@@ -41,53 +41,53 @@
 
 class p3ChatService: public p3Service, public pqiConfig
 {
-	public:
-		p3ChatService(p3ConnectMgr *cm);
+public:
+    p3ChatService(p3ConnectMgr *cm);
 
-		/* overloaded */
-		virtual int   tick();
-		virtual int   status();
+    /* overloaded */
+    virtual int   tick();
+    virtual int   status();
 
-		int	sendChat(std::wstring msg);
-		int	sendPrivateChat(std::wstring msg, std::string id);
-		void  sendStatusString(const std::string& peer_id,const std::string& status_str) ;
+    int	sendChat(std::wstring msg);
+    int	sendPrivateChat(std::wstring msg, std::string id);
+    void  sendStatusString(const std::string& peer_id,const std::string& status_str) ;
 
-		/// gets the peer's avatar in jpeg format, if available. Null otherwise. Also asks the peer to send
-		/// its avatar, if not already available. Creates a new unsigned char array. It's the caller's
-		/// responsibility to delete this ones used.
-		///
-		void getAvatarJpegData(const std::string& peer_id,unsigned char *& data,int& size) ;
+    /// gets the peer's avatar in jpeg format, if available. Null otherwise. Also asks the peer to send
+    /// its avatar, if not already available. Creates a new unsigned char array. It's the caller's
+    /// responsibility to delete this ones used.
+    ///
+    void getAvatarJpegData(const std::string& peer_id,unsigned char *& data,int& size) ;
 
-		/// Sets the avatar data and size. Data is copied, so should be destroyed by the caller.
-		void setOwnAvatarJpegData(const unsigned char *data,int size) ;
-		void getOwnAvatarJpegData(unsigned char *& data,int& size) ;
+    /// Sets the avatar data and size. Data is copied, so should be destroyed by the caller.
+    void setOwnAvatarJpegData(const unsigned char *data,int size) ;
+    void getOwnAvatarJpegData(unsigned char *& data,int& size) ;
 
-		std::list<RsChatMsgItem *> getChatQueue(); 
+    std::list<RsChatMsgItem *> getChatQueue();
 
-		/*** Overloaded from pqiConfig ****/
-		virtual bool    loadConfiguration(std::string &loadHash);
-		virtual bool    saveConfiguration();
+    /*** Overloaded from pqiConfig ****/
+    virtual bool    loadConfiguration(std::string &loadHash);
+    virtual bool    saveConfiguration();
 
-	private:
-		RsMutex mChatMtx;
+private:
+    RsMutex mChatMtx;
 
-		class AvatarInfo ;
+    class AvatarInfo ;
 
-		/// Send avatar info to peer in jpeg format.
-		void sendAvatarJpegData(const std::string& peer_id) ;
+    /// Send avatar info to peer in jpeg format.
+    void sendAvatarJpegData(const std::string& peer_id) ;
 
-		/// Receive the avatar in a chat item, with RS_CHAT_RECEIVE_AVATAR flag.
-		void receiveAvatarJpegData(RsChatMsgItem *ci) ;
+    /// Receive the avatar in a chat item, with RS_CHAT_RECEIVE_AVATAR flag.
+    void receiveAvatarJpegData(RsChatMsgItem *ci) ;
 
-		/// Sends a request for an avatar to the peer of given id
-		void sendAvatarRequest(const std::string& peer_id) ;
+    /// Sends a request for an avatar to the peer of given id
+    void sendAvatarRequest(const std::string& peer_id) ;
 
-		RsChatMsgItem *makeOwnAvatarItem() ;
+    RsChatMsgItem *makeOwnAvatarItem() ;
 
-		p3ConnectMgr *mConnMgr;
+    p3ConnectMgr *mConnMgr;
 
-		AvatarInfo *_own_avatar ;
-		std::map<std::string,AvatarInfo *> _avatars ;
+    AvatarInfo *_own_avatar ;
+    std::map<std::string,AvatarInfo *> _avatars ;
 };
 
 #endif // SERVICE_CHAT_HEADER

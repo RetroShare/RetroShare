@@ -38,9 +38,9 @@
 #define RS_DISTRIB_AUTHEN_REQ		0x0010   /* you must sign messages */
 #define RS_DISTRIB_AUTHEN_ANON		0x0020   /* you can send anonymous messages */
 
-#define RS_DISTRIB_ADMIN		0x0100   
-#define RS_DISTRIB_PUBLISH		0x0200   
-#define RS_DISTRIB_SUBSCRIBED		0x0400   
+#define RS_DISTRIB_ADMIN		0x0100
+#define RS_DISTRIB_PUBLISH		0x0200
+#define RS_DISTRIB_SUBSCRIBED		0x0400
 
 
 #endif /* RSDISTRIB_H */

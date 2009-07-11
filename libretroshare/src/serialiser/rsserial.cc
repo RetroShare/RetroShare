@@ -35,122 +35,122 @@
 ***/
 
 #ifdef RSSERIAL_DEBUG
-	#include <sstream>
+#include <sstream>
 #endif
-	
+
 RsItem::RsItem(uint32_t t)
-:type(t) 
+        :type(t)
 {
-	return;
+    return;
 }
-	
+
 RsItem::RsItem(uint8_t ver, uint8_t cls, uint8_t t, uint8_t subtype)
 {
-	type = (ver << 24) + (cls << 16) + (t << 8) + subtype;
-	return;
+    type = (ver << 24) + (cls << 16) + (t << 8) + subtype;
+    return;
 }
 
 RsItem::~RsItem()
 {
-	return;
+    return;
 }
 
-	
+
 uint32_t    RsItem::PacketId()
 {
-	return type;
+    return type;
 }
 
 uint8_t    RsItem::PacketVersion()
 {
-	return (type >> 24);
+    return (type >> 24);
 }
 
-	
+
 uint8_t    RsItem::PacketClass()
 {
-	return (type >> 16) & 0xFF;
+    return (type >> 16) & 0xFF;
 }
 
-	
+
 uint8_t    RsItem::PacketType()
 {
-	return (type >> 8) & 0xFF;
+    return (type >> 8) & 0xFF;
 }
 
-	
+
 uint8_t    RsItem::PacketSubType()
 {
-	return (type & 0xFF);
+    return (type & 0xFF);
 }
 
 
-	/* For Service Packets */	
+/* For Service Packets */
 RsItem::RsItem(uint8_t ver, uint16_t service, uint8_t subtype)
 {
-	type = (ver << 24) + (service << 8) + subtype;
-	return;
+    type = (ver << 24) + (service << 8) + subtype;
+    return;
 }
 
 uint16_t    RsItem::PacketService()
 {
-	return (type >> 8) & 0xFFFF;
+    return (type >> 8) & 0xFFFF;
 }
 
 
 
 RsSerialType::RsSerialType(uint32_t t)
-	:type(t & 0xFFFFFF00)
+        :type(t & 0xFFFFFF00)
 {
-	return;
+    return;
 }
-	
+
 RsSerialType::RsSerialType(uint8_t ver, uint8_t cls, uint8_t t)
 {
-	type = (ver << 24) + (cls << 16) + (t << 8);
-	return;
+    type = (ver << 24) + (cls << 16) + (t << 8);
+    return;
 }
 
 RsSerialType::RsSerialType(uint8_t ver, uint16_t service)
 {
-	type = (ver << 24) + (service << 8);
-	return;
+    type = (ver << 24) + (service << 8);
+    return;
 }
 
 RsSerialType::~RsSerialType()
 {
-	return;
+    return;
 }
-	
+
 uint32_t    RsSerialType::size(RsItem *)
 {
 #ifdef  RSSERIAL_DEBUG
-	std::cerr << "RsSerialType::size()" << std::endl;
+    std::cerr << "RsSerialType::size()" << std::endl;
 #endif
 
-	/* base size: type + length */
-	return 8; 
+    /* base size: type + length */
+    return 8;
 }
 
 bool        RsSerialType::serialise(RsItem *item, void *data, uint32_t *size)
 {
 #ifdef  RSSERIAL_DEBUG
-	std::cerr << "RsSerialType::serialise()" << std::endl;
+    std::cerr << "RsSerialType::serialise()" << std::endl;
 #endif
-	return false;
+    return false;
 }
 
 RsItem *    RsSerialType::deserialise(void *data, uint32_t *size)
 {
 #ifdef  RSSERIAL_DEBUG
-	std::cerr << "RsSerialType::deserialise()" << std::endl;
+    std::cerr << "RsSerialType::deserialise()" << std::endl;
 #endif
-	return NULL;
+    return NULL;
 }
 
 uint32_t    RsSerialType::PacketId()
 {
-	return type;
+    return type;
 }
 
 
@@ -158,299 +158,299 @@ uint32_t    RsSerialType::PacketId()
 
 RsSerialiser::RsSerialiser()
 {
-	return;
+    return;
 }
 
 
 RsSerialiser::~RsSerialiser()
 {
-	/* clean up the map */
-	std::map<uint32_t, RsSerialType *>::iterator it;
-	for(it = serialisers.begin(); it != serialisers.end(); it++)
-	{
-		delete (it->second);
-	}
-	serialisers.clear();
-	return;
+    /* clean up the map */
+    std::map<uint32_t, RsSerialType *>::iterator it;
+    for (it = serialisers.begin(); it != serialisers.end(); it++)
+    {
+        delete (it->second);
+    }
+    serialisers.clear();
+    return;
 }
 
 
 
 bool        RsSerialiser::addSerialType(RsSerialType *serialiser)
 {
-	uint32_t type = (serialiser->PacketId() & 0xFFFFFF00);
-	std::map<uint32_t, RsSerialType *>::iterator it;
-	if (serialisers.end() != (it = serialisers.find(type)))
-	{
+    uint32_t type = (serialiser->PacketId() & 0xFFFFFF00);
+    std::map<uint32_t, RsSerialType *>::iterator it;
+    if (serialisers.end() != (it = serialisers.find(type)))
+    {
 #ifdef  RSSERIAL_DEBUG
-		std::cerr << "RsSerialiser::addSerialType() Error Serialiser already exists!";
-		std::cerr << std::endl;
+        std::cerr << "RsSerialiser::addSerialType() Error Serialiser already exists!";
+        std::cerr << std::endl;
 #endif
-		return false;
-	}
+        return false;
+    }
 
-	serialisers[type] = serialiser;
-	return true;
+    serialisers[type] = serialiser;
+    return true;
 }
 
 
 
 uint32_t    RsSerialiser::size(RsItem *item)
 {
-	/* find the type */
-	uint32_t type = (item->PacketId() & 0xFFFFFF00);
-	std::map<uint32_t, RsSerialType *>::iterator it;
+    /* find the type */
+    uint32_t type = (item->PacketId() & 0xFFFFFF00);
+    std::map<uint32_t, RsSerialType *>::iterator it;
 
-	if (serialisers.end() == (it = serialisers.find(type)))
-	{
-		/* remove 8 more bits -> try again */
-		type &= 0xFFFF0000;
-		if (serialisers.end() == (it = serialisers.find(type)))
-		{
-			/* one more try */
-			type &= 0xFF000000;
-			if (serialisers.end() == (it = serialisers.find(type)))
-			{
-
-#ifdef  RSSERIAL_DEBUG
-				std::cerr << "RsSerialiser::size() serialiser missing!";
-			
-				std::ostringstream out;
-				out << std::hex << item->PacketId();
-
-				std::cerr << "RsSerialiser::size() PacketId: ";
-				std::cerr << out.str();
-				std::cerr << std::endl;
-#endif
-				return 0;
-			}
-		}
-	}
+    if (serialisers.end() == (it = serialisers.find(type)))
+    {
+        /* remove 8 more bits -> try again */
+        type &= 0xFFFF0000;
+        if (serialisers.end() == (it = serialisers.find(type)))
+        {
+            /* one more try */
+            type &= 0xFF000000;
+            if (serialisers.end() == (it = serialisers.find(type)))
+            {
 
 #ifdef  RSSERIAL_DEBUG
-	std::ostringstream out;
-	out << std::hex << "RsSerialiser::size() Item->PacketId(): " << item->PacketId();
-	out << " matched to Serialiser Type: " << type;
-	std::cerr << out.str() << std::endl;
+                std::cerr << "RsSerialiser::size() serialiser missing!";
+
+                std::ostringstream out;
+                out << std::hex << item->PacketId();
+
+                std::cerr << "RsSerialiser::size() PacketId: ";
+                std::cerr << out.str();
+                std::cerr << std::endl;
+#endif
+                return 0;
+            }
+        }
+    }
+
+#ifdef  RSSERIAL_DEBUG
+    std::ostringstream out;
+    out << std::hex << "RsSerialiser::size() Item->PacketId(): " << item->PacketId();
+    out << " matched to Serialiser Type: " << type;
+    std::cerr << out.str() << std::endl;
 #endif
 
-	return (it->second)->size(item);
+    return (it->second)->size(item);
 }
 
 bool        RsSerialiser::serialise  (RsItem *item, void *data, uint32_t *size)
 {
-	/* find the type */
-	uint32_t type = (item->PacketId() & 0xFFFFFF00);
-	std::map<uint32_t, RsSerialType *>::iterator it;
+    /* find the type */
+    uint32_t type = (item->PacketId() & 0xFFFFFF00);
+    std::map<uint32_t, RsSerialType *>::iterator it;
 
-	if (serialisers.end() == (it = serialisers.find(type)))
-	{
-		/* remove 8 more bits -> try again */
-		type &= 0xFFFF0000;
-		if (serialisers.end() == (it = serialisers.find(type)))
-		{
-			/* one more try */
-			type &= 0xFF000000;
-			if (serialisers.end() == (it = serialisers.find(type)))
-			{
-
-#ifdef  RSSERIAL_DEBUG
-				std::cerr << "RsSerialiser::serialise() serialiser missing!";
-				std::ostringstream out;
-				out << std::hex << item->PacketId();
-
-				std::cerr << "RsSerialiser::serialise() PacketId: ";
-				std::cerr << out.str();
-				std::cerr << std::endl;
-#endif
-				return false;
-			}
-		}
-	}
+    if (serialisers.end() == (it = serialisers.find(type)))
+    {
+        /* remove 8 more bits -> try again */
+        type &= 0xFFFF0000;
+        if (serialisers.end() == (it = serialisers.find(type)))
+        {
+            /* one more try */
+            type &= 0xFF000000;
+            if (serialisers.end() == (it = serialisers.find(type)))
+            {
 
 #ifdef  RSSERIAL_DEBUG
-	std::ostringstream out;
-	out << std::hex << "RsSerialiser::serialise() Item->PacketId(): " << item->PacketId();
-	out << " matched to Serialiser Type: " << type;
-	std::cerr << out.str() << std::endl;
+                std::cerr << "RsSerialiser::serialise() serialiser missing!";
+                std::ostringstream out;
+                out << std::hex << item->PacketId();
+
+                std::cerr << "RsSerialiser::serialise() PacketId: ";
+                std::cerr << out.str();
+                std::cerr << std::endl;
+#endif
+                return false;
+            }
+        }
+    }
+
+#ifdef  RSSERIAL_DEBUG
+    std::ostringstream out;
+    out << std::hex << "RsSerialiser::serialise() Item->PacketId(): " << item->PacketId();
+    out << " matched to Serialiser Type: " << type;
+    std::cerr << out.str() << std::endl;
 #endif
 
-	return (it->second)->serialise(item, data, size);
+    return (it->second)->serialise(item, data, size);
 }
 
 
 
 RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 {
-	/* find the type */
-	if (*size < 8)
-	{
+    /* find the type */
+    if (*size < 8)
+    {
 #ifdef  RSSERIAL_DEBUG
-		std::cerr << "RsSerialiser::deserialise() Not Enough Data(1)";
-		std::cerr << std::endl;
+        std::cerr << "RsSerialiser::deserialise() Not Enough Data(1)";
+        std::cerr << std::endl;
 #endif
-		return NULL;
-	}
+        return NULL;
+    }
 
-	uint32_t type = (getRsItemId(data) & 0xFFFFFF00);
-	uint32_t pkt_size = getRsItemSize(data);
+    uint32_t type = (getRsItemId(data) & 0xFFFFFF00);
+    uint32_t pkt_size = getRsItemSize(data);
 
-	if (pkt_size < *size)
-	{
+    if (pkt_size < *size)
+    {
 #ifdef  RSSERIAL_DEBUG
-		std::cerr << "RsSerialiser::deserialise() Not Enough Data(2)";
-		std::cerr << std::endl;
+        std::cerr << "RsSerialiser::deserialise() Not Enough Data(2)";
+        std::cerr << std::endl;
 #endif
-		return NULL;
-	}
+        return NULL;
+    }
 
-	/* store the packet size to return the amount we should use up */
-	*size = pkt_size;
+    /* store the packet size to return the amount we should use up */
+    *size = pkt_size;
 
-	std::map<uint32_t, RsSerialType *>::iterator it;
-	if (serialisers.end() == (it = serialisers.find(type)))
-	{
-		/* remove 8 more bits -> try again */
-		type &= 0xFFFF0000;
-		if (serialisers.end() == (it = serialisers.find(type)))
-		{
-			/* one more try */
-			type &= 0xFF000000;
-			if (serialisers.end() == (it = serialisers.find(type)))
-			{
+    std::map<uint32_t, RsSerialType *>::iterator it;
+    if (serialisers.end() == (it = serialisers.find(type)))
+    {
+        /* remove 8 more bits -> try again */
+        type &= 0xFFFF0000;
+        if (serialisers.end() == (it = serialisers.find(type)))
+        {
+            /* one more try */
+            type &= 0xFF000000;
+            if (serialisers.end() == (it = serialisers.find(type)))
+            {
 
 #ifdef  RSSERIAL_DEBUG
-				std::cerr << "RsSerialiser::deserialise() deserialiser missing!";
-				std::ostringstream out;
-				out << std::hex << getRsItemId(data);
+                std::cerr << "RsSerialiser::deserialise() deserialiser missing!";
+                std::ostringstream out;
+                out << std::hex << getRsItemId(data);
 
-				std::cerr << "RsSerialiser::deserialise() PacketId: ";
-				std::cerr << out.str();
-				std::cerr << std::endl;
+                std::cerr << "RsSerialiser::deserialise() PacketId: ";
+                std::cerr << out.str();
+                std::cerr << std::endl;
 #endif
-				return NULL;
-			}
-		}
-	}
+                return NULL;
+            }
+        }
+    }
 
-	RsItem *item = (it->second)->deserialise(data, &pkt_size);
-	if (!item)
-	{
+    RsItem *item = (it->second)->deserialise(data, &pkt_size);
+    if (!item)
+    {
 #ifdef  RSSERIAL_DEBUG
-				std::cerr << "RsSerialiser::deserialise() Failed!";
-				std::cerr << std::endl;
+        std::cerr << "RsSerialiser::deserialise() Failed!";
+        std::cerr << std::endl;
 #endif
-		return NULL;
-	}
+        return NULL;
+    }
 
-	if (pkt_size != *size)
-	{
+    if (pkt_size != *size)
+    {
 #ifdef  RSSERIAL_DEBUG
-		std::cerr << "RsSerialiser::deserialise() Warning: size mismatch!";
-		std::cerr << std::endl;
+        std::cerr << "RsSerialiser::deserialise() Warning: size mismatch!";
+        std::cerr << std::endl;
 #endif
-	}
-	return item;
+    }
+    return item;
 }
 
 
 bool   setRsItemHeader(void *data, uint32_t size, uint32_t type, uint32_t pktsize)
 {
-	if (size < 8)
-		return false;
+    if (size < 8)
+        return false;
 
-	uint32_t offset = 0;
-	bool ok = true;
-	ok &= setRawUInt32(data, 8, &offset, type);
-	ok &= setRawUInt32(data, 8, &offset, pktsize);
+    uint32_t offset = 0;
+    bool ok = true;
+    ok &= setRawUInt32(data, 8, &offset, type);
+    ok &= setRawUInt32(data, 8, &offset, pktsize);
 
-	return ok;
+    return ok;
 }
 
-	
+
 
 uint32_t getRsItemId(void *data)
 {
-	uint32_t type = 0;
-	uint32_t offset = 0;
-	getRawUInt32(data, 4, &offset, &type);
-	return type;
+    uint32_t type = 0;
+    uint32_t offset = 0;
+    getRawUInt32(data, 4, &offset, &type);
+    return type;
 }
 
 
 uint32_t getRsItemSize(void *data)
 {
-	uint32_t size = 0;
-	uint32_t offset = 4;
-	getRawUInt32(data, 8, &offset, &size);
-	return size;
+    uint32_t size = 0;
+    uint32_t offset = 4;
+    getRawUInt32(data, 8, &offset, &size);
+    return size;
 }
 
 uint8_t  getRsItemVersion(uint32_t type)
 {
-	return (type >> 24);
+    return (type >> 24);
 }
 
 uint8_t  getRsItemClass(uint32_t type)
 {
-	return (type >> 16) & 0xFF;
+    return (type >> 16) & 0xFF;
 }
 
 uint8_t  getRsItemType(uint32_t type)
 {
-	return (type >> 8) & 0xFF;
+    return (type >> 8) & 0xFF;
 }
 
 uint8_t  getRsItemSubType(uint32_t type)
 {
-	return (type & 0xFF);
+    return (type & 0xFF);
 }
 
 uint16_t  getRsItemService(uint32_t type)
 {
-	return (type >> 8) & 0xFFFF;
+    return (type >> 8) & 0xFFFF;
 }
 
 
 std::ostream &printRsItemBase(std::ostream &out, std::string clsName, uint16_t indent)
 {
-        printIndent(out, indent);
-	out << "RsItem: " << clsName << " ####################################";
-        out << std::endl;
-        return out;
+    printIndent(out, indent);
+    out << "RsItem: " << clsName << " ####################################";
+    out << std::endl;
+    return out;
 }
 
 std::ostream &printRsItemEnd(std::ostream &out, std::string clsName, uint16_t indent)
 {
-        printIndent(out, indent);
-        out << "###################### " << clsName << " #####################";
-        out << std::endl;
-	return out;
+    printIndent(out, indent);
+    out << "###################### " << clsName << " #####################";
+    out << std::endl;
+    return out;
 }
 
 std::ostream &RsRawItem::print(std::ostream &out, uint16_t indent)
 {
-        printRsItemBase(out, "RsRawItem", indent);
-	printIndent(out, indent);
-	out << "Size: " << len << std::endl;
-	printRsItemEnd(out, "RsRawItem", indent);
-	return out;
+    printRsItemBase(out, "RsRawItem", indent);
+    printIndent(out, indent);
+    out << "Size: " << len << std::endl;
+    printRsItemEnd(out, "RsRawItem", indent);
+    return out;
 }
 
 
 uint32_t getRsPktMaxSize()
 {
-	//return 65535; /* 2^16 (old artifical low size) */
-	//return 1048575; /* 2^20 -1 (Too Big! - must remove fixed static buffers first) */
-	/* Remember that every pqistreamer allocates an input buffer of this size!
-	 * So don't make it too big!
-	 */
-	return 262143; /* 2^18 -1 */
+    //return 65535; /* 2^16 (old artifical low size) */
+    //return 1048575; /* 2^20 -1 (Too Big! - must remove fixed static buffers first) */
+    /* Remember that every pqistreamer allocates an input buffer of this size!
+     * So don't make it too big!
+     */
+    return 262143; /* 2^18 -1 */
 }
 
 
 uint32_t getRsPktBaseSize()
 {
-	return 8; /* 4 + 4 */
+    return 8; /* 4 + 4 */
 }
 

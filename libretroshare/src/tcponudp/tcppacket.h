@@ -39,55 +39,55 @@ typedef unsigned char  uint8;
 
 class TcpPacket
 {
-	public:
+public:
 
-	uint8 *data;
-	int   datasize;
+    uint8 *data;
+    int   datasize;
 
 
-	/* ports aren't needed -> in udp 
-	 * uint16 srcport, destport
-	 **************************/
-	uint32 seqno, ackno;
-	uint16 hlen_flags;
-	uint16 winsize;
-	/* don't need these -> in udp + not supported
-	uint16 chksum, urgptr; 
-	 **************************/
-	/* no options.
-	 **************************/
-	
+    /* ports aren't needed -> in udp
+     * uint16 srcport, destport
+     **************************/
+    uint32 seqno, ackno;
+    uint16 hlen_flags;
+    uint16 winsize;
+    /* don't need these -> in udp + not supported
+    uint16 chksum, urgptr;
+     **************************/
+    /* no options.
+     **************************/
 
-	/* other variables */
-	double  ts; /* transmit time */ 
-	uint16  retrans; /* retransmit counter */
 
-	TcpPacket(uint8 *ptr, int size);
-	TcpPacket(); /* likely control packet */
-	~TcpPacket();
+    /* other variables */
+    double  ts; /* transmit time */
+    uint16  retrans; /* retransmit counter */
 
-int	writePacket(void *buf, int &size);
-int	readPacket(void *buf, int size);
+    TcpPacket(uint8 *ptr, int size);
+    TcpPacket(); /* likely control packet */
+    ~TcpPacket();
 
-void    *getData();
-void    *releaseData();
+    int	writePacket(void *buf, int &size);
+    int	readPacket(void *buf, int size);
 
-void    *setData(void *data, int size);
-int 	getDataSize();
+    void    *getData();
+    void    *releaseData();
 
-	/* flags */
-bool	hasSyn();
-bool 	hasFin();
-bool	hasAck();
-bool	hasRst();
+    void    *setData(void *data, int size);
+    int 	getDataSize();
 
-void    setSyn();
-void    setFin();
-void    setRst();
-void    setAckFlag();
+    /* flags */
+    bool	hasSyn();
+    bool 	hasFin();
+    bool	hasAck();
+    bool	hasRst();
 
-void    setAck(uint32 val);
-uint32  getAck();
+    void    setSyn();
+    void    setFin();
+    void    setRst();
+    void    setAckFlag();
+
+    void    setAck(uint32 val);
+    uint32  getAck();
 
 
 };

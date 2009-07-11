@@ -31,53 +31,53 @@
 
 std::string RsUtil::BinToHex(std::string bin)
 {
-	return BinToHex(bin.c_str(), bin.length());
+    return BinToHex(bin.c_str(), bin.length());
 }
 
 std::string RsUtil::BinToHex(const char *arr, const uint32_t len)
 {
-        std::ostringstream out;
+    std::ostringstream out;
 
-        for(uint32_t j = 0; j < len; j++)
-        {
-		out << std::hex << std::setw(2) << std::setfill('0') << (int32_t) (((const uint8_t *) arr)[j]);
-        }
-        return out.str();
+    for (uint32_t j = 0; j < len; j++)
+    {
+        out << std::hex << std::setw(2) << std::setfill('0') << (int32_t) (((const uint8_t *) arr)[j]);
+    }
+    return out.str();
 }
 
 
 std::string RsUtil::HashId(std::string id, bool reverse)
 {
-	std::string hash;
-	std::string tohash;
-	if (reverse)
-	{	
-		std::string::reverse_iterator rit;
-		for(rit = id.rbegin(); rit != id.rend(); rit++)
-		{
-			tohash += (*rit);
-		}
-	}
-	else
-	{
-		tohash = id;
-	}
+    std::string hash;
+    std::string tohash;
+    if (reverse)
+    {
+        std::string::reverse_iterator rit;
+        for (rit = id.rbegin(); rit != id.rend(); rit++)
+        {
+            tohash += (*rit);
+        }
+    }
+    else
+    {
+        tohash = id;
+    }
 
-	SHA_CTX *sha_ctx = new SHA_CTX;
-	uint8_t  sha_hash[SHA_DIGEST_LENGTH];
+    SHA_CTX *sha_ctx = new SHA_CTX;
+    uint8_t  sha_hash[SHA_DIGEST_LENGTH];
 
-	SHA1_Init(sha_ctx);
-	SHA1_Update(sha_ctx, tohash.c_str(), tohash.length());
-	SHA1_Final(sha_hash, sha_ctx);
+    SHA1_Init(sha_ctx);
+    SHA1_Update(sha_ctx, tohash.c_str(), tohash.length());
+    SHA1_Final(sha_hash, sha_ctx);
 
-	for(uint16_t i = 0; i < SHA_DIGEST_LENGTH; i++)
-	{
-		hash += sha_hash[i];
-	}
+    for (uint16_t i = 0; i < SHA_DIGEST_LENGTH; i++)
+    {
+        hash += sha_hash[i];
+    }
 
-	/* cleanup */
-	delete sha_ctx;
+    /* cleanup */
+    delete sha_ctx;
 
-	return hash;
+    return hash;
 }
 

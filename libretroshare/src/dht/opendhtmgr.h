@@ -35,28 +35,28 @@
 
 class OpenDHTMgr: public p3DhtMgr
 {
-	public:
+public:
 
-	OpenDHTMgr(std::string ownId, pqiConnectCb* cb, std::string configdir);
+    OpenDHTMgr(std::string ownId, pqiConnectCb* cb, std::string configdir);
 
-        protected:
+protected:
 
-	/********** OVERLOADED FROM p3DhtMgr ***************/
-virtual bool    dhtInit();
-virtual bool    dhtShutdown();
-virtual bool    dhtActive();
-virtual int     status(std::ostream &out);
+    /********** OVERLOADED FROM p3DhtMgr ***************/
+    virtual bool    dhtInit();
+    virtual bool    dhtShutdown();
+    virtual bool    dhtActive();
+    virtual int     status(std::ostream &out);
 
-/* Blocking calls (only from thread) */
-virtual bool publishDHT(std::string key, std::string value, uint32_t ttl);
-virtual bool searchDHT(std::string key);
+    /* Blocking calls (only from thread) */
+    virtual bool publishDHT(std::string key, std::string value, uint32_t ttl);
+    virtual bool searchDHT(std::string key);
 
-	/********** OVERLOADED FROM p3DhtMgr ***************/
+    /********** OVERLOADED FROM p3DhtMgr ***************/
 
-	private:
+private:
 
-	DHTClient *mClient;
-	std::string mConfigDir;
+    DHTClient *mClient;
+    std::string mConfigDir;
 };
 
 

@@ -54,371 +54,371 @@ static const int UDP_DEF_TTL = 64;
 
 class   udpPacket
 {
-	public:
-	udpPacket(struct sockaddr_in *addr, void *dta, int dlen)
-	:raddr(*addr), len(dlen)
-	{
-		data = malloc(len);
-		memcpy(data, dta, len);
-	}
+public:
+    udpPacket(struct sockaddr_in *addr, void *dta, int dlen)
+            :raddr(*addr), len(dlen)
+    {
+        data = malloc(len);
+        memcpy(data, dta, len);
+    }
 
-	~udpPacket()
-	{
-		if (data)
-		{
-			free(data);
-			data = NULL;
-			len = 0;
-		}
-	}
+    ~udpPacket()
+    {
+        if (data)
+        {
+            free(data);
+            data = NULL;
+            len = 0;
+        }
+    }
 
-	struct sockaddr_in raddr;
-	void *data;
-	int len;
+    struct sockaddr_in raddr;
+    void *data;
+    int len;
 };
 
 
 std::ostream &operator<<(std::ostream &out, const struct sockaddr_in &addr)
 {
-	out << "[" << inet_ntoa(addr.sin_addr) << ":";
-	out << htons(addr.sin_port) << "]";
-	return out;
+    out << "[" << inet_ntoa(addr.sin_addr) << ":";
+    out << htons(addr.sin_port) << "]";
+    return out;
 }
 
 
 bool operator==(const struct sockaddr_in &addr, const struct sockaddr_in &addr2)
 {
-	if (addr.sin_family != addr2.sin_family)
-		return false;
-	if (addr.sin_addr.s_addr != addr2.sin_addr.s_addr)
-		return false;
-	if (addr.sin_port != addr2.sin_port)
-		return false;
-	return true;
+    if (addr.sin_family != addr2.sin_family)
+        return false;
+    if (addr.sin_addr.s_addr != addr2.sin_addr.s_addr)
+        return false;
+    if (addr.sin_port != addr2.sin_port)
+        return false;
+    return true;
 }
 
 
 bool operator<(const struct sockaddr_in &addr, const struct sockaddr_in &addr2)
 {
-	if (addr.sin_family != addr2.sin_family)
-		return (addr.sin_family < addr2.sin_family);
-	if (addr.sin_addr.s_addr != addr2.sin_addr.s_addr)
-		return (addr.sin_addr.s_addr < addr2.sin_addr.s_addr);
-	if (addr.sin_port != addr2.sin_port)
-		return (addr.sin_port < addr2.sin_port);
-	return false;
+    if (addr.sin_family != addr2.sin_family)
+        return (addr.sin_family < addr2.sin_family);
+    if (addr.sin_addr.s_addr != addr2.sin_addr.s_addr)
+        return (addr.sin_addr.s_addr < addr2.sin_addr.s_addr);
+    if (addr.sin_port != addr2.sin_port)
+        return (addr.sin_port < addr2.sin_port);
+    return false;
 }
 
 std::string printPkt(void *d, int size)
 {
-	std::ostringstream out;
-	out << "Packet:" << "**********************";
-	for(int i = 0; i < size; i++)
-	{
-		if (i % 16 == 0)
-			out << std::endl;
-		out << std::hex << std::setw(2) << (unsigned int) ((unsigned char *) d)[i] << " ";
-	}
-	out << std::endl << "**********************";
-	out << std::endl;
-	return out.str();
+    std::ostringstream out;
+    out << "Packet:" << "**********************";
+    for (int i = 0; i < size; i++)
+    {
+        if (i % 16 == 0)
+            out << std::endl;
+        out << std::hex << std::setw(2) << (unsigned int) ((unsigned char *) d)[i] << " ";
+    }
+    out << std::endl << "**********************";
+    out << std::endl;
+    return out.str();
 }
 
 
 std::string printPktOffset(unsigned int offset, void *d, unsigned int size)
 {
-	std::ostringstream out;
-	out << "Packet:" << "**********************";
-	out << std::endl;
-	out << "Offset: " << std::hex << offset << " -> " << offset + size;
-	out << std::endl;
-	out << "Packet:" << "**********************";
+    std::ostringstream out;
+    out << "Packet:" << "**********************";
+    out << std::endl;
+    out << "Offset: " << std::hex << offset << " -> " << offset + size;
+    out << std::endl;
+    out << "Packet:" << "**********************";
 
-	unsigned int j = offset % 16;
-	if (j != 0)
-	{
-	  out << std::endl;
-	  out << std::hex << std::setw(6) << (unsigned int) offset - j;
-	  out << ": ";
-	  for(unsigned int i = 0; i < j; i++)
-	  {
-		out << "xx ";
-	  }
-	}
-	for(unsigned int i = offset; i < offset + size; i++)
-	{
-		if (i % 16 == 0)
-		{
-			out << std::endl;
-			out << std::hex << std::setw(6) << (unsigned int) i;
-			out << ": ";
-		}
-		out << std::hex << std::setw(2) << (unsigned int) ((unsigned char *) d)[i-offset] << " ";
-	}
-	out << std::endl << "**********************";
-	out << std::endl;
-	return out.str();
+    unsigned int j = offset % 16;
+    if (j != 0)
+    {
+        out << std::endl;
+        out << std::hex << std::setw(6) << (unsigned int) offset - j;
+        out << ": ";
+        for (unsigned int i = 0; i < j; i++)
+        {
+            out << "xx ";
+        }
+    }
+    for (unsigned int i = offset; i < offset + size; i++)
+    {
+        if (i % 16 == 0)
+        {
+            out << std::endl;
+            out << std::hex << std::setw(6) << (unsigned int) i;
+            out << ": ";
+        }
+        out << std::hex << std::setw(2) << (unsigned int) ((unsigned char *) d)[i-offset] << " ";
+    }
+    out << std::endl << "**********************";
+    out << std::endl;
+    return out.str();
 }
 
 
 
 UdpLayer::UdpLayer(UdpReceiver *udpr, struct sockaddr_in &local)
-	:recv(udpr), laddr(local), errorState(0), ttl(UDP_DEF_TTL)
+        :recv(udpr), laddr(local), errorState(0), ttl(UDP_DEF_TTL)
 {
-	openSocket();
-	return;
+    openSocket();
+    return;
 }
 
 int     UdpLayer::status(std::ostream &out)
 {
-	out << "UdpLayer::status()" << std::endl;
-	out << "localaddr: " << laddr << std::endl;
-	out << "sockfd: " << sockfd << std::endl;
-	out << std::endl;
-	return 1;
+    out << "UdpLayer::status()" << std::endl;
+    out << "localaddr: " << laddr << std::endl;
+    out << "sockfd: " << sockfd << std::endl;
+    out << std::endl;
+    return 1;
 }
 
 int UdpLayer::close()
 {
-	/* close socket if open */
-	sockMtx.lock();   /********** LOCK MUTEX *********/
+    /* close socket if open */
+    sockMtx.lock();   /********** LOCK MUTEX *********/
 
-	if (sockfd > 0)
-	{
-       		tounet_close(sockfd);
-	}
+    if (sockfd > 0)
+    {
+        tounet_close(sockfd);
+    }
 
-	sockMtx.unlock(); /******** UNLOCK MUTEX *********/
-	return 1;
+    sockMtx.unlock(); /******** UNLOCK MUTEX *********/
+    return 1;
 }
 
 void UdpLayer::run()
 {
-	return recv_loop();
+    return recv_loop();
 }
 
 /* higher level interface */
 void UdpLayer::recv_loop()
 {
-	int maxsize = 16000;
-	void *inbuf = malloc(maxsize);
+    int maxsize = 16000;
+    void *inbuf = malloc(maxsize);
 
-        int status;
-        struct timeval timeout;
+    int status;
+    struct timeval timeout;
 
-	while(1)
-	{
-		/* select on the socket TODO */
-                fd_set rset;
-                for(;;) {
-                        FD_ZERO(&rset);
-                        FD_SET(sockfd, &rset);
-                        timeout.tv_sec = 0;
-                        timeout.tv_usec = 500000;       /* 500 ms timeout */
-                        status = select(sockfd+1, &rset, NULL, NULL, &timeout);
-                        if (status > 0)
-			{
-                                break;  /* data available, go read it */
-                        } 
-			else if (status < 0) 
-			{
-				std::cerr << "UdpLayer::recv_loop() ";
-				std::cerr << "Error: " << tounet_errno() << std::endl;
-                        }
-                };      
+    while (1)
+    {
+        /* select on the socket TODO */
+        fd_set rset;
+        for (;;) {
+            FD_ZERO(&rset);
+            FD_SET(sockfd, &rset);
+            timeout.tv_sec = 0;
+            timeout.tv_usec = 500000;       /* 500 ms timeout */
+            status = select(sockfd+1, &rset, NULL, NULL, &timeout);
+            if (status > 0)
+            {
+                break;  /* data available, go read it */
+            }
+            else if (status < 0)
+            {
+                std::cerr << "UdpLayer::recv_loop() ";
+                std::cerr << "Error: " << tounet_errno() << std::endl;
+            }
+        };
 
-		int nsize = maxsize;
-		struct sockaddr_in from;
-		if (0 < receiveUdpPacket(inbuf, &nsize, from))
-		{
+        int nsize = maxsize;
+        struct sockaddr_in from;
+        if (0 < receiveUdpPacket(inbuf, &nsize, from))
+        {
 #ifdef DEBUG_UDP_LAYER
-	std::cerr << "UdpLayer::readPkt()  from : " << from << std::endl;
-	std::cerr << printPkt(inbuf, nsize);
+            std::cerr << "UdpLayer::readPkt()  from : " << from << std::endl;
+            std::cerr << printPkt(inbuf, nsize);
 #endif
-			// send to reciever.
-			recv -> recvPkt(inbuf, nsize, from);
-		}
-		else
-		{
+            // send to reciever.
+            recv -> recvPkt(inbuf, nsize, from);
+        }
+        else
+        {
 #ifdef DEBUG_UDP_LAYER
-			std::cerr << "UdpLayer::readPkt() not ready" << from;
-			std::cerr << std::endl;
+            std::cerr << "UdpLayer::readPkt() not ready" << from;
+            std::cerr << std::endl;
 #endif
-		}
-	}
-	return;
+        }
+    }
+    return;
 }
 
 
 int UdpLayer::sendPkt(void *data, int size, sockaddr_in &to, int ttl)
 {
-	/* if ttl is different -> set it */
-	if (ttl != getTTL())
-	{
-		setTTL(ttl);
-	}
+    /* if ttl is different -> set it */
+    if (ttl != getTTL())
+    {
+        setTTL(ttl);
+    }
 
-	/* and send! */
+    /* and send! */
 #ifdef DEBUG_UDP_LAYER
-	std::cerr << "UdpLayer::sendPkt()  to: " << to << std::endl;
-	std::cerr << printPkt(data, size);
+    std::cerr << "UdpLayer::sendPkt()  to: " << to << std::endl;
+    std::cerr << printPkt(data, size);
 #endif
-	sendUdpPacket(data, size, to);
-	return size;
+    sendUdpPacket(data, size, to);
+    return size;
 }
 
 /* setup connections */
-int UdpLayer::openSocket()	
+int UdpLayer::openSocket()
 {
-	sockMtx.lock();   /********** LOCK MUTEX *********/
+    sockMtx.lock();   /********** LOCK MUTEX *********/
 
-	/* make a socket */
-       	sockfd = tounet_socket(PF_INET, SOCK_DGRAM, 0);
+    /* make a socket */
+    sockfd = tounet_socket(PF_INET, SOCK_DGRAM, 0);
 #ifdef DEBUG_UDP_LAYER
-	std::cerr << "UpdStreamer::openSocket()" << std::endl;
+    std::cerr << "UpdStreamer::openSocket()" << std::endl;
 #endif
-	/* bind to address */
-	if (0 != tounet_bind(sockfd, (struct sockaddr *) (&laddr), sizeof(laddr)))
-	{
+    /* bind to address */
+    if (0 != tounet_bind(sockfd, (struct sockaddr *) (&laddr), sizeof(laddr)))
+    {
 #ifdef DEBUG_UDP_LAYER
-		std::cerr << "Socket Failed to Bind to : " << laddr << std::endl;
-		std::cerr << "Error: " << tounet_errno() << std::endl;
+        std::cerr << "Socket Failed to Bind to : " << laddr << std::endl;
+        std::cerr << "Error: " << tounet_errno() << std::endl;
 #endif
-		errorState = EADDRINUSE;
-		//exit(1);
+        errorState = EADDRINUSE;
+        //exit(1);
 
-		sockMtx.unlock(); /******** UNLOCK MUTEX *********/
-		return -1;
-	}
+        sockMtx.unlock(); /******** UNLOCK MUTEX *********/
+        return -1;
+    }
 
-	if (-1 == tounet_fcntl(sockfd, F_SETFL, O_NONBLOCK))
-	{
+    if (-1 == tounet_fcntl(sockfd, F_SETFL, O_NONBLOCK))
+    {
 #ifdef DEBUG_UDP_LAYER
-		std::cerr << "Failed to Make Non-Blocking" << std::endl;
+        std::cerr << "Failed to Make Non-Blocking" << std::endl;
 #endif
-	}
+    }
 
-	errorState = 0;
-
-#ifdef DEBUG_UDP_LAYER
-	std::cerr << "Socket Bound to : " << laddr << std::endl;
-#endif
-
-	sockMtx.unlock(); /******** UNLOCK MUTEX *********/
+    errorState = 0;
 
 #ifdef DEBUG_UDP_LAYER
-	std::cerr << "Setting TTL to " << UDP_DEF_TTL << std::endl;
+    std::cerr << "Socket Bound to : " << laddr << std::endl;
 #endif
-	setTTL(UDP_DEF_TTL);
 
-	return 1;
+    sockMtx.unlock(); /******** UNLOCK MUTEX *********/
+
+#ifdef DEBUG_UDP_LAYER
+    std::cerr << "Setting TTL to " << UDP_DEF_TTL << std::endl;
+#endif
+    setTTL(UDP_DEF_TTL);
+
+    return 1;
 
 }
 
 int UdpLayer::setTTL(int t)
 {
-	sockMtx.lock();   /********** LOCK MUTEX *********/
+    sockMtx.lock();   /********** LOCK MUTEX *********/
 
-	int err = tounet_setsockopt(sockfd, IPPROTO_IP, IP_TTL, &t, sizeof(int));
-	ttl = t;
+    int err = tounet_setsockopt(sockfd, IPPROTO_IP, IP_TTL, &t, sizeof(int));
+    ttl = t;
 
-	sockMtx.unlock(); /******** UNLOCK MUTEX *********/
+    sockMtx.unlock(); /******** UNLOCK MUTEX *********/
 
 #ifdef DEBUG_UDP_LAYER
-	std::cerr << "UdpLayer::setTTL(" << t << ") returned: " << err;
-	std::cerr << std::endl;
+    std::cerr << "UdpLayer::setTTL(" << t << ") returned: " << err;
+    std::cerr << std::endl;
 #endif
 
-	return err;
+    return err;
 }
 
 int UdpLayer::getTTL()
 {
-	sockMtx.lock();   /********** LOCK MUTEX *********/
+    sockMtx.lock();   /********** LOCK MUTEX *********/
 
-	int t = ttl;
+    int t = ttl;
 
-	sockMtx.unlock(); /******** UNLOCK MUTEX *********/
+    sockMtx.unlock(); /******** UNLOCK MUTEX *********/
 
-	return t;
+    return t;
 }
 
 /* monitoring / updates */
 int UdpLayer::okay()
 {
-	sockMtx.lock();   /********** LOCK MUTEX *********/
+    sockMtx.lock();   /********** LOCK MUTEX *********/
 
-	bool nonFatalError = ((errorState == 0) ||
-				(errorState == EAGAIN) ||
-				(errorState == EINPROGRESS));
+    bool nonFatalError = ((errorState == 0) ||
+                          (errorState == EAGAIN) ||
+                          (errorState == EINPROGRESS));
 
-	sockMtx.unlock(); /******** UNLOCK MUTEX *********/
+    sockMtx.unlock(); /******** UNLOCK MUTEX *********/
 
 #ifdef DEBUG_UDP_LAYER
-	if (!nonFatalError)
-	{
-		std::cerr << "UdpLayer::NOT okay(): Error: " << errorState << std::endl;
-	}
+    if (!nonFatalError)
+    {
+        std::cerr << "UdpLayer::NOT okay(): Error: " << errorState << std::endl;
+    }
 
 #endif
 
-	return nonFatalError;
+    return nonFatalError;
 }
 
 int UdpLayer::tick()
 {
 #ifdef DEBUG_UDP_LAYER
-	std::cerr << "UdpLayer::tick()" << std::endl;
+    std::cerr << "UdpLayer::tick()" << std::endl;
 #endif
-	return 1;
+    return 1;
 }
 
 /******************* Internals *************************************/
 
 int UdpLayer::receiveUdpPacket(void *data, int *size, struct sockaddr_in &from)
 {
-	struct sockaddr_in fromaddr;
-	socklen_t fromsize = sizeof(fromaddr);
-	int insize = *size;
+    struct sockaddr_in fromaddr;
+    socklen_t fromsize = sizeof(fromaddr);
+    int insize = *size;
 
-	sockMtx.lock();   /********** LOCK MUTEX *********/
+    sockMtx.lock();   /********** LOCK MUTEX *********/
 
-	insize = tounet_recvfrom(sockfd,data,insize,0,
-			(struct sockaddr*)&fromaddr,&fromsize);
+    insize = tounet_recvfrom(sockfd,data,insize,0,
+                             (struct sockaddr*)&fromaddr,&fromsize);
 
-	sockMtx.unlock(); /******** UNLOCK MUTEX *********/
+    sockMtx.unlock(); /******** UNLOCK MUTEX *********/
 
-	if (0 < insize)
-	{
+    if (0 < insize)
+    {
 #ifdef DEBUG_UDP_LAYER
-		std::cerr << "receiveUdpPacket() from: " << fromaddr;
-		std::cerr << " Size: " << insize;
-		std::cerr << std::endl;
+        std::cerr << "receiveUdpPacket() from: " << fromaddr;
+        std::cerr << " Size: " << insize;
+        std::cerr << std::endl;
 #endif
-		*size = insize;
-		from = fromaddr;
-		return insize;
-	}
-	return -1;
+        *size = insize;
+        from = fromaddr;
+        return insize;
+    }
+    return -1;
 }
 
 int UdpLayer::sendUdpPacket(const void *data, int size, struct sockaddr_in &to)
 {
-	/* send out */
+    /* send out */
 #ifdef DEBUG_UDP_LAYER
-	std::cerr << "UdpLayer::sendUdpPacket(): size: " << size;
-	std::cerr << " To: " << to << std::endl;
+    std::cerr << "UdpLayer::sendUdpPacket(): size: " << size;
+    std::cerr << " To: " << to << std::endl;
 #endif
-	struct sockaddr_in toaddr = to;
+    struct sockaddr_in toaddr = to;
 
-	sockMtx.lock();   /********** LOCK MUTEX *********/
+    sockMtx.lock();   /********** LOCK MUTEX *********/
 
-	tounet_sendto(sockfd, data, size, 0, 
-			   (struct sockaddr *) &(toaddr), 
-				sizeof(toaddr));
+    tounet_sendto(sockfd, data, size, 0,
+                  (struct sockaddr *) &(toaddr),
+                  sizeof(toaddr));
 
-	sockMtx.unlock(); /******** UNLOCK MUTEX *********/
-	return 1;
+    sockMtx.unlock(); /******** UNLOCK MUTEX *********/
+    return 1;
 }
 
 

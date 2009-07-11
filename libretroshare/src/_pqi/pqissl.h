@@ -68,7 +68,7 @@ const int PQISSL_UDP_FLAG = 0x02;
 
 
 /***************************** pqi Net SSL Interface *********************************
- * This provides the base SSL interface class, 
+ * This provides the base SSL interface class,
  * and handles most of the required functionality.
  *
  * there are a series of small fn's that can be overloaded
@@ -77,7 +77,7 @@ const int PQISSL_UDP_FLAG = 0x02;
  * Classes expected to inherit from this are:
  *
  * pqissllistener 	-> pqissllistener  (tcp only)
- * 			-> pqixpgplistener (tcp only)	
+ * 			-> pqixpgplistener (tcp only)
  *
  * pqissl	 	-> pqissltcp
  * 			-> pqissludp
@@ -95,10 +95,10 @@ class pqissl: public NetBinInterface
 {
 public:
     pqissl(pqissllistener *l, PQInterface *parent,
-		p3AuthMgr *am, p3ConnectMgr *cm);
+           p3AuthMgr *am, p3ConnectMgr *cm);
     virtual ~pqissl();
 
-	// NetInterface
+    // NetInterface
     virtual int connect(struct sockaddr_in raddr);
     virtual int listen();
     virtual int stoplistening();
@@ -161,9 +161,15 @@ public:
 protected:
 
     //protected internal fns that are overloaded for udp case.
-    virtual int net_internal_close(int fd) { return unix_close(fd); }
-    virtual int net_internal_SSL_set_fd(SSL *ssl, int fd) { return SSL_set_fd(ssl, fd); }
-    virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd);}
+    virtual int net_internal_close(int fd) {
+        return unix_close(fd);
+    }
+    virtual int net_internal_SSL_set_fd(SSL *ssl, int fd) {
+        return SSL_set_fd(ssl, fd);
+    }
+    virtual int net_internal_fcntl_nonblock(int fd) {
+        return unix_fcntl_nonblock(fd);
+    }
 
 
     /* data */
@@ -209,12 +215,12 @@ protected:
     AuthXPGP *mAuthMgr;
 
 #else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
+    /**************** PQI_USE_XPGP ******************/
 
     AuthSSL *mAuthMgr;
 
 #endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
+    /**************** PQI_USE_XPGP ******************/
 
     p3ConnectMgr *mConnMgr;
 

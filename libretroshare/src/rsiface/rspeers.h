@@ -67,104 +67,108 @@ std::string RsPeerLastConnectString(uint32_t lastConnect);
 /* Details class */
 class RsPeerDetails
 {
-	public:
+public:
 
-	RsPeerDetails();
+    RsPeerDetails();
 
-	/* Auth details */
-	std::string id;
-	std::string name;
-	std::string email;
-	std::string location;
-	std::string org;
-	
-	std::string fpr; /* pgp fingerprint */
-	std::string authcode; 
-	std::list<std::string> signers;
+    /* Auth details */
+    std::string id;
+    std::string name;
+    std::string email;
+    std::string location;
+    std::string org;
 
-	uint32_t trustLvl;
-	uint32_t validLvl;
+    std::string fpr; /* pgp fingerprint */
+    std::string authcode;
+    std::list<std::string> signers;
 
-	bool ownsign; /* we have signed certificate */
-	bool trusted; /* we trust their signature on others */
+    uint32_t trustLvl;
+    uint32_t validLvl;
 
-	/* Network details (only valid if friend) */
-	uint32_t		state;
+    bool ownsign; /* we have signed certificate */
+    bool trusted; /* we trust their signature on others */
 
-        std::string             localAddr;
-        uint16_t                localPort;
-        std::string             extAddr;
-        uint16_t                extPort;
+    /* Network details (only valid if friend) */
+    uint32_t		state;
 
-	uint32_t		netMode;
-	uint32_t		tryNetMode; /* only for ownState */
-	uint32_t		visState;
+    std::string             localAddr;
+    uint16_t                localPort;
+    std::string             extAddr;
+    uint16_t                extPort;
 
-	/* basic stats */
-	uint32_t		lastConnect; /* how long ago */
-	std::string		autoconnect;
-	uint32_t		connectPeriod; 
+    uint32_t		netMode;
+    uint32_t		tryNetMode; /* only for ownState */
+    uint32_t		visState;
+
+    /* basic stats */
+    uint32_t		lastConnect; /* how long ago */
+    std::string		autoconnect;
+    uint32_t		connectPeriod;
 };
 
 std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail);
 
-class RsPeers 
+class RsPeers
 {
-	public:
+public:
 
-	RsPeers()  { return; }
-virtual ~RsPeers() { return; }
+    RsPeers()  {
+        return;
+    }
+    virtual ~RsPeers() {
+        return;
+    }
 
-	/* Updates ... */
-virtual bool FriendsChanged() 					= 0;
-virtual bool OthersChanged() 					= 0;
+    /* Updates ... */
+    virtual bool FriendsChanged() 					= 0;
+    virtual bool OthersChanged() 					= 0;
 
-	/* Peer Details (Net & Auth) */
-virtual std::string getOwnId()					= 0;
+    /* Peer Details (Net & Auth) */
+    virtual std::string getOwnId()					= 0;
 
-virtual bool	getOnlineList(std::list<std::string> &ids)	= 0;
-virtual bool	getFriendList(std::list<std::string> &ids)	= 0;
-virtual bool	getOthersList(std::list<std::string> &ids)	= 0;
+    virtual bool	getOnlineList(std::list<std::string> &ids)	= 0;
+    virtual bool	getFriendList(std::list<std::string> &ids)	= 0;
+    virtual bool	getOthersList(std::list<std::string> &ids)	= 0;
 
-virtual bool    isOnline(std::string id)			= 0;
-virtual bool    isFriend(std::string id)			= 0;
-virtual std::string getPeerName(std::string id)			= 0;
-virtual bool	getPeerDetails(std::string id, RsPeerDetails &d) = 0;
+    virtual bool    isOnline(std::string id)			= 0;
+    virtual bool    isFriend(std::string id)			= 0;
+    virtual std::string getPeerName(std::string id)			= 0;
+    virtual bool	getPeerDetails(std::string id, RsPeerDetails &d) = 0;
 
-		/* Using PGP Ids */
-virtual std::string getPGPOwnId()				= 0;
-virtual bool    getPGPFriendList(std::list<std::string> &ids)   = 0;
-virtual bool    getPGPAllList(std::list<std::string> &ids) 	= 0;
+    /* Using PGP Ids */
+    virtual std::string getPGPOwnId()				= 0;
+    virtual bool    getPGPFriendList(std::list<std::string> &ids)   = 0;
+    virtual bool    getPGPAllList(std::list<std::string> &ids) 	= 0;
 
-	/* Add/Remove Friends */
-virtual	bool addFriend(std::string id)        			= 0;
-virtual	bool removeFriend(std::string id)  			= 0;
+    /* Add/Remove Friends */
+    virtual	bool addFriend(std::string id)        			= 0;
+    virtual	bool removeFriend(std::string id)  			= 0;
 
-	/* get/set third party info about who trusts me */
-virtual bool isTrustingMe(std::string id) const = 0 ;
+    /* get/set third party info about who trusts me */
+    virtual bool isTrustingMe(std::string id) const = 0 ;
 
-	/* Network Stuff */
-virtual	bool connectAttempt(std::string id)			= 0;
-virtual	bool setLocalAddress(std::string id, std::string addr, uint16_t port) = 0;
-virtual	bool setExtAddress(  std::string id, std::string addr, uint16_t port) = 0;
-virtual	bool setNetworkMode(std::string id, uint32_t netMode) 	= 0;
-virtual bool setVisState(std::string id, uint32_t vis)		= 0;
+    /* Network Stuff */
+    virtual	bool connectAttempt(std::string id)			= 0;
+    virtual	bool setLocalAddress(std::string id, std::string addr, uint16_t port) = 0;
+    virtual	bool setExtAddress(  std::string id, std::string addr, uint16_t port) = 0;
+    virtual	bool setNetworkMode(std::string id, uint32_t netMode) 	= 0;
+    virtual bool setVisState(std::string id, uint32_t vis)		= 0;
 
-virtual void getIPServersList(std::list<std::string>& ip_servers) = 0;
-virtual void allowServerIPDetermination(bool) = 0;
-virtual bool getAllowServerIPDetermination() = 0 ;
+    virtual void getIPServersList(std::list<std::string>& ip_servers) = 0;
+    virtual void allowServerIPDetermination(bool) = 0;
+    virtual bool getAllowServerIPDetermination() = 0 ;
 
-	/* Auth Stuff */
-virtual	std::string GetRetroshareInvite() 			= 0;
+    /* Auth Stuff */
+    virtual	std::string GetRetroshareInvite() 			= 0;
 
-virtual	bool LoadCertificateFromFile(std::string fname, std::string &id)  = 0;
-virtual	bool LoadCertificateFromString(std::string cert, std::string &id)  = 0;
-virtual	bool SaveCertificateToFile(std::string id, std::string fname)  = 0;
-virtual	std::string SaveCertificateToString(std::string id)  	= 0;
+    virtual	bool LoadCertificateFromFile(std::string fname, std::string &id)  = 0;
+    virtual	bool LoadCertificateFromString(std::string cert, std::string &id)  = 0;
+    virtual	bool SaveCertificateToFile(std::string id, std::string fname)  = 0;
+    virtual	std::string SaveCertificateToString(std::string id)  	= 0;
 
-virtual	bool AuthCertificate(std::string id, std::string code) 	= 0;
-virtual	bool SignCertificate(std::string id)                   	= 0;
-virtual	bool TrustCertificate(std::string id, bool trust) 	= 0;
+    virtual	bool AuthCertificate(std::string id, std::string code) 	= 0;
+    virtual	bool SignCertificate(std::string id)                   	= 0;
+    virtual	bool TrustCertificate(std::string id, bool trust) 	= 0;
 
 };
 

@@ -47,7 +47,7 @@
  *
  * At top level we need:
  *
- * - type / filename / size / hash - 
+ * - type / filename / size / hash -
  * and the file signed...
  *
  *
@@ -93,39 +93,39 @@ class p3AuthMgr;
 
 class pqiConfig
 {
-	public:	
-	pqiConfig(uint32_t t);
-virtual ~pqiConfig();
+public:
+    pqiConfig(uint32_t t);
+    virtual ~pqiConfig();
 
-virtual bool	loadConfiguration(std::string &loadHash) = 0;
-virtual bool	saveConfiguration() = 0;
+    virtual bool	loadConfiguration(std::string &loadHash) = 0;
+    virtual bool	saveConfiguration() = 0;
 
-uint32_t   Type();
-std::string Filename();
-std::string Hash();
+    uint32_t   Type();
+    std::string Filename();
+    std::string Hash();
 
-	protected:
+protected:
 
-void	IndicateConfigChanged();
-void	setHash(std::string h); 
+    void	IndicateConfigChanged();
+    void	setHash(std::string h);
 
-	RsMutex cfgMtx;
+    RsMutex cfgMtx;
 
-	private:
+private:
 
-void    setFilename(std::string name); 
-bool    HasConfigChanged(uint16_t idx);
+    void    setFilename(std::string name);
+    bool    HasConfigChanged(uint16_t idx);
 
-	Indicator ConfInd;
+    Indicator ConfInd;
 
-	uint32_t    type;
-	std::string filename;
-	std::string hash;
+    uint32_t    type;
+    std::string filename;
+    std::string hash;
 
-	friend class p3ConfigMgr; 
-	/* so it can access:
-	 * setFilename() and HasConfigChanged()
-	 */
+    friend class p3ConfigMgr;
+    /* so it can access:
+     * setFilename() and HasConfigChanged()
+     */
 };
 
 
@@ -136,85 +136,87 @@ bool    HasConfigChanged(uint16_t idx);
 
 class p3ConfigMgr
 {
-	public:
-	p3ConfigMgr(p3AuthMgr *am, std::string bdir, std::string fname, std::string signame);
+public:
+    p3ConfigMgr(p3AuthMgr *am, std::string bdir, std::string fname, std::string signame);
 
-void	tick();
-void	saveConfiguration();
-void	loadConfiguration();
-void	addConfiguration(std::string file, pqiConfig *conf);
+    void	tick();
+    void	saveConfiguration();
+    void	loadConfiguration();
+    void	addConfiguration(std::string file, pqiConfig *conf);
 
-	/* saves config, and disables further saving
-	 * used for exiting the system
-	 */
-void	completeConfiguration(); 
+    /* saves config, and disables further saving
+     * used for exiting the system
+     */
+    void	completeConfiguration();
 
-	private:
+private:
 
 
-	/* these are constants - so shouldn't need mutex */
-	p3AuthMgr *mAuthMgr;
+    /* these are constants - so shouldn't need mutex */
+    p3AuthMgr *mAuthMgr;
 
-const std::string basedir;
-const std::string metafname;
-const std::string metasigfname;
+    const std::string basedir;
+    const std::string metafname;
+    const std::string metasigfname;
 
-	RsMutex cfgMtx; /* below is protected */
+    RsMutex cfgMtx; /* below is protected */
 
-bool	mConfigSaveActive;
-std::map<uint32_t, pqiConfig *> configs;
+    bool	mConfigSaveActive;
+    std::map<uint32_t, pqiConfig *> configs;
 };
 
 
 class p3Config: public pqiConfig
 {
-	public:
+public:
 
-	p3Config(uint32_t t);
+    p3Config(uint32_t t);
 
-virtual bool	loadConfiguration(std::string &loadHash);
-virtual bool	saveConfiguration();
+    virtual bool	loadConfiguration(std::string &loadHash);
+    virtual bool	saveConfiguration();
 
-	protected:
+protected:
 
-	/* Key Functions to be overloaded for Full Configuration */
-virtual RsSerialiser *setupSerialiser() = 0;
-virtual std::list<RsItem *> saveList(bool &cleanup) = 0;
-virtual bool	loadList(std::list<RsItem *> load) = 0;
-/**
- * callback for mutex unlocking
- * in derived classes (should only be needed if cleanup = false)
- */
-virtual void    saveDone() { return; } 
+    /* Key Functions to be overloaded for Full Configuration */
+    virtual RsSerialiser *setupSerialiser() = 0;
+    virtual std::list<RsItem *> saveList(bool &cleanup) = 0;
+    virtual bool	loadList(std::list<RsItem *> load) = 0;
+    /**
+     * callback for mutex unlocking
+     * in derived classes (should only be needed if cleanup = false)
+     */
+    virtual void    saveDone() {
+        return;
+    }
 
 }; /* end of p3Config */
 
 
 class p3GeneralConfig: public p3Config
 {
-	public:
-	p3GeneralConfig();
+public:
+    p3GeneralConfig();
 
 // General Configuration System
-std::string 	getSetting(std::string opt);
-void 		setSetting(std::string opt, std::string val);
+    std::string 	getSetting(std::string opt);
+    void 		setSetting(std::string opt, std::string val);
 
-	protected:
+protected:
 
-	/* Key Functions to be overloaded for Full Configuration */
-virtual RsSerialiser *setupSerialiser();
-virtual std::list<RsItem *> saveList(bool &cleanup);
-virtual bool	loadList(std::list<RsItem *> load);
+    /* Key Functions to be overloaded for Full Configuration */
+    virtual RsSerialiser *setupSerialiser();
+    virtual std::list<RsItem *> saveList(bool &cleanup);
+    virtual bool	loadList(std::list<RsItem *> load);
 
-	private:
+private:
 
-	/* protected by pqiConfig mutex as well! */
-std::map<std::string, std::string> settings;
+    /* protected by pqiConfig mutex as well! */
+    std::map<std::string, std::string> settings;
 };
 
 
 
-	
+
 
 
 

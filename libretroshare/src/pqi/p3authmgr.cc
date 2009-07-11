@@ -28,275 +28,275 @@
 #include "pqi/p3authmgr.h"
 
 pqiAuthDetails::pqiAuthDetails()
-	:trustLvl(0), validLvl(0), ownsign(false), trusted(false)
+        :trustLvl(0), validLvl(0), ownsign(false), trusted(false)
 {
-	return;
+    return;
 }
 
 p3DummyAuthMgr::p3DummyAuthMgr()
 {
-	/* for the truely dummy option */
-	mOwnId = "OWNID";
+    /* for the truely dummy option */
+    mOwnId = "OWNID";
 
-	pqiAuthDetails ownDetails;
-	ownDetails.id = mOwnId;
-	ownDetails.name = "Youself";
-	ownDetails.email = "me@me.com";
-	ownDetails.location = "here";
-	ownDetails.org = "me.com";
+    pqiAuthDetails ownDetails;
+    ownDetails.id = mOwnId;
+    ownDetails.name = "Youself";
+    ownDetails.email = "me@me.com";
+    ownDetails.location = "here";
+    ownDetails.org = "me.com";
 
-	ownDetails.trustLvl = 6;
-	ownDetails.ownsign = true;
-	ownDetails.trusted = true;
+    ownDetails.trustLvl = 6;
+    ownDetails.ownsign = true;
+    ownDetails.trusted = true;
 
-	/* ignoring fpr and signers */
+    /* ignoring fpr and signers */
 
-	mPeerList[mOwnId] = ownDetails;
+    mPeerList[mOwnId] = ownDetails;
 
 }
 
-bool p3DummyAuthMgr::isTrustingMe(std::string id) 
+bool p3DummyAuthMgr::isTrustingMe(std::string id)
 {
-	std::cerr << "isTrustingMe is not implemented in p3DummyAuthMgr. Look into authxpgp.cc." << std::endl ;
-	return false ;
+    std::cerr << "isTrustingMe is not implemented in p3DummyAuthMgr. Look into authxpgp.cc." << std::endl ;
+    return false ;
 }
 void p3DummyAuthMgr::addTrustingPeer(std::string id)
 {
-	std::cerr << "addTrustingPeer is not implemented in p3DummyAuthMgr. Look into authxpgp.cc." << std::endl ;
+    std::cerr << "addTrustingPeer is not implemented in p3DummyAuthMgr. Look into authxpgp.cc." << std::endl ;
 }
 
 p3DummyAuthMgr::p3DummyAuthMgr(std::string ownId, std::list<pqiAuthDetails> peers)
 {
-	mOwnId = ownId;
-	bool addedOwn = false;
+    mOwnId = ownId;
+    bool addedOwn = false;
 
-	std::list<pqiAuthDetails>::iterator it;
-	for(it = peers.begin(); it != peers.end(); it++)
-	{
-		mPeerList[it->id] = (*it);
-		if (it->id == ownId)
-		{
-			addedOwn = true;
-		}
-	}
-	if (!addedOwn)
-	{
-		pqiAuthDetails ownDetails;
-		ownDetails.id = mOwnId;
-		ownDetails.name = "Youself";
-		ownDetails.email = "me@me.com";
-		ownDetails.location = "here";
-		ownDetails.org = "me.com";
+    std::list<pqiAuthDetails>::iterator it;
+    for (it = peers.begin(); it != peers.end(); it++)
+    {
+        mPeerList[it->id] = (*it);
+        if (it->id == ownId)
+        {
+            addedOwn = true;
+        }
+    }
+    if (!addedOwn)
+    {
+        pqiAuthDetails ownDetails;
+        ownDetails.id = mOwnId;
+        ownDetails.name = "Youself";
+        ownDetails.email = "me@me.com";
+        ownDetails.location = "here";
+        ownDetails.org = "me.com";
 
-		ownDetails.trustLvl = 6;
-		ownDetails.ownsign = true;
-		ownDetails.trusted = true;
+        ownDetails.trustLvl = 6;
+        ownDetails.ownsign = true;
+        ownDetails.trusted = true;
 
-		/* ignoring fpr and signers */
+        /* ignoring fpr and signers */
 
-		mPeerList[mOwnId] = ownDetails;
-	}
+        mPeerList[mOwnId] = ownDetails;
+    }
 }
-	
+
 bool   p3DummyAuthMgr:: active()
 {
-	return true;
+    return true;
 }
 
-int     p3DummyAuthMgr::InitAuth(const char *srvr_cert, const char *priv_key, 
-                                        const char *passwd)
+int     p3DummyAuthMgr::InitAuth(const char *srvr_cert, const char *priv_key,
+                                 const char *passwd)
 {
-	return 1;
+    return 1;
 }
 
 bool    p3DummyAuthMgr::CloseAuth()
 {
-	return true;
+    return true;
 }
 
 int     p3DummyAuthMgr::setConfigDirectories(std::string confFile, std::string neighDir)
 {
-	return 1;
+    return 1;
 }
 
 std::string p3DummyAuthMgr::OwnId()
 {
-	return mOwnId;
+    return mOwnId;
 }
 
 bool	p3DummyAuthMgr::getAllList(std::list<std::string> &ids)
 {
-	std::map<std::string, pqiAuthDetails>::iterator it;
-	for(it = mPeerList.begin(); it != mPeerList.end(); it++)
-	{
-		ids.push_back(it->first);
-	}
-	return true;
+    std::map<std::string, pqiAuthDetails>::iterator it;
+    for (it = mPeerList.begin(); it != mPeerList.end(); it++)
+    {
+        ids.push_back(it->first);
+    }
+    return true;
 }
 
 bool	p3DummyAuthMgr::getAuthenticatedList(std::list<std::string> &ids)
 {
-	std::map<std::string, pqiAuthDetails>::iterator it;
-	for(it = mPeerList.begin(); it != mPeerList.end(); it++)
-	{
-		if (it->second.trustLvl > 3)
-		{
-			ids.push_back(it->first);
-		}
-	}
-	return true;
+    std::map<std::string, pqiAuthDetails>::iterator it;
+    for (it = mPeerList.begin(); it != mPeerList.end(); it++)
+    {
+        if (it->second.trustLvl > 3)
+        {
+            ids.push_back(it->first);
+        }
+    }
+    return true;
 }
 
 bool	p3DummyAuthMgr::getUnknownList(std::list<std::string> &ids)
 {
-	std::map<std::string, pqiAuthDetails>::iterator it;
-	for(it = mPeerList.begin(); it != mPeerList.end(); it++)
-	{
-		if (it->second.trustLvl <= 3)
-		{
-			ids.push_back(it->first);
-		}
-	}
-	return true;
+    std::map<std::string, pqiAuthDetails>::iterator it;
+    for (it = mPeerList.begin(); it != mPeerList.end(); it++)
+    {
+        if (it->second.trustLvl <= 3)
+        {
+            ids.push_back(it->first);
+        }
+    }
+    return true;
 }
 
 bool	p3DummyAuthMgr::isValid(std::string id)
 {
-	std::map<std::string, pqiAuthDetails>::iterator it;
-	return (mPeerList.end() != mPeerList.find(id));
+    std::map<std::string, pqiAuthDetails>::iterator it;
+    return (mPeerList.end() != mPeerList.find(id));
 }
 
 
 bool	p3DummyAuthMgr::isAuthenticated(std::string id)
 {
-	std::map<std::string, pqiAuthDetails>::iterator it;
-	if (mPeerList.end() != (it = mPeerList.find(id)))
-	{
-		return (it->second.trustLvl > 3);
-	}
-	return false;
+    std::map<std::string, pqiAuthDetails>::iterator it;
+    if (mPeerList.end() != (it = mPeerList.find(id)))
+    {
+        return (it->second.trustLvl > 3);
+    }
+    return false;
 }
 
 std::string p3DummyAuthMgr::getName(std::string id)
 {
-	std::map<std::string, pqiAuthDetails>::iterator it;
-	if (mPeerList.end() != (it = mPeerList.find(id)))
-	{
-		return it->second.name;
-	}
-	std::string empty("");
-	return empty;
+    std::map<std::string, pqiAuthDetails>::iterator it;
+    if (mPeerList.end() != (it = mPeerList.find(id)))
+    {
+        return it->second.name;
+    }
+    std::string empty("");
+    return empty;
 }
 
 bool	p3DummyAuthMgr::getDetails(std::string id, pqiAuthDetails &details)
 {
-	std::map<std::string, pqiAuthDetails>::iterator it;
-	if (mPeerList.end() != (it = mPeerList.find(id)))
-	{
-		details = it->second;
-		return true;
-	}
-	return false;
+    std::map<std::string, pqiAuthDetails>::iterator it;
+    if (mPeerList.end() != (it = mPeerList.find(id)))
+    {
+        details = it->second;
+        return true;
+    }
+    return false;
 }
 
 bool p3DummyAuthMgr::FinalSaveCertificates()
 {
-	return false;
+    return false;
 }
 
 bool p3DummyAuthMgr::CheckSaveCertificates()
 {
-	return false;
+    return false;
 }
 
 bool p3DummyAuthMgr::saveCertificates()
 {
-	return false;
+    return false;
 }
 
 bool p3DummyAuthMgr::loadCertificates()
 {
-	return false;
+    return false;
 }
 
 bool p3DummyAuthMgr::LoadCertificateFromString(std::string pem, std::string &id)
 {
-	return false;
+    return false;
 }
 
 std::string p3DummyAuthMgr::SaveCertificateToString(std::string id)
 {
-	std::string dummy("CERT STRING");
-	return dummy;
+    std::string dummy("CERT STRING");
+    return dummy;
 }
 
 bool p3DummyAuthMgr::LoadCertificateFromFile(std::string filename, std::string &id)
 {
-	return false;
+    return false;
 }
 
 bool p3DummyAuthMgr::SaveCertificateToFile(std::string id, std::string filename)
 {
-	return false;
+    return false;
 }
 bool p3DummyAuthMgr::LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id)
 {
-	return false;
+    return false;
 }
 
 bool p3DummyAuthMgr::SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len)
 {
-	return false;
+    return false;
 }
 
-		/* Signatures */
+/* Signatures */
 bool p3DummyAuthMgr::AuthCertificate(std::string id)
 {
-	return false;
+    return false;
 }
 
 bool p3DummyAuthMgr::SignCertificate(std::string id)
 {
-	return false;
+    return false;
 }
 
 bool p3DummyAuthMgr::RevokeCertificate(std::string id)
 {
-	return false;
+    return false;
 }
 
 bool p3DummyAuthMgr::TrustCertificate(std::string id, bool trust)
 {
-	return false;
+    return false;
 }
 
 bool p3DummyAuthMgr::SignData(std::string input, std::string &sign)
 {
-	return false;
+    return false;
 }
 
 bool p3DummyAuthMgr::SignData(const void *data, const uint32_t len, std::string &sign)
 {
-	return false;
+    return false;
 }
 
-bool p3DummyAuthMgr::SignDataBin(std::string input, 
-		unsigned char *sign, unsigned int *signlen)
+bool p3DummyAuthMgr::SignDataBin(std::string input,
+                                 unsigned char *sign, unsigned int *signlen)
 {
-	return false;
+    return false;
 }
 
 bool p3DummyAuthMgr::SignDataBin(const void *data, const uint32_t len,
-                        unsigned char *sign, unsigned int *signlen)
+                                 unsigned char *sign, unsigned int *signlen)
 {
-	return false;
+    return false;
 }
 
-bool p3DummyAuthMgr::VerifySignBin(std::string pid, 
-			const void *data, const uint32_t len,
-                       	unsigned char *sign, unsigned int signlen)
+bool p3DummyAuthMgr::VerifySignBin(std::string pid,
+                                   const void *data, const uint32_t len,
+                                   unsigned char *sign, unsigned int signlen)
 {
-	return false;
+    return false;
 }
 
 

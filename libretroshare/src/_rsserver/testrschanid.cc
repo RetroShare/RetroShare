@@ -33,26 +33,26 @@
 
 int main()
 {
-	RsCertId id;
+    RsCertId id;
 
-	int i;
-	for(i = 0; i < 16; i++)
-	{
-		id.data[i] = i+121;
-	}
+    int i;
+    for (i = 0; i < 16; i++)
+    {
+        id.data[i] = i+121;
+    }
 
-	std::cerr << "Cert Id: " << id << std::endl;
+    std::cerr << "Cert Id: " << id << std::endl;
 
-	std::ostringstream out;
-	out << id;
-	std::string idstr = out.str();
+    std::ostringstream out;
+    out << id;
+    std::string idstr = out.str();
 
-	std::cerr << "Cert Id (str): " << idstr << std::endl;
+    std::cerr << "Cert Id (str): " << idstr << std::endl;
 
-	RsCertId id2(idstr);
+    RsCertId id2(idstr);
 
-	std::cerr << "Cert Id2 (from str): " << id2 << std::endl;
-	return 1;
+    std::cerr << "Cert Id2 (from str): " << id2 << std::endl;
+    return 1;
 }
 
 

@@ -26,7 +26,7 @@
 #ifndef FT_FILE_PROVIDER_HEADER
 #define FT_FILE_PROVIDER_HEADER
 
-/* 
+/*
  * ftFileProvider.
  *
  */
@@ -38,44 +38,44 @@
 class ftFileProvider
 {
 public:
-	ftFileProvider(std::string path, uint64_t size, std::string hash);
-	virtual ~ftFileProvider();
+    ftFileProvider(std::string path, uint64_t size, std::string hash);
+    virtual ~ftFileProvider();
 
-	virtual bool 	getFileData(uint64_t offset, uint32_t &chunk_size, void *data);
-	virtual bool    FileDetails(FileInfo &info);
-	std::string getHash();
-	uint64_t getFileSize();
-	bool fileOk();
+    virtual bool 	getFileData(uint64_t offset, uint32_t &chunk_size, void *data);
+    virtual bool    FileDetails(FileInfo &info);
+    std::string getHash();
+    uint64_t getFileSize();
+    bool fileOk();
 
-	void setPeerId(const std::string& id) ;
+    void setPeerId(const std::string& id) ;
 
 
 protected:
-virtual	int initializeFileAttrs(); /* does for both */
+    virtual	int initializeFileAttrs(); /* does for both */
 
-	uint64_t    mSize;
-	std::string hash;
-	std::string file_name;
-	FILE *fd;
+    uint64_t    mSize;
+    std::string hash;
+    std::string file_name;
+    FILE *fd;
 
-	/* 
-	 * Structure to gather statistics FIXME: lastRequestor - figure out a 
-	 * way to get last requestor (peerID)
-	 */
-	std::string lastRequestor;
-	uint64_t   req_loc;
-	uint32_t   req_size;
-	time_t    lastTS;   		// used for checking if it's alive
-	time_t    lastTS_t;   	// used for estimating transfer rate.
+    /*
+     * Structure to gather statistics FIXME: lastRequestor - figure out a
+     * way to get last requestor (peerID)
+     */
+    std::string lastRequestor;
+    uint64_t   req_loc;
+    uint32_t   req_size;
+    time_t    lastTS;   		// used for checking if it's alive
+    time_t    lastTS_t;   	// used for estimating transfer rate.
 
-	// these two are used for speed estimation
-	float 	  transfer_rate ;
-	uint32_t		total_size ;
+    // these two are used for speed estimation
+    float 	  transfer_rate ;
+    uint32_t		total_size ;
 
-	/* 
-         * Mutex Required for stuff below 
+    /*
+         * Mutex Required for stuff below
          */
-	RsMutex ftcMutex;
+    RsMutex ftcMutex;
 };
 
 

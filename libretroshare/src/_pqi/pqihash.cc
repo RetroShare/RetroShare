@@ -36,7 +36,7 @@ void pqihash::Complete(std::string &hash)
     SHA1_Final(sha_hash, sha_ctx);
 
     std::ostringstream out;
-    for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
+    for (int i = 0; i < SHA_DIGEST_LENGTH; i++)
     {
         out << std::setw(2) << std::setfill('0') << std::hex;
         out << (unsigned int) (sha_hash[i]);

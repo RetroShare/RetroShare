@@ -92,10 +92,14 @@ struct RsPhotoDetails
 
 class RsPhoto
 {
-    public:
+public:
 
-    RsPhoto()  { return; }
-    virtual ~RsPhoto() { return; }
+    RsPhoto()  {
+        return;
+    }
+    virtual ~RsPhoto() {
+        return;
+    }
 
     /* changed? */
     virtual bool updated() = 0;

@@ -55,22 +55,22 @@ DESCRIPTION:
                 table has been created to avoid string scans.
 
 DESIGN GOALS:	Specifically:
-		Code is a stand-alone utility to perform base64 
-		encoding/decoding. It should be genuinely useful 
-		when the need arises and it meets a need that is 
-		likely to occur for some users.  
-		Code acts as sample code to show the author's 
-		design and coding style.  
+		Code is a stand-alone utility to perform base64
+		encoding/decoding. It should be genuinely useful
+		when the need arises and it meets a need that is
+		likely to occur for some users.
+		Code acts as sample code to show the author's
+		design and coding style.
 
-		Generally: 
+		Generally:
 		This program is designed to survive:
 		Everything you need is in a single source file.
 		It compiles cleanly using a vanilla ANSI C compiler.
-		It does its job correctly with a minimum of fuss.  
-		The code is not overly clever, not overly simplistic 
-		and not overly verbose. 
-		Access is 'cut and paste' from a web page.  
-		Terms of use are reasonable.  
+		It does its job correctly with a minimum of fuss.
+		The code is not overly clever, not overly simplistic
+		and not overly verbose.
+		Access is 'cut and paste' from a web page.
+		Terms of use are reasonable.
 
 VALIDATION:     Non-trivial code is never without errors.  This
                 file likely has some problems, since it has only
@@ -230,7 +230,7 @@ void encodeblock( unsigned char in[3], unsigned char out[4], int len )
 ** decode 4 '6-bit' characters into 3 8-bit binary bytes
 */
 void decodeblock( unsigned char in[4], unsigned char out[3] )
-{   
+{
     out[ 0 ] = (unsigned char ) (((in[0] << 2) & 0xff) | ((in[1] >> 4) & 0xff));
     out[ 1 ] = (unsigned char ) (((in[1] << 4) & 0xff) | ((in[2] >> 2) & 0xff));
     out[ 2 ] = (unsigned char ) (((in[2] << 6) & 0xc0) | (in[3] & 0xff));
@@ -250,210 +250,210 @@ std::string displayBlock(unsigned char *arr, unsigned int len);
 
 std::string convertToBase64(std::string input)
 {
-	unsigned char in[3];
-	unsigned char out[4];
-	unsigned int len;
+    unsigned char in[3];
+    unsigned char out[4];
+    unsigned int len;
 
-	std::string result;
+    std::string result;
 
-	for(unsigned int i = 0; i < input.length(); i+= 3)
-	{
-		len = input.length() - i;
-		in[0] = input[i];
-		if (len > 1)
-			in[1] = input[i+1];
-		else
-			in[1] = 0;
+    for (unsigned int i = 0; i < input.length(); i+= 3)
+    {
+        len = input.length() - i;
+        in[0] = input[i];
+        if (len > 1)
+            in[1] = input[i+1];
+        else
+            in[1] = 0;
 
-		if (len > 2)
-			in[2] = input[i+2];
-		else
-			in[2] = 0;
+        if (len > 2)
+            in[2] = input[i+2];
+        else
+            in[2] = 0;
 
 
-		encodeblock(in, out, len);
-		//std::cerr << "eNcode Block in :" <<  displayBlock(in, 3);
-		//std::cerr << "eNcode Block out:" <<  displayBlock(out, 4);
+        encodeblock(in, out, len);
+        //std::cerr << "eNcode Block in :" <<  displayBlock(in, 3);
+        //std::cerr << "eNcode Block out:" <<  displayBlock(out, 4);
 
-		for(unsigned int j = 0; j < 4; j++)
-		{
-			result += out[j];
-		}
-	}
+        for (unsigned int j = 0; j < 4; j++)
+        {
+            result += out[j];
+        }
+    }
 
-	return result;
+    return result;
 }
 
 std::string convertFromBase64(std::string input)
 {
-	unsigned char in[4];
-	unsigned char out[3];
-	unsigned int len, outlen;
+    unsigned char in[4];
+    unsigned char out[3];
+    unsigned int len, outlen;
 
-	std::string result;
+    std::string result;
 
-	for(unsigned int i = 0; i < input.length(); i+= 4)
-	{
-		len = input.length() - i;
-		if (len < 4)
-		{
-			/* error */
-			std::cerr << "ERROR LENGTH in convertFromBase64";
-			std::cerr << std::endl;
-			return result;
-		}
-		outlen = 3;
-		in[0] = input[i];
-		in[1] = input[i+1];
-		in[2] = input[i+2];
-		in[3] = input[i+3];
+    for (unsigned int i = 0; i < input.length(); i+= 4)
+    {
+        len = input.length() - i;
+        if (len < 4)
+        {
+            /* error */
+            std::cerr << "ERROR LENGTH in convertFromBase64";
+            std::cerr << std::endl;
+            return result;
+        }
+        outlen = 3;
+        in[0] = input[i];
+        in[1] = input[i+1];
+        in[2] = input[i+2];
+        in[3] = input[i+3];
 
-		if (in[3] == '=')
-		{
-			outlen--;
-		}
-		if (in[2] == '=')
-		{
-			outlen--;
-		}
-		//std::cerr << "Decode Block in :" <<  displayBlock(in, 4);
+        if (in[3] == '=')
+        {
+            outlen--;
+        }
+        if (in[2] == '=')
+        {
+            outlen--;
+        }
+        //std::cerr << "Decode Block in :" <<  displayBlock(in, 4);
 
-		for(unsigned int j = 0; j < 4; j++)
-		{
-			unsigned char v = input[i+j];
-                	v = (unsigned char) ((v < 43 || v > 122) ? 0 : cd64[ v - 43 ]);
-		        if( v ) {
-				v = (unsigned char) ((v == '$') ? 0 : v - 61);
-			}
-			in[j] = v-1;
-		}
+        for (unsigned int j = 0; j < 4; j++)
+        {
+            unsigned char v = input[i+j];
+            v = (unsigned char) ((v < 43 || v > 122) ? 0 : cd64[ v - 43 ]);
+            if ( v ) {
+                v = (unsigned char) ((v == '$') ? 0 : v - 61);
+            }
+            in[j] = v-1;
+        }
 
-		decodeblock(in, out);
-		//std::cerr << "Decode Block out:" <<  displayBlock(out, 3);
+        decodeblock(in, out);
+        //std::cerr << "Decode Block out:" <<  displayBlock(out, 3);
 
-		for(unsigned int j = 0; j < outlen; j++)
-		{
-			result += out[j];
-		}
-	}
+        for (unsigned int j = 0; j < outlen; j++)
+        {
+            result += out[j];
+        }
+    }
 
-	return result;
+    return result;
 }
 
 
 std::string convertDataToBase64(unsigned char *data, uint32_t dlen)
 {
-	unsigned char in[3];
-	unsigned char out[4];
-	unsigned int len;
+    unsigned char in[3];
+    unsigned char out[4];
+    unsigned int len;
 
-	std::string result;
+    std::string result;
 
-	for(unsigned int i = 0; i < dlen; i+= 3)
-	{
-		len = dlen - i;
-		in[0] = data[i];
-		if (len > 1)
-			in[1] = data[i+1];
-		else
-			in[1] = 0;
+    for (unsigned int i = 0; i < dlen; i+= 3)
+    {
+        len = dlen - i;
+        in[0] = data[i];
+        if (len > 1)
+            in[1] = data[i+1];
+        else
+            in[1] = 0;
 
-		if (len > 2)
-			in[2] = data[i+2];
-		else
-			in[2] = 0;
+        if (len > 2)
+            in[2] = data[i+2];
+        else
+            in[2] = 0;
 
 
-		encodeblock(in, out, len);
-		//std::cerr << "eNcode Block in :" <<  displayBlock(in, 3);
-		//std::cerr << "eNcode Block out:" <<  displayBlock(out, 4);
+        encodeblock(in, out, len);
+        //std::cerr << "eNcode Block in :" <<  displayBlock(in, 3);
+        //std::cerr << "eNcode Block out:" <<  displayBlock(out, 4);
 
-		for(unsigned int j = 0; j < 4; j++)
-		{
-			result += out[j];
-		}
-	}
-	return result;
+        for (unsigned int j = 0; j < 4; j++)
+        {
+            result += out[j];
+        }
+    }
+    return result;
 }
 
 
 uint32_t DataLenFromBase64(std::string input)
 {
-	uint32_t len = input.length();
-	len = (len / 4) * 3;
-	/* remove extra char - if '=' */
-	if (input[input.length()-1] == '=')
-		len--;
-	if (input[input.length()-2] == '=')
-		len--;
-	return len;
+    uint32_t len = input.length();
+    len = (len / 4) * 3;
+    /* remove extra char - if '=' */
+    if (input[input.length()-1] == '=')
+        len--;
+    if (input[input.length()-2] == '=')
+        len--;
+    return len;
 }
 
 
 bool convertDataFromBase64(std::string input, unsigned char *data, uint32_t *dlen)
 {
-	unsigned char in[4];
-	unsigned char out[3];
-	unsigned int len, outlen;
-	unsigned int offset = 0;
+    unsigned char in[4];
+    unsigned char out[3];
+    unsigned int len, outlen;
+    unsigned int offset = 0;
 
-	std::string result;
+    std::string result;
 
-	len = DataLenFromBase64(input);
-	if (len > *dlen)
-	{
-		std::cerr << "ERROR LENGTH(1) in convertDataFromBase64";
-		std::cerr << std::endl;
-		return false;
-	}
+    len = DataLenFromBase64(input);
+    if (len > *dlen)
+    {
+        std::cerr << "ERROR LENGTH(1) in convertDataFromBase64";
+        std::cerr << std::endl;
+        return false;
+    }
 
-	for(unsigned int i = 0; i < input.length(); i+= 4)
-	{
-		len = input.length() - i;
-		if (len < 4)
-		{
-			/* error */
-			std::cerr << "ERROR LENGTH in convertDataFromBase64";
-			std::cerr << std::endl;
-			return false;
-		}
-		outlen = 3;
-		in[0] = input[i];
-		in[1] = input[i+1];
-		in[2] = input[i+2];
-		in[3] = input[i+3];
+    for (unsigned int i = 0; i < input.length(); i+= 4)
+    {
+        len = input.length() - i;
+        if (len < 4)
+        {
+            /* error */
+            std::cerr << "ERROR LENGTH in convertDataFromBase64";
+            std::cerr << std::endl;
+            return false;
+        }
+        outlen = 3;
+        in[0] = input[i];
+        in[1] = input[i+1];
+        in[2] = input[i+2];
+        in[3] = input[i+3];
 
-		if (in[3] == '=')
-		{
-			outlen--;
-		}
-		if (in[2] == '=')
-		{
-			outlen--;
-		}
-		//std::cerr << "Decode Block in :" <<  displayBlock(in, 4);
+        if (in[3] == '=')
+        {
+            outlen--;
+        }
+        if (in[2] == '=')
+        {
+            outlen--;
+        }
+        //std::cerr << "Decode Block in :" <<  displayBlock(in, 4);
 
-		for(unsigned int j = 0; j < 4; j++)
-		{
-			unsigned char v = input[i+j];
-                	v = (unsigned char) ((v < 43 || v > 122) ? 0 : cd64[ v - 43 ]);
-		        if( v ) {
-				v = (unsigned char) ((v == '$') ? 0 : v - 61);
-			}
-			in[j] = v-1;
-		}
+        for (unsigned int j = 0; j < 4; j++)
+        {
+            unsigned char v = input[i+j];
+            v = (unsigned char) ((v < 43 || v > 122) ? 0 : cd64[ v - 43 ]);
+            if ( v ) {
+                v = (unsigned char) ((v == '$') ? 0 : v - 61);
+            }
+            in[j] = v-1;
+        }
 
-		decodeblock(in, out);
-		//std::cerr << "Decode Block out:" <<  displayBlock(out, 3);
+        decodeblock(in, out);
+        //std::cerr << "Decode Block out:" <<  displayBlock(out, 3);
 
-		for(unsigned int j = 0; j < outlen; j++)
-		{
-			data[offset++] = out[j];
-		}
-	}
+        for (unsigned int j = 0; j < outlen; j++)
+        {
+            data[offset++] = out[j];
+        }
+    }
 
-	*dlen = offset;
-	return true;
+    *dlen = offset;
+    return true;
 }
 
 
@@ -461,18 +461,18 @@ bool convertDataFromBase64(std::string input, unsigned char *data, uint32_t *dle
 
 std::string displayBlock(unsigned char *arr, unsigned int len)
 {
-	std::ostringstream out;
+    std::ostringstream out;
 
-	for(unsigned int j = 0; j < len; j++)
-	{
-		out << std::hex << (int) arr[j] << "[" << arr[j] << "] ";
-	}
-	out << std::endl;
-	return out.str();
+    for (unsigned int j = 0; j < len; j++)
+    {
+        out << std::hex << (int) arr[j] << "[" << arr[j] << "] ";
+    }
+    out << std::endl;
+    return out.str();
 }
 
 
 
 
-		
+
 

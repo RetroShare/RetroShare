@@ -50,44 +50,44 @@ const RsConfig& RsIface::getConfig()
 /* set to true */
 bool RsIface::setChanged(DataFlags set)
 {
-        if ((int) set < (int) NumOfFlags)
-        {
-                /* go for it */
-                mChanged[(int) set ] = true;
-                return true;
-        }
-        return false;
+    if ((int) set < (int) NumOfFlags)
+    {
+        /* go for it */
+        mChanged[(int) set ] = true;
+        return true;
+    }
+    return false;
 }
 
 
 /* leaves it */
 bool    RsIface::getChanged(DataFlags set)
 {
-        if ((int) set < (int) NumOfFlags)
-        {
-                /* go for it */
-                return mChanged[(int) set ];
-        }
-        return false;
+    if ((int) set < (int) NumOfFlags)
+    {
+        /* go for it */
+        return mChanged[(int) set ];
+    }
+    return false;
 }
 
 /* resets it */
 bool    RsIface::hasChanged(DataFlags set)
 {
-        if ((int) set < (int) NumOfFlags)
+    if ((int) set < (int) NumOfFlags)
+    {
+        /* go for it */
+        if (mChanged[(int) set ])
         {
-                /* go for it */
-                if (mChanged[(int) set ])
-                {
-                        mChanged[(int) set ] = false;
-                        return true;
-                }
+            mChanged[(int) set ] = false;
+            return true;
         }
-        return false;
+    }
+    return false;
 }
 
 RsIface *createRsIface(NotifyBase &cb)
 {
-        return new RsIfaceReal(cb);
+    return new RsIfaceReal(cb);
 }
 

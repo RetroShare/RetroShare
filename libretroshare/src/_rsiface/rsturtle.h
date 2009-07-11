@@ -35,14 +35,14 @@ extern RsTurtle   *rsTurtle ;
 
 typedef uint32_t TurtleRequestId ;
 
-// This is the structure used to send back results of the turtle search 
+// This is the structure used to send back results of the turtle search
 // to the notifyBase class.
 
 struct TurtleFileInfo
 {
-	std::string hash ;
-	std::string name ;
-	uint64_t size ;
+    std::string hash ;
+    std::string name ;
+    uint64_t size ;
 };
 
 // Interface class for turtle hopping.
@@ -58,7 +58,9 @@ class RsTurtle
 public:
     enum FileSharingStrategy { SHARE_ENTIRE_NETWORK, SHARE_FRIENDS_ONLY } ;
 
-    RsTurtle() { _sharing_strategy = SHARE_ENTIRE_NETWORK ;}
+    RsTurtle() {
+        _sharing_strategy = SHARE_ENTIRE_NETWORK ;
+    }
     virtual ~RsTurtle() {}
 
 
@@ -85,7 +87,9 @@ public:
     // Sets the file sharing strategy. It concerns all local files. It would
     // be better to handle this for each file, of course.
 
-    void setFileSharingStrategy(FileSharingStrategy f) { _sharing_strategy = f ; }
+    void setFileSharingStrategy(FileSharingStrategy f) {
+        _sharing_strategy = f ;
+    }
 
 protected:
     FileSharingStrategy _sharing_strategy ;

@@ -26,7 +26,7 @@
 #ifndef PQIMONITOR_H
 #define PQIMONITOR_H
 
-/**** Rough sketch of a Monitor class 
+/**** Rough sketch of a Monitor class
  * expect it to change significantly
  *
  */
@@ -48,8 +48,8 @@ const uint32_t RS_PEER_ACTION_MASK      = 0xff00;
 /* STATE */
 const uint32_t RS_PEER_S_FRIEND		= 0x0001;
 const uint32_t RS_PEER_S_ONLINE    	= 0x0002;    /* heard from recently..*/
-const uint32_t RS_PEER_S_CONNECTED   	= 0x0004;  
-const uint32_t RS_PEER_S_UNREACHABLE    = 0x0008;  
+const uint32_t RS_PEER_S_CONNECTED   	= 0x0004;
+const uint32_t RS_PEER_S_UNREACHABLE    = 0x0008;
 
 /* ACTIONS */
 const uint32_t RS_PEER_NEW              = 0x0001;    /* new Peer */
@@ -91,10 +91,16 @@ class p3ConnectMgr;
 class pqiMonitor
 {
 public:
-    pqiMonitor() :mConnMgr(NULL) { return; }
-    virtual ~pqiMonitor() { return; }
+    pqiMonitor() :mConnMgr(NULL) {
+        return;
+    }
+    virtual ~pqiMonitor() {
+        return;
+    }
 
-    void setConnectionMgr(p3ConnectMgr *cm) { mConnMgr = cm; }
+    void setConnectionMgr(p3ConnectMgr *cm) {
+        mConnMgr = cm;
+    }
     virtual void	statusChange(const std::list<pqipeer> &plist) = 0;
 
     //virtual void	peerStatus(std::string id, uint32_t mode) = 0;
@@ -109,7 +115,9 @@ protected:
 class pqiConnectCb
 {
 public:
-    virtual ~pqiConnectCb() { return; }
+    virtual ~pqiConnectCb() {
+        return;
+    }
     virtual void peerStatus(std::string id,struct sockaddr_in laddr, struct sockaddr_in raddr,
                             uint32_t type, uint32_t flags, uint32_t source) = 0;
     virtual void peerConnectRequest(std::string id,struct sockaddr_in raddr, uint32_t source) = 0;
@@ -126,11 +134,11 @@ public:
     virtual ~pqiConnectCbDummy();
 
     virtual void peerStatus(std::string id,
-    struct sockaddr_in laddr, struct sockaddr_in raddr,
-    uint32_t type, uint32_t mode, uint32_t source);
+                            struct sockaddr_in laddr, struct sockaddr_in raddr,
+                            uint32_t type, uint32_t mode, uint32_t source);
 
     virtual void peerConnectRequest(std::string id,
-                        struct sockaddr_in raddr, uint32_t source);
+                                    struct sockaddr_in raddr, uint32_t source);
     virtual void stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags);
 };
 

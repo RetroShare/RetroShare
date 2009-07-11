@@ -28,7 +28,7 @@
 #ifndef PQIFILER_H
 #define PQIFILER_H
 
-/* 
+/*
  * PQI Filer
  *
  * This managers the file transfers.
@@ -72,13 +72,13 @@ public:
     ~PQFileStatus()
     {
         if (fileItem)
-                delete fileItem;
+            delete fileItem;
         if (fd)
-                fclose(fd);
+            fclose(fd);
     }
 
 
-/* data */
+    /* data */
     PQFileItem *fileItem;
     /* transfer inprogress or not */
     int status;
@@ -107,15 +107,17 @@ class pqifiler
 public:
 
 #ifdef USE_FILELOOK
-	pqifiler(fileLook*);
+    pqifiler(fileLook*);
 #else
-	pqifiler(filedex*);
+    pqifiler(filedex*);
 #endif
 
-    virtual ~pqifiler() { return; }
+    virtual ~pqifiler() {
+        return;
+    }
 
-/******************* GUI Interface *************************
- */
+    /******************* GUI Interface *************************
+     */
 
     int getFile(PQFileItem *in);
     int cancelFile(PQFileItem *i);
@@ -125,16 +127,18 @@ public:
     int tick();
     std::list<FileTransferItem *> getStatus();
 
-/************* Network Interface****************************
- */
+    /************* Network Interface****************************
+     */
 
     PQItem * sendPQFileItem();
     int recvPQFileItem(PQItem *in);
 
-    void setSavePath(std::string s) { savePath = s;}
- 
-private: 
- 
+    void setSavePath(std::string s) {
+        savePath = s;
+    }
+
+private:
+
     PQFileStatus *findRecvFileItem(PQFileItem *in);
     void queryInactive();
 
@@ -148,16 +152,16 @@ private:
 
     int requestData(PQFileStatus *item);
 
-/************* PQIFILEITEM Generator ***************************
- */
+    /************* PQIFILEITEM Generator ***************************
+     */
 
     PQFileStatus * createFileCache(PQFileItem *in);
     PQFileItem * generatePQFileRequest(PQFileStatus *);
     int generateFileData(PQFileStatus *s, PQFileItem *req);
     int sendFileNotAvail(PQFileItem *req);
 
-/************* FILE DATA HANDLING ******************************
- */
+    /************* FILE DATA HANDLING ******************************
+     */
 
     std::string determineFilePath(PQFileItem *item);
     int initiateFileTransfer(PQFileStatus *s);

@@ -35,109 +35,109 @@
 
 #include "rsiface/rsphoto.h"
 
-/* 
+/*
  * Photo Service
  */
 
 class PhotoSet
 {
-	public:
+public:
 
-	PhotoSet();
-        std::string pid;
+    PhotoSet();
+    std::string pid;
 
-        std::map<std::string, RsPhotoItem *> photos;
-        std::map<std::string, RsPhotoShowItem *> shows;
+    std::map<std::string, RsPhotoItem *> photos;
+    std::map<std::string, RsPhotoShowItem *> shows;
 };
 
 
 
 class p3PhotoService: public CacheSource, public CacheStore
 {
-	public:
+public:
 
-	p3PhotoService(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
-		std::string sourcedir, std::string storedir);
+    p3PhotoService(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
+                   std::string sourcedir, std::string storedir);
 
-void	tick();
+    void	tick();
 
-/******************************* CACHE SOURCE / STORE Interface *********************/
+    /******************************* CACHE SOURCE / STORE Interface *********************/
 
-	/* overloaded functions from Cache Source */
-virtual bool    loadLocalCache(const CacheData &data);
+    /* overloaded functions from Cache Source */
+    virtual bool    loadLocalCache(const CacheData &data);
 
-	/* overloaded functions from Cache Store */
-virtual int    loadCache(const CacheData &data);
+    /* overloaded functions from Cache Store */
+    virtual int    loadCache(const CacheData &data);
 
-/******************************* CACHE SOURCE / STORE Interface *********************/
+    /******************************* CACHE SOURCE / STORE Interface *********************/
 
-	public:
+public:
 
-/************* Extern Interface *******/
+    /************* Extern Interface *******/
 
-	/* things changed */
-bool updated();
+    /* things changed */
+    bool updated();
 
-        /* access data */
-bool getPhotoList(std::string id, std::list<std::string> &hashs);
-bool getShowList(std::string id, std::list<std::string> &showIds);
-bool getShowDetails(std::string id, std::string showId, RsPhotoShowDetails &detail);
-bool getPhotoDetails(std::string id, std::string photoId, RsPhotoDetails &detail);
+    /* access data */
+    bool getPhotoList(std::string id, std::list<std::string> &hashs);
+    bool getShowList(std::string id, std::list<std::string> &showIds);
+    bool getShowDetails(std::string id, std::string showId, RsPhotoShowDetails &detail);
+    bool getPhotoDetails(std::string id, std::string photoId, RsPhotoDetails &detail);
 
-	        /* add / delete */
-std::string createShow(std::string name);
-bool deleteShow(std::string showId);
-bool addPhotoToShow(std::string showId, std::string photoId, int16_t index);
-bool movePhotoInShow(std::string showId, std::string photoId, int16_t index);
-bool removePhotoFromShow(std::string showId, std::string photoId);
+    /* add / delete */
+    std::string createShow(std::string name);
+    bool deleteShow(std::string showId);
+    bool addPhotoToShow(std::string showId, std::string photoId, int16_t index);
+    bool movePhotoInShow(std::string showId, std::string photoId, int16_t index);
+    bool removePhotoFromShow(std::string showId, std::string photoId);
 
-std::string addPhoto(std::string path); /* add from file */
-bool addPhoto(std::string srcId, std::string photoId); /* add from peers photos */
-bool deletePhoto(std::string photoId);
+    std::string addPhoto(std::string path); /* add from file */
+    bool addPhoto(std::string srcId, std::string photoId); /* add from peers photos */
+    bool deletePhoto(std::string photoId);
 
-	        /* modify properties (TODO) */
-bool modifyShow(std::string showId, std::wstring name, std::wstring comment);
-bool modifyPhoto(std::string photoId, std::wstring name, std::wstring comment);
-bool modifyShowComment(std::string showId, std::string photoId, std::wstring comment);
-
-
-
-	private:	
-
-	/* cache processing */
-
-void loadPhotoIndex(std::string filename, std::string hash, std::string src);
-void availablePhoto(std::string filename, std::string hash, std::string src);
-
-bool loadPhotoItem(RsPhotoItem *item);
-bool loadPhotoShowItem(RsPhotoShowItem *item);
-void publishPhotos();
-
-
-	/* locate info */
-
-PhotoSet 	&locked_getPhotoSet(std::string id);
-RsPhotoItem 	*locked_getPhoto(std::string id, std::string photoId);
-RsPhotoShowItem *locked_getShow(std::string id, std::string showId);
-
-
-	/* test functions */
-void		createDummyData();
+    /* modify properties (TODO) */
+    bool modifyShow(std::string showId, std::wstring name, std::wstring comment);
+    bool modifyPhoto(std::string photoId, std::wstring name, std::wstring comment);
+    bool modifyShowComment(std::string showId, std::string photoId, std::wstring comment);
 
 
 
-	RsMutex mPhotoMtx;
+private:
 
-	/***** below here is locked *****/
+    /* cache processing */
 
-	bool mRepublish;
-	std::string mOwnId;
+    void loadPhotoIndex(std::string filename, std::string hash, std::string src);
+    void availablePhoto(std::string filename, std::string hash, std::string src);
 
-	bool mUpdated;
+    bool loadPhotoItem(RsPhotoItem *item);
+    bool loadPhotoShowItem(RsPhotoShowItem *item);
+    void publishPhotos();
 
-	std::map<std::string, PhotoSet> mPhotos;
+
+    /* locate info */
+
+    PhotoSet 	&locked_getPhotoSet(std::string id);
+    RsPhotoItem 	*locked_getPhoto(std::string id, std::string photoId);
+    RsPhotoShowItem *locked_getShow(std::string id, std::string showId);
+
+
+    /* test functions */
+    void		createDummyData();
+
+
+
+    RsMutex mPhotoMtx;
+
+    /***** below here is locked *****/
+
+    bool mRepublish;
+    std::string mOwnId;
+
+    bool mUpdated;
+
+    std::map<std::string, PhotoSet> mPhotos;
 
 
 };
 
-#endif 
+#endif

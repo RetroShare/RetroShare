@@ -40,79 +40,85 @@ const uint8_t RS_PKT_SUBTYPE_DISC_VERSION = 0x04;
 
 class RsDiscItem: public RsItem
 {
-	protected:
-		RsDiscItem(uint8_t subtype) :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC, subtype) {}
+protected:
+    RsDiscItem(uint8_t subtype) :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC, subtype) {}
 };
 
 
 class RsDiscOwnItem: public RsDiscItem
 {
-	public:
+public:
 
-	RsDiscOwnItem() :RsDiscItem(RS_PKT_SUBTYPE_DISC_OWN ) {}
+    RsDiscOwnItem() :RsDiscItem(RS_PKT_SUBTYPE_DISC_OWN ) {}
 
 
-	virtual ~RsDiscOwnItem();
+    virtual ~RsDiscOwnItem();
 
-	virtual  void clear();
-	virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    virtual  void clear();
+    virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	struct sockaddr_in laddr;
-	struct sockaddr_in saddr;
+    struct sockaddr_in laddr;
+    struct sockaddr_in saddr;
 
-	// time frame of recent connections.
-	uint16_t contact_tf;
-	// flags...
-	uint32_t discFlags;
+    // time frame of recent connections.
+    uint16_t contact_tf;
+    // flags...
+    uint32_t discFlags;
 };
 
 class RsDiscReply: public RsDiscItem
 {
-	public:
+public:
 
-	RsDiscReply()
-	:RsDiscItem(RS_PKT_SUBTYPE_DISC_REPLY),
-	certDER(TLV_TYPE_CERT_XPGP_DER)
-	{ return; }
+    RsDiscReply()
+            :RsDiscItem(RS_PKT_SUBTYPE_DISC_REPLY),
+            certDER(TLV_TYPE_CERT_XPGP_DER)
+    {
+        return;
+    }
 
-virtual ~RsDiscReply();
+    virtual ~RsDiscReply();
 
-virtual  void clear();
-virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    virtual  void clear();
+    virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	struct sockaddr_in laddr;
-	struct sockaddr_in saddr;
+    struct sockaddr_in laddr;
+    struct sockaddr_in saddr;
 
-	// time frame of recent connections.
-	uint16_t contact_tf;
-	// flags...
-	uint32_t discFlags;
+    // time frame of recent connections.
+    uint16_t contact_tf;
+    // flags...
+    uint32_t discFlags;
 
-	std::string aboutId;
-	RsTlvBinaryData certDER;
+    std::string aboutId;
+    RsTlvBinaryData certDER;
 };
 
 class RsDiscIssuer: public RsDiscItem
 {
-	public:
+public:
 
-	RsDiscIssuer()
-	:RsDiscItem(RS_PKT_SUBTYPE_DISC_ISSUER)
-	{ return; }
+    RsDiscIssuer()
+            :RsDiscItem(RS_PKT_SUBTYPE_DISC_ISSUER)
+    {
+        return;
+    }
 
-virtual ~RsDiscIssuer();
+    virtual ~RsDiscIssuer();
 
-virtual  void clear();
-virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    virtual  void clear();
+    virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	std::string issuerCert;
+    std::string issuerCert;
 };
 
 class RsDiscVersion: public RsDiscItem
 {
 public:
     RsDiscVersion() :RsDiscItem(RS_PKT_SUBTYPE_DISC_VERSION)
-    { return; }
+    {
+        return;
+    }
 
     virtual ~RsDiscVersion();
 
@@ -124,34 +130,38 @@ public:
 
 class RsDiscSerialiser: public RsSerialType
 {
-        public:
-        RsDiscSerialiser()
-        :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC)
-        { return; }
+public:
+    RsDiscSerialiser()
+            :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC)
+    {
+        return;
+    }
 
-virtual     ~RsDiscSerialiser() { return; }
+    virtual     ~RsDiscSerialiser() {
+        return;
+    }
 
-virtual uint32_t    size(RsItem *);
-virtual bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual RsItem *    deserialise(void *data, uint32_t *size);
+    virtual uint32_t    size(RsItem *);
+    virtual bool        serialise  (RsItem *item, void *data, uint32_t *size);
+    virtual RsItem *    deserialise(void *data, uint32_t *size);
 
-	private:
+private:
 
-virtual uint32_t    sizeItem(RsDiscOwnItem *);
-virtual bool        serialiseItem  (RsDiscOwnItem *item, void *data, uint32_t *size);
-virtual RsDiscOwnItem *deserialiseOwnItem(void *data, uint32_t *size);
+    virtual uint32_t    sizeItem(RsDiscOwnItem *);
+    virtual bool        serialiseItem  (RsDiscOwnItem *item, void *data, uint32_t *size);
+    virtual RsDiscOwnItem *deserialiseOwnItem(void *data, uint32_t *size);
 
-virtual uint32_t    sizeReply(RsDiscReply *);
-virtual bool        serialiseReply   (RsDiscReply *item, void *data, uint32_t *size);
-virtual RsDiscReply *deserialiseReply(void *data, uint32_t *size);
+    virtual uint32_t    sizeReply(RsDiscReply *);
+    virtual bool        serialiseReply   (RsDiscReply *item, void *data, uint32_t *size);
+    virtual RsDiscReply *deserialiseReply(void *data, uint32_t *size);
 
-virtual uint32_t    sizeIssuer(RsDiscIssuer *);
-virtual bool        serialiseIssuer   (RsDiscIssuer *item, void *data, uint32_t *size);
-virtual RsDiscIssuer *deserialiseIssuer(void *data, uint32_t *size);
+    virtual uint32_t    sizeIssuer(RsDiscIssuer *);
+    virtual bool        serialiseIssuer   (RsDiscIssuer *item, void *data, uint32_t *size);
+    virtual RsDiscIssuer *deserialiseIssuer(void *data, uint32_t *size);
 
-virtual uint32_t        sizeVersion(RsDiscVersion *);
-virtual bool            serialiseVersion(RsDiscVersion *item, void *data, uint32_t *size);
-virtual RsDiscVersion   *deserialiseVersion(void *data, uint32_t *size);
+    virtual uint32_t        sizeVersion(RsDiscVersion *);
+    virtual bool            serialiseVersion(RsDiscVersion *item, void *data, uint32_t *size);
+    virtual RsDiscVersion   *deserialiseVersion(void *data, uint32_t *size);
 
 };
 

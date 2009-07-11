@@ -45,29 +45,31 @@ class p3AuthMgr;
 
 class autoserver
 {
-	public:
-		autoserver()
-		:ts(0), discFlags(0) { return;}
+public:
+    autoserver()
+            :ts(0), discFlags(0) {
+        return;
+    }
 
-		std::string id;
-		struct sockaddr_in localAddr;
-		struct sockaddr_in remoteAddr;
+    std::string id;
+    struct sockaddr_in localAddr;
+    struct sockaddr_in remoteAddr;
 
-		time_t ts;
-		uint32_t discFlags;
+    time_t ts;
+    uint32_t discFlags;
 };
 
 
 class autoneighbour: public autoserver
 {
-	public:
-		autoneighbour()
-		:autoserver(), authoritative(false) {}
+public:
+    autoneighbour()
+            :autoserver(), authoritative(false) {}
 
-		bool authoritative;
-		bool validAddrs;
+    bool authoritative;
+    bool validAddrs;
 
-		std::map<std::string, autoserver> neighbour_of;
+    std::map<std::string, autoserver> neighbour_of;
 
 };
 
@@ -77,61 +79,61 @@ class p3ConnectMgr;
 
 class p3disc: public p3Service, public pqiMonitor
 {
-	public:
+public:
 
 
-        p3disc(p3AuthMgr *am, p3ConnectMgr *cm);
+    p3disc(p3AuthMgr *am, p3ConnectMgr *cm);
 
-	/************* from pqiMonitor *******************/
-virtual void statusChange(const std::list<pqipeer> &plist);
-	/************* from pqiMonitor *******************/
+    /************* from pqiMonitor *******************/
+    virtual void statusChange(const std::list<pqipeer> &plist);
+    /************* from pqiMonitor *******************/
 
-int	tick();
+    int	tick();
 
-	/* GUI requires access */
-bool 	potentialproxies(std::string id, std::list<std::string> &proxyIds);
-void 	getversions(std::map<std::string, std::string> &versions);
+    /* GUI requires access */
+    bool 	potentialproxies(std::string id, std::list<std::string> &proxyIds);
+    void 	getversions(std::map<std::string, std::string> &versions);
 
-	private:
-
-
-void respondToPeer(std::string id);
-
-	/* Network Output */
-void sendOwnDetails(std::string to);
-void sendOwnVersion(std::string to);
-void sendPeerDetails(std::string to, std::string about);
-void sendPeerIssuer(std::string to, std::string about);
-
-	/* Network Input */
-int  handleIncoming();
-void recvPeerOwnMsg(RsDiscOwnItem *item);
-void recvPeerFriendMsg(RsDiscReply *item);
-void recvPeerIssuerMsg(RsDiscIssuer *item);
-void recvPeerVersionMsg(RsDiscVersion *item);
-
-	/* handle network shape */
-int     addDiscoveryData(std::string fromId, std::string aboutId,
-		struct sockaddr_in laddr, struct sockaddr_in raddr,
-		uint32_t flags, time_t ts);
-
-int 	idServers();
+private:
 
 
-	private:
+    void respondToPeer(std::string id);
 
-	p3AuthMgr *mAuthMgr;
-	p3ConnectMgr *mConnMgr;
+    /* Network Output */
+    void sendOwnDetails(std::string to);
+    void sendOwnVersion(std::string to);
+    void sendPeerDetails(std::string to, std::string about);
+    void sendPeerIssuer(std::string to, std::string about);
+
+    /* Network Input */
+    int  handleIncoming();
+    void recvPeerOwnMsg(RsDiscOwnItem *item);
+    void recvPeerFriendMsg(RsDiscReply *item);
+    void recvPeerIssuerMsg(RsDiscIssuer *item);
+    void recvPeerVersionMsg(RsDiscVersion *item);
+
+    /* handle network shape */
+    int     addDiscoveryData(std::string fromId, std::string aboutId,
+                             struct sockaddr_in laddr, struct sockaddr_in raddr,
+                             uint32_t flags, time_t ts);
+
+    int 	idServers();
 
 
-	/* data */
-	RsMutex mDiscMtx;
+private:
 
-	bool mRemoteDisc;
-	bool mLocalDisc;
+    p3AuthMgr *mAuthMgr;
+    p3ConnectMgr *mConnMgr;
 
-	std::map<std::string, autoneighbour> neighbours;
-	std::map<std::string, std::string> versions;
+
+    /* data */
+    RsMutex mDiscMtx;
+
+    bool mRemoteDisc;
+    bool mLocalDisc;
+
+    std::map<std::string, autoneighbour> neighbours;
+    std::map<std::string, std::string> versions;
 };
 
 

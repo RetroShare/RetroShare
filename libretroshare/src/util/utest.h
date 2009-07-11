@@ -7,7 +7,7 @@
 #define TSUCCESS( s ) printf( "SUCCESS: " __FILE__ ":%-4d %s\n",  __LINE__, s )
 
 /* careful with this line (no protection) */
-#define INITTEST()  int ok = 1; int gok = 1; 
+#define INITTEST()  int ok = 1; int gok = 1;
 
 /* declare the variables */
 extern int ok;

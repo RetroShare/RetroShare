@@ -41,31 +41,31 @@
 class pqistore: public PQInterface
 {
 public:
-	pqistore(RsSerialiser *rss, std::string srcId, BinInterface *bio_in, int bio_flagsin);
-virtual ~pqistore();
+    pqistore(RsSerialiser *rss, std::string srcId, BinInterface *bio_in, int bio_flagsin);
+    virtual ~pqistore();
 
 // PQInterface
-virtual int     SendItem(RsItem *);
-virtual RsItem *GetItem();
+    virtual int     SendItem(RsItem *);
+    virtual RsItem *GetItem();
 
-virtual int     tick();
-virtual int     status();
+    virtual int     tick();
+    virtual int     status();
 
-std::string     gethash();
+    std::string     gethash();
 
-	private:
-int     writePkt(RsItem *item);
-int     readPkt(RsItem **item_out);
+private:
+    int     writePkt(RsItem *item);
+    int     readPkt(RsItem **item_out);
 
-	// Serialiser
-	RsSerialiser *rsSerialiser;
-	// Binary Interface for IO, initialisated at startup.
-	BinInterface *bio;
-	unsigned int  bio_flags; // only BIN_NO_CLOSE at the moment.
+    // Serialiser
+    RsSerialiser *rsSerialiser;
+    // Binary Interface for IO, initialisated at startup.
+    BinInterface *bio;
+    unsigned int  bio_flags; // only BIN_NO_CLOSE at the moment.
 
-	// Temp Storage for transient data.....
-	RsItem *nextPkt;
-	std::string mSrcId;
+    // Temp Storage for transient data.....
+    RsItem *nextPkt;
+    std::string mSrcId;
 };
 
 

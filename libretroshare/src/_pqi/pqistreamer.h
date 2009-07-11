@@ -84,7 +84,8 @@ private:
     void *pkt_rpending; // storage for read in pending packets.
 
     enum { reading_state_packet_started=1,
-           reading_state_initial=0 } ;
+           reading_state_initial=0
+         } ;
 
     int   reading_state ;
     int   failed_read_attempts ;

@@ -35,28 +35,28 @@ Enumerations defining the Operators usable in the Boolean search expressions
 ******************************************************************************************/
 
 
-enum LogicalOperator{
-	AndOp=0,	/* exp AND exp */
-	OrOp,		/* exp OR exp */
-	XorOp		/* exp XOR exp */
+enum LogicalOperator {
+    AndOp=0,	/* exp AND exp */
+    OrOp,		/* exp OR exp */
+    XorOp		/* exp XOR exp */
 };
 
 
 /*Operators for String Queries*/
-enum StringOperator{
-	ContainsAnyStrings = 0,	/* e.g. name contains any of 'conference' 'meeting' 'presentation' */
-	ContainsAllStrings,		/* same as above except that it contains ALL of the strings */
-	EqualsString			/* exactly equal*/
+enum StringOperator {
+    ContainsAnyStrings = 0,	/* e.g. name contains any of 'conference' 'meeting' 'presentation' */
+    ContainsAllStrings,		/* same as above except that it contains ALL of the strings */
+    EqualsString			/* exactly equal*/
 };
 
 /*Relational operators ( >, <, >=, <=, == and InRange )*/
-enum RelOperator{
-	Equals = 0,
-	GreaterEquals,
-	Greater,
-	SmallerEquals,
-	Smaller,
-	InRange		/* lower limit <= value <= upper limit*/
+enum RelOperator {
+    Equals = 0,
+    GreaterEquals,
+    Greater,
+    SmallerEquals,
+    Smaller,
+    InRange		/* lower limit <= value <= upper limit*/
 };
 
 /******************************************************************************************
@@ -67,7 +67,7 @@ classes:
 	CompoundExpression: The expression which uses a logical operator to combine
 							the results of two expressions
 	StringExpression: 	An expression which uses some sort of string comparison.
-	RelExpression: 		A Relational Expression where > < >= <= == make sense. 
+	RelExpression: 		A Relational Expression where > < >= <= == make sense.
 							e.g. size date etc
 
 ******************************************************************************************/
@@ -77,54 +77,54 @@ class FileEntry;
 class Expression
 {
 public:
-	virtual bool eval (FileEntry *file) = 0;
-	virtual ~Expression();
+    virtual bool eval (FileEntry *file) = 0;
+    virtual ~Expression();
 };
 
 
 class CompoundExpression : public Expression
 {
-public:	
-        CompoundExpression( enum LogicalOperator op, Expression * exp1, Expression *exp2);
-							
-        bool eval (FileEntry *file);
-        virtual ~CompoundExpression();
+public:
+    CompoundExpression( enum LogicalOperator op, Expression * exp1, Expression *exp2);
+
+    bool eval (FileEntry *file);
+    virtual ~CompoundExpression();
 private:
-	Expression *Lexp;
-	Expression *Rexp;
-	enum LogicalOperator Op;
+    Expression *Lexp;
+    Expression *Rexp;
+    enum LogicalOperator Op;
 
 };
 
 class StringExpression: public Expression
 {
 public:
-        StringExpression(enum StringOperator op, std::list<std::string> &t, bool ic);
+    StringExpression(enum StringOperator op, std::list<std::string> &t, bool ic);
 protected:
-	bool evalStr(std::string &str);
+    bool evalStr(std::string &str);
 private:
-	enum StringOperator Op;
-	std::list<std::string> terms;
-	bool IgnoreCase;
+    enum StringOperator Op;
+    std::list<std::string> terms;
+    bool IgnoreCase;
 };
 
 template <class T>
 class RelExpression: public Expression {
-public:	
-	RelExpression(enum RelOperator op, T lv, T hv): 
-				  Op(op), LowerValue(lv), HigherValue(hv) {}
+public:
+    RelExpression(enum RelOperator op, T lv, T hv):
+            Op(op), LowerValue(lv), HigherValue(hv) {}
 protected:
-	bool evalRel(T val);
+    bool evalRel(T val);
 private:
-	enum RelOperator Op;
-	T LowerValue;
-	T HigherValue;
+    enum RelOperator Op;
+    T LowerValue;
+    T HigherValue;
 };
 
 
 
 /******************************************************************************************
-Binary Predicate for Case Insensitive search 
+Binary Predicate for Case Insensitive search
 
 ******************************************************************************************/
 /*Binary predicate for case insensitive character comparison.*/
@@ -132,13 +132,13 @@ Binary Predicate for Case Insensitive search
  *Factor locales in the comparison
  */
 struct CompareCharIC :
-        public std::binary_function< char , char , bool>
+            public std::binary_function< char , char , bool>
 {
     bool operator () ( char ch1 , char ch2 ) const;
 };
 
 /******************************************************************************************
-Some implementations of StringExpressions. 
+Some implementations of StringExpressions.
 
 ******************************************************************************************/
 

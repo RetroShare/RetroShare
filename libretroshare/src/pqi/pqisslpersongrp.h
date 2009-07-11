@@ -32,16 +32,18 @@
 
 class pqisslpersongrp: public pqipersongrp
 {
-	public:
-	pqisslpersongrp(SecurityPolicy *pol, unsigned long flags)
-	:pqipersongrp(pol, flags) { return; }
+public:
+    pqisslpersongrp(SecurityPolicy *pol, unsigned long flags)
+            :pqipersongrp(pol, flags) {
+        return;
+    }
 
-	protected:
+protected:
 
-	/********* FUNCTIONS to OVERLOAD for specialisation ********/
-virtual pqilistener *createListener(struct sockaddr_in laddr);
-virtual pqiperson   *createPerson(std::string id, pqilistener *listener);
-	/********* FUNCTIONS to OVERLOAD for specialisation ********/
+    /********* FUNCTIONS to OVERLOAD for specialisation ********/
+    virtual pqilistener *createListener(struct sockaddr_in laddr);
+    virtual pqiperson   *createPerson(std::string id, pqilistener *listener);
+    /********* FUNCTIONS to OVERLOAD for specialisation ********/
 };
 
 

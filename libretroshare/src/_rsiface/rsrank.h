@@ -43,7 +43,7 @@ class RsRankComment
     int32_t	     score;
     time_t	     timestamp;
 };
-	
+
 // CHANGE:CLASS_TO_STRUCT
 struct RsRankDetails
 {
@@ -68,8 +68,12 @@ class RsRanks
 {
 public:
 
-    RsRanks()  { return; }
-    virtual ~RsRanks() { return; }
+    RsRanks()  {
+        return;
+    }
+    virtual ~RsRanks() {
+        return;
+    }
 
     /* needs update? */
     virtual bool updated() = 0;

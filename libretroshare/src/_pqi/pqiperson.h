@@ -40,7 +40,7 @@
 
 class pqiperson;
 
-static const int CONNECT_RECEIVED     = 1; 
+static const int CONNECT_RECEIVED     = 1;
 static const int CONNECT_SUCCESS      = 2;
 static const int CONNECT_UNREACHABLE  = 3;
 static const int CONNECT_FIREWALLED   = 4;
@@ -52,7 +52,9 @@ class pqiconnect: public pqistreamer, public NetInterface
 {
 public:
     pqiconnect(RsSerialiser *rss, NetBinInterface *ni_in);
-    virtual ~pqiconnect() { return; }
+    virtual ~pqiconnect() {
+        return;
+    }
 
     // presents a virtual NetInterface -> passes to ni.
     virtual int	connect(struct sockaddr_in raddr);
@@ -93,7 +95,7 @@ public:
     // The PQInterface interface.
     virtual int     SendItem(RsItem *);
     virtual RsItem *GetItem();
-	
+
     virtual int 	status();
     virtual int	tick();
 

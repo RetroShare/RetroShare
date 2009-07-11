@@ -26,10 +26,10 @@
 #ifndef MRK_AUTH_SSL_XPGP_HEADER
 #define MRK_AUTH_SSL_XPGP_HEADER
 
-/* This is the trial XPGP version 
+/* This is the trial XPGP version
  *
  * It has to be compiled against XPGP ssl version.
- * this is only a hacked up version, merging 
+ * this is only a hacked up version, merging
  * (so both can operate in parallel will happen later)
  *
  */
@@ -52,142 +52,142 @@ class AuthXPGP;
 class xpgpcert
 {
 public:
-	xpgpcert(XPGP *xpgp, std::string id);
+    xpgpcert(XPGP *xpgp, std::string id);
 
-	/* certificate parameters */
-	std::string id;
-	std::string name; 
-	std::string location;
-	std::string org;
-	std::string email;
+    /* certificate parameters */
+    std::string id;
+    std::string name;
+    std::string location;
+    std::string org;
+    std::string email;
 
-	std::string fpr;
-	std::list<std::string> signers;
+    std::string fpr;
+    std::list<std::string> signers;
 
-	/* Auth settings */
+    /* Auth settings */
 
-	uint32_t trustLvl;
-	bool ownsign;
-	bool trusted;
+    uint32_t trustLvl;
+    bool ownsign;
+    bool trusted;
 
-	/* INTERNAL Parameters */
-	XPGP *certificate;
+    /* INTERNAL Parameters */
+    XPGP *certificate;
 };
 
 class AuthXPGP: public p3AuthMgr
 {
-	public:
+public:
 
-	/* Initialisation Functions (Unique) */
-	AuthXPGP();
-virtual bool	active();
-virtual int	InitAuth(const char *srvr_cert, const char *priv_key, 
-					const char *passwd);
-virtual bool	CloseAuth();
-virtual int     setConfigDirectories(std::string confFile, std::string neighDir);
+    /* Initialisation Functions (Unique) */
+    AuthXPGP();
+    virtual bool	active();
+    virtual int	InitAuth(const char *srvr_cert, const char *priv_key,
+                         const char *passwd);
+    virtual bool	CloseAuth();
+    virtual int     setConfigDirectories(std::string confFile, std::string neighDir);
 
-	/*********** Overloaded Functions from p3AuthMgr **********/
-	
-	/* get Certificate Ids */
-	
-virtual	std::string OwnId();
-virtual bool    getAllList(std::list<std::string> &ids);
-virtual bool    getAuthenticatedList(std::list<std::string> &ids);
-virtual bool    getUnknownList(std::list<std::string> &ids);
-	
-	/* get Details from the Certificates */
-	
-virtual bool    isValid(std::string id);
-virtual bool    isAuthenticated(std::string id);
-virtual	std::string getName(std::string id);
-virtual bool    getDetails(std::string id, pqiAuthDetails &details);
-	
-	/* first party trust info */
-virtual bool isTrustingMe(std::string id) ;
-virtual void addTrustingPeer(std::string id) ;
+    /*********** Overloaded Functions from p3AuthMgr **********/
 
-	/* High Level Load/Save Configuration */
-virtual bool FinalSaveCertificates();
-virtual bool CheckSaveCertificates();
-virtual bool saveCertificates();
-virtual bool loadCertificates();
+    /* get Certificate Ids */
 
-	/* Load/Save certificates */
-virtual bool LoadCertificateFromString(std::string pem, std::string &id);
-virtual	std::string SaveCertificateToString(std::string id);
-virtual bool LoadCertificateFromFile(std::string filename, std::string &id);
-virtual bool SaveCertificateToFile(std::string id, std::string filename);
+    virtual	std::string OwnId();
+    virtual bool    getAllList(std::list<std::string> &ids);
+    virtual bool    getAuthenticatedList(std::list<std::string> &ids);
+    virtual bool    getUnknownList(std::list<std::string> &ids);
 
-virtual bool LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id);	
-virtual	bool SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len);
-	
-	/* Signatures */
+    /* get Details from the Certificates */
 
-virtual bool AuthCertificate(std::string uid);
-virtual bool SignCertificate(std::string id);
-virtual bool RevokeCertificate(std::string id);
-virtual bool TrustCertificate(std::string id, bool trust);
-	
-	/* Sign / Encrypt / Verify Data (TODO) */
-virtual bool 	SignData(std::string input, std::string &sign);
-virtual bool 	SignData(const void *data, const uint32_t len, std::string &sign);
-	/* for proper signatures! */
-virtual bool 	SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen);
-virtual bool 	SignDataBin(const void *data, const uint32_t len,
-                        unsigned char *sign, unsigned int *signlen);
+    virtual bool    isValid(std::string id);
+    virtual bool    isAuthenticated(std::string id);
+    virtual	std::string getName(std::string id);
+    virtual bool    getDetails(std::string id, pqiAuthDetails &details);
 
-virtual bool 	VerifySignBin(std::string pid,
-                        const void *data, const uint32_t len,
-                        unsigned char *sign, unsigned int signlen);
+    /* first party trust info */
+    virtual bool isTrustingMe(std::string id) ;
+    virtual void addTrustingPeer(std::string id) ;
 
-	/*********** Overloaded Functions from p3AuthMgr **********/
+    /* High Level Load/Save Configuration */
+    virtual bool FinalSaveCertificates();
+    virtual bool CheckSaveCertificates();
+    virtual bool saveCertificates();
+    virtual bool loadCertificates();
 
-	public: /* XPGP specific functions used in pqissl/pqissllistener */
-SSL_CTX *getCTX();
+    /* Load/Save certificates */
+    virtual bool LoadCertificateFromString(std::string pem, std::string &id);
+    virtual	std::string SaveCertificateToString(std::string id);
+    virtual bool LoadCertificateFromFile(std::string filename, std::string &id);
+    virtual bool SaveCertificateToFile(std::string id, std::string filename);
 
-bool 	ValidateCertificateXPGP(XPGP *xpgp, std::string &peerId); /* validate + get id */
-bool 	FailedCertificateXPGP(XPGP *xpgp, bool incoming);     /* store for discovery */
-bool 	CheckCertificateXPGP(std::string peerId, XPGP *xpgp); /* check that they are exact match */
+    virtual bool LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id);
+    virtual	bool SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len);
 
-	/* Special Config Loading (backwards compatibility) */
-bool  	loadCertificates(bool &oldFormat, std::map<std::string, std::string> &keyValueMap);
+    /* Signatures */
 
-	private:
+    virtual bool AuthCertificate(std::string uid);
+    virtual bool SignCertificate(std::string id);
+    virtual bool RevokeCertificate(std::string id);
+    virtual bool TrustCertificate(std::string id, bool trust);
 
-	/* Helper Functions */
+    /* Sign / Encrypt / Verify Data (TODO) */
+    virtual bool 	SignData(std::string input, std::string &sign);
+    virtual bool 	SignData(const void *data, const uint32_t len, std::string &sign);
+    /* for proper signatures! */
+    virtual bool 	SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen);
+    virtual bool 	SignDataBin(const void *data, const uint32_t len,
+                              unsigned char *sign, unsigned int *signlen);
 
-bool 	ProcessXPGP(XPGP *xpgp, std::string &id);
+    virtual bool 	VerifySignBin(std::string pid,
+                                const void *data, const uint32_t len,
+                                unsigned char *sign, unsigned int signlen);
 
-XPGP *	loadXPGPFromPEM(std::string pem);
-XPGP *	loadXPGPFromFile(std::string fname, std::string hash);
-bool    saveXPGPToFile(XPGP *xpgp, std::string fname, std::string &hash);
+    /*********** Overloaded Functions from p3AuthMgr **********/
 
-XPGP *	loadXPGPFromDER(const uint8_t *ptr, uint32_t len);
-bool 	saveXPGPToDER(XPGP *xpgp, uint8_t **ptr, uint32_t *len);
+public: /* XPGP specific functions used in pqissl/pqissllistener */
+    SSL_CTX *getCTX();
 
-	/*********** LOCKED Functions ******/
-bool 	locked_FindCert(std::string id, xpgpcert **cert);
+    bool 	ValidateCertificateXPGP(XPGP *xpgp, std::string &peerId); /* validate + get id */
+    bool 	FailedCertificateXPGP(XPGP *xpgp, bool incoming);     /* store for discovery */
+    bool 	CheckCertificateXPGP(std::string peerId, XPGP *xpgp); /* check that they are exact match */
+
+    /* Special Config Loading (backwards compatibility) */
+    bool  	loadCertificates(bool &oldFormat, std::map<std::string, std::string> &keyValueMap);
+
+private:
+
+    /* Helper Functions */
+
+    bool 	ProcessXPGP(XPGP *xpgp, std::string &id);
+
+    XPGP *	loadXPGPFromPEM(std::string pem);
+    XPGP *	loadXPGPFromFile(std::string fname, std::string hash);
+    bool    saveXPGPToFile(XPGP *xpgp, std::string fname, std::string &hash);
+
+    XPGP *	loadXPGPFromDER(const uint8_t *ptr, uint32_t len);
+    bool 	saveXPGPToDER(XPGP *xpgp, uint8_t **ptr, uint32_t *len);
+
+    /*********** LOCKED Functions ******/
+    bool 	locked_FindCert(std::string id, xpgpcert **cert);
 
 
-	/* Data */
-	RsMutex xpgpMtx;  /**** LOCKING */
+    /* Data */
+    RsMutex xpgpMtx;  /**** LOCKING */
 
-	int init;
-	std::string mCertConfigFile;
-	std::string mNeighDir;
+    int init;
+    std::string mCertConfigFile;
+    std::string mNeighDir;
 
-	SSL_CTX *sslctx;
-	XPGP_KEYRING *pgp_keyring;
+    SSL_CTX *sslctx;
+    XPGP_KEYRING *pgp_keyring;
 
-	std::string mOwnId;
-	xpgpcert *mOwnCert;
-	EVP_PKEY *pkey;
+    std::string mOwnId;
+    xpgpcert *mOwnCert;
+    EVP_PKEY *pkey;
 
-	bool mToSaveCerts;
-	bool mConfigSaveActive;
-	std::map<std::string, xpgpcert *> mCerts;
+    bool mToSaveCerts;
+    bool mConfigSaveActive;
+    std::map<std::string, xpgpcert *> mCerts;
 
-	std::list<std::string> _trusting_peers ;
+    std::list<std::string> _trusting_peers ;
 };
 
 /* Helper Functions */
@@ -203,8 +203,8 @@ std::list<std::string> getXPGPsigners(XPGP *cert);
 std::string getXPGPInfo(XPGP *cert);
 std::string getXPGPAuthCode(XPGP *xpgp);
 
-int     LoadCheckXPGPandGetName(const char *cert_file, 
-			std::string &userName, std::string &userId);
+int     LoadCheckXPGPandGetName(const char *cert_file,
+                                std::string &userName, std::string &userId);
 bool 	getXPGPid(XPGP *xpgp, std::string &xpgpid);
 
 

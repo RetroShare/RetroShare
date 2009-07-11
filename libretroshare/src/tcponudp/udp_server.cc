@@ -44,246 +44,246 @@
 
 void usage(char *name)
 {
-	std::cerr << "Usage: " << name; 
-	std::cerr << " [-pco] <laddr> <lport> ";
-	std::cerr << " <raddr> <rport> ";
-	std::cerr << std::endl;
-	exit(1);
-	return;	
+    std::cerr << "Usage: " << name;
+    std::cerr << " [-pco] <laddr> <lport> ";
+    std::cerr << " <raddr> <rport> ";
+    std::cerr << std::endl;
+    exit(1);
+    return;
 }
 
 int main(int argc, char **argv)
 {
-	int c;
-	bool isProxy = false;
-	bool toConnect = false;
-	bool stayOpen = false;
+    int c;
+    bool isProxy = false;
+    bool toConnect = false;
+    bool stayOpen = false;
 
-	while(-1 != (c = getopt(argc, argv, "f:pco")))
-	{
-		switch (c)
-		{
-			case 'p':
-				isProxy = true;
-				break;
-			case 'c':
-				toConnect = true;
-				break;
-			case 'o':
-				stayOpen = true;
-				break;
-			case 'f':
-	/* this can only work when the define below exists in tcpstream */
-#ifdef DEBUG_TCP_STREAM_EXTRA 
-				setupBinaryCheck(std::string(optarg));
+    while (-1 != (c = getopt(argc, argv, "f:pco")))
+    {
+        switch (c)
+        {
+        case 'p':
+            isProxy = true;
+            break;
+        case 'c':
+            toConnect = true;
+            break;
+        case 'o':
+            stayOpen = true;
+            break;
+        case 'f':
+            /* this can only work when the define below exists in tcpstream */
+#ifdef DEBUG_TCP_STREAM_EXTRA
+            setupBinaryCheck(std::string(optarg));
 #else
-				std::cerr << "Binary Check no Enabled!" << std::endl;
+            std::cerr << "Binary Check no Enabled!" << std::endl;
 #endif
-				break;
-			default:
-				usage(argv[0]);
-				break;
-		}
-	}
-				
-	if (argc-optind < 4)
-	{
-		usage(argv[0]);
-		return 1;	
-	}
-	/* setup the local/remote addresses.
-	 */
+            break;
+        default:
+            usage(argv[0]);
+            break;
+        }
+    }
 
-	tounet_init();
+    if (argc-optind < 4)
+    {
+        usage(argv[0]);
+        return 1;
+    }
+    /* setup the local/remote addresses.
+     */
 
-	struct sockaddr_in laddr;
-	struct sockaddr_in raddr;
+    tounet_init();
 
-	laddr.sin_family = AF_INET;
-	raddr.sin_family = AF_INET;
+    struct sockaddr_in laddr;
+    struct sockaddr_in raddr;
 
-	if ((!tounet_inet_aton(argv[optind], &(laddr.sin_addr))) ||
-		(!tounet_inet_aton(argv[optind+2], &(raddr.sin_addr))))
-	{
-		std::cerr << "Invalid addresses!" << std::endl;
-		usage(argv[0]);
-	}
+    laddr.sin_family = AF_INET;
+    raddr.sin_family = AF_INET;
 
-	laddr.sin_port = htons(atoi(argv[optind+1]));
-	raddr.sin_port = htons(atoi(argv[optind+3]));
+    if ((!tounet_inet_aton(argv[optind], &(laddr.sin_addr))) ||
+            (!tounet_inet_aton(argv[optind+2], &(raddr.sin_addr))))
+    {
+        std::cerr << "Invalid addresses!" << std::endl;
+        usage(argv[0]);
+    }
 
-	std::cerr << "Local Address: " << laddr << std::endl;
-	std::cerr << "Remote Address: " << raddr << std::endl;
+    laddr.sin_port = htons(atoi(argv[optind+1]));
+    raddr.sin_port = htons(atoi(argv[optind+3]));
 
-	UdpSorter udps(laddr);
-	if (!udps.okay())
-	{
-		std::cerr << "UdpSorter not Okay (Cannot Open Local Address): " << laddr << std::endl;
-		exit(1);
-	}
+    std::cerr << "Local Address: " << laddr << std::endl;
+    std::cerr << "Remote Address: " << raddr << std::endl;
 
-
-	TcpStream tcp(&udps);
-	udps.addUdpPeer(&tcp, raddr);
-
-	if (toConnect)
-	{
-		tcp.connect(raddr, 30);
-	}
-	else
-	{
-		tcp.listenfor(raddr);
-	}
-
-	while(!tcp.isConnected())
-	{
-		sleep(1);
-		std::cerr << "Waiting for TCP to Connect!" << std::endl;
-		udps.status(std::cerr);
-		tcp.status(std::cerr);
-		tcp.tick();
-	}
-	std::cerr << "TCP Connected***************************" << std::endl;
-	udps.status(std::cerr);
-	tcp.status(std::cerr);
-	std::cerr << "TCP Connected***************************" << std::endl;
-
-	int count = 1;
-
-	if (toConnect)
-	{
-		/* send data */
-		int bufsize = 51;
-		char buffer[bufsize];
-		int readsize = 0;
-
-		tounet_fcntl(0, F_SETFL, O_NONBLOCK);
-
-		bool done = false;
-		bool blockread = false;
-		while(!done)
-		{
-			//sleep(1);
-			usleep(100000);
-			//usleep(1000);
-			if (blockread != true)
-			{
-				readsize = read(0, buffer, bufsize);
-			}
-			if (readsize == 0)
-			{
-				/* eof */
-				done = true;
-			}
-			else if ((readsize == -1) && ( EAGAIN == errno ))
-			{
-				continue;
-			}
-
-			/* now we write */
-			if (-1 == tcp.write(buffer, readsize))
-				blockread = true;
-			else
-				blockread = false;
-
-			
-			tcp.tick();
-			if (count++ % 10 == 0)
-			{
-				std::cerr << "******************************************" << std::endl;
-				tcp.status(std::cerr);
-			}
-		}
-
-		tcp.closeWrite();
-
-		while(!tcp.widle())
-		{
-			//sleep(1);
-			usleep(100000);
-			//usleep(1000);
-			tcp.tick();
-			if (count++ % 10 == 0)
-			{
-				std::cerr << "Waiting for Idle()" << std::endl;
-				std::cerr << "******************************************" << std::endl;
-				tcp.status(std::cerr);
-			}
-		}
-
-		std::cerr << "Transfer Complete: " << tcp.wbytes() << " bytes";
-		std::cerr << std::endl;
-		return 1;
-	}
-
-	/* recv data */
-	int  bufsize = 1523;
-	char data[bufsize];
-	tounet_fcntl(1,F_SETFL,O_NONBLOCK);
-	while(1)
-	{
-		//sleep(1);
-		usleep(100000);
-		//usleep(1000);
-		//int writesize = bufsize;
-		int ret;
-		if (0 < (ret = tcp.read(data, bufsize)))
-		{
-			std::cerr << "TF(" << ret << ")" << std::endl;
-			write(1, data, ret);
-		}
-		else if (ret == 0)
-		{
-			/* completed transfer */
-			std::cerr << "Transfer complete :" << tcp.rbytes();
-			std::cerr << " bytes" << std::endl;
-			break;
-		}
-
-		tcp.tick();
-		if (count++ % 10 == 0)
-		{
-			std::cerr << "******************************************" << std::endl;
-			tcp.status(std::cerr);
-		}
-		if ((!stayOpen) && tcp.ridle())
-		{
-			std::cerr << "Transfer Idle after " << tcp.rbytes();
-			std::cerr << " bytes" << std::endl;
-			close(1);
-			break;
-		}
-	}
-
-	tcp.closeWrite();
-
-	/* tick for a bit */
-	while((stayOpen) || (!tcp.ridle()))
-	{
-		tcp.tick();
-		//sleep(1);
-		usleep(100000);
-		//usleep(1000);
-		if (count++ % 10 == 0)
-		{
-			std::cerr << "Waiting for Idle()" << std::endl;
-			std::cerr << "******************************************" << std::endl;
-			tcp.status(std::cerr);
-		}
-	}
+    UdpSorter udps(laddr);
+    if (!udps.okay())
+    {
+        std::cerr << "UdpSorter not Okay (Cannot Open Local Address): " << laddr << std::endl;
+        exit(1);
+    }
 
 
-	if ((!stayOpen) && tcp.ridle())
-	{
-		//std::cerr << "Transfer complete :" << tcp.rbytes();
-		//std::cerr << " bytes" << std::endl;
-		close(1);
-	return 1;
-	}
+    TcpStream tcp(&udps);
+    udps.addUdpPeer(&tcp, raddr);
 
-	return 1;
+    if (toConnect)
+    {
+        tcp.connect(raddr, 30);
+    }
+    else
+    {
+        tcp.listenfor(raddr);
+    }
+
+    while (!tcp.isConnected())
+    {
+        sleep(1);
+        std::cerr << "Waiting for TCP to Connect!" << std::endl;
+        udps.status(std::cerr);
+        tcp.status(std::cerr);
+        tcp.tick();
+    }
+    std::cerr << "TCP Connected***************************" << std::endl;
+    udps.status(std::cerr);
+    tcp.status(std::cerr);
+    std::cerr << "TCP Connected***************************" << std::endl;
+
+    int count = 1;
+
+    if (toConnect)
+    {
+        /* send data */
+        int bufsize = 51;
+        char buffer[bufsize];
+        int readsize = 0;
+
+        tounet_fcntl(0, F_SETFL, O_NONBLOCK);
+
+        bool done = false;
+        bool blockread = false;
+        while (!done)
+        {
+            //sleep(1);
+            usleep(100000);
+            //usleep(1000);
+            if (blockread != true)
+            {
+                readsize = read(0, buffer, bufsize);
+            }
+            if (readsize == 0)
+            {
+                /* eof */
+                done = true;
+            }
+            else if ((readsize == -1) && ( EAGAIN == errno ))
+            {
+                continue;
+            }
+
+            /* now we write */
+            if (-1 == tcp.write(buffer, readsize))
+                blockread = true;
+            else
+                blockread = false;
+
+
+            tcp.tick();
+            if (count++ % 10 == 0)
+            {
+                std::cerr << "******************************************" << std::endl;
+                tcp.status(std::cerr);
+            }
+        }
+
+        tcp.closeWrite();
+
+        while (!tcp.widle())
+        {
+            //sleep(1);
+            usleep(100000);
+            //usleep(1000);
+            tcp.tick();
+            if (count++ % 10 == 0)
+            {
+                std::cerr << "Waiting for Idle()" << std::endl;
+                std::cerr << "******************************************" << std::endl;
+                tcp.status(std::cerr);
+            }
+        }
+
+        std::cerr << "Transfer Complete: " << tcp.wbytes() << " bytes";
+        std::cerr << std::endl;
+        return 1;
+    }
+
+    /* recv data */
+    int  bufsize = 1523;
+    char data[bufsize];
+    tounet_fcntl(1,F_SETFL,O_NONBLOCK);
+    while (1)
+    {
+        //sleep(1);
+        usleep(100000);
+        //usleep(1000);
+        //int writesize = bufsize;
+        int ret;
+        if (0 < (ret = tcp.read(data, bufsize)))
+        {
+            std::cerr << "TF(" << ret << ")" << std::endl;
+            write(1, data, ret);
+        }
+        else if (ret == 0)
+        {
+            /* completed transfer */
+            std::cerr << "Transfer complete :" << tcp.rbytes();
+            std::cerr << " bytes" << std::endl;
+            break;
+        }
+
+        tcp.tick();
+        if (count++ % 10 == 0)
+        {
+            std::cerr << "******************************************" << std::endl;
+            tcp.status(std::cerr);
+        }
+        if ((!stayOpen) && tcp.ridle())
+        {
+            std::cerr << "Transfer Idle after " << tcp.rbytes();
+            std::cerr << " bytes" << std::endl;
+            close(1);
+            break;
+        }
+    }
+
+    tcp.closeWrite();
+
+    /* tick for a bit */
+    while ((stayOpen) || (!tcp.ridle()))
+    {
+        tcp.tick();
+        //sleep(1);
+        usleep(100000);
+        //usleep(1000);
+        if (count++ % 10 == 0)
+        {
+            std::cerr << "Waiting for Idle()" << std::endl;
+            std::cerr << "******************************************" << std::endl;
+            tcp.status(std::cerr);
+        }
+    }
+
+
+    if ((!stayOpen) && tcp.ridle())
+    {
+        //std::cerr << "Transfer complete :" << tcp.rbytes();
+        //std::cerr << " bytes" << std::endl;
+        close(1);
+        return 1;
+    }
+
+    return 1;
 }
 
 
 
-	
+

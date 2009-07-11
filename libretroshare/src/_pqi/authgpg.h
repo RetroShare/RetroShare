@@ -39,8 +39,8 @@
 
 /* Turn a set of parameters into a string */
 static std::string setKeyPairParams(bool useRsa, unsigned int blen,
-                std::string name, std::string comment, std::string email,
-                std::string passphrase);
+                                    std::string name, std::string comment, std::string email,
+                                    std::string passphrase);
 
 static gpgme_key_t getKey(gpgme_ctx_t, std::string, std::string, std::string);
 
@@ -72,7 +72,7 @@ public:
  * The certificate map type
  */
 typedef std::map<std::string, gpgcert> certmap;
-	
+
 class GPGAuthMgr: public AuthSSL
 {
 private:
@@ -104,7 +104,7 @@ public:
 
     int	GPGInit(std::string ownId, std::string name, std::string passwd);
     int	GPGInit(std::string name, std::string comment,
-			std::string email, std::string passwd);
+                std::string email, std::string passwd);
     /* Sign/Trust stuff */
     int	signCertificate(std::string id);
     int	revokeCertificate(std::string id);		/* revoke the signature on Certificate */
@@ -114,19 +114,19 @@ public:
     void showData(gpgme_data_t dh);
     void createDummyFriends(void); //NYI
 
-/*********************************************************************************/
-/************************* STAGE 1 ***********************************************/
-/*********************************************************************************/
-/*****
- * STAGE 1: Initialisation.... As we are switching to OpenPGP the init functions
- * will be different. Just move the initialisation functions over....
- *
- * As GPGMe requires external calls to the GPG executable, which could potentially
- * be expensive, We'll want to cache the GPG keys in this class.
- * This should be done at initialisation, and saved in a map.
- * (see storage at the end of the class)
- *
- ****/
+    /*********************************************************************************/
+    /************************* STAGE 1 ***********************************************/
+    /*********************************************************************************/
+    /*****
+     * STAGE 1: Initialisation.... As we are switching to OpenPGP the init functions
+     * will be different. Just move the initialisation functions over....
+     *
+     * As GPGMe requires external calls to the GPG executable, which could potentially
+     * be expensive, We'll want to cache the GPG keys in this class.
+     * This should be done at initialisation, and saved in a map.
+     * (see storage at the end of the class)
+     *
+     ****/
 
     /* initialisation -> done by derived classes */
     bool    active();
@@ -138,39 +138,39 @@ public:
     int     InitAuth(const char *srvr_cert, const char *priv_key,
                      const char *passwd);
     bool    CloseAuth();
- // int     setConfigDirectories(std::string confFile, std::string neighDir);
-  
+// int     setConfigDirectories(std::string confFile, std::string neighDir);
 
-/*********************************************************************************/
-/************************* STAGE 2 ***********************************************/
-/*********************************************************************************/
-/*****
- * STAGE 2: These are some of the most commonly used functions in Retroshare.
- *
- * provide access to the cache list that was created in stage 1.
- * 
- ****/
 
-		/* get Certificate Ids */
+    /*********************************************************************************/
+    /************************* STAGE 2 ***********************************************/
+    /*********************************************************************************/
+    /*****
+     * STAGE 2: These are some of the most commonly used functions in Retroshare.
+     *
+     * provide access to the cache list that was created in stage 1.
+     *
+     ****/
+
+    /* get Certificate Ids */
 
     std::string OwnId();
     bool	getAllList(std::list<std::string> &ids);
     bool	getAuthenticatedList(std::list<std::string> &ids);
     bool	getUnknownList(std::list<std::string> &ids);
 
-/*********************************************************************************/
-/************************* STAGE 3 ***********************************************/
-/*********************************************************************************/
-/*****
- * STAGE 3: These are some of the most commonly used functions in Retroshare.
- *
- * More commonly used functions.
- *
- * provide access to details in cache list.
- *
- ****/
+    /*********************************************************************************/
+    /************************* STAGE 3 ***********************************************/
+    /*********************************************************************************/
+    /*****
+     * STAGE 3: These are some of the most commonly used functions in Retroshare.
+     *
+     * More commonly used functions.
+     *
+     * provide access to details in cache list.
+     *
+     ****/
 
-		/* get Details from the Certificates */
+    /* get Details from the Certificates */
 
     bool	isValid(std::string id);
     bool	isAuthenticated(std::string id);
@@ -191,61 +191,61 @@ public:
     bool	isPGPAuthenticated(std::string id);
     bool	getPGPDetails(std::string id, pqiAuthDetails &details);
 
-/*********************************************************************************/
-/************************* STAGE 4 ***********************************************/
-/*********************************************************************************/
-/*****
- * STAGE 4: Loading and Saving Certificates. (Strings and Files)
- *
- ****/
+    /*********************************************************************************/
+    /************************* STAGE 4 ***********************************************/
+    /*********************************************************************************/
+    /*****
+     * STAGE 4: Loading and Saving Certificates. (Strings and Files)
+     *
+     ****/
 
 
-		/* Load/Save certificates */
+    /* Load/Save certificates */
     bool LoadCertificateFromString(std::string pem, std::string &id);
     std::string SaveCertificateToString(std::string id);
     bool LoadCertificateFromFile(std::string filename, std::string &id);
     bool SaveCertificateToFile(std::string id, std::string filename);
 
-/*********************************************************************************/
-/************************* STAGE 5 ***********************************************/
-/*********************************************************************************/
-/*****
- * STAGE 5: Loading and Saving Certificates (Binary)
- *
- * The existing function arguments are based on OpenSSL functions.
- * Feel free to change this format if required.
- *
- ****/
+    /*********************************************************************************/
+    /************************* STAGE 5 ***********************************************/
+    /*********************************************************************************/
+    /*****
+     * STAGE 5: Loading and Saving Certificates (Binary)
+     *
+     * The existing function arguments are based on OpenSSL functions.
+     * Feel free to change this format if required.
+     *
+     ****/
 
     bool LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id);
     bool SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len);
 
-/*********************************************************************************/
-/************************* STAGE 6 ***********************************************/
-/*********************************************************************************/
-/*****
- * STAGE 6: Authentication, Trust and Signing.
- *
- * This is some of the harder functions, but they should have been 
- * done in gpgroot already.
- *
- ****/
+    /*********************************************************************************/
+    /************************* STAGE 6 ***********************************************/
+    /*********************************************************************************/
+    /*****
+     * STAGE 6: Authentication, Trust and Signing.
+     *
+     * This is some of the harder functions, but they should have been
+     * done in gpgroot already.
+     *
+     ****/
 
-		/* Signatures */
+    /* Signatures */
     bool AuthCertificate(std::string uid);
     bool SignCertificate(std::string id);
     bool RevokeCertificate(std::string id);  /* Particularly hard - leave for later */
     bool TrustCertificate(std::string id, bool trust);
 
-/*********************************************************************************/
-/************************* STAGE 7 ***********************************************/
-/*********************************************************************************/
-/*****
- * STAGE 7: Signing Data.
- *
- * There should also be Encryption Functions... (do later).
- *
- ****/
+    /*********************************************************************************/
+    /************************* STAGE 7 ***********************************************/
+    /*********************************************************************************/
+    /*****
+     * STAGE 7: Signing Data.
+     *
+     * There should also be Encryption Functions... (do later).
+     *
+     ****/
 
 #if 0
     virtual  bool SignData(std::string input, std::string &sign);
@@ -257,42 +257,42 @@ public:
 
 #endif
 
-/*********************************************************************************/
-/************************* PGP Specific functions ********************************/
-/*********************************************************************************/
+    /*********************************************************************************/
+    /************************* PGP Specific functions ********************************/
+    /*********************************************************************************/
 
-/*
- * These support the authentication process.
- *
- */
+    /*
+     * These support the authentication process.
+     *
+     */
 
-        /************* Virtual Functions from AuthSSL *************/
+    /************* Virtual Functions from AuthSSL *************/
     virtual bool 	ValidateCertificate(X509 *x509, std::string &peerId);
     virtual int     VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx);
-        /************* Virtual Functions from AuthSSL *************/
+    /************* Virtual Functions from AuthSSL *************/
 
-/*
- *
- */
+    /*
+     *
+     */
 
     bool checkSignature(std::string id, std::string hash, std::string signature);
 
 
 
 
-/*********************************************************************************/
-/************************* OTHER FUNCTIONS ***************************************/
-/*********************************************************************************/
+    /*********************************************************************************/
+    /************************* OTHER FUNCTIONS ***************************************/
+    /*********************************************************************************/
 
-		/* High Level Load/Save Configuration */
-/*****
- * These functions call straight through to AuthSSL.
- * We don't need these functions here - as GPG stores the keys for us.
-  bool FinalSaveCertificates();
-  bool CheckSaveCertificates();
-  bool saveCertificates();
-  bool loadCertificates();
- ****/
+    /* High Level Load/Save Configuration */
+    /*****
+     * These functions call straight through to AuthSSL.
+     * We don't need these functions here - as GPG stores the keys for us.
+      bool FinalSaveCertificates();
+      bool CheckSaveCertificates();
+      bool saveCertificates();
+      bool loadCertificates();
+     ****/
 
 private:
 
@@ -329,16 +329,16 @@ private:
 
 typedef enum
 {
-  SIGN_START,
-  SIGN_COMMAND,
-  SIGN_UIDS,
-  SIGN_SET_EXPIRE,
-  SIGN_SET_CHECK_LEVEL,
-  SIGN_ENTER_PASSPHRASE,
-  SIGN_CONFIRM,
-  SIGN_QUIT,
-  SIGN_SAVE,
-  SIGN_ERROR
+    SIGN_START,
+    SIGN_COMMAND,
+    SIGN_UIDS,
+    SIGN_SET_EXPIRE,
+    SIGN_SET_CHECK_LEVEL,
+    SIGN_ENTER_PASSPHRASE,
+    SIGN_CONFIRM,
+    SIGN_QUIT,
+    SIGN_SAVE,
+    SIGN_ERROR
 } SignState;
 
 
@@ -346,55 +346,55 @@ typedef enum
 
 typedef enum
 {
-  TRUST_START,
-  TRUST_COMMAND,
-  TRUST_VALUE,
-  TRUST_REALLY_ULTIMATE,
-  TRUST_QUIT,
-  TRUST_SAVE,
-  TRUST_ERROR
+    TRUST_START,
+    TRUST_COMMAND,
+    TRUST_VALUE,
+    TRUST_REALLY_ULTIMATE,
+    TRUST_QUIT,
+    TRUST_SAVE,
+    TRUST_ERROR
 } TrustState;
 
 
 
-/* This is the generic data object passed to the 
- * callback function in a gpgme_op_edit operation. 
- * The contents of this object are modified during 
- * each callback, to keep track of states, errors 
+/* This is the generic data object passed to the
+ * callback function in a gpgme_op_edit operation.
+ * The contents of this object are modified during
+ * each callback, to keep track of states, errors
  * and other data.
  */
 
 class EditParams
 {
-	public: 
-	int state;
-	/* The return code of gpgme_op_edit() is the return value of
-	 * the last invocation of the callback. But returning an error 
-	 * from the callback does not abort the edit operation, so we 
-	 * must remember any error.
-	 */		
-	gpg_error_t err;
-	
-	/* Parameters specific to the key operation */	
-	void *oParams;
-	
-	EditParams(int state, void *oParams) {
-		this->state = state;
-		this->err = gpgme_error(GPG_ERR_NO_ERROR);
-		this->oParams = oParams;
-	}
-			
+public:
+    int state;
+    /* The return code of gpgme_op_edit() is the return value of
+     * the last invocation of the callback. But returning an error
+     * from the callback does not abort the edit operation, so we
+     * must remember any error.
+     */
+    gpg_error_t err;
+
+    /* Parameters specific to the key operation */
+    void *oParams;
+
+    EditParams(int state, void *oParams) {
+        this->state = state;
+        this->err = gpgme_error(GPG_ERR_NO_ERROR);
+        this->oParams = oParams;
+    }
+
 };
 
 /* Data specific to key signing */
 
-class SignParams 
+class SignParams
 {
 public:
-	
+
     std::string checkLvl;
     std::string passphrase;
-		
+
     SignParams(std::string checkLvl, std::string passphrase)
     {
         this->checkLvl = checkLvl;

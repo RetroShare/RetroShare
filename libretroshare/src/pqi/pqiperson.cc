@@ -36,103 +36,103 @@ const int pqipersonzone = 82371;
  ****/
 
 pqiperson::pqiperson(std::string id, pqipersongrp *pg)
-	:PQInterface(id), active(false), activepqi(NULL), 
-	inConnectAttempt(false), waittimes(0), 
-	pqipg(pg)
+        :PQInterface(id), active(false), activepqi(NULL),
+        inConnectAttempt(false), waittimes(0),
+        pqipg(pg)
 {
 
-	/* must check id! */
+    /* must check id! */
 
-	return;
+    return;
 }
 
 pqiperson::~pqiperson()
 {
-	// clean up the children.
-	std::map<uint32_t, pqiconnect *>::iterator it;
-	for(it = kids.begin(); it != kids.end(); it++)
-	{
-		pqiconnect *pc = (it->second);
-		delete pc;
-	}
-	kids.clear();
+    // clean up the children.
+    std::map<uint32_t, pqiconnect *>::iterator it;
+    for (it = kids.begin(); it != kids.end(); it++)
+    {
+        pqiconnect *pc = (it->second);
+        delete pc;
+    }
+    kids.clear();
 }
 
 
-	// The PQInterface interface.
+// The PQInterface interface.
 int     pqiperson::SendItem(RsItem *i)
 {
-	std::ostringstream out;
-	out << "pqiperson::SendItem()";
-	if (active)
-	{
-		out << " Active: Sending On";
-		return activepqi -> SendItem(i);
-	}
-	else
-	{
-		out << " Not Active: Used to put in ToGo Store";
-		out << std::endl;
-		out << " Now deleting...";
-		delete i;
-	}
-	pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
-	return 0; // queued.	
+    std::ostringstream out;
+    out << "pqiperson::SendItem()";
+    if (active)
+    {
+        out << " Active: Sending On";
+        return activepqi -> SendItem(i);
+    }
+    else
+    {
+        out << " Not Active: Used to put in ToGo Store";
+        out << std::endl;
+        out << " Now deleting...";
+        delete i;
+    }
+    pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
+    return 0; // queued.
 }
 
 RsItem *pqiperson::GetItem()
 {
-	if (active)
-		return activepqi -> GetItem();
-	// else not possible.
-	return NULL;
+    if (active)
+        return activepqi -> GetItem();
+    // else not possible.
+    return NULL;
 }
 
 int 	pqiperson::status()
 {
-	if (active)
-		return activepqi -> status();
-	return -1;
+    if (active)
+        return activepqi -> status();
+    return -1;
 }
 
-	// tick......
+// tick......
 int	pqiperson::tick()
 {
-	int activeTick = 0;
+    int activeTick = 0;
 
-	{
-	  std::ostringstream out;
-	  out << "pqiperson::tick() Id: " << PeerId() << " ";
-	  if (active)
-	  	out << "***Active***";
-	  else
-	  	out << ">>InActive<<";
+    {
+        std::ostringstream out;
+        out << "pqiperson::tick() Id: " << PeerId() << " ";
+        if (active)
+            out << "***Active***";
+        else
+            out << ">>InActive<<";
 
-	  out << std::endl;
-	  out << "Activepqi: " << activepqi << " inConnectAttempt: ";
+        out << std::endl;
+        out << "Activepqi: " << activepqi << " inConnectAttempt: ";
 
-	  if (inConnectAttempt)
-	  	out << "In Connection Attempt";
-	  else
-	  	out << "   Not Connecting    ";
-	  out << std::endl;
+        if (inConnectAttempt)
+            out << "In Connection Attempt";
+        else
+            out << "   Not Connecting    ";
+        out << std::endl;
 
 
-	// tick the children.
-	std::map<uint32_t, pqiconnect *>::iterator it;
-	for(it = kids.begin(); it != kids.end(); it++)
-	{
-		if (0 < (it->second) -> tick())
-		{
-			activeTick = 1;
-		}
-	  	out << "\tTicking Child: " << (it->first) << std::endl;
-	}
+        // tick the children.
+        std::map<uint32_t, pqiconnect *>::iterator it;
+        for (it = kids.begin(); it != kids.end(); it++)
+        {
+            if (0 < (it->second) -> tick())
+            {
+                activeTick = 1;
+            }
+            out << "\tTicking Child: " << (it->first) << std::endl;
+        }
 
-	  pqioutput(PQL_DEBUG_ALL, pqipersonzone, out.str());
-	} // end of pqioutput.
+        pqioutput(PQL_DEBUG_ALL, pqipersonzone, out.str());
+    } // end of pqioutput.
 
-	return activeTick;
+    return activeTick;
 }
 
 // callback function for the child - notify of a change.
@@ -140,166 +140,166 @@ int	pqiperson::tick()
 // otherwise could get dangerous loops.
 int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 {
-	{
-	  std::ostringstream out;
-	  out << "pqiperson::notifyEvent() Id: " << PeerId();
-	  out << std::endl;
-	  out << "Message: " << newState << " from: " << ni << std::endl;
+    {
+        std::ostringstream out;
+        out << "pqiperson::notifyEvent() Id: " << PeerId();
+        out << std::endl;
+        out << "Message: " << newState << " from: " << ni << std::endl;
 
-	  pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
-	}
+        pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
+    }
 
-	/* find the pqi, */
-	pqiconnect *pqi = NULL;
-	uint32_t    type = 0;
-	std::map<uint32_t, pqiconnect *>::iterator it;
-		
-	/* start again */
-	int i = 0;
-	for(it = kids.begin(); it != kids.end(); it++)
-	{
-	 	std::ostringstream out;
-	  	out << "pqiperson::connectattempt() Kid# ";
-	  	out << i << " of " << kids.size();
-	  	out << std::endl;
-		out << " type: " << (it->first);
-		out << " ni: " << (it->second)->ni;
-		out << " in_ni: " << ni;
-	  	pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
-		i++;
+    /* find the pqi, */
+    pqiconnect *pqi = NULL;
+    uint32_t    type = 0;
+    std::map<uint32_t, pqiconnect *>::iterator it;
 
-		if ((it->second)->thisNetInterface(ni))
-		{
-			pqi = (it->second);
-			type = (it->first);
-		}
-	}
+    /* start again */
+    int i = 0;
+    for (it = kids.begin(); it != kids.end(); it++)
+    {
+        std::ostringstream out;
+        out << "pqiperson::connectattempt() Kid# ";
+        out << i << " of " << kids.size();
+        out << std::endl;
+        out << " type: " << (it->first);
+        out << " ni: " << (it->second)->ni;
+        out << " in_ni: " << ni;
+        pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
+        i++;
 
-	if (!pqi)
-	{
-	  pqioutput(PQL_WARNING, pqipersonzone, "Unknown notfyEvent Source!");
-	  return -1;
-	}
-		
+        if ((it->second)->thisNetInterface(ni))
+        {
+            pqi = (it->second);
+            type = (it->first);
+        }
+    }
 
-	switch(newState)
-	{
-	case CONNECT_RECEIVED:
-	case CONNECT_SUCCESS:
-
-		/* notify */
-		if (pqipg)
-			pqipg->notifyConnect(PeerId(), type, true);
-
-		if ((active) && (activepqi != pqi)) // already connected - trouble
-		{
-	  		pqioutput(PQL_WARNING, pqipersonzone, 
-				"CONNECT_SUCCESS+active->trouble: shutdown EXISTING->switch to new one!");
-
-			// This is the RESET that's killing the connections.....
-			activepqi -> reset();
-			// this causes a recursive call back into this fn.
-			// which cleans up state.
-			// we only do this if its not going to mess with new conn.
-		}
-
-		/* now install a new one. */
-		{
-
-	  		pqioutput(PQL_WARNING, pqipersonzone, 
-				"CONNECT_SUCCESS->marking so! (resetting others)");
-			// mark as active.
-			active = true;
-			activepqi = pqi;
-	  		inConnectAttempt = false;
-
-			/* reset all other children? (clear up long UDP attempt) */
-			for(it = kids.begin(); it != kids.end(); it++)
-			{
-				if (it->second != activepqi)
-				{
-					it->second->reset();
-				}
-			}
-			return 1;
-		}
-		break;
-	case CONNECT_UNREACHABLE:
-	case CONNECT_FIREWALLED:
-	case CONNECT_FAILED:
+    if (!pqi)
+    {
+        pqioutput(PQL_WARNING, pqipersonzone, "Unknown notfyEvent Source!");
+        return -1;
+    }
 
 
-		if (active)
-		{
-			if (activepqi == pqi)
-			{
-	  			pqioutput(PQL_WARNING, pqipersonzone, 
-					"CONNECT_FAILED->marking so!");
-				active = false;
-				activepqi = NULL;
-			}
-			else
-			{
-	  			pqioutput(PQL_WARNING, pqipersonzone, 
-					"CONNECT_FAIL+not activepqi->strange!");
-				// probably UDP connect has failed, 
-				// TCP connection has been made since attempt started.
-				return -1;
-			}
-		}
-		else
-		{
-	  		pqioutput(PQL_WARNING, pqipersonzone, 
-			  "CONNECT_FAILED+NOT active -> try connect again");
-		}
+    switch (newState)
+    {
+    case CONNECT_RECEIVED:
+    case CONNECT_SUCCESS:
 
-		/* notify up (But not if we are actually active: rtn -1 case above) */
-		if (pqipg)
-			pqipg->notifyConnect(PeerId(), type, false);
+        /* notify */
+        if (pqipg)
+            pqipg->notifyConnect(PeerId(), type, true);
 
-		return 1;
+        if ((active) && (activepqi != pqi)) // already connected - trouble
+        {
+            pqioutput(PQL_WARNING, pqipersonzone,
+                      "CONNECT_SUCCESS+active->trouble: shutdown EXISTING->switch to new one!");
 
-		break;
-	default:
-		break;
-	}
-	return -1;
+            // This is the RESET that's killing the connections.....
+            activepqi -> reset();
+            // this causes a recursive call back into this fn.
+            // which cleans up state.
+            // we only do this if its not going to mess with new conn.
+        }
+
+        /* now install a new one. */
+        {
+
+            pqioutput(PQL_WARNING, pqipersonzone,
+                      "CONNECT_SUCCESS->marking so! (resetting others)");
+            // mark as active.
+            active = true;
+            activepqi = pqi;
+            inConnectAttempt = false;
+
+            /* reset all other children? (clear up long UDP attempt) */
+            for (it = kids.begin(); it != kids.end(); it++)
+            {
+                if (it->second != activepqi)
+                {
+                    it->second->reset();
+                }
+            }
+            return 1;
+        }
+        break;
+    case CONNECT_UNREACHABLE:
+    case CONNECT_FIREWALLED:
+    case CONNECT_FAILED:
+
+
+        if (active)
+        {
+            if (activepqi == pqi)
+            {
+                pqioutput(PQL_WARNING, pqipersonzone,
+                          "CONNECT_FAILED->marking so!");
+                active = false;
+                activepqi = NULL;
+            }
+            else
+            {
+                pqioutput(PQL_WARNING, pqipersonzone,
+                          "CONNECT_FAIL+not activepqi->strange!");
+                // probably UDP connect has failed,
+                // TCP connection has been made since attempt started.
+                return -1;
+            }
+        }
+        else
+        {
+            pqioutput(PQL_WARNING, pqipersonzone,
+                      "CONNECT_FAILED+NOT active -> try connect again");
+        }
+
+        /* notify up (But not if we are actually active: rtn -1 case above) */
+        if (pqipg)
+            pqipg->notifyConnect(PeerId(), type, false);
+
+        return 1;
+
+        break;
+    default:
+        break;
+    }
+    return -1;
 }
 
 /***************** Not PQInterface Fns ***********************/
 
 int 	pqiperson::reset()
 {
-	{
-	  std::ostringstream out;
-	  out << "pqiperson::reset() Id: " << PeerId();
-	  out << std::endl;
-	  pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
-	}
+    {
+        std::ostringstream out;
+        out << "pqiperson::reset() Id: " << PeerId();
+        out << std::endl;
+        pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
+    }
 
-	std::map<uint32_t, pqiconnect *>::iterator it;
-	for(it = kids.begin(); it != kids.end(); it++)
-	{
-		(it->second) -> reset();
-	}		
+    std::map<uint32_t, pqiconnect *>::iterator it;
+    for (it = kids.begin(); it != kids.end(); it++)
+    {
+        (it->second) -> reset();
+    }
 
-	activepqi = NULL;
-	active = false;
+    activepqi = NULL;
+    active = false;
 
-	return 1;
+    return 1;
 }
 
 int	pqiperson::addChildInterface(uint32_t type, pqiconnect *pqi)
 {
-	{
-	  std::ostringstream out;
-	  out << "pqiperson::addChildInterface() : Id " << PeerId() << " " << type;
-	  out << std::endl;
-	  pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
-	}
+    {
+        std::ostringstream out;
+        out << "pqiperson::addChildInterface() : Id " << PeerId() << " " << type;
+        out << std::endl;
+        pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
+    }
 
-	kids[type] = pqi;
-	return 1;
+    kids[type] = pqi;
+    return 1;
 }
 
 /***************** PRIVATE FUNCTIONS ***********************/
@@ -308,114 +308,114 @@ int	pqiperson::addChildInterface(uint32_t type, pqiconnect *pqi)
 
 int 	pqiperson::listen()
 {
-	{
-	  std::ostringstream out;
-	  out << "pqiperson::listen() Id: " << PeerId();
-	  out << std::endl;
-	  pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
-	}
+    {
+        std::ostringstream out;
+        out << "pqiperson::listen() Id: " << PeerId();
+        out << std::endl;
+        pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
+    }
 
-	if (!active)
-	{
-		std::map<uint32_t, pqiconnect *>::iterator it;
-		for(it = kids.begin(); it != kids.end(); it++)
-		{
-			// set them all listening.
-			(it->second) -> listen();
-		}
-	}
-	return 1;
+    if (!active)
+    {
+        std::map<uint32_t, pqiconnect *>::iterator it;
+        for (it = kids.begin(); it != kids.end(); it++)
+        {
+            // set them all listening.
+            (it->second) -> listen();
+        }
+    }
+    return 1;
 }
 
 
 int 	pqiperson::stoplistening()
 {
-	{
-	  std::ostringstream out;
-	  out << "pqiperson::stoplistening() Id: " << PeerId();
-	  out << std::endl;
-	  pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
-	}
+    {
+        std::ostringstream out;
+        out << "pqiperson::stoplistening() Id: " << PeerId();
+        out << std::endl;
+        pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
+    }
 
-	std::map<uint32_t, pqiconnect *>::iterator it;
-	for(it = kids.begin(); it != kids.end(); it++)
-	{
-		// set them all listening.
-		(it->second) -> stoplistening();
-	}
-	return 1;
+    std::map<uint32_t, pqiconnect *>::iterator it;
+    for (it = kids.begin(); it != kids.end(); it++)
+    {
+        // set them all listening.
+        (it->second) -> stoplistening();
+    }
+    return 1;
 }
 
 int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, uint32_t period, uint32_t timeout)
 {
 #ifdef PERSON_DEBUG
-	{
-	  std::ostringstream out;
-	  out << "pqiperson::connect() Id: " << PeerId();
-	  out << " type: " << type;
-	  out << " addr: " << inet_ntoa(raddr.sin_addr);
-	  out << ":" << ntohs(raddr.sin_port);
-	  out << " delay: " << delay;
-	  out << " period: " << period;
-	  out << " timeout: " << timeout;
-	  out << std::endl;
-	  std::cerr << out.str();
-	  //pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
-	}
+    {
+        std::ostringstream out;
+        out << "pqiperson::connect() Id: " << PeerId();
+        out << " type: " << type;
+        out << " addr: " << inet_ntoa(raddr.sin_addr);
+        out << ":" << ntohs(raddr.sin_port);
+        out << " delay: " << delay;
+        out << " period: " << period;
+        out << " timeout: " << timeout;
+        out << std::endl;
+        std::cerr << out.str();
+        //pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
+    }
 #endif
 
-	std::map<uint32_t, pqiconnect *>::iterator it;
-	
-	it = kids.find(type);
-	if (it == kids.end())
-	{
+    std::map<uint32_t, pqiconnect *>::iterator it;
+
+    it = kids.find(type);
+    if (it == kids.end())
+    {
 #ifdef PERSON_DEBUG
-	  	std::ostringstream out;
-	  	out << "pqiperson::connect()";
-	  	out << " missing pqiconnect";
-	  	out << std::endl;
-	  	std::cerr << out.str();
-	  	//pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
+        std::ostringstream out;
+        out << "pqiperson::connect()";
+        out << " missing pqiconnect";
+        out << std::endl;
+        std::cerr << out.str();
+        //pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
 #endif
-		return 0;
-	}
+        return 0;
+    }
 
-	/* set the parameters */
-	(it->second)->reset();
+    /* set the parameters */
+    (it->second)->reset();
 
 #ifdef PERSON_DEBUG
-	std::cerr << "pqiperson::connect() setting connect_parameters" << std::endl;
+    std::cerr << "pqiperson::connect() setting connect_parameters" << std::endl;
 #endif
-	(it->second)->connect_parameter(NET_PARAM_CONNECT_DELAY, delay);
-	(it->second)->connect_parameter(NET_PARAM_CONNECT_PERIOD, period);
-	(it->second)->connect_parameter(NET_PARAM_CONNECT_TIMEOUT, timeout);
+    (it->second)->connect_parameter(NET_PARAM_CONNECT_DELAY, delay);
+    (it->second)->connect_parameter(NET_PARAM_CONNECT_PERIOD, period);
+    (it->second)->connect_parameter(NET_PARAM_CONNECT_TIMEOUT, timeout);
 
-	(it->second)->connect(raddr);	
-		
-	// flag if we started a new connectionAttempt.
-	inConnectAttempt = true;
+    (it->second)->connect(raddr);
 
-	return 1;
+    // flag if we started a new connectionAttempt.
+    inConnectAttempt = true;
+
+    return 1;
 }
 
 
 float   pqiperson::getRate(bool in)
 {
-	// get the rate from the active one.
-	if ((!active) || (activepqi == NULL))
-		return 0;
-	return activepqi -> getRate(in);
+    // get the rate from the active one.
+    if ((!active) || (activepqi == NULL))
+        return 0;
+    return activepqi -> getRate(in);
 }
 
 void    pqiperson::setMaxRate(bool in, float val)
 {
-	// set to all of them. (and us)
-	PQInterface::setMaxRate(in, val);
-	// clean up the children.
-	std::map<uint32_t, pqiconnect *>::iterator it;
-	for(it = kids.begin(); it != kids.end(); it++)
-	{
-		(it->second) -> setMaxRate(in, val);
-	}
+    // set to all of them. (and us)
+    PQInterface::setMaxRate(in, val);
+    // clean up the children.
+    std::map<uint32_t, pqiconnect *>::iterator it;
+    for (it = kids.begin(); it != kids.end(); it++)
+    {
+        (it->second) -> setMaxRate(in, val);
+    }
 }
 

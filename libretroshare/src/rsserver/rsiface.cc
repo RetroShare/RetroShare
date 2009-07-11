@@ -28,44 +28,44 @@
 
 #include "rsiface/rsiface.h"
 #include "util/rsdir.h"
-			
+
 /* set to true */
 bool    RsIface::setChanged(DataFlags set)
 {
-	if ((int) set < (int) NumOfFlags)
-	{
-		/* go for it */
-		mChanged[(int) set ] = true;
-		return true;
-	}
-	return false;
+    if ((int) set < (int) NumOfFlags)
+    {
+        /* go for it */
+        mChanged[(int) set ] = true;
+        return true;
+    }
+    return false;
 }
 
-	
+
 /* leaves it */
 bool    RsIface::getChanged(DataFlags set)
 {
-	if ((int) set < (int) NumOfFlags)
-	{
-		/* go for it */
-		return mChanged[(int) set ];
-	}
-	return false;
+    if ((int) set < (int) NumOfFlags)
+    {
+        /* go for it */
+        return mChanged[(int) set ];
+    }
+    return false;
 }
 
 /* resets it */
 bool    RsIface::hasChanged(DataFlags set)
 {
-	if ((int) set < (int) NumOfFlags)
-	{
-		/* go for it */
-		if (mChanged[(int) set ])
-		{
-			mChanged[(int) set ] = false;
-			return true;
-		}
-	}
-	return false;
+    if ((int) set < (int) NumOfFlags)
+    {
+        /* go for it */
+        if (mChanged[(int) set ])
+        {
+            mChanged[(int) set ] = false;
+            return true;
+        }
+    }
+    return false;
 }
 
 /*************************** THE REAL RSIFACE (with MUTEXES) *******/
@@ -75,29 +75,31 @@ bool    RsIface::hasChanged(DataFlags set)
 class RsIfaceReal: public RsIface
 {
 public:
-        RsIfaceReal(NotifyBase &callback)
-	:RsIface(callback)
-	{ return; }
+    RsIfaceReal(NotifyBase &callback)
+            :RsIface(callback)
+    {
+        return;
+    }
 
-	virtual void lockData()
-	{
+    virtual void lockData()
+    {
 //		std::cerr << "RsIfaceReal::lockData()" << std::endl;
-		return rsIfaceMutex.lock();
-	}
+        return rsIfaceMutex.lock();
+    }
 
-	virtual void unlockData()
-	{
+    virtual void unlockData()
+    {
 //		std::cerr << "RsIfaceReal::unlockData()" << std::endl;
-		return rsIfaceMutex.unlock();
-	}
+        return rsIfaceMutex.unlock();
+    }
 
 private:
-	RsMutex rsIfaceMutex;
+    RsMutex rsIfaceMutex;
 };
 
 RsIface *createRsIface(NotifyBase &cb)
 {
-	return new RsIfaceReal(cb);
+    return new RsIfaceReal(cb);
 }
 
 

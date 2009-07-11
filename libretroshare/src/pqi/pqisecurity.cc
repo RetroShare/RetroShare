@@ -39,31 +39,31 @@
 
 std::string 		secpolicy_print(SecurityPolicy *)
 {
-	return std::string("secpolicy_print() Implement Me Please!");
+    return std::string("secpolicy_print() Implement Me Please!");
 }
 
 SecurityPolicy *	secpolicy_create()
 {
-	return (SecurityPolicy *) malloc(sizeof(SecurityPolicy));
+    return (SecurityPolicy *) malloc(sizeof(SecurityPolicy));
 }
 
 int	secpolicy_delete(SecurityPolicy *p)
 {
-	free(p);
-	return 1;
+    free(p);
+    return 1;
 }
 
 
 int 			secpolicy_limit(SecurityPolicy *limiter,
-				SecurityPolicy *alter)
+                       SecurityPolicy *alter)
 {
-	return 1;
+    return 1;
 }
 
-int 			secpolicy_check(SecurityPolicy *, int type_transaction, 
-						int direction)
+int 			secpolicy_check(SecurityPolicy *, int type_transaction,
+                       int direction)
 {
-	return 1;
+    return 1;
 }
 
 

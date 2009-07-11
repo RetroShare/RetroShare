@@ -14,7 +14,7 @@
 
 namespace RsUtil {
 
-	std::string retroshareVersion();
+std::string retroshareVersion();
 
 }
 

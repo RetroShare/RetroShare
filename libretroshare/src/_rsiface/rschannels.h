@@ -34,52 +34,52 @@
 #include "rsiface/rstypes.h"
 #include "rsiface/rsdistrib.h" /* For FLAGS */
 
-class ChannelInfo 
+class ChannelInfo
 {
-	public:
-	ChannelInfo() {}
-	std::string  channelId;
-	std::wstring channelName;
-	std::wstring channelDesc;
+public:
+    ChannelInfo() {}
+    std::string  channelId;
+    std::wstring channelName;
+    std::wstring channelDesc;
 
-	uint32_t channelFlags;
-	uint32_t pop;
+    uint32_t channelFlags;
+    uint32_t pop;
 
-	time_t lastPost;
+    time_t lastPost;
 };
 
-class ChannelMsgInfo 
+class ChannelMsgInfo
 {
-	public:
-	ChannelMsgInfo() {}
-	std::string channelId;
-	std::string msgId;
+public:
+    ChannelMsgInfo() {}
+    std::string channelId;
+    std::string msgId;
 
-	unsigned int msgflags;
+    unsigned int msgflags;
 
-	std::wstring subject;
-	std::wstring msg;
-	time_t ts;
+    std::wstring subject;
+    std::wstring msg;
+    time_t ts;
 
-	std::list<FileInfo> files;
-	uint32_t count;
-	uint64_t size;
+    std::list<FileInfo> files;
+    uint32_t count;
+    uint64_t size;
 };
 
 
-class ChannelMsgSummary 
+class ChannelMsgSummary
 {
-	public:
-	ChannelMsgSummary() {}
-	std::string channelId;
-	std::string msgId;
+public:
+    ChannelMsgSummary() {}
+    std::string channelId;
+    std::string msgId;
 
-	uint32_t msgflags;
+    uint32_t msgflags;
 
-	std::wstring subject;
-	std::wstring msg;
-	uint32_t count; /* file count     */
-	time_t ts;
+    std::wstring subject;
+    std::wstring msg;
+    uint32_t count; /* file count     */
+    time_t ts;
 
 };
 
@@ -90,29 +90,33 @@ std::ostream &operator<<(std::ostream &out, const ChannelMsgInfo &info);
 class RsChannels;
 extern RsChannels   *rsChannels;
 
-class RsChannels 
+class RsChannels
 {
-	public:
+public:
 
-	RsChannels() { return; }
-virtual ~RsChannels() { return; }
+    RsChannels() {
+        return;
+    }
+    virtual ~RsChannels() {
+        return;
+    }
 
-/****************************************/
+    /****************************************/
 
-virtual bool channelsChanged(std::list<std::string> &chanIds) = 0;
+    virtual bool channelsChanged(std::list<std::string> &chanIds) = 0;
 
 
-virtual std::string createChannel(std::wstring chanName, std::wstring chanDesc, uint32_t chanFlags) = 0;
+    virtual std::string createChannel(std::wstring chanName, std::wstring chanDesc, uint32_t chanFlags) = 0;
 
-virtual bool getChannelInfo(std::string cId, ChannelInfo &ci) = 0;
-virtual bool getChannelList(std::list<ChannelInfo> &chanList) = 0;
-virtual bool getChannelMsgList(std::string cId, std::list<ChannelMsgSummary> &msgs) = 0;
-virtual bool getChannelMessage(std::string cId, std::string mId, ChannelMsgInfo &msg) = 0;
+    virtual bool getChannelInfo(std::string cId, ChannelInfo &ci) = 0;
+    virtual bool getChannelList(std::list<ChannelInfo> &chanList) = 0;
+    virtual bool getChannelMsgList(std::string cId, std::list<ChannelMsgSummary> &msgs) = 0;
+    virtual bool getChannelMessage(std::string cId, std::string mId, ChannelMsgInfo &msg) = 0;
 
-virtual	bool ChannelMessageSend(ChannelMsgInfo &info)                 = 0;
+    virtual	bool ChannelMessageSend(ChannelMsgInfo &info)                 = 0;
 
-virtual bool channelSubscribe(std::string cId, bool subscribe)	= 0;
-/****************************************/
+    virtual bool channelSubscribe(std::string cId, bool subscribe)	= 0;
+    /****************************************/
 
 };
 

@@ -50,143 +50,143 @@ static int testRsTlvWideSet();
 
 int main()
 {
-	std::cerr << "RsTlvConfig[Item/Data/...] Tests" << std::endl;
+    std::cerr << "RsTlvConfig[Item/Data/...] Tests" << std::endl;
 
-	testRsTlvPeerIdSet();
-	testRsTlvServiceIdSet();//tbd
-	testRsTlvKeyValue();//tbd
-	testRsTlvKeyValueSet();//tbd
-	testRsTlvWideSet();
+    testRsTlvPeerIdSet();
+    testRsTlvServiceIdSet();//tbd
+    testRsTlvKeyValue();//tbd
+    testRsTlvKeyValueSet();//tbd
+    testRsTlvWideSet();
 
-	
-	FINALREPORT("RsTlvConfig[Item/Data/...] Tests");
 
-	return TESTRESULT();
+    FINALREPORT("RsTlvConfig[Item/Data/...] Tests");
+
+    return TESTRESULT();
 }
 
 int testRsTlvPeerIdSet()
 {
 
-	RsTlvPeerIdSet i1, i2; // one to set and other to get
+    RsTlvPeerIdSet i1, i2; // one to set and other to get
 
-	std::string testString;
+    std::string testString;
 
-	std::string randString[5];
-	randString[0] = "e$424!�!�";
-	randString[1] = "e~:@L{L{KHKG";
-	randString[2] = "e{@O**/*/*";
-	randString[3] = "e?<<BNMB>HG�!�%$";
-	randString[4] = "e><?<NVBCEE�$$%*^";
+    std::string randString[5];
+    randString[0] = "e$424!�!�";
+    randString[1] = "e~:@L{L{KHKG";
+    randString[2] = "e{@O**/*/*";
+    randString[3] = "e?<<BNMB>HG�!�%$";
+    randString[4] = "e><?<NVBCEE�$$%*^";
 
-	/* store a number of random ids */
+    /* store a number of random ids */
 
-	for(int i = 0; i < 15 ; i++)
-	{
-		testString = randString[(rand() % 4)] + randString[(rand() % 4)];
+    for (int i = 0; i < 15 ; i++)
+    {
+        testString = randString[(rand() % 4)] + randString[(rand() % 4)];
 
-		i1.ids.push_back(testString);
-	}
-		
-	CHECK(test_SerialiseTlvItem(std::cerr, &i1, &i2));
+        i1.ids.push_back(testString);
+    }
 
-	/*check that the data is the same*/
+    CHECK(test_SerialiseTlvItem(std::cerr, &i1, &i2));
 
-	REPORT("Serialize/Deserialize RsTlvPeerIdSet");
+    /*check that the data is the same*/
 
-	return 1;
+    REPORT("Serialize/Deserialize RsTlvPeerIdSet");
+
+    return 1;
 }
 
 int testRsTlvServiceIdSet()
-{		
-	RsTlvServiceIdSet i1, i2; // one to set and other to get
+{
+    RsTlvServiceIdSet i1, i2; // one to set and other to get
 
-	
-	/* store random numbers */
-	for(int i = 0; i < 15 ; i++)
-	{
-		i1.ids.push_back(1 + rand() % 12564);
-	}
-	std::cout << "error here!!!?";	
-	CHECK(test_SerialiseTlvItem(std::cerr, &i1, &i2));
 
-	/*check that the data is the same*/
-	REPORT("Serialize/Deserialize RsTlvServiceIdSet");
-	return 1;
+    /* store random numbers */
+    for (int i = 0; i < 15 ; i++)
+    {
+        i1.ids.push_back(1 + rand() % 12564);
+    }
+    std::cout << "error here!!!?";
+    CHECK(test_SerialiseTlvItem(std::cerr, &i1, &i2));
+
+    /*check that the data is the same*/
+    REPORT("Serialize/Deserialize RsTlvServiceIdSet");
+    return 1;
 }
 
 
 int testRsTlvKeyValue()
 {
-	RsTlvKeyValue i1, i2; // one to set and other to get
+    RsTlvKeyValue i1, i2; // one to set and other to get
 
-	i1.key = "whatever";
-	i1.value = "better work";
+    i1.key = "whatever";
+    i1.value = "better work";
 
-	CHECK(test_SerialiseTlvItem(std::cerr, &i1, &i2));
+    CHECK(test_SerialiseTlvItem(std::cerr, &i1, &i2));
 
-	/*check that the data is the same*/
-	REPORT("Serialize/Deserialize RsTlvKeyValue");
+    /*check that the data is the same*/
+    REPORT("Serialize/Deserialize RsTlvKeyValue");
 
-	return 1;
+    return 1;
 }
 int testRsTlvKeyValueSet()
-{	
-	RsTlvKeyValueSet i1, i2; // one to set and other to get
+{
+    RsTlvKeyValueSet i1, i2; // one to set and other to get
 
-	/* instantiate the objects values */
+    /* instantiate the objects values */
 
-	std::string randString[5];
-	randString[0] = "e$424!�!�";
-	randString[1] = "e~:@L{L{KHKG";
-	randString[2] = "e{@O**/*/*";
-	randString[3] = "e?<<BNMB>HG�!�%$";
-	randString[4] = "e><?<NVBCEE�$$%*^";
-  
-	for(int i = 0; i < 15; i++)
-	{
-		RsTlvKeyValue kv;
+    std::string randString[5];
+    randString[0] = "e$424!�!�";
+    randString[1] = "e~:@L{L{KHKG";
+    randString[2] = "e{@O**/*/*";
+    randString[3] = "e?<<BNMB>HG�!�%$";
+    randString[4] = "e><?<NVBCEE�$$%*^";
 
-		kv.key = randString[(rand() % 4)] + randString[(rand() % 4)];
-		kv.value = randString[(rand() % 4)] + randString[(rand() % 4)];
+    for (int i = 0; i < 15; i++)
+    {
+        RsTlvKeyValue kv;
 
-		i1.pairs.push_back(kv);
+        kv.key = randString[(rand() % 4)] + randString[(rand() % 4)];
+        kv.value = randString[(rand() % 4)] + randString[(rand() % 4)];
 
-	}
+        i1.pairs.push_back(kv);
 
-	CHECK(test_SerialiseTlvItem(std::cerr, &i1, &i2));
+    }
 
-	/*check that the data is the same*/
-	REPORT("Serialize/Deserialize RsTlvKeyValueSet");
+    CHECK(test_SerialiseTlvItem(std::cerr, &i1, &i2));
+
+    /*check that the data is the same*/
+    REPORT("Serialize/Deserialize RsTlvKeyValueSet");
 }
 
 int testRsTlvWideSet()
 {
- 	RsTlvKeyValueWideSet i1, i2; // one to set and other to get
- 	RsTlvKeyValueWide i_pair; // input pair
- 	RsTlvFileItem hello;
+    RsTlvKeyValueWideSet i1, i2; // one to set and other to get
+    RsTlvKeyValueWide i_pair; // input pair
+    RsTlvFileItem hello;
 
-	std::string randString[5];
-	randString[0] = "e$424!�!�";
-	randString[1] = "e~:@L{L{KHKG";
-	randString[2] = "e{@O**/*/*";
-	randString[3] = "e?<<BNMB>HG�!�%$";
-	randString[4] = "e><?<NVBCEE�$$%*^";
-	
-	/* store a 15 random pairs */
+    std::string randString[5];
+    randString[0] = "e$424!�!�";
+    randString[1] = "e~:@L{L{KHKG";
+    randString[2] = "e{@O**/*/*";
+    randString[3] = "e?<<BNMB>HG�!�%$";
+    randString[4] = "e><?<NVBCEE�$$%*^";
 
-	for(int i = 0; i < 15 ; i++)
-	{
-		i_pair.wKey.assign(randString[(rand() % 4)].begin(), randString[(rand() % 4)].end()); 
-		i_pair.wValue.assign(randString[(rand() % 4)].begin(), randString[(rand() % 4)].end()); 
-		i1.wPairs.push_back(i_pair);
-	}
-		
-	CHECK(test_SerialiseTlvItem(std::cerr, &i1, &i2));
+    /* store a 15 random pairs */
 
-	/*check that the data is the same*/
+    for (int i = 0; i < 15 ; i++)
+    {
+        i_pair.wKey.assign(randString[(rand() % 4)].begin(), randString[(rand() % 4)].end());
+        i_pair.wValue.assign(randString[(rand() % 4)].begin(), randString[(rand() % 4)].end());
+        i1.wPairs.push_back(i_pair);
+    }
 
-	REPORT("Serialize/Deserialize RsTlvKeyValueWideSet");
+    CHECK(test_SerialiseTlvItem(std::cerr, &i1, &i2));
 
-	return 1;
+    /*check that the data is the same*/
+
+    REPORT("Serialize/Deserialize RsTlvKeyValueWideSet");
+
+    return 1;
 }
 

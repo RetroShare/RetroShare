@@ -36,54 +36,54 @@
 
 class alertMsg
 {
-	public:
+public:
 
-	int epoch;
-	int type;
-	int severity;
-	std::string msg;
-	std::string source;
+    int epoch;
+    int type;
+    int severity;
+    std::string msg;
+    std::string source;
 };
 
 class alertBox
 {
-	public:
-	alertBox(Fl_Window *w, Fl_Text_Display *box);
-virtual	~alertBox();
+public:
+    alertBox(Fl_Window *w, Fl_Text_Display *box);
+    virtual	~alertBox();
 
-int	sendMsg(int type, int severity, 
-		std::string msg, std::string source);
+    int	sendMsg(int type, int severity,
+                std::string msg, std::string source);
 
-	protected:
-	int     loadInitMsg();
-virtual void	displayMsgs();
-virtual int     showMsgs(int severity);
+protected:
+    int     loadInitMsg();
+    virtual void	displayMsgs();
+    virtual int     showMsgs(int severity);
 
-	int showThreshold; // At what severity we show ourselves.
-	Fl_Window *alert_win;
-	Fl_Text_Display *alert_box;
-	int maxMessages;
+    int showThreshold; // At what severity we show ourselves.
+    Fl_Window *alert_win;
+    Fl_Text_Display *alert_box;
+    int maxMessages;
 
-	std::deque<alertMsg> msgs;
+    std::deque<alertMsg> msgs;
 };
 
 class chatterBox: public alertBox
 {
-	public:
-	chatterBox(Fl_Window *w, Fl_Text_Display *box)
-	:alertBox(w, box), firstMsg(true) 
-	{ 
-		chatterBox::loadInitMsg();
-		return; 
-	}
+public:
+    chatterBox(Fl_Window *w, Fl_Text_Display *box)
+            :alertBox(w, box), firstMsg(true)
+    {
+        chatterBox::loadInitMsg();
+        return;
+    }
 
-	protected:
-	int     loadInitMsg();
-virtual void	displayMsgs();
-virtual int     showMsgs(int severity);
+protected:
+    int     loadInitMsg();
+    virtual void	displayMsgs();
+    virtual int     showMsgs(int severity);
 
-	private:
-	bool firstMsg;
+private:
+    bool firstMsg;
 
 };
 

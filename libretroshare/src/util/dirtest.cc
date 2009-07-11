@@ -37,63 +37,63 @@ bool testRsDirUtils(std::string path);
 int main()
 {
 
-	std::list<std::string> dirs;
-	std::list<std::string>::iterator it;
-	dirs.push_back("/incoming/htuyr/file.txt");
-	dirs.push_back("/incoming/htuyr/file.txt ");
-	dirs.push_back("/incoming/htuyr/file.txt/");
-	dirs.push_back("/incoming/htuyr/file.txt//");
-	dirs.push_back("/incoming/htuyr//file.txt//");
-	dirs.push_back("/incoming/htuyr//file .txt");
-	dirs.push_back("/incoming/htuyr/Q");
-	dirs.push_back("/incoming/htuyr/Q//");
-	dirs.push_back("/incoming/htuyr/Q/");
-	dirs.push_back("/incoming/htuyr/Q/text");
-	dirs.push_back("/home/tst1//test2///test3/");
-	dirs.push_back("home2/tst4//test5///test6");
-	dirs.push_back("//home3");
-	dirs.push_back("//");
-	dirs.push_back("A");
-	dirs.push_back("ABC");
-	dirs.push_back("////ABC////");
-	dirs.push_back("A/B/C");
+    std::list<std::string> dirs;
+    std::list<std::string>::iterator it;
+    dirs.push_back("/incoming/htuyr/file.txt");
+    dirs.push_back("/incoming/htuyr/file.txt ");
+    dirs.push_back("/incoming/htuyr/file.txt/");
+    dirs.push_back("/incoming/htuyr/file.txt//");
+    dirs.push_back("/incoming/htuyr//file.txt//");
+    dirs.push_back("/incoming/htuyr//file .txt");
+    dirs.push_back("/incoming/htuyr/Q");
+    dirs.push_back("/incoming/htuyr/Q//");
+    dirs.push_back("/incoming/htuyr/Q/");
+    dirs.push_back("/incoming/htuyr/Q/text");
+    dirs.push_back("/home/tst1//test2///test3/");
+    dirs.push_back("home2/tst4//test5///test6");
+    dirs.push_back("//home3");
+    dirs.push_back("//");
+    dirs.push_back("A");
+    dirs.push_back("ABC");
+    dirs.push_back("////ABC////");
+    dirs.push_back("A/B/C");
 
-	for(it = dirs.begin(); it != dirs.end(); it++)
-	{
-		testRsDirUtils(*it);
-	}
+    for (it = dirs.begin(); it != dirs.end(); it++)
+    {
+        testRsDirUtils(*it);
+    }
 }
 
 bool testRsDirUtils(std::string path)
 {
 
-	std::cerr << "RsUtilTest input: [" << path << "]";
-	std::cerr << std::endl;
+    std::cerr << "RsUtilTest input: [" << path << "]";
+    std::cerr << std::endl;
 
-	std::string top = RsDirUtil::getTopDir(path);
-	std::string root = RsDirUtil::getRootDir(path);
-	std::string topdirs = RsDirUtil::removeRootDir(path);
-	std::string topdirs2 = RsDirUtil::removeRootDirs(path, root);
-	std::string restdirs = RsDirUtil::removeTopDir(path);
-	std::list<std::string> split;
-	std::list<std::string>::iterator it;
-	RsDirUtil::breakupDirList(path, split);
+    std::string top = RsDirUtil::getTopDir(path);
+    std::string root = RsDirUtil::getRootDir(path);
+    std::string topdirs = RsDirUtil::removeRootDir(path);
+    std::string topdirs2 = RsDirUtil::removeRootDirs(path, root);
+    std::string restdirs = RsDirUtil::removeTopDir(path);
+    std::list<std::string> split;
+    std::list<std::string>::iterator it;
+    RsDirUtil::breakupDirList(path, split);
 
-	std::cerr << "\tTop: [" << top << "]";
-	std::cerr << std::endl;
-	std::cerr << "\tRest: [" << restdirs << "]";
-	std::cerr << std::endl;
+    std::cerr << "\tTop: [" << top << "]";
+    std::cerr << std::endl;
+    std::cerr << "\tRest: [" << restdirs << "]";
+    std::cerr << std::endl;
 
-	std::cerr << "\tRoot: [" << root << "]";
-	std::cerr << std::endl;
-	std::cerr << "\tRemoveRoot: [" << topdirs << "]"; 
-	std::cerr << std::endl;
-	std::cerr << "\tSplit Up "; 
-	for(it = split.begin(); it != split.end(); it++)
-	{
-		std::cerr << ":" << (*it);
-	}
-	std::cerr << std::endl;
-	std::cerr << std::endl;
-	return true;
+    std::cerr << "\tRoot: [" << root << "]";
+    std::cerr << std::endl;
+    std::cerr << "\tRemoveRoot: [" << topdirs << "]";
+    std::cerr << std::endl;
+    std::cerr << "\tSplit Up ";
+    for (it = split.begin(); it != split.end(); it++)
+    {
+        std::cerr << ":" << (*it);
+    }
+    std::cerr << std::endl;
+    std::cerr << std::endl;
+    return true;
 }

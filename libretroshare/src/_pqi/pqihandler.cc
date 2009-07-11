@@ -38,161 +38,162 @@ const int pqihandlerzone = 34283;
 
 pqihandler::pqihandler(SecurityPolicy *Global)
 {
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+    RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
-	// The global security....
-	// if something is disabled here...
-	// cannot be enabled by module.
-	globsec = Global;
+    // The global security....
+    // if something is disabled here...
+    // cannot be enabled by module.
+    globsec = Global;
 
-	{
-		std::ostringstream out;
-		out  << "New pqihandler()" << std::endl;
-		out  << "Security Policy: " << secpolicy_print(globsec);
-		out  << std::endl;
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
-	}
+    {
+        std::ostringstream out;
+        out  << "New pqihandler()" << std::endl;
+        out  << "Security Policy: " << secpolicy_print(globsec);
+        out  << std::endl;
+        pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
+    }
 
-	// setup minimal total+individual rates.
-	rateIndiv_out = 0.01;
-	rateIndiv_in = 0.01;
-	rateMax_out = 0.01;
-	rateMax_in = 0.01;
-	return;
+    // setup minimal total+individual rates.
+    rateIndiv_out = 0.01;
+    rateIndiv_in = 0.01;
+    rateMax_out = 0.01;
+    rateMax_in = 0.01;
+    return;
 }
 
 int	pqihandler::tick()
 {
-	int moreToTick = 0;
+    int moreToTick = 0;
 
-  { RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+    {
+        RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
-	// tick all interfaces...
-	std::map<std::string, SearchModule *>::iterator it;
-	for(it = mods.begin(); it != mods.end(); it++)
-	{
-		if (0 < ((it -> second) -> pqi) -> tick())
-		{
+        // tick all interfaces...
+        std::map<std::string, SearchModule *>::iterator it;
+        for (it = mods.begin(); it != mods.end(); it++)
+        {
+            if (0 < ((it -> second) -> pqi) -> tick())
+            {
 #ifdef DEBUG_TICK
-                	std::cerr << "pqihandler::tick() moreToTick from mod()" << std::endl;
+                std::cerr << "pqihandler::tick() moreToTick from mod()" << std::endl;
 #endif
-			moreToTick = 1;
-		}
-	}
-	// get the items, and queue them correctly
-	if (0 < locked_GetItems())
-	{
+                moreToTick = 1;
+            }
+        }
+        // get the items, and queue them correctly
+        if (0 < locked_GetItems())
+        {
 #ifdef DEBUG_TICK
-               	std::cerr << "pqihandler::tick() moreToTick from GetItems()" << std::endl;
+            std::cerr << "pqihandler::tick() moreToTick from GetItems()" << std::endl;
 #endif
-		moreToTick = 1;
-	}
-  } /****** UNLOCK ******/
+            moreToTick = 1;
+        }
+    } /****** UNLOCK ******/
 
-	UpdateRates();
-	return moreToTick;
+    UpdateRates();
+    return moreToTick;
 }
 
 
 int	pqihandler::status()
 {
-	std::map<std::string, SearchModule *>::iterator it;
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+    std::map<std::string, SearchModule *>::iterator it;
+    RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
-	{ // for output
-		std::ostringstream out;
-		out  << "pqihandler::status() Active Modules:" << std::endl;
+    { // for output
+        std::ostringstream out;
+        out  << "pqihandler::status() Active Modules:" << std::endl;
 
-	// display all interfaces...
-	for(it = mods.begin(); it != mods.end(); it++)
-	{
-		out << "\tModule [" << it -> first << "] Pointer <";
-		out << (void *) ((it -> second) -> pqi) << ">" << std::endl;
-	}
+        // display all interfaces...
+        for (it = mods.begin(); it != mods.end(); it++)
+        {
+            out << "\tModule [" << it -> first << "] Pointer <";
+            out << (void *) ((it -> second) -> pqi) << ">" << std::endl;
+        }
 
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
+        pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
 
-	} // end of output.
+    } // end of output.
 
 
-	// status all interfaces...
-	for(it = mods.begin(); it != mods.end(); it++)
-	{
-		((it -> second) -> pqi) -> status();
-	}
-	return 1;
+    // status all interfaces...
+    for (it = mods.begin(); it != mods.end(); it++)
+    {
+        ((it -> second) -> pqi) -> status();
+    }
+    return 1;
 }
-	
+
 
 
 bool	pqihandler::AddSearchModule(SearchModule *mod)
 {
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-	// if peerid used -> error.
-	std::map<std::string, SearchModule *>::iterator it;
-	if (mod->peerid != mod->pqi->PeerId())
-	{
-		// ERROR!
-		std::ostringstream out;
-		out << "ERROR peerid != PeerId!" << std::endl;
-		pqioutput(PQL_ALERT, pqihandlerzone, out.str());
-		return false;
-	}
+    RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+    // if peerid used -> error.
+    std::map<std::string, SearchModule *>::iterator it;
+    if (mod->peerid != mod->pqi->PeerId())
+    {
+        // ERROR!
+        std::ostringstream out;
+        out << "ERROR peerid != PeerId!" << std::endl;
+        pqioutput(PQL_ALERT, pqihandlerzone, out.str());
+        return false;
+    }
 
-	if (mod->peerid == "")
-	{
-		// ERROR!
-		std::ostringstream out;
-		out << "ERROR peerid == NULL" << std::endl;
-		pqioutput(PQL_ALERT, pqihandlerzone, out.str());
-		return false;
-	}
+    if (mod->peerid == "")
+    {
+        // ERROR!
+        std::ostringstream out;
+        out << "ERROR peerid == NULL" << std::endl;
+        pqioutput(PQL_ALERT, pqihandlerzone, out.str());
+        return false;
+    }
 
-	if (mods.find(mod->peerid) != mods.end())
-	{
-		// ERROR!
-		std::ostringstream out;
-		out << "ERROR PeerId Module already exists!" << std::endl;
-		pqioutput(PQL_ALERT, pqihandlerzone, out.str());
-		return false;
-	}
+    if (mods.find(mod->peerid) != mods.end())
+    {
+        // ERROR!
+        std::ostringstream out;
+        out << "ERROR PeerId Module already exists!" << std::endl;
+        pqioutput(PQL_ALERT, pqihandlerzone, out.str());
+        return false;
+    }
 
-	// check security.
-	if (mod -> sp == NULL)
-	{
-		// create policy.
-		mod -> sp = secpolicy_create();
-	}
+    // check security.
+    if (mod -> sp == NULL)
+    {
+        // create policy.
+        mod -> sp = secpolicy_create();
+    }
 
-	// limit to what global security allows.
-	secpolicy_limit(globsec, mod -> sp);
+    // limit to what global security allows.
+    secpolicy_limit(globsec, mod -> sp);
 
-	// store.
-	mods[mod->peerid] = mod;
-	return true;
+    // store.
+    mods[mod->peerid] = mod;
+    return true;
 }
 
 bool	pqihandler::RemoveSearchModule(SearchModule *mod)
 {
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-	std::map<std::string, SearchModule *>::iterator it;
-	for(it = mods.begin(); it != mods.end(); it++)
-	{
-		if (mod == it -> second)
-		{
-			mods.erase(it);
-			return true;
-		}
-	}
-	return false;
+    RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+    std::map<std::string, SearchModule *>::iterator it;
+    for (it = mods.begin(); it != mods.end(); it++)
+    {
+        if (mod == it -> second)
+        {
+            mods.erase(it);
+            return true;
+        }
+    }
+    return false;
 }
 
 // dummy output check
 int	pqihandler::locked_checkOutgoingRsItem(RsItem *item, int global)
 {
-	pqioutput(PQL_WARNING, pqihandlerzone, 
-	  "pqihandler::checkOutgoingPQItem() NULL fn");
-	return 1;
+    pqioutput(PQL_WARNING, pqihandlerzone,
+              "pqihandler::checkOutgoingPQItem() NULL fn");
+    return 1;
 }
 
 
@@ -200,103 +201,103 @@ int	pqihandler::locked_checkOutgoingRsItem(RsItem *item, int global)
 // generalised output
 int	pqihandler::HandleRsItem(RsItem *item, int allowglobal)
 {
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+    RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
-	std::map<std::string, SearchModule *>::iterator it;
-	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-	  "pqihandler::HandleRsItem()");
+    std::map<std::string, SearchModule *>::iterator it;
+    pqioutput(PQL_DEBUG_BASIC, pqihandlerzone,
+              "pqihandler::HandleRsItem()");
 
-	/* simplified to no global! */
-	if (allowglobal)
-	{
-		/* error */
-		std::ostringstream out;
-		out << "pqihandler::HandleSearchItem()";
-		out << " Cannot send out Global RsItem";
-		pqioutput(PQL_ALERT, pqihandlerzone, out.str());
-		delete item;
-		return -1;
-	}
+    /* simplified to no global! */
+    if (allowglobal)
+    {
+        /* error */
+        std::ostringstream out;
+        out << "pqihandler::HandleSearchItem()";
+        out << " Cannot send out Global RsItem";
+        pqioutput(PQL_ALERT, pqihandlerzone, out.str());
+        delete item;
+        return -1;
+    }
 
-	if (!locked_checkOutgoingRsItem(item, allowglobal))
-	{
-		std::ostringstream out;
-	  	out <<	"pqihandler::HandleRsItem() checkOutgoingPQItem";
-		out << " Failed on item: " << std::endl;
-		item -> print(out);
+    if (!locked_checkOutgoingRsItem(item, allowglobal))
+    {
+        std::ostringstream out;
+        out <<	"pqihandler::HandleRsItem() checkOutgoingPQItem";
+        out << " Failed on item: " << std::endl;
+        item -> print(out);
 
-		pqioutput(PQL_ALERT, pqihandlerzone, out.str());
-		delete item;
-		return -1;
-	}
+        pqioutput(PQL_ALERT, pqihandlerzone, out.str());
+        delete item;
+        return -1;
+    }
 
-	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-	  "pqihandler::HandleRsItem() Sending to One Channel");
+    pqioutput(PQL_DEBUG_BASIC, pqihandlerzone,
+              "pqihandler::HandleRsItem() Sending to One Channel");
 
 
-	// find module.
-	if ((it = mods.find(item->PeerId())) == mods.end())
-	{
-		std::ostringstream out;
-		out << "pqihandler::HandleRsItem() Invalid chan!";
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
+    // find module.
+    if ((it = mods.find(item->PeerId())) == mods.end())
+    {
+        std::ostringstream out;
+        out << "pqihandler::HandleRsItem() Invalid chan!";
+        pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
 
-		delete item;
-		return -1;
-	}
+        delete item;
+        return -1;
+    }
 
-	// check security... is output allowed.
-	if(0 < secpolicy_check((it -> second) -> sp, 0, PQI_OUTGOING))
-	{
-		std::ostringstream out;
-		out << "pqihandler::HandleRsItem() sending to chan:";
-		out << it -> first << std::endl;
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
+    // check security... is output allowed.
+    if (0 < secpolicy_check((it -> second) -> sp, 0, PQI_OUTGOING))
+    {
+        std::ostringstream out;
+        out << "pqihandler::HandleRsItem() sending to chan:";
+        out << it -> first << std::endl;
+        pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
 
-		// if yes send on item.
-		((it -> second) -> pqi) -> SendItem(item);
-		return 1;
-	}
-	else
-	{
-		std::ostringstream out;
-		out << "pqihandler::HandleRsItem()";
-		out << " Sec not approved";
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
+        // if yes send on item.
+        ((it -> second) -> pqi) -> SendItem(item);
+        return 1;
+    }
+    else
+    {
+        std::ostringstream out;
+        out << "pqihandler::HandleRsItem()";
+        out << " Sec not approved";
+        pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
 
-		delete item;
-		return -1;
-	}
+        delete item;
+        return -1;
+    }
 
-	// if successfully sent to at least one.
-	return 1;
+    // if successfully sent to at least one.
+    return 1;
 }
 
-int	pqihandler::SearchSpecific(RsCacheRequest *ns) 
+int	pqihandler::SearchSpecific(RsCacheRequest *ns)
 {
-	return HandleRsItem(ns, 0);
+    return HandleRsItem(ns, 0);
 }
 
 int	pqihandler::SendSearchResult(RsCacheItem *ns)
 {
-	return HandleRsItem(ns, 0);
+    return HandleRsItem(ns, 0);
 }
 
 int     pqihandler::SendFileRequest(RsFileRequest *ns)
 {
-	return HandleRsItem(ns, 0);
+    return HandleRsItem(ns, 0);
 }
 
 int     pqihandler::SendFileData(RsFileData *ns)
 {
-	return HandleRsItem(ns, 0);
+    return HandleRsItem(ns, 0);
 }
 
 int     pqihandler::SendRsRawItem(RsRawItem *ns)
 {
-	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-	  	"pqihandler::SendRsRawItem()");
-	return HandleRsItem(ns, 0);
+    pqioutput(PQL_DEBUG_BASIC, pqihandlerzone,
+              "pqihandler::SendRsRawItem()");
+    return HandleRsItem(ns, 0);
 }
 
 
@@ -306,66 +307,66 @@ int     pqihandler::SendRsRawItem(RsRawItem *ns)
 
 int pqihandler::locked_GetItems()
 {
-	std::map<std::string, SearchModule *>::iterator it;
+    std::map<std::string, SearchModule *>::iterator it;
 
-	RsItem *item;
-	int count = 0;
+    RsItem *item;
+    int count = 0;
 
-	// loop through modules....
-	for(it = mods.begin(); it != mods.end(); it++)
-	{
-		SearchModule *mod = (it -> second);
+    // loop through modules....
+    for (it = mods.begin(); it != mods.end(); it++)
+    {
+        SearchModule *mod = (it -> second);
 
-		// check security... is output allowed.
-		if(0 < secpolicy_check((it -> second) -> sp, 
-					0, PQI_INCOMING)) // PQI_ITEM_TYPE_ITEM, PQI_INCOMING))
-		{
-			// if yes... attempt to read.
-			while((item = (mod -> pqi) -> GetItem()) != NULL)
-			{
-#ifdef RSITEM_DEBUG 
-				std::ostringstream out;
-				out << "pqihandler::GetItems() Incoming Item ";
-				out << " from: " << mod -> pqi << std::endl;
-				item -> print(out);
+        // check security... is output allowed.
+        if (0 < secpolicy_check((it -> second) -> sp,
+                                0, PQI_INCOMING)) // PQI_ITEM_TYPE_ITEM, PQI_INCOMING))
+        {
+            // if yes... attempt to read.
+            while ((item = (mod -> pqi) -> GetItem()) != NULL)
+            {
+#ifdef RSITEM_DEBUG
+                std::ostringstream out;
+                out << "pqihandler::GetItems() Incoming Item ";
+                out << " from: " << mod -> pqi << std::endl;
+                item -> print(out);
 
-				pqioutput(PQL_DEBUG_BASIC, 
-						pqihandlerzone, out.str());
+                pqioutput(PQL_DEBUG_BASIC,
+                          pqihandlerzone, out.str());
 #endif
 
-				if (item->PeerId() != (mod->pqi)->PeerId())
-				{
-					/* ERROR */
-					pqioutput(PQL_ALERT, 
-						pqihandlerzone, "ERROR PeerIds dont match!");
-					item->PeerId(mod->pqi->PeerId());
-				}
+                if (item->PeerId() != (mod->pqi)->PeerId())
+                {
+                    /* ERROR */
+                    pqioutput(PQL_ALERT,
+                              pqihandlerzone, "ERROR PeerIds dont match!");
+                    item->PeerId(mod->pqi->PeerId());
+                }
 
-				locked_SortnStoreItem(item);
-				count++;
-			}
-		}
-		else
-		{
-			// not allowed to recieve from here....
-			while((item = (mod -> pqi) -> GetItem()) != NULL)
-			{
-				std::ostringstream out;
-				out << "pqihandler::GetItems() Incoming Item ";
-				out << " from: " << mod -> pqi << std::endl;
-				item -> print(out);
-				out << std::endl;
-				out << "Item Not Allowed (Sec Pol). deleting!";
-				out << std::endl;
+                locked_SortnStoreItem(item);
+                count++;
+            }
+        }
+        else
+        {
+            // not allowed to recieve from here....
+            while ((item = (mod -> pqi) -> GetItem()) != NULL)
+            {
+                std::ostringstream out;
+                out << "pqihandler::GetItems() Incoming Item ";
+                out << " from: " << mod -> pqi << std::endl;
+                item -> print(out);
+                out << std::endl;
+                out << "Item Not Allowed (Sec Pol). deleting!";
+                out << std::endl;
 
-				pqioutput(PQL_DEBUG_BASIC, 
-						pqihandlerzone, out.str());
+                pqioutput(PQL_DEBUG_BASIC,
+                          pqihandlerzone, out.str());
 
-				delete item;
-			}
-		}
-	}
-	return count;
+                delete item;
+            }
+        }
+    }
+    return count;
 }
 
 
@@ -373,213 +374,223 @@ int pqihandler::locked_GetItems()
 
 void pqihandler::locked_SortnStoreItem(RsItem *item)
 {
-	/* get class type / subtype out of the item */
-	uint8_t vers    = item -> PacketVersion();
-	uint8_t cls     = item -> PacketClass();
-	uint8_t type    = item -> PacketType();
-	uint8_t subtype = item -> PacketSubType();
+    /* get class type / subtype out of the item */
+    uint8_t vers    = item -> PacketVersion();
+    uint8_t cls     = item -> PacketClass();
+    uint8_t type    = item -> PacketType();
+    uint8_t subtype = item -> PacketSubType();
 
-	/* whole Version reserved for SERVICES/CACHES */
-	if (vers == RS_PKT_VERSION_SERVICE)
-	{
-	    pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-	      "SortnStore -> Service");
-	    in_service.push_back(item);
-	    item = NULL;
-	    return;
-	}
+    /* whole Version reserved for SERVICES/CACHES */
+    if (vers == RS_PKT_VERSION_SERVICE)
+    {
+        pqioutput(PQL_DEBUG_BASIC, pqihandlerzone,
+                  "SortnStore -> Service");
+        in_service.push_back(item);
+        item = NULL;
+        return;
+    }
 
-	if (vers != RS_PKT_VERSION1)
-	{
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-			"SortnStore -> Invalid VERSION! Deleting!");
-		delete item;
-		item = NULL;
-		return;
-	}
+    if (vers != RS_PKT_VERSION1)
+    {
+        pqioutput(PQL_DEBUG_BASIC, pqihandlerzone,
+                  "SortnStore -> Invalid VERSION! Deleting!");
+        delete item;
+        item = NULL;
+        return;
+    }
 
-	switch(cls)
-	{
-	  case RS_PKT_CLASS_BASE:
-	    switch(type)
-	    {
-	      case RS_PKT_TYPE_CACHE:
-	        switch(subtype)
-	        {
-	          case RS_PKT_SUBTYPE_CACHE_REQUEST:
-	            pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-	              "SortnStore -> Cache Request");
-	            in_search.push_back(item);
-		    item = NULL;
-		    break;
+    switch (cls)
+    {
+    case RS_PKT_CLASS_BASE:
+        switch (type)
+        {
+        case RS_PKT_TYPE_CACHE:
+            switch (subtype)
+            {
+            case RS_PKT_SUBTYPE_CACHE_REQUEST:
+                pqioutput(PQL_DEBUG_BASIC, pqihandlerzone,
+                          "SortnStore -> Cache Request");
+                in_search.push_back(item);
+                item = NULL;
+                break;
 
-	          case RS_PKT_SUBTYPE_CACHE_ITEM:
-	            pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-	              "SortnStore -> Cache Result");
-	            in_result.push_back(item);
-		    item = NULL;
-		    break;
+            case RS_PKT_SUBTYPE_CACHE_ITEM:
+                pqioutput(PQL_DEBUG_BASIC, pqihandlerzone,
+                          "SortnStore -> Cache Result");
+                in_result.push_back(item);
+                item = NULL;
+                break;
 
-		  default:
-		    break; /* no match! */
-		}
-	        break;
+            default:
+                break; /* no match! */
+            }
+            break;
 
-	      case RS_PKT_TYPE_FILE:
-	        switch(subtype)
-	        {
-	          case RS_PKT_SUBTYPE_FI_REQUEST:
-	            pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-	              "SortnStore -> File Request");
-	            in_request.push_back(item);
-		    item = NULL;
-		    break;
+        case RS_PKT_TYPE_FILE:
+            switch (subtype)
+            {
+            case RS_PKT_SUBTYPE_FI_REQUEST:
+                pqioutput(PQL_DEBUG_BASIC, pqihandlerzone,
+                          "SortnStore -> File Request");
+                in_request.push_back(item);
+                item = NULL;
+                break;
 
-	          case RS_PKT_SUBTYPE_FI_DATA:
-	            pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-	              "SortnStore -> File Data");
-	            in_data.push_back(item);
-		    item = NULL;
-		    break;
+            case RS_PKT_SUBTYPE_FI_DATA:
+                pqioutput(PQL_DEBUG_BASIC, pqihandlerzone,
+                          "SortnStore -> File Data");
+                in_data.push_back(item);
+                item = NULL;
+                break;
 
-		  default:
-		    break; /* no match! */
-		}
-	        break;
+            default:
+                break; /* no match! */
+            }
+            break;
 
-	      default:
-	        break;  /* no match! */
-	    }
-	    break;
-	  
-	  default:
-	    pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-	      "SortnStore -> Unknown");
-	    break;
+        default:
+            break;  /* no match! */
+        }
+        break;
 
-	}
-	 
-	if (item)
-	{
-	    pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-	      "SortnStore -> Deleting Unsorted Item");
-	    delete item;
-	}
+    default:
+        pqioutput(PQL_DEBUG_BASIC, pqihandlerzone,
+                  "SortnStore -> Unknown");
+        break;
 
-	return;
+    }
+
+    if (item)
+    {
+        pqioutput(PQL_DEBUG_BASIC, pqihandlerzone,
+                  "SortnStore -> Deleting Unsorted Item");
+        delete item;
+    }
+
+    return;
 }
 
 
 // much like the input stuff.
 RsCacheItem *pqihandler::GetSearchResult()
 {
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+    RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
-	if (in_result.size() != 0)
-	{
-		RsCacheItem *fi = dynamic_cast<RsCacheItem *>(in_result.front());
-		if (!fi) { delete in_result.front(); }
-		in_result.pop_front();
-		return fi;
-	}
-	return NULL;
+    if (in_result.size() != 0)
+    {
+        RsCacheItem *fi = dynamic_cast<RsCacheItem *>(in_result.front());
+        if (!fi) {
+            delete in_result.front();
+        }
+        in_result.pop_front();
+        return fi;
+    }
+    return NULL;
 }
 
 RsCacheRequest *pqihandler::RequestedSearch()
 {
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+    RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
-	if (in_search.size() != 0)
-	{
-		RsCacheRequest *fi = dynamic_cast<RsCacheRequest *>(in_search.front());
-		if (!fi) { delete in_search.front(); }
-		in_search.pop_front();
-		return fi;
-	}
-	return NULL;
+    if (in_search.size() != 0)
+    {
+        RsCacheRequest *fi = dynamic_cast<RsCacheRequest *>(in_search.front());
+        if (!fi) {
+            delete in_search.front();
+        }
+        in_search.pop_front();
+        return fi;
+    }
+    return NULL;
 }
 
 RsFileRequest *pqihandler::GetFileRequest()
 {
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+    RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
-	if (in_request.size() != 0)
-	{
-		RsFileRequest *fi = dynamic_cast<RsFileRequest *>(in_request.front());
-		if (!fi) { delete in_request.front(); }
-		in_request.pop_front();
-		return fi;
-	}
-	return NULL;
+    if (in_request.size() != 0)
+    {
+        RsFileRequest *fi = dynamic_cast<RsFileRequest *>(in_request.front());
+        if (!fi) {
+            delete in_request.front();
+        }
+        in_request.pop_front();
+        return fi;
+    }
+    return NULL;
 }
 
 RsFileData *pqihandler::GetFileData()
 {
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+    RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
-	if (in_data.size() != 0)
-	{
-		RsFileData *fi = dynamic_cast<RsFileData *>(in_data.front());
-		if (!fi) { delete in_data.front(); }
-		in_data.pop_front();
-		return fi;
-	}
-	return NULL;
+    if (in_data.size() != 0)
+    {
+        RsFileData *fi = dynamic_cast<RsFileData *>(in_data.front());
+        if (!fi) {
+            delete in_data.front();
+        }
+        in_data.pop_front();
+        return fi;
+    }
+    return NULL;
 }
 
 RsRawItem *pqihandler::GetRsRawItem()
 {
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+    RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
-	if (in_service.size() != 0)
-	{
-		RsRawItem *fi = dynamic_cast<RsRawItem *>(in_service.front());
-		if (!fi) { delete in_service.front(); }
-		in_service.pop_front();
-		return fi;
-	}
-	return NULL;
+    if (in_service.size() != 0)
+    {
+        RsRawItem *fi = dynamic_cast<RsRawItem *>(in_service.front());
+        if (!fi) {
+            delete in_service.front();
+        }
+        in_service.pop_front();
+        return fi;
+    }
+    return NULL;
 }
 
 static const float MIN_RATE = 0.01; // 10 B/s
 
-// internal fn to send updates 
+// internal fn to send updates
 int     pqihandler::UpdateRates()
 {
-	std::map<std::string, SearchModule *>::iterator it;
-	int num_sm = mods.size();
+    std::map<std::string, SearchModule *>::iterator it;
+    int num_sm = mods.size();
 
-	float avail_in = getMaxRate(true);
-	float avail_out = getMaxRate(false);
+    float avail_in = getMaxRate(true);
+    float avail_out = getMaxRate(false);
 
-	float used_bw_in = 0;
-	float used_bw_out = 0;
+    float used_bw_in = 0;
+    float used_bw_out = 0;
 
-	/* Lock once rates have been retrieved */
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+    /* Lock once rates have been retrieved */
+    RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
-	int effectiveUploadsSm = 0;
-	int effectiveDownloadsSm = 0;
-	// loop through modules to get the used bandwith and the number of modules that are affectively transfering
-	//std::cerr << " Looping through modules" << std::endl;
-	for(it = mods.begin(); it != mods.end(); it++)
-	{
-		SearchModule *mod = (it -> second);
-		float crate_in = mod -> pqi -> getRate(true);
-		if (crate_in > 0.01 * avail_in || crate_in > 0.1)
-		{
-		    effectiveDownloadsSm ++;
-		}
+    int effectiveUploadsSm = 0;
+    int effectiveDownloadsSm = 0;
+    // loop through modules to get the used bandwith and the number of modules that are affectively transfering
+    //std::cerr << " Looping through modules" << std::endl;
+    for (it = mods.begin(); it != mods.end(); it++)
+    {
+        SearchModule *mod = (it -> second);
+        float crate_in = mod -> pqi -> getRate(true);
+        if (crate_in > 0.01 * avail_in || crate_in > 0.1)
+        {
+            effectiveDownloadsSm ++;
+        }
 
-		float crate_out = mod -> pqi -> getRate(false);
-		if (crate_out > 0.01 * avail_out || crate_out > 0.1)
-		{
-		    effectiveUploadsSm ++;
-		}
+        float crate_out = mod -> pqi -> getRate(false);
+        if (crate_out > 0.01 * avail_out || crate_out > 0.1)
+        {
+            effectiveUploadsSm ++;
+        }
 
-		used_bw_in += crate_in;
-		used_bw_out += crate_out;
-	}
+        used_bw_in += crate_in;
+        used_bw_out += crate_out;
+    }
 //	std::cerr << "Totals (In) Used B/W " << used_bw_in;
 //	std::cerr << " Available B/W " << avail_in;
 //	std::cerr << " Effective transfers " << effectiveDownloadsSm << std::endl;
@@ -587,81 +598,81 @@ int     pqihandler::UpdateRates()
 //	std::cerr << " Available B/W " << avail_out;
 //	std::cerr << " Effective transfers " << effectiveUploadsSm << std::endl;
 
-	locked_StoreCurrentRates(used_bw_in, used_bw_out);
+    locked_StoreCurrentRates(used_bw_in, used_bw_out);
 
-	//computing average rates for effective transfers
-	float max_in_effective = avail_in / num_sm;
-	if (effectiveDownloadsSm != 0) {
-	    max_in_effective = avail_in / effectiveDownloadsSm;
-	}
-	float max_out_effective = avail_out / num_sm;
-	if (effectiveUploadsSm != 0) {
-	    max_out_effective = avail_out / effectiveUploadsSm;
-	}
+    //computing average rates for effective transfers
+    float max_in_effective = avail_in / num_sm;
+    if (effectiveDownloadsSm != 0) {
+        max_in_effective = avail_in / effectiveDownloadsSm;
+    }
+    float max_out_effective = avail_out / num_sm;
+    if (effectiveUploadsSm != 0) {
+        max_out_effective = avail_out / effectiveUploadsSm;
+    }
 
-	//modify the outgoing rates if bandwith is not used well
-	float rate_out_modifier = 0;
-	if (used_bw_out / avail_out < 0.95) {
-	    rate_out_modifier = 0.001 * avail_out;
-	} else 	if (used_bw_out / avail_out > 1.05) {
-	    rate_out_modifier = - 0.001 * avail_out;
-	}
-	if (rate_out_modifier != 0) {
-	    for(it = mods.begin(); it != mods.end(); it++)
-	    {
-		    SearchModule *mod = (it -> second);
-			mod -> pqi -> setMaxRate(false, mod -> pqi -> getMaxRate(false) + rate_out_modifier);
-	    }
-	}
+    //modify the outgoing rates if bandwith is not used well
+    float rate_out_modifier = 0;
+    if (used_bw_out / avail_out < 0.95) {
+        rate_out_modifier = 0.001 * avail_out;
+    } else 	if (used_bw_out / avail_out > 1.05) {
+        rate_out_modifier = - 0.001 * avail_out;
+    }
+    if (rate_out_modifier != 0) {
+        for (it = mods.begin(); it != mods.end(); it++)
+        {
+            SearchModule *mod = (it -> second);
+            mod -> pqi -> setMaxRate(false, mod -> pqi -> getMaxRate(false) + rate_out_modifier);
+        }
+    }
 
-	//modify the incoming rates if bandwith is not used well
-	float rate_in_modifier = 0;
-	if (used_bw_in / avail_in < 0.95) {
-	    rate_in_modifier = 0.001 * avail_in;
-	} else 	if (used_bw_in / avail_in > 1.05) {
-	    rate_in_modifier = - 0.001 * avail_in;
-	}
-	if (rate_in_modifier != 0) {
-	    for(it = mods.begin(); it != mods.end(); it++)
-	    {
-		    SearchModule *mod = (it -> second);
-			mod -> pqi -> setMaxRate(true, mod -> pqi -> getMaxRate(true) + rate_in_modifier);
-	    }
-	}
+    //modify the incoming rates if bandwith is not used well
+    float rate_in_modifier = 0;
+    if (used_bw_in / avail_in < 0.95) {
+        rate_in_modifier = 0.001 * avail_in;
+    } else 	if (used_bw_in / avail_in > 1.05) {
+        rate_in_modifier = - 0.001 * avail_in;
+    }
+    if (rate_in_modifier != 0) {
+        for (it = mods.begin(); it != mods.end(); it++)
+        {
+            SearchModule *mod = (it -> second);
+            mod -> pqi -> setMaxRate(true, mod -> pqi -> getMaxRate(true) + rate_in_modifier);
+        }
+    }
 
-	//cap the rates
-	for(it = mods.begin(); it != mods.end(); it++)
-	{
-		SearchModule *mod = (it -> second);
-		if (mod -> pqi -> getMaxRate(false) < max_out_effective) {
-		    mod -> pqi -> setMaxRate(false, max_out_effective);
-		}
-		if (mod -> pqi -> getMaxRate(false) > avail_out) {
-		    mod -> pqi -> setMaxRate(false, avail_out);
-		}
-		if (mod -> pqi -> getMaxRate(true) < max_in_effective) {
-		    mod -> pqi -> setMaxRate(true, max_in_effective);
-		}
-		if (mod -> pqi -> getMaxRate(true) > avail_in) {
-		    mod -> pqi -> setMaxRate(true, avail_in);
-		}
-	}
+    //cap the rates
+    for (it = mods.begin(); it != mods.end(); it++)
+    {
+        SearchModule *mod = (it -> second);
+        if (mod -> pqi -> getMaxRate(false) < max_out_effective) {
+            mod -> pqi -> setMaxRate(false, max_out_effective);
+        }
+        if (mod -> pqi -> getMaxRate(false) > avail_out) {
+            mod -> pqi -> setMaxRate(false, avail_out);
+        }
+        if (mod -> pqi -> getMaxRate(true) < max_in_effective) {
+            mod -> pqi -> setMaxRate(true, max_in_effective);
+        }
+        if (mod -> pqi -> getMaxRate(true) > avail_in) {
+            mod -> pqi -> setMaxRate(true, avail_in);
+        }
+    }
 
-	return 1;
+    return 1;
 }
 
 void    pqihandler::getCurrentRates(float &in, float &out)
 {
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+    RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
-	in = rateTotal_in;
-	out = rateTotal_out;
+    in = rateTotal_in;
+    out = rateTotal_out;
 }
 
 void    pqihandler::locked_StoreCurrentRates(float in, float out)
 {
-	rateTotal_in = in;
-	rateTotal_out = out;
+    rateTotal_in = in;
+    rateTotal_out = out;
 }
 
 
@@ -686,20 +697,20 @@ void    pqihandler::locked_StoreCurrentRates(float in, float out)
 
 void pqihandler::setMaxRate(bool in, float val)
 {
-        RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-        if (in)
-                rateMax_in = val;
-        else
-                rateMax_out = val;
-        return;
+    RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+    if (in)
+        rateMax_in = val;
+    else
+        rateMax_out = val;
+    return;
 }
 
 float pqihandler::getMaxRate(bool in)
 {
-        RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-        if (in)
-                return rateMax_in;
-        else
-                return rateMax_out;
+    RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+    if (in)
+        return rateMax_in;
+    else
+        return rateMax_out;
 }
 

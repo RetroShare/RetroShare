@@ -35,29 +35,31 @@
 
 class Indicator
 {
-	public:
-	Indicator(uint16_t n = 1)
-	:num(n), changeFlags(n) {IndicateChanged();}
-void	IndicateChanged()
-	{
-		for(uint16_t i = 0; i < num; i++)
-			changeFlags[i]=true;
-	}
+public:
+    Indicator(uint16_t n = 1)
+            :num(n), changeFlags(n) {
+        IndicateChanged();
+    }
+    void	IndicateChanged()
+    {
+        for (uint16_t i = 0; i < num; i++)
+            changeFlags[i]=true;
+    }
 
-bool	Changed(uint16_t idx = 0)
-	{
-		/* catch overflow */
-		if (idx > num - 1)
-			return false;
+    bool	Changed(uint16_t idx = 0)
+    {
+        /* catch overflow */
+        if (idx > num - 1)
+            return false;
 
-		bool ans = changeFlags[idx];
-		changeFlags[idx] = false;
-		return ans;
-	}
+        bool ans = changeFlags[idx];
+        changeFlags[idx] = false;
+        return ans;
+    }
 
-	private:
-	uint16_t num;
-	std::vector<bool> changeFlags;
+private:
+    uint16_t num;
+    std::vector<bool> changeFlags;
 };
 
 

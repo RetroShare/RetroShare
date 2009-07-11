@@ -27,7 +27,7 @@
 #ifndef SERVICE_PORT_FORWARD_HEADER
 #define SERVICE_PORT_FORWARD_HEADER
 
-/* 
+/*
  * The start of a port forwarding service.
  *
  * This is just a very rough example of what might be required for version 1.
@@ -45,7 +45,7 @@
  *
  * THIRD VERSION:
  *
- * add broadcast/multicast forwardings. 
+ * add broadcast/multicast forwardings.
  * i.e. data gets sent to multiple peers.
  *
  * each forwarding with then consist of 'port, connectionId + list of peerIds'
@@ -64,24 +64,24 @@
 
 class p3PortService: public p3Service
 {
-	public:
-	p3PortService(p3ConnectMgr *cm);
+public:
+    p3PortService(p3ConnectMgr *cm);
 
-	/* example setup functions */
-bool	enablePortForwarding(uint32_t port, std::string peerId);
+    /* example setup functions */
+    bool	enablePortForwarding(uint32_t port, std::string peerId);
 
-	/* overloaded */
-virtual int   tick();
+    /* overloaded */
+    virtual int   tick();
 
-	private:
+private:
 
-	p3ConnectMgr *mConnMgr;
+    p3ConnectMgr *mConnMgr;
 
-	bool mEnabled;
-	bool mPeerOnline;
+    bool mEnabled;
+    bool mPeerOnline;
 
-	uint32_t mPort;
-	std::string mPeerId;
+    uint32_t mPort;
+    std::string mPeerId;
 
 };
 

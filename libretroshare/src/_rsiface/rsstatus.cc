@@ -25,9 +25,9 @@ std::string RsStatusString(uint32_t status)
 
 std::ostream& operator<<(std::ostream& out, const StatusInfo& si)
 {
-        out << "StatusInfo: " << std::endl;
-        out << "id: " << si.id << std::endl;
-        out << "status: " << si.status;
-        out << " (" << RsStatusString(si.status) << ")" << std::endl;
-        return out;
+    out << "StatusInfo: " << std::endl;
+    out << "id: " << si.id << std::endl;
+    out << "status: " << si.status;
+    out << " (" << RsStatusString(si.status) << ")" << std::endl;
+    return out;
 }

@@ -14,24 +14,24 @@
 
 class upnpentry
 {
-	public:
-	std::string name;
-	std::string id;
-	struct sockaddr_in addr;
-	unsigned int flags;
-	int status;
-	int lastTs;
+public:
+    std::string name;
+    std::string id;
+    struct sockaddr_in addr;
+    unsigned int flags;
+    int status;
+    int lastTs;
 };
 
 class upnpforward
 {
-	public:
-	std::string name;
-	unsigned int flags;
-	struct sockaddr_in iaddr;
-	struct sockaddr_in eaddr;
-	int status;
-	int lastTs;
+public:
+    std::string name;
+    unsigned int flags;
+    struct sockaddr_in iaddr;
+    struct sockaddr_in eaddr;
+    int status;
+    int lastTs;
 };
 
 
@@ -46,59 +46,59 @@ class uPnPConfigData;
 
 class upnphandler: public pqiNetAssistFirewall
 {
-	public:
+public:
 
-	upnphandler();
-virtual	~upnphandler();
+    upnphandler();
+    virtual	~upnphandler();
 
-	/* External Interface (pqiNetAssistFirewall) */
-virtual void    enable(bool active);
-virtual void    shutdown();
-virtual void 	restart();
+    /* External Interface (pqiNetAssistFirewall) */
+    virtual void    enable(bool active);
+    virtual void    shutdown();
+    virtual void 	restart();
 
-virtual bool    getEnabled();
-virtual bool    getActive();
+    virtual bool    getEnabled();
+    virtual bool    getActive();
 
-virtual void    setInternalPort(unsigned short iport_in);
-virtual void    setExternalPort(unsigned short eport_in);
-virtual bool    getInternalAddress(struct sockaddr_in &addr);
-virtual bool    getExternalAddress(struct sockaddr_in &addr);
+    virtual void    setInternalPort(unsigned short iport_in);
+    virtual void    setExternalPort(unsigned short eport_in);
+    virtual bool    getInternalAddress(struct sockaddr_in &addr);
+    virtual bool    getExternalAddress(struct sockaddr_in &addr);
 
-/* Public functions - for background thread operation, 
- * but effectively private from rest of RS, as in derived class
- */
+    /* Public functions - for background thread operation,
+     * but effectively private from rest of RS, as in derived class
+     */
 
-bool 	start_upnp();
-bool	shutdown_upnp();
+    bool 	start_upnp();
+    bool	shutdown_upnp();
 
-bool initUPnPState();
-bool printUPnPState();
+    bool initUPnPState();
+    bool printUPnPState();
 
-	private:
+private:
 
-bool background_setup_upnp(bool, bool);
-bool checkUPnPActive();
+    bool background_setup_upnp(bool, bool);
+    bool checkUPnPActive();
 
-	/* Mutex for data below */
-	RsMutex dataMtx;
+    /* Mutex for data below */
+    RsMutex dataMtx;
 
-	bool toEnable;   /* overall on/off switch */
-	bool toStart;  /* if set start forwarding */
-	bool toStop;   /* if set stop  forwarding */
+    bool toEnable;   /* overall on/off switch */
+    bool toStart;  /* if set start forwarding */
+    bool toStop;   /* if set stop  forwarding */
 
-	unsigned short iport;
-	unsigned short eport;       /* config            */
-	unsigned short eport_curr;  /* current forwarded */
+    unsigned short iport;
+    unsigned short eport;       /* config            */
+    unsigned short eport_curr;  /* current forwarded */
 
-	/* info from upnp */
-	unsigned int upnpState;
-	uPnPConfigData *upnpConfig;
+    /* info from upnp */
+    unsigned int upnpState;
+    uPnPConfigData *upnpConfig;
 
-	struct sockaddr_in upnp_iaddr;
-	struct sockaddr_in upnp_eaddr;
+    struct sockaddr_in upnp_iaddr;
+    struct sockaddr_in upnp_eaddr;
 
-	/* active port forwarding */
-	std::list<upnpforward> activeForwards;
+    /* active port forwarding */
+    std::list<upnpforward> activeForwards;
 
 };
 

@@ -34,31 +34,35 @@
 
 class RsChannelMsg: public RsItem
 {
-	public:
-	RsChannelMsg() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_CHANNEL, 
-		RS_PKT_SUBTYPE_DEFAULT)
-	{ return; }
-virtual ~RsChannelMsg();
-virtual void clear();
+public:
+    RsChannelMsg()
+            :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_CHANNEL,
+                    RS_PKT_SUBTYPE_DEFAULT)
+    {
+        return;
+    }
+    virtual ~RsChannelMsg();
+    virtual void clear();
 
-	RsTlvBinaryData cert;   /* Mandatory */
-	RsTlvFileSet  files;  /* Mandatory */
-	RsTlvBinaryData sign;   /* Mandatory */
+    RsTlvBinaryData cert;   /* Mandatory */
+    RsTlvFileSet  files;  /* Mandatory */
+    RsTlvBinaryData sign;   /* Mandatory */
 };
 
 class RsChannelMsgSerialiser: public RsSerialType
 {
-	public:
-	RsChannelMsgSerialiser()
-        :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_CHANNEL)
-	{ return; }
+public:
+    RsChannelMsgSerialiser()
+            :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_CHANNEL)
+    {
+        return;
+    }
 
-virtual     ~RsChannelMsgSerialiser();
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
+    virtual     ~RsChannelMsgSerialiser();
+
+    virtual	uint32_t    size(RsItem *);
+    virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
+    virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 };
 
@@ -66,33 +70,37 @@ virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 class RsChatItem: public RsItem
 {
-	public:
-	RsChatItem() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_CHAT, 
-		RS_PKT_SUBTYPE_DEFAULT)
-	{ return; }
-virtual ~RsChatItem();
-virtual void clear();
-std::ostream &print(std::ostream &out, uint16_t indent);
+public:
+    RsChatItem()
+            :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_CHAT,
+                    RS_PKT_SUBTYPE_DEFAULT)
+    {
+        return;
+    }
+    virtual ~RsChatItem();
+    virtual void clear();
+    std::ostream &print(std::ostream &out, uint16_t indent);
 
-	uint32_t chatFlags;
-	uint32_t sendTime;
+    uint32_t chatFlags;
+    uint32_t sendTime;
 
-	std::string message;
+    std::string message;
 
 };
 
 class RsChatItemSerialiser: public RsSerialType
 {
-	public:
-	RsChatItemSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_CHAT)
-	{ return; }
-virtual     ~RsChatItemSerialiser();
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
+public:
+    RsChatItemSerialiser()
+            :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_CHAT)
+    {
+        return;
+    }
+    virtual     ~RsChatItemSerialiser();
+
+    virtual	uint32_t    size(RsItem *);
+    virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
+    virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 };
 
@@ -100,40 +108,44 @@ virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 class RsMessageItem: public RsItem
 {
-	public:
-	RsMessageItem() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_MSG, 
-		RS_PKT_SUBTYPE_DEFAULT)
-	{ return; }
-virtual ~RsMessageItem();
-virtual void clear();
-std::ostream &print(std::ostream &out, uint16_t indent);
+public:
+    RsMessageItem()
+            :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_MSG,
+                    RS_PKT_SUBTYPE_DEFAULT)
+    {
+        return;
+    }
+    virtual ~RsMessageItem();
+    virtual void clear();
+    std::ostream &print(std::ostream &out, uint16_t indent);
 
-	uint32_t msgFlags;
-	uint32_t sendTime;
-	uint32_t recvTime;
+    uint32_t msgFlags;
+    uint32_t sendTime;
+    uint32_t recvTime;
 
-	std::string subject;
-	std::string message;
+    std::string subject;
+    std::string message;
 
-	RsTlvPeerIdSet msgto;
-	RsTlvPeerIdSet msgcc;
-	RsTlvPeerIdSet msgbcc;
+    RsTlvPeerIdSet msgto;
+    RsTlvPeerIdSet msgcc;
+    RsTlvPeerIdSet msgbcc;
 
-	RsTlvFileSet attachment;
+    RsTlvFileSet attachment;
 };
 
 class RsMessageItemSerialiser: public RsSerialType
 {
-	public:
-	RsMessageItemSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_MSG)
-	{ return; }
-virtual     ~RsMessageItemSerialiser();
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
+public:
+    RsMessageItemSerialiser()
+            :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_MSG)
+    {
+        return;
+    }
+    virtual     ~RsMessageItemSerialiser();
+
+    virtual	uint32_t    size(RsItem *);
+    virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
+    virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 };
 
@@ -141,31 +153,35 @@ virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 class RsStatus: public RsItem
 {
-	public:
-	RsStatus() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_STATUS, 
-		RS_PKT_SUBTYPE_DEFAULT)
-	{ return; }
-virtual ~RsStatus();
-virtual void clear();
-std::ostream &print(std::ostream &out, uint16_t indent);
+public:
+    RsStatus()
+            :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_STATUS,
+                    RS_PKT_SUBTYPE_DEFAULT)
+    {
+        return;
+    }
+    virtual ~RsStatus();
+    virtual void clear();
+    std::ostream &print(std::ostream &out, uint16_t indent);
 
-	/* status */
-	uint32_t status;
-	RsTlvServiceIdSet services;
+    /* status */
+    uint32_t status;
+    RsTlvServiceIdSet services;
 };
 
 class RsStatusSerialiser: public RsSerialType
 {
-	public:
-	RsStatusSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_STATUS)
-	{ return; }
-virtual     ~RsStatusSerialiser();
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
+public:
+    RsStatusSerialiser()
+            :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_STATUS)
+    {
+        return;
+    }
+    virtual     ~RsStatusSerialiser();
+
+    virtual	uint32_t    size(RsItem *);
+    virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
+    virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 };
 

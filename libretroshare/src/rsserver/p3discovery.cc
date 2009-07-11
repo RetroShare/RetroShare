@@ -31,20 +31,20 @@ RsDisc *rsDisc = NULL;
 
 bool p3Discovery::getDiscFriends(std::string id, std::list<std::string> &friends)
 {
-	if (mDisc)
-	{
-		return mDisc->potentialproxies(id, friends);
-	}
-	return false;
+    if (mDisc)
+    {
+        return mDisc->potentialproxies(id, friends);
+    }
+    return false;
 }
 
 bool p3Discovery::getDiscVersions(std::map<std::string, std::string> &versions)
 {
-	if (mDisc)
-	{
-		mDisc->getversions(versions);
-		return true;
-	}
-	return false;
+    if (mDisc)
+    {
+        mDisc->getversions(versions);
+        return true;
+    }
+    return false;
 }
 

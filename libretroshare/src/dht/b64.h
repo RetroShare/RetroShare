@@ -37,6 +37,6 @@ uint32_t DataLenFromBase64(std::string input);
 std::string convertDataToBase64(unsigned char *data, uint32_t dlen);
 bool convertDataFromBase64(std::string input, unsigned char *data, uint32_t *dlen);
 
-		
+
 #endif
 

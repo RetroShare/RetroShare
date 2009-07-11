@@ -50,95 +50,95 @@ RsMsgs *rsMsgs = NULL;
 
 bool p3Msgs::getMessageSummaries(std::list<MsgInfoSummary> &msgList)
 {
-	return mMsgSrv->getMessageSummaries(msgList);
+    return mMsgSrv->getMessageSummaries(msgList);
 }
 
 
 
 bool p3Msgs::getMessage(std::string mid, MessageInfo &msg)
 {
-	return mMsgSrv->getMessage(mid, msg);
+    return mMsgSrv->getMessage(mid, msg);
 }
 
 
 
 /****************************************/
 /****************************************/
-	/* Message Items */
+/* Message Items */
 bool p3Msgs::MessageSend(MessageInfo &info)
 {
-	return mMsgSrv->MessageSend(info);
+    return mMsgSrv->MessageSend(info);
 }
 
 /****************************************/
 /****************************************/
 bool p3Msgs::MessageDelete(std::string mid)
 {
-	//std::cerr << "p3Msgs::MessageDelete() ";
-	//std::cerr << "mid: " << mid << std::endl;
+    //std::cerr << "p3Msgs::MessageDelete() ";
+    //std::cerr << "mid: " << mid << std::endl;
 
-	mMsgSrv -> removeMsgId(mid);
+    mMsgSrv -> removeMsgId(mid);
 
-	return 1;
+    return 1;
 }
 
 bool p3Msgs::MessageRead(std::string mid)
 {
-	//std::cerr << "p3Msgs::MessageRead() ";
-	//std::cerr << "mid: " << mid << std::endl;
+    //std::cerr << "p3Msgs::MessageRead() ";
+    //std::cerr << "mid: " << mid << std::endl;
 
-	mMsgSrv -> markMsgIdRead(mid);
+    mMsgSrv -> markMsgIdRead(mid);
 
-	return 1;
+    return 1;
 }
 
 /****************************************/
 /****************************************/
 bool 	p3Msgs::ChatSend(ChatInfo &ci)
 {
-	/* send a message to all for now */
-	if (ci.chatflags & RS_CHAT_PRIVATE)
-	{
-	  mChatSrv -> sendPrivateChat(ci.msg, ci.rsid);
-	}
-	else
-	{
-	  /* global */
-	  mChatSrv -> sendChat(ci.msg);
-	}
-	return true;
+    /* send a message to all for now */
+    if (ci.chatflags & RS_CHAT_PRIVATE)
+    {
+        mChatSrv -> sendPrivateChat(ci.msg, ci.rsid);
+    }
+    else
+    {
+        /* global */
+        mChatSrv -> sendChat(ci.msg);
+    }
+    return true;
 }
 
-void p3Msgs::sendStatusString(const std::string& peer_id,const std::string& status_string) 
+void p3Msgs::sendStatusString(const std::string& peer_id,const std::string& status_string)
 {
-	mChatSrv->sendStatusString(peer_id,status_string);
+    mChatSrv->sendStatusString(peer_id,status_string);
 }
 
 bool    p3Msgs::chatAvailable()
 {
-	return mChatSrv->receivedItems();
+    return mChatSrv->receivedItems();
 }
 
 bool	p3Msgs::getNewChat(std::list<ChatInfo> &chats)
 {
-	/* get any messages and push them to iface */
+    /* get any messages and push them to iface */
 
-	// get the items from the list.
-	std::list<RsChatMsgItem *> clist = mChatSrv -> getChatQueue();
-	if (clist.size() < 1)
-	{
-		return false;
-	}
+    // get the items from the list.
+    std::list<RsChatMsgItem *> clist = mChatSrv -> getChatQueue();
+    if (clist.size() < 1)
+    {
+        return false;
+    }
 
-	std::list<RsChatMsgItem *>::iterator it;
-	for(it = clist.begin(); it != clist.end(); it++)
-	{
-		ChatInfo ci;
-		initRsChatInfo((*it), ci);
-		chats.push_back(ci);
-		delete (*it);
-	}
-	return true;
+    std::list<RsChatMsgItem *>::iterator it;
+    for (it = clist.begin(); it != clist.end(); it++)
+    {
+        ChatInfo ci;
+        initRsChatInfo((*it), ci);
+        chats.push_back(ci);
+        delete (*it);
+    }
+    return true;
 }
 
 /**** HELPER FNS For Chat/Msg/Channel Lists ************
@@ -149,43 +149,43 @@ bool	p3Msgs::getNewChat(std::list<ChatInfo> &chats)
 
 void p3Msgs::initRsChatInfo(RsChatMsgItem *c, ChatInfo &i)
 {
-	i.rsid = c -> PeerId();
-	i.name = mAuthMgr->getName(i.rsid);
-	i.chatflags = 0 ;
-	i.msg  = c -> message;
+    i.rsid = c -> PeerId();
+    i.name = mAuthMgr->getName(i.rsid);
+    i.chatflags = 0 ;
+    i.msg  = c -> message;
 
-	if (c -> chatFlags & RS_CHAT_FLAG_PRIVATE)
-	{
-		i.chatflags |= RS_CHAT_PRIVATE;
-		//std::cerr << "RsServer::initRsChatInfo() Chat Private!!!";
-	}
-	else
-	{
-		i.chatflags |= RS_CHAT_PUBLIC;
-		//std::cerr << "RsServer::initRsChatInfo() Chat Public!!!";
-	}
-	//std::cerr << std::endl;
+    if (c -> chatFlags & RS_CHAT_FLAG_PRIVATE)
+    {
+        i.chatflags |= RS_CHAT_PRIVATE;
+        //std::cerr << "RsServer::initRsChatInfo() Chat Private!!!";
+    }
+    else
+    {
+        i.chatflags |= RS_CHAT_PUBLIC;
+        //std::cerr << "RsServer::initRsChatInfo() Chat Public!!!";
+    }
+    //std::cerr << std::endl;
 
-	if(c->chatFlags & RS_CHAT_FLAG_AVATAR_AVAILABLE)
-	{
-	   std::cerr << "p3msgs::initRsChatInfo(): new avatar available for peer " << i.rsid << ". Sending above." << std::endl ;
-	   i.chatflags |= RS_CHAT_AVATAR_AVAILABLE;
-	}
+    if (c->chatFlags & RS_CHAT_FLAG_AVATAR_AVAILABLE)
+    {
+        std::cerr << "p3msgs::initRsChatInfo(): new avatar available for peer " << i.rsid << ". Sending above." << std::endl ;
+        i.chatflags |= RS_CHAT_AVATAR_AVAILABLE;
+    }
 }
 
 void p3Msgs::getOwnAvatarData(unsigned char *& data,int& size)
 {
-	mChatSrv->getOwnAvatarJpegData(data,size) ;
+    mChatSrv->getOwnAvatarJpegData(data,size) ;
 }
 
 void p3Msgs::setOwnAvatarData(const unsigned char *data,int size)
 {
-	mChatSrv->setOwnAvatarJpegData(data,size) ;
+    mChatSrv->setOwnAvatarJpegData(data,size) ;
 }
 
 void p3Msgs::getAvatarData(std::string pid,unsigned char *& data,int& size)
 {
-	mChatSrv->getAvatarJpegData(pid,data,size) ;
+    mChatSrv->getAvatarJpegData(pid,data,size) ;
 }
 
 

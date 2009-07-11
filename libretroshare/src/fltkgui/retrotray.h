@@ -66,43 +66,43 @@ class retroTray
 {
 
 public:
-	retroTray();
-int	init(HINSTANCE hi);
-int	installIcon(HICON icn, UserInterface *ui);
+    retroTray();
+    int	init(HINSTANCE hi);
+    int	installIcon(HICON icn, UserInterface *ui);
 
-int	buttonPressed(int, int);
-private:		
-void	showRetroShare() 
-{
-	if (getSSLRoot() -> active())
-	{
-		retroRoot -> main_win -> show();
-		visible = true;
-	}
-	else
-	{
-		retroRoot -> welcome_window -> show();
-	}
-}
+    int	buttonPressed(int, int);
+private:
+    void	showRetroShare()
+    {
+        if (getSSLRoot() -> active())
+        {
+            retroRoot -> main_win -> show();
+            visible = true;
+        }
+        else
+        {
+            retroRoot -> welcome_window -> show();
+        }
+    }
 
-void	hideRetroShare() 
-{
-	retroRoot -> main_win -> hide();
-	retroRoot -> welcome_window -> hide();
-	retroRoot -> alert_window -> hide();
-	retroRoot -> chatter_window -> hide();
+    void	hideRetroShare()
+    {
+        retroRoot -> main_win -> hide();
+        retroRoot -> welcome_window -> hide();
+        retroRoot -> alert_window -> hide();
+        retroRoot -> chatter_window -> hide();
 
-	visible = false;
-}
+        visible = false;
+    }
 
-int	showTrayMenu();
+    int	showTrayMenu();
 
-	HINSTANCE hInst;
-	HWND hWnd;
-	HICON hIcon;
-	NOTIFYICONDATA nid;
-	UserInterface *retroRoot;
-	bool visible;
+    HINSTANCE hInst;
+    HWND hWnd;
+    HICON hIcon;
+    NOTIFYICONDATA nid;
+    UserInterface *retroRoot;
+    bool visible;
 };
 
 

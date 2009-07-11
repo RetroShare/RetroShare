@@ -44,92 +44,92 @@ static int test_RsFileData();
 
 int main()
 {
-	std::cerr << "RsFile[Item/Data/...] Tests" << std::endl;
+    std::cerr << "RsFile[Item/Data/...] Tests" << std::endl;
 
 
-	test_RsFileItem(); 
-	//test_RsFileData(); 
-	
-	FINALREPORT("RsTlvFile[Item/Data/...] Tests");
+    test_RsFileItem();
+    //test_RsFileData();
 
-	return TESTRESULT();
+    FINALREPORT("RsTlvFile[Item/Data/...] Tests");
+
+    return TESTRESULT();
 }
 
 int test_RsFileItem()
 {
-	/* make a serialisable FileItem */
+    /* make a serialisable FileItem */
 
-	RsSerialiser srl;
-	RsFileRequest rsfi;
+    RsSerialiser srl;
+    RsFileRequest rsfi;
 
-	/* initialise */
-	rsfi.file.filesize = 101010;
-	rsfi.file.hash = "ABCDEFEGHE";
-	rsfi.file.name = "TestFile.txt";
-	rsfi.file.pop  = 12;
-	rsfi.file.age  = 456;
+    /* initialise */
+    rsfi.file.filesize = 101010;
+    rsfi.file.hash = "ABCDEFEGHE";
+    rsfi.file.name = "TestFile.txt";
+    rsfi.file.pop  = 12;
+    rsfi.file.age  = 456;
 
-	/* attempt to serialise it before we add it to the serialiser */
+    /* attempt to serialise it before we add it to the serialiser */
 
-	CHECK(0 == srl.size(&rsfi));
+    CHECK(0 == srl.size(&rsfi));
 
 #define MAX_BUFSIZE 16000
 
-	char buffer[MAX_BUFSIZE];
-	uint32_t sersize = MAX_BUFSIZE;
+    char buffer[MAX_BUFSIZE];
+    uint32_t sersize = MAX_BUFSIZE;
 
-	CHECK(false == srl.serialise(&rsfi, (void *) buffer, &sersize));
-
-
-	/* now add to serialiser */
-
-	RsFileItemSerialiser *rsfis = new RsFileItemSerialiser();
-	srl.addSerialType(rsfis);
-
-	uint32_t size = srl.size(&rsfi);
-	bool done = srl.serialise(&rsfi, (void *) buffer, &sersize);
-
-	std::cerr << "test_RsFileItem() size: " << size << std::endl;
-	std::cerr << "test_RsFileItem() done: " << done << std::endl;
-	std::cerr << "test_RsFileItem() sersize: " << sersize << std::endl;
-
-	std::cerr << "test_RsFileItem() serialised:" << std::endl;
-	displayRawPacket(std::cerr, (void *) buffer, sersize);
-
-	CHECK(done == true);
-
-	uint32_t sersize2 = sersize;
-	RsItem *output = srl.deserialise((void *) buffer, &sersize2);
-
-	CHECK(output != NULL);
-	CHECK(sersize2 == sersize);
-
-	RsFileRequest *outfi = dynamic_cast<RsFileRequest *>(output);
-
-	CHECK(outfi != NULL);
-
-	if (outfi)
-	{
-		/* check the data is the same */
-		CHECK(rsfi.file.filesize == outfi->file.filesize);
-		CHECK(rsfi.file.hash == outfi->file.hash);
-		CHECK(rsfi.file.name == outfi->file.name);
-		CHECK(rsfi.file.path == outfi->file.path);
-		CHECK(rsfi.file.pop  == outfi->file.pop);
-		CHECK(rsfi.file.age  == outfi->file.age);
-	}
-
-	sersize2 = MAX_BUFSIZE;
-	bool done2 = srl.serialise(outfi, (void *) &(buffer[16*8]), &sersize2);
-
-	CHECK(sersize2 == sersize);
-
-	displayRawPacket(std::cerr, (void *) buffer, 16 * 8 + sersize2);
+    CHECK(false == srl.serialise(&rsfi, (void *) buffer, &sersize));
 
 
-	REPORT("Serialise/Deserialise RsFileRequest");
+    /* now add to serialiser */
 
-	return 1;
+    RsFileItemSerialiser *rsfis = new RsFileItemSerialiser();
+    srl.addSerialType(rsfis);
+
+    uint32_t size = srl.size(&rsfi);
+    bool done = srl.serialise(&rsfi, (void *) buffer, &sersize);
+
+    std::cerr << "test_RsFileItem() size: " << size << std::endl;
+    std::cerr << "test_RsFileItem() done: " << done << std::endl;
+    std::cerr << "test_RsFileItem() sersize: " << sersize << std::endl;
+
+    std::cerr << "test_RsFileItem() serialised:" << std::endl;
+    displayRawPacket(std::cerr, (void *) buffer, sersize);
+
+    CHECK(done == true);
+
+    uint32_t sersize2 = sersize;
+    RsItem *output = srl.deserialise((void *) buffer, &sersize2);
+
+    CHECK(output != NULL);
+    CHECK(sersize2 == sersize);
+
+    RsFileRequest *outfi = dynamic_cast<RsFileRequest *>(output);
+
+    CHECK(outfi != NULL);
+
+    if (outfi)
+    {
+        /* check the data is the same */
+        CHECK(rsfi.file.filesize == outfi->file.filesize);
+        CHECK(rsfi.file.hash == outfi->file.hash);
+        CHECK(rsfi.file.name == outfi->file.name);
+        CHECK(rsfi.file.path == outfi->file.path);
+        CHECK(rsfi.file.pop  == outfi->file.pop);
+        CHECK(rsfi.file.age  == outfi->file.age);
+    }
+
+    sersize2 = MAX_BUFSIZE;
+    bool done2 = srl.serialise(outfi, (void *) &(buffer[16*8]), &sersize2);
+
+    CHECK(sersize2 == sersize);
+
+    displayRawPacket(std::cerr, (void *) buffer, 16 * 8 + sersize2);
+
+
+    REPORT("Serialise/Deserialise RsFileRequest");
+
+    return 1;
 }
 
 

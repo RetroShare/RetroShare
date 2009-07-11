@@ -36,7 +36,7 @@
 
 #include "rsiface/rsrank.h"
 
-/* 
+/*
  * A Generic Ranking system.
  * Each User provides one cache...
  *
@@ -51,117 +51,117 @@ class RsRankLinkMsg;
 
 class RankGroup
 {
-	public:
+public:
 
-	std::string rid; /* Random Id */
-	std::wstring link; 
-	std::wstring title; 
-	float rank;
-	bool ownTag;
-	std::map<std::string, RsRankLinkMsg *>  comments;
+    std::string rid; /* Random Id */
+    std::wstring link;
+    std::wstring title;
+    float rank;
+    bool ownTag;
+    std::map<std::string, RsRankLinkMsg *>  comments;
 };
 
 
 class p3Ranking: public CacheSource, public CacheStore, public p3Config
 {
-	public:
+public:
 
-	p3Ranking(p3ConnectMgr *connMgr, 
-		uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
-		std::string sourcedir, std::string storedir, 
-		uint32_t storePeriod);
+    p3Ranking(p3ConnectMgr *connMgr,
+              uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
+              std::string sourcedir, std::string storedir,
+              uint32_t storePeriod);
 
-/******************************* CACHE SOURCE / STORE Interface *********************/
+    /******************************* CACHE SOURCE / STORE Interface *********************/
 
-	/* overloaded functions from Cache Source */
-virtual bool    loadLocalCache(const CacheData &data);
+    /* overloaded functions from Cache Source */
+    virtual bool    loadLocalCache(const CacheData &data);
 
-	/* overloaded functions from Cache Store */
-virtual int    loadCache(const CacheData &data);
+    /* overloaded functions from Cache Store */
+    virtual int    loadCache(const CacheData &data);
 
-/******************************* CACHE SOURCE / STORE Interface *********************/
+    /******************************* CACHE SOURCE / STORE Interface *********************/
 
-	public:
+public:
 
-/************* Extern Interface *******/
+    /************* Extern Interface *******/
 
-	/* changed */
-virtual bool updated();
+    /* changed */
+    virtual bool updated();
 
-        /* Set Sort Methods */
-virtual bool setSortPeriod(uint32_t period);
-virtual bool setSortMethod(uint32_t type);
-virtual bool clearPeerFilter();
-virtual bool setPeerFilter(std::list<std::string> peers);
+    /* Set Sort Methods */
+    virtual bool setSortPeriod(uint32_t period);
+    virtual bool setSortMethod(uint32_t type);
+    virtual bool clearPeerFilter();
+    virtual bool setPeerFilter(std::list<std::string> peers);
 
-        /* get Ids */
-virtual uint32_t getRankingsCount();
-virtual float   getMaxRank();
-virtual bool    getRankings(uint32_t first, uint32_t count, std::list<std::string> &rids);
-virtual bool    getRankDetails(std::string rid, RsRankDetails &details);
+    /* get Ids */
+    virtual uint32_t getRankingsCount();
+    virtual float   getMaxRank();
+    virtual bool    getRankings(uint32_t first, uint32_t count, std::list<std::string> &rids);
+    virtual bool    getRankDetails(std::string rid, RsRankDetails &details);
 
-        /* Add New Comment / Msg */
-virtual std::string newRankMsg(std::wstring link, std::wstring title, std::wstring comment, int32_t score);
-virtual bool updateComment(std::string rid, std::wstring comment, int32_t score);
-virtual std::string anonRankMsg(std::string rid, std::wstring link, std::wstring title);
-
-
-void	tick();
-
-void	loadRankFile(std::string filename, std::string src);
-void 	addRankMsg(RsRankLinkMsg *msg);
-void 	publishMsgs(bool own);
-
-float 	locked_calcRank(RankGroup &grp); /* returns 0->100 */
-void	locked_reSortGroup(RankGroup &grp);
-
-void	sortAllMsgs();
-pqistore *createStore(std::string file, std::string src, bool reading);
+    /* Add New Comment / Msg */
+    virtual std::string newRankMsg(std::wstring link, std::wstring title, std::wstring comment, int32_t score);
+    virtual bool updateComment(std::string rid, std::wstring comment, int32_t score);
+    virtual std::string anonRankMsg(std::string rid, std::wstring link, std::wstring title);
 
 
-	/****************** p3Config STUFF *******************/
-        protected:
-bool    addAnonToList(RsRankLinkMsg *msg);
+    void	tick();
 
-virtual RsSerialiser *setupSerialiser();
-virtual std::list<RsItem *> saveList(bool &cleanup);
-virtual bool loadList(std::list<RsItem *> load);
-virtual void    saveDone();
+    void	loadRankFile(std::string filename, std::string src);
+    void 	addRankMsg(RsRankLinkMsg *msg);
+    void 	publishMsgs(bool own);
 
-	private:	
+    float 	locked_calcRank(RankGroup &grp); /* returns 0->100 */
+    void	locked_reSortGroup(RankGroup &grp);
 
-void	createDummyData();
+    void	sortAllMsgs();
+    pqistore *createStore(std::string file, std::string src, bool reading);
 
-	p3ConnectMgr *mConnMgr;
 
-	RsMutex mRankMtx;
+    /****************** p3Config STUFF *******************/
+protected:
+    bool    addAnonToList(RsRankLinkMsg *msg);
 
-	/***** below here is locked *****/
+    virtual RsSerialiser *setupSerialiser();
+    virtual std::list<RsItem *> saveList(bool &cleanup);
+    virtual bool loadList(std::list<RsItem *> load);
+    virtual void    saveDone();
 
-	bool mRepublish;
-	bool mRepublishFriends;
-	time_t mRepublishFriendTS;
+private:
 
-	uint32_t mStorePeriod;
+    void	createDummyData();
 
-	std::string mOwnId;
-	bool mUpdated;
-	bool mRepost;
+    p3ConnectMgr *mConnMgr;
 
-	std::map<std::string, RankGroup> mData;
-	std::multimap<float, std::string> mRankings;
+    RsMutex mRankMtx;
 
-	/* Filter/Sort params */
-	std::list<std::string> mPeerFilter;
-	uint32_t mViewPeriod;
-	uint32_t mSortType;
+    /***** below here is locked *****/
 
-	/* Anonymous Link List */
-	std::list<RsRankLinkMsg *> mAnon;
+    bool mRepublish;
+    bool mRepublishFriends;
+    time_t mRepublishFriendTS;
+
+    uint32_t mStorePeriod;
+
+    std::string mOwnId;
+    bool mUpdated;
+    bool mRepost;
+
+    std::map<std::string, RankGroup> mData;
+    std::multimap<float, std::string> mRankings;
+
+    /* Filter/Sort params */
+    std::list<std::string> mPeerFilter;
+    uint32_t mViewPeriod;
+    uint32_t mSortType;
+
+    /* Anonymous Link List */
+    std::list<RsRankLinkMsg *> mAnon;
 
 };
 
-#endif 
+#endif
 
 
 

@@ -33,53 +33,53 @@
 
 pqiConnectCbDummy::pqiConnectCbDummy()
 {
-	std::cerr << "pqiConnectCbDummy()" << std::endl;
-	return;
+    std::cerr << "pqiConnectCbDummy()" << std::endl;
+    return;
 }
 
-pqiConnectCbDummy::~pqiConnectCbDummy() 
-{ 
-	return; 
-}
-
-void    pqiConnectCbDummy::peerStatus(std::string id, 
-			struct sockaddr_in laddr, struct sockaddr_in raddr,
-                       uint32_t type, uint32_t mode, uint32_t source)
+pqiConnectCbDummy::~pqiConnectCbDummy()
 {
-	std::cerr << "pqiConnectCbDummy::peerStatus()";
-	std::cerr << " id: " << id;
-
-	std::cerr << " laddr: " << inet_ntoa(laddr.sin_addr);
-	std::cerr << " lport: " << ntohs(laddr.sin_port);
-	std::cerr << " raddr: " << inet_ntoa(raddr.sin_addr);
-	std::cerr << " rport: " << ntohs(raddr.sin_port);
-
-	std::cerr << " type: " << type;
-	std::cerr << " mode: " << mode;
-	std::cerr << " source: " << source;
-	std::cerr << std::endl;
+    return;
 }
 
-void    pqiConnectCbDummy::peerConnectRequest(std::string id, 
-                        	struct sockaddr_in raddr, uint32_t source)
+void    pqiConnectCbDummy::peerStatus(std::string id,
+                                      struct sockaddr_in laddr, struct sockaddr_in raddr,
+                                      uint32_t type, uint32_t mode, uint32_t source)
 {
-	std::cerr << "pqiConnectCbDummy::peerConnectRequest()";
-	std::cerr << " id: " << id;
-	std::cerr << " raddr: " << inet_ntoa(raddr.sin_addr);
-	std::cerr << ":" << ntohs(raddr.sin_port);
-	std::cerr << " source: " << source;
-	std::cerr << std::endl;
+    std::cerr << "pqiConnectCbDummy::peerStatus()";
+    std::cerr << " id: " << id;
+
+    std::cerr << " laddr: " << inet_ntoa(laddr.sin_addr);
+    std::cerr << " lport: " << ntohs(laddr.sin_port);
+    std::cerr << " raddr: " << inet_ntoa(raddr.sin_addr);
+    std::cerr << " rport: " << ntohs(raddr.sin_port);
+
+    std::cerr << " type: " << type;
+    std::cerr << " mode: " << mode;
+    std::cerr << " source: " << source;
+    std::cerr << std::endl;
 }
 
-void    pqiConnectCbDummy::stunStatus(std::string id, struct sockaddr_in raddr, 
-							uint32_t type, uint32_t flags)
+void    pqiConnectCbDummy::peerConnectRequest(std::string id,
+        struct sockaddr_in raddr, uint32_t source)
 {
-	std::cerr << "pqiConnectCbDummy::stunStatus()";
-	std::cerr << " idhash: " << RsUtil::BinToHex(id) << " raddr: " << inet_ntoa(raddr.sin_addr);
-	std::cerr << ":" << ntohs(raddr.sin_port);
-	std::cerr << " type: " << type;
-	std::cerr << " flags: " << flags;
-	std::cerr << std::endl;
+    std::cerr << "pqiConnectCbDummy::peerConnectRequest()";
+    std::cerr << " id: " << id;
+    std::cerr << " raddr: " << inet_ntoa(raddr.sin_addr);
+    std::cerr << ":" << ntohs(raddr.sin_port);
+    std::cerr << " source: " << source;
+    std::cerr << std::endl;
+}
+
+void    pqiConnectCbDummy::stunStatus(std::string id, struct sockaddr_in raddr,
+                                      uint32_t type, uint32_t flags)
+{
+    std::cerr << "pqiConnectCbDummy::stunStatus()";
+    std::cerr << " idhash: " << RsUtil::BinToHex(id) << " raddr: " << inet_ntoa(raddr.sin_addr);
+    std::cerr << ":" << ntohs(raddr.sin_port);
+    std::cerr << " type: " << type;
+    std::cerr << " flags: " << flags;
+    std::cerr << std::endl;
 }
 
 

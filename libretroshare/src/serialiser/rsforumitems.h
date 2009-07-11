@@ -42,50 +42,58 @@ const uint8_t RS_PKT_SUBTYPE_FORUM_MSG      = 0x02;
 
 class RsForumMsg: public RsDistribMsg
 {
-        public:
-        RsForumMsg()
-	:RsDistribMsg(RS_SERVICE_TYPE_FORUM, RS_PKT_SUBTYPE_FORUM_MSG) { return; }
-virtual ~RsForumMsg() { return; }
+public:
+    RsForumMsg()
+            :RsDistribMsg(RS_SERVICE_TYPE_FORUM, RS_PKT_SUBTYPE_FORUM_MSG) {
+        return;
+    }
+    virtual ~RsForumMsg() {
+        return;
+    }
 
-virtual void clear();
-virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+    virtual void clear();
+    virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-	/*
-	 * RsDistribMsg has:
-	 * grpId, parentId, threadId & timestamp.
-	 */
+    /*
+     * RsDistribMsg has:
+     * grpId, parentId, threadId & timestamp.
+     */
 
-        std::string  srcId;
+    std::string  srcId;
 
-        std::wstring title;
-        std::wstring msg;
+    std::wstring title;
+    std::wstring msg;
 
 };
 
 class RsForumSerialiser: public RsSerialType
 {
-	public:
-	RsForumSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_FORUM)
-	{ return; }
-virtual     ~RsForumSerialiser()
-	{ return; }
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
+public:
+    RsForumSerialiser()
+            :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_FORUM)
+    {
+        return;
+    }
+    virtual     ~RsForumSerialiser()
+    {
+        return;
+    }
 
-	private:
+    virtual	uint32_t    size(RsItem *);
+    virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
+    virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
-	/* For RS_PKT_SUBTYPE_FORUM_GRP */
+private:
+
+    /* For RS_PKT_SUBTYPE_FORUM_GRP */
 //virtual	uint32_t    sizeGrp(RsForumGrp *);
 //virtual	bool        serialiseGrp  (RsForumGrp *item, void *data, uint32_t *size);
 //virtual	RsForumGrp *deserialiseGrp(void *data, uint32_t *size);
 
-	/* For RS_PKT_SUBTYPE_FORUM_MSG */
-virtual	uint32_t    sizeMsg(RsForumMsg *);
-virtual	bool        serialiseMsg(RsForumMsg *item, void *data, uint32_t *size);
-virtual	RsForumMsg *deserialiseMsg(void *data, uint32_t *size);
+    /* For RS_PKT_SUBTYPE_FORUM_MSG */
+    virtual	uint32_t    sizeMsg(RsForumMsg *);
+    virtual	bool        serialiseMsg(RsForumMsg *item, void *data, uint32_t *size);
+    virtual	RsForumMsg *deserialiseMsg(void *data, uint32_t *size);
 
 };
 

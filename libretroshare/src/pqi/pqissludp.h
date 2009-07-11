@@ -38,16 +38,16 @@
 
 #include "pqi/pqissl.h"
 
- /* So pqissludp is the special firewall breaking protocol.
-  * This class will implement the basics of streaming
-  * ssl over udp using a tcponudp library....
-  * and a small extension to ssl.
-  */
+/* So pqissludp is the special firewall breaking protocol.
+ * This class will implement the basics of streaming
+ * ssl over udp using a tcponudp library....
+ * and a small extension to ssl.
+ */
 
 class pqissludp;
 class cert;
 
-/* This provides a NetBinInterface, which is 
+/* This provides a NetBinInterface, which is
  * primarily inherited from pqissl.
  * fns declared here are different -> all others are identical.
  */
@@ -55,50 +55,52 @@ class cert;
 class pqissludp: public pqissl
 {
 public:
-        pqissludp(PQInterface *parent, p3AuthMgr *am, p3ConnectMgr *cm);
+    pqissludp(PQInterface *parent, p3AuthMgr *am, p3ConnectMgr *cm);
 
-virtual ~pqissludp();
+    virtual ~pqissludp();
 
-	// NetInterface.
-	// listen fns call the udpproxy.
-virtual int listen();
-virtual int stoplistening();
-virtual int tick();
-virtual int reset();
+    // NetInterface.
+    // listen fns call the udpproxy.
+    virtual int listen();
+    virtual int stoplistening();
+    virtual int tick();
+    virtual int reset();
 
-virtual bool connect_parameter(uint32_t type, uint32_t value);
+    virtual bool connect_parameter(uint32_t type, uint32_t value);
 
-	// BinInterface.
-	// These are reimplemented.	
-virtual bool moretoread();
-virtual bool cansend();
-	/* UDP always through firewalls -> always bandwidth Limited */
-virtual bool bandwidthLimited() { return true; } 
+    // BinInterface.
+    // These are reimplemented.
+    virtual bool moretoread();
+    virtual bool cansend();
+    /* UDP always through firewalls -> always bandwidth Limited */
+    virtual bool bandwidthLimited() {
+        return true;
+    }
 
-	// pqissludp specific.
-	// called to initiate a connection;
-int 	attach();
+    // pqissludp specific.
+    // called to initiate a connection;
+    int 	attach();
 
 protected:
 
-virtual int Initiate_Connection(); 
-virtual int Basic_Connection_Complete();
+    virtual int Initiate_Connection();
+    virtual int Basic_Connection_Complete();
 
 //protected internal fns that are overloaded for udp case.
-virtual int net_internal_close(int fd);
-virtual int net_internal_SSL_set_fd(SSL *ssl, int fd);
-virtual int net_internal_fcntl_nonblock(int fd);
+    virtual int net_internal_close(int fd);
+    virtual int net_internal_SSL_set_fd(SSL *ssl, int fd);
+    virtual int net_internal_fcntl_nonblock(int fd);
 
 private:
 
-	BIO *tou_bio;  // specific to ssludp.
+    BIO *tou_bio;  // specific to ssludp.
 
-	//int remote_timeout;
-	//int proxy_timeout;
+    //int remote_timeout;
+    //int proxy_timeout;
 
-	long listen_checktime;
+    long listen_checktime;
 
-	uint32_t mConnectPeriod;
+    uint32_t mConnectPeriod;
 };
 
 #endif // MRK_PQI_SSL_UDP_HEADER

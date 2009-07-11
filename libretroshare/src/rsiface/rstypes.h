@@ -33,9 +33,9 @@
 #include <stdint.h>
 
 typedef std::string   RsCertId;
-typedef std::string   RsChanId; 
-typedef std::string   RsMsgId; 
-typedef std::string   RsAuthId; 
+typedef std::string   RsChanId;
+typedef std::string   RsMsgId;
+typedef std::string   RsAuthId;
 
 const uint32_t FT_STATE_FAILED		= 0x0000;
 const uint32_t FT_STATE_OKAY		= 0x0001;
@@ -45,59 +45,61 @@ const uint32_t FT_STATE_COMPLETE 	= 0x0004;
 
 class TransferInfo
 {
-	public:
-	/**** Need Some of these Fields ****/
-	std::string peerId;
-	std::string name; /* if has alternative name? */
-	double tfRate; /* kbytes */
-	int  status; /* FT_STATE_... */
+public:
+    /**** Need Some of these Fields ****/
+    std::string peerId;
+    std::string name; /* if has alternative name? */
+    double tfRate; /* kbytes */
+    int  status; /* FT_STATE_... */
 };
 
 
 class FileInfo
 {
-	/* old BaseInfo Entries */
-	public:
+    /* old BaseInfo Entries */
+public:
 
-	FileInfo() :flags(0), mId(0) { return; }
-	RsCertId id; /* key for matching everything */
-	int flags; /* INFO_TAG above */
+    FileInfo() :flags(0), mId(0) {
+        return;
+    }
+    RsCertId id; /* key for matching everything */
+    int flags; /* INFO_TAG above */
 
-	/* allow this to be tweaked by the GUI Model */
-	mutable unsigned int mId; /* (GUI) Model Id -> unique number */
+    /* allow this to be tweaked by the GUI Model */
+    mutable unsigned int mId; /* (GUI) Model Id -> unique number */
 
-	/* Old FileInfo Entries */
-	public:
+    /* Old FileInfo Entries */
+public:
 
-static const int kRsFiStatusNone = 0;
-static const int kRsFiStatusStall = 1;
-static const int kRsFiStatusProgress = 2;
-static const int kRsFiStatusDone = 2;
+    static const int kRsFiStatusNone = 0;
+    static const int kRsFiStatusStall = 1;
+    static const int kRsFiStatusProgress = 2;
+    static const int kRsFiStatusDone = 2;
 
-	/* FileInfo(); */
+    /* FileInfo(); */
 
-	int searchId;      /* 0 if none */
-	std::string path;
-	std::string fname;
-	std::string hash;
-	std::string ext;
+    int searchId;      /* 0 if none */
+    std::string path;
+    std::string fname;
+    std::string hash;
+    std::string ext;
 
-	uint64_t size; 
-	uint64_t avail; /* how much we have */
-	int status;
+    uint64_t size;
+    uint64_t avail; /* how much we have */
+    int status;
 
-	bool inRecommend;
+    bool inRecommend;
 
-	double rank;
-	int age;
+    double rank;
+    int age;
 
-	/* Transfer Stuff */
-	uint64_t transfered;
-	double   tfRate; /* in kbytes */
-	uint32_t  downloadStatus; /* 0 = Err, 1 = Ok, 2 = Done */
-	std::list<TransferInfo> peers;
+    /* Transfer Stuff */
+    uint64_t transfered;
+    double   tfRate; /* in kbytes */
+    uint32_t  downloadStatus; /* 0 = Err, 1 = Ok, 2 = Done */
+    std::list<TransferInfo> peers;
 
-        time_t lastTS;
+    time_t lastTS;
 };
 
 std::ostream &operator<<(std::ostream &out, const FileInfo &info);
@@ -113,47 +115,47 @@ std::ostream &operator<<(std::ostream &out, const FileInfo &info);
 
 class RsConfig
 {
-	public:
-	std::string		ownId;
-	std::string		ownName;
+public:
+    std::string		ownId;
+    std::string		ownName;
 
-	std::string		localAddr;
-	int			localPort;
-	std::string		extAddr;
-	int			extPort;
-	std::string		extName;
+    std::string		localAddr;
+    int			localPort;
+    std::string		extAddr;
+    int			extPort;
+    std::string		extName;
 
-	bool			firewalled;
-	bool			forwardPort;
+    bool			firewalled;
+    bool			forwardPort;
 
-	int			maxDownloadDataRate;     /* kb */
-	int			maxUploadDataRate;     /* kb */
-	int			maxIndivDataRate; /* kb */
+    int			maxDownloadDataRate;     /* kb */
+    int			maxUploadDataRate;     /* kb */
+    int			maxIndivDataRate; /* kb */
 
-	int			promptAtBoot; /* popup the password prompt */
+    int			promptAtBoot; /* popup the password prompt */
 
-	/* older data types */
-	bool			DHTActive;
-	bool			uPnPActive;
+    /* older data types */
+    bool			DHTActive;
+    bool			uPnPActive;
 
-	int			uPnPState;
-	int			DHTPeers;
+    int			uPnPState;
+    int			DHTPeers;
 
-	/* Flags for Network Status */
-	bool 			netOk;     /* That we've talked to someone! */
-	bool			netUpnpOk; /* upnp is enabled and active */
-	bool			netDhtOk;  /* response from dht */
-	bool			netExtOk;  /* know our external address */
-	bool			netUdpOk;  /* recvd stun / udp packets */
-	bool			netTcpOk;  /* recvd incoming tcp */
-	bool			netResetReq;
+    /* Flags for Network Status */
+    bool 			netOk;     /* That we've talked to someone! */
+    bool			netUpnpOk; /* upnp is enabled and active */
+    bool			netDhtOk;  /* response from dht */
+    bool			netExtOk;  /* know our external address */
+    bool			netUdpOk;  /* recvd stun / udp packets */
+    bool			netTcpOk;  /* recvd incoming tcp */
+    bool			netResetReq;
 };
 
 /********************** For Search Interface *****************/
 
 /* This is still rough, implement later! */
 
-	/* text based ones */
+/* text based ones */
 const std::string TypeExt  = "ext";
 const std::string TypeName = "name";
 const std::string TypeHash = "hash";
@@ -166,20 +168,20 @@ const int OpGreaterThan = 0x004;
 
 class Condition
 {
-	public:
+public:
 
-	std::string type;
-	int op;
-	double value;
-	std::string name;
+    std::string type;
+    int op;
+    double value;
+    std::string name;
 };
 
 class SearchRequest
 {
-	public:
-	int searchId;	
-	RsCertId toId;  /* all zeros for everyone! */
-	std::list<Condition> tests;
+public:
+    int searchId;
+    RsCertId toId;  /* all zeros for everyone! */
+    std::list<Condition> tests;
 };
 
 
@@ -206,41 +208,41 @@ class SearchRequest
 
 class DirStub
 {
-	public:
-	uint8_t type;
-	std::string name;
-	void *ref;
+public:
+    uint8_t type;
+    std::string name;
+    void *ref;
 };
 
 class DirDetails
 {
-	public:
-	void *parent;
-	uint32_t prow; /* parent row */
+public:
+    void *parent;
+    uint32_t prow; /* parent row */
 
-	void *ref;
-	uint8_t type;
-	std::string id;
-	std::string name;
-	std::string hash;
-	std::string path;
-	uint64_t count;
-	uint32_t age;
-	uint32_t rank;
+    void *ref;
+    uint8_t type;
+    std::string id;
+    std::string name;
+    std::string hash;
+    std::string path;
+    uint64_t count;
+    uint32_t age;
+    uint32_t rank;
 
-	std::list<DirStub> children;
+    std::list<DirStub> children;
 };
 
 class FileDetail
 {
-	public:
-	std::string id;
-	std::string name;
-	std::string hash;
-	std::string path;
-	uint64_t size;
-	uint32_t age;
-	uint32_t rank;
+public:
+    std::string id;
+    std::string name;
+    std::string hash;
+    std::string path;
+    uint64_t size;
+    uint32_t age;
+    uint32_t rank;
 };
 
 

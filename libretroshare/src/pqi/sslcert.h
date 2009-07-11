@@ -56,16 +56,16 @@ class sslroot;
 
 class cert: public Person
 {
-	public:
-	cert();
-virtual	~cert();
+public:
+    cert();
+    virtual	~cert();
 
-virtual std::string Signature();
-std::string	Hash();
-void	Hash(std::string);
+    virtual std::string Signature();
+    std::string	Hash();
+    void	Hash(std::string);
 
-	X509 *certificate;
-	std::string hash;
+    X509 *certificate;
+    std::string hash;
 };
 
 
@@ -75,120 +75,120 @@ sslroot *getSSLRoot();
 
 class sslroot
 {
-	public:
-	sslroot();
-int	active();
-int	setcertdir(char *path); 
-int	initssl(const char *srvr_cert, const char *priv_key, 
-			const char *CA_file, const char *passwd);
-int	closessl();
+public:
+    sslroot();
+    int	active();
+    int	setcertdir(char *path);
+    int	initssl(const char *srvr_cert, const char *priv_key,
+                const char *CA_file, const char *passwd);
+    int	closessl();
 
-/* Context handling  */
-SSL_CTX *getCTX();
+    /* Context handling  */
+    SSL_CTX *getCTX();
 
-/* Certificate handling */
-int	compareCerts(cert *a, cert *b);
+    /* Certificate handling */
+    int	compareCerts(cert *a, cert *b);
 
-	// network interface.
+    // network interface.
 
-	// program interface.
-int     addCertificate(cert *c);
-int     addUntrustedCertificate(cert *c);
-int	removeCertificate(cert *);
+    // program interface.
+    int     addCertificate(cert *c);
+    int     addUntrustedCertificate(cert *c);
+    int	removeCertificate(cert *);
 
-	// Creation of Certificates.... (From X509)
-	// Core functions....
-cert	*checkDuplicateX509(X509 *x);
-cert	*checkPeerX509(X509 *x);
-cert 	*makeCertificate(X509 *c);
-cert 	*registerCertificate(X509 *nc, struct sockaddr_in, bool in);
+    // Creation of Certificates.... (From X509)
+    // Core functions....
+    cert	*checkDuplicateX509(X509 *x);
+    cert	*checkPeerX509(X509 *x);
+    cert 	*makeCertificate(X509 *c);
+    cert 	*registerCertificate(X509 *nc, struct sockaddr_in, bool in);
 
-int	validateCertificate(cert *c);
+    int	validateCertificate(cert *c);
 
 // depreciated...
-cert	*findpeercert(const char *name); 
+    cert	*findpeercert(const char *name);
 //int	loadpeercert(const char *fname);
 //int	savepeercert(const char *fname);
 
 // Configuration Handling...
-int	setConfigDirs(const char *cdir, const char *ndir);
+    int	setConfigDirs(const char *cdir, const char *ndir);
 
 // these save both the certificates + the settings.
-int 	saveCertificates(const char *fname);
-int 	saveCertificates();
-int 	loadCertificates(const char *fname);
+    int 	saveCertificates(const char *fname);
+    int 	saveCertificates();
+    int 	loadCertificates(const char *fname);
 
-	// with a hash check/recalc in there for good measure.
-cert *	loadcertificate(const char* fname, std::string hash);
-int 	savecertificate(cert *c, const char* fname);
+    // with a hash check/recalc in there for good measure.
+    cert *	loadcertificate(const char* fname, std::string hash);
+    int 	savecertificate(cert *c, const char* fname);
 
 // digest hashing /signing or encrypting interface.
-int	hashFile(std::string fname, unsigned char *hash, unsigned int hlen);
-int	hashDigest(char *data, unsigned int dlen, unsigned char *hash, unsigned int hlen);
-int	signDigest(EVP_PKEY *key, char *data, unsigned int dlen, unsigned char *hash, unsigned int hlen);
-int	verifyDigest(EVP_PKEY *key, char *data, unsigned int dlen, unsigned char *enc, unsigned int elen);
-int     generateKeyPair(EVP_PKEY *keypair, unsigned int keylen);
+    int	hashFile(std::string fname, unsigned char *hash, unsigned int hlen);
+    int	hashDigest(char *data, unsigned int dlen, unsigned char *hash, unsigned int hlen);
+    int	signDigest(EVP_PKEY *key, char *data, unsigned int dlen, unsigned char *hash, unsigned int hlen);
+    int	verifyDigest(EVP_PKEY *key, char *data, unsigned int dlen, unsigned char *enc, unsigned int elen);
+    int     generateKeyPair(EVP_PKEY *keypair, unsigned int keylen);
 
 
 
-int	printCertificate(cert *, std::ostream &out);
- /****** REMOVED!
-  *
-  *
-std::list<std::string> listCertificates();
-  *
-  *
-  ****/
+    int	printCertificate(cert *, std::ostream &out);
+    /****** REMOVED!
+     *
+     *
+    std::list<std::string> listCertificates();
+     *
+     *
+     ****/
 
-std::list<cert *> &getCertList();
+    std::list<cert *> &getCertList();
 
-cert *  getOwnCert();
-int	checkNetAddress();
+    cert *  getOwnCert();
+    int	checkNetAddress();
 
-	// extra list for certs that aren't in main list.
-cert *  getCollectedCert();
-bool  	collectedCerts();
+    // extra list for certs that aren't in main list.
+    cert *  getCollectedCert();
+    bool  	collectedCerts();
 
-bool	CertsChanged();
-bool	CertsMajorChanged();
-void 	IndicateCertsChanged();
+    bool	CertsChanged();
+    bool	CertsMajorChanged();
+    void 	IndicateCertsChanged();
 
-std::string getSetting(std::string opt);
-void setSetting(std::string opt, std::string val);
+    std::string getSetting(std::string opt);
+    void setSetting(std::string opt, std::string val);
 
 
-/* Fns for relating cert signatures to structures */
-cert *findcertsign(certsign &sign);
-int   getcertsign(cert *c, certsign &sign);
-int   addtosignmap(cert *);
+    /* Fns for relating cert signatures to structures */
+    cert *findcertsign(certsign &sign);
+    int   getcertsign(cert *c, certsign &sign);
+    int   addtosignmap(cert *);
 
-	private: /* data */
-std::list<cert *> peercerts; 
-std::list<cert *> allcerts; 
-std::list<cert *> collectedcerts;
+private: /* data */
+    std::list<cert *> peercerts;
+    std::list<cert *> allcerts;
+    std::list<cert *> collectedcerts;
 
 // whenever a cert is added, it should also be put in the map.
-std::map<certsign, cert *> signmap;
+    std::map<certsign, cert *> signmap;
 
 
 
 // General Configuration System
 // easy it put it here - so it can be signed easily.
-std::map<std::string, std::string> settings;
+    std::map<std::string, std::string> settings;
 
-std::string certdir;
-std::string neighbourdir;
-std::string certfile;
+    std::string certdir;
+    std::string neighbourdir;
+    std::string certfile;
 
-SSL_CTX *sslctx;
-int init;
+    SSL_CTX *sslctx;
+    int init;
 
-Indicator certsChanged;
-Indicator certsMajorChanged;
+    Indicator certsChanged;
+    Indicator certsMajorChanged;
 
-EVP_PKEY *pkey;
+    EVP_PKEY *pkey;
 
-cert *own_cert;
+    cert *own_cert;
 
 };
 

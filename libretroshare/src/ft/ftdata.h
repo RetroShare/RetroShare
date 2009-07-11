@@ -26,7 +26,7 @@
 #ifndef FT_DATA_INTERFACE_HEADER
 #define FT_DATA_INTERFACE_HEADER
 
-/* 
+/*
  * ftData.
  *
  * Internal Interfaces for sending and receiving data.
@@ -38,40 +38,44 @@
 #include <string>
 #include <inttypes.h>
 
-	/*************** SEND INTERFACE *******************/
+/*************** SEND INTERFACE *******************/
 
 class ftDataSend
 {
-	public:
-virtual ~ftDataSend() { return; }
+public:
+    virtual ~ftDataSend() {
+        return;
+    }
 
-	/* Client Send */
-virtual bool    sendDataRequest(std::string peerId, std::string hash, 
-			uint64_t size, uint64_t offset, uint32_t chunksize) = 0;
+    /* Client Send */
+    virtual bool    sendDataRequest(std::string peerId, std::string hash,
+                                    uint64_t size, uint64_t offset, uint32_t chunksize) = 0;
 
-	/* Server Send */
-virtual bool    sendData(std::string peerId, std::string hash, uint64_t size,
-                        uint64_t offset, uint32_t chunksize, void *data) = 0;
+    /* Server Send */
+    virtual bool    sendData(std::string peerId, std::string hash, uint64_t size,
+                             uint64_t offset, uint32_t chunksize, void *data) = 0;
 
 };
 
 
 
-	/*************** RECV INTERFACE *******************/
+/*************** RECV INTERFACE *******************/
 
 class ftDataRecv
 {
-	public:
+public:
 
-virtual ~ftDataRecv() { return; }
+    virtual ~ftDataRecv() {
+        return;
+    }
 
-	/* Client Recv */
-virtual bool    recvData(std::string peerId, std::string hash, uint64_t size, 
-			uint64_t offset, uint32_t chunksize, void *data) = 0;
+    /* Client Recv */
+    virtual bool    recvData(std::string peerId, std::string hash, uint64_t size,
+                             uint64_t offset, uint32_t chunksize, void *data) = 0;
 
-	/* Server Recv */
-virtual bool    recvDataRequest(std::string peerId, std::string hash, 
-			uint64_t size, uint64_t offset, uint32_t chunksize) = 0;
+    /* Server Recv */
+    virtual bool    recvDataRequest(std::string peerId, std::string hash,
+                                    uint64_t size, uint64_t offset, uint32_t chunksize) = 0;
 
 
 };
@@ -79,51 +83,57 @@ virtual bool    recvDataRequest(std::string peerId, std::string hash,
 /******* Pair of Send/Recv (Only need to handle Send side) ******/
 class ftDataSendPair: public ftDataSend
 {
-	public:
+public:
 
-	ftDataSendPair(ftDataRecv *recv);
-virtual ~ftDataSendPair() { return; }
+    ftDataSendPair(ftDataRecv *recv);
+    virtual ~ftDataSendPair() {
+        return;
+    }
 
-	/* Client Send */
-virtual bool    sendDataRequest(std::string peerId, std::string hash, 
-			uint64_t size, uint64_t offset, uint32_t chunksize);
+    /* Client Send */
+    virtual bool    sendDataRequest(std::string peerId, std::string hash,
+                                    uint64_t size, uint64_t offset, uint32_t chunksize);
 
-	/* Server Send */
-virtual bool    sendData(std::string peerId, std::string hash, uint64_t size,
-                        uint64_t offset, uint32_t chunksize, void *data);
+    /* Server Send */
+    virtual bool    sendData(std::string peerId, std::string hash, uint64_t size,
+                             uint64_t offset, uint32_t chunksize, void *data);
 
-	ftDataRecv *mDataRecv;
+    ftDataRecv *mDataRecv;
 };
 
 
 class ftDataSendDummy: public ftDataSend
 {
-	public:
-virtual ~ftDataSendDummy() { return; }
+public:
+    virtual ~ftDataSendDummy() {
+        return;
+    }
 
-	/* Client Send */
-virtual bool    sendDataRequest(std::string peerId, std::string hash, 
-			uint64_t size, uint64_t offset, uint32_t chunksize);
+    /* Client Send */
+    virtual bool    sendDataRequest(std::string peerId, std::string hash,
+                                    uint64_t size, uint64_t offset, uint32_t chunksize);
 
-	/* Server Send */
-virtual bool    sendData(std::string peerId, std::string hash, uint64_t size,
-                        uint64_t offset, uint32_t chunksize, void *data);
+    /* Server Send */
+    virtual bool    sendData(std::string peerId, std::string hash, uint64_t size,
+                             uint64_t offset, uint32_t chunksize, void *data);
 
 };
 
 class ftDataRecvDummy: public ftDataRecv
 {
-	public:
+public:
 
-virtual ~ftDataRecvDummy() { return; }
+    virtual ~ftDataRecvDummy() {
+        return;
+    }
 
-	/* Client Recv */
-virtual bool    recvData(std::string peerId, std::string hash, uint64_t size, 
-			uint64_t offset, uint32_t chunksize, void *data);
+    /* Client Recv */
+    virtual bool    recvData(std::string peerId, std::string hash, uint64_t size,
+                             uint64_t offset, uint32_t chunksize, void *data);
 
-	/* Server Recv */
-virtual bool    recvDataRequest(std::string peerId, std::string hash, 
-			uint64_t size, uint64_t offset, uint32_t chunksize);
+    /* Server Recv */
+    virtual bool    recvDataRequest(std::string peerId, std::string hash,
+                                    uint64_t size, uint64_t offset, uint32_t chunksize);
 
 
 };

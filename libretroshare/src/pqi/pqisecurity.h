@@ -36,19 +36,19 @@
 //structure.
 typedef struct sec_policy
 {
-     int searchable; // flags indicate how searchable we are..
+    int searchable; // flags indicate how searchable we are..
 } SecurityPolicy;
 
 // functions for checking what is allowed...
-// 
+//
 
 std::string 		secpolicy_print(SecurityPolicy *);
 SecurityPolicy *	secpolicy_create();
 int			secpolicy_delete(SecurityPolicy *);
 int 			secpolicy_limit(SecurityPolicy *limiter,
-				SecurityPolicy *alter);
-int 			secpolicy_check(SecurityPolicy *, int type_transaction, 
-						int direction);
+                       SecurityPolicy *alter);
+int 			secpolicy_check(SecurityPolicy *, int type_transaction,
+                       int direction);
 
 
 #endif

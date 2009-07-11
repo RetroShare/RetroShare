@@ -39,7 +39,7 @@
 
 #include <iostream>
 
-/* NOTE That these BIT #defines will only 
+/* NOTE That these BIT #defines will only
  * work on little endian machines....
  * due to the ntohs ...
  */
@@ -73,177 +73,177 @@
 
 
 TcpPacket::TcpPacket(uint8 *ptr, int size)
-	:data(0), datasize(0), seqno(0), ackno(0), hlen_flags(0), 
-	 winsize(0), ts(0), retrans(0)
-	{
-		if (size > 0)
-		{
-			datasize = size;
-			data = (uint8 *) malloc(datasize);
-			memcpy(data, (void *) ptr, size);
-		}
-		return;
-	}
+        :data(0), datasize(0), seqno(0), ackno(0), hlen_flags(0),
+        winsize(0), ts(0), retrans(0)
+{
+    if (size > 0)
+    {
+        datasize = size;
+        data = (uint8 *) malloc(datasize);
+        memcpy(data, (void *) ptr, size);
+    }
+    return;
+}
 
 TcpPacket::TcpPacket() /* likely control packet */
-	:data(0), datasize(0), seqno(0), ackno(0), hlen_flags(0), 
-	 winsize(0), ts(0), retrans(0)
-	{
-		return;
-	}
+        :data(0), datasize(0), seqno(0), ackno(0), hlen_flags(0),
+        winsize(0), ts(0), retrans(0)
+{
+    return;
+}
 
 
 TcpPacket::~TcpPacket()
-	{
-		if (data)
-			free(data);
-	}
+{
+    if (data)
+        free(data);
+}
 
 
 int	TcpPacket::writePacket(void *buf, int &size)
 {
-	if (size < TCP_PSEUDO_HDR_SIZE + datasize)
-	{
-		size = 0;
-		return -1;
-	}
+    if (size < TCP_PSEUDO_HDR_SIZE + datasize)
+    {
+        size = 0;
+        return -1;
+    }
 
-	/* byte:  0 => uint16 srcport = 0 */
-	*((uint16 *) &(((uint8 *) buf)[0])) = htons(0); 
+    /* byte:  0 => uint16 srcport = 0 */
+    *((uint16 *) &(((uint8 *) buf)[0])) = htons(0);
 
-	/* byte:  2 => uint16 destport = 0 */
-	*((uint16 *) &(((uint8 *) buf)[2])) = htons(0); 
+    /* byte:  2 => uint16 destport = 0 */
+    *((uint16 *) &(((uint8 *) buf)[2])) = htons(0);
 
-	/* byte:  4 => uint32 seqno */
-	*((uint32 *) &(((uint8 *) buf)[4])) = htonl(seqno); 
+    /* byte:  4 => uint32 seqno */
+    *((uint32 *) &(((uint8 *) buf)[4])) = htonl(seqno);
 
-	/* byte:  8 => uint32 ackno */
-	*((uint32 *) &(((uint8 *) buf)[8])) = htonl(ackno); 
+    /* byte:  8 => uint32 ackno */
+    *((uint32 *) &(((uint8 *) buf)[8])) = htonl(ackno);
 
-	/* byte: 12 => uint16 len + flags */
-	*((uint16 *) &(((uint8 *) buf)[12])) = htons(hlen_flags); 
+    /* byte: 12 => uint16 len + flags */
+    *((uint16 *) &(((uint8 *) buf)[12])) = htons(hlen_flags);
 
-	/* byte: 14 => uint16 winsize */
-	*((uint16 *) &(((uint8 *) buf)[14])) = htons(winsize); 
+    /* byte: 14 => uint16 winsize */
+    *((uint16 *) &(((uint8 *) buf)[14])) = htons(winsize);
 
-	/* byte: 16 => uint16 chksum */
-	*((uint16 *) &(((uint8 *) buf)[16])) = htons(0); 
+    /* byte: 16 => uint16 chksum */
+    *((uint16 *) &(((uint8 *) buf)[16])) = htons(0);
 
-	/* byte: 18 => uint16 urgptr */
-	*((uint16 *) &(((uint8 *) buf)[18])) = htons(0); 
+    /* byte: 18 => uint16 urgptr */
+    *((uint16 *) &(((uint8 *) buf)[18])) = htons(0);
 
-	/* total 20 bytes */
+    /* total 20 bytes */
 
-	/* now the data */
-	memcpy((void *) &(((uint8 *) buf)[20]), data, datasize);
+    /* now the data */
+    memcpy((void *) &(((uint8 *) buf)[20]), data, datasize);
 
-	return size = TCP_PSEUDO_HDR_SIZE + datasize;
+    return size = TCP_PSEUDO_HDR_SIZE + datasize;
 }
 
 
 int	TcpPacket::readPacket(void *buf, int size)
 {
-	if (size < TCP_PSEUDO_HDR_SIZE)
-	{
-		std::cerr << "TcpPacket::readPacket() Failed Too Small!";
-		std::cerr << std::endl;
-		return -1;
-	}
+    if (size < TCP_PSEUDO_HDR_SIZE)
+    {
+        std::cerr << "TcpPacket::readPacket() Failed Too Small!";
+        std::cerr << std::endl;
+        return -1;
+    }
 
-	/* byte:  0 => uint16 srcport = 0 *******************
-	*((uint16 *) &(((uint8 *) buf)[0])) = htons(0); 
-	***********/
+    /* byte:  0 => uint16 srcport = 0 *******************
+    *((uint16 *) &(((uint8 *) buf)[0])) = htons(0);
+    ***********/
 
-	/* byte:  2 => uint16 destport = 0 ******************
-	*((uint16 *) &(((uint8 *) buf)[2])) = htons(0); 
-	***********/
+    /* byte:  2 => uint16 destport = 0 ******************
+    *((uint16 *) &(((uint8 *) buf)[2])) = htons(0);
+    ***********/
 
-	/* byte:  4 => uint32 seqno */
-	seqno = ntohl(  *((uint32 *) &(((uint8 *) buf)[4])) );
+    /* byte:  4 => uint32 seqno */
+    seqno = ntohl(  *((uint32 *) &(((uint8 *) buf)[4])) );
 
-	/* byte:  8 => uint32 ackno */
-	ackno = ntohl(  *((uint32 *) &(((uint8 *) buf)[8])) );
+    /* byte:  8 => uint32 ackno */
+    ackno = ntohl(  *((uint32 *) &(((uint8 *) buf)[8])) );
 
-	/* byte: 12 => uint16 len + flags */
-	hlen_flags = ntohs(  *((uint16 *) &(((uint8 *) buf)[12])) );
+    /* byte: 12 => uint16 len + flags */
+    hlen_flags = ntohs(  *((uint16 *) &(((uint8 *) buf)[12])) );
 
-	/* byte: 14 => uint16 winsize */
-	winsize = ntohs(  *((uint16 *) &(((uint8 *) buf)[14])) );
+    /* byte: 14 => uint16 winsize */
+    winsize = ntohs(  *((uint16 *) &(((uint8 *) buf)[14])) );
 
-	/* byte: 16 => uint16 chksum *************************
-	*((uint16 *) &(((uint8 *) buf)[16])) = htons(0); 
-	***********/
+    /* byte: 16 => uint16 chksum *************************
+    *((uint16 *) &(((uint8 *) buf)[16])) = htons(0);
+    ***********/
 
-	/* byte: 18 => uint16 urgptr *************************
-	*((uint16 *) &(((uint8 *) buf)[18])) = htons(0); 
-	***********/
+    /* byte: 18 => uint16 urgptr *************************
+    *((uint16 *) &(((uint8 *) buf)[18])) = htons(0);
+    ***********/
 
-	/* total 20 bytes */
+    /* total 20 bytes */
 
-	if (data)
-	{
-		free(data);
-	}
-	datasize = size - TCP_PSEUDO_HDR_SIZE;
-	data = (uint8 *) malloc(datasize);
+    if (data)
+    {
+        free(data);
+    }
+    datasize = size - TCP_PSEUDO_HDR_SIZE;
+    data = (uint8 *) malloc(datasize);
 
-	/* now the data */
-	memcpy(data, (void *) &(((uint8 *) buf)[20]), datasize);
+    /* now the data */
+    memcpy(data, (void *) &(((uint8 *) buf)[20]), datasize);
 
-	return size;
+    return size;
 }
 
-	/* flags */
+/* flags */
 bool	TcpPacket::hasSyn()
 {
-	return (hlen_flags & TCP_SYN_BIT);
+    return (hlen_flags & TCP_SYN_BIT);
 }
 
 bool	TcpPacket::hasFin()
 {
-	return (hlen_flags & TCP_FIN_BIT);
+    return (hlen_flags & TCP_FIN_BIT);
 }
 
 bool	TcpPacket::hasAck()
 {
-	return (hlen_flags & TCP_ACK_BIT);
+    return (hlen_flags & TCP_ACK_BIT);
 }
 
 bool	TcpPacket::hasRst()
 {
-	return (hlen_flags & TCP_RST_BIT);
+    return (hlen_flags & TCP_RST_BIT);
 }
 
 
 void    TcpPacket::setSyn()
 {
-	hlen_flags |= TCP_SYN_BIT;
+    hlen_flags |= TCP_SYN_BIT;
 }
 
 void    TcpPacket::setFin()
 {
-	hlen_flags |= TCP_FIN_BIT;
+    hlen_flags |= TCP_FIN_BIT;
 }
 
 void    TcpPacket::setRst()
 {
-	hlen_flags |= TCP_RST_BIT;
+    hlen_flags |= TCP_RST_BIT;
 }
 
 void    TcpPacket::setAckFlag()
 {
-	hlen_flags |= TCP_ACK_BIT;
+    hlen_flags |= TCP_ACK_BIT;
 }
 
 void    TcpPacket::setAck(uint32 val)
 {
-	setAckFlag();
-	ackno = val;
+    setAckFlag();
+    ackno = val;
 }
 
 uint32  TcpPacket::getAck()
 {
-	return ackno;
+    return ackno;
 }
 
 

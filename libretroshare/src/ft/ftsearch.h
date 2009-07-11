@@ -26,7 +26,7 @@
 #ifndef FT_SEARCH_HEADER
 #define FT_SEARCH_HEADER
 
-/* 
+/*
  * ftSearch
  *
  * This is a generic search interface - used by ft* to find files.
@@ -39,22 +39,30 @@
 class ftSearch
 {
 
-	public:
+public:
 
-	ftSearch() { return; }
-virtual ~ftSearch() { return; }
-virtual bool	search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const = 0;
+    ftSearch() {
+        return;
+    }
+    virtual ~ftSearch() {
+        return;
+    }
+    virtual bool	search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const = 0;
 
 };
 
 
 class ftSearchDummy: public ftSearch
 {
-	public:
+public:
 
-	ftSearchDummy() { return; }
-virtual ~ftSearchDummy() { return; }
-virtual bool	search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
+    ftSearchDummy() {
+        return;
+    }
+    virtual ~ftSearchDummy() {
+        return;
+    }
+    virtual bool	search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
 };
 
 #endif

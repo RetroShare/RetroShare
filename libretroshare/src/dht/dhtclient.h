@@ -32,40 +32,54 @@
 
 class DHTClient
 {
-	public:
+public:
 
-	/* initialise from file */
-virtual bool checkServerFile(std::string filename) = 0;
-virtual bool loadServers(std::string filename) = 0;
-virtual bool loadServersFromWeb(std::string storename) = 0;
-virtual bool loadServers(std::istream&) = 0;
+    /* initialise from file */
+    virtual bool checkServerFile(std::string filename) = 0;
+    virtual bool loadServers(std::string filename) = 0;
+    virtual bool loadServersFromWeb(std::string storename) = 0;
+    virtual bool loadServers(std::istream&) = 0;
 
-	/* check that its working */
-virtual bool dhtActive() = 0;
+    /* check that its working */
+    virtual bool dhtActive() = 0;
 
-	/* publish / search */
-virtual	bool publishKey(std::string key, std::string value, uint32_t ttl) = 0;
-virtual	bool searchKey(std::string key, std::list<std::string> &values) = 0;
+    /* publish / search */
+    virtual	bool publishKey(std::string key, std::string value, uint32_t ttl) = 0;
+    virtual	bool searchKey(std::string key, std::list<std::string> &values) = 0;
 
 };
 
 
 class DHTClientDummy: public DHTClient
 {
-	public:
+public:
 
-	/* initialise from file */
-virtual bool checkServerFile(std::string filename) { return false; }
-virtual bool loadServers(std::string filename) { return true; }
-virtual bool loadServersFromWeb(std::string storename) { return true; }
-virtual bool loadServers(std::istream&) { return true; }
+    /* initialise from file */
+    virtual bool checkServerFile(std::string filename) {
+        return false;
+    }
+    virtual bool loadServers(std::string filename) {
+        return true;
+    }
+    virtual bool loadServersFromWeb(std::string storename) {
+        return true;
+    }
+    virtual bool loadServers(std::istream&) {
+        return true;
+    }
 
-	/* check that its working */
-virtual bool dhtActive() { return true; }
+    /* check that its working */
+    virtual bool dhtActive() {
+        return true;
+    }
 
-	/* publish / search */
-virtual	bool publishKey(std::string key, std::string value, uint32_t ttl) { return true; }
-virtual	bool searchKey(std::string key, std::list<std::string> &values)   { return true; }
+    /* publish / search */
+    virtual	bool publishKey(std::string key, std::string value, uint32_t ttl) {
+        return true;
+    }
+    virtual	bool searchKey(std::string key, std::list<std::string> &values)   {
+        return true;
+    }
 
 };
 

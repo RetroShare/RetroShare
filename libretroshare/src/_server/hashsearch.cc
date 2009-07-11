@@ -31,21 +31,21 @@
 #include "_dbase/fistore.h"
 #include "_dbase/fimonitor.h"
 
-	/* Search Interface - For FileTransfer Lookup */
+/* Search Interface - For FileTransfer Lookup */
 int FileHashSearch::searchLocalHash(std::string hash, std::string &path, uint64_t &size)
 {
-	if (monitor)
-	{
-		return monitor->findLocalFile(hash, path, size);
-	}
-	return 0;
+    if (monitor)
+    {
+        return monitor->findLocalFile(hash, path, size);
+    }
+    return 0;
 }
 
 int FileHashSearch::searchRemoteHash(std::string hash, std::list<FileDetail> &results)
 {
-	if (store)
-		store->SearchHash(hash, results);
-	return results.size();
+    if (store)
+        store->SearchHash(hash, results);
+    return results.size();
 }
 
 

@@ -43,127 +43,127 @@ const int p3facemsgzone = 11453;
 
 int     RsServer::ConfigSetDataRates( int totalDownload, int totalUpload ) /* in kbrates */
 {
-	/* fill the rsiface class */
-	RsIface &iface = getIface();
+    /* fill the rsiface class */
+    RsIface &iface = getIface();
 
-	/* lock Mutexes */
-	lockRsCore();     /* LOCK */
-	iface.lockData(); /* LOCK */
+    /* lock Mutexes */
+    lockRsCore();     /* LOCK */
+    iface.lockData(); /* LOCK */
 
-	pqih -> setMaxRate(true, totalDownload);
-	pqih -> setMaxRate(false, totalUpload);
+    pqih -> setMaxRate(true, totalDownload);
+    pqih -> setMaxRate(false, totalUpload);
 
-	pqih -> save_config();
+    pqih -> save_config();
 
-	/* unlock Mutexes */
-	iface.unlockData(); /* UNLOCK */
-	unlockRsCore();     /* UNLOCK */
+    /* unlock Mutexes */
+    iface.unlockData(); /* UNLOCK */
+    unlockRsCore();     /* UNLOCK */
 
-	/* does its own locking */
-	UpdateAllConfig();
-	return 1;
+    /* does its own locking */
+    UpdateAllConfig();
+    return 1;
 }
 
 
 int     RsServer::ConfigGetDataRates( float &inKb, float &outKb ) /* in kbrates */
 {
-	/* fill the rsiface class */
-	RsIface &iface = getIface();
+    /* fill the rsiface class */
+    RsIface &iface = getIface();
 
-	/* lock Mutexes */
-	lockRsCore();     /* LOCK */
-	iface.lockData(); /* LOCK */
+    /* lock Mutexes */
+    lockRsCore();     /* LOCK */
+    iface.lockData(); /* LOCK */
 
-        pqih -> getCurrentRates(inKb, outKb);
+    pqih -> getCurrentRates(inKb, outKb);
 
-	/* unlock Mutexes */
-	iface.unlockData(); /* UNLOCK */
-	unlockRsCore();     /* UNLOCK */
+    /* unlock Mutexes */
+    iface.unlockData(); /* UNLOCK */
+    unlockRsCore();     /* UNLOCK */
 
-	return 1;
+    return 1;
 }
 
 
 int     RsServer::ConfigSetBootPrompt( bool on )
 {
 
-	return 1;
+    return 1;
 }
 
 
 int RsServer::UpdateAllConfig()
 {
-	/* fill the rsiface class */
-	RsIface &iface = getIface();
+    /* fill the rsiface class */
+    RsIface &iface = getIface();
 
-	/* lock Mutexes */
-	lockRsCore();     /* LOCK */
-	iface.lockData(); /* LOCK */
+    /* lock Mutexes */
+    lockRsCore();     /* LOCK */
+    iface.lockData(); /* LOCK */
 
- 	RsConfig &config = iface.mConfig;
+    RsConfig &config = iface.mConfig;
 
-	config.ownId = mAuthMgr->OwnId();
-	config.ownName = mAuthMgr->getName(config.ownId);
-	peerConnectState pstate;
-	mConnMgr->getOwnNetStatus(pstate);
+    config.ownId = mAuthMgr->OwnId();
+    config.ownName = mAuthMgr->getName(config.ownId);
+    peerConnectState pstate;
+    mConnMgr->getOwnNetStatus(pstate);
 
-	/* ports */
-	config.localAddr = inet_ntoa(pstate.localaddr.sin_addr);
-	config.localPort = ntohs(pstate.localaddr.sin_port);
+    /* ports */
+    config.localAddr = inet_ntoa(pstate.localaddr.sin_addr);
+    config.localPort = ntohs(pstate.localaddr.sin_port);
 
-	config.firewalled = true;
-	config.forwardPort  = true;
-	
-	config.extAddr = inet_ntoa(pstate.serveraddr.sin_addr);
-	config.extPort = ntohs(pstate.serveraddr.sin_port);
+    config.firewalled = true;
+    config.forwardPort  = true;
 
-	/* data rates */
-	config.maxDownloadDataRate = (int) pqih -> getMaxRate(true);     /* kb */
-	config.maxUploadDataRate = (int) pqih -> getMaxRate(false);     /* kb */
+    config.extAddr = inet_ntoa(pstate.serveraddr.sin_addr);
+    config.extPort = ntohs(pstate.serveraddr.sin_port);
 
-	config.promptAtBoot = true; /* popup the password prompt */      
+    /* data rates */
+    config.maxDownloadDataRate = (int) pqih -> getMaxRate(true);     /* kb */
+    config.maxUploadDataRate = (int) pqih -> getMaxRate(false);     /* kb */
 
-	/* update network configuration */
+    config.promptAtBoot = true; /* popup the password prompt */
 
-	config.netOk =   mConnMgr->getNetStatusOk();
-	config.netUpnpOk = mConnMgr->getNetStatusUpnpOk();
-	config.netDhtOk = mConnMgr->getNetStatusDhtOk();
-	config.netExtOk = mConnMgr->getNetStatusExtOk();
-	config.netUdpOk = mConnMgr->getNetStatusUdpOk();
-	config.netTcpOk = mConnMgr->getNetStatusTcpOk();
+    /* update network configuration */
 
-	/* update DHT/UPnP config */
+    config.netOk =   mConnMgr->getNetStatusOk();
+    config.netUpnpOk = mConnMgr->getNetStatusUpnpOk();
+    config.netDhtOk = mConnMgr->getNetStatusDhtOk();
+    config.netExtOk = mConnMgr->getNetStatusExtOk();
+    config.netUdpOk = mConnMgr->getNetStatusUdpOk();
+    config.netTcpOk = mConnMgr->getNetStatusTcpOk();
 
-	config.uPnPState  = mConnMgr->getUPnPState();
-	config.uPnPActive = mConnMgr->getUPnPEnabled();
-	config.DHTPeers   = 20;
-	config.DHTActive  = mConnMgr->getDHTEnabled();
+    /* update DHT/UPnP config */
 
-	/* Notify of Changes */
+    config.uPnPState  = mConnMgr->getUPnPState();
+    config.uPnPActive = mConnMgr->getUPnPEnabled();
+    config.DHTPeers   = 20;
+    config.DHTActive  = mConnMgr->getDHTEnabled();
+
+    /* Notify of Changes */
 //	iface.setChanged(RsIface::Config);
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CONFIG, NOTIFY_TYPE_MOD);
+    rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CONFIG, NOTIFY_TYPE_MOD);
 
-	/* unlock Mutexes */
-	iface.unlockData(); /* UNLOCK */
-	unlockRsCore();     /* UNLOCK */
+    /* unlock Mutexes */
+    iface.unlockData(); /* UNLOCK */
+    unlockRsCore();     /* UNLOCK */
 
-	return 1;
+    return 1;
 
 
 }
 
 void    RsServer::ConfigFinalSave()
 {
-	/* force saving of transfers TODO */
-	//ftserver->saveFileTransferStatus();
+    /* force saving of transfers TODO */
+    //ftserver->saveFileTransferStatus();
 
-	mAuthMgr->FinalSaveCertificates();
-	mConfigMgr->completeConfiguration();
+    mAuthMgr->FinalSaveCertificates();
+    mConfigMgr->completeConfiguration();
 }
 
 void RsServer::rsGlobalShutDown()
 {
-	ConfigFinalSave(); // save configuration before exit
-	mConnMgr->shutdown(); /* Handles UPnP */
+    ConfigFinalSave(); // save configuration before exit
+    mConnMgr->shutdown(); /* Handles UPnP */
 }
 

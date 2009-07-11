@@ -33,12 +33,12 @@ extern "C" {
 #endif
 
 
-int BIO_tou_socket_should_retry(int s, int e);
-int BIO_tou_socket_non_fatal_error(int error);
+    int BIO_tou_socket_should_retry(int s, int e);
+    int BIO_tou_socket_non_fatal_error(int error);
 
 #define BIO_TYPE_TOU_SOCKET     (30|0x0400|0x0100)      /* NEW rmfern type */
 
-BIO_METHOD *BIO_s_tou_socket(void);
+    BIO_METHOD *BIO_s_tou_socket(void);
 
 #ifdef  __cplusplus
 }

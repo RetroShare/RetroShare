@@ -28,35 +28,35 @@
 RsQblog* rsQblog =  NULL;
 
 p3Blog::p3Blog(p3Qblog* qblog) :
-mQblog(qblog)
+        mQblog(qblog)
 {
-	return;
+    return;
 }
 
 p3Blog::~p3Blog()
 {
-	return;
+    return;
 }
 
 bool p3Blog::getBlogs(std::map< std::string, std::multimap<long int, std::wstring> > &blogs)
 {
-	return mQblog->getBlogs(blogs);
+    return mQblog->getBlogs(blogs);
 }
 
 
 
 bool p3Blog::sendBlog(const std::wstring &msg)
 {
-	return mQblog->sendBlog(msg);
+    return mQblog->sendBlog(msg);
 }
 
 bool p3Blog::getPeerLatestBlog(std::string id, uint32_t &ts, std::wstring &post)
 {
-	//return mQblog->getPeerLatestBlog(id, ts, post);
-	ts = time(NULL);
-	post = L"Hmmm, not much, just eating prawn crackers at the moment... but I'll post this every second if you want ;)";
+    //return mQblog->getPeerLatestBlog(id, ts, post);
+    ts = time(NULL);
+    post = L"Hmmm, not much, just eating prawn crackers at the moment... but I'll post this every second if you want ;)";
 
-	return true;
+    return true;
 
 }
 

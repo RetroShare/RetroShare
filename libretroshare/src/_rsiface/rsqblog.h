@@ -26,24 +26,28 @@
  *
  */
 
- #include <iostream>
- #include <string>
- #include <list>
- #include <map>
+#include <iostream>
+#include <string>
+#include <list>
+#include <map>
 
- #include "rstypes.h"
+#include "rstypes.h"
 
 
 /* delcare interaface for everyone o use */
 class RsQblog;
 extern RsQblog *rsQblog;
 
- /*! allows gui to interface with the rsQblogs service */
+/*! allows gui to interface with the rsQblogs service */
 class RsQblog
 {
 public:
-    RsQblog() { return; }
-    virtual ~RsQblog() { return; }
+    RsQblog() {
+        return;
+    }
+    virtual ~RsQblog() {
+        return;
+    }
 
     /**
      * send blog info, will send to a data structure for transmission
@@ -51,15 +55,15 @@ public:
      */
     virtual bool sendBlog(const std::wstring &msg) = 0;
 
-     /**
-      * retrieve blog of a usr
-      * @param blogs contains the blog msgs of usr along with time posted for sorting
-      */
+    /**
+     * retrieve blog of a usr
+     * @param blogs contains the blog msgs of usr along with time posted for sorting
+     */
     virtual bool getBlogs(std::map< std::string, std::multimap<long int, std::wstring> > &blogs) = 0;
 
     /**
-		 * Stuff DrBob Added for Profile View!
-		 */
+    	 * Stuff DrBob Added for Profile View!
+    	 */
 
     /**
      * get users Latest Blog Post.
@@ -69,6 +73,6 @@ public:
      */
     virtual bool getPeerLatestBlog(std::string id, uint32_t &ts, std::wstring &post) = 0;
 
- };
+};
 
 #endif /*RSQBLOG_H*/

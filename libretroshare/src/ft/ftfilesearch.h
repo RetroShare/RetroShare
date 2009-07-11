@@ -26,7 +26,7 @@
 #ifndef FT_FILE_SEARCH_HEADER
 #define FT_FILE_SEARCH_HEADER
 
-/* 
+/*
  * ftFileSearch
  *
  * This is implements an array of ftSearch Interfaces.
@@ -40,19 +40,19 @@
 class ftFileSearch: public ftSearch
 {
 
-	public:
+public:
 
-	ftFileSearch();
+    ftFileSearch();
 
-bool    addSearchMode(ftSearch *search, uint32_t hintflags);
-virtual bool    search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
+    bool    addSearchMode(ftSearch *search, uint32_t hintflags);
+    virtual bool    search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
 
-	private:
+private:
 
-	// should have a mutex to protect vector....
-	// but not really necessary as it is const most of the time.
+    // should have a mutex to protect vector....
+    // but not really necessary as it is const most of the time.
 
-	std::vector<ftSearch *> mSearchs;
+    std::vector<ftSearch *> mSearchs;
 };
 
 

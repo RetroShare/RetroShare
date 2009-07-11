@@ -5,6 +5,7 @@ include(_dht/dht.pri)
 include(_pqi/pqi.pri)
 include(_server/server.pri)
 include(_dbase/dbase.pri)
+include(_serialiser/serialiser.pri)
 
 TEMPLATE = lib
 CONFIG += static

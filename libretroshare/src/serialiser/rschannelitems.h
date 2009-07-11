@@ -41,46 +41,54 @@ const uint8_t RS_PKT_SUBTYPE_CHANNEL_MSG      = 0x01;
 
 class RsChannelMsg: public RsDistribMsg
 {
-        public:
-        RsChannelMsg()
-	:RsDistribMsg(RS_SERVICE_TYPE_CHANNEL, RS_PKT_SUBTYPE_CHANNEL_MSG) { return; }
-virtual ~RsChannelMsg() { return; }
+public:
+    RsChannelMsg()
+            :RsDistribMsg(RS_SERVICE_TYPE_CHANNEL, RS_PKT_SUBTYPE_CHANNEL_MSG) {
+        return;
+    }
+    virtual ~RsChannelMsg() {
+        return;
+    }
 
-virtual void clear();
-virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+    virtual void clear();
+    virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-	/*
-	 * RsDistribMsg has:
-	 * grpId, timestamp.
-	 * Not Used: parentId, threadId 
-	 */
+    /*
+     * RsDistribMsg has:
+     * grpId, timestamp.
+     * Not Used: parentId, threadId
+     */
 
-        std::wstring subject;
-        std::wstring message;
+    std::wstring subject;
+    std::wstring message;
 
-        RsTlvFileSet attachment;
+    RsTlvFileSet attachment;
 
 };
 
 class RsChannelSerialiser: public RsSerialType
 {
-	public:
-	RsChannelSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_CHANNEL)
-	{ return; }
-virtual     ~RsChannelSerialiser()
-	{ return; }
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
+public:
+    RsChannelSerialiser()
+            :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_CHANNEL)
+    {
+        return;
+    }
+    virtual     ~RsChannelSerialiser()
+    {
+        return;
+    }
 
-	private:
+    virtual	uint32_t    size(RsItem *);
+    virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
+    virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
-	/* For RS_PKT_SUBTYPE_CHANNEL_MSG */
-virtual	uint32_t    sizeMsg(RsChannelMsg *);
-virtual	bool        serialiseMsg(RsChannelMsg *item, void *data, uint32_t *size);
-virtual	RsChannelMsg *deserialiseMsg(void *data, uint32_t *size);
+private:
+
+    /* For RS_PKT_SUBTYPE_CHANNEL_MSG */
+    virtual	uint32_t    sizeMsg(RsChannelMsg *);
+    virtual	bool        serialiseMsg(RsChannelMsg *item, void *data, uint32_t *size);
+    virtual	RsChannelMsg *deserialiseMsg(void *data, uint32_t *size);
 
 };
 

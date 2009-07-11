@@ -29,313 +29,313 @@
 #include "pqi/pqibin.h"
 
 BinFileInterface::BinFileInterface(const char *fname, int flags)
-	:bin_flags(flags), buf(NULL), hash(NULL), bcount(0)
+        :bin_flags(flags), buf(NULL), hash(NULL), bcount(0)
 {
-	/* if read + write - open r+ */
-	if ((bin_flags & BIN_FLAGS_READABLE) &&
-		(bin_flags & BIN_FLAGS_WRITEABLE))
-	{
-		buf = fopen(fname, "rb+");
-		/* if the file don't exist */
-		if (!buf)
-		{
-			buf = fopen(fname, "wb+");
-		}
+    /* if read + write - open r+ */
+    if ((bin_flags & BIN_FLAGS_READABLE) &&
+            (bin_flags & BIN_FLAGS_WRITEABLE))
+    {
+        buf = fopen(fname, "rb+");
+        /* if the file don't exist */
+        if (!buf)
+        {
+            buf = fopen(fname, "wb+");
+        }
 
-	}
-	else if (bin_flags & BIN_FLAGS_READABLE)
-	{
-		buf = fopen(fname, "rb");
-	}
-	else if (bin_flags & BIN_FLAGS_WRITEABLE)
-	{
-		// This is enough to remove old file in Linux...
-		// but not in windows.... (what to do)
-		buf = fopen(fname, "wb");
-		fflush(buf); /* this might help windows! */
-	}
-	else
-	{	
-		/* not read or write! */
-	}
+    }
+    else if (bin_flags & BIN_FLAGS_READABLE)
+    {
+        buf = fopen(fname, "rb");
+    }
+    else if (bin_flags & BIN_FLAGS_WRITEABLE)
+    {
+        // This is enough to remove old file in Linux...
+        // but not in windows.... (what to do)
+        buf = fopen(fname, "wb");
+        fflush(buf); /* this might help windows! */
+    }
+    else
+    {
+        /* not read or write! */
+    }
 
-	if (buf)
-	{
-		/* no problem */
+    if (buf)
+    {
+        /* no problem */
 
-		/* go to the end */
-		fseek(buf, 0L, SEEK_END);
-		/* get size */
-		size = ftell(buf);
-		/* back to the start */
-		fseek(buf, 0L, SEEK_SET);
-	}
-	else
-	{
-		size = 0;
-	}
+        /* go to the end */
+        fseek(buf, 0L, SEEK_END);
+        /* get size */
+        size = ftell(buf);
+        /* back to the start */
+        fseek(buf, 0L, SEEK_SET);
+    }
+    else
+    {
+        size = 0;
+    }
 
-	if (bin_flags & BIN_FLAGS_HASH_DATA)
-	{
-		hash = new pqihash();
-	}
+    if (bin_flags & BIN_FLAGS_HASH_DATA)
+    {
+        hash = new pqihash();
+    }
 }
 
 
 BinFileInterface::~BinFileInterface()
 {
-	if (buf)
-	{
-		fclose(buf);
-	}
+    if (buf)
+    {
+        fclose(buf);
+    }
 
-	if (hash)
-	{
-		delete hash;
-	}
+    if (hash)
+    {
+        delete hash;
+    }
 }
 
 int BinFileInterface::close()
 {
-	if (buf)
-	{
-		fclose(buf);
-		buf = NULL;
-	}
-	return 1;
+    if (buf)
+    {
+        fclose(buf);
+        buf = NULL;
+    }
+    return 1;
 }
-		
+
 int	BinFileInterface::senddata(void *data, int len)
 {
-	if (!buf)
-		return -1;
+    if (!buf)
+        return -1;
 
-	if (1 != fwrite(data, len, 1, buf))
-	{
-		return -1;
-	}
-	if (bin_flags & BIN_FLAGS_HASH_DATA)
-	{  
-		hash->addData(data, len);
-		bcount += len;
-	}
-	return len;
+    if (1 != fwrite(data, len, 1, buf))
+    {
+        return -1;
+    }
+    if (bin_flags & BIN_FLAGS_HASH_DATA)
+    {
+        hash->addData(data, len);
+        bcount += len;
+    }
+    return len;
 }
 
 int	BinFileInterface::readdata(void *data, int len)
 {
-	if (!buf)
-		return -1;
+    if (!buf)
+        return -1;
 
-	if (1 != fread(data, len, 1, buf))
-	{
-		return -1;
-	}
-	if (bin_flags & BIN_FLAGS_HASH_DATA)
-	{  
-		hash->addData(data, len);
-		bcount += len;
-	}
-	return len;
+    if (1 != fread(data, len, 1, buf))
+    {
+        return -1;
+    }
+    if (bin_flags & BIN_FLAGS_HASH_DATA)
+    {
+        hash->addData(data, len);
+        bcount += len;
+    }
+    return len;
 }
 
 std::string  BinFileInterface::gethash()
 {
-	std::string hashstr;
-	if (bin_flags & BIN_FLAGS_HASH_DATA)
-	{  
-		hash->Complete(hashstr);
-	}
-	return hashstr;
+    std::string hashstr;
+    if (bin_flags & BIN_FLAGS_HASH_DATA)
+    {
+        hash->Complete(hashstr);
+    }
+    return hashstr;
 }
 
 uint64_t BinFileInterface::bytecount()
 {
-	if (bin_flags & BIN_FLAGS_HASH_DATA)
-	{  
-		return bcount;
-	}
-	return 0;
+    if (bin_flags & BIN_FLAGS_HASH_DATA)
+    {
+        return bcount;
+    }
+    return 0;
 }
-	
+
 
 BinMemInterface::BinMemInterface(int defsize, int flags)
-	:bin_flags(flags), buf(NULL), size(defsize), 
-	recvsize(0), readloc(0), hash(NULL), bcount(0)
-	{
-		buf = malloc(defsize);
-		if (bin_flags & BIN_FLAGS_HASH_DATA)
-		{
-			hash = new pqihash();
-		}
-	}
+        :bin_flags(flags), buf(NULL), size(defsize),
+        recvsize(0), readloc(0), hash(NULL), bcount(0)
+{
+    buf = malloc(defsize);
+    if (bin_flags & BIN_FLAGS_HASH_DATA)
+    {
+        hash = new pqihash();
+    }
+}
 
 
 BinMemInterface::BinMemInterface(const void *data, const int defsize, int flags)
-	:bin_flags(flags), buf(NULL), size(defsize), 
-	recvsize(0), readloc(0), hash(NULL), bcount(0)
-	{
-		buf = malloc(defsize);
-		if (bin_flags & BIN_FLAGS_HASH_DATA)
-		{
-			hash = new pqihash();
-		}
+        :bin_flags(flags), buf(NULL), size(defsize),
+        recvsize(0), readloc(0), hash(NULL), bcount(0)
+{
+    buf = malloc(defsize);
+    if (bin_flags & BIN_FLAGS_HASH_DATA)
+    {
+        hash = new pqihash();
+    }
 
-		/* just remove the const 
-		 * *BAD* but senddata don't change it anyway 
-		 */
-		senddata((void *) data, defsize);
-	}
+    /* just remove the const
+     * *BAD* but senddata don't change it anyway
+     */
+    senddata((void *) data, defsize);
+}
 
-BinMemInterface::~BinMemInterface() 
-{ 
-	if (buf)
-		free(buf);
+BinMemInterface::~BinMemInterface()
+{
+    if (buf)
+        free(buf);
 
-	if (hash)
-		delete hash;
-	return; 
+    if (hash)
+        delete hash;
+    return;
 }
 
 int BinMemInterface::close()
 {
-	if (buf)
-	{
-		free(buf);
-		buf = NULL;
-	}
-	size = 0;
-	recvsize = 0;
-	readloc = 0;
-	return 1;
+    if (buf)
+    {
+        free(buf);
+        buf = NULL;
+    }
+    size = 0;
+    recvsize = 0;
+    readloc = 0;
+    return 1;
 }
 
-	/* some fns to mess with the memory */
+/* some fns to mess with the memory */
 int	BinMemInterface::fseek(int loc)
-	{
-		if (loc <= recvsize)
-		{
-			readloc = loc;
-			return 1;
-		}
-		return 0;
-	}
+{
+    if (loc <= recvsize)
+    {
+        readloc = loc;
+        return 1;
+    }
+    return 0;
+}
 
 
 int	BinMemInterface::senddata(void *data, const int len)
-	{
-		if(recvsize + len > size)
-		{
-			/* resize? */
-			return -1;
-		}
-		memcpy((char *) buf + recvsize, data, len);
-		if (bin_flags & BIN_FLAGS_HASH_DATA)
-		{  
-			hash->addData(data, len);
-			bcount += len;
-		}
-		recvsize += len;
-		return len;
-	}
+{
+    if (recvsize + len > size)
+    {
+        /* resize? */
+        return -1;
+    }
+    memcpy((char *) buf + recvsize, data, len);
+    if (bin_flags & BIN_FLAGS_HASH_DATA)
+    {
+        hash->addData(data, len);
+        bcount += len;
+    }
+    recvsize += len;
+    return len;
+}
 
-		
+
 int	BinMemInterface::readdata(void *data, int len)
-	{
-		if(readloc + len > recvsize)
-		{
-			/* no more stuff? */
-			return -1;
-		}
-		memcpy(data, (char *) buf + readloc, len);
-		if (bin_flags & BIN_FLAGS_HASH_DATA)
-		{  
-			hash->addData(data, len);
-			bcount += len;
-		}
-		readloc += len;
-		return len;
-	}
+{
+    if (readloc + len > recvsize)
+    {
+        /* no more stuff? */
+        return -1;
+    }
+    memcpy(data, (char *) buf + readloc, len);
+    if (bin_flags & BIN_FLAGS_HASH_DATA)
+    {
+        hash->addData(data, len);
+        bcount += len;
+    }
+    readloc += len;
+    return len;
+}
 
 
 
 std::string  BinMemInterface::gethash()
-	{
-		std::string hashstr;
-		if (bin_flags & BIN_FLAGS_HASH_DATA)
-		{  
-			hash->Complete(hashstr);
-		}
-		return hashstr;
-	}
+{
+    std::string hashstr;
+    if (bin_flags & BIN_FLAGS_HASH_DATA)
+    {
+        hash->Complete(hashstr);
+    }
+    return hashstr;
+}
 
 
 uint64_t BinMemInterface::bytecount()
 {
-	if (bin_flags & BIN_FLAGS_HASH_DATA)
-	{  
-		return bcount;
-	}
-	return 0;
+    if (bin_flags & BIN_FLAGS_HASH_DATA)
+    {
+        return bcount;
+    }
+    return 0;
 }
-	
+
 bool    BinMemInterface::writetofile(const char *fname)
 {
-	FILE *fd = fopen(fname, "wb");
-	if (!fd)
-	{
-		return false;
-	}
+    FILE *fd = fopen(fname, "wb");
+    if (!fd)
+    {
+        return false;
+    }
 
-	if (1 != fwrite(buf, recvsize, 1, fd))
-	{
-		fclose(fd);
-		return false;
-	}
+    if (1 != fwrite(buf, recvsize, 1, fd))
+    {
+        fclose(fd);
+        return false;
+    }
 
-	fclose(fd);
+    fclose(fd);
 
-	return true;
+    return true;
 }
 
 bool    BinMemInterface::readfromfile(const char *fname)
 {
-	FILE *fd = fopen(fname, "rb");
-	if (!fd)
-	{
-		return false;
-	}
+    FILE *fd = fopen(fname, "rb");
+    if (!fd)
+    {
+        return false;
+    }
 
-	/* get size */
-	::fseek(fd, 0L, SEEK_END);
-	int fsize = ftell(fd);
+    /* get size */
+    ::fseek(fd, 0L, SEEK_END);
+    int fsize = ftell(fd);
 
-	if (fsize > size)
-	{
-		/* not enough room */
-		std::cerr << "BinMemInterface::readfromfile() not enough room";
-		std::cerr << std::endl;
+    if (fsize > size)
+    {
+        /* not enough room */
+        std::cerr << "BinMemInterface::readfromfile() not enough room";
+        std::cerr << std::endl;
 
-		fclose(fd);
-		return false;
-	}
+        fclose(fd);
+        return false;
+    }
 
-	::fseek(fd, 0L, SEEK_SET);
-	if (1 != fread(buf, fsize, 1, fd))
-	{
-		/* not enough room */
-		std::cerr << "BinMemInterface::readfromfile() failed fread";
-		std::cerr << std::endl;
+    ::fseek(fd, 0L, SEEK_SET);
+    if (1 != fread(buf, fsize, 1, fd))
+    {
+        /* not enough room */
+        std::cerr << "BinMemInterface::readfromfile() failed fread";
+        std::cerr << std::endl;
 
-		fclose(fd);
-		return false;
-	}
+        fclose(fd);
+        return false;
+    }
 
-	recvsize = fsize;
-	readloc = 0;
-	fclose(fd);
+    recvsize = fsize;
+    readloc = 0;
+    fclose(fd);
 
-	return true;
+    return true;
 }
 
 
@@ -344,20 +344,20 @@ bool    BinMemInterface::readfromfile(const char *fname)
 
 void printNetBinID(std::ostream &out, std::string id, uint32_t t)
 {
-	out << "NetBinId(" << id << ",";
-	if (t == PQI_CONNECT_TCP)
-	{
-		out << "TCP)";
-	}
-	else
-	{
-		out << "UDP)";
-	}
+    out << "NetBinId(" << id << ",";
+    if (t == PQI_CONNECT_TCP)
+    {
+        out << "TCP)";
+    }
+    else
+    {
+        out << "UDP)";
+    }
 }
 
 
 /************************** NetBinDummy ******************************
- * A test framework, 
+ * A test framework,
  *
  */
 
@@ -366,200 +366,200 @@ void printNetBinID(std::ostream &out, std::string id, uint32_t t)
 const uint32_t DEFAULT_DUMMY_DELTA 	= 5;
 
 NetBinDummy::NetBinDummy(PQInterface *parent, std::string id, uint32_t t)
-       :NetBinInterface(parent, id), type(t), dummyConnected(false), 
+        :NetBinInterface(parent, id), type(t), dummyConnected(false),
         toConnect(false), connectDelta(DEFAULT_DUMMY_DELTA)
-{ 
-	return; 
+{
+    return;
 }
 
-	// Net Interface
+// Net Interface
 int NetBinDummy::connect(struct sockaddr_in raddr)
 {
-	std::cerr << "NetBinDummy::connect(";
-	std::cerr << inet_ntoa(raddr.sin_addr) << ":";
-	std::cerr << htons(raddr.sin_port);
-	std::cerr << ") ";
-	printNetBinID(std::cerr, PeerId(), type);
-	std::cerr << std::endl; 
+    std::cerr << "NetBinDummy::connect(";
+    std::cerr << inet_ntoa(raddr.sin_addr) << ":";
+    std::cerr << htons(raddr.sin_port);
+    std::cerr << ") ";
+    printNetBinID(std::cerr, PeerId(), type);
+    std::cerr << std::endl;
 
-	std::cerr << "NetBinDummy::dummyConnect = true!";
-	std::cerr << std::endl; 
+    std::cerr << "NetBinDummy::dummyConnect = true!";
+    std::cerr << std::endl;
 
-	if (type == PQI_CONNECT_TCP)
-	{
-		std::cerr << "NetBinDummy:: Not connecting TCP";
-		std::cerr << std::endl; 
-		if (parent())
-		{
-			parent()->notifyEvent(this, CONNECT_FAILED);
-		}
-	}
-	else if (!dummyConnected)
-	{
-		toConnect = true;
-		connectTS = time(NULL) + connectDelta;
-		std::cerr << "NetBinDummy::toConnect = true, connect in: ";
-		std::cerr << connectDelta << " secs";
-		std::cerr << std::endl; 
-	}
-	else
-	{
-		std::cerr << "NetBinDummy:: Already Connected!";
-		std::cerr << std::endl; 
-	}
+    if (type == PQI_CONNECT_TCP)
+    {
+        std::cerr << "NetBinDummy:: Not connecting TCP";
+        std::cerr << std::endl;
+        if (parent())
+        {
+            parent()->notifyEvent(this, CONNECT_FAILED);
+        }
+    }
+    else if (!dummyConnected)
+    {
+        toConnect = true;
+        connectTS = time(NULL) + connectDelta;
+        std::cerr << "NetBinDummy::toConnect = true, connect in: ";
+        std::cerr << connectDelta << " secs";
+        std::cerr << std::endl;
+    }
+    else
+    {
+        std::cerr << "NetBinDummy:: Already Connected!";
+        std::cerr << std::endl;
+    }
 
-	return 1;
+    return 1;
 }
 
 int NetBinDummy::listen()
 {
-	std::cerr << "NetBinDummy::connect() ";
-	printNetBinID(std::cerr, PeerId(), type);
-	std::cerr << std::endl;
+    std::cerr << "NetBinDummy::connect() ";
+    printNetBinID(std::cerr, PeerId(), type);
+    std::cerr << std::endl;
 
-	return 1;
+    return 1;
 }
 
 int NetBinDummy::stoplistening()
 {
-	std::cerr << "NetBinDummy::stoplistening() ";
-	printNetBinID(std::cerr, PeerId(), type);
-	std::cerr << std::endl;
+    std::cerr << "NetBinDummy::stoplistening() ";
+    printNetBinID(std::cerr, PeerId(), type);
+    std::cerr << std::endl;
 
-	return 1;
+    return 1;
 }
 
 int NetBinDummy::disconnect()
 {
-	std::cerr << "NetBinDummy::disconnect() ";
-	printNetBinID(std::cerr, PeerId(), type);
-	std::cerr << std::endl;
+    std::cerr << "NetBinDummy::disconnect() ";
+    printNetBinID(std::cerr, PeerId(), type);
+    std::cerr << std::endl;
 
-	std::cerr << "NetBinDummy::dummyConnect = false!";
-	std::cerr << std::endl; 
-	dummyConnected = false;
+    std::cerr << "NetBinDummy::dummyConnect = false!";
+    std::cerr << std::endl;
+    dummyConnected = false;
 
-	if (parent())
-	{
-		parent()->notifyEvent(this, CONNECT_FAILED);
-	}
+    if (parent())
+    {
+        parent()->notifyEvent(this, CONNECT_FAILED);
+    }
 
-	return 1;
+    return 1;
 }
 
 int NetBinDummy::reset()
 {
-	std::cerr << "NetBinDummy::reset() ";
-	printNetBinID(std::cerr, PeerId(), type);
-	std::cerr << std::endl;
+    std::cerr << "NetBinDummy::reset() ";
+    printNetBinID(std::cerr, PeerId(), type);
+    std::cerr << std::endl;
 
-	disconnect();
+    disconnect();
 
-	return 1;
+    return 1;
 }
 
 
-         // Bin Interface.
+// Bin Interface.
 int     NetBinDummy::tick()
 {
 
-	if (toConnect)
-	{
-		if (connectTS < time(NULL))
-		{
-			std::cerr << "NetBinDummy::tick() dummyConnected = true ";
-			printNetBinID(std::cerr, PeerId(), type);
-			std::cerr << std::endl;
-			dummyConnected = true;
-			toConnect = false;
-			if (parent())
-				parent()->notifyEvent(this, CONNECT_SUCCESS);
-		}
-		else
-		{
-			std::cerr << "NetBinDummy::tick() toConnect ";
-			printNetBinID(std::cerr, PeerId(), type);
-			std::cerr << std::endl;
-		}
-	}
-	return 0;
+    if (toConnect)
+    {
+        if (connectTS < time(NULL))
+        {
+            std::cerr << "NetBinDummy::tick() dummyConnected = true ";
+            printNetBinID(std::cerr, PeerId(), type);
+            std::cerr << std::endl;
+            dummyConnected = true;
+            toConnect = false;
+            if (parent())
+                parent()->notifyEvent(this, CONNECT_SUCCESS);
+        }
+        else
+        {
+            std::cerr << "NetBinDummy::tick() toConnect ";
+            printNetBinID(std::cerr, PeerId(), type);
+            std::cerr << std::endl;
+        }
+    }
+    return 0;
 }
 
 int     NetBinDummy::senddata(void *data, int len)
 {
-	std::cerr << "NetBinDummy::senddata() ";
-	printNetBinID(std::cerr, PeerId(), type);
-	std::cerr << std::endl;
+    std::cerr << "NetBinDummy::senddata() ";
+    printNetBinID(std::cerr, PeerId(), type);
+    std::cerr << std::endl;
 
-	if (dummyConnected)
-		return len;
-	return 0;
+    if (dummyConnected)
+        return len;
+    return 0;
 }
 
 int     NetBinDummy::readdata(void *data, int len)
 {
-	std::cerr << "NetBinDummy::readdata() ";
-	printNetBinID(std::cerr, PeerId(), type);
-	std::cerr << std::endl;
+    std::cerr << "NetBinDummy::readdata() ";
+    printNetBinID(std::cerr, PeerId(), type);
+    std::cerr << std::endl;
 
-	return 0;
+    return 0;
 }
 
 int     NetBinDummy::netstatus()
 {
-	std::cerr << "NetBinDummy::netstatus() ";
-	printNetBinID(std::cerr, PeerId(), type);
-	std::cerr << std::endl;
+    std::cerr << "NetBinDummy::netstatus() ";
+    printNetBinID(std::cerr, PeerId(), type);
+    std::cerr << std::endl;
 
-	return 1;
+    return 1;
 }
 
 int     NetBinDummy::isactive()
 {
-	std::cerr << "NetBinDummy::isactive() ";
-	printNetBinID(std::cerr, PeerId(), type);
-	if (dummyConnected)
-		std::cerr << " true ";
-	else
-		std::cerr << " false ";
-	std::cerr << std::endl;
+    std::cerr << "NetBinDummy::isactive() ";
+    printNetBinID(std::cerr, PeerId(), type);
+    if (dummyConnected)
+        std::cerr << " true ";
+    else
+        std::cerr << " false ";
+    std::cerr << std::endl;
 
-	return dummyConnected;
+    return dummyConnected;
 }
 
 bool    NetBinDummy::moretoread()
 {
-	std::cerr << "NetBinDummy::moretoread() ";
-	printNetBinID(std::cerr, PeerId(), type);
-	std::cerr << std::endl;
+    std::cerr << "NetBinDummy::moretoread() ";
+    printNetBinID(std::cerr, PeerId(), type);
+    std::cerr << std::endl;
 
-	return false;
+    return false;
 }
 
 bool    NetBinDummy::cansend()
 {
-	std::cerr << "NetBinDummy::cansend() ";
-	printNetBinID(std::cerr, PeerId(), type);
-	std::cerr << std::endl;
+    std::cerr << "NetBinDummy::cansend() ";
+    printNetBinID(std::cerr, PeerId(), type);
+    std::cerr << std::endl;
 
-	return dummyConnected;
+    return dummyConnected;
 }
 
 int	NetBinDummy::close()
 {
-	std::cerr << "NetBinDummy::close() ";
-	printNetBinID(std::cerr, PeerId(), type);
-	std::cerr << std::endl;
+    std::cerr << "NetBinDummy::close() ";
+    printNetBinID(std::cerr, PeerId(), type);
+    std::cerr << std::endl;
 
-	return 1;
+    return 1;
 }
 
 std::string NetBinDummy::gethash()
 {
-	std::cerr << "NetBinDummy::gethash() ";
-	printNetBinID(std::cerr, PeerId(), type);
-	std::cerr << std::endl;
+    std::cerr << "NetBinDummy::gethash() ";
+    printNetBinID(std::cerr, PeerId(), type);
+    std::cerr << std::endl;
 
-	return std::string("");
+    return std::string("");
 }
 

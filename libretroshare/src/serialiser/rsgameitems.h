@@ -36,43 +36,49 @@
 
 class RsGameItem: public RsItem
 {
-	public:
-	RsGameItem() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GAME_LAUNCHER, 
-		RS_PKT_SUBTYPE_DEFAULT)
-	{ return; }
-virtual ~RsGameItem();
-virtual void clear();  
-std::ostream &print(std::ostream &out, uint16_t indent = 0);
+public:
+    RsGameItem()
+            :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GAME_LAUNCHER,
+                    RS_PKT_SUBTYPE_DEFAULT)
+    {
+        return;
+    }
+    virtual ~RsGameItem();
+    virtual void clear();
+    std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-        uint32_t serviceId;
-        uint32_t numPlayers;
-        uint32_t msg; /* RS_GAME_MSG_XXX */
+    uint32_t serviceId;
+    uint32_t numPlayers;
+    uint32_t msg; /* RS_GAME_MSG_XXX */
 
-        std::string gameId;
-        std::wstring gameComment;
+    std::string gameId;
+    std::wstring gameComment;
 
-	RsTlvPeerIdSet players;
+    RsTlvPeerIdSet players;
 };
 
 class RsGameSerialiser: public RsSerialType
 {
-	public:
-	RsGameSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GAME_LAUNCHER)
-	{ return; }
-virtual     ~RsGameSerialiser()
-	{ return; }
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
+public:
+    RsGameSerialiser()
+            :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GAME_LAUNCHER)
+    {
+        return;
+    }
+    virtual     ~RsGameSerialiser()
+    {
+        return;
+    }
 
-	private:
+    virtual	uint32_t    size(RsItem *);
+    virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
+    virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
-virtual	uint32_t    sizeItem(RsGameItem *);
-virtual	bool        serialiseItem  (RsGameItem *item, void *data, uint32_t *size);
-virtual	RsGameItem *deserialiseItem(void *data, uint32_t *size);
+private:
+
+    virtual	uint32_t    sizeItem(RsGameItem *);
+    virtual	bool        serialiseItem  (RsGameItem *item, void *data, uint32_t *size);
+    virtual	RsGameItem *deserialiseItem(void *data, uint32_t *size);
 
 
 };

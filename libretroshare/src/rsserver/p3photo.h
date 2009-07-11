@@ -31,39 +31,39 @@
 
 class p3Photo: public RsPhoto
 {
-	public:
+public:
 
-	p3Photo(p3PhotoService *p3ps);
-virtual ~p3Photo();
+    p3Photo(p3PhotoService *p3ps);
+    virtual ~p3Photo();
 
-	/* changed? */
-virtual bool updated();
+    /* changed? */
+    virtual bool updated();
 
-	/* access data */
-virtual bool getPhotoList(std::string id, std::list<std::string> &hashs);
-virtual bool getShowList(std::string id, std::list<std::string> &showIds);
-virtual bool getShowDetails(std::string id, std::string showId, RsPhotoShowDetails &detail);
-virtual bool getPhotoDetails(std::string id, std::string photoId, RsPhotoDetails &detail);
+    /* access data */
+    virtual bool getPhotoList(std::string id, std::list<std::string> &hashs);
+    virtual bool getShowList(std::string id, std::list<std::string> &showIds);
+    virtual bool getShowDetails(std::string id, std::string showId, RsPhotoShowDetails &detail);
+    virtual bool getPhotoDetails(std::string id, std::string photoId, RsPhotoDetails &detail);
 
-	/* add / delete */
-virtual std::string createShow(std::string name); 
-virtual bool deleteShow(std::string showId);
-virtual bool addPhotoToShow(std::string showId, std::string photoId, int16_t index);
-virtual bool movePhotoInShow(std::string showId, std::string photoId, int16_t index);
-virtual bool removePhotoFromShow(std::string showId, std::string photoId);
+    /* add / delete */
+    virtual std::string createShow(std::string name);
+    virtual bool deleteShow(std::string showId);
+    virtual bool addPhotoToShow(std::string showId, std::string photoId, int16_t index);
+    virtual bool movePhotoInShow(std::string showId, std::string photoId, int16_t index);
+    virtual bool removePhotoFromShow(std::string showId, std::string photoId);
 
-virtual std::string addPhoto(std::string path); /* add from file */
-virtual bool addPhoto(std::string srcId, std::string photoId); /* add from peers photos */
-virtual bool deletePhoto(std::string photoId);
+    virtual std::string addPhoto(std::string path); /* add from file */
+    virtual bool addPhoto(std::string srcId, std::string photoId); /* add from peers photos */
+    virtual bool deletePhoto(std::string photoId);
 
-	/* modify properties (TODO) */
-virtual bool modifyShow(std::string showId, std::wstring name, std::wstring comment);
-virtual bool modifyPhoto(std::string photoId, std::wstring name, std::wstring comment);
-virtual bool modifyShowComment(std::string showId, std::string photoId, std::wstring comment);
+    /* modify properties (TODO) */
+    virtual bool modifyShow(std::string showId, std::wstring name, std::wstring comment);
+    virtual bool modifyPhoto(std::string photoId, std::wstring name, std::wstring comment);
+    virtual bool modifyShowComment(std::string showId, std::string photoId, std::wstring comment);
 
-	private:
+private:
 
-	p3PhotoService *mPhoto;
+    p3PhotoService *mPhoto;
 };
 
 #endif

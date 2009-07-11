@@ -30,36 +30,44 @@
 
 class RsTlvKeyValueWide: public RsTlvItem
 {
-	public:
-	
-	RsTlvKeyValueWide() { return;}
-		virtual ~RsTlvKeyValueWide() { return;}
-	
-virtual uint16_t TlvSize();
-virtual void TlvClear();
-virtual bool SetTlv(void *data, uint32_t size, uint32_t *offset);
-virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
-virtual std::ostream &print(std::ostream &out, uint16_t indent);
+public:
 
-	std::wstring wKey;
-	std::wstring wValue;
+    RsTlvKeyValueWide() {
+        return;
+    }
+    virtual ~RsTlvKeyValueWide() {
+        return;
+    }
+
+    virtual uint16_t TlvSize();
+    virtual void TlvClear();
+    virtual bool SetTlv(void *data, uint32_t size, uint32_t *offset);
+    virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
+    virtual std::ostream &print(std::ostream &out, uint16_t indent);
+
+    std::wstring wKey;
+    std::wstring wValue;
 };
 
 
 class RsTlvKeyValueWideSet : public RsTlvItem
 {
-	public:
-	
-	RsTlvKeyValueWideSet() { return;}
-	virtual ~RsTlvKeyValueWideSet() { return; }
-	
-virtual uint16_t TlvSize();
-virtual void TlvClear();
-virtual bool SetTlv(void *data, uint32_t size, uint32_t *offset);
-virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
-virtual std::ostream &print(std::ostream &out, uint16_t indent);
+public:
 
-	std::list<RsTlvKeyValueWide> wPairs;
+    RsTlvKeyValueWideSet() {
+        return;
+    }
+    virtual ~RsTlvKeyValueWideSet() {
+        return;
+    }
+
+    virtual uint16_t TlvSize();
+    virtual void TlvClear();
+    virtual bool SetTlv(void *data, uint32_t size, uint32_t *offset);
+    virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
+    virtual std::ostream &print(std::ostream &out, uint16_t indent);
+
+    std::list<RsTlvKeyValueWide> wPairs;
 };
 
 
