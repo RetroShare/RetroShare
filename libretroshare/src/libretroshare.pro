@@ -1,20 +1,33 @@
 TEMPLATE = lib
-CONFIG += static
+CONFIG += static xpgp
 TARGET = retroshare
 CONFIG += release
 
-################################# Linux ##########################################
+DEFINES *= MINIUPNPC_VERSION=10
+UPNPC_DIR=../../../../miniupnpc-1.0
 
 profiling {
 	QMAKE_CXXFLAGS -= -fomit-frame-pointer
 	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
 }
+pgp {
+	SSL_DIR=/usr/include/openssl
+	DEFINES -=PQI_USE_XPGP
+	DEFINES *= RS_USE_PGPSSL
+}
+xpgp {
+	DEFINES *= PQI_USE_XPGP 
+	SSL_DIR=../../../../openssl-0.9.7g-xpgp-0.1c
+}
+
+
+################################# Linux ##########################################
 
 debug {
-	DEFINES *= DEBUG
+#	DEFINES *= DEBUG
 #	DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER FT_DEBUG EXTADDRSEARCH_DEBUG
-#	DEFINES *= CHAT_DEBUG
-	DEFINES *= P3TURTLE_DEBUG CONTROL_DEBUG FT_DEBUG
+#	DEFINES *= CHAT_DEBUG CONTROL_DEBUG FT_DEBUG
+	DEFINES *= P3TURTLE_DEBUG 
 	QMAKE_CXXFLAGS *= -g
 }
 
@@ -52,19 +65,12 @@ win32 {
   DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW
 	DESTDIR = lib
 	  
-	SSL_DIR = ../../../../openssl-0.9.7g-xpgp-0.1c/include
-	UPNPC_DIR = ../../../../miniupnpc-1.0
 	PTHREADS_DIR = ../../../../pthreads-w32-2-8-0-release
   ZLIB_DIR = ../../../../zlib-1.2.3
         
-  INCLUDEPATH += . $${SSL_DIR} $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR}
+  INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR}
 }
 ################################### COMMON stuff ##################################
-
-DEFINES *=  PQI_USE_XPGP MINIUPNPC_VERSION=10
-
-SSL_DIR=../../../../openssl-0.9.7g-xpgp-0.1c
-UPNPC_DIR=../../../../miniupnpc-1.0
 
 INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR}
 
@@ -114,8 +120,6 @@ HEADERS += dbase/cachestrapper.h \
            ft/ftserver.h \
            ft/fttransfermodule.h \
            pqi/authssl.h \
-           pqi/authxpgp.h \
-           pqi/cleanupxpgp.h \
            pqi/p3authmgr.h \
            pqi/p3cfgmgr.h \
            pqi/p3connmgr.h \
@@ -231,7 +235,6 @@ HEADERS += dbase/cachestrapper.h \
 SOURCES = \
 				dht/dht_check_peers.cc \
 				dht/dht_bootstrap.cc \
-				pqi/xpgp_id.cc \
 				rsserver/p3face-msgs.cc \
 				rsserver/rsiface.cc \
 				rsserver/rstypes.cc \
@@ -286,8 +289,6 @@ SOURCES = \
 				pqi/pqiservice.cc \
 				pqi/pqiperson.cc \
 				pqi/pqissludp.cc \
-				pqi/authxpgp.cc \
-				pqi/cleanupxpgp.cc \
 				pqi/pqisslpersongrp.cc \
 				pqi/pqissllistener.cc \
 				pqi/pqissl.cc \
@@ -338,3 +339,12 @@ SOURCES = \
 				util/rsprint.cc \
 				util/rsthreads.cc \
 				util/rsversion.cc 
+
+pgp {
+	HEADERS += pqi/authssl.h pqi/cleanupxpgp.h pqi/authgpg.h
+	SOURCES += pqi/authssl.cc pqi/cleanupxpgp.cc pqi/authgpg.cc
+}
+xpgp {
+	HEADERS += pqi/authxpgp.h pqi/cleanupxpgp.h 
+	SOURCES += pqi/authxpgp.cc pqi/cleanupxpgp.cc pqi/xpgp_id.cc 
+}
