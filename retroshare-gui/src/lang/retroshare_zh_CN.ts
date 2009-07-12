@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="1.1" language="zh">
-<defaultcodec></defaultcodec>
+<!DOCTYPE TS>
+<TS version="2.0" language="zh">
 <context>
     <name></name>
     <message>
+        <location filename="../gui/ApplicationWindow.cpp" line="62"/>
+        <location filename="../gui/MainWindow.cpp" line="72"/>
         <location filename="../gui/Preferences/PreferencesWindow.cpp" line="31"/>
         <source>Arial</source>
         <translation>Arial</translation>
@@ -12,7 +14,6 @@
 <context>
     <name>@default</name>
     <message>
-        <location filename="../gui/Preferences/PreferencesWindow.cpp" line="31"/>
         <source>Arial</source>
         <translation type="obsolete">Arial</translation>
     </message>
@@ -40,7 +41,7 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/AddFileAssotiationDialog.cpp" line="153"/>
+        <location filename="../gui/Preferences/AddFileAssotiationDialog.cpp" line="152"/>
         <source>Sorry, can&apos;t determine system default command for this file
 </source>
         <translation>抱歉，不能确定文件的缺省命令。</translation>
@@ -49,27 +50,22 @@
 <context>
     <name>AddFriendDialog</name>
     <message>
-        <location filename="../gui/connect/AddFriendDialog.ui" line="72"/>
         <source>Cancel</source>
         <translation type="obsolete">取消</translation>
     </message>
     <message>
-        <location filename="../gui/connect/AddFriendDialog.ui" line="85"/>
         <source>Done</source>
         <translation type="obsolete">完成</translation>
     </message>
     <message>
-        <location filename="../gui/connect/AddFriendDialog.ui" line="59"/>
         <source>Load From File</source>
         <translation type="obsolete">从文件中加载证书</translation>
     </message>
     <message>
-        <location filename="../gui/connect/AddFriendDialog.cpp" line="101"/>
         <source>RetroShare</source>
         <translation type="obsolete">Retroshare</translation>
     </message>
     <message>
-        <location filename="../gui/connect/AddFriendDialog.cpp" line="102"/>
         <source>Certificate Load Failed</source>
         <translation type="obsolete">证书加载失败</translation>
     </message>
@@ -77,7 +73,6 @@
 <context>
     <name>AddFriendWizard</name>
     <message>
-        <location filename="../gui/connect/AddFriendWizard.ui" line="556"/>
         <source>Cancel</source>
         <translation type="obsolete">取消</translation>
     </message>
@@ -245,22 +240,18 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AuthorizationDialog</name>
     <message>
-        <location filename="../gui/authdlg/AuthorizationDialog.ui" line="13"/>
         <source>Authenticate</source>
         <translation type="obsolete">签署此人 (authenticate)</translation>
     </message>
     <message>
-        <location filename="../gui/authdlg/AuthorizationDialog.ui" line="36"/>
         <source>Authenticate Friend By Entering Their Code</source>
         <translation type="obsolete">签署这项好友进入代码 </translation>
     </message>
     <message>
-        <location filename="../gui/authdlg/AuthorizationDialog.ui" line="118"/>
         <source>OK</source>
         <translation type="obsolete">确定</translation>
     </message>
     <message>
-        <location filename="../gui/authdlg/AuthorizationDialog.ui" line="131"/>
         <source>Cancel</source>
         <translation type="obsolete">取消</translation>
     </message>
@@ -268,6 +259,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>BandwidthGraph</name>
     <message>
+        <location filename="../gui/bwgraph/bwgraph.cpp" line="273"/>
         <location filename="../gui/bwgraph/bwgraph.ui" line="514"/>
         <source>Show Settings</source>
         <translation>显示设置</translation>
@@ -372,6 +364,10 @@ p, li { white-space: pre-wrap; }
         <translation>准备</translation>
     </message>
     <message>
+        <location filename="../games/qbackgammon/bgwindow.cpp" line="37"/>
+        <location filename="../games/qbackgammon/bgwindow.cpp" line="87"/>
+        <location filename="../games/qbackgammon/bgwindow.cpp" line="104"/>
+        <location filename="../games/qbackgammon/bgwindow.cpp" line="116"/>
         <location filename="../games/qbackgammon/bgwindow.cpp" line="130"/>
         <source>QBackgammon</source>
         <translation></translation>
@@ -427,7 +423,7 @@ p, li { white-space: pre-wrap; }
         <translation>(&amp;)文件</translation>
     </message>
     <message>
-        <location filename="../games/qbackgammon/bgwindow.cpp" line="89"/>
+        <location filename="../games/qbackgammon/bgwindow.cpp" line="88"/>
         <source>Are you sure you want to start a new game?
 The current one will be lost.</source>
         <translation>你要重新开始游戏吗？</translation>
@@ -456,12 +452,12 @@ Released under GPL</source>
     <message>
         <location filename="../gui/BlogDialog.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/BlogDialog.ui" line="73"/>
         <source>Blogs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">博客</translation>
     </message>
     <message>
         <location filename="../gui/BlogDialog.ui" line="97"/>
@@ -514,7 +510,7 @@ Released under GPL</source>
     <message>
         <location filename="../gui/feeds/BlogMsgItem.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/feeds/BlogMsgItem.ui" line="54"/>
@@ -529,12 +525,12 @@ Released under GPL</source>
     <message>
         <location filename="../gui/feeds/BlogMsgItem.ui" line="126"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">展开</translation>
     </message>
     <message>
         <location filename="../gui/feeds/BlogMsgItem.ui" line="144"/>
         <source>Subject</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">题目</translation>
     </message>
     <message>
         <location filename="../gui/feeds/BlogMsgItem.ui" line="157"/>
@@ -563,7 +559,7 @@ Released under GPL</source>
     <message>
         <location filename="../gui/CalDialog.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/CalDialog.ui" line="52"/>
@@ -588,7 +584,7 @@ Released under GPL</source>
     <message>
         <location filename="../gui/CalDialog.ui" line="122"/>
         <source>Location:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">地点：</translation>
     </message>
     <message>
         <location filename="../gui/CalDialog.ui" line="168"/>
@@ -623,7 +619,7 @@ Released under GPL</source>
     <message>
         <location filename="../gui/CalDialog.ui" line="249"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">添加</translation>
     </message>
     <message>
         <location filename="../gui/CalDialog.ui" line="274"/>
@@ -642,57 +638,58 @@ Released under GPL</source>
 <context>
     <name>CertificatePage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="373"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="564"/>
         <source>Certificate files</source>
         <translation>证书</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="375"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="566"/>
         <source>Use XPGP certificates saved in files.</source>
         <translation>导入文件中的XPGP证书。</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="380"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="568"/>
         <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
         <translation>你可把生成的证书文件分享给你的好友。同样的，你也可以使用以前生成的证书文件。</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="398"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="588"/>
         <source>Specify path to your friend&apos;s certificate in the box below </source>
         <translation>选择在下表中给你好友的证书</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="425"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="616"/>
         <source>Select Certificate</source>
         <translation>选择证书</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="426"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="617"/>
         <source>Certificates (*.pqi *.pem)</source>
         <translation>证书 (*.pqi *.pem)</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="455"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="640"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="646"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="450"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="641"/>
         <source>Certificate file successfully created</source>
         <translation>证书创建成功</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="456"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="647"/>
         <source>Sorry, certificate file creation failed</source>
         <translation>抱歉，证书创建失败</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="489"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="680"/>
         <source>Certificate Load Failed:something is wrong with %1 </source>
         <translation>证书加载失败：%1出错。</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="496"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="687"/>
         <source>Certificate Load Failed:file %1 not found</source>
         <translation>证书加载失败：文件%1不存在。</translation>
     </message>
@@ -745,12 +742,12 @@ Released under GPL</source>
     <message>
         <location filename="../gui/feeds/ChanGroupItem.ui" line="19"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ChanGroupItem.ui" line="70"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">展开</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ChanGroupItem.ui" line="96"/>
@@ -763,12 +760,12 @@ Released under GPL</source>
     <message>
         <location filename="../gui/feeds/ChanMenuItem.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ChanMenuItem.ui" line="78"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">展开</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ChanMenuItem.ui" line="131"/>
@@ -820,12 +817,12 @@ Released under GPL</source>
         <translation>发送 </translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="220"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="231"/>
         <source>Delete Channel</source>
         <translation>删除频道 </translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="223"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="234"/>
         <source>Create Channel MSG</source>
         <translation>建立MSG频道 </translation>
     </message>
@@ -865,133 +862,134 @@ Released under GPL</source>
         <translation>保存信息</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="665"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="656"/>
         <source>&amp;File</source>
         <translation>(&amp;F)文件</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="670"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="661"/>
         <source>&amp;New</source>
         <translation>(&amp;N)新建</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="675"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="666"/>
         <source>&amp;Open...</source>
         <translation>(&amp;O)打开</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="682"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="673"/>
         <source>&amp;Save</source>
         <translation>(&amp;S)保存</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="688"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="679"/>
         <source>Save &amp;As...</source>
         <translation>(&amp;A)另存为</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="693"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="684"/>
         <source>&amp;Print...</source>
         <translation>(&amp;P)打印</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="702"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="693"/>
         <source>&amp;Export PDF...</source>
         <translation>(&amp;E)导出PDF</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="709"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="700"/>
         <source>&amp;Quit</source>
         <translation>(&amp;Q)退出</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="717"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="708"/>
         <source>&amp;Edit</source>
         <translation>(&amp;E)编辑</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="721"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="712"/>
         <source>&amp;Undo</source>
         <translation>(&amp;U)撤销</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="724"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="715"/>
         <source>&amp;Redo</source>
         <translation>(&amp;R)重做</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="728"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="719"/>
         <source>Cu&amp;t</source>
         <translation>(&amp;T)剪切</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="731"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="722"/>
         <source>&amp;Copy</source>
         <translation>(&amp;C)复制</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="734"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="725"/>
         <source>&amp;Paste</source>
         <translation>(&amp;P)粘贴</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="742"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="733"/>
         <source>&amp;View</source>
         <translation>(&amp;V)查看</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="747"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="738"/>
         <source>&amp;Contacts Sidebar</source>
         <translation>(&amp;C)联系人栏</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="755"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="746"/>
         <source>&amp;Insert</source>
         <translation>(&amp;I)插入</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="760"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="751"/>
         <source>&amp;Image</source>
         <translation>(&amp;I)图片</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="944"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="935"/>
         <source>Open File...</source>
         <translation>打开文件</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="968"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="936"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="959"/>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
         <translation>网页 (*.htm *.html);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="967"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="958"/>
         <source>Save as...</source>
         <translation>另存为</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="983"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="974"/>
         <source>Print Document</source>
         <translation>打印文档</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="1053"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="1044"/>
         <source>Save Message</source>
         <translation>保存信息</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="1055"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="1045"/>
         <source>Message has not been Sent.
 Do you want to save message ?</source>
         <translation>信息还没有发送。你要保存吗？</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="1074"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="1065"/>
         <source>Choose Image</source>
         <translation>选择图片</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="1075"/>
+        <location filename="../gui/msgs/ChanMsgDialog.cpp" line="1066"/>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
         <translation>支持的图片格式(*.png *.jpeg *jpg *gif)</translation>
     </message>
@@ -1016,6 +1014,7 @@ Do you want to save message ?</source>
         <translation>保存</translation>
     </message>
     <message>
+        <location filename="../gui/msgs/ChanMsgDialog.ui" line="38"/>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="455"/>
         <source>Contacts</source>
         <translation type="unfinished"></translation>
@@ -1023,7 +1022,7 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="128"/>
         <source>Subject:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">主题：</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="148"/>
@@ -1033,17 +1032,17 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="167"/>
         <source>Bold</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">大胆</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="192"/>
         <source>Underline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">下划线</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="217"/>
         <source>Italic</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">斜体</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="242"/>
@@ -1076,7 +1075,7 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/feeds/ChanMsgItem.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ChanMsgItem.ui" line="54"/>
@@ -1091,7 +1090,7 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/feeds/ChanMsgItem.ui" line="125"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">展开</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ChanMsgItem.ui" line="148"/>
@@ -1120,7 +1119,7 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/feeds/ChanNewItem.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ChanNewItem.ui" line="54"/>
@@ -1145,7 +1144,7 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/feeds/ChanNewItem.ui" line="185"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">展开</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ChanNewItem.ui" line="234"/>
@@ -1252,6 +1251,7 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../gui/channels/ChannelBrowserDialog.ui" line="194"/>
         <location filename="../gui/channels/ChannelBrowserDialog.ui" line="402"/>
         <source>1</source>
         <translation type="unfinished">1</translation>
@@ -1285,6 +1285,7 @@ Do you want to save message ?</source>
 <context>
     <name>ChannelFeed</name>
     <message>
+        <location filename="../gui/ChannelFeed.cpp" line="131"/>
         <location filename="../gui/ChannelFeed.ui" line="37"/>
         <source>Create Channel</source>
         <translation>创建频道 </translation>
@@ -1297,7 +1298,7 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/ChannelFeed.ui" line="25"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/ChannelFeed.ui" line="88"/>
@@ -1318,6 +1319,7 @@ Do you want to save message ?</source>
 <context>
     <name>ChannelStatsDialog</name>
     <message>
+        <location filename="../gui/channels/ChannelStatsDialog.ui" line="13"/>
         <location filename="../gui/channels/ChannelStatsDialog.ui" line="28"/>
         <source>Channel Statistics</source>
         <translation type="unfinished"></translation>
@@ -1343,6 +1345,7 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../gui/channels/ChannelStatsDialog.ui" line="216"/>
         <location filename="../gui/channels/ChannelStatsDialog.ui" line="281"/>
         <source>1</source>
         <translation type="unfinished">1</translation>
@@ -1379,12 +1382,10 @@ Do you want to save message ?</source>
 <context>
     <name>ChatDialog</name>
     <message>
-        <location filename="../gui/ChatDialog.cpp" line="120"/>
         <source>Chat</source>
         <translation type="obsolete">聊天</translation>
     </message>
     <message>
-        <location filename="../gui/ChatDialog.ui" line="1069"/>
         <source>Send</source>
         <translation type="obsolete">发送 </translation>
     </message>
@@ -1400,52 +1401,52 @@ Do you want to save message ?</source>
 <context>
     <name>ConclusionPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="541"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="732"/>
         <source>Make Friend</source>
         <translation>成为好友</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="543"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="734"/>
         <source>Fill details about your friend here</source>
         <translation>填写你好友的详细信息</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="546"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="737"/>
         <source>Peer details</source>
         <translation>节点详细信息</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="550"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="741"/>
         <source>Trust:</source>
         <translation>信任</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="554"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="745"/>
         <source>Name:</source>
         <translation>名字</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="558"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="749"/>
         <source>Org:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="562"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="753"/>
         <source>Loc:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="566"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="757"/>
         <source>Country:</source>
         <translation>国家</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="570"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="761"/>
         <source>Signers</source>
         <translation>签名</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="577"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="768"/>
         <source>AUTH CODE</source>
         <translation>认证码</translation>
     </message>
@@ -1458,6 +1459,7 @@ Do you want to save message ?</source>
         <translation>取消 </translation>
     </message>
     <message>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="647"/>
         <location filename="../gui/connect/ConfCertDialog.ui" line="654"/>
         <source>Port:</source>
         <translation>ip端口 </translation>
@@ -1468,21 +1470,19 @@ Do you want to save message ?</source>
         <translation>信託设定 </translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="749"/>
         <source>Trust Level</source>
         <translation type="obsolete">信任水平</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="786"/>
         <source>Trust Their Signature</source>
         <translation type="obsolete">信託签名</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="779"/>
         <source>Sign The Certificate</source>
         <translation type="obsolete">签署证书</translation>
     </message>
     <message>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="502"/>
         <location filename="../gui/connect/ConfCertDialog.ui" line="515"/>
         <source>Details</source>
         <translation>详情</translation>
@@ -1599,6 +1599,7 @@ Do you want to save message ?</source>
         <translation>结点详细信息</translation>
     </message>
     <message>
+        <location filename="../gui/connect/ConnectDialog.ui" line="496"/>
         <location filename="../gui/connect/ConnectDialog.ui" line="704"/>
         <source>Make Friend</source>
         <translation>成爲好友</translation>
@@ -1614,7 +1615,7 @@ Do you want to save message ?</source>
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:600; color:#000000;&quot;&gt;<byte value="x9"/><byte value="x9"/>Make Friend&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:600; color:#000000;&quot;&gt;		Make Friend&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1656,7 +1657,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ConnectFriendWizard</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="80"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="85"/>
         <source>Connect Friend Wizard</source>
         <translation>连接好友向导</translation>
     </message>
@@ -1790,16 +1791,24 @@ p, li { white-space: pre-wrap; }
         <translation>Rijndael Block size 块大小</translation>
     </message>
     <message>
+        <location filename="../gui/Preferences/CryptographyDialog.ui" line="713"/>
+        <location filename="../gui/Preferences/CryptographyDialog.ui" line="778"/>
         <location filename="../gui/Preferences/CryptographyDialog.ui" line="869"/>
         <source>128 Bits</source>
         <translation>128 Bits</translation>
     </message>
     <message>
+        <location filename="../gui/Preferences/CryptographyDialog.ui" line="726"/>
+        <location filename="../gui/Preferences/CryptographyDialog.ui" line="791"/>
+        <location filename="../gui/Preferences/CryptographyDialog.ui" line="804"/>
+        <location filename="../gui/Preferences/CryptographyDialog.ui" line="817"/>
         <location filename="../gui/Preferences/CryptographyDialog.ui" line="895"/>
         <source>192 Bits</source>
         <translation>192 Bits</translation>
     </message>
     <message>
+        <location filename="../gui/Preferences/CryptographyDialog.ui" line="739"/>
+        <location filename="../gui/Preferences/CryptographyDialog.ui" line="830"/>
         <location filename="../gui/Preferences/CryptographyDialog.ui" line="882"/>
         <source>256 Bits</source>
         <translation>256 Bits</translation>
@@ -1860,6 +1869,7 @@ p, li { white-space: pre-wrap; }
         <translation>Rijndael Feedback Size</translation>
     </message>
     <message>
+        <location filename="../gui/Preferences/CryptographyDialog.ui" line="525"/>
         <location filename="../gui/Preferences/CryptographyDialog.ui" line="908"/>
         <source>Key Size:</source>
         <translation>Key Size (关键大小):</translation>
@@ -1934,12 +1944,10 @@ p, li { white-space: pre-wrap; }
         <translation>共享目录</translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/DirectoriesDialog.ui" line="516"/>
         <source>Other Directories</source>
         <translation type="obsolete">其它目录</translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/DirectoriesDialog.ui" line="544"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Incoming Files&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;来袭档案&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -1960,13 +1968,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/Preferences/DirectoriesDialog.cpp" line="45"/>
+        <location filename="../gui/Preferences/DirectoriesDialog.cpp" line="46"/>
         <source>Browse</source>
         <translation>浏览</translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/DirectoriesDialog.cpp" line="46"/>
         <source>Erowse</source>
-        <translation>浏览</translation>
+        <translation type="obsolete">浏览</translation>
     </message>
     <message>
         <location filename="../gui/Preferences/DirectoriesDialog.cpp" line="126"/>
@@ -1992,55 +2000,39 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DirectoriesPage</name>
     <message>
-        <location filename="../gui/Settings/DirectoriesPage.ui" line="526"/>
         <source>Shared Directories</source>
-        <translation>共享目录</translation>
+        <translation type="obsolete">共享目录</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/DirectoriesPage.ui" line="583"/>
         <source>Incoming files</source>
         <translation type="obsolete">接收的文件</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/DirectoriesPage.cpp" line="91"/>
         <source>Add Shared Directory</source>
-        <translation>添加共享目录</translation>
+        <translation type="obsolete">添加共享目录</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/DirectoriesPage.cpp" line="91"/>
         <source>All Files (*)</source>
-        <translation>所有文件 (*)</translation>
+        <translation type="obsolete">所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/DirectoriesPage.cpp" line="117"/>
         <source>Set Incoming Directory</source>
-        <translation>设置上传目录</translation>
+        <translation type="obsolete">设置上传目录</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/DirectoriesPage.cpp" line="130"/>
         <source>Set Partials Directory</source>
-        <translation>设置部分目录</translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/DirectoriesPage.ui" line="607"/>
-        <source>Incoming Directory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/DirectoriesPage.ui" line="651"/>
-        <source>Partials Direcrtory</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">设置部分目录</translation>
     </message>
 </context>
 <context>
     <name>ErrorMessagePage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="514"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="705"/>
         <source>Sorry, some error appeared</source>
         <translation>抱歉，有错误产生</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="515"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="706"/>
         <source>Here is the error message: </source>
         <translation>错误信息：</translation>
     </message>
@@ -2129,6 +2121,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ExprParamElement</name>
     <message>
+        <location filename="../gui/advsearch/guiexprelement.cpp" line="369"/>
+        <location filename="../gui/advsearch/guiexprelement.cpp" line="382"/>
         <location filename="../gui/advsearch/guiexprelement.cpp" line="497"/>
         <source>to</source>
         <translation></translation>
@@ -2139,21 +2133,25 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
+        <location filename="../gui/advsearch/guiexprelement.cpp" line="446"/>
         <location filename="../gui/advsearch/guiexprelement.cpp" line="507"/>
         <source>dd.MM.yyyy</source>
         <translation></translation>
     </message>
     <message>
+        <location filename="../gui/advsearch/guiexprelement.cpp" line="464"/>
         <location filename="../gui/advsearch/guiexprelement.cpp" line="527"/>
         <source>KB</source>
         <translation></translation>
     </message>
     <message>
+        <location filename="../gui/advsearch/guiexprelement.cpp" line="465"/>
         <location filename="../gui/advsearch/guiexprelement.cpp" line="528"/>
         <source>MB</source>
         <translation></translation>
     </message>
     <message>
+        <location filename="../gui/advsearch/guiexprelement.cpp" line="466"/>
         <location filename="../gui/advsearch/guiexprelement.cpp" line="529"/>
         <source>GB</source>
         <translation></translation>
@@ -2223,7 +2221,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FileHashDialog</name>
     <message>
-        <location filename="../gui/filehash/FileHashDialog.ui" line="311"/>
         <source>Download</source>
         <translation type="obsolete">下载 (Download)</translation>
     </message>
@@ -2256,12 +2253,13 @@ p, li { white-space: pre-wrap; }
         <translation>在目录中。</translation>
     </message>
     <message>
+        <location filename="../gui/library/FindWindow.cpp" line="63"/>
         <location filename="../gui/library/FindWindow.cpp" line="70"/>
         <source>Find Files</source>
         <translation>搜索文件</translation>
     </message>
     <message>
-        <location filename="../gui/library/FindWindow.cpp" line="147"/>
+        <location filename="../gui/library/FindWindow.cpp" line="146"/>
         <source>%1 KB</source>
         <translation>%1 KB</translation>
     </message>
@@ -2282,11 +2280,69 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>FofPage</name>
+    <message>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="380"/>
+        <source>Friends of friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="382"/>
+        <source>Select now who you want to make friends with.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="384"/>
+        <source>Show me: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="386"/>
+        <source>Any peer I&apos;ve not signed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="387"/>
+        <source>Friends of my friends who already trust me</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="388"/>
+        <source>Signed peers showing as denied</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="392"/>
+        <source>Peer name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="393"/>
+        <source>Also signed by</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="394"/>
+        <source>Peer id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="396"/>
+        <source>Make friend with these peers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="500"/>
+        <source>*** None ***</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ForumMsgItem</name>
     <message>
         <location filename="../gui/feeds/ForumMsgItem.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ForumMsgItem.ui" line="54"/>
@@ -2301,9 +2357,11 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ForumMsgItem.ui" line="126"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">展开</translation>
     </message>
     <message>
+        <location filename="../gui/feeds/ForumMsgItem.ui" line="150"/>
+        <location filename="../gui/feeds/ForumMsgItem.ui" line="284"/>
         <location filename="../gui/feeds/ForumMsgItem.ui" line="397"/>
         <source>Subject: </source>
         <translation type="unfinished"></translation>
@@ -2329,6 +2387,7 @@ p, li { white-space: pre-wrap; }
         <translation>回复</translation>
     </message>
     <message>
+        <location filename="../gui/feeds/ForumMsgItem.ui" line="297"/>
         <location filename="../gui/feeds/ForumMsgItem.ui" line="410"/>
         <source>Message is about ???</source>
         <translation type="unfinished"></translation>
@@ -2349,7 +2408,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ForumNewItem.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ForumNewItem.ui" line="54"/>
@@ -2374,7 +2433,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ForumNewItem.ui" line="194"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">展开</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ForumNewItem.ui" line="251"/>
@@ -2396,6 +2455,7 @@ p, li { white-space: pre-wrap; }
         <translation>取消订阅论坛</translation>
     </message>
     <message>
+        <location filename="../gui/ForumsDialog.cpp" line="130"/>
         <location filename="../gui/ForumsDialog.ui" line="552"/>
         <source>New Forum</source>
         <translation>新论坛</translation>
@@ -2446,6 +2506,7 @@ p, li { white-space: pre-wrap; }
         <translation>新讯息 </translation>
     </message>
     <message>
+        <location filename="../gui/ForumsDialog.ui" line="534"/>
         <location filename="../gui/ForumsDialog.ui" line="608"/>
         <source>Forum Name</source>
         <translation type="unfinished"></translation>
@@ -2511,45 +2572,34 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ForumsDialog.ui" line="797"/>
         <source>PrintPreview</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">打印预览</translation>
     </message>
 </context>
 <context>
     <name>GSettingsWin</name>
     <message>
-        <location filename="../gui/Settings/gsettingswin.cpp" line="78"/>
         <source>General</source>
-        <translation>一般</translation>
+        <translation type="obsolete">一般</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/gsettingswin.cpp" line="81"/>
         <source>Network</source>
-        <translation>网络</translation>
+        <translation type="obsolete">网络</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/gsettingswin.cpp" line="84"/>
         <source>Directories</source>
-        <translation>目录</translation>
+        <translation type="obsolete">目录</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/gsettingswin.cpp" line="87"/>
         <source>Server</source>
-        <translation>结点 / 好友调整 </translation>
+        <translation type="obsolete">结点 / 好友调整 </translation>
     </message>
     <message>
-        <location filename="../gui/Settings/gsettingswin.cpp" line="83"/>
         <source>%1</source>
         <translation type="obsolete">%1</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/gsettingswin.cpp" line="90"/>
-        <source>File assotiations</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/gsettingswin.cpp" line="93"/>
         <source>UnknownPage</source>
-        <translation>未知页</translation>
+        <translation type="obsolete">未知页</translation>
     </message>
 </context>
 <context>
@@ -2570,6 +2620,7 @@ p, li { white-space: pre-wrap; }
         <translation>移除邀请名单</translation>
     </message>
     <message>
+        <location filename="../gui/GamesDialog.cpp" line="379"/>
         <location filename="../gui/GamesDialog.cpp" line="394"/>
         <source>Interested in Playing</source>
         <translation>感兴趣的游戏</translation>
@@ -2580,6 +2631,7 @@ p, li { white-space: pre-wrap; }
         <translation>不感兴趣的游戏</translation>
     </message>
     <message>
+        <location filename="../gui/GamesDialog.cpp" line="396"/>
         <location filename="../gui/GamesDialog.cpp" line="426"/>
         <source>Not Interested</source>
         <translation>不感兴趣</translation>
@@ -2617,7 +2669,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/GamesDialog.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/GamesDialog.ui" line="41"/>
@@ -2650,7 +2702,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/GamesDialog.ui" line="110"/>
         <source>Title / Comment</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">标题/评论</translation>
     </message>
     <message>
         <location filename="../gui/GamesDialog.ui" line="142"/>
@@ -2688,6 +2740,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../gui/GamesDialog.ui" line="225"/>
         <location filename="../gui/GamesDialog.ui" line="267"/>
         <source>Invite</source>
         <translation type="unfinished"></translation>
@@ -2703,6 +2756,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">删除</translation>
     </message>
     <message>
+        <location filename="../gui/GamesDialog.ui" line="283"/>
         <location filename="../gui/GamesDialog.ui" line="299"/>
         <source>Move Player</source>
         <translation type="unfinished"></translation>
@@ -2721,12 +2775,21 @@ p, li { white-space: pre-wrap; }
         <translation>Retroshare 设置</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="1075"/>
+        <location filename="../gui/GenCertDialog.ui" line="1083"/>
         <source>Load Trusted Certificate (Optional)</source>
         <translation>加载可信任证书(可选) </translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="1121"/>
+        <location filename="../gui/GenCertDialog.ui" line="1151"/>
+        <source>OpenPGP User</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/GenCertDialog.ui" line="1158"/>
+        <source>PGP Password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -2734,12 +2797,11 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;好友&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="1134"/>
+        <location filename="../gui/GenCertDialog.ui" line="1112"/>
         <source>Select File</source>
         <translation>选择文案</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="1154"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -2747,22 +2809,22 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;姓名:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="1157"/>
+        <location filename="../gui/GenCertDialog.ui" line="1128"/>
         <source>Generate New Certificate</source>
         <translation>生成新的证书</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="154"/>
+        <location filename="../gui/GenCertDialog.cpp" line="204"/>
         <source>Select Trusted Friend</source>
         <translation>选择信赖的好友</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="155"/>
+        <location filename="../gui/GenCertDialog.cpp" line="205"/>
         <source>Certificates (*.pqi *.pem)</source>
         <translation>证书 (*.pqi *.pem)</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="994"/>
+        <location filename="../gui/GenCertDialog.ui" line="975"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -2772,37 +2834,37 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;产生一个新的配置文件&lt;/span&gt;&lt;br /&gt;&lt;br /&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;请填写信息，这将&lt;br /&gt;让您的RetroShare连接到&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt;&quot;&gt;朋友们。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="1023"/>
+        <location filename="../gui/GenCertDialog.ui" line="1046"/>
         <source>Organisation:</source>
         <translation>主办机构：</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="1037"/>
+        <location filename="../gui/GenCertDialog.ui" line="1032"/>
         <source>Password (Again)</source>
         <translation>密码（再次）</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="1051"/>
+        <location filename="../gui/GenCertDialog.ui" line="1056"/>
         <source>Location:</source>
         <translation>地点：</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="1105"/>
+        <location filename="../gui/GenCertDialog.ui" line="1018"/>
         <source>Password</source>
         <translation>密码</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="1120"/>
+        <location filename="../gui/GenCertDialog.ui" line="1098"/>
         <source>Friend</source>
         <translation>朋友</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="1143"/>
+        <location filename="../gui/GenCertDialog.ui" line="1066"/>
         <source>Country:</source>
         <translation>国家</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="1150"/>
+        <location filename="../gui/GenCertDialog.ui" line="1001"/>
         <source>Name:</source>
         <translation>名字</translation>
     </message>
@@ -2810,12 +2872,10 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GeneralDialog</name>
     <message>
-        <location filename="../gui/Preferences/GeneralDialog.ui" line="511"/>
         <source>Style</source>
         <translation type="obsolete">风格 </translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/GeneralDialog.ui" line="541"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -2823,12 +2883,10 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;选择界面风格 Retroshare&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/GeneralDialog.ui" line="580"/>
         <source>Language</source>
         <translation type="obsolete">语言(Language)</translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/GeneralDialog.ui" line="623"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -2836,12 +2894,10 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;选择语言 Retroshare&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/GeneralDialog.ui" line="654"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Changes to language will only take effect after restarting RetroShare!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;改变语言才生效后重啟 Retroshare!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/GeneralDialog.ui" line="668"/>
         <source>Style Sheet</source>
         <translation type="obsolete">样式表 </translation>
     </message>
@@ -2851,7 +2907,6 @@ p, li { white-space: pre-wrap; }
         <translation>Login 登陆</translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/GeneralDialog.ui" line="555"/>
         <source>Misc</source>
         <translation type="obsolete">Misc </translation>
     </message>
@@ -2879,16 +2934,19 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GeneralMsgDialog</name>
     <message>
+        <location filename="../gui/GeneralMsgDialog.cpp" line="63"/>
         <location filename="../gui/GeneralMsgDialog.ui" line="34"/>
         <source>Channel</source>
         <translation>频道</translation>
     </message>
     <message>
+        <location filename="../gui/GeneralMsgDialog.cpp" line="62"/>
         <location filename="../gui/GeneralMsgDialog.ui" line="39"/>
         <source>Forum</source>
         <translation>论坛</translation>
     </message>
     <message>
+        <location filename="../gui/GeneralMsgDialog.cpp" line="64"/>
         <location filename="../gui/GeneralMsgDialog.ui" line="44"/>
         <source>Blog</source>
         <translation>博客</translation>
@@ -2911,7 +2969,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/GeneralMsgDialog.ui" line="29"/>
         <source>Friend</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">朋友</translation>
     </message>
     <message>
         <location filename="../gui/GeneralMsgDialog.ui" line="90"/>
@@ -2942,64 +3000,36 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GeneralPage</name>
     <message>
-        <location filename="../gui/Settings/GeneralPage.ui" line="13"/>
         <source>Keys manager</source>
-        <translation>key管理器</translation>
+        <translation type="obsolete">key管理器</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/GeneralPage.ui" line="34"/>
         <source>Style</source>
         <translation type="obsolete">风格</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/GeneralPage.ui" line="64"/>
         <source>Choose RetroShare&apos;s interface style</source>
         <translation type="obsolete">选择界面风格</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/GeneralPage.ui" line="100"/>
         <source>Language</source>
         <translation type="obsolete">语言 (Language)</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/GeneralPage.ui" line="115"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Changes to language will only take effect after restarting RetroShare!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;改变语言才生效后重啟Retroshare!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/GeneralPage.ui" line="159"/>
         <source>Choose the language used in RetroShare</source>
         <translation type="obsolete">选择语言Retroshare </translation>
     </message>
     <message>
-        <location filename="../gui/Settings/GeneralPage.ui" line="46"/>
         <source>Login</source>
-        <translation>Login 登陆</translation>
+        <translation type="obsolete">Login 登陆</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/GeneralPage.ui" line="72"/>
         <source>Misc</source>
-        <translation>Misc </translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/GeneralPage.ui" line="58"/>
-        <source>Auto Login</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/GeneralPage.ui" line="84"/>
-        <source>Show MainWindow at Startup</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/GeneralPage.ui" line="100"/>
-        <source>Start minimized</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/GeneralPage.ui" line="116"/>
-        <source>Start RetroShare when my system starts</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Misc </translation>
     </message>
 </context>
 <context>
@@ -3010,6 +3040,8 @@ p, li { white-space: pre-wrap; }
         <translation>接收 / Recv: </translation>
     </message>
     <message>
+        <location filename="../gui/graphframe.cpp" line="246"/>
+        <location filename="../gui/graphframe.cpp" line="255"/>
         <location filename="../gui/graphframe.cpp" line="293"/>
         <source>%1 KB/s</source>
         <translation>%1 KB/s</translation>
@@ -3038,33 +3070,15 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GraphWidget</name>
     <message>
-        <location filename="../gui/elastic/graphwidget.cpp" line="72"/>
+        <location filename="../gui/elastic/graphwidget.cpp" line="73"/>
         <source>Elastic Nodes</source>
         <translation>弹性节点</translation>
     </message>
 </context>
 <context>
-    <name>GroupChatToaster</name>
-    <message>
-        <location filename="../gui/toaster/GroupChatToaster.ui" line="144"/>
-        <source>border-image: url(:/images/avatar_background.png);</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/toaster/GroupChatToaster.ui" line="179"/>
-        <source>color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 #49881F, stop: 1 #49881F );</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/toaster/GroupChatToaster.ui" line="183"/>
-        <source>New GroupChat Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>HelpBrowser</name>
     <message>
+        <location filename="../gui/help/browser/helpbrowser.cpp" line="129"/>
         <location filename="../gui/help/browser/helpbrowser.cpp" line="134"/>
         <source>Error Loading Help Contents: </source>
         <translation>载入帮助内容时发生错误：</translation>
@@ -3090,11 +3104,12 @@ p, li { white-space: pre-wrap; }
         <translation>搜索内容未找到</translation>
     </message>
     <message>
-        <location filename="../gui/help/browser/helpbrowser.cpp" line="438"/>
+        <location filename="../gui/help/browser/helpbrowser.cpp" line="437"/>
         <source>Found %1 results</source>
         <translation>搜索到%1个结果</translation>
     </message>
     <message>
+        <location filename="../gui/help/browser/helpbrowser.ui" line="341"/>
         <location filename="../gui/help/browser/helpbrowser.ui" line="377"/>
         <source>Search</source>
         <translation>搜索 </translation>
@@ -3110,6 +3125,7 @@ p, li { white-space: pre-wrap; }
         <translation>关闭</translation>
     </message>
     <message>
+        <location filename="../gui/help/browser/helpbrowser.ui" line="28"/>
         <location filename="../gui/help/browser/helpbrowser.ui" line="274"/>
         <source>RetroShare Help</source>
         <translation>RetroShare帮助</translation>
@@ -3200,6 +3216,8 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../gui/help/browser/helpbrowser.ui" line="567"/>
+        <location filename="../gui/help/browser/helpbrowser.ui" line="570"/>
         <location filename="../gui/help/browser/helpbrowser.ui" line="573"/>
         <source>Find</source>
         <translation type="unfinished"></translation>
@@ -3239,7 +3257,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt; font-weight:600;&quot;&gt;RetroShare is a Open Source cross-platform, private and secure decentralised commmunication platform.<byte value="x9"/>&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt; font-weight:600;&quot;&gt;RetroShare is a Open Source cross-platform, private and secure decentralised commmunication platform.	&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt; font-weight:600;&quot;&gt;It lets you share securely your friends, using a web-of-trust to authenticate peers and OpenSSL to encrypt all communication. &lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt; font-weight:600;&quot;&gt;RetroShare provides filesharing, chat, messages and channels&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt; font-weight:600;&quot;&gt;&lt;/p&gt;
@@ -3258,7 +3276,7 @@ p, li { white-space: pre-wrap; }
         <source>Authors</source>
         <translation type="unfinished"></translation>
     </message>
-    <message encoding="UTF-8">
+    <message utf8="true">
         <location filename="../gui/HelpDialog.ui" line="575"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -3343,17 +3361,17 @@ p, li { white-space: pre-wrap; }
         <translation>不能打开链接</translation>
     </message>
     <message>
-        <location filename="../gui/help/browser/helptextbrowser.cpp" line="88"/>
+        <location filename="../gui/help/browser/helptextbrowser.cpp" line="85"/>
         <source>RetroShare can open the link you selected in your default Web browser. If your browser is not currently configured to use Tor then the request will not be anonymous.</source>
         <translation>RetroShare不能用缺省浏览器打开链接。如果你的浏览器没有配置为使用Tor，你的请求将无法使用匿名模式。</translation>
     </message>
     <message>
-        <location filename="../gui/help/browser/helptextbrowser.cpp" line="90"/>
+        <location filename="../gui/help/browser/helptextbrowser.cpp" line="89"/>
         <source>Do you want Retroshare to open the link in your Web browser?</source>
         <translation>你想让Retroshare用默认浏览器打开链接吗？</translation>
     </message>
     <message>
-        <location filename="../gui/help/browser/helptextbrowser.cpp" line="102"/>
+        <location filename="../gui/help/browser/helptextbrowser.cpp" line="101"/>
         <source>RetroShare was unable to open the selected link in your Web browser. You can still copy the URL and paste it into your browser.</source>
         <translation>RetroShare不能用缺省浏览器打开链接。你可以复制网址到你的浏览器中去。</translation>
     </message>
@@ -3361,22 +3379,31 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>IntroPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="111"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="118"/>
+        <source>This wizard will help you to connect to your friend(s) to RetroShare network. There are three possible ways to do this:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="124"/>
+        <source>&amp;Make friend with selected friends of my friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="116"/>
         <source>Add a new Friend</source>
         <translation>添加一个新好友</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="115"/>
         <source>This wizard will help you to connect your friend to RetroShare network. There are  two possible ways to do this:</source>
-        <translation>本向导将帮你与你的好友使用RetroShare网络。按照以下两个方法来做。</translation>
+        <translation type="obsolete">本向导将帮你与你的好友使用RetroShare网络。按照以下两个方法来做。</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="117"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="122"/>
         <source>&amp;Enter the certificate manually</source>
         <translation>(&amp;E)手工输入证书</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="119"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="123"/>
         <source>&amp;Use *.pqi files with certificates</source>
         <translation>(&amp;U)使用 *.pqi 证书文件</translation>
     </message>
@@ -3384,17 +3411,14 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>InviteDialog</name>
     <message>
-        <location filename="../gui/connect/InviteDialog.ui" line="540"/>
         <source>Done</source>
         <translation type="obsolete">完成</translation>
     </message>
     <message>
-        <location filename="../gui/connect/InviteDialog.ui" line="514"/>
         <source>Cancel</source>
         <translation type="obsolete">取消</translation>
     </message>
     <message>
-        <location filename="../gui/connect/InviteDialog.ui" line="43"/>
         <source>Launch Email</source>
         <translation type="obsolete">登陆电子邮件</translation>
     </message>
@@ -3685,7 +3709,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>LogDialog</name>
     <message>
-        <location filename="../gui/Preferences/LogDialog.ui" line="508"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -3740,44 +3763,44 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;START-CONNECT&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;Connecting to your Friends &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;There are four steps to connecting to a Friend:&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Get Friend&apos;s Certificate<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Load Certificate<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Sign Certificate<byte value="x9"/>&lt;/li&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Get Friend&apos;s Certificate	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Load Certificate	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Sign Certificate	&lt;/li&gt;
 &lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Connect to Friend.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The instructions might initially appear long and daunting, however thesesteps are required to ensure that your sharing is private and secure.These steps are only required a couple of times, to add new friends, and become quite straight forward after the first time.&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (1) EXCHANGE CERTIFICATES &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Before you can connect, you need send your certificate to your friend, and get your friends certificate. Follow these steps to get your certificate:&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on Your Certificate to Select it.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on the &quot;Export Friend&quot; Button to bring up a file save dialog.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select directory to save the certificate to.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Enter desired filename. (with a file type of .pqi), and Click OK.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Email this File to your Friend. (It is recommended you put the<byte value="x9"/>certificate in a zip file before sending, as some email programs<byte value="x9"/>don&apos;t transmit the file correctly).<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Ask your friend to do the same.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Once you have received your friend&apos;s certificate, removed it<byte value="x9"/>from the zip file and saved it to disk, you can proceed to step (2).&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on Your Certificate to Select it.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on the &quot;Export Friend&quot; Button to bring up a file save dialog.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select directory to save the certificate to.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Enter desired filename. (with a file type of .pqi), and Click OK.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Email this File to your Friend. (It is recommended you put the	certificate in a zip file before sending, as some email programs	don&apos;t transmit the file correctly).	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Ask your friend to do the same.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Once you have received your friend&apos;s certificate, removed it	from the zip file and saved it to disk, you can proceed to step (2).&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Note: This exchange of certificates is only necessary to get you started.Once you are connected to some friends the exchange of certificates becomeautomated by the autoDiscovery system. See&lt;a href=&quot;#GUI-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GUI: Connecting&lt;/span&gt;&lt;/a&gt; for more information.------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (2) LOAD YOUR FRIEND&apos;S CERTIFICATE &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Import Friend&quot;<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select your friends certificate file, then click &quot;Okay&quot;. <byte value="x9"/>Their certificate should appear in the top window of the &quot;Connect&quot; Tab.&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Import Friend&quot;	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select your friends certificate file, then click &quot;Okay&quot;. 	Their certificate should appear in the top window of the &quot;Connect&quot; Tab.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (3) SIGN CERTIFICATE &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select their Certificate by clicking on their name.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Configure Friend&quot; Button. This will bring up <byte value="x9"/>a configuration window. which allows you to look at the details<byte value="x9"/>of the certificate.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click the &quot;Sign Certificate&quot; button near the bottom of the &quot;Certificate Configuration&quot; Window.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Now close the window by clicking on the &quot;Done&quot; button.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Your Friends certificate should now say &quot;Trusted (S)&quot;, <byte value="x9"/>indicating it is ready for connections.&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select their Certificate by clicking on their name.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Configure Friend&quot; Button. This will bring up 	a configuration window. which allows you to look at the details	of the certificate.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click the &quot;Sign Certificate&quot; button near the bottom of the &quot;Certificate Configuration&quot; Window.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Now close the window by clicking on the &quot;Done&quot; button.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Your Friends certificate should now say &quot;Trusted (S)&quot;, 	indicating it is ready for connections.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can only share with &quot;Trusted&quot; Peers. You must sign your Friend&apos;scertificate to prove that you know the certificate belongs to your Friend. Do not sign any/all certificates - only the people youtrust. For more information see: &lt;br /&gt;&lt;a href=&quot;#FAQ-SIGN&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: Should I Sign this Certificate?&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-TRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: What does &quot;Trust&quot; Mean?&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-WEBOFTRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: What is a Web of Trust?&lt;/span&gt;&lt;/a&gt;.  &lt;br /&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt; &lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (4) AUTOCONNECT TO PEER &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Finally You need to activate the connection:<byte value="x9"/>&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click in the Box, next to your friends Name.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; A Tick should appear in the box, a connection will be started.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; The &quot;Offline&quot; will change to &quot;Online&quot; when you have successfully<byte value="x9"/>connected.&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Finally You need to activate the connection:	&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click in the Box, next to your friends Name.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; A Tick should appear in the box, a connection will be started.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; The &quot;Offline&quot; will change to &quot;Online&quot; when you have successfully	connected.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Remember: Your initial connection attempts will fail, until your friend has signed your certificate and ticked the Auto-Connect Box.This ensures that both peers trust each other, and stops random peopleaccessing your files.&lt;br /&gt;&lt;a href=&quot;#FAQ-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: Why won&apos;t it Connect?&lt;/span&gt;&lt;/a&gt;.  &lt;br /&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;
 &lt;tr&gt;
@@ -3820,15 +3843,15 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#FAQ&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The GUI is divided up into several sections which can be accessed by clicking on the Tabs along the top of the main window. &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Connect: Manage Connections and Friends.<byte value="x9"/><byte value="x9"/>(&lt;a href=&quot;#START-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;getting started&lt;/span&gt;&lt;/a&gt; and<byte value="x9"/><byte value="x9"/>&lt;a href=&quot;#GUI-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Listing: A directory view of available files.<byte value="x9"/><byte value="x9"/>(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/><byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Search: Search for available files.<byte value="x9"/><byte value="x9"/>(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Messages: For Sending/Recving Message. (Coming Soon)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Channels: A broadcast/subscription system. (Coming Soon)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Transfer: Listing of Current and completed Transfers.<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Config: Specify of share diectories and IP Addresses.<byte value="x9"/><byte value="x9"/>(&lt;a href=&quot;#GUI-CONFIG&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/>&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; About: Help and other Information.<byte value="x9"/>&lt;/li&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Connect: Manage Connections and Friends.		(&lt;a href=&quot;#START-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;getting started&lt;/span&gt;&lt;/a&gt; and		&lt;a href=&quot;#GUI-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Listing: A directory view of available files.		(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)		&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Search: Search for available files.		(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Messages: For Sending/Recving Message. (Coming Soon)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Channels: A broadcast/subscription system. (Coming Soon)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Transfer: Listing of Current and completed Transfers.	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Config: Specify of share diectories and IP Addresses.		(&lt;a href=&quot;#GUI-CONFIG&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)	&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; About: Help and other Information.	&lt;/li&gt;
 &lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Chat: Accessed by the clicking on the &quot;Chat&quot; button.&lt;/li&gt;&lt;/ul&gt;
 &lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;
 &lt;tr&gt;
@@ -3904,58 +3927,59 @@ p, li { white-space: pre-wrap; }
 &lt;td bgcolor=&quot;#cccccc&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#FAQ&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#aaaaaa&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:medium; font-weight:600; background-color:#aaaaaa;&quot;&gt;&lt;a name=&quot;ABOUT&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:medium;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:medium;&quot;&gt;见网页Retroshare更多细节. ( http://Retroshare.sf.net ) / About RetroShare &lt;/span&gt;&lt;span style=&quot; font-size:medium;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#aaaaaa&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#aaaaaa;&quot;&gt;Quick Links: &lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#ABOUT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;About&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#START&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Getting Started&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#GUI&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Gui Basics&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#FAQ&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;RetroShare is a private peer to peer communication platform created by Dr. Bob.This program enables you to securely share files and chat with your friends (and no-one else!).&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For more information, and the latest release go to http://www.lunamutt.com.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#aaaaaa&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:medium; font-weight:600; background-color:#aaaaaa;&quot;&gt;&lt;a name=&quot;START&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:medium;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:medium;&quot;&gt;Quick Start Guide to RetroShare &lt;/span&gt;&lt;span style=&quot; font-size:medium;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#aaaaaa&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#aaaaaa;&quot;&gt;Quick Links: &lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#ABOUT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;About&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#START&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Getting Started&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#GUI&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Gui Basics&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#FAQ&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;If this is your first time using Retroshare, it is recommended that you readthis guide for instructions on how to get started. The first step is:&lt;a href=&quot;#START-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Connecting to Your Friends&lt;/span&gt;&lt;/a&gt;. Once you have managed this you can  &lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Download Files&lt;/span&gt;&lt;/a&gt; and&lt;a href=&quot;#START-SHARE&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Share with Others&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Some of the key concepts related to ensuring your sharing remains private aredescribed in the  &lt;a href=&quot;#FAQ&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Frequently Asked Questions&lt;/span&gt;&lt;/a&gt;. Some Key security questions are:&lt;a href=&quot;#FAQ-WEBOFTRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;What is a Web of Trust?&lt;/span&gt;&lt;/a&gt;,  &lt;a href=&quot;#FAQ-SIGN&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Should I Sign this Certificate?&lt;/span&gt;&lt;/a&gt;, and finally&lt;a href=&quot;#FAQ-TRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;What does &quot;Trust&quot; Mean?&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;It is also worthwhile reading the &lt;a href=&quot;#GUI&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GUI Overview&lt;/span&gt;&lt;/a&gt;which describes the featureson available through the User Interface.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;START-CONNECT&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;Connecting to your Friends &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;There are four steps to connecting to a Friend:&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Get Friend&apos;s Certificate<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Load Certificate<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Sign Certificate<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Connect to Friend.&lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The instructions might initially appear long and daunting, however thesesteps are required to ensure that your sharing is private and secure.These steps are only required a couple of times, to add new friends, and become quite straight forward after the first time.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (1) EXCHANGE CERTIFICATES &lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Before you can connect, you need send your certificate to your friend, and get your friends certificate. Follow these steps to get your certificate:&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on Your Certificate to Select it.<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on the &quot;Export Friend&quot; Button to bring up a file save dialog.<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select directory to save the certificate to.<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Enter desired filename. (with a file type of .pqi), and Click OK.<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Email this File to your Friend. (It is recommended you put the<byte value="x9"/>certificate in a zip file before sending, as some email programs<byte value="x9"/>don&apos;t transmit the file correctly).<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Ask your friend to do the same.<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Once you have received your friend&apos;s certificate, removed it<byte value="x9"/>from the zip file and saved it to disk, you can proceed to step (2).&lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Note: This exchange of certificates is only necessary to get you started.Once you are connected to some friends the exchange of certificates becomeautomated by the autoDiscovery system. See&lt;a href=&quot;#GUI-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GUI: Connecting&lt;/span&gt;&lt;/a&gt; for more information.------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (2) LOAD YOUR FRIEND&apos;S CERTIFICATE &lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Import Friend&quot;<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select your friends certificate file, then click &quot;Okay&quot;. <byte value="x9"/>Their certificate should appear in the top window of the &quot;Connect&quot; Tab.&lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (3) SIGN CERTIFICATE &lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select their Certificate by clicking on their name.<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Configure Friend&quot; Button. This will bring up <byte value="x9"/>a configuration window. which allows you to look at the details<byte value="x9"/>of the certificate.<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click the &quot;Sign Certificate&quot; button near the bottom of the &quot;Certificate Configuration&quot; Window.<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Now close the window by clicking on the &quot;Done&quot; button.<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Your Friends certificate should now say &quot;Trusted (S)&quot;, <byte value="x9"/>indicating it is ready for connections.&lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can only share with &quot;Trusted&quot; Peers. You must sign your Friend&apos;scertificate to prove that you know the certificate belongs to your Friend. Do not sign any/all certificates - only the people youtrust. For more information see: &lt;br /&gt;&lt;a href=&quot;#FAQ-SIGN&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: Should I Sign this Certificate?&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-TRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: What does &quot;Trust&quot; Mean?&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-WEBOFTRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: What is a Web of Trust?&lt;/span&gt;&lt;/a&gt;.  &lt;br /&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt; &lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (4) AUTOCONNECT TO PEER &lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Finally You need to activate the connection:<byte value="x9"/>&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click in the Box, next to your friends Name.<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; A Tick should appear in the box, a connection will be started.<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; The &quot;Offline&quot; will change to &quot;Online&quot; when you have successfully<byte value="x9"/>connected.&lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Remember: Your initial connection attempts will fail, until your friend has signed your certificate and ticked the Auto-Connect Box.This ensures that both peers trust each other, and stops random peopleaccessing your files.&lt;br /&gt;&lt;a href=&quot;#FAQ-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: Why won&apos;t it Connect?&lt;/span&gt;&lt;/a&gt;.  &lt;br /&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;START-DOWNLOAD&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;Downloading Files &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Once you have connected to friends, you can download their shared files.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can search for the files you want using either:&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;(1) File Listing Tab: This gives you a directory view of the files being shared by your peers. Double clickon the directory name (not the arrow) to diplay its subdirectories and files.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;NOTE 1: This can take up to 5 seconds to fetch the information for your peer.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;NOTE 2: If the directory is empty, or the person is offline, then the request will silently fail.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;(2) Search Tab: Retroshare also allows you to search your peers computers for filenames. Enter yourterm(s) in the search box at the top of the TAB and click the &quot;Search&quot; button. This willsearch all of the peers that you are currently connected to.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;NOTE 3: If any matching files are found they will be displayed within 5 - 10 seconds.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Once you have found the files you want, Select the file(s), and click &quot;Download&quot; to begin the download process.If you click over the &quot;File Transfer&quot; TAB, the status of the files will appear.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;NOTE 4: The files can take up to 10 seconds to appear in the transfer window.&lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;START-SHARING&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;Sharing Files &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can specify which files you want to share in the &quot;Config&quot; Tab.In the &quot;Share Directories&quot; section, click the &quot;Add Directory&quot; Button, and select the directory you want to share.The files and subdirectories will become available for you peers.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can remove a directory from the Shared Directories List by clicking onthe directory name in the list, and then clicking &quot;Remove Directory&quot;.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#aaaaaa&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:medium; font-weight:600; background-color:#aaaaaa;&quot;&gt;&lt;a name=&quot;GUI&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:medium;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:medium;&quot;&gt;Gui Overview (Tab Description) &lt;/span&gt;&lt;span style=&quot; font-size:medium;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#aaaaaa&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#aaaaaa;&quot;&gt;Quick Links: &lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#ABOUT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;About&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#START&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Getting Started&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#GUI&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Gui Basics&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#FAQ&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The GUI is divided up into several sections which can be accessed by clicking on the Tabs along the top of the main window. &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;<byte value="x9"/>&lt;/p&gt;&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Connect: Manage Connections and Friends.<byte value="x9"/><byte value="x9"/>(&lt;a href=&quot;#START-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;getting started&lt;/span&gt;&lt;/a&gt; and<byte value="x9"/><byte value="x9"/>&lt;a href=&quot;#GUI-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Listing: A directory view of available files.<byte value="x9"/><byte value="x9"/>(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/><byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Search: Search for available files.<byte value="x9"/><byte value="x9"/>(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Messages: For Sending/Recving Message. (Coming Soon)<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Channels: A broadcast/subscription system. (Coming Soon)<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Transfer: Listing of Current and completed Transfers.<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Config: Specify of share diectories and IP Addresses.<byte value="x9"/><byte value="x9"/>(&lt;a href=&quot;#GUI-CONFIG&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; About: Help and other Information.<byte value="x9"/>&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Chat: Accessed by the clicking on the &quot;Chat&quot; button.&lt;/li&gt;&lt;/ul&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;GUI-CONNECT&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;The Connect Tab &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The Connect TAB consists of two windows. The upper windowshows a list of your friends. This window indicates each friendscurrent trust level, as well as their connection state.The &quot;Trust_Lvl&quot; Column indicates if the certificate has beenAuthenticated using the web of trust. You can only connect to &quot;Trusted&quot; certificates.  Tick the &quot;Auto_Connect&quot; box to connect to your trusted friends.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The lower window provides a list of the friends of your friends.This window shows the neighbour&apos;s name and how long ago they attempted to connect to you. This window is automatically populatedby the autoDiscovery system, and should be used to expand yourretroShare network. A word of warning: Do not automatically trust (or sign) anyonethat appears in this window. First verify by some other means (email/phone)that certificate belongs to the person you think it does.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Use the &quot;Neighbour List&quot; window to expand your friend list. Select the desired entry in the lower window by clicking on it, then click the &quot;Add to Friends&quot; Button to move it to the upper window.Likewise the &quot;Remove from Friends&quot; button moved a person from the upper window to the lower window.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The &quot;Configure Friend&quot; Button opens a Certificate Configuration window.This window can be used to examine the certificate details, sign the certificate or manually change the peer&apos;s IP Address.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;See Also:&lt;br /&gt;&lt;a href=&quot;#START-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Getting Started: Connecting to your friends&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: Why won&apos;t it Connect?&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-SIGN&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: Should I Sign this Certificate?&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-TRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: What does &quot;Trust&quot; Mean?&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-WEBOFTRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: What is a Web of Trust?&lt;/span&gt;&lt;/a&gt;.  &lt;br /&gt;&lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;GUI-CONFIG&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;The Config Tab &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The Configuration Tab allows you to select the share directories, as well as the directory that downloaded files are saved to.&lt;br /&gt;See &lt;a href=&quot;#STARTUP-SHARING&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Sharing you Files&lt;/span&gt;&lt;/a&gt; for details.  &lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The Config Tab also allows you to control the IP Address and Portused by RetroShare.  Under most cirumstances you do not need to changethese setting. If you are behind a firewall and can setup a forwarded port, the selected IP Address and Port should be specified here.&lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#aaaaaa&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:medium; font-weight:600; background-color:#aaaaaa;&quot;&gt;&lt;a name=&quot;FAQ&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:medium;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:medium;&quot;&gt;Frequently Asked Questions &lt;/span&gt;&lt;span style=&quot; font-size:medium;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#aaaaaa&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#aaaaaa;&quot;&gt;Quick Links: &lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#ABOUT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;About&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#START&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Getting Started&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#GUI&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Gui Basics&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#FAQ&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;FAQ-WEBOFTRUST&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;How does the security/privacy work? &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;RetroShares uses a Web of Trust Authentication system to ensurethat your &quot;friends&quot; are your friends, and uses SSL to encryptthe communcications between peers. &lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;FAQ-WEBOFTRUST&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;What is a Web of Trust? &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;A Web of Trust relies on a collection of peers to identify eachother. Look it up on the Web!&lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;FAQ-TRUST&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;What does &quot;Trust&quot; Mean in RetroShare?&lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Anyone can generate a certificate, with any name on it. So howdo you know that the certificate that claims to be from &quot;Joe Bloggs&quot;is really from your mate Joe. This is the &quot;AuthenticationProblem&quot;. RetroShare uses a Web of Trust to Authenticate your peers.&lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;FAQ-SIGN&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;Should I Sign this Certificate? &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You should only sign a certificate if you are completely surethat it comes from the &quot;right&quot; person. If you sign a certificateyou are &quot;Authenticating&quot; the person to yourself and others.If you sign certificates that you haven&apos;t checked, then you aredestroying your own privacy and security.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;How do you verify a certificate? Use an alternative method ofcommunication to send the certificate: E.g. email or USB stick. This will improve you confidence that the certificate belongsto the correct person. &lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;a name=&quot;FAQ-CONNECT&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt;W&lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;hy won&apos;t it Connect?&lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;A connection can fail for a number of reasons:&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;(1) Failed Authentication. Have both peers signed each otherscertificates? &lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;(2) Firewalls. If both peers are behind firewalls then they cannotconnect directly. RetroShare has a built in proxy system to circumventfirewalls - However this can only function if both peers can connect to a common third party that is not behind a firewall.  Thisis the most likely reason for initial connections to fail. The only solution to find a common friend that isn&apos;t firewalled (know anyone with Broadband?)&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;(3) IP Addresses are wrong. You can manually examine and change these using the Certificate configuration.&lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#aaaaaa&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#aaaaaa;&quot;&gt;Quick Links: &lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#ABOUT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;About&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#START&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Getting Started&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#GUI&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Gui Basics&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#FAQ&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#aaaaaa&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:medium; font-weight:600; background-color:#aaaaaa;&quot;&gt;&lt;a name=&quot;ABOUT&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:medium;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:medium;&quot;&gt;见网页Retroshare更多细节. ( http://Retroshare.sf.net ) / About RetroShare &lt;/span&gt;&lt;span style=&quot; font-size:medium;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#aaaaaa&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#aaaaaa;&quot;&gt;Quick Links: &lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#ABOUT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;About&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#START&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Getting Started&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#GUI&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Gui Basics&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#FAQ&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;RetroShare is a private peer to peer communication platform created by Dr. Bob.This program enables you to securely share files and chat with your friends (and no-one else!).&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For more information, and the latest release go to http://www.lunamutt.com.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#aaaaaa&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:medium; font-weight:600; background-color:#aaaaaa;&quot;&gt;&lt;a name=&quot;START&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:medium;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:medium;&quot;&gt;Quick Start Guide to RetroShare &lt;/span&gt;&lt;span style=&quot; font-size:medium;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#aaaaaa&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#aaaaaa;&quot;&gt;Quick Links: &lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#ABOUT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;About&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#START&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Getting Started&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#GUI&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Gui Basics&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#FAQ&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;If this is your first time using Retroshare, it is recommended that you readthis guide for instructions on how to get started. The first step is:&lt;a href=&quot;#START-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Connecting to Your Friends&lt;/span&gt;&lt;/a&gt;. Once you have managed this you can  &lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Download Files&lt;/span&gt;&lt;/a&gt; and&lt;a href=&quot;#START-SHARE&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Share with Others&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Some of the key concepts related to ensuring your sharing remains private aredescribed in the  &lt;a href=&quot;#FAQ&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Frequently Asked Questions&lt;/span&gt;&lt;/a&gt;. Some Key security questions are:&lt;a href=&quot;#FAQ-WEBOFTRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;What is a Web of Trust?&lt;/span&gt;&lt;/a&gt;,  &lt;a href=&quot;#FAQ-SIGN&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Should I Sign this Certificate?&lt;/span&gt;&lt;/a&gt;, and finally&lt;a href=&quot;#FAQ-TRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;What does &quot;Trust&quot; Mean?&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;It is also worthwhile reading the &lt;a href=&quot;#GUI&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GUI Overview&lt;/span&gt;&lt;/a&gt;which describes the featureson available through the User Interface.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;START-CONNECT&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;Connecting to your Friends &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;There are four steps to connecting to a Friend:&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Get Friend&apos;s Certificate	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Load Certificate	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Sign Certificate	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Connect to Friend.&lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The instructions might initially appear long and daunting, however thesesteps are required to ensure that your sharing is private and secure.These steps are only required a couple of times, to add new friends, and become quite straight forward after the first time.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (1) EXCHANGE CERTIFICATES &lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Before you can connect, you need send your certificate to your friend, and get your friends certificate. Follow these steps to get your certificate:&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on Your Certificate to Select it.	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click on the &quot;Export Friend&quot; Button to bring up a file save dialog.	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select directory to save the certificate to.	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Enter desired filename. (with a file type of .pqi), and Click OK.	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Email this File to your Friend. (It is recommended you put the	certificate in a zip file before sending, as some email programs	don&apos;t transmit the file correctly).	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Ask your friend to do the same.	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Once you have received your friend&apos;s certificate, removed it	from the zip file and saved it to disk, you can proceed to step (2).&lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Note: This exchange of certificates is only necessary to get you started.Once you are connected to some friends the exchange of certificates becomeautomated by the autoDiscovery system. See&lt;a href=&quot;#GUI-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GUI: Connecting&lt;/span&gt;&lt;/a&gt; for more information.------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (2) LOAD YOUR FRIEND&apos;S CERTIFICATE &lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Go to the &quot;Connect&quot; Tab	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Import Friend&quot;	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select your friends certificate file, then click &quot;Okay&quot;. 	Their certificate should appear in the top window of the &quot;Connect&quot; Tab.&lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (3) SIGN CERTIFICATE &lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Select their Certificate by clicking on their name.	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click &quot;Configure Friend&quot; Button. This will bring up 	a configuration window. which allows you to look at the details	of the certificate.	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click the &quot;Sign Certificate&quot; button near the bottom of the &quot;Certificate Configuration&quot; Window.	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Now close the window by clicking on the &quot;Done&quot; button.	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Your Friends certificate should now say &quot;Trusted (S)&quot;, 	indicating it is ready for connections.&lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can only share with &quot;Trusted&quot; Peers. You must sign your Friend&apos;scertificate to prove that you know the certificate belongs to your Friend. Do not sign any/all certificates - only the people youtrust. For more information see: &lt;br /&gt;&lt;a href=&quot;#FAQ-SIGN&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: Should I Sign this Certificate?&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-TRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: What does &quot;Trust&quot; Mean?&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-WEBOFTRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: What is a Web of Trust?&lt;/span&gt;&lt;/a&gt;.  &lt;br /&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt; &lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; (4) AUTOCONNECT TO PEER &lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Finally You need to activate the connection:	&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Click in the Box, next to your friends Name.	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; A Tick should appear in the box, a connection will be started.	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; The &quot;Offline&quot; will change to &quot;Online&quot; when you have successfully	connected.&lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Remember: Your initial connection attempts will fail, until your friend has signed your certificate and ticked the Auto-Connect Box.This ensures that both peers trust each other, and stops random peopleaccessing your files.&lt;br /&gt;&lt;a href=&quot;#FAQ-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: Why won&apos;t it Connect?&lt;/span&gt;&lt;/a&gt;.  &lt;br /&gt;------------------------------------------------------------------------&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;START-DOWNLOAD&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;Downloading Files &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Once you have connected to friends, you can download their shared files.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can search for the files you want using either:&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;(1) File Listing Tab: This gives you a directory view of the files being shared by your peers. Double clickon the directory name (not the arrow) to diplay its subdirectories and files.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;NOTE 1: This can take up to 5 seconds to fetch the information for your peer.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;NOTE 2: If the directory is empty, or the person is offline, then the request will silently fail.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;(2) Search Tab: Retroshare also allows you to search your peers computers for filenames. Enter yourterm(s) in the search box at the top of the TAB and click the &quot;Search&quot; button. This willsearch all of the peers that you are currently connected to.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;NOTE 3: If any matching files are found they will be displayed within 5 - 10 seconds.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Once you have found the files you want, Select the file(s), and click &quot;Download&quot; to begin the download process.If you click over the &quot;File Transfer&quot; TAB, the status of the files will appear.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;NOTE 4: The files can take up to 10 seconds to appear in the transfer window.&lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;START-SHARING&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;Sharing Files &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can specify which files you want to share in the &quot;Config&quot; Tab.In the &quot;Share Directories&quot; section, click the &quot;Add Directory&quot; Button, and select the directory you want to share.The files and subdirectories will become available for you peers.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can remove a directory from the Shared Directories List by clicking onthe directory name in the list, and then clicking &quot;Remove Directory&quot;.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#aaaaaa&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:medium; font-weight:600; background-color:#aaaaaa;&quot;&gt;&lt;a name=&quot;GUI&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:medium;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:medium;&quot;&gt;Gui Overview (Tab Description) &lt;/span&gt;&lt;span style=&quot; font-size:medium;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#aaaaaa&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#aaaaaa;&quot;&gt;Quick Links: &lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#ABOUT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;About&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#START&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Getting Started&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#GUI&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Gui Basics&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#FAQ&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The GUI is divided up into several sections which can be accessed by clicking on the Tabs along the top of the main window. &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:1px;&quot;&gt;	&lt;/p&gt;&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Connect: Manage Connections and Friends.		(&lt;a href=&quot;#START-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;getting started&lt;/span&gt;&lt;/a&gt; and		&lt;a href=&quot;#GUI-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Listing: A directory view of available files.		(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)		&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Search: Search for available files.		(&lt;a href=&quot;#START-DOWNLOAD&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloading&lt;/span&gt;&lt;/a&gt;)	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Messages: For Sending/Recving Message. (Coming Soon)	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Channels: A broadcast/subscription system. (Coming Soon)	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; File Transfer: Listing of Current and completed Transfers.	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Config: Specify of share diectories and IP Addresses.		(&lt;a href=&quot;#GUI-CONFIG&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more info&lt;/span&gt;&lt;/a&gt;)	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; About: Help and other Information.	&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Chat: Accessed by the clicking on the &quot;Chat&quot; button.&lt;/li&gt;&lt;/ul&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;GUI-CONNECT&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;The Connect Tab &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The Connect TAB consists of two windows. The upper windowshows a list of your friends. This window indicates each friendscurrent trust level, as well as their connection state.The &quot;Trust_Lvl&quot; Column indicates if the certificate has beenAuthenticated using the web of trust. You can only connect to &quot;Trusted&quot; certificates.  Tick the &quot;Auto_Connect&quot; box to connect to your trusted friends.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The lower window provides a list of the friends of your friends.This window shows the neighbour&apos;s name and how long ago they attempted to connect to you. This window is automatically populatedby the autoDiscovery system, and should be used to expand yourretroShare network. A word of warning: Do not automatically trust (or sign) anyonethat appears in this window. First verify by some other means (email/phone)that certificate belongs to the person you think it does.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Use the &quot;Neighbour List&quot; window to expand your friend list. Select the desired entry in the lower window by clicking on it, then click the &quot;Add to Friends&quot; Button to move it to the upper window.Likewise the &quot;Remove from Friends&quot; button moved a person from the upper window to the lower window.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The &quot;Configure Friend&quot; Button opens a Certificate Configuration window.This window can be used to examine the certificate details, sign the certificate or manually change the peer&apos;s IP Address.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;See Also:&lt;br /&gt;&lt;a href=&quot;#START-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Getting Started: Connecting to your friends&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-CONNECT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: Why won&apos;t it Connect?&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-SIGN&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: Should I Sign this Certificate?&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-TRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: What does &quot;Trust&quot; Mean?&lt;/span&gt;&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;#FAQ-WEBOFTRUST&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ: What is a Web of Trust?&lt;/span&gt;&lt;/a&gt;.  &lt;br /&gt;&lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;GUI-CONFIG&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;The Config Tab &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The Configuration Tab allows you to select the share directories, as well as the directory that downloaded files are saved to.&lt;br /&gt;See &lt;a href=&quot;#STARTUP-SHARING&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Sharing you Files&lt;/span&gt;&lt;/a&gt; for details.  &lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The Config Tab also allows you to control the IP Address and Portused by RetroShare.  Under most cirumstances you do not need to changethese setting. If you are behind a firewall and can setup a forwarded port, the selected IP Address and Port should be specified here.&lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#aaaaaa&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:medium; font-weight:600; background-color:#aaaaaa;&quot;&gt;&lt;a name=&quot;FAQ&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:medium;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:medium;&quot;&gt;Frequently Asked Questions &lt;/span&gt;&lt;span style=&quot; font-size:medium;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#aaaaaa&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#aaaaaa;&quot;&gt;Quick Links: &lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#ABOUT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;About&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#START&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Getting Started&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#GUI&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Gui Basics&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#FAQ&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;FAQ-WEBOFTRUST&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;How does the security/privacy work? &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;RetroShares uses a Web of Trust Authentication system to ensurethat your &quot;friends&quot; are your friends, and uses SSL to encryptthe communcications between peers. &lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;FAQ-WEBOFTRUST&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;What is a Web of Trust? &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;A Web of Trust relies on a collection of peers to identify eachother. Look it up on the Web!&lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;FAQ-TRUST&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;What does &quot;Trust&quot; Mean in RetroShare?&lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Anyone can generate a certificate, with any name on it. So howdo you know that the certificate that claims to be from &quot;Joe Bloggs&quot;is really from your mate Joe. This is the &quot;AuthenticationProblem&quot;. RetroShare uses a Web of Trust to Authenticate your peers.&lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;a name=&quot;FAQ-SIGN&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;Should I Sign this Certificate? &lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You should only sign a certificate if you are completely surethat it comes from the &quot;right&quot; person. If you sign a certificateyou are &quot;Authenticating&quot; the person to yourself and others.If you sign certificates that you haven&apos;t checked, then you aredestroying your own privacy and security.&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;How do you verify a certificate? Use an alternative method ofcommunication to send the certificate: E.g. email or USB stick. This will improve you confidence that the certificate belongsto the correct person. &lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:4px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:small; font-weight:600; background-color:#cccccc;&quot;&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;a name=&quot;FAQ-CONNECT&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-size:small;&quot;&gt;W&lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt;hy won&apos;t it Connect?&lt;/span&gt;&lt;span style=&quot; font-size:small;&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  &lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;A connection can fail for a number of reasons:&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;(1) Failed Authentication. Have both peers signed each otherscertificates? &lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;(2) Firewalls. If both peers are behind firewalls then they cannotconnect directly. RetroShare has a built in proxy system to circumventfirewalls - However this can only function if both peers can connect to a common third party that is not behind a firewall.  Thisis the most likely reason for initial connections to fail. The only solution to find a common friend that isn&apos;t firewalled (know anyone with Broadband?)&lt;/p&gt;&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;(3) IP Addresses are wrong. You can manually examine and change these using the Certificate configuration.&lt;/p&gt;&lt;table border=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;2&quot; cellpadding=&quot;2&quot;&gt;&lt;tr&gt;&lt;td bgcolor=&quot;#aaaaaa&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#aaaaaa;&quot;&gt;Quick Links: &lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#ABOUT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;About&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#START&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Getting Started&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#GUI&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Gui Basics&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;td bgcolor=&quot;#cccccc&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cccccc;&quot;&gt;&lt;a href=&quot;#FAQ&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;FAQ&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="165"/>
+        <location filename="../gui/MainWindow.cpp" line="168"/>
         <source>Network</source>
         <translation>网络</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="169"/>
+        <location filename="../gui/MainWindow.cpp" line="172"/>
         <source>Friends</source>
         <translation>聊天好友 </translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="182"/>
+        <location filename="../gui/MainWindow.cpp" line="185"/>
         <source>Transfers</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="196"/>
+        <location filename="../gui/MainWindow.cpp" line="199"/>
         <source>Messages</source>
         <translation>电子邮件</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="218"/>
+        <location filename="../gui/MainWindow.cpp" line="221"/>
         <source>Channels</source>
         <translation>频道 </translation>
     </message>
     <message>
+        <location filename="../gui/MainWindow.cpp" line="499"/>
         <location filename="../gui/MainWindow.ui" line="1082"/>
         <source>Options</source>
         <translation>选项 </translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="539"/>
+        <location filename="../gui/MainWindow.cpp" line="563"/>
         <source>Hide</source>
         <translation>隐藏 </translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="539"/>
+        <location filename="../gui/MainWindow.cpp" line="563"/>
         <source>Show</source>
         <translation>显示</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="485"/>
+        <location filename="../gui/MainWindow.cpp" line="330"/>
+        <location filename="../gui/MainWindow.ui" line="486"/>
         <source>RetroShare</source>
         <translation>Retroshare </translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="1101"/>
         <source>Invite Friend</source>
         <translation type="obsolete">邀请好友</translation>
     </message>
@@ -3970,62 +3994,62 @@ p, li { white-space: pre-wrap; }
         <translation>添加共享</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="179"/>
+        <location filename="../gui/MainWindow.cpp" line="182"/>
         <source>Search</source>
         <translation>搜索 </translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="189"/>
+        <location filename="../gui/MainWindow.cpp" line="192"/>
         <source>Files</source>
         <translation>文案 </translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="531"/>
         <source>Add Shared Directory</source>
         <translation type="obsolete">添加共享目录</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="304"/>
+        <location filename="../gui/MainWindow.cpp" line="307"/>
         <source>Show/Hide</source>
         <translation>显示/隐藏</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="322"/>
+        <location filename="../gui/MainWindow.cpp" line="325"/>
         <source>&amp;Quit</source>
         <translation>(&amp;Q)退出</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="478"/>
+        <location filename="../gui/MainWindow.cpp" line="502"/>
         <source>Bandwidth Graph</source>
         <translation>带宽图</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="482"/>
+        <location filename="../gui/MainWindow.cpp" line="506"/>
         <source>Open Messenger</source>
         <translation>打开信使</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="319"/>
+        <location filename="../gui/MainWindow.cpp" line="322"/>
         <source>Minimize</source>
         <translation>最小化</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="320"/>
+        <location filename="../gui/MainWindow.cpp" line="323"/>
         <source>Maximize</source>
         <translation>最大化</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="214"/>
+        <location filename="../gui/MainWindow.cpp" line="207"/>
+        <location filename="../gui/MainWindow.cpp" line="217"/>
         <source>Links Cloud</source>
         <translation>友情链接</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="241"/>
+        <location filename="../gui/MainWindow.cpp" line="244"/>
         <source>Unfinished</source>
         <translation>未完成</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="494"/>
+        <location filename="../gui/MainWindow.cpp" line="518"/>
         <source>Help</source>
         <translation>幇助</translation>
     </message>
@@ -4035,22 +4059,23 @@ p, li { white-space: pre-wrap; }
         <translation>关於</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="227"/>
+        <location filename="../gui/MainWindow.cpp" line="230"/>
         <source>News Feed</source>
         <translation>新闻提供</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="222"/>
+        <location filename="../gui/MainWindow.cpp" line="211"/>
+        <location filename="../gui/MainWindow.cpp" line="225"/>
         <source>Forums</source>
         <translation>论坛</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="485"/>
+        <location filename="../gui/MainWindow.cpp" line="509"/>
         <source>Open Messages</source>
         <translation>打开信使</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="488"/>
+        <location filename="../gui/MainWindow.cpp" line="512"/>
         <source>Applications</source>
         <translation>程序</translation>
     </message>
@@ -4060,32 +4085,32 @@ p, li { white-space: pre-wrap; }
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="127"/>
+        <location filename="../gui/MainWindow.cpp" line="130"/>
         <source>RetroShare %1 a secure decentralised commmunication platform</source>
         <translation>RetroShare %1 一个安全分散的通信平台</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="176"/>
+        <location filename="../gui/MainWindow.cpp" line="179"/>
         <source>Turtle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="231"/>
+        <location filename="../gui/MainWindow.cpp" line="234"/>
         <source>Plugins</source>
         <translation>插件</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="509"/>
+        <location filename="../gui/MainWindow.cpp" line="533"/>
         <source>Really quit ? </source>
         <translation>真要退出吗？</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="507"/>
+        <location filename="../gui/MainWindow.cpp" line="531"/>
         <source>Do you really want to exit RetroShare ?</source>
         <translation>你真的要退出RetroShare ？</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="1032"/>
+        <location filename="../gui/MainWindow.ui" line="1033"/>
         <source>toolBar_2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4113,7 +4138,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MessageToaster</name>
     <message>
-        <location filename="../gui/toaster/MessageToaster.ui" line="58"/>
         <source>message</source>
         <translation type="obsolete">电文</translation>
     </message>
@@ -4126,17 +4150,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MessagesDialog</name>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="157"/>
+        <location filename="../gui/MessagesDialog.cpp" line="159"/>
         <source>New Message</source>
         <translation>新讯息 </translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="170"/>
+        <location filename="../gui/MessagesDialog.cpp" line="172"/>
         <source>Reply to Message</source>
         <translation>回覆讯息</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="184"/>
+        <location filename="../gui/MessagesDialog.cpp" line="186"/>
         <source>Remove Message</source>
         <translation>清除讯息</translation>
     </message>
@@ -4208,12 +4232,11 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;新邮件 &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="203"/>
         <source>Download All</source>
-        <translation>下载所有 </translation>
+        <translation type="obsolete">下载所有 </translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="812"/>
+        <location filename="../gui/MessagesDialog.cpp" line="831"/>
         <source>Print Document</source>
         <translation>打印文档</translation>
     </message>
@@ -4228,37 +4251,43 @@ p, li { white-space: pre-wrap; }
         <translation>来源</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="120"/>
+        <location filename="../gui/MessagesDialog.cpp" line="122"/>
         <source>Forward selected Message</source>
         <translation>转发选择讯息</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="164"/>
+        <location filename="../gui/MessagesDialog.cpp" line="166"/>
         <source>Remove Messages</source>
         <translation>移除讯息</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="178"/>
+        <location filename="../gui/MessagesDialog.cpp" line="180"/>
         <source>Forward Message</source>
         <translation>转发讯息</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="284"/>
+        <location filename="../gui/MessagesDialog.cpp" line="202"/>
+        <source>Download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesDialog.cpp" line="251"/>
+        <location filename="../gui/MessagesDialog.cpp" line="286"/>
         <source>Re: </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="329"/>
+        <location filename="../gui/MessagesDialog.cpp" line="331"/>
         <source>Fwd: </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="121"/>
+        <location filename="../gui/MessagesDialog.cpp" line="123"/>
         <source>Replay to All</source>
         <translation>全部回复</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="174"/>
+        <location filename="../gui/MessagesDialog.cpp" line="176"/>
         <source>Reply to All</source>
         <translation>全部回复</translation>
     </message>
@@ -4424,27 +4453,27 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessagesPopupDialog.ui" line="130"/>
         <source>Subject</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">题目</translation>
     </message>
     <message>
         <location filename="../gui/MessagesPopupDialog.ui" line="211"/>
         <source>Subject:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">主题：</translation>
     </message>
     <message>
         <location filename="../gui/MessagesPopupDialog.ui" line="268"/>
         <source>From:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">来自：</translation>
     </message>
     <message>
         <location filename="../gui/MessagesPopupDialog.ui" line="325"/>
         <source>Date:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">日期：</translation>
     </message>
     <message>
         <location filename="../gui/MessagesPopupDialog.ui" line="382"/>
         <source>To:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">到：</translation>
     </message>
     <message>
         <location filename="../gui/MessagesPopupDialog.ui" line="514"/>
@@ -4452,7 +4481,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Download all Recommended Files&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;下载所有建议的文件&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/MessagesPopupDialog.ui" line="550"/>
@@ -4480,6 +4509,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../gui/MessagesPopupDialog.ui" line="630"/>
         <location filename="../gui/MessagesPopupDialog.ui" line="640"/>
         <source>Print</source>
         <translation type="unfinished">打印</translation>
@@ -4487,7 +4517,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessagesPopupDialog.ui" line="635"/>
         <source>PrintPreview</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">打印预览</translation>
     </message>
 </context>
 <context>
@@ -4618,7 +4648,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MsgFeed.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/MsgFeed.ui" line="51"/>
@@ -4648,7 +4678,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MsgFeed.ui" line="218"/>
         <source>Subject</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">题目</translation>
     </message>
     <message>
         <location filename="../gui/MsgFeed.ui" line="223"/>
@@ -4671,7 +4701,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/MsgItem.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/feeds/MsgItem.ui" line="54"/>
@@ -4686,7 +4716,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/MsgItem.ui" line="125"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">展开</translation>
     </message>
     <message>
         <location filename="../gui/feeds/MsgItem.ui" line="148"/>
@@ -4980,12 +5010,10 @@ p, li { white-space: pre-wrap; }
         <translation>TCP端口不可以访问</translation>
     </message>
     <message>
-        <location filename="../gui/statusbar/natstatus.cpp" line="122"/>
         <source>RetroShare Server</source>
         <translation type="obsolete">RetroShare服务器</translation>
     </message>
     <message>
-        <location filename="../gui/statusbar/natstatus.cpp" line="127"/>
         <source>UDP Server</source>
         <translation type="obsolete">UDP服务器</translation>
     </message>
@@ -5013,42 +5041,41 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NetworkDialog</name>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="160"/>
         <source>Load Certificate</source>
         <translation type="obsolete">加载证书 </translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="288"/>
+        <location filename="../gui/NetworkDialog.cpp" line="303"/>
         <source>Select a pem/pqi File</source>
         <translation>选择一个文件 PEM/PQI</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="305"/>
+        <location filename="../gui/NetworkDialog.cpp" line="320"/>
         <source>File Not Found</source>
         <translation>未找到文件</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="307"/>
+        <location filename="../gui/NetworkDialog.cpp" line="321"/>
         <source>%1 does not exist. Would you like to create it?</source>
         <translation>%1 不存在.  你想创建它吗?</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="317"/>
+        <location filename="../gui/NetworkDialog.cpp" line="332"/>
         <source>Failed to Create File</source>
         <translation>创建文件失败</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="318"/>
+        <location filename="../gui/NetworkDialog.cpp" line="333"/>
         <source>Unable to create %1 [%2]</source>
         <translation>无法创建 %1 [%2]</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="557"/>
+        <location filename="../gui/NetworkDialog.cpp" line="580"/>
         <source>Select Certificate</source>
         <translation>选择证书</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="558"/>
+        <location filename="../gui/NetworkDialog.cpp" line="581"/>
         <source>Certificates (*.pqi *.pem)</source>
         <translation>证书 (*.pqi *.pem)</translation>
     </message>
@@ -5061,12 +5088,10 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;网络:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="134"/>
         <source>Accept</source>
         <translation type="obsolete">接受</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="139"/>
         <source>Trust</source>
         <translation type="obsolete">信託 </translation>
     </message>
@@ -5106,13 +5131,13 @@ p, li { white-space: pre-wrap; }
         <translation>证书编号 </translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="129"/>
+        <location filename="../gui/NetworkDialog.cpp" line="141"/>
         <source>RetroShare %1 started.</source>
         <comment>e.g: RetroShare v0.x started.</comment>
         <translation>RetroShare %1已经启动</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="131"/>
+        <location filename="../gui/NetworkDialog.cpp" line="143"/>
         <source>Welcome to RetroShare.</source>
         <translation>欢迎使用RetroShare。</translation>
     </message>
@@ -5122,150 +5147,150 @@ p, li { white-space: pre-wrap; }
         <translation>网络</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="447"/>
+        <location filename="../gui/NetworkDialog.cpp" line="462"/>
         <source> is trusting you. 
 Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation>信任你。点击右键选择“成为好友”，就可以联系。</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="126"/>
+        <location filename="../gui/NetworkDialog.cpp" line="138"/>
         <source>Trust matrix</source>
         <translation>信任矩阵</translation>
     </message>
     <message>
+        <location filename="../gui/NetworkDialog.cpp" line="145"/>
         <location filename="../gui/NetworkDialog.ui" line="112"/>
         <source>View</source>
         <translation>查看</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="185"/>
+        <location filename="../gui/NetworkDialog.cpp" line="199"/>
         <source>Deny friend</source>
         <translation>拒绝好友</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="193"/>
+        <location filename="../gui/NetworkDialog.cpp" line="207"/>
         <source>Accept friend</source>
         <translation>接受好友</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="195"/>
+        <location filename="../gui/NetworkDialog.cpp" line="209"/>
         <source>Make friend</source>
         <translation>成为好友</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="202"/>
+        <location filename="../gui/NetworkDialog.cpp" line="216"/>
         <source>Delete certificate</source>
         <translation>删除证书</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="209"/>
+        <location filename="../gui/NetworkDialog.cpp" line="224"/>
         <source>Peer details...</source>
         <translation>节点详细资料</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="372"/>
+        <location filename="../gui/NetworkDialog.cpp" line="387"/>
         <source>Trusted</source>
         <translation>信任的</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="374"/>
+        <location filename="../gui/NetworkDialog.cpp" line="389"/>
         <source>Denied</source>
         <translation>拒绝的</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="377"/>
+        <location filename="../gui/NetworkDialog.cpp" line="392"/>
         <source>Is trusting me</source>
         <translation>信任我</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="379"/>
+        <location filename="../gui/NetworkDialog.cpp" line="394"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="386"/>
+        <location filename="../gui/NetworkDialog.cpp" line="401"/>
         <source>Never seen</source>
         <translation>从未见过</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="626"/>
+        <location filename="../gui/NetworkDialog.cpp" line="651"/>
         <source>UPNP is active.</source>
         <translation>UpNP是活动的</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="630"/>
+        <location filename="../gui/NetworkDialog.cpp" line="655"/>
         <source>UPNP NOT FOUND.</source>
         <translation>没有发现UPNP</translation>
     </message>
     <message>
+        <location filename="../gui/NetworkDialog.cpp" line="660"/>
         <location filename="../gui/NetworkDialog.ui" line="448"/>
         <source>DHT OK</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="639"/>
+        <location filename="../gui/NetworkDialog.cpp" line="664"/>
         <source>DHT is not working (down).</source>
         <translation>DHT没有工作。</translation>
     </message>
     <message>
+        <location filename="../gui/NetworkDialog.cpp" line="670"/>
         <location filename="../gui/NetworkDialog.ui" line="421"/>
         <source>Stable External IP Address</source>
         <translation>固定的外部IP地址</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="649"/>
+        <location filename="../gui/NetworkDialog.cpp" line="674"/>
         <source>Not Found External Address</source>
         <translation>没有发现外部地址</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="654"/>
         <source>UDP Port is reachable</source>
         <translation type="obsolete">UDP端口可以访问</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="658"/>
         <source>UDP Port is not reachable</source>
         <translation type="obsolete">UDP端口不可以访问</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="663"/>
         <source>TCP Port is reachable</source>
         <translation type="obsolete">TCP端口可以访问</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="667"/>
         <source>TCP Port is not reachable</source>
         <translation type="obsolete">TCP端口不可以访问</translation>
     </message>
     <message>
+        <location filename="../gui/NetworkDialog.cpp" line="699"/>
         <location filename="../gui/NetworkDialog.ui" line="363"/>
         <source>RetroShare Server</source>
         <translation>RetroShare服务器</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="678"/>
+        <location filename="../gui/NetworkDialog.cpp" line="703"/>
         <source>UDP Server</source>
         <translation>UDP服务器</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="683"/>
+        <location filename="../gui/NetworkDialog.cpp" line="708"/>
         <source>Net Limited</source>
         <translation>网络受限</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="687"/>
+        <location filename="../gui/NetworkDialog.cpp" line="712"/>
         <source>No Conectivity</source>
         <translation>没有链接</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="125"/>
+        <location filename="../gui/NetworkDialog.cpp" line="137"/>
         <source>Network View</source>
         <translation>网络查看</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="154"/>
@@ -5338,57 +5363,60 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="654"/>
+        <location filename="../gui/NetworkDialog.cpp" line="679"/>
         <source>UDP Port is active (UDP Connections)</source>
         <translation>UDP端口是积极（ UDP连接）</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="744"/>
+        <location filename="../gui/NetworkDialog.cpp" line="683"/>
+        <location filename="../gui/NetworkDialog.cpp" line="769"/>
         <source>UDP Port is not active</source>
         <translation>UDP端口是不活跃</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="750"/>
+        <location filename="../gui/NetworkDialog.cpp" line="688"/>
+        <location filename="../gui/NetworkDialog.cpp" line="775"/>
         <source>TCP Port is active (TCP Server)</source>
         <translation>TCP端口是积极的（ TCP服务器）</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="755"/>
+        <location filename="../gui/NetworkDialog.cpp" line="692"/>
+        <location filename="../gui/NetworkDialog.cpp" line="780"/>
         <source>TCP Port is not active</source>
         <translation>TCP端口是不活跃</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="706"/>
+        <location filename="../gui/NetworkDialog.cpp" line="731"/>
         <source>UPnP active</source>
         <translation>UPnP的积极</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="711"/>
+        <location filename="../gui/NetworkDialog.cpp" line="736"/>
         <source>UPnP inactive</source>
         <translation>无效的UPnP</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="717"/>
+        <location filename="../gui/NetworkDialog.cpp" line="742"/>
         <source>DHT active</source>
         <translation>双氢睾酮活跃</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="722"/>
+        <location filename="../gui/NetworkDialog.cpp" line="747"/>
         <source>DHT inactive</source>
         <translation>双氢睾酮无效</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="728"/>
+        <location filename="../gui/NetworkDialog.cpp" line="753"/>
         <source>Stabile External IP Address</source>
         <translation>斯塔比尔外部IP地址</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="733"/>
+        <location filename="../gui/NetworkDialog.cpp" line="758"/>
         <source>Not Found External IP Address</source>
         <translation>找不到外部IP地址</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="739"/>
+        <location filename="../gui/NetworkDialog.cpp" line="764"/>
         <source>UDP Port is active ( UDP Connections )</source>
         <translation>找不到外部IP地址</translation>
     </message>
@@ -5411,17 +5439,14 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
 <context>
     <name>NetworkPage</name>
     <message>
-        <location filename="../gui/Settings/NetworkPage.ui" line="513"/>
         <source>Rate Options</source>
         <translation type="obsolete">速度选项</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/NetworkPage.ui" line="525"/>
         <source>Max Total Data Rate (KB/S):</source>
         <translation type="obsolete">你的最大上传速度 (KB/S):</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/NetworkPage.ui" line="538"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -5432,12 +5457,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NetworkView</name>
     <message>
-        <location filename="../gui/NetworkView.cpp" line="267"/>
+        <location filename="../gui/NetworkView.cpp" line="371"/>
         <source>Hide Settings</source>
         <translation>隐藏设置</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkView.cpp" line="271"/>
+        <location filename="../gui/NetworkView.cpp" line="375"/>
         <source>Show Settings</source>
         <translation>显示设置</translation>
     </message>
@@ -5487,7 +5512,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NewsFeed.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/NewsFeed.ui" line="48"/>
@@ -5697,7 +5722,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/PeerItem.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/feeds/PeerItem.ui" line="54"/>
@@ -5705,6 +5730,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../gui/feeds/PeerItem.ui" line="96"/>
         <location filename="../gui/feeds/PeerItem.ui" line="162"/>
         <source>Connected</source>
         <translation type="unfinished"></translation>
@@ -5712,7 +5738,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/PeerItem.ui" line="125"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">展开</translation>
     </message>
     <message>
         <location filename="../gui/feeds/PeerItem.ui" line="155"/>
@@ -5745,6 +5771,13 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../gui/feeds/PeerItem.ui" line="441"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="454"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="467"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="480"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="493"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="573"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="586"/>
         <location filename="../gui/feeds/PeerItem.ui" line="599"/>
         <source>TextLabel</source>
         <translation type="unfinished"></translation>
@@ -5801,9 +5834,8 @@ p, li { white-space: pre-wrap; }
         <translation>导出好友</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="207"/>
         <source>Remove Friend</source>
-        <translation>删除好友</translation>
+        <translation type="obsolete">删除好友</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="431"/>
@@ -5852,6 +5884,11 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/PeersDialog.cpp" line="198"/>
         <source>Peer Details</source>
         <translation>结点详细信息</translation>
+    </message>
+    <message>
+        <location filename="../gui/PeersDialog.cpp" line="207"/>
+        <source>Deny Friend</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.ui" line="897"/>
@@ -5924,7 +5961,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersFeed.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/PeersFeed.ui" line="48"/>
@@ -5944,7 +5981,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersFeed.ui" line="93"/>
         <source>All Peers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">所有同伴</translation>
     </message>
 </context>
 <context>
@@ -5960,11 +5997,13 @@ p, li { white-space: pre-wrap; }
         <translation>移除</translation>
     </message>
     <message>
+        <location filename="../gui/PhotoDialog.ui" line="117"/>
         <location filename="../gui/PhotoDialog.ui" line="220"/>
         <source>Date</source>
         <translation>日期</translation>
     </message>
     <message>
+        <location filename="../gui/PhotoDialog.ui" line="122"/>
         <location filename="../gui/PhotoDialog.ui" line="230"/>
         <source>Location</source>
         <translation>位置 </translation>
@@ -5977,7 +6016,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PhotoDialog.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/PhotoDialog.ui" line="44"/>
@@ -6013,6 +6052,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../gui/PhotoDialog.ui" line="112"/>
         <location filename="../gui/PhotoDialog.ui" line="250"/>
         <source>Comment</source>
         <translation type="unfinished"></translation>
@@ -6028,6 +6068,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../gui/PhotoDialog.ui" line="159"/>
         <location filename="../gui/PhotoDialog.ui" line="162"/>
         <source>Add Photo(s)</source>
         <translation type="unfinished"></translation>
@@ -6058,17 +6099,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PhotoShow.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/PhotoShow.ui" line="25"/>
         <source>Date:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">日期：</translation>
     </message>
     <message>
         <location filename="../gui/PhotoShow.ui" line="32"/>
         <source>Location:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">地点：</translation>
     </message>
     <message>
         <location filename="../gui/PhotoShow.ui" line="39"/>
@@ -6200,32 +6241,32 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PopupChatDialog</name>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="367"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="374"/>
         <source>Hide Avatar</source>
         <translation>隐藏头像</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="368"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="375"/>
         <source>:images/hide_toolbox_frame.png</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="372"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="379"/>
         <source>Show Avatar</source>
         <translation>显示头像</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="373"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="380"/>
         <source>:images/show_toolbox_frame.png</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="614"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="621"/>
         <source>Open Style</source>
         <translation>打开样式</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="616"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="623"/>
         <source>Styles (*.htm)</source>
         <translation>样式 (*.htm)</translation>
     </message>
@@ -6245,42 +6286,43 @@ p, li { white-space: pre-wrap; }
         <translation>聊天</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="709"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="716"/>
         <source>Add Extra File</source>
         <translation>添加附件</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="811"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="824"/>
         <source>File Request Confirmation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="811"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="824"/>
         <source>The file has been added to your download list.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="815"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="828"/>
         <source>File Request Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="815"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="828"/>
         <source>The file link is malformed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="877"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="885"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="890"/>
         <source>Drop file error.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="872"/>
-        <source>The dropped does not exist.</source>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="885"/>
+        <source>File not found or file name not accepted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="877"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="890"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6290,6 +6332,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="87"/>
         <location filename="../gui/chat/PopupChatDialog.ui" line="128"/>
         <source>QLabel{
 border-image: url(:/images/mystatus_bg.png);
@@ -6306,19 +6349,22 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="316"/>
         <location filename="../gui/chat/PopupChatDialog.ui" line="526"/>
         <source>Bold</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">大胆</translation>
     </message>
     <message>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="344"/>
         <location filename="../gui/chat/PopupChatDialog.ui" line="536"/>
         <source>Underline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">下划线</translation>
     </message>
     <message>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="372"/>
         <location filename="../gui/chat/PopupChatDialog.ui" line="531"/>
         <source>Italic</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">斜体</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.ui" line="400"/>
@@ -6328,7 +6374,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/chat/PopupChatDialog.ui" line="428"/>
         <source>Text Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">文字颜色</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.ui" line="508"/>
@@ -6354,6 +6400,14 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/chat/PopupChatDialog.ui" line="462"/>
         <source>Add a File for your Friend</source>
         <translation>添加文件为您的朋友</translation>
+    </message>
+</context>
+<context>
+    <name>PopupWindowClass</name>
+    <message>
+        <location filename="../gui/notification/popupwindow.ui" line="14"/>
+        <source>PopupWindow</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6540,6 +6594,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../gui/profile/ProfileEdit.ui" line="167"/>
         <location filename="../gui/profile/ProfileEdit.ui" line="178"/>
         <source>Move</source>
         <translation type="unfinished"></translation>
@@ -6563,6 +6618,7 @@ p, li { white-space: pre-wrap; }
         <translation>更改照片</translation>
     </message>
     <message>
+        <location filename="../gui/profile/ProfileView.cpp" line="99"/>
         <location filename="../gui/profile/ProfileView.ui" line="180"/>
         <source>Edit Profile</source>
         <translation>编辑简介</translation>
@@ -6588,6 +6644,7 @@ p, li { white-space: pre-wrap; }
         <translation>下载所有 (Download All)</translation>
     </message>
     <message>
+        <location filename="../gui/profile/ProfileView.ui" line="44"/>
         <location filename="../gui/profile/ProfileView.ui" line="244"/>
         <source>Name</source>
         <translation>姓名</translation>
@@ -6766,37 +6823,37 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RemoteDirModel</name>
     <message>
-        <location filename="../rsiface/RemoteDirModel.cpp" line="490"/>
+        <location filename="../rsiface/RemoteDirModel.cpp" line="499"/>
         <source>Friends Directories</source>
         <translation>好友目录</translation>
     </message>
     <message>
-        <location filename="../rsiface/RemoteDirModel.cpp" line="494"/>
+        <location filename="../rsiface/RemoteDirModel.cpp" line="503"/>
         <source>My Directories</source>
         <translation>我的目录</translation>
     </message>
     <message>
-        <location filename="../rsiface/RemoteDirModel.cpp" line="498"/>
+        <location filename="../rsiface/RemoteDirModel.cpp" line="507"/>
         <source>Size</source>
         <translation>大小 </translation>
     </message>
     <message>
-        <location filename="../rsiface/RemoteDirModel.cpp" line="501"/>
+        <location filename="../rsiface/RemoteDirModel.cpp" line="510"/>
         <source>Rank</source>
         <translation>排名 </translation>
     </message>
     <message>
-        <location filename="../rsiface/RemoteDirModel.cpp" line="504"/>
+        <location filename="../rsiface/RemoteDirModel.cpp" line="513"/>
         <source>Age</source>
         <translation>年龄</translation>
     </message>
     <message>
-        <location filename="../rsiface/RemoteDirModel.cpp" line="420"/>
+        <location filename="../rsiface/RemoteDirModel.cpp" line="429"/>
         <source>FILE</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="../rsiface/RemoteDirModel.cpp" line="445"/>
+        <location filename="../rsiface/RemoteDirModel.cpp" line="454"/>
         <source>DIR</source>
         <translation>目录</translation>
     </message>
@@ -6829,12 +6886,12 @@ p, li { white-space: pre-wrap; }
         <translation>设置RetroShare日志文件的名字和保存位置。</translation>
     </message>
     <message>
-        <location filename="../rshare.cpp" line="221"/>
+        <location filename="../rshare.cpp" line="220"/>
         <source>Sets the verbosity of Vidalia&apos;s logging.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../rshare.cpp" line="224"/>
+        <location filename="../rshare.cpp" line="223"/>
         <source>Sets RetroShare&apos;s interface style.</source>
         <translation>设置RetroShare的界面样式。</translation>
     </message>
@@ -6844,7 +6901,7 @@ p, li { white-space: pre-wrap; }
         <translation>设置RetroShare的界面样式表。</translation>
     </message>
     <message>
-        <location filename="../rshare.cpp" line="229"/>
+        <location filename="../rshare.cpp" line="228"/>
         <source>Sets RetroShare&apos;s language.</source>
         <translation>设置RetroShare语言</translation>
     </message>
@@ -6859,7 +6916,7 @@ p, li { white-space: pre-wrap; }
         <translation>指定日志级别无效：</translation>
     </message>
     <message>
-        <location filename="../rshare.cpp" line="301"/>
+        <location filename="../rshare.cpp" line="300"/>
         <source>Unable to open log file &apos;%1&apos;: %2</source>
         <translation>不能打开日志文件 &quot;%1&apos;:%2</translation>
     </message>
@@ -6877,6 +6934,7 @@ p, li { white-space: pre-wrap; }
         <translation>结果 </translation>
     </message>
     <message>
+        <location filename="../gui/SearchDialog.cpp" line="217"/>
         <location filename="../gui/SearchDialog.ui" line="1202"/>
         <source>Download</source>
         <translation>下载 </translation>
@@ -6925,22 +6983,18 @@ p, li { white-space: pre-wrap; }
         <translation>视频 </translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="818"/>
         <source>Images</source>
         <translation type="obsolete">图片</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="826"/>
         <source>Programs</source>
         <translation type="obsolete">节目</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="834"/>
         <source>Archives</source>
         <translation type="obsolete">文件夹 </translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="842"/>
         <source>Documents</source>
         <translation type="obsolete">文件 </translation>
     </message>
@@ -6955,11 +7009,13 @@ p, li { white-space: pre-wrap; }
         <translation>跳过本地文件</translation>
     </message>
     <message>
+        <location filename="../gui/SearchDialog.cpp" line="282"/>
         <location filename="../gui/SearchDialog.cpp" line="288"/>
         <source>Sorry</source>
         <translation>抱歉</translation>
     </message>
     <message>
+        <location filename="../gui/SearchDialog.cpp" line="282"/>
         <location filename="../gui/SearchDialog.cpp" line="288"/>
         <source>This function is not yet implemented.</source>
         <translation>这个功能还没有开发实现。</translation>
@@ -7074,82 +7130,84 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ServerDialog</name>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="754"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="730"/>
         <source>Transfer Rates</source>
         <translation>传输速度</translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="665"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="631"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="654"/>
         <source>Port:</source>
         <translation>IP-Port (IP端口):</translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="518"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="507"/>
         <source>Network Configuration (takes effect after restart)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="527"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="516"/>
         <source>Automatic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="532"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="521"/>
         <source>Firewalled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="537"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="526"/>
         <source>Forwarded Port</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="548"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="537"/>
         <source>DHT Enabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="553"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="542"/>
         <source>DHT Disabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="562"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="551"/>
         <source>Discovery Enabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="567"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="556"/>
         <source>Discovery Disabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="611"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="588"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="600"/>
         <source>Network Configuration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="621"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="610"/>
         <source>Local Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="628"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="617"/>
         <source>External Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="706"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="682"/>
         <source>IP Service</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="712"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="688"/>
         <source>IP check service</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="718"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="694"/>
         <source>If you unckeck this, RetroShare can only determine your IP 
 when you connect to somebody. Leaving this checked helps 
 connecting when you have few friends. It also helps if you&apos;re 
@@ -7157,35 +7215,32 @@ behind a firewall or a VPN.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="724"/>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="700"/>
         <source>Allow RetroShare to ask my ip to these websites:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="777"/>
-        <source>Total Rate (KB/s) </source>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="744"/>
+        <source>Download (KB/s) </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Preferences/ServerDialog.ui" line="816"/>
-        <source>Per Person  </source>
+        <location filename="../gui/Preferences/ServerDialog.ui" line="771"/>
+        <source>Upload (KB/s) </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ServerPage</name>
     <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="513"/>
         <source>Change + Restart Server</source>
         <translation type="obsolete">改变+重綮动</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="526"/>
         <source>Server Settings</source>
         <translation type="obsolete">服务器设置 </translation>
     </message>
     <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="538"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -7193,7 +7248,6 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;外部地址:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="554"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -7201,7 +7255,6 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;本地地址:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="590"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -7209,187 +7262,59 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;IP-Port (IP的端口/ 港口):&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="670"/>
         <source>Port:</source>
-        <translation>IP-Port (IP的端口):</translation>
+        <translation type="obsolete">IP-Port (IP的端口):</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="658"/>
         <source>Misc</source>
         <translation type="obsolete">Misc </translation>
     </message>
     <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="670"/>
         <source>behinde Firewall</source>
         <translation type="obsolete">防火墙 </translation>
     </message>
     <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="683"/>
         <source>Forwarded External Port</source>
         <translation type="obsolete">转发外部端口</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="817"/>
         <source>Transfer Rates</source>
-        <translation>传输速度</translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="529"/>
-        <source>Network Configuration (takes effect after restart)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="538"/>
-        <source>Automatic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="543"/>
-        <source>Firewalled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="548"/>
-        <source>Forwarded Port</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="559"/>
-        <source>DHT Enabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="564"/>
-        <source>DHT Disabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="573"/>
-        <source>Discovery Enabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="578"/>
-        <source>Discovery Disabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="616"/>
-        <source>Network Configuration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="626"/>
-        <source>Local Address</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="633"/>
-        <source>External Address</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="711"/>
-        <source>Network Status</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="721"/>
-        <source>No Conectivity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="728"/>
-        <source>Limited</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="735"/>
-        <source>Udp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="742"/>
-        <source>Retroshare Server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="753"/>
-        <source>UDP Connections</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="763"/>
-        <source>Stable External IP Addrress</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="773"/>
-        <source>DHT Okay</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="783"/>
-        <source>UPnP Active</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="793"/>
-        <source>TCP server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="840"/>
-        <source>Total Rate (KB/s) </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Settings/ServerPage.ui" line="879"/>
-        <source>Per Person  </source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">传输速度</translation>
     </message>
 </context>
 <context>
     <name>Settings</name>
     <message>
-        <location filename="../gui/Settings/settings.ui" line="13"/>
         <source>Settings</source>
-        <translation>设置</translation>
+        <translation type="obsolete">设置</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/settings.ui" line="126"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation type="obsolete">取消</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/settings.ui" line="142"/>
         <source>Apply</source>
-        <translation>应用</translation>
+        <translation type="obsolete">应用</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/settings.ui" line="155"/>
         <source>OK</source>
-        <translation>确定</translation>
+        <translation type="obsolete">确定</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/settings.ui" line="222"/>
         <source>General</source>
-        <translation>一般</translation>
+        <translation type="obsolete">一般</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/settings.ui" line="227"/>
         <source>Network</source>
-        <translation>网络</translation>
+        <translation type="obsolete">网络</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/settings.ui" line="232"/>
         <source>Server</source>
-        <translation>服务器</translation>
+        <translation type="obsolete">服务器</translation>
     </message>
     <message>
-        <location filename="../gui/Settings/settings.ui" line="237"/>
         <source>Directories</source>
-        <translation>目录</translation>
+        <translation type="obsolete">目录</translation>
     </message>
 </context>
 <context>
@@ -7405,6 +7330,7 @@ p, li { white-space: pre-wrap; }
         <translation>移除选定的分享目录</translation>
     </message>
     <message>
+        <location filename="../gui/ShareManager.cpp" line="66"/>
         <location filename="../gui/ShareManager.ui" line="112"/>
         <source>Remove</source>
         <translation>移除</translation>
@@ -7457,12 +7383,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SharedFilesDialog</name>
     <message>
+        <location filename="../gui/SharedFilesDialog.cpp" line="202"/>
         <location filename="../gui/SharedFilesDialog.ui" line="634"/>
         <source>Download</source>
         <translation>下载</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="517"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -7470,39 +7396,64 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;档案&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="406"/>
         <source>Add to Recommend List</source>
-        <translation>添加到推荐列表</translation>
+        <translation type="obsolete">添加到推荐列表</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="422"/>
         <source>Recommend To </source>
-        <translation>推荐给</translation>
+        <translation type="obsolete">推荐给</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="424"/>
         <source>Message Friend </source>
-        <translation>讯息好友</translation>
+        <translation type="obsolete">讯息好友</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="490"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="590"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="629"/>
         <source>Open File</source>
         <translation>打开文件</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="499"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="593"/>
+        <source>Open Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/SharedFilesDialog.cpp" line="638"/>
         <source>Set command for opening this file</source>
         <translation>设置打开这个文件时使用的命令</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="600"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="205"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="584"/>
         <source>Copy retroshare Link</source>
-        <translation type="obsolete">复制retroshare链接</translation>
+        <translation type="unfinished">复制retroshare链接</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="603"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="173"/>
+        <source>Checking...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/SharedFilesDialog.cpp" line="181"/>
+        <source>Check files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/SharedFilesDialog.cpp" line="208"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="587"/>
         <source>Send retroshare Link</source>
-        <translation type="obsolete">发送retroshare链接</translation>
+        <translation type="unfinished">发送retroshare链接</translation>
+    </message>
+    <message>
+        <location filename="../gui/SharedFilesDialog.cpp" line="547"/>
+        <source>Recommend (Automated message) To </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/SharedFilesDialog.cpp" line="549"/>
+        <source>Recommend in a message to </source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="515"/>
@@ -7560,8 +7511,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/StartDialog.ui" line="641"/>
+        <source>generate new a profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>generate now a profile</source>
-        <translation>现在生成一个配置文件</translation>
+        <translation type="obsolete">现在生成一个配置文件</translation>
     </message>
     <message>
         <location filename="../gui/StartDialog.ui" line="657"/>
@@ -7569,17 +7524,22 @@ p, li { white-space: pre-wrap; }
         <translation>名字</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.ui" line="677"/>
+        <location filename="../gui/StartDialog.ui" line="664"/>
         <source>Password:</source>
         <translation>密码：</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.ui" line="700"/>
+        <location filename="../gui/StartDialog.ui" line="687"/>
         <source>Auto-login</source>
         <translation>自动登录</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.ui" line="747"/>
+        <location filename="../gui/StartDialog.ui" line="720"/>
+        <source>PGP Password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/StartDialog.ui" line="751"/>
         <source>Log In</source>
         <translation>登录</translation>
     </message>
@@ -7602,21 +7562,24 @@ p, li { white-space: pre-wrap; }
         <translation>Session:</translation>
     </message>
     <message>
+        <location filename="../gui/StatisticDialog.ui" line="582"/>
         <location filename="../gui/StatisticDialog.ui" line="610"/>
         <source>Downloaded:</source>
         <translation>下载完成:</translation>
     </message>
     <message>
-        <location filename="../gui/StatisticDialog.ui" line="330"/>
         <source>Average Downloadspeed:</source>
         <translation type="obsolete">Average Downloadspeed:</translation>
     </message>
     <message>
+        <location filename="../gui/StatisticDialog.ui" line="590"/>
         <location filename="../gui/StatisticDialog.ui" line="618"/>
         <source>Count of Downloads:</source>
         <translation>下载统计:</translation>
     </message>
     <message>
+        <location filename="../gui/StatisticDialog.ui" line="599"/>
+        <location filename="../gui/StatisticDialog.ui" line="667"/>
         <location filename="../gui/StatisticDialog.ui" line="735"/>
         <source>Overall</source>
         <translation>Overall</translation>
@@ -7627,6 +7590,8 @@ p, li { white-space: pre-wrap; }
         <translation>Upload</translation>
     </message>
     <message>
+        <location filename="../gui/StatisticDialog.ui" line="639"/>
+        <location filename="../gui/StatisticDialog.ui" line="707"/>
         <location filename="../gui/StatisticDialog.ui" line="775"/>
         <source>Session</source>
         <translation>Session</translation>
@@ -7637,11 +7602,11 @@ p, li { white-space: pre-wrap; }
         <translation>Uploaded:</translation>
     </message>
     <message>
-        <location filename="../gui/StatisticDialog.ui" line="373"/>
         <source>Average Uploadspeed:</source>
         <translation type="obsolete">Average Uploadspeed:</translation>
     </message>
     <message>
+        <location filename="../gui/StatisticDialog.ui" line="658"/>
         <location filename="../gui/StatisticDialog.ui" line="686"/>
         <source>Count of Uploads:</source>
         <translation>上载统计:</translation>
@@ -7652,17 +7617,21 @@ p, li { white-space: pre-wrap; }
         <translation>Uploaded</translation>
     </message>
     <message>
+        <location filename="../gui/StatisticDialog.ui" line="696"/>
+        <location filename="../gui/StatisticDialog.ui" line="718"/>
+        <location filename="../gui/StatisticDialog.ui" line="746"/>
         <location filename="../gui/StatisticDialog.ui" line="851"/>
         <source>Connections:</source>
         <translation>连接:</translation>
     </message>
     <message>
+        <location filename="../gui/StatisticDialog.ui" line="726"/>
+        <location filename="../gui/StatisticDialog.ui" line="754"/>
         <location filename="../gui/StatisticDialog.ui" line="859"/>
         <source>Peers:</source>
         <translation>节点:</translation>
     </message>
     <message>
-        <location filename="../gui/StatisticDialog.ui" line="438"/>
         <source>Misc</source>
         <translation type="obsolete">Misc</translation>
     </message>
@@ -7672,11 +7641,11 @@ p, li { white-space: pre-wrap; }
         <translation>Uptime:</translation>
     </message>
     <message>
-        <location filename="../gui/StatisticDialog.ui" line="452"/>
         <source>Overall:</source>
         <translation type="obsolete">Overall:</translation>
     </message>
     <message>
+        <location filename="../gui/StatisticDialog.ui" line="786"/>
         <location filename="../gui/StatisticDialog.ui" line="814"/>
         <source>Uptime</source>
         <translation>Uptime</translation>
@@ -7697,6 +7666,7 @@ p, li { white-space: pre-wrap; }
         <translation>下载速度:</translation>
     </message>
     <message>
+        <location filename="../gui/StatisticDialog.cpp" line="260"/>
         <location filename="../gui/StatisticDialog.ui" line="930"/>
         <source>Show Settings</source>
         <translation>显示设置</translation>
@@ -7802,7 +7772,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/SubDestItem.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/feeds/SubDestItem.ui" line="124"/>
@@ -7823,7 +7793,7 @@ p, li { white-space: pre-wrap; }
         <translation>文案名称 </translation>
     </message>
     <message>
-        <location filename="../gui/feeds/SubFileItem.cpp" line="632"/>
+        <location filename="../gui/feeds/SubFileItem.cpp" line="635"/>
         <source>Save Channel File</source>
         <translation>保存频道文件</translation>
     </message>
@@ -7866,42 +7836,42 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TextPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="148"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="152"/>
         <source>Text certificate</source>
         <translation>文本证书</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="150"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="154"/>
         <source>Use text representation of the XPGP certificates.</source>
         <translation>使用文字描述XPGP证书。</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="153"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="156"/>
         <source>The text below is your XPGP certificate. You have to provide it to your friend </source>
         <translation>你需要把你XPGP证书下面的文字提供给你的好友。</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="190"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="197"/>
         <source>Run Email program</source>
         <translation>运行邮件程序</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="204"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="210"/>
         <source>Please, paste your friends XPGP certificate into the box below</source>
         <translation>请粘贴你好友的XPGP证书到下面的框中</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="263"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="270"/>
         <source>Connect Friend Help</source>
         <translation>连接好友帮助</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="265"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="271"/>
         <source>You can copy this text and send it to your friend via email, ICQ or some other way</source>
         <translation>你可以复制这段文字通过电子邮件、ICQ或其它渠道发送给你的好友。</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="357"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="364"/>
         <source>Certificate Load Failed</source>
         <translation>证书加载失败</translation>
     </message>
@@ -7911,7 +7881,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransferFeed.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">论坛</translation>
     </message>
     <message>
         <location filename="../gui/TransferFeed.ui" line="48"/>
@@ -7927,22 +7897,23 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TransfersDialog</name>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="191"/>
+        <location filename="../gui/TransfersDialog.cpp" line="215"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="194"/>
+        <location filename="../gui/TransfersDialog.cpp" line="227"/>
         <source>Clear Completed</source>
         <translation>明确完成 </translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="108"/>
+        <location filename="../gui/TransfersDialog.cpp" line="78"/>
+        <location filename="../gui/TransfersDialog.cpp" line="123"/>
         <source>Status</source>
         <translation>状态</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="61"/>
+        <location filename="../gui/TransfersDialog.cpp" line="74"/>
         <source>Completed</source>
         <translation>完成 </translation>
     </message>
@@ -7963,116 +7934,195 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;上传 (Uploads):&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="103"/>
+        <location filename="../gui/TransfersDialog.cpp" line="72"/>
+        <location filename="../gui/TransfersDialog.cpp" line="118"/>
         <source>Name</source>
         <comment>i.e: file name</comment>
         <translation>姓名</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="104"/>
+        <location filename="../gui/TransfersDialog.cpp" line="73"/>
+        <location filename="../gui/TransfersDialog.cpp" line="119"/>
         <source>Size</source>
         <comment>i.e: file size</comment>
         <translation>大小 </translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="63"/>
+        <location filename="../gui/TransfersDialog.cpp" line="76"/>
         <source>Progress</source>
         <comment>i.e: % downloaded</comment>
         <translation>进度</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="62"/>
+        <location filename="../gui/TransfersDialog.cpp" line="75"/>
         <source>Speed</source>
         <comment>i.e: Download speed</comment>
         <translation>速度 </translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="64"/>
+        <location filename="../gui/TransfersDialog.cpp" line="77"/>
         <source>Sources</source>
         <comment>i.e: Sources</comment>
         <translation>来源</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="66"/>
+        <location filename="../gui/TransfersDialog.cpp" line="79"/>
         <source>Remaining</source>
         <comment>i.e: Estimated Time of Arrival / Time left</comment>
         <translation>剩余时间</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="67"/>
+        <location filename="../gui/TransfersDialog.cpp" line="80"/>
         <source>Core-ID</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="105"/>
+        <location filename="../gui/TransfersDialog.cpp" line="120"/>
         <source>User Name</source>
         <comment>i.e: user name</comment>
         <translation>用户姓名</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="106"/>
+        <location filename="../gui/TransfersDialog.cpp" line="121"/>
         <source>Progress</source>
         <comment>i.e: % uploaded</comment>
         <translation>进度</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="107"/>
+        <location filename="../gui/TransfersDialog.cpp" line="122"/>
         <source>Speed</source>
         <comment>i.e: upload speed</comment>
         <translation>速度 </translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="109"/>
+        <location filename="../gui/TransfersDialog.cpp" line="124"/>
         <source>Transferred</source>
         <translation>已下载</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="187"/>
+        <location filename="../gui/TransfersDialog.cpp" line="205"/>
         <source>Play</source>
         <translation>播放</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="606"/>
+        <location filename="../gui/TransfersDialog.cpp" line="209"/>
+        <source>Pause</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TransfersDialog.cpp" line="212"/>
+        <source>Resume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TransfersDialog.cpp" line="218"/>
+        <source>Open Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TransfersDialog.cpp" line="221"/>
+        <source>Open File</source>
+        <translation type="unfinished">打开文件</translation>
+    </message>
+    <message>
+        <location filename="../gui/TransfersDialog.cpp" line="224"/>
+        <source>Preview File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TransfersDialog.cpp" line="230"/>
+        <source>Copy retroshare Link</source>
+        <translation type="unfinished">复制retroshare链接</translation>
+    </message>
+    <message>
+        <location filename="../gui/TransfersDialog.cpp" line="233"/>
+        <source>Paste retroshare Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TransfersDialog.cpp" line="236"/>
+        <source>Set Root is not Decorated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TransfersDialog.cpp" line="239"/>
+        <source>Set Root is Decorated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TransfersDialog.cpp" line="242"/>
+        <source>View</source>
+        <translation type="unfinished">查看</translation>
+    </message>
+    <message>
+        <location filename="../gui/TransfersDialog.cpp" line="807"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="569"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1056"/>
+        <source>Open Transfer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TransfersDialog.cpp" line="1057"/>
+        <source>File %1 is not completed. If it is a media file, try to preview it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TransfersDialog.cpp" line="605"/>
+        <location filename="../gui/TransfersDialog.cpp" line="665"/>
+        <location filename="../gui/TransfersDialog.cpp" line="713"/>
+        <location filename="../gui/TransfersDialog.cpp" line="757"/>
         <source>Failed</source>
         <translation>失败</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="572"/>
+        <location filename="../gui/TransfersDialog.cpp" line="607"/>
+        <location filename="../gui/TransfersDialog.cpp" line="667"/>
+        <location filename="../gui/TransfersDialog.cpp" line="716"/>
+        <location filename="../gui/TransfersDialog.cpp" line="760"/>
         <source>Okay</source>
         <translation>行</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="575"/>
+        <location filename="../gui/TransfersDialog.cpp" line="609"/>
+        <location filename="../gui/TransfersDialog.cpp" line="669"/>
+        <location filename="../gui/TransfersDialog.cpp" line="719"/>
+        <location filename="../gui/TransfersDialog.cpp" line="763"/>
         <source>Waiting</source>
         <translation>等待</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="534"/>
+        <location filename="../gui/TransfersDialog.cpp" line="611"/>
+        <location filename="../gui/TransfersDialog.cpp" line="671"/>
         <source>Downloading</source>
         <translation>下载</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="582"/>
+        <location filename="../gui/TransfersDialog.cpp" line="613"/>
+        <location filename="../gui/TransfersDialog.cpp" line="660"/>
+        <location filename="../gui/TransfersDialog.cpp" line="673"/>
+        <location filename="../gui/TransfersDialog.cpp" line="726"/>
+        <location filename="../gui/TransfersDialog.cpp" line="770"/>
         <source>Complete</source>
         <translation>完成 </translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="564"/>
+        <location filename="../gui/TransfersDialog.cpp" line="615"/>
+        <location filename="../gui/TransfersDialog.cpp" line="662"/>
+        <location filename="../gui/TransfersDialog.cpp" line="752"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="578"/>
+        <location filename="../gui/TransfersDialog.cpp" line="722"/>
+        <location filename="../gui/TransfersDialog.cpp" line="766"/>
         <source>Uploading</source>
         <translation>上传</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="604"/>
+        <location filename="../gui/TransfersDialog.cpp" line="805"/>
         <source>Are you sure that you want to cancel and delete these files?</source>
         <translation>您确定要取消，并删除这些文件？</translation>
     </message>
@@ -8103,6 +8153,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TurtleSearchDialog</name>
     <message>
+        <location filename="../gui/TurtleSearchDialog.cpp" line="209"/>
         <location filename="../gui/TurtleSearchDialog.ui" line="974"/>
         <source>Download</source>
         <translation>下载</translation>
@@ -8118,32 +8169,34 @@ p, li { white-space: pre-wrap; }
         <translation>推荐给好友 </translation>
     </message>
     <message>
-        <location filename="../gui/TurtleSearchDialog.cpp" line="272"/>
+        <location filename="../gui/TurtleSearchDialog.cpp" line="274"/>
         <source>Download Notice</source>
         <translation>下载通告</translation>
     </message>
     <message>
-        <location filename="../gui/TurtleSearchDialog.cpp" line="272"/>
+        <location filename="../gui/TurtleSearchDialog.cpp" line="274"/>
         <source>Skipping Local Files</source>
         <translation>跳过本地文件</translation>
     </message>
     <message>
-        <location filename="../gui/TurtleSearchDialog.cpp" line="285"/>
+        <location filename="../gui/TurtleSearchDialog.cpp" line="281"/>
+        <location filename="../gui/TurtleSearchDialog.cpp" line="287"/>
         <source>Sorry</source>
         <translation>抱歉</translation>
     </message>
     <message>
-        <location filename="../gui/TurtleSearchDialog.cpp" line="285"/>
+        <location filename="../gui/TurtleSearchDialog.cpp" line="281"/>
+        <location filename="../gui/TurtleSearchDialog.cpp" line="287"/>
         <source>This function is not yet implemented.</source>
         <translation>这个功能还没有开发。</translation>
     </message>
     <message>
-        <location filename="../gui/TurtleSearchDialog.cpp" line="302"/>
+        <location filename="../gui/TurtleSearchDialog.cpp" line="304"/>
         <source>Remove</source>
         <translation>移除</translation>
     </message>
     <message>
-        <location filename="../gui/TurtleSearchDialog.cpp" line="305"/>
+        <location filename="../gui/TurtleSearchDialog.cpp" line="307"/>
         <source>Remove All</source>
         <translation>清除所有 </translation>
     </message>
@@ -8386,6 +8439,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
+        <location filename="../util/misc.h" line="305"/>
         <location filename="../util/misc.h" line="324"/>
         <source>Unknown</source>
         <translation>未知</translation>
@@ -8418,22 +8472,18 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>moreinfo</name>
     <message>
-        <location filename="../gui/moreinfo/moreinfo.ui" line="13"/>
         <source>Details</source>
         <translation type="obsolete">详情 </translation>
     </message>
     <message>
-        <location filename="../gui/moreinfo/moreinfo.ui" line="25"/>
         <source>OK</source>
         <translation type="obsolete">OK </translation>
     </message>
     <message>
-        <location filename="../gui/moreinfo/moreinfo.ui" line="39"/>
         <source>Name</source>
         <translation type="obsolete">姓名</translation>
     </message>
     <message>
-        <location filename="../gui/moreinfo/moreinfo.ui" line="44"/>
         <source>Value</source>
         <translation type="obsolete">值</translation>
     </message>
