@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>SearchDialog</class>
- <widget class="QWidget" name="SearchDialog" >
-  <property name="geometry" >
+ <widget class="QWidget" name="SearchDialog">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,162 +10,162 @@
     <height>374</height>
    </rect>
   </property>
-  <property name="sizePolicy" >
-   <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
     <horstretch>1</horstretch>
     <verstretch>1</verstretch>
    </sizepolicy>
   </property>
-  <property name="palette" >
+  <property name="palette">
    <palette>
     <active>
-     <colorrole role="WindowText" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="WindowText">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>0</red>
         <green>0</green>
         <blue>0</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Button" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Button">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>208</red>
         <green>208</green>
         <blue>208</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Light" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Light">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>255</red>
         <green>255</green>
         <blue>255</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Midlight" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Midlight">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>247</red>
         <green>247</green>
         <blue>247</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Dark" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Dark">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>104</red>
         <green>104</green>
         <blue>104</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Mid" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Mid">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>139</red>
         <green>139</green>
         <blue>139</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Text" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Text">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>0</red>
         <green>0</green>
         <blue>0</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="BrightText" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="BrightText">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>255</red>
         <green>255</green>
         <blue>255</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="ButtonText" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="ButtonText">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>0</red>
         <green>0</green>
         <blue>0</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Base" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Base">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>255</red>
         <green>255</green>
         <blue>255</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Window" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Window">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>240</red>
         <green>240</green>
         <blue>240</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Shadow" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Shadow">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>0</red>
         <green>0</green>
         <blue>0</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Highlight" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Highlight">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>0</red>
         <green>0</green>
         <blue>128</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="HighlightedText" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="HighlightedText">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>255</red>
         <green>255</green>
         <blue>255</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Link" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Link">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>0</red>
         <green>0</green>
         <blue>255</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="LinkVisited" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="LinkVisited">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>255</red>
         <green>0</green>
         <blue>255</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="AlternateBase" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="AlternateBase">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>231</red>
         <green>231</green>
         <blue>231</blue>
@@ -173,153 +174,153 @@
      </colorrole>
     </active>
     <inactive>
-     <colorrole role="WindowText" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="WindowText">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>0</red>
         <green>0</green>
         <blue>0</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Button" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Button">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>208</red>
         <green>208</green>
         <blue>208</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Light" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Light">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>255</red>
         <green>255</green>
         <blue>255</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Midlight" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Midlight">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>247</red>
         <green>247</green>
         <blue>247</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Dark" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Dark">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>104</red>
         <green>104</green>
         <blue>104</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Mid" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Mid">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>139</red>
         <green>139</green>
         <blue>139</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Text" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Text">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>0</red>
         <green>0</green>
         <blue>0</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="BrightText" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="BrightText">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>255</red>
         <green>255</green>
         <blue>255</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="ButtonText" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="ButtonText">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>0</red>
         <green>0</green>
         <blue>0</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Base" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Base">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>255</red>
         <green>255</green>
         <blue>255</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Window" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Window">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>240</red>
         <green>240</green>
         <blue>240</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Shadow" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Shadow">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>0</red>
         <green>0</green>
         <blue>0</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Highlight" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Highlight">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>192</red>
         <green>192</green>
         <blue>192</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="HighlightedText" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="HighlightedText">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>0</red>
         <green>0</green>
         <blue>0</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Link" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Link">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>0</red>
         <green>0</green>
         <blue>255</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="LinkVisited" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="LinkVisited">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>255</red>
         <green>0</green>
         <blue>255</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="AlternateBase" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="AlternateBase">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>231</red>
         <green>231</green>
         <blue>231</blue>
@@ -328,153 +329,153 @@
      </colorrole>
     </inactive>
     <disabled>
-     <colorrole role="WindowText" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="WindowText">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>104</red>
         <green>104</green>
         <blue>104</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Button" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Button">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>208</red>
         <green>208</green>
         <blue>208</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Light" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Light">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>255</red>
         <green>255</green>
         <blue>255</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Midlight" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Midlight">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>247</red>
         <green>247</green>
         <blue>247</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Dark" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Dark">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>104</red>
         <green>104</green>
         <blue>104</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Mid" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Mid">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>139</red>
         <green>139</green>
         <blue>139</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Text" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Text">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>104</red>
         <green>104</green>
         <blue>104</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="BrightText" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="BrightText">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>255</red>
         <green>255</green>
         <blue>255</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="ButtonText" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="ButtonText">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>104</red>
         <green>104</green>
         <blue>104</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Base" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Base">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>240</red>
         <green>240</green>
         <blue>240</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Window" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Window">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>240</red>
         <green>240</green>
         <blue>240</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Shadow" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Shadow">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>0</red>
         <green>0</green>
         <blue>0</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Highlight" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Highlight">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>0</red>
         <green>0</green>
         <blue>128</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="HighlightedText" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="HighlightedText">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>255</red>
         <green>255</green>
         <blue>255</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="Link" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Link">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>0</red>
         <green>0</green>
         <blue>255</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="LinkVisited" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="LinkVisited">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>255</red>
         <green>0</green>
         <blue>255</blue>
        </color>
       </brush>
      </colorrole>
-     <colorrole role="AlternateBase" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="AlternateBase">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>231</red>
         <green>231</green>
         <blue>231</blue>
@@ -484,7 +485,7 @@
     </disabled>
    </palette>
   </property>
-  <property name="font" >
+  <property name="font">
    <font>
     <family>Arial</family>
     <pointsize>8</pointsize>
@@ -495,125 +496,99 @@
     <strikeout>false</strikeout>
    </font>
   </property>
-  <property name="contextMenuPolicy" >
+  <property name="contextMenuPolicy">
    <enum>Qt::NoContextMenu</enum>
   </property>
-  <layout class="QGridLayout" >
-   <property name="leftMargin" >
+  <layout class="QGridLayout">
+   <property name="leftMargin">
     <number>6</number>
    </property>
-   <property name="topMargin" >
+   <property name="topMargin">
     <number>0</number>
    </property>
-   <property name="rightMargin" >
+   <property name="rightMargin">
     <number>6</number>
    </property>
-   <property name="bottomMargin" >
+   <property name="bottomMargin">
     <number>2</number>
    </property>
-   <property name="horizontalSpacing" >
+   <property name="horizontalSpacing">
     <number>6</number>
    </property>
-   <property name="verticalSpacing" >
+   <property name="verticalSpacing">
     <number>2</number>
    </property>
-   <item row="0" column="0" colspan="3" >
-    <layout class="QVBoxLayout" >
-     <property name="spacing" >
+   <item row="0" column="0" colspan="3">
+    <layout class="QVBoxLayout">
+     <property name="spacing">
       <number>0</number>
      </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
+     <property name="margin">
       <number>0</number>
      </property>
      <item>
-      <layout class="QHBoxLayout" >
-       <property name="spacing" >
+      <layout class="QHBoxLayout">
+       <property name="spacing">
         <number>6</number>
        </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
+       <property name="margin">
         <number>0</number>
        </property>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>6</number>
          </property>
-         <property name="leftMargin" >
-          <number>5</number>
-         </property>
-         <property name="topMargin" >
-          <number>5</number>
-         </property>
-         <property name="rightMargin" >
-          <number>5</number>
-         </property>
-         <property name="bottomMargin" >
+         <property name="margin">
           <number>5</number>
          </property>
          <item>
-          <widget class="QPushButton" name="toggleAdvancedSearchBtn" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+          <widget class="QPushButton" name="toggleAdvancedSearchBtn">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimumSize" >
+           <property name="minimumSize">
             <size>
              <width>34</width>
              <height>34</height>
             </size>
            </property>
-           <property name="maximumSize" >
+           <property name="maximumSize">
             <size>
              <width>34</width>
              <height>34</height>
             </size>
            </property>
-           <property name="toolTip" >
+           <property name="toolTip">
             <string>Toggle advanced searching on and off.</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string/>
            </property>
-           <property name="icon" >
-            <iconset resource="images.qrc" >:/images/advsearch_24x24.png</iconset>
+           <property name="icon">
+            <iconset resource="images.qrc">
+             <normaloff>:/images/advsearch_24x24.png</normaloff>:/images/advsearch_24x24.png</iconset>
            </property>
-           <property name="iconSize" >
+           <property name="iconSize">
             <size>
              <width>24</width>
              <height>24</height>
             </size>
            </property>
-           <property name="checkable" >
+           <property name="checkable">
             <bool>true</bool>
            </property>
           </widget>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>0</height>
@@ -624,107 +599,80 @@
         </layout>
        </item>
        <item>
-        <widget class="QFrame" name="SearchModeFrame" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+        <widget class="QFrame" name="SearchModeFrame">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
            <horstretch>255</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="minimumSize" >
+         <property name="minimumSize">
           <size>
            <width>390</width>
            <height>24</height>
           </size>
          </property>
-         <property name="frameShape" >
+         <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
          </property>
-         <property name="frameShadow" >
+         <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QVBoxLayout" >
-          <property name="spacing" >
+         <layout class="QVBoxLayout">
+          <property name="spacing">
            <number>0</number>
           </property>
-          <property name="leftMargin" >
-           <number>0</number>
-          </property>
-          <property name="topMargin" >
-           <number>0</number>
-          </property>
-          <property name="rightMargin" >
-           <number>0</number>
-          </property>
-          <property name="bottomMargin" >
+          <property name="margin">
            <number>0</number>
           </property>
           <item>
-           <widget class="QFrame" name="SimpleSearchPanel" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+           <widget class="QFrame" name="SimpleSearchPanel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="frameShape" >
+            <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
             </property>
-            <property name="frameShadow" >
+            <property name="frameShadow">
              <enum>QFrame::Raised</enum>
             </property>
-            <layout class="QVBoxLayout" >
-             <property name="spacing" >
+            <layout class="QVBoxLayout">
+             <property name="spacing">
               <number>0</number>
              </property>
-             <property name="leftMargin" >
-              <number>0</number>
-             </property>
-             <property name="topMargin" >
-              <number>0</number>
-             </property>
-             <property name="rightMargin" >
-              <number>0</number>
-             </property>
-             <property name="bottomMargin" >
+             <property name="margin">
               <number>0</number>
              </property>
              <item>
-              <layout class="QHBoxLayout" >
-               <property name="spacing" >
+              <layout class="QHBoxLayout">
+               <property name="spacing">
                 <number>6</number>
                </property>
-               <property name="leftMargin" >
-                <number>0</number>
-               </property>
-               <property name="topMargin" >
-                <number>0</number>
-               </property>
-               <property name="rightMargin" >
-                <number>0</number>
-               </property>
-               <property name="bottomMargin" >
+               <property name="margin">
                 <number>0</number>
                </property>
                <item>
-                <widget class="QLabel" name="label_3" >
-                 <property name="frameShape" >
+                <widget class="QLabel" name="label_3">
+                 <property name="frameShape">
                   <enum>QFrame::NoFrame</enum>
                  </property>
-                 <property name="frameShadow" >
+                 <property name="frameShadow">
                   <enum>QFrame::Plain</enum>
                  </property>
-                 <property name="text" >
-                  <string>&lt;h3>Simple Search:&lt;/h3></string>
+                 <property name="text">
+                  <string>&lt;h3&gt;Simple Search:&lt;/h3&gt;</string>
                  </property>
                 </widget>
                </item>
                <item>
                 <spacer>
-                 <property name="orientation" >
+                 <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0">
                   <size>
                    <width>10</width>
                    <height>20</height>
@@ -733,27 +681,27 @@
                 </spacer>
                </item>
                <item>
-                <widget class="QLabel" name="label" >
-                 <property name="sizePolicy" >
-                  <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                <widget class="QLabel" name="label">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <property name="text" >
+                 <property name="text">
                   <string>Keywords </string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="lineEdit" >
-                 <property name="sizePolicy" >
-                  <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                <widget class="QLineEdit" name="lineEdit">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>3</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <property name="maximumSize" >
+                 <property name="maximumSize">
                   <size>
                    <width>558</width>
                    <height>16777215</height>
@@ -763,13 +711,13 @@
                </item>
                <item>
                 <spacer>
-                 <property name="orientation" >
+                 <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="sizeType" >
+                 <property name="sizeType">
                   <enum>QSizePolicy::Fixed</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0">
                   <size>
                    <width>16</width>
                    <height>32</height>
@@ -778,89 +726,97 @@
                 </spacer>
                </item>
                <item>
-                <widget class="QLabel" name="label_2" >
-                 <property name="text" >
-                  <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Format&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Format&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="FileTypeComboBox" >
+                <widget class="QComboBox" name="FileTypeComboBox">
                  <item>
-                  <property name="text" >
+                  <property name="text">
                    <string>Any</string>
                   </property>
-                  <property name="icon" >
-                   <iconset resource="images.qrc" >:/images/FileTypeAny.png</iconset>
+                  <property name="icon">
+                   <iconset resource="images.qrc">
+                    <normaloff>:/images/FileTypeAny.png</normaloff>:/images/FileTypeAny.png</iconset>
                   </property>
                  </item>
                  <item>
-                  <property name="text" >
+                  <property name="text">
                    <string>Archive</string>
                   </property>
-                  <property name="icon" >
-                   <iconset resource="images.qrc" >:/images/FileTypeArchive.png</iconset>
+                  <property name="icon">
+                   <iconset resource="images.qrc">
+                    <normaloff>:/images/FileTypeArchive.png</normaloff>:/images/FileTypeArchive.png</iconset>
                   </property>
                  </item>
                  <item>
-                  <property name="text" >
+                  <property name="text">
                    <string>Audio</string>
                   </property>
-                  <property name="icon" >
-                   <iconset resource="images.qrc" >:/images/FileTypeAudio.png</iconset>
+                  <property name="icon">
+                   <iconset resource="images.qrc">
+                    <normaloff>:/images/FileTypeAudio.png</normaloff>:/images/FileTypeAudio.png</iconset>
                   </property>
                  </item>
                  <item>
-                  <property name="text" >
+                  <property name="text">
                    <string>CD-Image</string>
                   </property>
-                  <property name="icon" >
-                   <iconset resource="images.qrc" >:/images/FileTypeCDImage.png</iconset>
+                  <property name="icon">
+                   <iconset resource="images.qrc">
+                    <normaloff>:/images/FileTypeCDImage.png</normaloff>:/images/FileTypeCDImage.png</iconset>
                   </property>
                  </item>
                  <item>
-                  <property name="text" >
+                  <property name="text">
                    <string>Document</string>
                   </property>
-                  <property name="icon" >
-                   <iconset resource="images.qrc" >:/images/FileTypeDocument.png</iconset>
+                  <property name="icon">
+                   <iconset resource="images.qrc">
+                    <normaloff>:/images/FileTypeDocument.png</normaloff>:/images/FileTypeDocument.png</iconset>
                   </property>
                  </item>
                  <item>
-                  <property name="text" >
+                  <property name="text">
                    <string>Picture</string>
                   </property>
-                  <property name="icon" >
-                   <iconset resource="images.qrc" >:/images/FileTypePicture.png</iconset>
+                  <property name="icon">
+                   <iconset resource="images.qrc">
+                    <normaloff>:/images/FileTypePicture.png</normaloff>:/images/FileTypePicture.png</iconset>
                   </property>
                  </item>
                  <item>
-                  <property name="text" >
+                  <property name="text">
                    <string>Program</string>
                   </property>
-                  <property name="icon" >
-                   <iconset resource="images.qrc" >:/images/FileTypeProgram.png</iconset>
+                  <property name="icon">
+                   <iconset resource="images.qrc">
+                    <normaloff>:/images/FileTypeProgram.png</normaloff>:/images/FileTypeProgram.png</iconset>
                   </property>
                  </item>
                  <item>
-                  <property name="text" >
+                  <property name="text">
                    <string>Video</string>
                   </property>
-                  <property name="icon" >
-                   <iconset resource="images.qrc" >:/images/FileTypeVideo.png</iconset>
+                  <property name="icon">
+                   <iconset resource="images.qrc">
+                    <normaloff>:/images/FileTypeVideo.png</normaloff>:/images/FileTypeVideo.png</iconset>
                   </property>
                  </item>
                 </widget>
                </item>
                <item>
                 <spacer>
-                 <property name="orientation" >
+                 <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0">
                   <size>
                    <width>16</width>
                    <height>20</height>
@@ -869,29 +825,30 @@ p, li { white-space: pre-wrap; }
                 </spacer>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButtonsearch" >
-                 <property name="minimumSize" >
+                <widget class="QPushButton" name="pushButtonsearch">
+                 <property name="minimumSize">
                   <size>
                    <width>34</width>
                    <height>34</height>
                   </size>
                  </property>
-                 <property name="maximumSize" >
+                 <property name="maximumSize">
                   <size>
                    <width>34</width>
                    <height>34</height>
                   </size>
                  </property>
-                 <property name="toolTip" >
+                 <property name="toolTip">
                   <string>Perform simple search</string>
                  </property>
-                 <property name="text" >
+                 <property name="text">
                   <string/>
                  </property>
-                 <property name="icon" >
-                  <iconset resource="images.qrc" >:/images/find.png</iconset>
+                 <property name="icon">
+                  <iconset resource="images.qrc">
+                   <normaloff>:/images/find.png</normaloff>:/images/find.png</iconset>
                  </property>
-                 <property name="iconSize" >
+                 <property name="iconSize">
                   <size>
                    <width>24</width>
                    <height>24</height>
@@ -905,71 +862,53 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item>
-           <widget class="QFrame" name="AdvancedSearchPanel" >
-            <property name="enabled" >
+           <widget class="QFrame" name="AdvancedSearchPanel">
+            <property name="enabled">
              <bool>true</bool>
             </property>
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="frameShape" >
+            <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
             </property>
-            <property name="frameShadow" >
+            <property name="frameShadow">
              <enum>QFrame::Raised</enum>
             </property>
-            <layout class="QVBoxLayout" >
-             <property name="spacing" >
+            <layout class="QVBoxLayout">
+             <property name="spacing">
               <number>0</number>
              </property>
-             <property name="leftMargin" >
-              <number>0</number>
-             </property>
-             <property name="topMargin" >
-              <number>0</number>
-             </property>
-             <property name="rightMargin" >
-              <number>0</number>
-             </property>
-             <property name="bottomMargin" >
+             <property name="margin">
               <number>0</number>
              </property>
              <item>
-              <layout class="QHBoxLayout" >
-               <property name="spacing" >
+              <layout class="QHBoxLayout">
+               <property name="spacing">
                 <number>6</number>
                </property>
-               <property name="leftMargin" >
-                <number>0</number>
-               </property>
-               <property name="topMargin" >
-                <number>0</number>
-               </property>
-               <property name="rightMargin" >
-                <number>0</number>
-               </property>
-               <property name="bottomMargin" >
+               <property name="margin">
                 <number>0</number>
                </property>
                <item>
-                <widget class="QLabel" name="label_4" >
-                 <property name="text" >
-                  <string>&lt;h3>Advanced Search:&lt;/h3></string>
+                <widget class="QLabel" name="label_4">
+                 <property name="text">
+                  <string>&lt;h3&gt;Advanced Search:&lt;/h3&gt;</string>
                  </property>
                 </widget>
                </item>
                <item>
                 <spacer>
-                 <property name="orientation" >
+                 <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="sizeType" >
+                 <property name="sizeType">
                   <enum>QSizePolicy::Expanding</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0">
                   <size>
                    <width>50</width>
                    <height>20</height>
@@ -978,17 +917,17 @@ p, li { white-space: pre-wrap; }
                 </spacer>
                </item>
                <item>
-                <widget class="QPushButton" name="focusAdvSearchDialogBtn" >
-                 <property name="enabled" >
+                <widget class="QPushButton" name="focusAdvSearchDialogBtn">
+                 <property name="enabled">
                   <bool>true</bool>
                  </property>
-                 <property name="sizePolicy" >
-                  <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <property name="text" >
+                 <property name="text">
                   <string>Show Advanced Search Tool</string>
                  </property>
                 </widget>
@@ -1002,55 +941,47 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>6</number>
          </property>
-         <property name="leftMargin" >
-          <number>5</number>
-         </property>
-         <property name="topMargin" >
-          <number>5</number>
-         </property>
-         <property name="rightMargin" >
-          <number>5</number>
-         </property>
-         <property name="bottomMargin" >
+         <property name="margin">
           <number>5</number>
          </property>
          <item>
-          <widget class="QPushButton" name="resetButton" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+          <widget class="QPushButton" name="resetButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimumSize" >
+           <property name="minimumSize">
             <size>
              <width>34</width>
              <height>34</height>
             </size>
            </property>
-           <property name="maximumSize" >
+           <property name="maximumSize">
             <size>
              <width>34</width>
              <height>34</height>
             </size>
            </property>
-           <property name="toolTip" >
-            <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Reset Search Keyword and File Type&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Reset Search Keyword and File Type&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string/>
            </property>
-           <property name="icon" >
-            <iconset resource="images.qrc" >:/images/reset.png</iconset>
+           <property name="icon">
+            <iconset resource="images.qrc">
+             <normaloff>:/images/reset.png</normaloff>:/images/reset.png</iconset>
            </property>
-           <property name="iconSize" >
+           <property name="iconSize">
             <size>
              <width>24</width>
              <height>24</height>
@@ -1060,10 +991,10 @@ p, li { white-space: pre-wrap; }
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>0</height>
@@ -1076,106 +1007,116 @@ p, li { white-space: pre-wrap; }
       </layout>
      </item>
      <item>
-      <widget class="QSplitter" name="splitter" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+      <widget class="QSplitter" name="splitter">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
          <horstretch>0</horstretch>
          <verstretch>1</verstretch>
         </sizepolicy>
        </property>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <widget class="SearchTreeWidget" name="searchResultWidget" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+       <widget class="SearchTreeWidget" name="searchResultWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>1</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="contextMenuPolicy" >
+        <property name="font">
+         <font>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
+        <property name="contextMenuPolicy">
          <enum>Qt::CustomContextMenu</enum>
         </property>
-        <property name="dragEnabled" >
+        <property name="dragEnabled">
          <bool>true</bool>
         </property>
-        <property name="dragDropMode" >
+        <property name="dragDropMode">
          <enum>QAbstractItemView::DragOnly</enum>
         </property>
-        <property name="sortingEnabled" >
+        <property name="sortingEnabled">
          <bool>true</bool>
         </property>
         <column>
-         <property name="text" >
+         <property name="text">
           <string/>
          </property>
         </column>
         <column>
-         <property name="text" >
+         <property name="text">
           <string>Filename</string>
          </property>
         </column>
         <column>
-         <property name="text" >
+         <property name="text">
           <string>Size</string>
          </property>
         </column>
         <column>
-         <property name="text" >
+         <property name="text">
           <string>Sources</string>
          </property>
         </column>
         <column>
-         <property name="text" >
+         <property name="text">
           <string>Type</string>
          </property>
         </column>
         <column>
-         <property name="text" >
+         <property name="text">
           <string>Hash</string>
          </property>
         </column>
        </widget>
-       <widget class="QTreeWidget" name="searchSummaryWidget" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+       <widget class="QTreeWidget" name="searchSummaryWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
           <horstretch>0</horstretch>
           <verstretch>1</verstretch>
          </sizepolicy>
         </property>
-        <property name="sizeIncrement" >
+        <property name="sizeIncrement">
          <size>
           <width>0</width>
           <height>0</height>
          </size>
         </property>
-        <property name="baseSize" >
+        <property name="baseSize">
          <size>
           <width>0</width>
           <height>0</height>
          </size>
         </property>
-        <property name="mouseTracking" >
+        <property name="font">
+         <font>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
+        <property name="mouseTracking">
          <bool>true</bool>
         </property>
-        <property name="contextMenuPolicy" >
+        <property name="contextMenuPolicy">
          <enum>Qt::CustomContextMenu</enum>
         </property>
-        <property name="sortingEnabled" >
+        <property name="sortingEnabled">
          <bool>true</bool>
         </property>
         <column>
-         <property name="text" >
+         <property name="text">
           <string>KeyWords</string>
          </property>
         </column>
         <column>
-         <property name="text" >
+         <property name="text">
           <string>Results</string>
          </property>
         </column>
         <column>
-         <property name="text" >
+         <property name="text">
           <string>Search Id</string>
          </property>
         </column>
@@ -1184,34 +1125,35 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="1" column="0" >
-    <widget class="QPushButton" name="pushButtonDownload" >
-     <property name="minimumSize" >
+   <item row="1" column="0">
+    <widget class="QPushButton" name="pushButtonDownload">
+     <property name="minimumSize">
       <size>
        <width>120</width>
        <height>0</height>
       </size>
      </property>
-     <property name="toolTip" >
-      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Download Select&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Download Select&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
-     <property name="text" >
+     <property name="text">
       <string>Download</string>
      </property>
-     <property name="icon" >
-      <iconset resource="images.qrc" >:/images/download16.png</iconset>
+     <property name="icon">
+      <iconset resource="images.qrc">
+       <normaloff>:/images/download16.png</normaloff>:/images/download16.png</iconset>
      </property>
     </widget>
    </item>
-   <item row="1" column="1" >
+   <item row="1" column="1">
     <spacer>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>351</width>
        <height>20</height>
@@ -1219,9 +1161,9 @@ p, li { white-space: pre-wrap; }
      </property>
     </spacer>
    </item>
-   <item row="1" column="2" >
-    <widget class="QPushButton" name="cloaseallsearchresultsButton" >
-     <property name="text" >
+   <item row="1" column="2">
+    <widget class="QPushButton" name="cloaseallsearchresultsButton">
+     <property name="text">
       <string>Close All Search Results</string>
      </property>
     </widget>
@@ -1236,7 +1178,7 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="images.qrc" />
+  <include location="images.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -1245,11 +1187,11 @@ p, li { white-space: pre-wrap; }
    <receiver>SimpleSearchPanel</receiver>
    <slot>setHidden(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>29</x>
      <y>35</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>72</x>
      <y>43</y>
     </hint>
@@ -1261,11 +1203,11 @@ p, li { white-space: pre-wrap; }
    <receiver>AdvancedSearchPanel</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>28</x>
      <y>29</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>80</x>
      <y>64</y>
     </hint>
