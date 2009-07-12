@@ -32,7 +32,7 @@
 #include "ft/ftcontroller.h"
 #include "rsiface/rsturtle.h"
 
-/* global variable now points straight to 
+/* global variable now points straight to
  * ft/ code so variable defined here.
  */
 
@@ -664,7 +664,7 @@ int RsServer::StartupRetroShare()
 	}
 	certConfigFile += configConfFile;
 	certNeighDir +=   configCertDir;
-	emergencySaveDir += "Downloads";
+	emergencySaveDir += "Incoming";
 	emergencyPartialsDir += "Partials";
 
 	/* if we've loaded an old format file! */
@@ -692,7 +692,7 @@ int RsServer::StartupRetroShare()
 
 	/****** New Ft Server **** !!! */
         ftserver = new ftServer(mAuthMgr, mConnMgr);
-        ftserver->setP3Interface(pqih); 
+        ftserver->setP3Interface(pqih);
 	ftserver->setConfigDirectory(RsInit::basedir);
 
 	ftserver->SetupFtServer(&(getNotify()));
@@ -865,7 +865,7 @@ int RsServer::StartupRetroShare()
 
 		/* clean sockaddr before setting values (MaxOSX) */
 		sockaddr_clear(&laddr);
-		
+
 		laddr.sin_family = AF_INET;
 		laddr.sin_port = htons(RsInit::port);
 
@@ -1223,11 +1223,11 @@ bool RsInit::RsGenerateCertificate(
 		gen_ok = false;
         }
 
-	
+
 	X509 *cert = NULL;
 	if (gen_ok)
 	{
-		cert = SignX509Certificate(X509_REQ_get_subject_name(req), 
+		cert = SignX509Certificate(X509_REQ_get_subject_name(req),
 						privkey,req,days);
 
 		/* Print the signed Certificate! */
@@ -1269,7 +1269,7 @@ bool RsInit::RsGenerateCertificate(
         }
 
 	if (cert)
-	{	
+	{
 		gen_ok = true;
 	}
 
@@ -1307,7 +1307,7 @@ bool RsInit::RsGenerateCertificate(
 
 	/* save to file */
 	if (x509)
-	{	
+	{
 		gen_ok = true;
 
 		/* Print the signed Certificate! */
@@ -1341,14 +1341,14 @@ bool RsInit::RsGenerateCertificate(
                 	fprintf(stderr," : %s\n", cert_name.c_str());
 			gen_ok = false;
         	}
-	
+
 	        if (!PEM_write_X509(out,x509))
 	        {
 	                fprintf(stderr,"RsGenerateCert() Couldn't Save Cert");
 	                fprintf(stderr," : %s\n", cert_name.c_str());
 			gen_ok = false;
 	        }
-	
+
 		fclose(out);
 		X509_free(x509);
 	}
