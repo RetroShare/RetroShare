@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 #include "ShareManager.h"
@@ -52,7 +52,7 @@ ShareManager::ShareManager(QWidget *parent, Qt::WFlags flags)
 
 	ui.addButton->setToolTip(tr("Add a Share Directory"));
 	ui.removeButton->setToolTip(tr("Remove selected Shared Directory"));
-	
+
 	load();
 
 }
@@ -78,13 +78,13 @@ void ShareManager::load()
 	std::list<std::string>::const_iterator it;
 	std::list<std::string> dirs;
 	rsFiles->getSharedDirectories(dirs);
-	
+
 	/* get a link to the table */
 	QListWidget *listWidget = ui.shareddirList;
-	
+
 	/* remove old items ??? */
 	listWidget->clear();
-	
+
 	for(it = dirs.begin(); it != dirs.end(); it++)
 	{
 		/* (0) Dir Name */
@@ -92,7 +92,7 @@ void ShareManager::load()
 	}
 
 	//ui.incomingDir->setText(QString::fromStdString(rsFiles->getDownloadDirectory()));
-	
+
 	listWidget->update(); /* update display */
 
 
@@ -107,7 +107,7 @@ void ShareManager::addShareDirectory()
 
  	QString qdir = QFileDialog::getExistingDirectory(this, tr("Add Shared Directory"), "",
 				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-	
+
 	/* add it to the server */
 	std::string dir = qdir.toStdString();
 	if (dir != "")
@@ -149,8 +149,10 @@ bool  ShareManager::messageBoxOk(QString msg)
     return true;
  }
 
-
-
-
-
-
+void ShareManager::showEvent(QShowEvent *event)
+{
+	if (!event->spontaneous())
+	{
+		load();
+	}
+}
