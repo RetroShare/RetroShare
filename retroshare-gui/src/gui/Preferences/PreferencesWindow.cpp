@@ -28,7 +28,7 @@
 #include "rsiface/rsiface.h"
 
 
-#define FONT        QFont(tr("Arial"), 8)
+#define FONT        QFont(tr("Arial"), 9)
 
 /* Images for toolbar icons */
 #define IMAGE_PREFERENCES       ":/images/kcmsystem24.png"
