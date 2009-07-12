@@ -203,17 +203,17 @@ void	ftServer::run()
                   {
                     if ((now - info.lastTS) > 10)
                     {
-#ifdef SERVER_DEBUG 
+#ifdef SERVER_DEBUG
 							  std::cout << "info.lastTS = " << info.lastTS << ", now=" << now << std::endl ;
 #endif
                       toDels.push_back(sit->first);
                     }
-                  } 
+                  }
                 }
 
 					 if(!toDels.empty())
 						 mFtDataplex->deleteServers(toDels) ;
- 	
+
 #ifdef WIN32
 		Sleep(1000);
 #else
@@ -232,11 +232,11 @@ void	ftServer::run()
 	/********************** Controller Access **********************/
 	/***************************************************************/
 
-bool ftServer::FileRequest(std::string fname, std::string hash, uint64_t size, 
+bool ftServer::FileRequest(std::string fname, std::string hash, uint64_t size,
 	std::string dest, uint32_t flags, std::list<std::string> srcIds)
 {
    std::cerr << "Requesting " << fname << std::endl ;
-	return mFtController->FileRequest(fname, hash, size, 
+	return mFtController->FileRequest(fname, hash, size,
 						dest, flags, srcIds);
 }
 
@@ -320,7 +320,7 @@ bool ftServer::FileDetails(std::string hash, uint32_t hintflags, FileInfo &info)
 	/******************* ExtraFileList Access **********************/
 	/***************************************************************/
 
-bool  ftServer::ExtraFileAdd(std::string fname, std::string hash, uint64_t size, 
+bool  ftServer::ExtraFileAdd(std::string fname, std::string hash, uint64_t size,
 						uint32_t period, uint32_t flags)
 {
 	return mFtExtra->addExtraFile(fname, hash, size, period, flags);
@@ -354,7 +354,7 @@ bool ftServer::ExtraFileMove(std::string fname, std::string hash, uint64_t size,
 
 int ftServer::RequestDirDetails(std::string uid, std::string path, DirDetails &details)
 {
-#ifdef SERVER_DEBUG 
+#ifdef SERVER_DEBUG
 	std::cerr << "ftServer::RequestDirDetails(uid:" << uid;
 	std::cerr << ", path:" << path << ", ...) -> mFiStore";
 	std::cerr << std::endl;
@@ -367,10 +367,10 @@ int ftServer::RequestDirDetails(std::string uid, std::string path, DirDetails &d
 #endif
 	return mFiStore->RequestDirDetails(uid, path, details);
 }
-	
+
 int ftServer::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)
 {
-#ifdef SERVER_DEBUG 
+#ifdef SERVER_DEBUG
 	std::cerr << "ftServer::RequestDirDetails(ref:" << ref;
 	std::cerr << ", flags:" << flags << ", ...) -> mFiStore";
 	std::cerr << std::endl;
@@ -384,7 +384,7 @@ int ftServer::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)
 #endif
 	return mFiStore->RequestDirDetails(ref, details, flags);
 }
-	
+
 	/***************************************************************/
 	/******************** Search Interface *************************/
 	/***************************************************************/
@@ -392,7 +392,7 @@ int ftServer::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)
 
 int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results,uint32_t flags)
 {
-#ifdef SERVER_DEBUG 
+#ifdef SERVER_DEBUG
 	std::cerr << "ftServer::SearchKeywords()";
 	std::cerr << std::endl;
 
@@ -405,33 +405,33 @@ int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<FileDeta
 #endif
 	return mFiStore->SearchKeywords(keywords, results,flags);
 }
-	
+
 int ftServer::SearchBoolExp(Expression * exp, std::list<FileDetail> &results)
 {
 	return mFiStore->searchBoolExp(exp, results);
 }
 
-	
+
 	/***************************************************************/
 	/*************** Local Shared Dir Interface ********************/
 	/***************************************************************/
-	
+
 bool    ftServer::ConvertSharedFilePath(std::string path, std::string &fullpath)
 {
 	return mFiMon->convertSharedFilePath(path, fullpath);
 }
-	
+
 void    ftServer::ForceDirectoryCheck()
 {
 	mFiMon->forceDirectoryCheck();
 	return;
 }
-	
+
 bool    ftServer::InDirectoryCheck()
 {
 	return mFiMon->inDirectoryCheck();
 }
-	
+
 bool	ftServer::getSharedDirectories(std::list<std::string> &dirs)
 {
 	mFiMon->getSharedDirectories(dirs);
@@ -459,14 +459,14 @@ bool 	ftServer::removeSharedDirectory(std::string dir)
 	std::list<std::string> dirList;
 	std::list<std::string>::iterator it;
 
-#ifdef SERVER_DEBUG 
+#ifdef SERVER_DEBUG
 	std::cerr << "ftServer::removeSharedDirectory(" << dir << ")";
 	std::cerr << std::endl;
 #endif
 
 	mFiMon->getSharedDirectories(dirList);
 
-#ifdef SERVER_DEBUG 
+#ifdef SERVER_DEBUG
 	for(it = dirList.begin(); it != dirList.end(); it++)
 	{
 		std::cerr << "ftServer::removeSharedDirectory()";
@@ -475,10 +475,10 @@ bool 	ftServer::removeSharedDirectory(std::string dir)
 	}
 #endif
 
-	if (dirList.end() == (it = 
+	if (dirList.end() == (it =
 		std::find(dirList.begin(), dirList.end(), dir)))
 	{
-#ifdef SERVER_DEBUG 
+#ifdef SERVER_DEBUG
 		std::cerr << "ftServer::removeSharedDirectory()";
 		std::cerr << " Cannot Find Directory... Fail";
 		std::cerr << std::endl;
@@ -488,7 +488,7 @@ bool 	ftServer::removeSharedDirectory(std::string dir)
 	}
 
 
-#ifdef SERVER_DEBUG 
+#ifdef SERVER_DEBUG
 	std::cerr << "ftServer::removeSharedDirectory()";
 	std::cerr << " Updating Directories";
 	std::cerr << std::endl;
@@ -500,6 +500,27 @@ bool 	ftServer::removeSharedDirectory(std::string dir)
 	return true;
 }
 
+void ftServer::setShareDownloadDirectory(bool value)
+{
+	mFtController->setShareDownloadDirectory(value);
+}
+
+bool ftServer::getShareDownloadDirectory()
+{
+	return mFtController->getShareDownloadDirectory();
+}
+
+bool ftServer::shareDownloadDirectory()
+{
+	std::string dir = mFtController->getDownloadDirectory();
+	return addSharedDirectory(dir);
+}
+
+bool ftServer::unshareDownloadDirectory()
+{
+	std::string dir = mFtController->getDownloadDirectory();
+	return removeSharedDirectory(dir);
+}
 
 	/***************************************************************/
 	/****************** End of RsFiles Interface *******************/
@@ -538,7 +559,7 @@ bool  ftServer::loadConfigMap(std::map<std::string, std::string> &configMap)
 	/***************************************************************/
 
 	/* Client Send */
-bool	ftServer::sendDataRequest(std::string peerId, std::string hash, 
+bool	ftServer::sendDataRequest(std::string peerId, std::string hash,
 			uint64_t size, uint64_t offset, uint32_t chunksize)
 {
 	if(mTurtleRouter->isTurtlePeer(peerId))
@@ -579,7 +600,7 @@ bool	ftServer::sendData(std::string peerId, std::string hash, uint64_t size, uin
 	uint64_t offset = 0;
 	uint32_t chunk;
 
-#ifdef SERVER_DEBUG 
+#ifdef SERVER_DEBUG
 	std::cerr << "ftServer::sendData() to " << peerId << std::endl;
 	std::cerr << "hash: " << hash;
 	std::cerr << " offset: " << baseoffset;
@@ -624,7 +645,7 @@ bool	ftServer::sendData(std::string peerId, std::string hash, uint64_t size, uin
 			mP3iface->SendFileData(rfd);
 
 			/* print the data pointer */
-#ifdef SERVER_DEBUG 
+#ifdef SERVER_DEBUG
 			std::cerr << "ftServer::sendData() Packet: " << std::endl;
 			std::cerr << " offset: " << rfd->fd.file_offset;
 			std::cerr << " chunk: " << chunk;
@@ -651,7 +672,7 @@ bool	ftServer::sendData(std::string peerId, std::string hash, uint64_t size, uin
  */
 int	ftServer::tick()
 {
-	rslog(RSL_DEBUG_BASIC, ftserverzone, 
+	rslog(RSL_DEBUG_BASIC, ftserverzone,
 		"filedexserver::tick()");
 
 	if (mP3iface == NULL)
@@ -661,7 +682,7 @@ int	ftServer::tick()
 #endif
 
 		std::ostringstream out;
-		rslog(RSL_DEBUG_BASIC, ftserverzone, 
+		rslog(RSL_DEBUG_BASIC, ftserverzone,
 			"filedexserver::tick() Invalid Interface()");
 
 		return 1;
@@ -712,13 +733,13 @@ bool     ftServer::handleCacheData()
 	int i = 0;
 	int i_init = 0;
 
-#ifdef SERVER_DEBUG 
+#ifdef SERVER_DEBUG
 	//std::cerr << "ftServer::handleCacheData()" << std::endl;
 #endif
 	while((ci = mP3iface -> GetSearchResult()) != NULL)
 	{
 
-#ifdef SERVER_DEBUG 
+#ifdef SERVER_DEBUG
 		std::cerr << "ftServer::handleCacheData() Recvd SearchResult (CacheResponse!)" << std::endl;
 		std::ostringstream out;
 		if (i++ == i_init)
@@ -747,7 +768,7 @@ bool     ftServer::handleCacheData()
 	i_init = i;
 	while((cr = mP3iface -> RequestedSearch()) != NULL)
 	{
-#ifdef SERVER_DEBUG 
+#ifdef SERVER_DEBUG
 		/* just delete these */
 		std::ostringstream out;
 		out << "Requested Search:" << std::endl;
@@ -758,7 +779,7 @@ bool     ftServer::handleCacheData()
 	}
 
 
-	// Now handle it replacement (pushed cache results) 
+	// Now handle it replacement (pushed cache results)
 	{
 		std::list<std::pair<RsPeerId, CacheData> > cacheUpdates;
 		std::list<std::pair<RsPeerId, CacheData> >::iterator it;
@@ -768,7 +789,7 @@ bool     ftServer::handleCacheData()
 		{
 			/* construct reply */
 			RsCacheItem *ci = new RsCacheItem();
-	
+
 			/* id from incoming */
 			ci -> PeerId(it->first);
 
@@ -779,7 +800,7 @@ bool     ftServer::handleCacheData()
 			ci -> cacheType  = (it->second).cid.type;
 			ci -> cacheSubId =  (it->second).cid.subid;
 
-#ifdef SERVER_DEBUG 
+#ifdef SERVER_DEBUG
 			std::ostringstream out2;
 			out2 << "Outgoing CacheStrapper Update -> RsCacheItem:" << std::endl;
 			ci -> print(out2);
@@ -788,7 +809,7 @@ bool     ftServer::handleCacheData()
 
 			//rslog(RSL_DEBUG_BASIC, ftserverzone, out2.str());
 			mP3iface -> SendSearchResult(ci);
-		
+
 			i++;
 		}
 	}
@@ -808,7 +829,7 @@ bool    ftServer::handleFileData()
 	i_init = i;
 	while((fr = mP3iface -> GetFileRequest()) != NULL )
 	{
-#ifdef SERVER_DEBUG 
+#ifdef SERVER_DEBUG
 		std::cerr << "ftServer::handleFileData() Recvd ftFiler Request" << std::endl;
 		std::ostringstream out;
 		if (i == i_init)
@@ -820,8 +841,8 @@ bool    ftServer::handleFileData()
 #endif
 
 		i++; /* count */
-		mFtDataplex->recvDataRequest(fr->PeerId(), 
-				fr->file.hash,  fr->file.filesize, 
+		mFtDataplex->recvDataRequest(fr->PeerId(),
+				fr->file.hash,  fr->file.filesize,
 				fr->fileoffset, fr->chunksize);
 
 FileInfo(ffr);
@@ -832,7 +853,7 @@ FileInfo(ffr);
 	i_init = i;
 	while((fd = mP3iface -> GetFileData()) != NULL )
 	{
-#ifdef SERVER_DEBUG 
+#ifdef SERVER_DEBUG
 		std::cerr << "ftServer::handleFileData() Recvd ftFiler Data" << std::endl;
 		std::cerr << "hash: " << fd->fd.file.hash;
 		std::cerr << " length: " << fd->fd.binData.bin_len;
@@ -851,12 +872,12 @@ FileInfo(ffr);
 
 		/* incoming data */
 		mFtDataplex->recvData(fd->PeerId(),
-				 fd->fd.file.hash,  fd->fd.file.filesize, 
-				fd->fd.file_offset, 
-				fd->fd.binData.bin_len, 
+				 fd->fd.file.hash,  fd->fd.file.filesize,
+				fd->fd.file_offset,
+				fd->fd.binData.bin_len,
 				fd->fd.binData.bin_data);
 
-		/* we've stolen the data part -> so blank before delete 
+		/* we've stolen the data part -> so blank before delete
 		 */
 		fd->fd.binData.TlvShallowClear();
 		delete fd;
@@ -882,7 +903,7 @@ bool    ftServer::addConfiguration(p3ConfigMgr *cfgmgr)
 	cfgmgr->addConfiguration("ft_shared.cfg", mFiMon);
 	cfgmgr->addConfiguration("ft_extra.cfg", mFtExtra);
 	cfgmgr->addConfiguration("ft_transfers.cfg", mFtController);
-	
+
 	return true;
 }
 

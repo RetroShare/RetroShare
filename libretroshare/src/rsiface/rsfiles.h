@@ -55,7 +55,7 @@ const uint32_t RS_FILE_PEER_OFFLINE 	 = 0x00002000;
 /************************************
  * Used To indicate where to search.
  *
- * The Order of these is very important, 
+ * The Order of these is very important,
  * it specifies the search order too.
  *
  */
@@ -101,13 +101,13 @@ virtual ~RsFiles() { return; }
 /***
  *  Control of Downloads.
  ***/
-virtual bool FileRequest(std::string fname, std::string hash, uint64_t size, 
+virtual bool FileRequest(std::string fname, std::string hash, uint64_t size,
 		std::string dest, uint32_t flags, std::list<std::string> srcIds) = 0;
 virtual bool FileCancel(std::string hash) = 0;
 virtual bool FileControl(std::string hash, uint32_t flags) = 0;
 virtual bool FileClearCompleted() = 0;
 
-/*** 
+/***
  * Download / Upload Details.
  ***/
 virtual bool FileDownloads(std::list<std::string> &hashs) = 0;
@@ -121,7 +121,7 @@ virtual bool FileDetails(std::string hash, uint32_t hintflags, FileInfo &info) =
 virtual bool ExtraFileAdd(std::string fname, std::string hash, uint64_t size,
 				uint32_t period, uint32_t flags) = 0;
 virtual bool ExtraFileRemove(std::string hash, uint32_t flags) = 0;
-virtual bool ExtraFileHash(std::string localpath, 
+virtual bool ExtraFileHash(std::string localpath,
 				uint32_t period, uint32_t flags) = 0;
 virtual bool ExtraFileStatus(std::string localpath, FileInfo &info) = 0;
 virtual bool ExtraFileMove(std::string fname, std::string hash, uint64_t size,
@@ -157,6 +157,10 @@ virtual bool    getSharedDirectories(std::list<std::string> &dirs) = 0;
 virtual bool    addSharedDirectory(std::string dir) = 0;
 virtual bool    removeSharedDirectory(std::string dir) = 0;
 
+virtual void	setShareDownloadDirectory(bool value) = 0;
+virtual bool	getShareDownloadDirectory() = 0;
+virtual bool 	shareDownloadDirectory() = 0;
+virtual bool 	unshareDownloadDirectory() = 0;
 
 };
 

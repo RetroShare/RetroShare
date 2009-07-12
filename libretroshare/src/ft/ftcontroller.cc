@@ -78,7 +78,8 @@ ftFileControl::ftFileControl(std::string fname,
 }
 
 ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string configDir)
-	:CacheTransfer(cs), p3Config(CONFIG_TYPE_FT_CONTROL), mDataplex(dm), mFtActive(false),mTurtle(NULL)
+	:CacheTransfer(cs), p3Config(CONFIG_TYPE_FT_CONTROL), mDataplex(dm), mFtActive(false),
+	mTurtle(NULL), mShareDownloadDir(true)
 {
 	/* TODO */
 }
@@ -1293,6 +1294,7 @@ bool ftController::CancelCacheFile(RsPeerId id, std::string path, std::string ha
 
 const std::string download_dir_ss("DOWN_DIR");
 const std::string partial_dir_ss("PART_DIR");
+const std::string share_dwl_dir("SHARE_DWL_DIR");
 
 
 	/* p3Config Interface */
@@ -1323,6 +1325,7 @@ std::list<RsItem *> ftController::saveList(bool &cleanup)
 	/* basic control parameters */
 	configMap[download_dir_ss] = getDownloadDirectory();
 	configMap[partial_dir_ss] = getPartialsDirectory();
+	configMap[share_dwl_dir] = mShareDownloadDir ? "YES" : "NO";
 
 	RsConfigKeyValueSet *rskv = new RsConfigKeyValueSet();
 
@@ -1462,6 +1465,27 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
 		setPartialsDirectory(mit->second);
 	}
 
+	if (configMap.end() != (mit = configMap.find(share_dwl_dir)))
+	{
+		if (mit->second == "YES")
+		{
+			setShareDownloadDirectory(true);
+		}
+		else if (mit->second == "NO")
+		{
+			setShareDownloadDirectory(false);
+		}
+	}
+
 	return true;
 }
 
+void ftController::setShareDownloadDirectory(bool value)
+{
+	mShareDownloadDir = value;
+}
+
+bool ftController::getShareDownloadDirectory()
+{
+	return mShareDownloadDir;
+}

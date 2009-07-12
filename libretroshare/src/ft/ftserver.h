@@ -26,7 +26,7 @@
 #ifndef FT_SERVER_HEADER
 #define FT_SERVER_HEADER
 
-/* 
+/*
  * ftServer.
  *
  * Top level File Transfer interface.
@@ -114,14 +114,14 @@ ftController *getController() const { return mFtController ; }
 /***
  * Control of Downloads
  ***/
-virtual bool FileRequest(std::string fname, std::string hash, uint64_t size, 
+virtual bool FileRequest(std::string fname, std::string hash, uint64_t size,
 	std::string dest, uint32_t flags, std::list<std::string> srcIds);
 virtual bool FileCancel(std::string hash);
 virtual bool FileControl(std::string hash, uint32_t flags);
 virtual bool FileClearCompleted();
 
 /***
- * Download/Upload Details 
+ * Download/Upload Details
  ***/
 virtual bool FileDownloads(std::list<std::string> &hashs);
 virtual bool FileUploads(std::list<std::string> &hashs);
@@ -130,10 +130,10 @@ virtual bool FileDetails(std::string hash, uint32_t hintflags, FileInfo &info);
 /***
  * Extra List Access
  ***/
-virtual bool ExtraFileAdd(std::string fname, std::string hash, uint64_t size, 
+virtual bool ExtraFileAdd(std::string fname, std::string hash, uint64_t size,
 			uint32_t period, uint32_t flags);
 virtual bool ExtraFileRemove(std::string hash, uint32_t flags);
-virtual bool ExtraFileHash(std::string localpath, 
+virtual bool ExtraFileHash(std::string localpath,
 			uint32_t period, uint32_t flags);
 virtual bool ExtraFileStatus(std::string localpath, FileInfo &info);
 virtual bool ExtraFileMove(std::string fname, std::string hash, uint64_t size,
@@ -150,14 +150,14 @@ virtual int SearchKeywords(std::list<std::string> keywords, std::list<FileDetail
 virtual int SearchBoolExp(Expression * exp, std::list<FileDetail> &results);
 
 /***
- * Utility Functions 
+ * Utility Functions
  ***/
 virtual bool ConvertSharedFilePath(std::string path, std::string &fullpath);
 virtual void ForceDirectoryCheck();
 virtual bool InDirectoryCheck();
 
 /***
- * Directory Handling 
+ * Directory Handling
  ***/
 virtual void	setDownloadDirectory(std::string path);
 virtual void	setPartialsDirectory(std::string path);
@@ -169,6 +169,10 @@ virtual bool	setSharedDirectories(std::list<std::string> &dirs);
 virtual bool 	addSharedDirectory(std::string dir);
 virtual bool 	removeSharedDirectory(std::string dir);
 
+virtual void	setShareDownloadDirectory(bool value);
+virtual bool	getShareDownloadDirectory();
+virtual bool 	shareDownloadDirectory();
+virtual bool 	unshareDownloadDirectory();
 
 	/***************************************************************/
 	/*************** Control Interface *****************************/
@@ -180,7 +184,7 @@ virtual bool 	removeSharedDirectory(std::string dir);
 public:
 virtual bool    sendData(std::string peerId, std::string hash, uint64_t size,
                         uint64_t offset, uint32_t chunksize, void *data);
-virtual bool    sendDataRequest(std::string peerId, 
+virtual bool    sendDataRequest(std::string peerId,
 			std::string hash, uint64_t size,
                         uint64_t offset, uint32_t chunksize);
 
@@ -217,7 +221,7 @@ bool  loadConfigMap(std::map<std::string, std::string> &configMap);
 
 	private:
 
-	/* no need for Mutex protection - 
+	/* no need for Mutex protection -
 	 * as each component is protected independently.
 	 */
 

@@ -24,6 +24,7 @@
 #include "rsiface/rsfiles.h"
 #include "DirectoriesDialog.h"
 
+#include <algorithm>
 
 /** Constructor */
 DirectoriesDialog::DirectoriesDialog(QWidget *parent)
@@ -39,13 +40,21 @@ DirectoriesDialog::DirectoriesDialog(QWidget *parent)
   	connect(ui.removeButton, SIGNAL(clicked( bool ) ), this , SLOT( removeShareDirectory() ) );
   	connect(ui.incomingButton, SIGNAL(clicked( bool ) ), this , SLOT( setIncomingDirectory() ) );
   	connect(ui.partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );
+  	connect(ui.checkBox, SIGNAL(stateChanged(int)), this, SLOT(shareDownloadDirectory(int)));
 
-    	ui.addButton->setToolTip(tr("Add a Share Directory"));
-    	ui.removeButton->setToolTip(tr("Remove Shared Directory"));
-    	ui.incomingButton->setToolTip(tr("Browse"));
-    	ui.partialButton->setToolTip(tr("Browse"));
+	ui.addButton->setToolTip(tr("Add a Share Directory"));
+	ui.removeButton->setToolTip(tr("Remove Shared Directory"));
+	ui.incomingButton->setToolTip(tr("Browse"));
+	ui.partialButton->setToolTip(tr("Browse"));
 
-
+    if (rsFiles->getShareDownloadDirectory())
+    {
+    	ui.checkBox->setDown(true);		/* signal not emitted */
+    }
+    else
+    {
+    	ui.checkBox->setDown(false);	/* signal not emitted */
+    }
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -57,6 +66,26 @@ DirectoriesDialog::DirectoriesDialog(QWidget *parent)
 bool
 DirectoriesDialog::save(QString &errmsg)
 {
+	/* this is usefull especially when shared incoming files is
+	 * default option and when the user don't check/uncheck the
+	 * checkBox, so no signal is emitted to update the shared list */
+	if (ui.checkBox->isChecked())
+	{
+		std::list<std::string>::const_iterator it;
+		std::list<std::string> dirs;
+		rsFiles->getSharedDirectories(dirs);
+
+		if (dirs.end() == std::find(dirs.begin(), dirs.end(), rsFiles->getDownloadDirectory()))
+		{
+			rsFiles->shareDownloadDirectory();
+		}
+		rsFiles->setShareDownloadDirectory(true);
+	}
+	else
+	{
+		rsFiles->unshareDownloadDirectory();
+		rsFiles->setShareDownloadDirectory(false);
+	}
 
 	return true;
 }
@@ -84,8 +113,6 @@ void DirectoriesDialog::load()
 	ui.partialsDir->setText(QString::fromStdString(rsFiles->getPartialsDirectory()));
 
 	listWidget->update(); /* update display */
-
-
 }
 
 void DirectoriesDialog::addShareDirectory()
@@ -130,6 +157,17 @@ void DirectoriesDialog::setIncomingDirectory()
 	if (dir != "")
 	{
 		rsFiles->setDownloadDirectory(dir);
+		if (ui.checkBox->isChecked())
+		{
+			std::list<std::string>::const_iterator it;
+			std::list<std::string> dirs;
+			rsFiles->getSharedDirectories(dirs);
+
+			if (dirs.end() == std::find(dirs.begin(), dirs.end(), rsFiles->getDownloadDirectory()))
+			{
+				rsFiles->shareDownloadDirectory();
+			}
+		}
 	}
 	load();
 }
@@ -147,3 +185,24 @@ void DirectoriesDialog::setPartialsDirectory()
 	load();
 }
 
+void DirectoriesDialog::shareDownloadDirectory(int state)
+{
+	if (state == Qt::Checked)
+	{
+		std::list<std::string>::const_iterator it;
+		std::list<std::string> dirs;
+		rsFiles->getSharedDirectories(dirs);
+
+		if (dirs.end() == std::find(dirs.begin(), dirs.end(), rsFiles->getDownloadDirectory()))
+		{
+			rsFiles->shareDownloadDirectory();
+		}
+		rsFiles->setShareDownloadDirectory(true);
+	}
+	else
+	{
+		rsFiles->unshareDownloadDirectory();
+		rsFiles->setShareDownloadDirectory(false);
+	}
+	load();
+}

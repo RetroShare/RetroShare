@@ -26,7 +26,7 @@
 #ifndef FT_CONTROLLER_HEADER
 #define FT_CONTROLLER_HEADER
 
-/* 
+/*
  * ftController
  *
  * Top level download controller.
@@ -69,8 +69,8 @@ class ftFileControl
         enum {DOWNLOADING,COMPLETED,ERROR_COMPLETION};
 
 	ftFileControl();
-        ftFileControl(std::string fname, std::string tmppath, std::string dest, 
-		uint64_t size, std::string hash, uint32_t flags, 
+        ftFileControl(std::string fname, std::string tmppath, std::string dest,
+		uint64_t size, std::string hash, uint32_t flags,
 		ftFileCreator *fc, ftTransferModule *tm, uint32_t cb_flags);
 
 	std::string	   mName;
@@ -118,14 +118,17 @@ void	setFtSearchNExtra(ftSearch *, ftExtraList *);
 void	setTurtleRouter(p3turtle *) ;
 bool    activate();
 
+void	setShareDownloadDirectory(bool value);
+bool	getShareDownloadDirectory();
+
 virtual void run();
 
 	/***************************************************************/
 	/********************** Controller Access **********************/
 	/***************************************************************/
 
-bool 	FileRequest(std::string fname, std::string hash, 
-			uint64_t size, std::string dest, uint32_t flags, 
+bool 	FileRequest(std::string fname, std::string hash,
+			uint64_t size, std::string dest, uint32_t flags,
 			std::list<std::string> &sourceIds);
 
 bool 	FileCancel(std::string hash);
@@ -151,7 +154,7 @@ bool moveFile(const std::string& source,const std::string& dest) ;
 
 protected:
 
-virtual bool RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size); 
+virtual bool RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
 virtual bool CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
 
 	/***************************************************************/
@@ -172,7 +175,6 @@ virtual std::list<RsItem *> saveList(bool &cleanup);
 virtual bool    loadList(std::list<RsItem *> load);
 bool	loadConfigMap(std::map<std::string, std::string> &configMap);
 
-
 	private:
 
 	/* RunTime Functions */
@@ -185,7 +187,7 @@ bool    setPeerState(ftTransferModule *tm, std::string id,
 
 	/* pointers to other components */
 
-	ftSearch *mSearch; 
+	ftSearch *mSearch;
 	ftDataMultiplex *mDataplex;
 	ftExtraList *mExtraList;
 	p3turtle *mTurtle ;
@@ -218,6 +220,9 @@ bool    setPeerState(ftTransferModule *tm, std::string id,
 	bool mFtActive;
         bool mFtPendingDone;
 	std::list<ftPendingRequest> mPendingRequests;
+
+	/* share incoming directory */
+	bool mShareDownloadDir;
 };
 
 #endif

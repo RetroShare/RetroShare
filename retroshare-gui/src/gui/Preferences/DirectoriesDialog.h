@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -29,7 +29,7 @@
 #include "configpage.h"
 #include "ui_DirectoriesDialog.h"
 
-class DirectoriesDialog : public ConfigPage 
+class DirectoriesDialog : public ConfigPage
 {
   Q_OBJECT
 
@@ -49,8 +49,9 @@ private slots:
 	void removeShareDirectory();
 	void setIncomingDirectory();
 	void setPartialsDirectory();
+	void shareDownloadDirectory(int state);
 
-  
+
 private:
   /** A RshareSettings object used for saving/loading settings */
   RshareSettings* _settings;
