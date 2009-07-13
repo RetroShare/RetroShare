@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -93,7 +93,7 @@ PeersDialog::PeersDialog(QWidget *parent)
 
   /* hide the Tree +/- */
   ui.peertreeWidget -> setRootIsDecorated( false );
-  
+
     /* Set header resize modes and initial section sizes */
 	QHeaderView * _header = ui.peertreeWidget->header () ;
    	_header->setResizeMode (0, QHeaderView::Custom);
@@ -105,7 +105,7 @@ PeersDialog::PeersDialog(QWidget *parent)
 	_header->setResizeMode (6, QHeaderView::Interactive);
 	_header->setResizeMode (7, QHeaderView::Interactive);*/
 
-    
+
 	_header->resizeSection ( 0, 25 );
 	_header->resizeSection ( 1, 100 );
 	_header->resizeSection ( 2, 100 );
@@ -114,43 +114,43 @@ PeersDialog::PeersDialog(QWidget *parent)
 	_header->resizeSection ( 5, 230 );
 	_header->resizeSection ( 6, 120 );
 	_header->resizeSection ( 7, 220 );*/
-	
+
     // set header text aligment
 	QTreeWidgetItem * headerItem = ui.peertreeWidget->headerItem();
 	headerItem->setTextAlignment(0, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(1, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
 
-	
-	  
+
+
   loadEmoticonsgroupchat();
-  
+
   //setWindowIcon(QIcon(QString(":/images/rstray3.png")));
 
   connect(ui.lineEdit, SIGNAL(textChanged ( ) ), this, SLOT(checkChat( ) ));
   connect(ui.Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
   connect(ui.emoticonBtn, SIGNAL(clicked()), this, SLOT(smileyWidgetgroupchat()));
 
-   
+
   //connect( ui.msgSendList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgSendListCostumPopupMenu( QPoint ) ) );
   connect( ui.msgText, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(displayInfoChatMenu(const QPoint&)));
- 
-  connect(ui.textboldChatButton, SIGNAL(clicked()), this, SLOT(setFont()));  
-  connect(ui.textunderlineChatButton, SIGNAL(clicked()), this, SLOT(setFont()));  
+
+  connect(ui.textboldChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
+  connect(ui.textunderlineChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
   connect(ui.textitalicChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
-  connect(ui.fontsButton, SIGNAL(clicked()), this, SLOT(getFont()));  
+  connect(ui.fontsButton, SIGNAL(clicked()), this, SLOT(getFont()));
   connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(setColor()));
-   
+
   ui.fontsButton->setIcon(QIcon(QString(":/images/fonts.png")));
-  
+
   _currentColor = Qt::black;
   QPixmap pxm(16,16);
   pxm.fill(_currentColor);
   ui.colorChatButton->setIcon(pxm);
-  
+
   mCurrentFont = QFont("Comic Sans MS", 12);
   ui.lineEdit->setFont(mCurrentFont);
-  
+
   setChatInfo(tr("Welcome to RetroShare's group chat."),
               QString::fromUtf8("blue"));
 
@@ -159,12 +159,12 @@ PeersDialog::PeersDialog(QWidget *parent)
   foreach(QString mess, him)
       ui.msgText->append(mess);
       //setChatInfo(mess,  "green");
-              
-  
+
+
   QMenu * grpchatmenu = new QMenu();
   grpchatmenu->addAction(ui.actionClearChat);
   ui.menuButton->setMenu(grpchatmenu);
-  
+
   _underline = false;
 
   QTimer *timer = new QTimer(this);
@@ -194,16 +194,16 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
 
       connectfriendAct = new QAction(QIcon(IMAGE_CONNECT), tr( "Connect To Friend" ), this );
       connect( connectfriendAct , SIGNAL( triggered() ), this, SLOT( connectfriend() ) );
-      
+
       configurefriendAct = new QAction(QIcon(IMAGE_PEERINFO), tr( "Peer Details" ), this );
       connect( configurefriendAct , SIGNAL( triggered() ), this, SLOT( configurefriend() ) );
 
       profileviewAct = new QAction(QIcon(IMAGE_PEERINFO), tr( "Profile View" ), this );
       connect( profileviewAct , SIGNAL( triggered() ), this, SLOT( viewprofile() ) );
-      
+
       exportfriendAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Export Friend" ), this );
       connect( exportfriendAct , SIGNAL( triggered() ), this, SLOT( exportfriend() ) );
-      
+
       removefriendAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Deny Friend" ), this );
       connect( removefriendAct , SIGNAL( triggered() ), this, SLOT( removefriend() ) );
 
@@ -211,11 +211,11 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       contextMnu.clear();
       contextMnu.addAction( chatAct);
       contextMnu.addAction( msgAct);
-      contextMnu.addSeparator(); 
+      contextMnu.addSeparator();
       contextMnu.addAction( configurefriendAct);
       //contextMnu.addAction( profileviewAct);
       contextMnu.addSeparator();
-      contextMnu.addAction( connectfriendAct); 
+      contextMnu.addAction( connectfriendAct);
       contextMnu.addAction( exportfriendAct);
       contextMnu.addAction( removefriendAct);
       contextMnu.exec( mevent->globalPos() );
@@ -252,7 +252,7 @@ void  PeersDialog::insertPeers()
         /* remove old items ??? */
 	peerWidget->clear();
 	peerWidget->setColumnCount(3);
-	
+
 
         QList<QTreeWidgetItem *> items;
 	for(it = peers.begin(); it != peers.end(); it++)
@@ -262,7 +262,7 @@ void  PeersDialog::insertPeers()
 		{
 			continue; /* BAD */
 		}
-		
+
 		/* make a widget per friend */
            	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
@@ -270,8 +270,8 @@ void  PeersDialog::insertPeers()
 		/* First 5 (1-5) Key Items */
 		/* () Status Icon */
 		item -> setText(0, "");
-		
-		/* (0) Status */		
+
+		/* (0) Status */
 		QString status = QString::fromStdString(RsPeerStateString(detail.state));
 
 		/* Append additional status info from status service */
@@ -295,7 +295,7 @@ void  PeersDialog::insertPeers()
 		/* (3) Trust Level */
                 item -> setText(4,QString::fromStdString(
 				RsPeerTrustString(detail.trustLvl)));
-		
+
 		/* (4) Peer Address */
 		{
 			std::ostringstream out;
@@ -305,7 +305,7 @@ void  PeersDialog::insertPeers()
 			out << detail.extPort;
 			item -> setText(5, QString::fromStdString(out.str()));
 		}
-		
+
 		/* less important ones */
 		/* () Last Contact */
                 item -> setText(6,QString::fromStdString(
@@ -317,7 +317,7 @@ void  PeersDialog::insertPeers()
 		//item -> setText(8, QString::fromStdString(detail.location));
 		/* () Email */
 		//item -> setText(9, QString::fromStdString(detail.email));
-	
+
 		/* Hidden ones: RsCertId */
 		{
 			item -> setText(7, QString::fromStdString(detail.id));
@@ -327,7 +327,7 @@ void  PeersDialog::insertPeers()
                         }
 		}
 
-		/* ()  AuthCode */	
+		/* ()  AuthCode */
         //        item -> setText(11, QString::fromStdString(detail.authcode));
 
 		/* change background */
@@ -370,7 +370,7 @@ void  PeersDialog::insertPeers()
 			  item -> setIcon(0,(QIcon(IMAGE_AVAIBLE)));
 			}
 		}
-		else 
+		else
 		{
                 	if (now - detail.lastConnect < 3600)
 			{
@@ -389,7 +389,7 @@ void  PeersDialog::insertPeers()
 				}
 			}
 		}
-			
+
 		/* add to the list */
 		items.append(item);
 	}
@@ -416,12 +416,12 @@ void PeersDialog::exportfriend()
 {
         QTreeWidgetItem *c = getCurrentPeer();
 
-#ifdef PEERS_DEBUG 
+#ifdef PEERS_DEBUG
         std::cerr << "PeersDialog::exportfriend()" << std::endl;
 #endif
 	if (!c)
 	{
-#ifdef PEERS_DEBUG 
+#ifdef PEERS_DEBUG
         	std::cerr << "PeersDialog::exportfriend() Noone Selected -- sorry" << std::endl;
 #endif
 		return;
@@ -434,7 +434,7 @@ void PeersDialog::exportfriend()
 	std::string file = fileName.toStdString();
 	if (file != "")
 	{
-#ifdef PEERS_DEBUG 
+#ifdef PEERS_DEBUG
         	std::cerr << "PeersDialog::exportfriend() Saving to: " << file << std::endl;
         	std::cerr << std::endl;
 #endif
@@ -455,7 +455,7 @@ void PeersDialog::chatfriend()
 
     std::string name = (i -> text(2)).toStdString();
     std::string id = (i -> text(7)).toStdString();
-    
+
     RsPeerDetails detail;
     if (!rsPeers->getPeerDetails(id, detail))
     {
@@ -469,8 +469,8 @@ void PeersDialog::chatfriend()
     else
     {
     	/* info dialog */
-       QMessageBox::StandardButton sb = QMessageBox::question ( NULL, 
-			"Friend Not Online", 
+       QMessageBox::StandardButton sb = QMessageBox::question ( NULL,
+			"Friend Not Online",
 	"Your Friend is offline \nDo you want to send them a Message instead",
 			        (QMessageBox::Yes | QMessageBox::No));
 	if (sb == QMessageBox::Yes)
@@ -484,7 +484,7 @@ void PeersDialog::chatfriend()
 
 void PeersDialog::msgfriend()
 {
-#ifdef PEERS_DEBUG 
+#ifdef PEERS_DEBUG
     std::cerr << "SharedFilesDialog::msgfriend()" << std::endl;
 #endif
 
@@ -517,13 +517,13 @@ QTreeWidgetItem *PeersDialog::getCurrentPeer()
         QTreeWidgetItem *item = peerWidget -> currentItem();
         if (!item)
         {
-#ifdef PEERS_DEBUG 
+#ifdef PEERS_DEBUG
 		std::cerr << "Invalid Current Item" << std::endl;
 #endif
 		return NULL;
 	}
 
-#ifdef PEERS_DEBUG 
+#ifdef PEERS_DEBUG
 	/* Display the columns of this item. */
 	std::ostringstream out;
         out << "CurrentPeerItem: " << std::endl;
@@ -548,17 +548,17 @@ QTreeWidgetItem *PeersDialog::getCurrentPeer()
  *
  * All of these rely on the finding of the current Id.
  */
- 
+
 
 void PeersDialog::removefriend()
 {
         QTreeWidgetItem *c = getCurrentPeer();
-#ifdef PEERS_DEBUG 
+#ifdef PEERS_DEBUG
         std::cerr << "PeersDialog::removefriend()" << std::endl;
 #endif
 	if (!c)
 	{
-#ifdef PEERS_DEBUG 
+#ifdef PEERS_DEBUG
         	std::cerr << "PeersDialog::removefriend() Noone Selected -- sorry" << std::endl;
 #endif
 		return;
@@ -575,7 +575,7 @@ void PeersDialog::removefriend()
 void PeersDialog::allowfriend()
 {
 	QTreeWidgetItem *c = getCurrentPeer();
-#ifdef PEERS_DEBUG 
+#ifdef PEERS_DEBUG
 	std::cerr << "PeersDialog::allowfriend()" << std::endl;
 #endif
 	/*
@@ -588,12 +588,12 @@ void PeersDialog::allowfriend()
 void PeersDialog::connectfriend()
 {
 	QTreeWidgetItem *c = getCurrentPeer();
-#ifdef PEERS_DEBUG 
+#ifdef PEERS_DEBUG
 	std::cerr << "PeersDialog::connectfriend()" << std::endl;
 #endif
 	if (!c)
 	{
-#ifdef PEERS_DEBUG 
+#ifdef PEERS_DEBUG
         	std::cerr << "PeersDialog::connectfriend() Noone Selected -- sorry" << std::endl;
 #endif
 		return;
@@ -609,7 +609,7 @@ void PeersDialog::connectfriend()
 void PeersDialog::setaddressfriend()
 {
 	QTreeWidgetItem *c = getCurrentPeer();
-#ifdef PEERS_DEBUG 
+#ifdef PEERS_DEBUG
 	std::cerr << "PeersDialog::setaddressfriend()" << std::endl;
 #endif
 
@@ -624,7 +624,7 @@ void PeersDialog::setaddressfriend()
 void PeersDialog::trustfriend()
 {
 	QTreeWidgetItem *c = getCurrentPeer();
-#ifdef PEERS_DEBUG 
+#ifdef PEERS_DEBUG
 	std::cerr << "PeersDialog::trustfriend()" << std::endl;
 #endif
 	/*
@@ -679,7 +679,7 @@ void PeersDialog::insertChat()
 	for(it = newchat.begin(); it != newchat.end(); it++)
 	{
 		std::string msg(it->msg.begin(), it->msg.end());
-#ifdef PEERS_DEBUG 
+#ifdef PEERS_DEBUG
 		std::cerr << "PeersDialog::insertChat(): " << msg << std::endl;
 #endif
 
@@ -688,6 +688,7 @@ void PeersDialog::insertChat()
 		{
 			PopupChatDialog *pcd = getPrivateChat(it->rsid, it->name, chatflags);
 			pcd->addChatMsg(&(*it));
+			QApplication::alert(pcd);
 			continue;
 		}
 
@@ -697,7 +698,7 @@ void PeersDialog::insertChat()
 
         QString timestamp = QDateTime::currentDateTime().toString("hh:mm:ss");
         QString name = QString::fromStdString(it->name);
-        QString line = "<span style=\"color:#C00000\">" + timestamp + "</span>" +			
+        QString line = "<span style=\"color:#C00000\">" + timestamp + "</span>" +
             		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span>";
 
         //std::cerr << "PeersDialog::insertChat(): 1.11\n";
@@ -706,7 +707,7 @@ void PeersDialog::insertChat()
         extraTxt += line;
 
         extraTxt += QString::fromStdWString(it->msg);
-        
+
 		  // notify with a systray icon msg
 		  if(it->rsid != rsPeers->getOwnId())
 		  {
@@ -723,7 +724,7 @@ void PeersDialog::insertChat()
 
         /* add it everytime */
 		currenttxt += extraTxt;
-		
+
 		QHashIterator<QString, QString> i(smileys);
 		while(i.hasNext())
 		{
@@ -732,10 +733,10 @@ void PeersDialog::insertChat()
 				currenttxt.replace(code, "<img src=\"" + i.value() + "\" />");
 		}
 
-		
+
         msgWidget->setHtml(currenttxt);
 
-        
+
 
 		QScrollBar *qsb =  msgWidget->verticalScrollBar();
 		qsb -> setValue(qsb->maximum());
@@ -774,9 +775,9 @@ void PeersDialog::sendMsg()
 	ci.chatflags = RS_CHAT_PUBLIC;
 
     //historyKeeper.addMessage("THIS", "ALL", lineWidget->toHtml() );
-    
+
 	std::string msg(ci.msg.begin(), ci.msg.end());
-#ifdef PEERS_DEBUG 
+#ifdef PEERS_DEBUG
 	std::cerr << "PeersDialog::sendMsg(): " << msg << std::endl;
 #endif
 
@@ -860,7 +861,7 @@ void  PeersDialog::insertSendList()
 
 void PeersDialog::toggleSendItem( QTreeWidgetItem *item, int col )
 {
-#ifdef PEERS_DEBUG 
+#ifdef PEERS_DEBUG
 	std::cerr << "ToggleSendItem()" << std::endl;
 #endif
 
@@ -899,7 +900,7 @@ PeersDialog::getPrivateChat(std::string id, std::string name, uint chatflags)
    	/* exists already */
    	popupchatdialog = it->second;
    }
-   else 
+   else
    {
    	popupchatdialog = new PopupChatDialog(id, name);
 	chatDialogs[id] = popupchatdialog;
@@ -938,13 +939,13 @@ PeersDialog::getPrivateChat(std::string id, std::string name, uint chatflags)
 
 		popupchatdialog->flash();
 	   }
-   }	  
+   }
    else
    {
 	std::cerr << "not visible ... so leave popupchatdialog()";
 	std::cerr << std::endl;
    }
-	
+
    return popupchatdialog;
 }
 
@@ -958,7 +959,7 @@ void PeersDialog::clearOldChats()
 
 void PeersDialog::setColor()
 {
-	
+
     	bool ok;
  	QRgb color = QColorDialog::getRgba(ui.lineEdit->textColor().rgba(), &ok, this);
  	if (ok) {
@@ -986,18 +987,18 @@ void PeersDialog::setFont()
   ui.lineEdit->setTextColor(_currentColor);
 
   ui.lineEdit->setFocus();
-  
+
 }
 
-void PeersDialog::underline() 
+void PeersDialog::underline()
 {
  	        _underline = !_underline;
  	        ui.lineEdit->setFontUnderline(_underline);
 }
- 
+
 
 // Update Chat Info information
-void PeersDialog::setChatInfo(QString info, QColor color) 
+void PeersDialog::setChatInfo(QString info, QColor color)
 {
   static unsigned int nbLines = 0;
   ++nbLines;
@@ -1009,12 +1010,12 @@ void PeersDialog::setChatInfo(QString info, QColor color)
   ui.msgText->append(QString::fromUtf8("<font color='grey'>")+ QTime::currentTime().toString(QString::fromUtf8("hh:mm:ss")) + QString::fromUtf8("</font> - <font color='") + color.name() +QString::fromUtf8("'><i>") + info + QString::fromUtf8("</i></font>"));
 }
 
-void PeersDialog::on_actionClearChat_triggered() 
+void PeersDialog::on_actionClearChat_triggered()
 {
   ui.msgText->clear();
 }
 
-void PeersDialog::displayInfoChatMenu(const QPoint& pos) 
+void PeersDialog::displayInfoChatMenu(const QPoint& pos)
 {
   // Log Menu
   QMenu myChatMenu(this);
@@ -1046,7 +1047,7 @@ void PeersDialog::loadEmoticonsgroupchat()
 	while(sm_codes[i] != '{')
 	{
 		i++;
-		
+
 	}
 	while (i < sm_codes.length()-2)
 	{
@@ -1061,10 +1062,10 @@ void PeersDialog::loadEmoticonsgroupchat()
 		{
 			smcode += sm_codes[i];
 			i++;
-			
+
 		}
 		i++;
-		
+
 		while(sm_codes[i] != '\"')
 		{
 			i++;
@@ -1086,7 +1087,7 @@ void PeersDialog::loadEmoticonsgroupchat()
 }
 
 void PeersDialog::smileyWidgetgroupchat()
-{ 
+{
 	qDebug("MainWindow::smileyWidget()");
 	QWidget *smWidget = new QWidget(this , Qt::Popup );
 	smWidget->setWindowTitle("Emoticons");
@@ -1125,10 +1126,10 @@ void PeersDialog::smileyWidgetgroupchat()
          y = 0;
     // ustawiamy selektor na wyliczonej pozycji
     smWidget->move(x, y);
-	
+
 	x = 0;
     y = 0;
-	
+
 	QHashIterator<QString, QString> i(smileys);
 	while(i.hasNext())
 	{
@@ -1148,7 +1149,7 @@ void PeersDialog::smileyWidgetgroupchat()
 		connect(smButton, SIGNAL(clicked()), this, SLOT(addSmileys()));
         connect(smButton, SIGNAL(clicked()), smWidget, SLOT(close()));
 	}
-	
+
 	smWidget->show();
 }
 
