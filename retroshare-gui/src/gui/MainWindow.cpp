@@ -340,6 +340,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     timer->start(1000);
 }
 
+void MainWindow::displaySystrayMsg(const QString& title,const QString& msg)
+{
+	trayIcon->showMessage(title, msg, QSystemTrayIcon::Information, 1000);
+}
+
 void MainWindow::updateStatus()
 {
 	

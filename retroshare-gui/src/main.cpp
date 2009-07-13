@@ -177,6 +177,9 @@ int main(int argc, char *argv[])
 	QObject::connect(ConfCertDialog::instance(),SIGNAL(configChanged()),w->networkDialog,SLOT(insertConnect())) ;
 	QObject::connect(w->peersDialog,SIGNAL(friendsUpdated()),w->networkDialog,SLOT(insertConnect())) ;
 
+	
+	QObject::connect(w->peersDialog,SIGNAL(notifyGroupChat(const QString&,const QString&)),w,SLOT(displaySystrayMsg(const QString&,const QString&))) ;
+
 	/* only show window, if not startMinimized */
 	RshareSettings  *_settings = new RshareSettings();
 

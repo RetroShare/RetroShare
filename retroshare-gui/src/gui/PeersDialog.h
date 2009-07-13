@@ -106,6 +106,7 @@ private slots:
 
 signals:
   void friendsUpdated() ;
+  void notifyGroupChat(const QString&,const QString&) ;
   
 private:
 

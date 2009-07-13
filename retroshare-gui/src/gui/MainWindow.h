@@ -139,6 +139,7 @@ private slots:
     void showsmplayer();
     void showabout();
     void openShareManager();
+	 void displaySystrayMsg(const QString&,const QString&) ;
 	
     /** Displays the help browser and displays the most recently viewed help
     * topic. */

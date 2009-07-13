@@ -707,6 +707,20 @@ void PeersDialog::insertChat()
 
         extraTxt += QString::fromStdWString(it->msg);
         
+		  // notify with a systray icon msg
+		  if(it->rsid != rsPeers->getOwnId())
+		  {
+			  QTextEdit editor ;
+			  editor.setHtml(QString::fromStdWString(it->msg));
+			  QString notifyMsg(QString::fromStdString(it->name)+": "+editor.toPlainText()) ;
+
+			  if(notifyMsg.length() > 30)
+				  emit notifyGroupChat(QString("New group chat"), notifyMsg.left(30)+QString("..."));
+			  else
+				  emit notifyGroupChat(QString("New group chat"), notifyMsg);
+		  }
+
+
         /* add it everytime */
 		currenttxt += extraTxt;
 		
