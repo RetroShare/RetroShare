@@ -342,7 +342,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
 void MainWindow::displaySystrayMsg(const QString& title,const QString& msg)
 {
-	trayIcon->showMessage(title, msg, QSystemTrayIcon::Information, 1000);
+	trayIcon->showMessage(title, msg, QSystemTrayIcon::Information, 3000);
 }
 
 void MainWindow::updateStatus()
