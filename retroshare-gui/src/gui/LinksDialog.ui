@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>LinksDialog</class>
- <widget class="QWidget" name="LinksDialog" >
-  <property name="geometry" >
+ <widget class="QWidget" name="LinksDialog">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,42 +10,42 @@
     <height>529</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" >
-   <property name="horizontalSpacing" >
+  <layout class="QGridLayout">
+   <property name="horizontalSpacing">
     <number>6</number>
    </property>
-   <property name="verticalSpacing" >
+   <property name="verticalSpacing">
     <number>0</number>
    </property>
-   <item row="0" column="0" >
-    <widget class="QLabel" name="linksiconlabel" >
-     <property name="text" >
+   <item row="0" column="0">
+    <widget class="QLabel" name="linksiconlabel">
+     <property name="text">
       <string/>
      </property>
-     <property name="pixmap" >
-      <pixmap resource="images.qrc" >:/images/hi16-app-ktorrent.png</pixmap>
+     <property name="pixmap">
+      <pixmap resource="images.qrc">:/images/hi16-app-ktorrent.png</pixmap>
      </property>
     </widget>
    </item>
-   <item row="0" column="1" >
-    <widget class="QLabel" name="label_4" >
-     <property name="text" >
-      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+   <item row="0" column="1">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;span style=" font-weight:600;">Links Cloud&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Links Cloud&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="2" >
+   <item row="0" column="2">
     <spacer>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>461</width>
        <height>20</height>
@@ -52,57 +53,57 @@ p, li { white-space: pre-wrap; }
      </property>
     </spacer>
    </item>
-   <item row="1" column="0" colspan="3" >
-    <widget class="QSplitter" name="msgSplitter" >
-     <property name="orientation" >
+   <item row="1" column="0" colspan="3">
+    <widget class="QSplitter" name="msgSplitter">
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <widget class="QWidget" name="layoutWidget" >
-      <layout class="QGridLayout" >
-       <item row="0" column="0" colspan="13" >
-        <widget class="QTreeWidget" name="linkTreeWidget" >
-         <property name="font" >
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QGridLayout">
+       <item row="0" column="0" colspan="13">
+        <widget class="QTreeWidget" name="linkTreeWidget">
+         <property name="font">
           <font>
-           <pointsize>12</pointsize>
+           <pointsize>9</pointsize>
           </font>
          </property>
-         <property name="contextMenuPolicy" >
+         <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Title / Comment</string>
           </property>
          </column>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Score</string>
           </property>
          </column>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Peer / Link</string>
           </property>
          </column>
         </widget>
        </item>
-       <item row="1" column="0" >
-        <widget class="QPushButton" name="expandButton" >
-         <property name="text" >
+       <item row="1" column="0">
+        <widget class="QPushButton" name="expandButton">
+         <property name="text">
           <string/>
          </property>
-         <property name="icon" >
-          <iconset resource="images.qrc" >
+         <property name="icon">
+          <iconset resource="images.qrc">
            <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
          </property>
         </widget>
        </item>
-       <item row="1" column="1" >
+       <item row="1" column="1">
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>16</width>
            <height>20</height>
@@ -110,50 +111,50 @@ p, li { white-space: pre-wrap; }
          </property>
         </spacer>
        </item>
-       <item row="1" column="2" >
-        <widget class="QLabel" name="label" >
-         <property name="font" >
+       <item row="1" column="2">
+        <widget class="QLabel" name="label">
+         <property name="font">
           <font>
            <pointsize>10</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>Sort by</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="3" >
-        <widget class="QComboBox" name="rankComboBox" >
-         <property name="font" >
+       <item row="1" column="3">
+        <widget class="QComboBox" name="rankComboBox">
+         <property name="font">
           <font>
            <pointsize>12</pointsize>
           </font>
          </property>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Combo</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Time</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Ranking</string>
           </property>
          </item>
         </widget>
        </item>
-       <item row="1" column="4" >
+       <item row="1" column="4">
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>16</width>
            <height>20</height>
@@ -161,50 +162,50 @@ p, li { white-space: pre-wrap; }
          </property>
         </spacer>
        </item>
-       <item row="1" column="5" >
-        <widget class="QLabel" name="label_2" >
-         <property name="font" >
+       <item row="1" column="5">
+        <widget class="QLabel" name="label_2">
+         <property name="font">
           <font>
            <pointsize>10</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>In last</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="6" >
-        <widget class="QComboBox" name="periodComboBox" >
-         <property name="font" >
+       <item row="1" column="6">
+        <widget class="QComboBox" name="periodComboBox">
+         <property name="font">
           <font>
            <pointsize>12</pointsize>
           </font>
          </property>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Month</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Week</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Day</string>
           </property>
          </item>
         </widget>
        </item>
-       <item row="1" column="7" >
+       <item row="1" column="7">
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>16</width>
            <height>20</height>
@@ -212,45 +213,45 @@ p, li { white-space: pre-wrap; }
          </property>
         </spacer>
        </item>
-       <item row="1" column="8" >
-        <widget class="QLabel" name="label_3" >
-         <property name="font" >
+       <item row="1" column="8">
+        <widget class="QLabel" name="label_3">
+         <property name="font">
           <font>
            <pointsize>10</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>From</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="9" >
-        <widget class="QComboBox" name="fromComboBox" >
-         <property name="font" >
+       <item row="1" column="9">
+        <widget class="QComboBox" name="fromComboBox">
+         <property name="font">
           <font>
            <pointsize>12</pointsize>
           </font>
          </property>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>All Peers</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Own Links</string>
           </property>
          </item>
         </widget>
        </item>
-       <item row="1" column="10" >
+       <item row="1" column="10">
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>16</width>
            <height>20</height>
@@ -258,54 +259,54 @@ p, li { white-space: pre-wrap; }
          </property>
         </spacer>
        </item>
-       <item row="1" column="11" >
-        <widget class="QLabel" name="label_5" >
-         <property name="font" >
+       <item row="1" column="11">
+        <widget class="QLabel" name="label_5">
+         <property name="font">
           <font>
            <pointsize>10</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>Show</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="12" >
-        <widget class="QComboBox" name="topComboBox" >
-         <property name="font" >
+       <item row="1" column="12">
+        <widget class="QComboBox" name="topComboBox">
+         <property name="font">
           <font>
            <pointsize>12</pointsize>
           </font>
          </property>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Top 100</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>101-200</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>201-300</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>301-400</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>401-500</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Bottom 100</string>
           </property>
          </item>
@@ -313,16 +314,16 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="layoutWidget" >
-      <layout class="QVBoxLayout" >
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout">
        <item>
-        <layout class="QHBoxLayout" >
+        <layout class="QHBoxLayout">
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>311</width>
              <height>32</height>
@@ -331,27 +332,27 @@ p, li { white-space: pre-wrap; }
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="anonBox" >
-           <property name="font" >
+          <widget class="QCheckBox" name="anonBox">
+           <property name="font">
             <font>
              <pointsize>12</pointsize>
              <weight>50</weight>
              <bold>false</bold>
             </font>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>Add Anonymous Link</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="addButton" >
-           <property name="font" >
+          <widget class="QPushButton" name="addButton">
+           <property name="font">
             <font>
              <pointsize>12</pointsize>
             </font>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>Add Link/Comment</string>
            </property>
           </widget>
@@ -359,24 +360,24 @@ p, li { white-space: pre-wrap; }
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" >
+        <layout class="QHBoxLayout">
          <item>
-          <widget class="QLabel" name="label_6" >
-           <property name="font" >
+          <widget class="QLabel" name="label_6">
+           <property name="font">
             <font>
              <pointsize>12</pointsize>
              <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>Title:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="titleLineEdit" >
-           <property name="font" >
+          <widget class="QLineEdit" name="titleLineEdit">
+           <property name="font">
             <font>
              <pointsize>12</pointsize>
             </font>
@@ -384,63 +385,63 @@ p, li { white-space: pre-wrap; }
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_8" >
-           <property name="font" >
+          <widget class="QLabel" name="label_8">
+           <property name="font">
             <font>
              <pointsize>12</pointsize>
              <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>Score:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="scoreBox" >
+          <widget class="QComboBox" name="scoreBox">
            <item>
-            <property name="text" >
+            <property name="text">
              <string>+2 Great!</string>
             </property>
-            <property name="icon" >
-             <iconset resource="images.qrc" >
+            <property name="icon">
+             <iconset resource="images.qrc">
               <normaloff>:/images/filerating5.png</normaloff>:/images/filerating5.png</iconset>
             </property>
            </item>
            <item>
-            <property name="text" >
+            <property name="text">
              <string>+1 Good</string>
             </property>
-            <property name="icon" >
-             <iconset resource="images.qrc" >
+            <property name="icon">
+             <iconset resource="images.qrc">
               <normaloff>:/images/filerating4.png</normaloff>:/images/filerating4.png</iconset>
             </property>
            </item>
            <item>
-            <property name="text" >
+            <property name="text">
              <string>0 Okay</string>
             </property>
-            <property name="icon" >
-             <iconset resource="images.qrc" >
+            <property name="icon">
+             <iconset resource="images.qrc">
               <normaloff>:/images/filerating3.png</normaloff>:/images/filerating3.png</iconset>
             </property>
            </item>
            <item>
-            <property name="text" >
+            <property name="text">
              <string>-1 Sux</string>
             </property>
-            <property name="icon" >
-             <iconset resource="images.qrc" >
+            <property name="icon">
+             <iconset resource="images.qrc">
               <normaloff>:/images/filerating2.png</normaloff>:/images/filerating2.png</iconset>
             </property>
            </item>
            <item>
-            <property name="text" >
+            <property name="text">
              <string>-2 Bad Link</string>
             </property>
-            <property name="icon" >
-             <iconset resource="images.qrc" >
+            <property name="icon">
+             <iconset resource="images.qrc">
               <normaloff>:/images/filerating1.png</normaloff>:/images/filerating1.png</iconset>
             </property>
            </item>
@@ -449,24 +450,24 @@ p, li { white-space: pre-wrap; }
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" >
+        <layout class="QHBoxLayout">
          <item>
-          <widget class="QLabel" name="label_7" >
-           <property name="font" >
+          <widget class="QLabel" name="label_7">
+           <property name="font">
             <font>
              <pointsize>12</pointsize>
              <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>Url:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="linkLineEdit" >
-           <property name="font" >
+          <widget class="QLineEdit" name="linkLineEdit">
+           <property name="font">
             <font>
              <pointsize>12</pointsize>
             </font>
@@ -476,20 +477,20 @@ p, li { white-space: pre-wrap; }
         </layout>
        </item>
        <item>
-        <widget class="QTextEdit" name="linkTextEdit" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+        <widget class="QTextEdit" name="linkTextEdit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="maximumSize" >
+         <property name="maximumSize">
           <size>
            <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
-         <property name="font" >
+         <property name="font">
           <font>
            <pointsize>12</pointsize>
           </font>
@@ -503,7 +504,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="images.qrc" />
+  <include location="images.qrc"/>
  </resources>
  <connections/>
 </ui>
