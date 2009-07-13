@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>NetworkDialog</class>
- <widget class="QWidget" name="NetworkDialog" >
-  <property name="geometry" >
+ <widget class="QWidget" name="NetworkDialog">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,96 +10,84 @@
     <height>444</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" >
-   <property name="leftMargin" >
+  <layout class="QGridLayout">
+   <property name="leftMargin">
     <number>6</number>
    </property>
-   <property name="topMargin" >
+   <property name="topMargin">
     <number>6</number>
    </property>
-   <property name="rightMargin" >
+   <property name="rightMargin">
     <number>6</number>
    </property>
-   <property name="bottomMargin" >
+   <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item row="0" column="0" >
-    <widget class="QTabWidget" name="networkTab" >
-     <property name="tabPosition" >
+   <item row="0" column="0">
+    <widget class="QTabWidget" name="networkTab">
+     <property name="tabPosition">
       <enum>QTabWidget::North</enum>
      </property>
-     <property name="currentIndex" >
+     <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="networkTab" >
-      <attribute name="title" >
+     <widget class="QWidget" name="networkTab">
+      <attribute name="title">
        <string>Network</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <property name="leftMargin" >
+      <layout class="QGridLayout">
+       <property name="verticalSpacing">
         <number>0</number>
        </property>
-       <property name="topMargin" >
+       <property name="margin">
         <number>0</number>
        </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <property name="verticalSpacing" >
-        <number>0</number>
-       </property>
-       <item row="0" column="0" >
-        <layout class="QGridLayout" >
-         <property name="leftMargin" >
+       <item row="0" column="0">
+        <layout class="QGridLayout">
+         <property name="margin">
           <number>0</number>
          </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <property name="horizontalSpacing" >
+         <property name="spacing">
           <number>6</number>
          </property>
-         <property name="verticalSpacing" >
-          <number>6</number>
-         </property>
-         <item row="0" column="0" >
-          <widget class="QLabel" name="label" >
-           <property name="text" >
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="maximumSize">
+            <size>
+             <width>22</width>
+             <height>22</height>
+            </size>
+           </property>
+           <property name="text">
             <string/>
            </property>
-           <property name="pixmap" >
-            <pixmap/>
+           <property name="pixmap">
+            <pixmap resource="images.qrc">:/images/rs1.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item row="0" column="1" >
-          <widget class="QLabel" name="label_2" >
-           <property name="text" >
-            <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+         <item row="0" column="1">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:9pt; font-weight:600;">Network:&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Network:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="2" >
+         <item row="0" column="2">
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>40</width>
              <height>20</height>
@@ -106,260 +95,251 @@ p, li { white-space: pre-wrap; }
            </property>
           </spacer>
          </item>
-         <item row="0" column="3" >
-          <widget class="QPushButton" name="viewButton" >
-           <property name="text" >
+         <item row="0" column="3">
+          <widget class="QPushButton" name="viewButton">
+           <property name="text">
             <string>View</string>
            </property>
           </widget>
          </item>
         </layout>
        </item>
-       <item row="1" column="0" >
-        <widget class="QTreeWidget" name="connecttreeWidget" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+       <item row="1" column="0">
+        <widget class="QTreeWidget" name="connecttreeWidget">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="contextMenuPolicy" >
+         <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
-         <property name="acceptDrops" >
+         <property name="acceptDrops">
           <bool>false</bool>
          </property>
-         <property name="autoFillBackground" >
+         <property name="autoFillBackground">
           <bool>false</bool>
          </property>
-         <property name="lineWidth" >
+         <property name="lineWidth">
           <number>0</number>
          </property>
-         <property name="iconSize" >
+         <property name="iconSize">
           <size>
            <width>16</width>
            <height>16</height>
           </size>
          </property>
-         <property name="sortingEnabled" >
+         <property name="sortingEnabled">
           <bool>true</bool>
          </property>
          <column>
-          <property name="text" >
+          <property name="text">
            <string/>
           </property>
          </column>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Your trust</string>
           </property>
          </column>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Peer's trust</string>
           </property>
          </column>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Last Contact</string>
           </property>
          </column>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Name</string>
           </property>
          </column>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Peer Address</string>
           </property>
          </column>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Organisation</string>
           </property>
          </column>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Location</string>
           </property>
          </column>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Country</string>
           </property>
          </column>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Cert Id</string>
           </property>
          </column>
         </widget>
        </item>
-       <item row="2" column="0" >
-        <widget class="QTabWidget" name="tabBottom" >
-         <property name="maximumSize" >
+       <item row="2" column="0">
+        <widget class="QTabWidget" name="tabBottom">
+         <property name="maximumSize">
           <size>
            <width>16777215</width>
            <height>142</height>
           </size>
          </property>
-         <property name="tabPosition" >
+         <property name="tabPosition">
           <enum>QTabWidget::North</enum>
          </property>
-         <property name="currentIndex" >
+         <property name="currentIndex">
           <number>0</number>
          </property>
-         <widget class="QWidget" name="log_tab" >
-          <attribute name="title" >
+         <widget class="QWidget" name="log_tab">
+          <attribute name="title">
            <string>Log</string>
           </attribute>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
+          <layout class="QVBoxLayout">
+           <property name="spacing">
             <number>6</number>
            </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
+           <property name="margin">
             <number>0</number>
            </property>
            <item>
-            <widget class="QTextBrowser" name="infoLog" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+            <widget class="QTextBrowser" name="infoLog">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="maximumSize" >
+             <property name="maximumSize">
               <size>
                <width>16777215</width>
                <height>142</height>
               </size>
              </property>
-             <property name="contextMenuPolicy" >
+             <property name="contextMenuPolicy">
               <enum>Qt::CustomContextMenu</enum>
              </property>
             </widget>
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="networkstatus" >
-          <attribute name="title" >
+         <widget class="QWidget" name="networkstatus">
+          <attribute name="title">
            <string>Network Status</string>
           </attribute>
-          <layout class="QGridLayout" >
-           <item row="0" column="0" >
-            <layout class="QGridLayout" >
-             <item row="0" column="0" >
-              <layout class="QGridLayout" >
-               <item row="0" column="0" >
-                <widget class="QLabel" name="iconlabel_nonet" >
-                 <property name="maximumSize" >
+          <layout class="QGridLayout">
+           <item row="0" column="0">
+            <layout class="QGridLayout">
+             <item row="0" column="0">
+              <layout class="QGridLayout">
+               <item row="0" column="0">
+                <widget class="QLabel" name="iconlabel_nonet">
+                 <property name="maximumSize">
                   <size>
                    <width>16</width>
                    <height>16</height>
                   </size>
                  </property>
-                 <property name="text" >
+                 <property name="text">
                   <string/>
                  </property>
-                 <property name="pixmap" >
-                  <pixmap resource="images.qrc" >:/images/ledoff1.png</pixmap>
+                 <property name="pixmap">
+                  <pixmap resource="images.qrc">:/images/ledoff1.png</pixmap>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1" >
-                <widget class="QLabel" name="textlabel_nonet" >
-                 <property name="text" >
+               <item row="0" column="1">
+                <widget class="QLabel" name="textlabel_nonet">
+                 <property name="text">
                   <string>No Connectivity</string>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
-             <item row="1" column="0" >
-              <layout class="QGridLayout" >
-               <item row="0" column="0" >
-                <widget class="QLabel" name="iconlabel_netLimited" >
-                 <property name="maximumSize" >
+             <item row="1" column="0">
+              <layout class="QGridLayout">
+               <item row="0" column="0">
+                <widget class="QLabel" name="iconlabel_netLimited">
+                 <property name="maximumSize">
                   <size>
                    <width>16</width>
                    <height>16</height>
                   </size>
                  </property>
-                 <property name="text" >
+                 <property name="text">
                   <string/>
                  </property>
-                 <property name="pixmap" >
-                  <pixmap resource="images.qrc" >:/images/ledoff1.png</pixmap>
+                 <property name="pixmap">
+                  <pixmap resource="images.qrc">:/images/ledoff1.png</pixmap>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1" >
-                <widget class="QLabel" name="textlabel_netLimited" >
-                 <property name="text" >
+               <item row="0" column="1">
+                <widget class="QLabel" name="textlabel_netLimited">
+                 <property name="text">
                   <string>Limited</string>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
-             <item row="2" column="0" >
-              <layout class="QGridLayout" >
-               <item row="0" column="0" >
-                <widget class="QLabel" name="iconlabel_netUdp" >
-                 <property name="maximumSize" >
+             <item row="2" column="0">
+              <layout class="QGridLayout">
+               <item row="0" column="0">
+                <widget class="QLabel" name="iconlabel_netUdp">
+                 <property name="maximumSize">
                   <size>
                    <width>16</width>
                    <height>16</height>
                   </size>
                  </property>
-                 <property name="text" >
+                 <property name="text">
                   <string/>
                  </property>
-                 <property name="pixmap" >
-                  <pixmap resource="images.qrc" >:/images/ledoff1.png</pixmap>
+                 <property name="pixmap">
+                  <pixmap resource="images.qrc">:/images/ledoff1.png</pixmap>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1" >
-                <widget class="QLabel" name="textlabel_netUdp" >
-                 <property name="text" >
+               <item row="0" column="1">
+                <widget class="QLabel" name="textlabel_netUdp">
+                 <property name="text">
                   <string>UDP</string>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
-             <item row="3" column="0" >
-              <layout class="QGridLayout" >
-               <item row="0" column="0" >
-                <widget class="QLabel" name="iconlabel_netServer" >
-                 <property name="maximumSize" >
+             <item row="3" column="0">
+              <layout class="QGridLayout">
+               <item row="0" column="0">
+                <widget class="QLabel" name="iconlabel_netServer">
+                 <property name="maximumSize">
                   <size>
                    <width>16</width>
                    <height>16</height>
                   </size>
                  </property>
-                 <property name="text" >
+                 <property name="text">
                   <string/>
                  </property>
-                 <property name="pixmap" >
-                  <pixmap resource="images.qrc" >:/images/ledoff1.png</pixmap>
+                 <property name="pixmap">
+                  <pixmap resource="images.qrc">:/images/ledoff1.png</pixmap>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1" >
-                <widget class="QLabel" name="textlabel_netServer" >
-                 <property name="text" >
+               <item row="0" column="1">
+                <widget class="QLabel" name="textlabel_netServer">
+                 <property name="text">
                   <string>RetroShare Server</string>
                  </property>
                 </widget>
@@ -368,137 +348,137 @@ p, li { white-space: pre-wrap; }
              </item>
             </layout>
            </item>
-           <item row="0" column="1" >
-            <layout class="QGridLayout" >
-             <item row="0" column="0" >
-              <layout class="QGridLayout" >
-               <item row="0" column="0" >
-                <widget class="QLabel" name="iconlabel_udp" >
-                 <property name="maximumSize" >
+           <item row="0" column="1">
+            <layout class="QGridLayout">
+             <item row="0" column="0">
+              <layout class="QGridLayout">
+               <item row="0" column="0">
+                <widget class="QLabel" name="iconlabel_udp">
+                 <property name="maximumSize">
                   <size>
                    <width>16</width>
                    <height>16</height>
                   </size>
                  </property>
-                 <property name="text" >
+                 <property name="text">
                   <string/>
                  </property>
-                 <property name="pixmap" >
-                  <pixmap resource="images.qrc" >:/images/ledoff1.png</pixmap>
+                 <property name="pixmap">
+                  <pixmap resource="images.qrc">:/images/ledoff1.png</pixmap>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1" >
-                <widget class="QLabel" name="textlabel_udp" >
-                 <property name="text" >
+               <item row="0" column="1">
+                <widget class="QLabel" name="textlabel_udp">
+                 <property name="text">
                   <string>UDP Connections</string>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
-             <item row="1" column="0" >
-              <layout class="QGridLayout" >
-               <item row="0" column="0" >
-                <widget class="QLabel" name="iconlabel_ext" >
-                 <property name="maximumSize" >
+             <item row="1" column="0">
+              <layout class="QGridLayout">
+               <item row="0" column="0">
+                <widget class="QLabel" name="iconlabel_ext">
+                 <property name="maximumSize">
                   <size>
                    <width>16</width>
                    <height>16</height>
                   </size>
                  </property>
-                 <property name="text" >
+                 <property name="text">
                   <string/>
                  </property>
-                 <property name="pixmap" >
-                  <pixmap resource="images.qrc" >:/images/ledoff1.png</pixmap>
+                 <property name="pixmap">
+                  <pixmap resource="images.qrc">:/images/ledoff1.png</pixmap>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1" >
-                <widget class="QLabel" name="textlabel_ext" >
-                 <property name="text" >
+               <item row="0" column="1">
+                <widget class="QLabel" name="textlabel_ext">
+                 <property name="text">
                   <string>Stable External IP Address</string>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
-             <item row="2" column="0" >
-              <layout class="QGridLayout" >
-               <item row="0" column="0" >
-                <widget class="QLabel" name="iconlabel_dht" >
-                 <property name="maximumSize" >
+             <item row="2" column="0">
+              <layout class="QGridLayout">
+               <item row="0" column="0">
+                <widget class="QLabel" name="iconlabel_dht">
+                 <property name="maximumSize">
                   <size>
                    <width>16</width>
                    <height>16</height>
                   </size>
                  </property>
-                 <property name="text" >
+                 <property name="text">
                   <string/>
                  </property>
-                 <property name="pixmap" >
-                  <pixmap resource="images.qrc" >:/images/ledoff1.png</pixmap>
+                 <property name="pixmap">
+                  <pixmap resource="images.qrc">:/images/ledoff1.png</pixmap>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1" >
-                <widget class="QLabel" name="textlabel_dht" >
-                 <property name="text" >
+               <item row="0" column="1">
+                <widget class="QLabel" name="textlabel_dht">
+                 <property name="text">
                   <string>DHT OK</string>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
-             <item row="3" column="0" >
-              <layout class="QGridLayout" >
-               <item row="0" column="0" >
-                <widget class="QLabel" name="iconlabel_upnp" >
-                 <property name="maximumSize" >
+             <item row="3" column="0">
+              <layout class="QGridLayout">
+               <item row="0" column="0">
+                <widget class="QLabel" name="iconlabel_upnp">
+                 <property name="maximumSize">
                   <size>
                    <width>16</width>
                    <height>16</height>
                   </size>
                  </property>
-                 <property name="text" >
+                 <property name="text">
                   <string/>
                  </property>
-                 <property name="pixmap" >
-                  <pixmap resource="images.qrc" >:/images/ledoff1.png</pixmap>
+                 <property name="pixmap">
+                  <pixmap resource="images.qrc">:/images/ledoff1.png</pixmap>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1" >
-                <widget class="QLabel" name="textlabel_upnp" >
-                 <property name="text" >
+               <item row="0" column="1">
+                <widget class="QLabel" name="textlabel_upnp">
+                 <property name="text">
                   <string>UPnP Active</string>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
-             <item row="4" column="0" >
-              <layout class="QGridLayout" >
-               <item row="0" column="0" >
-                <widget class="QLabel" name="iconlabel_tcp" >
-                 <property name="maximumSize" >
+             <item row="4" column="0">
+              <layout class="QGridLayout">
+               <item row="0" column="0">
+                <widget class="QLabel" name="iconlabel_tcp">
+                 <property name="maximumSize">
                   <size>
                    <width>16</width>
                    <height>16</height>
                   </size>
                  </property>
-                 <property name="text" >
+                 <property name="text">
                   <string/>
                  </property>
-                 <property name="pixmap" >
-                  <pixmap resource="images.qrc" >:/images/ledoff1.png</pixmap>
+                 <property name="pixmap">
+                  <pixmap resource="images.qrc">:/images/ledoff1.png</pixmap>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1" >
-                <widget class="QLabel" name="textlabel_tcp" >
-                 <property name="text" >
+               <item row="0" column="1">
+                <widget class="QLabel" name="textlabel_tcp">
+                 <property name="text">
                   <string>TCP Server</string>
                  </property>
                 </widget>
@@ -516,44 +496,44 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
   </layout>
-  <action name="actionClearLog" >
-   <property name="text" >
+  <action name="actionClearLog">
+   <property name="text">
     <string>Clear</string>
    </property>
   </action>
-  <action name="actionTabsright" >
-   <property name="text" >
+  <action name="actionTabsright">
+   <property name="text">
     <string>Set Tabs Right</string>
    </property>
   </action>
-  <action name="actionTabsnorth" >
-   <property name="text" >
+  <action name="actionTabsnorth">
+   <property name="text">
     <string>Set Tabs North</string>
    </property>
   </action>
-  <action name="actionTabssouth" >
-   <property name="text" >
+  <action name="actionTabssouth">
+   <property name="text">
     <string>Set Tabs South</string>
    </property>
   </action>
-  <action name="actionTabswest" >
-   <property name="text" >
+  <action name="actionTabswest">
+   <property name="text">
     <string>Set Tabs Left</string>
    </property>
   </action>
-  <action name="actionTabsRounded" >
-   <property name="text" >
+  <action name="actionTabsRounded">
+   <property name="text">
     <string>Set Tabs Rounded</string>
    </property>
   </action>
-  <action name="actionTabsTriangular" >
-   <property name="text" >
+  <action name="actionTabsTriangular">
+   <property name="text">
     <string>Set Tabs Triangular</string>
    </property>
   </action>
  </widget>
  <resources>
-  <include location="images.qrc" />
+  <include location="images.qrc"/>
  </resources>
  <connections/>
 </ui>
