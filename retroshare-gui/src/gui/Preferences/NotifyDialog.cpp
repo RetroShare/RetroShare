@@ -69,7 +69,7 @@ NotifyDialog::save(QString &errmsg)
 	if (ui.popup_NewMsg->isChecked())
 		notifyflags |= RS_POPUP_MSG;
 
-	if (ui.popup_NewChat->isChecked())
+//	if (ui.popup_NewChat->isChecked())
 		notifyflags |= RS_POPUP_CHAT;
 
 	//if (ui.popup_Call->isChecked())
@@ -118,7 +118,8 @@ void NotifyDialog::load()
 
 	ui.popup_Connect->setChecked(notifyflags & RS_POPUP_CONNECT);
 	ui.popup_NewMsg->setChecked(notifyflags & RS_POPUP_MSG);
-	ui.popup_NewChat->setChecked(notifyflags & RS_POPUP_CHAT);
+	ui.systray_GroupChat->setChecked(true) ;
+//	ui.popup_NewChat->setChecked(notifyflags & RS_POPUP_CHAT);
 	//ui.popup_Call->setChecked(notifyflags & RS_POPUP_CALL);
 
 	ui.notify_Peers->setChecked(newsflags & RS_FEED_TYPE_PEER);
@@ -138,7 +139,8 @@ void NotifyDialog::load()
 	ui.notify_Chat->setEnabled(false);
 	ui.notify_Blogs->setEnabled(false);
 	ui.notify_Downloads->setEnabled(false);
-	ui.popup_NewChat->setEnabled(false);
+	ui.systray_GroupChat->setEnabled(false);
+//	ui.popup_NewChat->setEnabled(false);
 }
 
 
