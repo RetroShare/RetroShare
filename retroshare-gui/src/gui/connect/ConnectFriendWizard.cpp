@@ -282,7 +282,7 @@ TextPage::showHelpUserCert()
     QMessageBox::information(this,
                              tr("Connect Friend Help"),
                              tr("You can copy this text and send it to your "
-                                "friend via email, ICQ or some other way"));                          
+                                "friend via email or some other way"));                          
 
 }
 //
@@ -294,7 +294,7 @@ TextPage::copyCert()
     QMessageBox::information(this,
                              tr("RetroShare"),
                              tr("Your Cert is copied to Clipbard, paste and send it to your"
-                                "friend via email, ICQ or some other way"));
+                                "friend via email or some other way"));
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setText(userCertEdit->toPlainText());                            
 
