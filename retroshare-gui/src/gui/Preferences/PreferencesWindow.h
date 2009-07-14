@@ -50,6 +50,7 @@ public:
     Directories,           /** Directories page. */
     Appearance,				/** Appearance page. */
     Notify,				/** Notify page. */
+    Security,				/** Security page. */
     FileAssotiations    /** File assotiations page. */
   };
 

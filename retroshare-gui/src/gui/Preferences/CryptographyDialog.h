@@ -1,7 +1,7 @@
 /****************************************************************
- *  RShare is distributed under the following license:
+ *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2006, crypton
+ *  Copyright (C) 2006 - 2009 RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -25,9 +25,11 @@
 #include <QFileDialog>
 
 #include <gui/Preferences/rsharesettings.h>
+#include "gui/connect/ConnectFriendWizard.h"
 
 #include "configpage.h"
 #include "ui_CryptographyDialog.h"
+
 
 class CryptographyDialog : public ConfigPage 
 {
@@ -44,6 +46,12 @@ public:
   void load();
 
 private slots:
+
+  void loadPublicKey();
+
+  void copyPublicKey();
+
+  void exportPublicKey();
 
   
 private:

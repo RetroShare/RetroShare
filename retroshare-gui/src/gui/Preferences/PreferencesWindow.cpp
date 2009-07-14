@@ -32,12 +32,12 @@
 
 /* Images for toolbar icons */
 #define IMAGE_PREFERENCES       ":/images/kcmsystem24.png"
-#define IMAGE_SERVER        	  ":/images/server_24x24.png"
-#define IMAGE_DIRECTORIES    	  ":/images/folder_doments.png"
-#define IMAGE_CRYPTOGRAPHY      ":/images/cryptography_24x24.png"
-#define IMAGE_LOG   			      ":/images/log_24x24.png"
-#define IMAGE_ABOUT 			      ":/images/informations_24x24.png"
-#define IMAGE_SAVE			        ":/images/media-floppy.png"
+#define IMAGE_SERVER        	":/images/server_24x24.png"
+#define IMAGE_DIRECTORIES    	":/images/folder_doments.png"
+#define IMAGE_CRYPTOGRAPHY      ":/images/encrypted32.png"
+#define IMAGE_LOG   		":/images/log_24x24.png"
+#define IMAGE_ABOUT 		":/images/informations_24x24.png"
+#define IMAGE_SAVE	        ":/images/media-floppy.png"
 #define IMAGE_HELP              ":/images/help24.png"
 #define IMAGE_APPEARRANCE       ":/images/looknfeel.png"
 #define IMAGE_FILE_ASSOTIATIONS ":/images/folder-draft24.png"
@@ -68,6 +68,9 @@ PreferencesWindow::PreferencesWindow(QWidget *parent, Qt::WFlags flags)
   
   ui.stackPages->add(new NotifyDialog(ui.stackPages),
                      createPageAction(QIcon(IMAGE_NOTIFY), tr("Notify"), grp));
+
+  ui.stackPages->add(new CryptographyDialog(ui.stackPages),
+                     createPageAction(QIcon(IMAGE_CRYPTOGRAPHY), tr("Security"), grp));
 
   ui.stackPages->add(new FileAssotiationsDialog(ui.stackPages),
                      createPageAction(QIcon(IMAGE_FILE_ASSOTIATIONS),
