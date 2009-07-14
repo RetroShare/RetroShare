@@ -82,6 +82,7 @@ private:
     QHBoxLayout* userCertLayout;
     QVBoxLayout* userCertButtonsLayout;
     QPushButton* userCertHelpButton;
+    QPushButton* userCertCopyButton;
     #if defined(Q_OS_WIN)
     QPushButton* userCertMailButton;//! on Windows, click on this button
                                    //! launches default email client
@@ -93,6 +94,7 @@ private:
 
 private slots:
     void showHelpUserCert();
+    void copyCert();
     
     #if defined(Q_OS_WIN)
     //! launches default email client (on windows)

@@ -32,6 +32,8 @@
 #include <QCheckBox>
 #include <QGroupBox>
 #include <QComboBox>
+#include <QtGui>
+#include <QClipboard>
 #include <QTableWidget>
 #include <QHeaderView>
 
@@ -188,6 +190,16 @@ TextPage::TextPage(QWidget *parent)
     userCertHelpButton->setIcon( QIcon(":images/connect/info16.png") );
     connect (userCertHelpButton,  SIGNAL( clicked()),
              this,                SLOT(   showHelpUserCert()) );
+    
+    userCertCopyButton = new QPushButton;
+    userCertCopyButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    userCertCopyButton->setFixedSize(20,20);
+    userCertCopyButton->setFlat(true);
+    userCertCopyButton->setIcon( QIcon(":images/copyrslink.png") );
+    userCertCopyButton->setToolTip(tr("Copy your Cert to Clipboard"));
+    connect (userCertCopyButton,  SIGNAL( clicked()),
+             this,                SLOT(   copyCert()) );         
+             
 #if defined(Q_OS_WIN)
     userCertMailButton = new QPushButton;
     userCertMailButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -200,6 +212,7 @@ TextPage::TextPage(QWidget *parent)
 #endif
     userCertButtonsLayout = new QVBoxLayout();
     userCertButtonsLayout->addWidget(userCertHelpButton);
+    userCertButtonsLayout->addWidget(userCertCopyButton);
 #if defined(Q_OS_WIN)
     userCertButtonsLayout->addWidget(userCertMailButton);
 #endif
@@ -269,12 +282,27 @@ TextPage::showHelpUserCert()
     QMessageBox::information(this,
                              tr("Connect Friend Help"),
                              tr("You can copy this text and send it to your "
-                                "friend via email, ICQ or some other way"));
+                                "friend via email, ICQ or some other way"));                          
 
 }
 //
 //============================================================================
 //
+void
+TextPage::copyCert()
+{
+    QMessageBox::information(this,
+                             tr("RetroShare"),
+                             tr("Your Cert is copied to Clipbard, paste and send it to your"
+                                "friend via email, ICQ or some other way"));
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(userCertEdit->toPlainText());                            
+
+}
+//
+//============================================================================
+//
+
 int
 TextPage::nextId() const
 {
