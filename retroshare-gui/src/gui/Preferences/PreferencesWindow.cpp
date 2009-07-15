@@ -40,7 +40,7 @@
 #define IMAGE_SAVE	        ":/images/media-floppy.png"
 #define IMAGE_HELP              ":/images/help24.png"
 #define IMAGE_APPEARRANCE       ":/images/looknfeel.png"
-#define IMAGE_FILE_ASSOTIATIONS ":/images/folder-draft24.png"
+#define IMAGE_FILE_ASSOTIATIONS ":/images/filetype-association.png"
 #define IMAGE_NOTIFY            ":/images/status_unknown.png"
 
 
@@ -74,7 +74,7 @@ PreferencesWindow::PreferencesWindow(QWidget *parent, Qt::WFlags flags)
 
   ui.stackPages->add(new FileAssotiationsDialog(ui.stackPages),
                      createPageAction(QIcon(IMAGE_FILE_ASSOTIATIONS),
-                     tr("File assotiations"), grp));
+                     tr("File Associations"), grp));
 
                      
   
