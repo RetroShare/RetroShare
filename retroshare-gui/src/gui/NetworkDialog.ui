@@ -532,6 +532,10 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionAddFriend">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/user/add_user16.png</normaloff>:/images/user/add_user16.png</iconset>
+   </property>
    <property name="text">
     <string>Add Friend</string>
    </property>
@@ -542,6 +546,10 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionExportKey">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/exportpeers_16x16.png</normaloff>:/images/exportpeers_16x16.png</iconset>
+   </property>
    <property name="text">
     <string>Export My Key</string>
    </property>
