@@ -59,10 +59,13 @@
 #define IMAGE_PEERDETAILS    ":/images/peerdetails_16x16.png"
 #define IMAGE_AUTH           ":/images/encrypted16.png"
 #define IMAGE_MAKEFRIEND     ":/images/user/add_user16.png"
+#define IMAGE_EXPIORT      ":/images/exportpeers_16x16.png"
+
 /* Images for Status icons */
 #define IMAGE_AUTHED         ":/images/accepted16.png"
 #define IMAGE_DENIED         ":/images/denied16.png"
 #define IMAGE_TRUSTED        ":/images/rs-2.png"
+
 
 RsCertId getNeighRsCertId(QTreeWidgetItem *i);
 
@@ -118,7 +121,7 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 	QTreeWidgetItem * headerItem = ui.connecttreeWidget->headerItem();
 	headerItem->setTextAlignment(0, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(1, Qt::AlignHCenter | Qt::AlignVCenter);
-  headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
+	headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(3, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(4, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(5, Qt::AlignHCenter | Qt::AlignVCenter);
@@ -126,15 +129,8 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 	headerItem->setTextAlignment(7, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(8, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(9, Qt::AlignHCenter | Qt::AlignVCenter);
-	
-	/*networkview = new NetworkView(ui.networkviewTab);
-	QVBoxLayout *layout = new QVBoxLayout;
-	layout->addWidget(networkview);
-	ui.networkviewTab->setLayout(layout);
-	layout->setSpacing( 0 );
-	layout->setMargin( 0 );*/
 
-  ui.networkTab->addTab(new NetworkView(),QString(tr("Network View")));
+	ui.networkTab->addTab(new NetworkView(),QString(tr("Network View")));
 	ui.networkTab->addTab(new TrustView(),QString(tr("Trust matrix")));
      
     // Set Log infos
@@ -142,7 +138,11 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     
     setLogInfo(tr("Welcome to RetroShare."), QString::fromUtf8("blue"));
       
-    QMenu *menu = new QMenu(tr("View"));
+    QMenu *menu = new QMenu(tr("Menu"));
+    menu->addAction(ui.actionAddFriend); 
+    //menu->addAction(ui.actionCopyKey);
+    menu->addAction(ui.actionExportKey); 
+    menu->addSeparator();
     menu->addAction(ui.actionTabsright); 
     menu->addAction(ui.actionTabswest);
     menu->addAction(ui.actionTabssouth); 
@@ -217,13 +217,21 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 					connect( deleteCertAct, SIGNAL( triggered() ), this, SLOT( deleteCert() ) );
 					contextMnu.addAction( deleteCertAct );
 				}
+
 #endif
 			}
+		}
+		if (  peer_id == rsPeers->getOwnId())
+		{
+		    exportcertAct = new QAction(QIcon(IMAGE_EXPIORT), tr( "Export my Cert" ), this );
+		    connect( exportcertAct , SIGNAL( triggered() ), this, SLOT( on_actionExportKey_activated() ) );
+		    contextMnu.addAction( exportcertAct);
 		}
 
 		peerdetailsAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Peer details..." ), this );
 		connect( peerdetailsAct , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
 		contextMnu.addAction( peerdetailsAct);
+
 
 		contextMnu.exec( mevent->globalPos() );
 }
@@ -610,6 +618,73 @@ void NetworkDialog::authneighbour()
 	RsAuthId code;
         rsServer->NeighAuthFriend(getNeighRsCertId(c), code);
         */
+}
+
+/** Open a QFileDialog to browse for a pem/pqi file. */
+void NetworkDialog::on_actionAddFriend_activated()
+{
+  /* Create a new input dialog, which allows users to create files, too */
+  QFileDialog *dialog = new QFileDialog(this, tr("Select a pem/pqi File"));
+  //dialog->setDirectory(QFileInfo(ui.lineTorConfig->text()).absoluteDir());
+  //dialog->selectFile(QFileInfo(ui.lineTorConfig->text()).fileName());
+  dialog->setFileMode(QFileDialog::AnyFile);
+  dialog->setReadOnly(false);
+
+  /* Prompt the user to select a file or create a new one */
+  if (!dialog->exec() || dialog->selectedFiles().isEmpty()) {
+    return;
+  }
+  QString filename = QDir::convertSeparators(dialog->selectedFiles().at(0));
+ 
+  /* Check if the file exists */
+  QFile torrcFile(filename);
+  if (!QFileInfo(filename).exists()) {
+    /* The given file does not exist. Should we create it? */
+    int response = VMessageBox::question(this,
+                     tr("File Not Found"),
+                     tr("%1 does not exist. Would you like to create it?")
+                                                            .arg(filename),
+                     VMessageBox::Yes, VMessageBox::No);
+    
+    if (response == VMessageBox::No) {
+      /* Don't create it. Just bail. */
+      return;
+    }
+    /* Attempt to create the specified file */
+    if (!torrcFile.open(QIODevice::WriteOnly)) {
+      VMessageBox::warning(this,
+        tr("Failed to Create File"),
+        tr("Unable to create %1 [%2]").arg(filename)
+                                      .arg(torrcFile.errorString()),
+        VMessageBox::Ok);
+      return;
+    }
+  }
+  //ui.lineTorConfig->setText(filename);
+}
+
+
+void NetworkDialog::on_actionExportKey_activated()
+{
+    qDebug() << "  exportcert";
+
+    QString qdir = QFileDialog::getSaveFileName(this,
+                                                "Please choose a filename",
+                                                QDir::homePath(),
+                                                "RetroShare Certificate (*.pqi)");
+
+    if ( rsPeers->SaveCertificateToFile(rsPeers->getOwnId(), qdir.toStdString()) )
+    {
+        QMessageBox::information(this, tr("RetroShare"),
+                         tr("Certificate file successfully created"),
+                         QMessageBox::Ok, QMessageBox::Ok);
+    }
+    else
+    {
+        QMessageBox::information(this, tr("RetroShare"),
+                         tr("Sorry, certificate file creation failed"),
+                         QMessageBox::Ok, QMessageBox::Ok);
+    }
 }
 
 // Update Log Info information

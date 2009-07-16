@@ -98,7 +98,7 @@ p, li { white-space: pre-wrap; }
          <item row="0" column="3">
           <widget class="QPushButton" name="viewButton">
            <property name="text">
-            <string>View</string>
+            <string>Menu</string>
            </property>
           </widget>
          </item>
@@ -529,6 +529,21 @@ p, li { white-space: pre-wrap; }
   <action name="actionTabsTriangular">
    <property name="text">
     <string>Set Tabs Triangular</string>
+   </property>
+  </action>
+  <action name="actionAddFriend">
+   <property name="text">
+    <string>Add Friend</string>
+   </property>
+  </action>
+  <action name="actionCopyKey">
+   <property name="text">
+    <string>Copy My Key to Clipboard</string>
+   </property>
+  </action>
+  <action name="actionExportKey">
+   <property name="text">
+    <string>Export My Key</string>
    </property>
   </action>
  </widget>

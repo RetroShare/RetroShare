@@ -740,7 +740,7 @@ p, li { white-space: pre-wrap; }
         </size>
        </property>
        <property name="toolTip">
-        <string>Toggle advanced searching on and off.</string>
+        <string>Open advanced searching</string>
        </property>
        <property name="text">
         <string/>
@@ -756,7 +756,7 @@ p, li { white-space: pre-wrap; }
         </size>
        </property>
        <property name="checkable">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>

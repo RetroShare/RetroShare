@@ -68,6 +68,10 @@ private slots:
 
   void authneighbour();
   void addneighbour();
+
+  void on_actionAddFriend_activated();
+  //void on_actionCopyKey_activated();
+  void on_actionExportKey_activated();
   
   void on_actionClearLog_triggered();
   void displayInfoLogMenu(const QPoint& pos);
@@ -101,6 +105,7 @@ private:
   QAction* makefriendAct;
   QAction* authAct;
   QAction* loadcertAct;
+  QAction* exportcertAct;
 
   /* connection dialog */
   ConnectDialog *connectdialog;

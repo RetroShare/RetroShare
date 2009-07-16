@@ -106,7 +106,7 @@ SearchDialog::SearchDialog(QWidget *parent)
         ui.AdvancedSearchPanel->hide();
     }*/
     
-    connect(ui.toggleAdvancedSearchBtn, SIGNAL(toggled(bool)), this, SLOT(toggleAdvancedSearchDialog(bool)));
+    connect(ui.toggleAdvancedSearchBtn, SIGNAL(clicked()), this, SLOT(showAdvSearchDialog()));
     //connect(ui.focusAdvSearchDialogBtn, SIGNAL(clicked()), this, SLOT(showAdvSearchDialog())); 
     
     /* End Advanced Search Panel specifics */
