@@ -96,7 +96,7 @@ SearchDialog::SearchDialog(QWidget *parent)
    
     /* Advanced search panel specifica */
     RshareSettings rsharesettings;
-    QString key (UI_PREF_ADVANCED_SEARCH);
+    /*QString key (UI_PREF_ADVANCED_SEARCH);
     bool useAdvanced = rsharesettings.value(key, QVariant(false)).toBool();
     if (useAdvanced)
     {
@@ -104,10 +104,10 @@ SearchDialog::SearchDialog(QWidget *parent)
         ui.SimpleSearchPanel->hide();
     } else {
         ui.AdvancedSearchPanel->hide();
-    }
+    }*/
     
     connect(ui.toggleAdvancedSearchBtn, SIGNAL(toggled(bool)), this, SLOT(toggleAdvancedSearchDialog(bool)));
-    connect(ui.focusAdvSearchDialogBtn, SIGNAL(clicked()), this, SLOT(showAdvSearchDialog())); 
+    //connect(ui.focusAdvSearchDialogBtn, SIGNAL(clicked()), this, SLOT(showAdvSearchDialog())); 
     
     /* End Advanced Search Panel specifics */
 
@@ -501,6 +501,7 @@ void SearchDialog::searchKeywords()
 
         /* abstraction to allow reusee of tree rendering code */
         resultsToTree(txt, *finalResults);
+	ui.lineEdit->clear();
 }
  
 void SearchDialog::resultsToTree(std::string txt, std::list<FileDetail> results)
