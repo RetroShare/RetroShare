@@ -1,6 +1,21 @@
 Changes for v0.4.13d
 
-*
+* Added show Friends RS version on peer details panel
+* Added download of whole directory from gui
+* Added Add Friend and Export Cert to Menu Button
+* Added Export Cert to Network Dialog Context menu
+* Added a Security Page for Options to View, Copy and Export own Public Key.
+* Added checkbox for group chat in Notify Options.
+* Added Copy Cert to Clipboard functionality for ConnectWizard.
+* Added alert chat window when a new message was arrived
+* Added systray notification for group chat
+* Fixed proper update of shared list when list is modiffied from a different place
+* Changend default name for finished downloads directory was changed from Downloads to Incoming
+* Added share of incoming directory by default
+* Added storing Network Tab Position
+* Added for Check files button to change text when checking files
+* Change on the Timers of Network Menu that weren't wroking properlly
+* Fixed the context menu position of the Netwok Log
 * Fixed Bug - right click on local shared list won't abort the app
 * Fixed Bug for gpg connections.
 * Added open file/folder actions in local sharedfiles dialog
