@@ -5,8 +5,8 @@
  *      Author: alexandrut
  */
 
-#ifndef RSVERSIONXX_H_
-#define RSVERSIONXX_H_
+#ifndef RSVERSION_H_
+#define RSVERSION_H_
 
 #include <string>
 

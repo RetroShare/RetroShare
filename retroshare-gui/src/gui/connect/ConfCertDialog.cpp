@@ -15,13 +15,14 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 #include "ConfCertDialog.h"
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
+#include "rsiface/rsdisc.h"
 
 #include <QTime>
 
@@ -47,7 +48,7 @@ ConfCertDialog::ConfCertDialog(QWidget *parent, Qt::WFlags flags)
   connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(closeinfodlg()));
   connect(ui._makeFriendPB, SIGNAL(clicked()), this, SLOT(makeFriend()));
 
- 
+
   ui.applyButton->setToolTip(tr("Apply and Close"));
 }
 
@@ -60,7 +61,7 @@ void ConfCertDialog::show(const std::string& peer_id)
 }
 
 
-/** 
+/**
  Overloads the default show() slot so we can set opacity*/
 
 void
@@ -99,7 +100,7 @@ void ConfCertDialog::loadDialog()
 		/* fail */
 		return;
 	}
-	
+
 	ui.name->setText(QString::fromStdString(detail.name));
 	ui.orgloc->setText(QString::fromStdString(detail.org));
 	ui.country->setText(QString::fromStdString(detail.location));
@@ -108,7 +109,16 @@ void ConfCertDialog::loadDialog()
 	QDateTime date = QDateTime::fromTime_t(detail.lastConnect);
 	QString stime = date.toString(Qt::LocalDate);
         ui.lastcontact-> setText(stime);
-	
+
+    /* set retroshare version */
+    std::map<std::string, std::string>::iterator vit;
+    std::map<std::string, std::string> versions;
+	bool retv = rsDisc->getDiscVersions(versions);
+	if (retv && versions.end() != (vit = versions.find(detail.id)))
+	{
+		ui.version->setText(QString("v") + QString::fromStdString(vit->second));
+	}
+
 	/* set local address */
 	ui.localAddress->setText(QString::fromStdString(detail.localAddr));
 	ui.localPort -> setValue(detail.localPort);
@@ -124,7 +134,7 @@ void ConfCertDialog::loadDialog()
 	//ui.chkForwarded ->setChecked(ni->forwardPort);
 	//ui.chkFirewall  ->setChecked(0);
 	//ui.chkForwarded ->setChecked(0);
-	
+
 	//ui.indivRate->setValue(0);
 
 	//ui.trustLvl->setText(QString::fromStdString(RsPeerTrustString(detail.trustLvl)));
@@ -153,7 +163,7 @@ void ConfCertDialog::applyDialog()
 		/* fail */
 		return;
 	}
-	
+
 	/* check if the data is the same */
 	bool localChanged = false;
 	bool extChanged = false;
@@ -170,7 +180,7 @@ void ConfCertDialog::applyDialog()
 
 	if (detail.ownsign)
 	{
-		if (ui._peerAcceptedCB->isChecked() != ((detail.state & RS_PEER_STATE_FRIEND) > 0)) 
+		if (ui._peerAcceptedCB->isChecked() != ((detail.state & RS_PEER_STATE_FRIEND) > 0))
 			trustChanged = true;
 	}
 	else if (ui.signBox->isChecked())
@@ -206,7 +216,7 @@ void ConfCertDialog::applyDialog()
 
 	/* reload now */
 	loadDialog();
-	
+
 	/* close the Dialog after the Changes applied */
 	closeinfodlg();
 
@@ -224,7 +234,7 @@ void ConfCertDialog::makeFriend()
 }
 
 #if 0
-void ConfCertDialog::setInfo(std::string name, 
+void ConfCertDialog::setInfo(std::string name,
 				std::string trust,
 				std::string org,
 				std::string loc,
@@ -240,4 +250,4 @@ void ConfCertDialog::setInfo(std::string name,
 }
 #endif
 
-		     
+
