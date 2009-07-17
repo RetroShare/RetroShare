@@ -32,6 +32,7 @@
 #include "AppearanceDialog.h"
 #include "NotifyDialog.h"
 #include "FileAssotiationsDialog.h"
+#include "SoundDialog.h"
 #include "gui/help/browser/helpbrowser.h"
 #include <gui/common/rwindow.h>
 
@@ -46,12 +47,13 @@ public:
   /** Preferences dialog pages. */
   enum Page {
     General 	  	= 0,  /** Preferences page. */
-    Server,  			  /** Server page. */
-    Directories,           /** Directories page. */
-    Appearance,				/** Appearance page. */
-    Notify,				/** Notify page. */
-    Security,				/** Security page. */
-    FileAssotiations    /** File assotiations page. */
+    Server,  			      /** Server page. */
+    Directories,        /** Directories page. */
+    Appearance,				  /** Appearance page. */
+    Notify,				      /** Notify page. */
+    Security,				    /** Security page. */
+    FileAssotiations,   /** File assotiations page. */
+    Sound               /** Sound page. */
   };
 
   /** Default Constructor */

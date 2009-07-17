@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools release # pluginmgr debug
+CONFIG += qt gui uic qrc resources uitools debug # pluginmgr release
 QT     += network xml script 
 TEMPLATE = app
 TARGET = RetroShare
@@ -75,7 +75,7 @@ LIBS += -L"../../../../lib" -lretroshare -lminiupnpc -lssl -lcrypto
 
 # ###########################################
 
-LIBS += -lz -lgpgme
+LIBS += -lz #-lgpgme
 LIBS += -lQtUiTools
 
 DEPENDPATH += . \
@@ -139,6 +139,7 @@ HEADERS +=  rshare.h \
             gui/SharedFilesDialog.h \
             gui/ShareManager.h \
             gui/StatisticDialog.h \
+            gui/SoundManager.h \
             gui/HelpDialog.h \
             gui/LogoBar.h \
             gui/xprogressbar.h \
@@ -191,6 +192,7 @@ HEADERS +=  rshare.h \
             gui/Preferences/rsettings.h \
             gui/Preferences/FileAssotiationsDialog.h \
             gui/Preferences/AddFileAssotiationDialog.h \
+            gui/Preferences/SoundDialog.h \          
             gui/toaster/MessageToaster.h \
             gui/toaster/OnlineToaster.h \
             gui/toaster/ChatToaster.h \
@@ -289,7 +291,8 @@ FORMS +=    gui/BlogDialog.ui \
             gui/Preferences/GeneralDialog.ui \
             gui/Preferences/PreferencesWindow.ui \
             gui/Preferences/ServerDialog.ui \
-            gui/Preferences/NotifyDialog.ui \          
+            gui/Preferences/NotifyDialog.ui \
+            gui/Preferences/SoundDialog.ui \                    
             gui/Preferences/ConfirmQuitDialog.ui \
             gui/toaster/CallToaster.ui \
             gui/toaster/ChatToaster.ui \
@@ -355,6 +358,7 @@ SOURCES +=  main.cpp \
             gui/SharedFilesDialog.cpp \
             gui/ShareManager.cpp \
             gui/StatisticDialog.cpp \
+            gui/SoundManager.cpp \
             gui/MessagesDialog.cpp \
             gui/MessagesPopupDialog.cpp \
             gui/im_history/IMHistoryKeeper.cpp        \
@@ -401,6 +405,7 @@ SOURCES +=  main.cpp \
             gui/Preferences/rsettings.cpp \
             gui/Preferences/FileAssotiationsDialog.cpp   \
             gui/Preferences/AddFileAssotiationDialog.cpp \
+            gui/Preferences/SoundDialog.cpp \          
             gui/common/vmessagebox.cpp \
             gui/common/rwindow.cpp \ 
             gui/common/html.cpp \ 

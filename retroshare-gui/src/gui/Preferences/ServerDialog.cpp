@@ -275,10 +275,10 @@ void ServerDialog::toggleUPnP()
 		//ui.discComboBox->setEnabled(true);
 		ui.discComboBox->setEnabled(false);
 
-		ui.localAddress->setEnabled(false);
-		ui.localPort  -> setEnabled(true);
-		ui.extAddress -> setEnabled(false);
-		ui.extPort    -> setEnabled(true);
+		ui.localAddress->setReadOnly (true);
+		ui.localPort  -> setEnabled (true);
+		ui.extAddress -> setReadOnly (true);
+		ui.extPort    -> setEnabled (true);
 	}
 	else
 	{

@@ -32,16 +32,17 @@
 
 /* Images for toolbar icons */
 #define IMAGE_PREFERENCES       ":/images/kcmsystem24.png"
-#define IMAGE_SERVER        	":/images/server_24x24.png"
-#define IMAGE_DIRECTORIES    	":/images/folder_doments.png"
+#define IMAGE_SERVER        	  ":/images/server_24x24.png"
+#define IMAGE_DIRECTORIES    	  ":/images/folder_doments.png"
 #define IMAGE_CRYPTOGRAPHY      ":/images/encrypted32.png"
-#define IMAGE_LOG   		":/images/log_24x24.png"
-#define IMAGE_ABOUT 		":/images/informations_24x24.png"
-#define IMAGE_SAVE	        ":/images/media-floppy.png"
+#define IMAGE_LOG   		        ":/images/log_24x24.png"
+#define IMAGE_ABOUT 		        ":/images/informations_24x24.png"
+#define IMAGE_SAVE	            ":/images/media-floppy.png"
 #define IMAGE_HELP              ":/images/help24.png"
 #define IMAGE_APPEARRANCE       ":/images/looknfeel.png"
 #define IMAGE_FILE_ASSOTIATIONS ":/images/filetype-association.png"
 #define IMAGE_NOTIFY            ":/images/status_unknown.png"
+#define IMAGE_SOUND             ":/images/sound.png"
 
 
 
@@ -75,7 +76,11 @@ PreferencesWindow::PreferencesWindow(QWidget *parent, Qt::WFlags flags)
   ui.stackPages->add(new FileAssotiationsDialog(ui.stackPages),
                      createPageAction(QIcon(IMAGE_FILE_ASSOTIATIONS),
                      tr("File Associations"), grp));
-
+#ifdef RS_RELEASE_VERSION    
+#else                      
+  ui.stackPages->add(new SoundDialog(ui.stackPages),
+                     createPageAction(QIcon(IMAGE_SOUND), tr("Sound"), grp));                   
+#endif
                      
   
   /*foreach (ConfigPage *page, ui.stackPages->pages()) {
@@ -94,7 +99,6 @@ PreferencesWindow::PreferencesWindow(QWidget *parent, Qt::WFlags flags)
 
   /* Select the first action */
   grp->actions()[0]->setChecked(true);
-//  setFixedSize(QSize(480, 450));
   
    connect(ui.okButton, SIGNAL(clicked( bool )), this, SLOT( saveChanges()) );
    connect(ui.cancelprefButton, SIGNAL(clicked( bool )), this, SLOT( cancelpreferences()) );
