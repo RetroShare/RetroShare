@@ -69,6 +69,7 @@ virtual QStringList mimeTypes () const;
  private:
      void update (const QModelIndex &index );
      void treeStyle();
+     void downloadDirectory(const DirDetails & details, int prefixLen);
 
      QIcon categoryIcon;
      QIcon peerIcon;
