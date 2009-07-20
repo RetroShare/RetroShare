@@ -308,6 +308,11 @@ int	pqistreamer::queue_outpqi(RsItem *pqi)
 	// This is called by different threads, and by threads that are not the handleoutgoing thread,
 	// so it should be protected by a mutex !!
 	
+	if(dynamic_cast<RsFileData*>(pqi)!=NULL && (bio_flags & BIN_FLAGS_NO_DELETE))
+	{
+		std::cerr << "Having file data with flags = " << bio_flags << std::endl ;
+		*(int*)0x0=1 ;
+	}
 
         {
 	  std::ostringstream out;
@@ -642,8 +647,7 @@ continue_packet:
 		{
 			void *extradata = (void *) (((char *) block) + blen);
 			int tmplen ;
-		memset((void*)( &(((unsigned char *)block)[blen])),0,extralen) ;	// reset the block, to avoid uninitialized memory reads.
-
+//			memset((void*)( &(((unsigned char *)block)[blen])),0,extralen) ;	// reset the block, to avoid uninitialized memory reads.
 			memset( extradata,0,extralen ) ;	// for checking later
 
 			if (extralen != (tmplen = bio->readdata(extradata, extralen)))
@@ -720,13 +724,13 @@ continue_packet:
 		uint32_t pktlen = blen+extralen ;
 //		std::cerr << "deserializing. Size=" << pktlen << std::endl ;
 
-		if(pktlen == 17306)
-		{
-			FILE *f = fopen("dbug.packet.bin","w");
-			fwrite(block,pktlen,1,f) ;
-			fclose(f) ;
-			exit(-1) ;
-		}
+//		if(pktlen == 17306)
+//		{
+//			FILE *f = fopen("dbug.packet.bin","w");
+//			fwrite(block,pktlen,1,f) ;
+//			fclose(f) ;
+//			exit(-1) ;
+//		}
 		RsItem *pkt = rsSerialiser->deserialise(block, &pktlen);
 
 		if ((pkt != NULL) && (0  < handleincomingitem(pkt)))
