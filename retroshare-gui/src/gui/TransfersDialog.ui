@@ -507,7 +507,7 @@
     <number>6</number>
    </property>
    <property name="topMargin">
-    <number>1</number>
+    <number>6</number>
    </property>
    <property name="rightMargin">
     <number>6</number>
@@ -578,6 +578,7 @@ p, li { white-space: pre-wrap; }
         <widget class="QTreeView" name="downloadList">
          <property name="font">
           <font>
+           <family>Arial</family>
            <pointsize>9</pointsize>
           </font>
          </property>
@@ -636,6 +637,7 @@ p, li { white-space: pre-wrap; }
         <widget class="QTreeView" name="uploadsList">
          <property name="font">
           <font>
+           <family>Arial</family>
            <pointsize>9</pointsize>
           </font>
          </property>

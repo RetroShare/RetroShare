@@ -66,7 +66,10 @@ private slots:
   void sendLinkTo();
   void sendremoteLinkTo();
 
-  //void showFrame(bool show);
+  void showFrame(bool show);
+  void showFrameRemote(bool show);
+  void showFrameSplitted(bool show);
+
 
 
 //  void recommendfile();

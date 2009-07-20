@@ -82,7 +82,10 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 
   connect(ui.checkButton, SIGNAL(clicked()), this, SLOT(forceCheck()));
 
-  //connect(ui.frameButton, SIGNAL(toggled(bool)), this, SLOT(showFrame(bool)));
+  connect(ui.localButton, SIGNAL(toggled(bool)), this, SLOT(showFrame(bool)));
+  connect(ui.remoteButton, SIGNAL(toggled(bool)), this, SLOT(showFrameRemote(bool)));
+  connect(ui.splittedButton, SIGNAL(toggled(bool)), this, SLOT(showFrameSplitted(bool)));
+
 
   connect( ui.localDirTreeView, SIGNAL( customContextMenuRequested( QPoint ) ),
            this,            SLOT( sharedDirTreeWidgetContextMenu( QPoint ) ) );
@@ -687,20 +690,46 @@ SharedFilesDialog::tryToAddNewAssotiation()
 
 //============================================================================
 /**
- Toggles the Lokal TreeView on and off, changes toggle button text
+ Toggles the Splitted, Remote and Local View on and off*/
 
 void SharedFilesDialog::showFrame(bool show)
 {
     if (show) {
-        ui.frame->setVisible(true);
-        ui.frameButton->setChecked(true);
-        ui.frameButton->setToolTip(tr("Hide Lokal Direrectories"));
-        ui.frameButton->setIcon(QIcon(tr(":images/hide_toolbox_frame.png")));
-    } else {
-        ui.frame->setVisible(false);
-        ui.frameButton->setChecked(false);
-        ui.frameButton->setToolTip(tr("Show Lokal Directories"));
-        ui.frameButton->setIcon(QIcon(tr(":images/show_toolbox_frame.png")));
-    }
-}*/
+        ui.localframe->setVisible(true);
+        ui.remoteframe->setVisible(false);
+        
+        ui.localButton->setChecked(true);
+        
+        ui.remoteButton->setChecked(false);
+        ui.splittedButton->setChecked(false);
 
+    } 
+}
+
+void SharedFilesDialog::showFrameRemote(bool show)
+{
+    if (show) {
+        ui.remoteframe->setVisible(true);
+        ui.localframe->setVisible(false);
+        
+        ui.remoteButton->setChecked(true);
+        ui.localButton->setChecked(false);
+        ui.splittedButton->setChecked(false);
+
+
+    } 
+}
+
+void SharedFilesDialog::showFrameSplitted(bool show)
+{
+    if (show) {
+        ui.remoteframe->setVisible(true);
+        ui.localframe->setVisible(true);
+        
+        ui.splittedButton->setChecked(true);
+        
+        ui.localButton->setChecked(false);        
+        ui.remoteButton->setChecked(false);
+        
+    } 
+}
