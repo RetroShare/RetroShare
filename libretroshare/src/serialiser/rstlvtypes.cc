@@ -145,8 +145,10 @@ bool     RsTlvBinaryData::SetTlv(void *data, uint32_t size, uint32_t *offset) /*
 	{
 		memcpy(&(((uint8_t *) data)[*offset]), bin_data, bin_len);
 		*offset += bin_len;
+		return true;
 	}
-	return ok;
+	else
+		return false ;
 }
 
 
