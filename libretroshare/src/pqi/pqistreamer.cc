@@ -659,8 +659,10 @@ continue_packet:
 
 			if (extralen != (tmplen = bio->readdata(extradata, extralen)))
 			{
+#ifdef DEBUG_PQISTREAMER
 				if(tmplen > 0)
 					std::cerr << "[" << (void*)pthread_self() << "] " << "Incomplete packet read ! This is a real problem ;-)" << std::endl ;
+#endif
 
 				if(++failed_read_attempts > max_failed_read_attempts)
 				{
