@@ -702,7 +702,8 @@ void SharedFilesDialog::showFrame(bool show)
         
         ui.remoteButton->setChecked(false);
         ui.splittedButton->setChecked(false);
-
+        
+        ui.labeltext->setText(tr("<strong>My Shared Files</strong>"));
     } 
 }
 
@@ -716,7 +717,7 @@ void SharedFilesDialog::showFrameRemote(bool show)
         ui.localButton->setChecked(false);
         ui.splittedButton->setChecked(false);
 
-
+        ui.labeltext->setText(tr("<strong>Friends Files</strong>"));
     } 
 }
 
@@ -731,5 +732,6 @@ void SharedFilesDialog::showFrameSplitted(bool show)
         ui.localButton->setChecked(false);        
         ui.remoteButton->setChecked(false);
         
+        ui.labeltext->setText(tr("<strong>Files</strong>"));
     } 
 }
