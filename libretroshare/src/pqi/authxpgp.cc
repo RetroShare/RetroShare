@@ -139,6 +139,10 @@ static  int initLib = 0;
 	// setup cipher lists.
 	SSL_CTX_set_cipher_list(sslctx, "DEFAULT");
 
+	// setup flag against read errors
+//	SSL_CTX_set_mode(sslctx,SSL_MODE_AUTO_RETRY);
+//	SSL_CTX_set_mode(sslctx,SSL_MODE_ENABLE_PARTIAL_WRITE) ;
+
 	// certificates (Set Local Server Certificate).
 	FILE *ownfp = fopen(cert_file, "r");
 	if (ownfp == NULL)

@@ -181,6 +181,7 @@ virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd)
 
 	void *readpkt;
 	int pktlen;
+	int total_len ; // saves the reading state accross successive calls.
 
 	int attempt_ts;
 

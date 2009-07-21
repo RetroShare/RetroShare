@@ -235,6 +235,7 @@ int 	pqissl::reset()
 	ssl_connection = NULL;
 	sameLAN = false;
 	n_read_zero = 0;
+	total_len = 0 ;
 
 	if (neededReset)
 	{
@@ -1341,6 +1342,9 @@ int 	pqissl::senddata(void *data, int len)
 {
 	int tmppktlen ;
 
+#ifdef DEBUG_PQISSL
+	std::cout << "Sending data thread=" << pthread_self() << ", ssl=" << (void*)this << ", size=" << len << std::endl ;
+#endif
 	tmppktlen = SSL_write(ssl_connection, data, len) ;
 
 	if (len != tmppktlen)
@@ -1401,7 +1405,9 @@ int 	pqissl::senddata(void *data, int len)
 
 int 	pqissl::readdata(void *data, int len)
 {
-	int total_len = 0 ;
+#ifdef DEBUG_PQISSL
+	std::cout << "Reading data thread=" << pthread_self() << ", ssl=" << (void*)this << std::endl ;
+#endif
 
 	// There is a do, because packets can be splitted into multiple ssl buffers
 	// when they are larger than 16384 bytes. Such packets have to be read in 
@@ -1410,7 +1416,22 @@ int 	pqissl::readdata(void *data, int len)
 	{
 		int tmppktlen  ;
 
+#ifdef DEBUG_PQISSL
+		std::cerr << "calling SSL_read. len=" << len << ", total_len=" << total_len << std::endl ;
+#endif
 		tmppktlen = SSL_read(ssl_connection, (void*)((unsigned long int)data+(unsigned long int)total_len), len-total_len) ;
+#ifdef DEBUG_PQISSL
+		std::cerr << "have read " << tmppktlen << " bytes" << std::endl ;
+		std::cerr << "data[0] = " 
+			<< (int)((uint8_t*)data)[0] << " "
+			<< (int)((uint8_t*)data)[1] << " "
+			<< (int)((uint8_t*)data)[2] << " "
+			<< (int)((uint8_t*)data)[3] << " "
+			<< (int)((uint8_t*)data)[4] << " "
+			<< (int)((uint8_t*)data)[5] << " "
+			<< (int)((uint8_t*)data)[6] << " "
+			<< (int)((uint8_t*)data)[7] << std::endl ;
+#endif
 
 		// Need to catch errors.....
 		//
@@ -1501,6 +1522,10 @@ int 	pqissl::readdata(void *data, int len)
 			total_len+=tmppktlen ;
 	} while(total_len < len) ;
 
+#ifdef DEBUG_PQISSL
+	std::cerr << "pqissl: have read data of length " << total_len << ", expected is " << len << std::endl ;
+#endif
+
 	if (len != total_len)
 	{
 		std::ostringstream out;
@@ -1511,6 +1536,7 @@ int 	pqissl::readdata(void *data, int len)
 		std::cerr << out.str() ;
 		rslog(RSL_WARNING, pqisslzone, out.str());
 	}
+	total_len = 0 ;		// reset the packet pointer as we have finished a packet.
 	n_read_zero = 0;
 	return len;//tmppktlen;
 }
