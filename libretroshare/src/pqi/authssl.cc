@@ -792,6 +792,11 @@ std::string AuthSSL::getIssuerName(std::string id)
 
 	sslMtx.unlock(); /**** UNLOCK ****/
 
+#ifdef AUTHSSL_DEBUG
+	std::cerr << "AuthSSL::getIssuerName() => " << issuer;
+	std::cerr << std::endl;
+#endif
+
 	return issuer;
 }
 

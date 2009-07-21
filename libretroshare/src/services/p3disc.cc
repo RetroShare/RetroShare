@@ -25,6 +25,7 @@
 
 
 #include "rsiface/rsiface.h"
+#include "rsiface/rsinit.h" /* for PGPSSL flag */
 #include "rsiface/rspeers.h"
 #include "services/p3disc.h"
 
@@ -67,6 +68,7 @@ const uint32_t P3DISC_FLAGS_ASK_VERSION		= 0x0080;
 /*****
  * #define P3DISC_DEBUG 	1
  ****/
+#define P3DISC_DEBUG 	1
 
 /*********** NOTE ***************
  *
@@ -717,6 +719,8 @@ void p3disc::recvPeerIssuerMsg(RsDiscIssuer *item)
 
 #ifdef P3DISC_DEBUG
 	std::cerr << "p3disc::recvPeerIssuerMsg() From: " << item->PeerId();
+	std::cerr << std::endl;
+	std::cerr << "p3disc::recvPeerIssuerMsg() Cert: " << item->issuerCert;
 	std::cerr << std::endl;
 #endif
 

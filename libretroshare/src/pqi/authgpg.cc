@@ -1411,12 +1411,15 @@ std::string GPGAuthMgr::SaveCertificateToString(std::string id)
 
 	if (!isPGPValid(id))
 	{
+		std::cerr << "GPGAuthMgr::SaveCertificateToString() Id is Not PGP" << std::endl;
 		/* check if it is a SSL Certificate */
 		if (isValid(id))
 		{
+			std::cerr << "GPGAuthMgr::SaveCertificateToString() is SSLID!" << std::endl;
 			std::string sslcert = AuthSSL::SaveCertificateToString(id);
 			return sslcert;
 		}
+		std::cerr << "GPGAuthMgr::SaveCertificateToString() unknown ID" << std::endl;
 		std::string emptystr;
 		return emptystr;
 	}
@@ -1449,6 +1452,11 @@ std::string GPGAuthMgr::SaveCertificateToString(std::string id)
 	size_t len = 0; 
 	char *export_txt = gpgme_data_release_and_get_mem(gpgmeData, &len);
 	tmp = std::string(export_txt);
+
+	std::cerr << "Exported Certificate: ";
+	std::cerr << std::endl;
+	std::cerr << tmp;
+	std::cerr << std::endl;
 
 	gpgme_free(export_txt);
 
