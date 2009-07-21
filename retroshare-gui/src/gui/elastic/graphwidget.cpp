@@ -99,6 +99,7 @@ bool GraphWidget::clearGraph()
 
     nodeMap.clear();
     edgeList.clear();
+    arrowList.clear();
 
     return true;
 }

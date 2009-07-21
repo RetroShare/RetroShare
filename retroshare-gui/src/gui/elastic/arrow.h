@@ -55,7 +55,7 @@ public:
 
     void adjust();
 
-    enum { Type = UserType + 2 };
+    enum { Type = UserType + 3 };
     int type() const { return Type; }
     
 protected:
