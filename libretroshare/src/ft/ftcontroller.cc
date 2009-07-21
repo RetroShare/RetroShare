@@ -735,16 +735,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 
   { RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-    /* extension added to partial name to made
-     * possible preview of partial files from gui */
-	std::string ext = "";
-	int pos = fname.find_last_of('.');
-	if (pos > 0) /* don't apply for hidden files with no extension */
-	{
-		ext = fname.substr(pos);
-	}
-
-	savepath = mPartialsPath + "/" + hash + ext;
+	savepath = mPartialsPath + "/" + fname;
 	destination = dest + "/" + fname;
 
 	/* if no destpath - send to download directory */
