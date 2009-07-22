@@ -1,4 +1,4 @@
- <RCC>
+<RCC>
     <qresource prefix="/" >
         <file>help/authors.html</file>
         <file>help/licence.html</file>
@@ -53,7 +53,7 @@
         <file>images/avatar_background.png</file>
         <file>images/backgroundimage.png</file>
         <file>images/button_cancel.png</file>
-	      <file>images/calendar.png</file>
+        <file>images/calendar.png</file>
         <file>images/chat.png</file>
         <file>images/chat/bar_end.png</file>
         <file>images/chat/bar_fill.png</file>
@@ -221,15 +221,15 @@
         <file>images/mail_get.png</file>
         <file>images/mail_reply.png</file>
         <file>images/mail_replyall.png</file>
-	      <file>images/mail_forward.png</file>
+        <file>images/mail_forward.png</file>
         <file>images/mail_send.png</file>
         <file>images/mail_new.png</file>
         <file>images/mail_send24.png</file>
         <file>images/mailforward24-hover.png</file>
         <file>images/message-mail.png</file>
         <file>images/message-mail-read.png</file>
-	      <file>images/message-mail-imapdelete.png</file>
-	      <file>images/message-mail-replied-read.png</file>
+        <file>images/message-mail-imapdelete.png</file>
+        <file>images/message-mail-replied-read.png</file>
         <file>images/message-news.png</file>
         <file>images/message.png</file>
         <file>images/messenger.png</file>
@@ -383,59 +383,58 @@
         <file>qss/over/greentop.png</file>
         <file>qss/silver.qss</file>
         <file>qss/silver/silver.png</file>
-		  <file>qss/skin2.qss</file>
-		  <file>qss/skin2/background.png</file>
-		  <file>qss/chat/default.htm</file>
-		  <file>qss/chat/default.css</file>
-		  <file>qss/chat/second.htm</file>
-		  <file>qss/chat/second.css</file>
-		  <file>qss/chat/second.css</file>
-		  <file>smileys/angry.png</file>
-		  <file>smileys/beer.png</file>
-		  <file>smileys/cake.png</file>
-		  <file>smileys/camera.png</file>
-		  <file>smileys/cat.png</file>
-		  <file>smileys/clock.png</file>
-		  <file>smileys/cloudy.png</file>
-		  <file>smileys/coffee.png</file>
-		  <file>smileys/cool.png</file>
-		  <file>smileys/crying.png</file>
-		  <file>smileys/face-devil-grin48.png</file>
-		  <file>smileys/in-love.png</file>
-		  <file>smileys/island.png</file>
-		  <file>smileys/kissing.png</file>
-		  <file>smileys/laugh.png</file>
-		  <file>smileys/liquor.png</file>
-		  <file>smileys/lol.png</file>
-		  <file>smileys/love-over.png</file>
-		  <file>smileys/love.png</file>
-		  <file>smileys/mobile.png</file>
-		  <file>smileys/moneyeyes.png</file>
-		  <file>smileys/moon.png</file>
-		  <file>smileys/party.png</file>
-		  <file>smileys/peace.png</file>
-		  <file>smileys/phone.png</file>
-		  <file>smileys/pirate.png</file>
-		  <file>smileys/pizza.png</file>
-		  <file>smileys/pouty.png</file>
-		  <file>smileys/pumpkin.png</file>
-		  <file>smileys/rain.png</file>
-		  <file>smileys/rotfl.png</file>
-		  <file>smileys/sad.png</file>
-		  <file>smileys/smile.png</file>
-		  <file>smileys/surprised.png</file>
-		  <file>smileys/thunder.png</file>
-		  <file>smileys/tongue.png</file>
-		  <file>smileys/umbrella.png</file>
-		  <file>smileys/wink.png</file>
-		  <file>smileys/wondering.png</file>
-		  <file>smileys/emotes.acs</file>
-
+        <file>qss/skin2.qss</file>
+        <file>qss/skin2/background.png</file>
+        <file>qss/chat/default.htm</file>
+        <file>qss/chat/default.css</file>
+        <file>qss/chat/second.htm</file>
+        <file>qss/chat/second.css</file>
+        <file>qss/chat/second.css</file>
+        <file>smileys/angry.png</file>
+        <file>smileys/beer.png</file>
+        <file>smileys/cake.png</file>
+        <file>smileys/camera.png</file>
+        <file>smileys/cat.png</file>
+        <file>smileys/clock.png</file>
+        <file>smileys/cloudy.png</file>
+        <file>smileys/coffee.png</file>
+        <file>smileys/cool.png</file>
+        <file>smileys/crying.png</file>
+        <file>smileys/face-devil-grin48.png</file>
+        <file>smileys/in-love.png</file>
+        <file>smileys/island.png</file>
+        <file>smileys/kissing.png</file>
+        <file>smileys/laugh.png</file>
+        <file>smileys/liquor.png</file>
+        <file>smileys/lol.png</file>
+        <file>smileys/love-over.png</file>
+        <file>smileys/love.png</file>
+        <file>smileys/mobile.png</file>
+        <file>smileys/moneyeyes.png</file>
+        <file>smileys/moon.png</file>
+        <file>smileys/party.png</file>
+        <file>smileys/peace.png</file>
+        <file>smileys/phone.png</file>
+        <file>smileys/pirate.png</file>
+        <file>smileys/pizza.png</file>
+        <file>smileys/pouty.png</file>
+        <file>smileys/pumpkin.png</file>
+        <file>smileys/rain.png</file>
+        <file>smileys/rotfl.png</file>
+        <file>smileys/sad.png</file>
+        <file>smileys/smile.png</file>
+        <file>smileys/surprised.png</file>
+        <file>smileys/thunder.png</file>
+        <file>smileys/tongue.png</file>
+        <file>smileys/umbrella.png</file>
+        <file>smileys/wink.png</file>
+        <file>smileys/wondering.png</file>
+        <file>smileys/emotes.acs</file>
         <file>images/connect/connectFriendWatermark.png</file>
         <file>images/connect/connectFriendLogo.png</file>
         <file>images/connect/connectFriendBanner.png</file>
         <file>images/connect/info16.png</file>
         <file>images/connect/mail_send.png</file>
-
-	  </qresource>
+        <file>help/version.html</file>
+    </qresource>
 </RCC>

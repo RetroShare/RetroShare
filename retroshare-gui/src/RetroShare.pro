@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools debug # pluginmgr release
+CONFIG += qt gui uic qrc resources uitools debug # pluginmgr release version_detail_linux
 QT     += network xml script 
 TEMPLATE = app
 TARGET = RetroShare
@@ -19,6 +19,28 @@ linux-g++-64 {
 	QMAKE_LFLAGS += -L"../../../../lib/linux-g++-64"
 }
 
+version_detail_linux {
+	system(echo "" > gui/help/version.html)
+	system(ls /usr/bin/git) {
+	    system(/usr/bin/git log) {
+		#retrieve git commit
+		system(echo "Git version : " >> gui/help/version.html)
+		system(git log -n 1 | grep commit >> gui/help/version.html)
+		system(git log -n 1 | grep svn >> gui/help/version.html)
+		system(git status | grep branch >> gui/help/version.html)
+		system(echo "" >> gui/help/version.html)
+		system(echo "" >> gui/help/version.html)
+	    }
+	}
+
+	system(ls /usr/bin/svn) {
+	    system(/usr/bin/svn info) {
+		#retrieve svn revision
+		system(echo "Svn version : " >> gui/help/version.html)
+		system(svn info | head -n 5 | head -n 5 | tail -1 >> gui/help/gitversion.txt)
+	    }
+	}
+}
 #################### Cross compilation for windows under Linux ###################
 
 win32-x-g++ {

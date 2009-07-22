@@ -60,9 +60,15 @@ HelpDialog::HelpDialog(QWidget *parent)
   QFile thanksFile(QLatin1String(":/help/thanks.html"));
    if (thanksFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QTextStream in(&thanksFile);
-        ui.thanks->setText(in.readAll());
+	ui.thanks->setText(in.readAll());
    }
-   
+
+  QFile versionFile(QLatin1String(":/help/version.html"));
+   if (versionFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+	QTextStream in(&versionFile);
+	ui.version->setText(in.readAll());
+   }
+
    ui.label_2->setMinimumWidth(20);
 
 
