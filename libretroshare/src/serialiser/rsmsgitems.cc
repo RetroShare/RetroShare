@@ -67,6 +67,16 @@ std::ostream& RsChatStatusItem::print(std::ostream &out, uint16_t indent)
 	return out;
 }
 
+std::ostream& RsChatAvatarItem::print(std::ostream &out, uint16_t indent)
+{
+	printRsItemBase(out, "RsChatAvatarItem", indent);
+	uint16_t int_Indent = indent + 2;
+	printIndent(out, int_Indent);
+	out << "Image size: " << image_size << std::endl;
+	printRsItemEnd(out, "RsChatStatusItem", indent);
+
+	return out;
+}
 RsItem *RsChatSerialiser::deserialise(void *data, uint32_t *pktsize)
 {
 	uint32_t rstype = getRsItemId(data);
@@ -101,6 +111,7 @@ RsItem *RsChatSerialiser::deserialise(void *data, uint32_t *pktsize)
 	{
 		case RS_PKT_SUBTYPE_DEFAULT:		return new RsChatMsgItem(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_CHAT_STATUS:	return new RsChatStatusItem(data,*pktsize) ;
+		case RS_PKT_SUBTYPE_CHAT_AVATAR:	return new RsChatAvatarItem(data,*pktsize) ;
 		default:
 			std::cerr << "Unknown packet type in chat!" << std::endl ;
 			return NULL ;
@@ -123,6 +134,21 @@ uint32_t RsChatStatusItem::serial_size()
 	s += GetTlvStringSize(status_string); 			 /* status */
 
 	return s;
+}
+
+uint32_t RsChatAvatarItem::serial_size()
+{
+	uint32_t s = 8; /* header */
+	s += 4 ;						// size
+	s += image_size ;			// data
+
+	return s;
+}
+
+RsChatAvatarItem::~RsChatAvatarItem()
+{
+	free(image_data) ;
+	image_data = NULL ;
 }
 
 /* serialise the data to the buffer */
@@ -207,6 +233,48 @@ bool RsChatStatusItem::serialise(void *data, uint32_t& pktsize)
 	return ok;
 }
 
+bool RsChatAvatarItem::serialise(void *data, uint32_t& pktsize)
+{
+	uint32_t tlvsize = serial_size() ;
+	uint32_t offset = 0;
+
+	if (pktsize < tlvsize)
+		return false; /* not enough space */
+
+	pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
+
+#ifdef CHAT_DEBUG
+	std::cerr << "RsChatSerialiser serialising chat avatar item." << std::endl;
+	std::cerr << "RsChatSerialiser::serialiseItem() Header: " << ok << std::endl;
+	std::cerr << "RsChatSerialiser::serialiseItem() Size: " << tlvsize << std::endl;
+#endif
+
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+	ok &= setRawUInt32(data, tlvsize, &offset,image_size);
+
+	memcpy((void*)( (unsigned char *)data + offset),image_data,image_size) ;
+	offset += image_size ;
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+#ifdef CHAT_DEBUG
+		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
+#endif
+	}
+#ifdef CHAT_DEBUG
+	std::cerr << "computed size: " << 256*((unsigned char*)data)[6]+((unsigned char*)data)[7] << std::endl ;
+#endif
+
+	return ok;
+}
 RsChatMsgItem::RsChatMsgItem(void *data,uint32_t size)
 	: RsChatItem(RS_PKT_SUBTYPE_DEFAULT)
 {
@@ -246,6 +314,30 @@ RsChatStatusItem::RsChatStatusItem(void *data,uint32_t size)
 	if (!ok)
 		std::cerr << "Unknown error while deserializing." << std::endl ;
 }
+
+RsChatAvatarItem::RsChatAvatarItem(void *data,uint32_t size)
+	: RsChatItem(RS_PKT_SUBTYPE_CHAT_STATUS)
+{
+	uint32_t offset = 8; // skip the header 
+	uint32_t rssize = getRsItemSize(data);
+	bool ok = true ;
+
+#ifdef CHAT_DEBUG
+	std::cerr << "Building new chat status item." << std::endl ;
+#endif
+	/* get mandatory parts first */
+	ok &= getRawUInt32(data, rssize, &offset,&image_size);
+
+	image_data = (unsigned char *)malloc(image_size*sizeof(unsigned char)) ;
+	memcpy(image_data,(void*)((unsigned char*)data+offset),image_size) ;
+	offset += image_size ;
+
+	if (offset != rssize)
+		std::cerr << "Size error while deserializing." << std::endl ;
+	if (!ok)
+		std::cerr << "Unknown error while deserializing." << std::endl ;
+}
+
 
 /*************************************************************************/
 
