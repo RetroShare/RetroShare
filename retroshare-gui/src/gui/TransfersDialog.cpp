@@ -1014,7 +1014,7 @@ void TransfersDialog::previewTransfer()
 	if (info.downloadStatus == FT_STATE_COMPLETE) {
 		path = info.path + "/" + info.fname;
 	} else {
-		path = rsFiles->getPartialsDirectory() + "/" + info.hash;
+		path = rsFiles->getPartialsDirectory() + "/" + info.fname;
 	}
 
 	/* open or preview them with a suitable application */
