@@ -1,12 +1,18 @@
 Changes for v0.4.13d
 
+* Added use real name instead hash name for partials for preview
+* Fixed Bug to make pgp friend sharing work.
+* Fixes to the PGP Network View. 
+* Fixed corrected the connexion + one-way bug
+* Suppressed bug in RsTlvBinData that could return true even when the serialisation fails
+* Redesign SharedFiles, with splitted view for Remote and Local Dirs
 * Added show Friends RS version on peer details panel
 * Added download of whole directory from gui
 * Added Add Friend and Export Cert to Menu Button
 * Added Export Cert to Network Dialog Context menu
 * Added a Security Page for Options to View, Copy and Export own Public Key.
 * Added checkbox for group chat in Notify Options.
-* Added Copy Cert to Clipboard functionality for ConnectWizard.
+* Added Copy Cert to Clipboard functionality for ConnectFriendWizard.
 * Added alert chat window when a new message was arrived
 * Added systray notification for group chat
 * Fixed proper update of shared list when list is modiffied from a different place
