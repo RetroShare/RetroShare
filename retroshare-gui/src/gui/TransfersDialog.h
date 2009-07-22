@@ -28,6 +28,7 @@
 #include <QObject>
 #include <QModelIndex>
 #include <QVariant>
+#include <stdint.h>
 
 #include "mainpage.h"
 #include "ui_TransfersDialog.h"
