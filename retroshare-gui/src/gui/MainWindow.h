@@ -43,7 +43,6 @@
 #endif
 
 #include "Preferences/PreferencesWindow.h"
-//#include "Settings/gsettingswin.h"
 #include "bwgraph/bwgraph.h"
 #include "help/browser/helpbrowser.h"
 #include "games/qbackgammon/bgwindow.h"
@@ -139,7 +138,7 @@ private slots:
     void showsmplayer();
     void showabout();
     void openShareManager();
-	 void displaySystrayMsg(const QString&,const QString&) ;
+	  void displaySystrayMsg(const QString&,const QString&) ;
 	
     /** Displays the help browser and displays the most recently viewed help
     * topic. */
@@ -151,8 +150,9 @@ private slots:
     * to <b>page</b>. */
     void showPreferencesWindow(PreferencesWindow::Page page = PreferencesWindow::General);
     void showMess(MainWindow::Page page = MainWindow::Messages);
-
-//    void showSettings();
+#ifdef NEWSETTINGS       
+    void showSettings();
+#endif
     void setStyle();
     
     /** Called when user attempts to quit via quit button*/

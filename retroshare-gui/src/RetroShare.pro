@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools debug # pluginmgr release version_detail_linux
+CONFIG += qt gui uic qrc resources uitools debug pluginmgr #release version_detail_linux newsettings
 QT     += network xml script 
 TEMPLATE = app
 TARGET = RetroShare
@@ -533,7 +533,44 @@ pluginmgr {
 
 }
 
+newsettings {
+	    SOURCES += 	gui/settings/rsettingswin.cpp \
+			gui/settings/GeneralPage.cpp \
+			gui/settings/DirectoriesPage.cpp \
+			gui/settings/ServerPage.cpp \
+			gui/settings/NetworkPage.cpp \ 
+			gui/settings/NotifyPage.cpp \
+			gui/settings/CryptoPage.cpp \
+			gui/settings/AppearancePage.cpp \
+			gui/settings/FileAssociationsPage.cpp \
+			gui/settings/SoundPage.cpp \
+			gui/settings/AddFileAssociationDialog.cpp
+	    
+	    HEADERS +=  gui/settings/rsettingswin.h \
+			gui/settings/GeneralPage.h \
+			gui/settings/DirectoriesPage.h \
+			gui/settings/ServerPage.h \
+			gui/settings/NetworkPage.h \
+			gui/settings/NotifyPage.h \
+			gui/settings/CryptoPage.h \
+			gui/settings/AppearancePage.h \
+			gui/settings/FileAssociationsPage.h \
+			gui/settings/SoundPage.h \
+			gui/settings/AddFileAssociationDialog.h 
 
+	    FORMS +=    gui/settings/settings.ui \
+			gui/settings/GeneralPage.ui \
+			gui/settings/DirectoriesPage.ui \
+			gui/settings/ServerPage.ui \
+			gui/settings/NetworkPage.ui \
+			gui/settings/NotifyPage.ui \
+			gui/settings/CryptoPage.ui \
+			gui/settings/AppearancePage.ui \
+			gui/settings/SoundPage.ui
+
+	   DEFINES *= NEWSETTINGS
+
+}
 
 
 

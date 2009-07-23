@@ -1133,15 +1133,6 @@
     <string>About</string>
    </property>
   </action>
-  <action name="actionSettings">
-   <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/images/settings.png</normaloff>:/images/settings.png</iconset>
-   </property>
-   <property name="text">
-    <string>Settings</string>
-   </property>
-  </action>
  </widget>
  <customwidgets>
   <customwidget>

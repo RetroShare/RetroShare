@@ -56,7 +56,11 @@
 #include "statusbar/ratesstatus.h"
 
 #include "Preferences/PreferencesWindow.h"
-//#include "Settings/gsettingswin.h"
+
+#ifdef NEWSETTINGS       
+#include "settings/rsettingswin.h"
+#endif
+
 #include "util/rsversion.h"
 
 #include "rsiface/rsiface.h"
@@ -149,8 +153,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(ui.actionSMPlayer, SIGNAL(triggered()), this, SLOT( showsmplayer()) );
     connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT( showabout()) );
     connect(ui.actionColor, SIGNAL(triggered()), this, SLOT( setStyle()) );
-    //connect(ui.actionSettings, SIGNAL(triggered()), this, SLOT( showSettings()) );
-   	 
+  
        
     /** adjusted quit behaviour: trigger a warning that can be switched off in the saved
         config file RetroShare.conf */
@@ -234,6 +237,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
                        createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
 #endif
 
+
     /* Create the toolbar */
     ui.toolBar->addActions(grp->actions());
     ui.toolBar->addSeparator();
@@ -242,6 +246,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 #ifdef RS_RELEASE_VERSION    
 #else   
     addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));                   
+#endif
+
+#ifdef NEWSETTINGS       
+    addAction(new QAction(QIcon(IMAGE_OPTIONS), tr("Options"), ui.toolBar_2), SLOT(showSettings()));                   
 #endif
        
     /* Select the first action */
@@ -465,14 +473,16 @@ MainWindow::showMess(MainWindow::Page page)
 
 
 /** Shows Options */
-//void MainWindow::showSettings()
-//{
-//    static GSettingsWin *win = new GSettingsWin(this);
-//    if (win->isHidden())
-//        win->setNewPage(0);
-//    win->show();
-//    win->activateWindow();
-//}
+#ifdef NEWSETTINGS       
+void MainWindow::showSettings()
+{
+    static RSettingsWin *win = new RSettingsWin(this);
+    if (win->isHidden())
+        win->setNewPage(0);
+    win->show();
+    win->activateWindow();
+}
+#endif
 
 /** Shows Messenger window */
 void MainWindow::showMessengerWindow()
@@ -535,7 +545,7 @@ void MainWindow::doQuit()
 	  queryWrn.clear();
 	  queryWrn.append(tr("Do you really want to exit RetroShare ?"));
 
-		if ((QMessageBox::question(this, tr("Really quit ? "),queryWrn,QMessageBox::Ok|QMessageBox::No, QMessageBox::Ok))== QMessageBox::Ok)
+		if ((QMessageBox::question(this, tr("Really quit ? "),queryWrn,QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
 		{
       qApp->quit();
 		}
