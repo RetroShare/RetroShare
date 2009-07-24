@@ -18,7 +18,7 @@
     <file alias="da">retroshare_da.qm</file>
     <file alias="bg">retroshare_bg.qm</file>
     <file alias="sr">retroshare_sr.qm</file>
-    <file alias="se">retroshare_sv.qm</file>
+    <file alias="sv">retroshare_sv.qm</file>
     <file alias="zh_CN">retroshare_zh_CN.qm</file>
     <file alias="zh_TW">retroshare_zh_TW.qm</file>
   </qresource>
