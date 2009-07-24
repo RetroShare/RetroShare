@@ -11,7 +11,14 @@ profiling {
 	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
 }
 pgp {
+
 	SSL_DIR=/usr/include/openssl
+	#SSL_DIR=../../../../openssl-0.9.8k
+  GPG_ERROR_DIR=../../../../libgpg-error-1.7
+	GPGME_DIR = ../../../../gpgme-1.1.8
+	
+	INCLUDEPATH += . $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
+	
 	DEFINES -=PQI_USE_XPGP
 	DEFINES *= RS_USE_PGPSSL
 }
