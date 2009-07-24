@@ -154,6 +154,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 
 QSize ULListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
+	return QSize(50,17);
 	QVariant value = index.data(Qt::FontRole);
 	QFont fnt = value.isValid() ? qvariant_cast<QFont>(value) : option.font;
 	QFontMetrics fontMetrics(fnt);
