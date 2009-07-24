@@ -600,7 +600,7 @@ CertificatePage::CertificatePage(QWidget *parent)
     userFileLabel->setWordWrap(true);
                                   
     userFileCreateButton = new QPushButton;
-    userFileCreateButton->setText("Export my certificate...");
+    userFileCreateButton->setText(tr("Export my certificate..."));
     connect(userFileCreateButton, SIGNAL( clicked() ),
             this,                 SLOT( generateCertificateCalled()));
 
@@ -619,7 +619,7 @@ CertificatePage::CertificatePage(QWidget *parent)
     registerField("friendCertificateFile*", friendFileNameEdit);
 
     friendFileNameOpenButton= new QPushButton;
-    friendFileNameOpenButton->setText("...");
+    friendFileNameOpenButton->setText(tr("Browse"));
     connect(friendFileNameOpenButton, SIGNAL( clicked()),
             this                   , SLOT( loadFriendCert()));
     
