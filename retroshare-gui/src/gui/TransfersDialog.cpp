@@ -132,7 +132,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
 
   	//Selection Setup
-	  selection = ui.uploadsList->selectionModel();
+	  selectionup = ui.uploadsList->selectionModel();
 	  ui.uploadsList->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     /* Set header resize modes and initial section sizes Uploads TreeView*/

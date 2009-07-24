@@ -86,6 +86,8 @@ class TransfersDialog : public MainPage
 		QStandardItemModel *DLListModel;
 		QStandardItemModel *ULListModel;
 		QItemSelectionModel *selection;
+		QItemSelectionModel *selectionup;
+
 		DLListDelegate *DLDelegate;
 		ULListDelegate *ULDelegate;
 		qlonglong fileSize;
