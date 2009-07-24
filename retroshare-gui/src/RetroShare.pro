@@ -481,13 +481,12 @@ RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc
 TRANSLATIONS +=  \
             lang/retroshare_en.ts \
             lang/retroshare_de.ts \
+            lang/retroshare_da.ts \
             lang/retroshare_bg.ts \
             lang/retroshare_es.ts \
             lang/retroshare_fi.ts \
             lang/retroshare_fr.ts \
             lang/retroshare_af.ts  \
-            lang/retroshare_cn_simp.ts  \
-            lang/retroshare_cn_trad.ts  \
             lang/retroshare_gr.ts  \
             lang/retroshare_it.ts  \
             lang/retroshare_jp.ts  \
@@ -496,10 +495,9 @@ TRANSLATIONS +=  \
             lang/retroshare_pt.ts  \
             lang/retroshare_ru.ts  \
             lang/retroshare_tr.ts \
-            lang/retroshare_dk.ts \
             lang/retroshare_sl.ts \
             lang/retroshare_sr.ts \
-            lang/retroshare_se.ts \
+            lang/retroshare_sv.ts \
             lang/retroshare_zh_CN.ts \
             lang/retroshare_zh_TW.ts
 
