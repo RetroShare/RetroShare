@@ -8,7 +8,7 @@
         <location filename="../gui/MainWindow.cpp" line="70"/>
         <location filename="../gui/Preferences/PreferencesWindow.cpp" line="31"/>
         <source>Arial</source>
-        <translation type="unfinished">Arial</translation>
+        <translation>Arial</translation>
     </message>
 </context>
 <context>
@@ -23,7 +23,7 @@
     <message>
         <location filename="../gui/Preferences/AddFileAssotiationDialog.cpp" line="50"/>
         <source>File type(extension):</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei Typ (extension):</translation>
     </message>
     <message>
         <location filename="../gui/Preferences/AddFileAssotiationDialog.cpp" line="61"/>
@@ -38,7 +38,7 @@
     <message>
         <location filename="../gui/Preferences/AddFileAssotiationDialog.cpp" line="151"/>
         <source>RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/Preferences/AddFileAssotiationDialog.cpp" line="152"/>
@@ -727,7 +727,7 @@ Nachricht hier</translation>
     <message>
         <location filename="../gui/toaster/CallToaster.ui" line="656"/>
         <source>Message</source>
-        <translation type="unfinished">Nachricht</translation>
+        <translation>Nachricht</translation>
     </message>
 </context>
 <context>
@@ -750,7 +750,7 @@ Nachricht hier</translation>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="603"/>
         <source>Export my certificate...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportiere mein Zertifikat...</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="616"/>
@@ -760,7 +760,7 @@ Nachricht hier</translation>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="622"/>
         <source>Browse</source>
-        <translation type="unfinished">Durchsuchen</translation>
+        <translation>Durchsuchen</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="644"/>
@@ -6759,7 +6759,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="146"/>
         <source>Chatting with </source>
-        <translation type="unfinished">Chatte mit</translation>
+        <translation>Chatte mit</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.ui" line="87"/>
@@ -6801,7 +6801,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="716"/>
         <source>Add Extra File</source>
-        <translation type="unfinished">Zusätzlich eine Datei hinzufügen</translation>
+        <translation>Zusätzlich eine Datei hinzufügen</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="824"/>
@@ -6890,7 +6890,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/Preferences/PreferencesWindow.cpp" line="74"/>
         <source>Security</source>
-        <translation type="unfinished"></translation>
+        <translation>Sicherheit</translation>
     </message>
     <message>
         <location filename="../gui/Preferences/PreferencesWindow.cpp" line="78"/>
@@ -7967,12 +7967,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ShareManager.cpp" line="117"/>
         <source>Shared Directory Added!</source>
-        <translation>Verzeichniss wurde hinzugefügt</translation>
+        <translation>Verzeichniss wurde hinzugefügt!</translation>
     </message>
     <message>
         <location filename="../gui/ShareManager.cpp" line="130"/>
         <source>Do You Want to Remove ? </source>
-        <translation>Willst du es Entfernen</translation>
+        <translation>Willst du es Entfernen?</translation>
     </message>
     <message>
         <location filename="../gui/ShareManager.ui" line="59"/>
@@ -8034,22 +8034,26 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Files&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Dateien&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="559"/>
         <source>Splitted View</source>
-        <translation type="unfinished"></translation>
+        <translation>geteiltes Fenster</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="588"/>
         <source>Friends Folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Freundes Verzeichnisse</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="617"/>
         <source>My Folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Mein Verzeichnisse</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="774"/>
@@ -8060,12 +8064,12 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/SharedFilesDialog.cpp" line="593"/>
         <location filename="../gui/SharedFilesDialog.cpp" line="632"/>
         <source>Open File</source>
-        <translation>Öffne Pfad</translation>
+        <translation>Datei öffnen</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="596"/>
         <source>Open Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Verzeichniss öffnen</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="641"/>
@@ -8076,12 +8080,12 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/SharedFilesDialog.cpp" line="208"/>
         <location filename="../gui/SharedFilesDialog.cpp" line="587"/>
         <source>Copy retroshare Link</source>
-        <translation type="unfinished">Kopiere retroshare Link</translation>
+        <translation>Kopiere retroshare Link</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="176"/>
         <source>Checking...</source>
-        <translation type="unfinished"></translation>
+        <translation>Überprüfe...</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="184"/>
@@ -8092,7 +8096,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/SharedFilesDialog.cpp" line="211"/>
         <location filename="../gui/SharedFilesDialog.cpp" line="590"/>
         <source>Send retroshare Link</source>
-        <translation type="unfinished">Sende retroshare Link</translation>
+        <translation>Sende retroshare Link</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="550"/>
@@ -8107,17 +8111,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="706"/>
         <source>&lt;strong&gt;My Shared Files&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Meine Dateien&lt;/strong&gt;</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="720"/>
         <source>&lt;strong&gt;Friends Files&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Dateien von Freunde&lt;/strong&gt;</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="735"/>
         <source>&lt;strong&gt;Files&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Dateien&lt;/strong&gt;</translation>
     </message>
     <message>
         <source>Friends Share</source>
@@ -8207,7 +8211,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/StartDialog.ui" line="641"/>
         <source>generate new a profile</source>
-        <translation type="unfinished"></translation>
+        <translation>erstelle neues Profil</translation>
     </message>
     <message>
         <location filename="../gui/StartDialog.ui" line="687"/>
@@ -8222,7 +8226,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/StartDialog.ui" line="720"/>
         <source>PGP Password</source>
-        <translation type="unfinished"></translation>
+        <translation>PGP Passwort</translation>
     </message>
     <message>
         <location filename="../gui/StartDialog.ui" line="751"/>
@@ -8563,17 +8567,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="284"/>
         <source>You can copy this text and send it to your friend via email or some other way</source>
-        <translation type="unfinished"></translation>
+        <translation>Du kannst diesen Text kopieren und an deinen Freund senden mit email oder durch einen anderen weg</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="295"/>
         <source>RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="296"/>
         <source>Your Cert is copied to Clipbard, paste and send it to yourfriend via email or some other way</source>
-        <translation type="unfinished"></translation>
+        <translation>Dein Zertifikat wurde in die Zwischenablage kopiert</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="154"/>
@@ -8593,7 +8597,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="199"/>
         <source>Copy your Cert to Clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiere dein Zertifikat in die Zwischenablage</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="209"/>
@@ -8701,7 +8705,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/TransfersDialog.cpp" line="75"/>
         <source>Speed</source>
         <comment>i.e: Download speed</comment>
-        <translation>Geschwindigkeit</translation>
+        <translation>Speed</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="77"/>
@@ -8736,7 +8740,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/TransfersDialog.cpp" line="122"/>
         <source>Speed</source>
         <comment>i.e: upload speed</comment>
-        <translation>Geschwindigkeit</translation>
+        <translation>Speed</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="124"/>
@@ -8751,37 +8755,37 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="212"/>
         <source>Pause</source>
-        <translation type="unfinished">Pause</translation>
+        <translation>Pause</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="215"/>
         <source>Resume</source>
-        <translation type="unfinished"></translation>
+        <translation>Fortsetzen</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="221"/>
         <source>Open Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Verzeichniss Öffnen</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="224"/>
         <source>Open File</source>
-        <translation type="unfinished">Öffne Pfad</translation>
+        <translation>Datei öffnen</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="227"/>
         <source>Preview File</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorschau</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="233"/>
         <source>Copy retroshare Link</source>
-        <translation type="unfinished">Kopiere retroshare Link</translation>
+        <translation>Kopiere retroshare Link</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="236"/>
         <source>Paste retroshare Link</source>
-        <translation type="unfinished">retroshare Link Einfügen</translation>
+        <translation>retroshare Link Einfügen</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="239"/>
@@ -8796,7 +8800,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="245"/>
         <source>View</source>
-        <translation type="unfinished">Anzeige</translation>
+        <translation>Anzeige</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="810"/>
@@ -8811,7 +8815,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="1060"/>
         <source>File %1 is not completed. If it is a media file, try to preview it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei %1 ist nicht komplett. Wenn es eine Media datei ist dann versuche &quot;Vorschau&quot;.</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="808"/>
