@@ -117,7 +117,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     ULListModel = new QStandardItemModel(0,7);
     ULListModel->setHeaderData(UNAME, Qt::Horizontal, tr("Name", "i.e: file name"));
     ULListModel->setHeaderData(USIZE, Qt::Horizontal, tr("Size", "i.e: file size"));
-    ULListModel->setHeaderData(USERNAME, Qt::Horizontal, tr("User Name", "i.e: user name"));
+    ULListModel->setHeaderData(USERNAME, Qt::Horizontal, tr("Peer", "i.e: user name"));
     ULListModel->setHeaderData(UPROGRESS, Qt::Horizontal, tr("Progress", "i.e: % uploaded"));
     ULListModel->setHeaderData(ULSPEED, Qt::Horizontal, tr("Speed", "i.e: upload speed"));
     ULListModel->setHeaderData(USTATUS, Qt::Horizontal, tr("Status"));
@@ -131,32 +131,35 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     ui.uploadsList->setRootIsDecorated(false);
 
 
-
   	//Selection Setup
-	//selection = ui.uploadsList->selectionModel();
+	  selection = ui.uploadsList->selectionModel();
+	  ui.uploadsList->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-	/* Set header resize modes and initial section sizes Uploads TreeView*/
-//	QHeaderView * upheader = ui.uploadsList->header () ;
-//	upheader->setResizeMode (0, QHeaderView::Interactive); /*Name */
-//	upheader->setResizeMode (1, QHeaderView::Interactive); /*Size */
-//	upheader->setResizeMode (2, QHeaderView::Interactive); /*User Name*/
-//	upheader->setResizeMode (3, QHeaderView::Interactive); /*Progress*/
-//	upheader->setResizeMode (4, QHeaderView::Interactive); /*Speed */
-//	upheader->setResizeMode (5, QHeaderView::Interactive); /*Status*/
-//	upheader->setResizeMode (6, QHeaderView::Interactive); /*Transferred*/
-//
-//	upheader->resizeSection ( 0, 100 ); /*Name */
-//	upheader->resizeSection ( 1, 75 ); /*Size */
-//	upheader->resizeSection ( 2, 100 ); /*User Name*/
-//	upheader->resizeSection ( 3, 100 ); /*Progress*/
-//	upheader->resizeSection ( 4, 75 ); /*Speed */
-//	upheader->resizeSection ( 5, 100 ); /*Status*/
-//	upheader->resizeSection ( 6, 75 ); /*Transferred*/
+    /* Set header resize modes and initial section sizes Uploads TreeView*/
+    QHeaderView * upheader = ui.uploadsList->header () ;
+    upheader->setResizeMode (UNAME, QHeaderView::Interactive);
+    upheader->setResizeMode (USIZE, QHeaderView::Interactive);
+    upheader->setResizeMode (UTRANSFERRED, QHeaderView::Interactive);  
+    upheader->setResizeMode (ULSPEED, QHeaderView::Interactive); 
+    upheader->setResizeMode (UPROGRESS, QHeaderView::Interactive); 
+    upheader->setResizeMode (USTATUS, QHeaderView::Interactive); 
+    upheader->setResizeMode (USERNAME, QHeaderView::Interactive);  
+
+    upheader->resizeSection ( UNAME, 170 ); 
+    upheader->resizeSection ( USIZE, 70 );
+    upheader->resizeSection ( UTRANSFERRED, 75 );
+    upheader->resizeSection ( ULSPEED, 75 );  
+    upheader->resizeSection ( UPROGRESS, 170 ); 
+    upheader->resizeSection ( USTATUS, 100 ); 
+    upheader->resizeSection ( USERNAME, 75 ); 
+ 
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
+
+
 }
 
 void TransfersDialog::keyPressEvent(QKeyEvent *e)
@@ -451,11 +454,11 @@ int TransfersDialog::addUploadItem(QString symbol, QString name, QString coreID,
 
 	ULListModel->setData(ULListModel->index(row, UNAME), QVariant((QString)name), Qt::DisplayRole);
 	ULListModel->setData(ULListModel->index(row, USIZE), QVariant((qlonglong)fileSize));
-	ULListModel->setData(ULListModel->index(row, USERNAME), QVariant((QString)sources));
-	ULListModel->setData(ULListModel->index(row, UPROGRESS), QVariant((double)progress));
-	ULListModel->setData(ULListModel->index(row, ULSPEED), QVariant((double)dlspeed));
-	ULListModel->setData(ULListModel->index(row, USTATUS), QVariant((QString)status));
 	ULListModel->setData(ULListModel->index(row, UTRANSFERRED), QVariant((qlonglong)completed));
+	ULListModel->setData(ULListModel->index(row, ULSPEED), QVariant((double)dlspeed));
+	ULListModel->setData(ULListModel->index(row, UPROGRESS), QVariant((double)progress));
+	ULListModel->setData(ULListModel->index(row, USTATUS), QVariant((QString)status));
+	ULListModel->setData(ULListModel->index(row, USERNAME), QVariant((QString)sources));
 
 	return row;
 }

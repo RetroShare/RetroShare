@@ -125,7 +125,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 		    {
 			progress = index.data().toDouble();
 			// create a xProgressBar
-			xProgressBar progressBar(option.rect, painter); // the 3rd param is the  color schema (0 is the default value)
+			xProgressBar progressBar(option.rect, painter, 8); // the 3rd param is the  color schema (0 is the default value)
 			progressBar.setDisplayText(false); // should display % text?
 			progressBar.setValue(progress); // set the progress value
 			progressBar.setVerticalSpan(1);

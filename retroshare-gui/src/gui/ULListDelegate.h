@@ -26,13 +26,14 @@
 #include "xprogressbar.h"
 
 // Defines for upload list list columns
-#define USERNAME 0
-#define UNAME 1
-#define ULSPEED 2
-#define UTRANSFERRED 3
+#define UNAME 0
+#define USIZE 1
+#define UTRANSFERRED 2
+#define ULSPEED 3
 #define UPROGRESS 4
 #define USTATUS 5
-#define USIZE 6
+#define USERNAME 6
+
 
 
 #define MAX_CHAR_TMP 128

@@ -143,6 +143,32 @@ void xProgressBar::setColor()
 			gradColor2.setRgb(248, 170, 59);
 			// ok
 			break;
+			
+		/* clean schema */
+		case 8:
+			// background
+			backgroundBorderColor.setRgb(143, 180, 219);
+			backgroundColor.setRgb(198, 209, 221);
+			// progress
+			gradBorderColor.setRgb(209, 128, 24);
+			gradColor1.setRgb(246, 199, 138);
+			gradColor2.setRgb(255, 227, 190);
+			// ok
+			break;
+
+		/* light gray */
+		case 9:
+			// background
+			backgroundBorderColor.setRgb(194, 194, 194);
+			backgroundColor.setRgb(232, 233, 233);
+			// progress
+			gradBorderColor.setRgb(176, 176, 176);
+			gradColor1.setRgb(201, 201, 201);
+			gradColor2.setRgb(223, 223, 223);
+			// set text color (white is not a good option)
+			textColor = QColor(58, 58, 58);
+			// ok
+			break;	
 	}
 }
 
@@ -177,6 +203,13 @@ void xProgressBar::paint()
 		painter->setPen(textColor);
 		painter->drawText(rect, Qt::AlignCenter, locale.toString(progressValue, 'f', 2) + "%");
 	}
+}
+
+void xProgressBar::setColorSchema(const int value)
+{
+	schemaIndex = value;
+	// set the progress bar colors
+	setColor();
 }
 
 void xProgressBar::setValue(const float value)

@@ -59,6 +59,7 @@ Q_OBJECT
 	public:
 		xProgressBar(QRect rect, QPainter *painter, int schemaIndex = 0);
 		void paint();
+		void setColorSchema(const int value);
 		void setValue(const float value);
 		void setDisplayText(const bool display);
 		void setVerticalSpan(const int value);
