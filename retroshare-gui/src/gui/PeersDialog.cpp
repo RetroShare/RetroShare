@@ -711,6 +711,7 @@ void PeersDialog::insertChat()
 		  // notify with a systray icon msg
 		  if(it->rsid != rsPeers->getOwnId())
 		  {
+			  // This is a trick to translate HTML into text.
 			  QTextEdit editor ;
 			  editor.setHtml(QString::fromStdWString(it->msg));
 			  QString notifyMsg(QString::fromStdString(it->name)+": "+editor.toPlainText()) ;
@@ -734,10 +735,9 @@ void PeersDialog::insertChat()
 		}
 
 
-        msgWidget->setHtml(currenttxt);
+		msgWidget->setHtml(currenttxt);
 
-
-
+		msgWidget->update();
 		QScrollBar *qsb =  msgWidget->verticalScrollBar();
 		qsb -> setValue(qsb->maximum());
 	}
