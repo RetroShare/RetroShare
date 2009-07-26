@@ -139,20 +139,20 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     QHeaderView * upheader = ui.uploadsList->header () ;
     upheader->setResizeMode (UNAME, QHeaderView::Interactive);
     upheader->setResizeMode (USIZE, QHeaderView::Interactive);
-    upheader->setResizeMode (UTRANSFERRED, QHeaderView::Interactive);  
-    upheader->setResizeMode (ULSPEED, QHeaderView::Interactive); 
-    upheader->setResizeMode (UPROGRESS, QHeaderView::Interactive); 
-    upheader->setResizeMode (USTATUS, QHeaderView::Interactive); 
-    upheader->setResizeMode (USERNAME, QHeaderView::Interactive);  
+    upheader->setResizeMode (UTRANSFERRED, QHeaderView::Interactive);
+    upheader->setResizeMode (ULSPEED, QHeaderView::Interactive);
+    upheader->setResizeMode (UPROGRESS, QHeaderView::Interactive);
+    upheader->setResizeMode (USTATUS, QHeaderView::Interactive);
+    upheader->setResizeMode (USERNAME, QHeaderView::Interactive);
 
-    upheader->resizeSection ( UNAME, 170 ); 
+    upheader->resizeSection ( UNAME, 170 );
     upheader->resizeSection ( USIZE, 70 );
     upheader->resizeSection ( UTRANSFERRED, 75 );
-    upheader->resizeSection ( ULSPEED, 75 );  
-    upheader->resizeSection ( UPROGRESS, 170 ); 
-    upheader->resizeSection ( USTATUS, 100 ); 
-    upheader->resizeSection ( USERNAME, 75 ); 
- 
+    upheader->resizeSection ( ULSPEED, 75 );
+    upheader->resizeSection ( UPROGRESS, 170 );
+    upheader->resizeSection ( USTATUS, 100 );
+    upheader->resizeSection ( USERNAME, 75 );
+
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -616,6 +616,34 @@ void TransfersDialog::insertTransfers()
                 status = tr("Complete"); break;
             default:
                 status = tr("Unknown"); break;
+        }
+
+        /* a paused download remains with Downloading status;
+         * check to see if download is in download queue to
+         * update his status properly */
+        int priority;
+        if (rsFiles->getPriority(*it, priority)) {
+        	QString spriority;
+
+        	switch (priority) {
+        	case 0:
+        		spriority = tr("Low");
+        		break;
+        	case 1:
+        		spriority = tr("Normal");
+        		break;
+        	case 2:
+        		spriority = tr("High");
+        		break;
+        	case 3:
+        		spriority = tr("Auto");
+        		break;
+        	default:
+				spriority = tr("");
+				break;
+        	}
+
+        	status = tr("Queued [") + spriority + tr("]");
         }
 
         completed   = info.transfered;
