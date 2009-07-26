@@ -108,12 +108,19 @@ virtual bool FileControl(std::string hash, uint32_t flags) = 0;
 virtual bool FileClearCompleted() = 0;
 
 /***
+ * Control of Downloads Priority.
+ ***/
+virtual bool changePriority(const std::string hash, int priority) = 0;
+virtual bool getPriority(const std::string hash, int & priority) = 0;
+virtual bool clearDownload(const std::string hash) = 0;
+virtual void clearQueue() = 0;
+
+/***
  * Download / Upload Details.
  ***/
 virtual bool FileDownloads(std::list<std::string> &hashs) = 0;
 virtual bool FileUploads(std::list<std::string> &hashs) = 0;
 virtual bool FileDetails(std::string hash, uint32_t hintflags, FileInfo &info) = 0;
-
 
 /***
  * Extra List Access

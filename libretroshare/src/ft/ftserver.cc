@@ -32,6 +32,7 @@ const int ftserverzone = 29539;
 #include "ft/ftcontroller.h"
 #include "ft/ftfileprovider.h"
 #include "ft/ftdatamultiplex.h"
+#include "ft/ftdwlqueue.h"
 #include "turtle/p3turtle.h"
 
 
@@ -142,6 +143,8 @@ void ftServer::SetupFtServer(NotifyBase *cb)
 	mConnMgr->addMonitor(mFtController);
         mConnMgr->addMonitor(mCacheStrapper);
 
+    mFtDwlQueue = new ftDwlQueue(mFtController);
+
 	return;
 }
 
@@ -173,6 +176,9 @@ void    ftServer::StartupThreads()
 
 	/* Dataplex */
 	mFtDataplex->start();
+
+	/* Download Queue */
+	mFtDwlQueue->start();
 
 	/* start own thread */
 	start();
@@ -236,8 +242,10 @@ bool ftServer::FileRequest(std::string fname, std::string hash, uint64_t size,
 	std::string dest, uint32_t flags, std::list<std::string> srcIds)
 {
    std::cerr << "Requesting " << fname << std::endl ;
-	return mFtController->FileRequest(fname, hash, size,
-						dest, flags, srcIds);
+//	return mFtController->FileRequest(fname, hash, size,
+//						dest, flags, srcIds);
+	const DwlDetails details(fname, hash, size, dest, flags, srcIds, Normal);
+	mFtDwlQueue->insertDownload(details);
 }
 
 bool ftServer::FileCancel(std::string hash)
@@ -255,6 +263,32 @@ bool ftServer::FileClearCompleted()
 	return mFtController->FileClearCompleted();
 }
 
+	/* Control of Downloads Priority. */
+bool ftServer::changePriority(const std::string hash, int priority)
+{
+	return mFtDwlQueue->changePriority(hash, (DwlPriority) priority);
+}
+
+bool ftServer::getPriority(const std::string hash, int & priority)
+{
+	DwlPriority _priority;
+	int ret = mFtDwlQueue->getPriority(hash, _priority);
+	if (ret) {
+		priority = _priority;
+	}
+
+	return ret;
+}
+
+bool ftServer::clearDownload(const std::string hash)
+{
+	return mFtDwlQueue->clearDownload(hash);
+}
+
+void ftServer::clearQueue()
+{
+	mFtDwlQueue->clearQueue();
+}
 
 	/* Directory Handling */
 void ftServer::setDownloadDirectory(std::string path)

@@ -68,6 +68,8 @@ class ftFileSearch;
 class ftDataMultiplex;
 class p3turtle;
 
+class ftDwlQueue;
+
 class ftServer: public RsFiles, public ftDataSend, public RsThread
 {
 
@@ -119,6 +121,14 @@ virtual bool FileRequest(std::string fname, std::string hash, uint64_t size,
 virtual bool FileCancel(std::string hash);
 virtual bool FileControl(std::string hash, uint32_t flags);
 virtual bool FileClearCompleted();
+
+/***
+ * Control of Downloads Priority.
+ ***/
+virtual bool changePriority(const std::string hash, int priority);
+virtual bool getPriority(const std::string hash, int & priority);
+virtual bool clearDownload(const std::string hash);
+virtual void clearQueue();
 
 /***
  * Download/Upload Details
@@ -241,6 +251,8 @@ bool  loadConfigMap(std::map<std::string, std::string> &configMap);
 
 
 	ftFileSearch   *mFtSearch;
+
+	ftDwlQueue *mFtDwlQueue;
 
 	RsMutex srvMutex;
 	std::string mConfigPath;

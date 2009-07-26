@@ -126,6 +126,7 @@ HEADERS += dbase/cachestrapper.h \
            ft/ftsearch.h \
            ft/ftserver.h \
            ft/fttransfermodule.h \
+	   ft/ftdwlqueue.h \
            pqi/authssl.h \
            pqi/p3authmgr.h \
            pqi/p3cfgmgr.h \
@@ -264,6 +265,7 @@ SOURCES = \
 				ft/ftfilecreator.cc \
 				ft/ftdata.cc \
 				ft/ftfileprovider.cc \
+				ft/ftdwlqueue.cc \
 				upnp/upnputil.c \
 				dht/opendhtmgr.cc \
 				upnp/upnphandler.cc \

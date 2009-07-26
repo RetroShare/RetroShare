@@ -765,7 +765,7 @@ void RemoteDirModel::downloadSelected(QModelIndexList list)
         /* if it is a dir, copy all files included*/
         else if (details.type == DIR_TYPE_DIR)
         {
-        	size_t prefixLen = details.path.rfind(details.name);
+        	int prefixLen = details.path.rfind(details.name);
         	if (prefixLen < 0) continue;
         	downloadDirectory(details, prefixLen);
         }
