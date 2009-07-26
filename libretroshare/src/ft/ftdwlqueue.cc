@@ -29,7 +29,7 @@ void ftDwlQueue::run()
 
 	while (1) {
 
-#ifdef WIN_32
+#ifdef WIN32
 		Sleep(1000);
 #else
 		sleep(1);
@@ -37,16 +37,20 @@ void ftDwlQueue::run()
 
 		unsigned int sDwl = totalSystemDwl();
 		unsigned int qDwl = totalQueuedDwl();
+		unsigned int dwl = 0;
 
-		/* we have to know if one ore more downloads are
-		 * paused in the queue and the next of them will
-		 * not exceed download limit*/
-		if (!(qDwl && (sDwl - 1 < downloadLimit))) continue;
+		if (sDwl - qDwl >= 0) {
+			dwl = sDwl - qDwl;	/* real downloads, not in the queue */
+		}
+
+		/* we have to know if the next download from
+		 * queue will exceed the download limit */
+		if (dwl + 1 > downloadLimit) continue;
 
 		DwlDetails details;
 		if (!getNext(details)) continue;
 
-		/* if the download was puased restart it
+		/* if the download was paused restart it
 		 * else try a new request for download it */
 
 		if (details.paused == true) {
@@ -115,7 +119,7 @@ void ftDwlQueue::insertDownload(const DwlDetails & details) {
 		unsigned int sDwl = totalSystemDwl();
 
 		RsStackMutex stack(prmtx);
-		if ((!priorities.empty()) || (sDwl >= downloadLimit)) {
+		if ((!priorities.empty()) || (sDwl > downloadLimit)) {
 			rsFiles->FileControl(_details.hash, RS_FILE_CTRL_PAUSE);
 			_details.paused = true;
 
