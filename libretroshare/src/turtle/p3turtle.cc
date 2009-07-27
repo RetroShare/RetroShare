@@ -347,7 +347,9 @@ void p3turtle::locked_closeTunnel(TurtleTunnelId tid)
 		std::cerr << "p3turtle: was asked to close tunnel " << (void*)tid << ", which actually doesn't exist." << std::endl ;
 		return ;
 	}
+#ifdef P3TURTLE_DEBUG
 	std::cerr << "p3turtle: Closing tunnel " << (void*)tid << std::endl ;
+#endif
 
 	if(it->second.local_src == mConnMgr->getOwnId())	// this is a starting tunnel. We thus remove 
 																		// 	- the virtual peer from the vpid list
@@ -735,7 +737,9 @@ void p3turtle::handleRecvFileRequest(RsTurtleFileRequestItem *item)
 
 		if(it == _local_tunnels.end())
 		{
+#ifdef P3TURTLE_DEBUG
 			std::cerr << "p3turtle: got file request with unknown tunnel id " << (void*)item->tunnel_id << std::endl ;
+#endif
 			return ;
 		}
 
@@ -797,7 +801,9 @@ void p3turtle::handleRecvFileData(RsTurtleFileDataItem *item)
 
 		if(it == _local_tunnels.end())
 		{
+#ifdef P3TURTLE_DEBUG
 			std::cerr << "p3turtle: got file data with unknown tunnel id " << (void*)item->tunnel_id << std::endl ;
+#endif
 			return ;
 		}
 
@@ -843,6 +849,12 @@ void p3turtle::handleRecvFileData(RsTurtleFileDataItem *item)
 			*res_item = *item ;
 
 			res_item->chunk_data = malloc(res_item->chunk_size) ;
+
+			if(res_item->chunk_data == NULL)
+			{
+				std::cerr << "p3turtle: Warning: failed malloc of " << res_item->chunk_size << " bytes for received data packet." << std::endl ;
+				return ;
+			}
 			memcpy(res_item->chunk_data,item->chunk_data,res_item->chunk_size) ;
 
 			res_item->PeerId(tunnel.local_src) ;			
@@ -866,7 +878,9 @@ void p3turtle::sendDataRequest(const std::string& peerId, const std::string& has
 
 	if(it == _virtual_peers.end())
 	{
+#ifdef P3TURTLE_DEBUG
 		std::cerr << "p3turtle::senddataRequest: cannot find virtual peer " << peerId << " in VP list." << std::endl ;
+#endif
 		return ;
 	}
 	TurtleTunnelId tunnel_id = it->second ;
@@ -899,7 +913,9 @@ void p3turtle::sendFileData(const std::string& peerId, const std::string& hash, 
 
 	if(it == _virtual_peers.end())
 	{
+#ifdef P3TURTLE_DEBUG
 		std::cerr << "p3turtle::sendData: cannot find virtual peer " << peerId << " in VP list." << std::endl ;
+#endif
 		return ;
 	}
 	TurtleTunnelId tunnel_id = it->second ;
@@ -914,6 +930,12 @@ void p3turtle::sendFileData(const std::string& peerId, const std::string& hash, 
 	item->chunk_offset = offset ;
 	item->chunk_size = chunksize ;
 	item->chunk_data = malloc(chunksize) ;
+
+	if(item->chunk_data == NULL)
+	{
+		std::cerr << "p3turtle: Warning: failed malloc of " << chunksize << " bytes for sending data packet." << std::endl ;
+		return ;
+	}
 	memcpy(item->chunk_data,(void*)((uint8_t*)data),chunksize) ;
 	item->PeerId(tunnel.local_src) ;
 
@@ -930,7 +952,9 @@ bool p3turtle::search(std::string hash, uint64_t, uint32_t hintflags, FileInfo &
 
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
+#ifdef P3TURTLE_DEBUG
 	std::cerr << "p3turtle: received file search request for hash " << hash << "." << std::endl ;
+#endif
 
 	std::map<TurtleFileHash,TurtleFileHashInfo>::const_iterator it = _incoming_file_hashes.find(hash) ;
 
@@ -1188,7 +1212,11 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 		TurtleTunnel& tunnel(_local_tunnels[item->tunnel_id]) ;
 
 		if(found)
+		{
+#ifdef P3TURTLE_DEBUG
 			std::cerr << "Tunnel id " << (void*)item->tunnel_id << " is already there. Not storing." << std::endl ;
+#endif
+		}
 		else
 		{
 			tunnel.local_src = it->second.origin ;
@@ -1357,15 +1385,6 @@ void p3turtle::monitorFileTunnels(const std::string& name,const std::string& fil
 		_incoming_file_hashes[file_hash].name = name ;
 		_incoming_file_hashes[file_hash].time_stamp = time(NULL) ;
 	}
-
-#ifdef TO_REMOVE
-	std::list<std::string> srcIds ;
-
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "p3turtle: Calling ft server to handle the dl" << std::endl ;
-#endif
-	_ft_server->FileRequest(name,file_hash, size, "", 0, srcIds) ;
-#endif
 
 	IndicateConfigChanged() ;	// initiates saving of handled hashes.
 }
