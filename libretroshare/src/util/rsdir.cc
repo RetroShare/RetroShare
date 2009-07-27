@@ -392,7 +392,13 @@ bool RsDirUtil::renameFile(const std::string& from, const std::string& to)
 	int			loops = 0;
 
 #if defined(WIN32) || defined(MINGW) || defined(__CYGWIN__)
+#ifdef WIN_CROSS_UBUNTU
+	std::wstring f,t ;
+	for(int i=0;i<from.size();++i) f.push_back(from[i]) ;
+	for(int i=0;i<to.size();++i) t.push_back(to[i]) ;
+#else
 	std::string f(from),t(to) ;
+#endif
 	while (!MoveFileEx(f.c_str(), t.c_str(), MOVEFILE_REPLACE_EXISTING))
 #else
 	while (rename(from.c_str(), to.c_str()) < 0)
