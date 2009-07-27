@@ -56,6 +56,11 @@
 #define IMAGE_OPENFILE			       ":/images/fileopen.png"
 #define IMAGE_STOP			           ":/images/stop.png"
 #define IMAGE_PREVIEW			         ":/images/preview.png"
+#define IMAGE_PRIORITY			       ":/images/filepriority.png"
+#define IMAGE_PRIORITYLOW			     ":/images/prioritylow.png"
+#define IMAGE_PRIORITYNORMAL			 ":/images/prioritynormal.png"
+#define IMAGE_PRIORITYHIGH			   ":/images/priorityhigh.png"
+#define IMAGE_PRIORITYAUTO			   ":/images/priorityauto.png"
 
 
 /** Constructor */
