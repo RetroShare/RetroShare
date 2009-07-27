@@ -39,6 +39,7 @@
         <file>images/FileTypePicture.png</file>
         <file>images/FileTypeProgram.png</file>
         <file>images/FileTypeVideo.png</file>
+        <file>images/finished_background.png</file>
         <file>images/fonts.png</file>
         <file>images/folder16.png</file>
         <file>images/folderopen.png</file>
@@ -251,7 +252,7 @@
         <file>images/priorityauto.png</file>
         <file>images/priorityhigh.png</file>
         <file>images/prioritylow.png</file>
-        <file>images/priorityquestion.png</file>
+        <file>images/prioritynormal.png</file>
         <file>images/pause.png</file>
         <file>images/preview.png</file>
         <file>images/player_play.png</file>
