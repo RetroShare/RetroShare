@@ -100,7 +100,16 @@ bool ftFileProvider::getFileData(uint64_t offset, uint32_t &chunk_size, void *da
 	}
 
 	if (data_size > 0)
-	{		
+	{	
+		if(data == NULL)
+		{
+			std::cerr << "ftFileProvider: Warning ! Re-allocating data, which probably could not be allocated because of weird chunk size." << std::endl ;
+			if(NULL == (data = malloc(data_size))) 
+			{
+				std::cerr << "ftFileProvider: Could not malloc a size of " << data_size << std::endl ;
+				return false;
+			}
+		}	
 		/*
                  * seek for base_loc 
                  */
