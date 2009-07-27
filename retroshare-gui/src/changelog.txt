@@ -1,5 +1,8 @@
-Changes for v0.4.13d
+Changes for v0.*
 
+* Added implementation for priority download queue
+* Added switching colors for different uploads 
+* Changend Quit RetroShare MessageBox with "Yes" and not more with "OK"
 * Added use real name instead hash name for partials for preview
 * Fixed Bug to make pgp friend sharing work.
 * Fixes to the PGP Network View. 
