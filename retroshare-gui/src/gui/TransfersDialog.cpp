@@ -220,7 +220,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       resumeAct = new QAction(QIcon(IMAGE_RESUME), tr("Resume"), this);
       connect(resumeAct, SIGNAL(triggered()), this, SLOT(resumeFileTransfer()));
 
-	  cancelAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Cancel" ), this );
+      cancelAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Cancel" ), this );
       connect( cancelAct , SIGNAL( triggered() ), this, SLOT( cancel() ) );
 
       openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
@@ -249,23 +249,24 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 
       QMenu *viewMenu = new QMenu( tr("View"), this );
       viewMenu->addAction(rootisnotdecoratedAct);
-	  viewMenu->addAction(rootisdecoratedAct);
+      viewMenu->addAction(rootisdecoratedAct);
 
 	  clearQueuedDwlAct = new QAction(QIcon(), tr("Clear from Queue"), this);
 	  connect(clearQueuedDwlAct, SIGNAL(triggered()), this, SLOT(clearQueuedDwl()));
 	  clearQueueAct = new QAction(QIcon(), tr("Clear Queue"), this);
 	  connect(clearQueueAct, SIGNAL(triggered()), this, SLOT(clearQueue()));
 
-	  priorityLowAct = new QAction(QIcon(), tr("Low Priority"), this);
+	  priorityLowAct = new QAction(QIcon(IMAGE_PRIORITYLOW), tr("Low"), this);
 	  connect(priorityLowAct, SIGNAL(triggered()), this, SLOT(priorityLow()));
-	  priorityNormalAct = new QAction(QIcon(), tr("Normal Priority"), this);
+	  priorityNormalAct = new QAction(QIcon(IMAGE_PRIORITYNORMAL), tr("Normal"), this);
 	  connect(priorityNormalAct, SIGNAL(triggered()), this, SLOT(priorityNormal()));
-	  priorityHighAct = new QAction(QIcon(), tr("High Priority"), this);
+	  priorityHighAct = new QAction(QIcon(IMAGE_PRIORITYHIGH), tr("High"), this);
 	  connect(priorityHighAct, SIGNAL(triggered()), this, SLOT(priorityHigh()));
-	  priorityAutoAct = new QAction(QIcon(), tr("Auto Priority"), this);
+	  priorityAutoAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Auto"), this);
 	  connect(priorityAutoAct, SIGNAL(triggered()), this, SLOT(priorityAuto()));
 
-	  QMenu *priorityMenu = new QMenu(tr("Change priority as..."), this);
+	  QMenu *priorityMenu = new QMenu(tr("Priority (Download)"), this);
+	  priorityMenu->setIcon(QIcon(IMAGE_PRIORITY));
 	  priorityMenu->addAction(priorityLowAct);
 	  priorityMenu->addAction(priorityNormalAct);
 	  priorityMenu->addAction(priorityHighAct);
@@ -277,6 +278,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       	contextMnu.addAction(playAct);
       }
       contextMnu.addSeparator();
+      contextMnu.addMenu( priorityMenu);
       contextMnu.addAction( pauseAct);
       contextMnu.addAction( resumeAct);
       contextMnu.addAction( cancelAct);
@@ -292,7 +294,6 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       contextMnu.addSeparator();
       contextMnu.addAction( clearQueuedDwlAct);
       contextMnu.addAction( clearQueueAct);
-      contextMnu.addMenu( priorityMenu);
       contextMnu.addSeparator();
 	  contextMnu.addMenu( viewMenu);
       contextMnu.exec( mevent->globalPos() );
