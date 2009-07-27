@@ -220,7 +220,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       resumeAct = new QAction(QIcon(IMAGE_RESUME), tr("Resume"), this);
       connect(resumeAct, SIGNAL(triggered()), this, SLOT(resumeFileTransfer()));
 
-	    cancelAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Cancel" ), this );
+	  cancelAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Cancel" ), this );
       connect( cancelAct , SIGNAL( triggered() ), this, SLOT( cancel() ) );
 
       openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
@@ -249,7 +249,27 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 
       QMenu *viewMenu = new QMenu( tr("View"), this );
       viewMenu->addAction(rootisnotdecoratedAct);
-		  viewMenu->addAction(rootisdecoratedAct);
+	  viewMenu->addAction(rootisdecoratedAct);
+
+	  clearQueuedDwlAct = new QAction(QIcon(), tr("Clear from Queue"), this);
+	  connect(clearQueuedDwlAct, SIGNAL(triggered()), this, SLOT(clearQueuedDwl()));
+	  clearQueueAct = new QAction(QIcon(), tr("Clear Queue"), this);
+	  connect(clearQueueAct, SIGNAL(triggered()), this, SLOT(clearQueue()));
+
+	  priorityLowAct = new QAction(QIcon(), tr("Low Priority"), this);
+	  connect(priorityLowAct, SIGNAL(triggered()), this, SLOT(priorityLow()));
+	  priorityNormalAct = new QAction(QIcon(), tr("Normal Priority"), this);
+	  connect(priorityNormalAct, SIGNAL(triggered()), this, SLOT(priorityNormal()));
+	  priorityHighAct = new QAction(QIcon(), tr("High Priority"), this);
+	  connect(priorityHighAct, SIGNAL(triggered()), this, SLOT(priorityHigh()));
+	  priorityAutoAct = new QAction(QIcon(), tr("Auto Priority"), this);
+	  connect(priorityAutoAct, SIGNAL(triggered()), this, SLOT(priorityAuto()));
+
+	  QMenu *priorityMenu = new QMenu(tr("Change priority as..."), this);
+	  priorityMenu->addAction(priorityLowAct);
+	  priorityMenu->addAction(priorityNormalAct);
+	  priorityMenu->addAction(priorityHighAct);
+	  priorityMenu->addAction(priorityAutoAct);
 
       contextMnu.clear();
       if (addPlayOption)
@@ -270,7 +290,11 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       contextMnu.addAction( copylinkAct);
       contextMnu.addAction( pastelinkAct);
       contextMnu.addSeparator();
-	    contextMnu.addMenu( viewMenu);
+      contextMnu.addAction( clearQueuedDwlAct);
+      contextMnu.addAction( clearQueueAct);
+      contextMnu.addMenu( priorityMenu);
+      contextMnu.addSeparator();
+	  contextMnu.addMenu( viewMenu);
       contextMnu.exec( mevent->globalPos() );
 
 }
@@ -1091,6 +1115,53 @@ void TransfersDialog::openTransfer()
 		/* rise a message box for incompleted download file */
 		QMessageBox::information(this, tr("Open Transfer"),
 				tr("File %1 is not completed. If it is a media file, try to preview it.").arg(info.fname.c_str()));
+	}
+}
+
+/* clear download or all queue - for pending dwls */
+void TransfersDialog::clearQueuedDwl()
+{
+	QList<QStandardItem *> items;
+	QList<QStandardItem *>::iterator it;
+	getIdOfSelectedItems(items);
+
+	for (it = items.begin(); it != items.end(); it ++) {
+		std::string hash = (*it)->data(Qt::DisplayRole).toString().toStdString();
+		rsFiles->clearDownload(hash);
+	}
+}
+void TransfersDialog::clearQueue()
+{
+	rsFiles->clearQueue();
+}
+
+/* modify download priority actions */
+void TransfersDialog::priorityLow()
+{
+	changePriority(0);
+}
+void TransfersDialog::priorityNormal()
+{
+	changePriority(1);
+}
+void TransfersDialog::priorityHigh()
+{
+	changePriority(2);
+}
+void TransfersDialog::priorityAuto()
+{
+	changePriority(3);
+}
+
+void TransfersDialog::changePriority(int priority)
+{
+	QList<QStandardItem *> items;
+	QList<QStandardItem *>::iterator it;
+	getIdOfSelectedItems(items);
+
+	for (it = items.begin(); it != items.end(); it ++) {
+		std::string hash = (*it)->data(Qt::DisplayRole).toString().toStdString();
+		rsFiles->changePriority(hash, priority);
 	}
 }
 

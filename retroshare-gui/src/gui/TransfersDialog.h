@@ -77,6 +77,16 @@ class TransfersDialog : public MainPage
     void openTransfer();
     void previewTransfer();
 
+    /** clear download or all queue - for pending dwls */
+    void clearQueuedDwl();
+    void clearQueue();
+
+    /** modify download priority actions */
+    void priorityLow();
+	void priorityNormal();
+	void priorityHigh();
+	void priorityAuto();
+
 	signals:
 		void playFiles(QStringList files);
 
@@ -115,9 +125,17 @@ class TransfersDialog : public MainPage
 		QAction *openfolderAct;
 		QAction *openfileAct;
 		QAction *previewfileAct;
+		QAction *clearQueuedDwlAct;
+		QAction *clearQueueAct;
+		QAction *changePriorityAct;
+		QAction *priorityLowAct;
+		QAction *priorityNormalAct;
+		QAction *priorityHighAct;
+		QAction *priorityAutoAct;
 
 	void getIdOfSelectedItems(QList<QStandardItem *>& items);
     bool controlTransferFile(uint32_t flags);
+    void changePriority(int priority);
 
 		QTreeView *downloadList;
 
