@@ -290,6 +290,11 @@ void ftServer::clearQueue()
 	mFtDwlQueue->clearQueue();
 }
 
+void ftServer::getDwlDetails(std::list<DwlDetails> & details)
+{
+	mFtDwlQueue->getDwlDetails(details);
+}
+
 	/* Directory Handling */
 void ftServer::setDownloadDirectory(std::string path)
 {

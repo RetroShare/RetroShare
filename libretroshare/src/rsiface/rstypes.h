@@ -33,9 +33,9 @@
 #include <stdint.h>
 
 typedef std::string   RsCertId;
-typedef std::string   RsChanId; 
-typedef std::string   RsMsgId; 
-typedef std::string   RsAuthId; 
+typedef std::string   RsChanId;
+typedef std::string   RsMsgId;
+typedef std::string   RsAuthId;
 
 const uint32_t FT_STATE_FAILED		= 0x0000;
 const uint32_t FT_STATE_OKAY		= 0x0001;
@@ -82,7 +82,7 @@ static const int kRsFiStatusDone = 2;
 	std::string hash;
 	std::string ext;
 
-	uint64_t size; 
+	uint64_t size;
 	uint64_t avail; /* how much we have */
 	int status;
 
@@ -177,7 +177,7 @@ class Condition
 class SearchRequest
 {
 	public:
-	int searchId;	
+	int searchId;
 	RsCertId toId;  /* all zeros for everyone! */
 	std::list<Condition> tests;
 };
@@ -243,7 +243,30 @@ class FileDetail
 	uint32_t rank;
 };
 
+enum DwlPriority { Low = 0, Normal, High, Auto };
+
+/* class which encapsulates download details */
+class DwlDetails {
+public:
+	DwlDetails() { return; }
+	DwlDetails(std::string fname, std::string hash, int count, std::string dest,
+			uint32_t flags, std::list<std::string> srcIds, DwlPriority priority)
+	: fname(fname), hash(hash), count(count), dest(dest), flags(flags),
+	srcIds(srcIds), priority(priority), retries(0) { return; }
+
+	/* download details */
+	std::string fname;
+	std::string hash;
+	int count;
+	std::string dest;
+	uint32_t flags;
+	std::list<std::string> srcIds;
+
+	/* internally used in download queue */
+	DwlPriority priority;
+
+	/* how many times a failed dwl will be requeued */
+	unsigned int retries;
+};
 
 #endif
-
-

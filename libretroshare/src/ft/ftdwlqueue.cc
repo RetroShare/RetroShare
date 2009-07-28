@@ -35,41 +35,32 @@ void ftDwlQueue::run()
 		sleep(1);
 #endif
 
-		unsigned int sDwl = totalSystemDwl();
-		unsigned int qDwl = totalQueuedDwl();
-		unsigned int dwl = 0;
-
-		if (sDwl - qDwl >= 0) {
-			dwl = sDwl - qDwl;	/* real downloads, not in the queue */
-		}
-
 		/* we have to know if the next download from
-		 * queue will exceed the download limit */
-		if (dwl + 1 > downloadLimit) continue;
+		 * the queue will exceed the download limit */
+
+		unsigned int sDwl = totalSystemDwl();
+		if (sDwl + 1 > downloadLimit) continue;
+
+		/* now get the next dwl from the queue
+		 * and request for it */
 
 		DwlDetails details;
 		if (!getNext(details)) continue;
 
-		/* if the download was paused restart it
-		 * else try a new request for download it */
+		if (!mFtController->FileRequest(details.fname, details.hash, details.count, details.dest, details.flags, details.srcIds)) {
+			/* reque the download but with lower priority */
 
-		if (details.paused == true) {
-			rsFiles->FileControl(details.hash, RS_FILE_CTRL_START);
-		} else {
-			if (!mFtController->FileRequest(details.fname, details.hash, details.count, details.dest, details.flags, details.srcIds)) {
-				if (details.retries < retryLimit - 1) {
-					details.retries ++;
-					if (details.priority > 0) {
-						details.priority = (DwlPriority) (details.priority - 1);
-					}
-					details.paused = false;
-
-					prmtx.lock(); {
-					priorities.push_back(details);
-					priorities.sort(PriorityCompare());
-					}
-					prmtx.unlock();
+			if (details.retries < retryLimit - 1) {
+				details.retries ++;
+				if (details.priority > 0) {
+					details.priority = (DwlPriority) (details.priority - 1);
 				}
+
+				prmtx.lock(); {
+				priorities.push_back(details);
+				priorities.sort(PriorityCompare());
+				}
+				prmtx.unlock();
 			}
 		}
 	}
@@ -94,38 +85,32 @@ void ftDwlQueue::insertDownload(const DwlDetails & details) {
 	std::cerr << std::endl;
 #endif
 
-	if (!mFtController->FileRequest(_details.fname, _details.hash, _details.count, _details.dest, _details.flags, _details.srcIds)) {
-		/* reque the download but with lower priority */
+	/* if queue is empty and # of dwls does not
+	 * exceed limit, start the download without
+	 * putting it in the queue, else put it back
+	 * in the queue */
 
-		if (_details.retries < (retryLimit - 1)) {
-			_details.retries ++;
-			if (_details.priority > 0) {
-				_details.priority = (DwlPriority) (_details.priority - 1);
-			}
-			_details.paused = false;
+	unsigned int sDwl = totalSystemDwl();
 
-			prmtx.lock(); {
-			priorities.push_back(_details);
-			priorities.sort(PriorityCompare());
+	RsStackMutex stack(prmtx);
+
+	if (priorities.empty() && (sDwl + 1 <= downloadLimit)) {
+		if (!mFtController->FileRequest(_details.fname, _details.hash, _details.count, _details.dest, _details.flags, _details.srcIds)) {
+			/* reque the download but with lower priority */
+
+			if (_details.retries < (retryLimit - 1)) {
+				_details.retries ++;
+				if (_details.priority > 0) {
+					_details.priority = (DwlPriority) (_details.priority - 1);
+				}
+
+				priorities.push_back(_details);
+				priorities.sort(PriorityCompare());
 			}
-			prmtx.unlock();
 		}
 	} else {
-		/* continue a download only if queue is empty - no
-		 * other paused dwls are waiting - and the number
-		 * of downloads are not exceeding the limit, else
-		 * stop it and put in queue */
-
-		unsigned int sDwl = totalSystemDwl();
-
-		RsStackMutex stack(prmtx);
-		if ((!priorities.empty()) || (sDwl > downloadLimit)) {
-			rsFiles->FileControl(_details.hash, RS_FILE_CTRL_PAUSE);
-			_details.paused = true;
-
-			priorities.push_back(_details);
-			priorities.sort(PriorityCompare());
-		}
+		priorities.push_back(_details);
+		priorities.sort(PriorityCompare());
 	}
 }
 
@@ -219,28 +204,27 @@ bool ftDwlQueue::clearDownload(const std::string hash) {
 	return false;
 }
 
-void ftDwlQueue::clearQueue() {
+void ftDwlQueue::getDwlDetails(std::list<DwlDetails> & details) {
+#ifdef DEBUG_QUEUE
+	std::cerr << "ftDwlQueue::getDwlDetails()" << std::endl;
+#endif
+	details.clear();
+
 	RsStackMutex stack(prmtx);
 
+	std::list<DwlDetails>::iterator it;
+	for (it = priorities.begin(); it != priorities.end(); it ++) {
+		details.push_back(*it);
+	}
+}
+
+void ftDwlQueue::clearQueue() {
 #ifdef DEBUG_QUEUE
 	std::cerr << "ftDwlQueue::clearQueue()" << std::endl;
 #endif
-	priorities.clear();
-}
-
-unsigned int ftDwlQueue::totalQueuedDwl() {
 	RsStackMutex stack(prmtx);
 
-	/* count only paused dwls from the queue */
-	int total = 0;
-	std::list<DwlDetails>::iterator it;
-	for (it = priorities.begin(); it != priorities.end(); it ++) {
-		if (it->paused) {
-			total ++;
-		}
-	}
-
-	return total;
+	priorities.clear();
 }
 
 unsigned int ftDwlQueue::totalSystemDwl() {
@@ -258,9 +242,7 @@ unsigned int ftDwlQueue::totalSystemDwl() {
 
 		if (!rsFiles->FileDetails(*it, flags, info)) continue;
 
-		/* i'm not sure here what other types should be counted
-		 * but state waiting is very important here - dwls that
-		 * are just requested but not in downloading state */
+		/* i'm not sure what other types should be counted here */
 		if (info.downloadStatus == FT_STATE_DOWNLOADING || info.downloadStatus == FT_STATE_WAITING)
 			totalDwl ++;
 	}

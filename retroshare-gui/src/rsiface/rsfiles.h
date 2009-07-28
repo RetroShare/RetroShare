@@ -114,6 +114,7 @@ virtual bool changePriority(const std::string hash, int priority) = 0;
 virtual bool getPriority(const std::string hash, int & priority) = 0;
 virtual bool clearDownload(const std::string hash) = 0;
 virtual void clearQueue() = 0;
+virtual void getDwlDetails(std::list<DwlDetails> & details) = 0;
 
 /***
  * Download / Upload Details.

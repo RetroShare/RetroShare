@@ -40,6 +40,7 @@
 #include "rsiface/rsfiles.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsdisc.h"
+#include "rsiface/rstypes.h"
 #include <algorithm>
 #include "util/misc.h"
 
@@ -648,34 +649,6 @@ void TransfersDialog::insertTransfers()
                 status = tr("Unknown"); break;
         }
 
-        /* a paused download remains with Downloading status;
-         * check to see if download is in download queue to
-         * update his status properly */
-        int priority;
-        if (rsFiles->getPriority(*it, priority)) {
-        	QString spriority;
-
-        	switch (priority) {
-        	case 0:
-        		spriority = tr("Low");
-        		break;
-        	case 1:
-        		spriority = tr("Normal");
-        		break;
-        	case 2:
-        		spriority = tr("High");
-        		break;
-        	case 3:
-        		spriority = tr("Auto");
-        		break;
-        	default:
-				spriority = tr("");
-				break;
-        	}
-
-        	status = tr("Queued [") + spriority + tr("]");
-        }
-
         completed   = info.transfered;
         remaining   = (info.size - info.transfered) / (info.tfRate * 1024.0);
 
@@ -749,6 +722,57 @@ void TransfersDialog::insertTransfers()
             }
             dlPeers++;
         }
+    }
+
+    /* here i will insert files from the download queue - which are
+     * not started yet and can't be find in FileDownloads
+     * */
+    std::list<DwlDetails> details;
+    std::list<DwlDetails>::iterator dit;
+    rsFiles->getDwlDetails(details);
+    for (dit = details.begin(); dit != details.end(); dit ++)
+    {
+    	name 		= QString::fromStdString(dit->fname);
+    	coreId 		= QString::fromStdString(dit->hash);
+    	fileSize 	= dit->count;
+    	progress    = 0;
+    	dlspeed     = 0;
+    	sources     = "";
+    	completed   = 0;
+    	remaining   = 0;
+
+    	int priority = dit->priority;
+
+		QString spriority;
+		switch (dit->priority) {
+		case 0:
+			spriority = tr("Low");
+			break;
+		case 1:
+			spriority = tr("Normal");
+			break;
+		case 2:
+			spriority = tr("High");
+			break;
+		case 3:
+			spriority = tr("Auto");
+			break;
+		default:
+			spriority = tr("");
+			break;
+		}
+
+		status = tr("Queued [") + spriority + tr("]");
+
+		addItem("", name, coreId, fileSize, progress, dlspeed, sources, status, completed, remaining);
+
+		/* if found in selectedIds -> select again */
+		if (selectedIds.end() != std::find(selectedIds.begin(), selectedIds.end(), dit->hash)) {
+			selection->select(DLListModel->index(dlCount, 0),
+				QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent);
+		}
+
+		dlCount++;
     }
 
 

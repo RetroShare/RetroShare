@@ -14,32 +14,31 @@
 #include <list>
 #include <string>
 
-enum DwlPriority { Low = 0, Normal, High, Auto };
-
-/* class which encapsulates download details */
-class DwlDetails {
-public:
-	DwlDetails() { return; }
-	DwlDetails(std::string fname, std::string hash, int count, std::string dest,
-			uint32_t flags, std::list<std::string> srcIds, DwlPriority priority)
-	: fname(fname), hash(hash), count(count), dest(dest), flags(flags),
-	srcIds(srcIds), retries(0), priority(priority), paused(false) {
-		return;
-	}
-
-	/* download details */
-	std::string fname;
-	std::string hash;
-	int count;
-	std::string dest;
-	uint32_t flags;
-	std::list<std::string> srcIds;
-	unsigned int retries;
-
-	/* internally used in download queue */
-	DwlPriority priority;
-	bool paused;
-};
+//enum DwlPriority { Low = 0, Normal, High, Auto };
+//
+///* class which encapsulates download details */
+//class DwlDetails {
+//public:
+//	DwlDetails() { return; }
+//	DwlDetails(std::string fname, std::string hash, int count, std::string dest,
+//			uint32_t flags, std::list<std::string> srcIds, DwlPriority priority)
+//	: fname(fname), hash(hash), count(count), dest(dest), flags(flags),
+//	srcIds(srcIds), priority(priority), retries(0) { return; }
+//
+//	/* download details */
+//	std::string fname;
+//	std::string hash;
+//	int count;
+//	std::string dest;
+//	uint32_t flags;
+//	std::list<std::string> srcIds;
+//
+//	/* internally used in download queue */
+//	DwlPriority priority;
+//
+//	/* how many times a failed dwl will be requeued */
+//	unsigned int retries;
+//};
 
 /* comparator class used when sorting list */
 class PriorityCompare {
@@ -89,6 +88,7 @@ public:
 	virtual bool getPriority(const std::string hash, DwlPriority & priority);
 	virtual bool clearDownload(const std::string hash);
 	virtual void clearQueue();
+	virtual void getDwlDetails(std::list<DwlDetails> & details);
 
 private:
 	unsigned int downloadLimit;
@@ -99,7 +99,6 @@ private:
 	RsMutex prmtx;
 	std::list<DwlDetails> priorities;
 
-	unsigned int totalQueuedDwl();
 	unsigned int totalSystemDwl();
 };
 
