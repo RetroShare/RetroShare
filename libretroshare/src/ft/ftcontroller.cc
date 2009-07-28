@@ -735,7 +735,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 
   { RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	savepath = mPartialsPath + "/" + fname;
+	savepath = mPartialsPath + "/" + hash;
 	destination = dest + "/" + fname;
 
 	/* if no destpath - send to download directory */

@@ -1094,19 +1094,43 @@ void TransfersDialog::previewTransfer()
 	if (!misc::isPreviewable(info.fname.substr(pos + 1).c_str())) return;
 
 	/* make path for downloaded or downloading files */
-	QFileInfo qinfo;
+	bool complete = false;
 	std::string path;
 	if (info.downloadStatus == FT_STATE_COMPLETE) {
 		path = info.path + "/" + info.fname;
+		complete = true;
 	} else {
-		path = rsFiles->getPartialsDirectory() + "/" + info.fname;
+		path = rsFiles->getPartialsDirectory() + "/" + info.hash;
 	}
 
 	/* open or preview them with a suitable application */
-	qinfo.setFile(path.c_str());
-	if (qinfo.exists()) {
-		if (!QDesktopServices::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
-			std::cerr << "previewTransfer(): can't preview file " << path << std::endl;
+	QFileInfo qinfo;
+	if (complete) {
+		qinfo.setFile(QString::fromStdString(path));
+		if (qinfo.exists()) {
+			if (!QDesktopServices::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
+				std::cerr << "previewTransfer(): can't preview file " << path << std::endl;
+			}
+		}
+	} else {
+		QString linkName = QString::fromStdString(path) +
+							QString::fromStdString(info.fname.substr(info.fname.find_last_of('.')));
+		if (QFile::link(QString::fromStdString(path), linkName)) {
+			qinfo.setFile(linkName);
+			if (qinfo.exists()) {
+				if (!QDesktopServices::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
+					std::cerr << "previewTransfer(): can't preview file " << path << std::endl;
+				}
+			}
+			/* wait for the file to open then remove the link */
+#ifdef WIN32
+			Sleep(2000);
+#else
+			sleep(2);
+#endif
+			QFile::remove(linkName);
+		} else {
+			std::cerr << "previewTransfer(): can't create link for file " << path << std::endl;
 		}
 	}
 }
