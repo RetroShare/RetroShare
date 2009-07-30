@@ -57,10 +57,13 @@
 #include <iostream>
 #include <sstream>
 
+#define AUTHGPG_DEBUG 1
+
+
 /* Turn a set of parameters into a string */
 static std::string setKeyPairParams(bool useRsa, unsigned int blen,
 		std::string name, std::string comment, std::string email,
-		std::string passphrase);
+		std::string inPassphrase);
 
 static gpgme_key_t getKey(gpgme_ctx_t, std::string, std::string, std::string);
 
@@ -132,6 +135,7 @@ bool GPGAuthMgr::setPGPPassword_locked(std::string pwd)
 	memcpy(PgpPassword, pwd.c_str(), pwd.length());
 	PgpPassword[pwd.length()] = '\0';
 
+	fprintf(stderr, "GPGAuthMgr::setPGPPassword_locked() called\n");
 	gpgme_set_passphrase_cb(CTX, pgp_pwd_callback, (void *) PgpPassword);
 
 	return true;
@@ -257,7 +261,7 @@ bool GPGAuthMgr::availablePGPCertificates(std::list<std::string> &ids)
  * This function must be called successfully (return == 1)
  * before anything else can be done. (except above fn).
  */
-int	GPGAuthMgr::GPGInit(std::string ownId, std::string name, std::string passphrase)
+int	GPGAuthMgr::GPGInit(std::string ownId)
 {
 	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
@@ -280,23 +284,24 @@ int	GPGAuthMgr::GPGInit(std::string ownId, std::string name, std::string passphr
 		return 0;
 	}
 
-	mOwnGpgCert.user.name = name; 
+	mOwnGpgCert.user.name = newKey->uids->name;
 	mOwnGpgCert.user.email = newKey->uids->email;
 	mOwnGpgCert.user.fpr = newKey->subkeys->fpr;
 	mOwnGpgCert.user.id = ownId;
 	mOwnGpgCert.key = newKey;
-	this->passphrase = passphrase;
 
 	mOwnId = ownId;
 	gpgmeKeySelected = true;
 
-	setPGPPassword_locked(passphrase);
+	// Password set in different fn.
+	//this->passphrase = passphrase;
+	//setPGPPassword_locked(passphrase);
 
 	return true;
 }
 
 int	GPGAuthMgr::GPGInit(std::string name, std::string comment, 
-			std::string email, std::string passphrase)
+			std::string email, std::string inPassphrase)
 {
 	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
@@ -329,8 +334,8 @@ int	GPGAuthMgr::GPGInit(std::string name, std::string comment,
 	mOwnGpgCert.user.id = newKey->subkeys->keyid;
 	mOwnGpgCert.key = newKey;
 
-	this->passphrase = passphrase;
-	setPGPPassword_locked(passphrase);
+	this->passphrase = inPassphrase;
+	setPGPPassword_locked(inPassphrase);
 
 	mOwnId = mOwnGpgCert.user.id;
 	gpgmeKeySelected = true;
@@ -341,6 +346,21 @@ int	GPGAuthMgr::GPGInit(std::string name, std::string comment,
  GPGAuthMgr::~GPGAuthMgr()
 {
 }
+
+int	GPGAuthMgr::LoadGPGPassword(std::string pwd)
+{
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
+	if (!gpgmeInit) {
+		return 0;
+	}
+	
+	this->passphrase = pwd;
+	setPGPPassword_locked(pwd);
+
+	return 1;
+}
+	
 
 
 // store all keys in map mKeyList to avoid callin gpgme exe repeatedly
@@ -637,6 +657,12 @@ bool   GPGAuthMgr::printOwnKeys_locked()
 	return true;
 }
 
+bool    GPGAuthMgr::printKeys()
+{
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+	printAllKeys_locked();
+	return printOwnKeys_locked();
+}
 
 X509 *GPGAuthMgr::SignX509Req(X509_REQ *req, long days, std::string gpg_passwd)
 {
@@ -820,7 +846,7 @@ X509 *GPGAuthMgr::SignX509Req(X509_REQ *req, long days, std::string gpg_passwd)
 		goto err;
 	}
 
-	passphrase = "NULL";
+	//passphrase = "NULL";
 
 	std::cerr << "Signature done: len:" << sigoutl << std::endl;
 
@@ -1258,6 +1284,10 @@ bool	GPGAuthMgr::getDetails(std::string id, pqiAuthDetails &details)
 	 * Ids are the SSL id cert ids, so we have to get issuer id (pgpid)
 	 * before we can add any gpg details 
 	 ****/
+#ifdef AUTHGPG_DEBUG
+        std::cerr << "GPGAuthMgr::getDetails() \"" << id << "\"";
+        std::cerr << std::endl;
+#endif
 
 	if (AuthSSL::getDetails(id, details))
 	{
@@ -1906,7 +1936,7 @@ void GPGAuthMgr::createDummyFriends()
 
 static std::string setKeyPairParams(bool useRsa, unsigned int blen,
 		std::string name, std::string comment, std::string email,
-		std::string passphrase)
+		std::string inPassphrase)
 {
 	std::ostringstream params;
 	params << "<GnupgKeyParms format=\"internal\">"<< std::endl;
@@ -1932,7 +1962,7 @@ static std::string setKeyPairParams(bool useRsa, unsigned int blen,
 	params << "Name-Comment: "<< comment << std::endl;
 	params << "Name-Email: "<< email << std::endl;
 	params << "Expire-Date: 0"<< std::endl;
-	params << "Passphrase: "<< passphrase << std::endl;
+	params << "Passphrase: "<< inPassphrase << std::endl;
 	params << "</GnupgKeyParms>"<< std::endl;
 
 	return params.str();

@@ -9,7 +9,7 @@ endif
 
 # flags for components....
 #PQI_USE_SSLONLY = 1
-PQI_USE_XPGP = 1
+#PQI_USE_XPGP = 1
 
 
 #PQI_USE_PROXY = 1

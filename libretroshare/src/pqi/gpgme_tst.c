@@ -21,8 +21,7 @@ int main()
 	/* Select which GPG Keys we use */
 
 	/* print all keys */
-	mgr.printAllKeys();
-	mgr.printOwnKeys();
+	mgr.printKeys();
 
 	std::list<std::string> idList;
 	mgr.availablePGPCertificates(idList);
@@ -36,7 +35,8 @@ int main()
 	fprintf(stderr, "Using GPG Certificate:%s \n", id.c_str());
 
  	std::string noname;
-	mgr.GPGInit(id, "noname", gpg_passwd);
+	mgr.GPGInit(id);
+	mgr.LoadGPGPassword(gpg_passwd);
 
 	/* Init SSL library */
 	mgr.InitAuth(NULL, NULL, NULL);

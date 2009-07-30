@@ -105,8 +105,6 @@ class RsServer: public RsControl, public RsThread
 		/* p3face-msg Operations */
 
 	public:
-		virtual const std::string& certificateFileName() ;
-
 		/* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
 		virtual int     SetInChat(std::string id, bool in);         /* friend : chat msgs */
 		virtual int     SetInMsg(std::string id, bool in);          /* friend : msg receipients */ 

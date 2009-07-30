@@ -236,6 +236,8 @@ std::string getXPGPAuthCode(XPGP *xpgp);
 std::string getX509Info(X509 *cert);
 bool 	getX509id(X509 *x509, std::string &xid);
 
+int     LoadCheckX509andGetIssuerName(const char *cert_file, 
+			std::string &issuerName, std::string &userId);
 int     LoadCheckX509andGetName(const char *cert_file, 
 			std::string &userName, std::string &userId);
 

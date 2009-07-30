@@ -28,7 +28,11 @@
 
 #include "rsiface/rsiface.h"
 #include "util/rsdir.h"
-			
+
+/* global variable */			
+RsIface   *rsiface    = NULL;
+
+
 /* set to true */
 bool    RsIface::setChanged(DataFlags set)
 {
@@ -97,7 +101,8 @@ private:
 
 RsIface *createRsIface(NotifyBase &cb)
 {
-	return new RsIfaceReal(cb);
+	rsiface = new RsIfaceReal(cb);
+	return rsiface;
 }
 
 

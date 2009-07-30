@@ -9,7 +9,7 @@ include $(RS_TOP_DIR)/scripts/config.mk
 
 RSOBJ =  ftdata.o ftfileprovider.o ftfilecreator.o ftextralist.o \
 	ftdatamultiplex.o ftfilesearch.o fttransfermodule.o ftdbase.o ftserver.o \
-	ftcontroller.o pqitestor.o
+	ftcontroller.o pqitestor.o ftdwlqueue.o
 
 
 TESTOBJ  = ftfileprovidertest.o ftfilecreatortest.o ftextralisttest.o ftdataplextest.o ftserver1test.o ftserver2test.o fttransfermoduletest.o ftserver3test.o

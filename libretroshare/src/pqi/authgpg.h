@@ -82,9 +82,12 @@ class GPGAuthMgr: public AuthSSL
 
 	bool    availablePGPCertificates(std::list<std::string> &ids);
 
-	int	GPGInit(std::string ownId, std::string name, std::string passwd);
+	int	GPGInit(std::string ownId);
 	int	GPGInit(std::string name, std::string comment, 
-			std::string email, std::string passwd);
+			std::string email, std::string passwd); /* create it */
+
+	int	LoadGPGPassword(std::string pwd);
+
 	/* Sign/Trust stuff */
 	int	signCertificate(std::string id);
 	int	revokeCertificate(std::string id);		/* revoke the signature on Certificate */
@@ -93,6 +96,8 @@ class GPGAuthMgr: public AuthSSL
 	/* SKTAN */
 	void showData(gpgme_data_t dh);
 	void createDummyFriends(void); //NYI
+
+  	bool    printKeys();
 
 /*********************************************************************************/
 /************************* STAGE 1 ***********************************************/

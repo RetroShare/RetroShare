@@ -1,5 +1,5 @@
 TEMPLATE = lib
-CONFIG += static xpgp
+CONFIG += static pgp
 TARGET = retroshare
 CONFIG += release
 
@@ -22,6 +22,7 @@ pgp {
 	DEFINES -=PQI_USE_XPGP
 	DEFINES *= RS_USE_PGPSSL
 }
+
 xpgp {
 	DEFINES *= PQI_USE_XPGP 
 	SSL_DIR=../../../../openssl-0.9.7g-xpgp-0.1c
@@ -246,7 +247,7 @@ SOURCES = \
 				rsserver/p3face-msgs.cc \
 				rsserver/rsiface.cc \
 				rsserver/rstypes.cc \
-				rsserver/p3face-startup.cc \
+				rsserver/rsinit.cc \
 				rsserver/p3face-config.cc \
 				rsserver/p3face-server.cc \
 				rsserver/p3Blog.cc \

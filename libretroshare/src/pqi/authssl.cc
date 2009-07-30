@@ -803,7 +803,7 @@ std::string AuthSSL::getIssuerName(std::string id)
 bool    AuthSSL::getDetails(std::string id, pqiAuthDetails &details)
 {
 #ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::getDetails() " << id;
+	std::cerr << "AuthSSL::getDetails() \"" << id << "\"";
 	std::cerr << std::endl;
 #endif
 	sslMtx.lock();   /***** LOCK *****/
@@ -1946,6 +1946,59 @@ int	LoadCheckX509andGetName(const char *cert_file, std::string &userName, std::s
 	{
 		// extract the name.
 		userName = getX509CNString(x509->cert_info->subject);
+	}
+
+	std::cout << getX509Info(x509) << std::endl ;
+	// clean up.
+	X509_free(x509);
+
+	if (valid)
+	{
+		// happy!
+		return 1;
+	}
+	else
+	{
+		// something went wrong!
+		return 0;
+	}
+}
+
+
+// Not dependent on sslroot. load, and detroys the X509 memory.
+
+int	LoadCheckX509andGetIssuerName(const char *cert_file, std::string &issuerName, std::string &userId)
+{
+	/* This function loads the X509 certificate from the file, 
+	 * and checks the certificate 
+	 */
+
+	FILE *tmpfp = fopen(cert_file, "r");
+	if (tmpfp == NULL)
+	{
+#ifdef AUTHSSL_DEBUG
+		std::cerr << "sslroot::LoadCheckAndGetX509Name()";
+		std::cerr << " Failed to open Certificate File:" << cert_file;
+		std::cerr << std::endl;
+#endif
+		return 0;
+	}
+
+	// get xPGP certificate.
+	X509 *x509 = PEM_read_X509(tmpfp, NULL, NULL, NULL);
+	fclose(tmpfp);
+
+	// check the certificate.
+	bool valid = false;
+	if (x509)
+	{
+		valid = ((AuthSSL *) getAuthMgr())->ValidateCertificate(x509, userId);
+	}
+
+	if (valid)
+	{
+		// extract the name.
+		issuerName = getX509CNString(x509->cert_info->issuer);
 	}
 
 	std::cout << getX509Info(x509) << std::endl ;
