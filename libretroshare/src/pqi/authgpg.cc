@@ -106,8 +106,15 @@ gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passp
 	//fprintf(stderr, "pgp_pwd_callback() Set Password to:\"%s\"\n", passwd);
 	fprintf(stderr, "pgp_pwd_callback() Set Password\n");
 
+#ifndef WINDOWS_SYS
 	write(fd, passwd, strlen(passwd));
 	write(fd, "\n", 1); /* needs a new line? */
+#else
+	DWORD written = 0;
+	HANDLE winFd = (HANDLE) fd;
+	WriteFile(winFd, passwd, strlen(passwd), &written, NULL);
+	WriteFile(winFd, "\n", 1, &written, NULL); 
+#endif
 
 	return 0;
 }
@@ -140,7 +147,7 @@ GPGAuthMgr::GPGAuthMgr()
 	gpgme_check_version(NULL);
 	gpgme_set_locale(NULL, LC_CTYPE, setlocale (LC_CTYPE, NULL));
 
-	#ifndef HAVE_W32_SYSTEM
+	#ifdef LC_MESSAGES
 		gpgme_set_locale(NULL, LC_MESSAGES, setlocale (LC_MESSAGES, NULL));
 	#endif
  
@@ -2233,9 +2240,18 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
 	if (result)
         {
 		fprintf(stderr,"keySignCallback result:%s\n", result);
+#ifndef WINDOWS_SYS
 		if (*result)
 			write (fd, result, strlen (result));
           	write (fd, "\n", 1);
+#else
+		DWORD written = 0;
+		HANDLE winFd = (HANDLE) fd;
+		if (*result)
+			WriteFile(winFd, result, strlen(result), &written, NULL);
+		WriteFile(winFd, "\n", 1, &written, NULL); 
+#endif
+
         }
 	
 	fprintf(stderr,"keySignCallback Error status\n");
@@ -2334,9 +2350,17 @@ static gpgme_error_t trustCallback(void *opaque, gpgme_status_code_t status, \
 
 	if (result)
         {
+#ifndef WINDOWS_SYS
 		if (*result)
 			write (fd, result, strlen (result));
           	write (fd, "\n", 1);
+#else
+		DWORD written = 0;
+		HANDLE winFd = (HANDLE) fd;
+		if (*result)
+			WriteFile(winFd, result, strlen (result), &written, NULL);
+		WriteFile(winFd, "\n", 1, &written, NULL); 
+#endif
         }
 	
 	return params->err;
