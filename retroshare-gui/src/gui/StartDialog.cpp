@@ -75,18 +75,52 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
 	 * mark last one as default.
 	 */
 
+	std::list<std::string> accountIds;
+	std::list<std::string>::iterator it;
+	std::string preferedId;
+	RsInit::getPreferedAccountId(preferedId);
+	int pidx = -1;
+	int i;
+
+	if (RsInit::getAccountIds(accountIds))
+	{
+		for(it = accountIds.begin(), i = 0; it != accountIds.end(); it++, i++)
+		{
+			const QVariant & userData = QVariant(QString::fromStdString(*it));
+			std::string gpgid, name, email, sslname;
+			RsInit::getAccountDetails(*it, gpgid, name, email, sslname);
+       			QString accountName = QString::fromStdString(name);
+       			accountName += "/";
+       			accountName += QString::fromStdString(sslname);
+       			ui.loadName->addItem(accountName, userData);
+
+			if (preferedId == *it)
+			{
+				pidx = i;
+			}
+		}
+	}
+
+	if (pidx > 0)
+	{
+		ui.loadName->setCurrentIndex(pidx);
+	}
+
+#if 0
 	std::list<std::string> pgpIds;
 	std::list<std::string>::iterator it;
-	if (RsInit::GetLogins(pgpIds))
+	if (RsInit::GetPGPLogins(pgpIds))
 	{
 		for(it = pgpIds.begin(); it != pgpIds.end(); it++)
 		{
 			const QVariant & userData = QVariant(QString::fromStdString(*it));
 			std::string name, email;
-			RsInit::GetLoginDetails(*it, name, email);
+			RsInit::GetPGPLoginDetails(*it, name, email);
        			ui.loadName->addItem(QString::fromStdString(name), userData);
 		}
 	}
+#endif
+
 #else
 
   if (RsInit::ValidateCertificate(userName))
@@ -146,6 +180,7 @@ void StartDialog::closeinfodlg()
 
 void StartDialog::loadPerson()
 {
+        std::string accountId = "";
 	std::string passwd = ui.loadPasswd->text().toStdString();
 #ifdef RS_USE_PGPSSL
 
@@ -162,12 +197,18 @@ void StartDialog::loadPerson()
         }
 
         QVariant data = ui.loadName->itemData(pgpidx);
-        std::string PGPId = (data.toString()).toStdString();
+        accountId = (data.toString()).toStdString();
 
-	RsInit::LoadGPGPassword(PGPId, gpgPasswd);
+	std::string gpgId, gpgName, gpgEmail, sslName;
+	if (RsInit::getAccountDetails(accountId, 
+			gpgId, gpgName, gpgEmail, sslName))
+	{
+		RsInit::SelectGPGAccount(gpgId);
+		RsInit::LoadGPGPassword(gpgPasswd);
+	}
 #else
 #endif
-	RsInit::LoadPassword(passwd);
+	RsInit::LoadPassword(accountId, passwd);
 	loadCertificates();
 }
 

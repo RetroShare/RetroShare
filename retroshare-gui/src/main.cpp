@@ -39,9 +39,6 @@
 #include "rsiface/rsiface.h"
 #include "rsiface/notifyqt.h"
 
-RsIface   *rsiface    = NULL;
-RsControl *rsicontrol = NULL;
-
 int main(int argc, char *argv[])
 { 
 
@@ -64,7 +61,7 @@ int main(int argc, char *argv[])
 
 	/* Setup The GUI Stuff */
 	Rshare rshare(args, argc, argv, 
-		QString(RsInit::RsConfigDirectory()));
+		QString::fromStdString(RsInit::RsConfigDirectory()));
 
 	/* Login Dialog */
   	if (!okStart)
@@ -74,7 +71,8 @@ int main(int argc, char *argv[])
 
 		StartDialog *sd = NULL;
 		bool genCert = false;
-		if (RsInit::ValidateCertificate(userName))
+		std::list<std::string> accountIds;
+		if (RsInit::getAccountIds(accountIds) && (accountIds.size() > 0))
 		{
 			sd = new StartDialog();
 			sd->show();
@@ -121,37 +119,12 @@ int main(int argc, char *argv[])
 	}
 
 	NotifyQt   *notify = new NotifyQt();
-	RsIface *iface = createRsIface(*notify);
-	RsControl *rsServer = createRsControl(*iface, *notify);
+	createRsIface(*notify);
+	createRsControl(*rsiface, *notify);
 
-
-	/* save to the global variables */
-	rsiface = iface;
-	rsicontrol = rsServer;
-
-	rsServer->StartupRetroShare();
-	RsInit::passwd="" ;
-	//        CleanupRsConfig(config);
+	rsicontrol->StartupRetroShare();
 
 	MainWindow *w = new MainWindow;
-	//QMainWindow *skinWindow = new QMainWindow();
-
-	//skinWindow->resize(w->size().width()+15,w->size().width()+15);
-	//skinWindow->setWindowTitle(w->windowTitle());
-	//skinWindow->setCentralWidget(w);
-
-	/* Attach the Dialogs, to the Notify Class */
-// Not needed anymore since the notify class is directly connected by Qt signals/slots to the correct widgets below.
-//
-//	notify->setRsIface(iface);
-//	notify->setNetworkDialog(w->networkDialog);
-//	notify->setPeersDialog(w->peersDialog);
-//	notify->setDirDialog(w->sharedfilesDialog);
-//	notify->setTransfersDialog(w->transfersDialog);
-//	notify->setChatDialog(w->chatDialog);
-//	notify->setMessagesDialog(w->messagesDialog);
-//	notify->setChannelsDialog(w->channelsDialog);
-//	notify->setMessengerWindow(w->messengerWindow);
 
 	// I'm using a signal to transfer the hashing info to the mainwindow, because Qt schedules signals properly to
 	// avoid clashes between infos from threads.
@@ -187,12 +160,7 @@ int main(int argc, char *argv[])
 	{
 
 		w->show();
-		//skinWindow->show();
-
 	}
-
-	/* Run Retroshare */
-	//int ret = rshare.run();
 
 	/* Startup a Timer to keep the gui's updated */
 	QTimer *timer = new QTimer(w);

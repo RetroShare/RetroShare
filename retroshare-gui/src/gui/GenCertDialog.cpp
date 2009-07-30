@@ -57,13 +57,13 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
 
         std::list<std::string> pgpIds;
         std::list<std::string>::iterator it;
-        if (RsInit::GetLogins(pgpIds))
+        if (RsInit::GetPGPLogins(pgpIds))
         {
                 for(it = pgpIds.begin(); it != pgpIds.end(); it++)
                 {
                         const QVariant & userData = QVariant(QString::fromStdString(*it));
                         std::string name, email;
-                        RsInit::GetLoginDetails(*it, name, email);
+                        RsInit::GetPGPLoginDetails(*it, name, email);
 			std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
                         ui.genPGPuser->addItem(QString::fromStdString(name), userData);
                 }
@@ -171,15 +171,17 @@ void GenCertDialog::genPerson()
 
 #ifdef RS_USE_PGPSSL
 	/* Initialise the PGP user first */
-	RsInit::LoadGPGPassword(PGPId, PGPpasswd);
+	RsInit::SelectGPGAccount(PGPId);
+	RsInit::LoadGPGPassword(PGPpasswd);
 #endif
 
-
-	bool okGen = RsInit::RsGenerateCertificate(genName, genOrg, genLoc, genCountry, passwd, err);
+	std::string sslId;
+	bool okGen = RsInit::GenerateSSLCertificate(genName, genOrg, genLoc, genCountry, passwd, sslId, err);
 
 	if (okGen)
 	{
 		/* complete the process */
+		RsInit::LoadPassword(sslId, passwd);
 		loadCertificates();
 	}
 	else
@@ -199,6 +201,7 @@ void GenCertDialog::genPerson()
 void GenCertDialog::selectFriend()
 {
 
+#if 0
 	/* still need to find home (first) */
 
 	QString fileName = QFileDialog::getOpenFileName(this, tr("Select Trusted Friend"), "",
@@ -214,11 +217,15 @@ void GenCertDialog::selectFriend()
 	{
 		ui.genFriend -> setText("<Invalid Selected>");
 	}
+#endif
+
 }
 
 
 void GenCertDialog::checkChanged(int i)
 {
+
+#if 0
 	if (i)
 	{
 		selectFriend();
@@ -231,6 +238,8 @@ void GenCertDialog::checkChanged(int i)
 		RsInit::ValidateTrustedUser(fname, userName);
 		ui.genFriend -> setText("<None Selected>");
 	}
+#endif
+
 }
 
 

@@ -1,78 +1,104 @@
+#ifndef RETROSHARE_INIT_INTERFACE_H
+#define RETROSHARE_INIT_INTERFACE_H
+
+/*
+ * "$Id: rsiface.h,v 1.9 2007-04-21 19:08:51 rmf24 Exp $"
+ *
+ * RetroShare C++ Interface.
+ *
+ * Copyright 2004-2006 by Robert Fernie.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare@lunamutt.com".
+ *
+ */
+
+
 /* Initialisation Class (not publicly disclosed to RsIFace) */
 
 /****
  * #define RS_USE_PGPSSL 1
  ***/
 
+#define RS_USE_PGPSSL 1
+
 class RsInit
 {
 	public:
-		/* Commandline/Directory options */
+		/* reorganised RsInit system */
 
-		static const char *RsConfigDirectory() ;
+		/* PreLogin */
+		static void	InitRsConfig() ;
+		static int 	InitRetroShare(int argc, char **argv);
 
 
-		static bool	setStartMinimised() ;
-		static int 	InitRetroShare(int argcIgnored, char **argvIgnored) ;
-		static int 	LoadCertificates(bool autoLoginNT) ;
+		/* Account Details (Combined GPG+SSL Setup) */
+		static bool 	getPreferedAccountId(std::string &id);
+		static bool 	getAccountIds(std::list<std::string> &ids);
+		static bool 	getAccountDetails(std::string id, 
+					std::string &gpgId, std::string &gpgName, 
+					std::string &gpgEmail, std::string &sslName);
+
 		static bool	ValidateCertificate(std::string &userName) ;
-		static bool	ValidateTrustedUser(std::string fname, std::string &userName) ;
-		static bool	LoadPassword(std::string passwd) ;
-		static bool	RsGenerateCertificate(std::string name, std::string org, std::string loc, std::string country, std::string passwd, std::string &errString);
-		static void	load_check_basedir() ;
-		static int	create_configinit() ;
+
+
+		/* Generating GPGme Account */
+		static int 	GetPGPLogins(std::list<std::string> &pgpIds);
+		static int 	GetPGPLoginDetails(std::string id, std::string &name, std::string &email);
+		static bool	GeneratePGPCertificate(std::string name, std::string comment, std::string email, std::string passwd, std::string &pgpId, std::string &errString);
+
+		/* Login PGP */
+		static bool 	SelectGPGAccount(std::string id);
+		static bool 	LoadGPGPassword(std::string passwd);
+
+		/* Create SSL Certificates */
+		static bool	GenerateSSLCertificate(std::string name, std::string org, std::string loc, std::string country, std::string passwd, std::string &sslId, std::string &errString);
+
+		/* Login SSL */
+		static bool	LoadPassword(std::string id, std::string passwd) ;
+
+		/* Final Certificate load. This can be called if:
+		 * a) InitRetroshare() returns true -> autoLoad/password Set.
+		 * b) SelectGPGAccount() && LoadPassword()
+		 */
+		static int 	LoadCertificates(bool autoLoginNT) ;
+
+
+		/* Post Login Options */
+		static std::string 	RsConfigDirectory();
+		static bool	setStartMinimised() ;
+
+
+	private:
+		/* PreLogin */
+		static std::string getHomePath() ;
+		static void setupBaseDir();
+
+		/* Account Details */
+		static bool    get_configinit(std::string dir, std::string &id);
+		static bool    create_configinit(std::string dir, std::string id);
+
+		static bool setupAccount(std::string accountdir);
+
+		/* Auto Login */
 		static bool RsStoreAutoLogin() ;
 		static bool RsTryAutoLogin() ;
-		static bool RsClearAutoLogin(std::string basedir) ;
-		static void	InitRsConfig() ;
+		static bool RsClearAutoLogin() ;
 
-		static std::string getHomePath() ;
-
-		/* PGPSSL init functions */
-
-#ifdef RS_USE_PGPSSL
-		static bool 	LoadGPGPassword(std::string id, std::string passwd);
-		static int 	GetLogins(std::list<std::string> &pgpIds);
-		static int 	GetLoginDetails(std::string id, std::string &name, std::string &email);
-
-		static std::string gpgPasswd;
-#endif
-
-		/* Key Parameters that must be set before
-		 * RetroShare will start up:
-		 */
-		static std::string load_cert;
-		static std::string load_key;
-		static std::string passwd;
-
-		static bool havePasswd; 		/* for Commandline password */
-		static bool autoLogin;  		/* autoLogin allowed */
-		static bool startMinimised; /* Icon or Full Window */
-
-		/* Win/Unix Differences */
-		static char dirSeperator;
-
-		/* Directories */
-		static std::string basedir;
-		static std::string homePath;
-
-		/* Listening Port */
-		static bool forceExtPort;
-		static bool forceLocalAddr;
-		static unsigned short port;
-		static char inet[256];
-
-		/* Logging */
-		static bool haveLogFile;
-		static bool outStderr;
-		static bool haveDebugLevel;
-		static int  debugLevel;
-		static char logfname[1024];
-
-		static bool firsttime_run;
-		static bool load_trustedpeer;
-		static std::string load_trustedpeer_file;
-
-		static bool udpListenerOnly;
 };
 
+
+#endif

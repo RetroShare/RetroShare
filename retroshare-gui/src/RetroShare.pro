@@ -97,7 +97,7 @@ LIBS += -L"../../../../lib" -lretroshare -lminiupnpc -lssl -lcrypto
 
 # ###########################################
 
-LIBS += -lz #-lgpgme
+LIBS += -lz -lgpgme
 LIBS += -lQtUiTools
 
 DEPENDPATH += . \

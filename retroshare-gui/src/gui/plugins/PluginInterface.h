@@ -3,10 +3,13 @@
 
 #include <QtPlugin>
 
+#include <QString>
+/***
 QT_BEGIN_NAMESPACE
 class QString;
 class QWidget;
 QT_END_NAMESPACE
+***/
 
 //! a base class for plugins
 
