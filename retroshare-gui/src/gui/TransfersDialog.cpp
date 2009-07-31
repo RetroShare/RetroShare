@@ -19,6 +19,10 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#ifdef WIN32
+	#include <Windows.h>
+#endif
+
 
 #include "rshare.h"
 #include "TransfersDialog.h"
