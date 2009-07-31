@@ -10,7 +10,7 @@
 
 #include <string>
 
-#define VERSION "libretroshare 0.5.x"
+#define VERSION "0.5.x"
 
 namespace RsUtil {
 
