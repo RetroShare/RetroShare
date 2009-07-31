@@ -22,6 +22,7 @@
 
 #include "HelpDialog.h"
 #include "rsiface/rsiface.h"
+#include "rsiface/rsdisc.h"
 
 #include <iostream>
 #include <sstream>
@@ -66,7 +67,27 @@ HelpDialog::HelpDialog(QWidget *parent)
   QFile versionFile(QLatin1String(":/help/version.html"));
    if (versionFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
 	QTextStream in(&versionFile);
-	ui.version->setText(in.readAll());
+	QString version = in.readAll();
+
+	/* get libretroshare version */
+	std::map<std::string, std::string>::iterator vit;
+	std::map<std::string, std::string> versions;
+	const RsConfig &conf = rsiface->getConfig();
+	bool retv = rsDisc->getDiscVersions(versions);
+	std::cerr << "Version display own id " << conf.ownId << std::endl;
+	std::cerr << "Versions map size : " << versions.size() << std::endl;
+
+	for(vit = versions.begin(); vit != versions.end(); vit++)
+	{
+		 std::cerr << "vit first " << vit->first << " vit second " << vit->second << std::endl;
+	}
+	if (retv && versions.end() != (vit = versions.find(conf.ownId)))
+	{
+	    std::cerr << "Version displaying " << std::endl;
+	    version += QString(" ") + QString::fromStdString(vit->second);
+	}
+
+	ui.version->setText(version);
    }
 
    ui.label_2->setMinimumWidth(20);
