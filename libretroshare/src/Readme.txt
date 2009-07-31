@@ -307,6 +307,10 @@ Need:
 	Qt4.5.x opensource development kit + MinGw: 
 	http://get.qtsoftware.com/qtsdk/qt-sdk-win-opensource-2009.03.1.exe 
 	
+	MINGW and MSYS:
+	http://downloads.sourceforge.net/mingw/MinGW-5.1.4.exe
+	http://downloads.sourceforge.net/mingw/MSYS-1.0.11.exe
+	
 	miniupnpc
 	http://miniupnp.free.fr/files/download.php?file=miniupnpc-1.3.tar.gz
 	
