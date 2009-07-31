@@ -20,14 +20,14 @@ linux-g++-64 {
 }
 
 version_detail_linux {
-	system(echo "" > gui/help/version.html)
+	system(date > gui/help/version.html)
 	system(ls /usr/bin/git) {
 	    system(/usr/bin/git log) {
 		#retrieve git commit
 		system(echo "Git version : " >> gui/help/version.html)
+		system(git status | grep branch >> gui/help/version.html)
 		system(git log -n 1 | grep commit >> gui/help/version.html)
 		system(git log -n 1 | grep svn >> gui/help/version.html)
-		system(git status | grep branch >> gui/help/version.html)
 		system(echo "" >> gui/help/version.html)
 		system(echo "" >> gui/help/version.html)
 	    }
@@ -185,7 +185,6 @@ HEADERS +=  rshare.h \
             util/MouseEventFilter.h \
             util/EventFilter.h \
             util/Widget.h \
-            util/rsversion.h \
             util/RsAction.h \
             util/printpreview.h \
             util/log.h \
@@ -402,7 +401,6 @@ SOURCES +=  main.cpp \
             util/MouseEventFilter.cpp \
             util/EventFilter.cpp \
             util/Widget.cpp \
-            util/rsversion.cpp \
             util/RsAction.cpp \
             util/printpreview.cpp \
             util/log.cpp \

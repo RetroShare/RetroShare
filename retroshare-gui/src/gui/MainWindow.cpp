@@ -61,8 +61,6 @@
 #include "settings/rsettingswin.h"
 #endif
 
-#include "util/rsversion.h"
-
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsfiles.h"
@@ -131,7 +129,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Create RshareSettings object */
     _settings = new RshareSettings();
     
-    setWindowTitle(tr("RetroShare %1 a secure decentralised commmunication platform").arg(retroshareVersion())); 
+    setWindowTitle(tr("RetroShare a secure decentralised commmunication platform"));
 
     mSMPlayer = NULL;
   	

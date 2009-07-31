@@ -25,7 +25,6 @@
 
 #include "rshare.h"
 #include "common/vmessagebox.h"
-#include "util/rsversion.h"
 #include "NetworkDialog.h"
 #include "NetworkView.h"
 #include "TrustView.h"
@@ -134,7 +133,7 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 	ui.networkTab->addTab(new TrustView(),QString(tr("Trust matrix")));
      
     // Set Log infos
-    setLogInfo(tr("RetroShare %1 started.", "e.g: RetroShare v0.x started.").arg(retroshareVersion()));
+    setLogInfo(tr("RetroShare started."));
     
     setLogInfo(tr("Welcome to RetroShare."), QString::fromUtf8("blue"));
       
