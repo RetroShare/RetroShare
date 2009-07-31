@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools debug pluginmgr #release version_detail_linux newsettings
+CONFIG += qt gui uic qrc resources uitools debug pluginmgr version_detail_linux #release newsettings
 QT     += network xml script 
 TEMPLATE = app
 TARGET = RetroShare
@@ -20,14 +20,18 @@ linux-g++-64 {
 }
 
 version_detail_linux {
-	system(date > gui/help/version.html)
+	DEFINES += ADD_LIBRETROSHARE_VERSION_INFO
+	system(echo "Retroshare Gui version : " > gui/help/version.html)
+	system(date >> gui/help/version.html)
 	system(ls /usr/bin/git) {
 	    system(/usr/bin/git log) {
 		#retrieve git commit
-		system(echo "Git version : " >> gui/help/version.html)
-		system(git status | grep branch | cut -c 3- >> gui/help/version.html)
-		system(git log -n 1 | grep commit >> gui/help/version.html)
-		system(git log -n 1 | grep svn >> gui/help/version.html)
+		system(echo "Git version : $(git status | grep branch | cut -c 3-) $(git log -n 1 | grep commit)" >> gui/help/version.html)
+		system(git log -n 1 | grep svn) {
+			system(echo "Svn version : $(git log -n 1 | grep svn | awk 'NR==1{$NF=\"\"} 1' | head -1)" >> gui/help/version.html)
+		} else:system(git log -n 10 | grep svn) {
+			system(echo "Svn closest version : $(git log -n 10 | grep svn | awk 'NR==1{$NF=\"\"} 1' | head -1)" >> gui/help/version.html)
+		}
 		system(echo "" >> gui/help/version.html)
 		system(echo "" >> gui/help/version.html)
 	    }
@@ -36,8 +40,9 @@ version_detail_linux {
 	system(ls /usr/bin/svn) {
 	    system(/usr/bin/svn info) {
 		#retrieve svn revision
-		system(echo "Svn version : " >> gui/help/version.html)
-		system(svn info | head -n 5 | head -n 5 | tail -1 >> gui/help/version.html)
+		system(echo "Svn version : $(svn info | head -n 5 | head -n 5 | tail -1) >> gui/help/version.html)
+		system(echo "" >> gui/help/version.html)
+		system(echo "" >> gui/help/version.html)
 	    }
 	}
 }
