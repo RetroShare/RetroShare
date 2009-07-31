@@ -625,7 +625,7 @@ void RsInit::setupBaseDir()
 			std::cerr << "Cannot Create BaseConfig Dir" << std::endl;
 			exit(1);
 		}
-		basedir += "\\RetroShare";
+		RsInitConfig::basedir += "\\RetroShare";
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 	}
@@ -1386,6 +1386,8 @@ bool	RsInit::create_configinit(std::string dir, std::string id)
 	return false;
 }
 
+std::string make_path_unix(std::string path);
+
 std::string RsInit::getHomePath()
 {
 	std::string home;
@@ -1458,7 +1460,7 @@ extern "C" {
 #endif
 
 #ifdef WINDOWS_SYS
-#ifndef WIN_CROSS_UBUNTU
+#if defined(__CYGWIN__)
 
 typedef struct _CRYPTPROTECT_PROMPTSTRUCT {
   DWORD cbSize;
@@ -1516,12 +1518,12 @@ bool  RsInit::RsStoreAutoLogin()
 	return false;
 #else
 	/* store password encrypted in a file */
-	std::string entropy = load_cert;
+	std::string entropy = RsInitConfig::load_cert;
 
 	DATA_BLOB DataIn;
 	DATA_BLOB DataEnt;
 	DATA_BLOB DataOut;
-	BYTE *pbDataInput = (BYTE *) strdup(passwd.c_str());
+	BYTE *pbDataInput = (BYTE *) strdup(RsInitConfig::passwd.c_str());
 	DWORD cbDataInput = strlen((char *)pbDataInput)+1;
 	BYTE *pbDataEnt   =(BYTE *)  strdup(entropy.c_str());
 	DWORD cbDataEnt   = strlen((char *)pbDataEnt)+1;
@@ -1610,13 +1612,13 @@ bool  RsInit::RsTryAutoLogin()
 	return false;
 #else
 	/* Require a AutoLogin flag in the config to do this */
-	if (!autoLogin)
+	if (!RsInitConfig::autoLogin)
 	{
 		return false;
 	}
 
 	/* try to load from file */
-	std::string entropy = load_cert;
+	std::string entropy = RsInitConfig::load_cert;
 	/* get the data out */
 
 	/* open the data to the file */
@@ -1701,8 +1703,8 @@ bool  RsInit::RsTryAutoLogin()
 		{
      		  //std::cerr << "The decrypted data is: " << DataOut.pbData;
 		  //std::cerr << std::endl;
-		  passwd = (char *) DataOut.pbData;
-		  havePasswd = true;
+		  RsInitConfig::passwd = (char *) DataOut.pbData;
+		  RsInitConfig::havePasswd = true;
 		}
 	}
 	else
