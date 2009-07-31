@@ -190,6 +190,7 @@ HEADERS +=  rshare.h \
             util/MouseEventFilter.h \
             util/EventFilter.h \
             util/Widget.h \
+            util/rsversion.h \
             util/RsAction.h \
             util/printpreview.h \
             util/log.h \
@@ -407,6 +408,7 @@ SOURCES +=  main.cpp \
             util/EventFilter.cpp \
             util/Widget.cpp \
             util/RsAction.cpp \
+            util/rsversion.cpp \
             util/printpreview.cpp \
             util/log.cpp \
             gui/bwgraph/bwgraph.cpp \

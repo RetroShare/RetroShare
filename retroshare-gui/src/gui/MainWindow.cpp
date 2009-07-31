@@ -66,6 +66,7 @@
 #include "rsiface/rsfiles.h"
 
 #include "gui/connect/ConnectFriendWizard.h"
+#include "util/rsversion.h"
 
 #include <sstream>
 #include <iomanip>
@@ -129,8 +130,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Create RshareSettings object */
     _settings = new RshareSettings();
     
-    setWindowTitle(tr("RetroShare a secure decentralised commmunication platform"));
-
+    setWindowTitle(tr("RetroShare %1 a secure decentralised commmunication platform").arg(retroshareVersion()));
+    
     mSMPlayer = NULL;
   	
     // Setting icons
