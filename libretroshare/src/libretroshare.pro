@@ -1,31 +1,20 @@
 TEMPLATE = lib
-CONFIG += static pgp
+CONFIG += static
 TARGET = retroshare
 CONFIG += release
 
 DEFINES *= MINIUPNPC_VERSION=10
-UPNPC_DIR=../../../../miniupnpc-1.0
+DEFINES -= PQI_USE_XPGP
+DEFINES += RS_USE_PGPSSL
+
+UPNPC_DIR = ../../../../miniupnpc-1.0
+GPG_ERROR_DIR = ../../../../libgpg-error-1.7
+GPGME_DIR  = ../../../../gpgme-1.1.8
+
 
 profiling {
 	QMAKE_CXXFLAGS -= -fomit-frame-pointer
 	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
-}
-pgp {
-
-	SSL_DIR=/usr/include/openssl
-	#SSL_DIR=../../../../openssl-0.9.8k
-  GPG_ERROR_DIR=../../../../libgpg-error-1.7
-	GPGME_DIR = ../../../../gpgme-1.1.8
-	
-	INCLUDEPATH += . $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
-	
-	DEFINES -=PQI_USE_XPGP
-	DEFINES *= RS_USE_PGPSSL
-}
-
-xpgp {
-	DEFINES *= PQI_USE_XPGP 
-	SSL_DIR=../../../../openssl-0.9.7g-xpgp-0.1c
 }
 
 
@@ -44,12 +33,14 @@ linux-g++ {
 	DESTDIR = lib.linux-g++
 	QMAKE_CXXFLAGS *= -Wall 
 	QMAKE_CC = g++
+	SSL_DIR = /usr/include/openssl
 }
 linux-g++-64 {
 	OBJECTS_DIR = temp/linux-g++-64/obj
 	DESTDIR = lib.linux-g++-64
 	QMAKE_CXXFLAGS *= -Wall 
 	QMAKE_CC = g++
+	SSL_DIR = /usr/include/openssl
 }
 #################### Cross compilation for windows under Linux ####################
 
@@ -75,12 +66,13 @@ win32 {
 	  
 	PTHREADS_DIR = ../../../../pthreads-w32-2-8-0-release
   ZLIB_DIR = ../../../../zlib-1.2.3
+  SSL_DIR = ../../../../openssl-0.9.8k
         
   INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR}
 }
 ################################### COMMON stuff ##################################
 
-INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR}
+INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
 
 #DEPENDPATH += . \
 #              util \
@@ -127,8 +119,10 @@ HEADERS += dbase/cachestrapper.h \
            ft/ftsearch.h \
            ft/ftserver.h \
            ft/fttransfermodule.h \
-	   ft/ftdwlqueue.h \
+	         ft/ftdwlqueue.h \
            pqi/authssl.h \
+           pqi/authgpg.h \
+           pqi/cleanupxpgp.h \
            pqi/p3authmgr.h \
            pqi/p3cfgmgr.h \
            pqi/p3connmgr.h \
@@ -293,6 +287,9 @@ SOURCES = \
 				dbase/fistore.cc \
 				dbase/fimonitor.cc \
 				dbase/findex.cc \
+				pqi/authssl.cc \
+				pqi/authgpg.cc \
+				pqi/cleanupxpgp.cc \
 				pqi/p3notify.cc \
 				pqi/pqipersongrp.cc \
 				pqi/pqihandler.cc \
@@ -350,11 +347,4 @@ SOURCES = \
 				util/rsthreads.cc \
 				util/rsversion.cc 
 
-pgp {
-	HEADERS += pqi/authssl.h pqi/cleanupxpgp.h pqi/authgpg.h
-	SOURCES += pqi/authssl.cc pqi/cleanupxpgp.cc pqi/authgpg.cc
-}
-xpgp {
-	HEADERS += pqi/authxpgp.h pqi/cleanupxpgp.h 
-	SOURCES += pqi/authxpgp.cc pqi/cleanupxpgp.cc pqi/xpgp_id.cc 
-}
+
