@@ -24,7 +24,7 @@ version_detail_linux {
 	system(echo "Retroshare Gui version : " > gui/help/version.html)
 	system(date >> gui/help/version.html)
 	system(ls /usr/bin/git) {
-	    system(/usr/bin/git log) {
+	    system(/usr/bin/git log -n 1) {
 		#retrieve git commit
 		system(echo "Git version : $(git status | grep branch | cut -c 3-) $(git log -n 1 | grep commit)" >> gui/help/version.html)
 		system(git log -n 1 | grep svn) {
@@ -40,7 +40,7 @@ version_detail_linux {
 	system(ls /usr/bin/svn) {
 	    system(/usr/bin/svn info) {
 		#retrieve svn revision
-		system(echo "Svn version : $(svn info | head -n 5 | head -n 5 | tail -1) >> gui/help/version.html)
+		system(echo "Svn version : $(svn info | head -n 5 | head -n 5 | tail -1)" >> gui/help/version.html)
 		system(echo "" >> gui/help/version.html)
 		system(echo "" >> gui/help/version.html)
 	    }
