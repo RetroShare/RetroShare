@@ -1,5 +1,12 @@
 Changes for v0.*
 
+* Changes to startup / login function to handle multiple accounts.
+* Switched on OpenPGP version by default
+* Major change to the way certificates are stored now defaults to ~/.retroshare/SSLID/
+* Changend mods to use miniupnpc v1.3
+* Fixed Bug to use WriteFile instead of write under windows with gpgme.
+* Redesign of dwl queue - dwls will be enqueued and picked from there.
+* Changed to display the dwl queue in the transfers dialog 
 * Added implementation for priority download queue
 * Added switching colors for different uploads 
 * Changend Quit RetroShare MessageBox with "Yes" and not more with "OK"
