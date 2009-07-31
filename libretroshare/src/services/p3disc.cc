@@ -89,6 +89,9 @@ p3disc::p3disc(p3AuthMgr *am, p3ConnectMgr *cm)
 
 	mRemoteDisc = true;
 	mLocalDisc  = false;
+
+	//add own version to versions map
+	versions[mAuthMgr->OwnId()] = RsUtil::retroshareVersion();
 	return;
 }
 
