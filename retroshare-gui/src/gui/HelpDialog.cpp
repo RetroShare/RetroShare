@@ -69,23 +69,17 @@ HelpDialog::HelpDialog(QWidget *parent)
 	QTextStream in(&versionFile);
 	QString version = in.readAll();
 
+#ifdef ADD_LIBRETROSHARE_VERSION_INFO
 	/* get libretroshare version */
 	std::map<std::string, std::string>::iterator vit;
 	std::map<std::string, std::string> versions;
 	const RsConfig &conf = rsiface->getConfig();
 	bool retv = rsDisc->getDiscVersions(versions);
-	std::cerr << "Version display own id " << conf.ownId << std::endl;
-	std::cerr << "Versions map size : " << versions.size() << std::endl;
-
-	for(vit = versions.begin(); vit != versions.end(); vit++)
-	{
-		 std::cerr << "vit first " << vit->first << " vit second " << vit->second << std::endl;
-	}
 	if (retv && versions.end() != (vit = versions.find(conf.ownId)))
 	{
-	    std::cerr << "Version displaying " << std::endl;
-	    version += QString(" ") + QString::fromStdString(vit->second);
+	    version += QString::fromStdString("Retroshare library version : \n") + QString::fromStdString(vit->second);
 	}
+#endif
 
 	ui.version->setText(version);
    }
