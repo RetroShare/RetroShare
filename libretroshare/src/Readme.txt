@@ -13,42 +13,44 @@ Project site  . . . . . . . https://sourceforge.net/projects/retroshare
 Contact:  . . . . . . . . . retroshare@lunamutt.com ,defnax@users.sourceforge.net
 
 
-Compiling + Running RetroShare (V0.4.xxx)
+Compiling + Running RetroShare (V0.5.xxx)
 =========================================================================================
 REQUIREMENTS
 =========================================================================================
 
 Libraries/Tools:
 	* C/C++ Compiler. 	  	(standard on Linux/cygwin)
-	* OpenSSL-0.9.7g-xpgp 	http://www.lunamutt.com/retroshare/openssl-0.9.7g-xpgp-0.1c.tgz
-	* miniupnpc           	http://miniupnp.free.fr/files/download.php?file=miniupnpc-1.0.tar.gz
-	* Qt >= 4.4.x 		  	http://trolltech.com/downloads/opensource
+  * Qt >= 4.5.x 		  	  http://trolltech.com/downloads/opensource
+	* OpenSSL       	      http://www.openssl.org/source/openssl-0.9.8k.tar.gz
+	* miniupnpc           	http://miniupnp.free.fr/files/download.php?file=miniupnpc-1.3.tar.gz
+	* gpgme 			          ftp://ftp.gnupg.org/gcrypt/gpgme/gpgme-1.1.8.tar.bz2
+	* libgpg-error          ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.7.tar.bz2
 
-RetroShare Source Code: ( from sf.net/projects/retroshare)
-	* Qt-GUI-XXX.tgz
-	* retroshare-src-v0.4.XXX.tgz 
-	
 Latest RetroShare sources from (SVN) sourceforge.net:	
     svn co https://retroshare.svn.sourceforge.net/svnroot/retroshare retroshare  
 
 Windows Requirements:
-	* Cygwin (Windows Only) 	  http://www.cygwin.com/cygwin/setup.exe 
-	* Pthreads (Windows Only)   http://sourceware.org/pthreads-win32/ 
-	* Zlib (Windows Only)       http://www.zlib.net/
+	* Cygwin  	          http://www.cygwin.com/cygwin/setup.exe (for openssl compile)
+	* MinGW/Msys package  http://sourceforge.net/projects/mingw/files/	 (for compile gpgme and libgpg-error)
+	* Pthreads            http://sourceware.org/pthreads-win32/ 
+	* Zlib                http://www.zlib.net/
+
 		
 ------------------------------------------------------------------------------------------
 Build Scripts are avaible on SVN for Debian and Ubuntu:
 http://retroshare.svn.sourceforge.net/viewvc/retroshare/trunk/build_scripts/
 
-OpenSSL-0.9.7g-xpgp is available at:
-http://www.lunamutt.com/retroshare/openssl-0.9.7g-xpgp-0.1c.tgz
+Latest stable OpenSSL is available at:
+http://www.openssl.org/source/openssl-0.9.8k.tar.gz
 
-miniupnpc-1.0 is avaible at:
-http://miniupnp.free.fr/files/download.php?file=miniupnpc-1.0.tar.gz
+miniupnpc-1.3 is avaible at:
+http://miniupnp.free.fr/files/download.php?file=miniupnpc-1.3.tar.gz
 
-Linux Source package included this libraries: OpenSSL-0.9.7g-xpgp, miniupnpc-1.0, qcheckers, smplayer:
-http://downloads.sourceforge.net/retroshare/retroshare-pkg-linux-src-v0.4.09b.tgz
+gpgme Library is avaible at:
+ftp://ftp.gnupg.org/gcrypt/gpgme/gpgme-1.1.8.tar.bz2
 
+libgpg-error Library is avaible at:
+ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.7.tar.bz2
 
 Download/Compile as per instructions...
 
@@ -302,19 +304,19 @@ Need:
 	Cygwin development environment: 
 	http://www.cygwin.com/cygwin/setup.exe 
  
-	Qt4.4.x opensource development kit + MinGw: 
-	http://wftp.tu-chemnitz.de/pub/Qt/qt/source/qt-win-opensource-4.4.3-mingw.exe  
- 
-	source code for all libraries.: 
-	http://downloads.sourceforge.net/retroshare/retroshare-pkg-linux-src-v0.4.09b.tgz? 
- 
-	retroshare-pkg-linux-src-v0.4.09b.tgz are Libraries included: 
- 
-	openssl-0.9.7g-xpgp-0.1c.tgz 
-	miniupnpc-1.0.tar.gz
- 
-	Libraries for Windows needs: 
-	pthreads: ftp://sourceware.org/pub/pthreads-win32/pthreads-w32-2-8-0-release.tar.gz 
+	Qt4.5.x opensource development kit + MinGw: 
+	http://get.qtsoftware.com/qtsdk/qt-sdk-win-opensource-2009.03.1.exe 
+	
+	miniupnpc
+	http://miniupnp.free.fr/files/download.php?file=miniupnpc-1.3.tar.gz
+	
+	gpgme Library 
+	ftp://ftp.gnupg.org/gcrypt/gpgme/gpgme-1.1.8.tar.bz2
+
+	libgpg-error Library
+	ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.7.tar.bz2
+
+	pthreads:   ftp://sourceware.org/pub/pthreads-win32/pthreads-w32-2-8-0-release.tar.gz 
 	zlib: 		http://www.zlib.net/zlib-1.2.3.tar.gz 
  
  
