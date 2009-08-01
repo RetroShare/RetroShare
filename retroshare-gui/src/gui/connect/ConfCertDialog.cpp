@@ -116,7 +116,7 @@ void ConfCertDialog::loadDialog()
 	bool retv = rsDisc->getDiscVersions(versions);
 	if (retv && versions.end() != (vit = versions.find(detail.id)))
 	{
-		ui.version->setText(QString("v") + QString::fromStdString(vit->second));
+		ui.version->setText(QString::fromStdString(vit->second));
 	}
 
 	/* set local address */
