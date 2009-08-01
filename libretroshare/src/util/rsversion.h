@@ -5,17 +5,12 @@
  *      Author: alexandrut
  */
 
-#ifndef RSVERSION_H_
-#define RSVERSION_H_
-
 #include <string>
 
-#define VERSION "0.5.x"
+#define LIB_VERSION "0.5.x"
 
 namespace RsUtil {
 
 	std::string retroshareVersion();
 
 }
-
-#endif /* RSVERSION_H_ */

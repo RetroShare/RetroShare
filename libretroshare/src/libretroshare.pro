@@ -1,5 +1,5 @@
 TEMPLATE = lib
-CONFIG += static
+CONFIG += static version_detail_bash_script
 TARGET = retroshare
 CONFIG += release
 
@@ -42,6 +42,13 @@ linux-g++-64 {
 	QMAKE_CC = g++
 	SSL_DIR = /usr/include/openssl
 }
+
+version_detail_bash_script {
+    QMAKE_EXTRA_TARGETS += write_version_detail
+    PRE_TARGETDEPS = write_version_detail
+    write_version_detail.commands = ./version_detail.sh
+}
+
 #################### Cross compilation for windows under Linux ####################
 
 win32-x-g++ {	

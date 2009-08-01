@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools debug pluginmgr version_detail_linux #release newsettings
+CONFIG += qt gui uic qrc resources uitools debug pluginmgr version_detail_bash_script #release newsettings
 QT     += network xml script 
 TEMPLATE = app
 TARGET = RetroShare
@@ -19,32 +19,11 @@ linux-g++-64 {
 	QMAKE_LFLAGS += -L"../../../../lib/linux-g++-64"
 }
 
-version_detail_linux {
+version_detail_bash_script {
 	DEFINES += ADD_LIBRETROSHARE_VERSION_INFO
-	system(echo "Retroshare Gui version : " > gui/help/version.html)
-	system(date >> gui/help/version.html)
-	system(ls /usr/bin/git) {
-	    system(/usr/bin/git log -n 1) {
-		#retrieve git commit
-		system(echo "Git version : $(git status | grep branch | cut -c 3-) $(git log -n 1 | grep commit)" >> gui/help/version.html)
-		system(git log -n 1 | grep svn) {
-			system(echo "Svn version : $(git log -n 1 | grep svn | awk 'NR==1{$NF=\"\"} 1' | head -1)" >> gui/help/version.html)
-		} else:system(git log -n 10 | grep svn) {
-			system(echo "Svn closest version : $(git log -n 10 | grep svn | awk 'NR==1{$NF=\"\"} 1' | head -1)" >> gui/help/version.html)
-		}
-		system(echo "" >> gui/help/version.html)
-		system(echo "" >> gui/help/version.html)
-	    }
-	}
-
-	system(ls /usr/bin/svn) {
-	    system(/usr/bin/svn info) {
-		#retrieve svn revision
-		system(echo "Svn version : $(svn info | head -n 5 | head -n 5 | tail -1)" >> gui/help/version.html)
-		system(echo "" >> gui/help/version.html)
-		system(echo "" >> gui/help/version.html)
-	    }
-	}
+	QMAKE_EXTRA_TARGETS += write_version_detail
+	PRE_TARGETDEPS = write_version_detail
+	write_version_detail.commands = ./version_detail.sh
 }
 #################### Cross compilation for windows under Linux ###################
 

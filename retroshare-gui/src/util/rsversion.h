@@ -19,12 +19,10 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef _RSVERSION_H_
-#define _RSVERSION_H_
+
+#define GUI_VERSION "0.5.x"
 
 #include <QString>
 
 QString retroshareVersion();
-
-#endif
 

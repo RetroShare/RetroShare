@@ -21,18 +21,6 @@
 
 #include "rsversion.h"
 
-//#define USE_SVN_VERSIONS 1
-
-#define VERSION "0.5.0"
-
-#if USE_SVN_VERSIONS
-#include "svn_revision.h"
-#endif
-
 QString retroshareVersion() {
-#if USE_SVN_VERSIONS
-	return QString(QString(VERSION) + "+" + QString(SVN_REVISION));
-#else
-	return QString(VERSION);
-#endif
+	return QString(GUI_VERSION);
 }
