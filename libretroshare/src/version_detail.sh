@@ -2,7 +2,7 @@
 
 if ( git log -n 1 &> /dev/null); then
 	#retrieve git information
-	version="git : $(git status | grep branch | cut -c 6-) $(git log -n 1 | grep commit)"
+	version="git : $(git status | grep branch | cut -c 13-) $(git log -n 1 | grep commit | cut -c 8-)"
 fi
 
 if ( git log -n 1 | grep svn &> /dev/null); then
