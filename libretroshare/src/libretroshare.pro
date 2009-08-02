@@ -1,5 +1,5 @@
 TEMPLATE = lib
-CONFIG += static version_detail_bash_script
+CONFIG += static 
 TARGET = retroshare
 CONFIG += release
 
@@ -34,6 +34,7 @@ linux-g++ {
 	QMAKE_CXXFLAGS *= -Wall 
 	QMAKE_CC = g++
 	SSL_DIR = /usr/include/openssl
+	CONFIG += version_detail_bash_script
 }
 linux-g++-64 {
 	OBJECTS_DIR = temp/linux-g++-64/obj
@@ -41,6 +42,7 @@ linux-g++-64 {
 	QMAKE_CXXFLAGS *= -Wall 
 	QMAKE_CC = g++
 	SSL_DIR = /usr/include/openssl
+	CONFIG += version_detail_bash_script
 }
 
 version_detail_bash_script {
