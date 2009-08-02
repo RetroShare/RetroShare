@@ -22,18 +22,18 @@ Libraries/Tools:
 	* C/C++ Compiler. 	  	(standard on Linux/cygwin)
   * Qt >= 4.5.x 		  	  http://trolltech.com/downloads/opensource
 	* OpenSSL       	      http://www.openssl.org/source/openssl-0.9.8k.tar.gz
-	* miniupnpc           	http://miniupnp.free.fr/files/download.php?file=miniupnpc-1.3.tar.gz
+	* MiniUPnP           	  http://miniupnp.free.fr/files/download.php?file=miniupnpc-1.3.tar.gz
 	* gpgme 			          ftp://ftp.gnupg.org/gcrypt/gpgme/gpgme-1.1.8.tar.bz2
-	* libgpg-error          ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.7.tar.bz2
+	* libgpg-error          ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.7.tar.bz2 
 
-Latest RetroShare sources from (SVN) sourceforge.net:	
-    svn co https://retroshare.svn.sourceforge.net/svnroot/retroshare retroshare  
-
-Windows Requirements:
+Windows only:
 	* Cygwin  	          http://www.cygwin.com/cygwin/setup.exe (for openssl compile)
-	* MinGW/Msys package  http://sourceforge.net/projects/mingw/files/	 (for compile gpgme and libgpg-error)
+	* MinGW/Msys package  http://sourceforge.net/projects/mingw/files/	 (for compile gpgme,libgpg-error)
 	* Pthreads            http://sourceware.org/pthreads-win32/ 
 	* Zlib                http://www.zlib.net/
+	
+	Latest RetroShare sources from (SVN) sourceforge.net:	
+    svn co https://retroshare.svn.sourceforge.net/svnroot/retroshare retroshare 
 
 		
 ------------------------------------------------------------------------------------------
@@ -43,14 +43,18 @@ http://retroshare.svn.sourceforge.net/viewvc/retroshare/trunk/build_scripts/
 Latest stable OpenSSL is available at:
 http://www.openssl.org/source/openssl-0.9.8k.tar.gz
 
-miniupnpc-1.3 is avaible at:
+Latest miniupnpc-1.3 is avaible at:
 http://miniupnp.free.fr/files/download.php?file=miniupnpc-1.3.tar.gz
 
-gpgme Library is avaible at:
+Latest gpgme Library is avaible at:
 ftp://ftp.gnupg.org/gcrypt/gpgme/gpgme-1.1.8.tar.bz2
 
-libgpg-error Library is avaible at:
+Latest libgpg-error Library is avaible at:
 ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.7.tar.bz2
+
+Windows only:
+	pthreads:   ftp://sourceware.org/pub/pthreads-win32/pthreads-w32-2-8-0-release.tar.gz 
+	zlib: 		  http://www.zlib.net/zlib-1.2.3.tar.gz 
 
 Download/Compile as per instructions...
 
@@ -321,7 +325,7 @@ Need:
 	ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.7.tar.bz2
 
 	pthreads:   ftp://sourceware.org/pub/pthreads-win32/pthreads-w32-2-8-0-release.tar.gz 
-	zlib: 		http://www.zlib.net/zlib-1.2.3.tar.gz 
+	zlib: 		  http://www.zlib.net/zlib-1.2.3.tar.gz 
  
  
 In Brief: 
