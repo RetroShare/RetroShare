@@ -1,3 +1,16 @@
+Changes for v0.4.14-rc1
+* changed the order of upnp/stun and extaddrFinder to limit wrong analysis of firewalled situation
+* finally corrected the connexion + one-way bug
+* suppressed file download memory leak
+* compliance for linux 64 gcc44 compiling
+* Created v0.4.x branch
+* added new Toasters
+* add the drag'n drop file to popup chat
+* enabled double click download
+* New translations
+* Make compatible with Qt 4.3.4
+
+
 Changes for v0.4.13a
 
 * Merged peer detail dialogs from network and friends tab
