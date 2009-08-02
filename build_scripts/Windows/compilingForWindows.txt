@@ -42,6 +42,8 @@ In this section we install: cygwin, mingw/msys and Qt4.5
 	b) Download MSYS-1.0.11 installer and run. 
 
    links:
+  http://downloads.sourceforge.net/mingw/MinGW-5.1.4.exe
+	http://downloads.sourceforge.net/mingw/MSYS-1.0.11.exe
 	http://www.mingw.org/
 	http://sourceforge.net/projects/mingw/files/	
 
