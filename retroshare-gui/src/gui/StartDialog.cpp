@@ -63,6 +63,7 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
   //connect(ui.genButton, SIGNAL(clicked()), this, SLOT(genPerson()));
   connect(ui.loadButton, SIGNAL(clicked()), this, SLOT(loadPerson()));
   connect(ui.loadPasswd, SIGNAL(returnPressed()), this, SLOT(loadPerson()));
+  connect(ui.loadGPGPasswd, SIGNAL(returnPressed()), this, SLOT(loadPerson()));
   //connect(ui.selectButton, SIGNAL(clicked()), this, SLOT(selectFriend()));
   //connect(ui.friendBox, SIGNAL(stateChanged(int)), this, SLOT(checkChanged(int)));
   connect(ui.createaccountButton, SIGNAL(clicked()), this, SLOT(createnewaccount()));
