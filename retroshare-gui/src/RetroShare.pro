@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools debug pluginmgr version_detail_bash_script #release newsettings
+CONFIG += qt gui uic qrc resources uitools debug pluginmgr #release newsettings
 QT     += network xml script 
 TEMPLATE = app
 TARGET = RetroShare
@@ -13,10 +13,12 @@ MOC_DIR = temp/moc
 linux-g++ {
 	OBJECTS_DIR = temp/linux-g++/obj
  	QMAKE_LFLAGS += -L"../../../../lib/linux-g++"
+ 	CONFIG += version_detail_bash_script
 }
 linux-g++-64 {
 	OBJECTS_DIR = temp/linux-g++-64/obj
 	QMAKE_LFLAGS += -L"../../../../lib/linux-g++-64"
+	CONFIG += version_detail_bash_script
 }
 
 version_detail_bash_script {
