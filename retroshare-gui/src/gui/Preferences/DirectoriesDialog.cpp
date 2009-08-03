@@ -23,6 +23,7 @@
 #include <rshare.h>
 #include "rsiface/rsfiles.h"
 #include "DirectoriesDialog.h"
+#include "gui/ShareManager.h"
 
 #include <algorithm>
 
@@ -36,14 +37,16 @@ DirectoriesDialog::DirectoriesDialog(QWidget *parent)
  	/* Create RshareSettings object */
   	_settings = new RshareSettings();
 
-  	connect(ui.addButton, SIGNAL(clicked( bool ) ), this , SLOT( addShareDirectory() ) );
-  	connect(ui.removeButton, SIGNAL(clicked( bool ) ), this , SLOT( removeShareDirectory() ) );
+//  	connect(ui.addButton, SIGNAL(clicked( bool ) ), this , SLOT( addShareDirectory() ) );
+//  	connect(ui.removeButton, SIGNAL(clicked( bool ) ), this , SLOT( removeShareDirectory() ) );
   	connect(ui.incomingButton, SIGNAL(clicked( bool ) ), this , SLOT( setIncomingDirectory() ) );
   	connect(ui.partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );
   	connect(ui.checkBox, SIGNAL(stateChanged(int)), this, SLOT(shareDownloadDirectory(int)));
-
+  	connect(ui.editButton, SIGNAL(clicked()), this, SLOT(editDirectories()));
+#ifdef TO_REMOVE
 	ui.addButton->setToolTip(tr("Add a Share Directory"));
 	ui.removeButton->setToolTip(tr("Remove Shared Directory"));
+#endif
 	ui.incomingButton->setToolTip(tr("Browse"));
 	ui.partialButton->setToolTip(tr("Browse"));
 
@@ -62,23 +65,33 @@ DirectoriesDialog::DirectoriesDialog(QWidget *parent)
 #endif
 }
 
+void DirectoriesDialog::editDirectories()
+{
+	ShareManager::showYourself() ;
+}
+
 /** Saves the changes on this page */
-bool
-DirectoriesDialog::save(QString &errmsg)
+bool DirectoriesDialog::save(QString &errmsg)
 {
 	/* this is usefull especially when shared incoming files is
 	 * default option and when the user don't check/uncheck the
 	 * checkBox, so no signal is emitted to update the shared list */
 	if (ui.checkBox->isChecked())
 	{
-		std::list<std::string>::const_iterator it;
-		std::list<std::string> dirs;
+		std::list<SharedDirInfo>::const_iterator it;
+		std::list<SharedDirInfo> dirs;
 		rsFiles->getSharedDirectories(dirs);
 
-		if (dirs.end() == std::find(dirs.begin(), dirs.end(), rsFiles->getDownloadDirectory()))
-		{
+		bool found = false ;
+		for(std::list<SharedDirInfo>::const_iterator it(dirs.begin());it!=dirs.end();++it)
+			if((*it).filename == rsFiles->getDownloadDirectory())
+			{
+				found=true ;
+				break ;
+			}
+		if(!found)
 			rsFiles->shareDownloadDirectory();
-		}
+
 		rsFiles->setShareDownloadDirectory(true);
 	}
 	else
@@ -93,8 +106,8 @@ DirectoriesDialog::save(QString &errmsg)
 /** Loads the settings for this page */
 void DirectoriesDialog::load()
 {
-	std::list<std::string>::const_iterator it;
-	std::list<std::string> dirs;
+	std::list<SharedDirInfo>::const_iterator it;
+	std::list<SharedDirInfo> dirs;
 	rsFiles->getSharedDirectories(dirs);
 
 	/* get a link to the table */
@@ -106,7 +119,7 @@ void DirectoriesDialog::load()
 	for(it = dirs.begin(); it != dirs.end(); it++)
 	{
 		/* (0) Dir Name */
-		listWidget->addItem(QString::fromStdString(*it));
+		listWidget->addItem(QString::fromStdString((*it).filename));
 	}
 
 	ui.incomingDir->setText(QString::fromStdString(rsFiles->getDownloadDirectory()));
@@ -115,6 +128,7 @@ void DirectoriesDialog::load()
 	listWidget->update(); /* update display */
 }
 
+#ifdef TO_REMOVE
 void DirectoriesDialog::addShareDirectory()
 {
 
@@ -147,6 +161,7 @@ void DirectoriesDialog::removeShareDirectory()
 		load();
 	}
 }
+#endif
 
 void DirectoriesDialog::setIncomingDirectory()
 {
@@ -159,14 +174,19 @@ void DirectoriesDialog::setIncomingDirectory()
 		rsFiles->setDownloadDirectory(dir);
 		if (ui.checkBox->isChecked())
 		{
-			std::list<std::string>::const_iterator it;
-			std::list<std::string> dirs;
+			std::list<SharedDirInfo>::const_iterator it;
+			std::list<SharedDirInfo> dirs;
 			rsFiles->getSharedDirectories(dirs);
 
-			if (dirs.end() == std::find(dirs.begin(), dirs.end(), rsFiles->getDownloadDirectory()))
-			{
+			bool found = false ;
+			for(std::list<SharedDirInfo>::const_iterator it(dirs.begin());it!=dirs.end();++it)
+				if((*it).filename == rsFiles->getDownloadDirectory())
+				{
+					found=true ;
+					break ;
+				}
+			if(!found)
 				rsFiles->shareDownloadDirectory();
-			}
 		}
 	}
 	load();
@@ -189,14 +209,20 @@ void DirectoriesDialog::shareDownloadDirectory(int state)
 {
 	if (state == Qt::Checked)
 	{
-		std::list<std::string>::const_iterator it;
-		std::list<std::string> dirs;
+		std::list<SharedDirInfo>::const_iterator it;
+		std::list<SharedDirInfo> dirs;
 		rsFiles->getSharedDirectories(dirs);
 
-		if (dirs.end() == std::find(dirs.begin(), dirs.end(), rsFiles->getDownloadDirectory()))
-		{
+		bool found = false ;
+		for(std::list<SharedDirInfo>::const_iterator it(dirs.begin());it!=dirs.end();++it)
+			if((*it).filename == rsFiles->getDownloadDirectory())
+			{
+				found=true ;
+				break ;
+			}
+		if(!found)
 			rsFiles->shareDownloadDirectory();
-		}
+
 		rsFiles->setShareDownloadDirectory(true);
 	}
 	else

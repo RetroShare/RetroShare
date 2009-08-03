@@ -175,9 +175,10 @@ virtual void	setPartialsDirectory(std::string path);
 virtual std::string getDownloadDirectory();
 virtual std::string getPartialsDirectory();
 
-virtual bool	getSharedDirectories(std::list<std::string> &dirs);
-virtual bool	setSharedDirectories(std::list<std::string> &dirs);
-virtual bool 	addSharedDirectory(std::string dir);
+virtual bool	getSharedDirectories(std::list<SharedDirInfo> &dirs);
+virtual bool	setSharedDirectories(std::list<SharedDirInfo> &dirs);
+virtual bool 	addSharedDirectory(SharedDirInfo dir);
+virtual bool   updateShareFlags(const SharedDirInfo& dir); 	// updates the flags. The directory should already exist !
 virtual bool 	removeSharedDirectory(std::string dir);
 
 virtual void	setShareDownloadDirectory(bool value);

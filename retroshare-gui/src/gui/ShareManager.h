@@ -32,7 +32,10 @@ class ShareManager : public QDialog
 {
   Q_OBJECT
 
-public:
+	public:
+	  static void showYourself() ;
+
+private:
   /** Default constructor */
   ShareManager( QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default destructor */
@@ -53,10 +56,12 @@ private slots:
 
   void addShareDirectory();
   void removeShareDirectory();
+  void updateFlags(bool);
 
 private:
 
 
+  static ShareManager *_instance ;
 
   /** Define the popup menus for the Context menu */
   QMenu* contextMnu;

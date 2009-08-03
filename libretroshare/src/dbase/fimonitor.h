@@ -27,6 +27,7 @@
 #include "dbase/cachestrapper.h"
 #include "dbase/findex.h"
 #include "util/rsthreads.h"
+#include "rsiface/rsfiles.h"
 
 /******************************************************************************************
  * The Local Monitoring Class: FileIndexMonitor.
@@ -66,67 +67,71 @@ class NotifyBase ;
  * FileIndexMonitor
  *****************************************************************************************/
 
+static const uint32_t RS_SHARED_FLAGS_PUBLIC = 0x0001 ;
+static const uint32_t RS_SHARED_FLAGS_ANONYM = 0x0002 ;
+
 class FileIndexMonitor: public CacheSource, public RsThread
 {
 	public:
-	FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in, std::string cachedir, std::string pid);
-virtual ~FileIndexMonitor();
+		FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in, std::string cachedir, std::string pid);
+		virtual ~FileIndexMonitor();
 
-	/* external interface for filetransfer */
-bool    findLocalFile(std::string hash, std::string &fullpath, uint64_t &size) const;
+		/* external interface for filetransfer */
+		bool    findLocalFile(std::string hash,uint32_t f, std::string &fullpath, uint64_t &size) const;
 
-	/* external interface for local access to files */
-bool    convertSharedFilePath(std::string path, std::string &fullpath);
-
-
-	/* Interacting with CacheSource */
-	/* overloaded from CacheSource */
-virtual bool loadLocalCache(const CacheData &data);  /* called with stored data */
-bool 	updateCache(const CacheData &data);     /* we call when we have a new cache for others */
+		/* external interface for local access to files */
+		bool    convertSharedFilePath(std::string path, std::string &fullpath);
 
 
-	/* the FileIndexMonitor inner workings */
-//virtual void 	run(std::string& currentJob); /* overloaded from RsThread */
-//void 	updateCycle(std::string& currentJob);
-virtual void 	run(); /* overloaded from RsThread */
-void 	updateCycle();
+		/* Interacting with CacheSource */
+		/* overloaded from CacheSource */
+		virtual bool loadLocalCache(const CacheData &data);  /* called with stored data */
+		bool 	updateCache(const CacheData &data);     /* we call when we have a new cache for others */
 
-virtual void    setSharedDirectories(std::list<std::string> dirs);
-void    getSharedDirectories(std::list<std::string> &dirs);
 
-void    setPeriod(int insecs);
-void    forceDirectoryCheck();
-bool	inDirectoryCheck();
+		/* the FileIndexMonitor inner workings */
+		//virtual void 	run(std::string& currentJob); /* overloaded from RsThread */
+		//void 	updateCycle(std::string& currentJob);
+		virtual void 	run(); /* overloaded from RsThread */
+		void 	updateCycle();
 
-	/* util fns */
+		virtual void    setSharedDirectories(std::list<SharedDirInfo> dirs);
+		void    getSharedDirectories(std::list<SharedDirInfo>& dirs);
+		void	updateShareFlags(const SharedDirInfo& info) ;
+
+		void    setPeriod(int insecs);
+		void    forceDirectoryCheck();
+		bool	inDirectoryCheck();
+
+		/* util fns */
 
 	private:
 
-	/* the mutex should be locked before calling... these. */
-std::string locked_findRealRoot(std::string base) const;
-bool 	hashFile(std::string path, FileEntry &fi); /* To Implement */
+		/* the mutex should be locked before calling... these. */
+		std::string locked_findRealRoot(std::string base) const;
+		bool 	hashFile(std::string path, FileEntry &fi); /* To Implement */
 
-	/* data */
+		/* data */
 
-	mutable RsMutex fiMutex;
+		mutable RsMutex fiMutex;
 
-	FileIndex fi;
+		FileIndex fi;
 
-	int updatePeriod;
-	std::map<std::string, std::string> directoryMap; /* used by findRealRoot */
+		int updatePeriod;
+		std::map<std::string, SharedDirInfo> directoryMap; /* used by findRealRoot */
 
-	/* flags to kick - if we were busy or sleeping */
-	bool pendingDirs;
-	bool pendingForceCacheWrite;
+		/* flags to kick - if we were busy or sleeping */
+		bool pendingDirs;
+		bool pendingForceCacheWrite;
 
-	/* flags to force Check, to tell if we're in check */
-	bool mForceCheck;
-	bool mInCheck;
+		/* flags to force Check, to tell if we're in check */
+		bool mForceCheck;
+		bool mInCheck;
 
-	std::list<std::string> pendingDirList;
-	bool    internal_setSharedDirectories();
+		std::list<SharedDirInfo> pendingDirList;
+		bool    internal_setSharedDirectories();
 
-	NotifyBase *cb ;
+		NotifyBase *cb ;
 };
 
 

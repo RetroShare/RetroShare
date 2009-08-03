@@ -450,9 +450,7 @@ void MainWindow::addFriend()
 /** Shows Share Manager */
 void MainWindow::openShareManager()
 {
-    static ShareManager* sharemanager = new ShareManager(this);
-    sharemanager->show();
-
+	 ShareManager::showYourself();
 }
 
 /** Creates and displays the Configuration dialog with the current page set to

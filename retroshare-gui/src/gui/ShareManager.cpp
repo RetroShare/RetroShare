@@ -24,15 +24,19 @@
 
 #include <QContextMenuEvent>
 #include <QMenu>
+#include <QCheckBox>
 #include <QCursor>
 #include <QPoint>
 #include <QMouseEvent>
 #include <QPixmap>
 
 #include <QMessageBox>
+#include <QComboBox>
 
 /* Images for context menu icons */
 #define IMAGE_CANCEL               ":/images/delete.png"
+
+ShareManager *ShareManager::_instance = NULL ;
 
 /** Default constructor */
 ShareManager::ShareManager(QWidget *parent, Qt::WFlags flags)
@@ -75,27 +79,82 @@ void ShareManager::shareddirListCostumPopupMenu( QPoint point )
 /** Loads the settings for this page */
 void ShareManager::load()
 {
-	std::list<std::string>::const_iterator it;
-	std::list<std::string> dirs;
+	std::list<SharedDirInfo>::const_iterator it;
+	std::list<SharedDirInfo> dirs;
 	rsFiles->getSharedDirectories(dirs);
 
 	/* get a link to the table */
-	QListWidget *listWidget = ui.shareddirList;
+	QTableWidget *listWidget = ui.shareddirList;
 
 	/* remove old items ??? */
-	listWidget->clear();
+	listWidget->clearContents() ;
+	listWidget->setRowCount(0) ;
 
-	for(it = dirs.begin(); it != dirs.end(); it++)
+	connect(this,SIGNAL(itemClicked(QTableWidgetItem*)),this,SLOT(updateFlags(QTableWidgetItem*))) ;
+
+	int row=0 ;
+	for(it = dirs.begin(); it != dirs.end(); it++,++row)
 	{
-		/* (0) Dir Name */
-		listWidget->addItem(QString::fromStdString(*it));
+		listWidget->insertRow(row) ;
+		listWidget->setItem(row,0,new QTableWidgetItem(QString::fromStdString((*it).filename)));
+#ifdef USE_COMBOBOX
+		QComboBox *cb = new QComboBox ;
+		cb->addItem(QString("Network Wide")) ;
+		cb->addItem(QString("Browsable")) ;
+		cb->addItem(QString("Universal")) ;
+
+		cb->setToolTip(QString("Decide here whether this directory is\n* Network Wide: \tanonymously shared over the network (including your friends)\n* Browsable: \tbrowsable by your friends\n* Universal: \t\tboth")) ;
+
+		// TODO
+		//  - set combobox current value depending on what rsFiles reports.
+		//  - use a signal mapper to get the correct row that contains the combo box sending the signal:
+		//  		mapper = new SignalMapper(this) ;
+		//
+		//  		for(all cb)
+		//  		{
+		//  			signalMapper->setMapping(cb,...)
+		//  		}
+		//
+		int index = 0 ;
+		index += ((*it).shareflags & RS_FILE_HINTS_NETWORK_WIDE) > 0 ;
+		index += (((*it).shareflags & RS_FILE_HINTS_BROWSABLE) > 0) * 2 ;
+		listWidget->setCellWidget(row,1,cb);
+
+		if(index < 1 || index > 3)
+			std::cerr << "******* ERROR IN FILE SHARING FLAGS. Flags = " << (*it).shareflags << " ***********" << std::endl ;
+		else
+			index-- ;
+
+		cb->setCurrentIndex(index) ;
+#else
+		QCheckBox *cb1 = new QCheckBox ;
+		QCheckBox *cb2 = new QCheckBox ;
+
+		cb1->setChecked( (*it).shareflags & RS_FILE_HINTS_NETWORK_WIDE ) ;
+		cb2->setChecked( (*it).shareflags & RS_FILE_HINTS_BROWSABLE ) ;
+
+		cb1->setToolTip(QString("If checked, the share is anonymously shared to anybody.")) ;
+		cb2->setToolTip(QString("If checked, the share is browsable by your friends.")) ;
+
+		listWidget->setCellWidget(row,1,cb1);
+		listWidget->setCellWidget(row,2,cb2);
+
+		QObject::connect(cb1,SIGNAL(toggled(bool)),this,SLOT(updateFlags(bool))) ;
+		QObject::connect(cb2,SIGNAL(toggled(bool)),this,SLOT(updateFlags(bool))) ;
+#endif
 	}
 
 	//ui.incomingDir->setText(QString::fromStdString(rsFiles->getDownloadDirectory()));
 
 	listWidget->update(); /* update display */
+}
 
+void ShareManager::showYourself()
+{
+	if(_instance == NULL)
+		_instance = new ShareManager(NULL,0) ;
 
+	_instance->show() ;
 }
 
 void ShareManager::addShareDirectory()
@@ -112,9 +171,40 @@ void ShareManager::addShareDirectory()
 	std::string dir = qdir.toStdString();
 	if (dir != "")
 	{
-		rsFiles->addSharedDirectory(dir);
+		SharedDirInfo sdi ;
+		sdi.filename = dir ;
+		sdi.shareflags = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE ;
+
+		rsFiles->addSharedDirectory(sdi);
+
 		load();
         	messageBoxOk(tr("Shared Directory Added!"));
+	}
+}
+
+void ShareManager::updateFlags(bool b)
+{
+	std::cerr << "Updating flags (b=" << b << ") !!!" << std::endl ;
+
+	std::list<SharedDirInfo>::iterator it;
+	std::list<SharedDirInfo> dirs;
+	rsFiles->getSharedDirectories(dirs);
+
+	int row=0 ;
+	for(it = dirs.begin(); it != dirs.end(); it++,++row)
+	{
+		std::cerr << "Looking for row=" << row << ", file=" << (*it).filename << ", flags=" << (*it).shareflags << std::endl ;
+		uint32_t current_flags = 0 ;
+		current_flags |= (dynamic_cast<QCheckBox*>(ui.shareddirList->cellWidget(row,1)))->isChecked()? RS_FILE_HINTS_NETWORK_WIDE:0 ;
+		current_flags |= (dynamic_cast<QCheckBox*>(ui.shareddirList->cellWidget(row,2)))->isChecked()? RS_FILE_HINTS_BROWSABLE:0 ;
+
+		if( (*it).shareflags ^ current_flags )
+		{
+			(*it).shareflags = current_flags ;
+			rsFiles->updateShareFlags(*it) ;	// modifies the flags
+
+			std::cout << "Updating share flags for directory " << (*it).filename << std::endl ;
+		}
 	}
 }
 
@@ -122,12 +212,14 @@ void ShareManager::removeShareDirectory()
 {
 	/* id current dir */
 	/* ask for removal */
-	QListWidget *listWidget = ui.shareddirList;
-	QListWidgetItem *qdir = listWidget -> currentItem();
+	QTableWidget *listWidget = ui.shareddirList;
+	int row = listWidget -> currentRow();
+	QTableWidgetItem *qdir = listWidget->item(row,0) ;
 
 	QString queryWrn;
 	queryWrn.clear();
-	queryWrn.append(tr("Do You Want to Remove ? "));
+	queryWrn.append(tr("Do you really want to stop sharing this directory ? "));
+
 	if (qdir)
 	{
 		if ((QMessageBox::question(this, tr("Warning!"),queryWrn,QMessageBox::Ok|QMessageBox::No, QMessageBox::Ok))== QMessageBox::Ok)

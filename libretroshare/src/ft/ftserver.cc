@@ -246,6 +246,8 @@ bool ftServer::FileRequest(std::string fname, std::string hash, uint64_t size,
 //						dest, flags, srcIds);
 	const DwlDetails details(fname, hash, size, dest, flags, srcIds, Normal);
 	mFtDwlQueue->insertDownload(details);
+
+	return true ;
 }
 
 bool ftServer::FileCancel(std::string hash)
@@ -471,32 +473,46 @@ bool    ftServer::InDirectoryCheck()
 	return mFiMon->inDirectoryCheck();
 }
 
-bool	ftServer::getSharedDirectories(std::list<std::string> &dirs)
+bool	ftServer::getSharedDirectories(std::list<SharedDirInfo> &dirs)
 {
 	mFiMon->getSharedDirectories(dirs);
 	return true;
 }
 
-bool	ftServer::setSharedDirectories(std::list<std::string> &dirs)
+bool	ftServer::setSharedDirectories(std::list<SharedDirInfo> &dirs)
 {
 	mFiMon->setSharedDirectories(dirs);
 	return true;
 }
 
-bool 	ftServer::addSharedDirectory(std::string dir)
+bool 	ftServer::addSharedDirectory(SharedDirInfo dir)
 {
-	std::list<std::string> dirList;
+	std::list<SharedDirInfo> dirList;
 	mFiMon->getSharedDirectories(dirList);
+
+	// check that the directory is not already in the list.
+	for(std::list<SharedDirInfo>::const_iterator it(dirList.begin());it!=dirList.end();++it)
+		if((*it).filename == dir.filename)
+			return false ;
+	
+	// ok then, add the shared directory.
 	dirList.push_back(dir);
 
 	mFiMon->setSharedDirectories(dirList);
 	return true;
 }
 
+bool ftServer::updateShareFlags(const SharedDirInfo& info)
+{
+	mFiMon->updateShareFlags(info);
+
+	return true ;
+}
+
 bool 	ftServer::removeSharedDirectory(std::string dir)
 {
-	std::list<std::string> dirList;
-	std::list<std::string>::iterator it;
+	std::list<SharedDirInfo> dirList;
+	std::list<SharedDirInfo>::iterator it;
 
 #ifdef SERVER_DEBUG
 	std::cerr << "ftServer::removeSharedDirectory(" << dir << ")";
@@ -509,13 +525,14 @@ bool 	ftServer::removeSharedDirectory(std::string dir)
 	for(it = dirList.begin(); it != dirList.end(); it++)
 	{
 		std::cerr << "ftServer::removeSharedDirectory()";
-		std::cerr << " existing: " << *it;
+		std::cerr << " existing: " << (*it).filename;
 		std::cerr << std::endl;
 	}
 #endif
 
-	if (dirList.end() == (it =
-		std::find(dirList.begin(), dirList.end(), dir)))
+	for(it = dirList.begin();it!=dirList.end() && (*it).filename != dir;++it) ;
+
+	if(it == dirList.end())
 	{
 #ifdef SERVER_DEBUG
 		std::cerr << "ftServer::removeSharedDirectory()";
@@ -551,8 +568,11 @@ bool ftServer::getShareDownloadDirectory()
 
 bool ftServer::shareDownloadDirectory()
 {
-	std::string dir = mFtController->getDownloadDirectory();
-	return addSharedDirectory(dir);
+	SharedDirInfo inf ;
+	inf.filename = mFtController->getDownloadDirectory();
+	inf.shareflags = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE ;
+
+	return addSharedDirectory(inf);
 }
 
 bool ftServer::unshareDownloadDirectory()

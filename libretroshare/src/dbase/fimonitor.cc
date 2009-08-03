@@ -39,9 +39,9 @@
 #include <openssl/sha.h>
 #include <stdio.h>
 
-/***********
- * #define FIM_DEBUG 1
- ***********/
+//***********
+#define FIM_DEBUG 1
+// ***********/
 
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in,std::string cachedir, std::string pid)
 	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cachedir), fi(pid), 
@@ -59,7 +59,7 @@ FileIndexMonitor::~FileIndexMonitor()
 	return;
 }
 
-bool    FileIndexMonitor::findLocalFile(std::string hash, 
+bool    FileIndexMonitor::findLocalFile(std::string hash,uint32_t flags,
 				std::string &fullpath, uint64_t &size) const
 {
 	std::list<FileEntry *> results;
@@ -602,13 +602,45 @@ void 	FileIndexMonitor::updateCycle()
 	cb->notifyHashingInfo("") ;
 }
 
+void    FileIndexMonitor::updateShareFlags(const SharedDirInfo& dir)
+{
+#ifdef FIM_DEBUG
+	std::cerr << "*** FileIndexMonitor: Updating flags for " << dir.filename << " to " << dir.shareflags << std::endl ;
+#endif
+	{ 
+		RsStackMutex stack(fiMutex) ;	/* LOCKED DIRS */
+	
+		if(pendingDirs)
+			for(std::list<SharedDirInfo>::iterator it(pendingDirList.begin());it!=pendingDirList.end();++it)
+			{
+				std::cerr  << "** testing pending dir " << (*it).filename << std::endl ;
+				if((*it).filename == dir.filename)
+				{
+					std::cerr  << "** Updating to " << (*it).shareflags << "!!" << std::endl ;
+					(*it).shareflags = dir.shareflags ;
+					break ;
+				}
+			}
+		else
+			for(std::map<std::string,SharedDirInfo>::iterator it(directoryMap.begin());it!=directoryMap.end();++it)
+			{
+				std::cerr  << "** testing " << (*it).second.filename << std::endl ;
+				if((*it).second.filename == dir.filename)
+				{
+					std::cerr  << "** Updating from " << it->second.shareflags << "!!" << std::endl ;
+					(*it).second.shareflags = dir.shareflags ;
+					break ;
+				}
+			}
+	}
+}
 	/* interface */
-void    FileIndexMonitor::setSharedDirectories(std::list<std::string> dirs)
+void    FileIndexMonitor::setSharedDirectories(std::list<SharedDirInfo> dirs)
 {
 
-	std::list<std::string> checkeddirs;
+	std::list<SharedDirInfo> checkeddirs;
 
-	std::list<std::string>::iterator it;
+	std::list<SharedDirInfo>::iterator it;
 #ifdef FIM_DEBUG
 	std::cerr << "FileIndexMonitor::setSharedDirectories() :\n";
 #endif
@@ -617,12 +649,12 @@ void    FileIndexMonitor::setSharedDirectories(std::list<std::string> dirs)
 	{
 
 #ifdef FIM_DEBUG
-		std::cerr << "\t" << *it;
+		std::cerr << "\t" << (*it).filename;
 		std::cerr <<  std::endl;
 #endif
 
 		/* check if dir exists before adding in */
-		std::string path = (*it);
+		std::string path = (*it).filename;
 		DIR *dir = opendir(path.c_str());
 		if (!dir)
 		{
@@ -633,41 +665,37 @@ void    FileIndexMonitor::setSharedDirectories(std::list<std::string> dirs)
 		}
 		else
 		{
-			checkeddirs.push_back(path);
+			checkeddirs.push_back(*it);
 		}
 		closedir(dir);
 	}
 
-	fiMutex.lock(); { /* LOCKED DIRS */
+	{ 
+		RsStackMutex stack(fiMutex) ;/* LOCKED DIRS */
 
-	pendingDirs = true;
-	pendingDirList = checkeddirs;
-
-	} fiMutex.unlock(); /* UNLOCKED DIRS */
+		pendingDirs = true;
+		pendingDirList = checkeddirs;
+	}
 }
 
 	/* interface */
-void    FileIndexMonitor::getSharedDirectories(std::list<std::string> &dirs)
+void    FileIndexMonitor::getSharedDirectories(std::list<SharedDirInfo> &dirs)
 {
-	fiMutex.lock(); { /* LOCKED DIRS */
+	{ 
+		RsStackMutex stack(fiMutex) ; /* LOCKED DIRS */
 
-	/* must provide pendingDirs, as other parts depend on instanteous response */
-	if (pendingDirs)
-	{
-		dirs = pendingDirList;
-	}
-	else
-	{
-		/* get actual list (not pending stuff) */
-		std::map<std::string, std::string>::const_iterator it;
-		for(it = directoryMap.begin(); it != directoryMap.end(); it++)
+		/* must provide pendingDirs, as other parts depend on instanteous response */
+		if (pendingDirs)
+			dirs = pendingDirList;
+		else
 		{
-			dirs.push_back(it->second);
+			/* get actual list (not pending stuff) */
+			std::map<std::string, SharedDirInfo>::const_iterator it;
+
+			for(it = directoryMap.begin(); it != directoryMap.end(); it++)
+				dirs.push_back(it->second) ;
 		}
 	}
-
-
-	} fiMutex.unlock(); /* UNLOCKED DIRS */
 }
 
 
@@ -718,12 +746,12 @@ bool    FileIndexMonitor::internal_setSharedDirectories()
 	directoryMap.clear();
 	
 	/* iterate through the directories */
-	std::list<std::string>::iterator it;
-	std::map<std::string, std::string>::const_iterator cit;
+	std::list<SharedDirInfo>::iterator it;
+	std::map<std::string, SharedDirInfo>::const_iterator cit;
 	for(it = pendingDirList.begin(); it != pendingDirList.end(); it++)
 	{
 		/* get the head directory */
-		std::string root_dir = *it;
+		std::string root_dir = (*it).filename;
 		std::string top_dir  = RsDirUtil::getTopDir(root_dir);
 	
 		/* if unique -> add, else add modifier  */
@@ -741,7 +769,7 @@ bool    FileIndexMonitor::internal_setSharedDirectories()
 			{
 				unique = true;
 				/* add it! */
-				directoryMap[tst_dir.c_str()] = root_dir;
+				directoryMap[tst_dir.c_str()] = *it;
 #ifdef FIM_DEBUG
 				std::cerr << "Added [" << tst_dir << "] => " << root_dir << std::endl;
 #endif
@@ -774,7 +802,7 @@ std::string FileIndexMonitor::locked_findRealRoot(std::string rootdir) const
 	/**** MUST ALREADY BE LOCKED ****/ 
 	std::string realroot = "";
 
-	std::map<std::string, std::string>::const_iterator cit;
+	std::map<std::string, SharedDirInfo>::const_iterator cit;
 	if (directoryMap.end()== (cit=directoryMap.find(rootdir)))
 	{
 		std::cerr << "FileIndexMonitor::locked_findRealRoot() Invalid RootDir: ";
@@ -782,7 +810,7 @@ std::string FileIndexMonitor::locked_findRealRoot(std::string rootdir) const
 	}
 	else
 	{
-		realroot = cit->second;
+		realroot = cit->second.filename;
 	}
 
 	return realroot;

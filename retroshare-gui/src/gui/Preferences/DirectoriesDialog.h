@@ -44,9 +44,11 @@ public:
   void load();
 
 private slots:
-
+#ifdef TO_REMOVE
 	void addShareDirectory();
 	void removeShareDirectory();
+#endif
+	void editDirectories() ;
 	void setIncomingDirectory();
 	void setPartialsDirectory();
 	void shareDownloadDirectory(int state);

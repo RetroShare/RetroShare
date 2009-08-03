@@ -370,8 +370,7 @@ void MessengerWindow::showMessagesPopup()
 /** Shows Share Manager */
 void MessengerWindow::openShareManager()
 {
-    static ShareManager* sharemanager = new ShareManager(this);
-    sharemanager->show();
+	ShareManager::showYourself();
 
 }
 

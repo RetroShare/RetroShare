@@ -60,7 +60,8 @@ class ftFiMonitor: public FileIndexMonitor, public ftSearch, public p3Config
 	virtual bool search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
 
 	/* overloaded set dirs enables config indication */
-	virtual void setSharedDirectories(std::list<std::string> dirList);
+	virtual void setSharedDirectories(std::list<SharedDirInfo> dirList);
+	virtual void updateShareFlags(const SharedDirInfo& info) ;
 
 	/***
 	* Configuration - store shared directories

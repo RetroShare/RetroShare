@@ -136,7 +136,10 @@ bool ftFiMonitor::search(std::string hash, uint64_t size, uint32_t hintflags, Fi
 	std::cerr << std::endl;
 #endif
 
-	if (findLocalFile(hash, path, fsize))
+	// setup search flags according to hintflags
+	uint32_t flags = 0;
+	
+	if(findLocalFile(hash, flags, path, fsize))
 	{
 		/* fill in details */
 #ifdef DB_DEBUG
@@ -184,15 +187,16 @@ std::list<RsItem *> ftFiMonitor::saveList(bool &cleanup)
 #endif
 
 	/* get list of directories */
-	std::list<std::string> dirList;
-	std::list<std::string>::iterator it;
+	std::list<SharedDirInfo> dirList;
+	std::list<SharedDirInfo>::iterator it;
 
 	getSharedDirectories(dirList);
 
 	for(it = dirList.begin(); it != dirList.end(); it++)
 	{
 		RsFileConfigItem *fi = new RsFileConfigItem();
-		fi->file.path = *it;
+		fi->file.path = (*it).filename ;
+		fi->flags = (*it).shareflags ;
 
 		sList.push_back(fi);
 	}
@@ -214,7 +218,7 @@ bool    ftFiMonitor::loadList(std::list<RsItem *> load)
 
 	time_t ts = time(NULL);
 
-	std::list<std::string> dirList;
+	std::list<SharedDirInfo> dirList;
 
 	std::list<RsItem *>::iterator it;
 	for(it = load.begin(); it != load.end(); it++)
@@ -228,7 +232,11 @@ bool    ftFiMonitor::loadList(std::list<RsItem *> load)
 
 		/* ensure that it exists? */
 
-		dirList.push_back(fi->file.path);
+		SharedDirInfo info ;
+		info.filename = fi->file.path;
+		info.shareflags = fi->flags & (RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE) ;
+
+		dirList.push_back(info) ;
 	}
 
 	/* set directories */
@@ -236,7 +244,15 @@ bool    ftFiMonitor::loadList(std::list<RsItem *> load)
 	return true;
 }
 
-void	ftFiMonitor::setSharedDirectories(std::list<std::string> dirList)
+void	ftFiMonitor::updateShareFlags(const SharedDirInfo& info)
+{
+	FileIndexMonitor::updateShareFlags(info);
+
+	/* flag for config */
+	IndicateConfigChanged();
+}
+
+void	ftFiMonitor::setSharedDirectories(std::list<SharedDirInfo> dirList)
 {
 	FileIndexMonitor::setSharedDirectories(dirList);
 

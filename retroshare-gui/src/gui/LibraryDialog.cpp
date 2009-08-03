@@ -192,9 +192,7 @@ void LibraryDialog::StopRename()
 
 void LibraryDialog::CallShareFilesBtn_library()
 {
-    static ShareManager* sharemanager = new ShareManager(this);
-    sharemanager->show();
-
+	 ShareManager::showYourself();
 }
 
 void LibraryDialog::CallTileViewBtn_library()
