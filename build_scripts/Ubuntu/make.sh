@@ -1,13 +1,24 @@
 #!/bin/sh
 
 ###################### PARAMETERS ####################
-version="0.4.13e"
+version="0.4.14-rc1"
 arch=`dpkg --print-architecture`
 packager="Cyril Soler <csoler@users.sourceforge.net>"
+
+# Directory where to find libretroshare/src/ and retroshare-gui/src
+rsdir=/net/cortinaire/media/disc/csoler/RetroShare/retroshare-dev/v0.4.x/
+
 ######################################################
 
 echo attempting to get svn revision number...
 svn=`svn info | grep 'Revision:' | cut -d\  -f2`
+
+if test "$svn" = "" ; then
+	echo Could not read svn version. Please enter it:
+	read svn
+fi
+
+echo Got svn version $svn
 echo done.
 version="$version"."$svn"
 pkgname=RetroShare_"$version"_ubuntu_"$arch".deb
@@ -16,11 +27,13 @@ echo
 echo Building retroshare debian package version $version for Ubuntu $arch. 
 echo Please check that:
 echo "    "- you have sudo access and that root has right to write in this directory and the subdirectories.
-echo "    "- you have compiled libretroshare and retroshare-gui in ../../libretroshare/src/ 
-echo "                                                        "and ../../retroshare-gui/src/
-echo "    "- you have updated version numbers in ../../retroshare-gui/src/util/rsversion.cpp
-echo "                                      "and ../../retroshare-gui/src/retroshare.nsi
+echo "    "- you have compiled libretroshare and retroshare-gui in libretroshare/src/ 
+echo "                                                        "and retroshare-gui/src/
+echo "    "- you have updated version numbers in retroshare-gui/src/util/rsversion.cpp
+echo "                                      "and retroshare-gui/src/retroshare.nsi
 echo "    "- version and name will be: $pkgname
+echo "    "- current '$rsdir' variable is correct:
+echo "         "'rsdir='$rsdir
 
 if ! test `whoami` = "root" ; then
 	echo Please run this script as root.
@@ -49,20 +62,20 @@ echo Cleaning...
 find retroshare -name "*~" -exec \rm -f {} \;
 
 # copy executables at the right place
-if ! test -f ../../retroshare-gui/src/RetroShare; then
-	echo Can not find executable ../../retroshare-gui/src/RetroShare. Please fix this.
+if ! test -f $rsdir/retroshare-gui/src/RetroShare; then
+	echo Can not find executable $rsdir/retroshare-gui/src/RetroShare. Please fix this.
 	echo
 	exit ;
 fi
-if ! test -f ../../retroshare-nogui/src/retroshare-nogui; then
-	echo Can not find executable ../../retroshare-nogui/src/retroshare-nogui. Please fix this.
+if ! test -f $rsdir/retroshare-nogui/src/retroshare-nogui; then
+	echo Can not find executable $rsdir/retroshare-nogui/src/retroshare-nogui. Please fix this.
 	echo
 	exit ;
 fi
 echo Stripping executables...
-cp ../../retroshare-gui/src/RetroShare              retroshare/usr/bin/
+cp $rsdir/retroshare-gui/src/RetroShare              retroshare/usr/bin/
 strip retroshare/usr/bin/RetroShare
-cp ../../retroshare-nogui/src/retroshare-nogui retroshare/usr/bin/
+cp $rsdir/retroshare-nogui/src/retroshare-nogui retroshare/usr/bin/
 strip retroshare/usr/bin/retroshare-nogui
 
 # compute md5 sums
