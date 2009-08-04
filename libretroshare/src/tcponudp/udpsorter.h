@@ -49,10 +49,20 @@ class TouStunPeer
 {
 	public:
 	TouStunPeer()
-	:response(false), lastsend(0), failCount(0) { return; }
+	:response(false), lastsend(0), failCount(0) 
+	{ 
+		eaddr.sin_addr.s_addr = 0;
+		eaddr.sin_port = 0;
+		return; 
+	}
 	
 	TouStunPeer(std::string id_in, const struct sockaddr_in &addr)
-	:id(id_in), remote(addr), response(false), lastsend(0), failCount(0) { return; }
+	:id(id_in), remote(addr), response(false), lastsend(0), failCount(0)
+	{ 
+		eaddr.sin_addr.s_addr = 0;
+		eaddr.sin_port = 0;
+		return; 
+	}
 	
 	std::string id;
 	struct sockaddr_in remote, eaddr;
@@ -69,13 +79,20 @@ class UdpSorter: public UdpReceiver
 	UdpSorter(struct sockaddr_in &local);
 virtual ~UdpSorter() { return; }
 
+bool	resetAddress(struct sockaddr_in &local);
+
 	/* add a TCPonUDP stream */
 int	addUdpPeer(UdpPeer *peer, const struct sockaddr_in &raddr);
 int 	removeUdpPeer(UdpPeer *peer);
 
 bool 	setStunKeepAlive(uint32_t required);
 bool    addStunPeer(const struct sockaddr_in &remote, const char *peerid);
+bool    getStunPeer(int idx, std::string &id,
+                struct sockaddr_in &remote, struct sockaddr_in &eaddr,
+                uint32_t &failCount, time_t &lastSend);
+
 bool    checkStunKeepAlive();
+bool	needStunPeers();
 
 bool    externalAddr(struct sockaddr_in &remote, uint8_t &stable);
 
@@ -109,7 +126,7 @@ bool    locked_printStunList();
 bool    locked_recvdStun(const struct sockaddr_in &remote, const struct sockaddr_in &extaddr);
 bool    locked_checkExternalAddress();
 
-bool    storeStunPeer(const struct sockaddr_in &remote, const char *peerid);
+bool    storeStunPeer(const struct sockaddr_in &remote, const char *peerid, bool sent);
 
 	UdpLayer *udpLayer;
 
@@ -120,6 +137,7 @@ bool    storeStunPeer(const struct sockaddr_in &remote, const char *peerid);
 	struct sockaddr_in eaddr; /* external addr */
         bool eaddrKnown;
 	bool eaddrStable; /* if true then usable. if false -> Symmettric NAT */
+	time_t eaddrTime;
 
 	bool mStunKeepAlive;
 	time_t mStunLastRecv;

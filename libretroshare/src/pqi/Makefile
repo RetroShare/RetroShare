@@ -20,7 +20,7 @@ UDP_OBJ  = pqissludp.o
 OTHER_OBJ = p3notify.o
 
 
-TESTOBJ  = net_test.o dht_test.o net_test1.o
+TESTOBJ  = net_test.o dht_test.o net_test1.o 
 #conn_test.o
 
 TESTS  = net_test dht_test net_test1

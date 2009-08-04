@@ -66,7 +66,7 @@ const int p3dhtzone = 3892;
 #define DHT_DEFAULT_WAITTIME	1    /* Std sleep break period */
 
 #define DHT_NUM_BOOTSTRAP_BINS 		8
-#define DHT_MIN_BOOTSTRAP_REQ_PERIOD 	30
+#define DHT_MIN_BOOTSTRAP_REQ_PERIOD 	5
 
 void printDhtPeerEntry(dhtPeerEntry *ent, std::ostream &out);
 
@@ -1027,20 +1027,21 @@ int p3DhtMgr::checkStunState()
 	}
 	else if (mDhtState == DHT_STATE_FIND_STUN)
 	{
-		/* if we run out of stun peers -> get some more */
-		if (stunIds.size() < 1)
-		{
+	}
+
+	/* if we run out of stun peers -> get some more */
+	if (stunIds.size() < 1)
+	{
 #ifdef DHT_DEBUG
-			std::cerr << "WARNING: out of Stun Peers - switching to Active Now" << std::endl;
+		std::cerr << "WARNING: out of Stun Peers - Fetching some more" << std::endl;
 #endif
-			mDhtState = DHT_STATE_ACTIVE;
-			dhtMtx.unlock(); /* UNLOCK MUTEX */
+		mDhtState = DHT_STATE_ACTIVE;
+		dhtMtx.unlock(); /* UNLOCK MUTEX */
 
-			/* this is a locked function */
-			getDhtBootstrapList();
+		/* this is a locked function */
+		getDhtBootstrapList();
 
-			dhtMtx.lock(); /* LOCK MUTEX */
-		}
+		dhtMtx.lock(); /* LOCK MUTEX */
 	}
 
 	dhtMtx.unlock(); /* UNLOCK MUTEX */

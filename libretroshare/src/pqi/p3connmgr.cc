@@ -57,6 +57,7 @@ const uint32_t MAX_UPNP_INIT = 		10; /* seconds UPnP timeout */
 /****
  * #define CONN_DEBUG 1
  ***/
+#define CONN_DEBUG 1
 /****
  * #define P3CONNMGR_NO_TCP_CONNECTIONS 1
  ***/
@@ -103,6 +104,22 @@ peerConnectState::peerConnectState()
 
 	return;
 }
+
+std::string textPeerConnectState(peerConnectState &state)
+{
+	std::ostringstream out;
+	out << "Id: " << state.id << std::endl;
+	out << "NetMode: " << state.netMode << std::endl;
+	out << "VisState: " << state.visState << std::endl;
+	out << "laddr: " << inet_ntoa(state.localaddr.sin_addr) 
+		<< ":" << ntohs(state.localaddr.sin_port) << std::endl;
+	out << "eaddr: " << inet_ntoa(state.serveraddr.sin_addr) 
+		<< ":" << ntohs(state.serveraddr.sin_port) << std::endl;
+
+	std::string output = out.str();
+	return output;
+}
+
 
 
 p3ConnectMgr::p3ConnectMgr(p3AuthMgr *am)
@@ -246,6 +263,62 @@ void p3ConnectMgr::setOwnNetConfig(uint32_t netMode, uint32_t visState)
  *
  */
 
+/* Called to reseet the whole network stack. this call is 
+ * triggered by udp stun address tracking.
+ *
+ * must:
+ * 	- reset UPnP and DHT.
+ * 	- 
+ */
+
+void p3ConnectMgr::netReset()
+{
+	std::cerr << "p3ConnectMgr::netReset()" << std::endl;
+	std::cerr << "p3ConnectMgr::netReset() shutdown" << std::endl;
+
+	shutdown(); /* blocking shutdown call */
+
+	std::cerr << "p3ConnectMgr::netReset() reset NetStatus" << std::endl;
+	{
+		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+        	mNetStatus = RS_NET_UNKNOWN;
+	}
+
+	std::cerr << "p3ConnectMgr::netReset() checkNetAddress" << std::endl;
+	/* check Network Address */
+	checkNetAddress();
+
+	/* reset udp network - handled by tou_init! */
+	/* reset tcp network - if necessary */
+	{
+		/* NOTE: nNetListeners should be protected via the Mutex.
+		 * HOWEVER, as we NEVER change this list - once its setup
+		 * we can get away without it - and assume its constant.
+		 * 
+		 * NB: (*it)->reset_listener must be out of the mutex, 
+		 *      as it calls back to p3ConnMgr.
+		 */
+
+		std::cerr << "p3ConnectMgr::netReset() resetting listeners" << std::endl;
+		std::list<pqiNetListener *>::const_iterator it;
+		for(it = mNetListeners.begin(); it != mNetListeners.end(); it++)
+		{
+			std::cerr << "p3ConnectMgr::netReset() reset listener" << std::endl;
+			(*it)->reset_listener();
+		}
+	}
+
+	std::cerr << "p3ConnectMgr::netReset() done" << std::endl;
+}
+
+/* to allow resets of network stuff */
+void    p3ConnectMgr::addNetListener(pqiNetListener *listener)
+{
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+	mNetListeners.push_back(listener);
+}
+
+
 void p3ConnectMgr::netStatusReset()
 {
 	netFlagOk = true;
@@ -284,6 +357,7 @@ void p3ConnectMgr::netStartup()
 	std::cerr << "p3ConnectMgr::netStartup() tou_stunkeepalive() enabled" << std::endl;
 #endif
 	tou_stunkeepalive(1);
+	mStunMoreRequired = true;
 
 	ownState.netMode &= ~(RS_NET_MODE_ACTUAL);
 
@@ -293,12 +367,6 @@ void p3ConnectMgr::netStartup()
 		case RS_NET_MODE_TRY_EXT:  /* v similar to UDP */
 			ownState.netMode |= RS_NET_MODE_EXT;
 			mNetStatus = RS_NET_UDP_SETUP;
-#ifdef CONN_DEBUG
-	std::cerr << "p3ConnectMgr::netStartup() disabling stunkeepalive() cos EXT" << std::endl;
-#endif
-			tou_stunkeepalive(0);
-			mStunMoreRequired = false; /* only need to validate address (EXT) */
-
 			break;
 
 		case RS_NET_MODE_TRY_UDP:
@@ -552,10 +620,6 @@ void p3ConnectMgr::netUpnpCheck()
 		/* UPnP Failed us! */
 		mUpnpAddrValid = false;
 		mNetStatus = RS_NET_UDP_SETUP;
-#ifdef CONN_DEBUG
-	std::cerr << "p3ConnectMgr::netUpnpCheck() enabling stunkeepalive() cos UDP" << std::endl;
-#endif
-		tou_stunkeepalive(1);
 
 		connMtx.unlock(); /* UNLOCK MUTEX */
 	}
@@ -577,11 +641,6 @@ void p3ConnectMgr::netUpnpCheck()
 		mNetStatus = RS_NET_UDP_SETUP;
 		/* Fix netMode & Clear others! */
 		ownState.netMode = RS_NET_MODE_TRY_UPNP | RS_NET_MODE_UPNP; 
-#ifdef CONN_DEBUG
-	std::cerr << "p3ConnectMgr::netUpnpCheck() disabling stunkeepalive() cos uPnP" << std::endl;
-#endif
-		tou_stunkeepalive(0);
-		mStunMoreRequired = false; /* only need to validate address (UPNP) */
 
 		connMtx.unlock(); /* UNLOCK MUTEX */
 	}
@@ -645,8 +704,6 @@ void p3ConnectMgr::netUdpCheck()
 #endif
 				ownState.netMode &= ~(RS_NET_MODE_ACTUAL);
 				ownState.netMode |= RS_NET_MODE_UNREACHABLE;
-				tou_stunkeepalive(0);
-				mStunMoreRequired = false; /* no point -> unreachable (EXT) */
 
 				/* send a system warning message */
 				pqiNotify *notify = getPqiNotify();
@@ -882,44 +939,137 @@ void p3ConnectMgr::stunInit()
 	mStunMoreRequired = true;
 }
 
+/* This is continually called 
+ *
+ * checks whether the ext address is consistent
+ *
+ * checks if UDP needs more stun peers - or not
+ * The status is passed onto the DHT.
+ *
+ */
+ 
 bool p3ConnectMgr::stunCheck()
 {
-	/* check if we've got a Stun result */
-	bool stunOk = false;
 
 #ifdef CONN_DEBUG
-	//std::cerr << "p3ConnectMgr::stunCheck()" << std::endl;
+	std::cerr << "p3ConnectMgr::stunCheck()" << std::endl;
 #endif
 
-      {
-      	RsStackMutex stack(connMtx); /********* LOCK STACK MUTEX ******/
+	/* check udp address stability */
 
-	/* if DONE -> return */
-	if (mStunStatus == RS_STUN_DONE)
+	bool netDone = false;
+	bool doNetReset = false;
+
 	{
-		return true;
+		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+		mStunStatus = RS_STUN_DHT;
+		netDone = (mNetStatus == RS_NET_DONE);
 	}
 
-	if (mStunFound >= RS_STUN_FOUND_MIN)
+	struct sockaddr_in raddr;
+	socklen_t rlen = sizeof(raddr);
+	struct sockaddr_in eaddr;
+	socklen_t elen = sizeof(eaddr);
+	uint8_t stable;
+	uint32_t failCount;
+	time_t   lastSent;
+	time_t   now = time(NULL);
+
+	if (netDone)
 	{
-		mStunMoreRequired = false;
+#ifdef CONN_DEBUG
+		std::cerr << "NetSetupDone: Checking if network is same" << std::endl;
+#endif
+
+		if (0 < tou_extaddr((struct sockaddr *) &raddr, &rlen, &stable))
+		{
+			RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+			if ((mStunExtAddr.sin_addr.s_addr != raddr.sin_addr.s_addr) ||
+				(mStunAddrStable != stable))
+			{
+#ifdef CONN_DEBUG
+				std::cerr << "Ext Address Changed -> netReset" << std::endl;
+#endif
+
+				doNetReset = true;
+			}
+			else
+			{
+#ifdef CONN_DEBUG
+				std::cerr << "Ext Address Same: ok!" << std::endl;
+#endif
+			}
+		}
+		else
+		{
+#ifdef CONN_DEBUG
+			std::cerr << "No Ext Address -> netReset" << std::endl;
+#endif
+
+			doNetReset = true;
+		}
 	}
-	stunOk = (!mStunMoreRequired);
-      }
 
-
-	if (udpExtAddressCheck() && (stunOk))
+	if (doNetReset)
 	{
-		/* set external UDP address */
-		netAssistStun(false);
+#ifdef CONN_DEBUG
+		std::cerr << "Resetting Network" << std::endl;
+#endif
 
+		netReset();
+	}
+
+	int i = 0;
+	for(i = 0; tou_getstunpeer(i, (struct sockaddr *) &raddr, &rlen,
+					(struct sockaddr *) &eaddr, &elen, 
+					&failCount, &lastSent); i++)
+	{
+		std::cerr << "STUN PEERS: ";
+		std::cerr << " raddr: " << inet_ntoa(raddr.sin_addr) << ":" << ntohs(raddr.sin_port);
+		std::cerr << " eaddr: " << inet_ntoa(eaddr.sin_addr) << ":" << ntohs(eaddr.sin_port);
+		if (lastSent)
+		{
+			std::cerr << " failCount: " << failCount << " lastSent: " << now-lastSent;
+		}
+		else
+		{
+			std::cerr << " Unused ";
+		}
+		std::cerr << std::endl;
+	}
+
+	/* pass on udp status to dht */
+	if (tou_needstunpeers())
+	{
 		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
-		mStunStatus = RS_STUN_DONE;
+		if (!mStunMoreRequired)
+		{
+#ifdef CONN_DEBUG
+			std::cerr << "Telling DHT More Stun Required" << std::endl;
+#endif
 
-		return true;
+			netAssistStun(true);
+			mStunMoreRequired = true;
+		}
 	}
-	return false;
+	else
+	{
+		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+		if (mStunMoreRequired)
+		{
+#ifdef CONN_DEBUG
+			std::cerr << "Telling DHT No More Stun Required" << std::endl;
+#endif
+
+			netAssistStun(false);
+			mStunMoreRequired = false;
+		}
+	}
+
+	return true;
 }
 
 void    p3ConnectMgr::stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags)

@@ -57,8 +57,6 @@
 #include <iostream>
 #include <sstream>
 
-#define AUTHGPG_DEBUG 1
-
 
 /* Turn a set of parameters into a string */
 static std::string setKeyPairParams(bool useRsa, unsigned int blen,

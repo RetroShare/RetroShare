@@ -63,7 +63,19 @@ static int	tou_tick_all();
 int 	tou_init(const struct sockaddr *my_addr, socklen_t addrlen)
 {
 	if (tou_inited)
+	{
+		struct sockaddr_in *addr = (struct sockaddr_in *) my_addr;
+		udps->resetAddress(*addr);
+		if (!(udps->okay()))
+		{
+			std::cerr << "tou_init() FATAL ERROR: Cannot reset Udp Socket to: "
+				<< inet_ntoa(addr->sin_addr) << ":" << ntohs(addr->sin_port);
+			std::cerr << std::endl;
+
+			exit(1);
+		}
 		return 1;
+	}
 
 	tou_streams.resize(kInitStreamTable);
 
@@ -100,6 +112,36 @@ int 	tou_stunkeepalive(int required)
 	udps->setStunKeepAlive(required);
 	return 1;
 }
+
+
+int 	tou_getstunpeer(int i, struct sockaddr *remote_addr, socklen_t *raddrlen,
+				struct sockaddr *ext_addr, socklen_t *eaddrlen,
+                	uint32_t *failCount, time_t *lastSend)
+{
+	if (!tou_inited)
+		return -1;
+
+	std::string id;
+
+	bool ret = udps->getStunPeer(i, id,
+                	*((struct sockaddr_in *) remote_addr),
+                	*((struct sockaddr_in *) ext_addr),
+                	*failCount, *lastSend);
+
+	return ret;
+}
+
+int	tou_needstunpeers()
+{
+	if (!tou_inited)
+		return -1;
+
+	if (udps->needStunPeers())
+		return 1;
+	return 0;
+}
+
+	
 
 int     tou_tick_stunkeepalive()
 {

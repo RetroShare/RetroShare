@@ -171,7 +171,27 @@ int	pqissllistenbase::setuplisten()
 		out << "\tSetup Port: " << ntohs(laddr.sin_port);
 
 		pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out.str());
+		std::cerr << out.str() << std::endl;
 	}
+	
+	/* added a call to REUSEADDR, so that we can re-open an existing socket
+	 * when we restart_listener.
+	 */
+
+    	{
+      		int on = 1;
+      		if (setsockopt(lsock, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0)
+        	{
+			std::ostringstream out;
+			out << "pqissllistenbase::setuplisten()";
+			out << " Cannot setsockopt SO_REUSEADDR!" << std::endl;
+			showSocketError(out);
+			pqioutput(PQL_ALERT, pqissllistenzone, out.str());
+			std::cerr << out.str() << std::endl;
+
+			exit(1); 
+        	}
+    	}
 
 	if (0 != (err = bind(lsock, (struct sockaddr *) &laddr, sizeof(laddr))))
 	{
@@ -180,6 +200,7 @@ int	pqissllistenbase::setuplisten()
 		out << " Cannot Bind to Local Address!" << std::endl;
 		showSocketError(out);
 		pqioutput(PQL_ALERT, pqissllistenzone, out.str());
+		std::cerr << out.str() << std::endl;
 
 		exit(1); 
 		return -1;
@@ -198,6 +219,7 @@ int	pqissllistenbase::setuplisten()
 		out << err << std::endl;
 		showSocketError(out);
 		pqioutput(PQL_ALERT, pqissllistenzone, out.str());
+		std::cerr << out.str() << std::endl;
 
 		exit(1); 
 		return -1;

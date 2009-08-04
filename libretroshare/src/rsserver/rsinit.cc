@@ -2166,6 +2166,7 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 
 	pqih->init_listener();
+	mConnMgr->addNetListener(pqih); /* add listener so we can reset all sockets later */
 
 
 

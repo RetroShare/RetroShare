@@ -55,8 +55,24 @@ pthread_t  createThread(RsThread &thread)
 
     thread.mMutex.lock();
     {
-      pthread_create(&tid, 0, &rsthread_init, data);
-      thread.mTid = tid;
+
+#if 0
+	int ret;
+	ret = pthread_attr_init(&tattr);
+	if (doDetached)
+	{
+		ret = pthread_attr_setdetachstate(&tattr,PTHREAD_CREATE_DETACHED);
+	}
+	else
+	{
+		ret = pthread_attr_setdetachstate(&tattr,PTHREAD_CREATE_JOINABLE);
+	}
+
+      	pthread_create(&tid, &tattr, &rsthread_init, data);
+#endif
+
+      	pthread_create(&tid, 0, &rsthread_init, data);
+      	thread.mTid = tid;
     }
     thread.mMutex.unlock();
 
@@ -64,6 +80,16 @@ pthread_t  createThread(RsThread &thread)
 
 }
 
+void RsThread::join() /* waits for the the mTid thread to stop */
+{
+	void *ptr;
+	pthread_join(mTid, &ptr);
+}
+
+void RsThread::stop() 
+{
+	pthread_exit(NULL);
+}
 
 RsQueueThread::RsQueueThread(uint32_t min, uint32_t max, double relaxFactor )
 	:mMinSleep(min), mMaxSleep(max), mRelaxFactor(relaxFactor)

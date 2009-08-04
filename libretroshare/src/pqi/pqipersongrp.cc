@@ -186,6 +186,8 @@ int	pqipersongrp::init_listener()
 
 int     pqipersongrp::restart_listener()
 {
+	std::cerr << "pqipersongrp::restart_listener()" << std::endl;
+
 	// stop it, 
 	// change the address.
 	// restart.
@@ -197,6 +199,8 @@ int     pqipersongrp::restart_listener()
 
 	if (haveListener)
 	{
+		std::cerr << "pqipersongrp::restart_listener() haveListener" << std::endl;
+
 		peerConnectState state;
 		mConnMgr->getOwnNetStatus(state);
   
@@ -205,6 +209,9 @@ int     pqipersongrp::restart_listener()
 		pqil -> resetlisten();
 		pqil -> setListenAddr(state.localaddr);
 		pqil -> setuplisten();
+
+		std::cerr << "pqipersongrp::restart_listener() done!" << std::endl;
+
 	}
 	return 1;
 }

@@ -162,6 +162,8 @@ class peerConnectState
 
 };
 
+std::string textPeerConnectState(peerConnectState &state);
+
 
 class p3ConnectMgr: public pqiConnectCb, public p3Config
 {
@@ -176,6 +178,8 @@ void	addNetAssistConnect(uint32_t type, pqiNetAssistConnect *);
 void	addNetAssistFirewall(uint32_t type, pqiNetAssistFirewall *);
 
 bool	checkNetAddress(); /* check our address is sensible */
+
+void	addNetListener(pqiNetListener *listener);
 
 	/*************** External Control ****************/
 bool	shutdown(); /* blocking shutdown call */
@@ -273,6 +277,8 @@ virtual bool netAssistSetAddress( struct sockaddr_in &laddr,
 
 
 	/* Internal Functions */
+void 	netReset();
+
 void 	statusTick();
 void 	netTick();
 void 	netStartup();
@@ -341,6 +347,8 @@ private:
 	std::map<uint32_t, pqiNetAssistConnect  *> mDhts;
 
 	RsMutex connMtx; /* protects below */
+
+	std::list<pqiNetListener *>  mNetListeners;
 
 	time_t   mNetInitTS;
 	uint32_t mNetStatus;

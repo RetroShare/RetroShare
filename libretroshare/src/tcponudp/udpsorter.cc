@@ -37,9 +37,18 @@ const int rsudpsorterzone = 28477;
 
 static const int STUN_TTL = 64;
 
+#define TOU_STUN_MIN_PEERS 5
+
 /*
  * #define DEBUG_UDP_SORTER 1
  */
+
+
+const int32_t TOU_STUN_MAX_FAIL_COUNT = 3; /* 3 tries (could be higher?) */
+const int32_t TOU_STUN_MAX_SEND_RATE = 5;  /* every 5  seconds */
+const int32_t TOU_STUN_MAX_RECV_RATE = 25; /* every 25 seconds */
+const int32_t TOU_STUN_ADDR_MAX_AGE  = 120; /* 2 minutes */
+
 
 
 UdpSorter::UdpSorter(struct sockaddr_in &local)
@@ -53,6 +62,12 @@ UdpSorter::UdpSorter(struct sockaddr_in &local)
 	openSocket();
 	return;
 }
+
+bool    UdpSorter::resetAddress(struct sockaddr_in &local)
+{
+	return udpLayer->reset(local);
+}
+
 
 
 /* higher level interface */
@@ -148,7 +163,9 @@ int     UdpSorter::status(std::ostream &out)
 int UdpSorter::openSocket()	
 {
 	udpLayer = new UdpLayer(this, laddr);
-	udpLayer->start();
+	// start is called by udpLayer now, for consistency
+	// with reset!
+	//udpLayer->start();
 
 	return 1;
 }
@@ -301,8 +318,19 @@ bool UdpSorter::locked_handleStunPkt(void *data, int size, struct sockaddr_in &f
 
 bool    UdpSorter::externalAddr(struct sockaddr_in &external, uint8_t &stable)
 {
+        RsStackMutex stack(sortMtx);   /********** LOCK MUTEX *********/
+
 	if (eaddrKnown)
 	{
+		/* address timeout */
+		if (time(NULL) - eaddrTime > TOU_STUN_ADDR_MAX_AGE)
+		{
+			std::cerr << "UdpSorter::externalAddr() eaddr expired";
+			std::cerr << std::endl;
+
+			return false;
+		}
+
 		external = eaddr;
 
 		if (eaddrStable)
@@ -310,8 +338,15 @@ bool    UdpSorter::externalAddr(struct sockaddr_in &external, uint8_t &stable)
 		else
 			stable = 0;
 
+		std::cerr << "UdpSorter::externalAddr() eaddr:" << inet_ntoa(external.sin_addr);
+		std::cerr << ":" << ntohs(external.sin_port) << " stable: " << (int) stable;
+		std::cerr << std::endl;
+
 		return true;
 	}
+	std::cerr << "UdpSorter::externalAddr() eaddr unknown";
+	std::cerr << std::endl;
+
 	return false;
 }
 
@@ -503,13 +538,7 @@ bool UdpStun_isStunPacket(void *data, int size)
 
 /******************************* STUN Handling ********************************
  * The KeepAlive part - slightly more complicated
- *
- *
  */
-
-const int32_t TOU_STUN_MAX_FAIL_COUNT = 10; /* 10 tries (could be higher?) */
-const int32_t TOU_STUN_MAX_SEND_RATE = 5;  /* every 5  seconds */
-const int32_t TOU_STUN_MAX_RECV_RATE = 25; /* every 25 seconds */
 
 /******************************* STUN Handling ********************************/
 
@@ -536,11 +565,12 @@ bool    UdpSorter::addStunPeer(const struct sockaddr_in &remote, const char *pee
 	std::cerr << std::endl;
 #endif
 
-	storeStunPeer(remote, peerid);
-
         sortMtx.lock();   /********** LOCK MUTEX *********/
 	bool needStun = (!eaddrKnown);
         sortMtx.unlock();   /******** UNLOCK MUTEX *********/
+
+	storeStunPeer(remote, peerid, needStun);
+
 
 	if (needStun)
 	{
@@ -550,7 +580,7 @@ bool    UdpSorter::addStunPeer(const struct sockaddr_in &remote, const char *pee
 	return true;
 }
 
-bool    UdpSorter::storeStunPeer(const struct sockaddr_in &remote, const char *peerid)
+bool    UdpSorter::storeStunPeer(const struct sockaddr_in &remote, const char *peerid, bool sent)
 {
 
 #ifdef DEBUG_UDP_SORTER
@@ -571,11 +601,22 @@ bool    UdpSorter::storeStunPeer(const struct sockaddr_in &remote, const char *p
 			std::cerr << std::endl;
 #endif
 			/* already there */
+			if (sent)
+			{
+				it->failCount += 1;
+				it->lastsend = time(NULL);
+			}
 			return false;
 		}
 	}
 
 	TouStunPeer peer(std::string(peerid), remote);
+	if (sent)
+	{
+		peer.failCount += 1;
+		peer.lastsend = time(NULL);
+	}
+
 	mStunList.push_back(peer);
 
 #ifdef DEBUG_UDP_SORTER
@@ -704,10 +745,7 @@ bool    UdpSorter::locked_recvdStun(const struct sockaddr_in &remote, const stru
 	locked_printStunList();
 #endif
 
-	if (!eaddrKnown)
-	{
-		locked_checkExternalAddress();
-	}
+	locked_checkExternalAddress();
 
 	return found;
 }
@@ -722,13 +760,23 @@ bool    UdpSorter::locked_checkExternalAddress()
 
 	bool found1 = false;
 	bool found2 = false;
-
-	std::list<TouStunPeer>::iterator it;
-	std::list<TouStunPeer>::iterator p1;
-	std::list<TouStunPeer>::iterator p2;
-	for(it = mStunList.begin(); it != mStunList.end(); it++)
+	time_t now = time(NULL);
+	/* iterator backwards - as these are the most recent */
+	std::list<TouStunPeer>::reverse_iterator it;
+	std::list<TouStunPeer>::reverse_iterator p1;
+	std::list<TouStunPeer>::reverse_iterator p2;
+	for(it = mStunList.rbegin(); it != mStunList.rend(); it++)
 	{
-		if (it->response && isExternalNet(&(it->eaddr.sin_addr)))
+		/* check:
+		   1) have response.
+		   2) have eaddr.
+		   3) no fails.
+		   4) recent age.
+		 */
+
+		time_t age = (now - it->lastsend);
+		if (it->response && isExternalNet(&(it->eaddr.sin_addr)) &&
+			(it->failCount == 0) && (age < TOU_STUN_ADDR_MAX_AGE))
 		{
 			if (!found1)
 			{
@@ -757,6 +805,7 @@ bool    UdpSorter::locked_checkExternalAddress()
 		}
 		eaddrKnown = true;
 		eaddr = p1->eaddr;
+		eaddrTime = now;
 
 #ifdef DEBUG_UDP_SORTER
 		std::cerr << "UdpSorter::locked_checkExternalAddress() Found State:";
@@ -803,6 +852,36 @@ bool    UdpSorter::locked_printStunList()
 	return true;
 }
 
-
 	
+bool    UdpSorter::getStunPeer(int idx, std::string &id,
+		struct sockaddr_in &remote, struct sockaddr_in &eaddr, 
+		uint32_t &failCount, time_t &lastSend)
+{
+	RsStackMutex stack(sortMtx);   /********** LOCK MUTEX *********/
+
+	std::list<TouStunPeer>::iterator it;
+	int i;
+	for(i=0, it=mStunList.begin(); (i<idx) && (it!=mStunList.end()); it++, i++);
+
+	if (it != mStunList.end())
+	{
+		id = RsUtil::BinToHex(it->id);
+		remote = it->remote;
+		eaddr = it->eaddr;
+		failCount = it->failCount;
+		lastSend = it->lastsend;
+		return true;
+	}
+
+	return false;
+}
+
+
+bool    UdpSorter::needStunPeers()
+{
+	RsStackMutex stack(sortMtx);   /********** LOCK MUTEX *********/
+
+	return (mStunList.size() < TOU_STUN_MIN_PEERS);
+}
+
 

@@ -53,7 +53,6 @@ static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx);
 /***********
  ** #define AUTHSSL_DEBUG	1
  **********/
-#define AUTHSSL_DEBUG	1
 
 #ifdef PQI_USE_SSLONLY
 

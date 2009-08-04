@@ -134,5 +134,15 @@ virtual void    peerConnectRequest(std::string id,
 virtual void	stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags);
 };
 
+
+/* network listener interface - used to reset network addresses */
+class pqiNetListener
+{
+	public:
+virtual int	reset_listener() = 0;
+
+};
+
+
 #endif // PQI_MONITOR_H
 

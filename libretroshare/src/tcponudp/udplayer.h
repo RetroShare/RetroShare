@@ -70,9 +70,12 @@ class UdpLayer: public RsThread
 	UdpLayer(UdpReceiver *recv, struct sockaddr_in &local);
 virtual ~UdpLayer() { return; }
 
+int 	reset(struct sockaddr_in &local); /* calls join, close, openSocket */
+
 int     status(std::ostream &out);
 
 	/* setup connections */
+	int close();
 	int openSocket();
 
 	/* RsThread functions */
@@ -88,7 +91,6 @@ void	recv_loop(); /* uses callback to UdpReceiver */
 	int okay();
 	int tick();
 
-	int close();
 
 	/* data */
 	/* internals */
@@ -110,6 +112,7 @@ virtual	int sendUdpPacket(const void *data, int size, struct sockaddr_in &to);
 	int  errorState;
 	int sockfd;
 	int ttl;
+	bool stopThread;
 
 	RsMutex sockMtx;
 };

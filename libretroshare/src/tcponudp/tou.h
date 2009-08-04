@@ -79,6 +79,10 @@ int	tou_stunpeer(const struct sockaddr *ext_addr, socklen_t addrlen, const char 
 int     tou_stunkeepalive(int required);
 int     tou_tick_stunkeepalive();
 
+int     tou_getstunpeer(int i, struct sockaddr *remote_addr, socklen_t *raddrlen,
+                        	struct sockaddr *ext_addr, socklen_t *eaddrlen,
+                        uint32_t *failCount, time_t *lastSend);
+int	tou_needstunpeers();
 
 
 	/* Connections are as similar to UNIX as possible 

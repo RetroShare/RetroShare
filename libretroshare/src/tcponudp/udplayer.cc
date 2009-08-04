@@ -178,6 +178,33 @@ int     UdpLayer::status(std::ostream &out)
 	return 1;
 }
 
+int UdpLayer::reset(struct sockaddr_in &local)
+{
+	std::cerr << "UdpLayer::reset()" << std::endl;
+
+	/* stop the old thread */
+	{
+		RsStackMutex stack(sockMtx);   /********** LOCK MUTEX *********/
+		std::cerr << "UdpLayer::reset() setting stopThread flag" << std::endl;
+		stopThread = true;
+	}
+		
+	std::cerr << "UdpLayer::reset() joining" << std::endl;
+	join(); 
+
+	std::cerr << "UdpLayer::reset() closing socket" << std::endl;
+	close();
+
+	std::cerr << "UdpLayer::reset() resetting variables" << std::endl;
+	laddr = local;
+	errorState = 0;
+	ttl = UDP_DEF_TTL;
+
+	std::cerr << "UdpLayer::reset() opening socket" << std::endl;
+	openSocket();
+}
+
+
 int UdpLayer::close()
 {
 	/* close socket if open */
@@ -210,7 +237,21 @@ void UdpLayer::recv_loop()
 	{
 		/* select on the socket TODO */
                 fd_set rset;
-                for(;;) {
+                for(;;) 
+		{
+			/* check if we need to stop */
+			bool toStop = false;
+			{
+				RsStackMutex stack(sockMtx);   /********** LOCK MUTEX *********/
+				toStop = stopThread;
+			}
+			
+			if (toStop)
+			{
+				std::cerr << "UdpLayer::recv_loop() stopping thread" << std::endl;
+				stop();
+			}
+
                         FD_ZERO(&rset);
                         FD_SET(sockfd, &rset);
                         timeout.tv_sec = 0;
@@ -310,6 +351,13 @@ int UdpLayer::openSocket()
 	std::cerr << "Setting TTL to " << UDP_DEF_TTL << std::endl;
 #endif
 	setTTL(UDP_DEF_TTL);
+
+	// start up our thread.
+	{
+		RsStackMutex stack(sockMtx);   /********** LOCK MUTEX *********/
+		stopThread = false;
+	}
+	start();
 
 	return 1;
 
