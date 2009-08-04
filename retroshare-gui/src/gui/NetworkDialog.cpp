@@ -29,6 +29,7 @@
 #include "NetworkView.h"
 #include "TrustView.h"
 #include "connect/ConnectDialog.h"
+#include "GenCertDialog.h"
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 
@@ -140,7 +141,8 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     QMenu *menu = new QMenu(tr("Menu"));
     menu->addAction(ui.actionAddFriend); 
     //menu->addAction(ui.actionCopyKey);
-    menu->addAction(ui.actionExportKey); 
+    menu->addAction(ui.actionExportKey);
+    menu->addAction(ui.actionCreate_New_Profile);
     menu->addSeparator();
     menu->addAction(ui.actionTabsright); 
     menu->addAction(ui.actionTabswest);
@@ -700,6 +702,14 @@ void NetworkDialog::setLogInfo(QString info, QColor color) {
 
 void NetworkDialog::on_actionClearLog_triggered() {
   ui.infoLog->clear();
+}
+
+void NetworkDialog::on_actionCreate_New_Profile_activated()
+{
+    static GenCertDialog *gencertdialog = new GenCertDialog();
+    gencertdialog->show();
+    
+
 }
 
 void NetworkDialog::displayInfoLogMenu(const QPoint& pos) {

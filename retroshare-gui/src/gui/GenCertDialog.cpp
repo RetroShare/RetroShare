@@ -32,7 +32,6 @@
 #define DATETIME_FMT  "MMM dd hh:mm:ss"
 
 
-
 /** Default constructor */
 GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
   : QDialog(parent, flags)
@@ -44,8 +43,8 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
 
   
   connect(ui.genButton, SIGNAL(clicked()), this, SLOT(genPerson()));
-  connect(ui.selectButton, SIGNAL(clicked()), this, SLOT(selectFriend()));
-  connect(ui.friendBox, SIGNAL(stateChanged(int)), this, SLOT(checkChanged(int)));
+  //connect(ui.selectButton, SIGNAL(clicked()), this, SLOT(selectFriend()));
+  //connect(ui.friendBox, SIGNAL(stateChanged(int)), this, SLOT(checkChanged(int)));
 
   ui.genName->setFocus(Qt::OtherFocusReason);
 

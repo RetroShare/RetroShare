@@ -72,6 +72,9 @@ private slots:
   void on_actionAddFriend_activated();
   //void on_actionCopyKey_activated();
   void on_actionExportKey_activated();
+
+  void on_actionCreate_New_Profile_activated();
+
   
   void on_actionClearLog_triggered();
   void displayInfoLogMenu(const QPoint& pos);

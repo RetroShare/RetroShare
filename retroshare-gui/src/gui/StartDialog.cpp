@@ -240,8 +240,8 @@ void StartDialog::createnewaccount()
     //gencertdialog->show();
     
     QMessageBox::StandardButton sb = QMessageBox::question ( NULL,
-                        "Create New Certificate", 
-			"This will delete your existing Certificate\n Are you sure you want to continue",
+                        "Create a New Profil", 
+			"This will generate a new Profile\n Are you sure you want to continue",
 			(QMessageBox::Ok | QMessageBox::No));
 
     if (sb == QMessageBox::Ok)
