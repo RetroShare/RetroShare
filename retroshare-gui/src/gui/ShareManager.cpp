@@ -29,6 +29,7 @@
 #include <QPoint>
 #include <QMouseEvent>
 #include <QPixmap>
+#include <QHeaderView>
 
 #include <QMessageBox>
 #include <QComboBox>
@@ -53,11 +54,13 @@ ShareManager::ShareManager(QWidget *parent, Qt::WFlags flags)
 
   connect( ui.shareddirList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( shareddirListCostumPopupMenu( QPoint ) ) );
 
-
 	ui.addButton->setToolTip(tr("Add a Share Directory"));
 	ui.removeButton->setToolTip(tr("Remove selected Shared Directory"));
 
 	load();
+
+  ui.shareddirList->horizontalHeader()->setResizeMode( 0,QHeaderView::Interactive); 
+  ui.shareddirList->horizontalHeader()->resizeSection( 0, 360 );
 
 }
 
