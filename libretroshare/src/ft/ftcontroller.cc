@@ -1000,11 +1000,11 @@ bool 	ftController::setPartialsDirectory(std::string path)
         }
 
         if (rsFiles) {
-            std::list<std::string>::iterator it;
-            std::list<std::string> dirs;
+            std::list<SharedDirInfo>::iterator it;
+            std::list<SharedDirInfo> dirs;
             rsFiles->getSharedDirectories(dirs);
             for (it = dirs.begin(); it != dirs.end(); it++) {
-                if (!path.find(*it)) {
+                if (!path.find((*it).filename)) {
                     return false;
                 }
             }
