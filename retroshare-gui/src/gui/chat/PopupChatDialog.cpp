@@ -228,6 +228,11 @@ void PopupChatDialog::updateChat()
 
 void PopupChatDialog::addChatMsg(ChatInfo *ci)
 {
+	//store the state of the vertical scrollbar to set it at the end of the function
+	QScrollBar *qsb =  ui.textBrowser->verticalScrollBar();
+	int oldQsbValue = qsb->value();
+	bool maxQsbValue = (qsb->maximum() == qsb->value());
+
 	bool offline = true;
 
 	{
@@ -300,9 +305,12 @@ std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() <<
 
 	ui.textBrowser->setHtml(ui.textBrowser->toHtml() + formatMsg + "\n");
 	
-	QTextCursor cursor = ui.textBrowser->textCursor();
-	cursor.movePosition(QTextCursor::End);
-	ui.textBrowser->setTextCursor(cursor);
+
+	if (maxQsbValue ) {
+	    qsb -> setValue(qsb->maximum());
+	} else {
+	    qsb -> setValue(oldQsbValue);
+	}
 
 	if(ci->chatflags & RS_CHAT_AVATAR_AVAILABLE)
 	{
