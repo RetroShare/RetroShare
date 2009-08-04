@@ -735,11 +735,18 @@ void PeersDialog::insertChat()
 		}
 
 
-		msgWidget->setHtml(currenttxt);
-
-		msgWidget->update();
 		QScrollBar *qsb =  msgWidget->verticalScrollBar();
-		qsb -> setValue(qsb->maximum());
+		int oldQsbValue = qsb->value();
+		bool maxQsbValue = (qsb->maximum() == qsb->value());
+
+		msgWidget->setHtml(currenttxt);
+		msgWidget->update();
+
+		if (maxQsbValue ) {
+		    qsb -> setValue(qsb->maximum());
+		} else {
+		    qsb -> setValue(oldQsbValue);
+		}
 	}
 }
 
