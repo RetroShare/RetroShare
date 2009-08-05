@@ -3,11 +3,11 @@ CONFIG += static
 TARGET = retroshare
 CONFIG += release
 
-DEFINES *= MINIUPNPC_VERSION=10
+DEFINES *= MINIUPNPC_VERSION=13
 DEFINES -= PQI_USE_XPGP
 DEFINES += RS_USE_PGPSSL
 
-UPNPC_DIR = ../../../../miniupnpc-1.0
+UPNPC_DIR = ../../../../miniupnpc-1.3
 GPG_ERROR_DIR = ../../../../libgpg-error-1.7
 GPGME_DIR  = ../../../../gpgme-1.1.8
 
