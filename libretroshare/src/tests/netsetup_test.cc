@@ -198,6 +198,28 @@ int main(int argc, char **argv)
 	}
 
 
+#ifndef WINDOWS_SYS
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#else
+        // Windows Networking Init.
+        WORD wVerReq = MAKEWORD(2,2);
+        WSADATA wsaData;
+
+        if (0 != WSAStartup(wVerReq, &wsaData))
+        {
+                std::cerr << "Failed to Startup Windows Networking";
+                std::cerr << std::endl;
+        }
+        else
+        {
+                std::cerr << "Started Windows Networking";
+                std::cerr << std::endl;
+        }
+
+#endif
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+
+
 	std::string ownId = "OWNID";
 
 	/* create a dummy auth mgr */
@@ -241,8 +263,14 @@ int main(int argc, char **argv)
 		connMgr->tick();
 
 		setupTest(i, connMgr);
-
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS // ie UNIX
 		sleep(1);
+#else
+		Sleep(1000);
+#endif
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+
 		connMgr->tick();
 
 		checkResults(i, connMgr);

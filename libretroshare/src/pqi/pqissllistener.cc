@@ -180,7 +180,14 @@ int	pqissllistenbase::setuplisten()
 
     	{
       		int on = 1;
+
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS // ie UNIX
       		if (setsockopt(lsock, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0)
+#else //WINDOWS_SYS 
+      		if (setsockopt(lsock, SOL_SOCKET, SO_REUSEADDR, (const char *) &on, sizeof(on)) < 0)
+#endif 
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
         	{
 			std::ostringstream out;
 			out << "pqissllistenbase::setuplisten()";
