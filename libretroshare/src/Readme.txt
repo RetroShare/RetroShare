@@ -330,20 +330,24 @@ Need:
  
 In Brief: 
 UNDER Cygwin: 
-	(1) Compile openssl-xpgp. 
-	(2) Compile miniunpnc 
-	(3) Compile pthreads. 
-	(4) Compile zlib. 
+	(1) Compile openssl. (Configure mingw + make )
+	(2) Compile pthreads. 
+	(3) Compile zlib. 
  
-	(5) Compile libretroshare retroshare-v0.4.x 
+	(4) Compile libretroshare retroshare-v0.5.x 
  
-UNDER Mingw:
-  
-	(6) Compile the Qt-Gui. ( qmake + make )
+UNDER MinGW/MSYS Bash shell:
+  (5) Compile gpg-error (configure + make + make install)
+  (6) Compile gpgme     (configure + make + make install)
+   
+UNDER MinGW:
+  (7) Compile miniunpnc  (mingw32make.bat)
+	(8) Compile the Qt-Gui. ( qmake + make )
 
 
 Email me if you're having trouble:
 	retroshare@lunamutt.com
+	
 	
 You can go on ouer forum when you have trouble with compiling:
 http://retroshare.sourceforge.net/forum/
