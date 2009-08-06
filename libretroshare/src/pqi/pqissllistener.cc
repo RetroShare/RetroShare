@@ -39,6 +39,13 @@
 
 const int pqissllistenzone = 49787;
 
+/* NB: This #define makes the listener open 0.0.0.0:X port instead
+ * of a specific port - this might help retroshare work on PCs with
+ * multiple interfaces or unique network setups.
+ * #define OPEN_UNIVERSAL_PORT 1
+ */
+
+#define OPEN_UNIVERSAL_PORT 1
 
 /************************ PQI SSL LISTEN BASE ****************************
  *
@@ -200,7 +207,13 @@ int	pqissllistenbase::setuplisten()
         	}
     	}
 
+#ifdef OPEN_UNIVERSAL_PORT
+	struct sockaddr_in tmpaddr = laddr;
+	tmpaddr.sin_addr.s_addr = 0;
+	if (0 != (err = bind(lsock, (struct sockaddr *) &tmpaddr, sizeof(tmpaddr))))
+#else
 	if (0 != (err = bind(lsock, (struct sockaddr *) &laddr, sizeof(laddr))))
+#endif
 	{
 		std::ostringstream out;
 		out << "pqissllistenbase::setuplisten()";

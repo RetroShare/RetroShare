@@ -52,6 +52,17 @@
 
 static const int UDP_DEF_TTL = 64;
 
+/* NB: This #define makes the listener open 0.0.0.0:X port instead
+ * of a specific port - this might help retroshare work on PCs with
+ * multiple interfaces or unique network setups.
+ * #define OPEN_UNIVERSAL_PORT 1
+ * 
+ * This is also defined in pqissllistener (for TCP port).
+ */
+
+#define OPEN_UNIVERSAL_PORT 1
+
+
 class   udpPacket
 {
 	public:
@@ -319,7 +330,15 @@ int UdpLayer::openSocket()
 	std::cerr << "UpdStreamer::openSocket()" << std::endl;
 #endif
 	/* bind to address */
+
+
+#ifdef OPEN_UNIVERSAL_PORT
+        struct sockaddr_in tmpaddr = laddr;
+        tmpaddr.sin_addr.s_addr = 0;
+	if (0 != tounet_bind(sockfd, (struct sockaddr *) (&tmpaddr), sizeof(tmpaddr)))
+#else
 	if (0 != tounet_bind(sockfd, (struct sockaddr *) (&laddr), sizeof(laddr)))
+#endif
 	{
 #ifdef DEBUG_UDP_LAYER
 		std::cerr << "Socket Failed to Bind to : " << laddr << std::endl;
