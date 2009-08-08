@@ -59,8 +59,12 @@ ShareManager::ShareManager(QWidget *parent, Qt::WFlags flags)
 
 	load();
 
-  ui.shareddirList->horizontalHeader()->setResizeMode( 0,QHeaderView::Interactive); 
+  ui.shareddirList->horizontalHeader()->setResizeMode( 0,QHeaderView::Stretch);
+  ui.shareddirList->horizontalHeader()->setResizeMode( 2,QHeaderView::Interactive); 
+ 
   ui.shareddirList->horizontalHeader()->resizeSection( 0, 360 );
+  ui.shareddirList->horizontalHeader()->setStretchLastSection(false);
+
 
 }
 
