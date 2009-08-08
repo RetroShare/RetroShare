@@ -153,9 +153,9 @@ TextPage::TextPage(QWidget *parent)
                                "color:#32cd32;\">%1</span>");
     setTitle( titleStr.arg( tr("Text certificate") ) ) ;
     
-    setSubTitle(tr("Use text representation of the XPGP certificates."));
+    setSubTitle(tr("Use text representation of the PGP certificates."));
 
-    userCertLabel = new QLabel(tr("The text below is your XPGP certificate. "
+    userCertLabel = new QLabel(tr("The text below is your PGP certificate. "
                                   "You have to provide it to your friend "));
 
     std::cerr << "TextPage() getting Invite" << std::endl;
@@ -220,7 +220,7 @@ TextPage::TextPage(QWidget *parent)
     userCertLayout->addWidget(userCertEdit);
     userCertLayout->addLayout(userCertButtonsLayout);
 
-    friendCertLabel = new QLabel(tr("Please, paste your friends XPGP "
+    friendCertLabel = new QLabel(tr("Please, paste your friends PGP "
                                     "certificate into the box below" )) ;
     
     friendCertEdit = new QTextEdit;
@@ -591,7 +591,7 @@ CertificatePage::CertificatePage(QWidget *parent)
                                "color:#32cd32;\">%1</span>");
     setTitle( titleStr.arg( tr("Certificate files") ) ) ;
 
-    setSubTitle(tr("Use XPGP certificates saved in files."));
+    setSubTitle(tr("Use PGP certificates saved in files."));
     
     userFileLabel = new QLabel(tr("You have to generate a file with your "
                                   "certificate and give it to your friend. "
