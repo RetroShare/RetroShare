@@ -106,6 +106,8 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		/* util fns */
 
 	private:
+		// saves file indexs and update the cache.
+		void saveFileIndexes() ;
 
 		/* the mutex should be locked before calling... these. */
 		std::string locked_findRealRoot(std::string base) const;

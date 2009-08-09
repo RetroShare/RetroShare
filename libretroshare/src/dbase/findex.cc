@@ -859,7 +859,7 @@ error:
 }
 
 
-int FileIndex::saveIndex(std::string filename, std::string &fileHash, uint64_t &size)
+int FileIndex::saveIndex(std::string filename, std::string &fileHash, uint64_t &size,const std::set<std::string>& forbidden_dirs)
 {
 	unsigned char sha_buf[SHA_DIGEST_LENGTH];
 	std::ofstream file (filename.c_str(), std::ofstream::binary);
@@ -881,7 +881,25 @@ int FileIndex::saveIndex(std::string filename, std::string &fileHash, uint64_t &
 	oss << "#" << std::endl;
 	
 	/* begin recusion */
-	root->saveEntry(oss);
+	root->writeDirInfo(oss) ;
+
+	std::map<std::string, DirEntry *>::iterator it;
+	for(it = root->subdirs.begin(); it != root->subdirs.end(); it++)
+	{
+		std::cout << "writting root directory: name=" << it->second->name << ", path=" << it->second->path << std::endl ;
+		if(forbidden_dirs.find(it->second->name) != forbidden_dirs.end())
+			std::cerr << "  will be suppressed." << std::endl ;
+		else
+		{
+			std::cerr << "  will be saved." << std::endl ;
+			(it->second)->saveEntry(oss);
+		}
+	}
+
+	root->writeFileInfo(oss) ;	// this should never do anything
+
+	/* signal to pop directory from stack in loadIndex() */
+	oss << "-" << std::endl;
 
 	/* calculate sha1 hash */
 	SHA_CTX *sha_ctx = new SHA_CTX;	
@@ -920,9 +938,7 @@ std::string FixName(std::string in)
 	return in;
 }
 
-
-/* recusive function for traversing the dir tree in preorder */
-int DirEntry::saveEntry(std::ostringstream &oss)
+void DirEntry::writeDirInfo(std::ostringstream& oss)
 {
 	/* print node info */
 	oss << "d";
@@ -932,13 +948,10 @@ int DirEntry::saveEntry(std::ostringstream &oss)
 	oss << modtime << ",";
 	oss << pop << ",";
 	oss << updtime << "," << std::endl;
+}
 
-	std::map<std::string, DirEntry *>::iterator it;
-	for(it = subdirs.begin(); it != subdirs.end(); it++)
-	{
-		(it->second)->saveEntry(oss);
-	}
-
+void DirEntry::writeFileInfo(std::ostringstream& oss)
+{
 	/* print file info */
 	std::map<std::string, FileEntry *>::iterator fit;
 	for(fit = files.begin(); fit != files.end(); fit++)
@@ -951,6 +964,20 @@ int DirEntry::saveEntry(std::ostringstream &oss)
 		oss << (fit->second)->pop << ",";
 		oss << (fit->second)->updtime << "," << std::endl;
 	}
+}
+
+/* recusive function for traversing the dir tree in preorder */
+int DirEntry::saveEntry(std::ostringstream &oss)
+{
+	writeDirInfo(oss) ;
+
+	std::map<std::string, DirEntry *>::iterator it;
+	for(it = subdirs.begin(); it != subdirs.end(); it++)
+	{
+		(it->second)->saveEntry(oss);
+	}
+
+	writeFileInfo(oss) ;
 
 	/* signal to pop directory from stack in loadIndex() */
 	oss << "-" << std::endl;

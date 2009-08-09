@@ -150,8 +150,11 @@ bool FileIndexMonitor::loadLocalCache(const CacheData &data)  /* called with sto
 	//fi.root->name = data.pid;
 
 	/* More error checking needed here! */
-	if ((ok = fi.loadIndex(data.path + '/' + data.name, 
-				data.hash, data.size)))
+	
+	std::string name = data.name ;	// this trick allows to load the complete file. Not the one being shared.
+	name[name.length()-1] = 'c' ;
+
+	if ((ok = fi.loadIndex(data.path + '/' + data.name, data.hash, data.size)))
 	{
 #ifdef FIM_DEBUG
 		std::cerr << "FileIndexMonitor::loadCache() Success!";
@@ -544,56 +547,8 @@ void 	FileIndexMonitor::updateCycle()
 
 
 	if (fiMods)
-	{
-		/* store to the cacheDirectory */
-		fiMutex.lock(); { /* LOCKED DIRS */
-
-		std::string path = getCacheDir();
-		std::ostringstream out; 
-		out << "fc-own-" << time(NULL) << ".rsfc";
-
-		std::string tmpname = out.str();
-		std::string fname = path + "/" + tmpname;
-
-#ifdef FIM_DEBUG
-		std::cerr << "FileIndexMonitor::updateCycle() FileIndex modified ... updating";
-		std::cerr <<  std::endl;
-		std::cerr << "FileIndexMonitor::updateCycle() saving to: " << fname;
-		std::cerr <<  std::endl;
-#endif
-
-		std::string calchash;
-		uint64_t size;
-
-		fi.saveIndex(fname, calchash, size);
-
-#ifdef FIM_DEBUG
-		std::cerr << "FileIndexMonitor::updateCycle() saved with hash:" << calchash;
-		std::cerr <<  std::endl;
-#endif
-
-		/* should clean up the previous cache.... */
-
-		/* flag as new info */
-		CacheData data;
-		data.pid = fi.root->id;
-		data.cid.type  = getCacheType();
-		data.cid.subid = 0;
-		data.path = path;
-		data.name = tmpname;
-		data.hash = calchash;
-		data.size = size;
-		data.recvd = time(NULL);
-
-		updateCache(data);
-
-#ifdef FIM_DEBUG
-		std::cerr << "FileIndexMonitor::updateCycle() called updateCache()";
-		std::cerr <<  std::endl;
-#endif
-
-		} fiMutex.unlock(); /* UNLOCKED DIRS */
-	}
+		saveFileIndexes() ;
+	
 
 	{
 		RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
@@ -602,37 +557,115 @@ void 	FileIndexMonitor::updateCycle()
 	cb->notifyHashingInfo("") ;
 }
 
+void FileIndexMonitor::saveFileIndexes()
+{
+	/* store to the cacheDirectory */
+	RsStackMutex mutex(fiMutex) ; /* LOCKED DIRS */
+
+	std::string path = getCacheDir();
+
+	// Two files are saved: one with only browsable dirs, which will be shared by the cache system,
+	// and one with the complete file collection.
+	//
+	std::ostringstream out; 
+	out << "fc-own-" << time(NULL) << ".rsfb";
+	std::string tmpname_browsable = out.str();
+	std::string fname_browsable = path + "/" + tmpname_browsable;
+
+	std::ostringstream out2; 
+	out2 << "fc-own-" << time(NULL) << ".rsfc";
+	std::string tmpname_total = out2.str();
+	std::string fname_total = path + "/" + tmpname_total;
+
+#ifdef FIM_DEBUG
+	std::cerr << "FileIndexMonitor::updateCycle() FileIndex modified ... updating";
+	std::cerr <<  std::endl;
+	std::cerr << "FileIndexMonitor::updateCycle() saving browsable file list to: " << fname_browsable << std::endl ;
+	std::cerr << "FileIndexMonitor::updateCycle() saving total file list to  to: " << fname_total << std::endl ;
+#endif
+
+	std::string calchash;
+	uint64_t size;
+
+	std::cerr << "About to save, with the following restrictions:" << std::endl ;
+	std::set<std::string> forbidden_dirs ;
+	for(std::map<std::string,SharedDirInfo>::const_iterator it(directoryMap.begin());it!=directoryMap.end();++it)
+	{
+		std::cerr << "   dir=" << it->first << " : " ;
+		if((it->second.shareflags & RS_FILE_HINTS_BROWSABLE) == 0)
+		{
+			std::cerr << "forbidden" << std::endl;
+			forbidden_dirs.insert(it->first) ;
+		}
+		else
+			std::cerr << "autorized" << std::endl;
+	}
+
+	uint64_t sizetmp ;
+
+	fi.saveIndex(fname_total, calchash, sizetmp,std::set<std::string>());	// save all files
+	fi.saveIndex(fname_browsable, calchash, size,forbidden_dirs);		// save only browsable files
+
+#ifdef FIM_DEBUG
+	std::cerr << "FileIndexMonitor::updateCycle() saved with hash:" << calchash;
+	std::cerr <<  std::endl;
+#endif
+
+	/* should clean up the previous cache.... */
+
+	/* flag as new info */
+	CacheData data;
+	data.pid = fi.root->id;
+	data.cid.type  = getCacheType();
+	data.cid.subid = 0;
+	data.path = path;
+	data.name = tmpname_browsable;
+	data.hash = calchash;
+	data.size = size;
+	data.recvd = time(NULL);
+
+	updateCache(data);
+
+#ifdef FIM_DEBUG
+	std::cerr << "FileIndexMonitor::updateCycle() called updateCache()";
+	std::cerr <<  std::endl;
+#endif
+}
+
 void    FileIndexMonitor::updateShareFlags(const SharedDirInfo& dir)
 {
+	bool fimods = false ;
 #ifdef FIM_DEBUG
 	std::cerr << "*** FileIndexMonitor: Updating flags for " << dir.filename << " to " << dir.shareflags << std::endl ;
 #endif
 	{ 
 		RsStackMutex stack(fiMutex) ;	/* LOCKED DIRS */
-	
-		if(pendingDirs)
-			for(std::list<SharedDirInfo>::iterator it(pendingDirList.begin());it!=pendingDirList.end();++it)
+
+		for(std::list<SharedDirInfo>::iterator it(pendingDirList.begin());it!=pendingDirList.end();++it)
+		{
+			std::cerr  << "** testing pending dir " << (*it).filename << std::endl ;
+			if((*it).filename == dir.filename)
 			{
-				std::cerr  << "** testing pending dir " << (*it).filename << std::endl ;
-				if((*it).filename == dir.filename)
-				{
-					std::cerr  << "** Updating to " << (*it).shareflags << "!!" << std::endl ;
-					(*it).shareflags = dir.shareflags ;
-					break ;
-				}
+				std::cerr  << "** Updating to " << (*it).shareflags << "!!" << std::endl ;
+				(*it).shareflags = dir.shareflags ;
+				break ;
 			}
-		else
-			for(std::map<std::string,SharedDirInfo>::iterator it(directoryMap.begin());it!=directoryMap.end();++it)
+		}
+
+		for(std::map<std::string,SharedDirInfo>::iterator it(directoryMap.begin());it!=directoryMap.end();++it)
+		{
+			std::cerr  << "** testing " << (*it).second.filename << std::endl ;
+			if((*it).second.filename == dir.filename)
 			{
-				std::cerr  << "** testing " << (*it).second.filename << std::endl ;
-				if((*it).second.filename == dir.filename)
-				{
-					std::cerr  << "** Updating from " << it->second.shareflags << "!!" << std::endl ;
-					(*it).second.shareflags = dir.shareflags ;
-					break ;
-				}
+				std::cerr  << "** Updating from " << it->second.shareflags << "!!" << std::endl ;
+				(*it).second.shareflags = dir.shareflags ;
+				fimods = true ;
+				break ;
 			}
+		}
 	}
+	if(fimods)
+		saveFileIndexes() ;
 }
 	/* interface */
 void    FileIndexMonitor::setSharedDirectories(std::list<SharedDirInfo> dirs)

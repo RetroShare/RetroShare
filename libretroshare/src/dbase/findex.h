@@ -26,6 +26,7 @@
 
 #include <string>
 #include <map>
+#include <set>
 #include <list>
 #include <vector>
 #include <stdint.h>
@@ -134,6 +135,8 @@ int	 	updateDirectories(std::string path, int pop, int modtime);
 int 		print(std::ostream &out);
 
 int 		saveEntry(std::ostringstream &out);
+void writeDirInfo(std::ostringstream&);
+void writeFileInfo(std::ostringstream&);
 
 	/* Data */
 	std::string path;    /* full path (includes name) */
@@ -194,35 +197,35 @@ class Expression;
 class FileIndex
 {
 	public:
-	FileIndex(std::string pid);
-	~FileIndex();
+		FileIndex(std::string pid);
+		~FileIndex();
 
-	/* control root entries */
-int	setRootDirectories(std::list<std::string> inlist, time_t utime);
-int	getRootDirectories(std::list<std::string> &outlist);
+		/* control root entries */
+		int	setRootDirectories(std::list<std::string> inlist, time_t utime);
+		int	getRootDirectories(std::list<std::string> &outlist);
 
-	/* update (index building) */
-DirEntry  * updateDirEntry(std::string path, FileEntry fe, time_t utime);
-FileEntry * updateFileEntry(std::string path, FileEntry fe, time_t utime);
+		/* update (index building) */
+		DirEntry  * updateDirEntry(std::string path, FileEntry fe, time_t utime);
+		FileEntry * updateFileEntry(std::string path, FileEntry fe, time_t utime);
 
-DirEntry  * findOldDirectory(time_t old); /* finds directories older than old */
-int     removeOldDirectory(std::string fpath, std::string name, time_t old);
+		DirEntry  * findOldDirectory(time_t old); /* finds directories older than old */
+		int     removeOldDirectory(std::string fpath, std::string name, time_t old);
 
-int	cleanOldEntries(time_t old);  /* removes entries older than old */
+		int	cleanOldEntries(time_t old);  /* removes entries older than old */
 
-	/* debug */
-int	printFileIndex(std::ostream &out);
+		/* debug */
+		int	printFileIndex(std::ostream &out);
 
-	/* load/save to file */
-int 	loadIndex(std::string filename, std::string expectedHash, uint64_t size);
-int 	saveIndex(std::string filename, std::string &fileHash, uint64_t &size);
+		/* load/save to file */
+		int 	loadIndex(std::string filename, std::string expectedHash, uint64_t size);
+		int 	saveIndex(std::string filename, std::string &fileHash, uint64_t &size, const std::set<std::string>& forbidden_roots);
 
-	/* search through this index */
-int 	searchTerms(std::list<std::string> terms, std::list<FileEntry *> &results) const;
-int 	searchHash(std::string hash, std::list<FileEntry *> &results) const;
-int     searchBoolExp(Expression * exp, std::list<FileEntry *> &results) const;
+		/* search through this index */
+		int 	searchTerms(std::list<std::string> terms, std::list<FileEntry *> &results) const;
+		int 	searchHash(std::string hash, std::list<FileEntry *> &results) const;
+		int     searchBoolExp(Expression * exp, std::list<FileEntry *> &results) const;
 
-	PersonEntry *root;
+		PersonEntry *root;
 };
 
 

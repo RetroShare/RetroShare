@@ -72,10 +72,6 @@ const uint32_t RS_FILE_HINTS_TURTLE	 		= 0x00000040;
 const uint32_t RS_FILE_HINTS_NETWORK_WIDE = 0x00000080;	// anonymously shared over network
 const uint32_t RS_FILE_HINTS_BROWSABLE 	= 0x00000100;	// browsable by friends
 
-//const uint32_t RS_SHARED_DIR_ANONYMOUS = 0x01 ;
-//const uint32_t RS_SHARED_DIR_BROWSABLE = 0x02 ;
-//const uint32_t RS_SHARED_DIR_UNIVERSAL = 0x03 ;
-
 const uint32_t RS_FILE_HINTS_SPEC_ONLY	 = 0x01000000;
 const uint32_t RS_FILE_HINTS_NO_SEARCH   = 0x02000000;
 
