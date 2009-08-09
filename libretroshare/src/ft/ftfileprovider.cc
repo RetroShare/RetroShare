@@ -116,7 +116,7 @@ bool ftFileProvider::getFileData(uint64_t offset, uint32_t &chunk_size, void *da
 		if (1 != fread(data, data_size, 1, fd))
 		{
 			std::cerr << "ftFileProvider::getFileData() Failed to get data!";
-			free(data);
+			//free(data); no! already deleted in ftDataMultiplex::locked_handleServerRequest()
 			return 0;
 		}
 
