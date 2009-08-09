@@ -124,8 +124,8 @@ bool ftFileProvider::getFileData(uint64_t offset, uint32_t &chunk_size, void *da
 		
 		if (1 != fread(data, data_size, 1, fd))
 		{
-			std::cerr << "ftFileProvider::getFileData() Failed to get data!";
-			free(data);
+			std::cerr << "ftFileProvider::getFileData() Failed to get data. Data_size=" << data_size << ", base_loc=" << base_loc << " !";
+			//free(data); No!! It's already freed upwards in ftDataMultiplex::locked_handleServerRequest()
 			return 0;
 		}
 
