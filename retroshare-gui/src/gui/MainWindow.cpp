@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -57,7 +57,7 @@
 
 #include "Preferences/PreferencesWindow.h"
 
-#ifdef NEWSETTINGS       
+#ifdef NEWSETTINGS
 #include "settings/rsettingswin.h"
 #endif
 
@@ -126,24 +126,24 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 {
     /* Invoke the Qt Designer generated QObject setup routine */
     ui.setupUi(this);
-    
+
     /* Create RshareSettings object */
     _settings = new RshareSettings();
-    
+
     setWindowTitle(tr("RetroShare %1 a secure decentralised commmunication platform").arg(retroshareVersion()));
-    
+
     mSMPlayer = NULL;
-  	
+
     // Setting icons
     this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-    
+
     /* Create all the dialogs of which we only want one instance */
     _bandwidthGraph = new BandwidthGraph();
     messengerWindow = new MessengerWindow();
     _preferencesWindow = new PreferencesWindow();
     applicationWindow = new ApplicationWindow();
     applicationWindow->hide();
-	
+
     /** Left Side ToolBar**/
     connect(ui.actionAdd_Friend, SIGNAL(triggered() ), this , SLOT( addFriend() ) );
     connect(ui.actionAdd_Share, SIGNAL(triggered() ), this , SLOT( openShareManager() ) );
@@ -152,14 +152,14 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(ui.actionSMPlayer, SIGNAL(triggered()), this, SLOT( showsmplayer()) );
     connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT( showabout()) );
     connect(ui.actionColor, SIGNAL(triggered()), this, SLOT( setStyle()) );
-  
-       
+
+
     /** adjusted quit behaviour: trigger a warning that can be switched off in the saved
         config file RetroShare.conf */
     connect(ui.actionQuit, SIGNAL(triggered()), this, SLOT(doQuit()));
 
     /* load the StyleSheet*/
-    loadStyleSheet(Rshare::stylesheet()); 
+    loadStyleSheet(Rshare::stylesheet());
 
 
     /* Create the Main pages and actions */
@@ -169,7 +169,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(networkDialog = new NetworkDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_NETWORK2), tr("Network"), grp));
 
-  
+
     ui.stackPages->add(peersDialog = new PeersDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_PEERS), tr("Friends"), grp));
 
@@ -182,16 +182,16 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 #endif
     ui.stackPages->add(searchDialog = new SearchDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_SEARCH), tr("Search"), grp));
-                     
+
     ui.stackPages->add(transfersDialog = new TransfersDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_TRANSFERS), tr("Transfers"), grp));
-                     
+
     //TransferFeed *transferFeed = NULL;
     //ui.stackPages->add(transferFeed = new TransferFeed(ui.stackPages),
     //		createPageAction(QIcon(IMAGE_LINKS), tr("Transfers"), grp));
-	
+
     ui.stackPages->add(sharedfilesDialog = new SharedFilesDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_FILES), tr("Files"), grp));                     
+                       createPageAction(QIcon(IMAGE_FILES), tr("Files"), grp));
 
     //MsgFeed *msgFeed = NULL;
     //ui.stackPages->add(msgFeed = new MsgFeed(ui.stackPages),
@@ -199,11 +199,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     ui.stackPages->add(messagesDialog = new MessagesDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
-                       
+
     LinksDialog *linksDialog = NULL;
 
 
-#ifdef RS_RELEASE_VERSION    
+#ifdef RS_RELEASE_VERSION
     channelsDialog = NULL;
     ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
 			createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
@@ -212,7 +212,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
 
-	
+
 #else
     channelsDialog = NULL;
     ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
@@ -225,7 +225,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ForumsDialog *forumsDialog = NULL;
     ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
-                       
+
 #endif
     NewsFeed *newsFeed = NULL;
     ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
@@ -242,18 +242,18 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.toolBar->addSeparator();
     connect(grp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *)));
 
-#ifdef RS_RELEASE_VERSION    
-#else   
-    addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));                   
+#ifdef RS_RELEASE_VERSION
+#else
+    addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 #endif
 
-#ifdef NEWSETTINGS       
-    addAction(new QAction(QIcon(IMAGE_OPTIONS), tr("Options"), ui.toolBar_2), SLOT(showSettings()));                   
+#ifdef NEWSETTINGS
+    addAction(new QAction(QIcon(IMAGE_OPTIONS), tr("Options"), ui.toolBar_2), SLOT(showSettings()));
 #endif
-       
+
     /* Select the first action */
     grp->actions()[0]->setChecked(true);
-    
+
     /* also an empty list of chat windows */
     messengerWindow->setChatDialog(peersDialog);
 
@@ -264,10 +264,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /** StatusBar section **/
     peerstatus = new PeerStatus();
     statusBar()->addWidget(peerstatus);
-    
+
     dhtstatus = new DHTStatus();
     statusBar()->addWidget(dhtstatus);
-    
+
     natstatus = new NATStatus();
     statusBar()->addWidget(natstatus);
 
@@ -293,11 +293,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ratesstatus = new RatesStatus();
     statusBar()->addPermanentWidget(ratesstatus);
     /******* Status Bar end ******/
-  
+
     /* Create the actions that will go in the tray menu */
     createActions();
-             
-/******  
+
+/******
     * This is an annoying warning I get all the time...
     * (no help!)
     *
@@ -310,7 +310,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     // Tray icon Menu
     menu = new QMenu(this);
     QObject::connect(menu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
-    toggleVisibilityAction = 
+    toggleVisibilityAction =
             menu->addAction(QIcon(IMAGE_RETROSHARE), tr("Show/Hide"), this, SLOT(toggleVisibilitycontextmenu()));
     menu->addSeparator();
     menu->addAction(_messengerwindowAct);
@@ -318,7 +318,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     menu->addAction(_bandwidthAct);
 
     /* bandwidth only in development version */
-#ifdef RS_RELEASE_VERSION    
+#ifdef RS_RELEASE_VERSION
 #else
     menu->addAction(_appAct);
 #endif
@@ -331,14 +331,14 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     menu->addSeparator();
     menu->addAction(QIcon(IMAGE_CLOSE), tr("&Quit"), this, SLOT(doQuit()));
     // End of Icon Menu
-    
+
     // Create the tray icon
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setToolTip(tr("RetroShare"));
     trayIcon->setContextMenu(menu);
     trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
-    
-    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, 
+
+    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this,
             SLOT(toggleVisibility(QSystemTrayIcon::ActivationReason)));
     trayIcon->show();
 
@@ -354,32 +354,32 @@ void MainWindow::displaySystrayMsg(const QString& title,const QString& msg)
 
 void MainWindow::updateStatus()
 {
-	
+
 	if (ratesstatus)
     	ratesstatus->getRatesStatus();
 
   if (peerstatus)
       peerstatus->getPeerStatus();
-	
+
 	if (dhtstatus)
       dhtstatus->getDHTStatus();
-      
+
  	if (natstatus)
       natstatus->getNATStatus();
-      
+
     std::list<std::string> ids;
     rsPeers->getOnlineList(ids);
     int online = ids.size();
-   
-    if (online == 0) 
+
+    if (online == 0)
     {
         trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
     }
-    else if (online < 2) 
+    else if (online < 2)
     {
         trayIcon->setIcon(QIcon(IMAGE_ONEONLINE));
     }
-    else if (online < 3) 
+    else if (online < 3)
     {
         trayIcon->setIcon(QIcon(IMAGE_TWOONLINE));
     }
@@ -441,9 +441,9 @@ void MainWindow::addFriend()
     ConnectFriendWizard* connwiz = new ConnectFriendWizard(this);
 
     // set widget to be deleted after close
-    connwiz->setAttribute( Qt::WA_DeleteOnClose, true); 
+    connwiz->setAttribute( Qt::WA_DeleteOnClose, true);
 
-    
+
     connwiz->show();
 }
 
@@ -470,7 +470,7 @@ MainWindow::showMess(MainWindow::Page page)
 
 
 /** Shows Options */
-#ifdef NEWSETTINGS       
+#ifdef NEWSETTINGS
 void MainWindow::showSettings()
 {
     static RSettingsWin *win = new RSettingsWin(this);
@@ -510,41 +510,42 @@ void MainWindow::createActions()
 
     _prefsAct = new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), this);
     connect(_prefsAct, SIGNAL(triggered()), this, SLOT(showPreferencesWindow()));
-    
+
     _bandwidthAct = new QAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), this);
-    connect(_bandwidthAct, SIGNAL(triggered()), 
+    connect(_bandwidthAct, SIGNAL(triggered()),
             _bandwidthGraph, SLOT(showWindow()));
-          
+
     _messengerwindowAct = new QAction(QIcon(IMAGE_RSM16), tr("Open Messenger"), this);
     connect(_messengerwindowAct, SIGNAL(triggered()),this, SLOT(showMessengerWindow()));
 
     _messagesAct = new QAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this);
     connect(_messagesAct, SIGNAL(triggered()),this, SLOT(showMess()));
-    
+
     _appAct = new QAction(QIcon(IMAGE_UNFINISHED), tr("Applications"), this);
     connect(_appAct, SIGNAL(triggered()),this, SLOT(showApplWindow()));
-    
+
     //_smplayerAct = new QAction(QIcon(IMAGE_SMPLAYER), tr("SMPlayer"), this);
     //connect(_smplayerAct, SIGNAL(triggered()),this, SLOT(showsmplayer()));
-    
+
     _helpAct = new QAction(QIcon(IMG_HELP), tr("Help"), this);
     connect(_helpAct, SIGNAL(triggered()), this, SLOT(showHelpDialog()));
-         
-            
+
+
 }
 
-/** If the user attempts to quit the app, a check-warning is issued. This warning can be 
-    turned off for future quit events. 
+/** If the user attempts to quit the app, a check-warning is issued. This warning can be
+    turned off for future quit events.
 */
 void MainWindow::doQuit()
-{  
+{
     QString queryWrn;
 	  queryWrn.clear();
 	  queryWrn.append(tr("Do you really want to exit RetroShare ?"));
 
 		if ((QMessageBox::question(this, tr("Really quit ? "),queryWrn,QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
 		{
-      qApp->quit();
+			rsicontrol->rsGlobalShutDown();
+			qApp->quit();
 		}
 		else
 		return;
@@ -607,24 +608,24 @@ void MainWindow::loadStyleSheet(const QString &sheetName)
 {
     /** internal Stylesheets **/
     //QFile file(":/qss/" + sheetName.toLower() + ".qss");
-    
+
     /** extern Stylesheets **/
     QFile file(QApplication::applicationDirPath() + "/qss/" + sheetName.toLower() + ".qss");
-    
+
     file.open(QFile::ReadOnly);
     QString styleSheet = QLatin1String(file.readAll());
-    
+
     qApp->setStyleSheet(styleSheet);
-    
+
 }
 
 /** Shows smplayer */
 void MainWindow::showsmplayer()
-{    
+{
     return;
 
 #if 0
-    if (mSMPlayer == 0) 
+    if (mSMPlayer == 0)
     {
     	mSMPlayer = new SMPlayer(QString::null, this);
     	mSMPlayer->gui()->hide();
@@ -666,8 +667,8 @@ void MainWindow::playFiles(QStringList files)
 
 void MainWindow::showabout()
 {
-    static HelpDialog *helpdlg = new HelpDialog(this); 
-	helpdlg->show(); 
+    static HelpDialog *helpdlg = new HelpDialog(this);
+	helpdlg->show();
 }
 
 /** Displays the help browser and displays the most recently viewed help
@@ -696,7 +697,7 @@ void MainWindow::setStyle()
  QString toolSheet = "QToolBar" + standardSheet.replace("<color1>", stop1.name()).replace("<color2>", stop2.name());
  QString menuSheet = "QMenuBar" + standardSheet.replace("<color1>", stop1.name()).replace("<color2>", stop2.name());
  qApp->setStyleSheet(/*widgetSheet + */toolSheet + menuSheet);
- 
+
 }
 
 
