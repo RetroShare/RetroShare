@@ -55,7 +55,7 @@ ShareManager::ShareManager(QWidget *parent, Qt::WFlags flags)
   connect( ui.shareddirList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( shareddirListCostumPopupMenu( QPoint ) ) );
 
 	ui.addButton->setToolTip(tr("Add a Share Directory"));
-	ui.removeButton->setToolTip(tr("Remove selected Shared Directory"));
+	ui.removeButton->setToolTip(tr("Stop sharing selected Directory"));
 
 	load();
 
@@ -86,6 +86,8 @@ void ShareManager::shareddirListCostumPopupMenu( QPoint point )
 /** Loads the settings for this page */
 void ShareManager::load()
 {
+	std::cerr << "ShareManager:: In load !!!!!" << std::endl ;
+
 	std::list<SharedDirInfo>::const_iterator it;
 	std::list<SharedDirInfo> dirs;
 	rsFiles->getSharedDirectories(dirs);
@@ -154,6 +156,7 @@ void ShareManager::load()
 	//ui.incomingDir->setText(QString::fromStdString(rsFiles->getDownloadDirectory()));
 
 	listWidget->update(); /* update display */
+	update();
 }
 
 void ShareManager::showYourself()
@@ -171,8 +174,8 @@ void ShareManager::addShareDirectory()
 	 */
 
 
- 	QString qdir = QFileDialog::getExistingDirectory(this, tr("Add Shared Directory"), "",
-				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+	QString qdir = QFileDialog::getExistingDirectory(this, tr("Add Shared Directory"), "",
+			QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
 	/* add it to the server */
 	std::string dir = qdir.toStdString();
@@ -184,8 +187,8 @@ void ShareManager::addShareDirectory()
 
 		rsFiles->addSharedDirectory(sdi);
 
+		messageBoxOk(tr("Shared Directory Added!"));
 		load();
-        	messageBoxOk(tr("Shared Directory Added!"));
 	}
 }
 
@@ -236,7 +239,6 @@ void ShareManager::removeShareDirectory()
 		}
 		else
 		return;
-
 	}
 }
 

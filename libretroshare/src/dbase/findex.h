@@ -30,6 +30,7 @@
 #include <list>
 #include <vector>
 #include <stdint.h>
+#include <rsiface/rstypes.h>
 
 class ostream;
 
@@ -225,6 +226,8 @@ class FileIndex
 		int 	searchHash(std::string hash, std::list<FileEntry *> &results) const;
 		int     searchBoolExp(Expression * exp, std::list<FileEntry *> &results) const;
 
+		/* browse thru directories */
+		int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) const;
 		PersonEntry *root;
 };
 

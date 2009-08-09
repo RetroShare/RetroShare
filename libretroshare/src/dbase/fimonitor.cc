@@ -160,6 +160,8 @@ bool FileIndexMonitor::loadLocalCache(const CacheData &data)  /* called with sto
 		std::cerr << "FileIndexMonitor::loadCache() Success!";
 		std::cerr << std::endl;
 #endif
+		fi.root->row = 0;
+		fi.root->name = data.pname ;
 	}
 	else
 	{
@@ -466,6 +468,7 @@ void 	FileIndexMonitor::updateCycle()
 			std::cerr << "List of Files to rehash in: " << dirpath << std::endl;
 #endif
 			fiMods = true;
+			cb->notifyListPreChange(NOTIFY_LIST_DIRLIST, 0);
 		}
 
 #ifdef FIM_DEBUG
@@ -480,10 +483,10 @@ void 	FileIndexMonitor::updateCycle()
 		}
 #endif
 			
-                /* update files */
-                for(hit = filesToHash.begin(); hit != filesToHash.end(); hit++)
-                {
-//						 currentJob = "Hashing file " + realpath ;
+		/* update files */
+		for(hit = filesToHash.begin(); hit != filesToHash.end(); hit++)
+		{
+			//						 currentJob = "Hashing file " + realpath ;
 
 			if (hashFile(realpath, (*hit)))
 			{
@@ -492,8 +495,8 @@ void 	FileIndexMonitor::updateCycle()
 
 				/* update fileIndex with new time */
 				/* update with new time */
-                        	fi.updateFileEntry(dirpath, *hit, stamp);
-				
+				fi.updateFileEntry(dirpath, *hit, stamp);
+
 				/* unlock dirs */
 				fiMutex.unlock();
 			}
@@ -503,18 +506,20 @@ void 	FileIndexMonitor::updateCycle()
 			}
 
 			/* don't hit the disk too hard! */
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+			/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
 			usleep(10000); /* 1/100 sec */
 #else
 
-       		        Sleep(10);
+			Sleep(10);
 #endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+			/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-                }
-//					 currentJob = "" ;
-        }
+		}
+		
+		if (filesToHash.size() > 0)
+			cb->notifyListChange(NOTIFY_LIST_DIRLIST, 0);
+	}
 
 	fiMutex.lock(); { /* LOCKED DIRS */
 
@@ -543,12 +548,12 @@ void 	FileIndexMonitor::updateCycle()
 		fiMods = true;
 	}
 
-	} fiMutex.unlock(); /* UNLOCKED DIRS */
-
+	} 
 
 	if (fiMods)
-		saveFileIndexes() ;
+		locked_saveFileIndexes() ;
 	
+	fiMutex.unlock(); /* UNLOCKED DIRS */
 
 	{
 		RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
@@ -557,10 +562,10 @@ void 	FileIndexMonitor::updateCycle()
 	cb->notifyHashingInfo("") ;
 }
 
-void FileIndexMonitor::saveFileIndexes()
+
+void FileIndexMonitor::locked_saveFileIndexes()
 {
 	/* store to the cacheDirectory */
-	RsStackMutex mutex(fiMutex) ; /* LOCKED DIRS */
 
 	std::string path = getCacheDir();
 
@@ -634,6 +639,8 @@ void FileIndexMonitor::saveFileIndexes()
 
 void    FileIndexMonitor::updateShareFlags(const SharedDirInfo& dir)
 {
+	cb->notifyListPreChange(NOTIFY_LIST_DIRLIST, 0);
+
 	bool fimods = false ;
 #ifdef FIM_DEBUG
 	std::cerr << "*** FileIndexMonitor: Updating flags for " << dir.filename << " to " << dir.shareflags << std::endl ;
@@ -665,11 +672,16 @@ void    FileIndexMonitor::updateShareFlags(const SharedDirInfo& dir)
 		}
 	}
 	if(fimods)
-		saveFileIndexes() ;
+	{
+		RsStackMutex stack(fiMutex) ;	/* LOCKED DIRS */
+		locked_saveFileIndexes() ;
+	}
+	cb->notifyListChange(NOTIFY_LIST_DIRLIST, 0);
 }
 	/* interface */
 void    FileIndexMonitor::setSharedDirectories(std::list<SharedDirInfo> dirs)
 {
+	cb->notifyListPreChange(NOTIFY_LIST_DIRLIST, 0);
 
 	std::list<SharedDirInfo> checkeddirs;
 
@@ -703,32 +715,30 @@ void    FileIndexMonitor::setSharedDirectories(std::list<SharedDirInfo> dirs)
 		closedir(dir);
 	}
 
-	{ 
-		RsStackMutex stack(fiMutex) ;/* LOCKED DIRS */
+	RsStackMutex stack(fiMutex) ;/* LOCKED DIRS */
 
-		pendingDirs = true;
-		pendingDirList = checkeddirs;
-	}
+	pendingDirs = true;
+	pendingDirList = checkeddirs;
+
+	cb->notifyListChange(NOTIFY_LIST_DIRLIST, 0);
 }
 
 	/* interface */
 void    FileIndexMonitor::getSharedDirectories(std::list<SharedDirInfo> &dirs)
 {
-	{ 
-		RsStackMutex stack(fiMutex) ; /* LOCKED DIRS */
+	RsStackMutex stack(fiMutex) ; /* LOCKED DIRS */
 
-		/* must provide pendingDirs, as other parts depend on instanteous response */
-		if (pendingDirs)
-			dirs = pendingDirList;
-		else
-		{
-			/* get actual list (not pending stuff) */
-			std::map<std::string, SharedDirInfo>::const_iterator it;
+	/* must provide pendingDirs, as other parts depend on instanteous response */
+//	if (pendingDirs)
+//		dirs = pendingDirList;
+//	else
+//	{
+		/* get actual list (not pending stuff) */
+		std::map<std::string, SharedDirInfo>::const_iterator it;
 
-			for(it = directoryMap.begin(); it != directoryMap.end(); it++)
-				dirs.push_back(it->second) ;
-		}
-	}
+		for(it = directoryMap.begin(); it != directoryMap.end(); it++)
+			dirs.push_back(it->second) ;
+//	}
 }
 
 
@@ -821,6 +831,7 @@ bool    FileIndexMonitor::internal_setSharedDirectories()
 
 	fi.setRootDirectories(topdirs, 0);
 	
+	locked_saveFileIndexes() ;
 	fiMutex.unlock(); /* UNLOCKED DIRS */
 
 	return true;
@@ -898,4 +909,30 @@ bool FileIndexMonitor::hashFile(std::string fullpath, FileEntry &fent)
 	fclose(fd);
 	return true;
 }
+
+int FileIndexMonitor::RequestDirDetails(std::string uid, std::string path, DirDetails &details) const
+{
+	/* lock it up */
+	RsStackMutex mutex(fiMutex) ;
+
+	return (uid == fi.root->id) ;
+}
+
+int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) const
+{
+	RsStackMutex mutex(fiMutex) ;
+
+#ifdef FIM_DEBUG
+	std::cerr << "FileIndexMonitor::RequestDirDetails() ref=" << ref << " flags: " << flags << std::endl;
+#endif
+
+	/* root case */
+
+#ifdef FIM_DEBUG
+	fi.root->checkParentPointers();
+#endif
+
+	return fi.RequestDirDetails(ref,details,flags) ;
+}
+
 

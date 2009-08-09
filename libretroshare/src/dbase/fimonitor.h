@@ -67,9 +67,6 @@ class NotifyBase ;
  * FileIndexMonitor
  *****************************************************************************************/
 
-static const uint32_t RS_SHARED_FLAGS_PUBLIC = 0x0001 ;
-static const uint32_t RS_SHARED_FLAGS_ANONYM = 0x0002 ;
-
 class FileIndexMonitor: public CacheSource, public RsThread
 {
 	public:
@@ -95,6 +92,11 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		virtual void 	run(); /* overloaded from RsThread */
 		void 	updateCycle();
 
+		// Interface for browsing dir hirarchy
+		int RequestDirDetails(void*, DirDetails&, uint32_t) const ;
+		int RequestDirDetails(std::string uid, std::string path, DirDetails &details) const ;
+
+		// set/update shared directories
 		virtual void    setSharedDirectories(std::list<SharedDirInfo> dirs);
 		void    getSharedDirectories(std::list<SharedDirInfo>& dirs);
 		void	updateShareFlags(const SharedDirInfo& info) ;
@@ -107,7 +109,7 @@ class FileIndexMonitor: public CacheSource, public RsThread
 
 	private:
 		// saves file indexs and update the cache.
-		void saveFileIndexes() ;
+		void locked_saveFileIndexes() ;
 
 		/* the mutex should be locked before calling... these. */
 		std::string locked_findRealRoot(std::string base) const;

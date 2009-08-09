@@ -423,7 +423,10 @@ int ftServer::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)
 	}
 
 #endif
-	return mFiStore->RequestDirDetails(ref, details, flags);
+	if(flags & DIR_FLAGS_LOCAL)
+		return mFiMon->RequestDirDetails(ref, details, flags);
+	else
+		return mFiStore->RequestDirDetails(ref, details, flags);
 }
 
 	/***************************************************************/
