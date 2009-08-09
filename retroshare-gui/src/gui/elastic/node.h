@@ -54,8 +54,11 @@ class Arrow;
 class GraphWidget;
 class QGraphicsSceneMouseEvent;
 
-class Node : public QGraphicsItem
+class Node : public QObject, public QGraphicsItem
 {
+  Q_OBJECT
+
+
 public:
     Node(GraphWidget *graphWidget, uint32_t t, std::string id_in, std::string n);
 
@@ -74,6 +77,9 @@ public:
     QRectF boundingRect() const;
     //QPainterPath shape() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
+public slots:
+	void peerdetails();
 
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);

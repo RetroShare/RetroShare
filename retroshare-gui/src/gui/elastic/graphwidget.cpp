@@ -39,6 +39,8 @@
 #include "arrow.h"
 #include "node.h"
 
+#include "rsiface/rspeers.h"
+
 #include <QDebug>
 #include <QGraphicsScene>
 #include <QWheelEvent>
@@ -73,8 +75,6 @@ GraphWidget::GraphWidget(QWidget *parent)
     setWindowTitle(tr("Elastic Nodes"));
 
     clearGraph();
-
-    clearGraph();
 }
 
 bool GraphWidget::clearGraph()
@@ -88,7 +88,7 @@ bool GraphWidget::clearGraph()
     scene->setSceneRect(-200, -200, 1000, 1000);
     setScene(scene);
 
-    centerNode = new Node(this, 1, "OwnId", "You");
+    centerNode = new Node(this, 1, rsPeers->getPGPOwnId(), "You");
     scene->addItem(centerNode);
     centerNode->setPos(0, 0);
 
@@ -183,7 +183,7 @@ void GraphWidget::addArrow(std::string id1, std::string id2)
 void GraphWidget::itemMoved()
 {
     if (!timerId)
-        timerId = startTimer(1000 / 10);
+        timerId = startTimer(1000 / 1);
 }
 
 void GraphWidget::keyPressEvent(QKeyEvent *event)

@@ -274,21 +274,6 @@ void NetworkDialog::makeFriend()
 /** Shows Peer Information/Auth Dialog */
 void NetworkDialog::peerdetails()
 {
-#if 0
-#ifdef NET_DEBUG 
-    std::cerr << "ConnectionsDialog::peerdetails()" << std::endl;
-#endif
-
-    QTreeWidgetItem *wi = 
-    if (!wi)
-    	return;
-
-    RsCertId id = getNeighRsCertId(wi);
-    std::ostringstream out;
-    out << id;
-
-    showpeerdetails(out.str());
-#endif
 	 ConfCertDialog::show(getCurrentNeighbour()->text(9).toStdString());
 }
 

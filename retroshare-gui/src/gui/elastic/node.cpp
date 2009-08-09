@@ -34,11 +34,18 @@
 **
 ****************************************************************************/
 
+#include <QFileDialog>
+#include <QtGui>
+
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QStyleOption>
+#include <QContextMenuEvent>
 #include <QMenu>
+#include <QCursor>
+#include <QPoint>
+#include <QMouseEvent>
 
 #include "edge.h"
 #include "arrow.h"
@@ -46,6 +53,10 @@
 #include "graphwidget.h"
 #include <math.h>
 #include "rsiface/rspeers.h"
+
+#include <iostream>
+
+#include "../connect/ConfCertDialog.h"
 
 Node::Node(GraphWidget *graphWidget, uint32_t t, std::string id_in, std::string n)
     : graph(graphWidget), ntype(t), id(id_in), name(n),
@@ -137,7 +148,9 @@ void Node::calculateForces()
     if (qAbs(xvel) < 0.1 && qAbs(yvel) < 0.1)
         xvel = yvel = 0;
 
-    newPos = pos() + QPointF(xvel, yvel);
+    //newPos = pos() + QPointF(xvel, yvel);
+    // Increased the velocity for faster settling period.
+    newPos = pos() + QPointF(5 * xvel, 5 * yvel);
     newPos.setX(qMin(qMax(newPos.x(), sceneRect.left() + 10), sceneRect.right() - 10));
     newPos.setY(qMin(qMax(newPos.y(), sceneRect.top() + 10), sceneRect.bottom() - 10));
 
@@ -284,18 +297,122 @@ void Node::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 	}
 
 	/* no events for self */	
+#if 0
 	if (ntype == ELASTIC_NODE_TYPE_OWN) 
 	{
 		event->accept();
 		return;
 	}
+#endif
 
-	QString menuTitle = "Menu for ";
-	menuTitle += QString::fromStdString(details.name);
+	QString menuTitle = QString::fromStdString(details.name);
+	menuTitle += " : ";
+
+	std::cerr << "Node Menu for " << details.name << std::endl;	
 
 	QMenu menu;
+
+     switch(ntype)
+	{
+		case ELASTIC_NODE_TYPE_OWN:
+		{
+			menuTitle += "Ourselves";
+			break;
+		}
+		case ELASTIC_NODE_TYPE_FRIEND:
+		{
+			menuTitle += "Friend";
+			break;
+		}
+		case ELASTIC_NODE_TYPE_AUTHED:
+		{
+			menuTitle += "Authenticated";
+			break;
+		}
+		case ELASTIC_NODE_TYPE_MARGINALAUTH:
+		{
+			menuTitle += "Friend of a Friend";
+			break;
+		}
+		default:
+		case ELASTIC_NODE_TYPE_FOF:
+		{
+			menuTitle += " Unknown";
+			break;
+		}
+	}
+
      	QAction *titleAction = menu.addAction(menuTitle);
 	titleAction->setEnabled(false);
+	menu.addSeparator();
+
+	/* find all the peers which have this pgp peer as issuer */
+	std::list<std::string> ids;
+	std::list<std::string>::iterator it;
+	bool haveSSLcerts = false;
+
+	if ((ntype ==  ELASTIC_NODE_TYPE_AUTHED) || 	
+		(ntype ==  ELASTIC_NODE_TYPE_FRIEND) || 	
+			(ntype ==  ELASTIC_NODE_TYPE_OWN)) 	
+	{
+		rsPeers->getOthersList(ids);
+
+    		QAction *addAction = menu.addAction("Add All as Friends");
+     		QAction *rmAction = menu.addAction("Remove All as Friends");
+
+		std::cerr << "OthersList looking for ::Issuer " << id << std::endl;	
+		int nssl = 0;
+		for(it = ids.begin(); it != ids.end(); it++)
+		{
+			RsPeerDetails d2;
+	        	if (!rsPeers->getPeerDetails(*it, d2))
+				continue;
+
+			std::cerr << "OthersList::Id " << d2.id;
+			std::cerr << " ::Issuer " << d2.issuer << std::endl;	
+			if (d2.issuer == id)
+			{
+				QString sslTitle = "     SSL ID: ";
+				sslTitle += QString::fromStdString(d2.location);
+	
+				if (RS_PEER_STATE_FRIEND & d2.state)
+				{
+					sslTitle += " Allowed";
+				}
+				else
+				{
+					sslTitle += " Denied";
+				}
+
+				QMenu *sslMenu =  menu.addMenu (sslTitle);
+				if (RS_PEER_STATE_FRIEND & d2.state)
+				{
+	     				QAction *sslAction = sslMenu->addAction("Deny");
+				}
+				else
+				{
+	     				QAction *sslAction = sslMenu->addAction("Allow");
+				}
+				nssl++;
+			}
+		}
+
+		if (nssl > 0)
+		{
+			menu.addSeparator();
+			haveSSLcerts = true;
+		}
+		else
+		{
+			addAction->setVisible(false);
+			rmAction->setVisible(false);
+
+    			QAction *noAction = menu.addAction("No SSL Certificates for Peer");
+			noAction->setEnabled(false);
+			menu.addSeparator();
+		}
+	}
+	
 
      switch(ntype)
 	{
@@ -305,29 +422,59 @@ void Node::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 		}
 		case ELASTIC_NODE_TYPE_FRIEND:
 		{
-
-     			//QAction *rmAction = menu.addAction("Remove Friend");
-     			//QAction *chatAction = menu.addAction("Chat");
-     			//QAction *msgAction = menu.addAction("Msg");
+     			QAction *chatAction = menu.addAction("Chat");
+     			QAction *msgAction = menu.addAction("Msg");
+			menu.addSeparator();
+     			QAction *connction = menu.addAction("Connect");
+			menu.addSeparator();
 			break;
 		}
 		case ELASTIC_NODE_TYPE_AUTHED:
 		{
-     			//QAction *addAction = menu.addAction("Add Friend");
 			break;
 		}
 		case ELASTIC_NODE_TYPE_MARGINALAUTH:
 		{
-     			//QAction *makeAction = menu.addAction("Make Friend");
+			if (haveSSLcerts)
+			{
+     				QAction *makeAction = menu.addAction("Sign Peer and Add Friend");
+				menu.addSeparator();
+			}
+			else
+			{
+     				QAction *makeAction = menu.addAction("Sign Peer to Authenticate");
+				menu.addSeparator();
+			}
 			break;
 		}
 		default:
 		case ELASTIC_NODE_TYPE_FOF:
 		{
-     			//QAction *makeAction = menu.addAction("Make Friend");
+			if (haveSSLcerts)
+			{
+     				QAction *makeAction = menu.addAction("Sign Peer and Add Friend");
+				menu.addSeparator();
+			}
+			else
+			{
+     				QAction *makeAction = menu.addAction("Sign Peer to Authenticate");
+				menu.addSeparator();
+			}
 			break;
 		}
 	}
+
+     QAction *detailAction = menu.addAction("Peer Details");
+     QObject::connect( detailAction , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
+     connect( detailAction , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
+
+     QAction *expAction = menu.addAction("Export Certificate");
+
      QAction *selectedAction = menu.exec(event->screenPos());
 } 
+
+void Node::peerdetails()
+{
+         ConfCertDialog::show(id);
+}
 
