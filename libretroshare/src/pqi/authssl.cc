@@ -1632,6 +1632,10 @@ bool AuthSSL::ProcessX509(X509 *x509, std::string &id)
 		if (!cert->authed)
 		{
 			cert->authed = valid;
+
+			/* resave newly authed certificate */
+			mToSaveCerts = true;
+
 #ifdef AUTHSSL_DEBUG
 			std::cerr << "AuthSSL::ProcessX509() ";
 			std::cerr << "Updating Unauthed duplicate: ";
@@ -2166,9 +2170,10 @@ std::string getX509AuthCode(X509 *x509)
 	return out.str();
 }
 
-// other fns
+// filename of certificate. (SSL Only)
 std::string getCertName(X509 *x509)
 {
+
 	std::string name = getX509NameString(x509->cert_info->subject);
 	// strip out bad chars.
 	for(int i = 0; i < (signed) name.length(); i++)
@@ -2181,10 +2186,6 @@ std::string getCertName(X509 *x509)
 	}
 	return name;
 }
-
-#if 0
-#endif
-	
 
 /********** SSL ERROR STUFF ******************************************/
 
@@ -2322,12 +2323,20 @@ bool    AuthSSL::saveCertificates()
 		{
 			X509 *x509 = it->second->certificate;
 			std::string hash;
+#if PQI_SSLONLY
 			std::string neighfile = neighdir + getCertName(x509) + ".pqi";
+#else
+			std::string neighfile = neighdir + (it->first) + ".pqi";
+#endif
 
 			if (saveX509ToFile(x509, neighfile, hash))
 			{
 				conftxt += "CERT ";
+#if PQI_SSLONLY
 				conftxt += getCertName(x509);
+#else
+				conftxt += (it->first);
+#endif
 				conftxt += "\n";
 				conftxt += hash;
 				conftxt += "\n";

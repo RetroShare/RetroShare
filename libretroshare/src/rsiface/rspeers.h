@@ -78,6 +78,8 @@ class RsPeerDetails
 	std::string location;
 	std::string org;
 	
+	std::string issuer;
+
 	std::string fpr; /* pgp fingerprint */
 	std::string authcode; 
 	std::list<std::string> signers;

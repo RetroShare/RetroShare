@@ -302,6 +302,8 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 	d.org 		= authDetail.org;
 	d.signers 	= authDetail.signers;
 
+	d.issuer 	= authDetail.issuer;
+
 	d.ownsign 	= authDetail.ownsign;
 	d.trusted 	= authDetail.trusted;
 
