@@ -90,7 +90,7 @@ const uint32_t CB_CODE_MEDIA = 0x0004;
 struct SharedDirInfo
 {
 	std::string filename ;
-	uint32_t shareflags ;		// RS_FILE_HINTS_ANONYMOUS | RS_FILE_HINTS_BROWSABLE
+	uint32_t shareflags ;		// RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE
 };
 
 class RsFiles
