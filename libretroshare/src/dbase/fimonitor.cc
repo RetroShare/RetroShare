@@ -59,8 +59,39 @@ FileIndexMonitor::~FileIndexMonitor()
 	return;
 }
 
-bool    FileIndexMonitor::findLocalFile(std::string hash,uint32_t flags,
-				std::string &fullpath, uint64_t &size) const
+int FileIndexMonitor::SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results,uint32_t flags)
+{
+	results.clear();
+	std::list<FileEntry *> firesults;
+
+	fi.searchTerms(keywords, firesults);
+	time_t now  = time(NULL) ;
+
+	/* translate/filter results */
+
+	for(std::list<FileEntry*>::const_iterator rit(firesults.begin()); rit != firesults.end(); ++rit)
+	{
+		DirDetails details ;
+		RequestDirDetails((*rit)->parent,details,0) ;
+
+		if(( details.flags & flags & (DIR_FLAGS_BROWSABLE | DIR_FLAGS_NETWORK_WIDE) ) > 0 )
+		{
+			FileDetail fd;
+			fd.id = "Local"; //localId;
+			fd.name = (*rit)->name;
+			fd.hash = (*rit)->hash;
+			fd.path = ""; /* TODO */
+			fd.size = (*rit)->size;
+			fd.age  = now - (*rit)->modtime;
+			fd.rank = (*rit)->pop;
+
+			results.push_back(fd);
+		}
+	}
+	return !results.empty() ;
+}
+
+bool FileIndexMonitor::findLocalFile(std::string hash,uint32_t flags, std::string &fullpath, uint64_t &size) const
 {
 	std::list<FileEntry *> results;
 	bool ok = false;
@@ -72,6 +103,7 @@ bool    FileIndexMonitor::findLocalFile(std::string hash,uint32_t flags,
 #endif
 	/* search through the fileIndex */
 	fi.searchHash(hash, results);
+
 	if (results.size() > 0)
 	{
 		/* find the full path for the first entry */
@@ -937,7 +969,7 @@ int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, uint32_t
 	bool b = fi.RequestDirDetails(ref,details,flags) ;
 
 	// look for the top level and setup flags accordingly
-	
+
 	FileEntry *file = (FileEntry *) ref;
 	DirEntry *dir = dynamic_cast<DirEntry *>(file);
 	DirEntry *last_dir = NULL ;

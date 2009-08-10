@@ -447,7 +447,10 @@ int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<FileDeta
 	}
 
 #endif
-	return mFiStore->SearchKeywords(keywords, results,flags);
+	if(flags & DIR_FLAGS_LOCAL)
+		return mFiMon->SearchKeywords(keywords, results,flags);
+	else
+		return mFiStore->SearchKeywords(keywords, results,flags);
 }
 
 int ftServer::SearchBoolExp(Expression * exp, std::list<FileDetail> &results)

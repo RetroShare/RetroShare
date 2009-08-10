@@ -1307,7 +1307,7 @@ void p3turtle::performLocalSearch(const std::string& s,std::list<TurtleFileInfo>
 	words.push_back(s) ;
 	
 	// now, search!
-	rsFiles->SearchKeywords(words, initialResults,DIR_FLAGS_LOCAL);
+	rsFiles->SearchKeywords(words, initialResults,DIR_FLAGS_LOCAL | DIR_FLAGS_NETWORK_WIDE);
 
 	result.clear() ;
 
