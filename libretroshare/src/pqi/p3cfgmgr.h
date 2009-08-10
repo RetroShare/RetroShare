@@ -47,7 +47,7 @@
  *
  * At top level we need:
  *
- * - type / filename / size / hash - 
+ * - type / filename / size / hash -
  * and the file signed...
  *
  *
@@ -68,6 +68,7 @@ const uint32_t CONFIG_TYPE_CACHE_OLDID  = 0x0005;
 const uint32_t CONFIG_TYPE_FT_SHARED 	 = 0x0007;
 const uint32_t CONFIG_TYPE_FT_EXTRA_LIST= 0x0008;
 const uint32_t CONFIG_TYPE_FT_CONTROL 	 = 0x0009;
+const uint32_t CONFIG_TYPE_FT_DWLQUEUE	 = 0x000A;
 
 /* turtle router */
 const uint32_t CONFIG_TYPE_TURTLE	 	 = 0x0020;
@@ -93,7 +94,7 @@ class p3AuthMgr;
 
 class pqiConfig
 {
-	public:	
+	public:
 	pqiConfig(uint32_t t);
 virtual ~pqiConfig();
 
@@ -107,13 +108,13 @@ std::string Hash();
 	protected:
 
 void	IndicateConfigChanged();
-void	setHash(std::string h); 
+void	setHash(std::string h);
 
 	RsMutex cfgMtx;
 
 	private:
 
-void    setFilename(std::string name); 
+void    setFilename(std::string name);
 bool    HasConfigChanged(uint16_t idx);
 
 	Indicator ConfInd;
@@ -122,7 +123,7 @@ bool    HasConfigChanged(uint16_t idx);
 	std::string filename;
 	std::string hash;
 
-	friend class p3ConfigMgr; 
+	friend class p3ConfigMgr;
 	/* so it can access:
 	 * setFilename() and HasConfigChanged()
 	 */
@@ -147,7 +148,7 @@ void	addConfiguration(std::string file, pqiConfig *conf);
 	/* saves config, and disables further saving
 	 * used for exiting the system
 	 */
-void	completeConfiguration(); 
+void	completeConfiguration();
 
 	private:
 
@@ -185,7 +186,7 @@ virtual bool	loadList(std::list<RsItem *> load) = 0;
  * callback for mutex unlocking
  * in derived classes (should only be needed if cleanup = false)
  */
-virtual void    saveDone() { return; } 
+virtual void    saveDone() { return; }
 
 }; /* end of p3Config */
 
@@ -214,7 +215,7 @@ std::map<std::string, std::string> settings;
 
 
 
-	
+
 
 
 

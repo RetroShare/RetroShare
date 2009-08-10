@@ -523,6 +523,12 @@ bool	ftController::activate()
 	return true;
 }
 
+bool 	ftController::isActiveAndNoPending()
+{
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	return (mFtActive && mFtPendingDone);
+}
+
 bool	ftController::handleAPendingRequest()
 {
 	ftPendingRequest req;

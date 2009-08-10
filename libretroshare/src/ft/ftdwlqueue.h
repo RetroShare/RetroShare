@@ -14,31 +14,38 @@
 #include <list>
 #include <string>
 
-//enum DwlPriority { Low = 0, Normal, High, Auto };
-//
-///* class which encapsulates download details */
-//class DwlDetails {
-//public:
-//	DwlDetails() { return; }
-//	DwlDetails(std::string fname, std::string hash, int count, std::string dest,
-//			uint32_t flags, std::list<std::string> srcIds, DwlPriority priority)
-//	: fname(fname), hash(hash), count(count), dest(dest), flags(flags),
-//	srcIds(srcIds), priority(priority), retries(0) { return; }
-//
-//	/* download details */
-//	std::string fname;
-//	std::string hash;
-//	int count;
-//	std::string dest;
-//	uint32_t flags;
-//	std::list<std::string> srcIds;
-//
-//	/* internally used in download queue */
-//	DwlPriority priority;
-//
-//	/* how many times a failed dwl will be requeued */
-//	unsigned int retries;
-//};
+const uint8_t RS_PKT_TYPE_QUEUE_CONFIG = 0x05;
+
+class RsDwlQueueItem: public RsItem {
+public:
+	RsDwlQueueItem()
+	: RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_QUEUE_CONFIG, RS_PKT_SUBTYPE_FILE_ITEM) {
+		return;
+	}
+
+	virtual ~RsDwlQueueItem();
+
+	virtual void clear();
+	virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+	RsTlvFileItem file;
+	RsTlvPeerIdSet allPeerIds;
+	uint32_t priority;
+};
+
+class RsDwlQueueSerialiser: public RsSerialType {
+public:
+	RsDwlQueueSerialiser()
+	: RsSerialType(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_QUEUE_CONFIG) {
+		return;
+	}
+
+	virtual ~RsDwlQueueSerialiser();
+
+	virtual	uint32_t    size(RsItem *);
+	virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
+	virtual	RsItem *    deserialise(void *data, uint32_t *size);
+};
 
 /* comparator class used when sorting list */
 class PriorityCompare {
@@ -72,7 +79,7 @@ public:
 
 /* general class for download queue which
  * contains the a download priority list */
-class ftDwlQueue : public DwlQueue, public RsThread {
+class ftDwlQueue : public DwlQueue, public RsThread, public p3Config {
 public:
 	ftDwlQueue(ftController *ftc, unsigned int downloadLimit = 7, unsigned int retryLimit = 10);
 	virtual ~ftDwlQueue();
@@ -89,6 +96,12 @@ public:
 	virtual bool clearDownload(const std::string hash);
 	virtual void clearQueue();
 	virtual void getDwlDetails(std::list<DwlDetails> & details);
+
+	/* from p3 config interface */
+protected:
+	virtual RsSerialiser 		*setupSerialiser();
+	virtual std::list<RsItem *> saveList(bool &cleanup);
+	virtual bool 				loadList(std::list<RsItem *> load);
 
 private:
 	unsigned int downloadLimit;

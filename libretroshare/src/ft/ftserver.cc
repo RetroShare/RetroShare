@@ -497,7 +497,7 @@ bool 	ftServer::addSharedDirectory(SharedDirInfo dir)
 	for(std::list<SharedDirInfo>::const_iterator it(dirList.begin());it!=dirList.end();++it)
 		if((*it).filename == dir.filename)
 			return false ;
-	
+
 	// ok then, add the shared directory.
 	dirList.push_back(dir);
 
@@ -965,6 +965,7 @@ bool    ftServer::addConfiguration(p3ConfigMgr *cfgmgr)
 	cfgmgr->addConfiguration("ft_shared.cfg", mFiMon);
 	cfgmgr->addConfiguration("ft_extra.cfg", mFtExtra);
 	cfgmgr->addConfiguration("ft_transfers.cfg", mFtController);
+	cfgmgr->addConfiguration("ft_dwlqueue.cfg", mFtDwlQueue);
 
 	return true;
 }

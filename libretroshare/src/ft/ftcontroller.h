@@ -117,6 +117,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 void	setFtSearchNExtra(ftSearch *, ftExtraList *);
 void	setTurtleRouter(p3turtle *) ;
 bool    activate();
+bool 	isActiveAndNoPending();
 
 void	setShareDownloadDirectory(bool value);
 bool	getShareDownloadDirectory();
