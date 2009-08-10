@@ -13,20 +13,12 @@ MOC_DIR = temp/moc
 linux-g++ {
 	OBJECTS_DIR = temp/linux-g++/obj
  	QMAKE_LFLAGS += -L"../../../../lib/linux-g++"
- 	CONFIG += version_detail_bash_script
 }
 linux-g++-64 {
 	OBJECTS_DIR = temp/linux-g++-64/obj
 	QMAKE_LFLAGS += -L"../../../../lib/linux-g++-64"
-	CONFIG += version_detail_bash_script
 }
 
-version_detail_bash_script {
-	DEFINES += ADD_LIBRETROSHARE_VERSION_INFO
-	QMAKE_EXTRA_TARGETS += write_version_detail
-	PRE_TARGETDEPS = write_version_detail
-	write_version_detail.commands = ./version_detail.sh
-}
 #################### Cross compilation for windows under Linux ###################
 
 win32-x-g++ {
@@ -171,7 +163,6 @@ HEADERS +=  rshare.h \
             util/MouseEventFilter.h \
             util/EventFilter.h \
             util/Widget.h \
-            util/rsversion.h \
             util/RsAction.h \
             util/printpreview.h \
             util/log.h \
@@ -389,7 +380,6 @@ SOURCES +=  main.cpp \
             util/EventFilter.cpp \
             util/Widget.cpp \
             util/RsAction.cpp \
-            util/rsversion.cpp \
             util/printpreview.cpp \
             util/log.cpp \
             gui/bwgraph/bwgraph.cpp \
