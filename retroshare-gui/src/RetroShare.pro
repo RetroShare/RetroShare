@@ -103,7 +103,6 @@ HEADERS +=  rshare.h \
             rsiface/rsiface.h \
             rsiface/rstypes.h \
             rsiface/notifyqt.h \
-            rsiface/RemoteDirModel.h \
             control/bandwidthevent.h \
             control/eventtype.h \
             gui/DLListDelegate.h \
@@ -133,6 +132,7 @@ HEADERS +=  rshare.h \
             gui/TrustView.h \
             gui/MessengerWindow.h \
             gui/PeersDialog.h \
+            gui/RemoteDirModel.h \
             gui/RetroShareLinkAnalyzer.h \
             gui/SearchTreeWidget.h \
             gui/SearchDialog.h \
@@ -325,7 +325,6 @@ FORMS +=    gui/BlogDialog.ui \
 SOURCES +=  main.cpp \
             rshare.cpp \
             rsiface/notifyqt.cpp \
-            rsiface/RemoteDirModel.cpp \
             gui/DLListDelegate.cpp \
             gui/ULListDelegate.cpp \
             gui/StartDialog.cpp \
@@ -351,6 +350,7 @@ SOURCES +=  main.cpp \
             gui/TrustView.cpp \
             gui/MessengerWindow.cpp \
             gui/PeersDialog.cpp \
+            gui/RemoteDirModel.cpp \
             gui/RetroShareLinkAnalyzer.cpp \
             gui/SearchTreeWidget.cpp \
             gui/SearchDialog.cpp \

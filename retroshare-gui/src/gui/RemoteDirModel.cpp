@@ -1,7 +1,7 @@
 #include <set>
 
 #include "RemoteDirModel.h"
-#include "rsfiles.h"
+#include "rsiface/rsfiles.h"
 
 #include <QtGui>
 #include <QIcon>
