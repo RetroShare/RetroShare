@@ -323,7 +323,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     menu->addAction(_appAct);
 #endif
     menu->addAction(_prefsAct);
-    //menu->addAction(_smplayerAct);
     menu->addAction(_helpAct);
     menu->addSeparator();
     menu->addAction(QIcon(IMAGE_MINIMIZE), tr("Minimize"), this, SLOT(showMinimized()));
@@ -355,16 +354,16 @@ void MainWindow::displaySystrayMsg(const QString& title,const QString& msg)
 void MainWindow::updateStatus()
 {
 
-	if (ratesstatus)
-    	ratesstatus->getRatesStatus();
+      if (ratesstatus)
+      ratesstatus->getRatesStatus();
 
-  if (peerstatus)
+      if (peerstatus)
       peerstatus->getPeerStatus();
 
-	if (dhtstatus)
+      if (dhtstatus)
       dhtstatus->getDHTStatus();
 
- 	if (natstatus)
+      if (natstatus)
       natstatus->getNATStatus();
 
     std::list<std::string> ids;
@@ -499,7 +498,6 @@ MainWindow::~MainWindow()
 {
     delete _bandwidthGraph;
     delete _messengerwindowAct;
-    //delete _smplayerAct;
     delete _preferencesWindow;
 }
 
@@ -524,9 +522,6 @@ void MainWindow::createActions()
     _appAct = new QAction(QIcon(IMAGE_UNFINISHED), tr("Applications"), this);
     connect(_appAct, SIGNAL(triggered()),this, SLOT(showApplWindow()));
 
-    //_smplayerAct = new QAction(QIcon(IMAGE_SMPLAYER), tr("SMPlayer"), this);
-    //connect(_smplayerAct, SIGNAL(triggered()),this, SLOT(showsmplayer()));
-
     _helpAct = new QAction(QIcon(IMG_HELP), tr("Help"), this);
     connect(_helpAct, SIGNAL(triggered()), this, SLOT(showHelpDialog()));
 
@@ -538,7 +533,10 @@ void MainWindow::createActions()
 */
 void MainWindow::doQuit()
 {
-    QString queryWrn;
+    
+	if(!_settings->value(QString::fromUtf8("doQuit"), false).toBool()) 
+	{
+	  QString queryWrn;
 	  queryWrn.clear();
 	  queryWrn.append(tr("Do you really want to exit RetroShare ?"));
 
@@ -549,6 +547,10 @@ void MainWindow::doQuit()
 		}
 		else
 		return;
+	}
+	else
+	rsicontrol->rsGlobalShutDown();
+	qApp->quit();
 }
 
 void MainWindow::closeEvent(QCloseEvent *e)

@@ -55,6 +55,8 @@ bool
 GeneralDialog::save(QString &errmsg)
 {  
   _settings->setValue(QString::fromUtf8("StartMinimized"), startMinimized());
+
+  _settings->setValue(QString::fromUtf8("doQuit"), quit());
   
   _settings->setRunRetroshareOnBoot(
   ui.chkRunRetroshareAtSystemStartup->isChecked());
@@ -70,9 +72,16 @@ GeneralDialog::load()
   _settings->runRetroshareOnBoot());
  
   ui.checkStartMinimized->setChecked(_settings->value(QString::fromUtf8("StartMinimized"), false).toBool());
+
+  ui.checkQuit->setChecked(_settings->value(QString::fromUtf8("doQuit"), false).toBool());
   
 }
  
+bool GeneralDialog::quit() const {
+  if(ui.checkQuit->isChecked()) return true;
+  return ui.checkQuit->isChecked();
+}
+
 bool GeneralDialog::startMinimized() const {
   if(ui.checkStartMinimized->isChecked()) return true;
   return ui.checkStartMinimized->isChecked();
