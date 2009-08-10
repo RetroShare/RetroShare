@@ -27,7 +27,6 @@
 #include <QFileDialog>
 #include <QSystemTrayIcon>
 
-
 #include "NetworkDialog.h"
 #include "PeersDialog.h"
 #include "SearchDialog.h"
@@ -38,25 +37,20 @@
 #include "MessengerWindow.h"
 #include "ApplicationWindow.h"
 #include "PluginsPage.h"
+
 #ifdef TURTLE_HOPPING
 #include "TurtleSearchDialog.h"
 #endif
 
 #include "Preferences/PreferencesWindow.h"
+#include "Preferences/rsharesettings.h"
+
 #include "bwgraph/bwgraph.h"
 #include "help/browser/helpbrowser.h"
-#include "games/qbackgammon/bgwindow.h"
-
-#include "Preferences/ConfirmQuitDialog.h"
-
 #include "channels/channelsDialog.h"
-
 
 #include "ui_MainWindow.h"
 
-#include "Preferences/rsharesettings.h"
-
-class SMPlayer;
 
 class PeerStatus;
 class DHTStatus;
@@ -72,15 +66,15 @@ class MainWindow : public RWindow
 public:
     /** Main dialog pages. */
     enum Page {
-        Network            = 0,  /** Network page. */
-        Friends,              	 /** Peers page. */
-        Search,			             /** Search page. */
-        Transfers, 		           /** Transfers page. */
-        SharedDirectories,   	   /** Shared Directories page. */
-        Messages,  		           /** Messages page. */
-        Links,  		             /** Links page. */
-        Channels,  		           /** Channels page. */
-        Forums  	               /** Forums page. */
+        Network            = 0,  		/** Network page. */
+        Friends,              	 		/** Peers page. */
+        Search,					/** Search page. */
+        Transfers, 				/** Transfers page. */
+        SharedDirectories,   			/** Shared Directories page. */
+        Messages,  		           	/** Messages page. */
+        Links,  				/** Links page. */
+        Channels,  				/** Channels page. */
+        Forums  				/** Forums page. */
 
         
     };
@@ -111,7 +105,6 @@ public:
     ApplicationWindow   *applicationWindow;
     PluginsPage*   pluginsPage ;
 
-    SMPlayer * mSMPlayer;
 
 public slots:
     /** Called when this dialog is to be displayed */
@@ -135,7 +128,6 @@ private slots:
     void addFriend();
     void showMessengerWindow();
     void showApplWindow();
-    void showsmplayer();
     void showabout();
     void openShareManager();
 	  void displaySystrayMsg(const QString&,const QString&) ;
@@ -203,7 +195,6 @@ private:
     QAction *toggleVisibilityAction, *toolAct;
     QMenu *menu;
 
-    //QLabel *statusRates;
     PeerStatus *peerstatus;
     DHTStatus *dhtstatus;
     NATStatus *natstatus;

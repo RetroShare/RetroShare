@@ -43,9 +43,6 @@
 #include "MessengerWindow.h"
 #include "HelpDialog.h"
 
-#include "games/qbackgammon/bgwindow.h"
-//#include "smplayer.h"
-
 #ifdef TURTLE_HOPPING
 #include "gui/TurtleSearchDialog.h"
 #endif
@@ -102,7 +99,6 @@
 #define IMAGE_PHOTO             ":/images/lphoto.png"
 #define IMAGE_SMPLAYER          ":/images/smplayer_icon32.png"
 #define IMAGE_ADDFRIEND         ":/images/add-friend24.png"
-//#define IMAGE_INVITEFRIEND      ":/images/invite-friend24.png"
 #define IMAGE_ADDSHARE          ":/images/directoryadd_24x24_shadow.png"
 #define IMAGE_OPTIONS           ":/images/settings.png"
 #define IMAGE_QUIT              ":/images/exit_24x24.png"
@@ -116,9 +112,6 @@
 #define IMAGE_ONEONLINE         ":/images/rstray1.png"
 #define IMAGE_TWOONLINE         ":/images/rstray2.png"
 
-
-/* Keys for UI Preferences */
-#define UI_PREF_PROMPT_ON_QUIT  "UIOptions/ConfirmOnQuit"
 
 /** Constructor */
 MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
@@ -138,8 +131,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     	version	= QString::fromStdString(vit->second);
     }
     setWindowTitle(tr("RetroShare %1 a secure decentralised commmunication platform").arg(version));
-
-    mSMPlayer = NULL;
 
     // Setting icons
     this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
@@ -180,29 +171,22 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(peersDialog = new PeersDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_PEERS), tr("Friends"), grp));
 
-    //PeersFeed *peersFeed = NULL;
-    //ui.stackPages->add(peersFeed = new PeersFeed(ui.stackPages),
-    //		createPageAction(QIcon(IMAGE_PEERS), tr("Peers"), grp));
 #ifdef TURTLE_HOPPING
     ui.stackPages->add(turtleDialog = new TurtleSearchDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_TURTLE), tr("Turtle"), grp));
 #endif
+
     ui.stackPages->add(searchDialog = new SearchDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_SEARCH), tr("Search"), grp));
+
 
     ui.stackPages->add(transfersDialog = new TransfersDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_TRANSFERS), tr("Transfers"), grp));
 
-    //TransferFeed *transferFeed = NULL;
-    //ui.stackPages->add(transferFeed = new TransferFeed(ui.stackPages),
-    //		createPageAction(QIcon(IMAGE_LINKS), tr("Transfers"), grp));
 
     ui.stackPages->add(sharedfilesDialog = new SharedFilesDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_FILES), tr("Files"), grp));
 
-    //MsgFeed *msgFeed = NULL;
-    //ui.stackPages->add(msgFeed = new MsgFeed(ui.stackPages),
-    //		createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
 
     ui.stackPages->add(messagesDialog = new MessagesDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
@@ -268,7 +252,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(sharedfilesDialog, SIGNAL(playFiles( QStringList )), this, SLOT(playFiles( QStringList )));
     connect(transfersDialog, SIGNAL(playFiles( QStringList )), this, SLOT(playFiles( QStringList )));
 
-    /** StatusBar section **/
+    /** StatusBar section ********/
     peerstatus = new PeerStatus();
     statusBar()->addWidget(peerstatus);
 
@@ -299,7 +283,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     ratesstatus = new RatesStatus();
     statusBar()->addPermanentWidget(ratesstatus);
-    /******* Status Bar end ******/
+    /** Status Bar end ******/
 
     /* Create the actions that will go in the tray menu */
     createActions();
@@ -314,7 +298,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     tr("System tray unavailable"));
 ******/
 
-    // Tray icon Menu
+    /** Tray icon Menu **/
     menu = new QMenu(this);
     QObject::connect(menu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
     toggleVisibilityAction =
@@ -324,7 +308,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     menu->addAction(_messagesAct);
     menu->addAction(_bandwidthAct);
 
-    /* bandwidth only in development version */
 #ifdef RS_RELEASE_VERSION
 #else
     menu->addAction(_appAct);
@@ -336,7 +319,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     menu->addAction(QIcon(IMAGE_MAXIMIZE), tr("Maximize"), this, SLOT(showMaximized()));
     menu->addSeparator();
     menu->addAction(QIcon(IMAGE_CLOSE), tr("&Quit"), this, SLOT(doQuit()));
-    // End of Icon Menu
+    /** End of Icon Menu **/
 
     // Create the tray icon
     trayIcon = new QSystemTrayIcon(this);
@@ -626,24 +609,6 @@ void MainWindow::loadStyleSheet(const QString &sheetName)
 
     qApp->setStyleSheet(styleSheet);
 
-}
-
-/** Shows smplayer */
-void MainWindow::showsmplayer()
-{
-    return;
-
-#if 0
-    if (mSMPlayer == 0)
-    {
-    	mSMPlayer = new SMPlayer(QString::null, this);
-    	mSMPlayer->gui()->hide();
-    }
-    else
-    {
-    	mSMPlayer->gui()->show();
-    }
-#endif
 }
 
 void MainWindow::playFiles(QStringList files)
