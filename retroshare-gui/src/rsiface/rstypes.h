@@ -203,6 +203,8 @@ class SearchRequest
 #define DIR_FLAGS_PARENT        0x0001
 #define DIR_FLAGS_DETAILS       0x0002
 #define DIR_FLAGS_CHILDREN      0x0004
+#define DIR_FLAGS_NETWORK_WIDE  0x0008
+#define DIR_FLAGS_BROWSABLE     0x0010
 
 class DirStub
 {
@@ -226,7 +228,7 @@ class DirDetails
 	std::string path;
 	uint64_t count;
 	uint32_t age;
-	uint32_t rank;
+	uint32_t flags;
 
 	std::list<DirStub> children;
 };

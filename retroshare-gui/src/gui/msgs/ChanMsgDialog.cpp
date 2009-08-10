@@ -459,7 +459,7 @@ void  ChanMsgDialog::insertFileList(const std::list<DirDetails>& files_info)
 		FileInfo info ;
 		info.fname = it->name ;
 		info.hash = it->hash ;
-		info.rank = it->rank ;
+		info.rank = 0;//it->rank ;
 		info.size = it->count ;
 		_recList.push_back(info) ;
 
@@ -468,7 +468,7 @@ void  ChanMsgDialog::insertFileList(const std::list<DirDetails>& files_info)
 
 		item->setText(0, QString::fromStdString(it->name));			/* (0) Filename */
 		item->setText(1, misc::friendlyUnit(it->count));			 		/* (1) Size */
-		item->setText(2, QString::number(it->rank));
+		item->setText(2, QString::number(0)) ;//it->rank));
 		item->setText(3, QString::fromStdString(it->hash));
 		item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		item->setCheckState(0, Qt::Checked);

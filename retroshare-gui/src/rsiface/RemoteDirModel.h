@@ -70,6 +70,7 @@ virtual QStringList mimeTypes () const;
      void update (const QModelIndex &index );
      void treeStyle();
      void downloadDirectory(const DirDetails & details, int prefixLen);
+	  static QString getFlagsString(uint32_t) ;
 
      QIcon categoryIcon;
      QIcon peerIcon;

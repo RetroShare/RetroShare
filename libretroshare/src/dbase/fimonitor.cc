@@ -932,7 +932,39 @@ int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, uint32_t
 	fi.root->checkParentPointers();
 #endif
 
-	return fi.RequestDirDetails(ref,details,flags) ;
+	// return details as reported by the FileIndex
+
+	bool b = fi.RequestDirDetails(ref,details,flags) ;
+
+	// look for the top level and setup flags accordingly
+	
+	FileEntry *file = (FileEntry *) ref;
+	DirEntry *dir = dynamic_cast<DirEntry *>(file);
+	DirEntry *last_dir = NULL ;
+
+	if(dir != NULL)
+		while(dir->parent != NULL)
+		{
+			last_dir = dir ;
+			dir = dir->parent ;
+		}
+
+	if(last_dir != NULL)
+	{
+		std::cerr << "FileIndexMonitor::RequestDirDetails: parent->name=" << last_dir->name << std::endl ;
+		std::map<std::string,SharedDirInfo>::const_iterator it = directoryMap.find(last_dir->name) ;
+
+		if(it == directoryMap.end())
+			std::cerr << "*********** ERROR *********** In " << __PRETTY_FUNCTION__ << std::endl ;
+		else
+		{
+			details.flags |= (( (it->second.shareflags & RS_FILE_HINTS_BROWSABLE)>0)?DIR_FLAGS_BROWSABLE:0) ;
+			details.flags |= (( (it->second.shareflags & RS_FILE_HINTS_NETWORK_WIDE)>0)?DIR_FLAGS_NETWORK_WIDE:0) ;
+			std::cerr << "flags = " << details.flags << std::endl ;
+		}
+	}
+
+	return b ;
 }
 
 

@@ -1120,7 +1120,7 @@ int FileIndex::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)
 	if (!ref)
 	{
 #ifdef FI_DEBUG
-		std::cerr << "FileIndexMonitor::RequestDirDetails() ref=NULL (root)" << std::endl;
+		std::cerr << "FileIndex::RequestDirDetails() ref=NULL (root)" << std::endl;
 #endif
 		/* local only */
 		DirStub stub;
@@ -1138,14 +1138,14 @@ int FileIndex::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)
 		details.hash = "";
 		details.path = "";
 		details.age = 0;
-		details.rank = 0;
+		details.flags = 0;
 	}
 	else 
 	{
 		if (dir) /* has children --- fill */
 		{
 #ifdef FI_DEBUG
-			std::cerr << "FileIndexStore::RequestDirDetails() ref=dir" << std::endl;
+			std::cerr << "FileIndex::RequestDirDetails() ref=dir" << std::endl;
 #endif
 			std::map<std::string, FileEntry *>::iterator fit;
 			std::map<std::string, DirEntry *>::iterator dit;
@@ -1190,7 +1190,7 @@ int FileIndex::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)
 		details.name = file->name;
 		details.hash = file->hash;
 		details.age = time(NULL) - file->modtime;
-		details.rank = file->pop;
+		details.flags = 0;//file->pop;
 
 		/* find parent pointer, and row */
 		DirEntry *parent = file->parent;

@@ -219,7 +219,7 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 			details.hash = "";
 			details.path = "";
 			details.age = 0;
-			details.rank = 0;
+			details.flags = 0;
 		}
 		else
 		{
@@ -244,7 +244,7 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 			details.path = "";
 			details.count = indices.size();
 			details.age = 0;
-			details.rank = 0;
+			details.flags = 0;
 		}
 	}
 	else 
@@ -300,7 +300,7 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 		details.name = file->name;
 		details.hash = file->hash;
 		details.age = time(NULL) - file->modtime;
-		details.rank = file->pop;
+		details.flags = 0;//file->pop;
 
 		/* find parent pointer, and row */
 		DirEntry *parent = file->parent;

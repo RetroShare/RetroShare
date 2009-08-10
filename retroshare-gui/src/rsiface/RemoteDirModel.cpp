@@ -137,6 +137,17 @@ void RemoteDirModel::treeStyle()
  {
 	return 4;
  }
+QString RemoteDirModel::getFlagsString(uint32_t flags)
+{
+	switch(flags & (DIR_FLAGS_NETWORK_WIDE|DIR_FLAGS_BROWSABLE))
+	{
+		case DIR_FLAGS_NETWORK_WIDE: return QString("Anonymous") ;
+		case DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE: return QString("Anonymous and browsable by friends") ;
+		case DIR_FLAGS_BROWSABLE: return QString("Only browsable by friends") ;
+		default:
+										  return QString() ;
+	}
+}
 
  QVariant RemoteDirModel::data(const QModelIndex &index, int role) const
  {
@@ -160,6 +171,7 @@ void RemoteDirModel::treeStyle()
      else
      	flags |= DIR_FLAGS_LOCAL;
 
+	 
      if (!rsFiles->RequestDirDetails(ref, details, flags))
      {
      	return QVariant();
@@ -250,115 +262,115 @@ void RemoteDirModel::treeStyle()
     }
 
     if (role == Qt::DecorationRole)
-    {
+	 {
 
-    if (details.type == DIR_TYPE_PERSON)
-    {
-      switch(coln)
-      {
-        case 0:
-      return (QIcon(peerIcon));
-      break;
-      }
-    }
-	else if (details.type == DIR_TYPE_DIR)
-	{
-		switch(coln)
-		{
-			case 0:
-		QString ext = QFileInfo(QString::fromStdString(details.name)).suffix();
-		if (ext == "avi" || ext == "mpg" || ext == "movie")
-		{
-			QIcon icon(":/images/folder_video.png");
-		    	return icon;
-		}
-		else
-		{
-			return(QIcon(categoryIcon));
-		}
-		break;
-		}
-	}
-	else if (details.type == DIR_TYPE_FILE) /* File */
-	{
-		// extensions predefined
-		//QString name;
-		switch(coln)
-		{
-			case 0:
-		QString ext = QFileInfo(QString::fromStdString(details.name)).suffix();
-		if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif"
-		        || ext == "bmp" || ext == "ico" || ext == "svg")
-		{
-			//setIcon(0, QIcon(":/images/FileTypePicture.png"));
-			QIcon icon(":/images/FileTypePicture.png");
-		    return icon;
-		}
-		else if (ext == "avi" || ext == "AVI" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "ogm"
-			|| ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov"
-			|| ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp")
-		{
-			//setIcon(0, QIcon(":/images/videofile.png"));
-			QIcon icon(":/images/FileTypeVideo.png");
-		    return icon;
-		}
-		else if (ext == "ogg" || ext == "mp3" || ext == "wav" || ext == "wma" || ext == "xpm")
-		{
-			//setIcon(0, QIcon(":/images/soundfile.png"));
-			QIcon icon(":/images/FileTypeAudio.png");
-		    return icon;
-		}
-		else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "7z"
-		         || ext == "rar" || ext == "rpm" || ext == "deb")
-		{
-			//setIcon(0, QIcon(":/images/compressedfile.png"));
-			QIcon icon(":/images/FileTypeArchive.png");
-		    return icon;
-		}
-		else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com"
-			|| ext == "bin" || ext == "exe" || ext == "js" || ext == "pif"
-			|| ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws")
-		{
-		    return(QIcon(":/images/FileTypeProgram.png"));
-		}
-		else if (ext == "iso" || ext == "nrg" || ext == "mdf" )
-		{
-			//setIcon(0, QIcon(":/images/txtfile.png"));
-			QIcon icon(":/images/FileTypeCDImage.png");
-		    return icon;
-		}
-		else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h")
-		{
-			//setIcon(0, QIcon(":/images/txtfile.png"));
-			QIcon icon(":/images/FileTypeDocument.png");
-		    return icon;
-		}
-		else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls"
-		         || ext == "sxc" || ext == "odt" || ext == "ods")
-		{
-			//setIcon(0, QIcon(":/images/docfile.png"));
-		    	QIcon icon(":/images/FileTypeDocument.png");
-		    return icon;
-		}
-		else if (ext == "html" || ext == "htm" || ext == "php")
-		{
-			//setIcon(0, QIcon(":/images/netfile.png"));
-			QIcon icon(":/images/FileTypeDocument.png");
-		    return icon;
-		}
-		else
-		{
-			//setIcon(0, QIcon(":/images/file.png"));
-			QIcon icon(":/images/FileTypeAny.png");
-		    return icon;
-		}
-		break;
-		}
-	}
-	else
-	{
-		return QVariant();
-	}
+		 if (details.type == DIR_TYPE_PERSON)
+		 {
+			 switch(coln)
+			 {
+				 case 0:
+					 return (QIcon(peerIcon));
+					 break;
+			 }
+		 }
+		 else if (details.type == DIR_TYPE_DIR)
+		 {
+			 switch(coln)
+			 {
+				 case 0:
+					 QString ext = QFileInfo(QString::fromStdString(details.name)).suffix();
+					 if (ext == "avi" || ext == "mpg" || ext == "movie")
+					 {
+						 QIcon icon(":/images/folder_video.png");
+						 return icon;
+					 }
+					 else
+					 {
+						 return(QIcon(categoryIcon));
+					 }
+					 break;
+			 }
+		 }
+		 else if (details.type == DIR_TYPE_FILE) /* File */
+		 {
+			 // extensions predefined
+			 //QString name;
+			 switch(coln)
+			 {
+				 case 0:
+					 QString ext = QFileInfo(QString::fromStdString(details.name)).suffix();
+					 if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif"
+							 || ext == "bmp" || ext == "ico" || ext == "svg")
+					 {
+						 //setIcon(0, QIcon(":/images/FileTypePicture.png"));
+						 QIcon icon(":/images/FileTypePicture.png");
+						 return icon;
+					 }
+					 else if (ext == "avi" || ext == "AVI" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "ogm"
+							 || ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov"
+							 || ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp")
+					 {
+						 //setIcon(0, QIcon(":/images/videofile.png"));
+						 QIcon icon(":/images/FileTypeVideo.png");
+						 return icon;
+					 }
+					 else if (ext == "ogg" || ext == "mp3" || ext == "wav" || ext == "wma" || ext == "xpm")
+					 {
+						 //setIcon(0, QIcon(":/images/soundfile.png"));
+						 QIcon icon(":/images/FileTypeAudio.png");
+						 return icon;
+					 }
+					 else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "7z"
+							 || ext == "rar" || ext == "rpm" || ext == "deb")
+					 {
+						 //setIcon(0, QIcon(":/images/compressedfile.png"));
+						 QIcon icon(":/images/FileTypeArchive.png");
+						 return icon;
+					 }
+					 else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com"
+							 || ext == "bin" || ext == "exe" || ext == "js" || ext == "pif"
+							 || ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws")
+					 {
+						 return(QIcon(":/images/FileTypeProgram.png"));
+					 }
+					 else if (ext == "iso" || ext == "nrg" || ext == "mdf" )
+					 {
+						 //setIcon(0, QIcon(":/images/txtfile.png"));
+						 QIcon icon(":/images/FileTypeCDImage.png");
+						 return icon;
+					 }
+					 else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h")
+					 {
+						 //setIcon(0, QIcon(":/images/txtfile.png"));
+						 QIcon icon(":/images/FileTypeDocument.png");
+						 return icon;
+					 }
+					 else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls"
+							 || ext == "sxc" || ext == "odt" || ext == "ods")
+					 {
+						 //setIcon(0, QIcon(":/images/docfile.png"));
+						 QIcon icon(":/images/FileTypeDocument.png");
+						 return icon;
+					 }
+					 else if (ext == "html" || ext == "htm" || ext == "php")
+					 {
+						 //setIcon(0, QIcon(":/images/netfile.png"));
+						 QIcon icon(":/images/FileTypeDocument.png");
+						 return icon;
+					 }
+					 else
+					 {
+						 //setIcon(0, QIcon(":/images/file.png"));
+						 QIcon icon(":/images/FileTypeAny.png");
+						 return icon;
+					 }
+					 break;
+			 }
+		 }
+		 else
+		 {
+			 return QVariant();
+		 }
 	 }
 
      /*************
@@ -413,9 +425,7 @@ void RemoteDirModel::treeStyle()
 			break;
 			case 2:
 		{
-			std::ostringstream out;
-			out << details.rank;
-			return QString::fromStdString(out.str());
+				return getFlagsString(details.flags);
 		}
 			break;
 			case 3:
@@ -435,24 +445,23 @@ void RemoteDirModel::treeStyle()
 		switch(coln)
 		{
 			case 0:
-		return QString::fromStdString(details.name);
-			break;
+				return QString::fromStdString(details.name);
+				break;
 			case 1:
-		//return QString("");
-		{
-			std::ostringstream out;
-			out << details.count;
-			return QString::fromStdString(out.str());
-		}
-			break;
+				//return QString("");
+				{
+					std::ostringstream out;
+					out << details.count;
+					return QString::fromStdString(out.str());
+				}
+				break;
 			case 2:
-		return QString("");
-		//return QString::fromStdString(details.path);
-			break;
+				return getFlagsString(details.flags);
+				break;
 
 			default:
-		return QString(tr("DIR"));
-			break;
+				return QString(tr("DIR"));
+				break;
 		}
 	}
    } /* end of DisplayRole */
@@ -474,50 +483,50 @@ void RemoteDirModel::treeStyle()
 
  QVariant RemoteDirModel::headerData(int section, Qt::Orientation orientation,
                                       int role) const
- {
-     if (role == Qt::SizeHintRole)
-     {
-     	 int defw = 50;
-     	 int defh = 21;
-     	 if (section < 2)
-	 {
-	 	defw = 200;
-	 }
-         return QSize(defw, defh);
-     }
-
-     if (role != Qt::DisplayRole)
-         return QVariant();
-
-     if (orientation == Qt::Horizontal)
-     {
-     	switch(section)
+{
+	if (role == Qt::SizeHintRole)
 	{
-		case 0:
-			if (RemoteMode)
-			{
-				return QString(tr("Friends Directories"));
-			}
-			else
-			{
-				return QString(tr("My Directories"));
-			}
-			break;
-		case 1:
-			return QString(tr("Size"));
-			break;
-		case 2:
-			return QString(tr("Rank"));
-			break;
-		case 3:
-			return QString(tr("Age"));
-			break;
+		int defw = 50;
+		int defh = 21;
+		if (section < 2)
+		{
+			defw = 200;
+		}
+		return QSize(defw, defh);
 	}
-        return QString("Column %1").arg(section);
-     }
-     else
-         return QString("Row %1").arg(section);
- }
+
+	if (role != Qt::DisplayRole)
+		return QVariant();
+
+	if (orientation == Qt::Horizontal)
+	{
+		switch(section)
+		{
+			case 0:
+				if (RemoteMode)
+				{
+					return QString(tr("Friends Directories"));
+				}
+				else
+				{
+					return QString(tr("My Directories"));
+				}
+				break;
+			case 1:
+				return QString(tr("Size"));
+				break;
+			case 2:
+				return QString(tr("Share type"));
+				break;
+			case 3:
+				return QString(tr("Age"));
+				break;
+		}
+		return QString("Column %1").arg(section);
+	}
+	else
+		return QString("Row %1").arg(section);
+}
 
  QModelIndex RemoteDirModel::index(int row, int column,
                         const QModelIndex & parent) const
