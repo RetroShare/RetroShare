@@ -129,12 +129,12 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			xProgressBar progressBar(option.rect, painter );// the 3rd param is the  color schema (0 is the default value)
 					
 			QString ext = QFileInfo(QString::fromStdString(index.sibling(index.row(), UNAME).data().toString().toStdString())).suffix();;
-			if (ext == "rsfc" || ext == "rsrl" || ext == "dist" )
+			if (ext == "rsfc" || ext == "rsrl" || ext == "dist" || ext == "rsfb")
 		  {
 		  progressBar.setColorSchema( 9);
 		  }
-      else
-      {
+		  else
+		  {
 		  progressBar.setColorSchema( 8);
 		  }
 		  			

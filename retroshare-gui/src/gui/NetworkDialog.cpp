@@ -32,6 +32,7 @@
 #include "GenCertDialog.h"
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
+#include "rsiface/rsdisc.h"
 
 /* for GPGME */
 #include "rsiface/rsinit.h"
@@ -133,8 +134,16 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 	ui.networkTab->addTab(new NetworkView(),QString(tr("Network View")));
 	ui.networkTab->addTab(new TrustView(),QString(tr("Trust matrix")));
      
+    QString version = "-";
+    std::map<std::string, std::string>::iterator vit;
+    std::map<std::string, std::string> versions;
+    bool retv = rsDisc->getDiscVersions(versions);
+    if (retv && versions.end() != (vit = versions.find(rsPeers->getOwnId()))) {
+    	version	= QString::fromStdString(vit->second);
+    }
+
     // Set Log infos
-    setLogInfo(tr("RetroShare started."));
+    setLogInfo(tr("RetroShare %1 started.").arg(version));
     
     setLogInfo(tr("Welcome to RetroShare."), QString::fromUtf8("blue"));
       

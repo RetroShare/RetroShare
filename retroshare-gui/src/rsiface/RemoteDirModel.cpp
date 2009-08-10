@@ -458,6 +458,9 @@ QString RemoteDirModel::getFlagsString(uint32_t flags)
 			case 2:
 				return getFlagsString(details.flags);
 				break;
+			case 3:	
+				return  misc::userFriendlyDuration(details.age);
+				break;
 
 			default:
 				return QString(tr("DIR"));
