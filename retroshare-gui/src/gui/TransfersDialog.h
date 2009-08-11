@@ -146,7 +146,7 @@ class TransfersDialog : public MainPage
 		Ui::TransfersDialog ui;
 
 		public slots:
-			int addItem(QString symbol, QString name, QString coreID, qlonglong size, double progress, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining);
+			int addItem(QString symbol, QString name, QString coreID, qlonglong size, double progress, double dlspeed, QString sources, QString status, QString priority, qlonglong completed, qlonglong remaining);
 			bool addPeerToItem(int row, QString symbol, QString name, QString coreID, qlonglong fileSize, double progress, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining);
 		void delItem(int row);
 

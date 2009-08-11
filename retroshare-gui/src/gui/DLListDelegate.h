@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -34,8 +34,9 @@
 #define PROGRESS 4
 #define SOURCES 5
 #define STATUS 6
-#define REMAINING 7
-#define ID 8
+#define PRIORITY 7
+#define REMAINING 8
+#define ID 9
 
 
 #define MAX_CHAR_TMP 128

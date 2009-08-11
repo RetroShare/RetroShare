@@ -78,7 +78,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     connect( ui.downloadList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( downloadListCostumPopupMenu( QPoint ) ) );
 
     // Set Download list model
-    DLListModel = new QStandardItemModel(0,9);
+    DLListModel = new QStandardItemModel(0,ID + 1);
     DLListModel->setHeaderData(NAME, Qt::Horizontal, tr("Name", "i.e: file name"));
     DLListModel->setHeaderData(SIZE, Qt::Horizontal, tr("Size", "i.e: file size"));
     DLListModel->setHeaderData(COMPLETED, Qt::Horizontal, tr("Completed", ""));
@@ -86,6 +86,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     DLListModel->setHeaderData(PROGRESS, Qt::Horizontal, tr("Progress", "i.e: % downloaded"));
     DLListModel->setHeaderData(SOURCES, Qt::Horizontal, tr("Sources", "i.e: Sources"));
     DLListModel->setHeaderData(STATUS, Qt::Horizontal, tr("Status"));
+    DLListModel->setHeaderData(PRIORITY, Qt::Horizontal, tr("Priority"));
     DLListModel->setHeaderData(REMAINING, Qt::Horizontal, tr("Remaining", "i.e: Estimated Time of Arrival / Time left"));
     DLListModel->setHeaderData(ID, Qt::Horizontal, tr("Core-ID"));
     ui.downloadList->setModel(DLListModel);
@@ -112,6 +113,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     _header->setResizeMode (PROGRESS, QHeaderView::Interactive);
     _header->setResizeMode (SOURCES, QHeaderView::Interactive);
     _header->setResizeMode (STATUS, QHeaderView::Interactive);
+    _header->setResizeMode (PRIORITY, QHeaderView::Interactive);
     _header->setResizeMode (REMAINING, QHeaderView::Interactive);
 
     _header->resizeSection ( NAME, 170 );
@@ -121,6 +123,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     _header->resizeSection ( PROGRESS, 170 );
     _header->resizeSection ( SOURCES, 90 );
     _header->resizeSection ( STATUS, 100 );
+    _header->resizeSection ( PRIORITY, 100 );
     _header->resizeSection ( REMAINING, 100 );
 
     // Set Upload list model
@@ -352,7 +355,8 @@ TransfersDialog::~TransfersDialog()
 
 
 
-int TransfersDialog::addItem(QString symbol, QString name, QString coreID, qlonglong fileSize, double progress, double dlspeed, QString sources,  QString status, qlonglong completed, qlonglong remaining)
+int TransfersDialog::addItem(QString symbol, QString name, QString coreID, qlonglong fileSize, double progress, double dlspeed,
+		QString sources,  QString status, QString priority, qlonglong completed, qlonglong remaining)
 {
     int row;
     QString sl;
@@ -370,6 +374,7 @@ int TransfersDialog::addItem(QString symbol, QString name, QString coreID, qlong
     DLListModel->setData(DLListModel->index(row, PROGRESS), QVariant((double)progress));
     DLListModel->setData(DLListModel->index(row, SOURCES), QVariant((QString)sources));
     DLListModel->setData(DLListModel->index(row, STATUS), QVariant((QString)status));
+    DLListModel->setData(DLListModel->index(row, PRIORITY), QVariant((QString)priority));
     DLListModel->setData(DLListModel->index(row, REMAINING), QVariant((qlonglong)remaining));
     DLListModel->setData(DLListModel->index(row, ID), QVariant((QString)coreID));
 
@@ -445,8 +450,9 @@ bool TransfersDialog::addPeerToItem(int row, QString symbol, QString name, QStri
     QStandardItem *i5 = new QStandardItem(); i5->setData(QVariant((double)progress), Qt::DisplayRole);
     QStandardItem *i6 = new QStandardItem(); i6->setData(QVariant((QString)sources), Qt::DisplayRole);
     QStandardItem *i7 = new QStandardItem(); i7->setData(QVariant((QString)status), Qt::DisplayRole);
-    QStandardItem *i8 = new QStandardItem(); i8->setData(QVariant((qlonglong)remaining), Qt::DisplayRole);
-    QStandardItem *i9 = new QStandardItem(); i9->setData(QVariant((QString)coreID), Qt::DisplayRole);
+    QStandardItem *i8 = new QStandardItem(); i8->setData(QVariant((QString)tr("")), Qt::DisplayRole);	// blank field for priority
+    QStandardItem *i9 = new QStandardItem(); i9->setData(QVariant((qlonglong)remaining), Qt::DisplayRole);
+    QStandardItem *i10 = new QStandardItem(); i10->setData(QVariant((QString)coreID), Qt::DisplayRole);
 
     /* set status icon in the name field */
     if (status == "Downloading") {
@@ -471,6 +477,7 @@ bool TransfersDialog::addPeerToItem(int row, QString symbol, QString name, QStri
     items.append(i7);
     items.append(i8);
     items.append(i9);
+    items.append(i10);
 
     dlItem->appendRow(items);
 
@@ -536,6 +543,9 @@ void TransfersDialog::editItem(int row, int column, QVariant data)
 		case STATUS:
 			DLListModel->setData(DLListModel->index(row, STATUS), data);
 			break;
+		case PRIORITY:
+			DLListModel->setData(DLListModel->index(row, PRIORITY), data);
+			break;
 		case COMPLETED:
 			DLListModel->setData(DLListModel->index(row, COMPLETED), data);
 			break;
@@ -551,7 +561,7 @@ void TransfersDialog::editItem(int row, int column, QVariant data)
 	/* get the list of Transfers from the RsIface.  **/
 void TransfersDialog::insertTransfers()
 {
-	QString symbol, name, sources, status, coreId;
+	QString symbol, name, sources, status, priority, coreId;
 	qlonglong fileSize, completed, remaining;
 	double progress, dlspeed;
 
@@ -653,14 +663,15 @@ void TransfersDialog::insertTransfers()
                 status = tr("Unknown"); break;
         }
 
+        priority	= "";	/* for already downloading files */
         completed   = info.transfered;
         remaining   = (info.size - info.transfered) / (info.tfRate * 1024.0);
 
-        int addedRow = addItem(symbol, name, coreId, fileSize, progress, dlspeed, sources, status, completed, remaining);
+        int addedRow = addItem(symbol, name, coreId, fileSize, progress, dlspeed, sources, status, priority, completed, remaining);
 
         /* if found in selectedIds -> select again */
         if (selectedIds.end() != std::find(selectedIds.begin(), selectedIds.end(), info.hash)) {
-            selection->select(DLListModel->index(dlCount, 0),
+            selection->select(DLListModel->index(dlCount, NAME),
                 QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent);
         }
 
@@ -743,36 +754,32 @@ void TransfersDialog::insertTransfers()
     	dlspeed     = 0;
     	sources     = "";
     	completed   = 0;
+    	status 		= tr("Queued");
     	remaining   = 0;
 
-    	int priority = dit->priority;
-
-		QString spriority;
 		switch (dit->priority) {
-		case 0:
-			spriority = tr("Low");
-			break;
-		case 1:
-			spriority = tr("Normal");
-			break;
-		case 2:
-			spriority = tr("High");
-			break;
-		case 3:
-			spriority = tr("Auto");
-			break;
-		default:
-			spriority = tr("");
-			break;
+			case 0:
+				priority = tr("Low");
+				break;
+			case 1:
+				priority = tr("Normal");
+				break;
+			case 2:
+				priority = tr("High");
+				break;
+			case 3:
+				priority = tr("Auto");
+				break;
+			default:
+				priority = tr("Auto");
+				break;
 		}
 
-		status = tr("Queued [") + spriority + tr("]");
-
-		addItem("", name, coreId, fileSize, progress, dlspeed, sources, status, completed, remaining);
+		addItem("", name, coreId, fileSize, progress, dlspeed, sources, status, priority, completed, remaining);
 
 		/* if found in selectedIds -> select again */
 		if (selectedIds.end() != std::find(selectedIds.begin(), selectedIds.end(), dit->hash)) {
-			selection->select(DLListModel->index(dlCount, 0),
+			selection->select(DLListModel->index(dlCount, NAME),
 				QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent);
 		}
 
