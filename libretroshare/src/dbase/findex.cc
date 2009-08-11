@@ -35,8 +35,8 @@
 
 #include <openssl/sha.h>
 
-#define FI_DEBUG 1
 /****
+#define FI_DEBUG 1
  * #define FI_DEBUG_ALL 1
  ****/
 

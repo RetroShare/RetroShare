@@ -40,7 +40,7 @@
 #include <stdio.h>
 
 //***********
-#define FIM_DEBUG 1
+//#define FIM_DEBUG 1
 // ***********/
 
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in,std::string cachedir, std::string pid)
@@ -983,7 +983,9 @@ int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, uint32_t
 
 	if(last_dir != NULL)
 	{
+#ifdef FIM_DEBUG
 		std::cerr << "FileIndexMonitor::RequestDirDetails: parent->name=" << last_dir->name << std::endl ;
+#endif
 		std::map<std::string,SharedDirInfo>::const_iterator it = directoryMap.find(last_dir->name) ;
 
 		if(it == directoryMap.end())
@@ -992,7 +994,9 @@ int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, uint32_t
 		{
 			details.flags |= (( (it->second.shareflags & RS_FILE_HINTS_BROWSABLE)>0)?DIR_FLAGS_BROWSABLE:0) ;
 			details.flags |= (( (it->second.shareflags & RS_FILE_HINTS_NETWORK_WIDE)>0)?DIR_FLAGS_NETWORK_WIDE:0) ;
+#ifdef FIM_DEBUG
 			std::cerr << "flags = " << details.flags << std::endl ;
+#endif
 		}
 	}
 
