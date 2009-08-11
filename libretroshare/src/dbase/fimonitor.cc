@@ -968,6 +968,9 @@ int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, uint32_t
 
 	bool b = fi.RequestDirDetails(ref,details,flags) ;
 
+	if(!b)
+		return false ;
+
 	// look for the top level and setup flags accordingly
 
 	FileEntry *file = (FileEntry *) ref;

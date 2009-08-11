@@ -40,6 +40,13 @@
  * #define FI_DEBUG_ALL 1
  ****/
 
+static std::set<void*> _pointers ;
+static void registerEntry(void*p) { _pointers.insert(p) ; }
+static void unregisterEntry(void*p) 
+{ 
+	_pointers.erase(p) ; 
+}
+
 DirEntry::~DirEntry()
 {
 	/* cleanup */
@@ -48,12 +55,14 @@ DirEntry::~DirEntry()
 
 	for(dit = subdirs.begin(); dit != subdirs.end(); dit++)
 	{
+		unregisterEntry((void*)dit->second) ;
 		delete (dit->second);
 	}
 	subdirs.clear();
 
 	for(fit = files.begin(); fit != files.end(); fit++)
 	{
+		unregisterEntry((void*)fit->second) ;
 		delete (fit->second);
 	}
 	files.clear();
@@ -129,6 +138,7 @@ int  DirEntry::removeDir(std::string name)
 		ndir = (it->second);
 
 		subdirs.erase(it);
+		unregisterEntry((void*)ndir) ;
 		delete ndir;
 		/* update row counters */
 		updateChildRows();
@@ -158,6 +168,7 @@ int  DirEntry::removeFile(std::string name)
 		nfile = (it->second);
 
 		files.erase(it);
+		unregisterEntry((void*)nfile) ;
 		delete nfile;
 		/* update row counters */
 		updateChildRows();
@@ -188,6 +199,7 @@ int  DirEntry::removeOldDir(std::string name, time_t old)
 		std::cerr << std::endl;
 #endif
 			subdirs.erase(it);
+			unregisterEntry((void*)ndir) ;
 			delete ndir;
 
 			/* update row counters */
@@ -363,6 +375,7 @@ DirEntry *DirEntry::updateDir(FileEntry fe, time_t utime)
 		std::cerr << std::endl;
 #endif
 		ndir = new DirEntry();
+		registerEntry((void*)ndir) ;
 		ndir -> parent = this;
 		ndir -> path = path + "/" + fe.name;
 		ndir -> name = fe.name;
@@ -404,6 +417,7 @@ FileEntry *DirEntry::updateFile(FileEntry fe, time_t utime)
 #endif
 
 		nfile = new FileEntry();
+		registerEntry((void*)nfile) ;
 		nfile -> parent = this;
 		nfile -> name = fe.name;
 		nfile -> hash = fe.hash;
@@ -485,10 +499,12 @@ int DirEntry::print(std::ostream &out)
 FileIndex::FileIndex(std::string pid)
 {
 	root = new PersonEntry(pid);
+	registerEntry(root) ;
 }
 
 FileIndex::~FileIndex()
 {
+			unregisterEntry((void*)root) ;
 	delete root;
 }
 
@@ -661,7 +677,6 @@ int     FileIndex::printFileIndex(std::ostream &out)
 	return 1;
 }
 
-
 int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint64_t size)
 {
 	std::ifstream file (filename.c_str(), std::ifstream::binary);
@@ -735,8 +750,10 @@ int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint64_
 				case 1: 
 				{
 					std::string pid = root -> id;	
+			unregisterEntry((void*)root) ;
 					delete root; /* to clean up old entries */
 					root = new PersonEntry(pid);
+					registerEntry((void*)root) ;
 
 					/* shallow copy of all except id */
 					ndir = dirlist.back(); 
@@ -746,6 +763,7 @@ int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint64_
 					/* now cleanup (can't call standard delete) */
 					ndir->subdirs.clear();
 					ndir->files.clear();
+			unregisterEntry((void*)ndir) ;
 					delete ndir;
 					ndir = NULL;
 
@@ -806,6 +824,7 @@ int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint64_
 					goto error;
 				}
 				nfile = new FileEntry();
+				registerEntry((void*)nfile) ;
 				nfile->name = tokens[0];
 				nfile->hash = tokens[1];
 				nfile->size = atoll(tokens[2].c_str());
@@ -830,6 +849,7 @@ int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint64_
 					goto error;
 				}
 				ndir = new DirEntry();
+				registerEntry((void*)ndir) ;
 				ndir->name = tokens[0];
 				ndir->path = tokens[1];
 				ndir->size = atoi(tokens[2].c_str());
@@ -1113,6 +1133,9 @@ int FileIndex::searchBoolExp(Expression * exp, std::list<FileEntry *> &results) 
 int FileIndex::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) const
 {
 	/* so cast *ref to a DirEntry */
+
+	if(ref != NULL && _pointers.find(ref) == _pointers.end())
+		return false ;
 
 	FileEntry *file = (FileEntry *) ref;
 	DirEntry *dir = dynamic_cast<DirEntry *>(file);

@@ -712,7 +712,7 @@ QString RemoteDirModel::getFlagsString(uint32_t flags)
 	std::cerr << "RemoteDirModel::preMods()" << std::endl;
 #endif
 	//modelAboutToBeReset();
-	reset();
+//	reset();
 	layoutAboutToBeChanged();
  }
 
