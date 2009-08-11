@@ -24,6 +24,7 @@
  */
 
 #include "util/rsdebug.h"
+#include "util/rsdir.h"
 const int ftserverzone = 29539;
 
 #include "ft/ftserver.h"
@@ -75,6 +76,9 @@ void	ftServer::setConfigDirectory(std::string path)
 
 	std::string localcachedir = mConfigPath + "/cache/local";
 	std::string remotecachedir = mConfigPath + "/cache/remote";
+
+	RsDirUtil::checkCreateDirectory(localcachedir) ;
+	RsDirUtil::checkCreateDirectory(remotecachedir) ;
 
 	//mFiStore -> setCacheDir(remotecachedir);
         //mFiMon -> setCacheDir(localcachedir);
