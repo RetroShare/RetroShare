@@ -31,7 +31,7 @@
 #include "ui_SharedFilesDialog.h"
 
 #include "rsiface/rstypes.h"
-#include "rsiface/RemoteDirModel.h"
+#include "gui/RemoteDirModel.h"
 
 class SharedFilesDialog : public MainPage 
 {

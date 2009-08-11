@@ -26,7 +26,6 @@
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsfiles.h"
-#include "rsiface/RemoteDirModel.h"
 #include "ShareManager.h"
 
 

@@ -27,7 +27,6 @@
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsfiles.h"
-#include "rsiface/RemoteDirModel.h"
 #include "util/RsAction.h"
 #include "msgs/ChanMsgDialog.h"
 #include "Preferences/rsharesettings.h"
