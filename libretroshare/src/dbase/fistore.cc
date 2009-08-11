@@ -535,7 +535,7 @@ int FileIndexStore::searchBoolExp(Expression * exp, std::list<FileDetail> &resul
 int FileIndexStore::AboutToModify()
 {
 	if (cb)
-		cb->notifyListPreChange(NOTIFY_LIST_DIRLIST, 0);
+		cb->notifyListPreChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
 
 	return 1;
 }
@@ -544,7 +544,7 @@ int FileIndexStore::AboutToModify()
 int FileIndexStore::ModCompleted()
 {
 	if (cb)
-		cb->notifyListChange(NOTIFY_LIST_DIRLIST, 0);
+		cb->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
 
 	return 1;
 }

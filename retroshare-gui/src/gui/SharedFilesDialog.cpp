@@ -504,9 +504,17 @@ void  SharedFilesDialog::postModDirectories(bool update_local)
 {
 	std::cerr << "SharedFilesDialog::postModDirectories called with update_local = " << update_local << std::endl ;
 	if (update_local)
+	{
 		localModel->postMods();
+		ui.localDirTreeView->update() ;
+	}
 	else
+	{
 		model->postMods();
+		ui.remoteDirTreeView->update() ;
+	}
+
+	QCoreApplication::flush();
 }
 
 

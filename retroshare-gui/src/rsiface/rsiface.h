@@ -205,14 +205,15 @@ class NotifyBase
 	virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files) { (void)files; }
 };
 
-const int NOTIFY_LIST_NEIGHBOURS   = 1;
-const int NOTIFY_LIST_FRIENDS      = 2;
-const int NOTIFY_LIST_DIRLIST      = 3;
-const int NOTIFY_LIST_SEARCHLIST   = 4;
-const int NOTIFY_LIST_MESSAGELIST  = 5;
-const int NOTIFY_LIST_CHANNELLIST  = 6;
-const int NOTIFY_LIST_TRANSFERLIST = 7;
-const int NOTIFY_LIST_CONFIG       = 8;
+const int NOTIFY_LIST_NEIGHBOURS   		= 1;
+const int NOTIFY_LIST_FRIENDS      		= 2;
+const int NOTIFY_LIST_SEARCHLIST   		= 4;
+const int NOTIFY_LIST_MESSAGELIST  		= 5;
+const int NOTIFY_LIST_CHANNELLIST  		= 6;
+const int NOTIFY_LIST_TRANSFERLIST 		= 7;
+const int NOTIFY_LIST_CONFIG       		= 8;
+const int NOTIFY_LIST_DIRLIST_LOCAL		= 9;
+const int NOTIFY_LIST_DIRLIST_FRIENDS	= 10;
 
 const int NOTIFY_TYPE_SAME   = 0x01;
 const int NOTIFY_TYPE_MOD    = 0x02; /* general purpose, check all */

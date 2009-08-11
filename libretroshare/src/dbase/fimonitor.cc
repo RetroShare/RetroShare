@@ -500,7 +500,7 @@ void 	FileIndexMonitor::updateCycle()
 			std::cerr << "List of Files to rehash in: " << dirpath << std::endl;
 #endif
 			fiMods = true;
-			cb->notifyListPreChange(NOTIFY_LIST_DIRLIST, 0);
+			cb->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 		}
 
 #ifdef FIM_DEBUG
@@ -550,7 +550,7 @@ void 	FileIndexMonitor::updateCycle()
 		}
 		
 		if (filesToHash.size() > 0)
-			cb->notifyListChange(NOTIFY_LIST_DIRLIST, 0);
+			cb->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 	}
 
 	fiMutex.lock(); { /* LOCKED DIRS */
@@ -671,7 +671,7 @@ void FileIndexMonitor::locked_saveFileIndexes()
 
 void    FileIndexMonitor::updateShareFlags(const SharedDirInfo& dir)
 {
-	cb->notifyListPreChange(NOTIFY_LIST_DIRLIST, 0);
+	cb->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 
 	bool fimods = false ;
 #ifdef FIM_DEBUG
@@ -708,12 +708,12 @@ void    FileIndexMonitor::updateShareFlags(const SharedDirInfo& dir)
 		RsStackMutex stack(fiMutex) ;	/* LOCKED DIRS */
 		locked_saveFileIndexes() ;
 	}
-	cb->notifyListChange(NOTIFY_LIST_DIRLIST, 0);
+	cb->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 }
 	/* interface */
 void    FileIndexMonitor::setSharedDirectories(std::list<SharedDirInfo> dirs)
 {
-	cb->notifyListPreChange(NOTIFY_LIST_DIRLIST, 0);
+	cb->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 
 	std::list<SharedDirInfo> checkeddirs;
 
@@ -752,7 +752,7 @@ void    FileIndexMonitor::setSharedDirectories(std::list<SharedDirInfo> dirs)
 	pendingDirs = true;
 	pendingDirList = checkeddirs;
 
-	cb->notifyListChange(NOTIFY_LIST_DIRLIST, 0);
+	cb->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 }
 
 	/* interface */

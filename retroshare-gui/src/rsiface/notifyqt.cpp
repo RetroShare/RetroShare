@@ -67,8 +67,6 @@ void NotifyQt::notifyHashingInfo(std::string fileinfo)
 
 void NotifyQt::notifyListChange(int list, int type)
 {
-	(void) type;
-
 #ifdef NOTIFY_DEBUG
 	std::cerr << "NotifyQt::notifyListChange()" << std::endl;
 #endif
@@ -86,12 +84,17 @@ void NotifyQt::notifyListChange(int list, int type)
 #endif
 			emit friendsChanged() ;
 			break;
-		case NOTIFY_LIST_DIRLIST:
+		case NOTIFY_LIST_DIRLIST_LOCAL:
 #ifdef DEBUG
 			std::cerr << "received files changed" << std::endl ;
 #endif
-			emit filesPostModChanged(false) ;	/* Remote */
 			emit filesPostModChanged(true) ;  /* Local */
+			break;
+		case NOTIFY_LIST_DIRLIST_FRIENDS:
+#ifdef DEBUG
+			std::cerr << "received files changed" << std::endl ;
+#endif
+			emit filesPostModChanged(false) ;  /* Local */
 			break;
 		case NOTIFY_LIST_SEARCHLIST:
 			break;
@@ -134,8 +137,10 @@ void NotifyQt::notifyListPreChange(int list, int type)
 		case NOTIFY_LIST_FRIENDS:
 			emit friendsChanged() ;
 			break;
-		case NOTIFY_LIST_DIRLIST:
+		case NOTIFY_LIST_DIRLIST_FRIENDS:
 			emit filesPreModChanged(false) ;	/* remote */
+			break ;
+		case NOTIFY_LIST_DIRLIST_LOCAL:
 			emit filesPreModChanged(true) ;	/* local */
 			break;
 		case NOTIFY_LIST_SEARCHLIST:
