@@ -15,9 +15,9 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
- ****************************************************************/v
+ ****************************************************************/
 
 #ifndef REMOTE_DIR_MODEL
 #define REMOTE_DIR_MODEL
@@ -26,7 +26,7 @@
 #include <vector>
 #include <list>
 #include <string>
-#include <rsiface/rsfiles.h>
+#include "rsiface/rsfiles.h"
 #include "util/misc.h"
 #include "rsiface/rstypes.h"
 
