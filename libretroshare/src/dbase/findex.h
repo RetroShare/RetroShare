@@ -229,6 +229,11 @@ class FileIndex
 		/* browse thru directories */
 		int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) const;
 		PersonEntry *root;
+
+		static std::set<void*> _pointers ;
+		static void registerEntry(void*p) ; 
+		static void unregisterEntry(void*p) ; 
+		static bool isValid(void*p)  ;
 };
 
 

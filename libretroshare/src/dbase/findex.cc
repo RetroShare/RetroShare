@@ -34,17 +34,30 @@
 #include <fstream>
 
 #include <openssl/sha.h>
+#include <util/rsthreads.h>
 
 /****
 #define FI_DEBUG 1
  * #define FI_DEBUG_ALL 1
  ****/
 
-static std::set<void*> _pointers ;
-static void registerEntry(void*p) { _pointers.insert(p) ; }
-static void unregisterEntry(void*p) 
+static RsMutex FIndexPtrMtx ;
+std::set<void*> FileIndex::_pointers ;
+
+void FileIndex::registerEntry(void*p) 
 { 
+	RsStackMutex m(FIndexPtrMtx) ;
+	_pointers.insert(p) ; 
+}
+void FileIndex::unregisterEntry(void*p) 
+{ 
+	RsStackMutex m(FIndexPtrMtx) ;
 	_pointers.erase(p) ; 
+}
+bool FileIndex::isValid(void*p)  
+{ 
+	RsStackMutex m(FIndexPtrMtx) ;
+	return _pointers.find(p) != _pointers.end() ; 
 }
 
 DirEntry::~DirEntry()
@@ -55,14 +68,14 @@ DirEntry::~DirEntry()
 
 	for(dit = subdirs.begin(); dit != subdirs.end(); dit++)
 	{
-		unregisterEntry((void*)dit->second) ;
+		FileIndex::unregisterEntry((void*)dit->second) ;
 		delete (dit->second);
 	}
 	subdirs.clear();
 
 	for(fit = files.begin(); fit != files.end(); fit++)
 	{
-		unregisterEntry((void*)fit->second) ;
+		FileIndex::unregisterEntry((void*)fit->second) ;
 		delete (fit->second);
 	}
 	files.clear();
@@ -138,7 +151,7 @@ int  DirEntry::removeDir(std::string name)
 		ndir = (it->second);
 
 		subdirs.erase(it);
-		unregisterEntry((void*)ndir) ;
+		FileIndex::unregisterEntry((void*)ndir) ;
 		delete ndir;
 		/* update row counters */
 		updateChildRows();
@@ -168,7 +181,7 @@ int  DirEntry::removeFile(std::string name)
 		nfile = (it->second);
 
 		files.erase(it);
-		unregisterEntry((void*)nfile) ;
+		FileIndex::unregisterEntry((void*)nfile) ;
 		delete nfile;
 		/* update row counters */
 		updateChildRows();
@@ -199,7 +212,7 @@ int  DirEntry::removeOldDir(std::string name, time_t old)
 		std::cerr << std::endl;
 #endif
 			subdirs.erase(it);
-			unregisterEntry((void*)ndir) ;
+			FileIndex::unregisterEntry((void*)ndir) ;
 			delete ndir;
 
 			/* update row counters */
@@ -375,7 +388,7 @@ DirEntry *DirEntry::updateDir(FileEntry fe, time_t utime)
 		std::cerr << std::endl;
 #endif
 		ndir = new DirEntry();
-		registerEntry((void*)ndir) ;
+		FileIndex::registerEntry((void*)ndir) ;
 		ndir -> parent = this;
 		ndir -> path = path + "/" + fe.name;
 		ndir -> name = fe.name;
@@ -417,7 +430,7 @@ FileEntry *DirEntry::updateFile(FileEntry fe, time_t utime)
 #endif
 
 		nfile = new FileEntry();
-		registerEntry((void*)nfile) ;
+		FileIndex::registerEntry((void*)nfile) ;
 		nfile -> parent = this;
 		nfile -> name = fe.name;
 		nfile -> hash = fe.hash;
@@ -504,7 +517,7 @@ FileIndex::FileIndex(std::string pid)
 
 FileIndex::~FileIndex()
 {
-			unregisterEntry((void*)root) ;
+	FileIndex::unregisterEntry((void*)root) ;
 	delete root;
 }
 
@@ -750,7 +763,7 @@ int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint64_
 				case 1: 
 				{
 					std::string pid = root -> id;	
-			unregisterEntry((void*)root) ;
+					FileIndex::unregisterEntry((void*)root) ;
 					delete root; /* to clean up old entries */
 					root = new PersonEntry(pid);
 					registerEntry((void*)root) ;
@@ -763,7 +776,7 @@ int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint64_
 					/* now cleanup (can't call standard delete) */
 					ndir->subdirs.clear();
 					ndir->files.clear();
-			unregisterEntry((void*)ndir) ;
+					FileIndex::unregisterEntry((void*)ndir) ;
 					delete ndir;
 					ndir = NULL;
 
@@ -1134,7 +1147,7 @@ int FileIndex::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)
 {
 	/* so cast *ref to a DirEntry */
 
-	if(ref != NULL && _pointers.find(ref) == _pointers.end())
+	if(ref != NULL && !isValid(ref))
 		return false ;
 
 	FileEntry *file = (FileEntry *) ref;
