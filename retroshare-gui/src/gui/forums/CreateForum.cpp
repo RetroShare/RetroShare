@@ -28,7 +28,7 @@
 
 /** Constructor */
 CreateForum::CreateForum(QWidget *parent, bool isForum)
-: QWidget(parent), mIsForum(isForum)
+: QDialog(parent), mIsForum(isForum)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);

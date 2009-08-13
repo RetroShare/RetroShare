@@ -56,7 +56,7 @@
 #define IMAGE_FOLDERRED      ":/images/folder_red.png"
 #define IMAGE_FOLDERYELLOW   ":/images/folder_yellow.png"
 #define IMAGE_FORUM          ":/images/konversation16.png"
-#define IMAGE_SUBSCRIBE      ":/images/accepted16.png"
+#define IMAGE_SUBSCRIBE      ":/images/edit_add24.png"
 #define IMAGE_UNSUBSCRIBE    ":/images/cancel.png"
 #define IMAGE_INFO           ":/images/info16.png"
 #define IMAGE_NEWFORUM       ":/images/new_forum16.png"
@@ -756,7 +756,7 @@ void ForumsDialog::markMsgAsRead()
 
 void ForumsDialog::newforum()
 {
-	CreateForum *cf = new CreateForum(NULL, true);
+	static CreateForum *cf = new CreateForum(this);
 	cf->show();
 }
 

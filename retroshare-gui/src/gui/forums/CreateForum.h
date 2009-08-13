@@ -27,7 +27,7 @@
 
 #include "ui_CreateForum.h"
 
-class CreateForum : public QWidget
+class CreateForum : public QDialog
 {
   Q_OBJECT
 

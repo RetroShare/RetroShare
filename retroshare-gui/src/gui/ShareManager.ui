@@ -20,6 +20,9 @@
   <layout class="QGridLayout">
    <item row="0" column="0" colspan="4">
     <layout class="QGridLayout">
+     <property name="horizontalSpacing">
+      <number>0</number>
+     </property>
      <item row="0" column="0">
       <widget class="QLabel" name="piclabel">
        <property name="minimumSize">
@@ -34,6 +37,9 @@
          <height>48</height>
         </size>
        </property>
+       <property name="styleSheet">
+        <string notr="true">background-image: url(:/images/connect/connectFriendBanner.png)v</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -44,12 +50,16 @@
      </item>
      <item row="0" column="1">
       <widget class="QLabel" name="label_2">
+       <property name="styleSheet">
+        <string notr="true">background-image: url(:/images/connect/connectFriendBanner.png)</string>
+       </property>
        <property name="text">
-        <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:600; color:#32cd32;&quot;&gt;Share Manager&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:16pt;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Add a new Folder to Share with your Friends or remove a Shared Folder.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'DejaVu Sans'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:16pt; font-weight:600; color:#32cd32;&quot;&gt; Share Manager&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:10pt;&quot;&gt; Add a new Folder to Share with your Friends or remove a Shared Folder.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>
@@ -89,9 +99,6 @@ p, li { white-space: pre-wrap; }
         </attribute>
         <attribute name="verticalHeaderVisible">
          <bool>false</bool>
-        </attribute>
-        <attribute name="verticalHeaderDefaultSectionSize">
-         <number>22</number>
         </attribute>
         <attribute name="verticalHeaderDefaultSectionSize">
          <number>22</number>
