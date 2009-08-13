@@ -588,6 +588,8 @@ void TransfersDialog::insertTransfers()
         }
     }
 
+	/* view will be scrolled to first selected index */
+	QModelIndex firstSelIdx;
 
 	/* get expanded donwload items */
 	std::list<std::string> expandedIds;
@@ -673,6 +675,8 @@ void TransfersDialog::insertTransfers()
         if (selectedIds.end() != std::find(selectedIds.begin(), selectedIds.end(), info.hash)) {
             selection->select(DLListModel->index(dlCount, NAME),
                 QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent);
+            if (!firstSelIdx.isValid())
+            	firstSelIdx = DLListModel->index(dlCount, NAME);
         }
 
         /* expand last expanded items */
@@ -705,7 +709,7 @@ void TransfersDialog::insertTransfers()
             	sources		= QString("rShare v") + QString::fromStdString(vit->second);
             }
 
-            if (info.downloadStatus == FT_STATE_COMPLETE) {
+            if (pit->status == FT_STATE_COMPLETE) {
                 status = tr("Complete");
             } else {
                 status = tr("Unknown");
@@ -781,11 +785,16 @@ void TransfersDialog::insertTransfers()
 		if (selectedIds.end() != std::find(selectedIds.begin(), selectedIds.end(), dit->hash)) {
 			selection->select(DLListModel->index(dlCount, NAME),
 				QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent);
+			if (!firstSelIdx.isValid())
+				firstSelIdx = DLListModel->index(dlCount, NAME);
 		}
 
 		dlCount++;
     }
 
+    /* scroll to first selected index if any */
+    if (firstSelIdx.isValid())
+    	ui.downloadList->scrollTo(firstSelIdx);
 
 	for(it = upHashes.begin(); it != upHashes.end(); it++)
 	{
