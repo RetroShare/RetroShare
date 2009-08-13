@@ -61,9 +61,9 @@
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsfiles.h"
-#include "rsiface/rsdisc.h"
 
 #include "gui/connect/ConnectFriendWizard.h"
+#include "util/rsversion.h"
 
 #include <sstream>
 #include <iomanip>
@@ -123,14 +123,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Create RshareSettings object */
     _settings = new RshareSettings();
 
-    QString version = "-";
-    std::map<std::string, std::string>::iterator vit;
-    std::map<std::string, std::string> versions;
-    bool retv = rsDisc->getDiscVersions(versions);
-    if (retv && versions.end() != (vit = versions.find(rsPeers->getOwnId()))) {
-    	version	= QString::fromStdString(vit->second);
-    }
-    setWindowTitle(tr("RetroShare %1 a secure decentralised commmunication platform").arg(version));
+    setWindowTitle(tr("RetroShare %1 a secure decentralised commmunication platform").arg(retroshareVersion()));
 
     // Setting icons
     this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
@@ -523,8 +516,8 @@ void MainWindow::createActions()
 */
 void MainWindow::doQuit()
 {
-
-	if(!_settings->value(QString::fromUtf8("doQuit"), false).toBool())
+    
+	if(!_settings->value(QString::fromUtf8("doQuit"), false).toBool()) 
 	{
 	  QString queryWrn;
 	  queryWrn.clear();
