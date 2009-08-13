@@ -88,29 +88,17 @@ SearchDialog::SearchDialog(QWidget *parent)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
+    ui.lineEdit->setFocus();
+
     /* initialise the filetypes mapping */
     if (!SearchDialog::initialised)
     {
 	initialiseFileTypeMappings();
     }
    
-    /* Advanced search panel specifica */
     RshareSettings rsharesettings;
-    /*QString key (UI_PREF_ADVANCED_SEARCH);
-    bool useAdvanced = rsharesettings.value(key, QVariant(false)).toBool();
-    if (useAdvanced)
-    {
-        ui.toggleAdvancedSearchBtn->setChecked(true);
-        ui.SimpleSearchPanel->hide();
-    } else {
-        ui.AdvancedSearchPanel->hide();
-    }*/
     
-    connect(ui.toggleAdvancedSearchBtn, SIGNAL(clicked()), this, SLOT(showAdvSearchDialog()));
-    //connect(ui.focusAdvSearchDialogBtn, SIGNAL(clicked()), this, SLOT(showAdvSearchDialog())); 
-    
-    /* End Advanced Search Panel specifics */
-
+    connect(ui.toggleAdvancedSearchBtn, SIGNAL(clicked()), this, SLOT(showAdvSearchDialog()));   
 
     connect( ui.searchResultWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( searchtableWidgetCostumPopupMenu( QPoint ) ) );
     

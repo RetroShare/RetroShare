@@ -58,7 +58,7 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
   /* Create Bandwidth Graph related QObjects */
   _settings = new RshareSettings();
   
-
+  ui.loadPasswd->setFocus();
   
   //connect(ui.genButton, SIGNAL(clicked()), this, SLOT(genPerson()));
   connect(ui.loadButton, SIGNAL(clicked()), this, SLOT(loadPerson()));
