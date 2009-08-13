@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#don't exit even if a command fails
+set +e
+
+
 if ( git log -n 1 &> /dev/null); then
 	#retrieve git information
 	version="git : $(git status | grep branch | cut -c 13-) $(git log -n 1 | grep commit | cut -c 8-)"
@@ -21,3 +25,5 @@ if [[ $version != '' ]]; then
 	echo "Writing version to util/rsversion.h : $version "
 	sed -i "s/LIB_VERSION .*/LIB_VERSION \"$version\"/g" util/rsversion.h
 fi
+echo "script version_detail.sh finished normally"
+exit 0
