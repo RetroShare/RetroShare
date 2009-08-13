@@ -1742,16 +1742,16 @@ int GPGAuthMgr::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
 		if ((err == X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT) ||
  				(err == X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY))
 		{
-			X509_NAME_oneline(X509_get_issuer_name(ctx->cert), buf, 256);
+			X509_NAME_oneline(X509_get_issuer_name(ctx->current_cert), buf, 256);
 			printf("issuer= %s\n", buf);
 	
 			fprintf(stderr, "Doing REAL PGP Certificates\n");
 			/* do the REAL Authentication */
-			if (!AuthX509(ctx->cert))
+			if (!AuthX509(ctx->current_cert))
 			{
 				return false;
 			}
-			std::string pgpid = getX509CNString(ctx->cert->cert_info->issuer);
+			std::string pgpid = getX509CNString(ctx->current_cert->cert_info->issuer);
 			if (!isPGPAuthenticated(pgpid))
 			{
 				return false;
@@ -1761,7 +1761,7 @@ int GPGAuthMgr::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
 		else if ((err == X509_V_ERR_CERT_UNTRUSTED) ||
 			(err == X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE))
 		{
-			std::string pgpid = getX509CNString(ctx->cert->cert_info->issuer);
+			std::string pgpid = getX509CNString(ctx->current_cert->cert_info->issuer);
 			if (!isPGPAuthenticated(pgpid))
 			{
 				return false;
