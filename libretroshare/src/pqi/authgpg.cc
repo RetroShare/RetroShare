@@ -1478,12 +1478,13 @@ std::string GPGAuthMgr::SaveCertificateToString(std::string id)
 		std::cerr << "Error export Data";
 		std::cerr << std::endl;
 	}
+	gpgme_data_write (gpgmeData, "", 1); 	// to be able to convert it into a string
 
 	fflush (NULL);
 	fputs ("Begin Result:\n", stdout);
 	showData (gpgmeData);
 	fputs ("End Result.\n", stdout);
-  
+
 	size_t len = 0; 
 	char *export_txt = gpgme_data_release_and_get_mem(gpgmeData, &len);
 	tmp = std::string(export_txt);

@@ -78,6 +78,7 @@ p3turtle::p3turtle(p3ConnectMgr *cm,ftServer *fs)
 
 	_last_clean_time = 0 ;
 	_last_tunnel_management_time = 0 ;
+	_last_tunnel_campaign_time = 0 ;
 }
 
 int p3turtle::tick()
