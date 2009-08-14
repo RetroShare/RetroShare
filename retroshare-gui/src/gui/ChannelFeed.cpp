@@ -128,7 +128,12 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 void ChannelFeed::createChannel()
 {
 	CreateForum *cf = new CreateForum(NULL, false);
-	cf->setWindowTitle(tr("Create Channel"));
+
+	cf->setWindowTitle(tr("Create a new Channel"));
+	cf->ui.labelicon->setPixmap(QPixmap(":/images/add_channel64.png"));
+	QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
+                               "color:#32cd32;\">%1</span>");             
+	cf->ui.textlabelcreatforums->setText( titleStr.arg( tr("Create a new Channel") ) ) ;
 	cf->show();
 }
 

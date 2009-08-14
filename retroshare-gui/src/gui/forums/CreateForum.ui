@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>490</width>
-    <height>414</height>
+    <height>421</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -513,7 +513,7 @@
       <number>0</number>
      </property>
      <item row="0" column="0">
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="labelicon">
        <property name="maximumSize">
         <size>
          <width>64</width>
@@ -532,7 +532,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="textlabelcreatforums">
        <property name="styleSheet">
         <string notr="true">background-image: url(:/images/connect/connectFriendBanner.png)</string>
        </property>

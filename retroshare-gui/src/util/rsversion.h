@@ -22,7 +22,12 @@
 
 #define GUI_VERSION "0.5.0"
 
+#define GUI_REVISION "0.5.0"
+
+
 #include <QString>
 
 QString retroshareVersion();
+
+QString retroshareRevision();
 

@@ -24,3 +24,7 @@
 QString retroshareVersion() {
 	return QString(GUI_VERSION);
 }
+
+QString retroshareRevision() {
+	return QString(GUI_REVISION);
+}

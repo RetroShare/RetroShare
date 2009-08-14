@@ -36,6 +36,10 @@ public:
 
 void  newForum(); /* cleanup */
 
+  /** Qt Designer generated object */
+  Ui::CreateForum ui;
+
+
 public slots:
   /** Overloaded QWidget.show */
   void show();
@@ -48,8 +52,6 @@ void  cancelForum();
 
 private:
 
-  /** Qt Designer generated object */
-  Ui::CreateForum ui;
 
   bool mIsForum;
 };
