@@ -905,31 +905,39 @@ QString TransfersDialog::getPeerName(const std::string& id) const
 
 void TransfersDialog::cancel()
 {
-		QString queryWrn2;
+	QString queryWrn2;
     queryWrn2.clear();
     queryWrn2.append(tr("Are you sure that you want to cancel and delete these files?"));
 
     if ((QMessageBox::question(this, tr("RetroShare"),queryWrn2,QMessageBox::Ok|QMessageBox::No, QMessageBox::Ok))== QMessageBox::Ok)
     {
-
-
       for(int i = 0; i <= DLListModel->rowCount(); i++)
       {
         if(selection->isRowSelected(i, QModelIndex()))
         {
-        std::string id = getID(i, DLListModel).toStdString();
-#ifdef UNUSED
-        QString  qname = getFileName(i, DLListModel);
-        /* XXX -> Should not have to 'trim' filename ... something wrong here..
-        * but otherwise, not exact filename .... BUG
-        */
-        std::string name = (qname.trimmed()).toStdString();
-#endif
-        rsFiles->FileCancel(id); /* hash */
+        	QVector<QString> pri;
+        	pri << "Low" << "Normal" << "High" << "Auto";
+        	QString priority = getPriority(i, DLListModel).trimmed();
+        	std::string id = getID(i, DLListModel).toStdString();
 
+        	if (pri.indexOf(priority) >= 0)
+        	{
+        		/* for file that is just in dwl queue */
+        		rsFiles->clearDownload(id);
+        	}
+        	else
+        	{
+#ifdef UNUSED
+				QString  qname = getFileName(i, DLListModel);
+				/* XXX -> Should not have to 'trim' filename ... something wrong here..
+				* but otherwise, not exact filename .... BUG
+				*/
+				std::string name = (qname.trimmed()).toStdString();
+#endif
+				rsFiles->FileCancel(id); /* hash */
+        	}
         }
       }
-
     }
     else
     return;
@@ -1274,6 +1282,11 @@ QString TransfersDialog::getStatus(int row, QStandardItemModel *model)
 QString TransfersDialog::getID(int row, QStandardItemModel *model)
 {
 	return model->data(model->index(row, ID), Qt::DisplayRole).toString();
+}
+
+QString TransfersDialog::getPriority(int row, QStandardItemModel *model)
+{
+	return model->data(model->index(row, PRIORITY), Qt::DisplayRole).toString();
 }
 
 qlonglong TransfersDialog::getFileSize(int row, QStandardItemModel *model)

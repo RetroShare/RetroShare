@@ -161,6 +161,7 @@ class TransfersDialog : public MainPage
 		QString getFileName(int row, QStandardItemModel *model);
 		QString getStatus(int row, QStandardItemModel *model);
 		QString getID(int row, QStandardItemModel *model);
+		QString getPriority(int row, QStandardItemModel *model);
 		qlonglong getFileSize(int row, QStandardItemModel *model);
 		qlonglong getTransfered(int row, QStandardItemModel *model);
 		qlonglong getRemainingTime(int row, QStandardItemModel *model);
