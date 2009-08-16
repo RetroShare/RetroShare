@@ -1406,6 +1406,87 @@ bool p3turtle::performLocalHashSearch(const TurtleFileHash& hash,FileInfo& info)
 	return rsFiles->FileDetails(hash, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SPEC_ONLY, info);
 }
 
+static std::string printNumber(uint num,bool hex=false)
+{
+	if(hex)
+	{
+		char tmp[100] ;
+		sprintf(tmp,"0x%08x",num) ;
+		return std::string(tmp) ;
+	}
+	else
+	{
+		std::ostringstream out ;
+		out << num ;
+		return out.str() ;
+	}
+}
+
+void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
+								std::vector<std::vector<std::string> >& tunnels_info,
+								std::vector<std::vector<std::string> >& search_reqs_info,
+								std::vector<std::vector<std::string> >& tunnel_reqs_info) const
+{
+	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+
+	time_t now = time(NULL) ;
+
+	hashes_info.clear() ;
+
+	for(std::map<TurtleFileHash,TurtleFileHashInfo>::const_iterator it(_incoming_file_hashes.begin());it!=_incoming_file_hashes.end();++it)
+	{
+		hashes_info.push_back(std::vector<std::string>()) ;
+
+		std::vector<std::string>& hashes(hashes_info.back()) ;
+
+		hashes.push_back(it->first) ;
+		hashes.push_back(it->second.name) ;
+		hashes.push_back(printNumber(it->second.tunnels.size())) ;
+		hashes.push_back(printNumber(now - it->second.time_stamp)+" secs ago") ;
+	}
+#ifdef A_VOIR
+	for(std::map<TurtleFileHash,FileInfo>::const_iterator it(_outgoing_file_hashes.begin());it!=_outgoing_file_hashes.end();++it)
+		std::cerr << "    hash=0x" << it->first << ", name=" << it->second.fname << ", size=" << it->second.size << std::endl ;
+#endif
+	tunnels_info.clear();
+
+	for(std::map<TurtleTunnelId,TurtleTunnel>::const_iterator it(_local_tunnels.begin());it!=_local_tunnels.end();++it)
+	{
+		tunnels_info.push_back(std::vector<std::string>()) ;
+		std::vector<std::string>& tunnel(tunnels_info.back()) ;
+
+		tunnel.push_back(printNumber(it->first,true)) ;
+		tunnel.push_back(rsPeers->getPeerName(it->second.local_src)) ;
+		tunnel.push_back(rsPeers->getPeerName(it->second.local_dst)) ;
+		tunnel.push_back(it->second.hash) ;
+		tunnel.push_back(printNumber(now-it->second.time_stamp)) ;
+	}
+
+	search_reqs_info.clear();
+
+	for(std::map<TurtleSearchRequestId,TurtleRequestInfo>::const_iterator it(_search_requests_origins.begin());it!=_search_requests_origins.end();++it)
+	{
+		search_reqs_info.push_back(std::vector<std::string>()) ;
+		std::vector<std::string>& search_req(search_reqs_info.back()) ;
+
+		search_req.push_back(printNumber(it->first,true)) ;
+		search_req.push_back(rsPeers->getPeerName(it->second.origin)) ;
+		search_req.push_back(printNumber(now - it->second.time_stamp)) ;
+	}
+
+	tunnel_reqs_info.clear();
+
+	for(std::map<TurtleSearchRequestId,TurtleRequestInfo>::const_iterator it(_tunnel_requests_origins.begin());it!=_tunnel_requests_origins.end();++it)
+	{
+		tunnel_reqs_info.push_back(std::vector<std::string>()) ;
+		std::vector<std::string>& tunnel_req(tunnel_reqs_info.back()) ;
+
+		tunnel_req.push_back(printNumber(it->first,true)) ;
+		tunnel_req.push_back(rsPeers->getPeerName(it->second.origin)) ;
+		tunnel_req.push_back(printNumber(now - it->second.time_stamp)) ;
+	}
+}
+
 #ifdef P3TURTLE_DEBUG
 void p3turtle::dumpState()
 {

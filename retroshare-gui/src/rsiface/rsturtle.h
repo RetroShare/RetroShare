@@ -29,6 +29,7 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
+#include <vector>
 
 class RsTurtle;
 extern RsTurtle   *rsTurtle ;
@@ -56,10 +57,10 @@ struct TurtleFileInfo
 class RsTurtle
 {
 	public:
+		enum FileSharingStrategy { SHARE_ENTIRE_NETWORK, SHARE_FRIENDS_ONLY } ;
+
 		RsTurtle() { _sharing_strategy = SHARE_ENTIRE_NETWORK ;}
 		virtual ~RsTurtle() {}
-
-		enum FileSharingStrategy { SHARE_ENTIRE_NETWORK, SHARE_FRIENDS_ONLY } ;
 
 		// Lauches a search request through the pipes, and immediately returns
 		// the request id, which will be further used by the gui to store results
@@ -85,6 +86,10 @@ class RsTurtle
 
 		void setFileSharingStrategy(FileSharingStrategy f) { _sharing_strategy = f ; }
 
+		// Get info from the turtle router. I use std strings to hide the internal structs.
+		virtual void getInfo(std::vector<std::vector<std::string> >&,std::vector<std::vector<std::string> >&,
+									std::vector<std::vector<std::string> >&,std::vector<std::vector<std::string> >&) const = 0;
+		
 	protected:
 		FileSharingStrategy _sharing_strategy ;
 };

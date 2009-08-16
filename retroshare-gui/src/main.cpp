@@ -129,20 +129,20 @@ int main(int argc, char *argv[])
 	// I'm using a signal to transfer the hashing info to the mainwindow, because Qt schedules signals properly to
 	// avoid clashes between infos from threads.
 	//
-	QObject::connect(notify,SIGNAL(hashingInfoChanged(const QString&)),w                   ,SLOT(updateHashingInfo(const QString&))) ;
-#ifdef TURTLE_HOPPING
-	qRegisterMetaType<TurtleFileInfo>("TurtleFileInfo") ;
+
+	qRegisterMetaType<FileDetail>("FileDetail") ;
+
 	std::cerr << "connecting signals and slots" << std::endl ;
-	QObject::connect(notify,SIGNAL(gotTurtleSearchResult(qulonglong,TurtleFileInfo)),w->turtleDialog,SLOT(updateFiles(qulonglong,TurtleFileInfo))) ;
-#endif
-	QObject::connect(notify,SIGNAL(filesPreModChanged(bool))          ,w->sharedfilesDialog,SLOT(preModDirectories(bool)          )) ;
-	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w->sharedfilesDialog,SLOT(postModDirectories(bool)         )) ;
-	QObject::connect(notify,SIGNAL(transfersChanged())                ,w->transfersDialog  ,SLOT(insertTransfers()                )) ;
-	QObject::connect(notify,SIGNAL(friendsChanged())                  ,w->messengerWindow  ,SLOT(insertPeers()                    )) ;
-	QObject::connect(notify,SIGNAL(friendsChanged())                  ,w->peersDialog      ,SLOT(insertPeers()                    )) ;
-	QObject::connect(notify,SIGNAL(neighborsChanged())                ,w->networkDialog    ,SLOT(insertConnect()                  )) ;
-	QObject::connect(notify,SIGNAL(messagesChanged())                 ,w->messagesDialog   ,SLOT(insertMessages()                 )) ;
-	QObject::connect(notify,SIGNAL(configChanged())                   ,w->messagesDialog   ,SLOT(displayConfig()                  )) ;
+	QObject::connect(notify,SIGNAL(gotTurtleSearchResult(qulonglong,FileDetail)),w->searchDialog	,SLOT(updateFiles(qulonglong,FileDetail))) ;
+	QObject::connect(notify,SIGNAL(hashingInfoChanged(const QString&)),w                   		,SLOT(updateHashingInfo(const QString&))) ;
+	QObject::connect(notify,SIGNAL(filesPreModChanged(bool))          ,w->sharedfilesDialog		,SLOT(preModDirectories(bool)          )) ;
+	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w->sharedfilesDialog		,SLOT(postModDirectories(bool)         )) ;
+	QObject::connect(notify,SIGNAL(transfersChanged())                ,w->transfersDialog  		,SLOT(insertTransfers()                )) ;
+	QObject::connect(notify,SIGNAL(friendsChanged())                  ,w->messengerWindow  		,SLOT(insertPeers()                    )) ;
+	QObject::connect(notify,SIGNAL(friendsChanged())                  ,w->peersDialog      		,SLOT(insertPeers()                    )) ;
+	QObject::connect(notify,SIGNAL(neighborsChanged())                ,w->networkDialog    		,SLOT(insertConnect()                  )) ;
+	QObject::connect(notify,SIGNAL(messagesChanged())                 ,w->messagesDialog   		,SLOT(insertMessages()                 )) ;
+	QObject::connect(notify,SIGNAL(configChanged())                   ,w->messagesDialog   		,SLOT(displayConfig()                  )) ;
 
 	QObject::connect(notify,SIGNAL(chatStatusChanged(const QString&,const QString&)),w->peersDialog,SLOT(updatePeerStatusString(const QString&,const QString&)));
 	QObject::connect(notify,SIGNAL(logInfoChanged(const QString&)),w->networkDialog,SLOT(setLogInfo(QString))) ;

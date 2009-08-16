@@ -45,15 +45,23 @@ void NotifyQt::notifyChatStatus(const std::string& peer_id,const std::string& st
 	emit chatStatusChanged(QString::fromStdString(peer_id),QString::fromStdString(status_string)) ;
 }
 
-#ifdef TURTLE_HOPPING
 void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files) 
 {
 	std::cerr << "in notify search result..." << std::endl ;
 
 	for(std::list<TurtleFileInfo>::const_iterator it(files.begin());it!=files.end();++it)
-		emit gotTurtleSearchResult(search_id,*it) ;
+	{
+		FileDetail det ;
+		det.rank = 0 ;
+		det.age = 0 ;
+		det.name = (*it).name ;
+		det.hash = (*it).hash ;
+		det.id = "Anonymous" ;
+
+		emit gotTurtleSearchResult(search_id,det) ;
+	}
 }
-#endif
+
 void NotifyQt::notifyHashingInfo(std::string fileinfo)
 {
 	emit hashingInfoChanged(QString::fromStdString(fileinfo)) ;

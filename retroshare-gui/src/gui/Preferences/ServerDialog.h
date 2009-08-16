@@ -50,6 +50,7 @@ private slots:
   void saveAddresses();
   void toggleUPnP();
   void toggleIpDetermination(bool) ;
+  void showTurtleRouterDialog(); 
   
 private:
   /** A RshareSettings object used for saving/loading settings */

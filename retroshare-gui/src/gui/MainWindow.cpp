@@ -43,9 +43,7 @@
 #include "MessengerWindow.h"
 #include "HelpDialog.h"
 
-#ifdef TURTLE_HOPPING
-#include "gui/TurtleSearchDialog.h"
-#endif
+#include "gui/TurtleRouterDialog.h"
 
 #include "statusbar/peerstatus.h"
 #include "statusbar/dhtstatus.h"
@@ -164,10 +162,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(peersDialog = new PeersDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_PEERS), tr("Friends"), grp));
 
-#ifdef TURTLE_HOPPING
-    ui.stackPages->add(turtleDialog = new TurtleSearchDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_TURTLE), tr("Turtle"), grp));
-#endif
+//    ui.stackPages->add(turtleDialog = new TurtleRouterDialog(ui.stackPages), createPageAction(QIcon(IMAGE_TURTLE), tr("Turtle"), grp));
 
     ui.stackPages->add(searchDialog = new SearchDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_SEARCH), tr("Search"), grp));

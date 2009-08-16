@@ -26,6 +26,7 @@
 #include "rsiface/rsexpr.h"
 #include "rsiface/rsfiles.h"
 #include "rsiface/rspeers.h"
+#include "rsiface/rsturtle.h"
 #include "util/misc.h"
 
 #include <iostream>
@@ -248,6 +249,10 @@ void SearchDialog::download()
                                   (item->text(SR_REALSIZE_COL)).toInt(), 
                                   "", 0, srcIds);
 
+			rsTurtle->monitorFileTunnels(	item->text(SR_NAME_COL).toStdString(),
+                                  		item->text(SR_HASH_COL).toStdString(), 
+                                  		item->text(SR_REALSIZE_COL).toInt()) ;
+
 			std::cout << "isuing file request from search dialog: -" << (item->text(SR_NAME_COL)).toStdString() << "-" << (item->text(SR_HASH_COL)).toStdString() << "-" << (item->text(SR_REALSIZE_COL)).toInt() << "-ids=" ;
 			for(std::list<std::string>::const_iterator it(srcIds.begin());it!=srcIds.end();++it)
 				std::cout << *it << "-" << std::endl ;
@@ -408,9 +413,10 @@ void SearchDialog::advancedSearch(Expression* expression)
 	/* call to core */
 	std::list<FileDetail> results;
 	rsFiles -> SearchBoolExp(expression, results);
+	qulonglong searchId = rand() ;	// for now, because we need to call the turtle search to get a proper id.
 
         /* abstraction to allow reusee of tree rendering code */
-        resultsToTree((advSearchDialog->getSearchAsString()).toStdString(), results);
+	resultsToTree((advSearchDialog->getSearchAsString()).toStdString(),searchId, results);
 }
 
 
@@ -421,6 +427,8 @@ void SearchDialog::searchKeywords()
 	std::string txt = qTxt.toStdString();
 
 	std::cerr << "SearchDialog::searchKeywords() : " << txt << std::endl;
+
+	TurtleRequestId req_id = rsTurtle->turtleSearch(txt) ;
 
 	/* extract keywords from lineEdit */
 	QStringList qWords = qTxt.split(" ", QString::SkipEmptyParts);
@@ -441,7 +449,8 @@ void SearchDialog::searchKeywords()
 	std::list<FileDetail> initialResults;
 	std::list<FileDetail> * finalResults = 0;
 	
-	rsFiles -> SearchKeywords(words, initialResults,DIR_FLAGS_LOCAL | DIR_FLAGS_REMOTE);
+	//rsFiles -> SearchKeywords(words, initialResults,DIR_FLAGS_LOCAL | DIR_FLAGS_REMOTE | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
+	rsFiles -> SearchKeywords(words, initialResults,DIR_FLAGS_REMOTE | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
 	/* which extensions do we use? */
 	QString qExt, qName;
 	int extIndex;
@@ -451,7 +460,9 @@ void SearchDialog::searchKeywords()
 	if (ui.FileTypeComboBox->currentIndex() == FILETYPE_IDX_ANY) 
 	{
 		finalResults = &initialResults;
-	} else {
+	} 
+	else 
+	{
 		finalResults = new std::list<FileDetail>;
 		// amend the text description of the search
 		txt += " (" + ui.FileTypeComboBox->currentText().toStdString() + ")";
@@ -487,36 +498,83 @@ void SearchDialog::searchKeywords()
 		}
 	}
 
-        /* abstraction to allow reusee of tree rendering code */
-        resultsToTree(txt, *finalResults);
+	/* abstraction to allow reusee of tree rendering code */
+	resultsToTree(txt,req_id, *finalResults);
 	ui.lineEdit->clear();
 }
  
-void SearchDialog::resultsToTree(std::string txt, std::list<FileDetail> results)
+void SearchDialog::updateFiles(qulonglong search_id,FileDetail file)
 {
-	/* translate search results */
-	int searchId = nextSearchId++;
-	std::ostringstream out;
-	out << searchId;
+	/* which extensions do we use? */
+	std::string txt = ui.lineEdit->text().toStdString();
 
-	std::list<FileDetail>::iterator it;
-	for(it = results.begin(); it != results.end(); it++)
+	if (ui.FileTypeComboBox->currentIndex() == FILETYPE_IDX_ANY) 
+		insertFile(txt,search_id,file);
+	else
 	{
-		QTreeWidgetItem *item = new QTreeWidgetItem();
-		item->setText(SR_NAME_COL, QString::fromStdString(it->name));
-		item->setText(SR_HASH_COL, QString::fromStdString(it->hash));
-		item->setText(SR_SEARCH_ID_COL, QString::fromStdString(out.str()));
+		// amend the text description of the search
+		txt += " (" + ui.FileTypeComboBox->currentText().toStdString() + ")";
+		// collect the extensions to use
+		QString extStr = SearchDialog::FileTypeExtensionMap->value(ui.FileTypeComboBox->currentIndex());	
+		QStringList extList = extStr.split(" ");
 
-		QString ext = QFileInfo(QString::fromStdString(it->name)).suffix();
-		if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif"
-		        || ext == "bmp" || ext == "ico" || ext == "svg")
+		// get this file's extension
+		QString qName = QString::fromStdString(file.name);
+		int extIndex = qName.lastIndexOf(".");
+
+		if (extIndex >= 0) 
+		{
+			QString qExt = qName.mid(extIndex+1);
+
+			if (qExt != "" )
+				for (int i = 0; i < extList.size(); ++i)
+					if (qExt.toUpper() == extList.at(i).toUpper())
+						insertFile(txt,search_id,file);
+		}
+	}
+}
+ 
+void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const FileDetail& file)
+{
+	// algo:
+	//
+	// 1 - look in result window whether the file already exist. 
+	// 	1.1 - If yes, just increment the source number. 
+	// 	2.2 - Otherwize, add an entry.
+	// 2 - look in the summary whether there exist the same request id.
+	// 	1.1 - If yes, just increment the result number. 
+	// 	2.2 - Otherwize, add an entry.
+	//
+
+	// 1 - look in result window whether the file already exists. 
+	//
+	int items = ui.searchResultWidget->topLevelItemCount();
+	bool found = false ;
+
+	for(int i = 0; i < items; i++)
+		if(ui.searchResultWidget->topLevelItem(i)->text(SR_HASH_COL) == QString::fromStdString(file.hash)
+				&& ui.searchResultWidget->topLevelItem(i)->text(SR_SEARCH_ID_COL).toInt(NULL,16) == searchId)
+		{
+			int s = ui.searchResultWidget->topLevelItem(i)->text(SR_ID_COL).toInt() ;
+			ui.searchResultWidget->topLevelItem(i)->setText(SR_ID_COL,QString::number(s+1));
+			found = true ;
+		}
+	
+	if(!found)
+	{
+		/* translate search results */
+
+		QTreeWidgetItem *item = new QTreeWidgetItem();
+		item->setText(SR_NAME_COL, QString::fromStdString(file.name));
+		item->setText(SR_HASH_COL, QString::fromStdString(file.hash));
+
+		QString ext = QFileInfo(QString::fromStdString(file.name)).suffix();
+		if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif" || ext == "bmp" || ext == "ico" || ext == "svg")
 		{
 			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypePicture.png"));
 			item->setText(SR_TYPE_COL, QString::fromUtf8("Picture"));
 		}
-		else if (ext == "avi" || ext == "mpg" || ext == "mpeg" || ext == "wmv"
-			|| ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov"
-			|| ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp")
+		else if (ext == "avi" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov" || ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp")
 		{
 			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeVideo.png"));
 			item->setText(SR_TYPE_COL, QString::fromUtf8("Video"));
@@ -526,15 +584,12 @@ void SearchDialog::resultsToTree(std::string txt, std::list<FileDetail> results)
 			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeAudio.png"));
 			item->setText(SR_TYPE_COL, QString::fromUtf8("Audio"));
 		}
-		else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz"
-		         || ext == "rar" || ext == "rpm" || ext == "deb")
+		else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "rar" || ext == "rpm" || ext == "deb")
 		{
 			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeArchive.png"));
 			item->setText(SR_TYPE_COL, QString::fromUtf8("Archive"));
 		}
-		else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com"
-			|| ext == "bin" || ext == "exe" || ext == "js" || ext == "pif"
-			|| ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws")
+		else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com" || ext == "bin" || ext == "exe" || ext == "js" || ext == "pif" || ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws")
 		{
 			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeProgram.png"));
 			item->setText(SR_TYPE_COL, QString::fromUtf8("Program"));
@@ -550,7 +605,7 @@ void SearchDialog::resultsToTree(std::string txt, std::list<FileDetail> results)
 			item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
 		}
 		else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls"
-		         || ext == "sxc" || ext == "odt" || ext == "ods")
+				|| ext == "sxc" || ext == "odt" || ext == "ods")
 		{
 			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeDocument.png"));
 			item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
@@ -565,55 +620,59 @@ void SearchDialog::resultsToTree(std::string txt, std::list<FileDetail> results)
 			item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeAny.png"));
 		}
 
-		
-
 		/*
 		 * to facilitate downlaods we need to save the file size too
 		 */
-		//QVariant * variant = new QVariant((qulonglong)it->size);
-		//item->setText(SR_SIZE_COL, QString(variant->toString()));
-		item->setText(SR_SIZE_COL, misc::friendlyUnit(it->size));
-		item->setText(SR_REALSIZE_COL, QString::number(it->size));
+
+		item->setText(SR_SIZE_COL, misc::friendlyUnit(file.size));
+		item->setText(SR_REALSIZE_COL, QString::number(file.size));
 		item->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
-
-
-		// I kept the color code green=online, grey=offline
-		// Qt::blue is very dark and hardly compatible with the black text on it.
-		//
-		if (it->id == "Local")
-		{
-			item->setText(SR_ID_COL, QString::fromStdString(it->id));
-			item->setText(SR_UID_COL, QString::fromStdString(rsPeers->getOwnId()));
-			item->setBackground(3, QBrush(Qt::red)); /* colour green? */
-		}
-		else 
-		{
-			item->setText(SR_ID_COL, QString::fromStdString( rsPeers->getPeerName(it->id)));
-			item->setText(SR_UID_COL, QString::fromStdString( it->id));
-			if(rsPeers->isOnline(it->id))
-				item->setBackground(3, QBrush(Qt::green));
-			else
-				item->setBackground(3, QBrush(Qt::lightGray));
-		}
+		item->setText(SR_ID_COL, QString::number(1));
+		item->setText(SR_SEARCH_ID_COL, QString::number(searchId,16));
 
 		ui.searchResultWidget->addTopLevelItem(item);
 	}
 
 	/* add to the summary as well */
 
-	QTreeWidgetItem *item = new QTreeWidgetItem();
-	item->setText(SS_TEXT_COL, QString::fromStdString(txt));
-	std::ostringstream out2;
-	out2 << results.size();
+	int items2 = ui.searchSummaryWidget->topLevelItemCount();
+	bool found2 = false ;
 
-	item->setText(SS_COUNT_COL, QString::fromStdString(out2.str()));
-	item->setText(SS_SEARCH_ID_COL, QString::fromStdString(out.str()));
+	for(int i = 0; i < items2; i++)
+		if(ui.searchSummaryWidget->topLevelItem(i)->text(SS_SEARCH_ID_COL).toInt(NULL,16) == searchId)
+		{
+			if(!found)									// only increment result when it's a new item.
+			{
+				int s = ui.searchSummaryWidget->topLevelItem(i)->text(SS_COUNT_COL).toInt() ;
+				ui.searchSummaryWidget->topLevelItem(i)->setText(SS_COUNT_COL,QString::number(s+1));
+			}
+			found2 = true ;
+		}
 
-	ui.searchSummaryWidget->addTopLevelItem(item);
-	ui.searchSummaryWidget->setCurrentItem(item);
+	if(!found2)
+	{
+		QTreeWidgetItem *item2 = new QTreeWidgetItem();
+		item2->setText(SS_TEXT_COL, QString::fromStdString(txt));
+		item2->setText(SS_COUNT_COL, QString::number(1));
+		item2->setText(SS_SEARCH_ID_COL, QString::number(searchId,16));
+
+		ui.searchSummaryWidget->addTopLevelItem(item2);
+		ui.searchSummaryWidget->setCurrentItem(item2);
+	}
 
 	/* select this search result */
 	selectSearchResults();
+}
+
+void SearchDialog::resultsToTree(std::string txt,qulonglong searchId, const std::list<FileDetail>& results)
+{
+	/* translate search results */
+	std::ostringstream out;
+	out << searchId;
+
+	std::list<FileDetail>::const_iterator it;
+	for(it = results.begin(); it != results.end(); it++)
+		insertFile(txt,searchId,*it) ;
 }
 
 

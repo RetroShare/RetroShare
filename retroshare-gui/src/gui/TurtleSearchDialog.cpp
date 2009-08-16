@@ -22,7 +22,7 @@
 #include <list>
 
 #include "rshare.h"
-#include "TurtleSearchDialog.h"
+#include "SearchDialog.h"
 #include "rsiface/rsiface.h"
 #include "rsiface/rsexpr.h"
 #include "rsiface/rsfiles.h"
@@ -71,19 +71,19 @@
 
 /* static members */
 /* These indices MUST be identical to their equivalent indices in the combobox */
-const int TurtleSearchDialog::FILETYPE_IDX_ANY = 0;
-const int TurtleSearchDialog::FILETYPE_IDX_ARCHIVE = 1;
-const int TurtleSearchDialog::FILETYPE_IDX_AUDIO = 2;
-const int TurtleSearchDialog::FILETYPE_IDX_CDIMAGE = 3;
-const int TurtleSearchDialog::FILETYPE_IDX_DOCUMENT = 4;
-const int TurtleSearchDialog::FILETYPE_IDX_PICTURE = 5;
-const int TurtleSearchDialog::FILETYPE_IDX_PROGRAM = 6;
-const int TurtleSearchDialog::FILETYPE_IDX_VIDEO = 7;
-QMap<int, QString> * TurtleSearchDialog::FileTypeExtensionMap = new QMap<int, QString>();
-bool TurtleSearchDialog::initialised = false;
+const int SearchDialog::FILETYPE_IDX_ANY = 0;
+const int SearchDialog::FILETYPE_IDX_ARCHIVE = 1;
+const int SearchDialog::FILETYPE_IDX_AUDIO = 2;
+const int SearchDialog::FILETYPE_IDX_CDIMAGE = 3;
+const int SearchDialog::FILETYPE_IDX_DOCUMENT = 4;
+const int SearchDialog::FILETYPE_IDX_PICTURE = 5;
+const int SearchDialog::FILETYPE_IDX_PROGRAM = 6;
+const int SearchDialog::FILETYPE_IDX_VIDEO = 7;
+QMap<int, QString> * SearchDialog::FileTypeExtensionMap = new QMap<int, QString>();
+bool SearchDialog::initialised = false;
  
 /** Constructor */
-TurtleSearchDialog::TurtleSearchDialog(QWidget *parent)
+SearchDialog::SearchDialog(QWidget *parent)
 : MainPage(parent), 
 	advSearchDialog(NULL), 
 	contextMnu(NULL), contextMnu2(NULL),
@@ -93,7 +93,7 @@ TurtleSearchDialog::TurtleSearchDialog(QWidget *parent)
     ui.setupUi(this);
 
     /* initialise the filetypes mapping */
-    if (!TurtleSearchDialog::initialised)
+    if (!SearchDialog::initialised)
     {
 	initialiseFileTypeMappings();
     }
@@ -181,22 +181,22 @@ TurtleSearchDialog::TurtleSearchDialog(QWidget *parent)
 #endif
 }
 
-void TurtleSearchDialog::initialiseFileTypeMappings()
+void SearchDialog::initialiseFileTypeMappings()
 {
 	/* edit these strings to change the range of extensions recognised by the search */
-	TurtleSearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_ANY, "");
-	TurtleSearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_AUDIO, "aac aif iff m3u mid midi mp3 mpa ogg ra ram wav wma");
-	TurtleSearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_ARCHIVE, "7z bz2 gz pkg rar sea sit sitx tar zip");
-	TurtleSearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_CDIMAGE, "iso nrg mdf");
-	TurtleSearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_DOCUMENT, "doc odt ott rtf pdf ps txt log msg wpd wps" );	
-	TurtleSearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_PICTURE, "3dm 3dmf ai bmp drw dxf eps gif ico indd jpe jpeg jpg mng pcx pcc pct pgm "
+	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_ANY, "");
+	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_AUDIO, "aac aif iff m3u mid midi mp3 mpa ogg ra ram wav wma");
+	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_ARCHIVE, "7z bz2 gz pkg rar sea sit sitx tar zip");
+	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_CDIMAGE, "iso nrg mdf");
+	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_DOCUMENT, "doc odt ott rtf pdf ps txt log msg wpd wps" );	
+	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_PICTURE, "3dm 3dmf ai bmp drw dxf eps gif ico indd jpe jpeg jpg mng pcx pcc pct pgm "
 		"pix png psd psp qxd qxprgb sgi svg tga tif tiff xbm xcf");
-	TurtleSearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_PROGRAM, "app bat cgi com bin exe js pif py pl sh vb ws ");
-	TurtleSearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_VIDEO, "3gp asf asx avi mov mp4 mkv flv mpeg mpg qt rm swf vob wmv");
-	TurtleSearchDialog::initialised = true;
+	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_PROGRAM, "app bat cgi com bin exe js pif py pl sh vb ws ");
+	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_VIDEO, "3gp asf asx avi mov mp4 mkv flv mpeg mpg qt rm swf vob wmv");
+	SearchDialog::initialised = true;
 }
 
-void TurtleSearchDialog::searchtableWidgetCostumPopupMenu( QPoint point )
+void SearchDialog::searchtableWidgetCostumPopupMenu( QPoint point )
 {
       // block the popup if no results available
       if ((ui.searchResultWidget->selectedItems()).size() == 0) return; 
@@ -229,7 +229,7 @@ void TurtleSearchDialog::searchtableWidgetCostumPopupMenu( QPoint point )
 }
 
 
-void TurtleSearchDialog::download()
+void SearchDialog::download()
 {
 	/* should also be able to handle multi-selection */
 	QList<QTreeWidgetItem*> itemsForDownload = ui.searchResultWidget->selectedItems();
@@ -244,7 +244,7 @@ void TurtleSearchDialog::download()
 
 		if(item->text(SR_ID_COL) != "Local")
 		{
-			std::cerr << "TurtleSearchDialog::download() Calling File Request";
+			std::cerr << "SearchDialog::download() Calling File Request";
 #ifdef TO_DO
 			// This is disabled, although it still works for friends files. Indeed, one must first 
 			// warn the turtle router to digg tunnels for the given hashes, then call rsFiles.
@@ -275,14 +275,14 @@ void TurtleSearchDialog::download()
 }
 
 
-void TurtleSearchDialog::broadcastonchannel()
+void SearchDialog::broadcastonchannel()
 {
 
     QMessageBox::warning(0, tr("Sorry"), tr("This function is not yet implemented."));
 }
 
 
-void TurtleSearchDialog::recommendtofriends()
+void SearchDialog::recommendtofriends()
 {
    QMessageBox::warning(0, tr("Sorry"), tr("This function is not yet implemented."));
    
@@ -290,7 +290,7 @@ void TurtleSearchDialog::recommendtofriends()
 
 
 /** context menu searchTablewidget2 **/
-void TurtleSearchDialog::searchtableWidget2CostumPopupMenu( QPoint point )
+void SearchDialog::searchtableWidget2CostumPopupMenu( QPoint point )
 {
     
     // block the popup if no results available
@@ -317,7 +317,7 @@ void TurtleSearchDialog::searchtableWidget2CostumPopupMenu( QPoint point )
 }
 
 /** remove selected search result **/
-void TurtleSearchDialog::searchRemove()
+void SearchDialog::searchRemove()
 {
 	/* get the current search id from the summary window */
         QTreeWidgetItem *ci = ui.searchSummaryWidget->currentItem();
@@ -327,7 +327,7 @@ void TurtleSearchDialog::searchRemove()
         /* get the searchId text */
         QString searchId = ci->text(SS_SEARCH_ID_COL);
 
-        std::cerr << "TurtleSearchDialog::searchRemove(): searchId: " << searchId.toStdString();
+        std::cerr << "SearchDialog::searchRemove(): searchId: " << searchId.toStdString();
         std::cerr << std::endl;
 
         /* show only matching searchIds in main window */
@@ -359,7 +359,7 @@ void TurtleSearchDialog::searchRemove()
 }
 
 /** remove all search results **/
-void TurtleSearchDialog::searchRemoveAll()
+void SearchDialog::searchRemoveAll()
 {
 	ui.searchResultWidget->clear();
 	ui.searchSummaryWidget->clear();
@@ -370,13 +370,13 @@ void TurtleSearchDialog::searchRemoveAll()
         Advanced search implementation
 *******************************************************************/
 // Event handlers for hide and show events
-void TurtleSearchDialog::hideEvent(QHideEvent * event)
+void SearchDialog::hideEvent(QHideEvent * event)
 {
     showAdvSearchDialog(false);
     MainPage::hideEvent(event);
 }
 
-void TurtleSearchDialog::toggleAdvancedSearchDialog(bool toggled)
+void SearchDialog::toggleAdvancedSearchDialog(bool toggled)
 {
     // record the users preference for future reference
     RshareSettings rsharesettings;
@@ -386,7 +386,7 @@ void TurtleSearchDialog::toggleAdvancedSearchDialog(bool toggled)
     showAdvSearchDialog(toggled);
 }
 
-void TurtleSearchDialog::showAdvSearchDialog(bool show)
+void SearchDialog::showAdvSearchDialog(bool show)
 {
     // instantiate if about to show for the first time
     if (advSearchDialog == 0 && show)
@@ -404,7 +404,7 @@ void TurtleSearchDialog::showAdvSearchDialog(bool show)
     }
 }
 
-void TurtleSearchDialog::advancedSearch(Expression* expression)
+void SearchDialog::advancedSearch(Expression* expression)
 {
 //        advSearchDialog->hide();
 //
@@ -418,7 +418,7 @@ void TurtleSearchDialog::advancedSearch(Expression* expression)
 
 
 
-void TurtleSearchDialog::searchKeywords()
+void SearchDialog::searchKeywords()
 {	
 	QString qTxt = ui.lineEdit->text();
 	std::string txt = qTxt.toStdString();
@@ -426,7 +426,7 @@ void TurtleSearchDialog::searchKeywords()
 	TurtleRequestId id = rsTurtle->turtleSearch(txt) ;
 }
 
-void TurtleSearchDialog::updateFiles(qulonglong search_id,TurtleFileInfo file)
+void SearchDialog::updateFiles(qulonglong search_id,TurtleFileInfo file)
 {
 	/* which extensions do we use? */
 	std::string txt = ui.lineEdit->text().toStdString();
@@ -438,7 +438,7 @@ void TurtleSearchDialog::updateFiles(qulonglong search_id,TurtleFileInfo file)
 		// amend the text description of the search
 		txt += " (" + ui.FileTypeComboBox->currentText().toStdString() + ")";
 		// collect the extensions to use
-		QString extStr = TurtleSearchDialog::FileTypeExtensionMap->value(ui.FileTypeComboBox->currentIndex());	
+		QString extStr = SearchDialog::FileTypeExtensionMap->value(ui.FileTypeComboBox->currentIndex());	
 		QStringList extList = extStr.split(" ");
 
 		// get this file's extension
@@ -457,7 +457,7 @@ void TurtleSearchDialog::updateFiles(qulonglong search_id,TurtleFileInfo file)
 	}
 }
  
-void TurtleSearchDialog::insertFile(const std::string& txt,qulonglong searchId, const TurtleFileInfo& file)
+void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const TurtleFileInfo& file)
 {
 	// algo:
 	//
@@ -591,7 +591,7 @@ void TurtleSearchDialog::insertFile(const std::string& txt,qulonglong searchId, 
 //void QTreeWidget::currentItemChanged ( QTreeWidgetItem * current, QTreeWidgetItem * previous )  [signal]
 
 
-void TurtleSearchDialog::selectSearchResults()
+void SearchDialog::selectSearchResults()
 {
 	/* highlight this search in summary window */
 	QTreeWidgetItem *ci = ui.searchSummaryWidget->currentItem();
@@ -601,7 +601,7 @@ void TurtleSearchDialog::selectSearchResults()
 	/* get the searchId text */
 	QString searchId = ci->text(SS_SEARCH_ID_COL);
 
-	std::cerr << "TurtleSearchDialog::selectSearchResults(): searchId: " << searchId.toStdString();
+	std::cerr << "SearchDialog::selectSearchResults(): searchId: " << searchId.toStdString();
 	std::cerr << std::endl;
 
 	/* show only matching searchIds in main window */

@@ -57,7 +57,6 @@ const uint32_t MAX_UPNP_INIT = 		10; /* seconds UPnP timeout */
 /****
  * #define CONN_DEBUG 1
  ***/
-#define CONN_DEBUG 1
 /****
  * #define P3CONNMGR_NO_TCP_CONNECTIONS 1
  ***/
@@ -667,14 +666,7 @@ void p3ConnectMgr::netUdpCheck()
 		/* get the addr from the configuration */
 		struct sockaddr_in iaddr = ownState.localaddr;
 
-		if(use_extr_addr_finder && mExtAddrFinder->hasValidIP(&tmpip))
-		{
-			extValid = true;
-			extAddr = tmpip ;
-			extAddr.sin_port = iaddr.sin_port ;
-			extAddrStable = true;
-		}
-		else if (mUpnpAddrValid)
+		if (mUpnpAddrValid)
 		{
 			extValid = true;
 			extAddr = mUpnpExtAddr;
@@ -685,6 +677,13 @@ void p3ConnectMgr::netUdpCheck()
 			extValid = true;
 			extAddr = mStunExtAddr;
 			extAddrStable = mStunAddrStable;
+		}
+		else if(use_extr_addr_finder && mExtAddrFinder->hasValidIP(&tmpip))
+		{
+			extValid = true;
+			extAddr = tmpip ;
+			extAddr.sin_port = iaddr.sin_port ;
+			extAddrStable = true;
 		}
 
 		if (extValid)
@@ -1020,6 +1019,7 @@ bool p3ConnectMgr::stunCheck()
 		netReset();
 	}
 
+#ifdef CONN_DEBUG
 	int i = 0;
 	for(i = 0; tou_getstunpeer(i, (struct sockaddr *) &raddr, &rlen,
 					(struct sockaddr *) &eaddr, &elen, 
@@ -1038,6 +1038,7 @@ bool p3ConnectMgr::stunCheck()
 		}
 		std::cerr << std::endl;
 	}
+#endif
 
 	/* pass on udp status to dht */
 	if (tou_needstunpeers())

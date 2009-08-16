@@ -2,6 +2,7 @@
 #define RSIFACE_NOTIFY_TXT_H
 
 #include "rsiface/rsiface.h"
+#include "rsiface/rsturtle.h"
 #include <QObject>
 
 #include <string>
@@ -14,12 +15,7 @@ class ChatDialog;
 class MessagesDialog;
 class ChannelsDialog;
 class MessengerWindow;
-#ifdef TURTLE_HOPPING
-#include "rsiface/rsturtle.h"
-class TurtleSearchDialog ;
-
 struct TurtleFileInfo ;
-#endif
 
 //class NotifyQt: public NotifyBase, public QObject
 class NotifyQt: public QObject, public NotifyBase
@@ -52,9 +48,7 @@ class NotifyQt: public QObject, public NotifyBase
 //		virtual void notifyChat();
 		virtual void notifyChatStatus(const std::string& peer_id,const std::string& status_string);
 		virtual void notifyHashingInfo(std::string fileinfo);
-#ifdef TURTLE_HOPPING
 		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& found_files);
-#endif
 
 	signals:
 		// It's beneficial to send info to the GUI using signals, because signals are thread-safe
@@ -70,9 +64,7 @@ class NotifyQt: public QObject, public NotifyBase
 		void configChanged() const ;
 		void logInfoChanged(const QString&) const ;
 		void chatStatusChanged(const QString&,const QString&) const ;
-#ifdef TURTLE_HOPPING
-		void gotTurtleSearchResult(qulonglong search_id,TurtleFileInfo file) const ;
-#endif
+		void gotTurtleSearchResult(qulonglong search_id,FileDetail file) const ;
 
 	public slots:
 

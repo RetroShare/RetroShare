@@ -227,6 +227,12 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle, public ftS
 		//
 		virtual void stopMonitoringFileTunnels(const std::string& file_hash) ;
 
+		// get info about tunnels
+		virtual void getInfo(std::vector<std::vector<std::string> >&,
+									std::vector<std::vector<std::string> >&,
+									std::vector<std::vector<std::string> >&,
+									std::vector<std::vector<std::string> >&) const ;
+		
 		/************* from pqiMonitor *******************/
 		// Informs the turtle router that some peers are (dis)connected. This should initiate digging new tunnels,
 		// and closing other tunnels.

@@ -29,12 +29,11 @@
 
 //#include <config/rsharesettings.h>
 
+#include <rsiface/rsfiles.h>
 #include "mainpage.h"
 #include "ui_SearchDialog.h"
 #include "advsearch/advancedsearchdialog.h"
 #include "Preferences/rsharesettings.h"
-
-class FileDetail;
 
 class SearchDialog : public MainPage 
 {
@@ -46,6 +45,9 @@ class SearchDialog : public MainPage
 /** Default Destructor */
     
     
+public slots:
+		void updateFiles(qulonglong request_id,FileDetail file) ;
+
 private slots:
     
 /** Create the context popup menu and it's submenus */
@@ -84,7 +86,9 @@ private slots:
     
 private:
 /** render the results to the tree widget display */
-    void resultsToTree(std::string, std::list<FileDetail>);
+    void resultsToTree(std::string,qulonglong searchId, const std::list<FileDetail>&);
+	 void insertFile(const std::string& txt,qulonglong searchId, const FileDetail& file) ;
+
 
 /** the advanced search dialog instance */
     AdvancedSearchDialog * advSearchDialog;

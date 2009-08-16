@@ -130,6 +130,7 @@ HEADERS +=  rshare.h \
             gui/ExampleDialog.h \
             gui/GamesDialog.h \
             gui/PhotoDialog.h \
+				gui/TurtleRouterDialog.h \
             gui/PhotoShow.h \
             gui/LinksDialog.h \
             gui/LibraryDialog.h \
@@ -265,6 +266,7 @@ FORMS +=    gui/BlogDialog.ui \
             gui/MainWindow.ui \
             gui/ApplicationWindow.ui \
             gui/ExampleDialog.ui \
+				gui/TurtleRouterDialog.ui \
             gui/GamesDialog.ui \
             gui/PhotoDialog.ui \
             gui/PhotoShow.ui \
@@ -344,6 +346,7 @@ SOURCES +=  main.cpp \
             gui/TransfersDialog.cpp \
             gui/graphframe.cpp \
             gui/mainpagestack.cpp \
+				gui/TurtleRouterDialog.cpp \
             gui/MainWindow.cpp \
             gui/ApplicationWindow.cpp \
             gui/ExampleDialog.cpp \
