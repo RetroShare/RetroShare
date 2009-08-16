@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -30,8 +30,10 @@
 
 //#include "rshare.h"
 #include "LinksDialog.h"
+#include "RetroShareLinkAnalyzer.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsrank.h"
+#include "rsiface/rsfiles.h"
 
 #include <iostream>
 #include <sstream>
@@ -53,6 +55,7 @@
 #define IMAGE_OK			    ":/images/filerating3.png"
 #define IMAGE_SUX			    ":/images/filerating2.png"
 #define IMAGE_BADLINK			":/images/filerating1.png"
+#define IMAGE_DOWNLOAD       	":/images/download16.png"
 
 /******
  * #define LINKS_DEBUG 1
@@ -78,10 +81,10 @@ LinksDialog::LinksDialog(QWidget *parent)
   connect( ui.addButton, SIGNAL( clicked( void ) ), this, SLOT( addLinkComment( void ) ) );
   connect( ui.expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggleWindows( void ) ) );
 
-  connect( ui.linkTreeWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem *, QTreeWidgetItem * ) ), 
+  connect( ui.linkTreeWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem *, QTreeWidgetItem * ) ),
   		this, SLOT( changedItem ( QTreeWidgetItem *, QTreeWidgetItem * ) ) );
- 
-  connect( ui.linkTreeWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int ) ), 
+
+  connect( ui.linkTreeWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int ) ),
   		this, SLOT( openLink ( QTreeWidgetItem *, int ) ) );
 
   connect( ui.anonBox, SIGNAL( stateChanged ( int ) ), this, SLOT( checkAnon ( void  ) ) );
@@ -93,7 +96,7 @@ LinksDialog::LinksDialog(QWidget *parent)
 
   /* hide the Tree +/- */
 //  ui.linkTreeWidget -> setRootIsDecorated( false );
-  
+
     /* Set header resize modes and initial section sizes */
 	QHeaderView * _header = ui.linkTreeWidget->header () ;
 //   	_header->setResizeMode (0, QHeaderView::Custom);
@@ -104,12 +107,12 @@ LinksDialog::LinksDialog(QWidget *parent)
 	_header->resizeSection ( 0, 400 );
 	_header->resizeSection ( 1, 50 );
 	_header->resizeSection ( 2, 150 );
-	
+
 	ui.linkTreeWidget->setSortingEnabled(true);
 
 
 	/* Set a GUI update timer - much cleaner than
-	 * doing everything through the notify agent 
+	 * doing everything through the notify agent
 	 */
 
   QTimer *timer = new QTimer(this);
@@ -166,10 +169,15 @@ void LinksDialog::linkTreeWidgetCostumPopupMenu( QPoint point )
         connect( vote_m2 , SIGNAL( triggered() ), this, SLOT( voteup_m2() ) );
 	voteMenu->addAction(vote_m2);
 
+	downloadAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr("Download"), this);
+	connect(downloadAct, SIGNAL(triggered()), this, SLOT(downloadSelected()));
+
       contextMnu.clear();
       contextMnu.addAction(voteupAct);
-      contextMnu.addSeparator(); 
+      contextMnu.addSeparator();
       contextMnu.addMenu(voteMenu);
+      contextMnu.addSeparator();
+      contextMnu.addAction(downloadAct);
 
       contextMnu.exec( mevent->globalPos() );
 }
@@ -307,7 +315,7 @@ void  LinksDialog::updateLinks()
 	std::list<std::string>::iterator rit;
 	std::list<RsRankComment>::iterator cit;
 
-#ifdef LINKS_DEBUG 
+#ifdef LINKS_DEBUG
 	std::cerr << "LinksDialog::updateLinks()" << std::endl;
 #endif
 
@@ -353,7 +361,7 @@ void  LinksDialog::updateLinks()
 		/* create items */
            	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
-		/* (0) Title */		
+		/* (0) Title */
 		{
 			item -> setText(0, QString::fromStdWString(detail.title));
 			/* Bold and bigger */
@@ -375,7 +383,7 @@ void  LinksDialog::updateLinks()
 			item->setFont(1, font);
 		}
 
-		/* (2) Link */		
+		/* (2) Link */
 		{
 			item -> setText(2, QString::fromStdWString(detail.link));
 			/* Bold and bigger */
@@ -385,7 +393,7 @@ void  LinksDialog::updateLinks()
 			item->setFont(2, font);
 		}
 
-		/* (4) rid */		
+		/* (4) rid */
 		item -> setText(4, QString::fromStdString(detail.rid));
 
 
@@ -430,7 +438,7 @@ void  LinksDialog::updateLinks()
 				//peerScore = "[-2 BAD Link] ";
 			}
 
-			/* (0) Comment */		
+			/* (0) Comment */
 			if (cit->comment != L"")
 			{
 				commentText = peerScore + QString::fromStdWString(cit->comment);
@@ -460,8 +468,8 @@ void  LinksDialog::updateLinks()
 				child -> setText(2, peerLabel);
 
 			}
-			
-			/* (4) Id */		
+
+			/* (4) Id */
 			child -> setText(4, QString::fromStdString(cit->id));
 
 			if (i % 2 == 1)
@@ -494,7 +502,7 @@ void  LinksDialog::updateLinks()
 
 void LinksDialog::openLink ( QTreeWidgetItem * item, int column )
 {
-#ifdef LINKS_DEBUG 
+#ifdef LINKS_DEBUG
 	std::cerr << "LinksDialog::openLink()" << std::endl;
 #endif
 
@@ -502,26 +510,26 @@ void LinksDialog::openLink ( QTreeWidgetItem * item, int column )
 	if (!item)
 	{
 
-#ifdef LINKS_DEBUG 
+#ifdef LINKS_DEBUG
 		std::cerr << "LinksDialog::openLink() Failed Item" << std::endl;
 #endif
 		return;
 	}
 
-	std::string rid;	
-	std::string pid;	
+	std::string rid;
+	std::string pid;
 
 	QTreeWidgetItem *parent = item->parent();
 	if (parent)
 	{
 		/* a child comment -> ignore double click */
-#ifdef LINKS_DEBUG 
+#ifdef LINKS_DEBUG
 		std::cerr << "LinksDialog::openLink() Failed Child" << std::endl;
 #endif
 		return;
 	}
 
-#ifdef LINKS_DEBUG 
+#ifdef LINKS_DEBUG
 	std::cerr << "LinksDialog::openLink() " << (item->text(2)).toStdString() << std::endl;
 #endif
 	/* open a browser */
@@ -542,8 +550,8 @@ void  LinksDialog::changedItem(QTreeWidgetItem *curr, QTreeWidgetItem *prev)
 		return;
 	}
 
-	std::string rid;	
-	std::string pid;	
+	std::string rid;
+	std::string pid;
 
 	QTreeWidgetItem *parent = curr->parent();
 	if (parent)
@@ -551,7 +559,7 @@ void  LinksDialog::changedItem(QTreeWidgetItem *curr, QTreeWidgetItem *prev)
 		rid = (parent->text(4)).toStdString();
 		pid = (curr->text(4)).toStdString();
 
-#ifdef LINKS_DEBUG 
+#ifdef LINKS_DEBUG
 		std::cerr << "LinksDialog::changedItem() Rid: " << rid << " Pid: " << pid;
 		std::cerr << std::endl;
 #endif
@@ -562,7 +570,7 @@ void  LinksDialog::changedItem(QTreeWidgetItem *curr, QTreeWidgetItem *prev)
 	{
 		rid = (curr->text(4)).toStdString();
 
-#ifdef LINKS_DEBUG 
+#ifdef LINKS_DEBUG
 		std::cerr << "LinksDialog::changedItem() Rid: " << rid << " Pid: NULL";
 		std::cerr << std::endl;
 #endif
@@ -675,7 +683,7 @@ void  LinksDialog::updateComments(std::string rid, std::string pid)
 	return;
 }
 
-void LinksDialog::addLinkComment( void ) 
+void LinksDialog::addLinkComment( void )
 {
 	/* get the title / link / comment */
 	QString title = ui.titleLineEdit->text();
@@ -707,7 +715,7 @@ void LinksDialog::addLinkComment( void )
 				title.toStdWString(),
 				comment.toStdWString(), score);
 		}
-	
+
 		updateLinks();
 		return;
 	}
@@ -736,8 +744,8 @@ void LinksDialog::addLinkComment( void )
 			return;
 		}
 
-		rsRanks->updateComment(mLinkId, 
-			comment.toStdWString(), 
+		rsRanks->updateComment(mLinkId,
+			comment.toStdWString(),
 			score);
 	}
 	else
@@ -747,7 +755,7 @@ void LinksDialog::addLinkComment( void )
 		if ((title.toStdWString() == detail.title) /* same title! - wrong */
 		     || (title == ""))
 		{
-        		sb = QMessageBox::question ( NULL, "Link Title Not Changed", 
+        		sb = QMessageBox::question ( NULL, "Link Title Not Changed",
 				"Do you want to continue?",
 			        (QMessageBox::Yes | QMessageBox::No));
 		}
@@ -758,7 +766,7 @@ void LinksDialog::addLinkComment( void )
 			rsRanks->newRankMsg(
 				link.toStdWString(),
 				title.toStdWString(),
-				comment.toStdWString(), 
+				comment.toStdWString(),
 				score);
 		}
 	}
@@ -768,7 +776,7 @@ void LinksDialog::addLinkComment( void )
 
 void LinksDialog::toggleWindows( void )
 {
-	/* if msg header visible -> hide by changing splitter 
+	/* if msg header visible -> hide by changing splitter
 	 */
 
 	QList<int> sizeList = ui.msgSplitter->sizes();
@@ -828,13 +836,13 @@ QTreeWidgetItem *LinksDialog::getCurrentLine()
         QTreeWidgetItem *item = peerWidget -> currentItem();
         if (!item)
         {
-#ifdef LINKS_DEBUG 
+#ifdef LINKS_DEBUG
 		std::cerr << "Invalid Current Item" << std::endl;
 #endif
 		return NULL;
 	}
 
-#ifdef LINKS_DEBUG 
+#ifdef LINKS_DEBUG
 	/* Display the columns of this item. */
 	std::ostringstream out;
         out << "CurrentPeerItem: " << std::endl;
@@ -867,7 +875,7 @@ void LinksDialog::voteup_anon()
 	}
 
 	QString link = QString::fromStdWString(detail.link);
-#ifdef LINKS_DEBUG 
+#ifdef LINKS_DEBUG
 	std::cerr << "LinksDialog::voteup_anon() : " << link.toStdString() << std::endl;
 #endif
 	// need a proper anon sharing option.
@@ -893,7 +901,7 @@ void LinksDialog::voteup_score(int score)
 
 	QString link = QString::fromStdWString(detail.link);
 	std::wstring comment;
-#ifdef LINKS_DEBUG 
+#ifdef LINKS_DEBUG
 	std::cerr << "LinksDialog::voteup_score() : " << link.toStdString() << std::endl;
 #endif
 
@@ -942,3 +950,45 @@ void LinksDialog::voteup_m2()
 	voteup_score(-2);
 }
 
+void LinksDialog::downloadSelected()
+{
+	if (mLinkId == "")
+	{
+		return;
+	}
+
+	RsRankDetails detail;
+	if (!rsRanks->getRankDetails(mLinkId, detail))
+	{
+		/* not there! */
+		return;
+	}
+
+	QString link = QString::fromStdWString(detail.link);
+	std::wstring comment;
+#ifdef LINKS_DEBUG
+	std::cerr << "LinksDialog::downloadSelected() : " << link.toStdString() << std::endl;
+#endif
+
+	RetroShareLinkAnalyzer analyzer(QString::fromStdWString(detail.link));
+	QVector<RetroShareLinkData> linkList;
+	analyzer.getFileInformation(linkList);
+	if (!linkList.isEmpty())
+	{
+		/* regularly one link and choose it */
+		RetroShareLinkData item = linkList.first();
+
+		/* retrieve all peers id for this file */
+		FileInfo info;
+		rsFiles->FileDetails(item.getHash().toStdString(), 0, info);
+
+		std::list<std::string> srcIds;
+		std::list<TransferInfo>::iterator pit;
+		for (pit = info.peers.begin(); pit != info.peers.end(); pit ++)
+		{
+			srcIds.push_back(pit->peerId);
+		}
+
+		rsFiles->FileRequest(item.getName().toStdString(), item.getHash().toStdString(), item.getSize().toULong(), "", 0, srcIds);
+	}
+}

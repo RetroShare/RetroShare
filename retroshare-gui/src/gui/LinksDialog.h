@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -28,7 +28,7 @@
 #include "ui_LinksDialog.h"
 
 
-class LinksDialog : public MainPage 
+class LinksDialog : public MainPage
 {
   Q_OBJECT
 
@@ -50,6 +50,7 @@ private slots:
   void voteup_p0();
   void voteup_m1();
   void voteup_m2();
+  void downloadSelected();
 
 void changedSortRank( int index );
 void changedSortPeriod( int index );
@@ -65,7 +66,7 @@ void  changedItem(QTreeWidgetItem *curr, QTreeWidgetItem *prev);
 void checkAnon();
 
 void checkUpdate();
-  
+
 private:
 
 void  updateComments(std::string rid, std::string pid);
@@ -84,6 +85,7 @@ void  updateComments(std::string rid, std::string pid);
     /** Defines the actions for the context menu */
   QAction* voteupAct;
   QAction* votedownAct;
+  QAction* downloadAct;
 
   QTreeWidget *exampletreeWidget;
 
