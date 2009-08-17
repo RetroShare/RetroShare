@@ -65,7 +65,7 @@
 #define IMAGE_FRIEND         ":/images/peers_16x16.png"
 #define IMAGE_PROGRESS       ":/images/browse-looking.gif"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
-#define IMAGE_OPENFOLDER	 ":/images/folderopen.png"
+#define IMAGE_OPENFOLDER        ":/images/folderopen.png"
 #define IMAGE_OPENFILE		 ":/images/fileopen.png"
 
 const QString Image_AddNewAssotiationForFile = ":/images/kcmsystem24.png";
@@ -633,13 +633,14 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 
 
 	  contextMnu2.addAction( menuAction );
-	  contextMnu2.addAction( copylinklocalAct);
-	  contextMnu2.addAction( sendlinkAct);
-	  contextMnu2.addAction( sendlinkCloudAct);
-	  contextMnu2.addAction( addlinkCloudAct);
-	  contextMnu2.addSeparator();
 	  contextMnu2.addAction( openfileAct);
 	  contextMnu2.addAction( openfolderAct);
+	  contextMnu2.addSeparator();
+	  contextMnu2.addAction( copylinklocalAct);
+	  contextMnu2.addAction( sendlinkAct);
+	  contextMnu2.addSeparator();
+	  contextMnu2.addAction( sendlinkCloudAct);
+	  contextMnu2.addAction( addlinkCloudAct);
 	  contextMnu2.addSeparator();
 	  contextMnu2.addMenu( recMenu);
 	  contextMnu2.addMenu( msgMenu);
