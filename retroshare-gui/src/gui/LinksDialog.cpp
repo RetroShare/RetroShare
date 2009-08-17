@@ -54,8 +54,9 @@
 #define IMAGE_GOOD			    ":/images/filerating4.png"
 #define IMAGE_OK			    ":/images/filerating3.png"
 #define IMAGE_SUX			    ":/images/filerating2.png"
-#define IMAGE_BADLINK			":/images/filerating1.png"
-#define IMAGE_DOWNLOAD       	":/images/download16.png"
+#define IMAGE_BADLINK			   ":/images/filerating1.png"
+#define IMAGE_NOCOMMENTRATING			":/images/filerating0.png"
+#define IMAGE_DOWNLOAD       		":/images/download16.png"
 
 /******
  * #define LINKS_DEBUG 1
@@ -411,30 +412,35 @@ void  LinksDialog::updateLinks()
 			{
 				peerScore = "[+2] ";
 				child -> setIcon(0,(QIcon(IMAGE_GREAT)));
+				item -> setIcon(0,(QIcon(IMAGE_GREAT)));
 				//peerScore = "[+2 Great Link] ";
 			}
 			else if (cit->score == 1)
 			{
 				peerScore = "[+1] ";
 				child -> setIcon(0,(QIcon(IMAGE_GOOD)));
+				item -> setIcon(0,(QIcon(IMAGE_GOOD)));
 				//peerScore = "[+1 Good] ";
 			}
 			else if (cit->score == 0)
 			{
 				peerScore = "[+0] ";
 				child -> setIcon(0,(QIcon(IMAGE_OK)));
+				item -> setIcon(0,(QIcon(IMAGE_OK)));
 				//peerScore = "[+0 Okay] ";
 			}
 			else if (cit->score == -1)
 			{
 				peerScore = "[-1] ";
 				child -> setIcon(0,(QIcon(IMAGE_SUX)));
+				item -> setIcon(0,(QIcon(IMAGE_SUX)));
 				//peerScore = "[-1 Not Worth It] ";
 			}
 			else //if (cit->score < -1)
 			{
 				peerScore = "[-2 BAD] ";
 				child -> setIcon(0,(QIcon(IMAGE_BADLINK)));
+				item -> setIcon(0,(QIcon(IMAGE_BADLINK)));
 				//peerScore = "[-2 BAD Link] ";
 			}
 

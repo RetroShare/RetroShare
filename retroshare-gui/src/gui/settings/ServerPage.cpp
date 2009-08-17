@@ -20,6 +20,8 @@
  ****************************************************************/
 
 #include "ServerPage.h"
+#include <gui/TurtleRouterDialog.h>
+
 #include "rshare.h"
 
 #include <iostream>
@@ -38,6 +40,10 @@ ServerPage::ServerPage(QWidget * parent, Qt::WFlags flags)
 
   connect( ui.netModeComboBox, SIGNAL( activated ( int ) ), this, SLOT( toggleUPnP( ) ) );
   connect( ui.allowIpDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleIpDetermination(bool) ) );
+  connect( ui._showTurtleDialogPB,SIGNAL(clicked()),this,SLOT( showTurtleRouterDialog() )) ;
+
+	  ui._enableTurtleCB->setChecked(true) ;
+	  ui._enableTurtleCB->setEnabled(false) ;
 
    QTimer *timer = new QTimer(this);
    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
@@ -60,6 +66,11 @@ ServerPage::ServerPage(QWidget * parent, Qt::WFlags flags)
 #ifdef Q_WS_WIN
 
 #endif
+}
+
+void ServerPage::showTurtleRouterDialog()
+{
+	TurtleRouterDialog::showUp() ;
 }
 
 void ServerPage::toggleIpDetermination(bool b)

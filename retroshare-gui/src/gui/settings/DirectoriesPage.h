@@ -46,8 +46,12 @@ class DirectoriesPage: public QWidget
 
     private slots:
     
-    void addShareDirectory();
-    void removeShareDirectory();
+#ifdef TO_REMOVE
+	void addShareDirectory();
+	void removeShareDirectory();
+#endif
+
+    void editDirectories() ;
     void setIncomingDirectory();
     void setPartialsDirectory();
     void shareDownloadDirectory(int state);

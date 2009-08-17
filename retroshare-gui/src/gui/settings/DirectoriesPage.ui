@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>452</width>
-    <height>349</height>
+    <width>477</width>
+    <height>439</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -509,102 +509,6 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>Shared Directories</string>
-     </property>
-     <layout class="QGridLayout">
-      <item row="0" column="0" rowspan="3">
-       <widget class="QListWidget" name="dirList"/>
-      </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="addButton">
-        <property name="minimumSize">
-         <size>
-          <width>34</width>
-          <height>34</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>34</width>
-          <height>34</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/directoryadd_24x24_shadow.png</normaloff>:/images/directoryadd_24x24_shadow.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QPushButton" name="removeButton">
-        <property name="minimumSize">
-         <size>
-          <width>34</width>
-          <height>34</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>34</width>
-          <height>34</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/directoryremove_24x24_shadow.png</normaloff>:/images/directoryremove_24x24_shadow.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <spacer>
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>71</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="3" column="0">
-       <widget class="QCheckBox" name="checkBox">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Automatically share incoming directory (Recommanded)</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
@@ -695,14 +599,44 @@
      </layout>
     </widget>
    </item>
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Shared Directories</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0" colspan="2">
+       <widget class="QListWidget" name="dirList"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="checkBox">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Automatically share incoming directory (Recommanded)</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="editButton">
+        <property name="text">
+         <string>Edit Share</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
   </layout>
  </widget>
  <tabstops>
   <tabstop>incomingDir</tabstop>
   <tabstop>incomingButton</tabstop>
   <tabstop>dirList</tabstop>
-  <tabstop>addButton</tabstop>
-  <tabstop>removeButton</tabstop>
  </tabstops>
  <resources>
   <include location="../images.qrc"/>

@@ -227,7 +227,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 #endif
 
 #ifdef NEWSETTINGS
-    addAction(new QAction(QIcon(IMAGE_OPTIONS), tr("Options"), ui.toolBar_2), SLOT(showSettings()));
+    addAction(new QAction(QIcon(IMAGE_OPTIONS), tr("Options"), ui.toolBar), SLOT(showSettings()));
 #endif
 
     /* Select the first action */

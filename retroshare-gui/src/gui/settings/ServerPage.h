@@ -45,6 +45,7 @@ private slots:
   void saveAddresses();
   void toggleUPnP();
   void toggleIpDetermination(bool) ;
+  void showTurtleRouterDialog(); 
 
 
     private:
