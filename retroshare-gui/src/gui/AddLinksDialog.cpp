@@ -43,6 +43,8 @@ AddLinksDialog::AddLinksDialog(QWidget *parent)
   connect(ui.addLinkButton, SIGNAL(clicked()), this, SLOT(addLinkComment()));
   connect(ui.closepushButton, SIGNAL(clicked()), this, SLOT(close()));
 
+  ui.linkLineEdit->setReadOnly(true);
+
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
