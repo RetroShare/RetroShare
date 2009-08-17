@@ -341,10 +341,7 @@ void SharedFilesDialog::sendLinkToCloud()
 {
 	copyLinkLocal ();
 
-	AddLinksDialog *nAddLinksDialog = new AddLinksDialog();
-
-	nAddLinksDialog->insertTitleText("New File");
-	nAddLinksDialog->insertLinkText(QApplication::clipboard()->text().toStdString());
+	AddLinksDialog *nAddLinksDialog = new AddLinksDialog(QApplication::clipboard()->text());
 
 	nAddLinksDialog->addLinkComment();
 	nAddLinksDialog->close();
@@ -354,10 +351,7 @@ void SharedFilesDialog::addLinkToCloud()
 {
 	copyLinkLocal ();
 
-	AddLinksDialog *nAddLinksDialog = new AddLinksDialog(this);
-
-	nAddLinksDialog->insertTitleText("New File");
-	nAddLinksDialog->insertLinkText(QApplication::clipboard()->text().toStdString());
+	AddLinksDialog *nAddLinksDialog = new AddLinksDialog(QApplication::clipboard()->text());
 
 	nAddLinksDialog->show();
 }

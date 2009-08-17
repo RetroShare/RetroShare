@@ -30,11 +30,8 @@ class AddLinksDialog : public QDialog
 
 public:
   /** Default Constructor */
-  AddLinksDialog(QWidget *parent = 0);
+  AddLinksDialog(QString url, QWidget *parent = 0);
   /** Default Destructor */
-
-  void  insertTitleText(std::string title);
-  void  insertLinkText(std::string link);
 
   static int IndexToScore(int index);
 

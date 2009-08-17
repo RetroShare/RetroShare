@@ -22,6 +22,7 @@
 #include "common/vmessagebox.h"
 
 #include "AddLinksDialog.h"
+#include "RetroShareLinkAnalyzer.h"
 #include "rsiface/rsrank.h"
 
 /* Images for context menu icons */
@@ -33,7 +34,7 @@
 #define IMAGE_BADLINK			":/images/filerating1.png"
 
 /** Constructor */
-AddLinksDialog::AddLinksDialog(QWidget *parent)
+AddLinksDialog::AddLinksDialog(QString url, QWidget *parent)
 : QDialog(parent)
 {
   /* Invoke the Qt Designer generated object setup routine */
@@ -44,6 +45,20 @@ AddLinksDialog::AddLinksDialog(QWidget *parent)
   connect(ui.closepushButton, SIGNAL(clicked()), this, SLOT(close()));
 
   ui.linkLineEdit->setReadOnly(true);
+  ui.linkLineEdit->setText(url);
+
+  RetroShareLinkAnalyzer analyzer(url);
+  QVector<RetroShareLinkData> linkList;
+  analyzer.getFileInformation(linkList);
+  if (!linkList.isEmpty())
+  {	  /* set title as first name from list */
+	  RetroShareLinkData item = linkList.first();
+	  ui.titleLineEdit->setText(item.getName());
+  }
+  else
+  {
+	  ui.titleLineEdit->setText("New File");
+  }
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -90,14 +105,4 @@ void AddLinksDialog::addLinkComment()
 	}
 
 	close();
-}
-
-void  AddLinksDialog::insertTitleText(std::string title)
-{
-	ui.titleLineEdit->setText(QString::fromStdString(title));
-}
-
-void  AddLinksDialog::insertLinkText(std::string link)
-{
-	ui.linkLineEdit->setText(QString::fromStdString(link));
 }
