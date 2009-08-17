@@ -30,6 +30,7 @@
 #include "util/RsAction.h"
 #include "msgs/ChanMsgDialog.h"
 #include "Preferences/rsharesettings.h"
+#include "AddLinksDialog.h"
 
 #ifndef RETROSHARE_LINK_ANALYZER
 #include "RetroShareLinkAnalyzer.h"
@@ -234,8 +235,6 @@ void SharedFilesDialog::downloadRemoteSelected()
 
   QItemSelectionModel *qism = ui.remoteDirTreeView->selectionModel();
   model -> downloadSelected(qism->selectedIndexes());
-
-
 }
 
 void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
@@ -338,7 +337,30 @@ void SharedFilesDialog::sendLinkTo( /*std::string rsid*/ )
     nMsgDialog->show();
 }
 
+void SharedFilesDialog::sendLinkToCloud()
+{
+	copyLinkLocal ();
 
+	AddLinksDialog *nAddLinksDialog = new AddLinksDialog();
+
+	nAddLinksDialog->insertTitleText("New File");
+	nAddLinksDialog->insertLinkText(QApplication::clipboard()->text().toStdString());
+
+	nAddLinksDialog->addLinkComment();
+	nAddLinksDialog->close();
+}
+
+void SharedFilesDialog::addLinkToCloud()
+{
+	copyLinkLocal ();
+
+	AddLinksDialog *nAddLinksDialog = new AddLinksDialog(this);
+
+	nAddLinksDialog->insertTitleText("New File");
+	nAddLinksDialog->insertLinkText(QApplication::clipboard()->text().toStdString());
+
+	nAddLinksDialog->show();
+}
 
 void SharedFilesDialog::playselectedfiles()
 {
@@ -591,11 +613,17 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 	}
 	//#endif
 
-	        copylinklocalAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), this );
-          connect( copylinklocalAct , SIGNAL( triggered() ), this, SLOT( copyLinkLocal() ) );
+	  copylinklocalAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), this );
+	  connect( copylinklocalAct , SIGNAL( triggered() ), this, SLOT( copyLinkLocal() ) );
 
-          sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), this );
-          connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( /*std::string rsid*/ ) ) );
+	  sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), this );
+	  connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( /*std::string rsid*/ ) ) );
+
+	  sendlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link to Cloud" ), this );
+	  connect( sendlinkCloudAct , SIGNAL( triggered() ), this, SLOT( sendLinkToCloud(  ) ) );
+
+	  addlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Add Link to Cloud" ), this );
+	  connect( addlinkCloudAct , SIGNAL( triggered() ), this, SLOT( addLinkToCloud(  ) ) );
 
 	  openfileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Open File"), this);
 	  connect(openfileAct, SIGNAL(triggered()), this, SLOT(openfile()));
@@ -607,6 +635,8 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 	  contextMnu2.addAction( menuAction );
 	  contextMnu2.addAction( copylinklocalAct);
 	  contextMnu2.addAction( sendlinkAct);
+	  contextMnu2.addAction( sendlinkCloudAct);
+	  contextMnu2.addAction( addlinkCloudAct);
 	  contextMnu2.addSeparator();
 	  contextMnu2.addAction( openfileAct);
 	  contextMnu2.addAction( openfolderAct);
@@ -704,14 +734,14 @@ void SharedFilesDialog::showFrame(bool show)
     if (show) {
         ui.localframe->setVisible(true);
         ui.remoteframe->setVisible(false);
-        
+
         ui.localButton->setChecked(true);
-        
+
         ui.remoteButton->setChecked(false);
         ui.splittedButton->setChecked(false);
-        
+
         ui.labeltext->setText(tr("<strong>My Shared Files</strong>"));
-    } 
+    }
 }
 
 void SharedFilesDialog::showFrameRemote(bool show)
@@ -719,13 +749,13 @@ void SharedFilesDialog::showFrameRemote(bool show)
     if (show) {
         ui.remoteframe->setVisible(true);
         ui.localframe->setVisible(false);
-        
+
         ui.remoteButton->setChecked(true);
         ui.localButton->setChecked(false);
         ui.splittedButton->setChecked(false);
 
         ui.labeltext->setText(tr("<strong>Friends Files</strong>"));
-    } 
+    }
 }
 
 void SharedFilesDialog::showFrameSplitted(bool show)
@@ -733,12 +763,12 @@ void SharedFilesDialog::showFrameSplitted(bool show)
     if (show) {
         ui.remoteframe->setVisible(true);
         ui.localframe->setVisible(true);
-        
+
         ui.splittedButton->setChecked(true);
-        
-        ui.localButton->setChecked(false);        
+
+        ui.localButton->setChecked(false);
         ui.remoteButton->setChecked(false);
-        
+
         ui.labeltext->setText(tr("<strong>Files</strong>"));
-    } 
+    }
 }

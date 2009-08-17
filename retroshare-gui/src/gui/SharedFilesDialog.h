@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -33,7 +33,7 @@
 #include "rsiface/rstypes.h"
 #include "gui/RemoteDirModel.h"
 
-class SharedFilesDialog : public MainPage 
+class SharedFilesDialog : public MainPage
 {
   Q_OBJECT
 
@@ -55,9 +55,9 @@ private slots:
 
   /** Create the context popup menu and it's submenus */
   void shareddirtreeviewCostumPopupMenu( QPoint point );
-  
+
   void sharedDirTreeWidgetContextMenu( QPoint point );
-  
+
   void downloadRemoteSelected();
 //  void addMsgRemoteSelected();
 
@@ -65,6 +65,8 @@ private slots:
   void copyLinkLocal();
   void sendLinkTo();
   void sendremoteLinkTo();
+  void sendLinkToCloud();
+  void addLinkToCloud();
 
   void showFrame(bool show);
   void showFrameRemote(bool show);
@@ -91,15 +93,15 @@ private:
   //slots.. Maybe it's not good...
   //** Define the popup menus for the Context menu */
   //QMenu* contextMnu;
-  
+
   //QMenu* contextMnu2;
-  
+
    void copyLink (const QModelIndexList& lst, bool remote);
-  
+
   /** Defines the actions for the context menu for QTreeView */
   QAction* downloadAct;
   QAction* addMsgAct;
-  
+
   /** Defines the actions for the context menu for QTreeWidget */
   QAction* openfileAct;
   QAction* openfolderAct;
@@ -107,8 +109,9 @@ private:
   QAction* copylinklocalAct;
   QAction* sendremotelinkAct;
   QAction* sendlinkAct;
-  
-  
+  QAction* sendlinkCloudAct;
+  QAction* addlinkCloudAct;
+
   QTreeView *shareddirtreeview;
   QMovie *movie;
 
@@ -121,7 +124,7 @@ private:
 
   QString currentCommand;
   QString currentFile;
-  
+
   QAction* fileAssotiationAction(const QString fileName);
 };
 
