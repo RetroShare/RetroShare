@@ -20,47 +20,50 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef GENERALPAGE_H
-# define GENERALPAGE_H
+#ifndef _GENERALPAGE_H
+#define _GENERALPAGE_H
 
-#include <QStyleFactory>
+#include <QtGui>
+#include <QFileDialog>
 #include <QLineEdit>
 
 #include "gui/Preferences/rsharesettings.h"
-#include "lang/languagesupport.h"
 
-# include <QtGui/QWidget>
-# include "ui_GeneralPage.h"
+#include "ui_GeneralPage.h"
 
-class GeneralPage: public QWidget
+
+class GeneralPage : public QWidget 
 {
   Q_OBJECT
 
-    public:
-        GeneralPage(QWidget * parent = 0, Qt::WFlags flags = 0);
-        ~GeneralPage() {}
-        
-        /** Saves the changes on this page */
-        bool save(QString &errmsg);
-        /** Loads the settings for this page */
-        void load();
-        
-        bool startMinimized() const;
+public:
+  /** Default Constructor */
+  GeneralPage(QWidget * parent = 0, Qt::WFlags flags = 0);
+    /** Default Destructor */ 
+  ~GeneralPage() {}
 
-  private slots:
+  /** Saves the changes on this page */
+  bool save(QString &errmsg);
+  /** Loads the settings for this page */
+  void load();
+  bool startMinimized() const;
+  bool quit() const;
 
-      /** Called when the "show on startup" checkbox is toggled. */
-      void toggleShowOnStartup(bool checked);
 
-  private:
-       /** A VidaliaSettings object used for saving/loading settings */
-       RshareSettings* _settings;
-    
-    
-       void closeEvent (QCloseEvent * event);
-        
-       Ui::GeneralPage ui;
+private slots:
+
+  /** Called when the "show on startup" checkbox is toggled. */
+  void toggleShowOnStartup(bool checked);
+  
+private:
+  /** A RetroShare Settings object used for saving/loading settings */
+  RshareSettings *_settings;
+  
+
+  
+  /** Qt Designer generated object */
+  Ui::GeneralPage ui;
 };
 
-#endif // !GENERALPAGE_H
+#endif
 

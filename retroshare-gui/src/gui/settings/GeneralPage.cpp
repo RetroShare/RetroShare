@@ -1,8 +1,7 @@
 /****************************************************************
  * This file is distributed under the following license:
  *
- * Copyright (c) 2006-2007, crypton
- * Copyright (c) 2006, Matt Edman, Justin Hipple
+ * Copyright (c) 2009 RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -20,43 +19,44 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include "GeneralPage.h"
 #include "rshare.h"
+#include "GeneralPage.h"
 #include <util/stringutil.h>
-
 #include <QSystemTrayIcon>
 
+/** Constructor */
 GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
-    : QWidget(parent, flags)
+: QWidget(parent, flags)
 {
-    ui.setupUi(this);
-    setAttribute(Qt::WA_QuitOnClose, false);
-    setWindowTitle(windowTitle() + QLatin1String(" - General"));
+  /* Invoke the Qt Designer generated object setup routine */
+  ui.setupUi(this);
 
-    
-    /* Create RshareSettings object */
-    _settings = new RshareSettings();
+ /* Create RshareSettings object */
+  _settings = new RshareSettings();
   
+  load();
 
-    /* Hide platform specific features */
+  /* Hide platform specific features */
 #ifndef Q_WS_WIN
   ui.chkRunRetroshareAtSystemStartup->setVisible(false);
-#endif    ´
+  //ui.autologincheckBox->setEnabled(false) ;
+  //ui.autologincheckBox->setChecked(false) ;
+#endif    
 }
 
-void
-GeneralPage::closeEvent (QCloseEvent * event)
+/** Destructor */
+/*GeneralPage::~GeneralPage()
 {
-
-    QWidget::closeEvent(event);
-}
-
+  delete _settings;
+}*/
 
 /** Saves the changes on this page */
 bool
 GeneralPage::save(QString &errmsg)
-{
+{  
   _settings->setValue(QString::fromUtf8("StartMinimized"), startMinimized());
+
+  _settings->setValue(QString::fromUtf8("doQuit"), quit());
   
   _settings->setRunRetroshareOnBoot(
   ui.chkRunRetroshareAtSystemStartup->isChecked());
@@ -67,11 +67,19 @@ GeneralPage::save(QString &errmsg)
 /** Loads the settings for this page */
 void
 GeneralPage::load()
-{
+{  
   ui.chkRunRetroshareAtSystemStartup->setChecked(
   _settings->runRetroshareOnBoot());
  
   ui.checkStartMinimized->setChecked(_settings->value(QString::fromUtf8("StartMinimized"), false).toBool());
+
+  ui.checkQuit->setChecked(_settings->value(QString::fromUtf8("doQuit"), false).toBool());
+  
+}
+ 
+bool GeneralPage::quit() const {
+  if(ui.checkQuit->isChecked()) return true;
+  return ui.checkQuit->isChecked();
 }
 
 bool GeneralPage::startMinimized() const {
@@ -86,5 +94,3 @@ GeneralPage::toggleShowOnStartup(bool checked)
   //RshareSettings _settings;
   _settings->setShowMainWindowAtStart(checked);
 }
-
-

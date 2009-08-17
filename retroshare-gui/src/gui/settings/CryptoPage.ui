@@ -509,7 +509,14 @@
        </property>
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
-         <widget class="QTextEdit" name="certtextEdit"/>
+         <widget class="QTextEdit" name="certtextEdit">
+          <property name="font">
+           <font>
+            <pointsize>7</pointsize>
+            <kerning>false</kerning>
+           </font>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
