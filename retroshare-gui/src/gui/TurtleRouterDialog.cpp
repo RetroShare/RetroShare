@@ -40,6 +40,7 @@ void TurtleRouterDialog::showUp()
 		_instance = new TurtleRouterDialog ;
 
 	_instance->show() ;
+	_instance->update() ;
 }
 
 void TurtleRouterDialog::removeFileHash()
@@ -60,21 +61,24 @@ void TurtleRouterDialog::removeFileHash()
 
 void TurtleRouterDialog::update()
 {
-	std::cout << "updatign turtle router console."<< std::endl ;
+	if(isVisible())
+	{
+		std::cout << "updatign turtle router console."<< std::endl ;
 
-	std::vector<std::vector<std::string> > hashes_info ;
-	std::vector<std::vector<std::string> > tunnels_info ;
-	std::vector<std::vector<std::string> > search_reqs_info ;
-	std::vector<std::vector<std::string> > tunnel_reqs_info ;
+		std::vector<std::vector<std::string> > hashes_info ;
+		std::vector<std::vector<std::string> > tunnels_info ;
+		std::vector<std::vector<std::string> > search_reqs_info ;
+		std::vector<std::vector<std::string> > tunnel_reqs_info ;
 
-	rsTurtle->getInfo(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
+		rsTurtle->getInfo(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
 
-	// now display this in the QTableWidgets
-	
-	fillTable( _hashes_TW, hashes_info) ;
-	fillTable( _tunnels_TW, tunnels_info) ;
-	fillTable( _tunnel_reqs_TW, tunnel_reqs_info) ;
-	fillTable( _search_reqs_TW, search_reqs_info) ;
+		// now display this in the QTableWidgets
+
+		fillTable( _hashes_TW, hashes_info) ;
+		fillTable( _tunnels_TW, tunnels_info) ;
+		fillTable( _tunnel_reqs_TW, tunnel_reqs_info) ;
+		fillTable( _search_reqs_TW, search_reqs_info) ;
+	}
 }
 
 void TurtleRouterDialog::fillTable(QTableWidget *table,const std::vector<std::vector<std::string> >& data)
