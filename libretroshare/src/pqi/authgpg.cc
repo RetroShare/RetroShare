@@ -1046,6 +1046,7 @@ bool GPGAuthMgr::DoOwnSignature_locked(void *data, unsigned int datalen, void *b
 		ProcessPGPmeError(ERR);
 		std::cerr << "GPGAuthMgr::Sign FAILED ERR: " << ERR;
 		std::cerr << std::endl;
+		return false;
 	}
 
 	gpgme_sign_result_t res = gpgme_op_sign_result(CTX);

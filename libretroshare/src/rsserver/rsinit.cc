@@ -1057,6 +1057,10 @@ bool     RsInit::GenerateSSLCertificate(std::string name, std::string org, std::
 	X509 *x509 = mgr->SignX509Req(req, days, "dummypassword");
 
 	X509_REQ_free(req);
+	if (x509 == NULL) {
+		fprintf(stderr,"RsGenerateCert() Couldn't sign ssl certificate. Probably PGP password is wrong.\n");
+		return false;
+	}
 
 	/* save to file */
 	if (x509)

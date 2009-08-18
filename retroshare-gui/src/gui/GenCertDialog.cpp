@@ -176,7 +176,7 @@ void GenCertDialog::genPerson()
 		/* Message Dialog */
 		QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
 	                        "Generate ID Failure",
-			        "Failed to Generate your new Certificate!",
+				"Failed to Generate your new Certificate, maybe PGP password is wrong !",
 			          QMessageBox::Ok);
 	}
 }
