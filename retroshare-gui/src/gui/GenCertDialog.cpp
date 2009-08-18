@@ -110,8 +110,6 @@ void GenCertDialog::genPerson()
 	std::string genOrg  = ui.genOrg->text().toStdString();
 	std::string genLoc  = ui.genLoc->text().toStdString();
 	std::string genCountry = ui.genCountry->text().toStdString();
-	std::string passwd  = ui.genPasswd->text().toStdString();
-	std::string passwd2 = ui.genPasswd2->text().toStdString();
 	std::string err;
 
 
@@ -149,38 +147,28 @@ void GenCertDialog::genPerson()
 		return;
 	}
 
-	if ((passwd.length() >= 4) && (passwd == passwd2))
+	//generate a random ssl password
+	std::cerr << " generating sslPasswd." << std::endl;
+	qsrand(time(NULL));
+	std::string sslPasswd = "";
+	for( int i = 0 ; i < 6 ; ++i )
 	{
-		/* passwd passes basic test */
-	}
-	else
-	{
-		/* Message Dialog */
-		QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
-	                        "Generate ID Failure",
-		        "Your password is too short, or don't match",
-			          QMessageBox::Ok);
-
-	        ui.genPasswd->setText("");
-	        ui.genPasswd2->setText("");
-
-		return;
+	    int iNumber;
+	    iNumber = qrand()%25 + 65;
+	    sslPasswd += (char)iNumber;
 	}
 
-
-#ifdef RS_USE_PGPSSL
 	/* Initialise the PGP user first */
 	RsInit::SelectGPGAccount(PGPId);
 	RsInit::LoadGPGPassword(PGPpasswd);
-#endif
 
 	std::string sslId;
-	bool okGen = RsInit::GenerateSSLCertificate(genName, genOrg, genLoc, genCountry, passwd, sslId, err);
+	bool okGen = RsInit::GenerateSSLCertificate(genName, genOrg, genLoc, genCountry, sslPasswd, sslId, err);
 
 	if (okGen)
 	{
 		/* complete the process */
-		RsInit::LoadPassword(sslId, passwd);
+		RsInit::LoadPassword(sslId, sslPasswd);
 		loadCertificates();
 	}
 	else
