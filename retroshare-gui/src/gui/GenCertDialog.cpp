@@ -46,7 +46,7 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
   //connect(ui.selectButton, SIGNAL(clicked()), this, SLOT(selectFriend()));
   //connect(ui.friendBox, SIGNAL(stateChanged(int)), this, SLOT(checkChanged(int)));
 
-  ui.genName->setFocus(Qt::OtherFocusReason);
+  //ui.genName->setFocus(Qt::OtherFocusReason);
 
 #ifdef RS_USE_PGPSSL
         /* get all available pgp private certificates....
