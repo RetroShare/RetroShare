@@ -97,7 +97,9 @@ class RsInitConfig
                 static std::string configDir;
                 static std::string load_cert;
                 static std::string load_key;
-                static std::string passwd;
+		static std::string ssl_passphrase_file;
+
+		static std::string passwd;
 
                 static bool havePasswd;                 /* for Commandline password */
                 static bool autoLogin;                  /* autoLogin allowed */
@@ -145,6 +147,8 @@ std::string RsInitConfig::preferedId;
 std::string RsInitConfig::configDir;
 std::string RsInitConfig::load_cert;
 std::string RsInitConfig::load_key;
+std::string RsInitConfig::ssl_passphrase_file;
+
 std::string RsInitConfig::passwd;
 //std::string RsInitConfig::gpgPasswd;
 
@@ -1230,7 +1234,8 @@ bool     RsInit::LoadPassword(std::string id, std::string inPwd)
         // Create the filename.
         std::string basename = RsInitConfig::configDir + RsInitConfig::dirSeperator;
         basename += configKeyDir + RsInitConfig::dirSeperator;
-        basename += "user";
+	RsInitConfig::ssl_passphrase_file  = basename + "ssl_passphrase.pgp";
+	basename += "user";
 
         RsInitConfig::load_key  = basename + "_pk.pem";
         RsInitConfig::load_cert = basename + "_cert.pem";
@@ -1257,12 +1262,6 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 	if (RsInitConfig::load_key == "")
 	{
 	  std::cerr << "RetroShare needs a key" << std::endl;
-	  return 0;
-	}
-
-	if ((!RsInitConfig::havePasswd) || (RsInitConfig::passwd == ""))
-	{
-	  std::cerr << "RetroShare needs a Password" << std::endl;
 	  return 0;
 	}
 
@@ -1296,7 +1295,57 @@ int RsInit::LoadCertificates(bool autoLoginNT)
   #else /* X509 Certificates */
   /**************** PQI_USE_XPGP ******************/
 	/* The SSL / SSL + PGP version requires, SSL init + PGP init.  */
-	if (0 < authMgr -> InitAuth(RsInitConfig::load_cert.c_str(), RsInitConfig::load_key.c_str(),RsInitConfig::passwd.c_str()))
+	const char* sslPassword;
+	sslPassword = RsInitConfig::passwd.c_str();
+	//check if password is already in memory
+	if ((RsInitConfig::havePasswd) && (RsInitConfig::passwd != ""))
+	{
+		std::cerr << "RetroShare have a ssl Password" << std::endl;
+		sslPassword = RsInitConfig::passwd.c_str();
+
+		std::cerr << "let's store the ssl Password into a pgp ecrypted file" << std::endl;
+		FILE *sslPassphraseFile = fopen(RsInitConfig::ssl_passphrase_file.c_str(), "w");
+		std::cerr << "opening sslPassphraseFile. : " << RsInitConfig::ssl_passphrase_file.c_str() << std::endl;
+		gpgme_data_t cipher;
+		gpgme_data_t plain;
+		gpgme_data_new_from_mem(&plain, sslPassword, sizeof(sslPassword), 0);
+		gpgme_error_t error_reading_file = gpgme_data_new_from_stream (&cipher, sslPassphraseFile);
+		if (0 < authMgr->encryptText(plain, cipher)) {
+		    std::cerr << "Encrypting went ok !" << std::endl;
+		}
+		gpgme_data_release (cipher);
+		gpgme_data_release (plain);
+		fclose(sslPassphraseFile);
+		std::cerr << "sslPassword : " << sslPassword << std::endl;
+
+	} else {
+		//let's read the password from an encrypted file
+		//let's check if there's a ssl_passpharese_file that we can decrypt with PGP
+		FILE *sslPassphraseFile = fopen(RsInitConfig::ssl_passphrase_file.c_str(), "r");
+		if (sslPassphraseFile == NULL)
+		{
+			std::cerr << "No password povided, and no sslPassphraseFile." << std::endl;
+			return 0;
+		} else {
+			std::cerr << "opening sslPassphraseFile." << std::endl;
+			gpgme_data_t cipher;
+			gpgme_data_t plain;
+			gpgme_data_new (&plain);
+			gpgme_error_t error_reading_file = gpgme_data_new_from_stream (&cipher, sslPassphraseFile);
+			if (0 < authMgr->decryptText(cipher, plain)) {
+			    std::cerr << "Decrypting went ok !" << std::endl;
+			    sslPassword = gpgme_data_release_and_get_mem(plain, NULL);
+			} else {
+			    gpgme_data_release (plain);
+			    std::cerr << "Error : decrypting went wrong !" << std::endl;
+			}
+			gpgme_data_release (cipher);
+			fclose(sslPassphraseFile);
+		}
+	}
+
+	std::cerr << "RsInitConfig::load_key.c_str() : " << RsInitConfig::load_key.c_str() << std::endl;
+	if (0 < authMgr -> InitAuth(RsInitConfig::load_cert.c_str(), RsInitConfig::load_key.c_str(), sslPassword))
 	{
 		ok = true;
 	}

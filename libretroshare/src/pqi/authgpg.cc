@@ -1343,6 +1343,36 @@ bool	GPGAuthMgr::getPGPAllList(std::list<std::string> &ids)
 	return true;
 }
 
+bool 	GPGAuthMgr::decryptText(gpgme_data_t CIPHER, gpgme_data_t PLAIN) {
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
+	if (GPG_ERR_NO_ERROR != gpgme_op_decrypt (CTX, CIPHER, PLAIN))
+	{
+		std::cerr << "Error decrypting text";
+		std::cerr << std::endl;
+		return false;
+	}
+
+
+	return true;
+}
+
+bool 	GPGAuthMgr::encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER) {
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
+	gpgme_encrypt_flags_t* flags = new gpgme_encrypt_flags_t();
+
+	if (GPG_ERR_NO_ERROR != gpgme_op_encrypt(CTX, NULL, *flags, PLAIN, CIPHER))
+	{
+		std::cerr << "Error encrypting text";
+		std::cerr << std::endl;
+		return false;
+	}
+
+
+	return true;
+}
+
 bool	GPGAuthMgr::getPGPAuthenticatedList(std::list<std::string> &ids)
 {
 	RsStackMutex stack(pgpMtx); /******* LOCKED ******/

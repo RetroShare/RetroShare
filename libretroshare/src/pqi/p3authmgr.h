@@ -29,6 +29,7 @@
 #include <list>
 #include <map>
 #include <string>
+#include <gpgme.h>
 
 /************** GENERIC AUTHENTICATION MANAGER ***********
  * Provides a common interface for certificates.
@@ -111,8 +112,9 @@ virtual void addTrustingPeer(std::string id) = 0;
 
 		/* Extra Fns for PGP, call std versions if not overloaded */
 virtual std::string PGPOwnId() { return OwnId(); }
-virtual bool    getPGPAllList(std::list<std::string> &ids) { return getAllList(ids); };
-
+virtual bool    getPGPAllList(std::list<std::string> &ids) { return getAllList(ids); }
+virtual bool	encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER) { return 0; }
+virtual bool    decryptText(gpgme_data_t CIPHER, gpgme_data_t PLAIN) { return 0; }
 		/* Load/Save certificates */
 
 virtual bool LoadCertificateFromString(std::string pem, std::string &id)  = 0;

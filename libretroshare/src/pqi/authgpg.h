@@ -176,6 +176,8 @@ class GPGAuthMgr: public AuthSSL
  	bool	isPGPValid(std::string id);
  	bool	isPGPAuthenticated(std::string id);
  	bool	getPGPDetails(std::string id, pqiAuthDetails &details);
+	bool 	decryptText(gpgme_data_t CIPHER, gpgme_data_t PLAIN);
+	bool	encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER);
 
 /*********************************************************************************/
 /************************* STAGE 4 ***********************************************/
