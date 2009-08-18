@@ -132,6 +132,7 @@ HEADERS +=  rshare.h \
             gui/PhotoDialog.h \
 				gui/TurtleRouterDialog.h \
             gui/PhotoShow.h \
+            gui/AddLinksDialog.h \
             gui/LinksDialog.h \
             gui/LibraryDialog.h \
             gui/ForumsDialog.h \
@@ -261,6 +262,7 @@ FORMS +=    gui/BlogDialog.ui \
             gui/CalDialog.ui \
             gui/StartDialog.ui \
             gui/GenCertDialog.ui \
+            gui/AddLinksDialog.ui \
             gui/NetworkDialog.ui \
             gui/TransfersDialog.ui \
             gui/MainWindow.ui \
@@ -366,6 +368,7 @@ SOURCES +=  main.cpp \
             gui/RetroShareLinkAnalyzer.cpp \
             gui/SearchTreeWidget.cpp \
             gui/SearchDialog.cpp \
+            gui/AddLinksDialog.cpp \
             gui/SharedFilesDialog.cpp \
             gui/ShareManager.cpp \
             gui/StatisticDialog.cpp \
