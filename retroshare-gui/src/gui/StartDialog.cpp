@@ -72,10 +72,14 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
   std::string userName;
 
 #ifdef RS_USE_PGPSSL
+
+	//comment those to show the ssl password dialog
+	ui.loadPasswd->hide();
+	ui.label_4->hide();
+
 	/* get all available pgp private certificates....
 	 * mark last one as default.
 	 */
-
 	std::list<std::string> accountIds;
 	std::list<std::string>::iterator it;
 	std::string preferedId;
