@@ -1338,6 +1338,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 			} else {
 			    gpgme_data_release (plain);
 			    std::cerr << "Error : decrypting went wrong !" << std::endl;
+			    return 0;
 			}
 			gpgme_data_release (cipher);
 			fclose(sslPassphraseFile);
