@@ -50,6 +50,7 @@ RSettingsWin::RSettingsWin(QWidget * parent, Qt::WFlags flags)
 void
 RSettingsWin::showWindow(int page)
 {
+	loadSettings();
 	setNewPage(page);
 	QDialog::show();
 }
@@ -124,6 +125,17 @@ RSettingsWin::setNewPage(int page)
     pageName->setText(text);
     stackedWidget->setCurrentIndex(page);
     listWidget->setCurrentRow(page);
+}
+
+void
+RSettingsWin::loadSettings()
+{
+  /* Call each config page's load() method to load its data */
+  int i, count = stackedWidget->count();
+  for (i = 0; i < count; i++) {
+	  ConfigPage *page = (ConfigPage *) stackedWidget->widget(i);
+	  page->load();
+  }
 }
 
 /** Saves changes made to settings. */

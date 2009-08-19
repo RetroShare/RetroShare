@@ -48,6 +48,7 @@ class RSettingsWin: public QDialog, private Ui::Settings
         void saveChanges();
 
     private:
+    	void loadSettings();
         void closeEvent (QCloseEvent * event);
         void initStackedWidget();
 };
