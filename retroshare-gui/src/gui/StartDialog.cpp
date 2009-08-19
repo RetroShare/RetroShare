@@ -73,6 +73,10 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
 
 #ifdef RS_USE_PGPSSL
 
+#ifndef WINDOWS_SYS /* UNIX */
+	//hide autologin because it's not functionnal on other than windows system
+	ui.autoBox->hide();
+#endif
 	//comment those to show the ssl password dialog
 	ui.loadPasswd->hide();
 	ui.label_4->hide();
