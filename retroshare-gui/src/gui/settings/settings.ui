@@ -89,15 +89,6 @@
      </item>
      <item>
       <property name="text">
-       <string>Network</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../images.qrc">
-        <normaloff>:/images/network.png</normaloff>:/images/network.png</iconset>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Server</string>
       </property>
       <property name="icon">

@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -31,22 +31,25 @@ class RSettingsWin: public QDialog, private Ui::Settings
     Q_OBJECT
 
     public:
-        enum PageType { General = 0, Network, Server,
-                        Directories, Notify, Security, Appearance, Fileassociations, Sound  };
+        enum PageType { General = 0, Server,
+                        Directories, Notify, Security, Appearance, Fileassociations, Sound };
 
         RSettingsWin(QWidget * parent = 0, Qt::WFlags flags = 0);
         ~RSettingsWin() {}
+
+        void showWindow(int page);
 
     public slots:
         //! Go to a specific part of the control panel.
         void setNewPage(int page);
 
+    private slots:
+		/** Called when user clicks "Save Settings" */
+        void saveChanges();
+
     private:
         void closeEvent (QCloseEvent * event);
         void initStackedWidget();
-        
-        /** Called when user clicks "Save Settings" */
-        void saveChanges();
 };
 
 #endif // !RSETTINGSWIN_HPP_

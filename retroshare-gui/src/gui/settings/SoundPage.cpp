@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -26,14 +26,14 @@
 
 /** Constructor */
 SoundPage::SoundPage(QWidget * parent, Qt::WFlags flags)
-    : QWidget(parent, flags)
+    : ConfigPage(parent, flags)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
   /* Create RshareSettings object */
   _settings = new RshareSettings();
-  
+
         connect(ui.cmd_openFile,  SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile()));
 	connect(ui.cmd_openFile_2,SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile2()));
 	connect(ui.cmd_openFile_3,SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile3()));
@@ -104,7 +104,7 @@ SoundPage::load()
 			ui.checkBoxSound_4->setChecked(_settings->value("FileRecive_Incoming",false).toBool());
 			ui.checkBoxSound_5->setChecked(_settings->value("FileRecive_Finished",false).toBool());
 			ui.checkBoxSound_6->setChecked(_settings->value("NewChatMessage",false).toBool());
-		_settings->endGroup();			
+		_settings->endGroup();
 	_settings->endGroup();
 }
 
@@ -123,10 +123,10 @@ void SoundPage::on_cmd_openFile()
 void SoundPage::on_cmd_openFile2()
 {
 	ui.txt_SoundFile2->setText(QFileDialog::getOpenFileName(this,"Open File", ".", "wav (*.wav)"));
-	if(ui.txt_SoundFile2->text().isEmpty()){	
+	if(ui.txt_SoundFile2->text().isEmpty()){
 		ui.checkBoxSound_2->setChecked(false);
 		ui.checkBoxSound_2->setEnabled(false);
-	}	
+	}
 	else
 		ui.checkBoxSound_2->setEnabled(true);
 
@@ -170,5 +170,5 @@ void SoundPage::on_cmd_openFile6()
 	}
 	else
 		ui.checkBoxSound_6->setEnabled(true);
-	
+
 }

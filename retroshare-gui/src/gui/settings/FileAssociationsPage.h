@@ -22,7 +22,7 @@
 #ifndef __FileAssociationsPage__
 #define __FileAssociationsPage__
 
-//#include "configpage.h"
+#include "configpage.h"
 
 #include <QString>
 #include <QWidget>
@@ -52,11 +52,11 @@ class RshareSettings;
 //! With this config page user can specify, what programs should be executed
 //! to open some types of files. Here 'type' means 'file extension'(and
 //! 'file extension' means 'some symbols after last dot in filename').
-class FileAssociationsPage : public QWidget
+class FileAssociationsPage : public ConfigPage
 {
     Q_OBJECT
 
-public:        
+public:
     FileAssociationsPage(QWidget * parent = 0, Qt::WFlags flags = 0);
     virtual ~FileAssociationsPage();
 

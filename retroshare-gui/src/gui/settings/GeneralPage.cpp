@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -26,14 +26,14 @@
 
 /** Constructor */
 GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
-: QWidget(parent, flags)
+: ConfigPage(parent, flags)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
  /* Create RshareSettings object */
   _settings = new RshareSettings();
-  
+
   load();
 
   /* Hide platform specific features */
@@ -41,7 +41,7 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
   ui.chkRunRetroshareAtSystemStartup->setVisible(false);
   //ui.autologincheckBox->setEnabled(false) ;
   //ui.autologincheckBox->setChecked(false) ;
-#endif    
+#endif
 }
 
 /** Destructor */
@@ -53,30 +53,30 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
 /** Saves the changes on this page */
 bool
 GeneralPage::save(QString &errmsg)
-{  
+{
   _settings->setValue(QString::fromUtf8("StartMinimized"), startMinimized());
 
   _settings->setValue(QString::fromUtf8("doQuit"), quit());
-  
+
   _settings->setRunRetroshareOnBoot(
   ui.chkRunRetroshareAtSystemStartup->isChecked());
 
   return true;
 }
-  
+
 /** Loads the settings for this page */
 void
 GeneralPage::load()
-{  
+{
   ui.chkRunRetroshareAtSystemStartup->setChecked(
   _settings->runRetroshareOnBoot());
- 
+
   ui.checkStartMinimized->setChecked(_settings->value(QString::fromUtf8("StartMinimized"), false).toBool());
 
   ui.checkQuit->setChecked(_settings->value(QString::fromUtf8("doQuit"), false).toBool());
-  
+
 }
- 
+
 bool GeneralPage::quit() const {
   if(ui.checkQuit->isChecked()) return true;
   return ui.checkQuit->isChecked();

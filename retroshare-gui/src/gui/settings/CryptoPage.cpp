@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -34,7 +34,7 @@
 
 /** Constructor */
 CryptoPage::CryptoPage(QWidget * parent, Qt::WFlags flags)
-    : QWidget(parent, flags)
+    : ConfigPage(parent, flags)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
@@ -114,7 +114,7 @@ CryptoPage::copyPublicKey()
                              tr("Your Public Key is copied to Clipbard, paste and send it to your"
                                 "friend via email or some other way"));
     QClipboard *clipboard = QApplication::clipboard();
-    clipboard->setText(ui.certtextEdit->toPlainText());                            
+    clipboard->setText(ui.certtextEdit->toPlainText());
 
 }
 

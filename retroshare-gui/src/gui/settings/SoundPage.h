@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -26,15 +26,16 @@
 
 #include <gui/Preferences/rsharesettings.h>
 
+#include "configpage.h"
 #include "ui_SoundPage.h"
 
-class SoundPage : public QWidget 
+class SoundPage : public ConfigPage
 {
   Q_OBJECT
 
 public:
   /** Default Constructor */
-  SoundPage(QWidget * parent = 0, Qt::WFlags flags = 0);        
+  SoundPage(QWidget * parent = 0, Qt::WFlags flags = 0);
   /** Default Destructor */
   ~SoundPage() {}
 
@@ -51,7 +52,7 @@ private slots:
 	void on_cmd_openFile4();
 	void on_cmd_openFile5();
 	void on_cmd_openFile6();
-	
+
 private:
   /** A RshareSettings object used for saving/loading settings */
   RshareSettings* _settings;

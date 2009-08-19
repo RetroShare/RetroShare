@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -43,18 +43,20 @@ RSettingsWin::RSettingsWin(QWidget * parent, Qt::WFlags flags)
 
     initStackedWidget();
 
-    connect(listWidget, SIGNAL(currentRowChanged(int)),
-            this, SLOT(setNewPage(int)));
-            
+    connect(listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(setNewPage(int)));
     connect(okButton, SIGNAL(clicked( bool )), this, SLOT( saveChanges()) );
+}
 
-
+void
+RSettingsWin::showWindow(int page)
+{
+	setNewPage(page);
+	QDialog::show();
 }
 
 void
 RSettingsWin::closeEvent (QCloseEvent * event)
 {
-
     QWidget::closeEvent(event);
 }
 
@@ -64,8 +66,7 @@ RSettingsWin::initStackedWidget()
     stackedWidget->setCurrentIndex(-1);
     stackedWidget->removeWidget(stackedWidget->widget(0));
 
-    stackedWidget->addWidget(new GeneralPage(false));    
-    stackedWidget->addWidget(new NetworkPage());
+    stackedWidget->addWidget(new GeneralPage(false));
     stackedWidget->addWidget(new ServerPage());
     stackedWidget->addWidget(new DirectoriesPage());
     stackedWidget->addWidget(new NotifyPage());
@@ -73,9 +74,8 @@ RSettingsWin::initStackedWidget()
     stackedWidget->addWidget(new AppearancePage());
     stackedWidget->addWidget(new FileAssociationsPage() );
     stackedWidget->addWidget(new SoundPage() );
-   
+
     setNewPage(General);
-        
 }
 
 void
@@ -88,10 +88,6 @@ RSettingsWin::setNewPage(int page)
         case General:
             text = tr("General");
 	    pageicon->setPixmap(QPixmap(":/images/kcmsystem24.png"));
-            break;
-        case Network:
-            text = tr("Network");
-	    pageicon->setPixmap(QPixmap(":/images/network32.png"));
             break;
         case Directories:
             text = tr("Directories");
@@ -124,8 +120,8 @@ RSettingsWin::setNewPage(int page)
         default:
             text = tr("UnknownPage");// impossible case
     }
-                                        
-    pageName->setText(text); //tr("%1").arg(
+
+    pageName->setText(text);
     stackedWidget->setCurrentIndex(page);
     listWidget->setCurrentRow(page);
 }
@@ -134,53 +130,31 @@ RSettingsWin::setNewPage(int page)
 void
 RSettingsWin::saveChanges()
 {
-  bool saveOk;
-  QString errmsg;
+	bool saveOk;
+	QString errmsg;
 
-  GeneralPage *gp; 
-  NetworkPage *np; 
-  CryptoPage *cp;
-  ServerPage *sp;
-  NotifyPage *nfp;
-  AppearancePage *ap;
-  
-   /* Call each config page's save() method to save its data */
-   int i, count = stackedWidget->count();
-   for (i = 0; i < count; i++) {
-    QWidget *page = stackedWidget->widget(i);
-    if (NULL != (gp = dynamic_cast<GeneralPage *>(page))) {saveOk = gp->save(errmsg);}
-    else 
-    if (NULL !=(np = dynamic_cast<NetworkPage *>(page))) {saveOk = np->save(errmsg);}
-    else 
-    if (NULL !=(sp = dynamic_cast<ServerPage *>(page))) {saveOk = sp->save(errmsg);}
-    else 
-    if (NULL !=(cp = dynamic_cast<CryptoPage *>(page))) {saveOk = cp->save(errmsg);}
-    else 
-    if (NULL !=(nfp = dynamic_cast<NotifyPage *>(page))) {saveOk = nfp->save(errmsg);}
-    else if (NULL !=(ap = dynamic_cast<AppearancePage *>(page))) {saveOk = ap->save(errmsg);}
+	/* Call each config page's save() method to save its data */
+	int i, count = stackedWidget->count();
+	for (i = 0; i < count; i++) {
+		ConfigPage *page = (ConfigPage *) stackedWidget->widget(i);
+		saveOk = page->save(errmsg);
 
+		if (!saveOk) {
+			/* Display the offending page */
+			stackedWidget->setCurrentWidget(page);
 
-    if (!saveOk) {
-      /* Display the offending page */
-      stackedWidget->setCurrentWidget(page);
-      
-      /* Show the user what went wrong */
-      QMessageBox::warning(this, 
-        tr("Error Saving Configuration"), errmsg,
-        QMessageBox::Ok, QMessageBox::NoButton);
+			/* Show the user what went wrong */
+			QMessageBox::warning(this,
+			tr("Error Saving Configuration"), errmsg,
+			QMessageBox::Ok, QMessageBox::NoButton);
 
-      /* Don't process the rest of the pages */
-      return;
-    }
-   }
+			/* Don't process the rest of the pages */
+			return;
+		}
+	}
 
+	/* call to RsIface save function.... */
+	//rsicontrol -> ConfigSave();
 
-  /* call to RsIface save function.... */
-  //rsicontrol -> ConfigSave();
-
-  QDialog::close();
+	QDialog::close();
 }
-
-
-
-

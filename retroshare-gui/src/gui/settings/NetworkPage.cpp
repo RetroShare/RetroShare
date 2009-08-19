@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -23,7 +23,7 @@
 #include "rshare.h"
 
 NetworkPage::NetworkPage(QWidget * parent, Qt::WFlags flags)
-    : QWidget(parent, flags)
+    : ConfigPage(parent, flags)
 {
     ui.setupUi(this);
     setAttribute(Qt::WA_QuitOnClose, false);
@@ -41,9 +41,9 @@ NetworkPage::closeEvent (QCloseEvent * event)
 bool
 NetworkPage::save(QString &errmsg)
 {
-
+	return true;
 }
-  
+
 /** Loads the settings for this page */
 void
 NetworkPage::load()

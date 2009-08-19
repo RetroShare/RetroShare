@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -27,13 +27,13 @@
 
 #include "gui/Preferences/rsharesettings.h"
 
-
+#include "configpage.h"
 #include "ui_NotifyPage.h"
 
-class NotifyPage : public QWidget
+class NotifyPage : public ConfigPage
 {
   Q_OBJECT
-  
+
   public:
       /** Default Constructor */
       NotifyPage(QWidget * parent = 0, Qt::WFlags flags = 0);
@@ -51,9 +51,9 @@ class NotifyPage : public QWidget
   private slots:
 
   private:
-  
+
        void closeEvent (QCloseEvent * event);
-       
+
       /** A RshareSettings object used for saving/loading settings */
       RshareSettings* _settings;
 

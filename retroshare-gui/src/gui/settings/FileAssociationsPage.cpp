@@ -54,7 +54,7 @@
 //============================================================================
 
 FileAssociationsPage::FileAssociationsPage(QWidget * parent, Qt::WFlags flags)
-    : QWidget(parent, flags)
+    : ConfigPage(parent, flags)
 //:QFrame()
 {
     QVBoxLayout* pageLay = new QVBoxLayout(this);
@@ -82,7 +82,7 @@ FileAssociationsPage::FileAssociationsPage(QWidget * parent, Qt::WFlags flags)
 
     table = new QTableWidget(5,2,this);//default 5 rows, 2 columns
     table->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("File type") ) );
-    
+
     table->setHorizontalHeaderItem(1,  new QTableWidgetItem("Command") );
     connect( table, SIGNAL( cellActivated(int, int)),
              this,  SLOT( tableCellActivated(int, int)) );
@@ -194,7 +194,7 @@ FileAssociationsPage::load()
         removeAction->setEnabled(false);
         editAction->setEnabled(false);
     }
-        
+
     table->selectRow(0);
 }
 
@@ -255,7 +255,7 @@ FileAssociationsPage::addnew()
                 }
             }
         }
-        
+
         settings->setValue(currType, currCmd);
 
         removeAction->setEnabled(true);
@@ -279,17 +279,17 @@ FileAssociationsPage::edit()
     QString currCmd = (titem->data(QTableWidgetItem::Type)).toString();
     afad.setCommand(currCmd);
     afad.setFileType(currType);
-            
+
     int ti = afad.exec();
 
     if (ti==QDialog::Accepted)
     {
         currCmd = afad.resultCommand() ;
         titem = table->item( currentRow,1);
-                
+
         titem->setData(QTableWidgetItem::Type, currCmd);
 
-        settings->setValue(currType, currCmd);    
+        settings->setValue(currType, currCmd);
     }
 }
 

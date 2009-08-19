@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -27,15 +27,14 @@
 
 #include <algorithm>
 
-
 DirectoriesPage::DirectoriesPage(QWidget * parent, Qt::WFlags flags)
-    : QWidget(parent, flags)
+    : ConfigPage(parent, flags)
 {
     ui.setupUi(this);
     setAttribute(Qt::WA_QuitOnClose, false);
 
     load();
-  
+
   	connect(ui.incomingButton, SIGNAL(clicked( bool ) ), this , SLOT( setIncomingDirectory() ) );
   	connect(ui.partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );
   	connect(ui.checkBox, SIGNAL(stateChanged(int)), this, SLOT(shareDownloadDirectory(int)));
@@ -108,7 +107,7 @@ bool DirectoriesPage::save(QString &errmsg)
 
 	return true;
 }
-  
+
 /** Loads the settings for this page */
 void DirectoriesPage::load()
 {

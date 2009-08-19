@@ -16,7 +16,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -29,17 +29,18 @@
 
 #include "gui/Preferences/rsharesettings.h"
 
+#include "configpage.h"
 #include "ui_GeneralPage.h"
 
 
-class GeneralPage : public QWidget 
+class GeneralPage : public ConfigPage
 {
   Q_OBJECT
 
 public:
   /** Default Constructor */
   GeneralPage(QWidget * parent = 0, Qt::WFlags flags = 0);
-    /** Default Destructor */ 
+    /** Default Destructor */
   ~GeneralPage() {}
 
   /** Saves the changes on this page */
@@ -54,13 +55,13 @@ private slots:
 
   /** Called when the "show on startup" checkbox is toggled. */
   void toggleShowOnStartup(bool checked);
-  
+
 private:
   /** A RetroShare Settings object used for saving/loading settings */
   RshareSettings *_settings;
-  
 
-  
+
+
   /** Qt Designer generated object */
   Ui::GeneralPage ui;
 };

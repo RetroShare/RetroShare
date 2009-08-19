@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -29,9 +29,10 @@
 #include "gui/Preferences/rsharesettings.h"
 #include <lang/languagesupport.h>
 
+#include "configpage.h"
 #include "ui_AppearancePage.h"
 
-class AppearancePage : public QWidget 
+class AppearancePage : public ConfigPage
 {
   Q_OBJECT
 
@@ -50,11 +51,11 @@ class AppearancePage : public QWidget
 
       void on_styleSheetCombo_activated(const QString &styleSheetName);
 
-  
+
   private:
         /** A RshareSettings object used for saving/loading settings */
       RshareSettings* _settings;
-  
+
       void loadStyleSheet(const QString &sheetName);
       void loadqss();
 

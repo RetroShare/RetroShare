@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -33,7 +33,7 @@
 #include <QTimer>
 
 ServerPage::ServerPage(QWidget * parent, Qt::WFlags flags)
-    : QWidget(parent, flags)
+    : ConfigPage(parent, flags)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
@@ -154,7 +154,7 @@ void ServerPage::load()
 
 
 	toggleUPnP();
-	
+
 
 	/* Addresses must be set here - otherwise can't edit it */
 		/* set local address */
@@ -262,7 +262,7 @@ void ServerPage::updateStatus()
 
 	ui.netStatusBox->setText(QString::fromStdString(out.str()));
 	ui.netStatusBox ->setReadOnly(true);
-#endif 
+#endif
 
 
 

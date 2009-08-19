@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -26,14 +26,14 @@
 
 /** Constructor */
 AppearancePage::AppearancePage(QWidget * parent, Qt::WFlags flags)
-    : QWidget(parent, flags)
+    : ConfigPage(parent, flags)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
   /* Create RshareSettings object */
   _settings = new RshareSettings();
-  
+
   connect(ui.styleSheetCombo, SIGNAL(clicked()), this, SLOT(loadStyleSheet()));
 
   /* Populate combo boxes */
@@ -45,13 +45,13 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WFlags flags)
   foreach (QString style, QStyleFactory::keys()) {
     ui.cmboStyle->addItem(style, style.toLower());
   }
-  
+
   ui.styleSheetCombo->setCurrentIndex(ui.styleSheetCombo->findText("Default"));
   //loadStyleSheet("Default");
   loadqss();
-  
+
   load();
-  
+
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -66,11 +66,11 @@ AppearancePage::save(QString &errmsg)
 	Q_UNUSED(errmsg);
 	QString languageCode =
     LanguageSupport::languageCode(ui.cmboLanguage->currentText());
-  
+
 	_settings->setLanguageCode(languageCode);
 	_settings->setInterfaceStyle(ui.cmboStyle->currentText());
 	_settings->setSheetName(ui.styleSheetCombo->currentText());
-  
+
     /* Set to new style */
 	Rshare::setStyle(ui.cmboStyle->currentText());
 	return true;
@@ -82,21 +82,21 @@ AppearancePage::save(QString &errmsg)
 void
 AppearancePage::load()
 {
-  
+
 	int index = ui.cmboLanguage->findData(_settings->getLanguageCode());
 	ui.cmboLanguage->setCurrentIndex(index);
-  
+
 	index = ui.cmboStyle->findData(Rshare::style().toLower());
 	ui.cmboStyle->setCurrentIndex(index);
-  
-    ui.styleSheetCombo->setCurrentIndex(ui.styleSheetCombo->findText(_settings->getSheetName())); 
-  
+
+    ui.styleSheetCombo->setCurrentIndex(ui.styleSheetCombo->findText(_settings->getSheetName()));
+
     /** load saved internal styleSheet **/
     //QFile file(":/qss/" + (_settings->getSheetName().toLower()) + ".qss");
-    
+
     /** load saved extern Stylesheets **/
     QFile file(QApplication::applicationDirPath() + "/qss/" + (_settings->getSheetName().toLower()) + ".qss");
-    
+
     file.open(QFile::ReadOnly);
     QString styleSheet = QLatin1String(file.readAll());
     qApp->setStyleSheet(styleSheet);
@@ -112,16 +112,16 @@ void AppearancePage::loadStyleSheet(const QString &sheetName)
 {
      /** internal Stylesheets **/
     //QFile file(":/qss/" + sheetName.toLower() + ".qss");
-    
+
     /** extern Stylesheets **/
     QFile file(QApplication::applicationDirPath() + "/qss/" + sheetName.toLower() + ".qss");
-    
+
     file.open(QFile::ReadOnly);
     QString styleSheet = QLatin1String(file.readAll());
 
-    
+
     qApp->setStyleSheet(styleSheet);
-    
+
 }
 
 void AppearancePage::loadqss()
@@ -133,5 +133,5 @@ void AppearancePage::loadqss()
 	if(st.fileName() != "." && st.fileName() != ".." && st.isFile())
 	ui.styleSheetCombo->addItem(st.fileName().remove(".qss"));
 	}
- 
+
 }

@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -26,17 +26,17 @@
 #include <QWidget>
 #include <QtGui>
 
+#include "configpage.h"
+#include "ui_DirectoriesPage.h"
 
-# include "ui_DirectoriesPage.h"
-
-class DirectoriesPage: public QWidget 
+class DirectoriesPage: public ConfigPage
 {
   Q_OBJECT
 
     public:
         DirectoriesPage(QWidget * parent = 0, Qt::WFlags flags = 0);
       //  ~DirectoriesPage() {}
-        
+
     /** Saves the changes on this page */
     bool save(QString &errmsg);
     /** Loads the settings for this page */
@@ -45,7 +45,7 @@ class DirectoriesPage: public QWidget
 
 
     private slots:
-    
+
 #ifdef TO_REMOVE
 	void addShareDirectory();
 	void removeShareDirectory();
@@ -57,9 +57,9 @@ class DirectoriesPage: public QWidget
     void shareDownloadDirectory(int state);
 
     private:
-    
+
        void closeEvent (QCloseEvent * event);
-        
+
        Ui::DirectoriesPage ui;
 };
 

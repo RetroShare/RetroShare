@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -32,13 +32,13 @@
 
 /** Constructor */
 NotifyPage::NotifyPage(QWidget * parent, Qt::WFlags flags)
-  : QWidget(parent, flags)
+  : ConfigPage(parent, flags)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
   setAttribute(Qt::WA_QuitOnClose, false);
   setWindowTitle(windowTitle() + QLatin1String(" - Notify"));
-  
+
   /* Create RshareSettings object */
   _settings = new RshareSettings();
 
