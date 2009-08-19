@@ -50,12 +50,6 @@
 #include "statusbar/natstatus.h"
 #include "statusbar/ratesstatus.h"
 
-#include "Preferences/PreferencesWindow.h"
-
-#ifdef NEWSETTINGS
-#include "settings/rsettingswin.h"
-#endif
-
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsfiles.h"
@@ -129,7 +123,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Create all the dialogs of which we only want one instance */
     _bandwidthGraph = new BandwidthGraph();
     messengerWindow = new MessengerWindow();
-    _preferencesWindow = new PreferencesWindow();
+    _settingsWindow = new RSettingsWin();
     applicationWindow = new ApplicationWindow();
     applicationWindow->hide();
 
@@ -433,9 +427,9 @@ void MainWindow::openShareManager()
 /** Creates and displays the Configuration dialog with the current page set to
  * <b>page</b>. */
 void
-MainWindow::showPreferencesWindow(PreferencesWindow::Page page)
+MainWindow::showPreferencesWindow(RSettingsWin::PageType page)
 {
-  _preferencesWindow->showWindow(page);
+  _settingsWindow->showWindow(page);
 }
 
 /** Shows Messages Dialog */
@@ -476,7 +470,7 @@ MainWindow::~MainWindow()
 {
     delete _bandwidthGraph;
     delete _messengerwindowAct;
-    delete _preferencesWindow;
+    delete _settingsWindow;
 }
 
 /** Create and bind actions to events. Setup for initial
@@ -511,8 +505,8 @@ void MainWindow::createActions()
 */
 void MainWindow::doQuit()
 {
-    
-	if(!_settings->value(QString::fromUtf8("doQuit"), false).toBool()) 
+
+	if(!_settings->value(QString::fromUtf8("doQuit"), false).toBool())
 	{
 	  QString queryWrn;
 	  queryWrn.clear();

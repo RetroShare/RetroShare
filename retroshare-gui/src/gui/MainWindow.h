@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -38,15 +38,13 @@
 #include "ApplicationWindow.h"
 #include "PluginsPage.h"
 
-#include "Preferences/PreferencesWindow.h"
-#include "Preferences/rsharesettings.h"
+#include "settings/rsettingswin.h"
 
 #include "bwgraph/bwgraph.h"
 #include "help/browser/helpbrowser.h"
 #include "channels/channelsDialog.h"
 
 #include "ui_MainWindow.h"
-
 
 class PeerStatus;
 class DHTStatus;
@@ -72,20 +70,20 @@ public:
         Channels,  				/** Channels page. */
         Forums  				/** Forums page. */
 
-        
+
     };
 
     /** Default Constructor */
     MainWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
-    
+
     /** Destructor. */
     ~MainWindow();
 
-    /* A Bit of a Hack... but public variables for 
-    * the dialogs, so we can add them to the 
+    /* A Bit of a Hack... but public variables for
+    * the dialogs, so we can add them to the
     * Notify Class...
     */
-    
+
     NetworkDialog     *networkDialog;
     PeersDialog       *peersDialog;
     SearchDialog      *searchDialog;
@@ -104,7 +102,7 @@ public slots:
     //void show();
     /** Shows the config dialog with focus set to the given page. */
     void showWindow(Page page);
-  
+
     void playFiles(QStringList files);
 	  void updateHashingInfo(const QString&) ;
 
@@ -112,7 +110,7 @@ private slots:
 
     void updateMenu();
     void updateStatus();
-    
+
     void toggleVisibility(QSystemTrayIcon::ActivationReason e);
     void toggleVisibilitycontextmenu();
 
@@ -124,7 +122,7 @@ private slots:
     void showabout();
     void openShareManager();
 	  void displaySystrayMsg(const QString&,const QString&) ;
-	
+
     /** Displays the help browser and displays the most recently viewed help
     * topic. */
     void showHelpDialog();
@@ -133,16 +131,16 @@ private slots:
 
     /** Creates and displays the Configuration dialog with the current page set
     * to <b>page</b>. */
-    void showPreferencesWindow(PreferencesWindow::Page page = PreferencesWindow::General);
+    void showPreferencesWindow(RSettingsWin::PageType page = RSettingsWin::General);
     void showMess(MainWindow::Page page = MainWindow::Messages);
-#ifdef NEWSETTINGS       
+#ifdef NEWSETTINGS
     void showSettings();
 #endif
     void setStyle();
-    
+
     /** Called when user attempts to quit via quit button*/
     void doQuit();
-    
+
 
 
 protected:
@@ -151,14 +149,12 @@ protected:
 
 private slots:
 
-
-
 private:
 
     /** Create the actions on the tray menu or menubar */
     void createActions();
-    
-    
+
+
     /** Defines the actions for the tray menu */
     QAction* _prefsAct;
     QAction* _bandwidthAct;
@@ -167,23 +163,23 @@ private:
     QAction* _smplayerAct;
     QAction* _helpAct;
     QAction* _appAct;
-    
+
     /** A BandwidthGraph object which handles monitoring RetroShare bandwidth usage */
     BandwidthGraph* _bandwidthGraph;
-    
-    PreferencesWindow* _preferencesWindow;
-    
+
+    RSettingsWin *_settingsWindow;
+
     /** A RetroShareSettings object used for saving/loading settings */
     RshareSettings* _settings;
-    
+
     /** Creates a new action for a Main page. */
     QAction* createPageAction(QIcon img, QString text, QActionGroup *group);
     /** Adds a new action to the toolbar. */
     void addAction(QAction *action, const char *slot = 0);
-        
-    
+
+
     void loadStyleSheet(const QString &sheetName);
-    
+
     QSystemTrayIcon *trayIcon;
     QAction *toggleVisibilityAction, *toolAct;
     QMenu *menu;
@@ -194,7 +190,7 @@ private:
     RatesStatus *ratesstatus;
 
     QLabel *_hashing_info_label ;
-    
+
     /** Qt Designer generated object */
     Ui::MainWindow ui;
 };

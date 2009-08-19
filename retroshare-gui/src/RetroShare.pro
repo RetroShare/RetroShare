@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools debug pluginmgr #release newsettings
+CONFIG += qt gui uic qrc resources uitools debug pluginmgr newsettings #release 
 QT     += network xml script 
 TEMPLATE = app
 TARGET = RetroShare

@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -30,8 +30,6 @@
 #include <rshare.h>
 #include "ApplicationWindow.h"
 
-
-#include "Preferences/PreferencesWindow.h"
 //#include "Settings/gsettingswin.h"
 
 #include "rsiface/rsiface.h"
@@ -101,12 +99,12 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
 {
     /* Invoke the Qt Designer generated QObject setup routine */
     ui.setupUi(this);
-    
+
     setWindowTitle(tr("RetroShare"));
 
     RshareSettings config;
     config.loadWidgetInformation(this);
-  
+
     // Setting icons
     this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
     loadStyleSheet("Default");
@@ -121,27 +119,27 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
  //   ChannelsDialog *channelsDialog = NULL;
  //   ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
  //                        createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
- 
+
     //NewsFeed *newsFeed = NULL;
     //ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
     //                  createPageAction(QIcon(IMAGE_NEWSFEED), tr("News Feed"), grp));
-      
+
     StatisticDialog *statisticDialog = NULL;
     ui.stackPages->add(statisticDialog = new StatisticDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_STATISTIC), tr("Statistics"), grp));
-               
+
     PeersFeed *peersFeed = NULL;
     ui.stackPages->add(peersFeed = new PeersFeed(ui.stackPages),
                       createPageAction(QIcon(IMAGE_PEERS), tr("Peers"), grp));
-                     
+
     TransferFeed *transferFeed = NULL;
     ui.stackPages->add(transferFeed = new TransferFeed(ui.stackPages),
                       createPageAction(QIcon(IMAGE_LINKS), tr("Transfers"), grp));
-                     
+
     MsgFeed *msgFeed = NULL;
     ui.stackPages->add(msgFeed = new MsgFeed(ui.stackPages),
                       createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
-                     
+
     BlogDialog *blogDialog = NULL;
     ui.stackPages->add(blogDialog = new BlogDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_BLOGS), tr("Blog Feed"), grp));
@@ -153,7 +151,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
 //    ForumsDialog *forumsDialog = NULL;
 //    ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
 //                       createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
-                     
+
     GamesDialog *gamesDialog = NULL;
     ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_GAMES), tr("Games Launcher"), grp));
@@ -161,21 +159,21 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     PhotoDialog *photoDialog = NULL;
     ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), grp));
-                      
+
     LibraryDialog *libraryDialog = NULL;
     ui.stackPages->add(libraryDialog = new LibraryDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_LIBRARY), tr("Library"), grp));
-                     
+
     CalDialog *calDialog = NULL;
     ui.stackPages->add(calDialog = new CalDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_CALENDAR), tr("Shared Calendars"), grp));
-                     
-                     
-                     
-                     
+
+
+
+
   //ui.stackPages->add(groupsDialog = new GroupsDialog(ui.stackPages),
   //                   createPageAction(QIcon(), tr("Groups"), grp));
-                                                              
+
   //ui.stackPages->add(new StatisticDialog(ui.stackPages),
   //                   createPageAction(QIcon(IMAGE_STATISTIC), tr("Statistics"), grp));
 
@@ -210,7 +208,7 @@ void ApplicationWindow::addAction(QAction *action, const char *slot)
 /** Overloads the default show so we can load settings */
 void ApplicationWindow::show()
 {
-  
+
     if (!this->isVisible()) {
         QMainWindow::show();
     } else {
@@ -295,9 +293,9 @@ void ApplicationWindow::loadStyleSheet(const QString &sheetName)
     file.open(QFile::ReadOnly);
     QString styleSheet = QLatin1String(file.readAll());
 
-    
+
     qApp->setStyleSheet(styleSheet);
-    
+
 }
 
 /** Shows smplayer */
@@ -305,11 +303,11 @@ void ApplicationWindow::showsmplayer()
 {
 #if 0
     static SMPlayer * smplayer = 0;
-    
+
     if (smplayer == 0) {
         smplayer = new SMPlayer(QString::null, this);
     }
-		    
+
     smplayer->gui()->show();
 #endif
 }
