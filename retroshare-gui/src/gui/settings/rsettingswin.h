@@ -37,8 +37,6 @@ class RSettingsWin: public QDialog, private Ui::Settings
         RSettingsWin(QWidget * parent = 0, Qt::WFlags flags = 0);
         ~RSettingsWin() {}
 
-        void showWindow(int page);
-
     public slots:
         //! Go to a specific part of the control panel.
         void setNewPage(int page);

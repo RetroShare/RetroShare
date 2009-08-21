@@ -38,7 +38,7 @@
 #include "ChannelFeed.h"
 #include "ShareManager.h"
 
-#include <rshare.h>
+#include "rshare.h"
 #include "MainWindow.h"
 #include "MessengerWindow.h"
 #include "HelpDialog.h"
@@ -56,6 +56,7 @@
 
 #include "gui/connect/ConnectFriendWizard.h"
 #include "util/rsversion.h"
+#include "settings/rsettingswin.h"
 
 #include <sstream>
 #include <iomanip>
@@ -65,9 +66,9 @@
 
 /* Images for toolbar icons */
 #define IMAGE_NETWORK           ":/images/retrosharelogo1.png"
-#define IMAGE_NETWORK2           ":/images/rs1.png"
+#define IMAGE_NETWORK2          ":/images/rs1.png"
 #define IMAGE_PEERS         	":/images/groupchat.png"
-#define IMAGE_SEARCH    	":/images/filefind.png"
+#define IMAGE_SEARCH    		":/images/filefind.png"
 #define IMAGE_TRANSFERS      	":/images/ktorrent32.png"
 #define IMAGE_LINKS             ":/images/knewsticker24.png"
 #define IMAGE_FILES   	        ":/images/fileshare24.png"
@@ -84,7 +85,7 @@
 #define IMAGE_RSM32             ":/images/kdmconfig.png"
 #define IMAGE_RSM16             ":/images/rsmessenger16.png"
 #define IMAGE_CLOSE             ":/images/close_normal.png"
-#define IMAGE_SMPLAYER		":/images/smplayer_icon32.png"
+#define IMAGE_SMPLAYER			":/images/smplayer_icon32.png"
 #define IMAGE_BLOCK         	":/images/blockdevice.png"
 #define IMAGE_COLOR         	":/images/highlight.png"
 #define IMAGE_GAMES             ":/images/kgames.png"
@@ -123,14 +124,13 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Create all the dialogs of which we only want one instance */
     _bandwidthGraph = new BandwidthGraph();
     messengerWindow = new MessengerWindow();
-    _settingsWindow = new RSettingsWin();
     applicationWindow = new ApplicationWindow();
     applicationWindow->hide();
 
     /** Left Side ToolBar**/
     connect(ui.actionAdd_Friend, SIGNAL(triggered() ), this , SLOT( addFriend() ) );
     connect(ui.actionAdd_Share, SIGNAL(triggered() ), this , SLOT( openShareManager() ) );
-    connect(ui.actionOptions, SIGNAL(triggered()), this, SLOT( showPreferencesWindow()) );
+    connect(ui.actionOptions, SIGNAL(triggered()), this, SLOT( showSettings()) );
     connect(ui.actionMessenger, SIGNAL(triggered()), this, SLOT( showMessengerWindow()) );
     connect(ui.actionSMPlayer, SIGNAL(triggered()), this, SLOT( showsmplayer()) );
     connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT( showabout()) );
@@ -220,9 +220,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 #endif
 
-#ifdef NEWSETTINGS
     addAction(new QAction(QIcon(IMAGE_OPTIONS), tr("Options"), ui.toolBar), SLOT(showSettings()));
-#endif
 
     /* Select the first action */
     grp->actions()[0]->setChecked(true);
@@ -294,7 +292,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 #else
     menu->addAction(_appAct);
 #endif
-    menu->addAction(_prefsAct);
+    menu->addAction(_settingsAct);
     menu->addAction(_helpAct);
     menu->addSeparator();
     menu->addAction(QIcon(IMAGE_MINIMIZE), tr("Minimize"), this, SLOT(showMinimized()));
@@ -424,13 +422,6 @@ void MainWindow::openShareManager()
 	 ShareManager::showYourself();
 }
 
-/** Creates and displays the Configuration dialog with the current page set to
- * <b>page</b>. */
-void
-MainWindow::showPreferencesWindow(RSettingsWin::PageType page)
-{
-  _settingsWindow->showWindow(page);
-}
 
 /** Shows Messages Dialog */
 void
@@ -441,7 +432,6 @@ MainWindow::showMess(MainWindow::Page page)
 
 
 /** Shows Options */
-#ifdef NEWSETTINGS
 void MainWindow::showSettings()
 {
     static RSettingsWin *win = new RSettingsWin(this);
@@ -450,7 +440,6 @@ void MainWindow::showSettings()
     win->show();
     win->activateWindow();
 }
-#endif
 
 /** Shows Messenger window */
 void MainWindow::showMessengerWindow()
@@ -470,7 +459,6 @@ MainWindow::~MainWindow()
 {
     delete _bandwidthGraph;
     delete _messengerwindowAct;
-    delete _settingsWindow;
 }
 
 /** Create and bind actions to events. Setup for initial
@@ -478,8 +466,8 @@ MainWindow::~MainWindow()
 void MainWindow::createActions()
 {
 
-    _prefsAct = new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), this);
-    connect(_prefsAct, SIGNAL(triggered()), this, SLOT(showPreferencesWindow()));
+    _settingsAct = new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), this);
+    connect(_settingsAct, SIGNAL(triggered()), this, SLOT(showSettings()));
 
     _bandwidthAct = new QAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), this);
     connect(_bandwidthAct, SIGNAL(triggered()),
@@ -718,5 +706,3 @@ void openFile(std::string path)
 
 	return;
 }
-
-

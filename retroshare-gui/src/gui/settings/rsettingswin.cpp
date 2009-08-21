@@ -48,14 +48,6 @@ RSettingsWin::RSettingsWin(QWidget * parent, Qt::WFlags flags)
 }
 
 void
-RSettingsWin::showWindow(int page)
-{
-	loadSettings();
-	setNewPage(page);
-	QDialog::show();
-}
-
-void
 RSettingsWin::closeEvent (QCloseEvent * event)
 {
     QWidget::closeEvent(event);
@@ -123,6 +115,7 @@ RSettingsWin::setNewPage(int page)
     }
 
     pageName->setText(text);
+    loadSettings();	/* load saved settings */
     stackedWidget->setCurrentIndex(page);
     listWidget->setCurrentRow(page);
 }

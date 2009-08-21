@@ -38,8 +38,6 @@
 #include "ApplicationWindow.h"
 #include "PluginsPage.h"
 
-#include "settings/rsettingswin.h"
-
 #include "bwgraph/bwgraph.h"
 #include "help/browser/helpbrowser.h"
 #include "channels/channelsDialog.h"
@@ -104,7 +102,7 @@ public slots:
     void showWindow(Page page);
 
     void playFiles(QStringList files);
-	  void updateHashingInfo(const QString&) ;
+	void updateHashingInfo(const QString&) ;
 
 private slots:
 
@@ -121,7 +119,7 @@ private slots:
     void showApplWindow();
     void showabout();
     void openShareManager();
-	  void displaySystrayMsg(const QString&,const QString&) ;
+	void displaySystrayMsg(const QString&,const QString&) ;
 
     /** Displays the help browser and displays the most recently viewed help
     * topic. */
@@ -129,23 +127,15 @@ private slots:
     /** Called when a child window requests the given help <b>topic</b>. */
     void showHelpDialog(const QString &topic);
 
-    /** Creates and displays the Configuration dialog with the current page set
-    * to <b>page</b>. */
-    void showPreferencesWindow(RSettingsWin::PageType page = RSettingsWin::General);
     void showMess(MainWindow::Page page = MainWindow::Messages);
-#ifdef NEWSETTINGS
     void showSettings();
-#endif
     void setStyle();
 
     /** Called when user attempts to quit via quit button*/
     void doQuit();
 
-
-
 protected:
     void closeEvent(QCloseEvent *);
-
 
 private slots:
 
@@ -154,9 +144,8 @@ private:
     /** Create the actions on the tray menu or menubar */
     void createActions();
 
-
     /** Defines the actions for the tray menu */
-    QAction* _prefsAct;
+    QAction* _settingsAct;
     QAction* _bandwidthAct;
     QAction* _messengerwindowAct;
     QAction* _messagesAct;
@@ -167,8 +156,6 @@ private:
     /** A BandwidthGraph object which handles monitoring RetroShare bandwidth usage */
     BandwidthGraph* _bandwidthGraph;
 
-    RSettingsWin *_settingsWindow;
-
     /** A RetroShareSettings object used for saving/loading settings */
     RshareSettings* _settings;
 
@@ -176,7 +163,6 @@ private:
     QAction* createPageAction(QIcon img, QString text, QActionGroup *group);
     /** Adds a new action to the toolbar. */
     void addAction(QAction *action, const char *slot = 0);
-
 
     void loadStyleSheet(const QString &sheetName);
 
