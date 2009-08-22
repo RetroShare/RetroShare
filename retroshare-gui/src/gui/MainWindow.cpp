@@ -220,8 +220,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 #endif
 
-    addAction(new QAction(QIcon(IMAGE_OPTIONS), tr("Options"), ui.toolBar), SLOT(showSettings()));
-
     /* Select the first action */
     grp->actions()[0]->setChecked(true);
 
