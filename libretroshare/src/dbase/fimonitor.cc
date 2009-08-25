@@ -1,16 +1,16 @@
 /*
  * RetroShare FileCache Module: fimonitor.cc
- *   
+ *
  * Copyright 2004-2007 by Robert Fernie.
- *     
- * This library is free software; you can redistribute it and/or 
+ *
+ * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
  * License Version 2 as published by the Free Software Foundation.
  *
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU  
- * Library General Public License for more details. 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
  * License along with this library; if not, write to the Free Software
@@ -44,8 +44,8 @@
 // ***********/
 
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in,std::string cachedir, std::string pid)
-	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cachedir), fi(pid), 
-		pendingDirs(false), pendingForceCacheWrite(false), 
+	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cachedir), fi(pid),
+		pendingDirs(false), pendingForceCacheWrite(false),
 		mForceCheck(false), mInCheck(false),cb(cb_in)
 
 {
@@ -59,7 +59,7 @@ FileIndexMonitor::~FileIndexMonitor()
 	return;
 }
 
-int FileIndexMonitor::SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results,uint32_t flags)
+int FileIndexMonitor::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,uint32_t flags)
 {
 	results.clear();
 	std::list<FileEntry *> firesults;
@@ -69,7 +69,7 @@ int FileIndexMonitor::SearchKeywords(std::list<std::string> keywords, std::list<
 	return filterResults(firesults,results,flags) ;
 }
 
-int FileIndexMonitor::SearchBoolExp(Expression *exp, std::list<FileDetail>& results,uint32_t flags) const
+int FileIndexMonitor::SearchBoolExp(Expression *exp, std::list<DirDetails>& results,uint32_t flags) const
 {
 	results.clear();
 	std::list<FileEntry *> firesults;
@@ -79,29 +79,22 @@ int FileIndexMonitor::SearchBoolExp(Expression *exp, std::list<FileDetail>& resu
 	return filterResults(firesults,results,flags) ;
 }
 
-int FileIndexMonitor::filterResults(std::list<FileEntry*>& firesults,std::list<FileDetail>& results,uint32_t flags) const
+int FileIndexMonitor::filterResults(std::list<FileEntry*>& firesults,std::list<DirDetails>& results,uint32_t flags) const
 {
-	time_t now  = time(NULL) ;
-
 	/* translate/filter results */
 
 	for(std::list<FileEntry*>::const_iterator rit(firesults.begin()); rit != firesults.end(); ++rit)
 	{
-		DirDetails details ;
-		RequestDirDetails((*rit)->parent,details,0) ;
+		DirDetails pdetails ;
+		RequestDirDetails((*rit)->parent,pdetails,0) ;
+		DirDetails cdetails ;
+		RequestDirDetails (*rit,cdetails,0);
 
-		if(( details.flags & flags & (DIR_FLAGS_BROWSABLE | DIR_FLAGS_NETWORK_WIDE) ) > 0 )
+		if ( ((cdetails.type == DIR_TYPE_FILE) && (pdetails.flags & flags & (DIR_FLAGS_BROWSABLE | DIR_FLAGS_NETWORK_WIDE)) > 0) ||
+				((cdetails.type == DIR_TYPE_DIR) && (cdetails.flags & flags & (DIR_FLAGS_BROWSABLE | DIR_FLAGS_NETWORK_WIDE)) > 0) )
 		{
-			FileDetail fd;
-			fd.id = "Local"; //localId;
-			fd.name = (*rit)->name;
-			fd.hash = (*rit)->hash;
-			fd.path = ""; /* TODO */
-			fd.size = (*rit)->size;
-			fd.age  = now - (*rit)->modtime;
-			fd.rank = (*rit)->pop;
-
-			results.push_back(fd);
+			cdetails.id = "Local";
+			results.push_back(cdetails);
 		}
 	}
 	return !results.empty() ;
@@ -198,7 +191,7 @@ bool FileIndexMonitor::loadLocalCache(const CacheData &data)  /* called with sto
 	//fi.root->name = data.pid;
 
 	/* More error checking needed here! */
-	
+
 	std::string name = data.name ;	// this trick allows to load the complete file. Not the one being shared.
 	name[name.length()-1] = 'c' ;
 
@@ -218,7 +211,7 @@ bool FileIndexMonitor::loadLocalCache(const CacheData &data)  /* called with sto
 		std::cerr << std::endl;
 #endif
 	}
-		
+
 	} fiMutex.unlock(); /* UNLOCKED DIRS */
 
 	if (ok)
@@ -306,7 +299,7 @@ void 	FileIndexMonitor::updateCycle()
 			/* reset start time */
 			startstamp = time(NULL);
 		}
-		
+
 		/* Handle a Single out-of-date directory */
 
 		time_t stamp = time(NULL);
@@ -332,7 +325,7 @@ void 	FileIndexMonitor::updateCycle()
 
         	FileEntry fe;
 		/* entries that need to be checked properly */
-		std::list<FileEntry> filesToHash; 
+		std::list<FileEntry> filesToHash;
 		std::list<FileEntry>::iterator hit;
 
 		/* determine the full root path */
@@ -347,7 +340,7 @@ void 	FileIndexMonitor::updateCycle()
 		{
 			realpath += "/" + remdir;
 		}
-			
+
 
 
 #ifdef FIM_DEBUG
@@ -502,11 +495,11 @@ void 	FileIndexMonitor::updateCycle()
 		 * next files - hashing them, before adding into the system.
 		 */
 		/* for safety - blank out data we cannot use (TODO) */
-		olddir = NULL;	
+		olddir = NULL;
 
 		/* close directory */
 		closedir(dir);
-			
+
 		/* unlock dirs */
 		fiMutex.unlock();
 
@@ -530,7 +523,7 @@ void 	FileIndexMonitor::updateCycle()
 			std::cerr << std::endl;
 		}
 #endif
-			
+
 		/* update files */
 		for(hit = filesToHash.begin(); hit != filesToHash.end(); hit++)
 		{
@@ -564,14 +557,14 @@ void 	FileIndexMonitor::updateCycle()
 			/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 		}
-		
+
 		if (filesToHash.size() > 0)
 			cb->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 	}
 
 	fiMutex.lock(); { /* LOCKED DIRS */
 
-	/* finished update cycle - cleanup extra dirs/files that 
+	/* finished update cycle - cleanup extra dirs/files that
 	 * have not had their timestamps updated.
 	 */
 
@@ -586,7 +579,7 @@ void 	FileIndexMonitor::updateCycle()
 	fi.printFileIndex(std::cerr);
 #endif
 
-	/* now if we have changed things -> restore file/hash it/and 
+	/* now if we have changed things -> restore file/hash it/and
 	 * tell the CacheSource
 	 */
 
@@ -596,11 +589,11 @@ void 	FileIndexMonitor::updateCycle()
 		fiMods = true;
 	}
 
-	} 
+	}
 
 	if (fiMods)
 		locked_saveFileIndexes() ;
-	
+
 	fiMutex.unlock(); /* UNLOCKED DIRS */
 
 	{
@@ -620,12 +613,12 @@ void FileIndexMonitor::locked_saveFileIndexes()
 	// Two files are saved: one with only browsable dirs, which will be shared by the cache system,
 	// and one with the complete file collection.
 	//
-	std::ostringstream out; 
+	std::ostringstream out;
 	out << "fc-own-" << time(NULL) << ".rsfb";
 	std::string tmpname_browsable = out.str();
 	std::string fname_browsable = path + "/" + tmpname_browsable;
 
-	std::ostringstream out2; 
+	std::ostringstream out2;
 	out2 << "fc-own-" << time(NULL) << ".rsfc";
 	std::string tmpname_total = out2.str();
 	std::string fname_total = path + "/" + tmpname_total;
@@ -693,7 +686,7 @@ void    FileIndexMonitor::updateShareFlags(const SharedDirInfo& dir)
 #ifdef FIM_DEBUG
 	std::cerr << "*** FileIndexMonitor: Updating flags for " << dir.filename << " to " << dir.shareflags << std::endl ;
 #endif
-	{ 
+	{
 		RsStackMutex stack(fiMutex) ;	/* LOCKED DIRS */
 
 		for(std::list<SharedDirInfo>::iterator it(pendingDirList.begin());it!=pendingDirList.end();++it)
@@ -828,14 +821,14 @@ bool    FileIndexMonitor::internal_setSharedDirectories()
 		fiMutex.unlock(); /* UNLOCKED DIRS */
 		return false;
 	}
-	
+
 	mForceCheck = false;
 	pendingDirs = false;
 	pendingForceCacheWrite = true;
-	
+
 	/* clear old directories */
 	directoryMap.clear();
-	
+
 	/* iterate through the directories */
 	std::list<SharedDirInfo>::iterator it;
 	std::map<std::string, SharedDirInfo>::const_iterator cit;
@@ -844,7 +837,7 @@ bool    FileIndexMonitor::internal_setSharedDirectories()
 		/* get the head directory */
 		std::string root_dir = (*it).filename;
 		std::string top_dir  = RsDirUtil::getTopDir(root_dir);
-	
+
 		/* if unique -> add, else add modifier  */
 		bool unique = false;
 		for(i = 0; !unique; i++)
@@ -878,20 +871,20 @@ bool    FileIndexMonitor::internal_setSharedDirectories()
 	}
 
 	fi.setRootDirectories(topdirs, 0);
-	
+
 	locked_saveFileIndexes() ;
 	fiMutex.unlock(); /* UNLOCKED DIRS */
 
 	return true;
 }
-	
-	
-	
+
+
+
 
 /* lookup directory function */
 std::string FileIndexMonitor::locked_findRealRoot(std::string rootdir) const
 {
-	/**** MUST ALREADY BE LOCKED ****/ 
+	/**** MUST ALREADY BE LOCKED ****/
 	std::string realroot = "";
 
 	std::map<std::string, SharedDirInfo>::const_iterator cit;
@@ -933,7 +926,7 @@ bool FileIndexMonitor::hashFile(std::string fullpath, FileEntry &fent)
 	}
 
 	/* reading failed for some reason */
-	if (ferror(fd)) 
+	if (ferror(fd))
 	{
 		delete sha_ctx;
 		fclose(fd);
@@ -942,7 +935,7 @@ bool FileIndexMonitor::hashFile(std::string fullpath, FileEntry &fent)
 
 	SHA1_Final(&sha_buf[0], sha_ctx);
 
-	/* TODO: Actually we should store the hash data as binary ... 
+	/* TODO: Actually we should store the hash data as binary ...
 	 * but then it shouldn't be put in a string.
 	 */
 

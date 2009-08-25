@@ -1,16 +1,16 @@
 /*
  * RetroShare FileCache Module: fistore.cc
- *   
+ *
  * Copyright 2004-2007 by Robert Fernie.
- *     
- * This library is free software; you can redistribute it and/or 
+ *
+ * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
  * License Version 2 as published by the Free Software Foundation.
  *
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU  
- * Library General Public License for more details. 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
  * License along with this library; if not, write to the Free Software
@@ -25,15 +25,15 @@
 #include "rsiface/rsexpr.h"
 #include "serialiser/rsserviceids.h"
 
-FileIndexStore::FileIndexStore(CacheStrapper *cs, CacheTransfer *cft, 
+FileIndexStore::FileIndexStore(CacheStrapper *cs, CacheTransfer *cft,
 		NotifyBase *cb_in, RsPeerId ownid, std::string cachedir)
-	:CacheStore(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cft, cachedir), 
+	:CacheStore(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cft, cachedir),
 		localId(ownid), localindex(NULL), cb(cb_in)
-{ 
+{
 	return;
 }
 
-FileIndexStore::~FileIndexStore() 
+FileIndexStore::~FileIndexStore()
 {
 	/* clean up the Index */
 	return;
@@ -151,7 +151,7 @@ int FileIndexStore::RequestDirDetails(std::string uid, std::string path, DirDeta
 	if (it == indices.end())
 	{
 		//DirEntry *fdir = (it->second).lookupDirectory(path);
-		/* translate it 
+		/* translate it
 		 */
 		found = false;
 	}
@@ -232,13 +232,13 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 			/* get remote root entries */
 			for(pit = indices.begin(); pit != indices.end(); pit++)
 			{
-				/* 
+				/*
 				 */
 				DirStub stub;
 				stub.type = DIR_TYPE_PERSON;
 				stub.name = (pit->second)->root->name;
 				stub.ref =  (pit->second)->root;
-	
+
 				details.children.push_back(stub);
 			}
 			details.parent = NULL;
@@ -253,7 +253,7 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 			details.flags = 0;
 		}
 	}
-	else 
+	else
 	{
 		if (dir) /* has children --- fill */
 		{
@@ -263,31 +263,31 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 			std::map<std::string, FileEntry *>::iterator fit;
 			std::map<std::string, DirEntry *>::iterator dit;
 			/* extract all the entries */
-			for(dit = dir->subdirs.begin(); 
+			for(dit = dir->subdirs.begin();
 				dit != dir->subdirs.end(); dit++)
 			{
 				DirStub stub;
 				stub.type = DIR_TYPE_DIR;
 				stub.name = (dit->second) -> name;
 				stub.ref  = (dit->second);
-	
+
 				details.children.push_back(stub);
 			}
-	
-			for(fit = dir->files.begin(); 
+
+			for(fit = dir->files.begin();
 				fit != dir->files.end(); fit++)
 			{
 				DirStub stub;
 				stub.type = DIR_TYPE_FILE;
 				stub.name = (fit->second) -> name;
 				stub.ref  = (fit->second);
-	
+
 				details.children.push_back(stub);
 			}
 
 			details.type = DIR_TYPE_DIR;
 			details.hash = "";
-			details.count = dir->subdirs.size() + 
+			details.count = dir->subdirs.size() +
 					dir->files.size();
 		}
 		else
@@ -298,7 +298,7 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 			details.type = DIR_TYPE_FILE;
 			details.count = file->size;
 		}
-	
+
 #ifdef FIS_DEBUG
 		std::cerr << "FileIndexStore::RequestDirDetails() name: " << file->name << std::endl;
 #endif
@@ -333,7 +333,7 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 
 		if(parent==NULL)
 		{
-			if(NULL == (person = dynamic_cast<PersonEntry *>(file))) 
+			if(NULL == (person = dynamic_cast<PersonEntry *>(file)))
 			{
 				std::cerr << "Major Error- Not PersonEntry!";
 				exit(1);
@@ -366,7 +366,7 @@ int FileIndexStore::SearchHash(std::string hash, std::list<FileDetail> &results)
 {
 	lockData();
 	std::map<RsPeerId, FileIndex *>::const_iterator pit;
-	std::list<FileEntry *>::iterator rit; 
+	std::list<FileEntry *>::iterator rit;
 	std::list<FileEntry *> firesults;
 
 	time_t now = time(NULL);
@@ -411,11 +411,11 @@ int FileIndexStore::SearchHash(std::string hash, std::list<FileDetail> &results)
 }
 
 
-int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results,uint32_t flags) const
+int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,uint32_t flags) const
 {
 	lockData();
 	std::map<RsPeerId, FileIndex *>::const_iterator pit;
-	std::list<FileEntry *>::iterator rit; 
+	std::list<FileEntry *>::iterator rit;
 	std::list<FileEntry *> firesults;
 
 	time_t now = time(NULL);
@@ -432,18 +432,10 @@ int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<Fi
 			/* translate results */
 			for(rit = firesults.begin(); rit != firesults.end(); rit++)
 			{
-				FileDetail fd;
-				fd.id = pit->first;
-				fd.name = (*rit)->name;
-				fd.hash = (*rit)->hash;
-				fd.path = ""; /* TODO */
-				fd.size = (*rit)->size;
-				fd.age  = now - (*rit)->modtime;
-				fd.rank = (*rit)->pop;
-
-				results.push_back(fd);
+				DirDetails dd;
+				(pit->second)->RequestDirDetails(*rit, dd, 0);
+				results.push_back(dd);
 			}
-
 		}
 
 	if(flags & DIR_FLAGS_LOCAL)
@@ -455,16 +447,10 @@ int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<Fi
 			/* translate results */
 			for(rit = firesults.begin(); rit != firesults.end(); rit++)
 			{
-				FileDetail fd;
-				fd.id = "Local"; //localId;
-				fd.name = (*rit)->name;
-				fd.hash = (*rit)->hash;
-				fd.path = ""; /* TODO */
-				fd.size = (*rit)->size;
-				fd.age  = now - (*rit)->modtime;
-				fd.rank = (*rit)->pop;
-
-				results.push_back(fd);
+				DirDetails dd;
+				(pit->second)->RequestDirDetails(*rit, dd, 0);
+				dd.id = "Local";
+				results.push_back(dd);
 			}
 
 		}
@@ -474,11 +460,11 @@ int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<Fi
 }
 
 
-int FileIndexStore::searchBoolExp(Expression * exp, std::list<FileDetail> &results) const
+int FileIndexStore::searchBoolExp(Expression * exp, std::list<DirDetails> &results) const
 {
 	lockData();
 	std::map<RsPeerId, FileIndex *>::const_iterator pit;
-	std::list<FileEntry *>::iterator rit; 
+	std::list<FileEntry *>::iterator rit;
 	std::list<FileEntry *> firesults;
 
 	time_t now = time(NULL);
@@ -495,16 +481,9 @@ int FileIndexStore::searchBoolExp(Expression * exp, std::list<FileDetail> &resul
 		/* translate results */
 		for(rit = firesults.begin(); rit != firesults.end(); rit++)
 		{
-			FileDetail fd;
-			fd.id = pit->first;
-			fd.name = (*rit)->name;
-			fd.hash = (*rit)->hash;
-			fd.path = ""; /* TODO */
-			fd.size = (*rit)->size;
-			fd.age  = now - (*rit)->modtime;
-			fd.rank  = (*rit)->pop;
-
-			results.push_back(fd);
+			DirDetails dd;
+			(pit->second)->RequestDirDetails(*rit, dd, 0);
+			results.push_back(dd);
 		}
 
 	}
@@ -519,16 +498,10 @@ int FileIndexStore::searchBoolExp(Expression * exp, std::list<FileDetail> &resul
 		/* translate results */
 		for(rit = firesults.begin(); rit != firesults.end(); rit++)
 		{
-			FileDetail fd;
-			fd.id = "Local"; //localId;
-			fd.name = (*rit)->name;
-			fd.hash = (*rit)->hash;
-			fd.path = ""; /* TODO */
-			fd.size = (*rit)->size;
-			fd.age  = now - (*rit)->modtime;
-			fd.rank  = (*rit)->pop;
-
-			results.push_back(fd);
+			DirDetails dd;
+			(pit->second)->RequestDirDetails(*rit, dd, 0);
+			dd.id = "Local";
+			results.push_back(dd);
 		}
 
 	}

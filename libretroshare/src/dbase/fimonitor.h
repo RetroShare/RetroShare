@@ -1,16 +1,16 @@
 /*
  * RetroShare FileCache Module: fimonitor.h
- *   
+ *
  * Copyright 2004-2007 by Robert Fernie.
- *     
- * This library is free software; you can redistribute it and/or 
+ *
+ * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
  * License Version 2 as published by the Free Software Foundation.
  *
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU  
- * Library General Public License for more details. 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
  * License along with this library; if not, write to the Free Software
@@ -75,9 +75,9 @@ class FileIndexMonitor: public CacheSource, public RsThread
 
 		/* external interface for filetransfer */
 		bool findLocalFile(std::string hash,uint32_t f, std::string &fullpath, uint64_t &size) const;
-		int SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results,uint32_t flags) ;
-		int SearchBoolExp(Expression *exp, std::list<FileDetail> &results,uint32_t flags) const ;
-		int filterResults(std::list<FileEntry*>& firesults,std::list<FileDetail>& results,uint32_t flags) const ;
+		int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,uint32_t flags) ;
+		int SearchBoolExp(Expression *exp, std::list<DirDetails> &results,uint32_t flags) const ;
+		int filterResults(std::list<FileEntry*>& firesults,std::list<DirDetails>& results,uint32_t flags) const ;
 
 
 		/* external interface for local access to files */

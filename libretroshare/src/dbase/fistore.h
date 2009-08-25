@@ -1,16 +1,16 @@
 /*
  * RetroShare FileCache Module: fistore.h
- *   
+ *
  * Copyright 2004-2007 by Robert Fernie.
- *     
- * This library is free software; you can redistribute it and/or 
+ *
+ * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
  * License Version 2 as published by the Free Software Foundation.
  *
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU  
- * Library General Public License for more details. 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
  * License along with this library; if not, write to the Free Software
@@ -27,7 +27,7 @@
 
 /**********
  * Stores the FileCaches of the Peers
- * must implement 'loadCache' to 
+ * must implement 'loadCache' to
  *
  * This class is also accessed by the GUI....
  * and the FileTransfer class.
@@ -63,7 +63,7 @@ class FileIndexStore: public CacheStore
 {
 	public:
 
-	FileIndexStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in, 
+	FileIndexStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in,
 			RsPeerId ownid, std::string cachedir);
 virtual ~FileIndexStore();
 
@@ -74,10 +74,10 @@ virtual int loadCache(const CacheData &data);	  /* actual load, once data availa
 	int SearchHash(std::string hash, std::list<FileDetail> &results) const;
 
 	/* Search Interface - For Search Interface */
-	int SearchKeywords(std::list<std::string> terms, std::list<FileDetail> &results,uint32_t flags) const;
+	int SearchKeywords(std::list<std::string> terms, std::list<DirDetails> &results,uint32_t flags) const;
 
 	/* Search Interface - for Adv Search Interface */
-	int searchBoolExp(Expression * exp, std::list<FileDetail> &results) const;
+	int searchBoolExp(Expression * exp, std::list<DirDetails> &results) const;
 
 
 	/* Search Interface - For Directory Access */

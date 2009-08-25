@@ -44,20 +44,20 @@
 static RsMutex FIndexPtrMtx ;
 std::set<void*> FileIndex::_pointers ;
 
-void FileIndex::registerEntry(void*p) 
-{ 
+void FileIndex::registerEntry(void*p)
+{
 	RsStackMutex m(FIndexPtrMtx) ;
-	_pointers.insert(p) ; 
+	_pointers.insert(p) ;
 }
-void FileIndex::unregisterEntry(void*p) 
-{ 
+void FileIndex::unregisterEntry(void*p)
+{
 	RsStackMutex m(FIndexPtrMtx) ;
-	_pointers.erase(p) ; 
+	_pointers.erase(p) ;
 }
-bool FileIndex::isValid(void*p)  
-{ 
+bool FileIndex::isValid(void*p)
+{
 	RsStackMutex m(FIndexPtrMtx) ;
-	return _pointers.find(p) != _pointers.end() ; 
+	return _pointers.find(p) != _pointers.end() ;
 }
 
 DirEntry::~DirEntry()
@@ -291,7 +291,7 @@ int  DirEntry::removeOldEntries(time_t old, bool recursive)
 
 DirEntry *DirEntry::findOldDirectory(time_t old)
 {
-	/* check if one of our directories is old ... 
+	/* check if one of our directories is old ...
 	 */
 
 	/* get all dirs with old time */
@@ -480,7 +480,7 @@ int FileEntry::print(std::ostream &out)
 	else
 		out << "[MISSING PARENT]";
 
-	out << " " << name; 
+	out << " " << name;
 	out << "  [ s: " << size << " ] ==> ";
 	out << "  [ " << hash << " ]";
         out << std::endl;
@@ -645,7 +645,7 @@ int  	FileIndex::removeOldDirectory(std::string fpath, std::string name, time_t 
 		std::cerr << std::endl;
 #endif
 
-	/* because of this find - we cannot get a child of 
+	/* because of this find - we cannot get a child of
 	 * root (which is what we want!)
 	 */
 
@@ -697,7 +697,7 @@ int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint64_
 	{
 #ifdef FI_DEBUG
 		std::cerr << "FileIndex::loadIndex error opening file: " << filename;
-		std::cerr << std::endl; 
+		std::cerr << std::endl;
 #endif
 		return 0;
 	}
@@ -714,10 +714,10 @@ int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint64_
 
 	/* calculate hash */
 	unsigned char sha_buf[SHA_DIGEST_LENGTH];
-	SHA_CTX *sha_ctx = new SHA_CTX;	
+	SHA_CTX *sha_ctx = new SHA_CTX;
 	SHA1_Init(sha_ctx);
 	SHA1_Update(sha_ctx, ss.str().c_str(), ss.str().length());
-	SHA1_Final(&sha_buf[0], sha_ctx);	
+	SHA1_Final(&sha_buf[0], sha_ctx);
 	delete sha_ctx;
 
 	std::ostringstream tmpout;
@@ -729,19 +729,19 @@ int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint64_
 	if (expectedHash != tmpout.str())
 	{
 #ifdef FI_DEBUG
-		std::cerr << "FileIndex::loadIndex expected hash does not match" << std::endl; 
+		std::cerr << "FileIndex::loadIndex expected hash does not match" << std::endl;
 		std::cerr << "Expected hash: " << expectedHash << std::endl;
 		std::cerr << "Hash found:    " << tmpout.str() << std::endl;
 #endif
 		return 0;
 	}
-	
+
 	DirEntry *ndir = NULL;
 	FileEntry *nfile = NULL;
 	std::list<DirEntry *> dirlist;
 	std::string word;
 	char ch;
-	
+
 	while(ss.get(ch))
 	{
 		if (ch == '-')
@@ -750,7 +750,7 @@ int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint64_
 			switch(dirlist.size())
 			{
 				/* parse error: out of directory */
-				case 0: 
+				case 0:
 				{
 #ifdef FI_DEBUG
 					std::cerr << "loadIndex error parsing saved file: " << filename;
@@ -760,16 +760,16 @@ int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint64_
 					goto error;
 				}
 				/* finished parse, last dir is root */
-				case 1: 
+				case 1:
 				{
-					std::string pid = root -> id;	
+					std::string pid = root -> id;
 					FileIndex::unregisterEntry((void*)root) ;
 					delete root; /* to clean up old entries */
 					root = new PersonEntry(pid);
 					registerEntry((void*)root) ;
 
 					/* shallow copy of all except id */
-					ndir = dirlist.back(); 
+					ndir = dirlist.back();
 					dirlist.pop_back(); /* empty list */
 					(*root) = (*ndir);
 
@@ -782,13 +782,13 @@ int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint64_
 
 					/* must reset parent pointers now */
 					std::map<std::string, DirEntry *>::iterator it;
-					for(it = root->subdirs.begin(); 
+					for(it = root->subdirs.begin();
 						it != root->subdirs.end(); it++)
 					{
 						(it->second)->parent = root;
 					}
 
-					break; 
+					break;
 				}
 				/* pop stack */
 				default: dirlist.pop_back(); ndir = dirlist.back();
@@ -897,12 +897,12 @@ int FileIndex::saveIndex(std::string filename, std::string &fileHash, uint64_t &
 	unsigned char sha_buf[SHA_DIGEST_LENGTH];
 	std::ofstream file (filename.c_str(), std::ofstream::binary);
 	std::ostringstream oss;
-	
+
 	if (!file)
 	{
 #ifdef FI_DEBUG
 		std::cerr << "FileIndex::saveIndex error opening file: " << filename;
-		std::cerr << std::endl; 
+		std::cerr << std::endl;
 #endif
 		return 0;
 	}
@@ -912,7 +912,7 @@ int FileIndex::saveIndex(std::string filename, std::string &fileHash, uint64_t &
 	oss << "# Dir: d name, path, parent, size, modtime, pop, updtime;" << std::endl;
 	oss << "# File: f name, hash, size, modtime, pop, updtime;" << std::endl;
 	oss << "#" << std::endl;
-	
+
 	/* begin recusion */
 	root->writeDirInfo(oss) ;
 
@@ -935,10 +935,10 @@ int FileIndex::saveIndex(std::string filename, std::string &fileHash, uint64_t &
 	oss << "-" << std::endl;
 
 	/* calculate sha1 hash */
-	SHA_CTX *sha_ctx = new SHA_CTX;	
+	SHA_CTX *sha_ctx = new SHA_CTX;
 	SHA1_Init(sha_ctx);
 	SHA1_Update(sha_ctx, oss.str().c_str(), oss.str().length());
-	SHA1_Final(&sha_buf[0], sha_ctx);	
+	SHA1_Final(&sha_buf[0], sha_ctx);
 	delete sha_ctx;
 
 	std::ostringstream tmpout;
@@ -1022,7 +1022,7 @@ int FileIndex::searchHash(std::string hash, std::list<FileEntry *> &results) con
 {
 #ifdef FI_DEBUG
 	std::cerr << "FileIndex::searchHash(" << hash << ")";
-	std::cerr << std::endl; 
+	std::cerr << std::endl;
 #endif
 	DirEntry *ndir = NULL;
 	std::list<DirEntry *> dirlist;
@@ -1049,7 +1049,7 @@ int FileIndex::searchHash(std::string hash, std::list<FileEntry *> &results) con
 #ifdef FI_DEBUG
 				std::cerr << "FileIndex::searchHash(" << hash << ")";
 				std::cerr << " found: " << fit->second->name;
-				std::cerr << std::endl; 
+				std::cerr << std::endl;
 #endif
 			}
 		}
@@ -1077,6 +1077,28 @@ int FileIndex::searchTerms(std::list<std::string> terms, std::list<FileEntry *> 
 		for(it = ndir->subdirs.begin(); it != ndir->subdirs.end(); it++)
 		{
 			dirlist.push_back(it->second);
+		}
+
+		for (iter = terms.begin(); iter != terms.end(); iter ++) {
+			std::string::const_iterator it2;
+			const std::string &str1 = ndir->name;
+			const std::string &str2 = *iter;
+			it2 = std::search(str1.begin(), str1.end(), str2.begin(), str2.end(), CompareCharIC());
+			if (it2 != str1.end()) {
+				/* first search to see if its parent is in the results list */
+				bool addDir = true;
+				for (std::list<FileEntry *>::iterator rit(results.begin()); rit != results.end() && addDir; rit ++) {
+					DirEntry *de = dynamic_cast<DirEntry *>(*rit);
+					if (de && (de == root))
+						continue;
+					if (de && (de == ndir->parent))
+						addDir = false;
+				}
+				if (addDir) {
+					results.push_back((FileEntry *) ndir);
+					break;
+				}
+			}
 		}
 
 		for(fit = ndir->files.begin(); fit != ndir->files.end(); fit++)
@@ -1135,7 +1157,7 @@ int FileIndex::searchBoolExp(Expression * exp, std::list<FileEntry *> &results) 
 			/*Evaluate the boolean expression and add it to the results if its true*/
 			bool ret = exp->eval(fit->second);
 			if (ret == true){
-				results.push_back(fit->second);	
+				results.push_back(fit->second);
 			}
 		}
 	} //while
@@ -1176,7 +1198,7 @@ int FileIndex::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)
 		details.age = 0;
 		details.flags = 0;
 	}
-	else 
+	else
 	{
 		if (dir) /* has children --- fill */
 		{
@@ -1192,17 +1214,17 @@ int FileIndex::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)
 				stub.type = DIR_TYPE_DIR;
 				stub.name = (dit->second) -> name;
 				stub.ref  = (dit->second);
-	
+
 				details.children.push_back(stub);
 			}
-	
+
 			for(fit = dir->files.begin(); fit != dir->files.end(); fit++)
 			{
 				DirStub stub;
 				stub.type = DIR_TYPE_FILE;
 				stub.name = (fit->second) -> name;
 				stub.ref  = (fit->second);
-	
+
 				details.children.push_back(stub);
 			}
 
@@ -1218,7 +1240,7 @@ int FileIndex::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)
 			details.type = DIR_TYPE_FILE;
 			details.count = file->size;
 		}
-	
+
 #ifdef FI_DEBUG
 		std::cerr << "FileIndexStore::RequestDirDetails() name: " << file->name << std::endl;
 #endif
@@ -1253,7 +1275,7 @@ int FileIndex::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)
 
 		if(parent==NULL)
 		{
-			if(NULL == (person = dynamic_cast<PersonEntry *>(file))) 
+			if(NULL == (person = dynamic_cast<PersonEntry *>(file)))
 			{
 				std::cerr << "Major Error- Not PersonEntry!";
 				exit(1);

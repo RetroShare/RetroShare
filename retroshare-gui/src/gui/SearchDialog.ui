@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>627</width>
+    <width>645</width>
     <height>341</height>
    </rect>
   </property>
@@ -574,6 +574,15 @@
         <property name="icon">
          <iconset resource="images.qrc">
           <normaloff>:/images/FileTypeVideo.png</normaloff>:/images/FileTypeVideo.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Directory</string>
+        </property>
+        <property name="icon">
+         <iconset resource="images.qrc">
+          <normaloff>:/images/folder_green16.png</normaloff>:/images/folder_green16.png</iconset>
         </property>
        </item>
       </widget>
