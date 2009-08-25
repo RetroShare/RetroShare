@@ -424,11 +424,11 @@ void SearchDialog::advancedSearch(Expression* expression)
 	/* abstraction to allow reusee of tree rendering code */
 	resultsToTree((advSearchDialog->getSearchAsString()).toStdString(),req_id, results);
 
-	// debug stuff
-	Expression *expression2 = LinearizedExpression::toExpr(e) ;
-	results.clear() ;
-	rsFiles -> SearchBoolExp(expression2, results, DIR_FLAGS_REMOTE | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
-	resultsToTree((advSearchDialog->getSearchAsString()).toStdString(),req_id+1, results);
+//	// debug stuff
+//	Expression *expression2 = LinearizedExpression::toExpr(e) ;
+//	results.clear() ;
+//	rsFiles -> SearchBoolExp(expression2, results, DIR_FLAGS_REMOTE | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
+//	resultsToTree((advSearchDialog->getSearchAsString()).toStdString(),req_id+1, results);
 }
 
 
