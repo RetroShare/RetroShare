@@ -158,7 +158,7 @@ virtual int RequestDirDetails(std::string uid, std::string path, DirDetails &det
 virtual int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags);
 
 virtual int SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results,uint32_t flags);
-virtual int SearchBoolExp(Expression * exp, std::list<FileDetail> &results);
+virtual int SearchBoolExp(Expression * exp, std::list<FileDetail> &results,uint32_t flags);
 
 /***
  * Utility Functions

@@ -4,17 +4,23 @@
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rsbaseserial.h"
 #include "rsiface/rsturtle.h"
+#include "rsiface/rsexpr.h"
 #include "serialiser/rsserviceids.h"
 #include "turtle/turtletypes.h"
 
-const uint8_t RS_TURTLE_SUBTYPE_SEARCH_REQUEST = 0x01 ;
-const uint8_t RS_TURTLE_SUBTYPE_SEARCH_RESULT  = 0x02 ;
-const uint8_t RS_TURTLE_SUBTYPE_OPEN_TUNNEL    = 0x03 ;
-const uint8_t RS_TURTLE_SUBTYPE_TUNNEL_OK      = 0x04 ;
-const uint8_t RS_TURTLE_SUBTYPE_CLOSE_TUNNEL   = 0x05 ;
-const uint8_t RS_TURTLE_SUBTYPE_TUNNEL_CLOSED  = 0x06 ;
-const uint8_t RS_TURTLE_SUBTYPE_FILE_REQUEST   = 0x07 ;
-const uint8_t RS_TURTLE_SUBTYPE_FILE_DATA      = 0x08 ;
+const uint8_t RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST	= 0x01 ;
+const uint8_t RS_TURTLE_SUBTYPE_SEARCH_RESULT  			= 0x02 ;
+const uint8_t RS_TURTLE_SUBTYPE_OPEN_TUNNEL    			= 0x03 ;
+const uint8_t RS_TURTLE_SUBTYPE_TUNNEL_OK      			= 0x04 ;
+const uint8_t RS_TURTLE_SUBTYPE_CLOSE_TUNNEL   			= 0x05 ;
+const uint8_t RS_TURTLE_SUBTYPE_TUNNEL_CLOSED  			= 0x06 ;
+const uint8_t RS_TURTLE_SUBTYPE_FILE_REQUEST   			= 0x07 ;
+const uint8_t RS_TURTLE_SUBTYPE_FILE_DATA      			= 0x08 ;
+const uint8_t RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST = 0x09 ;
+
+/***********************************************************************************/
+/*                           Basic Turtle Item Class                               */
+/***********************************************************************************/
 
 class RsTurtleItem: public RsItem
 {
@@ -26,6 +32,10 @@ class RsTurtleItem: public RsItem
 
 		virtual void clear() {} 
 };
+
+/***********************************************************************************/
+/*                           Turtle Search Item classes                            */
+/***********************************************************************************/
 
 class RsTurtleSearchResultItem: public RsTurtleItem
 {
@@ -51,19 +61,52 @@ class RsTurtleSearchResultItem: public RsTurtleItem
 class RsTurtleSearchRequestItem: public RsTurtleItem
 {
 	public:
-		RsTurtleSearchRequestItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_REQUEST) {}
-		RsTurtleSearchRequestItem(void *data,uint32_t size) ;		// deserialization
+		RsTurtleSearchRequestItem(uint32_t subtype) : RsTurtleItem(subtype) {}
 
-		std::string match_string ;	// string to match
+		virtual RsTurtleSearchRequestItem *clone() const = 0 ;						// used for cloning in routing methods
+		virtual void performLocalSearch(std::list<TurtleFileInfo>&) const = 0 ;	// abstracts the search method
+
 		uint32_t request_id ; 		// randomly generated request id.
 		uint16_t depth ;				// Used for limiting search depth.
+};
+
+class RsTurtleStringSearchRequestItem: public RsTurtleSearchRequestItem
+{
+	public:
+		RsTurtleStringSearchRequestItem() : RsTurtleSearchRequestItem(RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST) {} 
+		RsTurtleStringSearchRequestItem(void *data,uint32_t size) ;
+			
+		std::string match_string ;	// string to match
+
+		virtual RsTurtleSearchRequestItem *clone() const { return new RsTurtleStringSearchRequestItem(*this) ; }
+		virtual void performLocalSearch(std::list<TurtleFileInfo>&) const ;
 
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
-
 	protected:
 		virtual bool serialize(void *data,uint32_t& size) ;	
 		virtual uint32_t serial_size() ; 
 };
+
+class RsTurtleRegExpSearchRequestItem: public RsTurtleSearchRequestItem
+{
+	public:
+		RsTurtleRegExpSearchRequestItem() : RsTurtleSearchRequestItem(RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST) {} 
+		RsTurtleRegExpSearchRequestItem(void *data,uint32_t size) ;
+
+		LinearizedExpression expr ;	// Reg Exp in linearised mode
+
+		virtual RsTurtleSearchRequestItem *clone() const { return new RsTurtleRegExpSearchRequestItem(*this) ; }
+		virtual void performLocalSearch(std::list<TurtleFileInfo>&) const ;
+
+		virtual std::ostream& print(std::ostream& o, uint16_t) ;
+	protected:
+		virtual bool serialize(void *data,uint32_t& size) ;	
+		virtual uint32_t serial_size() ; 
+};
+
+/***********************************************************************************/
+/*                           Turtle Tunnel Item classes                            */
+/***********************************************************************************/
 
 class RsTurtleOpenTunnelItem: public RsTurtleItem
 {
@@ -99,6 +142,7 @@ class RsTurtleTunnelOkItem: public RsTurtleItem
 		virtual uint32_t serial_size() ; 
 };
 
+#ifdef A_VIRER
 class RsTurtleCloseTunnelItem: public RsTurtleItem
 {
 	public:
@@ -126,6 +170,11 @@ class RsTurtleTunnelClosedItem: public RsTurtleItem
 		virtual bool serialize(void *data,uint32_t& size) ;	
 		virtual uint32_t serial_size() ; 
 };
+#endif
+
+/***********************************************************************************/
+/*                           Turtle File Transfer item classes                     */
+/***********************************************************************************/
 
 class RsTurtleFileRequestItem: public RsTurtleItem
 {
@@ -161,8 +210,10 @@ class RsTurtleFileDataItem: public RsTurtleItem
 		virtual uint32_t serial_size() ; 
 };
 
-// Class responsible for serializing/deserializing all turtle items.
-//
+/***********************************************************************************/
+/*                           Turtle Serialiser class                               */
+/***********************************************************************************/
+
 class RsTurtleSerialiser: public RsSerialType
 {
 	public:

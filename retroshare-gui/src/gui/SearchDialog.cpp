@@ -412,11 +412,23 @@ void SearchDialog::advancedSearch(Expression* expression)
 
 	/* call to core */
 	std::list<FileDetail> results;
-	rsFiles -> SearchBoolExp(expression, results);
-	qulonglong searchId = rand() ;	// for now, because we need to call the turtle search to get a proper id.
 
-        /* abstraction to allow reusee of tree rendering code */
-	resultsToTree((advSearchDialog->getSearchAsString()).toStdString(),searchId, results);
+	// send a turtle search request
+	LinearizedExpression e ;
+	expression->linearize(e) ;
+
+	TurtleRequestId req_id = rsTurtle->turtleSearch(e) ;
+
+	rsFiles -> SearchBoolExp(expression, results, DIR_FLAGS_REMOTE | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
+
+	/* abstraction to allow reusee of tree rendering code */
+	resultsToTree((advSearchDialog->getSearchAsString()).toStdString(),req_id, results);
+
+	// debug stuff
+	Expression *expression2 = LinearizedExpression::toExpr(e) ;
+	results.clear() ;
+	rsFiles -> SearchBoolExp(expression2, results, DIR_FLAGS_REMOTE | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
+	resultsToTree((advSearchDialog->getSearchAsString()).toStdString(),req_id+1, results);
 }
 
 

@@ -207,6 +207,7 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle, public ftS
 		// as they come back.
 		//
 		virtual TurtleSearchRequestId turtleSearch(const std::string& string_to_match) ;
+		virtual TurtleSearchRequestId turtleSearch(const LinearizedExpression& expr) ;
 
 		// Initiates tunnel handling for the given file hash.  tunnels.  Launches
 		// an exception if an error occurs during the initialization process. The

@@ -37,27 +37,58 @@ Enumerations defining the Operators usable in the Boolean search expressions
 
 enum LogicalOperator{
 	AndOp=0,	/* exp AND exp */
-	OrOp,		/* exp OR exp */
-	XorOp		/* exp XOR exp */
+	OrOp=1,		/* exp OR exp */
+	XorOp=2		/* exp XOR exp */
 };
 
 
 /*Operators for String Queries*/
 enum StringOperator{
 	ContainsAnyStrings = 0,	/* e.g. name contains any of 'conference' 'meeting' 'presentation' */
-	ContainsAllStrings,		/* same as above except that it contains ALL of the strings */
-	EqualsString			/* exactly equal*/
+	ContainsAllStrings = 1,		/* same as above except that it contains ALL of the strings */
+	EqualsString = 2			/* exactly equal*/
 };
 
 /*Relational operators ( >, <, >=, <=, == and InRange )*/
 enum RelOperator{
 	Equals = 0,
-	GreaterEquals,
-	Greater,
-	SmallerEquals,
-	Smaller,
-	InRange		/* lower limit <= value <= upper limit*/
+	GreaterEquals = 1,
+	Greater = 2,
+	SmallerEquals = 3,
+	Smaller = 4,
+	InRange = 5		/* lower limit <= value <= upper limit*/
 };
+
+/********************************************************************************************
+ * Helper class for further serialisation
+ ********************************************************************************************/
+
+class StringExpression ;
+class Expression ;
+
+class LinearizedExpression
+{
+	public:
+		std::vector<uint8_t> _tokens ;
+		std::vector<uint32_t> _ints ;
+		std::vector<std::string> _strings ;
+
+		typedef enum {	EXPR_DATE= 0,
+							EXPR_POP = 1,
+							EXPR_SIZE= 2,
+							EXPR_HASH= 3,
+							EXPR_NAME= 4,
+							EXPR_PATH= 5,
+							EXPR_EXT = 6,
+							EXPR_COMP= 7 } token ;
+
+		static Expression *toExpr(const LinearizedExpression& e) ;
+
+	private:
+		static Expression *toExpr(const LinearizedExpression& e,int&,int&,int&) ;
+		static void readStringExpr(const LinearizedExpression& e,int& n_ints,int& n_strings,std::list<std::string>& strings,bool& b,StringOperator& op) ;
+};
+
 
 /******************************************************************************************
 Boolean Search Expression
@@ -74,68 +105,80 @@ classes:
 
 class FileEntry;
 
-class Expression{
-public:
-	virtual bool eval (FileEntry *file) = 0;
-	virtual ~Expression() {};
+class Expression
+{
+	public:
+		virtual bool eval (FileEntry *file) = 0;
+		virtual ~Expression() {};
+
+		virtual void linearize(LinearizedExpression& e) const = 0 ;
 };
 
 
-class CompoundExpression : public Expression {
-public:	
-	CompoundExpression( enum LogicalOperator op, Expression * exp1, Expression *exp2)
-						: Lexp(exp1), Rexp(exp2), Op(op){ }
-							
-	bool eval (FileEntry *file) {
-		if (Lexp == NULL or Rexp == NULL) {
-			return false;	
+class CompoundExpression : public Expression 
+{
+	public:	
+		CompoundExpression( enum LogicalOperator op, Expression * exp1, Expression *exp2)
+			: Lexp(exp1), Rexp(exp2), Op(op){ }
+
+		bool eval (FileEntry *file) {
+			if (Lexp == NULL or Rexp == NULL) {
+				return false;	
+			}
+			switch (Op){
+				case AndOp:
+					return Lexp->eval(file) && Rexp->eval(file);
+				case OrOp:
+					return Lexp->eval(file) || Rexp->eval(file);
+				case XorOp:
+					return Lexp->eval(file) ^ Rexp->eval(file);
+				default:
+					return false;
+			}
 		}
-		switch (Op){
-			case AndOp:
-				return Lexp->eval(file) && Rexp->eval(file);
-			case OrOp:
-				return Lexp->eval(file) || Rexp->eval(file);
-			case XorOp:
-				return Lexp->eval(file) ^ Rexp->eval(file);
-			default:
-				return false;
-		}
-	}
-	virtual ~CompoundExpression(){
-		delete Lexp;
-		delete Rexp;
-	}	
-private:
-	Expression *Lexp;
-	Expression *Rexp;
-	enum LogicalOperator Op;
+		virtual ~CompoundExpression(){
+			delete Lexp;
+			delete Rexp;
+		}	
+
+		virtual void linearize(LinearizedExpression& e) const ;
+	private:
+		Expression *Lexp;
+		Expression *Rexp;
+		enum LogicalOperator Op;
 
 };
 
-class StringExpression: public Expression {
-public:
-	StringExpression(enum StringOperator op, std::list<std::string> &t, 
-					 bool ic): Op(op),terms(t), IgnoreCase(ic){}
-protected:
-	bool evalStr(std::string &str);
-private:
-	enum StringOperator Op;
-	std::list<std::string> terms;
-	bool IgnoreCase;
+class StringExpression: public Expression 
+{
+	public:
+		StringExpression(enum StringOperator op, std::list<std::string> &t, bool ic): Op(op),terms(t), IgnoreCase(ic){}
+
+		virtual void linearize(LinearizedExpression& e) const ;
+	protected:
+		bool evalStr(std::string &str);
+
+		enum StringOperator Op;
+		std::list<std::string> terms;
+		bool IgnoreCase;
 };
 
 template <class T>
-class RelExpression: public Expression {
-public:	
-	RelExpression(enum RelOperator op, T lv, T hv): 
-				  Op(op), LowerValue(lv), HigherValue(hv) {}
-protected:
-	bool evalRel(T val);
-private:
-	enum RelOperator Op;
-	T LowerValue;
-	T HigherValue;
+class RelExpression: public Expression 
+{
+	public:	
+		RelExpression(enum RelOperator op, T lv, T hv): Op(op), LowerValue(lv), HigherValue(hv) {}
+
+		virtual void linearize(LinearizedExpression& e) const ;
+	protected:
+		bool evalRel(T val);
+
+		enum RelOperator Op;
+		T LowerValue;
+		T HigherValue;
 };
+
+template<> void RelExpression<int>::linearize(LinearizedExpression& e) const ;
 
 template <class T>
 bool RelExpression<T>::evalRel(T val) {
@@ -181,11 +224,18 @@ Some implementations of StringExpressions.
 
 ******************************************************************************************/
 
-class NameExpression: public StringExpression {
-public:
-	NameExpression(enum StringOperator op, std::list<std::string> &t, bool ic): 
-					StringExpression(op,t,ic) {}
-	bool eval(FileEntry *file);
+class NameExpression: public StringExpression 
+{
+	public:
+		NameExpression(enum StringOperator op, std::list<std::string> &t, bool ic): 
+			StringExpression(op,t,ic) {}
+		bool eval(FileEntry *file);
+
+		virtual void linearize(LinearizedExpression& e) const
+		{
+			e._tokens.push_back(LinearizedExpression::EXPR_NAME) ;
+			StringExpression::linearize(e) ;
+		}
 };
 
 class PathExpression: public StringExpression {
@@ -193,6 +243,12 @@ public:
 	PathExpression(enum StringOperator op, std::list<std::string> &t, bool ic): 
 					StringExpression(op,t,ic) {}
 	bool eval(FileEntry *file);
+
+		virtual void linearize(LinearizedExpression& e) const
+		{
+			e._tokens.push_back(LinearizedExpression::EXPR_PATH) ;
+			StringExpression::linearize(e) ;
+		}
 };
 
 class ExtExpression: public StringExpression {
@@ -200,6 +256,12 @@ public:
 	ExtExpression(enum StringOperator op, std::list<std::string> &t, bool ic): 
 					StringExpression(op,t,ic) {}
 	bool eval(FileEntry *file);
+
+		virtual void linearize(LinearizedExpression& e) const
+		{
+			e._tokens.push_back(LinearizedExpression::EXPR_EXT) ;
+			StringExpression::linearize(e) ;
+		}
 };
 
 class HashExpression: public StringExpression {
@@ -207,6 +269,12 @@ public:
 	HashExpression(enum StringOperator op, std::list<std::string> &t): 
 					StringExpression(op,t, true) {}
 	bool eval(FileEntry *file);
+
+		virtual void linearize(LinearizedExpression& e) const
+		{
+			e._tokens.push_back(LinearizedExpression::EXPR_HASH) ;
+			StringExpression::linearize(e) ;
+		}
 };
 
 /******************************************************************************************
@@ -214,28 +282,50 @@ Some implementations of Relational Expressions.
 
 ******************************************************************************************/
 
-class DateExpression: public RelExpression<int> {
-public:
-	DateExpression(enum RelOperator op, int v): RelExpression<int>(op,v,v){}
-	DateExpression(enum RelOperator op, int lv, int hv): 
-					RelExpression<int>(op,lv,hv) {}
-	bool eval(FileEntry *file);
+class DateExpression: public RelExpression<int> 
+{
+	public:
+		DateExpression(enum RelOperator op, int v): RelExpression<int>(op,v,v){}
+		DateExpression(enum RelOperator op, int lv, int hv): 
+			RelExpression<int>(op,lv,hv) {}
+		bool eval(FileEntry *file);
+
+		virtual void linearize(LinearizedExpression& e) const
+		{
+			e._tokens.push_back(LinearizedExpression::EXPR_DATE) ;
+			RelExpression<int>::linearize(e) ;
+		}
 };
 
-class SizeExpression: public RelExpression<int> {
-public:
-	SizeExpression(enum RelOperator op, int v): RelExpression<int>(op,v,v){}
-	SizeExpression(enum RelOperator op, int lv, int hv): 
-					RelExpression<int>(op,lv,hv) {}
-	bool eval(FileEntry *file);
+class SizeExpression: public RelExpression<int> 
+{
+	public:
+		SizeExpression(enum RelOperator op, int v): RelExpression<int>(op,v,v){}
+		SizeExpression(enum RelOperator op, int lv, int hv): 
+			RelExpression<int>(op,lv,hv) {}
+		bool eval(FileEntry *file);
+
+		virtual void linearize(LinearizedExpression& e) const
+		{
+			e._tokens.push_back(LinearizedExpression::EXPR_SIZE) ;
+			RelExpression<int>::linearize(e) ;
+		}
 };
 
-class PopExpression: public RelExpression<int> {
-public:
-	PopExpression(enum RelOperator op, int v): RelExpression<int>(op,v,v){}
-	PopExpression(enum RelOperator op, int lv, int hv): 
-					RelExpression<int>(op,lv,hv) {}
-	bool eval(FileEntry *file);
+class PopExpression: public RelExpression<int> 
+{
+	public:
+		PopExpression(enum RelOperator op, int v): RelExpression<int>(op,v,v){}
+		PopExpression(enum RelOperator op, int lv, int hv): RelExpression<int>(op,lv,hv) {}
+		PopExpression(const LinearizedExpression& e) ;
+		bool eval(FileEntry *file);
+
+		virtual void linearize(LinearizedExpression& e) const
+		{
+			e._tokens.push_back(LinearizedExpression::EXPR_POP) ;
+			RelExpression<int>::linearize(e) ;
+		}
 };
 
 #endif /* RS_EXPRESSIONS_H */
+

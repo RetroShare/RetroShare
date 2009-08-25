@@ -526,8 +526,9 @@ int p3turtle::handleIncoming()
 
 		switch(item->PacketSubType())
 		{
-			case RS_TURTLE_SUBTYPE_SEARCH_REQUEST: handleSearchRequest(dynamic_cast<RsTurtleSearchRequestItem *>(item)) ;
-																break ;
+			case RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST: 
+			case RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST: handleSearchRequest(dynamic_cast<RsTurtleSearchRequestItem *>(item)) ;
+																		 break ;
 
 			case RS_TURTLE_SUBTYPE_SEARCH_RESULT : handleSearchResult(dynamic_cast<RsTurtleSearchResultItem *>(item)) ;
 																break ;
@@ -596,7 +597,8 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 		if(_sharing_strategy != SHARE_FRIENDS_ONLY || item->depth < 2)
 		{
 			std::list<TurtleFileInfo> result ;
-			performLocalSearch(item->match_string,result) ;
+
+			item->performLocalSearch(result) ;
 
 			RsTurtleSearchResultItem *res_item = NULL ;
 			uint32_t item_size = 0 ;
@@ -658,7 +660,7 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 				std::cerr << "  Forwarding request to peer = " << *it << std::endl ;
 #endif
 				// Copy current item and modify it.
-				RsTurtleSearchRequestItem *fwd_item = new RsTurtleSearchRequestItem(*item) ;
+				RsTurtleSearchRequestItem *fwd_item = item->clone() ;
 
 				++(fwd_item->depth) ;		// increase search depth
 				fwd_item->PeerId(*it) ;
@@ -767,9 +769,8 @@ void p3turtle::handleRecvFileRequest(RsTurtleFileRequestItem *item)
 		}
 		else	// No, it's a request we should forward down the pipe.
 		{
-			RsTurtleFileRequestItem *res_item = new RsTurtleFileRequestItem ;
+			RsTurtleFileRequestItem *res_item = new RsTurtleFileRequestItem(*item) ;
 
-			*res_item = *item ;
 			res_item->PeerId(tunnel.local_dst) ;			
 
 			sendItem(res_item) ;
@@ -812,6 +813,8 @@ void p3turtle::handleRecvFileData(RsTurtleFileDataItem *item)
 
 		// Only file data transfer updates tunnels time_stamp field, to avoid maintaining tunnel that are incomplete.
 		tunnel.time_stamp = time(NULL) ;
+		// also update the hash time stamp to show that it's actually being downloaded.
+		_incoming_file_hashes[tunnel.hash].time_stamp = time(NULL) ;
 
 		// Let's figure out whether this reuqest is for us or not.
 
@@ -845,9 +848,7 @@ void p3turtle::handleRecvFileData(RsTurtleFileDataItem *item)
 #ifdef P3TURTLE_DEBUG
 			std::cerr << "  Forwarding data chunk to peer " << tunnel.local_src << std::endl ;
 #endif
-			RsTurtleFileDataItem *res_item = new RsTurtleFileDataItem ;
-
-			*res_item = *item ;
+			RsTurtleFileDataItem *res_item = new RsTurtleFileDataItem(*item) ;
 
 			res_item->chunk_data = malloc(res_item->chunk_size) ;
 
@@ -1298,14 +1299,14 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 // ------------------------------  IO with libretroshare  ----------------------------// 
 // -----------------------------------------------------------------------------------//
 //
-void p3turtle::performLocalSearch(const std::string& s,std::list<TurtleFileInfo>& result) 
+void RsTurtleStringSearchRequestItem::performLocalSearch(std::list<TurtleFileInfo>& result) const
 {
 	/* call to core */
 	std::list<FileDetail> initialResults;
 	std::list<std::string> words ;
 
 	// to do: split search string into words.
-	words.push_back(s) ;
+	words.push_back(match_string) ;
 	
 	// now, search!
 	rsFiles->SearchKeywords(words, initialResults,DIR_FLAGS_LOCAL | DIR_FLAGS_NETWORK_WIDE);
@@ -1322,6 +1323,30 @@ void p3turtle::performLocalSearch(const std::string& s,std::list<TurtleFileInfo>
 		result.push_back(i) ;
 	}
 }
+void RsTurtleRegExpSearchRequestItem::performLocalSearch(std::list<TurtleFileInfo>& result) const
+{
+	/* call to core */
+	std::list<FileDetail> initialResults;
+
+	// to do: split search string into words.
+	Expression *exp = LinearizedExpression::toExpr(expr) ;
+	
+	// now, search!
+	rsFiles->SearchBoolExp(exp,initialResults,DIR_FLAGS_LOCAL | DIR_FLAGS_NETWORK_WIDE);
+
+	result.clear() ;
+
+	for(std::list<FileDetail>::const_iterator it(initialResults.begin());it!=initialResults.end();++it)
+	{
+		TurtleFileInfo i ;
+		i.hash = it->hash ;
+		i.size = it->size ;
+		i.name = it->name ;
+
+		result.push_back(i) ;
+	}
+	delete exp ;
+}
 
 TurtleRequestId p3turtle::turtleSearch(const std::string& string_to_match) 
 {
@@ -1331,7 +1356,7 @@ TurtleRequestId p3turtle::turtleSearch(const std::string& string_to_match)
 
 	// Form a request packet that simulates a request from us.
 	//
-	RsTurtleSearchRequestItem *item = new RsTurtleSearchRequestItem ;
+	RsTurtleStringSearchRequestItem *item = new RsTurtleStringSearchRequestItem ;
 
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "performing search. OwnId = " << mConnMgr->getOwnId() << std::endl ;
@@ -1348,6 +1373,42 @@ TurtleRequestId p3turtle::turtleSearch(const std::string& string_to_match)
 
 	item->PeerId(mConnMgr->getOwnId()) ;
 	item->match_string = string_to_match ;
+	item->request_id = id ;
+	item->depth = 0 ;
+	
+	// send it 
+	
+	handleSearchRequest(item) ;
+
+	delete item ;
+
+	return id ;
+}
+TurtleRequestId p3turtle::turtleSearch(const LinearizedExpression& expr) 
+{
+	// generate a new search id.
+	
+	TurtleRequestId id = generateRandomRequestId() ;
+
+	// Form a request packet that simulates a request from us.
+	//
+	RsTurtleRegExpSearchRequestItem *item = new RsTurtleRegExpSearchRequestItem ;
+
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "performing search. OwnId = " << mConnMgr->getOwnId() << std::endl ;
+#endif
+	while(mConnMgr->getOwnId() == "")
+	{
+		std::cerr << "... waitting for connect manager to form own id." << std::endl ;
+#ifdef WIN32
+		Sleep(1000) ;
+#else
+		sleep(1) ;
+#endif
+	}
+
+	item->PeerId(mConnMgr->getOwnId()) ;
+	item->expr = expr ;
 	item->request_id = id ;
 	item->depth = 0 ;
 	
@@ -1395,7 +1456,7 @@ void p3turtle::returnSearchResult(RsTurtleSearchResultItem *item)
 	// just cout for now, but it should be notified to the gui
 	
 #ifdef P3TURTLE_DEBUG
-	std::cerr << "  Returning result for search request " << item->request_id << " upwards." << std::endl ;
+	std::cerr << "  Returning result for search request " << (void*)item->request_id << " upwards." << std::endl ;
 #endif
 
 	rsicontrol->getNotify().notifyTurtleSearchResult(item->request_id,item->result) ;
@@ -1459,7 +1520,7 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 		tunnel.push_back(rsPeers->getPeerName(it->second.local_src)) ;
 		tunnel.push_back(rsPeers->getPeerName(it->second.local_dst)) ;
 		tunnel.push_back(it->second.hash) ;
-		tunnel.push_back(printNumber(now-it->second.time_stamp)) ;
+		tunnel.push_back(printNumber(now-it->second.time_stamp) + " secs ago") ;
 	}
 
 	search_reqs_info.clear();
@@ -1471,7 +1532,7 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 
 		search_req.push_back(printNumber(it->first,true)) ;
 		search_req.push_back(rsPeers->getPeerName(it->second.origin)) ;
-		search_req.push_back(printNumber(now - it->second.time_stamp)) ;
+		search_req.push_back(printNumber(now - it->second.time_stamp) + " secs ago") ;
 	}
 
 	tunnel_reqs_info.clear();
@@ -1483,7 +1544,7 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 
 		tunnel_req.push_back(printNumber(it->first,true)) ;
 		tunnel_req.push_back(rsPeers->getPeerName(it->second.origin)) ;
-		tunnel_req.push_back(printNumber(now - it->second.time_stamp)) ;
+		tunnel_req.push_back(printNumber(now - it->second.time_stamp) + " secs ago") ;
 	}
 }
 

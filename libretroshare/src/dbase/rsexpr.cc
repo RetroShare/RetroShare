@@ -29,11 +29,19 @@
 #include <algorithm>
 #include <functional>
 
-
 /******************************************************************************************
 eval functions of relational expressions. 
 
 ******************************************************************************************/
+
+template<>
+void RelExpression<int>::linearize(LinearizedExpression& e) const
+{
+	e._ints.push_back(Op) ;
+	e._ints.push_back(LowerValue) ;
+	e._ints.push_back(HigherValue) ;
+}
+
 
 bool DateExpression::eval(FileEntry *file)
 {
@@ -148,3 +156,125 @@ bool StringExpression :: evalStr ( std::string &str ){
 	}
 	return false;
 }
+
+/*************************************************************************
+ * linearization code
+ *************************************************************************/
+
+void CompoundExpression::linearize(LinearizedExpression& e) const
+{
+	e._tokens.push_back(LinearizedExpression::EXPR_COMP) ;
+	e._ints.push_back(Op) ;
+
+	Lexp->linearize(e) ;
+	Rexp->linearize(e) ;
+}
+
+void StringExpression::linearize(LinearizedExpression& e) const
+{
+	e._ints.push_back(Op) ;
+	e._ints.push_back(IgnoreCase) ;
+	e._ints.push_back(terms.size()) ;
+
+	for(std::list<std::string>::const_iterator it(terms.begin());it!=terms.end();++it)
+		e._strings.push_back(*it) ;
+}
+
+Expression *LinearizedExpression::toExpr(const LinearizedExpression& e) 
+{
+	int i=0,j=0,k=0 ;
+	return toExpr(e,i,j,k) ;
+}
+
+void LinearizedExpression::readStringExpr(const LinearizedExpression& e,int& n_ints,int& n_strings,std::list<std::string>& strings,bool& b,StringOperator& op) 
+{
+	op = static_cast<StringOperator>(e._ints[n_ints++]) ;
+	b = e._ints[n_ints++] ;
+	int n = e._ints[n_ints++] ;
+
+	strings.clear() ;
+	for(int i=0;i<n;++i)
+		strings.push_back(e._strings[n_strings++]) ;
+}
+							  
+Expression *LinearizedExpression::toExpr(const LinearizedExpression& e,int& n_tok,int& n_ints,int& n_strings) 
+{
+	LinearizedExpression::token tok = static_cast<LinearizedExpression::token>(e._tokens[n_tok++]) ;
+
+	switch(tok)
+	{
+		case EXPR_COMP:	{ 
+									LogicalOperator op = static_cast<LogicalOperator>(e._ints[n_ints++]) ;
+
+									Expression *e1 = toExpr(e,n_tok,n_ints,n_strings) ;
+									Expression *e2 = toExpr(e,n_tok,n_ints,n_strings) ;
+
+									return new CompoundExpression(op,e1,e2) ;
+								}
+
+		case EXPR_POP:	  {
+								  RelOperator op = static_cast<RelOperator>(e._ints[n_ints++]) ;
+								  int lv = e._ints[n_ints++] ;
+								  int hv = e._ints[n_ints++] ;
+
+								  return new PopExpression(op,lv,hv) ;
+							  }
+		case EXPR_SIZE:  {
+								  RelOperator op = static_cast<RelOperator>(e._ints[n_ints++]) ;
+								  int lv = e._ints[n_ints++] ;
+								  int hv = e._ints[n_ints++] ;
+
+								  return new SizeExpression(op,lv,hv) ;
+							  }
+		case EXPR_DATE:  {
+								  RelOperator op = static_cast<RelOperator>(e._ints[n_ints++]) ;
+								  int lv = e._ints[n_ints++] ;
+								  int hv = e._ints[n_ints++] ;
+
+								  return new DateExpression(op,lv,hv) ;
+							  }
+		case EXPR_HASH:	{
+									std::list<std::string> strings ;
+									StringOperator op ;
+									bool b ;
+
+									readStringExpr(e,n_ints,n_strings,strings,b,op) ;
+									return new HashExpression(op,strings) ;
+								}
+		case EXPR_EXT:
+								{
+									std::list<std::string> strings ;
+									StringOperator op ;
+									bool b ;
+
+									readStringExpr(e,n_ints,n_strings,strings,b,op) ;
+
+									return new ExtExpression(op,strings,b) ;
+								}
+		case EXPR_PATH:
+								{
+									std::list<std::string> strings ;
+									StringOperator op ;
+									bool b ;
+
+									readStringExpr(e,n_ints,n_strings,strings,b,op) ;
+
+									return new ExtExpression(op,strings,b) ;
+								}
+		case EXPR_NAME:	
+								{
+									std::list<std::string> strings ;
+									StringOperator op ;
+									bool b ;
+
+									readStringExpr(e,n_ints,n_strings,strings,b,op) ;
+
+									return new NameExpression(op,strings,b) ;
+								}
+		default:
+								std::cerr << "No expression match the current value " << tok << std::endl ;
+								return NULL ;
+	}
+}
+
+

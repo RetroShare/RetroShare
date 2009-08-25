@@ -76,6 +76,9 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		/* external interface for filetransfer */
 		bool findLocalFile(std::string hash,uint32_t f, std::string &fullpath, uint64_t &size) const;
 		int SearchKeywords(std::list<std::string> keywords, std::list<FileDetail> &results,uint32_t flags) ;
+		int SearchBoolExp(Expression *exp, std::list<FileDetail> &results,uint32_t flags) const ;
+		int filterResults(std::list<FileEntry*>& firesults,std::list<FileDetail>& results,uint32_t flags) const ;
+
 
 		/* external interface for local access to files */
 		bool    convertSharedFilePath(std::string path, std::string &fullpath);

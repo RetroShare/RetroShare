@@ -32,6 +32,40 @@
 
 #include <iostream>
 
+/* UInt8 get/set */
+
+bool getRawUInt8(void *data, uint32_t size, uint32_t *offset, uint8_t *out)
+{
+	/* first check there is space */
+	if (size < *offset + 1)
+	{
+		return false;
+	}
+	void *buf = (void *) &(((uint8_t *) data)[*offset]);
+
+	/* extract the data */
+	memcpy(out, buf, sizeof(uint8_t));
+	(*offset) += 1;
+
+	return true;
+}
+	
+bool setRawUInt8(void *data, uint32_t size, uint32_t *offset, uint8_t in)
+{
+	/* first check there is space */
+	if (size < *offset + 1)
+	{
+		return false;
+	}
+
+	void *buf = (void *) &(((uint8_t *) data)[*offset]);
+
+	/* pack it in */
+	memcpy(buf, &in, sizeof(uint8_t));
+
+	(*offset) += 1;
+	return true;
+}
 /* UInt16 get/set */
 
 bool getRawUInt16(void *data, uint32_t size, uint32_t *offset, uint16_t *out)

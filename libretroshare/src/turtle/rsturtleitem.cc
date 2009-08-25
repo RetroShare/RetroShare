@@ -13,14 +13,35 @@
 //
 // ---------------------------------- Packet sizes -----------------------------------//
 //
-uint32_t RsTurtleSearchRequestItem::serial_size() 
+
+uint32_t RsTurtleStringSearchRequestItem::serial_size() 
 {
 	uint32_t s = 0 ;
 
 	s += 8 ; // header
-	s += GetTlvStringSize(match_string) ;
 	s += 4 ; // request_id
 	s += 2 ; // depth
+	s += GetTlvStringSize(match_string) ;	// match_string
+
+	return s ;
+}
+uint32_t RsTurtleRegExpSearchRequestItem::serial_size() 
+{
+	uint32_t s = 0 ;
+
+	s += 8 ; // header
+	s += 4 ; // request_id
+	s += 2 ; // depth
+
+	s += 4 ; // number of strings
+
+	for(uint i=0;i<expr._strings.size();++i)
+		s += GetTlvStringSize(expr._strings[i]) ;
+
+	s += 4 ; // number of ints
+	s += 4 * expr._ints.size() ;
+	s += 4 ; // number of tokens
+	s += expr._tokens.size() ;		// uint8_t has size 1
 
 	return s ;
 }
@@ -118,12 +139,13 @@ RsItem *RsTurtleSerialiser::deserialise(void *data, uint32_t *size)
 #endif
 		switch(getRsItemSubType(rstype))
 		{
-			case RS_TURTLE_SUBTYPE_SEARCH_REQUEST:	return new RsTurtleSearchRequestItem(data,*size) ;
-			case RS_TURTLE_SUBTYPE_SEARCH_RESULT:	return new RsTurtleSearchResultItem(data,*size) ;
-			case RS_TURTLE_SUBTYPE_OPEN_TUNNEL  :	return new RsTurtleOpenTunnelItem(data,*size) ;
-			case RS_TURTLE_SUBTYPE_TUNNEL_OK    :	return new RsTurtleTunnelOkItem(data,*size) ;
-			case RS_TURTLE_SUBTYPE_FILE_REQUEST :	return new RsTurtleFileRequestItem(data,*size) ;
-			case RS_TURTLE_SUBTYPE_FILE_DATA    :	return new RsTurtleFileDataItem(data,*size) ;
+			case RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST	:	return new RsTurtleStringSearchRequestItem(data,*size) ;
+			case RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST	:	return new RsTurtleRegExpSearchRequestItem(data,*size) ;
+			case RS_TURTLE_SUBTYPE_SEARCH_RESULT			:	return new RsTurtleSearchResultItem(data,*size) ;
+			case RS_TURTLE_SUBTYPE_OPEN_TUNNEL  			:	return new RsTurtleOpenTunnelItem(data,*size) ;
+			case RS_TURTLE_SUBTYPE_TUNNEL_OK    			:	return new RsTurtleTunnelOkItem(data,*size) ;
+			case RS_TURTLE_SUBTYPE_FILE_REQUEST 			:	return new RsTurtleFileRequestItem(data,*size) ;
+			case RS_TURTLE_SUBTYPE_FILE_DATA    			:	return new RsTurtleFileDataItem(data,*size) ;
 
 			default:
 																std::cerr << "Unknown packet type in RsTurtle!" << std::endl ;
@@ -140,7 +162,7 @@ RsItem *RsTurtleSerialiser::deserialise(void *data, uint32_t *size)
 
 }
 
-bool RsTurtleSearchRequestItem::serialize(void *data,uint32_t& pktsize)
+bool RsTurtleStringSearchRequestItem::serialize(void *data,uint32_t& pktsize)
 {
 	uint32_t tlvsize = serial_size();
 	uint32_t offset = 0;
@@ -174,11 +196,61 @@ bool RsTurtleSearchRequestItem::serialize(void *data,uint32_t& pktsize)
 	return ok;
 }
 
-RsTurtleSearchRequestItem::RsTurtleSearchRequestItem(void *data,uint32_t pktsize)
-	: RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_REQUEST)
+bool RsTurtleRegExpSearchRequestItem::serialize(void *data,uint32_t& pktsize)
+{
+	uint32_t tlvsize = serial_size();
+	uint32_t offset = 0;
+
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "RsTurtleSerialiser::serialising RegExp search packet (size=" << tlvsize << ")" << std::endl;
+#endif
+	if (pktsize < tlvsize)
+		return false; /* not enough space */
+
+	pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data,tlvsize,PacketId(), tlvsize);
+
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+
+	ok &= setRawUInt32(data, tlvsize, &offset, request_id);
+	ok &= setRawUInt16(data, tlvsize, &offset, depth);
+
+	// now serialize the regexp
+	ok &= setRawUInt32(data,tlvsize,&offset,expr._tokens.size()) ;
+
+	for(uint i=0;i<expr._tokens.size();++i) ok &= setRawUInt8(data,tlvsize,&offset,expr._tokens[i]) ;
+
+	ok &= setRawUInt32(data,tlvsize,&offset,expr._ints.size()) ;
+
+	for(uint i=0;i<expr._ints.size();++i) ok &= setRawUInt32(data,tlvsize,&offset,expr._ints[i]) ;
+
+	ok &= setRawUInt32(data,tlvsize,&offset,expr._strings.size()) ;
+
+	for(uint i=0;i<expr._strings.size();++i) ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, expr._strings[i]); 	
+
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+#ifdef P3TURTLE_DEBUG
+		std::cerr << "RsTurtleSerialiser::serialiseTransfer() Size Error! (offset=" << offset << ", tlvsize=" << tlvsize << ")" << std::endl;
+#endif
+	}
+
+	return ok;
+}
+
+RsTurtleStringSearchRequestItem::RsTurtleStringSearchRequestItem(void *data,uint32_t pktsize)
+	: RsTurtleSearchRequestItem(RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST)
 {
 #ifdef P3TURTLE_DEBUG
-	std::cerr << "  type = search request" << std::endl ;
+	std::cerr << "  deserializibg packet. type = search request (string)" << std::endl ;
 #endif
 	uint32_t offset = 8; // skip the header 
 	uint32_t rssize = getRsItemSize(data);
@@ -187,6 +259,46 @@ RsTurtleSearchRequestItem::RsTurtleSearchRequestItem(void *data,uint32_t pktsize
 	ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE, match_string); 	// file hash
 	ok &= getRawUInt32(data, pktsize, &offset, &request_id);
 	ok &= getRawUInt16(data, pktsize, &offset, &depth);
+
+#ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
+#else
+	if (offset != rssize)
+		throw std::runtime_error("Size error while deserializing.") ;
+	if (!ok)
+		throw std::runtime_error("Unknown error while deserializing.") ;
+#endif
+}
+
+RsTurtleRegExpSearchRequestItem::RsTurtleRegExpSearchRequestItem(void *data,uint32_t pktsize)
+	: RsTurtleSearchRequestItem(RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST)
+{
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "  deserializibg packet. type = search request (regexp)" << std::endl ;
+#endif
+	uint32_t offset = 8; // skip the header 
+	uint32_t rssize = getRsItemSize(data);
+	bool ok = true ;
+
+	ok &= getRawUInt32(data, pktsize, &offset, &request_id);
+	ok &= getRawUInt16(data, pktsize, &offset, &depth);
+
+	// now serialize the regexp
+	uint32_t n =0 ;
+	ok &= getRawUInt32(data,pktsize,&offset,&n) ;
+
+	expr._tokens.resize(n) ;
+
+	for(uint i=0;i<n;++i) ok &= getRawUInt8(data,pktsize,&offset,&expr._tokens[i]) ;
+
+	ok &= getRawUInt32(data,pktsize,&offset,&n) ;
+	expr._ints.resize(n) ;
+
+	for(uint i=0;i<n;++i) ok &= getRawUInt32(data,pktsize,&offset,&expr._ints[i]) ;
+
+	ok &= getRawUInt32(data,pktsize,&offset,&n) ;
+	expr._strings.resize(n) ;
+
+	for(uint i=0;i<n;++i) ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE, expr._strings[i]); 	
 
 #ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
 #else
@@ -544,13 +656,26 @@ bool RsTurtleFileDataItem::serialize(void *data,uint32_t& pktsize)
 // -------------------------------------  IO  --------------------------------------- // 
 // -----------------------------------------------------------------------------------//
 //
-std::ostream& RsTurtleSearchRequestItem::print(std::ostream& o, uint16_t)
+std::ostream& RsTurtleStringSearchRequestItem::print(std::ostream& o, uint16_t)
 {
-	o << "Search request:" << std::endl ;
+	o << "Search request (string):" << std::endl ;
 	o << "  direct origin: \"" << PeerId() << "\"" << std::endl ;
 	o << "  match string: \"" << match_string << "\"" << std::endl ;
 	o << "  Req. Id: " << (void *)request_id << std::endl ;
 	o << "  Depth  : " << depth << std::endl ;
+
+	return o ;
+}
+std::ostream& RsTurtleRegExpSearchRequestItem::print(std::ostream& o, uint16_t)
+{
+	o << "Search request (regexp):" << std::endl ;
+	o << "  direct origin: \"" << PeerId() << "\"" << std::endl ;
+	o << "  Req. Id: " << (void *)request_id << std::endl ;
+	o << "  Depth  : " << depth << std::endl ;
+	o << "  RegExp: " << std::endl ;
+	o << "    Toks: " ; for(uint i=0;i<expr._tokens.size();++i) std::cout << (int)expr._tokens[i] << " " ; std::cout << std::endl ;
+	o << "    Ints: " ; for(uint i=0;i<expr._ints.size();++i) std::cout << (int)expr._ints[i] << " " ; std::cout << std::endl ;
+	o << "    Strs: " ; for(uint i=0;i<expr._strings.size();++i) std::cout << expr._strings[i] << " " ; std::cout << std::endl ;
 
 	return o ;
 }

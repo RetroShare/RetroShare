@@ -31,6 +31,8 @@
 #include <list>
 #include <vector>
 
+class LinearizedExpression ;
+
 class RsTurtle;
 extern RsTurtle   *rsTurtle ;
 
@@ -67,6 +69,7 @@ class RsTurtle
 		// as they come back.
 		//
 		virtual TurtleRequestId turtleSearch(const std::string& match_string) = 0 ;
+		virtual TurtleRequestId turtleSearch(const LinearizedExpression& expr) = 0 ;
 
 		// Initiates tunnel handling for the given file hash.  tunnels.  Launches
 		// an exception if an error occurs during the initialization process. The

@@ -65,6 +65,22 @@ int FileIndexMonitor::SearchKeywords(std::list<std::string> keywords, std::list<
 	std::list<FileEntry *> firesults;
 
 	fi.searchTerms(keywords, firesults);
+
+	return filterResults(firesults,results,flags) ;
+}
+
+int FileIndexMonitor::SearchBoolExp(Expression *exp, std::list<FileDetail>& results,uint32_t flags) const
+{
+	results.clear();
+	std::list<FileEntry *> firesults;
+
+	fi.searchBoolExp(exp, firesults);
+
+	return filterResults(firesults,results,flags) ;
+}
+
+int FileIndexMonitor::filterResults(std::list<FileEntry*>& firesults,std::list<FileDetail>& results,uint32_t flags) const
+{
 	time_t now  = time(NULL) ;
 
 	/* translate/filter results */
