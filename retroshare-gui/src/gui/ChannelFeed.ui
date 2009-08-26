@@ -153,7 +153,7 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="icon">
           <iconset resource="images.qrc">
-           <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
+           <normaloff>:/images/konqsidebar_news24.png</normaloff>:/images/konqsidebar_news24.png</iconset>
          </property>
         </widget>
        </item>
