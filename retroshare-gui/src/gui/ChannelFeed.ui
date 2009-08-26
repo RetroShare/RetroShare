@@ -70,6 +70,9 @@
     <layout class="QGridLayout" name="gridLayout_3">
      <item row="0" column="0">
       <layout class="QGridLayout" name="gridLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
        <item row="0" column="0">
         <widget class="QLabel" name="iconLabel">
          <property name="minimumSize">
@@ -83,6 +86,10 @@
            <width>64</width>
            <height>64</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"> background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 #F2F2F2, stop:1 #E6E6E6);</string>
          </property>
          <property name="text">
           <string/>
@@ -99,6 +106,10 @@
            <weight>75</weight>
            <bold>true</bold>
           </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"> background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 #F2F2F2, stop:1 #E6E6E6);</string>
          </property>
          <property name="text">
           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
