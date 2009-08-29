@@ -35,6 +35,11 @@ TrustView::TrustView()
 	update() ;
 }
 
+void TrustView::showEvent(QShowEvent *e)
+{
+	QWidget::showEvent(e) ;
+	update() ;
+}
 void TrustView::wheelEvent(QWheelEvent *e)
 {
 	if(e->modifiers() & Qt::ShiftModifier)
@@ -98,14 +103,14 @@ void TrustView::updateZoom(int z)
 //	cout << "updated zoom" << endl;
 }
 
-int TrustView::getRowColId(const string& name)
+int TrustView::getRowColId(const string& peerid)
 {
-	static map<string,int> nameToRow ;
+	static map<string,int> peeridToRow ;
 
-	map<string,int>::const_iterator itpr(nameToRow.find( name )) ;
+	map<string,int>::const_iterator itpr(peeridToRow.find( peerid )) ;
 	int i ;
 
-	if(itpr == nameToRow.end())
+	if(itpr == peeridToRow.end())
 	{
 		i = trustTableTW->columnCount() ;
 //		cout << "  -> peer not in table. Creating entry # " << i << endl ;
@@ -113,7 +118,9 @@ int TrustView::getRowColId(const string& name)
 		trustTableTW->insertColumn(i) ;
 		trustTableTW->insertRow(i) ;
 
-		nameToRow[name] = i ;
+		peeridToRow[peerid] = i ;
+
+		std::string name = rsPeers->getPeerName(peerid) ;
 
 		trustTableTW->setHorizontalHeaderItem(i,new QTableWidgetItem(QString(name.c_str()))) ;
 		trustTableTW->setVerticalHeaderItem(i,new QTableWidgetItem(QString(name.c_str()))) ;
@@ -130,6 +137,9 @@ int TrustView::getRowColId(const string& name)
 void TrustView::update()
 {
 	// collect info.
+
+	if(!isVisible())
+		return ;
 
 	std::list<std::string> neighs;
 
@@ -150,11 +160,11 @@ void TrustView::update()
 
 //		cout << "treating neigh = " << details.name << endl ;
 //		cout << "  signers = " ;
-		int i = getRowColId(details.name) ;
+		int i = getRowColId(details.id) ;
 
 		for(list<string>::const_iterator it2(details.signers.begin());it2!=details.signers.end();++it2) 
 		{
-//			cout << *it2 << " " ;
+			cout << *it2 << " " ;
 			// Signers are identified by there name, so if we have twice the same signers, this gets crappy.
 
 			int j = getRowColId(*it2) ;
