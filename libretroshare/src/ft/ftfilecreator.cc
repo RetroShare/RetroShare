@@ -94,14 +94,14 @@ bool ftFileCreator::addFileData(uint64_t offset, uint32_t chunk_size, void *data
 	/* 
 	 * go to the offset of the file 
 	 */
-	if (0 != fseek(this->fd, offset, SEEK_SET))
+	if (0 != fseeko64(this->fd, offset, SEEK_SET))
 	{
 		std::cerr << "ftFileCreator::addFileData() Bad fseek" << std::endl;
 		return 0;
 	}
 	
-	long int pos;
-	pos = ftell(fd);
+	uint64_t pos;
+	pos = ftello64(fd);
 	/* 
 	 * add the data 
  	 */
@@ -117,7 +117,7 @@ bool ftFileCreator::addFileData(uint64_t offset, uint32_t chunk_size, void *data
 		return 0;
 	}
 
-	pos = ftell(fd);
+	pos = ftello64(fd);
 	
 #ifdef FILE_DEBUG
 	std::cerr << "ftFileCreator::addFileData() added Data...";
@@ -166,7 +166,7 @@ int ftFileCreator::initializeFileAttrs()
          * attempt to open file 
          */
 	
-	fd = fopen(file_name.c_str(), "r+b");
+	fd = fopen64(file_name.c_str(), "r+b");
 	if (!fd)
 	{
 		std::cerr << "ftFileCreator::initializeFileAttrs() Failed to open (r+b): ";
@@ -176,7 +176,7 @@ int ftFileCreator::initializeFileAttrs()
 		std::cerr << std::endl;
 
 		/* try opening for write */
-		fd = fopen(file_name.c_str(), "w+b");
+		fd = fopen64(file_name.c_str(), "w+b");
 		if (!fd)
 		{
 			std::cerr << "ftFileCreator::initializeFileAttrs()";
@@ -193,13 +193,13 @@ int ftFileCreator::initializeFileAttrs()
 	 * move to the end 
          */
 	
-	if (0 != fseek(fd, 0L, SEEK_END))
+	if (0 != fseeko64(fd, 0L, SEEK_END))
 	{
         	std::cerr << "ftFileCreator::initializeFileAttrs() Seek Failed" << std::endl;
 		return 0;
 	}
 
-	uint64_t recvdsize = ftell(fd);
+	uint64_t recvdsize = ftello64(fd);
 
         std::cerr << "ftFileCreator::initializeFileAttrs() File Expected Size: " << mSize << " RecvdSize: " << recvdsize << std::endl;
 
