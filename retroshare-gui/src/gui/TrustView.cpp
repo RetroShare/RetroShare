@@ -35,6 +35,11 @@ TrustView::TrustView()
 	update() ;
 }
 
+void TrustView::showEvent(QShowEvent *e)
+{
+	QWidget::showEvent(e) ;
+	update() ;
+}
 void TrustView::wheelEvent(QWheelEvent *e)
 {
 	if(e->modifiers() & Qt::ShiftModifier)
@@ -130,6 +135,9 @@ int TrustView::getRowColId(const string& name)
 void TrustView::update()
 {
 	// collect info.
+
+	if(!isVisible())
+		return ;
 
 	std::list<std::string> neighs;
 

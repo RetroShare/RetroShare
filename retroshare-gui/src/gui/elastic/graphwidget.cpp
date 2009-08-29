@@ -38,6 +38,7 @@
 #include "edge.h"
 #include "node.h"
 
+#include <iostream>
 #include <QDebug>
 #include <QGraphicsScene>
 #include <QWheelEvent>
@@ -202,7 +203,8 @@ void GraphWidget::keyPressEvent(QKeyEvent *event)
 
 void GraphWidget::timerEvent(QTimerEvent *event)
 {
-    Q_UNUSED(event);
+	if(!isVisible())
+		return;
 
     QList<Node *> nodes;
     foreach (QGraphicsItem *item, scene()->items()) {

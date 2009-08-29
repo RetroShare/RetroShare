@@ -1,6 +1,7 @@
 #include "ui_TrustView.h"
 
 class QWheelEvent ;
+class QShowEvent ;
 
 class TrustView: public QWidget, public Ui::TrustView
 {
@@ -11,6 +12,7 @@ class TrustView: public QWidget, public Ui::TrustView
 
 	protected:
 		virtual void wheelEvent(QWheelEvent *) ;
+		virtual void showEvent(QShowEvent *) ;
 
 	public slots:
 		void update() ;
