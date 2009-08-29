@@ -413,8 +413,13 @@ bool	ftDataMultiplex::locked_handleServerRequest(ftFileProvider *provider,
 		std::string peerId, std::string hash, uint64_t size, 
 			uint64_t offset, uint32_t chunksize)
 {
-	void *data = malloc(size);
+	void *data = malloc(chunksize);
 
+	if(data == NULL)
+	{
+		std::cerr << "WARNING: Could not allocate data for a chunksize of " << chunksize << std::endl ;
+		return false ;
+	}
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::locked_handleServerRequest()";
 	std::cerr << "\t peer: " << peerId << " hash: " << hash;
