@@ -29,6 +29,7 @@
 
 #include <string>
 #include <list>
+#include <stdint.h>
 
 /******************************************************************************************
 Enumerations defining the Operators usable in the Boolean search expressions
