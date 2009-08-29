@@ -26,6 +26,7 @@
 #include "serialiser/rsserviceids.h"
 #include "rsiface/rsiface.h"
 #include "rsiface/rsnotify.h"
+#include <errno.h>
 
 #include <iostream>
 #include <sstream>
@@ -392,15 +393,18 @@ void 	FileIndexMonitor::updateCycle()
 		 */
 
 		struct dirent *dent;
-		struct stat buf;
+		struct stat64 buf;
 
 		while(NULL != (dent = readdir(dir)))
 		{
 			/* check entry type */
 			std::string fname = dent -> d_name;
 			std::string fullname = realpath + "/" + fname;
+#ifdef FIM_DEBUG
+			std::cerr << "calling stats on " << fullname <<std::endl;
+#endif
 
-	 		if (-1 != stat(fullname.c_str(), &buf))
+	 		if (-1 != stat64(fullname.c_str(), &buf))
 			{
 #ifdef FIM_DEBUG
 				std::cerr << "buf.st_mode: " << buf.st_mode <<std::endl;
@@ -488,6 +492,10 @@ void 	FileIndexMonitor::updateCycle()
 					continue;
 				}
 			}
+#ifdef FIM_DEBUG
+			else
+				std::cout << "stat error " << errno << std::endl ;
+#endif
 		}
 
 
@@ -917,7 +925,7 @@ bool FileIndexMonitor::hashFile(std::string fullpath, FileEntry &fent)
 #ifdef FIM_DEBUG
 	std::cerr << "File to hash = " << f_hash << std::endl;
 #endif
-	if (NULL == (fd = fopen(f_hash.c_str(), "rb")))	return false;
+	if (NULL == (fd = fopen64(f_hash.c_str(), "rb")))	return false;
 
 	SHA1_Init(sha_ctx);
 	while((len = fread(gblBuf,1, 512, fd)) > 0)
@@ -928,6 +936,9 @@ bool FileIndexMonitor::hashFile(std::string fullpath, FileEntry &fent)
 	/* reading failed for some reason */
 	if (ferror(fd))
 	{
+#ifdef FIM_DEBUG
+		std::cerr << "read error !!" << std::endl;
+#endif
 		delete sha_ctx;
 		fclose(fd);
 		return false;

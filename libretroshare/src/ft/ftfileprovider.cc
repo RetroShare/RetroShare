@@ -113,7 +113,7 @@ bool ftFileProvider::getFileData(uint64_t offset, uint32_t &chunk_size, void *da
 		/*
                  * seek for base_loc 
                  */
-		fseek(fd, base_loc, SEEK_SET);
+		fseeko64(fd, base_loc, SEEK_SET);
 
 		// Data space allocated by caller.
 		//void *data = malloc(chunk_size);
@@ -191,14 +191,14 @@ int ftFileProvider::initializeFileAttrs()
          * attempt to open file 
          */
 	
-	fd = fopen(file_name.c_str(), "rb");
+	fd = fopen64(file_name.c_str(), "rb");
 	if (!fd)
 	{
 		std::cerr << "ftFileProvider::initializeFileAttrs() Failed to open (r+b): ";
 		std::cerr << file_name << std::endl;
 
 		/* try opening read only */
-		fd = fopen(file_name.c_str(), "rb");
+		fd = fopen64(file_name.c_str(), "rb");
 		if (!fd)
 		{
 			std::cerr << "ftFileProvider::initializeFileAttrs() Failed to open (rb): ";
@@ -214,13 +214,13 @@ int ftFileProvider::initializeFileAttrs()
 	 * move to the end 
          */
 	
-	if (0 != fseek(fd, 0L, SEEK_END))
+	if (0 != fseeko64(fd, 0L, SEEK_END))
 	{
         	std::cerr << "ftFileProvider::initializeFileAttrs() Seek Failed" << std::endl;
 		return 0;
 	}
 
-	uint64_t recvdsize = ftell(fd);
+	uint64_t recvdsize = ftello64(fd);
 
         std::cerr << "ftFileProvider::initializeFileAttrs() File Expected Size: " << mSize << " RecvdSize: " << recvdsize << std::endl;
 	
