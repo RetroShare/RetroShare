@@ -1205,7 +1205,6 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 			// have forwarded but that it not in the list ??
 
 			std::cerr << __PRETTY_FUNCTION__ << ": tunnel result has no peer direction!" << std::endl ;
-			delete item ;
 			return ;
 		}
 
