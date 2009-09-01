@@ -1560,6 +1560,7 @@ bool GPGAuthMgr::LoadCertificateFromString(std::string str, std::string &id)
 	{
 		std::cerr << "GPGAuthMgr::Error Importing Certificate";
 		std::cerr << std::endl;
+		return false ;
 	}
 
 
