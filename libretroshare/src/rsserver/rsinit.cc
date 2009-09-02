@@ -1320,7 +1320,6 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		gpgme_data_release (cipher);
 		gpgme_data_release (plain);
 		fclose(sslPassphraseFile);
-		std::cerr << "sslPassword : " << sslPassword << std::endl;
 
 	} else {
 		//let's read the password from an encrypted file
