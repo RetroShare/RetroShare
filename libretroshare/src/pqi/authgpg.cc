@@ -1077,6 +1077,7 @@ bool GPGAuthMgr::DoOwnSignature_locked(void *data, unsigned int datalen, void *b
 	/* now extract the data from gpgmeSig */
 	size_t len = 0; 
 	int len2 = len;
+	gpgme_data_write (gpgmeSig, "", 1); 	// to be able to convert it into a string
 	char *export_sig = gpgme_data_release_and_get_mem(gpgmeSig, &len);
 	fprintf(stderr, "GPGAuthMgr::Signature len: %d \n", len2);
 	if (len < *outl)

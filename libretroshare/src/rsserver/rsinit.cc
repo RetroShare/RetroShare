@@ -1337,6 +1337,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 			gpgme_error_t error_reading_file = gpgme_data_new_from_stream (&cipher, sslPassphraseFile);
 			if (0 < authMgr->decryptText(cipher, plain)) {
 			    std::cerr << "Decrypting went ok !" << std::endl;
+				 gpgme_data_write (plain, "", 1);
 			    sslPassword = gpgme_data_release_and_get_mem(plain, NULL);
 			} else {
 			    gpgme_data_release (plain);
