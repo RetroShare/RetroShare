@@ -480,7 +480,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
 	 * 4) Get List of GPG Accounts.
 	 */
 
-	//getAuthMgr() -> InitAuth(NULL, NULL, NULL);
+	getAuthMgr() -> InitAuth(NULL, NULL, NULL);
 
 	// first check config directories, and set bootstrap values.
 	setupBaseDir();
