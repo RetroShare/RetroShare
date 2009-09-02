@@ -425,6 +425,9 @@ int	AuthSSL::InitAuth(const char *cert_file, const char *priv_key_file,
 	std::cerr << "AuthSSL::InitAuth()";
 	std::cerr << std::endl;
 #endif
+	if ( passwd == NULL || strlen(passwd) == 0) {
+	    std::cerr << "Warning : AuthSSL::InitAuth passwd empty." << std::endl;
+	}
 
 static  int initLib = 0;
 	if (!initLib)
