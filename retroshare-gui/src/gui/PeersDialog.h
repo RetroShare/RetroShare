@@ -52,6 +52,8 @@ public:
   void loadEmoticonsgroupchat();
 //  void setChatDialog(ChatDialog *cd);
 
+  QPixmap picture;
+
 public slots:
 
   void  insertPeers();
@@ -103,6 +105,11 @@ private slots:
   void setFont();
   void getFont();
   void underline(); 
+
+  void changeAvatarClicked();
+  void updateAvatar();
+  void getAvatar();
+
 
 signals:
   void friendsUpdated() ;

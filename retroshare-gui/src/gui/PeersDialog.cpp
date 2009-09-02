@@ -91,6 +91,8 @@ PeersDialog::PeersDialog(QWidget *parent)
   connect( ui.peertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( peertreeWidgetCostumPopupMenu( QPoint ) ) );
   connect( ui.peertreeWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend()));
 
+  connect( ui.avatartoolButton, SIGNAL(clicked()), SLOT(getAvatar()));
+
   /* hide the Tree +/- */
   ui.peertreeWidget -> setRootIsDecorated( false );
 
@@ -171,7 +173,9 @@ PeersDialog::PeersDialog(QWidget *parent)
   timer->connect(timer, SIGNAL(timeout()), this, SLOT(insertChat()));
   timer->start(500); /* half a second */
 
-	ui.peertreeWidget->sortItems( 1, Qt::AscendingOrder );
+  ui.peertreeWidget->sortItems( 1, Qt::AscendingOrder );
+
+  updateAvatar();
 
 
   /* Hide platform specific features */
@@ -219,6 +223,8 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       contextMnu.addAction( exportfriendAct);
       contextMnu.addAction( removefriendAct);
       contextMnu.exec( mevent->globalPos() );
+
+      updateAvatar();
 }
 
 
@@ -252,6 +258,17 @@ void  PeersDialog::insertPeers()
         /* remove old items ??? */
 	peerWidget->clear();
 	peerWidget->setColumnCount(3);
+
+	// add self nick and Avatar to Friends.
+	RsPeerDetails pd ;
+
+		if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) 
+		{
+			QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
+                               "color:#32cd32;\">%1</span>");             
+			ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + tr(" (me)"))) ;
+
+		}
 
 
         QList<QTreeWidgetItem *> items;
@@ -1184,4 +1201,53 @@ void PeersDialog::viewprofile()
 
 	profileview -> setPeerId(id);
 	profileview -> show();
+}
+
+void PeersDialog::updateAvatar()
+{
+	unsigned char *data = NULL;
+	int size = 0 ;
+
+	rsMsgs->getOwnAvatarData(data,size); 
+
+	std::cerr << "Image size = " << size << std::endl ;
+
+	if(size == 0)
+	   std::cerr << "Got no image" << std::endl ;
+
+	// set the image
+	QPixmap pix ;
+	pix.loadFromData(data,size,"JPG") ;
+	ui.avatartoolButton->setIcon(pix); // writes image into ba in JPG format
+
+	delete[] data ;
+}
+
+void PeersDialog::getAvatar()
+{
+	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg)");
+	if(!fileName.isEmpty())
+	{
+		picture = QPixmap(fileName).scaled(82,82, Qt::IgnoreAspectRatio);
+
+		std::cerr << "Sending avatar image down the pipe" << std::endl ;
+
+		// send avatar down the pipe for other peers to get it.
+		QByteArray ba;
+		QBuffer buffer(&ba);
+		buffer.open(QIODevice::WriteOnly);
+		picture.save(&buffer, "JPG"); // writes image into ba in JPG format
+
+		std::cerr << "Image size = " << ba.size() << std::endl ;
+
+		rsMsgs->setOwnAvatarData((unsigned char *)(ba.data()),ba.size()) ;	// last char 0 included.
+
+		updateAvatar() ;
+	}
+}
+
+void PeersDialog::changeAvatarClicked() 
+{
+
+	updateAvatar();
 }
