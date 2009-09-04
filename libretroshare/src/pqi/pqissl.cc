@@ -1556,11 +1556,6 @@ int 	pqissl::isactive()
 	return active;
 }
 
-bool 	pqissl::bandwidthLimited()
-{
-	return (!sameLAN);
-}
-
 bool 	pqissl::moretoread()
 {
 	{

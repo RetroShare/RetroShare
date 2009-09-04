@@ -120,7 +120,7 @@ virtual bool cansend();
 
 virtual int close(); /* BinInterface version of reset() */
 virtual std::string gethash(); /* not used here */
-virtual bool bandwidthLimited();
+virtual bool bandwidthLimited() { return true ; } // replace by !sameLAN to avoid bandwidth limiting on lAN
 
 protected:
 	// A little bit of information to describe 
