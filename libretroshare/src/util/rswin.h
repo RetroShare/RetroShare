@@ -1,7 +1,7 @@
 #ifndef RS_UNIVERSAL_STUFF
 #define RS_UNIVERSAL_STUFF
 
-#ifdef WIN32
+#if defined(WIN32) || defined(MINGW) 
 
 #include <unistd.h>
 #define sleep(x) Sleep(1000 * x)
