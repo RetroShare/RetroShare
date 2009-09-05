@@ -1469,12 +1469,12 @@ bool p3turtle::performLocalHashSearch(const TurtleFileHash& hash,FileInfo& info)
 	return rsFiles->FileDetails(hash, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SPEC_ONLY, info);
 }
 
-static std::string printNumber(uint num,bool hex=false)
+static std::string printNumber(uint64_t num,bool hex=false)
 {
 	if(hex)
 	{
 		char tmp[100] ;
-		sprintf(tmp,"0x%08x",num) ;
+		sprintf(tmp,"0x%08lx",num) ;
 		return std::string(tmp) ;
 	}
 	else

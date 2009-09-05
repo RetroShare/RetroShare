@@ -7,16 +7,14 @@ DEFINES *= MINIUPNPC_VERSION=13
 DEFINES -= PQI_USE_XPGP
 DEFINES += RS_USE_PGPSSL
 
-UPNPC_DIR = ../../../../miniupnpc-1.3
-GPG_ERROR_DIR = ../../../../libgpg-error-1.7
-GPGME_DIR  = ../../../../gpgme-1.1.8
-
 
 profiling {
 	QMAKE_CXXFLAGS -= -fomit-frame-pointer
 	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
 }
 
+DEFINES -= PQI_USE_XPGP
+DEFINES *= RS_USE_PGPSSL
 
 ################################# Linux ##########################################
 
@@ -60,28 +58,38 @@ win32-x-g++ {
 	QMAKE_CXXFLAGS *= -Wmissing-include-dirs
 	QMAKE_CC = i586-mingw32msvc-g++
 	QMAKE_LIB = i586-mingw32msvc-ar
+	QMAKE_AR = i586-mingw32msvc-ar
 	DEFINES *= STATICLIB WIN32
+
+	SSL_DIR=../../../../openssl
+	UPNPC_DIR = ../../../../miniupnpc-1.3
+	GPG_ERROR_DIR = ../../../../libgpg-error-1.7
+	GPGME_DIR  = ../../../../gpgme-1.1.8
 
 	INCLUDEPATH *= /usr/i586-mingw32msvc/include ${HOME}/.wine/drive_c/pthreads/include/
 }
 ################################# Windows ##########################################
 
 win32 {
-	QMAKE_CC = g++
-  OBJECTS_DIR = temp/obj
-	MOC_DIR = temp/moc
-  DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW
-	DESTDIR = lib
-	  
-	PTHREADS_DIR = ../../../../pthreads-w32-2-8-0-release
-  ZLIB_DIR = ../../../../zlib-1.2.3
-  SSL_DIR = ../../../../OpenSSL
-        
-  INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR}
+		QMAKE_CC = g++
+		OBJECTS_DIR = temp/obj
+		MOC_DIR = temp/moc
+		DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW
+		DESTDIR = lib
+
+		UPNPC_DIR = ../../../../miniupnpc-1.3
+		GPG_ERROR_DIR = ../../../../libgpg-error-1.7
+		GPGME_DIR  = ../../../../gpgme-1.1.8
+
+		PTHREADS_DIR = ../../../../pthreads-w32-2-8-0-release
+		ZLIB_DIR = ../../../../zlib-1.2.3
+		SSL_DIR = ../../../../OpenSSL
+
+		INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR}
 }
 ################################### COMMON stuff ##################################
 
-INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
+INCLUDEPATH += . $${SSL_DIR} $${UPNPC_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
 
 #DEPENDPATH += . \
 #              util \

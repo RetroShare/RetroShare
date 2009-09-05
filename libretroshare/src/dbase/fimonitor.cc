@@ -21,6 +21,7 @@
  *
  */
 
+#include <util/rswin.h>
 #include "dbase/fimonitor.h"
 #include "util/rsdir.h"
 #include "serialiser/rsserviceids.h"

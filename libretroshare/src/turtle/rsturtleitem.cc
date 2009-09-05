@@ -35,7 +35,7 @@ uint32_t RsTurtleRegExpSearchRequestItem::serial_size()
 
 	s += 4 ; // number of strings
 
-	for(uint i=0;i<expr._strings.size();++i)
+	for(unsigned int i=0;i<expr._strings.size();++i)
 		s += GetTlvStringSize(expr._strings[i]) ;
 
 	s += 4 ; // number of ints
@@ -224,15 +224,15 @@ bool RsTurtleRegExpSearchRequestItem::serialize(void *data,uint32_t& pktsize)
 	// now serialize the regexp
 	ok &= setRawUInt32(data,tlvsize,&offset,expr._tokens.size()) ;
 
-	for(uint i=0;i<expr._tokens.size();++i) ok &= setRawUInt8(data,tlvsize,&offset,expr._tokens[i]) ;
+	for(unsigned int i=0;i<expr._tokens.size();++i) ok &= setRawUInt8(data,tlvsize,&offset,expr._tokens[i]) ;
 
 	ok &= setRawUInt32(data,tlvsize,&offset,expr._ints.size()) ;
 
-	for(uint i=0;i<expr._ints.size();++i) ok &= setRawUInt32(data,tlvsize,&offset,expr._ints[i]) ;
+	for(unsigned int i=0;i<expr._ints.size();++i) ok &= setRawUInt32(data,tlvsize,&offset,expr._ints[i]) ;
 
 	ok &= setRawUInt32(data,tlvsize,&offset,expr._strings.size()) ;
 
-	for(uint i=0;i<expr._strings.size();++i) ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, expr._strings[i]); 	
+	for(unsigned int i=0;i<expr._strings.size();++i) ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, expr._strings[i]); 	
 
 
 	if (offset != tlvsize)
@@ -288,17 +288,17 @@ RsTurtleRegExpSearchRequestItem::RsTurtleRegExpSearchRequestItem(void *data,uint
 
 	expr._tokens.resize(n) ;
 
-	for(uint i=0;i<n;++i) ok &= getRawUInt8(data,pktsize,&offset,&expr._tokens[i]) ;
+	for(uint32_t i=0;i<n;++i) ok &= getRawUInt8(data,pktsize,&offset,&expr._tokens[i]) ;
 
 	ok &= getRawUInt32(data,pktsize,&offset,&n) ;
 	expr._ints.resize(n) ;
 
-	for(uint i=0;i<n;++i) ok &= getRawUInt32(data,pktsize,&offset,&expr._ints[i]) ;
+	for(uint32_t i=0;i<n;++i) ok &= getRawUInt32(data,pktsize,&offset,&expr._ints[i]) ;
 
 	ok &= getRawUInt32(data,pktsize,&offset,&n) ;
 	expr._strings.resize(n) ;
 
-	for(uint i=0;i<n;++i) ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE, expr._strings[i]); 	
+	for(uint32_t i=0;i<n;++i) ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE, expr._strings[i]); 	
 
 #ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
 #else
@@ -673,9 +673,9 @@ std::ostream& RsTurtleRegExpSearchRequestItem::print(std::ostream& o, uint16_t)
 	o << "  Req. Id: " << (void *)request_id << std::endl ;
 	o << "  Depth  : " << depth << std::endl ;
 	o << "  RegExp: " << std::endl ;
-	o << "    Toks: " ; for(uint i=0;i<expr._tokens.size();++i) std::cout << (int)expr._tokens[i] << " " ; std::cout << std::endl ;
-	o << "    Ints: " ; for(uint i=0;i<expr._ints.size();++i) std::cout << (int)expr._ints[i] << " " ; std::cout << std::endl ;
-	o << "    Strs: " ; for(uint i=0;i<expr._strings.size();++i) std::cout << expr._strings[i] << " " ; std::cout << std::endl ;
+	o << "    Toks: " ; for(unsigned int i=0;i<expr._tokens.size();++i) std::cout << (int)expr._tokens[i] << " " ; std::cout << std::endl ;
+	o << "    Ints: " ; for(unsigned int i=0;i<expr._ints.size();++i) std::cout << (int)expr._ints[i] << " " ; std::cout << std::endl ;
+	o << "    Strs: " ; for(unsigned int i=0;i<expr._strings.size();++i) std::cout << expr._strings[i] << " " ; std::cout << std::endl ;
 
 	return o ;
 }
