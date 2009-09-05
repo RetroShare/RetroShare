@@ -14,11 +14,13 @@ linux-g++ {
 	OBJECTS_DIR = temp/linux-g++/obj
  	QMAKE_LFLAGS += -L"../../../../lib/linux-g++"
  	CONFIG += version_detail_bash_script
+	LIBS += -L"../../../../lib" -lretroshare -lssl -lcrypto -lpthread -lminiupnpc -lz
 }
 linux-g++-64 {
 	OBJECTS_DIR = temp/linux-g++-64/obj
 	QMAKE_LFLAGS += -L"../../../../lib/linux-g++-64"
 	CONFIG += version_detail_bash_script
+	LIBS += -L"../../../../lib" -lretroshare -lssl -lcrypto -lpthread -lminiupnpc -lz
 }
 
 version_detail_bash_script {
@@ -30,16 +32,25 @@ version_detail_bash_script {
 #################### Cross compilation for windows under Linux ###################
 
 win32-x-g++ {
-	OBJECTS_DIR = temp/win32-x-g++/obj
+		OBJECTS_DIR = temp/win32-x-g++/obj
 
-	LIBS += -L"../../../../lib/win32-x-g++"
-    	LIBS += -lpthreadGCE2
-    	LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
-    	LIBS += -lole32 -lwinmm
+		LIBS += ../../libretroshare/src/lib.win32xgcc/libretroshare.a
+		LIBS += ../../../../lib/win32-x-g++-v0.5/libssl.a 
+		LIBS += ../../../../lib/win32-x-g++-v0.5/libcrypto.a 
+		LIBS += ../../../../lib/win32-x-g++-v0.5/libgpgme.dll.a 
+		LIBS += ../../../../lib/win32-x-g++-v0.5/libminiupnpc.a 
+		LIBS += ../../../../lib/win32-x-g++-v0.5/libz.a 
+		LIBS += -L${HOME}/.wine/drive_c/pthreads/lib -lpthreadGCE2
+		LIBS += -lQtUiTools
+		LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32 -gdi32
+		LIBS += -lole32 -lwinmm
 
-	DEFINES *= WIN32
+		DEFINES *= WIN32 WIN32_CROSS_UBUNTU
 
-	RC_FILE = gui/images/retroshare_win.rc
+		INCLUDEPATH += ../../../../gpgme-1.1.8/src/
+		INCLUDEPATH += ../../../../libgpg-error-1.7/src/
+
+		RC_FILE = gui/images/retroshare_win.rc
 }
 
 #################################### Windows #####################################
@@ -68,6 +79,8 @@ macx {
 
     LIBS += -Wl,-search_paths_first
     LIBS += -L"../../../../lib" -lretroshare -lssl -lcrypto -lminiupnpc -lz
+	 LIBS += -lgpgme
+	 LIBS += -lQtUiTools
 }
 
 ############################## Common stuff ######################################
@@ -75,16 +88,8 @@ macx {
 # On Linux systems that alredy have libssl and libcrypto it is advisable
 # to rename the patched version of SSL to something like libsslxpgp.a and libcryptoxpg.a
 
-# comment the next option if you renamed libcrtypto and libssl
-LIBS += -L"../../../../lib" -lretroshare -lminiupnpc -lssl -lcrypto
-
-# uncomment the next option if you renamed libcrtypto and libssl
-#LIBS += -L"../../../../lib" -lretroshare -lminiupnpc -lsslxpgp -lcryptoxpgp
-
 # ###########################################
 
-LIBS += -lz -lgpgme
-LIBS += -lQtUiTools
 
 DEPENDPATH += . \
             rsiface \

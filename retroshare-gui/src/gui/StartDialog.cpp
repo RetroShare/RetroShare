@@ -78,8 +78,8 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
 	ui.autoBox->hide();
 #endif
 	//comment those to show the ssl password dialog
-	ui.loadPasswd->hide();
-	ui.label_4->hide();
+	//ui.loadPasswd->hide();
+	//ui.label_4->hide();
 
 	/* get all available pgp private certificates....
 	 * mark last one as default.
