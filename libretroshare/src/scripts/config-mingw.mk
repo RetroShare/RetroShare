@@ -28,25 +28,22 @@ ZLIB_DIR=$(SRC_ROOT_PKG)/zlib-1.2.3
 SSL_DIR=$(SRC_ROOT_PKG)/openssl-tmp
 UPNPC_DIR=$(SRC_ROOT_PKG)/miniupnpc-1.3
 
+###########################################################################
 
-#SSL_DIR=$(SRC_ROOT_PKG)/openssl-0.9.8k
+#### Enable this section for compiling with MSYS/MINGW compile
+#SRC_ROOT=/home/linux
 
-###################
+#SSL_DIR=$(SRC_ROOT)/OpenSSL
+#GPGME_DIR=$(SRC_ROOT)/gpgme-1.1.8
+#GPG_ERROR_DIR=$(SRC_ROOT)/libgpg-error-1.7
 
-#ALT_SRC_ROOT=/cygdrive/c/RetroShareBuild/src
-#SRC_ROOT=/cygdrive/c/RetroShareBuild/src
-
-#PTHREADS_DIR=$(ALT_SRC_ROOT)/pthreads-w32-2-8-0-release
-
-###################
-
-#ZLIB_DIR=$(ALT_SRC_ROOT)/zlib-1.2.3
-#SSL_DIR=$(SRC_ROOT)/openssl-0.9.7g-xpgp-0.1c
+#ZLIB_DIR=$(SRC_ROOT)/zlib-1.2.3
 #UPNPC_DIR=$(SRC_ROOT)/miniupnpc-1.0
+#PTHREADS_DIR=$(SRC_ROOT)/pthreads-w32-2-8-0-release
 
 include $(RS_TOP_DIR)/scripts/checks.mk
 
-############ ENFORCE DIRECTORY NAMING ########################
+############ ENFORCE DIRECTORY NAMING #######################################
 
 CC = g++
 RM = /bin/rm
@@ -116,6 +113,10 @@ CFLAGS += -I$(SSL_DIR)/include
 CFLAGS += -I$(PTHREADS_DIR)/include
 CFLAGS += -I$(ZLIB_DIR)
 CFLAGS += -I$(SRC_ROOT_GPG)/include
+
+### Enable this for GPGME and GPG ERROR dirs
+#CFLAGS += -I$(GPGME_DIR)/src
+#CFLAGS += -I$(GPG_ERROR_DIR)/src
 
 CFLAGS += $(WININC)
 
