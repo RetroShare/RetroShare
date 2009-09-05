@@ -42,7 +42,7 @@ In this section we install: cygwin, mingw/msys and Qt4.5
 	b) Download MSYS-1.0.11 installer and run. 
 
    links:
-  http://downloads.sourceforge.net/mingw/MinGW-5.1.4.exe
+	http://downloads.sourceforge.net/mingw/MinGW-5.1.4.exe
 	http://downloads.sourceforge.net/mingw/MSYS-1.0.11.exe
 	http://www.mingw.org/
 	http://sourceforge.net/projects/mingw/files/	
@@ -111,7 +111,7 @@ In this section we install: cygwin, mingw/msys and Qt4.5
      3) c:/msys/1.0/home/XXX/zlib-1.2.3
      4) c:/msys/1.0/home/XXX/gpgme-1.1.8
      5) c:/msys/1.0/home/XXX/libgpg-error-1.7
-  c) Install OpenSSL to this directory (get from http://www.slproweb.com/download/Win32OpenSSL-0_9_8k.exe)
+	c) Install OpenSSL to this directory (get from http://www.slproweb.com/download/Win32OpenSSL-0_9_8k.exe)
      1) c:/msys/1.0/home/XXX/OpenSSL
 	d) get the latest svn trunk and unzip to (get from http://retroshare.svn.sourceforge.net/viewvc/retroshare/trunk.tar.gz) .
      1) c:/msys/1.0/home/XXX/retroshare
@@ -138,7 +138,7 @@ In this section we install: cygwin, mingw/msys and Qt4.5
       ### Enable this for GPGME and GPG ERROR dirs
       CFLAGS += -I$(GPGME_DIR)/src
       CFLAGS += -I$(GPG_ERROR_DIR)/src
-    5) Edit your SRC_ROOT to your /home/xxxx dir
+	 5) Edit your SRC_ROOT to your /home/xxxx dir
       
 
 	c) compile libretroshare
