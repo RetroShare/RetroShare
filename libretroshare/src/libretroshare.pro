@@ -75,7 +75,7 @@ win32 {
 	  
 	PTHREADS_DIR = ../../../../pthreads-w32-2-8-0-release
   ZLIB_DIR = ../../../../zlib-1.2.3
-  SSL_DIR = ../../../../openssl-0.9.8k
+  SSL_DIR = ../../../../OpenSSL
         
   INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR}
 }
