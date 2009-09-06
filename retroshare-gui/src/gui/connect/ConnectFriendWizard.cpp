@@ -85,7 +85,6 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent)
               QPixmap(":/images/connect/connectFriendBanner.png")) ;
               
     setWindowTitle(tr("Connect Friend Wizard"));
-
 }
 
 //============================================================================
@@ -100,6 +99,17 @@ ConnectFriendWizard::accept()
 
         rsPeers->AuthCertificate(authId, authCode );
         rsPeers->addFriend(authId);
+
+	//let's check if there is ip adresses in the wizard.
+	if (!this->field("ext_friend_ip").isNull() && !this->field("ext_friend_port").isNull()) {
+	    std::cerr << "ConnectFriendWizard::accept() : setting ip ext address." << std::endl;
+	    rsPeers->setExtAddress(authId, this->field("ext_friend_ip").toString().toStdString(), this->field("ext_friend_port").toInt());
+	}
+	if (!this->field("local_friend_ip").isNull() && !this->field("local_friend_port").isNull()) {
+	    std::cerr << "ConnectFriendWizard::accept() : setting ip local address." << std::endl;
+	    rsPeers->setLocalAddress(authId, this->field("local_friend_ip").toString().toStdString(), this->field("local_friend_port").toInt());
+	}
+
         rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS,1) ;
     }
 
@@ -335,18 +345,10 @@ TextPage::nextId() const
 		//let's parse local port
 		subCert = subCert.substr(parsePosition + 1);
 		parsePosition = subCert.find(";");
-		std::string local_port_string = subCert.substr(0, parsePosition);
+		std::string local_port = subCert.substr(0, parsePosition);
 #ifdef FRIEND_WIZARD_DEBUG
-		std::cerr << "Local port : " << local_port_string << std::endl;
+		std::cerr << "Local port : " << local_port << std::endl;
 #endif
-		std::istringstream iss(local_port_string);
-		int local_port;
-		iss >> local_port;
-
-#ifdef FRIEND_WIZARD_DEBUG
-		std::cerr << "ConnectFriendWizard : saving ip local address." << std::endl;
-#endif
-		rsPeers->setLocalAddress(id, local_ip, local_port);
 
 		//let's parse ip ext address
 		parsePosition = certstr.find(EXT_IP);
@@ -365,18 +367,16 @@ TextPage::nextId() const
 		    //let's parse ext port
 		    subCert = subCert.substr(parsePosition + 1);
 		    parsePosition = subCert.find(";");
-		    std::string ext_port_string = subCert.substr(0, parsePosition);
+		    std::string ext_port = subCert.substr(0, parsePosition);
     #ifdef FRIEND_WIZARD_DEBUG
-		    std::cerr << "Ext port : " << ext_port_string << std::endl;
+		    std::cerr << "Ext port : " << ext_port << std::endl;
     #endif
-		    std::istringstream iss2(ext_port_string);
-		    int ext_port;
-		    iss2 >> ext_port;
 
-#ifdef FRIEND_WIZARD_DEBUG
-		    std::cerr << "ConnectFriendWizard : saving ip ext address." << std::endl;
-#endif
-		    rsPeers->setExtAddress(id, ext_ip, ext_port);
+		    //let's store the result in the friend wizard. We will retreive it in the acept() method
+		    wizard()->setField("ext_friend_ip", QString::fromStdString(ext_ip));
+		    wizard()->setField("ext_friend_port", QString::fromStdString(ext_port));
+		    wizard()->setField("local_friend_ip", QString::fromStdString(local_ip));
+		    wizard()->setField("local_friend_port", QString::fromStdString(local_port));
 		}
 
 	    }
@@ -811,6 +811,22 @@ ConclusionPage::ConclusionPage(QWidget *parent)
     peerIdEdit = new QLineEdit(this);
     peerIdEdit->setVisible(false);
     registerField("idField",peerIdEdit);
+
+    ext_friend_ip = new QLineEdit(this);
+    ext_friend_ip->setVisible(false);
+    registerField("ext_friend_ip",ext_friend_ip);
+
+    ext_friend_port = new QLineEdit(this);
+    ext_friend_port->setVisible(false);
+    registerField("ext_friend_port",ext_friend_port);
+
+    local_friend_ip = new QLineEdit(this);
+    local_friend_ip->setVisible(false);
+    registerField("local_friend_ip",local_friend_ip);
+
+    local_friend_port = new QLineEdit(this);
+    local_friend_port->setVisible(false);
+    registerField("local_friend_port",local_friend_port);
 }
 
 //============================================================================

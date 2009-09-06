@@ -228,6 +228,10 @@ private:
     //! It's a hack; This widget is used only to register "id" field in the
     //! wizard. Really the widget isn't displayed.
     QLineEdit* peerIdEdit;
+    QLineEdit* ext_friend_ip;
+    QLineEdit* ext_friend_port;
+    QLineEdit* local_friend_ip;
+    QLineEdit* local_friend_port;
 };
 
 //============================================================================
