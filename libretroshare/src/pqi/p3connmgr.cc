@@ -2833,6 +2833,11 @@ bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
 	{
 		if (mOthersList.end() == (it = mOthersList.find(id)))
 		{
+			#ifdef CONN_DEBUG
+					std::cerr << "p3ConnectMgr::setLocalAddress() cannot add addres info : peer id not found in friend list ";
+					std::cerr << " id: " << id;
+					std::cerr << std::endl;
+			#endif
 			return false;
 		}
 	}
@@ -2862,6 +2867,11 @@ bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
 	{
 		if (mOthersList.end() == (it = mOthersList.find(id)))
 		{
+			#ifdef CONN_DEBUG
+					std::cerr << "p3ConnectMgr::setLocalAddress() cannot add addres info : peer id not found in friend list ";
+					std::cerr << " id: " << id;
+					std::cerr << std::endl;
+			#endif
 			return false;
 		}
 	}
