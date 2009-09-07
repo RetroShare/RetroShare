@@ -101,10 +101,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 
   QString title = QString::fromStdString(name) + " :" + tr(" RetroShare - Encrypted Chat")  ;
   setWindowTitle(title);
-  
-  //set the default avatar
-  //ui.avatarlabel->setPixmap(QPixmap(":/images/retrosharelogo1.png"));
-  
+    
   setWindowIcon(QIcon(QString(":/images/rstray3.png")));
   
   ui.textboldButton->setIcon(QIcon(QString(":/images/edit-bold.png")));
@@ -123,13 +120,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   
   /*Disabled style Button when will switch chat style RetroShare will crash need to be fix */
   //ui.styleButton->setEnabled(false);
-   
-  /*QMenu * fontmenu = new QMenu();
-  fontmenu->addAction(ui.actionBold);
-  fontmenu->addAction(ui.actionUnderline);
-  fontmenu->addAction(ui.actionItalic);
-  fontmenu->addAction(ui.actionStrike);
-  ui.fontButton->setMenu(fontmenu);*/
+
   
   mCurrentColor = Qt::black;
   mCurrentFont = QFont("Comic Sans MS", 10);
@@ -317,6 +308,11 @@ std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() <<
 	   std::cerr << "received msg saying an avatar for peer " << ci->rsid << " is available." << std::endl ;
 	   updatePeerAvatar(ci->rsid) ;
 	}
+	/*else
+	{
+      ui.avatarlabel->setPixmap(QPixmap(":/images/user/personal128.png"));
+	}*/
+	
 	resetStatusBar() ;
 }
 
@@ -688,8 +684,8 @@ void PopupChatDialog::updateAvatar()
 
 	// set the image
 	QPixmap pix ;
-	pix.loadFromData(data,size,"JPG") ;
-	ui.myavatarlabel->setPixmap(pix); // writes image into ba in JPG format
+	pix.loadFromData(data,size,"PNG") ;
+	ui.myavatarlabel->setPixmap(pix); // writes image into ba in PNGformat
 
 	delete[] data ;
 }
@@ -708,7 +704,7 @@ void PopupChatDialog::getAvatar()
 		QByteArray ba;
 		QBuffer buffer(&ba);
 		buffer.open(QIODevice::WriteOnly);
-		picture.save(&buffer, "JPG"); // writes image into ba in JPG format
+		picture.save(&buffer, "PNG"); // writes image into ba in PNG format
 
 		std::cerr << "Image size = " << ba.size() << std::endl ;
 

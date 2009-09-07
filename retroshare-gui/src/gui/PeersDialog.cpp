@@ -1207,8 +1207,8 @@ void PeersDialog::updateAvatar()
 
 	// set the image
 	QPixmap pix ;
-	pix.loadFromData(data,size,"JPG") ;
-	ui.avatartoolButton->setIcon(pix); // writes image into ba in JPG format
+	pix.loadFromData(data,size,"PNG") ;
+	ui.avatartoolButton->setIcon(pix); // writes image into ba in PNG format
 
 	delete[] data ;
 }
@@ -1226,7 +1226,7 @@ void PeersDialog::getAvatar()
 		QByteArray ba;
 		QBuffer buffer(&ba);
 		buffer.open(QIODevice::WriteOnly);
-		picture.save(&buffer, "JPG"); // writes image into ba in JPG format
+		picture.save(&buffer, "PNG"); // writes image into ba in PNG format
 
 		std::cerr << "Image size = " << ba.size() << std::endl ;
 
