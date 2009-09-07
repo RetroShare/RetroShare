@@ -96,26 +96,17 @@ PeersDialog::PeersDialog(QWidget *parent)
   /* hide the Tree +/- */
   ui.peertreeWidget -> setRootIsDecorated( false );
 
-    /* Set header resize modes and initial section sizes */
+  /* Set header resize modes and initial section sizes */
 	QHeaderView * _header = ui.peertreeWidget->header () ;
-   	_header->setResizeMode (0, QHeaderView::Custom);
+  _header->setResizeMode (0, QHeaderView::Custom);
 	_header->setResizeMode (1, QHeaderView::Interactive);
 	_header->setResizeMode (2, QHeaderView::Interactive);
-	/*_header->setResizeMode (3, QHeaderView::Interactive);
-	_header->setResizeMode (4, QHeaderView::Interactive);
-	_header->setResizeMode (5, QHeaderView::Interactive);
-	_header->setResizeMode (6, QHeaderView::Interactive);
-	_header->setResizeMode (7, QHeaderView::Interactive);*/
 
 
 	_header->resizeSection ( 0, 25 );
 	_header->resizeSection ( 1, 100 );
 	_header->resizeSection ( 2, 100 );
-	/*_header->resizeSection ( 3, 120 );
-	_header->resizeSection ( 4, 100 );
-	_header->resizeSection ( 5, 230 );
-	_header->resizeSection ( 6, 120 );
-	_header->resizeSection ( 7, 220 );*/
+
 
     // set header text aligment
 	QTreeWidgetItem * headerItem = ui.peertreeWidget->headerItem();
@@ -127,7 +118,6 @@ PeersDialog::PeersDialog(QWidget *parent)
 
   loadEmoticonsgroupchat();
 
-  //setWindowIcon(QIcon(QString(":/images/rstray3.png")));
 
   connect(ui.lineEdit, SIGNAL(textChanged ( ) ), this, SLOT(checkChat( ) ));
   connect(ui.Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
@@ -224,7 +214,7 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       contextMnu.addAction( removefriendAct);
       contextMnu.exec( mevent->globalPos() );
 
-      updateAvatar();
+
 }
 
 
