@@ -14,13 +14,13 @@ linux-g++ {
 	OBJECTS_DIR = temp/linux-g++/obj
  	QMAKE_LFLAGS += -L"../../../../lib/linux-g++"
  	CONFIG += version_detail_bash_script
-	LIBS += -L"../../../../lib" -lretroshare -lssl -lcrypto -lpthread -lminiupnpc -lz
+	LIBS += -L"../../../../lib" -lretroshare -lssl -lcrypto -lgpgme -lpthread -lminiupnpc -lz
 }
 linux-g++-64 {
 	OBJECTS_DIR = temp/linux-g++-64/obj
 	QMAKE_LFLAGS += -L"../../../../lib/linux-g++-64"
 	CONFIG += version_detail_bash_script
-	LIBS += -L"../../../../lib" -lretroshare -lssl -lcrypto -lpthread -lminiupnpc -lz
+	LIBS += -L"../../../../lib" -lretroshare -lssl -lcrypto -lgpgme -lpthread -lminiupnpc -lz
 }
 
 version_detail_bash_script {
@@ -57,9 +57,10 @@ win32-x-g++ {
 
 win32 {
 
-	OBJECTS_DIR = temp/obj
+    OBJECTS_DIR = temp/obj
 
-    LIBS += -L"../../../../lib" -lretroshare -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
+    LIBS += -L"../../../../lib" 
+    LIBS += -lretroshare -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
     LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
     LIBS += -lole32 -lwinmm
 
