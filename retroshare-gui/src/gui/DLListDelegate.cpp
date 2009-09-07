@@ -46,7 +46,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	QPixmap pixmap;
 	qlonglong fileSize;
 	double progress, dlspeed, multi;
-	int minutes, hours, days;
+	int seconds,minutes, hours, days;
 	qlonglong remaining;
 	QString temp , status;
 	qlonglong completed;
@@ -100,22 +100,21 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 		case REMAINING:
 			remaining = index.data().toLongLong();
 			minutes = remaining / 60;
+			seconds = remaining % 60;
 			hours = minutes / 60;
-			minutes = minutes - hours * 60;
+			minutes = minutes % 60 ;
 			days = hours / 24;
-			hours = hours - days * 24;
+			hours = hours % 24 ;
 			if(days > 0) {
-				temp.clear();
-				temp.sprintf("%dd %2dh %dm", days, hours, minutes);
+				temp = QString::number(days)+"d "+QString::number(hours)+"h" ;
 			} else if(hours > 0 || days > 0) {
-				temp.clear();
-				temp.sprintf("%dh %dm", hours, minutes);
+				temp = QString::number(hours)+"h "+QString::number(minutes)+"m" ;
 			} else if(minutes > 0 || hours > 0) {
-				temp.clear();
-				temp.sprintf("%dm", minutes);
-			} else {
-				temp = "Unknown";
-			}
+				temp = QString::number(minutes)+"m"+QString::number(seconds)+"s" ;
+			} else if(seconds > 0) {
+				temp = QString::number(seconds)+"s" ;
+			} else
+				temp = "Unknown" ;
 			painter->drawText(option.rect, Qt::AlignCenter, temp);
 			break;
 		case COMPLETED:
