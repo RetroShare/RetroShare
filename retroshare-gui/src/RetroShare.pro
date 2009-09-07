@@ -63,13 +63,11 @@ win32 {
     LIBS += -lretroshare -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
     LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
     LIBS += -lole32 -lwinmm
+    
+    INCLUDEPATH += ../../../../gpgme-1.1.8/src/
+    INCLUDEPATH += ../../../../libgpg-error-1.7/src/
 
     RC_FILE = gui/images/retroshare_win.rc
-    
-    ## ENABLE THIS OPTION for release Version.
-    #DEFINES += RS_RELEASE_VERSION
-
-
 }
 
 ##################################### MacOS ######################################
@@ -80,8 +78,8 @@ macx {
 
     LIBS += -Wl,-search_paths_first
     LIBS += -L"../../../../lib" -lretroshare -lssl -lcrypto -lminiupnpc -lz
-	 LIBS += -lgpgme
-	 LIBS += -lQtUiTools
+    LIBS += -lgpgme
+    LIBS += -lQtUiTools
 }
 
 ############################## Common stuff ######################################
