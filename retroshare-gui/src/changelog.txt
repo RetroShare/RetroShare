@@ -1,3 +1,12 @@
+
+Changes for v0.4.14-rc2
+
+* Fixed remaining size issue
+* Restored accounting for LAN transfer rates
+* Added large file support
+* Corrected wrong allocation request
+* Teaked the TrustView and NetworkView so that they only update when visible. Doing so, the CPU overload is only present when strictly needed.
+
 Changes for v0.4.14-rc1
 * changed the order of upnp/stun and extaddrFinder to limit wrong analysis of firewalled situation
 * finally corrected the connexion + one-way bug
@@ -9,7 +18,6 @@ Changes for v0.4.14-rc1
 * enabled double click download
 * New translations
 * Make compatible with Qt 4.3.4
-
 
 Changes for v0.4.13a
 
