@@ -62,8 +62,8 @@
 #define IMAGE_CHAT               ":/images/chat.png"
 #define IMAGE_SENDMESSAGE		 ":/images/message-mail.png"
 /* Images for Status icons */
-#define IMAGE_ONLINE             ":/images/donline.png"
-#define IMAGE_OFFLINE            ":/images/dhidden.png"
+#define IMAGE_ONLINE             ":/images/im-user.png"
+#define IMAGE_OFFLINE            ":/images/im-user-offline.png"
 /* Images for Status icons */
 #define IMAGE_ON                 ":/images/contract_hover.png"
 #define IMAGE_OFF                ":/images/expand_hover.png"
