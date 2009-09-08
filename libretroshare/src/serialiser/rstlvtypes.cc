@@ -33,6 +33,8 @@
 #include <iomanip>
 #include <iostream>
 
+#define TLV_DEBUG 1
+
 void  	RsTlvItem::TlvShallowClear()
 {
 	TlvClear(); /* unless overloaded! */

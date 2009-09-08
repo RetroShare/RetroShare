@@ -447,7 +447,7 @@ bool GetTlvString(void *data, uint32_t size, uint32_t *offset,
 		return false;
 	}
 
-	char *strdata = (char *) right_shift_void_pointer(tlvstart, 4);
+	char *strdata = (char *) right_shift_void_pointer(tlvstart, TLV_HEADER_SIZE);
 	uint16_t strsize = tlvsize - TLV_HEADER_SIZE; /* remove the header */
 	in = std::string(strdata, strsize);
 
