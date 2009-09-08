@@ -141,14 +141,17 @@ bool     RsTlvBinaryData::SetTlv(void *data, uint32_t size, uint32_t *offset) /*
 	ok &= SetTlvBase(data, tlvend, offset, tlvtype, tlvsize);
 
 	/* add mandatory data */
-	if ((bin_data != NULL) && (bin_len))
+
+	// Warning: this is actually not an error if bin_len=0, as it does not
+	// corrupt the packet structure. We thus still return true in this case.
+	//
+	if (bin_data != NULL && bin_len > 0)
 	{
 		memcpy(&(((uint8_t *) data)[*offset]), bin_data, bin_len);
 		*offset += bin_len;
-		return true;
 	}
-	else
-		return false ;
+
+	return ok;
 }
 
 
