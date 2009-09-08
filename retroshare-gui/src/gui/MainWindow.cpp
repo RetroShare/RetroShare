@@ -515,18 +515,27 @@ void MainWindow::closeEvent(QCloseEvent *e)
 {
     static bool firstTime = true;
 
-    if (trayIcon->isVisible()) {
-        if (firstTime)
-        {
+   if(!_settings->value(QString::fromUtf8("ClosetoTray"), false).toBool())
+   {
+      if (trayIcon->isVisible()) {
+          if (firstTime)
+          {
 /*****
             QMessageBox::information(this, tr("RetroShare System tray"),
             tr("Application will continue running. Quit using context menu in the system tray"));
 *****/
             firstTime = false;
-        }
-        hide();
-        e->ignore();
-    }
+          }
+          hide();
+          e->ignore();
+      }
+   }
+   else   
+   {
+       rsicontrol->rsGlobalShutDown();
+       qApp->quit();
+   }
+   
 
 }
 

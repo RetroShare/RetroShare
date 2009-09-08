@@ -48,6 +48,7 @@ public:
   /** Loads the settings for this page */
   void load();
   bool startMinimized() const;
+  bool closetoTray() const;
   bool quit() const;
 
 

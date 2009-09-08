@@ -57,6 +57,8 @@ GeneralPage::save(QString &errmsg)
   _settings->setValue(QString::fromUtf8("StartMinimized"), startMinimized());
 
   _settings->setValue(QString::fromUtf8("doQuit"), quit());
+  
+  _settings->setValue(QString::fromUtf8("ClosetoTray"), closetoTray());
 
   _settings->setRunRetroshareOnBoot(
   ui.chkRunRetroshareAtSystemStartup->isChecked());
@@ -74,6 +76,8 @@ GeneralPage::load()
   ui.checkStartMinimized->setChecked(_settings->value(QString::fromUtf8("StartMinimized"), false).toBool());
 
   ui.checkQuit->setChecked(_settings->value(QString::fromUtf8("doQuit"), false).toBool());
+  
+  ui.checkClosetoTray->setChecked(_settings->value(QString::fromUtf8("ClosetoTray"), false).toBool());
 
 }
 
@@ -85,6 +89,11 @@ bool GeneralPage::quit() const {
 bool GeneralPage::startMinimized() const {
   if(ui.checkStartMinimized->isChecked()) return true;
   return ui.checkStartMinimized->isChecked();
+}
+
+bool GeneralPage::closetoTray() const {
+  if(ui.checkClosetoTray->isChecked()) return true;
+  return ui.checkClosetoTray->isChecked();
 }
 
 /** Called when the "show on startup" checkbox is toggled. */
