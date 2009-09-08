@@ -36,6 +36,11 @@
 #include <openssl/sha.h>
 #include <util/rsthreads.h>
 
+// This char is used to separate fields in the file list cache. It is supposed to be
+// sufficiently safe on all systems.
+//
+static const char FILE_CACHE_SEPARATOR_CHAR = '|' ;
+
 /****
 #define FI_DEBUG 1
  * #define FI_DEBUG_ALL 1
@@ -807,7 +812,7 @@ int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint64_
 			/* parse line */
 			while(1)
 			{
-				getline(ss, word, ',');
+				getline(ss, word, FILE_CACHE_SEPARATOR_CHAR);
 				if (ss.eof())
 					goto error;
 				tokens.push_back(word);
@@ -895,7 +900,8 @@ error:
 int FileIndex::saveIndex(std::string filename, std::string &fileHash, uint64_t &size,const std::set<std::string>& forbidden_dirs)
 {
 	unsigned char sha_buf[SHA_DIGEST_LENGTH];
-	std::ofstream file (filename.c_str(), std::ofstream::binary);
+	std::string filenametmp = filename + ".tmp" ;
+	std::ofstream file (filenametmp.c_str(), std::ofstream::binary);
 	std::ostringstream oss;
 
 	if (!file)
@@ -954,7 +960,13 @@ int FileIndex::saveIndex(std::string filename, std::string &fileHash, uint64_t &
 	/* get the size out */
 	size=file.tellp();
 	file.close();
-	return 1;
+
+	// Use a temp file name so that the file is never half saved.
+	//
+	if(!RsDirUtil::renameFile(filenametmp,filename))
+		return false ;
+
+	return true;
 }
 
 
@@ -963,7 +975,7 @@ std::string FixName(std::string in)
 	/* replace any , with _ */
 	for(unsigned int i = 0; i < in.length(); i++)
 	{
-		if (in[i] == ',')
+		if (in[i] == FILE_CACHE_SEPARATOR_CHAR)
 		{
 			in[i] = '_';
 		}
@@ -975,12 +987,12 @@ void DirEntry::writeDirInfo(std::ostringstream& oss)
 {
 	/* print node info */
 	oss << "d";
-	oss << FixName(name) << ",";
-	oss << FixName(path) << ",";
-	oss << size << ",";
-	oss << modtime << ",";
-	oss << pop << ",";
-	oss << updtime << "," << std::endl;
+	oss << FixName(name) << FILE_CACHE_SEPARATOR_CHAR ;
+	oss << FixName(path) << FILE_CACHE_SEPARATOR_CHAR ;
+	oss << size << FILE_CACHE_SEPARATOR_CHAR ;
+	oss << modtime << FILE_CACHE_SEPARATOR_CHAR ;
+	oss << pop << FILE_CACHE_SEPARATOR_CHAR ;
+	oss << updtime << FILE_CACHE_SEPARATOR_CHAR  << std::endl;
 }
 
 void DirEntry::writeFileInfo(std::ostringstream& oss)
@@ -990,12 +1002,12 @@ void DirEntry::writeFileInfo(std::ostringstream& oss)
 	for(fit = files.begin(); fit != files.end(); fit++)
 	{
 		oss << "f";
-		oss << FixName((fit->second)->name) << ",";
-		oss << (fit->second)->hash << ",";
-		oss << (fit->second)->size << ",";
-		oss << (fit->second)->modtime << ",";
-		oss << (fit->second)->pop << ",";
-		oss << (fit->second)->updtime << "," << std::endl;
+		oss << FixName((fit->second)->name) << FILE_CACHE_SEPARATOR_CHAR ;
+		oss << (fit->second)->hash << FILE_CACHE_SEPARATOR_CHAR ;
+		oss << (fit->second)->size << FILE_CACHE_SEPARATOR_CHAR ;
+		oss << (fit->second)->modtime << FILE_CACHE_SEPARATOR_CHAR ;
+		oss << (fit->second)->pop << FILE_CACHE_SEPARATOR_CHAR ;
+		oss << (fit->second)->updtime << FILE_CACHE_SEPARATOR_CHAR << std::endl;
 	}
 }
 
