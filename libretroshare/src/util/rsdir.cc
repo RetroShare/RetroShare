@@ -426,4 +426,408 @@ bool RsDirUtil::renameFile(const std::string& from, const std::string& to)
 	return true ;
 }
 
+/************************* WIDE STRING ***************************/
+/************************* WIDE STRING ***************************/
+/************************* WIDE STRING ***************************/
+
+std::wstring 	RsDirUtil::getWideTopDir(std::wstring dir)
+{
+	std::wstring top;
+
+	/* find the subdir: [/][dir1.../]<top>[/]
+	 */
+	int i,j;
+	int len = dir.length();
+	for(j = len - 1; (j > 0) && (dir[j] == '/'); j--);
+	for(i = j; (i > 0) && (dir[i] != '/'); i--);
+
+	if (dir[i] == '/')
+		i++;
+
+	for(; i <= j; i++)
+	{
+		top += dir[i];
+	}
+
+	return top;
+}
+
+std::wstring 	RsDirUtil::removeWideTopDir(std::wstring dir)
+{
+	std::wstring rest;
+
+	/* remove the subdir: [/][dir1.../]<top>[/]
+	 */
+	int i,j;
+	int len = dir.length();
+	for(j = len - 1; (j > 0) && (dir[j] == '/'); j--);
+	for(i = j; (i >= 0) && (dir[i] != '/'); i--);
+
+	/* remove any more slashes */
+	for(; (i >= 0) && (dir[i] == '/'); i--);
+
+	for(j = 0; j <= i; j++)
+	{
+		rest += dir[j];
+	}
+
+	return rest;
+}
+
+std::wstring 	RsDirUtil::getWideRootDir(std::wstring dir)
+{
+	std::wstring root;
+
+	/* find the subdir: [/]root[/...]
+	 */
+	int i,j;
+	int len = dir.length();
+	for(i = 0; (i < len) && (dir[i] == '/'); i++);
+	for(j = i; (j < len) && (dir[j] != '/'); j++);
+	if (i == j)
+		return root; /* empty */
+	for(; i < j; i++)
+	{
+		root += dir[i];
+	}
+	return root;
+}
+
+std::wstring RsDirUtil::removeWideRootDir(std::wstring path)
+{
+	unsigned int i, j;
+	unsigned int len = path.length();
+	std::wstring output;
+
+	/* chew leading '/'s */
+	for(i = 0; (i < len) && (path[i] == '/'); i++);
+	if (i == len)
+			return output; /*  empty string */
+
+	for(j = i; (j < len) && (path[j] != '/'); j++); /* run to next '/' */
+	for(; (j < len) && (path[j] == '/'); j++); 	/* chew leading '/'s */
+
+	for(; j < len; j++)
+	{
+		output += path[j];
+	}
+
+	return output;
+}
+
+std::wstring RsDirUtil::removeWideRootDirs(std::wstring path, std::wstring root)
+{
+	/* too tired */
+	std::wstring notroot;
+
+	unsigned int i = 0, j = 0;
+
+	/* catch empty data */
+	if ((root.length() < 1) || (path.length() < 1))
+		return notroot;
+		
+	if ((path[0] == '/') && (root[0] != '/'))
+	{
+		i++;
+	}
+
+	for(; (i < path.length()) && (j < root.length()) && (path[i] == root[j]); i++, j++);
+
+	/* should have consumed root. */
+	if (j == root.length())
+	{
+		//std::cerr << "matched root!" << std::endl;
+	}
+	else
+	{
+		//std::cerr << "failed i: " << i << ", j: " << j << std::endl;
+		//std::cerr << "root: " << root << " path: " << path << std::endl;
+		return notroot;
+	}
+
+	if (path[i] == '/')
+	{
+		i++;
+	}
+
+	for(; i < path.length(); i++)
+	{
+		notroot += path[i];
+	}
+
+	//std::cerr << "Found NotRoot: " << notroot << std::endl;
+
+	return notroot;
+}
+
+
+
+int	RsDirUtil::breakupWideDirList(std::wstring path, 
+			std::list<std::wstring> &subdirs)
+{
+	int start = 0;
+	unsigned int i;
+	for(i = 0; i < path.length(); i++)
+	{
+		if (path[i] == '/')
+		{
+			if (i - start > 0)
+			{
+				subdirs.push_back(path.substr(start, i-start));
+			}
+			start = i+1;
+		}
+	}
+	// get the final one.
+	if (i - start > 0)
+	{
+		subdirs.push_back(path.substr(start, i-start));
+	}
+	return 1;
+}
+
+
+
+bool	RsDirUtil::checkWideDirectory(std::wstring dir)
+{
+	struct stat buf;
+	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
+	std::string d(dir.begin(), dir.end());
+	int val = stat(d.c_str(), &buf);
+	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
+	if (val == -1)
+	{
+#ifdef RSDIR_DEBUG 
+		std::cerr << "RsDirUtil::checkDirectory() ";
+		std::cerr << d << " doesn't exist" << std::endl;
+#endif
+		return false;
+	} 
+	else if (!S_ISDIR(buf.st_mode))
+	{
+		// Some other type - error.
+#ifdef RSDIR_DEBUG 
+		std::cerr << "RsDirUtil::checkDirectory() ";
+		std::cerr << d << " is not Directory" << std::endl;
+#endif
+		return false;
+	}
+	return true;
+}
+
+
+bool	RsDirUtil::checkWideCreateDirectory(std::wstring dir)
+{
+	struct stat buf;
+	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
+	std::string d(dir.begin(), dir.end());
+	int val = stat(d.c_str(), &buf);
+	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
+	if (val == -1)
+	{
+		// directory don't exist. create.
+/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS // UNIX
+	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
+		if (-1 == mkdir(d.c_str(), 0777))
+	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
+#else // WIN
+		if (-1 == mkdir(d.c_str()))
+#endif
+/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+
+		{
+#ifdef RSDIR_DEBUG 
+		  std::cerr << "check_create_directory() Fatal Error --";
+		  std::cerr <<std::endl<< "\tcannot create:" <<d<<std::endl;
+#endif
+		  return 0;
+		}
+
+#ifdef RSDIR_DEBUG 
+		std::cerr << "check_create_directory()";
+		std::cerr <<std::endl<< "\tcreated:" <<d<<std::endl;
+#endif
+	} 
+	else if (!S_ISDIR(buf.st_mode))
+	{
+		// Some other type - error.
+#ifdef RSDIR_DEBUG 
+		std::cerr<<"check_create_directory() Fatal Error --";
+		std::cerr<<std::endl<<"\t"<<d<<" is nor Directory"<<std::endl;
+#endif
+		return 0;
+	}
+#ifdef RSDIR_DEBUG 
+	std::cerr << "check_create_directory()";
+	std::cerr <<std::endl<< "\tDir Exists:" <<d<<std::endl;
+#endif
+	return 1;
+}
+
+
+
+#include <dirent.h>
+
+bool 	RsDirUtil::cleanupWideDirectory(std::wstring cleandir, std::list<std::wstring> keepFiles)
+{
+
+	/* check for the dir existance */
+	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
+	std::string cd(cleandir.begin(), cleandir.end());
+	DIR *dir = opendir(cd.c_str());
+	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
+	std::list<std::wstring>::const_iterator it;
+
+	if (!dir)
+	{
+		return false;
+	}
+
+	struct dirent *dent;
+	struct stat buf;
+
+	while(NULL != (dent = readdir(dir)))
+	{
+		/* check entry type */
+	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
+		std::string fname(dent -> d_name);
+		std::wstring wfname(fname.begin(), fname.end());
+		std::string fullname = cd + "/" + fname;
+
+	 	if (-1 != stat(fullname.c_str(), &buf))
+	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
+		{
+			/* only worry about files */
+			if (S_ISREG(buf.st_mode))
+			{
+				/* check if we should keep it */
+				if (keepFiles.end() == (it = std::find(keepFiles.begin(), keepFiles.end(), wfname)))
+				{
+	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
+					/* can remove */
+					remove(fullname.c_str());
+	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
+				}
+			}
+		}
+	}
+	/* close directory */
+	closedir(dir);
+
+	return true;
+}
+
+/* slightly nicer helper function */
+bool RsDirUtil::hashWideFile(std::wstring filepath, 
+		std::wstring &name, std::string &hash, uint64_t &size)
+{
+	if (getWideFileHash(filepath, hash, size))
+	{
+		/* extract file name */
+		name = RsDirUtil::getWideTopDir(filepath);
+		return true;
+	}
+	return false;
+}
+
+
+#include <openssl/sha.h>
+#include <sstream>
+#include <iomanip>
+
+/* Function to hash, and get details of a file */
+bool RsDirUtil::getWideFileHash(std::wstring filepath, 
+				std::string &hash, uint64_t &size)
+{
+	FILE *fd;
+	int  len;
+	SHA_CTX *sha_ctx = new SHA_CTX;
+	unsigned char sha_buf[SHA_DIGEST_LENGTH];
+	unsigned char gblBuf[512];
+
+	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
+	std::string fp(filepath.begin(), filepath.end());
+
+	if (NULL == (fd = fopen(fp.c_str(), "rb")))
+		return false;
+
+	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
+
+	/* determine size */
+ 	fseek(fd, 0, SEEK_END);
+	size = ftell(fd);
+	fseek(fd, 0, SEEK_SET);
+
+	SHA1_Init(sha_ctx);
+	while((len = fread(gblBuf,1, 512, fd)) > 0)
+	{
+		SHA1_Update(sha_ctx, gblBuf, len);
+	}
+
+	/* reading failed for some reason */
+	if (ferror(fd)) 
+	{
+		delete sha_ctx;
+		fclose(fd);
+		return false;
+	}
+
+	SHA1_Final(&sha_buf[0], sha_ctx);
+
+        std::ostringstream tmpout;
+	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
+	{
+		tmpout << std::setw(2) << std::setfill('0') << std::hex << (unsigned int) (sha_buf[i]);
+	}
+	hash = tmpout.str();
+
+	delete sha_ctx;
+	fclose(fd);
+	return true;
+}
+
+bool RsDirUtil::renameWideFile(const std::wstring& from, const std::wstring& to)
+{
+	int			loops = 0;
+
+#if defined(WIN32) || defined(MINGW) || defined(__CYGWIN__)
+#ifdef WIN_CROSS_UBUNTU
+	std::wstring f,t ;
+	for(int i=0;i<from.size();++i) f.push_back(from[i]) ;
+	for(int i=0;i<to.size();++i) t.push_back(to[i]) ;
+#else
+	std::wstring f(from),t(to) ;
+#endif
+	while (!MoveFileEx(f.c_str(), t.c_str(), MOVEFILE_REPLACE_EXISTING))
+#else
+	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
+        std::string f(from.begin(), from.end());
+        std::string t(to.begin(), to.end());
+	while (rename(f.c_str(), t.c_str()) < 0)
+	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
+#endif
+	{
+#ifdef WIN32
+		if (GetLastError() != ERROR_ACCESS_DENIED)
+#else
+		if (errno != EACCES)
+#endif
+			/* set errno? */
+			return false ;
+#ifdef WIN32
+		Sleep(100000);				/* us */
+#else
+		usleep(100000);				/* us */
+#endif
+
+		if (loops >= 30)
+			return false ;
+
+		loops++;
+	}
+
+	return true ;
+}
+
 

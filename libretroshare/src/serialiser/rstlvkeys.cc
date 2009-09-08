@@ -65,9 +65,9 @@ void RsTlvSecurityKey::ShallowClear()
 }
 
 
-uint16_t RsTlvSecurityKey::TlvSize()
+uint32_t RsTlvSecurityKey::TlvSize()
 {
-	uint32_t s = 4; /* header + 4 for size */
+	uint32_t s = TLV_HEADER_SIZE; /* header + 4 for size */
 
 	/* now add comment and title length of this tlv object */
 
@@ -84,7 +84,7 @@ uint16_t RsTlvSecurityKey::TlvSize()
 bool  RsTlvSecurityKey::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
 {
 	/* must check sizes */
-	uint16_t tlvsize = TlvSize();
+	uint32_t tlvsize = TlvSize();
 	uint32_t tlvend  = *offset + tlvsize;
 
 	if (size < tlvend)
@@ -110,11 +110,11 @@ bool  RsTlvSecurityKey::SetTlv(void *data, uint32_t size, uint32_t *offset) /* s
 
 bool  RsTlvSecurityKey::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
 {
-	if (size < *offset + 4)
+	if (size < *offset + TLV_HEADER_SIZE)
 		return false;	
 	
 	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
-	uint16_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
+	uint32_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
 	uint32_t tlvend = *offset + tlvsize;
 
 	if (size < tlvend)    /* check size */
@@ -129,7 +129,7 @@ bool  RsTlvSecurityKey::GetTlv(void *data, uint32_t size, uint32_t *offset) /* s
 	TlvClear();
 
 	/* skip the header */
-	(*offset) += 4;
+	(*offset) += TLV_HEADER_SIZE;
 
 	ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_KEYID, keyId);
 	ok &= getRawUInt32(data, tlvend, offset, &(keyFlags));
@@ -137,6 +137,22 @@ bool  RsTlvSecurityKey::GetTlv(void *data, uint32_t size, uint32_t *offset) /* s
 	ok &= getRawUInt32(data, tlvend, offset, &(endTS));
 	ok &= keyData.GetTlv(data, tlvend, offset);  
    
+
+	/***************************************************************************
+	 * NB: extra components could be added (for future expansion of the type).
+	 *            or be present (if this code is reading an extended version).
+	 *
+	 * We must chew up the extra characters to conform with TLV specifications
+	 ***************************************************************************/
+	if (*offset != tlvend)
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvSecurityKey::GetTlv() Warning extra bytes at end of item";
+		std::cerr << std::endl;
+#endif
+		*offset = tlvend;
+	}
+
 	return ok;
 	
 }
@@ -182,10 +198,10 @@ void RsTlvSecurityKeySet::TlvClear()
 	keys.clear(); //empty list
 }
 
-uint16_t RsTlvSecurityKeySet::TlvSize()
+uint32_t RsTlvSecurityKeySet::TlvSize()
 {
 
-	uint32_t s = 4; /* header + 4 for size */
+	uint32_t s = TLV_HEADER_SIZE; /* header */
 
 	std::map<std::string, RsTlvSecurityKey>::iterator it;
 	
@@ -205,7 +221,7 @@ uint16_t RsTlvSecurityKeySet::TlvSize()
 bool  RsTlvSecurityKeySet::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
 {
 	/* must check sizes */
-	uint16_t tlvsize = TlvSize();
+	uint32_t tlvsize = TlvSize();
 	uint32_t tlvend  = *offset + tlvsize;
 
 	if (size < tlvend)
@@ -235,11 +251,11 @@ return ok;
 
 bool  RsTlvSecurityKeySet::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
 {
-	if (size < *offset + 4)
+	if (size < *offset + TLV_HEADER_SIZE)
 		return false;	
 
 	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
-	uint16_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
+	uint32_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
 	uint32_t tlvend = *offset + tlvsize;
 
 	if (size < tlvend)    /* check size */
@@ -254,31 +270,57 @@ bool  RsTlvSecurityKeySet::GetTlv(void *data, uint32_t size, uint32_t *offset) /
 	TlvClear();
 
 	/* skip the header */
-	(*offset) += 4;
+	(*offset) += TLV_HEADER_SIZE;
 
 	/* groupId */
 	ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_GROUPID, groupId);
 
-	/* while there is TLV  */
-	while((*offset) + 2 < tlvend)
-	{
-		/* get the next type */
-		uint16_t tlvsubtype = GetTlvType( &(((uint8_t *) data)[*offset]) );
-		
-		RsTlvSecurityKey key;
-		ok &= key.GetTlv(data, size, offset);
-		if (ok)
-		{
-			keys[key.keyId] = key;
-			key.ShallowClear(); /* so that the Map can get control - should be ref counted*/
-		}
+        /* while there is TLV  */
+        while((*offset) + 2 < tlvend)
+        {
+                /* get the next type */
+                uint16_t tlvsubtype = GetTlvType( &(((uint8_t *) data)[*offset]) );
 
-		if (!ok)
-		{
-			return false;
-		}
+                switch(tlvsubtype)
+                {
+                        case TLV_TYPE_SECURITYKEY:
+			{
+				RsTlvSecurityKey key;
+				ok &= key.GetTlv(data, size, offset);
+				if (ok)
+				{
+					keys[key.keyId] = key;
+					key.ShallowClear(); /* so that the Map can get control - should be ref counted*/
+				}
+			}
+				break;
+                        default:
+                                ok &= SkipUnknownTlv(data, tlvend, offset);
+                                break;
+
+                }
+
+                if (!ok)
+			break;
 	}
+   
+
 		
+	/***************************************************************************
+	 * NB: extra components could be added (for future expansion of the type).
+	 *            or be present (if this code is reading an extended version).
+	 *
+	 * We must chew up the extra characters to conform with TLV specifications
+	 ***************************************************************************/
+	if (*offset != tlvend)
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvSecurityKeySet::GetTlv() Warning extra bytes at end of item";
+		std::cerr << std::endl;
+#endif
+		*offset = tlvend;
+	}
+
 	return ok;
 }
 
@@ -323,9 +365,9 @@ void RsTlvKeySignature::ShallowClear()
 	signData.bin_len = 0;
 }
 
-uint16_t RsTlvKeySignature::TlvSize()
+uint32_t RsTlvKeySignature::TlvSize()
 {
-	uint32_t s = 4; /* header + 4 for size */
+	uint32_t s = TLV_HEADER_SIZE; /* header + 4 for size */
 
 	s += GetTlvStringSize(keyId); 
 	s += signData.TlvSize();
@@ -337,7 +379,7 @@ uint16_t RsTlvKeySignature::TlvSize()
 bool  RsTlvKeySignature::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
 {
 	/* must check sizes */
-	uint16_t tlvsize = TlvSize();
+	uint32_t tlvsize = TlvSize();
 	uint32_t tlvend  = *offset + tlvsize;
 
 	if (size < tlvend)
@@ -360,7 +402,7 @@ bool  RsTlvKeySignature::SetTlv(void *data, uint32_t size, uint32_t *offset) /* 
 
 bool  RsTlvKeySignature::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
 {
-	if (size < *offset + 4)
+	if (size < *offset + TLV_HEADER_SIZE)
 		return false;	
 	
 	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
@@ -379,11 +421,26 @@ bool  RsTlvKeySignature::GetTlv(void *data, uint32_t size, uint32_t *offset) /* 
 	TlvClear();
 
 	/* skip the header */
-	(*offset) += 4;
+	(*offset) += TLV_HEADER_SIZE;
 
 	ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_KEYID, keyId);
 	ok &= signData.GetTlv(data, tlvend, offset);  
    
+	/***************************************************************************
+	 * NB: extra components could be added (for future expansion of the type).
+	 *            or be present (if this code is reading an extended version).
+	 *
+	 * We must chew up the extra characters to conform with TLV specifications
+	 ***************************************************************************/
+	if (*offset != tlvend)
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvKeySignature::GetTlv() Warning extra bytes at end of item";
+		std::cerr << std::endl;
+#endif
+		*offset = tlvend;
+	}
+
 	return ok;
 	
 }

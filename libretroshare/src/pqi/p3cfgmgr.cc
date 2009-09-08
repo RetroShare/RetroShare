@@ -38,6 +38,8 @@
  * #define CONFIG_DEBUG 1
  ***/
 
+#define CONFIG_DEBUG 1
+
 p3ConfigMgr::p3ConfigMgr(p3AuthMgr *am, std::string dir, std::string fname, std::string signame)
 	:mAuthMgr(am), basedir(dir), metafname(fname), metasigfname(signame),
 	mConfigSaveActive(true)

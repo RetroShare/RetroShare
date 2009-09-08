@@ -78,6 +78,10 @@ std::ostream &RsDistribMsg::print(std::ostream &out, uint16_t indent)
 
 void 	RsDistribSignedMsg::clear()
 {
+#ifdef RSSERIAL_DEBUG 
+	std::cerr << "RsDistribSignedMsg::clear()" << std::endl;
+#endif
+
 	grpId.clear();
 	msgId.clear();
 	flags = 0;
@@ -114,6 +118,10 @@ std::ostream &RsDistribSignedMsg::print(std::ostream &out, uint16_t indent)
 
 void 	RsDistribGrp::clear()
 {
+#ifdef RSSERIAL_DEBUG 
+	std::cerr << "RsDistribGrp::clear()" << std::endl;
+#endif
+
 	grpId.clear();
 	timestamp = 0;
 	grpFlags = 0;
@@ -176,6 +184,10 @@ std::ostream &RsDistribGrp::print(std::ostream &out, uint16_t indent)
 
 void 	RsDistribGrpKey::clear()
 {
+#ifdef RSSERIAL_DEBUG 
+	std::cerr << "RsDistribGrpKey::clear()" << std::endl;
+#endif
+
 	grpId.clear();
 	key.TlvClear();
 }
@@ -222,11 +234,21 @@ uint32_t    RsDistribSerialiser::sizeGrp(RsDistribGrp *item)
 /* serialise the data to the buffer */
 bool     RsDistribSerialiser::serialiseGrp(RsDistribGrp *item, void *data, uint32_t *pktsize)
 {
+#ifdef RSSERIAL_DEBUG 
+	std::cerr << "RsDistribSerialiser::serialiseGrp()" << std::endl;
+#endif
+
 	uint32_t tlvsize = sizeGrp(item);
 	uint32_t offset = 0;
 
 	if (*pktsize < tlvsize)
+	{
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDistribSerialiser::serialiseGrp() FAIL no space" << std::endl;
+#endif
+
 		return false; /* not enough space */
+	}
 
 	*pktsize = tlvsize;
 
@@ -242,18 +264,42 @@ bool     RsDistribSerialiser::serialiseGrp(RsDistribGrp *item, void *data, uint3
 	ok &= setRawUInt32(data, tlvsize, &offset, item->timestamp);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->grpFlags);
 
+#ifdef RSSERIAL_DEBUG 
+	if (!ok)
+		std::cerr << "RsDistribSerialiser::serialiseGrp() Id/Flags NOK" << std::endl;
+#endif
 	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_NAME, item->grpName);
 	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_COMMENT, item->grpDesc);
 	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_CATEGORY, item->grpCategory);
 
+#ifdef RSSERIAL_DEBUG 
+	if (!ok)
+		std::cerr << "RsDistribSerialiser::serialiseGrp() Strings NOK" << std::endl;
+#endif
 	ok &= setRawUInt32(data, tlvsize, &offset, item->grpControlFlags);
 	ok &= item->grpControlList.SetTlv(data, tlvsize, &offset);
 
 	ok &= item->grpPixmap.SetTlv(data, tlvsize, &offset);
+#ifdef RSSERIAL_DEBUG 
+	if (!ok)
+		std::cerr << "RsDistribSerialiser::serialiseGrp() List/Pix NOK" << std::endl;
+#endif
 
 	ok &= item->adminKey.SetTlv(data, tlvsize, &offset);
+#ifdef RSSERIAL_DEBUG 
+	if (!ok)
+		std::cerr << "RsDistribSerialiser::serialiseGrp() AdminKey NOK" << std::endl;
+#endif
 	ok &= item->publishKeys.SetTlv(data, tlvsize, &offset);
+#ifdef RSSERIAL_DEBUG 
+	if (!ok)
+		std::cerr << "RsDistribSerialiser::serialiseGrp() PubKey NOK" << std::endl;
+#endif
 	ok &= item->adminSignature.SetTlv(data, tlvsize, &offset);
+#ifdef RSSERIAL_DEBUG 
+	if (!ok)
+		std::cerr << "RsDistribSerialiser::serialiseGrp() AdminSign NOK" << std::endl;
+#endif
 
 	if (offset != tlvsize)
 	{
@@ -261,12 +307,22 @@ bool     RsDistribSerialiser::serialiseGrp(RsDistribGrp *item, void *data, uint3
 		std::cerr << "RsDistribSerialiser::serialiseGrp() Size Error! " << std::endl;
 	}
 
+#ifdef RSSERIAL_DEBUG 
+	if (!ok)
+	{
+		std::cerr << "RsDistribSerialiser::serialiseGrp() NOK" << std::endl;
+	}
+#endif
+
 	return ok;
 }
 
 
 RsDistribGrp *RsDistribSerialiser::deserialiseGrp(void *data, uint32_t *pktsize)
 {
+#ifdef RSSERIAL_DEBUG 
+	std::cerr << "RsDistribSerialiser::deserialiseGrp()" << std::endl;
+#endif
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
 	uint32_t rssize = getRsItemSize(data);
@@ -278,11 +334,19 @@ RsDistribGrp *RsDistribSerialiser::deserialiseGrp(void *data, uint32_t *pktsize)
 		(RS_SERVICE_TYPE_DISTRIB != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_DISTRIB_GRP != getRsItemSubType(rstype)))
 	{
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDistribSerialiser::deserialiseGrp() FAIL wrong type" << std::endl;
+#endif
 		return NULL; /* wrong type */
 	}
 
 	if (*pktsize < rssize)    /* check size */
+	{
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDistribSerialiser::deserialiseGrp() FAIL wrong size" << std::endl;
+#endif
 		return NULL; /* not enough data */
+	}
 
 	/* set the packet length */
 	*pktsize = rssize;
@@ -316,6 +380,9 @@ RsDistribGrp *RsDistribSerialiser::deserialiseGrp(void *data, uint32_t *pktsize)
 
 	if (offset != rssize)
 	{
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDistribSerialiser::deserialiseGrp() FAIL size mismatch" << std::endl;
+#endif
 		/* error */
 		delete item;
 		return NULL;
@@ -323,6 +390,9 @@ RsDistribGrp *RsDistribSerialiser::deserialiseGrp(void *data, uint32_t *pktsize)
 
 	if (!ok)
 	{
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDistribSerialiser::deserialiseGrp() NOK" << std::endl;
+#endif
 		delete item;
 		return NULL;
 	}
@@ -344,25 +414,52 @@ uint32_t    RsDistribSerialiser::sizeGrpKey(RsDistribGrpKey *item)
 /* serialise the data to the buffer */
 bool     RsDistribSerialiser::serialiseGrpKey(RsDistribGrpKey *item, void *data, uint32_t *pktsize)
 {
+#ifdef RSSERIAL_DEBUG 
+	std::cerr << "RsDistribSerialiser::serialiseGrpKey()" << std::endl;
+#endif
+		/* error */
 	uint32_t tlvsize = sizeGrpKey(item);
 	uint32_t offset = 0;
 
 	if (*pktsize < tlvsize)
+	{
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDistribSerialiser::serialiseGrpKey() FAIL no space" << std::endl;
+#endif
 		return false; /* not enough space */
+	}
 
 	*pktsize = tlvsize;
 
 	bool ok = true;
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+#ifdef RSSERIAL_DEBUG 
+	if (!ok)
+	{
+		std::cerr << "RsDistribSerialiser::serialiseGrpKey() HEADER FAILED" << std::endl;
+	}
+#endif
 
 	/* skip the header */
 	offset += 8;
 
 	/* RsDistribGrp */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+#ifdef RSSERIAL_DEBUG 
+	if (!ok)
+	{
+		std::cerr << "RsDistribSerialiser::serialiseGrpKey() GROUPID FAILED" << std::endl;
+	}
+#endif
 
 	ok &= item->key.SetTlv(data, tlvsize, &offset);
+#ifdef RSSERIAL_DEBUG 
+	if (!ok)
+	{
+		std::cerr << "RsDistribSerialiser::serialiseGrpKey() KEY FAILED" << std::endl;
+	}
+#endif
 
 	if (offset != tlvsize)
 	{
@@ -370,12 +467,22 @@ bool     RsDistribSerialiser::serialiseGrpKey(RsDistribGrpKey *item, void *data,
 		std::cerr << "RsDistribSerialiser::serialiseGrpKey() Size Error! " << std::endl;
 	}
 
+#ifdef RSSERIAL_DEBUG 
+	if (!ok)
+	{
+		std::cerr << "RsDistribSerialiser::serialiseGrpKey() NOK" << std::endl;
+	}
+#endif
+
 	return ok;
 }
 
 
 RsDistribGrpKey *RsDistribSerialiser::deserialiseGrpKey(void *data, uint32_t *pktsize)
 {
+#ifdef RSSERIAL_DEBUG 
+	std::cerr << "RsDistribSerialiser::deserialiseGrpKey()" << std::endl;
+#endif
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
 	uint32_t rssize = getRsItemSize(data);
@@ -387,11 +494,19 @@ RsDistribGrpKey *RsDistribSerialiser::deserialiseGrpKey(void *data, uint32_t *pk
 		(RS_SERVICE_TYPE_DISTRIB != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_DISTRIB_GRP_KEY != getRsItemSubType(rstype)))
 	{
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDistribSerialiser::deserialiseGrpKey() FAIL wrong type" << std::endl;
+#endif
 		return NULL; /* wrong type */
 	}
 
 	if (*pktsize < rssize)    /* check size */
+	{
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDistribSerialiser::deserialiseGrpKey() FAIL no space" << std::endl;
+#endif
 		return NULL; /* not enough data */
+	}
 
 	/* set the packet length */
 	*pktsize = rssize;
@@ -411,6 +526,9 @@ RsDistribGrpKey *RsDistribSerialiser::deserialiseGrpKey(void *data, uint32_t *pk
 
 	if (offset != rssize)
 	{
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDistribSerialiser::deserialiseGrpKey() FAIL size mismatch" << std::endl;
+#endif
 		/* error */
 		delete item;
 		return NULL;
@@ -418,6 +536,9 @@ RsDistribGrpKey *RsDistribSerialiser::deserialiseGrpKey(void *data, uint32_t *pk
 
 	if (!ok)
 	{
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDistribSerialiser::deserialiseGrpKey() FAIL not Okay" << std::endl;
+#endif
 		delete item;
 		return NULL;
 	}
@@ -445,11 +566,19 @@ uint32_t    RsDistribSerialiser::sizeSignedMsg(RsDistribSignedMsg *item)
 /* serialise the data to the buffer */
 bool     RsDistribSerialiser::serialiseSignedMsg(RsDistribSignedMsg *item, void *data, uint32_t *pktsize)
 {
+#ifdef RSSERIAL_DEBUG 
+	std::cerr << "RsDistribSerialiser::serialiseSignedMsg()" << std::endl;
+#endif
 	uint32_t tlvsize = sizeSignedMsg(item);
 	uint32_t offset = 0;
 
 	if (*pktsize < tlvsize)
+	{
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDistribSerialiser::serialiseSignedMsg() FAIL no space" << std::endl;
+#endif
 		return false; /* not enough space */
+	}
 
 	*pktsize = tlvsize;
 
@@ -474,9 +603,18 @@ bool     RsDistribSerialiser::serialiseSignedMsg(RsDistribSignedMsg *item, void 
 
 	if (offset != tlvsize)
 	{
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDistribSerialiser::serialiseSignedMsg() FAIL Size Error! " << std::endl;
+#endif
 		ok = false;
-		std::cerr << "RsDistribSerialiser::serialiseSignedMsg() Size Error! " << std::endl;
 	}
+
+#ifdef RSSERIAL_DEBUG 
+	if (!ok)
+	{
+		std::cerr << "RsDistribSerialiser::serialiseSignedMsg() NOK" << std::endl;
+	}
+#endif
 
 	return ok;
 }
@@ -484,6 +622,9 @@ bool     RsDistribSerialiser::serialiseSignedMsg(RsDistribSignedMsg *item, void 
 
 RsDistribSignedMsg *RsDistribSerialiser::deserialiseSignedMsg(void *data, uint32_t *pktsize)
 {
+#ifdef RSSERIAL_DEBUG 
+	std::cerr << "RsDistribSerialiser::deserialiseSignedMsg()" << std::endl;
+#endif
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
 	uint32_t rssize = getRsItemSize(data);
@@ -495,11 +636,19 @@ RsDistribSignedMsg *RsDistribSerialiser::deserialiseSignedMsg(void *data, uint32
 		(RS_SERVICE_TYPE_DISTRIB != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_DISTRIB_SIGNED_MSG != getRsItemSubType(rstype)))
 	{
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDistribSerialiser::deserialiseSignedMsg() Wrong Type" << std::endl;
+#endif
 		return NULL; /* wrong type */
 	}
 
 	if (*pktsize < rssize)    /* check size */
+	{
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDistribSerialiser::deserialiseSignedMsg() Wrong Size" << std::endl;
+#endif
 		return NULL; /* not enough data */
+	}
 
 	/* set the packet length */
 	*pktsize = rssize;
@@ -526,6 +675,9 @@ RsDistribSignedMsg *RsDistribSerialiser::deserialiseSignedMsg(void *data, uint32
 
 	if (offset != rssize)
 	{
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDistribSerialiser::deserialiseSignedMsg() size mismatch" << std::endl;
+#endif
 		/* error */
 		delete item;
 		return NULL;
@@ -533,6 +685,9 @@ RsDistribSignedMsg *RsDistribSerialiser::deserialiseSignedMsg(void *data, uint32
 
 	if (!ok)
 	{
+#ifdef RSSERIAL_DEBUG 
+		std::cerr << "RsDistribSerialiser::deserialiseSignedMsg() NOK" << std::endl;
+#endif
 		delete item;
 		return NULL;
 	}
@@ -569,6 +724,9 @@ uint32_t    RsDistribSerialiser::size(RsItem *i)
 
 bool     RsDistribSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 {
+#ifdef RSSERIAL_DEBUG 
+	std::cerr << "RsDistribSerialiser::serialise()" << std::endl;
+#endif
 	RsDistribGrp *dg;
 	RsDistribGrpKey *dgk;
 	RsDistribSignedMsg *dsm;
@@ -590,6 +748,9 @@ bool     RsDistribSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize
 
 RsItem *RsDistribSerialiser::deserialise(void *data, uint32_t *pktsize)
 {
+#ifdef RSSERIAL_DEBUG 
+	std::cerr << "RsDistribSerialiser::deserialise()" << std::endl;
+#endif
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
 

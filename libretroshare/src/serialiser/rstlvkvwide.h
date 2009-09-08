@@ -35,7 +35,7 @@ class RsTlvKeyValueWide: public RsTlvItem
 	RsTlvKeyValueWide() { return;}
 		virtual ~RsTlvKeyValueWide() { return;}
 	
-virtual uint16_t TlvSize();
+virtual uint32_t TlvSize();
 virtual void TlvClear();
 virtual bool SetTlv(void *data, uint32_t size, uint32_t *offset);
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
@@ -53,7 +53,7 @@ class RsTlvKeyValueWideSet : public RsTlvItem
 	RsTlvKeyValueWideSet() { return;}
 	virtual ~RsTlvKeyValueWideSet() { return; }
 	
-virtual uint16_t TlvSize();
+virtual uint32_t TlvSize();
 virtual void TlvClear();
 virtual bool SetTlv(void *data, uint32_t size, uint32_t *offset);
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */

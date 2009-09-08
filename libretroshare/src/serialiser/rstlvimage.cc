@@ -31,7 +31,7 @@
 #include "serialiser/rsbaseserial.h"
 
 /***
- * #define TLV_FI_DEBUG 1
+ * #define TLV_IMG_DEBUG 1
  **/
 
 /************************************* RsTlvImage ************************************/
@@ -49,9 +49,9 @@ void RsTlvImage::TlvClear()
 }
 
 
-uint16_t RsTlvImage::TlvSize()
+uint32_t RsTlvImage::TlvSize()
 {
-	uint32_t s = 4; /* header */
+	uint32_t s = TLV_HEADER_SIZE; /* header */
 
 	/* collect sizes for both uInts and data length */
 	s+= 4;
@@ -63,21 +63,45 @@ uint16_t RsTlvImage::TlvSize()
 
 bool RsTlvImage::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
 {
+#ifdef TLV_IMG_DEBUG
+        std::cerr << "RsTlvImage::SetTlv()" << std::endl;
+#endif
+
+
 	/* must check sizes */
-	uint16_t tlvsize = TlvSize();
+	uint32_t tlvsize = TlvSize();
 	uint32_t tlvend  = *offset + tlvsize;
 
 	if (size < tlvend)
+	{
+#ifdef TLV_IMG_DEBUG
+        	std::cerr << "RsTlvImage::SetTlv() no space" << std::endl;
+#endif
 		return false; /* not enough space */
+	}
 
 	bool ok = true;
 
 		/* start at data[offset] */
 	ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_IMAGE , tlvsize);
+#ifdef TLV_IMG_DEBUG
+	if (!ok)
+        	std::cerr << "RsTlvImage::SetTlv() NOK base" << std::endl;
+#endif
 
 	/* add mandatory part */
         ok &= setRawUInt32(data, tlvend, offset, image_type);
+#ifdef TLV_IMG_DEBUG
+	if (!ok)
+        	std::cerr << "RsTlvImage::SetTlv() NOK image" << std::endl;
+#endif
+
 	ok &= binData.SetTlv(data, size, offset);
+#ifdef TLV_IMG_DEBUG
+	if (!ok)
+        	std::cerr << "RsTlvImage::SetTlv() NOK binData" << std::endl;
+#endif
+
 
 	return ok;
 
@@ -86,7 +110,10 @@ bool RsTlvImage::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialis
 
 bool RsTlvImage::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
 {
-	if (size < *offset + 4)
+#ifdef TLV_IMG_DEBUG
+       	std::cerr << "RsTlvImage::GetTlv()" << std::endl;
+#endif
+	if (size < *offset + TLV_HEADER_SIZE)
 	{
 		return false;
 	}
@@ -96,10 +123,20 @@ bool RsTlvImage::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialis
 	uint32_t tlvend = *offset + tlvsize;
 
 	if (size < tlvend)    /* check size */
+	{
+#ifdef TLV_IMG_DEBUG
+        	std::cerr << "RsTlvImage::GetTlv() FAIL no space" << std::endl;
+#endif
 		return false; /* not enough space */
+	}
 
 	if (tlvtype != TLV_TYPE_IMAGE) /* check type */
+	{
+#ifdef TLV_IMG_DEBUG
+        	std::cerr << "RsTlvImage::GetTlv() FAIL wrong type" << std::endl;
+#endif
 		return false;
+	}
 
 	bool ok = true;
 
@@ -107,11 +144,32 @@ bool RsTlvImage::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialis
 	TlvClear();
 
 	/* skip the header */
-	(*offset) += 4;
+	(*offset) += TLV_HEADER_SIZE;
 
         /* add mandatory parts first */
         ok &= getRawUInt32(data, tlvend, offset, &(image_type));
 	ok &= binData.GetTlv(data, size, offset);
+
+#ifdef TLV_IMG_DEBUG
+	if (!ok)
+        	std::cerr << "RsTlvImage::GetTlv() NOK" << std::endl;
+#endif
+
+
+	/***************************************************************************
+	 * NB: extra components could be added (for future expansion of the type).
+	 *            or be present (if this code is reading an extended version).
+	 *
+	 * We must chew up the extra characters to conform with TLV specifications
+	 ***************************************************************************/
+	if (*offset != tlvend)
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvImage::GetTlv() Warning extra bytes at end of item";
+		std::cerr << std::endl;
+#endif
+		*offset = tlvend;
+	}
 
 	return ok;
 

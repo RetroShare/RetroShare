@@ -765,10 +765,12 @@ void    FileIndexMonitor::setSharedDirectories(std::list<SharedDirInfo> dirs)
 		closedir(dir);
 	}
 
-	RsStackMutex stack(fiMutex) ;/* LOCKED DIRS */
+	{
+		RsStackMutex stack(fiMutex) ;/* LOCKED DIRS */
 
-	pendingDirs = true;
-	pendingDirList = checkeddirs;
+		pendingDirs = true;
+		pendingDirList = checkeddirs;
+	}
 
 	cb->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 }

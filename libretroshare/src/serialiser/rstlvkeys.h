@@ -48,7 +48,7 @@ class RsTlvSecurityKey: public RsTlvItem
 	public:
 	 RsTlvSecurityKey();
 virtual ~RsTlvSecurityKey() { return; }
-virtual uint16_t TlvSize();
+virtual uint32_t TlvSize();
 virtual void	 TlvClear();
 virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
@@ -69,7 +69,7 @@ class RsTlvSecurityKeySet: public RsTlvItem
 	public:
 	 RsTlvSecurityKeySet() { return; }
 virtual ~RsTlvSecurityKeySet() { return; }
-virtual uint16_t TlvSize();
+virtual uint32_t TlvSize();
 virtual void	 TlvClear();
 virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
@@ -85,7 +85,7 @@ class RsTlvKeySignature: public RsTlvItem
 	public:
 	 RsTlvKeySignature();
 virtual ~RsTlvKeySignature() { return; }
-virtual uint16_t TlvSize();
+virtual uint32_t TlvSize();
 virtual void	 TlvClear();
 virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */

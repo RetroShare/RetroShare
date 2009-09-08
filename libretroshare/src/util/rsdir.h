@@ -38,8 +38,8 @@ std::string 	getTopDir(std::string);
 std::string 	getRootDir(std::string);
 std::string 	removeRootDir(std::string path);
 std::string     removeTopDir(std::string dir);
-
 std::string 	removeRootDirs(std::string path, std::string root);
+
 
 // Renames file from to file to. Files should be on the same file system.
 //	returns true if succeed, false otherwise.
@@ -56,6 +56,30 @@ bool 		hashFile(std::string filepath,
 		  std::string &name, std::string &hash, uint64_t &size);
 
 bool 		getFileHash(std::string filepath,                
+			std::string &hash, uint64_t &size);
+
+
+std::wstring 	getWideTopDir(std::wstring);
+std::wstring 	getWideRootDir(std::wstring);
+std::wstring 	removeWideRootDir(std::wstring path);
+std::wstring     removeWideTopDir(std::wstring dir);
+std::wstring 	removeWideRootDirs(std::wstring path, std::wstring root);
+
+// Renames file from to file to. Files should be on the same file system.
+//	returns true if succeed, false otherwise.
+bool		renameWideFile(const std::wstring& from,const std::wstring& to) ;
+
+int     	breakupWideDirList(std::wstring path,
+                        	std::list<std::wstring> &subdirs);
+
+bool    	checkWideDirectory(std::wstring dir);
+bool    	checkWideCreateDirectory(std::wstring dir);
+bool    	cleanupWideDirectory(std::wstring dir, std::list<std::wstring> keepFiles);
+
+bool 		hashWideFile(std::wstring filepath,                
+		  std::wstring &name, std::string &hash, uint64_t &size);
+
+bool 		getWideFileHash(std::wstring filepath,                
 			std::string &hash, uint64_t &size);
 
 }

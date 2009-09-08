@@ -44,15 +44,17 @@ void RsTlvFileItem::TlvClear()
 {
 	filesize = 0;
 	hash = "";
-	name = "";
-	path = "";
+	name.clear();
+	path.clear();
 	pop = 0;
 	age = 0;
+	piecesize = 0;
+	hashset.TlvClear();
 }
 
-uint16_t    RsTlvFileItem::TlvSize()
+uint32_t    RsTlvFileItem::TlvSize()
 {
-	uint32_t s = 4; /* header */
+	uint32_t s = TLV_HEADER_SIZE; /* header */
 	s += 8; /* filesize */
 	s += GetTlvStringSize(hash); 
 #ifdef TLV_FI_DEBUG
@@ -93,6 +95,22 @@ uint16_t    RsTlvFileItem::TlvSize()
 #endif
 	}
 
+	if (piecesize != 0)
+	{
+		s += GetTlvUInt32Size(); 
+#ifdef TLV_FI_DEBUG
+	std::cerr << "RsTlvFileItem::TlvSize() 4 + PieceSize: " << s << std::endl;
+#endif
+	}
+
+	if (hashset.ids.size() != 0)
+	{
+		s += hashset.TlvSize(); 
+#ifdef TLV_FI_DEBUG
+	std::cerr << "RsTlvFileItem::TlvSize() 4 + HashSet: " << s << std::endl;
+#endif
+	}
+
 #ifdef TLV_FI_DEBUG
 	std::cerr << "RsTlvFileItem::TlvSize() Total: " << s << std::endl;
 #endif
@@ -104,7 +122,7 @@ uint16_t    RsTlvFileItem::TlvSize()
 bool     RsTlvFileItem::SetTlv(void *data, uint32_t size, uint32_t *offset)
 {
 	/* must check sizes */
-	uint16_t tlvsize = TlvSize();
+	uint32_t tlvsize = TlvSize();
 	uint32_t tlvend  = *offset + tlvsize;
 
 	if (size < tlvend)
@@ -209,6 +227,30 @@ bool     RsTlvFileItem::SetTlv(void *data, uint32_t size, uint32_t *offset)
 	std::cerr << std::endl;
 #endif
 
+	if (piecesize != 0)
+		ok &= SetTlvUInt32(data, tlvend, offset, TLV_TYPE_UINT32_SIZE,  piecesize);
+#ifdef TLV_FI_DEBUG
+	if (!ok)
+	{
+		std::cerr << "RsTlvFileItem::SetTlv() Setting Option:piecesize Failed (or earlier)" << std::endl;
+	}
+	std::cerr << "RsTlvFileItem::SetTlv() Post PieceSize:" << std::endl;
+	std::cerr << "RsTlvFileItem::SetTlv() Data: " << data << " size: " << size << " offset: " << *offset;
+	std::cerr << std::endl;
+#endif
+
+	if (hashset.ids.size() != 0)
+		ok &= hashset.SetTlv(data, tlvend, offset);
+#ifdef TLV_FI_DEBUG
+	if (!ok)
+	{
+		std::cerr << "RsTlvFileItem::SetTlv() Setting Option:hashset Failed (or earlier)" << std::endl;
+	}
+	std::cerr << "RsTlvFileItem::SetTlv() Post HashSet:" << std::endl;
+	std::cerr << "RsTlvFileItem::SetTlv() Data: " << data << " size: " << size << " offset: " << *offset;
+	std::cerr << std::endl;
+#endif
+
 
 
 #ifdef TLV_FI_DEBUG
@@ -224,7 +266,7 @@ bool     RsTlvFileItem::SetTlv(void *data, uint32_t size, uint32_t *offset)
 bool     RsTlvFileItem::GetTlv(void *data, uint32_t size, uint32_t *offset)
 {
 	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
-	uint16_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
+	uint32_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
 	uint32_t tlvend = *offset + tlvsize;
 
 	if (size < tlvend)    /* check size */
@@ -239,7 +281,7 @@ bool     RsTlvFileItem::GetTlv(void *data, uint32_t size, uint32_t *offset)
 	TlvClear();
 
 	/* skip the header */
-	(*offset) += 4;
+	(*offset) += TLV_HEADER_SIZE;
 
 	/* get mandatory parts first */
 	ok &= getRawUInt64(data, tlvend, offset, &filesize);
@@ -264,14 +306,37 @@ bool     RsTlvFileItem::GetTlv(void *data, uint32_t size, uint32_t *offset)
 			case TLV_TYPE_UINT32_AGE:
 				ok &= GetTlvUInt32(data, tlvend, offset, TLV_TYPE_UINT32_AGE, &age);
 				break;
+			case TLV_TYPE_UINT32_SIZE:
+				ok &= GetTlvUInt32(data, tlvend, offset, TLV_TYPE_UINT32_SIZE, &piecesize);
+				break;
+			case TLV_TYPE_HASHSET:
+				ok &= hashset.GetTlv(data, tlvend, offset);
+				break;
 			default:
-				ok = false;
+				ok &= SkipUnknownTlv(data, tlvend, offset);
+				break;
 		}
 		if (!ok)
 		{
-			return false;
+			break;
 		}
 	}
+
+	/***************************************************************************
+	 * NB: extra components could be added (for future expansion of the type).
+	 *            or be present (if this code is reading an extended version).
+	 *
+	 * We must chew up the extra characters to conform with TLV specifications
+	 ***************************************************************************/
+	if (*offset != tlvend)
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvFileItem::GetTlv() Warning extra bytes at end of item";
+		std::cerr << std::endl;
+#endif
+		*offset = tlvend;
+	}
+
 	return ok;
 }
 
@@ -294,12 +359,12 @@ std::ostream &RsTlvFileItem::print(std::ostream &out, uint16_t indent)
 	if (name.length() > 0)
 	{
 		printIndent(out, int_Indent);
-		out << "Name: " << name << std::endl;
+        	out << "Name :  " << name << std::endl;
 	}
 	if (path.length() > 0)
 	{
 		printIndent(out, int_Indent);
-		out << "Path: " << path << std::endl;
+        	out << "Path :  " << path  << std::endl;
 	}
 	if (pop != 0)
 	{
@@ -310,6 +375,15 @@ std::ostream &RsTlvFileItem::print(std::ostream &out, uint16_t indent)
 	{
 		printIndent(out, int_Indent);
 		out << "Age: " << age << std::endl;
+	}
+	if (piecesize != 0)
+	{
+		printIndent(out, int_Indent);
+		out << "PieceSize: " << piecesize << std::endl;
+	}
+	if (hashset.ids.size() != 0)
+	{
+                hashset.print(out, int_Indent);
 	}
 
 	printEnd(out, "RsTlvFileItem", indent);
@@ -327,9 +401,9 @@ void RsTlvFileSet::TlvClear()
 	items.clear();  
 }
 
-uint16_t RsTlvFileSet::TlvSize()
+uint32_t RsTlvFileSet::TlvSize()
 {
-	uint32_t s = 4; /* header */
+	uint32_t s = TLV_HEADER_SIZE; /* header */
 
 	/* first determine the total size of RstlvFileItems in list */
 
@@ -356,7 +430,7 @@ uint16_t RsTlvFileSet::TlvSize()
 bool     RsTlvFileSet::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
 {
 	/* must check sizes */
-	uint16_t tlvsize = TlvSize();
+	uint32_t tlvsize = TlvSize();
 	uint32_t tlvend  = *offset + tlvsize;
 
 	if (size < tlvend)
@@ -391,7 +465,7 @@ bool     RsTlvFileSet::SetTlv(void *data, uint32_t size, uint32_t *offset) /* se
 
 bool     RsTlvFileSet::GetTlv(void *data, uint32_t size, uint32_t *offset)
 {
-	if (size < *offset + 4)
+	if (size < *offset + TLV_HEADER_SIZE)
 		return false;
 
 	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
@@ -410,7 +484,7 @@ bool     RsTlvFileSet::GetTlv(void *data, uint32_t size, uint32_t *offset)
 	TlvClear();
 
 	/* skip the header */
-	(*offset) += 4;
+	(*offset) += TLV_HEADER_SIZE;
 
 	/* while there is more TLV  */
 	while((*offset) + 2 < tlvend)
@@ -439,13 +513,28 @@ bool     RsTlvFileSet::GetTlv(void *data, uint32_t size, uint32_t *offset)
 		else
 		{
 			/* unknown subtype -> error */
-			ok = false;
+			ok &= SkipUnknownTlv(data, tlvend, offset);
 		}
 
 		if (!ok)
 		{
-			return false;
+			break;
 		}
+	}
+
+	/***************************************************************************
+	 * NB: extra components could be added (for future expansion of the type).
+	 *            or be present (if this code is reading an extended version).
+	 *
+	 * We must chew up the extra characters to conform with TLV specifications
+	 ***************************************************************************/
+	if (*offset != tlvend)
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvFileSet::GetTlv() Warning extra bytes at end of item";
+		std::cerr << std::endl;
+#endif
+		*offset = tlvend;
 	}
 
 	return ok;
@@ -506,9 +595,9 @@ void RsTlvFileData::TlvClear()
 }
 
 
-uint16_t RsTlvFileData::TlvSize()
+uint32_t RsTlvFileData::TlvSize()
 {
-	uint32_t s = 4; /* header */
+	uint32_t s = TLV_HEADER_SIZE; /* header */
 
 	/* collect sizes for both uInts and data length */
 	s+= file.TlvSize();
@@ -522,7 +611,7 @@ uint16_t RsTlvFileData::TlvSize()
 bool RsTlvFileData::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
 {
 	/* must check sizes */
-	uint16_t tlvsize = TlvSize();
+	uint32_t tlvsize = TlvSize();
 	uint32_t tlvend  = *offset + tlvsize;
 
 	if (size < tlvend)
@@ -546,7 +635,7 @@ bool RsTlvFileData::SetTlv(void *data, uint32_t size, uint32_t *offset) /* seria
 
 bool RsTlvFileData::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
 {
-	if (size < *offset + 4)
+	if (size < *offset + TLV_HEADER_SIZE)
 	{
 		return false;
 	}
@@ -567,12 +656,28 @@ bool RsTlvFileData::GetTlv(void *data, uint32_t size, uint32_t *offset) /* seria
 	TlvClear();
 
 	/* skip the header */
-	(*offset) += 4;
+	(*offset) += TLV_HEADER_SIZE;
 
 	ok &= file.GetTlv(data, size, offset);
 	ok &= GetTlvUInt64(data,size,offset, 
 			TLV_TYPE_UINT64_OFFSET,&file_offset);
 	ok &= binData.GetTlv(data, size, offset);
+
+
+	/***************************************************************************
+	 * NB: extra components could be added (for future expansion of the type).
+	 *            or be present (if this code is reading an extended version).
+	 *
+	 * We must chew up the extra characters to conform with TLV specifications
+	 ***************************************************************************/
+	if (*offset != tlvend)
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvFileData::GetTlv() Warning extra bytes at end of item";
+		std::cerr << std::endl;
+#endif
+		*offset = tlvend;
+	}
 
 	return ok;
 

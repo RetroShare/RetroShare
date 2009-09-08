@@ -33,13 +33,17 @@
  * Data is Serialised into the following format
  *
  * -----------------------------------------
- * | TLV TYPE (2 bytes)| TLV LEN (2 bytes) |
+ * | TLV TYPE (2 bytes) | TLV LEN (4 bytes)|
  * -----------------------------------------
  * |                                       |
  * |         Data ....                     |
  * |                                       |
  * -----------------------------------------
  *
+ * Originally TLV TYPE = 2 bytes, and TLV LEN = 2 bytes.
+ * However with HTML and WSTRINGS the 64K Limit becomes limiting.
+ * The TLV LEN = 4 bytes now!
+ * 
  * Size is the total size of the TLV Field (including the 4 byte header)
  *
  * Like the lowlevel packing routines. They are usually 
@@ -55,20 +59,6 @@
  * 		This is incremented by the datasize.
  *
  * *in / *out - the data to (un)pack.
- *
- *
- * BIG TLV Fields have now been added. 
- * If the Tlv Type & TLV_BIGLEN_BIT
- * ---------------------------------------------------------
- * | TLV TYPE (2 bytes)| TLV LEN (4 bytes)                  |
- * ---------------------------------------------------------
- * |                                                        |
- * |         Data ....                                      |
- * |                                                        |
- * ---------------------------------------------------------
- *
- *
- *
  *
  ******************************************************************/
 
@@ -108,6 +98,12 @@
 
 /* 0b 1001 XXXX XXXX XXXX Compound    */
 
+
+/* TLV HEADER SIZE (Reference) *******************************/
+const uint32_t TLV_HEADER_TYPE_SIZE   = 2;
+const uint32_t TLV_HEADER_LEN_SIZE    = 4;
+const uint32_t TLV_HEADER_SIZE        = TLV_HEADER_TYPE_SIZE + TLV_HEADER_LEN_SIZE;
+/* TLV HEADER SIZE (Reference) *******************************/
 
 
 const uint16_t TLV_TYPE_UINT8_SERID   = 0x0010;
@@ -194,7 +190,9 @@ const uint16_t TLV_TYPE_WKEYVALUE     = 0x1012;
 const uint16_t TLV_TYPE_KEYVALUESET   = 0x1011;
 const uint16_t TLV_TYPE_WKEYVALUESET  = 0x1013;
 
-const uint16_t TLV_TYPE_PEERSET       = 0x1020;
+const uint16_t TLV_TYPE_STRINGSET     = 0x1020; /* dummy non-existant */
+const uint16_t TLV_TYPE_PEERSET       = 0x1021;
+const uint16_t TLV_TYPE_HASHSET       = 0x1022;
 const uint16_t TLV_TYPE_SERVICESET    = 0x1030; 
 
 const uint16_t TLV_TYPE_SECURITYKEY   = 0x1040;
@@ -208,9 +206,12 @@ const uint16_t TLV_TYPE_IMAGE         = 0x1060;
 /**** Basic TLV Functions ****/
 uint16_t GetTlvSize(void *data);
 uint16_t GetTlvType(void *data);
-bool     SetTlvBase(void *data, uint32_t size, uint32_t *offset, uint16_t type, uint16_t len);
-bool     SetTlvSize(void *data, uint32_t size, uint16_t len);
+bool     SetTlvBase(void *data, uint32_t size, uint32_t *offset, uint16_t type, uint32_t len);
+bool     SetTlvSize(void *data, uint32_t size, uint32_t len);
+bool 	 SetTlvType(void *data, uint32_t size, uint16_t type);
 
+/* skip past the unknown tlv elements */
+bool SkipUnknownTlv(void *data, uint32_t size, uint32_t *offset);
 
 /**** Generic TLV Functions ****
  * This have the same data (int or string for example), 

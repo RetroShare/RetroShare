@@ -25,13 +25,13 @@ RSOBJ += rsstatusitems.o		# RsItems
 
 TESTOBJ  = tlvbase_test.o tlvbase_test2.o tlvfileitem_test.o 
 TESTOBJ += tlvitems_test.o tlvstack_test.o tlvconfig_test.o 
-TESTOBJ += rsserial_test.o rstlvwidetest.o
+TESTOBJ += rsserial_test.o rstlvwidetest.o tlvrandom_test.o
 
 #rsbaseitem_test.o 
 
 TESTS  = tlvbase_test tlvbase_test2 tlvfileitem_test 
 TESTS += tlvitems_test tlvstack_test tlvconfig_test
-TESTS += rstlvwidetest
+TESTS += rstlvwidetest tlvrandom_test
 #rsserial_test 
 
 #rsbaseitem_test
@@ -64,6 +64,9 @@ rsbaseitem_test : rsbaseitem_test.o
 
 rstlvwidetest : rstlvwidetest.o
 	$(CC) $(CFLAGS) -o rstlvwidetest rstlvwidetest.o $(OBJ) $(LIBS)
+
+tlvrandom_test : tlvrandom_test.o
+	$(CC) $(CFLAGS) -o tlvrandom_test tlvrandom_test.o $(OBJ) $(LIBS)
 
 
 ###############################################################

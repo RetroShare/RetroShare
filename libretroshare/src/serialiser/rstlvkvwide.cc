@@ -39,9 +39,9 @@ void RsTlvKeyValueWide::TlvClear()
  	wValue.clear();
 }
  
-uint16_t RsTlvKeyValueWide::TlvSize()
+uint32_t RsTlvKeyValueWide::TlvSize()
 {
-	uint32_t s =  4; /* header size */
+	uint32_t s =  TLV_HEADER_SIZE; /* header size */
 	s += GetTlvWideStringSize(wKey);
 	s += GetTlvWideStringSize(wValue);
 	
@@ -70,7 +70,7 @@ bool RsTlvKeyValueWide::SetTlv(void *data, uint32_t size, uint32_t *offset)
 {
 
 	/* must check sizes */
-	uint16_t tlvsize = TlvSize();
+	uint32_t tlvsize = TlvSize();
 	uint32_t tlvend  = *offset + tlvsize;
 
 	if (size < tlvend)
@@ -94,7 +94,7 @@ bool RsTlvKeyValueWide::SetTlv(void *data, uint32_t size, uint32_t *offset)
 
 bool RsTlvKeyValueWide::GetTlv(void *data, uint32_t size, uint32_t *offset)
 {
-	if (size < *offset + 4)
+	if (size < *offset + TLV_HEADER_SIZE)
 		return false;	
 	
 	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
@@ -113,7 +113,7 @@ bool RsTlvKeyValueWide::GetTlv(void *data, uint32_t size, uint32_t *offset)
 	TlvClear();
 
 	/* skip the header */
-	(*offset) += 4;
+	(*offset) += TLV_HEADER_SIZE;
 
 	/* while there is TLV  */
 	while((*offset) + 2 < tlvend)
@@ -130,16 +130,32 @@ bool RsTlvKeyValueWide::GetTlv(void *data, uint32_t size, uint32_t *offset)
 				ok &= GetTlvWideString(data, tlvend, offset,  TLV_TYPE_WSTR_VALUE, wValue);
 				break;
 			default:
+				ok &= SkipUnknownTlv(data, tlvend, offset);
 				break;
 
 		}
 
 		if (!ok)
 		{
-			return false;
+			break;
 		}
 	}
    
+	/***************************************************************************
+	 * NB: extra components could be added (for future expansion of the type).
+	 *            or be present (if this code is reading an extended version).
+	 *
+	 * We must chew up the extra characters to conform with TLV specifications
+	 ***************************************************************************/
+	if (*offset != tlvend)
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvKeyValueWide::GetTlv() Warning extra bytes at end of item";
+		std::cerr << std::endl;
+#endif
+		*offset = tlvend;
+	}
+
 	return ok;
 }
 
@@ -151,9 +167,9 @@ void RsTlvKeyValueWideSet::TlvClear()
 	wPairs.clear();
 }
 
-uint16_t RsTlvKeyValueWideSet::TlvSize()
+uint32_t RsTlvKeyValueWideSet::TlvSize()
 {
-	uint32_t s = 4; /* header size */
+	uint32_t s = TLV_HEADER_SIZE; /* header size */
 	
 	std::list<RsTlvKeyValueWide>::iterator  it;
 	
@@ -185,7 +201,7 @@ bool RsTlvKeyValueWideSet::SetTlv(void *data, uint32_t size, uint32_t* offset)
 {
 
 	/* must check sizes */
-	uint16_t tlvsize = TlvSize();
+	uint32_t tlvsize = TlvSize();
 	uint32_t tlvend  = *offset + tlvsize;
 
 	if (size < tlvend)
@@ -207,7 +223,7 @@ bool RsTlvKeyValueWideSet::SetTlv(void *data, uint32_t size, uint32_t* offset)
 
 bool RsTlvKeyValueWideSet::GetTlv(void *data, uint32_t size, uint32_t* offset)
 {
-	if (size < *offset + 4)
+	if (size < *offset + TLV_HEADER_SIZE)
 		return false;	
 	
 	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
@@ -226,23 +242,51 @@ bool RsTlvKeyValueWideSet::GetTlv(void *data, uint32_t size, uint32_t* offset)
 	TlvClear();
 
 	/* skip the header */
-	(*offset) += 4;
+	(*offset) += TLV_HEADER_SIZE;
 
-	/* while there is TLV  */
-	while((*offset) + 2 < tlvend)
-	{
+        /* while there is TLV  */
+        while((*offset) + 2 < tlvend)
+        {
+                /* get the next type */
+                uint16_t tlvsubtype = GetTlvType( &(((uint8_t *) data)[*offset]) );
 
-		RsTlvKeyValueWide wPair;
-		
-		ok &= wPair.GetTlv(data, size, offset);
-		
-		wPairs.push_back(wPair);
+                switch(tlvsubtype)
+                {
+                        case TLV_TYPE_WKEYVALUE:
+			{
+				RsTlvKeyValueWide kv;
+				ok &= kv.GetTlv(data, size, offset);
+				if (ok)
+				{
+					wPairs.push_back(kv);
+				}
+			}
+                                break;
+                        default:
+                                ok &= SkipUnknownTlv(data, tlvend, offset);
+                                break;
 
-		if (!ok)
-		{
-			return false;
-		}
+                }
+
+                if (!ok)
+			break;
 	}
    
+
+	/***************************************************************************
+	 * NB: extra components could be added (for future expansion of the type).
+	 *            or be present (if this code is reading an extended version).
+	 *
+	 * We must chew up the extra characters to conform with TLV specifications
+	 ***************************************************************************/
+	if (*offset != tlvend)
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvBinaryData::GetTlv() Warning extra bytes at end of item";
+		std::cerr << std::endl;
+#endif
+		*offset = tlvend;
+	}
+
 	return ok;
 }

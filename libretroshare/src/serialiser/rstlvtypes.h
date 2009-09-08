@@ -36,7 +36,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-//#define RS_TLV_TYPE_FILE_ITEM   0x0000
 
 //! A base class for all tlv items 
 /*! This class is provided to allow the serialisation and deserialization of compund 
@@ -47,7 +46,7 @@ class RsTlvItem
 	public:
 	 RsTlvItem() { return; }
 virtual ~RsTlvItem() { return; }
-virtual uint16_t TlvSize() = 0;
+virtual uint32_t TlvSize() = 0;
 virtual void	 TlvClear() = 0;
 virtual	void	 TlvShallowClear(); /*! Don't delete allocated data */
 virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) = 0; /* serialise   */
@@ -67,42 +66,103 @@ class RsTlvBinaryData: public RsTlvItem
 	public:
 	 RsTlvBinaryData(uint16_t t);
 virtual ~RsTlvBinaryData();
-virtual	uint16_t TlvSize();
+virtual	uint32_t TlvSize();
 virtual	void	 TlvClear(); /*! Initialize fields to empty legal values ( "0", "", etc) */
 virtual	void	 TlvShallowClear(); /*! Don't delete the binary data */
 
  /// Serialise.
 /*! Serialise Tlv to buffer(*data) of 'size' bytes starting at *offset */
 virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset);
+
 /// Deserialise.
 /*! Deserialise Tlv buffer(*data) of 'size' bytes starting at *offset */
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
 virtual std::ostream &print(std::ostream &out, uint16_t indent); /*! Error/Debug util function */
 
-bool    setBinData(void *data, uint16_t size);
+bool    setBinData(void *data, uint32_t size);
 
 	uint16_t tlvtype;	/// set/checked against TLV input 
-	uint16_t bin_len;	/// size of malloc'ed data (not serialised) 
+	uint32_t bin_len;	/// size of malloc'ed data (not serialised) 
 	void    *bin_data;	/// mandatory
 };
+
+
+/**** MORE TLV *****
+ *
+ *
+ */
+
+class RsTlvStringSet: public RsTlvItem
+{
+	public:
+	 RsTlvStringSet(uint16_t type);
+virtual ~RsTlvStringSet() { return; }
+virtual uint32_t TlvSize();
+virtual void	 TlvClear();
+virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
+virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
+virtual std::ostream &print(std::ostream &out, uint16_t indent);
+virtual std::ostream &printHex(std::ostream &out, uint16_t indent); /* SPECIAL One */
+
+	uint16_t mType;
+	std::list<std::string> ids; /* Mandatory */
+};
+
+class RsTlvPeerIdSet: public RsTlvStringSet
+{
+	public:
+	RsTlvPeerIdSet();
+};
+
+class RsTlvHashSet: public RsTlvStringSet
+{
+	public:
+	RsTlvHashSet();
+};
+
+class RsTlvServiceIdSet: public RsTlvItem
+{
+	public:
+	 RsTlvServiceIdSet() { return; }
+virtual ~RsTlvServiceIdSet() { return; }
+virtual uint32_t TlvSize();
+virtual void	 TlvClear();
+virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
+virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
+virtual std::ostream &print(std::ostream &out, uint16_t indent);
+
+	std::list<uint32_t> ids; /* Mandatory */
+};
+
+
+/**** MORE TLV *****
+ *
+ * File Items/Data.
+ *
+ */
+
 
 class RsTlvFileItem: public RsTlvItem
 {
 	public:
 	 RsTlvFileItem();
 virtual ~RsTlvFileItem() { return; }
-virtual uint16_t TlvSize();
+virtual uint32_t TlvSize();
 virtual void	 TlvClear();
 virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
 virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
-uint64_t filesize; /// Mandatory: size of file to be downloaded
+	uint64_t filesize; /// Mandatory: size of file to be downloaded
 	std::string hash;  /// Mandatory: to find file
 	std::string name;  /// Optional: name of file
 	std::string path;  /// Optional: path on host computer
 	uint32_t    pop;   /// Optional: Popularity of file
 	uint32_t    age;   /// Optional: age of file
+	// For chunk hashing.
+	uint32_t    piecesize;  /// Optional: bytes/piece for hashset.
+	RsTlvHashSet hashset; /// Optional: chunk hashes.
+
 };
 
 class RsTlvFileSet: public RsTlvItem
@@ -110,7 +170,7 @@ class RsTlvFileSet: public RsTlvItem
 	public:
 	 RsTlvFileSet() { return; }
 virtual ~RsTlvFileSet() { return; }
-virtual uint16_t TlvSize();
+virtual uint32_t TlvSize();
 virtual void	 TlvClear();
 virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
@@ -127,7 +187,7 @@ class RsTlvFileData: public RsTlvItem
 	public:
 	 RsTlvFileData(); 
 	 virtual ~RsTlvFileData() { return; }
-virtual uint16_t TlvSize();
+virtual uint32_t TlvSize();
 virtual void	 TlvClear();
 virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
@@ -136,43 +196,6 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent);
 	RsTlvFileItem   file;         /// Mandatory: file information	
 	uint64_t        file_offset;  /// Mandatory: where to start in bin data
 	RsTlvBinaryData binData;      /// Mandatory: serialised file info
-};
-
-
-/**** MORE TLV *****
- *
- *
- */
-
-
-class RsTlvPeerIdSet: public RsTlvItem
-{
-	public:
-	 RsTlvPeerIdSet() { return; }
-virtual ~RsTlvPeerIdSet() { return; }
-virtual uint16_t TlvSize();
-virtual void	 TlvClear();
-virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
-virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
-virtual std::ostream &print(std::ostream &out, uint16_t indent);
-virtual std::ostream &printHex(std::ostream &out, uint16_t indent); /* SPECIAL One */
-
-	std::list<std::string> ids; /* Mandatory */
-};
-
-
-class RsTlvServiceIdSet: public RsTlvItem
-{
-	public:
-	 RsTlvServiceIdSet() { return; }
-virtual ~RsTlvServiceIdSet() { return; }
-virtual uint16_t TlvSize();
-virtual void	 TlvClear();
-virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
-virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
-virtual std::ostream &print(std::ostream &out, uint16_t indent);
-
-	std::list<uint32_t> ids; /* Mandatory */
 };
 
 
@@ -189,7 +212,7 @@ class RsTlvKeyValue: public RsTlvItem
 	public:
 	 RsTlvKeyValue() { return; }
 virtual ~RsTlvKeyValue() { return; }
-virtual uint16_t TlvSize();
+virtual uint32_t TlvSize();
 virtual void	 TlvClear();
 virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
@@ -204,7 +227,7 @@ class RsTlvKeyValueSet: public RsTlvItem
 	public:
 	 RsTlvKeyValueSet() { return; }
 virtual ~RsTlvKeyValueSet() { return; }
-virtual uint16_t TlvSize();
+virtual uint32_t TlvSize();
 virtual void	 TlvClear();
 virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
@@ -219,7 +242,7 @@ class RsTlvImage: public RsTlvItem
 	public:
 	 RsTlvImage(); 
 	 virtual ~RsTlvImage() { return; }
-virtual uint16_t TlvSize();
+virtual uint32_t TlvSize();
 virtual void	 TlvClear();
 virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */

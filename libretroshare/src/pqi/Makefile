@@ -20,10 +20,10 @@ UDP_OBJ  = pqissludp.o
 OTHER_OBJ = p3notify.o
 
 
-TESTOBJ  = net_test.o dht_test.o net_test1.o 
+TESTOBJ  = net_test.o dht_test.o net_test1.o netiface_test.o
 #conn_test.o
 
-TESTS  = net_test dht_test net_test1
+TESTS  = net_test dht_test net_test1 netiface_test
 #conn_test
 
 ifdef PQI_USE_XPGP
@@ -67,6 +67,9 @@ net_test: net_test.o
 
 net_test1: net_test1.o 
 	$(CC) $(CFLAGS) -o net_test1 net_test1.o $(LIBS)
+
+netiface_test: netiface_test.o 
+	$(CC) $(CFLAGS) -o netiface_test netiface_test.o $(LIBS)
 
 ###############################################################
 include $(RS_TOP_DIR)/scripts/rules.mk
