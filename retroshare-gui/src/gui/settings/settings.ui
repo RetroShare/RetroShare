@@ -11,12 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Settings</string>
+   <string>Options</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff/>
-   </iconset>
+   <iconset resource="../images.qrc">
+    <normaloff>:/images/kcmsystem24.png</normaloff>:/images/kcmsystem24.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0" rowspan="2">
