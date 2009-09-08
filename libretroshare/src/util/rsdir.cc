@@ -426,6 +426,7 @@ bool RsDirUtil::renameFile(const std::string& from, const std::string& to)
 	return true ;
 }
 
+#if 0 // NOT ENABLED YET!
 /************************* WIDE STRING ***************************/
 /************************* WIDE STRING ***************************/
 /************************* WIDE STRING ***************************/
@@ -831,3 +832,4 @@ bool RsDirUtil::renameWideFile(const std::wstring& from, const std::wstring& to)
 }
 
 
+#endif // WIDE STUFF NOT ENABLED YET!
