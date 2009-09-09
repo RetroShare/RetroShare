@@ -1217,6 +1217,10 @@ bool AuthSSL::VerifySignBin(std::string pid,
 	}
 
 	EVP_PKEY *peerkey = peer->certificate->cert_info->key->pkey;
+
+	if(peerkey == NULL)
+		return false ;
+
 	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
 	
 	if (0 == EVP_VerifyInit(mdctx, EVP_sha1()))
@@ -1233,6 +1237,12 @@ bool AuthSSL::VerifySignBin(std::string pid,
 
 		EVP_MD_CTX_destroy(mdctx);
 		return false;
+	}
+
+	if(signlen == 0 || sign == NULL)
+	{
+		EVP_MD_CTX_destroy(mdctx);
+		return false ;
 	}
 
 	if (0 == EVP_VerifyFinal(mdctx, sign, signlen, peerkey))
