@@ -251,11 +251,15 @@ bool ftServer::FileRequest(std::string fname, std::string hash, uint64_t size,
 	const DwlDetails details(fname, hash, size, dest, flags, srcIds, Normal);
 	mFtDwlQueue->insertDownload(details);
 
+	rsTurtle->monitorFileTunnels(	fname,hash,size ) ;
+
 	return true ;
 }
 
 bool ftServer::FileCancel(std::string hash)
 {
+	rsTurtle->stopMonitoringFileTunnels(hash) ;
+
 	return mFtController->FileCancel(hash);
 }
 

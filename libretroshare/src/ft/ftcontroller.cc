@@ -899,7 +899,6 @@ bool 	ftController::FileCancel(std::string hash)
         }
 
 	mDownloads.erase(mit);
-	mTurtle->stopMonitoringFileTunnels(hash) ;
 
 	IndicateConfigChanged(); /* completed transfer -> save */
 	return true;
