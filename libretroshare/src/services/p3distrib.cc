@@ -624,6 +624,9 @@ void	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, std::string src, bool l
 	/* accept message */
 	(git->second).msgs[msg->msgId] = msg;
 
+	/* now update parents TS */
+	locked_updateChildTS(git->second, msg);
+
 #ifdef DISTRIB_DEBUG
 	std::cerr << "p3GroupDistrib::loadMsg() Msg Loaded Successfully" << std::endl;
 	std::cerr << std::endl;
@@ -2565,6 +2568,42 @@ bool	p3GroupDistrib::locked_checkDistribMsg(
 
 	return true;
 }
+
+
+        /* now update parents TS */
+bool	p3GroupDistrib::locked_updateChildTS(GroupInfo &gi, RsDistribMsg *msg)
+{
+	/* find all parents - update timestamp */
+	time_t updateTS = msg->timestamp;
+	msg->childTS = updateTS;
+
+	while("" != msg->parentId)
+	{
+		std::string parentId = msg->parentId;
+
+        	std::map<std::string, RsDistribMsg *>::iterator mit;
+        	if (gi.msgs.end() == (mit = gi.msgs.find(parentId)))
+		{
+			/* not found - abandon */
+			return true;
+		}
+		RsDistribMsg *parent = mit->second;
+		if ((!parent) || (parent->childTS > updateTS))
+		{
+			/* we're too old - give up! */
+			return true;
+		}
+
+		/* update timestamp */
+		parent->childTS = updateTS;
+		msg = parent;
+	}
+}
+
+
+			
+
+
 
 
 /***** DEBUG *****/

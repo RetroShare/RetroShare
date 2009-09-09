@@ -329,6 +329,7 @@ void    locked_publishPendingMsgs();
 uint16_t locked_determineCacheSubId();
 
 
+
 /***************************************************************************************/
 /***************************************************************************************/
 
@@ -366,6 +367,7 @@ virtual bool    locked_choosePublishKey(GroupInfo &info);
 /* TO FINISH */
 	/* utilities */
 std::string HashRsItem(const RsItem *item);
+bool    locked_updateChildTS(GroupInfo &gi, RsDistribMsg *msg);
 
 /***************************************************************************************/
 /***************************************************************************************/

@@ -69,6 +69,7 @@ class ForumMsgInfo
 	std::wstring title;
 	std::wstring msg;
 	time_t ts;
+	time_t childTS;
 };
 
 
@@ -87,7 +88,7 @@ class ThreadInfoSummary
 	std::wstring msg;
 	int count; /* file count     */
 	time_t ts;
-
+	time_t childTS;
 };
 
 std::ostream &operator<<(std::ostream &out, const ForumInfo &info);

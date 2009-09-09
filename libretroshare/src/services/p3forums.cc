@@ -165,6 +165,7 @@ bool p3Forums::getForumThreadList(std::string fId, std::list<ThreadInfoSummary> 
 		tis.threadId = msg->msgId; // these are the thread heads!
 
 		tis.ts = msg->timestamp;
+		tis.childTS = msg->childTS;
 
 		/* the rest must be gotten from the derived Msg */
 		
@@ -200,6 +201,7 @@ bool p3Forums::getForumThreadMsgList(std::string fId, std::string pId, std::list
 		tis.threadId = msg->threadId;
 
 		tis.ts = msg->timestamp;
+		tis.childTS = msg->childTS;
 
 		/* the rest must be gotten from the derived Msg */
 		
@@ -230,6 +232,7 @@ bool p3Forums::getForumMessage(std::string fId, std::string mId, ForumMsgInfo &i
 	info.threadId = msg->threadId;
 
 	info.ts = msg->timestamp;
+	info.childTS = msg->childTS;
 
 	/* the rest must be gotten from the derived Msg */
 		
@@ -302,29 +305,6 @@ std::string p3Forums::createForumMsg(std::string fId, std::string pId,
 	std::string msgId = publishMsg(fmsg, signIt);
 	return msgId;
 }
-
-
-#if 0
-	/* p3Config Serialiser */
-RsSerialiser *p3Forums::setupSerialiser()
-{
-        RsSerialiser *rss = new RsSerialiser();
-
-	rss->addSerialType(new RsForumSerialiser());
-        return rss;
-}
-
-pqistreamer *p3Forums::createStreamer(BinInterface *bio, std::string src, uint32_t bioflags)
-{
-        RsSerialiser *rsSerialiser = new RsSerialiser();
-        //rsSerialiser->addSerialType(new RsForumSerialiser());
-        rsSerialiser->addSerialType(new RsDistribSerialiser());
-
-        pqistreamer *streamer = new pqistreamer(rsSerialiser, src, bio, bioflags);
-        return streamer;
-}
-
-#endif
 
 RsSerialType *p3Forums::createSerialiser()
 {
