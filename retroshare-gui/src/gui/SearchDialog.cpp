@@ -251,10 +251,6 @@ void SearchDialog::download()
                                   (item->text(SR_REALSIZE_COL)).toInt(),
                                   "", 0, srcIds);
 
-			rsTurtle->monitorFileTunnels(	item->text(SR_NAME_COL).toStdString(),
-                                  		item->text(SR_HASH_COL).toStdString(),
-                                  		item->text(SR_REALSIZE_COL).toInt()) ;
-
 			std::cout << "isuing file request from search dialog: -" << (item->text(SR_NAME_COL)).toStdString() << "-" << (item->text(SR_HASH_COL)).toStdString() << "-" << (item->text(SR_REALSIZE_COL)).toInt() << "-ids=" ;
 			for(std::list<std::string>::const_iterator it(srcIds.begin());it!=srcIds.end();++it)
 				std::cout << *it << "-" << std::endl ;
