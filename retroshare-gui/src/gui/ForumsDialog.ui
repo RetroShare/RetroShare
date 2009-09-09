@@ -644,6 +644,11 @@
            <widget class="QComboBox" name="viewBox">
             <item>
              <property name="text">
+              <string>Last Post</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
               <string>Threaded View</string>
              </property>
             </item>

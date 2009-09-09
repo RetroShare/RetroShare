@@ -553,10 +553,23 @@ void ForumsDialog::insertThreads()
 	mCurrPostId = "";
 	std::string fId = mCurrForumId;
 
+#define VIEW_LAST_POST	0
+#define VIEW_THREADED	1
+#define VIEW_FLAT	2
+
 	bool flatView = false;
-	if (ui.viewBox->currentIndex() == 1)
+	bool useChildTS = false;
+	switch(ui.viewBox->currentIndex())
 	{
-		flatView = true;
+		case VIEW_LAST_POST:
+			useChildTS = true;
+			break;
+		case VIEW_FLAT:
+			flatView = true;
+			break;
+		default:
+		case VIEW_THREADED:
+			break;
 	}
 
 	std::list<ThreadInfoSummary> threads;
@@ -587,9 +600,23 @@ void ForumsDialog::insertThreads()
 
 		{
 			QDateTime qtime;
-			qtime.setTime_t(tit->ts);
+			if (useChildTS)
+				qtime.setTime_t(tit->childTS);
+			else
+				qtime.setTime_t(tit->ts);
+
 			QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
-			item -> setText(0, timestamp);
+
+			QString txt = timestamp;
+			if (useChildTS)
+			{
+				QDateTime qtime2;
+				qtime2.setTime_t(tit->ts);
+				QString timestamp2 = qtime2.toString("yyyy-MM-dd hh:mm:ss");
+				txt += " / ";
+				txt += timestamp2;
+			}
+			item -> setText(0, txt);
 		}
 		ForumMsgInfo msginfo ;
 		rsForums->getForumMessage(fId,tit->msgId,msginfo) ;
@@ -639,9 +666,23 @@ void ForumsDialog::insertThreads()
 		
 					{
 						QDateTime qtime;
-						qtime.setTime_t(mit->ts);
+						if (useChildTS)
+							qtime.setTime_t(mit->childTS);
+						else
+							qtime.setTime_t(mit->ts);
+
 						QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
-						child -> setText(0, timestamp);
+
+						QString txt = timestamp;
+						if (useChildTS)
+						{
+							QDateTime qtime2;
+							qtime2.setTime_t(mit->ts);
+							QString timestamp2 = qtime2.toString("yyyy-MM-dd hh:mm:ss");
+							txt += " / ";
+							txt += timestamp2;
+						}
+						child -> setText(0, txt);
 					}
 					ForumMsgInfo msginfo ;
 					rsForums->getForumMessage(fId,mit->msgId,msginfo) ;
