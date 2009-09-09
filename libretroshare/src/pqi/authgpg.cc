@@ -1297,7 +1297,7 @@ bool	GPGAuthMgr::getDetails(std::string id, pqiAuthDetails &details)
 		if (mKeyList.end() != (it = mKeyList.find(details.issuer)))
 		{
 			/* what do we want from the gpg mgr */
-			details.location = details.name;
+			details.location = details.location;
 			details.name = it->second.user.name;
 			details.email = it->second.user.email;
 
