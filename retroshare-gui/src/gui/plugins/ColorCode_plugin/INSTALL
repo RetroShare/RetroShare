@@ -1,0 +1,8 @@
+ColorCode 0.1
+
+simply run:
+
+qmake-qt4 -project
+qmake-qt4
+make
+
