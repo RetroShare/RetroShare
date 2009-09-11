@@ -703,7 +703,6 @@ void TransfersDialog::insertTransfers()
             coreId      = QString::fromStdString(info.fname) + getPeerName(pit->peerId);
             fileSize    = info.size;
             progress    = (info.transfered * 100.0) / info.size;
-            dlspeed     = pit->tfRate * 1024.0;
             sources     = "";
             if (retv && versions.end() != (vit = versions.find(pit->peerId))) {
             	sources		= QString("rShare v") + QString::fromStdString(vit->second);
@@ -726,6 +725,10 @@ void TransfersDialog::insertTransfers()
                         status = tr("Complete"); break;
                 }
             }
+
+            dlspeed			= 0;
+            if (status == "Downloading")
+            	dlspeed     = pit->tfRate * 1024.0;
 
             completed   = info.transfered;
             remaining   = (info.size - info.transfered) / (pit->tfRate * 1024.0);
