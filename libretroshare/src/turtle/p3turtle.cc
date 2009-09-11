@@ -480,8 +480,13 @@ uint32_t p3turtle::generateRandomRequestId()
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
-	return rand() ;
+	static uint64_t s = time(NULL) ;
+
+	s = s*1664525 + 1013904223 ;	// pseudo random number generator from Wikipedia/Numerical Recipies.
+
+	return (uint32_t)(s & 0x00000000ffffffff) ;
 }
+
 uint32_t p3turtle::generatePersonalFilePrint(const TurtleFileHash& hash,bool b)
 {
 	// whatever cooking from the file hash and OwnId that cannot be recovered.
@@ -706,7 +711,8 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 #endif
 		RsTurtleSearchResultItem *fwd_item = new RsTurtleSearchResultItem(*item) ;	// copy the item
 
-		// normally here, we should setup the forward adress, so that the owner's of the files found can be further reached by a tunnel.
+		// Normally here, we should setup the forward adress, so that the owner's
+		// of the files found can be further reached by a tunnel.
 
 		fwd_item->PeerId(it->second.origin) ;
 		fwd_item->depth = 2 + (rand() % 256) ; // obfuscate the depth for non immediate friends.
