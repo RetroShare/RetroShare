@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 #include <QtGui>
@@ -31,6 +31,8 @@
 #include "gui/feeds/ChanMsgItem.h"
 
 #include "gui/forums/CreateForum.h"
+
+#include "gui/ChanGroupDelegate.h"
 
 #include "GeneralMsgDialog.h"
 
@@ -52,43 +54,43 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 
 	/*************** Setup Left Hand Side (List of Channels) ****************/
 
-	mGroupLayout = new QVBoxLayout;
-	mGroupLayout->setSpacing(0);
-	mGroupLayout->setMargin(0);
-	mGroupLayout->setContentsMargins(0,0,0,0);
-
-	mGroupOwn = new ChanGroupItem("Own Channels");
-	mGroupSub = new ChanGroupItem("Subscribed Channels");
-	mGroupPop = new ChanGroupItem("Popular Channels");
-	mGroupOther = new ChanGroupItem("Other Channels");
-
-	mGroupLayout->addWidget(mGroupOwn);
-	mGroupLayout->addWidget(mGroupSub);
-	mGroupLayout->addWidget(mGroupPop);
-	mGroupLayout->addWidget(mGroupOther);
-
-
-	QWidget *middleWidget = new QWidget();
-	//middleWidget->setSizePolicy( QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
-	middleWidget->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
-	middleWidget->setLayout(mGroupLayout);
-
-     	QScrollArea *scrollArea = new QScrollArea;
-        //scrollArea->setBackgroundRole(QPalette::Dark);
-	scrollArea->setWidget(middleWidget);
-	scrollArea->setWidgetResizable(true);
-	scrollArea->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
-
-	QVBoxLayout *layout2 = new QVBoxLayout;
-	layout2->addWidget(scrollArea);
-	layout2->setSpacing(0);
-	layout2->setMargin(0);
-	layout2->setContentsMargins(0,0,0,0);
-
-	
-     	chanFrame->setLayout(layout2);
-
-	/*************** Setup Left Hand Side (List of Channels) ****************/
+//	mGroupLayout = new QVBoxLayout;
+//	mGroupLayout->setSpacing(0);
+//	mGroupLayout->setMargin(0);
+//	mGroupLayout->setContentsMargins(0,0,0,0);
+//
+//	mGroupOwn = new ChanGroupItem("Own Channels");
+//	mGroupSub = new ChanGroupItem("Subscribed Channels");
+//	mGroupPop = new ChanGroupItem("Popular Channels");
+//	mGroupOther = new ChanGroupItem("Other Channels");
+//
+//	mGroupLayout->addWidget(mGroupOwn);
+//	mGroupLayout->addWidget(mGroupSub);
+//	mGroupLayout->addWidget(mGroupPop);
+//	mGroupLayout->addWidget(mGroupOther);
+//
+//
+//	QWidget *middleWidget = new QWidget();
+//	//middleWidget->setSizePolicy( QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
+//	middleWidget->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
+//	middleWidget->setLayout(mGroupLayout);
+//
+//     	QScrollArea *scrollArea = new QScrollArea;
+//        //scrollArea->setBackgroundRole(QPalette::Dark);
+//	scrollArea->setWidget(middleWidget);
+//	scrollArea->setWidgetResizable(true);
+//	scrollArea->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
+//
+//	QVBoxLayout *layout2 = new QVBoxLayout;
+//	layout2->addWidget(scrollArea);
+//	layout2->setSpacing(0);
+//	layout2->setMargin(0);
+//	layout2->setContentsMargins(0,0,0,0);
+//
+//
+//     	chanFrame->setLayout(layout2);
+//
+	/*************** Setup Right Hand Side (List of Messages) ****************/
 
 	mMsgLayout = new QVBoxLayout;
 	mMsgLayout->setSpacing(0);
@@ -99,8 +101,8 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	middleWidget2->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
 	middleWidget2->setLayout(mMsgLayout);
 
-     	QScrollArea *scrollArea2 = new QScrollArea;
-        //scrollArea2->setBackgroundRole(QPalette::Dark);
+	QScrollArea *scrollArea2 = new QScrollArea;
+	//scrollArea2->setBackgroundRole(QPalette::Dark);
 	scrollArea2->setWidget(middleWidget2);
 	scrollArea2->setWidgetResizable(true);
 	scrollArea2->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
@@ -112,19 +114,53 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	layout3->setContentsMargins(0,0,0,0);
 
 
-     	msgFrame->setLayout(layout3);
+    msgFrame->setLayout(layout3);
 
-	mChannelId = "OWNID"; 
+//	mChannelId = "OWNID";
 
+//	updateChannelList();
+//
+//	QTimer *timer = new QTimer(this);
+//	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
+//	timer->start(1000);
+
+  	mChannelId = "";
+	model = new QStandardItemModel(0, 2, this);
+	model->setHeaderData(0, Qt::Horizontal, tr("Name"), Qt::DisplayRole);
+	model->setHeaderData(1, Qt::Horizontal, tr("ID"), Qt::DisplayRole);
+
+	treeView->setModel(model);
+	treeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+	treeView->setItemDelegate(new ChanGroupDelegate());
+	treeView->setRootIsDecorated(false);
+
+	// hide header and id column
+	treeView->setHeaderHidden(true);
+	treeView->hideColumn(1);
+
+	QStandardItem *item1 = new QStandardItem("Own Channels");
+	QStandardItem *item2 = new QStandardItem("Subscribed Channels");
+	QStandardItem *item3 = new QStandardItem("Popular Channels");
+	QStandardItem *item4 = new QStandardItem("Other Channels");
+
+	model->appendRow(item1);
+	model->appendRow(item2);
+	model->appendRow(item3);
+	model->appendRow(item4);
+
+	connect(treeView, SIGNAL(activated(const QModelIndex &)), this, SLOT(selectChannel(const QModelIndex &)));
+	connect(treeView, SIGNAL(activated(const QModelIndex &)), this, SLOT(toggleSelection(const QModelIndex &)));
+
+	//added from ahead
 	updateChannelList();
-	
+
 	mChannelFont = QFont("MS SANS SERIF", 24);
-  nameLabel->setFont(mChannelFont);
-  
+    nameLabel->setFont(mChannelFont);
+
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
 	timer->start(1000);
-
 }
 
 
@@ -135,7 +171,7 @@ void ChannelFeed::createChannel()
 	cf->setWindowTitle(tr("Create a new Channel"));
 	cf->ui.labelicon->setPixmap(QPixmap(":/images/add_channel64.png"));
 	QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
-                               "color:#32cd32;\">%1</span>");             
+                               "color:#32cd32;\">%1</span>");
 	cf->ui.textlabelcreatforums->setText( titleStr.arg( tr("Create a new Channel") ) ) ;
 	cf->show();
 }
@@ -209,6 +245,19 @@ void ChannelFeed::selectChannel( std::string cId)
 	updateChannelMsgs();
 }
 
+void ChannelFeed::selectChannel(const QModelIndex &index)
+{
+	int row = index.row();
+	int col = index.column();
+	if (col != 1) {
+		QModelIndex sibling = index.sibling(row, 1);
+		if (sibling.isValid())
+			mChannelId = sibling.data().toString().toStdString();
+	} else
+		mChannelId = index.data().toString().toStdString();
+	updateChannelMsgs();
+}
+
 void ChannelFeed::checkUpdate()
 {
 	std::list<std::string> chanIds;
@@ -228,8 +277,6 @@ void ChannelFeed::checkUpdate()
 		}
 	}
 }
-
-
 
 
 void ChannelFeed::updateChannelList()
@@ -323,117 +370,232 @@ void ChannelFeed::updateChannelList()
 
 void ChannelFeed::updateChannelListOwn(std::list<std::string> &ids)
 {
-	std::list<ChanMenuItem *>::iterator it;
+//	std::list<ChanMenuItem *>::iterator it;
 	std::list<std::string>::iterator iit;
 
-	/* TEMP just replace all of them */
-	for(it = mChannelListOwn.begin(); it != mChannelListOwn.end(); it++)
-	{
-		delete (*it);
-	}
-	mChannelListOwn.clear();
+//	/* TEMP just replace all of them */
+//	for(it = mChannelListOwn.begin(); it != mChannelListOwn.end(); it++)
+//	{
+//		delete (*it);
+//	}
+//	mChannelListOwn.clear();
+//
+//	int topIndex = mGroupLayout->indexOf(mGroupOwn);
+//	int index = topIndex + 1;
+//	for (iit = ids.begin(); iit != ids.end(); iit++, index++)
+//	{
+//#ifdef CHAN_DEBUG
+//		std::cerr << "ChannelFeed::updateChannelListOwn(): " << *iit << " at: " << index;
+//		std::cerr << std::endl;
+//#endif
+//
+//		ChanMenuItem *cmi = new ChanMenuItem(*iit);
+//		mChannelListOwn.push_back(cmi);
+//		mGroupLayout->insertWidget(index, cmi);
+//
+//		connect(cmi, SIGNAL( selectMe( std::string )), this, SLOT( selectChannel( std::string )));
+//	}
 
-	int topIndex = mGroupLayout->indexOf(mGroupOwn);
-	int index = topIndex + 1;
-	for (iit = ids.begin(); iit != ids.end(); iit++, index++)
-	{
+
+	/* remove rows with groups before adding new ones */
+	model->item(OWN)->removeRows(0, model->item(OWN)->rowCount());
+
+	for (iit = ids.begin(); iit != ids.end(); iit ++) {
 #ifdef CHAN_DEBUG
-		std::cerr << "ChannelFeed::updateChannelListOwn(): " << *iit << " at: " << index;
-		std::cerr << std::endl;
+		std::cerr << "ChannelFeed::updateChannelListOwn(): " << *iit << std::endl;
 #endif
+		QStandardItem *ownGroup = model->item(OWN);
+		QList<QStandardItem *> channel;
+		QStandardItem *item1 = new QStandardItem();
+		QStandardItem *item2 = new QStandardItem();
 
-		ChanMenuItem *cmi = new ChanMenuItem(*iit);
-		mChannelListOwn.push_back(cmi);
-		mGroupLayout->insertWidget(index, cmi);
-  	
-		connect(cmi, SIGNAL( selectMe( std::string )), this, SLOT( selectChannel( std::string )));
+		ChannelInfo ci;
+		if (rsChannels && rsChannels->getChannelInfo(*iit, ci)) {
+			item1->setData(QVariant(QString::fromStdWString(ci.channelName)), Qt::DisplayRole);
+			item2->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
+			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
+					).arg(QString::number(ci.pop)).arg(9999).arg(9999));
+		} else {
+			item1->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
+			item2->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
+			item1->setToolTip("Unknown Channel\nNo Description");
+		}
+
+		channel.append(item1);
+		channel.append(item2);
+		ownGroup->appendRow(channel);
 	}
 }
 
 void ChannelFeed::updateChannelListSub(std::list<std::string> &ids)
 {
-	std::list<ChanMenuItem *>::iterator it;
+//	std::list<ChanMenuItem *>::iterator it;
 	std::list<std::string>::iterator iit;
 
-	/* TEMP just replace all of them */
-	for(it = mChannelListSub.begin(); it != mChannelListSub.end(); it++)
-	{
-		delete (*it);
-	}
-	mChannelListSub.clear();
+//	/* TEMP just replace all of them */
+//	for(it = mChannelListSub.begin(); it != mChannelListSub.end(); it++)
+//	{
+//		delete (*it);
+//	}
+//	mChannelListSub.clear();
+//
+//	int topIndex = mGroupLayout->indexOf(mGroupSub);
+//	int index = topIndex + 1;
+//	for (iit = ids.begin(); iit != ids.end(); iit++, index++)
+//	{
+//#ifdef CHAN_DEBUG
+//		std::cerr << "ChannelFeed::updateChannelListSub(): " << *iit << " at: " << index;
+//		std::cerr << std::endl;
+//#endif
+//
+//		ChanMenuItem *cmi = new ChanMenuItem(*iit);
+//		mChannelListSub.push_back(cmi);
+//		mGroupLayout->insertWidget(index, cmi);
+//		connect(cmi, SIGNAL( selectMe( std::string )), this, SLOT( selectChannel( std::string )));
+//	}
 
-	int topIndex = mGroupLayout->indexOf(mGroupSub);
-	int index = topIndex + 1;
-	for (iit = ids.begin(); iit != ids.end(); iit++, index++)
-	{
+	/* remove rows with groups before adding new ones */
+	model->item(SUBSCRIBED)->removeRows(0, model->item(SUBSCRIBED)->rowCount());
+
+	for (iit = ids.begin(); iit != ids.end(); iit ++) {
 #ifdef CHAN_DEBUG
-		std::cerr << "ChannelFeed::updateChannelListSub(): " << *iit << " at: " << index;
-		std::cerr << std::endl;
+		std::cerr << "ChannelFeed::updateChannelListSub(): " << *iit << std::endl;
 #endif
+		QStandardItem *ownGroup = model->item(SUBSCRIBED);
+		QList<QStandardItem *> channel;
+		QStandardItem *item1 = new QStandardItem();
+		QStandardItem *item2 = new QStandardItem();
 
-		ChanMenuItem *cmi = new ChanMenuItem(*iit);
-		mChannelListSub.push_back(cmi);
-		mGroupLayout->insertWidget(index, cmi);
-		connect(cmi, SIGNAL( selectMe( std::string )), this, SLOT( selectChannel( std::string )));
+		ChannelInfo ci;
+		if (rsChannels && rsChannels->getChannelInfo(*iit, ci)) {
+			item1->setData(QVariant(QString::fromStdWString(ci.channelName)), Qt::DisplayRole);
+			item2->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
+			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
+					).arg(QString::number(ci.pop)).arg(9999).arg(9999));
+		} else {
+			item1->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
+			item2->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
+			item1->setToolTip("Unknown Channel\nNo Description");
+		}
+
+		channel.append(item1);
+		channel.append(item2);
+		ownGroup->appendRow(channel);
 	}
 
 }
 
 void ChannelFeed::updateChannelListPop(std::list<std::string> &ids)
 {
-	std::list<ChanMenuItem *>::iterator it;
+//	std::list<ChanMenuItem *>::iterator it;
 	std::list<std::string>::iterator iit;
 
-	/* TEMP just replace all of them */
-	for(it = mChannelListPop.begin(); it != mChannelListPop.end(); it++)
-	{
-		delete (*it);
-	}
-	mChannelListPop.clear();
+//	/* TEMP just replace all of them */
+//	for(it = mChannelListPop.begin(); it != mChannelListPop.end(); it++)
+//	{
+//		delete (*it);
+//	}
+//	mChannelListPop.clear();
+//
+//	int topIndex = mGroupLayout->indexOf(mGroupPop);
+//	int index = topIndex + 1;
+//	for (iit = ids.begin(); iit != ids.end(); iit++, index++)
+//	{
+//#ifdef CHAN_DEBUG
+//		std::cerr << "ChannelFeed::updateChannelListPop(): " << *iit << " at: " << index;
+//		std::cerr << std::endl;
+//#endif
+//
+//		ChanMenuItem *cmi = new ChanMenuItem(*iit);
+//		mChannelListPop.push_back(cmi);
+//		mGroupLayout->insertWidget(index, cmi);
+//		connect(cmi, SIGNAL( selectMe( std::string )), this, SLOT( selectChannel( std::string )));
+//	}
 
-	int topIndex = mGroupLayout->indexOf(mGroupPop);
-	int index = topIndex + 1;
-	for (iit = ids.begin(); iit != ids.end(); iit++, index++)
-	{
+	/* remove rows with groups before adding new ones */
+	model->item(POPULAR)->removeRows(0, model->item(POPULAR)->rowCount());
+
+	for (iit = ids.begin(); iit != ids.end(); iit ++) {
 #ifdef CHAN_DEBUG
-		std::cerr << "ChannelFeed::updateChannelListPop(): " << *iit << " at: " << index;
-		std::cerr << std::endl;
+		std::cerr << "ChannelFeed::updateChannelListPop(): " << *iit << std::endl;
 #endif
+		QStandardItem *ownGroup = model->item(POPULAR);
+		QList<QStandardItem *> channel;
+		QStandardItem *item1 = new QStandardItem();
+		QStandardItem *item2 = new QStandardItem();
 
-		ChanMenuItem *cmi = new ChanMenuItem(*iit);
-		mChannelListPop.push_back(cmi);
-		mGroupLayout->insertWidget(index, cmi);
-		connect(cmi, SIGNAL( selectMe( std::string )), this, SLOT( selectChannel( std::string )));
+		ChannelInfo ci;
+		if (rsChannels && rsChannels->getChannelInfo(*iit, ci)) {
+			item1->setData(QVariant(QString::fromStdWString(ci.channelName)), Qt::DisplayRole);
+			item2->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
+			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
+					).arg(QString::number(ci.pop)).arg(9999).arg(9999));
+		} else {
+			item1->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
+			item2->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
+			item1->setToolTip("Unknown Channel\nNo Description");
+		}
+
+		channel.append(item1);
+		channel.append(item2);
+		ownGroup->appendRow(channel);
 	}
-
-
 }
 
 void ChannelFeed::updateChannelListOther(std::list<std::string> &ids)
 {
-	std::list<ChanMenuItem *>::iterator it;
+//	std::list<ChanMenuItem *>::iterator it;
 	std::list<std::string>::iterator iit;
 
-	/* TEMP just replace all of them */
-	for(it = mChannelListOther.begin(); it != mChannelListOther.end(); it++)
-	{
-		delete (*it);
-	}
-	mChannelListOther.clear();
+//	/* TEMP just replace all of them */
+//	for(it = mChannelListOther.begin(); it != mChannelListOther.end(); it++)
+//	{
+//		delete (*it);
+//	}
+//	mChannelListOther.clear();
+//
+//	int topIndex = mGroupLayout->indexOf(mGroupOther);
+//	int index = topIndex + 1;
+//	for (iit = ids.begin(); iit != ids.end(); iit++, index++)
+//	{
+//#ifdef CHAN_DEBUG
+//		std::cerr << "ChannelFeed::updateChannelListOther(): " << *iit << " at: " << index;
+//		std::cerr << std::endl;
+//#endif
+//
+//		ChanMenuItem *cmi = new ChanMenuItem(*iit);
+//		mChannelListOther.push_back(cmi);
+//		mGroupLayout->insertWidget(index, cmi);
+//		connect(cmi, SIGNAL( selectMe( std::string )), this, SLOT( selectChannel( std::string )));
+//	}
 
-	int topIndex = mGroupLayout->indexOf(mGroupOther);
-	int index = topIndex + 1;
-	for (iit = ids.begin(); iit != ids.end(); iit++, index++)
-	{
+	/* remove rows with groups before adding new ones */
+	model->item(OTHER)->removeRows(0, model->item(OTHER)->rowCount());
+
+	for (iit = ids.begin(); iit != ids.end(); iit ++) {
 #ifdef CHAN_DEBUG
-		std::cerr << "ChannelFeed::updateChannelListOther(): " << *iit << " at: " << index;
-		std::cerr << std::endl;
+		std::cerr << "ChannelFeed::updateChannelListOther(): " << *iit << std::endl;
 #endif
+		QStandardItem *ownGroup = model->item(OTHER);
+		QList<QStandardItem *> channel;
+		QStandardItem *item1 = new QStandardItem();
+		QStandardItem *item2 = new QStandardItem();
 
-		ChanMenuItem *cmi = new ChanMenuItem(*iit);
-		mChannelListOther.push_back(cmi);
-		mGroupLayout->insertWidget(index, cmi);
-		connect(cmi, SIGNAL( selectMe( std::string )), this, SLOT( selectChannel( std::string )));
+		ChannelInfo ci;
+		if (rsChannels && rsChannels->getChannelInfo(*iit, ci)) {
+			item1->setData(QVariant(QString::fromStdWString(ci.channelName)), Qt::DisplayRole);
+			item2->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
+			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
+					).arg(QString::number(ci.pop)).arg(9999).arg(9999));
+		} else {
+			item1->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
+			item2->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
+			item1->setToolTip("Unknown Channel\nNo Description");
+		}
+
+		channel.append(item1);
+		channel.append(item2);
+		ownGroup->appendRow(channel);
 	}
 }
 
@@ -498,9 +660,6 @@ void ChannelFeed::updateChannelMsgs()
 }
 
 
-
-
-
 void ChannelFeed::unsubscribeChannel()
 {
 #ifdef CHAN_DEBUG
@@ -529,5 +688,9 @@ void ChannelFeed::subscribeChannel()
 }
 
 
-
-
+void ChannelFeed::toggleSelection(const QModelIndex &index)
+{
+	QItemSelectionModel *selectionModel = treeView->selectionModel();
+	if (index.child(0, 0).isValid())
+		selectionModel->select(index, QItemSelectionModel::Toggle);
+}

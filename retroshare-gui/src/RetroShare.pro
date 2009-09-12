@@ -247,6 +247,7 @@ HEADERS +=  rshare.h \
             gui/TransferFeed.h \
             gui/ChannelFeed.h \
             gui/GeneralMsgDialog.h \
+	    gui/ChanGroupDelegate.h \
             gui/feeds/FeedHolder.h \
             gui/feeds/ForumNewItem.h \
             gui/feeds/ForumMsgItem.h \
@@ -459,6 +460,7 @@ SOURCES +=  main.cpp \
             gui/TransferFeed.cpp \
             gui/ChannelFeed.cpp \
             gui/GeneralMsgDialog.cpp \
+	    gui/ChanGroupDelegate.cpp \
             gui/feeds/ForumNewItem.cpp \
             gui/feeds/ForumMsgItem.cpp \
             gui/feeds/PeerItem.cpp \

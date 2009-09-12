@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -25,11 +25,19 @@
 #include "mainpage.h"
 #include "ui_ChannelFeed.h"
 
+#include <QStandardItemModel>
+
 #include "gui/feeds/FeedHolder.h"
+
+#define OWN	0
+#define SUBSCRIBED	1
+#define POPULAR	2
+#define OTHER	3
 
 class ChanGroupItem;
 class ChanMenuItem;
 class ChanMsgItem;
+
 
 class ChannelFeed : public MainPage, public FeedHolder, private Ui::ChannelFeed
 {
@@ -48,6 +56,8 @@ virtual void openMsg(uint32_t type, std::string grpId, std::string inReplyTo);
 public slots:
 
 	void selectChannel( std::string );
+	void selectChannel(const QModelIndex &);
+	void toggleSelection(const QModelIndex &);
 
 private slots:
 
@@ -71,26 +81,28 @@ private:
 
 	void updateChannelMsgs();
 
+	QStandardItemModel *model;
+
 	std::string mChannelId; /* current Channel */
 
 	/* Layout Pointers */
-	QBoxLayout *mGroupLayout;
+//	QBoxLayout *mGroupLayout;
 	QBoxLayout *mMsgLayout;
 
 	/* Group Headers */
-	ChanGroupItem *mGroupOwn;
-	ChanGroupItem *mGroupSub;
-	ChanGroupItem *mGroupPop;
-	ChanGroupItem *mGroupOther;
+//	ChanGroupItem *mGroupOwn;
+//	ChanGroupItem *mGroupSub;
+//	ChanGroupItem *mGroupPop;
+//	ChanGroupItem *mGroupOther;
 
 	/* lists of feedItems */
-	std::list<ChanMenuItem *> mChannelListOwn;
-	std::list<ChanMenuItem *> mChannelListSub;
-	std::list<ChanMenuItem *> mChannelListPop;
-	std::list<ChanMenuItem *> mChannelListOther;
+//	std::list<ChanMenuItem *> mChannelListOwn;
+//	std::list<ChanMenuItem *> mChannelListSub;
+//	std::list<ChanMenuItem *> mChannelListPop;
+//	std::list<ChanMenuItem *> mChannelListOther;
 
 	std::list<ChanMsgItem *> mChanMsgItems;
-	
+
 	QFont mChannelFont;
 
 };
