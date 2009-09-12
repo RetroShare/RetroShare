@@ -132,9 +132,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(ui.actionAdd_Share, SIGNAL(triggered() ), this , SLOT( openShareManager() ) );
     connect(ui.actionOptions, SIGNAL(triggered()), this, SLOT( showSettings()) );
     connect(ui.actionMessenger, SIGNAL(triggered()), this, SLOT( showMessengerWindow()) );
-    connect(ui.actionSMPlayer, SIGNAL(triggered()), this, SLOT( showsmplayer()) );
+    //connect(ui.actionSMPlayer, SIGNAL(triggered()), this, SLOT( showsmplayer()) );
     connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT( showabout()) );
-    connect(ui.actionColor, SIGNAL(triggered()), this, SLOT( setStyle()) );
+    //connect(ui.actionColor, SIGNAL(triggered()), this, SLOT( setStyle()) );
 
 
     /** adjusted quit behaviour: trigger a warning that can be switched off in the saved
