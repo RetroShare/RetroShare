@@ -6,19 +6,19 @@ TARGET = retroshare-nogui
 linux-g++ {
 	OBJECTS_DIR = temp/linux-g++/obj
 
-	LIBS += ../../../../lib/linux-g++/libretroshare.a 
-	LIBS += ../../../../lib/linux-g++/libminiupnpc.a 
-	LIBS += ../../../../lib/linux-g++/libssl.a 
-	LIBS += ../../../../lib/linux-g++/libcrypto.a
+	LIBS += ../../../lib/linux-g++/libretroshare.a 
+	LIBS += ../../../lib/linux-g++/libminiupnpc.a 
+	LIBS += ../../../lib/linux-g++/libssl.a 
+	LIBS += ../../../lib/linux-g++/libcrypto.a
     LIBS += -lz
 }
 linux-g++-64 {
 	OBJECTS_DIR = temp/linux-g++-64/obj
 
-	LIBS += ../../../../lib/linux-g++-64/libretroshare.a 
-	LIBS += ../../../../lib/linux-g++-64/libminiupnpc.a 
-	LIBS += ../../../../lib/linux-g++-64/libssl.a 
-	LIBS += ../../../../lib/linux-g++-64/libcrypto.a
+	LIBS += ../../libretroshare/src/lib.linux-g++-64/libretroshare.a 
+	LIBS += ../../../../build/lib.linux-g++-64/libminiupnpc.a 
+	LIBS += ../../../../build/lib.linux-g++-64/libssl.a 
+	LIBS += ../../../../build/lib.linux-g++-64/libcrypto.a
     LIBS += -lz
 }
 
@@ -67,6 +67,7 @@ macx {
 
 DEPENDPATH += ../../libretroshare/src
             
+LIBS *= -lpthread
 INCLUDEPATH += . ../../libretroshare/src
 
 # Input
