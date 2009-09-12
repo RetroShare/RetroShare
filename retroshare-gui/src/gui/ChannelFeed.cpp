@@ -117,7 +117,10 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	mChannelId = "OWNID"; 
 
 	updateChannelList();
-
+	
+	mChannelFont = QFont("MS SANS SERIF", 24);
+  nameLabel->setFont(mChannelFont);
+  
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
 	timer->start(1000);

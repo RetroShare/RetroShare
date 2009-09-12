@@ -90,6 +90,8 @@ private:
 	std::list<ChanMenuItem *> mChannelListOther;
 
 	std::list<ChanMsgItem *> mChanMsgItems;
+	
+	QFont mChannelFont;
 
 };
 
