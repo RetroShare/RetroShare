@@ -149,7 +149,7 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	model->appendRow(item3);
 	model->appendRow(item4);
 
-	connect(treeView, SIGNAL(activated(const QModelIndex &)), this, SLOT(selectChannel(const QModelIndex &)));
+	connect(treeView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(selectChannel(const QModelIndex &)));
 	connect(treeView, SIGNAL(activated(const QModelIndex &)), this, SLOT(toggleSelection(const QModelIndex &)));
 
 	//added from ahead
