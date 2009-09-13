@@ -95,7 +95,7 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 
 
 
-    	/* Set header resize modes and initial section sizes */
+   /* Set header resize modes and initial section sizes */
 	QHeaderView * ftheader = ui.forumTreeWidget->header () ;
 	ftheader->setResizeMode (0, QHeaderView::Interactive);
     
@@ -108,6 +108,9 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 	ttheader->resizeSection ( 0, 170 );
 	ttheader->resizeSection ( 1, 170 );
 
+
+   mForumNameFont = QFont("MS SANS SERIF", 12);
+   ui.forumName->setFont(mForumNameFont);
   
 
   /* Hide platform specific features */
@@ -658,10 +661,12 @@ void ForumsDialog::insertThreads()
 					if (flatView)
 					{
 						child = new QTreeWidgetItem(); 
+						ui.threadTreeWidget->setRootIsDecorated( false );
 					}
 					else
 					{
 						child = new QTreeWidgetItem(parent);
+						ui.threadTreeWidget->setRootIsDecorated( true );
 					}
 		
 					{
