@@ -1,15 +1,15 @@
 TEMPLATE = lib
 CONFIG += static
 TARGET = retroshare
-CONFIG += release
+CONFIG += debug
 
 ################################# Linux ##########################################
 
 debug {
-	DEFINES *= DEBUG
+#	DEFINES *= DEBUG
 #	DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER FT_DEBUG EXTADDRSEARCH_DEBUG
 #	DEFINES *= P3TURTLE_DEBUG CHAT_DEBUG
-	DEFINES *= CHAT_DEBUG
+#	DEFINES *= DEBUG_PQISSL
 	QMAKE_CXXFLAGS *= -g
 }
 
@@ -30,7 +30,7 @@ linux-g++-64 {
 win32-x-g++ {	
 	OBJECTS_DIR = temp/win32xgcc/obj
 	DESTDIR = lib.win32xgcc
-	DEFINES *= WINDOWS_SYS WIN32
+	DEFINES *= WINDOWS_SYS WIN32 WIN_CROSS_UBUNTU __USE_LARGEFILE64
 	QMAKE_CXXFLAGS *= -Wmissing-include-dirs
 	QMAKE_CC = i586-mingw32msvc-g++
 	QMAKE_LIB = i586-mingw32msvc-ar
@@ -48,7 +48,7 @@ win32 {
 	DESTDIR = lib
 	  
 	SSL_DIR = ../../../../openssl-0.9.7g-xpgp-0.1c/include
-	UPNPC_DIR = ../../../../miniupnpc-1.0
+	UPNPC_DIR = ../../../../miniupnpc-1.3
 	PTHREADS_DIR = ../../../../pthreads-w32-2-8-0-release
   ZLIB_DIR = ../../../../zlib-1.2.3
         
@@ -56,7 +56,7 @@ win32 {
 }
 ################################### COMMON stuff ##################################
 
-DEFINES *=  PQI_USE_XPGP MINIUPNPC_VERSION=10
+DEFINES *=  PQI_USE_XPGP MINIUPNPC_VERSION=13
 
 SSL_DIR=../../../openssl-0.9.7g-xpgp-0.1c
 UPNPC_DIR=../../../miniupnpc-1.0

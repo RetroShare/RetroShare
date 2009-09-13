@@ -10,24 +10,25 @@ MOC_DIR = temp/moc
 
 ################################# Linux ##########################################
 
+DEFINES *= _GNU_SOURCE
 linux-g++ {
 	OBJECTS_DIR = temp/linux-g++/obj
 
 	LIBS += ../../libretroshare/src/lib.linux-g++/libretroshare.a 
-	LIBS += ../../../lib/linux-g++/libminiupnpc.a 
-	LIBS += ../../../lib/linux-g++/libssl.a 
-	LIBS += ../../../lib/linux-g++/libcrypto.a
-	LIBS += -lQtUiTools
-    LIBS += -lz 
+	LIBS += ../../../../build/lib.linux-g++/libminiupnpc.a 
+	LIBS += ../../../../build/lib.linux-g++/libssl_xpgp.a 
+	LIBS += ../../../../build/lib.linux-g++/libcrypto_xpgp.a
+	LIBS += -lz
 }
+
 linux-g++-64 {
 	OBJECTS_DIR = temp/linux-g++-64/obj
 
 	LIBS += ../../libretroshare/src/lib.linux-g++-64/libretroshare.a 
 	LIBS += ../../../../build/lib.linux-g++-64/libminiupnpc.a 
-	LIBS += ../../../../build/lib.linux-g++-64/libssl.a 
-	LIBS += ../../../../build/lib.linux-g++-64/libcrypto.a
-    LIBS += -lz
+	LIBS += ../../../../build/lib.linux-g++-64/libssl_xpgp.a 
+	LIBS += ../../../../build/lib.linux-g++-64/libcrypto_xpgp.a
+	LIBS += -lz
 }
 
 #################### Cross compilation for windows under Linux ###################
@@ -35,11 +36,11 @@ linux-g++-64 {
 win32-x-g++ {
 	OBJECTS_DIR = temp/win32-x-g++/obj
 
-	LIBS += ../../../../lib/win32-x-g++/libretroshare.a 
-	LIBS += ../../../../lib/win32-x-g++/libssl.a 
-	LIBS += ../../../../lib/win32-x-g++/libcrypto.a 
-	LIBS += ../../../../lib/win32-x-g++/libminiupnpc.a 
-	LIBS += ../../../../lib/win32-x-g++/libz.a 
+	LIBS += ../../libretroshare/src/lib.win32xgcc/libretroshare.a
+	LIBS += ../../../../build/lib.win32-x-g++/libssl_xpgp.a 
+	LIBS += ../../../../build/lib.win32-x-g++/libcrypto_xpgp.a 
+	LIBS += ../../../../build/lib.win32-x-g++/libminiupnpc.a 
+	LIBS += ../../../../build/lib.win32-x-g++/libz.a 
 	LIBS += -L${HOME}/.wine/drive_c/pthreads/lib -lpthreadGCE2
 	LIBS += -lQtUiTools
 	LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32 -gdi32
