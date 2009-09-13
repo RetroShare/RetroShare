@@ -615,8 +615,14 @@ void ChannelFeed::updateChannelMsgs()
 		nameLabel->setText("No Channel Selected");
 		return;
 	}
-	/* set channel name */
-	nameLabel->setText(QString::fromStdWString(ci.channelName));
+	
+	/* set textcolor for Channel name  */
+	QString channelStr("<span style=\"font-size:22pt; font-weight:500;"
+                               "color:#4F4F4F;\">%1</span>");
+	
+	/* set Channel name */
+	QString cname = QString::fromStdWString(ci.channelName);
+  nameLabel->setText(channelStr.arg(cname));
 
 	/* do buttons */
 	if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED)
