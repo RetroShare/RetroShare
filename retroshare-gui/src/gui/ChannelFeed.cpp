@@ -155,8 +155,10 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	//added from ahead
 	updateChannelList();
 
-	mChannelFont = QFont("MS SANS SERIF", 24);
+	mChannelFont = QFont("MS SANS SERIF", 22);
     nameLabel->setFont(mChannelFont);
+    
+    nameLabel->setMinimumWidth(20);
 
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
