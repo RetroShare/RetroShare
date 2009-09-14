@@ -177,21 +177,20 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
 
 #ifdef RS_RELEASE_VERSION
-    channelsDialog = NULL;
-    ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
-			createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
 			
-		    ChannelFeed *channelFeed = NULL;
+		ChannelFeed *channelFeed = NULL;
     ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
                       createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
 
     ForumsDialog *forumsDialog = NULL;
     ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
-
+                       
+    ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
+			createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
 
 #else
-    channelsDialog = NULL;
+
     ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
 			createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
 

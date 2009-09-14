@@ -88,7 +88,6 @@ public:
     TransfersDialog   *transfersDialog;
     ChatDialog        *chatDialog;
     MessagesDialog    *messagesDialog;
-    ChannelsDialog    *channelsDialog;
     SharedFilesDialog *sharedfilesDialog;
     MessengerWindow   *messengerWindow;
     ApplicationWindow   *applicationWindow;
