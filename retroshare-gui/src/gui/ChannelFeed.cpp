@@ -138,11 +138,11 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	// hide header and id column
 	treeView->setHeaderHidden(true);
 	treeView->hideColumn(1);
-
-	QStandardItem *item1 = new QStandardItem("Own Channels");
-	QStandardItem *item2 = new QStandardItem("Subscribed Channels");
-	QStandardItem *item3 = new QStandardItem("Popular Channels");
-	QStandardItem *item4 = new QStandardItem("Other Channels");
+	
+	QStandardItem *item1 = new QStandardItem(tr("Own Channels"));
+	QStandardItem *item2 = new QStandardItem(tr("Subscribed Channels"));
+	QStandardItem *item3 = new QStandardItem(tr("Popular Channels"));
+	QStandardItem *item4 = new QStandardItem(tr("Other Channels"));
 
 	model->appendRow(item1);
 	model->appendRow(item2);
@@ -156,10 +156,17 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	updateChannelList();
 
 	mChannelFont = QFont("MS SANS SERIF", 22);
-    nameLabel->setFont(mChannelFont);
+	nameLabel->setFont(mChannelFont);
     
-    nameLabel->setMinimumWidth(20);
-
+	nameLabel->setMinimumWidth(20);
+    
+	itemFont = QFont("ARIAL", 10);
+	itemFont.setBold(true);
+	item1->setFont(itemFont);
+	item2->setFont(itemFont);
+	item3->setFont(itemFont);
+	item4->setFont(itemFont);
+	
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
 	timer->start(1000);

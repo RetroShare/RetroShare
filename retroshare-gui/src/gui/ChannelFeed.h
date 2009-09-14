@@ -104,6 +104,7 @@ private:
 	std::list<ChanMsgItem *> mChanMsgItems;
 
 	QFont mChannelFont;
+	QFont itemFont;
 
 };
 
