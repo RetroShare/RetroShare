@@ -126,6 +126,12 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     _header->resizeSection ( PRIORITY, 100 );
     _header->resizeSection ( REMAINING, 100 );
 
+    connect(_header, SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)), this, SLOT(saveSortIndicator(int, Qt::SortOrder)));
+
+    // set default column and sort order
+    _sortCol = 0;
+    _sortOrder = Qt::AscendingOrder;
+
     // Set Upload list model
     ULListModel = new QStandardItemModel(0,7);
     ULListModel->setHeaderData(UNAME, Qt::Horizontal, tr("Name", "i.e: file name"));
@@ -614,6 +620,9 @@ void TransfersDialog::insertTransfers()
 		delUploadItem(i);
 	}
 
+	ui.downloadList->sortByColumn(_sortCol, _sortOrder);
+	/* disable for performance issues, enable after insert all transfers */
+	ui.downloadList->setSortingEnabled(false);
 
 	/* get the download and upload lists */
 	std::list<std::string> downHashes;
@@ -798,6 +807,8 @@ void TransfersDialog::insertTransfers()
     /* scroll to first selected index if any */
     if (firstSelIdx.isValid())
     	ui.downloadList->scrollTo(firstSelIdx);
+
+    ui.downloadList->setSortingEnabled(true);
 
 	for(it = upHashes.begin(); it != upHashes.end(); it++)
 	{
@@ -1261,6 +1272,11 @@ void TransfersDialog::rootisnotdecorated()
     ui.downloadList->setRootIsDecorated(false);
 }
 
+void TransfersDialog::saveSortIndicator(int logicalIndex, Qt::SortOrder order)
+{
+	_sortCol = logicalIndex;;
+	_sortOrder = order;
+}
 
 double TransfersDialog::getProgress(int row, QStandardItemModel *model)
 {
