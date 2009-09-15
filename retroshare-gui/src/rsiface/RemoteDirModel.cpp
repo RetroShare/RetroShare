@@ -1,5 +1,6 @@
 #include <set>
 
+#include "gui/Preferences/rsharesettings.h"
 #include "RemoteDirModel.h"
 #include "rsfiles.h"
 
@@ -24,7 +25,12 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 
 }
 
-
+std::wstring getWString(const std::string& s)
+{
+	std::wstring w ;
+	for(int i=0;i<s.length();++i)
+		w.push_back(s[i]) ;
+}
 
  bool RemoteDirModel::hasChildren(const QModelIndex &parent) const
  {
@@ -392,34 +398,33 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 	{
 		switch(coln)
 		{
-			case 0:
-		return QString::fromStdString(details.name);
-			break;
+			case 0: return QString::fromUtf8(details.name.c_str()) ;
+					  break;
 			case 1:
-		{
-			std::ostringstream out;
-			//out << details.count;
-			//return QString::fromStdString(out.str());
-			return  misc::friendlyUnit(details.count);
-		}
-			break;
+					  {
+						  std::ostringstream out;
+						  //out << details.count;
+						  //return QString::fromStdString(out.str());
+						  return  misc::friendlyUnit(details.count);
+					  }
+					  break;
 			case 2:
-		{
-			std::ostringstream out;
-			out << details.rank;
-			return QString::fromStdString(out.str());
-		}
-			break;
+					  {
+						  std::ostringstream out;
+						  out << details.rank;
+						  return QString::fromStdString(out.str());
+					  }
+					  break;
 			case 3:
-		{
-			std::ostringstream out;
-			//out << details.age;
-			return  misc::userFriendlyDuration(details.age);
-		}
-			break;
+					  {
+						  std::ostringstream out;
+						  //out << details.age;
+						  return  misc::userFriendlyDuration(details.age);
+					  }
+					  break;
 			default:
-		return QString(tr("FILE"));
-			break;
+					  return QString(tr("FILE"));
+					  break;
 		}
 	}
 	else if (details.type == DIR_TYPE_DIR) /* Dir */
@@ -427,24 +432,24 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 		switch(coln)
 		{
 			case 0:
-		return QString::fromStdString(details.name);
-			break;
+				return QString::fromUtf8(details.name.c_str());
+				break;
 			case 1:
-		//return QString("");
-		{
-			std::ostringstream out;
-			out << details.count;
-			return QString::fromStdString(out.str());
-		}
-			break;
+				//return QString("");
+				{
+					std::ostringstream out;
+					out << details.count;
+					return QString::fromStdString(out.str());
+				}
+				break;
 			case 2:
-		return QString("");
-		//return QString::fromStdString(details.path);
-			break;
+				return QString("");
+				//return QString::fromStdString(details.path);
+				break;
 
 			default:
-		return QString(tr("DIR"));
-			break;
+				return QString(tr("DIR"));
+				break;
 		}
 	}
    } /* end of DisplayRole */

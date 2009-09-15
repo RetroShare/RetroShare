@@ -70,7 +70,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     DLDelegate = new DLListDelegate();
     ui.downloadList->setItemDelegate(DLDelegate);
 	
-    ui.downloadList->setAutoScroll(false) ;
+//    ui.downloadList->setAutoScroll(false) ;
   
   	//Selection Setup
     selection = ui.downloadList->selectionModel();
@@ -111,7 +111,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     ULDelegate = new ULListDelegate();
     ui.uploadsList->setItemDelegate(ULDelegate);
     
-    ui.uploadsList->setAutoScroll(false) ;
+//    ui.uploadsList->setAutoScroll(false) ;
     ui.uploadsList->setRootIsDecorated(false);
   
   	//Selection Setup
@@ -191,8 +191,8 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 	  cancelAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Cancel" ), this );
       connect( cancelAct , SIGNAL( triggered() ), this, SLOT( cancel() ) );
       
-      clearcompletedAct = new QAction(QIcon(IMAGE_CLEARCOMPLETED), tr( "Clear Completed" ), this );
-      connect( clearcompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
+//      clearcompletedAct = new QAction(QIcon(IMAGE_CLEARCOMPLETED), tr( "Clear Completed" ), this );
+//      connect( clearcompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
 
       contextMnu.clear();
       if (addPlayOption)
@@ -203,7 +203,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 
       contextMnu.addAction( cancelAct);
       contextMnu.addSeparator();
-      contextMnu.addAction( clearcompletedAct);
+//      contextMnu.addAction( clearcompletedAct);
       contextMnu.exec( mevent->globalPos() );
 }
 
@@ -407,7 +407,7 @@ void TransfersDialog::insertTransfers()
 	  {
 		symbol  	= "";
 		coreId		= QString::fromStdString(info.hash);
-		name    	= QString::fromStdString(info.fname);
+		name    	= QString::fromUtf8(info.fname.c_str());
 		sources		= QString::fromStdString(rsPeers->getPeerName(pit->peerId));
 
 		switch(pit->status)
@@ -436,7 +436,7 @@ void TransfersDialog::insertTransfers()
 			status = tr("Complete");
 		}
         
-		dlspeed  	= pit->tfRate * 1024.0;
+		dlspeed 		= (pit->status == FT_STATE_DOWNLOADING)?( pit->tfRate * 1024.0 ) :0.0;
 		fileSize 	= info.size;
 		completed 	= info.transfered;
 		progress 	= info.transfered * 100.0 / info.size;
@@ -459,7 +459,7 @@ void TransfersDialog::insertTransfers()
 	  {
 		symbol  	= "";
 		coreId		= QString::fromStdString(info.hash);
-		name    	= QString::fromStdString(info.fname);
+		name    	= QString::fromUtf8(info.fname.c_str());
 		sources		= tr("Unknown");
 
 		switch(info.downloadStatus)
@@ -483,14 +483,13 @@ void TransfersDialog::insertTransfers()
 		
         	}
 
-		dlspeed  	= info.tfRate * 1024.0;
+		dlspeed 		= (pit->status == FT_STATE_DOWNLOADING)?( pit->tfRate * 1024.0 ) :0.0;
 		fileSize 	= info.size;
 		completed 	= info.transfered;
 		progress 	= info.transfered * 100.0 / info.size;
 		remaining   = (info.size - info.transfered) / (info.tfRate * 1024.0);
 	
-		addItem(symbol, name, coreId, fileSize, progress, 
-				dlspeed, sources,  status, completed, remaining);
+		addItem(symbol, name, coreId, fileSize, progress, dlspeed, sources,  status, completed, remaining);
 
 		/* if found in selectedIds -> select again */
 		if (selectedIds.end() != std::find(selectedIds.begin(), selectedIds.end(), info.hash))
@@ -516,7 +515,7 @@ void TransfersDialog::insertTransfers()
 	  {
 		symbol  	= "";
 		coreId		= QString::fromStdString(info.hash);
-		name    	= QString::fromStdString(info.fname);
+		name    	= QString::fromUtf8(info.fname.c_str());
 		sources		= QString::fromStdString(rsPeers->getPeerName(pit->peerId));
 
 		switch(pit->status)
@@ -545,7 +544,7 @@ void TransfersDialog::insertTransfers()
 	//		status = "Complete";
 	//	}
         
-		dlspeed  	= pit->tfRate * 1024.0;
+		dlspeed 		= (pit->status == FT_STATE_DOWNLOADING)?( pit->tfRate * 1024.0 ) :0.0;
 		fileSize 	= info.size;
 		completed 	= info.transfered;
 		progress 	= info.transfered * 100.0 / info.size;
@@ -560,7 +559,7 @@ void TransfersDialog::insertTransfers()
 	  {
 		symbol  	= "";
 		coreId		= QString::fromStdString(info.hash);
-		name    	= QString::fromStdString(info.fname);
+		name    	= QString::fromUtf8(info.fname.c_str());
 		sources		= tr("Unknown");
 
 		switch(info.downloadStatus)
@@ -590,8 +589,7 @@ void TransfersDialog::insertTransfers()
 		progress 	= info.transfered * 100.0 / info.size;
 		remaining   = (info.size - info.transfered) / (info.tfRate * 1024.0);
 	
-		addUploadItem(symbol, name, coreId, fileSize, progress, 
-				dlspeed, sources,  status, completed, remaining);
+		addUploadItem(symbol, name, coreId, fileSize, progress, dlspeed, sources,  status, completed, remaining);
 		ulCount++;
 	  }
 	}

@@ -477,7 +477,7 @@ void SearchDialog::searchKeywords()
 		{
 			fd = *resultsIter;
 			// get this file's extension
-			qName = QString::fromStdString(fd.name);
+			qName = QString::fromUtf8(fd.name.c_str());
 			extIndex = qName.lastIndexOf(".");
 			if (extIndex >= 0) {
 				qExt = qName.mid(extIndex+1);
@@ -514,7 +514,7 @@ void SearchDialog::resultsToTree(std::string txt, std::list<FileDetail> results)
 	for(it = results.begin(); it != results.end(); it++)
 	{
 		QTreeWidgetItem *item = new QTreeWidgetItem();
-		item->setText(SR_NAME_COL, QString::fromStdString(it->name));
+		item->setText(SR_NAME_COL, QString::fromUtf8(it->name.c_str()));
 		item->setText(SR_HASH_COL, QString::fromStdString(it->hash));
 		item->setText(SR_SEARCH_ID_COL, QString::fromStdString(out.str()));
 
