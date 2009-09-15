@@ -126,11 +126,11 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     _header->resizeSection ( PRIORITY, 100 );
     _header->resizeSection ( REMAINING, 100 );
 
-    connect(_header, SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)), this, SLOT(saveSortIndicator(int, Qt::SortOrder)));
+    connect(_header, SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)), this, SLOT(saveSortIndicatorDwl(int, Qt::SortOrder)));
 
-    // set default column and sort order
-    _sortCol = 0;
-    _sortOrder = Qt::AscendingOrder;
+    // set default column and sort order for download
+    _sortColDwl = 0;
+    _sortOrderDwl = Qt::AscendingOrder;
 
     // Set Upload list model
     ULListModel = new QStandardItemModel(0,7);
@@ -171,6 +171,12 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     upheader->resizeSection ( UPROGRESS, 170 );
     upheader->resizeSection ( USTATUS, 100 );
     upheader->resizeSection ( USERNAME, 75 );
+
+    connect(upheader, SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)), this, SLOT(saveSortIndicatorUpl(int, Qt::SortOrder)));
+
+	// set default column and sort order for upload
+	_sortColUpl = 0;
+	_sortOrderUpl = Qt::AscendingOrder;
 
 
   /* Hide platform specific features */
@@ -620,7 +626,7 @@ void TransfersDialog::insertTransfers()
 		delUploadItem(i);
 	}
 
-	ui.downloadList->sortByColumn(_sortCol, _sortOrder);
+	ui.downloadList->sortByColumn(_sortColDwl, _sortOrderDwl);
 	/* disable for performance issues, enable after insert all transfers */
 	ui.downloadList->setSortingEnabled(false);
 
@@ -810,6 +816,9 @@ void TransfersDialog::insertTransfers()
 
     ui.downloadList->setSortingEnabled(true);
 
+    ui.uploadsList->sortByColumn(_sortColUpl, _sortOrderUpl);
+	/* disable for performance issues, enable after insert all transfers */
+	ui.uploadsList->setSortingEnabled(false);
 	for(it = upHashes.begin(); it != upHashes.end(); it++)
 	{
 	  FileInfo info;
@@ -902,6 +911,8 @@ void TransfersDialog::insertTransfers()
 		ulCount++;
 	  }
 	}
+
+	ui.uploadsList->setSortingEnabled(true);
 }
 
 QString TransfersDialog::getPeerName(const std::string& id) const
@@ -1272,10 +1283,16 @@ void TransfersDialog::rootisnotdecorated()
     ui.downloadList->setRootIsDecorated(false);
 }
 
-void TransfersDialog::saveSortIndicator(int logicalIndex, Qt::SortOrder order)
+void TransfersDialog::saveSortIndicatorDwl(int logicalIndex, Qt::SortOrder order)
 {
-	_sortCol = logicalIndex;;
-	_sortOrder = order;
+	_sortColDwl = logicalIndex;;
+	_sortOrderDwl = order;
+}
+
+void TransfersDialog::saveSortIndicatorUpl(int logicalIndex, Qt::SortOrder order)
+{
+	_sortColUpl = logicalIndex;;
+	_sortOrderUpl = order;
 }
 
 double TransfersDialog::getProgress(int row, QStandardItemModel *model)

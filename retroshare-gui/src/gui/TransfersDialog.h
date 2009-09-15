@@ -87,8 +87,9 @@ class TransfersDialog : public MainPage
 	void priorityHigh();
 	void priorityAuto();
 
-	/** save sort indicator for next transfers display */
-	void saveSortIndicator(int logicalIndex, Qt::SortOrder order);
+	/** save sort indicators for next transfers display */
+	void saveSortIndicatorDwl(int logicalIndex, Qt::SortOrder order);
+	void saveSortIndicatorUpl(int logicalIndex, Qt::SortOrder order);
 
 	signals:
 		void playFiles(QStringList files);
@@ -109,8 +110,8 @@ class TransfersDialog : public MainPage
 		QString status, icon, name;
 		qlonglong completed, remaining;
 
-		int _sortCol;
-		Qt::SortOrder _sortOrder;
+		int _sortColDwl, _sortColUpl;
+		Qt::SortOrder _sortOrderDwl, _sortOrderUpl;
 
 
 		/** Create the actions on the tray menu or menubar */
