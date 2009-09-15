@@ -109,7 +109,7 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 	ttheader->resizeSection ( 1, 170 );
 
 
-   mForumNameFont = QFont("MS SANS SERIF", 12);
+   mForumNameFont = QFont("Times", 12, QFont::Bold);
    ui.forumName->setFont(mForumNameFont);
   
 
