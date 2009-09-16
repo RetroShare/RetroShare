@@ -465,28 +465,35 @@ void ForumsDialog::insertForums()
 		}
 	}
 
+  itemFont = QFont("ARIAL", 10);
+	itemFont.setBold(true);
+	
 	/* now we can add them in as a tree! */
         QList<QTreeWidgetItem *> TopList;
         QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 	item -> setText(0, tr("Your Forums"));
+	item -> setFont(0,itemFont);
 	item -> setIcon(0,(QIcon(IMAGE_FOLDER)));
 	item -> addChildren(AdminList);
 	TopList.append(item);
 
         item = new QTreeWidgetItem((QTreeWidget*)0);
 	item -> setText(0, tr("Subscribed Forums"));
+	item -> setFont(0,itemFont);
 	item -> setIcon(0,(QIcon(IMAGE_FOLDERRED)));
 	item -> addChildren(SubList);
 	TopList.append(item);
 
         item = new QTreeWidgetItem((QTreeWidget*)0);
 	item -> setText(0, tr("Popular Forums"));
+	item -> setFont(0,itemFont);
 	item -> setIcon(0,(QIcon(IMAGE_FOLDERGREEN)));
 	item -> addChildren(PopList);
 	TopList.append(item);
 
         item = new QTreeWidgetItem((QTreeWidget*)0);
 	item -> setText(0, tr("Other Forums"));
+	item -> setFont(0,itemFont);
 	item -> setIcon(0,(QIcon(IMAGE_FOLDERYELLOW)));
 	item -> addChildren(OtherList);
 	TopList.append(item);

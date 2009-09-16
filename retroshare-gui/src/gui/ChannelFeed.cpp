@@ -166,6 +166,12 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	item2->setFont(itemFont);
 	item3->setFont(itemFont);
 	item4->setFont(itemFont);
+		  
+  item1->setForeground(QBrush(QColor(79, 79, 79)));
+  item2->setForeground(QBrush(QColor(79, 79, 79)));
+  item3->setForeground(QBrush(QColor(79, 79, 79)));
+  item4->setForeground(QBrush(QColor(79, 79, 79)));
+
 	
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));

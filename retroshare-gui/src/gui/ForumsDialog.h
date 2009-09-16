@@ -83,6 +83,7 @@ private:
   std::string mCurrPostId;
   
   QFont mForumNameFont;
+  QFont itemFont;
 
   /** Qt Designer generated object */
   Ui::ForumsDialog ui;
