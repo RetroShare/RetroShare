@@ -643,8 +643,9 @@ std::ostream &RsDiscVersion::print(std::ostream &out, uint16_t indent)
 
 uint32_t RsDiscSerialiser::sizeVersion(RsDiscVersion *item)
 {
-    uint32_t s = 8;
-	s += GetTlvStringSize(item->version);
+    uint32_t s = 8; /* header */
+    s += 4; /* size in RawString() */
+	s += item->version.length();
 
 	return s;
 }
