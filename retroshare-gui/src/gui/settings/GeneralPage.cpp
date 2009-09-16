@@ -34,7 +34,7 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
  /* Create RshareSettings object */
   _settings = new RshareSettings();
 
-  load();
+  //load();
 
   /* Hide platform specific features */
 #ifndef Q_WS_WIN

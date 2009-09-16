@@ -33,7 +33,7 @@ DirectoriesPage::DirectoriesPage(QWidget * parent, Qt::WFlags flags)
     ui.setupUi(this);
     setAttribute(Qt::WA_QuitOnClose, false);
 
-    load();
+    //load();
 
   	connect(ui.incomingButton, SIGNAL(clicked( bool ) ), this , SLOT( setIncomingDirectory() ) );
   	connect(ui.partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );

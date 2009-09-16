@@ -42,7 +42,7 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WFlags flags)
   /* Create RshareSettings object */
   _settings = new RshareSettings();
 
-  load();
+  //load();
 
    //QTimer *timer = new QTimer(this);
    //timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));

@@ -49,7 +49,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WFlags flags)
    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
    timer->start(1000);
 
-	load();
+	//load();
 	updateStatus();
 
 	bool b = rsPeers->getAllowServerIPDetermination() ;

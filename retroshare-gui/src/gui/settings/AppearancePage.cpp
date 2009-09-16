@@ -50,7 +50,7 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WFlags flags)
   //loadStyleSheet("Default");
   loadqss();
 
-  load();
+  //load();
 
 
   /* Hide platform specific features */
