@@ -98,6 +98,13 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     _header->resizeSection ( STATUS, 100 ); 
     _header->resizeSection ( REMAINING, 100 ); 
 	
+	 connect(_header, SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)), this, SLOT(saveSortIndicatorDwl(int, Qt::SortOrder)));
+
+    // set default column and sort order for download
+    _sortColDwl = 0;
+    _sortOrderDwl = Qt::AscendingOrder;
+
+
     // Set Upload list model
     ULListModel = new QStandardItemModel(0,7);
     ULListModel->setHeaderData(UNAME, Qt::Horizontal, tr("Name", "i.e: file name"));
@@ -114,6 +121,30 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 //    ui.uploadsList->setAutoScroll(false) ;
     ui.uploadsList->setRootIsDecorated(false);
   
+	     /* Set header resize modes and initial section sizes Uploads TreeView*/
+    QHeaderView * upheader = ui.uploadsList->header () ;
+    upheader->setResizeMode (UNAME, QHeaderView::Interactive);
+    upheader->setResizeMode (USIZE, QHeaderView::Interactive);
+    upheader->setResizeMode (UTRANSFERRED, QHeaderView::Interactive);
+    upheader->setResizeMode (ULSPEED, QHeaderView::Interactive);
+    upheader->setResizeMode (UPROGRESS, QHeaderView::Interactive);
+    upheader->setResizeMode (USTATUS, QHeaderView::Interactive);
+    upheader->setResizeMode (USERNAME, QHeaderView::Interactive);
+
+    upheader->resizeSection ( UNAME, 170 );
+    upheader->resizeSection ( USIZE, 70 );
+    upheader->resizeSection ( UTRANSFERRED, 75 );
+    upheader->resizeSection ( ULSPEED, 75 );
+    upheader->resizeSection ( UPROGRESS, 170 );
+    upheader->resizeSection ( USTATUS, 100 );
+    upheader->resizeSection ( USERNAME, 75 );
+
+	     connect(upheader, SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)), this, SLOT(saveSortIndicatorUpl(int, Qt::SortOrder)));
+
+	// set default column and sort order for upload
+	_sortColUpl = 0;
+	_sortOrderUpl = Qt::AscendingOrder;
+
   	//Selection Setup
 	//selection = ui.uploadsList->selectionModel();
 	
@@ -376,6 +407,13 @@ void TransfersDialog::insertTransfers()
 		delUploadItem(i);
 	}
 	
+		ui.downloadList->sortByColumn(_sortColDwl, _sortOrderDwl);
+	/* disable for performance issues, enable after insert all transfers */
+	ui.downloadList->setSortingEnabled(false);
+
+	QModelIndex firstSelIdx;
+
+
 
 	/* get the download and upload lists */
 	std::list<std::string> downHashes;
@@ -451,6 +489,8 @@ void TransfersDialog::insertTransfers()
 			selection->select(DLListModel->index(dlCount, 0), 
 				QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent);
 
+			if (!firstSelIdx.isValid())
+				firstSelIdx = DLListModel->index(dlCount, NAME);
 		}
 		dlCount++;
 	  }
@@ -497,10 +537,21 @@ void TransfersDialog::insertTransfers()
 			selection->select(DLListModel->index(dlCount, 0), 
 				QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent);
 
+			if (!firstSelIdx.isValid())
+				firstSelIdx = DLListModel->index(dlCount, NAME);
 		}
 		dlCount++;
 	  }
 	}
+
+	if (firstSelIdx.isValid())
+		ui.downloadList->scrollTo(firstSelIdx);
+
+	    ui.downloadList->setSortingEnabled(true);
+
+    ui.uploadsList->sortByColumn(_sortColUpl, _sortOrderUpl);
+	/* disable for performance issues, enable after insert all transfers */
+	ui.uploadsList->setSortingEnabled(false);
 
 	for(it = upHashes.begin(); it != upHashes.end(); it++)
 	{
@@ -629,6 +680,18 @@ void TransfersDialog::clearcompleted()
 {
     	std::cerr << "TransfersDialog::clearcompleted()" << std::endl;
    	rsFiles->FileClearCompleted();
+}
+
+void TransfersDialog::saveSortIndicatorDwl(int logicalIndex, Qt::SortOrder order)
+{
+	_sortColDwl = logicalIndex;;
+	_sortOrderDwl = order;
+}
+
+void TransfersDialog::saveSortIndicatorUpl(int logicalIndex, Qt::SortOrder order)
+{
+	_sortColUpl = logicalIndex;;
+	_sortOrderUpl = order;
 }
 
 double TransfersDialog::getProgress(int row, QStandardItemModel *model)

@@ -62,6 +62,10 @@ class TransfersDialog : public MainPage
 		void clearcompleted();
 		void playSelectedTransfer(); 
 
+			void saveSortIndicatorDwl(int logicalIndex, Qt::SortOrder order);
+	void saveSortIndicatorUpl(int logicalIndex, Qt::SortOrder order);
+
+
 	signals:
 		void playFiles(QStringList files);
 
@@ -77,6 +81,8 @@ class TransfersDialog : public MainPage
 		QString status, icon, name;
 		qlonglong completed, remaining;
 
+		int _sortColDwl, _sortColUpl;
+		Qt::SortOrder _sortOrderDwl, _sortOrderUpl;
 
 		/** Create the actions on the tray menu or menubar */
 		void createActions();
