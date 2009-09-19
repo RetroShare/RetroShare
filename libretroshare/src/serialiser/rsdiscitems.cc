@@ -644,8 +644,7 @@ std::ostream &RsDiscVersion::print(std::ostream &out, uint16_t indent)
 uint32_t RsDiscSerialiser::sizeVersion(RsDiscVersion *item)
 {
     uint32_t s = 8; /* header */
-    s += 4; /* size in RawString() */
-	s += item->version.length();
+    s += GetTlvStringSize(item->version);
 
 	return s;
 }
@@ -673,7 +672,7 @@ bool RsDiscSerialiser::serialiseVersion(RsDiscVersion *item, void *data, uint32_
     /* skip the header */
     offset += 8;
 
-    ok &= setRawString(data, tlvsize, &offset, item->version);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->version);
 
     if (offset != tlvsize)
     {
@@ -726,7 +725,7 @@ RsDiscVersion *RsDiscSerialiser::deserialiseVersion(void *data, uint32_t *pktsiz
 	/* skip the header */
 	offset += 8;
 
-	ok &= getRawString(data, rssize, &offset, item->version);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->version);
 
 	if (offset != rssize)
 	{
