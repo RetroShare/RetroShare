@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>PeerItem</class>
- <widget class="QWidget" name="PeerItem" >
-  <property name="geometry" >
+ <widget class="QWidget" name="PeerItem">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,67 +10,68 @@
     <height>323</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" >
-   <property name="topMargin" >
+  <layout class="QGridLayout">
+   <property name="margin">
     <number>0</number>
    </property>
-   <property name="bottomMargin" >
-    <number>0</number>
-   </property>
-   <item row="0" column="0" >
-    <widget class="QFrame" name="frame" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+   <item row="0" column="0">
+    <widget class="QFrame" name="frame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="frameShape" >
+     <property name="styleSheet">
+      <string notr="true">QFrame#frame{border: 2px solid black;}</string>
+     </property>
+     <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
-     <property name="frameShadow" >
+     <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" >
-      <property name="topMargin" >
+     <layout class="QVBoxLayout">
+      <property name="topMargin">
        <number>0</number>
       </property>
-      <property name="bottomMargin" >
+      <property name="bottomMargin">
        <number>0</number>
       </property>
       <item>
-       <layout class="QHBoxLayout" >
+       <layout class="QHBoxLayout">
         <item>
-         <widget class="QPushButton" name="clearButton" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+         <widget class="QPushButton" name="clearButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="toolTip" >
+          <property name="toolTip">
            <string>Remove Item</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string/>
           </property>
-          <property name="icon" >
-           <iconset resource="images.qrc" >:/images/close_normal.png</iconset>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
           </property>
          </widget>
         </item>
         <item>
          <spacer>
-          <property name="orientation" >
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeType" >
+          <property name="sizeType">
            <enum>QSizePolicy::Preferred</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>16</width>
             <height>26</height>
@@ -78,34 +80,34 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLabel" name="titleLabel" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+         <widget class="QLabel" name="titleLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="font" >
+          <property name="font">
            <font>
             <weight>75</weight>
             <italic>true</italic>
             <bold>true</bold>
            </font>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Connected</string>
           </property>
          </widget>
         </item>
         <item>
          <spacer>
-          <property name="orientation" >
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeType" >
+          <property name="sizeType">
            <enum>QSizePolicy::Preferred</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>500</width>
             <height>20</height>
@@ -114,64 +116,65 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="expandButton" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+         <widget class="QPushButton" name="expandButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="toolTip" >
+          <property name="toolTip">
            <string>Expand</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string/>
           </property>
-          <property name="icon" >
-           <iconset resource="images.qrc" >:/images/add_24x24.png</iconset>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/add_24x24.png</normaloff>:/images/add_24x24.png</iconset>
           </property>
          </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" >
+       <layout class="QHBoxLayout">
         <item>
-         <widget class="QLabel" name="typeLabel" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+         <widget class="QLabel" name="typeLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="font" >
+          <property name="font">
            <font>
             <weight>75</weight>
             <italic>true</italic>
             <bold>true</bold>
            </font>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Status:</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="statusLabel" >
-          <property name="text" >
+         <widget class="QLabel" name="statusLabel">
+          <property name="text">
            <string>Connected</string>
           </property>
          </widget>
         </item>
         <item>
          <spacer>
-          <property name="orientation" >
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeType" >
+          <property name="sizeType">
            <enum>QSizePolicy::Fixed</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>40</width>
             <height>20</height>
@@ -180,40 +183,40 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLabel" name="label" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Minimum" hsizetype="Preferred" >
+         <widget class="QLabel" name="label">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="font" >
+          <property name="font">
            <font>
             <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Trust: </string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="trustLabel" >
-          <property name="text" >
+         <widget class="QLabel" name="trustLabel">
+          <property name="text">
            <string>Good</string>
           </property>
          </widget>
         </item>
         <item>
          <spacer>
-          <property name="orientation" >
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeType" >
+          <property name="sizeType">
            <enum>QSizePolicy::Preferred</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>500</width>
             <height>20</height>
@@ -222,33 +225,34 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="addButton" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+         <widget class="QPushButton" name="addButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="toolTip" >
+          <property name="toolTip">
            <string>Make Friend</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string/>
           </property>
-          <property name="icon" >
-           <iconset resource="images.qrc" >:/images/add-friend24.png</iconset>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/add-friend24.png</normaloff>:/images/add-friend24.png</iconset>
           </property>
          </widget>
         </item>
         <item>
          <spacer>
-          <property name="orientation" >
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeType" >
+          <property name="sizeType">
            <enum>QSizePolicy::Fixed</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
             <height>20</height>
@@ -257,33 +261,34 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="removeButton" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+         <widget class="QPushButton" name="removeButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="toolTip" >
+          <property name="toolTip">
            <string>Remove Friend</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string/>
           </property>
-          <property name="icon" >
-           <iconset resource="images.qrc" >:/images/ddeny.png</iconset>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/ddeny.png</normaloff>:/images/ddeny.png</iconset>
           </property>
          </widget>
         </item>
         <item>
          <spacer>
-          <property name="orientation" >
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeType" >
+          <property name="sizeType">
            <enum>QSizePolicy::Fixed</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>60</width>
             <height>20</height>
@@ -292,33 +297,34 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="msgButton" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+         <widget class="QPushButton" name="msgButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="toolTip" >
+          <property name="toolTip">
            <string>Send Mail</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string/>
           </property>
-          <property name="icon" >
-           <iconset resource="images.qrc" >:/images/mail_send.png</iconset>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/mail_send.png</normaloff>:/images/mail_send.png</iconset>
           </property>
          </widget>
         </item>
         <item>
          <spacer>
-          <property name="orientation" >
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeType" >
+          <property name="sizeType">
            <enum>QSizePolicy::Fixed</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
             <height>20</height>
@@ -327,100 +333,101 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="chatButton" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+         <widget class="QPushButton" name="chatButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="toolTip" >
+          <property name="toolTip">
            <string>Chat</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string/>
           </property>
-          <property name="icon" >
-           <iconset resource="images.qrc" >:/images/chat.png</iconset>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/chat.png</normaloff>:/images/chat.png</iconset>
           </property>
          </widget>
         </item>
        </layout>
       </item>
       <item>
-       <widget class="QFrame" name="expandFrame" >
-        <property name="frameShape" >
+       <widget class="QFrame" name="expandFrame">
+        <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>
-        <property name="frameShadow" >
+        <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QVBoxLayout" >
+        <layout class="QVBoxLayout">
          <item>
-          <layout class="QHBoxLayout" >
+          <layout class="QHBoxLayout">
            <item>
-            <layout class="QVBoxLayout" >
+            <layout class="QVBoxLayout">
              <item>
-              <widget class="QLabel" name="label_3" >
-               <property name="font" >
+              <widget class="QLabel" name="label_3">
+               <property name="font">
                 <font>
                  <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>Name:</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_4" >
-               <property name="font" >
+              <widget class="QLabel" name="label_4">
+               <property name="font">
                 <font>
                  <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>RsId:</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_5" >
-               <property name="font" >
+              <widget class="QLabel" name="label_5">
+               <property name="font">
                 <font>
                  <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>Organisation</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_6" >
-               <property name="font" >
+              <widget class="QLabel" name="label_6">
+               <property name="font">
                 <font>
                  <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>Location</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_7" >
-               <property name="font" >
+              <widget class="QLabel" name="label_7">
+               <property name="font">
                 <font>
                  <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>Country</string>
                </property>
               </widget>
@@ -428,68 +435,68 @@
             </layout>
            </item>
            <item>
-            <layout class="QVBoxLayout" >
+            <layout class="QVBoxLayout">
              <item>
-              <widget class="QLabel" name="nameLabel" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+              <widget class="QLabel" name="nameLabel">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>TextLabel</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="idLabel" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+              <widget class="QLabel" name="idLabel">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>TextLabel</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="orgLabel" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+              <widget class="QLabel" name="orgLabel">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>TextLabel</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="locLabel" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+              <widget class="QLabel" name="locLabel">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>TextLabel</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="countryLabel" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+              <widget class="QLabel" name="countryLabel">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>TextLabel</string>
                </property>
               </widget>
@@ -500,13 +507,13 @@
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>20</height>
@@ -515,44 +522,44 @@
           </spacer>
          </item>
          <item>
-          <layout class="QHBoxLayout" >
+          <layout class="QHBoxLayout">
            <item>
-            <layout class="QVBoxLayout" >
+            <layout class="QVBoxLayout">
              <item>
-              <widget class="QLabel" name="label_8" >
-               <property name="font" >
+              <widget class="QLabel" name="label_8">
+               <property name="font">
                 <font>
                  <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>IP Address</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_9" >
-               <property name="font" >
+              <widget class="QLabel" name="label_9">
+               <property name="font">
                 <font>
                  <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>Connection Method</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_10" >
-               <property name="font" >
+              <widget class="QLabel" name="label_10">
+               <property name="font">
                 <font>
                  <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>Last Contact:</string>
                </property>
               </widget>
@@ -560,42 +567,42 @@
             </layout>
            </item>
            <item>
-            <layout class="QVBoxLayout" >
+            <layout class="QVBoxLayout">
              <item>
-              <widget class="QLabel" name="ipLabel" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+              <widget class="QLabel" name="ipLabel">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>TextLabel</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="connLabel" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+              <widget class="QLabel" name="connLabel">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>TextLabel</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="lastLabel" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+              <widget class="QLabel" name="lastLabel">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
-               <property name="text" >
+               <property name="text">
                 <string>TextLabel</string>
                </property>
               </widget>
@@ -613,7 +620,8 @@
   </layout>
  </widget>
  <resources>
-  <include location="images.qrc" />
+  <include location="../images.qrc"/>
+  <include location="images.qrc"/>
  </resources>
  <connections/>
 </ui>
