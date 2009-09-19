@@ -626,8 +626,11 @@ void ChannelFeed::updateChannelMsgs()
 		subscribeButton->setEnabled(false);
 		unsubscribeButton->setEnabled(false);
 		nameLabel->setText("No Channel Selected");
+		iconLabel->setEnabled(false);
 		return;
 	}
+	
+	iconLabel->setEnabled(true);
 	
 	/* set textcolor for Channel name  */
 	QString channelStr("<span style=\"font-size:22pt; font-weight:500;"
