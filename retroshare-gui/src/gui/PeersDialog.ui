@@ -616,7 +616,7 @@ p, li { white-space: pre-wrap; }
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-image: url(:/images/connect/connectFriendBanner.png)</string>
+          <string notr="true">QFrame#frame{background-image: url(:/images/connect/connectFriendBanner.png)}</string>
          </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
@@ -676,9 +676,7 @@ p, li { white-space: pre-wrap; }
                </size>
               </property>
               <property name="styleSheet">
-               <string notr="true">
-
-</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;

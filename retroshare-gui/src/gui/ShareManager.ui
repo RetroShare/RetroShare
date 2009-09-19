@@ -21,7 +21,7 @@
    <item row="0" column="0" colspan="4">
     <widget class="QFrame" name="frame">
      <property name="styleSheet">
-      <string notr="true">background-image: url(:/images/connect/connectFriendBanner.png)
+      <string notr="true">QFrame#frame{background-image: url(:/images/connect/connectFriendBanner.png)}
 </string>
      </property>
      <property name="frameShape">

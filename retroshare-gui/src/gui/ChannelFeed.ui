@@ -82,7 +82,7 @@
      <item row="0" column="0">
       <widget class="QFrame" name="frame">
        <property name="styleSheet">
-        <string notr="true"> QFrame{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        <string notr="true"> QFrame#frame{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 #F2F2F2, stop:1 #E6E6E6);}</string>
        </property>
        <property name="frameShape">
