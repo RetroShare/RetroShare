@@ -200,49 +200,7 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <spacer>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>228</width>
-              <height>17</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
           <item row="0" column="3">
-           <widget class="QPushButton" name="subscribeButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>26</width>
-              <height>26</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>Subscribe To Channel</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="images.qrc">
-              <normaloff>:/images/konqsidebar_news24.png</normaloff>:/images/konqsidebar_news24.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="4">
            <widget class="QPushButton" name="unsubscribeButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -260,15 +218,37 @@ p, li { white-space: pre-wrap; }
              <string>Unsubcribe To Channel</string>
             </property>
             <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="images.qrc">
-              <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
+             <string>Unsubscribe</string>
             </property>
            </widget>
           </item>
           <item row="0" column="2">
+           <widget class="QPushButton" name="subscribeButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>26</width>
+              <height>26</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Subscribe To Channel</string>
+            </property>
+            <property name="text">
+             <string>Subscribe</string>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/images/konqsidebar_news24.png</normaloff>:/images/konqsidebar_news24.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
            <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
