@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>825</width>
+    <width>652</width>
     <height>323</height>
    </rect>
   </property>
@@ -26,7 +26,8 @@
       </sizepolicy>
      </property>
      <property name="styleSheet">
-      <string notr="true">QFrame#frame{border: 2px solid black;}</string>
+      <string notr="true">QFrame#frame{border: 2px solid black;
+background: white;}</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -36,10 +37,10 @@
      </property>
      <layout class="QVBoxLayout">
       <property name="topMargin">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="bottomMargin">
-       <number>0</number>
+       <number>1</number>
       </property>
       <item>
        <layout class="QHBoxLayout">
@@ -62,22 +63,6 @@
             <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
           </property>
          </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Preferred</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>16</width>
-            <height>26</height>
-           </size>
-          </property>
-         </spacer>
         </item>
         <item>
          <widget class="QLabel" name="titleLabel">
@@ -621,7 +606,7 @@
  </widget>
  <resources>
   <include location="../images.qrc"/>
-  <include location="images.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>
