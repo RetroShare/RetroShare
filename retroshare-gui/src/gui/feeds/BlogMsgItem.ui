@@ -29,7 +29,8 @@
       </sizepolicy>
      </property>
      <property name="styleSheet">
-      <string notr="true">QFrame#frame{border: 2px solid black;}</string>
+      <string notr="true">QFrame#frame{border: 2px solid black;
+background: white;}</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
