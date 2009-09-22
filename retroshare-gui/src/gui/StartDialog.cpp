@@ -23,6 +23,7 @@
 #include <rsiface/rsinit.h>
 #include "StartDialog.h"
 #include "GenCertDialog.h"
+#include "InfoDialog.h"
 #include "LogoBar.h"
 #include <QFileDialog>
 #include <QMessageBox>
@@ -67,6 +68,7 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
   //connect(ui.selectButton, SIGNAL(clicked()), this, SLOT(selectFriend()));
   //connect(ui.friendBox, SIGNAL(stateChanged(int)), this, SLOT(checkChanged(int)));
   connect(ui.createaccountButton, SIGNAL(clicked()), this, SLOT(createnewaccount()));
+  connect(ui.infoButton,SIGNAL(clicked()), this, SLOT(infodlg()));
 
   /* load the Certificate File name */
   std::string userName;
@@ -258,6 +260,15 @@ void StartDialog::createnewaccount()
     	close();
     }
 }
+
+
+void StartDialog::infodlg()
+{
+    static InfoDialog *infodialog = new InfoDialog();
+    infodialog->show();
+}
+
+
 
 bool  StartDialog::requestedNewCert()
 {

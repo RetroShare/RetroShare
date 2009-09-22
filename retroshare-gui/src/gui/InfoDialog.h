@@ -1,5 +1,5 @@
 /****************************************************************
- *  RShare is distributed under the following license:
+ *  RetroShare is distributed under the following license:
  *
  *  Copyright (C) 2006, crypton
  *
@@ -19,51 +19,30 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#ifndef _INFODIALOG_H
+#define _INFODIALOG_H
 
-#ifndef _GENCERTDIALOG_H
-#define _GENCERTDIALOG_H
+#include <QFileDialog>
 
-#include "rsiface/rsiface.h"
+#include "ui_InfoDialog.h"
 
-#include "ui_GenCertDialog.h"
+#include "rsiface/rstypes.h"
 
-
-
-class GenCertDialog : public QDialog
+class InfoDialog : public QDialog 
 {
   Q_OBJECT
 
 public:
-  /** Default constructor */
-  GenCertDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
-  /** Default destructor */
+  /** Default Constructor */
+  InfoDialog(QWidget *parent = 0);
+  /** Default Destructor */
 
-  //~GenCertDialog();
-  
-public slots:
-  /** Overloaded QWidget.show */
-  void show();
-
-protected:
-  void closeEvent (QCloseEvent * event);
-  
 private slots:
 
-	void closeinfodlg();
-	void genPerson();
-	//void loadPerson();
-	void selectFriend();
-	void checkChanged(int i);
-	void infodlg();
-  
 private:
-
-  /** Loads the saved connectidialog settings */
-  //  void loadSettings();
-  void loadCertificates();
-
   /** Qt Designer generated object */
-  Ui::GenCertDialog ui;
+  Ui::InfoDialog ui;
+
 };
 
 #endif

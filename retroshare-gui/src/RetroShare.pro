@@ -134,7 +134,7 @@ HEADERS +=  rshare.h \
             gui/ExampleDialog.h \
             gui/GamesDialog.h \
             gui/PhotoDialog.h \
-				gui/TurtleRouterDialog.h \
+            gui/TurtleRouterDialog.h \
             gui/PhotoShow.h \
             gui/AddLinksDialog.h \
             gui/LinksDialog.h \
@@ -155,6 +155,7 @@ HEADERS +=  rshare.h \
             gui/StatisticDialog.h \
             gui/SoundManager.h \
             gui/HelpDialog.h \
+            gui/InfoDialog.h \
             gui/LogoBar.h \
             gui/xprogressbar.h \
             gui/plugins/PluginInterface.h \
@@ -247,7 +248,7 @@ HEADERS +=  rshare.h \
             gui/TransferFeed.h \
             gui/ChannelFeed.h \
             gui/GeneralMsgDialog.h \
-	    gui/ChanGroupDelegate.h \
+            gui/ChanGroupDelegate.h \
             gui/feeds/FeedHolder.h \
             gui/feeds/ForumNewItem.h \
             gui/feeds/ForumMsgItem.h \
@@ -273,7 +274,7 @@ FORMS +=    gui/BlogDialog.ui \
             gui/MainWindow.ui \
             gui/ApplicationWindow.ui \
             gui/ExampleDialog.ui \
-				gui/TurtleRouterDialog.ui \
+            gui/TurtleRouterDialog.ui \
             gui/GamesDialog.ui \
             gui/PhotoDialog.ui \
             gui/PhotoShow.ui \
@@ -294,6 +295,7 @@ FORMS +=    gui/BlogDialog.ui \
             gui/MessagesPopupDialog.ui \
             gui/help/browser/helpbrowser.ui \
             gui/HelpDialog.ui \
+            gui/InfoDialog.ui \
             gui/bwgraph/bwgraph.ui \
             gui/profile/ProfileView.ui \
             gui/profile/ProfileEdit.ui \
@@ -353,7 +355,7 @@ SOURCES +=  main.cpp \
             gui/TransfersDialog.cpp \
             gui/graphframe.cpp \
             gui/mainpagestack.cpp \
-				gui/TurtleRouterDialog.cpp \
+            gui/TurtleRouterDialog.cpp \
             gui/MainWindow.cpp \
             gui/ApplicationWindow.cpp \
             gui/ExampleDialog.cpp \
@@ -387,6 +389,7 @@ SOURCES +=  main.cpp \
             gui/help/browser/helpbrowser.cpp \
             gui/help/browser/helptextbrowser.cpp \
             gui/HelpDialog.cpp \
+            gui/InfoDialog.cpp \
             gui/LogoBar.cpp \
             gui/xprogressbar.cpp \
             lang/languagesupport.cpp \
@@ -460,7 +463,7 @@ SOURCES +=  main.cpp \
             gui/TransferFeed.cpp \
             gui/ChannelFeed.cpp \
             gui/GeneralMsgDialog.cpp \
-	    gui/ChanGroupDelegate.cpp \
+            gui/ChanGroupDelegate.cpp \
             gui/feeds/ForumNewItem.cpp \
             gui/feeds/ForumMsgItem.cpp \
             gui/feeds/PeerItem.cpp \

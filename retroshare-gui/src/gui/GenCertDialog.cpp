@@ -23,6 +23,7 @@
 #include <rshare.h>
 #include <rsiface/rsinit.h>
 #include "GenCertDialog.h"
+#include "InfoDialog.h"
 #include "gui/Preferences/rsharesettings.h"
 #include <QFileDialog>
 #include <QMessageBox>
@@ -43,6 +44,7 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
 
   
   connect(ui.genButton, SIGNAL(clicked()), this, SLOT(genPerson()));
+  connect(ui.infopushButton,SIGNAL(clicked()), this, SLOT(infodlg()));
   //connect(ui.selectButton, SIGNAL(clicked()), this, SLOT(selectFriend()));
   //connect(ui.friendBox, SIGNAL(stateChanged(int)), this, SLOT(checkChanged(int)));
 
@@ -248,3 +250,8 @@ void GenCertDialog::loadCertificates()
 	}
 }
 
+void GenCertDialog::infodlg()
+{
+    static InfoDialog *infodialog = new InfoDialog();
+    infodialog->show();
+}

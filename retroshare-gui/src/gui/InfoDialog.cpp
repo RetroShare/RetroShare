@@ -1,7 +1,7 @@
 /****************************************************************
- *  RShare is distributed under the following license:
+ *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2006, crypton
+ *  Copyright (C) 2009, RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -20,51 +20,39 @@
  ****************************************************************/
 
 
-#ifndef _GENCERTDIALOG_H
-#define _GENCERTDIALOG_H
-
+#include "InfoDialog.h"
 #include "rsiface/rsiface.h"
 
-#include "ui_GenCertDialog.h"
+#include <iostream>
+#include <sstream>
 
+#include <QtCore/QFile>
+#include <QtCore/QTextStream>
 
+#include <QContextMenuEvent>
+#include <QMenu>
+#include <QCursor>
+#include <QPoint>
+#include <QMouseEvent>
+#include <QPixmap>
 
-class GenCertDialog : public QDialog
+/* Images for context menu icons */
+#define IMAGE_DOWNLOAD       ":/images/start.png"
+
+/** Constructor */
+InfoDialog::InfoDialog(QWidget *parent)
+:QDialog(parent)
 {
-  Q_OBJECT
-
-public:
-  /** Default constructor */
-  GenCertDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
-  /** Default destructor */
-
-  //~GenCertDialog();
+  /* Invoke the Qt Designer generated object setup routine */
+  ui.setupUi(this);
   
-public slots:
-  /** Overloaded QWidget.show */
-  void show();
+  connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
-protected:
-  void closeEvent (QCloseEvent * event);
-  
-private slots:
 
-	void closeinfodlg();
-	void genPerson();
-	//void loadPerson();
-	void selectFriend();
-	void checkChanged(int i);
-	void infodlg();
-  
-private:
-
-  /** Loads the saved connectidialog settings */
-  //  void loadSettings();
-  void loadCertificates();
-
-  /** Qt Designer generated object */
-  Ui::GenCertDialog ui;
-};
+  /* Hide platform specific features */
+#ifdef Q_WS_WIN
 
 #endif
+}
+
 

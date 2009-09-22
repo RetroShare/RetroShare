@@ -60,7 +60,9 @@ private slots:
 
 	void closeinfodlg();
 	void loadPerson();
-    void createnewaccount();
+  void createnewaccount();
+  void infodlg();
+
   
 private:
 
