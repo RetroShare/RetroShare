@@ -109,6 +109,9 @@ private slots:
   void changeAvatarClicked();
   void updateAvatar();
   void getAvatar();
+  
+  void on_actionAdd_Friend_activated();
+  void on_actionCreate_new_Profile_activated(); 
 
 
 signals:

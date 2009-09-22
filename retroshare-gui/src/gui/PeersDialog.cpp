@@ -35,8 +35,8 @@
 #include "msgs/ChanMsgDialog.h"
 #include "connect/ConfCertDialog.h"
 #include "profile/ProfileView.h"
-
-
+#include "GenCertDialog.h"
+#include "gui/connect/ConnectFriendWizard.h"
 #include "gui/Preferences/rsharesettings.h"
 
 #include <iostream>
@@ -164,6 +164,12 @@ PeersDialog::PeersDialog(QWidget *parent)
   timer->start(500); /* half a second */
 
   ui.peertreeWidget->sortItems( 1, Qt::AscendingOrder );
+  
+  QMenu *menu = new QMenu();
+  menu->addAction(ui.actionAdd_Friend); 
+  menu->addSeparator();
+  menu->addAction(ui.actionCreate_new_Profile);
+  ui.menupushButton->setMenu(menu);
 
   updateAvatar();
 
@@ -1240,4 +1246,22 @@ void PeersDialog::changeAvatarClicked()
 {
 
 	updateAvatar();
+}
+
+void PeersDialog::on_actionAdd_Friend_activated() 
+{
+  ConnectFriendWizard* connectwiz = new ConnectFriendWizard(this);
+
+    // set widget to be deleted after close
+    connectwiz->setAttribute( Qt::WA_DeleteOnClose, true);
+
+
+    connectwiz->show();
+}
+
+void PeersDialog::on_actionCreate_new_Profile_activated()
+{
+    static GenCertDialog *gencertdialog = new GenCertDialog();
+    gencertdialog->show();
+    
 }
