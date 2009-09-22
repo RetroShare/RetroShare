@@ -148,11 +148,11 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     setLogInfo(tr("Welcome to RetroShare."), QString::fromUtf8("blue"));
       
     QMenu *menu = new QMenu(tr("Menu"));
-    menu->addAction(ui.actionAddFriend); 
+    //menu->addAction(ui.actionAddFriend); 
     //menu->addAction(ui.actionCopyKey);
-    menu->addAction(ui.actionExportKey);
-    menu->addAction(ui.actionCreate_New_Profile);
-    menu->addSeparator();
+    //menu->addAction(ui.actionExportKey);
+    //menu->addAction(ui.actionCreate_New_Profile);
+    //menu->addSeparator();
     menu->addAction(ui.actionTabsright); 
     menu->addAction(ui.actionTabswest);
     menu->addAction(ui.actionTabssouth); 
