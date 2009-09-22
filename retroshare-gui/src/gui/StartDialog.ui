@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>244</width>
-    <height>529</height>
+    <height>532</height>
    </rect>
   </property>
   <property name="palette">
@@ -441,7 +441,7 @@
   <property name="styleSheet">
    <string notr="true">.QWidget {
    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                       stop:0 lightgray, stop:1 darkgray);
+                                       stop:0 #ECECEC, stop:1 #E0E0E0);
  }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
