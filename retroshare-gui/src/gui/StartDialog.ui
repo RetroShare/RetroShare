@@ -581,7 +581,7 @@ p, li { white-space: pre-wrap; }
       </item>
      </layout>
     </item>
-    <item row="4" column="1" colspan="2">
+    <item row="3" column="1" colspan="2">
      <widget class="QGroupBox" name="groupBox">
       <property name="title">
        <string/>
@@ -660,7 +660,7 @@ p, li { white-space: pre-wrap; }
       </layout>
      </widget>
     </item>
-    <item row="5" column="0" colspan="4">
+    <item row="4" column="0" colspan="4">
      <layout class="QGridLayout" name="gridLayout_3">
       <property name="topMargin">
        <number>9</number>
@@ -709,7 +709,7 @@ p, li { white-space: pre-wrap; }
       </item>
      </layout>
     </item>
-    <item row="6" column="0" colspan="4">
+    <item row="5" column="0" colspan="4">
      <spacer>
       <property name="orientation">
        <enum>Qt::Vertical</enum>
@@ -722,7 +722,7 @@ p, li { white-space: pre-wrap; }
       </property>
      </spacer>
     </item>
-    <item row="8" column="0" colspan="4">
+    <item row="7" column="0" colspan="4">
      <widget class="QFrame" name="callBarFrame">
       <property name="minimumSize">
        <size>
@@ -738,7 +738,7 @@ p, li { white-space: pre-wrap; }
       </property>
      </widget>
     </item>
-    <item row="2" column="3" rowspan="3">
+    <item row="3" column="3">
      <spacer name="horizontalSpacer_3">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -751,7 +751,7 @@ p, li { white-space: pre-wrap; }
       </property>
      </spacer>
     </item>
-    <item row="2" column="0" rowspan="3">
+    <item row="3" column="0">
      <spacer name="horizontalSpacer_4">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -764,33 +764,20 @@ p, li { white-space: pre-wrap; }
       </property>
      </spacer>
     </item>
-    <item row="3" column="1" colspan="2">
-     <spacer name="horizontalSpacer_5">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>75</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="7" column="1">
+    <item row="6" column="1">
      <widget class="QPushButton" name="createaccountButton">
       <property name="toolTip">
        <string>Generate now a Profile</string>
       </property>
       <property name="text">
-       <string>new profile</string>
+       <string>Create new profile</string>
       </property>
       <property name="flat">
        <bool>false</bool>
       </property>
      </widget>
     </item>
-    <item row="7" column="2">
+    <item row="6" column="2">
      <widget class="QPushButton" name="infoButton">
       <property name="text">
        <string>Info</string>
