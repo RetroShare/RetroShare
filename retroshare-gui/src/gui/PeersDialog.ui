@@ -562,6 +562,17 @@ p, li { white-space: pre-wrap; }
             <property name="toolTip">
              <string>Add</string>
             </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton::menu-indicator {
+     subcontrol-origin: padding;
+     subcontrol-position: bottom right;
+ }
+
+ QPushButton::menu-indicator:pressed, QPushButton::menu-indicator:open {
+     position: relative;
+     top: 2px; left: 2px; /* shift the arrow by 2 px */
+ }</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -574,6 +585,9 @@ p, li { white-space: pre-wrap; }
               <width>16</width>
               <height>16</height>
              </size>
+            </property>
+            <property name="default">
+             <bool>false</bool>
             </property>
             <property name="flat">
              <bool>true</bool>
