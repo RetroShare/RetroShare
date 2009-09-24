@@ -637,6 +637,7 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 		child->setIcon(SR_ICON_COL, QIcon(IMAGE_DIRECTORY));
 		child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
 		child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
+		child->setText(SR_SIZE_COL, misc::friendlyUnit(dir.count));
 		child->setText(SR_AGE_COL, misc::userFriendlyDuration(dir.age));
 		child->setText(SR_REALSIZE_COL, QString::number(dir.count));
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
