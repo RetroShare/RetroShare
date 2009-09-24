@@ -169,6 +169,7 @@ PeersDialog::PeersDialog(QWidget *parent)
   menu->addAction(ui.actionAdd_Friend); 
   menu->addSeparator();
   menu->addAction(ui.actionCreate_new_Profile);
+  //ui.menupushButton->setPopupMode(QToolButton::MenuButtonPopup);
   ui.menupushButton->setMenu(menu);
 
   updateAvatar();
@@ -208,7 +209,31 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       connect( removefriendAct , SIGNAL( triggered() ), this, SLOT( removefriend() ) );
 
 
+      QWidget *widget = new QWidget();
+      widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");  
+      
+      QHBoxLayout *hbox = new QHBoxLayout();
+      hbox->setMargin(0);
+      hbox->setSpacing(6);
+    
+      iconLabel = new QLabel( this );
+      iconLabel->setPixmap(QPixmap::QPixmap(":/images/user/friends24.png"));
+      iconLabel->setMaximumSize( iconLabel->frameSize().height() + 24, 24 );
+      hbox->addWidget(iconLabel);
+       
+      textLabel = new QLabel( tr("<strong>Friends</strong>"), this );
+      hbox->addWidget(textLabel);
+      
+      spacerItem = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+      hbox->addItem(spacerItem); 
+       
+      widget->setLayout( hbox );
+    
+      QWidgetAction *widgetAction = new QWidgetAction(this); 
+      widgetAction->setDefaultWidget(widget); 
+
       contextMnu.clear();
+      contextMnu.addAction( widgetAction);
       contextMnu.addAction( chatAct);
       contextMnu.addAction( msgAct);
       contextMnu.addSeparator();
@@ -219,7 +244,7 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       contextMnu.addAction( exportfriendAct);
       contextMnu.addAction( removefriendAct);
       contextMnu.exec( mevent->globalPos() );
-
+      
 
 }
 

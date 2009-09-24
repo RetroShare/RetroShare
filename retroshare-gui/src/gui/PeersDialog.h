@@ -119,15 +119,16 @@ signals:
   void notifyGroupChat(const QString&,const QString&) ;
   
 private:
+   class QLabel *iconLabel, *textLabel;
+   class QWidget *widget;
+   class QWidgetAction *widgetAction;
+   class QSpacerItem *spacerItem; 
 
   /* Worker Functions */
   /* (1) Update Display */
 
   /* (2) Utility Fns */
   QTreeWidgetItem *getCurrentPeer();
-
- // ChatDialog *chatDialog;
-
 
   /** Define the popup menus for the Context menu */
   QMenu* contextMnu;
