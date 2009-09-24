@@ -876,6 +876,11 @@ p, li { white-space: pre-wrap; }
       </column>
       <column>
        <property name="text">
+        <string>Age</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
         <string>Hash</string>
        </property>
       </column>

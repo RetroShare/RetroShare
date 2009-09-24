@@ -56,11 +56,13 @@
 #define SR_SIZE_COL         2
 #define SR_ID_COL           3
 #define SR_TYPE_COL         4
-#define SR_HASH_COL         5
-#define SR_SEARCH_ID_COL    6
+#define SR_AGE_COL          5
+#define SR_HASH_COL         6
 
-#define SR_UID_COL          7
-#define SR_REALSIZE_COL         8
+#define SR_SEARCH_ID_COL    7
+
+#define SR_UID_COL          8
+#define SR_REALSIZE_COL     9
 
 /* indicies for search summary item columns SS_ = Search Summary */
 #define SS_TEXT_COL         0
@@ -143,7 +145,7 @@ SearchDialog::SearchDialog(QWidget *parent)
     _smheader->resizeSection ( 1, 75 );
     _smheader->resizeSection ( 2, 75 );
 
-    ui.searchResultWidget->setColumnCount(6);
+    ui.searchResultWidget->setColumnCount(7);
     _smheader = ui.searchResultWidget->header () ;
     _smheader->setResizeMode (0, QHeaderView::Custom);
     _smheader->setResizeMode (1, QHeaderView::Interactive);
@@ -155,7 +157,8 @@ SearchDialog::SearchDialog(QWidget *parent)
     _smheader->resizeSection ( 2, 75 );
     _smheader->resizeSection ( 3, 75 );
     _smheader->resizeSection ( 4, 75 );
-    _smheader->resizeSection ( 5, 240 );
+    _smheader->resizeSection ( 5, 90 );
+    _smheader->resizeSection ( 6, 240 );
 
 
     // set header text aligment
@@ -609,6 +612,7 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 		child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
 		QString ext = QFileInfo(QString::fromStdString(dir.name)).suffix();
 		child->setText(SR_SIZE_COL, misc::friendlyUnit(dir.count));
+		child->setText(SR_AGE_COL, misc::userFriendlyDuration(dir.age));
 		child->setText(SR_REALSIZE_COL, QString::number(dir.count));
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		child->setText(SR_ID_COL, QString::number(1));
@@ -633,7 +637,7 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 		child->setIcon(SR_ICON_COL, QIcon(IMAGE_DIRECTORY));
 		child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
 		child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
-		child->setText(SR_SIZE_COL, misc::friendlyUnit(dir.count));
+		child->setText(SR_AGE_COL, misc::userFriendlyDuration(dir.age));
 		child->setText(SR_REALSIZE_COL, QString::number(dir.count));
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		child->setText(SR_ID_COL, QString::number(1));
@@ -729,6 +733,7 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 
 		item->setText(SR_SIZE_COL, misc::friendlyUnit(file.size));
 		item->setText(SR_REALSIZE_COL, QString::number(file.size));
+		item->setText(SR_AGE_COL, misc::userFriendlyDuration(file.age));
 		item->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		item->setText(SR_ID_COL, QString::number(1));
 		item->setText(SR_SEARCH_ID_COL, sid_hexa);
