@@ -86,6 +86,7 @@ private slots:
 
 private:
 /** render the results to the tree widget display */
+	 void initSearchResult(const std::string& txt,qulonglong searchId) ;
     void resultsToTree(std::string,qulonglong searchId, const std::list<DirDetails>&);
 	 void insertFile(const std::string& txt,qulonglong searchId, const FileDetail& file) ;
 	 void insertDirectory(const std::string &txt, qulonglong searchId, const DirDetails &dir, QTreeWidgetItem *item);

@@ -404,6 +404,21 @@ void SearchDialog::showAdvSearchDialog(bool show)
     }
 }
 
+// Creates a new entry in the search summary, not to leave it blank whatever happens.
+//
+void SearchDialog::initSearchResult(const std::string& txt,qulonglong searchId)
+{
+	QString sid_hexa = QString::number(searchId,16) ;
+
+	QTreeWidgetItem *item2 = new QTreeWidgetItem();
+	item2->setText(SS_TEXT_COL, QString::fromStdString(txt));
+	item2->setText(SS_COUNT_COL, QString::number(0));
+	item2->setText(SS_SEARCH_ID_COL, sid_hexa);
+
+	ui.searchSummaryWidget->addTopLevelItem(item2);
+	ui.searchSummaryWidget->setCurrentItem(item2);
+}
+
 void SearchDialog::advancedSearch(Expression* expression)
 {
         advSearchDialog->hide();
@@ -416,6 +431,10 @@ void SearchDialog::advancedSearch(Expression* expression)
 	expression->linearize(e) ;
 
 	TurtleRequestId req_id = rsTurtle->turtleSearch(e) ;
+
+	// This will act before turtle results come to the interface, thanks to the signals scheduling policy.
+	// The text "bool exp" should be replaced by an appropriate text describing the actual search.
+	initSearchResult(std::string("bool exp"),req_id) ;	
 
 	rsFiles -> SearchBoolExp(expression, results, DIR_FLAGS_REMOTE | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
 
@@ -439,6 +458,8 @@ void SearchDialog::searchKeywords()
 	std::cerr << "SearchDialog::searchKeywords() : " << txt << std::endl;
 
 	TurtleRequestId req_id = rsTurtle->turtleSearch(txt) ;
+
+	initSearchResult(txt,req_id) ;	// this will act before turtle results come to the interface, thanks to the signals scheduling policy.
 
 	/* extract keywords from lineEdit */
 	QStringList qWords = qTxt.split(" ", QString::SkipEmptyParts);
@@ -530,13 +551,18 @@ void SearchDialog::searchKeywords()
 
 	/* abstraction to allow reusee of tree rendering code */
 	resultsToTree(txt,req_id, *finalResults);
-	ui.lineEdit->clear();
+	ui.lineEdit->clear() ;
 }
 
 void SearchDialog::updateFiles(qulonglong search_id,FileDetail file)
 {
 	/* which extensions do we use? */
 	std::string txt = ui.lineEdit->text().toStdString();
+
+	std::cout << "Updating file detail:" << std::endl ;
+	std::cout << "  size = " << file.size << std::endl ;
+	std::cout << "  name = " << file.name << std::endl ;
+	std::cout << "  s_id = " << search_id << std::endl ;
 
 	if (ui.FileTypeComboBox->currentIndex() == FILETYPE_IDX_ANY)
 		insertFile(txt,search_id,file);
@@ -549,7 +575,7 @@ void SearchDialog::updateFiles(qulonglong search_id,FileDetail file)
 		QStringList extList = extStr.split(" ");
 
 		// get this file's extension
-		QString qName = QString::fromStdString(file.name);
+		QString qName = QString::fromUtf8(file.name.c_str());
 		int extIndex = qName.lastIndexOf(".");
 
 		if (extIndex >= 0)
@@ -566,7 +592,10 @@ void SearchDialog::updateFiles(qulonglong search_id,FileDetail file)
 
 void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, const DirDetails &dir, QTreeWidgetItem *item)
 {
-	if (dir.type == DIR_TYPE_FILE) {
+	QString sid_hexa = QString::number(searchId,16) ;
+
+	if (dir.type == DIR_TYPE_FILE) 
+	{
 		QTreeWidgetItem *child;
 		if (item == NULL) {
 			child = new QTreeWidgetItem(ui.searchResultWidget);
@@ -576,14 +605,14 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 
 		/* translate search result for a file */
 
-		child->setText(SR_NAME_COL, QString::fromStdString(dir.name));
+		child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
 		child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
 		QString ext = QFileInfo(QString::fromStdString(dir.name)).suffix();
 		child->setText(SR_SIZE_COL, misc::friendlyUnit(dir.count));
 		child->setText(SR_REALSIZE_COL, QString::number(dir.count));
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		child->setText(SR_ID_COL, QString::number(1));
-		child->setText(SR_SEARCH_ID_COL, QString::number(searchId,16));
+		child->setText(SR_SEARCH_ID_COL, sid_hexa);
 		setIconAndType(child, ext);
 
 		if (item == NULL) {
@@ -591,7 +620,9 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 		} else {
 			item->addChild(child);
 		}
-	} else { /* it is a directory */
+	} 
+	else 
+	{ /* it is a directory */
 		QTreeWidgetItem *child;
 		if (item == NULL) {
 			child = new QTreeWidgetItem(ui.searchResultWidget);
@@ -600,13 +631,13 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 		}
 
 		child->setIcon(SR_ICON_COL, QIcon(IMAGE_DIRECTORY));
-		child->setText(SR_NAME_COL, QString::fromStdString(dir.name));
+		child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
 		child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
 		child->setText(SR_SIZE_COL, misc::friendlyUnit(dir.count));
 		child->setText(SR_REALSIZE_COL, QString::number(dir.count));
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		child->setText(SR_ID_COL, QString::number(1));
-		child->setText(SR_SEARCH_ID_COL, QString::number(searchId,16));
+		child->setText(SR_SEARCH_ID_COL, sid_hexa);
 
 		if (item == NULL) {
 			ui.searchResultWidget->addTopLevelItem(child);
@@ -618,7 +649,7 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 
 			for(int i = 0; i < items; i++)
 			{
-				if(ui.searchSummaryWidget->topLevelItem(i)->text(SS_SEARCH_ID_COL).toInt(NULL,16) == searchId)
+				if(ui.searchSummaryWidget->topLevelItem(i)->text(SS_SEARCH_ID_COL) == sid_hexa)
 				{
 					// increment result since every item is new
 					int s = ui.searchSummaryWidget->topLevelItem(i)->text(SS_COUNT_COL).toInt() ;
@@ -631,7 +662,7 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 				QTreeWidgetItem *item2 = new QTreeWidgetItem();
 				item2->setText(SS_TEXT_COL, QString::fromStdString(txt));
 				item2->setText(SS_COUNT_COL, QString::number(1));
-				item2->setText(SS_SEARCH_ID_COL, QString::number(searchId,16));
+				item2->setText(SS_SEARCH_ID_COL, sid_hexa);
 
 				ui.searchSummaryWidget->addTopLevelItem(item2);
 				ui.searchSummaryWidget->setCurrentItem(item2);
@@ -669,13 +700,16 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 	int items = ui.searchResultWidget->topLevelItemCount();
 	bool found = false ;
 
+	QString sid_hexa = QString::number(searchId,16) ;
+
 	for(int i = 0; i < items; i++)
 		if(ui.searchResultWidget->topLevelItem(i)->text(SR_HASH_COL) == QString::fromStdString(file.hash)
-				&& ui.searchResultWidget->topLevelItem(i)->text(SR_SEARCH_ID_COL).toInt(NULL,16) == searchId)
+				&& ui.searchResultWidget->topLevelItem(i)->text(SR_SEARCH_ID_COL) == sid_hexa)
 		{
 			int s = ui.searchResultWidget->topLevelItem(i)->text(SR_ID_COL).toInt() ;
 			ui.searchResultWidget->topLevelItem(i)->setText(SR_ID_COL,QString::number(s+1));
 			found = true ;
+			break ;
 		}
 
 	if(!found)
@@ -683,7 +717,7 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 		/* translate search results */
 
 		QTreeWidgetItem *item = new QTreeWidgetItem();
-		item->setText(SR_NAME_COL, QString::fromStdString(file.name));
+		item->setText(SR_NAME_COL, QString::fromUtf8(file.name.c_str()));
 		item->setText(SR_HASH_COL, QString::fromStdString(file.hash));
 
 		QString ext = QFileInfo(QString::fromStdString(file.name)).suffix();
@@ -697,7 +731,7 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 		item->setText(SR_REALSIZE_COL, QString::number(file.size));
 		item->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		item->setText(SR_ID_COL, QString::number(1));
-		item->setText(SR_SEARCH_ID_COL, QString::number(searchId,16));
+		item->setText(SR_SEARCH_ID_COL, sid_hexa);
 
 		ui.searchResultWidget->addTopLevelItem(item);
 	}
@@ -708,7 +742,7 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 	bool found2 = false ;
 
 	for(int i = 0; i < items2; i++)
-		if(ui.searchSummaryWidget->topLevelItem(i)->text(SS_SEARCH_ID_COL).toInt(NULL,16) == searchId)
+		if(ui.searchSummaryWidget->topLevelItem(i)->text(SS_SEARCH_ID_COL) == sid_hexa)
 		{
 			if(!found)									// only increment result when it's a new item.
 			{
@@ -716,6 +750,7 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 				ui.searchSummaryWidget->topLevelItem(i)->setText(SS_COUNT_COL,QString::number(s+1));
 			}
 			found2 = true ;
+			break ;
 		}
 
 	if(!found2)
@@ -723,7 +758,7 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 		QTreeWidgetItem *item2 = new QTreeWidgetItem();
 		item2->setText(SS_TEXT_COL, QString::fromStdString(txt));
 		item2->setText(SS_COUNT_COL, QString::number(1));
-		item2->setText(SS_SEARCH_ID_COL, QString::number(searchId,16));
+		item2->setText(SS_SEARCH_ID_COL, sid_hexa);
 
 		ui.searchSummaryWidget->addTopLevelItem(item2);
 		ui.searchSummaryWidget->setCurrentItem(item2);
