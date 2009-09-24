@@ -56,6 +56,7 @@ void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<Turtl
 		det.age = 0 ;
 		det.name = (*it).name ;
 		det.hash = (*it).hash ;
+		det.size = (*it).size ;
 		det.id = "Anonymous" ;
 
 		emit gotTurtleSearchResult(search_id,det) ;
