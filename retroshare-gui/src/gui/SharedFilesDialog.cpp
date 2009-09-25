@@ -734,8 +734,12 @@ void SharedFilesDialog::showFrame(bool show)
 
         ui.remoteButton->setChecked(false);
         ui.splittedButton->setChecked(false);
+        
+        /* set textcolor for Channel name  */
+        QString labelStr("<span style=\"font-size:11pt; font-weight:500;"
+                               "color:#000000;\">%1</span>");
 
-        ui.labeltext->setText(tr("<strong>My Shared Files</strong>"));
+        ui.labeltext->setText( labelStr.arg(tr("<strong>My Shared Files</strong>")));
     }
 }
 
@@ -749,7 +753,11 @@ void SharedFilesDialog::showFrameRemote(bool show)
         ui.localButton->setChecked(false);
         ui.splittedButton->setChecked(false);
 
-        ui.labeltext->setText(tr("<strong>Friends Files</strong>"));
+        /* set textcolor for Channel name  */
+        QString label1Str("<span style=\"font-size:11pt; font-weight:500;"
+                               "color:#000000;\">%1</span>");
+
+        ui.labeltext->setText( label1Str.arg(tr("<strong>Friends Files</strong>")));
     }
 }
 
@@ -763,7 +771,11 @@ void SharedFilesDialog::showFrameSplitted(bool show)
 
         ui.localButton->setChecked(false);
         ui.remoteButton->setChecked(false);
+        
+        /* set textcolor for Channel name  */
+        QString label2Str("<span style=\"font-size:11pt; font-weight:500;"
+                               "color:#000000;\">%1</span>");
 
-        ui.labeltext->setText(tr("<strong>Files</strong>"));
+        ui.labeltext->setText( label2Str.arg(tr("<strong>Files</strong>")));
     }
 }

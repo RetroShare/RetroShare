@@ -661,6 +661,9 @@ p, li { white-space: pre-wrap; }
       </item>
       <item row="0" column="4">
        <widget class="QPushButton" name="pushButtonsearch">
+        <property name="toolTip">
+         <string>Start Search</string>
+        </property>
         <property name="text">
          <string>Search</string>
         </property>
@@ -668,6 +671,9 @@ p, li { white-space: pre-wrap; }
       </item>
       <item row="0" column="5">
        <widget class="QPushButton" name="resetButton">
+        <property name="toolTip">
+         <string>Reset</string>
+        </property>
         <property name="text">
          <string>Reset</string>
         </property>
@@ -680,7 +686,7 @@ p, li { white-space: pre-wrap; }
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>88</width>
+          <width>50</width>
           <height>20</height>
          </size>
         </property>
@@ -688,6 +694,9 @@ p, li { white-space: pre-wrap; }
       </item>
       <item row="0" column="7">
        <widget class="QPushButton" name="toggleAdvancedSearchBtn">
+        <property name="toolTip">
+         <string>Advanced Search</string>
+        </property>
         <property name="text">
          <string>Advanced</string>
         </property>
