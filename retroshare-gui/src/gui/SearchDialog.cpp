@@ -230,7 +230,6 @@ void SearchDialog::searchtableWidgetCostumPopupMenu( QPoint point )
       contextMnu->exec( mevent->globalPos() );
 }
 
-
 void SearchDialog::download()
 {
     /* should also be able to handle multi-selection */
@@ -244,19 +243,24 @@ void SearchDialog::download()
         // call the download
 	if (item->text(SR_ID_COL) != "Local")
 	{
-		std::cerr << "SearchDialog::download() Calling File Request";
-		std::cerr << std::endl;
-		std::list<std::string> srcIds;
-		srcIds.push_back(item->text(SR_UID_COL).toStdString()) ;
+		if (!item->childCount()) {
+			std::cerr << "SearchDialog::download() Calling File Request";
+			std::cerr << std::endl;
+			std::list<std::string> srcIds;
+			srcIds.push_back(item->text(SR_UID_COL).toStdString()) ;
 
-        	rsFiles -> FileRequest((item->text(SR_NAME_COL)).toStdString(),
-                                  (item->text(SR_HASH_COL)).toStdString(),
-                                  (item->text(SR_REALSIZE_COL)).toInt(),
-                                  "", 0, srcIds);
+				rsFiles -> FileRequest((item->text(SR_NAME_COL)).toStdString(),
+									  (item->text(SR_HASH_COL)).toStdString(),
+									  (item->text(SR_REALSIZE_COL)).toInt(),
+									  "", 0, srcIds);
 
-			std::cout << "isuing file request from search dialog: -" << (item->text(SR_NAME_COL)).toStdString() << "-" << (item->text(SR_HASH_COL)).toStdString() << "-" << (item->text(SR_REALSIZE_COL)).toInt() << "-ids=" ;
-			for(std::list<std::string>::const_iterator it(srcIds.begin());it!=srcIds.end();++it)
-				std::cout << *it << "-" << std::endl ;
+				std::cout << "isuing file request from search dialog: -" << (item->text(SR_NAME_COL)).toStdString() << "-" << (item->text(SR_HASH_COL)).toStdString() << "-" << (item->text(SR_REALSIZE_COL)).toInt() << "-ids=" ;
+				for(std::list<std::string>::const_iterator it(srcIds.begin());it!=srcIds.end();++it)
+					std::cout << *it << "-" << std::endl ;
+		} else {
+			// we have a folder
+			downloadDirectory(item, tr(""));
+		}
 	}
 	else
 	{
@@ -269,6 +273,53 @@ void SearchDialog::download()
     }
 }
 
+void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString &base)
+{
+	if (!item->childCount()) {
+		std::list<std::string> srcIds;
+		srcIds.push_back(item->text(SR_UID_COL).toStdString());
+
+		QString path = QString::fromStdString(rsFiles->getDownloadDirectory())
+						+ tr("/") + base + tr("/");
+		QString cleanPath = QDir::cleanPath(path);
+
+		rsFiles->FileRequest(item->text(SR_NAME_COL).toStdString(),
+				item->text(SR_HASH_COL).toStdString(),
+				item->text(SR_REALSIZE_COL).toInt(),
+				cleanPath.toStdString(), 0, srcIds);
+
+		std::cout << "SearchDialog::downloadDirectory(): "\
+				"issuing file request from search dialog: -"
+			<< (item->text(SR_NAME_COL)).toStdString()
+			<< "-" << (item->text(SR_HASH_COL)).toStdString()
+			<< "-" << (item->text(SR_REALSIZE_COL)).toInt()
+			<< "-ids=" ;
+		for(std::list<std::string>::const_iterator it(srcIds.begin());
+				it!=srcIds.end();++it)
+			std::cout << *it << "-" << std::endl ;
+	} else {
+		QDir dwlDir(QString::fromStdString(rsFiles->getDownloadDirectory()));
+		QString path;
+		if (base == tr(""))
+			path = item->text(SR_NAME_COL);
+		else
+			path = base + tr("/") + item->text(SR_NAME_COL);
+		QString cleanPath = QDir::cleanPath(path);
+
+		// create this folder in download path
+		if (!dwlDir.mkpath(cleanPath)) {
+			std::cerr << "SearchDialog::downloadDirectory() - can't create "
+				<< cleanPath.toStdString() << " directory" << std::endl;
+			return;
+		}
+
+		// recursive call for every child - file or folder
+		for (int i = 0, cnt = item->childCount(); i < cnt; i++) {
+			QTreeWidgetItem *child = item->child(i);
+			downloadDirectory(child, path);
+		}
+	}
+}
 
 void SearchDialog::broadcastonchannel()
 {
@@ -437,7 +488,7 @@ void SearchDialog::advancedSearch(Expression* expression)
 
 	// This will act before turtle results come to the interface, thanks to the signals scheduling policy.
 	// The text "bool exp" should be replaced by an appropriate text describing the actual search.
-	initSearchResult(std::string("bool exp"),req_id) ;	
+	initSearchResult(std::string("bool exp"),req_id) ;
 
 	rsFiles -> SearchBoolExp(expression, results, DIR_FLAGS_REMOTE | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
 
@@ -597,7 +648,7 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 {
 	QString sid_hexa = QString::number(searchId,16) ;
 
-	if (dir.type == DIR_TYPE_FILE) 
+	if (dir.type == DIR_TYPE_FILE)
 	{
 		QTreeWidgetItem *child;
 		if (item == NULL) {
@@ -624,8 +675,8 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 		} else {
 			item->addChild(child);
 		}
-	} 
-	else 
+	}
+	else
 	{ /* it is a directory */
 		QTreeWidgetItem *child;
 		if (item == NULL) {

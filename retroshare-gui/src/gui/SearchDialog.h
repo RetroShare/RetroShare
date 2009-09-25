@@ -91,6 +91,7 @@ private:
 	 void insertFile(const std::string& txt,qulonglong searchId, const FileDetail& file) ;
 	 void insertDirectory(const std::string &txt, qulonglong searchId, const DirDetails &dir, QTreeWidgetItem *item);
 	 void setIconAndType(QTreeWidgetItem *item, QString &ext);
+	 void downloadDirectory(const QTreeWidgetItem *item, const QString &base);
 
 
 /** the advanced search dialog instance */
