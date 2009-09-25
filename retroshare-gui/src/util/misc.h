@@ -309,7 +309,7 @@ class misc : public QObject{
       }
       int minutes = seconds / 60;
       if(minutes < 60) {
-        return tr("%1m","e.g: 10minutes").arg(QString::QString::fromUtf8(misc::toString(minutes).c_str()));
+        return tr("%1 minutes","e.g: 10minutes").arg(QString::QString::fromUtf8(misc::toString(minutes).c_str()));
       }
       int hours = minutes / 60;
       minutes = minutes - hours*60;
@@ -320,6 +320,11 @@ class misc : public QObject{
       hours = hours - days * 24;
       if(days < 365) {
         return tr("%1d %2h %3m", "e.g: 2days 10hours 2minutes").arg(QString::fromUtf8(misc::toString(days).c_str())).arg(QString::fromUtf8(misc::toString(hours).c_str())).arg(QString::fromUtf8(misc::toString(minutes).c_str()));
+      }
+      int years = days / 365;
+      days = days - years * 365;
+      if(years > 1) {
+        return tr("%1y %1d %2h %3m", "e.g: 2 years 2days 10hours 2minutes").arg(QString::fromUtf8(misc::toString(years).c_str())).arg(QString::fromUtf8(misc::toString(days).c_str())).arg(QString::fromUtf8(misc::toString(hours).c_str())).arg(QString::fromUtf8(misc::toString(minutes).c_str()));
       }
       return tr("Unknown");
     }
