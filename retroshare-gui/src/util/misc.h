@@ -318,7 +318,7 @@ class misc : public QObject{
       }
       int days = hours / 24;
       hours = hours - days * 24;
-      if(days < 100) {
+      if(days < 365) {
         return tr("%1d %2h %3m", "e.g: 2days 10hours 2minutes").arg(QString::fromUtf8(misc::toString(days).c_str())).arg(QString::fromUtf8(misc::toString(hours).c_str())).arg(QString::fromUtf8(misc::toString(minutes).c_str()));
       }
       return tr("Unknown");
