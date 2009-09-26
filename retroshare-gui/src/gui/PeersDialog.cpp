@@ -779,7 +779,8 @@ void PeersDialog::insertChat()
 
 		QScrollBar *qsb =  msgWidget->verticalScrollBar();
 		int oldQsbValue = qsb->value();
-		bool maxQsbValue = (qsb->maximum() == qsb->value());
+		//check if the scroll bar is at the bottom. If t is, we will putt it at the bottom after the new message
+		bool maxQsbValue = ((qsb->maximum() - 30) < qsb->value());
 
 		msgWidget->setHtml(currenttxt);
 		msgWidget->update();
