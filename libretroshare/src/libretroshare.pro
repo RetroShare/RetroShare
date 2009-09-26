@@ -31,7 +31,12 @@ linux-g++ {
 	DESTDIR = lib.linux-g++
 	QMAKE_CXXFLAGS *= -Wall 
 	QMAKE_CC = g++
+	
 	SSL_DIR = /usr/include/openssl
+	UPNPC_DIR = ../../../../miniupnpc-1.3
+	GPG_ERROR_DIR = ../../../../libgpg-error-1.7
+	GPGME_DIR  = ../../../../gpgme-1.1.8
+	
 	CONFIG += version_detail_bash_script
 }
 linux-g++-64 {
