@@ -35,6 +35,7 @@
 #include "msgs/ChanMsgDialog.h"
 #include "connect/ConfCertDialog.h"
 #include "profile/ProfileView.h"
+#include "profile/ProfileWidget.h"
 #include "GenCertDialog.h"
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/Preferences/rsharesettings.h"
@@ -95,6 +96,9 @@ PeersDialog::PeersDialog(QWidget *parent)
 
   /* hide the Tree +/- */
   ui.peertreeWidget -> setRootIsDecorated( false );
+  
+  ui.peertabWidget->addTab(new ProfileWidget(),QString(tr("Profile")));
+
 
   /* Set header resize modes and initial section sizes */
 	QHeaderView * _header = ui.peertreeWidget->header () ;
