@@ -197,7 +197,7 @@ bool FileIndexMonitor::loadLocalCache(const CacheData &data)  /* called with sto
 	std::string name = data.name ;	// this trick allows to load the complete file. Not the one being shared.
 	name[name.length()-1] = 'c' ;
 
-	if ((ok = fi.loadIndex(data.path + '/' + data.name, data.hash, data.size)))
+	if ((ok = fi.loadIndex(data.path + '/' + name, "", data.size)))
 	{
 #ifdef FIM_DEBUG
 		std::cerr << "FileIndexMonitor::loadCache() Success!";

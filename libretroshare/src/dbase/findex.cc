@@ -731,7 +731,7 @@ int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint64_
 		tmpout << std::setw(2) << std::setfill('0') << std::hex << (unsigned int) (sha_buf[i]);
 	}
 
-	if (expectedHash != tmpout.str())
+	if (expectedHash != "" && expectedHash != tmpout.str())
 	{
 #ifdef FI_DEBUG
 		std::cerr << "FileIndex::loadIndex expected hash does not match" << std::endl;
