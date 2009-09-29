@@ -20,20 +20,22 @@
  ****************************************************************/
 
 
-#ifndef _PROFILEWIDGET_H
-#define _PROFILEWIDGET_H
+#ifndef _STATUSMESSAGE_H
+#define _STATUSMESSAGE_H
 
-#include <QWidget>
+#include <QDialog>
 
-#include "ui_ProfileWidget.h"
+#include <gui/Preferences/rsharesettings.h>
 
-class ProfileWidget : public QWidget
+#include "ui_StatusMessage.h"
+
+class StatusMessage : public QDialog
 {
   Q_OBJECT
 
 	public:
   /** Default constructor */
-  ProfileWidget(QWidget *parent = 0, Qt::WFlags flags = 0);
+  StatusMessage(QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default destructor */
 
 
@@ -42,16 +44,19 @@ protected:
   
 private slots:
 
-  void loadDialog();
-  void statusmessagedlg();
+  /** Saves the changes on this page */
+  void save();
+  /** Loads the settings for this page */
+  void load();
+  
   
 private:
-
-
+  /** A RshareSettings object used for saving/loading settings */
+  RshareSettings* _settings;
 
 
   /** Qt Designer generated object */
-  Ui::ProfileWidget ui;
+  Ui::StatusMessage ui;
 
 };
 

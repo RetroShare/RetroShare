@@ -88,6 +88,9 @@ PeersDialog::PeersDialog(QWidget *parent)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
+  
+  /* Create RshareSettings object */
+  _settings = new RshareSettings();
 
   connect( ui.peertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( peertreeWidgetCostumPopupMenu( QPoint ) ) );
   connect( ui.peertreeWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend()));
@@ -173,10 +176,19 @@ PeersDialog::PeersDialog(QWidget *parent)
   menu->addAction(ui.actionAdd_Friend); 
   menu->addSeparator();
   menu->addAction(ui.actionCreate_new_Profile);
-  //ui.menupushButton->setPopupMode(QToolButton::MenuButtonPopup);
   ui.menupushButton->setMenu(menu);
+  
+  QTimer *timerAvatar = new QTimer(this);
+  connect(timerAvatar, SIGNAL(timeout()), this, SLOT(updateAvatar()));
+  timerAvatar->start(1000);
+    
+  QTimer *timerstatus= new QTimer(this);
+  connect(timerstatus, SIGNAL(timeout()), this, SLOT(loadmypersonalstatus()));
+  timerstatus->start(1000);
 
   updateAvatar();
+  
+  loadmypersonalstatus();
 
 
   /* Hide platform specific features */
@@ -1284,7 +1296,7 @@ void PeersDialog::changeAvatarClicked()
 
 void PeersDialog::on_actionAdd_Friend_activated() 
 {
-  ConnectFriendWizard* connectwiz = new ConnectFriendWizard(this);
+    ConnectFriendWizard* connectwiz = new ConnectFriendWizard(this);
 
     // set widget to be deleted after close
     connectwiz->setAttribute( Qt::WA_DeleteOnClose, true);
@@ -1298,4 +1310,14 @@ void PeersDialog::on_actionCreate_new_Profile_activated()
     static GenCertDialog *gencertdialog = new GenCertDialog();
     gencertdialog->show();
     
+}
+
+/** Loads own personal status */
+void PeersDialog::loadmypersonalstatus()
+{
+	_settings->beginGroup("Profile");
+	
+			ui.mypersonalstatuslabel->setText(_settings->value("StatusMessage","").toString());
+
+	_settings->endGroup();
 }

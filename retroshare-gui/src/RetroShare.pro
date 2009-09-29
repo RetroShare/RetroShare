@@ -187,6 +187,7 @@ HEADERS +=  rshare.h \
             gui/profile/ProfileView.h \
             gui/profile/ProfileEdit.h \
             gui/profile/ProfileWidget.h \
+            gui/profile/StatusMessage.h \
             gui/chat/PopupChatDialog.h \
             gui/connect/ConnectDialog.h \
             gui/connect/ConfCertDialog.h \
@@ -301,6 +302,7 @@ FORMS +=    gui/BlogDialog.ui \
             gui/profile/ProfileView.ui \
             gui/profile/ProfileEdit.ui \
             gui/profile/ProfileWidget.ui \
+            gui/profile/StatusMessage.ui \
             gui/chat/PopupChatDialog.ui \
             gui/connect/ConnectDialog.ui \
             gui/connect/ConfCertDialog.ui \
@@ -412,6 +414,7 @@ SOURCES +=  main.cpp \
             gui/profile/ProfileView.cpp \
             gui/profile/ProfileEdit.cpp \
             gui/profile/ProfileWidget.cpp \
+            gui/profile/StatusMessage.cpp \
             gui/chat/PopupChatDialog.cpp \
             gui/connect/ConnectDialog.cpp \
             gui/connect/ConfCertDialog.cpp \

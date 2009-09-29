@@ -24,6 +24,8 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsdisc.h"
 
+#include "StatusMessage.h"
+
 #include <QTime>
 
 #include <sstream>
@@ -38,6 +40,8 @@ ProfileWidget::ProfileWidget(QWidget *parent, Qt::WFlags flags)
 {
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
+  
+  connect(ui.editstatuspushButton,SIGNAL(clicked()), this, SLOT(statusmessagedlg()));
 
   loadDialog();
 }
@@ -94,6 +98,11 @@ void ProfileWidget::loadDialog()
 
 }
 
+void ProfileWidget::statusmessagedlg()
+{
+    static StatusMessage *statusmsgdialog = new StatusMessage();
+    statusmsgdialog->show();
+}
 
 
 

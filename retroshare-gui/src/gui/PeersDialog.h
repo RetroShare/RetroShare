@@ -25,6 +25,7 @@
 #include <QFileDialog>
 
 #include "chat/PopupChatDialog.h"
+#include <gui/Preferences/rsharesettings.h>
 
 #include "mainpage.h"
 #include "ui_PeersDialog.h"
@@ -65,7 +66,7 @@ public slots:
   void smileyWidgetgroupchat();
   void addSmileys();
   
-    void on_actionClearChat_triggered();
+  void on_actionClearChat_triggered();
   void displayInfoChatMenu(const QPoint& pos);
 
 	void updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat) ;
@@ -112,6 +113,8 @@ private slots:
   
   void on_actionAdd_Friend_activated();
   void on_actionCreate_new_Profile_activated(); 
+  
+  void loadmypersonalstatus();
 
 
 signals:
@@ -153,6 +156,9 @@ private:
   std::map<std::string, PopupChatDialog *> chatDialogs;
 
   QFont mCurrentFont; /* how the text will come out */
+  
+  /** A RshareSettings object used for saving/loading settings */
+  RshareSettings* _settings;
 
   /** Qt Designer generated object */
   Ui::PeersDialog ui;
