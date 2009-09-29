@@ -713,8 +713,11 @@ background: white;}</string>
               <height>61</height>
              </size>
             </property>
+            <property name="toolTip">
+             <string>Add or Change your Avatar</string>
+            </property>
             <property name="styleSheet">
-             <string notr="true">border-image: url(:/images/mystatus_bg.png);</string>
+             <string notr="true">QToolButton#avatartoolButton{border-image: url(:/images/mystatus_bg.png);}</string>
             </property>
             <property name="text">
              <string/>
