@@ -1,6 +1,6 @@
 /*
  * RetroShare
- * Copyright (C) 2006,2007  crypton
+ * Copyright (C) 2006 - 2009  RetroShare Team
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,49 +19,92 @@
 
 #include "MessageToaster.h"
 
-#include "ui_MessageToaster.h"
+#include "tools.h"
 
-#include "QtToaster.h"
-
-#include <QtGui/QtGui>
-
-MessageToaster::MessageToaster()
-	: QObject(NULL) {
-
-	_messageToasterWidget = new QWidget(NULL);
-
-	_ui = new Ui::MessageToaster();
-	_ui->setupUi(_messageToasterWidget);
-
-	connect(_ui->messageButton, SIGNAL(clicked()), SLOT(chatButtonSlot()));
-
-	connect(_ui->closeButton, SIGNAL(clicked()), SLOT(close()));
-
-	_toaster = new QtToaster(_messageToasterWidget, _ui->windowFrame);
-	_toaster->setTimeOnTop(5000);
+MessageToaster::MessageToaster( QWidget * parent, Qt::WFlags f)
+		: QWidget(parent, f)
+{
+	setupUi(this);
+	// set window flags
+	QWidget::setWindowFlags(Qt::ToolTip | Qt::WindowStaysOnTopHint);
+	// init the timer
+	displayTimer = new QTimer(this);
+	connect(displayTimer, SIGNAL(timeout()), this, SLOT(displayTimerOnTimer()));
+	// connect buttons
+	connect(closebtn, SIGNAL(clicked()), this, SLOT(closeClicked()));
+	connect(openmessagebtn, SIGNAL(clicked()), this, SLOT(openmessageClicked()));
+	// init state
+	displayState = dsInactive;
 }
 
-MessageToaster::~MessageToaster() {
-	delete _ui;
+MessageToaster::~MessageToaster()
+{
+	delete displayTimer;
 }
 
-void MessageToaster::setMessage(const QString & message) {
-	_ui->messagelabel2->setText(message);
+void MessageToaster::displayTimerOnTimer()
+{
+	if (!isVisible()) return;
+
+	QDesktopWidget *desktop = QApplication::desktop();
+	QRect availableGeometry  = desktop->availableGeometry(this);
+
+	// display popup animation
+	if (displayState == dsShowing)
+		if (pos().x() > availableGeometry.width() - size().width())// - 15)
+			move(pos().x() - 2, pos().y());
+		else
+		{
+			displayState = dsWaiting;
+			displayTimer->start(5000);
+		}
+	// hide popup animation
+	else if (displayState == dsHiding)
+		if (pos().x() < availableGeometry.width())
+			move(pos().x() + 2, pos().y());
+		else
+		{
+			displayState = dsWaiting;
+			displayTimer->stop();
+			hide();
+		}
+	else if (displayState == dsWaiting)
+	{
+		displayState = dsHiding;
+		displayTimer->start(2);
+	}
 }
 
-void MessageToaster::setPixmap(const QPixmap & pixmap) {
-	_ui->pixmaplabel->setPixmap(pixmap);
+void MessageToaster::displayPopup()
+{
+	QDesktopWidget *desktop = QApplication::desktop();
+	QRect availableGeometry  = desktop->availableGeometry(this);
+	move(desktop->width(), availableGeometry.height() - size().height());
+	this->show();
+
+	alpha = 0;
+
+	displayState = dsShowing;
+	displayTimer->start(2);
 }
 
-void MessageToaster::show() {
-	_toaster->show();
+void MessageToaster::closeClicked()
+{
+	displayState = dsHiding;
+	displayTimer->start(2);
 }
 
-void MessageToaster::close() {
-	_toaster->close();
+void MessageToaster::openmessageClicked()
+{
+	 //
 }
 
-void MessageToaster::chatButtonSlot() {
-	chatButtonClicked();
-	close();
+void MessageToaster::setMessage(const QString & message) 
+{
+	messagelabel->setText(message);
+}
+
+void MessageToaster::setName(const QString & name) 
+{
+	namelabel->setText(name);
 }

@@ -218,15 +218,16 @@ void NotifyQt::UpdateGUI()
 
 			/* id the name */
 			std::string name = rsPeers->getPeerName(id);
-			std::string realmsg = msg + "<strong>" + name + "</strong>";
+			std::string realmsg = "<strong>" + name + "</strong>";
 			switch(type)
 			{
 				case RS_POPUP_MSG:
 				if (popupflags & RS_POPUP_MSG)
 				{
 					MessageToaster * msgToaster = new MessageToaster();
-					msgToaster->setMessage(QString::fromStdString(realmsg));
-					msgToaster->show();
+					//msgToaster->setMessage(QString::fromStdString(title));
+					msgToaster->setName(QString::fromStdString(realmsg));
+					msgToaster->displayPopup();
 				}
 					break;
 				case RS_POPUP_CHAT:
