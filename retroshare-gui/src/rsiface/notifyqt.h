@@ -24,29 +24,17 @@ class NotifyQt: public QObject, public NotifyBase
 	public:
 		NotifyQt()
 		: cDialog(NULL)
-//, pDialog(NULL),
-//		dDialog(NULL), tDialog(NULL),
-//		hDialog(NULL), mDialog(NULL),
-//		sDialog(NULL), mWindow(NULL)
 	{ return; }
 
 		virtual ~NotifyQt() { return; }
 
 		void setNetworkDialog(NetworkDialog *c) { cDialog = c; }
-//		void setPeersDialog(PeersDialog *p) { pDialog = p; }
-//		void setDirDialog(SharedFilesDialog *d) { dDialog = d; }
-//		void setTransfersDialog(TransfersDialog *t) { tDialog = t; }
-//		void setChatDialog(ChatDialog *m)         { hDialog = m; }
-//		void setMessagesDialog(MessagesDialog *m) { mDialog = m; }
-//		void setChannelsDialog(ChannelsDialog *s) { sDialog = s; }
-//		void setMessengerWindow(MessengerWindow *mw) { mWindow = mw; }
-//		void setRsIface(RsIface *i) { iface = i; }
 
 		virtual void notifyListPreChange(int list, int type);
 		virtual void notifyListChange(int list, int type);
 		virtual void notifyErrorMsg(int list, int sev, std::string msg);
-//		virtual void notifyChat();
-		virtual void notifyChatStatus(const std::string& peer_id,const std::string& status_string);
+		virtual void notifyChatStatus(const std::string& peer_id,const std::string& status_string,bool is_private);
+		virtual void notifyCustomState(const std::string& peer_id,const std::string& status_string);
 		virtual void notifyHashingInfo(std::string fileinfo);
 		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& found_files);
 
@@ -63,7 +51,8 @@ class NotifyQt: public QObject, public NotifyBase
 		void messagesChanged() const ;
 		void configChanged() const ;
 		void logInfoChanged(const QString&) const ;
-		void chatStatusChanged(const QString&,const QString&) const ;
+		void chatStatusChanged(const QString&,const QString&,bool) const ;
+		void peerCustomStateStringChanged(const QString&,const QString&) const ;
 		void gotTurtleSearchResult(qulonglong search_id,FileDetail file) const ;
 
 	public slots:

@@ -68,7 +68,7 @@ public slots:
     void on_actionClearChat_triggered();
   void displayInfoChatMenu(const QPoint& pos);
 
-	void updatePeerStatusString(const QString& peer_id,const QString& status_string) ;
+	void updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat) ;
 
 
 private slots:

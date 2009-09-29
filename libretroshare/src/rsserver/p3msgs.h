@@ -57,12 +57,18 @@ class p3Msgs: public RsMsgs
 	  virtual void setOwnAvatarData(const unsigned char *data,int size);
 	  virtual void getOwnAvatarData(unsigned char *& data,int& size);
 
+	  // gets/set avatar from peer id in jpeg format.
+	  virtual void   setCustomStateString(const std::string&  status_string) ;
+	  virtual std::string getCustomStateString() ;
+	  
+
 	  /****************************************/
 	  /* Chat */
 	  virtual bool    chatAvailable();
 	  virtual	bool 	ChatSend(ChatInfo &ci);
 	  virtual	bool	getNewChat(std::list<ChatInfo> &chats);
 	  virtual void    sendStatusString(const std::string& peer_id,const std::string& status_string) ;
+	  virtual void    sendGroupChatStatusString(const std::string& status_string) ;
 
 	  /****************************************/
 

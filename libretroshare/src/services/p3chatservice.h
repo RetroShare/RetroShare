@@ -39,7 +39,9 @@
 #include "services/p3service.h"
 #include "pqi/p3connmgr.h"
 
-class p3ChatService: public p3Service, public pqiConfig
+//#define AVATAR_KEEP_BACKWRD_COMP
+
+class p3ChatService: public p3Service, public p3Config
 {
 	public:
 		p3ChatService(p3ConnectMgr *cm);
@@ -51,6 +53,9 @@ class p3ChatService: public p3Service, public pqiConfig
 		int	sendChat(std::wstring msg);
 		int	sendPrivateChat(std::wstring msg, std::string id);
 		void  sendStatusString(const std::string& peer_id,const std::string& status_str) ;
+		void  sendGroupChatStatusString(const std::string& status_str) ;
+		void  setCustomStateString(const std::string&) ;
+		std::string getCustomStateString() { return _custom_status_string ; }
 
 		/// gets the peer's avatar in jpeg format, if available. Null otherwise. Also asks the peer to send
 		/// its avatar, if not already available. Creates a new unsigned char array. It's the caller's
@@ -64,9 +69,10 @@ class p3ChatService: public p3Service, public pqiConfig
 
 		std::list<RsChatMsgItem *> getChatQueue(); 
 
-		/*** Overloaded from pqiConfig ****/
-		virtual bool    loadConfiguration(std::string &loadHash);
-		virtual bool    saveConfiguration();
+		/************* from p3Config *******************/
+		virtual RsSerialiser *setupSerialiser() ;
+		virtual std::list<RsItem*> saveList(bool& cleanup) ;
+		virtual bool loadList(std::list<RsItem*> load) ;
 
 	private:
 		RsMutex mChatMtx;
@@ -77,17 +83,21 @@ class p3ChatService: public p3Service, public pqiConfig
 		void sendAvatarJpegData(const std::string& peer_id) ;
 
 		/// Receive the avatar in a chat item, with RS_CHAT_RECEIVE_AVATAR flag.
-		void receiveAvatarJpegData(RsChatMsgItem *ci) ;
+#ifdef AVATAR_KEEP_BACKWRD_COMP
+		void receiveAvatarJpegData(RsChatMsgItem *ci) ;	// old method
+#endif
+		void receiveAvatarJpegData(RsChatAvatarItem *ci) ;	// new method
 
 		/// Sends a request for an avatar to the peer of given id
 		void sendAvatarRequest(const std::string& peer_id) ;
 
-		RsChatMsgItem *makeOwnAvatarItem() ;
+		RsChatAvatarItem *makeOwnAvatarItem() ;
 
 		p3ConnectMgr *mConnMgr;
 
 		AvatarInfo *_own_avatar ;
 		std::map<std::string,AvatarInfo *> _avatars ;
+		std::string _custom_status_string ;
 };
 
 #endif // SERVICE_CHAT_HEADER

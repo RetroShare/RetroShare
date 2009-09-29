@@ -683,13 +683,17 @@ void PeersDialog::configurefriend()
 	ConfCertDialog::show(getPeerRsCertId(getCurrentPeer()));
 }
 
-void PeersDialog::updatePeerStatusString(const QString& peer_id,const QString& status_string)
+void PeersDialog::updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat)
 {
-	RshareSettings settings;
-//	uint chatflags = settings.getChatFlags();
-
-	PopupChatDialog *pcd = getPrivateChat(peer_id.toStdString(),rsPeers->getPeerName(peer_id.toStdString()), 0);
-	pcd->updateStatusString(status_string);
+	if(is_private_chat)
+	{
+		PopupChatDialog *pcd = getPrivateChat(peer_id.toStdString(),rsPeers->getPeerName(peer_id.toStdString()), 0);
+		pcd->updateStatusString(status_string);
+	}
+	else
+	{
+		std::cerr << "Updating public chat msg from peer " << rsPeers->getPeerName(peer_id.toStdString()) << ": " << status_string.toStdString() << std::endl ;
+	}
 }
 
 void PeersDialog::insertChat()

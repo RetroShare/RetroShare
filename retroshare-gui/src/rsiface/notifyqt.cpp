@@ -39,10 +39,16 @@ void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
 	return;
 }
 
-void NotifyQt::notifyChatStatus(const std::string& peer_id,const std::string& status_string)
+void NotifyQt::notifyCustomState(const std::string& peer_id,const std::string& custom_state_string) 
 {
-	std::cerr << "Received chat status string: " << status_string << std::endl ;
-	emit chatStatusChanged(QString::fromStdString(peer_id),QString::fromStdString(status_string)) ;
+	std::cerr << "notifyQt: Received custom status string: " << custom_state_string << std::endl ;
+	emit peerCustomStateStringChanged(QString::fromStdString(peer_id),QString::fromStdString(custom_state_string)) ;
+}
+
+void NotifyQt::notifyChatStatus(const std::string& peer_id,const std::string& status_string,bool is_private)
+{
+	std::cerr << "notifyQt: Received chat status string: " << status_string << std::endl ;
+	emit chatStatusChanged(QString::fromStdString(peer_id),QString::fromStdString(status_string),is_private) ;
 }
 
 void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files) 

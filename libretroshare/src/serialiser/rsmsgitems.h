@@ -39,8 +39,11 @@ const uint32_t RS_CHAT_FLAG_PRIVATE 		 	= 0x0001;
 const uint32_t RS_CHAT_FLAG_REQUESTS_AVATAR	= 0x0002;
 const uint32_t RS_CHAT_FLAG_CONTAINS_AVATAR	= 0x0004;
 const uint32_t RS_CHAT_FLAG_AVATAR_AVAILABLE = 0x0008;
+const uint32_t RS_CHAT_FLAG_CUSTOM_STATE		= 0x0010;	// used for transmitting peer status string 
+const uint32_t RS_CHAT_FLAG_PUBLIC  		 	= 0x0020;
 
-const uint8_t RS_PKT_SUBTYPE_CHAT_STATUS = 0x02 ;	// default is 0x01
+const uint8_t RS_PKT_SUBTYPE_CHAT_AVATAR = 0x03 ;	// default is 0x01
+const uint8_t RS_PKT_SUBTYPE_CHAT_STATUS = 0x04 ;	// default is 0x01
 
 class RsChatItem: public RsItem
 {
@@ -90,8 +93,28 @@ class RsChatStatusItem: public RsChatItem
 		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
 		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
 
+		uint32_t flags ;
 		std::string status_string;
 };
+
+// This class contains avatar images in Qt format.
+//
+class RsChatAvatarItem: public RsChatItem
+{
+	public:
+		RsChatAvatarItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_AVATAR) {}
+		RsChatAvatarItem(void *data,uint32_t size) ; // deserialization
+
+		virtual ~RsChatAvatarItem() ;
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
+		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
+
+		uint32_t image_size ;				// size of data in bytes
+		unsigned char *image_data ;		// image
+};
+
 
 class RsChatSerialiser: public RsSerialType
 {

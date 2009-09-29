@@ -109,6 +109,10 @@ bool 	p3Msgs::ChatSend(ChatInfo &ci)
 	return true;
 }
 
+void p3Msgs::sendGroupChatStatusString(const std::string& status_string) 
+{
+	mChatSrv->sendGroupChatStatusString(status_string);
+}
 void p3Msgs::sendStatusString(const std::string& peer_id,const std::string& status_string) 
 {
 	mChatSrv->sendStatusString(peer_id,status_string);
@@ -188,4 +192,12 @@ void p3Msgs::getAvatarData(std::string pid,unsigned char *& data,int& size)
 	mChatSrv->getAvatarJpegData(pid,data,size) ;
 }
 
+std::string p3Msgs::getCustomStateString()
+{
+	return mChatSrv->getCustomStateString() ;
+}
 
+void p3Msgs::setCustomStateString(const std::string& state_string)
+{
+	mChatSrv->setCustomStateString(state_string) ;
+}
