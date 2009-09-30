@@ -65,27 +65,28 @@
 border: 1px solid #CCCCCC;}
 </string>
    </property>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>39</y>
-      <width>231</width>
-      <height>42</height>
+      <x>91</x>
+      <y>40</y>
+      <width>261</width>
+      <height>16</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Status message</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLineEdit" name="txt_StatusMessage"/>
-     </item>
-    </layout>
+    <property name="text">
+     <string>Status message</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="txt_StatusMessage">
+    <property name="geometry">
+     <rect>
+      <x>91</x>
+      <y>60</y>
+      <width>221</width>
+      <height>20</height>
+     </rect>
+    </property>
    </widget>
   </widget>
   <widget class="QLabel" name="label_3">
@@ -176,6 +177,7 @@ border: 1px solid #CCCCCC;}
   <zorder>label</zorder>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
