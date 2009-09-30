@@ -52,6 +52,7 @@ public:
   ~PopupChatDialog();
 
   void updateChat();
+  void updatePeerAvatar(const std::string&);
   void addChatMsg(ChatInfo *ci);
   
   void loadEmoticons();
@@ -106,7 +107,6 @@ private slots:
 private:
 
   void colorChanged(const QColor &c);
-  void updatePeerAvatar(const std::string&);
   void updateAvatar();
   void addAttachment(std::string);
 

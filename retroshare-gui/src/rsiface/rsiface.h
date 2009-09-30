@@ -204,6 +204,7 @@ class NotifyBase
 	virtual void notifyCustomState(const std::string& peer_id,const std::string& status_string) {}
 	virtual void notifyHashingInfo(std::string fileinfo) { (void)fileinfo; return ; }
 	virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files) { (void)files; }
+	virtual void notifyPeerHasNewAvatar(std::string peer_id) { (void)peer_id; }
 };
 
 const int NOTIFY_LIST_NEIGHBOURS   		= 1;

@@ -145,12 +145,11 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(configChanged())                   ,w->messagesDialog   		,SLOT(displayConfig()                  )) ;
 
 	QObject::connect(notify,SIGNAL(chatStatusChanged(const QString&,const QString&,bool)),w->peersDialog,SLOT(updatePeerStatusString(const QString&,const QString&,bool)));
+	QObject::connect(notify,SIGNAL(peerHasNewAvatar(const QString&)),w->peersDialog,SLOT(updatePeersAvatar(const QString&)));
 	QObject::connect(notify,SIGNAL(logInfoChanged(const QString&)),w->networkDialog,SLOT(setLogInfo(QString))) ;
 
 	QObject::connect(ConfCertDialog::instance(),SIGNAL(configChanged()),w->networkDialog,SLOT(insertConnect())) ;
 	QObject::connect(w->peersDialog,SIGNAL(friendsUpdated()),w->networkDialog,SLOT(insertConnect())) ;
-
-	
 	QObject::connect(w->peersDialog,SIGNAL(notifyGroupChat(const QString&,const QString&)),w,SLOT(displaySystrayMsg(const QString&,const QString&))) ;
 
 	/* only show window, if not startMinimized */

@@ -168,13 +168,6 @@ void p3Msgs::initRsChatInfo(RsChatMsgItem *c, ChatInfo &i)
 		i.chatflags |= RS_CHAT_PUBLIC;
 		//std::cerr << "RsServer::initRsChatInfo() Chat Public!!!";
 	}
-	//std::cerr << std::endl;
-
-	if(c->chatFlags & RS_CHAT_FLAG_AVATAR_AVAILABLE)
-	{
-	   std::cerr << "p3msgs::initRsChatInfo(): new avatar available for peer " << i.rsid << ". Sending above." << std::endl ;
-	   i.chatflags |= RS_CHAT_AVATAR_AVAILABLE;
-	}
 }
 
 void p3Msgs::getOwnAvatarData(unsigned char *& data,int& size)

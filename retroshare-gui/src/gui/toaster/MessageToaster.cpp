@@ -19,8 +19,6 @@
 
 #include "MessageToaster.h"
 
-#include "tools.h"
-
 MessageToaster::MessageToaster( QWidget * parent, Qt::WFlags f)
 		: QWidget(parent, f)
 {

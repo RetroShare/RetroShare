@@ -399,6 +399,12 @@ std::list<RsChatMsgItem *> p3ChatService::getChatQueue()
 		if(ca != NULL)
 		{
 			receiveAvatarJpegData(ca) ;
+
+#ifdef CHAT_DEBUG
+			std::cerr << "Received avatar data for peer " << ca->PeerId() << ". Notifying." << std::endl ;
+#endif
+			rsicontrol->getNotify().notifyPeerHasNewAvatar(ca->PeerId()) ;
+
 			delete item ;
 			continue ;
 		}
@@ -490,7 +496,7 @@ void p3ChatService::getAvatarJpegData(const std::string& peer_id,unsigned char *
 
 	std::map<std::string,AvatarInfo *>::const_iterator it = _avatars.find(peer_id) ; 
 
-	std::cerr << "p3chatservice:: avatar requested from above. " << std::endl ;
+	std::cerr << "p3chatservice:: avatar for peer " << peer_id << " requested from above. " << std::endl ;
 	// has avatar. Return it strait away.
 	//
 	if(it!=_avatars.end())

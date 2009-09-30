@@ -70,6 +70,7 @@ public slots:
   void displayInfoChatMenu(const QPoint& pos);
 
 	void updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat) ;
+	void updatePeersAvatar(const QString& peer_id);
 
 
 private slots:

@@ -178,16 +178,7 @@ PeersDialog::PeersDialog(QWidget *parent)
   menu->addAction(ui.actionCreate_new_Profile);
   ui.menupushButton->setMenu(menu);
   
-  QTimer *timerAvatar = new QTimer(this);
-  connect(timerAvatar, SIGNAL(timeout()), this, SLOT(updateAvatar()));
-  timerAvatar->start(1000);
-    
-  QTimer *timerstatus= new QTimer(this);
-  connect(timerstatus, SIGNAL(timeout()), this, SLOT(loadmypersonalstatus()));
-  timerstatus->start(1000);
-
   updateAvatar();
-  
   loadmypersonalstatus();
 
 
@@ -693,6 +684,14 @@ void PeersDialog::trustfriend()
 void PeersDialog::configurefriend()
 {
 	ConfCertDialog::show(getPeerRsCertId(getCurrentPeer()));
+}
+
+void PeersDialog::updatePeersAvatar(const QString& peer_id)
+{
+	std::cerr << "PeersDialog: Got notified of new avatar for peer " << peer_id.toStdString() << std::endl ;
+
+	PopupChatDialog *pcd = getPrivateChat(peer_id.toStdString(),rsPeers->getPeerName(peer_id.toStdString()), 0);
+	pcd->updatePeerAvatar(peer_id.toStdString());
 }
 
 void PeersDialog::updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat)

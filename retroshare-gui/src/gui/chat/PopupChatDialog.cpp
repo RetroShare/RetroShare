@@ -304,11 +304,6 @@ std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() <<
 	    qsb -> setValue(oldQsbValue);
 	}
 
-	if(ci->chatflags & RS_CHAT_AVATAR_AVAILABLE)
-	{
-	   std::cerr << "received msg saying an avatar for peer " << ci->rsid << " is available." << std::endl ;
-	   updatePeerAvatar(ci->rsid) ;
-	}
 	/*else
 	{
       ui.avatarlabel->setPixmap(QPixmap(":/images/user/personal128.png"));
@@ -648,6 +643,8 @@ void PopupChatDialog::changeStyle()
 
 void PopupChatDialog::updatePeerAvatar(const std::string& peer_id)
 {
+	   std::cerr << "popupchatDialog: updating avatar for peer " << peer_id << std::endl ;
+
 	unsigned char *data = NULL;
 	int size = 0 ;
 
@@ -665,7 +662,7 @@ void PopupChatDialog::updatePeerAvatar(const std::string& peer_id)
 
 	// set the image
 	QPixmap pix ;
-	pix.loadFromData(data,size,"JPG") ;
+	pix.loadFromData(data,size,"PNG") ;
 	ui.avatarlabel->setPixmap(pix); // writes image into ba in JPG format
 
 	delete[] data ;

@@ -39,6 +39,12 @@ void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
 	return;
 }
 
+void NotifyQt::notifyPeerHasNewAvatar(std::string peer_id)
+{
+	std::cerr << "notifyQt: notification of new avatar." << std::endl ;
+	emit peerHasNewAvatar(QString::fromStdString(peer_id)) ;
+}
+
 void NotifyQt::notifyCustomState(const std::string& peer_id,const std::string& custom_state_string) 
 {
 	std::cerr << "notifyQt: Received custom status string: " << custom_state_string << std::endl ;
