@@ -1315,9 +1315,9 @@ void PeersDialog::on_actionCreate_new_Profile_activated()
 /** Loads own personal status */
 void PeersDialog::loadmypersonalstatus()
 {
-	_settings->beginGroup("Profile");
-	
-			ui.mypersonalstatuslabel->setText(_settings->value("StatusMessage","").toString());
-
-	_settings->endGroup();
+	//_settings->beginGroup("Profile");	
+	//ui.mypersonalstatuslabel->setText(_settings->value("StatusMessage","").toString());
+  //_settings->endGroup();
+  
+  ui.mypersonalstatuslabel->setText(QString::fromStdString(rsMsgs->getCustomStateString()));
 }

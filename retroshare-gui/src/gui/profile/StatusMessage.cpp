@@ -73,11 +73,12 @@ void StatusMessage::save()
 /** Loads the settings for this page */
 void StatusMessage::load()
 {
-	_settings->beginGroup("Profile");
+	//_settings->beginGroup("Profile");	
+			//ui.txt_StatusMessage->setText(_settings->value("StatusMessage","").toString());
+	//_settings->endGroup();
 	
-			ui.txt_StatusMessage->setText(_settings->value("StatusMessage","").toString());
+		  ui.txt_StatusMessage->setText(QString::fromStdString(rsMsgs->getCustomStateString())) ;
 
-	_settings->endGroup();
 }
 
 
