@@ -37,8 +37,7 @@
 #include "util/PixmapMerging.h"
 #include "LogoBar.h"
 #include "util/Widget.h"
-//#include "gui/connect/InviteDialog.h"
-//#include "gui/connect/AddFriendDialog.h"
+
 #include "gui/connect/ConnectFriendWizard.h"
 
 #include "MessagesPopupDialog.h"
@@ -60,7 +59,7 @@
 #define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
 #define IMAGE_EXPIORTFRIEND      ":/images/exportpeers_16x16.png"
 #define IMAGE_CHAT               ":/images/chat.png"
-#define IMAGE_SENDMESSAGE		 ":/images/message-mail.png"
+#define IMAGE_SENDMESSAGE		     ":/images/message-mail.png"
 /* Images for Status icons */
 #define IMAGE_ONLINE             ":/images/im-user.png"
 #define IMAGE_OFFLINE            ":/images/im-user-offline.png"
@@ -80,24 +79,21 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
   
-	//RshareSettings config;
-	//config.loadWidgetInformation(this);
 
 	connect( ui.messengertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messengertreeWidgetCostumPopupMenu( QPoint ) ) );
 
 	connect( ui.avatarButton, SIGNAL(clicked()), SLOT(getAvatar()));
 	connect( ui.shareButton, SIGNAL(clicked()), SLOT(openShareManager()));
 
-    	connect( ui.addIMAccountButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend2() ) );
+  connect( ui.addIMAccountButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend2() ) );
 
-    	connect( ui.messengertreeWidget, SIGNAL(itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend2()));
-
+  connect( ui.messengertreeWidget, SIGNAL(itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend2()));
 
   
 	/* to hide the header  */
 	ui.messengertreeWidget->header()->hide(); 
  
-        /* Set header resize modes and initial section sizes */
+  /* Set header resize modes and initial section sizes */
 	ui.messengertreeWidget->setColumnCount(1);
 
 	QHeaderView * _header = ui.messengertreeWidget->header () ;   
@@ -107,9 +103,6 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 	//_header->setResizeMode (3, QHeaderView::Interactive);
 
 	_header->resizeSection ( 0, 200 );   
-
-    	/* Create all the dialogs of which we only want one instance */
-    	//_mainWindow = new MainWindow();
  
 	//LogoBar
 	_rsLogoBarmessenger = NULL;
@@ -121,7 +114,10 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 	ui.messagecomboBox->setMinimumWidth(20);
 	ui.searchlineEdit->setMinimumWidth(20);
 
-  	updateAvatar();
+  updateAvatar();
+  	
+  itemFont = QFont("ARIAL", 10);
+	itemFont.setBold(true);
 
   
   /* Hide platform specific features */
@@ -228,10 +224,11 @@ void  MessengerWindow::insertPeers()
 		item -> setText(4, QString::fromStdString(details.id));
 
 		/* add to the list */
-                if (details.state & RS_PEER_STATE_CONNECTED)
+    if (details.state & RS_PEER_STATE_CONNECTED)
 		{
 		   online_items.append(item);
-		   item -> setIcon(0,(QIcon(IMAGE_ONLINE)));	   
+		   item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
+		   item -> setFont(0,itemFont); 	   
 		}
 		else
 		{
@@ -250,9 +247,11 @@ void  MessengerWindow::insertPeers()
 
 		/* add all the labels */
 		/* (0) Person */
-		item -> setText(0, "Online");
+		item -> setText(0, tr("Online"));
 		item -> addChildren(online_items);
-		item -> setIcon(0,(QIcon(IMAGE_ON)));
+		item -> setFont(0,itemFont);   
+
+		//item -> setIcon(0,(QIcon(IMAGE_ON)));
 	        peerWidget->addTopLevelItem(item);
 		peerWidget->expandItem(item);
 	}
@@ -263,12 +262,13 @@ void  MessengerWindow::insertPeers()
 
 		/* add all the labels */
 		/* (0) Person */
-		item -> setText(0, "Offline");
+		item -> setText(0, tr("Offline"));
 		item -> addChildren(offline_items);
+		item -> setFont(0,itemFont);   
 		
 	        peerWidget->addTopLevelItem(item);
 		peerWidget->expandItem(item);
-		item -> setIcon(0,(QIcon(IMAGE_OFF)));
+		//item -> setIcon(0,(QIcon(IMAGE_OFF)));
 	}
 
 	peerWidget->update(); /* update display */

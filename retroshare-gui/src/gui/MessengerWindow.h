@@ -122,6 +122,8 @@ private:
   QTreeView *messengertreeWidget;
 
   LogoBar * _rsLogoBarmessenger;
+  
+  QFont itemFont;
 
   /** Qt Designer generated object */
   Ui::MessengerWindow ui;
