@@ -8,7 +8,7 @@
 /* Customize the toolbar. */
 QToolBar {
    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                       stop:0 #6F6F6F, stop:1 #979797);
+                                       stop:0 #F2F2F2, stop:1 #E6E6E6);
 }
 
 

@@ -181,3 +181,16 @@ QLabel#fromText{
 	color: blue;
 
 }
+
+QLabel#friendstitlellabel{
+  color: black;
+}
+
+QLabel#networklabel{
+  color: black;
+}
+
+QLabel#labeltext{
+  color: black;
+}
+
