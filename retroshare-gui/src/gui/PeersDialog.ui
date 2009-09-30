@@ -571,6 +571,10 @@ p, li { white-space: pre-wrap; }
  QPushButton::menu-indicator:pressed, QPushButton::menu-indicator:open {
      position: relative;
      top: 2px; left: 2px; /* shift the arrow by 2 px */
+ }
+
+ QPushButton:hover {
+	border: 1px solid #CCCCCC;
  }</string>
             </property>
             <property name="text">
