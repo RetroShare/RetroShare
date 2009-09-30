@@ -39,6 +39,12 @@ void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
 	return;
 }
 
+void NotifyQt::notifyOwnAvatarChanged()
+{
+	std::cerr << "Notifyqt:: notified that own avatar changed" << std::endl ;
+	emit ownAvatarChanged() ;
+}
+
 void NotifyQt::notifyPeerHasNewAvatar(std::string peer_id)
 {
 	std::cerr << "notifyQt: notification of new avatar." << std::endl ;

@@ -62,6 +62,8 @@ public slots:
 
   void insertChat();
   void setChatInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));
+  void resetStatusBar() ;
+
   
   void smileyWidgetgroupchat();
   void addSmileys();
@@ -69,14 +71,19 @@ public slots:
   void on_actionClearChat_triggered();
   void displayInfoChatMenu(const QPoint& pos);
 
+	// called by notifyQt when another peer is typing (in group chant and private chat)
 	void updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat) ;
-	void updatePeersAvatar(const QString& peer_id);
 
+	void updatePeersAvatar(const QString& peer_id);
+  void updateAvatar();	// called by notifyQt to update the avatar when it gets changed by another component
 
 private slots:
 
   /** Create the context popup menu and it's submenus */
   void peertreeWidgetCostumPopupMenu( QPoint point );
+
+	void updateStatusString(const QString& statusString) ;	// called when a peer is typing in group chat 
+	void updateStatusTyping() ;										// called each time a key is hit
   
   //void updatePeerStatusString(const QString& peer_id,const QString& chat_status) ;
 
@@ -109,7 +116,6 @@ private slots:
   void underline(); 
 
   void changeAvatarClicked();
-  void updateAvatar();
   void getAvatar();
   
   void on_actionAdd_Friend_activated();
@@ -151,6 +157,7 @@ private:
   
   QColor _currentColor;
   bool _underline;
+  time_t last_status_send_time ;
 
   QHash<QString, QString> smileys;
 

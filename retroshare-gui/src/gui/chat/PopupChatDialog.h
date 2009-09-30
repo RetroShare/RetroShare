@@ -58,6 +58,7 @@ public:
   void loadEmoticons();
   void loadEmoticons2();
 
+  void updateAvatar();
 
   QString loadEmptyStyle(); 
 
@@ -107,7 +108,6 @@ private slots:
 private:
 
   void colorChanged(const QColor &c);
-  void updateAvatar();
   void addAttachment(std::string);
 
    QAction     *actionTextBold;

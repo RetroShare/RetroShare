@@ -92,6 +92,8 @@ PeersDialog::PeersDialog(QWidget *parent)
   /* Create RshareSettings object */
   _settings = new RshareSettings();
 
+  last_status_send_time = 0 ;
+
   connect( ui.peertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( peertreeWidgetCostumPopupMenu( QPoint ) ) );
   connect( ui.peertreeWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend()));
 
@@ -686,6 +688,34 @@ void PeersDialog::configurefriend()
 	ConfCertDialog::show(getPeerRsCertId(getCurrentPeer()));
 }
 
+void PeersDialog::resetStatusBar() 
+{
+	std::cerr << "PeersDialog: reseting status bar." << std::endl ;
+
+	ui.statusStringLabel->setText(QString("")) ;
+}
+
+void PeersDialog::updateStatusTyping()
+{
+	if(time(NULL) - last_status_send_time > 5)	// limit 'peer is typing' packets to at most every 10 sec
+	{
+		std::cerr << "PeersDialog: sending group chat typing info." << std::endl ;
+
+		rsMsgs->sendGroupChatStatusString(rsiface->getConfig().ownName + " is typing...");
+		last_status_send_time = time(NULL) ;
+	}
+}
+// Called by libretroshare through notifyQt to display the peer's status
+//
+void PeersDialog::updateStatusString(const QString& status_string)
+{
+	std::cerr << "PeersDialog: received group chat typing info. updating gui." << std::endl ;
+
+	ui.statusStringLabel->setText(status_string) ; // displays info for 5 secs.
+
+	QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
+}
+
 void PeersDialog::updatePeersAvatar(const QString& peer_id)
 {
 	std::cerr << "PeersDialog: Got notified of new avatar for peer " << peer_id.toStdString() << std::endl ;
@@ -704,6 +734,8 @@ void PeersDialog::updatePeerStatusString(const QString& peer_id,const QString& s
 	else
 	{
 		std::cerr << "Updating public chat msg from peer " << rsPeers->getPeerName(peer_id.toStdString()) << ": " << status_string.toStdString() << std::endl ;
+
+		updateStatusString(status_string) ;
 	}
 }
 
@@ -825,6 +857,8 @@ void PeersDialog::checkChat()
 	}
 	else
 	{
+		updateStatusTyping() ;
+
 		//std::cerr << "No <return> found in :" << txt << ":";
 		//std::cerr << std::endl;
 	}
@@ -1261,6 +1295,9 @@ void PeersDialog::updateAvatar()
 	pix.loadFromData(data,size,"PNG") ;
 	ui.avatartoolButton->setIcon(pix); // writes image into ba in PNG format
 
+   for(std::map<std::string, PopupChatDialog *>::const_iterator it(chatDialogs.begin());it!=chatDialogs.end();++it)
+		it->second->updateAvatar() ;
+
 	delete[] data ;
 }
 
@@ -1283,7 +1320,8 @@ void PeersDialog::getAvatar()
 
 		rsMsgs->setOwnAvatarData((unsigned char *)(ba.data()),ba.size()) ;	// last char 0 included.
 
-		updateAvatar() ;
+		// I suppressed this because it gets called already by rsMsgs->setOwnAvatarData() through a Qt notification signal
+		//updateAvatar() ;
 	}
 }
 

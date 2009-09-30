@@ -38,6 +38,7 @@ class NotifyQt: public QObject, public NotifyBase
 		virtual void notifyHashingInfo(std::string fileinfo);
 		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& found_files);
 		virtual void notifyPeerHasNewAvatar(std::string peer_id) ;
+		virtual void notifyOwnAvatarChanged() ;
 
 	signals:
 		// It's beneficial to send info to the GUI using signals, because signals are thread-safe
@@ -56,6 +57,7 @@ class NotifyQt: public QObject, public NotifyBase
 		void peerCustomStateStringChanged(const QString&,const QString&) const ;
 		void gotTurtleSearchResult(qulonglong search_id,FileDetail file) const ;
 		void peerHasNewAvatar(const QString& peer_id) const ;
+		void ownAvatarChanged() const ;
 
 	public slots:
 
