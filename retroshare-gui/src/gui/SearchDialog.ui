@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>652</width>
+    <width>659</width>
     <height>336</height>
    </rect>
   </property>
@@ -332,9 +332,9 @@
      <colorrole role="WindowText">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>104</red>
-        <green>104</green>
-        <blue>104</blue>
+        <red>0</red>
+        <green>0</green>
+        <blue>0</blue>
        </color>
       </brush>
      </colorrole>
@@ -386,9 +386,9 @@
      <colorrole role="Text">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>104</red>
-        <green>104</green>
-        <blue>104</blue>
+        <red>0</red>
+        <green>0</green>
+        <blue>0</blue>
        </color>
       </brush>
      </colorrole>
@@ -404,9 +404,9 @@
      <colorrole role="ButtonText">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>104</red>
-        <green>104</green>
-        <blue>104</blue>
+        <red>0</red>
+        <green>0</green>
+        <blue>0</blue>
        </color>
       </brush>
      </colorrole>
@@ -499,6 +499,48 @@
   <property name="contextMenuPolicy">
    <enum>Qt::NoContextMenu</enum>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QToolButton, QPushButton, QComboBox { 
+border-image: url(:/images/btn_26.png) 4;
+border-width: 4;
+padding: 0px 6px;
+font-size: 12px;
+}
+
+*{
+color: black;
+}
+
+QComboBox QAbstractItemView {
+background-color:white;
+}
+
+QComboBox::down-arrow {
+image: url(:/images/combobox_arrow.png);
+}
+
+QComboBox:drop-down
+{
+subcontrol-origin: padding;
+subcontrol-position: top right;
+border-left-style: none; 
+border-top-right-radius: 1px;
+border-bottom-right-radius: 1px;
+}
+
+QToolButton:hover, QPushButton:hover, QComboBox:hover {
+border-image: url(:/images/btn_26_hover.png) 4;
+}
+
+QToolButton:disabled, QPushButton:disabled, QComboBox::disabled {
+color:gray;
+}
+
+QToolButton:pressed, QPushButton:pressed{
+border-image: url(:/images/btn_26_pressed.png) 4;
+}
+</string>
+  </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <property name="verticalSpacing">
     <number>0</number>
@@ -519,6 +561,9 @@ stop:0 #FEFEFE, stop:1 #E8E8E8);
 border: 1px solid #CCCCCC;}</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
+      <property name="margin">
+       <number>6</number>
+      </property>
       <item row="0" column="0">
        <widget class="QComboBox" name="FileTypeComboBox">
         <item>
@@ -641,6 +686,9 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Enter a Keyword here&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
+        <property name="styleSheet">
+         <string notr="true">border: 1px solid #8B8B8B;</string>
+        </property>
        </widget>
       </item>
       <item row="0" column="3">
@@ -658,16 +706,6 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
        </spacer>
-      </item>
-      <item row="0" column="4">
-       <widget class="QPushButton" name="pushButtonsearch">
-        <property name="toolTip">
-         <string>Start Search</string>
-        </property>
-        <property name="text">
-         <string>Search</string>
-        </property>
-       </widget>
       </item>
       <item row="0" column="5">
        <widget class="QPushButton" name="resetButton">
@@ -699,6 +737,16 @@ p, li { white-space: pre-wrap; }
         </property>
         <property name="text">
          <string>Advanced</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="QPushButton" name="pushButtonsearch">
+        <property name="toolTip">
+         <string>Start Search</string>
+        </property>
+        <property name="text">
+         <string>Search</string>
         </property>
        </widget>
       </item>
