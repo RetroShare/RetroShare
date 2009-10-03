@@ -26,6 +26,8 @@
 
 #include "ui_MessagesPopupDialog.h"
 
+class MessagesDialog;
+
 class MessagesPopupDialog : public QMainWindow 
 {
   Q_OBJECT
@@ -34,57 +36,15 @@ public:
   /** Default Constructor */
   MessagesPopupDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default Destructor */
+  ~MessagesPopupDialog();
 
-
- void insertMessages();
- void insertMsgTxtAndFiles();
-
-
- virtual void keyPressEvent(QKeyEvent *) ;
 private slots:
 
-  /** Create the context popup menu and it's submenus */
-  void messageslistWidgetCostumPopupMenu( QPoint point ); 
-  void msgfilelistWidgetCostumPopupMenu(QPoint);  
-
-  void changeBox( int newrow );
-  void updateMessages ( QTreeWidgetItem * item, int column );
-
-  void newmessage();
-
-  void replytomessage();
-  void forwardmessage();
-
-  void print();
-  void printpreview();
-  
-  void removemessage();
-  void markMsgAsRead();  
-  
-  void getcurrentrecommended();
-  void getallrecommended();
-
-  /* handle splitter */
-  void togglefileview();
 
 private:
 
-  bool getCurrentMsg(std::string &cid, std::string &mid);
+    MessagesDialog *messagesdlg;
 
-  std::string mCurrCertId;
-  std::string mCurrMsgId;
-
-  /** Define the popup menus for the Context menu */
-  QMenu* contextMnu;
-  
-   /** Defines the actions for the context menu */
-  QAction* newmsgAct;
-  QAction* replytomsgAct;
-  QAction* forwardmsgAct;
-  QAction* removemsgAct;
-
-  QAction* getRecAct;
-  QAction* getAllRecAct;
   
   /** Qt Designer generated object */
   Ui::MessagesPopupDialog ui;
