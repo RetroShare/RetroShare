@@ -36,6 +36,7 @@ public:
   /** Default constructor */
   ConnectDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default destructor */
+  ~ConnectDialog();
 
 bool loadPeer(std::string id);
 

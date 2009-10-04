@@ -50,7 +50,11 @@ ConnectDialog::ConnectDialog(QWidget *parent, Qt::WFlags flags)
  
 }
 
-
+/** Destructor. */
+ConnectDialog::~ConnectDialog()
+{
+  delete _settings;
+}
 
 /** 
  Overloads the default show() slot so we can set opacity*/
