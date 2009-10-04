@@ -1,24 +1,7 @@
 RetroShare Todo list
 ====================================================================
 
-
-* start minimized [enabel,disable start minimized](Options->General)
-* Auto Login [enabel,disable Auto Login](Options->General)
-* enable/disable Toasters from (Options->Notify)
-
-* collapse sources in Downloads [similar ares,emule](TransfersDialog)
-* Contacts Manager(Adressbook) for Messages ( similar Thunderbirds Adressbook feature)
-
-* Proxy support
-* DynDNS support
-
-* partial multi source download ("swarming")
-
-* setCacheDirectory/getCacheDirectory (Customizable Directories for cache folder)
-* setChannelsDirectory/getChannelsDirectory (Customizable Directories for channels folder)
-
-
-See the Rest of the Projects list and Todo list on Wiki:
+Projects list and Todo list on Wiki:
 http://retroshare.sourceforge.net/wiki/index.php/Development
 
 http://retroshare.sourceforge.net/wiki/index.php/To_do_list

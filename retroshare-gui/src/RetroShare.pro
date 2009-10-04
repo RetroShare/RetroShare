@@ -98,7 +98,6 @@ DEPENDPATH += . \
             gui \
             lang \
             util \
-            games\qbackgammon \
             gui\bwgraph \
             gui\chat \
             gui\connect \
@@ -233,10 +232,6 @@ HEADERS +=  rshare.h \
             gui/advsearch/advancedsearchdialog.h \
             gui/advsearch/expressionwidget.h \
             gui/advsearch/guiexprelement.h \
-            games/qbackgammon/bgwindow.h \
-            games/qbackgammon/bgwidget.h \
-            games/qbackgammon/bgboard.h \
-            games/qbackgammon/optionsdlg.h \
             gui/elastic/graphwidget.h \
             gui/elastic/edge.h \
             gui/elastic/arrow.h \
@@ -442,10 +437,6 @@ SOURCES +=  main.cpp \
             gui/advsearch/advancedsearchdialog.cpp \
             gui/advsearch/expressionwidget.cpp \
             gui/advsearch/guiexprelement.cpp \
-            games/qbackgammon/bgwindow.cpp \
-            games/qbackgammon/bgwidget.cpp \
-            games/qbackgammon/bgboard.cpp \
-            games/qbackgammon/optionsdlg.cpp \
             gui/elastic/graphwidget.cpp \
             gui/elastic/edge.cpp \
             gui/elastic/arrow.cpp \
