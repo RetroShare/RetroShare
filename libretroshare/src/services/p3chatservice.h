@@ -39,8 +39,6 @@
 #include "services/p3service.h"
 #include "pqi/p3connmgr.h"
 
-//#define AVATAR_KEEP_BACKWRD_COMP
-
 class p3ChatService: public p3Service, public p3Config
 {
 	public:
@@ -54,8 +52,10 @@ class p3ChatService: public p3Service, public p3Config
 		int	sendPrivateChat(std::wstring msg, std::string id);
 		void  sendStatusString(const std::string& peer_id,const std::string& status_str) ;
 		void  sendGroupChatStatusString(const std::string& status_str) ;
-		void  setCustomStateString(const std::string&) ;
-		std::string getCustomStateString() { return _custom_status_string ; }
+
+		std::string getCustomStateString(const std::string& peer_id) ;
+		void  setOwnCustomStateString(const std::string&) ;
+		std::string getOwnCustomStateString() ;
 
 		/// gets the peer's avatar in jpeg format, if available. Null otherwise. Also asks the peer to send
 		/// its avatar, if not already available. Creates a new unsigned char array. It's the caller's
@@ -78,26 +78,28 @@ class p3ChatService: public p3Service, public p3Config
 		RsMutex mChatMtx;
 
 		class AvatarInfo ;
+		class StateStringInfo ;
 
 		/// Send avatar info to peer in jpeg format.
 		void sendAvatarJpegData(const std::string& peer_id) ;
 
 		/// Receive the avatar in a chat item, with RS_CHAT_RECEIVE_AVATAR flag.
-#ifdef AVATAR_KEEP_BACKWRD_COMP
-		void receiveAvatarJpegData(RsChatMsgItem *ci) ;	// old method
-#endif
 		void receiveAvatarJpegData(RsChatAvatarItem *ci) ;	// new method
+		void receiveStateString(const std::string& id,const std::string& s) ;
 
 		/// Sends a request for an avatar to the peer of given id
 		void sendAvatarRequest(const std::string& peer_id) ;
 
 		RsChatAvatarItem *makeOwnAvatarItem() ;
+		RsChatStatusItem *makeOwnCustomStateStringItem() ;
 
 		p3ConnectMgr *mConnMgr;
 
 		AvatarInfo *_own_avatar ;
 		std::map<std::string,AvatarInfo *> _avatars ;
+
 		std::string _custom_status_string ;
+		std::map<std::string,StateStringInfo> _state_strings ;
 };
 
 #endif // SERVICE_CHAT_HEADER

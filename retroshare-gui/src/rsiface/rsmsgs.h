@@ -136,6 +136,7 @@ virtual void   sendGroupChatStatusString(const std::string& status_string) = 0 ;
 
 virtual void   setCustomStateString(const std::string&  status_string) = 0 ;
 virtual std::string getCustomStateString() = 0 ;
+virtual std::string getCustomStateString(const std::string& peer_id) = 0 ;
 
 // get avatar data for peer pid
 virtual void getAvatarData(std::string pid,unsigned char *& data,int& size) = 0 ;

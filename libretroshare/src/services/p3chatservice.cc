@@ -52,23 +52,11 @@ p3ChatService::p3ChatService(p3ConnectMgr *cm)
 
 int	p3ChatService::tick()
 {
-
-#ifdef CHAT_DEBUG
-	std::cerr << "p3ChatService::tick()";
-	std::cerr << std::endl;
-#endif
-
 	return 0;
 }
 
 int	p3ChatService::status()
 {
-
-#ifdef CHAT_DEBUG
-	std::cerr << "p3ChatService::status()";
-	std::cerr << std::endl;
-#endif
-
 	return 1;
 }
 
@@ -112,6 +100,20 @@ int     p3ChatService::sendChat(std::wstring msg)
 	return 1;
 }
 
+class p3ChatService::StateStringInfo
+{
+   public: 
+	  StateStringInfo() 
+	  {
+		  _custom_status_string = "" ;	// the custom status string of the peer
+		  _peer_is_new = false ;			// true when the peer has a new avatar
+		  _own_is_new = false ;				// true when I myself a new avatar to send to this peer.
+	  }
+
+	  std::string _custom_status_string ;
+	  int _peer_is_new ;			// true when the peer has a new avatar
+	  int _own_is_new ;			// true when I myself a new avatar to send to this peer.
+};
 class p3ChatService::AvatarInfo
 {
    public: 
@@ -144,85 +146,17 @@ class p3ChatService::AvatarInfo
 	  AvatarInfo(const unsigned char *jpeg_data,int size)
 	  {
 		  init(jpeg_data,size) ;
-#ifdef TO_REMOVE
-		 int n_c = size ;
-		 int p   = 2 ;// minimum value for sizeof(wchar_t) over win/mac/linux ;
-		 int n   = n_c/p + 1 ;
-
-		 _jpeg_wstring = std::wstring(n,0) ;
-
-		 for(int i=0;i<n;++i)
-		 {
-			wchar_t h = jpeg_data[p*i+p-1] ;
-
-			for(int j=p-2;j>=0;--j)
-			{
-			   h = h << 8 ;
-			   h += jpeg_data[p*i+j] ;
-			}
-			_jpeg_wstring[i] = h ;
-		 }
-#endif
 	  }
-#ifdef AVATAR_KEEP_BACKWRD_COMP
-	  AvatarInfo(const std::wstring& s)
-	  {
-		  int p 	= 2 ;// minimum value for sizeof(wchar_t) over win/mac/linux ;
-		  int n 	= s.size() ;
-		  int n_c	= p*n ;
-
-		  _image_data = new unsigned char[n_c] ;
-		  _image_size = n_c ;
-
-		  for(int i=0;i<n;++i)
-		  {
-			  wchar_t h = s[i] ;
-
-			  for(int j=0;j<p;++j)
-			  {
-				  _image_data[p*i+j] = (unsigned char)(h & 0xff) ;
-				  h = h >> 8 ;
-			  }
-		  }
-
-	  }
-#endif
-
-#ifdef TO_REMOVE
-	  const std::wstring& toStdWString() const { return _jpeg_wstring; }
-#endif
 
 	  void toUnsignedChar(unsigned char *& data,uint32_t& size) const
 	  {
 		  data = new unsigned char[_image_size] ;
 		  size = _image_size ;
 		  memcpy(data,_image_data,size*sizeof(unsigned char)) ;
-#ifdef TO_REMOVE
-		 int p 	= 2 ;// minimum value for sizeof(wchar_t) over win/mac/linux ;
-		 int n 	= _jpeg_wstring.size() ;
-		 int n_c	= p*n ;
-
-		 data = new unsigned char[n_c] ;
-		 size = n_c ;
-
-		 for(int i=0;i<n;++i)
-		 {
-			wchar_t h = _jpeg_wstring[i] ;
-
-			for(int j=0;j<p;++j)
-			{
-			   data[p*i+j] = (unsigned char)(h & 0xff) ;
-			   h = h >> 8 ;
-			}
-		 }
-#endif
 	  }
 
 	  uint32_t _image_size ;
 	  unsigned char *_image_data ;
-#ifdef TO_REMOVE
-	  std::wstring _jpeg_wstring;
-#endif
 	  int _peer_is_new ;			// true when the peer has a new avatar
 	  int _own_is_new ;			// true when I myself a new avatar to send to this peer.
 };
@@ -233,7 +167,7 @@ void p3ChatService::sendGroupChatStatusString(const std::string& status_string)
 	mConnMgr->getOnlineList(ids);
 
 #ifdef CHAT_DEBUG
-	std::cerr << "p3ChatService::sendChat()";
+	std::cerr << "p3ChatService::sendChat(): sending group chat status string: " << status_string << std::endl ;
 	std::cerr << std::endl;
 #endif
 
@@ -280,21 +214,24 @@ int     p3ChatService::sendPrivateChat( std::wstring msg, std::string id)
 	ci->sendTime = time(NULL);
 	ci->message = msg;
 
-	std::map<std::string,AvatarInfo*>::iterator it = _avatars.find(id) ; 
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+		std::map<std::string,AvatarInfo*>::iterator it = _avatars.find(id) ; 
 
-	if(it == _avatars.end())
-	{
-		_avatars[id] = new AvatarInfo ;
-		it = _avatars.find(id) ;
-	}
-	if(it != _avatars.end() && it->second->_own_is_new)
-	{
+		if(it == _avatars.end())
+		{
+			_avatars[id] = new AvatarInfo ;
+			it = _avatars.find(id) ;
+		}
+		if(it->second->_own_is_new)
+		{
 #ifdef CHAT_DEBUG
-	   std::cerr << "p3ChatService::sendPrivateChat: new avatar never sent to peer " << id << ". Setting <new> flag to packet." << std::endl; 
+			std::cerr << "p3ChatService::sendPrivateChat: new avatar never sent to peer " << id << ". Setting <new> flag to packet." << std::endl; 
 #endif
 
-	   ci->chatFlags |= RS_CHAT_FLAG_AVATAR_AVAILABLE ;
-	   it->second->_own_is_new = false ;
+			ci->chatFlags |= RS_CHAT_FLAG_AVATAR_AVAILABLE ;
+			it->second->_own_is_new = false ;
+		}
 	}
 
 #ifdef CHAT_DEBUG
@@ -306,6 +243,36 @@ int     p3ChatService::sendPrivateChat( std::wstring msg, std::string id)
 #endif
 
 	sendItem(ci);
+
+	// Check if custom state string has changed, in which case it should be sent to the peer.
+	bool should_send_state_string = false ;
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+		std::map<std::string,StateStringInfo>::iterator it = _state_strings.find(id) ; 
+
+		if(it != _state_strings.end())
+		{
+			_state_strings[id] = StateStringInfo() ;
+			it = _state_strings.find(id) ;
+			it->second._own_is_new = true ;
+		}
+		if(it->second._own_is_new)
+		{
+			should_send_state_string = true ;
+			it->second._own_is_new = false ;
+		}
+	}
+
+	if(should_send_state_string)
+	{
+#ifdef CHAT_DEBUG
+		std::cerr << "own status string is new for peer " << id << ": sending it." << std::endl ;
+#endif
+		RsChatStatusItem *cs = makeOwnCustomStateStringItem() ;
+		cs->PeerId(id) ;
+		sendItem(cs) ;
+	}
 
 	return 1;
 }
@@ -334,14 +301,7 @@ std::list<RsChatMsgItem *> p3ChatService::getChatQueue()
 			std::cerr << "Got msg. Flags = " << ci->chatFlags << std::endl ;
 #endif
 
-			if(ci->chatFlags & RS_CHAT_FLAG_CONTAINS_AVATAR)			// no msg here. Just an avatar.
-			{
-#ifdef AVATAR_KEEP_BACKWRD_COMP
-				receiveAvatarJpegData(ci) ;									// Do we keep this for backward compatibility ?
-#endif
-				delete item ;
-			}
-			else if(ci->chatFlags & RS_CHAT_FLAG_REQUESTS_AVATAR)		// no msg here. Just an avatar request.
+			if(ci->chatFlags & RS_CHAT_FLAG_REQUESTS_AVATAR)		// no msg here. Just an avatar request.
 			{
 				sendAvatarJpegData(ci->PeerId()) ;
 				delete item ;
@@ -388,7 +348,13 @@ std::list<RsChatMsgItem *> p3ChatService::getChatQueue()
 				rsicontrol->getNotify().notifyChatStatus(cs->PeerId(),cs->status_string,false) ;
 
 			if(cs->flags & RS_CHAT_FLAG_CUSTOM_STATE)
-				rsicontrol->getNotify().notifyCustomState(cs->PeerId(),cs->status_string) ;
+			{
+#ifdef CHAT_DEBUG
+				std::cout << "Received custom status string packet from peer " << cs->PeerId() << ": " << cs->status_string << ". Storing it and notifying." << std::endl ;
+#endif
+				receiveStateString(cs->PeerId(),cs->status_string) ;	// store it
+				rsicontrol->getNotify().notifyCustomState(cs->PeerId()) ;
+			}
 
 			delete item ;
 			continue ;
@@ -413,12 +379,18 @@ std::list<RsChatMsgItem *> p3ChatService::getChatQueue()
 	return ilist;
 }
 
-void p3ChatService::setCustomStateString(const std::string& s)
+void p3ChatService::setOwnCustomStateString(const std::string& s)
 {
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
+#ifdef CHAT_DEBUG
+		std::cerr << "p3chatservice: Setting own state string to new value : " << s << std::endl ;
+#endif
 		_custom_status_string = s ;
+
+		for(std::map<std::string,StateStringInfo>::iterator it(_state_strings.begin());it!=_state_strings.end();++it)
+			it->second._own_is_new = true ;
 	}
 	IndicateConfigChanged();
 }
@@ -427,7 +399,9 @@ void p3ChatService::setOwnAvatarJpegData(const unsigned char *data,int size)
 {
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+#ifdef CHAT_DEBUG
 		std::cerr << "p3chatservice: Setting own avatar to new image." << std::endl ;
+#endif
 
 		if(_own_avatar != NULL)
 			delete _own_avatar ;
@@ -439,28 +413,34 @@ void p3ChatService::setOwnAvatarJpegData(const unsigned char *data,int size)
 			it->second->_own_is_new = true ;
 	}
 	IndicateConfigChanged();
+
+	rsicontrol->getNotify().notifyOwnAvatarChanged() ;
+
+#ifdef CHAT_DEBUG
 	std::cerr << "p3chatservice:setOwnAvatarJpegData() done." << std::endl ;
-}
-
-#ifdef AVATAR_KEEP_BACKWRD_COMP
-// This one is kept for compatibility
-void p3ChatService::receiveAvatarJpegData(RsChatMsgItem *ci)
-{
-	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-   std::cerr << "p3chatservice: received avatar jpeg data for peer " << ci->PeerId() << ". Storing it." << std::endl ;
-
-   bool new_peer = (_avatars.find(ci->PeerId()) == _avatars.end()) ;
-
-   _avatars[ci->PeerId()] = new AvatarInfo(ci->message) ; 
-   _avatars[ci->PeerId()]->_peer_is_new = true ;
-   _avatars[ci->PeerId()]->_own_is_new = new_peer ;
-}
 #endif
 
+}
+
+void p3ChatService::receiveStateString(const std::string& id,const std::string& s)
+{
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+#ifdef CHAT_DEBUG
+   std::cerr << "p3chatservice: received avatar jpeg data for peer " << id << ". Storing it." << std::endl ;
+#endif
+
+   bool new_peer = (_state_strings.find(id) == _state_strings.end()) ;
+
+   _state_strings[id]._custom_status_string = s ;
+   _state_strings[id]._peer_is_new = true ;
+   _state_strings[id]._own_is_new = new_peer ;
+}
 void p3ChatService::receiveAvatarJpegData(RsChatAvatarItem *ci)
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+#ifdef CHAT_DEBUG
    std::cerr << "p3chatservice: received avatar jpeg data for peer " << ci->PeerId() << ". Storing it." << std::endl ;
+#endif
 
    bool new_peer = (_avatars.find(ci->PeerId()) == _avatars.end()) ;
 
@@ -469,13 +449,20 @@ void p3ChatService::receiveAvatarJpegData(RsChatAvatarItem *ci)
    _avatars[ci->PeerId()]->_own_is_new = new_peer ;
 }
 
+std::string p3ChatService::getOwnCustomStateString() 
+{
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+	return _custom_status_string ;
+}
 void p3ChatService::getOwnAvatarJpegData(unsigned char *& data,int& size) 
 {
 	// should be a Mutex here.
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
 	uint32_t s = 0 ;
+#ifdef CHAT_DEBUG
 	std::cerr << "p3chatservice:: own avatar requested from above. " << std::endl ;
+#endif
 	// has avatar. Return it strait away.
 	//
 	if(_own_avatar != NULL)
@@ -489,6 +476,36 @@ void p3ChatService::getOwnAvatarJpegData(unsigned char *& data,int& size)
 		size=0 ;
 	}
 }
+
+std::string p3ChatService::getCustomStateString(const std::string& peer_id) 
+{
+	// should be a Mutex here.
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+	std::map<std::string,StateStringInfo>::iterator it = _state_strings.find(peer_id) ; 
+
+#ifdef CHAT_DEBUG
+	std::cerr << "p3chatservice:: status string for peer " << peer_id << " requested from above. " << std::endl ;
+#endif
+	// has it. Return it strait away.
+	//
+	if(it!=_state_strings.end())
+	{
+	   it->second._peer_is_new = false ;
+#ifdef CHAT_DEBUG
+	   std::cerr << "Already has status string. Returning it" << std::endl ;
+#endif
+	   return it->second._custom_status_string ;
+	}
+	else
+	{
+#ifdef CHAT_DEBUG
+		std::cerr << "No status string for this peer. Not requesting it." << std::endl ;
+#endif
+		return std::string() ;
+	}
+}
+
 void p3ChatService::getAvatarJpegData(const std::string& peer_id,unsigned char *& data,int& size) 
 {
 	// should be a Mutex here.
@@ -496,7 +513,9 @@ void p3ChatService::getAvatarJpegData(const std::string& peer_id,unsigned char *
 
 	std::map<std::string,AvatarInfo *>::const_iterator it = _avatars.find(peer_id) ; 
 
+#ifdef CHAT_DEBUG
 	std::cerr << "p3chatservice:: avatar for peer " << peer_id << " requested from above. " << std::endl ;
+#endif
 	// has avatar. Return it strait away.
 	//
 	if(it!=_avatars.end())
@@ -505,7 +524,9 @@ void p3ChatService::getAvatarJpegData(const std::string& peer_id,unsigned char *
 	   it->second->toUnsignedChar(data,s) ;
 		size = s ;
 	   it->second->_peer_is_new = false ;
+#ifdef CHAT_DEBUG
 	   std::cerr << "Already has avatar. Returning it" << std::endl ;
+#endif
 	   return ;
 	}
 	else
@@ -525,27 +546,30 @@ void p3ChatService::sendAvatarRequest(const std::string& peer_id)
 	ci->sendTime = time(NULL);
 	ci->message = std::wstring() ;
 
+#ifdef CHAT_DEBUG
 	std::cerr << "p3ChatService::sending request for avatar, to peer " << peer_id << std::endl ;
 	std::cerr << std::endl;
+#endif
 
 	sendItem(ci);
 }
 
+RsChatStatusItem *p3ChatService::makeOwnCustomStateStringItem()
+{
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+	RsChatStatusItem *ci = new RsChatStatusItem();
+
+	ci->flags = RS_CHAT_FLAG_CUSTOM_STATE ;
+	ci->status_string = _custom_status_string ;
+
+	return ci ;
+}
 RsChatAvatarItem *p3ChatService::makeOwnAvatarItem()
 {
-#ifdef TO_REMOVE
-	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-	RsChatMsgItem *ci = new RsChatMsgItem();
-
-	ci->chatFlags = RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_CONTAINS_AVATAR ;
-	ci->sendTime = time(NULL);
-	ci->message = _own_avatar->toStdWString() ;
-#else
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 	RsChatAvatarItem *ci = new RsChatAvatarItem();
 
 	_own_avatar->toUnsignedChar(ci->image_data,ci->image_size) ;
-#endif
 
 	return ci ;
 }

@@ -39,134 +39,135 @@ class ChatDialog;
 
 class PeersDialog : public MainPage 
 {
-  Q_OBJECT
+	Q_OBJECT
 
-public:
-  /** Default Constructor */
-  PeersDialog(QWidget *parent = 0);
-  /** Default Destructor */
-  
-  PopupChatDialog *getPrivateChat(std::string id, std::string name, uint chatflags);
-  void clearOldChats();
-  
-  void loadEmoticonsgroupchat();
-//  void setChatDialog(ChatDialog *cd);
+	public:
+		/** Default Constructor */
+		PeersDialog(QWidget *parent = 0);
+		/** Default Destructor */
 
-  QPixmap picture;
+		PopupChatDialog *getPrivateChat(std::string id, std::string name, uint chatflags);
+		void clearOldChats();
 
-public slots:
+		void loadEmoticonsgroupchat();
+		//  void setChatDialog(ChatDialog *cd);
 
-  void  insertPeers();
-	void toggleSendItem( QTreeWidgetItem *item, int col );
+		QPixmap picture;
 
-  void insertChat();
-  void setChatInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));
-  void resetStatusBar() ;
+		public slots:
 
-  
-  void smileyWidgetgroupchat();
-  void addSmileys();
-  
-  void on_actionClearChat_triggered();
-  void displayInfoChatMenu(const QPoint& pos);
+			void  insertPeers();
+		void toggleSendItem( QTreeWidgetItem *item, int col );
 
-	// called by notifyQt when another peer is typing (in group chant and private chat)
-	void updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat) ;
+		void insertChat();
+		void setChatInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));
+		void resetStatusBar() ;
 
-	void updatePeersAvatar(const QString& peer_id);
-  void updateAvatar();	// called by notifyQt to update the avatar when it gets changed by another component
 
-private slots:
+		void smileyWidgetgroupchat();
+		void addSmileys();
 
-  /** Create the context popup menu and it's submenus */
-  void peertreeWidgetCostumPopupMenu( QPoint point );
+		void on_actionClearChat_triggered();
+		void displayInfoChatMenu(const QPoint& pos);
 
-	void updateStatusString(const QString& statusString) ;	// called when a peer is typing in group chat 
-	void updateStatusTyping() ;										// called each time a key is hit
-  
-  //void updatePeerStatusString(const QString& peer_id,const QString& chat_status) ;
+		// called by notifyQt when another peer is typing (in group chant and private chat)
+		void updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat) ;
 
-  /** Export friend in Friends Dialog */
-  void exportfriend();
-  /** Remove friend  */
-  void removefriend();
-  /** start a chat with a friend **/
-  void chatfriend();
-  void msgfriend();
+		void updatePeersCustomStateString(const QString& peer_id) ;
+		void updatePeersAvatar(const QString& peer_id);
+		void updateAvatar();	// called by notifyQt to update the avatar when it gets changed by another component
 
-  void configurefriend();
-  void viewprofile();
+		private slots:
 
-  /** RsServer Friend Calls */
-  void allowfriend();
-  void connectfriend();
-  void setaddressfriend();
-  void trustfriend();
-  
-  void setColor();      
-  void insertSendList();
-  void checkChat();
-  void sendMsg();
-  
-  //void privchat();
-  
-  void setFont();
-  void getFont();
-  void underline(); 
+			/** Create the context popup menu and it's submenus */
+			void peertreeWidgetCostumPopupMenu( QPoint point );
 
-  void changeAvatarClicked();
-  void getAvatar();
-  
-  void on_actionAdd_Friend_activated();
-  void on_actionCreate_new_Profile_activated(); 
-  
-  void loadmypersonalstatus();
+		void updateStatusString(const QString& statusString) ;	// called when a peer is typing in group chat 
+		void updateStatusTyping() ;										// called each time a key is hit
+
+		//void updatePeerStatusString(const QString& peer_id,const QString& chat_status) ;
+
+		/** Export friend in Friends Dialog */
+		void exportfriend();
+		/** Remove friend  */
+		void removefriend();
+		/** start a chat with a friend **/
+		void chatfriend();
+		void msgfriend();
+
+		void configurefriend();
+		void viewprofile();
+
+		/** RsServer Friend Calls */
+		void allowfriend();
+		void connectfriend();
+		void setaddressfriend();
+		void trustfriend();
+
+		void setColor();      
+		void insertSendList();
+		void checkChat();
+		void sendMsg();
+
+		//void privchat();
+
+		void setFont();
+		void getFont();
+		void underline(); 
+
+		void changeAvatarClicked();
+		void getAvatar();
+
+		void on_actionAdd_Friend_activated();
+		void on_actionCreate_new_Profile_activated(); 
+
+		void loadmypersonalstatus();
 
 
 signals:
-  void friendsUpdated() ;
-  void notifyGroupChat(const QString&,const QString&) ;
-  
-private:
-   class QLabel *iconLabel, *textLabel;
-   class QWidget *widget;
-   class QWidgetAction *widgetAction;
-   class QSpacerItem *spacerItem; 
+		void friendsUpdated() ;
+		void notifyGroupChat(const QString&,const QString&) ;
 
-  /* Worker Functions */
-  /* (1) Update Display */
+	private:
+		class QLabel *iconLabel, *textLabel;
+		class QWidget *widget;
+		class QWidgetAction *widgetAction;
+		class QSpacerItem *spacerItem; 
 
-  /* (2) Utility Fns */
-  QTreeWidgetItem *getCurrentPeer();
+		/* Worker Functions */
+		/* (1) Update Display */
 
-  /** Define the popup menus for the Context menu */
-  QMenu* contextMnu;
-    /** Defines the actions for the context menu */
-  QAction* chatAct;
-  QAction* msgAct;
-  QAction* connectfriendAct;
-  QAction* profileviewAct;
-  QAction* configurefriendAct;
-  QAction* exportfriendAct;
-  QAction* removefriendAct;
+		/* (2) Utility Fns */
+		QTreeWidgetItem *getCurrentPeer();
 
-  QTreeWidget *peertreeWidget;
+		/** Define the popup menus for the Context menu */
+		QMenu* contextMnu;
+		/** Defines the actions for the context menu */
+		QAction* chatAct;
+		QAction* msgAct;
+		QAction* connectfriendAct;
+		QAction* profileviewAct;
+		QAction* configurefriendAct;
+		QAction* exportfriendAct;
+		QAction* removefriendAct;
 
-  IMHistoryKeeper historyKeeper;
-  
-  QColor _currentColor;
-  bool _underline;
-  time_t last_status_send_time ;
+		QTreeWidget *peertreeWidget;
 
-  QHash<QString, QString> smileys;
+		IMHistoryKeeper historyKeeper;
 
-  std::map<std::string, PopupChatDialog *> chatDialogs;
+		QColor _currentColor;
+		bool _underline;
+		time_t last_status_send_time ;
 
-  QFont mCurrentFont; /* how the text will come out */
-  
+		std::map<std::string, PopupChatDialog *> chatDialogs;
 
-  /** Qt Designer generated object */
-  Ui::PeersDialog ui;
+		QFont mCurrentFont; /* how the text will come out */
+
+		/** A RshareSettings object used for saving/loading settings */
+		RshareSettings* _settings;
+
+		/** Qt Designer generated object */
+		Ui::PeersDialog ui;
 };
 
 #endif

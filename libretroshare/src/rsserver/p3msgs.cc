@@ -185,12 +185,18 @@ void p3Msgs::getAvatarData(std::string pid,unsigned char *& data,int& size)
 	mChatSrv->getAvatarJpegData(pid,data,size) ;
 }
 
+std::string p3Msgs::getCustomStateString(const std::string& peer_id)
+{
+	return mChatSrv->getCustomStateString(peer_id) ;
+}
+
 std::string p3Msgs::getCustomStateString()
 {
-	return mChatSrv->getCustomStateString() ;
+	return mChatSrv->getOwnCustomStateString() ;
 }
 
 void p3Msgs::setCustomStateString(const std::string& state_string)
 {
-	mChatSrv->setCustomStateString(state_string) ;
+	mChatSrv->setOwnCustomStateString(state_string) ;
 }
+

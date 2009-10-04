@@ -712,6 +712,18 @@ void PeersDialog::updateStatusString(const QString& status_string)
 	QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
 }
 
+void PeersDialog::updatePeersCustomStateString(const QString& peer_id)
+{
+#ifdef JUST_AN_EXAMPLE
+	// This is an example of how to retrieve the custom string.
+	//
+	std::cerr << "PeersDialog: Got notified that state string changed for peer " << peer_id.toStdString() << std::endl ;
+	std::cerr << "New state string for this peer is : " << rsMsgs->getCustomStateString(peer_id.toStdString()) << std::endl ;
+
+	QMessageBox::information(NULL,"Notification",peer_id+" has new custom string: " + QString::fromStdString(rsMsgs->getCustomStateString(peer_id.toStdString()))) ;
+#endif
+}
+
 void PeersDialog::updatePeersAvatar(const QString& peer_id)
 {
 	std::cerr << "PeersDialog: Got notified of new avatar for peer " << peer_id.toStdString() << std::endl ;

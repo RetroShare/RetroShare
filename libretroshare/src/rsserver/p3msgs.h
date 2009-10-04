@@ -58,8 +58,9 @@ class p3Msgs: public RsMsgs
 	  virtual void getOwnAvatarData(unsigned char *& data,int& size);
 
 	  // gets/set avatar from peer id in jpeg format.
-	  virtual void   setCustomStateString(const std::string&  status_string) ;
+	  virtual void setCustomStateString(const std::string&  status_string) ;
 	  virtual std::string getCustomStateString() ;
+	  virtual std::string getCustomStateString(const std::string& peer_id) ;
 	  
 
 	  /****************************************/
