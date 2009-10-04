@@ -37,7 +37,7 @@ class StatusMessage : public QDialog
   /** Default constructor */
   StatusMessage(QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default destructor */
-
+  ~StatusMessage();
 
 protected:
   void closeEvent (QCloseEvent * event);

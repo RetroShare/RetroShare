@@ -46,6 +46,13 @@ ProfileWidget::ProfileWidget(QWidget *parent, Qt::WFlags flags)
   loadDialog();
 }
 
+/** Destructor. */
+ProfileWidget::~ProfileWidget()
+{
+
+}
+
+
 void ProfileWidget::closeEvent (QCloseEvent * event)
 {
  QWidget::closeEvent(event);

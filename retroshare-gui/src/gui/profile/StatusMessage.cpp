@@ -49,6 +49,13 @@ StatusMessage::StatusMessage(QWidget *parent, Qt::WFlags flags)
   
 }
 
+/** Destructor. */
+StatusMessage::~StatusMessage()
+{
+  delete _settings;
+
+}
+
 void StatusMessage::closeEvent (QCloseEvent * event)
 {
  QDialog::closeEvent(event);

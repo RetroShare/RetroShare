@@ -35,6 +35,7 @@ class ProfileWidget : public QWidget
   /** Default constructor */
   ProfileWidget(QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default destructor */
+  ~ProfileWidget();
 
 
 protected:
