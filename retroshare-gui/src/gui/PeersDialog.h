@@ -25,7 +25,6 @@
 #include <QFileDialog>
 
 #include "chat/PopupChatDialog.h"
-#include <gui/Preferences/rsharesettings.h>
 
 #include "mainpage.h"
 #include "ui_PeersDialog.h"
@@ -165,8 +164,6 @@ private:
 
   QFont mCurrentFont; /* how the text will come out */
   
-  /** A RshareSettings object used for saving/loading settings */
-  RshareSettings* _settings;
 
   /** Qt Designer generated object */
   Ui::PeersDialog ui;

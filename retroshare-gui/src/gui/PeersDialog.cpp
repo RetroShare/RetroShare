@@ -38,7 +38,6 @@
 #include "profile/ProfileWidget.h"
 #include "GenCertDialog.h"
 #include "gui/connect/ConnectFriendWizard.h"
-#include "gui/Preferences/rsharesettings.h"
 
 #include <iostream>
 #include <sstream>
@@ -88,9 +87,6 @@ PeersDialog::PeersDialog(QWidget *parent)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
-  
-  /* Create RshareSettings object */
-  _settings = new RshareSettings();
 
   last_status_send_time = 0 ;
 
@@ -1303,7 +1299,7 @@ void PeersDialog::updateAvatar()
 
 void PeersDialog::getAvatar()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg)");
+	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg *.tiff)");
 	if(!fileName.isEmpty())
 	{
 		picture = QPixmap(fileName).scaled(82,82, Qt::IgnoreAspectRatio);
@@ -1352,9 +1348,6 @@ void PeersDialog::on_actionCreate_new_Profile_activated()
 /** Loads own personal status */
 void PeersDialog::loadmypersonalstatus()
 {
-	//_settings->beginGroup("Profile");	
-	//ui.mypersonalstatuslabel->setText(_settings->value("StatusMessage","").toString());
-  //_settings->endGroup();
   
   ui.mypersonalstatuslabel->setText(QString::fromStdString(rsMsgs->getCustomStateString()));
 }
