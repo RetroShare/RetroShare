@@ -158,6 +158,8 @@ signals:
 		QColor _currentColor;
 		bool _underline;
 		time_t last_status_send_time ;
+		
+		QHash<QString, QString> smileys;
 
 		std::map<std::string, PopupChatDialog *> chatDialogs;
 
