@@ -530,15 +530,18 @@ border: 1px solid #CCCCCC;}</string>
        <widget class="QLabel" name="labelicon">
         <property name="maximumSize">
          <size>
-          <width>16</width>
-          <height>16</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="text">
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="images.qrc">:/images/fileshare16.png</pixmap>
+         <pixmap resource="images.qrc">:/images/fileshare24.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -667,6 +670,9 @@ p, li { white-space: pre-wrap; }
    </item>
    <item row="1" column="0">
     <widget class="QSplitter" name="splitter">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
@@ -691,6 +697,9 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">#remoteDirTreeView{border: 1px solid #CCCCCC;}</string>
          </property>
          <property name="dragEnabled">
           <bool>true</bool>
@@ -738,6 +747,9 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="acceptDrops">
           <bool>false</bool>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">#localDirTreeView{border: 1px solid #CCCCCC;}</string>
          </property>
          <property name="dragEnabled">
           <bool>true</bool>
