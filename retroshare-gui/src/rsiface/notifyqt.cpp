@@ -13,7 +13,6 @@
 #include "gui/TransfersDialog.h"
 //#include "gui/ChatDialog.h"
 #include "gui/MessagesDialog.h"
-#include "gui/ChannelsDialog.h"
 #include "gui/MessengerWindow.h"
 
 #include "gui/toaster/OnlineToaster.h"

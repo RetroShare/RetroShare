@@ -42,7 +42,6 @@
 #include "NetworkView.h"
 #include "PhotoDialog.h"
 #include "ForumsDialog.h"
-#include "channels/channelsDialog.h"
 #include "BlogDialog.h"
 #include "CalDialog.h"
 #include "PeersFeed.h"
@@ -112,18 +111,6 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     /* Create the config pages and actions */
     QActionGroup *grp = new QActionGroup(this);
 
- //   LinksDialog *linksDialog = NULL;
- //   ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
- //                      createPageAction(QIcon(IMAGE_TRANSFERS), tr("Links Cloud"), grp));
-
- //   ChannelsDialog *channelsDialog = NULL;
- //   ui.stackPages->add(channelsDialog = new ChannelsDialog(ui.stackPages),
- //                        createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
-
-    //NewsFeed *newsFeed = NULL;
-    //ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
-    //                  createPageAction(QIcon(IMAGE_NEWSFEED), tr("News Feed"), grp));
-
     StatisticDialog *statisticDialog = NULL;
     ui.stackPages->add(statisticDialog = new StatisticDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_STATISTIC), tr("Statistics"), grp));
@@ -144,13 +131,6 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(blogDialog = new BlogDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_BLOGS), tr("Blog Feed"), grp));
 
-//    ChannelFeed *channelFeed = NULL;
-//    ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
-//                      createPageAction(QIcon(IMAGE_CHANNELS), tr("Channel Feed"), grp));
-//
-//    ForumsDialog *forumsDialog = NULL;
-//    ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
-//                       createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
 
     GamesDialog *gamesDialog = NULL;
     ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
@@ -169,13 +149,6 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
                       createPageAction(QIcon(IMAGE_CALENDAR), tr("Shared Calendars"), grp));
 
 
-
-
-  //ui.stackPages->add(groupsDialog = new GroupsDialog(ui.stackPages),
-  //                   createPageAction(QIcon(), tr("Groups"), grp));
-
-  //ui.stackPages->add(new StatisticDialog(ui.stackPages),
-  //                   createPageAction(QIcon(IMAGE_STATISTIC), tr("Statistics"), grp));
 
    /* Create the toolbar */
    ui.toolBar->addActions(grp->actions());

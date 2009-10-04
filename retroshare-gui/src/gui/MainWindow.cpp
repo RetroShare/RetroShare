@@ -132,7 +132,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(ui.actionAdd_Share, SIGNAL(triggered() ), this , SLOT( openShareManager() ) );
     connect(ui.actionOptions, SIGNAL(triggered()), this, SLOT( showSettings()) );
     connect(ui.actionMessenger, SIGNAL(triggered()), this, SLOT( showMessengerWindow()) );
-    //connect(ui.actionSMPlayer, SIGNAL(triggered()), this, SLOT( showsmplayer()) );
     connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT( showabout()) );
     //connect(ui.actionColor, SIGNAL(triggered()), this, SLOT( setStyle()) );
 
@@ -156,7 +155,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(peersDialog = new PeersDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_PEERS), tr("Friends"), grp));
 
-//    ui.stackPages->add(turtleDialog = new TurtleRouterDialog(ui.stackPages), createPageAction(QIcon(IMAGE_TURTLE), tr("Turtle"), grp));
 
     ui.stackPages->add(searchDialog = new SearchDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_SEARCH), tr("Search"), grp));
@@ -191,12 +189,12 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
 #else
 
-    ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
-			createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
-
     ChannelFeed *channelFeed = NULL;
     ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
                       createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
+
+    ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
+			createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
 
     ForumsDialog *forumsDialog = NULL;
     ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
@@ -316,6 +314,20 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
     timer->start(1000);
 }
+
+/** Destructor. */
+MainWindow::~MainWindow()
+{
+    delete _bandwidthGraph;
+    delete _messengerwindowAct;
+    delete peerstatus;
+    delete dhtstatus;
+    delete natstatus;
+    delete ratesstatus;
+    delete _settings;
+    delete applicationWindow;
+}
+
 
 void MainWindow::displaySystrayMsg(const QString& title,const QString& msg)
 {
@@ -455,12 +467,6 @@ void MainWindow::showApplWindow()
     applicationWindow->show();
 }
 
-/** Destructor. */
-MainWindow::~MainWindow()
-{
-    delete _bandwidthGraph;
-    delete _messengerwindowAct;
-}
 
 /** Create and bind actions to events. Setup for initial
  * tray menu configuration. */

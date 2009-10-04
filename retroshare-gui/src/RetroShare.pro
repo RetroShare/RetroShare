@@ -58,12 +58,14 @@ win32-x-g++ {
 win32 {
 
     OBJECTS_DIR = temp/obj
+    #LIBS += -L"D/Qt/2009.03/qt/plugins/imageformats"
+    #QTPLUGIN += qjpeg
 
     LIBS += -L"../../../../lib" 
     LIBS += -lretroshare -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
     LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
     LIBS += -lole32 -lwinmm
-    
+        
     INCLUDEPATH += ../../../../gpgme-1.1.8/src/
     INCLUDEPATH += ../../../../libgpg-error-1.7/src/
 
@@ -235,11 +237,6 @@ HEADERS +=  rshare.h \
             games/qbackgammon/bgwidget.h \
             games/qbackgammon/bgboard.h \
             games/qbackgammon/optionsdlg.h \
-            gui/channels/channelsDialog.h \
-            gui/channels/channelBrowserDialog.h \
-            gui/channels/channelStatsDialog.h \
-            gui/channels/myChannelsDialog.h \
-            gui/channels/mySubscriptionsDialog.h \
             gui/elastic/graphwidget.h \
             gui/elastic/edge.h \
             gui/elastic/arrow.h \
@@ -323,11 +320,6 @@ FORMS +=    gui/BlogDialog.ui \
             gui/toaster/OnlineToaster.ui \
             gui/advsearch/AdvancedSearchDialog.ui \
             gui/advsearch/expressionwidget.ui \
-            gui/channels/ChannelsDialog.ui \
-            gui/channels/ChannelBrowserDialog.ui \
-            gui/channels/ChannelStatsDialog.ui \
-            gui/channels/MyChannelsDialog.ui \
-            gui/channels/MySubscriptionsDialog.ui \
             gui/NewsFeed.ui \
             gui/PeersFeed.ui \
             gui/MsgFeed.ui \
@@ -454,11 +446,6 @@ SOURCES +=  main.cpp \
             games/qbackgammon/bgwidget.cpp \
             games/qbackgammon/bgboard.cpp \
             games/qbackgammon/optionsdlg.cpp \
-            gui/channels/channelsDialog.cpp \
-            gui/channels/channelBrowserDialog.cpp \
-            gui/channels/channelStatsDialog.cpp \
-            gui/channels/myChannelsDialog.cpp \
-            gui/channels/mySubscriptionsDialog.cpp \
             gui/elastic/graphwidget.cpp \
             gui/elastic/edge.cpp \
             gui/elastic/arrow.cpp \

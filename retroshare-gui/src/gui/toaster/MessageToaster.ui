@@ -294,10 +294,6 @@ border-radius: 10px }</string>
  </tabstops>
  <resources>
   <include location="../images.qrc"/>
-  <include location="../resources/resources.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

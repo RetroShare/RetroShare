@@ -40,7 +40,6 @@
 
 #include "bwgraph/bwgraph.h"
 #include "help/browser/helpbrowser.h"
-#include "channels/channelsDialog.h"
 
 #include "ui_MainWindow.h"
 
