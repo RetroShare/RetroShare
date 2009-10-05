@@ -392,6 +392,8 @@ void p3ChatService::setOwnCustomStateString(const std::string& s)
 		for(std::map<std::string,StateStringInfo>::iterator it(_state_strings.begin());it!=_state_strings.end();++it)
 			it->second._own_is_new = true ;
 	}
+
+	rsicontrol->getNotify().notifyOwnStatusMessageChanged() ;
 	IndicateConfigChanged();
 }
 
