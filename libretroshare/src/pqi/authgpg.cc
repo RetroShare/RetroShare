@@ -1136,6 +1136,7 @@ bool GPGAuthMgr::VerifySignature_locked(std::string id, void *data, int datalen,
 	else
 	{
 		fprintf(stderr, "VerifySignature Failed to get Result\n");
+		return false ;
 	}
 
 	gpgme_signature_t sg = res->signatures;
