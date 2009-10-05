@@ -44,6 +44,12 @@ void NotifyQt::notifyOwnAvatarChanged()
 	emit ownAvatarChanged() ;
 }
 
+void NotifyQt::notifyOwnStatusMessageChanged()
+{
+	std::cerr << "Notifyqt:: notified that own avatar changed" << std::endl ;
+	emit ownStatusMessageChanged() ;
+}
+
 void NotifyQt::notifyPeerHasNewAvatar(std::string peer_id)
 {
 	std::cerr << "notifyQt: notification of new avatar." << std::endl ;
