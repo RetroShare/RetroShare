@@ -206,7 +206,8 @@ void ApplicationWindow::show(Page page)
 /** Destructor. */
 ApplicationWindow::~ApplicationWindow()
 {
-    delete exampleDialog;
+// is this allocated anywhere ??
+//    delete exampleDialog;
 }
 
 /** Create and bind actions to events. Setup for initial
