@@ -108,6 +108,8 @@ class PeersDialog : public MainPage
 		void insertSendList();
 		void checkChat();
 		void sendMsg();
+		
+		void statusmessage();
 
 		//void privchat();
 

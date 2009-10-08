@@ -36,6 +36,8 @@
 #include "connect/ConfCertDialog.h"
 #include "profile/ProfileView.h"
 #include "profile/ProfileWidget.h"
+#include "profile/StatusMessage.h"
+
 #include "GenCertDialog.h"
 #include "gui/connect/ConnectFriendWizard.h"
 
@@ -87,6 +89,9 @@ PeersDialog::PeersDialog(QWidget *parent)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
+  
+  /* Create RshareSettings object */
+  _settings = new RshareSettings();
 
   last_status_send_time = 0 ;
 
@@ -94,6 +99,7 @@ PeersDialog::PeersDialog(QWidget *parent)
   connect( ui.peertreeWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend()));
 
   connect( ui.avatartoolButton, SIGNAL(clicked()), SLOT(getAvatar()));
+  connect( ui.mypersonalstatuslabel, SIGNAL(clicked()), SLOT(statusmessage()));
 
   /* hide the Tree +/- */
   ui.peertreeWidget -> setRootIsDecorated( false );
@@ -175,10 +181,11 @@ PeersDialog::PeersDialog(QWidget *parent)
   menu->addSeparator();
   menu->addAction(ui.actionCreate_new_Profile);
   ui.menupushButton->setMenu(menu);
+
   
   updateAvatar();
   loadmypersonalstatus();
-
+  
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -329,7 +336,7 @@ void  PeersDialog::insertPeers()
 		item -> setTextAlignment(1, Qt::AlignCenter | Qt::AlignVCenter );
 
 		/* (1) Person */
-		item -> setText( 2, QString::fromStdString(detail.name) + tr("   ") + tr(" - ") +
+		item -> setText( 2, QString::fromStdString(detail.name) + tr(" - ") +
             QString::fromStdString(rsMsgs->getCustomStateString(detail.id)));
 
 		/* (2) Auto Connect */
@@ -1363,4 +1370,10 @@ void PeersDialog::loadmypersonalstatus()
 {
   
   ui.mypersonalstatuslabel->setText(QString::fromStdString(rsMsgs->getCustomStateString()));
+}
+
+void PeersDialog::statusmessage()
+{
+    static StatusMessage *statusmsgdialog = new StatusMessage();
+    statusmsgdialog->show();
 }
