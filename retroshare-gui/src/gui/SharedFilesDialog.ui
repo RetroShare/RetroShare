@@ -578,7 +578,7 @@ p, li { white-space: pre-wrap; }
         </property>
        </spacer>
       </item>
-      <item row="0" column="3">
+      <item row="0" column="4">
        <widget class="QPushButton" name="splittedButton">
         <property name="maximumSize">
          <size>
@@ -607,7 +607,7 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="0" column="4">
+      <item row="0" column="5">
        <widget class="QPushButton" name="remoteButton">
         <property name="maximumSize">
          <size>
@@ -636,7 +636,7 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="0" column="5">
+      <item row="0" column="6">
        <widget class="QPushButton" name="localButton">
         <property name="maximumSize">
          <size>
@@ -663,6 +663,35 @@ p, li { white-space: pre-wrap; }
         <property name="flat">
          <bool>true</bool>
         </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QComboBox" name="indicatorCBox">
+        <item>
+         <property name="text">
+          <string>No indicator</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Last day</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Last week</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Last month</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Older</string>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>

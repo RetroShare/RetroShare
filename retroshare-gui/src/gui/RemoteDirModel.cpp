@@ -1,4 +1,4 @@
-/****************************************************************
+/*************************************:***************************
  *  RetroShare is distributed under the following license:
  *
  *  Copyright (C) 2006 - 2009 RetroShare Team
@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -39,11 +39,11 @@
 
 RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
         : QAbstractItemModel(parent),
-         RemoteMode(mode), nIndex(1), indexSet(1)   /* ass zero index cant be used */
+         RemoteMode(mode), nIndex(1), indexSet(1) /* ass zero index cant be used */,
+         ageIndicator(0)
 {
 	setSupportedDragActions(Qt::CopyAction);
-  treeStyle();
-
+	treeStyle();
 }
 
 void RemoteDirModel::treeStyle()
@@ -156,7 +156,7 @@ void RemoteDirModel::treeStyle()
 
  int RemoteDirModel::columnCount(const QModelIndex &parent) const
  {
-	return 4;
+	return 5;
  }
 QString RemoteDirModel::getFlagsString(uint32_t flags)
 {
@@ -168,6 +168,35 @@ QString RemoteDirModel::getFlagsString(uint32_t flags)
 		default:
 										  return QString() ;
 	}
+}
+
+QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
+{
+	QString ret("");
+	QString nind("NEW");
+	QString oind("OLD");
+	uint32_t age = details.age;
+
+	switch (ageIndicator) {
+		case IND_LAST_DAY:
+			if (age < 24 * 60 * 60) return nind;
+			break;
+		case IND_LAST_WEEK:
+			if (age < 7 * 24 * 60 * 60) return nind;
+			break;
+		case IND_LAST_MONTH:
+			if (age < 30 * 24 * 60 * 60) return nind;
+			break;
+		case IND_OLDER:
+			if (age >= 30 * 24 * 60 * 60) return oind;
+			break;
+		case IND_DEFAULT:
+			return ret;
+		default:
+			return ret;
+	}
+
+	return ret;
 }
 
  QVariant RemoteDirModel::data(const QModelIndex &index, int role) const
@@ -192,7 +221,7 @@ QString RemoteDirModel::getFlagsString(uint32_t flags)
      else
      	flags |= DIR_FLAGS_LOCAL;
 
-	 
+
      if (!rsFiles->RequestDirDetails(ref, details, flags))
      {
      	return QVariant();
@@ -456,6 +485,14 @@ QString RemoteDirModel::getFlagsString(uint32_t flags)
 			return  misc::userFriendlyDuration(details.age);
 		}
 			break;
+			case 4:
+		{
+			QString ind("");
+			if (ageIndicator != IND_DEFAULT)
+				ind = getAgeIndicatorString(details);
+			return ind;
+		}
+            break;
 			default:
 		return QString(tr("FILE"));
 			break;
@@ -479,10 +516,24 @@ QString RemoteDirModel::getFlagsString(uint32_t flags)
 			case 2:
 				return getFlagsString(details.flags);
 				break;
-			case 3:	
+			case 3:
 				return  misc::userFriendlyDuration(details.age);
 				break;
-
+            case 4:
+            {
+            	if (ageIndicator == IND_DEFAULT)
+            		return QString("");
+            	QModelIndex pidx = parent(index);
+            	QModelIndex pidxs = pidx.sibling(pidx.row(), 4);
+            	if (pidxs.isValid() && pidxs.data() != tr(""))
+            		return pidxs.data();
+            	else {
+            		QString ind("");
+            		getAgeIndicatorRec(details, ind);
+            		return ind;
+            	}
+            }
+                break;
 			default:
 				return QString(tr("DIR"));
 				break;
@@ -503,7 +554,27 @@ QString RemoteDirModel::getFlagsString(uint32_t flags)
 	return QVariant();
  }
 
+void RemoteDirModel::getAgeIndicatorRec(DirDetails &details, QString &ret) const {
+	if (details.type == DIR_TYPE_FILE) {
+		ret = getAgeIndicatorString(details);
+		return;
+	} else if (details.type == DIR_TYPE_DIR && ret == tr("")) {
+		std::list<DirStub>::iterator it;
+		for (it = details.children.begin(); it != details.children.end(); it++) {
+			void *ref = it->ref;
+			DirDetails childDetails;
+			uint32_t flags;
 
+			if (RemoteMode)
+				flags |= DIR_FLAGS_REMOTE;
+			else
+				flags |= DIR_FLAGS_LOCAL;
+
+			if (rsFiles->RequestDirDetails(ref, childDetails, flags) && ret == tr(""))
+				getAgeIndicatorRec(childDetails, ret);
+		}
+	}
+}
 
  QVariant RemoteDirModel::headerData(int section, Qt::Orientation orientation,
                                       int role) const
@@ -544,6 +615,9 @@ QString RemoteDirModel::getFlagsString(uint32_t flags)
 				break;
 			case 3:
 				return QString(tr("Age"));
+				break;
+			case 4:
+				return QString(tr("What's new"));
 				break;
 		}
 		return QString("Column %1").arg(section);

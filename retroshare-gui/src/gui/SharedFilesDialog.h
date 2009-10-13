@@ -72,8 +72,6 @@ private slots:
   void showFrameRemote(bool show);
   void showFrameSplitted(bool show);
 
-
-
 //  void recommendfile();
   void playselectedfiles();
   void openfile();
@@ -84,6 +82,8 @@ private slots:
   void recommendFilesToMsg( std::string rsid );
   void runCommandForFile();
   void tryToAddNewAssotiation();
+	
+  void indicatorChanged(int index);
 
 signals:
   void playFiles(QStringList files);

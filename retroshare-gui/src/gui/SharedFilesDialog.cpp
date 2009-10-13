@@ -95,7 +95,7 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   connect( ui.remoteDirTreeView, SIGNAL( doubleClicked(const QModelIndex&)), this, SLOT( downloadRemoteSelected()));
   connect( ui.downloadButton, SIGNAL( clicked()), this, SLOT( downloadRemoteSelected()));
 
-
+	connect(ui.indicatorCBox, SIGNAL(currentIndexChanged(int)), this, SLOT(indicatorChanged(int)));
 
 /*
   connect( ui.remoteDirTreeView, SIGNAL( itemExpanded( QTreeWidgetItem * ) ),
@@ -128,11 +128,13 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 	l_header->setResizeMode (1, QHeaderView::Fixed);
 	l_header->setResizeMode (2, QHeaderView::Interactive);
 	l_header->setResizeMode (3, QHeaderView::Interactive);
+	l_header->setResizeMode (4, QHeaderView::Interactive);
 
 	l_header->resizeSection ( 0, 490 );
 	l_header->resizeSection ( 1, 70 );
 	l_header->resizeSection ( 2, 130 );
 	l_header->resizeSection ( 3, 100 );
+	l_header->resizeSection ( 4, 100 );
 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * r_header = ui.remoteDirTreeView->header () ;
@@ -143,12 +145,14 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 	r_header->setResizeMode (1, QHeaderView::Fixed);
 	r_header->setResizeMode (2, QHeaderView::Interactive);
 	r_header->setResizeMode (3, QHeaderView::Fixed);
+	r_header->setResizeMode (4, QHeaderView::Interactive);
 
 
 	r_header->resizeSection ( 0, 490 );
 	r_header->resizeSection ( 1, 70 );
 	r_header->resizeSection ( 2, 130 );
 	r_header->resizeSection ( 3, 100 );
+	r_header->resizeSection ( 4, 100 );
 
 	l_header->setHighlightSections(false);
 	r_header->setHighlightSections(false);
@@ -734,7 +738,7 @@ void SharedFilesDialog::showFrame(bool show)
 
         ui.remoteButton->setChecked(false);
         ui.splittedButton->setChecked(false);
-        
+
         /* set textcolor for Channel name  */
         QString labelStr("<span style=\"font-size:11pt; font-weight:500;"
                                "color:#000000;\">%1</span>");
@@ -771,7 +775,7 @@ void SharedFilesDialog::showFrameSplitted(bool show)
 
         ui.localButton->setChecked(false);
         ui.remoteButton->setChecked(false);
-        
+
         /* set textcolor for Channel name  */
         QString label2Str("<span style=\"font-size:11pt; font-weight:500;"
                                "color:#000000;\">%1</span>");
@@ -779,3 +783,10 @@ void SharedFilesDialog::showFrameSplitted(bool show)
         ui.labeltext->setText( label2Str.arg(tr("<strong>Files</strong>")));
     }
 }
+
+void SharedFilesDialog::indicatorChanged(int index)
+{
+    model->changeAgeIndicator(index);
+    localModel->changeAgeIndicator(index);
+}
+

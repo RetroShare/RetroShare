@@ -30,6 +30,12 @@
 #include "util/misc.h"
 #include "rsiface/rstypes.h"
 
+#define IND_DEFAULT 	0
+#define IND_LAST_DAY    1
+#define IND_LAST_WEEK   2
+#define IND_LAST_MONTH  3
+#define IND_OLDER       4
+
 class RemoteDirModel : public QAbstractItemModel
 {
     Q_OBJECT
@@ -76,6 +82,9 @@ public:
 
      void getFilePaths(QModelIndexList list, std::list<std::string> &fullpaths);
 
+     void changeAgeIndicator(int indicator) { ageIndicator = indicator; }
+
+
   public slots:
 
      void collapsed ( const QModelIndex & index ) { update(index); }
@@ -92,6 +101,10 @@ virtual QStringList mimeTypes () const;
      void treeStyle();
      void downloadDirectory(const DirDetails & details, int prefixLen);
 	  static QString getFlagsString(uint32_t) ;
+    QString getAgeIndicatorString(const DirDetails &) const;
+    void getAgeIndicatorRec(DirDetails &details, QString &ret) const;
+
+    int ageIndicator;
 
      QIcon categoryIcon;
      QIcon peerIcon;
