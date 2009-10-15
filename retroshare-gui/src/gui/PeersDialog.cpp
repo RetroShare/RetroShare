@@ -41,7 +41,6 @@
 #include "GenCertDialog.h"
 #include "gui/connect/ConnectFriendWizard.h"
 
-#include <iostream>
 #include <sstream>
 
 #include <QTextCodec>
@@ -74,6 +73,7 @@
 #define IMAGE_OFFLINE            ":/images/user/identityoffline24.png"
 #define IMAGE_OFFLINE2           ":/images/user/identitylightgrey24.png"
 #define IMAGE_AVAIBLE            ":/images/user/identityavaiblecyan24.png"
+#define IMAGE_UNREACHABLE        ":/images/user/identityunreachable24.png"
 #define IMAGE_CONNECT2           ":/images/reload24.png"
 
 
@@ -338,6 +338,8 @@ void  PeersDialog::insertPeers()
 		/* (1) Person */
 		item -> setText( 2, QString::fromStdString(detail.name) + tr(" - ") +
             QString::fromStdString(rsMsgs->getCustomStateString(detail.id)));
+    item -> setToolTip( 2, QString::fromStdString(detail.name) + tr(" - ") +
+            QString::fromStdString(rsMsgs->getCustomStateString(detail.id)));
 
 		/* (2) Auto Connect */
 		//item -> setText(3, QString::fromStdString(detail.autoconnect));
@@ -404,8 +406,11 @@ void  PeersDialog::insertPeers()
 			/* bright green */
 			for(i = 1; i < 8; i++)
 			{
-			  item -> setBackground(i,QBrush(Qt::red));
-			  item -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
+			  //item -> setBackground(i,QBrush(Qt::red));
+			  item -> setTextColor(i,(Qt::darkRed));
+			  QFont font ;
+			  item -> setFont(i,font);
+			  item -> setIcon(0,(QIcon(IMAGE_UNREACHABLE)));
 			}
 		}
 		else if (detail.state & RS_PEER_STATE_ONLINE)

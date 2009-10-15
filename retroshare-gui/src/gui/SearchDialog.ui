@@ -560,9 +560,18 @@ stop:0 #FEFEFE, stop:1 #E8E8E8);
 
 border: 1px solid #CCCCCC;}</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <property name="margin">
+     <layout class="QGridLayout" name="gridLayout_4">
+      <property name="leftMargin">
        <number>6</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>6</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
       </property>
       <item row="0" column="0">
        <widget class="QComboBox" name="FileTypeComboBox">
@@ -666,48 +675,76 @@ border: 1px solid #CCCCCC;}</string>
        </spacer>
       </item>
       <item row="0" column="2">
-       <widget class="QLineEdit" name="lineEdit">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>3</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+       <layout class="QGridLayout" name="gridLayout">
+        <property name="spacing">
+         <number>0</number>
         </property>
-        <property name="maximumSize">
-         <size>
-          <width>558</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <item row="0" column="0">
+         <widget class="QLineEdit" name="lineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>3</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>23</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>1677777</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Enter a Keyword here&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">border: 1px solid #8B8B8B;</string>
-        </property>
-       </widget>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">border: 1px solid #8B8B8B;
+</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="pushButtonsearch">
+          <property name="toolTip">
+           <string>Start Search</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton { 
+border-image: url(:/images/btn1.png) 4;
+border-width: 4;
+padding: 0px 6px;
+font-size: 12px;
+}
+
+*{
+color: black;
+}
+
+QPushButton:hover {
+border-image: url(:/images/btn2.png) 4;
+}
+
+QPushButton:pressed{
+border-image: url(:/images/btn3.png) 4;
+}</string>
+          </property>
+          <property name="text">
+           <string>Search</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item row="0" column="3">
-       <spacer>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>18</width>
-          <height>32</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="5">
        <widget class="QPushButton" name="resetButton">
         <property name="toolTip">
          <string>Reset</string>
@@ -717,10 +754,13 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="0" column="6">
+      <item row="0" column="4">
        <spacer>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Minimum</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -730,23 +770,13 @@ p, li { white-space: pre-wrap; }
         </property>
        </spacer>
       </item>
-      <item row="0" column="7">
+      <item row="0" column="5">
        <widget class="QPushButton" name="toggleAdvancedSearchBtn">
         <property name="toolTip">
          <string>Advanced Search</string>
         </property>
         <property name="text">
          <string>Advanced</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="4">
-       <widget class="QPushButton" name="pushButtonsearch">
-        <property name="toolTip">
-         <string>Start Search</string>
-        </property>
-        <property name="text">
-         <string>Search</string>
         </property>
        </widget>
       </item>
