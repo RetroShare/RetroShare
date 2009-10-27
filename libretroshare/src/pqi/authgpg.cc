@@ -153,6 +153,16 @@ GPGAuthMgr::GPGAuthMgr()
 		gpgme_set_locale(NULL, LC_MESSAGES, setlocale (LC_MESSAGES, NULL));
 	#endif
  
+	#ifndef WINDOWS_SYS
+	/* setup the engine (gpg2) */
+	if (GPG_ERR_NO_ERROR != gpgme_set_engine_info(GPGME_PROTOCOL_OpenPGP, "/usr/bin/gpg2", NULL))
+	{
+	       std::cerr << "Error creating Setting engine";
+	       std::cerr << std::endl;
+	       return;
+	}
+	#endif
+
 	if (GPG_ERR_NO_ERROR != gpgme_engine_check_version(GPGME_PROTOCOL_OpenPGP))
 	{
 		std::cerr << "Error check engine version";
