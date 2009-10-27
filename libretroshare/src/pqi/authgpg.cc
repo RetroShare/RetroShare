@@ -1360,13 +1360,14 @@ bool	GPGAuthMgr::getPGPAllList(std::list<std::string> &ids)
 bool 	GPGAuthMgr::decryptText(gpgme_data_t CIPHER, gpgme_data_t PLAIN) {
 	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
-	if (GPG_ERR_NO_ERROR != gpgme_op_decrypt (CTX, CIPHER, PLAIN))
+	gpg_error_t ERR;
+	if (GPG_ERR_NO_ERROR != (ERR = gpgme_op_decrypt (CTX, CIPHER, PLAIN)))
 	{
-		std::cerr << "Error decrypting text";
+		ProcessPGPmeError(ERR);
+		std::cerr << "GPGAuthMgr::decryptText() Error decrypting text.";
 		std::cerr << std::endl;
 		return false;
 	}
-
 
 	return true;
 }
@@ -1375,11 +1376,13 @@ bool 	GPGAuthMgr::encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER) {
 	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
 	gpgme_encrypt_flags_t* flags = new gpgme_encrypt_flags_t();
-        gpgme_key_t keys[2] = {mOwnGpgCert.key, NULL};
+	gpgme_key_t keys[2] = {mOwnGpgCert.key, NULL};
 
-        if (GPG_ERR_NO_ERROR != gpgme_op_encrypt(CTX, keys, *flags, PLAIN, CIPHER))
+	gpg_error_t ERR;
+	if (GPG_ERR_NO_ERROR != (ERR = gpgme_op_encrypt(CTX, keys, *flags, PLAIN, CIPHER)))
 	{
-		std::cerr << "Error encrypting text";
+		ProcessPGPmeError(ERR);
+		std::cerr << "GPGAuthMgr::encryptText() Error encrypting text.";
 		std::cerr << std::endl;
 		return false;
 	}
