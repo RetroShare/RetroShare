@@ -4,6 +4,7 @@ TEMPLATE = app
 TARGET = RetroShare
 
 DEFINES *= RS_RELEASE_VERSION
+DEFINES += RS_USE_PGPSSL
 RCC_DIR = temp/qrc
 UI_DIR  = temp/ui
 MOC_DIR = temp/moc
