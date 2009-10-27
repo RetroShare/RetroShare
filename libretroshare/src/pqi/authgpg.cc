@@ -133,8 +133,8 @@ bool GPGAuthMgr::setPGPPassword_locked(std::string pwd)
 	memcpy(PgpPassword, pwd.c_str(), pwd.length());
 	PgpPassword[pwd.length()] = '\0';
 
-	fprintf(stderr, "GPGAuthMgr::setPGPPassword_locked() called\n");
-	gpgme_set_passphrase_cb(CTX, pgp_pwd_callback, (void *) PgpPassword);
+        fprintf(stderr, "GPGAuthMgr::setPGPPassword_locked() called\n");
+        gpgme_set_passphrase_cb(CTX, pgp_pwd_callback, (void *) PgpPassword);
 
 	return true;
 }
@@ -155,12 +155,12 @@ GPGAuthMgr::GPGAuthMgr()
  
 	#ifndef WINDOWS_SYS
 	/* setup the engine (gpg2) */
-	if (GPG_ERR_NO_ERROR != gpgme_set_engine_info(GPGME_PROTOCOL_OpenPGP, "/usr/bin/gpg2", NULL))
-	{
-	       std::cerr << "Error creating Setting engine";
-	       std::cerr << std::endl;
-	       return;
-	}
+//        if (GPG_ERR_NO_ERROR != gpgme_set_engine_info(GPGME_PROTOCOL_OpenPGP, "/usr/bin/gpg2", NULL))
+//        {
+//               std::cerr << "Error creating Setting engine";
+//               std::cerr << std::endl;
+//               return;
+//        }
 	#endif
 
 	if (GPG_ERR_NO_ERROR != gpgme_engine_check_version(GPGME_PROTOCOL_OpenPGP))
@@ -174,7 +174,24 @@ GPGAuthMgr::GPGAuthMgr()
 	{
 		std::cerr << "Error getting engine info";
 		std::cerr << std::endl;
-		return;
+                while (INFO && INFO->protocol != GPGME_PROTOCOL_OpenPGP) {
+                    INFO = INFO->next;
+                }
+                if (!INFO) {
+                    fprintf (stderr, "GPGME compiled without support for protocol %s",
+                        gpgme_get_protocol_name (INFO->protocol));
+                } else if (INFO->file_name && !INFO->version) {
+                    fprintf (stderr, "Engine %s not installed properly",
+                        INFO->file_name);
+                } else if (INFO->file_name && INFO->version && INFO->req_version) {
+                    fprintf (stderr, "Engine %s version %s installed, "
+                        "but at least version %s required", INFO->file_name,
+                        INFO->version, INFO->req_version);
+                }  else {
+                    fprintf (stderr, "Unknown problem with engine for protocol %s",
+                        gpgme_get_protocol_name (INFO->protocol));
+                }
+                return;
 	}
 
 	/* Create New Contexts */
@@ -199,6 +216,16 @@ GPGAuthMgr::GPGAuthMgr()
 	storeAllKeys_locked();
 	printAllKeys_locked();
 	updateTrustAllKeys_locked();
+}
+
+bool GPGAuthMgr::getPGPEngineFileName(std::string &fileName)
+{
+    if (!INFO) {
+        return false;
+    } else {
+        fileName = std::string(INFO->file_name);
+        return true;
+    }
 }
 
 /* This function is called when retroshare is first started
@@ -817,11 +844,6 @@ X509 *GPGAuthMgr::SignX509Req(X509_REQ *req, long days, std::string gpg_passwd)
         sigoutll=sigoutl=2048; // hashoutl; //EVP_PKEY_size(pkey);
         buf_sigout=(unsigned char *)OPENSSL_malloc((unsigned int)sigoutl);
 
-	std::cerr << "Buffer Sizes: in: " << inl;
-	std::cerr << "  HashOut: " << hashoutl;
-	std::cerr << "  SigOut: " << sigoutl;
-	std::cerr << std::endl;
-
         if ((buf_in == NULL) || (buf_hashout == NULL) || (buf_sigout == NULL))
                 {
                 hashoutl=0;
@@ -853,6 +875,11 @@ X509 *GPGAuthMgr::SignX509Req(X509_REQ *req, long days, std::string gpg_passwd)
 		sigoutl = 0;	
 		goto err;
 	}
+
+        std::cerr << "Buffer Sizes: in: " << inl;
+        std::cerr << "  HashOut: " << hashoutl;
+        std::cerr << "  SigOut: " << sigoutl;
+        std::cerr << std::endl;
 
 	//passphrase = "NULL";
 
@@ -1119,7 +1146,7 @@ bool GPGAuthMgr::VerifySignature_locked(std::string id, void *data, int datalen,
 		std::cerr << std::endl;
 	}
 
-	if (GPG_ERR_NO_ERROR != gpgme_data_new_from_mem(&gpgmeSig, (const char *) sig, siglen, 1))
+        if (GPG_ERR_NO_ERROR != gpgme_data_new_from_mem(&gpgmeSig, (const char *) sig, siglen, 1))
 	{
 		std::cerr << "Error create Sig";
 		std::cerr << std::endl;
@@ -1133,9 +1160,33 @@ bool GPGAuthMgr::VerifySignature_locked(std::string id, void *data, int datalen,
 	if (GPG_ERR_NO_ERROR != (ERR = gpgme_op_verify(CTX,gpgmeSig, gpgmeData, NULL)))
 	{
 		ProcessPGPmeError(ERR);
-		std::cerr << "GPGAuthMgr::Verify FAILED";
+                std::cerr << "GPGAuthMgr::VerifySignature_locked FAILED for first try.";
 		std::cerr << std::endl;
-	}
+
+                std::cerr << "GPGAuthMgr::VerifySignature_locked making another signature check with siglen - 1 (mandatory for gpg v1)." << std::endl;
+
+                std::cerr << "VerifySignature: datalen: " << datalen << " siglen: " << (siglen - 1);
+                std::cerr << std::endl;
+
+                if (GPG_ERR_NO_ERROR != gpgme_data_new_from_mem(&gpgmeData, (const char *) data, datalen, 1))
+                {
+                        std::cerr << "Error create Data";
+                        std::cerr << std::endl;
+                }
+
+                if (GPG_ERR_NO_ERROR != gpgme_data_new_from_mem(&gpgmeSig, (const char *) sig, siglen - 1, 1))
+                {
+                        std::cerr << "Error create Sig";
+                        std::cerr << std::endl;
+                }
+                if (GPG_ERR_NO_ERROR != (ERR = gpgme_op_verify(CTX,gpgmeSig, gpgmeData, NULL)))
+                {
+                        ProcessPGPmeError(ERR);
+                        std::cerr << "GPGAuthMgr::VerifySignature_locked FAILED for second try.";
+                        std::cerr << std::endl;
+                }
+
+        }
 
 	gpgme_verify_result_t res = gpgme_op_verify_result(CTX);
 

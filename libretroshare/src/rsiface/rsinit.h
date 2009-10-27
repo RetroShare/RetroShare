@@ -47,6 +47,7 @@ class RsInit
 
 		/* Account Details (Combined GPG+SSL Setup) */
 		static bool 	getPreferedAccountId(std::string &id);
+                static bool     getPGPEngineFileName(std::string &fileName);
 		static bool 	getAccountIds(std::list<std::string> &ids);
 		static bool 	getAccountDetails(std::string id, 
 					std::string &gpgId, std::string &gpgName, 

@@ -82,6 +82,9 @@ class GPGAuthMgr: public AuthSSL
 
 	bool    availablePGPCertificates(std::list<std::string> &ids);
 
+        //get the pgpg engine used by the pgp functions
+        bool    getPGPEngineFileName(std::string &fileName);
+
 	int	GPGInit(std::string ownId);
 	int	GPGInit(std::string name, std::string comment, 
 			std::string email, std::string passwd); /* create it */

@@ -780,6 +780,17 @@ int      RsInit::GetPGPLogins(std::list<std::string> &pgpIds)
     #endif
 }
 
+bool      RsInit::getPGPEngineFileName(std::string &fileName)
+{
+    #ifdef PQI_USE_SSLONLY
+        return false;
+    #else  // PGP+SSL
+        GPGAuthMgr *mgr = (GPGAuthMgr *) getAuthMgr();
+
+        return mgr->getPGPEngineFileName(fileName);
+    #endif
+}
+
 int      RsInit::GetPGPLoginDetails(std::string id, std::string &name, std::string &email)
 {
   std::cerr << "RsInit::GetPGPLoginDetails for \"" << id << "\"";

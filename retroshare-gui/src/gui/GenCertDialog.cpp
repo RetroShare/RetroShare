@@ -51,9 +51,17 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
   //ui.genName->setFocus(Qt::OtherFocusReason);
 
 #ifndef WINDOWS_SYS /* UNIX */
-	//comment those to show the pgp password field
-	ui.genPGPpassword->hide();
-	ui.label_3->hide();
+        std::string gpgEngineFileName;
+        if (RsInit::getPGPEngineFileName(gpgEngineFileName)) {
+            std::cerr << "RsInit::getPGPEngineFileName() : " << gpgEngineFileName << std::endl;
+            //if fileName contains gpg2 then the passphrase is set by pinentry and not by RS
+            QString *fileName = new QString(gpgEngineFileName.c_str());
+            if (fileName->contains("gpg2")) {
+                ui.genPGPpassword->hide();
+                ui.label_3->hide();
+            }
+        }
+        //comment those to show the pgp password field
  #endif
 
 #ifdef RS_USE_PGPSSL

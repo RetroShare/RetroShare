@@ -83,8 +83,16 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
 	ui.loadPasswd->hide();
 	ui.label_4->hide();
 
-	ui.loadGPGPasswd->hide();
-	ui.label_5->hide();
+        std::string gpgEngineFileName;
+        if (RsInit::getPGPEngineFileName(gpgEngineFileName)) {
+            std::cerr << "RsInit::getPGPEngineFileName() : " << gpgEngineFileName << std::endl;
+            //if fileName contains gpg2 then the passphrase is set by pinentry and not by RS
+            QString *fileName = new QString(gpgEngineFileName.c_str());
+            if (fileName->contains("gpg2")) {
+                ui.loadGPGPasswd->hide();
+                ui.label_5->hide();
+            }
+        }
 #endif
 
 	/* get all available pgp private certificates....
