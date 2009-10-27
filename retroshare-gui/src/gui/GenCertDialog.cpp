@@ -50,6 +50,12 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
 
   //ui.genName->setFocus(Qt::OtherFocusReason);
 
+#ifndef WINDOWS_SYS /* UNIX */
+	//comment those to show the pgp password field
+	ui.genPGPpassword->hide();
+	ui.label_3->hide();
+ #endif
+
 #ifdef RS_USE_PGPSSL
         /* get all available pgp private certificates....
          * mark last one as default.
