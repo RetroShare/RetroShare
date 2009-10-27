@@ -479,7 +479,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
 	 * 2) Get List of Available Accounts.
 	 * 4) Get List of GPG Accounts.
 	 */
-
+        std::cerr << "Calling initAuth debug 1." << std::endl;
 	getAuthMgr() -> InitAuth(NULL, NULL, NULL);
 
 	// first check config directories, and set bootstrap values.
@@ -741,10 +741,6 @@ static bool checkAccount(std::string accountdir, accountId &id)
 	std::cerr << "checkAccount() dir: " << accountdir << std::endl;
 
 /**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	return LoadCheckXPGPandGetName(cert_name.c_str(), id.sslName, id.sslId);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 		/* check against authmanagers private keys */
 	bool ret = LoadCheckX509andGetName(cert_name.c_str(), id.sslName, id.sslId);
 
@@ -770,9 +766,6 @@ static bool checkAccount(std::string accountdir, accountId &id)
 
     #endif
 	return ret;
-
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 }
 
 
@@ -788,9 +781,6 @@ static bool checkAccount(std::string accountdir, accountId &id)
                 /* Generating GPGme Account */
 int      RsInit::GetPGPLogins(std::list<std::string> &pgpIds)
 {
-  #ifdef PQI_USE_XPGP
-	return 0;
-  #else
     #ifdef PQI_USE_SSLONLY
 	return 0;
     #else  // PGP+SSL
@@ -799,7 +789,6 @@ int      RsInit::GetPGPLogins(std::list<std::string> &pgpIds)
 	mgr->availablePGPCertificates(pgpIds);
 	return 1;
     #endif
-  #endif
 }
 
 int      RsInit::GetPGPLoginDetails(std::string id, std::string &name, std::string &email)
@@ -807,9 +796,6 @@ int      RsInit::GetPGPLoginDetails(std::string id, std::string &name, std::stri
   std::cerr << "RsInit::GetPGPLoginDetails for \"" << id << "\"";
   std::cerr << std::endl;
 
-  #ifdef PQI_USE_XPGP
-	return 0;
-  #else
     #ifdef PQI_USE_SSLONLY
 	return 0;
     #else  // PGP+SSL
@@ -826,7 +812,6 @@ int      RsInit::GetPGPLoginDetails(std::string id, std::string &name, std::stri
 
 	return 1;
     #endif
-  #endif
 }
 
 /* Before any SSL stuff can be loaded, the correct PGP must be selected / generated:
@@ -885,7 +870,6 @@ bool     GeneratePGPCertificate(std::string name, std::string comment, std::stri
                 /* Create SSL Certificates */
 bool     RsInit::GenerateSSLCertificate(std::string name, std::string org, std::string loc, std::string country, std::string passwd, std::string &sslId, std::string &errString)
 {
-	// In the XPGP world this is easy...
 	// generate the private_key / certificate.
 	// save to file.
 	//
@@ -923,24 +907,6 @@ bool     RsInit::GenerateSSLCertificate(std::string name, std::string org, std::
 
 	bool gen_ok = false;
 
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	if (!generate_xpgp(cert_name.c_str(), key_name.c_str(),
-			passwd.c_str(),
-			name.c_str(),
-			"", //ui -> gen_email -> value(),
-			org.c_str(),
-			loc.c_str(),
-			"", //ui -> gen_state -> value(),
-			country.c_str(),
-			nbits))
-	{
-		gen_ok = true;
-	}
-
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-/**************** PQI_USE_XPGP ******************/
    #if defined(PQI_USE_SSLONLY)
 	X509_REQ *req = GenerateX509Req(
 			key_name.c_str(),
@@ -1034,7 +1000,7 @@ bool     RsInit::GenerateSSLCertificate(std::string name, std::string org, std::
 
 
   #else /* X509 Certificates */
-  /**************** PQI_USE_XPGP ******************/
+  /**************** PQI_USE_PGP ******************/
 
 
 	/* Extra step required for SSL + PGP, user must have selected
@@ -1112,9 +1078,6 @@ bool     RsInit::GenerateSSLCertificate(std::string name, std::string org, std::
 
 
   #endif /* X509 Certificates */
-  /**************** PQI_USE_XPGP ******************/
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
 	if (!gen_ok)
 	{
@@ -1127,15 +1090,7 @@ bool     RsInit::GenerateSSLCertificate(std::string name, std::string org, std::
 	std::string sslName;
 	int ret = 0;
 
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	ret = LoadCheckXPGPandGetName(cert_name.c_str(), sslName, sslId);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 	ret = LoadCheckX509andGetName(cert_name.c_str(), sslName, sslId);
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
 
 	/* Move directory to correct id */
 	std::string finalbase = RsInitConfig::basedir + RsInitConfig::dirSeperator + sslId + RsInitConfig::dirSeperator;
@@ -1276,18 +1231,9 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 
 	bool ok = false;
 
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	if (0 < authMgr -> InitAuth(RsInitConfig::load_cert.c_str(), RsInitConfig::load_key.c_str(),RsInitConfig::passwd.c_str()))
-	{
-		ok = true;
-	}
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-	/* The SSL / SSL + PGP version requires, SSL init + PGP init.  */
-  /**************** PQI_USE_XPGP ******************/
   #if defined(PQI_USE_SSLONLY)
-	if (0 < authMgr -> InitAuth(RsInitConfig::load_cert.c_str(), RsInitConfig::load_key.c_str(),RsInitConfig::passwd.c_str()))
+        std::cerr << "Calling initAuth debug 2." << std::endl;
+        if (0 < authMgr -> InitAuth(RsInitConfig::load_cert.c_str(), RsInitConfig::load_key.c_str(),RsInitConfig::passwd.c_str()))
 	{
 		ok = true;
 	}
@@ -1297,7 +1243,6 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 	}
 
   #else /* X509 Certificates */
-  /**************** PQI_USE_XPGP ******************/
 	/* The SSL / SSL + PGP version requires, SSL init + PGP init.  */
 	const char* sslPassword;
 	sslPassword = RsInitConfig::passwd.c_str();
@@ -1313,11 +1258,11 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		gpgme_data_t cipher;
 		gpgme_data_t plain;
 		gpgme_data_new_from_mem(&plain, sslPassword, sizeof(sslPassword), 0);
-		gpgme_error_t error_reading_file = gpgme_data_new_from_stream (&cipher, sslPassphraseFile);
-		if (0 < authMgr->encryptText(plain, cipher)) {
+                gpgme_error_t error_reading_file = gpgme_data_new_from_stream (&cipher, sslPassphraseFile);
+                if (0 < authMgr->encryptText(plain, cipher)) {
 		    std::cerr << "Encrypting went ok !" << std::endl;
 		}
-		gpgme_data_release (cipher);
+                gpgme_data_release (cipher);
 		gpgme_data_release (plain);
 		fclose(sslPassphraseFile);
 
@@ -1350,6 +1295,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 	}
 
 	std::cerr << "RsInitConfig::load_key.c_str() : " << RsInitConfig::load_key.c_str() << std::endl;
+        std::cerr << "sslPassword : " << sslPassword << std::endl;;
 	if (0 < authMgr -> InitAuth(RsInitConfig::load_cert.c_str(), RsInitConfig::load_key.c_str(), sslPassword))
 	{
 		ok = true;
@@ -1360,9 +1306,6 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		std::cerr << std::endl;
 	}
   #endif /* X509 Certificates */
-  /**************** PQI_USE_XPGP ******************/
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
 	if (ok)
 	{
@@ -1932,7 +1875,7 @@ int RsServer::StartupRetroShare()
 
 	mAuthMgr = getAuthMgr();
 
-	if (1 != mAuthMgr -> InitAuth(NULL, NULL, NULL))
+        if (1 != mAuthMgr -> InitAuth(NULL, NULL, NULL))
 	{
 		std::cerr << "main() - Fatal Error....." << std::endl;
 		std::cerr << "Invalid Certificate configuration!" << std::endl;
@@ -1947,7 +1890,8 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 
 	/* set the debugging to crashMode */
-	if ((!RsInitConfig::haveLogFile) && (!RsInitConfig::outStderr))
+        std::cerr << "set the debugging to crashMode." << std::endl;
+        if ((!RsInitConfig::haveLogFile) && (!RsInitConfig::outStderr))
 	{
 		std::string crashfile = RsInitConfig::basedir + RsInitConfig::dirSeperator;
 		crashfile += configLogFileName;
@@ -1962,6 +1906,7 @@ int RsServer::StartupRetroShare()
 
 	/**************************************************************************/
 	// Load up Certificates, and Old Configuration (if present)
+        std::cerr << "Load up Certificates, and Old Configuration (if present)." << std::endl;
 
 	std::string certConfigFile = RsInitConfig::configDir.c_str();
 	std::string certNeighDir   = RsInitConfig::configDir.c_str();
@@ -1990,6 +1935,7 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 	/* setup classes / structures */
 	/**************************************************************************/
+        std::cerr << "setup classes / structures" << std::endl;
 
 	/* Setup Notify Early - So we can use it. */
 	rsNotify = new p3Notify();
@@ -2020,7 +1966,7 @@ int RsServer::StartupRetroShare()
 	rsFiles = ftserver;
 
 
-	mConfigMgr = new p3ConfigMgr(mAuthMgr, RsInitConfig::configDir, "rs-v0.4.cfg", "rs-v0.4.sgn");
+        mConfigMgr = new p3ConfigMgr(mAuthMgr, RsInitConfig::configDir, "rs-v0.5.cfg", "rs-v0.5.sgn");
 	mGeneralConfig = new p3GeneralConfig();
 
 	/* create Services */
@@ -2100,6 +2046,7 @@ int RsServer::StartupRetroShare()
 
 	/**************************************************************************/
 	/* need to Monitor too! */
+        std::cerr << "need to Monitor too!" << std::endl;
 
 	mConnMgr->addMonitor(pqih);
 	mConnMgr->addMonitor(mCacheStrapper);
@@ -2127,19 +2074,13 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("channels.cfg", mChannels);
 	mConfigMgr->addConfiguration("turtle.cfg", tr);
 
-#ifndef RS_RELEASE
-#else
-#endif
-
 	ftserver->addConfiguration(mConfigMgr);
-
-
-	/**************************************************************************/
-
+        mConfigMgr->saveConfiguration();
 
 	/**************************************************************************/
 	/* (2) Load configuration files */
 	/**************************************************************************/
+        std::cerr << "(2) Load configuration files" << std::endl;
 
 	mConfigMgr->loadConfiguration();
 
@@ -2149,13 +2090,8 @@ int RsServer::StartupRetroShare()
 	 */
 
 	/**************************************************************************/
-	/* Hack Old Configuration into new System (first load only) */
-	/**************************************************************************/
-
-	/**************************************************************************/
 	/* trigger generalConfig loading for classes that require it */
 	/**************************************************************************/
-
 	pqih->setConfig(mGeneralConfig);
 
         pqih->load_config();
@@ -2163,6 +2099,7 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 	/* Force Any Configuration before Startup (After Load) */
 	/**************************************************************************/
+        std::cerr << "Force Any Configuration before Startup (After Load)" << std::endl;
 
 	if (RsInitConfig::forceLocalAddr)
 	{
