@@ -215,6 +215,13 @@ void	p3ConfigMgr::loadConfiguration()
 	filename1 += metasigfname;
 	filename2 += metafname;
 
+        #ifdef CONFIG_DEBUG 
+		std::cerr << "p3ConfigMgr::loadConfiguration() filename1 : " << filename1;
+		std::cerr << std::endl;
+		std::cerr << "p3ConfigMgr::loadConfiguration() filename2 : " << filename2;
+		std::cerr << std::endl;
+         #endif
+
 	/* write signature to configuration */
 	BinMemInterface *signbio = new BinMemInterface(1000, BIN_FLAGS_READABLE);
 

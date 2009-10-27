@@ -440,6 +440,7 @@ static  int initLib = 0;
 
 	if (init == 1)
 	{
+                std::cerr << "AuthSSL::InitAuth already initialized." << std::endl;
 		return 1;
 	}
 

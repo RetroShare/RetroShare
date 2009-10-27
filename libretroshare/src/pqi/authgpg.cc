@@ -1182,7 +1182,8 @@ bool   GPGAuthMgr::active()
 int     GPGAuthMgr::InitAuth(const char *srvr_cert, const char *priv_key, 
                                         const char *passwd)
 {
-	/* Initialise the SSL part */
+        std::cerr << "GPGAuthMgr::InitAuth() called." << std::endl;
+       /* Initialise the SSL part */
 	if (AuthSSL::InitAuth(srvr_cert, priv_key, passwd))
 	{
 		RsStackMutex stack(pgpMtx); /******* LOCKED ******/
@@ -1364,14 +1365,14 @@ bool 	GPGAuthMgr::encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER) {
 	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
 	gpgme_encrypt_flags_t* flags = new gpgme_encrypt_flags_t();
+        gpgme_key_t keys[2] = {mOwnGpgCert.key, NULL};
 
-	if (GPG_ERR_NO_ERROR != gpgme_op_encrypt(CTX, NULL, *flags, PLAIN, CIPHER))
+        if (GPG_ERR_NO_ERROR != gpgme_op_encrypt(CTX, keys, *flags, PLAIN, CIPHER))
 	{
 		std::cerr << "Error encrypting text";
 		std::cerr << std::endl;
 		return false;
 	}
-
 
 	return true;
 }
@@ -1835,7 +1836,7 @@ int	GPGAuthMgr::signCertificate(std::string id)
 	}
 
 	gpgme_key_t signKey = it->second.key;
-	gpgme_key_t ownKey  = mOwnGpgCert.key;
+        gpgme_key_t ownKey  = mOwnGpgCert.key;
 	
 	class SignParams sparams("0", passphrase);
 	class EditParams params(SIGN_START, &sparams);
