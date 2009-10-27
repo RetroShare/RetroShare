@@ -1246,7 +1246,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		std::cerr << "opening sslPassphraseFile. : " << RsInitConfig::ssl_passphrase_file.c_str() << std::endl;
 		gpgme_data_t cipher;
 		gpgme_data_t plain;
-		gpgme_data_new_from_mem(&plain, sslPassword, sizeof(sslPassword), 0);
+		gpgme_data_new_from_mem(&plain, sslPassword, strlen(sslPassword), 0);
                 gpgme_error_t error_reading_file = gpgme_data_new_from_stream (&cipher, sslPassphraseFile);
                 if (0 < authMgr->encryptText(plain, cipher)) {
 		    std::cerr << "Encrypting went ok !" << std::endl;
