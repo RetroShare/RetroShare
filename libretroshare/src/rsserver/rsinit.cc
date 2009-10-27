@@ -46,23 +46,14 @@
 // for blocking signals
 #include <signal.h>
 
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	#include "pqi/authxpgp.h"
+#if defined(PQI_USE_SSLONLY)
+    #include "pqi/authssl.h"
 #else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 /**************** PQI_USE_SSLONLY ***************/
-  #if defined(PQI_USE_SSLONLY)
-	#include "pqi/authssl.h"
-  #else /* X509 Certificates */
-  /**************** PQI_USE_SSLONLY ***************/
-  /**************** SSL + OPENPGP *****************/
-	#include "pqi/authgpg.h"
-	#include "pqi/authssl.h"
-  #endif /* X509 Certificates */
-  /**************** SSL + OPENPGP *****************/
+/**************** SSL + OPENPGP *****************/
+    #include "pqi/authgpg.h"
+    #include "pqi/authssl.h"
 #endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
 class accountId
 {
@@ -740,15 +731,13 @@ static bool checkAccount(std::string accountdir, accountId &id)
 
 	std::cerr << "checkAccount() dir: " << accountdir << std::endl;
 
-/**************** PQI_USE_XPGP ******************/
-		/* check against authmanagers private keys */
-	bool ret = LoadCheckX509andGetName(cert_name.c_str(), id.sslName, id.sslId);
+	bool ret = false;
 
+	/* check against authmanagers private keys */
+	LoadCheckX509andGetName(cert_name.c_str(), id.sslName, id.sslId);
 	std::cerr << "sslName: " << id.sslName << " id: " << id.sslId << std::endl;
 
-    #ifdef PQI_USE_SSLONLY
-    #else  // PGP+SSL
-		std::string pgpid;
+    #ifndef PQI_USE_SSLONLY
 		std::string tmpid;
 		if (LoadCheckX509andGetIssuerName(cert_name.c_str(), id.pgpId, tmpid))
 		{
