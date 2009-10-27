@@ -470,7 +470,6 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
 	 * 2) Get List of Available Accounts.
 	 * 4) Get List of GPG Accounts.
 	 */
-        std::cerr << "Calling initAuth debug 1." << std::endl;
 	getAuthMgr() -> InitAuth(NULL, NULL, NULL);
 
 	// first check config directories, and set bootstrap values.
