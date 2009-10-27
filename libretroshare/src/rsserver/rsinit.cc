@@ -1337,11 +1337,11 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 			gpgme_error_t error_reading_file = gpgme_data_new_from_stream (&cipher, sslPassphraseFile);
 			if (0 < authMgr->decryptText(cipher, plain)) {
 			    std::cerr << "Decrypting went ok !" << std::endl;
-				 gpgme_data_write (plain, "", 1);
+                            gpgme_data_write (plain, "", 1);
 			    sslPassword = gpgme_data_release_and_get_mem(plain, NULL);
 			} else {
 			    gpgme_data_release (plain);
-			    std::cerr << "Error : decrypting went wrong !" << std::endl;
+                            std::cerr << "Error : decrypting went wrong !" << std::endl;
 			    return 0;
 			}
 			gpgme_data_release (cipher);
@@ -1932,14 +1932,7 @@ int RsServer::StartupRetroShare()
 
 	mAuthMgr = getAuthMgr();
 
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
 	if (1 != mAuthMgr -> InitAuth(NULL, NULL, NULL))
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-	if (1 != mAuthMgr -> InitAuth(NULL, NULL, NULL))
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 	{
 		std::cerr << "main() - Fatal Error....." << std::endl;
 		std::cerr << "Invalid Certificate configuration!" << std::endl;
@@ -1968,7 +1961,6 @@ int RsServer::StartupRetroShare()
 	}
 
 	/**************************************************************************/
-
 	// Load up Certificates, and Old Configuration (if present)
 
 	std::string certConfigFile = RsInitConfig::configDir.c_str();
@@ -2160,13 +2152,6 @@ int RsServer::StartupRetroShare()
 	/* Hack Old Configuration into new System (first load only) */
 	/**************************************************************************/
 
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
 	/**************************************************************************/
 	/* trigger generalConfig loading for classes that require it */
 	/**************************************************************************/
@@ -2269,7 +2254,6 @@ int RsServer::StartupRetroShare()
 	rsPhoto = new p3Photo(photoService);
 	rsStatus = new p3Status();
 	rsQblog = new p3Blog(mQblog);
-
 #else
 	rsGameLauncher = NULL;
 	rsPhoto = NULL;
@@ -2294,7 +2278,3 @@ int RsServer::StartupRetroShare()
 
 	return 1;
 }
-
-
-
-
