@@ -224,6 +224,7 @@ bool GPGAuthMgr::getPGPEngineFileName(std::string &fileName)
         return false;
     } else {
         fileName = std::string(INFO->file_name);
+	std :: cerr << "GPGAuthMgr::getPGPEngineFileName() : " << fileName << std::endl;
         return true;
     }
 }
