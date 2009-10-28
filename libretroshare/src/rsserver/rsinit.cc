@@ -2074,7 +2074,6 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("turtle.cfg", tr);
 
 	ftserver->addConfiguration(mConfigMgr);
-        mConfigMgr->saveConfiguration();
 
 	/**************************************************************************/
 	/* (2) Load configuration files */
