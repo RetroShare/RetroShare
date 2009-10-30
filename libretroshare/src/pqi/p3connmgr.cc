@@ -57,7 +57,7 @@ const uint32_t RS_STUN_FOUND_MIN =     	10;
 const uint32_t MAX_UPNP_INIT = 		100; /* seconds UPnP timeout */
 const uint32_t MAX_UDP_INIT = 		120; /* seconds Udp timeout */
 
-const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		20; /* seconds Udp timeout */
+const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
 
 /****
  * #define CONN_DEBUG 1
@@ -418,6 +418,12 @@ void p3ConnectMgr::tick()
 
 bool p3ConnectMgr::shutdown() /* blocking shutdown call */
 {
+	{
+		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+		mNetStatus = RS_NET_UNKNOWN;
+		mNetInitTS = time(NULL);
+		netStatusReset();
+	}
 	netAssistFirewallShutdown();
 	netAssistConnectShutdown();
 
@@ -993,7 +999,6 @@ void p3ConnectMgr::stunInit()
  * The status is passed onto the DHT.
  *
  */
- 
 bool p3ConnectMgr::stunCheck()
 {
 
