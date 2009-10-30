@@ -700,19 +700,14 @@ void p3ConnectMgr::networkConsistencyCheck()
 	bool doNetReset = false;
 	//if one of the flag is degrated from true to false during last tick, let's do a reset
 	//storing old flags
-//	#ifdef CONN_DEBUG
-//		std::cerr << "p3ConnectMgr::networkConsistencyCheck() net flags : " << std::endl;
-//		std::cerr << "	oldnetFlagLocalOk : " << oldnetFlagLocalOk << ". netFlagLocalOk : " << netFlagLocalOk << "." << std::endl;
-//		std::cerr << "	oldnetFlagUpnpOk : " << oldnetFlagUpnpOk << ". netFlagUpnpOk : " << netFlagUpnpOk << "." << std::endl;
-//		std::cerr << "	oldnetFlagDhtOk : " << oldnetFlagDhtOk << ". netFlagDhtOk : " << netFlagDhtOk << "." << std::endl;
-//		std::cerr << "	oldnetFlagStunOk : " << oldnetFlagStunOk << ". netFlagStunOk : " << netFlagStunOk << "." << std::endl;
-//		std::cerr << "	oldnetFlagExtraAddressCheckOk : " << oldnetFlagExtraAddressCheckOk << ". netFlagExtraAddressCheckOk : " << netFlagExtraAddressCheckOk << "." << std::endl;
-//	#endif
-	oldnetFlagLocalOk = netFlagLocalOk;
-	oldnetFlagUpnpOk = netFlagUpnpOk;
-	oldnetFlagDhtOk = netFlagDhtOk;
-	oldnetFlagStunOk = netFlagStunOk;
-	oldnetFlagExtraAddressCheckOk = netFlagExtraAddressCheckOk;
+	#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr::networkConsistencyCheck() net flags : " << std::endl;
+		std::cerr << "	oldnetFlagLocalOk : " << oldnetFlagLocalOk << ". netFlagLocalOk : " << netFlagLocalOk << "." << std::endl;
+		std::cerr << "	oldnetFlagUpnpOk : " << oldnetFlagUpnpOk << ". netFlagUpnpOk : " << netFlagUpnpOk << "." << std::endl;
+		std::cerr << "	oldnetFlagDhtOk : " << oldnetFlagDhtOk << ". netFlagDhtOk : " << netFlagDhtOk << "." << std::endl;
+		std::cerr << "	oldnetFlagStunOk : " << oldnetFlagStunOk << ". netFlagStunOk : " << netFlagStunOk << "." << std::endl;
+		std::cerr << "	oldnetFlagExtraAddressCheckOk : " << oldnetFlagExtraAddressCheckOk << ". netFlagExtraAddressCheckOk : " << netFlagExtraAddressCheckOk << "." << std::endl;
+	#endif
 	if ((!netFlagLocalOk && oldnetFlagLocalOk)
 	    || (!netFlagUpnpOk && oldnetFlagUpnpOk)
 	    || (!netFlagDhtOk && oldnetFlagDhtOk)
@@ -722,6 +717,11 @@ void p3ConnectMgr::networkConsistencyCheck()
 	    #ifdef CONN_DEBUG
 		    std::cerr << "p3ConnectMgr::networkConsistencyCheck() A net flag went down." << std::endl;
 	    #endif
+
+	    //don't do a normal shutdown for upnp as it might hang up.
+	    //With a 0 port it will just dereference and not attemps to communicate for shutting upnp session.
+	    netAssistFirewallPorts(0, 0);
+
 	    doNetReset = true;
 	}
 

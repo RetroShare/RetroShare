@@ -212,33 +212,6 @@
              <item row="1" column="0">
               <layout class="QGridLayout">
                <item row="0" column="0">
-                <widget class="QLabel" name="iconlabel_netInternetConnection">
-                 <property name="maximumSize">
-                  <size>
-                   <width>16</width>
-                   <height>16</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="pixmap">
-                  <pixmap resource="images.qrc">:/images/ledoff1.png</pixmap>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QLabel" name="iconlabel_netInternetConnection_2">
-                 <property name="text">
-                  <string>Internet connection</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="2" column="0">
-              <layout class="QGridLayout">
-               <item row="0" column="0">
                 <widget class="QLabel" name="iconlabel_upnp">
                  <property name="maximumSize">
                   <size>

@@ -106,9 +106,6 @@ bool upnphandler::start_upnp()
 		return false;
 	}
 
-	char eprot1[] = "TCP";
-	char eprot2[] = "UDP";
-
 	struct sockaddr_in localAddr;
 	{
 	    RsStackMutex stack(dataMtx); /* LOCK STACK MUTEX */
@@ -153,7 +150,7 @@ bool upnphandler::start_upnp()
 	    std::cerr << "Attempting Redirection: InAddr: " << in_addr;
 	    std::cerr << " InPort: " << in_port1;
 	    std::cerr << " ePort: " << eport1;
-	    std::cerr << " eProt: " << eprot1;
+	    std::cerr << " eProt: " << "TCP";
 	    std::cerr << std::endl;
 	}
 
@@ -191,49 +188,34 @@ bool upnphandler::shutdown_upnp()
 {
 	RsStackMutex stack(dataMtx); /* LOCK STACK MUTEX */
 
-	if (!(upnpState >= RS_UPNP_S_READY))
-	{
-		return false;
-	}
-
-	char eprot1[] = "TCP";
-	char eprot2[] = "UDP";
+	//stopping os ok, set starting to true for next net reset
+	toStop = false;
+	toStart = true;
 
 	/* always attempt this (unless no port number) */
-	if (eport_curr > 0)
+	if (eport_curr > 0 && eport > 0)
 	{
-
-		char eport1[256];
-		char eport2[256];
-
-		snprintf(eport1, 256, "%d", eport_curr);
-		snprintf(eport2, 256, "%d", eport_curr);
-
-		std::cerr << "Attempting To Remove Redirection: port: " << eport1;
-		std::cerr << " Prot: " << eprot1;
+		std::cerr << "Attempting To Remove Redirection: port: " << eport_curr;
+		std::cerr << " Prot: TCP";
 		std::cerr << std::endl;
 
 		std::vector<CUPnPPortMapping> upnpPortMapping1;
-		CUPnPPortMapping cUPnPPortMapping1 = CUPnPPortMapping(eport_curr, 0, eprot1, true, "tcp redirection");
+		CUPnPPortMapping cUPnPPortMapping1 = CUPnPPortMapping(eport_curr, 0, "TCP", true, "tcp redirection");
 		upnpPortMapping1.push_back(cUPnPPortMapping1);
 		cUPnPControlPoint->DeletePortMappings(upnpPortMapping1);
 
-		std::cerr << "Attempting To Remove Redirection: port: " << eport2;
-		std::cerr << " Prot: " << eprot2;
+		std::cerr << "Attempting To Remove Redirection: port: " << eport_curr;
+		std::cerr << " Prot: UDP";
 		std::cerr << std::endl;
 
 		std::vector<CUPnPPortMapping> upnpPortMapping2;
-		CUPnPPortMapping cUPnPPortMapping2 = CUPnPPortMapping(eport_curr, 0, eprot2, true, "udp redirection");
+		CUPnPPortMapping cUPnPPortMapping2 = CUPnPPortMapping(eport_curr, 0, "UDP", true, "udp redirection");
 		upnpPortMapping2.push_back(cUPnPPortMapping2);
 		cUPnPControlPoint->DeletePortMappings(upnpPortMapping2);
 
 		//destroy the upnp object
 		cUPnPControlPoint->~CUPnPControlPoint();
 		upnpState = RS_UPNP_S_UNINITIALISED;
-
-		//stopping os ok, set starting to true for next net reset
-		toStop = false;
-		toStart = true;
 	}
 
 	return true;

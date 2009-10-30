@@ -573,7 +573,6 @@ private:
 
 public:
 	CUPnPService *m_WanService;
-	RsMutex m_getStateVariableMutex;
 	std::string m_getStateVariableLastResult;
 	static CUPnPControlPoint *s_CtrlPoint;
 	CUPnPControlPoint(unsigned short udpPort);

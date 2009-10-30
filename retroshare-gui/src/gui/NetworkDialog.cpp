@@ -827,15 +827,6 @@ void NetworkDialog::updateNetworkStatus()
 	  ui.iconlabel_ext->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
       }
 
-      if (config.netExtraAddressOk || config.netStunOk || config.netUpnpOk)
-      {
-	  ui.iconlabel_netInternetConnection->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
-      }
-      else
-      {
-	  ui.iconlabel_netInternetConnection->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
-      }
-
     rsiface->unlockData(); /* UnLock Interface */
 }
 
