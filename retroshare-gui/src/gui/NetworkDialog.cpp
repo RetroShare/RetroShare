@@ -797,109 +797,63 @@ void NetworkDialog::updateNetworkStatus()
       if(config.netUpnpOk)
       {
          ui.iconlabel_upnp->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
-         ui.textlabel_upnp->setText(tr("UPnP active"));
       }
       else
       {    
          ui.iconlabel_upnp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
-         ui.textlabel_upnp->setText(tr("UPnP inactive"));
       }
       
       if(config.netDhtOk)
       {
          ui.iconlabel_dht->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
-         ui.textlabel_dht->setText(tr("DHT active"));
       }
       else
       {    
          ui.iconlabel_dht->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
-         ui.textlabel_dht->setText(tr("DHT inactive"));
       }
       
       if(config.netExtOk)
       {
          ui.iconlabel_ext->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
-         ui.textlabel_ext->setText(tr("Stabile External IP Address"));
       }
       else
       {    
          ui.iconlabel_ext->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
-         ui.textlabel_ext->setText(tr("Not Found External IP Address"));
       }
       
       if(config.netUdpOk)
       {
          ui.iconlabel_udp->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
-         ui.textlabel_udp->setText(tr("UDP Port is active ( UDP Connections )"));
       }
       else
       {    
          ui.iconlabel_udp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
-         ui.textlabel_udp->setText(tr("UDP Port is not active"));
       }
             
       if (config.netExtOk)
       {
 	if (config.netUpnpOk)
         {
-           ui.iconlabel_netServer->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
-           
-           ui.iconlabel_netUdp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
-           ui.iconlabel_netLimited->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
-           ui.iconlabel_nonet->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+	   ui.iconlabel_netUdp->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
+	   ui.iconlabel_netLimited->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
         }
         else
         {
            ui.iconlabel_netUdp->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
-           
-           ui.iconlabel_netServer->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
-           ui.iconlabel_netLimited->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
-           ui.iconlabel_nonet->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
-        }
+	   ui.iconlabel_netLimited->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
+	}
       }
       else if (config.netOk)
       {
-          ui.iconlabel_netLimited->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
+	  ui.iconlabel_netLimited->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
           
           ui.iconlabel_netUdp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
-          ui.iconlabel_netServer->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
-          ui.iconlabel_nonet->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
       }
       else
-      {
-          ui.iconlabel_nonet->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
-          
+      {          
           ui.iconlabel_netUdp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
-          ui.iconlabel_netServer->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
           ui.iconlabel_netLimited->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
       }
-      
-      //ui.check_net->setChecked(config.netOk);
-      /*ui.check_upnp->setChecked(config.netUpnpOk);
-      ui.check_dht->setChecked(config.netDhtOk);
-      ui.check_ext->setChecked(config.netExtOk);
-      ui.check_udp->setChecked(config.netUdpOk);
-      ui.check_tcp->setChecked(config.netTcpOk);
-
-      if (config.netExtOk)
-      {
-        if (config.netUpnpOk || config.netTcpOk)
-        {
-          ui.radio_netServer->setChecked(true);
-        }
-        else
-        {
-          ui.radio_netUdp->setChecked(true);
-        }
-      }
-      else if (config.netOk)
-      {
-        ui.radio_netLimited->setChecked(true);
-      }
-      else
-      {
-        ui.radio_nonet->setChecked(true);
-      }*/
 		
     rsiface->unlockData(); /* UnLock Interface */
 }

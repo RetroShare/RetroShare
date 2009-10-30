@@ -70,38 +70,38 @@ void NATStatus::getNATStatus()
     /* now the extra bit .... switch on check boxes */
     const RsConfig &config = rsiface->getConfig();
     
-    if(config.netUpnpOk)
-    {
-      iconLabel->setPixmap(QPixmap::QPixmap(":/images/greenled.png"));
-      iconLabel->setToolTip(tr("UPNP is active."));
-    }
-    else
-    {    
-      iconLabel->setPixmap(QPixmap::QPixmap(":/images/yellowled.png"));
-      iconLabel->setToolTip(tr("UPNP NOT FOUND."));
-    }   
-    
-    if(config.netExtOk)
-    {
-      iconLabel->setPixmap(QPixmap::QPixmap(":/images/greenled.png"));
-      iconLabel->setToolTip(tr("Stable External IP Address"));
-    }
-    else
-    {
-      iconLabel->setPixmap(QPixmap::QPixmap(":/images/yellowled.png"));
-      iconLabel->setToolTip(tr("Not Found External Address"));
-    }
-    
-    if(config.netUdpOk)
-    {
-      iconLabel->setPixmap(QPixmap::QPixmap(":/images/greenled.png"));
-      iconLabel->setToolTip(tr("UDP Port is reachable"));
-    }
-    else
-    {
-      iconLabel->setPixmap(QPixmap::QPixmap(":/images/yellowled.png"));
-      iconLabel->setToolTip(tr("UDP Port is not reachable"));
-    }
+//    if(config.netUpnpOk)
+//    {
+//      iconLabel->setPixmap(QPixmap::QPixmap(":/images/greenled.png"));
+//      iconLabel->setToolTip(tr("UPNP is active."));
+//    }
+//    else
+//    {
+//      iconLabel->setPixmap(QPixmap::QPixmap(":/images/yellowled.png"));
+//      iconLabel->setToolTip(tr("UPNP NOT FOUND."));
+//    }
+//
+//    if(config.netExtOk)
+//    {
+//      iconLabel->setPixmap(QPixmap::QPixmap(":/images/greenled.png"));
+//      iconLabel->setToolTip(tr("Stable External IP Address"));
+//    }
+//    else
+//    {
+//      iconLabel->setPixmap(QPixmap::QPixmap(":/images/yellowled.png"));
+//      iconLabel->setToolTip(tr("Not Found External Address"));
+//    }
+//
+//    if(config.netUdpOk)
+//    {
+//      iconLabel->setPixmap(QPixmap::QPixmap(":/images/yellowled.png"));
+//      iconLabel->setToolTip(tr("UDP Port is reachable"));
+//    }
+//    else
+//    {
+//      iconLabel->setPixmap(QPixmap::QPixmap(":/images/grayled.png"));
+//      iconLabel->setToolTip(tr("UDP Port is not reachable"));
+//    }
     
     if (config.netExtOk)
     {

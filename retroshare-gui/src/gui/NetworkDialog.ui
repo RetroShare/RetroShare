@@ -185,33 +185,6 @@
              <item row="0" column="0">
               <layout class="QGridLayout">
                <item row="0" column="0">
-                <widget class="QLabel" name="iconlabel_nonet">
-                 <property name="maximumSize">
-                  <size>
-                   <width>16</width>
-                   <height>16</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="pixmap">
-                  <pixmap resource="images.qrc">:/images/ledoff1.png</pixmap>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QLabel" name="textlabel_nonet">
-                 <property name="text">
-                  <string>No Connectivity</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="1" column="0">
-              <layout class="QGridLayout">
-               <item row="0" column="0">
                 <widget class="QLabel" name="iconlabel_netLimited">
                  <property name="maximumSize">
                   <size>
@@ -230,13 +203,13 @@
                <item row="0" column="1">
                 <widget class="QLabel" name="textlabel_netLimited">
                  <property name="text">
-                  <string>Limited</string>
+                  <string>Local network</string>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
-             <item row="2" column="0">
+             <item row="1" column="0">
               <layout class="QGridLayout">
                <item row="0" column="0">
                 <widget class="QLabel" name="iconlabel_netUdp">
@@ -257,16 +230,16 @@
                <item row="0" column="1">
                 <widget class="QLabel" name="textlabel_netUdp">
                  <property name="text">
-                  <string>UDP</string>
+                  <string>Internet connection</string>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
-             <item row="3" column="0">
+             <item row="2" column="0">
               <layout class="QGridLayout">
                <item row="0" column="0">
-                <widget class="QLabel" name="iconlabel_netServer">
+                <widget class="QLabel" name="iconlabel_upnp">
                  <property name="maximumSize">
                   <size>
                    <width>16</width>
@@ -282,9 +255,9 @@
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QLabel" name="textlabel_netServer">
+                <widget class="QLabel" name="textlabel_upnp">
                  <property name="text">
-                  <string>RetroShare Server</string>
+                  <string>UPnP</string>
                  </property>
                 </widget>
                </item>
@@ -315,7 +288,7 @@
                <item row="0" column="1">
                 <widget class="QLabel" name="textlabel_udp">
                  <property name="text">
-                  <string>UDP Connections</string>
+                  <string>UDP stun external ip address</string>
                  </property>
                 </widget>
                </item>
@@ -342,7 +315,7 @@
                <item row="0" column="1">
                 <widget class="QLabel" name="textlabel_ext">
                  <property name="text">
-                  <string>Stable External IP Address</string>
+                  <string>Stable external IP address</string>
                  </property>
                 </widget>
                </item>
@@ -369,34 +342,7 @@
                <item row="0" column="1">
                 <widget class="QLabel" name="textlabel_dht">
                  <property name="text">
-                  <string>DHT OK</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="3" column="0">
-              <layout class="QGridLayout">
-               <item row="0" column="0">
-                <widget class="QLabel" name="iconlabel_upnp">
-                 <property name="maximumSize">
-                  <size>
-                   <width>16</width>
-                   <height>16</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="pixmap">
-                  <pixmap resource="images.qrc">:/images/ledoff1.png</pixmap>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QLabel" name="textlabel_upnp">
-                 <property name="text">
-                  <string>UPnP Active</string>
+                  <string>DHT</string>
                  </property>
                 </widget>
                </item>
