@@ -450,6 +450,11 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
 	sigact.sa_handler = SIG_IGN;
 	sigact.sa_flags = 0;
 
+	sigset_t set;
+	sigemptyset(&set);
+	//sigaddset(&set, SIGINT); // or whatever other signal
+	sigact.sa_mask = set;
+
 	if (0 == sigaction(SIGPIPE, &sigact, NULL))
 	{
 		std::cerr << "RetroShare:: Successfully Installed";
