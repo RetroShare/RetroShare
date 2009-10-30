@@ -29,8 +29,8 @@ linux-g++ {
 
 	SSL_DIR = /usr/include/openssl
 	UPNP_DIR = /usr/include/upnp
-	HEADERS += usr/include/gpg-error.h
-	HEADERS += usr/include/gpgme.h
+	HEADERS += /usr/include/gpg-error.h
+	HEADERS += /usr/include/gpgme.h
 	INCLUDEPATH += . $${SSL_DIR} $${UPNP_DIR}
 
 	CONFIG += version_detail_bash_script
@@ -44,8 +44,8 @@ linux-g++-64 {
 
 	SSL_DIR = /usr/include/openssl
 	UPNP_DIR = /usr/include/upnp
-	HEADERS += usr/include/gpg-error.h
-	HEADERS += usr/include/gpgme.h
+	HEADERS += /usr/include/gpg-error.h
+	HEADERS += /sr/include/gpgme.h
 	INCLUDEPATH += . $${SSL_DIR} $${UPNP_DIR}
 
 	CONFIG += version_detail_bash_script
