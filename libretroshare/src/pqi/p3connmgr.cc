@@ -2937,7 +2937,7 @@ bool 	p3ConnectMgr::checkNetAddress()
 	std::list<std::string>::iterator it;
 
 	in_addr_t old_in_addr = ownState.localaddr.sin_addr.s_addr;
-	in_port_t old_in_port = ownState.localaddr.sin_port;
+	int old_in_port = ownState.localaddr.sin_port;
 
 	{
 	    RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
