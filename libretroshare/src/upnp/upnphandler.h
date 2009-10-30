@@ -15,8 +15,8 @@
 #define RS_UPNP_S_UNINITIALISED  0
 #define RS_UPNP_S_UNAVAILABLE    1
 #define RS_UPNP_S_READY          2
-#define RS_UPNP_S_TCP_FAILED     3
-#define RS_UPNP_S_UDP_FAILED     4
+#define RS_UPNP_S_TCP_AND_FAILED 3
+//#define RS_UPNP_S_UDP_FAILED     4
 #define RS_UPNP_S_ACTIVE         5
 
 class upnphandler: public pqiNetAssistFirewall

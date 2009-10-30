@@ -16,15 +16,14 @@ extern "C" {
 
 bool upnphandler::initUPnPState()
 {
+	#ifdef UPNP_DEBUG
 	std::cerr << "upnphandler::initUPnPState" << std::endl;
+	#endif
 	cUPnPControlPoint = new CUPnPControlPoint(2000);
 
 	bool IGWDetected = cUPnPControlPoint->GetIGWDeviceDetected();
 
 	if (IGWDetected) {
-	    upnpState = RS_UPNP_S_READY;
-	    std::cerr << "upnphandler::initUPnPState READY" << std::endl;
-
 	    /* MODIFY STATE */
 	    dataMtx.lock(); /* LOCK MUTEX */
 	    std::cerr << "upnphandler::initUPnPState cUPnPControlPoint internal ip adress : ";
@@ -34,12 +33,16 @@ bool upnphandler::initUPnPState()
 	    inet_aton(cUPnPControlPoint->getInternalIpAddress(), &(upnp_iaddr.sin_addr));
 	    upnp_iaddr.sin_port = htons(iport);
 
-
+	    #ifdef UPNP_DEBUG
+	    std::cerr << "upnphandler::initUPnPState READY" << std::endl;
+	    #endif
 	    dataMtx.unlock(); /* UNLOCK MUTEX */
 
 	} else {
 	    upnpState = RS_UPNP_S_UNAVAILABLE;
+	    #ifdef UPNP_DEBUG
 	    std::cerr << "upnphandler::initUPnPState UNAVAILABLE" << std::endl;
+	    #endif
 	}
 
 	return 0;
@@ -56,8 +59,10 @@ class upnpThreadData
 	/* Thread routines */
 extern "C" void* doSetupUPnP(void* p)
 {
+	#ifdef UPNP_DEBUG
 	std::cerr << "doSetupUPnP Creating upnp thread." << std::endl;
-        upnpThreadData *data = (upnpThreadData *) p;
+	#endif
+	upnpThreadData *data = (upnpThreadData *) p;
         if ((!data) || (!data->handler))
         {
                 pthread_exit(NULL);
@@ -86,7 +91,9 @@ bool upnphandler::background_setup_upnp(bool start, bool stop)
 	pthread_t tid;
 
 	/* launch thread */
+	#ifdef UPNP_DEBUG
 	std::cerr << "background_setup_upnp Creating upnp thread." << std::endl;
+	#endif
 	upnpThreadData *data = new upnpThreadData();
 	data->handler = this;
 	data->start = start;
@@ -102,7 +109,9 @@ bool upnphandler::start_upnp()
 {
 	if (!(upnpState >= RS_UPNP_S_READY))
 	{
+		#ifdef UPNP_DEBUG
 		std::cerr << "upnphandler::start_upnp() Not Ready" << std::endl;
+		#endif
 		return false;
 	}
 
@@ -117,27 +126,26 @@ bool upnphandler::start_upnp()
 	    {
 		    /* use local port if eport is zero */
 		    eport_curr = iport;
-		    std::cerr << "Using LocalPort for extPort!";
-		    std::cerr << std::endl;
+		    #ifdef UPNP_DEBUG
+		    std::cerr << "upnphandler::start_upnp() Using LocalPort for extPort." << std::endl;
+		    #endif
 	    }
 
 	    if (!eport_curr)
 	    {
-		    std::cerr << "Invalid eport ... ";
-		    std::cerr << std::endl;
+		    #ifdef UPNP_DEBUG
+		    std::cerr << "upnphandler::start_upnp() Invalid eport ... " << std::endl;
+		    #endif
 		    return false;
 	    }
-
 
 	    /* our port */
 	    char in_addr[256];
 	    char in_port1[256];
-	    char eport1[256];
 
 	    upnp_iaddr.sin_port = htons(iport);
 	    localAddr = upnp_iaddr;
 	    uint32_t linaddr = ntohl(localAddr.sin_addr.s_addr);
-
 	    snprintf(in_port1, 256, "%d", ntohs(localAddr.sin_port));
 	    snprintf(in_addr, 256, "%d.%d.%d.%d",
 		     ((linaddr >> 24) & 0xff),
@@ -145,13 +153,13 @@ bool upnphandler::start_upnp()
 		     ((linaddr >> 8) & 0xff),
 		     ((linaddr >> 0) & 0xff));
 
-	    snprintf(eport1, 256, "%d", eport_curr);
-
+	    #ifdef UPNP_DEBUG
 	    std::cerr << "Attempting Redirection: InAddr: " << in_addr;
 	    std::cerr << " InPort: " << in_port1;
-	    std::cerr << " ePort: " << eport1;
-	    std::cerr << " eProt: " << "TCP";
+	    std::cerr << " ePort: " << eport_curr;
+	    std::cerr << " eProt: " << "TCP and UDP";
 	    std::cerr << std::endl;
+	    #endif
 	}
 
 	//build port mapping config
@@ -174,7 +182,7 @@ bool upnphandler::start_upnp()
 		if (extAddrResult && (res || res2)) {
 		    upnpState = RS_UPNP_S_ACTIVE;
 		} else {
-		    upnpState = RS_UPNP_S_UDP_FAILED;
+		    upnpState = RS_UPNP_S_TCP_AND_FAILED;
 		}
 
 		toStart = false;
@@ -196,18 +204,22 @@ bool upnphandler::shutdown_upnp()
 	/* always attempt this (unless no port number) */
 	if (eport_curr > 0 && eport > 0 && (upnpState >= RS_UPNP_S_ACTIVE))
 	{
+		#ifdef UPNP_DEBUG
 		std::cerr << "upnphandler::shutdown_upnp() : Attempting To Remove Redirection: port: " << eport_curr;
 		std::cerr << " Prot: TCP";
 		std::cerr << std::endl;
+		#endif
 
 		std::vector<CUPnPPortMapping> upnpPortMapping1;
 		CUPnPPortMapping cUPnPPortMapping1 = CUPnPPortMapping(eport_curr, 0, "TCP", true, "tcp redirection");
 		upnpPortMapping1.push_back(cUPnPPortMapping1);
 		cUPnPControlPoint->DeletePortMappings(upnpPortMapping1);
 
+		#ifdef UPNP_DEBUG
 		std::cerr << " : Attempting To Remove Redirection: port: " << eport_curr;
 		std::cerr << " Prot: UDP";
 		std::cerr << std::endl;
+		#endif
 
 		std::vector<CUPnPPortMapping> upnpPortMapping2;
 		CUPnPPortMapping cUPnPPortMapping2 = CUPnPPortMapping(eport_curr, 0, "UDP", true, "udp redirection");
@@ -218,7 +230,7 @@ bool upnphandler::shutdown_upnp()
 		cUPnPControlPoint->~CUPnPControlPoint();
 		upnpState = RS_UPNP_S_UNINITIALISED;
 	} else {
-    	    #ifdef CONN_DEBUG
+    	    #ifdef UPNP_DEBUG
 		    std::cerr << "upnphandler::shutdown_upnp() : avoid upnp connection for shutdows A net flag went down." << std::endl;
 	    #endif
 	}
@@ -247,11 +259,13 @@ upnphandler::~upnphandler()
 	/* RsIface */
 void  upnphandler::enable(bool active)
 {
-	std::cerr << "upnphandler::enable called with argument active : " << active << std::endl;
-	std::cerr << "toEnable : " << toEnable << std::endl;
-	std::cerr << "toStart : " << toStart << std::endl;
-	dataMtx.lock();   /***  LOCK MUTEX  ***/
+    	#ifdef UPNP_DEBUG
+	    std::cerr << "upnphandler::enable called with argument active : " << active << std::endl;
+	    std::cerr << "toEnable : " << toEnable << std::endl;
+	    std::cerr << "toStart : " << toStart << std::endl;
+	#endif
 
+	dataMtx.lock();   /***  LOCK MUTEX  ***/
 	if (active != toEnable)
 	{
 		if (active)
@@ -309,7 +323,9 @@ bool    upnphandler::getActive()
 {
 	dataMtx.lock();   /***  LOCK MUTEX  ***/
 
-	std::cerr <<"GetActive Called result : " << (upnpState == RS_UPNP_S_ACTIVE) << std::endl;
+    	#ifdef UPNP_DEBUG
+	    std::cerr <<"upnphandler::getActive() result : " << (upnpState == RS_UPNP_S_ACTIVE) << std::endl;
+	#endif
 
 	bool on = (upnpState == RS_UPNP_S_ACTIVE);
 
@@ -321,13 +337,7 @@ bool    upnphandler::getActive()
 	/* the address that the listening port is on */
 void    upnphandler::setInternalPort(unsigned short iport_in)
 {
-	std::cerr << "UPnPHandler::setInternalAddress() pre Lock!" << std::endl;
 	dataMtx.lock();   /***  LOCK MUTEX  ***/
-	std::cerr << "UPnPHandler::setInternalAddress() postLock!" << std::endl;
-
-	std::cerr << "UPnPHandler::setInternalPort(" << iport_in << ") current port: ";
-	std::cerr << iport << std::endl;
-
 	if (iport != iport_in)
 	{
 		iport = iport_in;
@@ -343,13 +353,7 @@ void    upnphandler::setInternalPort(unsigned short iport_in)
 
 void    upnphandler::setExternalPort(unsigned short eport_in)
 {
-	std::cerr << "UPnPHandler::setExternalPort() pre Lock!" << std::endl;
 	dataMtx.lock();   /***  LOCK MUTEX  ***/
-	std::cerr << "UPnPHandler::setExternalPort() postLock!" << std::endl;
-
-	std::cerr << "UPnPHandler::setExternalPort(" << eport_in << ") current port: ";
-	std::cerr << eport << std::endl;
-
 	/* flag both shutdown/start -> for restart */
 	if (eport != eport_in)
 	{
@@ -368,12 +372,7 @@ void    upnphandler::setExternalPort(unsigned short eport_in)
 	/* as determined by uPnP */
 bool    upnphandler::getInternalAddress(struct sockaddr_in &addr)
 {
-//	std::cerr << "UPnPHandler::getInternalAddress() pre Lock!" << std::endl;
 	dataMtx.lock();   /***  LOCK MUTEX  ***/
-//	std::cerr << "UPnPHandler::getInternalAddress() postLock!" << std::endl;
-
-	std::cerr << "UPnPHandler::getInternalAddress()" << std::endl;
-
 	addr = upnp_iaddr;
 	bool valid = (upnpState >= RS_UPNP_S_ACTIVE);
 
@@ -390,9 +389,11 @@ bool    upnphandler::getExternalAddress(struct sockaddr_in &addr)
 	{
 		const char* externalIPAddress = externalAdress.c_str();
 
-		std::cerr << "Stored External address: " << externalIPAddress;
+		#ifdef UPNP_DEBUG
+		std::cerr << " upnphandler::getExternalAddress() : " << externalIPAddress;
 		std::cerr << ":" << eport_curr;
 		std::cerr << std::endl;
+		#endif
 
 		dataMtx.lock();   /***  LOCK MUTEX  ***/
 		sockaddr_clear(&upnp_eaddr);
