@@ -70,6 +70,10 @@ win32 {
     LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
     LIBS += -lole32 -lwinmm
     RC_FILE = gui/images/retroshare_win.rc
+
+    GPG_ERROR_DIR = ../../../../libgpg-error-1.7
+    GPGME_DIR  = ../../../../gpgme-1.1.8
+    INCLUDEPATH += . $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
 }
 
 ##################################### MacOS ######################################
