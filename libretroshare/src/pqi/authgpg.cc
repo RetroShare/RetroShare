@@ -56,7 +56,7 @@
 #include "authgpg.h"
 #include <iostream>
 #include <sstream>
-
+#include <QtGui>
 
 /* Turn a set of parameters into a string */
 static std::string setKeyPairParams(bool useRsa, unsigned int blen,
@@ -100,7 +100,10 @@ gpgcert::~gpgcert()
 
 gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passphrase_info, int prev_was_bad, int fd)
 {
-	const char *passwd = (const char *) hook;
+	QString text = QInputDialog::getText(NULL, "GPG key passphrase",
+					  "GPG key passphrase", QLineEdit::Password,
+					  NULL, NULL);
+
 
 	if (prev_was_bad)
 		fprintf(stderr, "pgp_pwd_callback() Prev was bad!\n");
@@ -108,12 +111,12 @@ gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passp
 	fprintf(stderr, "pgp_pwd_callback() Set Password\n");
 
 #ifndef WINDOWS_SYS
-	write(fd, passwd, strlen(passwd));
+	write(fd, text.toStdString().c_str(), text.length());
 	write(fd, "\n", 1); /* needs a new line? */
 #else
 	DWORD written = 0;
 	HANDLE winFd = (HANDLE) fd;
-	WriteFile(winFd, passwd, strlen(passwd), &written, NULL);
+	WriteFile(winFd, text.toStdString().c_str(), text.length(), &written, NULL);
 	WriteFile(winFd, "\n", 1, &written, NULL); 
 #endif
 
