@@ -103,32 +103,27 @@ void NATStatus::getNATStatus()
 //      iconLabel->setToolTip(tr("UDP Port is not reachable"));
 //    }
     
-    if (config.netExtOk)
+    if (config.netUpnpOk)
     {
-      if (config.netUpnpOk)
-      {
-        iconLabel->setPixmap(QPixmap::QPixmap(":/images/greenled.png"));
-        iconLabel->setToolTip(tr("OK | RetroShare Server"));
-      }
-      else
-      {
-        iconLabel->setPixmap(QPixmap::QPixmap(":/images/greenled.png"));
-        iconLabel->setToolTip(tr("OK | UDP Server"));      
-      }
+    iconLabel->setPixmap(QPixmap::QPixmap(":/images/greenled.png"));
+    iconLabel->setToolTip(tr("OK | RetroShare Server"));
     }
-    else if (config.netOk)
+    else if (config.netStunOk || config.netExtraAddressOk)
     {
-      iconLabel->setPixmap(QPixmap::QPixmap(":/images/grayled.png"));
-      iconLabel->setToolTip(tr("Net Limited"));
+    iconLabel->setPixmap(QPixmap::QPixmap(":/images/grayled.png"));
+    iconLabel->setToolTip(tr("Internet connection"));
+    }
+    else if (config.netLocalOk)
+    {
+    iconLabel->setPixmap(QPixmap::QPixmap(":/images/grayled.png"));
+    iconLabel->setToolTip(tr("No internet connection"));
     }
     else
     {
-      iconLabel->setPixmap(QPixmap::QPixmap(":/images/redled.png"));
-      iconLabel->setToolTip(tr("No Conectivity"));
+    iconLabel->setPixmap(QPixmap::QPixmap(":/images/redled.png"));
+    iconLabel->setToolTip(tr("No local network"));
     }
 		
     rsiface->unlockData(); /* UnLock Interface */
 
 }
-
-

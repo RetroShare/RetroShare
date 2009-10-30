@@ -194,13 +194,11 @@ bool  getIPServersEnabled() { return use_extr_addr_finder ;}
 void  setIPServersEnabled(bool b) ;
 void  getIPServersList(std::list<std::string>& ip_servers) ;
 
-bool	getNetStatusOk();
+bool	getNetStatusLocalOk();
 bool	getNetStatusUpnpOk();
 bool	getNetStatusDhtOk();
-bool	getNetStatusExtOk();
-bool	getNetStatusUdpOk();
-bool	getNetStatusTcpOk();
-bool	getNetResetReq();
+bool	getNetStatusStunOk();
+bool	getNetStatusExtraAddressCheckOk();
 
 void 	setOwnNetConfig(uint32_t netMode, uint32_t visState);
 bool 	setLocalAddress(std::string id, struct sockaddr_in addr);
@@ -299,12 +297,10 @@ void 	netExtCheck();
 void 	netUpnpInit();
 void 	netUpnpCheck();
 
-void 	netUdpCheck();
+void 	netExtraAddressCheck();
 void    netUnreachableCheck();
 
 	/* Udp / Stun functions */
-bool 	udpInternalAddress(struct sockaddr_in iaddr);
-bool 	udpExtAddressCheck();
 void 	udpStunPeer(std::string id, struct sockaddr_in &addr);
 
 void 	stunInit();
@@ -312,12 +308,18 @@ bool 	stunCheck();
 void 	stunCollect(std::string id, struct sockaddr_in addr, uint32_t flags);
 bool    addBootstrapStunPeers();
 
+void 	networkConsistencyCheck();
+
 	/* monitor control */
 void 	tickMonitors();
 
 	/* connect attempts */
 bool	retryConnectTCP(std::string id);
 bool	retryConnectNotify(std::string id);
+
+bool 	getUpnpExtAddress(struct sockaddr_in &addr);
+bool 	getStunExtAddress(struct sockaddr_in &addr);
+bool 	getExtFinderExtAddress(struct sockaddr_in &addr);
 
 	/* temporary for testing */
 //virtual void 	loadConfiguration() { return; }
@@ -365,24 +367,25 @@ private:
 	bool use_extr_addr_finder ;
 
 	/* external Address determination */
-	bool mUpnpAddrValid, mStunAddrValid;
-	bool mStunAddrStable;
-	struct sockaddr_in mUpnpExtAddr;
+	//bool mUpnpAddrValid, mStunAddrValid;
+	//bool mStunAddrStable;
+	//struct sockaddr_in mUpnpExtAddr;
 	struct sockaddr_in mStunExtAddr;
 
 	/* network status flags (read by rsiface) */
-	bool netFlagOk;
+	bool netFlagLocalOk;
 	bool netFlagUpnpOk;
 	bool netFlagDhtOk;
-	bool netFlagExtOk;
-	bool netFlagUdpOk;
-	bool netFlagResetReq;
+	bool netFlagStunOk;
+	bool netFlagExtraAddressCheckOk;
 
-	//tcp connection test is not implemented
-	bool netFlagTcpOk;
+	/* old network status flags in order to detect changes */
+	bool oldnetFlagLocalOk;
+	bool oldnetFlagUpnpOk;
+	bool oldnetFlagDhtOk;
+	bool oldnetFlagStunOk;
+	bool oldnetFlagExtraAddressCheckOk;
 
-
-	/* these are protected for testing */
 protected:
 
 void addPeer(std::string id, std::string name); /* tmp fn */
@@ -395,7 +398,3 @@ void addPeer(std::string id, std::string name); /* tmp fn */
 };
 
 #endif // MRK_PQI_CONNECTION_MANAGER_HEADER
-
-
-
-

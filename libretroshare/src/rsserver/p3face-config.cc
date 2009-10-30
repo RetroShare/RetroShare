@@ -125,12 +125,11 @@ int RsServer::UpdateAllConfig()
 
 	/* update network configuration */
 
-	config.netOk =   mConnMgr->getNetStatusOk();
+	config.netLocalOk =   mConnMgr->getNetStatusLocalOk();
 	config.netUpnpOk = mConnMgr->getNetStatusUpnpOk();
 	config.netDhtOk = mConnMgr->getNetStatusDhtOk();
-	config.netExtOk = mConnMgr->getNetStatusExtOk();
-	config.netUdpOk = mConnMgr->getNetStatusUdpOk();
-	//config.netTcpOk = mConnMgr->getNetStatusTcpOk();
+	config.netStunOk = mConnMgr->getNetStatusStunOk();
+	config.netExtraAddressOk = mConnMgr->getNetStatusExtraAddressCheckOk();
 
 	/* update DHT/UPnP config */
 

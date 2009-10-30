@@ -735,52 +735,40 @@ void NetworkDialog::getNetworkStatus()
 
     if(config.netDhtOk)
     {
-      setLogInfo(tr("DHT OK"), QString::fromUtf8("green"));
+      setLogInfo(tr("DHT OK."), QString::fromUtf8("green"));
     }
     else 
     {
       setLogInfo(tr("DHT is not working (down)."), QString::fromUtf8("red"));
     }
-    
-    
-    if(config.netExtOk)
+        
+    if(config.netStunOk)
     {
-      setLogInfo(tr("Stable External IP Address"), QString::fromUtf8("green"));
+      setLogInfo(tr("Stun external address detection is working."), QString::fromUtf8("green"));
     }
     else
     {
-      setLogInfo(tr("Not Found External Address"), QString::fromUtf8("red"));
+      setLogInfo(tr("Stun is not working."), QString::fromUtf8("red"));
     }
     
-    if(config.netUdpOk)
+    if (config.netLocalOk)
     {
-      setLogInfo(tr("UDP Port is active (UDP Connections)"), QString::fromUtf8("green"));
+      setLogInfo(tr("Local network detected"), QString::fromUtf8("magenta"));
     }
     else
     {
-      setLogInfo(tr("UDP Port is not active"), QString::fromUtf8("red"));
+      setLogInfo(tr("No local network detected"), QString::fromUtf8("red"));
     }
-    
-    if (config.netExtOk)
+
+    if (config.netExtraAddressOk)
     {
-      if (config.netUpnpOk)
-      {
-        setLogInfo(tr("RetroShare Server"), QString::fromUtf8("green"));
-      }
-      else
-      {
-        setLogInfo(tr("UDP Server"), QString::fromUtf8("green"));
-      }
-    }
-    else if (config.netOk)
-    {
-      setLogInfo(tr("Net Limited"), QString::fromUtf8("magenta"));
+      setLogInfo(tr("ip found via external address finder"), QString::fromUtf8("magenta"));
     }
     else
     {
-      setLogInfo(tr("No Conectivity"), QString::fromUtf8("red"));
+      setLogInfo(tr("external address finder didn't found anything"), QString::fromUtf8("red"));
     }
-    		
+
     rsiface->unlockData(); /* UnLock Interface */
 }
 
@@ -811,17 +799,8 @@ void NetworkDialog::updateNetworkStatus()
       {    
          ui.iconlabel_dht->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
       }
-      
-      if(config.netExtOk)
-      {
-         ui.iconlabel_ext->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
-      }
-      else
-      {    
-         ui.iconlabel_ext->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
-      }
-      
-      if(config.netUdpOk)
+            
+      if(config.netStunOk)
       {
          ui.iconlabel_udp->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
       }
@@ -830,31 +809,33 @@ void NetworkDialog::updateNetworkStatus()
          ui.iconlabel_udp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
       }
             
-      if (config.netExtOk)
-      {
-	if (config.netUpnpOk)
-        {
-	   ui.iconlabel_netUdp->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
-	   ui.iconlabel_netLimited->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
-        }
-        else
-        {
-           ui.iconlabel_netUdp->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
-	   ui.iconlabel_netLimited->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
-	}
-      }
-      else if (config.netOk)
+      if (config.netLocalOk)
       {
 	  ui.iconlabel_netLimited->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
-          
-          ui.iconlabel_netUdp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
       }
       else
       {          
-          ui.iconlabel_netUdp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
           ui.iconlabel_netLimited->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
       }
-		
+
+      if (config.netExtraAddressOk)
+      {
+	  ui.iconlabel_ext->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
+      }
+      else
+      {
+	  ui.iconlabel_ext->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+      }
+
+      if (config.netExtraAddressOk || config.netStunOk || config.netUpnpOk)
+      {
+	  ui.iconlabel_netInternetConnection->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
+      }
+      else
+      {
+	  ui.iconlabel_netInternetConnection->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+      }
+
     rsiface->unlockData(); /* UnLock Interface */
 }
 

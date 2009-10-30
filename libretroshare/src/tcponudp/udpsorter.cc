@@ -338,14 +338,18 @@ bool    UdpSorter::externalAddr(struct sockaddr_in &external, uint8_t &stable)
 		else
 			stable = 0;
 
+#ifdef DEBUG_UDP_SORTER
 		std::cerr << "UdpSorter::externalAddr() eaddr:" << inet_ntoa(external.sin_addr);
 		std::cerr << ":" << ntohs(external.sin_port) << " stable: " << (int) stable;
 		std::cerr << std::endl;
+#endif
 
 		return true;
 	}
+#ifdef DEBUG_UDP_SORTER
 	std::cerr << "UdpSorter::externalAddr() eaddr unknown";
 	std::cerr << std::endl;
+#endif
 
 	return false;
 }

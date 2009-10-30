@@ -140,13 +140,11 @@ class RsConfig
 	int			DHTPeers;
 
 	/* Flags for Network Status */
-	bool 			netOk;     /* That we've talked to someone! */
+	bool 			netLocalOk;     /* That we've talked to someone! */
 	bool			netUpnpOk; /* upnp is enabled and active */
 	bool			netDhtOk;  /* response from dht */
-	bool			netExtOk;  /* know our external address */
-	bool			netUdpOk;  /* recvd stun / udp packets */
-	//bool			netTcpOk;  /* recvd incoming tcp */
-	bool			netResetReq;
+	bool			netStunOk;  /* recvd stun / udp packets */
+	bool			netExtraAddressOk;  /* recvd ip address with external finder*/
 };
 
 /********************** For Search Interface *****************/
