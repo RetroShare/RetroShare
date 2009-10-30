@@ -556,6 +556,7 @@ void p3ConnectMgr::netTick()
 			//std::cerr << "p3ConnectMgr::netTick() STATUS: DONE" << std::endl;
 #endif
 			stunCheck(); /* Keep on stunning */
+			netExtraAddressCheck();
 
 			break;
 
@@ -775,129 +776,6 @@ void p3ConnectMgr::networkConsistencyCheck()
 		#endif
 		}
 	}
-
-
-//	struct sockaddr_in tmpip ;
-//
-//
-//	if (udpExtAddressCheck() || (mUpnpAddrValid) || (use_extr_addr_finder && mExtAddrFinder->hasValidIP(&tmpip)))
-//	{
-//		bool extValid = false;
-//		bool extAddrStable = false;
-//		struct sockaddr_in extAddr;
-//		uint32_t mode = 0;
-//
-//		connMtx.lock();   /*   LOCK MUTEX */
-//
-//		mNetStatus = RS_NET_DONE;
-//
-//		/* get the addr from the configuration */
-//		struct sockaddr_in iaddr = ownState.localaddr;
-//
-//		if (mUpnpAddrValid)
-//		{
-//			extValid = true;
-//			extAddr = mUpnpExtAddr;
-//			extAddrStable = true;
-//		}
-//		else if (mStunAddrValid)
-//		{
-//			extValid = true;
-//			extAddr = mStunExtAddr;
-//			extAddrStable = mStunAddrStable;
-//		}
-//		else if(use_extr_addr_finder && mExtAddrFinder->hasValidIP(&tmpip))
-//		{
-//			extValid = true;
-//			extAddr = tmpip ;
-//			extAddr.sin_port = iaddr.sin_port ;
-//			extAddrStable = true;
-//		}
-//
-//		if (extValid)
-//		{
-//			ownState.serveraddr = extAddr;
-//			mode = RS_NET_CONN_TCP_LOCAL;
-//
-//			if (!extAddrStable)
-//			{
-//#ifdef CONN_DEBUG
-//				std::cerr << "p3ConnectMgr::netUdpCheck() UDP Unstable :( ";
-//				std::cerr <<  std::endl;
-//				std::cerr << "p3ConnectMgr::netUdpCheck() We are unreachable";
-//				std::cerr <<  std::endl;
-//				std::cerr << "netMode =>  RS_NET_MODE_UNREACHABLE";
-//				std::cerr <<  std::endl;
-//#endif
-//				ownState.netMode &= ~(RS_NET_MODE_ACTUAL);
-//				ownState.netMode |= RS_NET_MODE_UNREACHABLE;
-//
-//				/* send a system warning message */
-//				pqiNotify *notify = getPqiNotify();
-//				if (notify)
-//				{
-//					std::string title =
-//						"Warning: Bad Firewall Configuration";
-//
-//					std::string msg;
-//					msg +=  "               **** WARNING ****     \n";
-//					msg +=  "Retroshare has detected that you are behind";
-//					msg +=  " a restrictive Firewall\n";
-//					msg +=  "\n";
-//					msg +=  "You cannot connect to other firewalled peers\n";
-//					msg +=  "\n";
-//					msg +=  "You can fix this by:\n";
-//					msg +=  "   (1) opening an External Port\n";
-//					msg +=  "   (2) enabling UPnP, or\n";
-//					msg +=  "   (3) get a new (approved) Firewall/Router\n";
-//
-//					notify->AddSysMessage(0, RS_SYS_WARNING, title, msg);
-//				}
-//
-//			}
-//			else if (mUpnpAddrValid  || (ownState.netMode & RS_NET_MODE_EXT))
-//			{
-//				mode |= RS_NET_CONN_TCP_EXTERNAL;
-//				mode |= RS_NET_CONN_UDP_DHT_SYNC;
-//			}
-//			else // if (extAddrStable)
-//			{
-//				/* Check if extAddr == intAddr (Not Firewalled) */
-//				if ((0 == inaddr_cmp(iaddr, extAddr)) &&
-//					isExternalNet(&(extAddr.sin_addr)))
-//				{
-//					mode |= RS_NET_CONN_TCP_EXTERNAL;
-//				}
-//
-//				mode |= RS_NET_CONN_UDP_DHT_SYNC;
-//			}
-//
-//			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-//		}
-//
-//		connMtx.unlock(); /* UNLOCK MUTEX */
-//
-//		netAssistSetAddress(iaddr, extAddr, mode);
-//
-//		/* flag unreachables! */
-//		if ((extValid) && (!extAddrStable))
-//		{
-//			netUnreachableCheck();
-//		}
-//
-//	} else {
-//		//don't do a reset it if the udp init is not finished
-//		time_t delta = time(NULL) - mNetInitTS;
-//		#ifdef CONN_DEBUG
-//			std::cerr << "p3ConnectMgr time since last reset : " << delta << std::endl;
-//		#endif
-//		if (delta > MAX_UDP_INIT) {
-//		#ifdef CONN_DEBUG
-//			std::cerr << "we got no external ip address from udp stun, let's do a network reset." << delta << std::endl;
-//		#endif
-//		    netReset();
-//		}
-//	}
 }
 
 void p3ConnectMgr::netExtraAddressCheck()
