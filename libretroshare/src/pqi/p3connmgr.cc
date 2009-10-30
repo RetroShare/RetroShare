@@ -1043,18 +1043,23 @@ bool p3ConnectMgr::stunCheck()
 		if (0 < tou_extaddr((struct sockaddr *) &raddr, &rlen, &stable))
 		{
 			RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+			mStunAddrStable = (stable != 0);
 
 			if ((mStunExtAddr.sin_addr.s_addr != raddr.sin_addr.s_addr) ||
-				(mStunAddrStable != stable))
+				(mStunAddrStable != true))
 			{
 #ifdef CONN_DEBUG
-				std::cerr << "Ext Address Changed -> netReset" << std::endl;
+			    std::cerr << "mStunExtAddr.sin_addr.s_addr : " << inet_ntoa(mStunExtAddr.sin_addr) << std::endl;
+			    std::cerr << "raddr.sin_addr.s_addr : " << inet_ntoa(raddr.sin_addr) << std::endl;
+			    std::cerr << "mStunAddrStable : " << mStunAddrStable << std::endl;
 #endif
 
 				doNetReset = true;
 			}
 			else
 			{
+				netFlagUdpOk = true;
+
 #ifdef CONN_DEBUG
 				std::cerr << "Ext Address Same: ok!" << std::endl;
 #endif
@@ -1070,6 +1075,7 @@ bool p3ConnectMgr::stunCheck()
 			if (upnpExtAdress) {
 			   //don't do a reset
 			   mStunExtAddr = extAddr;
+			   netFlagUdpOk = false;
 #ifdef CONN_DEBUG
 			std::cerr << "Found upnp Ext Address. don't do a reset." << std::endl;
 #endif
