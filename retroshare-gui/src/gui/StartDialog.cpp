@@ -78,22 +78,14 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
 #ifndef WINDOWS_SYS /* UNIX */
 	//hide autologin because it's not functionnal on other than windows system
 	ui.autoBox->hide();
+#endif
 
 	//comment those to show the pgp and ssl password dialog
 	ui.loadPasswd->hide();
 	ui.label_4->hide();
 
-        std::string gpgEngineFileName;
-        if (RsInit::getPGPEngineFileName(gpgEngineFileName)) {
-            std::cerr << "RsInit::getPGPEngineFileName() : " << gpgEngineFileName << std::endl;
-            //if fileName contains gpg2 then the passphrase is set by pinentry and not by RS
-            QString *fileName = new QString(gpgEngineFileName.c_str());
-            if (fileName->contains("gpg2")) {
-                ui.loadGPGPasswd->hide();
-                ui.label_5->hide();
-            }
-        }
-#endif
+	ui.loadGPGPasswd->hide();
+	ui.label_5->hide();
 
 	/* get all available pgp private certificates....
 	 * mark last one as default.
