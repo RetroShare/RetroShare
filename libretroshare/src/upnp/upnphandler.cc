@@ -231,7 +231,7 @@ bool upnphandler::shutdown_upnp()
 		upnpState = RS_UPNP_S_UNINITIALISED;
 	} else {
     	    #ifdef UPNP_DEBUG
-		    std::cerr << "upnphandler::shutdown_upnp() : avoid upnp connection for shutdows A net flag went down." << std::endl;
+		    std::cerr << "upnphandler::shutdown_upnp() : avoid upnp connection for shutdonws because probably a net flag went down." << std::endl;
 	    #endif
 	}
 
