@@ -54,8 +54,8 @@ const uint32_t RS_STUN_DONE =      	0x0002;
 const uint32_t RS_STUN_LIST_MIN =      	100;
 const uint32_t RS_STUN_FOUND_MIN =     	10;
 
-const uint32_t MAX_UPNP_INIT = 		100; /* seconds UPnP timeout */
-const uint32_t MAX_UDP_INIT = 		120; /* seconds Udp timeout */
+const uint32_t MAX_UPNP_INIT = 		60; /* seconds UPnP timeout */
+const uint32_t MAX_UDP_INIT = 		80; /* seconds Udp timeout */
 
 const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
 
@@ -352,6 +352,7 @@ void p3ConnectMgr::netStatusReset()
 	netFlagUdpOk = false;
 	netFlagTcpOk = false;
 	netFlagResetReq = false;
+	IndicateConfigChanged();
 }
 
 void p3ConnectMgr::netStartup()
