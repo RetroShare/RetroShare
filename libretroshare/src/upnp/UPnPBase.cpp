@@ -170,6 +170,8 @@ void CUPnPLib::ProcessActionResponse(
 			std::cerr << "\n    " <<
 				childTag << "='" <<
 				childValue << "'";
+			//add the variable to the wanservice property map
+			(m_ctrlPoint.m_WanService->propertyMap)[std::string(childTag)] = std::string(childValue);
 			child = Element_GetNextSibling(child);
 		}
 	} else {
@@ -1021,8 +1023,12 @@ std::string CUPnPControlPoint::getExternalAddress()
 			"WAN Service not detected." << std::endl;
 		return false;
 	}
-
-	return m_WanService->GetStateVariable("ExternalIPAddress");
+	PrivateGetExternalIpAdress();
+	std::string result =  m_WanService->GetStateVariable("NewExternalIPAddress");
+	if (result == "") {
+	    result = m_WanService->GetStateVariable("ExternalIPAddress");
+	}
+	return result;
 }
 
 void CUPnPControlPoint::RefreshPortMappings()
@@ -1127,6 +1133,22 @@ bool CUPnPControlPoint::PrivateDeletePortMapping(
 	argval[2].SetArgument("NewProtocol");
 	argval[2].SetValue(upnpPortMapping.getProtocol());
 	
+	// Execute
+	bool ret = true;
+	for (ServiceMap::iterator it = m_ServiceMap.begin();
+	     it != m_ServiceMap.end(); ++it) {
+		ret &= it->second->Execute(actionName, argval);
+	}
+
+	return ret;
+}
+
+bool CUPnPControlPoint::PrivateGetExternalIpAdress()
+{
+	// Start building the action
+	std::string actionName("GetExternalIPAddress");
+	std::vector<CUPnPArgumentValue> argval(0);
+
 	// Execute
 	bool ret = true;
 	for (ServiceMap::iterator it = m_ServiceMap.begin();
@@ -1362,15 +1384,6 @@ upnpEventSubscriptionExpired:
 		} else {
 		    //add the variable to the wanservice property map
 		    (upnpCP->m_WanService->propertyMap)[std::string(sv_event->StateVarName)] = std::string(sv_event->CurrentVal);
-#if 0
-			// Warning: The use of UpnpGetServiceVarStatus and 
-			// UpnpGetServiceVarStatusAsync is deprecated by the
-			// UPnP forum.
-			TvCtrlPointHandleGetVar(
-				sv_event->CtrlUrl,
-				sv_event->StateVarName,
-				sv_event->CurrentVal );
-#endif
 		}
 		break;
 	}

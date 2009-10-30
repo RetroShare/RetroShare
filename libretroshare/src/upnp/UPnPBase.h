@@ -569,10 +569,10 @@ private:
 	PortMappingMap m_ActivePortMappingsMap;
 	RsMutex m_RootDeviceListMutex;
 	bool m_IGWDeviceDetected;
-	CUPnPService *m_WanService;
 	RsMutex m_WaitForSearchTimeoutMutex;
 
 public:
+	CUPnPService *m_WanService;
 	RsMutex m_getStateVariableMutex;
 	std::string m_getStateVariableLastResult;
 	static CUPnPControlPoint *s_CtrlPoint;
@@ -586,7 +586,7 @@ public:
 		std::vector<CUPnPPortMapping> &upnpPortMapping);
 	bool DeletePortMappings(
 		std::vector<CUPnPPortMapping> &upnpPortMapping);
-	
+
 	UpnpClient_Handle GetUPnPClientHandle()	const
 		{ return m_UPnPClientHandle; }
 
@@ -622,6 +622,7 @@ private:
 		CUPnPPortMapping &upnpPortMapping);
 	bool PrivateDeletePortMapping(
 		CUPnPPortMapping &upnpPortMapping);
+	bool PrivateGetExternalIpAdress();
 };
 
 // File_checked_for_headers
