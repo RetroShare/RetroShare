@@ -11,7 +11,6 @@ extern "C" {
 /* This stuff is actually C */
 
 #include "upnp/upnphandler.h"
-#include "upnp/upnputil.h"
 
 struct WanDevice {
     char UDN[250];
