@@ -819,7 +819,9 @@ void p3ConnectMgr::netUdpCheck()
 			std::cerr << "p3ConnectMgr time since last reset : " << delta << std::endl;
 		#endif
 		if (delta > MAX_UDP_INIT) {
-		    //if we got no external ip address let's do a network reset
+		#ifdef CONN_DEBUG
+			std::cerr << "we got no external ip address from udp stun, let's do a network reset." << delta << std::endl;
+		#endif
 		    netReset();
 		}
 	}
@@ -1083,7 +1085,7 @@ bool p3ConnectMgr::stunCheck()
 	if (doNetReset)
 	{
 #ifdef CONN_DEBUG
-		std::cerr << "Resetting Network" << std::endl;
+		std::cerr << "Stun trying to reeset Network" << std::endl;
 #endif
 
 		//don't do a reset it if the udp init is not finished
@@ -3147,6 +3149,9 @@ bool 	p3ConnectMgr::checkNetAddress()
 		std::cerr << "ownState.localaddr.sin_port : " << ownState.localaddr.sin_port << std::endl;
 #endif
 	if ((old_in_addr != ownState.localaddr.sin_addr.s_addr) || (old_in_port != ownState.localaddr.sin_port)) {
+#ifdef CONN_DEBUG
+		std::cerr << "local address changed, resetting network." << std::endl;
+#endif
 	    //local address changed, resetting network
 	    netReset();
 	}
