@@ -12,24 +12,7 @@ extern "C" {
 
 #include "upnp/upnphandler.h"
 
-struct WanDevice {
-    char UDN[250];
-    char DescDocURL[250];
-    char FriendlyName[250];
-    char PresURL[250];
-    int  AdvrTimeOut;
-};
-
-class uPnPConfigData
-{
-	public:
-		struct WanDevice * WanDevice;
-		char lanaddr[16];	/* my ip address on the LAN */
-};
-
 #include "util/rsnet.h"
-
-UpnpClient_Handle ctrlpt_handle = -1;
 
 bool upnphandler::initUPnPState()
 {
@@ -105,6 +88,7 @@ bool upnphandler::background_setup_upnp(bool start, bool stop)
 	pthread_t tid;
 
 	/* launch thread */
+	std::cerr << "Creating upnp thread." << std::endl;
 	upnpThreadData *data = new upnpThreadData();
 	data->handler = this;
 	data->start = start;
@@ -186,9 +170,10 @@ bool upnphandler::start_upnp()
 	    CUPnPPortMapping cUPnPPortMapping2 = CUPnPPortMapping(eport_curr, ntohs(localAddr.sin_port), "UDP", true, "udp retroshare redirection");
 	    upnpPortMapping2.push_back(cUPnPPortMapping2);
 	    bool res2 = cUPnPControlPoint->AddPortMappings(upnpPortMapping2);
-	    if (res) {
+	    if (res2) {
 		upnpState = RS_UPNP_S_ACTIVE;
 	    } else {
+		//upnpState = RS_UPNP_S_ACTIVE;
 		upnpState = RS_UPNP_S_UDP_FAILED;
 	    }
 	}
@@ -217,7 +202,7 @@ bool upnphandler::start_upnp()
 
 	toStart = false;
 
-	return true;
+	return (upnpState == RS_UPNP_S_ACTIVE);
 
 }
 
@@ -248,8 +233,8 @@ bool upnphandler::shutdown_upnp()
 		std::cerr << std::endl;
 
 		std::vector<CUPnPPortMapping> upnpPortMapping1;
-		CUPnPPortMapping *cUPnPPortMapping1 = &CUPnPPortMapping(eport_curr, 0, eprot1, true, "tcp redirection");
-		upnpPortMapping1.push_back(*cUPnPPortMapping1);
+		CUPnPPortMapping cUPnPPortMapping1 = CUPnPPortMapping(eport_curr, 0, eprot1, true, "tcp redirection");
+		upnpPortMapping1.push_back(cUPnPPortMapping1);
 		cUPnPControlPoint->DeletePortMappings(upnpPortMapping1);
 
 		std::cerr << "Attempting To Remove Redirection: port: " << eport2;
@@ -257,8 +242,8 @@ bool upnphandler::shutdown_upnp()
 		std::cerr << std::endl;
 
 		std::vector<CUPnPPortMapping> upnpPortMapping2;
-		CUPnPPortMapping *cUPnPPortMapping2 = &CUPnPPortMapping(eport_curr, 0, eprot2, true, "tcp redirection");
-		upnpPortMapping2.push_back(*cUPnPPortMapping2);
+		CUPnPPortMapping cUPnPPortMapping2 = CUPnPPortMapping(eport_curr, 0, eprot2, true, "udp redirection");
+		upnpPortMapping2.push_back(cUPnPPortMapping2);
 		cUPnPControlPoint->DeletePortMappings(upnpPortMapping2);
 
 		//destroy the upnp object
@@ -329,6 +314,7 @@ void    upnphandler::shutdown()
 void    upnphandler::restart()
 {
 	/* non-blocking call to shutdown upnp, and startup again. */
+	std::cerr << "upnphandler::restart() called." << std::endl;
 	background_setup_upnp(true, true);
 }
 
@@ -348,6 +334,8 @@ bool    upnphandler::getEnabled()
 bool    upnphandler::getActive()
 {
 	dataMtx.lock();   /***  LOCK MUTEX  ***/
+
+	std::cerr <<"GetActive Called result : " << (upnpState == RS_UPNP_S_ACTIVE) << std::endl;
 
 	bool on = (upnpState == RS_UPNP_S_ACTIVE);
 

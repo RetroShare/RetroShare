@@ -430,6 +430,7 @@ private:
 	std::auto_ptr<CUPnPSCPD> m_SCPD;
 	
 public:
+	std::map<std::string, std::string> propertyMap;
 	CUPnPService(
 		const CUPnPControlPoint &upnpControlPoint,
 		CUPnPLib &upnpLib,
@@ -475,12 +476,6 @@ public:
 		const std::vector<CUPnPArgumentValue> &ArgValue) const;
 	const std::string GetStateVariable(
 		const std::string &stateVariableName);
-
-	//callback Function
-	static int GetServiceVarStatusAsyncCallback(
-		Upnp_EventType EventType,
-		void* Event,
-		void* Cookie);
 
 };
 

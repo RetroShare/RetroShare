@@ -726,40 +726,32 @@ bool CUPnPService::Execute(
 const std::string CUPnPService::GetStateVariable(
 	const std::string &stateVariableName)
 {
-//	DOMString StVarVal;
-//	int ret = UpnpGetServiceVarStatus(
-//		m_UPnPControlPoint.GetUPnPClientHandle(),
-//		GetAbsControlURL().c_str(),
-//		stateVariableName.c_str(),
-//		&StVarVal);
-	std::cerr << "GetAbsControlURL().c_str() : " << GetAbsControlURL().c_str() << std::endl;
-	std::cerr << "stateVariableName.c_str() : " << stateVariableName.c_str() << std::endl;
-	int ret = UpnpGetServiceVarStatusAsync(
-		    m_UPnPControlPoint.GetUPnPClientHandle(), /** The handle of the control point. */
-		    GetAbsControlURL().c_str(), /** The URL of the service. */
-		    stateVariableName.c_str(),   /** The name of the variable to query. */
-		    static_cast<Upnp_FunPtr>(&CUPnPService::GetServiceVarStatusAsyncCallback),       /** Pointer to a callback function to be invoked when the operation is complete. */
-		    NULL     /** Pointer to user data to pass to the callback function when invoked. */
-		    );
-
-	if (ret != UPNP_E_SUCCESS) {
-		std::ostringstream msg;
-		msg << "GetStateVariable(\"" <<
-			stateVariableName <<
-			"\"): in a call to UpnpGetServiceVarStatus";
-		m_upnpLib.processUPnPErrorMessage(
-			msg.str(), ret, NULL, NULL);
-		return stdEmptyString;
+	//this getvar is just to make an event happening
+	DOMString StVarVal;
+	int ret = UpnpGetServiceVarStatus(
+		m_UPnPControlPoint.GetUPnPClientHandle(),
+		GetAbsControlURL().c_str(),
+		stateVariableName.c_str(),
+		&StVarVal);
+	std::cerr << "GetStateVariable pausing in case of an UPnP event incomming.";
+	time_t begin_time = time(NULL);
+	while (true) {
+	    if (time(NULL) - begin_time > 7) {
+		break;
+	    }
 	}
-	std::cerr << "UpnpGetServiceVarStatusAsync) called successfully" << std::endl;
+	std::cerr << "GetStateVariable pause finished.";
 
-	//double lock for blocking it. It will be deblocked by the callback funtion GetServiceVarStatusAsyncCallback
-	CUPnPControlPoint *upnpCP = CUPnPControlPoint::s_CtrlPoint;
-	upnpCP->m_getStateVariableMutex.lock();
-	std::cerr << "m_getStateVariableMutex.lock() 1 finished." << std::endl;
-
-	//return StVarVal;
-	return upnpCP->m_getStateVariableLastResult;
+	std::cerr << "GetStateVariable(" << stateVariableName << ") = ";
+	std::map<std::string, std::string>::iterator it;
+	it = propertyMap.find(stateVariableName);
+	if  (it == propertyMap.end()) {
+	    std::cerr << "Empty String" << std::endl;
+	    return stdEmptyString;
+	} else {
+	    std::cerr << (*it).second << std::endl;
+	    return (*it).second;
+	}
 }
 
 
@@ -903,7 +895,7 @@ m_WanService(NULL)
 	// on the mutex.
 //	UpnpSetContentLength(m_UPnPClientHandle, 5000000);
 //	UpnpSetMaxContentLength(5000000);
-	ret = UpnpSearchAsync(m_UPnPClientHandle, 30, m_upnpLib.UPNP_DEVICE_IGW.c_str(), NULL);
+	ret = UpnpSearchAsync(m_UPnPClientHandle, 20, m_upnpLib.UPNP_DEVICE_IGW.c_str(), NULL);
 	//ret = UpnpSearchAsync(m_UPnPClientHandle, 3, m_upnpLib.UPNP_DEVICE_IGW.c_str(), this);
 	//ret = UpnpSearchAsync(m_UPnPClientHandle, 3, m_upnpLib.UPNP_DEVICE_LAN.c_str(), this);
 	//ret = UpnpSearchAsync(m_UPnPClientHandle, 3, m_upnpLib.UPNP_DEVICE_WAN_CONNECTION.c_str(), this);
@@ -974,12 +966,12 @@ bool CUPnPControlPoint::AddPortMappings(
 	bool ok = false;
 
 	// Check the number of port mappings before
-	std::istringstream PortMappingNumberOfEntries(
+	std::istringstream OldPortMappingNumberOfEntries(
 		m_WanService->GetStateVariable(
 			"PortMappingNumberOfEntries"));
-	unsigned long oldNumberOfEntries;
-	PortMappingNumberOfEntries >> oldNumberOfEntries;
-	
+	int oldNumberOfEntries;
+	OldPortMappingNumberOfEntries >> oldNumberOfEntries;
+
 	// Add the enabled port mappings
 	for (int i = 0; i < n; ++i) {
 		if (upnpPortMapping[i].getEnabled() == "1") {
@@ -992,37 +984,7 @@ bool CUPnPControlPoint::AddPortMappings(
 			PrivateAddPortMapping(upnpPortMapping[i]);
 		}
 	}
-
-	// Test some variables, this is deprecated, might not work
-	// with some routers
-	m_WanService->GetStateVariable("ConnectionType");
-	m_WanService->GetStateVariable("PossibleConnectionTypes");
-	m_WanService->GetStateVariable("ConnectionStatus");
-	m_WanService->GetStateVariable("Uptime");
-	m_WanService->GetStateVariable("LastConnectionError");
-	m_WanService->GetStateVariable("RSIPAvailable");
-	m_WanService->GetStateVariable("NATEnabled");
-	m_WanService->GetStateVariable("ExternalIPAddress");
-	m_WanService->GetStateVariable("PortMappingNumberOfEntries");
-	m_WanService->GetStateVariable("PortMappingLeaseDuration");
-	
-	// Just for testing
-//	std::vector<CUPnPArgumentValue> argval;
-//	argval.resize(0);
-//	m_WanService->Execute("GetStatusInfo", argval);
-	
-#if 0
-	// These do not work. Their value must be requested for a
-	// specific port mapping.
-	m_WanService->GetStateVariable("PortMappingEnabled");
-	m_WanService->GetStateVariable("RemoteHost");
-	m_WanService->GetStateVariable("ExternalPort");
-	m_WanService->GetStateVariable("InternalPort");
-	m_WanService->GetStateVariable("PortMappingProtocol");
-	m_WanService->GetStateVariable("InternalClient");
-	m_WanService->GetStateVariable("PortMappingDescription");
-#endif
-	
+			
 	// Debug only
 #ifdef UPNP_DEBUG
 	std::cerr << "CUPnPControlPoint::AddPortMappings: "
@@ -1031,12 +993,13 @@ bool CUPnPControlPoint::AddPortMappings(
 #endif
 
 	// Not very good, must find a better test
-	PortMappingNumberOfEntries.str(
+	std::istringstream NewPortMappingNumberOfEntries(
 		m_WanService->GetStateVariable(
 			"PortMappingNumberOfEntries"));
-	unsigned long newNumberOfEntries;
-	PortMappingNumberOfEntries >> newNumberOfEntries;
-	ok = newNumberOfEntries - oldNumberOfEntries == 4;
+	int newNumberOfEntries;
+	NewPortMappingNumberOfEntries >> newNumberOfEntries;
+	std::cerr <<  "newNumberOfEntries - oldNumberOfEntries : " << (newNumberOfEntries - oldNumberOfEntries) << std::endl;
+	ok = newNumberOfEntries - oldNumberOfEntries >= 1;
 
 	std::cerr <<  "CUPnPControlPoint::AddPortMappings finished. success : " << ok << std::endl;
 
@@ -1062,9 +1025,6 @@ void CUPnPControlPoint::RefreshPortMappings()
 		++it) {
 		PrivateAddPortMapping(it->second);
 	}
-
-	// For testing
-	m_WanService->GetStateVariable("PortMappingNumberOfEntries");
 }
 
 
@@ -1160,7 +1120,7 @@ bool CUPnPControlPoint::DeletePortMappings(
 			"PortMappingNumberOfEntries"));
 	unsigned long newNumberOfEntries;
 	PortMappingNumberOfEntries >> newNumberOfEntries;
-	ok = oldNumberOfEntries - newNumberOfEntries == 4;
+	ok = oldNumberOfEntries - newNumberOfEntries >= 4;
 	
 	return ok;
 }
@@ -1414,9 +1374,8 @@ upnpEventSubscriptionExpired:
 			upnpCP->m_upnpLib.processUPnPErrorMessage(
 				msg.str(), sv_event->ErrCode, NULL, NULL);
 		} else {
-		    std::cerr << sv_event->StateVarName << std::endl;
-		    std::cerr << sv_event->CtrlUrl << std::endl;
-		    std::cerr << sv_event->CurrentVal << std::endl;
+		    //add the variable to the wanservice property map
+		    (upnpCP->m_WanService->propertyMap)[std::string(sv_event->StateVarName)] = std::string(sv_event->CurrentVal);
 #if 0
 			// Warning: The use of UpnpGetServiceVarStatus and 
 			// UpnpGetServiceVarStatusAsync is deprecated by the
@@ -1459,53 +1418,6 @@ eventSubscriptionRequest:
 	return 0;
 }
 
-// This function is static
-int CUPnPService::GetServiceVarStatusAsyncCallback(Upnp_EventType EventType, void *Event, void * /*Cookie*/)
-{	
-	//fprintf(stderr, "Callback: %d, Cookie: %p\n", EventType, Cookie);
-	CUPnPControlPoint *upnpCP = CUPnPControlPoint::s_CtrlPoint;
-	switch (EventType) {
-	case UPNP_EVENT_RECEIVED: {
-		fprintf(stderr, "GetServiceVarStatusAsyncCallback: UPNP_EVENT_RECEIVED\n");
-		// Event reveived
-		struct Upnp_Event *e_event = (struct Upnp_Event *)Event;
-		const std::string Sid = e_event->Sid;
-		// Parses the event
-		upnpCP->OnEventReceived(Sid, e_event->EventKey, e_event->ChangedVariables);
-		break;
-	}
-	case UPNP_CONTROL_GET_VAR_COMPLETE: {
-		fprintf(stderr, "Callback GetServiceVarStatusAsyncCallback : UPNP_CONTROL_GET_VAR_COMPLETE\n");
-		struct Upnp_State_Var_Complete *sv_event =
-			(struct Upnp_State_Var_Complete *)Event;
-		if (sv_event->ErrCode != UPNP_E_SUCCESS) {
-			std::cerr <<  "error(UPNP_CONTROL_GET_VAR_COMPLETE) : ";
-			std::cerr << "Error Code : " << sv_event->ErrCode << std::endl;
-		} else {
-		    std::cerr << sv_event->StateVarName << std::endl;
-		    std::cerr << sv_event->CtrlUrl << std::endl;
-		    std::cerr << sv_event->CurrentVal << std::endl;
-		    upnpCP->m_getStateVariableLastResult = sv_event->CurrentVal;
-		}
-		break;
-	}
-	default:
-		// Humm, this is not good, we forgot to handle something...
-		fprintf(stderr,
-			"Callback: default... Unknown event:'%d', not good.\n",
-			EventType);
-		std::cerr << "error(UPnP::Callback): Event not handled:'" <<
-			EventType << "'." << std::endl;
-		// Better not throw in the callback. Who would catch it?
-		//throw CUPnPException(msg);
-		break;
-	}
-
-	std::cerr << "Unlocking  m_getStateVariableMutex." << std::endl;
-	upnpCP->m_getStateVariableMutex.unlock();
-	return 0;
-}
-
 
 void CUPnPControlPoint::OnEventReceived(
 		const std::string &Sid,
@@ -1514,31 +1426,40 @@ void CUPnPControlPoint::OnEventReceived(
 {
 	std::cerr << "UPNP_EVENT_RECEIVED:" <<
 		"\n    SID: " << Sid <<
-		"\n    Key: " << EventKey <<
-		"\n    Property list:";
-	IXML_Element *root =
-		m_upnpLib.Element_GetRootElement(ChangedVariablesDoc);
-	IXML_Element *child =
-		m_upnpLib.Element_GetFirstChild(root);
-	if (child) {
-		while (child) {
-			IXML_Element *child2 =
-				m_upnpLib.Element_GetFirstChild(child);
-			const DOMString childTag =
-				m_upnpLib.Element_GetTag(child2);
-			std::string childValue =
-				m_upnpLib.Element_GetTextValue(child2);
-			std::cerr << "\n        " <<
-				childTag << "='" <<
-				childValue << "'";
-			child = m_upnpLib.Element_GetNextSibling(child);
-		}
-	} else {
-		std::cerr << "\n    Empty property list.";
+		"\n    Key: " << EventKey << std::endl;
+	std::cerr << "m_WanService->GetServiceId() : " << m_WanService->GetSID() << std::endl;
+
+	if (m_WanService->GetSID() == Sid) {
+	    //let's store the properties if it is an event of the wan device
+	    std::cerr << "\n    Property list:";
+
+	    IXML_Element *root =
+		    m_upnpLib.Element_GetRootElement(ChangedVariablesDoc);
+	    IXML_Element *child =
+		    m_upnpLib.Element_GetFirstChild(root);
+	    if (child) {
+		    while (child) {
+			    IXML_Element *child2 =
+				    m_upnpLib.Element_GetFirstChild(child);
+			    const DOMString childTag =
+				    m_upnpLib.Element_GetTag(child2);
+			    std::string childValue =
+				    m_upnpLib.Element_GetTextValue(child2);
+			    std::cerr << "\n        " <<
+				    childTag << "='" <<
+				    childValue << "'";
+			    const std::string cTag(childTag);
+			    const std::string cValue(childValue);
+			    (m_WanService->propertyMap)[cTag] = cValue;
+			    child = m_upnpLib.Element_GetNextSibling(child);
+		    }
+	    } else {
+		    std::cerr << "\n    Empty property list.";
+	    }
+	    std::cerr << std::endl;
+	    // Freeing that doc segfaults. Probably should not be freed.
+	    //ixmlDocument_free(ChangedVariablesDoc);
 	}
-	std::cerr << std::endl;
-	// Freeing that doc segfaults. Probably should not be freed.
-	//ixmlDocument_free(ChangedVariablesDoc);
 }
 
 
