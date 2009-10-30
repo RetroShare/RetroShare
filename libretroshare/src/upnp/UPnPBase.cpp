@@ -697,32 +697,6 @@ bool CUPnPService::Execute(
 		static_cast<Upnp_FunPtr>(&CUPnPControlPoint::Callback),
 		NULL);
 	return true;
-	
-//	std::cerr << "Calling UpnpSendAction." << std::endl;
-//	// Send the action synchronously
-//	IXML_Document *RespDoc = NULL;
-//	int ret = UpnpSendAction(
-//		m_UPnPControlPoint.GetUPnPClientHandle(),
-//		GetAbsControlURL().c_str(),
-//		GetServiceType().c_str(),
-//		NULL, ActionDoc, &RespDoc);
-//	if (ret != UPNP_E_SUCCESS) {
-//		m_upnpLib.processUPnPErrorMessage(
-//			"UpnpSendAction", ret, NULL, RespDoc);
-//		ixmlDocument_free(ActionDoc);
-//		ixmlDocument_free(RespDoc);
-//		return false;
-//	}
-//	ixmlDocument_free(ActionDoc);
-//
-//	// Check the response document
-//	m_upnpLib.ProcessActionResponse(
-//		RespDoc, action.GetName());
-//
-//	// Free the response document
-//	ixmlDocument_free(RespDoc);
-//
-//	return true;
 }
 
 
@@ -887,7 +861,7 @@ m_WanService(NULL)
 #ifdef UPNP_DEBUG
 	std::cerr << "CUPnPControlPoint Constructor UpnpInit finished" << std::endl;
 #endif
-	if (ret != UPNP_E_SUCCESS) {
+	if (ret != UPNP_E_SUCCESS && ret !=UPNP_E_INIT) {
 		std::cerr << "error(UpnpInit): Error code : ";
 		goto error;
 	}

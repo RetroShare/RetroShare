@@ -191,11 +191,12 @@ bool upnphandler::shutdown_upnp()
 	//stopping os ok, set starting to true for next net reset
 	toStop = false;
 	toStart = true;
+	upnpState = RS_UPNP_S_UNINITIALISED;
 
 	/* always attempt this (unless no port number) */
-	if (eport_curr > 0 && eport > 0)
+	if (eport_curr > 0 && eport > 0 && (upnpState >= RS_UPNP_S_ACTIVE))
 	{
-		std::cerr << "Attempting To Remove Redirection: port: " << eport_curr;
+		std::cerr << "upnphandler::shutdown_upnp() : Attempting To Remove Redirection: port: " << eport_curr;
 		std::cerr << " Prot: TCP";
 		std::cerr << std::endl;
 
@@ -204,7 +205,7 @@ bool upnphandler::shutdown_upnp()
 		upnpPortMapping1.push_back(cUPnPPortMapping1);
 		cUPnPControlPoint->DeletePortMappings(upnpPortMapping1);
 
-		std::cerr << "Attempting To Remove Redirection: port: " << eport_curr;
+		std::cerr << " : Attempting To Remove Redirection: port: " << eport_curr;
 		std::cerr << " Prot: UDP";
 		std::cerr << std::endl;
 
@@ -216,6 +217,10 @@ bool upnphandler::shutdown_upnp()
 		//destroy the upnp object
 		cUPnPControlPoint->~CUPnPControlPoint();
 		upnpState = RS_UPNP_S_UNINITIALISED;
+	} else {
+    	    #ifdef CONN_DEBUG
+		    std::cerr << "upnphandler::shutdown_upnp() : avoid upnp connection for shutdows A net flag went down." << std::endl;
+	    #endif
 	}
 
 	return true;
