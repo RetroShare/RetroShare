@@ -54,8 +54,8 @@ const uint32_t RS_STUN_DONE =      	0x0002;
 const uint32_t RS_STUN_LIST_MIN =      	100;
 const uint32_t RS_STUN_FOUND_MIN =     	10;
 
-const uint32_t MAX_UPNP_INIT = 		60; /* seconds UPnP timeout */
-const uint32_t MAX_UDP_INIT = 		80; /* seconds Udp timeout */
+const uint32_t MAX_UPNP_INIT = 		80; /* seconds UPnP timeout */
+const uint32_t MAX_UDP_INIT = 		100; /* seconds Udp timeout */
 
 const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
 
@@ -345,6 +345,7 @@ void    p3ConnectMgr::addNetListener(pqiNetListener *listener)
 
 void p3ConnectMgr::netStatusReset()
 {
+	std::cerr << "p3ConnectMgr::netStatusReset()";
 	netFlagOk = false;
 	netFlagUpnpOk = false;
 	netFlagDhtOk = false;
@@ -374,6 +375,7 @@ void p3ConnectMgr::netStartup()
 	 */
 
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+	netStatusReset();
 
 	mNetInitTS = time(NULL);
 #ifdef CONN_DEBUG
@@ -945,13 +947,14 @@ bool p3ConnectMgr::udpExtAddressCheck()
 		 * so up is okay, and ext address is known stable or not.
 		 */
 
-		if (mStunAddrStable)
+		if (mStunAddrStable) {
 			netFlagExtOk = true;
-		netFlagUdpOk = true;
+			netFlagUdpOk = true;
+		}
 
 		return true;
 	}
-	return false; 
+	return false;
 }
 	
 void p3ConnectMgr::udpStunPeer(std::string id, struct sockaddr_in &addr)
@@ -1059,10 +1062,21 @@ bool p3ConnectMgr::stunCheck()
 		else
 		{
 #ifdef CONN_DEBUG
-			std::cerr << "No Ext Address -> netReset" << std::endl;
+			std::cerr << "Stun : No Ext Address. Checking upnp est address." << std::endl;
 #endif
-
-			doNetReset = true;
+			struct sockaddr_in extAddr;
+			bool upnpExtAdress = netAssistExtAddress(extAddr);
+			if (upnpExtAdress) {
+			   //don't do a reset
+#ifdef CONN_DEBUG
+			std::cerr << "Found upnp Ext Address. don't do a reset." << std::endl;
+#endif
+			} else {
+#ifdef CONN_DEBUG
+			std::cerr << "No upnp Ext Address. doing a reset." << std::endl;
+#endif
+			     doNetReset = true;
+			}
 		}
 	}
 
@@ -1080,6 +1094,8 @@ bool p3ConnectMgr::stunCheck()
 		if (delta > MAX_UDP_INIT) {
 		    //stun failed let's do a network reset
 		    netReset();
+		} else {
+		    doNetReset = false;;
 		}
 	}
 
