@@ -130,7 +130,7 @@ int RsServer::UpdateAllConfig()
 	config.netDhtOk = mConnMgr->getNetStatusDhtOk();
 	config.netExtOk = mConnMgr->getNetStatusExtOk();
 	config.netUdpOk = mConnMgr->getNetStatusUdpOk();
-	config.netTcpOk = mConnMgr->getNetStatusTcpOk();
+	//config.netTcpOk = mConnMgr->getNetStatusTcpOk();
 
 	/* update DHT/UPnP config */
 

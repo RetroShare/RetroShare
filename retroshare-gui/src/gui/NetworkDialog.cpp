@@ -761,18 +761,9 @@ void NetworkDialog::getNetworkStatus()
       setLogInfo(tr("UDP Port is not active"), QString::fromUtf8("red"));
     }
     
-    if(config.netTcpOk)
-    {
-      setLogInfo(tr("TCP Port is active (TCP Server)"), QString::fromUtf8("green"));
-    }
-    else
-    {
-      setLogInfo(tr("TCP Port is not active"), QString::fromUtf8("red"));
-    }
-
     if (config.netExtOk)
     {
-      if (config.netUpnpOk || config.netTcpOk)
+      if (config.netUpnpOk)
       {
         setLogInfo(tr("RetroShare Server"), QString::fromUtf8("green"));
       }
@@ -846,21 +837,10 @@ void NetworkDialog::updateNetworkStatus()
          ui.iconlabel_udp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
          ui.textlabel_udp->setText(tr("UDP Port is not active"));
       }
-      
-      if(config.netTcpOk)
-      {
-         ui.iconlabel_tcp->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
-         ui.textlabel_tcp->setText(tr("TCP Port is active (TCP Server)"));
-      }
-      else
-      {    
-         ui.iconlabel_tcp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
-         ui.textlabel_tcp->setText(tr("TCP Port is not active"));
-      }
-      
+            
       if (config.netExtOk)
       {
-        if (config.netUpnpOk || config.netTcpOk)
+	if (config.netUpnpOk)
         {
            ui.iconlabel_netServer->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
            

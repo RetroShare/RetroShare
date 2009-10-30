@@ -103,20 +103,9 @@ void NATStatus::getNATStatus()
       iconLabel->setToolTip(tr("UDP Port is not reachable"));
     }
     
-    if(config.netTcpOk)
-    {
-      iconLabel->setPixmap(QPixmap::QPixmap(":/images/greenled.png"));
-      iconLabel->setToolTip(tr("TCP Port is reachable"));
-    }
-    else
-    {
-      iconLabel->setPixmap(QPixmap::QPixmap(":/images/yellowled.png"));
-      iconLabel->setToolTip(tr("TCP Port is not reachable"));
-    }
-
     if (config.netExtOk)
     {
-      if (config.netUpnpOk || config.netTcpOk)
+      if (config.netUpnpOk)
       {
         iconLabel->setPixmap(QPixmap::QPixmap(":/images/greenled.png"));
         iconLabel->setToolTip(tr("OK | RetroShare Server"));

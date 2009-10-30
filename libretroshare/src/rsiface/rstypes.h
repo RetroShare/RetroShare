@@ -145,7 +145,7 @@ class RsConfig
 	bool			netDhtOk;  /* response from dht */
 	bool			netExtOk;  /* know our external address */
 	bool			netUdpOk;  /* recvd stun / udp packets */
-	bool			netTcpOk;  /* recvd incoming tcp */
+	//bool			netTcpOk;  /* recvd incoming tcp */
 	bool			netResetReq;
 };
 
