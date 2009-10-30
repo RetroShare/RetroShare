@@ -577,14 +577,14 @@ bool CUPnPService::Execute(
 	const std::string &ActionName,
 	const std::vector<CUPnPArgumentValue> &ArgValue) const
 {
-	std::ostringstream msg;
+	std::cerr << "CUPnPService::Execute called.";
 	if (m_SCPD.get() == NULL) {
 		std::cerr << "Service without SCPD Document, cannot execute action '" << ActionName <<
 			"' for service '" << GetServiceType() << "'.";
 		std::cerr << std::endl;
 		return false;
 	}
-	std::ostringstream msgAction("Sending action ");
+	std::cerr << "Sending action ";
 	// Check for correct action name
 	ActionList::const_iterator itAction =
 		m_SCPD->GetActionList().find(ActionName);
@@ -594,7 +594,7 @@ bool CUPnPService::Execute(
 		std::cerr << std::endl;
 		return false;
 	}
-	msgAction << ActionName << "(";
+	std::cerr <<  ActionName << "(";
 	bool firstTime = true;
 	// Check for correct Argument/Value pairs
 	const CUPnPAction &action = *(itAction->second);
@@ -676,6 +676,7 @@ bool CUPnPService::Execute(
 			}
 		}
 	} else {
+		std::cerr << "UpnpMakeAction" << std::endl;
 		ActionDoc = UpnpMakeAction(
 			action.GetName().c_str(),
 			GetServiceType().c_str(),
@@ -686,7 +687,7 @@ bool CUPnPService::Execute(
 			return false;
 		}
 	}
-#if 0
+
 	// Send the action asynchronously
 	UpnpSendActionAsync(
 		m_UPnPControlPoint.GetUPnPClientHandle(),
@@ -696,32 +697,32 @@ bool CUPnPService::Execute(
 		static_cast<Upnp_FunPtr>(&CUPnPControlPoint::Callback),
 		NULL);
 	return true;
-#endif
 	
-	// Send the action synchronously
-	IXML_Document *RespDoc = NULL;
-	int ret = UpnpSendAction(
-		m_UPnPControlPoint.GetUPnPClientHandle(),
-		GetAbsControlURL().c_str(),
-		GetServiceType().c_str(),
-		NULL, ActionDoc, &RespDoc);
-	if (ret != UPNP_E_SUCCESS) {
-		m_upnpLib.processUPnPErrorMessage(
-			"UpnpSendAction", ret, NULL, RespDoc);
-		ixmlDocument_free(ActionDoc);
-		ixmlDocument_free(RespDoc);
-		return false;
-	}
-	ixmlDocument_free(ActionDoc);
-	
-	// Check the response document
-	m_upnpLib.ProcessActionResponse(
-		RespDoc, action.GetName());
-	
-	// Free the response document
-	ixmlDocument_free(RespDoc);
-
-	return true;
+//	std::cerr << "Calling UpnpSendAction." << std::endl;
+//	// Send the action synchronously
+//	IXML_Document *RespDoc = NULL;
+//	int ret = UpnpSendAction(
+//		m_UPnPControlPoint.GetUPnPClientHandle(),
+//		GetAbsControlURL().c_str(),
+//		GetServiceType().c_str(),
+//		NULL, ActionDoc, &RespDoc);
+//	if (ret != UPNP_E_SUCCESS) {
+//		m_upnpLib.processUPnPErrorMessage(
+//			"UpnpSendAction", ret, NULL, RespDoc);
+//		ixmlDocument_free(ActionDoc);
+//		ixmlDocument_free(RespDoc);
+//		return false;
+//	}
+//	ixmlDocument_free(ActionDoc);
+//
+//	// Check the response document
+//	m_upnpLib.ProcessActionResponse(
+//		RespDoc, action.GetName());
+//
+//	// Free the response document
+//	ixmlDocument_free(RespDoc);
+//
+//	return true;
 }
 
 
