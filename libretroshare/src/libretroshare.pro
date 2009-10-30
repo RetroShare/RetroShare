@@ -67,7 +67,11 @@ win32-x-g++ {
 	QMAKE_AR = i586-mingw32msvc-ar
 	DEFINES *= STATICLIB WIN32
 
-	SSL_DIR=../../../../openssl
+        #miniupnp implementation files
+        HEADERS += upnp/upnputil.h
+        SOURCES += upnp/upnputil.c
+
+        SSL_DIR=../../../../openssl
 	UPNPC_DIR = ../../../../miniupnpc-1.3
 	GPG_ERROR_DIR = ../../../../libgpg-error-1.7
 	GPGME_DIR  = ../../../../gpgme-1.1.8
@@ -81,11 +85,15 @@ win32 {
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
 		DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW
-		DEFINES *= MINIUPNPC_VERSION=13
+                DEFINES *= MINIUPNPC_VERSION=13
 		DESTDIR = lib
 
+                #miniupnp implementation files
+                HEADERS += upnp/upnputil.h
+                SOURCES += upnp/upnputil.c
 
-		UPNPC_DIR = ../../../../miniupnpc-1.3
+
+                UPNPC_DIR = ../../../../miniupnpc-1.3
 		GPG_ERROR_DIR = ../../../../libgpg-error-1.7
 		GPGME_DIR  = ../../../../gpgme-1.1.8
 
@@ -249,7 +257,6 @@ HEADERS += dbase/cachestrapper.h \
            tcponudp/udplayer.h \
            tcponudp/udpsorter.h \
            upnp/upnphandler.h \
-	   upnp/UPnPBase.h \
 	   util/rsdebug.h \
            util/rsdir.h \
            util/rsnet.h \
@@ -258,7 +265,7 @@ HEADERS += dbase/cachestrapper.h \
            util/rswin.h \
            util/rsversion.h 
 
-SOURCES = \
+SOURCES += \
 				dht/dht_check_peers.cc \
 				dht/dht_bootstrap.cc \
 				rsserver/p3face-msgs.cc \

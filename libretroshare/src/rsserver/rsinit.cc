@@ -1258,11 +1258,11 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 
 		std::cerr << "let's store the ssl Password into a pgp ecrypted file" << std::endl;
 		FILE *sslPassphraseFile = fopen(RsInitConfig::ssl_passphrase_file.c_str(), "w");
-		std::cerr << "opening sslPassphraseFile. : " << RsInitConfig::ssl_passphrase_file.c_str() << std::endl;
+                std::cerr << "opening sslPassphraseFile : " << RsInitConfig::ssl_passphrase_file.c_str() << std::endl;
 		gpgme_data_t cipher;
 		gpgme_data_t plain;
-		gpgme_data_new_from_mem(&plain, sslPassword, strlen(sslPassword), 0);
-                gpgme_error_t error_reading_file = gpgme_data_new_from_stream (&cipher, sslPassphraseFile);
+                gpgme_data_new_from_mem(&plain, sslPassword, strlen(sslPassword), 1);
+                gpgme_data_new_from_stream (&cipher, sslPassphraseFile);
                 if (0 < authMgr->encryptText(plain, cipher)) {
 		    std::cerr << "Encrypting went ok !" << std::endl;
 		}
@@ -1276,10 +1276,10 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		FILE *sslPassphraseFile = fopen(RsInitConfig::ssl_passphrase_file.c_str(), "r");
 		if (sslPassphraseFile == NULL)
 		{
-			std::cerr << "No password povided, and no sslPassphraseFile." << std::endl;
+                        std::cerr << "No password povided, and no sslPassphraseFile : " << RsInitConfig::ssl_passphrase_file.c_str() << std::endl;
 			return 0;
 		} else {
-			std::cerr << "opening sslPassphraseFile." << std::endl;
+                        std::cerr << "opening sslPassphraseFile : " << RsInitConfig::ssl_passphrase_file.c_str() << std::endl;
 			gpgme_data_t cipher;
 			gpgme_data_t plain;
 			gpgme_data_new (&plain);

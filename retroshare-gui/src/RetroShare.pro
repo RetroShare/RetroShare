@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools debug pluginmgr newsettings #release
+CONFIG += qt gui uic qrc resources uitools pluginmgr newsettings release
 QT     += network xml script 
 TEMPLATE = app
 TARGET = RetroShare
@@ -63,14 +63,11 @@ win32 {
     #LIBS += -L"D/Qt/2009.03/qt/plugins/imageformats"
     #QTPLUGIN += qjpeg
 
+    LIBS += ../../libretroshare/src/lib/libretroshare.a
     LIBS += -L"../../../../lib" 
-    LIBS += -lretroshare -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
+    LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
     LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
     LIBS += -lole32 -lwinmm
-        
-    INCLUDEPATH += ../../../../gpgme-1.1.8/src/
-    INCLUDEPATH += ../../../../libgpg-error-1.7/src/
-
     RC_FILE = gui/images/retroshare_win.rc
 }
 
