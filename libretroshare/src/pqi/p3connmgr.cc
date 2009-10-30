@@ -697,14 +697,6 @@ void p3ConnectMgr::netUdpCheck()
 #endif
 	struct sockaddr_in tmpip ;
 
-	//don't check it if the udp init is not finished
-	time_t delta = time(NULL) - mNetInitTS;
-	#ifdef CONN_DEBUG
-		std::cerr << "p3ConnectMgr time since last reset : " << delta << std::endl;
-	#endif
-	if (delta < MAX_UDP_INIT) {
-	    return;
-	}
 
 	if (udpExtAddressCheck() || (mUpnpAddrValid) || (use_extr_addr_finder && mExtAddrFinder->hasValidIP(&tmpip))) 
 	{
@@ -817,6 +809,17 @@ void p3ConnectMgr::netUdpCheck()
 		if ((extValid) && (!extAddrStable))
 		{
 			netUnreachableCheck();
+		}
+
+	} else {
+		//don't do a reset it if the udp init is not finished
+		time_t delta = time(NULL) - mNetInitTS;
+		#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr time since last reset : " << delta << std::endl;
+		#endif
+		if (delta > MAX_UDP_INIT) {
+		    //if we got no external ip address let's do a network reset
+		    netReset();
 		}
 	}
 }
@@ -1069,7 +1072,15 @@ bool p3ConnectMgr::stunCheck()
 		std::cerr << "Resetting Network" << std::endl;
 #endif
 
-		netReset();
+		//don't do a reset it if the udp init is not finished
+		time_t delta = time(NULL) - mNetInitTS;
+		#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr time since last reset : " << delta << std::endl;
+		#endif
+		if (delta > MAX_UDP_INIT) {
+		    //stun failed let's do a network reset
+		    netReset();
+		}
 	}
 
 #ifdef CONN_DEBUG
