@@ -43,10 +43,9 @@ const uint32_t RS_NET_NEED_RESET = 	0x0000;
 const uint32_t RS_NET_UNKNOWN = 	0x0001;
 const uint32_t RS_NET_UPNP_INIT = 	0x0002;
 const uint32_t RS_NET_UPNP_SETUP =  	0x0003;
-const uint32_t RS_NET_EXT_ADDR_FINDER =   	0x0004;
-const uint32_t RS_NET_DONE =    	0x0005;
-const uint32_t RS_NET_LOOPBACK =    	0x0006;
-const uint32_t RS_NET_MODE_DOWN =    	0x0007;
+const uint32_t RS_NET_DONE =    	0x0004;
+const uint32_t RS_NET_LOOPBACK =    	0x0005;
+const uint32_t RS_NET_MODE_DOWN =    	0x0006;
 
 /* Stun modes (TODO) */
 const uint32_t RS_STUN_DHT =      	0x0001;
@@ -54,7 +53,7 @@ const uint32_t RS_STUN_DONE =      	0x0002;
 const uint32_t RS_STUN_LIST_MIN =      	100;
 const uint32_t RS_STUN_FOUND_MIN =     	10;
 
-const uint32_t MAX_UPNP_INIT = 		70; /* seconds UPnP timeout */
+const uint32_t MAX_UPNP_INIT = 		20; /* seconds UPnP timeout */
 const uint32_t MAX_NETWORK_INIT =	75; /* seconds Udp timeout */
 
 const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
@@ -384,10 +383,10 @@ void p3ConnectMgr::netStartup()
 	switch(ownState.netMode & RS_NET_MODE_TRYMODE)
 	{
 
-		case RS_NET_MODE_TRY_EXT:  /* v similar to UDP */
-			ownState.netMode |= RS_NET_MODE_EXT;
-			mNetStatus = RS_NET_EXT_ADDR_FINDER;
-			break;
+//		case RS_NET_MODE_TRY_EXT:  /* v similar to UDP */
+//			ownState.netMode |= RS_NET_MODE_EXT;
+//			mNetStatus = RS_NET_EXT_ADDR_FINDER;
+//			break;
 
 		case RS_NET_MODE_TRY_UDP:
 			ownState.netMode |= RS_NET_MODE_UDP;
@@ -513,6 +512,11 @@ void p3ConnectMgr::netTick()
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
 
+	//tick the extra adress finder
+	if ((netStatus > RS_NET_UNKNOWN) && use_extr_addr_finder && !netFlagExtraAddressCheckOk) {
+	    netExtraAddressCheck();
+	}
+
 	switch(netStatus)
 	{
 		case RS_NET_NEED_RESET:
@@ -534,6 +538,7 @@ void p3ConnectMgr::netTick()
 #ifdef CONN_DEBUG
 			std::cerr << "p3ConnectMgr::netTick() STATUS: UPNP_INIT" << std::endl;
 #endif
+			netExtraAddressCheck();
 			netUpnpInit();
 			break;
 
@@ -544,19 +549,11 @@ void p3ConnectMgr::netTick()
 			netUpnpCheck();
 			break;
 
-		case RS_NET_EXT_ADDR_FINDER:
-#ifdef CONN_DEBUG
-			std::cerr << "p3ConnectMgr::netTick() STATUS: RS_NET_EXT_ADDR_FINDER" << std::endl;
-#endif
-			netExtraAddressCheck();
-			break;
-
 		case RS_NET_DONE:
 #ifdef CONN_DEBUG
 			//std::cerr << "p3ConnectMgr::netTick() STATUS: DONE" << std::endl;
 #endif
 			stunCheck(); /* Keep on stunning */
-			netExtraAddressCheck();
 
 			break;
 
@@ -698,6 +695,7 @@ void p3ConnectMgr::networkConsistencyCheck()
 	delta = time(NULL) - mNetInitTS;
 	std::cerr << "p3ConnectMgr::networkConsistencyCheck() time since last rest : " << delta << std::endl;
 #endif
+
 	bool doNetReset = false;
 	//if one of the flag is degrated from true to false during last tick, let's do a reset
 	//storing old flags
@@ -737,26 +735,30 @@ void p3ConnectMgr::networkConsistencyCheck()
 	//if ip adresses are different, let's use the stun address, then the extaddrfinder and then the upnp address.
 	struct sockaddr_in extAddr;
 	if (getStunExtAddress(extAddr)) {
-    #ifdef CONN_DEBUG
-	    std::cerr << "p3ConnectMgr::networkConsistencyCheck() using STUN for ownState.serveraddr." << std::endl;
-    #endif
-	    ownState.serveraddr = extAddr;
-	} else if (getExtFinderExtAddress(extAddr)) {
-    #ifdef CONN_DEBUG
-	    std::cerr << "p3ConnectMgr::networkConsistencyCheck() using External address finder for ownState.serveraddr." << std::endl;
-    #endif
-	    ownState.serveraddr = extAddr;
-	} else if (getUpnpExtAddress(extAddr)) {
-    #ifdef CONN_DEBUG
-	    std::cerr << "p3ConnectMgr::networkConsistencyCheck() using UPNP for ownState.serveraddr." << std::endl;
-    #endif
+	    #ifdef CONN_DEBUG
+		    std::cerr << "p3ConnectMgr::networkConsistencyCheck() using STUN for ownState.serveraddr." << std::endl;
+	    #endif
 	    ownState.serveraddr = extAddr;
 	} else {
-	    #ifdef CONN_DEBUG
-		    std::cerr << "p3ConnectMgr::networkConsistencyCheck() no external ip address." << std::endl;
-	    #endif
-	    doNetReset = true;
+		//call the extrafinder address
+		if (getExtFinderExtAddress(extAddr)) {
+		    #ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::networkConsistencyCheck() using External address finder for ownState.serveraddr." << std::endl;
+		    #endif
+		ownState.serveraddr = extAddr;
+		} else if (getUpnpExtAddress(extAddr)) {
+		    #ifdef CONN_DEBUG
+		    std::cerr << "p3ConnectMgr::networkConsistencyCheck() using UPNP for ownState.serveraddr." << std::endl;
+		    #endif
+		    ownState.serveraddr = extAddr;
+		} else {
+		    #ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::networkConsistencyCheck() no external ip address." << std::endl;
+		    #endif
+		    doNetReset = true;
+		}
 	}
+
 	connMtx.unlock(); /* UNLOCK MUTEX */
 
 
@@ -770,10 +772,10 @@ void p3ConnectMgr::networkConsistencyCheck()
 		    #endif
 		    netReset();
 		} else {
-		#ifdef CONN_DEBUG
+		    #ifdef CONN_DEBUG
 			std::cerr << "p3ConnectMgr::networkConsistencyCheck() reset delayed : p3ConnectMgr time since last reset : " << delta;
 			std::cerr << ". Cannot reset before : " <<  MAX_NETWORK_INIT << " sec" << std::endl;
-		#endif
+		    #endif
 		}
 	}
 }
@@ -781,9 +783,15 @@ void p3ConnectMgr::networkConsistencyCheck()
 void p3ConnectMgr::netExtraAddressCheck()
 {	struct sockaddr_in tmpip;
 	if (use_extr_addr_finder && mExtAddrFinder->hasValidIP(&tmpip)) {
+	    #ifdef CONN_DEBUG
+		    std::cerr << "p3ConnectMgr::netExtraAddressCheck() return true" << std::endl;
+	    #endif
 	    RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 	    netFlagExtraAddressCheckOk = true;
 	} else {
+	    #ifdef CONN_DEBUG
+		    std::cerr << "p3ConnectMgr::netExtraAddressCheck() return false" << std::endl;
+	    #endif
 	    RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 	    netFlagExtraAddressCheckOk = false;
 	}

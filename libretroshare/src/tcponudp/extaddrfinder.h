@@ -20,6 +20,7 @@ class ExtAddrFinder
 	private:
 		friend void* doExtAddrSearch(void *p) ;
 
+		time_t   *mFoundTS;
 		RsMutex _addrMtx ;
 		struct sockaddr_in *_addr ;
 		bool *_found ;

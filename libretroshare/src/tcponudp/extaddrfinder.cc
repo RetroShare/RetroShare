@@ -15,6 +15,8 @@
 #include <algorithm>
 #include <stdio.h>
 
+const uint32_t MAX_IP_STORE =	20; /* seconds ip address timeout */
+
 static const std::string ADDR_AGENT  = "Mozilla/5.0";
 
 static std::string scan_ip(const std::string& text)
@@ -139,27 +141,40 @@ void* doExtAddrSearch(void *p)
 		std::cout << "ip found through " << *it << ": \"" << ip << "\"" << std::endl ;
 #endif
 	}
+
 	if(res.empty())
 	{
+		// thread safe copy results.
+		//
+		af->_addrMtx.lock();
+		*(af->_found) = false ;
+		*(af->mFoundTS) = time(NULL) ;
+		*(af->_searching) = false ;
 		pthread_exit(NULL);
+		af->_addrMtx.unlock();
 		return NULL ;
 	}
 
 	sort(res.begin(),res.end()) ; // eliminates outliers.
 
-	// thread safe copy results.
-	//
-	RsStackMutex mut(af->_addrMtx) ;
 
 	if(!inet_aton(res[res.size()/2].c_str(),&(af->_addr->sin_addr)))
 	{
 		std::cerr << "ExtAddrFinder: Could not convert " << res[res.size()/2] << " into an address." << std::endl ;
+		af->_addrMtx.lock();
+		*(af->_found) = false ;
+		*(af->mFoundTS) = time(NULL) ;
+		*(af->_searching) = false ;
+		af->_addrMtx.unlock();
 		pthread_exit(NULL);
 		return NULL ;
 	}
 
+	af->_addrMtx.lock();
 	*(af->_found) = true ;
+	*(af->mFoundTS) = time(NULL) ;
 	*(af->_searching) = false ;
+	af->_addrMtx.unlock();
 
 	pthread_exit(NULL);
 	return NULL ;
@@ -179,37 +194,41 @@ bool ExtAddrFinder::hasValidIP(struct sockaddr_in *addr)
 #ifdef EXTADDRSEARCH_DEBUG
 	std::cerr << "ExtAddrFinder: Getting ip." << std::endl ;
 #endif
+
 	if(*_found)
 	{
 #ifdef EXTADDRSEARCH_DEBUG
 		std::cerr << "ExtAddrFinder: Has stored ip: responding with this ip." << std::endl ;
 #endif
-		*addr = *_addr ;
-		return true ;
+		*addr = *_addr;
 	}
 
-	if(_addrMtx.trylock()) 
-	{
-		if(!*_searching)
-		{
-#ifdef EXTADDRSEARCH_DEBUG
-			std::cerr << "ExtAddrFinder: No stored ip: Initiating new search." << std::endl ;
-#endif
-			*_searching = true ;
-			start_request() ;
-		}
-#ifdef EXTADDRSEARCH_DEBUG
-		else
-			std::cerr << "ExtAddrFinder: Already searching." << std::endl ;
-#endif
-		_addrMtx.unlock(); 
+	//timeout the current ip
+	time_t delta = time(NULL) - *mFoundTS;
+	if(delta > MAX_IP_STORE) {//launch a research
+	    if( _addrMtx.trylock())
+		    {
+			    if(!*_searching)
+			    {
+	    #ifdef EXTADDRSEARCH_DEBUG
+				    std::cerr << "ExtAddrFinder: No stored ip: Initiating new search." << std::endl ;
+	    #endif
+				    *_searching = true ;
+				    start_request() ;
+			    }
+	    #ifdef EXTADDRSEARCH_DEBUG
+			    else
+				    std::cerr << "ExtAddrFinder: Already searching." << std::endl ;
+	    #endif
+			    _addrMtx.unlock();
+		    }
+	    #ifdef EXTADDRSEARCH_DEBUG
+		    else
+			    std::cerr << "ExtAddrFinder: (Note) Could not acquire lock. Busy." << std::endl ;
+	    #endif
 	}
-#ifdef EXTADDRSEARCH_DEBUG
-	else
-		std::cerr << "ExtAddrFinder: (Note) Could not acquire lock. Busy." << std::endl ;
-#endif
 
-	return false ;
+	return *_found ;
 }
 
 ExtAddrFinder::~ExtAddrFinder()
@@ -243,6 +262,8 @@ ExtAddrFinder::ExtAddrFinder()
 
 	_searching = new bool ;
 	*_searching = false ;
+
+	*mFoundTS = time(NULL);
 
 	_addr = (sockaddr_in*)malloc(sizeof(sockaddr_in)) ;
 
