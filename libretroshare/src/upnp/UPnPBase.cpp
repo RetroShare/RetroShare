@@ -28,7 +28,6 @@
 #include "UPnPBase.h"
 #include <stdio.h>
 
-#include <dlfcn.h>		// For dlopen(), dlsym(), dlclose()
 #include <algorithm>		// For transform()
 
 
