@@ -39,12 +39,14 @@ const int p3connectzone = 3431;
 
 /* Network setup States */
 
+const uint32_t RS_NET_NEED_RESET = 	0x0000;
 const uint32_t RS_NET_UNKNOWN = 	0x0001;
 const uint32_t RS_NET_UPNP_INIT = 	0x0002;
 const uint32_t RS_NET_UPNP_SETUP =  	0x0003;
 const uint32_t RS_NET_UDP_SETUP =   	0x0004;
 const uint32_t RS_NET_DONE =    	0x0005;
-
+const uint32_t RS_NET_LOOPBACK =    	0x0006;
+const uint32_t RS_NET_MODE_DOWN =    	0x0007;
 
 /* Stun modes (TODO) */
 const uint32_t RS_STUN_DHT =      	0x0001;
@@ -52,10 +54,10 @@ const uint32_t RS_STUN_DONE =      	0x0002;
 const uint32_t RS_STUN_LIST_MIN =      	100;
 const uint32_t RS_STUN_FOUND_MIN =     	10;
 
-const uint32_t MAX_UPNP_INIT = 		120; /* seconds UPnP timeout */
-const uint32_t MAX_UDP_INIT = 		150; /* seconds Udp timeout */
+const uint32_t MAX_UPNP_INIT = 		100; /* seconds UPnP timeout */
+const uint32_t MAX_UDP_INIT = 		120; /* seconds Udp timeout */
 
-const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		150; /* seconds Udp timeout */
+const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		20; /* seconds Udp timeout */
 
 /****
  * #define CONN_DEBUG 1
@@ -130,6 +132,7 @@ p3ConnectMgr::p3ConnectMgr(p3AuthMgr *am)
 	mStunStatus(0), mStunFound(0), mStunMoreRequired(true), 
 	mStatusChanged(false)
 {
+	netFlagOk = false;
 	mUpnpAddrValid = false;
 	mStunAddrValid = false;
 	mStunAddrStable = false;
@@ -283,6 +286,10 @@ void p3ConnectMgr::netReset()
 		std::cerr << "p3ConnectMgr time since last reset : " << delta << std::endl;
 	#endif
 	if (delta < MIN_TIME_BETWEEN_NET_RESET) {
+	    {
+		    RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+		    mNetStatus = RS_NET_NEED_RESET;
+	    }
 	    #ifdef CONN_DEBUG
 		    std::cerr << "p3ConnectMgr::netStartup() don't do a net reset if the MIN_TIME_BETWEEN_NET_RESET is not reached" << std::endl;
 	    #endif
@@ -299,6 +306,7 @@ void p3ConnectMgr::netReset()
 	{
 		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
         	mNetStatus = RS_NET_UNKNOWN;
+		netFlagOk = false;
 	}
 
 	std::cerr << "p3ConnectMgr::netReset() checkNetAddress" << std::endl;
@@ -338,7 +346,6 @@ void    p3ConnectMgr::addNetListener(pqiNetListener *listener)
 
 void p3ConnectMgr::netStatusReset()
 {
-	netFlagOk = true;
 	netFlagUpnpOk = false;
 	netFlagDhtOk = false;
 	netFlagExtOk = false;
@@ -415,6 +422,7 @@ bool p3ConnectMgr::shutdown() /* blocking shutdown call */
 	connMtx.lock();   /*   LOCK MUTEX */
 
 	bool upnpActive = ownState.netMode & RS_NET_MODE_UPNP;
+	mNetStatus = RS_NET_MODE_DOWN;
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
 
@@ -503,8 +511,9 @@ void p3ConnectMgr::netTick()
 	// the computer is not yet connected to the internet. In such a case we
 	// periodically check for a local net address.
 	//
-	if(isLoopbackNet(&(ownState.localaddr.sin_addr)))
-		checkNetAddress() ;
+
+//	if(isLoopbackNet(&(ownState.localaddr.sin_addr)))
+	checkNetAddress() ;
 
 	connMtx.lock();   /*   LOCK MUTEX */
 
@@ -514,15 +523,18 @@ void p3ConnectMgr::netTick()
 
 	switch(netStatus)
 	{
-		case RS_NET_UNKNOWN:
+		case RS_NET_NEED_RESET:
 
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::netTick() STATUS: NEED_RESET" << std::endl;
+#endif
+			netReset();
+			break;
+
+		case RS_NET_UNKNOWN:
 #ifdef CONN_DEBUG
 			std::cerr << "p3ConnectMgr::netTick() STATUS: UNKNOWN" << std::endl;
 #endif
- 			/*  RS_NET_UNKNOWN -(config)-> RS_NET_EXT_INIT
- 			 *  RS_NET_UNKNOWN -(config)-> RS_NET_UPNP_INIT
- 			 *  RS_NET_UNKNOWN -(config)-> RS_NET_UDP_INIT
-			 */
 			netStartup();
 			break;
 
@@ -552,6 +564,14 @@ void p3ConnectMgr::netTick()
 			//std::cerr << "p3ConnectMgr::netTick() STATUS: DONE" << std::endl;
 #endif
 			stunCheck(); /* Keep on stunning until its happy */
+			break;
+
+		case RS_NET_LOOPBACK:
+			shutdown();
+#ifdef CONN_DEBUG
+			//std::cerr << "p3ConnectMgr::netTick() STATUS: DONE" << std::endl;
+#endif
+			//do nothing, there is already a checkNetAddress() in the tick
 		default:
 			break;
 	}
@@ -3013,88 +3033,102 @@ bool 	p3ConnectMgr::checkNetAddress()
 	std::list<std::string> addrs = getLocalInterfaces();
 	std::list<std::string>::iterator it;
 
-	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+	in_addr_t old_in_addr = ownState.localaddr.sin_addr.s_addr;
+	in_port_t old_in_port = ownState.localaddr.sin_port;
 
-	bool found = false;
-	for(it = addrs.begin(); (!found) && (it != addrs.end()); it++)
 	{
+	    RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+	    bool found = false;
+	    for(it = addrs.begin(); (!found) && (it != addrs.end()); it++)
+	    {
+    #ifdef CONN_DEBUG
+		    std::cerr << "p3ConnectMgr::checkNetAddress() Local Interface: " << *it;
+		    std::cerr << std::endl;
+    #endif
+
+		    // Ive added the 'isNotLoopbackNet' to prevent re-using the lo address if this was saved in the
+		    // configuration. In such a case, lo should only be chosen from getPreferredInterface as a last resort
+		    // fallback solution.
+		    //
+		    if ((!isLoopbackNet(&ownState.localaddr.sin_addr)) && (*it) == inet_ntoa(ownState.localaddr.sin_addr))
+		    {
+			    found = true;
+			    if (netFlagOk != true) {
+				    #ifdef CONN_DEBUG
+							    std::cerr << "p3ConnectMgr::checkNetAddress() changing netFlagOk to true.";
+							    std::cerr << std::endl;
+				    #endif
+				    netFlagOk = true;
+				    IndicateConfigChanged();
+			    }
+		    }
+	    }
+	    /* check that we didn't catch 0.0.0.0 - if so go for prefered */
+	    if ((found) && (ownState.localaddr.sin_addr.s_addr == 0))
+	    {
+		    found = false;
+	    }
+
+	    if (!found)
+	    {
+		    ownState.localaddr.sin_addr = getPreferredInterface();
+
+    #ifdef CONN_DEBUG
+		    std::cerr << "p3ConnectMgr::checkNetAddress() Local Address Not Found: Using Preferred Interface: ";
+		    std::cerr << inet_ntoa(ownState.localaddr.sin_addr);
+		    std::cerr << std::endl;
+    #endif
+
+		    IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+	    }
+	    if (isLoopbackNet(&(ownState.localaddr.sin_addr)))
+	    {
+		   mNetStatus = RS_NET_LOOPBACK;
+	    }
+
+	    int port = ntohs(ownState.localaddr.sin_port);
+	    if ((port < PQI_MIN_PORT) || (port > PQI_MAX_PORT))
+	    {
+		    ownState.localaddr.sin_port = htons(PQI_DEFAULT_PORT);
+	    }
+
+	    /* if localaddr = serveraddr, then ensure that the ports
+	     * are the same (modify server)... this mismatch can
+	     * occur when the local port is changed....
+	     */
+
+	    if (ownState.localaddr.sin_addr.s_addr ==
+			    ownState.serveraddr.sin_addr.s_addr)
+	    {
+		    ownState.serveraddr.sin_port =
+			    ownState.localaddr.sin_port;
+	    }
+
+	    // ensure that address family is set, otherwise windows Barfs.
+	    ownState.localaddr.sin_family = AF_INET;
+	    ownState.serveraddr.sin_family = AF_INET;
+
+    #ifdef CONN_DEBUG
+	    std::cerr << "p3ConnectMgr::checkNetAddress() Final Local Address: ";
+	    std::cerr << inet_ntoa(ownState.localaddr.sin_addr);
+	    std::cerr << ":" << ntohs(ownState.localaddr.sin_port);
+	    std::cerr << std::endl;
+    #endif
+	}
+
 #ifdef CONN_DEBUG
-		std::cerr << "p3ConnectMgr::checkNetAddress() Local Interface: " << *it;
-		std::cerr << std::endl;
+		std::cerr << "old_in_addr : " << old_in_addr << std::endl;
+		std::cerr << "ownState.localaddr.sin_addr.s_addr : " << ownState.localaddr.sin_addr.s_addr << std::endl;
+		std::cerr << "old_in_port : " << old_in_port << std::endl;
+		std::cerr << "ownState.localaddr.sin_port : " << ownState.localaddr.sin_port << std::endl;
 #endif
-
-		// Ive added the 'isNotLoopbackNet' to prevent re-using the lo address if this was saved in the 
-		// configuration. In such a case, lo should only be chosen from getPreferredInterface as a last resort 
-		// fallback solution.
-		//
-		if ((!isLoopbackNet(&ownState.localaddr.sin_addr)) && (*it) == inet_ntoa(ownState.localaddr.sin_addr))
-		{
-#ifdef CONN_DEBUG
-			std::cerr << "p3ConnectMgr::checkNetAddress() Matches Existing Address! FOUND = true";
-			std::cerr << std::endl;
-#endif
-			found = true;
-		}
-	}
-	/* check that we didn't catch 0.0.0.0 - if so go for prefered */
-	if ((found) && (ownState.localaddr.sin_addr.s_addr == 0))
-	{
-		found = false;
+	if ((old_in_addr != ownState.localaddr.sin_addr.s_addr) || (old_in_port != ownState.localaddr.sin_port)) {
+	    //local address changed, resetting network
+	    netReset();
 	}
 
-	if (!found)
-	{
-		ownState.localaddr.sin_addr = getPreferredInterface();
-
-#ifdef CONN_DEBUG
-		std::cerr << "p3ConnectMgr::checkNetAddress() Local Address Not Found: Using Preferred Interface: ";
-		std::cerr << inet_ntoa(ownState.localaddr.sin_addr);
-		std::cerr << std::endl;
-#endif
-	
-		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-
-	}
-	if ((isPrivateNet(&(ownState.localaddr.sin_addr))) ||
-		(isLoopbackNet(&(ownState.localaddr.sin_addr))))
-	{
-		/* firewalled */
-		//own_cert -> Firewalled(true);
-	}
-	else
-	{
-		//own_cert -> Firewalled(false);
-	}
-
-	int port = ntohs(ownState.localaddr.sin_port);
-	if ((port < PQI_MIN_PORT) || (port > PQI_MAX_PORT))
-	{
-		ownState.localaddr.sin_port = htons(PQI_DEFAULT_PORT);
-	}
-
-	/* if localaddr = serveraddr, then ensure that the ports
-	 * are the same (modify server)... this mismatch can 
-	 * occur when the local port is changed....
-	 */
-
-	if (ownState.localaddr.sin_addr.s_addr == 
-			ownState.serveraddr.sin_addr.s_addr)
-	{
-		ownState.serveraddr.sin_port = 
-			ownState.localaddr.sin_port;
-	}
-
-	// ensure that address family is set, otherwise windows Barfs.
-	ownState.localaddr.sin_family = AF_INET;
-	ownState.serveraddr.sin_family = AF_INET;
-
-#ifdef CONN_DEBUG
-	std::cerr << "p3ConnectMgr::checkNetAddress() Final Local Address: ";
-	std::cerr << inet_ntoa(ownState.localaddr.sin_addr);
-	std::cerr << ":" << ntohs(ownState.localaddr.sin_port);
-	std::cerr << std::endl;
-#endif
-  
 	return 1;
 }
 
@@ -3555,6 +3589,7 @@ bool	p3ConnectMgr::getDHTEnabled()
 
 bool	p3ConnectMgr::getNetStatusOk()
 {
+	std::cerr << "netFlagOk : " << netFlagOk << std::endl;
 	return netFlagOk;
 }
 

@@ -21,30 +21,27 @@ bool upnphandler::initUPnPState()
 
 	bool IGWDetected = cUPnPControlPoint->GetIGWDeviceDetected();
 
-	/* MODIFY STATE */
-	dataMtx.lock(); /* LOCK MUTEX */
-	std::cerr << "upnphandler::initUPnPState cUPnPControlPoint internal ip adress : ";
-	std::cerr << cUPnPControlPoint->getInternalIpAddress() << std::endl;
-
-	//const char ipaddr = cUPnPControlPoint->getInternalIpAddress().c_str();
-	inet_aton(cUPnPControlPoint->getInternalIpAddress(), &(upnp_iaddr.sin_addr));
-	upnp_iaddr.sin_port = htons(iport);
-
 	if (IGWDetected) {
 	    upnpState = RS_UPNP_S_READY;
+	    std::cerr << "upnphandler::initUPnPState READY" << std::endl;
+
+	    /* MODIFY STATE */
+	    dataMtx.lock(); /* LOCK MUTEX */
+	    std::cerr << "upnphandler::initUPnPState cUPnPControlPoint internal ip adress : ";
+	    std::cerr << cUPnPControlPoint->getInternalIpAddress() << std::endl;
+
+	    //const char ipaddr = cUPnPControlPoint->getInternalIpAddress().c_str();
+	    inet_aton(cUPnPControlPoint->getInternalIpAddress(), &(upnp_iaddr.sin_addr));
+	    upnp_iaddr.sin_port = htons(iport);
+
+
+	    dataMtx.unlock(); /* UNLOCK MUTEX */
+
 	} else {
 	    upnpState = RS_UPNP_S_UNAVAILABLE;
-	}
-
-	dataMtx.unlock(); /* UNLOCK MUTEX */
-
-	/* done, NOT AVAILABLE YET */
-
-	if (upnpState == RS_UPNP_S_READY) {
-	    std::cerr << "upnphandler::initUPnPState READY" << std::endl;
-	} else {
 	    std::cerr << "upnphandler::initUPnPState UNAVAILABLE" << std::endl;
 	}
+
 	return 0;
 }
 
