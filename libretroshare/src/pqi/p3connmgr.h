@@ -376,8 +376,10 @@ private:
 	bool netFlagDhtOk;
 	bool netFlagExtOk;
 	bool netFlagUdpOk;
-	bool netFlagTcpOk;
 	bool netFlagResetReq;
+
+	//tcp connection test is not implemented
+	bool netFlagTcpOk;
 
 
 	/* these are protected for testing */
