@@ -21,34 +21,32 @@ debug {
 	QMAKE_CXXFLAGS *= -g
 }
 
-linux-g++ {
-	OBJECTS_DIR = temp/linux-g++/obj
+unix {
 	DESTDIR = lib
 	QMAKE_CXXFLAGS *= -Wall
 	QMAKE_CC = g++
 
 	SSL_DIR = /usr/include/openssl
 	UPNP_DIR = /usr/include/upnp
+	INCLUDEPATH += . $${SSL_DIR} $${UPNP_DIR}
+
+	#gpg files
 	HEADERS += /usr/include/gpg-error.h
 	HEADERS += /usr/include/gpgme.h
-	INCLUDEPATH += . $${SSL_DIR} $${UPNP_DIR}
+
+	#libupnp implementation files
+	HEADERS += upnp/UPnPBase.h
+	SOURCES += upnp/UPnPBase.cpp
 
 	CONFIG += version_detail_bash_script
 }
 
+linux-g++ {
+	OBJECTS_DIR = temp/linux-g++/obj
+}
+
 linux-g++-64 {
 	OBJECTS_DIR = temp/linux-g++-64/obj
-	DESTDIR = lib
-	QMAKE_CXXFLAGS *= -Wall
-	QMAKE_CC = g++
-
-	SSL_DIR = /usr/include/openssl
-	UPNP_DIR = /usr/include/upnp
-	HEADERS += /usr/include/gpg-error.h
-	HEADERS += /usr/include/gpgme.h
-	INCLUDEPATH += . $${SSL_DIR} $${UPNP_DIR}
-
-	CONFIG += version_detail_bash_script
 }
 
 version_detail_bash_script {
@@ -83,7 +81,9 @@ win32 {
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
 		DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW
+		DEFINES *= MINIUPNPC_VERSION=13
 		DESTDIR = lib
+
 
 		UPNPC_DIR = ../../../../miniupnpc-1.3
 		GPG_ERROR_DIR = ../../../../libgpg-error-1.7
@@ -93,7 +93,7 @@ win32 {
 		ZLIB_DIR = ../../../../zlib-1.2.3
 		SSL_DIR = ../../../../OpenSSL
 
-		INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR}
+		INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
 }
 ################################### COMMON stuff ##################################
 
@@ -286,7 +286,6 @@ SOURCES = \
 				ft/ftdwlqueue.cc \
 				dht/opendhtmgr.cc \
 				upnp/upnphandler.cc \
-				upnp/UPnPBase.cpp \
 				dht/opendht.cc \
 				dht/opendhtstr.cc \
 				dht/b64.c \

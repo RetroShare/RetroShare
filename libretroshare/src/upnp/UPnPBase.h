@@ -24,6 +24,8 @@
 //
 
 
+//this file uses libupnp
+
 #include <map>
 #include <string>
 #include <sstream>
