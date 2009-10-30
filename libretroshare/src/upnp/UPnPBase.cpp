@@ -993,13 +993,13 @@ bool CUPnPControlPoint::AddPortMappings(
 
 	// Check the number of port mappings before
 	//have a little break in case we just modified the variable, so we have to wait for an event
-	std::cerr << "GetStateVariable pausing in case of an UPnP event incomming.";
-	time_t begin_time = time(NULL);
-	while (true) {
-	   if (time(NULL) - begin_time > 7) {
-	       break;
-	   }
-	}
+//	std::cerr << "GetStateVariable pausing in case of an UPnP event incomming.";
+//	time_t begin_time = time(NULL);
+//	while (true) {
+//	   if (time(NULL) - begin_time > 7) {
+//	       break;
+//	   }
+//	}
 	std::istringstream OldPortMappingNumberOfEntries(
 		m_WanService->GetStateVariable(
 			"PortMappingNumberOfEntries"));
@@ -1022,7 +1022,7 @@ bool CUPnPControlPoint::AddPortMappings(
 	// Not very good, must find a better test : check the new number of port entries
 	//have a little break in case we just modified the variable, so we have to wait for an event
 	std::cerr << "GetStateVariable pausing in case of an UPnP event incomming.";
-	begin_time = time(NULL);
+	time_t begin_time = time(NULL);
 	while (true) {
 	   if (time(NULL) - begin_time > 7) {
 	       break;
