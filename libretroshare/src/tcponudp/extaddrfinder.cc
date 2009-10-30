@@ -15,7 +15,7 @@
 #include <algorithm>
 #include <stdio.h>
 
-const uint32_t MAX_IP_STORE =	20; /* seconds ip address timeout */
+const uint32_t MAX_IP_STORE =	300; /* seconds ip address timeout */
 
 static const std::string ADDR_AGENT  = "Mozilla/5.0";
 

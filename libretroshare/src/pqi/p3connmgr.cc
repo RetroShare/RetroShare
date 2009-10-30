@@ -53,8 +53,8 @@ const uint32_t RS_STUN_DONE =      	0x0002;
 const uint32_t RS_STUN_LIST_MIN =      	100;
 const uint32_t RS_STUN_FOUND_MIN =     	10;
 
-const uint32_t MAX_UPNP_INIT = 		20; /* seconds UPnP timeout */
-const uint32_t MAX_NETWORK_INIT =	75; /* seconds Udp timeout */
+const uint32_t MAX_UPNP_INIT = 		60; /* seconds UPnP timeout */
+const uint32_t MAX_NETWORK_INIT =	75; /* timeout before network reset */
 
 const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
 
