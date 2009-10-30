@@ -3059,10 +3059,10 @@ bool 	p3ConnectMgr::checkNetAddress()
 	    bool found = false;
 	    for(it = addrs.begin(); (!found) && (it != addrs.end()); it++)
 	    {
-//    #ifdef CONN_DEBUG
-//		    std::cerr << "p3ConnectMgr::checkNetAddress() Local Interface: " << *it;
-//		    std::cerr << std::endl;
-//    #endif
+    #ifdef CONN_DEBUG
+		    std::cerr << "p3ConnectMgr::checkNetAddress() Local Interface: " << *it;
+		    std::cerr << std::endl;
+    #endif
 
 		    // Ive added the 'isNotLoopbackNet' to prevent re-using the lo address if this was saved in the
 		    // configuration. In such a case, lo should only be chosen from getPreferredInterface as a last resort
@@ -3071,14 +3071,6 @@ bool 	p3ConnectMgr::checkNetAddress()
 		    if ((!isLoopbackNet(&ownState.localaddr.sin_addr)) && (*it) == inet_ntoa(ownState.localaddr.sin_addr))
 		    {
 			    found = true;
-			    if (netFlagLocalOk != true) {
-				    #ifdef CONN_DEBUG
-							    std::cerr << "p3ConnectMgr::checkNetAddress() changing netFlagOk to true.";
-							    std::cerr << std::endl;
-				    #endif
-				    netFlagLocalOk = true;
-				    IndicateConfigChanged();
-			    }
 		    }
 	    }
 	    /* check that we didn't catch 0.0.0.0 - if so go for prefered */
@@ -3087,19 +3079,27 @@ bool 	p3ConnectMgr::checkNetAddress()
 		    found = false;
 	    }
 
-	    if (!found)
+	    if (found)
 	    {
+		if (netFlagLocalOk != true) {
+			#ifdef CONN_DEBUG
+						std::cerr << "p3ConnectMgr::checkNetAddress() changing netFlagOk to true.";
+						std::cerr << std::endl;
+			#endif
+			netFlagLocalOk = true;
+			IndicateConfigChanged();
+		}
+	    } else {
 		    ownState.localaddr.sin_addr = getPreferredInterface();
-
-//    #ifdef CONN_DEBUG
-//		    std::cerr << "p3ConnectMgr::checkNetAddress() Local Address Not Found: Using Preferred Interface: ";
-//		    std::cerr << inet_ntoa(ownState.localaddr.sin_addr);
-//		    std::cerr << std::endl;
-//    #endif
-
+    #ifdef CONN_DEBUG
+		    std::cerr << "p3ConnectMgr::checkNetAddress() Local Address Not Found: Using Preferred Interface: ";
+		    std::cerr << inet_ntoa(ownState.localaddr.sin_addr);
+		    std::cerr << std::endl;
+    #endif
 		    IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 	    }
+
 	    if (isLoopbackNet(&(ownState.localaddr.sin_addr)))
 	    {
 		   mNetStatus = RS_NET_LOOPBACK;
@@ -3115,7 +3115,6 @@ bool 	p3ConnectMgr::checkNetAddress()
 	     * are the same (modify server)... this mismatch can
 	     * occur when the local port is changed....
 	     */
-
 	    if (ownState.localaddr.sin_addr.s_addr ==
 			    ownState.serveraddr.sin_addr.s_addr)
 	    {
@@ -3127,19 +3126,18 @@ bool 	p3ConnectMgr::checkNetAddress()
 	    ownState.localaddr.sin_family = AF_INET;
 	    ownState.serveraddr.sin_family = AF_INET;
 
-//    #ifdef CONN_DEBUG
-//	    std::cerr << "p3ConnectMgr::checkNetAddress() Final Local Address: ";
-//	    std::cerr << inet_ntoa(ownState.localaddr.sin_addr);
-//	    std::cerr << ":" << ntohs(ownState.localaddr.sin_port);
-//	    std::cerr << std::endl;
-//    #endif
+    #ifdef CONN_DEBUG
+	    std::cerr << "p3ConnectMgr::checkNetAddress() Final Local Address: ";
+	    std::cerr << inet_ntoa(ownState.localaddr.sin_addr);
+	    std::cerr << ":" << ntohs(ownState.localaddr.sin_port);
+	    std::cerr << std::endl;
+    #endif
 	}
 
 	if ((old_in_addr != ownState.localaddr.sin_addr.s_addr) || (old_in_port != ownState.localaddr.sin_port)) {
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::checkNetAddress() local address changed, resetting network." << std::endl;
 #endif
-	    //local address changed, resetting network
 	    netReset();
 	}
 
