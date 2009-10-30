@@ -876,7 +876,7 @@ m_WanService(NULL)
 	std::cerr << "CUPnPControlPoint Constructor UpnpInit finished" << std::endl;
 #endif
 	if (ret != UPNP_E_SUCCESS) {
-		std::cerr << "error(UpnpInit): Error code ";
+		std::cerr << "error(UpnpInit): Error code : ";
 		goto error;
 	}
 	port = UpnpGetServerPort();
@@ -933,9 +933,9 @@ m_WanService(NULL)
 
 	// Error processing
 error:
-	std::cerr << "UpnpFinish called within CUPnPControlPoint constructor." << std::endl;
-	UpnpFinish();
 	std::cerr << ret << ": " << m_upnpLib.GetUPnPErrorMessage(ret) << "." << std::endl;
+	UpnpFinish();
+	std::cerr << "UpnpFinish called within CUPnPControlPoint constructor." << std::endl;
 	return;
 }
 
