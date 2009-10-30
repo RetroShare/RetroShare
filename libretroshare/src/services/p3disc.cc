@@ -68,7 +68,6 @@ const uint32_t P3DISC_FLAGS_ASK_VERSION		= 0x0080;
 /*****
  * #define P3DISC_DEBUG 	1
  ****/
-#define P3DISC_DEBUG 	1
 
 /*********** NOTE ***************
  *
