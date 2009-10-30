@@ -1083,6 +1083,7 @@ bool CUPnPControlPoint::PrivateAddPortMapping(
 bool CUPnPControlPoint::DeletePortMappings(
 	std::vector<CUPnPPortMapping> &upnpPortMapping)
 {
+	std::cerr << "DeletePortMappings called." << std::endl;
 	if (!WanServiceDetected()) {
 		std::cerr  <<  "UPnP Error: "
 			"CUPnPControlPoint::DeletePortMapping: "
@@ -1137,7 +1138,9 @@ bool CUPnPControlPoint::PrivateDeletePortMapping(
 	bool ret = true;
 	for (ServiceMap::iterator it = m_ServiceMap.begin();
 	     it != m_ServiceMap.end(); ++it) {
+		std::cerr << "Sending a delete port mapping action." << std::endl;
 		ret &= it->second->Execute(actionName, argval);
+		std::cerr << "Delete port mapping action finished." << std::endl;
 	}
 
 	return ret;
