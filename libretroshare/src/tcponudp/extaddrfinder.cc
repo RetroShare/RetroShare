@@ -263,7 +263,7 @@ ExtAddrFinder::ExtAddrFinder()
 	_searching = new bool ;
 	*_searching = false ;
 
-	*mFoundTS = time(NULL);
+	*mFoundTS = time(NULL) - MAX_IP_STORE;
 
 	_addr = (sockaddr_in*)malloc(sizeof(sockaddr_in)) ;
 

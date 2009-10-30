@@ -216,7 +216,7 @@ bool upnphandler::shutdown_upnp()
 		cUPnPControlPoint->DeletePortMappings(upnpPortMapping1);
 
 		#ifdef UPNP_DEBUG
-		std::cerr << " : Attempting To Remove Redirection: port: " << eport_curr;
+		std::cerr << "upnphandler::shutdown_upnp()  : Attempting To Remove Redirection: port: " << eport_curr;
 		std::cerr << " Prot: UDP";
 		std::cerr << std::endl;
 		#endif
