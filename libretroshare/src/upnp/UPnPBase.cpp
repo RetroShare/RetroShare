@@ -729,37 +729,48 @@ bool CUPnPService::Execute(
 const std::string CUPnPService::GetStateVariable(
 	const std::string &stateVariableName)
 {
-	//this getvar is just to make an event happening
-	DOMString StVarVal;
-	int ret = UpnpGetServiceVarStatus(
-		m_UPnPControlPoint.GetUPnPClientHandle(),
-		GetAbsControlURL().c_str(),
-		stateVariableName.c_str(),
-		&StVarVal);
-	if (StVarVal != NULL) {
-	    std::string varValue = std::string(StVarVal);
-	    std::cerr << "GetStateVariable varValue returned by UpnpGetServiceVarStatus : " << varValue << std::endl;
-	    return varValue;
+	std::map<std::string, std::string>::iterator it;
+	it = propertyMap.find(stateVariableName);
+	if  (it != propertyMap.end()) {
+	    std::cerr << "GetStateVariable(" << stateVariableName << ") = ";
+	    std::cerr << (*it).second << std::endl;
+	    return (*it).second;
 	} else {
-	    //use event to get state variable
-	    std::cerr << "GetStateVariable pausing in case of an UPnP event incomming.";
-	    time_t begin_time = time(NULL);
-	    while (true) {
-		if (time(NULL) - begin_time > 7) {
-		    break;
+	    //property map is not populated with the specified value.
+	    //we will try to get it with an event
+
+	    //this getvar is just to make the event happening
+	    DOMString StVarVal;
+	    UpnpGetServiceVarStatus(
+		    m_UPnPControlPoint.GetUPnPClientHandle(),
+		    GetAbsControlURL().c_str(),
+		    stateVariableName.c_str(),
+		    &StVarVal);
+	    if (StVarVal != NULL) {
+		std::string varValue = std::string(StVarVal);
+		std::cerr << "GetStateVariable varValue returned by UpnpGetServiceVarStatus : " << varValue << std::endl;
+		return varValue;
+	    } else {
+		//use event to get state variable
+		std::cerr << "GetStateVariable pausing in case of an UPnP event incomming.";
+		time_t begin_time = time(NULL);
+		while (true) {
+		    if (time(NULL) - begin_time > 7) {
+			break;
+		    }
 		}
 	    }
-	    std::cerr << "GetStateVariable pause finished.";
 
-	    std::cerr << "GetStateVariable(" << stateVariableName << ") = ";
-	    std::map<std::string, std::string>::iterator it;
+	    //propertyMap should be populated by nom
 	    it = propertyMap.find(stateVariableName);
-	    if  (it == propertyMap.end()) {
-		std::cerr << "Empty String" << std::endl;
-		return stdEmptyString;
-	    } else {
+	    if  (it != propertyMap.end()) {
+		std::cerr << "GetStateVariable(" << stateVariableName << ") = ";
 		std::cerr << (*it).second << std::endl;
 		return (*it).second;
+	    } else {
+		std::cerr << "GetStateVariable(" << stateVariableName << ") = ";
+		std::cerr << "Empty String" << std::endl;
+		return stdEmptyString;
 	    }
 	}
 }
@@ -929,6 +940,11 @@ m_WanService(NULL)
 
 	}
 
+	//clean the PortMappingNumberOfEntries as it is erroneus on the first event with the french neufbox
+	if (WanServiceDetected()) {
+	    m_WanService->propertyMap.erase("PortMappingNumberOfEntries");
+	}
+
 	std::cerr << "CUPnPControlPoint Constructor finished" << std::endl;
 	return;
 
@@ -976,6 +992,14 @@ bool CUPnPControlPoint::AddPortMappings(
 	bool ok = false;
 
 	// Check the number of port mappings before
+	//have a little break in case we just modified the variable, so we have to wait for an event
+	std::cerr << "GetStateVariable pausing in case of an UPnP event incomming.";
+	time_t begin_time = time(NULL);
+	while (true) {
+	   if (time(NULL) - begin_time > 7) {
+	       break;
+	   }
+	}
 	std::istringstream OldPortMappingNumberOfEntries(
 		m_WanService->GetStateVariable(
 			"PortMappingNumberOfEntries"));
@@ -994,15 +1018,16 @@ bool CUPnPControlPoint::AddPortMappings(
 			PrivateAddPortMapping(upnpPortMapping[i]);
 		}
 	}
-			
-	// Debug only
-#ifdef UPNP_DEBUG
-	std::cerr << "CUPnPControlPoint::AddPortMappings: "
-		"m_ActivePortMappingsMap.size() == " <<
-		m_ActivePortMappingsMap.size() << std::endl;
-#endif
 
-	// Not very good, must find a better test
+	// Not very good, must find a better test : check the new number of port entries
+	//have a little break in case we just modified the variable, so we have to wait for an event
+	std::cerr << "GetStateVariable pausing in case of an UPnP event incomming.";
+	begin_time = time(NULL);
+	while (true) {
+	   if (time(NULL) - begin_time > 7) {
+	       break;
+	   }
+	}
 	std::istringstream NewPortMappingNumberOfEntries(
 		m_WanService->GetStateVariable(
 			"PortMappingNumberOfEntries"));
@@ -1024,10 +1049,16 @@ std::string CUPnPControlPoint::getExternalAddress()
 			"WAN Service not detected." << std::endl;
 		return false;
 	}
-	PrivateGetExternalIpAdress();
 	std::string result =  m_WanService->GetStateVariable("NewExternalIPAddress");
+	std::cerr <<  " m_WanService->GetStateVariable(NewExternalIPAddress) = " <<  result << std::endl;
 	if (result == "") {
-	    result = m_WanService->GetStateVariable("ExternalIPAddress");
+	    PrivateGetExternalIpAdress();
+	    result =  m_WanService->GetStateVariable("NewExternalIPAddress");
+	    std::cerr <<  " m_WanService->GetStateVariable(NewExternalIPAddress) = " <<  result << std::endl;
+	    if (result == "") {
+		result = m_WanService->GetStateVariable("ExternalIPAddress");
+		std::cerr <<  " m_WanService->GetStateVariable(ExternalIPAddress) = " <<  result << std::endl;
+	    }
 	}
 	return result;
 }

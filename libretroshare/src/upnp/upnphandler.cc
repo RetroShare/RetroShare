@@ -100,8 +100,6 @@ bool upnphandler::background_setup_upnp(bool start, bool stop)
 
 bool upnphandler::start_upnp()
 {
-	RsStackMutex stack(dataMtx); /* LOCK STACK MUTEX */
-
 	if (!(upnpState >= RS_UPNP_S_READY))
 	{
 		std::cerr << "upnphandler::start_upnp() Not Ready" << std::endl;
@@ -111,48 +109,53 @@ bool upnphandler::start_upnp()
 	char eprot1[] = "TCP";
 	char eprot2[] = "UDP";
 
-	/* if we're to load -> load */
-	/* select external ports */
-	eport_curr = eport;
-	if (!eport_curr)
+	struct sockaddr_in localAddr;
 	{
-		/* use local port if eport is zero */
-		eport_curr = iport;
-		std::cerr << "Using LocalPort for extPort!";
-		std::cerr << std::endl;
+	    RsStackMutex stack(dataMtx); /* LOCK STACK MUTEX */
+
+	    /* if we're to load -> load */
+	    /* select external ports */
+	    eport_curr = eport;
+	    if (!eport_curr)
+	    {
+		    /* use local port if eport is zero */
+		    eport_curr = iport;
+		    std::cerr << "Using LocalPort for extPort!";
+		    std::cerr << std::endl;
+	    }
+
+	    if (!eport_curr)
+	    {
+		    std::cerr << "Invalid eport ... ";
+		    std::cerr << std::endl;
+		    return false;
+	    }
+
+
+	    /* our port */
+	    char in_addr[256];
+	    char in_port1[256];
+	    char eport1[256];
+
+	    upnp_iaddr.sin_port = htons(iport);
+	    localAddr = upnp_iaddr;
+	    uint32_t linaddr = ntohl(localAddr.sin_addr.s_addr);
+
+	    snprintf(in_port1, 256, "%d", ntohs(localAddr.sin_port));
+	    snprintf(in_addr, 256, "%d.%d.%d.%d",
+		     ((linaddr >> 24) & 0xff),
+		     ((linaddr >> 16) & 0xff),
+		     ((linaddr >> 8) & 0xff),
+		     ((linaddr >> 0) & 0xff));
+
+	    snprintf(eport1, 256, "%d", eport_curr);
+
+	    std::cerr << "Attempting Redirection: InAddr: " << in_addr;
+	    std::cerr << " InPort: " << in_port1;
+	    std::cerr << " ePort: " << eport1;
+	    std::cerr << " eProt: " << eprot1;
+	    std::cerr << std::endl;
 	}
-
-	if (!eport_curr)
-	{
-		std::cerr << "Invalid eport ... ";
-		std::cerr << std::endl;
-		return false;
-	}
-
-
-	/* our port */
-	char in_addr[256];
-	char in_port1[256];
-	char eport1[256];
-
-	upnp_iaddr.sin_port = htons(iport);
-	struct sockaddr_in localAddr = upnp_iaddr;
-	uint32_t linaddr = ntohl(localAddr.sin_addr.s_addr);
-
-	snprintf(in_port1, 256, "%d", ntohs(localAddr.sin_port));
-	snprintf(in_addr, 256, "%d.%d.%d.%d", 
-		 ((linaddr >> 24) & 0xff),
-		 ((linaddr >> 16) & 0xff),
-		 ((linaddr >> 8) & 0xff),
-		 ((linaddr >> 0) & 0xff));
-
-	snprintf(eport1, 256, "%d", eport_curr);
-
-	std::cerr << "Attempting Redirection: InAddr: " << in_addr;
-	std::cerr << " InPort: " << in_port1;
-	std::cerr << " ePort: " << eport1;
-	std::cerr << " eProt: " << eprot1;
-	std::cerr << std::endl;
 
 	//build port mapping config
 	std::vector<CUPnPPortMapping> upnpPortMapping1;
@@ -160,45 +163,25 @@ bool upnphandler::start_upnp()
 	upnpPortMapping1.push_back(cUPnPPortMapping1);
 	bool res = cUPnPControlPoint->AddPortMappings(upnpPortMapping1);
 
-	if (res) {
-	    upnpState = RS_UPNP_S_ACTIVE;
-	} else {
-	    upnpState = RS_UPNP_S_TCP_FAILED;
-	    std::vector<CUPnPPortMapping> upnpPortMapping2;
-	    CUPnPPortMapping cUPnPPortMapping2 = CUPnPPortMapping(eport_curr, ntohs(localAddr.sin_port), "UDP", true, "udp retroshare redirection");
-	    upnpPortMapping2.push_back(cUPnPPortMapping2);
-	    bool res2 = cUPnPControlPoint->AddPortMappings(upnpPortMapping2);
-	    if (res2) {
-		upnpState = RS_UPNP_S_ACTIVE;
-	    } else {
-		//upnpState = RS_UPNP_S_ACTIVE;
-		upnpState = RS_UPNP_S_UDP_FAILED;
-	    }
-	}
+	std::vector<CUPnPPortMapping> upnpPortMapping2;
+	CUPnPPortMapping cUPnPPortMapping2 = CUPnPPortMapping(eport_curr, ntohs(localAddr.sin_port), "UDP", true, "udp retroshare redirection");
+	upnpPortMapping2.push_back(cUPnPPortMapping2);
+	bool res2 = cUPnPControlPoint->AddPortMappings(upnpPortMapping2);
 
-	/* now store the external address */
-	std::string externalAdress = cUPnPControlPoint->getExternalAddress();
-	sockaddr_clear(&upnp_eaddr);
+	struct sockaddr_in extAddr;
+	bool extAddrResult = getExternalAddress(extAddr);
 
-	if(!externalAdress.empty())
 	{
-		const char* externalIPAddress = externalAdress.c_str();
+		RsStackMutex stack(dataMtx); /* LOCK STACK MUTEX */
 
-		std::cerr << "Stored External address: " << externalIPAddress;
-		std::cerr << ":" << eport_curr;
-		std::cerr << std::endl;
+		if (extAddrResult && (res || res2)) {
+		    upnpState = RS_UPNP_S_ACTIVE;
+		} else {
+		    upnpState = RS_UPNP_S_UDP_FAILED;
+		}
 
-		inet_aton(externalIPAddress, &(upnp_eaddr.sin_addr));
-		upnp_eaddr.sin_family = AF_INET;
-		upnp_eaddr.sin_port = htons(eport_curr);
+		toStart = false;
 	}
-	else
-	{
-		std::cerr << "FAILED To get external Address";
-		std::cerr << std::endl;
-	}
-
-	toStart = false;
 
 	return (upnpState == RS_UPNP_S_ACTIVE);
 
@@ -414,15 +397,28 @@ bool    upnphandler::getInternalAddress(struct sockaddr_in &addr)
 
 bool    upnphandler::getExternalAddress(struct sockaddr_in &addr)
 {
-//	std::cerr << "UPnPHandler::getExternalAddress() pre Lock!" << std::endl;
-	dataMtx.lock();   /***  LOCK MUTEX  ***/
-//	std::cerr << "UPnPHandler::getExternalAddress() postLock!" << std::endl;
+	std::string externalAdress = cUPnPControlPoint->getExternalAddress();
 
-	std::cerr << "UPnPHandler::getExternalAddress()" << std::endl;
-	addr = upnp_eaddr;
-	bool valid = (upnpState == RS_UPNP_S_ACTIVE);
+	if(!externalAdress.empty())
+	{
+		const char* externalIPAddress = externalAdress.c_str();
 
-	dataMtx.unlock(); /*** UNLOCK MUTEX ***/
+		std::cerr << "Stored External address: " << externalIPAddress;
+		std::cerr << ":" << eport_curr;
+		std::cerr << std::endl;
 
-	return valid;
+		dataMtx.lock();   /***  LOCK MUTEX  ***/
+		sockaddr_clear(&upnp_eaddr);
+		inet_aton(externalIPAddress, &(upnp_eaddr.sin_addr));
+		upnp_eaddr.sin_family = AF_INET;
+		upnp_eaddr.sin_port = htons(eport_curr);
+		dataMtx.unlock(); /*** UNLOCK MUTEX ***/
+
+		addr = upnp_eaddr;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
