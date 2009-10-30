@@ -11,18 +11,18 @@ MOC_DIR = temp/moc
 
 ################################# Linux ##########################################
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
-linux-g++ {
-	OBJECTS_DIR = temp/linux-g++/obj
+unix {
 	CONFIG += version_detail_bash_script
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += -lssl -lcrypto -lgpgme -lpthread -lz -lupnp
 }
 
+linux-g++ {
+	OBJECTS_DIR = temp/linux-g++/obj
+}
+
 linux-g++-64 {
 	OBJECTS_DIR = temp/linux-g++-64/obj
-	CONFIG += version_detail_bash_script
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += -lssl -lcrypto -lgpgme -lpthread -lz -lupnp
 }
 
 version_detail_bash_script {
