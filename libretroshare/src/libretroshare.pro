@@ -10,8 +10,6 @@ profiling {
 	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
 }
 
-################################# Linux ##########################################
-
 debug {
 #	DEFINES *= DEBUG
 #	DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER FT_DEBUG EXTADDRSEARCH_DEBUG
@@ -21,7 +19,8 @@ debug {
 	QMAKE_CXXFLAGS *= -g
 }
 
-unix {
+################################# Linux ##########################################
+linux-* {
 	DESTDIR = lib
 	QMAKE_CXXFLAGS *= -Wall
 	QMAKE_CC = g++

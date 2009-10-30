@@ -11,7 +11,7 @@ MOC_DIR = temp/moc
 
 ################################# Linux ##########################################
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
-unix {
+linux-* {
 	CONFIG += version_detail_bash_script
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += -lssl -lcrypto -lgpgme -lpthread -lz -lupnp
@@ -31,6 +31,7 @@ version_detail_bash_script {
 	PRE_TARGETDEPS = write_version_detail
 	write_version_detail.commands = ./version_detail.sh
 }
+
 #################### Cross compilation for windows under Linux ###################
 
 win32-x-g++ {
