@@ -1,23 +1,14 @@
 TEMPLATE = lib
-CONFIG += static 
+CONFIG += static release
 TARGET = retroshare
-CONFIG += release
 
-DEFINES *= MINIUPNPC_VERSION=13
 DEFINES -= PQI_USE_XPGP
 DEFINES += RS_USE_PGPSSL
-
-UPNPC_DIR = ../../../../miniupnpc-1.3
-GPG_ERROR_DIR = ../../../../libgpg-error-1.7
-GPGME_DIR  = ../../../../gpgme-1.1.8
 
 profiling {
 	QMAKE_CXXFLAGS -= -fomit-frame-pointer
 	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
 }
-
-DEFINES -= PQI_USE_XPGP
-DEFINES *= RS_USE_PGPSSL
 
 ################################# Linux ##########################################
 
@@ -32,23 +23,31 @@ debug {
 
 linux-g++ {
 	OBJECTS_DIR = temp/linux-g++/obj
-	DESTDIR = lib.linux-g++
-	QMAKE_CXXFLAGS *= -Wall 
+	DESTDIR = lib
+	QMAKE_CXXFLAGS *= -Wall
 	QMAKE_CC = g++
-	
+
 	SSL_DIR = /usr/include/openssl
-	UPNPC_DIR = ../../../../miniupnpc-1.3
-	GPG_ERROR_DIR = ../../../../libgpg-error-1.7
-	GPGME_DIR  = ../../../../gpgme-1.1.8
-	
+	UPNP_DIR = /usr/include/upnp
+	HEADERS += usr/include/gpg-error.h
+	HEADERS += usr/include/gpgme.h
+	INCLUDEPATH += . $${SSL_DIR} $${UPNP_DIR}
+
 	CONFIG += version_detail_bash_script
 }
+
 linux-g++-64 {
 	OBJECTS_DIR = temp/linux-g++-64/obj
-	DESTDIR = lib.linux-g++-64
-	QMAKE_CXXFLAGS *= -Wall 
+	DESTDIR = lib
+	QMAKE_CXXFLAGS *= -Wall
 	QMAKE_CC = g++
+
 	SSL_DIR = /usr/include/openssl
+	UPNP_DIR = /usr/include/upnp
+	HEADERS += usr/include/gpg-error.h
+	HEADERS += usr/include/gpgme.h
+	INCLUDEPATH += . $${SSL_DIR} $${UPNP_DIR}
+
 	CONFIG += version_detail_bash_script
 }
 
@@ -97,8 +96,6 @@ win32 {
 		INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR}
 }
 ################################### COMMON stuff ##################################
-
-INCLUDEPATH += . $${SSL_DIR} $${UPNPC_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
 
 #DEPENDPATH += . \
 #              util \
@@ -252,8 +249,8 @@ HEADERS += dbase/cachestrapper.h \
            tcponudp/udplayer.h \
            tcponudp/udpsorter.h \
            upnp/upnphandler.h \
-           upnp/upnputil.h \
-           util/rsdebug.h \
+	   upnp/UPnPBase.h \
+	   util/rsdebug.h \
            util/rsdir.h \
            util/rsnet.h \
            util/rsprint.h \
@@ -287,9 +284,9 @@ SOURCES = \
 				ft/ftdata.cc \
 				ft/ftfileprovider.cc \
 				ft/ftdwlqueue.cc \
-				upnp/upnputil.c \
 				dht/opendhtmgr.cc \
 				upnp/upnphandler.cc \
+				upnp/UPnPBase.cpp \
 				dht/opendht.cc \
 				dht/opendhtstr.cc \
 				dht/b64.c \

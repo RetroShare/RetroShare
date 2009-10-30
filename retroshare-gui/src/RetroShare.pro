@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools debug pluginmgr newsettings #release 
+CONFIG += qt gui uic qrc resources uitools debug pluginmgr newsettings #release
 QT     += network xml script 
 TEMPLATE = app
 TARGET = RetroShare
@@ -13,15 +13,16 @@ MOC_DIR = temp/moc
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
 linux-g++ {
 	OBJECTS_DIR = temp/linux-g++/obj
- 	QMAKE_LFLAGS += -L"../../../../lib/linux-g++"
- 	CONFIG += version_detail_bash_script
-	LIBS += -L"../../../../lib" -lretroshare -lssl -lcrypto -lgpgme -lpthread -lminiupnpc -lz
+	CONFIG += version_detail_bash_script
+	LIBS += ../../libretroshare/src/lib/libretroshare.a
+	LIBS += -lssl -lcrypto -lgpgme -lpthread -lz -lupnp
 }
+
 linux-g++-64 {
 	OBJECTS_DIR = temp/linux-g++-64/obj
-	QMAKE_LFLAGS += -L"../../../../lib/linux-g++-64"
 	CONFIG += version_detail_bash_script
-	LIBS += -L"../../../../lib" -lretroshare -lssl -lcrypto -lgpgme -lpthread -lminiupnpc -lz
+	LIBS += ../../libretroshare/src/lib/libretroshare.a
+	LIBS += -lssl -lcrypto -lgpgme -lpthread -lz -lupnp
 }
 
 version_detail_bash_script {
