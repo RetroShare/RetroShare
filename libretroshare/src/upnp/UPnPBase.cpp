@@ -410,7 +410,7 @@ m_dataType    (upnpLib.Element_GetChildValueByTag(stateVariable, "dataType")),
 m_defaultValue(upnpLib.Element_GetChildValueByTag(stateVariable, "defaultValue")),
 m_sendEvents  (upnpLib.Element_GetAttributeByTag (stateVariable, "sendEvents"))
 {
-	std::cerr <<	"\CUPnPStateVariable::CUPnPStateVariable() n    StateVariable:"     <<
+        std::cerr <<	"CUPnPStateVariable::CUPnPStateVariable() \n    StateVariable:"     <<
 		"\n        name: "         << m_name <<
 		"\n        dataType: "     << m_dataType <<
 		"\n        defaultValue: " << m_defaultValue <<
