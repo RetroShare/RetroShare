@@ -132,7 +132,6 @@ p3ConnectMgr::p3ConnectMgr(p3AuthMgr *am)
 	mStunStatus(0), mStunFound(0), mStunMoreRequired(true), 
 	mStatusChanged(false)
 {
-	netFlagOk = false;
 	mUpnpAddrValid = false;
 	mStunAddrValid = false;
 	mStunAddrStable = false;
@@ -306,7 +305,7 @@ void p3ConnectMgr::netReset()
 	{
 		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
         	mNetStatus = RS_NET_UNKNOWN;
-		netFlagOk = false;
+		netStatusReset();
 	}
 
 	std::cerr << "p3ConnectMgr::netReset() checkNetAddress" << std::endl;
@@ -346,6 +345,7 @@ void    p3ConnectMgr::addNetListener(pqiNetListener *listener)
 
 void p3ConnectMgr::netStatusReset()
 {
+	netFlagOk = false;
 	netFlagUpnpOk = false;
 	netFlagDhtOk = false;
 	netFlagExtOk = false;
@@ -368,7 +368,6 @@ void p3ConnectMgr::netStartup()
 	netDhtInit();
 	netUdpInit();
 	netStunInit();
-	netStatusReset();
 
 	/* decide which net setup mode we're going into 
 	 */
@@ -419,17 +418,7 @@ void p3ConnectMgr::tick()
 
 bool p3ConnectMgr::shutdown() /* blocking shutdown call */
 {
-	connMtx.lock();   /*   LOCK MUTEX */
-
-	bool upnpActive = ownState.netMode & RS_NET_MODE_UPNP;
-	mNetStatus = RS_NET_MODE_DOWN;
-
-	connMtx.unlock(); /* UNLOCK MUTEX */
-
-	if (upnpActive)
-	{
-		netAssistFirewallShutdown();
-	}
+	netAssistFirewallShutdown();
 	netAssistConnectShutdown();
 
 	return true;
