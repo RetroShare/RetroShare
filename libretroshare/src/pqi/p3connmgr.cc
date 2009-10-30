@@ -52,7 +52,10 @@ const uint32_t RS_STUN_DONE =      	0x0002;
 const uint32_t RS_STUN_LIST_MIN =      	100;
 const uint32_t RS_STUN_FOUND_MIN =     	10;
 
-const uint32_t MAX_UPNP_INIT = 		10; /* seconds UPnP timeout */
+const uint32_t MAX_UPNP_INIT = 		120; /* seconds UPnP timeout */
+const uint32_t MAX_UDP_INIT = 		150; /* seconds Udp timeout */
+
+const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		150; /* seconds Udp timeout */
 
 /****
  * #define CONN_DEBUG 1
@@ -272,7 +275,22 @@ void p3ConnectMgr::setOwnNetConfig(uint32_t netMode, uint32_t visState)
 
 void p3ConnectMgr::netReset()
 {
+
 	std::cerr << "p3ConnectMgr::netReset()" << std::endl;
+	//don't do a net reset if the MIN_TIME_BETWEEN_NET_RESET is not reached
+	time_t delta = time(NULL) - mNetInitTS;
+	#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr time since last reset : " << delta << std::endl;
+	#endif
+	if (delta < MIN_TIME_BETWEEN_NET_RESET) {
+	    #ifdef CONN_DEBUG
+		    std::cerr << "p3ConnectMgr::netStartup() don't do a net reset if the MIN_TIME_BETWEEN_NET_RESET is not reached" << std::endl;
+	    #endif
+	    return;
+	}
+
+
+
 	std::cerr << "p3ConnectMgr::netReset() shutdown" << std::endl;
 
 	shutdown(); /* blocking shutdown call */
@@ -351,8 +369,8 @@ void p3ConnectMgr::netStartup()
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 	mNetInitTS = time(NULL);
-
 #ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::netStartup() resetting mNetInitTS timestamp" << std::endl;
 	std::cerr << "p3ConnectMgr::netStartup() tou_stunkeepalive() enabled" << std::endl;
 #endif
 	tou_stunkeepalive(1);
@@ -604,6 +622,9 @@ void p3ConnectMgr::netUpnpCheck()
 	connMtx.lock();   /*   LOCK MUTEX */
 
 	time_t delta = time(NULL) - mNetInitTS;
+	#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr time since last reset : " << delta << std::endl;
+	#endif
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
 
@@ -613,6 +634,10 @@ void p3ConnectMgr::netUpnpCheck()
 	if ((upnpState < 0) ||
 	   ((upnpState == 0) && (delta > MAX_UPNP_INIT)))
 	{
+#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr::netUpnpCheck() ";
+		std::cerr << "Upnp Check failed." << std::endl;
+#endif
 		/* fallback to UDP startup */
 		connMtx.lock();   /*   LOCK MUTEX */
 
@@ -624,6 +649,10 @@ void p3ConnectMgr::netUpnpCheck()
 	}
 	else if ((upnpState > 0) && netAssistExtAddress(extAddr))
 	{
+#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr::netUpnpCheck() ";
+		std::cerr << "Upnp Check successed." << std::endl;
+#endif
 		/* switch to UDP startup */
 		connMtx.lock();   /*   LOCK MUTEX */
 
@@ -651,6 +680,15 @@ void p3ConnectMgr::netUdpCheck()
 	std::cerr << "p3ConnectMgr::netUdpCheck()" << std::endl;
 #endif
 	struct sockaddr_in tmpip ;
+
+	//don't check it if the udp init is not finished
+	time_t delta = time(NULL) - mNetInitTS;
+	#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr time since last reset : " << delta << std::endl;
+	#endif
+	if (delta < MAX_UDP_INIT) {
+	    return;
+	}
 
 	if (udpExtAddressCheck() || (mUpnpAddrValid) || (use_extr_addr_finder && mExtAddrFinder->hasValidIP(&tmpip))) 
 	{

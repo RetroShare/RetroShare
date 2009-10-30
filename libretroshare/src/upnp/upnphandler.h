@@ -12,37 +12,12 @@
 #include "upnp.h"
 #include "upnp/UPnPBase.h"
 
-class upnpentry
-{
-	public:
-	std::string name;
-	std::string id;
-	struct sockaddr_in addr;
-	unsigned int flags;
-	int status;
-	int lastTs;
-};
-
-class upnpforward
-{
-	public:
-	std::string name;
-	unsigned int flags;
-	struct sockaddr_in iaddr;
-	struct sockaddr_in eaddr;
-	int status;
-	int lastTs;
-};
-
-
 #define RS_UPNP_S_UNINITIALISED  0
 #define RS_UPNP_S_UNAVAILABLE    1
 #define RS_UPNP_S_READY          2
 #define RS_UPNP_S_TCP_FAILED     3
 #define RS_UPNP_S_UDP_FAILED     4
 #define RS_UPNP_S_ACTIVE         5
-
-class uPnPConfigData;
 
 class upnphandler: public pqiNetAssistFirewall
 {
@@ -95,10 +70,6 @@ class upnphandler: public pqiNetAssistFirewall
 	    /* info from upnp */
 	    struct sockaddr_in upnp_iaddr;
 	    struct sockaddr_in upnp_eaddr;
-
-	    /* active port forwarding */
-	    std::list<upnpforward> activeForwards;
-
 };
 
 /* info from upnp */

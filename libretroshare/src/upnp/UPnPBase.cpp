@@ -733,24 +733,31 @@ const std::string CUPnPService::GetStateVariable(
 		GetAbsControlURL().c_str(),
 		stateVariableName.c_str(),
 		&StVarVal);
-	std::cerr << "GetStateVariable pausing in case of an UPnP event incomming.";
-	time_t begin_time = time(NULL);
-	while (true) {
-	    if (time(NULL) - begin_time > 7) {
-		break;
-	    }
-	}
-	std::cerr << "GetStateVariable pause finished.";
-
-	std::cerr << "GetStateVariable(" << stateVariableName << ") = ";
-	std::map<std::string, std::string>::iterator it;
-	it = propertyMap.find(stateVariableName);
-	if  (it == propertyMap.end()) {
-	    std::cerr << "Empty String" << std::endl;
-	    return stdEmptyString;
+	if (StVarVal != NULL) {
+	    std::string varValue = std::string(StVarVal);
+	    std::cerr << "GetStateVariable varValue returned by UpnpGetServiceVarStatus : " << varValue << std::endl;
+	    return varValue;
 	} else {
-	    std::cerr << (*it).second << std::endl;
-	    return (*it).second;
+	    //use event to get state variable
+	    std::cerr << "GetStateVariable pausing in case of an UPnP event incomming.";
+	    time_t begin_time = time(NULL);
+	    while (true) {
+		if (time(NULL) - begin_time > 7) {
+		    break;
+		}
+	    }
+	    std::cerr << "GetStateVariable pause finished.";
+
+	    std::cerr << "GetStateVariable(" << stateVariableName << ") = ";
+	    std::map<std::string, std::string>::iterator it;
+	    it = propertyMap.find(stateVariableName);
+	    if  (it == propertyMap.end()) {
+		std::cerr << "Empty String" << std::endl;
+		return stdEmptyString;
+	    } else {
+		std::cerr << (*it).second << std::endl;
+		return (*it).second;
+	    }
 	}
 }
 
@@ -1078,14 +1085,6 @@ bool CUPnPControlPoint::DeletePortMappings(
 	}
 	
 	int n = upnpPortMapping.size();
-	bool ok = false;
-	
-	// Check the number of port mappings before
-	std::istringstream PortMappingNumberOfEntries(
-		m_WanService->GetStateVariable(
-			"PortMappingNumberOfEntries"));
-	unsigned long oldNumberOfEntries;
-	PortMappingNumberOfEntries >> oldNumberOfEntries;
 	
 	// Delete the enabled port mappings
 	for (int i = 0; i < n; ++i) {
@@ -1108,21 +1107,8 @@ bool CUPnPControlPoint::DeletePortMappings(
 			PrivateDeletePortMapping(upnpPortMapping[i]);
 		}
 	}
-	
-	// Debug only
-	std::cerr  << "CUPnPControlPoint::DeletePortMappings: "
-		"m_ActivePortMappingsMap.size() == " <<
-		m_ActivePortMappingsMap.size() << std::endl;
-	
-	// Not very good, must find a better test
-	PortMappingNumberOfEntries.str(
-		m_WanService->GetStateVariable(
-			"PortMappingNumberOfEntries"));
-	unsigned long newNumberOfEntries;
-	PortMappingNumberOfEntries >> newNumberOfEntries;
-	ok = oldNumberOfEntries - newNumberOfEntries >= 4;
-	
-	return ok;
+		
+	return true;
 }
 
 

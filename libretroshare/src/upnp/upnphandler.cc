@@ -59,6 +59,7 @@ class upnpThreadData
 	/* Thread routines */
 extern "C" void* doSetupUPnP(void* p)
 {
+	std::cerr << "doSetupUPnP Creating upnp thread." << std::endl;
         upnpThreadData *data = (upnpThreadData *) p;
         if ((!data) || (!data->handler))
         {
@@ -88,7 +89,7 @@ bool upnphandler::background_setup_upnp(bool start, bool stop)
 	pthread_t tid;
 
 	/* launch thread */
-	std::cerr << "Creating upnp thread." << std::endl;
+	std::cerr << "background_setup_upnp Creating upnp thread." << std::endl;
 	upnpThreadData *data = new upnpThreadData();
 	data->handler = this;
 	data->start = start;
@@ -249,7 +250,10 @@ bool upnphandler::shutdown_upnp()
 		//destroy the upnp object
 		cUPnPControlPoint->~CUPnPControlPoint();
 		upnpState = RS_UPNP_S_UNINITIALISED;
+
+		//stopping os ok, set starting to true for next net reset
 		toStop = false;
+		toStart = true;
 	}
 
 	return true;
@@ -276,6 +280,9 @@ upnphandler::~upnphandler()
 	/* RsIface */
 void  upnphandler::enable(bool active)
 {
+	std::cerr << "upnphandler::enable called with argument active : " << active << std::endl;
+	std::cerr << "toEnable : " << toEnable << std::endl;
+	std::cerr << "toStart : " << toStart << std::endl;
 	dataMtx.lock();   /***  LOCK MUTEX  ***/
 
 	if (active != toEnable)
