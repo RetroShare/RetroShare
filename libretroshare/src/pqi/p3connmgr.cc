@@ -649,8 +649,7 @@ void p3ConnectMgr::netUpnpCheck()
 	struct sockaddr_in extAddr;
 	int upnpState = netAssistFirewallActive();
 
-	if ((upnpState < 0) ||
-	   ((upnpState == 0) && (delta > MAX_UPNP_INIT)))
+	if ((upnpState == 0) && (delta > MAX_UPNP_INIT))
 	{
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::netUpnpCheck() ";
@@ -1062,12 +1061,13 @@ bool p3ConnectMgr::stunCheck()
 		else
 		{
 #ifdef CONN_DEBUG
-			std::cerr << "Stun : No Ext Address. Checking upnp est address." << std::endl;
+			std::cerr << "Stun : No Ext Address. Checking upnp ext address." << std::endl;
 #endif
 			struct sockaddr_in extAddr;
 			bool upnpExtAdress = netAssistExtAddress(extAddr);
 			if (upnpExtAdress) {
 			   //don't do a reset
+			   mStunExtAddr = extAddr;
 #ifdef CONN_DEBUG
 			std::cerr << "Found upnp Ext Address. don't do a reset." << std::endl;
 #endif
