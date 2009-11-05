@@ -48,6 +48,10 @@ int main(int argc, char *argv[])
 
 	rsiface = NULL;
 
+	NotifyQt   *notify = new NotifyQt();
+	createRsIface(*notify);
+	createRsControl(*rsiface, *notify);
+
         /* RetroShare Core Objects */
 	RsInit::InitRsConfig();
 	bool okStart = RsInit::InitRetroShare(argc, argv);
@@ -118,10 +122,6 @@ int main(int argc, char *argv[])
 		RsInit::LoadCertificates(false);
 	}
 
-	NotifyQt   *notify = new NotifyQt();
-	createRsIface(*notify);
-	createRsControl(*rsiface, *notify);
-
 	rsicontrol->StartupRetroShare();
 
 	MainWindow *w = new MainWindow;
@@ -145,6 +145,7 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(configChanged())                   ,w->messagesDialog   		,SLOT(displayConfig()                  )) ;
 
 	QObject::connect(notify,SIGNAL(chatStatusChanged(const QString&,const QString&,bool)),w->peersDialog,SLOT(updatePeerStatusString(const QString&,const QString&,bool)));
+	QObject::connect(notify,SIGNAL(peerHasNewCustomStateString(const QString&)),w->peersDialog,SLOT(updatePeersCustomStateString(const QString&)));
 	QObject::connect(notify,SIGNAL(peerHasNewAvatar(const QString&)),w->peersDialog,SLOT(updatePeersAvatar(const QString&)));
 	QObject::connect(notify,SIGNAL(ownAvatarChanged()),w->peersDialog,SLOT(updateAvatar()));
 	QObject::connect(notify,SIGNAL(ownStatusMessageChanged()),w->peersDialog,SLOT(loadmypersonalstatus()));

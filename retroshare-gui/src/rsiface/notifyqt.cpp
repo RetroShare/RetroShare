@@ -44,6 +44,13 @@ void NotifyQt::notifyOwnAvatarChanged()
 	emit ownAvatarChanged() ;
 }
 
+std::string NotifyQt::askForPassword(const std::string& window_title,const std::string& text)
+{
+	return QInputDialog::getText(NULL, QString::fromStdString(window_title),
+					  QString::fromStdString(text), QLineEdit::Password,
+					  NULL, NULL).toStdString();
+}
+
 void NotifyQt::notifyOwnStatusMessageChanged()
 {
 	std::cerr << "Notifyqt:: notified that own avatar changed" << std::endl ;

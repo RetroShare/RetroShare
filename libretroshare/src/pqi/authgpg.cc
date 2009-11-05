@@ -54,9 +54,9 @@
  */
 
 #include "authgpg.h"
+#include <rsiface/rsiface.h>
 #include <iostream>
 #include <sstream>
-#include <QtGui>
 
 /* Turn a set of parameters into a string */
 static std::string setKeyPairParams(bool useRsa, unsigned int blen,
@@ -100,9 +100,11 @@ gpgcert::~gpgcert()
 
 gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passphrase_info, int prev_was_bad, int fd)
 {
-	QString text = QInputDialog::getText(NULL, "GPG key passphrase",
-					  "GPG key passphrase", QLineEdit::Password,
-					  NULL, NULL);
+	std::string text = rsicontrol->getNotify().askForPassword("GPG key passphrase","GPG key passphrase") ;
+
+//	QString text = QInputDialog::getText(NULL, "GPG key passphrase",
+//					  "GPG key passphrase", QLineEdit::Password,
+//					  NULL, NULL);
 
 
 	if (prev_was_bad)
@@ -111,12 +113,12 @@ gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passp
 	fprintf(stderr, "pgp_pwd_callback() Set Password\n");
 
 #ifndef WINDOWS_SYS
-	write(fd, text.toStdString().c_str(), text.length());
+	write(fd, text.c_str(), text.size());
 	write(fd, "\n", 1); /* needs a new line? */
 #else
 	DWORD written = 0;
 	HANDLE winFd = (HANDLE) fd;
-	WriteFile(winFd, text.toStdString().c_str(), text.length(), &written, NULL);
+	WriteFile(winFd, text.c_str(), text.size(), &written, NULL);
 	WriteFile(winFd, "\n", 1, &written, NULL); 
 #endif
 

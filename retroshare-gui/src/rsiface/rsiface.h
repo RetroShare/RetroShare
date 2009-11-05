@@ -207,6 +207,8 @@ class NotifyBase
 	virtual void notifyPeerHasNewAvatar(std::string peer_id) { (void)peer_id; }
 	virtual void notifyOwnAvatarChanged() {}
 	virtual void notifyOwnStatusMessageChanged() {}
+
+	virtual std::string askForPassword(const std::string& window_title,const std::string& text) {}
 };
 
 const int NOTIFY_LIST_NEIGHBOURS   		= 1;
