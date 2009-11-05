@@ -28,6 +28,8 @@ bool upnphandler::initUPnPState()
 	if (IGWDetected) {
 	    /* MODIFY STATE */
 	    dataMtx.lock(); /* LOCK MUTEX */
+	    upnpState = RS_UPNP_S_READY;
+
 	    std::cerr << "upnphandler::initUPnPState cUPnPControlPoint internal ip adress : ";
 	    std::cerr << cUPnPControlPoint->getInternalIpAddress() << std::endl;
 
