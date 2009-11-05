@@ -1845,8 +1845,6 @@ RsTurtle *rsTurtle = NULL ;
 #include "rsserver/p3Blog.h"
 #include "rsiface/rsgame.h"
 
-#include "rsserver/p3files.h"
-
 #include "pqi/p3notify.h" // HACK - moved to pqi for compilation order.
 
 
