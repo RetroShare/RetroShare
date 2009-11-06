@@ -347,6 +347,13 @@ void p3ConnectMgr::netStatusReset()
 	netFlagUpnpOk = false;
 	netFlagDhtOk = false;
 	netFlagStunOk = false;
+
+	for(std::map<std::string, peerConnectState>::iterator it = mFriendList.begin(); it != mFriendList.end(); it++)
+	{
+		it->second.state &= ~RS_PEER_S_CONNECTED ;
+		it->second.lastattempt = 0 ;	// forces immediate re-connexion
+	}
+
 	IndicateConfigChanged();
 }
 
