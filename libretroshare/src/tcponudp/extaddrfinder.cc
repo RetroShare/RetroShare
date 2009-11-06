@@ -231,12 +231,28 @@ bool ExtAddrFinder::hasValidIP(struct sockaddr_in *addr)
 	return *_found ;
 }
 
+void ExtAddrFinder::reset()
+{
+	while(*_searching) 
+#ifdef WIN32
+		Sleep(1000) ;
+#else
+		sleep(1) ;
+#endif
+
+	RsStackMutex mut(_addrMtx) ;
+
+	*_found = false ;
+	*_searching = false ;
+	*mFoundTS = time(NULL) - MAX_IP_STORE;
+}
+
 ExtAddrFinder::~ExtAddrFinder()
 {
 #ifdef EXTADDRSEARCH_DEBUG
 	std::cerr << "ExtAddrFinder: Deleting ExtAddrFinder." << std::endl ;
 #endif
-	while(!*_searching) 
+	while(*_searching) 
 #ifdef WIN32
 		Sleep(1000) ;
 #else

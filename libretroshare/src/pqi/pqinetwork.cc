@@ -179,6 +179,20 @@ std::list<std::string> getLocalInterfaces()
 			out << std::endl;
 			pqioutput(PQL_DEBUG_BASIC, pqinetzone, out.str());
 
+			// Now check wether the interface is up and running. If not, we don't use it!!
+			//
+			if(ioctl(sock,SIOCGIFFLAGS,&ifreq) != 0)
+			{
+				std::cerr << "Could not get flags from interface " << ifptr -> if_name << std::endl ;
+				continue ;
+			}
+#ifdef NET_DEBUG
+			std::cout << out.str() ;
+			std::cout << "flags = " << ifreq.ifr_flags << std::endl ;
+#endif
+			if((ifreq.ifr_flags & IFF_UP) == 0) continue ;
+			if((ifreq.ifr_flags & IFF_RUNNING) == 0) continue ;
+
 			addrs.push_back(astr);
 		}
 	}
@@ -533,6 +547,9 @@ struct in_addr getPreferredInterface() // returns best addr.
 	for(it = addrs.begin(); it != addrs.end(); it++)
 	{
 		inet_aton((*it).c_str(), &addr);
+
+		std::cout << "Examining addr = " << (void*)addr.s_addr << std::endl ;
+
 		// for windows silliness (returning 0.0.0.0 as valid addr!).
 		if (addr.s_addr == 0)
 		{
@@ -562,12 +579,15 @@ struct in_addr getPreferredInterface() // returns best addr.
 		{
 			if (!found_ext)
 			{
+				std::cerr << "Found external address " << (void*)addr.s_addr << std::endl ;
 				found_ext = true;
 				addr_ext = addr;
-				return addr_ext;
 			}
 		}
 	}
+
+	if(found_ext)					// external address is best.
+		return addr_ext ;
 
 	if (found_priv)
 		return addr_priv;

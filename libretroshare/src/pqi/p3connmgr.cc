@@ -290,11 +290,12 @@ void p3ConnectMgr::netReset()
 	    return;
 	}
 
-
-
 	std::cerr << "p3ConnectMgr::netReset() shutdown" << std::endl;
 
 	shutdown(); /* blocking shutdown call */
+
+	// Will initiate a new call for determining the external ip.
+	mExtAddrFinder->reset() ;
 
 	std::cerr << "p3ConnectMgr::netReset() reset NetStatus" << std::endl;
 	{
@@ -2933,6 +2934,69 @@ bool    p3ConnectMgr::setVisState(std::string id, uint32_t visState)
 
 bool 	p3ConnectMgr::checkNetAddress()
 {
+	in_addr_t old_in_addr = ownState.localaddr.sin_addr.s_addr;
+	int old_in_port = ownState.localaddr.sin_port;
+
+	{
+		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+		// GetPreferredInterface now chooses the best local ilterface for you. So it's the default function to use now.
+		//
+		ownState.localaddr.sin_addr = getPreferredInterface() ;
+
+		if(ownState.localaddr.sin_addr.s_addr != 0)
+		{
+			if (netFlagLocalOk != true) 
+			{
+#ifdef CONN_DEBUG
+				std::cerr << "p3ConnectMgr::checkNetAddress() changing netFlagOk to true.";
+				std::cerr << std::endl;
+#endif
+				netFlagLocalOk = true;
+				IndicateConfigChanged();
+			}
+		} 
+
+		if(isLoopbackNet(&(ownState.localaddr.sin_addr)))
+			mNetStatus = RS_NET_LOOPBACK;
+
+		int port = ntohs(ownState.localaddr.sin_port);
+
+		if ((port < PQI_MIN_PORT) || (port > PQI_MAX_PORT))
+			ownState.localaddr.sin_port = htons(PQI_DEFAULT_PORT);
+
+		/* if localaddr = serveraddr, then ensure that the ports
+		 * are the same (modify server)... this mismatch can
+		 * occur when the local port is changed....
+		 */
+		if (ownState.localaddr.sin_addr.s_addr == ownState.serveraddr.sin_addr.s_addr)
+			ownState.serveraddr.sin_port = ownState.localaddr.sin_port;
+
+		// ensure that address family is set, otherwise windows Barfs.
+		ownState.localaddr.sin_family = AF_INET;
+		ownState.serveraddr.sin_family = AF_INET;
+
+#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr::checkNetAddress() Final Local Address: ";
+		std::cerr << inet_ntoa(ownState.localaddr.sin_addr);
+		std::cerr << ":" << ntohs(ownState.localaddr.sin_port);
+		std::cerr << std::endl;
+#endif
+	}
+
+	if ((old_in_addr != ownState.localaddr.sin_addr.s_addr) || (old_in_port != ownState.localaddr.sin_port)) 
+	{
+#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr::checkNetAddress() local address changed, resetting network." << std::endl;
+#endif
+		netReset();
+	}
+
+	return 1;
+}
+#ifdef TO_REMOVE
+bool 	p3ConnectMgr::checkNetAddress()
+{
 	std::list<std::string> addrs = getLocalInterfaces();
 	std::list<std::string>::iterator it;
 
@@ -2991,36 +3055,35 @@ bool 	p3ConnectMgr::checkNetAddress()
 		   mNetStatus = RS_NET_LOOPBACK;
 	    }
 
-	    int port = ntohs(ownState.localaddr.sin_port);
-	    if ((port < PQI_MIN_PORT) || (port > PQI_MAX_PORT))
-	    {
-		    ownState.localaddr.sin_port = htons(PQI_DEFAULT_PORT);
-	    }
+		 int port = ntohs(ownState.localaddr.sin_port);
+		 if ((port < PQI_MIN_PORT) || (port > PQI_MAX_PORT))
+		 {
+			 ownState.localaddr.sin_port = htons(PQI_DEFAULT_PORT);
+		 }
 
-	    /* if localaddr = serveraddr, then ensure that the ports
-	     * are the same (modify server)... this mismatch can
-	     * occur when the local port is changed....
-	     */
-	    if (ownState.localaddr.sin_addr.s_addr ==
-			    ownState.serveraddr.sin_addr.s_addr)
-	    {
-		    ownState.serveraddr.sin_port =
-			    ownState.localaddr.sin_port;
-	    }
+		 /* if localaddr = serveraddr, then ensure that the ports
+		  * are the same (modify server)... this mismatch can
+		  * occur when the local port is changed....
+		  */
+		 if (ownState.localaddr.sin_addr.s_addr == ownState.serveraddr.sin_addr.s_addr)
+		 {
+			 ownState.serveraddr.sin_port = ownState.localaddr.sin_port;
+		 }
 
-	    // ensure that address family is set, otherwise windows Barfs.
-	    ownState.localaddr.sin_family = AF_INET;
-	    ownState.serveraddr.sin_family = AF_INET;
+		 // ensure that address family is set, otherwise windows Barfs.
+		 ownState.localaddr.sin_family = AF_INET;
+		 ownState.serveraddr.sin_family = AF_INET;
 
-    #ifdef CONN_DEBUG
-	    std::cerr << "p3ConnectMgr::checkNetAddress() Final Local Address: ";
-	    std::cerr << inet_ntoa(ownState.localaddr.sin_addr);
-	    std::cerr << ":" << ntohs(ownState.localaddr.sin_port);
-	    std::cerr << std::endl;
-    #endif
+#ifdef CONN_DEBUG
+		 std::cerr << "p3ConnectMgr::checkNetAddress() Final Local Address: ";
+		 std::cerr << inet_ntoa(ownState.localaddr.sin_addr);
+		 std::cerr << ":" << ntohs(ownState.localaddr.sin_port);
+		 std::cerr << std::endl;
+#endif
 	}
 
-	if ((old_in_addr != ownState.localaddr.sin_addr.s_addr) || (old_in_port != ownState.localaddr.sin_port)) {
+	if ((old_in_addr != ownState.localaddr.sin_addr.s_addr) || (old_in_port != ownState.localaddr.sin_port)) 
+	{
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::checkNetAddress() local address changed, resetting network." << std::endl;
 #endif
@@ -3029,6 +3092,7 @@ bool 	p3ConnectMgr::checkNetAddress()
 
 	return 1;
 }
+#endif
 
 
 /************************* p3config functions **********************/

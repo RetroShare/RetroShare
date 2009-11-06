@@ -17,6 +17,8 @@ class ExtAddrFinder
 
 		void start_request() ;
 
+		void reset() ;
+
 	private:
 		friend void* doExtAddrSearch(void *p) ;
 
