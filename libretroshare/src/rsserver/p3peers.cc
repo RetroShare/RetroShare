@@ -280,6 +280,19 @@ bool    p3Peers::isFriend(std::string id)
 	return false;
 }
 
+static struct sockaddr_in getPreferredAddress(	const struct sockaddr_in& addr1,time_t ts1,
+																const struct sockaddr_in& addr2,time_t ts2,
+																const struct sockaddr_in& addr3,time_t ts3)
+{
+	time_t ts = ts1 ;
+	struct sockaddr_in addr = addr1 ;
+
+	if(ts2 > ts && strcmp(inet_ntoa(addr2.sin_addr),"0.0.0.0")) { ts = ts2 ; addr = addr2 ; }
+	if(ts3 > ts && strcmp(inet_ntoa(addr3.sin_addr),"0.0.0.0")) { ts = ts3 ; addr = addr3 ; }
+
+	return addr ;
+}
+
 bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 {
 #ifdef P3PEERS_DEBUG
@@ -341,12 +354,17 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 		}
 	}
 
+	// From all addresses, show the most recent one if no address is currently in use.
+	struct sockaddr_in best_local_addr = (!strcmp(inet_ntoa(pcs.localaddr.sin_addr),"0.0.0.0"))?getPreferredAddress(pcs.dht.laddr,pcs.dht.ts,pcs.disc.laddr,pcs.disc.ts,pcs.peer.laddr,pcs.peer.ts):pcs.localaddr ;
+	struct sockaddr_in best_servr_addr = (!strcmp(inet_ntoa(pcs.serveraddr.sin_addr),"0.0.0.0"))?getPreferredAddress(pcs.dht.raddr,pcs.dht.ts,pcs.disc.raddr,pcs.disc.ts,pcs.peer.raddr,pcs.peer.ts):pcs.serveraddr ;
+		
+
 	/* fill from pcs */
 
-	d.localAddr	= inet_ntoa(pcs.localaddr.sin_addr);
-	d.localPort	= ntohs(pcs.localaddr.sin_port);
-	d.extAddr	= inet_ntoa(pcs.serveraddr.sin_addr);
-	d.extPort	= ntohs(pcs.serveraddr.sin_port);
+	d.localAddr	= inet_ntoa(best_local_addr.sin_addr);
+	d.localPort	= ntohs(best_local_addr.sin_port);
+	d.extAddr	= inet_ntoa(best_servr_addr.sin_addr);
+	d.extPort	= ntohs(best_servr_addr.sin_port);
 	d.lastConnect	= pcs.lastcontact;
 	d.connectPeriod = 0;
 
