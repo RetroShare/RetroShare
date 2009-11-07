@@ -220,7 +220,7 @@ void ConfCertDialog::applyDialog()
 	/* close the Dialog after the Changes applied */
 	closeinfodlg();
 
-	if(trustChanged || signChanged)
+	if(trustChanged || signChanged || localChanged || extChanged)
 		emit configChanged() ;
 }
 
