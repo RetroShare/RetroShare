@@ -200,11 +200,6 @@ bool upnphandler::shutdown_upnp()
 {
 	RsStackMutex stack(dataMtx); /* LOCK STACK MUTEX */
 
-	//stopping os ok, set starting to true for next net reset
-	toStop = false;
-	toStart = true;
-	upnpState = RS_UPNP_S_UNINITIALISED;
-
 	/* always attempt this (unless no port number) */
 	if (eport_curr > 0 && eport > 0 && (upnpState >= RS_UPNP_S_ACTIVE))
 	{
@@ -232,12 +227,16 @@ bool upnphandler::shutdown_upnp()
 
 		//destroy the upnp object
 		cUPnPControlPoint->~CUPnPControlPoint();
-		upnpState = RS_UPNP_S_UNINITIALISED;
 	} else {
     	    #ifdef UPNP_DEBUG
 		    std::cerr << "upnphandler::shutdown_upnp() : avoid upnp connection for shutdonws because probably a net flag went down." << std::endl;
 	    #endif
 	}
+
+	//stopping os ok, set starting to true for next net reset
+	toStop = false;
+	toStart = true;
+	upnpState = RS_UPNP_S_UNINITIALISED;
 
 	return true;
 
@@ -298,7 +297,7 @@ void  upnphandler::enable(bool active)
 void    upnphandler::shutdown()
 {
 	/* blocking call to shutdown upnp */
-
+	std::cerr << "upnphandler::shutdown() called." << std::endl;
 	shutdown_upnp();
 }
 
