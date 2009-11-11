@@ -548,7 +548,7 @@ struct in_addr getPreferredInterface() // returns best addr.
 	{
 		inet_aton((*it).c_str(), &addr);
 
-		std::cout << "Examining addr = " << (void*)addr.s_addr << std::endl ;
+		//std::cout << "Examining addr = " << (void*)addr.s_addr << std::endl ;
 
 		// for windows silliness (returning 0.0.0.0 as valid addr!).
 		if (addr.s_addr == 0)
