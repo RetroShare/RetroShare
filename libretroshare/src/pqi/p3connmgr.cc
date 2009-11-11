@@ -2707,6 +2707,24 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 		}
 	}
 
+	//add the ips off the ipAdressList
+	std::list<IpAddressTimed> ipList = it->second.getIpAddressList();
+	for (std::list<IpAddressTimed>::iterator ipListIt = ipList.begin(); ipListIt!=(ipList.end()); ipListIt++) {
+#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr::retryConnectTCP() adding ip : ";
+		std::cerr << inet_ntoa(ipListIt->ipAddr.sin_addr);
+		std::cerr << ":" << ntohs(ipListIt->ipAddr.sin_port);
+		std::cerr << std::endl;
+#endif
+		peerConnectAddress pca;
+		pca.addr = ipListIt->ipAddr;
+		pca.type = RS_NET_CONN_TCP_UNKNOW_TOPOLOGY;
+		pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
+		pca.ts = time(NULL);
+		pca.period = 0;
+		it->second.connAddrs.push_back(pca);
+	}
+
 #endif // P3CONNMGR_NO_TCP_CONNECTIONS
 
 	/* flag as last attempt to prevent loop */
@@ -2840,6 +2858,12 @@ bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
 
 	/* "it" points to peer */
 	it->second.currentlocaladdr = addr;
+	//update ip address list
+	IpAddressTimed ipAddressTimed;
+	ipAddressTimed.ipAddr = addr;
+	ipAddressTimed.seenTime = time(NULL);
+	it->second.updateIpAddressList(ipAddressTimed);
+
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 	return true;
@@ -2874,6 +2898,12 @@ bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
 
 	/* "it" points to peer */
 	it->second.currentserveraddr = addr;
+	//update ip address list
+	IpAddressTimed ipAddressTimed;
+	ipAddressTimed.ipAddr = addr;
+	ipAddressTimed.seenTime = time(NULL);
+	it->second.updateIpAddressList(ipAddressTimed);
+
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 	return true;
