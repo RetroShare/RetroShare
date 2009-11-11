@@ -1593,6 +1593,82 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags)
 		it->second.lastcontact = time(NULL);  /* time of connect */
 		it->second.connecttype = flags;
 
+		//check if the ip list contains the current remote address of the connected peer
+		//TODO : we update both internal and external tcp adress, we should try to determinate wich one was use for this connection
+		bool found = false;
+		std::list<IpAddressTimed>::iterator ipListIt;
+		for (ipListIt = it->second.remoteaddrList.begin(); ipListIt!=(it->second.remoteaddrList.end()); ipListIt++) {
+		    if (ipListIt->ipAddr.sin_addr.s_addr == it->second.currentserveraddr.sin_addr.s_addr && ipListIt->ipAddr.sin_port == it->second.currentserveraddr.sin_port) {
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::connectResult() remote ip found in the list. Update seen time for : ";
+			std::cerr << inet_ntoa(ipListIt->ipAddr.sin_addr);
+			std::cerr << ":" << ntohs(ipListIt->ipAddr.sin_port);
+			std::cerr << std::endl;
+#endif
+			found = true;
+			//update the seen time
+			ipListIt->seenTime = time_t(NULL);
+			break;
+		    }
+		}
+		if (!found && (it->second.currentserveraddr.sin_addr.s_addr != 0)) {
+		    //add the current addresses to the ip list
+
+		    IpAddressTimed ipAdress;
+		    ipAdress.seenTime = time_t(NULL);
+		    ipAdress.ipAddr = it->second.currentserveraddr;
+#ifdef CONN_DEBUG
+		    std::cerr << "p3ConnectMgr::connectResult() adding to the ip list the current remote addr : " << id;
+		    std::cerr << inet_ntoa(it->second.currentserveraddr.sin_addr);
+		    std::cerr << ":" << ntohs(it->second.currentserveraddr.sin_port);
+		    std::cerr << std::endl;
+#endif
+		    it->second.remoteaddrList.push_back(ipAdress);
+		}
+
+		//check if the list contains the current local address of the connected peer
+		found = false;
+		for (ipListIt = it->second.remoteaddrList.begin(); ipListIt!=(it->second.remoteaddrList.end()); ipListIt++) {
+		    if (ipListIt->ipAddr.sin_addr.s_addr == it->second.currentlocaladdr.sin_addr.s_addr && ipListIt->ipAddr.sin_port == it->second.currentlocaladdr.sin_port) {
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::connectResult() remote ip found in the list. Update seen time for : ";
+			std::cerr << inet_ntoa(ipListIt->ipAddr.sin_addr);
+			std::cerr << ":" << ntohs(ipListIt->ipAddr.sin_port);
+			std::cerr << std::endl;
+#endif
+			found = true;
+			//update the seen time
+			ipListIt->seenTime = time_t(NULL);
+			break;
+		    }
+		}
+		if (!found && (it->second.currentlocaladdr.sin_addr.s_addr != 0)) {
+		    //add the current addresses to the ip list
+		    IpAddressTimed ipAdress;
+		    ipAdress.seenTime = time_t(NULL);
+		    ipAdress.ipAddr = it->second.currentlocaladdr;
+#ifdef CONN_DEBUG
+		    std::cerr << "p3ConnectMgr::connectResult() adding to the ip list the current local addr : " << id;
+		    std::cerr << inet_ntoa(it->second.currentlocaladdr.sin_addr);
+		    std::cerr << ":" << ntohs(it->second.currentlocaladdr.sin_port);
+		    std::cerr << std::endl;
+#endif
+		    it->second.remoteaddrList.push_back(ipAdress);
+		}
+
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::connectResult() current ip list for the peer : " << id;
+			std::cerr << ", size : " << it->second.remoteaddrList.size();
+			std::cerr << ", adresses : " << std::endl;
+#endif
+		for (ipListIt = it->second.remoteaddrList.begin(); ipListIt!=(it->second.remoteaddrList.end()); ipListIt++) {
+#ifdef CONN_DEBUG
+			std::cerr << inet_ntoa(ipListIt->ipAddr.sin_addr);
+			std::cerr << ":" << ntohs(ipListIt->ipAddr.sin_port);
+			std::cerr << std::endl;
+#endif
+		}
+
 		return true;
 	}
 
@@ -2858,6 +2934,32 @@ bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
 	return true;
 }
 
+bool    p3ConnectMgr::setAddressList(std::string id, std::list<IpAddressTimed> IpAddressTimedList)
+{
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+	/* check if it is a friend */
+	std::map<std::string, peerConnectState>::iterator it;
+	if (mFriendList.end() == (it = mFriendList.find(id)))
+	{
+		if (mOthersList.end() == (it = mOthersList.find(id)))
+		{
+			#ifdef CONN_DEBUG
+					std::cerr << "p3ConnectMgr::setLocalAddress() cannot add addres info : peer id not found in friend list ";
+					std::cerr << " id: " << id;
+					std::cerr << std::endl;
+			#endif
+			return false;
+		}
+	}
+
+	/* "it" points to peer */
+	it->second.remoteaddrList = IpAddressTimedList;
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+	return true;
+}
+
 bool    p3ConnectMgr::setNetworkMode(std::string id, uint32_t netMode)
 {
 	if (id == mAuthMgr->OwnId())
@@ -3269,6 +3371,7 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 				addFriend(pitem->pid, pitem->netMode, pitem->visState, pitem->lastContact);
 				setLocalAddress(pitem->pid, pitem->currentlocaladdr);
 				setExtAddress(pitem->pid, pitem->currentremoteaddr);
+				setAddressList(pitem->pid, pitem->remoteaddrList);
 			}
 		}
 		else if (sitem)

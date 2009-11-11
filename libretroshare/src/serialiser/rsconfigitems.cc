@@ -763,6 +763,11 @@ uint32_t RsPeerConfigSerialiser::sizeNet(RsPeerNetItem *i)
 	s += GetTlvIpAddrPortV4Size(); /* localaddr */ 
 	s += GetTlvIpAddrPortV4Size(); /* remoteaddr */ 
 
+	//add the size of the ip list
+	int ipListSize = i->remoteaddrList.size();
+	s += ipListSize * GetTlvIpAddrPortV4Size();
+	s += ipListSize * 8; //size of an uint64
+
 	return s;
 
 }
@@ -785,7 +790,7 @@ bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint3
 
 #ifdef RSSERIAL_DEBUG
 	std::cerr << "RsPeerConfigSerialiser::serialiseNet() Header: " << ok << std::endl;
-	std::cerr << "RsPeerConfigSerialiser::serialiseNet() Header: " << tlvsize << std::endl;
+	std::cerr << "RsPeerConfigSerialiser::serialiseNet() Header test: " << tlvsize << std::endl;
 #endif
 
 	/* skip the header */
@@ -798,6 +803,13 @@ bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint3
 	ok &= setRawUInt32(data, tlvsize, &offset, item->lastContact); /* Mandatory */
 	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->currentlocaladdr));
 	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->currentremoteaddr));
+
+	//store the ip list
+	std::list<IpAddressTimed>::iterator ipListIt;
+	for (ipListIt = item->remoteaddrList.begin(); ipListIt!=(item->remoteaddrList.end()); ipListIt++) {
+	    ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(ipListIt->ipAddr));
+	    ok &= setRawUInt64(data, tlvsize, &offset, ipListIt->seenTime);
+	}
 
 	if(offset != tlvsize)
 	{
@@ -849,6 +861,18 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 	ok &= getRawUInt32(data, rssize, &offset, &(item->lastContact)); /* Mandatory */
 	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->currentlocaladdr));
 	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->currentremoteaddr));
+
+	//get the ip adress list
+	std::list<IpAddressTimed> ipTimedList;
+	while (offset < rssize) {
+	    IpAddressTimed ipTimed;
+	    ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &ipTimed.ipAddr);
+	    uint64_t time;
+	    ok &= getRawUInt64(data, rssize, &offset, &time);
+	    ipTimed.seenTime = time;
+	    ipTimedList.push_back(ipTimed);
+	}
+	item->remoteaddrList = ipTimedList;
 
 	if (offset != rssize)
 	{

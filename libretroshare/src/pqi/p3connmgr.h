@@ -210,6 +210,8 @@ bool	getNetStatusExtraAddressCheckOk();
 void 	setOwnNetConfig(uint32_t netMode, uint32_t visState);
 bool 	setLocalAddress(std::string id, struct sockaddr_in addr);
 bool 	setExtAddress(std::string id, struct sockaddr_in addr);
+bool    setAddressList(std::string id, std::list<IpAddressTimed> IpAddressTimedList);
+
 
 bool 	setNetworkMode(std::string id, uint32_t netMode);
 bool 	setVisState(std::string id, uint32_t visState);
