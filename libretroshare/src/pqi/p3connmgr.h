@@ -129,6 +129,9 @@ class peerConnectAddress
 
 class peerConnectState
 {
+	private:
+	std::list<IpAddressTimed> ipAddressList;
+
 	public:
 	peerConnectState(); /* init */
 
@@ -138,10 +141,14 @@ class peerConnectState
 	uint32_t visState; /* STD, GRAY, DARK */	
 
         //used to store friends ip lists
-        std::list<IpAddressTimed> ipAddressList;
-        void sortIpAdressList(); //Sort the ip list ordering by seen time
-        void purgeIpAdressList(); //purge old addresses to keep a small list
-        void updateIpAdressList(IpAddressTimed ipTimed); //purge old addresses to keep a small list
+	void sortIpAddressListBySeenTime(); //Sort the ip list ordering by seen time
+	void purgeIpAddressList(); //purge old addresses to keep a small list
+	std::list<IpAddressTimed> getIpAddressList(); //return the sorted ant purged list.
+	void updateIpAddressList(IpAddressTimed ipTimed);
+	void updateIpAddressList(std::list<IpAddressTimed> ipTimedList);
+	static bool compare_seen_time (IpAddressTimed first, IpAddressTimed second);
+	static bool is_same_address (IpAddressTimed first, IpAddressTimed second);
+	void printIpAddressList();
 
 	//used to store current ip (for config and connection management)
 	struct sockaddr_in currentlocaladdr;             /* Mandatory */

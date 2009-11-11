@@ -430,8 +430,10 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 	di -> PeerId(to);
 	di -> aboutId = about;
 
-	// set the server address.
-        di -> ipAddressList = detail.ipAddressList;
+	// set the ip addresses.
+	di -> ipAddressList = detail.getIpAddressList();
+	di -> currentladdr = detail.currentlocaladdr;
+	di -> currentsaddr = detail.currentserveraddr;
 
 	if (detail.state & RS_PEER_S_CONNECTED)
 	{
