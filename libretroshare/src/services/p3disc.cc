@@ -360,6 +360,7 @@ void p3disc::sendOwnDetails(std::string to)
 	di -> PeerId(to);
 	di -> laddr = detail.currentlocaladdr;
 	di -> saddr = detail.currentserveraddr;
+	di -> ipAddressList = detail.getIpAddressList();
 	di -> contact_tf = 0;
 
 	/* construct disc flags */
@@ -630,7 +631,7 @@ void p3disc::recvPeerOwnMsg(RsDiscOwnItem *item)
 		flags |= RS_NET_FLAGS_STABLE_UDP;
 	}
 
-	mConnMgr->peerStatus(item->PeerId(), item->laddr, item->saddr,
+	mConnMgr->peerStatus(item->PeerId(), item->laddr, item->saddr, item->ipAddressList,
 				type, flags, RS_CB_PERSON);
 
 	/* also add as potential stun buddy */
@@ -703,7 +704,7 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 	/* only valid certs, and not ourselves */
 	if ((loaded) && (peerId != mConnMgr->getOwnId()))
 	{
-		mConnMgr->peerStatus(peerId, item->currentladdr, item->currentsaddr, type, flags, RS_CB_DISC);
+		mConnMgr->peerStatus(peerId, item->currentladdr, item->currentsaddr, item->ipAddressList, type, flags, RS_CB_DISC);
 
 		std::string hashid1 = RsUtil::HashId(peerId, false);
 		mConnMgr->stunStatus(hashid1, item->currentsaddr, type, RS_STUN_FRIEND_OF_FRIEND);

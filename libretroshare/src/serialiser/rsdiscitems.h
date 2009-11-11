@@ -58,6 +58,10 @@ class RsDiscOwnItem: public RsDiscItem
 	virtual  void clear();
 	virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
+	//use for transmitting ip address list
+	std::list<IpAddressTimed> ipAddressList;
+
+	//use for transmitting my own adress list
 	struct sockaddr_in laddr;
 	struct sockaddr_in saddr;
 
@@ -81,7 +85,7 @@ virtual ~RsDiscReply();
 virtual  void clear();
 virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	//use for transmitting peer adress list
+	//use for transmitting ip address list
         std::list<IpAddressTimed> ipAddressList;
 
 	//use for transmitting my own adress list

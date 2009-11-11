@@ -125,7 +125,7 @@ void	addPeer(std::string id)
 }
 
 virtual void    peerStatus(std::string id,
-                        struct sockaddr_in laddr, struct sockaddr_in raddr,
+			struct sockaddr_in laddr, struct sockaddr_in raddr, std::list<IpAddressTimed> ipAddressList,
                         uint32_t type, uint32_t mode, uint32_t source)
 {
 

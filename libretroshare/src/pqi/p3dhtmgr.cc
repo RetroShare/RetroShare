@@ -1756,7 +1756,8 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 
 	if (doCb)
 	{
-		mConnCb->peerStatus(ent.id, ent.laddr, ent.raddr, 
+		std::list<IpAddressTimed> ipAddressList;
+		mConnCb->peerStatus(ent.id, ent.laddr, ent.raddr, ipAddressList,
 				ent.type, 0, RS_CB_DHT);
 	}
 

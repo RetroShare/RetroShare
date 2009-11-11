@@ -149,6 +149,7 @@ class peerConnectState
 	static bool compare_seen_time (IpAddressTimed first, IpAddressTimed second);
 	static bool is_same_address (IpAddressTimed first, IpAddressTimed second);
 	void printIpAddressList();
+	static void printIpAddressList(std::list<IpAddressTimed> ipTimedList);
 
 	//used to store current ip (for config and connection management)
 	struct sockaddr_in currentlocaladdr;             /* Mandatory */
@@ -255,7 +256,7 @@ void	removeMonitor(pqiMonitor *mon);
 
 	/******* overloaded from pqiConnectCb *************/
 virtual void    peerStatus(std::string id, 
-			struct sockaddr_in laddr, struct sockaddr_in raddr,
+			struct sockaddr_in laddr, struct sockaddr_in raddr, std::list<IpAddressTimed> ipAddressList,
                         uint32_t type, uint32_t flags, uint32_t source);
 virtual void    peerConnectRequest(std::string id, 
 			struct sockaddr_in raddr, uint32_t source);
