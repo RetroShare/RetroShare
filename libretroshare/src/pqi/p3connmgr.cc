@@ -3782,9 +3782,9 @@ void peerConnectState::updateIpAddressList(IpAddressTimed ipTimed) { //purge old
 			std::cerr << ":" << ntohs(ipTimed.ipAddr.sin_port);
 			std::cerr << std::endl;
 #endif
-		if (ipTimed.ipAddr.sin_addr.s_addr == 0) {
+		if (ipTimed.ipAddr.sin_addr.s_addr == 0 || ipTimed.ipAddr.sin_port == 0) {
 #ifdef CONN_DEBUG
-			std::cerr << "peerConnectState::updateIpAdressList() ip parameter is 0.0.0.0, do nothing." << std::endl;
+			std::cerr << "peerConnectState::updateIpAdressList() ip parameter is 0.0.0.0 or port is 0, ignoring." << std::endl;
 #endif
 		    return;
 		}
