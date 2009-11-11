@@ -32,6 +32,7 @@
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rsserviceids.h"
+#include "serialiser/rsconfigitems.h"
 
 const uint8_t RS_PKT_SUBTYPE_DISC_OWN    = 0x01;
 const uint8_t RS_PKT_SUBTYPE_DISC_REPLY  = 0x02;
@@ -80,8 +81,13 @@ virtual ~RsDiscReply();
 virtual  void clear();
 virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	struct sockaddr_in laddr;
-	struct sockaddr_in saddr;
+	//use for transmitting peer adress list
+	std::list<IpAddressTimed> localaddrList;
+	std::list<IpAddressTimed> remoteaddrList;
+
+	//use for transmitting my own adress list
+	struct sockaddr_in currentladdr;
+	struct sockaddr_in currentsaddr;
 
 	// time frame of recent connections.
 	uint16_t contact_tf;

@@ -50,6 +50,11 @@ const uint8_t RS_PKT_SUBTYPE_FILE_ITEM     = 0x02;
 
 /**************************************************************************/
 
+struct IpAddressTimed {
+    struct sockaddr_in ipAddr;
+    time_t seenTime;
+};
+
 class RsPeerNetItem: public RsItem
 {
 	public:
@@ -68,8 +73,11 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	uint32_t    visState;                     /* Mandatory */
 	uint32_t    lastContact;                  /* Mandatory */
 
-	struct sockaddr_in localaddr;             /* Mandatory */
-	struct sockaddr_in remoteaddr;            /* Mandatory */
+	struct sockaddr_in currentlocaladdr;             /* Mandatory */
+	struct sockaddr_in currentremoteaddr;            /* Mandatory */
+
+	std::list<IpAddressTimed> localaddrList;
+	std::list<IpAddressTimed> remoteaddrList;
 };
 
 class RsPeerStunItem: public RsItem
@@ -161,11 +169,13 @@ virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 /**************************************************************************/
 
-#define FT_STATE_FAILED         0
-#define FT_STATE_OKAY           1
-#define FT_STATE_WAITING        2
-#define FT_STATE_DOWNLOADING    3
-#define FT_STATE_COMPLETE       4
+#ifndef FT_STATE_FAILED
+    #define FT_STATE_FAILED         0
+    #define FT_STATE_OKAY           1
+    #define FT_STATE_WAITING        2
+    #define FT_STATE_DOWNLOADING    3
+    #define FT_STATE_COMPLETE       4
+#endif
 
 class RsFileTransfer: public RsItem
 {

@@ -102,8 +102,8 @@ peerConnectState::peerConnectState()
 	 source(0), 
 	 inConnAttempt(0)
 {
-	sockaddr_clear(&localaddr);
-	sockaddr_clear(&serveraddr);
+	sockaddr_clear(&currentlocaladdr);
+	sockaddr_clear(&currentserveraddr);
 
 	return;
 }
@@ -114,10 +114,10 @@ std::string textPeerConnectState(peerConnectState &state)
 	out << "Id: " << state.id << std::endl;
 	out << "NetMode: " << state.netMode << std::endl;
 	out << "VisState: " << state.visState << std::endl;
-	out << "laddr: " << inet_ntoa(state.localaddr.sin_addr) 
-		<< ":" << ntohs(state.localaddr.sin_port) << std::endl;
-	out << "eaddr: " << inet_ntoa(state.serveraddr.sin_addr) 
-		<< ":" << ntohs(state.serveraddr.sin_port) << std::endl;
+	out << "laddr: " << inet_ntoa(state.currentlocaladdr.sin_addr)
+		<< ":" << ntohs(state.currentlocaladdr.sin_port) << std::endl;
+	out << "eaddr: " << inet_ntoa(state.currentserveraddr.sin_addr)
+		<< ":" << ntohs(state.currentserveraddr.sin_port) << std::endl;
 
 	std::string output = out.str();
 	return output;
@@ -586,7 +586,7 @@ void p3ConnectMgr::netUdpInit()
 #endif
 	connMtx.lock();   /*   LOCK MUTEX */
 
-	struct sockaddr_in iaddr = ownState.localaddr;
+	struct sockaddr_in iaddr = ownState.currentlocaladdr;
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
 
@@ -622,8 +622,8 @@ void p3ConnectMgr::netUpnpInit()
 	/* get the ports from the configuration */
 
 	mNetStatus = RS_NET_UPNP_SETUP;
-	iport = ntohs(ownState.localaddr.sin_port);
-	eport = ntohs(ownState.serveraddr.sin_port);
+	iport = ntohs(ownState.currentlocaladdr.sin_port);
+	eport = ntohs(ownState.currentserveraddr.sin_port);
 	if ((eport < 1000) || (eport > 30000))
 	{
 		eport = iport;
@@ -746,19 +746,19 @@ void p3ConnectMgr::networkConsistencyCheck()
 	    #ifdef CONN_DEBUG
 		    std::cerr << "p3ConnectMgr::networkConsistencyCheck() using STUN for ownState.serveraddr." << std::endl;
 	    #endif
-	    ownState.serveraddr = extAddr;
+	    ownState.currentserveraddr = extAddr;
 	} else {
 		//call the extrafinder address
 		if (getExtFinderExtAddress(extAddr)) {
 		    #ifdef CONN_DEBUG
 			std::cerr << "p3ConnectMgr::networkConsistencyCheck() using External address finder for ownState.serveraddr." << std::endl;
 		    #endif
-		ownState.serveraddr = extAddr;
+		    ownState.currentserveraddr = extAddr;
 		} else if (getUpnpExtAddress(extAddr)) {
 		    #ifdef CONN_DEBUG
 		    std::cerr << "p3ConnectMgr::networkConsistencyCheck() using UPNP for ownState.serveraddr." << std::endl;
 		    #endif
-		    ownState.serveraddr = extAddr;
+		    ownState.currentserveraddr = extAddr;
 		} else {
 		    #ifdef CONN_DEBUG
 			std::cerr << "p3ConnectMgr::networkConsistencyCheck() no external ip address." << std::endl;
@@ -1515,15 +1515,16 @@ bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr,
 	
 	it->second.lastattempt = time(NULL);  /* time of last connect attempt */
 	it->second.inConnAttempt = true;
-	it->second.currentConnAddr = it->second.connAddrs.front();
+	it->second.currentConnAddrAttempt = it->second.connAddrs.front();
 	it->second.connAddrs.pop_front();
 
-	addr = it->second.currentConnAddr.addr;
-	delay = it->second.currentConnAddr.delay;
-	period = it->second.currentConnAddr.period;
-	type = it->second.currentConnAddr.type;
 
 #ifdef CONN_DEBUG
+	addr = it->second.currentConnAddrAttempt.addr;
+	delay = it->second.currentConnAddrAttempt.delay;
+	period = it->second.currentConnAddrAttempt.period;
+	type = it->second.currentConnAddrAttempt.type;
+
 	std::cerr << "p3ConnectMgr::connectAttempt() Success: ";
 	std::cerr << " id: " << id;
 	std::cerr << std::endl;
@@ -1772,8 +1773,8 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		it->second.source = RS_CB_PERSON;
 		it->second.peer = details;
 
-		it->second.localaddr = laddr;
-		it->second.serveraddr = raddr;
+		it->second.currentlocaladdr = laddr;
+		it->second.currentserveraddr = raddr;
 
 		it->second.state |= RS_PEER_S_ONLINE;
 		it->second.lastavailable = now;
@@ -1924,7 +1925,7 @@ void    p3ConnectMgr::peerStatus(std::string id,
 
 	/* if address is same -> try local */
 	if ((isValidNet(&(details.laddr.sin_addr))) &&
-		(sameNet(&(ownState.localaddr.sin_addr), &(details.laddr.sin_addr))))
+		(sameNet(&(ownState.currentlocaladdr.sin_addr), &(details.laddr.sin_addr))))
 
 	{
 		/* add the local address */
@@ -1970,8 +1971,8 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		std::cerr << " id: " << id;
 		std::cerr << " laddr: " << inet_ntoa(details.laddr.sin_addr);
 		std::cerr << ": " << ntohs(details.laddr.sin_port);
-		std::cerr << " own.laddr: " << inet_ntoa(ownState.localaddr.sin_addr);
-		std::cerr << ": " << ntohs(ownState.localaddr.sin_port);
+		std::cerr << " own.laddr: " << inet_ntoa(ownState.currentlocaladdr.sin_addr);
+		std::cerr << ": " << ntohs(ownState.currentlocaladdr.sin_port);
 		std::cerr << std::endl;
 #endif
 	}
@@ -2546,21 +2547,21 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 #ifndef P3CONNMGR_NO_TCP_CONNECTIONS
 
 	/* if address is same -> try local */
-	if ((isValidNet(&(it->second.localaddr.sin_addr))) &&
-		(sameNet(&(ownState.localaddr.sin_addr), 
-			&(it->second.localaddr.sin_addr))))
+	if ((isValidNet(&(it->second.currentlocaladdr.sin_addr))) &&
+		(sameNet(&(ownState.currentlocaladdr.sin_addr),
+			&(it->second.currentlocaladdr.sin_addr))))
 
 	{
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::retryConnectTCP() Local Address Valid: ";
-		std::cerr << inet_ntoa(it->second.localaddr.sin_addr);
-		std::cerr << ":" << ntohs(it->second.localaddr.sin_port);
+		std::cerr << inet_ntoa(it->second.currentlocaladdr.sin_addr);
+		std::cerr << ":" << ntohs(it->second.currentlocaladdr.sin_port);
 		std::cerr << std::endl;
 #endif
 
 		bool localExists = false;
 		if ((it->second.inConnAttempt) && 
-			(it->second.currentConnAddr.type == RS_NET_CONN_TCP_LOCAL))
+			(it->second.currentConnAddrAttempt.type == RS_NET_CONN_TCP_LOCAL))
 		{
 			localExists = true;
 		}
@@ -2587,7 +2588,7 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 			peerConnectAddress pca;
 			pca.ts = now;
 			pca.type = RS_NET_CONN_TCP_LOCAL;
-			pca.addr = it->second.localaddr;
+			pca.addr = it->second.currentlocaladdr;
 	
 			{
 				/* Log */
@@ -2619,19 +2620,19 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 	//		(it->second.netMode = RS_NET_MODE_EXT))
 	
 	/* always try external */
-	if (isValidNet(&(it->second.serveraddr.sin_addr)))
+	if (isValidNet(&(it->second.currentserveraddr.sin_addr)))
 	{
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::retryConnectTCP() Ext Address Valid: ";
-		std::cerr << inet_ntoa(it->second.serveraddr.sin_addr);
-		std::cerr << ":" << ntohs(it->second.serveraddr.sin_port);
+		std::cerr << inet_ntoa(it->second.currentserveraddr.sin_addr);
+		std::cerr << ":" << ntohs(it->second.currentserveraddr.sin_port);
 		std::cerr << std::endl;
 #endif
 
 
 		bool remoteExists = false;
 		if ((it->second.inConnAttempt) && 
-			(it->second.currentConnAddr.type == RS_NET_CONN_TCP_EXTERNAL))
+			(it->second.currentConnAddrAttempt.type == RS_NET_CONN_TCP_EXTERNAL))
 		{
 			remoteExists = true;
 		}
@@ -2658,7 +2659,7 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 			peerConnectAddress pca;
 			pca.ts = now;
 			pca.type = RS_NET_CONN_TCP_EXTERNAL;
-			pca.addr = it->second.serveraddr;
+			pca.addr = it->second.currentserveraddr;
 
 			{
 				/* Log */
@@ -2796,7 +2797,7 @@ bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
 
 	if (id == mAuthMgr->OwnId())
 	{
-		ownState.localaddr = addr;
+		ownState.currentlocaladdr = addr;
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 		return true;
 	}
@@ -2817,7 +2818,7 @@ bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
 	}
 
 	/* "it" points to peer */
-	it->second.localaddr = addr;
+	it->second.currentlocaladdr = addr;
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 	return true;
@@ -2830,7 +2831,7 @@ bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
 
 	if (id == mAuthMgr->OwnId())
 	{
-		ownState.serveraddr = addr;
+		ownState.currentserveraddr = addr;
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 		return true;
 	}
@@ -2851,7 +2852,7 @@ bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
 	}
 
 	/* "it" points to peer */
-	it->second.serveraddr = addr;
+	it->second.currentserveraddr = addr;
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 	return true;
@@ -2941,17 +2942,17 @@ bool    p3ConnectMgr::setVisState(std::string id, uint32_t visState)
 
 bool 	p3ConnectMgr::checkNetAddress()
 {
-	in_addr_t old_in_addr = ownState.localaddr.sin_addr.s_addr;
-	int old_in_port = ownState.localaddr.sin_port;
+	in_addr_t old_in_addr = ownState.currentlocaladdr.sin_addr.s_addr;
+	int old_in_port = ownState.currentlocaladdr.sin_port;
 
 	{
 		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 		// GetPreferredInterface now chooses the best local ilterface for you. So it's the default function to use now.
 		//
-		ownState.localaddr.sin_addr = getPreferredInterface() ;
+		ownState.currentlocaladdr.sin_addr = getPreferredInterface() ;
 
-		if(ownState.localaddr.sin_addr.s_addr != 0)
+		if(ownState.currentlocaladdr.sin_addr.s_addr != 0)
 		{
 			if (netFlagLocalOk != true) 
 			{
@@ -2964,34 +2965,34 @@ bool 	p3ConnectMgr::checkNetAddress()
 			}
 		} 
 
-		if(isLoopbackNet(&(ownState.localaddr.sin_addr)))
+		if(isLoopbackNet(&(ownState.currentlocaladdr.sin_addr)))
 			mNetStatus = RS_NET_LOOPBACK;
 
-		int port = ntohs(ownState.localaddr.sin_port);
+		int port = ntohs(ownState.currentlocaladdr.sin_port);
 
 		if ((port < PQI_MIN_PORT) || (port > PQI_MAX_PORT))
-			ownState.localaddr.sin_port = htons(PQI_DEFAULT_PORT);
+			ownState.currentlocaladdr.sin_port = htons(PQI_DEFAULT_PORT);
 
 		/* if localaddr = serveraddr, then ensure that the ports
 		 * are the same (modify server)... this mismatch can
 		 * occur when the local port is changed....
 		 */
-		if (ownState.localaddr.sin_addr.s_addr == ownState.serveraddr.sin_addr.s_addr)
-			ownState.serveraddr.sin_port = ownState.localaddr.sin_port;
+		if (ownState.currentlocaladdr.sin_addr.s_addr == ownState.currentserveraddr.sin_addr.s_addr)
+			ownState.currentserveraddr.sin_port = ownState.currentlocaladdr.sin_port;
 
 		// ensure that address family is set, otherwise windows Barfs.
-		ownState.localaddr.sin_family = AF_INET;
-		ownState.serveraddr.sin_family = AF_INET;
+		ownState.currentlocaladdr.sin_family = AF_INET;
+		ownState.currentserveraddr.sin_family = AF_INET;
 
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::checkNetAddress() Final Local Address: ";
-		std::cerr << inet_ntoa(ownState.localaddr.sin_addr);
-		std::cerr << ":" << ntohs(ownState.localaddr.sin_port);
+		std::cerr << inet_ntoa(ownState.currentlocaladdr.sin_addr);
+		std::cerr << ":" << ntohs(ownState.currentlocaladdr.sin_port);
 		std::cerr << std::endl;
 #endif
 	}
 
-	if ((old_in_addr != ownState.localaddr.sin_addr.s_addr) || (old_in_port != ownState.localaddr.sin_port)) 
+	if ((old_in_addr != ownState.currentlocaladdr.sin_addr.s_addr) || (old_in_port != ownState.currentlocaladdr.sin_port))
 	{
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::checkNetAddress() local address changed, resetting network." << std::endl;
@@ -3143,8 +3144,20 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
 
 	item->visState = ownState.visState;
 	item->lastContact = ownState.lastcontact;
-	item->localaddr = ownState.localaddr;
-	item->remoteaddr = ownState.serveraddr;
+
+	std::list <IpAddressTimed> tempLocaladdrList;
+	struct IpAddressTimed locaIp;
+	locaIp.ipAddr = ownState.currentlocaladdr;
+	locaIp.seenTime = time(NULL);
+	tempLocaladdrList.push_back(locaIp);
+	item->localaddrList = tempLocaladdrList;
+
+	std::list <IpAddressTimed> tempRemoteaddrList;
+	struct IpAddressTimed remoteIp;
+	remoteIp.ipAddr = ownState.currentserveraddr;
+	remoteIp.seenTime = time(NULL);
+	tempRemoteaddrList.push_back(remoteIp);
+	item->remoteaddrList = tempRemoteaddrList;
 
 #ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::saveList() Own Config Item:";
@@ -3166,8 +3179,10 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
 		item->netMode = (it->second).netMode;
 		item->visState = (it->second).visState;
 		item->lastContact = (it->second).lastcontact;
-		item->localaddr = (it->second).localaddr;
-		item->remoteaddr = (it->second).serveraddr;
+		item->currentlocaladdr = (it->second).currentlocaladdr;
+		item->currentremoteaddr = (it->second).currentserveraddr;
+		item->localaddrList = (it->second).localaddrList;
+		item->remoteaddrList = (it->second).remoteaddrList;
 
 		saveData.push_back(item);
 #ifdef CONN_DEBUG
@@ -3239,8 +3254,8 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 #endif
 				/* add ownConfig */
 				setOwnNetConfig(pitem->netMode, pitem->visState);
-				setLocalAddress(pitem->pid, pitem->localaddr);
-				setExtAddress(pitem->pid, pitem->remoteaddr);
+				setLocalAddress(pitem->pid, pitem->currentlocaladdr);
+				setExtAddress(pitem->pid, pitem->currentremoteaddr);
 			}
 			else
 			{
@@ -3252,8 +3267,8 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 #endif
 				/* ************* */
 				addFriend(pitem->pid, pitem->netMode, pitem->visState, pitem->lastContact);
-				setLocalAddress(pitem->pid, pitem->localaddr);
-				setExtAddress(pitem->pid, pitem->remoteaddr);
+				setLocalAddress(pitem->pid, pitem->currentlocaladdr);
+				setExtAddress(pitem->pid, pitem->currentremoteaddr);
 			}
 		}
 		else if (sitem)

@@ -358,8 +358,8 @@ void p3disc::sendOwnDetails(std::string to)
 
 	// Fill the message
 	di -> PeerId(to);
-	di -> laddr = detail.localaddr;
-	di -> saddr = detail.serveraddr;
+	di -> laddr = detail.currentlocaladdr;
+	di -> saddr = detail.currentserveraddr;
 	di -> contact_tf = 0;
 
 	/* construct disc flags */
@@ -431,8 +431,8 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 	di -> aboutId = about;
 
 	// set the server address.
-	di -> laddr = detail.localaddr;
-	di -> saddr = detail.serveraddr;
+	di -> localaddrList = detail.localaddrList;
+	di -> remoteaddrList = detail.remoteaddrList;
 
 	if (detail.state & RS_PEER_S_CONNECTED)
 	{
@@ -702,13 +702,13 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 	/* only valid certs, and not ourselves */
 	if ((loaded) && (peerId != mConnMgr->getOwnId()))
 	{
-		mConnMgr->peerStatus(peerId, item->laddr, item->saddr, type, flags, RS_CB_DISC);
+		mConnMgr->peerStatus(peerId, item->currentladdr, item->currentsaddr, type, flags, RS_CB_DISC);
 
 		std::string hashid1 = RsUtil::HashId(peerId, false);
-		mConnMgr->stunStatus(hashid1, item->saddr, type, RS_STUN_FRIEND_OF_FRIEND);
+		mConnMgr->stunStatus(hashid1, item->currentsaddr, type, RS_STUN_FRIEND_OF_FRIEND);
 	}
 
-	addDiscoveryData(item->PeerId(), peerId, item->laddr, item->saddr, item->discFlags, time(NULL));
+	addDiscoveryData(item->PeerId(), peerId, item->currentladdr, item->currentsaddr, item->discFlags, time(NULL));
 
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS, NOTIFY_TYPE_MOD);
 

@@ -179,7 +179,7 @@ int	pqipersongrp::init_listener()
 		mConnMgr->getOwnNetStatus(state);
 
   		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-		pqil = createListener(state.localaddr);
+		pqil = createListener(state.currentlocaladdr);
 	}
 	return 1;
 }
@@ -207,7 +207,7 @@ int     pqipersongrp::restart_listener()
   		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
 		pqil -> resetlisten();
-		pqil -> setListenAddr(state.localaddr);
+		pqil -> setListenAddr(state.currentlocaladdr);
 		pqil -> setuplisten();
 
 		std::cerr << "pqipersongrp::restart_listener() done!" << std::endl;

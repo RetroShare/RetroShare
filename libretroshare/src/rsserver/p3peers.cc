@@ -354,9 +354,10 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 		}
 	}
 
+	//TODO : check use of this details
 	// From all addresses, show the most recent one if no address is currently in use.
-	struct sockaddr_in best_local_addr = (!strcmp(inet_ntoa(pcs.localaddr.sin_addr),"0.0.0.0"))?getPreferredAddress(pcs.dht.laddr,pcs.dht.ts,pcs.disc.laddr,pcs.disc.ts,pcs.peer.laddr,pcs.peer.ts):pcs.localaddr ;
-	struct sockaddr_in best_servr_addr = (!strcmp(inet_ntoa(pcs.serveraddr.sin_addr),"0.0.0.0"))?getPreferredAddress(pcs.dht.raddr,pcs.dht.ts,pcs.disc.raddr,pcs.disc.ts,pcs.peer.raddr,pcs.peer.ts):pcs.serveraddr ;
+	struct sockaddr_in best_local_addr = (!strcmp(inet_ntoa(pcs.currentlocaladdr.sin_addr),"0.0.0.0"))?getPreferredAddress(pcs.dht.laddr,pcs.dht.ts,pcs.disc.laddr,pcs.disc.ts,pcs.peer.laddr,pcs.peer.ts):pcs.currentlocaladdr ;
+	struct sockaddr_in best_servr_addr = (!strcmp(inet_ntoa(pcs.currentserveraddr.sin_addr),"0.0.0.0"))?getPreferredAddress(pcs.dht.raddr,pcs.dht.ts,pcs.disc.raddr,pcs.disc.ts,pcs.peer.raddr,pcs.peer.ts):pcs.currentserveraddr ;
 		
 
 	/* fill from pcs */
@@ -430,7 +431,7 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 		/* 
 		 */
 		autostr << "Trying ";
-		switch(pcs.currentConnAddr.type)
+		switch(pcs.currentConnAddrAttempt.type)
 		{
 			case RS_NET_CONN_TCP_LOCAL:
 				autostr << "TCP (Local)";
@@ -440,7 +441,7 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 				break;
 			case RS_NET_CONN_UDP_DHT_SYNC:
 				autostr << "UDP (ETA: ";
-				autostr << 420 - (time(NULL) - pcs.currentConnAddr.ts);
+				autostr << 420 - (time(NULL) - pcs.currentConnAddrAttempt.ts);
 				autostr << ")";
 				break;
 			default:

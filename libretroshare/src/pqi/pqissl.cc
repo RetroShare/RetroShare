@@ -1264,7 +1264,7 @@ int	pqissl::accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr) // initiat
 
 	peerConnectState details;
 	mConnMgr->getOwnNetStatus(details);
-	sameLAN = isSameSubnet(&(remote_addr.sin_addr), &(details.localaddr.sin_addr));
+	sameLAN = isSameSubnet(&(remote_addr.sin_addr), &(details.currentlocaladdr.sin_addr));
 
 	{
 	  std::ostringstream out;
@@ -1272,7 +1272,7 @@ int	pqissl::accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr) // initiat
 	  out << std::endl;
 	  out << "\t\tchecking for same LAN";
 	  out << std::endl;
-	  out << "\t localaddr: " << inet_ntoa(details.localaddr.sin_addr);
+	  out << "\t localaddr: " << inet_ntoa(details.currentlocaladdr.sin_addr);
 	  out << std::endl;
 	  out << "\t remoteaddr: " << inet_ntoa(remote_addr.sin_addr);
 	  out << std::endl;

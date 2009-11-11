@@ -306,8 +306,8 @@ RsDiscReply::~RsDiscReply()
 
 void 	RsDiscReply::clear()
 {
-	memset(&laddr, 0, sizeof(laddr));
-	memset(&saddr, 0, sizeof(laddr));
+	memset(&currentladdr, 0, sizeof(currentladdr));
+	memset(&currentsaddr, 0, sizeof(currentladdr));
 	contact_tf = 0;
 	discFlags = 0;
 	aboutId.clear();
@@ -320,12 +320,12 @@ std::ostream &RsDiscReply::print(std::ostream &out, uint16_t indent)
 	uint16_t int_Indent = indent + 2;
 
         printIndent(out, int_Indent);
-        out << "Local Address: " << inet_ntoa(laddr.sin_addr);
-	out << " Port: " << ntohs(laddr.sin_port) << std::endl;
+	out << "Local Address: " << inet_ntoa(currentladdr.sin_addr);
+	out << " Port: " << ntohs(currentladdr.sin_port) << std::endl;
 
         printIndent(out, int_Indent);
-        out << "Server Address: " << inet_ntoa(saddr.sin_addr);
-	out << " Port: " << ntohs(saddr.sin_port) << std::endl;
+	out << "Server Address: " << inet_ntoa(currentsaddr.sin_addr);
+	out << " Port: " << ntohs(currentsaddr.sin_port) << std::endl;
 
         printIndent(out, int_Indent);
         out << "Contact TimeFrame: " << contact_tf;
@@ -380,8 +380,8 @@ bool     RsDiscSerialiser::serialiseReply(RsDiscReply *item, void *data, uint32_
 	offset += 8;
 
 	/* add mandatory parts first */
-	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->laddr));
-	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->saddr));
+	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->currentladdr));
+	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->currentsaddr));
 	ok &= setRawUInt16(data, tlvsize, &offset, item->contact_tf);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->discFlags);
 
@@ -441,9 +441,9 @@ RsDiscReply *RsDiscSerialiser::deserialiseReply(void *data, uint32_t *pktsize)
 
 	/* get mandatory parts first */
 	ok &= GetTlvIpAddrPortV4(data, rssize, &offset,
-					TLV_TYPE_IPV4_LOCAL, &(item->laddr));
+					TLV_TYPE_IPV4_LOCAL, &(item->currentladdr));
 	ok &= GetTlvIpAddrPortV4(data, rssize, &offset,
-					TLV_TYPE_IPV4_REMOTE, &(item->saddr));
+					TLV_TYPE_IPV4_REMOTE, &(item->currentsaddr));
 	ok &= getRawUInt16(data, rssize, &offset, &(item->contact_tf));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->discFlags));
 

@@ -718,8 +718,8 @@ void RsPeerNetItem::clear()
 	visState = 0;
 	lastContact = 0;
 
-	sockaddr_clear(&localaddr);
-	sockaddr_clear(&remoteaddr);
+	sockaddr_clear(&currentlocaladdr);
+	sockaddr_clear(&currentremoteaddr);
 }
 
 std::ostream &RsPeerNetItem::print(std::ostream &out, uint16_t indent)
@@ -740,12 +740,12 @@ std::ostream &RsPeerNetItem::print(std::ostream &out, uint16_t indent)
 	out << "lastContact: " << lastContact << std::endl;
 
 	printIndent(out, int_Indent);
-	out << "localaddr: " << inet_ntoa(localaddr.sin_addr);
-	out << ":" << htons(localaddr.sin_port) << std::endl;
+	out << "currentlocaladdr: " << inet_ntoa(currentlocaladdr.sin_addr);
+	out << ":" << htons(currentlocaladdr.sin_port) << std::endl;
 
 	printIndent(out, int_Indent);
-	out << "remoteaddr: " << inet_ntoa(remoteaddr.sin_addr);
-	out << ":" << htons(remoteaddr.sin_port) << std::endl;
+	out << "currentremoteaddr: " << inet_ntoa(currentremoteaddr.sin_addr);
+	out << ":" << htons(currentremoteaddr.sin_port) << std::endl;
 
         printRsItemEnd(out, "RsPeerNetItem", indent);
 	return out;
@@ -796,8 +796,8 @@ bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint3
 	ok &= setRawUInt32(data, tlvsize, &offset, item->netMode); /* Mandatory */
 	ok &= setRawUInt32(data, tlvsize, &offset, item->visState); /* Mandatory */
 	ok &= setRawUInt32(data, tlvsize, &offset, item->lastContact); /* Mandatory */
-        ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->localaddr)); 
-        ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->remoteaddr)); 
+	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->currentlocaladdr));
+	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->currentremoteaddr));
 
 	if(offset != tlvsize)
 	{
@@ -847,8 +847,8 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 	ok &= getRawUInt32(data, rssize, &offset, &(item->netMode)); /* Mandatory */
 	ok &= getRawUInt32(data, rssize, &offset, &(item->visState)); /* Mandatory */
 	ok &= getRawUInt32(data, rssize, &offset, &(item->lastContact)); /* Mandatory */
-        ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->localaddr)); 
-        ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->remoteaddr)); 
+	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->currentlocaladdr));
+	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->currentremoteaddr));
 
 	if (offset != rssize)
 	{

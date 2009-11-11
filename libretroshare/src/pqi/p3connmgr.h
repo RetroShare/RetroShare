@@ -28,6 +28,7 @@
 
 #include "pqi/pqimonitor.h"
 #include "pqi/p3authmgr.h"
+#include "serialiser/rsconfigitems.h"
 
 //#include "pqi/p3dhtmgr.h"
 //#include "pqi/p3upnpmgr.h"
@@ -135,7 +136,13 @@ class peerConnectState
 	uint32_t netMode; /* EXT / UPNP / UDP / INVALID */
 	uint32_t visState; /* STD, GRAY, DARK */	
 
-	struct sockaddr_in localaddr, serveraddr;
+	//used to store friends ip lists
+	std::list<IpAddressTimed> localaddrList;
+	std::list<IpAddressTimed> remoteaddrList;
+
+	//used to store current ip (for config and connection management)
+	struct sockaddr_in currentlocaladdr;             /* Mandatory */
+	struct sockaddr_in currentserveraddr;            /* Mandatory */
 
         time_t lastcontact; 
 
@@ -157,7 +164,7 @@ class peerConnectState
 
 	/* a list of connect attempts to make (in order) */
 	bool inConnAttempt;
-	peerConnectAddress currentConnAddr;
+	peerConnectAddress currentConnAddrAttempt;
 	std::list<peerConnectAddress> connAddrs;
 
 };
