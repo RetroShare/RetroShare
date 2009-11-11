@@ -76,8 +76,7 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	struct sockaddr_in currentlocaladdr;             /* Mandatory */
 	struct sockaddr_in currentremoteaddr;            /* Mandatory */
 
-	std::list<IpAddressTimed> localaddrList;
-	std::list<IpAddressTimed> remoteaddrList;
+        std::list<IpAddressTimed> ipAddressList;
 };
 
 class RsPeerStunItem: public RsItem

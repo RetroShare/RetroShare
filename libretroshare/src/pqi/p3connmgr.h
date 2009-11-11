@@ -83,6 +83,7 @@ const uint32_t RS_NET_CONN_UDP_ALL 		= 0x00f0;
 
 const uint32_t RS_NET_CONN_TCP_LOCAL 		= 0x0001;
 const uint32_t RS_NET_CONN_TCP_EXTERNAL 	= 0x0002;
+const uint32_t RS_NET_CONN_TCP_UNKNOW_TOPOLOGY	= 0x0003;
 const uint32_t RS_NET_CONN_UDP_DHT_SYNC 	= 0x0010;
 const uint32_t RS_NET_CONN_UDP_PEER_SYNC 	= 0x0020; /* coming soon */
 
@@ -136,9 +137,10 @@ class peerConnectState
 	uint32_t netMode; /* EXT / UPNP / UDP / INVALID */
 	uint32_t visState; /* STD, GRAY, DARK */	
 
-	//used to store friends ip lists
-	std::list<IpAddressTimed> localaddrList;
-	std::list<IpAddressTimed> remoteaddrList;
+        //used to store friends ip lists
+        std::list<IpAddressTimed> ipAddressList;
+        void sortIpAdressList(); //Sort the ip list ordering by seen time
+        void purgeIpAdressList(); //purge old addresses to keep a small list
 
 	//used to store current ip (for config and connection management)
 	struct sockaddr_in currentlocaladdr;             /* Mandatory */

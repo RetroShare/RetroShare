@@ -764,7 +764,7 @@ uint32_t RsPeerConfigSerialiser::sizeNet(RsPeerNetItem *i)
 	s += GetTlvIpAddrPortV4Size(); /* remoteaddr */ 
 
 	//add the size of the ip list
-	int ipListSize = i->remoteaddrList.size();
+        int ipListSize = i->ipAddressList.size();
 	s += ipListSize * GetTlvIpAddrPortV4Size();
 	s += ipListSize * 8; //size of an uint64
 
@@ -806,7 +806,7 @@ bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint3
 
 	//store the ip list
 	std::list<IpAddressTimed>::iterator ipListIt;
-	for (ipListIt = item->remoteaddrList.begin(); ipListIt!=(item->remoteaddrList.end()); ipListIt++) {
+        for (ipListIt = item->ipAddressList.begin(); ipListIt!=(item->ipAddressList.end()); ipListIt++) {
 	    ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(ipListIt->ipAddr));
 	    ok &= setRawUInt64(data, tlvsize, &offset, ipListIt->seenTime);
 	}
@@ -872,7 +872,7 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 	    ipTimed.seenTime = time;
 	    ipTimedList.push_back(ipTimed);
 	}
-	item->remoteaddrList = ipTimedList;
+        item->ipAddressList = ipTimedList;
 
 	if (offset != rssize)
 	{

@@ -82,8 +82,7 @@ virtual  void clear();
 virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	//use for transmitting peer adress list
-	std::list<IpAddressTimed> localaddrList;
-	std::list<IpAddressTimed> remoteaddrList;
+        std::list<IpAddressTimed> ipAddressList;
 
 	//use for transmitting my own adress list
 	struct sockaddr_in currentladdr;
