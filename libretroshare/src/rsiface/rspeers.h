@@ -96,7 +96,8 @@ class RsPeerDetails
         std::string             localAddr;
         uint16_t                localPort;
         std::string             extAddr;
-        uint16_t                extPort;
+	uint16_t                extPort;
+	std::list<std::string>  ipAddressList;
 
 	uint32_t		netMode;
 	uint32_t		tryNetMode; /* only for ownState */

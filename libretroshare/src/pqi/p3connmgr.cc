@@ -3850,5 +3850,4 @@ void peerConnectState::printIpAddressList(std::list<IpAddressTimed> ipTimedList)
 			std::cerr << " seenTime : " << ipListIt->seenTime << std::endl;
 #endif
 		}
-
 }

@@ -126,6 +126,10 @@ void ConfCertDialog::loadDialog()
 	ui.extAddress->setText(QString::fromStdString(detail.extAddr));
 	ui.extPort -> setValue(detail.extPort);
 
+	ui.ipAddressList->clear();
+	for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
+	       ui.ipAddressList->addItem(QString::fromStdString(*it));
+
 	/* set the url for DNS access (OLD) */
 	//ui.extName->setText(QString::fromStdString(""));
 

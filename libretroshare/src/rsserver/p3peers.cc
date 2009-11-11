@@ -368,6 +368,15 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 	d.extPort	= ntohs(best_servr_addr.sin_port);
 	d.lastConnect	= pcs.lastcontact;
 	d.connectPeriod = 0;
+	std::list<std::string> ipAddressList;
+	std::list<IpAddressTimed> pcsList = pcs.getIpAddressList();
+	for (std::list<IpAddressTimed>::iterator ipListIt = pcsList.begin(); ipListIt!=(pcsList.end()); ipListIt++) {
+	    std::ostringstream toto;
+	    toto << ntohs(ipListIt->ipAddr.sin_port);
+	    ipAddressList.push_back(std::string(inet_ntoa(ipListIt->ipAddr.sin_addr)) + ":" + toto.str());
+	}
+	d.ipAddressList = ipAddressList;
+
 
 	/* Translate */
 	
