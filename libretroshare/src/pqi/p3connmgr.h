@@ -141,6 +141,7 @@ class peerConnectState
         std::list<IpAddressTimed> ipAddressList;
         void sortIpAdressList(); //Sort the ip list ordering by seen time
         void purgeIpAdressList(); //purge old addresses to keep a small list
+        void updateIpAdressList(IpAddressTimed ipTimed); //purge old addresses to keep a small list
 
 	//used to store current ip (for config and connection management)
 	struct sockaddr_in currentlocaladdr;             /* Mandatory */

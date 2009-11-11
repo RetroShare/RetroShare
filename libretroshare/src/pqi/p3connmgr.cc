@@ -3718,3 +3718,11 @@ bool 	p3ConnectMgr::getStunExtAddress(struct sockaddr_in &addr) {
 bool 	p3ConnectMgr::getExtFinderExtAddress(struct sockaddr_in &addr)    {
 	    return (use_extr_addr_finder && mExtAddrFinder->hasValidIP(&addr));
 }
+
+void peerConnectState::sortIpAdressList() { //Sort the ip list ordering by seen time
+}
+
+void peerConnectState::purgeIpAdressList() {//purge old addresses to keep a small list
+}
+void peerConnectState::updateIpAdressList(IpAddressTimed ipTimed) { //purge old addresses to keep a small list
+}
