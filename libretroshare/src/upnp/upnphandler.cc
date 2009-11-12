@@ -30,8 +30,10 @@ bool upnphandler::initUPnPState()
 	    dataMtx.lock(); /* LOCK MUTEX */
 	    upnpState = RS_UPNP_S_READY;
 
+	    #ifdef UPNP_DEBUG
 	    std::cerr << "upnphandler::initUPnPState cUPnPControlPoint internal ip adress : ";
 	    std::cerr << cUPnPControlPoint->getInternalIpAddress() << std::endl;
+	    #endif
 
 	    //const char ipaddr = cUPnPControlPoint->getInternalIpAddress().c_str();
 	    inet_aton(cUPnPControlPoint->getInternalIpAddress(), &(upnp_iaddr.sin_addr));
@@ -297,7 +299,10 @@ void  upnphandler::enable(bool active)
 void    upnphandler::shutdown()
 {
 	/* blocking call to shutdown upnp */
+
+	#ifdef UPNP_DEBUG
 	std::cerr << "upnphandler::shutdown() called." << std::endl;
+	#endif
 	shutdown_upnp();
 }
 

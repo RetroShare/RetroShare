@@ -123,6 +123,7 @@ std::string CUPnPLib::processUPnPErrorMessage(
 	IXML_Document *doc) const
 {
 	std::ostringstream msg;
+#ifdef UPNP_DEBUG
 	if (errorString == NULL || *errorString == 0) {
 		errorString = "Not available";
 	}
@@ -151,7 +152,7 @@ std::string CUPnPLib::processUPnPErrorMessage(
 			" (" << errorCode << ").";
 		std::cerr << std::endl;
 	}
-	
+#endif
 	return msg.str();
 }
 
@@ -168,18 +169,24 @@ void CUPnPLib::ProcessActionResponse(
 		while (child) {
 			const DOMString childTag = Element_GetTag(child);
 			std::string childValue = Element_GetTextValue(child);
+#ifdef UPNP_DEBUG
 			std::cerr << "CUPnPLib::ProcessActionResponse() \n    " <<
 				childTag << "='" <<
 				childValue << "'";
+#endif
 			//add the variable to the wanservice property map
 			(m_ctrlPoint.m_WanService->propertyMap)[std::string(childTag)] = std::string(childValue);
 			child = Element_GetNextSibling(child);
 		}
 	} else {
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPLib::ProcessActionResponse() \n    Empty response for action '" <<
 			actionName << "'.";
+#endif
 	}
+#ifdef UPNP_DEBUG
 	std::cerr << std::endl;
+#endif
 }
 
 
@@ -358,12 +365,14 @@ m_retval              (upnpLib.Element_GetFirstChildByTag(argument, "retval")),
 m_relatedStateVariable(upnpLib.Element_GetChildValueByTag(argument, "relatedStateVariable"))
 {
 
+#ifdef UPNP_DEBUG
 	std::cerr <<	"CUPnPArgument::CUPnPArgument() \n    Argument:"                  <<
 		"\n        name: "                 << m_name <<
 		"\n        direction: "            << m_direction <<
 		"\n        retval: "               << m_retval <<
 		"\n        relatedStateVariable: " << m_relatedStateVariable;
 	std::cerr << std::endl;
+#endif
 }
 
 
@@ -377,9 +386,11 @@ m_UPnPControlPoint(upnpControlPoint),
 m_ArgumentList(upnpControlPoint, upnpLib, action, SCPDURL),
 m_name(upnpLib.Element_GetChildValueByTag(action, "name"))
 {
+#ifdef UPNP_DEBUG
 	std::cerr <<	"CUPnPAction::CUPnPAction() \n    Action:"    <<
 		"\n        name: " << m_name;
 	std::cerr << std::endl;
+#endif
 }
 
 
@@ -392,9 +403,11 @@ CUPnPAllowedValue::CUPnPAllowedValue(
 m_UPnPControlPoint(upnpControlPoint),
 m_allowedValue(upnpLib.Element_GetTextValue(allowedValue))
 {
+#ifdef UPNP_DEBUG
 	std::cerr <<	"CUPnPAllowedValue::CUPnPAllowedValue() \n    AllowedValue:"      <<
 		"\n        allowedValue: " << m_allowedValue;
 	std::cerr << std::endl;
+#endif
 }
 
 
@@ -411,12 +424,14 @@ m_dataType    (upnpLib.Element_GetChildValueByTag(stateVariable, "dataType")),
 m_defaultValue(upnpLib.Element_GetChildValueByTag(stateVariable, "defaultValue")),
 m_sendEvents  (upnpLib.Element_GetAttributeByTag (stateVariable, "sendEvents"))
 {
-        std::cerr <<	"CUPnPStateVariable::CUPnPStateVariable() \n    StateVariable:"     <<
+#ifdef UPNP_DEBUG
+	std::cerr <<	"CUPnPStateVariable::CUPnPStateVariable() \n    StateVariable:"     <<
 		"\n        name: "         << m_name <<
 		"\n        dataType: "     << m_dataType <<
 		"\n        defaultValue: " << m_defaultValue <<
 		"\n        sendEvents: "   << m_sendEvents;
 	std::cerr << std::endl;
+#endif
 }
 
 
@@ -477,10 +492,12 @@ m_SCPD(NULL)
 		m_SCPDURL.c_str(),
 		scpdURL);
 	if( errcode != UPNP_E_SUCCESS ) {
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPService::CUPnPService() Error generating scpdURL from " <<
 			"|" << URLBase << "|" <<
 			m_SCPDURL << "|.";
 		std::cerr << std::endl;
+#endif
 	} else {
 		m_absSCPDURL = scpdURL;
 	}
@@ -493,10 +510,12 @@ m_SCPD(NULL)
 		m_controlURL.c_str(),
 		controlURL);
 	if( errcode != UPNP_E_SUCCESS ) {
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPService::CUPnPService() Error generating controlURL from " <<
 			"|" << URLBase << "|" <<
 			m_controlURL << "|.";
 		std::cerr << std::endl;
+#endif
 	} else {
 		m_absControlURL = controlURL;
 	}
@@ -509,14 +528,17 @@ m_SCPD(NULL)
 		m_eventSubURL.c_str(),
 		eventURL);
 	if( errcode != UPNP_E_SUCCESS ) {
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPService::CUPnPService() Error generating eventURL from " <<
 			"|" << URLBase << "|" <<
 			m_eventSubURL << "|.";
 		std::cerr << std::endl;
+#endif
 	} else {
 		m_absEventSubURL = eventURL;
 	}
 
+#ifdef UPNP_DEBUG
 	std::cerr <<	"CUPnPService::CUPnPService() \n    Service:"             <<
 		"\n        serviceType: "    << m_serviceType <<
 		"\n        serviceId: "      << m_serviceId <<
@@ -527,6 +549,7 @@ m_SCPD(NULL)
 		"\n        eventSubURL: "    << m_eventSubURL <<
 		"\n        absEventSubURL: " << m_absEventSubURL;
 	std::cerr << std::endl;
+#endif
 
 	if (m_serviceType == upnpLib.UPNP_SERVICE_WAN_IP_CONNECTION ||
 	    m_serviceType == upnpLib.UPNP_SERVICE_WAN_PPP_CONNECTION) {
@@ -545,26 +568,32 @@ m_SCPD(NULL)
 			upnpLib.m_ctrlPoint.SetWanService(this);
 			// Log it
 			msg.str("");
+#ifdef UPNP_DEBUG
 			std::cerr << "CUPnPService::CUPnPService() WAN Service Detected: '" <<
 				m_serviceType << "'.";
 			std::cerr  << std::endl;
+#endif
 			// Subscribe
 			upnpLib.m_ctrlPoint.Subscribe(*this);
 #if 0
 //#warning Delete this code on release.
 		} else {
 			msg.str("");
+#ifdef UPNP_DEBUG
 			std::cerr << "WAN service detected again: '" <<
 				m_serviceType <<
 				"'. Will only use the first instance.";
 			std::cerr << std::endl;
+#endif
 		}
 #endif
 	} else {
 		msg.str("");
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPService::CUPnPService() Uninteresting service detected: '" <<
 			m_serviceType << "'. Ignoring.";
 		std::cerr << std::endl;
+#endif
 	}
 }
 
@@ -578,21 +607,29 @@ bool CUPnPService::Execute(
 	const std::string &ActionName,
 	const std::vector<CUPnPArgumentValue> &ArgValue) const
 {
+#ifdef UPNP_DEBUG
 	std::cerr << "CUPnPService::Execute() called." << std::endl;
+#endif
 	if (m_SCPD.get() == NULL) {
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPService::Execute() Service without SCPD Document, cannot execute action '" << ActionName <<
 			"' for service '" << GetServiceType() << "'.";
 		std::cerr << std::endl;
+#endif
 		return false;
 	}
+#ifdef UPNP_DEBUG
 	std::cerr << "CUPnPService::Execute() Sending action " << std::endl;
+#endif
 	// Check for correct action name
 	ActionList::const_iterator itAction =
 		m_SCPD->GetActionList().find(ActionName);
 	if (itAction == m_SCPD->GetActionList().end()) {
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPService::Execute() invalid action name '" << ActionName <<
 			"' for service '" << GetServiceType() << "'.";
 		std::cerr << std::endl;
+#endif
 		return false;
 	}
 	std::cerr <<  ActionName << "(";
@@ -603,20 +640,24 @@ bool CUPnPService::Execute(
 		ArgumentList::const_iterator itArg =
 			action.GetArgumentList().find(ArgValue[i].GetArgument());
 		if (itArg == action.GetArgumentList().end()) {
+#ifdef UPNP_DEBUG
 			std::cerr << "CUPnPService::Execute() Invalid argument name '" << ArgValue[i].GetArgument() <<
 				"' for action '" << action.GetName() <<
 				"' for service '" << GetServiceType() << "'.";
 			std::cerr << std::endl;
+#endif
 			return false;
 		}
 		const CUPnPArgument &argument = *(itArg->second);
 		if (tolower(argument.GetDirection()[0]) != 'i' ||
 		    tolower(argument.GetDirection()[1]) != 'n') {
+#ifdef UPNP_DEBUG
 			std::cerr << "CUPnPService::Execute() Invalid direction for argument '" <<
 				ArgValue[i].GetArgument() <<
 				"' for action '" << action.GetName() <<
 				"' for service '" << GetServiceType() << "'.";
 			std::cerr << std::endl;
+#endif
 			return false;
 		}
 		const std::string relatedStateVariableName =
@@ -626,23 +667,27 @@ bool CUPnPService::Execute(
 				m_SCPD->GetServiceStateTable().
 				find(relatedStateVariableName);
 			if (itSVT == m_SCPD->GetServiceStateTable().end()) {
+#ifdef UPNP_DEBUG
 				std::cerr << "CUPnPService::Execute() Inconsistent Service State Table, did not find '" <<
 					relatedStateVariableName <<
 					"' for argument '" << argument.GetName() <<
 					"' for action '" << action.GetName() <<
 					"' for service '" << GetServiceType() << "'.";
 				std::cerr << std::endl;
+#endif
 				return false;
 			}
 			const CUPnPStateVariable &stateVariable = *(itSVT->second);
 			if (	!stateVariable.GetAllowedValueList().empty() &&
 				stateVariable.GetAllowedValueList().find(ArgValue[i].GetValue()) ==
 					stateVariable.GetAllowedValueList().end()) {
+#ifdef UPNP_DEBUG
 				std::cerr << "CUPnPService::Execute() Value not allowed '" << ArgValue[i].GetValue() <<
 					"' for state variable '" << relatedStateVariableName <<
 					"' for argument '" << argument.GetName() <<
 					"' for action '" << action.GetName() <<
 					"' for service '" << GetServiceType() << "'.";
+#endif
 
 				return false;
 			}
@@ -650,16 +695,22 @@ bool CUPnPService::Execute(
 		if (firstTime) {
 			firstTime = false;
 		} else {
+#ifdef UPNP_DEBUG
 			std::cerr << ", ";
+#endif
 		}
+#ifdef UPNP_DEBUG
 		std::cerr <<
 			ArgValue[i].GetArgument() <<
 			"='" <<
 			ArgValue[i].GetValue() <<
 			"'";
+#endif
 	}
+#ifdef UPNP_DEBUG
 	std::cerr << ")";
 	std::cerr << std::endl;
+#endif
 	// Everything is ok, make the action
 	IXML_Document *ActionDoc = NULL;
 	if (ArgValue.size()) {
@@ -677,14 +728,18 @@ bool CUPnPService::Execute(
 			}
 		}
 	} else {
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPService::Execute() UpnpMakeAction" << std::endl;
+#endif
 		ActionDoc = UpnpMakeAction(
 			action.GetName().c_str(),
 			GetServiceType().c_str(),
 			0, NULL);
 		if (!ActionDoc) {
+#ifdef UPNP_DEBUG
 			std::cerr << "CUPnPService::Execute() Error: UpnpMakeAction returned NULL.";
 			std::cerr << std::endl;
+#endif
 			return false;
 		}
 	}
@@ -707,8 +762,10 @@ const std::string CUPnPService::GetStateVariable(
 	std::map<std::string, std::string>::iterator it;
 	it = propertyMap.find(stateVariableName);
 	if  (it != propertyMap.end()) {
+#ifdef UPNP_DEBUG
 	    std::cerr << "CUPnPService::GetStateVariable(" << stateVariableName << ") = ";
 	    std::cerr << (*it).second << std::endl;
+#endif
 	    return (*it).second;
 	} else {
 	    //property map is not populated with the specified value.
@@ -723,11 +780,15 @@ const std::string CUPnPService::GetStateVariable(
 		    &StVarVal);
 	    if (StVarVal != NULL) {
 		std::string varValue = std::string(StVarVal);
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPService::GetStateVariable() varValue returned by UpnpGetServiceVarStatus : " << varValue << std::endl;
+#endif
 		return varValue;
 	    } else {
 		//use event to get state variable
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPService::GetStateVariable() pausing in case of an UPnP event incomming.";
+#endif
 		time_t begin_time = time(NULL);
 		while (true) {
 		    if (time(NULL) - begin_time > 7) {
@@ -739,12 +800,16 @@ const std::string CUPnPService::GetStateVariable(
 	    //propertyMap should be populated by nom
 	    it = propertyMap.find(stateVariableName);
 	    if  (it != propertyMap.end()) {
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPService::GetStateVariable(" << stateVariableName << ") = ";
 		std::cerr << (*it).second << std::endl;
+#endif
 		return (*it).second;
 	    } else {
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPService::GetStateVariable(" << stateVariableName << ") = ";
 		std::cerr << "Empty String" << std::endl;
+#endif
 		return stdEmptyString;
 	    }
 	}
@@ -783,15 +848,18 @@ m_presentationURL  (upnpLib.Element_GetChildValueByTag(device, "presentationURL"
 		m_presentationURL.c_str(),
 		presURL);
 	if (errcode != UPNP_E_SUCCESS) {
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPDevice::CUPnPDevice() Error generating presentationURL from " <<
 			"|" << URLBase << "|" <<
 			m_presentationURL << "|.";
 		std::cerr << std::endl;
+#endif
 	} else {
 		m_presentationURL = presURL;
 	}
 	
 	msg.str("");
+#ifdef UPNP_DEBUG
 	std::cerr <<	"CUPnPDevice::CUPnPDevice() \n    Device: "                <<
 		"\n        friendlyName: "      << m_friendlyName <<
 		"\n        deviceType: "        << m_deviceType <<
@@ -806,6 +874,7 @@ m_presentationURL  (upnpLib.Element_GetChildValueByTag(device, "presentationURL"
 		"\n        UPC: "               << m_UPC <<
 		"\n        presentationURL: "   << m_presentationURL
 		<< std::endl;
+#endif
 }
 
 
@@ -824,6 +893,7 @@ m_URLBase(OriginalURLBase),
 m_location(location),
 m_expires(expires)
 {
+#ifdef UPNP_DEBUG
 	std::cerr <<
 		"CUPnPRootDevice::CUPnPRootDevice() \n    Root Device: "       <<
 		"\n        URLBase: "       << m_URLBase <<
@@ -831,6 +901,7 @@ m_expires(expires)
 		"\n        location: "      << m_location <<
 		"\n        expires: "       << m_expires
 		<< std::endl;
+#endif
 }
 
 
@@ -848,7 +919,9 @@ m_RootDeviceListMutex(),
 m_IGWDeviceDetected(false),
 m_WanService(NULL)
 {
+#ifdef UPNP_DEBUG
 	std::cerr << "UPnPControlPoint::CUPnPControlPoint() Constructor" << std::endl;
+#endif
 	// Pointer to self
 	s_CtrlPoint = this;
 	
@@ -856,27 +929,35 @@ m_WanService(NULL)
 	int ret;
 	char *ipAddress = NULL;
 	unsigned short port = 0;
+#ifdef UPNP_DEBUG
 	int resLog = UpnpInitLog();
-	ret = UpnpInit(ipAddress, udpPort);
 	std::cerr << "UPnPControlPoint::CUPnPControlPoint() Init log : " << resLog << std::endl;
+#endif
+	ret = UpnpInit(ipAddress, udpPort);
 #ifdef UPNP_DEBUG
 	std::cerr << "CUPnPControlPoint Constructor UpnpInit finished" << std::endl;
 #endif
 	if (ret != UPNP_E_SUCCESS && ret !=UPNP_E_INIT) {
+#ifdef UPNP_DEBUG
 		std::cerr << "UPnPControlPoint::CUPnPControlPoint() error(UpnpInit): Error code : ";
+#endif
 		goto error;
 	}
 	port = UpnpGetServerPort();
 	ipAddress = UpnpGetServerIpAddress();
+#ifdef UPNP_DEBUG
 	std::cerr << "UPnPControlPoint::CUPnPControlPoint() bound to " << ipAddress << ":" <<
 		port << "." << std::endl;
+#endif
 
 	ret = UpnpRegisterClient(
 		static_cast<Upnp_FunPtr>(&CUPnPControlPoint::Callback),
 		&m_UPnPClientHandle,
 		&m_UPnPClientHandle);
 	if (ret != UPNP_E_SUCCESS) {
+#ifdef UPNP_DEBUG
 		std::cerr << "UPnPControlPoint::CUPnPControlPoint() error(UpnpRegisterClient): Error registering callback: ";
+#endif
 		goto error;
 	}
 
@@ -896,7 +977,9 @@ m_WanService(NULL)
 	//ret = UpnpSearchAsync(m_UPnPClientHandle, 3, m_upnpLib.UPNP_DEVICE_LAN.c_str(), this);
 	//ret = UpnpSearchAsync(m_UPnPClientHandle, 3, m_upnpLib.UPNP_DEVICE_WAN_CONNECTION.c_str(), this);
 	if (ret != UPNP_E_SUCCESS) {
+#ifdef UPNP_DEBUG
 		std::cerr << "UPnPControlPoint::CUPnPControlPoint() error(UpnpSearchAsync): Error sending search request: ";
+#endif
 		goto error;
 	}
 
@@ -908,11 +991,14 @@ m_WanService(NULL)
 		// Lock it again, so that we block. Unlocking will only happen
 		// when the UPNP_DISCOVERY_SEARCH_TIMEOUT event occurs at the
 		// callback.
+#ifdef UPNP_DEBUG
 		std::cerr << "UPnPControlPoint::CUPnPControlPoint() blocking m_WaitForSearchTimeoutMutex." << std::endl;
+#endif
 		//RsMutex toto(m_WaitForSearchTimeoutMutex);
 		m_WaitForSearchTimeoutMutex.lock();
+#ifdef UPNP_DEBUG
 		std::cerr << "UPnPControlPoint::CUPnPControlPoint() m_WaitForSearchTimeoutMutex blocking finished." << std::endl;
-
+#endif
 	}
 
 	//clean the PortMappingNumberOfEntries as it is erroneus on the first event with the french neufbox
@@ -920,14 +1006,20 @@ m_WanService(NULL)
 	    m_WanService->propertyMap.erase("PortMappingNumberOfEntries");
 	}
 
+#ifdef UPNP_DEBUG
 	std::cerr << "UPnPControlPoint::CUPnPControlPoint() CUPnPControlPoint Constructor finished" << std::endl;
+#endif
 	return;
 
 	// Error processing
 error:
+#ifdef UPNP_DEBUG
 	std::cerr << ret << ": " << m_upnpLib.GetUPnPErrorMessage(ret) << "." << std::endl;
+#endif
 	UpnpFinish();
+#ifdef UPNP_DEBUG
 	std::cerr << "UPnPControlPoint::CUPnPControlPoint() UpnpFinish called within CUPnPControlPoint constructor." << std::endl;
+#endif
 	return;
 }
 
@@ -947,7 +1039,9 @@ CUPnPControlPoint::~CUPnPControlPoint()
 	// Remove all first
 	// RemoveAll();
 	UpnpUnRegisterClient(m_UPnPClientHandle);
+#ifdef UPNP_DEBUG
 	std::cerr << "CUPnPControlPoint::~CUPnPControlPoint() UpnpFinish called within CUPnPControlPoint destructor." << std::endl;
+#endif
 	UpnpFinish();
 }
 
@@ -956,12 +1050,16 @@ bool CUPnPControlPoint::AddPortMappings(
 	std::vector<CUPnPPortMapping> &upnpPortMapping)
 {
 	if (!WanServiceDetected()) {
+#ifdef UPNP_DEBUG
 		std::cerr <<  "CUPnPControlPoint::AddPortMappings() UPnP Error: "
 			"CUPnPControlPoint::AddPortMapping: "
 			"WAN Service not detected." << std::endl;
+#endif
 		return false;
 	}
+#ifdef UPNP_DEBUG
 	std::cerr <<  "CUPnPControlPoint::AddPortMappings() called." << std::endl;
+#endif
 
 	int n = upnpPortMapping.size();
 	bool ok = false;
@@ -996,7 +1094,9 @@ bool CUPnPControlPoint::AddPortMappings(
 
 	// Not very good, must find a better test : check the new number of port entries
 	//have a little break in case we just modified the variable, so we have to wait for an event
+#ifdef UPNP_DEBUG
 	std::cerr << "CUPnPControlPoint::AddPortMappings() GetStateVariable pausing in case of an UPnP event incomming.";
+#endif
 	time_t begin_time = time(NULL);
 	while (true) {
 	   if (time(NULL) - begin_time > 4) {
@@ -1008,10 +1108,14 @@ bool CUPnPControlPoint::AddPortMappings(
 			"PortMappingNumberOfEntries"));
 	int newNumberOfEntries;
 	NewPortMappingNumberOfEntries >> newNumberOfEntries;
+#ifdef UPNP_DEBUG
 	std::cerr <<  "CUPnPControlPoint::AddPortMappings() CUPnPControlPoint::AddPortMappings() newNumberOfEntries - oldNumberOfEntries : " << (newNumberOfEntries - oldNumberOfEntries) << std::endl;
+#endif
 	ok = newNumberOfEntries - oldNumberOfEntries >= 1;
 
+#ifdef UPNP_DEBUG
 	std::cerr <<  "CUPnPControlPoint::AddPortMappings() finished. Success = " << ok << std::endl;
+#endif
 
 	return ok;
 }
@@ -1019,20 +1123,28 @@ bool CUPnPControlPoint::AddPortMappings(
 std::string CUPnPControlPoint::getExternalAddress()
 {
 	if (!WanServiceDetected()) {
+#ifdef UPNP_DEBUG
 		std::cerr <<  "CUPnPControlPoint::getExternalAddress() UPnP Error: "
 			"CUPnPControlPoint::AddPortMapping: "
 			"WAN Service not detected." << std::endl;
+#endif
 		return false;
 	}
 	std::string result =  m_WanService->GetStateVariable("NewExternalIPAddress");
+#ifdef UPNP_DEBUG
 	std::cerr <<  "CUPnPControlPoint::getExternalAddress() m_WanService->GetStateVariable(NewExternalIPAddress) = " <<  result << std::endl;
+#endif
 	if (result == "") {
 	    PrivateGetExternalIpAdress();
 	    result =  m_WanService->GetStateVariable("NewExternalIPAddress");
+#ifdef UPNP_DEBUG
 	    std::cerr <<  "CUPnPControlPoint::getExternalAddress() m_WanService->GetStateVariable(NewExternalIPAddress) = " <<  result << std::endl;
+#endif
 	    if (result == "") {
 		result = m_WanService->GetStateVariable("ExternalIPAddress");
+#ifdef UPNP_DEBUG
 		std::cerr <<  "CUPnPControlPoint::getExternalAddress() m_WanService->GetStateVariable(ExternalIPAddress) = " <<  result << std::endl;
+#endif
 	    }
 	}
 	return result;
@@ -1090,11 +1202,15 @@ bool CUPnPControlPoint::PrivateAddPortMapping(
 bool CUPnPControlPoint::DeletePortMappings(
 	std::vector<CUPnPPortMapping> &upnpPortMapping)
 {
+#ifdef UPNP_DEBUG
 	std::cerr << "CUPnPControlPoint::DeletePortMappings() called." << std::endl;
+#endif
 	if (!WanServiceDetected()) {
+#ifdef UPNP_DEBUG
 		std::cerr  <<  "UPnP Error: "
 			"CUPnPControlPoint::DeletePortMapping: "
 			"WAN Service not detected." << std::endl;
+#endif
 		return false;
 	}
 	
@@ -1111,10 +1227,12 @@ bool CUPnPControlPoint::DeletePortMappings(
 			if (it != m_ActivePortMappingsMap.end()) {
 				m_ActivePortMappingsMap.erase(it);
 			} else {
+#ifdef UPNP_DEBUG
 				std::cerr   <<  "CUPnPControlPoint::DeletePortMappings() UPnP Error: "
 					"CUPnPControlPoint::DeletePortMapping: "
 					"Mapping was not found in the active "
 					"mapping map." << std::endl;
+#endif
 			}
 			
 			// Delete the port mapping
@@ -1145,9 +1263,13 @@ bool CUPnPControlPoint::PrivateDeletePortMapping(
 	bool ret = true;
 	for (ServiceMap::iterator it = m_ServiceMap.begin();
 	     it != m_ServiceMap.end(); ++it) {
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPControlPoint::PrivateDeletePortMapping() Sending a delete port mapping action." << std::endl;
+#endif
 		ret &= it->second->Execute(actionName, argval);
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPControlPoint::PrivateDeletePortMapping() Delete port mapping action finished." << std::endl;
+#endif
 	}
 
 	return ret;
@@ -1183,34 +1305,42 @@ int CUPnPControlPoint::Callback(Upnp_EventType EventType, void *Event, void * /*
 	//fprintf(stderr, "Callback: %d, Cookie: %p\n", EventType, Cookie);
 	switch (EventType) {
 	case UPNP_DISCOVERY_ADVERTISEMENT_ALIVE:
-		//fprintf(stderr, "Callback: UPNP_DISCOVERY_ADVERTISEMENT_ALIVE\n");
-		//std::cerr << "error(UPNP_DISCOVERY_ADVERTISEMENT_ALIVE): ";
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPControlPoint::Callback() UPNP_DISCOVERY_ADVERTISEMENT_ALIVE: ";
+#endif
 		goto upnpDiscovery;
 	case UPNP_DISCOVERY_SEARCH_RESULT: {
-		//fprintf(stderr, "Callback: UPNP_DISCOVERY_SEARCH_RESULT\n");
-		//std::cerr << "CUPnPControlPoint::Callback() Uerror(UPNP_DISCOVERY_SEARCH_RESULT): ";
+#ifdef UPNP_DEBUG
 		std::cerr << "UPNP_DISCOVERY_SEARCH_RESULT: ";
+#endif
 		// UPnP Discovery
 upnpDiscovery:
 		struct Upnp_Discovery *d_event = (struct Upnp_Discovery *)Event;
 		IXML_Document *doc = NULL;
 		int ret;
 		if (d_event->ErrCode != UPNP_E_SUCCESS) {
+#ifdef UPNP_DEBUG
 			std::cerr << upnpCP->m_upnpLib.GetUPnPErrorMessage(d_event->ErrCode) << ".";
 			std::cerr << std::endl;
+#endif
 		}
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPControlPoint::Callback() URetrieving device description from " <<
 				d_event->Location << "." << std::endl;
+#endif
 		// Get the XML tree device description in doc
 		ret = UpnpDownloadXmlDoc(d_event->Location, &doc); 
 		if (ret != UPNP_E_SUCCESS) {
+#ifdef UPNP_DEBUG
 			std::cerr << "CUPnPControlPoint::Callback() UError retrieving device description from " <<
 				d_event->Location << ": " <<
 				upnpCP->m_upnpLib.GetUPnPErrorMessage(ret) << ".";
+#endif
 		} else {
+#ifdef UPNP_DEBUG
 			std::cerr << "CUPnPControlPoint::Callback() URetrieving device description from " <<
 				d_event->Location << "." << std::endl;
+#endif
 		}
 		if (doc) {
 			// Get the root node
@@ -1237,13 +1367,19 @@ upnpDiscovery:
 				// Log it if not UPNP_DISCOVERY_ADVERTISEMENT_ALIVE,
 				// we don't want to spam our logs.
 				//if (EventType != UPNP_DISCOVERY_ADVERTISEMENT_ALIVE) {
+#ifdef UPNP_DEBUG
 					std::cerr << "Internet Gateway Device Detected." << std::endl;
+#endif
 				//}
+#ifdef UPNP_DEBUG
 				std::cerr << "CUPnPControlPoint::Callback() UGetting root device desc." << std::endl;
+#endif
 				// Add the root device to our list
 				upnpCP->AddRootDevice(rootDevice, urlBase,
 					d_event->Location, d_event->Expires);
+#ifdef UPNP_DEBUG
 				std::cerr << "CUPnPControlPoint::Callback() UFinishing getting root device desc." << std::endl;
+#endif
 			}
 			// Free the XML doc tree
 			ixmlDocument_free(doc);
@@ -1253,8 +1389,10 @@ upnpDiscovery:
 	case UPNP_DISCOVERY_SEARCH_TIMEOUT: {
 		//fprintf(stderr, "Callback: UPNP_DISCOVERY_SEARCH_TIMEOUT\n");
 		// Search timeout
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPControlPoint::Callback() UUPNP_DISCOVERY_SEARCH_TIMEOUT : unlocking mutex." << std::endl;
-		
+#endif
+
 		// Unlock the search timeout mutex
 		upnpCP->m_WaitForSearchTimeoutMutex.unlock();
 		
@@ -1265,9 +1403,11 @@ upnpDiscovery:
 		// UPnP Device Removed
 		struct Upnp_Discovery *dab_event = (struct Upnp_Discovery *)Event;
 		if (dab_event->ErrCode != UPNP_E_SUCCESS) {
+#ifdef UPNP_DEBUG
 			std::cerr << "CUPnPControlPoint::Callback() Uerror(UPNP_DISCOVERY_ADVERTISEMENT_BYEBYE): " <<
 				upnpCP->m_upnpLib.GetUPnPErrorMessage(dab_event->ErrCode) <<
 				"." << std::endl;
+#endif
 		}
 		std::string devType = dab_event->DeviceType;
 		// Check for an InternetGatewayDevice and removes it from the list
@@ -1278,7 +1418,9 @@ upnpDiscovery:
 		break;
 	}
 	case UPNP_EVENT_RECEIVED: {
+#ifdef UPNP_DEBUG
 		fprintf(stderr, "Callback: UPNP_EVENT_RECEIVED\n");
+#endif
 		// Event reveived
 		struct Upnp_Event *e_event = (struct Upnp_Event *)Event;
 		const std::string Sid = e_event->Sid;
@@ -1346,17 +1488,21 @@ upnpEventSubscriptionExpired:
 				CUPnPService &service = *(it->second);
 				service.SetTimeout(TimeOut);
 				service.SetSID(newSID);
+#ifdef UPNP_DEBUG
 				std::cerr << "CUPnPControlPoint::Callback() Re-subscribed to EventURL '" <<
 					es_event->PublisherUrl <<
 					"' with SID == '" <<
 					newSID << "'." << std::endl;
+#endif
 				// In principle, we should test to see if the
 				// service is the same. But here we only have one
 				// service, so...
 				upnpCP->RefreshPortMappings();
 			} else {
+#ifdef UPNP_DEBUG
 				std::cerr << "CUPnPControlPoint::Callback() Error: did not find service " <<
 					newSID << " in the service map." << std::endl;
+#endif
 			}
 		}
 		break;
@@ -1383,7 +1529,9 @@ upnpEventSubscriptionExpired:
 		break;
 	}
 	case UPNP_CONTROL_GET_VAR_COMPLETE: {
+#ifdef UPNP_DEBUG
 		fprintf(stderr, "CUPnPControlPoint::Callback() Callback: UPNP_CONTROL_GET_VAR_COMPLETE\n");
+#endif
 		msg << "CUPnPControlPoint::Callback() error(UPNP_CONTROL_GET_VAR_COMPLETE): ";
 		struct Upnp_State_Var_Complete *sv_event =
 			(struct Upnp_State_Var_Complete *)Event;
@@ -1400,25 +1548,35 @@ upnpEventSubscriptionExpired:
 	// ignore these cases, since this is not a device 
 	case UPNP_CONTROL_GET_VAR_REQUEST:
 		//fprintf(stderr, "Callback: UPNP_CONTROL_GET_VAR_REQUEST\n");
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPControlPoint::Callback() error(UPNP_CONTROL_GET_VAR_REQUEST): ";
+#endif
 		goto eventSubscriptionRequest;
 	case UPNP_CONTROL_ACTION_REQUEST:
 		//fprintf(stderr, "Callback: UPNP_CONTROL_ACTION_REQUEST\n");
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPControlPoint::Callback() error(UPNP_CONTROL_ACTION_REQUEST): ";
+#endif
 		goto eventSubscriptionRequest;
 	case UPNP_EVENT_SUBSCRIPTION_REQUEST:
 		//fprintf(stderr, "Callback: UPNP_EVENT_SUBSCRIPTION_REQUEST\n");
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPControlPoint::Callback() error(UPNP_EVENT_SUBSCRIPTION_REQUEST): ";
+#endif
 eventSubscriptionRequest:
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPControlPoint::Callback() This is not a UPnP Device, this is a UPnP Control Point, event ignored." <<  std::endl;
+#endif
 		break;
 	default:
 		// Humm, this is not good, we forgot to handle something...
+#ifdef UPNP_DEBUG
 		fprintf(stderr,
 			"Callback: default... Unknown event:'%d', not good.\n",
 			EventType);
 		std::cerr << "CUPnPControlPoint::Callback() error(UPnP::Callback): Event not handled:'" <<
 			EventType << "'." << std::endl;
+#endif
 		// Better not throw in the callback. Who would catch it?
 		//throw CUPnPException(msg);
 		break;
@@ -1433,14 +1591,18 @@ void CUPnPControlPoint::OnEventReceived(
 		int EventKey,
 		IXML_Document *ChangedVariablesDoc)
 {
+#ifdef UPNP_DEBUG
 	std::cerr << "CUPnPControlPoint::OnEventReceived() UPNP_EVENT_RECEIVED:" <<
 		"\n    SID: " << Sid <<
 		"\n    Key: " << EventKey << std::endl;
 	std::cerr << "CUPnPControlPoint::OnEventReceived() m_WanService->GetServiceId() : " << m_WanService->GetSID() << std::endl;
+#endif
 
 	if (m_WanService->GetSID() == Sid) {
 	    //let's store the properties if it is an event of the wan device
+#ifdef UPNP_DEBUG
 	    std::cerr << "CUPnPControlPoint::OnEventReceived() \n    Property list:";
+#endif
 
 	    IXML_Element *root =
 		    m_upnpLib.Element_GetRootElement(ChangedVariablesDoc);
@@ -1454,18 +1616,24 @@ void CUPnPControlPoint::OnEventReceived(
 				    m_upnpLib.Element_GetTag(child2);
 			    std::string childValue =
 				    m_upnpLib.Element_GetTextValue(child2);
+#ifdef UPNP_DEBUG
 			    std::cerr << "\n        " <<
 				    childTag << "='" <<
 				    childValue << "'";
+#endif
 			    const std::string cTag(childTag);
 			    const std::string cValue(childValue);
 			    (m_WanService->propertyMap)[cTag] = cValue;
 			    child = m_upnpLib.Element_GetNextSibling(child);
 		    }
 	    } else {
+#ifdef UPNP_DEBUG
 		    std::cerr << "CUPnPControlPoint::OnEventReceived() \n    Empty property list.";
+#endif
 	    }
+#ifdef UPNP_DEBUG
 	    std::cerr << std::endl;
+#endif
 	    // Freeing that doc segfaults. Probably should not be freed.
 	    //ixmlDocument_free(ChangedVariablesDoc);
 	}
@@ -1533,9 +1701,11 @@ void CUPnPControlPoint::Subscribe(CUPnPService &service)
 			scpdRoot, service.GetAbsSCPDURL());
 		service.SetSCPD(scpd);
 		m_ServiceMap[service.GetAbsEventSubURL()] = &service;
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPControlPoint::Subscribe() Successfully retrieved SCPD Document for service " <<
 			service.GetServiceType() << ", absEventSubURL: " <<
 			service.GetAbsEventSubURL() << "." << std::endl;
+#endif
 
 		// Now try to subscribe to this service. If the subscription
 		// is not successfull, we will not be notified about events,
@@ -1545,26 +1715,34 @@ void CUPnPControlPoint::Subscribe(CUPnPService &service)
 			service.GetTimeoutAddr(),
 			service.GetSID());
 		if (errcode == UPNP_E_SUCCESS) {
+#ifdef UPNP_DEBUG
 			std::cerr << "CUPnPControlPoint::Subscribe() Successfully subscribed to service " <<
 				service.GetServiceType() << ", absEventSubURL: " <<
 				service.GetAbsEventSubURL() << "." << std::endl;
+#endif
 		} else {
+#ifdef UPNP_DEBUG
 			std::cerr << "CUPnPControlPoint::Subscribe() Error subscribing to service " <<
 				service.GetServiceType() << ", absEventSubURL: " <<
 				service.GetAbsEventSubURL() << ", error: " <<
 				m_upnpLib.GetUPnPErrorMessage(errcode) << ".";
+#endif
 			goto error;
 		}
 	} else {
+#ifdef UPNP_DEBUG
 		std::cerr << "CUPnPControlPoint::Subscribe() Error getting SCPD Document from " <<
 			service.GetAbsSCPDURL() << "." << std::endl;
+#endif
 	}
 	
 	return;
 
-	// Error processing	
 error:
+	1+1;
+#ifdef UPNP_DEBUG
 	std::cerr << std::endl;
+#endif
 }
 
 
