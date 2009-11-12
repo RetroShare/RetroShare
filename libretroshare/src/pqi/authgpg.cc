@@ -1163,7 +1163,7 @@ bool GPGAuthMgr::VerifySignature_locked(std::string id, void *data, int datalen,
 	gpgme_set_armor (CTX, 0);
 
 	gpgme_error_t ERR;
-	if (GPG_ERR_NO_ERROR != (ERR = gpgme_op_verify(CTX,gpgmeSig, gpgmeData, NULL)))
+	if (GPG_ERR_NO_ERROR != (ERR = gpgme_op_verify(CTX,gpgmeSig, gpgmeData, NULL)) && siglen != 0)
 	{
 		ProcessPGPmeError(ERR);
                 std::cerr << "GPGAuthMgr::VerifySignature_locked FAILED for first try.";
