@@ -317,7 +317,7 @@ void 	netExtCheck();
 void 	netUpnpInit();
 void 	netUpnpCheck();
 
-void 	netExtraAddressCheck();
+void 	netExtFinderAddressCheck();
 void    netUnreachableCheck();
 
 	/* Udp / Stun functions */

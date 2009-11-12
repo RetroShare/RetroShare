@@ -544,7 +544,7 @@ void p3ConnectMgr::netTick()
 #ifdef CONN_DEBUG
 			std::cerr << "p3ConnectMgr::netTick() STATUS: UPNP_INIT" << std::endl;
 #endif
-			netExtraAddressCheck();
+			netExtFinderAddressCheck();
 			netUpnpInit();
 			break;
 
@@ -561,7 +561,7 @@ void p3ConnectMgr::netTick()
 #endif
 			stunCheck(); /* Keep on stunning */
 			if (!netFlagStunOk) {
-			    netExtraAddressCheck();
+			    netExtFinderAddressCheck();
 			}
 
 			break;
@@ -755,6 +755,7 @@ void p3ConnectMgr::networkConsistencyCheck()
 		    #endif
 		    ownState.currentserveraddr = extAddr;
 		} else if (getExtFinderExtAddress(extAddr)) {
+		    netExtFinderAddressCheck(); //so we put the extra address flag ok.
 		    #ifdef CONN_DEBUG
 		    std::cerr << "p3ConnectMgr::networkConsistencyCheck() using getExtFinderExtAddress for ownState.serveraddr." << std::endl;
 		    #endif
@@ -794,7 +795,7 @@ void p3ConnectMgr::networkConsistencyCheck()
 	}
 }
 
-void p3ConnectMgr::netExtraAddressCheck()
+void p3ConnectMgr::netExtFinderAddressCheck()
 {	struct sockaddr_in tmpip;
 	if (getExtFinderExtAddress(tmpip)) {
 	    #ifdef CONN_DEBUG

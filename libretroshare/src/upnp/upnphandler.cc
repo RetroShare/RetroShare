@@ -168,15 +168,20 @@ bool upnphandler::start_upnp()
 	    #endif
 	}
 
-	//build port mapping config
+	//first of all, build the mappings
 	std::vector<CUPnPPortMapping> upnpPortMapping1;
 	CUPnPPortMapping cUPnPPortMapping1 = CUPnPPortMapping(eport_curr, ntohs(localAddr.sin_port), "TCP", true, "tcp retroshare redirection");
 	upnpPortMapping1.push_back(cUPnPPortMapping1);
-	bool res = cUPnPControlPoint->AddPortMappings(upnpPortMapping1);
-
 	std::vector<CUPnPPortMapping> upnpPortMapping2;
 	CUPnPPortMapping cUPnPPortMapping2 = CUPnPPortMapping(eport_curr, ntohs(localAddr.sin_port), "UDP", true, "udp retroshare redirection");
 	upnpPortMapping2.push_back(cUPnPPortMapping2);
+
+	//attempt to remove formal port redirection rules
+	cUPnPControlPoint->DeletePortMappings(upnpPortMapping1);
+	cUPnPControlPoint->DeletePortMappings(upnpPortMapping2);
+
+	//add new rules
+	bool res = cUPnPControlPoint->AddPortMappings(upnpPortMapping1);
 	bool res2 = cUPnPControlPoint->AddPortMappings(upnpPortMapping2);
 
 	struct sockaddr_in extAddr;
