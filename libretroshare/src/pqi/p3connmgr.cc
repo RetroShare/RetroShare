@@ -2566,153 +2566,11 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 	/* are the addresses different? */
 
 	time_t now = time(NULL);
-        std::list<peerConnectAddress>::iterator cit;
 
 	/* add in attempts ... local(TCP), remote(TCP) 
 	 */
 
 #ifndef P3CONNMGR_NO_TCP_CONNECTIONS
-
-	/* if address is same -> try local */
-	if ((isValidNet(&(it->second.currentlocaladdr.sin_addr))) &&
-		(sameNet(&(ownState.currentlocaladdr.sin_addr),
-			&(it->second.currentlocaladdr.sin_addr))))
-
-	{
-#ifdef CONN_DEBUG
-		std::cerr << "p3ConnectMgr::retryConnectTCP() Local Address Valid: ";
-		std::cerr << inet_ntoa(it->second.currentlocaladdr.sin_addr);
-		std::cerr << ":" << ntohs(it->second.currentlocaladdr.sin_port);
-		std::cerr << std::endl;
-#endif
-
-		bool localExists = false;
-		if ((it->second.inConnAttempt) && 
-			(it->second.currentConnAddrAttempt.type == RS_NET_CONN_TCP_LOCAL))
-		{
-			localExists = true;
-		}
-
-		for(cit = it->second.connAddrs.begin();
-			(!localExists) && (cit != it->second.connAddrs.begin()); cit++)
-		{
-			if (cit->type == RS_NET_CONN_TCP_LOCAL)
-			{
-				localExists = true;
-			}
-		}
-
-		/* check if there is a local one on there already */
-
-		if (!localExists)
-		{
-#ifdef CONN_DEBUG
-			std::cerr << "p3ConnectMgr::retryConnectTCP() Adding Local Addr to Queue";
-			std::cerr << std::endl;
-#endif
-
-			/* add the local address */
-			peerConnectAddress pca;
-			pca.ts = now;
-			pca.type = RS_NET_CONN_TCP_LOCAL;
-			pca.addr = it->second.currentlocaladdr;
-	
-			{
-				/* Log */
-				std::ostringstream out;
-				out << "p3ConnectMgr::retryConnectTCP() PushBack Local TCP Address: ";
-				out << " id: " << id;
-				out << " raddr: " << inet_ntoa(pca.addr.sin_addr);
-				out << ":" << ntohs(pca.addr.sin_port);
-				out << " type: " << pca.type;
-				out << " delay: " << pca.delay;
-				out << " period: " << pca.period;
-				out << " ts: " << pca.ts;
-				rslog(RSL_WARNING, p3connectzone, out.str());
-			}
-	
-			it->second.connAddrs.push_back(pca);
-		}
-		else
-		{
-#ifdef CONN_DEBUG
-			std::cerr << "p3ConnectMgr::retryConnectTCP() Local Addr already in Queue";
-			std::cerr << std::endl;
-#endif
-		}
-	}
-
-	/* otherwise try external ... (should check flags) */
-	//if ((isValidNet(&(it->second.serveraddr.sin_addr))) && 
-	//		(it->second.netMode = RS_NET_MODE_EXT))
-	
-	/* always try external */
-	if (isValidNet(&(it->second.currentserveraddr.sin_addr)))
-	{
-#ifdef CONN_DEBUG
-		std::cerr << "p3ConnectMgr::retryConnectTCP() Ext Address Valid: ";
-		std::cerr << inet_ntoa(it->second.currentserveraddr.sin_addr);
-		std::cerr << ":" << ntohs(it->second.currentserveraddr.sin_port);
-		std::cerr << std::endl;
-#endif
-
-
-		bool remoteExists = false;
-		if ((it->second.inConnAttempt) && 
-			(it->second.currentConnAddrAttempt.type == RS_NET_CONN_TCP_EXTERNAL))
-		{
-			remoteExists = true;
-		}
-
-		for(cit = it->second.connAddrs.begin();
-			(!remoteExists) && (cit != it->second.connAddrs.begin()); cit++)
-		{
-			if (cit->type == RS_NET_CONN_TCP_EXTERNAL)
-			{
-				remoteExists = true;
-			}
-		}
-
-		/* check if there is a local one on there already */
-
-		if (!remoteExists)
-		{
-#ifdef CONN_DEBUG
-			std::cerr << "p3ConnectMgr::retryConnectTCP() Adding Ext Addr to Queue";
-			std::cerr << std::endl;
-#endif
-
-			/* add the remote address */
-			peerConnectAddress pca;
-			pca.ts = now;
-			pca.type = RS_NET_CONN_TCP_EXTERNAL;
-			pca.addr = it->second.currentserveraddr;
-
-			{
-				/* Log */
-				std::ostringstream out;
-				out << "p3ConnectMgr::retryConnectTCP() PushBack Ext TCP Address: ";
-				out << " id: " << id;
-				out << " raddr: " << inet_ntoa(pca.addr.sin_addr);
-				out << ":" << ntohs(pca.addr.sin_port);
-				out << " type: " << pca.type;
-				out << " delay: " << pca.delay;
-				out << " period: " << pca.period;
-				out << " ts: " << pca.ts;
-				rslog(RSL_WARNING, p3connectzone, out.str());
-			}
-
-			it->second.connAddrs.push_back(pca);
-		}
-		else
-		{
-#ifdef CONN_DEBUG
-			std::cerr << "p3ConnectMgr::retryConnectTCP() Ext Addr already in Queue";
-			std::cerr << std::endl;
-#endif
-		}
-	}
-
 	//add the ips off the ipAdressList
 	std::list<IpAddressTimed> ipList = it->second.getIpAddressList();
 	for (std::list<IpAddressTimed>::iterator ipListIt = ipList.begin(); ipListIt!=(ipList.end()); ipListIt++) {
@@ -2722,13 +2580,27 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 		std::cerr << ":" << ntohs(ipListIt->ipAddr.sin_port);
 		std::cerr << std::endl;
 #endif
-		peerConnectAddress pca;
-		pca.addr = ipListIt->ipAddr;
-		pca.type = RS_NET_CONN_TCP_UNKNOW_TOPOLOGY;
-		pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
-		pca.ts = time(NULL);
-		pca.period = 0;
-		it->second.connAddrs.push_back(pca);
+		//check that the address doens't exist already in the connAddrs
+		bool found = false;
+		for (std::list<peerConnectAddress>::iterator cit = it->second.connAddrs.begin(); cit != it->second.connAddrs.end(); cit++) {
+		    if (cit->addr.sin_addr.s_addr == ipListIt->ipAddr.sin_addr.s_addr && cit->addr.sin_port == ipListIt->ipAddr.sin_port) {
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::retryConnectTCP() ip already in the conn addr attempt list." << std::endl;
+#endif
+			found = true;
+			break;
+		    }
+		}
+
+		if (!found) {
+		    peerConnectAddress pca;
+		    pca.addr = ipListIt->ipAddr;
+		    pca.type = RS_NET_CONN_TCP_UNKNOW_TOPOLOGY;
+		    pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
+		    pca.ts = time(NULL);
+		    pca.period = 0;
+		    it->second.connAddrs.push_back(pca);
+		}
 	}
 
 #endif // P3CONNMGR_NO_TCP_CONNECTIONS
@@ -3782,9 +3654,10 @@ void peerConnectState::updateIpAddressList(IpAddressTimed ipTimed) { //purge old
 			std::cerr << ":" << ntohs(ipTimed.ipAddr.sin_port);
 			std::cerr << std::endl;
 #endif
-		if (ipTimed.ipAddr.sin_addr.s_addr == 0 || ipTimed.ipAddr.sin_port == 0) {
+		if (ipTimed.ipAddr.sin_addr.s_addr == 0 || ipTimed.ipAddr.sin_port == 0 ||
+		    std::string(inet_ntoa(ipTimed.ipAddr.sin_addr)) == "1.1.1.1") {
 #ifdef CONN_DEBUG
-			std::cerr << "peerConnectState::updateIpAdressList() ip parameter is 0.0.0.0 or port is 0, ignoring." << std::endl;
+			std::cerr << "peerConnectState::updateIpAdressList() ip parameter is 0.0.0.0, 1.1.1.1 or port is 0, ignoring." << std::endl;
 #endif
 		    return;
 		}

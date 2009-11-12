@@ -437,27 +437,7 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 	std::ostringstream autostr;
 	if (pcs.inConnAttempt)
 	{
-		/* 
-		 */
-		autostr << "Trying ";
-		switch(pcs.currentConnAddrAttempt.type)
-		{
-			case RS_NET_CONN_TCP_LOCAL:
-				autostr << "TCP (Local)";
-				break;
-			case RS_NET_CONN_TCP_EXTERNAL:
-				autostr << "TCP (External)";
-				break;
-			case RS_NET_CONN_UDP_DHT_SYNC:
-				autostr << "UDP (ETA: ";
-				autostr << 420 - (time(NULL) - pcs.currentConnAddrAttempt.ts);
-				autostr << ")";
-				break;
-			default:
-				autostr << "Unknown";
-				break;
-		}
-
+		autostr << "Trying " << inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr) << ":" <<  ntohs(pcs.currentConnAddrAttempt.addr.sin_port);
 	}
 	else if (pcs.state & RS_PEER_S_CONNECTED)
 	{
