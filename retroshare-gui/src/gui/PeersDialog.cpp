@@ -803,7 +803,6 @@ void PeersDialog::insertChat()
 		}
 
 		std::ostringstream out;
-		QString currenttxt = msgWidget->toHtml();
 		QString extraTxt;
 
         QString timestamp = QDateTime::currentDateTime().toString("hh:mm:ss");
@@ -832,32 +831,15 @@ void PeersDialog::insertChat()
 				  emit notifyGroupChat(QString("New group chat"), notifyMsg);
 		  }
 
-
-        /* add it everytime */
-		currenttxt += extraTxt;
-
 		QHashIterator<QString, QString> i(smileys);
 		while(i.hasNext())
 		{
 			i.next();
 			foreach(QString code, i.key().split("|"))
-				currenttxt.replace(code, "<img src=\"" + i.value() + "\" />");
+				extraTxt.replace(code, "<img src=\"" + i.value() + "\" />");
 		}
 
-
-		QScrollBar *qsb =  msgWidget->verticalScrollBar();
-		int oldQsbValue = qsb->value();
-		//check if the scroll bar is at the bottom. If t is, we will putt it at the bottom after the new message
-		bool maxQsbValue = ((qsb->maximum() - 30) < qsb->value());
-
-		msgWidget->setHtml(currenttxt);
-		msgWidget->update();
-
-		if (maxQsbValue ) {
-		    qsb -> setValue(qsb->maximum());
-		} else {
-		    qsb -> setValue(oldQsbValue);
-		}
+		msgWidget->append(extraTxt);
 	}
 }
 
