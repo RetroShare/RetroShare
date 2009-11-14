@@ -241,6 +241,9 @@ void ForumsDialog::togglefileview()
 
 void ForumsDialog::checkUpdate()
 {
+	if(!isVisible())
+		return ;
+
 	std::list<std::string> forumIds;
 	std::list<std::string>::iterator it;
 	if (!rsForums)

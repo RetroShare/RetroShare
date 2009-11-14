@@ -226,6 +226,9 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
 /* get the list of peers from the RsIface.  */
 void  PeersDialog::insertPeers()
 {
+	if(!isVisible())
+		return ;
+
 	std::list<std::string> peers;
 	std::list<std::string>::iterator it;
 

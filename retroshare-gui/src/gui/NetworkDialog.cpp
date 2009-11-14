@@ -692,6 +692,9 @@ void NetworkDialog::getNetworkStatus()
 
 void NetworkDialog::updateNetworkStatus()
 {
+	if(!isVisible())
+		return ;
+
     rsiface->lockData(); /* Lock Interface */
 
     /* now the extra bit .... switch on check boxes */

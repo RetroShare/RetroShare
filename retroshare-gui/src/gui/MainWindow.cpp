@@ -339,6 +339,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
 void MainWindow::updateStatus()
 {
+	if(!isVisible())
+		return ;
 	
 	if (ratesstatus)
     	ratesstatus->getRatesStatus();
@@ -508,6 +510,8 @@ void MainWindow::doQuit()
 
 		if ((QMessageBox::question(this, tr("Really quit ? "),queryWrn,QMessageBox::Ok|QMessageBox::No, QMessageBox::Ok))== QMessageBox::Ok)
 		{
+			delete rsicontrol ;
+			delete rsiface ;
       qApp->quit();
 		}
 		else
