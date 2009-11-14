@@ -1355,8 +1355,6 @@ void p3ConnectMgr::getOthersList(std::list<std::string> &peers)
 	return;
 }
 
-
-
 bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr, 
                                 uint32_t &delay, uint32_t &period, uint32_t &type)
 
@@ -1387,17 +1385,29 @@ bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr,
 		return false;
 	}
 	
+	// Sort addresses by reverse time stamp, so as to use the most relevant one first.
+	
+	std::list<peerConnectAddress>::iterator it2(it->second.connAddrs.begin()), best_it(it->second.connAddrs.begin()) ;
+
+	for(;it2!=it->second.connAddrs.end();++it2)
+	{
+		std::cerr << "Examining " << inet_ntoa((*it2).addr.sin_addr) << ", time stamp = " << (*it2).ts << std::endl ;
+
+		if( (*it2).ts > (*best_it).ts)
+			best_it = it2 ;
+	}
+
 	it->second.lastattempt = time(NULL);  /* time of last connect attempt */
 	it->second.inConnAttempt = true;
-	it->second.currentConnAddr = it->second.connAddrs.front();
-	it->second.connAddrs.pop_front();
+	it->second.currentConnAddr = *best_it ;
+	it->second.connAddrs.erase(best_it) ;
 
 	addr = it->second.currentConnAddr.addr;
 	delay = it->second.currentConnAddr.delay;
 	period = it->second.currentConnAddr.period;
 	type = it->second.currentConnAddr.type;
 
-#ifdef CONN_DEBUG
+//#ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::connectAttempt() Success: ";
 	std::cerr << " id: " << id;
 	std::cerr << std::endl;
@@ -1407,7 +1417,7 @@ bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr,
 	std::cerr << " period: " << period;
 	std::cerr << " type: " << type;
 	std::cerr << std::endl;
-#endif
+//#endif
 
 	return true;
 }
