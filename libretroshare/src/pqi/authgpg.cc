@@ -1331,20 +1331,15 @@ void 	GPGAuthMgr::addTrustingPeer(std::string)
 }
 
 /**** These Two are common */
-std::string GPGAuthMgr::getName(std::string id)
+std::string GPGAuthMgr::getPGPName(std::string id)
 {
-	std::string name = AuthSSL::getName(id);
-	if (name != "")
-	{
-		RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
-		certmap::iterator it;
-		if (mKeyList.end() != (it = mKeyList.find(id)))
-		{
-			return it->second.user.name;
-		}
-	}
-	return name;
+	certmap::iterator it;
+	if (mKeyList.end() != (it = mKeyList.find(id)))
+		return it->second.user.name;
+
+	return std::string();
 }
 
 bool	GPGAuthMgr::getDetails(std::string id, pqiAuthDetails &details)
@@ -1360,35 +1355,42 @@ bool	GPGAuthMgr::getDetails(std::string id, pqiAuthDetails &details)
 
 	if (AuthSSL::getDetails(id, details))
 	{
-		RsStackMutex stack(pgpMtx); /******* LOCKED ******/
-
-		certmap::iterator it;
-		if (mKeyList.end() != (it = mKeyList.find(details.issuer)))
+		//RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+		if(pgpMtx.trylock())
 		{
-			/* what do we want from the gpg mgr */
-			details.location = details.location;
-			details.name = it->second.user.name;
-			details.email = it->second.user.email;
+			certmap::iterator it;
+			if (mKeyList.end() != (it = mKeyList.find(details.issuer)))
+			{
+				/* what do we want from the gpg mgr */
+				details.location = details.location;
+				details.name = it->second.user.name;
+				details.email = it->second.user.email;
 
-			//details = it->second.user;
+				//details = it->second.user;
+			}
+			pgpMtx.unlock() ;
 			return true;
 		}
-		return true;
+		return false ;
 	}
 	else
 	{
-		RsStackMutex stack(pgpMtx); /******* LOCKED ******/
-
-		/* if we cannot find a ssl cert - might be a pgp cert */
-		certmap::iterator it;
-		if (mKeyList.end() != (it = mKeyList.find(id)))
+		//RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+		if(pgpMtx.trylock())
 		{
-			/* what do we want from the gpg mgr */
-			details = it->second.user;
-			return true;
+			/* if we cannot find a ssl cert - might be a pgp cert */
+			certmap::iterator it;
+			if (mKeyList.end() != (it = mKeyList.find(id)))
+			{
+				/* what do we want from the gpg mgr */
+				details = it->second.user;
+				pgpMtx.unlock() ;
+				return true;
+			}
+			pgpMtx.unlock() ;
 		}
+		return false;
 	}
-	return false;
 }
 
 
