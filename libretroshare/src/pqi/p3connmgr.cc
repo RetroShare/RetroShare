@@ -740,33 +740,34 @@ void p3ConnectMgr::networkConsistencyCheck()
 	oldnetFlagStunOk = netFlagStunOk;
 	oldnetFlagExtraAddressCheckOk = netFlagExtraAddressCheckOk;
 
-	//if ip adresses are different, let's use the stun address, then the extaddrfinder and then the upnp address.
-	struct sockaddr_in extAddr;
-	if (getStunExtAddress(extAddr)) {
-	    #ifdef CONN_DEBUG
-		    std::cerr << "p3ConnectMgr::networkConsistencyCheck() using STUN for ownState.serveraddr." << std::endl;
-	    #endif
-	    ownState.currentserveraddr = extAddr;
-	} else {
-		//call the extrafinder address
-		if (getUpnpExtAddress(extAddr)) {
-		    #ifdef CONN_DEBUG
-			std::cerr << "p3ConnectMgr::networkConsistencyCheck() using getUpnpExtAddress for ownState.serveraddr." << std::endl;
-		    #endif
-		    ownState.currentserveraddr = extAddr;
-		} else if (getExtFinderExtAddress(extAddr)) {
-		    netExtFinderAddressCheck(); //so we put the extra address flag ok.
-		    #ifdef CONN_DEBUG
-		    std::cerr << "p3ConnectMgr::networkConsistencyCheck() using getExtFinderExtAddress for ownState.serveraddr." << std::endl;
-		    #endif
-		    ownState.currentserveraddr = extAddr;
-		} else {
-		    #ifdef CONN_DEBUG
-			std::cerr << "p3ConnectMgr::networkConsistencyCheck() no external ip address." << std::endl;
-		    #endif
-		    doNetReset = true;
-		}
-	}
+        if (!doNetReset) {//if ip adresses are different, let's use the stun address, then the extaddrfinder and then the upnp address.
+            struct sockaddr_in extAddr;
+            if (getStunExtAddress(extAddr)) {
+                #ifdef CONN_DEBUG
+                        std::cerr << "p3ConnectMgr::networkConsistencyCheck() using STUN for ownState.serveraddr." << std::endl;
+                #endif
+                ownState.currentserveraddr = extAddr;
+            } else {
+                    //call the extrafinder address
+                    if (getUpnpExtAddress(extAddr)) {
+                        #ifdef CONN_DEBUG
+                            std::cerr << "p3ConnectMgr::networkConsistencyCheck() using getUpnpExtAddress for ownState.serveraddr." << std::endl;
+                        #endif
+                        ownState.currentserveraddr = extAddr;
+                    } else if (getExtFinderExtAddress(extAddr)) {
+                        netExtFinderAddressCheck(); //so we put the extra address flag ok.
+                        #ifdef CONN_DEBUG
+                        std::cerr << "p3ConnectMgr::networkConsistencyCheck() using getExtFinderExtAddress for ownState.serveraddr." << std::endl;
+                        #endif
+                        ownState.currentserveraddr = extAddr;
+                    } else {
+                        #ifdef CONN_DEBUG
+                            std::cerr << "p3ConnectMgr::networkConsistencyCheck() no external ip address." << std::endl;
+                        #endif
+                        doNetReset = true;
+                    }
+            }
+        }
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
 
@@ -801,13 +802,11 @@ void p3ConnectMgr::netExtFinderAddressCheck()
 	    #ifdef CONN_DEBUG
 		    std::cerr << "p3ConnectMgr::netExtraAddressCheck() return true" << std::endl;
 	    #endif
-	    RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 	    netFlagExtraAddressCheckOk = true;
 	} else {
 	    #ifdef CONN_DEBUG
 		    std::cerr << "p3ConnectMgr::netExtraAddressCheck() return false" << std::endl;
 	    #endif
-	    RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 	    netFlagExtraAddressCheckOk = false;
 	}
 }
