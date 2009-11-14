@@ -125,6 +125,9 @@ LinksDialog::LinksDialog(QWidget *parent)
 
 void LinksDialog::checkUpdate()
 {
+	if(!isVisible())
+		return ;
+
 	/* update */
 	if (!rsRanks)
 		return;

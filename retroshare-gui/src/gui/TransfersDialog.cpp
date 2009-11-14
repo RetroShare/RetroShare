@@ -271,6 +271,9 @@ void TransfersDialog::playSelectedTransfer()
 
 void TransfersDialog::updateProgress(int value)
 {
+	if(!isVisible())
+		return ;
+
 	for(int i = 0; i <= DLListModel->rowCount(); i++) {
 		if(selection->isRowSelected(i, QModelIndex())) {
 			editItem(i, PROGRESS, QVariant((double)value));
@@ -381,6 +384,9 @@ void TransfersDialog::editItem(int row, int column, QVariant data)
 	/* get the list of Transfers from the RsIface.  **/
 void TransfersDialog::insertTransfers()
 {
+	if(!isVisible())
+		return ;
+
 	QString symbol, name, sources, status, coreId;
 	qlonglong fileSize, completed, remaining;
 	double progress, dlspeed; 
