@@ -163,7 +163,7 @@ class GPGAuthMgr: public AuthSSL
 
  	bool	isValid(std::string id);
  	bool	isAuthenticated(std::string id);
- 	std::string getName(std::string id);
+ 	std::string getPGPName(std::string pgp_id);
  	bool	getDetails(std::string id, pqiAuthDetails &details);
 
 	virtual bool isTrustingMe(std::string);
