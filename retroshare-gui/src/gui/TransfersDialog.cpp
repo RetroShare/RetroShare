@@ -174,9 +174,19 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     connect(upheader, SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)), this, SLOT(saveSortIndicatorUpl(int, Qt::SortOrder)));
 
-	// set default column and sort order for upload
-	_sortColUpl = 0;
-	_sortOrderUpl = Qt::AscendingOrder;
+    // set default column and sort order for upload
+    _sortColUpl = 0;
+    _sortOrderUpl = Qt::AscendingOrder;
+	
+	  createTaskGraphPainterWidget();
+	  
+	  /*
+	  taskGraphDetailLayout = new QHBoxLayout();
+    taskGraphDetailLayout->addWidget(taskGraphWidget);
+    ui.tab_2->setLayout(taskGraphDetailLayout);
+    taskGraphDetailLayout->setSpacing( 0 );
+    taskGraphDetailLayout->setMargin( 0 );*/
+    
 
 
   /* Hide platform specific features */
@@ -1294,6 +1304,36 @@ void TransfersDialog::saveSortIndicatorUpl(int logicalIndex, Qt::SortOrder order
 	_sortColUpl = logicalIndex;;
 	_sortOrderUpl = order;
 }
+
+void TransfersDialog::createTaskGraphPainterWidget()
+{
+    taskGraphPainterWidget = new TaskGraphPainterWidget();
+    //taskGraphWidget = new QScrollArea();
+    ui.taskGraphWidget->setWidget(taskGraphPainterWidget);
+    ui.taskGraphWidget->setWidgetResizable(true);
+    ui.taskGraphWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui.taskGraphWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    ui.taskGraphWidget->viewport()->setBackgroundRole(QPalette::NoRole);
+    ui.taskGraphWidget->setFrameStyle(QFrame::NoFrame);
+    ui.taskGraphWidget->setFocusPolicy(Qt::NoFocus);
+}
+
+/*void TransfersDialog::setTaskGraphPainterWidget (const QModelIndex& index)
+{
+    Download *dl = (Download *) (index.model ()->
+        data (index.model ()->index (index.row (), DLListDelegate::PTR)).value <quintptr > ());
+
+    if (!dl)
+        return;
+
+    // call takeWidget before setWidget to avoid destruction of the widget
+    QWidget* lastWidget = taskGraphWidget->takeWidget ();
+
+    QWidget* currentWidget = dl->getTaskGraphicWidget ();
+    taskGraphWidget->setWidget (currentWidget);
+
+    taskGraphWidget->show ();
+}*/
 
 double TransfersDialog::getProgress(int row, QStandardItemModel *model)
 {

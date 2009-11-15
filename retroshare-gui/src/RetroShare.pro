@@ -159,6 +159,7 @@ HEADERS +=  rshare.h \
             gui/ShareManager.h \
             gui/StatisticDialog.h \
             gui/SoundManager.h \
+            gui/taskGraphPainterWidget.h \
             gui/HelpDialog.h \
             gui/InfoDialog.h \
             gui/LogoBar.h \
@@ -376,6 +377,7 @@ SOURCES +=  main.cpp \
             gui/StatisticDialog.cpp \
             gui/SoundManager.cpp \
             gui/MessagesDialog.cpp \
+            gui/taskGraphPainterWidget.cpp \
             gui/MessagesPopupDialog.cpp \
             gui/im_history/IMHistoryKeeper.cpp        \
             gui/im_history/IMHistoryReader.cpp        \

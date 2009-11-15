@@ -31,6 +31,8 @@
 #include <stdint.h>
 
 #include "mainpage.h"
+#include "taskGraphPainterWidget.h"
+
 #include "ui_TransfersDialog.h"
 
 
@@ -90,6 +92,8 @@ class TransfersDialog : public MainPage
 	/** save sort indicators for next transfers display */
 	void saveSortIndicatorDwl(int logicalIndex, Qt::SortOrder order);
 	void saveSortIndicatorUpl(int logicalIndex, Qt::SortOrder order);
+	
+	//void setTaskGraphPainterWidget (const QModelIndex& index);
 
 	signals:
 		void playFiles(QStringList files);
@@ -112,6 +116,11 @@ class TransfersDialog : public MainPage
 
 		int _sortColDwl, _sortColUpl;
 		Qt::SortOrder _sortOrderDwl, _sortOrderUpl;
+		
+		void createTaskGraphPainterWidget();
+    /*QHBoxLayout *taskGraphDetailLayout;
+    QScrollArea *taskGraphWidget;*/
+    TaskGraphPainterWidget *taskGraphPainterWidget;
 
 
 		/** Create the actions on the tray menu or menubar */
@@ -153,8 +162,8 @@ class TransfersDialog : public MainPage
 		Ui::TransfersDialog ui;
 
 		public slots:
-			int addItem(QString symbol, QString name, QString coreID, qlonglong size, double progress, double dlspeed, QString sources, QString status, QString priority, qlonglong completed, qlonglong remaining);
-			bool addPeerToItem(int row, QString symbol, QString name, QString coreID, qlonglong fileSize, double progress, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining);
+		int addItem(QString symbol, QString name, QString coreID, qlonglong size, double progress, double dlspeed, QString sources, QString status, QString priority, qlonglong completed, qlonglong remaining);
+		bool addPeerToItem(int row, QString symbol, QString name, QString coreID, qlonglong fileSize, double progress, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining);
 		void delItem(int row);
 
 		int addUploadItem(QString symbol, QString name, QString coreID, qlonglong size, double progress, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining);

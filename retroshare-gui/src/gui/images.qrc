@@ -63,6 +63,9 @@
         <file>images/folder16.png</file>
         <file>images/folderopen.png</file>
         <file>images/fileopen.png</file>
+        <file>images/graph-downloaded.png</file>
+        <file>images/graph-downloading.png</file>
+        <file>images/graph-notdownload.png</file>
         <file>images/add-friend24.png</file>
         <file>images/add-share24.png</file>
         <file>images/add_24x24.png</file>
