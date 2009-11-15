@@ -1,5 +1,5 @@
 CONFIG += qt gui uic qrc resources uitools pluginmgr newsettings release
-QT     += network xml script 
+QT     += network xml script opengl
 TEMPLATE = app
 TARGET = RetroShare
 
