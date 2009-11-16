@@ -14,7 +14,7 @@ MOC_DIR = temp/moc
 linux-* {
 	CONFIG += version_detail_bash_script
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += -lssl -lcrypto -lgpgme -lpthread -lupnp
+        LIBS += -lssl -lgpgme -lupnp
 }
 
 linux-g++ {
