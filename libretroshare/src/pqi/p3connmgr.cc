@@ -54,12 +54,12 @@ const uint32_t RS_STUN_DONE =      	0x0002;
 const uint32_t RS_STUN_LIST_MIN =      	100;
 const uint32_t RS_STUN_FOUND_MIN =     	10;
 
-const uint32_t MAX_UPNP_INIT = 		70; /* seconds UPnP timeout */
-const uint32_t MAX_NETWORK_INIT =	80; /* timeout before network reset */
+const uint32_t MAX_UPNP_INIT = 		60; /* seconds UPnP timeout */
+const uint32_t MAX_NETWORK_INIT =	70; /* timeout before network reset */
 
 const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
 
-const uint32_t PEER_CONNECT_STATE_MAX_LIST_SIZE =     	10;
+const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	10;
 
 /****
  * #define CONN_DEBUG 1
@@ -567,11 +567,11 @@ void p3ConnectMgr::netTick()
 			break;
 
 		case RS_NET_LOOPBACK:
-			shutdown();
+                        //don't do a shutdown because a client in a computer without network might be usefull for debug.
+                        //shutdown();
 #ifdef CONN_DEBUG
-			//std::cerr << "p3ConnectMgr::netTick() STATUS: DONE" << std::endl;
+                        std::cerr << "p3ConnectMgr::netTick() STATUS: RS_NET_LOOPBACK" << std::endl;
 #endif
-			//do nothing, there is already a checkNetAddress() in the tick
 		default:
 			break;
 	}
@@ -691,18 +691,10 @@ void p3ConnectMgr::netUpnpCheck()
 
 void p3ConnectMgr::networkConsistencyCheck()
 {
-	//don't do a check if there is no local network
-	if (!netFlagLocalOk) {
-	#ifdef CONN_DEBUG
-		std::cerr << "p3ConnectMgr::networkConsistencyCheck() don't check if there is no local network." << std::endl;
-	#endif
-	    return;
-	}
-
 	time_t delta;
 #ifdef CONN_DEBUG
 	delta = time(NULL) - mNetInitTS;
-	std::cerr << "p3ConnectMgr::networkConsistencyCheck() time since last rest : " << delta << std::endl;
+        std::cerr << "p3ConnectMgr::networkConsistencyCheck() time since last reset : " << delta << std::endl;
 #endif
 
 	bool doNetReset = false;
@@ -715,7 +707,7 @@ void p3ConnectMgr::networkConsistencyCheck()
 		std::cerr << "	oldnetFlagStunOk : " << oldnetFlagStunOk << ". netFlagStunOk : " << netFlagStunOk << "." << std::endl;
 		std::cerr << "	oldnetFlagExtraAddressCheckOk : " << oldnetFlagExtraAddressCheckOk << ". netFlagExtraAddressCheckOk : " << netFlagExtraAddressCheckOk << "." << std::endl;
 	#endif
-	if ((!netFlagLocalOk && oldnetFlagLocalOk)
+        if ( !netFlagLocalOk
 	    || (!netFlagUpnpOk && oldnetFlagUpnpOk)
 	    || (!netFlagDhtOk && oldnetFlagDhtOk)
 	    || (!netFlagStunOk && oldnetFlagStunOk)
@@ -740,7 +732,7 @@ void p3ConnectMgr::networkConsistencyCheck()
 	oldnetFlagStunOk = netFlagStunOk;
 	oldnetFlagExtraAddressCheckOk = netFlagExtraAddressCheckOk;
 
-        if (!doNetReset) {//if ip adresses are different, let's use the stun address, then the extaddrfinder and then the upnp address.
+        if (!doNetReset) {//set an external address. if ip adresses are different, let's use the stun address, then the extaddrfinder and then the upnp address.
             struct sockaddr_in extAddr;
             if (getStunExtAddress(extAddr)) {
                 #ifdef CONN_DEBUG
@@ -768,11 +760,36 @@ void p3ConnectMgr::networkConsistencyCheck()
                     }
             }
         }
-
 	connMtx.unlock(); /* UNLOCK MUTEX */
 
+        if (!doNetReset) {
+            //extAddr found,update ip address list
+            IpAddressTimed ipAddressTimed;
+            ipAddressTimed.ipAddr = ownState.currentserveraddr;
+            ipAddressTimed.seenTime = time(NULL);
+            ownState.updateIpAddressList(ipAddressTimed);
+        }
 
-	//if there is no external ip address, let's do a net reset
+        if (doNetReset) {
+            //check if a peer is connected, then don't do a net reset
+            bool is_connected = false;
+            std::map<std::string, peerConnectState>::iterator it;
+            for(it = mFriendList.begin(); it != mFriendList.end() && !is_connected; it++)
+            {
+                    /* get last contact detail */
+                    is_connected = it->second.state & RS_PEER_S_CONNECTED;
+            }
+            doNetReset = !is_connected;
+            #ifdef CONN_DEBUG
+            if (is_connected) {
+                    std::cerr << "p3ConnectMgr::networkConsistencyCheck() not doing a net reset because a peer is connected." << std::endl;
+                } else {
+                    std::cerr << "p3ConnectMgr::networkConsistencyCheck() no peer is connected." << std::endl;
+                }
+            #endif
+        }
+
+        //let's do a net reset
 	if (doNetReset) {
 		//don't do a reset it if the network init is not finished
 		delta = time(NULL) - mNetInitTS;
@@ -787,13 +804,7 @@ void p3ConnectMgr::networkConsistencyCheck()
 			std::cerr << ". Cannot reset before : " <<  MAX_NETWORK_INIT << " sec" << std::endl;
 		    #endif
 		}
-	} else {
-	    //extAddr found,update ip address list
-	    IpAddressTimed ipAddressTimed;
-	    ipAddressTimed.ipAddr = ownState.currentserveraddr;
-	    ipAddressTimed.seenTime = time(NULL);
-	    ownState.updateIpAddressList(ipAddressTimed);
-	}
+        }
 }
 
 void p3ConnectMgr::netExtFinderAddressCheck()
@@ -2904,7 +2915,7 @@ bool 	p3ConnectMgr::checkNetAddress()
 		//
 		ownState.currentlocaladdr.sin_addr = getPreferredInterface() ;
 
-		if(ownState.currentlocaladdr.sin_addr.s_addr != 0)
+                if(ownState.currentlocaladdr.sin_addr.s_addr != 0 && !isLoopbackNet(&(ownState.currentlocaladdr.sin_addr)))
 		{
 			if (netFlagLocalOk != true) 
 			{
@@ -2915,7 +2926,21 @@ bool 	p3ConnectMgr::checkNetAddress()
 				netFlagLocalOk = true;
 				IndicateConfigChanged();
 			}
-		} 
+                } else {
+                    if (netFlagLocalOk != false)
+                    {
+#ifdef CONN_DEBUG
+                            std::cerr << "p3ConnectMgr::checkNetAddress() changing netFlagOk to false.";
+                            std::cerr << std::endl;
+#endif
+                            netFlagLocalOk = false;
+                            netFlagExtraAddressCheckOk = false;
+                            netFlagUpnpOk = false;
+                            netFlagDhtOk = false;
+                            netFlagStunOk = false;
+                            IndicateConfigChanged();
+                    }
+                }
 
 		if(isLoopbackNet(&(ownState.currentlocaladdr.sin_addr)))
 			mNetStatus = RS_NET_LOOPBACK;
@@ -2961,106 +2986,6 @@ bool 	p3ConnectMgr::checkNetAddress()
 
 	return 1;
 }
-#ifdef TO_REMOVE
-bool 	p3ConnectMgr::checkNetAddress()
-{
-	std::list<std::string> addrs = getLocalInterfaces();
-	std::list<std::string>::iterator it;
-
-	in_addr_t old_in_addr = ownState.localaddr.sin_addr.s_addr;
-	int old_in_port = ownState.localaddr.sin_port;
-
-	{
-	    RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
-
-	    bool found = false;
-	    for(it = addrs.begin(); (!found) && (it != addrs.end()); it++)
-	    {
-    #ifdef CONN_DEBUG
-		    std::cerr << "p3ConnectMgr::checkNetAddress() Local Interface: " << *it;
-		    std::cerr << std::endl;
-    #endif
-
-		    // Ive added the 'isNotLoopbackNet' to prevent re-using the lo address if this was saved in the
-		    // configuration. In such a case, lo should only be chosen from getPreferredInterface as a last resort
-		    // fallback solution.
-		    //
-		    if ((!isLoopbackNet(&ownState.localaddr.sin_addr)) && (*it) == inet_ntoa(ownState.localaddr.sin_addr))
-		    {
-			    found = true;
-		    }
-	    }
-	    /* check that we didn't catch 0.0.0.0 - if so go for prefered */
-	    if ((found) && (ownState.localaddr.sin_addr.s_addr == 0))
-	    {
-		    found = false;
-	    }
-
-	    if (found)
-	    {
-		if (netFlagLocalOk != true) {
-			#ifdef CONN_DEBUG
-						std::cerr << "p3ConnectMgr::checkNetAddress() changing netFlagOk to true.";
-						std::cerr << std::endl;
-			#endif
-			netFlagLocalOk = true;
-			IndicateConfigChanged();
-		}
-	    } else {
-		    ownState.localaddr.sin_addr = getPreferredInterface();
-    #ifdef CONN_DEBUG
-		    std::cerr << "p3ConnectMgr::checkNetAddress() Local Address Not Found: Using Preferred Interface: ";
-		    std::cerr << inet_ntoa(ownState.localaddr.sin_addr);
-		    std::cerr << std::endl;
-    #endif
-		    IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-
-	    }
-
-	    if (isLoopbackNet(&(ownState.localaddr.sin_addr)))
-	    {
-		   mNetStatus = RS_NET_LOOPBACK;
-	    }
-
-		 int port = ntohs(ownState.localaddr.sin_port);
-		 if ((port < PQI_MIN_PORT) || (port > PQI_MAX_PORT))
-		 {
-			 ownState.localaddr.sin_port = htons(PQI_DEFAULT_PORT);
-		 }
-
-		 /* if localaddr = serveraddr, then ensure that the ports
-		  * are the same (modify server)... this mismatch can
-		  * occur when the local port is changed....
-		  */
-		 if (ownState.localaddr.sin_addr.s_addr == ownState.serveraddr.sin_addr.s_addr)
-		 {
-			 ownState.serveraddr.sin_port = ownState.localaddr.sin_port;
-		 }
-
-		 // ensure that address family is set, otherwise windows Barfs.
-		 ownState.localaddr.sin_family = AF_INET;
-		 ownState.serveraddr.sin_family = AF_INET;
-
-#ifdef CONN_DEBUG
-		 std::cerr << "p3ConnectMgr::checkNetAddress() Final Local Address: ";
-		 std::cerr << inet_ntoa(ownState.localaddr.sin_addr);
-		 std::cerr << ":" << ntohs(ownState.localaddr.sin_port);
-		 std::cerr << std::endl;
-#endif
-	}
-
-	if ((old_in_addr != ownState.localaddr.sin_addr.s_addr) || (old_in_port != ownState.localaddr.sin_port)) 
-	{
-#ifdef CONN_DEBUG
-		std::cerr << "p3ConnectMgr::checkNetAddress() local address changed, resetting network." << std::endl;
-#endif
-	    netReset();
-	}
-
-	return 1;
-}
-#endif
-
 
 /************************* p3config functions **********************/
 /*******************************************************************/
@@ -3610,7 +3535,7 @@ void peerConnectState::purgeIpAddressList() {//purge old and useless addresses t
 
     std::list<IpAddressTimed>::iterator ipListIt;
     for (ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end());) {
-	if (ipListIt->ipAddr.sin_addr.s_addr == 0 || isLoopbackNet(&(ipListIt->ipAddr.sin_addr))) {
+        if (ipListIt->ipAddr.sin_addr.s_addr == 0) {
 	    ipAddressList.erase(ipListIt++);
 	} else {
 	    ++ipListIt;
@@ -3633,8 +3558,8 @@ void peerConnectState::purgeIpAddressList() {//purge old and useless addresses t
 
     sortIpAddressListBySeenTime();
     //keep only a limited number of addresses
-    if (ipAddressList.size() > PEER_CONNECT_STATE_MAX_LIST_SIZE) {
-	ipAddressList.resize(PEER_CONNECT_STATE_MAX_LIST_SIZE);
+    if (ipAddressList.size() > PEER_IP_CONNECT_STATE_MAX_LIST_SIZE) {
+        ipAddressList.resize(PEER_IP_CONNECT_STATE_MAX_LIST_SIZE);
     }
 }
 
