@@ -128,6 +128,7 @@ virtual void getDwlDetails(std::list<DwlDetails> & details) = 0;
 virtual bool FileDownloads(std::list<std::string> &hashs) = 0;
 virtual bool FileUploads(std::list<std::string> &hashs) = 0;
 virtual bool FileDetails(std::string hash, uint32_t hintflags, FileInfo &info) = 0;
+virtual bool FileChunksDetails(const std::string& hash,FileChunksInfo& info) = 0 ;
 
 /***
  * Extra List Access

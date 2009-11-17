@@ -28,6 +28,7 @@
 
 
 #include <list>
+#include <vector>
 #include <iostream>
 #include <string>
 #include <stdint.h>
@@ -37,11 +38,13 @@ typedef std::string   RsChanId;
 typedef std::string   RsMsgId;
 typedef std::string   RsAuthId;
 
-const uint32_t FT_STATE_FAILED		= 0x0000;
-const uint32_t FT_STATE_OKAY		= 0x0001;
-const uint32_t FT_STATE_WAITING 	= 0x0002;
-const uint32_t FT_STATE_DOWNLOADING 	= 0x0003;
-const uint32_t FT_STATE_COMPLETE 	= 0x0004;
+#ifndef FT_STATE_FAILED
+    const uint32_t FT_STATE_FAILED		= 0x0000;
+    const uint32_t FT_STATE_OKAY		= 0x0001;
+    const uint32_t FT_STATE_WAITING 	= 0x0002;
+    const uint32_t FT_STATE_DOWNLOADING 	= 0x0003;
+    const uint32_t FT_STATE_COMPLETE 	= 0x0004;
+#endif
 
 class TransferInfo
 {
@@ -244,6 +247,16 @@ class FileDetail
 };
 
 enum DwlPriority { Low = 0, Normal, High, Auto };
+
+class FileChunksInfo
+{
+	public:
+	enum ChunkState { CHUNK_DONE, CHUNK_ACTIVE, CHUNK_OUTSTANDING } ;
+
+	uint64_t file_size ;					// real size of the file
+	uint32_t chunk_size ;				// size of chunks
+	std::vector<ChunkState> chunks ;	// dl state of chunks. Only the last chunk may have size < chunk_size
+};
 
 /* class which encapsulates download details */
 class DwlDetails {
