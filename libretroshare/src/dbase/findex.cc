@@ -776,7 +776,20 @@ int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint64_
 			/* parse line */
 			while(1)
 			{
-				getline(ss, word, ',');
+				word.clear() ;
+
+				while(1)
+				{
+					std::string tmp ;
+					getline(ss,tmp,',') ;
+					word += tmp ;
+
+					if(word[word.length()-1] == '\\')	// when we find the string "\," we turn it into "," and continue
+						word[word.length()-1] = ',' ;
+					else
+						break ;
+				}
+
 				if (ss.eof())
 					goto error;
 				tokens.push_back(word);
@@ -906,18 +919,22 @@ int FileIndex::saveIndex(std::string filename, std::string &fileHash, uint64_t &
 	return 1;
 }
 
-
+// Turns all "," in the string into "\,"
+//
 std::string FixName(std::string in)
 {
 	/* replace any , with _ */
+	std::string out ;	
+	int j=0 ;
+
 	for(unsigned int i = 0; i < in.length(); i++)
 	{
 		if (in[i] == ',')
-		{
-			in[i] = '_';
-		}
+			out += "\\" ;
+
+		out.push_back(in[i]) ;
 	}
-	return in;
+	return out;
 }
 
 
