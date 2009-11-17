@@ -463,7 +463,7 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 		switch(coln)
 		{
 			case 0:
-		return QString::fromStdString(details.name);
+		return QString::fromUtf8(details.name.c_str());
 			break;
 			case 1:
 		{
@@ -503,7 +503,7 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 		switch(coln)
 		{
 			case 0:
-				return QString::fromStdString(details.name);
+				return QString::fromUtf8(details.name.c_str());
 				break;
 			case 1:
 				//return QString("");

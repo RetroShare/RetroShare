@@ -113,7 +113,6 @@ int TrustView::getRowColId(const string& peerid)
 	if(itpr == peeridToRow.end())
 	{
 		i = trustTableTW->columnCount() ;
-//		cout << "  -> peer not in table. Creating entry # " << i << endl ;
 
 		trustTableTW->insertColumn(i) ;
 		trustTableTW->insertRow(i) ;
@@ -146,7 +145,7 @@ void TrustView::update()
 	if(!rsPeers->getOthersList(neighs))
 		return ;
 
-	neighs.push_back(rsPeers->getOwnId()) ;
+//	neighs.push_back(rsPeers->getPGPOwnId()) ;
 
 	trustTableTW->setSortingEnabled(false) ;
 
@@ -155,17 +154,17 @@ void TrustView::update()
 	// Fill everything
 	for(list<string>::const_iterator it1(neighs.begin()); it1 != neighs.end(); ++it1)
 	{
+		std::list<std::string> friends_ids ;
+
 		if(!rsPeers->getPeerDetails(*it1,details)) 
 			continue ;
 
-//		cout << "treating neigh = " << details.name << endl ;
-//		cout << "  signers = " ;
 		int i = getRowColId(details.id) ;
+		std::string issuer(details.issuer) ;	// the one we check for trust.
 
 		for(list<string>::const_iterator it2(details.signers.begin());it2!=details.signers.end();++it2) 
 		{
 			cout << *it2 << " " ;
-			// Signers are identified by there name, so if we have twice the same signers, this gets crappy.
 
 			int j = getRowColId(*it2) ;
 

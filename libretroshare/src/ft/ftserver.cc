@@ -305,6 +305,21 @@ void ftServer::getDwlDetails(std::list<DwlDetails> & details)
 	mFtDwlQueue->getDwlDetails(details);
 }
 
+bool ftServer::FileChunksDetails(const std::string& hash,FileChunksInfo& info)
+{
+	// for know put some dummy info. It's for display sake only.
+	info.chunk_size = 1024*1024 ;
+	info.file_size = 250*info.chunk_size - 123 ; // last chunk is not complete.
+	info.chunks.resize(250,FileChunksInfo::CHUNK_DONE) ;
+	int n = rand()%150 + 50 ;
+	for(int i=0;i<10;++i)
+		info.chunks[n+i] = FileChunksInfo::CHUNK_ACTIVE ;
+	for(int i=n+10;i<250;++i)
+		info.chunks[i] = FileChunksInfo::CHUNK_OUTSTANDING ;
+
+	return true ;
+}
+
 	/* Directory Handling */
 void ftServer::setDownloadDirectory(std::string path)
 {

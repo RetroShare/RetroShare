@@ -30,11 +30,12 @@
 
 #include "mainpage.h"
 #include "ui_NetworkDialog.h"
+#include "RsAutoUpdatePage.h"
 
 #include "connect/ConnectDialog.h"
 
 
-class NetworkDialog : public MainPage 
+class NetworkDialog : public RsAutoUpdatePage 
 {
   Q_OBJECT
 
@@ -46,6 +47,7 @@ public:
   void  showpeerdetails(std::string id);
 
   //void load();
+  virtual void updateDisplay() ; // overloaded from RsAutoUpdatePage
   
 public slots:
   void  insertConnect();

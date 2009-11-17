@@ -465,6 +465,12 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 }
 
 
+std::string p3Peers::getPeerPGPName(std::string id)
+{
+	/* get from mAuthMgr as it should have more peers? */
+	return mAuthMgr->getIssuerName(id);
+}
+
 std::string p3Peers::getPeerName(std::string id)
 {
 #ifdef P3PEERS_DEBUG

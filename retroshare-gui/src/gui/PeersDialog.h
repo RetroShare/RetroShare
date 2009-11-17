@@ -25,6 +25,7 @@
 #include <QFileDialog>
 
 #include "chat/PopupChatDialog.h"
+#include "RsAutoUpdatePage.h"
 
 #include "mainpage.h"
 #include "ui_PeersDialog.h"
@@ -37,7 +38,7 @@ class QTextEdit;
 class QTextCharFormat;
 class ChatDialog;
 
-class PeersDialog : public MainPage 
+class PeersDialog : public RsAutoUpdatePage 
 {
 	Q_OBJECT
 
@@ -53,6 +54,7 @@ class PeersDialog : public MainPage
 		//  void setChatDialog(ChatDialog *cd);
 
 		QPixmap picture;
+		virtual void updateDisplay() ;	// overloaded from RsAutoUpdatePage
 
 		public slots:
 

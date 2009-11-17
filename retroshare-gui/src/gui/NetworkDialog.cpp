@@ -76,7 +76,8 @@ RsCertId getNeighRsCertId(QTreeWidgetItem *i);
 
 /** Constructor */
 NetworkDialog::NetworkDialog(QWidget *parent)
-: MainPage(parent), connectdialog(NULL)
+: RsAutoUpdatePage(10000,parent), 	// updates every 10 sec.
+	connectdialog(NULL)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
@@ -346,6 +347,11 @@ void NetworkDialog::loadcert()
 
 #include <sstream>
 
+void NetworkDialog::updateDisplay()
+{
+	insertConnect() ;
+}
+
 /* get the list of Neighbours from the RsIface.  */
 void NetworkDialog::insertConnect()
 {
@@ -425,7 +431,7 @@ void NetworkDialog::insertConnect()
 				out << detail.extPort;
 			} else {
 				// No Trust => no IP Information
-				out << "0.0.0.0:0/0.0.0.0:0";
+				out << "Unknown";
 			}
                 	item -> setText(5, QString::fromStdString(out.str()));
 		}
@@ -433,7 +439,7 @@ void NetworkDialog::insertConnect()
 		/* Others */
 		item -> setText(6, QString::fromStdString(detail.org));
 		item -> setText(7, QString::fromStdString(detail.location));
-		item -> setText(8, QString::fromStdString(detail.email));
+		item -> setText(8, QString::fromStdString(rsPeers->getPeerName(detail.id)));
 
 		{
 			item -> setText(9, QString::fromStdString(detail.id));

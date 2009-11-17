@@ -209,17 +209,6 @@ void NotifyQt::UpdateGUI()
 
 //	std::cerr << "Got update signal t=" << lastTs << std::endl ;
 
-	if (time(NULL) > lastTs)					// always update, every 1 sec.
-	{
-		emit transfersChanged();
-		emit friendsChanged() ;
-	}
-
-	if (time(NULL) > lastTs + 5)				// update every 5 seconds. I don't know what to do with these.
-	{
-//		displayChannels();
-	}
-
 	lastTs = time(NULL) ;
 
 	static bool already_updated = false ;	// these only update once at start because they may already have been set before 

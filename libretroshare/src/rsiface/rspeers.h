@@ -132,6 +132,7 @@ virtual bool	getOthersList(std::list<std::string> &ids)	= 0;
 virtual bool    isOnline(std::string id)			= 0;
 virtual bool    isFriend(std::string id)			= 0;
 virtual std::string getPeerName(std::string id)			= 0;
+virtual std::string getPeerPGPName(std::string pgp_id)	= 0;
 virtual bool	getPeerDetails(std::string id, RsPeerDetails &d) = 0;
 
 		/* Using PGP Ids */

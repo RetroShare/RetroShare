@@ -28,6 +28,7 @@
 
 
 #include <list>
+#include <vector>
 #include <iostream>
 #include <string>
 #include <stdint.h>
@@ -246,6 +247,16 @@ class FileDetail
 };
 
 enum DwlPriority { Low = 0, Normal, High, Auto };
+
+class FileChunksInfo
+{
+	public:
+	enum ChunkState { CHUNK_DONE, CHUNK_ACTIVE, CHUNK_OUTSTANDING } ;
+
+	uint64_t file_size ;					// real size of the file
+	uint32_t chunk_size ;				// size of chunks
+	std::vector<ChunkState> chunks ;	// dl state of chunks. Only the last chunk may have size < chunk_size
+};
 
 /* class which encapsulates download details */
 class DwlDetails {

@@ -656,7 +656,7 @@ p, li { white-space: pre-wrap; }
          <normaloff>:/images/blockdevice.png</normaloff>:/images/blockdevice.png</iconset>
        </attribute>
        <attribute name="title">
-        <string>File Chunks</string>
+        <string>Selected transfer</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_7">
         <property name="margin">
@@ -666,7 +666,7 @@ p, li { white-space: pre-wrap; }
          <number>6</number>
         </property>
         <item row="0" column="0">
-         <widget class="QScrollArea" name="taskGraphWidget">
+         <widget class="QScrollArea" name="fileTransferInfoWidget">
           <property name="frameShape">
            <enum>QFrame::NoFrame</enum>
           </property>

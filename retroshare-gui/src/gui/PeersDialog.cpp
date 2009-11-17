@@ -84,7 +84,7 @@
 
 /** Constructor */
 PeersDialog::PeersDialog(QWidget *parent)
-            : MainPage(parent),
+            : RsAutoUpdatePage(1000,parent),
               historyKeeper(Rshare::dataDirectory() + "/his1.xml")
 {
   /* Invoke the Qt Designer generated object setup routine */
@@ -260,7 +260,10 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
 
 }
 
-
+void PeersDialog::updateDisplay()
+{
+	insertPeers() ;
+}
 
 /* get the list of peers from the RsIface.  */
 void  PeersDialog::insertPeers()

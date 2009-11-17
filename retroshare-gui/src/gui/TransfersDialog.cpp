@@ -29,6 +29,7 @@
 #include "RetroShareLinkAnalyzer.h"
 #include "DLListDelegate.h"
 #include "ULListDelegate.h"
+#include "FileTransferInfoWidget.h"
 
 #include <QContextMenuEvent>
 #include <QMenu>
@@ -70,7 +71,7 @@
 
 /** Constructor */
 TransfersDialog::TransfersDialog(QWidget *parent)
-: MainPage(parent)
+: RsAutoUpdatePage(1000,parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
@@ -178,16 +179,16 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     _sortColUpl = 0;
     _sortOrderUpl = Qt::AscendingOrder;
 	
-	  createTaskGraphPainterWidget();
-	  
-	  /*
-	  taskGraphDetailLayout = new QHBoxLayout();
-    taskGraphDetailLayout->addWidget(taskGraphWidget);
-    ui.tab_2->setLayout(taskGraphDetailLayout);
-    taskGraphDetailLayout->setSpacing( 0 );
-    taskGraphDetailLayout->setMargin( 0 );*/
-    
+    FileTransferInfoWidget *ftiw = new FileTransferInfoWidget();
+    ui.fileTransferInfoWidget->setWidget(ftiw);
+    ui.fileTransferInfoWidget->setWidgetResizable(true);
+    ui.fileTransferInfoWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui.fileTransferInfoWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    ui.fileTransferInfoWidget->viewport()->setBackgroundRole(QPalette::NoRole);
+    ui.fileTransferInfoWidget->setFrameStyle(QFrame::NoFrame);
+    ui.fileTransferInfoWidget->setFocusPolicy(Qt::NoFocus);
 
+	 QObject::connect(ui.downloadList,SIGNAL(clicked(const QModelIndex&)),this,SLOT(showFileDetails())) ;
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -205,7 +206,7 @@ void TransfersDialog::keyPressEvent(QKeyEvent *e)
 		e->accept() ;
 	}
 	else
-		MainPage::keyPressEvent(e) ;
+		RsAutoUpdatePage::keyPressEvent(e) ;
 }
 
 void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
@@ -222,7 +223,8 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
        */
 	std::cerr << "TransfersDialog::downloadListCostumPopupMenu()" << std::endl;
 
-      	bool addPlayOption = false;
+	bool addPlayOption = false;
+
 	for(int i = 0; i <= DLListModel->rowCount(); i++) {
 		std::cerr << "Row Status :" << getStatus(i, DLListModel).toStdString() << ":" << std::endl;
 		if(selection->isRowSelected(i, QModelIndex())) {
@@ -236,14 +238,13 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 			}
 		}
 	}
-
       	QAction *playAct = NULL;
 	if (addPlayOption)
 	{
       		playAct = new QAction(QIcon(IMAGE_PLAY), tr( "Play" ), this );
       		connect( playAct , SIGNAL( triggered() ), this, SLOT( playSelectedTransfer() ) );
 	}
-
+    	QAction *detailsAct = NULL;
       pauseAct = new QAction(QIcon(IMAGE_PAUSE), tr("Pause"), this);
       connect(pauseAct, SIGNAL(triggered()), this, SLOT(pauseFileTransfer()));
 
@@ -325,9 +326,9 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       contextMnu.addAction( clearQueuedDwlAct);
       contextMnu.addAction( clearQueueAct);
       contextMnu.addSeparator();
-	  contextMnu.addMenu( viewMenu);
-      contextMnu.exec( mevent->globalPos() );
+		contextMnu.addMenu( viewMenu);
 
+      contextMnu.exec( mevent->globalPos() );
 }
 
 void TransfersDialog::playSelectedTransfer()
@@ -581,6 +582,10 @@ void TransfersDialog::editItem(int row, int column, QVariant data)
 }
 
 	/* get the list of Transfers from the RsIface.  **/
+void TransfersDialog::updateDisplay()
+{
+	insertTransfers();
+}
 void TransfersDialog::insertTransfers()
 {
 	QString symbol, name, sources, status, priority, coreId;
@@ -658,7 +663,7 @@ void TransfersDialog::insertTransfers()
         if (info.flags & CB_CODE_CACHE) continue;
 
         symbol      = "";
-        name        = QString::fromStdString(info.fname);
+        name        = QString::fromUtf8(info.fname.c_str());
         coreId      = QString::fromStdString(info.hash);
         fileSize    = info.size;
         progress    = (info.transfered * 100.0) / info.size;
@@ -779,7 +784,7 @@ void TransfersDialog::insertTransfers()
     rsFiles->getDwlDetails(details);
     for (dit = details.begin(); dit != details.end(); dit ++)
     {
-    	name 		= QString::fromStdString(dit->fname);
+    	name 		= QString::fromUtf8(dit->fname.c_str());
     	coreId 		= QString::fromStdString(dit->hash);
     	fileSize 	= dit->count;
     	progress    = 0;
@@ -842,7 +847,7 @@ void TransfersDialog::insertTransfers()
 	  {
 		symbol  	= "";
 		coreId		= QString::fromStdString(info.hash);
-		name    	= QString::fromStdString(info.fname);
+		name    	= QString::fromUtf8(info.fname.c_str());
 		sources		= getPeerName(pit->peerId);
 
 		switch(pit->status)
@@ -886,7 +891,7 @@ void TransfersDialog::insertTransfers()
 	  {
 		symbol  	= "";
 		coreId		= QString::fromStdString(info.hash);
-		name    	= QString::fromStdString(info.fname);
+		name    	= QString::fromUtf8(info.fname.c_str());
 		sources		= tr("Unknown");
 
 		switch(info.downloadStatus)
@@ -1305,35 +1310,23 @@ void TransfersDialog::saveSortIndicatorUpl(int logicalIndex, Qt::SortOrder order
 	_sortOrderUpl = order;
 }
 
-void TransfersDialog::createTaskGraphPainterWidget()
+void TransfersDialog::showFileDetails()
 {
-    taskGraphPainterWidget = new TaskGraphPainterWidget();
-    //taskGraphWidget = new QScrollArea();
-    ui.taskGraphWidget->setWidget(taskGraphPainterWidget);
-    ui.taskGraphWidget->setWidgetResizable(true);
-    ui.taskGraphWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui.taskGraphWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    ui.taskGraphWidget->viewport()->setBackgroundRole(QPalette::NoRole);
-    ui.taskGraphWidget->setFrameStyle(QFrame::NoFrame);
-    ui.taskGraphWidget->setFocusPolicy(Qt::NoFocus);
+	std::string file_hash ;
+	int nb_select = 0 ;
+
+	for(int i = 0; i <= DLListModel->rowCount(); i++) 
+		if(selection->isRowSelected(i, QModelIndex())) 
+		{
+	        file_hash = getID(i, DLListModel).toStdString();
+			  ++nb_select ;
+		}
+	if(nb_select != 1)
+		return ;
+	
+	dynamic_cast<FileTransferInfoWidget*>(ui.fileTransferInfoWidget->widget())->setFileHash(file_hash) ;
+	dynamic_cast<FileTransferInfoWidget*>(ui.fileTransferInfoWidget->widget())->updateDisplay() ;
 }
-
-/*void TransfersDialog::setTaskGraphPainterWidget (const QModelIndex& index)
-{
-    Download *dl = (Download *) (index.model ()->
-        data (index.model ()->index (index.row (), DLListDelegate::PTR)).value <quintptr > ());
-
-    if (!dl)
-        return;
-
-    // call takeWidget before setWidget to avoid destruction of the widget
-    QWidget* lastWidget = taskGraphWidget->takeWidget ();
-
-    QWidget* currentWidget = dl->getTaskGraphicWidget ();
-    taskGraphWidget->setWidget (currentWidget);
-
-    taskGraphWidget->show ();
-}*/
 
 double TransfersDialog::getProgress(int row, QStandardItemModel *model)
 {

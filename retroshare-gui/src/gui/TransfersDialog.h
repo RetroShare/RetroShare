@@ -31,7 +31,7 @@
 #include <stdint.h>
 
 #include "mainpage.h"
-#include "taskGraphPainterWidget.h"
+#include "RsAutoUpdatePage.h"
 
 #include "ui_TransfersDialog.h"
 
@@ -40,7 +40,7 @@ class DLListDelegate;
 class ULListDelegate;
 class QStandardItemModel;
 
-class TransfersDialog : public MainPage
+class TransfersDialog : public RsAutoUpdatePage
 {
 	Q_OBJECT
 
@@ -51,6 +51,7 @@ class TransfersDialog : public MainPage
 		~TransfersDialog();
 
 		virtual void keyPressEvent(QKeyEvent *) ;
+		virtual void updateDisplay() ;				// derived from RsAutoUpdateWidget
 
 	public slots:
 		void insertTransfers();
@@ -117,12 +118,6 @@ class TransfersDialog : public MainPage
 		int _sortColDwl, _sortColUpl;
 		Qt::SortOrder _sortOrderDwl, _sortOrderUpl;
 		
-		void createTaskGraphPainterWidget();
-    /*QHBoxLayout *taskGraphDetailLayout;
-    QScrollArea *taskGraphWidget;*/
-    TaskGraphPainterWidget *taskGraphPainterWidget;
-
-
 		/** Create the actions on the tray menu or menubar */
 		void createActions();
 
@@ -171,6 +166,7 @@ class TransfersDialog : public MainPage
 
 		void editItem(int row, int column, QVariant data);
 		void updateProgress(int value);
+		void showFileDetails() ;
 
 		double getProgress(int row, QStandardItemModel *model);
 		double getSpeed(int row, QStandardItemModel *model);

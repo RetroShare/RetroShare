@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools pluginmgr newsettings release
+CONFIG += qt gui uic qrc resources uitools pluginmgr newsettings 
 QT     += network xml script opengl
 TEMPLATE = app
 TARGET = RetroShare
@@ -159,7 +159,8 @@ HEADERS +=  rshare.h \
             gui/ShareManager.h \
             gui/StatisticDialog.h \
             gui/SoundManager.h \
-            gui/taskGraphPainterWidget.h \
+            gui/FileTransferInfoWidget.h \
+            gui/RsAutoUpdatePage.h \
             gui/HelpDialog.h \
             gui/InfoDialog.h \
             gui/LogoBar.h \
@@ -368,6 +369,7 @@ SOURCES +=  main.cpp \
             gui/MessengerWindow.cpp \
             gui/PeersDialog.cpp \
             gui/RemoteDirModel.cpp \
+            gui/RsAutoUpdatePage.cpp \
             gui/RetroShareLinkAnalyzer.cpp \
             gui/SearchTreeWidget.cpp \
             gui/SearchDialog.cpp \
@@ -377,7 +379,7 @@ SOURCES +=  main.cpp \
             gui/StatisticDialog.cpp \
             gui/SoundManager.cpp \
             gui/MessagesDialog.cpp \
-            gui/taskGraphPainterWidget.cpp \
+            gui/FileTransferInfoWidget.cpp \
             gui/MessagesPopupDialog.cpp \
             gui/im_history/IMHistoryKeeper.cpp        \
             gui/im_history/IMHistoryReader.cpp        \
