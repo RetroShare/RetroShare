@@ -29,7 +29,7 @@
 #include <QModelIndex>
 #include <QVariant>
 
-#include "mainpage.h"
+#include "RsAutoUpdatePage.h"
 #include "ui_TransfersDialog.h"
 
 
@@ -37,7 +37,7 @@ class DLListDelegate;
 class ULListDelegate;
 class QStandardItemModel;
 
-class TransfersDialog : public MainPage
+class TransfersDialog : public RsAutoUpdatePage
 {
 	Q_OBJECT
 
@@ -49,6 +49,7 @@ class TransfersDialog : public MainPage
 		
 		virtual void keyPressEvent(QKeyEvent *) ;
 
+		virtual void updateDisplay() ;
 	public slots:
 		void insertTransfers();
 

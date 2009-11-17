@@ -26,7 +26,7 @@
 
 #include "chat/PopupChatDialog.h"
 
-#include "mainpage.h"
+#include "RsAutoUpdatePage.h"
 #include "ui_PeersDialog.h"
 
 #include "im_history/IMHistoryKeeper.h"
@@ -37,7 +37,7 @@ class QTextEdit;
 class QTextCharFormat;
 class ChatDialog;
 
-class PeersDialog : public MainPage 
+class PeersDialog : public RsAutoUpdatePage 
 {
   Q_OBJECT
 
@@ -52,6 +52,7 @@ public:
   void loadEmoticonsgroupchat();
 //  void setChatDialog(ChatDialog *cd);
 
+  virtual void updateDisplay() ;
 public slots:
 
   void  insertPeers();

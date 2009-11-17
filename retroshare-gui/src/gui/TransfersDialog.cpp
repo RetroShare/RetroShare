@@ -47,7 +47,7 @@
 
 /** Constructor */
 TransfersDialog::TransfersDialog(QWidget *parent)
-: MainPage(parent)
+: RsAutoUpdatePage(1000,parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
@@ -381,12 +381,13 @@ void TransfersDialog::editItem(int row, int column, QVariant data)
 	}
 }
 
+void TransfersDialog::updateDisplay()
+{
+	insertTransfers();
+}
 	/* get the list of Transfers from the RsIface.  **/
 void TransfersDialog::insertTransfers()
 {
-	if(!isVisible())
-		return ;
-
 	QString symbol, name, sources, status, coreId;
 	qlonglong fileSize, completed, remaining;
 	double progress, dlspeed; 

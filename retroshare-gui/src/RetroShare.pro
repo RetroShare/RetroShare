@@ -145,6 +145,7 @@ HEADERS +=  rshare.h \
             gui/HelpDialog.h \
             gui/LogoBar.h \
             gui/xprogressbar.h \
+			gui/RsAutoUpdatePage.h \
             gui/plugins/PluginInterface.h \
             gui/im_history/IMHistoryKeeper.h           \
             gui/im_history/IMHistoryReader.h           \
@@ -359,6 +360,7 @@ SOURCES +=  main.cpp \
             gui/StatisticDialog.cpp \
             gui/MessagesDialog.cpp \
             gui/MessagesPopupDialog.cpp \
+			gui/RsAutoUpdatePage.cpp \
             gui/im_history/IMHistoryKeeper.cpp        \
             gui/im_history/IMHistoryReader.cpp        \
             gui/im_history/IMHistoryItem.cpp          \

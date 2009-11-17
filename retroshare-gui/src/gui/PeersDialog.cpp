@@ -35,6 +35,7 @@
 #include "msgs/ChanMsgDialog.h"
 #include "connect/ConfCertDialog.h"
 #include "profile/ProfileView.h"
+#include "RsAutoUpdatePage.h"
 
 
 #include "gui/Preferences/rsharesettings.h"
@@ -82,7 +83,7 @@
 
 /** Constructor */
 PeersDialog::PeersDialog(QWidget *parent)
-            : MainPage(parent),
+            : RsAutoUpdatePage(1000,parent),
               historyKeeper(Rshare::dataDirectory() + "/his1.xml")
 {
   /* Invoke the Qt Designer generated object setup routine */
@@ -221,14 +222,14 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       contextMnu.exec( mevent->globalPos() );
 }
 
-
+void PeersDialog::updateDisplay()
+{
+	insertPeers() ;
+}
 
 /* get the list of peers from the RsIface.  */
 void  PeersDialog::insertPeers()
 {
-	if(!isVisible())
-		return ;
-
 	std::list<std::string> peers;
 	std::list<std::string>::iterator it;
 
