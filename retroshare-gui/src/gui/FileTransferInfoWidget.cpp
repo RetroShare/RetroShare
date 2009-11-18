@@ -101,7 +101,7 @@ void FileTransferInfoWidget::draw(const FileChunksInfo& info,QPainter *painter)
     if (fileSize%blockSize == 0) blocks--;
     QRectF source(0.0, 0.0, 12.0, 12.0);
 
-    for (int i=0;i<=blocks;i++)
+    for (int i=0;i<blocks;i++)
     {
         if (x > maxWidth - 13)
         {

@@ -33,6 +33,7 @@
  *
  */
 #include "ftfileprovider.h"
+#include "ftchunkmap.h"
 #include <map>
 class ftChunk;
 
@@ -49,6 +50,7 @@ virtual bool 	getFileData(uint64_t offset, uint32_t &chunk_size, void *data);
 	bool	finished() { return getRecvd() == getFileSize(); }
 	uint64_t getRecvd();
 		
+	void getChunkMap(FileChunksInfo& info) ;
 
 	/* 
 	 * creation functions for FileCreator 
@@ -74,6 +76,7 @@ private:
 
 	std::map<uint64_t, ftChunk> mChunks;
 
+	ChunkMap chunkMap ;
 };
 
 class ftChunk {

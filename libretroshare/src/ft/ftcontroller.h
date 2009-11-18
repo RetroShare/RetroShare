@@ -136,6 +136,7 @@ bool 	FileCancel(std::string hash);
 bool 	FileControl(std::string hash, uint32_t flags);
 bool 	FileClearCompleted();
 bool 	FlagFileComplete(std::string hash);
+bool  getFileChunksDetails(const std::string& hash,FileChunksInfo& info);
 
 	/* get Details of File Transfers */
 bool 	FileDownloads(std::list<std::string> &hashs);

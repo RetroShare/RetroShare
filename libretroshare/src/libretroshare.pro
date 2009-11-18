@@ -14,8 +14,10 @@ debug {
 #	DEFINES *= DEBUG
 #	DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER FT_DEBUG EXTADDRSEARCH_DEBUG
 #	DEFINES *= CHAT_DEBUG CONTROL_DEBUG FT_DEBUG
-#	DEFINES *= P3TURTLE_DEBUG
-#	DEFINES *= UPNP_DEBUG CONN_DEBUG
+#	DEFINES *= P3TURTLE_DEBUG UPNP_DEBUG 
+#	DEFINES *= CONN_DEBUG
+#	DEFINES *= NET_DEBUG
+#	DEFINES *= DISTRIB_DEBUG
 	QMAKE_CXXFLAGS *= -g
 }
 
@@ -147,6 +149,7 @@ HEADERS += dbase/cachestrapper.h \
            ft/ftfileprovider.h \
            ft/ftfilesearch.h \
            ft/ftsearch.h \
+           ft/ftchunkmap.h \
            ft/ftserver.h \
            ft/fttransfermodule.h \
 	         ft/ftdwlqueue.h \
@@ -288,6 +291,7 @@ SOURCES += \
 				ft/ftextralist.cc \
 				ft/ftfilecreator.cc \
 				ft/ftdata.cc \
+				ft/ftchunkmap.cc \
 				ft/ftfileprovider.cc \
 				ft/ftdwlqueue.cc \
 				dht/opendhtmgr.cc \

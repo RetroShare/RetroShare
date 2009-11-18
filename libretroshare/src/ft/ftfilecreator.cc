@@ -16,7 +16,7 @@
 ***********************************************************/
 
 ftFileCreator::ftFileCreator(std::string path, uint64_t size, std::string
-hash, uint64_t recvd): ftFileProvider(path,size,hash) 
+hash, uint64_t recvd): ftFileProvider(path,size,hash), chunkMap(size)
 {
 	/* 
          * FIXME any inits to do?
@@ -38,6 +38,8 @@ hash, uint64_t recvd): ftFileProvider(path,size,hash)
 	/* initialise the Transfer Lists */
 	mStart = recvd;
 	mEnd = recvd;
+
+	chunkMap.received(recvd) ;
 }
 
 bool    ftFileCreator::getFileData(uint64_t offset, 
@@ -264,6 +266,9 @@ int ftFileCreator::locked_notifyReceived(uint64_t offset, uint32_t chunk_size)
 		mStart = offset + chunk_size;
 	}
 
+	// update chunk map
+	chunkMap.received(mStart) ;
+
 	if (mChunks.size() == 0)
 	{
 		mStart = mEnd;
@@ -271,6 +276,7 @@ int ftFileCreator::locked_notifyReceived(uint64_t offset, uint32_t chunk_size)
 
 	/* otherwise there is another earlier block to go
 	 */
+
 	return 1;
 }
 
@@ -349,11 +355,18 @@ bool ftFileCreator::getMissingChunk(uint64_t &offset, uint32_t &chunk)
 #endif
 
 		mChunks[offset] = ftChunk(offset, chunk, ts);
+
+		chunkMap.requested(offset,chunk) ;
 	}
 
 	return true; /* cos more data to get */
 }
 
+void ftFileCreator::getChunkMap(FileChunksInfo& info)
+{
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+	info = chunkMap ;
+}
 
 bool ftFileCreator::locked_printChunkMap()
 {

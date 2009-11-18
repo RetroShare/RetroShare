@@ -94,6 +94,20 @@ void ftController::setFtSearchNExtra(ftSearch *search, ftExtraList *list)
 	mExtraList = list;
 }
 
+bool ftController::getFileChunksDetails(const std::string& hash,FileChunksInfo& info)
+{
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
+	std::map<std::string, ftFileControl>::iterator it = mDownloads.find(hash) ;
+
+	if(it == mDownloads.end())
+		return false ;
+
+	it->second.mCreator->getChunkMap(info) ;
+
+	return true ;
+}
+
 void ftController::addFileSource(const std::string& hash,const std::string& peer_id)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
