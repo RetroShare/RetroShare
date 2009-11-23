@@ -291,7 +291,7 @@ void NetworkDialog::peerdetails()
 void NetworkDialog::showpeerdetails(std::string id)
 {
 #ifdef NET_DEBUG 
-    std::cerr << "ConnectionsDialog::showpeerdetails()" << std::endl;
+    std::cerr << "NetworkDialog::showpeerdetails()" << std::endl;
 #endif
     if ((connectdialog) && (connectdialog -> loadPeer(id)))
     {
@@ -584,7 +584,7 @@ RsCertId getNeighRsCertId(QTreeWidgetItem *i)
 std::string NetworkDialog::loadneighbour()
 {
 #ifdef NET_DEBUG 
-        std::cerr << "ConnectionsDialog::loadneighbour()" << std::endl;
+        std::cerr << "NetworkDialog::loadneighbour()" << std::endl;
 #endif
         QString fileName = QFileDialog::getOpenFileName(this, tr("Select Certificate"), "",
 	                                             tr("Certificates (*.pqi *.pem)"));
@@ -602,7 +602,7 @@ void NetworkDialog::addneighbour()
 {
         QTreeWidgetItem *c = getCurrentNeighbour();
 #ifdef NET_DEBUG 
-        std::cerr << "ConnectionsDialog::addneighbour()" << std::endl;
+        std::cerr << "NetworkDialog::addneighbour()" << std::endl;
 #endif
         /*
         rsServer->NeighAddFriend(getNeighRsCertId(c));
@@ -613,7 +613,7 @@ void NetworkDialog::authneighbour()
 {
         QTreeWidgetItem *c = getCurrentNeighbour();
 #ifdef NET_DEBUG 
-        std::cerr << "ConnectionsDialog::authneighbour()" << std::endl;
+        std::cerr << "NetworkDialog::authneighbour()" << std::endl;
 #endif
         /*
 	RsAuthId code;
