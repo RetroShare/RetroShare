@@ -385,35 +385,6 @@
         <file>images/window_fullscreen.png</file>
         <file>images/window_nofullscreen.png</file>
         <file>layouts/default.ui</file>
-        <file>qss/black.qss</file>
-        <file>qss/black/backgroundblack.png</file>
-        <file>qss/black/border.png</file>
-        <file>qss/black/button.png</file>
-        <file>qss/black/button_hover.png</file>
-        <file>qss/black/button_pressed.png</file>
-        <file>qss/black/checkBox.png</file>
-        <file>qss/black/checkBox_hover.png</file>
-        <file>qss/black/checkBox_hoverAndSelected.png</file>
-        <file>qss/black/checkBox_selected.png</file>
-        <file>qss/blue.qss</file>
-        <file>qss/blue/blue.png</file>
-        <file>qss/default.qss</file>
-        <file>qss/default/retrotoolbar.png</file>
-        <file>qss/ed2k.qss</file>
-        <file>qss/ed2k/backed2k.png</file>
-        <file>qss/ed2k/button-down.png</file>
-        <file>qss/ed2k/button-hover.png</file>
-        <file>qss/ed2k/button-up.png</file>
-        <file>qss/ed2k/little-back.png</file>
-        <file>qss/over.qss</file>
-        <file>qss/over/backover.png</file>
-        <file>qss/over/greenbot.png</file>
-        <file>qss/over/greenhover.png</file>
-        <file>qss/over/greentop.png</file>
-        <file>qss/silver.qss</file>
-        <file>qss/silver/silver.png</file>
-        <file>qss/skin2.qss</file>
-        <file>qss/skin2/background.png</file>
         <file>qss/chat/default.htm</file>
         <file>qss/chat/default.css</file>
         <file>qss/chat/second.htm</file>
