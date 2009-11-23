@@ -494,19 +494,6 @@ TRANSLATIONS +=  \
             lang/retroshare_zh_CN.ts \
             lang/retroshare_zh_TW.ts
 
-# To compile for turtle hopping. I'm using this flag to avoid conflict while developping.
-# Just do a 
-#    qmake CONFIG=turtle
-
-turtle {                        
-        SOURCES += gui/TurtleSearchDialog.cpp
-        HEADERS += rsiface/rsturtle.h gui/TurtleSearchDialog.h
-        FORMS += gui/TurtleSearchDialog.ui
-        DEFINES *= TURTLE_HOPPING
-        DEFINES *= RS_RELEASE_VERSION
-}
-
-
 # Shifted Qt4.4 dependancies to here.
 #    qmake CONFIG=pluginmgr
 
