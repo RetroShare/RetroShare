@@ -1,0 +1,12 @@
+
+
+
+/* Customize the toolbar. */
+QToolBar {
+   	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+								   stop: 0 #6799B3, stop: 0.3 #377a90, 
+								   stop: 0.31 #0e5e73, stop: 1 #4b8598);
+
+    border: 1px solid #4b8598;
+}
+
