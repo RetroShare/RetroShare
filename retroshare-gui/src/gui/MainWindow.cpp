@@ -266,17 +266,31 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     /* Create the actions that will go in the tray menu */
     createActions();
+    /* Creates a tray icon with a context menu and adds it to the system's * notification area. */
+    createTrayIcon();
 
-/******
-    * This is an annoying warning I get all the time...
-    * (no help!)
-    *
-    *
-    if (!QSystemTrayIcon::isSystemTrayAvailable())
-    QMessageBox::warning(0, tr("System tray is unavailable"),
-    tr("System tray unavailable"));
-******/
+    QTimer *timer = new QTimer(this);
+    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
+    timer->start(1000);
+}
 
+/** Destructor. */
+MainWindow::~MainWindow()
+{
+    delete _bandwidthGraph;
+    delete _messengerwindowAct;
+    delete peerstatus;
+    delete dhtstatus;
+    delete natstatus;
+    delete ratesstatus;
+    delete _settings;
+    delete applicationWindow;
+}
+
+/** Creates a tray icon with a context menu and adds it to the system
+ * notification area. */
+void MainWindow::createTrayIcon()
+{
     /** Tray icon Menu **/
     menu = new QMenu(this);
     QObject::connect(menu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
@@ -309,25 +323,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this,
             SLOT(toggleVisibility(QSystemTrayIcon::ActivationReason)));
     trayIcon->show();
-
-    QTimer *timer = new QTimer(this);
-    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
-    timer->start(1000);
 }
-
-/** Destructor. */
-MainWindow::~MainWindow()
-{
-    delete _bandwidthGraph;
-    delete _messengerwindowAct;
-    delete peerstatus;
-    delete dhtstatus;
-    delete natstatus;
-    delete ratesstatus;
-    delete _settings;
-    delete applicationWindow;
-}
-
 
 void MainWindow::displaySystrayMsg(const QString& title,const QString& msg)
 {

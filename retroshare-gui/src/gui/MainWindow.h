@@ -141,6 +141,8 @@ private:
 
     /** Create the actions on the tray menu or menubar */
     void createActions();
+    
+    void createTrayIcon();
 
     /** Defines the actions for the tray menu */
     QAction* _settingsAct;
