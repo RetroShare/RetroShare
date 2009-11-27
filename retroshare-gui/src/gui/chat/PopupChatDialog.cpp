@@ -289,7 +289,15 @@ std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() <<
                     		    .replace("%name%", name)
 				    .replace("%message%", message);
 
-	ui.textBrowser->append(formatMsg + "\n");
+	if ((ui.textBrowser->verticalScrollBar()->maximum() - 30) < ui.textBrowser->verticalScrollBar()->value() ) {
+	    ui.textBrowser->append(formatMsg + "\n");
+	} else {
+	    //the vertical scroll is not at the bottom, so just update the text, the scroll will stay at the current position
+	    int scroll = ui.textBrowser->verticalScrollBar()->value();
+	    ui.textBrowser->setHtml(ui.textBrowser->toHtml() + formatMsg + "\n");
+	    ui.textBrowser->verticalScrollBar()->setValue(scroll);
+	    ui.textBrowser->update();
+	}
 	resetStatusBar() ;
 }
 

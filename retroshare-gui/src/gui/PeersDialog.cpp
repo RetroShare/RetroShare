@@ -842,7 +842,15 @@ void PeersDialog::insertChat()
 				extraTxt.replace(code, "<img src=\"" + i.value() + "\" />");
 		}
 
-		msgWidget->append(extraTxt);
+		if ((msgWidget->verticalScrollBar()->maximum() - 30) < msgWidget->verticalScrollBar()->value() ) {
+		    msgWidget->append(extraTxt);
+		} else {
+		    //the vertical scroll is not at the bottom, so just update the text, the scroll will stay at the current position
+		    int scroll = msgWidget->verticalScrollBar()->value();
+		    msgWidget->setHtml(msgWidget->toHtml() + extraTxt);
+		    msgWidget->verticalScrollBar()->setValue(scroll);
+		    msgWidget->update();
+		}
 	}
 }
 
