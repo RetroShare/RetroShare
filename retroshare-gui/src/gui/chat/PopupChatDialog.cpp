@@ -246,8 +246,8 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
         QString name = QString::fromStdString(ci ->name);        
         QString message = QString::fromStdWString(ci -> msg);
 
-	//replace http:// and www. with <a href> links
-	QRegExp rx("(http://[^ <>]*)|(www\\.[^ <>]*)");
+	//replace http://, https:// and www. with <a href> links
+	QRegExp rx("(https?://[^ <>]*)|(www\\.[^ <>]*)");
 	int count = 0;
 	int pos = 100; //ignor the first 100 charater because of the standard DTD ref
 	while ( (pos = rx.indexIn(message, pos)) != -1 ) {
