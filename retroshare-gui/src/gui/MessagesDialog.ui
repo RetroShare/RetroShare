@@ -770,6 +770,15 @@ p, li { white-space: pre-wrap; }
         <pointsize>9</pointsize>
        </font>
       </property>
+      <property name="styleSheet">
+       <string notr="true">QListWidget::item:selected { /* when user selects item using mouse or keyboard */
+	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+	stop: 0 #a6a6a6, stop: 0.08 #7f7f7f,
+	stop: 0.39999 #717171, stop: 0.4 #626262,
+	stop: 0.9 #4c4c4c, stop: 1 #333333);
+}
+</string>
+      </property>
       <property name="lineWidth">
        <number>1</number>
       </property>
@@ -852,6 +861,17 @@ p, li { white-space: pre-wrap; }
        </property>
        <property name="contextMenuPolicy">
         <enum>Qt::CustomContextMenu</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QHeaderView::section {
+	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+	stop: 0 #a6a6a6, stop: 0.08 #7f7f7f,
+	stop: 0.39999 #717171, stop: 0.4 #626262,
+	stop: 0.9 #4c4c4c, stop: 1 #333333);
+     color: white;
+     padding-left: 4px;
+     border: 1px solid #6c6c6c;
+ }</string>
        </property>
        <property name="indentation">
         <number>16</number>
@@ -1256,6 +1276,17 @@ p, li { white-space: pre-wrap; }
        </property>
        <property name="contextMenuPolicy">
         <enum>Qt::CustomContextMenu</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QHeaderView::section {
+	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+	stop: 0 #a6a6a6, stop: 0.08 #7f7f7f,
+	stop: 0.39999 #717171, stop: 0.4 #626262,
+	stop: 0.9 #4c4c4c, stop: 1 #333333);
+     color: white;
+     padding-left: 4px;
+     border: 1px solid #6c6c6c;
+ }</string>
        </property>
        <property name="sortingEnabled">
         <bool>true</bool>
