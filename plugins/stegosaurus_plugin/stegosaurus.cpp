@@ -9,7 +9,6 @@ StegoSaurus::StegoSaurus(QWidget *parent, Qt::WFlags flags)
 	: QDialog(parent, flags)
 {
 	ui.setupUi(this);
-	setWindowOpacity(0.5);
 	bitsAvailable=0;
 	sizeofData=0;
 	inputFileSize=0;
