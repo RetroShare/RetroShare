@@ -1,12 +1,12 @@
 #!/bin/sh
 
 ###################### PARAMETERS ####################
-version="0.4.14-rc1"
+version="0.4.14-rc4"
 arch=`dpkg --print-architecture`
 packager="Cyril Soler <csoler@users.sourceforge.net>"
 
 # Directory where to find libretroshare/src/ and retroshare-gui/src
-rsdir=/net/cortinaire/media/disc/csoler/RetroShare/retroshare-dev/v0.4.x/
+rsdir=/home/csoler/Desktop/Code/retroshare/branches/v0.4.x/
 
 ######################################################
 
