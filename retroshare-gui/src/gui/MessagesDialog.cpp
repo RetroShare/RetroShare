@@ -19,22 +19,22 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+
 #include "MessagesDialog.h"
 #include "msgs/ChanMsgDialog.h"
 #include "gui/toaster/MessageToaster.h"
 #include "util/printpreview.h"
 #include "util/misc.h"
-#include "gui/calendar/src/views/mainview.h"
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsmsgs.h"
 #include "rsiface/rsfiles.h"
-
 #include <sstream>
 #include <list>
 #include <iostream>
 #include <string>
+
 
 #include <QContextMenuEvent>
 #include <QMenu>
@@ -82,7 +82,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   connect(ui.expandFilesButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
   connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getcurrentrecommended()));
   
-  ui.messagestabWidget->addTab(new MainView(),QString(tr("Calendar")));
 
   mCurrCertId = "";
   mCurrMsgId  = "";
