@@ -142,15 +142,14 @@ int RsServer::UpdateAllConfig()
 
 	/* Notify of Changes */
 //	iface.setChanged(RsIface::Config);
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CONFIG, NOTIFY_TYPE_MOD);
 
 	/* unlock Mutexes */
 	iface.unlockData(); /* UNLOCK */
 	unlockRsCore();     /* UNLOCK */
 
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CONFIG, NOTIFY_TYPE_MOD);
+
 	return 1;
-
-
 }
 
 void    RsServer::ConfigFinalSave()

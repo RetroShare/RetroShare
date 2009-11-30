@@ -467,22 +467,24 @@ void    upnphandler::restart()
 
 bool    upnphandler::getEnabled()
 {
-	dataMtx.lock();   /***  LOCK MUTEX  ***/
+// no need to lock for reading a boolean
+//	dataMtx.lock();   /***  LOCK MUTEX  ***/
 
 	bool on = toEnable;
 
-	dataMtx.unlock(); /*** UNLOCK MUTEX ***/
+//	dataMtx.unlock(); /*** UNLOCK MUTEX ***/
 
 	return on;
 }
 
 bool    upnphandler::getActive()
 {
-	dataMtx.lock();   /***  LOCK MUTEX  ***/
+// no need to lock for reading a boolean
+//	dataMtx.lock();   /***  LOCK MUTEX  ***/
 
 	bool on = (upnpState == RS_UPNP_S_ACTIVE);
 
-	dataMtx.unlock(); /*** UNLOCK MUTEX ***/
+//	dataMtx.unlock(); /*** UNLOCK MUTEX ***/
 
 	return on;
 }
