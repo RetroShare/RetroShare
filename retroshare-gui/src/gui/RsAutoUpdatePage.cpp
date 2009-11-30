@@ -1,6 +1,7 @@
 #include <iostream>
 #include <QTimer>
 #include "RsAutoUpdatePage.h"
+#include "MessengerWindow.h"
 
 RsAutoUpdatePage::RsAutoUpdatePage(int ms_update_period,QWidget *parent)
 	: MainPage(parent)
@@ -24,8 +25,9 @@ void RsAutoUpdatePage::timerUpdate()
 	//
 	if(!isVisible())
 		return ;
-
-	updateDisplay() ;
+	
+	updateDisplay();
+	MessengerWindow::getInstance()->insertPeers();
 	update() ;				// Qt flush
 }
 

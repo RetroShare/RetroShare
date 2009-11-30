@@ -38,16 +38,16 @@ class MessengerWindow : public RWindow
   Q_OBJECT
 
 public:
-  /** Default Constructor */
-  MessengerWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
-  /** Default Destructor */
 
   void setChatDialog(PeersDialog *cd);
+
   
   NetworkDialog *networkDialog2;
 
   QPixmap picture;
 
+  static MessengerWindow* getInstance();
+  static void releaseInstance();
 
 public slots:
   void  insertPeers();
@@ -58,6 +58,9 @@ public slots:
 
 protected:
   void closeEvent (QCloseEvent * event);
+  /** Default Constructor */
+  MessengerWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
+  /** Default Destructor */
 
 
 private slots:
@@ -98,6 +101,7 @@ private slots:
   
 private:
 
+  static MessengerWindow *mv;
   /* Worker Functions */
   /* (1) Update Display */
 

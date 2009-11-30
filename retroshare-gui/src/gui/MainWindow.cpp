@@ -123,7 +123,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     /* Create all the dialogs of which we only want one instance */
     _bandwidthGraph = new BandwidthGraph();
-    messengerWindow = new MessengerWindow();
+
+    /*messengerWindow instance is created statically so that RsAutoUpdatePage can access it*/ 
+    messengerWindow = MessengerWindow::getInstance();
     applicationWindow = new ApplicationWindow();
     applicationWindow->hide();
 

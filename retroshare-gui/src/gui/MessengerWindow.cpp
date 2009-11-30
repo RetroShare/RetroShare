@@ -70,7 +70,24 @@
 /******
  * #define MSG_DEBUG 1
  *****/
+MessengerWindow* MessengerWindow::mv = 0;
 
+MessengerWindow* MessengerWindow::getInstance()
+{
+	if(mv == 0)
+	{
+		mv = new MessengerWindow();
+	}
+	return mv;
+}
+
+void MessengerWindow::releaseInstance()
+{
+	if(mv != 0)
+	{
+		delete mv;
+	}
+}
 
 /** Constructor */
 MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
@@ -115,7 +132,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 	ui.searchlineEdit->setMinimumWidth(20);
 
   updateAvatar();
-  	
+  insertPeers(); 	
   itemFont = QFont("ARIAL", 10);
 	itemFont.setBold(true);
 
@@ -175,13 +192,12 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
       contextMnu.exec( mevent->globalPos() );
 }
 
-
-
 /* get the list of peers from the RsIface.  */
 void  MessengerWindow::insertPeers()
 {
         if (!rsPeers)
         {
+		
                 /* not ready yet! */
                 return;
         }
@@ -190,7 +206,7 @@ void  MessengerWindow::insertPeers()
         std::list<std::string>::iterator it;
 
         rsPeers->getFriendList(peers);
-
+	
         /* get a link to the table */
         QTreeWidget *peerWidget = ui.messengertreeWidget;
 
@@ -200,13 +216,12 @@ void  MessengerWindow::insertPeers()
 
 	for(it = peers.begin(); it != peers.end(); it++)
 	{
-
                 RsPeerDetails details;
                 if (!rsPeers->getPeerDetails(*it, details))
                 {
                         continue; /* BAD */
                 }
-
+		
 		/* make a widget per friend */
            	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
@@ -273,7 +288,6 @@ void  MessengerWindow::insertPeers()
 
 	peerWidget->update(); /* update display */
 }
-
 
 /* Utility Fns */
 std::string getMessengerPeerRsCertId(QTreeWidgetItem *i)
