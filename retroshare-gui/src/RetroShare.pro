@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools pluginmgr newsettings 
+CONFIG += qt gui uic qrc resources uitools pluginmgr newsettings
 QT     += network xml script opengl
 TEMPLATE = app
 TARGET = RetroShare
@@ -108,7 +108,6 @@ DEPENDPATH += . \
             gui\images \              
             gui\Preferences \
             gui\common \
-            gui\library \
             gui\toaster \
             gui\help\browser \
             gui\elastic
@@ -125,8 +124,6 @@ HEADERS +=  rshare.h \
             gui/DLListDelegate.h \
             gui/ULListDelegate.h \
             gui/StartDialog.h \
-            gui/BlogDialog.h \
-            gui/CalDialog.h \
             gui/NetworkDialog.h \
             gui/GenCertDialog.h \
             gui/TransfersDialog.h \
@@ -135,15 +132,9 @@ HEADERS +=  rshare.h \
             gui/mainpage.h \
             gui/mainpagestack.h \
             gui/MainWindow.h \
-            gui/ApplicationWindow.h \
-            gui/ExampleDialog.h \
-            gui/GamesDialog.h \
-            gui/PhotoDialog.h \
             gui/TurtleRouterDialog.h \
-            gui/PhotoShow.h \
             gui/AddLinksDialog.h \
             gui/LinksDialog.h \
-            gui/LibraryDialog.h \
             gui/ForumsDialog.h \
             gui/forums/CreateForum.h \
             gui/forums/CreateForumMsg.h \
@@ -157,7 +148,6 @@ HEADERS +=  rshare.h \
             gui/SearchDialog.h \
             gui/SharedFilesDialog.h \
             gui/ShareManager.h \
-            gui/StatisticDialog.h \
             gui/SoundManager.h \
             gui/FileTransferInfoWidget.h \
             gui/RsAutoUpdatePage.h \
@@ -198,7 +188,6 @@ HEADERS +=  rshare.h \
             gui/chat/PopupChatDialog.h \
             gui/connect/ConnectDialog.h \
             gui/connect/ConfCertDialog.h \
-            gui/library/FindWindow.h \ 
             gui/msgs/ChanMsgDialog.h \
             gui/msgs/ChanCreateDialog.h \
             gui/images/retroshare_win.rc.h \
@@ -243,9 +232,6 @@ HEADERS +=  rshare.h \
             gui/elastic/arrow.h \
             gui/elastic/node.h \
             gui/NewsFeed.h \
-            gui/PeersFeed.h \
-            gui/MsgFeed.h \
-            gui/TransferFeed.h \
             gui/ChannelFeed.h \
             gui/GeneralMsgDialog.h \
             gui/ChanGroupDelegate.h \
@@ -264,23 +250,14 @@ HEADERS +=  rshare.h \
             gui/connect/ConnectFriendWizard.h
 
 
-FORMS +=    gui/BlogDialog.ui \
-            gui/CalDialog.ui \
-            gui/StartDialog.ui \
+FORMS +=    gui/StartDialog.ui \
             gui/GenCertDialog.ui \
             gui/AddLinksDialog.ui \
             gui/NetworkDialog.ui \
             gui/TransfersDialog.ui \
             gui/MainWindow.ui \
-            gui/ApplicationWindow.ui \
-            gui/ExampleDialog.ui \
             gui/TurtleRouterDialog.ui \
-            gui/GamesDialog.ui \
-            gui/PhotoDialog.ui \
-            gui/PhotoShow.ui \
             gui/LinksDialog.ui \
-            gui/LibraryDialog.ui \
-            gui/ForumsDialog.ui \
             gui/forums/CreateForum.ui \
             gui/forums/CreateForumMsg.ui \
             gui/NetworkView.ui \
@@ -290,7 +267,6 @@ FORMS +=    gui/BlogDialog.ui \
             gui/SearchDialog.ui \
             gui/SharedFilesDialog.ui \
             gui/ShareManager.ui \
-            gui/StatisticDialog.ui \
             gui/MessagesDialog.ui \
             gui/MessagesPopupDialog.ui \
             gui/help/browser/helpbrowser.ui \
@@ -322,9 +298,6 @@ FORMS +=    gui/BlogDialog.ui \
             gui/advsearch/AdvancedSearchDialog.ui \
             gui/advsearch/expressionwidget.ui \
             gui/NewsFeed.ui \
-            gui/PeersFeed.ui \
-            gui/MsgFeed.ui \
-            gui/TransferFeed.ui \
             gui/ChannelFeed.ui \
             gui/GeneralMsgDialog.ui \
             gui/feeds/ForumNewItem.ui \
@@ -346,21 +319,13 @@ SOURCES +=  main.cpp \
             gui/ULListDelegate.cpp \
             gui/StartDialog.cpp \
             gui/GenCertDialog.cpp \
-            gui/BlogDialog.cpp \
-            gui/CalDialog.cpp \
             gui/NetworkDialog.cpp \
             gui/TransfersDialog.cpp \
             gui/graphframe.cpp \
             gui/mainpagestack.cpp \
             gui/TurtleRouterDialog.cpp \
             gui/MainWindow.cpp \
-            gui/ApplicationWindow.cpp \
-            gui/ExampleDialog.cpp \
-            gui/GamesDialog.cpp \
-            gui/PhotoDialog.cpp \
-            gui/PhotoShow.cpp \
             gui/LinksDialog.cpp \
-            gui/LibraryDialog.cpp \
             gui/ForumsDialog.cpp \
             gui/forums/CreateForum.cpp \
             gui/forums/CreateForumMsg.cpp \
@@ -376,7 +341,6 @@ SOURCES +=  main.cpp \
             gui/AddLinksDialog.cpp \
             gui/SharedFilesDialog.cpp \
             gui/ShareManager.cpp \
-            gui/StatisticDialog.cpp \
             gui/SoundManager.cpp \
             gui/MessagesDialog.cpp \
             gui/FileTransferInfoWidget.cpp \
@@ -432,7 +396,6 @@ SOURCES +=  main.cpp \
             gui/common/vmessagebox.cpp \
             gui/common/rwindow.cpp \ 
             gui/common/html.cpp \ 
-            gui/library/FindWindow.cpp \        
             gui/statusbar/peerstatus.cpp \  
             gui/statusbar/dhtstatus.cpp \
             gui/statusbar/natstatus.cpp \
@@ -450,9 +413,6 @@ SOURCES +=  main.cpp \
             gui/elastic/arrow.cpp \
             gui/elastic/node.cpp \
             gui/NewsFeed.cpp \
-            gui/PeersFeed.cpp \
-            gui/MsgFeed.cpp \
-            gui/TransferFeed.cpp \
             gui/ChannelFeed.cpp \
             gui/GeneralMsgDialog.cpp \
             gui/ChanGroupDelegate.cpp \
@@ -551,6 +511,47 @@ newsettings {
 }
 
 
+unfinished {
 
+DEPENDPATH += gui/unfinished \
+
+HEADERS += gui/unfinished/ApplicationWindow.h \
+           gui/unfinished/BlogDialog.h \
+           gui/unfinished/CalDialog.h \
+           gui/unfinished/ExampleDialog.h \
+           gui/unfinished/GamesDialog.h \
+           gui/unfinished/MsgFeed.h \
+           gui/unfinished/PeersFeed.h \
+           gui/unfinished/PhotoDialog.h \
+           gui/unfinished/PhotoShow.h \
+           gui/unfinished/StatisticDialog.h \
+           gui/unfinished/TransferFeed.h
+
+FORMS += gui/unfinished/ApplicationWindow.ui \
+         gui/unfinished/BlogDialog.ui \
+         gui/unfinished/CalDialog.ui \
+         gui/unfinished/ExampleDialog.ui \
+         gui/unfinished/GamesDialog.ui \
+         gui/unfinished/MsgFeed.ui \
+         gui/unfinished/PeersFeed.ui \
+         gui/unfinished/PhotoDialog.ui \
+         gui/unfinished/PhotoShow.ui \
+         gui/unfinished/StatisticDialog.ui \
+         gui/unfinished/TransferFeed.ui
+         
+SOURCES += gui/unfinished/ApplicationWindow.cpp \
+           gui/unfinished/BlogDialog.cpp \
+           gui/unfinished/CalDialog.cpp \
+           gui/unfinished/ExampleDialog.cpp \
+           gui/unfinished/GamesDialog.cpp \
+           gui/unfinished/MsgFeed.cpp \
+           gui/unfinished/PeersFeed.cpp \
+           gui/unfinished/PhotoDialog.cpp \
+           gui/unfinished/PhotoShow.cpp \
+           gui/unfinished/StatisticDialog.cpp \
+           gui/unfinished/TransferFeed.cpp
+
+          DEFINES *= UNFINISHED
+}
 
 

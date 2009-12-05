@@ -27,16 +27,12 @@
 #include <QIcon>
 #include <QPixmap>
 
-#include "NetworkView.h"
-#include "LinksDialog.h"
-#include "PhotoDialog.h"
-#include "ForumsDialog.h"
-#include "NewsFeed.h"
-#include "PeersFeed.h"
-#include "TransferFeed.h"
-#include "MsgFeed.h"
 #include "ChannelFeed.h"
 #include "ShareManager.h"
+#include "NetworkView.h"
+#include "LinksDialog.h"
+#include "ForumsDialog.h"
+#include "NewsFeed.h"
 
 #include "rshare.h"
 #include "MainWindow.h"
@@ -126,8 +122,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     /*messengerWindow instance is created statically so that RsAutoUpdatePage can access it*/ 
     messengerWindow = MessengerWindow::getInstance();
+#ifdef UNFINISHED
     applicationWindow = new ApplicationWindow();
     applicationWindow->hide();
+#endif    
 
     /** Left Side ToolBar**/
     connect(ui.actionAdd_Friend, SIGNAL(triggered() ), this , SLOT( addFriend() ) );
@@ -218,8 +216,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.toolBar->addSeparator();
     connect(grp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *)));
 
-#ifdef RS_RELEASE_VERSION
-#else
+#ifdef UNFINISHED
     addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 #endif
 
@@ -286,7 +283,9 @@ MainWindow::~MainWindow()
     delete natstatus;
     delete ratesstatus;
     delete _settings;
+#ifdef UNFINISHED   
     delete applicationWindow;
+#endif    
 }
 
 /** Creates a tray icon with a context menu and adds it to the system
@@ -303,8 +302,7 @@ void MainWindow::createTrayIcon()
     menu->addAction(_messagesAct);
     menu->addAction(_bandwidthAct);
 
-#ifdef RS_RELEASE_VERSION
-#else
+#ifdef UNFINISHED
     menu->addAction(_appAct);
 #endif
     menu->addAction(_settingsAct);
@@ -460,11 +458,12 @@ void MainWindow::showMessengerWindow()
 
 
 /** Shows Application window */
+#ifdef UNFINISHED
 void MainWindow::showApplWindow()
 {
     applicationWindow->show();
 }
-
+#endif
 
 /** Create and bind actions to events. Setup for initial
  * tray menu configuration. */

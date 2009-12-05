@@ -27,15 +27,17 @@
 #include <QFileDialog>
 #include <QSystemTrayIcon>
 
+#ifdef UNFINISHED
+#include "unfinished/ApplicationWindow.h"
+#endif
+
 #include "NetworkDialog.h"
 #include "PeersDialog.h"
 #include "SearchDialog.h"
 #include "TransfersDialog.h"
 #include "MessagesDialog.h"
 #include "SharedFilesDialog.h"
-#include "StatisticDialog.h"
 #include "MessengerWindow.h"
-#include "ApplicationWindow.h"
 #include "PluginsPage.h"
 
 #include "bwgraph/bwgraph.h"
@@ -89,7 +91,9 @@ public:
     MessagesDialog    *messagesDialog;
     SharedFilesDialog *sharedfilesDialog;
     MessengerWindow   *messengerWindow;
+#ifdef UNFINISHED    
     ApplicationWindow   *applicationWindow;
+#endif
     PluginsPage*   pluginsPage ;
 
 
@@ -114,7 +118,10 @@ private slots:
     /** Toolbar fns. */
     void addFriend();
     void showMessengerWindow();
+#ifdef UNFINISHED    
     void showApplWindow();
+#endif
+
     void showabout();
     void openShareManager();
 	void displaySystrayMsg(const QString&,const QString&) ;
