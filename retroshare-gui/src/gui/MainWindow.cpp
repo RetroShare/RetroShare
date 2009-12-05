@@ -482,10 +482,10 @@ void MainWindow::createActions()
 
     _messagesAct = new QAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this);
     connect(_messagesAct, SIGNAL(triggered()),this, SLOT(showMess()));
-
+#ifdef UNFINISHED
     _appAct = new QAction(QIcon(IMAGE_UNFINISHED), tr("Applications"), this);
     connect(_appAct, SIGNAL(triggered()),this, SLOT(showApplWindow()));
-
+#endif
     _helpAct = new QAction(QIcon(IMG_HELP), tr("Help"), this);
     connect(_helpAct, SIGNAL(triggered()), this, SLOT(showHelpDialog()));
 
