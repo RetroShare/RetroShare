@@ -206,7 +206,6 @@ HEADERS += dbase/cachestrapper.h \
            rsserver/p3Blog.h \
            rsserver/p3discovery.h \
            rsserver/p3face.h \
-           rsserver/p3files.h \
            rsserver/p3msgs.h \
            rsserver/p3peers.h \
            rsserver/p3photo.h \
