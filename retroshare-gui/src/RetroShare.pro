@@ -255,6 +255,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/AddLinksDialog.ui \
             gui/NetworkDialog.ui \
             gui/TransfersDialog.ui \
+            gui/ForumsDialog.ui \
             gui/MainWindow.ui \
             gui/TurtleRouterDialog.ui \
             gui/LinksDialog.ui \
