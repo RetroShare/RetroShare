@@ -121,6 +121,7 @@ virtual bool FileRequest(std::string fname, std::string hash, uint64_t size,
 virtual bool FileCancel(std::string hash);
 virtual bool FileControl(std::string hash, uint32_t flags);
 virtual bool FileClearCompleted();
+virtual bool setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy s) ;
 
 /***
  * Control of Downloads Priority.

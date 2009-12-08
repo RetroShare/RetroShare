@@ -261,8 +261,7 @@ uint32_t ftTransferModule::getDataRate(std::string peerId)
 
 
   //interface to client module
-bool ftTransferModule::recvFileData(std::string peerId, uint64_t offset, 
-			uint32_t chunk_size, void *data)
+bool ftTransferModule::recvFileData(std::string peerId, uint64_t offset, uint32_t chunk_size, void *data)
 {
 #ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::recvFileData()";
@@ -316,18 +315,19 @@ void ftTransferModule::requestData(std::string peerId, uint64_t offset, uint32_t
   mMultiplexor->sendDataRequest(peerId, mHash, mSize, offset,chunk_size);
 }
 
-bool ftTransferModule::getChunk(uint64_t &offset, uint32_t &chunk_size)
+bool ftTransferModule::getChunk(const std::string& peer_id,uint32_t size_hint,uint64_t &offset, uint32_t &chunk_size)
 {
 #ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::getChunk()";
 	std::cerr << " hash: " << mHash;
 	std::cerr << " size: " << mSize;
 	std::cerr << " offset: " << offset;
+	std::cerr << " size_hint: " << size_hint;
 	std::cerr << " chunk_size: " << chunk_size;
 	std::cerr << std::endl;
 #endif
 
-  	bool val = mFileCreator->getMissingChunk(offset, chunk_size);
+  	bool val = mFileCreator->getMissingChunk(peer_id,size_hint,offset, chunk_size);
 
 #ifdef FT_DEBUG
 	if (val)
@@ -595,7 +595,9 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 		info.state = PQIPEER_IDLE;
 		return false;
 	}
-
+#ifdef FT_DEBUG
+	std::cerr << "locked_tickPeerTransfer() actual rate (before): " << info.actualRate << ", lastTransfers=" << info.lastTransfers << std::endl ;
+#endif
 	/* update rate */
 	info.actualRate = info.actualRate * 0.75 + 0.25 * info.lastTransfers;
 	info.lastTransfers = 0;
@@ -617,15 +619,23 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 	{
 		if (info.mRateIncrease > 0)
 		{
+#ifdef FT_DEBUG
+			std::cerr << "!!! - Emergency shutdown because rttActive is true, and age is " << ts - info.rttStart << std::endl ;
+#endif
 			info.mRateIncrease = 0;
+			info.rttActive = false ; // I've added this to avoid being stuck when rttActive is true
 		}
 	}
 
 	/* request at more than current rate */
 	uint32_t next_req = info.actualRate * (1.0 + info.mRateIncrease);
 #ifdef FT_DEBUG
+	std::cerr << "locked_tickPeerTransfer() actual rate (after): " << actualRate 
+				<< " increase factor=" << 1.0 + info.mRateIncrease 
+				<< " info.desiredRate=" << info.desiredRate 
+				<< " info.actualRate=" << info.actualRate 
+				<< ", next_req=" << next_req ;
 
-	std::cerr << "locked_tickPeerTransfer() actual rate: " << actualRate;
 	std::cerr << std::endl;
 #endif
 
@@ -667,19 +677,21 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 	
 	/* do request */
 	uint64_t req_offset = 0;
-	if (getChunk(req_offset,next_req))
+	uint32_t req_size =0 ;
+
+	if (getChunk(info.peerId,next_req,req_offset,req_size))
 	{
-		if (next_req > 0)
+		if (req_size > 0)
 		{
 			info.state = PQIPEER_DOWNLOADING;
-			requestData(info.peerId,req_offset,next_req);
+			requestData(info.peerId,req_offset,req_size);
 
 			/* start next rtt measurement */
 			if (!info.rttActive)
 			{
 				info.rttStart = ts;
 				info.rttActive = true;
-				info.rttOffset = req_offset + next_req;
+				info.rttOffset = req_offset + req_size;
 			}
 		}
 		else
@@ -688,9 +700,8 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 			std::cerr << std::endl;
 		}
 	}
-	else mFlag = 1;      
-
-	return true ;
+	else 
+		mFlag = 1;      
 
 	return true;
 }
@@ -704,6 +715,8 @@ bool ftTransferModule::locked_recvPeerData(peerInfo &info, uint64_t offset,
 #ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::locked_recvPeerData()";
 	std::cerr << " peerId: " << info.peerId;
+	std::cerr << " rttOffset: " << info.rttOffset;
+	std::cerr << " lastTransfers: " << info.lastTransfers;
 	std::cerr << " offset: " << offset;
 	std::cerr << " chunksize: " << chunk_size;
 	std::cerr << " data: " << data;
@@ -718,36 +731,36 @@ bool ftTransferModule::locked_recvPeerData(peerInfo &info, uint64_t offset,
 
   if ((info.rttActive) && (info.rttOffset == offset + chunk_size))
   {
-  	/* update tip */
-	int32_t rtt = time(NULL) - info.rttStart;
+	  /* update tip */
+	  int32_t rtt = time(NULL) - info.rttStart;
 
-	/* 
-	 * FT_TM_FAST_RTT = 1 sec. mRateIncrease =  1.00
-	 * FT_TM_SLOW_RTT = 9 sec. mRateIncrease =  0
-	 * 		   11 sec. mRateIncrease = -0.25
-	 * if it is slower than this allow fast data increase.
-	 * initial guess - linear with rtt.
-	 * change if this leads to wild oscillations 
-	 *
-	 */
+	  /* 
+		* FT_TM_FAST_RTT = 1 sec. mRateIncrease =  1.00
+		* FT_TM_SLOW_RTT = 9 sec. mRateIncrease =  0
+		* 		   11 sec. mRateIncrease = -0.25
+		* if it is slower than this allow fast data increase.
+		* initial guess - linear with rtt.
+		* change if this leads to wild oscillations 
+		*
+		*/
 
-	info.mRateIncrease = (FT_TM_SLOW_RTT - rtt) * 
-		(FT_TM_MAX_INCREASE / (FT_TM_SLOW_RTT - FT_TM_FAST_RTT));
+	  info.mRateIncrease = (FT_TM_SLOW_RTT - rtt) * 
+		  (FT_TM_MAX_INCREASE / (FT_TM_SLOW_RTT - FT_TM_FAST_RTT));
 
-	if (info.mRateIncrease > FT_TM_MAX_INCREASE)
-		info.mRateIncrease = FT_TM_MAX_INCREASE;
+	  if (info.mRateIncrease > FT_TM_MAX_INCREASE)
+		  info.mRateIncrease = FT_TM_MAX_INCREASE;
 
-	if (info.mRateIncrease < FT_TM_MIN_INCREASE)
-		info.mRateIncrease = FT_TM_MIN_INCREASE;
+	  if (info.mRateIncrease < FT_TM_MIN_INCREASE)
+		  info.mRateIncrease = FT_TM_MIN_INCREASE;
 
-	info.rtt = rtt;
-	info.rttActive = false;
+	  info.rtt = rtt;
+	  info.rttActive = false;
 
 #ifdef FT_DEBUG
-	std::cerr << "ftTransferModule::locked_recvPeerData()";
-	std::cerr << "Updated Rate based on RTT: " << rtt;
-	std::cerr << " Rate: " << info.mRateIncrease;
-	std::cerr << std::endl;
+	  std::cerr << "ftTransferModule::locked_recvPeerData()";
+	  std::cerr << "Updated Rate based on RTT: " << rtt;
+	  std::cerr << " Rate: " << info.mRateIncrease;
+	  std::cerr << std::endl;
 #endif
 
   }

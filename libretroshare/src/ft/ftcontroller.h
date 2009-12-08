@@ -132,6 +132,8 @@ bool 	FileRequest(std::string fname, std::string hash,
 			uint64_t size, std::string dest, uint32_t flags,
 			std::list<std::string> &sourceIds);
 
+bool 	setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy s);
+
 bool 	FileCancel(std::string hash);
 bool 	FileControl(std::string hash, uint32_t flags);
 bool 	FileClearCompleted();

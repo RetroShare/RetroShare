@@ -303,6 +303,16 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 	  priorityMenu->addAction(priorityHighAct);
 	  priorityMenu->addAction(priorityAutoAct);
 
+	  chunkStreamingAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Streaming"), this);
+	  connect(chunkStreamingAct, SIGNAL(triggered()), this, SLOT(chunkStreaming()));
+	  chunkRandomAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Random"), this);
+	  connect(chunkRandomAct, SIGNAL(triggered()), this, SLOT(chunkRandom()));
+
+	  QMenu *chunkMenu = new QMenu(tr("Chunk strategy"), this);
+	  chunkMenu->setIcon(QIcon(IMAGE_PRIORITY));
+	  chunkMenu->addAction(chunkStreamingAct);
+	  chunkMenu->addAction(chunkRandomAct);
+
       contextMnu.clear();
       if (addPlayOption)
       {
@@ -310,6 +320,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       }
       contextMnu.addSeparator();
       contextMnu.addMenu( priorityMenu);
+      contextMnu.addMenu( chunkMenu);
       contextMnu.addAction( pauseAct);
       contextMnu.addAction( resumeAct);
       contextMnu.addAction( cancelAct);
@@ -1252,6 +1263,25 @@ void TransfersDialog::clearQueue()
 	rsFiles->clearQueue();
 }
 
+void TransfersDialog::chunkStreaming()
+{
+	setChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_STREAMING) ;
+}
+void TransfersDialog::chunkRandom()
+{
+	setChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
+}
+void TransfersDialog::setChunkStrategy(FileChunksInfo::ChunkStrategy s)
+{
+	QList<QStandardItem *> items;
+	QList<QStandardItem *>::iterator it;
+	getIdOfSelectedItems(items);
+
+	for (it = items.begin(); it != items.end(); it ++) {
+		std::string hash = (*it)->data(Qt::DisplayRole).toString().toStdString();
+		rsFiles->setChunkStrategy(hash, s);
+	}
+}
 /* modify download priority actions */
 void TransfersDialog::priorityLow()
 {

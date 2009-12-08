@@ -256,6 +256,11 @@ bool ftServer::FileRequest(std::string fname, std::string hash, uint64_t size,
 	return true ;
 }
 
+bool ftServer::setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy s)
+{
+	return mFtController->setChunkStrategy(hash,s);
+}
+
 bool ftServer::FileCancel(std::string hash)
 {
 	rsTurtle->stopMonitoringFileTunnels(hash) ;

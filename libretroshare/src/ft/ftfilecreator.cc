@@ -15,8 +15,8 @@
 *
 ***********************************************************/
 
-ftFileCreator::ftFileCreator(std::string path, uint64_t size, std::string
-hash, uint64_t recvd): ftFileProvider(path,size,hash), chunkMap(size)
+ftFileCreator::ftFileCreator(std::string path, uint64_t size, std::string hash, uint64_t recvd)
+	: ftFileProvider(path,size,hash), chunkMap(size)
 {
 	/* 
          * FIXME any inits to do?
@@ -36,23 +36,25 @@ hash, uint64_t recvd): ftFileProvider(path,size,hash), chunkMap(size)
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
 	/* initialise the Transfer Lists */
-	mStart = recvd;
-	mEnd = recvd;
+//	mStart = recvd;
+//	mEnd = recvd;
 
-	chunkMap.received(recvd) ;
+#ifdef TO_DO
+	// we should init the chunk map with some bit array saying what is received and what is not!!
+	chunkMap.setTotalReceived(recvd) ;
+#endif
 }
 
-bool    ftFileCreator::getFileData(uint64_t offset, 
-                uint32_t &chunk_size, void *data)
+bool ftFileCreator::getFileData(uint64_t offset, uint32_t &chunk_size, void *data)
 {
 	{
-	  RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
-	  if (offset + chunk_size > mStart)
-	  {
-		/* don't have the data */
-		return false;
-	  }
-        }
+		RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+		if (offset + chunk_size > mStart)
+		{
+			/* don't have the data */
+			return false;
+		}
+	}
 
 	return ftFileProvider::getFileData(offset, chunk_size, data);
 }
@@ -60,7 +62,7 @@ bool    ftFileCreator::getFileData(uint64_t offset,
 uint64_t ftFileCreator::getRecvd()
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
-	return mStart;
+	return chunkMap.getTotalReceived() ;
 }
 
 bool ftFileCreator::addFileData(uint64_t offset, uint32_t chunk_size, void *data)
@@ -206,8 +208,8 @@ int ftFileCreator::initializeFileAttrs()
         std::cerr << "ftFileCreator::initializeFileAttrs() File Expected Size: " << mSize << " RecvdSize: " << recvdsize << std::endl;
 
 	/* start from there! */
-	mStart = recvdsize;
-	mEnd = recvdsize;
+//	mStart = recvdsize;
+//	mEnd = recvdsize;
 	
 	return 1;
 }
@@ -230,9 +232,9 @@ int ftFileCreator::locked_notifyReceived(uint64_t offset, uint32_t chunk_size)
 #endif
 
 	/* find the chunk */
-	std::map<uint64_t, ftChunk>::iterator it;
-	it = mChunks.find(offset);
-	bool isFirst = false;
+	std::map<uint64_t, ftChunk>::iterator it = mChunks.find(offset);
+
+//	bool isFirst = false;
 	if (it == mChunks.end())
 	{
 #ifdef FILE_DEBUG
@@ -244,35 +246,37 @@ int ftFileCreator::locked_notifyReceived(uint64_t offset, uint32_t chunk_size)
 #endif
 		return 0; /* ignoring */
 	}
-	else if (it == mChunks.begin())
-	{
-		isFirst = true;
-	}
+
+//	if (it == mChunks.begin())
+//	{
+//		isFirst = true;
+//	}
 
 	ftChunk chunk = it->second;
 	mChunks.erase(it);
 
-	if (chunk.chunk != chunk_size)
+	if (chunk.size != chunk_size)
 	{
 		/* partial : shrink chunk */
-		chunk.chunk -= chunk_size;
+		chunk.size -= chunk_size;
 		chunk.offset += chunk_size;
 		mChunks[chunk.offset] = chunk;
 	}
+	else	// notify the chunkmap that the slice is finished
+		chunkMap.dataReceived(chunk.id) ;
 
-	/* update how much has been completed */
-	if (isFirst)
-	{
-		mStart = offset + chunk_size;
-	}
+//	/* update how much has been completed */
+//	if (isFirst)
+//	{
+//		mStart = offset + chunk_size;
+//	}
 
 	// update chunk map
-	chunkMap.received(mStart) ;
 
-	if (mChunks.size() == 0)
-	{
-		mStart = mEnd;
-	}
+//	if (mChunks.size() == 0)
+//	{
+//		mStart = mEnd;
+//	}
 
 	/* otherwise there is another earlier block to go
 	 */
@@ -280,15 +284,25 @@ int ftFileCreator::locked_notifyReceived(uint64_t offset, uint32_t chunk_size)
 	return 1;
 }
 
+void ftFileCreator::setChunkStrategy(FileChunksInfo::ChunkStrategy s)
+{
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+
+#ifdef FILE_DEBUG
+	std::cerr << "ftFileCtreator: setting chunk strategy to " << s << std::endl ;
+#endif
+	chunkMap.setStrategy(s) ;
+}
+
 /* Returns true if more to get 
  * But can return size = 0, if we are still waiting for the data.
  */
 
-bool ftFileCreator::getMissingChunk(uint64_t &offset, uint32_t &chunk) 
+bool ftFileCreator::getMissingChunk(const std::string& peer_id,uint32_t size_hint,uint64_t &offset, uint32_t& size) 
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 #ifdef FILE_DEBUG
-	std::cerr << "ffc::getMissingChunk(...,"<< chunk << ")";
+	std::cerr << "ffc::getMissingChunk(...,"<< size_hint << ")";
 	std::cerr << " this: " << this;
 	std::cerr << std::endl;
 	locked_printChunkMap();
@@ -296,14 +310,14 @@ bool ftFileCreator::getMissingChunk(uint64_t &offset, uint32_t &chunk)
 
 	/* check start point */
 
-	if (mStart == mSize)
-	{
-#ifdef FILE_DEBUG
-		std::cerr << "ffc::getMissingChunk() File Done";
-		std::cerr << std::endl;
-#endif
-		return false;
-	}
+//	if(mStart == mSize)
+//	{
+//#ifdef FILE_DEBUG
+//		std::cerr << "ffc::getMissingChunk() File Done";
+//		std::cerr << std::endl;
+//#endif
+//		return false;
+//	}
 
 	/* check for freed chunks */
 	time_t ts = time(NULL);
@@ -316,48 +330,47 @@ bool ftFileCreator::getMissingChunk(uint64_t &offset, uint32_t &chunk)
 		if (it->second.ts < old)
 		{
 #ifdef FILE_DEBUG
-			std::cerr << "ffc::getMissingChunk() ReAlloc";
+			std::cerr << "ffc::getMissingChunk() Re-asking for an old chunk";
 			std::cerr << std::endl;
 #endif
 
 			/* retry this one */
 			it->second.ts = ts;
-			chunk = it->second.chunk;
+			size = it->second.size;
 			offset = it->second.offset;
 
 			return true;
 		}
 	}
 
-#ifdef FILE_DEBUG
-	std::cerr << "ffc::getMissingChunk() new Alloc";
-	std::cerr << "  mStart: " << mStart << " mEnd: " << mEnd;
-	std::cerr << "mSize: " << mSize;
-	std::cerr << std::endl;
-#endif
-
 	/* else allocate a new chunk */
-	if (mSize - mEnd < chunk)
-		chunk = mSize - mEnd;
 
-	offset = mEnd;
-	mEnd += chunk;
+	ftChunk chunk ;
 
-	if (chunk > 0)
-	{
+	if(!chunkMap.getDataChunk(peer_id,size_hint,chunk))
+		return false ;
+
+//	if (mSize - mEnd < chunk)
+//		chunk = mSize - mEnd;
+//
+//	offset = mEnd;
+//	mEnd += chunk;
+
+//	if (chunk > 0)
+//	{
 #ifdef FILE_DEBUG
-		std::cerr << "ffc::getMissingChunk() Allocated " << chunk;
-		std::cerr << " offset: " << offset;
-		std::cerr << std::endl;
-		std::cerr << "  mStart: " << mStart << " mEnd: " << mEnd;
-		std::cerr << "mSize: " << mSize;
-		std::cerr << std::endl;
+	std::cerr << "ffc::getMissingChunk() Retrieved new chunk: " << chunk << std::endl ;
+//		std::cerr << std::endl;
+//		std::cerr << "  mStart: " << mStart << " mEnd: " << mEnd;
+//		std::cerr << "mSize: " << mSize;
+//		std::cerr << std::endl;
 #endif
 
-		mChunks[offset] = ftChunk(offset, chunk, ts);
+	mChunks[chunk.offset] = chunk ;
 
-		chunkMap.requested(offset,chunk) ;
-	}
+	offset = chunk.offset ;
+	size = chunk.size ;
+//	}
 
 	return true; /* cos more data to get */
 }
@@ -365,7 +378,8 @@ bool ftFileCreator::getMissingChunk(uint64_t &offset, uint32_t &chunk)
 void ftFileCreator::getChunkMap(FileChunksInfo& info)
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
-	info = chunkMap ;
+
+	chunkMap.getChunksInfo(info) ;
 }
 
 bool ftFileCreator::locked_printChunkMap()
@@ -377,37 +391,16 @@ bool ftFileCreator::locked_printChunkMap()
 #endif
 
 	/* check start point */
-	std::cerr << "Size: " << mSize << " Start: " << mStart << " End: " << mEnd;
-	std::cerr << std::endl;
-	std::cerr << "\tOutstanding Chunks (in the middle)";
+//	std::cerr << "Size: " << mSize << " Start: " << mStart << " End: " << mEnd;
+	std::cerr << "\tOutstanding Chunks:";
 	std::cerr << std::endl;
 
 	std::map<uint64_t, ftChunk>::iterator it;
-	time_t ts = time(NULL);
+	
 	for(it = mChunks.begin(); it != mChunks.end(); it++)
-	{
-		std::cerr << "\tChunk [" << it->second.offset << "] size: ";
-		std::cerr << it->second.chunk;
-		std::cerr << "  Age: " << ts - it->second.ts;
-		std::cerr << std::endl;
-	}
+		std::cerr << "  " << it->second << std::endl ;
+
 	return true; 
 }
 
-/***********************************************************
-*
-*	ftChunk methods
-*
-***********************************************************/
-
-ftChunk::ftChunk(uint64_t ioffset,uint64_t size,time_t now) 
-   : offset(ioffset), chunk(size), ts(now)
-{
-
-}
-
-ftChunk::~ftChunk()
-{
-
-}
 

@@ -252,6 +252,7 @@ class FileChunksInfo
 {
 	public:
 	enum ChunkState { CHUNK_DONE, CHUNK_ACTIVE, CHUNK_OUTSTANDING } ;
+	enum ChunkStrategy { CHUNK_STRATEGY_STREAMING, CHUNK_STRATEGY_RANDOM } ;
 
 	uint64_t file_size ;					// real size of the file
 	uint32_t chunk_size ;				// size of chunks

@@ -842,6 +842,21 @@ bool 	ftController::setPeerState(ftTransferModule *tm, std::string id,
 }
 
 
+bool ftController::setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy s)
+{
+	std::map<std::string,ftFileControl>::iterator mit;
+	mit=mDownloads.find(hash);
+	if (mit==mDownloads.end())
+	{
+#ifdef CONTROL_DEBUG
+		std::cerr<<"ftController::FileCancel file is not found in mDownloads"<<std::endl;
+#endif
+		return false;
+	}
+
+	mit->second.mCreator->setChunkStrategy(s) ;
+	return true ;
+}
 
 bool 	ftController::FileCancel(std::string hash)
 {

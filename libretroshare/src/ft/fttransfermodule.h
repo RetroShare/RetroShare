@@ -55,7 +55,8 @@ class peerInfo
 {
 public:
 	peerInfo(std::string peerId_in):peerId(peerId_in),state(PQIPEER_NOT_ONLINE),desiredRate(0),actualRate(0),
-		offset(0),chunkSize(0),receivedSize(0),lastTS(0),
+//		offset(0),chunkSize(0),receivedSize(0),
+		lastTS(0),
 		recvTS(0), lastTransfers(0), nResets(0), 
 		rtt(0), rttActive(false), rttStart(0), rttOffset(0),
 		mRateIncrease(1)
@@ -64,7 +65,8 @@ public:
 	}
 	peerInfo(std::string peerId_in,uint32_t state_in,uint32_t maxRate_in):
 		peerId(peerId_in),state(state_in),desiredRate(maxRate_in),actualRate(0),
-		offset(0),chunkSize(0),receivedSize(0),lastTS(0),
+//		offset(0),chunkSize(0),receivedSize(0),
+		lastTS(0),
 		recvTS(0), lastTransfers(0), nResets(0), 
 		rtt(0), rttActive(false), rttStart(0), rttOffset(0),
 		mRateIncrease(1)
@@ -77,11 +79,11 @@ public:
   	double actualRate;
 
   	//current file data request
-  	uint64_t offset;
-  	uint32_t chunkSize;
+//  	uint64_t offset;
+//  	uint32_t chunkSize;
 
   	//already received data size for current request
-  	uint32_t receivedSize;
+//  	uint32_t receivedSize;
 
   	time_t lastTS; /* last Request */
 	time_t recvTS; /* last Recv */
@@ -147,7 +149,7 @@ public:
   void requestData(std::string peerId, uint64_t offset, uint32_t chunk_size);
 
   //interface to file creator
-  bool getChunk(uint64_t &offset, uint32_t &chunk_size);
+  bool getChunk(const std::string& peer_id,uint32_t size_hint,uint64_t &offset, uint32_t &chunk_size);
   bool storeData(uint64_t offset, uint32_t chunk_size, void *data);
 
   int tick();

@@ -30,6 +30,7 @@
 #include <QVariant>
 #include <stdint.h>
 
+#include <rsiface/rstypes.h>
 #include "mainpage.h"
 #include "RsAutoUpdatePage.h"
 
@@ -90,6 +91,9 @@ class TransfersDialog : public RsAutoUpdatePage
 	void priorityHigh();
 	void priorityAuto();
 
+	void chunkRandom();
+	void chunkStreaming();
+
 	/** save sort indicators for next transfers display */
 	void saveSortIndicatorDwl(int logicalIndex, Qt::SortOrder order);
 	void saveSortIndicatorUpl(int logicalIndex, Qt::SortOrder order);
@@ -143,10 +147,13 @@ class TransfersDialog : public RsAutoUpdatePage
 		QAction *priorityNormalAct;
 		QAction *priorityHighAct;
 		QAction *priorityAutoAct;
+		QAction *chunkRandomAct;
+		QAction *chunkStreamingAct;
 
 	void getIdOfSelectedItems(QList<QStandardItem *>& items);
     bool controlTransferFile(uint32_t flags);
     void changePriority(int priority);
+	void setChunkStrategy(FileChunksInfo::ChunkStrategy s) ;
 
 		QTreeView *downloadList;
 
