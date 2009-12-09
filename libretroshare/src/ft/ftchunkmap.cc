@@ -221,7 +221,7 @@ uint32_t ChunkMap::getAvailableChunk(uint32_t start_location,const std::string& 
 	const std::vector<uint32_t> peer_chunks(it->second) ;
 #endif
 
-	for(uint i=0;i<_map.size();++i)
+	for(unsigned int i=0;i<_map.size();++i)
 	{
 		uint32_t j = (start_location+i)%_map.size() ;
 

@@ -80,6 +80,7 @@ class ChunkMap
 		// Constructor. Decides what will be the size of chunks and how many there will be.
 
 		ChunkMap(uint64_t file_size) ;
+		virtual ~ChunkMap() {}
 
       // Returns an slice of data to be asked to the peer within a chunk.
 		// If a chunk is already been downloaded by this peer, take a slice at
