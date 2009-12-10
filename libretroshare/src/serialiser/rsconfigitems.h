@@ -27,6 +27,7 @@
  */
 
 #include <map>
+#include <vector>
 
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvbase.h"
@@ -179,31 +180,34 @@ virtual	RsItem *    deserialise(void *data, uint32_t *size);
 class RsFileTransfer: public RsItem
 {
 	public:
-	RsFileTransfer() 
-	:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, 
-		RS_PKT_TYPE_FILE_CONFIG,
-		RS_PKT_SUBTYPE_FILE_TRANSFER)
-	{ return; }
-virtual ~RsFileTransfer();
-virtual void clear();
-std::ostream &print(std::ostream &out, uint16_t indent = 0);
+		RsFileTransfer() :RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_FILE_CONFIG, RS_PKT_SUBTYPE_FILE_TRANSFER)
+		{ 
+			return; 
+		}
+		virtual ~RsFileTransfer();
+		virtual void clear();
+		std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	RsTlvFileItem file;
-	RsTlvPeerIdSet allPeerIds;
+		RsTlvFileItem file;
+		RsTlvPeerIdSet allPeerIds;
 
-	std::string cPeerId;
+		std::string cPeerId;
 
-	uint16_t state;
-	uint16_t in;
+		uint16_t state;
+		uint16_t in;
 
-	uint64_t transferred;
-	uint32_t crate;
-	uint32_t trate;
+		uint64_t transferred;
+		uint32_t crate;
+		uint32_t trate;
 
+		uint32_t lrate;
+		uint32_t ltransfer;
 
-	uint32_t lrate;
-	uint32_t ltransfer;
-
+		// chunk information
+		uint32_t chunk_size ;					// common size of chunks
+		uint32_t chunk_number ;					// total number of chunks (this is not redondant, cause chunks are compressed)
+		uint32_t chunk_strategy ;				// strategy flags for chunks
+		std::vector<uint32_t> chunk_map ;	// chunk availability (bitwise)
 };
 
 /**************************************************************************/

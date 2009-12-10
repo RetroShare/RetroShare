@@ -31,8 +31,6 @@
 #define RSSERIAL_DEBUG 1
 ***/
 
-#define RSSERIAL_DEBUG 1
-
 #include <iostream>
 
 /*************************************************************************/
@@ -198,6 +196,11 @@ uint32_t    RsFileConfigSerialiser::sizeTransfer(RsFileTransfer *item)
 	s += 4; /* trate */
 	s += 4; /* lrate */
 	s += 4; /* ltransfer */
+	s += 4; // chunk_size
+	s += 4; // chunk_number
+	s += 4; // chunk_strategy
+	s += 4; // chunk map size
+	s += 4*item->chunk_map.size(); // chunk_map
 
 	return s;
 }
@@ -239,6 +242,14 @@ bool     RsFileConfigSerialiser::serialiseTransfer(RsFileTransfer *item, void *d
 	ok &= setRawUInt32(data, tlvsize, &offset, item->trate);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->lrate);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->ltransfer);
+
+	ok &= setRawUInt32(data, tlvsize, &offset, item->chunk_size);
+	ok &= setRawUInt32(data, tlvsize, &offset, item->chunk_number);
+	ok &= setRawUInt32(data, tlvsize, &offset, item->chunk_strategy);
+	ok &= setRawUInt32(data, tlvsize, &offset, item->chunk_map.size());
+
+	for(uint32_t i=0;i<item->chunk_map.size();++i)
+		ok &= setRawUInt32(data, tlvsize, &offset, item->chunk_map[i]);
 
 	if (offset != tlvsize)
 	{
@@ -298,6 +309,16 @@ RsFileTransfer *RsFileConfigSerialiser::deserialiseTransfer(void *data, uint32_t
 	ok &= getRawUInt32(data, rssize, &offset, &(item->trate));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->lrate));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->ltransfer));
+
+	ok &= getRawUInt32(data, rssize, &offset, &(item->chunk_size));
+	ok &= getRawUInt32(data, rssize, &offset, &(item->chunk_number));
+	ok &= getRawUInt32(data, rssize, &offset, &(item->chunk_strategy));
+	uint32_t map_size = 0 ;
+	ok &= getRawUInt32(data, rssize, &offset, &map_size);
+
+	item->chunk_map.resize(map_size) ;
+	for(uint32_t i=0;i<map_size;++i)
+		ok &= getRawUInt32(data, rssize, &offset, &(item->chunk_map[i]));
 
 	if (offset != rssize)
 	{

@@ -67,6 +67,35 @@ ChunkMap::ChunkMap(uint64_t s)
 #endif
 }
 
+ChunkMap::ChunkMap(uint64_t file_size,
+							const std::vector<uint32_t>& map,
+							uint32_t chunk_size,
+							uint32_t chunk_number,
+							FileChunksInfo::ChunkStrategy strategy) 
+
+	:_file_size(file_size),_chunk_size(chunk_size),_strategy(strategy)
+{
+#ifdef DEBUG_FTCHUNK
+	std::cerr << "ChunkMap:: loading availability map of size " << map.size() << ", chunk_size=" << chunk_size << ", chunknumber = " << chunk_number << std::endl ;
+#endif
+
+	_map.clear() ;
+	_map.resize(chunk_number) ;
+	_total_downloaded = 0 ;
+
+	for(uint32_t i=0;i<_map.size();++i)
+	{
+		uint32_t j = i & 31 ;	// i%32
+		uint32_t k = i >> 5 ;	// i/32
+
+		_map[i] = ( (map[k] & (1<<j)) > 0)?(FileChunksInfo::CHUNK_DONE) : (FileChunksInfo::CHUNK_OUTSTANDING) ;
+
+		if(_map[i] == FileChunksInfo::CHUNK_DONE)
+			_total_downloaded += _chunk_size ;
+	}
+}
+
+
 void ChunkMap::dataReceived(const ftChunk::ChunkId& cid)
 {
 	// 1 - find which chunk contains the received data.
@@ -245,6 +274,32 @@ void ChunkMap::getChunksInfo(FileChunksInfo& info) const
 	info.file_size = _file_size ;
 	info.chunk_size = _chunk_size ;
 	info.chunks = _map ;
+}
+
+void ChunkMap::buildAvailabilityMap(std::vector<uint32_t>& map,uint32_t& chunk_size,uint32_t& chunk_number,FileChunksInfo::ChunkStrategy& strategy) const 
+{
+	chunk_size = _chunk_size ;
+	chunk_number = _map.size() ;
+	strategy = _strategy ;
+
+	map.clear() ;
+	map.reserve((chunk_number >> 5)+1) ;
+
+	uint32_t r=0 ;
+	for(uint32_t i=0;i<_map.size();++i)
+	{
+		uint32_t j = i & 31 ;
+		r |= (_map[i]==FileChunksInfo::CHUNK_DONE)?(1<<j):0 ;
+
+		if(j==31 || i==_map.size()-1)
+		{
+			map.push_back(r);
+			r=0 ;
+		}
+	}
+#ifdef DEBUG_FTCHUNK
+	std::cerr << "ChunkMap:: built availability map of size " << map.size() << ", chunk_size=" << chunk_size << ", chunknumber = " << chunk_number << ", strategy=" << _strategy << std::endl ;
+#endif
 }
 
 

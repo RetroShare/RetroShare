@@ -59,6 +59,9 @@ virtual bool 	getFileData(uint64_t offset, uint32_t &chunk_size, void *data);
 	bool	getMissingChunk(const std::string& peer_id,uint32_t size_hint,uint64_t& offset, uint32_t& size);
 	bool 	addFileData(uint64_t offset, uint32_t chunk_size, void *data);
 
+	void loadAvailabilityMap(const std::vector<uint32_t>& map,uint32_t chunk_size,uint32_t chunk_number,uint32_t chunk_strategy) ;
+	void storeAvailabilityMap(std::vector<uint32_t>& map,uint32_t& chunk_size,uint32_t& chunk_number,uint32_t& chunk_strategy) ;
+
 protected:
 
 virtual int initializeFileAttrs(); 

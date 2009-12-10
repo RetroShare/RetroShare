@@ -80,6 +80,11 @@ class ChunkMap
 		// Constructor. Decides what will be the size of chunks and how many there will be.
 
 		ChunkMap(uint64_t file_size) ;
+
+		// constructor from saved map info
+		ChunkMap(uint64_t file_size,const std::vector<uint32_t>& map,uint32_t chunk_size,uint32_t chunk_number,FileChunksInfo::ChunkStrategy s) ;
+
+		// destructor
 		virtual ~ChunkMap() {}
 
       // Returns an slice of data to be asked to the peer within a chunk.
@@ -106,13 +111,14 @@ class ChunkMap
 
 		void setStrategy(FileChunksInfo::ChunkStrategy s) { _strategy = s ; }
 
-#ifdef TO_DO
       // Properly fills an vector of fixed size chunks with availability or download state.
       // chunks is given with the proper number of chunks and we have to adapt to it. This can be used
       // to display square chunks in the gui or display a blue bar of availability by collapsing info from all peers.
 
-      void linearize(FileChunksInfo& info) const ;
+      void buildAvailabilityMap(std::vector<uint32_t>& map,uint32_t& chunk_size,uint32_t& chunk_number,FileChunksInfo::ChunkStrategy& s) const ;
+		void loadAvailabilityMap(const std::vector<uint32_t>& map,uint32_t chunk_size,uint32_t chunk_number,FileChunksInfo::ChunkStrategy s) ;
 
+#ifdef TO_DO
 		// Updates the peer's availablility map
 		//
 		void setPeerAvailabilityMap(const std::string& peer_id,const std::vector<uint32_t>& peer_map) ;
@@ -131,17 +137,17 @@ class ChunkMap
 		uint32_t getAvailableChunk(uint32_t start_location,const std::string& peer_id) const ;
 
 	private:
-		const uint64_t						_file_size ;		// total size of the file in bytes.
-		const uint32_t						_chunk_size ;		// Size of chunks. Common to all chunks.
-		FileChunksInfo::ChunkStrategy 						_strategy ;			// how do we allocate new chunks
-		std::map<std::string,Chunk>	_active_chunks_feed ; // vector of chunks being downloaded. Exactly one chunk per peer id.
-		std::map<ChunkNumber,ChunkDownloadInfo> _slices_to_download ; // list of (slice id,slice size) 
+		uint64_t												_file_size ;		// total size of the file in bytes.
+		uint32_t												_chunk_size ;		// Size of chunks. Common to all chunks.
+		FileChunksInfo::ChunkStrategy 				_strategy ;			// how do we allocate new chunks
+		std::map<std::string,Chunk>					_active_chunks_feed ; // vector of chunks being downloaded. Exactly one chunk per peer id.
+		std::map<ChunkNumber,ChunkDownloadInfo>	_slices_to_download ; // list of (slice id,slice size) 
 
-		std::vector<FileChunksInfo::ChunkState> _map ;				// vector of chunk state over the whole file
+		std::vector<FileChunksInfo::ChunkState>	_map ;				// vector of chunk state over the whole file
 
 		std::map<std::string,std::vector<uint32_t> >	_peers_chunks_availability ;	// what does each source peer have.
 
-		uint64_t								_total_downloaded ;
+		uint64_t												_total_downloaded ;
 };
 
 

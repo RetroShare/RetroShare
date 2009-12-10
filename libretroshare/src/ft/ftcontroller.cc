@@ -57,6 +57,8 @@
  * #define CONTROL_DEBUG 1
  *****/
 
+static const uint32_t SAVE_TRANSFERS_DELAY = 30	; // save transfer progress every 30 seconds.
+
 ftFileControl::ftFileControl()
 	:mTransfer(NULL), mCreator(NULL),
 	 mState(0), mSize(0), mFlags(0)
@@ -79,7 +81,7 @@ ftFileControl::ftFileControl(std::string fname,
 
 ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string configDir)
 	:CacheTransfer(cs), p3Config(CONFIG_TYPE_FT_CONTROL), mDataplex(dm), mFtActive(false),
-	mTurtle(NULL), mShareDownloadDir(true)
+	mTurtle(NULL), mShareDownloadDir(true),last_save_time(0)
 {
 	/* TODO */
 }
@@ -180,6 +182,13 @@ void ftController::run()
 		{
 		  	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 			doPending = (mFtActive) && (!mFtPendingDone);
+		}
+
+		time_t now = time(NULL) ;
+		if(now - last_save_time > SAVE_TRANSFERS_DELAY)
+		{
+			IndicateConfigChanged() ;
+			last_save_time = now ;
 		}
 
 		if (doPending)
@@ -546,17 +555,44 @@ bool 	ftController::isActiveAndNoPending()
 bool	ftController::handleAPendingRequest()
 {
 	ftPendingRequest req;
-  { RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	{ 
+		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	if (mPendingRequests.size() < 1)
-	{
-		return false;
+		if (mPendingRequests.size() < 1)
+		{
+			return false;
+		}
+		req = mPendingRequests.front();
+		mPendingRequests.pop_front();
 	}
-	req = mPendingRequests.front();
-	mPendingRequests.pop_front();
-  }
+
 	FileRequest(req.mName, req.mHash, req.mSize, req.mDest, req.mFlags, req.mSrcIds);
-	return true;
+
+	{ 
+		// See whether there is a pendign chunk map recorded for this hash.
+		//
+		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
+		std::map<std::string,RsFileTransfer*>::iterator it(mPendingChunkMaps.find(req.mHash)) ;
+
+		if(it != mPendingChunkMaps.end())
+		{
+			RsFileTransfer *rsft = it->second ;
+			std::map<std::string, ftFileControl>::iterator fit = mDownloads.find(rsft->file.hash);
+
+			if((fit==mDownloads.end() || (fit->second).mCreator == NULL))
+			{
+				// This should never happen, because the last call to FileRequest must have created the fileCreator!!
+				//
+				std::cerr << "ftController::loadList(): Error: could not find hash " << rsft->file.hash << " in mDownloads list !" << std::endl ;
+			}
+			else
+				(fit->second).mCreator->loadAvailabilityMap(rsft->chunk_map,rsft->chunk_size,rsft->chunk_number,rsft->chunk_strategy) ;
+
+			delete rsft ;
+			mPendingChunkMaps.erase(it) ;
+		}
+	}
 }
 
 
@@ -1308,8 +1344,7 @@ bool ftController::RequestCacheFile(RsPeerId id, std::string path, std::string h
 	std::list<std::string> ids;
 	ids.push_back(id);
 
-	FileRequest(hash, hash, size, path,
-		RS_FILE_HINTS_CACHE | RS_FILE_HINTS_NO_SEARCH, ids);
+	FileRequest(hash, hash, size, path, RS_FILE_HINTS_CACHE | RS_FILE_HINTS_NO_SEARCH, ids);
 
 	return true;
 }
@@ -1422,6 +1457,7 @@ std::list<RsItem *> ftController::saveList(bool &cleanup)
 		//rft->flags = fit->second.mFlags;
 
 		fit->second.mTransfer->getFileSources(rft->allPeerIds.ids);
+		fit->second.mCreator->storeAvailabilityMap(rft->chunk_map,rft->chunk_size,rft->chunk_number,rft->chunk_strategy) ;
 
 		saveData.push_back(rft);
 	}
@@ -1461,17 +1497,27 @@ bool ftController::loadList(std::list<RsItem *> load)
 		}
 		else if (NULL != (rsft = dynamic_cast<RsFileTransfer *>(*it)))
 		{
-//			csoler: I'm suppressing this lock since there is a double lock below
-//					in FileRequest, line 382.
-//  			RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
-//
-
 			/* This will get stored on a waiting list - until the
 			 * config files are fully loaded
 			 */
-			FileRequest(rsft->file.name, rsft->file.hash, rsft->file.filesize,
-				rsft->file.path, 0, rsft->allPeerIds.ids);
+			FileRequest(rsft->file.name, rsft->file.hash, rsft->file.filesize, rsft->file.path, 0, rsft->allPeerIds.ids);
 
+			{
+				RsStackMutex mtx(ctrlMutex) ;
+
+				std::map<std::string, ftFileControl>::iterator fit = mDownloads.find(rsft->file.hash);
+
+				if((fit==mDownloads.end() || (fit->second).mCreator == NULL))
+				{
+					std::cerr << "ftController::loadList(): Error: could not find hash " << rsft->file.hash << " in mDownloads list !" << std::endl ;
+					std::cerr << "Storing the map in a wait list." << std::endl ;
+
+					mPendingChunkMaps[rsft->file.hash] = rsft ;
+					continue ;	// i.e. don't delete the item!
+				}
+				else
+					(fit->second).mCreator->loadAvailabilityMap(rsft->chunk_map,rsft->chunk_size,rsft->chunk_number,rsft->chunk_strategy) ;
+			}
 		}
 
 		/* cleanup */

@@ -189,6 +189,7 @@ bool    handleAPendingRequest();
 bool    setPeerState(ftTransferModule *tm, std::string id,
                         uint32_t maxrate, bool online);
 
+		time_t last_save_time ;
 	/* pointers to other components */
 
 	ftSearch *mSearch;
@@ -224,6 +225,7 @@ bool    setPeerState(ftTransferModule *tm, std::string id,
 	bool mFtActive;
         bool mFtPendingDone;
 	std::list<ftPendingRequest> mPendingRequests;
+	std::map<std::string,RsFileTransfer*> mPendingChunkMaps ;
 
 	/* share incoming directory */
 	bool mShareDownloadDir;

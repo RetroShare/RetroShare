@@ -403,4 +403,19 @@ bool ftFileCreator::locked_printChunkMap()
 	return true; 
 }
 
+void ftFileCreator::loadAvailabilityMap(const std::vector<uint32_t>& map,uint32_t chunk_size,uint32_t chunk_number,uint32_t strategy) 
+{
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+
+	chunkMap = ChunkMap(mSize,map,chunk_size,chunk_number,FileChunksInfo::ChunkStrategy(strategy)) ;
+}
+void ftFileCreator::storeAvailabilityMap(std::vector<uint32_t>& map,uint32_t& chunk_size,uint32_t& chunk_number,uint32_t& strategy) 
+{
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+
+	FileChunksInfo::ChunkStrategy strat ;
+	chunkMap.buildAvailabilityMap(map,chunk_size,chunk_number,strat) ;
+	strategy = (uint32_t)strat ;
+}
+
 
