@@ -728,7 +728,8 @@ p, li { white-space: pre-wrap; }
           <enum>Qt::CustomContextMenu</enum>
          </property>
          <property name="styleSheet">
-          <string notr="true">#remoteDirTreeView{border: 1px solid #CCCCCC;}</string>
+          <string notr="true">#remoteDirTreeView{border: 1px solid #CCCCCC;
+background: white;}</string>
          </property>
          <property name="dragEnabled">
           <bool>true</bool>
@@ -778,7 +779,8 @@ p, li { white-space: pre-wrap; }
           <bool>false</bool>
          </property>
          <property name="styleSheet">
-          <string notr="true">#localDirTreeView{border: 1px solid #CCCCCC;}</string>
+          <string notr="true">#localDirTreeView{border: 1px solid #CCCCCC;
+background: white;}</string>
          </property>
          <property name="dragEnabled">
           <bool>true</bool>
