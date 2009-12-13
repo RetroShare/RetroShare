@@ -149,6 +149,12 @@ virtual bool 	SignDataBin(std::string, unsigned char*, unsigned int*);
 virtual bool    SignDataBin(const void*, uint32_t, unsigned char*, unsigned int*);
 virtual bool    VerifySignBin(std::string, const void*, uint32_t, unsigned char*, unsigned int);
 
+// return : false if encrypt failed
+bool     encrypt(void *&out, int &outlen, const void *in, int inlen, std::string peerId); //return the encrypted length
+
+// return : false if decrypt fails
+bool     decrypt(void *&out, int &outlen, const void *in, int inlen); //return the encrypted length
+
 
 	/*********** Overloaded Functions from p3AuthMgr **********/
 

@@ -122,6 +122,8 @@ int 	notifyEvent(NetInterface *ni, int event);
 virtual float   getRate(bool in);
 virtual void    setMaxRate(bool in, float val);
 
+pqiconnect *getKid(uint32_t type);
+
 	private:
 
 	std::map<uint32_t, pqiconnect *> kids;

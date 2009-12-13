@@ -1786,6 +1786,29 @@ bool    AuthSSL::FailedCertificate(X509 *x509, bool incoming)
 	return ProcessX509(x509, id);
 }
 
+bool    AuthSSL::encrypt(void *&out, int &outlen, const void *in, int inlen, std::string peerId)
+{
+#ifdef AUTHSSL_DEBUG
+        std::cerr << "AuthSSL::encrypt() called with inlen : " << inlen << std::endl;
+#endif
+        //TODO : use ssl to crypt the binary input buffer
+        out = malloc(inlen);
+        memcpy(out, in, inlen);
+        outlen = inlen;
+}
+
+bool    AuthSSL::decrypt(void *&out, int &outlen, const void *in, int inlen)
+{
+#ifdef AUTHSSL_DEBUG
+        std::cerr << "AuthSSL::decrypt() called with inlen : " << inlen << std::endl;
+#endif
+        //TODO : use ssl to decrypt the binary input buffer
+        out = malloc(inlen);
+        memcpy(out, in, inlen);
+        outlen = inlen;
+}
+
+
 /* check that they are exact match */
 bool    AuthSSL::CheckCertificate(std::string x509Id, X509 *x509)
 {

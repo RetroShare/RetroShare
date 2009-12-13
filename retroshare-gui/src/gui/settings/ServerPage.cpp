@@ -40,6 +40,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WFlags flags)
 
   connect( ui.netModeComboBox, SIGNAL( activated ( int ) ), this, SLOT( toggleUPnP( ) ) );
   connect( ui.allowIpDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleIpDetermination(bool) ) );
+  connect( ui.allowTunnelConnectionCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTunnelConnection(bool) ) );
   connect( ui._showTurtleDialogPB,SIGNAL(clicked()),this,SLOT( showTurtleRouterDialog() )) ;
 
 	  ui._enableTurtleCB->setChecked(true) ;
@@ -55,6 +56,9 @@ ServerPage::ServerPage(QWidget * parent, Qt::WFlags flags)
 	bool b = rsPeers->getAllowServerIPDetermination() ;
 	ui.allowIpDeterminationCB->setChecked(b) ;
 	ui.IPServersLV->setEnabled(b) ;
+
+        b = rsPeers->getAllowTunnelConnection() ;
+        ui.allowTunnelConnectionCB->setChecked(b) ;
 
 	std::list<std::string> ip_servers ;
 	rsPeers->getIPServersList(ip_servers) ;
@@ -77,6 +81,12 @@ void ServerPage::toggleIpDetermination(bool b)
 {
 	rsPeers->allowServerIPDetermination(b) ;
 	ui.IPServersLV->setEnabled(b) ;
+}
+
+void ServerPage::toggleTunnelConnection(bool b)
+{
+        std::cerr << "ServerPage::toggleTunnelConnection() set tunnel to : " << b << std::endl;
+        rsPeers->allowTunnelConnection(b) ;
 }
 
 void

@@ -96,7 +96,7 @@ class RsPeerDetails
         std::string             localAddr;
         uint16_t                localPort;
         std::string             extAddr;
-	uint16_t                extPort;
+        uint16_t                extPort;
 	std::list<std::string>  ipAddressList;
 
 	uint32_t		netMode;
@@ -156,7 +156,9 @@ virtual bool setVisState(std::string id, uint32_t vis)		= 0;
 
 virtual void getIPServersList(std::list<std::string>& ip_servers) = 0;
 virtual void allowServerIPDetermination(bool) = 0;
+virtual void allowTunnelConnection(bool) = 0;
 virtual bool getAllowServerIPDetermination() = 0 ;
+virtual bool getAllowTunnelConnection() = 0 ;
 
 	/* Auth Stuff */
 virtual	std::string GetRetroshareInvite() 			= 0;

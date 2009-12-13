@@ -66,7 +66,11 @@ int     pqiperson::SendItem(RsItem *i)
 	out << "pqiperson::SendItem()";
 	if (active)
 	{
-		out << " Active: Sending On";
+                out << " Active: Sending On" << std::endl;
+                i->print(out, 5);
+#ifdef PERSON_DEBUG
+                std::cerr << out.str() << std::endl;
+#endif
 		return activepqi -> SendItem(i);
 	}
 	else
@@ -76,6 +80,7 @@ int     pqiperson::SendItem(RsItem *i)
 		out << " Now deleting...";
 		delete i;
 	}
+
 	pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
 	return 0; // queued.	
 }
@@ -145,6 +150,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 	  out << "pqiperson::notifyEvent() Id: " << PeerId();
 	  out << std::endl;
 	  out << "Message: " << newState << " from: " << ni << std::endl;
+          out << "Active pqi : " << activepqi;
 
 	  pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
 	}
@@ -166,11 +172,11 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 		out << " ni: " << (it->second)->ni;
 		out << " in_ni: " << ni;
 	  	pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
-		i++;
+                i++;
 
 		if ((it->second)->thisNetInterface(ni))
 		{
-			pqi = (it->second);
+                        pqi = (it->second);
 			type = (it->first);
 		}
 	}
@@ -180,7 +186,6 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 	  pqioutput(PQL_WARNING, pqipersonzone, "Unknown notfyEvent Source!");
 	  return -1;
 	}
-		
 
 	switch(newState)
 	{
@@ -194,10 +199,10 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 		if ((active) && (activepqi != pqi)) // already connected - trouble
 		{
 	  		pqioutput(PQL_WARNING, pqipersonzone, 
-				"CONNECT_SUCCESS+active->trouble: shutdown EXISTING->switch to new one!");
+                                "CONNECT_SUCCESS+active-> activing new connection, shutting others");
 
 			// This is the RESET that's killing the connections.....
-			activepqi -> reset();
+                        //activepqi -> reset();
 			// this causes a recursive call back into this fn.
 			// which cleans up state.
 			// we only do this if its not going to mess with new conn.
@@ -208,18 +213,21 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 
 	  		pqioutput(PQL_WARNING, pqipersonzone, 
 				"CONNECT_SUCCESS->marking so! (resetting others)");
-			// mark as active.
+                        // mark as active.
 			active = true;
 			activepqi = pqi;
-	  		inConnectAttempt = false;
+                        inConnectAttempt = false;
 
 			/* reset all other children? (clear up long UDP attempt) */
 			for(it = kids.begin(); it != kids.end(); it++)
 			{
 				if (it->second != activepqi)
 				{
-					it->second->reset();
-				}
+                                        std::cerr << "Resetting pqi" << std::endl;
+                                        it->second->reset();
+                                } else {
+                                        std::cerr << "Active pqi : not resetting." << std::endl;
+                                }
 			}
 			return 1;
 		}
@@ -231,22 +239,17 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 
 		if (active)
 		{
-			if (activepqi == pqi)
+                        if (activepqi == pqi)
 			{
 	  			pqioutput(PQL_WARNING, pqipersonzone, 
 					"CONNECT_FAILED->marking so!");
 				active = false;
 				activepqi = NULL;
-			}
-			else
-			{
-	  			pqioutput(PQL_WARNING, pqipersonzone, 
-					"CONNECT_FAIL+not activepqi->strange!");
-				// probably UDP connect has failed, 
-				// TCP connection has been made since attempt started.
-				return -1;
-			}
-		}
+                        } else {
+                                pqioutput(PQL_WARNING, pqipersonzone,
+                                        "CONNECT_FAILED-> from an unactive connection, don't flag the peer as not connected, just try next attempt !");
+                        }
+                }
 		else
 		{
 	  		pqioutput(PQL_WARNING, pqipersonzone, 
@@ -254,8 +257,14 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 		}
 
 		/* notify up (But not if we are actually active: rtn -1 case above) */
-		if (pqipg)
-			pqipg->notifyConnect(PeerId(), type, false);
+                if (!active) {
+                    if (pqipg)
+                            pqipg->notifyConnect(PeerId(), type, false);
+                } else {
+                     if (pqipg)
+                           pqipg->notifyConnect(PeerId(), PQI_CONNECT_DO_NEXT_ATTEMPT, false);
+                    return -1;
+                }
 
 		return 1;
 
@@ -398,6 +407,19 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, 
 	return 1;
 }
 
+
+pqiconnect	*pqiperson::getKid(uint32_t type)
+{
+	std::map<uint32_t, pqiconnect *>::iterator it;
+
+	it = kids.find(type);
+	if (it == kids.end())
+	{
+	    return NULL;
+	} else {
+	    return it->second;
+	}
+}
 
 float   pqiperson::getRate(bool in)
 {

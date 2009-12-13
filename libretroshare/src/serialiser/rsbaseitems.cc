@@ -682,14 +682,21 @@ uint32_t    RsServiceSerialiser::size(RsItem *i)
 /* serialise the data to the buffer */
 bool    RsServiceSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 {
-	RsRawItem *item = dynamic_cast<RsRawItem *>(i);
+        RsRawItem *item = dynamic_cast<RsRawItem *>(i);
 	if (!item)
 	{
 		return false;
 	}
 
+        #ifdef RSSERIAL_DEBUG
+                std::cerr << "RsServiceSerialiser::serialise() serializing raw item. pktsize : " << *pktsize;
+        #endif
+
 	uint32_t tlvsize = item->getRawLength();
-	uint32_t offset = 0;
+        #ifdef RSSERIAL_DEBUG
+                std::cerr << "tlvsize : " << tlvsize << std::endl;
+        #endif
+        uint32_t offset = 0;
 
 	if (*pktsize < tlvsize)
 		return false; /* not enough space */

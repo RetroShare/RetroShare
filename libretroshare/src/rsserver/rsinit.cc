@@ -1421,7 +1421,7 @@ std::string RsInit::getHomePath()
 	}
 
 	out << "fltkserver::getHomePath() -> " << home << std::endl;
-	std::cerr << out;
+	std::cerr << out.str();
 
 	// convert to FLTK desired format.
 	home = make_path_unix(home);
@@ -1827,6 +1827,7 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3status.h"
 #include "services/p3Qblog.h"
 #include "turtle/p3turtle.h"
+#include "services/p3tunnel.h"
 
 #include <list>
 #include <string>
@@ -1975,6 +1976,10 @@ int RsServer::StartupRetroShare()
 	ad = new p3disc(mAuthMgr, mConnMgr);
 	msgSrv = new p3MsgService(mConnMgr);
 	chatSrv = new p3ChatService(mConnMgr);
+
+	p3tunnel *tn = new p3tunnel(mAuthMgr,mConnMgr, pqih);
+	pqih -> addService(tn);
+	mConnMgr->setP3tunnel(tn);
 
 	p3turtle *tr = new p3turtle(mConnMgr,ftserver) ;
 	rsTurtle = tr ;

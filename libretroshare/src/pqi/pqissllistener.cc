@@ -57,14 +57,7 @@ const int pqissllistenzone = 49787;
 
 pqissllistenbase::pqissllistenbase(struct sockaddr_in addr, p3AuthMgr *am, p3ConnectMgr *cm)
 	:laddr(addr), active(false), 
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	mAuthMgr((AuthXPGP *) am), mConnMgr(cm)
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 	mAuthMgr((AuthSSL *) am), mConnMgr(cm)
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
 {
 	if (!(mAuthMgr -> active()))
@@ -471,14 +464,7 @@ int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_
 	  "pqissllistenbase::Extract_Failed_SSL_Certificate()");
 
 	// Get the Peer Certificate....
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	XPGP *peercert = SSL_get_peer_pgp_certificate(ssl);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 	X509 *peercert = SSL_get_peer_certificate(ssl);
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
 	if (peercert == NULL)
 	{
@@ -492,14 +478,7 @@ int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_
 
 	// save certificate... (and ip locations)
 	// false for outgoing....
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	mAuthMgr->FailedCertificateXPGP(peercert, true);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 	mAuthMgr->FailedCertificate(peercert, true);
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
 	return 1;
 }
@@ -631,14 +610,7 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 { 
 
 	// Get the Peer Certificate....
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	XPGP *peercert = SSL_get_peer_pgp_certificate(ssl);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 	X509 *peercert = SSL_get_peer_certificate(ssl);
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
 	if (peercert == NULL)
 	{
@@ -653,11 +625,6 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 	// Check cert.
 	std::string newPeerId;
 
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	bool certOk = mAuthMgr->ValidateCertificateXPGP(peercert, newPeerId);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
 	/****
 	 * As the validation is actually done before this...
@@ -665,9 +632,6 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 	 ****/
 
 	bool certOk = mAuthMgr->ValidateCertificate(peercert, newPeerId);
-
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
 	bool found = false;
 	std::map<std::string, pqissl *>::iterator it;
@@ -680,14 +644,7 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 
 		// bad - shutdown.
 		// pqissllistenbase will shutdown!
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-		XPGP_free(peercert);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 		X509_free(peercert);
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
 		return -1;
 	}
@@ -723,27 +680,13 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 		out << std::endl;
 		out << "pqissllistenbase: Will shut it down!" << std::endl;
   	        pqioutput(PQL_WARNING, pqissllistenzone, out.str());
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-		XPGP_free(peercert);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 		X509_free(peercert);
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
 		return -1;
 	}
 
 	/* Certificate consumed! */
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	bool certKnown = mAuthMgr->CheckCertificateXPGP(it->first, peercert);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 	bool certKnown = mAuthMgr->CheckCertificate(it->first, peercert);
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
 	if (certKnown == false)
 	{

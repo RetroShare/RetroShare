@@ -39,14 +39,7 @@
 #include "pqi/pqi_base.h"
 #include "pqi/pqilistener.h"
 
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-#include "pqi/authxpgp.h"
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 #include "pqi/authssl.h"
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
 /***************************** pqi Net SSL Interface *********************************
  */
@@ -95,18 +88,7 @@ int     Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_in *inaddr);
 
 	protected:
 
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-
-	AuthXPGP *mAuthMgr;
-
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
 	AuthSSL *mAuthMgr;
-
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
 	p3ConnectMgr *mConnMgr;
 

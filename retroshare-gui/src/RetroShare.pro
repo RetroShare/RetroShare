@@ -112,12 +112,10 @@ DEPENDPATH += . \
             gui\help\browser \
             gui\elastic
             
-INCLUDEPATH += . \
+INCLUDEPATH += ../../libretroshare/src/
 
 # Input
 HEADERS +=  rshare.h \
-            rsiface/rsiface.h \
-            rsiface/rstypes.h \
             rsiface/notifyqt.h \
             control/bandwidthevent.h \
             control/eventtype.h \

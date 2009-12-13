@@ -158,6 +158,7 @@ RsRawItem *p3ServiceServer::outgoing()
 
 			item -> print(out);
 			out << std::endl;
+			std::cerr << out.str();
 			pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out.str());
 #endif
 
@@ -179,6 +180,7 @@ RsRawItem *p3ServiceServer::outgoing()
 			item -> print(out);
 			out << std::endl;
 			pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out.str());
+			std::cerr << out.str();
 #endif
 
 			return item;

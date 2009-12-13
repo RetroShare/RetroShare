@@ -437,7 +437,13 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 	std::ostringstream autostr;
 	if (pcs.inConnAttempt)
 	{
-		autostr << "Trying " << inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr) << ":" <<  ntohs(pcs.currentConnAddrAttempt.addr.sin_port);
+                if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TUNNEL) {
+                    autostr << "Trying tunnel connection";
+                } else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TCP_ALL) {
+                    autostr << "Trying TCP : " << inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr) << ":" <<  ntohs(pcs.currentConnAddrAttempt.addr.sin_port);
+                } else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_UDP_ALL) {
+                    autostr << "Trying UDP : " << inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr) << ":" <<  ntohs(pcs.currentConnAddrAttempt.addr.sin_port);
+                }
 	}
 	else if (pcs.state & RS_PEER_S_CONNECTED)
 	{
@@ -449,7 +455,11 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 		{
 			autostr << "Connected: UDP";
 		}
-		else 
+		else if (pcs.connecttype == RS_NET_CONN_TUNNEL)
+		{
+                        autostr << "Connected: Tunnel";
+		}
+		else
 		{
 			autostr << "Connected: Unknown";
 		}
@@ -600,9 +610,22 @@ void p3Peers::allowServerIPDetermination(bool b)
 {
 	mConnMgr->setIPServersEnabled(b) ;
 }
-bool p3Peers::getAllowServerIPDetermination() 
+
+void p3Peers::allowTunnelConnection(bool b)
+{
+        std::cerr << "p3Peers::allowTunnelConnection() set tunnel to : " << b << std::endl;
+        mConnMgr->setTunnelConnection(b) ;
+}
+
+bool p3Peers::getAllowServerIPDetermination()
 {
 	return mConnMgr->getIPServersEnabled() ;
+}
+
+bool p3Peers::getAllowTunnelConnection()
+{
+        std::cerr << "p3Peers::getAllowTunnelConnection() tunnel is : " << mConnMgr->getTunnelConnection()  << std::endl;
+        return mConnMgr->getTunnelConnection() ;
 }
 
 bool 	p3Peers::setLocalAddress(std::string id, std::string addr_str, uint16_t port)

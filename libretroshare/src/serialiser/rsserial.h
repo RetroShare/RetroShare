@@ -164,7 +164,7 @@ class RsRawItem: public RsItem
 {
 	public:
 	RsRawItem(uint32_t t, uint32_t size)
-	:RsItem(t), len(size) { data = malloc(len); }
+        :RsItem(t), len(size) { data = malloc(len);}
 
 virtual ~RsRawItem()
 	{

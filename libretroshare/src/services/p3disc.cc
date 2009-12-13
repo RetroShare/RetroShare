@@ -627,7 +627,7 @@ void p3disc::recvPeerOwnMsg(RsDiscOwnItem *item)
 
 	if (item->discFlags & P3DISC_FLAGS_STABLE_UDP)
 	{
-		type |= RS_NET_CONN_UDP_DHT_SYNC;
+                type |= RS_NET_CONN_UDP;
 		flags |= RS_NET_FLAGS_STABLE_UDP;
 	}
 
@@ -697,7 +697,7 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 
 	if (item->discFlags & P3DISC_FLAGS_STABLE_UDP)
 	{
-		type |= RS_NET_CONN_UDP_DHT_SYNC;
+                type |= RS_NET_CONN_UDP;
 		flags |= RS_NET_FLAGS_STABLE_UDP;
 	}
 

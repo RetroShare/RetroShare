@@ -366,6 +366,27 @@ int     pqipersongrp::removePeer(std::string id)
 	return 1;
 }
 
+pqiperson     *pqipersongrp::getPeer(std::string id)
+{
+	std::map<std::string, SearchModule *>::iterator it;
+
+#ifdef PGRP_DEBUG
+	std::cerr << " pqipersongrp::getPeer() id: " << id;
+	std::cerr << std::endl;
+#endif
+
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+
+	it = mods.find(id);
+	if (it != mods.end())
+	{
+		SearchModule *mod = it->second;
+		pqiperson *p = (pqiperson *) mod -> pqi;
+		return p;
+	}
+	return NULL;
+}
+
 int     pqipersongrp::connectPeer(std::string id)
 {
 	/* get status from p3connectMgr */
@@ -434,6 +455,15 @@ int     pqipersongrp::connectPeer(std::string id)
 		std::cerr << std::endl;
 #endif
 	}
+	else if (type & RS_NET_CONN_TUNNEL)
+	{
+		ptype = PQI_CONNECT_TUNNEL;
+		timeout = period * 2;
+#ifdef PGRP_DEBUG
+		std::cerr << " pqipersongrp::connectPeer() connecting with UDP: Timeout :" << timeout;
+		std::cerr << std::endl;
+#endif
+	}
 	else
 		return 0;
 
@@ -448,19 +478,27 @@ int     pqipersongrp::connectPeer(std::string id)
 
 bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success)
 {
-	uint32_t type = 0;
+        uint32_t type = 0;
 	if (ptype == PQI_CONNECT_TCP)
 	{
 		type = RS_NET_CONN_TCP_ALL;
 	}
-	else
+	else if (ptype == PQI_CONNECT_UDP)
 	{
 		type = RS_NET_CONN_UDP_ALL;
 	}
+	else if (ptype == PQI_CONNECT_TUNNEL)
+	{
+		type = RS_NET_CONN_TUNNEL;
+	}
 
-	
-	if (mConnMgr)
-		mConnMgr->connectResult(id, success, type);
+        if (mConnMgr) {
+           if (ptype == PQI_CONNECT_DO_NEXT_ATTEMPT) {
+                        mConnMgr->doNextAttempt(id);
+            } else {
+                        mConnMgr->connectResult(id, success, type);
+            }
+        }
 	
 	return (NULL != mConnMgr);
 }

@@ -167,6 +167,7 @@ int	pqistreamer::SendItem(RsItem *si)
 	  out << "pqistreamer::SendItem():" << std::endl;
 	  si -> print(out);
 	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
+	    std::cerr << out.str();
 	}
 #endif
 
@@ -297,7 +298,10 @@ int	pqistreamer::status()
 
 int	pqistreamer::queue_outpqi(RsItem *pqi)
 {
-	RsStackMutex stack(streamerMtx) ;		// lock out_pkt and out_data
+#ifdef DEBUG_PQISTREAMER
+        std::cerr << "pqistreamer::queue_outpqi() called." << std::endl;
+#endif
+        RsStackMutex stack(streamerMtx) ;		// lock out_pkt and out_data
 
 	// This is called by different threads, and by threads that are not the handleoutgoing thread,
 	// so it should be protected by a mutex !!
@@ -323,7 +327,10 @@ int	pqistreamer::queue_outpqi(RsItem *pqi)
         uint32_t pktsize = rsSerialiser->size(pqi);
 	void *ptr = malloc(pktsize);
 
-	if (rsSerialiser->serialise(pqi, ptr, &pktsize))
+#ifdef DEBUG_PQISTREAMER
+        std::cerr << "pqistreamer::queue_outpqi() serializing packet with packet size : " << pktsize << std::endl;
+#endif
+        if (rsSerialiser->serialise(pqi, ptr, &pktsize))
 	{
 		if (isCntrl)
 		{
@@ -462,7 +469,9 @@ int	pqistreamer::handleoutgoing()
 			// write packet.
 			len = getRsItemSize(pkt_wpending);
 
-//			std::cout << "Sending Out Pkt of size " << len << " !" << std::endl ;
+#ifdef DEBUG_PQISTREAMER
+                        std::cout << "Sending Out Pkt of size " << len << " !" << std::endl;
+#endif
 
 			if (len != (ss = bio->senddata(pkt_wpending, len)))
 			{
@@ -599,7 +608,10 @@ continue_packet:
 		int extralen = getRsItemSize(block) - blen;
 
 #ifdef DEBUG_PQISTREAMER
-		std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet state=" << reading_state << std::endl ;
+                std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet getRsItemSize(block) = " << getRsItemSize(block) << std::endl ;
+                std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet extralen = " << extralen << std::endl ;
+
+                std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet state=" << reading_state << std::endl ;
 		std::cerr << "[" << (void*)pthread_self() << "] " << "block 1 : " << (int)(((unsigned char*)block)[0]) << " " << (int)(((unsigned char*)block)[1]) << " " << (int)(((unsigned char*)block)[2]) << " " << (int)(((unsigned char*)block)[3])  << " "
 							<< (int)(((unsigned char*)block)[4]) << " " 
 							<< (int)(((unsigned char*)block)[5]) << " " 
@@ -738,7 +750,7 @@ continue_packet:
 			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
 		}
 
-		//		std::cerr << "Deserializing packet of size " << pktlen <<std::endl ;
+                //		std::cerr << "Deserializing packet of size " << pktlen <<std::endl ;
 
 		uint32_t pktlen = blen+extralen ;
 #ifdef DEBUG_PQISTREAMER

@@ -181,7 +181,8 @@ HEADERS += dbase/cachestrapper.h \
            pqi/pqiservice.h \
            pqi/pqistore.h \
            pqi/pqissl.h \
-           pqi/pqissllistener.h \
+           pqi/pqissltunnel.h \
+	   pqi/pqissllistener.h \
            pqi/pqisslpersongrp.h \
            pqi/pqissludp.h \
            pqi/pqistreamer.h \
@@ -213,7 +214,8 @@ HEADERS += dbase/cachestrapper.h \
            serialiser/rsbaseitems.h \
            serialiser/rsbaseserial.h \
            serialiser/rschannelitems.h \
-           serialiser/rsconfigitems.h \
+	   serialiser/rstunnelitems.h \
+	   serialiser/rsconfigitems.h \
            serialiser/rsdiscitems.h \
            serialiser/rsdistribitems.h \
            serialiser/rsforumitems.h \
@@ -234,7 +236,8 @@ HEADERS += dbase/cachestrapper.h \
            services/p3channels.h \
            services/p3chatservice.h \
            services/p3disc.h \
-           services/p3distrib.h \
+	   services/p3tunnel.h \
+	   services/p3distrib.h \
            services/p3forums.h \
            services/p3gamelauncher.h \
            services/p3gameservice.h \
@@ -306,6 +309,7 @@ SOURCES += \
 				services/p3distrib.cc \
 				services/p3photoservice.cc \
 				services/p3disc.cc \
+				services/p3tunnel.cc \
 				services/p3ranking.cc \
 				services/p3gamelauncher.cc \
 				services/p3msgservice.cc \
@@ -330,6 +334,7 @@ SOURCES += \
 				pqi/pqisslpersongrp.cc \
 				pqi/pqissllistener.cc \
 				pqi/pqissl.cc \
+                                pqi/pqissltunnel.cc \
 				pqi/pqistore.cc \
 				pqi/p3authmgr.cc \
 				pqi/p3cfgmgr.cc \
@@ -345,6 +350,7 @@ SOURCES += \
 				serialiser/rsqblogitems.cc \
 				serialiser/rsstatusitems.cc \
 				serialiser/rschannelitems.cc \
+				serialiser/rstunnelitems.cc \
 				serialiser/rsforumitems.cc \
 				serialiser/rsdistribitems.cc \
 				serialiser/rsgameitems.cc \

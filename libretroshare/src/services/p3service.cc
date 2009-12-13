@@ -204,6 +204,10 @@ RsRawItem *p3Service::send()
 	delete si;
 
 	srvMtx.unlock(); /***** UNLOCK MUTEX *****/
+#ifdef SERV_DEBUG
+                std::cerr << "p3Service::send() returning RawItem.";
+                std::cerr << std::endl;
+#endif
 	return raw;
 }
 

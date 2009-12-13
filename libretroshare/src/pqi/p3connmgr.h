@@ -33,6 +33,7 @@
 //#include "pqi/p3dhtmgr.h"
 //#include "pqi/p3upnpmgr.h"
 #include "pqi/pqiassist.h"
+#include "services/p3tunnel.h"
 
 #include "pqi/p3cfgmgr.h"
 
@@ -80,12 +81,12 @@ const uint32_t RS_NET_MODE_UNREACHABLE = 0x0008;
 /* order of attempts ... */
 const uint32_t RS_NET_CONN_TCP_ALL 		= 0x000f;
 const uint32_t RS_NET_CONN_UDP_ALL 		= 0x00f0;
+const uint32_t RS_NET_CONN_TUNNEL 		= 0x0f00;
 
 const uint32_t RS_NET_CONN_TCP_LOCAL 		= 0x0001;
 const uint32_t RS_NET_CONN_TCP_EXTERNAL 	= 0x0002;
 const uint32_t RS_NET_CONN_TCP_UNKNOW_TOPOLOGY	= 0x0003;
-const uint32_t RS_NET_CONN_UDP_DHT_SYNC 	= 0x0010;
-const uint32_t RS_NET_CONN_UDP_PEER_SYNC 	= 0x0020; /* coming soon */
+const uint32_t RS_NET_CONN_UDP           	= 0x0010;
 
 /* extra flags */
 // not sure if needed yet.
@@ -211,6 +212,8 @@ bool	getDHTEnabled();
 bool  getIPServersEnabled() { return use_extr_addr_finder ;}
 void  setIPServersEnabled(bool b) ;
 void  getIPServersList(std::list<std::string>& ip_servers) ;
+void  setTunnelConnection(bool b) ;
+bool  getTunnelConnection() { return allow_tunnel_connection ;}
 
 bool	getNetStatusLocalOk();
 bool	getNetStatusUpnpOk();
@@ -266,6 +269,10 @@ virtual void    stunStatus(std::string id, struct sockaddr_in raddr, uint32_t ty
 bool 	connectAttempt(std::string id, struct sockaddr_in &addr, 
 				uint32_t &delay, uint32_t &period, uint32_t &type);
 bool 	connectResult(std::string id, bool success, uint32_t flags);
+bool    doNextAttempt(std::string id);
+
+p3tunnel* 	getP3tunnel();
+void 	setP3tunnel(p3tunnel *p3tun);
 
 
 protected:
@@ -365,6 +372,8 @@ private:
 
 	p3AuthMgr *mAuthMgr;
 
+	p3tunnel *mP3tunnel;
+
 	std::map<uint32_t, pqiNetAssistFirewall *> mFwAgents;
 	std::map<uint32_t, pqiNetAssistConnect  *> mDhts;
 
@@ -385,6 +394,7 @@ private:
 
 	ExtAddrFinder *mExtAddrFinder ;
 	bool use_extr_addr_finder ;
+        bool allow_tunnel_connection ;
 
 	/* external Address determination */
 	//bool mUpnpAddrValid, mStunAddrValid;

@@ -205,7 +205,7 @@ class RsTurtleFileDataItem: public RsTurtleItem
 		void    *chunk_data ;	// actual data.
 
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
-	protected:
+
 		virtual bool serialize(void *data,uint32_t& size) ;	
 		virtual uint32_t serial_size() ; 
 };
@@ -221,11 +221,11 @@ class RsTurtleSerialiser: public RsSerialType
 
 		virtual uint32_t 	size (RsItem *item) 
 		{ 
-			return static_cast<RsTurtleItem *>(item)->serial_size() ; 
+			return dynamic_cast<RsTurtleItem *>(item)->serial_size() ;
 		}
 		virtual bool serialise(RsItem *item, void *data, uint32_t *size) 
 		{ 
-			return static_cast<RsTurtleItem *>(item)->serialize(data,*size) ; 
+			return dynamic_cast<RsTurtleItem *>(item)->serialize(data,*size) ;
 		}
 		virtual RsItem *deserialise (void *data, uint32_t *size) ;
 };

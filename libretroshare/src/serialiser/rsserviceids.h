@@ -46,6 +46,7 @@ const uint16_t RS_SERVICE_TYPE_DISC        = 0x0011;
 const uint16_t RS_SERVICE_TYPE_CHAT        = 0x0012;
 const uint16_t RS_SERVICE_TYPE_MSG         = 0x0013;
 const uint16_t RS_SERVICE_TYPE_TURTLE      = 0x0014;
+const uint16_t RS_SERVICE_TYPE_TUNNEL      = 0x0015;
 
 /* Combined Cache/Service ids */
 

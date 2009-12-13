@@ -216,6 +216,9 @@ int	pqihandler::HandleRsItem(RsItem *item, int allowglobal)
 		out << "pqihandler::HandleSearchItem()";
 		out << " Cannot send out Global RsItem";
 		pqioutput(PQL_ALERT, pqihandlerzone, out.str());
+#ifdef DEBUG_TICK
+                std::cerr << out.str();
+#endif
 		delete item;
 		return -1;
 	}
@@ -225,7 +228,10 @@ int	pqihandler::HandleRsItem(RsItem *item, int allowglobal)
 		std::ostringstream out;
 	  	out <<	"pqihandler::HandleRsItem() checkOutgoingPQItem";
 		out << " Failed on item: " << std::endl;
-		item -> print(out);
+#ifdef DEBUG_TICK
+                std::cerr << out.str();
+#endif
+                item -> print(out);
 
 		pqioutput(PQL_ALERT, pqihandlerzone, out.str());
 		delete item;
@@ -234,6 +240,9 @@ int	pqihandler::HandleRsItem(RsItem *item, int allowglobal)
 
 	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
 	  "pqihandler::HandleRsItem() Sending to One Channel");
+#ifdef DEBUG_TICK
+        std::cerr << "pqihandler::HandleRsItem() Sending to One Channel" << std::endl;
+#endif
 
 
 	// find module.
@@ -242,6 +251,9 @@ int	pqihandler::HandleRsItem(RsItem *item, int allowglobal)
 		std::ostringstream out;
 		out << "pqihandler::HandleRsItem() Invalid chan!";
 		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
+#ifdef DEBUG_TICK
+                std::cerr << out.str();
+#endif
 
 		delete item;
 		return -1;
@@ -254,6 +266,9 @@ int	pqihandler::HandleRsItem(RsItem *item, int allowglobal)
 		out << "pqihandler::HandleRsItem() sending to chan:";
 		out << it -> first << std::endl;
 		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
+#ifdef DEBUG_TICK
+                std::cerr << out.str();
+#endif
 
 		// if yes send on item.
 		((it -> second) -> pqi) -> SendItem(item);
@@ -265,6 +280,9 @@ int	pqihandler::HandleRsItem(RsItem *item, int allowglobal)
 		out << "pqihandler::HandleRsItem()";
 		out << " Sec not approved";
 		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out.str());
+#ifdef DEBUG_TICK
+                std::cerr << out.str();
+#endif
 
 		delete item;
 		return -1;
@@ -298,6 +316,9 @@ int     pqihandler::SendRsRawItem(RsRawItem *ns)
 {
 	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
 	  	"pqihandler::SendRsRawItem()");
+#ifdef DEBUG_TICK
+        std::cerr << "pqihandler::SendRsRawItem()" << std ::endl;
+#endif
 	return HandleRsItem(ns, 0);
 }
 

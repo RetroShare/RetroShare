@@ -67,6 +67,7 @@ virtual void    statusChange(const std::list<pqipeer> &plist);
 
 	/******************* Peer Control **************************/
 virtual int addPeer(std::string id); /* can be overloaded for testing */
+virtual pqiperson *getPeer(std::string id); /* can be overloaded for testing */
 int     removePeer(std::string id);
 int     connectPeer(std::string id);
 

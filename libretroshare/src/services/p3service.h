@@ -50,6 +50,7 @@
 
 std::string generateRandomServiceId();
 
+//TODO : encryption and upload / download rate implementation
 
 class p3Service: public pqiService
 {
