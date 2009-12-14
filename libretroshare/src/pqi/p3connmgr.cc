@@ -1581,7 +1581,10 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags, s
 		it->second.lastcontact = time(NULL);  /* time of connect */
                 it->second.connecttype = flags;
 
-                if (remote_peer_address.sin_addr.s_addr != 0) {
+                if (remote_peer_address.sin_addr.s_addr != 0
+                    && !(remote_peer_address.sin_addr.s_addr == ownState.currentlocaladdr.sin_addr.s_addr)
+                    && (!isLoopbackNet(&remote_peer_address.sin_addr))
+                    ) {
                     IpAddressTimed ipLocalAddressTimed;
                     ipLocalAddressTimed.ipAddr = remote_peer_address;
                     ipLocalAddressTimed.seenTime = time(NULL);
@@ -2489,28 +2492,29 @@ bool    p3ConnectMgr::setAddressList(std::string id, std::list<IpAddressTimed> I
 {
         /* check if it is our own ip */
         if (id == getOwnId()) {
+            #ifdef CONN_DEBUG
+                            std::cerr << "p3ConnectMgr::setAddressList() received own ip address list." << std::endl;
+                            peerConnectState::printIpAddressList(IpAddressTimedList);
+            #endif
             //extract first address that is not the same as local address
             		//check if the ip list contains the current remote address of the connected peer
-                bool found = false;
+                IpAddressTimed foundAddress;
                 std::list<IpAddressTimed>::iterator ipListIt;
-                for (ipListIt = IpAddressTimedList.begin(); ipListIt!=(IpAddressTimedList.end()) && !found; ipListIt++) {
+                for (ipListIt = IpAddressTimedList.begin(); ipListIt!=(IpAddressTimedList.end()); ++ipListIt) {
                     //assume address is valid if not same as local address, is not 0 and is not loopback
                     if (!(ipListIt->ipAddr.sin_addr.s_addr == ownState.currentlocaladdr.sin_addr.s_addr)
                         && (ipListIt->ipAddr.sin_addr.s_addr != 0)
                         && (!isLoopbackNet(&ipListIt->ipAddr.sin_addr))
                         ) {
-                        found = true;
-                     }
-                }
+                        //the pointer ipListIt is pointing to an external address
+                        #ifdef CONN_DEBUG
+                                        std::cerr << "p3ConnectMgr::setAddressList() setting own ext adress from p3disc : ";
+                                        std::cerr << inet_ntoa(ipListIt->ipAddr.sin_addr) << ":" << ntohs(ipListIt->ipAddr.sin_port) << " seenTime : " << ipListIt->seenTime << std::endl;
+                        #endif
 
-                if (found) {
-                    //the pointer ipListIt is pointing to an external address
-                    #ifdef CONN_DEBUG
-                                    std::cerr << "p3ConnectMgr::setAddressList() setting own ext adress from p3disc : ";
-                                    std::cerr << inet_ntoa(ipListIt->ipAddr.sin_addr) << ":" << ntohs(ipListIt->ipAddr.sin_port) << " seenTime : " << ipListIt->seenTime << std::endl;
-                    #endif
-
-                    setExtAddress(getOwnId(), ipListIt->ipAddr);
+                        setExtAddress(getOwnId(), ipListIt->ipAddr);
+                        break;
+                    }
                 }
 
 
