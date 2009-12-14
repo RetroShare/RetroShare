@@ -46,7 +46,6 @@
 #include "ui_MainWindow.h"
 
 class PeerStatus;
-class DHTStatus;
 class NATStatus;
 class RatesStatus;
 
@@ -180,7 +179,6 @@ private:
     QMenu *menu;
 
     PeerStatus *peerstatus;
-    DHTStatus *dhtstatus;
     NATStatus *natstatus;
     RatesStatus *ratesstatus;
 

@@ -42,7 +42,6 @@
 #include "gui/TurtleRouterDialog.h"
 
 #include "statusbar/peerstatus.h"
-#include "statusbar/dhtstatus.h"
 #include "statusbar/natstatus.h"
 #include "statusbar/ratesstatus.h"
 
@@ -234,9 +233,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     peerstatus = new PeerStatus();
     statusBar()->addWidget(peerstatus);
 
-    dhtstatus = new DHTStatus();
-    statusBar()->addWidget(dhtstatus);
-
     natstatus = new NATStatus();
     statusBar()->addWidget(natstatus);
 
@@ -279,7 +275,6 @@ MainWindow::~MainWindow()
     delete _bandwidthGraph;
     delete _messengerwindowAct;
     delete peerstatus;
-    delete dhtstatus;
     delete natstatus;
     delete ratesstatus;
     delete _settings;
@@ -338,9 +333,6 @@ void MainWindow::updateStatus()
 
       if (peerstatus)
       peerstatus->getPeerStatus();
-
-      if (dhtstatus)
-      dhtstatus->getDHTStatus();
 
       if (natstatus)
       natstatus->getNATStatus();

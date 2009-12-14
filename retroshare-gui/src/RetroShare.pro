@@ -219,7 +219,6 @@ HEADERS +=  rshare.h \
             gui/help/browser/helpbrowser.h \
             gui/help/browser/helptextbrowser.h \
             gui/statusbar/peerstatus.h \
-            gui/statusbar/dhtstatus.h \
             gui/statusbar/natstatus.h \
             gui/statusbar/ratesstatus.h \  
             gui/advsearch/advancedsearchdialog.h \
@@ -396,7 +395,6 @@ SOURCES +=  main.cpp \
             gui/common/rwindow.cpp \ 
             gui/common/html.cpp \ 
             gui/statusbar/peerstatus.cpp \  
-            gui/statusbar/dhtstatus.cpp \
             gui/statusbar/natstatus.cpp \
             gui/statusbar/ratesstatus.cpp \  
             gui/toaster/ChatToaster.cpp \

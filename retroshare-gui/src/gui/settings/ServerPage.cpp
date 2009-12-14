@@ -140,14 +140,6 @@ void ServerPage::load()
 	}
 	ui.netModeComboBox->setCurrentIndex(netIndex);
 
-	/* set dht/disc */
-	netIndex = 1;
-	if (detail.visState & RS_VS_DHT_ON)
-	{
-		netIndex = 0;
-	}
-	ui.dhtComboBox->setCurrentIndex(netIndex);
-
 	netIndex = 1;
 	if (detail.visState & RS_VS_DISC_ON)
 	{
@@ -290,11 +282,6 @@ void ServerPage::toggleUPnP()
 
 	if (settingChangeable)
 	{
-		ui.dhtComboBox->setEnabled(true);
-		// disabled until we've got it all working.
-		//ui.discComboBox->setEnabled(true);
-		ui.discComboBox->setEnabled(false);
-
 		ui.localAddress->setEnabled(false);
 		ui.localPort  -> setEnabled(true);
 		ui.extAddress -> setEnabled(false);
@@ -302,9 +289,6 @@ void ServerPage::toggleUPnP()
 	}
 	else
 	{
-		ui.dhtComboBox->setEnabled(false);
-		ui.discComboBox->setEnabled(false);
-
 		ui.localAddress->setEnabled(false);
 		ui.localPort  -> setEnabled(false);
 		ui.extAddress -> setEnabled(false);
@@ -355,11 +339,6 @@ void ServerPage::saveAddresses()
 	if (0 == ui.discComboBox->currentIndex())
 	{
 		visState |= RS_VS_DISC_ON;
-	}
-
-	if (0 == ui.dhtComboBox->currentIndex())
-	{
-		visState |= RS_VS_DHT_ON;
 	}
 
 	if (visState != detail.visState)
