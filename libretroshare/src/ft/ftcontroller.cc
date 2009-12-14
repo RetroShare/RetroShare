@@ -373,24 +373,28 @@ bool ftController::completeFile(std::string hash)
 	{
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-		std::cerr << "ftController:completeFile(" << hash << ")";
+#ifdef CONTROL_DEBUG
+                std::cerr << "ftController:completeFile(" << hash << ")";
 		std::cerr << std::endl;
-
+#endif
 		std::map<std::string, ftFileControl>::iterator it;
 		it = mDownloads.find(hash);
 		if (it == mDownloads.end())
 		{
-			std::cerr << "ftController:completeFile(" << hash << ")";
+#ifdef CONTROL_DEBUG
+                        std::cerr << "ftController:completeFile(" << hash << ")";
 			std::cerr << " Not Found!";
 			std::cerr << std::endl;
-			return false;
+#endif
+                        return false;
 		}
 
 		/* check if finished */
 		if (!(it->second).mCreator->finished())
 		{
 			/* not done! */
-			std::cerr << "ftController:completeFile(" << hash << ")";
+#ifdef CONTROL_DEBUG
+                        std::cerr << "ftController:completeFile(" << hash << ")";
 			std::cerr << " Transfer Not Done";
 			std::cerr << std::endl;
 
@@ -398,7 +402,7 @@ bool ftController::completeFile(std::string hash)
 			std::cerr << (it->second).mCreator->getFileSize();
 			std::cerr << " and Recvd: ";
 			std::cerr << (it->second).mCreator->getRecvd();
-
+#endif
 			return false;
 		}
 
