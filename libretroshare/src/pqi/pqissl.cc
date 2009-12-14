@@ -178,6 +178,11 @@ int 	pqissl::disconnect()
 	return reset();
 }
 
+int pqissl::getConnectAddress(struct sockaddr_in &raddr) {
+    raddr = remote_addr;
+    return (remote_addr.sin_addr.s_addr == 0);
+}
+
 /* BinInterface version of reset() for pqistreamer */
 int 	pqissl::close() 
 {

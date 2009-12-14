@@ -196,6 +196,11 @@ int 	pqissltunnel::reset()
 	return 1;
 }
 
+int pqissltunnel::getConnectAddress(struct sockaddr_in &raddr) {
+    sockaddr_clear(&raddr);
+    return 0;
+}
+
 bool 	pqissltunnel::connect_parameter(uint32_t type, uint32_t value)
 {
 	{

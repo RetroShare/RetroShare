@@ -138,6 +138,7 @@ virtual int stoplistening();
 virtual int disconnect();
 virtual int reset();
 virtual bool connect_parameter(uint32_t type, uint32_t value) { return false; }
+virtual int getConnectAddress(struct sockaddr_in &raddr) {return 0;}
 
 	// Bin Interface.
 virtual int     tick();

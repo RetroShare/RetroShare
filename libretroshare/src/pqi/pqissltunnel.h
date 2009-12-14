@@ -85,6 +85,7 @@ virtual int listen();
 virtual int stoplistening();
 virtual int reset();
 virtual int disconnect();
+virtual int getConnectAddress(struct sockaddr_in &raddr);
 
 virtual bool connect_parameter(uint32_t type, uint32_t value);
 

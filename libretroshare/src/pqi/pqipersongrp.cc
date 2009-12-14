@@ -476,7 +476,13 @@ int     pqipersongrp::connectPeer(std::string id)
 	return 1;
 }
 
-bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success)
+bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success) {
+    struct sockaddr_in remote_peer_address;
+    sockaddr_clear(&remote_peer_address);
+    notifyConnect(id, ptype, success, remote_peer_address);
+}
+
+bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success, struct sockaddr_in remote_peer_address)
 {
         uint32_t type = 0;
 	if (ptype == PQI_CONNECT_TCP)
@@ -496,7 +502,7 @@ bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success
            if (ptype == PQI_CONNECT_DO_NEXT_ATTEMPT) {
                         mConnMgr->doNextAttempt(id);
             } else {
-                        mConnMgr->connectResult(id, success, type);
+                        mConnMgr->connectResult(id, success, type, remote_peer_address);
             }
         }
 	

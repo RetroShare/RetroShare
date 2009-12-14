@@ -710,6 +710,13 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 		mConnMgr->stunStatus(hashid1, item->currentsaddr, type, RS_STUN_FRIEND_OF_FRIEND);
 	}
 
+        /* send Own Ip list to connect manager. It will extract the external ip address from it */
+        if (peerId == mConnMgr->getOwnId())
+        {
+                mConnMgr->setAddressList(mConnMgr->getOwnId(), item->ipAddressList);
+        }
+
+
 	addDiscoveryData(item->PeerId(), peerId, item->currentladdr, item->currentsaddr, item->discFlags, time(NULL));
 
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS, NOTIFY_TYPE_MOD);

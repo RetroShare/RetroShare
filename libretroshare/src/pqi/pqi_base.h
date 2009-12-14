@@ -374,6 +374,7 @@ virtual int stoplistening() = 0;
 virtual int disconnect() = 0;
 virtual int reset() = 0;
 virtual std::string PeerId() { return peerId; }
+virtual int getConnectAddress(struct sockaddr_in &raddr) = 0;
 
 virtual bool connect_parameter(uint32_t type, uint32_t value) = 0;
 

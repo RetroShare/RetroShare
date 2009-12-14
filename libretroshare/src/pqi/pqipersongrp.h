@@ -72,6 +72,7 @@ int     removePeer(std::string id);
 int     connectPeer(std::string id);
 
 	/*** callback from children ****/
+bool    notifyConnect(std::string id, uint32_t type, bool success, struct sockaddr_in remote_peer_address);
 bool    notifyConnect(std::string id, uint32_t type, bool success);
 
 	// tick interfaces.

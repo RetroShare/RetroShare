@@ -1086,7 +1086,7 @@ void    p3ConnectMgr::stunStatus(std::string id, struct sockaddr_in raddr, uint3
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
 
-	/* only useful if they have an exposed TCP/UDP port */
+        /* only useful if they have an exposed TCP/UDP port */
 	if (type & RS_NET_CONN_TCP_EXTERNAL) 
 	{
 		if (stillStunning)
@@ -1536,7 +1536,7 @@ bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr,
  *
  */
 
-bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags)
+bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address)
 {
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
@@ -1558,16 +1558,15 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags)
 		return false;
 	}
 
-
-	it->second.inConnAttempt = false;
+        it->second.inConnAttempt = false;
 
 	if (success)
 	{
-		/* remove other attempts */
-		it->second.connAddrs.clear();
-		netAssistFriend(id, false);
+                /* remove other attempts */
+                it->second.inConnAttempt = false;
+                netAssistFriend(id, false);
 
-                /* update address (will come through from DISC) */
+                /* update address (will come although through from DISC) */
 
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::connectResult() Connect!: id: " << id << std::endl;
@@ -1579,24 +1578,25 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags)
 		/* change state */
 		it->second.state |= RS_PEER_S_CONNECTED;
 		it->second.actions |= RS_PEER_CONNECTED;
-		mStatusChanged = true;
 		it->second.lastcontact = time(NULL);  /* time of connect */
-		it->second.connecttype = flags;
+                it->second.connecttype = flags;
 
-		IpAddressTimed ipLocalAddressTimed;
-		ipLocalAddressTimed.ipAddr = it->second.currentlocaladdr;
-		ipLocalAddressTimed.seenTime = time(NULL);
-		it->second.updateIpAddressList(ipLocalAddressTimed);
+                if (remote_peer_address.sin_addr.s_addr != 0) {
+                    IpAddressTimed ipLocalAddressTimed;
+                    ipLocalAddressTimed.ipAddr = remote_peer_address;
+                    ipLocalAddressTimed.seenTime = time(NULL);
+                    it->second.updateIpAddressList(ipLocalAddressTimed);
 
-		IpAddressTimed ipRemoteAddressTimed;
-		ipRemoteAddressTimed.ipAddr = it->second.currentserveraddr;
-		ipRemoteAddressTimed.seenTime = time(NULL);
-		it->second.updateIpAddressList(ipRemoteAddressTimed);
+                    it->second.purgeIpAddressList();
+    #ifdef CONN_DEBUG
+                    std::cerr << "p3ConnectMgr::connectResult() adding current peer adress in list." << std::endl;
+                    it->second.printIpAddressList();
+    #endif
+                }
 
-		it->second.purgeIpAddressList();
-		it->second.printIpAddressList(); //output log
-		return true;
-	}
+                mStatusChanged = true;
+                return true;
+        }
 
 #ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::connectResult() Disconnect/Fail: id: " << id << std::endl;
@@ -2450,17 +2450,13 @@ bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
 {
 	if (id == mAuthMgr->OwnId())
 	{
-                {
-                        RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
-                        ownState.currentserveraddr = addr;
-                }
-                IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-                if ((ownState.netMode & RS_NET_MODE_ACTUAL) == RS_NET_MODE_EXT ||
-                    (ownState.netMode & RS_NET_MODE_ACTUAL) == RS_NET_MODE_UDP) {
-                    netReset();
-                }
+            if (ownState.currentserveraddr.sin_addr.s_addr != addr.sin_addr.s_addr ||
+                ownState.currentserveraddr.sin_port != addr.sin_port) {
+                    RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+                    ownState.currentserveraddr = addr;
+            }
                 return true;
-	}
+        }
 
         RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 	/* check if it is a friend */
@@ -2491,9 +2487,40 @@ bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
 
 bool    p3ConnectMgr::setAddressList(std::string id, std::list<IpAddressTimed> IpAddressTimedList)
 {
-	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+        /* check if it is our own ip */
+        if (id == getOwnId()) {
+            //extract first address that is not the same as local address
+            		//check if the ip list contains the current remote address of the connected peer
+                bool found = false;
+                std::list<IpAddressTimed>::iterator ipListIt;
+                for (ipListIt = IpAddressTimedList.begin(); ipListIt!=(IpAddressTimedList.end()) && !found; ipListIt++) {
+                    //assume address is valid if not same as local address, is not 0 and is not loopback
+                    if (!(ipListIt->ipAddr.sin_addr.s_addr == ownState.currentlocaladdr.sin_addr.s_addr)
+                        && (ipListIt->ipAddr.sin_addr.s_addr != 0)
+                        && (!isLoopbackNet(&ipListIt->ipAddr.sin_addr))
+                        ) {
+                        found = true;
+                     }
+                }
 
-	/* check if it is a friend */
+                if (found) {
+                    //the pointer ipListIt is pointing to an external address
+                    #ifdef CONN_DEBUG
+                                    std::cerr << "p3ConnectMgr::setAddressList() setting own ext adress from p3disc : ";
+                                    std::cerr << inet_ntoa(ipListIt->ipAddr.sin_addr) << ":" << ntohs(ipListIt->ipAddr.sin_port) << " seenTime : " << ipListIt->seenTime << std::endl;
+                    #endif
+
+                    setExtAddress(getOwnId(), ipListIt->ipAddr);
+                }
+
+
+            IndicateConfigChanged();
+            return true;
+        }
+
+        RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+        /* check if it is a friend */
 	std::map<std::string, peerConnectState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{

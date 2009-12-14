@@ -226,7 +226,6 @@ bool 	setLocalAddress(std::string id, struct sockaddr_in addr);
 bool 	setExtAddress(std::string id, struct sockaddr_in addr);
 bool    setAddressList(std::string id, std::list<IpAddressTimed> IpAddressTimedList);
 
-
 bool 	setNetworkMode(std::string id, uint32_t netMode);
 bool 	setVisState(std::string id, uint32_t visState);
 
@@ -268,7 +267,7 @@ virtual void    stunStatus(std::string id, struct sockaddr_in raddr, uint32_t ty
 	/****************** Connections *******************/
 bool 	connectAttempt(std::string id, struct sockaddr_in &addr, 
 				uint32_t &delay, uint32_t &period, uint32_t &type);
-bool 	connectResult(std::string id, bool success, uint32_t flags);
+bool 	connectResult(std::string id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address);
 bool    doNextAttempt(std::string id);
 
 p3tunnel* 	getP3tunnel();
@@ -287,7 +286,7 @@ virtual bool netAssistConnectEnabled();
 virtual bool netAssistConnectActive();
 virtual bool netAssistConnectShutdown();
 
-		/* Assist Firewall */
+/* Assist Firewall */
 bool netAssistExtAddress(struct sockaddr_in &extAddr);
 bool netAssistFirewallPorts(uint16_t iport, uint16_t eport);
 

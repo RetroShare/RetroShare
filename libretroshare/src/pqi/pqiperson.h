@@ -69,6 +69,7 @@ virtual int	stoplistening() 	{ return ni -> stoplistening(); }
 virtual int 	reset() 		{ return ni -> reset(); }
 virtual int 	disconnect() 		{ return ni -> reset(); }
 virtual bool 	connect_parameter(uint32_t type, uint32_t value) { return ni -> connect_parameter(type, value);}
+virtual int     getConnectAddress(struct sockaddr_in &raddr){ return ni->getConnectAddress(raddr); }
 
 	// get the contact from the net side!
 virtual std::string PeerId()

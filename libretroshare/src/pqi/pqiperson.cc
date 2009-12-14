@@ -156,7 +156,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 	}
 
 	/* find the pqi, */
-	pqiconnect *pqi = NULL;
+        pqiconnect *pqi = NULL;
 	uint32_t    type = 0;
 	std::map<uint32_t, pqiconnect *>::iterator it;
 		
@@ -193,8 +193,11 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 	case CONNECT_SUCCESS:
 
 		/* notify */
-		if (pqipg)
-			pqipg->notifyConnect(PeerId(), type, true);
+                if (pqipg) {
+                        struct sockaddr_in remote_peer_address;
+                        pqi->getConnectAddress(remote_peer_address);
+                        pqipg->notifyConnect(PeerId(), type, true, remote_peer_address);
+                }
 
 		if ((active) && (activepqi != pqi)) // already connected - trouble
 		{
