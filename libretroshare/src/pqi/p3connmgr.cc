@@ -2254,7 +2254,14 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
                     }
                 }
 
-                if (!found && !isSameSubnet(&ipListIt->ipAddr.sin_addr, &ownState.currentlocaladdr.sin_addr)) {//add only if in different subnet
+                /* Try not to add internal address like 192.168.x.x
+                * check that the (addr1 & 255.255.0.0) == (addr2 & 255.255.0.0)
+                */
+                unsigned long a1 = ntohl(ipListIt->ipAddr.sin_addr.s_addr);
+                unsigned long a2 = ntohl(ownState.currentlocaladdr.sin_addr.s_addr);
+                bool isLocal = ((a1 & 0xffff0000) == (a2 & 0xffff0000));
+
+                if (!found && !isLocal && !isSameSubnet(&ipListIt->ipAddr.sin_addr, &ownState.currentlocaladdr.sin_addr)) {//add only if in different subnet
 #ifdef CONN_DEBUG
                     std::cerr << "Adding udp connection attempt." << std::endl;
 #endif
