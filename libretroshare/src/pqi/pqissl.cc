@@ -62,7 +62,6 @@ const int PQISSL_UDP_FLAG = 0x02;
 ***********/
 
 static const int PQISSL_MAX_READ_ZERO_COUNT = 20;
-static const int PQISSL_SSL_CONNECT_TIMEOUT = 30;
 
 /********** PQI SSL STUFF ******************************************
  *
@@ -94,7 +93,6 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3AuthMgr *am, p3ConnectM
 	sslmode(PQISSL_ACTIVE), ssl_connection(NULL), sockfd(-1), 
 	pqil(l),  // no init for remote_addr.
 	readpkt(NULL), pktlen(0), 
-	attempt_ts(0),
 	net_attempt(0), net_failure(0), net_unreachable(0), 
 	sameLAN(false), n_read_zero(0), 
 	mConnectDelay(0), mConnectTS(0),
@@ -241,6 +239,7 @@ int 	pqissl::reset()
 	sameLAN = false;
 	n_read_zero = 0;
 	total_len = 0 ;
+        mTimeoutTS = 0;
 
 	if (neededReset)
 	{
@@ -369,7 +368,15 @@ int	pqissl::tick()
 			out << "Continuing Connection Attempt!";
 			rslog(RSL_DEBUG_BASIC, pqisslzone, out.str());
 
-			ConnectAttempt();
+                        if (mTimeoutTS != 0 && time(NULL) > mTimeoutTS)
+                        {
+                                rslog(RSL_DEBUG_BASIC, pqisslzone,
+                                        "pqissl::Authorise_SSL_Connection() Connection Timed Out!");
+                                /* as sockfd is valid, this should close it all up */
+                                reset();
+                        } else {
+                            ConnectAttempt();
+                        }
 			return 1;
 		}
 	}
@@ -928,9 +935,6 @@ int 	pqissl::Initiate_SSL_Connection()
   	rslog(RSL_DEBUG_BASIC, pqisslzone, 
 	  "pqissl::Initiate_SSL_Connection() Basic Connection Okay");
 
-	// setup timeout value.
-	ssl_connect_timeout = time(NULL) + PQISSL_SSL_CONNECT_TIMEOUT;
-
 	// Perform SSL magic.
 	// library already inited by sslroot().
 	SSL *ssl = SSL_new(mAuthMgr->getCTX());
@@ -1095,10 +1099,9 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
 int 	pqissl::Authorise_SSL_Connection()
 {
   	rslog(RSL_DEBUG_BASIC, pqisslzone, 
-	  "pqissl::Authorise_SSL_Connection()");
-	ssl_connect_timeout = time(NULL) + PQISSL_SSL_CONNECT_TIMEOUT;
+          "pqissl::Authorise_SSL_Connection()");
 
-        if (time(NULL) > ssl_connect_timeout)
+        if (time(NULL) > mTimeoutTS)
         {
 		rslog(RSL_DEBUG_BASIC, pqisslzone,
 			"pqissl::Authorise_SSL_Connection() Connection Timed Out!");

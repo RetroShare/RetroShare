@@ -73,7 +73,7 @@ const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	6;
 
 const uint32_t P3CONNMGR_TCP_DEFAULT_DELAY = 2; /* 2 Seconds? is it be enough! */
 const uint32_t P3CONNMGR_UDP_DEFAULT_DELAY = 2; /* 2 Seconds? is it be enough! */
-const uint32_t P3CONNMGR_UDP_DEFAULT_TIMEOUT = 40; //a random timeout is set between P3CONNMGR_UDP_DEFAULT_TIMEOUT and 2 * P3CONNMGR_UDP_DEFAULT_TIMEOUT in the implementation
+const uint32_t P3CONNMGR_UDP_DEFAULT_PERIOD = 20; //a random timeout is set between P3CONNMGR_UDP_DEFAULT_PERIOD and 2 * P3CONNMGR_UDP_DEFAULT_PERIOD in the implementation
 
 #define MAX_AVAIL_PERIOD 180 //times a peer stay in available state when not connected
 #define MIN_RETRY_PERIOD 90
@@ -2228,7 +2228,7 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 #ifdef CONN_DEBUG
                     std::cerr << "Adding tcp connection attempt list." << std::endl;
 #endif
-                   peerConnectAddress pca;
+                    peerConnectAddress pca;
                     pca.addr = ipListIt->ipAddr;
                     pca.type = RS_NET_CONN_TCP_UNKNOW_TOPOLOGY;
                     pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
@@ -2276,7 +2276,7 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
                     pca.delay = P3CONNMGR_UDP_DEFAULT_DELAY;
                     pca.ts = time(NULL);
                     // pseudo random number generator from Wikipedia/Numerical Recipies.
-                    pca.period = P3CONNMGR_UDP_DEFAULT_TIMEOUT + ((time(NULL)*1664525 + 1013904223) % P3CONNMGR_UDP_DEFAULT_TIMEOUT); //add a random timeout between 1 and 2 times P3CONNMGR_UDP_DEFAULT_TIMEOUT
+                    pca.period = P3CONNMGR_UDP_DEFAULT_PERIOD + ((time(NULL)*1664525 + 1013904223) % P3CONNMGR_UDP_DEFAULT_PERIOD); //add a random period between 1 and 2 times P3CONNMGR_UDP_DEFAULT_PERIOD
                     it->second.connAddrs.push_back(pca);
 
 #ifdef CONN_DEBUG
@@ -2506,14 +2506,22 @@ bool    p3ConnectMgr::setAddressList(std::string id, std::list<IpAddressTimed> I
                         && (ipListIt->ipAddr.sin_addr.s_addr != 0)
                         && (!isLoopbackNet(&ipListIt->ipAddr.sin_addr))
                         ) {
-                        //the pointer ipListIt is pointing to an external address
-                        #ifdef CONN_DEBUG
-                                        std::cerr << "p3ConnectMgr::setAddressList() setting own ext adress from p3disc : ";
-                                        std::cerr << inet_ntoa(ipListIt->ipAddr.sin_addr) << ":" << ntohs(ipListIt->ipAddr.sin_port) << " seenTime : " << ipListIt->seenTime << std::endl;
-                        #endif
-
-                        setExtAddress(getOwnId(), ipListIt->ipAddr);
-                        break;
+                        //Let's check if the address is not to old
+                        if ((time(NULL) - ipListIt->seenTime) < P3CONNMGR_UDP_DEFAULT_PERIOD) {
+                            //the pointer ipListIt is pointing to an external address
+                            #ifdef CONN_DEBUG
+                                            std::cerr << "p3ConnectMgr::setAddressList() setting own ext adress from p3disc : ";
+                                            std::cerr << inet_ntoa(ipListIt->ipAddr.sin_addr) << ":" << ntohs(ipListIt->ipAddr.sin_port) << " seenTime : " << ipListIt->seenTime << std::endl;
+                            #endif
+                            setExtAddress(getOwnId(), ipListIt->ipAddr);
+                            break;
+                        } else {
+                            #ifdef CONN_DEBUG
+                                            std::cerr << "p3ConnectMgr::setAddressList() own ext adress from p3disc is too old to be used : ";
+                                            std::cerr << inet_ntoa(ipListIt->ipAddr.sin_addr) << ":" << ntohs(ipListIt->ipAddr.sin_port) << " seenTime : " << ipListIt->seenTime << std::endl;
+                            #endif
+                            break;
+                        }
                     }
                 }
 
