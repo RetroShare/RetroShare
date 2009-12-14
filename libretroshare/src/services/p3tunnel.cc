@@ -33,27 +33,14 @@
 #include "pqi/p3authmgr.h"
 #include "pqi/p3connmgr.h"
 
-#include <iostream>
 #include <errno.h>
-#include <cmath>
 
 const uint32_t AUTODISC_LDI_SUBTYPE_PING = 0x01;
 const uint32_t AUTODISC_LDI_SUBTYPE_RPLY = 0x02;
 
-#include <sstream>
-
 #include "util/rsdebug.h"
 #include "util/rsprint.h"
 #include "util/rsversion.h"
-
-static int convertTDeltaToTRange(double tdelta);
-static int convertTRangeToTDelta(int trange);
-
-// Operating System specific includes.
-
-
-const uint32_t p3tunnel_FLAGS_USE_DISC 		= 0x0001;
-const uint32_t p3tunnel_FLAGS_USE_DHT 		= 0x0002;
 
 p3tunnel::p3tunnel(p3AuthMgr *am, p3ConnectMgr *cm, pqipersongrp *perGrp)
 	:p3Service(RS_SERVICE_TYPE_TUNNEL), mAuthMgr(am), mConnMgr(cm), mPqiPersonGrp(perGrp)
