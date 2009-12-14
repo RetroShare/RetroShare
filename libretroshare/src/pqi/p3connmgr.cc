@@ -2239,7 +2239,7 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
         ipList = it->second.getIpAddressList();
         for (std::list<IpAddressTimed>::iterator ipListIt = ipList.begin(); ipListIt!=(ipList.end()); ipListIt++) {
 #ifdef CONN_DEBUG
-                std::cerr << "p3ConnectMgr::retryConnectTCP() adding ip : " << inet_ntoa(ipListIt->ipAddr.sin_addr);
+                std::cerr << "p3ConnectMgr::retryConnectTCP() adding udp connection attempt : " << inet_ntoa(ipListIt->ipAddr.sin_addr);
                 std::cerr << ":" << ntohs(ipListIt->ipAddr.sin_port) << std::endl;
 #endif
                 //check that the address doens't exist already in the connAddrs
@@ -2265,7 +2265,7 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 
                 if (!found && !isLocal && !isSameSubnet(&ipListIt->ipAddr.sin_addr, &ownState.currentlocaladdr.sin_addr)) {//add only if in different subnet
 #ifdef CONN_DEBUG
-                    std::cerr << "Adding udp connection attempt." << std::endl;
+                    std::cerr << "Adding udp connection attempt.";
 #endif
                     peerConnectAddress pca;
                     pca.addr = ipListIt->ipAddr;
@@ -2273,8 +2273,12 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
                     pca.delay = P3CONNMGR_UDP_DEFAULT_DELAY;
                     pca.ts = time(NULL);
                     // pseudo random number generator from Wikipedia/Numerical Recipies.
-                    pca.period = P3CONNMGR_UDP_DEFAULT_TIMEOUT + (time(NULL)*1664525 + 1013904223 % P3CONNMGR_UDP_DEFAULT_TIMEOUT); //add a random timeout between 1 and 2 times P3CONNMGR_UDP_DEFAULT_TIMEOUT
+                    pca.period = P3CONNMGR_UDP_DEFAULT_TIMEOUT + ((time(NULL)*1664525 + 1013904223) % P3CONNMGR_UDP_DEFAULT_TIMEOUT); //add a random timeout between 1 and 2 times P3CONNMGR_UDP_DEFAULT_TIMEOUT
                     it->second.connAddrs.push_back(pca);
+
+#ifdef CONN_DEBUG
+                    std::cerr << " Udp attempt timeout : " << pca.period << std::endl;
+#endif
 
                     break; //add only one udp address
                 }
