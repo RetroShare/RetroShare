@@ -1945,7 +1945,7 @@ int RsServer::StartupRetroShare()
 
 	mConnMgr = new p3ConnectMgr(mAuthMgr);
 	pqiNetAssistFirewall *mUpnpMgr = new upnphandler();
-	p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr, RsInitConfig::configDir);
+        //p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr, RsInitConfig::configDir);
 
 	SecurityPolicy *none = secpolicy_create();
 	pqih = new pqisslpersongrp(none, flags);
@@ -2048,7 +2048,7 @@ int RsServer::StartupRetroShare()
 
 	/**************************************************************************/
 
-	mConnMgr->addNetAssistConnect(1, mDhtMgr);
+        //mConnMgr->addNetAssistConnect(1, mDhtMgr);
 	mConnMgr->addNetAssistFirewall(1, mUpnpMgr);
 
 	/**************************************************************************/
@@ -2169,7 +2169,7 @@ int RsServer::StartupRetroShare()
         ftserver->StartupThreads();
 	ftserver->ResumeTransfers();
 
-	mDhtMgr->start();
+        //mDhtMgr->start();
 
 	// create loopback device, and add to pqisslgrp.
 
