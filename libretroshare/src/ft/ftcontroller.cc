@@ -273,8 +273,10 @@ bool ftController::FlagFileComplete(std::string hash)
 	RsStackMutex stack2(doneMutex);
 	mDone.push_back(hash);
 
-	std::cerr << "ftController:FlagFileComplete(" << hash << ")";
-	std::cerr << std::endl;
+#ifdef CONTROL_DEBUG
+        std::cerr << "ftController:FlagFileComplete(" << hash << ")";
+        std::cerr << std::endl;
+#endif
 
 	return true;
 }
@@ -285,20 +287,20 @@ bool ftController::moveFile(const std::string& source,const std::string& dest)
 	//
 	if (0 == rename(source.c_str(), dest.c_str()))
 	{
-//#ifdef CONTROL_DEBUG
-		std::cerr << "ftController::completeFile() renaming to: ";
-		std::cerr << dest;
-		std::cerr << std::endl;
-//#endif
+#ifdef CONTROL_DEBUG
+                std::cerr << "ftController::completeFile() renaming to: ";
+                std::cerr << dest;
+                std::cerr << std::endl;
+#endif
 
 		return true ;
 	}
-//#ifdef CONTROL_DEBUG
+#ifdef CONTROL_DEBUG
 	std::cerr << "ftController::completeFile() FAILED mv to: ";
 	std::cerr << dest;
 	std::cerr << std::endl;
 	std::cerr << "trying copy" << std::endl ;
-//#endif
+#endif
 	// We could not rename, probably because we're dealing with different file systems.
 	// Let's copy then.
 
@@ -756,17 +758,21 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 			/* if the sources don't exist already - add in */
 			for(pit = info.peers.begin(); pit != info.peers.end(); pit++)
 			{
-				std::cerr << "\tSource: " << pit->peerId;
+#ifdef CONTROL_DEBUG
+                                std::cerr << "\tSource: " << pit->peerId;
 				std::cerr << std::endl;
+#endif
 
 				if (srcIds.end() == std::find(
 					srcIds.begin(), srcIds.end(), pit->peerId))
 				{
 					srcIds.push_back(pit->peerId);
 
-					std::cerr << "\tAdding in: " << pit->peerId;
+#ifdef CONTROL_DEBUG
+                                        std::cerr << "\tAdding in: " << pit->peerId;
 					std::cerr << std::endl;
-				}
+#endif
+                                }
 			}
 		}
 
