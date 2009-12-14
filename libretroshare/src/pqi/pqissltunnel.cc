@@ -205,7 +205,7 @@ bool 	pqissltunnel::connect_parameter(uint32_t type, uint32_t value)
 {
 	{
                 std::ostringstream out;
-		out << "pqissltunnel::connect_parameter() Peer: " << PeerId();
+                out << "pqissltunnel::connect_parameter() (not used) Peer: " << PeerId();
 		out << " type: " << type << "value: " << value;
 		rslog(RSL_DEBUG_ALL, pqisslzone, out.str());
 	}
@@ -213,7 +213,7 @@ bool 	pqissltunnel::connect_parameter(uint32_t type, uint32_t value)
         if (type == NET_PARAM_CONNECT_DELAY)
 	{
                 std::ostringstream out;
-		out << "pqissltunnel::connect_parameter() Peer: " << PeerId();
+                out << "pqissltunnel::connect_parameter() (not used) Peer: " << PeerId();
 		out << " DELAY: " << value;
 		rslog(RSL_WARNING, pqisslzone, out.str());
 
@@ -222,7 +222,7 @@ bool 	pqissltunnel::connect_parameter(uint32_t type, uint32_t value)
         else if (type == NET_PARAM_CONNECT_TIMEOUT)
 	{
                 std::ostringstream out;
-		out << "pqissltunnel::connect_parameter() Peer: " << PeerId();
+                out << "pqissltunnel::connect_parameter() (not used) Peer: " << PeerId();
 		out << " TIMEOUT: " << value;
 		rslog(RSL_WARNING, pqisslzone, out.str());
 
