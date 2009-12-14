@@ -574,7 +574,7 @@ void p3ConnectMgr::netTick()
 			break;
 
 		case RS_NET_LOOPBACK:
-                        //don't do a shutdown because a client in a computer without network might be usefull for debug.
+                        //don't do a shutdown because a client in a computer without local network might be usefull for debug.
                         //shutdown();
 #ifdef CONN_DEBUG
                         std::cerr << "p3ConnectMgr::netTick() STATUS: RS_NET_LOOPBACK" << std::endl;
@@ -2398,16 +2398,23 @@ bool   p3ConnectMgr::retryConnectNotify(std::string id)
 
 bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
 {
-	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 	if (id == mAuthMgr->OwnId())
 	{
-		ownState.currentlocaladdr = addr;
-		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-		return true;
+                {
+                        RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+                        ownState.currentlocaladdr = addr;
+                }
+                IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+                if ((ownState.netMode & RS_NET_MODE_ACTUAL) == RS_NET_MODE_EXT ||
+                    (ownState.netMode & RS_NET_MODE_ACTUAL) == RS_NET_MODE_UDP) {
+                    netReset();
+                }
+                return true;
 	}
 
-	/* check if it is a friend */
+        RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+        /* check if it is a friend */
         std::map<std::string, peerConnectState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
@@ -2435,16 +2442,21 @@ bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
 
 bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
 {
-	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
-
-
 	if (id == mAuthMgr->OwnId())
 	{
-		ownState.currentserveraddr = addr;
-		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-		return true;
+                {
+                        RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+                        ownState.currentserveraddr = addr;
+                }
+                IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+                if ((ownState.netMode & RS_NET_MODE_ACTUAL) == RS_NET_MODE_EXT ||
+                    (ownState.netMode & RS_NET_MODE_ACTUAL) == RS_NET_MODE_UDP) {
+                    netReset();
+                }
+                return true;
 	}
 
+        RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 	/* check if it is a friend */
         std::map<std::string, peerConnectState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
@@ -2501,12 +2513,13 @@ bool    p3ConnectMgr::setNetworkMode(std::string id, uint32_t netMode)
 	{
 		uint32_t visState = ownState.visState;
 		setOwnNetConfig(netMode, visState);
-
+                if ((netMode & RS_NET_MODE_ACTUAL) != (ownState.netMode & RS_NET_MODE_ACTUAL)) {
+                    netReset();
+                }
 		return true;
 	}
 
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
-
 	/* check if it is a friend */
         std::map<std::string, peerConnectState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
