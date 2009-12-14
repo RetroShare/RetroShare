@@ -25,7 +25,7 @@
 #include <QSettings>
 #include <QtGui>
 
-#include <gui/Preferences/rsharesettings.h>
+#include "settings/rsharesettings.h"
 
 
 class SoundManager :public QObject

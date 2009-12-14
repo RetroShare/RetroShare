@@ -27,7 +27,7 @@
 #include <QFileDialog>
 #include <QLineEdit>
 
-#include "gui/Preferences/rsharesettings.h"
+#include "rsharesettings.h"
 
 #include "configpage.h"
 #include "ui_GeneralPage.h"

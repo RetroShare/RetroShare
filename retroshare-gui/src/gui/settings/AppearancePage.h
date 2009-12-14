@@ -26,7 +26,7 @@
 #include <QStyleFactory>
 #include <QtGui>
 
-#include "gui/Preferences/rsharesettings.h"
+#include "rsharesettings.h"
 #include <lang/languagesupport.h>
 
 #include "configpage.h"

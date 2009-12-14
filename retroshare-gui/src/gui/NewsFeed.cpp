@@ -34,7 +34,7 @@
 #include "feeds/BlogMsgItem.h"
 #include "feeds/MsgItem.h"
 
-#include "Preferences/rsharesettings.h"
+#include "settings/rsharesettings.h"
 
 #include "GeneralMsgDialog.h"
 

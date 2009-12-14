@@ -24,7 +24,7 @@
 #include <rsiface/rsinit.h>
 #include "GenCertDialog.h"
 #include "InfoDialog.h"
-#include "gui/Preferences/rsharesettings.h"
+#include "gui/settings/rsharesettings.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <util/WidgetBackgroundImage.h>

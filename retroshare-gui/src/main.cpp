@@ -25,8 +25,7 @@
 #include <gui/MainWindow.h>
 #include <gui/StartDialog.h>
 #include <gui/GenCertDialog.h>
-#include <gui/Preferences/GeneralDialog.h>
-#include <gui/Preferences/rsharesettings.h>
+#include <gui/settings/rsharesettings.h>
 #include <gui/connect/ConfCertDialog.h>
 
 /*** WINDOWS DON'T LIKE THIS - REDEFINES VER numbers.

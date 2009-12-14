@@ -23,7 +23,7 @@
 #ifndef _STARTDIALOG_H
 #define _STARTDIALOG_H
 
-#include <gui/Preferences/rsharesettings.h>
+#include "settings/rsharesettings.h"
 #include "rsiface/rsiface.h"
 /********
 #if (QT_VERSION >= 040300)

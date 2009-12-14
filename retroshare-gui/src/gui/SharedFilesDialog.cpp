@@ -22,14 +22,14 @@
 
 #include "rshare.h"
 #include "SharedFilesDialog.h"
-#include "Preferences/AddFileAssotiationDialog.h"
+#include "settings/AddFileAssociationDialog.h"
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsfiles.h"
 #include "util/RsAction.h"
 #include "msgs/ChanMsgDialog.h"
-#include "Preferences/rsharesettings.h"
+#include "settings/rsharesettings.h"
 #include "AddLinksDialog.h"
 
 #ifndef RETROSHARE_LINK_ANALYZER
@@ -662,7 +662,7 @@ SharedFilesDialog::fileAssotiationAction(const QString fileName)
     //                            QSettings::IniFormat);
     settings->beginGroup("FileAssotiations");
 
-    QString key = AddFileAssotiationDialog::cleanFileType(currentFile) ;
+    QString key = AddFileAssociationDialog::cleanFileType(currentFile) ;
     if ( settings->contains(key) )
     {
         result = new QAction(QIcon(IMAGE_PLAY), tr( "Open File" ), this );
@@ -704,9 +704,9 @@ SharedFilesDialog::runCommandForFile()
 void
 SharedFilesDialog::tryToAddNewAssotiation()
 {
-    AddFileAssotiationDialog afad(true, this);//'add file assotiations' dialog
+    AddFileAssociationDialog afad(true, this);//'add file assotiations' dialog
 
-    afad.setFileType(AddFileAssotiationDialog::cleanFileType(currentFile));
+    afad.setFileType(AddFileAssociationDialog::cleanFileType(currentFile));
 
     int ti = afad.exec();
 

@@ -27,7 +27,7 @@
 #include <QDialog>
 
 #include "ui_PopupChatDialog.h"
-#include <gui/Preferences/rsharesettings.h>
+#include <gui/settings/rsharesettings.h>
 
 #include "rsiface/rsiface.h"
 #include "gui/feeds/SubFileItem.h"

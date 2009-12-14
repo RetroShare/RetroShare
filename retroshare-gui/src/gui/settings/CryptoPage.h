@@ -25,7 +25,7 @@
 #include <QFileDialog>
 #include <QtGui/QWidget>
 
-#include <gui/Preferences/rsharesettings.h>
+#include "rsharesettings.h"
 #include "gui/connect/ConnectFriendWizard.h"
 
 #include "configpage.h"

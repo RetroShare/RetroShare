@@ -27,9 +27,6 @@
 #include <QEvent>
 #include <QTimer>
 
-
-#include <gui/Preferences/rsharesettings.h>
-
 #include "gui/mainpage.h"
 #include "ui_StatisticDialog.h"
 #include "gui/linetypes.h"

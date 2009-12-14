@@ -106,7 +106,6 @@ DEPENDPATH += . \
             gui\chat \
             gui\connect \
             gui\images \              
-            gui\Preferences \
             gui\common \
             gui\toaster \
             gui\help\browser \
@@ -189,21 +188,8 @@ HEADERS +=  rshare.h \
             gui/msgs/ChanMsgDialog.h \
             gui/msgs/ChanCreateDialog.h \
             gui/images/retroshare_win.rc.h \
-            gui/Preferences/configpage.h \
-            gui/Preferences/configpagestack.h \
-            gui/Preferences/CryptographyDialog.h \
-            gui/Preferences/DirectoriesDialog.h \
-            gui/Preferences/AppearanceDialog.h \
-            gui/Preferences/GeneralDialog.h \
-            gui/Preferences/PreferencesWindow.h \
-            gui/Preferences/ServerDialog.h \          
-            gui/Preferences/NotifyDialog.h \          
-            gui/Preferences/ConfirmQuitDialog.h \
-            gui/Preferences/rsharesettings.h \
-            gui/Preferences/rsettings.h \
-            gui/Preferences/FileAssotiationsDialog.h \
-            gui/Preferences/AddFileAssotiationDialog.h \
-            gui/Preferences/SoundDialog.h \          
+            gui/settings/rsharesettings.h \
+            gui/settings/rsettings.h \         
             gui/toaster/MessageToaster.h \
             gui/toaster/OnlineToaster.h \
             gui/toaster/ChatToaster.h \
@@ -280,15 +266,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/connect/ConfCertDialog.ui \
             gui/msgs/ChanMsgDialog.ui \
             gui/msgs/ChanCreateDialog.ui \
-            gui/Preferences/CryptographyDialog.ui \
-            gui/Preferences/DirectoriesDialog.ui \
-            gui/Preferences/AppearanceDialog.ui \
-            gui/Preferences/GeneralDialog.ui \
-            gui/Preferences/PreferencesWindow.ui \
-            gui/Preferences/ServerDialog.ui \
-            gui/Preferences/NotifyDialog.ui \
-            gui/Preferences/SoundDialog.ui \                    
-            gui/Preferences/ConfirmQuitDialog.ui \
             gui/toaster/CallToaster.ui \
             gui/toaster/ChatToaster.ui \
             gui/toaster/MessageToaster.ui \
@@ -376,24 +353,12 @@ SOURCES +=  main.cpp \
             gui/connect/ConnectDialog.cpp \
             gui/connect/ConfCertDialog.cpp \
             gui/msgs/ChanMsgDialog.cpp \
-            gui/msgs/ChanCreateDialog.cpp \
-            gui/Preferences/configpagestack.cpp \
-            gui/Preferences/CryptographyDialog.cpp \
-            gui/Preferences/DirectoriesDialog.cpp \
-            gui/Preferences/AppearanceDialog.cpp \
-            gui/Preferences/GeneralDialog.cpp \
-            gui/Preferences/PreferencesWindow.cpp \
-            gui/Preferences/ServerDialog.cpp \
-            gui/Preferences/NotifyDialog.cpp \          
-            gui/Preferences/ConfirmQuitDialog.cpp \
-            gui/Preferences/rsharesettings.cpp \
-            gui/Preferences/rsettings.cpp \
-            gui/Preferences/FileAssotiationsDialog.cpp   \
-            gui/Preferences/AddFileAssotiationDialog.cpp \
-            gui/Preferences/SoundDialog.cpp \          
+            gui/msgs/ChanCreateDialog.cpp \          
             gui/common/vmessagebox.cpp \
             gui/common/rwindow.cpp \ 
-            gui/common/html.cpp \ 
+            gui/common/html.cpp \
+            gui/settings/rsharesettings.cpp \
+            gui/settings/rsettings.cpp \ 
             gui/statusbar/peerstatus.cpp \  
             gui/statusbar/natstatus.cpp \
             gui/statusbar/ratesstatus.cpp \  
@@ -491,7 +456,7 @@ newsettings {
 			gui/settings/AppearancePage.h \
 			gui/settings/FileAssociationsPage.h \
 			gui/settings/SoundPage.h \
-			gui/settings/AddFileAssociationDialog.h 
+			gui/settings/AddFileAssociationDialog.h\
 
 	    FORMS +=    gui/settings/settings.ui \
 			gui/settings/GeneralPage.ui \

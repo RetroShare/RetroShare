@@ -28,7 +28,7 @@
 #include <QEvent>
 #include <QTimer>
 
-#include <gui/Preferences/rsharesettings.h>
+#include <gui/settings/rsharesettings.h>
 #include <gui/common/rwindow.h>
 
 #include "ui_bwgraph.h"

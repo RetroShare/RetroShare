@@ -11,7 +11,6 @@
 #include "gui/PeersDialog.h"
 #include "gui/SharedFilesDialog.h"
 #include "gui/TransfersDialog.h"
-//#include "gui/ChatDialog.h"
 #include "gui/MessagesDialog.h"
 #include "gui/MessengerWindow.h"
 
@@ -20,7 +19,7 @@
 #include "gui/toaster/ChatToaster.h"
 #include "gui/toaster/CallToaster.h"
 
-#include "gui/Preferences/rsharesettings.h"
+#include "gui/settings/rsharesettings.h"
 
 #include <iostream>
 #include <sstream>

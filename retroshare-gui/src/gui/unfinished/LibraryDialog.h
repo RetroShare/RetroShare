@@ -24,8 +24,6 @@
 
 #include <QFileDialog>
 
-//#include <config/rsharesettings.h>
-
 #include "gui/mainpage.h"
 #include "ui_LibraryDialog.h"
 

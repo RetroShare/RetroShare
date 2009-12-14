@@ -33,7 +33,7 @@
 #include <stdlib.h>
 
 #include <lang/languagesupport.h>
-#include "gui/Preferences/rsharesettings.h"
+#include "gui/settings/rsharesettings.h"
 
 #include "rshare.h"
 

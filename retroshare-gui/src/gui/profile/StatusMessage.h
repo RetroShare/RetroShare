@@ -25,7 +25,7 @@
 
 #include <QDialog>
 
-#include <gui/Preferences/rsharesettings.h>
+#include <gui/settings/rsharesettings.h>
 
 #include "ui_StatusMessage.h"
 

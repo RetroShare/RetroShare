@@ -33,7 +33,7 @@
 #include "mainpage.h"
 #include "ui_SearchDialog.h"
 #include "advsearch/advancedsearchdialog.h"
-#include "Preferences/rsharesettings.h"
+#include "settings/rsharesettings.h"
 
 class SearchDialog : public MainPage
 {

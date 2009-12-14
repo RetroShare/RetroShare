@@ -36,7 +36,7 @@
 #include <QKeySequence>
 
 #include "util/log.h"
-#include "gui/Preferences/rsharesettings.h"
+#include "gui/settings/rsharesettings.h"
 
 /** Rshare's version string */
 #define RSHARE_VERSION    "0.7"

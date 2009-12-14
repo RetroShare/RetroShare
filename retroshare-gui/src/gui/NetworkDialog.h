@@ -26,7 +26,7 @@
 #include <QFileDialog>
 #include <QtGui>
 
-#include "Preferences/rsharesettings.h"
+#include "settings/rsharesettings.h"
 
 #include "mainpage.h"
 #include "ui_NetworkDialog.h"

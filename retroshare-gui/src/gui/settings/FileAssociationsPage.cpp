@@ -22,7 +22,7 @@
 #include "FileAssociationsPage.h"
 #include "AddFileAssociationDialog.h"
 //#include "rshare.h" // for Rshare::dataDirectory() method
-#include "gui/Preferences/rsharesettings.h"
+#include "rsharesettings.h"
 
 #include <QSettings>
 #include <QApplication>
