@@ -35,9 +35,6 @@
 
 #include <errno.h>
 
-const uint32_t AUTODISC_LDI_SUBTYPE_PING = 0x01;
-const uint32_t AUTODISC_LDI_SUBTYPE_RPLY = 0x02;
-
 #include "util/rsdebug.h"
 #include "util/rsprint.h"
 #include "util/rsversion.h"
