@@ -211,7 +211,8 @@ void p3ConnectMgr::setOwnNetConfig(uint32_t netMode, uint32_t visState)
 	/* if we've started up - then tweak Dht On/Off */
 	if (mNetStatus != RS_NET_UNKNOWN)
 	{
-		enableNetAssistConnect(!(ownState.visState & RS_VIS_STATE_NODHT));
+                //enableNetAssistConnect(!(ownState.visState & RS_VIS_STATE_NODHT));
+                //DHT disabled
 	}
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
@@ -379,7 +380,7 @@ void p3ConnectMgr::netStartup()
 	std::cerr << "p3ConnectMgr::netStartup()" << std::endl;
 #endif
 
-	netDhtInit();
+        //netDhtInit(); //DHT disabled
 	netUdpInit();
 	netStunInit();
 
@@ -614,7 +615,8 @@ void p3ConnectMgr::netDhtInit()
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
 
-	enableNetAssistConnect(!(vs & RS_VIS_STATE_NODHT));
+        //enableNetAssistConnect(!(vs & RS_VIS_STATE_NODHT));
+        //DHT disabled
 }
 
 
