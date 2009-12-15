@@ -1627,7 +1627,7 @@ bool p3ConnectMgr::doNextAttempt(std::string id)
 
         it->second.inConnAttempt = false;
 
-        if ((it->second.state & RS_PEER_S_CONNECTED) && !(it->second.state & RS_NET_CONN_TUNNEL)) {
+        if ((it->second.state & RS_PEER_S_CONNECTED) && !(it->second.connecttype & RS_NET_CONN_TUNNEL)) {
             rslog(RSL_WARNING, p3connectzone, "p3ConnectMgr::doNextAttempt() peer is already connected and not in tunnel mode, don't do next attempt.");
             return true;
         }
