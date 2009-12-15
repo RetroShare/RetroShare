@@ -1620,14 +1620,17 @@ bool p3ConnectMgr::doNextAttempt(std::string id)
         it = mFriendList.find(id);
         if (it == mFriendList.end())
         {
-#ifdef CONN_DEBUG
-                std::cerr << "p3ConnectMgr::connectResult() Failed, missing Friend " << " id: " << id << std::endl;
-#endif
+                rslog(RSL_WARNING, p3connectzone, "p3ConnectMgr::connectResult() Failed, missing Friend ");
                 return false;
         }
 
 
         it->second.inConnAttempt = false;
+
+        if ((it->second.state & RS_PEER_S_CONNECTED) && !(it->second.state & RS_NET_CONN_TUNNEL)) {
+            rslog(RSL_WARNING, p3connectzone, "p3ConnectMgr::doNextAttempt() peer is already connected and not in tunnel mode, don't do next attempt.");
+            return true;
+        }
 
         if (it->second.connAddrs.size() < 1)
         {
