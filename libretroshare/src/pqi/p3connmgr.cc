@@ -1735,9 +1735,20 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		it->second.source = RS_CB_DISC;
 		it->second.disc = details;
 
-		it->second.currentlocaladdr = laddr;
-		it->second.currentserveraddr = raddr;
 		it->second.updateIpAddressList(ipDiscAddressList);
+
+                it->second.currentlocaladdr = laddr;
+                it->second.currentserveraddr = raddr;
+                //add the given address to the address list
+                IpAddressTimed laddrTimed;
+                laddrTimed.ipAddr = laddr;
+                laddrTimed.seenTime = time(NULL);
+                it->second.updateIpAddressList(laddrTimed);
+
+                IpAddressTimed raddrTimed;
+                raddrTimed.ipAddr = raddr;
+                raddrTimed.seenTime = time(NULL);
+                it->second.updateIpAddressList(raddrTimed);
 
 		if (flags & RS_NET_FLAGS_ONLINE)
 		{
@@ -1761,9 +1772,20 @@ void    p3ConnectMgr::peerStatus(std::string id,
 		it->second.source = RS_CB_PERSON;
 		it->second.peer = details;
 
-		it->second.currentlocaladdr = laddr;
-		it->second.currentserveraddr = raddr;
 		it->second.updateIpAddressList(ipDiscAddressList);
+
+                it->second.currentlocaladdr = laddr;
+                it->second.currentserveraddr = raddr;
+                //add the given address to the address list
+                IpAddressTimed laddrTimed;
+                laddrTimed.ipAddr = laddr;
+                laddrTimed.seenTime = time(NULL);
+                it->second.updateIpAddressList(laddrTimed);
+
+                IpAddressTimed raddrTimed;
+                raddrTimed.ipAddr = raddr;
+                raddrTimed.seenTime = time(NULL);
+                it->second.updateIpAddressList(raddrTimed);
 
 		it->second.state |= RS_PEER_S_ONLINE;
 		it->second.lastavailable = now;
