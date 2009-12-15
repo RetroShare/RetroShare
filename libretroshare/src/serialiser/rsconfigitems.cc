@@ -890,6 +890,9 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 	    ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &ipTimed.ipAddr);
 	    uint64_t time;
 	    ok &= getRawUInt64(data, rssize, &offset, &time);
+            if (!ok) {
+                break;
+            }
 	    ipTimed.seenTime = time;
 	    ipTimedList.push_back(ipTimed);
 	}
