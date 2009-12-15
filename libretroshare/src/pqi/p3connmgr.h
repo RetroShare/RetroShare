@@ -147,12 +147,15 @@ class peerConnectState
 	std::list<IpAddressTimed> getIpAddressList(); //return the sorted ant purged list.
 	void updateIpAddressList(IpAddressTimed ipTimed);
 	void updateIpAddressList(std::list<IpAddressTimed> ipTimedList);
-	static bool compare_seen_time (IpAddressTimed first, IpAddressTimed second);
-	static bool is_same_address (IpAddressTimed first, IpAddressTimed second);
 	void printIpAddressList();
-	static void printIpAddressList(std::list<IpAddressTimed> ipTimedList);
 
-	//used to store current ip (for config and connection management)
+        static void sortIpAddressListBySeenTime(std::list<IpAddressTimed> &ipTimedList); //Sort the ip list ordering by seen time
+        static bool compare_seen_time (IpAddressTimed first, IpAddressTimed second);
+        static bool is_same_address (IpAddressTimed first, IpAddressTimed second);
+        static void printIpAddressList(std::list<IpAddressTimed> ipTimedList);
+        static bool extractExtAddress(std::list<IpAddressTimed> ipAddressList, IpAddressTimed &resultAddress); //extract the last seen external address from the list
+
+        //used to store current ip (for config and connection management)
 	struct sockaddr_in currentlocaladdr;             /* Mandatory */
 	struct sockaddr_in currentserveraddr;            /* Mandatory */
 

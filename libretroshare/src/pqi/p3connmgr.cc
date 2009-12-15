@@ -2219,62 +2219,49 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
                 }
         }
 
-        //add the first 2 ips off the ipAdressList for UDP
-        ipList = it->second.getIpAddressList();
-        for (std::list<IpAddressTimed>::iterator ipListIt = ipList.begin(); ipListIt!=(ipList.end()); ipListIt++) {
-#ifdef CONN_DEBUG
-                std::cerr << "p3ConnectMgr::retryConnectTCP() adding udp connection attempt : " << inet_ntoa(ipListIt->ipAddr.sin_addr);
-                std::cerr << ":" << ntohs(ipListIt->ipAddr.sin_port) << std::endl;
-#endif
-                //check that the address doens't exist already in the connAddrs
-                bool found = false;
-                for (std::list<peerConnectAddress>::iterator cit = it->second.connAddrs.begin(); cit != it->second.connAddrs.end(); cit++) {
-                    if (cit->addr.sin_addr.s_addr == ipListIt->ipAddr.sin_addr.s_addr &&
-                        cit->addr.sin_port == ipListIt->ipAddr.sin_port &&
-                        cit->type == RS_NET_CONN_UDP) {
-#ifdef CONN_DEBUG
-                        std::cerr << "p3ConnectMgr::retryConnectTCP() udp attempt already in list." << std::endl;
-#endif
-                        found = true;
-                        break;
-                    }
+        //add the supposed external address UDP
+        IpAddressTimed extractedAddress;
+        if (peerConnectState::extractExtAddress(it->second.getIpAddressList(), extractedAddress)) {
+        #ifdef CONN_DEBUG
+            rslog(RSL_DEBUG_BASIC, p3connectzone, "p3ConnectMgr::retryConnectTCP() got a valid external address for UDP connection");
+        #endif
+            //check that the UDP attempt doens't exist already in the connAddrs
+            bool found = false;
+            for (std::list<peerConnectAddress>::iterator cit = it->second.connAddrs.begin(); cit != it->second.connAddrs.end(); cit++) {
+                if ( cit->type == RS_NET_CONN_UDP) {
+                    #ifdef CONN_DEBUG
+                    rslog(RSL_DEBUG_BASIC, p3connectzone, "p3ConnectMgr::retryConnectTCP() udp attempt already in list.");
+                    #endif
+                    found = true;
+                    break;
                 }
-
-                /* Try not to add internal address like 192.168.x.x
-                * check that the (addr1 & 255.255.0.0) == (addr2 & 255.255.0.0)
-                */
-                unsigned long a1 = ntohl(ipListIt->ipAddr.sin_addr.s_addr);
-                unsigned long a2 = ntohl(ownState.currentlocaladdr.sin_addr.s_addr);
-                bool isLocal = ((a1 & 0xffff0000) == (a2 & 0xffff0000));
-
-                if (!found && !isLocal && !isSameSubnet(&ipListIt->ipAddr.sin_addr, &ownState.currentlocaladdr.sin_addr)) {//add only if in different subnet
-#ifdef CONN_DEBUG
-                    std::cerr << "Adding udp connection attempt.";
-#endif
-                    peerConnectAddress pca;
-                    pca.addr = ipListIt->ipAddr;
-                    pca.type = RS_NET_CONN_UDP;
-                    pca.delay = P3CONNMGR_UDP_DEFAULT_DELAY;
-                    pca.ts = time(NULL);
-                    // pseudo random number generator from Wikipedia/Numerical Recipies.
-                    pca.period = P3CONNMGR_UDP_DEFAULT_PERIOD + ((time(NULL)*1664525 + 1013904223) % P3CONNMGR_UDP_DEFAULT_PERIOD); //add a random period between 1 and 2 times P3CONNMGR_UDP_DEFAULT_PERIOD
-                    it->second.connAddrs.push_back(pca);
-
-#ifdef CONN_DEBUG
-                    std::cerr << " Udp attempt timeout : " << pca.period << std::endl;
-#endif
-
-                    break; //add only one udp address
-                }
+            }
+            if (!found) {
+                #ifdef CONN_DEBUG
+                rslog(RSL_DEBUG_BASIC, p3connectzone, "p3ConnectMgr::retryConnectTCP() Adding udp connection attempt.");
+                #endif
+                peerConnectAddress pca;
+                pca.addr = extractedAddress.ipAddr;
+                pca.type = RS_NET_CONN_UDP;
+                pca.delay = P3CONNMGR_UDP_DEFAULT_DELAY;
+                pca.ts = time(NULL);
+                // pseudo random number generator from Wikipedia/Numerical Recipies.
+                pca.period = P3CONNMGR_UDP_DEFAULT_PERIOD + ((time(NULL)*1664525 + 1013904223) % P3CONNMGR_UDP_DEFAULT_PERIOD); //add a random period between 1 and 2 times P3CONNMGR_UDP_DEFAULT_PERIOD
+                it->second.connAddrs.push_back(pca);
+            }
+        } else {
+            #ifdef CONN_DEBUG
+            rslog(RSL_DEBUG_BASIC, p3connectzone, "p3ConnectMgr::retryConnectTCP() no valid external address found for udp connection.");
+            #endif
         }
 
         //ad the tunnel attempt
         bool found = false;
         for (std::list<peerConnectAddress>::iterator cit = it->second.connAddrs.begin(); cit != it->second.connAddrs.end(); cit++) {
             if (cit->type == RS_NET_CONN_TUNNEL) {
-#ifdef CONN_DEBUG
-                std::cerr << "p3ConnectMgr::retryConnectTCP() tunnel is already in the list.." << std::endl;
-#endif
+                #ifdef CONN_DEBUG
+                rslog(RSL_DEBUG_BASIC, p3connectzone, "p3ConnectMgr::retryConnectTCP() tunnel is already in the list.");
+                #endif
                 found = true;
                 break;
             }
@@ -2282,9 +2269,9 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 
         if (!(it->second.state & RS_PEER_S_CONNECTED) && !found && allow_tunnel_connection)
         {
-#ifdef CONN_DEBUG
-            std::cerr << "p3ConnectMgr::retryConnectTCP() Add the tunnel connection attempt." << std::endl;
-#endif
+            #ifdef CONN_DEBUG
+            rslog(RSL_DEBUG_BASIC, p3connectzone, "p3ConnectMgr::retryConnectTCP() Add the tunnel connection attempt.");
+            #endif
             peerConnectAddress pca;
             pca.type = RS_NET_CONN_TUNNEL;
             pca.ts = time(NULL);
@@ -2295,27 +2282,27 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 	/* flag as last attempt to prevent loop */
         it->second.lastattempt = time(NULL) + ((time(NULL)*1664525 + 1013904223) % 3);//add a random perturbation between 0 and 2 sec.  pseudo random number generator from Wikipedia/Numerical Recipies.
 
-	if (it->second.inConnAttempt)
-	{
-		/*  -> it'll automatically use the addresses */
+        if (it->second.inConnAttempt) {
+                /*  -> it'll automatically use the addresses we added */
 		return true;
 	}
 
 	/* start a connection attempt */
-	if (it->second.connAddrs.size() > 0)
-	{
-#ifdef CONN_DEBUG
-		std::cerr << "p3ConnectMgr::retryConnectTCP() Started CONNECT ATTEMPT! " << " id: " << id << std::endl;
-#endif
+        if (it->second.connAddrs.size() > 0) {
+            #ifdef CONN_DEBUG
+            std::ostringstream out;
+            out << "p3ConnectMgr::retryConnectTCP() Started CONNECT ATTEMPT! " << " id: " << id ;
+            rslog(RSL_DEBUG_ALERT, p3connectzone, out.str());
+            #endif
 
-		it->second.actions |= RS_PEER_CONNECT_REQ;
-		mStatusChanged = true;
-	}
-	else
-	{
-#ifdef CONN_DEBUG
-                std::cerr << "p3ConnectMgr::retryConnectTCP() No addr in the connect attempt list. Not suitable for CONNECT ATTEMPT! " << " id: " << id << std::endl;
-#endif
+            it->second.actions |= RS_PEER_CONNECT_REQ;
+            mStatusChanged = true;
+        } else {
+            #ifdef CONN_DEBUG
+            std::ostringstream out;
+            out << "p3ConnectMgr::retryConnectTCP() No addr in the connect attempt list. Not suitable for CONNECT ATTEMPT! " << " id: " << id;
+            rslog(RSL_DEBUG_ALERT, p3connectzone, out.str());
+            #endif
 	}
 	return true; 
 }
@@ -2475,43 +2462,27 @@ bool    p3ConnectMgr::setAddressList(std::string id, std::list<IpAddressTimed> I
         if (id == getOwnId()) {
             struct sockaddr_in extAddr;
             if (getUpnpExtAddress(extAddr) || getExtFinderExtAddress(extAddr)) {
-            #ifdef CONN_DEBUG
-                            std::cerr << "p3ConnectMgr::setAddressList() received own ip address list, but already got an external address with upnp or extaddrfinder." << std::endl;
-            #endif
+                #ifdef CONN_DEBUG
+                std::cerr << "p3ConnectMgr::setAddressList() received own ip address list, but already got an external address with upnp or extaddrfinder." << std::endl;
+                #endif
                 return false;
             }
-            //extract first address that is not the same as local address
-            		//check if the ip list contains the current remote address of the connected peer
-                IpAddressTimed foundAddress;
-                std::list<IpAddressTimed>::iterator ipListIt;
-                for (ipListIt = IpAddressTimedList.begin(); ipListIt!=(IpAddressTimedList.end()); ++ipListIt) {
-                    //assume address is valid if not same as local address, is not 0 and is not loopback
-                    if (!(ipListIt->ipAddr.sin_addr.s_addr == ownState.currentlocaladdr.sin_addr.s_addr)
-                        && (ipListIt->ipAddr.sin_addr.s_addr != 0)
-                        && (!isLoopbackNet(&ipListIt->ipAddr.sin_addr))
-                        ) {
-                        //Let's check if the address is not to old
-                        if ((time(NULL) - ipListIt->seenTime) < P3CONNMGR_UDP_DEFAULT_PERIOD) {
-                            //the pointer ipListIt is pointing to an external address
-                            #ifdef CONN_DEBUG
-                                            std::cerr << "p3ConnectMgr::setAddressList() setting own ext adress from p3disc : ";
-                                            std::cerr << inet_ntoa(ipListIt->ipAddr.sin_addr) << ":" << ntohs(ipListIt->ipAddr.sin_port) << " seenTime : " << ipListIt->seenTime << std::endl;
-                            #endif
-                            setExtAddress(getOwnId(), ipListIt->ipAddr);
-                            break;
-                        } else {
-                            #ifdef CONN_DEBUG
-                                            std::cerr << "p3ConnectMgr::setAddressList() own ext adress from p3disc is too old to be used : ";
-                                            std::cerr << inet_ntoa(ipListIt->ipAddr.sin_addr) << ":" << ntohs(ipListIt->ipAddr.sin_port) << " seenTime : " << ipListIt->seenTime << std::endl;
-                            #endif
-                            break;
-                        }
-                    }
-                }
+            IpAddressTimed extractedAddress;
+            if (peerConnectState::extractExtAddress(IpAddressTimedList, extractedAddress)) {
+                #ifdef CONN_DEBUG
+                std::cerr << "p3ConnectMgr::setAddressList() got a valid own external address." << std::endl;
+                #endif
+                setExtAddress(getOwnId(), extractedAddress.ipAddr);
+                IndicateConfigChanged();
+                return true;
+            } else {
+                #ifdef CONN_DEBUG
+                rslog(RSL_DEBUG_BASIC, p3connectzone, "p3ConnectMgr::setAddressList() no valid external address found for own address ");
+                #endif
+                return false;
+            }
 
 
-            IndicateConfigChanged();
-            return true;
         }
 
         RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
@@ -3228,12 +3199,17 @@ bool peerConnectState::is_same_address(IpAddressTimed first, IpAddressTimed seco
 }
 
 void peerConnectState::sortIpAddressListBySeenTime() { //Sort the ip list ordering by seen time
+    sortIpAddressListBySeenTime(this->ipAddressList);
+}
+
+void peerConnectState::sortIpAddressListBySeenTime(std::list<IpAddressTimed> &ipTimedListInput) { //Sort the ip list ordering by seen time
 #ifdef CONN_DEBUG
     std::cerr << "peerConnectState::sortIpAdressListBySeenTime() called" << std::endl;
 #endif
-    ipAddressList.sort(peerConnectState::compare_seen_time);
-    ipAddressList.reverse();
+    ipTimedListInput.sort(peerConnectState::compare_seen_time);
+    ipTimedListInput.reverse();
 }
+
 
 std::list<IpAddressTimed>  peerConnectState::getIpAddressList()  {
 #ifdef CONN_DEBUG
@@ -3344,6 +3320,24 @@ void peerConnectState::printIpAddressList() {
 		}
 
 }
+
+bool peerConnectState::extractExtAddress(std::list<IpAddressTimed> IpAddressTimedList, IpAddressTimed &resultAddress) {//extract first address that is not the same as local address
+                sortIpAddressListBySeenTime(IpAddressTimedList);
+                //check if the ip list contains the current remote address of the connected peer
+                std::list<IpAddressTimed>::iterator ipListIt;
+                for (ipListIt = IpAddressTimedList.begin(); ipListIt!=(IpAddressTimedList.end()); ++ipListIt) {
+                    //assume address is valid if not private, is not 0 and is not loopback
+                    if ((ipListIt->ipAddr.sin_addr.s_addr != 0)
+                        && (!isLoopbackNet(&ipListIt->ipAddr.sin_addr))
+                        && (!isPrivateNet(&ipListIt->ipAddr.sin_addr))
+                        ) {
+                            resultAddress = *ipListIt;
+                            return true;
+                    }
+                }
+                return false;
+}
+
 
 void peerConnectState::printIpAddressList(std::list<IpAddressTimed> ipTimedList) {
 #ifdef CONN_DEBUG
