@@ -372,8 +372,8 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 	std::list<IpAddressTimed> pcsList = pcs.getIpAddressList();
 	for (std::list<IpAddressTimed>::iterator ipListIt = pcsList.begin(); ipListIt!=(pcsList.end()); ipListIt++) {
 	    std::ostringstream toto;
-	    toto << ntohs(ipListIt->ipAddr.sin_port);
-	    ipAddressList.push_back(std::string(inet_ntoa(ipListIt->ipAddr.sin_addr)) + ":" + toto.str());
+            toto << ntohs(ipListIt->ipAddr.sin_port) << "    " << (time(NULL) - ipListIt->seenTime) << " sec";
+            ipAddressList.push_back(std::string(inet_ntoa(ipListIt->ipAddr.sin_addr)) + ":" + toto.str());
 	}
 	d.ipAddressList = ipAddressList;
 
