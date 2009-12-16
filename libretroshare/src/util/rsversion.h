@@ -7,10 +7,15 @@
 
 #include <string>
 
-#define LIB_VERSION "0.5.x"
+#define LIB_VERSION "0.5.0"
+#define SVN_REVISION ""
 
 namespace RsUtil {
 
 	std::string retroshareVersion();
 
 }
+
+
+
+

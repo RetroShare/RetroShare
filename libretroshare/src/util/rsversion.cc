@@ -9,5 +9,6 @@
 
 std::string RsUtil::retroshareVersion()
 {
-	return std::string(LIB_VERSION);
+	return std::string(LIB_VERSION) + " " + std::string(SVN_REVISION);
+
 }

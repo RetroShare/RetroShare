@@ -23,7 +23,7 @@ fi
 if [[ $version != '' ]]; then
 	version="$version  date : $(date +'%T %m.%d.%y')"
 	echo "Writing version to util/rsversion.h : $version "
-	sed -i "s/LIB_VERSION .*/LIB_VERSION \"$version\"/g" util/rsversion.h
+	sed -i "s/SVN_REVISION .*/SVN_REVISION \"$version\"/g" util/rsversion.h
 fi
 echo "script version_detail.sh finished normally"
 exit 0
