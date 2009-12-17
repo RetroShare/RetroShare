@@ -2200,7 +2200,7 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::retryConnectTCP() Peer Already Connected" << std::endl;
 #endif
-                if (it->second.currentConnAddrAttempt.type & RS_NET_CONN_TUNNEL) {
+                if (it->second.connecttype & RS_NET_CONN_TUNNEL) {
 #ifdef CONN_DEBUG
                     std::cerr << "p3ConnectMgr::retryConnectTCP() Peer Connected through a tunnel connection, let's try a normal connection." << std::endl;
 #endif
