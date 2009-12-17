@@ -203,7 +203,6 @@ virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd)
 	time_t   mConnectTS;
 	uint32_t mConnectTimeout;
 	time_t   mTimeoutTS;
-        bool quietShutdown;
 
 	/* Need Certificate specific functions here! */
 /**************** PQI_USE_XPGP ******************/
