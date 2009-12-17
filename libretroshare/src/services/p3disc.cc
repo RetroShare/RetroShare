@@ -360,7 +360,7 @@ void p3disc::sendOwnDetails(std::string to)
 	di -> PeerId(to);
 	di -> laddr = detail.currentlocaladdr;
 	di -> saddr = detail.currentserveraddr;
-	di -> ipAddressList = detail.getIpAddressList();
+        //di -> ipAddressList = detail.getIpAddressList(); there is no private address list
 	di -> contact_tf = 0;
 
 	/* construct disc flags */
@@ -631,7 +631,8 @@ void p3disc::recvPeerOwnMsg(RsDiscOwnItem *item)
 		flags |= RS_NET_FLAGS_STABLE_UDP;
 	}
 
-	mConnMgr->peerStatus(item->PeerId(), item->laddr, item->saddr, item->ipAddressList,
+        std::list<IpAddressTimed> emptyAddressList; //no address list for own disc message
+        mConnMgr->peerStatus(item->PeerId(), item->laddr, item->saddr, emptyAddressList,
 				type, flags, RS_CB_PERSON);
 
 	/* also add as potential stun buddy */

@@ -215,17 +215,17 @@ bool     RsDiscSerialiser::serialiseItem(RsDiscOwnItem *item, void *data, uint32
 	/* add mandatory parts first */
 	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset,
 					TLV_TYPE_IPV4_LOCAL, &(item->laddr));
-	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset,
+        ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset,
 					TLV_TYPE_IPV4_REMOTE, &(item->saddr));
 	ok &= setRawUInt16(data, tlvsize, &offset, item->contact_tf);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->discFlags);
 
-	//store the ip list
-	std::list<IpAddressTimed>::iterator ipListIt;
-	for (ipListIt = item->ipAddressList.begin(); ipListIt!=(item->ipAddressList.end()); ipListIt++) {
-	    ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(ipListIt->ipAddr));
-	    ok &= setRawUInt64(data, tlvsize, &offset, ipListIt->seenTime);
-	}
+        //store the ip list There is no private address list for own item
+//	std::list<IpAddressTimed>::iterator ipListIt;
+//	for (ipListIt = item->ipAddressList.begin(); ipListIt!=(item->ipAddressList.end()); ipListIt++) {
+//	    ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(ipListIt->ipAddr));
+//	    ok &= setRawUInt64(data, tlvsize, &offset, ipListIt->seenTime);
+//	}
 
 	if (offset != tlvsize)
 	{
@@ -286,16 +286,16 @@ RsDiscOwnItem *RsDiscSerialiser::deserialiseOwnItem(void *data, uint32_t *pktsiz
 	ok &= getRawUInt32(data, rssize, &offset, &(item->discFlags));
 
 	//get the ip adress list
-	std::list<IpAddressTimed> ipTimedList;
-	while (offset < rssize) {
-	    IpAddressTimed ipTimed;
-	    ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &ipTimed.ipAddr);
-	    uint64_t time;
-	    ok &= getRawUInt64(data, rssize, &offset, &time);
-	    ipTimed.seenTime = time;
-	    ipTimedList.push_back(ipTimed);
-	}
-	item->ipAddressList = ipTimedList;
+//	std::list<IpAddressTimed> ipTimedList;
+//	while (offset < rssize) {
+//	    IpAddressTimed ipTimed;
+//	    ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &ipTimed.ipAddr);
+//	    uint64_t time;
+//	    ok &= getRawUInt64(data, rssize, &offset, &time);
+//	    ipTimed.seenTime = time;
+//	    ipTimedList.push_back(ipTimed);
+//	}
+//	item->ipAddressList = ipTimedList;
 
 	if (offset != rssize)
 	{
