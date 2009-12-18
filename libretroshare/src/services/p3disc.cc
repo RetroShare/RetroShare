@@ -359,8 +359,12 @@ void p3disc::sendOwnDetails(std::string to)
 	// Fill the message
 	di -> PeerId(to);
 	di -> laddr = detail.currentlocaladdr;
-	di -> saddr = detail.currentserveraddr;
-        //di -> ipAddressList = detail.getIpAddressList(); there is no private address list
+        di -> saddr = detail.currentserveraddr;
+#ifdef P3DISC_DEBUG
+                            std::cerr << "p3disc::sendOwnDetails() detail.currentlocaladdr.sin_addr : " << inet_ntoa(detail.currentlocaladdr.sin_addr) <<  ":" << ntohs(detail.currentlocaladdr.sin_port) << std::endl;
+                            std::cerr << "p3disc::sendOwnDetails() detail.currentserveraddr.sin_addr : " << inet_ntoa(detail.currentserveraddr.sin_addr) << ":" << ntohs(detail.currentlocaladdr.sin_port) << std::endl;
+#endif
+        di -> ipAddressList = detail.getIpAddressList();
 	di -> contact_tf = 0;
 
 	/* construct disc flags */
@@ -390,8 +394,12 @@ void p3disc::sendOwnDetails(std::string to)
 
 	di->discFlags |= P3DISC_FLAGS_OWN_DETAILS;
 
+#ifdef P3DISC_DEBUG
+        di->print(std::cerr, 5);
+#endif
+
 	/* send msg */
-	sendItem(di);
+        sendItem(di);
 }
 
  /* (dest (to), source (cert)) */
