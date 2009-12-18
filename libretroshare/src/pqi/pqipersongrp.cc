@@ -398,8 +398,8 @@ int     pqipersongrp::connectPeer(std::string id)
 
   { RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
         if (id == mConnMgr->getOwnId()) {
-            #ifdef CONN_DEBUG
-            rslog(RSL_WARNING, p3connectzone, "pqipersongrp::connectPeer() Failed, connecting to own id.");
+            #ifdef PGRP_DEBUG
+            std::cerr << "pqipersongrp::connectPeer() Failed, connecting to own id." << std::endl;
             #endif
             return 0;
         }
