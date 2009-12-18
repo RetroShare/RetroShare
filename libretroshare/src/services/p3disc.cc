@@ -239,6 +239,8 @@ void p3disc::statusChange(const std::list<pqipeer> &plist)
 		{
 			/* send our details to them */
 			sendOwnDetails(pit->id);
+                        /* send their own details to them. Usefull for ext ip address detection */
+                        sendPeerDetails(pit->id, pit->id);
 		}
 	}
 }

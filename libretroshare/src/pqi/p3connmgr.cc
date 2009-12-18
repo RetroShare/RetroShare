@@ -2495,14 +2495,17 @@ bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
                     RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
                     ownState.currentserveraddr = addr;
                     //check port and address
-                    if (ownState.currentserveraddr.sin_addr.s_addr == 0) {
-                        //use internal port for now
-                        ownState.currentserveraddr.sin_addr = ownState.currentlocaladdr.sin_addr;
-                    }
-                    if (addr.sin_port == 0) {
-                        //use internal port for now
-                        ownState.currentserveraddr.sin_port = ownState.currentlocaladdr.sin_port;
-                    }
+                if (ownState.currentserveraddr.sin_addr.s_addr == 0 || ownState.currentserveraddr.sin_port == 0 ||
+                    ownState.currentserveraddr.sin_addr.s_addr == 1|| ownState.currentserveraddr.sin_port == 1 ||
+                    std::string(inet_ntoa(ownState.currentserveraddr.sin_addr)) == "1.1.1.1") {
+                        //try to extract ext address from the ip address list
+                        IpAddressTimed extractedAddress;
+                        if (peerConnectState::extractExtAddress(ownState.getIpAddressList(), extractedAddress)) {
+                            ownState.currentserveraddr = extractedAddress.ipAddr;
+                        } else {
+                            ownState.currentserveraddr = ownState.currentlocaladdr;
+                        }
+                }
             }
                 return true;
         }
@@ -2536,9 +2539,23 @@ bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
 
 bool    p3ConnectMgr::setAddressList(std::string id, std::list<IpAddressTimed> IpAddressTimedList)
 {
+        #ifdef CONN_DEBUG
+                        std::cerr << "p3ConnectMgr::setAddressList() called for id : " << id << std::endl;
+        #endif
         /* check if it is our own ip */
         if (id == getOwnId()) {
             ownState.updateIpAddressList(IpAddressTimedList);
+            //if we are using firewalled or manually set port mode, and we are not using extAddrFinder, we will use this list for ip ext ip detection
+            if ((!ownState.netMode & RS_NET_MODE_UPNP) && !use_extr_addr_finder) {
+                IpAddressTimed extractedAddress;
+                if (peerConnectState::extractExtAddress(IpAddressTimedList, extractedAddress)) {
+                    #ifdef CONN_DEBUG
+                                    std::cerr << "p3ConnectMgr::setAddressList() using ip address list to set external addres." << std::endl;
+                    #endif
+                    ownState.currentserveraddr.sin_addr = extractedAddress.ipAddr.sin_addr;
+                    IndicateConfigChanged();
+                }
+            }
             return true;
         }
 
@@ -3244,7 +3261,12 @@ bool 	p3ConnectMgr::getStunExtAddress(struct sockaddr_in &addr) {
 }
 
 bool 	p3ConnectMgr::getExtFinderExtAddress(struct sockaddr_in &addr)    {
-	    return (use_extr_addr_finder && mExtAddrFinder->hasValidIP(&addr));
+    if ((use_extr_addr_finder && mExtAddrFinder->hasValidIP(&addr))) {
+        addr.sin_port = ownState.currentlocaladdr.sin_port;
+        return true;
+    } else {
+        return false;
+    }
 }
 
 bool peerConnectState::compare_seen_time (IpAddressTimed first, IpAddressTimed second) { //Sort the ip list ordering by seen time
@@ -3384,9 +3406,12 @@ bool peerConnectState::extractExtAddress(std::list<IpAddressTimed> IpAddressTime
                 std::list<IpAddressTimed>::iterator ipListIt;
                 for (ipListIt = IpAddressTimedList.begin(); ipListIt!=(IpAddressTimedList.end()); ++ipListIt) {
                     //assume address is valid if not private, is not 0 and is not loopback
-                    if ((ipListIt->ipAddr.sin_addr.s_addr != 0)
-                        && (!isLoopbackNet(&ipListIt->ipAddr.sin_addr))
-                        && (!isPrivateNet(&ipListIt->ipAddr.sin_addr))
+                    //if ((ipListIt->ipAddr.sin_addr.s_addr != 0)
+                    if (ipListIt->ipAddr.sin_addr.s_addr != 0 && ipListIt->ipAddr.sin_port != 0 &&
+                        ipListIt->ipAddr.sin_addr.s_addr != 1 && ipListIt->ipAddr.sin_port != 1 &&
+                        std::string(inet_ntoa(ipListIt->ipAddr.sin_addr)) == "1.1.1.1" &&
+                        (!isLoopbackNet(&ipListIt->ipAddr.sin_addr)) &&
+                        (!isPrivateNet(&ipListIt->ipAddr.sin_addr))
                         ) {
                             resultAddress = *ipListIt;
                             return true;
