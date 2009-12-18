@@ -2891,8 +2891,6 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 #endif
 				/* add ownConfig */
 				setOwnNetConfig(pitem->netMode, pitem->visState);
-				setLocalAddress(pitem->pid, pitem->currentlocaladdr);
-				setExtAddress(pitem->pid, pitem->currentremoteaddr);
 			}
 			else
 			{
@@ -2903,10 +2901,10 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 #endif
 				/* ************* */
 				addFriend(pitem->pid, pitem->netMode, pitem->visState, pitem->lastContact);
-				setLocalAddress(pitem->pid, pitem->currentlocaladdr);
-				setExtAddress(pitem->pid, pitem->currentremoteaddr);
-                                setAddressList(pitem->pid, pitem->ipAddressList);
 			}
+                        setLocalAddress(pitem->pid, pitem->currentlocaladdr);
+                        setExtAddress(pitem->pid, pitem->currentremoteaddr);
+                        setAddressList(pitem->pid, pitem->ipAddressList);
 		}
 		else if (sitem)
 		{

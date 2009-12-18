@@ -889,11 +889,10 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 	    IpAddressTimed ipTimed;
             sockaddr_clear(&ipTimed.ipAddr);
             ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &ipTimed.ipAddr);
+            if (!ok) { break;}
             uint64_t time = 0;
             ok &= getRawUInt64(data, rssize, &offset, &time);
-            if (!ok) {
-                break;
-            }
+            if (!ok) { break;}
 	    ipTimed.seenTime = time;
 	    ipTimedList.push_back(ipTimed);
 	}
