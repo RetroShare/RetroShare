@@ -100,7 +100,7 @@ peerConnectState::peerConnectState()
 	 lastcontact(0),
 	 connecttype(0),
 	 lastavailable(0),
-	 lastattempt(0),
+         lastattempt(time(NULL) - MIN_RETRY_PERIOD + 6), //start connection in 6 sec
 	 name("nameless"), state(0), actions(0), 
 	 source(0), 
 	 inConnAttempt(0)
@@ -363,7 +363,7 @@ void p3ConnectMgr::netStatusReset()
 	for(std::map<std::string, peerConnectState>::iterator it = mFriendList.begin(); it != mFriendList.end(); it++)
 	{
 		it->second.state &= ~RS_PEER_S_CONNECTED ;
-		it->second.lastattempt = time(NULL) - MIN_RETRY_PERIOD + 5 ;	// forces immediate re-connexion in 5 seconds
+                it->second.lastattempt = time(NULL) - MIN_RETRY_PERIOD + 6;	// forces immediate re-connexion in 6 seconds.
 	}
 
 	IndicateConfigChanged();
