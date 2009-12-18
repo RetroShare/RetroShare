@@ -308,6 +308,7 @@ RsDiscOwnItem *RsDiscSerialiser::deserialiseOwnItem(void *data, uint32_t *pktsiz
         while (offset < rssize && count < (int)listSize) {
             count++;
             IpAddressTimed ipTimed;
+            sockaddr_clear(&ipTimed.ipAddr);
             ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &ipTimed.ipAddr);
             uint64_t time;
             ok &= getRawUInt64(data, rssize, &offset, &time);
@@ -529,6 +530,7 @@ RsDiscReply *RsDiscSerialiser::deserialiseReply(void *data, uint32_t *pktsize)
         while (offset < rssize && count < (int)listSize) {
             count++;
 	    IpAddressTimed ipTimed;
+            sockaddr_clear(&ipTimed.ipAddr);
 	    ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &ipTimed.ipAddr);
 	    uint64_t time;
 	    ok &= getRawUInt64(data, rssize, &offset, &time);
