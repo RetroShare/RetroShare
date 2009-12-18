@@ -146,6 +146,7 @@ void 	RsDiscOwnItem::clear()
 	memset(&saddr, 0, sizeof(laddr));
 	contact_tf = 0;
 	discFlags = 0;
+        ipAddressList.clear();
 }
 
 std::ostream &RsDiscOwnItem::print(std::ostream &out, uint16_t indent)
@@ -167,6 +168,16 @@ std::ostream &RsDiscOwnItem::print(std::ostream &out, uint16_t indent)
 
         printIndent(out, int_Indent);
         out << "DiscFlags:  " << discFlags  << std::endl;
+
+        printIndent(out, int_Indent);
+        out << "IpAddressListSize:  " << ipAddressList.size()  << std::endl;
+
+        printIndent(out, int_Indent);
+        out << "RsDiscOwnItem::print() IpAddressList: " << std::endl;
+        for (std::list<IpAddressTimed>::iterator ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end()); ipListIt++) {
+        printIndent(out, int_Indent);
+               out << inet_ntoa(ipListIt->ipAddr.sin_addr) << ":" << ntohs(ipListIt->ipAddr.sin_port) << " seenTime : " << ipListIt->seenTime << std::endl;
+        }
 
         printRsItemEnd(out, "RsDiscOwnItem", indent);
         return out;
@@ -210,7 +221,7 @@ bool     RsDiscSerialiser::serialiseItem(RsDiscOwnItem *item, void *data, uint32
 	std::cerr << "RsDiscSerialiser::serialiseItem() Size: " << tlvsize << std::endl;
 #endif
 
-	/* skip the header */
+        /* skip the header */
 	offset += 8;
 
 	/* add mandatory parts first */
@@ -292,9 +303,9 @@ RsDiscOwnItem *RsDiscSerialiser::deserialiseOwnItem(void *data, uint32_t *pktsiz
         ok &= getRawUInt32(data, rssize, &offset, &listSize);
 
 	//get the ip adress list
-        uint32_t count = 0;
+        int count = 0;
         std::list<IpAddressTimed> ipTimedList;
-        while (offset < rssize && count < listSize) {
+        while (offset < rssize && count < (int)listSize) {
             count++;
             IpAddressTimed ipTimed;
             ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &ipTimed.ipAddr);
@@ -344,6 +355,7 @@ void 	RsDiscReply::clear()
 	discFlags = 0;
 	aboutId.clear();
 	certDER.TlvClear();
+        ipAddressList.clear();
 }
 
 std::ostream &RsDiscReply::print(std::ostream &out, uint16_t indent)
@@ -365,6 +377,16 @@ std::ostream &RsDiscReply::print(std::ostream &out, uint16_t indent)
 
         printIndent(out, int_Indent);
         out << "DiscFlags:  " << discFlags  << std::endl;
+
+        printIndent(out, int_Indent);
+        out << "IpAddressListSize:  " << ipAddressList.size()  << std::endl;
+
+        printIndent(out, int_Indent);
+        out << "RsDiscOwnItem::print() IpAddressList: " << std::endl;
+        for (std::list<IpAddressTimed>::iterator ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end()); ipListIt++) {
+        printIndent(out, int_Indent);
+               out << inet_ntoa(ipListIt->ipAddr.sin_addr) << ":" << ntohs(ipListIt->ipAddr.sin_port) << " seenTime : " << ipListIt->seenTime << std::endl;
+        }
 
         printIndent(out, int_Indent);
         out << "AboutId:  " << aboutId  << std::endl;
@@ -502,9 +524,10 @@ RsDiscReply *RsDiscSerialiser::deserialiseReply(void *data, uint32_t *pktsize)
         ok &= getRawUInt32(data, rssize, &offset, &listSize);
 
         //get the ip adress list
-        uint32_t count = 0;
+        int count = 0;
         std::list<IpAddressTimed> ipTimedList;
-        while (offset < rssize && count < listSize) {
+        while (offset < rssize && count < (int)listSize) {
+            count++;
 	    IpAddressTimed ipTimed;
 	    ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &ipTimed.ipAddr);
 	    uint64_t time;
