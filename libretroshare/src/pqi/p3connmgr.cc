@@ -1499,11 +1499,19 @@ bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr,
 	period = it->second.currentConnAddrAttempt.period;
 	type = it->second.currentConnAddrAttempt.type;
 
+
 #ifdef CONN_DEBUG
-	std::cerr << "p3ConnectMgr::connectAttempt() Success: id: " << id << std::endl;
+        std::cerr << "p3ConnectMgr::connectAttempt() found an address: id: " << id << std::endl;
 	std::cerr << " laddr: " << inet_ntoa(addr.sin_addr) << " lport: " << ntohs(addr.sin_port) << " delay: " << delay << " period: " << period;
 	std::cerr << " type: " << type << std::endl;
 #endif
+        if (addr.sin_addr.s_addr == 0 || addr.sin_port == 0) {
+#ifdef CONN_DEBUG
+        std::cerr << "p3ConnectMgr::connectAttempt() address or port is null, don't make the attempt." << std::endl;
+        std::cerr << " type: " << type << std::endl;
+#endif
+        return false;
+        }
 
 	return true;
 }
@@ -1527,7 +1535,13 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags, s
         } else {
             rslog(RSL_WARNING, p3connectzone, "p3ConnectMgr::connectResult() called with FAILED.");
         }
-
+        
+        if (id == getOwnId()) {
+#ifdef CONN_DEBUG
+                rslog(RSL_WARNING, p3connectzone, "p3ConnectMgr::connectResult() Failed, connecting to own id: ");
+#endif
+            return false;
+        }
 	/* check for existing */
         std::map<std::string, peerConnectState>::iterator it;
 	it = mFriendList.find(id);
@@ -1614,6 +1628,13 @@ bool p3ConnectMgr::doNextAttempt(std::string id)
         RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
         rslog(RSL_WARNING, p3connectzone, "p3ConnectMgr::doNextAttempt() called id : " + id);
+
+        if (id == getOwnId()) {
+            #ifdef CONN_DEBUG
+            rslog(RSL_WARNING, p3connectzone, "p3ConnectMgr::doNextAttempt() Failed, connecting to own id: ");
+            #endif
+            return false;
+        }
 
         /* check for existing */
         std::map<std::string, peerConnectState>::iterator it;
@@ -2184,7 +2205,14 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 	std::cerr << "p3ConnectMgr::retryConnectTCP() id: " << id << std::endl;
 #endif
 
-	/* look up the id */
+        if (id == getOwnId()) {
+            #ifdef CONN_DEBUG
+            rslog(RSL_WARNING, p3connectzone, "p3ConnectMgr::retryConnectTCP() Failed, connecting to own id: ");
+            #endif
+            return false;
+        }
+
+        /* look up the id */
         std::map<std::string, peerConnectState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
@@ -2301,6 +2329,15 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
             pca.type = RS_NET_CONN_TUNNEL;
             pca.ts = time(NULL);
             pca.period = 0;
+
+            //we've got to set an address to avoid null pointer or some other bug
+            if (peerConnectState::extractExtAddress(it->second.getIpAddressList(), extractedAddress)) {
+                pca.addr = extractedAddress.ipAddr;
+            } else {
+                sockaddr_clear(&pca.addr);
+                pca.addr.sin_addr.s_addr = 1;
+                pca.addr.sin_port = 1;
+            }
             it->second.connAddrs.push_back(pca);
         }
 
@@ -3249,13 +3286,17 @@ void peerConnectState::purgeIpAddressList() {//purge old and useless addresses t
 
     std::list<IpAddressTimed>::iterator ipListIt;
     for (ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end());) {
-        if (ipListIt->ipAddr.sin_addr.s_addr == 0) {
-	    ipAddressList.erase(ipListIt++);
+        if (ipListIt->ipAddr.sin_addr.s_addr == 0 || ipListIt->ipAddr.sin_port == 0 ||
+            ipListIt->ipAddr.sin_addr.s_addr == 1|| ipListIt->ipAddr.sin_port == 1 ||
+            std::string(inet_ntoa(ipListIt->ipAddr.sin_addr)) == "1.1.1.1") {
+            ipAddressList.erase(ipListIt++);
 	} else {
 	    ++ipListIt;
 	}
     }
+#ifdef CONN_DEBUG
     printIpAddressList();
+#endif
 
     //purge duplicates
     for (ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end()); ipListIt++) {
@@ -3290,7 +3331,8 @@ void peerConnectState::updateIpAddressList(IpAddressTimed ipTimed) { //purge old
 			std::cerr << ":" << ntohs(ipTimed.ipAddr.sin_port);
 			std::cerr << std::endl;
 #endif
-		if (ipTimed.ipAddr.sin_addr.s_addr == 0 || ipTimed.ipAddr.sin_port == 0 ||
+                if (ipTimed.ipAddr.sin_addr.s_addr == 0 || ipTimed.ipAddr.sin_port == 0 ||
+                    ipTimed.ipAddr.sin_addr.s_addr == 1|| ipTimed.ipAddr.sin_port == 1 ||
 		    std::string(inet_ntoa(ipTimed.ipAddr.sin_addr)) == "1.1.1.1") {
 #ifdef CONN_DEBUG
 			std::cerr << "peerConnectState::updateIpAdressList() ip parameter is 0.0.0.0, 1.1.1.1 or port is 0, ignoring." << std::endl;

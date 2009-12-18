@@ -284,6 +284,7 @@ void    pqipersongrp::statusChange(const std::list<pqipeer> &plist)
 
 		if (it->actions & RS_PEER_CONNECT_REQ)
 		{
+
 			connectPeer(it->id);
 		}
 	  }
@@ -396,7 +397,13 @@ int     pqipersongrp::connectPeer(std::string id)
 #endif
 
   { RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-	std::map<std::string, SearchModule *>::iterator it;
+        if (id == mConnMgr->getOwnId()) {
+            #ifdef CONN_DEBUG
+            rslog(RSL_WARNING, p3connectzone, "pqipersongrp::connectPeer() Failed, connecting to own id.");
+            #endif
+            return 0;
+        }
+        std::map<std::string, SearchModule *>::iterator it;
 	it = mods.find(id);
 	if (it == mods.end())
 	{
