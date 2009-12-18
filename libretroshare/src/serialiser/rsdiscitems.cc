@@ -180,6 +180,7 @@ uint32_t    RsDiscSerialiser::sizeItem(RsDiscOwnItem *item)
 	s += GetTlvIpAddrPortV4Size(); /* saddr */
 	s += 2; /* contact_tf */
 	s += 4; /* discFlags  */
+        s += 4; /* ipaddress list size  */
 
 	//add the size of the ip list
 	int ipListSize = item->ipAddressList.size();
@@ -220,12 +221,14 @@ bool     RsDiscSerialiser::serialiseItem(RsDiscOwnItem *item, void *data, uint32
 	ok &= setRawUInt16(data, tlvsize, &offset, item->contact_tf);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->discFlags);
 
-        //store the ip list There is no private address list for own item
-//	std::list<IpAddressTimed>::iterator ipListIt;
-//	for (ipListIt = item->ipAddressList.begin(); ipListIt!=(item->ipAddressList.end()); ipListIt++) {
-//	    ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(ipListIt->ipAddr));
-//	    ok &= setRawUInt64(data, tlvsize, &offset, ipListIt->seenTime);
-//	}
+        ok &= setRawUInt32(data, tlvsize, &offset, item->ipAddressList.size());
+
+        //store the ip list
+        std::list<IpAddressTimed>::iterator ipListIt;
+        for (ipListIt = item->ipAddressList.begin(); ipListIt!=(item->ipAddressList.end()); ipListIt++) {
+            ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(ipListIt->ipAddr));
+            ok &= setRawUInt64(data, tlvsize, &offset, ipListIt->seenTime);
+        }
 
 	if (offset != tlvsize)
 	{
@@ -285,17 +288,22 @@ RsDiscOwnItem *RsDiscSerialiser::deserialiseOwnItem(void *data, uint32_t *pktsiz
 	ok &= getRawUInt16(data, rssize, &offset, &(item->contact_tf));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->discFlags));
 
+        uint32_t listSize;
+        ok &= getRawUInt32(data, rssize, &offset, &listSize);
+
 	//get the ip adress list
-//	std::list<IpAddressTimed> ipTimedList;
-//	while (offset < rssize) {
-//	    IpAddressTimed ipTimed;
-//	    ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &ipTimed.ipAddr);
-//	    uint64_t time;
-//	    ok &= getRawUInt64(data, rssize, &offset, &time);
-//	    ipTimed.seenTime = time;
-//	    ipTimedList.push_back(ipTimed);
-//	}
-//	item->ipAddressList = ipTimedList;
+        uint32_t count = 0;
+        std::list<IpAddressTimed> ipTimedList;
+        while (offset < rssize && count < listSize) {
+            count++;
+            IpAddressTimed ipTimed;
+            ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &ipTimed.ipAddr);
+            uint64_t time;
+            ok &= getRawUInt64(data, rssize, &offset, &time);
+            ipTimed.seenTime = time;
+            ipTimedList.push_back(ipTimed);
+        }
+        item->ipAddressList = ipTimedList;
 
 	if (offset != rssize)
 	{
@@ -376,6 +384,7 @@ uint32_t    RsDiscSerialiser::sizeReply(RsDiscReply *item)
 	s += 4; /* discFlags  */
 	s += GetTlvStringSize(item->aboutId);
 	s += item->certDER.TlvSize();
+        s += 4; /* ipaddress list size  */
 
 	//add the size of the ip list
 	int ipListSize = item->ipAddressList.size();
@@ -418,10 +427,11 @@ bool     RsDiscSerialiser::serialiseReply(RsDiscReply *item, void *data, uint32_
 
 	ok &= item->certDER.SetTlv(data, tlvsize, &offset);
 
+        ok &= setRawUInt32(data, tlvsize, &offset, item->ipAddressList.size());
 
-	//store the ip list
-	std::list<IpAddressTimed>::iterator ipListIt;
-	for (ipListIt = item->ipAddressList.begin(); ipListIt!=(item->ipAddressList.end()); ipListIt++) {
+        //store the ip list
+        std::list<IpAddressTimed>::iterator ipListIt;
+        for (ipListIt = item->ipAddressList.begin(); ipListIt!=(item->ipAddressList.end()); ipListIt++) {
 	    ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(ipListIt->ipAddr));
 	    ok &= setRawUInt64(data, tlvsize, &offset, ipListIt->seenTime);
 	}
@@ -488,9 +498,13 @@ RsDiscReply *RsDiscSerialiser::deserialiseReply(void *data, uint32_t *pktsize)
 					TLV_TYPE_STR_PEERID, item->aboutId);
 	ok &= item->certDER.GetTlv(data, rssize, &offset);
 
-	//get the ip adress list
-	std::list<IpAddressTimed> ipTimedList;
-	while (offset < rssize) {
+        uint32_t listSize;
+        ok &= getRawUInt32(data, rssize, &offset, &listSize);
+
+        //get the ip adress list
+        uint32_t count = 0;
+        std::list<IpAddressTimed> ipTimedList;
+        while (offset < rssize && count < listSize) {
 	    IpAddressTimed ipTimed;
 	    ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &ipTimed.ipAddr);
 	    uint64_t time;
