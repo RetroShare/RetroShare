@@ -398,7 +398,7 @@ bool    upnphandler::getExternalAddress(struct sockaddr_in &addr)
 {
 	std::string externalAdress = cUPnPControlPoint->getExternalAddress();
 
-	if(!externalAdress.empty())
+        if(!externalAdress.empty() && externalAdress != "")
 	{
 		const char* externalIPAddress = externalAdress.c_str();
 

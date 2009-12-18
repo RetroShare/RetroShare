@@ -1128,7 +1128,7 @@ std::string CUPnPControlPoint::getExternalAddress()
 			"CUPnPControlPoint::AddPortMapping: "
 			"WAN Service not detected." << std::endl;
 #endif
-		return false;
+                return "";
 	}
 	std::string result =  m_WanService->GetStateVariable("NewExternalIPAddress");
 #ifdef UPNP_DEBUG
