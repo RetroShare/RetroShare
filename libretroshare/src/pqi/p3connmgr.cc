@@ -2406,6 +2406,13 @@ bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
                 {
                         RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
                         ownState.currentlocaladdr = addr;
+                        //avoid 0 for port and address
+                        if (ownState.currentlocaladdr.sin_addr.s_addr == 0) {
+                            ownState.currentlocaladdr.sin_addr.s_addr = 1;
+                        }
+                        if (addr.sin_port == 0) {
+                            ownState.currentlocaladdr.sin_port = 1;
+                        }
                 }
                 IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
                 if ((ownState.netMode & RS_NET_MODE_ACTUAL) == RS_NET_MODE_EXT ||
