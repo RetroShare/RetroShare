@@ -587,11 +587,19 @@ bool SetTlvIpAddrPortV4(void *data, uint32_t size, uint32_t *offset,
 	bool ok = true;
 	ok &= SetTlvBase(data, tlvend, offset, type, tlvsize);
 
-	/* now add the data .... (its already in network order) - so flip */
-	uint32_t ipaddr = out->sin_addr.s_addr;
+        sockaddr_in addr = *out;
+        //it looks like if ip or port is null that there is a problem
+        if (addr.sin_addr.s_addr == 0) {
+            addr.sin_addr.s_addr = 1;
+        }
+        if (addr.sin_port == 0) {
+            addr.sin_port = 1;
+        }
+        /* now add the data .... (its already in network order) - so flip */
+        uint32_t ipaddr = addr.sin_addr.s_addr;
 	ok &= setRawUInt32(data, tlvend, offset, ntohl(ipaddr));
 
-	uint16_t port = out->sin_port;
+        uint16_t port = addr.sin_port;
 	ok &= setRawUInt16(data, tlvend, offset, ntohs(port));
 
 	return ok;
