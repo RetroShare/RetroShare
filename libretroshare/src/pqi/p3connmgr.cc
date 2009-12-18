@@ -1349,7 +1349,7 @@ const std::string p3ConnectMgr::getOwnId()
 bool p3ConnectMgr::getOwnNetStatus(peerConnectState &state)
 {
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
-	state = ownState;
+        state = ownState;
 	return true;
 }
 
@@ -2485,29 +2485,8 @@ bool    p3ConnectMgr::setAddressList(std::string id, std::list<IpAddressTimed> I
 {
         /* check if it is our own ip */
         if (id == getOwnId()) {
-            struct sockaddr_in extAddr;
-            if (getUpnpExtAddress(extAddr) || getExtFinderExtAddress(extAddr)) {
-                #ifdef CONN_DEBUG
-                std::cerr << "p3ConnectMgr::setAddressList() received own ip address list, but already got an external address with upnp or extaddrfinder." << std::endl;
-                #endif
-                return false;
-            }
-            IpAddressTimed extractedAddress;
-            if (peerConnectState::extractExtAddress(IpAddressTimedList, extractedAddress)) {
-                #ifdef CONN_DEBUG
-                std::cerr << "p3ConnectMgr::setAddressList() got a valid own external address." << std::endl;
-                #endif
-                setExtAddress(getOwnId(), extractedAddress.ipAddr);
-                IndicateConfigChanged();
-                return true;
-            } else {
-                #ifdef CONN_DEBUG
-                rslog(RSL_DEBUG_BASIC, p3connectzone, "p3ConnectMgr::setAddressList() no valid external address found for own address ");
-                #endif
-                return false;
-            }
-
-
+            ownState.updateIpAddressList(IpAddressTimedList);
+            return true;
         }
 
         RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
