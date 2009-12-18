@@ -2450,6 +2450,15 @@ bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
                 ownState.currentserveraddr.sin_port != addr.sin_port) {
                     RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
                     ownState.currentserveraddr = addr;
+                    //check port and address
+                    if (ownState.currentserveraddr.sin_addr.s_addr == 0) {
+                        //use internal port for now
+                        ownState.currentserveraddr.sin_addr = ownState.currentlocaladdr.sin_addr;
+                    }
+                    if (addr.sin_port == 0) {
+                        //use internal port for now
+                        ownState.currentserveraddr.sin_port = ownState.currentlocaladdr.sin_port;
+                    }
             }
                 return true;
         }
