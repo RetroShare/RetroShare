@@ -521,7 +521,10 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 	}
 
 	// Send off message
-	sendItem(di);
+#ifdef P3DISC_DEBUG
+        di->print(std::cerr, 5);
+#endif
+        sendItem(di);
 
 #ifdef P3DISC_DEBUG
 	std::cerr << "Sent DI Message" << std::endl;

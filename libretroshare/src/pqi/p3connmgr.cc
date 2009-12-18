@@ -3314,15 +3314,10 @@ void peerConnectState::updateIpAddressList(IpAddressTimed ipTimed) { //purge old
 }
 
 void peerConnectState::printIpAddressList() {
-#ifdef CONN_DEBUG
-			std::cerr << "peerConnectState::printIpAdressList() current ip list for the peer : " << id << ", size : " << ipAddressList.size() << ", adresses : " << std::endl;
-#endif
+                std::cerr << "peerConnectState::printIpAdressList() current ip list for the peer : " << id << ", size : " << ipAddressList.size() << ", adresses : " << std::endl;
 		for (std::list<IpAddressTimed>::iterator ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end()); ipListIt++) {
-#ifdef CONN_DEBUG
 			std::cerr << inet_ntoa(ipListIt->ipAddr.sin_addr) << ":" << ntohs(ipListIt->ipAddr.sin_port) << " seenTime : " << ipListIt->seenTime << std::endl;
-#endif
 		}
-
 }
 
 bool peerConnectState::extractExtAddress(std::list<IpAddressTimed> IpAddressTimedList, IpAddressTimed &resultAddress) {//extract first address that is not the same as local address
