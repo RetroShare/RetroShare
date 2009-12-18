@@ -887,9 +887,10 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 	std::list<IpAddressTimed> ipTimedList;
 	while (offset < rssize) {
 	    IpAddressTimed ipTimed;
-	    ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &ipTimed.ipAddr);
-	    uint64_t time;
-	    ok &= getRawUInt64(data, rssize, &offset, &time);
+            sockaddr_clear(&ipTimed.ipAddr);
+            ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &ipTimed.ipAddr);
+            uint64_t time = 0;
+            ok &= getRawUInt64(data, rssize, &offset, &time);
             if (!ok) {
                 break;
             }
