@@ -96,7 +96,7 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3AuthMgr *am, p3ConnectM
 	net_attempt(0), net_failure(0), net_unreachable(0), 
 	sameLAN(false), n_read_zero(0), 
 	mConnectDelay(0), mConnectTS(0),
-	mConnectTimeout(0), mTimeoutTS(0), 
+        mConnectTimeout(0), mTimeoutTS(0), quietShutdown(false),
 
 /**************** PQI_USE_XPGP ******************/
 #if defined(PQI_USE_XPGP)
@@ -213,14 +213,19 @@ int 	pqissl::reset()
 	out << "\tssl_con: " << ssl_connection << std::endl;
 	out << std::endl;
 
-	bool neededReset = false;
+        bool neededReset = false;
 
-	if (ssl_connection != NULL)
+	if (ssl_connection != NULL && sockfd > 0)
 	{
 		out << "pqissl::reset() Shutting down SSL Connection";
 		out << std::endl;
-		SSL_shutdown(ssl_connection);
+                if (quietShutdown) {
+                    ssl_connection->quiet_shutdown;
+                } else {
+                    SSL_shutdown(ssl_connection);
+                }
 
+                quietShutdown = false;
 		neededReset = true;	
 	}
 
@@ -1374,6 +1379,7 @@ int 	pqissl::senddata(void *data, int len)
 			out << std::endl;
 			std::cerr << out.str() ;
 			rslog(RSL_ALERT, pqisslzone, out.str());
+                        quietShutdown = true;
 			reset();
 			return -1;
 		}
@@ -1493,7 +1499,8 @@ int 	pqissl::readdata(void *data, int len)
 				out << "Socket Closed Abruptly.... Resetting PQIssl";
 				out << std::endl;
 				rslog(RSL_ALERT, pqisslzone, out.str());
-				reset();
+                                quietShutdown = true;
+                                reset();
 				std::cerr << out.str() << std::endl ;
 				return -1;
 			}
