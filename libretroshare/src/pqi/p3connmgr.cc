@@ -2545,8 +2545,9 @@ bool    p3ConnectMgr::setAddressList(std::string id, std::list<IpAddressTimed> I
         /* check if it is our own ip */
         if (id == getOwnId()) {
             ownState.updateIpAddressList(IpAddressTimedList);
-            //if we are using firewalled or manually set port mode, and we are not using extAddrFinder, we will use this list for ip ext ip detection
-            if ((!ownState.netMode & RS_NET_MODE_UPNP) && !use_extr_addr_finder) {
+            //if we have no ext address from upnp or extAdrFinder, we will use this list for ext ip detection
+            sockaddr_in extAddr;
+            if (!getExtFinderExtAddress(extAddr) && !getUpnpExtAddress(extAddr)) { //TODO fix it
                 IpAddressTimed extractedAddress;
                 if (peerConnectState::extractExtAddress(IpAddressTimedList, extractedAddress)) {
                     #ifdef CONN_DEBUG
@@ -2554,6 +2555,10 @@ bool    p3ConnectMgr::setAddressList(std::string id, std::list<IpAddressTimed> I
                     #endif
                     ownState.currentserveraddr.sin_addr = extractedAddress.ipAddr.sin_addr;
                     IndicateConfigChanged();
+                } else {
+                    #ifdef CONN_DEBUG
+                                    std::cerr << "p3ConnectMgr::setAddressList() no valuable ext adress found." << std::endl;
+                    #endif
                 }
             }
             return true;
@@ -3280,30 +3285,17 @@ void peerConnectState::sortIpAddressListBySeenTime() { //Sort the ip list orderi
 }
 
 void peerConnectState::sortIpAddressListBySeenTime(std::list<IpAddressTimed> &ipTimedListInput) { //Sort the ip list ordering by seen time
-#ifdef CONN_DEBUG
-    std::cerr << "peerConnectState::sortIpAdressListBySeenTime() called" << std::endl;
-#endif
     ipTimedListInput.sort(peerConnectState::compare_seen_time);
     ipTimedListInput.reverse();
 }
 
 
 std::list<IpAddressTimed>  peerConnectState::getIpAddressList()  {
-#ifdef CONN_DEBUG
-    std::cerr << "peerConnectState::getIpAddressList() called" << std::endl;
-#endif
     purgeIpAddressList();
-#ifdef CONN_DEBUG
-    printIpAddressList();
-#endif
     return ipAddressList;
 }
 
 void peerConnectState::purgeIpAddressList() {//purge old and useless addresses to keep a small list
-#ifdef CONN_DEBUG
-    std::cerr << "peerConnectState::purgeIpAdressList() called." << std::endl;
-#endif
-
     std::list<IpAddressTimed>::iterator ipListIt;
     for (ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end());) {
         if (ipListIt->ipAddr.sin_addr.s_addr == 0 || ipListIt->ipAddr.sin_port == 0 ||
@@ -3314,9 +3306,6 @@ void peerConnectState::purgeIpAddressList() {//purge old and useless addresses t
 	    ++ipListIt;
 	}
     }
-#ifdef CONN_DEBUG
-    printIpAddressList();
-#endif
 
     //purge duplicates
     for (ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end()); ipListIt++) {
@@ -3407,7 +3396,7 @@ bool peerConnectState::extractExtAddress(std::list<IpAddressTimed> IpAddressTime
                     //if ((ipListIt->ipAddr.sin_addr.s_addr != 0)
                     if (ipListIt->ipAddr.sin_addr.s_addr != 0 && ipListIt->ipAddr.sin_port != 0 &&
                         ipListIt->ipAddr.sin_addr.s_addr != 1 && ipListIt->ipAddr.sin_port != 1 &&
-                        std::string(inet_ntoa(ipListIt->ipAddr.sin_addr)) == "1.1.1.1" &&
+                        std::string(inet_ntoa(ipListIt->ipAddr.sin_addr)) != "1.1.1.1" &&
                         (!isLoopbackNet(&ipListIt->ipAddr.sin_addr)) &&
                         (!isPrivateNet(&ipListIt->ipAddr.sin_addr))
                         ) {
