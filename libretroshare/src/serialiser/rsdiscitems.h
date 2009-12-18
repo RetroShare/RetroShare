@@ -37,7 +37,7 @@
 const uint8_t RS_PKT_SUBTYPE_DISC_OWN    = 0x01;
 const uint8_t RS_PKT_SUBTYPE_DISC_REPLY  = 0x02;
 const uint8_t RS_PKT_SUBTYPE_DISC_ISSUER = 0x03;
-const uint8_t RS_PKT_SUBTYPE_DISC_VERSION = 0x04;
+const uint8_t RS_PKT_SUBTYPE_DISC_VERSION = 0x05;
 
 class RsDiscItem: public RsItem
 {
