@@ -366,7 +366,8 @@ void p3disc::sendOwnDetails(std::string to)
                             std::cerr << "p3disc::sendOwnDetails() detail.currentlocaladdr.sin_addr : " << inet_ntoa(detail.currentlocaladdr.sin_addr) <<  ":" << ntohs(detail.currentlocaladdr.sin_port) << std::endl;
                             std::cerr << "p3disc::sendOwnDetails() detail.currentserveraddr.sin_addr : " << inet_ntoa(detail.currentserveraddr.sin_addr) << ":" << ntohs(detail.currentlocaladdr.sin_port) << std::endl;
 #endif
-        di -> ipAddressList = detail.getIpAddressList();
+
+        di -> ipAddressList = std::list<IpAddressTimed> (detail.getIpAddressList()); //duplicate the list to build the item
 	di -> contact_tf = 0;
 
 	/* construct disc flags */
@@ -442,7 +443,7 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 	di -> aboutId = about;
 
 	// set the ip addresses.
-	di -> ipAddressList = detail.getIpAddressList();
+        di -> ipAddressList = std::list<IpAddressTimed> (detail.getIpAddressList());  //duplicate the list to build the item
 	di -> currentladdr = detail.currentlocaladdr;
 	di -> currentsaddr = detail.currentserveraddr;
 
@@ -644,8 +645,7 @@ void p3disc::recvPeerOwnMsg(RsDiscOwnItem *item)
 		flags |= RS_NET_FLAGS_STABLE_UDP;
 	}
 
-        std::list<IpAddressTimed> emptyAddressList; //no address list for own disc message
-        mConnMgr->peerStatus(item->PeerId(), item->laddr, item->saddr, emptyAddressList,
+        mConnMgr->peerStatus(item->PeerId(), item->laddr, item->saddr, item->ipAddressList,
 				type, flags, RS_CB_PERSON);
 
 	/* also add as potential stun buddy */
