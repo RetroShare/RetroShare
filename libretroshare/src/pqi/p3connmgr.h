@@ -382,9 +382,12 @@ private:
 	RsMutex connMtx; /* protects below */
 
 	std::list<pqiNetListener *>  mNetListeners;
+        void    stopListeners();
+        void    startListeners();
 
 	time_t   mNetInitTS;
 	uint32_t mNetStatus;
+        bool     mListenerActive;
 
 	uint32_t mStunStatus;
 	uint32_t mStunFound;

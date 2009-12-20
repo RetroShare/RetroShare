@@ -119,7 +119,7 @@ pqissltunnel::pqissltunnel(PQInterface *parent, p3AuthMgr *am, p3ConnectMgr *cm)
 pqissltunnel::~pqissltunnel() {
   	rslog(RSL_ALERT, pqisslzone, 
 	    "pqissltunnel::~pqissltunnel -> destroying pqissl");
-	stoplistening(); /* remove from pqissllistener only */
+        //stoplistening();
 	reset(); 
 	return;
 }

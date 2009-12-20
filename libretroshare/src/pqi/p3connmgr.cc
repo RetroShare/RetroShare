@@ -100,7 +100,7 @@ peerConnectState::peerConnectState()
 	 lastcontact(0),
 	 connecttype(0),
 	 lastavailable(0),
-         lastattempt(time(NULL) - MIN_RETRY_PERIOD + 6), //start connection in 6 sec
+         lastattempt(time(NULL) - MIN_RETRY_PERIOD + MIN_TIME_BETWEEN_NET_RESET + 2), //start connection 2 second after the possible next one net reset
 	 name("nameless"), state(0), actions(0), 
 	 source(0), 
 	 inConnAttempt(0)
@@ -320,26 +320,6 @@ void p3ConnectMgr::netReset()
 	/* check Network Address */
 	checkNetAddress();
 
-	/* reset udp network - handled by tou_init! */
-	/* reset tcp network - if necessary */
-	{
-		/* NOTE: nNetListeners should be protected via the Mutex.
-		 * HOWEVER, as we NEVER change this list - once its setup
-		 * we can get away without it - and assume its constant.
-		 * 
-		 * NB: (*it)->reset_listener must be out of the mutex, 
-		 *      as it calls back to p3ConnMgr.
-		 */
-
-		std::cerr << "p3ConnectMgr::netReset() resetting listeners" << std::endl;
-		std::list<pqiNetListener *>::const_iterator it;
-		for(it = mNetListeners.begin(); it != mNetListeners.end(); it++)
-		{
-			std::cerr << "p3ConnectMgr::netReset() reset listener" << std::endl;
-			(*it)->reset_listener();
-		}
-	}
-
 	std::cerr << "p3ConnectMgr::netReset() done" << std::endl;
 }
 
@@ -350,6 +330,29 @@ void    p3ConnectMgr::addNetListener(pqiNetListener *listener)
 	mNetListeners.push_back(listener);
 }
 
+void    p3ConnectMgr::startListeners() {
+                /* NOTE: nNetListeners should be protected via the Mutex.
+                 * HOWEVER, as we NEVER change this list - once its setup
+                 * we can get away without it - and assume its constant.
+                 *
+                 * NB: (*it)->reset_listener must be out of the mutex,
+                 *      as it calls back to p3ConnMgr.
+                 */
+
+                std::cerr << "p3ConnectMgr::netReset() resetting listeners" << std::endl;
+                std::list<pqiNetListener *>::const_iterator it;
+                for(it = mNetListeners.begin(); it != mNetListeners.end(); it++)
+                {
+                        std::cerr << "p3ConnectMgr::netReset() reset listener" << std::endl;
+                        (*it)->reset_listener();
+                }
+                mListenerActive = true;
+}
+
+void    p3ConnectMgr::stopListeners() {
+                //TODO implement it
+                mListenerActive = false;
+}
 
 void p3ConnectMgr::netStatusReset()
 {
@@ -442,6 +445,7 @@ bool p3ConnectMgr::shutdown() /* blocking shutdown call */
 	}
 	netAssistFirewallShutdown();
 	netAssistConnectShutdown();
+        stopListeners(); //not implemented yet
 
 	return true;
 }
@@ -530,6 +534,12 @@ void p3ConnectMgr::netTick()
 	uint32_t netStatus = mNetStatus;
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
+        /* start tcp network - if necessary */
+        //TODO : implement stop listeners in net reset
+        if (!mListenerActive && netStatus != RS_NET_NEED_RESET && (time(NULL) - mNetInitTS) > (MIN_TIME_BETWEEN_NET_RESET + 2)) {//start connection 2 second after the possible next one net reset
+            startListeners();
+        }
+
 
 	switch(netStatus)
 	{
