@@ -366,9 +366,15 @@ void p3disc::sendOwnDetails(std::string to)
                             std::cerr << "p3disc::sendOwnDetails() detail.currentlocaladdr.sin_addr : " << inet_ntoa(detail.currentlocaladdr.sin_addr) <<  ":" << ntohs(detail.currentlocaladdr.sin_port) << std::endl;
                             std::cerr << "p3disc::sendOwnDetails() detail.currentserveraddr.sin_addr : " << inet_ntoa(detail.currentserveraddr.sin_addr) << ":" << ntohs(detail.currentlocaladdr.sin_port) << std::endl;
 #endif
+        di -> ipAddressList.clear();
+        for ( std::list<IpAddressTimed>::iterator ipListIt = detail.getIpAddressList().begin(); ipListIt!= detail.getIpAddressList().end(); ipListIt++) {
+            IpAddressTimed ipAddress;
+            ipAddress.ipAddr = ipListIt->ipAddr;
+            ipAddress.seenTime = ipListIt->seenTime;
+            di -> ipAddressList.push_back(ipAddress);
+        }
 
-        di -> ipAddressList = std::list<IpAddressTimed> (detail.getIpAddressList()); //duplicate the list to build the item
-	di -> contact_tf = 0;
+        di -> contact_tf = 0;
 
 	/* construct disc flags */
 	di -> discFlags = 0;
@@ -442,9 +448,15 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 	di -> PeerId(to);
 	di -> aboutId = about;
 
-	// set the ip addresses.
-        di -> ipAddressList = std::list<IpAddressTimed> (detail.getIpAddressList());  //duplicate the list to build the item
-	di -> currentladdr = detail.currentlocaladdr;
+        // set the ip addresse list.
+        di -> ipAddressList.clear();
+        for ( std::list<IpAddressTimed>::iterator ipListIt = detail.getIpAddressList().begin(); ipListIt!= detail.getIpAddressList().end(); ipListIt++) {
+            IpAddressTimed ipAddress;
+            ipAddress.ipAddr = ipListIt->ipAddr;
+            ipAddress.seenTime = ipListIt->seenTime;
+            di -> ipAddressList.push_back(ipAddress);
+        }
+        di -> currentladdr = detail.currentlocaladdr;
 	di -> currentsaddr = detail.currentserveraddr;
 
 	if (detail.state & RS_PEER_S_CONNECTED)
