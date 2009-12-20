@@ -367,8 +367,9 @@ void p3disc::sendOwnDetails(std::string to)
                             std::cerr << "p3disc::sendOwnDetails() detail.currentserveraddr.sin_addr : " << inet_ntoa(detail.currentserveraddr.sin_addr) << ":" << ntohs(detail.currentlocaladdr.sin_port) << std::endl;
 #endif
         di -> ipAddressList.clear();
-        for ( std::list<IpAddressTimed>::iterator ipListIt = detail.getIpAddressList().begin(); ipListIt!= detail.getIpAddressList().end(); ipListIt++) {
-            IpAddressTimed ipAddress;
+        std::list<IpAddressTimed> ipAddressListTemp = detail.getIpAddressList();
+        for ( std::list<IpAddressTimed>::iterator ipListIt = ipAddressListTemp.begin(); ipListIt!= ipAddressListTemp.end(); ipListIt++) {
+           IpAddressTimed ipAddress;
             ipAddress.ipAddr = ipListIt->ipAddr;
             ipAddress.seenTime = ipListIt->seenTime;
             di -> ipAddressList.push_back(ipAddress);
@@ -450,7 +451,8 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 
         // set the ip addresse list.
         di -> ipAddressList.clear();
-        for ( std::list<IpAddressTimed>::iterator ipListIt = detail.getIpAddressList().begin(); ipListIt!= detail.getIpAddressList().end(); ipListIt++) {
+        std::list<IpAddressTimed> ipAddressListTemp = detail.getIpAddressList();
+        for ( std::list<IpAddressTimed>::iterator ipListIt = ipAddressListTemp.begin(); ipListIt!= ipAddressListTemp.end(); ipListIt++) {
             IpAddressTimed ipAddress;
             ipAddress.ipAddr = ipListIt->ipAddr;
             ipAddress.seenTime = ipListIt->seenTime;
