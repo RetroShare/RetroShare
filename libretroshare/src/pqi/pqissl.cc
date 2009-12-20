@@ -1475,7 +1475,7 @@ int 	pqissl::readdata(void *data, int len)
 				 */
 
 				++n_read_zero;
-				out << "SSL_ERROR_ZERO_RETURN -- ";
+                                out << "ssl read : SSL_ERROR_ZERO_RETURN -- Blocking the writing process while waiting for more information.";
 				out << std::endl;
 				out << " Has socket closed been properly closed? nReadZero: " << n_read_zero;
 				out << std::endl;
@@ -1483,6 +1483,7 @@ int 	pqissl::readdata(void *data, int len)
 				if (PQISSL_MAX_READ_ZERO_COUNT < n_read_zero)
 				{
 					out << "Count passed Limit, shutting down!";
+                                        quietShutdown = true;
 					reset();
 				}
 
@@ -1639,6 +1640,11 @@ bool 	pqissl::moretoread()
 
 bool 	pqissl::cansend()
 {
+        if (n_read_zero > 0) {
+        rslog(RSL_DEBUG_ALL, pqisslzone,
+                "pqissl::cansend() read socket returns 0, so we don't wanna send know.");
+            return false;
+        }
 	rslog(RSL_DEBUG_ALL, pqisslzone, 
 		"pqissl::cansend() polling socket!");
 
