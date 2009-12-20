@@ -245,6 +245,7 @@ int 	pqissl::reset()
 	n_read_zero = 0;
 	total_len = 0 ;
         mTimeoutTS = 0;
+        listen();
 
 	if (neededReset)
 	{
@@ -1120,20 +1121,15 @@ int 	pqissl::Authorise_SSL_Connection()
 		return err;
 	}
 
+        stoplistening();
+
   	rslog(RSL_DEBUG_BASIC, pqisslzone, 
 	  "pqissl::Authorise_SSL_Connection() SSL_Connection_Complete");
 
 	// reset switch.
 	waiting = WAITING_NOT;
 
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	XPGP *peercert = SSL_get_peer_pgp_certificate(ssl_connection);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 	X509 *peercert = SSL_get_peer_certificate(ssl_connection);
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
 	if (peercert == NULL)
 	{
@@ -1155,14 +1151,7 @@ int 	pqissl::Authorise_SSL_Connection()
 	//      (pqissl's case) sslcert->serveraddr or sslcert->localaddr.
 
 	bool certCorrect = false;
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	certCorrect = mAuthMgr->CheckCertificateXPGP(PeerId(), peercert);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 	certCorrect = mAuthMgr->CheckCertificate(PeerId(), peercert);
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
 	// check it's the right one.
 	if (certCorrect)
