@@ -61,7 +61,7 @@ const int PQISSL_REMOTE_FLAG = 0x02;
 const int PQISSL_UDP_FLAG = 0x02;
 ***********/
 
-static const int PQISSL_MAX_READ_ZERO_COUNT = 20;
+static const int PQISSL_MAX_READ_ZERO_COUNT = 40;
 
 /********** PQI SSL STUFF ******************************************
  *
