@@ -30,7 +30,7 @@ QString
 ColorCodePlugin::pluginDescription() const
 {
     QString res;
-    res = "a StegoSaurus plugin" ;
+    res = "a ColorCode plugin" ;
 
     return res; 
 }
