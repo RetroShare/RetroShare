@@ -1495,12 +1495,27 @@ bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr,
 		std::cerr << "p3ConnectMgr::connectAttempt() FAILED No ConnectAddresses id: " << id << std::endl;
 #endif
 		return false;
-	}
-	        
-        it->second.lastattempt = time(NULL) + ((time(NULL)*1664525 + 1013904223) % 3);//add a random perturbation between 0 and 2 sec.  pseudo random number generator from Wikipedia/Numerical Recipies.
+        }
 
-	it->second.inConnAttempt = true;
-	it->second.currentConnAddrAttempt = it->second.connAddrs.front();
+        if ((it->second.state & RS_PEER_S_CONNECTED) && it->second.connAddrs.front().type == RS_NET_CONN_TUNNEL) {
+            //don't do a tunnel atemp if already connected via tunnel
+            it->second.connAddrs.pop_front();
+#ifdef CONN_DEBUG
+                std::cerr << "p3ConnectMgr::connectAttempt() avoiding tunnel connection attempt because already connected via tunnel. "  << std::endl;
+#endif
+            //returning next connect attempt.
+            if (it->second.connAddrs.size() < 1)
+            {
+    #ifdef CONN_DEBUG
+                    std::cerr << "p3ConnectMgr::connectAttempt() FAILED No ConnectAddresses id: " << id << std::endl;
+    #endif
+                    return false;
+            }
+         }
+
+        it->second.lastattempt = time(NULL) + ((time(NULL)*1664525 + 1013904223) % 3);//add a random perturbation between 0 and 2 sec.  pseudo random number generator from Wikipedia/Numerical Recipies.
+        it->second.inConnAttempt = true;
+        it->second.currentConnAddrAttempt = it->second.connAddrs.front();
 	it->second.connAddrs.pop_front();
 
 
