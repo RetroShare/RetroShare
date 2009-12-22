@@ -276,6 +276,10 @@ bool    doNextAttempt(std::string id);
 p3tunnel* 	getP3tunnel();
 void 	setP3tunnel(p3tunnel *p3tun);
 
+bool 	getUpnpExtAddress(struct sockaddr_in &addr);
+bool 	getStunExtAddress(struct sockaddr_in &addr);
+bool 	getExtFinderExtAddress(struct sockaddr_in &addr);
+
 
 protected:
 	/****************** Internal Interface *******************/
@@ -345,10 +349,6 @@ void 	tickMonitors();
 	/* connect attempts */
 bool	retryConnectTCP(std::string id);
 bool	retryConnectNotify(std::string id);
-
-bool 	getUpnpExtAddress(struct sockaddr_in &addr);
-bool 	getStunExtAddress(struct sockaddr_in &addr);
-bool 	getExtFinderExtAddress(struct sockaddr_in &addr);
 
 	/* temporary for testing */
 //virtual void 	loadConfiguration() { return; }
@@ -421,11 +421,13 @@ private:
 	bool oldnetFlagStunOk;
 	bool oldnetFlagExtraAddressCheckOk;
 
+public:
+        peerConnectState ownState;
+
 protected:
 
 void addPeer(std::string id, std::string name); /* tmp fn */
 
-	peerConnectState ownState;
 
 	std::list<std::string> mStunList;
 	std::map<std::string, peerConnectState> mFriendList;

@@ -1578,14 +1578,8 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags, s
 		return false;
 	}
 
-        it->second.inConnAttempt = false;
-
 	if (success)
 	{
-                /* remove other attempts */
-                it->second.inConnAttempt = false;
-                netAssistFriend(id, false);
-
                 /* update address (will come although through from DISC) */
 
 #ifdef CONN_DEBUG
@@ -1600,10 +1594,16 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags, s
 		it->second.actions |= RS_PEER_CONNECTED;
 		it->second.lastcontact = time(NULL);  /* time of connect */
                 it->second.connecttype = flags;
+                //used to send back to the peer it's own ext address
+                it->second.currentserveraddr = remote_peer_address;
 
-                if (remote_peer_address.sin_addr.s_addr != 0
-                    && !(remote_peer_address.sin_addr.s_addr == ownState.currentlocaladdr.sin_addr.s_addr)
-                    && (!isLoopbackNet(&remote_peer_address.sin_addr))
+                //add the ip address in the address list if we were in a connect attempt and the attempt address is the same as the connect result
+                if (it->second.inConnAttempt &&
+                    it->second.currentConnAddrAttempt.addr.sin_addr.s_addr == remote_peer_address.sin_addr.s_addr &&
+                    it->second.currentConnAddrAttempt.addr.sin_port == remote_peer_address.sin_port &&
+                    remote_peer_address.sin_addr.s_addr != 0 &&
+                    !(remote_peer_address.sin_addr.s_addr == ownState.currentlocaladdr.sin_addr.s_addr) &&
+                    (!isLoopbackNet(&remote_peer_address.sin_addr))
                     ) {
                     IpAddressTimed ipLocalAddressTimed;
                     ipLocalAddressTimed.ipAddr = remote_peer_address;
@@ -1617,9 +1617,15 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags, s
     #endif
                 }
 
+                /* remove other attempts */
+                it->second.inConnAttempt = false;
+                it->second.connAddrs.clear();
+                netAssistFriend(id, false);
                 mStatusChanged = true;
                 return true;
         }
+
+        it->second.inConnAttempt = false;
 
 #ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::connectResult() Disconnect/Fail: id: " << id << std::endl;

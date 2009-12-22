@@ -235,10 +235,10 @@ void p3disc::statusChange(const std::list<pqipeer> &plist)
 		if ((pit->state & RS_PEER_S_FRIEND) &&
 			(pit->actions & RS_PEER_CONNECTED))
 		{
-			/* send our details to them */
-			sendOwnDetails(pit->id);
                         /* send their own details to them. Usefull for ext ip address detection */
                         sendPeerDetails(pit->id, pit->id);
+                        /* send our details to them */
+			sendOwnDetails(pit->id);
 		}
 	}
 }
@@ -761,7 +761,24 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
         /* send Own Ip list to connect manager. It will extract the external ip address from it */
         if (peerId == mConnMgr->getOwnId())
         {
+                //setAddressList might also set our own external address
                 mConnMgr->setAddressList(mConnMgr->getOwnId(), item->ipAddressList);
+
+                if (item->currentsaddr.sin_addr.s_addr != 0 && item->currentsaddr.sin_port != 0 &&
+                    item->currentsaddr.sin_addr.s_addr != 1 && item->currentsaddr.sin_port != 1 &&
+                    std::string(inet_ntoa(item->currentsaddr.sin_addr)) != "1.1.1.1" &&
+                    (!isLoopbackNet(&item->currentsaddr.sin_addr)) &&
+                    (!isPrivateNet(&item->currentsaddr.sin_addr))
+                    ) {
+                    //the current server address given by the peer looks nice, let's use it for our own ext address if needed
+                    sockaddr_in tempAddr;
+                    if (!mConnMgr->getExtFinderExtAddress(tempAddr) && !mConnMgr->getUpnpExtAddress(tempAddr)) {
+                        //don't change the port, just the ip
+                        item->currentsaddr.sin_port = mConnMgr->ownState.currentserveraddr.sin_port;
+                        mConnMgr->setExtAddress(mConnMgr->getOwnId(), item->currentsaddr);
+                    }
+                }
+
         }
 
 
