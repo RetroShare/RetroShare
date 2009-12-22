@@ -610,7 +610,7 @@ CertificatePage::CertificatePage(QWidget *parent)
 
     userFileFrame = new QGroupBox;
     userFileFrame->setFlat(true);
-    userFileFrame->setTitle("Export my certificate...");
+    userFileFrame->setTitle(tr("Export my certificate..."));
     userFileFrame->setLayout(userFileLayout);
 
     friendFileLabel = new QLabel(tr("Specify path to your friend's "
@@ -659,7 +659,7 @@ CertificatePage::generateCertificateCalled()
     qDebug() << "  generateCertificateCalled";
 
     QString qdir = QFileDialog::getSaveFileName(this,
-                                                "Please choose a filename",
+                                                tr("Please choose a filename"),
                                                 QDir::homePath(),
                                                 "RetroShare Certificate (*.pqi)");
 
