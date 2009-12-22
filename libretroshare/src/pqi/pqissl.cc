@@ -725,6 +725,16 @@ int 	pqissl::Basic_Connection_Complete()
 	rslog(RSL_DEBUG_BASIC, pqisslzone, 
 	  "pqissl::Basic_Connection_Complete()...");
 
+#ifdef DEBUG_PQISSL_TUNNEL
+        rslog(RSL_DEBUG_BASIC, pqisslzone,
+          "pqissl::Basic_Connection_Complete() parent()->PeerId() : " + parent()->PeerId());
+        if (parent()->PeerId() == "83515db66b37e7a916535aa16a498c00" || parent()->PeerId() == "eedd76e9ebf775a707f5fb90bd651e00") {
+            rslog(RSL_DEBUG_BASIC, pqisslzone,
+              "pqissl::Basic_Connection_Complete() resetting connection for test purpose.");
+            reset();
+        }
+#endif
+
 	/* new TimeOut code. */
 	if (time(NULL) > mTimeoutTS)
 	{
