@@ -26,6 +26,7 @@
 #include "pqi/pqi.h"
 #include "pqi/pqiperson.h"
 #include "pqi/pqipersongrp.h"
+#include "services/p3disc.h"
 
 const int pqipersonzone = 82371;
 #include "util/rsdebug.h"
@@ -100,10 +101,24 @@ int 	pqiperson::status()
 	return -1;
 }
 
+int 	pqiperson::receiveHeartbeat()
+{
+        pqioutput(PQL_DEBUG_ALERT, pqipersonzone, "pqiperson::receiveHeartbeat() from peer : " + PeerId());
+        lastHeartbeatReceived = time(NULL);
+}
+
 	// tick......
 int	pqiperson::tick()
 {
-	int activeTick = 0;
+        //if lastHeartbeatReceived is 0, it might be not activated so don't do a net reset.
+        if (active &&
+            lastHeartbeatReceived != 0 &&
+            (time(NULL) - lastHeartbeatReceived) > HEARTBEAT_REPEAT_TIME * 3) {
+            pqioutput(PQL_WARNING, pqipersonzone, "pqiperson::tick() No heartbeat from the peer, assume connection is dead.");
+            this->reset();
+        }
+
+        int activeTick = 0;
 
 	{
 	  std::ostringstream out;
@@ -218,6 +233,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 				"CONNECT_SUCCESS->marking so! (resetting others)");
                         // mark as active.
 			active = true;
+                        lastHeartbeatReceived = 0;
 			activepqi = pqi;
                         inConnectAttempt = false;
 
@@ -297,6 +313,7 @@ int 	pqiperson::reset()
 
 	activepqi = NULL;
 	active = false;
+        lastHeartbeatReceived = 0;
 
 	return 1;
 }

@@ -35,6 +35,7 @@
 #include "pqi/pqinetwork.h"
 
 #include "pqi/pqi.h"
+#include "pqi/pqipersongrp.h"
 
 class p3ConnectMgr;
 class p3AuthMgr;
@@ -80,7 +81,7 @@ class p3disc: public p3Service, public pqiMonitor
 	public:
 
 
-        p3disc(p3AuthMgr *am, p3ConnectMgr *cm);
+        p3disc(p3AuthMgr *am, p3ConnectMgr *cm, pqipersongrp *persGrp);
 
 	/************* from pqiMonitor *******************/
 virtual void statusChange(const std::list<pqipeer> &plist);
@@ -102,6 +103,7 @@ void sendOwnDetails(std::string to);
 void sendOwnVersion(std::string to);
 void sendPeerDetails(std::string to, std::string about);
 void sendPeerIssuer(std::string to, std::string about);
+void sendHeartbeat(std::string to);
 
 	/* Network Input */
 int  handleIncoming();
@@ -109,6 +111,7 @@ void recvPeerOwnMsg(RsDiscOwnItem *item);
 void recvPeerFriendMsg(RsDiscReply *item);
 void recvPeerIssuerMsg(RsDiscIssuer *item);
 void recvPeerVersionMsg(RsDiscVersion *item);
+void recvHeartbeatMsg(RsDiscHeartbeat *item);
 
 	/* handle network shape */
 int     addDiscoveryData(std::string fromId, std::string aboutId,
@@ -122,7 +125,8 @@ int 	idServers();
 
 	p3AuthMgr *mAuthMgr;
 	p3ConnectMgr *mConnMgr;
-
+        pqipersongrp *mPqiPersonGrp;
+        time_t lastSentHeartbeatTime;
 
 	/* data */
 	RsMutex mDiscMtx;

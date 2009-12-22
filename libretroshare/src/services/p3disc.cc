@@ -79,8 +79,8 @@ const uint32_t P3DISC_FLAGS_ASK_VERSION		= 0x0080;
  ******************************************************************************************
  *****************************************************************************************/
 
-p3disc::p3disc(p3AuthMgr *am, p3ConnectMgr *cm)
-	:p3Service(RS_SERVICE_TYPE_DISC), mAuthMgr(am), mConnMgr(cm)
+p3disc::p3disc(p3AuthMgr *am, p3ConnectMgr *cm, pqipersongrp *pqih)
+        :p3Service(RS_SERVICE_TYPE_DISC), mAuthMgr(am), mConnMgr(cm), mPqiPersonGrp(pqih)
 {
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
 
@@ -88,6 +88,7 @@ p3disc::p3disc(p3AuthMgr *am, p3ConnectMgr *cm)
 
 	mRemoteDisc = true;
 	mLocalDisc  = false;
+        lastSentHeartbeatTime = 0;
 
 	//add own version to versions map
 	versions[mAuthMgr->OwnId()] = RsUtil::retroshareVersion();
@@ -106,6 +107,19 @@ static int count = 0;
 		idServers();
 	}
 #endif
+        //send a heartbeat to all connected peers
+        if (time(NULL) - lastSentHeartbeatTime > HEARTBEAT_REPEAT_TIME) {
+            #ifdef P3DISC_DEBUG
+            std::cerr << "p3disc::tick() sending heartbeat to all peers" << std::endl;
+            #endif
+            lastSentHeartbeatTime = time(NULL);
+            std::list <std::string> peers;
+            mConnMgr->getOnlineList(peers);
+            for (std::list<std::string>::const_iterator pit = peers.begin(); pit != peers.end(); ++pit) {
+                sendHeartbeat(*pit);
+            }
+        }
+        
 
 	return handleIncoming();
 }
@@ -154,34 +168,13 @@ int p3disc::handleIncoming()
 		RsDiscReply *dri = NULL;
 		RsDiscIssuer *dii = NULL;
 		RsDiscVersion *dvi = NULL;
+                RsDiscHeartbeat *dta = NULL;
 
-#ifdef TO_REMOVE
-		if (NULL == (di = dynamic_cast<RsDiscItem *> (item)))
-		{
-
-#ifdef P3DISC_DEBUG
-			std::ostringstream out;
-			out << "p3disc::handleIncoming()";
-			out << "Deleting Non RsDiscItem Msg" << std::endl;
-			item -> print(out);
-
-			std::cerr << out.str() << std::endl;
-#endif
-
-			// delete and continue to next loop.
-			delete item;
-
-			continue;
-		}
-#endif
 		{
 #ifdef P3DISC_DEBUG
-			std::ostringstream out;
-			out << "p3disc::handleIncoming()";
-			out << " Received Message!" << std::endl;
-			item -> print(out);
-
-			std::cerr << out.str() << std::endl;
+                        std::cerr << "p3disc::handleIncoming() Received Message!" << std::endl;
+                        item -> print(std::cerr);
+                        std::cerr  << std::endl;
 #endif
 		}
 
@@ -211,6 +204,11 @@ int p3disc::handleIncoming()
 			recvPeerOwnMsg(dio);
 			nhandled++;
 		}
+                else if (NULL != (dta = dynamic_cast<RsDiscHeartbeat *> (item)))
+                {
+                        recvHeartbeatMsg(dta);
+                        return 1;
+                }
 		delete item;
 	}
 	return nhandled;
@@ -618,6 +616,28 @@ void p3disc::sendOwnVersion(std::string to)
 #endif
 }
 
+void p3disc::sendHeartbeat(std::string to)
+{
+        {
+#ifdef P3DISC_DEBUG
+                std::ostringstream out;
+                out << "p3disc::sendHeartbeat()";
+                out << " Sending tick to : " << to << std::endl;
+                std::cerr << out.str() << std::endl;
+#endif
+        }
+
+        RsDiscHeartbeat *di = new RsDiscHeartbeat();
+        di->PeerId(to);
+
+        /* send the message */
+        sendItem(di);
+
+#ifdef P3DISC_DEBUG
+        std::cerr << "Sent tick Message" << std::endl;
+#endif
+}
+
 /*************************************************************************************/
 /*				Input Network Msgs				     */
 /*************************************************************************************/
@@ -777,14 +797,26 @@ void p3disc::recvPeerIssuerMsg(RsDiscIssuer *item)
 void p3disc::recvPeerVersionMsg(RsDiscVersion *item)
 {
 #ifdef P3DISC_DEBUG
-	std::cerr << "p3disc::recvPeerVersionMsg() From: " << item->PeerId();
-	std::cerr << std::endl;
+        std::cerr << "p3disc::recvPeerVersionMsg() From: " << item->PeerId();
+        std::cerr << std::endl;
 #endif
 
-	// dont need protection
-	versions[item->PeerId()] = item->version;
+        // dont need protection
+        versions[item->PeerId()] = item->version;
 
-	return;
+        return;
+}
+
+void p3disc::recvHeartbeatMsg(RsDiscHeartbeat *item)
+{
+#ifdef P3DISC_DEBUG
+        std::cerr << "p3disc::recvHeartbeatMsg() From: " << item->PeerId();
+        std::cerr << std::endl;
+#endif
+
+        mPqiPersonGrp->getPeer(item->PeerId())->receiveHeartbeat();
+
+        return;
 }
 
 /*************************************************************************************/

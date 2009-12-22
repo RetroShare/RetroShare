@@ -38,6 +38,7 @@ const uint8_t RS_PKT_SUBTYPE_DISC_OWN    = 0x01;
 const uint8_t RS_PKT_SUBTYPE_DISC_REPLY  = 0x02;
 const uint8_t RS_PKT_SUBTYPE_DISC_ISSUER = 0x03;
 const uint8_t RS_PKT_SUBTYPE_DISC_VERSION = 0x05;
+const uint8_t RS_PKT_SUBTYPE_DISC_HEARTBEAT = 0x06;
 
 class RsDiscItem: public RsItem
 {
@@ -131,6 +132,18 @@ public:
     std::string version;
 };
 
+class RsDiscHeartbeat: public RsDiscItem
+{
+public:
+    RsDiscHeartbeat() :RsDiscItem(RS_PKT_SUBTYPE_DISC_HEARTBEAT)
+    { return; }
+
+    virtual ~RsDiscHeartbeat();
+
+    virtual void clear();
+    virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+};
+
 class RsDiscSerialiser: public RsSerialType
 {
         public:
@@ -161,6 +174,10 @@ virtual RsDiscIssuer *deserialiseIssuer(void *data, uint32_t *size);
 virtual uint32_t        sizeVersion(RsDiscVersion *);
 virtual bool            serialiseVersion(RsDiscVersion *item, void *data, uint32_t *size);
 virtual RsDiscVersion   *deserialiseVersion(void *data, uint32_t *size);
+
+virtual uint32_t        sizeHeartbeat(RsDiscHeartbeat *);
+virtual bool            serialiseHeartbeat(RsDiscHeartbeat *item, void *data, uint32_t *size);
+virtual RsDiscHeartbeat *deserialiseHeartbeat(void *data, uint32_t *size);
 
 };
 

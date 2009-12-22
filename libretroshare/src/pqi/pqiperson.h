@@ -41,6 +41,8 @@ static const int CONNECT_UNREACHABLE  = 3;
 static const int CONNECT_FIREWALLED   = 4;
 static const int CONNECT_FAILED       = 5;
 
+static const int HEARTBEAT_REPEAT_TIME       = 4;
+
 #include "pqi/pqistreamer.h"
 
 class pqiconnect: public pqistreamer, public NetInterface
@@ -105,7 +107,7 @@ int 	reset();
 int 	listen();
 int 	stoplistening();
 int	connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, uint32_t period, uint32_t timeout);
-
+int     receiveHeartbeat();
 	// add in connection method.
 int	addChildInterface(uint32_t type, pqiconnect *pqi);
 
@@ -132,6 +134,7 @@ pqiconnect *getKid(uint32_t type);
 	pqiconnect *activepqi;
 	bool inConnectAttempt;
 	int waittimes;
+        time_t lastHeartbeatReceived;//use to track connection failure
 
 private: /* Helper functions */
 

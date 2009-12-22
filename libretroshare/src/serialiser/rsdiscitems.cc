@@ -49,6 +49,7 @@ uint32_t    RsDiscSerialiser::size(RsItem *i)
 	RsDiscReply *rdr;
 	RsDiscIssuer *rds;
 	RsDiscVersion *rdv;
+        RsDiscHeartbeat *rdt;
 
 	/* do reply first - as it is derived from Item */
 	if (NULL != (rdr = dynamic_cast<RsDiscReply *>(i)))
@@ -67,6 +68,10 @@ uint32_t    RsDiscSerialiser::size(RsItem *i)
 	{
 		return sizeVersion(rdv);
 	}
+        else if (NULL != (rdt = dynamic_cast<RsDiscHeartbeat *>(i)))
+        {
+                return sizeHeartbeat(rdt);
+        }
 
 	return 0;
 }
@@ -78,6 +83,7 @@ bool    RsDiscSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 	RsDiscReply *rdr;
 	RsDiscIssuer *rds;
 	RsDiscVersion *rdv;
+        RsDiscHeartbeat *rdt;
 
 	/* do reply first - as it is derived from Item */
 	if (NULL != (rdr = dynamic_cast<RsDiscReply *>(i)))
@@ -96,6 +102,10 @@ bool    RsDiscSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 	{
 		return serialiseVersion(rdv, data, pktsize);
 	}
+        else if (NULL != (rdt = dynamic_cast<RsDiscHeartbeat *>(i)))
+        {
+                return serialiseHeartbeat(rdt, data, pktsize);
+        }
 
 	return false;
 }
@@ -126,7 +136,10 @@ RsItem *RsDiscSerialiser::deserialise(void *data, uint32_t *pktsize)
 		case RS_PKT_SUBTYPE_DISC_VERSION:
 			return deserialiseVersion(data, pktsize);
 			break;
-		default:
+                case RS_PKT_SUBTYPE_DISC_HEARTBEAT:
+                        return deserialiseHeartbeat(data, pktsize);
+                        break;
+                default:
 			return NULL;
 			break;
 	}
@@ -838,6 +851,131 @@ RsDiscVersion *RsDiscSerialiser::deserialiseVersion(void *data, uint32_t *pktsiz
 	}
 
 	return item;
+}
+
+
+/*************************************************************************/
+
+
+RsDiscHeartbeat::~RsDiscHeartbeat()
+{
+    return;
+}
+void RsDiscHeartbeat::clear()
+{
+}
+
+std::ostream &RsDiscHeartbeat::print(std::ostream &out, uint16_t indent)
+{
+    printRsItemBase(out, "RsDiscHeartbeat", indent);
+        uint16_t int_Indent = indent + 2;
+
+    printRsItemEnd(out, "RsDiscHeartbeat", indent);
+    return out;
+}
+
+uint32_t RsDiscSerialiser::sizeHeartbeat(RsDiscHeartbeat *item)
+{
+    uint32_t s = 8; /* header */
+
+        return s;
+}
+
+/* serialise the data to the buffer */
+bool RsDiscSerialiser::serialiseHeartbeat(RsDiscHeartbeat *item, void *data, uint32_t *pktsize)
+{
+    uint32_t tlvsize = sizeHeartbeat(item);
+    uint32_t offset = 0;
+
+    if (*pktsize < tlvsize)
+        return false;   /* not enough space */
+
+    *pktsize = tlvsize;
+
+    bool ok = true;
+
+    ok &= setRsItemHeader(data, *pktsize, item->PacketId(), *pktsize);
+
+#ifdef RSSERIAL_DEBUG
+    std::cerr << "RsDiscSerialiser::serialiseHeartbeat() Header: " << ok << std::endl;
+        std::cerr << "RsDiscSerialiser::serialiseHeartbeat() Size: " << tlvsize << std::endl;
+#endif
+
+    /* skip the header */
+    offset += 8;
+
+    if (offset != tlvsize)
+    {
+        ok = false;
+#ifdef RSSERIAL_DEBUG
+        std::cerr << "RsDiscSerialiser::serialiseHeartbeat() Size Error! " << std::endl;
+                std::cerr << "Offset: " << offset << " tlvsize: " << tlvsize << std::endl;
+#endif
+    }
+
+    return ok;
+}
+
+RsDiscHeartbeat *RsDiscSerialiser::deserialiseHeartbeat(void *data, uint32_t *pktsize)
+{
+    /* get the type and size */
+        uint32_t rstype = getRsItemId(data);
+        uint32_t rssize = getRsItemSize(data);
+
+        uint32_t offset = 0;
+
+    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+                (RS_SERVICE_TYPE_DISC != getRsItemService(rstype)) ||
+                (RS_PKT_SUBTYPE_DISC_HEARTBEAT != getRsItemSubType(rstype)))
+        {
+#ifdef RSSERIAL_DEBUG
+                std::cerr << "RsDiscSerialiser::deserialiseHeartbeat() Wrong Type" << std::endl;
+#endif
+                return NULL; /* wrong type */
+        }
+
+        if (*pktsize < rssize)    /* check size */
+        {
+#ifdef RSSERIAL_DEBUG
+                std::cerr << "RsDiscSerialiser::deserialiseHeartbeat() pktsize != rssize" << std::endl;
+                std::cerr << "Pktsize: " << *pktsize << " Rssize: " << rssize << std::endl;
+#endif
+                return NULL; /* not enough data */
+        }
+
+        /* set the packet length */
+        *pktsize = rssize;
+
+        bool ok = true;
+
+        /* ready to load */
+        RsDiscHeartbeat *item = new RsDiscHeartbeat();
+        item->clear();
+
+        /* skip the header */
+        offset += 8;
+
+        if (offset != rssize)
+        {
+#ifdef RSSERIAL_DEBUG
+                std::cerr << "RsDiscSerialiser::deserialiseHeartbeat() offset != rssize" << std::endl;
+                std::cerr << "Offset: " << offset << " Rssize: " << rssize << std::endl;
+#endif
+                /* error */
+                delete item;
+                return NULL;
+        }
+
+        if (!ok)
+        {
+#ifdef RSSERIAL_DEBUG
+                std::cerr << "RsDiscSerialiser::deserialiseHeartbeat() ok = false" << std::endl;
+#endif
+                delete item;
+                return NULL;
+        }
+
+        return item;
 }
 
 

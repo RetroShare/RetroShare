@@ -1973,7 +1973,7 @@ int RsServer::StartupRetroShare()
 	mGeneralConfig = new p3GeneralConfig();
 
 	/* create Services */
-	ad = new p3disc(mAuthMgr, mConnMgr);
+        ad = new p3disc(mAuthMgr, mConnMgr, pqih);
 	msgSrv = new p3MsgService(mConnMgr);
 	chatSrv = new p3ChatService(mConnMgr);
 
