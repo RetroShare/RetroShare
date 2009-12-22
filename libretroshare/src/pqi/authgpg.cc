@@ -1152,7 +1152,7 @@ bool GPGAuthMgr::VerifySignature_locked(std::string id, void *data, int datalen,
 		std::cerr << std::endl;
 	}
 
-        if (GPG_ERR_NO_ERROR != gpgme_data_new_from_mem(&gpgmeSig, (const char *) sig, siglen, 1))
+        if (siglen != 0 && GPG_ERR_NO_ERROR != gpgme_data_new_from_mem(&gpgmeSig, (const char *) sig, siglen - 1, 1))
 	{
 		std::cerr << "Error create Sig";
 		std::cerr << std::endl;
@@ -1163,35 +1163,11 @@ bool GPGAuthMgr::VerifySignature_locked(std::string id, void *data, int datalen,
 	gpgme_set_armor (CTX, 0);
 
 	gpgme_error_t ERR;
-	if (GPG_ERR_NO_ERROR != (ERR = gpgme_op_verify(CTX,gpgmeSig, gpgmeData, NULL)) && siglen != 0)
-	{
-		ProcessPGPmeError(ERR);
-                std::cerr << "GPGAuthMgr::VerifySignature_locked FAILED for first try.";
-		std::cerr << std::endl;
-
-                std::cerr << "GPGAuthMgr::VerifySignature_locked making another signature check with siglen - 1 (mandatory for gpg v1)." << std::endl;
-
-                std::cerr << "VerifySignature: datalen: " << datalen << " siglen: " << (siglen - 1);
+        if (GPG_ERR_NO_ERROR != (ERR = gpgme_op_verify(CTX,gpgmeSig, gpgmeData, NULL)))
+        {
+                ProcessPGPmeError(ERR);
+                std::cerr << "GPGAuthMgr::Verify FAILED";
                 std::cerr << std::endl;
-
-                if (GPG_ERR_NO_ERROR != gpgme_data_new_from_mem(&gpgmeData, (const char *) data, datalen, 1))
-                {
-                        std::cerr << "Error create Data";
-                        std::cerr << std::endl;
-                }
-
-                if (GPG_ERR_NO_ERROR != gpgme_data_new_from_mem(&gpgmeSig, (const char *) sig, siglen - 1, 1))
-                {
-                        std::cerr << "Error create Sig";
-                        std::cerr << std::endl;
-                }
-                if (GPG_ERR_NO_ERROR != (ERR = gpgme_op_verify(CTX,gpgmeSig, gpgmeData, NULL)))
-                {
-                        ProcessPGPmeError(ERR);
-                        std::cerr << "GPGAuthMgr::VerifySignature_locked FAILED for second try.";
-                        std::cerr << std::endl;
-                }
-
         }
 
 	gpgme_verify_result_t res = gpgme_op_verify_result(CTX);
