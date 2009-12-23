@@ -67,8 +67,6 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
   connect(ui.loadGPGPasswd, SIGNAL(returnPressed()), this, SLOT(loadPerson()));
   //connect(ui.selectButton, SIGNAL(clicked()), this, SLOT(selectFriend()));
   //connect(ui.friendBox, SIGNAL(stateChanged(int)), this, SLOT(checkChanged(int)));
-  connect(ui.createaccountButton, SIGNAL(clicked()), this, SLOT(createnewaccount()));
-  connect(ui.infoButton,SIGNAL(clicked()), this, SLOT(infodlg()));
 
   /* load the Certificate File name */
   std::string userName;
@@ -86,6 +84,11 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
 
 	ui.loadGPGPasswd->hide();
 	ui.label_5->hide();
+	
+	ui.loadPasswd->setMinimumHeight(0);
+	ui.loadGPGPasswd->setMinimumHeight(0);
+	ui.label_4->setMinimumHeight(0);
+	ui.label_5->setMinimumHeight(0);
 
 	/* get all available pgp private certificates....
 	 * mark last one as default.
@@ -247,8 +250,7 @@ void StartDialog::loadCertificates()
 
 }
 
-
-void StartDialog::createnewaccount()
+void StartDialog::on_labelProfile_linkActivated(QString link)
 {
     //static GenCertDialog *gencertdialog = new GenCertDialog();
     //gencertdialog->show();
@@ -265,20 +267,16 @@ void StartDialog::createnewaccount()
     }
 }
 
-
-void StartDialog::infodlg()
+void StartDialog::on_labelInfo_linkActivated(QString link)
 {
     static InfoDialog *infodialog = new InfoDialog();
     infodialog->show();
 }
 
-
-
-bool  StartDialog::requestedNewCert()
+bool StartDialog::requestedNewCert()
 {
 	return reqNewCert;
 }
-
 
 LogoBar & StartDialog::getLogoBar() const {
 	return *_rsLogoBar;

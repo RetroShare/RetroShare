@@ -60,9 +60,9 @@ private slots:
 
 	void closeinfodlg();
 	void loadPerson();
-  void createnewaccount();
-  void infodlg();
-
+	
+  void on_labelProfile_linkActivated(QString link);
+  void on_labelInfo_linkActivated(QString link);
   
 private:
 
