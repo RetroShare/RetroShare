@@ -556,7 +556,7 @@ void 	FileIndexMonitor::updateCycle()
 	if (fiMods)
 	{
 		/* store to the cacheDirectory */
-		fiMutex.lock(); { /* LOCKED DIRS */
+		RsStackMutex mt(fiMutex) ;/* LOCKED DIRS */
 
 		std::string path = getCacheDir();
 		std::ostringstream out; 
@@ -575,34 +575,54 @@ void 	FileIndexMonitor::updateCycle()
 		std::string calchash;
 		uint64_t size;
 
-		fi.saveIndex(fname, calchash, size);
+		std::string fnametmp = fname+".tmp" ;
+
+		if(fi.saveIndex(fnametmp, calchash, size))
+		{
+			std::cerr << "renaming " << fnametmp.c_str() << " to " << fname.c_str() << std::endl ;
+
+			if(!RsDirUtil::renameFile(fnametmp,fname))
+			{
+				std::ostringstream errlog;
+#ifdef WIN32
+				errlog << "Error " << GetLastError() ;
+#else
+				errlog << "Error " << errno ;
+#endif
+				std::cerr << "fimonitor::updateCycle(): ERROR: File rename error: got error "+errlog.str() << std::endl ;
+				return ;
+			}
+
+			std::cerr << "Successfully wrote p3config file " << fname.c_str() << std::endl ;
+
 
 #ifdef FIM_DEBUG
-		std::cerr << "FileIndexMonitor::updateCycle() saved with hash:" << calchash;
-		std::cerr <<  std::endl;
+			std::cerr << "FileIndexMonitor::updateCycle() saved with hash:" << calchash;
+			std::cerr <<  std::endl;
 #endif
 
-		/* should clean up the previous cache.... */
+			/* should clean up the previous cache.... */
 
-		/* flag as new info */
-		CacheData data;
-		data.pid = fi.root->id;
-		data.cid.type  = getCacheType();
-		data.cid.subid = 0;
-		data.path = path;
-		data.name = tmpname;
-		data.hash = calchash;
-		data.size = size;
-		data.recvd = time(NULL);
+			/* flag as new info */
+			CacheData data;
+			data.pid = fi.root->id;
+			data.cid.type  = getCacheType();
+			data.cid.subid = 0;
+			data.path = path;
+			data.name = tmpname;
+			data.hash = calchash;
+			data.size = size;
+			data.recvd = time(NULL);
 
-		updateCache(data);
+			updateCache(data);
 
 #ifdef FIM_DEBUG
-		std::cerr << "FileIndexMonitor::updateCycle() called updateCache()";
-		std::cerr <<  std::endl;
+			std::cerr << "FileIndexMonitor::updateCycle() called updateCache()";
+			std::cerr <<  std::endl;
 #endif
-
-		} fiMutex.unlock(); /* UNLOCKED DIRS */
+		}
+		else
+			std::cerr << "fimonitor::updateCycle(): ERROR: Could not save file index file!! Check permissions and disk availability" << std::endl ;
 	}
 
 	{

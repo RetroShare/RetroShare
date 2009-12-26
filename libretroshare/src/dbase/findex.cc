@@ -913,6 +913,9 @@ int FileIndex::saveIndex(std::string filename, std::string &fileHash, uint64_t &
 	/* finally, save to file */
 	file << oss.str();
 
+	if(file.fail())
+		return 0 ;
+
 	/* get the size out */
 	size=file.tellp();
 	file.close();
