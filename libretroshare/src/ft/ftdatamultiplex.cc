@@ -328,6 +328,31 @@ bool 	ftDataMultiplex::doWork()
 	return true;
 }
 
+bool ftDataMultiplex::recvFileMap(const std::string& peerId, const std::string& hash, uint32_t chunk_size, uint32_t nb_chunks, const std::vector<uint32_t>& compressed_map)
+{
+	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
+	std::map<std::string, ftClient>::iterator it;
+
+	if (mClients.end() == (it = mClients.find(hash)))
+	{
+#ifdef MPLEX_DEBUG
+		std::cerr << "ftDataMultiplex::handleRecvMap() ERROR: No matching Client!";
+		std::cerr << std::endl;
+#endif
+		/* error */
+		return false;
+	}
+
+#ifdef MPLEX_DEBUG
+	std::cerr << "ftDataMultiplex::handleRecvMap() Passing map to FT Module";
+	std::cerr << std::endl;
+#endif
+	
+	(it->second).mCreator->setSourceMap(peerId, chunk_size, nb_chunks,compressed_map);
+
+	return true;
+
+}
 
 bool	ftDataMultiplex::handleRecvData(std::string peerId, 
 			std::string hash, uint64_t size, 

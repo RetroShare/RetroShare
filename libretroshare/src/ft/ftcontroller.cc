@@ -599,6 +599,8 @@ bool	ftController::handleAPendingRequest()
 			mPendingChunkMaps.erase(it) ;
 		}
 	}
+
+	return true ;
 }
 
 
@@ -750,7 +752,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 		/* do a source search - for any extra sources */
 		if (mSearch->search(hash, size,
 			RS_FILE_HINTS_REMOTE |
-			RS_FILE_HINTS_TURTLE |
+//			RS_FILE_HINTS_TURTLE |
 			RS_FILE_HINTS_SPEC_ONLY, info))
 		{
 			/* do something with results */

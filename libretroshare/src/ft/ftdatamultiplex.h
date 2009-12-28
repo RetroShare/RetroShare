@@ -84,81 +84,72 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 
 	public:
 
-	ftDataMultiplex(std::string ownId, ftDataSend *server, ftSearch *search);
+		ftDataMultiplex(std::string ownId, ftDataSend *server, ftSearch *search);
 
-	/* ftController Interface */
-bool	addTransferModule(ftTransferModule *mod, ftFileCreator *f);
-bool	removeTransferModule(std::string hash);
+		/* ftController Interface */
+		bool	addTransferModule(ftTransferModule *mod, ftFileCreator *f);
+		bool	removeTransferModule(std::string hash);
 
-	/* data interface */
-        /* get Details of File Transfers */
-bool    FileUploads(std::list<std::string> &hashs);
-bool    FileDownloads(std::list<std::string> &hashs);
-bool    FileDetails(std::string hash, uint32_t hintsflag, FileInfo &info);
+		/* data interface */
+		/* get Details of File Transfers */
+		bool    FileUploads(std::list<std::string> &hashs);
+		bool    FileDownloads(std::list<std::string> &hashs);
+		bool    FileDetails(std::string hash, uint32_t hintsflag, FileInfo &info);
 
-void		deleteServers(const std::list<std::string>& serv_hash) ;
-
-
-	/*************** SEND INTERFACE (calls ftDataSend) *******************/
-
-	/* Client Send */
-bool	sendDataRequest(std::string peerId, std::string hash, uint64_t size, 
-			uint64_t offset, uint32_t chunksize);
-
-	/* Server Send */
-bool	sendData(std::string peerId, std::string hash, uint64_t size, 
-			uint64_t offset, uint32_t chunksize, void *data);
+		void		deleteServers(const std::list<std::string>& serv_hash) ;
 
 
-	/*************** RECV INTERFACE (provides ftDataRecv) ****************/
+		/*************** SEND INTERFACE (calls ftDataSend) *******************/
 
-	/* Client Recv */
-virtual bool	recvData(std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data);
+		/* Client Send */
+		bool	sendDataRequest(std::string peerId, std::string hash, uint64_t size, 
+				uint64_t offset, uint32_t chunksize);
 
-	/* Server Recv */
-virtual bool	recvDataRequest(std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunksize);
+		/* Server Send */
+		bool	sendData(std::string peerId, std::string hash, uint64_t size, 
+				uint64_t offset, uint32_t chunksize, void *data);
+
+
+		/*************** RECV INTERFACE (provides ftDataRecv) ****************/
+
+		/* Client Recv */
+		virtual bool recvData(std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data);
+		virtual bool recvFileMap(const std::string& peerId, const std::string& hash, uint32_t chunk_size, uint32_t nb_chunks, const std::vector<uint32_t>& compressed_map) ;
+
+		/* Server Recv */
+		virtual bool	recvDataRequest(std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunksize);
 
 
 	protected:
 
-	/* Overloaded from RsQueueThread */
-virtual bool workQueued();
-virtual bool doWork();
+		/* Overloaded from RsQueueThread */
+		virtual bool workQueued();
+		virtual bool doWork();
 
 	private:
 
-	/* Handling Job Queues */
-bool    handleRecvData(std::string peerId,
-                std::string hash, uint64_t size, 
-		uint64_t offset, uint32_t chunksize, void *data);
+		/* Handling Job Queues */
+		bool    handleRecvData(std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data);
+		bool    handleRecvDataRequest(std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunksize);
+		bool    handleSearchRequest(std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunksize);
 
-bool    handleRecvDataRequest(std::string peerId,
-                        std::string hash, uint64_t size,
-			uint64_t offset, uint32_t chunksize);
+		/* We end up doing the actual server job here */
+		bool    locked_handleServerRequest(ftFileProvider *provider, std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunksize);
 
-bool    handleSearchRequest(std::string peerId,
-                        std::string hash, uint64_t size,
-			uint64_t offset, uint32_t chunksize);
+		RsMutex dataMtx;
 
-	/* We end up doing the actual server job here */
-bool    locked_handleServerRequest(ftFileProvider *provider, 
-	std::string peerId, std::string hash, uint64_t size, 
-	uint64_t offset, uint32_t chunksize);
+		std::map<std::string, ftClient> mClients;
+		std::map<std::string, ftFileProvider *> mServers;
 
-	RsMutex dataMtx;
+		std::list<ftRequest> mRequestQueue;
+		std::list<ftRequest> mSearchQueue;
+		std::map<std::string, time_t> mUnknownHashs;
 
-	std::map<std::string, ftClient> mClients;
-	std::map<std::string, ftFileProvider *> mServers;
+		ftDataSend *mDataSend;
+		ftSearch   *mSearch;
+		std::string mOwnId;
 
-	std::list<ftRequest> mRequestQueue;
-	std::list<ftRequest> mSearchQueue;
-	std::map<std::string, time_t> mUnknownHashs;
-
-	ftDataSend *mDataSend;
-	ftSearch   *mSearch;
-	std::string mOwnId;
-
-        friend class ftServer;
+		friend class ftServer;
 };
 
 #endif

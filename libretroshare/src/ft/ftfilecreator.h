@@ -38,48 +38,64 @@
 
 class ftFileCreator: public ftFileProvider
 {
-public:
+	public:
 
-	ftFileCreator(std::string savepath, uint64_t size, std::string hash, uint64_t recvd);
-	
-	~ftFileCreator();
+		ftFileCreator(std::string savepath, uint64_t size, std::string hash, uint64_t recvd);
 
-	 /* overloaded from FileProvider */
-virtual bool 	getFileData(uint64_t offset, uint32_t &chunk_size, void *data);
-	bool	finished() { return getRecvd() == getFileSize(); }
-	uint64_t getRecvd();
-		
-	void getChunkMap(FileChunksInfo& info) ;
-	void setChunkStrategy(FileChunksInfo::ChunkStrategy s) ;
+		~ftFileCreator();
 
-	/* 
-	 * creation functions for FileCreator 
-         */
+		/* overloaded from FileProvider */
+		virtual bool 	getFileData(uint64_t offset, uint32_t &chunk_size, void *data);
+		bool	finished() { return getRecvd() == getFileSize(); }
+		uint64_t getRecvd();
 
-	bool	getMissingChunk(const std::string& peer_id,uint32_t size_hint,uint64_t& offset, uint32_t& size);
-	bool 	addFileData(uint64_t offset, uint32_t chunk_size, void *data);
+		void getChunkMap(FileChunksInfo& info) ;
+		void setChunkStrategy(FileChunksInfo::ChunkStrategy s) ;
 
-	void loadAvailabilityMap(const std::vector<uint32_t>& map,uint32_t chunk_size,uint32_t chunk_number,uint32_t chunk_strategy) ;
-	void storeAvailabilityMap(std::vector<uint32_t>& map,uint32_t& chunk_size,uint32_t& chunk_number,uint32_t& chunk_strategy) ;
+		/* 
+		 * creation functions for FileCreator 
+		 */
 
-protected:
+		// Gets a new variable-sized chunk of size "size_hint" from the given peer id. The returned size, "size" is
+		// at most equal to size_hint.
+		//
+		bool	getMissingChunk(const std::string& peer_id,uint32_t size_hint,uint64_t& offset, uint32_t& size);
 
-virtual int initializeFileAttrs(); 
+		// actually store data in the file, and update chunks info
+		//
+		bool 	addFileData(uint64_t offset, uint32_t chunk_size, void *data);
 
-private:
+		// Load/save the availability map for the file being downloaded, in a compact/compressed form.
+		// This is used for
+		// 	- loading and saving info about the current transfers
+		// 	- getting info about current chunks for the GUI
+		// 	- sending availability info to the peers for which we also are a source
+		//
+		void loadAvailabilityMap(const std::vector<uint32_t>& map,uint32_t chunk_size,uint32_t chunk_number,uint32_t chunk_strategy) ;
+		void storeAvailabilityMap(std::vector<uint32_t>& map,uint32_t& chunk_size,uint32_t& chunk_number,uint32_t& chunk_strategy) ;
 
-	bool 	locked_printChunkMap();
-	int 	locked_notifyReceived(uint64_t offset, uint32_t chunk_size);
-	/* 
-         * structure to track missing chunks 
-         */
-	
-	uint64_t mStart;
-	uint64_t mEnd;
+		// This is called when receiving the availability map from a source peer, for the file being handled.
+		//
+		void setSourceMap(const std::string& peer_id,uint32_t chunk_size,uint32_t nb_chunks,const std::vector<uint32_t>& map) ;
 
-	std::map<uint64_t, ftChunk> mChunks;
+	protected:
 
-	ChunkMap chunkMap ;
+		virtual int initializeFileAttrs(); 
+
+	private:
+
+		bool 	locked_printChunkMap();
+		int 	locked_notifyReceived(uint64_t offset, uint32_t chunk_size);
+		/* 
+		 * structure to track missing chunks 
+		 */
+
+		uint64_t mStart;
+		uint64_t mEnd;
+
+		std::map<uint64_t, ftChunk> mChunks;
+
+		ChunkMap chunkMap ;
 };
 
 #endif // FT_FILE_CREATOR_HEADER

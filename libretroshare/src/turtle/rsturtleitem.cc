@@ -113,6 +113,22 @@ uint32_t RsTurtleFileDataItem::serial_size()
 
 	return s ;
 }
+
+uint32_t RsTurtleFileMapItem::serial_size()
+{
+	uint32_t s = 0 ;
+
+	s += 8 ; // header
+	s += 4 ; // tunnel id 
+	s += 4 ; // chunk_size
+	s += 4 ; // nb_chunks
+	s += 4 ; // compressed_map.size()
+
+	s += 4 * compressed_map.size() ;
+
+	return s ;
+}
+
 //
 // ---------------------------------- Serialization ----------------------------------//
 //
@@ -146,6 +162,7 @@ RsItem *RsTurtleSerialiser::deserialise(void *data, uint32_t *size)
 			case RS_TURTLE_SUBTYPE_TUNNEL_OK    			:	return new RsTurtleTunnelOkItem(data,*size) ;
 			case RS_TURTLE_SUBTYPE_FILE_REQUEST 			:	return new RsTurtleFileRequestItem(data,*size) ;
 			case RS_TURTLE_SUBTYPE_FILE_DATA    			:	return new RsTurtleFileDataItem(data,*size) ;
+			case RS_TURTLE_SUBTYPE_FILE_MAP     			:	return new RsTurtleFileMapItem(data,*size) ;
 
 			default:
 																std::cerr << "Unknown packet type in RsTurtle!" << std::endl ;
@@ -160,6 +177,44 @@ RsItem *RsTurtleSerialiser::deserialise(void *data, uint32_t *size)
 	}
 #endif
 
+}
+
+bool RsTurtleFileMapItem::serialize(void *data,uint32_t& pktsize)
+{
+	uint32_t tlvsize = serial_size();
+	uint32_t offset = 0;
+
+	if (pktsize < tlvsize)
+		return false; /* not enough space */
+
+	pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data,tlvsize,PacketId(), tlvsize);
+
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+
+	ok &= setRawUInt32(data, tlvsize, &offset, tunnel_id);
+	ok &= setRawUInt32(data, tlvsize, &offset, chunk_size);
+	ok &= setRawUInt32(data, tlvsize, &offset, nb_chunks);
+	ok &= setRawUInt32(data, tlvsize, &offset, compressed_map.size());
+
+	for(uint32_t i=0;i<compressed_map.size() && ok;++i)
+		ok &= setRawUInt32(data, tlvsize, &offset, compressed_map[i]);
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsFileConfigSerialiser::serialiseTransfer() Size Error! " << std::endl;
+#endif
+	}
+
+	return ok;
 }
 
 bool RsTurtleStringSearchRequestItem::serialize(void *data,uint32_t& pktsize)
@@ -348,6 +403,30 @@ bool RsTurtleSearchResultItem::serialize(void *data,uint32_t& pktsize)
 	}
 
 	return ok;
+}
+
+RsTurtleFileMapItem::RsTurtleFileMapItem(void *data,uint32_t pktsize)
+	: RsTurtleItem(RS_TURTLE_SUBTYPE_FILE_MAP)
+{
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "  type = search result" << std::endl ;
+#endif
+	uint32_t offset = 8; // skip the header 
+	uint32_t rssize = getRsItemSize(data);
+
+	/* add mandatory parts first */
+
+	bool ok = true ;
+	uint32_t s ;
+	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id);
+	ok &= getRawUInt32(data, pktsize, &offset, &chunk_size);
+	ok &= getRawUInt32(data, pktsize, &offset, &nb_chunks) ;
+	ok &= getRawUInt32(data, pktsize, &offset, &s) ;
+
+	compressed_map.resize(s) ;
+
+	for(uint32_t i=0;i<s && ok;++i)
+		ok &= getRawUInt32(data, pktsize, &offset, &(compressed_map[i])) ;
 }
 
 RsTurtleSearchResultItem::RsTurtleSearchResultItem(void *data,uint32_t pktsize)
@@ -738,6 +817,21 @@ std::ostream& RsTurtleFileDataItem::print(std::ostream& o, uint16_t)
 	o << "  offset    : " << chunk_offset << std::endl ;
 	o << "  chunk size: " << chunk_size << std::endl ;
 	o << "  data      : " << (void*)chunk_data << std::endl ;
+
+	return o ;
+}
+
+std::ostream& RsTurtleFileMapItem::print(std::ostream& o, uint16_t)
+{
+	o << "File map item:" << std::endl ;
+
+	o << "  tunnel id : " << (void*)tunnel_id << std::endl ;
+	o << "  chunk size: " << chunk_size << std::endl ;
+	o << "  nb chunks : " << nb_chunks << std::endl ;
+	o << "  map      : " ;
+
+	for(uint32_t i=0;i<compressed_map.size();++i)
+		o << (void*)compressed_map[i] << std::endl ;
 
 	return o ;
 }

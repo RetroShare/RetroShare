@@ -131,6 +131,11 @@
 //
 // Questions:
 // 	- should tunnels be re-used ? nope. The only useful case would be when two peers are exchanging files, which happens quite rarely.
+//
+// TODO:
+// 	- derive most packets from RsTurtleTunnelPacketItem, that can be handled
+// 	as raw data through a tunnel. This will avoid replicating most of the
+// 	tunnel handling code.
 
 
 #ifndef MRK_PQI_TURTLE_H
@@ -152,6 +157,7 @@ class p3AuthMgr;
 class p3ConnectMgr;
 class ftDataMultiplex;
 class RsSerialiser;
+
 static const int TURTLE_MAX_SEARCH_DEPTH = 6 ;
 
 // This class is used to keep trace of requests (searches and tunnels).
@@ -197,7 +203,7 @@ class TurtleFileHashInfo
 // 	p3Config   | ConfigChanged()  | used to load/save .cfg file for turtle variales.
 // 	-----------+------------------+------------------------------------------------------
 //
-class p3turtle: public p3Service, public pqiMonitor, public RsTurtle, public ftSearch, public p3Config
+class p3turtle: public p3Service, public pqiMonitor, public RsTurtle,/* public ftSearch */ public p3Config
 {
 	public:
 		p3turtle(p3ConnectMgr *cm,ftServer *m);
@@ -250,10 +256,10 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle, public ftS
 		//
 		virtual int tick();
 
-		/************* from ftSearch *******************/
-		// Search function. This function looks into the file hashes currently handled , and sends back info.
-		//
-		virtual bool search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const ;
+//		/************* from ftSearch *******************/
+//		// Search function. This function looks into the file hashes currently handled , and sends back info.
+//		//
+//		virtual bool search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const ;
 
 		/************* from p3Config *******************/
 		virtual RsSerialiser *setupSerialiser() ;
@@ -304,6 +310,7 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle, public ftS
 		void handleTunnelResult(RsTurtleTunnelOkItem *item);		
 		void handleRecvFileRequest(RsTurtleFileRequestItem *item);		
 		void handleRecvFileData(RsTurtleFileDataItem *item);		
+		void handleRecvFileMap(RsTurtleFileMapItem*);
 
 		//------ Functions connecting the turtle router to other components.----------//
 		

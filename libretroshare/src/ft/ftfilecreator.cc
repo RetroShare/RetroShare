@@ -409,6 +409,7 @@ void ftFileCreator::loadAvailabilityMap(const std::vector<uint32_t>& map,uint32_
 
 	chunkMap = ChunkMap(mSize,map,chunk_size,chunk_number,FileChunksInfo::ChunkStrategy(strategy)) ;
 }
+
 void ftFileCreator::storeAvailabilityMap(std::vector<uint32_t>& map,uint32_t& chunk_size,uint32_t& chunk_number,uint32_t& strategy) 
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
@@ -416,6 +417,13 @@ void ftFileCreator::storeAvailabilityMap(std::vector<uint32_t>& map,uint32_t& ch
 	FileChunksInfo::ChunkStrategy strat ;
 	chunkMap.buildAvailabilityMap(map,chunk_size,chunk_number,strat) ;
 	strategy = (uint32_t)strat ;
+}
+
+void ftFileCreator::setSourceMap(const std::string& peer_id,uint32_t chunk_size,uint32_t nb_chunks,const std::vector<uint32_t>& compressed_map)
+{
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+
+	chunkMap.setPeerAvailabilityMap(peer_id,chunk_size,nb_chunks,compressed_map) ;
 }
 
 

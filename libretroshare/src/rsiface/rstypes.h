@@ -62,45 +62,45 @@ class FileInfo
 	/* old BaseInfo Entries */
 	public:
 
-	FileInfo() :flags(0), mId(0) { return; }
-	RsCertId id; /* key for matching everything */
-	int flags; /* INFO_TAG above */
+		FileInfo() :flags(0), mId(0) { return; }
+		RsCertId id; /* key for matching everything */
+		int flags; /* INFO_TAG above */
 
-	/* allow this to be tweaked by the GUI Model */
-	mutable unsigned int mId; /* (GUI) Model Id -> unique number */
+		/* allow this to be tweaked by the GUI Model */
+		mutable unsigned int mId; /* (GUI) Model Id -> unique number */
 
-	/* Old FileInfo Entries */
+		/* Old FileInfo Entries */
 	public:
 
-static const int kRsFiStatusNone = 0;
-static const int kRsFiStatusStall = 1;
-static const int kRsFiStatusProgress = 2;
-static const int kRsFiStatusDone = 2;
+		static const int kRsFiStatusNone = 0;
+		static const int kRsFiStatusStall = 1;
+		static const int kRsFiStatusProgress = 2;
+		static const int kRsFiStatusDone = 2;
 
-	/* FileInfo(); */
+		/* FileInfo(); */
 
-	int searchId;      /* 0 if none */
-	std::string path;
-	std::string fname;
-	std::string hash;
-	std::string ext;
+		int searchId;      /* 0 if none */
+		std::string path;
+		std::string fname;
+		std::string hash;
+		std::string ext;
 
-	uint64_t size;
-	uint64_t avail; /* how much we have */
-	int status;
+		uint64_t size;
+		uint64_t avail; /* how much we have */
+		int status;
 
-	bool inRecommend;
+		bool inRecommend;
 
-	double rank;
-	int age;
+		double rank;
+		int age;
 
-	/* Transfer Stuff */
-	uint64_t transfered;
-	double   tfRate; /* in kbytes */
-	uint32_t  downloadStatus; /* 0 = Err, 1 = Ok, 2 = Done */
-	std::list<TransferInfo> peers;
+		/* Transfer Stuff */
+		uint64_t transfered;
+		double   tfRate; /* in kbytes */
+		uint32_t  downloadStatus; /* 0 = Err, 1 = Ok, 2 = Done */
+		std::list<TransferInfo> peers;
 
-        time_t lastTS;
+		time_t lastTS;
 };
 
 std::ostream &operator<<(std::ostream &out, const FileInfo &info);
@@ -248,15 +248,29 @@ class FileDetail
 
 enum DwlPriority { Low = 0, Normal, High, Auto };
 
+// Macro to read a bits array for compressed chunk maps
+//
+#define COMPRESSED_MAP_READ(A,j) (A[j >> 5] & (1 << (j & 0x11111)))
+
 class FileChunksInfo
 {
 	public:
-	enum ChunkState { CHUNK_DONE, CHUNK_ACTIVE, CHUNK_OUTSTANDING } ;
-	enum ChunkStrategy { CHUNK_STRATEGY_STREAMING, CHUNK_STRATEGY_RANDOM } ;
+		enum ChunkState { CHUNK_DONE, CHUNK_ACTIVE, CHUNK_OUTSTANDING } ;
+		enum ChunkStrategy { CHUNK_STRATEGY_STREAMING, CHUNK_STRATEGY_RANDOM } ;
 
-	uint64_t file_size ;					// real size of the file
-	uint32_t chunk_size ;				// size of chunks
-	std::vector<ChunkState> chunks ;	// dl state of chunks. Only the last chunk may have size < chunk_size
+		uint64_t file_size ;					// real size of the file
+		uint32_t chunk_size ;				// size of chunks
+
+		// dl state of chunks. Only the last chunk may have size < chunk_size
+		std::vector<ChunkState> chunks ;	
+
+		// For each source peer, gives the compressed bit map of have/don't have sate
+		std::vector<std::pair<std::string, std::vector<uint32_t> > > compressed_peer_availability_maps ;
+
+		// For each chunk (by chunk number), gives the completion of the chunk.
+		//                     
+		std::vector<std::pair<uint32_t,uint32_t> > active_chunks ;
+
 };
 
 /* class which encapsulates download details */

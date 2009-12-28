@@ -205,7 +205,7 @@ void p3turtle::manageTunnels()
 
 		time_t now = time(NULL) ;
 		bool tunnel_campain = false ;
-		if(now > _last_tunnel_campaign_time+REGULAR_TUNNEL_DIGGING_TIME)
+		if(now > _last_tunnel_campaign_time + REGULAR_TUNNEL_DIGGING_TIME)
 		{
 #ifdef P3TURTLE_DEBUG
 			std::cerr << "  Tunnel management: flaging all hashes for tunnels digging." << std::endl ;
@@ -819,14 +819,12 @@ void p3turtle::handleRecvFileData(RsTurtleFileDataItem *item)
 
 		// Only file data transfer updates tunnels time_stamp field, to avoid maintaining tunnel that are incomplete.
 		tunnel.time_stamp = time(NULL) ;
-		// also update the hash time stamp to show that it's actually being downloaded.
-		_incoming_file_hashes[tunnel.hash].time_stamp = time(NULL) ;
 
 		// Let's figure out whether this reuqest is for us or not.
 
 		if(tunnel.local_src == mConnMgr->getOwnId()) // Yes, we have to pass on the data to the multiplexer
 		{
-			std::map<TurtleFileHash,TurtleFileHashInfo>::const_iterator it( _incoming_file_hashes.find(tunnel.hash) ) ;
+			std::map<TurtleFileHash,TurtleFileHashInfo>::iterator it( _incoming_file_hashes.find(tunnel.hash) ) ;
 #ifdef P3TURTLE_DEBUG
 			assert(!tunnel.hash.empty()) ;
 #endif
@@ -848,6 +846,9 @@ void p3turtle::handleRecvFileData(RsTurtleFileDataItem *item)
 			vpid = tunnel.vpid ;
 			hash = tunnel.hash ;
 			size = hash_info.size ;
+
+			// also update the hash time stamp to show that it's actually being downloaded.
+			it->second.time_stamp = time(NULL) ;
 		}
 		else	// No, it's a request we should forward down the pipe.
 		{
@@ -874,6 +875,73 @@ void p3turtle::handleRecvFileData(RsTurtleFileDataItem *item)
 	_ft_server->getMultiplexer()->recvData(vpid,hash,size,item->chunk_offset,item->chunk_size,item->chunk_data) ;
 	item->chunk_data = NULL ;	// this prevents deletion in the destructor of RsFileDataItem, because data will be deleted
 										// down _ft_server->getMultiplexer()->recvData()...in ftTransferModule::recvFileData
+}
+
+void p3turtle::handleRecvFileMap(RsTurtleFileMapItem *item)
+{
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "p3Turtle: received file Map item:" << std::endl ;
+	item->print(std::cerr,1) ;
+#endif
+	{
+		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+
+		std::map<TurtleTunnelId,TurtleTunnel>::iterator it(_local_tunnels.find(item->tunnel_id)) ;
+
+		if(it == _local_tunnels.end())
+		{
+#ifdef P3TURTLE_DEBUG
+			std::cerr << "p3turtle: got file map with unknown tunnel id " << (void*)item->tunnel_id << std::endl ;
+#endif
+			return ;
+		}
+
+		TurtleTunnel& tunnel(it->second) ;
+
+		// Only file data transfer updates tunnels time_stamp field, to avoid maintaining tunnel that are incomplete.
+		tunnel.time_stamp = time(NULL) ;
+
+		// Let's figure out whether this reuqest is for us or not.
+
+		if(tunnel.local_src == mConnMgr->getOwnId()) // Yes, we have to pass on the data to the multiplexer
+		{
+			std::map<TurtleFileHash,TurtleFileHashInfo>::iterator it( _incoming_file_hashes.find(tunnel.hash) ) ;
+#ifdef P3TURTLE_DEBUG
+			assert(!tunnel.hash.empty()) ;
+#endif
+			if(it==_incoming_file_hashes.end())
+			{
+#ifdef P3TURTLE_DEBUG
+				std::cerr << "No tunnel for incoming data. Maybe the tunnel is being closed." << std::endl ;
+#endif
+				return ;
+			}
+
+			const TurtleFileHashInfo& hash_info(it->second) ;
+#ifdef P3TURTLE_DEBUG
+			std::cerr << "  This is an endpoint for this file map." << std::endl ;
+			std::cerr << "  Forwarding data to the multiplexer." << std::endl ;
+			std::cerr << "  using peer_id=" << tunnel.vpid << ", hash=" << tunnel.hash << std::endl ;
+#endif
+			// also update the hash time stamp to show that it's actually being downloaded.
+			it->second.time_stamp = time(NULL) ;
+
+			// we should check that there is no backward call to the turtle router!
+			//
+			_ft_server->getMultiplexer()->recvFileMap(tunnel.vpid,tunnel.hash,item->chunk_size,item->nb_chunks,item->compressed_map) ;
+		}
+		else	// No, it's a request we should forward down the pipe.
+		{
+#ifdef P3TURTLE_DEBUG
+			std::cerr << "  Forwarding file map to peer " << tunnel.local_src << std::endl ;
+#endif
+			RsTurtleFileMapItem *res_item = new RsTurtleFileMapItem(*item) ;
+			res_item->PeerId(tunnel.local_src) ;
+
+			sendItem(res_item) ;
+			return ;
+		}
+	}
 }
 
 // Send a data request into the correct tunnel for the given file hash
@@ -953,61 +1021,61 @@ void p3turtle::sendFileData(const std::string& peerId, const std::string& hash, 
 	sendItem(item) ;
 }
 
-bool p3turtle::search(std::string hash, uint64_t, uint32_t hintflags, FileInfo &info) const
-{
-	if(! (hintflags & RS_FILE_HINTS_TURTLE))		// this should not happen, but it's a security.
-		return false;
-
-	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
-
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "p3turtle: received file search request for hash " << hash << "." << std::endl ;
-#endif
-
-	std::map<TurtleFileHash,TurtleFileHashInfo>::const_iterator it = _incoming_file_hashes.find(hash) ;
-
-	if(_incoming_file_hashes.end() != it)
-	{
-		info.fname = it->second.name;
-		info.size = it->second.size;
-		info.hash = it->first;
-
-		for(unsigned int i=0;i<it->second.tunnels.size();++i)
-		{
-			TransferInfo ti;
-			ti.peerId = getTurtlePeerId(it->second.tunnels[i]);
-			ti.name = "Distant peer for hash=" + hash ;
-			ti.tfRate = 0;
-			info.peers.push_back(ti);
-		}
-
-#ifdef P3TURTLE_DEBUG
-		std::cerr << "  Found these tunnels for that hash:. "<< std::endl ;
-		for(unsigned int i=0;i<it->second.tunnels.size();++i)
-			std::cerr << "    " << (void*)it->second.tunnels[i] << std::endl ;
-
-		std::cerr << "  answered yes. "<< std::endl ;
-#endif
-		return true ;
-	}
-	else
-	{
-#ifdef P3TURTLE_DEBUG
-		std::cerr << "  responding false." << std::endl ;
-#endif
-		return false ;
-	}
-}
+// This function is actually not needed: Search request to the turtle router are:
+// 	- distant search requests, handled by the router
+// 	- search requests over files being downloaded, handled by rsFiles !!
+//
+//bool p3turtle::search(std::string hash, uint64_t, uint32_t hintflags, FileInfo &info) const
+//{
+//	if(! (hintflags & RS_FILE_HINTS_TURTLE))		// this should not happen, but it's a security.
+//		return false;
+//
+//	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+//
+//#ifdef P3TURTLE_DEBUG
+//	std::cerr << "p3turtle: received file search request for hash " << hash << "." << std::endl ;
+//#endif
+//
+//	std::map<TurtleFileHash,TurtleFileHashInfo>::const_iterator it = _incoming_file_hashes.find(hash) ;
+//
+//	if(_incoming_file_hashes.end() != it)
+//	{
+//		info.fname = it->second.name;
+//		info.size = it->second.size;
+//		info.hash = it->first;
+//
+//		for(unsigned int i=0;i<it->second.tunnels.size();++i)
+//		{
+//			TransferInfo ti;
+//			ti.peerId = getTurtlePeerId(it->second.tunnels[i]);
+//			ti.name = "Distant peer for hash=" + hash ;
+//			ti.tfRate = 0;
+//			info.peers.push_back(ti);
+//		}
+//
+//#ifdef P3TURTLE_DEBUG
+//		std::cerr << "  Found these tunnels for that hash:. "<< std::endl ;
+//		for(unsigned int i=0;i<it->second.tunnels.size();++i)
+//			std::cerr << "    " << (void*)it->second.tunnels[i] << std::endl ;
+//
+//		std::cerr << "  answered yes. "<< std::endl ;
+//#endif
+//		return true ;
+//	}
+//	else
+//	{
+//#ifdef P3TURTLE_DEBUG
+//		std::cerr << "  responding false." << std::endl ;
+//#endif
+//		return false ;
+//	}
+//}
 
 bool p3turtle::isTurtlePeer(const std::string& peer_id) const
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
 	return _virtual_peers.find(peer_id) != _virtual_peers.end() ;
-
-//	if(it->second.tunnels.empty())
-//		return false ;
-//
 }
 
 std::string p3turtle::getTurtlePeerId(TurtleTunnelId tid) const
@@ -1472,7 +1540,7 @@ void p3turtle::returnSearchResult(RsTurtleSearchResultItem *item)
 
 bool p3turtle::performLocalHashSearch(const TurtleFileHash& hash,FileInfo& info)
 {
-	return rsFiles->FileDetails(hash, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SPEC_ONLY, info);
+	return rsFiles->FileDetails(hash, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SPEC_ONLY | RS_FILE_HINTS_DOWNLOAD, info);
 }
 
 static std::string printNumber(uint64_t num,bool hex=false)
@@ -1480,7 +1548,7 @@ static std::string printNumber(uint64_t num,bool hex=false)
 	if(hex)
 	{
 		char tmp[100] ;
-		sprintf(tmp,"0x%08lx",num) ;
+		sprintf(tmp,"0x%08x%08x", uint32_t(num >> 32),uint32_t(num & ( (1<<32)-1 ))) ;
 		return std::string(tmp) ;
 	}
 	else

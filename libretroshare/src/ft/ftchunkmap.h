@@ -24,7 +24,8 @@
 // 		corresponding acive slice. When asked a slice, ftChunkMap cuts out a slice from the remaining part of the chunk
 // 		to download, sends the slice's coordinates and gives a unique slice id (such as the slice offset).
 
-// This class handles a slice of a chunk, at the level of ftFileCreator
+
+// This class handles a slice of a chunk of arbitrary uint32_t size, at the level of ftFileCreator
 
 class ftChunk 
 {
@@ -41,10 +42,10 @@ class ftChunk
 		time_t   ts;
 };
 
-// This class handles a single chunk. Although each chunk is requested at once,
+// This class handles a single fixed-sized chunk. Although each chunk is requested at once,
 // it may be sent back into sub-chunks because of file transfer rate constraints. 
 // So the dataReceived function should be called to progressively complete the chunk,
-// and the getChunk method should ask for a sub0chunk of a given size.
+// and the getChunk method should ask for a sub-chunk of a given size.
 //
 class Chunk
 {
@@ -118,11 +119,9 @@ class ChunkMap
       void buildAvailabilityMap(std::vector<uint32_t>& map,uint32_t& chunk_size,uint32_t& chunk_number,FileChunksInfo::ChunkStrategy& s) const ;
 		void loadAvailabilityMap(const std::vector<uint32_t>& map,uint32_t chunk_size,uint32_t chunk_number,FileChunksInfo::ChunkStrategy s) ;
 
-#ifdef TO_DO
 		// Updates the peer's availablility map
 		//
-		void setPeerAvailabilityMap(const std::string& peer_id,const std::vector<uint32_t>& peer_map) ;
-#endif
+		void setPeerAvailabilityMap(const std::string& peer_id,uint32_t chunk_size,uint32_t nb_chunks,const std::vector<uint32_t>& peer_map) ;
 
 		// Returns the total size of downloaded data in the file.
 		uint64_t getTotalReceived() const { return _total_downloaded ; }
@@ -134,7 +133,7 @@ class ChunkMap
 
 		// Returns the first chunk available starting from start_location for this peer_id.
 		//
-		uint32_t getAvailableChunk(uint32_t start_location,const std::string& peer_id) const ;
+		uint32_t getAvailableChunk(uint32_t start_location,const std::string& peer_id) ;
 
 	private:
 		uint64_t												_file_size ;		// total size of the file in bytes.
@@ -145,7 +144,7 @@ class ChunkMap
 
 		std::vector<FileChunksInfo::ChunkState>	_map ;				// vector of chunk state over the whole file
 
-		std::map<std::string,std::vector<uint32_t> >	_peers_chunks_availability ;	// what does each source peer have.
+		std::map<std::string,std::vector<uint32_t> >	_peers_chunks_availability ;	// what does each source peer have, stored in compressed format.
 
 		uint64_t												_total_downloaded ;
 };

@@ -115,7 +115,7 @@ INCLUDEPATH += ../../libretroshare/src/
 
 # Input
 HEADERS +=  rshare.h \
-            rsiface/notifyqt.h \
+            gui/notifyqt.h \
             control/bandwidthevent.h \
             control/eventtype.h \
             gui/DLListDelegate.h \
@@ -289,7 +289,7 @@ FORMS +=    gui/StartDialog.ui \
 
 SOURCES +=  main.cpp \
             rshare.cpp \
-            rsiface/notifyqt.cpp \
+            gui/notifyqt.cpp \
             gui/DLListDelegate.cpp \
             gui/ULListDelegate.cpp \
             gui/StartDialog.cpp \

@@ -32,18 +32,57 @@
 
 /* RsIface Thread Wrappers */
 
+#undef RSTHREAD_SELF_LOCKING_GUARD
+
 class RsMutex
 {
 	public:
 
-	RsMutex() { pthread_mutex_init(&realMutex, NULL); }
-        ~RsMutex() { pthread_mutex_destroy(&realMutex); }
-void	lock() { pthread_mutex_lock(&realMutex); }
-void	unlock() { pthread_mutex_unlock(&realMutex); }
-bool	trylock() { return (0 == pthread_mutex_trylock(&realMutex)); }
+	RsMutex() 
+	{ 
+		pthread_mutex_init(&realMutex, NULL); 
+#ifdef RSTHREAD_SELF_LOCKING_GUARD
+		_thread_id = 0 ;
+#endif
+	}
+	~RsMutex() 
+	{ 
+		pthread_mutex_destroy(&realMutex); 
+	}
+
+	void	lock() 
+	{ 
+#ifdef RSTHREAD_SELF_LOCKING_GUARD
+		if(!trylock())
+			if(!pthread_equal(_thread_id,pthread_self()))
+#endif
+				pthread_mutex_lock(&realMutex); 
+
+#ifdef RSTHREAD_SELF_LOCKING_GUARD
+		_thread_id = pthread_self() ;
+		++_cnt ;
+#endif
+	}
+	void	unlock() 
+	{ 
+#ifdef RSTHREAD_SELF_LOCKING_GUARD
+		if(--_cnt == 0)
+		{
+#endif
+			pthread_mutex_unlock(&realMutex); 
+#ifdef RSTHREAD_SELF_LOCKING_GUARD
+			_thread_id = 0 ;
+		}
+#endif
+	}
+	bool	trylock() { return (0 == pthread_mutex_trylock(&realMutex)); }
 
 	private:
-	pthread_mutex_t  realMutex;
+		pthread_mutex_t  realMutex;
+#ifdef RSTHREAD_SELF_LOCKING_GUARD
+		pthread_t _thread_id ;
+		uint32_t _cnt ;
+#endif
 };
 
 class RsStackMutex

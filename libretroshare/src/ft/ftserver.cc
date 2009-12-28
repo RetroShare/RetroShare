@@ -156,7 +156,7 @@ void ftServer::connectToTurtleRouter(p3turtle *fts)
 {
 	mTurtleRouter = fts ;
 
-	mFtSearch->addSearchMode(fts, RS_FILE_HINTS_TURTLE);
+//	mFtSearch->addSearchMode(fts, RS_FILE_HINTS_TURTLE);
 	mFtController->setTurtleRouter(fts) ;
 }
 

@@ -17,6 +17,7 @@ const uint8_t RS_TURTLE_SUBTYPE_TUNNEL_CLOSED  			= 0x06 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_REQUEST   			= 0x07 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_DATA      			= 0x08 ;
 const uint8_t RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST = 0x09 ;
+const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP              = 0x10 ;
 
 /***********************************************************************************/
 /*                           Basic Turtle Item Class                               */
@@ -142,36 +143,6 @@ class RsTurtleTunnelOkItem: public RsTurtleItem
 		virtual uint32_t serial_size() ; 
 };
 
-#ifdef A_VIRER
-class RsTurtleCloseTunnelItem: public RsTurtleItem
-{
-	public:
-		RsTurtleCloseTunnelItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_CLOSE_TUNNEL) {}
-		RsTurtleCloseTunnelItem(void *data,uint32_t size) ;		// deserialization
-
-		uint32_t tunnel_id ;		// id of the tunnel to close.
-
-		virtual std::ostream& print(std::ostream& o, uint16_t) ;
-	protected:
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
-};
-
-class RsTurtleTunnelClosedItem: public RsTurtleItem
-{
-	public:
-		RsTurtleTunnelClosedItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_TUNNEL_CLOSED) {}
-		RsTurtleTunnelClosedItem(void *data,uint32_t size) ;		// deserialization
-
-		uint32_t tunnel_id ;		// id of the tunnel to close.
-
-		virtual std::ostream& print(std::ostream& o, uint16_t) ;
-	protected:
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
-};
-#endif
-
 /***********************************************************************************/
 /*                           Turtle File Transfer item classes                     */
 /***********************************************************************************/
@@ -204,6 +175,27 @@ class RsTurtleFileDataItem: public RsTurtleItem
 		uint32_t chunk_size ;	// size of the file chunk
 		void    *chunk_data ;	// actual data.
 
+		virtual std::ostream& print(std::ostream& o, uint16_t) ;
+
+		virtual bool serialize(void *data,uint32_t& size) ;	
+		virtual uint32_t serial_size() ; 
+};
+
+class RsTurtleFileMapItem: public RsTurtleItem			
+{
+	public:
+		RsTurtleFileMapItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_FILE_MAP) {}
+		RsTurtleFileMapItem(void *data,uint32_t size) ;		// deserialization
+
+		uint32_t tunnel_id ;				// id of the tunnel to travel through. Also used for identifying the file source
+		uint32_t chunk_size ;			// fixed size of chunks, as seen from the source, for the given map.
+		uint32_t nb_chunks ;				// number of chunks in the file.	The last two infos are redundant, as we can recompute 
+												// this info from the file size, but this allows a security check.
+												
+		std::vector<uint32_t> compressed_map ;	// Map info for the file in compressed format. Each *bit* in the array uint's says "I have" or "I don't have"
+												// by default, we suppose the peer has all the chunks. This info will thus be and-ed 
+												// with the default file map for this source.
+												
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
 
 		virtual bool serialize(void *data,uint32_t& size) ;	
