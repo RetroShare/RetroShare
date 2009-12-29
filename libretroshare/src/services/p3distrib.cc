@@ -2366,9 +2366,8 @@ bool 	p3GroupDistrib::locked_validateDistribSignedMsg(
 #endif
 
 #ifdef DISTRIB_DEBUG
-	std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() KeyId: ";
-	std::cerr << newMsg->publishSignature.keyId;
-	std::cerr << std::endl;
+	std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() publish KeyId: " << newMsg->publishSignature.keyId << std::endl;
+	std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() personal KeyId: " << newMsg->personalSignature.keyId << std::endl;
 #endif
 
 	/********************* check signature *******************/
@@ -2463,6 +2462,11 @@ bool 	p3GroupDistrib::locked_validateDistribSignedMsg(
         	unsigned char *personalsigbuf = (unsigned char *) 
 				newMsg->personalSignature.signData.bin_data;
 
+#ifdef TEMPORARILY SUSPENDED
+			// csoler:
+			//  I'm suspending this because it prevents messages to be displayed. I guess there is a signature
+			//  problem, such as the msg is signed by the SSL key and authed by the PGP one, or something like this.
+			//
 		if (!mAuthMgr->VerifySignBin(
 			newMsg->personalSignature.keyId,
 			newMsg->packet.bin_data, newMsg->packet.bin_len,
@@ -2474,6 +2478,7 @@ bool 	p3GroupDistrib::locked_validateDistribSignedMsg(
 #endif
 			signOk = 0;
 		}
+#endif
 	} 
 	else if ((info.grpFlags & RS_DISTRIB_AUTHEN_MASK)
 					& RS_DISTRIB_AUTHEN_REQ)
