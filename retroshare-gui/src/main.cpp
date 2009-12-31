@@ -32,11 +32,10 @@
 #include <gui/qskinobject/qskinobject.h>
 ****/
 
-//#include <util/process.h>
 #include <util/stringutil.h>
 #include "rsiface/rsinit.h"
 #include "rsiface/rsiface.h"
-#include "rsiface/notifyqt.h"
+#include "gui/notifyqt.h"
 
 int main(int argc, char *argv[])
 { 
