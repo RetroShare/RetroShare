@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/" >
+        <file>images/about.png</file>
         <file>images/irkick.png</file>
         <file>images/btn1.png</file>
         <file>images/btn2.png</file>
@@ -171,7 +172,7 @@
         <file>images/flags/pl.png</file>
         <file>images/flags/pt.png</file>
         <file>images/flags/ru.png</file>
-        <file>images/flags/se.png</file>
+        <file>images/flags/sv.png</file>
         <file>images/flags/sl.png</file>
         <file>images/flags/tr.png</file>
         <file>images/folder-draft.png</file>

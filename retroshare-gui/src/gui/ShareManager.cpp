@@ -174,7 +174,7 @@ void ShareManager::addShareDirectory()
 	 */
 
 
-	QString qdir = QFileDialog::getExistingDirectory(this, tr("Add Shared Directory"), "",
+	QString qdir = QFileDialog::getExistingDirectory(this, tr("Select A Folder To Share"), "",
 			QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
 	/* add it to the server */

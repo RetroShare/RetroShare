@@ -38,6 +38,7 @@
 #include "MainWindow.h"
 #include "MessengerWindow.h"
 #include "HelpDialog.h"
+#include "AboutDialog.h"
 
 #include "gui/TurtleRouterDialog.h"
 
@@ -184,7 +185,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
                        createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
                        
     ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
-			createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
+                       createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
 
 #else
 
@@ -506,7 +507,7 @@ void MainWindow::doQuit()
 	}
 	else
 	rsicontrol->rsGlobalShutDown();
-	qApp->quit();
+	rApp->quit();
 }
 
 void MainWindow::closeEvent(QCloseEvent *e)
@@ -531,7 +532,7 @@ void MainWindow::closeEvent(QCloseEvent *e)
    else   
    {
        rsicontrol->rsGlobalShutDown();
-       qApp->quit();
+       rApp->quit();
    }
    
 
@@ -616,8 +617,8 @@ void MainWindow::playFiles(QStringList files)
 
 void MainWindow::showabout()
 {
-    static HelpDialog *helpdlg = new HelpDialog(this);
-	helpdlg->show();
+    static AboutDialog *adlg = new AboutDialog(this);
+    adlg->exec();
 }
 
 /** Displays the help browser and displays the most recently viewed help
@@ -635,6 +636,19 @@ void MainWindow::showHelpDialog(const QString &topic)
   if (!helpBrowser)
     helpBrowser = new HelpBrowser(this);
   helpBrowser->showWindow(topic);
+}
+
+/** Called when the user changes the UI translation. */
+void
+MainWindow::retranslateUi()
+{
+  ui.retranslateUi(this);
+  foreach (MainPage *page, ui.stackPages->pages()) {
+    page->retranslateUi();
+  }
+  foreach (QAction *action, ui.toolBar->actions()) {
+    action->setText(tr(qPrintable(action->data().toString()), "MainWindow"));
+  }
 }
 
 void MainWindow::setStyle()

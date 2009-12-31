@@ -44,6 +44,7 @@
 #include "help/browser/helpbrowser.h"
 
 #include "ui_MainWindow.h"
+#include "gui/common/RWindow.h"
 
 class PeerStatus;
 class NATStatus;
@@ -103,7 +104,13 @@ public slots:
     void showWindow(Page page);
 
     void playFiles(QStringList files);
-	void updateHashingInfo(const QString&) ;
+    void updateHashingInfo(const QString&) ;
+	
+protected:
+    void closeEvent(QCloseEvent *);
+    
+    /** Called when the user changes the UI translation. */
+    virtual void retranslateUi();
 
 private slots:
 
@@ -123,7 +130,7 @@ private slots:
 
     void showabout();
     void openShareManager();
-	void displaySystrayMsg(const QString&,const QString&) ;
+    void displaySystrayMsg(const QString&,const QString&) ;
 
     /** Displays the help browser and displays the most recently viewed help
     * topic. */
@@ -138,10 +145,6 @@ private slots:
     /** Called when user attempts to quit via quit button*/
     void doQuit();
 
-protected:
-    void closeEvent(QCloseEvent *);
-
-private slots:
 
 private:
 

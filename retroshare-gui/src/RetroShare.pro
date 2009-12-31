@@ -130,6 +130,7 @@ HEADERS +=  rshare.h \
             gui/mainpagestack.h \
             gui/MainWindow.h \
             gui/TurtleRouterDialog.h \
+            gui/AboutDialog.h \
             gui/AddLinksDialog.h \
             gui/LinksDialog.h \
             gui/ForumsDialog.h \
@@ -235,6 +236,7 @@ HEADERS +=  rshare.h \
 
 FORMS +=    gui/StartDialog.ui \
             gui/GenCertDialog.ui \
+            gui/AboutDialog.ui \
             gui/AddLinksDialog.ui \
             gui/NetworkDialog.ui \
             gui/TransfersDialog.ui \
@@ -290,6 +292,7 @@ FORMS +=    gui/StartDialog.ui \
 SOURCES +=  main.cpp \
             rshare.cpp \
             gui/notifyqt.cpp \
+            gui/AboutDialog.cpp \
             gui/DLListDelegate.cpp \
             gui/ULListDelegate.cpp \
             gui/StartDialog.cpp \

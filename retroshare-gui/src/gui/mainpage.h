@@ -32,7 +32,7 @@ public:
   /** Default Constructor */
   MainPage(QWidget *parent = 0) : QWidget(parent) {}
 
-
+  virtual void retranslateUi() {}
 };
 
 #endif
