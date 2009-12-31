@@ -44,7 +44,7 @@
 #include "help/browser/helpbrowser.h"
 
 #include "ui_MainWindow.h"
-#include "gui/common/RWindow.h"
+#include "gui/common/rwindow.h"
 
 class PeerStatus;
 class NATStatus;
