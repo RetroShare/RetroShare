@@ -20,7 +20,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>about_dialog_title</string>
+   <string>About RetroShare</string>
   </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
