@@ -285,31 +285,31 @@ MainWindow::~MainWindow()
 void MainWindow::createTrayIcon()
 {
     /** Tray icon Menu **/
-    menu = new QMenu(this);
-    QObject::connect(menu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
+    trayMenu = new QMenu(this);
+    QObject::connect(trayMenu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
     toggleVisibilityAction =
-            menu->addAction(QIcon(IMAGE_RETROSHARE), tr("Show/Hide"), this, SLOT(toggleVisibilitycontextmenu()));
-    menu->addSeparator();
-    menu->addAction(_messengerwindowAct);
-    menu->addAction(_messagesAct);
-    menu->addAction(_bandwidthAct);
+    trayMenu->addAction(QIcon(IMAGE_RETROSHARE), tr("Show/Hide"), this, SLOT(toggleVisibilitycontextmenu()));
+    trayMenu->addSeparator();
+    trayMenu->addAction(_messengerwindowAct);
+    trayMenu->addAction(_messagesAct);
+    trayMenu->addAction(_bandwidthAct);
 
 #ifdef UNFINISHED
-    menu->addAction(_appAct);
+    trayMenu->addAction(_appAct);
 #endif
-    menu->addAction(_settingsAct);
-    menu->addAction(_helpAct);
-    menu->addSeparator();
-    menu->addAction(QIcon(IMAGE_MINIMIZE), tr("Minimize"), this, SLOT(showMinimized()));
-    menu->addAction(QIcon(IMAGE_MAXIMIZE), tr("Maximize"), this, SLOT(showMaximized()));
-    menu->addSeparator();
-    menu->addAction(QIcon(IMAGE_CLOSE), tr("&Quit"), this, SLOT(doQuit()));
+    trayMenu->addAction(_settingsAct);
+    trayMenu->addAction(_helpAct);
+    trayMenu->addSeparator();
+    trayMenu->addAction(QIcon(IMAGE_MINIMIZE), tr("Minimize"), this, SLOT(showMinimized()));
+    trayMenu->addAction(QIcon(IMAGE_MAXIMIZE), tr("Maximize"), this, SLOT(showMaximized()));
+    trayMenu->addSeparator();
+    trayMenu->addAction(QIcon(IMAGE_CLOSE), tr("&Quit"), this, SLOT(doQuit()));
     /** End of Icon Menu **/
 
     // Create the tray icon
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setToolTip(tr("RetroShare"));
-    trayIcon->setContextMenu(menu);
+    trayIcon->setContextMenu(trayMenu);
     trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this,
@@ -319,7 +319,7 @@ void MainWindow::createTrayIcon()
 
 void MainWindow::displaySystrayMsg(const QString& title,const QString& msg)
 {
-	trayIcon->showMessage(title, msg, QSystemTrayIcon::Information, 3000);
+    trayIcon->showMessage(title, msg, QSystemTrayIcon::Information, 3000);
 }
 
 void MainWindow::updateStatus()

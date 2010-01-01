@@ -176,7 +176,7 @@ private:
 
     QSystemTrayIcon *trayIcon;
     QAction *toggleVisibilityAction, *toolAct;
-    QMenu *menu;
+    QMenu *trayMenu;
 
     PeerStatus *peerstatus;
     NATStatus *natstatus;
