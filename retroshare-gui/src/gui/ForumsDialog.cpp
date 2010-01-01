@@ -61,6 +61,7 @@
 #define IMAGE_UNSUBSCRIBE    ":/images/cancel.png"
 #define IMAGE_INFO           ":/images/info16.png"
 #define IMAGE_NEWFORUM       ":/images/new_forum16.png"
+#define IMAGE_FORUMAUTHD     ":/images/konv_message2.png"
 
 
 
@@ -318,7 +319,13 @@ void ForumsDialog::insertForums()
 			if (it->forumFlags & RS_DISTRIB_AUTHEN_REQ)
 			{
 				name += " (AUTHD)";
+				item -> setIcon(0,(QIcon(IMAGE_FORUMAUTHD)));
 			}
+			else
+			{
+				item -> setIcon(0,(QIcon(IMAGE_FORUM)));
+			}
+			
 			item -> setText(0, name);
 
 			/* (1) Popularity */
@@ -339,7 +346,6 @@ void ForumsDialog::insertForums()
 			// Id.
 			item -> setText(4, QString::fromStdString(it->forumId));
 			AdminList.append(item);
-			item -> setIcon(0,(QIcon(IMAGE_FORUM)));
 		}
 		else if (flags & RS_DISTRIB_SUBSCRIBED)
 		{
@@ -358,7 +364,13 @@ void ForumsDialog::insertForums()
 			if (it->forumFlags & RS_DISTRIB_AUTHEN_REQ)
 			{
 				name += " (AUTHD)";
+				item -> setIcon(0,(QIcon(IMAGE_FORUMAUTHD)));
 			}
+			else
+			{
+			  item -> setIcon(0,(QIcon(IMAGE_FORUM)));
+			}
+			
 			item -> setText(0, name);
 
 			/* (1) Popularity */
@@ -379,7 +391,6 @@ void ForumsDialog::insertForums()
 			// Id.
 			item -> setText(4, QString::fromStdString(it->forumId));
 			SubList.append(item);
-			item -> setIcon(0,(QIcon(IMAGE_FORUM)));
 		}
 		else
 		{
@@ -432,8 +443,15 @@ void ForumsDialog::insertForums()
 			if (it->forumFlags & RS_DISTRIB_AUTHEN_REQ)
 			{
 				name += " (AUTHD)";
+				item -> setIcon(0,(QIcon(IMAGE_FORUMAUTHD)));
 			}
+			else
+			{
+			  item -> setIcon(0,(QIcon(IMAGE_FORUM)));
+			}
+			
 			item -> setText(0, name);
+			
 
 			/* (1) Popularity */
 			{
@@ -456,12 +474,10 @@ void ForumsDialog::insertForums()
 			if (it->pop < popLimit)
 			{
 				OtherList.append(item);
-				item -> setIcon(0,(QIcon(IMAGE_FORUM)));
 			}
 			else
 			{
 				PopList.append(item);
-				item -> setIcon(0,(QIcon(IMAGE_FORUM)));
 			}
 		}
 	}
