@@ -633,7 +633,16 @@ void ForumsDialog::insertThreads()
 		rsForums->getForumMessage(fId,tit->msgId,msginfo) ;
 
 		item->setText(1, QString::fromStdWString(tit->title));
+		
+		if (rsPeers->getPeerName(msginfo.srcId) !="")
+		{
 		item->setText(2, QString::fromStdString(rsPeers->getPeerName(msginfo.srcId)));
+		}
+		else
+		{
+		item->setText(2, tr("Anonymous"));
+		}
+		
 		item->setText(3, "signed");
 		item->setText(4, QString::fromStdString(tit->parentId));
 		item->setText(5, QString::fromStdString(tit->msgId));
