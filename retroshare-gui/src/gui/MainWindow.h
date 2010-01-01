@@ -50,8 +50,6 @@ class PeerStatus;
 class NATStatus;
 class RatesStatus;
 
-void openFile(std::string path);
-
 class MainWindow : public RWindow
 {
   Q_OBJECT
@@ -103,7 +101,6 @@ public slots:
     /** Shows the config dialog with focus set to the given page. */
     void showWindow(Page page);
 
-    void playFiles(QStringList files);
     void updateHashingInfo(const QString&) ;
 	
 protected:

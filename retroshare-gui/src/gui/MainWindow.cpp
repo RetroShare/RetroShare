@@ -63,16 +63,16 @@
 /* Images for toolbar icons */
 #define IMAGE_NETWORK           ":/images/retrosharelogo1.png"
 #define IMAGE_NETWORK2          ":/images/rs1.png"
-#define IMAGE_PEERS         	":/images/groupchat.png"
-#define IMAGE_SEARCH    		":/images/filefind.png"
-#define IMAGE_TRANSFERS      	":/images/ktorrent32.png"
+#define IMAGE_PEERS         	  ":/images/groupchat.png"
+#define IMAGE_SEARCH    		    ":/images/filefind.png"
+#define IMAGE_TRANSFERS      	  ":/images/ktorrent32.png"
 #define IMAGE_LINKS             ":/images/irkick.png"
 #define IMAGE_FILES   	        ":/images/fileshare24.png"
-#define IMAGE_CHANNELS       	":/images/channels.png"
+#define IMAGE_CHANNELS       	  ":/images/channels.png"
 #define IMAGE_FORUMS            ":/images/konversation.png"
 #define IMAGE_TURTLE            ":/images/turtle.png"
 #define IMAGE_PREFERENCES       ":/images/kcmsystem24.png"
-#define IMAGE_CHAT          	":/images/groupchat.png"
+#define IMAGE_CHAT          	  ":/images/groupchat.png"
 #define IMAGE_RETROSHARE        ":/images/rstray3.png"
 #define IMAGE_ABOUT             ":/images/informations_24x24.png"
 #define IMAGE_STATISTIC         ":/images/utilities-system-monitor.png"
@@ -81,9 +81,9 @@
 #define IMAGE_RSM32             ":/images/kdmconfig.png"
 #define IMAGE_RSM16             ":/images/rsmessenger16.png"
 #define IMAGE_CLOSE             ":/images/close_normal.png"
-#define IMAGE_SMPLAYER			":/images/smplayer_icon32.png"
-#define IMAGE_BLOCK         	":/images/blockdevice.png"
-#define IMAGE_COLOR         	":/images/highlight.png"
+#define IMAGE_SMPLAYER			    ":/images/smplayer_icon32.png"
+#define IMAGE_BLOCK         	  ":/images/blockdevice.png"
+#define IMAGE_COLOR         	  ":/images/highlight.png"
 #define IMAGE_GAMES             ":/images/kgames.png"
 #define IMAGE_PHOTO             ":/images/lphoto.png"
 #define IMAGE_SMPLAYER          ":/images/smplayer_icon32.png"
@@ -225,10 +225,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     /* also an empty list of chat windows */
     messengerWindow->setChatDialog(peersDialog);
-
-    // Allow to play files from SharedFilesDialog.
-    connect(sharedfilesDialog, SIGNAL(playFiles( QStringList )), this, SLOT(playFiles( QStringList )));
-    connect(transfersDialog, SIGNAL(playFiles( QStringList )), this, SLOT(playFiles( QStringList )));
 
     /** StatusBar section ********/
     peerstatus = new PeerStatus();
@@ -587,34 +583,6 @@ void MainWindow::loadStyleSheet(const QString &sheetName)
 
 }
 
-void MainWindow::playFiles(QStringList files)
-{
-	std::cerr << "MainWindow::playFiles() Can only play first currently" << std::endl;
-	QStringList::iterator it;
-	it = files.begin();
-	if (it == files.end())
-	{
-		return;
-	}
-	std::string path = (*it).toStdString();
-	std::cerr << "MainWindow::playFiles() opening: " << path << std::endl;
-
-	openFile(path);
-	return;
-
-#if 0
-	showsmplayer();
-
-	std::cerr << "MainWindow::playFiles() showsmplayer() done" << std::endl;
-
-	if (mSMPlayer)
-		mSMPlayer->gui()->openFiles(files);
-
-	std::cerr << "MainWindow::playFiles() done" << std::endl;
-#endif
-}
-
-
 void MainWindow::showabout()
 {
     static AboutDialog *adlg = new AboutDialog(this);
@@ -661,67 +629,4 @@ void MainWindow::setStyle()
  QString menuSheet = "QMenuBar" + standardSheet.replace("<color1>", stop1.name()).replace("<color2>", stop2.name());
  qApp->setStyleSheet(/*widgetSheet + */toolSheet + menuSheet);
 
-}
-
-
-void openFile(std::string path)
-{
-	bool isAbs = true;
-	QString surl("file://");
-
-#if defined(Q_OS_WIN)
-	/* check that it is an absolute path */
-	if (path.size() < 4)
-	{
-		std::cerr << "[WIN] openPath() Very Small path ignoring: " << path;
-		std::cerr << std::endl;
-		return;
-	}
-
-	if ((path[1] == ':') && ((path[2] == '\\') || (path[2] == '/')))
-	{
-		isAbs = true;
-	}
-#else
-
-	/* check that it is an absolute path */
-	if (path.size() < 1)
-	{
-		std::cerr << "[UNIX] openPath() Very Small path ignoring: " << path;
-		std::cerr << std::endl;
-		return;
-	}
-
-	if (path[0] == '/')
-	{
-		isAbs = true;
-	}
-#endif
-
-	if (!isAbs)
-	{
-
-#define ROOT_PATH_SIZE 1024
-
-		char rootdir[ROOT_PATH_SIZE];
-		if (NULL == getcwd(rootdir, ROOT_PATH_SIZE))
-		{
-			std::cerr << "openPath() get Abs Failed: " << path;
-			std::cerr << std::endl;
-			return;
-		}
-
-		std::string rdir(rootdir);
-		surl += QString::fromStdString(rdir);
-		surl += '/';
-	}
-
-	surl += QString::fromStdString(path);
-	std::cerr << "openPath() opening AbsPath Url: " << surl.toStdString();
-	std::cerr << std::endl;
-
-	QUrl url(surl);
-	QDesktopServices::openUrl(url);
-
-	return;
 }
