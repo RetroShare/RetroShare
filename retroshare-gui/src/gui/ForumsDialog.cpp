@@ -42,6 +42,7 @@
 #include <QDateTime>
 #include <QHeaderView>
 #include <QTimer>
+#include <QMessageBox>
 
 /* Images for context menu icons */
 #define IMAGE_MESSAGE        ":/images/folder-draft.png"
@@ -76,7 +77,7 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 
   connect(ui.newForumButton, SIGNAL(clicked()), this, SLOT(newforum()));
   connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(createmessage()));
-
+  connect(ui.newthreadButton, SIGNAL(clicked()), this, SLOT(showthread()));
 
   connect( ui.forumTreeWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem *, QTreeWidgetItem *) ), this,
   	SLOT( changedForum( QTreeWidgetItem *, QTreeWidgetItem * ) ) );
@@ -830,10 +831,12 @@ void ForumsDialog::showthread()
 {
 	if (mCurrForumId == "")
 	{
+	  QMessageBox::information(this, tr("RetroShare"),tr("No Forum Selected!"));
 		return;
 	}
 
 	CreateForumMsg *cfm = new CreateForumMsg(mCurrForumId, "");
+	cfm->setWindowTitle(tr("Start New Thread"));
 	cfm->show();
 }
 
@@ -876,12 +879,5 @@ static 	ForumDisplay *fui = new ForumDisplay();
 #endif
 
 }
-
-
-
-
-
-	
-
 
 

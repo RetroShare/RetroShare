@@ -32,8 +32,8 @@ class ForumsDialog : public MainPage
 public:
   ForumsDialog(QWidget *parent = 0);
 
- void insertForums();
- void insertPost();
+  void insertForums();
+  void insertPost();
 
 private slots:
 
@@ -44,14 +44,14 @@ private slots:
 
   void newforum();
 
-void checkUpdate();
+  void checkUpdate();
 
-void changedForum( QTreeWidgetItem *curr, QTreeWidgetItem *prev );
-void changedThread( QTreeWidgetItem *curr, QTreeWidgetItem *prev );
-void changedThread2();
+  void changedForum( QTreeWidgetItem *curr, QTreeWidgetItem *prev );
+  void changedThread( QTreeWidgetItem *curr, QTreeWidgetItem *prev );
+  void changedThread2();
 
-void changeBox( int newrow );
-void updateMessages ( QTreeWidgetItem * item, int column );
+  void changeBox( int newrow );
+  void updateMessages ( QTreeWidgetItem * item, int column );
 
   void newmessage();
 
