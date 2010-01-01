@@ -584,7 +584,7 @@ void SubFileItem::play()
 	std::cerr << std::endl;
 #endif
 
-	openFile(mPath);
+	//openFile(mPath);
 
 }
 
