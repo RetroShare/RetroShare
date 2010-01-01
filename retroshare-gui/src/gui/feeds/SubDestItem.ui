@@ -1,97 +1,91 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>SubDestItem</class>
- <widget class="QWidget" name="SubDestItem" >
-  <property name="geometry" >
+ <widget class="QWidget" name="SubDestItem">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>615</width>
-    <height>64</height>
+    <width>592</width>
+    <height>77</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" >
-   <property name="leftMargin" >
+  <layout class="QGridLayout">
+   <property name="margin">
     <number>0</number>
    </property>
-   <property name="topMargin" >
+   <property name="spacing">
     <number>0</number>
    </property>
-   <property name="rightMargin" >
-    <number>0</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>0</number>
-   </property>
-   <property name="horizontalSpacing" >
-    <number>0</number>
-   </property>
-   <property name="verticalSpacing" >
-    <number>0</number>
-   </property>
-   <item row="0" column="0" >
-    <widget class="QFrame" name="frame" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+   <item row="0" column="0">
+    <widget class="QFrame" name="frame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="frameShape" >
+     <property name="styleSheet">
+      <string notr="true">QFrame#frame{border: 2px solid black; 
+background: white;}
+</string>
+     </property>
+     <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
-     <property name="frameShadow" >
+     <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" >
+     <layout class="QVBoxLayout">
       <item>
-       <layout class="QHBoxLayout" >
+       <layout class="QHBoxLayout">
         <item>
-         <widget class="QLabel" name="typeLabel" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+         <widget class="QLabel" name="typeLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="minimumSize" >
+          <property name="minimumSize">
            <size>
             <width>100</width>
             <height>0</height>
            </size>
           </property>
-          <property name="maximumSize" >
+          <property name="maximumSize">
            <size>
             <width>300</width>
             <height>16777215</height>
            </size>
           </property>
-          <property name="font" >
+          <property name="font">
            <font>
             <weight>75</weight>
             <italic>true</italic>
             <bold>true</bold>
            </font>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Type</string>
           </property>
-          <property name="wordWrap" >
+          <property name="wordWrap">
            <bool>false</bool>
           </property>
          </widget>
         </item>
         <item>
          <spacer>
-          <property name="orientation" >
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeType" >
+          <property name="sizeType">
            <enum>QSizePolicy::Fixed</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
             <height>20</height>
@@ -100,43 +94,43 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLabel" name="nameLabel" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+         <widget class="QLabel" name="nameLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="maximumSize" >
+          <property name="maximumSize">
            <size>
             <width>300</width>
             <height>16777215</height>
            </size>
           </property>
-          <property name="font" >
+          <property name="font">
            <font>
             <weight>75</weight>
             <italic>true</italic>
             <bold>true</bold>
            </font>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Person/Channel Name</string>
           </property>
-          <property name="wordWrap" >
+          <property name="wordWrap">
            <bool>false</bool>
           </property>
          </widget>
         </item>
         <item>
          <spacer>
-          <property name="orientation" >
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeType" >
+          <property name="sizeType">
            <enum>QSizePolicy::Expanding</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>71</width>
             <height>21</height>
@@ -145,21 +139,22 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="cancelButton" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+         <widget class="QPushButton" name="cancelButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="toolTip" >
+          <property name="toolTip">
            <string>Delete FeedItem</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string/>
           </property>
-          <property name="icon" >
-           <iconset resource="../images.qrc" >:/images/close-down.png</iconset>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/close-down.png</normaloff>:/images/close-down.png</iconset>
           </property>
          </widget>
         </item>
@@ -171,7 +166,8 @@
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc" />
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>
