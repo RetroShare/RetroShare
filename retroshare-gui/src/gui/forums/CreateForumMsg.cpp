@@ -65,6 +65,15 @@ void  CreateForumMsg::newMsg()
 
 		ui.forumName->setText(name);
 		ui.forumSubject->setText(subj);
+		
+		if (!ui.forumSubject->text().isEmpty())
+		{
+      ui.forumMessage->setFocus();
+    }
+		else
+		{
+      ui.forumSubject->setFocus();
+		}
 
 		if (fi.forumFlags & RS_DISTRIB_AUTHEN_REQ)
 		{
