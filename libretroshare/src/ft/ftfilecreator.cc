@@ -34,15 +34,6 @@ ftFileCreator::ftFileCreator(std::string path, uint64_t size, std::string hash, 
 #endif
 
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
-
-	/* initialise the Transfer Lists */
-//	mStart = recvd;
-//	mEnd = recvd;
-
-#ifdef TO_DO
-	// we should init the chunk map with some bit array saying what is received and what is not!!
-	chunkMap.setTotalReceived(recvd) ;
-#endif
 }
 
 bool ftFileCreator::getFileData(uint64_t offset, uint32_t &chunk_size, void *data)
@@ -423,6 +414,13 @@ void ftFileCreator::setSourceMap(const std::string& peer_id,uint32_t chunk_size,
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
+	// At this point, we should cancel all file chunks that are asked to the
+	// peer and which this peer actually doesn't possesses. Otherwise, the transfer may get stuck. 
+	// This should be done by:
+	// 	- first setting the peer availability map
+	// 	- then asking the chunkmap which chunks are being downloaded, but actually shouldn't
+	// 	- cancelling them in the ftFileCreator, so that they can be re-asked later to another peer.
+	//
 	chunkMap.setPeerAvailabilityMap(peer_id,chunk_size,nb_chunks,compressed_map) ;
 }
 

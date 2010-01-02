@@ -367,24 +367,19 @@ bool ftServer::FileUploads(std::list<std::string> &hashs)
 
 bool ftServer::FileDetails(std::string hash, uint32_t hintflags, FileInfo &info)
 {
-	bool found = false;
 	if (hintflags & RS_FILE_HINTS_DOWNLOAD)
-	{
-		//found = mFtDataplex->FileDetails(hash, hintflags, info);
-		//
-		// Use Controller for download searches.
-		found = mFtController->FileDetails(hash, info);
-	}
-	else if (hintflags & RS_FILE_HINTS_UPLOAD)
-	{
-		found = mFtDataplex->FileDetails(hash, hintflags, info);
-	}
+		if(mFtController->FileDetails(hash, info))
+			return true ;
 
-	if (!found)
-	{
-		found = mFtSearch->search(hash, 0, hintflags, info);
-	}
-	return found;
+	if(hintflags & RS_FILE_HINTS_UPLOAD)
+		if(mFtDataplex->FileDetails(hash, hintflags, info))
+			return true ;
+
+	if(hintflags & ~(RS_FILE_HINTS_UPLOAD | RS_FILE_HINTS_DOWNLOAD)) 
+		if(mFtSearch->search(hash, 0, hintflags, info))
+			return true ;
+
+	return false;
 }
 
 	/***************************************************************/

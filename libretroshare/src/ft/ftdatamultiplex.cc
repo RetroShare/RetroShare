@@ -127,35 +127,43 @@ bool    ftDataMultiplex::FileDetails(std::string hash, uint32_t hintsflag, FileI
 #endif
 
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-	std::map<std::string, ftFileProvider *>::iterator sit;
-	sit = mServers.find(hash);
-	if (sit != mServers.end())
+
+	if(hintsflag & RS_FILE_HINTS_DOWNLOAD)
 	{
+		std::map<std::string, ftClient>::iterator cit;
+		if (mClients.end() != (cit = mClients.find(hash)))
+		{
 
 #ifdef MPLEX_DEBUG
-		std::cerr << "ftDataMultiplex::FileDetails()";
-		std::cerr << " Found ftFileProvider!";
-		std::cerr << std::endl;
+			std::cerr << "ftDataMultiplex::FileDetails()";
+			std::cerr << " Found ftFileCreator!";
+			std::cerr << std::endl;
 #endif
 
-		(sit->second)->FileDetails(info);
-		return true;
+			//(cit->second).mModule->FileDetails(info);
+			(cit->second).mCreator->FileDetails(info);
+			return true;
+		}
 	}
 
-	std::map<std::string, ftClient>::iterator cit;
-	if (mClients.end() != (cit = mClients.find(hash)))
+	if(hintsflag & RS_FILE_HINTS_UPLOAD)
 	{
+		std::map<std::string, ftFileProvider *>::iterator sit;
+		sit = mServers.find(hash);
+		if (sit != mServers.end())
+		{
 
 #ifdef MPLEX_DEBUG
-		std::cerr << "ftDataMultiplex::FileDetails()";
-		std::cerr << " Found ftFileCreator!";
-		std::cerr << std::endl;
+			std::cerr << "ftDataMultiplex::FileDetails()";
+			std::cerr << " Found ftFileProvider!";
+			std::cerr << std::endl;
 #endif
 
-		//(cit->second).mModule->FileDetails(info);
-		(cit->second).mCreator->FileDetails(info);
-		return true;
+			(sit->second)->FileDetails(info);
+			return true;
+		}
 	}
+
 
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::FileDetails()";

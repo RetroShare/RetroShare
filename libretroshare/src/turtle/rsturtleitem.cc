@@ -406,7 +406,7 @@ bool RsTurtleSearchResultItem::serialize(void *data,uint32_t& pktsize)
 }
 
 RsTurtleFileMapItem::RsTurtleFileMapItem(void *data,uint32_t pktsize)
-	: RsTurtleItem(RS_TURTLE_SUBTYPE_FILE_MAP)
+	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_MAP)
 {
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "  type = search result" << std::endl ;
@@ -630,7 +630,7 @@ bool RsTurtleFileRequestItem::serialize(void *data,uint32_t& pktsize)
 }
 
 RsTurtleFileRequestItem::RsTurtleFileRequestItem(void *data,uint32_t pktsize)
-	: RsTurtleItem(RS_TURTLE_SUBTYPE_FILE_REQUEST)
+	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_REQUEST)
 {
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "  type = file request" << std::endl ;
@@ -662,7 +662,7 @@ RsTurtleFileDataItem::~RsTurtleFileDataItem()
 	free(chunk_data) ;
 }
 RsTurtleFileDataItem::RsTurtleFileDataItem(void *data,uint32_t pktsize)
-	: RsTurtleItem(RS_TURTLE_SUBTYPE_FILE_DATA)
+	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_DATA)
 {
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "  type = file request" << std::endl ;

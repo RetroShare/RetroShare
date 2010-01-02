@@ -36,6 +36,7 @@ class RsTurtleItem: public RsItem
 
 /***********************************************************************************/
 /*                           Turtle Search Item classes                            */
+/*                                Specific packets                                 */
 /***********************************************************************************/
 
 class RsTurtleSearchResultItem: public RsTurtleItem
@@ -144,14 +145,46 @@ class RsTurtleTunnelOkItem: public RsTurtleItem
 };
 
 /***********************************************************************************/
+/*                           Generic turtle packets for tunnels                    */
+/***********************************************************************************/
+
+class RsTurtleGenericTunnelItem: public RsTurtleItem
+{
+	public:
+		RsTurtleGenericTunnelItem(uint8_t sub_packet_id) : RsTurtleItem(sub_packet_id) {}
+
+		typedef enum { DIRECTION_CLIENT, DIRECTION_SERVER } Direction ;
+
+		/// Does this packet stamps tunnels when it passes through ?
+		/// This is used for keeping trace weither tunnels are active or not.
+		
+		virtual bool shouldStampTunnel() const = 0 ;
+
+		/// All tunnels derived from RsTurtleGenericTunnelItem should have a tunnel id to 
+		/// indicate which tunnel they are travelling through.
+		
+		virtual TurtleTunnelId tunnelId() const = 0 ;
+
+		/// Indicate weither the packet is a client packet (goign back to the
+		/// client) or a server packet (going to the server. Typically file
+		/// requests are server packets, whereas file data are client packets.
+		
+		virtual Direction travelingDirection() const = 0 ;
+};
+
+/***********************************************************************************/
 /*                           Turtle File Transfer item classes                     */
 /***********************************************************************************/
 
-class RsTurtleFileRequestItem: public RsTurtleItem
+class RsTurtleFileRequestItem: public RsTurtleGenericTunnelItem
 {
 	public:
-		RsTurtleFileRequestItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_FILE_REQUEST) {}
+		RsTurtleFileRequestItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_REQUEST) {}
 		RsTurtleFileRequestItem(void *data,uint32_t size) ;		// deserialization
+
+		virtual bool shouldStampTunnel() const { return false ; }
+		virtual TurtleTunnelId tunnelId() const { return tunnel_id ; }
+		virtual Direction travelingDirection() const { return DIRECTION_SERVER ; }
 
 		uint32_t tunnel_id ;		// id of the tunnel to travel through
 		uint64_t chunk_offset ;
@@ -163,12 +196,16 @@ class RsTurtleFileRequestItem: public RsTurtleItem
 		virtual uint32_t serial_size() ; 
 };
 
-class RsTurtleFileDataItem: public RsTurtleItem
+class RsTurtleFileDataItem: public RsTurtleGenericTunnelItem
 {
 	public:
-		RsTurtleFileDataItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_FILE_DATA) {}
+		RsTurtleFileDataItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_DATA) {}
 		~RsTurtleFileDataItem() ;
 		RsTurtleFileDataItem(void *data,uint32_t size) ;		// deserialization
+
+		virtual bool shouldStampTunnel() const { return true ; }
+		virtual TurtleTunnelId tunnelId() const { return tunnel_id ; }
+		virtual Direction travelingDirection() const { return DIRECTION_CLIENT ; }
 
 		uint32_t tunnel_id ;		// id of the tunnel to travel through
 		uint64_t chunk_offset ;	// offset in the file
@@ -181,20 +218,25 @@ class RsTurtleFileDataItem: public RsTurtleItem
 		virtual uint32_t serial_size() ; 
 };
 
-class RsTurtleFileMapItem: public RsTurtleItem			
+class RsTurtleFileMapItem: public RsTurtleGenericTunnelItem			
 {
 	public:
-		RsTurtleFileMapItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_FILE_MAP) {}
+		RsTurtleFileMapItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_MAP) {}
 		RsTurtleFileMapItem(void *data,uint32_t size) ;		// deserialization
 
-		uint32_t tunnel_id ;				// id of the tunnel to travel through. Also used for identifying the file source
-		uint32_t chunk_size ;			// fixed size of chunks, as seen from the source, for the given map.
-		uint32_t nb_chunks ;				// number of chunks in the file.	The last two infos are redundant, as we can recompute 
-												// this info from the file size, but this allows a security check.
+		virtual bool shouldStampTunnel() const { return false ; }
+		virtual TurtleTunnelId tunnelId() const { return tunnel_id ; }
+		virtual Direction travelingDirection() const { return direction ; }
+
+		Direction direction ;	// travel direction for this packet (server/client)
+		uint32_t tunnel_id ;		// id of the tunnel to travel through. Also used for identifying the file source
+		uint32_t chunk_size ;	// fixed size of chunks, as seen from the source, for the given map.
+		uint32_t nb_chunks ;		// number of chunks in the file.	The last two infos are redundant, as we can recompute 
+										// this info from the file size, but this allows a security check.
 												
 		std::vector<uint32_t> compressed_map ;	// Map info for the file in compressed format. Each *bit* in the array uint's says "I have" or "I don't have"
-												// by default, we suppose the peer has all the chunks. This info will thus be and-ed 
-												// with the default file map for this source.
+										// by default, we suppose the peer has all the chunks. This info will thus be and-ed 
+										// with the default file map for this source.
 												
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
 
