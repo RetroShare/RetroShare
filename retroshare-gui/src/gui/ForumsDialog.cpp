@@ -23,6 +23,7 @@
 #include "ForumsDialog.h"
 #include "gui/forums/CreateForum.h"
 #include "gui/forums/CreateForumMsg.h"
+#include "gui/forums/ForumDetails.h"
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
@@ -891,8 +892,8 @@ void ForumsDialog::forumSubscribe(bool subscribe)
 
 void ForumsDialog::showForumDetails()
 {
-#if 0
-static 	ForumDisplay *fui = new ForumDisplay();
+
+  static ForumDetails *fui = new ForumDetails();
 
 	if (mCurrForumId == "")
 	{
@@ -901,7 +902,7 @@ static 	ForumDisplay *fui = new ForumDisplay();
 
 	fui->showDetails(mCurrForumId);
 	fui->show();
-#endif
+
 
 }
 

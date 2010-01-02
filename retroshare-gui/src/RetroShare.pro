@@ -134,6 +134,7 @@ HEADERS +=  rshare.h \
             gui/AddLinksDialog.h \
             gui/LinksDialog.h \
             gui/ForumsDialog.h \
+            gui/forums/ForumDetails.h \
             gui/forums/CreateForum.h \
             gui/forums/CreateForumMsg.h \
             gui/NetworkView.h \
@@ -246,6 +247,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/LinksDialog.ui \
             gui/forums/CreateForum.ui \
             gui/forums/CreateForumMsg.ui \
+            gui/forums/ForumDetails.ui \
             gui/NetworkView.ui \
             gui/TrustView.ui \
             gui/MessengerWindow.ui \
@@ -305,6 +307,7 @@ SOURCES +=  main.cpp \
             gui/MainWindow.cpp \
             gui/LinksDialog.cpp \
             gui/ForumsDialog.cpp \
+            gui/forums/ForumDetails.cpp \
             gui/forums/CreateForum.cpp \
             gui/forums/CreateForumMsg.cpp \
             gui/NetworkView.cpp \
