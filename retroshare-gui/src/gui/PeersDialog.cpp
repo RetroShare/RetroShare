@@ -84,7 +84,7 @@
 
 /** Constructor */
 PeersDialog::PeersDialog(QWidget *parent)
-            : RsAutoUpdatePage(1000,parent),
+            : RsAutoUpdatePage(1500,parent),
               historyKeeper(Rshare::dataDirectory() + "/his1.xml")
 {
   /* Invoke the Qt Designer generated object setup routine */
@@ -106,17 +106,24 @@ PeersDialog::PeersDialog(QWidget *parent)
   
   ui.peertabWidget->addTab(new ProfileWidget(),QString(tr("Profile")));
 
+  ui.peertreeWidget->setColumnCount(8);
+  ui.peertreeWidget->setColumnHidden ( 3, true);
+  ui.peertreeWidget->setColumnHidden ( 4, true);
+  ui.peertreeWidget->setColumnHidden ( 5, true);
+  ui.peertreeWidget->setColumnHidden ( 6, true);
+  ui.peertreeWidget->setColumnHidden ( 7, true);
+  ui.peertreeWidget->sortItems( 2, Qt::AscendingOrder );
 
   /* Set header resize modes and initial section sizes */
 	QHeaderView * _header = ui.peertreeWidget->header () ;
-  _header->setResizeMode (0, QHeaderView::Custom);
+        _header->setResizeMode (0, QHeaderView::Custom);
 	_header->setResizeMode (1, QHeaderView::Interactive);
 	_header->setResizeMode (2, QHeaderView::Interactive);
 
 
 	_header->resizeSection ( 0, 25 );
-	_header->resizeSection ( 1, 100 );
-	_header->resizeSection ( 2, 100 );
+        _header->resizeSection ( 1, 150 );
+        _header->resizeSection ( 2, 150 );
 
 
     // set header text aligment
@@ -173,8 +180,6 @@ PeersDialog::PeersDialog(QWidget *parent)
   QTimer *timer = new QTimer(this);
   timer->connect(timer, SIGNAL(timeout()), this, SLOT(insertChat()));
   timer->start(500); /* half a second */
-
-  ui.peertreeWidget->sortItems( 2, Qt::AscendingOrder );
   
   QMenu *menu = new QMenu();
   menu->addAction(ui.actionAdd_Friend); 
@@ -185,7 +190,6 @@ PeersDialog::PeersDialog(QWidget *parent)
   
   updateAvatar();
   loadmypersonalstatus();
-  
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -268,7 +272,7 @@ void PeersDialog::updateDisplay()
 /* get the list of peers from the RsIface.  */
 void  PeersDialog::insertPeers()
 {
-	std::list<std::string> peers;
+        std::list<std::string> peers;
 	std::list<std::string>::iterator it;
 
 	if (!rsPeers)
@@ -281,6 +285,7 @@ void  PeersDialog::insertPeers()
 
         /* get a link to the table */
         QTreeWidget *peerWidget = ui.peertreeWidget;
+
         QTreeWidgetItem *oldSelect = getCurrentPeer();
         QTreeWidgetItem *newSelect = NULL;
 	time_t now = time(NULL);
@@ -291,23 +296,17 @@ void  PeersDialog::insertPeers()
                 oldId = (oldSelect -> text(7)).toStdString();
         }
 
-        /* remove old items ??? */
-	peerWidget->clear();
-	peerWidget->setColumnCount(3);
-
 	// add self nick and Avatar to Friends.
 	RsPeerDetails pd ;
 
-		if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) 
-		{
-			QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
-                               "color:#32cd32;\">%1</span>");             
-			ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + tr(" (me)"))) ;
+        if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd))
+        {
+                QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
+                       "color:#32cd32;\">%1</span>");
+                ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + tr(" (me)"))) ;
+        }
 
-		}
 
-
-        QList<QTreeWidgetItem *> items;
 	for(it = peers.begin(); it != peers.end(); it++)
 	{
 		RsPeerDetails detail;
@@ -317,7 +316,13 @@ void  PeersDialog::insertPeers()
 		}
 
 		/* make a widget per friend */
-           	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
+                QTreeWidgetItem *item;
+                QList<QTreeWidgetItem *> list = peerWidget->findItems (QString::fromStdString(detail.id), Qt::MatchExactly, 7);
+                if (list.size() == 1) {
+                    item = list.front();
+                } else {
+                    item = new QTreeWidgetItem((QTreeWidget*)0);
+                }
 
 		/* add all the labels */
 		/* First 5 (1-5) Key Items */
@@ -339,14 +344,17 @@ void  PeersDialog::insertPeers()
 		item -> setTextAlignment(1, Qt::AlignCenter | Qt::AlignVCenter );
 
 		/* (1) Person */
-		item -> setText( 2, QString::fromStdString(detail.name) + tr(" - ") +
-            QString::fromStdString(rsMsgs->getCustomStateString(detail.id)));
-    item -> setToolTip( 2, QString::fromStdString(detail.name) + tr(" - ") +
-            QString::fromStdString(rsMsgs->getCustomStateString(detail.id)));
+                if (rsMsgs->getCustomStateString(detail.id) != "") {
+                    item -> setText( 2, QString::fromStdString(detail.name) + tr(" - ") +
+                    QString::fromStdString(rsMsgs->getCustomStateString(detail.id)));
+                    item -> setToolTip( 2, QString::fromStdString(detail.name) + tr(" - ") +
+                    QString::fromStdString(rsMsgs->getCustomStateString(detail.id)));
+                } else {
+                    item -> setText( 2, QString::fromStdString(detail.name));
+                    item -> setToolTip( 2, QString::fromStdString(detail.name));
+                }
 
-		/* (2) Auto Connect */
-		//item -> setText(3, QString::fromStdString(detail.autoconnect));
-		item -> setText(3, status);
+                item -> setText(3, status);
 
 		/* (3) Trust Level */
                 item -> setText(4,QString::fromStdString(
@@ -379,7 +387,7 @@ void  PeersDialog::insertPeers()
 			item -> setText(7, QString::fromStdString(detail.id));
                         if ((oldSelect) && (oldId == detail.id))
                         {
-                                newSelect = item;
+                                peerWidget->setCurrentItem(item);
                         }
 		}
 
@@ -424,7 +432,7 @@ void  PeersDialog::insertPeers()
 			  //item -> setBackground(i,QBrush(Qt::cyan));
 			  item -> setTextColor(i,(Qt::darkCyan));
 			  QFont font ;
-        font.setBold(true);
+                          font.setBold(true);
 			  item -> setFont(i,font);
 			  item -> setIcon(0,(QIcon(IMAGE_AVAIBLE)));
 			}
@@ -450,17 +458,8 @@ void  PeersDialog::insertPeers()
 		}
 
 		/* add to the list */
-		items.append(item);
+                peerWidget->addTopLevelItem(item);
 	}
-
-	/* add the items in! */
-	peerWidget->insertTopLevelItems(0, items);
-        if (newSelect)
-        {
-                peerWidget->setCurrentItem(newSelect);
-        }
-
-	peerWidget->update(); /* update display */
 }
 
 /* Utility Fns */
