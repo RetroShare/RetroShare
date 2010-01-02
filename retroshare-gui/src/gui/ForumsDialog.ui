@@ -537,17 +537,14 @@
          </property>
          <column>
           <property name="text">
-           <string>Forum Name</string>
+           <string>RetroShare Forums</string>
           </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Popularity</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Posts</string>
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
           </property>
          </column>
         </widget>
