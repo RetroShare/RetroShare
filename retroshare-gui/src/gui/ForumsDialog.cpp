@@ -114,6 +114,7 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 
    mForumNameFont = QFont("Times", 12, QFont::Bold);
    ui.forumName->setFont(mForumNameFont);
+   ui.threadTitle->setFont(mForumNameFont);
   
 
   /* Hide platform specific features */
@@ -126,7 +127,7 @@ void ForumsDialog::forumListCustomPopupMenu( QPoint point )
 {
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
-
+      
       QAction *subForumAct = new QAction(QIcon(IMAGE_SUBSCRIBE), tr( "Subscribe to Forum" ), this );
       connect( subForumAct , SIGNAL( triggered() ), this, SLOT( subscribeToForum() ) );
       
@@ -146,6 +147,7 @@ void ForumsDialog::forumListCustomPopupMenu( QPoint point )
       contextMnu.addAction( newForumAct );
       contextMnu.addAction( detailsForumAct );
       contextMnu.exec( mevent->globalPos() );
+
 
 }
 
@@ -341,7 +343,7 @@ void ForumsDialog::insertForums()
 				QDateTime qtime;
 				qtime.setTime_t(it->lastPost);
 				QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
-				item -> setText(3, timestamp);
+				item -> setText(1, timestamp);
 			}
 			// Id.
 			item -> setText(4, QString::fromStdString(it->forumId));
@@ -771,6 +773,7 @@ void ForumsDialog::insertPost()
 		 */
 
 		ui.postText->setText("");
+		ui.threadTitle->setText("");
 		return;
 	}
 
@@ -781,8 +784,17 @@ void ForumsDialog::insertPost()
 		ui.postText->setText("");
 		return;
 	}
+	
+	/* get the Thread */
+	ForumMsgInfo title;
+	if (!rsForums->getForumMessage(mCurrForumId, mCurrPostId, title))
+	{
+		ui.threadTitle->setText("");
+		return;
+	}
 
 	ui.postText->setHtml(QString::fromStdWString(msg.msg));
+	ui.threadTitle->setText(QString::fromStdWString(title.title));
 }
 
 
