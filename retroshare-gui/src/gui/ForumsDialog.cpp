@@ -333,9 +333,8 @@ void ForumsDialog::insertForums()
 			{
 				std::ostringstream out;
 				out << it->pop;
-				item -> setText(0,tr("Popularity: ") + QString::fromStdString(out.str()));
+				item -> setToolTip(0, tr("Popularity: ") + QString::fromStdString(out.str()));
 			}
-			//item -> setText(2, QString::fromStdWString(it->forumName));
 
 			// Date 
 			{
@@ -380,7 +379,6 @@ void ForumsDialog::insertForums()
 				out << it->pop;
 				item -> setToolTip(0, tr("Popularity: ") + QString::fromStdString(out.str()));
 			}
-			//item -> setText(2, QString::fromStdWString(it->forumName));
 
 			// Date 
 			{
@@ -431,6 +429,8 @@ void ForumsDialog::insertForums()
 		}
 		else
 		{
+      /* popular forum */
+		
 			/* Name, 
 			 * Type,
 			 * Rank,
@@ -460,7 +460,6 @@ void ForumsDialog::insertForums()
 				out << it->pop;
 				item -> setToolTip(0, tr("Popularity: ") + QString::fromStdString(out.str()));
 			}
-			//item -> setText(2, QString::fromStdWString(it->forumName));
 
 			// Date 
 			{
