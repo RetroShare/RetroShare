@@ -238,7 +238,7 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 	if (offline)
 	{
 	    	QString offlineMsg = "<br>\n<span style=\"color:#1D84C9\"><strong> ----- PEER OFFLINE (Chat will be lost) -----</strong></span> \n<br>";
-		ui.textBrowser->setHtml(ui.textBrowser->toHtml() + offlineMsg);
+                ui.textBrowser->append(offlineMsg);
 	}
 	
 
