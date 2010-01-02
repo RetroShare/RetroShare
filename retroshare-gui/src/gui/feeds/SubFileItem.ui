@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>560</width>
+    <width>469</width>
     <height>82</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -87,7 +93,7 @@ background: white;}
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>100</width>
+            <width>20</width>
             <height>26</height>
            </size>
           </property>
@@ -185,11 +191,11 @@ background: white;}
            <enum>Qt::Horizontal</enum>
           </property>
           <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
+           <enum>QSizePolicy::Expanding</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>398</width>
+            <width>50</width>
             <height>17</height>
            </size>
           </property>
