@@ -571,6 +571,12 @@ void ForumsDialog::insertThreads()
 	{
 		/* not an actual forum - clear */
 		ui.threadTreeWidget->clear();
+		/* when no Thread selected - clear */
+		ui.forumName->clear();
+		ui.threadTitle->clear();
+		ui.postText->clear();
+		/* clear last stored forumID */
+		mCurrForumId = "";
 		std::cerr << "ForumsDialog::insertThreads() Current Thread Invalid" << std::endl;
 
 		return;
@@ -728,7 +734,6 @@ void ForumsDialog::insertThreads()
 					rsForums->getForumMessage(fId,mit->msgId,msginfo) ;
 
 					child->setText(1, QString::fromStdWString(mit->title));
-					//child->setText(2, QString::fromStdString(msginfo.srcId));
 					child->setText(2, QString::fromStdString(rsPeers->getPeerName(msginfo.srcId)));
 					child->setText(3, "signed");
 					child->setText(4, QString::fromStdString(mit->parentId));
@@ -751,6 +756,8 @@ void ForumsDialog::insertThreads()
 
 	/* add all messages in! */
 	ui.threadTreeWidget->clear();
+	ui.postText->clear();
+	ui.threadTitle->clear();
 	ui.threadTreeWidget->insertTopLevelItems(0, items);
 
 }
