@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>427</width>
-    <height>348</height>
+    <width>436</width>
+    <height>355</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,7 @@
      <widget class="QWidget" name="tab">
       <attribute name="icon">
        <iconset resource="../images.qrc">
-        <normaloff>:/images/konversation16.png</normaloff>:/images/konversation16.png</iconset>
+        <normaloff>:/images/info16.png</normaloff>:/images/info16.png</iconset>
       </attribute>
       <attribute name="title">
        <string>Forum Details</string>
@@ -100,6 +100,56 @@
           </item>
          </layout>
         </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="Seite">
+      <attribute name="icon">
+       <iconset resource="../images.qrc">
+        <normaloff>:/images/encrypted22.png</normaloff>:/images/encrypted22.png</iconset>
+      </attribute>
+      <attribute name="title">
+       <string>Security</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Allowed Messages</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="radioButton_authd">
+            <property name="text">
+             <string>Authemticated Messages</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="radioButton_anonymous">
+            <property name="text">
+             <string>Anonymous Messages</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>358</width>
+           <height>172</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>

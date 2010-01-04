@@ -54,6 +54,9 @@ ForumDetails::ForumDetails(QWidget *parent, Qt::WFlags flags)
   ui.postline ->setReadOnly(true);
   ui.IDline ->setReadOnly(true);
   ui.DescriptiontextEdit ->setReadOnly(true);
+  
+  ui.radioButton_authd->setEnabled(false);
+  ui.radioButton_anonymous->setEnabled(false);
 }
 
 
@@ -105,29 +108,43 @@ void ForumDetails::loadDialog()
 	for(it = forumList.begin(); it != forumList.end(); it++)
 	{
 	
-	// Set Forum Name
-	ui.nameline->setText(QString::fromStdWString(fi.forumName));
+    // Set Forum Name
+    ui.nameline->setText(QString::fromStdWString(fi.forumName));
 
-	// Set Popularity
-	{
-    std::ostringstream out;
-    out << it->pop;
-    ui.popline -> setText(QString::fromStdString(out.str()));
-	}
+    // Set Popularity
+    {
+      std::ostringstream out;
+      out << it->pop;
+      ui.popline -> setText(QString::fromStdString(out.str()));
+    }
 	
-	// Set Last Post Date 
-	{
-		QDateTime qtime;
-		qtime.setTime_t(it->lastPost);
-		QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
-		ui.postline -> setText(timestamp);
-	}
+    // Set Last Post Date 
+    {
+      QDateTime qtime;
+      qtime.setTime_t(it->lastPost);
+      QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
+      ui.postline -> setText(timestamp);
+    }
 
-  // Set Forum ID
-	ui.IDline->setText(QString::fromStdString(fi.forumId));
+    // Set Forum ID
+    ui.IDline->setText(QString::fromStdString(fi.forumId));
 	
-	// Set Forum Description
-	ui.DescriptiontextEdit->setText(QString::fromStdWString(fi.forumDesc));
+    // Set Forum Description
+    ui.DescriptiontextEdit->setText(QString::fromStdWString(fi.forumDesc));
+        
+		
+      if (fi.forumFlags & RS_DISTRIB_AUTHEN_REQ)
+      {
+        ui.radioButton_authd->setChecked(true);
+        ui.radioButton_anonymous->setChecked(false);
+      }
+      if (fi.forumFlags & RS_DISTRIB_AUTHEN_ANON)
+      {
+        ui.radioButton_authd->setChecked(false);
+        ui.radioButton_anonymous->setChecked(true);
+      }
+
+
 	
 	}
 
