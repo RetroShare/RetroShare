@@ -19,7 +19,6 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
 #include "ForumsDialog.h"
 #include "gui/forums/CreateForum.h"
 #include "gui/forums/CreateForumMsg.h"
@@ -29,21 +28,25 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsmsgs.h"
 #include "rsiface/rsforums.h"
+
 #include <sstream>
 #include <algorithm>
 
 #include <QContextMenuEvent>
-#include <QMenu>
 #include <QCursor>
-#include <QPoint>
+#include <QDateTime>
+#include <QFile>
+#include <QFileInfo>
+#include <QMenu>
 #include <QMouseEvent>
 #include <QPixmap>
+#include <QPoint>
 #include <QPrintDialog>
 #include <QPrinter>
-#include <QDateTime>
 #include <QHeaderView>
 #include <QTimer>
 #include <QMessageBox>
+#include <QtGui>
 
 /* Images for context menu icons */
 #define IMAGE_MESSAGE        ":/images/folder-draft.png"
@@ -96,8 +99,6 @@ ForumsDialog::ForumsDialog(QWidget *parent)
   timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
   timer->start(1000);
 
-
-
    /* Set header resize modes and initial section sizes */
 	QHeaderView * ftheader = ui.forumTreeWidget->header () ;
 	ftheader->setResizeMode (0, QHeaderView::Interactive);
@@ -115,6 +116,8 @@ ForumsDialog::ForumsDialog(QWidget *parent)
    mForumNameFont = QFont("Times", 12, QFont::Bold);
    ui.forumName->setFont(mForumNameFont);
    ui.threadTitle->setFont(mForumNameFont);
+   
+   loadForumEmoticons();
   
 
   /* Hide platform specific features */
@@ -799,8 +802,19 @@ void ForumsDialog::insertPost()
 		ui.threadTitle->setText("");
 		return;
 	}
+	
+	QString extraTxt;
+	extraTxt += QString::fromStdWString(msg.msg);
+	
+  QHashIterator<QString, QString> i(smileys);
+	while(i.hasNext())
+	{
+			i.next();
+			foreach(QString code, i.key().split("|"))
+			extraTxt.replace(code, "<img src=\"" + i.value() + "\" />");
+		}
 
-	ui.postText->setHtml(QString::fromStdWString(msg.msg));
+	ui.postText->setHtml(extraTxt);
 	ui.threadTitle->setText(QString::fromStdWString(title.title));
 }
 
@@ -922,6 +936,68 @@ void ForumsDialog::showForumDetails()
 	fui->show();
 
 
+}
+
+void ForumsDialog::loadForumEmoticons()
+{
+	QString sm_codes;
+	#if defined(Q_OS_WIN32)
+	QFile sm_file(QApplication::applicationDirPath() + "/emoticons/emotes.acs");
+	#else
+	QFile sm_file(QString(":/smileys/emotes.acs"));
+	#endif
+	if(!sm_file.open(QIODevice::ReadOnly))
+	{
+		std::cerr << "Could not open resouce file :/emoticons/emotes.acs" << std::endl ;
+		return ;
+	}
+	sm_codes = sm_file.readAll();
+	sm_file.close();
+	sm_codes.remove("\n");
+	sm_codes.remove("\r");
+	int i = 0;
+	QString smcode;
+	QString smfile;
+	while(sm_codes[i] != '{')
+	{
+		i++;
+
+	}
+	while (i < sm_codes.length()-2)
+	{
+		smcode = "";
+		smfile = "";
+		while(sm_codes[i] != '\"')
+		{
+			i++;
+		}
+		i++;
+		while (sm_codes[i] != '\"')
+		{
+			smcode += sm_codes[i];
+			i++;
+
+		}
+		i++;
+
+		while(sm_codes[i] != '\"')
+		{
+			i++;
+		}
+		i++;
+		while(sm_codes[i] != '\"' && sm_codes[i+1] != ';')
+		{
+			smfile += sm_codes[i];
+			i++;
+		}
+		i++;
+		if(!smcode.isEmpty() && !smfile.isEmpty())
+			#if defined(Q_OS_WIN32)
+		    smileys.insert(smcode, smfile);
+	        #else
+			smileys.insert(smcode, ":/"+smfile);
+			#endif
+	}
 }
 
 

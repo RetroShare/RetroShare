@@ -34,10 +34,12 @@ public:
 
   void insertForums();
   void insertPost();
+  
+  void loadForumEmoticons();
 
 private slots:
 
- void insertThreads();
+  void insertThreads();
   /** Create the context popup menu and it's submenus */
   void forumListCustomPopupMenu( QPoint point ); 
   void threadListCustomPopupMenu( QPoint point );  
@@ -72,7 +74,7 @@ private slots:
   void unsubscribeToForum();
 
   void showForumDetails();
-
+  
 private:
 
   void forumSubscribe(bool subscribe);
@@ -84,6 +86,8 @@ private:
   
   QFont mForumNameFont;
   QFont itemFont;
+  
+  QHash<QString, QString> smileys;
 
   /** Qt Designer generated object */
   Ui::ForumsDialog ui;
