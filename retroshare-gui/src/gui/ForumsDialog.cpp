@@ -670,7 +670,15 @@ void ForumsDialog::insertThreads()
 		item->setText(2, tr("Anonymous"));
 		}
 		
-		item->setText(3, "signed");
+		if (msginfo.msgflags & RS_DISTRIB_AUTHEN_REQ)
+    {
+    item->setText(3, tr("signed"));
+    }
+    else
+    {
+    item->setText(3, tr("none"));    
+    }
+    
 		item->setText(4, QString::fromStdString(tit->parentId));
 		item->setText(5, QString::fromStdString(tit->msgId));
 
@@ -736,9 +744,26 @@ void ForumsDialog::insertThreads()
 					ForumMsgInfo msginfo ;
 					rsForums->getForumMessage(fId,mit->msgId,msginfo) ;
 
-					child->setText(1, QString::fromStdWString(mit->title));
-					child->setText(2, QString::fromStdString(rsPeers->getPeerName(msginfo.srcId)));
-					child->setText(3, "signed");
+          child->setText(1, QString::fromStdWString(mit->title));
+          
+          if (rsPeers->getPeerName(msginfo.srcId) !="")
+          {
+          child->setText(2, QString::fromStdString(rsPeers->getPeerName(msginfo.srcId)));
+          }
+          else
+          {
+          child->setText(2, tr("Anonymous"));
+          }
+		
+          if (msginfo.msgflags & RS_DISTRIB_AUTHEN_REQ)
+          {
+          child->setText(3, tr("signed"));
+          }
+          else
+          {
+          child->setText(3, tr("none"));    
+          }
+
 					child->setText(4, QString::fromStdString(mit->parentId));
 					child->setText(5, QString::fromStdString(mit->msgId));
 
