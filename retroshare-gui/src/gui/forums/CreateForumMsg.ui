@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>CreateForumMsg</class>
- <widget class="QMainWindow" name="CreateForumMsg" >
-  <property name="geometry" >
+ <widget class="QMainWindow" name="CreateForumMsg">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,32 +10,32 @@
     <height>353</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Post Forum Message</string>
   </property>
-  <property name="windowIcon" >
-   <iconset resource="../images.qrc" >
+  <property name="windowIcon">
+   <iconset resource="../images.qrc">
     <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
-  <property name="toolButtonStyle" >
+  <property name="toolButtonStyle">
    <enum>Qt::ToolButtonTextUnderIcon</enum>
   </property>
-  <widget class="QWidget" name="centralwidget" >
-   <layout class="QGridLayout" >
-    <item row="0" column="0" >
-     <layout class="QVBoxLayout" >
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout">
+    <item row="0" column="0">
+     <layout class="QVBoxLayout">
       <item>
-       <layout class="QHBoxLayout" >
+       <layout class="QHBoxLayout">
         <item>
-         <widget class="QLabel" name="label_2" >
-          <property name="text" >
+         <widget class="QLabel" name="label_2">
+          <property name="text">
            <string>Forum</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="forumName" >
-          <property name="enabled" >
+         <widget class="QLineEdit" name="forumName">
+          <property name="enabled">
            <bool>false</bool>
           </property>
          </widget>
@@ -42,34 +43,34 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" >
+       <layout class="QHBoxLayout">
         <item>
-         <widget class="QLabel" name="label" >
-          <property name="text" >
+         <widget class="QLabel" name="label">
+          <property name="text">
            <string>Forum Post Subject</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="forumSubject" />
+         <widget class="QLineEdit" name="forumSubject"/>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" >
+       <layout class="QHBoxLayout">
         <item>
-         <widget class="QLabel" name="label_5" >
-          <property name="text" >
+         <widget class="QLabel" name="label_5">
+          <property name="text">
            <string>Forum Post</string>
           </property>
          </widget>
         </item>
         <item>
          <spacer>
-          <property name="orientation" >
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" stdset="0" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>40</width>
             <height>20</height>
@@ -78,58 +79,75 @@
          </spacer>
         </item>
         <item>
-         <widget class="QCheckBox" name="signBox" >
-          <property name="text" >
+         <widget class="QCheckBox" name="signBox">
+          <property name="text">
            <string>Sign Message</string>
           </property>
-          <property name="checked" >
+          <property name="checked">
            <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="emoticonButton">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/smileys/smile.png</normaloff>:/smileys/smile.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
           </property>
          </widget>
         </item>
        </layout>
       </item>
       <item>
-       <widget class="QTextEdit" name="forumMessage" />
+       <widget class="QTextEdit" name="forumMessage"/>
       </item>
      </layout>
     </item>
    </layout>
   </widget>
-  <widget class="QToolBar" name="toolBar" >
-   <property name="windowTitle" >
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
     <string>toolBar</string>
    </property>
-   <attribute name="toolBarArea" >
+   <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
-   <attribute name="toolBarBreak" >
+   <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="postmessage_action" />
-   <addaction name="close_action" />
+   <addaction name="postmessage_action"/>
+   <addaction name="close_action"/>
   </widget>
-  <action name="postmessage_action" >
-   <property name="icon" >
-    <iconset resource="../images.qrc" >
+  <action name="postmessage_action">
+   <property name="icon">
+    <iconset resource="../images.qrc">
      <normaloff>:/images/mail_send24.png</normaloff>:/images/mail_send24.png</iconset>
    </property>
-   <property name="text" >
+   <property name="text">
     <string>Post Forum Msg</string>
    </property>
   </action>
-  <action name="close_action" >
-   <property name="icon" >
-    <iconset resource="../images.qrc" >
+  <action name="close_action">
+   <property name="icon">
+    <iconset resource="../images.qrc">
      <normaloff>:/images/button_cancel.png</normaloff>:/images/button_cancel.png</iconset>
    </property>
-   <property name="text" >
+   <property name="text">
     <string>Close</string>
    </property>
   </action>
  </widget>
  <resources>
-  <include location="../images.qrc" />
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

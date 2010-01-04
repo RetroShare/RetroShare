@@ -35,18 +35,25 @@ class CreateForumMsg : public QMainWindow
 public:
   CreateForumMsg(std::string fId, std::string pId);
 
-void  newMsg(); /* cleanup */
+  void  newMsg(); /* cleanup */
+  
+  void loadEmoticonsForums();
 
 private slots:
 
 	/* actions to take.... */
-void  createMsg();
-void  cancelMsg();
+  void  createMsg();
+  void  cancelMsg();
+
+  void smileyWidgetForums();
+	void addSmileys();
 
 private:
 
   std::string mForumId;
   std::string mParentId;
+  
+  QHash<QString, QString> smileys;
 
   /** Qt Designer generated object */
   Ui::CreateForumMsg ui;
