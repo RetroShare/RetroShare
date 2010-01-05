@@ -17,7 +17,7 @@
 "(P)|(p)":"smileys/camera.png";
 "(C)|(c)":"smileys/coffee.png";
 "*JOKINGLY*|:))|:-))":"smileys/laugh.png";
-"/<B>|/bj|/baijiu":"smileys/liquor.png";
+"bj|baijiu":"smileys/liquor.png";
 "(L)|(l)":"smileys/love.png";
 "(U)|(u)":"smileys/love-over.png";
 "(S)":"smileys/moon.png";
@@ -34,5 +34,14 @@
 "(O)|(o)":"smileys/clock.png";
 "(um)":"smileys/umbrella.png";
 "(6)":"smileys/face-devil-grin48.png";
-
+"(st)":"smileys/rain.png"
+"(li)":"smileys/thunder.png"
+"(S)":"smileys/moon.png"
+"<~>":"smileys/cloudy.png"
+"*-:)":"smileys/lamp.png"
+"(Y)|(y)":"smileys/good.png"
+"(D)|(d)":"smileys/drink.png"
+"(ap)":"smileys/airplane.png"
+"(tu)":"smileys/turtle.png"
+":-t|:-T":"smileys/time-out.png"
 }
