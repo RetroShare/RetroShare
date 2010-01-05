@@ -47,7 +47,7 @@ ChannelFeed::ChannelFeed(QWidget *parent)
   	/* Invoke the Qt Designer generated object setup routine */
   	setupUi(this);
 
-  	connect(chanButton, SIGNAL(clicked()), this, SLOT(createChannel()));
+  	connect(actionCreate_Channel, SIGNAL(triggered()), this, SLOT(createChannel()));
   	connect(postButton, SIGNAL(clicked()), this, SLOT(sendMsg()));
   	connect(subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeChannel ( void ) ) );
   	connect(unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
@@ -171,6 +171,11 @@ ChannelFeed::ChannelFeed(QWidget *parent)
   item2->setForeground(QBrush(QColor(79, 79, 79)));
   item3->setForeground(QBrush(QColor(79, 79, 79)));
   item4->setForeground(QBrush(QColor(79, 79, 79)));
+  
+  QMenu *channelmenu = new QMenu();
+  channelmenu->addAction(actionCreate_Channel); 
+  channelmenu->addSeparator();
+  channelpushButton->setMenu(channelmenu);
 
 	
 	QTimer *timer = new QTimer(this);
@@ -718,3 +723,4 @@ void ChannelFeed::toggleSelection(const QModelIndex &index)
 	if (index.child(0, 0).isValid())
 		selectionModel->select(index, QItemSelectionModel::Toggle);
 }
+

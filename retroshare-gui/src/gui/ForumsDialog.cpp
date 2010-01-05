@@ -80,7 +80,7 @@ ForumsDialog::ForumsDialog(QWidget *parent)
   connect( ui.forumTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( forumListCustomPopupMenu( QPoint ) ) );
   connect( ui.threadTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( threadListCustomPopupMenu( QPoint ) ) );
 
-  connect(ui.newForumButton, SIGNAL(clicked()), this, SLOT(newforum()));
+  connect(ui.actionCreate_Forum, SIGNAL(triggered()), this, SLOT(newforum()));
   connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(createmessage()));
   connect(ui.newthreadButton, SIGNAL(clicked()), this, SLOT(showthread()));
 
@@ -118,6 +118,11 @@ ForumsDialog::ForumsDialog(QWidget *parent)
    ui.threadTitle->setFont(mForumNameFont);
    
    loadForumEmoticons();
+   
+  QMenu *forummenu = new QMenu();
+  forummenu->addAction(ui.actionCreate_Forum); 
+  forummenu->addSeparator();
+  ui.forumpushButton->setMenu(forummenu);
   
 
   /* Hide platform specific features */
