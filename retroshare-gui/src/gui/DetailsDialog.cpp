@@ -136,7 +136,12 @@ void DetailsDialog::setSources(const QString & sources)
 
 void DetailsDialog::setDatarate(const double & datarate) 
 {
-	ui.datarate_line->setText(QString::number(datarate));
+      QString temp;
+			temp.clear();
+			temp.sprintf("%.2f", datarate/1024.);
+			temp += " KB/s";
+
+      ui.datarate_line->setText(temp);
 }
 
 void DetailsDialog::setCompleted(const qulonglong & completed) 
