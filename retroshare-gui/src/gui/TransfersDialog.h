@@ -87,18 +87,18 @@ class TransfersDialog : public RsAutoUpdatePage
 
     /** modify download priority actions */
     void priorityLow();
-	void priorityNormal();
-	void priorityHigh();
-	void priorityAuto();
+    void priorityNormal();
+    void priorityHigh();
+    void priorityAuto();
 
-	void chunkRandom();
-	void chunkStreaming();
+    void chunkRandom();
+    void chunkStreaming();
 
-	/** save sort indicators for next transfers display */
-	void saveSortIndicatorDwl(int logicalIndex, Qt::SortOrder order);
-	void saveSortIndicatorUpl(int logicalIndex, Qt::SortOrder order);
+    /** save sort indicators for next transfers display */
+    void saveSortIndicatorDwl(int logicalIndex, Qt::SortOrder order);
+    void saveSortIndicatorUpl(int logicalIndex, Qt::SortOrder order);
 	
-	//void setTaskGraphPainterWidget (const QModelIndex& index);
+    void showDetailsDialog();
 
 	signals:
 		void playFiles(QStringList files);
@@ -149,6 +149,7 @@ class TransfersDialog : public RsAutoUpdatePage
 		QAction *priorityAutoAct;
 		QAction *chunkRandomAct;
 		QAction *chunkStreamingAct;
+		QAction *detailsfileAct;
 
 	void getIdOfSelectedItems(QList<QStandardItem *>& items);
     bool controlTransferFile(uint32_t flags);

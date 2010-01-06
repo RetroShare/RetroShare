@@ -118,6 +118,7 @@ HEADERS +=  rshare.h \
             gui/notifyqt.h \
             control/bandwidthevent.h \
             control/eventtype.h \
+            gui/DetailsDialog.h \
             gui/DLListDelegate.h \
             gui/ULListDelegate.h \
             gui/StartDialog.h \
@@ -260,6 +261,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/help/browser/helpbrowser.ui \
             gui/HelpDialog.ui \
             gui/InfoDialog.ui \
+            gui/DetailsDialog.ui \
             gui/bwgraph/bwgraph.ui \
             gui/profile/ProfileView.ui \
             gui/profile/ProfileEdit.ui \
@@ -295,6 +297,7 @@ SOURCES +=  main.cpp \
             rshare.cpp \
             gui/notifyqt.cpp \
             gui/AboutDialog.cpp \
+            gui/DetailsDialog.cpp \
             gui/DLListDelegate.cpp \
             gui/ULListDelegate.cpp \
             gui/StartDialog.cpp \

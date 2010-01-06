@@ -27,6 +27,7 @@
 #include "rshare.h"
 #include "TransfersDialog.h"
 #include "RetroShareLinkAnalyzer.h"
+#include "DetailsDialog.h"
 #include "DLListDelegate.h"
 #include "ULListDelegate.h"
 #include "FileTransferInfoWidget.h"
@@ -215,8 +216,6 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
-      //showdowninfoAct = new QAction(QIcon(IMAGE_INFO), tr( "Details..." ), this );
-      //connect( showdowninfoAct , SIGNAL( triggered() ), this, SLOT( showDownInfoWindow() ) );
 
       /* check which item is selected
        * - if it is completed - play should appear in menu
@@ -262,6 +261,9 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 
       previewfileAct = new QAction(QIcon(IMAGE_PREVIEW), tr("Preview File"), this);
       connect(previewfileAct, SIGNAL(triggered()), this, SLOT(previewTransfer()));
+      
+      detailsfileAct = new QAction(QIcon(IMAGE_INFO), tr("Details..."), this);
+      connect(detailsfileAct, SIGNAL(triggered()), this, SLOT(showDetailsDialog()));
 
       clearcompletedAct = new QAction(QIcon(IMAGE_CLEARCOMPLETED), tr( "Clear Completed" ), this );
       connect( clearcompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
@@ -328,6 +330,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       contextMnu.addAction( openfileAct);
       contextMnu.addAction( previewfileAct);
       contextMnu.addAction( openfolderAct);
+      contextMnu.addAction( detailsfileAct);
       contextMnu.addSeparator();
       contextMnu.addAction( clearcompletedAct);
       contextMnu.addSeparator();
@@ -337,7 +340,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
       contextMnu.addAction( clearQueuedDwlAct);
       contextMnu.addAction( clearQueueAct);
       contextMnu.addSeparator();
-		contextMnu.addMenu( viewMenu);
+      contextMnu.addMenu( viewMenu);
 
       contextMnu.exec( mevent->globalPos() );
 }
@@ -1036,6 +1039,69 @@ void TransfersDialog::copyLink ()
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setText(analyzer.getRetroShareLink ());
 }
+
+void TransfersDialog::showDetailsDialog()
+{
+    static DetailsDialog *detailsdlg = new DetailsDialog();
+    
+    QModelIndexList lst = ui.downloadList->selectionModel ()->selectedIndexes ();
+    RetroShareLinkAnalyzer analyzer;
+
+    for (int i = 0; i < lst.count (); i++)
+    {
+        if (lst[i].column () == 0)
+        {
+            QModelIndex& ind = lst[i];
+            QString fhash = ind.model ()->data (ind.model ()->index (ind.row (), ID )).toString() ;
+            QString fsize = ind.model ()->data (ind.model ()->index (ind.row (), SIZE)).toString() ;
+            QString fname = ind.model ()->data (ind.model ()->index (ind.row (), NAME)).toString() ;
+            QString fstatus = ind.model ()->data (ind.model ()->index (ind.row (), STATUS)).toString() ;
+            QString fpriority = ind.model ()->data (ind.model ()->index (ind.row (), PRIORITY)).toString() ;
+            QString fsources= ind.model ()->data (ind.model ()->index (ind.row (), SOURCES)).toString() ;
+            
+            qulonglong filesize = ind.model ()->data (ind.model ()->index (ind.row (), SIZE)).toULongLong() ;
+            double fdatarate = ind.model ()->data (ind.model ()->index (ind.row (), DLSPEED)).toDouble() ;            
+            qulonglong fcompleted = ind.model ()->data (ind.model ()->index (ind.row (), COMPLETED)).toULongLong() ;
+            qulonglong fremaining = ind.model ()->data (ind.model ()->index (ind.row (), REMAINING)).toULongLong() ;
+            
+            // Set Details.. Window Title
+            detailsdlg->setWindowTitle(tr("Details:") + fname);
+
+            // General GroupBox
+            detailsdlg->setHash(fhash);
+            detailsdlg->setFileName(fname);
+            detailsdlg->setSize(filesize);
+            detailsdlg->setStatus(fstatus);
+            detailsdlg->setPriority(fpriority);
+            detailsdlg->setType(QFileInfo(fname).suffix());
+            
+            // Transfer GroupBox
+            detailsdlg->setSources(fsources);
+            detailsdlg->setDatarate(fdatarate);
+            detailsdlg->setCompleted(fcompleted);
+            detailsdlg->setRemaining(fremaining);
+            
+            // retroshare link(s) Tab
+            analyzer.setRetroShareLink (fname, fsize, fhash);
+            detailsdlg->setLink(analyzer.getRetroShareLink ());
+            
+            detailsdlg->show();
+            break;
+        }
+    }
+}
+
+// display properties of selected items
+/*void DownloadingTorrents::propertiesSelection(){
+  QModelIndexList selectedIndexes = downloadList->selectionModel()->selectedIndexes();
+  foreach(const QModelIndex &index, selectedIndexes){
+    if(index.column() == NAME){
+      showProperties(index);
+    }
+  }
+}*/
+
+
 
 void TransfersDialog::pasteLink()
 {
