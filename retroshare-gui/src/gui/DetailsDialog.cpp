@@ -96,12 +96,32 @@ DetailsDialog::show()
 
 void DetailsDialog::closeEvent (QCloseEvent * event)
 {
- QWidget::closeEvent(event);
+  QWidget::closeEvent(event);
+  
+  int c;
+  c = CommentsModel->rowCount();
+  CommentsModel->removeRows(0,c);
 }
 
 void DetailsDialog::setFileName(const QString & filename) 
 {
-	ui.name_label_2->setText(filename);
+    int c;
+    QModelIndex index;
+    
+    c = CommentsModel->rowCount();
+    CommentsModel->insertRow(c);
+    
+    index = CommentsModel->index(c, 0);
+    CommentsModel->setData(index, tr("Not Rated"));
+    
+    index = CommentsModel->index(c, 1);
+    CommentsModel->setData(index, tr("No Comments"));
+    
+    index = CommentsModel->index(c, 2);
+    CommentsModel->setData(index, filename);
+    
+    ui.name_label_2->setText(filename);
+    
 }
 
 void DetailsDialog::setHash(const QString & hash) 
