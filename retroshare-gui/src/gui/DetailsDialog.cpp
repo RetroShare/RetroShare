@@ -98,9 +98,6 @@ void DetailsDialog::closeEvent (QCloseEvent * event)
 {
   QWidget::closeEvent(event);
   
-  int c;
-  c = CommentsModel->rowCount();
-  CommentsModel->removeRows(0,c);
 }
 
 void DetailsDialog::setFileName(const QString & filename) 
@@ -108,6 +105,10 @@ void DetailsDialog::setFileName(const QString & filename)
     int c;
     QModelIndex index;
     
+    c = CommentsModel->rowCount();
+    CommentsModel->removeRows(0,c);
+    
+    {
     c = CommentsModel->rowCount();
     CommentsModel->insertRow(c);
     
@@ -119,6 +120,7 @@ void DetailsDialog::setFileName(const QString & filename)
     
     index = CommentsModel->index(c, 2);
     CommentsModel->setData(index, filename);
+    }
     
     ui.name_label_2->setText(filename);
     
