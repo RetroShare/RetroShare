@@ -538,20 +538,27 @@
       <string>Misc</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
+      <item row="1" column="0">
        <widget class="QCheckBox" name="checkQuit">
         <property name="text">
          <string>Do not show the Quit RetroShare MessageBox</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="0">
        <widget class="QCheckBox" name="checkClosetoTray">
         <property name="text">
          <string>Do not Minimize to Tray Icon</string>
         </property>
         <property name="checked">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkBoxWizard">
+        <property name="text">
+         <string>Do not run Quick Start Wizard on RetroShare start</string>
         </property>
        </widget>
       </item>

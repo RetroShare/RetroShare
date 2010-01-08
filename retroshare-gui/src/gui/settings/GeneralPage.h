@@ -50,6 +50,7 @@ public:
   bool startMinimized() const;
   bool closetoTray() const;
   bool quit() const;
+  bool firstRun() const;
 
 
 private slots:

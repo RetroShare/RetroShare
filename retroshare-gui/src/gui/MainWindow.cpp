@@ -112,6 +112,13 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     /* Create RshareSettings object */
     _settings = new RshareSettings();
+    
+    if (!_settings->value(QString::fromUtf8("FirstRun"), false).toBool())
+    {
+    _settings->setValue(QString::fromUtf8("FirstRun"), false);
+		QuickStartWizard *qstartWizard = new QuickStartWizard(this);
+		qstartWizard->exec();
+    }
 
     setWindowTitle(tr("RetroShare %1 a secure decentralised commmunication platform").arg(retroshareVersion()));
 
