@@ -141,6 +141,9 @@ private slots:
 
     /** Called when user attempts to quit via quit button*/
     void doQuit();
+    
+    void on_actionQuick_Start_Wizard_activated();
+
 
 
 private:

@@ -118,6 +118,7 @@ HEADERS +=  rshare.h \
             gui/notifyqt.h \
             control/bandwidthevent.h \
             control/eventtype.h \
+            gui/QuickStartWizard.h \
             gui/DetailsDialog.h \
             gui/DLListDelegate.h \
             gui/ULListDelegate.h \
@@ -148,6 +149,7 @@ HEADERS +=  rshare.h \
             gui/SearchDialog.h \
             gui/SharedFilesDialog.h \
             gui/ShareManager.h \
+            gui/SFListDelegate.h \
             gui/SoundManager.h \
             gui/FileTransferInfoWidget.h \
             gui/RsAutoUpdatePage.h \
@@ -240,6 +242,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/GenCertDialog.ui \
             gui/AboutDialog.ui \
             gui/AddLinksDialog.ui \
+            gui/QuickStartWizard.ui \
             gui/NetworkDialog.ui \
             gui/TransfersDialog.ui \
             gui/ForumsDialog.ui \
@@ -297,6 +300,7 @@ SOURCES +=  main.cpp \
             rshare.cpp \
             gui/notifyqt.cpp \
             gui/AboutDialog.cpp \
+            gui/QuickStartWizard.cpp \
             gui/DetailsDialog.cpp \
             gui/DLListDelegate.cpp \
             gui/ULListDelegate.cpp \
@@ -325,6 +329,7 @@ SOURCES +=  main.cpp \
             gui/AddLinksDialog.cpp \
             gui/SharedFilesDialog.cpp \
             gui/ShareManager.cpp \
+            gui/SFListDelegate.cpp \
             gui/SoundManager.cpp \
             gui/MessagesDialog.cpp \
             gui/FileTransferInfoWidget.cpp \

@@ -39,6 +39,7 @@
 #include "MessengerWindow.h"
 #include "HelpDialog.h"
 #include "AboutDialog.h"
+#include "QuickStartWizard.h"
 
 #include "gui/TurtleRouterDialog.h"
 
@@ -604,6 +605,12 @@ void MainWindow::showHelpDialog(const QString &topic)
   if (!helpBrowser)
     helpBrowser = new HelpBrowser(this);
   helpBrowser->showWindow(topic);
+}
+
+void MainWindow::on_actionQuick_Start_Wizard_activated()
+{
+    QuickStartWizard *qstartwizard = new QuickStartWizard(this);
+    qstartwizard->exec();
 }
 
 /** Called when the user changes the UI translation. */

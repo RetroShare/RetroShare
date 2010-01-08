@@ -53,6 +53,7 @@
    <addaction name="separator"/>
    <addaction name="actionMessenger"/>
    <addaction name="actionAbout"/>
+   <addaction name="actionQuick_Start_Wizard"/>
    <addaction name="actionOptions"/>
    <addaction name="separator"/>
    <addaction name="actionQuit"/>
@@ -117,6 +118,18 @@
    </property>
    <property name="text">
     <string>Quit</string>
+   </property>
+  </action>
+  <action name="actionQuick_Start_Wizard">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/tools_wizard.png</normaloff>:/images/tools_wizard.png</iconset>
+   </property>
+   <property name="text">
+    <string>Quick Start Wizard</string>
+   </property>
+   <property name="toolTip">
+    <string>Quick Start Wizard</string>
    </property>
   </action>
  </widget>

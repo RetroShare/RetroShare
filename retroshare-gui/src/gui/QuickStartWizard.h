@@ -1,0 +1,91 @@
+/****************************************************************
+ *  RetroShare is distributed under the following license:
+ *
+ *  Copyright (C) 2006-2010,  RetroShare Team
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License
+ *  as published by the Free Software Foundation; either version 2
+ *  of the License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Boston, MA  02110-1301, USA.
+ ****************************************************************/
+
+#ifndef _QUICKSTARTWIZARD_H
+#define _QUICKSTARTWIZARD_H
+
+#include <QtGui/QDialog>
+
+#include "settings/rsharesettings.h"
+#include "ui_QuickStartWizard.h"
+
+
+class QuickStartWizard : public QDialog 
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(QuickStartWizard)
+    
+public:
+    explicit QuickStartWizard(QWidget *parent = 0);
+    virtual ~QuickStartWizard();
+    
+    void loadNetwork();
+    void loadShare();    
+    void loadGeneral();
+    
+      bool startMinimized() const;
+      bool quitbox() const;
+
+
+
+protected:
+    virtual void changeEvent(QEvent *e);
+   // virtual void showEvent(QShowEvent * event);
+
+private:
+    Ui::QuickStartWizard ui;
+    
+    bool messageBoxOk(QString);
+      
+     /** A RetroShare Settings object used for saving/loading settings */
+    RshareSettings *_settings;
+
+private Q_SLOTS:
+	void on_pushButtonSharesRemove_clicked();
+	void on_pushButtonSharesAdd_clicked();
+	void on_pushButtonSystemExit_clicked();
+	void on_pushButtonSystemFinish_clicked();
+	void on_pushButtonSystemBack_clicked();
+	void on_pushButtonNetworksExit_clicked();
+	void on_pushButtonNetworksNext_clicked();
+	void on_pushButtonNetworksBack_clicked();
+	void on_pushButtonNetworkExit_clicked();
+	void on_pushButtonNetworkNext_clicked();
+	void on_pushButtonNetworkBack_clicked();
+	void on_pushButtonSharesExit_clicked();
+	void on_pushButtonSharesNext_clicked();
+	void on_pushButtonSharesBack_clicked();
+	void on_pushButtonWelcomeExit_clicked();
+	void on_pushButtonWelcomeNext_clicked();
+	void on_pushButtonConnectionExit_clicked();
+	void on_pushButtonConnectionNext_clicked();
+	void on_pushButtonConnectionBack_clicked();
+	
+	void updateFlags(bool);
+	void saveChanges();
+	void toggleUPnP();  
+	void toggleTunnelConnection(bool) ;
+
+
+
+};
+
+#endif // _QUICKSTARTWIZARD_H
