@@ -182,8 +182,8 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 	 	std::ostringstream out;
 	  	out << "pqiperson::connectattempt() Kid# ";
 	  	out << i << " of " << kids.size();
-	  	out << std::endl;
-		out << " type: " << (it->first);
+                out << std::endl;
+                out << " type: " << (it->first);
 		out << " ni: " << (it->second)->ni;
 		out << " in_ni: " << ni;
 	  	pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
@@ -240,9 +240,10 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 			/* reset all other children? (clear up long UDP attempt) */
 			for(it = kids.begin(); it != kids.end(); it++)
 			{
-				if (it->second != activepqi)
-				{
-                                        std::cerr << "Resetting pqi" << std::endl;
+                                if (!(it->second)->thisNetInterface(ni))
+                                {
+                                        out << "Resetting pqi ref : " << &(it->second) << std::endl;
+                                        pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
                                         it->second->reset();
                                 } else {
                                         std::cerr << "Active pqi : not resetting." << std::endl;
@@ -258,7 +259,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 
 		if (active)
 		{
-                        if (activepqi == pqi)
+                        if (activepqi->thisNetInterface(ni))
 			{
 	  			pqioutput(PQL_WARNING, pqipersonzone, 
 					"CONNECT_FAILED->marking so!");
