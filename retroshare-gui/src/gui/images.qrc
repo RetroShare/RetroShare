@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/" >
+        <file>images/rs_wizard.png</file>
         <file>images/about.png</file>
         <file>images/irkick.png</file>
         <file>images/btn1.png</file>
