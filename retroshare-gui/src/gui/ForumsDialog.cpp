@@ -23,6 +23,7 @@
 #include "gui/forums/CreateForum.h"
 #include "gui/forums/CreateForumMsg.h"
 #include "gui/forums/ForumDetails.h"
+#include "msgs/ChanMsgDialog.h"
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
@@ -169,10 +170,14 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
       
       QAction *viewAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr( "Start New Thread" ), this );
       connect( viewAct , SIGNAL( triggered() ), this, SLOT( showthread() ) );
+      
+      QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply to Author" ), this );
+      connect( replyauthorAct , SIGNAL( triggered() ), this, SLOT( replytomessage() ) );
 
       contextMnu.clear();
       contextMnu.addAction( replyAct);
       contextMnu.addAction( viewAct);
+      contextMnu.addAction( replyauthorAct);
       contextMnu.exec( mevent->globalPos() );
 
 }
@@ -191,13 +196,6 @@ void ForumsDialog::newmessage()
 #endif
 
     /* window will destroy itself! */
-}
-
-void ForumsDialog::replytomessage()
-{
-	/* put msg on msgBoard, and switch to it. */
-
-
 }
 
 void ForumsDialog::togglefileview()
@@ -914,7 +912,6 @@ void ForumsDialog::createmessage()
 	cfm->show();
 }
 
-
 void ForumsDialog::showthread()
 {
 	if (mCurrForumId == "")
@@ -1030,4 +1027,41 @@ void ForumsDialog::loadForumEmoticons()
 	}
 }
 
+void ForumsDialog::replytomessage()
+{
+	if (mCurrForumId == "")
+	{
+		return;
+	}
+	
+	fId = mCurrForumId;
+  	pId = mCurrPostId;
+
+	ForumMsgInfo msgInfo ;
+	rsForums->getForumMessage(fId,pId,msgInfo) ;
+
+          
+ 	if (rsPeers->getPeerName(msgInfo.srcId) !="")
+ 	{
+  
+	ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+	nMsgDialog->newMsg();
+	nMsgDialog->insertTitleText( (QString("Re: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
+	nMsgDialog->setWindowTitle(tr("Re: ") + QString::fromStdWString(msgInfo.title) ) ;
+
+	QTextDocument doc ;
+	doc.setHtml(QString::fromStdWString(msgInfo.msg)) ;
+	std::string cited_text(doc.toPlainText().toStdString()) ;
+
+	nMsgDialog->insertPastedText(cited_text) ;
+	nMsgDialog->addRecipient( msgInfo.srcId ) ;
+	nMsgDialog->show();
+	nMsgDialog->activateWindow();
+	
+	}
+	else
+	{
+	QMessageBox::information(this, tr("RetroShare"),tr("You cant reply a Anonymous Author"));
+	}
+}
 

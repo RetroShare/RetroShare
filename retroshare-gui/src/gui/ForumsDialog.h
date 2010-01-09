@@ -36,6 +36,7 @@ public:
   void insertPost();
   
   void loadForumEmoticons();
+  
 
 private slots:
 
@@ -88,6 +89,9 @@ private:
   QFont itemFont;
   
   QHash<QString, QString> smileys;
+  
+  std::string fId;
+  std::string pId;
 
   /** Qt Designer generated object */
   Ui::ForumsDialog ui;
