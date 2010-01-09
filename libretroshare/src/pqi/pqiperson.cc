@@ -242,6 +242,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 			{
                                 if (!(it->second)->thisNetInterface(ni))
                                 {
+                                        std::ostringstream out;
                                         out << "Resetting pqi ref : " << &(it->second) << std::endl;
                                         pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
                                         it->second->reset();
