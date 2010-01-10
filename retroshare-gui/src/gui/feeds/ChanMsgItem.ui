@@ -7,13 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>435</width>
-    <height>207</height>
+    <height>205</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
+   <property name="horizontalSpacing">
+    <number>0</number>
+   </property>
+   <property name="margin">
+    <number>6</number>
+   </property>
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
      <property name="sizePolicy">
@@ -233,6 +239,8 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>

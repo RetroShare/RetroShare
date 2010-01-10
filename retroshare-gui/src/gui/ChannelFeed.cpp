@@ -92,13 +92,13 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 //
 	/*************** Setup Right Hand Side (List of Messages) ****************/
 
-	mMsgLayout = new QVBoxLayout;
+	/*mMsgLayout = new QVBoxLayout;
 	mMsgLayout->setSpacing(0);
 	mMsgLayout->setMargin(0);
 	mMsgLayout->setContentsMargins(0,0,0,0);
 
 	QWidget *middleWidget2 = new QWidget();
-	middleWidget2->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
+	middleWidget2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 	middleWidget2->setLayout(mMsgLayout);
 
 	QScrollArea *scrollArea2 = new QScrollArea;
@@ -111,10 +111,9 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	layout3->addWidget(scrollArea2);
 	layout3->setSpacing(0);
 	layout3->setMargin(0);
-	layout3->setContentsMargins(0,0,0,0);
+	layout3->setContentsMargins(0,0,0,0); 
 
-
-    msgFrame->setLayout(layout3);
+    msgFrame->setLayout(layout3);*/
 
 //	mChannelId = "OWNID";
 
@@ -684,7 +683,7 @@ void ChannelFeed::updateChannelMsgs()
 		ChanMsgItem *cmi = new ChanMsgItem(this, 0, mChannelId, it->msgId, true);
 
 		mChanMsgItems.push_back(cmi);
-		mMsgLayout->addWidget(cmi);
+		verticalLayout->addWidget(cmi);
 	}
 }
 
