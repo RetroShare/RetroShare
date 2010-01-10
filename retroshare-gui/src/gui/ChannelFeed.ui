@@ -414,7 +414,7 @@ p, li { white-space: pre-wrap; }
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true">QFrame{background-color: white;}</string>
+        <string notr="true"/>
        </property>
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
