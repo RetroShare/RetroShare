@@ -66,9 +66,9 @@ void  CreateForumMsg::newMsg()
 			name += " In Reply to: ";
 			name += QString::fromStdWString(msg.title);
 			
-			QString text = ui.forumSubject->text();
+			QString text = QString::fromStdWString(msg.title);
 			
-			if (text.startsWith("Re:"))
+			if (text.startsWith("Re:", Qt::CaseInsensitive))
 			{
 			subj = QString::fromStdWString(msg.title);
 			}
@@ -127,6 +127,7 @@ void  CreateForumMsg::createMsg()
 	{
 		msgInfo.msgflags = RS_DISTRIB_AUTHEN_REQ;
 	}
+
 
 	if ((msgInfo.msg == L"") && (msgInfo.title == L""))
 		return; /* do nothing */
