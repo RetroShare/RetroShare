@@ -246,7 +246,7 @@ void ChunkMap::setPeerAvailabilityMap(const std::string& peer_id,const Compresse
 
 	// Checks wether the map is full of not.
 	//
-	for(uint i=0;i<_map.size();++i)
+	for(uint32_t i=0;i<_map.size();++i)
 		if(!cmap[i])
 		{
 			mi.is_full = false ;
