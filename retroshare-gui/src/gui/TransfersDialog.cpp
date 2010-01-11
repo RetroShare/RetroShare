@@ -31,6 +31,7 @@
 #include "DLListDelegate.h"
 #include "ULListDelegate.h"
 #include "FileTransferInfoWidget.h"
+#include "xprogressbar.h"
 
 #include <QContextMenuEvent>
 #include <QMenu>
@@ -68,6 +69,34 @@
 #define IMAGE_PRIORITYNORMAL			 ":/images/prioritynormal.png"
 #define IMAGE_PRIORITYHIGH			   ":/images/priorityhigh.png"
 #define IMAGE_PRIORITYAUTO			   ":/images/priorityauto.png"
+
+//static const CompressedChunkMap *getMap_tmp()
+//{
+//	static CompressedChunkMap *cmap = NULL ;
+//
+//	if(cmap == NULL)
+//	{
+//		cmap = new CompressedChunkMap ; // to be passed as a parameter
+//		// Initialize the chunkmap with a dummy value, for testing. To be removed...
+//		cmap->_nb_chunks = 700 ;
+//		cmap->_map.resize(cmap->_nb_chunks/32+1,0) ;	
+//		cmap->_progress = 0.34 ;
+//		for(uint i=0;i<10;++i)
+//		{
+//			uint32_t start = rand()%cmap->_nb_chunks;
+//			uint32_t j = std::min((int)cmap->_nb_chunks,(int)start+10+(rand()%5)) ;
+//
+//			for(uint32_t k=start;k<j;++k)
+//				COMPRESSED_MAP_WRITE(cmap->_map,k,1) ;
+//		}
+//
+//		std::cerr << "Built cmap = " << (void*)cmap << std::endl ;
+//	}
+//	return cmap ;
+//}
+
+
+Q_DECLARE_METATYPE(FileProgressInfo) 
 
 
 /** Constructor */
@@ -378,11 +407,11 @@ void TransfersDialog::playSelectedTransfer()
 
 void TransfersDialog::updateProgress(int value)
 {
-	for(int i = 0; i <= DLListModel->rowCount(); i++) {
-		if(selection->isRowSelected(i, QModelIndex())) {
-			editItem(i, PROGRESS, QVariant((double)value));
-		}
-	}
+//	for(int i = 0; i <= DLListModel->rowCount(); i++) {
+//		if(selection->isRowSelected(i, QModelIndex())) {
+//			editItem(i, PROGRESS, QVariant((double)value));
+//		}
+//	}
 }
 
 TransfersDialog::~TransfersDialog()
@@ -391,8 +420,7 @@ TransfersDialog::~TransfersDialog()
 }
 
 
-
-int TransfersDialog::addItem(QString symbol, QString name, QString coreID, qlonglong fileSize, double progress, double dlspeed,
+int TransfersDialog::addItem(QString symbol, QString name, QString coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed,
 		QString sources,  QString status, QString priority, qlonglong completed, qlonglong remaining)
 {
     int row;
@@ -408,7 +436,7 @@ int TransfersDialog::addItem(QString symbol, QString name, QString coreID, qlong
     DLListModel->setData(DLListModel->index(row, SIZE), QVariant((qlonglong)fileSize));
     DLListModel->setData(DLListModel->index(row, COMPLETED), QVariant((qlonglong)completed));
     DLListModel->setData(DLListModel->index(row, DLSPEED), QVariant((double)dlspeed));
-    DLListModel->setData(DLListModel->index(row, PROGRESS), QVariant((double)progress));
+	 DLListModel->setData(DLListModel->index(row, PROGRESS), QVariant::fromValue(pinfo));
     DLListModel->setData(DLListModel->index(row, SOURCES), QVariant((QString)sources));
     DLListModel->setData(DLListModel->index(row, STATUS), QVariant((QString)status));
     DLListModel->setData(DLListModel->index(row, PRIORITY), QVariant((QString)priority));
@@ -469,7 +497,7 @@ int TransfersDialog::addItem(QString symbol, QString name, QString coreID, qlong
 	return row;
 }
 
-bool TransfersDialog::addPeerToItem(int row, QString symbol, QString name, QString coreID, qlonglong fileSize, double progress, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining)
+bool TransfersDialog::addPeerToItem(int row, QString symbol, QString name, QString coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining)
 {
     QStandardItem *dlItem = DLListModel->item(row);
     if (!dlItem) return false;
@@ -484,7 +512,7 @@ bool TransfersDialog::addPeerToItem(int row, QString symbol, QString name, QStri
     QStandardItem *i2 = new QStandardItem(); i2->setData(QVariant((qlonglong)fileSize), Qt::DisplayRole);
     QStandardItem *i3 = new QStandardItem(); i3->setData(QVariant((qlonglong)completed), Qt::DisplayRole);
     QStandardItem *i4 = new QStandardItem(); i4->setData(QVariant((double)dlspeed), Qt::DisplayRole);
-    QStandardItem *i5 = new QStandardItem(); i5->setData(QVariant((double)progress), Qt::DisplayRole);
+    QStandardItem *i5 = new QStandardItem(); i5->setData(QVariant::fromValue(pinfo), Qt::DisplayRole);
     QStandardItem *i6 = new QStandardItem(); i6->setData(QVariant((QString)sources), Qt::DisplayRole);
     QStandardItem *i7 = new QStandardItem(); i7->setData(QVariant((QString)status), Qt::DisplayRole);
     QStandardItem *i8 = new QStandardItem(); i8->setData(QVariant((QString)tr("")), Qt::DisplayRole);	// blank field for priority
@@ -522,7 +550,7 @@ bool TransfersDialog::addPeerToItem(int row, QString symbol, QString name, QStri
 }
 
 
-int TransfersDialog::addUploadItem(QString symbol, QString name, QString coreID, qlonglong fileSize, double progress, double dlspeed, QString sources,  QString status, qlonglong completed, qlonglong remaining)
+int TransfersDialog::addUploadItem(QString symbol, QString name, QString coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed, QString source,  QString status, qlonglong completed, qlonglong remaining)
 {
 	int row;
 	QString sl;
@@ -535,9 +563,9 @@ int TransfersDialog::addUploadItem(QString symbol, QString name, QString coreID,
 	ULListModel->setData(ULListModel->index(row, USIZE), QVariant((qlonglong)fileSize));
 	ULListModel->setData(ULListModel->index(row, UTRANSFERRED), QVariant((qlonglong)completed));
 	ULListModel->setData(ULListModel->index(row, ULSPEED), QVariant((double)dlspeed));
-	ULListModel->setData(ULListModel->index(row, UPROGRESS), QVariant((double)progress));
+	ULListModel->setData(ULListModel->index(row, UPROGRESS), QVariant::fromValue(pinfo));
 	ULListModel->setData(ULListModel->index(row, USTATUS), QVariant((QString)status));
-	ULListModel->setData(ULListModel->index(row, USERNAME), QVariant((QString)sources));
+	ULListModel->setData(ULListModel->index(row, USERNAME), QVariant((QString)source));
 
 	return row;
 }
@@ -568,9 +596,9 @@ void TransfersDialog::editItem(int row, int column, QVariant data)
 		case SIZE:
 			DLListModel->setData(DLListModel->index(row, SIZE), data);
 			break;
-		case PROGRESS:
-			DLListModel->setData(DLListModel->index(row, PROGRESS), data);
-			break;
+//		case PROGRESS:
+//			DLListModel->setData(DLListModel->index(row, PROGRESS), data);
+//			break;
 		case DLSPEED:
 			DLListModel->setData(DLListModel->index(row, DLSPEED), data);
 			break;
@@ -670,7 +698,8 @@ void TransfersDialog::insertTransfers()
 	uint32_t ulCount = 0;
 
     std::list<std::string>::iterator it;
-    for (it = downHashes.begin(); it != downHashes.end(); it++) {
+    for (it = downHashes.begin(); it != downHashes.end(); it++) 
+	 {
         FileInfo info;
         if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) continue;
         //if file transfer is a cache file index file, don't show it
@@ -713,7 +742,21 @@ void TransfersDialog::insertTransfers()
         completed   = info.transfered;
         remaining   = (info.size - info.transfered) / (info.tfRate * 1024.0);
 
-        int addedRow = addItem(symbol, name, coreId, fileSize, progress, dlspeed, sources, status, priority, completed, remaining);
+		  FileChunksInfo fcinfo ;
+		  if(!rsFiles->FileDownloadChunksDetails(*it,fcinfo)) 
+			  continue ;
+
+		  FileProgressInfo pinfo ;
+		  pinfo.cmap = fcinfo.chunks ;
+		  pinfo.progress = completed*100.0/info.size ;
+
+//			std::cerr << "Converting fcinfo to compressed chunk map. Chunks=" << fcinfo.chunks.size() << std::endl ;
+//			std::cerr << "map data = " ;
+//			for(uint k=0;k<cmap._map.size();++k)
+//				std::cout << (void*)cmap._map[k] ;
+//			std::cout << std::endl ;
+
+        int addedRow = addItem(symbol, name, coreId, fileSize, pinfo, dlspeed, sources, status, priority, completed, remaining);
 
         /* if found in selectedIds -> select again */
         if (selectedIds.end() != std::find(selectedIds.begin(), selectedIds.end(), info.hash)) {
@@ -777,7 +820,11 @@ void TransfersDialog::insertTransfers()
             completed   = info.transfered;
             remaining   = (info.size - info.transfered) / (pit->tfRate * 1024.0);
 
-            if (!addPeerToItem(addedRow, symbol, name, coreId, fileSize, progress, dlspeed, sources, status, completed, remaining))
+				FileProgressInfo pinfo ;
+				pinfo.cmap = fcinfo.compressed_peer_availability_maps[pit->peerId] ;
+				pinfo.progress = 0.0 ;	// we don't display completion for sources.
+
+            if (!addPeerToItem(addedRow, symbol, name, coreId, fileSize, pinfo, dlspeed, sources, status, completed, remaining))
                 continue;
 
             /* if peers found in selectedIds, select again */
@@ -826,7 +873,10 @@ void TransfersDialog::insertTransfers()
 				break;
 		}
 
-		addItem("", name, coreId, fileSize, progress, dlspeed, sources, status, priority, completed, remaining);
+		FileProgressInfo pinfo ;
+		pinfo.progress = 0.0 ;
+
+		addItem("", name, coreId, fileSize, pinfo, dlspeed, sources, status, priority, completed, remaining);
 
 		/* if found in selectedIds -> select again */
 		if (selectedIds.end() != std::find(selectedIds.begin(), selectedIds.end(), dit->hash)) {
@@ -890,14 +940,36 @@ void TransfersDialog::insertTransfers()
 	//		status = "Complete";
 	//	}
 
+		FileProgressInfo pinfo ;
+
+		if(!rsFiles->FileUploadChunksDetails(*it,pit->peerId,pinfo.cmap) )
+			continue ;
+
 		dlspeed  	= pit->tfRate * 1024.0;
 		fileSize 	= info.size;
 		completed 	= info.transfered;
 		progress 	= info.transfered * 100.0 / info.size;
 		remaining   = (info.size - info.transfered) / (info.tfRate * 1024.0);
 
-		addUploadItem(symbol, name, coreId, fileSize, progress,
-				dlspeed, sources,  status, completed, remaining);
+		// Estimate the completion. We need something more accurate, meaning that we need to 
+		// transmit the completion info.
+		//
+		uint32_t chunk_size = 1024*1024 ;
+ 		uint32_t nb_chunks = (uint32_t)(info.size / (uint64_t)(chunk_size) ) ;
+		if((info.size % (uint64_t)chunk_size) != 0)
+			++nb_chunks ;
+		
+		uint32_t filled_chunks = pinfo.cmap.filledChunks(nb_chunks) ;
+
+		if(filled_chunks > 1)
+		{
+			pinfo.progress = filled_chunks*100.0/nb_chunks ;
+			completed = std::min(info.size,((uint64_t)filled_chunks)*chunk_size) ;
+		}
+		else
+			pinfo.progress = progress ;
+
+		addUploadItem(symbol, name, coreId, fileSize, pinfo, dlspeed, sources,  status, completed, remaining);
 		ulCount++;
 	  }
 
@@ -935,8 +1007,11 @@ void TransfersDialog::insertTransfers()
 		progress 	= info.transfered * 100.0 / info.size;
 		remaining   = (info.size - info.transfered) / (info.tfRate * 1024.0);
 
-		addUploadItem(symbol, name, coreId, fileSize, progress,
-				dlspeed, sources,  status, completed, remaining);
+		FileProgressInfo pinfo ;
+		pinfo.progress = progress ;
+		pinfo.cmap = CompressedChunkMap() ;
+
+		addUploadItem(symbol, name, coreId, fileSize, pinfo, dlspeed, sources,  status, completed, remaining);
 		ulCount++;
 	  }
 	}
@@ -1411,6 +1486,8 @@ void TransfersDialog::showFileDetails()
 	std::string file_hash ;
 	int nb_select = 0 ;
 
+	std::cout << "new selection " << std::endl ;
+
 	for(int i = 0; i <= DLListModel->rowCount(); i++) 
 		if(selection->isRowSelected(i, QModelIndex())) 
 		{
@@ -1418,15 +1495,19 @@ void TransfersDialog::showFileDetails()
 			  ++nb_select ;
 		}
 	if(nb_select != 1)
-		return ;
+		dynamic_cast<FileTransferInfoWidget*>(ui.fileTransferInfoWidget->widget())->setFileHash("") ;
+	else
+		dynamic_cast<FileTransferInfoWidget*>(ui.fileTransferInfoWidget->widget())->setFileHash(file_hash) ;
 	
-	dynamic_cast<FileTransferInfoWidget*>(ui.fileTransferInfoWidget->widget())->setFileHash(file_hash) ;
+	std::cout << "calling update " << std::endl ;
 	dynamic_cast<FileTransferInfoWidget*>(ui.fileTransferInfoWidget->widget())->updateDisplay() ;
+	std::cout << "done" << std::endl ;
 }
 
 double TransfersDialog::getProgress(int row, QStandardItemModel *model)
 {
-	return model->data(model->index(row, PROGRESS), Qt::DisplayRole).toDouble();
+//	return model->data(model->index(row, PROGRESS), Qt::DisplayRole).toDouble();
+return 0.0 ;
 }
 
 double TransfersDialog::getSpeed(int row, QStandardItemModel *model)

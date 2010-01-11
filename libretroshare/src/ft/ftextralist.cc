@@ -318,14 +318,14 @@ bool	ftExtraList::hashExtraFileDone(std::string path, FileInfo &info)
 		}
 		hash = it->second;
 	}
-	return search(hash, 0, 0, info);
+	return search(hash, 0, info);
 }
 
 	/***
 	 * Search Function - used by File Transfer 
 	 *
 	 **/
-bool    ftExtraList::search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const
+bool    ftExtraList::search(std::string hash, uint32_t hintflags, FileInfo &info) const
 {
 
 #ifdef  DEBUG_ELIST

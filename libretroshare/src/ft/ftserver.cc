@@ -310,21 +310,9 @@ void ftServer::getDwlDetails(std::list<DwlDetails> & details)
 	mFtDwlQueue->getDwlDetails(details);
 }
 
-bool ftServer::FileChunksDetails(const std::string& hash,FileChunksInfo& info)
+bool ftServer::FileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info)
 {
-	return mFtController->getFileChunksDetails(hash,info);
-//
-//	// for know put some dummy info. It's for display sake only.
-//	info.chunk_size = 1024*1024 ;
-//	info.file_size = 250*info.chunk_size - 123 ; // last chunk is not complete.
-//	info.chunks.resize(250,FileChunksInfo::CHUNK_DONE) ;
-//	int n = rand()%150 + 50 ;
-//	for(int i=0;i<10;++i)
-//		info.chunks[n+i] = FileChunksInfo::CHUNK_ACTIVE ;
-//	for(int i=n+10;i<250;++i)
-//		info.chunks[i] = FileChunksInfo::CHUNK_OUTSTANDING ;
-//
-//	return true ;
+	return mFtController->getFileDownloadChunksDetails(hash,info);
 }
 
 	/* Directory Handling */
@@ -360,6 +348,11 @@ bool ftServer::FileDownloads(std::list<std::string> &hashs)
 	//return mFtDataplex->FileDownloads(hashs);
 }
 
+bool ftServer::FileUploadChunksDetails(const std::string& hash,const std::string& peer_id,CompressedChunkMap& cmap)
+{
+	return mFtDataplex->getClientChunkMap(hash,peer_id,cmap);
+}
+
 bool ftServer::FileUploads(std::list<std::string> &hashs)
 {
 	return mFtDataplex->FileUploads(hashs);
@@ -376,7 +369,7 @@ bool ftServer::FileDetails(std::string hash, uint32_t hintflags, FileInfo &info)
 			return true ;
 
 	if(hintflags & ~(RS_FILE_HINTS_UPLOAD | RS_FILE_HINTS_DOWNLOAD)) 
-		if(mFtSearch->search(hash, 0, hintflags, info))
+		if(mFtSearch->search(hash, hintflags, info))
 			return true ;
 
 	return false;
@@ -652,8 +645,7 @@ bool  ftServer::loadConfigMap(std::map<std::string, std::string> &configMap)
 	/***************************************************************/
 
 	/* Client Send */
-bool	ftServer::sendDataRequest(std::string peerId, std::string hash,
-			uint64_t size, uint64_t offset, uint32_t chunksize)
+bool	ftServer::sendDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
 {
 	if(mTurtleRouter->isTurtlePeer(peerId))
 		mTurtleRouter->sendDataRequest(peerId,hash,size,offset,chunksize) ;
@@ -680,12 +672,33 @@ bool	ftServer::sendDataRequest(std::string peerId, std::string hash,
 	return true;
 }
 
+bool ftServer::sendChunkMapRequest(const std::string& peerId,const std::string& hash)
+{
+	if(mTurtleRouter->isTurtlePeer(peerId))
+		mTurtleRouter->sendChunkMapRequest(peerId,hash) ;
+
+	// We only send chunkmap requests to turtle peers. This will be a problem at display time for
+	// direct friends, so I'll see later whether I code it or not.
+	return true ;
+}
+
+bool ftServer::sendChunkMap(const std::string& peerId,const std::string& hash,const CompressedChunkMap& map)
+{
+	if(mTurtleRouter->isTurtlePeer(peerId))
+		mTurtleRouter->sendChunkMap(peerId,hash,map) ;
+
+	// We only send chunkmap requests to turtle peers. This will be a problem at display time for
+	// direct friends, so I'll see later whether I code it or not.
+	return true ;
+}
+
+
 //const uint32_t	MAX_FT_CHUNK  = 32 * 1024; /* 32K */
 //const uint32_t	MAX_FT_CHUNK  = 16 * 1024; /* 16K */
 const uint32_t	MAX_FT_CHUNK  = 8 * 1024; /* 16K */
 
 	/* Server Send */
-bool	ftServer::sendData(std::string peerId, std::string hash, uint64_t size, uint64_t baseoffset, uint32_t chunksize, void *data)
+bool	ftServer::sendData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t baseoffset, uint32_t chunksize, void *data)
 {
 	/* create a packet */
 	/* push to networking part */

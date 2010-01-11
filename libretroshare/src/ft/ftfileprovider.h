@@ -37,45 +37,57 @@
 
 class ftFileProvider
 {
-public:
-	ftFileProvider(std::string path, uint64_t size, std::string hash);
-	virtual ~ftFileProvider();
+	public:
+		ftFileProvider(std::string path, uint64_t size, std::string hash);
+		virtual ~ftFileProvider();
 
-	virtual bool 	getFileData(uint64_t offset, uint32_t &chunk_size, void *data);
-	virtual bool    FileDetails(FileInfo &info);
-	std::string getHash();
-	uint64_t getFileSize();
-	bool fileOk();
+		virtual bool 	getFileData(uint64_t offset, uint32_t &chunk_size, void *data);
+		virtual bool    FileDetails(FileInfo &info);
+		std::string getHash();
+		uint64_t getFileSize();
+		bool fileOk();
 
-	void setPeerId(const std::string& id) ;
+		void setPeerId(const std::string& id) ;
 
+		// Provides a client for the map of chunks actually present in the file. If the provider is also
+		// a file creator, because the file is actually being downloaded, then the map may be partially complete.
+		// Otherwize, a plain map is returned.
+		//
+		virtual void getAvailabilityMap(CompressedChunkMap& cmap) ;
 
-protected:
-virtual	int initializeFileAttrs(); /* does for both */
+		// a ftFileProvider feeds a distant peer. To display what the peers already has, we need to store/read this info.
+		void getClientMap(const std::string& peer_id,CompressedChunkMap& cmap,bool& map_is_too_old) ;
+		void setClientMap(const std::string& peer_id,const CompressedChunkMap& cmap) ;
 
-	uint64_t    mSize;
-	std::string hash;
-	std::string file_name;
-	FILE *fd;
+	protected:
+		virtual	int initializeFileAttrs(); /* does for both */
 
-	/* 
-	 * Structure to gather statistics FIXME: lastRequestor - figure out a 
-	 * way to get last requestor (peerID)
-	 */
-	std::string lastRequestor;
-	uint64_t   req_loc;
-	uint32_t   req_size;
-	time_t    lastTS;   		// used for checking if it's alive
-	time_t    lastTS_t;   	// used for estimating transfer rate.
+		uint64_t    mSize;
+		std::string hash;
+		std::string file_name;
+		FILE *fd;
 
-	// these two are used for speed estimation
-	float 	  transfer_rate ;
-	uint32_t		total_size ;
+		/* 
+		 * Structure to gather statistics FIXME: lastRequestor - figure out a 
+		 * way to get last requestor (peerID)
+		 */
+		std::string lastRequestor;
+		uint64_t   req_loc;
+		uint32_t   req_size;
+		time_t    lastTS;   		// used for checking if it's alive
+		time_t    lastTS_t;   	// used for estimating transfer rate.
 
-	/* 
-         * Mutex Required for stuff below 
-         */
-	RsMutex ftcMutex;
+		// these two are used for speed estimation
+		float 	  transfer_rate ;
+		uint32_t		total_size ;
+
+		// Info about what the downloading peer already has
+		std::map<std::string,std::pair<CompressedChunkMap,time_t> > clients_chunk_maps ;
+
+		/* 
+		 * Mutex Required for stuff below 
+		 */
+		RsMutex ftcMutex;
 };
 
 

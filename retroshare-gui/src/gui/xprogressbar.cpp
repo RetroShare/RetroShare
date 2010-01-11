@@ -24,9 +24,12 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <math.h>
+#include <rsiface/rstypes.h>
 #include "xprogressbar.h"
 
-xProgressBar::xProgressBar(QRect rect, QPainter *painter, int schemaIndex)
+xProgressBar::xProgressBar(const CompressedChunkMap& cmap,QRect rect, QPainter *painter, int schemaIndex)
+	: _cmap(cmap)
 {
 	// assign internal data
 	this->schemaIndex = schemaIndex;
@@ -39,7 +42,7 @@ xProgressBar::xProgressBar(QRect rect, QPainter *painter, int schemaIndex)
 	vSpan = 0;
 	hSpan = 0;
 	// text color
-	textColor = QColor("white");
+	textColor = QColor("black");
 }
 
 void xProgressBar::setColor()
@@ -187,14 +190,41 @@ void xProgressBar::paint()
 	linearGrad.setColorAt(1.00, gradColor1);
 	painter->setPen(gradBorderColor);
 
-	// calculate progress value
-	int preWidth = static_cast<int>((rect.width() - 1 - hSpan)*(progressValue/100));
-	int progressWidth = rect.width() - preWidth;
-	if (progressWidth == rect.width() - hSpan) return;
+	int width = static_cast<int>(rect.width()-1-2*hSpan) ;
 
-	// paint the progress
 	painter->setBrush(linearGrad);
-	painter->drawRect(rect.x() + hSpan, rect.y() + vSpan, rect.width() - progressWidth - hSpan, rect.height() - 1 - vSpan * 2);
+
+	uint32_t ss = _cmap._map.size()*32 ;
+
+	if(ss > 1)	// for small files we use a more progressive display
+	for(int i=0;i<ss;++i)
+	{
+		int j=0 ;
+		while(i+j<ss && _cmap[i+j])
+			++j ;
+
+		if(j>0)
+		{
+			float o = std::min(1.0f,j/(float)ss*width) ;
+			painter->setOpacity(o) ;
+			painter->drawRect(rect.x() + hSpan+(int)rint(i*width/(float)ss), rect.y() + vSpan, (int)ceil(j*width/(float)ss), rect.height() - 1 - vSpan * 2);
+		}
+
+		i += j ;
+	}
+	else
+	{
+		// calculate progress value
+		int preWidth = static_cast<int>((rect.width() - 1 - hSpan)*(progressValue/100));
+		int progressWidth = rect.width() - preWidth;
+		if (progressWidth == rect.width() - hSpan) return;
+
+		// paint the progress
+		painter->setBrush(linearGrad);
+		painter->drawRect(rect.x() + hSpan, rect.y() + vSpan, rect.width() - progressWidth - hSpan, rect.height() - 1 - vSpan * 2);
+	}
+	painter->setOpacity(1.0f) ;
+
 	
 	// paint text?
 	if (displayText)

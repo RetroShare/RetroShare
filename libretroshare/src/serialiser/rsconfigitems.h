@@ -29,6 +29,7 @@
 #include <map>
 #include <vector>
 
+#include <rsiface/rstypes.h>
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvtypes.h"
@@ -204,10 +205,8 @@ class RsFileTransfer: public RsItem
 		uint32_t ltransfer;
 
 		// chunk information
-		uint32_t chunk_size ;					// common size of chunks
-		uint32_t chunk_number ;					// total number of chunks (this is not redondant, cause chunks are compressed)
 		uint32_t chunk_strategy ;				// strategy flags for chunks
-		std::vector<uint32_t> chunk_map ;	// chunk availability (bitwise)
+		CompressedChunkMap compressed_chunk_map ;	// chunk availability (bitwise)
 };
 
 /**************************************************************************/

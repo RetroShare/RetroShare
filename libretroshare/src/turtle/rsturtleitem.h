@@ -5,6 +5,7 @@
 #include "serialiser/rsbaseserial.h"
 #include "rsiface/rsturtle.h"
 #include "rsiface/rsexpr.h"
+#include "rsiface/rstypes.h"
 #include "serialiser/rsserviceids.h"
 #include "turtle/turtletypes.h"
 
@@ -18,6 +19,7 @@ const uint8_t RS_TURTLE_SUBTYPE_FILE_REQUEST   			= 0x07 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_DATA      			= 0x08 ;
 const uint8_t RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST = 0x09 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP              = 0x10 ;
+const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST      = 0x11 ;
 
 /***********************************************************************************/
 /*                           Basic Turtle Item Class                               */
@@ -153,7 +155,9 @@ class RsTurtleGenericTunnelItem: public RsTurtleItem
 	public:
 		RsTurtleGenericTunnelItem(uint8_t sub_packet_id) : RsTurtleItem(sub_packet_id) {}
 
-		typedef enum { DIRECTION_CLIENT, DIRECTION_SERVER } Direction ;
+		typedef uint32_t Direction ;
+		static const Direction DIRECTION_CLIENT = 0x001 ;
+		static const Direction DIRECTION_SERVER = 0x002 ;
 
 		/// Does this packet stamps tunnels when it passes through ?
 		/// This is used for keeping trace weither tunnels are active or not.
@@ -218,6 +222,26 @@ class RsTurtleFileDataItem: public RsTurtleGenericTunnelItem
 		virtual uint32_t serial_size() ; 
 };
 
+class RsTurtleFileMapRequestItem: public RsTurtleGenericTunnelItem			
+{
+	public:
+		RsTurtleFileMapRequestItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST) {}
+		RsTurtleFileMapRequestItem(void *data,uint32_t size) ;		// deserialization
+
+		virtual bool shouldStampTunnel() const { return false ; }
+		virtual TurtleTunnelId tunnelId() const { return tunnel_id ; }
+		virtual Direction travelingDirection() const { return direction ; }
+
+		Direction direction ;	// travel direction for this packet (server/client)
+		uint32_t tunnel_id ;		// id of the tunnel to travel through. Also used for identifying the file source
+										// this info from the file size, but this allows a security check.
+												
+		virtual std::ostream& print(std::ostream& o, uint16_t) ;
+
+		virtual bool serialize(void *data,uint32_t& size) ;	
+		virtual uint32_t serial_size() ; 
+};
+
 class RsTurtleFileMapItem: public RsTurtleGenericTunnelItem			
 {
 	public:
@@ -230,11 +254,9 @@ class RsTurtleFileMapItem: public RsTurtleGenericTunnelItem
 
 		Direction direction ;	// travel direction for this packet (server/client)
 		uint32_t tunnel_id ;		// id of the tunnel to travel through. Also used for identifying the file source
-		uint32_t chunk_size ;	// fixed size of chunks, as seen from the source, for the given map.
-		uint32_t nb_chunks ;		// number of chunks in the file.	The last two infos are redundant, as we can recompute 
 										// this info from the file size, but this allows a security check.
 												
-		std::vector<uint32_t> compressed_map ;	// Map info for the file in compressed format. Each *bit* in the array uint's says "I have" or "I don't have"
+		CompressedChunkMap compressed_map ;	// Map info for the file in compressed format. Each *bit* in the array uint's says "I have" or "I don't have"
 										// by default, we suppose the peer has all the chunks. This info will thus be and-ed 
 										// with the default file map for this source.
 												

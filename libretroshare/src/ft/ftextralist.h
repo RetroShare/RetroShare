@@ -138,7 +138,7 @@ bool	 	hashExtraFileDone(std::string path, FileInfo &info);
 		 * implementation of ftSearch.
 		 *
 		 **/
-virtual bool    search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
+virtual bool    search(std::string hash, uint32_t hintflags, FileInfo &info) const;
 
 		/***
 		 * Thread Main Loop 

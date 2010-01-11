@@ -50,16 +50,20 @@ class ftFileCreator: public ftFileProvider
 		uint64_t getRecvd();
 
 		void getChunkMap(FileChunksInfo& info) ;
+
 		void setChunkStrategy(FileChunksInfo::ChunkStrategy s) ;
+		FileChunksInfo::ChunkStrategy getChunkStrategy() ;
 
 		/* 
 		 * creation functions for FileCreator 
 		 */
 
 		// Gets a new variable-sized chunk of size "size_hint" from the given peer id. The returned size, "size" is
-		// at most equal to size_hint.
+		// at most equal to size_hint. chunk_map_needed is set if 
+		// - no chunkmap info is available. In such a case, the chunk info is irrelevant and false is returned.
+		// - the chunk info is too old. In tis case, true is returned, and the chunks info can be used.
 		//
-		bool	getMissingChunk(const std::string& peer_id,uint32_t size_hint,uint64_t& offset, uint32_t& size);
+		bool	getMissingChunk(const std::string& peer_id,uint32_t size_hint,uint64_t& offset, uint32_t& size,bool& is_chunk_map_too_old);
 
 		// actually store data in the file, and update chunks info
 		//
@@ -71,12 +75,12 @@ class ftFileCreator: public ftFileProvider
 		// 	- getting info about current chunks for the GUI
 		// 	- sending availability info to the peers for which we also are a source
 		//
-		void loadAvailabilityMap(const std::vector<uint32_t>& map,uint32_t chunk_size,uint32_t chunk_number,uint32_t chunk_strategy) ;
-		void storeAvailabilityMap(std::vector<uint32_t>& map,uint32_t& chunk_size,uint32_t& chunk_number,uint32_t& chunk_strategy) ;
+		virtual void getAvailabilityMap(CompressedChunkMap& cmap) ;
+		void setAvailabilityMap(const CompressedChunkMap& cmap) ;
 
 		// This is called when receiving the availability map from a source peer, for the file being handled.
 		//
-		void setSourceMap(const std::string& peer_id,uint32_t chunk_size,uint32_t nb_chunks,const std::vector<uint32_t>& map) ;
+		void setSourceMap(const std::string& peer_id,const CompressedChunkMap& map) ;
 
 	protected:
 

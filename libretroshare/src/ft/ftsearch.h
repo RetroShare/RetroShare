@@ -43,7 +43,7 @@ class ftSearch
 
 	ftSearch() { return; }
 virtual ~ftSearch() { return; }
-virtual bool	search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const = 0;
+virtual bool	search(std::string hash, uint32_t hintflags, FileInfo &info) const = 0;
 
 };
 
@@ -54,7 +54,7 @@ class ftSearchDummy: public ftSearch
 
 	ftSearchDummy() { return; }
 virtual ~ftSearchDummy() { return; }
-virtual bool	search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
+virtual bool	search(std::string hash, uint32_t hintflags, FileInfo &info) const;
 };
 
 #endif

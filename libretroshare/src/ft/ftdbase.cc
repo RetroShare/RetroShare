@@ -37,7 +37,7 @@ ftFiStore::ftFiStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in,
 	return;
 }
 
-bool ftFiStore::search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const
+bool ftFiStore::search(std::string hash, uint32_t hintflags, FileInfo &info) const
 {
 	/* could use hintflags to specify which bits of fileinfo to use additionally.
 	   eg. hintflags & FT_SEARCH_PEER_ID, then only return matching peers + hash.
@@ -47,7 +47,7 @@ bool ftFiStore::search(std::string hash, uint64_t size, uint32_t hintflags, File
 	 */
 
 #ifdef DB_DEBUG
-	std::cerr << "ftFiStore::search(" << hash << "," << size << "," << hintflags;
+	std::cerr << "ftFiStore::search(" << hash << "," << hintflags;
 	std::cerr << ")";
 	std::cerr << std::endl;
 #endif
@@ -68,8 +68,8 @@ bool ftFiStore::search(std::string hash, uint64_t size, uint32_t hintflags, File
 #endif
 			bool fullmatch = true;
 
-			if (it->size != size)
-				fullmatch = false;
+//			if (it->size != size)
+//				fullmatch = false;
 
 
 #if 0
@@ -125,13 +125,13 @@ ftFiMonitor::ftFiMonitor(CacheStrapper *cs,NotifyBase *cb_in, std::string cached
 	return;
 }
 
-bool ftFiMonitor::search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const
+bool ftFiMonitor::search(std::string hash, uint32_t hintflags, FileInfo &info) const
 {
 	uint64_t fsize;
 	std::string path;
 
 #ifdef DB_DEBUG
-	std::cerr << "ftFiMonitor::search(" << hash << "," << size << "," << hintflags;
+	std::cerr << "ftFiMonitor::search(" << hash << "," << hintflags;
 	std::cerr << ")";
 	std::cerr << std::endl;
 #endif
@@ -269,10 +269,10 @@ ftCacheStrapper::ftCacheStrapper(p3AuthMgr *am, p3ConnectMgr *cm)
 }
 
 	/* overloaded search function */
-bool ftCacheStrapper::search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const
+bool ftCacheStrapper::search(std::string hash, uint32_t hintflags, FileInfo &info) const
 {
 #ifdef DB_DEBUG
-	std::cerr << "ftCacheStrapper::search(" << hash << "," << size << "," << hintflags;
+	std::cerr << "ftCacheStrapper::search(" << hash << "," << hintflags;
 	std::cerr << ")";
 	std::cerr << std::endl;
 #endif

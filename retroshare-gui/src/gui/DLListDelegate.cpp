@@ -19,6 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <rsiface/rstypes.h>
 #include <QModelIndex>
 #include <QPainter>
 #include <QStyleOptionProgressBarV2>
@@ -26,6 +27,8 @@
 #include <QApplication>
 
 #include "DLListDelegate.h"
+
+Q_DECLARE_METATYPE(FileProgressInfo)
 
 DLListDelegate::DLListDelegate(QObject *parent) : QAbstractItemDelegate(parent)
 {
@@ -144,14 +147,14 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
 		case PROGRESS:
-		    {
-			progress = index.data().toDouble();
-			// create a xProgressBar
-			xProgressBar progressBar(option.rect, painter); // the 3rd param is the  color schema (0 is the default value)
-			progressBar.setDisplayText(false); // should display % text?
-			progressBar.setValue(progress); // set the progress value
-			progressBar.setVerticalSpan(1);
-			progressBar.paint(); // paint the progress bar
+			{
+				// create a xProgressBar
+				FileProgressInfo pinfo = index.data().value<FileProgressInfo>() ;
+				xProgressBar progressBar(pinfo.cmap,option.rect, painter); // the 3rd param is the  color schema (0 is the default value)
+				progressBar.setDisplayText(false); // should display % text?
+				progressBar.setValue(pinfo.progress); // set the progress value
+				progressBar.setVerticalSpan(1);
+				progressBar.paint(); // paint the progress bar
 			}
 			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
 			break;

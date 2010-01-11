@@ -80,8 +80,12 @@ ftFileControl::ftFileControl(std::string fname,
 }
 
 ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string configDir)
-	:CacheTransfer(cs), p3Config(CONFIG_TYPE_FT_CONTROL), mDataplex(dm), mFtActive(false),
-	mTurtle(NULL), mShareDownloadDir(true),last_save_time(0)
+	:CacheTransfer(cs), p3Config(CONFIG_TYPE_FT_CONTROL), 
+	last_save_time(0),
+	mDataplex(dm),
+	mTurtle(NULL), 
+	mFtActive(false),
+	mShareDownloadDir(true)
 {
 	/* TODO */
 }
@@ -96,7 +100,7 @@ void ftController::setFtSearchNExtra(ftSearch *search, ftExtraList *list)
 	mExtraList = list;
 }
 
-bool ftController::getFileChunksDetails(const std::string& hash,FileChunksInfo& info)
+bool ftController::getFileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
@@ -185,7 +189,7 @@ void ftController::run()
 		}
 
 		time_t now = time(NULL) ;
-		if(now - last_save_time > SAVE_TRANSFERS_DELAY)
+		if((int)now - (int)last_save_time > (int)SAVE_TRANSFERS_DELAY)
 		{
 			IndicateConfigChanged() ;
 			last_save_time = now ;
@@ -593,7 +597,10 @@ bool	ftController::handleAPendingRequest()
 				std::cerr << "ftController::loadList(): Error: could not find hash " << rsft->file.hash << " in mDownloads list !" << std::endl ;
 			}
 			else
-				(fit->second).mCreator->loadAvailabilityMap(rsft->chunk_map,rsft->chunk_size,rsft->chunk_number,rsft->chunk_strategy) ;
+			{
+				(fit->second).mCreator->setAvailabilityMap(rsft->compressed_chunk_map) ;
+				(fit->second).mCreator->setChunkStrategy((FileChunksInfo::ChunkStrategy)(rsft->chunk_strategy)) ;
+			}
 
 			delete rsft ;
 			mPendingChunkMaps.erase(it) ;
@@ -733,10 +740,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	}
 	else
 	{
-		if (mSearch->search(hash, size,
-			RS_FILE_HINTS_LOCAL |
-			RS_FILE_HINTS_EXTRA |
-			RS_FILE_HINTS_SPEC_ONLY, info))
+		if (mSearch->search(hash, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY, info))
 		{
 			/* have it already */
 			/* add in as completed transfer */
@@ -750,10 +754,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 		}
 
 		/* do a source search - for any extra sources */
-		if (mSearch->search(hash, size,
-			RS_FILE_HINTS_REMOTE |
-//			RS_FILE_HINTS_TURTLE |
-			RS_FILE_HINTS_SPEC_ONLY, info))
+		if (mSearch->search(hash, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info))
 		{
 			/* do something with results */
 #ifdef CONTROL_DEBUG
@@ -817,8 +818,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	ftTransferModule *tm = new ftTransferModule(fc, mDataplex,this);
 
 	/* add into maps */
-	ftFileControl ftfc(fname, savepath, destination,
-			size, hash, flags, fc, tm, callbackCode);
+	ftFileControl ftfc(fname, savepath, destination, size, hash, flags, fc, tm, callbackCode);
 	ftfc.mCreateTime = time(NULL);
 
 #ifdef CONTROL_DEBUG
@@ -1469,7 +1469,23 @@ std::list<RsItem *> ftController::saveList(bool &cleanup)
 		//rft->flags = fit->second.mFlags;
 
 		fit->second.mTransfer->getFileSources(rft->allPeerIds.ids);
-		fit->second.mCreator->storeAvailabilityMap(rft->chunk_map,rft->chunk_size,rft->chunk_number,rft->chunk_strategy) ;
+
+		// Remove turtle peers from sources, as they are not supposed to survive a reboot of RS, since they are dynamic sources.
+		// Otherwize, such sources are unknown from the turtle router, at restart, and never get removed.
+		//
+		for(std::list<std::string>::iterator sit(rft->allPeerIds.ids.begin());sit!=rft->allPeerIds.ids.end();)
+			if(mTurtle->isTurtlePeer(*sit))
+			{
+				std::list<std::string>::iterator sittmp(sit) ;
+				++sittmp ;
+				rft->allPeerIds.ids.erase(sit) ;
+				sit = sittmp ;
+			}
+			else
+				++sit ;
+
+		fit->second.mCreator->getAvailabilityMap(rft->compressed_chunk_map) ;
+		rft->chunk_strategy = fit->second.mCreator->getChunkStrategy() ;
 
 		saveData.push_back(rft);
 	}
@@ -1528,7 +1544,10 @@ bool ftController::loadList(std::list<RsItem *> load)
 					continue ;	// i.e. don't delete the item!
 				}
 				else
-					(fit->second).mCreator->loadAvailabilityMap(rsft->chunk_map,rsft->chunk_size,rsft->chunk_number,rsft->chunk_strategy) ;
+				{
+					(fit->second).mCreator->setAvailabilityMap(rsft->compressed_chunk_map) ;
+					(fit->second).mCreator->setChunkStrategy((FileChunksInfo::ChunkStrategy)(rsft->chunk_strategy)) ;
+				}
 			}
 		}
 

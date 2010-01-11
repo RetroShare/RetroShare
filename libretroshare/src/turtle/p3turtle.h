@@ -280,6 +280,13 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle,/* public f
 
 		/// Send file data into the correct tunnel for the given file hash
 		void sendFileData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t baseoffset, uint32_t chunksize, void *data) ;
+
+		/// Send a request for the chunk map of this file to the given peer
+		void sendChunkMapRequest(const std::string& peerId, const std::string& hash) ;
+
+		/// Send a chunk map of this file to the given peer
+		void sendChunkMap(const std::string& peerId, const std::string& hash,const CompressedChunkMap& cmap) ;
+
 	private:
 		//--------------------------- Admin/Helper functions -------------------------//
 		
@@ -321,6 +328,7 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle,/* public f
 		void handleTunnelResult(RsTurtleTunnelOkItem *item);		
 		void handleRecvFileRequest(RsTurtleFileRequestItem *item);		
 		void handleRecvFileData(RsTurtleFileDataItem *item);		
+		void handleRecvFileMapRequest(RsTurtleFileMapRequestItem*);
 		void handleRecvFileMap(RsTurtleFileMapItem*);
 
 		//------ Functions connecting the turtle router to other components.----------//

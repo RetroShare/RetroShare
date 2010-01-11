@@ -45,7 +45,7 @@ class ftFileSearch: public ftSearch
 	ftFileSearch();
 
 bool    addSearchMode(ftSearch *search, uint32_t hintflags);
-virtual bool    search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const;
+virtual bool    search(std::string hash, uint32_t hintflags, FileInfo &info) const;
 
 	private:
 

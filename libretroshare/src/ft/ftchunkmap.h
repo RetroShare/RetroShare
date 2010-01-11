@@ -73,80 +73,96 @@ class ChunkDownloadInfo
 		uint32_t _remains ;
 };
 
+class SourceChunksInfo
+{
+	public:
+		CompressedChunkMap cmap ;	//! map of what the peer has/doens't have
+		time_t TS ;						//! last update time for this info
+		bool is_full ;					//! is the map full ? In such a case, re-asking for it is unnecessary.
+};
+
 class ChunkMap
 {
    public:
 		typedef uint32_t ChunkNumber ;
 
-		// Constructor. Decides what will be the size of chunks and how many there will be.
+		/// Constructor. Decides what will be the size of chunks and how many there will be.
 
 		ChunkMap(uint64_t file_size) ;
 
-		// constructor from saved map info
+		/// constructor from saved map info
 		ChunkMap(uint64_t file_size,const std::vector<uint32_t>& map,uint32_t chunk_size,uint32_t chunk_number,FileChunksInfo::ChunkStrategy s) ;
 
-		// destructor
+		/// destructor
 		virtual ~ChunkMap() {}
 
-      // Returns an slice of data to be asked to the peer within a chunk.
-		// If a chunk is already been downloaded by this peer, take a slice at
-		// the beginning of this chunk, or at least where it starts.
-		// If not, randomly/streamly select a new chunk depending on the strategy. 
-      // adds an entry in the chunk_ids map, and sets up 1 interval for it.
-      // the chunk should be available from the designated peer. 
+      /// Returns an slice of data to be asked to the peer within a chunk.
+		/// If a chunk is already been downloaded by this peer, take a slice at
+		/// the beginning of this chunk, or at least where it starts.
+		/// If not, randomly/streamly select a new chunk depending on the strategy. 
+      /// adds an entry in the chunk_ids map, and sets up 1 interval for it.
+      /// the chunk should be available from the designated peer. 
 
-      virtual bool getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChunk& chunk) ; 
+      virtual bool getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChunk& chunk,bool& source_chunk_map_needed) ; 
 
-      // Notify received a slice of data. This needs to 
-      //   - carve in the map of chunks what is received, what is not.
-      //   - tell which chunks are finished. For this, each interval must know what chunk number it has been attributed
-      //    when the interval is split in the middle, the number of intervals for the chunk is increased. If the interval is
-      //    completely covered by the data, the interval number is decreased.
+      /// Notify received a slice of data. This needs to 
+      ///   - carve in the map of chunks what is received, what is not.
+      ///   - tell which chunks are finished. For this, each interval must know what chunk number it has been attributed
+      ///    when the interval is split in the middle, the number of intervals for the chunk is increased. If the interval is
+      ///    completely covered by the data, the interval number is decreased.
 
       virtual void dataReceived(const ftChunk::ChunkId& c_id) ;
 
-      // Decides how chunks are selected. 
-      //    STREAMING: the 1st chunk is always returned
-      //       RANDOM: the beginning of a random interval is selected first. If two few intervals 
-      //                exist, the largest one is randomly split into two.
+      /// Decides how chunks are selected. 
+      ///    STREAMING: the 1st chunk is always returned
+      ///       RANDOM: the beginning of a random interval is selected first. If two few intervals 
+      ///                exist, the largest one is randomly split into two.
 
 		void setStrategy(FileChunksInfo::ChunkStrategy s) { _strategy = s ; }
+		FileChunksInfo::ChunkStrategy getStrategy() const { return _strategy ; }
 
-      // Properly fills an vector of fixed size chunks with availability or download state.
-      // chunks is given with the proper number of chunks and we have to adapt to it. This can be used
-      // to display square chunks in the gui or display a blue bar of availability by collapsing info from all peers.
+      /// Properly fills an vector of fixed size chunks with availability or download state.
+      /// chunks is given with the proper number of chunks and we have to adapt to it. This can be used
+      /// to display square chunks in the gui or display a blue bar of availability by collapsing info from all peers.
+		/// The set method is not virtual because it has no reason to exist in the parent ftFileProvider
 
-      void buildAvailabilityMap(std::vector<uint32_t>& map,uint32_t& chunk_size,uint32_t& chunk_number,FileChunksInfo::ChunkStrategy& s) const ;
-		void loadAvailabilityMap(const std::vector<uint32_t>& map,uint32_t chunk_size,uint32_t chunk_number,FileChunksInfo::ChunkStrategy s) ;
+      virtual void getAvailabilityMap(CompressedChunkMap& cmap) const ;
+		void setAvailabilityMap(const CompressedChunkMap& cmap) ;
 
-		// Updates the peer's availablility map
+		/// This function fills in a plain map for a file of the given size. This
+		/// is used to ensure that the chunk size will be consistent with the rest
+		/// of the code.
 		//
-		void setPeerAvailabilityMap(const std::string& peer_id,uint32_t chunk_size,uint32_t nb_chunks,const std::vector<uint32_t>& peer_map) ;
+		static void buildPlainMap(uint64_t size,CompressedChunkMap& map) ;
 
-		// Returns the total size of downloaded data in the file.
+		/// This function is used by the parent ftFileProvider to know whether the chunk can be sent or not.
+		bool isChunkAvailable(uint64_t offset, uint32_t chunk_size) const ;
+
+		/// Updates the peer's availablility map
+		//
+		void setPeerAvailabilityMap(const std::string& peer_id,const CompressedChunkMap& peer_map) ;
+
+		/// Returns the total size of downloaded data in the file.
 		uint64_t getTotalReceived() const { return _total_downloaded ; }
 
 		void getChunksInfo(FileChunksInfo& info) const ;
 	protected:
-		// handles what size the last chunk has.
+		/// handles what size the last chunk has.
 		uint32_t sizeOfChunk(uint32_t chunk_number) const ;
 
-		// Returns the first chunk available starting from start_location for this peer_id.
+		/// Returns the first chunk available starting from start_location for this peer_id.
 		//
-		uint32_t getAvailableChunk(uint32_t start_location,const std::string& peer_id) ;
+		uint32_t getAvailableChunk(uint32_t start_location,const std::string& peer_id,bool& chunk_map_too_old) ;
 
 	private:
-		uint64_t												_file_size ;		// total size of the file in bytes.
-		uint32_t												_chunk_size ;		// Size of chunks. Common to all chunks.
-		FileChunksInfo::ChunkStrategy 				_strategy ;			// how do we allocate new chunks
-		std::map<std::string,Chunk>					_active_chunks_feed ; // vector of chunks being downloaded. Exactly one chunk per peer id.
-		std::map<ChunkNumber,ChunkDownloadInfo>	_slices_to_download ; // list of (slice id,slice size) 
-
-		std::vector<FileChunksInfo::ChunkState>	_map ;				// vector of chunk state over the whole file
-
-		std::map<std::string,std::vector<uint32_t> >	_peers_chunks_availability ;	// what does each source peer have, stored in compressed format.
-
-		uint64_t												_total_downloaded ;
+		uint64_t												_file_size ;						//! total size of the file in bytes.
+		uint32_t												_chunk_size ;						//! Size of chunks. Common to all chunks.
+		FileChunksInfo::ChunkStrategy 				_strategy ;							//! how do we allocate new chunks
+		std::map<std::string,Chunk>					_active_chunks_feed ; 			//! vector of chunks being downloaded. Exactly 1 chunk per peer.
+		std::map<ChunkNumber,ChunkDownloadInfo>	_slices_to_download ; 			//! list of (slice id,slice size) 
+		std::vector<FileChunksInfo::ChunkState>	_map ;								//! vector of chunk state over the whole file
+		std::map<std::string,SourceChunksInfo>		_peers_chunks_availability ;	//! what does each source peer have
+		uint64_t												_total_downloaded ;				//! completion for the file
 };
 
 

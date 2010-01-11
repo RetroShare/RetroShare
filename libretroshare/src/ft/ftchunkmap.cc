@@ -1,7 +1,10 @@
 #include <math.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <rsiface/rspeers.h>
 #include "ftchunkmap.h"
+
+static const uint32_t SOURCE_CHUNK_MAP_UPDATE_PERIOD = 60 ; //! TTL for  chunkmap info
 
 std::ostream& operator<<(std::ostream& o,const ftChunk& c)
 {
@@ -28,26 +31,6 @@ void Chunk::getSlice(uint32_t size_hint,ftChunk& chunk)
 	_offset += chunk.size ;
 }
 
-//uint32_t Chunk::dataReceived(const ftChunk::ChunkId cid)
-//{
-//#ifdef DEBUG_FTCHUNK
-//	std::cerr << "*** Chunk::dataReceived: slice " << cid << " finished" << std::endl ;
-//#endif
-//	std::map<ftChunk::ChunkId,uint32_t>::iterator it( _slices_to_download.find(cid) ) ;
-//
-//	if(it == _slices_to_download.end())
-//	{
-//		std::cerr << "!!! Chunk::dataReceived: could not find chunk " << cid << ": probably a fatal error" << std::endl ;
-//		return 0 ;
-//	}
-//	else
-//	{
-//		uint32_t n = it->second ;
-//		_slices_to_download.erase(it) ;
-//		return n ;
-//	}
-//}
-
 ChunkMap::ChunkMap(uint64_t s)
 	:_file_size(s),_chunk_size(1024*1024) 	// 1MB chunks
 {
@@ -67,33 +50,45 @@ ChunkMap::ChunkMap(uint64_t s)
 #endif
 }
 
-ChunkMap::ChunkMap(uint64_t file_size,
-							const std::vector<uint32_t>& map,
-							uint32_t chunk_size,
-							uint32_t chunk_number,
-							FileChunksInfo::ChunkStrategy strategy) 
-
-	:_file_size(file_size),_chunk_size(chunk_size),_strategy(strategy)
+void ChunkMap::setAvailabilityMap(const CompressedChunkMap& map)
 {
-#ifdef DEBUG_FTCHUNK
-	std::cerr << "ChunkMap:: loading availability map of size " << map.size() << ", chunk_size=" << chunk_size << ", chunknumber = " << chunk_number << std::endl ;
-#endif
-
-	_map.clear() ;
-	_map.resize(chunk_number) ;
-	_total_downloaded = 0 ;
-
 	for(uint32_t i=0;i<_map.size();++i)
-	{
-		uint32_t j = i & 31 ;	// i%32
-		uint32_t k = i >> 5 ;	// i/32
-
-		_map[i] = ( (map[k] & (1<<j)) > 0)?(FileChunksInfo::CHUNK_DONE) : (FileChunksInfo::CHUNK_OUTSTANDING) ;
-
-		if(_map[i] == FileChunksInfo::CHUNK_DONE)
+		if(map[i] > 0)
+		{
+			_map[i] = FileChunksInfo::CHUNK_DONE ;
 			_total_downloaded += _chunk_size ;
-	}
+		}
+		else
+			_map[i] = FileChunksInfo::CHUNK_OUTSTANDING ;
 }
+
+//ChunkMap::ChunkMap(uint64_t file_size,
+//							const std::vector<uint32_t>& map,
+//							uint32_t chunk_size,
+//							uint32_t chunk_number,
+//							FileChunksInfo::ChunkStrategy strategy) 
+//
+//	:_file_size(file_size),_chunk_size(chunk_size),_strategy(strategy)
+//{
+//#ifdef DEBUG_FTCHUNK
+//	std::cerr << "ChunkMap:: loading availability map of size " << map.size() << ", chunk_size=" << chunk_size << ", chunknumber = " << chunk_number << std::endl ;
+//#endif
+//
+//	_map.clear() ;
+//	_map.resize(chunk_number) ;
+//	_total_downloaded = 0 ;
+//
+//	for(uint32_t i=0;i<_map.size();++i)
+//	{
+//		uint32_t j = i & 31 ;	// i%32
+//		uint32_t k = i >> 5 ;	// i/32
+//
+//		_map[i] = ( (map[k] & (1<<j)) > 0)?(FileChunksInfo::CHUNK_DONE) : (FileChunksInfo::CHUNK_OUTSTANDING) ;
+//
+//		if(_map[i] == FileChunksInfo::CHUNK_DONE)
+//			_total_downloaded += _chunk_size ;
+//	}
+//}
 
 
 void ChunkMap::dataReceived(const ftChunk::ChunkId& cid)
@@ -151,7 +146,7 @@ void ChunkMap::dataReceived(const ftChunk::ChunkId& cid)
 // 			- chunks pushed when new chunks are needed
 // 			- chunks removed when completely downloaded
 //
-bool ChunkMap::getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChunk& chunk)
+bool ChunkMap::getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChunk& chunk,bool& source_chunk_map_needed)
 {
 #ifdef DEBUG_FTCHUNK
 	std::cerr << "*** ChunkMap::getDataChunk: size_hint = " << size_hint << std::endl ;
@@ -168,10 +163,10 @@ bool ChunkMap::getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChun
 
 		switch(_strategy)
 		{
-			case FileChunksInfo::CHUNK_STRATEGY_STREAMING:	c = getAvailableChunk(0,peer_id) ;	// very bold!!
+			case FileChunksInfo::CHUNK_STRATEGY_STREAMING:	c = getAvailableChunk(0,peer_id,source_chunk_map_needed) ;	// very bold!!
 																			break ;
 
-			case FileChunksInfo::CHUNK_STRATEGY_RANDOM: 		c = getAvailableChunk(rand()%_map.size(),peer_id) ;
+			case FileChunksInfo::CHUNK_STRATEGY_RANDOM: 		c = getAvailableChunk(rand()%_map.size(),peer_id,source_chunk_map_needed) ;
 																			break ;
 			default:
 #ifdef DEBUG_FTCHUNK
@@ -212,23 +207,51 @@ bool ChunkMap::getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChun
 	return true ;
 }
 
-void ChunkMap::setPeerAvailabilityMap(const std::string& peer_id,uint32_t chunk_size,uint32_t nb_chunks,const std::vector<uint32_t>& compressed_peer_map)
+bool ChunkMap::isChunkAvailable(uint64_t offset, uint32_t chunk_size) const 
+{
+	uint32_t chunk_number_start = offset/(uint64_t)_chunk_size ;
+	uint32_t chunk_number_end = (offset+(uint64_t)chunk_size)/(uint64_t)_chunk_size ;
+
+	if((offset+(uint64_t)chunk_size) % (uint64_t)_chunk_size == 0)
+		--chunk_number_end ;
+
+	// It's possible that chunk_number_start==chunk_number_end+1, but for this we need to have
+	// chunk_size=0, and offset%_chunk_size=0, so the response "true" is still valid.
+	//
+	for(uint32_t i=chunk_number_start;i!=chunk_number_end;++i)
+		if(_map[i] != FileChunksInfo::CHUNK_DONE)
+			return false ;
+
+	return true ;
+}
+
+void ChunkMap::setPeerAvailabilityMap(const std::string& peer_id,const CompressedChunkMap& cmap)
 {
 #ifdef DEBUG_FTCHUNK
 	std::cout << "ChunkMap::Receiving new availability map for peer " << peer_id << std::endl ;
 #endif
-	// Check that the parameters are the same. Otherwise we should convert the info into the local format. 
-	// If all RS instances have the same policy for deciding the sizes of chunks, this should not happen.
 
-	if(chunk_size != _chunk_size || nb_chunks != _map.size())
+	if(cmap._map.size() != _map.size()/32+(_map.size()%32 != 0))
 	{
-		std::cerr << "ChunkMap::setPeerAvailabilityMap: chunk size / number of chunks is not correct. Dropping the info." << std::endl ;
+		std::cerr << "ChunkMap::setPeerAvailabilityMap: chunk size / number of chunks is not correct. Dropping the info. cmap.size()=" << cmap._map.size() << ", _map/32+0/1 = " << _map.size()/32+(_map.size()%32 != 0) << std::endl ;
 		return ;
 	}
 
 	// sets the map.
 	//
-	_peers_chunks_availability[peer_id] = compressed_peer_map ;
+	SourceChunksInfo& mi(_peers_chunks_availability[peer_id]) ;
+	mi.cmap = cmap ;
+	mi.TS = time(NULL) ;
+	mi.is_full = true ;
+
+	// Checks wether the map is full of not.
+	//
+	for(uint i=0;i<_map.size();++i)
+		if(!cmap[i])
+		{
+			mi.is_full = false ;
+			break ;
+		}
 
 #ifdef DEBUG_FTCHUNK
 	std::cerr << "ChunkMap::setPeerAvailabilityMap: Setting chunk availability info for peer " << peer_id << std::endl ;
@@ -243,32 +266,54 @@ uint32_t ChunkMap::sizeOfChunk(uint32_t cid) const
 		return _chunk_size ;
 }
 
-uint32_t ChunkMap::getAvailableChunk(uint32_t start_location,const std::string& peer_id) 
+uint32_t ChunkMap::getAvailableChunk(uint32_t start_location,const std::string& peer_id,bool& map_is_too_old) 
 {
 	// Very bold algorithm: checks for 1st availabe chunk for this peer starting
 	// from the given start location.
-	std::map<std::string,std::vector<uint32_t> >::const_iterator it(_peers_chunks_availability.find(peer_id)) ;
+	std::map<std::string,SourceChunksInfo>::iterator it(_peers_chunks_availability.find(peer_id)) ;
 
 	// Do we have records for this file source ?
 	//
 	if(it == _peers_chunks_availability.end())
 	{
-#ifdef DEBUG_FTCHUNK
-		std::cout << "No chunk map for peer " << peer_id << ": supposing full data." << std::endl ;
-#endif
-		std::vector<uint32_t>& pchunks(_peers_chunks_availability[peer_id]) ;
+		SourceChunksInfo& pchunks(_peers_chunks_availability[peer_id]) ;
 
-		pchunks.resize( (_map.size() >> 5)+!!(_map.size() & 0x11111),~(uint32_t)0 ) ;
+		// Ok, we don't have the info, so two cases:
+		// 	- we are the actual source, so we can safely init the map to a full map
+		// 	- we are not the source, so we init it with an empty map, and set the time stamp to 0.
+		//
+		if(peer_id == rsPeers->getOwnId())
+		{
+			pchunks.cmap._map.resize( CompressedChunkMap::getCompressedSize(_map.size()),~(uint32_t)0 ) ;
+			pchunks.TS = 0 ;
+			pchunks.is_full = true ;
+		}
+		else
+		{
+			pchunks.cmap._map.resize( CompressedChunkMap::getCompressedSize(_map.size()),0 ) ;
+			pchunks.TS = 0 ;
+			pchunks.is_full = false ;
+		}
 
 		it = _peers_chunks_availability.find(peer_id) ;
 	}
-	const std::vector<uint32_t>& peer_chunks(it->second) ;
+	SourceChunksInfo& peer_chunks(it->second) ;
+
+	// If the info is too old, we ask for a new one. When the map is full, we ask 10 times less, as it's probably not 
+	// useful to get a new map that will also be full, but because we need to be careful not to mislead information,
+	// we still keep asking.
+	//
+	time_t now = time(NULL) ;
+	map_is_too_old = (int)now - (int)peer_chunks.TS > (int)SOURCE_CHUNK_MAP_UPDATE_PERIOD*(1+9*peer_chunks.is_full) ;
+
+	// We will re-ask but not now seconds.
+	peer_chunks.TS = now ;
 
 	for(unsigned int i=0;i<_map.size();++i)
 	{
 		uint32_t j = (start_location+i)%(int)_map.size() ;	// index of the chunk
 
-		if(_map[j] == FileChunksInfo::CHUNK_OUTSTANDING && COMPRESSED_MAP_READ(peer_chunks,j))
+		if(_map[j] == FileChunksInfo::CHUNK_OUTSTANDING && peer_chunks.cmap[j])
 		{
 #ifdef DEBUG_FTCHUNK
 			std::cerr << "ChunkMap::getAvailableChunk: returning chunk " << j << " for peer " << peer_id << std::endl;
@@ -296,35 +341,30 @@ void ChunkMap::getChunksInfo(FileChunksInfo& info) const
 
 	info.compressed_peer_availability_maps.clear() ;
 
-	for(std::map<std::string,std::vector<uint32_t> >::const_iterator it(_peers_chunks_availability.begin());it!= _peers_chunks_availability.end();++it)
-		info.compressed_peer_availability_maps.push_back(std::pair<std::string,std::vector<uint32_t> >(it->first,it->second)) ;
+	for(std::map<std::string,SourceChunksInfo>::const_iterator it(_peers_chunks_availability.begin());it!=_peers_chunks_availability.end();++it)
+		info.compressed_peer_availability_maps[it->first] = it->second.cmap ;
 }
 
-void ChunkMap::buildAvailabilityMap(std::vector<uint32_t>& map,uint32_t& chunk_size,uint32_t& chunk_number,FileChunksInfo::ChunkStrategy& strategy) const 
+void ChunkMap::getAvailabilityMap(CompressedChunkMap& compressed_map) const 
 {
-	chunk_size = _chunk_size ;
-	chunk_number = _map.size() ;
-	strategy = _strategy ;
+	compressed_map = CompressedChunkMap(_map) ; 
 
-	map.clear() ;
-	map.reserve((chunk_number >> 5)+1) ;
-
-	uint32_t r=0 ;
-	for(uint32_t i=0;i<_map.size();++i)
-	{
-		uint32_t j = i & 31 ;
-		r |= (_map[i]==FileChunksInfo::CHUNK_DONE)?(1<<j):0 ;
-
-		if(j==31 || i==_map.size()-1)
-		{
-			map.push_back(r);
-			r=0 ;
-		}
-	}
 #ifdef DEBUG_FTCHUNK
-	std::cerr << "ChunkMap:: built availability map of size " << map.size() << ", chunk_size=" << chunk_size << ", chunknumber = " << chunk_number << ", strategy=" << _strategy << std::endl ;
+	std::cerr << "ChunkMap:: retrieved availability map of size " << _map.size() << ", chunk_size=" << _chunk_size << std::endl ;
 #endif
 }
+
+void ChunkMap::buildPlainMap(uint64_t size, CompressedChunkMap& map)
+{
+	uint32_t chunk_size(1024*1024) ;	// 1MB chunks
+	uint64_t n = size/(uint64_t)chunk_size ;
+
+	if(size % (uint64_t)chunk_size != 0)
+		++n ;
+
+	map = CompressedChunkMap(n,~uint32_t(0)) ;
+}
+
 
 
 

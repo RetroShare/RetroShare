@@ -327,7 +327,11 @@ bool ftTransferModule::getChunk(const std::string& peer_id,uint32_t size_hint,ui
 	std::cerr << std::endl;
 #endif
 
-  	bool val = mFileCreator->getMissingChunk(peer_id,size_hint,offset, chunk_size);
+	bool source_peer_map_needed ;
+  	bool val = mFileCreator->getMissingChunk(peer_id,size_hint,offset, chunk_size,source_peer_map_needed);
+
+	if(source_peer_map_needed)
+		mMultiplexor->sendChunkMapRequest(peer_id, mHash) ;
 
 #ifdef FT_DEBUG
 	if (val)
@@ -338,12 +342,14 @@ bool ftTransferModule::getChunk(const std::string& peer_id,uint32_t size_hint,ui
 	        std::cerr << " size: " << mSize;
 		std::cerr << " offset: " << offset;
 		std::cerr << " chunk_size: " << chunk_size;
+		std::cerr << " peer map needed = " << source_peer_map_needed << std::endl ;
 		std::cerr << std::endl;
 	}
 	else
 	{
 		std::cerr << "ftTransferModule::getChunk()";
 		std::cerr << " Answer: No Chunk Available";
+		std::cerr << " peer map needed = " << source_peer_map_needed << std::endl ;
 		std::cerr << std::endl;
 	}
 #endif

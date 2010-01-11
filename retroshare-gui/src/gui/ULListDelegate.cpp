@@ -19,6 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <rsiface/rstypes.h>
 #include <QModelIndex>
 #include <QPainter>
 #include <QStyleOptionProgressBarV2>
@@ -27,6 +28,8 @@
 #include <QtGui>
 
 #include "ULListDelegate.h"
+
+Q_DECLARE_METATYPE(FileProgressInfo)
 
 ULListDelegate::ULListDelegate(QObject *parent) : QAbstractItemDelegate(parent)
 {
@@ -123,25 +126,22 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
 		case UPROGRESS:
-		    {
-			progress = index.data().toDouble();
-			// create a xProgressBar
-			xProgressBar progressBar(option.rect, painter );// the 3rd param is the  color schema (0 is the default value)
-					
-			QString ext = QFileInfo(QString::fromStdString(index.sibling(index.row(), UNAME).data().toString().toStdString())).suffix();;
-			if (ext == "rsfc" || ext == "rsrl" || ext == "dist" || ext == "rsfb")
-		  {
-		  progressBar.setColorSchema( 9);
-		  }
-		  else
-		  {
-		  progressBar.setColorSchema( 8);
-		  }
-		  			
-			progressBar.setDisplayText(false); // should display % text?
-			progressBar.setValue(progress); // set the progress value
-			progressBar.setVerticalSpan(1);
-			progressBar.paint(); // paint the progress bar
+			{
+				FileProgressInfo pinfo = index.data().value<FileProgressInfo>() ;
+
+				// create a xProgressBar
+				xProgressBar progressBar(pinfo.cmap,option.rect,painter,0);// the 3rd param is the  color schema (0 is the default value)
+
+				QString ext = QFileInfo(QString::fromStdString(index.sibling(index.row(), UNAME).data().toString().toStdString())).suffix();;
+				if (ext == "rsfc" || ext == "rsrl" || ext == "dist" || ext == "rsfb")
+					progressBar.setColorSchema( 9);
+				else
+					progressBar.setColorSchema( 8);
+
+				progressBar.setDisplayText(true); // should display % text?
+				progressBar.setValue(pinfo.progress); // set the progress value
+				progressBar.setVerticalSpan(1);
+				progressBar.paint(); // paint the progress bar
 			}
 			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
 			break;

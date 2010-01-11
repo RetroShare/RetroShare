@@ -62,23 +62,16 @@ void FileTransferInfoWidget::updateDisplay()
 {
 	std::cout << "In TaskGraphPainterWidget::updateDisplay()" << std::endl ;
 
+	bool ok=true ;
 	FileInfo nfo ;
 	if(!rsFiles->FileDetails(_file_hash, RS_FILE_HINTS_DOWNLOAD, nfo)) 
-		return ;
+		ok = false ;
 	FileChunksInfo info ;
-	if(!rsFiles->FileChunksDetails(_file_hash, info)) 
-		return ;
+	if(!rsFiles->FileDownloadChunksDetails(_file_hash, info)) 
+		ok = false ;
 
 	std::cout << "got details for file " << nfo.fname << std::endl ;
 
-	uint64_t fileSize = info.file_size;
-	uint32_t blockSize = info.chunk_size ;
-	int blocks = info.chunks.size() ;
-
-	int columns = maxWidth/chunk_square_size;
-	y = blocks/columns*chunk_square_size;
-	x = blocks%columns*chunk_square_size;
-	maxHeight = y+150+info.active_chunks.size()*(block_sep+text_height);	// warning: this should be computed from the different size parameter and the number of objects drawn, otherwise the last objects to be displayed will be truncated.
 	pixmap = QPixmap(size());
 	pixmap.fill(this, 0, 0);
 	pixmap = QPixmap(maxWidth, maxHeight);
@@ -88,7 +81,16 @@ void FileTransferInfoWidget::updateDisplay()
 	QPainter painter(&pixmap);
 	painter.initFrom(this);
 
-	draw(info,&painter) ;
+	if(ok)
+	{
+		int blocks = info.chunks.size() ;
+		int columns = maxWidth/chunk_square_size;
+		y = blocks/columns*chunk_square_size;
+		x = blocks%columns*chunk_square_size;
+		maxHeight = y+150+info.active_chunks.size()*(block_sep+text_height);	// warning: this should be computed from the different size parameter and the number of objects drawn, otherwise the last objects to be displayed will be truncated.
+
+		draw(info,&painter) ;
+	}
 
 	pixmap2 = pixmap;
 }
@@ -194,8 +196,8 @@ void FileTransferInfoWidget::draw(const FileChunksInfo& info,QPainter *painter)
 		 int nb_src = 0 ;
 		 int chunk_num = (int)floor(i/float(availability_map_size_X)*(nb_chunks-1)) ;
 
-		 for(uint j=0;j<info.compressed_peer_availability_maps.size();++j)
-			 nb_src += (bool)(COMPRESSED_MAP_READ(info.compressed_peer_availability_maps[j].second, chunk_num)) ;
+		 for(std::map<std::string,CompressedChunkMap>::const_iterator it(info.compressed_peer_availability_maps.begin());it!=info.compressed_peer_availability_maps.end();++it)
+			 nb_src += it->second[chunk_num] ;
 
 		 painter->setPen(QColor::fromHsv(200,50*nb_src,200)) ; // the more sources, the more saturated
 		 painter->drawLine(i,y,i,y+availability_map_size_Y) ;

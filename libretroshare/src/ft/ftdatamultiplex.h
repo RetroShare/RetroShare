@@ -102,23 +102,31 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 		/*************** SEND INTERFACE (calls ftDataSend) *******************/
 
 		/* Client Send */
-		bool	sendDataRequest(std::string peerId, std::string hash, uint64_t size, 
-				uint64_t offset, uint32_t chunksize);
+		bool	sendDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize);
 
 		/* Server Send */
-		bool	sendData(std::string peerId, std::string hash, uint64_t size, 
-				uint64_t offset, uint32_t chunksize, void *data);
+		bool	sendData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data);
 
+		/* Server/client Send */
+		bool	sendChunkMapRequest(const std::string& peerId, const std::string& hash) ;
 
 		/*************** RECV INTERFACE (provides ftDataRecv) ****************/
 
 		/* Client Recv */
-		virtual bool recvData(std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data);
-		virtual bool recvFileMap(const std::string& peerId, const std::string& hash, uint32_t chunk_size, uint32_t nb_chunks, const std::vector<uint32_t>& compressed_map) ;
+		virtual bool recvData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data);
+
+		/// Receive a request for a chunk map
+		virtual bool recvChunkMapRequest(const std::string& peer_id,const std::string& hash,bool is_client) ;
+		/// Receive a chunk map
+		virtual bool recvChunkMap(const std::string& peer_id,const std::string& hash,const CompressedChunkMap& cmap,bool is_client) ;
 
 		/* Server Recv */
-		virtual bool	recvDataRequest(std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunksize);
+		virtual bool	recvDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize);
 
+		// Returns the chunk map from the file uploading client. Also initiates a chunk map request if this 
+		// map is too old. This supposes that the caller will ask again in a few seconds.
+		//
+		bool getClientChunkMap(const std::string& upload_hash,const std::string& peer_id,CompressedChunkMap& map) ;
 
 	protected:
 
@@ -129,9 +137,11 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 	private:
 
 		/* Handling Job Queues */
-		bool    handleRecvData(std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data);
-		bool    handleRecvDataRequest(std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunksize);
-		bool    handleSearchRequest(std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunksize);
+		bool handleRecvData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data);
+		bool handleRecvDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize);
+		bool handleSearchRequest(const std::string& peerId, const std::string& hash);
+		bool handleRecvClientChunkMapRequest(const std::string& peerId, const std::string& hash) ;
+		bool handleRecvServerChunkMapRequest(const std::string& peerId, const std::string& hash) ;
 
 		/* We end up doing the actual server job here */
 		bool    locked_handleServerRequest(ftFileProvider *provider, std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunksize);
@@ -143,7 +153,7 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 
 		std::list<ftRequest> mRequestQueue;
 		std::list<ftRequest> mSearchQueue;
-		std::map<std::string, time_t> mUnknownHashs;
+//		std::map<std::string, time_t> mUnknownHashs;
 
 		ftDataSend *mDataSend;
 		ftSearch   *mSearch;

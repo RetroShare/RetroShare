@@ -1,8 +1,11 @@
 #include "ftfileprovider.h"
+#include "ftchunkmap.h"
 
 #include "util/rsdir.h"
 #include <stdlib.h>
 #include <stdio.h>
+
+static const time_t UPLOAD_CHUNK_MAPS_TIME = 30 ;	// time to ask for a new chunkmap from uploaders in seconds.
 
 ftFileProvider::ftFileProvider(std::string path, uint64_t size, std::string
 hash) : mSize(size), hash(hash), file_name(path), fd(NULL),transfer_rate(0),total_size(0)
@@ -71,6 +74,13 @@ bool    ftFileProvider::FileDetails(FileInfo &info)
 	/* Use req_loc / req_size to estimate data rate */
 
 	return true;
+}
+
+void ftFileProvider::getAvailabilityMap(CompressedChunkMap& cmap) 
+{
+	// We are here because the file we deal with is complete. So we return a plain map.
+	//
+	ChunkMap::buildPlainMap(mSize,cmap) ;
 }
 
 
@@ -166,6 +176,39 @@ bool ftFileProvider::getFileData(uint64_t offset, uint32_t &chunk_size, void *da
 		return 0;
 	}
 	return 1;
+}
+
+void ftFileProvider::setClientMap(const std::string& peer_id,const CompressedChunkMap& cmap)
+{
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+
+	std::pair<CompressedChunkMap,time_t>& map_info(clients_chunk_maps[peer_id]) ;
+
+	map_info.first = cmap ;
+	map_info.second = time(NULL) ;
+}
+
+void ftFileProvider::getClientMap(const std::string& peer_id,CompressedChunkMap& cmap,bool& map_is_too_old)
+{
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+
+	std::map<std::string,std::pair<CompressedChunkMap,time_t> >::iterator it(clients_chunk_maps.find(peer_id)) ;
+	
+	if(it == clients_chunk_maps.end())
+	{
+		clients_chunk_maps[peer_id] = std::pair<CompressedChunkMap,time_t>(CompressedChunkMap(),0) ;
+		it = clients_chunk_maps.find(peer_id) ;
+	}
+	
+	if(time(NULL) - it->second.second > UPLOAD_CHUNK_MAPS_TIME)
+	{
+		map_is_too_old = true ;
+		it->second.second = time(NULL) ;	// to avoid re-asking before the TTL
+	}
+	else
+		map_is_too_old = false ;
+
+	cmap = it->second.first ;
 }
 
 int ftFileProvider::initializeFileAttrs()

@@ -138,7 +138,9 @@ virtual void getDwlDetails(std::list<DwlDetails> & details);
 virtual bool FileDownloads(std::list<std::string> &hashs);
 virtual bool FileUploads(std::list<std::string> &hashs);
 virtual bool FileDetails(std::string hash, uint32_t hintflags, FileInfo &info);
-virtual bool FileChunksDetails(const std::string& hash,FileChunksInfo& info) ;
+virtual bool FileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info) ;
+virtual bool FileUploadChunksDetails(const std::string& hash,const std::string& peer_id,CompressedChunkMap& map) ;
+
 
 /***
  * Extra List Access
@@ -196,11 +198,11 @@ virtual bool 	unshareDownloadDirectory();
 	/*************** Data Transfer Interface ***********************/
 	/***************************************************************/
 public:
-virtual bool    sendData(std::string peerId, std::string hash, uint64_t size,
-                        uint64_t offset, uint32_t chunksize, void *data);
-virtual bool    sendDataRequest(std::string peerId,
-			std::string hash, uint64_t size,
-                        uint64_t offset, uint32_t chunksize);
+virtual bool sendData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data);
+virtual bool sendDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize);
+virtual bool sendChunkMapRequest(const std::string& peer_id,const std::string& hash) ;
+virtual bool sendChunkMap(const std::string& peer_id,const std::string& hash,const CompressedChunkMap& cmap) ;
+
 
 	/*************** Internal Transfer Fns *************************/
 virtual int tick();

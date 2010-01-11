@@ -40,19 +40,23 @@
 
 	/*************** SEND INTERFACE *******************/
 
+class CompressedChunkMap ;
+
 class ftDataSend
 {
 	public:
-virtual ~ftDataSend() { return; }
+		virtual ~ftDataSend() { return; }
 
-	/* Client Send */
-virtual bool    sendDataRequest(std::string peerId, std::string hash, 
-			uint64_t size, uint64_t offset, uint32_t chunksize) = 0;
+		/* Client Send */
+		virtual bool    sendDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize) = 0;
 
-	/* Server Send */
-virtual bool    sendData(std::string peerId, std::string hash, uint64_t size,
-                        uint64_t offset, uint32_t chunksize, void *data) = 0;
+		/* Server Send */
+		virtual bool    sendData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data) = 0;
 
+		/// Send a request for a chunk map
+		virtual bool sendChunkMapRequest(const std::string& peer_id,const std::string& hash) = 0;
+		/// Send a chunk map
+		virtual bool sendChunkMap(const std::string& peer_id,const std::string& hash,const CompressedChunkMap& cmap) = 0;
 };
 
 
@@ -62,18 +66,19 @@ virtual bool    sendData(std::string peerId, std::string hash, uint64_t size,
 class ftDataRecv
 {
 	public:
+		virtual ~ftDataRecv() { return; }
 
-virtual ~ftDataRecv() { return; }
+		/* Client Recv */
+		virtual bool    recvData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data) = 0;
 
-	/* Client Recv */
-virtual bool    recvData(std::string peerId, std::string hash, uint64_t size, 
-			uint64_t offset, uint32_t chunksize, void *data) = 0;
+		/* Server Recv */
+		virtual bool    recvDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize) = 0;
 
-	/* Server Recv */
-virtual bool    recvDataRequest(std::string peerId, std::string hash, 
-			uint64_t size, uint64_t offset, uint32_t chunksize) = 0;
+		/// Send a request for a chunk map
+		virtual bool recvChunkMapRequest(const std::string& peer_id,const std::string& hash,bool is_client) = 0;
 
-
+		/// Send a chunk map
+		virtual bool recvChunkMap(const std::string& peer_id,const std::string& hash,const CompressedChunkMap& cmap,bool is_client) = 0;
 };
 
 /******* Pair of Send/Recv (Only need to handle Send side) ******/

@@ -28,6 +28,7 @@
 
 
 #include <list>
+#include <map>
 #include <vector>
 #include <iostream>
 #include <string>
@@ -250,7 +251,10 @@ enum DwlPriority { Low = 0, Normal, High, Auto };
 
 // Macro to read a bits array for compressed chunk maps
 //
-#define COMPRESSED_MAP_READ(A,j) (A[j >> 5] & (1 << (j & 0x11111)))
+//#define COMPRESSED_MAP_READ(A,j) (A[j >> 5] & (1 << (j & 0x11111)))
+//#define COMPRESSED_MAP_WRITE(A,j,x) (A[j >> 5] |= (1 << (j & 0x11111)))
+
+class CompressedChunkMap ;
 
 class FileChunksInfo
 {
@@ -265,12 +269,48 @@ class FileChunksInfo
 		std::vector<ChunkState> chunks ;	
 
 		// For each source peer, gives the compressed bit map of have/don't have sate
-		std::vector<std::pair<std::string, std::vector<uint32_t> > > compressed_peer_availability_maps ;
+		std::map<std::string, CompressedChunkMap> compressed_peer_availability_maps ;
 
 		// For each chunk (by chunk number), gives the completion of the chunk.
 		//                     
 		std::vector<std::pair<uint32_t,uint32_t> > active_chunks ;
+};
 
+class CompressedChunkMap
+{
+	public:
+		CompressedChunkMap() {}
+
+		CompressedChunkMap(const std::vector<FileChunksInfo::ChunkState>& uncompressed_data)
+		{
+			_map.resize( getCompressedSize(uncompressed_data.size()),0 ) ;
+
+			for(uint32_t i=0;i<uncompressed_data.size();++i)
+				if(uncompressed_data[i]==FileChunksInfo::CHUNK_DONE) 
+					set(i) ;
+		}
+
+		CompressedChunkMap(uint32_t nb_chunks,uint32_t value)
+		{
+			_map.resize(getCompressedSize(nb_chunks),value) ;
+		}
+
+		static uint32_t getCompressedSize(uint32_t size) { return (size>>5) + !!(size&31) ; }
+
+		uint32_t filledChunks(uint32_t nbchks)
+		{
+			uint32_t res = 0 ;
+			for(uint32_t i=0;i<std::min(nbchks,_map.size()*32);++i)
+				res += operator[](i) ;
+			return res ;
+		}
+		inline bool operator[](uint32_t i) const { return (_map[i >> 5] & (1 << (i & 31))) > 0 ; }
+
+		inline void   set(uint32_t j) { _map[j >> 5] |=  (1 << (j & 31)) ; }
+		inline void reset(uint32_t j) { _map[j >> 5] &= ~(1 << (j & 31)) ; }
+
+		/// compressed map, one bit per chunk
+		std::vector<uint32_t> _map ;
 };
 
 /* class which encapsulates download details */

@@ -129,7 +129,12 @@ virtual void getDwlDetails(std::list<DwlDetails> & details) = 0;
 virtual bool FileDownloads(std::list<std::string> &hashs) = 0;
 virtual bool FileUploads(std::list<std::string> &hashs) = 0;
 virtual bool FileDetails(std::string hash, uint32_t hintflags, FileInfo &info) = 0;
-virtual bool FileChunksDetails(const std::string& hash,FileChunksInfo& info) = 0 ;
+
+/// Gives chunk details about the downloaded file with given hash.
+virtual bool FileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info) = 0 ;
+
+/// details about the upload with given hash
+virtual bool FileUploadChunksDetails(const std::string& hash,const std::string& peer_id,CompressedChunkMap& map) = 0 ;
 
 /***
  * Extra List Access

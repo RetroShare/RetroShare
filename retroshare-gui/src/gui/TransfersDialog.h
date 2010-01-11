@@ -33,6 +33,7 @@
 #include <rsiface/rstypes.h>
 #include "mainpage.h"
 #include "RsAutoUpdatePage.h"
+#include "xprogressbar.h"
 
 #include "ui_TransfersDialog.h"
 
@@ -165,11 +166,11 @@ class TransfersDialog : public RsAutoUpdatePage
 		Ui::TransfersDialog ui;
 
 		public slots:
-		int addItem(QString symbol, QString name, QString coreID, qlonglong size, double progress, double dlspeed, QString sources, QString status, QString priority, qlonglong completed, qlonglong remaining);
-		bool addPeerToItem(int row, QString symbol, QString name, QString coreID, qlonglong fileSize, double progress, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining);
+		int addItem(QString symbol, QString name, QString coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, QString sources, QString status, QString priority, qlonglong completed, qlonglong remaining);
+		bool addPeerToItem(int row, QString symbol, QString name, QString coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining);
 		void delItem(int row);
 
-		int addUploadItem(QString symbol, QString name, QString coreID, qlonglong size, double progress, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining);
+		int addUploadItem(QString symbol, QString name, QString coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining);
 		void delUploadItem(int row);
 
 		void editItem(int row, int column, QVariant data);

@@ -75,12 +75,12 @@ bool	ftFileSearch::addSearchMode(ftSearch *search, uint32_t hintflags)
 	return false;
 }
 
-bool	ftFileSearch::search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const
+bool	ftFileSearch::search(std::string hash, uint32_t hintflags, FileInfo &info) const
 {
 	uint32_t hints, i;
 
 #ifdef DEBUG_SEARCH
-	std::cerr << "ftFileSearch::search(" << hash << ", " << size; 
+	std::cerr << "ftFileSearch::search(" << hash ;
 	std::cerr << ", " << hintflags << ");";
 	std::cerr << std::endl;
 #endif
@@ -99,7 +99,7 @@ bool	ftFileSearch::search(std::string hash, uint64_t size, uint32_t hintflags, F
 				std::cerr << i;
 				std::cerr << std::endl;
 #endif
-				if (search->search(hash, size, hintflags, info))
+				if (search->search(hash, hintflags, info))
 				{
 #ifdef DEBUG_SEARCH
 					std::cerr << "ftFileSearch::search() SLOT: ";
@@ -155,7 +155,7 @@ bool	ftFileSearch::search(std::string hash, uint64_t size, uint32_t hintflags, F
 			std::cerr << "ftFileSearch::search() SLOT: " << i;
 			std::cerr << std::endl;
 #endif
-			if (search->search(hash, size, hintflags, info))
+			if (search->search(hash, hintflags, info))
 			{
 #ifdef DEBUG_SEARCH
 				std::cerr << "ftFileSearch::search() SLOT: ";
@@ -180,10 +180,10 @@ bool	ftFileSearch::search(std::string hash, uint64_t size, uint32_t hintflags, F
 }
 
 
-bool 	ftSearchDummy::search(std::string hash, uint64_t size, uint32_t hintflags, FileInfo &info) const
+bool 	ftSearchDummy::search(std::string hash, uint32_t hintflags, FileInfo &info) const
 {
 #ifdef DEBUG_SEARCH
-	std::cerr << "ftSearchDummy::search(" << hash << ", " << size; 
+	std::cerr << "ftSearchDummy::search(" << hash ;
 	std::cerr << ", " << hintflags << ");";
 	std::cerr << std::endl;
 #endif

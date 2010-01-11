@@ -27,11 +27,21 @@
 #ifndef XPROGRESSBAR_H
 #define XPROGRESSBAR_H
 //
+#include <stdint.h>
 #include <QRect>
 #include <QColor>
 #include <QPainter>
 #include <QLinearGradient>
 #include <QLocale>
+
+#include <rsiface/rstypes.h>
+
+class FileProgressInfo
+{
+	public:
+		CompressedChunkMap cmap ;
+		float progress ;
+};
 //
 class xProgressBar : public QObject
 {
@@ -56,8 +66,11 @@ Q_OBJECT
 		QColor gradColor2;
 		// configure the color
 		void setColor();
+
+		const CompressedChunkMap& _cmap ;
 	public:
-		xProgressBar(QRect rect, QPainter *painter, int schemaIndex = 0);
+		xProgressBar(const CompressedChunkMap& cmap,QRect rect, QPainter *painter, int schemaIndex = 0);
+
 		void paint();
 		void setColorSchema(const int value);
 		void setValue(const float value);

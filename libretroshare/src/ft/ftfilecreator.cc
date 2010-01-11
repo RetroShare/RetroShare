@@ -38,16 +38,19 @@ ftFileCreator::ftFileCreator(std::string path, uint64_t size, std::string hash, 
 
 bool ftFileCreator::getFileData(uint64_t offset, uint32_t &chunk_size, void *data)
 {
+	// Only send the data if we actually have it.
+	//
+	bool have_it = false ;
 	{
 		RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
-		if (offset + chunk_size > mStart)
-		{
-			/* don't have the data */
-			return false;
-		}
+
+		have_it = chunkMap.isChunkAvailable(offset, chunk_size) ;
 	}
 
-	return ftFileProvider::getFileData(offset, chunk_size, data);
+	if(have_it)
+		return ftFileProvider::getFileData(offset, chunk_size, data);
+	else
+		return false ;
 }
 
 uint64_t ftFileCreator::getRecvd()
@@ -225,7 +228,6 @@ int ftFileCreator::locked_notifyReceived(uint64_t offset, uint32_t chunk_size)
 	/* find the chunk */
 	std::map<uint64_t, ftChunk>::iterator it = mChunks.find(offset);
 
-//	bool isFirst = false;
 	if (it == mChunks.end())
 	{
 #ifdef FILE_DEBUG
@@ -237,11 +239,6 @@ int ftFileCreator::locked_notifyReceived(uint64_t offset, uint32_t chunk_size)
 #endif
 		return 0; /* ignoring */
 	}
-
-//	if (it == mChunks.begin())
-//	{
-//		isFirst = true;
-//	}
 
 	ftChunk chunk = it->second;
 	mChunks.erase(it);
@@ -256,25 +253,18 @@ int ftFileCreator::locked_notifyReceived(uint64_t offset, uint32_t chunk_size)
 	else	// notify the chunkmap that the slice is finished
 		chunkMap.dataReceived(chunk.id) ;
 
-//	/* update how much has been completed */
-//	if (isFirst)
-//	{
-//		mStart = offset + chunk_size;
-//	}
-
-	// update chunk map
-
-//	if (mChunks.size() == 0)
-//	{
-//		mStart = mEnd;
-//	}
-
 	/* otherwise there is another earlier block to go
 	 */
 
 	return 1;
 }
 
+FileChunksInfo::ChunkStrategy ftFileCreator::getChunkStrategy()
+{
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+
+	return chunkMap.getStrategy() ;
+}
 void ftFileCreator::setChunkStrategy(FileChunksInfo::ChunkStrategy s)
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
@@ -289,7 +279,7 @@ void ftFileCreator::setChunkStrategy(FileChunksInfo::ChunkStrategy s)
  * But can return size = 0, if we are still waiting for the data.
  */
 
-bool ftFileCreator::getMissingChunk(const std::string& peer_id,uint32_t size_hint,uint64_t &offset, uint32_t& size) 
+bool ftFileCreator::getMissingChunk(const std::string& peer_id,uint32_t size_hint,uint64_t &offset, uint32_t& size,bool& source_chunk_map_needed) 
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 #ifdef FILE_DEBUG
@@ -298,17 +288,7 @@ bool ftFileCreator::getMissingChunk(const std::string& peer_id,uint32_t size_hin
 	std::cerr << std::endl;
 	locked_printChunkMap();
 #endif
-
-	/* check start point */
-
-//	if(mStart == mSize)
-//	{
-//#ifdef FILE_DEBUG
-//		std::cerr << "ffc::getMissingChunk() File Done";
-//		std::cerr << std::endl;
-//#endif
-//		return false;
-//	}
+	source_chunk_map_needed = false ;
 
 	/* check for freed chunks */
 	time_t ts = time(NULL);
@@ -338,30 +318,17 @@ bool ftFileCreator::getMissingChunk(const std::string& peer_id,uint32_t size_hin
 
 	ftChunk chunk ;
 
-	if(!chunkMap.getDataChunk(peer_id,size_hint,chunk))
+	if(!chunkMap.getDataChunk(peer_id,size_hint,chunk,source_chunk_map_needed))
 		return false ;
 
-//	if (mSize - mEnd < chunk)
-//		chunk = mSize - mEnd;
-//
-//	offset = mEnd;
-//	mEnd += chunk;
-
-//	if (chunk > 0)
-//	{
 #ifdef FILE_DEBUG
 	std::cerr << "ffc::getMissingChunk() Retrieved new chunk: " << chunk << std::endl ;
-//		std::cerr << std::endl;
-//		std::cerr << "  mStart: " << mStart << " mEnd: " << mEnd;
-//		std::cerr << "mSize: " << mSize;
-//		std::cerr << std::endl;
 #endif
 
 	mChunks[chunk.offset] = chunk ;
 
 	offset = chunk.offset ;
 	size = chunk.size ;
-//	}
 
 	return true; /* cos more data to get */
 }
@@ -382,7 +349,6 @@ bool ftFileCreator::locked_printChunkMap()
 #endif
 
 	/* check start point */
-//	std::cerr << "Size: " << mSize << " Start: " << mStart << " End: " << mEnd;
 	std::cerr << "\tOutstanding Chunks:";
 	std::cerr << std::endl;
 
@@ -394,23 +360,21 @@ bool ftFileCreator::locked_printChunkMap()
 	return true; 
 }
 
-void ftFileCreator::loadAvailabilityMap(const std::vector<uint32_t>& map,uint32_t chunk_size,uint32_t chunk_number,uint32_t strategy) 
+void ftFileCreator::setAvailabilityMap(const CompressedChunkMap& cmap) 
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
-	chunkMap = ChunkMap(mSize,map,chunk_size,chunk_number,FileChunksInfo::ChunkStrategy(strategy)) ;
+	chunkMap.setAvailabilityMap(cmap) ;
 }
 
-void ftFileCreator::storeAvailabilityMap(std::vector<uint32_t>& map,uint32_t& chunk_size,uint32_t& chunk_number,uint32_t& strategy) 
+void ftFileCreator::getAvailabilityMap(CompressedChunkMap& map) 
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
-	FileChunksInfo::ChunkStrategy strat ;
-	chunkMap.buildAvailabilityMap(map,chunk_size,chunk_number,strat) ;
-	strategy = (uint32_t)strat ;
+	chunkMap.getAvailabilityMap(map) ;
 }
 
-void ftFileCreator::setSourceMap(const std::string& peer_id,uint32_t chunk_size,uint32_t nb_chunks,const std::vector<uint32_t>& compressed_map)
+void ftFileCreator::setSourceMap(const std::string& peer_id,const CompressedChunkMap& compressed_map)
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
@@ -421,7 +385,7 @@ void ftFileCreator::setSourceMap(const std::string& peer_id,uint32_t chunk_size,
 	// 	- then asking the chunkmap which chunks are being downloaded, but actually shouldn't
 	// 	- cancelling them in the ftFileCreator, so that they can be re-asked later to another peer.
 	//
-	chunkMap.setPeerAvailabilityMap(peer_id,chunk_size,nb_chunks,compressed_map) ;
+	chunkMap.setPeerAvailabilityMap(peer_id,compressed_map) ;
 }
 
 
