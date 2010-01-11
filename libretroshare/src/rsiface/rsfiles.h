@@ -60,17 +60,18 @@ const uint32_t RS_FILE_PEER_OFFLINE 	 = 0x00002000;
  *
  */
 
-const uint32_t RS_FILE_HINTS_MASK	 = 0x00ffffff;
+const uint32_t RS_FILE_HINTS_MASK	             = 0x00ffffff;
 
-const uint32_t RS_FILE_HINTS_CACHE	 		= 0x00000001;
-const uint32_t RS_FILE_HINTS_EXTRA	 		= 0x00000002;
-const uint32_t RS_FILE_HINTS_LOCAL	 		= 0x00000004;
-const uint32_t RS_FILE_HINTS_REMOTE	 		= 0x00000008;
-const uint32_t RS_FILE_HINTS_DOWNLOAD		= 0x00000010;
-const uint32_t RS_FILE_HINTS_UPLOAD	 		= 0x00000020;
-//const uint32_t RS_FILE_HINTS_TURTLE	 		= 0x00000040; // unused
-const uint32_t RS_FILE_HINTS_NETWORK_WIDE = 0x00000080;	// anonymously shared over network
-const uint32_t RS_FILE_HINTS_BROWSABLE 	= 0x00000100;	// browsable by friends
+const uint32_t RS_FILE_HINTS_CACHE	 		       = 0x00000001;
+const uint32_t RS_FILE_HINTS_EXTRA	 		       = 0x00000002;
+const uint32_t RS_FILE_HINTS_LOCAL	 		       = 0x00000004;
+const uint32_t RS_FILE_HINTS_REMOTE	 		       = 0x00000008;
+const uint32_t RS_FILE_HINTS_DOWNLOAD		       = 0x00000010;
+const uint32_t RS_FILE_HINTS_UPLOAD	 		       = 0x00000020;
+
+const uint32_t RS_FILE_HINTS_NETWORK_WIDE        = 0x00000080;	// anonymously shared over network
+const uint32_t RS_FILE_HINTS_BROWSABLE 	       = 0x00000100;	// browsable by friends
+const uint32_t RS_FILE_HINTS_ASSUME_AVAILABILITY = 0x00000200; // Assume full source availability. Used for cache files.
 
 const uint32_t RS_FILE_HINTS_SPEC_ONLY	 = 0x01000000;
 const uint32_t RS_FILE_HINTS_NO_SEARCH   = 0x02000000;

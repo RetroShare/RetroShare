@@ -472,6 +472,7 @@ bool ftController::completeFile(std::string hash)
 		mDownloads.erase(it);
 
 		mTurtle->stopMonitoringFileTunnels(hash_to_suppress) ;
+
 	} /******* UNLOCKED ********/
 
 
@@ -770,8 +771,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 				std::cerr << std::endl;
 #endif
 
-				if (srcIds.end() == std::find(
-					srcIds.begin(), srcIds.end(), pit->peerId))
+				if (srcIds.end() == std::find( srcIds.begin(), srcIds.end(), pit->peerId))
 				{
 					srcIds.push_back(pit->peerId);
 
@@ -814,7 +814,18 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	}
   } /******* UNLOCKED ********/
 
-	ftFileCreator *fc = new ftFileCreator(savepath, size, hash, 0);
+  // We check that flags are consistent.  In particular, for know
+  // we can't send chunkmaps through normal traffic, so availability must be assumed whenever the traffic is not
+  // a turtle traffic:
+  
+  	if(flags & RS_FILE_HINTS_NETWORK_WIDE)
+		mTurtle->monitorFileTunnels(fname,hash,size) ;
+	else
+		flags |= RS_FILE_HINTS_ASSUME_AVAILABILITY ;
+
+	bool assume_source_availability = (flags & RS_FILE_HINTS_ASSUME_AVAILABILITY) > 0 ;
+
+	ftFileCreator *fc = new ftFileCreator(savepath, size, hash, 0,assume_source_availability);
 	ftTransferModule *tm = new ftTransferModule(fc, mDataplex,this);
 
 	/* add into maps */
@@ -908,6 +919,8 @@ bool ftController::setChunkStrategy(const std::string& hash,FileChunksInfo::Chun
 
 bool 	ftController::FileCancel(std::string hash)
 {
+	rsTurtle->stopMonitoringFileTunnels(hash) ;
+
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController::FileCancel" << std::endl;
 #endif
@@ -1356,7 +1369,7 @@ bool ftController::RequestCacheFile(RsPeerId id, std::string path, std::string h
 	std::list<std::string> ids;
 	ids.push_back(id);
 
-	FileRequest(hash, hash, size, path, RS_FILE_HINTS_CACHE | RS_FILE_HINTS_NO_SEARCH, ids);
+	FileRequest(hash, hash, size, path, RS_FILE_HINTS_CACHE | RS_FILE_HINTS_NO_SEARCH | RS_FILE_HINTS_ASSUME_AVAILABILITY, ids);
 
 	return true;
 }

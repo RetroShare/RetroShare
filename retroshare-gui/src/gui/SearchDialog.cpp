@@ -252,7 +252,7 @@ void SearchDialog::download()
 				rsFiles -> FileRequest((item->text(SR_NAME_COL)).toStdString(),
 									  (item->text(SR_HASH_COL)).toStdString(),
 									  (item->text(SR_REALSIZE_COL)).toInt(),
-									  "", 0, srcIds);
+									  "", RS_FILE_HINTS_NETWORK_WIDE, srcIds);
 
 				std::cout << "isuing file request from search dialog: -" << (item->text(SR_NAME_COL)).toStdString() << "-" << (item->text(SR_HASH_COL)).toStdString() << "-" << (item->text(SR_REALSIZE_COL)).toInt() << "-ids=" ;
 				for(std::list<std::string>::const_iterator it(srcIds.begin());it!=srcIds.end();++it)
@@ -286,7 +286,7 @@ void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString 
 		rsFiles->FileRequest(item->text(SR_NAME_COL).toStdString(),
 				item->text(SR_HASH_COL).toStdString(),
 				item->text(SR_REALSIZE_COL).toInt(),
-				cleanPath.toStdString(), 0, srcIds);
+				cleanPath.toStdString(),RS_FILE_HINTS_NETWORK_WIDE, srcIds);
 
 		std::cout << "SearchDialog::downloadDirectory(): "\
 				"issuing file request from search dialog: -"

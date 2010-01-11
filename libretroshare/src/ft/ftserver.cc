@@ -242,17 +242,13 @@ void	ftServer::run()
 	/********************** Controller Access **********************/
 	/***************************************************************/
 
-bool ftServer::FileRequest(std::string fname, std::string hash, uint64_t size,
-	std::string dest, uint32_t flags, std::list<std::string> srcIds)
+bool ftServer::FileRequest(std::string fname, std::string hash, uint64_t size, std::string dest, uint32_t flags, std::list<std::string> srcIds)
 {
    std::cerr << "Requesting " << fname << std::endl ;
 //	return mFtController->FileRequest(fname, hash, size,
 //						dest, flags, srcIds);
 	const DwlDetails details(fname, hash, size, dest, flags, srcIds, Normal);
 	mFtDwlQueue->insertDownload(details);
-
-	rsTurtle->monitorFileTunnels(	fname,hash,size ) ;
-
 	return true ;
 }
 
@@ -263,8 +259,6 @@ bool ftServer::setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStr
 
 bool ftServer::FileCancel(std::string hash)
 {
-	rsTurtle->stopMonitoringFileTunnels(hash) ;
-
 	return mFtController->FileCancel(hash);
 }
 

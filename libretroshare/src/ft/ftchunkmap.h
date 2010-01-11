@@ -84,11 +84,12 @@ class SourceChunksInfo
 class ChunkMap
 {
    public:
+		static const uint32_t CHUNKMAP_FIXED_CHUNK_SIZE = 1024*1024 ; // 1 MB chunk
 		typedef uint32_t ChunkNumber ;
 
 		/// Constructor. Decides what will be the size of chunks and how many there will be.
 
-		ChunkMap(uint64_t file_size) ;
+		ChunkMap(uint64_t file_size,bool assume_sources_availability) ;
 
 		/// constructor from saved map info
 		ChunkMap(uint64_t file_size,const std::vector<uint32_t>& map,uint32_t chunk_size,uint32_t chunk_number,FileChunksInfo::ChunkStrategy s) ;
@@ -163,6 +164,7 @@ class ChunkMap
 		std::vector<FileChunksInfo::ChunkState>	_map ;								//! vector of chunk state over the whole file
 		std::map<std::string,SourceChunksInfo>		_peers_chunks_availability ;	//! what does each source peer have
 		uint64_t												_total_downloaded ;				//! completion for the file
+		bool													_assume_availability	;			//! set for transfers where the source is always available
 };
 
 
