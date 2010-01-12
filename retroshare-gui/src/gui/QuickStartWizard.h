@@ -43,6 +43,7 @@ public:
     
       bool startMinimized() const;
       bool quitbox() const;
+      bool firstRunWizard() const;
 
 
 

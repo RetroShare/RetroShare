@@ -121,7 +121,7 @@ p, li { white-space: pre-wrap; }
    <item row="1" column="0">
     <widget class="QStackedWidget" name="pagesWizard">
      <property name="currentIndex">
-      <number>0</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="pageWelcome">
       <layout class="QGridLayout" name="gridLayout_2">
@@ -1221,6 +1221,13 @@ p, li { white-space: pre-wrap; }
              <widget class="QCheckBox" name="checkBoxRunRetroshareAtSystemStartup">
               <property name="text">
                <string>Start RetroShare when my System Starts.</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QCheckBox" name="checkBoxQuickWizard">
+              <property name="text">
+               <string>Do not Start Quick Start Wizard on Start</string>
               </property>
              </widget>
             </item>

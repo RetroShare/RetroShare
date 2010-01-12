@@ -169,6 +169,8 @@ void QuickStartWizard::on_pushButtonSystemFinish_clicked()
   
   _settings->setRunRetroshareOnBoot(ui.checkBoxRunRetroshareAtSystemStartup->isChecked());
   
+  _settings->setValue(QString::fromUtf8("FirstRun"), firstRunWizard());
+  
   saveChanges();
   
 	close();
@@ -355,7 +357,7 @@ QuickStartWizard::loadGeneral()
 
   ui.checkBoxQuit->setChecked(_settings->value(QString::fromUtf8("doQuit"), false).toBool());
   
-
+	ui.checkBoxQuickWizard->setChecked(_settings->value(QString::fromUtf8("FirstRun"), false).toBool());
 }
 
 bool QuickStartWizard::quitbox() const {
@@ -366,6 +368,11 @@ bool QuickStartWizard::quitbox() const {
 bool QuickStartWizard::startMinimized() const {
   if(ui.checkBoxStartMinimized->isChecked()) return true;
   return ui.checkBoxStartMinimized->isChecked();
+}
+
+bool QuickStartWizard::firstRunWizard() const {
+  if(ui.checkBoxQuickWizard->isChecked()) return true;
+  return ui.checkBoxQuickWizard->isChecked();
 }
 
 /** Loads the settings for this page */
