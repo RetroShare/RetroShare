@@ -57,6 +57,7 @@ virtual bool	getPeerDetails(std::string id, RsPeerDetails &d);
 virtual std::string getPGPOwnId();
 virtual bool    getPGPFriendList(std::list<std::string> &ids);
 virtual bool    getPGPAllList(std::list<std::string> &ids);
+virtual bool	getPGPDetails(std::string id, RsPeerDetails &d);
 
 
 	/* Add/Remove Friends */
@@ -87,8 +88,7 @@ virtual	bool LoadCertificateFromString(std::string cert, std::string &id);
 virtual	bool SaveCertificateToFile(std::string id, std::string fname);
 virtual	std::string SaveCertificateToString(std::string id);
 
-virtual	bool AuthCertificate(std::string id, std::string code);
-virtual	bool SignCertificate(std::string id);
+virtual	bool SignGPGCertificate(std::string id);
 virtual	bool TrustCertificate(std::string id, bool trust);
 
 	private:

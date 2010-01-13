@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>291</width>
-    <height>514</height>
+    <height>525</height>
    </rect>
   </property>
   <property name="palette">
@@ -594,68 +594,8 @@ p, li { white-space: pre-wrap; }
          </property>
         </widget>
        </item>
-       <item row="3" column="0" colspan="2">
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>Password:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0" colspan="2">
-        <widget class="QLineEdit" name="loadPasswd">
-         <property name="minimumSize">
-          <size>
-           <width>20</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="echoMode">
-          <enum>QLineEdit::Password</enum>
-         </property>
-         <property name="readOnly">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QCheckBox" name="autoBox">
-         <property name="text">
-          <string>Auto-login</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="1">
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>98</width>
-           <height>17</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="1" column="0" colspan="2">
         <widget class="QComboBox" name="loadName"/>
-       </item>
-       <item row="6" column="0" colspan="2">
-        <widget class="QLineEdit" name="loadGPGPasswd">
-         <property name="echoMode">
-          <enum>QLineEdit::Password</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>PGP Password</string>
-         </property>
-        </widget>
        </item>
        <item row="2" column="0" colspan="2">
         <spacer name="verticalSpacer">
@@ -681,19 +621,6 @@ p, li { white-space: pre-wrap; }
       <property name="bottomMargin">
        <number>9</number>
       </property>
-      <item row="0" column="0">
-       <spacer>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>61</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item row="0" column="1">
        <widget class="QPushButton" name="loadButton">
         <property name="text">
@@ -706,6 +633,19 @@ p, li { white-space: pre-wrap; }
          <bool>false</bool>
         </property>
        </widget>
+      </item>
+      <item row="0" column="0">
+       <spacer>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>61</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
       <item row="0" column="2">
        <spacer>
@@ -738,32 +678,6 @@ p, li { white-space: pre-wrap; }
       </property>
      </widget>
     </item>
-    <item row="3" column="3">
-     <spacer name="horizontalSpacer_3">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>24</width>
-        <height>198</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="3" column="0">
-     <spacer name="horizontalSpacer_4">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>25</width>
-        <height>208</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
     <item row="5" column="1">
      <widget class="QLabel" name="labelProfile">
       <property name="text">
@@ -791,9 +705,6 @@ p, li { white-space: pre-wrap; }
  </widget>
  <tabstops>
   <tabstop>loadName</tabstop>
-  <tabstop>loadPasswd</tabstop>
-  <tabstop>loadGPGPasswd</tabstop>
-  <tabstop>autoBox</tabstop>
   <tabstop>loadButton</tabstop>
   <tabstop>toolButton</tabstop>
  </tabstops>

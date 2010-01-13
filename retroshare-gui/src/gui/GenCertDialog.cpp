@@ -50,30 +50,29 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
 
   //ui.genName->setFocus(Qt::OtherFocusReason);
 
-    //the pgp password is now a GT box.
-    ui.genPGPpassword->hide();
-    ui.label_3->hide();
+    ui.genCountry->hide();
+    ui.label_6->hide();
+    ui.genOrg->hide();
+    ui.label_8->hide();
 
-#ifdef RS_USE_PGPSSL
-        /* get all available pgp private certificates....
-         * mark last one as default.
-         */
-	std::cerr << "Finding PGPUsers" << std::endl;
+    /* get all available pgp private certificates....
+     * mark last one as default.
+     */
+    std::cerr << "Finding PGPUsers" << std::endl;
 
-        std::list<std::string> pgpIds;
-        std::list<std::string>::iterator it;
-        if (RsInit::GetPGPLogins(pgpIds))
-        {
-                for(it = pgpIds.begin(); it != pgpIds.end(); it++)
-                {
-                        const QVariant & userData = QVariant(QString::fromStdString(*it));
-                        std::string name, email;
-                        RsInit::GetPGPLoginDetails(*it, name, email);
-			std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
-                        ui.genPGPuser->addItem(QString::fromStdString(name), userData);
-                }
-        }
-#endif
+    std::list<std::string> pgpIds;
+    std::list<std::string>::iterator it;
+    if (RsInit::GetPGPLogins(pgpIds))
+    {
+            for(it = pgpIds.begin(); it != pgpIds.end(); it++)
+            {
+                    const QVariant & userData = QVariant(QString::fromStdString(*it));
+                    std::string name, email;
+                    RsInit::GetPGPLoginDetails(*it, name, email);
+                    std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
+                    ui.genPGPuser->addItem(QString::fromStdString(name), userData);
+            }
+    }
 
 
 }
@@ -112,16 +111,11 @@ void GenCertDialog::genPerson()
 {
 
 	/* Check the data from the GUI. */
-	std::string genName = ui.genName->text().toStdString();
 	std::string genOrg  = ui.genOrg->text().toStdString();
 	std::string genLoc  = ui.genLoc->text().toStdString();
 	std::string genCountry = ui.genCountry->text().toStdString();
 	std::string err;
 
-
-#ifdef RS_USE_PGPSSL
-
-	std::string PGPpasswd  = ui.genPGPpassword->text().toStdString();
 	int pgpidx = ui.genPGPuser->currentIndex();
 	if (pgpidx < 0)
 	{
@@ -135,23 +129,6 @@ void GenCertDialog::genPerson()
 
 	QVariant data = ui.genPGPuser->itemData(pgpidx);
 	std::string PGPId = (data.toString()).toStdString();
-
-#endif
-
-
-	if (genName.length() >= 3)
-	{
-		/* name passes basic test */
-	}
-	else
-	{
-		/* Message Dialog */
-		QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
-	                        "Generate ID Failure",
-			        "Your Name is too short (3+ characters)",
-			          QMessageBox::Ok);
-		return;
-	}
 
 	//generate a random ssl password
 	std::cerr << " generating sslPasswd." << std::endl;
@@ -169,7 +146,8 @@ void GenCertDialog::genPerson()
         //RsInit::LoadGPGPassword(PGPpasswd);
 
 	std::string sslId;
-	bool okGen = RsInit::GenerateSSLCertificate(genName, genOrg, genLoc, genCountry, sslPasswd, sslId, err);
+        std::cerr << "Generating SSL cert with name : " << ui.genPGPuser->itemText(pgpidx).toStdString()  << std::endl;
+        bool okGen = RsInit::GenerateSSLCertificate(ui.genPGPuser->itemText(pgpidx).toStdString(), genOrg, genLoc, genCountry, sslPasswd, sslId, err);
 
 	if (okGen)
 	{

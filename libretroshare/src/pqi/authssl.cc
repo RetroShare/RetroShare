@@ -1769,7 +1769,7 @@ X509 *AuthSSL::SignX509Req(X509_REQ *req, long days)
         X509 *x509 = X509_new();
         if (x509 == NULL)
         {
-                std::cerr << "GPGAuthMgr::SignX509Req() FAIL" << std::endl;
+                std::cerr << "AuthSSL::SignX509Req() FAIL" << std::endl;
                 return NULL;
         }
 
@@ -1777,7 +1777,7 @@ X509 *AuthSSL::SignX509Req(X509_REQ *req, long days)
         unsigned long chtype = MBSTRING_ASC;
         X509_NAME *issuer_name = X509_NAME_new();
         X509_NAME_add_entry_by_txt(issuer_name, "CN", chtype,
-                        (unsigned char *) mOwnId.c_str(), -1, -1, 0);
+                        (unsigned char *) AuthGPG::getAuthGPG()->PGPOwnId().c_str(), -1, -1, 0);
 /****
         X509_NAME_add_entry_by_NID(issuer_name, 48, 0,
                         (unsigned char *) "email@email.com", -1, -1, 0);
@@ -1787,24 +1787,24 @@ X509 *AuthSSL::SignX509Req(X509_REQ *req, long days)
                         (unsigned char *) "loc", -1, -1, 0);
 ****/
 
-        std::cerr << "GPGAuthMgr::SignX509Req() Issuer name: " << mOwnId << std::endl;
+        std::cerr << "AuthSSL::SignX509Req() Issuer name: " << AuthGPG::getAuthGPG()->PGPOwnId() << std::endl;
 
         BIGNUM *btmp = BN_new();
         if (!BN_pseudo_rand(btmp, SERIAL_RAND_BITS, 0, 0))
         {
-                std::cerr << "GPGAuthMgr::SignX509Req() rand FAIL" << std::endl;
+                std::cerr << "AuthSSL::SignX509Req() rand FAIL" << std::endl;
                 return NULL;
         }
         if (!BN_to_ASN1_INTEGER(btmp, serial))
         {
-                std::cerr << "GPGAuthMgr::SignX509Req() asn1 FAIL" << std::endl;
+                std::cerr << "AuthSSL::SignX509Req() asn1 FAIL" << std::endl;
                 return NULL;
         }
         BN_free(btmp);
 
         if (!X509_set_serialNumber(x509, serial))
         {
-                std::cerr << "GPGAuthMgr::SignX509Req() serial FAIL" << std::endl;
+                std::cerr << "AuthSSL::SignX509Req() serial FAIL" << std::endl;
                 return NULL;
         }
         ASN1_INTEGER_free(serial);
@@ -1815,7 +1815,7 @@ X509 *AuthSSL::SignX509Req(X509_REQ *req, long days)
 
         if (!X509_set_issuer_name(x509, issuer_name))
         {
-                std::cerr << "GPGAuthMgr::SignX509Req() issue FAIL" << std::endl;
+                std::cerr << "AuthSSL::SignX509Req() issue FAIL" << std::endl;
                 return NULL;
         }
         X509_NAME_free(issuer_name);
@@ -1823,26 +1823,26 @@ X509 *AuthSSL::SignX509Req(X509_REQ *req, long days)
 
         if (!X509_gmtime_adj(X509_get_notBefore(x509),0))
         {
-                std::cerr << "GPGAuthMgr::SignX509Req() notbefore FAIL" << std::endl;
+                std::cerr << "AuthSSL::SignX509Req() notbefore FAIL" << std::endl;
                 return NULL;
         }
 
         if (!X509_gmtime_adj(X509_get_notAfter(x509), (long)60*60*24*days))
         {
-                std::cerr << "GPGAuthMgr::SignX509Req() notafter FAIL" << std::endl;
+                std::cerr << "AuthSSL::SignX509Req() notafter FAIL" << std::endl;
                 return NULL;
         }
 
         if (!X509_set_subject_name(x509, X509_REQ_get_subject_name(req)))
         {
-                std::cerr << "GPGAuthMgr::SignX509Req() sub FAIL" << std::endl;
+                std::cerr << "AuthSSL::SignX509Req() sub FAIL" << std::endl;
                 return NULL;
         }
 
         tmppkey = X509_REQ_get_pubkey(req);
         if (!tmppkey || !X509_set_pubkey(x509,tmppkey))
         {
-                std::cerr << "GPGAuthMgr::SignX509Req() pub FAIL" << std::endl;
+                std::cerr << "AuthSSL::SignX509Req() pub FAIL" << std::endl;
                 return NULL;
         }
 
@@ -1901,7 +1901,7 @@ X509 *AuthSSL::SignX509Req(X509_REQ *req, long days)
                 {
                 hashoutl=0;
                 sigoutl=0;
-                fprintf(stderr, "GPGAuthMgr::SignX509Req: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_MALLOC_FAILURE)\n");
+                fprintf(stderr, "AuthSSL::SignX509Req: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_MALLOC_FAILURE)\n");
                 goto err;
                 }
         p=buf_in;
@@ -1916,7 +1916,7 @@ X509 *AuthSSL::SignX509Req(X509_REQ *req, long days)
                         (unsigned int *)&hashoutl))
                 {
                 hashoutl=0;
-                fprintf(stderr, "GPGAuthMgr::SignX509Req: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_EVP_LIB)\n");
+                fprintf(stderr, "AuthSSL::SignX509Req: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_EVP_LIB)\n");
                 goto err;
                 }
 

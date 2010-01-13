@@ -549,6 +549,18 @@ bool	p3Peers::getPGPAllList(std::list<std::string> &ids)
 	return true;
 }
 
+bool	p3Peers::getPGPDetails(std::string id, RsPeerDetails &d)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::getPgpDetails()";
+        std::cerr << std::endl;
+#endif
+
+        /* get from mAuthMgr */
+        AuthGPG::getAuthGPG()->getPGPDetails(id, d);
+        return true;
+}
+
 std::string p3Peers::getPGPOwnId()
 {
 #ifdef P3PEERS_DEBUG
@@ -874,34 +886,14 @@ std::string p3Peers::SaveCertificateToString(std::string id)
         return AuthSSL::getAuthSSL()->SaveCertificateToString(id);
 }
 
-bool 	p3Peers::AuthCertificate(std::string id, std::string code)
-{
-#ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::AuthCertificate() " << id;
-	std::cerr << std::endl;
-#endif
-
-        if (AuthSSL::getAuthSSL()->AuthCertificate(id))
-	{
-#ifdef P3PEERS_DEBUG
-		std::cerr << "p3Peers::AuthCertificate() OK ... Adding as Friend";
-		std::cerr << std::endl;
-#endif
-
-		/* add in as a friend */
-		return mConnMgr->addFriend(id);
-	}
-	return false;
-}
-
-bool 	p3Peers::SignCertificate(std::string id)
+bool 	p3Peers::SignGPGCertificate(std::string id)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::SignCertificate() " << id;
 	std::cerr << std::endl;
 #endif
 
-        return AuthSSL::getAuthSSL()->SignCertificate(id);
+        return AuthGPG::getAuthGPG()->SignCertificateLevel0(id);
 }
 
 bool 	p3Peers::TrustCertificate(std::string id, bool trust)

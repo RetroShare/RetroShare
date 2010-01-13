@@ -30,7 +30,11 @@
 #include <string>
 #include <list>
 
-/* The Main Interface Class - for information about your Peers */
+/* The Main Interface Class - for information about your Peers
+* A peer is another RS instance, means associated with an SSL certificate
+* A same GPG person can have multiple peer running with different SSL certs signed by the same GPG key
+* Thus a peer have SSL cert details, and also the parent GPG details
+*/
 class RsPeers;
 extern RsPeers   *rsPeers;
 
@@ -105,7 +109,7 @@ class RsPeerDetails
 	/* basic stats */
 	uint32_t		lastConnect; /* how long ago */
 	std::string		autoconnect;
-	uint32_t		connectPeriod; 
+        uint32_t		connectPeriod;
 };
 
 std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail);
@@ -138,6 +142,7 @@ virtual bool	getPeerDetails(std::string id, RsPeerDetails &d) = 0;
 virtual std::string getPGPOwnId()				= 0;
 virtual bool    getPGPFriendList(std::list<std::string> &ids)   = 0;
 virtual bool    getPGPAllList(std::list<std::string> &ids) 	= 0;
+virtual bool	getPGPDetails(std::string id, RsPeerDetails &d) = 0;
 
 	/* Add/Remove Friends */
 virtual	bool addFriend(std::string id)        			= 0;
@@ -167,8 +172,7 @@ virtual	bool LoadCertificateFromString(std::string cert, std::string &id)  = 0;
 virtual	bool SaveCertificateToFile(std::string id, std::string fname)  = 0;
 virtual	std::string SaveCertificateToString(std::string id)  	= 0;
 
-virtual	bool AuthCertificate(std::string id, std::string code) 	= 0;
-virtual	bool SignCertificate(std::string id)                   	= 0;
+virtual	bool SignGPGCertificate(std::string id)                   	= 0;
 virtual	bool TrustCertificate(std::string id, bool trust) 	= 0;
 
 };

@@ -53,34 +53,12 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
   /* Create Bandwidth Graph related QObjects */
   _settings = new RshareSettings();
   
-  ui.loadPasswd->setFocus();
-  
-  //connect(ui.genButton, SIGNAL(clicked()), this, SLOT(genPerson()));
+  ui.loadButton->setFocus();
+
   connect(ui.loadButton, SIGNAL(clicked()), this, SLOT(loadPerson()));
-  connect(ui.loadPasswd, SIGNAL(returnPressed()), this, SLOT(loadPerson()));
-  connect(ui.loadGPGPasswd, SIGNAL(returnPressed()), this, SLOT(loadPerson()));
-  //connect(ui.selectButton, SIGNAL(clicked()), this, SLOT(selectFriend()));
-  //connect(ui.friendBox, SIGNAL(stateChanged(int)), this, SLOT(checkChanged(int)));
 
   /* load the Certificate File name */
   std::string userName;
-
-#ifndef WINDOWS_SYS /* UNIX */
-	//hide autologin because it's not functionnal on other than windows system
-	ui.autoBox->hide();
-#endif
-
-	//comment those to show the pgp and ssl password dialog
-	ui.loadPasswd->hide();
-	ui.label_4->hide();
-
-	ui.loadGPGPasswd->hide();
-	ui.label_5->hide();
-	
-	ui.loadPasswd->setMinimumHeight(0);
-	ui.loadGPGPasswd->setMinimumHeight(0);
-	ui.label_4->setMinimumHeight(0);
-	ui.label_5->setMinimumHeight(0);
 
 	/* get all available pgp private certificates....
 	 * mark last one as default.
@@ -100,8 +78,6 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
 			std::string gpgid, name, email, sslname;
 			RsInit::getAccountDetails(*it, gpgid, name, email, sslname);
        			QString accountName = QString::fromStdString(name);
-       			accountName += "/";
-       			accountName += QString::fromStdString(sslname);
        			ui.loadName->addItem(accountName, userData);
 
 			if (preferedId == *it)
@@ -149,10 +125,7 @@ void StartDialog::closeinfodlg()
 void StartDialog::loadPerson()
 {
         std::string accountId = "";
-	std::string passwd = ui.loadPasswd->text().toStdString();
-#ifdef RS_USE_PGPSSL
 
-	std::string gpgPasswd = ui.loadGPGPasswd->text().toStdString();
         int pgpidx = ui.loadName->currentIndex();
         if (pgpidx < 0)
         {
@@ -172,19 +145,16 @@ void StartDialog::loadPerson()
 			gpgId, gpgName, gpgEmail, sslName))
 	{
 		RsInit::SelectGPGAccount(gpgId);
-                //RsInit::LoadGPGPassword(gpgPasswd);
 	}
-#else
-#endif
-	RsInit::LoadPassword(accountId, passwd);
+
+        RsInit::LoadPassword(accountId, "");
 	loadCertificates();
 }
 
 void StartDialog::loadCertificates()
 {
-	bool autoSave = (Qt::Checked == ui.autoBox -> checkState());
 	/* Final stage of loading */
-	if (RsInit::LoadCertificates(autoSave))
+	if (RsInit::LoadCertificates(false))
 	{
 		close();
 	}
@@ -195,9 +165,7 @@ void StartDialog::loadCertificates()
                                 "Login Failure",
                                 "*** Wrong Password ***",
 				QMessageBox::Ok);
-	        ui.loadPasswd->setText("");
 	}
-
 }
 
 void StartDialog::on_labelProfile_linkActivated(QString link)

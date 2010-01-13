@@ -66,7 +66,7 @@
           <bool>false</bool>
          </property>
          <property name="lineWidth">
-          <number>0</number>
+          <number>20</number>
          </property>
          <property name="iconSize">
           <size>
@@ -74,27 +74,39 @@
            <height>16</height>
           </size>
          </property>
+         <property name="uniformRowHeights">
+          <bool>true</bool>
+         </property>
          <property name="sortingEnabled">
           <bool>true</bool>
          </property>
+         <property name="animated">
+          <bool>true</bool>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <attribute name="headerCascadingSectionResizes">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="headerDefaultSectionSize">
+          <number>200</number>
+         </attribute>
+         <attribute name="headerStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="headerCascadingSectionResizes">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="headerDefaultSectionSize">
+          <number>200</number>
+         </attribute>
+         <attribute name="headerStretchLastSection">
+          <bool>true</bool>
+         </attribute>
          <column>
           <property name="text">
-           <string/>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Your trust</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Peer's trust</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Last Contact</string>
+           <string> </string>
           </property>
          </column>
          <column>
@@ -104,22 +116,7 @@
          </column>
          <column>
           <property name="text">
-           <string>Peer Address</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Organisation</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Location</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Country</string>
+           <string>Peer's trust</string>
           </property>
          </column>
          <column>

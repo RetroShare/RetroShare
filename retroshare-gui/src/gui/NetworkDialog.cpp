@@ -33,6 +33,7 @@
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsdisc.h"
+#include <algorithm>
 
 /* for GPGME */
 #include "rsiface/rsinit.h"
@@ -96,44 +97,25 @@ NetworkDialog::NetworkDialog(QWidget *parent)
   ui.connecttreeWidget -> setRootIsDecorated( false );
   
   /* Set header resize modes and initial section sizes */
-	QHeaderView * _header = ui.connecttreeWidget->header () ;   
-	_header->setResizeMode (0, QHeaderView::Custom);
-	_header->setResizeMode (1, QHeaderView::Interactive);
-	_header->setResizeMode (2, QHeaderView::Interactive);
-	_header->setResizeMode (3, QHeaderView::Interactive);
-	_header->setResizeMode (4, QHeaderView::Interactive);
-	_header->setResizeMode (5, QHeaderView::Interactive);
-	_header->setResizeMode (6, QHeaderView::Interactive);
-	_header->setResizeMode (7, QHeaderView::Interactive);
-	_header->setResizeMode (8, QHeaderView::Interactive);
-	_header->setResizeMode (9, QHeaderView::Interactive);
-    
-	_header->resizeSection ( 0, 25 );
-	_header->resizeSection ( 1, 100 );
-	_header->resizeSection ( 2, 100 );
-	_header->resizeSection ( 3, 100 );
-	_header->resizeSection ( 4, 100 );
-	_header->resizeSection ( 5, 200);
-	_header->resizeSection ( 6, 100 );
-	_header->resizeSection ( 7, 100 );
-	_header->resizeSection ( 8, 100 );
-	_header->resizeSection ( 9, 100 );
-	
-	// set header text aligment
-	QTreeWidgetItem * headerItem = ui.connecttreeWidget->headerItem();
-	headerItem->setTextAlignment(0, Qt::AlignHCenter | Qt::AlignVCenter);
-	headerItem->setTextAlignment(1, Qt::AlignHCenter | Qt::AlignVCenter);
-	headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
-	headerItem->setTextAlignment(3, Qt::AlignHCenter | Qt::AlignVCenter);
-	headerItem->setTextAlignment(4, Qt::AlignHCenter | Qt::AlignVCenter);
-	headerItem->setTextAlignment(5, Qt::AlignHCenter | Qt::AlignVCenter);
-	headerItem->setTextAlignment(6, Qt::AlignHCenter | Qt::AlignVCenter);
-	headerItem->setTextAlignment(7, Qt::AlignHCenter | Qt::AlignVCenter);
-	headerItem->setTextAlignment(8, Qt::AlignHCenter | Qt::AlignVCenter);
-	headerItem->setTextAlignment(9, Qt::AlignHCenter | Qt::AlignVCenter);
+    QHeaderView * _header = ui.connecttreeWidget->header () ;
+    _header->setResizeMode (0, QHeaderView::Custom);
+    _header->setResizeMode (1, QHeaderView::Interactive);
+    _header->setResizeMode (2, QHeaderView::Interactive);
+    _header->setResizeMode (3, QHeaderView::Interactive);
 
-	ui.networkTab->addTab(new NetworkView(),QString(tr("Network View")));
-	ui.networkTab->addTab(new TrustView(),QString(tr("Trust matrix")));
+    _header->resizeSection ( 0, 25 );
+    _header->resizeSection ( 1, 200 );
+    _header->resizeSection ( 2, 200 );
+
+    // set header text aligment
+    QTreeWidgetItem * headerItem = ui.connecttreeWidget->headerItem();
+    headerItem->setTextAlignment(0, Qt::AlignHCenter | Qt::AlignVCenter);
+    headerItem->setTextAlignment(1, Qt::AlignHCenter | Qt::AlignVCenter);
+    headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
+    headerItem->setTextAlignment(3, Qt::AlignVCenter);
+
+    ui.networkTab->addTab(new NetworkView(),QString(tr("Network View")));
+    ui.networkTab->addTab(new TrustView(),QString(tr("Trust matrix")));
      
     QString version = "-";
     std::map<std::string, std::string>::iterator vit;
@@ -198,14 +180,14 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 
 		std::string peer_id = wi->text(9).toStdString() ;
 
-			// That's what context menus are made for
+                // That's what context menus are made for
 		RsPeerDetails detail;
-		if(!rsPeers->getPeerDetails(peer_id, detail))		// that is not suppose to fail.
+                if(!rsPeers->getPGPDetails(peer_id, detail))		// that is not suppose to fail.
 			return ;
 
-		if(peer_id != rsPeers->getOwnId())
+                if(peer_id != rsPeers->getPGPOwnId())
 		{
-			if(detail.state & RS_PEER_STATE_FRIEND)
+                        if(detail.ownsign)
 			{
 				denyFriendAct = new QAction(QIcon(IMAGE_DENIED), tr( "Deny friend" ), this );
 
@@ -214,10 +196,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 			}
 			else	// not a friend
 			{
-				if(detail.validLvl > RS_TRUST_LVL_MARGINAL)		// it's a denied old friend.
-					makefriendAct = new QAction(QIcon(IMAGE_MAKEFRIEND), tr( "Accept friend" ), this );
-				else
-					makefriendAct = new QAction(QIcon(IMAGE_MAKEFRIEND), tr( "Make friend" ), this );
+				makefriendAct = new QAction(QIcon(IMAGE_MAKEFRIEND), tr( "Make friend" ), this );
 
 				connect( makefriendAct , SIGNAL( triggered() ), this, SLOT( makeFriend() ) );
 				contextMnu.addAction( makefriendAct);
@@ -232,7 +211,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 #endif
 			}
 		}
-		if (  peer_id == rsPeers->getOwnId())
+                if (  peer_id == rsPeers->getPGPOwnId())
 		{
 		    exportcertAct = new QAction(QIcon(IMAGE_EXPIORT), tr( "Export my Cert" ), this );
 		    connect( exportcertAct , SIGNAL( triggered() ), this, SLOT( on_actionExportKey_activated() ) );
@@ -250,7 +229,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 void NetworkDialog::denyFriend()
 {
 	QTreeWidgetItem *wi = getCurrentNeighbour();
-	std::string peer_id = wi->text(9).toStdString() ;
+        std::string peer_id = wi->text(3).toStdString() ;
 	rsPeers->removeFriend(peer_id) ;
 
 	insertConnect() ;
@@ -273,9 +252,9 @@ void NetworkDialog::deleteCert()
 void NetworkDialog::makeFriend()
 {
 	QTreeWidgetItem *wi = getCurrentNeighbour();
-	std::string authId = wi->text(9).toStdString() ;
+        std::string authId = wi->text(3).toStdString() ;
 
-	rsPeers->AuthCertificate(authId, "");
+        rsPeers->SignGPGCertificate(authId);
 	rsPeers->addFriend(authId);
 
 	insertConnect() ;
@@ -284,7 +263,7 @@ void NetworkDialog::makeFriend()
 /** Shows Peer Information/Auth Dialog */
 void NetworkDialog::peerdetails()
 {
-	 ConfCertDialog::show(getCurrentNeighbour()->text(9).toStdString());
+         ConfCertDialog::show(getCurrentNeighbour()->text(3).toStdString());
 }
 
 /** Shows Peer Information/Auth Dialog */
@@ -360,9 +339,9 @@ void NetworkDialog::insertConnect()
 		return;
 	}
 
-	std::list<std::string> neighs;
+        std::list<std::string> neighs; //these are GPG ids
 	std::list<std::string>::iterator it;
-	rsPeers->getOthersList(neighs);
+        rsPeers->getPGPAllList(neighs);
 
 	/* get a link to the table */
         QTreeWidget *connectWidget = ui.connecttreeWidget;
@@ -371,122 +350,75 @@ void NetworkDialog::insertConnect()
 	std::string oldId;
 	if (oldSelect)
 	{
-		oldId = (oldSelect -> text(9)).toStdString();
+                oldId = (oldSelect -> text(3)).toStdString();
 	}
+
+        RsPeerDetails ownGPGDetails ;
+        rsPeers->getPGPDetails(rsPeers->getPGPOwnId(), ownGPGDetails);
 
         QList<QTreeWidgetItem *> items;
 	for(it = neighs.begin(); it != neighs.end(); it++)
 	{
-		RsPeerDetails detail;
-		if (!rsPeers->getPeerDetails(*it, detail))
-		{
-			continue; /* BAD */
-		}
+                if (*it == rsPeers->getPGPOwnId()) {
+                    continue;
+                }
 
-		/* make a widget per friend */
+                RsPeerDetails detail;
+                if (!rsPeers->getPGPDetails(*it, detail))
+                {
+                        continue; /* BAD */
+                }
+                /* make a widget per friend */
            	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
-
-		/* add all the labels */
 		
 	        /* (0) Status Icon */
-		item -> setText(0, "");
+                item -> setText(0, "");
 
-		/* (1) Accept/Deny */
-		if (detail.state & RS_PEER_STATE_FRIEND)
-			item -> setText(1, tr("Trusted"));
+        	/* (1) Person */
+		item -> setText(1, QString::fromStdString(detail.name));
+
+                /* (2) has me auth */
+                bool hasSignedMe = false;
+                std::list<std::string>::iterator signersIt;
+                for(signersIt = ownGPGDetails.signers.begin(); signersIt != ownGPGDetails.signers.end() ; ++signersIt) {
+                    if (*signersIt == detail.id) {
+                        hasSignedMe = true;
+                        break;
+                    }
+                }
+                if (hasSignedMe)
+                        item -> setText(2, tr("Has authenticated me"));
 		else
-			item -> setText(1, tr("Denied"));
-
-		if (rsPeers->isTrustingMe(detail.id) || detail.lastConnect>0)
-			item -> setText(2, tr("Is trusting me"));
-		else
-			item -> setText(2, tr("Unknown"));
-
-		/* (3) Last Connect */
-		{
-			std::ostringstream out;
-			// Show anouncement if a friend never was connected.
-			if (detail.lastConnect==0 ) 
-				item -> setText(3, tr("Never seen"));
-			else 
-			{
-				// Dont Show a timestamp in RS calculate the day
-				QDateTime datum = QDateTime::fromTime_t(detail.lastConnect);
-				// out << datum.toString(Qt::LocalDate);
-				QString stime = datum.toString(Qt::LocalDate);
-				item -> setText(3, stime);
-			}
-		}
+                        item -> setText(2, tr("Unknown"));
 		
-        	/* (4) Person */
-		item -> setText(4, QString::fromStdString(detail.name));
-		
-		/* (5) Peer Address */
+                /* (3) key id */
 		{
-			std::ostringstream out;
-			if(detail.state & RS_PEER_STATE_FRIEND) {
-				out << detail.localAddr << ":";
-				out << detail.localPort << "/";
-				out << detail.extAddr << ":";
-				out << detail.extPort;
-			} else {
-				// No Trust => no IP Information
-				out << "Unknown";
-			}
-                	item -> setText(5, QString::fromStdString(out.str()));
-		}
-
-		/* Others */
-		item -> setText(6, QString::fromStdString(detail.org));
-		item -> setText(7, QString::fromStdString(detail.location));
-		item -> setText(8, QString::fromStdString(rsPeers->getPeerName(detail.id)));
-
-		{
-			item -> setText(9, QString::fromStdString(detail.id));
+                        item -> setText(3, QString::fromStdString(detail.id));
 			if ((oldSelect) && (oldId == detail.id))
 			{
 				newSelect = item;
 			}
 		}
 
-		//item -> setText(10, QString::fromStdString(detail.authcode));
 
 		/**
 		* Determinated the Background Color
 		*/
 		QColor backgrndcolor;
 		
-		if (detail.state & RS_PEER_STATE_FRIEND)
+                if (detail.ownsign)
 		{
 			item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
 			backgrndcolor=Qt::green;
 		}
 		else
 		{
-			if (rsPeers->isTrustingMe(detail.id))
+                        if (hasSignedMe)
 			{
 				backgrndcolor=Qt::magenta;
 				item -> setIcon(0,(QIcon(IMAGE_TRUSTED)));
 				for(int k=0;k<8;++k)
-					item -> setToolTip(k,QString::fromStdString(detail.name) + QString(tr(" is trusting you. \nRight-click and select 'make friend' to be able to connect."))) ;
-			}
-#ifdef RS_USE_PGPSSL
-			else if (detail.validLvl > GPGME_VALIDITY_MARGINAL)
-			{
-				backgrndcolor=Qt::cyan;
-				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
-			}
-#else
-			else if (detail.trustLvl > RS_TRUST_LVL_MARGINAL)
-			{
-				backgrndcolor=Qt::cyan;
-				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
-			}
-#endif
-			else if (detail.lastConnect < 10000) /* 3 hours? */
-			{
-				backgrndcolor=Qt::yellow;
-				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
+                                        item -> setToolTip(k,QString::fromStdString(detail.name) + QString(tr(" has authenticaed you. \nRight-click and select 'make friend' to be able to connect."))) ;
 			}
 			else
 			{
@@ -502,39 +434,28 @@ void NetworkDialog::insertConnect()
 
 		/* add to the list */
 		items.append(item);
+
 	}
 
 	// add self to network.
-	RsPeerDetails pd ;
-	if(rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) 
-	{
-		QTreeWidgetItem *self_item = new QTreeWidgetItem((QTreeWidget*)0);
+        QTreeWidgetItem *self_item = new QTreeWidgetItem((QTreeWidget*)0);
 
-		self_item->setText(1,"N/A");
-		self_item->setText(2,"N/A");
-		self_item->setText(3,"N/A");
-		self_item->setText(4,QString::fromStdString(pd.name) + " (yourself)") ;
+        self_item->setText(1,QString::fromStdString(ownGPGDetails.name) + " (yourself)") ;
+        self_item->setText(2,"N/A");
+        self_item->setText(3, QString::fromStdString(ownGPGDetails.id));
 
-		std::ostringstream out;
-		out << pd.localAddr << ":" << pd.localPort << "/" << pd.extAddr << ":" << pd.extPort;
-		self_item->setText(5, QString::fromStdString(out.str()));
-		self_item->setText(6, QString::fromStdString(pd.org));
-		self_item->setText(7, QString::fromStdString(pd.location));
-		self_item->setText(8, QString::fromStdString(pd.email));
-		self_item->setText(9, QString::fromStdString(pd.id));
+        // Color each Background column in the Network Tab except the first one => 1-9
+        for(int i=1;i<10;++i)
+        {
+                self_item->setBackground(i,QBrush(Qt::green));
+        }
+        self_item->setIcon(0,(QIcon(IMAGE_AUTHED)));
+        items.append(self_item);
 
-		// Color each Background column in the Network Tab except the first one => 1-9
-		for(int i=1;i<10;++i)
-		{
-			self_item->setBackground(i,QBrush(Qt::green));
-		}
-		self_item->setIcon(0,(QIcon(IMAGE_AUTHED)));
-		items.append(self_item);
-	}
 
 	/* remove old items ??? */
 	connectWidget->clear();
-	connectWidget->setColumnCount(10);	
+        connectWidget->setColumnCount(4);
 
 	/* add the items in! */
 	connectWidget->insertTopLevelItems(0, items);
@@ -542,7 +463,7 @@ void NetworkDialog::insertConnect()
 	{
 		connectWidget->setCurrentItem(newSelect);
 	}
-
+        connectWidget->sortItems( 1, Qt::AscendingOrder );
 	connectWidget->update(); /* update display */
 }
 
@@ -569,7 +490,7 @@ QTreeWidgetItem *NetworkDialog::getCurrentNeighbour()
 /* Utility Fns */
 RsCertId getNeighRsCertId(QTreeWidgetItem *i)
 {
-        RsCertId id = (i -> text(9)).toStdString();
+        RsCertId id = (i -> text(3)).toStdString();
         return id;
 }   
   

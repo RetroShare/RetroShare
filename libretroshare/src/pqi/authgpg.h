@@ -43,6 +43,7 @@
 #include <openssl/ssl.h>
 #include <openssl/evp.h>
 #include "util/rsthreads.h"
+#include "rsiface/rspeers.h"
 #include <string>
 #include <list>
 #include <map>
@@ -150,6 +151,7 @@ class AuthGPG
     /* PGP web of trust management */
     GPG_id PGPOwnId();
     bool	getPGPAllList(std::list<std::string> &ids);
+    bool	getPGPDetails(std::string id, RsPeerDetails &d);
     bool	getPGPSignedList(std::list<std::string> &ids);
     bool	getPGPValidList(std::list<std::string> &ids);
     bool	isPGPValid(std::string id);

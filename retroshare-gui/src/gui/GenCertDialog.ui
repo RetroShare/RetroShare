@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>428</width>
-    <height>404</height>
+    <height>413</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1035,51 +1035,34 @@ p, li { white-space: pre-wrap; }
         <property name="spacing">
          <number>6</number>
         </property>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_5">
-          <property name="text">
-           <string>Name:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1" colspan="2">
-         <widget class="QLineEdit" name="genName"/>
-        </item>
-        <item row="5" column="0" colspan="3">
-         <widget class="Line" name="line_4">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="0">
+        <item row="2" column="0">
          <widget class="QLabel" name="label_6">
           <property name="text">
            <string>Organisation:</string>
           </property>
          </widget>
         </item>
-        <item row="6" column="1" colspan="2">
+        <item row="2" column="1" colspan="2">
          <widget class="QLineEdit" name="genOrg"/>
         </item>
-        <item row="7" column="0">
+        <item row="3" column="0">
          <widget class="QLabel" name="label_7">
           <property name="text">
            <string>Location:</string>
           </property>
          </widget>
         </item>
-        <item row="7" column="1" colspan="2">
+        <item row="3" column="1" colspan="2">
          <widget class="QLineEdit" name="genLoc"/>
         </item>
-        <item row="8" column="0">
+        <item row="4" column="0">
          <widget class="QLabel" name="label_8">
           <property name="text">
            <string>Country:</string>
           </property>
          </widget>
         </item>
-        <item row="8" column="1" colspan="2">
+        <item row="4" column="1" colspan="2">
          <widget class="QLineEdit" name="genCountry"/>
         </item>
         <item row="0" column="1" colspan="2">
@@ -1092,35 +1075,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>PGP Password</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1" colspan="2">
-         <widget class="QLineEdit" name="genPGPpassword">
-          <property name="echoMode">
-           <enum>QLineEdit::Password</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="Line" name="line_5">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1" colspan="2">
-         <widget class="Line" name="line_6">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="9" column="1">
+        <item row="5" column="1">
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -1169,8 +1124,6 @@ p, li { white-space: pre-wrap; }
  </widget>
  <tabstops>
   <tabstop>genPGPuser</tabstop>
-  <tabstop>genPGPpassword</tabstop>
-  <tabstop>genName</tabstop>
   <tabstop>genOrg</tabstop>
   <tabstop>genLoc</tabstop>
   <tabstop>genCountry</tabstop>
