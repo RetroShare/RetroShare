@@ -2019,7 +2019,10 @@ int RsServer::StartupRetroShare()
 
 	//mConfigMgr->addConfiguration("ftserver.cfg", ftserver);
 	//
-	mConfigMgr->addConfiguration("peers.cfg", mConnMgr);
+        mConfigMgr->addConfiguration("gpg_prefs.cfg", AuthGPG::getAuthGPG());
+        mConfigMgr->loadConfiguration();
+
+        mConfigMgr->addConfiguration("peers.cfg", mConnMgr);
 	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
 	mConfigMgr->addConfiguration("chat.cfg", chatSrv);

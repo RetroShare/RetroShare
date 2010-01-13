@@ -48,6 +48,7 @@
 #include <list>
 #include <set>
 #include <map>
+#include "pqi/p3cfgmgr.h"
 
 #define GPG_id std::string
 
@@ -83,7 +84,7 @@ class gpgcert
  */
 typedef std::map<std::string, gpgcert> certmap;
 	
-class AuthGPG
+class AuthGPG : public p3Config
 {
 	private:
 
@@ -214,6 +215,15 @@ class AuthGPG
 
   static AuthGPG *getAuthGPG() throw() // pour obtenir l'instance
       { return instance_gpg; }
+
+        protected:
+/*****************************************************************/
+/***********************  p3config  ******************************/
+        /* Key Functions to be overloaded for Full Configuration */
+        virtual RsSerialiser *setupSerialiser();
+        virtual std::list<RsItem *> saveList(bool &cleanup);
+        virtual bool    loadList(std::list<RsItem *> load);
+/*****************************************************************/
 
 private:
 

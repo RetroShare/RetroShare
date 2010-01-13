@@ -30,6 +30,7 @@
 #include <sstream>
 #include <algorithm>
 #include <boost/lexical_cast.hpp>
+#include "serialiser/rsconfigitems.h"
 
 
 // initialisation du pointeur de singleton à zéro
@@ -114,7 +115,7 @@ static char *PgpPassword = NULL;
 
 
 AuthGPG::AuthGPG()
-	:gpgmeInit(false) 
+        :gpgmeInit(false) , p3Config(CONFIG_TYPE_AUTHGPG)
 {
 	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
@@ -1244,6 +1245,8 @@ bool AuthGPG::setAcceptToConnectGPGCertificate(std::string gpg_id, bool acceptan
         it->second.accept_connection = acceptance;
         mAcceptToConnectMap[gpg_id] = acceptance;
 
+        IndicateConfigChanged();
+
         return true;
 }
 
@@ -1977,4 +1980,71 @@ static gpgme_error_t trustCallback(void *opaque, gpgme_status_code_t status, \
         }
 	
 	return params->err;
+}
+
+// -----------------------------------------------------------------------------------//
+// --------------------------------  Config functions  ------------------------------ //
+// -----------------------------------------------------------------------------------//
+//
+RsSerialiser *AuthGPG::setupSerialiser()
+{
+        RsSerialiser *rss = new RsSerialiser ;
+        rss->addSerialType(new RsGeneralConfigSerialiser());
+        return rss ;
+}
+
+std::list<RsItem*> AuthGPG::saveList(bool& cleanup)
+{
+        std::cerr << "AuthGPG::saveList() called" << std::endl ;
+        cleanup = true ;
+        std::list<RsItem*> lst ;
+
+        // Now save config for network digging strategies
+        RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
+        std::map<std::string, bool>::iterator mapIt;
+        for (mapIt = mAcceptToConnectMap.begin(); mapIt != mAcceptToConnectMap.end(); mapIt++) {
+            RsTlvKeyValue kv;
+            kv.key = mapIt->first;
+            std::cerr << "AuthGPG::saveList() called (mapIt->second) : " << (mapIt->second) << std::endl ;
+            kv.value = (mapIt->second)?"TRUE":"FALSE" ;
+            vitem->tlvkvs.pairs.push_back(kv) ;
+        }
+        lst.push_back(vitem);
+
+        return lst ;
+}
+
+bool AuthGPG::loadList(std::list<RsItem*> load)
+{
+        std::cerr << "AuthGPG::loadList() Item Count: " << load.size() << std::endl;
+
+        RsStackMutex stack(pgpMtx); /****** STACK LOCK MUTEX *******/
+
+        storeAllKeys_locked();
+
+        /* load the list of accepted gpg keys */
+        std::list<RsItem *>::iterator it;
+        for(it = load.begin(); it != load.end(); it++) {
+                RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet *>(*it);
+
+                if(vitem) {
+                        std::cerr << "AuthGPG::loadList() General Variable Config Item:" << std::endl;
+                        vitem->print(std::cerr, 10);
+                        std::cerr << std::endl;
+
+                        std::list<RsTlvKeyValue>::iterator kit;
+                        for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) {
+                            mAcceptToConnectMap[kit->key] = (kit->value == "TRUE");
+                            //set the gpg key
+                            certmap::iterator it;
+                            if (mKeyList.end() != (it = mKeyList.find(kit->key))) {
+                                    std::cerr << "AuthGPG::loadList() setting accept to : " << (kit->value == "TRUE");
+                                    std::cerr << " for gpg key id : " << kit->key << std::endl;
+                                    it->second.accept_connection = (kit->value == "TRUE");
+                            }
+                        }
+                }
+                delete (*it);
+        }
+        return true;
 }

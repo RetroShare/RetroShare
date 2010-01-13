@@ -590,7 +590,7 @@ bool 	p3Peers::addFriend(std::string id, std::string gpg_id)
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::addFriend() with : id : " << id << "; gpg_id : " << gpg_id << std::endl;
 #endif
-        if (id == gpg_id) {
+        if (id == gpg_id || id == "") {
             return addDummyFriend(gpg_id);
         } else {
             return mConnMgr->addFriend(id, gpg_id);

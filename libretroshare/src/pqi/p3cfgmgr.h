@@ -63,6 +63,8 @@ const uint32_t CONFIG_TYPE_PEERS 	    = 0x0002;
 const uint32_t CONFIG_TYPE_FSERVER 	    = 0x0003;
 const uint32_t CONFIG_TYPE_MSGS 	       = 0x0004;
 const uint32_t CONFIG_TYPE_CACHE_OLDID  = 0x0005;
+const uint32_t CONFIG_TYPE_AUTHGPG	 	 = 0x006;
+
 
 /* new FileTransfer */
 const uint32_t CONFIG_TYPE_FT_SHARED 	 = 0x0007;
