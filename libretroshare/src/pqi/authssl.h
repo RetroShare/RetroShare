@@ -104,6 +104,7 @@ SSL_CTX *	getNewSslCtx();
 	
         /* get Certificate Id */
 virtual	std::string OwnId();
+virtual	std::string getOwnLocation();
 //virtual bool    getAllList(std::list<std::string> &ids);
 //virtual bool    getAuthenticatedList(std::list<std::string> &ids);
 //virtual bool    getUnknownList(std::list<std::string> &ids);

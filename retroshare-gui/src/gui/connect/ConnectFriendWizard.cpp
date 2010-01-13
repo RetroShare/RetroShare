@@ -48,6 +48,8 @@
 #include <QRegExpValidator>
 #include <QRegExp>
 
+#include <boost/lexical_cast.hpp>
+
 #include <QDebug>
 #include <sstream>
 #include <iostream>
@@ -131,9 +133,9 @@ ConnectFriendWizard::accept()
                 std::cerr << "ConnectFriendWizard::accept() : setting ip local address." << std::endl;
                 rsPeers->setLocalAddress(ssl_Id, this->field("local_friend_ip").toString().toStdString(), this->field("local_friend_port").toInt());
             }
-            if (!this->field("peerLocation").isNull()) {
+            if (!this->field(LOCATION_FIELD_CONNECT_FRIEND_WIZARD).isNull()) {
                 std::cerr << "ConnectFriendWizard::accept() : setting peerLocation." << std::endl;
-                rsPeers->setLocation(ssl_Id, this->field("peerLocation").toString().toStdString());
+                rsPeers->setLocation(ssl_Id, this->field(LOCATION_FIELD_CONNECT_FRIEND_WIZARD).toString().toStdString());
             }
         }
 
@@ -198,21 +200,6 @@ TextPage::TextPage(QWidget *parent)
     std::cerr << "TextPage() getting Invite" << std::endl;
     userCertEdit = new QTextEdit;
     std::string invite = rsPeers->GetRetroshareInvite();
-
-    //add the ip local and external address after the signature
-    RsPeerDetails ownDetail;
-    rsPeers->getPeerDetails(rsPeers->getOwnId(), ownDetail);
-    invite += LOCAL_IP;
-    invite += ownDetail.localAddr + ":";
-    std::ostringstream out;
-    out << ownDetail.localPort;
-    invite += out.str() + ";";
-    invite += "\n";
-    invite += EXT_IP;
-    invite += ownDetail.extAddr + ":";
-    std::ostringstream out2;
-    out2 << ownDetail.extPort;
-    invite += out2.str() + ";";
 
     userCertEdit->setText(QString::fromStdString(invite));
     userCertEdit->setReadOnly(true);
@@ -354,66 +341,11 @@ int TextPage::nextId() const {
         wizard()->setField(LOCATION_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.location));
         wizard()->setField(CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(certstr));
 
-        //parse the text to get ip address
-	try {
-#ifdef FRIEND_WIZARD_DEBUG
-	    std::cerr << "Paring cert for ip detection : " << certstr << std::endl;
-#endif
-	    int parsePosition = certstr.find(LOCAL_IP);
-#ifdef FRIEND_WIZARD_DEBUG
-	    std::cerr << "local ip position : " << parsePosition << std::endl;
-#endif
-	    if (parsePosition != std::string::npos) {
-		//let's parse ip local address
-		parsePosition += LOCAL_IP.length();
-		std::string subCert = certstr.substr(parsePosition);
-		parsePosition = subCert.find(":");
-		std::string local_ip = subCert.substr(0, parsePosition);
-#ifdef FRIEND_WIZARD_DEBUG
-		std::cerr << "Local Ip : " << local_ip << std::endl;
-#endif
+        wizard()->setField("ext_friend_ip", QString::fromStdString(pd.extAddr));
+        wizard()->setField("ext_friend_port", QString::fromStdString(boost::lexical_cast<std::string>(pd.extPort)));
+        wizard()->setField("local_friend_ip", QString::fromStdString(pd.localAddr));
+        wizard()->setField("local_friend_port", QString::fromStdString(boost::lexical_cast<std::string>(pd.localPort)));
 
-		//let's parse local port
-		subCert = subCert.substr(parsePosition + 1);
-		parsePosition = subCert.find(";");
-		std::string local_port = subCert.substr(0, parsePosition);
-#ifdef FRIEND_WIZARD_DEBUG
-		std::cerr << "Local port : " << local_port << std::endl;
-#endif
-
-		//let's parse ip ext address
-		parsePosition = certstr.find(EXT_IP);
-#ifdef FRIEND_WIZARD_DEBUG
-		std::cerr << "local ip position : " << parsePosition << std::endl;
-#endif
-		if (parsePosition != std::string::npos) {
-		    parsePosition = parsePosition + EXT_IP.length();
-		    subCert = certstr.substr(parsePosition);
-		    parsePosition = subCert.find(":");
-		    std::string ext_ip = subCert.substr(0, parsePosition);
-    #ifdef FRIEND_WIZARD_DEBUG
-		    std::cerr << "Ext Ip : " << ext_ip << std::endl;
-    #endif
-
-		    //let's parse ext port
-		    subCert = subCert.substr(parsePosition + 1);
-		    parsePosition = subCert.find(";");
-		    std::string ext_port = subCert.substr(0, parsePosition);
-    #ifdef FRIEND_WIZARD_DEBUG
-                    std::cerr << "Ext port : " << ext_port << std::endl;
-    #endif
-
-		    //let's store the result in the friend wizard. We will retreive it in the acept() method
-		    wizard()->setField("ext_friend_ip", QString::fromStdString(ext_ip));
-		    wizard()->setField("ext_friend_port", QString::fromStdString(ext_port));
-		    wizard()->setField("local_friend_ip", QString::fromStdString(local_ip));
-		    wizard()->setField("local_friend_port", QString::fromStdString(local_port));
-		}
-
-	    }
-	} catch (...) {
-	    std::cerr << "ConnectFriendWizard : Parse ip address error." << std::endl;
-	}
         return ConnectFriendWizard::Page_Conclusion ;
     }
     else

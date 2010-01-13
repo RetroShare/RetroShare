@@ -653,6 +653,20 @@ std::string AuthSSL::OwnId()
 	return id;
 }
 
+std::string AuthSSL::getOwnLocation()
+{
+#ifdef AUTHSSL_DEBUG
+        std::cerr << "AuthSSL::OwnId()";
+        std::cerr << std::endl;
+#endif
+        sslMtx.lock();   /***** LOCK *****/
+
+        std::string location = mOwnCert->location;
+
+        sslMtx.unlock(); /**** UNLOCK ****/
+        return location;
+}
+
 //bool    AuthSSL::getAllList(std::list<std::string> &ids)
 //{
 //#ifdef AUTHSSL_DEBUG

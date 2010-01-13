@@ -80,30 +80,9 @@ CryptoPage::load()
 void
 CryptoPage::loadPublicKey()
 {
-    //std::cerr << "CryptoPage() getting Invite" << std::endl;
-
-    std::string invite = rsPeers->GetRetroshareInvite();
-
-    RsPeerDetails ownDetail;
-    rsPeers->getPeerDetails(rsPeers->getOwnId(), ownDetail);
-    invite += LOCAL_IP;
-    invite += ownDetail.localAddr + ":";
-    std::ostringstream out;
-    out << ownDetail.localPort;
-    invite += out.str() + ";";
-    invite += "\n";
-    invite += EXT_IP;
-    invite += ownDetail.extAddr + ":";
-    std::ostringstream out2;
-    out2 << ownDetail.extPort;
-    invite += out2.str() + ";";
-
-    ui.certtextEdit->setText(QString::fromStdString(invite));
+    ui.certtextEdit->setText(QString::fromStdString(rsPeers->GetRetroshareInvite()));
     ui.certtextEdit->setReadOnly(true);
     ui.certtextEdit->setMinimumHeight(200);
-
-    //std::cerr << "CryptoPage() getting Invite: " << invite << std::endl;
-
 }
 
 void

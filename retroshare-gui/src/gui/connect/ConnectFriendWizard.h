@@ -18,9 +18,6 @@ class QComboBox;
 class QTableWidget;
 //QT_END_NAMESPACE
 
-const std::string LOCAL_IP = "---LOCAL---";
-const std::string EXT_IP = "---EXT---";
-
 //============================================================================
 //! A wizard for adding friends. Based on standard QWizard component
 
