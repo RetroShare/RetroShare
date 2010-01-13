@@ -499,8 +499,8 @@ void FofPage::updatePeersList(int e)
 				break ;
 
 			case 1: // "Unsigned peers who already signed my certificate"
-				show = rsPeers->isTrustingMe(details.id) && !(details.state & RS_PEER_STATE_FRIEND) ;
-				std::cerr << "case 1, ownsign=" << details.ownsign << ", is_trusting_me=" << rsPeers->isTrustingMe(details.id) << ", show=" << show << std::endl ;
+                                show = details.hasSignedMe && !(details.state & RS_PEER_STATE_FRIEND) ;
+                                std::cerr << "case 1, ownsign=" << details.ownsign << ", is_authed_me=" << details.hasSignedMe << ", show=" << show << std::endl ;
 				break ;
 
 			case 0: // "All unsigned friends of my friends"

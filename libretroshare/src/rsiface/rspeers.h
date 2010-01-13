@@ -76,6 +76,7 @@ class RsPeerDetails
 	RsPeerDetails();
 
 	/* Auth details */
+        bool isOnlyGPGdetail;
 	std::string id;
 	std::string name;
 	std::string email;
@@ -137,21 +138,22 @@ virtual bool    isOnline(std::string id)			= 0;
 virtual bool    isFriend(std::string id)			= 0;
 virtual std::string getPeerName(std::string id)			= 0;
 virtual std::string getPeerPGPName(std::string pgp_id)	= 0;
-virtual bool	getPeerDetails(std::string id, RsPeerDetails &d) = 0;
+virtual bool	getPeerDetails(std::string id, RsPeerDetails &d) = 0; //get Peer detail accept SSL and PGP certs
 
 		/* Using PGP Ids */
 virtual std::string getPGPOwnId()				= 0;
 virtual std::string getPGPId(std::string ssl_id)	= 0;
-virtual bool    getPGPFriendList(std::list<std::string> &ids)   = 0;
+virtual bool    getPGPAcceptedList(std::list<std::string> &ids)   = 0;
+virtual bool    getPGPSignedList(std::list<std::string> &ids)   = 0;//friends that we accpet to connect with but we don't want to sign their gpg key
+virtual bool    getPGPValidList(std::list<std::string> &ids)   = 0;
 virtual bool    getPGPAllList(std::list<std::string> &ids) 	= 0;
 virtual bool	getPGPDetails(std::string id, RsPeerDetails &d) = 0;
+
+virtual bool    getPGPFriendList(std::list<std::string> &ids) 	= 0;
 
 	/* Add/Remove Friends */
 virtual	bool addFriend(std::string id)        			= 0;
 virtual	bool removeFriend(std::string id)  			= 0;
-
-	/* get/set third party info about who trusts me */
-virtual bool isTrustingMe(std::string id) const = 0 ;
 
 	/* Network Stuff */
 virtual	bool connectAttempt(std::string id)			= 0;
@@ -175,7 +177,7 @@ virtual	bool SaveCertificateToFile(std::string id, std::string fname)  = 0;
 virtual	std::string SaveCertificateToString(std::string id)  	= 0;
 
 virtual	bool SignGPGCertificate(std::string id)                   	= 0;
-virtual	bool TrustCertificate(std::string id, bool trust) 	= 0;
+virtual	bool TrustGPGCertificate(std::string id, uint32_t trustlvl) 	= 0;
 
 };
 

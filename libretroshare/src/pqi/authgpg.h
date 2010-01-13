@@ -182,6 +182,7 @@ class AuthGPG
   bool TrustCertificateNone(std::string id);
   bool TrustCertificateMarginally(std::string id);
   bool TrustCertificateFully(std::string id);
+  bool TrustCertificate(std::string id,  int trustlvl); //trustlvl is 2 for none, 3 for marginal and 4 for full trust
 
 /*********************************************************************************/
 /************************* STAGE 7 ***********************************************/
@@ -294,6 +295,18 @@ class SignParams
         SignParams(std::string checkLvl) {
                 this->checkLvl = checkLvl;
 	}
+};
+
+/* Data specific to key signing */
+class TrustParams
+{
+        public:
+
+        std::string trustLvl;
+
+        TrustParams(std::string trustLvl) {
+                this->trustLvl = trustLvl;
+        }
 };
 
 #endif

@@ -29,6 +29,8 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+#include <boost/lexical_cast.hpp>
+
 
 // initialisation du pointeur de singleton à zéro
 AuthGPG *AuthGPG::instance_gpg = new AuthGPG();
@@ -60,7 +62,7 @@ gpgcert::~gpgcert()
 {
 	if (key)
 	{
-		gpgme_key_unref(key);
+               gpgme_key_unref(key);
 	}
 }
 
@@ -294,21 +296,6 @@ int	AuthGPG::GPGInit(std::string ownId)
 {
 }
 
-//int	AuthGPG::LoadGPGPassword(std::string pwd)
-//{
-//	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
-//
-//	if (!gpgmeInit) {
-//		return 0;
-//	}
-//
-//	this->passphrase = pwd;
-//	setPGPPassword_locked(pwd);
-//
-//	return 1;
-//}
-	
-
 
 // store all keys in map mKeyList to avoid callin gpgme exe repeatedly
 bool   AuthGPG::storeAllKeys_locked()
@@ -326,7 +313,7 @@ bool   AuthGPG::storeAllKeys_locked()
 	
         std::cerr << "AuthGPG::storeAllKeys_locked() clearing existing ones";
 	std::cerr << std::endl;
-	mKeyList.clear();
+        mKeyList.clear();
 
 	/* enable SIG mode */
 	gpgme_keylist_mode_t origmode = gpgme_get_keylist_mode(CTX);
@@ -410,9 +397,7 @@ bool   AuthGPG::storeAllKeys_locked()
 				{
                                         nu.signers.push_back(keyid);
 				}
-                                std::cerr << "keyid: " << keyid << std::endl;
-                                std::cerr << "mOwnGpgId: " << mOwnGpgId << std::endl;
-                                if (keyid == mOwnGpgId) {
+                               if (keyid == mOwnGpgId) {
                                     nu.ownsign = true;
                                 }
 			}
@@ -614,7 +599,7 @@ bool   AuthGPG::printOwnKeys_locked()
 
 bool    AuthGPG::printKeys()
 {
-        //RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+        RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 	printAllKeys_locked();
 	return printOwnKeys_locked();
 }
@@ -860,7 +845,7 @@ int     AuthGPG::setConfigDirectories(std::string confFile, std::string neighDir
 /**** These Two are common */
 std::string AuthGPG::getPGPName(GPG_id id)
 {
-        //RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+        RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
 	certmap::iterator it;
 	if (mKeyList.end() != (it = mKeyList.find(id)))
@@ -872,7 +857,7 @@ std::string AuthGPG::getPGPName(GPG_id id)
 /**** These Two are common */
 std::string AuthGPG::getPGPEmail(GPG_id id)
 {
-        //RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+        RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
         certmap::iterator it;
         if (mKeyList.end() != (it = mKeyList.find(id)))
@@ -892,7 +877,7 @@ std::string AuthGPG::PGPOwnId()
 
 bool	AuthGPG::getPGPAllList(std::list<std::string> &ids)
 {
-        //RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+        RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
 	/* add an id for each pgp certificate */
 	certmap::iterator it;
@@ -903,9 +888,24 @@ bool	AuthGPG::getPGPAllList(std::list<std::string> &ids)
 	return true;
 }
 
+bool	AuthGPG::getPGPValidList(std::list<std::string> &ids)
+{
+        RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+
+        /* add an id for each pgp certificate */
+        certmap::iterator it;
+        for(it = mKeyList.begin(); it != mKeyList.end(); it++)
+        {
+            if (it->second.validLvl >= GPGME_VALIDITY_MARGINAL) {
+                ids.push_back(it->first);
+            }
+        }
+        return true;
+}
+
 bool	AuthGPG::getPGPDetails(std::string id, RsPeerDetails &d)
 {
-        //RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+        RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
         /* add an id for each pgp certificate */
         certmap::iterator it;
@@ -1193,13 +1193,17 @@ bool AuthGPG::RevokeCertificate(std::string id)
 
 bool AuthGPG::TrustCertificateMarginally(std::string id)
 {
-	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
-
         std::cerr << "AuthGPG::TrustCertificateMarginally(" << id << ")";
 	std::cerr << std::endl;
         //TODO implement it
 
 	return false;
+}
+
+bool AuthGPG::TrustCertificate(std::string id, int trustlvl)
+{
+        std::cerr << "AuthGPG::TrustCertificate(" << id << ", " << trustlvl << ")" << std::endl;
+        return this->privateTrustCertificate(id, trustlvl);
 }
 
 bool AuthGPG::SignData(std::string input, std::string &sign)
@@ -1263,8 +1267,7 @@ int	AuthGPG::privateSignCertificate(std::string id)
 	}
 	
 	
-	if(GPG_ERR_NO_ERROR != (ERR = gpgme_op_edit(CTX, signKey, keySignCallback, \
-		&params, out))) {
+        if(GPG_ERR_NO_ERROR != (ERR = gpgme_op_edit(CTX, signKey, keySignCallback, &params, out))) {
 		return 0;	
 	}
 	
@@ -1294,8 +1297,8 @@ int	AuthGPG::privateTrustCertificate(std::string id, int trustlvl)
 	
 	gpgcert trustCert = mKeyList.find(id)->second;
 	gpgme_key_t trustKey = trustCert.key;
-	const char *lvls[] = {"1", "2", "3", "4", "5"};	
-	class EditParams params(TRUST_START, (void *) *(lvls + trustlvl -1));
+        class TrustParams sparams((boost::lexical_cast<std::string>(trustlvl)));
+        class EditParams params(TRUST_START, &sparams);
 	gpgme_data_t out;
         gpg_error_t ERR;
 	
@@ -1306,6 +1309,11 @@ int	AuthGPG::privateTrustCertificate(std::string id, int trustlvl)
 
 	if(GPG_ERR_NO_ERROR != (ERR = gpgme_op_edit(CTX, trustKey, trustCallback, &params, out)))
 		return 0;
+
+        //the key ref has changed, we got to get rid of the old reference.
+        trustCert.key = NULL;
+
+        storeAllKeys_locked();
 		
 	return 1;
 }
@@ -1750,9 +1758,44 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
 static gpgme_error_t trustCallback(void *opaque, gpgme_status_code_t status, \
 	const char *args, int fd) {
 
-	class EditParams *params = (class EditParams *)opaque;
-	const char *result = NULL;
-	char *trustLvl = (char *)params->oParams;
+        class EditParams *params = (class EditParams *)opaque;
+        class TrustParams *tparams = (class TrustParams *)params->oParams;
+        const char *result = NULL;
+
+                /* printf stuff out */
+        if (status == GPGME_STATUS_EOF)
+                fprintf(stderr,"keySignCallback GPGME_STATUS_EOF\n");
+        if (status == GPGME_STATUS_GOT_IT)
+                fprintf(stderr,"keySignCallback GPGME_STATUS_GOT_IT\n");
+        if (status == GPGME_STATUS_USERID_HINT)
+                fprintf(stderr,"keySignCallback GPGME_STATUS_USERID_HINT\n");
+        if (status == GPGME_STATUS_NEED_PASSPHRASE)
+                fprintf(stderr,"keySignCallback GPGME_STATUS_NEED_PASSPHRASE\n");
+        if (status == GPGME_STATUS_GOOD_PASSPHRASE)
+                fprintf(stderr,"keySignCallback GPGME_STATUS_GOOD_PASSPHRASE\n");
+        if (status == GPGME_STATUS_BAD_PASSPHRASE)
+                fprintf(stderr,"keySignCallback GPGME_STATUS_BAD_PASSPHRASE\n");
+        if (status == GPGME_STATUS_GET_LINE)
+                fprintf(stderr,"keySignCallback GPGME_STATUS_GET_LINE\n");
+        if (status == GPGME_STATUS_GET_BOOL)
+                fprintf(stderr,"keySignCallback GPGME_STATUS_GET_BOOL \n");
+        if (status == GPGME_STATUS_ALREADY_SIGNED)
+                fprintf(stderr,"keySignCallback GPGME_STATUS_ALREADY_SIGNED\n");
+
+                /* printf stuff out */
+        if (params->state == TRUST_START)
+                fprintf(stderr,"keySignCallback params->state TRUST_START\n");
+        if (params->state == TRUST_COMMAND)
+                fprintf(stderr,"keySignCallback params->state TRUST_COMMAND\n");
+        if (params->state == TRUST_VALUE)
+                fprintf(stderr,"keySignCallback params->state TRUST_VALUE\n");
+        if (params->state == TRUST_REALLY_ULTIMATE)
+                fprintf(stderr,"keySignCallback params->state TRUST_REALLY_ULTIMATE\n");
+        if (params->state == TRUST_QUIT)
+                fprintf(stderr,"keySignCallback params->state TRUST_QUIT\n");
+        if (params->state == TRUST_ERROR)
+                fprintf(stderr,"keySignCallback params->state TRUST_ERROR\n");
+
 
 	if(status == GPGME_STATUS_EOF ||
 		status == GPGME_STATUS_GOT_IT) {
@@ -1777,7 +1820,7 @@ static gpgme_error_t trustCallback(void *opaque, gpgme_status_code_t status, \
       			if (status == GPGME_STATUS_GET_LINE &&
 				(!std::string("edit_ownertrust.value").compare(args))) {
 				params->state = TRUST_VALUE;
-				result = trustLvl;
+                                result = tparams->trustLvl.c_str();;
 			} else {
 				params->state = TRUST_ERROR;
 				params->err = gpg_error (GPG_ERR_GENERAL);
@@ -1844,6 +1887,7 @@ static gpgme_error_t trustCallback(void *opaque, gpgme_status_code_t status, \
 			WriteFile(winFd, result, strlen (result), &written, NULL);
 		WriteFile(winFd, "\n", 1, &written, NULL); 
 #endif
+                std::cerr << "trustCallback() result : " << result << std::endl;
         }
 	
 	return params->err;

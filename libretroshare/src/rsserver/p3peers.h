@@ -56,17 +56,18 @@ virtual bool	getPeerDetails(std::string id, RsPeerDetails &d);
                 /* Using PGP Ids */
 virtual std::string getPGPOwnId();
 virtual std::string getPGPId(std::string ssl_id);
-virtual bool    getPGPFriendList(std::list<std::string> &ids);
+virtual bool    getPGPAcceptedList(std::list<std::string> &ids);
+virtual bool    getPGPSignedList(std::list<std::string> &ids);
+virtual bool    getPGPValidList(std::list<std::string> &ids);
 virtual bool    getPGPAllList(std::list<std::string> &ids);
 virtual bool	getPGPDetails(std::string id, RsPeerDetails &d);
+
+virtual bool    getPGPFriendList(std::list<std::string> &ids);
 
 
 	/* Add/Remove Friends */
 virtual	bool addFriend(std::string id);
 virtual	bool removeFriend(std::string id);
-
-	/* get/set third party info about who trusts me */
-virtual bool isTrustingMe(std::string id) const ;
 
 	/* Network Stuff */
 virtual	bool connectAttempt(std::string id);
@@ -90,7 +91,7 @@ virtual	bool SaveCertificateToFile(std::string id, std::string fname);
 virtual	std::string SaveCertificateToString(std::string id);
 
 virtual	bool SignGPGCertificate(std::string id);
-virtual	bool TrustCertificate(std::string id, bool trust);
+virtual	bool TrustGPGCertificate(std::string id, uint32_t trustlvl);
 
 	private:
 

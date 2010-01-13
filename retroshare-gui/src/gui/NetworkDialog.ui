@@ -95,18 +95,9 @@
          <attribute name="headerStretchLastSection">
           <bool>true</bool>
          </attribute>
-         <attribute name="headerCascadingSectionResizes">
-          <bool>true</bool>
-         </attribute>
-         <attribute name="headerDefaultSectionSize">
-          <number>200</number>
-         </attribute>
-         <attribute name="headerStretchLastSection">
-          <bool>true</bool>
-         </attribute>
          <column>
           <property name="text">
-           <string> </string>
+           <string/>
           </property>
          </column>
          <column>
@@ -116,7 +107,12 @@
          </column>
          <column>
           <property name="text">
-           <string>Peer's trust</string>
+           <string>GPG key validity</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Did peer authenticated me</string>
           </property>
          </column>
          <column>
@@ -171,7 +167,7 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
+          <item row="0" column="3">
            <spacer>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -184,7 +180,7 @@ p, li { white-space: pre-wrap; }
             </property>
            </spacer>
           </item>
-          <item row="0" column="3">
+          <item row="0" column="4">
            <widget class="QPushButton" name="viewButton">
             <property name="toolTip">
              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -213,6 +209,13 @@ subcontrol-position: bottom right;
             </property>
             <property name="flat">
              <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QCheckBox" name="showUnvalidKeys">
+            <property name="text">
+             <string>Show keys that are not validated by the GPG web of trust</string>
             </property>
            </widget>
           </item>

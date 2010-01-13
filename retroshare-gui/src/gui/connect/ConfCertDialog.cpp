@@ -94,22 +94,18 @@ void ConfCertDialog::loadId(std::string id)
 
 void ConfCertDialog::loadDialog()
 {
-        isPGPId = false;
 	RsPeerDetails detail;
 	if (!rsPeers->getPeerDetails(mId, detail))
 	{
-            isPGPId = true;
-            if (!rsPeers->getPGPDetails(mId, detail)) {
-                QMessageBox::information(this,
-                         tr("RetroShare"),
-                         tr("Error : cannot get peer details."));
-                this->close();
-            }
+            QMessageBox::information(this,
+                     tr("RetroShare"),
+                     tr("Error : cannot get peer details."));
+            closeinfodlg();
         }
 
 	ui.name->setText(QString::fromStdString(detail.name));
         ui.peerid->setText(QString::fromStdString(detail.id));
-        if (!isPGPId) {
+        if (!detail.isOnlyGPGdetail) {
             ui.orgloc->setText(QString::fromStdString(detail.org));
             ui.country->setText(QString::fromStdString(detail.location));
             // Dont Show a timestamp in RS calculate the day
@@ -160,19 +156,6 @@ void ConfCertDialog::loadDialog()
             ui.groupBox->hide();
         }
 
-	/* set the url for DNS access (OLD) */
-	//ui.extName->setText(QString::fromStdString(""));
-
-	/**** TODO ****/
-	//ui.chkFirewall  ->setChecked(ni->firewalled);
-	//ui.chkForwarded ->setChecked(ni->forwardPort);
-	//ui.chkFirewall  ->setChecked(0);
-	//ui.chkForwarded ->setChecked(0);
-
-	//ui.indivRate->setValue(0);
-
-	//ui.trustLvl->setText(QString::fromStdString(RsPeerTrustString(detail.trustLvl)));
-
         if (detail.ownsign) {
             ui.sign_button->hide();
             ui.signed_already_label->show();
@@ -182,9 +165,37 @@ void ConfCertDialog::loadDialog()
         }
 
         if (detail.hasSignedMe) {
-                ui.is_signing_me->setText(tr("Peer has acepted me as a friend and did signed my GPG key"));
+                ui.is_signing_me->setText(tr("Peer has authenticated me as a friend and did sign my GPG key"));
         } else {
-                ui.is_signing_me->setText(tr("Peer has not acepted me as a friend and did not signed my GPG key"));
+                ui.is_signing_me->setText(tr("Peer has not authenticated me as a friend and did not sign my GPG key"));
+       }
+
+       //web of trust
+       if (detail.trustLvl == 5) {
+           //trust is ultimate, it means it's one of our own keys
+           ui.web_of_trust_label->setText(tr("Your trust in this peer is ultimate, it's probably a key you own."));
+           ui.radioButton_trust_fully->hide();
+           ui.radioButton_trust_marginnaly->hide();
+           ui.radioButton_trust_never->hide();
+       } else {
+            ui.radioButton_trust_fully->show();
+            ui.radioButton_trust_marginnaly->show();
+            ui.radioButton_trust_never->show();
+            if (detail.trustLvl == 4) {
+                ui.web_of_trust_label->setText(tr("Your trust in this peer is full, it means he has an excellent understanding of key signing, and his signature on a key would be as good as your own."));
+                ui.radioButton_trust_fully->setChecked(true);
+            } else if (detail.trustLvl == 3) {
+                ui.web_of_trust_label->setText(tr("Your trust in this peer is marginal, it means he understands the implications of key signing and properly check keys before signing them."));
+                ui.radioButton_trust_marginnaly->setChecked(true);
+            } else if (detail.trustLvl == 2) {
+                ui.web_of_trust_label->setText(tr("Your trust in this peer is none, it means he is known to improperly sign other keys."));
+                ui.radioButton_trust_never->setChecked(true);
+            } else {
+                ui.web_of_trust_label->setText(tr("Your trust in this peer is not set."));
+                ui.radioButton_trust_fully->setChecked(false);
+                ui.radioButton_trust_marginnaly->setChecked(false);
+                ui.radioButton_trust_never->setChecked(false);
+           }
        }
 
         ui.signers->clear() ;
@@ -199,42 +210,54 @@ void ConfCertDialog::loadDialog()
 
 void ConfCertDialog::applyDialog()
 {
-	std::cerr << "In apply dialog" << std::endl ;
-	RsPeerDetails detail;
+        std::cerr << "ConfCertDialog::applyDialog() called" << std::endl ;
+        RsPeerDetails detail;
 	if (!rsPeers->getPeerDetails(mId, detail))
 	{
-		std::cerr << "Could not get details from " << mId << std::endl ;
-		/* fail */
-		return;
-	}
+            if (!rsPeers->getPGPDetails(mId, detail)) {
+                QMessageBox::information(this,
+                         tr("RetroShare"),
+                         tr("Error : cannot get peer details."));
+                closeinfodlg();
+            }
+        }
 
-	/* check if the data is the same */
-	bool localChanged = false;
-	bool extChanged = false;
-	bool fwChanged = false;
+        //check the GPG trustlvl
+        if (ui.radioButton_trust_fully->isChecked() && detail.trustLvl != 4) {
+            //trust has changed to fully
+            rsPeers->TrustGPGCertificate(detail.id, 4);
+        } else if (ui.radioButton_trust_marginnaly->isChecked() && detail.trustLvl != 3) {
+            rsPeers->TrustGPGCertificate(detail.id, 3);
 
-	/* set local address */
-	if ((detail.localAddr != ui.localAddress->text().toStdString()) || (detail.localPort != ui.localPort -> value()))
-		localChanged = true;
+        } else if (ui.radioButton_trust_never->isChecked() && detail.trustLvl != 2) {
+            rsPeers->TrustGPGCertificate(detail.id, 2);
+        }
 
-	if ((detail.extAddr != ui.extAddress->text().toStdString()) || (detail.extPort != ui.extPort -> value()))
-		extChanged = true;
+        if (!detail.isOnlyGPGdetail) {
+            /* check if the data is the same */
+            bool localChanged = false;
+            bool extChanged = false;
+            bool fwChanged = false;
 
-	/* now we can action the changes */
-	if (localChanged)
-		rsPeers->setLocalAddress(mId, ui.localAddress->text().toStdString(), ui.localPort->value());
+            /* set local address */
+            if ((detail.localAddr != ui.localAddress->text().toStdString()) || (detail.localPort != ui.localPort -> value()))
+                    localChanged = true;
 
-	if (extChanged)
-		rsPeers->setExtAddress(mId,ui.extAddress->text().toStdString(), ui.extPort->value());
+            if ((detail.extAddr != ui.extAddress->text().toStdString()) || (detail.extPort != ui.extPort -> value()))
+                    extChanged = true;
 
-	/* reload now */
-	loadDialog();
+            /* now we can action the changes */
+            if (localChanged)
+                    rsPeers->setLocalAddress(mId, ui.localAddress->text().toStdString(), ui.localPort->value());
 
-	/* close the Dialog after the Changes applied */
-	closeinfodlg();
+            if (extChanged)
+                    rsPeers->setExtAddress(mId,ui.extAddress->text().toStdString(), ui.extPort->value());
 
-        if(localChanged || extChanged)
-		emit configChanged() ;
+            if(localChanged || extChanged)
+                    emit configChanged() ;
+        }
+
+        closeinfodlg();
 }
 
 void ConfCertDialog::makeFriend()

@@ -259,11 +259,6 @@ bool    p3Peers::isOnline(std::string id)
 	return false;
 }
 
-bool    p3Peers::isTrustingMe(std::string id) const
-{
-        return AuthSSL::getAuthSSL()->isTrustingMe(id) ;
-}
-
 bool    p3Peers::isFriend(std::string id)
 {
 #ifdef P3PEERS_DEBUG
@@ -300,9 +295,17 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 	std::cerr << "p3Peers::getPeerDetails() " << id;
 	std::cerr << std::endl;
 #endif
+        //first, check if it's a gpg or a ssl id.
+        if (AuthSSL::getAuthSSL()->getGPGId(id) == "") {
+            //assume is not SSL, because every ssl_id has got a pgp_id
+            d.isOnlyGPGdetail = true;
+            return this->getPGPDetails(id, d);
+        }
 
         /* get from gpg (first), to fill in the sign and trust details */
+        /* don't retrun now, we've got fill in the ssl and connection info */
         this->getPGPDetails(AuthSSL::getAuthSSL()->getGPGId(id), d);
+        d.isOnlyGPGdetail = false;
 
         //get the ssl details
         sslcert authDetail;
@@ -533,8 +536,6 @@ bool	p3Peers::getPGPFriendList(std::list<std::string> &ids)
 	return true;
 }
 
-
-
 bool	p3Peers::getPGPAllList(std::list<std::string> &ids)
 {
 #ifdef P3PEERS_DEBUG
@@ -545,6 +546,42 @@ bool	p3Peers::getPGPAllList(std::list<std::string> &ids)
 	/* get from mAuthMgr */
         AuthGPG::getAuthGPG()->getPGPAllList(ids);
 	return true;
+}
+
+bool	p3Peers::getPGPValidList(std::list<std::string> &ids)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::getPGPOthersList()";
+        std::cerr << std::endl;
+#endif
+
+        /* get from mAuthMgr */
+        AuthGPG::getAuthGPG()->getPGPValidList(ids);
+        return true;
+}
+
+bool	p3Peers::getPGPSignedList(std::list<std::string> &ids)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::getPGPOthersList()";
+        std::cerr << std::endl;
+#endif
+
+        /* get from mAuthMgr */
+        AuthGPG::getAuthGPG()->getPGPSignedList(ids);
+        return true;
+}
+
+bool	p3Peers::getPGPAcceptedList(std::list<std::string> &ids)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::getPGPOthersList()";
+        std::cerr << std::endl;
+#endif
+
+        /* get from mAuthMgr */
+        AuthGPG::getAuthGPG()->getPGPSignedList(ids);
+        return true;
 }
 
 bool	p3Peers::getPGPDetails(std::string id, RsPeerDetails &d)
@@ -903,16 +940,20 @@ bool 	p3Peers::SignGPGCertificate(std::string id)
         return AuthGPG::getAuthGPG()->SignCertificateLevel0(id);
 }
 
-bool 	p3Peers::TrustCertificate(std::string id, bool trust)
+bool 	p3Peers::TrustGPGCertificate(std::string id, uint32_t trustlvl)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::TrustCertificate() " << id;
 	std::cerr << std::endl;
 #endif
-
-        return AuthSSL::getAuthSSL()->TrustCertificate(id, trust);
+        //check if we've got a ssl or gpg id
+        if (AuthSSL::getAuthSSL()->getGPGId(id) == "") {
+            //if no result then it must be a gpg id
+            return AuthGPG::getAuthGPG()->TrustCertificate(id, trustlvl);
+        } else {
+            return AuthGPG::getAuthGPG()->TrustCertificate(AuthSSL::getAuthSSL()->getGPGId(id), trustlvl);
+        }
 }
-
 
 
 int ensureExtension(std::string &name, std::string def_ext)

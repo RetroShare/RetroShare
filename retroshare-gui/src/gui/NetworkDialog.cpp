@@ -92,7 +92,10 @@ NetworkDialog::NetworkDialog(QWidget *parent)
   connectdialog = new ConnectDialog();
   
   connect(ui.infoLog, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(displayInfoLogMenu(const QPoint&)));
-  
+
+  connect(ui.showUnvalidKeys, SIGNAL(clicked()), this, SLOT(insertConnect()));
+
+
   /* hide the Tree +/- */
   ui.connecttreeWidget -> setRootIsDecorated( false );
   
@@ -102,17 +105,20 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     _header->setResizeMode (1, QHeaderView::Interactive);
     _header->setResizeMode (2, QHeaderView::Interactive);
     _header->setResizeMode (3, QHeaderView::Interactive);
+    _header->setResizeMode (4, QHeaderView::Interactive);
 
     _header->resizeSection ( 0, 25 );
     _header->resizeSection ( 1, 200 );
     _header->resizeSection ( 2, 200 );
+    _header->resizeSection ( 3, 200 );
 
     // set header text aligment
     QTreeWidgetItem * headerItem = ui.connecttreeWidget->headerItem();
     headerItem->setTextAlignment(0, Qt::AlignHCenter | Qt::AlignVCenter);
     headerItem->setTextAlignment(1, Qt::AlignHCenter | Qt::AlignVCenter);
     headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
-    headerItem->setTextAlignment(3, Qt::AlignVCenter);
+    headerItem->setTextAlignment(3, Qt::AlignHCenter | Qt::AlignVCenter);
+    headerItem->setTextAlignment(4, Qt::AlignVCenter);
 
     ui.networkTab->addTab(new NetworkView(),QString(tr("Network View")));
     ui.networkTab->addTab(new TrustView(),QString(tr("Trust matrix")));
@@ -178,7 +184,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
       contextMnu.clear();
 
-                std::string peer_id = wi->text(3).toStdString() ;
+                std::string peer_id = wi->text(4).toStdString() ;
 
                 // That's what context menus are made for
 		RsPeerDetails detail;
@@ -229,7 +235,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 void NetworkDialog::denyFriend()
 {
 	QTreeWidgetItem *wi = getCurrentNeighbour();
-        std::string peer_id = wi->text(3).toStdString() ;
+        std::string peer_id = wi->text(4).toStdString() ;
 	rsPeers->removeFriend(peer_id) ;
 
 	insertConnect() ;
@@ -252,7 +258,7 @@ void NetworkDialog::deleteCert()
 void NetworkDialog::makeFriend()
 {
 	QTreeWidgetItem *wi = getCurrentNeighbour();
-        std::string authId = wi->text(3).toStdString() ;
+        std::string authId = wi->text(4).toStdString() ;
 
         rsPeers->SignGPGCertificate(authId);
 	rsPeers->addFriend(authId);
@@ -263,7 +269,7 @@ void NetworkDialog::makeFriend()
 /** Shows Peer Information/Auth Dialog */
 void NetworkDialog::peerdetails()
 {
-         ConfCertDialog::show(getCurrentNeighbour()->text(3).toStdString());
+         ConfCertDialog::show(getCurrentNeighbour()->text(4).toStdString());
 }
 
 /** Shows Peer Information/Auth Dialog */
@@ -341,7 +347,11 @@ void NetworkDialog::insertConnect()
 
         std::list<std::string> neighs; //these are GPG ids
 	std::list<std::string>::iterator it;
-        rsPeers->getPGPAllList(neighs);
+        if (ui.showUnvalidKeys->isChecked()) {
+            rsPeers->getPGPAllList(neighs);
+        } else {
+            rsPeers->getPGPValidList(neighs);
+        }
 
 	/* get a link to the table */
         QTreeWidget *connectWidget = ui.connecttreeWidget;
@@ -350,7 +360,7 @@ void NetworkDialog::insertConnect()
 	std::string oldId;
 	if (oldSelect)
 	{
-                oldId = (oldSelect -> text(3)).toStdString();
+                oldId = (oldSelect -> text(4)).toStdString();
 	}
 
         RsPeerDetails ownGPGDetails ;
@@ -377,15 +387,26 @@ void NetworkDialog::insertConnect()
         	/* (1) Person */
 		item -> setText(1, QString::fromStdString(detail.name));
 
-                /* (2) has me auth */
+                /* (2) Key validity */
+                if (detail.validLvl == 3) {
+                    item -> setText(2, tr("Marginnal"));
+                } else if (detail.validLvl == 4) {
+                    item -> setText(2, tr("Full"));
+                } else if (detail.validLvl == 5) {
+                    item -> setText(2, tr("Ultimate"));
+                } else{
+                    item -> setText(2, tr("None"));
+                }
+
+                /* (3) has me auth */
                 if (detail.hasSignedMe)
-                        item -> setText(2, tr("Has authenticated me"));
+                        item -> setText(3, tr("Has authenticated me"));
 		else
-                        item -> setText(2, tr("Unknown"));
+                        item -> setText(3, tr("Unknown"));
 		
-                /* (3) key id */
+                /* (4) key id */
 		{
-                        item -> setText(3, QString::fromStdString(detail.id));
+                        item -> setText(4, QString::fromStdString(detail.id));
 			if ((oldSelect) && (oldId == detail.id))
 			{
 				newSelect = item;
@@ -410,7 +431,7 @@ void NetworkDialog::insertConnect()
 				backgrndcolor=Qt::magenta;
 				item -> setIcon(0,(QIcon(IMAGE_TRUSTED)));
 				for(int k=0;k<8;++k)
-                                        item -> setToolTip(k,QString::fromStdString(detail.name) + QString(tr(" has authenticaed you. \nRight-click and select 'make friend' to be able to connect."))) ;
+                                        item -> setToolTip(k,QString::fromStdString(detail.name) + QString(tr(" has authenticated you. \nRight-click and select 'make friend' to be able to connect."))) ;
 			}
 			else
 			{
@@ -434,7 +455,7 @@ void NetworkDialog::insertConnect()
 
         self_item->setText(1,QString::fromStdString(ownGPGDetails.name) + " (yourself)") ;
         self_item->setText(2,"N/A");
-        self_item->setText(3, QString::fromStdString(ownGPGDetails.id));
+        self_item->setText(4, QString::fromStdString(ownGPGDetails.id));
 
         // Color each Background column in the Network Tab except the first one => 1-9
         for(int i=1;i<10;++i)
@@ -447,7 +468,7 @@ void NetworkDialog::insertConnect()
 
 	/* remove old items ??? */
 	connectWidget->clear();
-        connectWidget->setColumnCount(4);
+        connectWidget->setColumnCount(5);
 
 	/* add the items in! */
 	connectWidget->insertTopLevelItems(0, items);
@@ -482,14 +503,14 @@ QTreeWidgetItem *NetworkDialog::getCurrentNeighbour()
 /* Utility Fns */
 RsCertId getNeighRsCertId(QTreeWidgetItem *i)
 {
-        RsCertId id = (i -> text(3)).toStdString();
+        RsCertId id = (i -> text(4)).toStdString();
         return id;
 }   
   
 /* So from the Neighbours Dialog we can call the following control Functions:
  * (1) Load Certificate             NeighLoadCertificate(std::string file)
  * (2) Neigh  Auth                  NeighAuthFriend(id, code)
- * (3) Neigh  Add                   NeighAddFriend(id)
+ * (4) Neigh  Add                   NeighAddFriend(id)
  *
  * All of these rely on the finding of the current Id.
  */
