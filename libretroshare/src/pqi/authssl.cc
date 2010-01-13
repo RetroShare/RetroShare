@@ -49,8 +49,6 @@
 /********************************************************************************/
 /********************************************************************************/
 
-static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx);
-
 sslcert::sslcert(X509 *x509, std::string pid)
 {
 	certificate = x509;
@@ -414,7 +412,17 @@ bool AuthSSL::active()
 
 // args: server cert, server private key, trusted certificates.
 
-int	AuthSSL::InitAuth(const char *cert_file, const char *priv_key_file, 
+static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx)
+{
+#ifdef AUTHSSL_DEBUG
+        std::cerr << "static verify_x509_callback called.";
+        std::cerr << std::endl;
+#endif
+        return AuthSSL::getAuthSSL()->VerifyX509Callback(preverify_ok, ctx);
+
+}
+
+int	AuthSSL::InitAuth(const char *cert_file, const char *priv_key_file,
 			const char *passwd)
 {
 #ifdef AUTHSSL_DEBUG
@@ -476,11 +484,8 @@ static  int initLib = 0;
 
 	if (x509 == NULL)
 	{
-		std::cerr << "AuthSSL::InitAuth() PEM_read_X509() Failed";
+                std::cerr << "AuthSSL::InitAuth() PEM_read_X509() Failed";
 		std::cerr << std::endl;
-#ifdef AUTHSSL_DEBUG
-#endif
-
 		return -1;
 	}
 	SSL_CTX_use_certificate(sslctx, x509);
@@ -499,10 +504,8 @@ static  int initLib = 0;
 
 	if (pkey == NULL)
 	{
-		std::cerr << "AuthSSL::InitAuth() PEM_read_PrivateKey() Failed";
+                std::cerr << "AuthSSL::InitAuth() PEM_read_PrivateKey() Failed";
 		std::cerr << std::endl;
-#ifdef AUTHSSL_DEBUG
-#endif
 		return -1;
 	}
 	SSL_CTX_use_PrivateKey(sslctx, pkey);
@@ -1986,7 +1989,7 @@ bool AuthSSL::AuthX509(X509 *x509)
         int sigoutl=0,sigoutll=0;
         X509_ALGOR *a;
 
-        fprintf(stderr, "GPGAuthMgr::AuthX509()\n");
+        fprintf(stderr, "AuthSSL::AuthX509()\n");
 
         EVP_MD_CTX_init(&ctx);
 
@@ -2005,13 +2008,12 @@ bool AuthSSL::AuthX509(X509 *x509)
         std::cerr << "  SigOut: " << sigoutl;
         std::cerr << std::endl;
 
-        if ((buf_in == NULL) || (buf_hashout == NULL) || (buf_sigout == NULL))
-                {
+        if ((buf_in == NULL) || (buf_hashout == NULL) || (buf_sigout == NULL)) {
                 hashoutl=0;
                 sigoutl=0;
-                fprintf(stderr, "GPGAuthMgr::AuthX509: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_MALLOC_FAILURE)\n");
+                fprintf(stderr, "AuthSSL::AuthX509: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_MALLOC_FAILURE)\n");
                 goto err;
-                }
+        }
         p=buf_in;
 
         std::cerr << "Buffers Allocated" << std::endl;
@@ -2024,7 +2026,7 @@ bool AuthSSL::AuthX509(X509 *x509)
                         (unsigned int *)&hashoutl))
                 {
                 hashoutl=0;
-                fprintf(stderr, "GPGAuthMgr::AuthX509: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_EVP_LIB)\n");
+                fprintf(stderr, "AuthSSL::AuthX509: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_EVP_LIB)\n");
                 goto err;
                 }
 
@@ -2035,8 +2037,7 @@ bool AuthSSL::AuthX509(X509 *x509)
         memmove(buf_sigout, signature->data, sigoutl);
 
         /* NOW Sign via GPG Functions */
-        if (!AuthGPG::getAuthGPG()->VerifySignBin(buf_hashout, hashoutl, buf_sigout, (unsigned int) sigoutl))
-        {
+        if (!AuthGPG::getAuthGPG()->VerifySignBin(buf_hashout, hashoutl, buf_sigout, (unsigned int) sigoutl)) {
                 sigoutl = 0;
                 goto err;
         }
@@ -2152,92 +2153,85 @@ int pem_passwd_cb(char *buf, int size, int rwflag, void *password)
 	return(strlen(buf));
 }
 
-
-static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx)
-{
-        return AuthSSL::getAuthSSL()->VerifyX509Callback(preverify_ok, ctx);
-
-}
-
-
 int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
 {
-	char    buf[256];
-	X509   *err_cert;
-	int     err, depth;
-	//SSL    *ssl;
-	//mydata_t *mydata;
-	
-	err_cert = X509_STORE_CTX_get_current_cert(ctx);
-	err = X509_STORE_CTX_get_error(ctx);
-	depth = X509_STORE_CTX_get_error_depth(ctx);
+        char    buf[256];
+        X509   *err_cert;
+        int     err, depth;
 
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::VerifyX509Callback(preverify_ok: " << preverify_ok
-				 << " Err: " << err << " Depth: " << depth;
-	std::cerr << std::endl;
-#endif
-	
-	/*
-	* Retrieve the pointer to the SSL of the connection currently treated
-	* and the application specific data stored into the SSL object.
-	*/
-	//ssl = X509_STORE_CTX_get_ex_data(ctx, SSL_get_ex_data_X509_STORE_CTX_idx());
-	//mydata = SSL_get_ex_data(ssl, mydata_index);
-	
-	X509_NAME_oneline(X509_get_subject_name(err_cert), buf, 256);
-	
-	std::cerr << "AuthSSL::VerifyX509Callback: depth: " << depth << ":" << buf;
-	std::cerr << std::endl;
+        err_cert = X509_STORE_CTX_get_current_cert(ctx);
+        err = X509_STORE_CTX_get_error(ctx);
+        depth = X509_STORE_CTX_get_error_depth(ctx);
+
+        std::cerr << "AuthSSL::VerifyX509Callback(preverify_ok: " << preverify_ok
+                                 << " Err: " << err << " Depth: " << depth;
+        std::cerr << std::endl;
+
+        /*
+        * Retrieve the pointer to the SSL of the connection currently treated
+        * and the application specific data stored into the SSL object.
+        */
+
+        X509_NAME_oneline(X509_get_subject_name(err_cert), buf, 256);
+
+        std::cerr << "AuthSSL::VerifyX509Callback: depth: " << depth << ":" << buf;
+        std::cerr << std::endl;
 
 
-//		X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT
-//		X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN  
-//
-//	We accept self signed certificates.
-	if (!preverify_ok && (depth == 0) && (err == X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT)) 
-	{
-		std::cerr << "AuthSSL::VerifyX509Callback() Accepting SELF_SIGNED_CERT";
-		std::cerr << std::endl;
-		preverify_ok = 1;
-	}
+        if (!preverify_ok) {
+                fprintf(stderr, "Verify error:num=%d:%s:depth=%d:%s\n", err,
+                X509_verify_cert_error_string(err), depth, buf);
+        }
 
-	if (!preverify_ok) {
-		fprintf(stderr, "Verify error:num=%d:%s:depth=%d:%s\n", err,
-		X509_verify_cert_error_string(err), depth, buf);
-	}
+        /*
+        * At this point, err contains the last verification error. We can use
+        * it for something special
+        */
 
-#if 0
-	else if (mydata->verbose_mode)
-	{
-		printf("depth=%d:%s\n", depth, buf);
-	}
-#endif
-	
-	/*
-	* At this point, err contains the last verification error. We can use
-	* it for something special
-	*/
+        if (!preverify_ok)
+        {
+                if ((err == X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT) ||
+                                (err == X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY))
+                {
+                        X509_NAME_oneline(X509_get_issuer_name(X509_STORE_CTX_get_current_cert(ctx)), buf, 256);
+                        printf("issuer= %s\n", buf);
 
-	if (!preverify_ok && (err == X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT))
-	{
-		X509_NAME_oneline(X509_get_issuer_name(ctx->current_cert), buf, 256);
-		printf("issuer= %s\n", buf);
-	}
-
-
-#if 0	
-	if (mydata->always_continue)
-		return 1;
-	else
-		return preverify_ok;
-#endif
-	return preverify_ok;
-
+                        fprintf(stderr, "Doing REAL PGP Certificates\n");
+                        /* do the REAL Authentication */
+                        if (!AuthX509(X509_STORE_CTX_get_current_cert(ctx)))
+                        {
+                                return false;
+                        }
+                        std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
+                        if (!AuthGPG::getAuthGPG()->isPGPAuthenticated(pgpid))
+                        {
+                                return false;
+                        }
+                        preverify_ok = true;
+                }
+                else if ((err == X509_V_ERR_CERT_UNTRUSTED) ||
+                        (err == X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE))
+                {
+                        std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
+                        if (!AuthGPG::getAuthGPG()->isPGPAuthenticated(pgpid))
+                        {
+                                return false;
+                        }
+                        preverify_ok = true;
+                }
+        }
+        else
+        {
+                fprintf(stderr, "Failing Normal Certificate!!!\n");
+                preverify_ok = false;
+        }
+        if (preverify_ok) {
+            fprintf(stderr, "AuthSSL::VerifyX509Callback returned true.\n");
+        } else {
+            fprintf(stderr, "AuthSSL::VerifyX509Callback returned false.\n");
+        }
+        return preverify_ok;
 }
-
-
-
 
 
 // Not dependent on sslroot. load, and detroys the X509 memory.

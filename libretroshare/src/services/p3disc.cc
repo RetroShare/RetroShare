@@ -292,11 +292,7 @@ void p3disc::respondToPeer(std::string id)
 			/* send issuer certs ... only do this for friends at initial connections,
 			   no need to do with onlineId list.
 			 */
-
-#ifdef RS_USE_PGPSSL
 			sendPeerIssuer(id, *it);
-#endif
-
 			sendPeerDetails(id, *it); /* (dest (to), source (cert)) */
 		}
 	}
@@ -804,7 +800,7 @@ void p3disc::recvPeerIssuerMsg(RsDiscIssuer *item)
 
 	/* load certificate */
 	std::string peerId;
-        bool loaded = AuthSSL::getAuthSSL()->LoadCertificateFromString(item->issuerCert, peerId);
+        //bool loaded = AuthSSL::getAuthSSL()->LoadCertificateFromString(item->issuerCert, peerId);
 
 	/* cleanup (handled by caller) */
 
