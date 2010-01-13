@@ -30,6 +30,7 @@
 #include <map>
 #include <string>
 #include <gpgme.h>
+#include <stdint.h>
 
 /************** GENERIC AUTHENTICATION MANAGER ***********
  * Provides a common interface for certificates.
