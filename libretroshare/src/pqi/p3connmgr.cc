@@ -2997,14 +2997,15 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 			vitem->print(std::cerr, 10);
 			std::cerr << std::endl;
 #endif
-			if(vitem->tlvkvs.pairs.front().key == "USE_EXTR_IP_FINDER")
-			{
-				use_extr_addr_finder = (vitem->tlvkvs.pairs.front().value == "TRUE") ;
-				std::cerr << "setting use_extr_addr_finder to " << use_extr_addr_finder << std::endl ;
-                        } else if (vitem->tlvkvs.pairs.front().key == "ALLOW_TUNNEL_CONNECTION")
-                        {
-                                allow_tunnel_connection = (vitem->tlvkvs.pairs.front().value == "TRUE") ;
-                                std::cerr << "setting allow_tunnel_connection to " << allow_tunnel_connection << std::endl ;
+                        std::list<RsTlvKeyValue>::iterator kit;
+                        for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) {
+                            if(kit->key == "USE_EXTR_IP_FINDER") {
+                                    use_extr_addr_finder = (kit->value == "TRUE");
+                                    std::cerr << "setting use_extr_addr_finder to " << use_extr_addr_finder << std::endl ;
+                            } else if (kit->key == "ALLOW_TUNNEL_CONNECTION") {
+                                    allow_tunnel_connection = (kit->value == "TRUE");
+                                    std::cerr << "setting allow_tunnel_connection to " << allow_tunnel_connection << std::endl ;
+                            }
                         }
 			
 		}
