@@ -94,7 +94,8 @@ void 	getversions(std::map<std::string, std::string> &versions);
 	private:
 
 
-void sendAllInfoToPeer(std::string id);
+void sendAllInfoToJustConnectedPeer(std::string id);
+void sendJustConnectedPeerInfoToAllPeer(std::string id);
 
 	/* Network Output */
 //void sendOwnDetails(std::string to);

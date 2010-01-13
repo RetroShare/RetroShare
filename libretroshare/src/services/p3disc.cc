@@ -228,17 +228,18 @@ void p3disc::statusChange(const std::list<pqipeer> &plist)
 //                        sendPeerDetails(pit->id, pit->id);
 //                        /* send our details to them */
                         sendOwnVersion(pit->id);
-                        sendAllInfoToPeer(pit->id);
+                        sendAllInfoToJustConnectedPeer(pit->id);
+                        sendJustConnectedPeerInfoToAllPeer(pit->id);
 		}
 	}
 }
 
-void p3disc::sendAllInfoToPeer(std::string id)
+void p3disc::sendAllInfoToJustConnectedPeer(std::string id)
 {
 	/* get a peer lists */
 
 #ifdef P3DISC_DEBUG
-	std::cerr << "p3disc::respondToPeer() id: " << id;
+        std::cerr << "p3disc::sendAllInfoToJustConnectedPeer() id: " << id;
 	std::cerr << std::endl;
 #endif
 
@@ -269,6 +270,25 @@ void p3disc::sendAllInfoToPeer(std::string id)
         std::set<std::string>::iterator gpgIdsIt;
         for (gpgIdsIt = gpgIds.begin(); gpgIdsIt != gpgIds.end(); gpgIdsIt++) {
             sendPeerDetails(id, *gpgIdsIt);
+        }
+}
+
+void p3disc::sendJustConnectedPeerInfoToAllPeer(std::string connectedPeerId)
+{
+        /* get a peer lists */
+
+#ifdef P3DISC_DEBUG
+        std::cerr << "p3disc::sendJustConnectedPeerInfoToAllPeer() connectedPeerId : " << connectedPeerId << std::endl;
+#endif
+        std::string gpg_connectedPeerId = rsPeers->getGPGId(connectedPeerId);
+        std::list<std::string> onlineIds;
+        std::list<std::string>::iterator onlineIdsIt;
+
+        rsPeers->getOnlineList(onlineIds);
+
+        /* send them a list of all friend's details */
+        for(onlineIdsIt = onlineIds.begin(); onlineIdsIt != onlineIds.end(); onlineIdsIt++) {
+                sendPeerDetails(*onlineIdsIt, gpg_connectedPeerId);
         }
 }
 
