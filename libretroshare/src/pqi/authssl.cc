@@ -2186,13 +2186,9 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
             std::string certId;
             getX509id(X509_STORE_CTX_get_current_cert(ctx), certId);
             if (!mConnMgr->isFriend(certId)) {
-                //we've got a new ssl id, let's add it as a friend
-                mConnMgr->addFriend(certId, getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer));
+                //we've got a new ssl id
                 preverify_ok = false;
             }
-            //set location
-            mConnMgr->setLocation(certId, getX509LocString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->subject));
-
 
             //is the connection was initiated by us, then it was for a specific peer id wich is stored is in the context
             //check that the peerid in the context is the same as the cert one
@@ -2207,12 +2203,20 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                     //tranfer the ip address to the new peer
                     peerConnectState detail;
                     if (mConnMgr->getFriendNetStatus(peer_id_in_context, detail)) {
+                        mConnMgr->addFriend(certId, getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer));
                         mConnMgr->setAddressList(certId, detail.getIpAddressList());
                     }
                 } else {
                     fprintf(stderr, "AuthSSL::VerifyX509Callback peer id in context is the same as cert, continung connection.");
                 }
             }
+
+            //just to be sure
+            mConnMgr->addFriend(certId, getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer));
+
+            //set location
+            mConnMgr->setLocation(certId, getX509LocString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->subject));
+
         }
 
         if (preverify_ok) {

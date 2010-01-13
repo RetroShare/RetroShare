@@ -257,13 +257,7 @@ void NetworkDialog::deleteCert()
 
 void NetworkDialog::makeFriend()
 {
-	QTreeWidgetItem *wi = getCurrentNeighbour();
-        std::string authId = wi->text(4).toStdString() ;
-
-        rsPeers->signGPGCertificate(authId);
-        rsPeers->addDummyFriend(authId);
-
-	insertConnect() ;
+        ConfCertDialog::showTrust(getCurrentNeighbour()->text(4).toStdString());
 }
 
 /** Shows Peer Information/Auth Dialog */

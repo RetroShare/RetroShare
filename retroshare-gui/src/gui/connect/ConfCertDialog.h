@@ -33,6 +33,7 @@ class ConfCertDialog : public QDialog
 
 	public:
 	  static void show(const std::string& id) ;
+          static void showTrust(const std::string& id) ;
 
 	  static ConfCertDialog *instance() ;
 signals:
@@ -58,6 +59,7 @@ void setInfo(std::string name,
 private slots:
   /** Overloaded QWidget.show */
   void show();
+  void showTrust();
 
 protected:
   void closeEvent (QCloseEvent * event);

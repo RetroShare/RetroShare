@@ -58,7 +58,15 @@ void ConfCertDialog::show(const std::string& peer_id)
 	/* set the Id */
 
 	instance()->loadId(peer_id);
-	instance()->show();
+        instance()->show();
+}
+
+void ConfCertDialog::showTrust(const std::string& peer_id)
+{
+        /* set the Id */
+
+        instance()->loadId(peer_id);
+        instance()->showTrust();
 }
 
 
@@ -69,6 +77,18 @@ void
 ConfCertDialog::show()
 {
   //loadSettings();
+  ui.stabWidget->setCurrentIndex(0);
+  if(!this->isVisible()) {
+    QDialog::show();
+
+  }
+}
+
+void
+ConfCertDialog::showTrust()
+{
+  //loadSettings();
+  ui.stabWidget->setCurrentIndex(1);
   if(!this->isVisible()) {
     QDialog::show();
 
