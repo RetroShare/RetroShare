@@ -936,7 +936,7 @@ void ConclusionPage::initializePage() {
     nameEdit->setText( QString::fromStdString( detail.name ) ) ;
     trustEdit->setText(QString::fromStdString( trustString ) ) ;
     emailEdit->setText(QString::fromStdString( detail.email ) );
-    locEdit->setText( QString::fromStdString( location ) );
+    locEdit->setText( QString::fromStdString( detail.location ) );
     signersEdit->setPlainText( ts );
     
 }
