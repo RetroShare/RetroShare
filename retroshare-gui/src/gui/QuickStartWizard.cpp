@@ -26,6 +26,7 @@
 #include <QCheckBox>
 #include <QMessageBox>
 #include <QComboBox>
+#include <QHeaderView>
 
 #include "rsiface/rsfiles.h"
 #include "rsiface/rsiface.h"
