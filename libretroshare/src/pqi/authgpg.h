@@ -30,14 +30,17 @@
 #ifndef RS_GPG_AUTH_HEADER
 #define RS_GPG_AUTH_HEADER
 
-//#include "p3authmgr.h"
-#include "authssl.h"
 #include <gpgme.h>
+#include "pqi/p3authmgr.h"
+#include <openssl/ssl.h>
+#include <openssl/evp.h>
+#include "util/rsthreads.h"
+
+#define GPG_id std::string
 
 /* gpgcert is the identifier for a person.
  * It is a wrapper class for a GPGme OpenPGP certificate.
  */
-
 class gpgcert
 {
 	public:
@@ -53,17 +56,21 @@ class gpgcert
  */
 typedef std::map<std::string, gpgcert> certmap;
 	
-class GPGAuthMgr: public AuthSSL
+class GPGAuthMgr
 {
 	private:
 
 	/* Internal functions */
 	bool 	setPGPPassword_locked(std::string pwd);
-	bool 	DoOwnSignature_locked(void *, unsigned int, void *, unsigned int *);
-	bool    VerifySignature_locked(std::string id, void *data, int datalen, 
-							void *sig, unsigned int siglen);
+        bool 	DoOwnSignature_locked(const void *, unsigned int, void *, unsigned int *);
+        bool    VerifySignature_locked(const void *data, int datalen, const void *sig, unsigned int siglen);
 
-	// store all keys in map mKeyList to avoid calling gpgme exe repeatedly
+        /* Sign/Trust stuff */
+        int	privateSignCertificate(GPG_id id);
+        int	privateRevokeCertificate(GPG_id id);		/* revoke the signature on Certificate */
+        int	privateTrustCertificate(GPG_id id, int trustlvl);
+
+        // store all keys in map mKeyList to avoid calling gpgme exe repeatedly
   	bool    storeAllKeys_locked();
   	bool    updateTrustAllKeys_locked();
 
@@ -75,11 +82,6 @@ class GPGAuthMgr: public AuthSSL
 	GPGAuthMgr();
 	~GPGAuthMgr();
 
-
-	X509* 	SignX509Req(X509_REQ *req, long days, std::string);
-	bool 	AuthX509(X509 *x509);
-
-
 	bool    availablePGPCertificates(std::list<std::string> &ids);
 
         //get the pgpg engine used by the pgp functions
@@ -90,11 +92,6 @@ class GPGAuthMgr: public AuthSSL
 			std::string email, std::string passwd); /* create it */
 
 	int	LoadGPGPassword(std::string pwd);
-
-	/* Sign/Trust stuff */
-	int	signCertificate(std::string id);
-	int	revokeCertificate(std::string id);		/* revoke the signature on Certificate */
-	int	trustCertificate(std::string id, int trustlvl);
 
 	/* SKTAN */
 	void showData(gpgme_data_t dh);
@@ -119,34 +116,11 @@ class GPGAuthMgr: public AuthSSL
 		/* initialisation -> done by derived classes */
   bool    active(); 
 
-	/* Init by generating new Own PGP Cert, or selecting existing PGP Cert
-	 */
-
-	/* Arguments passed on to AuthSSL */
-  int     InitAuth(const char *srvr_cert, const char *priv_key, 
-                                        const char *passwd);
+        /* Init by generating new Own PGP Cert, or selecting existing PGP Cert */
+  int     InitAuth();
   bool    CloseAuth();
- // int     setConfigDirectories(std::string confFile, std::string neighDir);
 
   
-
-/*********************************************************************************/
-/************************* STAGE 2 ***********************************************/
-/*********************************************************************************/
-/*****
- * STAGE 2: These are some of the most commonly used functions in Retroshare.
- *
- * provide access to the cache list that was created in stage 1.
- * 
- ****/
-
-		/* get Certificate Ids */
-
-  std::string OwnId();
-  bool	getAllList(std::list<std::string> &ids);
-  bool	getAuthenticatedList(std::list<std::string> &ids);
-  bool	getUnknownList(std::list<std::string> &ids);
-
 /*********************************************************************************/
 /************************* STAGE 3 ***********************************************/
 /*********************************************************************************/
@@ -159,28 +133,20 @@ class GPGAuthMgr: public AuthSSL
  *
  ****/
 
-		/* get Details from the Certificates */
-
- 	bool	isValid(std::string id);
- 	bool	isAuthenticated(std::string id);
- 	std::string getPGPName(std::string pgp_id);
- 	bool	getDetails(std::string id, pqiAuthDetails &details);
-
-	virtual bool isTrustingMe(std::string);
-	virtual void addTrustingPeer(std::string);
+    /* get Details from the Certificates */
+    bool	isAuthenticated(std::string id);
+    std::string getPGPName(GPG_id pgp_id);
+    bool	getDetails(std::string id, pqiAuthDetails &details);
 
 
-	/* PGP versions of Certificate Fns */
-
-	std::string PGPOwnId();
-  	bool	getPGPAllList(std::list<std::string> &ids);
-  	bool	getPGPAuthenticatedList(std::list<std::string> &ids);
-  	bool	getPGPUnknownList(std::list<std::string> &ids);
- 	bool	isPGPValid(std::string id);
- 	bool	isPGPAuthenticated(std::string id);
- 	bool	getPGPDetails(std::string id, pqiAuthDetails &details);
-	bool 	decryptText(gpgme_data_t CIPHER, gpgme_data_t PLAIN);
-	bool	encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER);
+    /* PGP versions of Certificate Fns */
+    GPG_id PGPOwnId();
+    bool	getPGPAllList(std::list<std::string> &ids);
+    bool	getPGPAuthenticatedList(std::list<std::string> &ids);
+    bool	getPGPUnknownList(std::list<std::string> &ids);
+    bool	isPGPValid(std::string id);
+    bool	isPGPAuthenticated(std::string id);
+    bool	getPGPDetails(std::string id, pqiAuthDetails &details);
 
 /*********************************************************************************/
 /************************* STAGE 4 ***********************************************/
@@ -192,25 +158,8 @@ class GPGAuthMgr: public AuthSSL
 
 
 		/* Load/Save certificates */
-  bool LoadCertificateFromString(std::string pem, std::string &id);
+  bool LoadCertificateFromString(std::string pem);
   std::string SaveCertificateToString(std::string id);
-  bool LoadCertificateFromFile(std::string filename, std::string &id);
-  bool SaveCertificateToFile(std::string id, std::string filename);
-
-/*********************************************************************************/
-/************************* STAGE 5 ***********************************************/
-/*********************************************************************************/
-/*****
- * STAGE 5: Loading and Saving Certificates (Binary)
- *
- * The existing function arguments are based on OpenSSL functions.
- * Feel free to change this format if required.
- *
- ****/
-
-
-  bool LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id);
-  bool SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len);
 
 /*********************************************************************************/
 /************************* STAGE 6 ***********************************************/
@@ -226,7 +175,7 @@ class GPGAuthMgr: public AuthSSL
 		/* Signatures */
   bool AuthCertificate(std::string uid);
   bool SignCertificate(std::string id);
- 	bool RevokeCertificate(std::string id);  /* Particularly hard - leave for later */
+  bool RevokeCertificate(std::string id);  /* Particularly hard - leave for later */
   bool TrustCertificate(std::string id, bool trust);
 
 /*********************************************************************************/
@@ -239,55 +188,25 @@ class GPGAuthMgr: public AuthSSL
  *
  ****/
 
-#if 0
-virtual  bool SignData(std::string input, std::string &sign);
-virtual  bool SignData(const void *data, const uint32_t len, std::string &sign);
-virtual  bool SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen);
-virtual bool  SignDataBin(const void *data, const uint32_t len,
-                        unsigned char *sign, unsigned int *signlen);
-virtual bool VerifySignBin(std::string, const void*, uint32_t, unsigned char*, unsigned int);
 
-#endif
+  bool SignData(std::string input, std::string &sign);
+  bool SignData(const void *data, const uint32_t len, std::string &sign);
+  bool SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen);
+  bool SignDataBin(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen);
+  bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int);
+  bool decryptText(gpgme_data_t CIPHER, gpgme_data_t PLAIN);
+  bool encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER);
 
 
 /*********************************************************************************/
 /************************* PGP Specific functions ********************************/
 /*********************************************************************************/
 
-/*
- * These support the authentication process.
- *
- */
-
-        /************* Virtual Functions from AuthSSL *************/
-virtual bool 	ValidateCertificate(X509 *x509, std::string &peerId);
-virtual int     VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx);
-        /************* Virtual Functions from AuthSSL *************/
-
-/*
- *
- */
 
 bool checkSignature(std::string id, std::string hash, std::string signature);
 
 
-
-
-/*********************************************************************************/
-/************************* OTHER FUNCTIONS ***************************************/
-/*********************************************************************************/
-
-		/* High Level Load/Save Configuration */
-/*****
- * These functions call straight through to AuthSSL.
- * We don't need these functions here - as GPG stores the keys for us.
-  bool FinalSaveCertificates();
-  bool CheckSaveCertificates();
-  bool saveCertificates();
-  bool loadCertificates();
- ****/
-
-	private:
+        private:
 
 	RsMutex pgpMtx;
 	/* Below is protected via the mutex */
@@ -309,13 +228,13 @@ bool checkSignature(std::string id, std::string hash, std::string signature);
 	std::string passphrase;
 };
 
-/*****
- *
- * Support Functions for OpenSSL verification.
- *
- */
+// the single instance of this
+static GPGAuthMgr instance_gpgroot;
 
-//int verify_pgp_callback(int preverify_ok, X509_STORE_CTX *ctx);
+GPGAuthMgr *getAuthGPG()
+{
+        return &instance_gpgroot;
+}
 
 
 /* Sign a key */

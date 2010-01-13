@@ -48,11 +48,15 @@
 #include <string>
 #include <map>
 
+#include "authgpg.h"
+
 #include "util/rsthreads.h"
 
 #include "pqi/pqi_base.h"
 #include "pqi/pqinetwork.h"
 #include "pqi/p3authmgr.h"
+
+typedef std::string SSL_id;
 
 class AuthSSL;
 
@@ -111,6 +115,7 @@ virtual bool    isValid(std::string id);
 virtual bool    isAuthenticated(std::string id);
 virtual	std::string getName(std::string id);
 virtual std::string getIssuerName(std::string id);
+virtual GPG_id getGPGId(SSL_id id);
 virtual bool    getDetails(std::string id, pqiAuthDetails &details);
 
         /* first party trust info (dummy) */
@@ -159,6 +164,9 @@ bool     decrypt(void *&out, int &outlen, const void *in, int inlen); //return t
 	/*********** Overloaded Functions from p3AuthMgr **********/
 
 	/************* Virtual Functions from AuthSSL *************/
+X509* 	SignX509Req(X509_REQ *req, long days);
+bool 	AuthX509(X509 *x509);
+
 
 virtual int 	VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx);
 virtual bool 	ValidateCertificate(X509 *x509, std::string &peerId); /* validate + get id */
@@ -213,6 +221,14 @@ bool 	locked_FindCert(std::string id, sslcert **cert);
 	std::map<std::string, sslcert *> mCerts;
 
 };
+
+// the single instance of this, but only when SSL Only
+static AuthSSL instance_sslroot;
+
+AuthSSL *getAuthSSL()
+{
+        return &instance_sslroot;
+}
 
 
 X509_REQ *GenerateX509Req(

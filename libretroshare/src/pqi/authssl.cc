@@ -50,23 +50,6 @@
 
 static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx);
 
-/***********
- ** #define AUTHSSL_DEBUG	1
- **********/
-
-#ifdef PQI_USE_SSLONLY
-
-// the single instance of this, but only when SSL Only
-static AuthSSL instance_sslroot;
-
-p3AuthMgr *getAuthMgr()
-{
-	return &instance_sslroot;
-}
-
-#endif
-
-
 sslcert::sslcert(X509 *x509, std::string pid)
 {
 	certificate = x509;
@@ -801,6 +784,10 @@ std::string AuthSSL::getIssuerName(std::string id)
 #endif
 
 	return issuer;
+}
+
+GPG_id AuthSSL::getGPGId(SSL_id id) {
+    return getIssuerName(id);
 }
 
 bool    AuthSSL::getDetails(std::string id, pqiAuthDetails &details)
@@ -1755,8 +1742,300 @@ bool getX509id(X509 *x509, std::string &xid)
 	return true;
 }
 
+X509 *AuthSSL::SignX509Req(X509_REQ *req, long days)
+{
+        RsStackMutex stack(sslMtx); /******* LOCKED ******/
+
+        /* Transform the X509_REQ into a suitable format to
+         * generate DIGEST hash. (for SSL to do grunt work)
+         */
 
 
+#define SERIAL_RAND_BITS 64
+
+        const EVP_MD *digest = EVP_sha1();
+        ASN1_INTEGER *serial = ASN1_INTEGER_new();
+        EVP_PKEY *tmppkey;
+        X509 *x509 = X509_new();
+        if (x509 == NULL)
+        {
+                std::cerr << "GPGAuthMgr::SignX509Req() FAIL" << std::endl;
+                return NULL;
+        }
+
+        long version = 0x00;
+        unsigned long chtype = MBSTRING_ASC;
+        X509_NAME *issuer_name = X509_NAME_new();
+        X509_NAME_add_entry_by_txt(issuer_name, "CN", chtype,
+                        (unsigned char *) mOwnId.c_str(), -1, -1, 0);
+/****
+        X509_NAME_add_entry_by_NID(issuer_name, 48, 0,
+                        (unsigned char *) "email@email.com", -1, -1, 0);
+        X509_NAME_add_entry_by_txt(issuer_name, "O", chtype,
+                        (unsigned char *) "org", -1, -1, 0);
+        X509_NAME_add_entry_by_txt(x509_name, "L", chtype,
+                        (unsigned char *) "loc", -1, -1, 0);
+****/
+
+        std::cerr << "GPGAuthMgr::SignX509Req() Issuer name: " << mOwnId << std::endl;
+
+        BIGNUM *btmp = BN_new();
+        if (!BN_pseudo_rand(btmp, SERIAL_RAND_BITS, 0, 0))
+        {
+                std::cerr << "GPGAuthMgr::SignX509Req() rand FAIL" << std::endl;
+                return NULL;
+        }
+        if (!BN_to_ASN1_INTEGER(btmp, serial))
+        {
+                std::cerr << "GPGAuthMgr::SignX509Req() asn1 FAIL" << std::endl;
+                return NULL;
+        }
+        BN_free(btmp);
+
+        if (!X509_set_serialNumber(x509, serial))
+        {
+                std::cerr << "GPGAuthMgr::SignX509Req() serial FAIL" << std::endl;
+                return NULL;
+        }
+        ASN1_INTEGER_free(serial);
+
+        /* Generate SUITABLE issuer name.
+         * Must reference OpenPGP key, that is used to verify it
+         */
+
+        if (!X509_set_issuer_name(x509, issuer_name))
+        {
+                std::cerr << "GPGAuthMgr::SignX509Req() issue FAIL" << std::endl;
+                return NULL;
+        }
+        X509_NAME_free(issuer_name);
+
+
+        if (!X509_gmtime_adj(X509_get_notBefore(x509),0))
+        {
+                std::cerr << "GPGAuthMgr::SignX509Req() notbefore FAIL" << std::endl;
+                return NULL;
+        }
+
+        if (!X509_gmtime_adj(X509_get_notAfter(x509), (long)60*60*24*days))
+        {
+                std::cerr << "GPGAuthMgr::SignX509Req() notafter FAIL" << std::endl;
+                return NULL;
+        }
+
+        if (!X509_set_subject_name(x509, X509_REQ_get_subject_name(req)))
+        {
+                std::cerr << "GPGAuthMgr::SignX509Req() sub FAIL" << std::endl;
+                return NULL;
+        }
+
+        tmppkey = X509_REQ_get_pubkey(req);
+        if (!tmppkey || !X509_set_pubkey(x509,tmppkey))
+        {
+                std::cerr << "GPGAuthMgr::SignX509Req() pub FAIL" << std::endl;
+                return NULL;
+        }
+
+        std::cerr << "X509 Cert, prepared for signing" << std::endl;
+
+        /*** NOW The Manual signing bit (HACKED FROM asn1/a_sign.c) ***/
+        int (*i2d)(X509_CINF*, unsigned char**) = i2d_X509_CINF;
+        X509_ALGOR *algor1 = x509->cert_info->signature;
+        X509_ALGOR *algor2 = x509->sig_alg;
+        ASN1_BIT_STRING *signature = x509->signature;
+        X509_CINF *data = x509->cert_info;
+        EVP_PKEY *pkey = NULL;
+        const EVP_MD *type = EVP_sha1();
+
+        EVP_MD_CTX ctx;
+        unsigned char *p,*buf_in=NULL;
+        unsigned char *buf_hashout=NULL,*buf_sigout=NULL;
+        int i,inl=0,hashoutl=0,hashoutll=0;
+        int sigoutl=0,sigoutll=0;
+        X509_ALGOR *a;
+
+        EVP_MD_CTX_init(&ctx);
+
+        /* FIX ALGORITHMS */
+
+        a = algor1;
+        ASN1_TYPE_free(a->parameter);
+        a->parameter=ASN1_TYPE_new();
+        a->parameter->type=V_ASN1_NULL;
+
+        ASN1_OBJECT_free(a->algorithm);
+        a->algorithm=OBJ_nid2obj(type->pkey_type);
+
+        a = algor2;
+        ASN1_TYPE_free(a->parameter);
+        a->parameter=ASN1_TYPE_new();
+        a->parameter->type=V_ASN1_NULL;
+
+        ASN1_OBJECT_free(a->algorithm);
+        a->algorithm=OBJ_nid2obj(type->pkey_type);
+
+
+        std::cerr << "Algorithms Fixed" << std::endl;
+
+        /* input buffer */
+        inl=i2d(data,NULL);
+        buf_in=(unsigned char *)OPENSSL_malloc((unsigned int)inl);
+
+        hashoutll=hashoutl=EVP_MD_size(type);
+        buf_hashout=(unsigned char *)OPENSSL_malloc((unsigned int)hashoutl);
+
+        sigoutll=sigoutl=2048; // hashoutl; //EVP_PKEY_size(pkey);
+        buf_sigout=(unsigned char *)OPENSSL_malloc((unsigned int)sigoutl);
+
+        if ((buf_in == NULL) || (buf_hashout == NULL) || (buf_sigout == NULL))
+                {
+                hashoutl=0;
+                sigoutl=0;
+                fprintf(stderr, "GPGAuthMgr::SignX509Req: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_MALLOC_FAILURE)\n");
+                goto err;
+                }
+        p=buf_in;
+
+        std::cerr << "Buffers Allocated" << std::endl;
+
+        i2d(data,&p);
+        /* data in buf_in, ready to be hashed */
+        EVP_DigestInit_ex(&ctx,type, NULL);
+        EVP_DigestUpdate(&ctx,(unsigned char *)buf_in,inl);
+        if (!EVP_DigestFinal(&ctx,(unsigned char *)buf_hashout,
+                        (unsigned int *)&hashoutl))
+                {
+                hashoutl=0;
+                fprintf(stderr, "GPGAuthMgr::SignX509Req: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_EVP_LIB)\n");
+                goto err;
+                }
+
+        std::cerr << "Digest Applied: len: " << hashoutl << std::endl;
+
+        /* NOW Sign via GPG Functions */
+        if (!getAuthGPG()->SignDataBin(buf_hashout, hashoutl, buf_sigout, (unsigned int *) &sigoutl))
+        {
+                sigoutl = 0;
+                goto err;
+        }
+
+        std::cerr << "Buffer Sizes: in: " << inl;
+        std::cerr << "  HashOut: " << hashoutl;
+        std::cerr << "  SigOut: " << sigoutl;
+        std::cerr << std::endl;
+
+        //passphrase = "NULL";
+
+        std::cerr << "Signature done: len:" << sigoutl << std::endl;
+
+        /* ADD Signature back into Cert... Signed!. */
+
+        if (signature->data != NULL) OPENSSL_free(signature->data);
+        signature->data=buf_sigout;
+        buf_sigout=NULL;
+        signature->length=sigoutl;
+        /* In the interests of compatibility, I'll make sure that
+         * the bit string has a 'not-used bits' value of 0
+         */
+        signature->flags&= ~(ASN1_STRING_FLAG_BITS_LEFT|0x07);
+        signature->flags|=ASN1_STRING_FLAG_BITS_LEFT;
+
+        std::cerr << "Certificate Complete" << std::endl;
+
+        return x509;
+
+
+  err:
+        /* cleanup */
+        std::cerr << "GPGAuthMgr::SignX509Req() err: FAIL" << std::endl;
+
+        return NULL;
+}
+
+bool AuthSSL::AuthX509(X509 *x509)
+{
+        RsStackMutex stack(sslMtx); /******* LOCKED ******/
+
+        /* extract CN for peer Id */
+        X509_NAME *issuer = X509_get_issuer_name(x509);
+        std::string id = "";
+
+        /* verify signature */
+
+        /*** NOW The Manual signing bit (HACKED FROM asn1/a_sign.c) ***/
+        int (*i2d)(X509_CINF*, unsigned char**) = i2d_X509_CINF;
+        ASN1_BIT_STRING *signature = x509->signature;
+        X509_CINF *data = x509->cert_info;
+        EVP_PKEY *pkey = NULL;
+        const EVP_MD *type = EVP_sha1();
+
+        EVP_MD_CTX ctx;
+        unsigned char *p,*buf_in=NULL;
+        unsigned char *buf_hashout=NULL,*buf_sigout=NULL;
+        int i,inl=0,hashoutl=0,hashoutll=0;
+        int sigoutl=0,sigoutll=0;
+        X509_ALGOR *a;
+
+        fprintf(stderr, "GPGAuthMgr::AuthX509()\n");
+
+        EVP_MD_CTX_init(&ctx);
+
+        /* input buffer */
+        inl=i2d(data,NULL);
+        buf_in=(unsigned char *)OPENSSL_malloc((unsigned int)inl);
+
+        hashoutll=hashoutl=EVP_MD_size(type);
+        buf_hashout=(unsigned char *)OPENSSL_malloc((unsigned int)hashoutl);
+
+        sigoutll=sigoutl=2048; //hashoutl; //EVP_PKEY_size(pkey);
+        buf_sigout=(unsigned char *)OPENSSL_malloc((unsigned int)sigoutl);
+
+        std::cerr << "Buffer Sizes: in: " << inl;
+        std::cerr << "  HashOut: " << hashoutl;
+        std::cerr << "  SigOut: " << sigoutl;
+        std::cerr << std::endl;
+
+        if ((buf_in == NULL) || (buf_hashout == NULL) || (buf_sigout == NULL))
+                {
+                hashoutl=0;
+                sigoutl=0;
+                fprintf(stderr, "GPGAuthMgr::AuthX509: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_MALLOC_FAILURE)\n");
+                goto err;
+                }
+        p=buf_in;
+
+        std::cerr << "Buffers Allocated" << std::endl;
+
+        i2d(data,&p);
+        /* data in buf_in, ready to be hashed */
+        EVP_DigestInit_ex(&ctx,type, NULL);
+        EVP_DigestUpdate(&ctx,(unsigned char *)buf_in,inl);
+        if (!EVP_DigestFinal(&ctx,(unsigned char *)buf_hashout,
+                        (unsigned int *)&hashoutl))
+                {
+                hashoutl=0;
+                fprintf(stderr, "GPGAuthMgr::AuthX509: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_EVP_LIB)\n");
+                goto err;
+                }
+
+        std::cerr << "Digest Applied: len: " << hashoutl << std::endl;
+
+        /* copy data into signature */
+        sigoutl = signature->length;
+        memmove(buf_sigout, signature->data, sigoutl);
+
+        /* NOW Sign via GPG Functions */
+        if (!getAuthGPG()->VerifySignBin(buf_hashout, hashoutl, buf_sigout, (unsigned int) sigoutl))
+        {
+                sigoutl = 0;
+                goto err;
+        }
+
+        return true;
+
+  err:
+        return false;
+}
 	/* validate + get id */
 bool    AuthSSL::ValidateCertificate(X509 *x509, std::string &peerId)
 {

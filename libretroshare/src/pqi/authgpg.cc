@@ -57,6 +57,7 @@
 #include <rsiface/rsiface.h>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 /* Turn a set of parameters into a string */
 static std::string setKeyPairParams(bool useRsa, unsigned int blen,
@@ -75,14 +76,6 @@ static void ProcessPGPmeError(gpgme_error_t ERR);
 
 /* Function to sign X509_REQ via GPGme.
  */
-
-// the single instance of this, but only when SSL Only
-static GPGAuthMgr instance_gpgroot;
-
-p3AuthMgr *getAuthMgr()
-{
-        return &instance_gpgroot;
-}
 
 gpgcert::gpgcert()
 	:key(NULL)
@@ -705,217 +698,6 @@ bool    GPGAuthMgr::printKeys()
 	return printOwnKeys_locked();
 }
 
-X509 *GPGAuthMgr::SignX509Req(X509_REQ *req, long days, std::string gpg_passwd)
-{
-	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
-
-	/* Transform the X509_REQ into a suitable format to
-	 * generate DIGEST hash. (for SSL to do grunt work)
-	 */
-
-
-#define SERIAL_RAND_BITS 64
-
-	const EVP_MD *digest = EVP_sha1();
-	ASN1_INTEGER *serial = ASN1_INTEGER_new();
-	EVP_PKEY *tmppkey;
-	X509 *x509 = X509_new();
-	if (x509 == NULL)
-	{
-		std::cerr << "GPGAuthMgr::SignX509Req() FAIL" << std::endl;
-		return NULL;
-	}
-
-        long version = 0x00;
-        unsigned long chtype = MBSTRING_ASC;
-        X509_NAME *issuer_name = X509_NAME_new();
-        X509_NAME_add_entry_by_txt(issuer_name, "CN", chtype,
-                        (unsigned char *) mOwnId.c_str(), -1, -1, 0);
-/****
-        X509_NAME_add_entry_by_NID(issuer_name, 48, 0,
-                        (unsigned char *) "email@email.com", -1, -1, 0);
-        X509_NAME_add_entry_by_txt(issuer_name, "O", chtype,
-                        (unsigned char *) "org", -1, -1, 0);
-        X509_NAME_add_entry_by_txt(x509_name, "L", chtype,
-                        (unsigned char *) "loc", -1, -1, 0);
-****/
-
-	std::cerr << "GPGAuthMgr::SignX509Req() Issuer name: " << mOwnId << std::endl;
-
-        BIGNUM *btmp = BN_new();
-        if (!BN_pseudo_rand(btmp, SERIAL_RAND_BITS, 0, 0))
-	{
-		std::cerr << "GPGAuthMgr::SignX509Req() rand FAIL" << std::endl;
-		return NULL;
-	}
-        if (!BN_to_ASN1_INTEGER(btmp, serial))
-	{
-		std::cerr << "GPGAuthMgr::SignX509Req() asn1 FAIL" << std::endl;
-		return NULL;
-	}
-        BN_free(btmp);
-
-	if (!X509_set_serialNumber(x509, serial)) 
-	{
-		std::cerr << "GPGAuthMgr::SignX509Req() serial FAIL" << std::endl;
-		return NULL;
-	}
-	ASN1_INTEGER_free(serial);
-
-	/* Generate SUITABLE issuer name.
-	 * Must reference OpenPGP key, that is used to verify it
-	 */
-
-	if (!X509_set_issuer_name(x509, issuer_name))
-	{
-		std::cerr << "GPGAuthMgr::SignX509Req() issue FAIL" << std::endl;
-		return NULL;
-	}
-	X509_NAME_free(issuer_name);
-
-
-        if (!X509_gmtime_adj(X509_get_notBefore(x509),0))
-	{
-		std::cerr << "GPGAuthMgr::SignX509Req() notbefore FAIL" << std::endl;
-		return NULL;
-	}
-
-        if (!X509_gmtime_adj(X509_get_notAfter(x509), (long)60*60*24*days))
-	{
-		std::cerr << "GPGAuthMgr::SignX509Req() notafter FAIL" << std::endl;
-		return NULL;
-	}
-
-        if (!X509_set_subject_name(x509, X509_REQ_get_subject_name(req)))
-	{
-		std::cerr << "GPGAuthMgr::SignX509Req() sub FAIL" << std::endl;
-		return NULL;
-	}
-
-        tmppkey = X509_REQ_get_pubkey(req);
-        if (!tmppkey || !X509_set_pubkey(x509,tmppkey))
-	{
-		std::cerr << "GPGAuthMgr::SignX509Req() pub FAIL" << std::endl;
-                return NULL;
-        }
-
-	std::cerr << "X509 Cert, prepared for signing" << std::endl;
-
-	/*** NOW The Manual signing bit (HACKED FROM asn1/a_sign.c) ***/
-	int (*i2d)(X509_CINF*, unsigned char**) = i2d_X509_CINF;
-	X509_ALGOR *algor1 = x509->cert_info->signature;
-	X509_ALGOR *algor2 = x509->sig_alg;
-        ASN1_BIT_STRING *signature = x509->signature;
-	X509_CINF *data = x509->cert_info;
-	EVP_PKEY *pkey = NULL;
-        const EVP_MD *type = EVP_sha1();
-
-        EVP_MD_CTX ctx;
-        unsigned char *p,*buf_in=NULL;
-        unsigned char *buf_hashout=NULL,*buf_sigout=NULL;
-        int i,inl=0,hashoutl=0,hashoutll=0;
-        int sigoutl=0,sigoutll=0;
-        X509_ALGOR *a;
-
-        EVP_MD_CTX_init(&ctx);
-
-	/* FIX ALGORITHMS */
-
-	a = algor1;
-        ASN1_TYPE_free(a->parameter);
-        a->parameter=ASN1_TYPE_new();
-        a->parameter->type=V_ASN1_NULL;
-
-        ASN1_OBJECT_free(a->algorithm);
-        a->algorithm=OBJ_nid2obj(type->pkey_type);
-
-	a = algor2;
-        ASN1_TYPE_free(a->parameter);
-        a->parameter=ASN1_TYPE_new();
-        a->parameter->type=V_ASN1_NULL;
-
-        ASN1_OBJECT_free(a->algorithm);
-        a->algorithm=OBJ_nid2obj(type->pkey_type);
-
-
-	std::cerr << "Algorithms Fixed" << std::endl;
-
-	/* input buffer */
-        inl=i2d(data,NULL);
-        buf_in=(unsigned char *)OPENSSL_malloc((unsigned int)inl);
-
-        hashoutll=hashoutl=EVP_MD_size(type);
-        buf_hashout=(unsigned char *)OPENSSL_malloc((unsigned int)hashoutl);
-
-        sigoutll=sigoutl=2048; // hashoutl; //EVP_PKEY_size(pkey);
-        buf_sigout=(unsigned char *)OPENSSL_malloc((unsigned int)sigoutl);
-
-        if ((buf_in == NULL) || (buf_hashout == NULL) || (buf_sigout == NULL))
-                {
-                hashoutl=0;
-                sigoutl=0;
-                fprintf(stderr, "GPGAuthMgr::SignX509Req: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_MALLOC_FAILURE)\n");
-                goto err;
-                }
-        p=buf_in;
-
-	std::cerr << "Buffers Allocated" << std::endl;
-
-        i2d(data,&p);
-	/* data in buf_in, ready to be hashed */
-        EVP_DigestInit_ex(&ctx,type, NULL);
-        EVP_DigestUpdate(&ctx,(unsigned char *)buf_in,inl);
-        if (!EVP_DigestFinal(&ctx,(unsigned char *)buf_hashout,
-                        (unsigned int *)&hashoutl))
-                {
-                hashoutl=0;
-                fprintf(stderr, "GPGAuthMgr::SignX509Req: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_EVP_LIB)\n");
-                goto err;
-                }
-
-	std::cerr << "Digest Applied: len: " << hashoutl << std::endl;
-
-	/* NOW Sign via GPG Functions */
-	if (!DoOwnSignature_locked(buf_hashout, hashoutl, buf_sigout, (unsigned int *) &sigoutl))
-	{
-		sigoutl = 0;	
-		goto err;
-	}
-
-        std::cerr << "Buffer Sizes: in: " << inl;
-        std::cerr << "  HashOut: " << hashoutl;
-        std::cerr << "  SigOut: " << sigoutl;
-        std::cerr << std::endl;
-
-	//passphrase = "NULL";
-
-	std::cerr << "Signature done: len:" << sigoutl << std::endl;
-
-	/* ADD Signature back into Cert... Signed!. */
-
-        if (signature->data != NULL) OPENSSL_free(signature->data);
-        signature->data=buf_sigout;
-        buf_sigout=NULL;
-        signature->length=sigoutl;
-        /* In the interests of compatibility, I'll make sure that
-         * the bit string has a 'not-used bits' value of 0
-         */
-        signature->flags&= ~(ASN1_STRING_FLAG_BITS_LEFT|0x07);
-        signature->flags|=ASN1_STRING_FLAG_BITS_LEFT;
-
-	std::cerr << "Certificate Complete" << std::endl;
-
-        return x509;
-
-
-  err:
-	/* cleanup */
-	std::cerr << "GPGAuthMgr::SignX509Req() err: FAIL" << std::endl;
-
-	return NULL;
-}
-
-
 
 #if 0
 	int ASN1_sign(int (*i2d)(), X509_ALGOR *algor1, X509_ALGOR *algor2,
@@ -930,93 +712,6 @@ X509 *GPGAuthMgr::SignX509Req(X509_REQ *req, long days, std::string gpg_passwd)
 	return NULL;
 }
 #endif
-
-
-bool GPGAuthMgr::AuthX509(X509 *x509)
-{
-	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
-
-	/* extract CN for peer Id */
-	X509_NAME *issuer = X509_get_issuer_name(x509);
-	std::string id = "";
-
-	/* verify signature */
-
-	/*** NOW The Manual signing bit (HACKED FROM asn1/a_sign.c) ***/
-	int (*i2d)(X509_CINF*, unsigned char**) = i2d_X509_CINF;
-        ASN1_BIT_STRING *signature = x509->signature;
-	X509_CINF *data = x509->cert_info;
-	EVP_PKEY *pkey = NULL;
-        const EVP_MD *type = EVP_sha1();
-
-        EVP_MD_CTX ctx;
-        unsigned char *p,*buf_in=NULL;
-        unsigned char *buf_hashout=NULL,*buf_sigout=NULL;
-        int i,inl=0,hashoutl=0,hashoutll=0;
-        int sigoutl=0,sigoutll=0;
-        X509_ALGOR *a;
-
-        fprintf(stderr, "GPGAuthMgr::AuthX509()\n");
-
-        EVP_MD_CTX_init(&ctx);
-
-	/* input buffer */
-        inl=i2d(data,NULL);
-        buf_in=(unsigned char *)OPENSSL_malloc((unsigned int)inl);
-
-        hashoutll=hashoutl=EVP_MD_size(type);
-        buf_hashout=(unsigned char *)OPENSSL_malloc((unsigned int)hashoutl);
-
-        sigoutll=sigoutl=2048; //hashoutl; //EVP_PKEY_size(pkey);
-        buf_sigout=(unsigned char *)OPENSSL_malloc((unsigned int)sigoutl);
-
-	std::cerr << "Buffer Sizes: in: " << inl;
-	std::cerr << "  HashOut: " << hashoutl;
-	std::cerr << "  SigOut: " << sigoutl;
-	std::cerr << std::endl;
-
-        if ((buf_in == NULL) || (buf_hashout == NULL) || (buf_sigout == NULL))
-                {
-                hashoutl=0;
-                sigoutl=0;
-                fprintf(stderr, "GPGAuthMgr::AuthX509: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_MALLOC_FAILURE)\n");
-                goto err;
-                }
-        p=buf_in;
-
-	std::cerr << "Buffers Allocated" << std::endl;
-
-        i2d(data,&p);
-	/* data in buf_in, ready to be hashed */
-        EVP_DigestInit_ex(&ctx,type, NULL);
-        EVP_DigestUpdate(&ctx,(unsigned char *)buf_in,inl);
-        if (!EVP_DigestFinal(&ctx,(unsigned char *)buf_hashout,
-                        (unsigned int *)&hashoutl))
-                {
-                hashoutl=0;
-                fprintf(stderr, "GPGAuthMgr::AuthX509: ASN1err(ASN1_F_ASN1_SIGN,ERR_R_EVP_LIB)\n");
-                goto err;
-                }
-
-	std::cerr << "Digest Applied: len: " << hashoutl << std::endl;
-
-	/* copy data into signature */
-	sigoutl = signature->length;
-	memmove(buf_sigout, signature->data, sigoutl);
-
-	/* NOW Sign via GPG Functions */
-	if (!VerifySignature_locked(id, buf_hashout, hashoutl, buf_sigout, (unsigned int) sigoutl))
-	{
-		sigoutl = 0;	
-		goto err;
-	}
-
-	return true;
-
-  err:
-	return false;
-}
-
 
 void ProcessPGPmeError(gpgme_error_t ERR)
 {
@@ -1055,7 +750,7 @@ void print_pgpme_verify_summary(unsigned int summary)
 }
 
 
-bool GPGAuthMgr::DoOwnSignature_locked(void *data, unsigned int datalen, void *buf_sigout, unsigned int *outl)
+bool GPGAuthMgr::DoOwnSignature_locked(const void *data, unsigned int datalen, void *buf_sigout, unsigned int *outl)
 {
 	/* setup signers */
 	gpgme_signers_clear(CTX);
@@ -1137,8 +832,7 @@ bool GPGAuthMgr::DoOwnSignature_locked(void *data, unsigned int datalen, void *b
 
 
 /* import to GnuPG and other Certificates */
-bool GPGAuthMgr::VerifySignature_locked(std::string id, void *data, int datalen, 
-                                                        void *sig, unsigned int siglen)
+bool GPGAuthMgr::VerifySignature_locked(const void *data, int datalen, const void *sig, unsigned int siglen)
 {
 	gpgme_data_t gpgmeSig;
 	gpgme_data_t gpgmeData;
@@ -1222,19 +916,10 @@ bool   GPGAuthMgr::active()
 	return ((gpgmeInit) && (gpgmeKeySelected) && (gpgmeX509Selected));
 }
 
-int     GPGAuthMgr::InitAuth(const char *srvr_cert, const char *priv_key, 
-                                        const char *passwd)
+int     GPGAuthMgr::InitAuth()
 {
-        std::cerr << "GPGAuthMgr::InitAuth() called." << std::endl;
-       /* Initialise the SSL part */
-	if (AuthSSL::InitAuth(srvr_cert, priv_key, passwd))
-	{
-		RsStackMutex stack(pgpMtx); /******* LOCKED ******/
-		gpgmeX509Selected = true;
-		return 1;
-	}
-
-	return 0;
+        gpgmeX509Selected = true;
+        return 1;
 }
 
 bool    GPGAuthMgr::CloseAuth()
@@ -1251,63 +936,8 @@ int     GPGAuthMgr::setConfigDirectories(std::string confFile, std::string neigh
 
 #endif
 
-/**** The standard versions of the OwnId/get*List ... return SSL ids 
- * There are alternative functions for gpg ids.
- ****/
-
-std::string GPGAuthMgr::OwnId()
-{
-	/* to the external libretroshare world, we are our SSL id */
-	return AuthSSL::OwnId();
-}
-
-bool	GPGAuthMgr::getAllList(std::list<std::string> &ids)
-{
-	/* get all of the certificates */
-	return AuthSSL::getAllList(ids);
-}
-
-bool	GPGAuthMgr::getAuthenticatedList(std::list<std::string> &ids)
-{
-	return AuthSSL::getAuthenticatedList(ids);
-}
-
-bool	GPGAuthMgr::getUnknownList(std::list<std::string> &ids)
-{
-	return AuthSSL::getUnknownList(ids);
-}
-
-/*******************************/
-
-bool	GPGAuthMgr::isValid(std::string id)
-{
-	return AuthSSL::isValid(id);
-}
-
-bool	GPGAuthMgr::isAuthenticated(std::string id)
-{
-	/* This must be handled at PGP level */
-
-	/* get pgpid */
-	std::string pgpid = getIssuerName(id);
-
-	return isPGPAuthenticated(pgpid);
-	//return AuthSSL::isAuthenticated(id);
-}
-
-bool 	GPGAuthMgr::isTrustingMe(std::string)
-{
-	return false;
-}
-
-void 	GPGAuthMgr::addTrustingPeer(std::string)
-{
-
-
-}
-
 /**** These Two are common */
-std::string GPGAuthMgr::getPGPName(std::string id)
+std::string GPGAuthMgr::getPGPName(GPG_id id)
 {
 	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
@@ -1318,55 +948,23 @@ std::string GPGAuthMgr::getPGPName(std::string id)
 	return std::string();
 }
 
-bool	GPGAuthMgr::getDetails(std::string id, pqiAuthDetails &details)
+bool	GPGAuthMgr::getDetails(GPG_id id, pqiAuthDetails &details)
 {
-	/**** GPG Details.
-	 * Ids are the SSL id cert ids, so we have to get issuer id (pgpid)
-	 * before we can add any gpg details 
-	 ****/
-#ifdef AUTHGPG_DEBUG
-        std::cerr << "GPGAuthMgr::getDetails() \"" << id << "\"";
-        std::cerr << std::endl;
-#endif
-
-	if (AuthSSL::getDetails(id, details))
-	{
-		//RsStackMutex stack(pgpMtx); /******* LOCKED ******/
-		if(pgpMtx.trylock())
-		{
-			certmap::iterator it;
-			if (mKeyList.end() != (it = mKeyList.find(details.issuer)))
-			{
-				/* what do we want from the gpg mgr */
-				details.location = details.location;
-				details.name = it->second.user.name;
-				details.email = it->second.user.email;
-
-				//details = it->second.user;
-			}
-			pgpMtx.unlock() ;
-			return true;
-		}
-		return false ;
-	}
-	else
-	{
-		//RsStackMutex stack(pgpMtx); /******* LOCKED ******/
-		if(pgpMtx.trylock())
-		{
-			/* if we cannot find a ssl cert - might be a pgp cert */
-			certmap::iterator it;
-			if (mKeyList.end() != (it = mKeyList.find(id)))
-			{
-				/* what do we want from the gpg mgr */
-				details = it->second.user;
-				pgpMtx.unlock() ;
-				return true;
-			}
-			pgpMtx.unlock() ;
-		}
-		return false;
-	}
+        //RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+        if(pgpMtx.trylock())
+        {
+                /* if we cannot find a ssl cert - might be a pgp cert */
+                certmap::iterator it;
+                if (mKeyList.end() != (it = mKeyList.find(id)))
+                {
+                        /* what do we want from the gpg mgr */
+                        details = it->second.user;
+                        pgpMtx.unlock() ;
+                        return true;
+                }
+                pgpMtx.unlock() ;
+        }
+        return false;
 }
 
 
@@ -1456,7 +1054,7 @@ bool	GPGAuthMgr::getPGPUnknownList(std::list<std::string> &ids)
 }
 
 
-bool	GPGAuthMgr::isPGPValid(std::string id)
+bool	GPGAuthMgr::isPGPValid(GPG_id id)
 {
 	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
@@ -1465,7 +1063,7 @@ bool	GPGAuthMgr::isPGPValid(std::string id)
 }
 
 
-bool	GPGAuthMgr::isPGPAuthenticated(std::string id)
+bool	GPGAuthMgr::isPGPAuthenticated(GPG_id id)
 {
 	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
@@ -1526,16 +1124,7 @@ bool GPGAuthMgr::loadCertificates()
 std::string GPGAuthMgr::SaveCertificateToString(std::string id)
 {
 
-	if (!isPGPValid(id))
-	{
-		std::cerr << "GPGAuthMgr::SaveCertificateToString() Id is Not PGP" << std::endl;
-		/* check if it is a SSL Certificate */
-		if (isValid(id))
-		{
-			std::cerr << "GPGAuthMgr::SaveCertificateToString() is SSLID!" << std::endl;
-			std::string sslcert = AuthSSL::SaveCertificateToString(id);
-			return sslcert;
-		}
+        if (!isPGPValid(id)) {
 		std::cerr << "GPGAuthMgr::SaveCertificateToString() unknown ID" << std::endl;
 		std::string emptystr;
 		return emptystr;
@@ -1582,18 +1171,9 @@ std::string GPGAuthMgr::SaveCertificateToString(std::string id)
 }
 
 /* import to GnuPG and other Certificates */
-bool GPGAuthMgr::LoadCertificateFromString(std::string str, std::string &id)
+bool GPGAuthMgr::LoadCertificateFromString(std::string str)
 {
 
-	/* catch SSL Certs and pass to AuthSSL. */
-        std::string sslmarker("-----BEGIN CERTIFICATE-----");
-        size_t pos = str.find(sslmarker);
-        if (pos != std::string::npos)
-        {
-		return AuthSSL::LoadCertificateFromString(str, id);
-	}
-
-	/* otherwise assume it is a PGP cert */
 	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
 	gpgme_data_t gpgmeData;
@@ -1635,27 +1215,6 @@ bool GPGAuthMgr::LoadCertificateFromString(std::string str, std::string &id)
 	return true;
 }
 
-/*** These are passed to SSL ****/
-bool GPGAuthMgr::LoadCertificateFromFile(std::string filename, std::string &id)
-{
-	return false;
-}
-
-bool GPGAuthMgr::SaveCertificateToFile(std::string id, std::string filename)
-{
-	return false;
-}
-
-bool GPGAuthMgr::LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id)
-{
-	return AuthSSL::LoadCertificateFromBinary(ptr, len, id);
-}
-
-bool GPGAuthMgr::SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len)
-{
-	return AuthSSL::SaveCertificateToBinary(id, ptr, len);
-}
-
 /*****************************************************************
  * Auth...? Signing, Revoke, Trust are all done at
  * the PGP level....
@@ -1670,17 +1229,8 @@ bool GPGAuthMgr::SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t
 /*************************************/
 
 /* Auth takes SSL Certificate */
-bool GPGAuthMgr::AuthCertificate(std::string id)
+bool GPGAuthMgr::AuthCertificate(GPG_id pgpid)
 {
-	/**
-	 * we are passed an SSL cert, check if the cert is signed 
-	 * by an already authed peer.
-	 **/
-        std::cerr << "GPGAuthMgr::AuthCertificate(" << id << ")";
-	std::cerr << std::endl;
-
-	std::string pgpid = AuthSSL::getIssuerName(id);
-
 	if (isPGPAuthenticated(pgpid))
 	{
 		return true;
@@ -1695,14 +1245,14 @@ bool GPGAuthMgr::AuthCertificate(std::string id)
 }
 
 /* These take PGP Ids */
-bool GPGAuthMgr::SignCertificate(std::string id)
+bool GPGAuthMgr::SignCertificate(GPG_id id)
 {
 
         std::cerr << "GPGAuthMgr::SignCertificate(" << id << ")";
 	std::cerr << std::endl;
 
 
-	if (1 != signCertificate(id))
+        if (1 != privateSignCertificate(id))
 	{
 		return false;
 	}
@@ -1735,13 +1285,6 @@ bool GPGAuthMgr::TrustCertificate(std::string id, bool trust)
 	return false;
 }
 
-/*****************************************************************
- * Signing data is done by the SSL certificate.
- *
- */
-
-#if 0
-
 bool GPGAuthMgr::SignData(std::string input, std::string &sign)
 {
 	return false;
@@ -1758,118 +1301,20 @@ bool GPGAuthMgr::SignDataBin(std::string input, unsigned char *sign, unsigned in
 	return false;
 }
 
-bool GPGAuthMgr::SignDataBin(const void *data, const uint32_t len,
-                        unsigned char *sign, unsigned int *signlen)
-{
-	return false;
+bool GPGAuthMgr::SignDataBin(const void *data, unsigned int datalen, unsigned char *sign, unsigned int *signlen) {
+        return DoOwnSignature_locked(data, datalen,
+                        sign, signlen);
 }
 
-#endif
-
-
-        /************* Virtual Functions from AuthSSL *************/
-
-bool GPGAuthMgr::ValidateCertificate(X509 *x509, std::string &peerId)
-{
-        std::cerr << "GPGAuthMgr::ValidateCertificate()";
-	std::cerr << std::endl;
-
-	bool val = AuthX509(x509);
-	if (val)
-	{
-		return getX509id(x509, peerId);
-	}
-	/* be sure to get the id anyway */
-	getX509id(x509, peerId);
-
-	return false;
+bool GPGAuthMgr::VerifySignBin(const void *data, uint32_t datalen, unsigned char *sign, unsigned int signlen) {
+        return VerifySignature_locked(data, datalen,
+                        sign, signlen);
 }
-
-
-int GPGAuthMgr::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
-{
-	char    buf[256];
-	X509   *err_cert;
-	int     err, depth;
-	
-	err_cert = X509_STORE_CTX_get_current_cert(ctx);
-	err = X509_STORE_CTX_get_error(ctx);
-	depth = X509_STORE_CTX_get_error_depth(ctx);
-
-	std::cerr << "GPGAuthMgr::VerifyX509Callback(preverify_ok: " << preverify_ok
-				 << " Err: " << err << " Depth: " << depth;
-	std::cerr << std::endl;
-	
-	/*
-	* Retrieve the pointer to the SSL of the connection currently treated
-	* and the application specific data stored into the SSL object.
-	*/
-	
-	X509_NAME_oneline(X509_get_subject_name(err_cert), buf, 256);
-	
-	std::cerr << "GPGAuthMgr::VerifyX509Callback: depth: " << depth << ":" << buf;
-	std::cerr << std::endl;
-
-
-	if (!preverify_ok) {
-		fprintf(stderr, "Verify error:num=%d:%s:depth=%d:%s\n", err,
-		X509_verify_cert_error_string(err), depth, buf);
-	}
-
-	/*
-	* At this point, err contains the last verification error. We can use
-	* it for something special
-	*/
-
-	if (!preverify_ok)
-	{
-		if ((err == X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT) ||
- 				(err == X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY))
-		{
-			X509_NAME_oneline(X509_get_issuer_name(X509_STORE_CTX_get_current_cert(ctx)), buf, 256);
-			printf("issuer= %s\n", buf);
-	
-			fprintf(stderr, "Doing REAL PGP Certificates\n");
-			/* do the REAL Authentication */
-			if (!AuthX509(X509_STORE_CTX_get_current_cert(ctx)))
-			{
-				return false;
-			}
-			std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
-			if (!isPGPAuthenticated(pgpid))
-			{
-				return false;
-			}
-			preverify_ok = true;
-		}
-		else if ((err == X509_V_ERR_CERT_UNTRUSTED) ||
-			(err == X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE))
-		{
-			std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
-			if (!isPGPAuthenticated(pgpid))
-			{
-				return false;
-			}
-			preverify_ok = true;
-		}
-	}
-	else
-	{
-		fprintf(stderr, "Failing Normal Certificate!!!\n");
-		preverify_ok = false;
-	}
-
-	return preverify_ok;
-}
-
-
-        /************* Virtual Functions from AuthSSL *************/
-
 
 
 	/* Sign/Trust stuff */
 
-int	GPGAuthMgr::signCertificate(std::string id)
+int	GPGAuthMgr::privateSignCertificate(std::string id)
 {
 	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
@@ -1912,14 +1357,14 @@ int	GPGAuthMgr::signCertificate(std::string id)
 }
 
 /* revoke the signature on Certificate */
-int	GPGAuthMgr::revokeCertificate(std::string id)
+int	GPGAuthMgr::privateRevokeCertificate(std::string id)
 {
 	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
 	return 0;
 }
 
-int	GPGAuthMgr::trustCertificate(std::string id, int trustlvl)
+int	GPGAuthMgr::privateTrustCertificate(std::string id, int trustlvl)
 {
 	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 

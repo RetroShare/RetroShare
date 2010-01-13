@@ -46,14 +46,8 @@
 // for blocking signals
 #include <signal.h>
 
-#if defined(PQI_USE_SSLONLY)
-    #include "pqi/authssl.h"
-#else /* X509 Certificates */
-/**************** PQI_USE_SSLONLY ***************/
-/**************** SSL + OPENPGP *****************/
-    #include "pqi/authgpg.h"
-    #include "pqi/authssl.h"
-#endif /* X509 Certificates */
+#include "pqi/authgpg.h"
+#include "pqi/authssl.h"
 
 class accountId
 {
@@ -1022,9 +1016,8 @@ bool     RsInit::GenerateSSLCertificate(std::string name, std::string org, std::
 			country.c_str(),
 			nbits, errString);
 
-	GPGAuthMgr *mgr = (GPGAuthMgr *) getAuthMgr();
 	long days = 3000;
-	X509 *x509 = mgr->SignX509Req(req, days, "dummypassword");
+        X509 *x509 = getAuthSSL()->SignX509Req(req, days);
 
 	X509_REQ_free(req);
 	if (x509 == NULL) {
