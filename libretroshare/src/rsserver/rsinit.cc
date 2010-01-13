@@ -735,7 +735,6 @@ static bool checkAccount(std::string accountdir, accountId &id)
 	LoadCheckX509andGetName(cert_name.c_str(), id.sslName, id.sslId);
 	std::cerr << "sslName: " << id.sslName << " id: " << id.sslId << std::endl;
 
-    #ifndef PQI_USE_SSLONLY
 		std::string tmpid;
 		if (LoadCheckX509andGetIssuerName(cert_name.c_str(), id.pgpId, tmpid))
 		{
@@ -751,7 +750,6 @@ static bool checkAccount(std::string accountdir, accountId &id)
 			ret = false;
 		}
 
-    #endif
 	return ret;
 }
 

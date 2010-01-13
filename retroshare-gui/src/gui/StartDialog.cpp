@@ -41,12 +41,6 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
 
-/**
-#if (QT_VERSION >= 040300)
-  skinobject = new QSkinObject(this);
-  skinobject->startSkinning();
-#endif**/
-
   RshareSettings config;
   config.loadWidgetInformation(this);
  
@@ -70,8 +64,6 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
 
   /* load the Certificate File name */
   std::string userName;
-
-#ifdef RS_USE_PGPSSL
 
 #ifndef WINDOWS_SYS /* UNIX */
 	//hide autologin because it's not functionnal on other than windows system
@@ -123,48 +115,6 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
 	{
 		ui.loadName->setCurrentIndex(pidx);
 	}
-
-#if 0
-	std::list<std::string> pgpIds;
-	std::list<std::string>::iterator it;
-	if (RsInit::GetPGPLogins(pgpIds))
-	{
-		for(it = pgpIds.begin(); it != pgpIds.end(); it++)
-		{
-			const QVariant & userData = QVariant(QString::fromStdString(*it));
-			std::string name, email;
-			RsInit::GetPGPLoginDetails(*it, name, email);
-       			ui.loadName->addItem(QString::fromStdString(name), userData);
-		}
-	}
-#endif
-
-#else
-
-  if (RsInit::ValidateCertificate(userName))
-  {
-  	/* just need to enter password */
-        ui.loadName->addItem(QString::fromStdString(userName));
-	//ui.loadName->setText(QString::fromStdString(userName));
-	ui.loadPasswd->setFocus(Qt::OtherFocusReason);
-	ui.loadButton -> setEnabled(true);
-  }
-  else
-  {
-  	/* need to generate new user */
-        ui.loadName->addItem("<No Existing User>");
-	//ui.loadName->setText("<No Existing User>");
-	ui.loadButton -> setEnabled(false);
-	//ui.genName->setFocus(Qt::OtherFocusReason);
-  }
-#ifndef Q_WS_WIN
-	ui.autoBox->setChecked(false) ;
-	ui.autoBox->setEnabled(false) ;
-#endif
-#endif
-
-  //ui.genFriend -> setText("<None Selected>");
-
 }
 
 

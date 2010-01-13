@@ -282,8 +282,6 @@ void p3ConnectMgr::setOwnNetConfig(uint32_t netMode, uint32_t visState)
 
 void p3ConnectMgr::netReset()
 {
-
-	std::cerr << "p3ConnectMgr::netReset()" << std::endl;
 	//don't do a net reset if the MIN_TIME_BETWEEN_NET_RESET is not reached
 	time_t delta = time(NULL) - mNetInitTS;
 	#ifdef CONN_DEBUG
@@ -307,14 +305,12 @@ void p3ConnectMgr::netReset()
 	// Will initiate a new call for determining the external ip.
 	mExtAddrFinder->reset() ;
 
-	std::cerr << "p3ConnectMgr::netReset() reset NetStatus" << std::endl;
 	{
 		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
         	mNetStatus = RS_NET_UNKNOWN;
 		netStatusReset();
 	}
 
-	std::cerr << "p3ConnectMgr::netReset() checkNetAddress" << std::endl;
 	/* check Network Address */
 	checkNetAddress();
 
@@ -710,7 +706,7 @@ void p3ConnectMgr::networkConsistencyCheck()
         std::cerr << "p3ConnectMgr::networkConsistencyCheck() time since last reset : " << delta << std::endl;
 #endif
 
-	bool doNetReset = false;
+        bool doNetReset = false;
 	//if one of the flag is degrated from true to false during last tick, let's do a reset
 	#ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::networkConsistencyCheck() net flags : " << std::endl;
