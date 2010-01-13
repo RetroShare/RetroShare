@@ -84,6 +84,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent)
     setWizardStyle(ModernStyle);
 #endif
 
+
 // at this moment I don't know, what information should be in help
 //    setOption(HaveHelpButton, true); 
 //    connect(this, SIGNAL(helpRequested()), this, SLOT(showHelp()));
@@ -204,6 +205,13 @@ TextPage::TextPage(QWidget *parent)
     userCertEdit->setText(QString::fromStdString(invite));
     userCertEdit->setReadOnly(true);
     userCertEdit->setMinimumHeight(200);
+    userCertEdit->setMinimumWidth(450);
+    QFont font;
+    font.setPointSize(10);
+    font.setBold(false);
+    font.setStyleHint(QFont::TypeWriter, QFont::PreferDefault);
+    //font.setWeight(75);
+    userCertEdit->setFont(font);
 
     std::cerr << "TextPage() getting Invite: " << invite << std::endl;
 
@@ -752,11 +760,11 @@ ConclusionPage::ConclusionPage(QWidget *parent) : QWizardPage(parent) {
 
     peerGPGIdEdit = new QLineEdit(this);
     peerGPGIdEdit->setVisible(false);
-    registerField(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD,peerGPGIdEdit);
+    registerField(GPG_ID_FIELD_CONNECT_FRIEND_WIZARD,peerGPGIdEdit);
 
     peerLocation = new QLineEdit(this);
     peerLocation->setVisible(false);
-    registerField(GPG_ID_FIELD_CONNECT_FRIEND_WIZARD,peerLocation);
+    registerField(LOCATION_FIELD_CONNECT_FRIEND_WIZARD,peerLocation);
 
     peerCertStringEdit = new QLineEdit(this);
     peerCertStringEdit->setVisible(false);

@@ -40,10 +40,10 @@
 	#include <gpgme.h>
 #endif
 
-const std::string CERT_SSL_ID = "---SSLID---";
-const std::string CERT_LOCATION = "---LOCATION---";
-const std::string CERT_LOCAL_IP = "---LOCAL---";
-const std::string CERT_EXT_IP = "---EXT---";
+const std::string CERT_SSL_ID = "--SSLID--";
+const std::string CERT_LOCATION = "--LOCATION--";
+const std::string CERT_LOCAL_IP = "--LOCAL--";
+const std::string CERT_EXT_IP = "--EXT--";
 
 
 
@@ -790,16 +790,16 @@ p3Peers::GetRetroshareInvite()
         //add the sslid, location, ip local and external address after the signature
         RsPeerDetails ownDetail;
         if (getPeerDetails(rsPeers->getOwnId(), ownDetail)) {
-            invite += CERT_SSL_ID + ownDetail.id + ";\n";
+            invite += CERT_SSL_ID + ownDetail.id + ";";
             invite += CERT_LOCATION + ownDetail.location + ";\n";
             invite += CERT_LOCAL_IP + ownDetail.localAddr + ":";
             std::ostringstream out;
             out << ownDetail.localPort;
-            invite += out.str() + ";\n";
+            invite += out.str() + ";";
             invite += CERT_EXT_IP + ownDetail.extAddr + ":";
             std::ostringstream out2;
             out2 << ownDetail.extPort;
-            invite += out2.str() + ";\n";
+            invite += out2.str() + ";";
         }
 
         std::cerr << "p3Peers::GetRetroshareInvite() returns : \n";
@@ -895,82 +895,83 @@ bool 	p3Peers::loadDetailsFromStringCert(std::string certstr, RsPeerDetails &pd)
             //let's parse the ssl id
             parsePosition = certstr.find(CERT_SSL_ID);
             std::cerr << "sslid position : " << parsePosition << std::endl;
-            if (parsePosition == std::string::npos)
-                return true;
-            parsePosition += CERT_SSL_ID.length();
-            std::string subCert = certstr.substr(parsePosition);
-            parsePosition = subCert.find(";");
-            if (parsePosition == std::string::npos)
-                return true;
-            std::string ssl_id = subCert.substr(0, parsePosition);
-            std::cerr << "SSL id : " << ssl_id << std::endl;
-            pd.id = ssl_id;
+            if (parsePosition != std::string::npos) {
+                parsePosition += CERT_SSL_ID.length();
+                std::string subCert = certstr.substr(parsePosition);
+                parsePosition = subCert.find(";");
+                if (parsePosition != std::string::npos) {
+                    std::string ssl_id = subCert.substr(0, parsePosition);
+                    std::cerr << "SSL id : " << ssl_id << std::endl;
+                    pd.id = ssl_id;
+                }
+            }
 
             //let's parse the location
             parsePosition = certstr.find(CERT_LOCATION);
             std::cerr << "location position : " << parsePosition << std::endl;
-            if (parsePosition == std::string::npos)
-                return true;
-            parsePosition += CERT_LOCATION.length();
-            subCert = certstr.substr(parsePosition);
-            parsePosition = subCert.find(";");
-            if (parsePosition == std::string::npos)
-                return true;
-            std::string location = subCert.substr(0, parsePosition);
-            std::cerr << "location : " << location << std::endl;
-            pd.location = location;
+            if (parsePosition != std::string::npos) {
+                parsePosition += CERT_LOCATION.length();
+                std::string subCert = certstr.substr(parsePosition);
+                parsePosition = subCert.find(";");
+                if (parsePosition != std::string::npos) {
+                    std::string location = subCert.substr(0, parsePosition);
+                    std::cerr << "location : " << location << std::endl;
+                    pd.location = location;
+                }
+            }
 
             //let's parse ip local address
             parsePosition = certstr.find(CERT_LOCAL_IP);
             std::cerr << "local ip position : " << parsePosition << std::endl;
-            if (parsePosition == std::string::npos)
-                return true;
-            parsePosition += CERT_LOCAL_IP.length();
-            subCert = certstr.substr(parsePosition);
-            parsePosition = subCert.find(":");
-            if (parsePosition == std::string::npos)
-                return true;
-            std::string local_ip = subCert.substr(0, parsePosition);
-            std::cerr << "Local Ip : " << local_ip << std::endl;
-            pd.localAddr = local_ip;
+            if (parsePosition != std::string::npos) {
+                parsePosition += CERT_LOCAL_IP.length();
+                std::string subCert = certstr.substr(parsePosition);
+                parsePosition = subCert.find(":");
+                if (parsePosition != std::string::npos) {
+                    std::string local_ip = subCert.substr(0, parsePosition);
+                    std::cerr << "Local Ip : " << local_ip << std::endl;
+                    pd.localAddr = local_ip;
 
-            //let's parse local port
-            subCert = subCert.substr(parsePosition + 1);
-            parsePosition = subCert.find(";");
-            if (parsePosition == std::string::npos)
-                return true;
-            std::string local_port = subCert.substr(0, parsePosition);
-            std::cerr << "Local port : " << local_port << std::endl;
-            pd.localPort = (boost::lexical_cast<uint16_t>(local_port));
+                    //let's parse local port
+                    subCert = subCert.substr(parsePosition + 1);
+                    parsePosition = subCert.find(";");
+                    if (parsePosition != std::string::npos) {
+                        std::string local_port = subCert.substr(0, parsePosition);
+                        std::cerr << "Local port : " << local_port << std::endl;
+                        pd.localPort = (boost::lexical_cast<uint16_t>(local_port));
+                    }
+                }
+            }
 
             //let's parse ip ext address
             parsePosition = certstr.find(CERT_EXT_IP);
             std::cerr << "Ext ip position : " << parsePosition << std::endl;
-            if (parsePosition == std::string::npos)
-                return true;
-            parsePosition = parsePosition + CERT_EXT_IP.length();
-            subCert = certstr.substr(parsePosition);
-            parsePosition = subCert.find(":");
-            if (parsePosition == std::string::npos)
-                return true;
-            std::string ext_ip = subCert.substr(0, parsePosition);
-            std::cerr << "Ext Ip : " << ext_ip << std::endl;
-            pd.extAddr = ext_ip;
+            if (parsePosition != std::string::npos) {
+                parsePosition = parsePosition + CERT_EXT_IP.length();
+                std::string subCert = certstr.substr(parsePosition);
+                parsePosition = subCert.find(":");
+                if (parsePosition != std::string::npos) {
+                    std::string ext_ip = subCert.substr(0, parsePosition);
+                    std::cerr << "Ext Ip : " << ext_ip << std::endl;
+                    pd.extAddr = ext_ip;
 
-            //let's parse ext port
-            subCert = subCert.substr(parsePosition + 1);
-            parsePosition = subCert.find(";");
-            if (parsePosition == std::string::npos)
-                return true;
-            std::string ext_port = subCert.substr(0, parsePosition);
-            std::cerr << "Ext port : " << ext_port << std::endl;
-            pd.extPort = (boost::lexical_cast<uint16_t>(ext_port));
+                    //let's parse ext port
+                    subCert = subCert.substr(parsePosition + 1);
+                    parsePosition = subCert.find(";");
+                    if (parsePosition != std::string::npos) {
+                        std::string ext_port = subCert.substr(0, parsePosition);
+                        std::cerr << "Ext port : " << ext_port << std::endl;
+                        pd.extPort = (boost::lexical_cast<uint16_t>(ext_port));
+                    }
+                }
+            }
+
 
         } catch (...) {
             std::cerr << "ConnectFriendWizard : Parse ip address error." << std::endl;
         }
 
-        return true;;
+        return true;
 }
 
 

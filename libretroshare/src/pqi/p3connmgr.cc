@@ -2958,6 +2958,7 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 				/* add ownConfig */
                                 setOwnNetConfig(pitem->netMode, pitem->visState);
                                 ownState.gpg_id = AuthGPG::getAuthGPG()->getGPGOwnId();
+                                ownState.location = AuthSSL::getAuthSSL()->getOwnLocation();
 			}
 			else
 			{
@@ -2968,8 +2969,8 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 #endif
 				/* ************* */
                                 addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, pitem->visState, pitem->lastContact);
-			}
-                        setLocation(pitem->pid, pitem->location);
+                                setLocation(pitem->pid, pitem->location);
+                        }
                         setLocalAddress(pitem->pid, pitem->currentlocaladdr);
                         setExtAddress(pitem->pid, pitem->currentremoteaddr);
                         setAddressList(pitem->pid, pitem->ipAddressList);
