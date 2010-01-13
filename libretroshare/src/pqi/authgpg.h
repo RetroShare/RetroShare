@@ -83,7 +83,6 @@ class AuthGPG
 	private:
 
 	/* Internal functions */
-	bool 	setPGPPassword_locked(std::string pwd);
         bool 	DoOwnSignature_locked(const void *, unsigned int, void *, unsigned int *);
         bool    VerifySignature_locked(const void *data, int datalen, const void *sig, unsigned int siglen);
 
@@ -107,10 +106,6 @@ class AuthGPG
         bool    availablePGPCertificates(std::list<std::string> &ids);
 
 	int	GPGInit(std::string ownId);
-	int	GPGInit(std::string name, std::string comment, 
-			std::string email, std::string passwd); /* create it */
-
-	int	LoadGPGPassword(std::string pwd);
 
 	/* SKTAN */
 	void showData(gpgme_data_t dh);
@@ -227,8 +222,6 @@ private:
     std::string mX509id;
 
     gpgcert mOwnGpgCert;
-
-    std::string passphrase;
 };
 
 /* Sign a key */
@@ -294,12 +287,10 @@ class SignParams
 {
 	public:
 	
-	std::string checkLvl; 
-	std::string passphrase;
-		
-	SignParams(std::string checkLvl, std::string passphrase) {
-		this->checkLvl = checkLvl;
-		this->passphrase = passphrase;
+        std::string checkLvl;
+
+        SignParams(std::string checkLvl) {
+                this->checkLvl = checkLvl;
 	}
 };
 

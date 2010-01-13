@@ -172,7 +172,7 @@ void StartDialog::loadPerson()
 			gpgId, gpgName, gpgEmail, sslName))
 	{
 		RsInit::SelectGPGAccount(gpgId);
-		RsInit::LoadGPGPassword(gpgPasswd);
+                //RsInit::LoadGPGPassword(gpgPasswd);
 	}
 #else
 #endif

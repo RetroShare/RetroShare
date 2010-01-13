@@ -35,8 +35,7 @@ AuthGPG *AuthGPG::instance_gpg = new AuthGPG();
 
 /* Turn a set of parameters into a string */
 static std::string setKeyPairParams(bool useRsa, unsigned int blen,
-		std::string name, std::string comment, std::string email,
-		std::string inPassphrase);
+                std::string name, std::string comment, std::string email);
 
 static gpgme_key_t getKey(gpgme_ctx_t, std::string, std::string, std::string);
 
@@ -94,22 +93,22 @@ gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passp
 
 static char *PgpPassword = NULL;
 
-bool AuthGPG::setPGPPassword_locked(std::string pwd)
-{
-	/* reset it while we change it */
-	gpgme_set_passphrase_cb(CTX, NULL, NULL);
-
-	if (PgpPassword)
-		free(PgpPassword);
-	PgpPassword = (char *) malloc(pwd.length() + 1);
-	memcpy(PgpPassword, pwd.c_str(), pwd.length());
-	PgpPassword[pwd.length()] = '\0';
-
-        fprintf(stderr, "AuthGPG::setPGPPassword_locked() called\n");
-        gpgme_set_passphrase_cb(CTX, pgp_pwd_callback, (void *) PgpPassword);
-
-	return true;
-}
+//bool AuthGPG::setPGPPassword_locked(std::string pwd)
+//{
+//	/* reset it while we change it */
+//	gpgme_set_passphrase_cb(CTX, NULL, NULL);
+//
+//	if (PgpPassword)
+//		free(PgpPassword);
+//	PgpPassword = (char *) malloc(pwd.length() + 1);
+//	memcpy(PgpPassword, pwd.c_str(), pwd.length());
+//	PgpPassword[pwd.length()] = '\0';
+//
+//        fprintf(stderr, "AuthGPG::setPGPPassword_locked() called\n");
+//        gpgme_set_passphrase_cb(CTX, pgp_pwd_callback, (void *) PgpPassword);
+//
+//	return true;
+//}
 
 
 AuthGPG::AuthGPG()
@@ -284,74 +283,30 @@ int	AuthGPG::GPGInit(std::string ownId)
         storeAllKeys_locked();
         printAllKeys_locked();
 
+        gpgme_set_passphrase_cb(CTX, pgp_pwd_callback, (void *) NULL);
+
         std::cerr << "AuthGPG::GPGInit finished." << std::endl;
 
         return true;
-}
-
-int	AuthGPG::GPGInit(std::string name, std::string comment,
-			std::string email, std::string inPassphrase)
-{
-	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
-
-	gpgme_key_t newKey;
-	gpgme_genkey_result_t result;
-        gpg_error_t ERR;
-	
-	if (!gpgmeInit) {
-		return 0;
-	}
-	
-	if(GPG_ERR_NO_ERROR != (ERR = gpgme_op_genkey(CTX, setKeyPairParams(true, 2048, name, comment, email, \
-		passphrase).c_str(), NULL, NULL))) {
-		std::cerr << "Error generating the key" << std::endl;
-		return 0;
-	}
-	
-	if((result = gpgme_op_genkey_result(CTX)) == NULL) 
-		return 0;
-	
-	
-	if(GPG_ERR_NO_ERROR != (ERR = gpgme_get_key(CTX, result->fpr, &newKey, 1))) {
-		std::cerr << "Error reading own key" << std::endl;
-		return 0;
-	}
-	
-        mOwnGpgCert.name = name;
-        mOwnGpgCert.email = email;
-        mOwnGpgCert.fpr = newKey->subkeys->fpr;
-        mOwnGpgCert.id = newKey->subkeys->keyid;
-	mOwnGpgCert.key = newKey;
-
-	this->passphrase = inPassphrase;
-	setPGPPassword_locked(inPassphrase);
-
-        mOwnGpgId = mOwnGpgCert.id;
-	gpgmeKeySelected = true;
-
-        storeAllKeys_locked();
-        printAllKeys_locked();
-
-	return 1;
 }
 
  AuthGPG::~AuthGPG()
 {
 }
 
-int	AuthGPG::LoadGPGPassword(std::string pwd)
-{
-	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
-
-	if (!gpgmeInit) {
-		return 0;
-	}
-	
-	this->passphrase = pwd;
-	setPGPPassword_locked(pwd);
-
-	return 1;
-}
+//int	AuthGPG::LoadGPGPassword(std::string pwd)
+//{
+//	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+//
+//	if (!gpgmeInit) {
+//		return 0;
+//	}
+//
+//	this->passphrase = pwd;
+//	setPGPPassword_locked(pwd);
+//
+//	return 1;
+//}
 	
 
 
@@ -1254,7 +1209,7 @@ int	AuthGPG::privateSignCertificate(std::string id)
 	gpgme_key_t signKey = it->second.key;
         gpgme_key_t ownKey  = mOwnGpgCert.key;
 	
-        class SignParams sparams("0", passphrase);
+        class SignParams sparams("0");
 	class EditParams params(SIGN_START, &sparams);
 	gpgme_data_t out;
         gpg_error_t ERR;
@@ -1357,19 +1312,19 @@ void AuthGPG::createDummyFriends()
 	
 	// create key params for a few dummies
 	std::string friend1 = setKeyPairParams(true, DUMMY_KEY_LEN, "friend89", 
-	"I am your first friend", "friend1@friend.com", "1234");
+        "I am your first friend", "friend1@friend.com");
 	std::string friend2 = setKeyPairParams(true, DUMMY_KEY_LEN, "friend2", 
-	"I am your second friend", "friend2@friend.com", "2345");
+        "I am your second friend", "friend2@friend.com");
 	std::string friend3 = setKeyPairParams(true, DUMMY_KEY_LEN, "friend3",
-	"I am your third friend", "friend3@friend.com", "3456");
+        "I am your third friend", "friend3@friend.com");
 
 	// params for others
 	std::string other1 = setKeyPairParams(true, DUMMY_KEY_LEN, "other89", 
-	"I am your first other", "other@other.com", "1234");
+        "I am your first other", "other@other.com");
 	std::string other2 = setKeyPairParams(true, DUMMY_KEY_LEN, "other2", 
-	"I am your second other", "other2@other.com", "2345");
+        "I am your second other", "other2@other.com");
 	std::string other3 = setKeyPairParams(true, DUMMY_KEY_LEN, "other3",
-	"I am your third other", "other3@other.com", "3456");
+        "I am your third other", "other3@other.com");
 	
 	gpgme_error_t rc = GPG_ERR_NO_ERROR; // assume OK
 	rc = gpgme_op_genkey(CTX, friend1.c_str(), NULL, NULL);
@@ -1385,8 +1340,7 @@ void AuthGPG::createDummyFriends()
 }
 
 static std::string setKeyPairParams(bool useRsa, unsigned int blen,
-		std::string name, std::string comment, std::string email,
-		std::string inPassphrase)
+                std::string name, std::string comment, std::string email)
 {
 	std::ostringstream params;
 	params << "<GnupgKeyParms format=\"internal\">"<< std::endl;
@@ -1411,8 +1365,7 @@ static std::string setKeyPairParams(bool useRsa, unsigned int blen,
 	params << "Name-Real: "<< name << std::endl;
 	params << "Name-Comment: "<< comment << std::endl;
 	params << "Name-Email: "<< email << std::endl;
-	params << "Expire-Date: 0"<< std::endl;
-	params << "Passphrase: "<< inPassphrase << std::endl;
+        params << "Expire-Date: 0"<< std::endl;
 	params << "</GnupgKeyParms>"<< std::endl;
 
 	return params.str();
@@ -1645,27 +1598,27 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
           			params->err = gpg_error (GPG_ERR_GENERAL);
         		}
       			break;
-		case SIGN_ENTER_PASSPHRASE:
-			fprintf(stderr,"keySignCallback SIGN_ENTER_PASSPHRASE\n");
-
-			if(status == GPGME_STATUS_GET_HIDDEN &&
-				(!std::string("passphrase.enter").compare(args)))
-			{
-				params->state = SIGN_CONFIRM;
-				result = sparams->passphrase.c_str();
-			}
-			// If using pgp_pwd_callback, then never have to enter passphrase this way.
-			// must catch GOOD_PASSPHRASE to move on.
-			else if (status == GPGME_STATUS_GOOD_PASSPHRASE)
-			{
-				params->state = SIGN_CONFIRM;
-			}
-			else
-			{
-          			params->state = SIGN_ERROR;
-          			params->err = gpg_error (GPG_ERR_GENERAL);
-        		}
-      			break;			
+//		case SIGN_ENTER_PASSPHRASE:
+//			fprintf(stderr,"keySignCallback SIGN_ENTER_PASSPHRASE\n");
+//
+//			if(status == GPGME_STATUS_GET_HIDDEN &&
+//				(!std::string("passphrase.enter").compare(args)))
+//			{
+//				params->state = SIGN_CONFIRM;
+//				result = sparams->passphrase.c_str();
+//			}
+//			// If using pgp_pwd_callback, then never have to enter passphrase this way.
+//			// must catch GOOD_PASSPHRASE to move on.
+//			else if (status == GPGME_STATUS_GOOD_PASSPHRASE)
+//			{
+//				params->state = SIGN_CONFIRM;
+//			}
+//			else
+//			{
+//          			params->state = SIGN_ERROR;
+//          			params->err = gpg_error (GPG_ERR_GENERAL);
+//        		}
+//      			break;
     		case SIGN_CONFIRM:			
 			fprintf(stderr,"keySignCallback SIGN_CONFIRM\n");
 

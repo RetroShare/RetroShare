@@ -809,23 +809,23 @@ bool RsInit::SelectGPGAccount(std::string id)
 }
 
 
-bool RsInit::LoadGPGPassword(std::string inPGPpasswd)
-{
-
-	bool ok = false;
-        if (0 < AuthGPG::getAuthGPG() -> LoadGPGPassword(inPGPpasswd))
-	{
-		ok = true;
-		std::cerr << "PGP LoadPwd Success!";
-		std::cerr << std::endl;
-	}
-	else
-	{
-		std::cerr << "PGP LoadPwd Failed!";
-		std::cerr << std::endl;
-	}
-	return ok;
-}
+//bool RsInit::LoadGPGPassword(std::string inPGPpasswd)
+//{
+//
+//	bool ok = false;
+//        if (0 < AuthGPG::getAuthGPG() -> LoadGPGPassword(inPGPpasswd))
+//	{
+//		ok = true;
+//		std::cerr << "PGP LoadPwd Success!";
+//		std::cerr << std::endl;
+//	}
+//	else
+//	{
+//		std::cerr << "PGP LoadPwd Failed!";
+//		std::cerr << std::endl;
+//	}
+//	return ok;
+//}
 
 
 bool     GeneratePGPCertificate(std::string name, std::string comment, std::string email, std::string passwd, std::string &pgpId, std::string &errString)

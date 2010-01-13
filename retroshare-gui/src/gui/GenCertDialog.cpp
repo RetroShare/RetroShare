@@ -166,7 +166,7 @@ void GenCertDialog::genPerson()
 
 	/* Initialise the PGP user first */
 	RsInit::SelectGPGAccount(PGPId);
-	RsInit::LoadGPGPassword(PGPpasswd);
+        //RsInit::LoadGPGPassword(PGPpasswd);
 
 	std::string sslId;
 	bool okGen = RsInit::GenerateSSLCertificate(genName, genOrg, genLoc, genCountry, sslPasswd, sslId, err);
