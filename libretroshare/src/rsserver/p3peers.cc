@@ -301,7 +301,10 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 	std::cerr << std::endl;
 #endif
 
-	/* get from mAuthMgr (first) */
+        /* get from gpg (first), to fill in the sign and trust details */
+        this->getPGPDetails(AuthSSL::getAuthSSL()->getGPGId(id), d);
+
+        //get the ssl details
         sslcert authDetail;
         if (!AuthSSL::getAuthSSL()->getCertDetails(id, authDetail))
 	{
@@ -310,16 +313,11 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 
         d.fpr		= authDetail.fpr;
         d.id 		= authDetail.id;
-        d.name 		= authDetail.name;
-        d.email 	= authDetail.email;
+        //d.name 		= authDetail.name;
+        //d.email 	= authDetail.email;
         d.location 	= authDetail.location;
         d.org 		= authDetail.org;
-        d.gpgSigners 	= authDetail.signers;
-
         d.issuer 	= authDetail.issuer;
-
-        d.ownsign       = AuthGPG::getAuthGPG()->isPGPSigned(AuthSSL::getAuthSSL()->getGPGId(id));
-
 
 	/* generate */
 	d.authcode  	= "AUTHCODE";

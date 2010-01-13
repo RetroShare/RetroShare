@@ -136,6 +136,17 @@ void ConfCertDialog::loadDialog()
             ui.ipAddressList->clear();
             for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
                    ui.ipAddressList->addItem(QString::fromStdString(*it));
+
+            ui.orgloc->show();
+            ui.label_11->show();
+            ui.country->show();
+            ui.label_8->show();
+            ui.lastcontact->show();
+            ui.label_7->show();
+            ui.version->show();
+            ui.label_3->show();
+
+            ui.groupBox->show();
         } else {
             ui.orgloc->hide();
             ui.label_11->hide();
@@ -166,22 +177,12 @@ void ConfCertDialog::loadDialog()
             ui.sign_button->hide();
             ui.signed_already_label->show();
         } else {
-             ui.sign_button->show();
+            ui.sign_button->show();
             ui.signed_already_label->hide();
         }
 
-        bool hasSignedMe = false;
-        RsPeerDetails ownGPGDetails ;
-        rsPeers->getPGPDetails(rsPeers->getPGPOwnId(), ownGPGDetails);
-        std::list<std::string>::iterator signersIt;
-        for(signersIt = ownGPGDetails.gpgSigners.begin(); signersIt != ownGPGDetails.gpgSigners.end() ; ++signersIt) {
-            if (*signersIt == detail.id) {
-                hasSignedMe = true;
-                break;
-            }
-        }
-        if (hasSignedMe) {
-                ui.is_signing_me->setText(tr("Peer has acepted me as a friend and did not signed my GPG key"));
+        if (detail.hasSignedMe) {
+                ui.is_signing_me->setText(tr("Peer has acepted me as a friend and did signed my GPG key"));
         } else {
                 ui.is_signing_me->setText(tr("Peer has not acepted me as a friend and did not signed my GPG key"));
        }

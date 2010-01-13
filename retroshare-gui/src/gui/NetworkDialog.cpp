@@ -378,15 +378,7 @@ void NetworkDialog::insertConnect()
 		item -> setText(1, QString::fromStdString(detail.name));
 
                 /* (2) has me auth */
-                bool hasSignedMe = false;
-                std::list<std::string>::iterator signersIt;
-                for(signersIt = ownGPGDetails.gpgSigners.begin(); signersIt != ownGPGDetails.gpgSigners.end() ; ++signersIt) {
-                    if (*signersIt == detail.id) {
-                        hasSignedMe = true;
-                        break;
-                    }
-                }
-                if (hasSignedMe)
+                if (detail.hasSignedMe)
                         item -> setText(2, tr("Has authenticated me"));
 		else
                         item -> setText(2, tr("Unknown"));
@@ -413,7 +405,7 @@ void NetworkDialog::insertConnect()
 		}
 		else
 		{
-                        if (hasSignedMe)
+                        if (detail.hasSignedMe)
 			{
 				backgrndcolor=Qt::magenta;
 				item -> setIcon(0,(QIcon(IMAGE_TRUSTED)));

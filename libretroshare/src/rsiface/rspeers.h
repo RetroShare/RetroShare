@@ -91,7 +91,8 @@ class RsPeerDetails
 	uint32_t trustLvl;
 	uint32_t validLvl;
 
-        bool ownsign; /* we have signed certificate */
+        bool ownsign; /* we have signed the remote peer GPG key */
+        bool hasSignedMe; /* the remote peer has signed my GPG key */
 
 	/* Network details (only valid if friend) */
 	uint32_t		state;

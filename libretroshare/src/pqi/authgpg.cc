@@ -456,6 +456,11 @@ bool   AuthGPG::storeAllKeys_locked()
 
 		/* store in map */
                 mKeyList[nu.id] = nu;
+
+                //store own key
+                if (nu.id == mOwnGpgId) {
+                    mOwnGpgCert = nu;
+                }
 	}
 
 	if (GPG_ERR_NO_ERROR != gpgme_op_keylist_end(CTX))
@@ -913,6 +918,19 @@ bool	AuthGPG::getPGPDetails(std::string id, RsPeerDetails &d)
             d.validLvl = it->second.validLvl;
             d.ownsign = it->second.ownsign;
             d.gpgSigners = it->second.signers;
+
+            //did the peer signed me ?
+            d.hasSignedMe = false;
+            std::list<std::string>::iterator signersIt;
+            for(signersIt = mOwnGpgCert.signers.begin(); signersIt != mOwnGpgCert.signers.end() ; ++signersIt) {
+                if (*signersIt == d.id) {
+                    d.hasSignedMe = true;
+                    break;
+                }
+            }
+
+
+
             std::cerr << "AuthGPG::getPGPDetails() get details for : " << id << std::endl;
             std::cerr << "AuthGPG::getPGPDetails() Name : " << it->second.name << std::endl;
             return true;
