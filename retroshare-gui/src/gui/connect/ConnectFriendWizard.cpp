@@ -97,7 +97,7 @@ ConnectFriendWizard::accept()
         std::string authId = field("idField").toString().toStdString();
         std::string authCode = field("authCode").toString().toStdString();
 
-        rsPeers->AuthCertificate(authId, authCode );
+        //rsPeers->AuthCertificate(authId, authCode );
         rsPeers->addFriend(authId);
 
 	//let's check if there is ip adresses in the wizard.
@@ -485,7 +485,7 @@ void FofPage::updatePeersList(int e)
 		
 		std::set<std::string> common_friends ;
 
-		for(std::list<std::string>::const_iterator it2(details.signers.begin());it2!=details.signers.end();++it2)
+                for(std::list<std::string>::const_iterator it2(details.gpgSigners.begin());it2!=details.gpgSigners.end();++it2)
 			if(my_friends_names.find(*it2) != my_friends_names.end()	&& *it2 != details.name)										
 				common_friends.insert(*it2) ;
 
@@ -565,7 +565,7 @@ void FofPage::signAllSelectedUsers()
 		if(it->first->isChecked())
 		{
 			std::cerr << "Making friend with " << it->second << std::endl ;
-			rsPeers->AuthCertificate(it->second, "");
+                        //rsPeers->AuthCertificate(it->second, "");
 			rsPeers->addFriend(it->second);
 		}
 
@@ -868,7 +868,7 @@ ConclusionPage::initializePage()
 
     QString ts;
     std::list<std::string>::iterator it;
-    for(it = detail.signers.begin(); it != detail.signers.end(); it++)
+    for(it = detail.gpgSigners.begin(); it != detail.gpgSigners.end(); it++)
     {
             ts.append(QString::fromStdString( rsPeers->getPeerName(*it) ));
             ts.append( "<" ) ;

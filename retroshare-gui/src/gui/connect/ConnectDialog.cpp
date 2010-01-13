@@ -130,7 +130,7 @@ void ConnectDialog::authAttempt()
 
 	/* well lets do it ! */
 	std::cerr << "Attempting AuthCode:" << authCode << std::endl;
-	rsPeers->AuthCertificate(authId, authCode);
+        //rsPeers->AuthCertificate(authId, authCode);
 	rsPeers->addFriend(authId);
 
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS,1) ;
@@ -166,7 +166,7 @@ bool ConnectDialog::loadPeer(std::string id)
 	std::ostringstream out;
 
 	std::list<std::string>::iterator it;
-	for(it = detail.signers.begin(); it != detail.signers.end(); it++)
+        for(it = detail.gpgSigners.begin(); it != detail.gpgSigners.end(); it++)
 	{
 		out << rsPeers->getPeerName(*it) << " <" << *it << ">";
 		out << std::endl;

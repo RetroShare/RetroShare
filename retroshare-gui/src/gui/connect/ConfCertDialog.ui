@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>506</width>
-    <height>474</height>
+    <height>523</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="stabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="icon">
@@ -257,56 +257,43 @@
        <item>
         <widget class="QGroupBox" name="groupBox_3">
          <property name="title">
-          <string>Trust Settings</string>
+          <string>Key signing settings</string>
          </property>
          <layout class="QVBoxLayout" name="_10">
           <item>
-           <widget class="QCheckBox" name="signBox">
-            <property name="toolTip">
-             <string comment="Once signed, you cannot unsign a certificate, only deny connexions."/>
-            </property>
+           <widget class="QLabel" name="is_signing_me">
             <property name="text">
-             <string>Sign this certificate</string>
+             <string>Peer has signed my GPG key</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="_peerAcceptedCB">
+           <widget class="QGroupBox" name="groupBox_4">
+            <property name="title">
+             <string>Peer key is already signed by :</string>
+            </property>
+            <layout class="QVBoxLayout" name="_11">
+             <item>
+              <widget class="QTextBrowser" name="signers"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="signed_already_label">
             <property name="text">
-             <string>Accept connexions from this peer</string>
+             <string>Peer is already a friend of me (his GPG key is signed by me)</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="_peerTrustsMeCB">
-            <property name="toolTip">
-             <string/>
-            </property>
+           <widget class="QPushButton" name="sign_button">
             <property name="text">
-             <string>Peer has signed my certficate</string>
+             <string>Make friend (Sign his GPG key)</string>
             </property>
            </widget>
           </item>
          </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_4">
-         <property name="title">
-          <string>Certificate signers</string>
-         </property>
-         <layout class="QVBoxLayout" name="_11">
-          <item>
-           <widget class="QTextBrowser" name="signers"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="_makeFriendPB">
-         <property name="text">
-          <string>Make friend (Sign certificate and accept)</string>
-         </property>
         </widget>
        </item>
        <item>

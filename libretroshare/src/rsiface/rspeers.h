@@ -86,7 +86,7 @@ class RsPeerDetails
 
 	std::string fpr; /* pgp fingerprint */
 	std::string authcode; 
-	std::list<std::string> signers;
+        std::list<std::string> gpgSigners;
 
 	uint32_t trustLvl;
 	uint32_t validLvl;
@@ -140,6 +140,7 @@ virtual bool	getPeerDetails(std::string id, RsPeerDetails &d) = 0;
 
 		/* Using PGP Ids */
 virtual std::string getPGPOwnId()				= 0;
+virtual std::string getPGPId(std::string ssl_id)	= 0;
 virtual bool    getPGPFriendList(std::list<std::string> &ids)   = 0;
 virtual bool    getPGPAllList(std::list<std::string> &ids) 	= 0;
 virtual bool	getPGPDetails(std::string id, RsPeerDetails &d) = 0;

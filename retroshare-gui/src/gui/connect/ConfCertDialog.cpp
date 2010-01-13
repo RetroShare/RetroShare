@@ -25,6 +25,7 @@
 #include "rsiface/rsdisc.h"
 
 #include <QTime>
+#include <QtGui>
 
 ConfCertDialog *ConfCertDialog::instance()
 {
@@ -46,7 +47,7 @@ ConfCertDialog::ConfCertDialog(QWidget *parent, Qt::WFlags flags)
 
   connect(ui.applyButton, SIGNAL(clicked()), this, SLOT(applyDialog()));
   connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(closeinfodlg()));
-  connect(ui._makeFriendPB, SIGNAL(clicked()), this, SLOT(makeFriend()));
+  connect(ui.sign_button, SIGNAL(clicked()), this, SLOT(makeFriend()));
 
 
   ui.applyButton->setToolTip(tr("Apply and Close"));
@@ -93,42 +94,60 @@ void ConfCertDialog::loadId(std::string id)
 
 void ConfCertDialog::loadDialog()
 {
-
+        isPGPId = false;
 	RsPeerDetails detail;
 	if (!rsPeers->getPeerDetails(mId, detail))
 	{
-		/* fail */
-		return;
-	}
+            isPGPId = true;
+            if (!rsPeers->getPGPDetails(mId, detail)) {
+                QMessageBox::information(this,
+                         tr("RetroShare"),
+                         tr("Error : cannot get peer details."));
+                this->close();
+            }
+        }
 
 	ui.name->setText(QString::fromStdString(detail.name));
-	ui.orgloc->setText(QString::fromStdString(detail.org));
-	ui.country->setText(QString::fromStdString(detail.location));
         ui.peerid->setText(QString::fromStdString(detail.id));
-	// Dont Show a timestamp in RS calculate the day
-	QDateTime date = QDateTime::fromTime_t(detail.lastConnect);
-	QString stime = date.toString(Qt::LocalDate);
-        ui.lastcontact-> setText(stime);
+        if (!isPGPId) {
+            ui.orgloc->setText(QString::fromStdString(detail.org));
+            ui.country->setText(QString::fromStdString(detail.location));
+            // Dont Show a timestamp in RS calculate the day
+            QDateTime date = QDateTime::fromTime_t(detail.lastConnect);
+            QString stime = date.toString(Qt::LocalDate);
+            ui.lastcontact-> setText(stime);
 
-    /* set retroshare version */
-    std::map<std::string, std::string>::iterator vit;
-    std::map<std::string, std::string> versions;
-	bool retv = rsDisc->getDiscVersions(versions);
-	if (retv && versions.end() != (vit = versions.find(detail.id)))
-	{
-		ui.version->setText(QString::fromStdString(vit->second));
-	}
+            /* set retroshare version */
+            std::map<std::string, std::string>::iterator vit;
+            std::map<std::string, std::string> versions;
+            bool retv = rsDisc->getDiscVersions(versions);
+            if (retv && versions.end() != (vit = versions.find(detail.id)))
+            {
+                    ui.version->setText(QString::fromStdString(vit->second));
+            }
 
-	/* set local address */
-	ui.localAddress->setText(QString::fromStdString(detail.localAddr));
-	ui.localPort -> setValue(detail.localPort);
-	/* set the server address */
-	ui.extAddress->setText(QString::fromStdString(detail.extAddr));
-	ui.extPort -> setValue(detail.extPort);
+            /* set local address */
+            ui.localAddress->setText(QString::fromStdString(detail.localAddr));
+            ui.localPort -> setValue(detail.localPort);
+            /* set the server address */
+            ui.extAddress->setText(QString::fromStdString(detail.extAddr));
+            ui.extPort -> setValue(detail.extPort);
 
-	ui.ipAddressList->clear();
-	for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
-	       ui.ipAddressList->addItem(QString::fromStdString(*it));
+            ui.ipAddressList->clear();
+            for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
+                   ui.ipAddressList->addItem(QString::fromStdString(*it));
+        } else {
+            ui.orgloc->hide();
+            ui.label_11->hide();
+            ui.country->hide();
+            ui.label_8->hide();
+            ui.lastcontact->hide();
+            ui.label_7->hide();
+            ui.version->hide();
+            ui.label_3->hide();
+
+            ui.groupBox->hide();
+        }
 
 	/* set the url for DNS access (OLD) */
 	//ui.extName->setText(QString::fromStdString(""));
@@ -143,17 +162,37 @@ void ConfCertDialog::loadDialog()
 
 	//ui.trustLvl->setText(QString::fromStdString(RsPeerTrustString(detail.trustLvl)));
 
-	ui._peerTrustsMeCB->setChecked(rsPeers->isOnline(detail.id) || rsPeers->isTrustingMe(detail.id)) ;
-	ui._peerTrustsMeCB->setEnabled(false);
-	ui.signBox->setChecked(detail.ownsign) ;
-	ui.signBox->setEnabled(!detail.ownsign) ;
+        if (detail.ownsign) {
+            ui.sign_button->hide();
+            ui.signed_already_label->show();
+        } else {
+             ui.sign_button->show();
+            ui.signed_already_label->hide();
+        }
 
-	ui._peerAcceptedCB->setChecked(detail.state & RS_PEER_STATE_FRIEND) ;
-	ui._peerAcceptedCB->setEnabled(detail.ownsign) ;
+        bool hasSignedMe = false;
+        RsPeerDetails ownGPGDetails ;
+        rsPeers->getPGPDetails(rsPeers->getPGPOwnId(), ownGPGDetails);
+        std::list<std::string>::iterator signersIt;
+        for(signersIt = ownGPGDetails.gpgSigners.begin(); signersIt != ownGPGDetails.gpgSigners.end() ; ++signersIt) {
+            if (*signersIt == detail.id) {
+                hasSignedMe = true;
+                break;
+            }
+        }
+        if (hasSignedMe) {
+                ui.is_signing_me->setText(tr("Peer has acepted me as a friend and did not signed my GPG key"));
+        } else {
+                ui.is_signing_me->setText(tr("Peer has not acepted me as a friend and did not signed my GPG key"));
+       }
 
-	ui.signers->clear() ;
-	for(std::list<std::string>::const_iterator it(detail.signers.begin());it!=detail.signers.end();++it)
-		ui.signers->append(QString::fromStdString(*it)) ;
+        ui.signers->clear() ;
+        for(std::list<std::string>::const_iterator it(detail.gpgSigners.begin());it!=detail.gpgSigners.end();++it) {	
+            RsPeerDetails signerDetail;
+            if (rsPeers->getPGPDetails(*it, signerDetail)) {
+                ui.signers->append(QString::fromStdString(signerDetail.name));
+            }
+        }
 }
 
 
@@ -172,8 +211,6 @@ void ConfCertDialog::applyDialog()
 	bool localChanged = false;
 	bool extChanged = false;
 	bool fwChanged = false;
-	bool signChanged = false;
-	bool trustChanged = false;
 
 	/* set local address */
 	if ((detail.localAddr != ui.localAddress->text().toStdString()) || (detail.localPort != ui.localPort -> value()))
@@ -182,14 +219,6 @@ void ConfCertDialog::applyDialog()
 	if ((detail.extAddr != ui.extAddress->text().toStdString()) || (detail.extPort != ui.extPort -> value()))
 		extChanged = true;
 
-	if (detail.ownsign)
-	{
-		if (ui._peerAcceptedCB->isChecked() != ((detail.state & RS_PEER_STATE_FRIEND) > 0))
-			trustChanged = true;
-	}
-	else if (ui.signBox->isChecked())
-		signChanged = true;
-
 	/* now we can action the changes */
 	if (localChanged)
 		rsPeers->setLocalAddress(mId, ui.localAddress->text().toStdString(), ui.localPort->value());
@@ -197,61 +226,18 @@ void ConfCertDialog::applyDialog()
 	if (extChanged)
 		rsPeers->setExtAddress(mId,ui.extAddress->text().toStdString(), ui.extPort->value());
 
-#if 0
-	if (fwChanged)
-		rsicontrol -> FriendSetFirewall(mId, ui.chkFirewall->isChecked(),
-						ui.chkForwarded->isChecked());
-#endif
-
-	if (signChanged)
-	{
-		std::cerr << "Signature changed. Signing certificate" << mId << std::endl ;
-		rsPeers->SignCertificate(mId);
-	}
-
-	if (trustChanged)
-	{
-		std::cerr << "Acceptance changed. Authing ceAuthrtificate" << mId << std::endl ;
-		if(ui._peerAcceptedCB->isChecked())
-			rsPeers->AuthCertificate(mId, "");
-		else
-			rsPeers->removeFriend(mId);
-	}
-
 	/* reload now */
 	loadDialog();
 
 	/* close the Dialog after the Changes applied */
 	closeinfodlg();
 
-	if(trustChanged || signChanged || localChanged || extChanged)
+        if(localChanged || extChanged)
 		emit configChanged() ;
 }
 
 void ConfCertDialog::makeFriend()
 {
-	ui.signBox->setChecked(true) ;
-	ui._peerAcceptedCB->setChecked(true) ;
-
-//	rsPeers->TrustCertificate(mId, ui.trustBox->isChecked());
-//	rsPeers->SignCertificate(mId);
+        rsPeers->SignGPGCertificate(mId);
+        loadDialog();
 }
-
-#if 0
-void ConfCertDialog::setInfo(std::string name,
-				std::string trust,
-				std::string org,
-				std::string loc,
-				std::string country,
-				std::string signers)
-{
-	ui.name->setText(QString::fromStdString(name));
-	ui.trustLvl->setText(QString::fromStdString(trust));
-	ui.orgloc->setText(QString::fromStdString(org + loc));
-	//ui.loc->setText(QString::fromStdString(loc));
-	//ui.country->setText(QString::fromStdString(country));
-	//ui.signers->setText(QString::fromStdString(signers));
-}
-#endif
-
-

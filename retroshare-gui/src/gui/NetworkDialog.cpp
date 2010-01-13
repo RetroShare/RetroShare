@@ -178,7 +178,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
       contextMnu.clear();
 
-		std::string peer_id = wi->text(9).toStdString() ;
+                std::string peer_id = wi->text(3).toStdString() ;
 
                 // That's what context menus are made for
 		RsPeerDetails detail;
@@ -380,7 +380,7 @@ void NetworkDialog::insertConnect()
                 /* (2) has me auth */
                 bool hasSignedMe = false;
                 std::list<std::string>::iterator signersIt;
-                for(signersIt = ownGPGDetails.signers.begin(); signersIt != ownGPGDetails.signers.end() ; ++signersIt) {
+                for(signersIt = ownGPGDetails.gpgSigners.begin(); signersIt != ownGPGDetails.gpgSigners.end() ; ++signersIt) {
                     if (*signersIt == detail.id) {
                         hasSignedMe = true;
                         break;

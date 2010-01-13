@@ -500,7 +500,7 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 	RsPeerDetails pd ;
 	std::string name = rsPeers->getPeerName(about) ;
 	if(rsPeers->getPeerDetails(to,pd))
-		for(std::list<std::string>::const_iterator it(pd.signers.begin());it!=pd.signers.end();++it)
+                for(std::list<std::string>::const_iterator it(pd.gpgSigners.begin());it!=pd.gpgSigners.end();++it)
 			if(*it == name)
 			{
 				di->discFlags |= P3DISC_FLAGS_PEER_TRUSTS_ME;

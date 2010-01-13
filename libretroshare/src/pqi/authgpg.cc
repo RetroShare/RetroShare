@@ -912,7 +912,9 @@ bool	AuthGPG::getPGPDetails(std::string id, RsPeerDetails &d)
             d.trustLvl = it->second.trustLvl;
             d.validLvl = it->second.validLvl;
             d.ownsign = it->second.ownsign;
-            d.signers = it->second.signers;
+            d.gpgSigners = it->second.signers;
+            std::cerr << "AuthGPG::getPGPDetails() get details for : " << id << std::endl;
+            std::cerr << "AuthGPG::getPGPDetails() Name : " << it->second.name << std::endl;
             return true;
         } else {
             return false;
@@ -926,8 +928,7 @@ bool 	AuthGPG::decryptText(gpgme_data_t CIPHER, gpgme_data_t PLAIN) {
 	if (GPG_ERR_NO_ERROR != (ERR = gpgme_op_decrypt (CTX, CIPHER, PLAIN)))
 	{
 		ProcessPGPmeError(ERR);
-                std::cerr << "AuthGPG::decryptText() Error decrypting text.";
-		std::cerr << std::endl;
+                std::cerr << "AuthGPG::decryptText() Error decrypting text." << std::endl;
 		return false;
 	}
 

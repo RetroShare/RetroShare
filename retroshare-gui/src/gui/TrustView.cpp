@@ -162,7 +162,7 @@ void TrustView::update()
 		int i = getRowColId(details.id) ;
 		std::string issuer(details.issuer) ;	// the one we check for trust.
 
-		for(list<string>::const_iterator it2(details.signers.begin());it2!=details.signers.end();++it2) 
+                for(list<string>::const_iterator it2(details.gpgSigners.begin());it2!=details.gpgSigners.end();++it2)
 		{
 			cout << *it2 << " " ;
 

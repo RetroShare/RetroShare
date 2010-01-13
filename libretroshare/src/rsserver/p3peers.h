@@ -55,6 +55,7 @@ virtual bool	getPeerDetails(std::string id, RsPeerDetails &d);
 
                 /* Using PGP Ids */
 virtual std::string getPGPOwnId();
+virtual std::string getPGPId(std::string ssl_id);
 virtual bool    getPGPFriendList(std::list<std::string> &ids);
 virtual bool    getPGPAllList(std::list<std::string> &ids);
 virtual bool	getPGPDetails(std::string id, RsPeerDetails &d);

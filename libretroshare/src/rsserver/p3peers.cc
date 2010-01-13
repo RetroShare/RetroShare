@@ -314,7 +314,7 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
         d.email 	= authDetail.email;
         d.location 	= authDetail.location;
         d.org 		= authDetail.org;
-        d.signers 	= authDetail.signers;
+        d.gpgSigners 	= authDetail.signers;
 
         d.issuer 	= authDetail.issuer;
 
@@ -552,13 +552,12 @@ bool	p3Peers::getPGPAllList(std::list<std::string> &ids)
 bool	p3Peers::getPGPDetails(std::string id, RsPeerDetails &d)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getPgpDetails()";
+        std::cerr << "p3Peers::getPgpDetails() called for id : " << id;
         std::cerr << std::endl;
 #endif
 
         /* get from mAuthMgr */
-        AuthGPG::getAuthGPG()->getPGPDetails(id, d);
-        return true;
+        return AuthGPG::getAuthGPG()->getPGPDetails(id, d);
 }
 
 std::string p3Peers::getPGPOwnId()
@@ -572,6 +571,16 @@ std::string p3Peers::getPGPOwnId()
         return AuthGPG::getAuthGPG()->PGPOwnId();
 }
 
+std::string p3Peers::getPGPId(std::string ssl_id)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::getPGPId()";
+        std::cerr << std::endl;
+#endif
+
+        /* get from mAuthMgr */
+        return AuthSSL::getAuthSSL()->getGPGId(ssl_id);
+}
 
 
 
@@ -970,8 +979,8 @@ std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail)
 	out << std::endl;
 
 	std::list<std::string>::const_iterator it;
-	for(it = detail.signers.begin();
-		it != detail.signers.end(); it++)
+        for(it = detail.gpgSigners.begin();
+                it != detail.gpgSigners.end(); it++)
 	{
 		out << "\t" << *it;
 		out << std::endl;

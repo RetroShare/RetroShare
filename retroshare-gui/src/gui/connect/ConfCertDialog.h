@@ -76,6 +76,7 @@ private:
 void 	loadDialog();
 
 std::string mId;
+bool isPGPId;
   /** Qt Designer generated object */
   Ui::ConfCertDialog ui;
 

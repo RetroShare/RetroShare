@@ -341,7 +341,7 @@ void  NetworkView::insertSignatures()
 			continue;
 		}
 
-		for(sit = detail.signers.begin(); sit != detail.signers.end(); sit++)
+                for(sit = detail.gpgSigners.begin(); sit != detail.gpgSigners.end(); sit++)
 		{
 
 				if (*it != *sit)
