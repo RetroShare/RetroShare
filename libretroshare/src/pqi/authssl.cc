@@ -813,22 +813,33 @@ bool    AuthSSL::getCertDetails(SSL_id id, sslcert &cert)
 
 	bool valid = false;
         sslcert *tcert = NULL;
-	if (id == mOwnId)
-	{
-                cert = *mOwnCert;
-		valid = true;
-	}
-        else if (locked_FindCert(id, &tcert))
-	{
-		valid = true;
+        if (id == mOwnId) {
+                cert.authed = mOwnCert->authed;
+                cert.certificate = mOwnCert->certificate;
+                cert.email = mOwnCert->email;
+                cert.fpr = mOwnCert->fpr;
+                cert.id = mOwnCert->id;
+                cert.issuer = mOwnCert->issuer;
+                cert.location = mOwnCert->location;
+                cert.name = mOwnCert->name;
+                cert.org = mOwnCert->org;
+                cert.signers = mOwnCert->signers;
+                valid = true;
+        } else if (locked_FindCert(id, &tcert))	{
+                cert.authed = tcert->authed;
+                cert.certificate = tcert->certificate;
+                cert.email = tcert->email;
+                cert.fpr = tcert->fpr;
+                cert.id = tcert->id;
+                cert.issuer = tcert->issuer;
+                cert.location = tcert->location;
+                cert.name = tcert->name;
+                cert.org = tcert->org;
+                cert.signers = tcert->signers;
+                valid = true;
 	}
 
-	if (valid)
-	{
-                cert = *tcert;
-	}
-
-	sslMtx.unlock(); /**** UNLOCK ****/
+        sslMtx.unlock(); /**** UNLOCK ****/
 
 	return valid;
 }

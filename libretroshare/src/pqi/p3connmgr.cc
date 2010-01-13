@@ -2083,7 +2083,7 @@ bool p3ConnectMgr::addFriend(std::string id, uint32_t netMode, uint32_t visState
 	peerConnectState pstate;
 
 	pstate.id = id;
-	pstate.name = detail.name;
+        pstate.name = detail.name;
 
 	pstate.state = RS_PEER_S_FRIEND;
 	pstate.actions = RS_PEER_NEW;
@@ -2192,7 +2192,7 @@ bool p3ConnectMgr::addNeighbour(std::string id)
 	peerConnectState pstate;
 
 	pstate.id = id;
-	pstate.name = detail.name;
+        pstate.name = detail.name;
 
 	pstate.state = 0;
 	pstate.actions = 0; //RS_PEER_NEW;

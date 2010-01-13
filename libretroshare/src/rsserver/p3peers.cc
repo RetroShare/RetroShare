@@ -308,15 +308,15 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 		return false;
 	}
 
-	d.fpr		= authDetail.fpr;
-	d.id 		= authDetail.id;
-	d.name 		= authDetail.name;
-	d.email 	= authDetail.email;
-	d.location 	= authDetail.location;
-	d.org 		= authDetail.org;
-	d.signers 	= authDetail.signers;
+        d.fpr		= authDetail.fpr;
+        d.id 		= authDetail.id;
+        d.name 		= authDetail.name;
+        d.email 	= authDetail.email;
+        d.location 	= authDetail.location;
+        d.org 		= authDetail.org;
+        d.signers 	= authDetail.signers;
 
-	d.issuer 	= authDetail.issuer;
+        d.issuer 	= authDetail.issuer;
 
         d.trusted       = AuthGPG::getAuthGPG()->isPGPAuthenticated(AuthSSL::getAuthSSL()->getGPGId(id));
 
@@ -509,7 +509,7 @@ bool	p3Peers::getPGPFriendList(std::list<std::string> &ids)
 
 #ifdef P3PEERS_DEBUG
 		std::cerr << "p3Peers::getPGPFriendList() Cert Id: " << *it;
-		std::cerr << " Issuer: " << detail.issuer;
+                std::cerr << " Issuer: " << detail.issuer;
 		std::cerr << std::endl;
 #endif
 
@@ -520,16 +520,16 @@ bool	p3Peers::getPGPFriendList(std::list<std::string> &ids)
 		}
 #endif
 
-		if (ids.end() == std::find(ids.begin(),ids.end(),detail.issuer))
+                if (ids.end() == std::find(ids.begin(),ids.end(),detail.issuer))
 		{
 
 #ifdef P3PEERS_DEBUG
 			std::cerr << "p3Peers::getPGPFriendList() Adding Friend: ";
-			std::cerr << detail.issuer;
+                        std::cerr << detail.issuer;
 			std::cerr << std::endl;
 #endif
 			
-			ids.push_back(detail.issuer);
+                        ids.push_back(detail.issuer);
 		}
 	}
 	return true;

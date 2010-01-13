@@ -390,7 +390,6 @@ bool 	groupsChanged(std::list<std::string> &groupIds);
 
 	RsMutex distribMtx; /* Protects All Data Below */
 	std::string mOwnId;
-	p3AuthMgr *mAuthMgr;
 
 	private:	
 	

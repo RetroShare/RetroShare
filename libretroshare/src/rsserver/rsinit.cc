@@ -2133,7 +2133,7 @@ int RsServer::StartupRetroShare()
 	/* Setup GUI Interfaces. */
 
         rsPeers = new p3Peers(mConnMgr);
-	rsMsgs  = new p3Msgs(mAuthMgr, msgSrv, chatSrv);
+        rsMsgs  = new p3Msgs(msgSrv, chatSrv);
 	rsDisc  = new p3Discovery(ad);
 
 	rsForums = mForums;

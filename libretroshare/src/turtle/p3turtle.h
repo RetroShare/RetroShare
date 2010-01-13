@@ -153,7 +153,6 @@
 #include "rsturtleitem.h"
 
 class ftServer ;
-class p3AuthMgr;
 class p3ConnectMgr;
 class ftDataMultiplex;
 class RsSerialiser;

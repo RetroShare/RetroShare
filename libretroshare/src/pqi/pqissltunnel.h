@@ -128,8 +128,6 @@ private:
 	/* Need Certificate specific functions here! */
 	time_t   mConnectTS;
 
-	AuthSSL *mAuthMgr;
-
 	p3ConnectMgr *mConnMgr;
 
 	p3tunnel *mP3tunnel;

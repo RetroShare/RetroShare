@@ -205,20 +205,6 @@ virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd)
 	time_t   mTimeoutTS;
         bool quietShutdown;
 
-	/* Need Certificate specific functions here! */
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-
-	AuthXPGP *mAuthMgr;
-
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
-	AuthSSL *mAuthMgr;
-
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
 	p3ConnectMgr *mConnMgr;
 
 private:

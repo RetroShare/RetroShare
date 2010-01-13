@@ -28,7 +28,6 @@
 
 #include "rsiface/rsmsgs.h"
 
-class p3AuthMgr;
 class p3MsgService;
 class p3ChatService;
 
@@ -38,8 +37,8 @@ class p3Msgs: public RsMsgs
 {
    public:
 
-	  p3Msgs(p3AuthMgr *p3a, p3MsgService *p3m, p3ChatService *p3c)
-		 :mAuthMgr(p3a), mMsgSrv(p3m), mChatSrv(p3c) { return; }
+          p3Msgs(p3MsgService *p3m, p3ChatService *p3c)
+                 :mMsgSrv(p3m), mChatSrv(p3c) { return; }
 	  virtual ~p3Msgs() { return; }
 
 	  /****************************************/
@@ -78,7 +77,6 @@ class p3Msgs: public RsMsgs
 
 	  void initRsChatInfo(RsChatMsgItem *c, ChatInfo &i);
 
-	  p3AuthMgr     *mAuthMgr;
 	  p3MsgService  *mMsgSrv;
 	  p3ChatService *mChatSrv;
 };

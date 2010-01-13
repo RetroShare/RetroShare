@@ -102,7 +102,7 @@ pqissltunnel::pqissltunnel(PQInterface *parent, p3ConnectMgr *cm)
 	  rslog(RSL_ALERT, pqisslzone, out.str());
 	}
 
-	if (!(mAuthMgr->isAuthenticated(PeerId()))) {
+        if (!(AuthSSL::getAuthSSL()->isAuthenticated(PeerId()))) {
 	  rslog(RSL_ALERT, pqisslzone,
 	    "pqissltunnel::Warning Certificate Not Approved!");
 	  rslog(RSL_ALERT, pqisslzone,
@@ -470,7 +470,7 @@ int 	pqissltunnel::senddata(void *data, int len)
         item->connection_accepted = 1;
 
         int oulen;
-        if (!mAuthMgr->encrypt(item->encoded_data, oulen, data, len, parent()->PeerId())) {
+        if (!AuthSSL::getAuthSSL()->encrypt(item->encoded_data, oulen, data, len, parent()->PeerId())) {
             std::cerr << "pqissltunnel::readdata() problem while crypting packet, ignoring it." << std::endl;
             return -1;
         }
@@ -499,7 +499,7 @@ int 	pqissltunnel::readdata(void *data, int len)
 		//let's read a new packet
 		current_data_offset = 0;
                 //decrypt one packet from the queue and put it into the current data packet.
-                if (!mAuthMgr->decrypt(curent_data_packet.data, curent_data_packet.length, data_packet_queue.back().data, data_packet_queue.back().length)) {
+                if (!AuthSSL::getAuthSSL()->decrypt(curent_data_packet.data, curent_data_packet.length, data_packet_queue.back().data, data_packet_queue.back().length)) {
                     std::cerr << "pqissltunnel::readdata() problem while decrypting packet, ignoring it." << std::endl;
                     curent_data_packet.length = 0;
                     return -1;

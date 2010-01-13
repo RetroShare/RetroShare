@@ -109,7 +109,7 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3ConnectMgr *cm)
 	  rslog(RSL_ALERT, pqisslzone, out.str());
 	}
 
-	if (!(mAuthMgr->isAuthenticated(PeerId())))
+        if (!(AuthSSL::getAuthSSL()->isAuthenticated(PeerId())))
 	{
   	  rslog(RSL_ALERT, pqisslzone, 
 	    "pqissl::Warning Certificate Not Approved!");
@@ -945,7 +945,7 @@ int 	pqissl::Initiate_SSL_Connection()
 
 	// Perform SSL magic.
 	// library already inited by sslroot().
-	SSL *ssl = SSL_new(mAuthMgr->getCTX());
+        SSL *ssl = SSL_new(AuthSSL::getAuthSSL()->getCTX());
 	if (ssl == NULL)
 	{
   		rslog(RSL_ALERT, pqisslzone, 
@@ -1089,14 +1089,7 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
 	// we actually connected to remote_addr, 
 	// 	which could be 
 	//      (pqissl's case) sslcert->serveraddr or sslcert->localaddr.
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	mAuthMgr->FailedCertificateXPGP(peercert, false);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-	mAuthMgr->FailedCertificate(peercert, false);
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
+        AuthSSL::getAuthSSL()->FailedCertificate(peercert, false);
 
 	return 1;
 }
@@ -1153,7 +1146,7 @@ int 	pqissl::Authorise_SSL_Connection()
 	//      (pqissl's case) sslcert->serveraddr or sslcert->localaddr.
 
 	bool certCorrect = false;
-	certCorrect = mAuthMgr->CheckCertificate(PeerId(), peercert);
+        certCorrect = AuthSSL::getAuthSSL()->CheckCertificate(PeerId(), peercert);
 
 	// check it's the right one.
 	if (certCorrect)

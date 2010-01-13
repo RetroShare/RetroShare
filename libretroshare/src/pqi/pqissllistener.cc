@@ -59,8 +59,7 @@ pqissllistenbase::pqissllistenbase(struct sockaddr_in addr, p3ConnectMgr *cm)
         :laddr(addr), active(false), mConnMgr(cm)
 
 {
-	if (!(mAuthMgr -> active()))
-	{
+        if (!(AuthSSL::getAuthSSL()-> active())) {
 		pqioutput(PQL_ALERT, pqissllistenzone, 
 			"SSL-CTX-CERT-ROOT not initialised!");
 
@@ -346,7 +345,7 @@ int	pqissllistenbase::acceptconnection()
 	// Negotiate certificates. SSL stylee.
 	// Allow negotiations for secure transaction.
 	
-	SSL *ssl = SSL_new(mAuthMgr -> getCTX());
+        SSL *ssl = SSL_new(AuthSSL::getAuthSSL() -> getCTX());
 	SSL_set_fd(ssl, fd);
 
 	return continueSSL(ssl, remote_addr, true); // continue and save if incomplete.
@@ -477,7 +476,7 @@ int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_
 
 	// save certificate... (and ip locations)
 	// false for outgoing....
-	mAuthMgr->FailedCertificate(peercert, true);
+        AuthSSL::getAuthSSL()->FailedCertificate(peercert, true);
 
 	return 1;
 }
@@ -630,7 +629,7 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 	 * we should only need to call CheckCertificate here!
 	 ****/
 
-	bool certOk = mAuthMgr->ValidateCertificate(peercert, newPeerId);
+        bool certOk = AuthSSL::getAuthSSL()->ValidateCertificate(peercert, newPeerId);
 
 	bool found = false;
 	std::map<std::string, pqissl *>::iterator it;
@@ -685,7 +684,7 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 	}
 
 	/* Certificate consumed! */
-	bool certKnown = mAuthMgr->CheckCertificate(it->first, peercert);
+        bool certKnown = AuthSSL::getAuthSSL()->CheckCertificate(it->first, peercert);
 
 	if (certKnown == false)
 	{

@@ -88,8 +88,6 @@ int     Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_in *inaddr);
 
 	protected:
 
-	AuthSSL *mAuthMgr;
-
 	p3ConnectMgr *mConnMgr;
 
 };

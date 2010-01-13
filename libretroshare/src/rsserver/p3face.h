@@ -161,7 +161,6 @@ class RsServer: public RsControl, public RsThread
 		ftServer *ftserver;
 
 		p3ConnectMgr *mConnMgr;
-		p3AuthMgr    *mAuthMgr;
 
 		pqipersongrp *pqih;
 

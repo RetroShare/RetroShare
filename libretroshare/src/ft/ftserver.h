@@ -51,7 +51,6 @@
 #include "pqi/p3cfgmgr.h"
 
 class p3ConnectMgr;
-class p3AuthMgr;
 
 class CacheStrapper;
 class CacheTransfer;
@@ -242,7 +241,6 @@ bool  loadConfigMap(std::map<std::string, std::string> &configMap);
 	 */
 
         P3Interface *mP3iface;     /* XXX THIS NEEDS PROTECTION */
-        p3AuthMgr    *mAuthMgr;
         p3ConnectMgr *mConnMgr;
 
 	ftCacheStrapper *mCacheStrapper;

@@ -272,8 +272,6 @@ class CachePair
 bool operator<(const CachePair &a, const CachePair &b);
 
 
-class p3AuthMgr;
-
 class CacheStrapper: public pqiMonitor, public p3Config
 {
 	public:
@@ -317,7 +315,6 @@ virtual bool    loadList(std::list<RsItem *> load);
 	private:
 
 	/* these are static - so shouldn't need mutex */
-	p3AuthMgr *mAuthMgr;
 	p3ConnectMgr *mConnMgr;
 
 	std::map<uint16_t, CachePair> caches;
