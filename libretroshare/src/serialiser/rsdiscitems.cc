@@ -364,13 +364,9 @@ RsDiscReply::~RsDiscReply()
 
 void 	RsDiscReply::clear()
 {
-	memset(&currentladdr, 0, sizeof(currentladdr));
-	memset(&currentsaddr, 0, sizeof(currentladdr));
-	contact_tf = 0;
-	discFlags = 0;
 	aboutId.clear();
         certGPG.clear();
-        ipAddressList.clear();
+        rsPeerList.clear();
 }
 
 std::ostream &RsDiscReply::print(std::ostream &out, uint16_t indent)
@@ -379,34 +375,16 @@ std::ostream &RsDiscReply::print(std::ostream &out, uint16_t indent)
 	uint16_t int_Indent = indent + 2;
 
         printIndent(out, int_Indent);
-	out << "Local Address: " << inet_ntoa(currentladdr.sin_addr);
-	out << " Port: " << ntohs(currentladdr.sin_port) << std::endl;
-
-        printIndent(out, int_Indent);
-	out << "Server Address: " << inet_ntoa(currentsaddr.sin_addr);
-	out << " Port: " << ntohs(currentsaddr.sin_port) << std::endl;
-
-        printIndent(out, int_Indent);
-        out << "Contact TimeFrame: " << contact_tf;
-        out << std::endl;
-
-        printIndent(out, int_Indent);
-        out << "DiscFlags:  " << discFlags  << std::endl;
-
-        printIndent(out, int_Indent);
         out << "AboutId:  " << aboutId  << std::endl;
 
         printIndent(out, int_Indent);
         out << "certGPG:  " << certGPG  << std::endl;
 
         printIndent(out, int_Indent);
-        out << "IpAddressListSize:  " << ipAddressList.size()  << std::endl;
-
-        printIndent(out, int_Indent);
-        out << "RsDiscOwnItem::print() IpAddressList: " << std::endl;
-        for (std::list<IpAddressTimed>::iterator ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end()); ipListIt++) {
-        printIndent(out, int_Indent);
-               out << inet_ntoa(ipListIt->ipAddr.sin_addr) << ":" << ntohs(ipListIt->ipAddr.sin_port) << " seenTime : " << ipListIt->seenTime << std::endl;
+        out << "RsDiscReply::print() RsPeerNetItem list : " << std::endl;
+        for (std::list<RsPeerNetItem>::iterator pitemIt = rsPeerList.begin(); pitemIt!=(rsPeerList.end()); pitemIt++) {
+            printIndent(out, int_Indent);
+            pitemIt->print(std::cerr, indent);
         }
 
         printRsItemEnd(out, "RsDiscReply", indent);
@@ -417,18 +395,14 @@ std::ostream &RsDiscReply::print(std::ostream &out, uint16_t indent)
 uint32_t    RsDiscSerialiser::sizeReply(RsDiscReply *item)
 {
 	uint32_t s = 8; /* header */
-	s += GetTlvIpAddrPortV4Size(); /* laddr */
-	s += GetTlvIpAddrPortV4Size(); /* saddr */
-	s += 2; /* connect_tr */
-	s += 4; /* discFlags  */
 	s += GetTlvStringSize(item->aboutId);
         s += GetTlvStringSize(item->certGPG);
-        s += 4; /* ipaddress list size  */
 
-	//add the size of the ip list
-	int ipListSize = item->ipAddressList.size();
-	s += ipListSize * GetTlvIpAddrPortV4Size();
-	s += ipListSize * 8; //size of an uint64
+        RsPeerConfigSerialiser *rss = new RsPeerConfigSerialiser();
+        for (std::list<RsPeerNetItem>::iterator it = item->rsPeerList.begin(); it != item->rsPeerList.end(); it++){
+            RsPeerNetItem pitem = *it;
+            s += rss->size(&pitem);
+        }
 
 	return s;
 }
@@ -457,26 +431,23 @@ bool     RsDiscSerialiser::serialiseReply(RsDiscReply *item, void *data, uint32_
 	offset += 8;
 
 	/* add mandatory parts first */
-	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->currentladdr));
-	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->currentsaddr));
-	ok &= setRawUInt16(data, tlvsize, &offset, item->contact_tf);
-	ok &= setRawUInt32(data, tlvsize, &offset, item->discFlags);
-
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, item->aboutId);
-
         ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_CERT_GPG, item->certGPG);
 
-        ok &= setRawUInt32(data, tlvsize, &offset, item->ipAddressList.size());
-
         //store the ip list
-        std::list<IpAddressTimed>::iterator ipListIt;
-        for (ipListIt = item->ipAddressList.begin(); ipListIt!=(item->ipAddressList.end()); ipListIt++) {
-	    ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(ipListIt->ipAddr));
-	    ok &= setRawUInt64(data, tlvsize, &offset, ipListIt->seenTime);
+        RsPeerConfigSerialiser *rss = new RsPeerConfigSerialiser();
+        std::list<RsPeerNetItem>::iterator pitemIt;
+        for (pitemIt = item->rsPeerList.begin(); pitemIt!=(item->rsPeerList.end()); pitemIt++) {
+            void *pitemData = malloc(16000);
+            uint32_t size = 16000;
+            RsPeerNetItem pitem = *pitemIt;
+            ok &= rss->serialise(&pitem, pitemData, &size);
+            memcpy(data + offset, pitemData, size);
+            free(pitemData);
+            offset += size;
 	}
 
-	if (offset != tlvsize)
-	{
+        if (offset != tlvsize) {
 		ok = false;
 #ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::serialiseReply() Size Error! " << std::endl;
@@ -526,41 +497,22 @@ RsDiscReply *RsDiscSerialiser::deserialiseReply(void *data, uint32_t *pktsize)
 	offset += 8;
 
 	/* get mandatory parts first */
-	ok &= GetTlvIpAddrPortV4(data, rssize, &offset,
-					TLV_TYPE_IPV4_LOCAL, &(item->currentladdr));
-	ok &= GetTlvIpAddrPortV4(data, rssize, &offset,
-					TLV_TYPE_IPV4_REMOTE, &(item->currentsaddr));
-	ok &= getRawUInt16(data, rssize, &offset, &(item->contact_tf));
-	ok &= getRawUInt32(data, rssize, &offset, &(item->discFlags));
+        ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, item->aboutId);
+        ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_CERT_GPG, item->certGPG);
 
-	ok &= GetTlvString(data, rssize, &offset,
-					TLV_TYPE_STR_PEERID, item->aboutId);
-
-        ok &= GetTlvString(data, rssize, &offset,
-                                        TLV_TYPE_STR_CERT_GPG, item->certGPG);
-
-        uint32_t listSize;
-        ok &= getRawUInt32(data, rssize, &offset, &listSize);
-
-        //get the ip adress list
-        int count = 0;
-        std::list<IpAddressTimed> ipTimedList;
-        while (offset < rssize && count < (int)listSize) {
-            count++;
-	    IpAddressTimed ipTimed;
-            sockaddr_clear(&ipTimed.ipAddr);
-	    ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &ipTimed.ipAddr);
-            if (!ok) { break; }
-            uint64_t time = 0;
-	    ok &= getRawUInt64(data, rssize, &offset, &time);
-            if (!ok) { break; }
-            ipTimed.seenTime = time;
-	    ipTimedList.push_back(ipTimed);
+        //get the peernet address list
+        RsPeerConfigSerialiser *rss = new RsPeerConfigSerialiser();
+        std::list<RsPeerNetItem> rsPeerNetItemList;
+        while (offset < rssize) {
+            void *peerNetdata = malloc(16000);
+            uint32_t peerNetSize = (*pktsize) - offset;
+            memcpy(peerNetdata, data + offset, peerNetSize);
+            RsPeerNetItem *rsPeerNetItem = (RsPeerNetItem*)rss->deserialise(peerNetdata, &peerNetSize);
+            offset += peerNetSize;
+            item->rsPeerList.push_back(*rsPeerNetItem);
 	}
-	item->ipAddressList = ipTimedList;
 
-	if (offset != rssize)
-	{
+        if (offset != rssize) {
 #ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialiseReply() offset != rssize" << std::endl;
 #endif
@@ -569,8 +521,7 @@ RsDiscReply *RsDiscSerialiser::deserialiseReply(void *data, uint32_t *pktsize)
 		return NULL;
 	}
 
-	if (!ok)
-	{
+        if (!ok) {
 #ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialiseReply() ok = false" << std::endl;
 #endif
@@ -593,7 +544,7 @@ RsDiscIssuer::~RsDiscIssuer()
 
 void 	RsDiscIssuer::clear()
 {
-	issuerCert = "";
+        certGPG.clear();
 }
 
 std::ostream &RsDiscIssuer::print(std::ostream &out, uint16_t indent)
@@ -602,7 +553,7 @@ std::ostream &RsDiscIssuer::print(std::ostream &out, uint16_t indent)
 	uint16_t int_Indent = indent + 2;
 
         printIndent(out, int_Indent);
-        out << "Cert String:  " << issuerCert  << std::endl;
+        out << "GPG Cert String:  " << certGPG  << std::endl;
 
         printRsItemEnd(out, "RsDiscIssuer", indent);
         return out;
@@ -613,7 +564,7 @@ uint32_t    RsDiscSerialiser::sizeIssuer(RsDiscIssuer *item)
 {
 	uint32_t s = 8; /* header */
 	s += 4; /* size in RawString() */
-	s += item->issuerCert.length();
+        s += item->certGPG.length();
 
 	return s;
 }
@@ -642,7 +593,7 @@ bool     RsDiscSerialiser::serialiseIssuer(RsDiscIssuer *item, void *data, uint3
 	offset += 8;
 
 	/* add mandatory parts first */
-	ok &= setRawString(data, tlvsize, &offset, item->issuerCert);
+        ok &= setRawString(data, tlvsize, &offset, item->certGPG);
 
 	if (offset != tlvsize)
 	{
@@ -697,7 +648,7 @@ RsDiscIssuer *RsDiscSerialiser::deserialiseIssuer(void *data, uint32_t *pktsize)
 	offset += 8;
 
 	/* get mandatory parts first */
-	ok &= getRawString(data, rssize, &offset, item->issuerCert);
+        ok &= getRawString(data, rssize, &offset, item->certGPG);
 
 	if (offset != rssize)
 	{

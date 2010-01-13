@@ -181,32 +181,27 @@ int p3disc::handleIncoming()
 
 
 		// if discovery reply then respond if haven't already.
-		if (NULL != (dri = dynamic_cast<RsDiscReply *> (item)))
-		{
+                if (NULL != (dri = dynamic_cast<RsDiscReply *> (item)))	{
 
-			recvPeerFriendMsg(dri);
+                        recvPeerDetails(dri);
 			nhandled++;
 		}
 #ifdef RS_USE_PGPSSL
-		else if (NULL != (dii = dynamic_cast<RsDiscIssuer *> (item)))
-		{
+                else if (NULL != (dii = dynamic_cast<RsDiscIssuer *> (item))) {
 
-			recvPeerIssuerMsg(dii);
+                        //recvPeerIssuerMsg(dii);
 			nhandled++;
 		}
 #endif
-		else if (NULL != (dvi = dynamic_cast<RsDiscVersion *> (item)))
-		{
+                else if (NULL != (dvi = dynamic_cast<RsDiscVersion *> (item))) {
 			recvPeerVersionMsg(dvi);
 			nhandled++;
 		}
-		else if (NULL != (dio = dynamic_cast<RsDiscOwnItem *> (item))) /* Ping */
-		{
-			recvPeerOwnMsg(dio);
+                else if (NULL != (dio = dynamic_cast<RsDiscOwnItem *> (item))) /* Ping */ {
+                        //recvPeerOwnMsg(dio);
 			nhandled++;
 		}
-                else if (NULL != (dta = dynamic_cast<RsDiscHeartbeat *> (item)))
-                {
+                else if (NULL != (dta = dynamic_cast<RsDiscHeartbeat *> (item))) {
                         recvHeartbeatMsg(dta);
                         return 1;
                 }
@@ -225,26 +220,20 @@ void p3disc::statusChange(const std::list<pqipeer> &plist)
 	std::cerr << std::endl;
 #endif
 
-	/* get a list of all online peers */
-	std::list<std::string> onlineIds;
-	mConnMgr->getOnlineList(onlineIds);
-
 	std::list<pqipeer>::const_iterator pit;
 	/* if any have switched to 'connected' then we notify */
-	for(pit =  plist.begin(); pit != plist.end(); pit++)
-	{
-		if ((pit->state & RS_PEER_S_FRIEND) &&
-			(pit->actions & RS_PEER_CONNECTED))
-		{
+        for(pit =  plist.begin(); pit != plist.end(); pit++) {
+                if ((pit->state & RS_PEER_S_FRIEND) && (pit->actions & RS_PEER_CONNECTED)) {
                         /* send their own details to them. Usefull for ext ip address detection */
-                        sendPeerDetails(pit->id, pit->id);
-                        /* send our details to them */
-			sendOwnDetails(pit->id);
+//                        sendPeerDetails(pit->id, pit->id);
+//                        /* send our details to them */
+                        sendOwnVersion(pit->id);
+                        sendAllInfoToPeer(pit->id);
 		}
 	}
 }
 
-void p3disc::respondToPeer(std::string id)
+void p3disc::sendAllInfoToPeer(std::string id)
 {
 	/* get a peer lists */
 
@@ -253,171 +242,38 @@ void p3disc::respondToPeer(std::string id)
 	std::cerr << std::endl;
 #endif
 
-	std::list<std::string> friendIds;
-	std::list<std::string> onlineIds;
-	std::list<std::string>::iterator it;
+        std::list<std::string> friendIds;
+        std::list<std::string>::iterator friendIdsIt;
+        std::set<std::string> gpgIds;;
 
-	mConnMgr->getFriendList(friendIds);
-	mConnMgr->getOnlineList(onlineIds);
-
-	/* Check that they have DISC on */
-	{
-		/* get details */
-		peerConnectState detail;
-		if (!mConnMgr->getFriendNetStatus(id, detail))
-		{
-			/* major error! */
-			return;
-		}
-
-		if (detail.visState & RS_VIS_STATE_NODISC)
-		{
-			/* don't have DISC enabled */
-			return;
-		}
-	}
+        rsPeers->getFriendList(friendIds);
 
 	/* send them a list of all friend's details */
-	for(it = friendIds.begin(); it != friendIds.end(); it++)
-	{
+        for(friendIdsIt = friendIds.begin(); friendIdsIt != friendIds.end(); friendIdsIt++) {
 		/* get details */
 		peerConnectState detail;
-		if (!mConnMgr->getFriendNetStatus(*it, detail))
-		{
+                if (!mConnMgr->getFriendNetStatus(*friendIdsIt, detail)) {
 			/* major error! */
 			continue;
 		}
 
-		if (!(detail.visState & RS_VIS_STATE_NODISC))
-		{
-			/* send issuer certs ... only do this for friends at initial connections,
-			   no need to do with onlineId list.
-			 */
-			sendPeerIssuer(id, *it);
-			sendPeerDetails(id, *it); /* (dest (to), source (cert)) */
+                if (!(detail.visState & RS_VIS_STATE_NODISC)) {
+                        gpgIds.insert(detail.gpg_id);
 		}
-	}
-
-	/* send their details to all online peers */
-	for(it = onlineIds.begin(); it != onlineIds.end(); it++)
-	{
-		peerConnectState detail;
-		if (!mConnMgr->getFriendNetStatus(*it, detail))
-		{
-			/* major error! */
-			continue;
-		}
-
-		if (!(detail.visState & RS_VIS_STATE_NODISC))
-		{
-			sendPeerDetails(*it, id); /* (dest (to), source (cert)) */
-		}
-	}
-}
-
-/*************************************************************************************/
-/*				Output Network Msgs				     */
-/*************************************************************************************/
-void p3disc::sendOwnDetails(std::string to)
-{
-	/* setup:
-	 * IP local / external
-	 * availability (TCP LOCAL / EXT, UDP ...)
-	 */
-
-	// Then send message.
-	{
-#ifdef P3DISC_DEBUG
-	  	  std::ostringstream out;
-		  out << "p3disc::sendOwnDetails()";
-		  out << "Constructing a RsDiscItem Message!" << std::endl;
-		  out << "Sending to: " << to;
-		  std::cerr << out.str() << std::endl;
-#endif
-	}
-
-	// Construct a message
-	RsDiscOwnItem *di = new RsDiscOwnItem();
-
-	/* components:
-	 * laddr
-	 * saddr
-	 * contact_tf
-	 * discFlags
-	 */
-
-	peerConnectState detail;
-	if (!mConnMgr->getOwnNetStatus(detail))
-	{
-		/* major error! */
-		return;
-	}
-
-	// Fill the message
-	di -> PeerId(to);
-	di -> laddr = detail.currentlocaladdr;
-        di -> saddr = detail.currentserveraddr;
-#ifdef P3DISC_DEBUG
-                            std::cerr << "p3disc::sendOwnDetails() detail.currentlocaladdr.sin_addr : " << inet_ntoa(detail.currentlocaladdr.sin_addr) <<  ":" << ntohs(detail.currentlocaladdr.sin_port) << std::endl;
-                            std::cerr << "p3disc::sendOwnDetails() detail.currentserveraddr.sin_addr : " << inet_ntoa(detail.currentserveraddr.sin_addr) << ":" << ntohs(detail.currentlocaladdr.sin_port) << std::endl;
-#endif
-        di -> ipAddressList.clear();
-        std::list<IpAddressTimed> ipAddressListTemp = detail.getIpAddressList();
-        for ( std::list<IpAddressTimed>::iterator ipListIt = ipAddressListTemp.begin(); ipListIt!= ipAddressListTemp.end(); ipListIt++) {
-           IpAddressTimed ipAddress;
-            ipAddress.ipAddr = ipListIt->ipAddr;
-            ipAddress.seenTime = ipListIt->seenTime;
-            di -> ipAddressList.push_back(ipAddress);
         }
 
-        di -> contact_tf = 0;
+        //add own info
+        gpgIds.insert(rsPeers->getGPGOwnId());
 
-	/* construct disc flags */
-	di -> discFlags = 0;
-	if (!(detail.visState & RS_VIS_STATE_NODISC))
-	{
-		di->discFlags |= P3DISC_FLAGS_USE_DISC;
-	}
-
-	if (!(detail.visState & RS_VIS_STATE_NODHT))
-	{
-		di->discFlags |= P3DISC_FLAGS_USE_DHT;
-	}
-
-	if ((detail.netMode & RS_NET_MODE_EXT) ||
-		(detail.netMode & RS_NET_MODE_UPNP))
-	{
-		di->discFlags |= P3DISC_FLAGS_EXTERNAL_ADDR;
-	}
-	else if (detail.netMode & RS_NET_MODE_UDP)
-	{
-		di->discFlags |= P3DISC_FLAGS_STABLE_UDP;
-	}
-
-	// set flag - request for version
-	di->discFlags |= P3DISC_FLAGS_ASK_VERSION;
-
-	di->discFlags |= P3DISC_FLAGS_OWN_DETAILS;
-
-#ifdef P3DISC_DEBUG
-        di->print(std::cerr, 5);
-#endif
-
-	/* send msg */
-        sendItem(di);
+        //send details for each gpg Ids
+        std::set<std::string>::iterator gpgIdsIt;
+        for (gpgIdsIt = gpgIds.begin(); gpgIdsIt != gpgIds.end(); gpgIdsIt++) {
+            sendPeerDetails(id, *gpgIdsIt);
+        }
 }
 
  /* (dest (to), source (cert)) */
-void p3disc::sendPeerDetails(std::string to, std::string about)
-{
-	/* setup:
-	 * Certificate.
-	 * IP local / external
-	 * availability ...
-	 * last connect (0) if online.
-	 */
-
-	/* send it off */
+void p3disc::sendPeerDetails(std::string to, std::string about) {
 	{
 #ifdef P3DISC_DEBUG
 		std::ostringstream out;
@@ -428,13 +284,7 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 #endif
 	}
 
-
-	peerConnectState detail;
-	if (!mConnMgr->getFriendNetStatus(about, detail))
-	{
-		/* major error! */
-		return;
-	}
+        about = rsPeers->getGPGId(about);
 
 	// Construct a message
 	RsDiscReply *di = new RsDiscReply();
@@ -443,111 +293,58 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 	// Set Target as input cert.
 	di -> PeerId(to);
 	di -> aboutId = about;
+        di -> certGPG = AuthGPG::getAuthGPG()->SaveCertificateToString(about);
 
         // set the ip addresse list.
-        di -> ipAddressList.clear();
-        std::list<IpAddressTimed> ipAddressListTemp = detail.getIpAddressList();
-        for ( std::list<IpAddressTimed>::iterator ipListIt = ipAddressListTemp.begin(); ipListIt!= ipAddressListTemp.end(); ipListIt++) {
-            IpAddressTimed ipAddress;
-            ipAddress.ipAddr = ipListIt->ipAddr;
-            ipAddress.seenTime = ipListIt->seenTime;
-            di -> ipAddressList.push_back(ipAddress);
+        std::list<std::string> sslChilds;
+        rsPeers->getSSLChildListOfGPGId(about, sslChilds);
+        for (std::list<std::string>::iterator sslChildIt = sslChilds.begin(); sslChildIt != sslChilds.end(); sslChildIt++) {
+            peerConnectState detail;
+            if (!mConnMgr->getFriendNetStatus(*sslChildIt, detail)) {
+                    continue;
+            }
+            RsPeerNetItem *rsPeerNetItem = new RsPeerNetItem();
+            rsPeerNetItem->clear();
+
+            rsPeerNetItem->pid = detail.id;
+            rsPeerNetItem->gpg_id = detail.gpg_id;
+            rsPeerNetItem->location = detail.location;
+            rsPeerNetItem->netMode = detail.netMode;
+            rsPeerNetItem->visState = detail.visState;
+            rsPeerNetItem->lastContact = detail.lastcontact;
+            rsPeerNetItem->currentlocaladdr = detail.currentlocaladdr;
+            rsPeerNetItem->currentremoteaddr = detail.currentserveraddr;
+            rsPeerNetItem->ipAddressList = detail.getIpAddressList();
+
+            di->rsPeerList.push_back(*rsPeerNetItem);
+
         }
-        di -> currentladdr = detail.currentlocaladdr;
-	di -> currentsaddr = detail.currentserveraddr;
 
-	if (detail.state & RS_PEER_S_CONNECTED)
-	{
-		di -> contact_tf = 0;
-	}
-	else
-	{
-		di -> contact_tf = convertTDeltaToTRange(time(NULL) - detail.lastcontact);
-	}
+        //send own details
+        if (about == rsPeers->getGPGOwnId()) {
+            peerConnectState detail;
+            if (mConnMgr->getOwnNetStatus(detail)) {
+                RsPeerNetItem *rsPeerNetItem = new RsPeerNetItem();
+                rsPeerNetItem->clear();
+                rsPeerNetItem->pid = detail.id;
+                rsPeerNetItem->gpg_id = detail.gpg_id;
+                rsPeerNetItem->location = detail.location;
+                rsPeerNetItem->netMode = detail.netMode;
+                rsPeerNetItem->visState = detail.visState;
+                rsPeerNetItem->lastContact = time(NULL);
+                rsPeerNetItem->currentlocaladdr = detail.currentlocaladdr;
+                rsPeerNetItem->currentremoteaddr = detail.currentserveraddr;
+                rsPeerNetItem->ipAddressList = detail.getIpAddressList();
 
-	/* construct disc flags */
-	di->discFlags = 0;
-
-	/* NOTE we should not be sending packet if NODISC is set....
-	 * checked elsewhere... so don't check.
-	 */
-	di->discFlags |= P3DISC_FLAGS_USE_DISC;
-
-	if (!(detail.visState & RS_VIS_STATE_NODHT))
-	{
-		di->discFlags |= P3DISC_FLAGS_USE_DHT;
-	}
-
-	if (detail.netMode & RS_NET_MODE_EXT)
-	{
-		di->discFlags |= P3DISC_FLAGS_EXTERNAL_ADDR;
-	}
-	else if (detail.netMode & RS_NET_MODE_UDP)
-	{
-		di->discFlags |= P3DISC_FLAGS_STABLE_UDP;
-	}
-
-	if (detail.state & RS_PEER_S_CONNECTED)
-	{
-		di->discFlags |= P3DISC_FLAGS_PEER_ONLINE;
-	}
-
-	uint32_t certLen = 0;
-
-        di -> certGPG = AuthGPG::getAuthGPG()->SaveCertificateToString(about);
+                di->rsPeerList.push_back(*rsPeerNetItem);
+            }
+        }
 
         // Send off message
 #ifdef P3DISC_DEBUG
         di->print(std::cerr, 5);
 #endif
         sendItem(di);
-
-#ifdef P3DISC_DEBUG
-	std::cerr << "Sent DI Message" << std::endl;
-#endif
-}
-
-
- /* (dest (to), source (cert)) */
-void p3disc::sendPeerIssuer(std::string to, std::string about)
-{
-	/* this is just a straight certificate (normally pgp).
-	 * but can get quite big (>100K) so will use new packet type.
-	 */
-
-	/* send it off */
-	{
-#ifdef P3DISC_DEBUG
-		std::ostringstream out;
-		out << "p3disc::sendPeerIssuer()";
-		out << " Sending details of: " << about;
-		out << " to: " << to << std::endl;
-		std::cerr << out.str() << std::endl;
-#endif
-	}
-
-        std::string aboutIssuerId = rsPeers->getGPGId(about);
-	if (aboutIssuerId == "")
-	{
-		/* major error! */
-		return;
-	}
-
-	// Construct a message
-	RsDiscIssuer *di = new RsDiscIssuer();
-
-	// Fill the message
-	// Set Target as input cert.
-	di -> PeerId(to);
-
-        di -> issuerCert = AuthGPG::getAuthGPG()->SaveCertificateToString(aboutIssuerId);
-
-#ifdef P3DISC_DEBUG
-	std::cerr << "Saved certificate to string in RsDiscIssuer. " << std::endl ;
-#endif
-
-	// Send off message
-	sendItem(di);
 
 #ifdef P3DISC_DEBUG
 	std::cerr << "Sent DI Message" << std::endl;
@@ -599,168 +396,95 @@ void p3disc::sendHeartbeat(std::string to)
 #endif
 }
 
-/*************************************************************************************/
-/*				Input Network Msgs				     */
-/*************************************************************************************/
-void p3disc::recvPeerOwnMsg(RsDiscOwnItem *item)
-{
-#ifdef P3DISC_DEBUG
-	std::cerr << "p3disc::recvPeerOwnMsg() From: " << item->PeerId() << std::endl;
-#endif
-
-	/* tells us their exact address (mConnectMgr can ignore if it looks wrong) */
-	uint32_t type = 0;
-	uint32_t flags = 0;
-
-	/* translate flags */
-	if (item->discFlags & P3DISC_FLAGS_USE_DISC)
-	{
-		flags |= RS_NET_FLAGS_USE_DISC;
-	}
-	if (item->discFlags & P3DISC_FLAGS_USE_DHT)
-	{
-		flags |= RS_NET_FLAGS_USE_DHT;
-	}
-	if (item->discFlags & P3DISC_FLAGS_PEER_ONLINE)
-	{
-		flags |= RS_NET_FLAGS_ONLINE;
-	}
-
-	/* generate type */
-	type = RS_NET_CONN_TCP_LOCAL;
-	if (item->discFlags & P3DISC_FLAGS_EXTERNAL_ADDR)
-	{
-		type |= RS_NET_CONN_TCP_EXTERNAL;
-		flags |= RS_NET_FLAGS_EXTERNAL_ADDR;
-	}
-
-	if (item->discFlags & P3DISC_FLAGS_STABLE_UDP)
-	{
-                type |= RS_NET_CONN_UDP;
-		flags |= RS_NET_FLAGS_STABLE_UDP;
-	}
-
-        mConnMgr->peerStatus(item->PeerId(), item->laddr, item->saddr, item->ipAddressList,
-				type, flags, RS_CB_PERSON);
-
-	/* also add as potential stun buddy */
-	std::string hashid1 = RsUtil::HashId(item->PeerId(), false);
-	mConnMgr->stunStatus(hashid1, item->saddr, type,
-				RS_STUN_ONLINE | RS_STUN_FRIEND);
-
-	/* now reply with all details */
-	respondToPeer(item->PeerId());
-
-	/*sending rs versio if i was asked*/
-	if (item->discFlags & P3DISC_FLAGS_ASK_VERSION)
-	{
-		sendOwnVersion(item->PeerId());
-	}
-
-	addDiscoveryData(item->PeerId(), item->PeerId(), item->laddr, item->saddr, item->discFlags, time(NULL));
-
-	/* cleanup (handled by caller) */
-}
-
-
-void p3disc::recvPeerFriendMsg(RsDiscReply *item)
+void p3disc::recvPeerDetails(RsDiscReply *item)
 {
 
 #ifdef P3DISC_DEBUG
-	std::cerr << "p3disc::recvPeerFriendMsg() From: " << item->PeerId();
-	std::cerr << " About " << item->aboutId;
-	std::cerr << std::endl;
+        std::cerr << "p3disc::recvPeerFriendMsg() From: " << item->PeerId() << " About " << item->aboutId << std::endl;
 #endif
+        std::string certGpgId;
+        AuthGPG::getAuthGPG()->LoadCertificateFromString(item->certGPG, certGpgId);
+        if (item->aboutId != certGpgId) {
+ #ifdef P3DISC_DEBUG
+        std::cerr << "p3disc::recvPeerFriendMsg() Error : about id is not the same as gpg id." << std::endl;
+#endif
+           return;
+        }
 
-	/* tells us their exact address (mConnectMgr can ignore if it looks wrong) */
-	uint32_t type = 0;
-	uint32_t flags = 0;
+        for (std::list<RsPeerNetItem>::iterator pitem = item->rsPeerList.begin(); pitem != item->rsPeerList.end(); pitem++) {
+            //don't update dummy friends
+            if (rsPeers->isDummyFriend(pitem->pid)) {
+                continue;
+            }
 
-	/* translate flags */
-	if (item->discFlags & P3DISC_FLAGS_USE_DISC) 	flags |= RS_NET_FLAGS_USE_DISC;
-	if (item->discFlags & P3DISC_FLAGS_USE_DHT) 		flags |= RS_NET_FLAGS_USE_DHT;
-	if (item->discFlags & P3DISC_FLAGS_PEER_ONLINE) flags |= RS_NET_FLAGS_ONLINE;
-	if (item->discFlags & P3DISC_FLAGS_PEER_TRUSTS_ME)
-	{
-                std::cerr << "  Found a peer that trust me: " << item->aboutId << " (" << rsPeers->getPeerName(item->aboutId) << ")" << std::endl ;
-		flags |= RS_NET_FLAGS_TRUSTS_ME;
-	}
+            addDiscoveryData(item->PeerId(), pitem->pid, pitem->currentlocaladdr, pitem->currentremoteaddr, 0, time(NULL));
 
-	/* generate type */
-	type = RS_NET_CONN_TCP_LOCAL;
-	if (item->discFlags & P3DISC_FLAGS_EXTERNAL_ADDR)
-	{
-		type |= RS_NET_CONN_TCP_EXTERNAL;
-		flags |= RS_NET_FLAGS_EXTERNAL_ADDR;
-	}
-
-	if (item->discFlags & P3DISC_FLAGS_STABLE_UDP)
-	{
-                type |= RS_NET_CONN_UDP;
-		flags |= RS_NET_FLAGS_STABLE_UDP;
-	}
-
-	/* only valid certs, and not ourselves */
-        if ((item->aboutId != mConnMgr->getOwnId()))
-	{
-                mConnMgr->peerStatus(item->aboutId, item->currentladdr, item->currentsaddr, item->ipAddressList, type, flags, RS_CB_DISC);
-
-                std::string hashid1 = RsUtil::HashId(item->aboutId, false);
-		mConnMgr->stunStatus(hashid1, item->currentsaddr, type, RS_STUN_FRIEND_OF_FRIEND);
-	}
-
-        /* send Own Ip list to connect manager. It will extract the external ip address from it */
-        if (item->aboutId == mConnMgr->getOwnId())
-        {
-                //setAddressList might also set our own external address
-                mConnMgr->setAddressList(mConnMgr->getOwnId(), item->ipAddressList);
-
-                if (item->currentsaddr.sin_addr.s_addr != 0 && item->currentsaddr.sin_port != 0 &&
-                    item->currentsaddr.sin_addr.s_addr != 1 && item->currentsaddr.sin_port != 1 &&
-                    std::string(inet_ntoa(item->currentsaddr.sin_addr)) != "1.1.1.1" &&
-                    (!isLoopbackNet(&item->currentsaddr.sin_addr)) &&
-                    (!isPrivateNet(&item->currentsaddr.sin_addr))
+            #ifdef P3DISC_DEBUG
+            std::cerr << "pp3disc::recvPeerFriendMsg() Peer Config Item:" << std::endl;
+            pitem->print(std::cerr, 10);
+            std::cerr << std::endl;
+            #endif
+            if (pitem->pid != rsPeers->getOwnId()) {
+                mConnMgr->addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, pitem->visState, 0);
+                RsPeerDetails storedDetails;
+                rsPeers->getPeerDetails(pitem->pid, storedDetails);
+                if (    (!(storedDetails.state & RS_PEER_CONNECTED) && storedDetails.lastConnect < (pitem->lastContact - 10000))
+                        || item->PeerId() == pitem->pid) { //update if it's fresh info or if it's from the peer itself
+                    //their info is fresher than ours (there is a 10000 seconds margin), update ours
+                    mConnMgr->setLocalAddress(pitem->pid, pitem->currentlocaladdr);
+                    mConnMgr->setExtAddress(pitem->pid, pitem->currentremoteaddr);
+                    mConnMgr->setVisState(pitem->pid, pitem->visState);
+                    mConnMgr->setNetworkMode(pitem->pid, pitem->netMode);
+                    if (storedDetails.location == "") {
+                        mConnMgr->setLocation(pitem->pid, pitem->location);
+                    }
+                }
+            } else {
+                if (pitem->currentremoteaddr.sin_addr.s_addr != 0 && pitem->currentremoteaddr.sin_port != 0 &&
+                    pitem->currentremoteaddr.sin_addr.s_addr != 1 && pitem->currentremoteaddr.sin_port != 1 &&
+                    std::string(inet_ntoa(pitem->currentremoteaddr.sin_addr)) != "1.1.1.1" &&
+                    (!isLoopbackNet(&pitem->currentremoteaddr.sin_addr)) &&
+                    (!isPrivateNet(&pitem->currentremoteaddr.sin_addr))
                     ) {
                     //the current server address given by the peer looks nice, let's use it for our own ext address if needed
                     sockaddr_in tempAddr;
                     if (!mConnMgr->getExtFinderExtAddress(tempAddr) && !mConnMgr->getUpnpExtAddress(tempAddr)) {
                         //don't change the port, just the ip
-                        item->currentsaddr.sin_port = mConnMgr->ownState.currentserveraddr.sin_port;
-                        mConnMgr->setExtAddress(mConnMgr->getOwnId(), item->currentsaddr);
+                        pitem->currentremoteaddr.sin_port = mConnMgr->ownState.currentserveraddr.sin_port;
+                        mConnMgr->setExtAddress(mConnMgr->getOwnId(), pitem->currentremoteaddr);
                     }
                 }
+            }
+            //allways update address list
+            mConnMgr->setAddressList(pitem->pid, pitem->ipAddressList);
 
         }
-
-
-        addDiscoveryData(item->PeerId(), item->aboutId, item->currentladdr, item->currentsaddr, item->discFlags, time(NULL));
-
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS, NOTIFY_TYPE_MOD);
 
-	/* cleanup (handled by caller) */
+        /* cleanup (handled by caller) */
 }
 
 
-void p3disc::recvPeerIssuerMsg(RsDiscIssuer *item)
-{
-
-#ifdef P3DISC_DEBUG
-	std::cerr << "p3disc::recvPeerIssuerMsg() From: " << item->PeerId();
-	std::cerr << std::endl;
-	std::cerr << "p3disc::recvPeerIssuerMsg() Cert: " << item->issuerCert;
-	std::cerr << std::endl;
-#endif
-
-	/* tells us their exact address (mConnectMgr can ignore if it looks wrong) */
-
-	/* load certificate */
-        std::string gpgId;
-        bool loaded = AuthGPG::getAuthGPG()->LoadCertificateFromString(item->issuerCert, gpgId);
-
-	/* cleanup (handled by caller) */
-
-	return;
-}
+//void p3disc::recvPeerIssuerMsg(RsDiscIssuer *item)
+//{
+//
+//#ifdef P3DISC_DEBUG
+//	std::cerr << "p3disc::recvPeerIssuerMsg() From: " << item->PeerId();
+//	std::cerr << std::endl;
+//	std::cerr << "p3disc::recvPeerIssuerMsg() Cert: " << item->issuerCert;
+//	std::cerr << std::endl;
+//#endif
+//
+//	/* tells us their exact address (mConnectMgr can ignore if it looks wrong) */
+//
+//	/* load certificate */
+//        std::string gpgId;
+//        bool loaded = AuthGPG::getAuthGPG()->LoadCertificateFromString(item->issuerCert, gpgId);
+//
+//	/* cleanup (handled by caller) */
+//
+//	return;
+//}
 
 void p3disc::recvPeerVersionMsg(RsDiscVersion *item)
 {
@@ -790,8 +514,6 @@ void p3disc::recvHeartbeatMsg(RsDiscHeartbeat *item)
 /*************************************************************************************/
 /*				Storing Network Graph				     */
 /*************************************************************************************/
-
-
 int	p3disc::addDiscoveryData(std::string fromId, std::string aboutId, struct sockaddr_in laddr, struct sockaddr_in raddr, uint32_t flags, time_t ts)
 {
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
@@ -853,7 +575,6 @@ int	p3disc::addDiscoveryData(std::string fromId, std::string aboutId, struct soc
 /*************************************************************************************/
 /*			   Extracting Network Graph Details			     */
 /*************************************************************************************/
-
 bool p3disc::potentialproxies(std::string id, std::list<std::string> &proxyIds)
 {
 	/* find id -> and extract the neighbour_of ids */

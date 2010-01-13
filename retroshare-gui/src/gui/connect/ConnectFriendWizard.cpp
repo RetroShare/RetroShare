@@ -256,7 +256,6 @@ TextPage::TextPage(QWidget *parent)
                                     "certificate into the box below" )) ;
     
     friendCertEdit = new QTextEdit;
-    registerField("aaabbb", friendCertEdit, "plainText");//, "textChanged");
 
     //=== add all widgets to one layout
     textPageLayout = new QVBoxLayout();

@@ -523,12 +523,15 @@ bool	p3Peers::getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> 
         mConnMgr->getFriendList(friendsIds);
         peerConnectState pcs;
         for (std::list<std::string>::iterator it = friendsIds.begin(); it != friendsIds.end(); it++) {
-            mConnMgr->getFriendNetStatus(*it, pcs);
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getSSLChildListOfGPGId() iterating over friends status :id : " << gpg_id;
+        std::cerr << "p3Peers::getSSLChildListOfGPGId() iterating over friends id : " << gpg_id;
         std::cerr << std::endl;
 #endif
             if (mConnMgr->getFriendNetStatus(*it, pcs) && pcs.gpg_id == gpg_id) {
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::getSSLChildListOfGPGId() adding ssl id :  " << pcs.id;
+        std::cerr << std::endl;
+#endif
                 ids.push_back(pcs.id);
             }
         }
@@ -572,7 +575,7 @@ std::string p3Peers::getGPGId(std::string sslid_or_gpgid)
         if (mConnMgr->getFriendNetStatus(sslid_or_gpgid, pcs)) {
             return pcs.gpg_id;
         } else {
-            if ( AuthGPG::getAuthGPG()->isGPGValid(sslid_or_gpgid)) {
+            if ( AuthGPG::getAuthGPG()->isGPGId(sslid_or_gpgid)) {
                 #ifdef P3PEERS_DEBUG
                 std::cerr << "p3Peers::getPGPId() given id is already an gpg id : " << sslid_or_gpgid;
                 std::cerr << std::endl;
@@ -614,6 +617,21 @@ bool 	p3Peers::addDummyFriend(std::string gpg_id)
             return false;
         }
 }
+
+bool 	p3Peers::isDummyFriend(std::string ssl_id) {
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::isDummyFriend() called" << std::endl;
+#endif
+        RsPeerDetails details;
+        bool ret = false;
+        if (getPeerDetails(ssl_id, details)) {
+            ret = (details.id == ("dummy" + details.gpg_id));
+        }
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::isDummyFriend() return : " << ret << std::endl;
+#endif
+        return ret;
+    }
 
 bool 	p3Peers::removeFriend(std::string id)
 {

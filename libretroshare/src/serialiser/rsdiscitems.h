@@ -86,18 +86,18 @@ virtual  void clear();
 virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	//use for transmitting ip address list
-        std::list<IpAddressTimed> ipAddressList;
+        std::list<RsPeerNetItem> rsPeerList;
 
 	//use for transmitting my own adress list
-	struct sockaddr_in currentladdr;
-	struct sockaddr_in currentsaddr;
+//	struct sockaddr_in currentladdr;
+//	struct sockaddr_in currentsaddr;
 
 	// time frame of recent connections.
-	uint16_t contact_tf;
+        //uint16_t contact_tf;
 	// flags...
-	uint32_t discFlags;
+        //uint32_t discFlags;
 
-	std::string aboutId;
+        std::string aboutId;
         std::string certGPG;
 };
 
@@ -114,7 +114,7 @@ virtual ~RsDiscIssuer();
 virtual  void clear();
 virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	std::string issuerCert;
+        std::string certGPG;
 };
 
 class RsDiscVersion: public RsDiscItem

@@ -94,20 +94,20 @@ void 	getversions(std::map<std::string, std::string> &versions);
 	private:
 
 
-void respondToPeer(std::string id);
+void sendAllInfoToPeer(std::string id);
 
 	/* Network Output */
-void sendOwnDetails(std::string to);
+//void sendOwnDetails(std::string to);
 void sendOwnVersion(std::string to);
 void sendPeerDetails(std::string to, std::string about);
-void sendPeerIssuer(std::string to, std::string about);
+//void sendPeerIssuer(std::string to, std::string about);
 void sendHeartbeat(std::string to);
 
 	/* Network Input */
 int  handleIncoming();
-void recvPeerOwnMsg(RsDiscOwnItem *item);
-void recvPeerFriendMsg(RsDiscReply *item);
-void recvPeerIssuerMsg(RsDiscIssuer *item);
+//void recvPeerOwnMsg(RsDiscOwnItem *item);
+void recvPeerDetails(RsDiscReply *item);
+//void recvPeerIssuerMsg(RsDiscIssuer *item);
 void recvPeerVersionMsg(RsDiscVersion *item);
 void recvHeartbeatMsg(RsDiscHeartbeat *item);
 

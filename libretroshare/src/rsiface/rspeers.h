@@ -158,6 +158,7 @@ virtual bool    getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string
 	/* Add/Remove Friends */
 virtual	bool addFriend(std::string ssl_id, std::string gpg_id)        			= 0;
 virtual	bool addDummyFriend(std::string gpg_id)        			= 0; //we want to add a empty ssl friend for this gpg id
+virtual	bool isDummyFriend(std::string ssl_id)                  = 0;
 virtual	bool removeFriend(std::string id)  			= 0;
 
 	/* Network Stuff */
