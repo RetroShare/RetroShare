@@ -780,8 +780,8 @@ int      RsInit::GetPGPLoginDetails(std::string id, std::string &name, std::stri
         std::cerr << "RsInit::GetPGPLoginDetails for \"" << id << "\"";
         std::cerr << std::endl;
 
-        name = AuthGPG::getAuthGPG()->getPGPName(AuthSSL::getAuthSSL()->getGPGId(id));
-        email = AuthGPG::getAuthGPG()->getPGPEmail(AuthSSL::getAuthSSL()->getGPGId(id));
+        name = AuthGPG::getAuthGPG()->getPGPName(id);
+        email = AuthGPG::getAuthGPG()->getPGPEmail(id);
         if (name != "") {
             return 1;
         } else {
