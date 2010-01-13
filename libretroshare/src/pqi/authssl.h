@@ -101,26 +101,19 @@ virtual int     setConfigDirectories(std::string confFile, std::string neighDir)
 	/*********** Overloaded Functions from p3AuthMgr **********/
 	
 	/* get Certificate Ids */
-	
 virtual	std::string OwnId();
 virtual bool    getAllList(std::list<std::string> &ids);
 virtual bool    getAuthenticatedList(std::list<std::string> &ids);
 virtual bool    getUnknownList(std::list<std::string> &ids);
-	
+virtual bool    getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> &ids);
+
 	/* get Details from the Certificates */
-	
-virtual bool    isValid(std::string id);
 virtual bool    isAuthenticated(std::string id);
 virtual	std::string getName(std::string id);
 virtual std::string getIssuerName(std::string id);
 virtual std::string getGPGId(SSL_id id);
 virtual bool    getCertDetails(std::string id, sslcert &cert);
 
-        /* first party trust info (dummy) */
-virtual bool isTrustingMe(std::string id) ;
-virtual void addTrustingPeer(std::string id) ;
-
-	
 	/* High Level Load/Save Configuration */
 virtual bool FinalSaveCertificates();
 virtual bool CheckSaveCertificates();
@@ -132,18 +125,10 @@ virtual bool LoadCertificateFromString(std::string pem, std::string &id);
 virtual	std::string SaveCertificateToString(std::string id);
 virtual bool LoadCertificateFromFile(std::string filename, std::string &id);
 virtual bool SaveCertificateToFile(std::string id, std::string filename);
+bool 	ProcessX509(X509 *x509, std::string &id);
 
 virtual bool LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id);	
 virtual	bool SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len);
-	
-	/* Signatures */
-
-virtual bool AuthCertificate(std::string uid);
-
-		/* These are dummy functions */
-virtual bool SignCertificate(std::string id);
-virtual bool RevokeCertificate(std::string id);
-virtual bool TrustCertificate(std::string id, bool trust);
 	
 	/* Sign / Encrypt / Verify Data (TODO) */
 virtual bool 	SignData(std::string input, std::string &sign);
@@ -153,10 +138,10 @@ virtual bool    SignDataBin(const void*, uint32_t, unsigned char*, unsigned int*
 virtual bool    VerifySignBin(std::string, const void*, uint32_t, unsigned char*, unsigned int);
 
 // return : false if encrypt failed
-bool     encrypt(void *&out, int &outlen, const void *in, int inlen, std::string peerId); //return the encrypted length
+bool     encrypt(void *&out, int &outlen, const void *in, int inlen, std::string peerId);
 
 // return : false if decrypt fails
-bool     decrypt(void *&out, int &outlen, const void *in, int inlen); //return the encrypted length
+bool     decrypt(void *&out, int &outlen, const void *in, int inlen);
 
 
 	/*********** Overloaded Functions from p3AuthMgr **********/
@@ -191,8 +176,6 @@ bool  	loadCertificates(bool &oldFormat, std::map<std::string, std::string> &key
         static AuthSSL *instance_ssl;
 
 	/* Helper Functions */
-bool 	ProcessX509(X509 *x509, std::string &id);
-
 X509 *	loadX509FromPEM(std::string pem);
 X509 *	loadX509FromFile(std::string fname, std::string hash);
 bool    saveX509ToFile(X509 *x509, std::string fname, std::string &hash);

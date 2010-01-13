@@ -640,25 +640,38 @@ background: white;}</string>
            <height>24</height>
           </size>
          </property>
+         <property name="autoExpandDelay">
+          <number>1</number>
+         </property>
+         <property name="indentation">
+          <number>20</number>
+         </property>
          <property name="itemsExpandable">
           <bool>true</bool>
          </property>
          <property name="sortingEnabled">
           <bool>true</bool>
          </property>
+         <property name="wordWrap">
+          <bool>false</bool>
+         </property>
+         <property name="expandsOnDoubleClick">
+          <bool>false</bool>
+         </property>
+         <attribute name="headerDefaultSectionSize">
+          <number>200</number>
+         </attribute>
+         <attribute name="headerDefaultSectionSize">
+          <number>200</number>
+         </attribute>
          <column>
           <property name="text">
-           <string>#</string>
+           <string>Person</string>
           </property>
          </column>
          <column>
           <property name="text">
            <string>Status</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Person</string>
           </property>
          </column>
         </widget>
@@ -1139,8 +1152,6 @@ background: white;}</string>
   </action>
  </widget>
  <resources>
-  <include location="images.qrc"/>
-  <include location="images.qrc"/>
   <include location="images.qrc"/>
  </resources>
  <connections/>

@@ -100,32 +100,28 @@ PeersDialog::PeersDialog(QWidget *parent)
 
   connect( ui.avatartoolButton, SIGNAL(clicked()), SLOT(getAvatar()));
   connect( ui.mypersonalstatuslabel, SIGNAL(clicked()), SLOT(statusmessage()));
-
-  /* hide the Tree +/- */
-  ui.peertreeWidget -> setRootIsDecorated( false );
   
   ui.peertabWidget->addTab(new ProfileWidget(),QString(tr("Profile")));
 
   ui.peertreeWidget->setColumnCount(4);
   ui.peertreeWidget->setColumnHidden ( 3, true);
+  ui.peertreeWidget->setColumnHidden ( 2, true);
   ui.peertreeWidget->sortItems( 2, Qt::AscendingOrder );
 
   /* Set header resize modes and initial section sizes */
-	QHeaderView * _header = ui.peertreeWidget->header () ;
-        _header->setResizeMode (0, QHeaderView::Custom);
-	_header->setResizeMode (1, QHeaderView::Interactive);
-	_header->setResizeMode (2, QHeaderView::Interactive);
+//	QHeaderView * _header = ui.peertreeWidget->header () ;
+//        _header->setResizeMode (0, QHeaderView::Custom);
+//	_header->setResizeMode (1, QHeaderView::Interactive);
+//	_header->setResizeMode (2, QHeaderView::Interactive);
+//
+//        _header->resizeSection ( 0, 100 );
+//        _header->resizeSection ( 1, 100 );
+//        _header->resizeSection ( 2, 100 );
 
-
-	_header->resizeSection ( 0, 25 );
-        _header->resizeSection ( 1, 150 );
-        _header->resizeSection ( 2, 150 );
-
-
-    // set header text aligment
+// set header text aligment
 	QTreeWidgetItem * headerItem = ui.peertreeWidget->headerItem();
-	headerItem->setTextAlignment(0, Qt::AlignHCenter | Qt::AlignVCenter);
-	headerItem->setTextAlignment(1, Qt::AlignHCenter | Qt::AlignVCenter);
+        headerItem->setTextAlignment(0, Qt::AlignHCenter | Qt::AlignVCenter);
+        headerItem->setTextAlignment(1, Qt::AlignLeft | Qt::AlignVCenter);
 	headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
 
 
@@ -268,7 +264,7 @@ void PeersDialog::updateDisplay()
 /* get the list of peers from the RsIface.  */
 void  PeersDialog::insertPeers()
 {
-        std::list<std::string> peers;
+        std::list<std::string> gpgFriends;
 	std::list<std::string>::iterator it;
 
         if (!rsPeers) {
@@ -276,7 +272,7 @@ void  PeersDialog::insertPeers()
                 return;
         }
 
-	rsPeers->getFriendList(peers);
+        rsPeers->getPGPAcceptedList(gpgFriends);
 
         /* get a link to the table */
         QTreeWidget *peerWidget = ui.peertreeWidget;
@@ -289,7 +285,8 @@ void  PeersDialog::insertPeers()
                 ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + tr(" (me)"))) ;
         }
 
-        for(it = peers.begin(); it != peers.end(); it++) {
+        //add the gpg friends
+        for(it = gpgFriends.begin(); it != gpgFriends.end(); it++) {
 		RsPeerDetails detail;
                 if (!rsPeers->getPeerDetails(*it, detail)) {
 			continue; /* BAD */
@@ -301,71 +298,110 @@ void  PeersDialog::insertPeers()
                 if (list.size() == 1) {
                     item = list.front();
                 } else {
-                    item = new QTreeWidgetItem((QTreeWidget*)0);
+                    item = new QTreeWidgetItem(0);
+                    item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
                 }
 
-		item -> setText(0, "");
+                item -> setText(0, QString::fromStdString(detail.name));
 
-		item -> setText(1, QString::fromStdString(detail.autoconnect));
-		item -> setTextAlignment(1, Qt::AlignCenter | Qt::AlignVCenter );
+                item -> setTextAlignment(0, Qt::AlignLeft | Qt::AlignVCenter );
 
-                if (rsMsgs->getCustomStateString(detail.id) != "") {
-                    item -> setText( 2, QString::fromStdString(detail.name) + tr(" - ") +
-                    QString::fromStdString(rsMsgs->getCustomStateString(detail.id)));
-                    item -> setToolTip( 2, QString::fromStdString(detail.name) + tr(" - ") +
-                    QString::fromStdString(rsMsgs->getCustomStateString(detail.id)));
-                } else {
-                    item -> setText( 2, QString::fromStdString(detail.name));
-                    item -> setToolTip( 2, QString::fromStdString(detail.name));
-                }
+                //item -> setText( 1, QString::fromStdString(detail.name));
 
                 /* not displayed, used to find back the item */
                 item -> setText(3, QString::fromStdString(detail.id));
 
-                /* change color and icon */
-		int i;
-                if (detail.state & RS_PEER_STATE_CONNECTED) {
-                    item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
-                    QFont font;
-                    font.setBold(true);
-                    for(i = 1; i < 3; i++) {
-                        item -> setTextColor(i,(Qt::darkBlue));
-                        item -> setFont(i,font);
-                    }
-               } else if (detail.state & RS_PEER_STATE_UNREACHABLE) {
-                    item -> setIcon(0,(QIcon(IMAGE_UNREACHABLE)));
-                    QFont font;
-                    font.setBold(false);
-                    for(i = 1; i < 3; i++) {
-                        item -> setTextColor(i,(Qt::darkRed));
-                        item -> setFont(i,font);
-                    }
-                } else if (detail.state & RS_PEER_STATE_ONLINE) {
-                    /* bright green */
-                    item -> setIcon(0,(QIcon(IMAGE_AVAIBLE)));
-                    QFont font;
-                    font.setBold(true);
-                    for(i = 1; i < 3; i++) {
-                        item -> setTextColor(i,(Qt::darkCyan));
-                        item -> setFont(i,font);
-                    }
-                } else {
-                    if (time(NULL) - detail.lastConnect < 3600) {
-                        item -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
-                    } else {
-                        item -> setIcon(0,(QIcon(IMAGE_OFFLINE2)));
-                    }
-                    QFont font;
-                    font.setBold(false);
-                    for(i = 1; i < 3; i++) {
-                        item -> setTextColor(i,(Qt::black));
-                        item -> setFont(i,font);
-                    }
-		}
-
                 /* add to the list. If item is already in the list, it won't be duplicated thanks to Qt */
                 peerWidget->addTopLevelItem(item);
-	}
+
+                //add the childs (ssl certs)
+                //item->takeChildren();
+
+                std::list<std::string> sslContacts;
+                rsPeers->getSSLChildListOfGPGId(detail.id, sslContacts);
+                for(std::list<std::string>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); sslIt++) {
+                    RsPeerDetails sslDetail;
+                    if (!rsPeers->getPeerDetails(*sslIt, sslDetail)) {
+                            continue; /* BAD */
+                    }
+
+                    /* find the sslItem */
+                    QTreeWidgetItem *sslItem = new QTreeWidgetItem(1);
+                    bool gotToExpandBecauseNewChild = true;
+                    for (int childIndex = 0; childIndex < item->childCount(); childIndex++) {
+                        if (item->child(childIndex)->text(3).toStdString() == sslDetail.id) {
+                            sslItem = item->child(childIndex);
+                            gotToExpandBecauseNewChild = false;
+                            break;
+                        }
+                    }
+                    /* not displayed, used to find back the item */
+                    sslItem -> setText(3, QString::fromStdString(sslDetail.id));
+
+                    if (rsMsgs->getCustomStateString(sslDetail.id) != "") {
+                        sslItem -> setText( 0, tr("location : ") + QString::fromStdString(sslDetail.location) + tr(" - ") + QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id)));
+                        sslItem -> setToolTip( 0, tr("location : ") + QString::fromStdString(sslDetail.location) + tr(" - ") + QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id)));
+                    } else {
+                        sslItem -> setText( 0, tr("location : ") + QString::fromStdString(sslDetail.location));
+                        sslItem -> setToolTip( 0, tr("location : ") + QString::fromStdString(sslDetail.location));
+                    }
+
+                    /* not displayed, used to find back the item */
+                    sslItem -> setText(1, QString::fromStdString(sslDetail.autoconnect));
+
+                    /* change color and icon */
+                    int i;
+                    if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
+                        sslItem -> setIcon(0,(QIcon(IMAGE_ONLINE)));
+                        QFont font;
+                        font.setBold(true);
+                        for(i = 1; i < 3; i++) {
+                            sslItem -> setTextColor(i,(Qt::darkBlue));
+                            sslItem -> setFont(i,font);
+                        }
+                   } else if (sslDetail.state & RS_PEER_STATE_UNREACHABLE) {
+                        sslItem -> setIcon(0,(QIcon(IMAGE_UNREACHABLE)));
+                        QFont font;
+                        font.setBold(false);
+                        for(i = 1; i < 3; i++) {
+                            sslItem -> setTextColor(i,(Qt::darkRed));
+                            sslItem -> setFont(i,font);
+                        }
+                    } else if (sslDetail.state & RS_PEER_STATE_ONLINE) {
+                        /* bright green */
+                        sslItem -> setIcon(0,(QIcon(IMAGE_AVAIBLE)));
+                        QFont font;
+                        font.setBold(true);
+                        for(i = 1; i < 3; i++) {
+                            sslItem -> setTextColor(i,(Qt::darkCyan));
+                            sslItem -> setFont(i,font);
+                        }
+                    } else {
+                        if (time(NULL) - sslDetail.lastConnect < 3600) {
+                            sslItem -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
+                        } else {
+                            sslItem -> setIcon(0,(QIcon(IMAGE_OFFLINE2)));
+                        }
+                        QFont font;
+                        font.setBold(false);
+                        for(i = 1; i < 3; i++) {
+                            sslItem -> setTextColor(i,(Qt::black));
+                            sslItem -> setFont(i,font);
+                        }
+                    }
+
+                    #ifdef PEERS_DEBUG
+                    std::cerr << "PeersDialog::insertPeers() inserting sslItem." << std::endl;
+                    #endif
+                    /* add to the list. If item is already in the list, it won't be duplicated thanks to Qt */
+                    item->addChild(sslItem);
+                    if (gotToExpandBecauseNewChild) {
+                        item->setExpanded(true);
+                    }
+                }
+            }
+
+
 }
 
 /* Utility Fns */
@@ -386,7 +422,7 @@ void PeersDialog::exportfriend()
 	if (!c)
 	{
 #ifdef PEERS_DEBUG
-        	std::cerr << "PeersDialog::exportfriend() Noone Selected -- sorry" << std::endl;
+                std::cerr << "PeersDialog::exportfriend() None Selected -- sorry" << std::endl;
 #endif
 		return;
 	}

@@ -604,16 +604,6 @@ int     AuthSSL::setConfigDirectories(std::string configfile, std::string neighd
 	return 1;
 }
 
-/* no trust in SSL certs */	
-bool AuthSSL::isTrustingMe(std::string id) 
-{
-	return false;
-}
-void AuthSSL::addTrustingPeer(std::string id)
-{
-	return;
-}
-
 std::string AuthSSL::OwnId()
 {
 #ifdef AUTHSSL_DEBUG
@@ -697,30 +687,30 @@ bool    AuthSSL::getUnknownList(std::list<std::string> &ids)
 	return true;
 }
 
-	/* silly question really - only valid certs get saved to map
-	 * so if in map its okay
-	 */
-bool    AuthSSL::isValid(std::string id)
+bool    AuthSSL::getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> &ids)
 {
 #ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::isValid() " << id;
-	std::cerr << std::endl;
+        std::cerr << "AuthSSL::getChildListOfGPGId() called for gpg id : " << gpg_id << std::endl;
 #endif
-	sslMtx.lock();   /***** LOCK *****/
-	bool valid = false;
+        sslMtx.lock();   /***** LOCK *****/
 
-	if (id == mOwnId)
-	{
-		valid = true;
-	}
-	else
-	{
-		valid = (mCerts.end() != mCerts.find(id));
-	}
+        /* iterate through both lists */
+        std::map<std::string, sslcert *>::iterator it;
 
-	sslMtx.unlock(); /**** UNLOCK ****/
+        for(it = mCerts.begin(); it != mCerts.end(); it++)
+        {
+#ifdef AUTHSSL_DEBUG
+        std::cerr << "AuthSSL::getChildListOfGPGId() it->second->authed : " << it->second->authed << "; it->second->issuer : " << it->second->issuer << std::endl;
+#endif
+                if (it->second->authed && it->second->issuer == gpg_id)
+                {
+                        ids.push_back(it->first);
+                }
+        }
 
-	return valid;
+        sslMtx.unlock(); /**** UNLOCK ****/
+
+        return true;
 }
 
 bool    AuthSSL::isAuthenticated(std::string id)
@@ -1018,73 +1008,6 @@ bool 	AuthSSL::SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *
 	sslMtx.unlock(); /**** UNLOCK ****/
 	return valid;
 }
-
-
-	/* Signatures */
-	/* NO Signatures in SSL Certificates */
-
-bool AuthSSL::SignCertificate(std::string id)
-{
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::SignCertificate() NULL " << id;
-	std::cerr << std::endl;
-#endif
-	bool valid = false;
-	return valid;
-}
-
-bool AuthSSL::TrustCertificate(std::string id, bool totrust)
-{
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::TrustCertificate() NULL " << id;
-	std::cerr << std::endl;
-#endif
-	bool valid = false;
-	return valid;
-}
-
-bool AuthSSL::RevokeCertificate(std::string id)
-{
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::RevokeCertificate() NULL " << id;
-	std::cerr << std::endl;
-#endif
-
-	sslMtx.lock();   /***** LOCK *****/
-	sslMtx.unlock(); /**** UNLOCK ****/
-
-	return false;
-}
-
-
-bool AuthSSL::AuthCertificate(std::string id)
-{
-
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::AuthCertificate() " << id;
-	std::cerr << std::endl;
-#endif
-
-	sslMtx.lock();   /***** LOCK *****/
-
-	/* get the cert first */
-	sslcert *cert = NULL;
-	sslcert *own = mOwnCert;
-	bool valid = false;
-
-	if (locked_FindCert(id, &cert))
-	{
-	/* ensuring this function can do nothing in PGP mode */
-#ifdef PQI_USE_SSLONLY
-		cert->authed=true;
-		mToSaveCerts = true;
-#endif
-	}
-
-	sslMtx.unlock(); /**** UNLOCK ****/
-	return valid;
-}
-
 
 	/* Sign / Encrypt / Verify Data (TODO) */
 	
@@ -1577,13 +1500,7 @@ bool AuthSSL::ProcessX509(X509 *x509, std::string &id)
 	{
 #ifdef AUTHSSL_DEBUG
 		std::cerr << "AuthSSL::ProcessX509() ValidateCertificate FAILED";
-		std::cerr << std::endl;
-#endif
-
-#ifdef PQI_USE_SSLONLY
-		/* bad ( or unknown pgp issuer ) certificate */
-		X509_free(x509);
-		return false;
+                std::cerr << std::endl;
 #endif
 	}
 
@@ -1681,7 +1598,7 @@ bool AuthSSL::ProcessX509(X509 *x509, std::string &id)
 
 	sslMtx.lock();   /***** LOCK *****/
 
-	mCerts[xid] = cert;	
+        mCerts[xid] = cert;
 
 	/* resave if new certificate */
 	mToSaveCerts = true;
@@ -1707,8 +1624,7 @@ bool AuthSSL::ProcessX509(X509 *x509, std::string &id)
 }
 
 
-bool getX509id(X509 *x509, std::string &xid)
-{
+bool getX509id(X509 *x509, std::string &xid) {
 #ifdef AUTHSSL_DEBUG
 	std::cerr << "AuthSSL::getX509id()";
 	std::cerr << std::endl;
@@ -1986,8 +1902,6 @@ bool AuthSSL::AuthX509(X509 *x509)
         int sigoutl=0,sigoutll=0;
         X509_ALGOR *a;
 
-        fprintf(stderr, "AuthSSL::AuthX509()\n");
-
         EVP_MD_CTX_init(&ctx);
 
         /* input buffer */
@@ -2038,6 +1952,8 @@ bool AuthSSL::AuthX509(X509 *x509)
                 sigoutl = 0;
                 goto err;
         }
+        //TODO implement a way to check that the sign KEY is the same as the issuer id in the ssl cert
+
         std::cerr << "AuthSSL::AuthX509() X509 authenticated" << std::endl;
         return true;
 
@@ -2049,22 +1965,20 @@ bool AuthSSL::AuthX509(X509 *x509)
 bool    AuthSSL::ValidateCertificate(X509 *x509, std::string &peerId)
 {
 	/* check self signed */
-#warning "ValidateCertificate Not Finished"
-
-#if 0
-	if (!X509_check_valid_certificate(x509))
-	{
-		/* bad certificate */
-		return false;
-	}
+        if (!AuthX509(x509) || !getX509id(x509, peerId)) {
+#ifdef AUTHSSL_DEBUG
+        std::cerr << "AuthSSL::ValidateCertificate() bad certificate.";
+        std::cerr << std::endl;
 #endif
+                return false;
+	}
 
 #ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::ValidateCertificate() Not Finished!";
+        std::cerr << "AuthSSL::ValidateCertificate() good certificate.";
 	std::cerr << std::endl;
 #endif
 
-	return getX509id(x509, peerId);
+        return true;
 }
 
 /* store for discovery */
@@ -2134,8 +2048,6 @@ bool    AuthSSL::CheckCertificate(std::string x509Id, X509 *x509)
 		return true;
 	}
 }
-
-
 
 
 /********************************************************************************/

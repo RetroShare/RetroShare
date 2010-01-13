@@ -61,9 +61,7 @@ virtual bool    getPGPSignedList(std::list<std::string> &ids);
 virtual bool    getPGPValidList(std::list<std::string> &ids);
 virtual bool    getPGPAllList(std::list<std::string> &ids);
 virtual bool	getPGPDetails(std::string id, RsPeerDetails &d);
-
-virtual bool    getPGPFriendList(std::list<std::string> &ids);
-
+virtual bool    getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> &ids);
 
 	/* Add/Remove Friends */
 virtual	bool addFriend(std::string id);

@@ -104,7 +104,7 @@ class AuthGPG
         AuthGPG();
         ~AuthGPG();
 
-        bool    availablePGPCertificates(std::list<std::string> &ids);
+        bool    availablePGPCertificatesWithPrivateKeys(std::list<std::string> &ids);
 
 	int	GPGInit(std::string ownId);
 
@@ -150,10 +150,11 @@ class AuthGPG
 
     /* PGP web of trust management */
     GPG_id PGPOwnId();
-    bool	getPGPAllList(std::list<std::string> &ids);
     bool	getPGPDetails(std::string id, RsPeerDetails &d);
-    bool	getPGPSignedList(std::list<std::string> &ids);
+    bool	getPGPAllList(std::list<std::string> &ids);
     bool	getPGPValidList(std::list<std::string> &ids);
+    bool	getPGPAcceptedList(std::list<std::string> &ids);
+    bool	getPGPSignedList(std::list<std::string> &ids);
     bool	isPGPValid(std::string id);
     bool	isPGPSigned(std::string id);
 

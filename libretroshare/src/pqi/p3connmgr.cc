@@ -2170,7 +2170,7 @@ bool p3ConnectMgr::addNeighbour(std::string id)
 	}
 
 	/* check with the AuthMgr if its valid */
-        if (!AuthSSL::getAuthSSL()->isValid(id))
+        if (!AuthSSL::getAuthSSL()->isAuthenticated(id))
 	{
 		/* no auth */
 		return false;
@@ -2912,7 +2912,7 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 				std::cerr << std::endl;
 #endif
 				/* add ownConfig */
-				setOwnNetConfig(pitem->netMode, pitem->visState);
+                                setOwnNetConfig(pitem->netMode, pitem->visState);
 			}
 			else
 			{

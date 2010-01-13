@@ -291,16 +291,21 @@ static struct sockaddr_in getPreferredAddress(	const struct sockaddr_in& addr1,t
 
 bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 {
-#ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::getPeerDetails() " << id;
-	std::cerr << std::endl;
-#endif
+        #ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::getPeerDetails() called for id : " << id << std::endl;
+        #endif
         //first, check if it's a gpg or a ssl id.
         if (AuthSSL::getAuthSSL()->getGPGId(id) == "") {
             //assume is not SSL, because every ssl_id has got a pgp_id
+            #ifdef P3PEERS_DEBUG
+            std::cerr << "p3Peers::getPeerDetails() got a gpg id and is returning GPG details only for id : " << id << std::endl;
+            #endif
             d.isOnlyGPGdetail = true;
             return this->getPGPDetails(id, d);
         }
+        #ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::getPeerDetails() got a SSL id and is returning SSL and GPG details for id : " << id << std::endl;
+        #endif
 
         /* get from gpg (first), to fill in the sign and trust details */
         /* don't retrun now, we've got fill in the ssl and connection info */
@@ -309,9 +314,11 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 
         //get the ssl details
         sslcert authDetail;
-        if (!AuthSSL::getAuthSSL()->getCertDetails(id, authDetail))
-	{
-		return false;
+        if (!AuthSSL::getAuthSSL()->getCertDetails(id, authDetail)) {
+                #ifdef P3PEERS_DEBUG
+                std::cerr << "p3Peers::getPeerDetails() got no SSL details, is returning." << std::endl;
+                #endif
+                return false;
 	}
 
         d.fpr		= authDetail.fpr;
@@ -486,56 +493,6 @@ std::string p3Peers::getPeerName(std::string id)
         return AuthSSL::getAuthSSL()->getName(id);
 }
 
-
-bool	p3Peers::getPGPFriendList(std::list<std::string> &ids)
-{
-#ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::getPGPFriendList()";
-	std::cerr << std::endl;
-#endif
-
-	std::list<std::string> certids;
-	std::list<std::string>::iterator it;
-
-	mConnMgr->getFriendList(certids);
-
-        /* get from mAuthMgr (first) */
-	for(it = certids.begin(); it != certids.end(); it++)
-	{
-                sslcert detail;
-                if (!AuthSSL::getAuthSSL()->getCertDetails(*it, detail))
-        	{
-			continue;
-		}
-
-#ifdef P3PEERS_DEBUG
-		std::cerr << "p3Peers::getPGPFriendList() Cert Id: " << *it;
-                std::cerr << " Issuer: " << detail.issuer;
-		std::cerr << std::endl;
-#endif
-
-#if 0
-		if (!mAuthMgr->isPGPvalid(detail.issuer))
-		{
-			continue;
-		}
-#endif
-
-                if (ids.end() == std::find(ids.begin(),ids.end(),detail.issuer))
-		{
-
-#ifdef P3PEERS_DEBUG
-			std::cerr << "p3Peers::getPGPFriendList() Adding Friend: ";
-                        std::cerr << detail.issuer;
-			std::cerr << std::endl;
-#endif
-			
-                        ids.push_back(detail.issuer);
-		}
-	}
-	return true;
-}
-
 bool	p3Peers::getPGPAllList(std::list<std::string> &ids)
 {
 #ifdef P3PEERS_DEBUG
@@ -579,9 +536,19 @@ bool	p3Peers::getPGPAcceptedList(std::list<std::string> &ids)
         std::cerr << std::endl;
 #endif
 
-        /* get from mAuthMgr */
+        //TODO implement an additional list of GPG keys that are accepted even if not signed
         AuthGPG::getAuthGPG()->getPGPSignedList(ids);
         return true;
+}
+
+bool	p3Peers::getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> &ids)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::getSSLChildListOfGPGId() for id : " << gpg_id;
+        std::cerr << std::endl;
+#endif
+
+        return AuthSSL::getAuthSSL()->getSSLChildListOfGPGId(gpg_id, ids);;
 }
 
 bool	p3Peers::getPGPDetails(std::string id, RsPeerDetails &d)

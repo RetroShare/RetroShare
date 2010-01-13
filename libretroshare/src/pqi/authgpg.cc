@@ -198,7 +198,7 @@ AuthGPG::AuthGPG()
  *
  * returns false if GnuPG is not available.
  */
-bool AuthGPG::availablePGPCertificates(std::list<std::string> &ids)
+bool AuthGPG::availablePGPCertificatesWithPrivateKeys(std::list<std::string> &ids)
 {
         //RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
@@ -225,9 +225,9 @@ bool AuthGPG::availablePGPCertificates(std::list<std::string> &ids)
 	/* Loop until end of key */
 	for(i = 0;(GPG_ERR_NO_ERROR == (ERR = gpgme_op_keylist_next (CTX, &KEY))); i++)
 	{
-		if (KEY->subkeys)
+                if (KEY->subkeys)
 		{	
-			ids.push_back(KEY->subkeys->keyid);
+                        ids.push_back(KEY->subkeys->keyid);
                         std::cerr << "AuthGPG::availablePGPCertificates() Added: "
 				<< KEY->subkeys->keyid << std::endl;
 		}
@@ -969,6 +969,14 @@ bool 	AuthGPG::encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER) {
 	}
 
 	return true;
+}
+
+bool	AuthGPG::getPGPAcceptedList(std::list<std::string> &ids)
+{
+        //RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+    //TODO : implement a list in config file of accepted GPG key to connect with
+
+        return getPGPSignedList(ids);
 }
 
 bool	AuthGPG::getPGPSignedList(std::list<std::string> &ids)

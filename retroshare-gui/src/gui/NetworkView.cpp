@@ -156,7 +156,7 @@ void  NetworkView::insertPeers()
 
 	/* get the list of friends' issuers, as we flag them specially */
 	std::list<std::string> fids;
- 	rsPeers->getPGPFriendList(fids);
+        //rsPeers->getPGPFriendList(fids);
 	
 
 	int i = 0;
@@ -252,7 +252,7 @@ void  NetworkView::insertConnections()
 
 	//std::string ownId = rsPeers->getGPGOwnId();
  	//rsPeers->getPGPAllList(ids);
- 	rsPeers->getPGPFriendList(fids);
+        //rsPeers->getPGPFriendList(fids);
 
 	std::cerr << "NetworkView::insertConnections()" << std::endl;
 

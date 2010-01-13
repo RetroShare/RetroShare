@@ -765,7 +765,7 @@ static bool checkAccount(std::string accountdir, accountId &id)
 
                 /* Generating GPGme Account */
 int      RsInit::GetPGPLogins(std::list<std::string> &pgpIds) {
-        AuthGPG::getAuthGPG()->availablePGPCertificates(pgpIds);
+        AuthGPG::getAuthGPG()->availablePGPCertificatesWithPrivateKeys(pgpIds);
 	return 1;
 }
 
@@ -1886,6 +1886,12 @@ int RsServer::StartupRetroShare()
 	rsNotify = new p3Notify();
 
         mConnMgr = new p3ConnectMgr();
+        //load all the SSL certs as friends
+        std::list<std::string> sslIds;
+        AuthSSL::getAuthSSL()->getAuthenticatedList(sslIds);
+        for (std::list<std::string>::iterator sslIdsIt = sslIds.begin(); sslIdsIt != sslIds.end(); sslIdsIt++) {
+            mConnMgr->addFriend(*sslIdsIt);
+        }
 	pqiNetAssistFirewall *mUpnpMgr = new upnphandler();
         //p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr, RsInitConfig::configDir);
 

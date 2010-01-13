@@ -130,37 +130,36 @@ virtual bool OthersChanged() 					= 0;
 	/* Peer Details (Net & Auth) */
 virtual std::string getOwnId()					= 0;
 
-virtual bool	getOnlineList(std::list<std::string> &ids)	= 0;
-virtual bool	getFriendList(std::list<std::string> &ids)	= 0;
-virtual bool	getOthersList(std::list<std::string> &ids)	= 0;
+virtual bool	getOnlineList(std::list<std::string> &ssl_ids)	= 0;
+virtual bool	getFriendList(std::list<std::string> &ssl_ids)	= 0;
+virtual bool	getOthersList(std::list<std::string> &ssl_ids)	= 0;
 
-virtual bool    isOnline(std::string id)			= 0;
-virtual bool    isFriend(std::string id)			= 0;
-virtual std::string getPeerName(std::string id)			= 0;
-virtual std::string getPeerPGPName(std::string pgp_id)	= 0;
-virtual bool	getPeerDetails(std::string id, RsPeerDetails &d) = 0; //get Peer detail accept SSL and PGP certs
+virtual bool    isOnline(std::string ssl_id)			= 0;
+virtual bool    isFriend(std::string ssl_id)			= 0;
+virtual std::string getPeerName(std::string ssl_id)			= 0;
+virtual std::string getPeerPGPName(std::string ssl_id)	= 0;
+virtual bool	getPeerDetails(std::string ssl_or_gpg_id, RsPeerDetails &d) = 0; //get Peer detail accept SSL and PGP certs
 
 		/* Using PGP Ids */
 virtual std::string getPGPOwnId()				= 0;
 virtual std::string getPGPId(std::string ssl_id)	= 0;
-virtual bool    getPGPAcceptedList(std::list<std::string> &ids)   = 0;
-virtual bool    getPGPSignedList(std::list<std::string> &ids)   = 0;//friends that we accpet to connect with but we don't want to sign their gpg key
-virtual bool    getPGPValidList(std::list<std::string> &ids)   = 0;
-virtual bool    getPGPAllList(std::list<std::string> &ids) 	= 0;
-virtual bool	getPGPDetails(std::string id, RsPeerDetails &d) = 0;
-
-virtual bool    getPGPFriendList(std::list<std::string> &ids) 	= 0;
+virtual bool    getPGPAcceptedList(std::list<std::string> &gpg_ids)   = 0;
+virtual bool    getPGPSignedList(std::list<std::string> &gpg_ids)   = 0;//friends that we accpet to connect with but we don't want to sign their gpg key
+virtual bool    getPGPValidList(std::list<std::string> &gpg_ids)   = 0;
+virtual bool    getPGPAllList(std::list<std::string> &gpg_ids) 	= 0;
+virtual bool	getPGPDetails(std::string gpg_id, RsPeerDetails &d) = 0;
+virtual bool    getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> &ids) = 0;
 
 	/* Add/Remove Friends */
 virtual	bool addFriend(std::string id)        			= 0;
 virtual	bool removeFriend(std::string id)  			= 0;
 
 	/* Network Stuff */
-virtual	bool connectAttempt(std::string id)			= 0;
-virtual	bool setLocalAddress(std::string id, std::string addr, uint16_t port) = 0;
-virtual	bool setExtAddress(  std::string id, std::string addr, uint16_t port) = 0;
-virtual	bool setNetworkMode(std::string id, uint32_t netMode) 	= 0;
-virtual bool setVisState(std::string id, uint32_t vis)		= 0;
+virtual	bool connectAttempt(std::string ssl_id)			= 0;
+virtual	bool setLocalAddress(std::string ssl_id, std::string addr, uint16_t port) = 0;
+virtual	bool setExtAddress(  std::string ssl_id, std::string addr, uint16_t port) = 0;
+virtual	bool setNetworkMode(std::string ssl_id, uint32_t netMode) 	= 0;
+virtual bool setVisState(std::string ssl_id, uint32_t vis)		= 0;
 
 virtual void getIPServersList(std::list<std::string>& ip_servers) = 0;
 virtual void allowServerIPDetermination(bool) = 0;
@@ -176,8 +175,8 @@ virtual	bool LoadCertificateFromString(std::string cert, std::string &id)  = 0;
 virtual	bool SaveCertificateToFile(std::string id, std::string fname)  = 0;
 virtual	std::string SaveCertificateToString(std::string id)  	= 0;
 
-virtual	bool SignGPGCertificate(std::string id)                   	= 0;
-virtual	bool TrustGPGCertificate(std::string id, uint32_t trustlvl) 	= 0;
+virtual	bool SignGPGCertificate(std::string gpg_id)                   	= 0;
+virtual	bool TrustGPGCertificate(std::string gpg_id, uint32_t trustlvl) 	= 0;
 
 };
 

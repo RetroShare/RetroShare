@@ -729,7 +729,6 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 	{
 		std::cerr << "  Found a peer that trust me: " << peerId << " (" << rsPeers->getPeerName(peerId) << ")" << std::endl ;
 		flags |= RS_NET_FLAGS_TRUSTS_ME;
-                AuthSSL::getAuthSSL()->addTrustingPeer(peerId) ;
 	}
 
 	/* generate type */
