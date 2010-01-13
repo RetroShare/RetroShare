@@ -2230,8 +2230,10 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                     AuthSSL::getAuthSSL()->ProcessX509(certCopy, certId);
                     mConnMgr->addFriend(certId);
                 }
-            }
 
+                //this current connection won't work, so respond false
+                preverify_ok = false;
+            }
             //check that the peerid in the context is the same as the cert one
             SSL *ssl = (SSL*) X509_STORE_CTX_get_ex_data(ctx, SSL_get_ex_data_X509_STORE_CTX_idx());
             if (SSL_get_ex_data(ssl, AuthSSL::ex_data_ctx_index)) {
