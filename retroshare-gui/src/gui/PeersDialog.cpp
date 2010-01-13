@@ -287,6 +287,9 @@ void  PeersDialog::insertPeers()
 
         //add the gpg friends
         for(it = gpgFriends.begin(); it != gpgFriends.end(); it++) {
+            if (*it == rsPeers->getPGPOwnId()) {
+                continue;
+            }
 		RsPeerDetails detail;
                 if (!rsPeers->getPeerDetails(*it, detail)) {
 			continue; /* BAD */
@@ -355,7 +358,7 @@ void  PeersDialog::insertPeers()
                         sslItem -> setIcon(0,(QIcon(IMAGE_ONLINE)));
                         QFont font;
                         font.setBold(true);
-                        for(i = 1; i < 3; i++) {
+                        for(i = 0; i < 3; i++) {
                             sslItem -> setTextColor(i,(Qt::darkBlue));
                             sslItem -> setFont(i,font);
                         }
@@ -363,7 +366,7 @@ void  PeersDialog::insertPeers()
                         sslItem -> setIcon(0,(QIcon(IMAGE_UNREACHABLE)));
                         QFont font;
                         font.setBold(false);
-                        for(i = 1; i < 3; i++) {
+                        for(i = 0; i < 3; i++) {
                             sslItem -> setTextColor(i,(Qt::darkRed));
                             sslItem -> setFont(i,font);
                         }
@@ -372,7 +375,7 @@ void  PeersDialog::insertPeers()
                         sslItem -> setIcon(0,(QIcon(IMAGE_AVAIBLE)));
                         QFont font;
                         font.setBold(true);
-                        for(i = 1; i < 3; i++) {
+                        for(i = 0; i < 3; i++) {
                             sslItem -> setTextColor(i,(Qt::darkCyan));
                             sslItem -> setFont(i,font);
                         }
@@ -384,7 +387,7 @@ void  PeersDialog::insertPeers()
                         }
                         QFont font;
                         font.setBold(false);
-                        for(i = 1; i < 3; i++) {
+                        for(i = 0; i < 3; i++) {
                             sslItem -> setTextColor(i,(Qt::black));
                             sslItem -> setFont(i,font);
                         }
