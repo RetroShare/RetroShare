@@ -300,7 +300,7 @@ class CompressedChunkMap
 		uint32_t filledChunks(uint32_t nbchks)
 		{
 			uint32_t res = 0 ;
-			for(uint32_t i=0;i<std::min(nbchks,_map.size()*32);++i)
+			for(uint32_t i=0;i<std::min(nbchks,(uint32_t)_map.size()*32);++i)
 				res += operator[](i) ;
 			return res ;
 		}
