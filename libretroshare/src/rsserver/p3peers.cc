@@ -626,6 +626,8 @@ bool 	p3Peers::isDummyFriend(std::string ssl_id) {
         bool ret = false;
         if (getPeerDetails(ssl_id, details)) {
             ret = (details.id == ("dummy" + details.gpg_id));
+        } else {
+            ret = (ssl_id.substr(0,5) == "dummy");
         }
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::isDummyFriend() return : " << ret << std::endl;
