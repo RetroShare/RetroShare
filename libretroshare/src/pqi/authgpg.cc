@@ -1326,8 +1326,6 @@ bool AuthGPG::VerifySignBin(const void *data, uint32_t datalen, unsigned char *s
 
 int	AuthGPG::privateSignCertificate(std::string id)
 {
-	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
-
 	/* The key should be in Others list and not in Peers list ?? 
 	 * Once the key is signed, it moves from Others to Peers list ??? 
 	 */
@@ -1360,8 +1358,10 @@ int	AuthGPG::privateSignCertificate(std::string id)
 		return 0;	
 	}
 	
-	/* Should I move the certificate from Others to Peers ???  */
-	 
+        RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+        storeAllKeys_locked();
+
+
 	return 1;
 }
 
@@ -1375,10 +1375,7 @@ int	AuthGPG::privateRevokeCertificate(std::string id)
 
 int	AuthGPG::privateTrustCertificate(std::string id, int trustlvl)
 {
-	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
-
-	/* The certificate should be in Peers list ??? */
-	
+	/* The certificate should be in Peers list ??? */	
         if(!isGPGSigned(id)) {
 		std::cerr << "Invalid Certificate" << std::endl;
 		return 0;
@@ -1402,6 +1399,7 @@ int	AuthGPG::privateTrustCertificate(std::string id, int trustlvl)
         //the key ref has changed, we got to get rid of the old reference.
         trustCert.key = NULL;
 
+        RsStackMutex stack(pgpMtx); /******* LOCKED ******/
         storeAllKeys_locked();
 		
 	return 1;
