@@ -69,7 +69,9 @@ private slots:
 	void closeinfodlg();
 	void applyDialog();
 	void makeFriend();
-  
+        void denyFriend();
+        void signGPGKey();
+
 private:
 
   /** Loads the saved connectidialog settings */

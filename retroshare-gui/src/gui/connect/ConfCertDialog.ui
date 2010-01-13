@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>459</width>
+    <width>512</width>
     <height>529</height>
    </rect>
   </property>
@@ -21,7 +21,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="stabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="icon">
@@ -254,6 +254,145 @@
       </attribute>
       <layout class="QVBoxLayout" name="_9">
        <item>
+        <layout class="QHBoxLayout" name="friendAndSignLayout">
+         <item>
+          <widget class="QPushButton" name="denyFriendButton">
+           <property name="text">
+            <string>Deny Friend</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../images.qrc">
+             <normaloff>:/images/cancel.png</normaloff>:/images/cancel.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>15</width>
+             <height>15</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="make_friend_button">
+           <property name="text">
+            <string>Make Friends</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../images.qrc">
+             <normaloff>:/images/add-friend24.png</normaloff>:/images/add-friend24.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>15</width>
+             <height>15</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="signGPGKeyCheckBox">
+           <property name="text">
+            <string>Sign GPG key</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../images.qrc">
+             <normaloff>:/images/dauthed.png</normaloff>:/images/dauthed.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>15</width>
+             <height>15</height>
+            </size>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="signKeyButton">
+           <property name="text">
+            <string>Sign GPG Key</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../images.qrc">
+             <normaloff>:/images/dauthed.png</normaloff>:/images/dauthed.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>15</width>
+             <height>15</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>10</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="wotLayout">
+         <item>
+          <widget class="QLabel" name="web_of_trust_label">
+           <property name="text">
+            <string>Your trust in this peer is :</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButton_trust_never">
+           <property name="text">
+            <string>None</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButton_trust_marginnaly">
+           <property name="text">
+            <string>Marginal</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButton_trust_fully">
+           <property name="text">
+            <string>Full</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>10</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
         <widget class="QGroupBox" name="groupBox_3">
          <property name="font">
           <font>
@@ -262,20 +401,32 @@
           </font>
          </property>
          <property name="title">
-          <string>GPG Key signing settings</string>
+          <string>GPG Key</string>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+         <property name="checkable">
+          <bool>false</bool>
          </property>
          <layout class="QVBoxLayout" name="_10">
           <item>
            <widget class="QLabel" name="is_signing_me">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>Peer has signed my GPG key</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox_4">
+           <widget class="QGroupBox" name="signersBox">
             <property name="title">
-             <string>Peer key is already signed by :</string>
+             <string>Peer key is signed by :</string>
             </property>
             <layout class="QVBoxLayout" name="_11">
              <item>
@@ -283,106 +434,6 @@
              </item>
             </layout>
            </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="signed_already_label">
-            <property name="maximumSize">
-             <size>
-              <width>450</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Not filled</string>
-            </property>
-            <property name="scaledContents">
-             <bool>false</bool>
-            </property>
-            <property name="wordWrap">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="signGPGKeyCheckBox">
-            <property name="text">
-             <string>Sign GPG key (Default)</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="make_friend_button">
-            <property name="text">
-             <string>Make Friends</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_5">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>50</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <kerning>true</kerning>
-          </font>
-         </property>
-         <property name="title">
-          <string>GPG Web of Trust</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <widget class="QLabel" name="web_of_trust_label">
-            <property name="text">
-             <string>Your trust in this peer is :</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <item>
-             <widget class="QRadioButton" name="radioButton_trust_never">
-              <property name="toolTip">
-               <string>Your trust in this peer is none, it means he is known to improperly sign other keys.</string>
-              </property>
-              <property name="text">
-               <string>None</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton_trust_marginnaly">
-              <property name="toolTip">
-               <string>Your trust in this peer is marginal, it means he understands the implications of key signing and properly check keys before signing them.</string>
-              </property>
-              <property name="text">
-               <string>Marginnaly</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton_trust_fully">
-              <property name="toolTip">
-               <string>Your trust in this peer is full, it means he has an excellent understanding of key signing, and his signature on a key would be as good as your own.</string>
-              </property>
-              <property name="text">
-               <string>Fully</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
           </item>
          </layout>
         </widget>

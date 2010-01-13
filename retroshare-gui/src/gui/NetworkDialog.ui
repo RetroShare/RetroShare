@@ -222,7 +222,7 @@ subcontrol-position: bottom right;
          </layout>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="3" column="0">
         <widget class="QTabWidget" name="tabBottom">
          <property name="maximumSize">
           <size>
@@ -400,6 +400,47 @@ subcontrol-position: bottom right;
            </item>
           </layout>
          </widget>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QTreeWidget" name="unvalidGPGkeyWidget">
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
+         <attribute name="headerCascadingSectionResizes">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="headerDefaultSectionSize">
+          <number>200</number>
+         </attribute>
+         <attribute name="headerShowSortIndicator" stdset="0">
+          <bool>true</bool>
+         </attribute>
+         <column>
+          <property name="text">
+           <string/>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>GPG key validity</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Did peer authenticated me</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Cert Id</string>
+          </property>
+         </column>
         </widget>
        </item>
       </layout>

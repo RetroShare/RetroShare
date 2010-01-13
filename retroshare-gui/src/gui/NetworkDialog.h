@@ -64,7 +64,8 @@ private slots:
   void peerdetails();
   /** Create the context popup menu and it's submenus */
   void connecttreeWidgetCostumPopupMenu( QPoint point );
-  
+  //void unvalidGPGkeyWidgetCostumPopupMenu( QPoint point );
+
   /** Called when user clicks "Load Cert" to choose location of a Cert file */
   void loadcert();
 

@@ -87,6 +87,9 @@ NetworkDialog::NetworkDialog(QWidget *parent)
   _settings = new RshareSettings();
 
   connect( ui.connecttreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connecttreeWidgetCostumPopupMenu( QPoint ) ) );
+  connect( ui.connecttreeWidget, SIGNAL( itemSelectionChanged()), ui.unvalidGPGkeyWidget, SLOT( clearSelection() ) );
+  connect( ui.unvalidGPGkeyWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connecttreeWidgetCostumPopupMenu( QPoint ) ) );
+  connect( ui.unvalidGPGkeyWidget, SIGNAL( itemSelectionChanged()), ui.connecttreeWidget, SLOT( clearSelection() ) );
 
   /* create a single connect dialog */
   connectdialog = new ConnectDialog();
@@ -120,7 +123,29 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     headerItem->setTextAlignment(3, Qt::AlignHCenter | Qt::AlignVCenter);
     headerItem->setTextAlignment(4, Qt::AlignVCenter);
 
-    ui.networkTab->addTab(new NetworkView(),QString(tr("Network View")));
+      /* hide the Tree +/- */
+    ui.unvalidGPGkeyWidget -> setRootIsDecorated( false );
+
+    /* Set header resize modes and initial section sizes */
+    ui.unvalidGPGkeyWidget->header()->setResizeMode (0, QHeaderView::Custom);
+    ui.unvalidGPGkeyWidget->header()->setResizeMode (1, QHeaderView::Interactive);
+    ui.unvalidGPGkeyWidget->header()->setResizeMode (2, QHeaderView::Interactive);
+    ui.unvalidGPGkeyWidget->header()->setResizeMode (3, QHeaderView::Interactive);
+    ui.unvalidGPGkeyWidget->header()->setResizeMode (4, QHeaderView::Interactive);
+
+    ui.unvalidGPGkeyWidget->header()->resizeSection ( 0, 25 );
+    ui.unvalidGPGkeyWidget->header()->resizeSection ( 1, 200 );
+    ui.unvalidGPGkeyWidget->header()->resizeSection ( 2, 200 );
+    ui.unvalidGPGkeyWidget->header()->resizeSection ( 3, 200 );
+
+    // set header text aligment
+    ui.unvalidGPGkeyWidget->headerItem()->setTextAlignment(0, Qt::AlignHCenter | Qt::AlignVCenter);
+    ui.unvalidGPGkeyWidget->headerItem()->setTextAlignment(1, Qt::AlignHCenter | Qt::AlignVCenter);
+    ui.unvalidGPGkeyWidget->headerItem()->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
+    ui.unvalidGPGkeyWidget->headerItem()->setTextAlignment(3, Qt::AlignHCenter | Qt::AlignVCenter);
+    ui.unvalidGPGkeyWidget->headerItem()->setTextAlignment(4, Qt::AlignVCenter);
+
+    //ui.networkTab->addTab(new NetworkView(),QString(tr("Network View")));
     ui.networkTab->addTab(new TrustView(),QString(tr("Trust matrix")));
      
     QString version = "-";
@@ -173,7 +198,7 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 
 void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 {
-
+    std::cerr << "NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point ) called" << std::endl;
     QTreeWidgetItem *wi = getCurrentNeighbour();
     if (!wi)
     	return;
@@ -193,7 +218,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 
                 if(peer_id != rsPeers->getGPGOwnId())
 		{
-                        if(detail.ownsign)
+                        if(detail.accept_connection)
 			{
 				denyFriendAct = new QAction(QIcon(IMAGE_DENIED), tr( "Deny friend" ), this );
 
@@ -341,11 +366,7 @@ void NetworkDialog::insertConnect()
 
         std::list<std::string> neighs; //these are GPG ids
 	std::list<std::string>::iterator it;
-        if (ui.showUnvalidKeys->isChecked()) {
-            rsPeers->getGPGAllList(neighs);
-        } else {
-            rsPeers->getGPGValidList(neighs);
-        }
+        rsPeers->getGPGAllList(neighs);
 
 	/* get a link to the table */
         QTreeWidget *connectWidget = ui.connecttreeWidget;
@@ -360,7 +381,8 @@ void NetworkDialog::insertConnect()
         RsPeerDetails ownGPGDetails ;
         rsPeers->getGPGDetails(rsPeers->getGPGOwnId(), ownGPGDetails);
 
-        QList<QTreeWidgetItem *> items;
+        QList<QTreeWidgetItem *> validItems;
+        QList<QTreeWidgetItem *> unvalidItems;
 	for(it = neighs.begin(); it != neighs.end(); it++)
 	{
                 if (*it == rsPeers->getGPGOwnId()) {
@@ -413,7 +435,7 @@ void NetworkDialog::insertConnect()
 		*/
 		QColor backgrndcolor;
 		
-                if (detail.ownsign)
+                if (detail.accept_connection)
 		{
 			item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
 			backgrndcolor=Qt::green;
@@ -423,7 +445,7 @@ void NetworkDialog::insertConnect()
                         if (detail.hasSignedMe)
 			{
 				backgrndcolor=Qt::magenta;
-				item -> setIcon(0,(QIcon(IMAGE_TRUSTED)));
+                                item -> setIcon(0,(QIcon(IMAGE_DENIED)));
 				for(int k=0;k<8;++k)
                                         item -> setToolTip(k,QString::fromStdString(detail.name) + QString(tr(" has authenticated you. \nRight-click and select 'make friend' to be able to connect."))) ;
 			}
@@ -440,7 +462,11 @@ void NetworkDialog::insertConnect()
 			item -> setBackground(i,QBrush(backgrndcolor));
 
 		/* add to the list */
-		items.append(item);
+                if (detail.accept_connection || detail.validLvl >= 3) {
+                    validItems.append(item);
+                } else {
+                    unvalidItems.append(item);
+                }
 
 	}
 
@@ -457,41 +483,44 @@ void NetworkDialog::insertConnect()
                 self_item->setBackground(i,QBrush(Qt::green));
         }
         self_item->setIcon(0,(QIcon(IMAGE_AUTHED)));
-        items.append(self_item);
+        validItems.append(self_item);
 
 
 	/* remove old items ??? */
 	connectWidget->clear();
         connectWidget->setColumnCount(5);
+        ui.unvalidGPGkeyWidget->clear();
+        ui.unvalidGPGkeyWidget->setColumnCount(5);
 
 	/* add the items in! */
-	connectWidget->insertTopLevelItems(0, items);
-	if (newSelect)
-	{
-		connectWidget->setCurrentItem(newSelect);
-	}
+        connectWidget->insertTopLevelItems(0, validItems);
+        ui.unvalidGPGkeyWidget->insertTopLevelItems(0, unvalidItems);
+        if (newSelect) {
+                connectWidget->setCurrentItem(newSelect);
+                ui.unvalidGPGkeyWidget->setCurrentItem(newSelect);
+        }
         connectWidget->sortItems( 1, Qt::AscendingOrder );
-	connectWidget->update(); /* update display */
+        ui.unvalidGPGkeyWidget->sortItems( 1, Qt::AscendingOrder );
+
+        if (ui.showUnvalidKeys->isChecked()) {
+            ui.unvalidGPGkeyWidget->show();
+        } else {
+            ui.unvalidGPGkeyWidget->hide();
+        }
+        connectWidget->update(); /* update display */
+        ui.unvalidGPGkeyWidget->update(); /* update display */
+
 }
 
 QTreeWidgetItem *NetworkDialog::getCurrentNeighbour()
 { 
-        /* get the current, and extract the Id */
-  
-        /* get a link to the table */
-        QTreeWidget *connectWidget = ui.connecttreeWidget;
-        QTreeWidgetItem *item = connectWidget -> currentItem();
-        if (!item) 
-        {
-#ifdef NET_DEBUG 
-                std::cerr << "Invalid Current Item" << std::endl;
-#endif
-                return NULL;
+        if (ui.connecttreeWidget->selectedItems().size() != 0)  {
+            return ui.connecttreeWidget -> currentItem();
+        } else if (ui.unvalidGPGkeyWidget->selectedItems().size() != 0) {
+            return ui.unvalidGPGkeyWidget->currentItem();
         }
-    
-        /* Display the columns of this item. */
 
-        return item;
+        return NULL;
 }   
 
 /* Utility Fns */

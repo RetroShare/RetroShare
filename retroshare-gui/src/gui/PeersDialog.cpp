@@ -213,7 +213,12 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       exportfriendAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Export Friend" ), this );
       connect( exportfriendAct , SIGNAL( triggered() ), this, SLOT( exportfriend() ) );
 
-      removefriendAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Deny Friend" ), this );
+      QTreeWidgetItem *c = getCurrentPeer();
+      if (c->type() == 0) {
+          removefriendAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Deny Friend" ), this );
+      } else {
+          removefriendAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Remove Friend Location" ), this );
+      }
       connect( removefriendAct , SIGNAL( triggered() ), this, SLOT( removefriend() ) );
 
 
@@ -310,7 +315,7 @@ void  PeersDialog::insertPeers()
             if (list.size() == 1) {
                 gpg_item = list.front();
             } else {
-                gpg_item = new QTreeWidgetItem(0);
+                gpg_item = new QTreeWidgetItem(0); //set type to 0 for custom popup menu
                 gpg_item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
             }
 
@@ -360,7 +365,7 @@ void  PeersDialog::insertPeers()
                     }
                 }
                 if (newChild) {
-                   sslItem = new QTreeWidgetItem(1);
+                   sslItem = new QTreeWidgetItem(1); //set type to 1 for custom popup menu
                 }
 
                 RsPeerDetails sslDetail;

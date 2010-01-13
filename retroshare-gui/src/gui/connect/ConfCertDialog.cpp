@@ -48,6 +48,8 @@ ConfCertDialog::ConfCertDialog(QWidget *parent, Qt::WFlags flags)
   connect(ui.applyButton, SIGNAL(clicked()), this, SLOT(applyDialog()));
   connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(closeinfodlg()));
   connect(ui.make_friend_button, SIGNAL(clicked()), this, SLOT(makeFriend()));
+  connect(ui.denyFriendButton, SIGNAL(clicked()), this, SLOT(denyFriend()));
+  connect(ui.signKeyButton, SIGNAL(clicked()), this, SLOT(signGPGKey()));
 
 
   ui.applyButton->setToolTip(tr("Apply and Close"));
@@ -171,64 +173,91 @@ void ConfCertDialog::loadDialog()
             ui.groupBox->hide();
         }
 
-        if (detail.accept_connection) {
-            //connection already accepted, propose to sign gpg key
-            if (!detail.ownsign) {
-                ui.signGPGKeyCheckBox->setChecked(true);
-                ui.signGPGKeyCheckBox->hide();
-                ui.signed_already_label->setText(tr("Peer is already a friend"));
-                ui.make_friend_button->setText(tr("Sign GPG key"));
-                ui.make_friend_button->show();
-            } else {
-                ui.signGPGKeyCheckBox->hide();
-                ui.signed_already_label->setText(tr("Peer is a friend and GPG key is signed"));
-                ui.signed_already_label->show();
-                ui.make_friend_button->hide();
-            }
+        if (detail.gpg_id == rsPeers->getGPGOwnId()) {
+            ui.make_friend_button->hide();
+            ui.signGPGKeyCheckBox->hide();
+            ui.signKeyButton->hide();
+            ui.denyFriendButton->hide();
+
+            ui.web_of_trust_label->hide();
+            ui.radioButton_trust_fully->hide();
+            ui.radioButton_trust_marginnaly->hide();
+            ui.radioButton_trust_never->hide();
+
+            ui.is_signing_me->hide();
+            ui.signersBox->setTitle(tr("Your key is signed by : "));
+
         } else {
             ui.make_friend_button->show();
-            ui.make_friend_button->setText(tr("Make Friend"));
-            if (!detail.ownsign) {
-                ui.signGPGKeyCheckBox->show();
-                ui.signGPGKeyCheckBox->setChecked(true);
-            } else {
-                ui.signGPGKeyCheckBox->hide();
-            }
-            ui.signed_already_label->hide();
-        }
+            ui.signGPGKeyCheckBox->show();
+            ui.signKeyButton->show();
+            ui.denyFriendButton->show();
 
-        if (detail.hasSignedMe) {
-                ui.is_signing_me->setText(tr("Peer has authenticated me as a friend and did sign my GPG key"));
-        } else {
-                ui.is_signing_me->setText(tr("Peer has not authenticated me as a friend and did not sign my GPG key"));
-       }
-
-       //web of trust
-       if (detail.trustLvl == 5) {
-           //trust is ultimate, it means it's one of our own keys
-           ui.web_of_trust_label->setText(tr("Your trust in this peer is ultimate, it's probably a key you own."));
-           ui.radioButton_trust_fully->hide();
-           ui.radioButton_trust_marginnaly->hide();
-           ui.radioButton_trust_never->hide();
-       } else {
+            ui.web_of_trust_label->show();
             ui.radioButton_trust_fully->show();
             ui.radioButton_trust_marginnaly->show();
             ui.radioButton_trust_never->show();
-            if (detail.trustLvl == 4) {
-                ui.web_of_trust_label->setText(tr("Your trust in this peer is full."));
-                ui.radioButton_trust_fully->setChecked(true);
-            } else if (detail.trustLvl == 3) {
-                ui.web_of_trust_label->setText(tr("Your trust in this peer is marginal."));
-                ui.radioButton_trust_marginnaly->setChecked(true);
-            } else if (detail.trustLvl == 2) {
-                ui.web_of_trust_label->setText(tr("Your trust in this peer is none."));
-                ui.radioButton_trust_never->setChecked(true);
+
+            ui.is_signing_me->show();
+            ui.signersBox->setTitle(tr("Peer key is signed by : "));
+
+            if (detail.accept_connection) {
+                ui.make_friend_button->hide();
+                ui.denyFriendButton->show();
+                ui.signGPGKeyCheckBox->hide();
+                //connection already accepted, propose to sign gpg key
+                if (!detail.ownsign) {
+                    ui.signGPGKeyCheckBox->hide();
+                    ui.signKeyButton->show();
+                } else {
+                    ui.signGPGKeyCheckBox->hide();
+                    ui.signKeyButton->hide();
+                }
             } else {
-                ui.web_of_trust_label->setText(tr("Your trust in this peer is not set."));
-                ui.radioButton_trust_fully->setChecked(false);
-                ui.radioButton_trust_marginnaly->setChecked(false);
-                ui.radioButton_trust_never->setChecked(false);
+                ui.make_friend_button->show();
+                ui.denyFriendButton->hide();
+                ui.signKeyButton->hide();
+                if (!detail.ownsign) {
+                    ui.signGPGKeyCheckBox->show();
+                    ui.signGPGKeyCheckBox->setChecked(true);
+                } else {
+                    ui.signGPGKeyCheckBox->hide();
+                }
+            }
+
+           //web of trust
+           if (detail.trustLvl == 5) {
+               //trust is ultimate, it means it's one of our own keys
+               ui.web_of_trust_label->setText(tr("Your trust in this peer is ultimate, it's probably a key you own."));
+               ui.radioButton_trust_fully->hide();
+               ui.radioButton_trust_marginnaly->hide();
+               ui.radioButton_trust_never->hide();
+           } else {
+                ui.radioButton_trust_fully->show();
+                ui.radioButton_trust_marginnaly->show();
+                ui.radioButton_trust_never->show();
+                if (detail.trustLvl == 4) {
+                    ui.web_of_trust_label->setText(tr("Your trust in this peer is full."));
+                    ui.radioButton_trust_fully->setChecked(true);
+                } else if (detail.trustLvl == 3) {
+                    ui.web_of_trust_label->setText(tr("Your trust in this peer is marginal."));
+                    ui.radioButton_trust_marginnaly->setChecked(true);
+                } else if (detail.trustLvl == 2) {
+                    ui.web_of_trust_label->setText(tr("Your trust in this peer is none."));
+                    ui.radioButton_trust_never->setChecked(true);
+                } else {
+                    ui.web_of_trust_label->setText(tr("Your trust in this peer is not set."));
+                    ui.radioButton_trust_fully->setChecked(false);
+                    ui.radioButton_trust_marginnaly->setChecked(false);
+                    ui.radioButton_trust_never->setChecked(false);
+               }
            }
+
+            if (detail.hasSignedMe) {
+                ui.is_signing_me->setText(tr("Peer has authenticated me as a friend and did sign my GPG key"));
+            } else {
+                ui.is_signing_me->setText(tr("Peer has not authenticated me as a friend and did not sign my GPG key"));
+            }
        }
 
         ui.signers->clear() ;
@@ -292,8 +321,7 @@ void ConfCertDialog::applyDialog()
         closeinfodlg();
 }
 
-void ConfCertDialog::makeFriend()
-{
+void ConfCertDialog::makeFriend() {
     std::string gpg_id = rsPeers->getGPGId(mId);
     if (ui.signGPGKeyCheckBox->isChecked()) {
         rsPeers->signGPGCertificate(gpg_id);
@@ -303,3 +331,16 @@ void ConfCertDialog::makeFriend()
     rsPeers->addFriend(mId, gpg_id);
     loadDialog();
 }
+
+void ConfCertDialog::denyFriend() {
+    std::string gpg_id = rsPeers->getGPGId(mId);
+    rsPeers->setAcceptToConnectGPGCertificate(gpg_id, false);
+    loadDialog();
+}
+
+void ConfCertDialog::signGPGKey() {
+    std::string gpg_id = rsPeers->getGPGId(mId);
+    rsPeers->signGPGCertificate(gpg_id);
+    loadDialog();
+}
+
