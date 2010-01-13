@@ -1886,6 +1886,7 @@ int RsServer::StartupRetroShare()
 	rsNotify = new p3Notify();
 
         mConnMgr = new p3ConnectMgr();
+        AuthSSL::getAuthSSL()->mConnMgr = mConnMgr;
         //load all the SSL certs as friends
         std::list<std::string> sslIds;
         AuthSSL::getAuthSSL()->getAuthenticatedList(sslIds);

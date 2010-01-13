@@ -33,6 +33,7 @@
 
 #include "pqinetwork.h"
 #include "authgpg.h"
+#include "pqi/p3connmgr.h"
 
 /******************** notify of new Cert **************************/
 #include "pqinotify.h"
@@ -51,6 +52,10 @@
 
 // initialisation du pointeur de singleton à zéro
 AuthSSL *AuthSSL::instance_ssl = new AuthSSL();
+
+// initialisation du pointeur de ex data du ssl context
+int AuthSSL::ex_data_ctx_index = 0;
+
 
 sslcert::sslcert(X509 *x509, std::string pid)
 {
@@ -585,6 +590,36 @@ SSL_CTX *AuthSSL::getCTX()
 	std::cerr << std::endl;
 #endif
 	return sslctx;
+}
+
+/* Context handling  */
+SSL_CTX *AuthSSL::getNewSslCtx()
+{
+#ifdef AUTHSSL_DEBUG
+        std::cerr << "AuthSSL::getNewSslCtx()";
+        std::cerr << std::endl;
+#endif
+        // setup connection method
+        SSL_CTX *newSslctx = SSL_CTX_new(TLSv1_method());
+
+        // setup cipher lists.
+        SSL_CTX_set_cipher_list(newSslctx, "DEFAULT");
+
+        // certificates (Set Local Server Certificate).
+        SSL_CTX_use_certificate(newSslctx, mOwnCert->certificate);
+
+        // get private key
+        SSL_CTX_use_PrivateKey(newSslctx, pkey);
+
+        // enable verification of certificates (PEER)
+        // and install verify callback.
+        SSL_CTX_set_verify(newSslctx, SSL_VERIFY_PEER |
+                        SSL_VERIFY_FAIL_IF_NO_PEER_CERT,
+                                verify_x509_callback);
+
+        std::cerr << "getNewSslCtx() finished" << std::endl;
+
+        return newSslctx;
 }
 
 int     AuthSSL::setConfigDirectories(std::string configfile, std::string neighdir)
@@ -1880,13 +1915,37 @@ X509 *AuthSSL::SignX509Req(X509_REQ *req, long days)
 
 bool AuthSSL::AuthX509(X509 *x509)
 {
+        fprintf(stderr, "AuthSSL::AuthX509() called\n");
+
         RsStackMutex stack(sslMtx); /******* LOCKED ******/
 
         /* extract CN for peer Id */
-        X509_NAME *issuer = X509_get_issuer_name(x509);
-        std::string id = "";
+        std::string issuer = getX509CNString(x509->cert_info->issuer);
+        //check that the issuer is in the accepted GPG key list.
+        std::list<std::string> acceptedIds;
+        AuthGPG::getAuthGPG()->getPGPAcceptedList(acceptedIds);
+        bool isAccepted = false;
+        for(std::list<std::string>::iterator it = acceptedIds.begin(); it != acceptedIds.end(); it++){
+            std::cerr << "AuthSSL::AuthX509() : accepted id : " << *it << std::endl;
+            if (*it == issuer) {
+                isAccepted = true;
+                break;
+            }
+        }
+        if (!isAccepted) {
+            //check that the gpg key is not one of our private key usefull for initialisation
+            AuthGPG::getAuthGPG()->availablePGPCertificatesWithPrivateKeys(acceptedIds);
+            bool isAccepted = false;
+            for(std::list<std::string>::iterator it = acceptedIds.begin(); it != acceptedIds.end(); it++){
+                std::cerr << "AuthSSL::AuthX509() : accepted id : " << *it << std::endl;
+                if (*it == issuer) {
+                    isAccepted = true;
+                    break;
+                }
+            }
+        }
 
-        /* verify signature */
+        /* verify GPG signature */
 
         /*** NOW The Manual signing bit (HACKED FROM asn1/a_sign.c) ***/
         int (*i2d)(X509_CINF*, unsigned char**) = i2d_X509_CINF;
@@ -2132,12 +2191,68 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                         }
                         preverify_ok = true;
                 }
-        }
-        else
-        {
+        } else {
                 fprintf(stderr, "Failing Normal Certificate!!!\n");
                 preverify_ok = false;
         }
+
+        if (preverify_ok) {
+            //add the cert to our collection if not already in it
+            bool found = false;
+            std::string certId;
+            {
+                RsStackMutex stack(sslMtx);
+                sslcert *cert = NULL;
+                getX509id(X509_STORE_CTX_get_current_cert(ctx), certId);
+                found = locked_FindCert(certId, &cert);
+            }
+            if (!found) {
+                std::cerr << "AuthSSL::VerifyX509Callback adding new SSL friend" << std::endl;
+                //first we want to ceate a new x509 because when SSL connection will be destroyed we will loose ref to the current x509
+                std::string copyCertstr;
+                BIO *bp = BIO_new(BIO_s_mem());
+                PEM_write_bio_X509(bp, X509_STORE_CTX_get_current_cert(ctx));
+                char *data;
+                int len = BIO_get_mem_data(bp, &data);
+                for(int i = 0; i < len; i++)  {
+                        copyCertstr += data[i];
+                }
+                BIO_free(bp);
+
+                //create a new x509 from the copyCertstr
+                char *certstr = strdup(copyCertstr.c_str());
+                BIO *bp2 = BIO_new_mem_buf(certstr, -1);
+                X509 *certCopy = PEM_read_bio_X509(bp2, NULL, NULL, NULL);
+                BIO_free(bp2);
+                free(certstr);
+
+                if (certCopy) {
+                    AuthSSL::getAuthSSL()->ProcessX509(certCopy, certId);
+                    mConnMgr->addFriend(certId);
+                }
+            }
+
+            //check that the peerid in the context is the same as the cert one
+            SSL *ssl = (SSL*) X509_STORE_CTX_get_ex_data(ctx, SSL_get_ex_data_X509_STORE_CTX_idx());
+            if (SSL_get_ex_data(ssl, AuthSSL::ex_data_ctx_index)) {
+                char *peer_id_in_context = (char*) SSL_get_ex_data(ssl, AuthSSL::ex_data_ctx_index);
+                if (std::string(certId.c_str()) != std::string(peer_id_in_context)) {
+                    //the connection was asked for a given peer and get connected top another peer
+                    fprintf(stderr, "AuthSSL::VerifyX509Callback peer id in context not the same as cert, aborting connection.");
+                    preverify_ok = false;
+
+                    //tranfer the ip address to the new peer
+                    peerConnectState detail;
+                    if (mConnMgr->getFriendNetStatus(peer_id_in_context, detail)) {
+                        mConnMgr->setAddressList(certId, detail.getIpAddressList());
+                    }
+                } else {
+                    fprintf(stderr, "AuthSSL::VerifyX509Callback peer id in context is the same as cert, continung connection.");
+                }
+            }
+        }
+
+
         if (preverify_ok) {
             fprintf(stderr, "AuthSSL::VerifyX509Callback returned true.\n");
         } else {

@@ -57,6 +57,8 @@ typedef std::string SSL_id;
 
 class AuthSSL;
 
+class p3ConnectMgr;
+
 class sslcert
 {
         public:
@@ -96,6 +98,7 @@ virtual int	InitAuth(const char *srvr_cert, const char *priv_key,
 					const char *passwd);
 virtual bool	CloseAuth();
 virtual int     setConfigDirectories(std::string confFile, std::string neighDir);
+SSL_CTX *	getNewSslCtx();
 
 
 	/*********** Overloaded Functions from p3AuthMgr **********/
@@ -159,6 +162,7 @@ virtual bool 	ValidateCertificate(X509 *x509, std::string &peerId); /* validate 
 
 	public: /* SSL specific functions used in pqissl/pqissllistener */
 SSL_CTX *getCTX();
+static int ex_data_ctx_index; //used to pass the peer id in the ssl context
 
 
 bool 	FailedCertificate(X509 *x509, bool incoming);     /* store for discovery */
@@ -170,7 +174,9 @@ bool  	loadCertificates(bool &oldFormat, std::map<std::string, std::string> &key
   static AuthSSL *getAuthSSL() throw() // pour obtenir l'instance
       { return instance_ssl; }
 
-	private:
+        p3ConnectMgr *mConnMgr;
+
+    private:
 
         // the single instance of this
         static AuthSSL *instance_ssl;

@@ -945,7 +945,9 @@ int 	pqissl::Initiate_SSL_Connection()
 
 	// Perform SSL magic.
 	// library already inited by sslroot().
-        SSL *ssl = SSL_new(AuthSSL::getAuthSSL()->getCTX());
+        SSL_CTX *ssl_ctx = AuthSSL::getAuthSSL()->getCTX();
+
+        SSL *ssl = SSL_new(ssl_ctx);
 	if (ssl == NULL)
 	{
   		rslog(RSL_ALERT, pqisslzone, 
@@ -960,7 +962,11 @@ int 	pqissl::Initiate_SSL_Connection()
 
 	ssl_connection = ssl;
 
-	net_internal_SSL_set_fd(ssl, sockfd);
+        //store the peer id in the context for the callback check
+        AuthSSL::ex_data_ctx_index = SSL_get_ex_new_index(0, NULL, NULL, NULL, NULL);
+        SSL_set_ex_data(ssl, AuthSSL::ex_data_ctx_index, const_cast<char*> (PeerId().c_str()));
+
+        net_internal_SSL_set_fd(ssl, sockfd);
 	if (err < 1)
 	{
 		std::ostringstream out;
@@ -1065,16 +1071,9 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
 	  "pqissl::Extract_Failed_SSL_Certificate()");
 
 	// Get the Peer Certificate....
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	XPGP *peercert = SSL_get_peer_pgp_certificate(ssl_connection);
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 	X509 *peercert = SSL_get_peer_certificate(ssl_connection);
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
-	if (peercert == NULL)
+        if (peercert == NULL)
 	{
   		rslog(RSL_WARNING, pqisslzone, 
 		  "pqissl::Extract_Failed_SSL_Certificate() Peer Didnt Give Cert");
@@ -1158,7 +1157,7 @@ int 	pqissl::Authorise_SSL_Connection()
 
 		accept(ssl_connection, sockfd, remote_addr);
 		return 1;
-	}
+        }
 
 	{
 		std::ostringstream out;
