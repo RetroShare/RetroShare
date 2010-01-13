@@ -1355,8 +1355,15 @@ bool p3ConnectMgr::getOwnNetStatus(peerConnectState &state)
 
 bool p3ConnectMgr::isFriend(std::string id)
 {
-	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
-	return (mFriendList.end() != mFriendList.find(id));
+#ifdef CONN_DEBUG
+                std::cerr << "p3ConnectMgr::isFriend(" << id << ") called" << std::endl;
+#endif
+        RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+        bool ret = (mFriendList.end() != mFriendList.find(id));
+#ifdef CONN_DEBUG
+                std::cerr << "p3ConnectMgr::isFriend(" << id << ") returning : " << ret << std::endl;
+#endif
+        return ret;
 }
 
 bool p3ConnectMgr::isOnline(std::string id)
@@ -1990,7 +1997,7 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in radd
 
 bool p3ConnectMgr::addFriend(std::string id, std::string gpg_id, uint32_t netMode, uint32_t visState, time_t lastContact)
 {
-	/* so three possibilities 
+        /* so four possibilities
 	 * (1) already exists as friend -> do nothing.
 	 * (2) is in others list -> move over.
 	 * (3) is non-existant -> create new one.
@@ -1999,6 +2006,12 @@ bool p3ConnectMgr::addFriend(std::string id, std::string gpg_id, uint32_t netMod
 #ifdef CONN_DEBUG
         std::cerr << "p3ConnectMgr::addFriend() " << id << "; gpg_id : " << gpg_id << std::endl;
 #endif
+
+#ifdef CONN_DEBUG
+        std::cerr << "p3ConnectMgr::addFriend() removing dummy friend" << std::endl;
+#endif
+        //remove any dummy friend because we just add a real ssl friend
+        removeFriend("dummy"+ gpg_id);
 
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
@@ -2101,7 +2114,8 @@ bool p3ConnectMgr::removeFriend(std::string id)
 {
 
 #ifdef CONN_DEBUG
-	std::cerr << "p3ConnectMgr::removeFriend() " << id << std::endl;
+        std::cerr << "p3ConnectMgr::removeFriend() for id : " << id << std::endl;
+        std::cerr << "p3ConnectMgr::removeFriend() mFriendList.size() : " << mFriendList.size() << std::endl;
 #endif
 
 	netAssistFriend(id, false);
@@ -2114,7 +2128,10 @@ bool p3ConnectMgr::removeFriend(std::string id)
 	if (mFriendList.end() != (it = mFriendList.find(id)))
 	{
 
-		peerConnectState peer = it->second;
+#ifdef CONN_DEBUG
+        std::cerr << "p3ConnectMgr::removeFriend() friend found in the list." << id << std::endl;
+#endif
+                peerConnectState peer = it->second;
 
 		mFriendList.erase(it);
 
@@ -2123,13 +2140,16 @@ bool p3ConnectMgr::removeFriend(std::string id)
 		peer.state &= (~RS_PEER_S_ONLINE);
 		peer.actions = RS_PEER_MOVED;
 		peer.inConnAttempt = false;
-		mOthersList[id] = peer;
+                //mOthersList[id] = peer;
 		mStatusChanged = true;
 
 		success = true;
 	}
 
-	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+#ifdef CONN_DEBUG
+        std::cerr << "p3ConnectMgr::removeFriend() new mFriendList.size() : " << mFriendList.size() << std::endl;
+#endif
+        IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 	return success;
 }

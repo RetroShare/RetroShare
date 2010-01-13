@@ -164,6 +164,7 @@ class AuthGPG
     bool	isGPGValid(std::string id);
     bool	isGPGSigned(std::string id);
     bool	isGPGAccepted(std::string id);
+    bool        isGPGId(GPG_id id);
 
 /*********************************************************************************/
 /************************* STAGE 4 ***********************************************/

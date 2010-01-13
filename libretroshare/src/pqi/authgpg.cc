@@ -1031,6 +1031,19 @@ bool	AuthGPG::isGPGValid(GPG_id id)
 
 }
 
+bool	AuthGPG::isGPGId(GPG_id id)
+{
+        RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+        storeAllKeys_locked();
+        certmap::iterator it;
+        if (mKeyList.end() != (it = mKeyList.find(id))) {
+            return true;
+        } else {
+            return false;
+        }
+
+}
+
 
 bool	AuthGPG::isGPGSigned(GPG_id id)
 {
@@ -1657,8 +1670,8 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
       			else if (status == GPGME_STATUS_ALREADY_SIGNED)
         		{
           			/* The key has already been signed with this key */
-          			params->state = SIGN_ERROR;
-          			params->err =  gpg_error (GPG_ERR_CONFLICT);
+                                params->state = SIGN_QUIT;
+                                result = "quit";
         		}
       			else if (status == GPGME_STATUS_GET_LINE &&
           			(!std::string("keyedit.prompt").compare(args)))

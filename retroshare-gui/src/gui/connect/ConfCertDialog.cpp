@@ -47,7 +47,7 @@ ConfCertDialog::ConfCertDialog(QWidget *parent, Qt::WFlags flags)
 
   connect(ui.applyButton, SIGNAL(clicked()), this, SLOT(applyDialog()));
   connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(closeinfodlg()));
-  connect(ui.sign_button, SIGNAL(clicked()), this, SLOT(makeFriend()));
+  connect(ui.make_friend_button, SIGNAL(clicked()), this, SLOT(makeFriend()));
 
 
   ui.applyButton->setToolTip(tr("Apply and Close"));
@@ -151,11 +151,29 @@ void ConfCertDialog::loadDialog()
             ui.groupBox->hide();
         }
 
-        if (detail.ownsign) {
-            ui.sign_button->hide();
-            ui.signed_already_label->show();
+        if (detail.accept_connection) {
+            //connection already accepted, propose to sign gpg key
+            if (!detail.ownsign) {
+                ui.signGPGKeyCheckBox->setChecked(true);
+                ui.signGPGKeyCheckBox->hide();
+                ui.signed_already_label->setText(tr("Peer is already a friend"));
+                ui.make_friend_button->setText(tr("Sign GPG key"));
+                ui.make_friend_button->show();
+            } else {
+                ui.signGPGKeyCheckBox->hide();
+                ui.signed_already_label->setText(tr("Peer is a friend and GPG key is signed"));
+                ui.signed_already_label->show();
+                ui.make_friend_button->hide();
+            }
         } else {
-            ui.sign_button->show();
+            ui.make_friend_button->show();
+            ui.make_friend_button->setText(tr("Make Friend"));
+            if (!detail.ownsign) {
+                ui.signGPGKeyCheckBox->show();
+                ui.signGPGKeyCheckBox->setChecked(true);
+            } else {
+                ui.signGPGKeyCheckBox->hide();
+            }
             ui.signed_already_label->hide();
         }
 
@@ -177,13 +195,13 @@ void ConfCertDialog::loadDialog()
             ui.radioButton_trust_marginnaly->show();
             ui.radioButton_trust_never->show();
             if (detail.trustLvl == 4) {
-                ui.web_of_trust_label->setText(tr("Your trust in this peer is full, it means he has an excellent understanding of key signing, and his signature on a key would be as good as your own."));
+                ui.web_of_trust_label->setText(tr("Your trust in this peer is full."));
                 ui.radioButton_trust_fully->setChecked(true);
             } else if (detail.trustLvl == 3) {
-                ui.web_of_trust_label->setText(tr("Your trust in this peer is marginal, it means he understands the implications of key signing and properly check keys before signing them."));
+                ui.web_of_trust_label->setText(tr("Your trust in this peer is marginal."));
                 ui.radioButton_trust_marginnaly->setChecked(true);
             } else if (detail.trustLvl == 2) {
-                ui.web_of_trust_label->setText(tr("Your trust in this peer is none, it means he is known to improperly sign other keys."));
+                ui.web_of_trust_label->setText(tr("Your trust in this peer is none."));
                 ui.radioButton_trust_never->setChecked(true);
             } else {
                 ui.web_of_trust_label->setText(tr("Your trust in this peer is not set."));
@@ -256,6 +274,12 @@ void ConfCertDialog::applyDialog()
 
 void ConfCertDialog::makeFriend()
 {
-        rsPeers->signGPGCertificate(mId);
-        loadDialog();
+    std::string gpg_id = rsPeers->getGPGId(mId);
+    if (ui.signGPGKeyCheckBox->isChecked()) {
+        rsPeers->signGPGCertificate(gpg_id);
+    } else {
+        rsPeers->setAcceptToConnectGPGCertificate(gpg_id, true);
+    }
+    rsPeers->addFriend(mId, gpg_id);
+    loadDialog();
 }

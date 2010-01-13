@@ -243,21 +243,15 @@ bool    p3Peers::isOnline(std::string id)
 	return false;
 }
 
-bool    p3Peers::isFriend(std::string id)
+bool    p3Peers::isFriend(std::string ssl_id)
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::isFriend() " << id;
+        std::cerr << "p3Peers::isFriend() " << ssl_id;
 	std::cerr << std::endl;
 #endif
 
-	/* get from mConnectMgr */
-	peerConnectState state;
-	if (mConnMgr->getFriendNetStatus(id, state) &&
-			(state.state & RS_PEER_S_FRIEND))
-	{
-		return true;
-	}
-	return false;
+        /* get from mConnectMgr */
+        return mConnMgr->isFriend(ssl_id);
 }
 
 static struct sockaddr_in getPreferredAddress(	const struct sockaddr_in& addr1,time_t ts1,
@@ -562,7 +556,7 @@ std::string p3Peers::getGPGOwnId()
         return AuthGPG::getAuthGPG()->getGPGOwnId();
 }
 
-std::string p3Peers::getGPGId(std::string ssl_id)
+std::string p3Peers::getGPGId(std::string sslid_or_gpgid)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getPGPId()";
@@ -570,15 +564,22 @@ std::string p3Peers::getGPGId(std::string ssl_id)
 #endif
 
         /* get from mAuthMgr */
-        if (ssl_id == AuthSSL::getAuthSSL()->OwnId()) {
+        if (sslid_or_gpgid == AuthSSL::getAuthSSL()->OwnId()) {
             return AuthGPG::getAuthGPG()->getGPGOwnId();
         }
         peerConnectState pcs;
-        if (mConnMgr->getFriendNetStatus(ssl_id, pcs)) {
+        if (mConnMgr->getFriendNetStatus(sslid_or_gpgid, pcs)) {
             return pcs.gpg_id;
         } else {
-            return "";
+            if ( AuthGPG::getAuthGPG()->isGPGValid(sslid_or_gpgid)) {
+                #ifdef P3PEERS_DEBUG
+                std::cerr << "p3Peers::getPGPId() given id is already an gpg id : " << sslid_or_gpgid;
+                std::cerr << std::endl;
+                #endif
+                return sslid_or_gpgid;
+            }
         }
+        return "";
 }
 
 
@@ -599,10 +600,18 @@ bool 	p3Peers::addFriend(std::string id, std::string gpg_id)
 bool 	p3Peers::addDummyFriend(std::string gpg_id)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::addDummyFriend() not implemented yet" << std::endl;
+        std::cerr << "p3Peers::addDummyFriend() called" << std::endl;
 #endif
-
-        return false;
+        std::string dummy_ssl_id = "dummy"+ gpg_id;
+        //check if this gpg_id already got a dummy friend
+        if (!mConnMgr->isFriend(dummy_ssl_id)) {
+            return mConnMgr->addFriend(dummy_ssl_id, gpg_id);
+        } else {
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::addDummyFriend() dummy friend already exists for gpg_id : " << gpg_id  << std::endl;
+#endif
+            return false;
+        }
 }
 
 bool 	p3Peers::removeFriend(std::string id)
@@ -934,12 +943,9 @@ bool 	p3Peers::signGPGCertificate(std::string id)
 	std::cerr << std::endl;
 #endif
 
-        if (AuthGPG::getAuthGPG()->SignCertificateLevel0(id)) {
-            //by default, set the GPG to accept connection
-            AuthGPG::getAuthGPG()->setAcceptToConnectGPGCertificate(id, true);
-            return true;
-        }
-        return false;
+        AuthGPG::getAuthGPG()->SignCertificateLevel0(id);
+        AuthGPG::getAuthGPG()->setAcceptToConnectGPGCertificate(id, true);
+        return true;
 }
 
 bool 	p3Peers::setAcceptToConnectGPGCertificate(std::string gpg_id, bool acceptance)

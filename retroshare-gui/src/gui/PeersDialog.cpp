@@ -275,7 +275,7 @@ void  PeersDialog::insertPeers()
         rsPeers->getGPGAcceptedList(gpgFriends);
 
         /* get a link to the table */
-        QTreeWidget *peerWidget = ui.peertreeWidget;
+        QTreeWidget *peertreeWidget = ui.peertreeWidget;
 
 	// add self nick and Avatar to Friends.
 	RsPeerDetails pd ;
@@ -285,6 +285,18 @@ void  PeersDialog::insertPeers()
                 ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + tr(" (me)"))) ;
         }
 
+        //remove items that are not fiends anymore
+        int index = 0;
+        while (index < peertreeWidget->topLevelItemCount()) {
+            std::string gpg_id = (peertreeWidget->topLevelItem(index))->text(3).toStdString();
+            if (!rsPeers->isGPGAccepted(gpg_id)) {
+                peertreeWidget->takeTopLevelItem(index);
+            } else {
+                index++;
+            }
+        }
+
+
         //add the gpg friends
         for(it = gpgFriends.begin(); it != gpgFriends.end(); it++) {
             std::cerr << "" << *it << std::endl;
@@ -292,54 +304,72 @@ void  PeersDialog::insertPeers()
                 continue;
             }
 
-            RsPeerDetails detail;
-            if (!rsPeers->getPeerDetails(*it, detail)) {
-                    continue; /* BAD */
-            }
-
             /* make a widget per friend */
-            QTreeWidgetItem *item;
-            QList<QTreeWidgetItem *> list = peerWidget->findItems (QString::fromStdString(detail.gpg_id), Qt::MatchExactly, 3);
+            QTreeWidgetItem *gpg_item;
+            QList<QTreeWidgetItem *> list = peertreeWidget->findItems(QString::fromStdString(*it), Qt::MatchExactly, 3);
             if (list.size() == 1) {
-                item = list.front();
+                gpg_item = list.front();
             } else {
-                item = new QTreeWidgetItem(0);
-                item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
+                gpg_item = new QTreeWidgetItem(0);
+                gpg_item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
             }
 
-            item -> setText(0, QString::fromStdString(detail.name));
+            RsPeerDetails detail;
+            if (!rsPeers->getPeerDetails(*it, detail) || !detail.accept_connection) {
+                //don't accept anymore connection, remove from the view
+                peertreeWidget->takeTopLevelItem(peertreeWidget->indexOfTopLevelItem(gpg_item));
+                continue;
+            }
 
-            item -> setTextAlignment(0, Qt::AlignLeft | Qt::AlignVCenter );
+            //use to mark item as updated
+            gpg_item->setData(0, Qt::UserRole, true);
+            gpg_item -> setText(0, QString::fromStdString(detail.name));
 
-            //item -> setText( 1, QString::fromStdString(detail.name));
+            gpg_item -> setTextAlignment(0, Qt::AlignLeft | Qt::AlignVCenter );
+
+            //gpg_item -> setText( 1, QString::fromStdString(detail.name));
 
             /* not displayed, used to find back the item */
-            item -> setText(3, QString::fromStdString(detail.id));
+            gpg_item -> setText(3, QString::fromStdString(detail.id));
 
-            /* add to the list. If item is already in the list, it won't be duplicated thanks to Qt */
-            peerWidget->addTopLevelItem(item);
+            //remove items that are not friends anymore
+            int childIndex = 0;
+            while (childIndex < gpg_item->childCount()) {
+                std::string ssl_id = (gpg_item->child(childIndex))->text(3).toStdString();
+                if (!rsPeers->isFriend(ssl_id)) {
+                    gpg_item->takeChild(childIndex);
+                } else {
+                    childIndex++;
+                }
+            }
 
-            //add the childs (ssl certs)
-            //item->takeChildren();
-
+            //update the childs (ssl certs)
             std::list<std::string> sslContacts;
             rsPeers->getSSLChildListOfGPGId(detail.gpg_id, sslContacts);
             for(std::list<std::string>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); sslIt++) {
-                RsPeerDetails sslDetail;
-                if (!rsPeers->getPeerDetails(*sslIt, sslDetail)) {
-                        continue; /* BAD */
-                }
 
-                /* find the sslItem */
-                QTreeWidgetItem *sslItem = new QTreeWidgetItem(1);
-                bool gotToExpandBecauseNewChild = true;
-                for (int childIndex = 0; childIndex < item->childCount(); childIndex++) {
-                    if (item->child(childIndex)->text(3).toStdString() == sslDetail.id) {
-                        sslItem = item->child(childIndex);
-                        gotToExpandBecauseNewChild = false;
+                QTreeWidgetItem *sslItem;
+
+                //find the corresponding sslItem child item of the gpg item
+                bool newChild = true;
+                for (int childIndex = 0; childIndex < gpg_item->childCount(); childIndex++) {
+                    if (gpg_item->child(childIndex)->text(3).toStdString() == *sslIt) {
+                        sslItem = gpg_item->child(childIndex);
+                        newChild = false;
                         break;
                     }
                 }
+                if (newChild) {
+                   sslItem = new QTreeWidgetItem(1);
+                }
+
+                RsPeerDetails sslDetail;
+                if (!rsPeers->getPeerDetails(*sslIt, sslDetail) || !rsPeers->isFriend(*sslIt)) {
+                    std::cerr << "Removing widget from the view : id : " << *sslIt << std::endl;
+                    //child has disappeared, remove it from the gpg_item
+                    gpg_item->removeChild(sslItem);
+                }
+
                 /* not displayed, used to find back the item */
                 sslItem -> setText(3, QString::fromStdString(sslDetail.id));
 
@@ -399,11 +429,15 @@ void  PeersDialog::insertPeers()
                 std::cerr << "PeersDialog::insertPeers() inserting sslItem." << std::endl;
                 #endif
                 /* add to the list. If item is already in the list, it won't be duplicated thanks to Qt */
-                item->addChild(sslItem);
-                if (gotToExpandBecauseNewChild) {
-                    item->setExpanded(true);
+                gpg_item->addChild(sslItem);
+                if (newChild) {
+                    gpg_item->setExpanded(true);
                 }
             }
+
+            /* add to the list. If item is already in the list, it won't be duplicated thanks to Qt */
+            peertreeWidget->addTopLevelItem(gpg_item);
+
         }
 
 

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>506</width>
+    <width>459</width>
     <height>529</height>
    </rect>
   </property>
@@ -21,7 +21,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="stabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="icon">
@@ -286,15 +286,37 @@
           </item>
           <item>
            <widget class="QLabel" name="signed_already_label">
+            <property name="maximumSize">
+             <size>
+              <width>450</width>
+              <height>50</height>
+             </size>
+            </property>
             <property name="text">
-             <string>Peer is already a friend of me (his GPG key is signed by me)</string>
+             <string>Not filled</string>
+            </property>
+            <property name="scaledContents">
+             <bool>false</bool>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="sign_button">
+           <widget class="QCheckBox" name="signGPGKeyCheckBox">
             <property name="text">
-             <string>Make friend (Sign his GPG key)</string>
+             <string>Sign GPG key (Default)</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="make_friend_button">
+            <property name="text">
+             <string>Make Friends</string>
             </property>
            </widget>
           </item>
@@ -332,6 +354,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
              <widget class="QRadioButton" name="radioButton_trust_never">
+              <property name="toolTip">
+               <string>Your trust in this peer is none, it means he is known to improperly sign other keys.</string>
+              </property>
               <property name="text">
                <string>None</string>
               </property>
@@ -339,6 +364,9 @@
             </item>
             <item>
              <widget class="QRadioButton" name="radioButton_trust_marginnaly">
+              <property name="toolTip">
+               <string>Your trust in this peer is marginal, it means he understands the implications of key signing and properly check keys before signing them.</string>
+              </property>
               <property name="text">
                <string>Marginnaly</string>
               </property>
@@ -346,6 +374,9 @@
             </item>
             <item>
              <widget class="QRadioButton" name="radioButton_trust_fully">
+              <property name="toolTip">
+               <string>Your trust in this peer is full, it means he has an excellent understanding of key signing, and his signature on a key would be as good as your own.</string>
+              </property>
               <property name="text">
                <string>Fully</string>
               </property>

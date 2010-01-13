@@ -155,7 +155,7 @@ signals:
 		QAction* exportfriendAct;
 		QAction* removefriendAct;
 
-		QTreeWidget *peertreeWidget;
+                //QTreeWidget *peertreeWidget;
 
 		IMHistoryKeeper historyKeeper;
 
