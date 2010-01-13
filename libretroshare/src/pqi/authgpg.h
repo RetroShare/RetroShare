@@ -46,6 +46,7 @@
 #include "rsiface/rspeers.h"
 #include <string>
 #include <list>
+#include <set>
 #include <map>
 
 #define GPG_id std::string
@@ -71,6 +72,9 @@ class gpgcert
 
                 bool ownsign;
 
+                //This is not gpg, but RS data. A gpg peer can be accepted for connecting but not signed.
+                bool accept_connection;
+
 		gpgme_key_t key;
 };
 
@@ -85,7 +89,7 @@ class AuthGPG
 
 	/* Internal functions */
         bool 	DoOwnSignature_locked(const void *, unsigned int, void *, unsigned int *);
-        bool    VerifySignature_locked(const void *data, int datalen, const void *sig, unsigned int siglen);
+        bool    VerifySignature_locked(const void *data, int datalen, const void *sig, unsigned int siglen, std::string withfingerprint);
 
         /* Sign/Trust stuff */
         int	privateSignCertificate(GPG_id id);
@@ -104,7 +108,7 @@ class AuthGPG
         AuthGPG();
         ~AuthGPG();
 
-        bool    availablePGPCertificatesWithPrivateKeys(std::list<std::string> &ids);
+        bool    availableGPGCertificatesWithPrivateKeys(std::list<std::string> &ids);
 
 	int	GPGInit(std::string ownId);
 
@@ -145,18 +149,21 @@ class AuthGPG
  * provide access to details in cache list.
  *
  ****/
-    std::string getPGPName(GPG_id pgp_id);
-    std::string getPGPEmail(GPG_id pgp_id);
+    std::string getGPGName(GPG_id pgp_id);
+    std::string getGPGEmail(GPG_id pgp_id);
 
     /* PGP web of trust management */
-    GPG_id PGPOwnId();
-    bool	getPGPDetails(std::string id, RsPeerDetails &d);
-    bool	getPGPAllList(std::list<std::string> &ids);
-    bool	getPGPValidList(std::list<std::string> &ids);
-    bool	getPGPAcceptedList(std::list<std::string> &ids);
-    bool	getPGPSignedList(std::list<std::string> &ids);
-    bool	isPGPValid(std::string id);
-    bool	isPGPSigned(std::string id);
+    std::string getGPGOwnId();
+    std::string getGPGOwnName();
+    std::string getGPGOwnEmail();
+    bool	getGPGDetails(std::string id, RsPeerDetails &d);
+    bool	getGPGAllList(std::list<std::string> &ids);
+    bool	getGPGValidList(std::list<std::string> &ids);
+    bool	getGPGAcceptedList(std::list<std::string> &ids);
+    bool	getGPGSignedList(std::list<std::string> &ids);
+    bool	isGPGValid(std::string id);
+    bool	isGPGSigned(std::string id);
+    bool	isGPGAccepted(std::string id);
 
 /*********************************************************************************/
 /************************* STAGE 4 ***********************************************/
@@ -165,7 +172,7 @@ class AuthGPG
  * STAGE 4: Loading and Saving Certificates. (Strings and Files)
  *
  ****/
-  bool LoadCertificateFromString(std::string pem);
+  bool LoadCertificateFromString(std::string pem, std::string &gpg_id);
   std::string SaveCertificateToString(std::string id);
 
 /*********************************************************************************/
@@ -178,6 +185,7 @@ class AuthGPG
  * done in gpgroot already.
  *
  ****/
+  bool setAcceptToConnectGPGCertificate(std::string gpg_id, bool acceptance); //don't act on the gpg key, use a seperate set
   bool SignCertificateLevel0(std::string id);
   bool RevokeCertificate(std::string id);  /* Particularly hard - leave for later */
   bool TrustCertificateNone(std::string id);
@@ -198,7 +206,7 @@ class AuthGPG
   bool SignData(const void *data, const uint32_t len, std::string &sign);
   bool SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen);
   bool SignDataBin(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen);
-  bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int);
+  bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, std::string withfingerprint);
   bool decryptText(gpgme_data_t CIPHER, gpgme_data_t PLAIN);
   bool encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER);
 //END of PGP public functions
@@ -223,7 +231,10 @@ private:
     gpgme_ctx_t CTX;
 
     std::string mOwnGpgId;
+    std::string mOwnGpgName;
+    std::string mOwnGpgEmail;
     std::string mX509id;
+    std::map<std::string, bool> mAcceptToConnectMap;
 
     gpgcert mOwnGpgCert;
 };

@@ -272,7 +272,7 @@ void  PeersDialog::insertPeers()
                 return;
         }
 
-        rsPeers->getPGPAcceptedList(gpgFriends);
+        rsPeers->getGPGAcceptedList(gpgFriends);
 
         /* get a link to the table */
         QTreeWidget *peerWidget = ui.peertreeWidget;
@@ -287,122 +287,124 @@ void  PeersDialog::insertPeers()
 
         //add the gpg friends
         for(it = gpgFriends.begin(); it != gpgFriends.end(); it++) {
-            if (*it == rsPeers->getPGPOwnId()) {
+            std::cerr << "" << *it << std::endl;
+            if (*it == rsPeers->getGPGOwnId()) {
                 continue;
             }
-		RsPeerDetails detail;
-                if (!rsPeers->getPeerDetails(*it, detail)) {
-			continue; /* BAD */
-		}
 
-		/* make a widget per friend */
-                QTreeWidgetItem *item;
-                QList<QTreeWidgetItem *> list = peerWidget->findItems (QString::fromStdString(detail.id), Qt::MatchExactly, 3);
-                if (list.size() == 1) {
-                    item = list.front();
-                } else {
-                    item = new QTreeWidgetItem(0);
-                    item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
+            RsPeerDetails detail;
+            if (!rsPeers->getPeerDetails(*it, detail)) {
+                    continue; /* BAD */
+            }
+
+            /* make a widget per friend */
+            QTreeWidgetItem *item;
+            QList<QTreeWidgetItem *> list = peerWidget->findItems (QString::fromStdString(detail.gpg_id), Qt::MatchExactly, 3);
+            if (list.size() == 1) {
+                item = list.front();
+            } else {
+                item = new QTreeWidgetItem(0);
+                item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
+            }
+
+            item -> setText(0, QString::fromStdString(detail.name));
+
+            item -> setTextAlignment(0, Qt::AlignLeft | Qt::AlignVCenter );
+
+            //item -> setText( 1, QString::fromStdString(detail.name));
+
+            /* not displayed, used to find back the item */
+            item -> setText(3, QString::fromStdString(detail.id));
+
+            /* add to the list. If item is already in the list, it won't be duplicated thanks to Qt */
+            peerWidget->addTopLevelItem(item);
+
+            //add the childs (ssl certs)
+            //item->takeChildren();
+
+            std::list<std::string> sslContacts;
+            rsPeers->getSSLChildListOfGPGId(detail.gpg_id, sslContacts);
+            for(std::list<std::string>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); sslIt++) {
+                RsPeerDetails sslDetail;
+                if (!rsPeers->getPeerDetails(*sslIt, sslDetail)) {
+                        continue; /* BAD */
                 }
 
-                item -> setText(0, QString::fromStdString(detail.name));
+                /* find the sslItem */
+                QTreeWidgetItem *sslItem = new QTreeWidgetItem(1);
+                bool gotToExpandBecauseNewChild = true;
+                for (int childIndex = 0; childIndex < item->childCount(); childIndex++) {
+                    if (item->child(childIndex)->text(3).toStdString() == sslDetail.id) {
+                        sslItem = item->child(childIndex);
+                        gotToExpandBecauseNewChild = false;
+                        break;
+                    }
+                }
+                /* not displayed, used to find back the item */
+                sslItem -> setText(3, QString::fromStdString(sslDetail.id));
 
-                item -> setTextAlignment(0, Qt::AlignLeft | Qt::AlignVCenter );
-
-                //item -> setText( 1, QString::fromStdString(detail.name));
+                if (rsMsgs->getCustomStateString(sslDetail.id) != "") {
+                    sslItem -> setText( 0, tr("location : ") + QString::fromStdString(sslDetail.location) + tr(" - ") + QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id)));
+                    sslItem -> setToolTip( 0, tr("location : ") + QString::fromStdString(sslDetail.location) + tr(" - ") + QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id)));
+                } else {
+                    sslItem -> setText( 0, tr("location : ") + QString::fromStdString(sslDetail.location));
+                    sslItem -> setToolTip( 0, tr("location : ") + QString::fromStdString(sslDetail.location));
+                }
 
                 /* not displayed, used to find back the item */
-                item -> setText(3, QString::fromStdString(detail.id));
+                sslItem -> setText(1, QString::fromStdString(sslDetail.autoconnect));
 
-                /* add to the list. If item is already in the list, it won't be duplicated thanks to Qt */
-                peerWidget->addTopLevelItem(item);
-
-                //add the childs (ssl certs)
-                //item->takeChildren();
-
-                std::list<std::string> sslContacts;
-                rsPeers->getSSLChildListOfGPGId(detail.id, sslContacts);
-                for(std::list<std::string>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); sslIt++) {
-                    RsPeerDetails sslDetail;
-                    if (!rsPeers->getPeerDetails(*sslIt, sslDetail)) {
-                            continue; /* BAD */
+                /* change color and icon */
+                int i;
+                if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
+                    sslItem -> setIcon(0,(QIcon(IMAGE_ONLINE)));
+                    QFont font;
+                    font.setBold(true);
+                    for(i = 0; i < 3; i++) {
+                        sslItem -> setTextColor(i,(Qt::darkBlue));
+                        sslItem -> setFont(i,font);
                     }
-
-                    /* find the sslItem */
-                    QTreeWidgetItem *sslItem = new QTreeWidgetItem(1);
-                    bool gotToExpandBecauseNewChild = true;
-                    for (int childIndex = 0; childIndex < item->childCount(); childIndex++) {
-                        if (item->child(childIndex)->text(3).toStdString() == sslDetail.id) {
-                            sslItem = item->child(childIndex);
-                            gotToExpandBecauseNewChild = false;
-                            break;
-                        }
+               } else if (sslDetail.state & RS_PEER_STATE_UNREACHABLE) {
+                    sslItem -> setIcon(0,(QIcon(IMAGE_UNREACHABLE)));
+                    QFont font;
+                    font.setBold(false);
+                    for(i = 0; i < 3; i++) {
+                        sslItem -> setTextColor(i,(Qt::darkRed));
+                        sslItem -> setFont(i,font);
                     }
-                    /* not displayed, used to find back the item */
-                    sslItem -> setText(3, QString::fromStdString(sslDetail.id));
-
-                    if (rsMsgs->getCustomStateString(sslDetail.id) != "") {
-                        sslItem -> setText( 0, tr("location : ") + QString::fromStdString(sslDetail.location) + tr(" - ") + QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id)));
-                        sslItem -> setToolTip( 0, tr("location : ") + QString::fromStdString(sslDetail.location) + tr(" - ") + QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id)));
+                } else if (sslDetail.state & RS_PEER_STATE_ONLINE) {
+                    /* bright green */
+                    sslItem -> setIcon(0,(QIcon(IMAGE_AVAIBLE)));
+                    QFont font;
+                    font.setBold(true);
+                    for(i = 0; i < 3; i++) {
+                        sslItem -> setTextColor(i,(Qt::darkCyan));
+                        sslItem -> setFont(i,font);
+                    }
+                } else {
+                    if (time(NULL) - sslDetail.lastConnect < 3600) {
+                        sslItem -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
                     } else {
-                        sslItem -> setText( 0, tr("location : ") + QString::fromStdString(sslDetail.location));
-                        sslItem -> setToolTip( 0, tr("location : ") + QString::fromStdString(sslDetail.location));
+                        sslItem -> setIcon(0,(QIcon(IMAGE_OFFLINE2)));
                     }
-
-                    /* not displayed, used to find back the item */
-                    sslItem -> setText(1, QString::fromStdString(sslDetail.autoconnect));
-
-                    /* change color and icon */
-                    int i;
-                    if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
-                        sslItem -> setIcon(0,(QIcon(IMAGE_ONLINE)));
-                        QFont font;
-                        font.setBold(true);
-                        for(i = 0; i < 3; i++) {
-                            sslItem -> setTextColor(i,(Qt::darkBlue));
-                            sslItem -> setFont(i,font);
-                        }
-                   } else if (sslDetail.state & RS_PEER_STATE_UNREACHABLE) {
-                        sslItem -> setIcon(0,(QIcon(IMAGE_UNREACHABLE)));
-                        QFont font;
-                        font.setBold(false);
-                        for(i = 0; i < 3; i++) {
-                            sslItem -> setTextColor(i,(Qt::darkRed));
-                            sslItem -> setFont(i,font);
-                        }
-                    } else if (sslDetail.state & RS_PEER_STATE_ONLINE) {
-                        /* bright green */
-                        sslItem -> setIcon(0,(QIcon(IMAGE_AVAIBLE)));
-                        QFont font;
-                        font.setBold(true);
-                        for(i = 0; i < 3; i++) {
-                            sslItem -> setTextColor(i,(Qt::darkCyan));
-                            sslItem -> setFont(i,font);
-                        }
-                    } else {
-                        if (time(NULL) - sslDetail.lastConnect < 3600) {
-                            sslItem -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
-                        } else {
-                            sslItem -> setIcon(0,(QIcon(IMAGE_OFFLINE2)));
-                        }
-                        QFont font;
-                        font.setBold(false);
-                        for(i = 0; i < 3; i++) {
-                            sslItem -> setTextColor(i,(Qt::black));
-                            sslItem -> setFont(i,font);
-                        }
-                    }
-
-                    #ifdef PEERS_DEBUG
-                    std::cerr << "PeersDialog::insertPeers() inserting sslItem." << std::endl;
-                    #endif
-                    /* add to the list. If item is already in the list, it won't be duplicated thanks to Qt */
-                    item->addChild(sslItem);
-                    if (gotToExpandBecauseNewChild) {
-                        item->setExpanded(true);
+                    QFont font;
+                    font.setBold(false);
+                    for(i = 0; i < 3; i++) {
+                        sslItem -> setTextColor(i,(Qt::black));
+                        sslItem -> setFont(i,font);
                     }
                 }
+
+                #ifdef PEERS_DEBUG
+                std::cerr << "PeersDialog::insertPeers() inserting sslItem." << std::endl;
+                #endif
+                /* add to the list. If item is already in the list, it won't be duplicated thanks to Qt */
+                item->addChild(sslItem);
+                if (gotToExpandBecauseNewChild) {
+                    item->setExpanded(true);
+                }
             }
+        }
 
 
 }
@@ -443,7 +445,7 @@ void PeersDialog::exportfriend()
 #endif
 		if (rsPeers)
 		{
-			rsPeers->SaveCertificateToFile(id, file);
+                        rsPeers->saveCertificateToFile(id, file);
 		}
 	}
 

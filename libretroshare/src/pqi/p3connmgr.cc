@@ -28,6 +28,8 @@
 #include "tcponudp/tou.h"
 #include "tcponudp/extaddrfinder.h"
 #include "util/rsnet.h"
+#include "pqi/authgpg.h"
+
 
 #include "util/rsprint.h"
 #include "util/rsdebug.h"
@@ -96,12 +98,14 @@ peerAddrInfo::peerAddrInfo()
 
 peerConnectState::peerConnectState()
 	:id("unknown"), 
+         gpg_id("unknown"),
 	 netMode(RS_NET_MODE_UNKNOWN), visState(RS_VIS_STATE_STD), 
 	 lastcontact(0),
 	 connecttype(0),
 	 lastavailable(0),
          lastattempt(time(NULL) - MIN_RETRY_PERIOD + MIN_TIME_BETWEEN_NET_RESET + 2), //start connection 2 second after the possible next one net reset
-	 name("nameless"), state(0), actions(0), 
+         name(""), location(""),
+         state(0), actions(0),
 	 source(0), 
 	 inConnAttempt(0)
 {
@@ -136,7 +140,7 @@ p3ConnectMgr::p3ConnectMgr()
 {
 	/* setup basics of own state */
         ownState.id = AuthSSL::getAuthSSL()->OwnId();
-        ownState.name = AuthSSL::getAuthSSL()->getName(ownState.id);
+        ownState.name = AuthGPG::getAuthGPG()->getGPGOwnName();
         ownState.netMode = RS_NET_MODE_UDP;
 
 	//use_extr_addr_finder = true ;
@@ -1442,18 +1446,18 @@ void p3ConnectMgr::getFriendList(std::list<std::string> &peers)
 }
 
 
-void p3ConnectMgr::getOthersList(std::list<std::string> &peers)
-{
-	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
-
-	/* check for existing */
-        std::map<std::string, peerConnectState>::iterator it;
-	for(it = mOthersList.begin(); it != mOthersList.end(); it++)
-	{
-		peers.push_back(it->first);
-	}
-	return;
-}
+//void p3ConnectMgr::getOthersList(std::list<std::string> &peers)
+//{
+//	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+//
+//	/* check for existing */
+//        std::map<std::string, peerConnectState>::iterator it;
+//	for(it = mOthersList.begin(); it != mOthersList.end(); it++)
+//	{
+//		peers.push_back(it->first);
+//	}
+//	return;
+//}
 
 
 
@@ -1984,7 +1988,7 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in radd
 /*******************************************************************/
 /*******************************************************************/
 
-bool p3ConnectMgr::addFriend(std::string id, uint32_t netMode, uint32_t visState, time_t lastContact)
+bool p3ConnectMgr::addFriend(std::string id, std::string gpg_id, uint32_t netMode, uint32_t visState, time_t lastContact)
 {
 	/* so three possibilities 
 	 * (1) already exists as friend -> do nothing.
@@ -1993,7 +1997,7 @@ bool p3ConnectMgr::addFriend(std::string id, uint32_t netMode, uint32_t visState
 	 */
 
 #ifdef CONN_DEBUG
-	std::cerr << "p3ConnectMgr::addFriend() " << id << std::endl;
+        std::cerr << "p3ConnectMgr::addFriend() " << id << "; gpg_id : " << gpg_id << std::endl;
 #endif
 
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
@@ -2009,19 +2013,21 @@ bool p3ConnectMgr::addFriend(std::string id, uint32_t netMode, uint32_t visState
 		return true;
 	}
 
-	/* check with the AuthMgr if its authorised */
-        if (!AuthSSL::getAuthSSL()->isAuthenticated(id))
-	{
+        //Authentication is now tested at connection time, we don't store the ssl cert anymore
+        if (!AuthGPG::getAuthGPG()->isGPGAccepted(gpg_id))
+        {
 #ifdef CONN_DEBUG
-		std::cerr << "p3ConnectMgr::addFriend() Failed Authentication" << std::endl;
+                std::cerr << "p3ConnectMgr::addFriend() gpg is not accepted" << std::endl;
 #endif
-		/* no auth */
-		return false;
-	}
+                /* no auth */
+                return false;
+        }
 
-	/* check if it is in others */
-	if (mOthersList.end() != (it = mOthersList.find(id)))
-	{
+
+        /* check if it is in others */
+//	if (mOthersList.end() != (it = mOthersList.find(id)))
+        if (false)
+        {
 		/* (2) in mOthersList -> move over */
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::addFriend() Move from Others" << std::endl;
@@ -2057,19 +2063,7 @@ bool p3ConnectMgr::addFriend(std::string id, uint32_t netMode, uint32_t visState
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 		return true;
-	}
-
-	/* get details from AuthMgr */
-        sslcert detail;
-        if (!AuthSSL::getAuthSSL()->getCertDetails(id, detail))
-	{
-#ifdef CONN_DEBUG
-		std::cerr << "p3ConnectMgr::addFriend() Failed to get Details" << std::endl;
-#endif
-		/* ERROR: no details */
-		return false;
-	}
-
+        }
 
 #ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::addFriend() Creating New Entry" << std::endl;
@@ -2079,7 +2073,8 @@ bool p3ConnectMgr::addFriend(std::string id, uint32_t netMode, uint32_t visState
 	peerConnectState pstate;
 
 	pstate.id = id;
-        pstate.name = detail.name;
+        pstate.gpg_id = gpg_id;
+        pstate.name = AuthGPG::getAuthGPG()->getGPGName(gpg_id);
 
 	pstate.state = RS_PEER_S_FRIEND;
 	pstate.actions = RS_PEER_NEW;
@@ -2145,7 +2140,7 @@ bool p3ConnectMgr::addNeighbour(std::string id)
 {
 
 #ifdef CONN_DEBUG
-	std::cerr << "p3ConnectMgr::addNeighbour() " << id << std::endl;
+	std::cerr << "p3ConnectMgr::addNeighbour() not implemented anymore." << id << std::endl;
 #endif
 
 	/* so three possibilities 
@@ -2154,51 +2149,51 @@ bool p3ConnectMgr::addNeighbour(std::string id)
 	 * (3) is non-existant -> create new one.
 	 */
 
-	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+//	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+//
+//        std::map<std::string, peerConnectState>::iterator it;
+//	if (mFriendList.end() == mFriendList.find(id))
+//	{
+//		/* (1) already exists */
+//		return false;
+//	}
+//
+//	if (mOthersList.end() == mOthersList.find(id))
+//	{
+//		/* (2) already exists */
+//		return true;
+//	}
+//
+//	/* check with the AuthMgr if its valid */
+//        if (!AuthSSL::getAuthSSL()->isAuthenticated(id))
+//	{
+//		/* no auth */
+//		return false;
+//	}
+//
+//	/* get details from AuthMgr */
+//        sslcert detail;
+//        if (!AuthSSL::getAuthSSL()->getCertDetails(id, detail))
+//	{
+//		/* no details */
+//		return false;
+//	}
+//
+//	/* create a new entry */
+//	peerConnectState pstate;
+//
+//	pstate.id = id;
+//        pstate.name = detail.name;
+//
+//	pstate.state = 0;
+//	pstate.actions = 0; //RS_PEER_NEW;
+//	pstate.visState = RS_VIS_STATE_STD;
+//	pstate.netMode = RS_NET_MODE_UNKNOWN;
+//
+//	/* addr & timestamps -> auto cleared */
+//	mOthersList[id] = pstate;
 
-        std::map<std::string, peerConnectState>::iterator it;
-	if (mFriendList.end() == mFriendList.find(id))
-	{
-		/* (1) already exists */
-		return false;
-	}
-
-	if (mOthersList.end() == mOthersList.find(id))
-	{
-		/* (2) already exists */
-		return true;
-	}
-
-	/* check with the AuthMgr if its valid */
-        if (!AuthSSL::getAuthSSL()->isAuthenticated(id))
-	{
-		/* no auth */
-		return false;
-	}
-
-	/* get details from AuthMgr */
-        sslcert detail;
-        if (!AuthSSL::getAuthSSL()->getCertDetails(id, detail))
-	{
-		/* no details */
-		return false;
-	}
-
-	/* create a new entry */
-	peerConnectState pstate;
-
-	pstate.id = id;
-        pstate.name = detail.name;
-
-	pstate.state = 0;
-	pstate.actions = 0; //RS_PEER_NEW;
-	pstate.visState = RS_VIS_STATE_STD;
-	pstate.netMode = RS_NET_MODE_UNKNOWN;
-
-	/* addr & timestamps -> auto cleared */
-	mOthersList[id] = pstate;
-
-	return true;
+        return false;
 }
 
 /*******************************************************************/
@@ -2633,6 +2628,30 @@ bool    p3ConnectMgr::setNetworkMode(std::string id, uint32_t netMode)
 	return false;
 }
 
+bool    p3ConnectMgr::setLocation(std::string id, std::string location)
+{
+#ifdef CONN_DEBUG
+        std::cerr << "p3ConnectMgr::setLocation() called for id : " << id << "; with location " << location << std::endl;
+#endif
+        if (id == AuthSSL::getAuthSSL()->OwnId())
+        {
+                ownState.location = location;
+                return true;
+        }
+
+        RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+        /* check if it is a friend */
+        std::map<std::string, peerConnectState>::iterator it;
+        bool isFriend = false;
+        if (mFriendList.end() == (it = mFriendList.find(id))) {
+            return false;
+        } else {
+            it->second.location = location;
+            return true;
+        }
+}
+
 bool    p3ConnectMgr::setVisState(std::string id, uint32_t visState)
 {
         if (id == AuthSSL::getAuthSSL()->OwnId())
@@ -2792,6 +2811,8 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
 	item->clear();
 
 	item->pid = getOwnId();
+        item->gpg_id = ownState.gpg_id;
+        item->location = ownState.location;
 	if (ownState.netMode & RS_NET_MODE_TRY_EXT)
 	{
 		item->netMode = RS_NET_MODE_EXT;
@@ -2828,7 +2849,9 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
 		item->clear();
 
 		item->pid = it->first;
-		item->netMode = (it->second).netMode;
+                item->gpg_id = (it->second).gpg_id;
+                item->location = (it->second).location;
+                item->netMode = (it->second).netMode;
 		item->visState = (it->second).visState;
 		item->lastContact = (it->second).lastcontact;
 		item->currentlocaladdr = (it->second).currentlocaladdr;
@@ -2913,6 +2936,7 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 #endif
 				/* add ownConfig */
                                 setOwnNetConfig(pitem->netMode, pitem->visState);
+                                ownState.gpg_id = AuthGPG::getAuthGPG()->getGPGOwnId();
 			}
 			else
 			{
@@ -2922,8 +2946,9 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 				std::cerr << std::endl;
 #endif
 				/* ************* */
-				addFriend(pitem->pid, pitem->netMode, pitem->visState, pitem->lastContact);
+                                addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, pitem->visState, pitem->lastContact);
 			}
+                        setLocation(pitem->pid, pitem->location);
                         setLocalAddress(pitem->pid, pitem->currentlocaladdr);
                         setExtAddress(pitem->pid, pitem->currentremoteaddr);
                         setAddressList(pitem->pid, pitem->ipAddressList);

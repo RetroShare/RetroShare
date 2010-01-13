@@ -355,7 +355,7 @@ void Node::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 		(ntype ==  ELASTIC_NODE_TYPE_FRIEND) || 	
 			(ntype ==  ELASTIC_NODE_TYPE_OWN)) 	
 	{
-		rsPeers->getOthersList(ids);
+                rsPeers->getFriendList(ids);
 
     		QAction *addAction = menu.addAction("Add All as Friends");
      		QAction *rmAction = menu.addAction("Remove All as Friends");

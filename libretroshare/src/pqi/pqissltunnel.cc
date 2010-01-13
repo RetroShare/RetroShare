@@ -102,12 +102,12 @@ pqissltunnel::pqissltunnel(PQInterface *parent, p3ConnectMgr *cm)
 	  rslog(RSL_ALERT, pqisslzone, out.str());
 	}
 
-        if (!(AuthSSL::getAuthSSL()->isAuthenticated(PeerId()))) {
-	  rslog(RSL_ALERT, pqisslzone,
-	    "pqissltunnel::Warning Certificate Not Approved!");
-	  rslog(RSL_ALERT, pqisslzone,
-	    "\t pqissltunnel will not initialise....");
-	}
+//        if (!(AuthSSL::getAuthSSL()->isAuthenticated(PeerId()))) {
+//	  rslog(RSL_ALERT, pqisslzone,
+//	    "pqissltunnel::Warning Certificate Not Approved!");
+//	  rslog(RSL_ALERT, pqisslzone,
+//	    "\t pqissltunnel will not initialise....");
+//	}
 	mP3tunnel = mConnMgr->getP3tunnel();
 	current_data_offset = 0;
 	curent_data_packet.length = 0;

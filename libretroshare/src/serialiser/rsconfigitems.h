@@ -71,7 +71,9 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	/* networking information */
 	std::string pid;                          /* Mandatory */
-	uint32_t    netMode;                      /* Mandatory */
+        std::string gpg_id;                          /* Mandatory */
+        std::string location;                          /* not Mandatory */
+        uint32_t    netMode;                      /* Mandatory */
 	uint32_t    visState;                     /* Mandatory */
 	uint32_t    lastContact;                  /* Mandatory */
 

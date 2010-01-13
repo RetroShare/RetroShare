@@ -27,12 +27,10 @@
 #define MRK_AUTH_SSL_HEADER
 
 /* 
- * This is an implementation of SSL certificate authentication, which can be 
+ * This is an implementation of SSL certificate authentication, which is
  * overloaded with pgp style signatures, and web-of-trust authentication.
  *
- * There are several virtual functions with can be overloaded to acheive this.
- *      SignCertificate()
- *	AuthCertificate()
+ * only the owner ssl cert is store, the rest is jeus callback verification
  * 	
  * To use as an SSL authentication system, you must use a common CA certificate.
  * and compilation should be done with PQI_USE_XPGP off, and PQI_USE_SSLONLY on
@@ -52,6 +50,7 @@
 
 #include "pqi/pqi_base.h"
 #include "pqi/pqinetwork.h"
+#include "rsiface/rspeers.h"
 
 typedef std::string SSL_id;
 
@@ -75,7 +74,7 @@ class sslcert
         std::string issuer;
 
         std::string fpr;
-        std::list<std::string> signers;
+        //std::list<std::string> signers;
 
         /* Auth settings */
         bool authed;
@@ -103,42 +102,43 @@ SSL_CTX *	getNewSslCtx();
 
 	/*********** Overloaded Functions from p3AuthMgr **********/
 	
-	/* get Certificate Ids */
+        /* get Certificate Id */
 virtual	std::string OwnId();
-virtual bool    getAllList(std::list<std::string> &ids);
-virtual bool    getAuthenticatedList(std::list<std::string> &ids);
-virtual bool    getUnknownList(std::list<std::string> &ids);
-virtual bool    getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> &ids);
+//virtual bool    getAllList(std::list<std::string> &ids);
+//virtual bool    getAuthenticatedList(std::list<std::string> &ids);
+//virtual bool    getUnknownList(std::list<std::string> &ids);
+//virtual bool    getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> &ids);
 
 	/* get Details from the Certificates */
-virtual bool    isAuthenticated(std::string id);
-virtual	std::string getName(std::string id);
-virtual std::string getIssuerName(std::string id);
-virtual std::string getGPGId(SSL_id id);
-virtual bool    getCertDetails(std::string id, sslcert &cert);
+//virtual bool    isAuthenticated(std::string id);
+//virtual	std::string getName(std::string id);
+//virtual std::string getIssuerName(std::string id);
+//virtual std::string getGPGId(SSL_id id);
+//virtual bool    getCertDetails(std::string id, sslcert &cert);
 
 	/* High Level Load/Save Configuration */
-virtual bool FinalSaveCertificates();
-virtual bool CheckSaveCertificates();
-virtual bool saveCertificates();
-virtual bool loadCertificates();
+//virtual bool FinalSaveCertificates();
+//virtual bool CheckSaveCertificates();
+//virtual bool saveCertificates();
+//virtual bool loadCertificates();
 
 	/* Load/Save certificates */
-virtual bool LoadCertificateFromString(std::string pem, std::string &id);
-virtual	std::string SaveCertificateToString(std::string id);
-virtual bool LoadCertificateFromFile(std::string filename, std::string &id);
-virtual bool SaveCertificateToFile(std::string id, std::string filename);
-bool 	ProcessX509(X509 *x509, std::string &id);
 
-virtual bool LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id);	
-virtual	bool SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len);
+virtual bool LoadDetailsFromStringCert(std::string pem, RsPeerDetails &pd);
+virtual	std::string SaveOwnCertificateToString();
+//virtual bool LoadCertificateFromFile(std::string filename, std::string &id);
+//virtual bool SaveCertificateToFile(std::string id, std::string filename);
+//bool 	ProcessX509(X509 *x509, std::string &id);
+//
+//virtual bool LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id);
+//virtual	bool SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len);
 	
 	/* Sign / Encrypt / Verify Data (TODO) */
 virtual bool 	SignData(std::string input, std::string &sign);
 virtual bool 	SignData(const void *data, const uint32_t len, std::string &sign);
 virtual bool 	SignDataBin(std::string, unsigned char*, unsigned int*);
 virtual bool    SignDataBin(const void*, uint32_t, unsigned char*, unsigned int*);
-virtual bool    VerifySignBin(std::string, const void*, uint32_t, unsigned char*, unsigned int);
+virtual bool    VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int);
 
 // return : false if encrypt failed
 bool     encrypt(void *&out, int &outlen, const void *in, int inlen, std::string peerId);
@@ -165,11 +165,11 @@ SSL_CTX *getCTX();
 static int ex_data_ctx_index; //used to pass the peer id in the ssl context
 
 
-bool 	FailedCertificate(X509 *x509, bool incoming);     /* store for discovery */
-bool 	CheckCertificate(std::string peerId, X509 *x509); /* check that they are exact match */
+//bool 	FailedCertificate(X509 *x509, bool incoming);     /* store for discovery */
+//bool 	CheckCertificate(std::string peerId, X509 *x509); /* check that they are exact match */
 
 	/* Special Config Loading (backwards compatibility) */
-bool  	loadCertificates(bool &oldFormat, std::map<std::string, std::string> &keyValueMap);
+//bool  	loadCertificates(bool &oldFormat, std::map<std::string, std::string> &keyValueMap);
 
   static AuthSSL *getAuthSSL() throw() // pour obtenir l'instance
       { return instance_ssl; }
@@ -190,7 +190,7 @@ X509 *	loadX509FromDER(const uint8_t *ptr, uint32_t len);
 bool 	saveX509ToDER(X509 *x509, uint8_t **ptr, uint32_t *len);
 
 	/*********** LOCKED Functions ******/
-bool 	locked_FindCert(std::string id, sslcert **cert);
+//bool 	locked_FindCert(std::string id, sslcert **cert);
 
 
 	/* Data */
@@ -208,7 +208,7 @@ bool 	locked_FindCert(std::string id, sslcert **cert);
 
 	bool mToSaveCerts;
 	bool mConfigSaveActive;
-	std::map<std::string, sslcert *> mCerts;
+        //std::map<std::string, sslcert *> mCerts;
 
 };
 

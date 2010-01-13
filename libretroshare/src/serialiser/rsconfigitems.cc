@@ -729,6 +729,8 @@ RsPeerNetItem::~RsPeerNetItem()
 void RsPeerNetItem::clear()
 {
 	pid.clear();
+        gpg_id.clear();
+        location.clear();
 	netMode = 0;
 	visState = 0;
 	lastContact = 0;
@@ -744,6 +746,12 @@ std::ostream &RsPeerNetItem::print(std::ostream &out, uint16_t indent)
 
 	printIndent(out, int_Indent);
     	out << "PeerId: " << pid << std::endl; 
+
+        printIndent(out, int_Indent);
+        out << "GPGid: " << gpg_id << std::endl;
+
+        printIndent(out, int_Indent);
+        out << "location: " << location << std::endl;
 
     	printIndent(out, int_Indent);
 	out << "netMode: " << netMode << std::endl;
@@ -772,7 +780,9 @@ uint32_t RsPeerConfigSerialiser::sizeNet(RsPeerNetItem *i)
 {	
 	uint32_t s = 8; /* header */
 	s += GetTlvStringSize(i->pid); /* peerid */ 
-	s += 4; /* netMode */
+        s += GetTlvStringSize(i->gpg_id);
+        s += GetTlvStringSize(i->location);
+        s += 4; /* netMode */
 	s += 4; /* visState */
 	s += 4; /* lastContact */
 	s += GetTlvIpAddrPortV4Size(); /* localaddr */ 
@@ -813,7 +823,9 @@ bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint3
 
 	/* add mandatory parts first */
         ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, item->pid); /* Mandatory */
-	ok &= setRawUInt32(data, tlvsize, &offset, item->netMode); /* Mandatory */
+        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GPGID, item->gpg_id); /* Mandatory */
+        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LOCATION, item->location); /* Mandatory */
+        ok &= setRawUInt32(data, tlvsize, &offset, item->netMode); /* Mandatory */
 	ok &= setRawUInt32(data, tlvsize, &offset, item->visState); /* Mandatory */
 	ok &= setRawUInt32(data, tlvsize, &offset, item->lastContact); /* Mandatory */
 	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->currentlocaladdr));
@@ -871,7 +883,9 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 
 	/* get mandatory parts first */
         ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, item->pid); /* Mandatory */
-	ok &= getRawUInt32(data, rssize, &offset, &(item->netMode)); /* Mandatory */
+        ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_GPGID, item->gpg_id); /* Mandatory */
+        ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LOCATION, item->location); /* Mandatory */
+        ok &= getRawUInt32(data, rssize, &offset, &(item->netMode)); /* Mandatory */
 	ok &= getRawUInt32(data, rssize, &offset, &(item->visState)); /* Mandatory */
 	ok &= getRawUInt32(data, rssize, &offset, &(item->lastContact)); /* Mandatory */
 	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->currentlocaladdr));

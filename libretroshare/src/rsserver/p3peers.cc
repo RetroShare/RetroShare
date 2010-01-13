@@ -62,7 +62,6 @@ std::string RsPeerTrustString(uint32_t trustLvl)
 
 	std::string str;
 
-#ifdef RS_USE_PGPSSL
 	switch(trustLvl)
 	{
 		default:
@@ -84,21 +83,6 @@ std::string RsPeerTrustString(uint32_t trustLvl)
 		case GPGME_VALIDITY_ULTIMATE:
 			str = "GPGME_VALIDITY_ULTIMATE";
 			break;
-	}
-	return str;
-#endif
-
-	if (trustLvl == RS_TRUST_LVL_GOOD)
-	{
-		str = "Good";
-	}
-	else if (trustLvl == RS_TRUST_LVL_MARGINAL)
-	{
-		str = "Marginal";
-	}
-	else 
-	{
-		str = "No Trust";
 	}
 	return str;
 }
@@ -230,17 +214,17 @@ bool	p3Peers::getFriendList(std::list<std::string> &ids)
 	return true;
 }
 
-bool	p3Peers::getOthersList(std::list<std::string> &ids)
-{
-#ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::getOthersList()";
-	std::cerr << std::endl;
-#endif
-
-	/* get from mAuthMgr */
-        AuthSSL::getAuthSSL()->getAllList(ids);
-	return true;
-}
+//bool	p3Peers::getOthersList(std::list<std::string> &ids)
+//{
+//#ifdef P3PEERS_DEBUG
+//	std::cerr << "p3Peers::getOthersList()";
+//	std::cerr << std::endl;
+//#endif
+//
+//	/* get from mAuthMgr */
+//        AuthSSL::getAuthSSL()->getAllList(ids);
+//	return true;
+//}
 
 bool    p3Peers::isOnline(std::string id)
 {
@@ -295,65 +279,36 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
         std::cerr << "p3Peers::getPeerDetails() called for id : " << id << std::endl;
         #endif
         //first, check if it's a gpg or a ssl id.
-        if (AuthSSL::getAuthSSL()->getGPGId(id) == "") {
-            //assume is not SSL, because every ssl_id has got a pgp_id
+        peerConnectState pcs;
+        if (id != AuthSSL::getAuthSSL()->OwnId() && !mConnMgr->getFriendNetStatus(id, pcs)) {
+            //assume is not SSL, because every ssl_id has got a friend correspondance in mConnMgr
             #ifdef P3PEERS_DEBUG
             std::cerr << "p3Peers::getPeerDetails() got a gpg id and is returning GPG details only for id : " << id << std::endl;
             #endif
             d.isOnlyGPGdetail = true;
-            return this->getPGPDetails(id, d);
+            return this->getGPGDetails(id, d);
         }
         #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getPeerDetails() got a SSL id and is returning SSL and GPG details for id : " << id << std::endl;
         #endif
 
+        if (id == AuthSSL::getAuthSSL()->OwnId())
+        {
+                mConnMgr->getOwnNetStatus(pcs);
+        }
+
         /* get from gpg (first), to fill in the sign and trust details */
         /* don't retrun now, we've got fill in the ssl and connection info */
-        this->getPGPDetails(AuthSSL::getAuthSSL()->getGPGId(id), d);
+        this->getGPGDetails(pcs.gpg_id, d);
         d.isOnlyGPGdetail = false;
 
         //get the ssl details
-        sslcert authDetail;
-        if (!AuthSSL::getAuthSSL()->getCertDetails(id, authDetail)) {
-                #ifdef P3PEERS_DEBUG
-                std::cerr << "p3Peers::getPeerDetails() got no SSL details, is returning." << std::endl;
-                #endif
-                return false;
-	}
-
-        d.fpr		= authDetail.fpr;
-        d.id 		= authDetail.id;
-        //d.name 		= authDetail.name;
-        //d.email 	= authDetail.email;
-        d.location 	= authDetail.location;
-        d.org 		= authDetail.org;
-        d.issuer 	= authDetail.issuer;
+        d.id 		= id;
+        d.location 	= pcs.location;
 
 	/* generate */
 	d.authcode  	= "AUTHCODE";
 
-	/* get from mConnectMgr */
-	peerConnectState pcs;
-
-        if (id == AuthSSL::getAuthSSL()->OwnId())
-	{
-		mConnMgr->getOwnNetStatus(pcs);
-	}
-	else if (!mConnMgr->getFriendNetStatus(id, pcs))
-	{
-		if (!mConnMgr->getOthersNetStatus(id, pcs))
-		{
-			/* fill in blank data */
-			d.localPort = 0;
-			d.extPort = 0;
-			d.lastConnect = 0;
-			d.connectPeriod = 0;
-			d.state = 0;
-			d.netMode = 0;
-
-			return true;
-		}
-	}
 
 	//TODO : check use of this details
 	// From all addresses, show the most recent one if no address is currently in use.
@@ -476,36 +431,53 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 }
 
 
-std::string p3Peers::getPeerPGPName(std::string id)
+std::string p3Peers::getGPGName(std::string gpg_id)
 {
 	/* get from mAuthMgr as it should have more peers? */
-        return AuthSSL::getAuthSSL()->getIssuerName(id);
+        return AuthGPG::getAuthGPG()->getGPGName(gpg_id);
 }
 
-std::string p3Peers::getPeerName(std::string id)
+bool p3Peers::isGPGAccepted(std::string gpg_id_is_friend)
+{
+        /* get from mAuthMgr as it should have more peers? */
+        return AuthGPG::getAuthGPG()->isGPGAccepted(gpg_id_is_friend);
+}
+
+std::string p3Peers::getPeerName(std::string ssl_or_gpg_id)
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::getPeerName() " << id;
+        std::cerr << "p3Peers::getPeerName() " << ssl_or_gpg_id;
 	std::cerr << std::endl;
 #endif
+        std::string name;
+        if (ssl_or_gpg_id == AuthSSL::getAuthSSL()->OwnId()) {
+            return AuthGPG::getAuthGPG()->getGPGOwnName();
+        }
+        peerConnectState pcs;
+        if (mConnMgr->getFriendNetStatus(ssl_or_gpg_id, pcs)) {
+    #ifdef P3PEERS_DEBUG
+            std::cerr << "p3Peers::getPeerName() got a ssl id. Name is : " << pcs.name;
+            std::cerr << std::endl;
+    #endif
+           return pcs.name;
+        }
 
-	/* get from mAuthMgr as it should have more peers? */
-        return AuthSSL::getAuthSSL()->getName(id);
+        return AuthGPG::getAuthGPG()->getGPGName(ssl_or_gpg_id);
 }
 
-bool	p3Peers::getPGPAllList(std::list<std::string> &ids)
+bool	p3Peers::getGPGAllList(std::list<std::string> &ids)
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::getPGPOthersList()";
-	std::cerr << std::endl;
+        std::cerr << "p3Peers::getGPGAllList()";
+        std::cerr << std::endl;
 #endif
 
-	/* get from mAuthMgr */
-        AuthGPG::getAuthGPG()->getPGPAllList(ids);
-	return true;
+        /* get from mAuthMgr */
+        AuthGPG::getAuthGPG()->getGPGAllList(ids);
+        return true;
 }
 
-bool	p3Peers::getPGPValidList(std::list<std::string> &ids)
+bool	p3Peers::getGPGValidList(std::list<std::string> &ids)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getPGPOthersList()";
@@ -513,11 +485,11 @@ bool	p3Peers::getPGPValidList(std::list<std::string> &ids)
 #endif
 
         /* get from mAuthMgr */
-        AuthGPG::getAuthGPG()->getPGPValidList(ids);
+        AuthGPG::getAuthGPG()->getGPGValidList(ids);
         return true;
 }
 
-bool	p3Peers::getPGPSignedList(std::list<std::string> &ids)
+bool	p3Peers::getGPGSignedList(std::list<std::string> &ids)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getPGPOthersList()";
@@ -525,11 +497,11 @@ bool	p3Peers::getPGPSignedList(std::list<std::string> &ids)
 #endif
 
         /* get from mAuthMgr */
-        AuthGPG::getAuthGPG()->getPGPSignedList(ids);
+        AuthGPG::getAuthGPG()->getGPGSignedList(ids);
         return true;
 }
 
-bool	p3Peers::getPGPAcceptedList(std::list<std::string> &ids)
+bool	p3Peers::getGPGAcceptedList(std::list<std::string> &ids)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getPGPOthersList()";
@@ -537,7 +509,7 @@ bool	p3Peers::getPGPAcceptedList(std::list<std::string> &ids)
 #endif
 
         //TODO implement an additional list of GPG keys that are accepted even if not signed
-        AuthGPG::getAuthGPG()->getPGPSignedList(ids);
+        AuthGPG::getAuthGPG()->getGPGAcceptedList(ids);
         return true;
 }
 
@@ -547,11 +519,28 @@ bool	p3Peers::getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> 
         std::cerr << "p3Peers::getSSLChildListOfGPGId() for id : " << gpg_id;
         std::cerr << std::endl;
 #endif
-
-        return AuthSSL::getAuthSSL()->getSSLChildListOfGPGId(gpg_id, ids);;
+        ids.clear();
+        if (gpg_id == "" ) {
+            return false;
+        }
+        //let's roll throush the friends
+        std::list<std::string> friendsIds;
+        mConnMgr->getFriendList(friendsIds);
+        peerConnectState pcs;
+        for (std::list<std::string>::iterator it = friendsIds.begin(); it != friendsIds.end(); it++) {
+            mConnMgr->getFriendNetStatus(*it, pcs);
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::getSSLChildListOfGPGId() iterating over friends status :id : " << gpg_id;
+        std::cerr << std::endl;
+#endif
+            if (mConnMgr->getFriendNetStatus(*it, pcs) && pcs.gpg_id == gpg_id) {
+                ids.push_back(pcs.id);
+            }
+        }
+        return true;
 }
 
-bool	p3Peers::getPGPDetails(std::string id, RsPeerDetails &d)
+bool	p3Peers::getGPGDetails(std::string id, RsPeerDetails &d)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getPgpDetails() called for id : " << id;
@@ -559,10 +548,10 @@ bool	p3Peers::getPGPDetails(std::string id, RsPeerDetails &d)
 #endif
 
         /* get from mAuthMgr */
-        return AuthGPG::getAuthGPG()->getPGPDetails(id, d);
+        return AuthGPG::getAuthGPG()->getGPGDetails(id, d);
 }
 
-std::string p3Peers::getPGPOwnId()
+std::string p3Peers::getGPGOwnId()
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::getPGPOwnId()";
@@ -570,10 +559,10 @@ std::string p3Peers::getPGPOwnId()
 #endif
 
 	/* get from mAuthMgr */
-        return AuthGPG::getAuthGPG()->PGPOwnId();
+        return AuthGPG::getAuthGPG()->getGPGOwnId();
 }
 
-std::string p3Peers::getPGPId(std::string ssl_id)
+std::string p3Peers::getGPGId(std::string ssl_id)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getPGPId()";
@@ -581,20 +570,39 @@ std::string p3Peers::getPGPId(std::string ssl_id)
 #endif
 
         /* get from mAuthMgr */
-        return AuthSSL::getAuthSSL()->getGPGId(ssl_id);
+        if (ssl_id == AuthSSL::getAuthSSL()->OwnId()) {
+            return AuthGPG::getAuthGPG()->getGPGOwnId();
+        }
+        peerConnectState pcs;
+        if (mConnMgr->getFriendNetStatus(ssl_id, pcs)) {
+            return pcs.gpg_id;
+        } else {
+            return "";
+        }
 }
 
 
 
 	/* Add/Remove Friends */
-bool 	p3Peers::addFriend(std::string id)
+bool 	p3Peers::addFriend(std::string id, std::string gpg_id)
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::addFriend() " << id;
-	std::cerr << std::endl;
+        std::cerr << "p3Peers::addFriend() with : id : " << id << "; gpg_id : " << gpg_id << std::endl;
+#endif
+        if (id == gpg_id) {
+            return addDummyFriend(gpg_id);
+        } else {
+            return mConnMgr->addFriend(id, gpg_id);
+        }
+}
+
+bool 	p3Peers::addDummyFriend(std::string gpg_id)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::addDummyFriend() not implemented yet" << std::endl;
 #endif
 
-	return mConnMgr->addFriend(id);
+        return false;
 }
 
 bool 	p3Peers::removeFriend(std::string id)
@@ -670,6 +678,15 @@ bool 	p3Peers::setLocalAddress(std::string id, std::string addr_str, uint16_t po
 	return false;
 }
 
+bool 	p3Peers::setLocation(std::string ssl_id, std::string location)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::setLocation() " << ssl_id;
+        std::cerr << std::endl;
+#endif
+
+        return mConnMgr->setLocation(ssl_id, location);
+}
 bool 	p3Peers::setExtAddress(std::string id, std::string addr_str, uint16_t port)
 {
 #ifdef P3PEERS_DEBUG
@@ -759,10 +776,10 @@ p3Peers::GetRetroshareInvite()
 	std::cerr << std::endl;
 
         std::string ownId = AuthSSL::getAuthSSL()->OwnId();
-        std::string certstr = AuthSSL::getAuthSSL()->SaveCertificateToString(ownId);
-        std::string name = AuthSSL::getAuthSSL()->getName(ownId);
+        std::string certstr = AuthSSL::getAuthSSL()->SaveOwnCertificateToString();
+        std::string name = AuthGPG::getAuthGPG()->getGPGOwnName();
 	
-        std::string pgpownId = AuthGPG::getAuthGPG()->PGPOwnId();
+        std::string pgpownId = AuthGPG::getAuthGPG()->getGPGOwnId();
         std::string pgpcertstr = AuthGPG::getAuthGPG()->SaveCertificateToString(pgpownId);
 	
 	std::cerr << "p3Peers::GetRetroshareInvite() SSL Cert:";
@@ -785,14 +802,14 @@ p3Peers::GetRetroshareInvite()
 
 //===========================================================================
 
-bool 	p3Peers::LoadCertificateFromFile(std::string fname, std::string &id)
+bool 	p3Peers::loadCertificateFromFile(std::string fname, std::string &id, std::string &gpg_id)
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::LoadCertificateFromFile() ";
+        std::cerr << "p3Peers::LoadCertificateFromFile() not implemented yet";
 	std::cerr << std::endl;
 #endif
 
-        return AuthSSL::getAuthSSL()->LoadCertificateFromFile(fname, id);
+        return false;
 }
 
 
@@ -840,7 +857,7 @@ bool splitCerts(std::string in, std::string &sslcert, std::string &pgpcert)
 
 
 
-bool 	p3Peers::LoadCertificateFromString(std::string cert, std::string &id)
+bool 	p3Peers::loadDetailsFromStringCert(std::string cert, RsPeerDetails &pd)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::LoadCertificateFromString() ";
@@ -849,76 +866,112 @@ bool 	p3Peers::LoadCertificateFromString(std::string cert, std::string &id)
 
 	std::string sslcert;
 	std::string pgpcert;
-	bool ret = false;
-	if (splitCerts(cert, sslcert, pgpcert))
-	{
-		if (pgpcert != "")
-		{
-			std::cerr << "pgpcert .... " << std::endl;
-			std::cerr << pgpcert << std::endl;
+        bool retGPG = false;
+        bool retSSL = false;
+        std::string gpg_id_from_gpg_cert;
+        std::string gpg_id_from_ssl_cert;
+        splitCerts(cert, sslcert, pgpcert);
 
-                        ret = AuthGPG::getAuthGPG()->LoadCertificateFromString(pgpcert);
-		}
-		if (sslcert != "")
-		{
-			std::cerr << "sslcert .... " << std::endl;
-			std::cerr << sslcert << std::endl;
+        if (pgpcert != "") {
+            std::cerr << "p3Peers::LoadDetailsFromStringCert() pgpcert .... " << std::endl;
+            std::cerr << pgpcert << std::endl;
+            std::string gpg_id;
+            AuthGPG::getAuthGPG()->LoadCertificateFromString(pgpcert, gpg_id);
+            retGPG = AuthGPG::getAuthGPG()->getGPGDetails(gpg_id, pd);
+            gpg_id_from_gpg_cert = pd.gpg_id;
+        }
+        if (sslcert != "") {
+            std::cerr << "p3Peers::LoadDetailsFromStringCert() sslcert .... " << std::endl;
+            std::cerr << sslcert << std::endl;
+            retSSL = AuthSSL::getAuthSSL()->LoadDetailsFromStringCert(sslcert, pd);
+            gpg_id_from_ssl_cert = pd.gpg_id;
+        }
 
-                        ret = AuthSSL::getAuthSSL()->LoadCertificateFromString(sslcert, id);
-		}
-	}
-
-	return ret;
+        if (retGPG && retSSL) {
+            //check that the ssl_id and gpg_id are corresponding
+            if (gpg_id_from_gpg_cert != gpg_id_from_ssl_cert) {
+                std::cerr << "p3Peers::LoadDetailsFromStringCert() gpgCert and slCert are not corresponding. Load failed." << std::endl;
+                return false;
+            }
+        }
+        return retGPG || retSSL;
 }
 
 
 
 
 
-bool 	p3Peers::SaveCertificateToFile(std::string id, std::string fname)
+bool 	p3Peers::saveCertificateToFile(std::string id, std::string fname)
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::SaveCertificateToFile() " << id;
+        std::cerr << "p3Peers::SaveCertificateToFile() not implemented yet " << id;
 	std::cerr << std::endl;
 #endif
 
-	ensureExtension(fname, "pqi");
-
-        return AuthSSL::getAuthSSL()->SaveCertificateToFile(id, fname);
+//	ensureExtension(fname, "pqi");
+//
+//        return AuthSSL::getAuthSSL()->SaveCertificateToFile(id, fname);
+        return false;
 }
 
-std::string p3Peers::SaveCertificateToString(std::string id)
+std::string p3Peers::saveCertificateToString(std::string id)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::SaveCertificateToString() " << id;
 	std::cerr << std::endl;
 #endif
-
-        return AuthSSL::getAuthSSL()->SaveCertificateToString(id);
+        if (id == AuthSSL::getAuthSSL()->OwnId()) {
+            return AuthSSL::getAuthSSL()->SaveOwnCertificateToString();
+        } else {
+            return "";
+        }
 }
 
-bool 	p3Peers::SignGPGCertificate(std::string id)
+bool 	p3Peers::signGPGCertificate(std::string id)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::SignCertificate() " << id;
 	std::cerr << std::endl;
 #endif
 
-        return AuthGPG::getAuthGPG()->SignCertificateLevel0(id);
+        if (AuthGPG::getAuthGPG()->SignCertificateLevel0(id)) {
+            //by default, set the GPG to accept connection
+            AuthGPG::getAuthGPG()->setAcceptToConnectGPGCertificate(id, true);
+            return true;
+        }
+        return false;
 }
 
-bool 	p3Peers::TrustGPGCertificate(std::string id, uint32_t trustlvl)
+bool 	p3Peers::setAcceptToConnectGPGCertificate(std::string gpg_id, bool acceptance)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::setAcceptToConnectGPGCertificate() called with gpg_id : " << gpg_id << ", acceptance : " << acceptance << std::endl;
+#endif
+
+        if (gpg_id != "" && acceptance == false) {
+            //remove the friends from the connect manager
+            std::list<std::string> sslFriends;
+            this->getSSLChildListOfGPGId(gpg_id, sslFriends);
+            for (std::list<std::string>::iterator it = sslFriends.begin(); it != sslFriends.end(); it++) {
+                mConnMgr->removeFriend(*it);
+            }
+            return AuthGPG::getAuthGPG()->setAcceptToConnectGPGCertificate(gpg_id, acceptance);
+        }
+        return AuthGPG::getAuthGPG()->setAcceptToConnectGPGCertificate(gpg_id, acceptance);
+}
+
+bool 	p3Peers::trustGPGCertificate(std::string id, uint32_t trustlvl)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::TrustCertificate() " << id;
 	std::cerr << std::endl;
 #endif
         //check if we've got a ssl or gpg id
-        if (AuthSSL::getAuthSSL()->getGPGId(id) == "") {
+        if (getGPGId(id) == "") {
             //if no result then it must be a gpg id
             return AuthGPG::getAuthGPG()->TrustCertificate(id, trustlvl);
         } else {
-            return AuthGPG::getAuthGPG()->TrustCertificate(AuthSSL::getAuthSSL()->getGPGId(id), trustlvl);
+            return AuthGPG::getAuthGPG()->TrustCertificate(getGPGId(id), trustlvl);
         }
 }
 
@@ -1015,39 +1068,3 @@ std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail)
 
 	return out;
 }
-
-
-/********** TRANSLATION ****/
-
-
-uint32_t RsPeerTranslateTrust(uint32_t trustLvl)
-{
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	switch(trustLvl)
-	{
-		case TRUST_SIGN_OWN:
-		case TRUST_SIGN_TRSTED:
-		case TRUST_SIGN_AUTHEN:
-			return RS_TRUST_LVL_GOOD;
-			break;
-
-		case TRUST_SIGN_BASIC:
-			return RS_TRUST_LVL_MARGINAL;
-			break;
-
-		case TRUST_SIGN_UNTRUSTED:
-		case TRUST_SIGN_UNKNOWN:
-		case TRUST_SIGN_NONE:
-		default:
-			return RS_TRUST_LVL_UNKNOWN;
-			break;
-	}
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-
-	return RS_TRUST_LVL_UNKNOWN;
-}
-

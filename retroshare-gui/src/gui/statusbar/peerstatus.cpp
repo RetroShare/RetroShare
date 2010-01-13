@@ -72,7 +72,7 @@ void PeerStatus::getPeerStatus()
     int friends = ids.size();
 
     ids.clear();
-    rsPeers->getOthersList(ids);
+    //rsPeers->getOthersList(ids);
     int others = 1 + ids.size();
 
     std::ostringstream out2;

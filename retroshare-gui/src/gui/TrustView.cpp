@@ -142,7 +142,7 @@ void TrustView::update()
 
 	std::list<std::string> neighs;
 
-	if(!rsPeers->getOthersList(neighs))
+//	if(!rsPeers->getOthersList(neighs))
 		return ;
 
 //	neighs.push_back(rsPeers->getPGPOwnId()) ;

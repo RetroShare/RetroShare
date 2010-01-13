@@ -88,7 +88,7 @@ bool GraphWidget::clearGraph()
     scene->setSceneRect(-200, -200, 1000, 1000);
     setScene(scene);
 
-    centerNode = new Node(this, 1, rsPeers->getPGPOwnId(), "You");
+    centerNode = new Node(this, 1, rsPeers->getGPGOwnId(), "You");
     scene->addItem(centerNode);
     centerNode->setPos(0, 0);
 

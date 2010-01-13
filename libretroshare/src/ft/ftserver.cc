@@ -858,7 +858,9 @@ bool     ftServer::handleCacheData()
 		data.name = ci->file.name;
 		data.path = ci->file.path;
 		data.pid = ci->PeerId();
-                data.pname = AuthSSL::getAuthSSL()->getName(ci->PeerId());
+                peerConnectState pca;
+                mConnMgr->getFriendNetStatus(ci->PeerId(), pca);
+                data.pname = pca.name;
 		mCacheStrapper->recvCacheResponse(data, time(NULL));
 
 		delete ci;

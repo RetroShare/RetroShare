@@ -77,8 +77,7 @@ class RsDiscReply: public RsDiscItem
 	public:
 
 	RsDiscReply()
-	:RsDiscItem(RS_PKT_SUBTYPE_DISC_REPLY),
-	certDER(TLV_TYPE_CERT_XPGP_DER)
+        :RsDiscItem(RS_PKT_SUBTYPE_DISC_REPLY)
 	{ return; }
 
 virtual ~RsDiscReply();
@@ -99,7 +98,7 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	uint32_t discFlags;
 
 	std::string aboutId;
-	RsTlvBinaryData certDER;
+        std::string certGPG;
 };
 
 class RsDiscIssuer: public RsDiscItem

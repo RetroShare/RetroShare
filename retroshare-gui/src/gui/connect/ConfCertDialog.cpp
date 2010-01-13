@@ -106,8 +106,7 @@ void ConfCertDialog::loadDialog()
 	ui.name->setText(QString::fromStdString(detail.name));
         ui.peerid->setText(QString::fromStdString(detail.id));
         if (!detail.isOnlyGPGdetail) {
-            ui.orgloc->setText(QString::fromStdString(detail.org));
-            ui.country->setText(QString::fromStdString(detail.location));
+            ui.loc->setText(QString::fromStdString(detail.location));
             // Dont Show a timestamp in RS calculate the day
             QDateTime date = QDateTime::fromTime_t(detail.lastConnect);
             QString stime = date.toString(Qt::LocalDate);
@@ -133,25 +132,21 @@ void ConfCertDialog::loadDialog()
             for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
                    ui.ipAddressList->addItem(QString::fromStdString(*it));
 
-            ui.orgloc->show();
-            ui.label_11->show();
-            ui.country->show();
-            ui.label_8->show();
+            ui.loc->show();
+            ui.label_loc->show();
             ui.lastcontact->show();
-            ui.label_7->show();
+            ui.label_last_contact->show();
             ui.version->show();
-            ui.label_3->show();
+            ui.label_version->show();
 
             ui.groupBox->show();
         } else {
-            ui.orgloc->hide();
-            ui.label_11->hide();
-            ui.country->hide();
-            ui.label_8->hide();
+            ui.loc->hide();
+            ui.label_loc->hide();
             ui.lastcontact->hide();
-            ui.label_7->hide();
+            ui.label_last_contact->hide();
             ui.version->hide();
-            ui.label_3->hide();
+            ui.label_version->hide();
 
             ui.groupBox->hide();
         }
@@ -201,7 +196,7 @@ void ConfCertDialog::loadDialog()
         ui.signers->clear() ;
         for(std::list<std::string>::const_iterator it(detail.gpgSigners.begin());it!=detail.gpgSigners.end();++it) {	
             RsPeerDetails signerDetail;
-            if (rsPeers->getPGPDetails(*it, signerDetail)) {
+            if (rsPeers->getGPGDetails(*it, signerDetail)) {
                 ui.signers->append(QString::fromStdString(signerDetail.name));
             }
         }
@@ -214,7 +209,7 @@ void ConfCertDialog::applyDialog()
         RsPeerDetails detail;
 	if (!rsPeers->getPeerDetails(mId, detail))
 	{
-            if (!rsPeers->getPGPDetails(mId, detail)) {
+            if (!rsPeers->getGPGDetails(mId, detail)) {
                 QMessageBox::information(this,
                          tr("RetroShare"),
                          tr("Error : cannot get peer details."));
@@ -225,12 +220,11 @@ void ConfCertDialog::applyDialog()
         //check the GPG trustlvl
         if (ui.radioButton_trust_fully->isChecked() && detail.trustLvl != 4) {
             //trust has changed to fully
-            rsPeers->TrustGPGCertificate(detail.id, 4);
+            rsPeers->trustGPGCertificate(detail.id, 4);
         } else if (ui.radioButton_trust_marginnaly->isChecked() && detail.trustLvl != 3) {
-            rsPeers->TrustGPGCertificate(detail.id, 3);
-
+            rsPeers->trustGPGCertificate(detail.id, 3);
         } else if (ui.radioButton_trust_never->isChecked() && detail.trustLvl != 2) {
-            rsPeers->TrustGPGCertificate(detail.id, 2);
+            rsPeers->trustGPGCertificate(detail.id, 2);
         }
 
         if (!detail.isOnlyGPGdetail) {
@@ -262,6 +256,6 @@ void ConfCertDialog::applyDialog()
 
 void ConfCertDialog::makeFriend()
 {
-        rsPeers->SignGPGCertificate(mId);
+        rsPeers->signGPGCertificate(mId);
         loadDialog();
 }

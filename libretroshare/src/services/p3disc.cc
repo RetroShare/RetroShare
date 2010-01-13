@@ -492,47 +492,11 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 		di->discFlags |= P3DISC_FLAGS_PEER_ONLINE;
 	}
 
-	// Add 3rd party trust info
-	// We look at peers that trust 'to', by looking into 'to''s tigners list. The problem is that
-	// signers are accessible through their names instead of their id, so there is ambiguity if too peers
-	// have the same names. @DrBob: that would be cool to save signers using their ids...
-	//
-	RsPeerDetails pd ;
-	std::string name = rsPeers->getPeerName(about) ;
-	if(rsPeers->getPeerDetails(to,pd))
-                for(std::list<std::string>::const_iterator it(pd.gpgSigners.begin());it!=pd.gpgSigners.end();++it)
-			if(*it == name)
-			{
-				di->discFlags |= P3DISC_FLAGS_PEER_TRUSTS_ME;
-#ifdef P3DISC_DEBUG
-				std::cerr << "   Peer " << about << "(" << name << ")" << " is trusting " << to << ", sending info." << std::endl ;
-#endif
-			}
-
 	uint32_t certLen = 0;
 
-	unsigned char **binptr = (unsigned char **) &(di -> certDER.bin_data);
+        di -> certGPG = AuthGPG::getAuthGPG()->SaveCertificateToString(about);
 
-        AuthSSL::getAuthSSL()->SaveCertificateToBinary(about, binptr, &certLen);
-#ifdef P3DISC_DEBUG
-	std::cerr << "Saved certificate to binary in p3discReply. Length=" << certLen << std::endl ;
-#endif
-	if (certLen > 0)
-	{
-		di -> certDER.bin_len = certLen;
-#ifdef P3DISC_DEBUG
-		std::cerr << "Cert Encoded(" << certLen << ")" << std::endl;
-#endif
-	}
-	else
-	{
-#ifdef P3DISC_DEBUG
-		std::cerr << "Failed to Encode Cert" << std::endl;
-#endif
-		di -> certDER.bin_len = 0;
-	}
-
-	// Send off message
+        // Send off message
 #ifdef P3DISC_DEBUG
         di->print(std::cerr, 5);
 #endif
@@ -562,7 +526,7 @@ void p3disc::sendPeerIssuer(std::string to, std::string about)
 #endif
 	}
 
-        std::string aboutIssuerId = AuthSSL::getAuthSSL()->getGPGId(about);
+        std::string aboutIssuerId = rsPeers->getGPGId(about);
 	if (aboutIssuerId == "")
 	{
 		/* major error! */
@@ -709,15 +673,6 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 #endif
 
 	/* tells us their exact address (mConnectMgr can ignore if it looks wrong) */
-
-	/* load certificate */
-	std::string peerId;
-
-	uint8_t *certptr = (uint8_t *) item->certDER.bin_data;
-	uint32_t len = item->certDER.bin_len;
-
-        bool loaded = AuthSSL::getAuthSSL()->LoadCertificateFromBinary(certptr, len, peerId);
-
 	uint32_t type = 0;
 	uint32_t flags = 0;
 
@@ -727,7 +682,7 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 	if (item->discFlags & P3DISC_FLAGS_PEER_ONLINE) flags |= RS_NET_FLAGS_ONLINE;
 	if (item->discFlags & P3DISC_FLAGS_PEER_TRUSTS_ME)
 	{
-		std::cerr << "  Found a peer that trust me: " << peerId << " (" << rsPeers->getPeerName(peerId) << ")" << std::endl ;
+                std::cerr << "  Found a peer that trust me: " << item->aboutId << " (" << rsPeers->getPeerName(item->aboutId) << ")" << std::endl ;
 		flags |= RS_NET_FLAGS_TRUSTS_ME;
 	}
 
@@ -746,16 +701,16 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 	}
 
 	/* only valid certs, and not ourselves */
-	if ((loaded) && (peerId != mConnMgr->getOwnId()))
+        if ((item->aboutId != mConnMgr->getOwnId()))
 	{
-		mConnMgr->peerStatus(peerId, item->currentladdr, item->currentsaddr, item->ipAddressList, type, flags, RS_CB_DISC);
+                mConnMgr->peerStatus(item->aboutId, item->currentladdr, item->currentsaddr, item->ipAddressList, type, flags, RS_CB_DISC);
 
-		std::string hashid1 = RsUtil::HashId(peerId, false);
+                std::string hashid1 = RsUtil::HashId(item->aboutId, false);
 		mConnMgr->stunStatus(hashid1, item->currentsaddr, type, RS_STUN_FRIEND_OF_FRIEND);
 	}
 
         /* send Own Ip list to connect manager. It will extract the external ip address from it */
-        if (peerId == mConnMgr->getOwnId())
+        if (item->aboutId == mConnMgr->getOwnId())
         {
                 //setAddressList might also set our own external address
                 mConnMgr->setAddressList(mConnMgr->getOwnId(), item->ipAddressList);
@@ -778,7 +733,7 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
         }
 
 
-	addDiscoveryData(item->PeerId(), peerId, item->currentladdr, item->currentsaddr, item->discFlags, time(NULL));
+        addDiscoveryData(item->PeerId(), item->aboutId, item->currentladdr, item->currentsaddr, item->discFlags, time(NULL));
 
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS, NOTIFY_TYPE_MOD);
 
@@ -799,8 +754,8 @@ void p3disc::recvPeerIssuerMsg(RsDiscIssuer *item)
 	/* tells us their exact address (mConnectMgr can ignore if it looks wrong) */
 
 	/* load certificate */
-	std::string peerId;
-        bool loaded = AuthGPG::getAuthGPG()->LoadCertificateFromString(item->issuerCert);
+        std::string gpgId;
+        bool loaded = AuthGPG::getAuthGPG()->LoadCertificateFromString(item->issuerCert, gpgId);
 
 	/* cleanup (handled by caller) */
 

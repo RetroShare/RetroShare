@@ -149,8 +149,8 @@ void  NetworkView::insertPeers()
 	/* add all friends */
 	std::list<std::string> ids;
 	std::list<std::string>::iterator it;
- 	rsPeers->getPGPAllList(ids);
-	std::string ownId = rsPeers->getPGPOwnId();
+        rsPeers->getGPGAllList(ids);
+        std::string ownId = rsPeers->getGPGOwnId();
 
 	std::cerr << "NetworkView::insertPeers()" << std::endl;
 
@@ -326,9 +326,9 @@ void  NetworkView::insertSignatures()
 	/* iterate through all friends */
 	std::list<std::string> ids;
 	std::list<std::string>::iterator it, sit;
-	std::string ownId = rsPeers->getPGPOwnId();
+        std::string ownId = rsPeers->getGPGOwnId();
 
- 	rsPeers->getPGPAllList(ids);
+        rsPeers->getGPGAllList(ids);
 
 	std::cerr << "NetworkView::insertSignatures()" << std::endl;
 

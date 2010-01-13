@@ -30,6 +30,7 @@
 #include <iostream>
 #include <sstream>
 #include "pqi/authssl.h"
+#include "pqi/authgpg.h"
 
 #include "util/rsdebug.h"
 const int p3facemsgzone = 11453;
@@ -104,9 +105,9 @@ int RsServer::UpdateAllConfig()
  	RsConfig &config = iface.mConfig;
 
         config.ownId = AuthSSL::getAuthSSL()->OwnId();
-        config.ownName = AuthSSL::getAuthSSL()->getName(config.ownId);
+        config.ownName = AuthGPG::getAuthGPG()->getGPGOwnName();
 	peerConnectState pstate;
-	mConnMgr->getOwnNetStatus(pstate);
+        mConnMgr->getOwnNetStatus(pstate);
 
 	/* ports */
 	config.localAddr = inet_ntoa(pstate.currentlocaladdr.sin_addr);
@@ -157,7 +158,7 @@ void    RsServer::ConfigFinalSave()
 	/* force saving of transfers TODO */
 	//ftserver->saveFileTransferStatus();
 
-        AuthSSL::getAuthSSL()->FinalSaveCertificates();
+        //AuthSSL::getAuthSSL()->FinalSaveCertificates();
 	mConfigMgr->completeConfiguration();
 }
 

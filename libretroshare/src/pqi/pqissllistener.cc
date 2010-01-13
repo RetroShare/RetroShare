@@ -472,11 +472,11 @@ int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_
 	}
 
   	pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
-	  "pqissllistenbase::Extract_Failed_SSL_Certificate() Have Peer Cert - Registering");
+          "pqissllistenbase::Extract_Failed_SSL_Certificate() Have Peer Cert - (Not) Registering (Anymore)");
 
 	// save certificate... (and ip locations)
 	// false for outgoing....
-        AuthSSL::getAuthSSL()->FailedCertificate(peercert, true);
+        //AuthSSL::getAuthSSL()->FailedCertificate(peercert, true);
 
 	return 1;
 }
@@ -683,19 +683,19 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 		return -1;
 	}
 
-	/* Certificate consumed! */
-        bool certKnown = AuthSSL::getAuthSSL()->CheckCertificate(it->first, peercert);
-
-	if (certKnown == false)
-	{
-		std::ostringstream out;
-		out << "Failed Final Check";
-		out << " for Connection:" << inet_ntoa(remote_addr.sin_addr);
-		out << std::endl;
-		out << "pqissllistenbase: Will shut it down!" << std::endl;
-  	        pqioutput(PQL_WARNING, pqissllistenzone, out.str());
-		return -1;
-	}
+//	/* Certificate consumed! */
+//        bool certKnown = AuthSSL::getAuthSSL()->CheckCertificate(it->first, peercert);
+//
+//	if (certKnown == false)
+//	{
+//		std::ostringstream out;
+//		out << "Failed Final Check";
+//		out << " for Connection:" << inet_ntoa(remote_addr.sin_addr);
+//		out << std::endl;
+//		out << "pqissllistenbase: Will shut it down!" << std::endl;
+//  	        pqioutput(PQL_WARNING, pqissllistenzone, out.str());
+//		return -1;
+//	}
 
 	pqissl *pqis = it -> second;
 

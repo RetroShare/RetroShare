@@ -53,6 +53,16 @@
 #include <iostream>
 #include <set>
 
+#define SSL_ID_FIELD_CONNECT_FRIEND_WIZARD "idField"
+#define GPG_ID_FIELD_CONNECT_FRIEND_WIZARD "GPGidField"
+#define LOCATION_FIELD_CONNECT_FRIEND_WIZARD "peerLocation"
+#define CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD "peerCertString"
+#define SIGN_RADIO_BUTTON_FIELD_CONNECT_FRIEND_WIZARD "signRadioButton"
+#define ACCEPT_RADIO_BUTTON_FIELD_CONNECT_FRIEND_WIZARD "acceptRadioButton"
+
+
+
+
 //============================================================================
 //! 
 ConnectFriendWizard::ConnectFriendWizard(QWidget *parent)
@@ -92,23 +102,40 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent)
 void
 ConnectFriendWizard::accept()
 {
-    if ( hasVisitedPage(Page_Conclusion) )
-    {
-        std::string authId = field("idField").toString().toStdString();
-        std::string authCode = field("authCode").toString().toStdString();
+    if ( hasVisitedPage(Page_Conclusion) ) {
+        std::cerr << "ConnectFriendWizard::accept() called with page conclusion visited" << std::endl;
 
-        //rsPeers->AuthCertificate(authId, authCode );
-        rsPeers->addFriend(authId);
+        std::string ssl_Id = field(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD).toString().toStdString();
+        std::string gpg_Id = field(GPG_ID_FIELD_CONNECT_FRIEND_WIZARD).toString().toStdString();
+        bool sign = field(SIGN_RADIO_BUTTON_FIELD_CONNECT_FRIEND_WIZARD).toBool();
+        bool accept_connection = field(ACCEPT_RADIO_BUTTON_FIELD_CONNECT_FRIEND_WIZARD).toBool();
 
-	//let's check if there is ip adresses in the wizard.
-	if (!this->field("ext_friend_ip").isNull() && !this->field("ext_friend_port").isNull()) {
-	    std::cerr << "ConnectFriendWizard::accept() : setting ip ext address." << std::endl;
-	    rsPeers->setExtAddress(authId, this->field("ext_friend_ip").toString().toStdString(), this->field("ext_friend_port").toInt());
-	}
-	if (!this->field("local_friend_ip").isNull() && !this->field("local_friend_port").isNull()) {
-	    std::cerr << "ConnectFriendWizard::accept() : setting ip local address." << std::endl;
-	    rsPeers->setLocalAddress(authId, this->field("local_friend_ip").toString().toStdString(), this->field("local_friend_port").toInt());
-	}
+        if (gpg_Id != "") {
+            if (sign) {
+                std::cerr << "ConclusionPage::validatePage() signing GPG key." << std::endl;
+                rsPeers->signGPGCertificate(gpg_Id); //bye default sign set accept_connection to true;
+            } else if (accept_connection) {
+                std::cerr << "ConclusionPage::validatePage() accepting GPG key for connection." << std::endl;
+                rsPeers->setAcceptToConnectGPGCertificate(gpg_Id, true);
+            }
+        }
+
+        if (ssl_Id != "") {
+            rsPeers->addFriend(ssl_Id, gpg_Id);
+            //let's check if there is ip adresses in the wizard.
+            if (!this->field("ext_friend_ip").isNull() && !this->field("ext_friend_port").isNull()) {
+                std::cerr << "ConnectFriendWizard::accept() : setting ip ext address." << std::endl;
+                rsPeers->setExtAddress(ssl_Id, this->field("ext_friend_ip").toString().toStdString(), this->field("ext_friend_port").toInt());
+            }
+            if (!this->field("local_friend_ip").isNull() && !this->field("local_friend_port").isNull()) {
+                std::cerr << "ConnectFriendWizard::accept() : setting ip local address." << std::endl;
+                rsPeers->setLocalAddress(ssl_Id, this->field("local_friend_ip").toString().toStdString(), this->field("local_friend_port").toInt());
+            }
+            if (!this->field("peerLocation").isNull()) {
+                std::cerr << "ConnectFriendWizard::accept() : setting peerLocation." << std::endl;
+                rsPeers->setLocation(ssl_Id, this->field("peerLocation").toString().toStdString());
+            }
+        }
 
         rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS,1) ;
     }
@@ -313,17 +340,21 @@ TextPage::copyCert()
 //============================================================================
 //
 
-int
-TextPage::nextId() const
-{
-    std::string id;
-    std::string certstr;
-    
-    certstr = friendCertEdit->toPlainText().toStdString();
+int TextPage::nextId() const {
 
-    if ( rsPeers->LoadCertificateFromString(certstr, id) )
-    {
-	//parse the text to get ip address
+    std::string certstr;
+    certstr = friendCertEdit->toPlainText().toStdString();
+    RsPeerDetails pd;
+    if ( rsPeers->loadDetailsFromStringCert(certstr, pd) ) {
+#ifdef FRIEND_WIZARD_DEBUG
+            std::cerr << "ConnectFriendWizard got id : " << pd.id << "; gpg_id : " << pd.gpg_id << std::endl;
+#endif
+        wizard()->setField(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.id));
+        wizard()->setField(GPG_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.gpg_id));
+        wizard()->setField(LOCATION_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.location));
+        wizard()->setField(CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(certstr));
+
+        //parse the text to get ip address
 	try {
 #ifdef FRIEND_WIZARD_DEBUG
 	    std::cerr << "Paring cert for ip detection : " << certstr << std::endl;
@@ -369,7 +400,7 @@ TextPage::nextId() const
 		    parsePosition = subCert.find(";");
 		    std::string ext_port = subCert.substr(0, parsePosition);
     #ifdef FRIEND_WIZARD_DEBUG
-		    std::cerr << "Ext port : " << ext_port << std::endl;
+                    std::cerr << "Ext port : " << ext_port << std::endl;
     #endif
 
 		    //let's store the result in the friend wizard. We will retreive it in the acept() method
@@ -383,7 +414,6 @@ TextPage::nextId() const
 	} catch (...) {
 	    std::cerr << "ConnectFriendWizard : Parse ip address error." << std::endl;
 	}
-	wizard()->setField("idField", QString::fromStdString(id));
         return ConnectFriendWizard::Page_Conclusion ;
     }
     else
@@ -400,9 +430,7 @@ TextPage::nextId() const
 //============================================================================
 //============================================================================
 //
-FofPage::FofPage(QWidget *parent)
-    : QWizardPage(parent)
-{
+FofPage::FofPage(QWidget *parent) : QWizardPage(parent) {
 	_friends_signed = false ;
     QString titleStr("<span style=\"font-size:14pt; font-weight:500;" "color:#32cd32;\">%1</span>");
     setTitle( titleStr.arg( tr("Friends of friends") ) ) ;
@@ -442,35 +470,26 @@ FofPage::FofPage(QWidget *parent)
 	 updatePeersList(0) ;
 }
  
-void FofPage::updatePeersList(int e) 
-{
+void FofPage::updatePeersList(int e) {
 	rsiface->unlockData(); /* UnLock Interface */
-	std::cout << "updating peers list with e=" << e << std::endl ;
 
 	selectedPeersTW->clearContents() ;
-	selectedPeersTW->setRowCount(0) ;
+        selectedPeersTW->setRowCount(0) ;
 
 	std::list<std::string> ids ;
-	rsPeers->getOthersList(ids) ;
+        rsPeers->getGPGAllList(ids) ;
 
 	int row = 0 ;
 
 	_id_boxes.clear() ;
+        std::cerr << "FofPage::updatePeersList() updating peers list with e=" << e << std::endl ;
 
 	// We have to use this trick because signers are given by their names instead of their ids. That's a cause
 	// for some confusion when two peers have the same name. 
 	//
-	std::set<std::string> my_friends_names ;
-
-	std::list<std::string> friends_ids ;
-	rsPeers->getFriendList(friends_ids) ;
-
-	for(std::list<std::string>::const_iterator it(friends_ids.begin());it!=friends_ids.end();++it)
-		my_friends_names.insert(rsPeers->getPeerName(*it)) ;
-
-	// Now fill in the table of selected peers.
-	//
-	for(std::list<std::string>::const_iterator it(ids.begin());it!=ids.end();++it)
+        std::list<std::string> gpg_ids;
+        rsPeers->getGPGAllList(gpg_ids);
+        for(std::list<std::string>::const_iterator it(gpg_ids.begin());it!=gpg_ids.end();++it)
 	{
 		std::cerr << "examining peer " << *it << " (name=" << rsPeers->getPeerName(*it) ;
 		RsPeerDetails details ;
@@ -485,10 +504,11 @@ void FofPage::updatePeersList(int e)
 		
 		std::set<std::string> common_friends ;
 
-                for(std::list<std::string>::const_iterator it2(details.gpgSigners.begin());it2!=details.gpgSigners.end();++it2)
-			if(my_friends_names.find(*it2) != my_friends_names.end()	&& *it2 != details.name)										
-				common_friends.insert(*it2) ;
-
+                for(std::list<std::string>::const_iterator it2(details.gpgSigners.begin());it2!=details.gpgSigners.end();++it2) {
+                    if(rsPeers->isGPGAccepted(*it2))										 {
+                        common_friends.insert(*it2);
+                     }
+                }
 		bool show = false;
 
 		switch(e)
@@ -511,13 +531,14 @@ void FofPage::updatePeersList(int e)
 			default: break ;
 		}
 
-		if(show)
+                if(show)
 		{
 			selectedPeersTW->insertRow(row) ;
 
 			QCheckBox *cb = new QCheckBox ;
 			cb->setChecked(true) ;
 			_id_boxes[cb] = details.id ;
+                        _gpg_id_boxes[cb] = details.gpg_id ;
 
 			selectedPeersTW->setCellWidget(row,0,cb) ;
 			selectedPeersTW->setItem(row,1,new QTableWidgetItem(QString::fromStdString(details.name))) ;
@@ -535,6 +556,8 @@ void FofPage::updatePeersList(int e)
 			++row ;
 		}
 	}
+        std::cerr << "FofPage::updatePeersList() finished iterating over peers" << std::endl ;
+
 	if(row>0)
 	{
 		selectedPeersTW->resizeColumnsToContents() ;
@@ -547,18 +570,15 @@ void FofPage::updatePeersList(int e)
 	selectedPeersTW->setSortingEnabled(true) ;
 }
 
-int FofPage::nextId() const
-{
+int FofPage::nextId() const {
 	return -1 ;
 }
 
-bool FofPage::isComplete() const
-{
+bool FofPage::isComplete() const {
 	return _friends_signed ;
 }
 
-void FofPage::signAllSelectedUsers() 
-{
+void FofPage::signAllSelectedUsers() {
 	std::cerr << "makign lots of friends !!" << std::endl ;
 
 	for(std::map<QCheckBox*,std::string>::const_iterator it(_id_boxes.begin());it!=_id_boxes.end();++it)
@@ -566,7 +586,7 @@ void FofPage::signAllSelectedUsers()
 		{
 			std::cerr << "Making friend with " << it->second << std::endl ;
                         //rsPeers->AuthCertificate(it->second, "");
-			rsPeers->addFriend(it->second);
+                        rsPeers->addFriend(it->second, _gpg_id_boxes[it->first]);
 		}
 
 	_friends_signed = true ;
@@ -584,9 +604,7 @@ void FofPage::signAllSelectedUsers()
 //============================================================================
 //============================================================================
 
-CertificatePage::CertificatePage(QWidget *parent)
-    : QWizardPage(parent)
-{
+CertificatePage::CertificatePage(QWidget *parent) : QWizardPage(parent) {
     QString titleStr("<span style=\"font-size:14pt; font-weight:500;"
                                "color:#32cd32;\">%1</span>");
     setTitle( titleStr.arg( tr("Certificate files") ) ) ;
@@ -637,9 +655,7 @@ CertificatePage::CertificatePage(QWidget *parent)
 
 //============================================================================
 
-void
-CertificatePage::loadFriendCert()
-{
+void CertificatePage::loadFriendCert() {
     QString fileName =
         QFileDialog::getOpenFileName(this, tr("Select Certificate"),
                                      "", tr("Certificates (*.pqi *.pem)"));
@@ -653,9 +669,7 @@ CertificatePage::loadFriendCert()
 
 //============================================================================
 
-void
-CertificatePage::generateCertificateCalled()
-{
+void CertificatePage::generateCertificateCalled() {
     qDebug() << "  generateCertificateCalled";
 
     QString qdir = QFileDialog::getSaveFileName(this,
@@ -663,7 +677,7 @@ CertificatePage::generateCertificateCalled()
                                                 QDir::homePath(),
                                                 "RetroShare Certificate (*.pqi)");
 
-    if ( rsPeers->SaveCertificateToFile(rsPeers->getOwnId(), qdir.toStdString()) )
+    if ( rsPeers->saveCertificateToFile(rsPeers->getOwnId(), qdir.toStdString()) )
     {
         QMessageBox::information(this, tr("RetroShare"),
                          tr("Certificate file successfully created"),
@@ -679,33 +693,31 @@ CertificatePage::generateCertificateCalled()
 
 //============================================================================
 
-bool
-CertificatePage::isComplete() const
-{
+bool CertificatePage::isComplete() const {
     return !( (friendFileNameEdit->text()).isEmpty() );              
 }
 
 //============================================================================
 
-int
-CertificatePage::nextId() const
-{
+int CertificatePage::nextId() const {
     std::string id;
     
     QString fn = friendFileNameEdit->text();
     if (QFile::exists(fn))
     {
         std::string fnstr = fn.toStdString();
-        if ( rsPeers->LoadCertificateFromFile(fnstr, id) ) 
+//        if ( rsPeers->LoadCertificateFromFile(fnstr, id) )
+        if ( false )
         {
-            wizard()->setField("idField", QString::fromStdString(id));
+            wizard()->setField(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(id));
             
             return ConnectFriendWizard::Page_Conclusion;
         }
         else
         {
             wizard()->setField("errorMessage",
-                     QString(tr("Certificate Load Failed:something is wrong with %1 ")).arg(fn) );
+//                     QString(tr("Certificate Load Failed:something is wrong with %1 ")).arg(fn) );
+                     QString(tr("Not implemented ")));
             return ConnectFriendWizard::Page_ErrorMessage;
         }
     }
@@ -752,65 +764,71 @@ int ErrorMessagePage::nextId() const
 //============================================================================
 //============================================================================
 
-ConclusionPage::ConclusionPage(QWidget *parent)
-    : QWizardPage(parent)
-{
+ConclusionPage::ConclusionPage(QWidget *parent) : QWizardPage(parent) {
     QString titleStr("<span style=\"font-size:14pt; font-weight:500;"
                                "color:#32cd32;\">%1</span>");
     setTitle( titleStr.arg( tr("Make Friend") ) ) ;
 
-    setSubTitle(tr("Fill details about your friend here"));
+    setSubTitle(tr("Details about your friend : "));
 
     peerDetailsFrame = new QGroupBox;
     peerDetailsFrame->setTitle( tr("Peer details") );
 
     peerDetailsLayout =  new QGridLayout();
-    
-    trustLabel = new QLabel( tr("Trust:") );
+
+    trustLabel = new QLabel( tr("Key validity:") );
     peerDetailsLayout->addWidget(trustLabel, 0,0,1,1);
-    trustEdit = new QLineEdit();
+    trustEdit = new QLabel();
     peerDetailsLayout->addWidget(trustEdit, 0,1,1,1);
     nameLabel = new QLabel( tr("Name:") );
     peerDetailsLayout->addWidget(nameLabel, 1,0,1,1);
-    nameEdit = new QLineEdit();
+    nameEdit = new QLabel();
     peerDetailsLayout->addWidget(nameEdit, 1,1,1,1);
-    orgLabel = new QLabel( tr("Org:") );
-    peerDetailsLayout->addWidget(orgLabel, 2,0,1,1);
-    orgEdit = new QLineEdit();
-    peerDetailsLayout->addWidget(orgEdit, 2,1,1,1);
+    emailLabel = new QLabel( tr("Email:") );
+    peerDetailsLayout->addWidget(emailLabel, 2,0,1,1);
+    emailEdit = new QLabel();
+    peerDetailsLayout->addWidget(emailEdit, 2,1,1,1);
     locLabel = new QLabel( tr("Loc:") );
     peerDetailsLayout->addWidget(locLabel, 3,0,1,1);
-    locEdit = new QLineEdit();
+    locEdit = new QLabel();
     peerDetailsLayout->addWidget(locEdit, 3,1,1,1);
-    countryLabel = new QLabel( tr("Country:") );
-    peerDetailsLayout->addWidget(countryLabel, 4,0,1,1);
-    countryEdit = new QLineEdit();
-    peerDetailsLayout->addWidget(countryEdit, 4,1,1,1);
     signersLabel = new QLabel( tr("Signers") );
-    peerDetailsLayout->addWidget(signersLabel, 5,0,1,1);
+    peerDetailsLayout->addWidget(signersLabel, 4,0,1,1);
     signersEdit = new QTextEdit();
-    peerDetailsLayout->addWidget(signersEdit, 5,1,1,1);
+    peerDetailsLayout->addWidget(signersEdit, 4,1,1,1);
 
     peerDetailsFrame->setLayout(peerDetailsLayout);
 
-    authCodeLabel = new QLabel( tr("AUTH CODE") );
-    authCodeEdit = new QLineEdit();
-    registerField("authCode", authCodeEdit);
-    
-    authCodeLayout = new QHBoxLayout();
-    authCodeLayout->addWidget(authCodeLabel);
-    authCodeLayout->addWidget(authCodeEdit);
-    authCodeLayout->addStretch();
+    signGPGRadioButton = new QRadioButton();
+    signGPGRadioButton->setText(tr("Add as friend and Sign GPG Key"));
+    registerField(SIGN_RADIO_BUTTON_FIELD_CONNECT_FRIEND_WIZARD,signGPGRadioButton);
+    acceptNoSignGPGRadioButton = new QRadioButton();
+    acceptNoSignGPGRadioButton->setText(tr("Add as friend but don't sign GPG Key"));
+    registerField(ACCEPT_RADIO_BUTTON_FIELD_CONNECT_FRIEND_WIZARD,acceptNoSignGPGRadioButton);
+    peerDetailsLayout->addWidget(signGPGRadioButton, 5,0,1,-1); // QWidget * widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment alignment = 0 )
+    peerDetailsLayout->addWidget(acceptNoSignGPGRadioButton, 6,0,1,-1); // QWidget * widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment alignment = 0 )
 
     conclusionPageLayout = new QVBoxLayout();
     conclusionPageLayout->addWidget(peerDetailsFrame);
-    conclusionPageLayout->addLayout(authCodeLayout);
 
     setLayout(conclusionPageLayout);
 
+    //registering fields for cross pages access. There maybe a cleaner solution
     peerIdEdit = new QLineEdit(this);
     peerIdEdit->setVisible(false);
-    registerField("idField",peerIdEdit);
+    registerField(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD,peerIdEdit);
+
+    peerGPGIdEdit = new QLineEdit(this);
+    peerGPGIdEdit->setVisible(false);
+    registerField(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD,peerGPGIdEdit);
+
+    peerLocation = new QLineEdit(this);
+    peerLocation->setVisible(false);
+    registerField(GPG_ID_FIELD_CONNECT_FRIEND_WIZARD,peerLocation);
+
+    peerCertStringEdit = new QLineEdit(this);
+    peerCertStringEdit->setVisible(false);
+    registerField(CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD,peerCertStringEdit);
 
     ext_friend_ip = new QLineEdit(this);
     ext_friend_ip->setVisible(false);
@@ -831,36 +849,75 @@ ConclusionPage::ConclusionPage(QWidget *parent)
 
 //============================================================================
 //
-int ConclusionPage::nextId() const
-{
+int ConclusionPage::nextId() const {
     return -1;
 }
+
 //
 //============================================================================
 //
-void
-ConclusionPage::initializePage()
-{
-    std::string id = field("idField").toString().toStdString();
+void ConclusionPage::initializePage() {
+    std::string id = field(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD).toString().toStdString();
+    std::string gpg_id = field(GPG_ID_FIELD_CONNECT_FRIEND_WIZARD).toString().toStdString();
+    std::string location = field(LOCATION_FIELD_CONNECT_FRIEND_WIZARD).toString().toStdString();
+    std::string certString = field(CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD).toString().toStdString();
+    std::cerr << "Conclusion page id : " << id << "; gpg_id : " << gpg_id << std::endl;
 
     RsPeerDetails detail;
-    if (!rsPeers->getPeerDetails(id, detail))
-    {
-            rsiface->unlockData(); /* UnLock Interface */
-            return ;//false;
+    if (!rsPeers->loadDetailsFromStringCert(certString, detail)) {
+        if (!rsPeers->getPeerDetails(id, detail)) {
+            if (!rsPeers->getPeerDetails(gpg_id, detail)) {
+                rsiface->unlockData(); /* UnLock Interface */
+                return ;//false;
+            }
+        }
+    }
+
+    //set the radio button to sign the GPG key
+    if (detail.accept_connection && !detail.ownsign) {
+        //gpg key connection is already accepted, don't propose to accept it again
+        signGPGRadioButton->setText(tr("Peer is already a GPG key is already a retroshare friend. Sign his GPG key."));
+        signGPGRadioButton->setChecked(true);
+        acceptNoSignGPGRadioButton->hide();
+        acceptNoSignGPGRadioButton->setChecked(false);
+    }
+    if (!detail.accept_connection && detail.ownsign) {
+        //gpg key is already signed, don't propose to sign it again
+        acceptNoSignGPGRadioButton->setText(tr("GPG key is already signed, make it a retroshare friend."));
+        acceptNoSignGPGRadioButton->setChecked(true);
+        signGPGRadioButton->hide();
+        signGPGRadioButton->setChecked(false);
+    }
+    if (!detail.accept_connection && !detail.ownsign) {
+        signGPGRadioButton->setText(tr("Add as friend and Sign GPG Key"));
+        signGPGRadioButton->show();
+        acceptNoSignGPGRadioButton->setText(tr("Add as friend but don't sign GPG Key"));
+        acceptNoSignGPGRadioButton->show();
+    }
+    if (detail.accept_connection && detail.ownsign && !detail.isOnlyGPGdetail) {
+        acceptNoSignGPGRadioButton->setChecked(false);
+        acceptNoSignGPGRadioButton->hide();
+        signGPGRadioButton->setChecked(false);
+        signGPGRadioButton->hide();
+        radioButtonsLabel = new QLabel(tr("It seems your friend is already registered. Adding it might just set it's ip address."));
+        peerDetailsLayout->addWidget(radioButtonsLabel, 7,0,1,-1); // QWidget * widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment alignment = 0 )
     }
 
     std::string trustString;
-
-    switch(detail.trustLvl)
+    switch(detail.validLvl)
     {
-            case RS_TRUST_LVL_GOOD:
-                    trustString = "Good";
+            case RS_TRUST_LVL_ULTIMATE:
+                    trustString = "Ultimate";
+            break;
+            case RS_TRUST_LVL_FULL:
+                    trustString = "Full";
             break;
             case RS_TRUST_LVL_MARGINAL:
                     trustString = "Marginal";
             break;
-            case RS_TRUST_LVL_UNKNOWN:
+            case RS_TRUST_LVL_NONE:
+                    trustString = "None";
+            break;
             default:
                     trustString = "No Trust";
             break;
@@ -868,8 +925,7 @@ ConclusionPage::initializePage()
 
     QString ts;
     std::list<std::string>::iterator it;
-    for(it = detail.gpgSigners.begin(); it != detail.gpgSigners.end(); it++)
-    {
+    for(it = detail.gpgSigners.begin(); it != detail.gpgSigners.end(); it++) {
             ts.append(QString::fromStdString( rsPeers->getPeerName(*it) ));
             ts.append( "<" ) ;
             ts.append( QString::fromStdString(*it) );
@@ -879,14 +935,11 @@ ConclusionPage::initializePage()
 
     nameEdit->setText( QString::fromStdString( detail.name ) ) ;
     trustEdit->setText(QString::fromStdString( trustString ) ) ;
-    orgEdit->setText(QString::fromStdString( detail.org ) );
-    locEdit->setText( QString::fromStdString( detail.location ) );
-    countryEdit->setText( QString::fromStdString( detail.email ) );
+    emailEdit->setText(QString::fromStdString( detail.email ) );
+    locEdit->setText( QString::fromStdString( location ) );
     signersEdit->setPlainText( ts );
     
-    authCodeEdit->setText( QString::fromStdString(detail.authcode) );
 }
-//
+
 //============================================================================
 //
-

@@ -21,7 +21,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="stabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="icon">
@@ -39,7 +39,7 @@
          </property>
          <layout class="QGridLayout" name="_2">
           <item row="0" column="0">
-           <widget class="QLabel" name="label_10">
+           <widget class="QLabel" name="label_name">
             <property name="text">
              <string>Name:</string>
             </property>
@@ -52,73 +52,59 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_11">
-            <property name="text">
-             <string>Org / Loc:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="orgloc">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_8">
-            <property name="text">
-             <string>Country/State:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="country">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="label_id">
             <property name="text">
              <string>Peer ID</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="2" column="1">
            <widget class="QLineEdit" name="peerid">
             <property name="readOnly">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_7">
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_last_contact">
             <property name="text">
              <string>Last Contact</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="5" column="1">
            <widget class="QLineEdit" name="lastcontact">
             <property name="readOnly">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
+          <item row="6" column="1">
            <widget class="QLineEdit" name="version">
             <property name="readOnly">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_3">
+          <item row="6" column="0">
+           <widget class="QLabel" name="label_version">
             <property name="text">
              <string>Version</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_loc">
+            <property name="text">
+             <string>Loc:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="loc">
+            <property name="readOnly">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

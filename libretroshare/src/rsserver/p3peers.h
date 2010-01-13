@@ -45,30 +45,33 @@ virtual std::string getOwnId();
 
 virtual bool	getOnlineList(std::list<std::string> &ids);
 virtual bool	getFriendList(std::list<std::string> &ids);
-virtual bool	getOthersList(std::list<std::string> &ids);
+//virtual bool	getOthersList(std::list<std::string> &ids);
 
 virtual bool    isOnline(std::string id);
 virtual bool    isFriend(std::string id);
-virtual std::string getPeerPGPName(std::string pgp_id);
-virtual std::string getPeerName(std::string id);
+virtual bool    isGPGAccepted(std::string gpg_id_is_friend); //
+virtual std::string getGPGName(std::string gpg_id);
+virtual std::string getPeerName(std::string ssl_or_gpg_id);
 virtual bool	getPeerDetails(std::string id, RsPeerDetails &d);
 
                 /* Using PGP Ids */
-virtual std::string getPGPOwnId();
-virtual std::string getPGPId(std::string ssl_id);
-virtual bool    getPGPAcceptedList(std::list<std::string> &ids);
-virtual bool    getPGPSignedList(std::list<std::string> &ids);
-virtual bool    getPGPValidList(std::list<std::string> &ids);
-virtual bool    getPGPAllList(std::list<std::string> &ids);
-virtual bool	getPGPDetails(std::string id, RsPeerDetails &d);
+virtual std::string getGPGOwnId();
+virtual std::string getGPGId(std::string ssl_id);
+virtual bool    getGPGAcceptedList(std::list<std::string> &ids);
+virtual bool    getGPGSignedList(std::list<std::string> &ids);
+virtual bool    getGPGValidList(std::list<std::string> &ids);
+virtual bool    getGPGAllList(std::list<std::string> &ids);
+virtual bool	getGPGDetails(std::string id, RsPeerDetails &d);
 virtual bool    getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> &ids);
 
 	/* Add/Remove Friends */
-virtual	bool addFriend(std::string id);
-virtual	bool removeFriend(std::string id);
+virtual	bool addFriend(std::string ssl_id, std::string gpg_id);
+virtual	bool addDummyFriend(std::string gpg_id); //we want to add a empty ssl friend for this gpg id
+virtual	bool removeFriend(std::string ssl_id);
 
 	/* Network Stuff */
 virtual	bool connectAttempt(std::string id);
+virtual bool setLocation(std::string ssl_id, std::string location);//location is shown in the gui to differentiate ssl certs
 virtual	bool setLocalAddress(std::string id, std::string addr, uint16_t port);
 virtual	bool setExtAddress(std::string id, std::string addr, uint16_t port);
 virtual	bool setNetworkMode(std::string id, uint32_t netMode);
@@ -83,13 +86,14 @@ virtual bool getAllowTunnelConnection() ;
 	/* Auth Stuff */
 virtual	std::string GetRetroshareInvite();
 
-virtual	bool LoadCertificateFromFile(std::string fname, std::string &id);
-virtual	bool LoadCertificateFromString(std::string cert, std::string &id);
-virtual	bool SaveCertificateToFile(std::string id, std::string fname);
-virtual	std::string SaveCertificateToString(std::string id);
+virtual	bool loadCertificateFromFile(std::string fname, std::string &id, std::string &gpg_id);
+virtual	bool loadDetailsFromStringCert(std::string cert, RsPeerDetails &pd);
+virtual	bool saveCertificateToFile(std::string id, std::string fname);
+virtual	std::string saveCertificateToString(std::string id);
 
-virtual	bool SignGPGCertificate(std::string id);
-virtual	bool TrustGPGCertificate(std::string id, uint32_t trustlvl);
+virtual	bool setAcceptToConnectGPGCertificate(std::string gpg_id, bool acceptance);
+virtual	bool signGPGCertificate(std::string id);
+virtual	bool trustGPGCertificate(std::string id, uint32_t trustlvl);
 
 	private:
 

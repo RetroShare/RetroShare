@@ -39,9 +39,10 @@ class RsPeers;
 extern RsPeers   *rsPeers;
 
 /* Trust Levels */
-const uint32_t RS_TRUST_LVL_UNKNOWN	= 0x0001;
-const uint32_t RS_TRUST_LVL_MARGINAL	= 0x0002;
-const uint32_t RS_TRUST_LVL_GOOD	= 0x0003;
+const uint32_t RS_TRUST_LVL_NONE	= 2;
+const uint32_t RS_TRUST_LVL_MARGINAL	= 3;
+const uint32_t RS_TRUST_LVL_FULL	= 4;
+const uint32_t RS_TRUST_LVL_ULTIMATE	= 5;
 
 
 /* Net Mode */
@@ -78,6 +79,7 @@ class RsPeerDetails
 	/* Auth details */
         bool isOnlyGPGdetail;
 	std::string id;
+        std::string gpg_id;
 	std::string name;
 	std::string email;
 	std::string location;
@@ -94,6 +96,8 @@ class RsPeerDetails
 
         bool ownsign; /* we have signed the remote peer GPG key */
         bool hasSignedMe; /* the remote peer has signed my GPG key */
+
+        bool accept_connection;
 
 	/* Network details (only valid if friend) */
 	uint32_t		state;
@@ -132,30 +136,33 @@ virtual std::string getOwnId()					= 0;
 
 virtual bool	getOnlineList(std::list<std::string> &ssl_ids)	= 0;
 virtual bool	getFriendList(std::list<std::string> &ssl_ids)	= 0;
-virtual bool	getOthersList(std::list<std::string> &ssl_ids)	= 0;
+//virtual bool	getOthersList(std::list<std::string> &ssl_ids)	= 0;
 
 virtual bool    isOnline(std::string ssl_id)			= 0;
 virtual bool    isFriend(std::string ssl_id)			= 0;
-virtual std::string getPeerName(std::string ssl_id)			= 0;
-virtual std::string getPeerPGPName(std::string ssl_id)	= 0;
+virtual bool    isGPGAccepted(std::string gpg_id_is_friend)			= 0; //
+virtual std::string getPeerName(std::string ssl_or_gpg_id)			= 0;
+virtual std::string getGPGName(std::string gpg_id)	= 0;
 virtual bool	getPeerDetails(std::string ssl_or_gpg_id, RsPeerDetails &d) = 0; //get Peer detail accept SSL and PGP certs
 
 		/* Using PGP Ids */
-virtual std::string getPGPOwnId()				= 0;
-virtual std::string getPGPId(std::string ssl_id)	= 0;
-virtual bool    getPGPAcceptedList(std::list<std::string> &gpg_ids)   = 0;
-virtual bool    getPGPSignedList(std::list<std::string> &gpg_ids)   = 0;//friends that we accpet to connect with but we don't want to sign their gpg key
-virtual bool    getPGPValidList(std::list<std::string> &gpg_ids)   = 0;
-virtual bool    getPGPAllList(std::list<std::string> &gpg_ids) 	= 0;
-virtual bool	getPGPDetails(std::string gpg_id, RsPeerDetails &d) = 0;
+virtual std::string getGPGOwnId()				= 0;
+virtual std::string getGPGId(std::string ssl_id)	= 0;
+virtual bool    getGPGAcceptedList(std::list<std::string> &gpg_ids)   = 0;
+virtual bool    getGPGSignedList(std::list<std::string> &gpg_ids)   = 0;//friends that we accpet to connect with but we don't want to sign their gpg key
+virtual bool    getGPGValidList(std::list<std::string> &gpg_ids)   = 0;
+virtual bool    getGPGAllList(std::list<std::string> &gpg_ids) 	= 0;
+virtual bool	getGPGDetails(std::string gpg_id, RsPeerDetails &d) = 0;
 virtual bool    getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> &ids) = 0;
 
 	/* Add/Remove Friends */
-virtual	bool addFriend(std::string id)        			= 0;
+virtual	bool addFriend(std::string ssl_id, std::string gpg_id)        			= 0;
+virtual	bool addDummyFriend(std::string gpg_id)        			= 0; //we want to add a empty ssl friend for this gpg id
 virtual	bool removeFriend(std::string id)  			= 0;
 
 	/* Network Stuff */
 virtual	bool connectAttempt(std::string ssl_id)			= 0;
+virtual bool setLocation(std::string ssl_id, std::string location) = 0;//location is shown in the gui to differentiate ssl certs
 virtual	bool setLocalAddress(std::string ssl_id, std::string addr, uint16_t port) = 0;
 virtual	bool setExtAddress(  std::string ssl_id, std::string addr, uint16_t port) = 0;
 virtual	bool setNetworkMode(std::string ssl_id, uint32_t netMode) 	= 0;
@@ -170,13 +177,14 @@ virtual bool getAllowTunnelConnection() = 0 ;
 	/* Auth Stuff */
 virtual	std::string GetRetroshareInvite() 			= 0;
 
-virtual	bool LoadCertificateFromFile(std::string fname, std::string &id)  = 0;
-virtual	bool LoadCertificateFromString(std::string cert, std::string &id)  = 0;
-virtual	bool SaveCertificateToFile(std::string id, std::string fname)  = 0;
-virtual	std::string SaveCertificateToString(std::string id)  	= 0;
+virtual	bool loadCertificateFromFile(std::string fname, std::string &id, std::string &gpg_id)  = 0;
+virtual	bool loadDetailsFromStringCert(std::string cert, RsPeerDetails &pd) = 0;
+virtual	bool saveCertificateToFile(std::string id, std::string fname)  = 0;
+virtual	std::string saveCertificateToString(std::string id)  	= 0;
 
-virtual	bool SignGPGCertificate(std::string gpg_id)                   	= 0;
-virtual	bool TrustGPGCertificate(std::string gpg_id, uint32_t trustlvl) 	= 0;
+virtual	bool setAcceptToConnectGPGCertificate(std::string gpg_id, bool acceptance) = 0;
+virtual	bool signGPGCertificate(std::string gpg_id)                   	= 0;
+virtual	bool trustGPGCertificate(std::string gpg_id, uint32_t trustlvl) 	= 0;
 
 };
 

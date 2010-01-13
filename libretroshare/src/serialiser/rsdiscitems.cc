@@ -369,7 +369,7 @@ void 	RsDiscReply::clear()
 	contact_tf = 0;
 	discFlags = 0;
 	aboutId.clear();
-	certDER.TlvClear();
+        certGPG.clear();
         ipAddressList.clear();
 }
 
@@ -394,6 +394,12 @@ std::ostream &RsDiscReply::print(std::ostream &out, uint16_t indent)
         out << "DiscFlags:  " << discFlags  << std::endl;
 
         printIndent(out, int_Indent);
+        out << "AboutId:  " << aboutId  << std::endl;
+
+        printIndent(out, int_Indent);
+        out << "certGPG:  " << certGPG  << std::endl;
+
+        printIndent(out, int_Indent);
         out << "IpAddressListSize:  " << ipAddressList.size()  << std::endl;
 
         printIndent(out, int_Indent);
@@ -402,10 +408,6 @@ std::ostream &RsDiscReply::print(std::ostream &out, uint16_t indent)
         printIndent(out, int_Indent);
                out << inet_ntoa(ipListIt->ipAddr.sin_addr) << ":" << ntohs(ipListIt->ipAddr.sin_port) << " seenTime : " << ipListIt->seenTime << std::endl;
         }
-
-        printIndent(out, int_Indent);
-        out << "AboutId:  " << aboutId  << std::endl;
-	certDER.print(out, int_Indent);
 
         printRsItemEnd(out, "RsDiscReply", indent);
         return out;
@@ -420,7 +422,7 @@ uint32_t    RsDiscSerialiser::sizeReply(RsDiscReply *item)
 	s += 2; /* connect_tr */
 	s += 4; /* discFlags  */
 	s += GetTlvStringSize(item->aboutId);
-	s += item->certDER.TlvSize();
+        s += GetTlvStringSize(item->certGPG);
         s += 4; /* ipaddress list size  */
 
 	//add the size of the ip list
@@ -448,7 +450,7 @@ bool     RsDiscSerialiser::serialiseReply(RsDiscReply *item, void *data, uint32_
 
 #ifdef RSSERIAL_DEBUG
 	std::cerr << "RsDiscSerialiser::serialiseReply() Header: " << ok << std::endl;
-	std::cerr << "RsDiscSerialiser::serialiseReply() Size: " << tlvsize << std::endl;
+        std::cerr << "RsDiscSerialiser::serialiseReply() Size: " << tlvsize << std::endl;
 #endif
 
 	/* skip the header */
@@ -462,7 +464,7 @@ bool     RsDiscSerialiser::serialiseReply(RsDiscReply *item, void *data, uint32_
 
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, item->aboutId);
 
-	ok &= item->certDER.SetTlv(data, tlvsize, &offset);
+        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_CERT_GPG, item->certGPG);
 
         ok &= setRawUInt32(data, tlvsize, &offset, item->ipAddressList.size());
 
@@ -533,7 +535,9 @@ RsDiscReply *RsDiscSerialiser::deserialiseReply(void *data, uint32_t *pktsize)
 
 	ok &= GetTlvString(data, rssize, &offset,
 					TLV_TYPE_STR_PEERID, item->aboutId);
-	ok &= item->certDER.GetTlv(data, rssize, &offset);
+
+        ok &= GetTlvString(data, rssize, &offset,
+                                        TLV_TYPE_STR_CERT_GPG, item->certGPG);
 
         uint32_t listSize;
         ok &= getRawUInt32(data, rssize, &offset, &listSize);

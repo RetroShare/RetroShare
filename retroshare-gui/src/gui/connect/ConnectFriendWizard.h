@@ -159,7 +159,8 @@ private:
     QVBoxLayout* certPageLayout;    
 
 	 bool _friends_signed ;
-	 std::map<QCheckBox*,std::string> _id_boxes ;
+         std::map<QCheckBox*,std::string> _id_boxes ;
+         std::map<QCheckBox*,std::string> _gpg_id_boxes ;
 
 private slots:
 	void signAllSelectedUsers() ;
@@ -203,31 +204,32 @@ private slots:
 
 private:
     QGroupBox* peerDetailsFrame;
+    QGridLayout* peerDetailsLayout;
     QLabel* trustLabel;
-    QLineEdit* trustEdit;
+    QLabel* trustEdit;
     QLabel* nameLabel;
-    QLineEdit* nameEdit;
-    QLabel* orgLabel;
-    QLineEdit* orgEdit;
+    QLabel* nameEdit;
+    QLabel* emailLabel;
+    QLabel* emailEdit;
     QLabel* locLabel;
-    QLineEdit* locEdit;
-    QLabel* countryLabel;
-    QLineEdit* countryEdit;
+    QLabel* locEdit;
     QLabel* signersLabel;
     QTextEdit* signersEdit;
-    QGridLayout* peerDetailsLayout;
-    
-    QLabel* authCodeLabel;
-    QLineEdit* authCodeEdit;
-    QHBoxLayout* authCodeLayout;
+
+    QLabel* radioButtonsLabel;
+    QRadioButton *signGPGRadioButton;
+    QRadioButton *acceptNoSignGPGRadioButton;
 
     QVBoxLayout* conclusionPageLayout;
 
     //! peer id
 
-    //! It's a hack; This widget is used only to register "id" field in the
-    //! wizard. Really the widget isn't displayed.
+//    //! It's a hack; This widget is used only to register "id" field in the
+//    //! wizard. Really the widget isn't displayed.
     QLineEdit* peerIdEdit;
+    QLineEdit* peerGPGIdEdit;
+    QLineEdit* peerLocation;
+    QLineEdit* peerCertStringEdit;
     QLineEdit* ext_friend_ip;
     QLineEdit* ext_friend_port;
     QLineEdit* local_friend_ip;

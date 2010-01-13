@@ -131,7 +131,7 @@ void ConnectDialog::authAttempt()
 	/* well lets do it ! */
 	std::cerr << "Attempting AuthCode:" << authCode << std::endl;
         //rsPeers->AuthCertificate(authId, authCode);
-	rsPeers->addFriend(authId);
+        rsPeers->addDummyFriend(authId);
 
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS,1) ;
 	/* close it up! */
@@ -151,15 +151,20 @@ bool ConnectDialog::loadPeer(std::string id)
 
 	switch(detail.trustLvl)
 	{
-		case RS_TRUST_LVL_GOOD:
-			trustString = "Good";
+                case RS_TRUST_LVL_ULTIMATE:
+                        trustString = "Ultimate";
+                break;
+                case RS_TRUST_LVL_FULL:
+                        trustString = "Full";
 		break;
 		case RS_TRUST_LVL_MARGINAL:
 			trustString = "Marginal";
 		break;
-		case RS_TRUST_LVL_UNKNOWN:
+                case RS_TRUST_LVL_NONE:
+                        trustString = "None";
+                break;
 		default:
-			trustString = "No Trust";
+                        trustString = "Unknown";
 		break;
 	}
 

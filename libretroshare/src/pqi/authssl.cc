@@ -653,234 +653,231 @@ std::string AuthSSL::OwnId()
 	return id;
 }
 
-bool    AuthSSL::getAllList(std::list<std::string> &ids)
-{
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::getAllList()";
-	std::cerr << std::endl;
-#endif
-	sslMtx.lock();   /***** LOCK *****/
+//bool    AuthSSL::getAllList(std::list<std::string> &ids)
+//{
+//#ifdef AUTHSSL_DEBUG
+//	std::cerr << "AuthSSL::getAllList()";
+//	std::cerr << std::endl;
+//#endif
+//	sslMtx.lock();   /***** LOCK *****/
+//
+//	/* iterate through both lists */
+//	std::map<std::string, sslcert *>::iterator it;
+//
+//	for(it = mCerts.begin(); it != mCerts.end(); it++)
+//	{
+//		ids.push_back(it->first);
+//	}
+//
+//	sslMtx.unlock(); /**** UNLOCK ****/
+//
+//	return true;
+//}
 
-	/* iterate through both lists */
-	std::map<std::string, sslcert *>::iterator it;
+//bool    AuthSSL::getAuthenticatedList(std::list<std::string> &ids)
+//{
+//#ifdef AUTHSSL_DEBUG
+//	std::cerr << "AuthSSL::getAuthenticatedList()";
+//	std::cerr << std::endl;
+//#endif
+//	sslMtx.lock();   /***** LOCK *****/
+//
+//	/* iterate through both lists */
+//	std::map<std::string, sslcert *>::iterator it;
+//
+//	for(it = mCerts.begin(); it != mCerts.end(); it++)
+//	{
+//		if (it->second->authed)
+//		{
+//			ids.push_back(it->first);
+//		}
+//	}
+//
+//	sslMtx.unlock(); /**** UNLOCK ****/
+//
+//	return true;
+//}
 
-	for(it = mCerts.begin(); it != mCerts.end(); it++)
-	{
-		ids.push_back(it->first);
-	}
+//bool    AuthSSL::getUnknownList(std::list<std::string> &ids)
+//{
+//#ifdef AUTHSSL_DEBUG
+//	std::cerr << "AuthSSL::getUnknownList()";
+//	std::cerr << std::endl;
+//#endif
+//	sslMtx.lock();   /***** LOCK *****/
+//
+//	/* iterate through both lists */
+//	std::map<std::string, sslcert *>::iterator it;
+//
+//	for(it = mCerts.begin(); it != mCerts.end(); it++)
+//	{
+//		if (!it->second->authed)
+//		{
+//			ids.push_back(it->first);
+//		}
+//	}
+//
+//	sslMtx.unlock(); /**** UNLOCK ****/
+//
+//	return true;
+//}
 
-	sslMtx.unlock(); /**** UNLOCK ****/
+//bool    AuthSSL::getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> &ids)
+//{
+//#ifdef AUTHSSL_DEBUG
+//        std::cerr << "AuthSSL::getChildListOfGPGId() called for gpg id : " << gpg_id << std::endl;
+//#endif
+//        sslMtx.lock();   /***** LOCK *****/
+//
+//        /* iterate through both lists */
+//        std::map<std::string, sslcert *>::iterator it;
+//
+//        for(it = mCerts.begin(); it != mCerts.end(); it++)
+//        {
+//#ifdef AUTHSSL_DEBUG
+//        std::cerr << "AuthSSL::getChildListOfGPGId() it->second->authed : " << it->second->authed << "; it->second->issuer : " << it->second->issuer << std::endl;
+//#endif
+//                if (it->second->authed && it->second->issuer == gpg_id)
+//                {
+//                        ids.push_back(it->first);
+//                }
+//        }
+//
+//        sslMtx.unlock(); /**** UNLOCK ****/
+//
+//        return true;
+//}
 
-	return true;
-}
+//bool    AuthSSL::isAuthenticated(std::string id)
+//{
+//#ifdef AUTHSSL_DEBUG
+//	std::cerr << "AuthSSL::isAuthenticated() " << id;
+//	std::cerr << std::endl;
+//#endif
+//	sslMtx.lock();   /***** LOCK *****/
+//
+//	sslcert *cert = NULL;
+//	bool auth = false;
+//
+//	if (locked_FindCert(id, &cert))
+//	{
+//		auth = cert->authed;
+//	}
+//
+//	sslMtx.unlock(); /**** UNLOCK ****/
+//
+//	return auth;
+//}
 
-bool    AuthSSL::getAuthenticatedList(std::list<std::string> &ids)
-{
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::getAuthenticatedList()";
-	std::cerr << std::endl;
-#endif
-	sslMtx.lock();   /***** LOCK *****/
+//std::string AuthSSL::getName(std::string id)
+//{
+//#ifdef AUTHSSL_DEBUG
+//	std::cerr << "AuthSSL::getName() " << id;
+//	std::cerr << std::endl;
+//#endif
+//	std::string name;
+//
+//	sslMtx.lock();   /***** LOCK *****/
+//
+//	sslcert *cert = NULL;
+//	if (id == mOwnId)
+//	{
+//		name = mOwnCert->name;
+//	}
+//	else if (locked_FindCert(id, &cert))
+//	{
+//		name = cert->name;
+//	}
+//
+//	sslMtx.unlock(); /**** UNLOCK ****/
+//
+//	return name;
+//}
 
-	/* iterate through both lists */
-	std::map<std::string, sslcert *>::iterator it;
+//std::string AuthSSL::getIssuerName(std::string id)
+//{
+//#ifdef AUTHSSL_DEBUG
+//	std::cerr << "AuthSSL::getIssuerName() " << id;
+//	std::cerr << std::endl;
+//#endif
+//	std::string issuer;
+//
+//	sslMtx.lock();   /***** LOCK *****/
+//
+//	sslcert *cert = NULL;
+//	if (id == mOwnId)
+//	{
+//		issuer = mOwnCert->issuer;
+//	}
+//	else if (locked_FindCert(id, &cert))
+//	{
+//		issuer = cert->issuer;
+//	}
+//
+//	sslMtx.unlock(); /**** UNLOCK ****/
+//
+//#ifdef AUTHSSL_DEBUG
+//	std::cerr << "AuthSSL::getIssuerName() => " << issuer;
+//	std::cerr << std::endl;
+//#endif
+//
+//	return issuer;
+//}
 
-	for(it = mCerts.begin(); it != mCerts.end(); it++)
-	{
-		if (it->second->authed)
-		{
-			ids.push_back(it->first);
-		}
-	}
+//GPG_id AuthSSL::getGPGId(SSL_id id) {
+//    return getIssuerName(id);
+//}
 
-	sslMtx.unlock(); /**** UNLOCK ****/
-
-	return true;
-}
-
-bool    AuthSSL::getUnknownList(std::list<std::string> &ids)
-{
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::getUnknownList()";
-	std::cerr << std::endl;
-#endif
-	sslMtx.lock();   /***** LOCK *****/
-
-	/* iterate through both lists */
-	std::map<std::string, sslcert *>::iterator it;
-
-	for(it = mCerts.begin(); it != mCerts.end(); it++)
-	{
-		if (!it->second->authed)
-		{
-			ids.push_back(it->first);
-		}
-	}
-
-	sslMtx.unlock(); /**** UNLOCK ****/
-
-	return true;
-}
-
-bool    AuthSSL::getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> &ids)
-{
-#ifdef AUTHSSL_DEBUG
-        std::cerr << "AuthSSL::getChildListOfGPGId() called for gpg id : " << gpg_id << std::endl;
-#endif
-        sslMtx.lock();   /***** LOCK *****/
-
-        /* iterate through both lists */
-        std::map<std::string, sslcert *>::iterator it;
-
-        for(it = mCerts.begin(); it != mCerts.end(); it++)
-        {
-#ifdef AUTHSSL_DEBUG
-        std::cerr << "AuthSSL::getChildListOfGPGId() it->second->authed : " << it->second->authed << "; it->second->issuer : " << it->second->issuer << std::endl;
-#endif
-                if (it->second->authed && it->second->issuer == gpg_id)
-                {
-                        ids.push_back(it->first);
-                }
-        }
-
-        sslMtx.unlock(); /**** UNLOCK ****/
-
-        return true;
-}
-
-bool    AuthSSL::isAuthenticated(std::string id)
-{
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::isAuthenticated() " << id;
-	std::cerr << std::endl;
-#endif
-	sslMtx.lock();   /***** LOCK *****/
-
-	sslcert *cert = NULL;
-	bool auth = false;
-
-	if (locked_FindCert(id, &cert))
-	{
-		auth = cert->authed;
-	}
-
-	sslMtx.unlock(); /**** UNLOCK ****/
-
-	return auth;
-}
-
-std::string AuthSSL::getName(std::string id)
-{
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::getName() " << id;
-	std::cerr << std::endl;
-#endif
-	std::string name;
-
-	sslMtx.lock();   /***** LOCK *****/
-
-	sslcert *cert = NULL;
-	if (id == mOwnId)
-	{
-		name = mOwnCert->name;
-	}
-	else if (locked_FindCert(id, &cert))
-	{
-		name = cert->name;
-	}
-
-	sslMtx.unlock(); /**** UNLOCK ****/
-
-	return name;
-}
-
-std::string AuthSSL::getIssuerName(std::string id)
-{
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::getIssuerName() " << id;
-	std::cerr << std::endl;
-#endif
-	std::string issuer;
-
-	sslMtx.lock();   /***** LOCK *****/
-
-	sslcert *cert = NULL;
-	if (id == mOwnId)
-	{
-		issuer = mOwnCert->issuer;
-	}
-	else if (locked_FindCert(id, &cert))
-	{
-		issuer = cert->issuer;
-	}
-
-	sslMtx.unlock(); /**** UNLOCK ****/
-
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::getIssuerName() => " << issuer;
-	std::cerr << std::endl;
-#endif
-
-	return issuer;
-}
-
-GPG_id AuthSSL::getGPGId(SSL_id id) {
-    return getIssuerName(id);
-}
-
-bool    AuthSSL::getCertDetails(SSL_id id, sslcert &cert)
-{
-#ifdef AUTHSSL_DEBUG
-        std::cerr << "AuthSSL::getCertDetails() \"" << id << "\"";
-	std::cerr << std::endl;
-#endif
-	sslMtx.lock();   /***** LOCK *****/
-
-	bool valid = false;
-        sslcert *tcert = NULL;
-        if (id == mOwnId) {
-                cert.authed = mOwnCert->authed;
-                cert.certificate = mOwnCert->certificate;
-                cert.email = mOwnCert->email;
-                cert.fpr = mOwnCert->fpr;
-                cert.id = mOwnCert->id;
-                cert.issuer = mOwnCert->issuer;
-                cert.location = mOwnCert->location;
-                cert.name = mOwnCert->name;
-                cert.org = mOwnCert->org;
-                cert.signers = mOwnCert->signers;
-                valid = true;
-        } else if (locked_FindCert(id, &tcert))	{
-                cert.authed = tcert->authed;
-                cert.certificate = tcert->certificate;
-                cert.email = tcert->email;
-                cert.fpr = tcert->fpr;
-                cert.id = tcert->id;
-                cert.issuer = tcert->issuer;
-                cert.location = tcert->location;
-                cert.name = tcert->name;
-                cert.org = tcert->org;
-                cert.signers = tcert->signers;
-                valid = true;
-	}
-
-        sslMtx.unlock(); /**** UNLOCK ****/
-
-	return valid;
-}
-	
+//bool    AuthSSL::getCertDetails(SSL_id id, sslcert &cert)
+//{
+//#ifdef AUTHSSL_DEBUG
+//        std::cerr << "AuthSSL::getCertDetails() \"" << id << "\"";
+//	std::cerr << std::endl;
+//#endif
+//	sslMtx.lock();   /***** LOCK *****/
+//
+//	bool valid = false;
+//        sslcert *tcert = NULL;
+//        if (id == mOwnId) {
+//                cert.authed = mOwnCert->authed;
+//                cert.certificate = mOwnCert->certificate;
+//                cert.email = mOwnCert->email;
+//                cert.fpr = mOwnCert->fpr;
+//                cert.id = mOwnCert->id;
+//                cert.issuer = mOwnCert->issuer;
+//                cert.location = mOwnCert->location;
+//                cert.name = mOwnCert->name;
+//                cert.org = mOwnCert->org;
+//                cert.signers = mOwnCert->signers;
+//                valid = true;
+//        } else if (locked_FindCert(id, &tcert))	{
+//                cert.authed = tcert->authed;
+//                cert.certificate = tcert->certificate;
+//                cert.email = tcert->email;
+//                cert.fpr = tcert->fpr;
+//                cert.id = tcert->id;
+//                cert.issuer = tcert->issuer;
+//                cert.location = tcert->location;
+//                cert.name = tcert->name;
+//                cert.org = tcert->org;
+//                cert.signers = tcert->signers;
+//                valid = true;
+//	}
+//
+//        sslMtx.unlock(); /**** UNLOCK ****/
+//
+//	return valid;
+//}
+//
 	
 	/* Load/Save certificates */
-	
-bool AuthSSL::LoadCertificateFromString(std::string pem, std::string &id)
+//don't save the ssl certs anymore, just return the id
+bool AuthSSL::LoadDetailsFromStringCert(std::string pem, RsPeerDetails &pd)
 {
 #ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::LoadCertificateFromString() " << id;
+        std::cerr << "AuthSSL::LoadIdsFromStringCert() ";
 	std::cerr << std::endl;
-#endif
-
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::LoadCertificateFromString() Cleaning up Certificate First!";
+        std::cerr << "AuthSSL::LoadIdsFromStringCert() Cleaning up Certificate First!";
 	std::cerr << std::endl;
 #endif
 
@@ -890,159 +887,143 @@ bool AuthSSL::LoadCertificateFromString(std::string pem, std::string &id)
 	if (!x509)
 		return false;
 
-	return ProcessX509(x509, id);
+        if (!ValidateCertificate(x509, pd.id)) {
+            return false;
+        } else {
+            pd.gpg_id = getX509CNString(x509->cert_info->issuer);
+            pd.location = getX509LocString(x509->cert_info->subject);
+            return true;
+        }
 }
 
-std::string AuthSSL::SaveCertificateToString(std::string id)
+std::string AuthSSL::SaveOwnCertificateToString()
 {
 #ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::SaveCertificateToString() " << id;
-	std::cerr << std::endl;
+        std::cerr << "AuthSSL::SaveOwnCertificateToString() " << std::endl;
 #endif
-
-
-	sslMtx.lock();   /***** LOCK *****/
 
 	/* get the cert first */
 	std::string certstr;
-	sslcert *cert = NULL;
-	bool valid = false;
+        BIO *bp = BIO_new(BIO_s_mem());
 
-	if (id == mOwnId)
-	{
-		cert = mOwnCert;
-		valid = true;
-	}
-	else if (locked_FindCert(id, &cert))
-	{
-		valid = true;
-	}
+        PEM_write_bio_X509(bp, mOwnCert->certificate);
 
-	if (valid)
-	{
-		BIO *bp = BIO_new(BIO_s_mem());
+        /* translate the bp data to a string */
+        char *data;
+        int len = BIO_get_mem_data(bp, &data);
+        for(int i = 0; i < len; i++)
+        {
+                certstr += data[i];
+        }
 
-		PEM_write_bio_X509(bp, cert->certificate);
-
-		/* translate the bp data to a string */
-		char *data;
-		int len = BIO_get_mem_data(bp, &data);
-		for(int i = 0; i < len; i++)
-		{
-			certstr += data[i];
-		}
-
-		BIO_free(bp);
-	}
-
-	sslMtx.unlock(); /**** UNLOCK ****/
+        BIO_free(bp);
 
 	return certstr;
 }
 
 
 
-bool AuthSSL::LoadCertificateFromFile(std::string filename, std::string &id)
-{
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::LoadCertificateFromFile() " << id;
-	std::cerr << std::endl;
-#endif
-
-	std::string nullhash;
-
-	X509 *x509 = loadX509FromFile(filename.c_str(), nullhash);
-	if (!x509)
-		return false;
-
-	return ProcessX509(x509, id);
-}
+//bool AuthSSL::LoadCertificateFromFile(std::string filename, std::string &id)
+//{
+//#ifdef AUTHSSL_DEBUG
+//	std::cerr << "AuthSSL::LoadCertificateFromFile() " << id;
+//	std::cerr << std::endl;
+//#endif
+//
+//	std::string nullhash;
+//
+//	X509 *x509 = loadX509FromFile(filename.c_str(), nullhash);
+//	if (!x509)
+//		return false;
+//
+//	return ProcessX509(x509, id);
+//}
 
 //============================================================================
 
 //! Saves something to filename
 
 //! \returns true on success, false on failure
-bool AuthSSL::SaveCertificateToFile(std::string id, std::string filename)
-{
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::SaveCertificateToFile() " << id;
-	std::cerr << std::endl;
-#endif
-
-	sslMtx.lock();   /***** LOCK *****/
-
-	/* get the cert first */
-	sslcert *cert = NULL;
-	bool valid = false;
-	std::string hash;
-
-	if (id == mOwnId)
-	{
-		cert = mOwnCert;
-		valid = true;
-	}
-	else if (locked_FindCert(id, &cert))
-	{
-		valid = true;
-	}
-	if (valid)
-	{
-		valid = saveX509ToFile(cert->certificate, filename, hash);
-	}
-
-	sslMtx.unlock(); /**** UNLOCK ****/
-	return valid;
-}
+//bool AuthSSL::SaveCertificateToFile(std::string id, std::string filename)
+//{
+//#ifdef AUTHSSL_DEBUG
+//	std::cerr << "AuthSSL::SaveCertificateToFile() " << id;
+//	std::cerr << std::endl;
+//#endif
+//
+//	sslMtx.lock();   /***** LOCK *****/
+//
+//	/* get the cert first */
+//	sslcert *cert = NULL;
+//	bool valid = false;
+//	std::string hash;
+//
+//	if (id == mOwnId)
+//	{
+//		cert = mOwnCert;
+//		valid = true;
+//	}
+//	else if (locked_FindCert(id, &cert))
+//	{
+//		valid = true;
+//	}
+//	if (valid)
+//	{
+//		valid = saveX509ToFile(cert->certificate, filename, hash);
+//	}
+//
+//	sslMtx.unlock(); /**** UNLOCK ****/
+//	return valid;
+//}
 
 	/**** To/From DER format ***/
 
-bool 	AuthSSL::LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id)
-{
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::LoadCertificateFromFile() " << id;
-	std::cerr << std::endl;
-#endif
+//bool 	AuthSSL::LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id)
+//{
+//#ifdef AUTHSSL_DEBUG
+//	std::cerr << "AuthSSL::LoadCertificateFromFile() " << id;
+//	std::cerr << std::endl;
+//#endif
+//
+//	X509 *x509 = loadX509FromDER(ptr, len);
+//	if (!x509)
+//		return false;
+//
+//        return ValidateCertificate(x509, ssl_id);
+//
+//}
 
-	X509 *x509 = loadX509FromDER(ptr, len);
-	if (!x509)
-		return false;
-
-	return ProcessX509(x509, id);
-
-}
-
-bool 	AuthSSL::SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len)
-{
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::SaveCertificateToBinary() " << id;
-	std::cerr << std::endl;
-#endif
-
-	sslMtx.lock();   /***** LOCK *****/
-
-	/* get the cert first */
-	sslcert *cert = NULL;
-	bool valid = false;
-	std::string hash;
-
-	if (id == mOwnId)
-	{
-		cert = mOwnCert;
-		valid = true;
-	}
-	else if (locked_FindCert(id, &cert))
-	{
-		valid = true;
-	}
-	if (valid)
-	{
-		valid = saveX509ToDER(cert->certificate, ptr, len);
-	}
-
-	sslMtx.unlock(); /**** UNLOCK ****/
-	return valid;
-}
+//bool 	AuthSSL::SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len)
+//{
+//#ifdef AUTHSSL_DEBUG
+//	std::cerr << "AuthSSL::SaveCertificateToBinary() " << id;
+//	std::cerr << std::endl;
+//#endif
+//
+//	sslMtx.lock();   /***** LOCK *****/
+//
+//	/* get the cert first */
+//	sslcert *cert = NULL;
+//	bool valid = false;
+//	std::string hash;
+//
+//	if (id == mOwnId)
+//	{
+//		cert = mOwnCert;
+//		valid = true;
+//	}
+//	else if (locked_FindCert(id, &cert))
+//	{
+//		valid = true;
+//	}
+//	if (valid)
+//	{
+//		valid = saveX509ToDER(cert->certificate, ptr, len);
+//	}
+//
+//	sslMtx.unlock(); /**** UNLOCK ****/
+//	return valid;
+//}
 
 	/* Sign / Encrypt / Verify Data (TODO) */
 	
@@ -1153,24 +1134,14 @@ bool AuthSSL::SignDataBin(const void *data, const uint32_t len,
 }
 
 
-bool AuthSSL::VerifySignBin(std::string pid, 
-			const void *data, const uint32_t len,
+bool AuthSSL::VerifySignBin(const void *data, const uint32_t len,
                        	unsigned char *sign, unsigned int signlen)
 {
 	RsStackMutex stack(sslMtx);   /***** STACK LOCK MUTEX *****/
 
 	/* find the peer */
 	
-	sslcert *peer;
-	if (pid == mOwnId)
-	{
-		peer = mOwnCert;
-	}
-	else if (!locked_FindCert(pid, &peer))
-	{
-		std::cerr << "VerifySignBin() no peer" << std::endl;
-		return false;
-	}
+        sslcert *peer = mOwnCert;
 
 	EVP_PKEY *peerkey = peer->certificate->cert_info->key->pkey;
 
@@ -1222,17 +1193,17 @@ bool AuthSSL::VerifySignBin(std::string pid,
 
 
 	/**** AUX Functions ****/
-bool AuthSSL::locked_FindCert(std::string id, sslcert **cert)
-{
-	std::map<std::string, sslcert *>::iterator it;
-
-	if (mCerts.end() != (it = mCerts.find(id)))
-	{
-		*cert = it->second;
-		return true;
-	}
-	return false;
-}
+//bool AuthSSL::locked_FindCert(std::string id, sslcert **cert)
+//{
+//	std::map<std::string, sslcert *>::iterator it;
+//
+//	if (mCerts.end() != (it = mCerts.find(id)))
+//	{
+//		*cert = it->second;
+//		return true;
+//	}
+//	return false;
+//}
 
 
 X509 *AuthSSL::loadX509FromFile(std::string fname, std::string hash)
@@ -1519,144 +1490,144 @@ bool AuthSSL::saveX509ToDER(X509 *x509, uint8_t **ptr, uint32_t *len)
 
 
 
-bool AuthSSL::ProcessX509(X509 *x509, std::string &id)
-{
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::ProcessX509()";
-	std::cerr << std::endl;
-#endif
-
-	/* extract id */
-	std::string xid;
-
-	bool valid = ValidateCertificate(x509, xid);
-
-	if (!valid)
-	{
-#ifdef AUTHSSL_DEBUG
-		std::cerr << "AuthSSL::ProcessX509() ValidateCertificate FAILED";
-                std::cerr << std::endl;
-#endif
-	}
-
-	sslcert *cert = NULL;
-	bool duplicate = false;
-
-	sslMtx.lock();   /***** LOCK *****/
-
-	if (xid == mOwnId)
-	{
-#ifdef AUTHSSL_DEBUG
-		std::cerr << "AuthSSL::ProcessX509() Cert is own id (dup)";
-		std::cerr << std::endl;
-#endif
-
-		cert = mOwnCert;
-		duplicate = true;
-	}
-	else if (locked_FindCert(xid, &cert))
-	{
-#ifdef AUTHSSL_DEBUG
-		std::cerr << "AuthSSL::ProcessX509() Found Duplicate";
-		std::cerr << std::endl;
-#endif
-
-		duplicate = true;
-	}
-
-	if (duplicate)
-	{
-#ifdef AUTHSSL_DEBUG
-		std::cerr << "AuthSSL::ProcessX509() Processing as dup";
-		std::cerr << std::endl;
-#endif
-
-		/* have a duplicate */
-		/* check that they are exact */
-		if (0 != X509_cmp(cert->certificate, x509))
-		{
-
-#ifdef AUTHSSL_DEBUG
-			std::cerr << "AuthSSL::ProcessX509() Not the same: MAJOR ERROR";
-			std::cerr << std::endl;
-#endif
-
-			/* MAJOR ERROR */
-			X509_free(x509);
-			sslMtx.unlock(); /**** UNLOCK ****/
-			return false;
-		}
-
-		X509_free(x509);
-
-		/* we accepted it! */
-		id = xid;
-
-		if (!cert->authed)
-		{
-			cert->authed = valid;
-
-			/* resave newly authed certificate */
-			mToSaveCerts = true;
-
-#ifdef AUTHSSL_DEBUG
-			std::cerr << "AuthSSL::ProcessX509() ";
-			std::cerr << "Updating Unauthed duplicate: ";
-			std::cerr << (valid ? "true" : "false");
-			std::cerr << std::endl;
-#endif
-		}
-		else
-		{
-#ifdef AUTHSSL_DEBUG
-			std::cerr << "AuthSSL::ProcessX509() ";
-			std::cerr << "Original already Valid";
-			std::cerr << std::endl;
-#endif
-		}
-
-#ifdef AUTHSSL_DEBUG
-		std::cerr << "AuthSSL::ProcessX509() Accepted Dup";
-		std::cerr << std::endl;
-#endif
-
-
-		sslMtx.unlock(); /**** UNLOCK ****/
-		return true;
-	}
-
-	sslMtx.unlock(); /**** UNLOCK ****/
-
-	/* if we get here -> its a new certificate */
-	cert = new sslcert(x509, xid);
-	cert->authed = valid;
-
-	sslMtx.lock();   /***** LOCK *****/
-
-        mCerts[xid] = cert;
-
-	/* resave if new certificate */
-	mToSaveCerts = true;
-	sslMtx.unlock(); /**** UNLOCK ****/
-
-#if 0
-	/******************** notify of new Cert **************************/
-	pqiNotify *pqinotify = getPqiNotify();
-	if (pqinotify)
-	{
-		pqinotify->AddFeedItem(RS_FEED_ITEM_PEER_NEW, xid, "","");
-	}
-	/******************** notify of new Cert **************************/
-#endif
-
-	id = xid;
-
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::ProcessX509() Accepted New Cert";
-	std::cerr << std::endl;
-#endif
-	return true;
-}
+//bool AuthSSL::ProcessX509(X509 *x509, std::string &id)
+//{
+//#ifdef AUTHSSL_DEBUG
+//	std::cerr << "AuthSSL::ProcessX509()";
+//	std::cerr << std::endl;
+//#endif
+//
+//	/* extract id */
+//	std::string xid;
+//
+//	bool valid = ValidateCertificate(x509, xid);
+//
+//	if (!valid)
+//	{
+//#ifdef AUTHSSL_DEBUG
+//		std::cerr << "AuthSSL::ProcessX509() ValidateCertificate FAILED";
+//                std::cerr << std::endl;
+//#endif
+//	}
+//
+//	sslcert *cert = NULL;
+//	bool duplicate = false;
+//
+//	sslMtx.lock();   /***** LOCK *****/
+//
+//	if (xid == mOwnId)
+//	{
+//#ifdef AUTHSSL_DEBUG
+//		std::cerr << "AuthSSL::ProcessX509() Cert is own id (dup)";
+//		std::cerr << std::endl;
+//#endif
+//
+//		cert = mOwnCert;
+//		duplicate = true;
+//	}
+//	else if (locked_FindCert(xid, &cert))
+//	{
+//#ifdef AUTHSSL_DEBUG
+//		std::cerr << "AuthSSL::ProcessX509() Found Duplicate";
+//		std::cerr << std::endl;
+//#endif
+//
+//		duplicate = true;
+//	}
+//
+//	if (duplicate)
+//	{
+//#ifdef AUTHSSL_DEBUG
+//		std::cerr << "AuthSSL::ProcessX509() Processing as dup";
+//		std::cerr << std::endl;
+//#endif
+//
+//		/* have a duplicate */
+//		/* check that they are exact */
+//		if (0 != X509_cmp(cert->certificate, x509))
+//		{
+//
+//#ifdef AUTHSSL_DEBUG
+//			std::cerr << "AuthSSL::ProcessX509() Not the same: MAJOR ERROR";
+//			std::cerr << std::endl;
+//#endif
+//
+//			/* MAJOR ERROR */
+//			X509_free(x509);
+//			sslMtx.unlock(); /**** UNLOCK ****/
+//			return false;
+//		}
+//
+//		X509_free(x509);
+//
+//		/* we accepted it! */
+//		id = xid;
+//
+//		if (!cert->authed)
+//		{
+//			cert->authed = valid;
+//
+//			/* resave newly authed certificate */
+//			mToSaveCerts = true;
+//
+//#ifdef AUTHSSL_DEBUG
+//			std::cerr << "AuthSSL::ProcessX509() ";
+//			std::cerr << "Updating Unauthed duplicate: ";
+//			std::cerr << (valid ? "true" : "false");
+//			std::cerr << std::endl;
+//#endif
+//		}
+//		else
+//		{
+//#ifdef AUTHSSL_DEBUG
+//			std::cerr << "AuthSSL::ProcessX509() ";
+//			std::cerr << "Original already Valid";
+//			std::cerr << std::endl;
+//#endif
+//		}
+//
+//#ifdef AUTHSSL_DEBUG
+//		std::cerr << "AuthSSL::ProcessX509() Accepted Dup";
+//		std::cerr << std::endl;
+//#endif
+//
+//
+//		sslMtx.unlock(); /**** UNLOCK ****/
+//		return true;
+//	}
+//
+//	sslMtx.unlock(); /**** UNLOCK ****/
+//
+//	/* if we get here -> its a new certificate */
+//	cert = new sslcert(x509, xid);
+//	cert->authed = valid;
+//
+//	sslMtx.lock();   /***** LOCK *****/
+//
+//        mCerts[xid] = cert;
+//
+//	/* resave if new certificate */
+//	mToSaveCerts = true;
+//	sslMtx.unlock(); /**** UNLOCK ****/
+//
+//#if 0
+//	/******************** notify of new Cert **************************/
+//	pqiNotify *pqinotify = getPqiNotify();
+//	if (pqinotify)
+//	{
+//		pqinotify->AddFeedItem(RS_FEED_ITEM_PEER_NEW, xid, "","");
+//	}
+//	/******************** notify of new Cert **************************/
+//#endif
+//
+//	id = xid;
+//
+//#ifdef AUTHSSL_DEBUG
+//	std::cerr << "AuthSSL::ProcessX509() Accepted New Cert";
+//	std::cerr << std::endl;
+//#endif
+//	return true;
+//}
 
 
 bool getX509id(X509 *x509, std::string &xid) {
@@ -1728,7 +1699,7 @@ X509 *AuthSSL::SignX509Req(X509_REQ *req, long days)
         unsigned long chtype = MBSTRING_ASC;
         X509_NAME *issuer_name = X509_NAME_new();
         X509_NAME_add_entry_by_txt(issuer_name, "CN", chtype,
-                        (unsigned char *) AuthGPG::getAuthGPG()->PGPOwnId().c_str(), -1, -1, 0);
+                        (unsigned char *) AuthGPG::getAuthGPG()->getGPGOwnId().c_str(), -1, -1, 0);
 /****
         X509_NAME_add_entry_by_NID(issuer_name, 48, 0,
                         (unsigned char *) "email@email.com", -1, -1, 0);
@@ -1738,7 +1709,7 @@ X509 *AuthSSL::SignX509Req(X509_REQ *req, long days)
                         (unsigned char *) "loc", -1, -1, 0);
 ****/
 
-        std::cerr << "AuthSSL::SignX509Req() Issuer name: " << AuthGPG::getAuthGPG()->PGPOwnId() << std::endl;
+        std::cerr << "AuthSSL::SignX509Req() Issuer name: " << AuthGPG::getAuthGPG()->getGPGOwnId() << std::endl;
 
         BIGNUM *btmp = BN_new();
         if (!BN_pseudo_rand(btmp, SERIAL_RAND_BITS, 0, 0))
@@ -1921,29 +1892,26 @@ bool AuthSSL::AuthX509(X509 *x509)
 
         /* extract CN for peer Id */
         std::string issuer = getX509CNString(x509->cert_info->issuer);
-        //check that the issuer is in the accepted GPG key list.
-        std::list<std::string> acceptedIds;
-        AuthGPG::getAuthGPG()->getPGPAcceptedList(acceptedIds);
-        bool isAccepted = false;
-        for(std::list<std::string>::iterator it = acceptedIds.begin(); it != acceptedIds.end(); it++){
-            std::cerr << "AuthSSL::AuthX509() : accepted id : " << *it << std::endl;
-            if (*it == issuer) {
-                isAccepted = true;
-                break;
-            }
+        RsPeerDetails pd;
+        if (!AuthGPG::getAuthGPG()->getGPGDetails(issuer, pd)) {
+            std::cerr << "AuthSSL::AuthX509() X509 NOT authenticated : AuthGPG::getAuthGPG()->getGPGDetails() returned false." << std::endl;
+            return false;
         }
-        if (!isAccepted) {
-            //check that the gpg key is not one of our private key usefull for initialisation
-            AuthGPG::getAuthGPG()->availablePGPCertificatesWithPrivateKeys(acceptedIds);
-            bool isAccepted = false;
-            for(std::list<std::string>::iterator it = acceptedIds.begin(); it != acceptedIds.end(); it++){
-                std::cerr << "AuthSSL::AuthX509() : accepted id : " << *it << std::endl;
-                if (*it == issuer) {
-                    isAccepted = true;
-                    break;
-                }
-            }
-        }
+
+//        //check that the issuer is in the accepted GPG key list.
+//        if (!pd.ownsign || !pd.is_connect_accepted_even_without_ownsign) {
+//            //check that the gpg key is not one of our private key (usefull for initialisation)
+//            std::list<std::string> privateIds;
+//            AuthGPG::getAuthGPG()->availableGPGCertificatesWithPrivateKeys(privateIds);
+//            bool isAccepted = false;
+//            for(std::list<std::string>::iterator it = acceptedIds.begin(); it != privateIds.end(); it++){
+//                std::cerr << "AuthSSL::AuthX509() : accepted id : " << *it << std::endl;
+//                if (*it == issuer) {
+//                    isAccepted = true;
+//                    break;
+//                }
+//            }
+//        }
 
         /* verify GPG signature */
 
@@ -2006,12 +1974,13 @@ bool AuthSSL::AuthX509(X509 *x509)
         sigoutl = signature->length;
         memmove(buf_sigout, signature->data, sigoutl);
 
-        /* NOW Sign via GPG Functions */
-        if (!AuthGPG::getAuthGPG()->VerifySignBin(buf_hashout, hashoutl, buf_sigout, (unsigned int) sigoutl)) {
+        /* NOW check sign via GPG Functions */
+        //get the fingerprint of the key that is supposed to sign
+        std::cerr << "AuthSSL::AuthX509() verifying the gpg sig with keyprint : " << pd.fpr << std::endl;
+        if (!AuthGPG::getAuthGPG()->VerifySignBin(buf_hashout, hashoutl, buf_sigout, (unsigned int) sigoutl, pd.fpr)) {
                 sigoutl = 0;
                 goto err;
         }
-        //TODO implement a way to check that the sign KEY is the same as the issuer id in the ssl cert
 
         std::cerr << "AuthSSL::AuthX509() X509 authenticated" << std::endl;
         return true;
@@ -2041,11 +2010,11 @@ bool    AuthSSL::ValidateCertificate(X509 *x509, std::string &peerId)
 }
 
 /* store for discovery */
-bool    AuthSSL::FailedCertificate(X509 *x509, bool incoming)
-{
-	std::string id;
-	return ProcessX509(x509, id);
-}
+//bool    AuthSSL::FailedCertificate(X509 *x509, bool incoming)
+//{
+//	std::string id;
+//	return ProcessX509(x509, id);
+//}
 
 bool    AuthSSL::encrypt(void *&out, int &outlen, const void *in, int inlen, std::string peerId)
 {
@@ -2071,42 +2040,42 @@ bool    AuthSSL::decrypt(void *&out, int &outlen, const void *in, int inlen)
 
 
 /* check that they are exact match */
-bool    AuthSSL::CheckCertificate(std::string x509Id, X509 *x509)
-{
-	sslMtx.lock();   /***** LOCK *****/
-
-	sslcert *cert = NULL;
-	if (!locked_FindCert(x509Id, &cert))
-	{
-		/* not there -> error */
-		X509_free(x509);
-
-		sslMtx.unlock(); /**** UNLOCK ****/
-		return false;
-	}
-	else
-	{
-		/* have a duplicate */
-		/* check that they are exact */
-		if (0 != X509_cmp(cert->certificate, x509))
-		{
-			/* MAJOR ERROR */
-			X509_free(x509);
-			sslMtx.unlock(); /**** UNLOCK ****/
-			return false;
-		}
-
-		/* transfer new signatures */
-		//X509_copy_known_signatures(pgp_keyring, cert->certificate, x509);
-		X509_free(x509);
-
-		/* update signers */
-		//cert->signers = getX509signers(cert->certificate);
-
-		sslMtx.unlock(); /**** UNLOCK ****/
-		return true;
-	}
-}
+//bool    AuthSSL::CheckCertificate(std::string x509Id, X509 *x509)
+//{
+//	sslMtx.lock();   /***** LOCK *****/
+//
+//	sslcert *cert = NULL;
+//	if (!locked_FindCert(x509Id, &cert))
+//	{
+//		/* not there -> error */
+//		X509_free(x509);
+//
+//		sslMtx.unlock(); /**** UNLOCK ****/
+//		return false;
+//	}
+//	else
+//	{
+//		/* have a duplicate */
+//		/* check that they are exact */
+//		if (0 != X509_cmp(cert->certificate, x509))
+//		{
+//			/* MAJOR ERROR */
+//			X509_free(x509);
+//			sslMtx.unlock(); /**** UNLOCK ****/
+//			return false;
+//		}
+//
+//		/* transfer new signatures */
+//		//X509_copy_known_signatures(pgp_keyring, cert->certificate, x509);
+//		X509_free(x509);
+//
+//		/* update signers */
+//		//cert->signers = getX509signers(cert->certificate);
+//
+//		sslMtx.unlock(); /**** UNLOCK ****/
+//		return true;
+//	}
+//}
 
 
 /********************************************************************************/
@@ -2173,7 +2142,7 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                                 return false;
                         }
                         std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
-                        if (!AuthGPG::getAuthGPG()->isPGPSigned(pgpid))
+                        if (!AuthGPG::getAuthGPG()->isGPGAccepted(pgpid))
                         {
                                 fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not signed by ourself.\n");
                                 return false;
@@ -2184,7 +2153,7 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                         (err == X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE))
                 {
                         std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
-                        if (!AuthGPG::getAuthGPG()->isPGPSigned(pgpid))
+                        if (!AuthGPG::getAuthGPG()->isGPGAccepted(pgpid))
                         {
                                 fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not signed by ourself.\n");
                                 return false;
@@ -2197,43 +2166,21 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
         }
 
         if (preverify_ok) {
-            //add the cert to our collection if not already in it
-            bool found = false;
+
+
+            //sslcert *cert = NULL;
             std::string certId;
-            {
-                RsStackMutex stack(sslMtx);
-                sslcert *cert = NULL;
-                getX509id(X509_STORE_CTX_get_current_cert(ctx), certId);
-                found = locked_FindCert(certId, &cert);
-            }
-            if (!found) {
-                std::cerr << "AuthSSL::VerifyX509Callback adding new SSL friend" << std::endl;
-                //first we want to ceate a new x509 because when SSL connection will be destroyed we will loose ref to the current x509
-                std::string copyCertstr;
-                BIO *bp = BIO_new(BIO_s_mem());
-                PEM_write_bio_X509(bp, X509_STORE_CTX_get_current_cert(ctx));
-                char *data;
-                int len = BIO_get_mem_data(bp, &data);
-                for(int i = 0; i < len; i++)  {
-                        copyCertstr += data[i];
-                }
-                BIO_free(bp);
-
-                //create a new x509 from the copyCertstr
-                char *certstr = strdup(copyCertstr.c_str());
-                BIO *bp2 = BIO_new_mem_buf(certstr, -1);
-                X509 *certCopy = PEM_read_bio_X509(bp2, NULL, NULL, NULL);
-                BIO_free(bp2);
-                free(certstr);
-
-                if (certCopy) {
-                    AuthSSL::getAuthSSL()->ProcessX509(certCopy, certId);
-                    mConnMgr->addFriend(certId);
-                }
-
-                //this current connection won't work, so respond false
+            getX509id(X509_STORE_CTX_get_current_cert(ctx), certId);
+            if (!mConnMgr->isFriend(certId)) {
+                //we've got a new ssl id, let's add it as a friend
+                mConnMgr->addFriend(certId, getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer));
                 preverify_ok = false;
             }
+            //set location
+            mConnMgr->setLocation(certId, getX509LocString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->subject));
+
+
+            //is the connection was initiated by us, then it was for a specific peer id wich is stored is in the context
             //check that the peerid in the context is the same as the cert one
             SSL *ssl = (SSL*) X509_STORE_CTX_get_ex_data(ctx, SSL_get_ex_data_X509_STORE_CTX_idx());
             if (SSL_get_ex_data(ssl, AuthSSL::ex_data_ctx_index)) {
@@ -2253,7 +2200,6 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                 }
             }
         }
-
 
         if (preverify_ok) {
             fprintf(stderr, "AuthSSL::VerifyX509Callback returned true.\n");
@@ -2601,173 +2547,173 @@ int printSSLError(SSL *ssl, int retval, int err, unsigned long err2,
  *
  */
 
-bool	AuthSSL::FinalSaveCertificates()
-{
-	CheckSaveCertificates();
+//bool	AuthSSL::FinalSaveCertificates()
+//{
+//	CheckSaveCertificates();
+//
+//	RsStackMutex stack(sslMtx); /***** LOCK *****/
+//	mConfigSaveActive = false;
+//	return true;
+//}
 
-	RsStackMutex stack(sslMtx); /***** LOCK *****/
-	mConfigSaveActive = false;
-	return true;
-}
+//bool	AuthSSL::CheckSaveCertificates()
+//{
+//	sslMtx.lock();   /***** LOCK *****/
+//
+//	if ((mConfigSaveActive) && (mToSaveCerts))
+//	{
+//		mToSaveCerts = false;
+//		sslMtx.unlock(); /**** UNLOCK ****/
+//
+//		saveCertificates();
+//		return true;
+//	}
+//
+//	sslMtx.unlock(); /**** UNLOCK ****/
+//
+//	return false;
+//}
 
-bool	AuthSSL::CheckSaveCertificates()
-{
-	sslMtx.lock();   /***** LOCK *****/
-
-	if ((mConfigSaveActive) && (mToSaveCerts))
-	{
-		mToSaveCerts = false;
-		sslMtx.unlock(); /**** UNLOCK ****/
-
-		saveCertificates();
-		return true;
-	}
-
-	sslMtx.unlock(); /**** UNLOCK ****/
-
-	return false;
-}
-
-bool    AuthSSL::saveCertificates()
-{
-	// construct file name.
-	// create the file in memory - hash + sign.
-	// write out data to a file.
-	
-	sslMtx.lock();   /***** LOCK *****/
-
-	std::string configfile = mCertConfigFile;
-	std::string neighdir = mNeighDir;
-
-	sslMtx.unlock(); /**** UNLOCK ****/
-
-	/* add on the slash */
-	if (neighdir != "")
-	{
-		neighdir += "/";
-	}
-
-	std::map<std::string, std::string>::iterator mit;
-
-	std::string conftxt;
-	std::string empty("");
-	unsigned int i;
-
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::saveCertificates()";
-	std::cerr << std::endl;
-#endif
-	sslMtx.lock();   /***** LOCK *****/
-
-	/* iterate through both lists */
-	std::map<std::string, sslcert *>::iterator it;
-
-	for(it = mCerts.begin(); it != mCerts.end(); it++)
-	{
-// SAVE ALL CERTS
-#if PQI_USE_PQISSL
-#endif
-// Save only Authed Certs;
-		if (it->second->authed)
-		{
-			X509 *x509 = it->second->certificate;
-			std::string hash;
-#if PQI_SSLONLY
-			std::string neighfile = neighdir + getCertName(x509) + ".pqi";
-#else
-			std::string neighfile = neighdir + (it->first) + ".pqi";
-#endif
-
-			if (saveX509ToFile(x509, neighfile, hash))
-			{
-				conftxt += "CERT ";
-#if PQI_SSLONLY
-				conftxt += getCertName(x509);
-#else
-				conftxt += (it->first);
-#endif
-				conftxt += "\n";
-				conftxt += hash;
-				conftxt += "\n";
-			}
-		}
-	}
-
-
-	// now work out signature of it all. This relies on the 
-	// EVP library of openSSL..... We are going to use signing
-	// for the moment.
-
-	unsigned int signlen = EVP_PKEY_size(pkey);
-	unsigned char signature[signlen];
-
-	//OpenSSL_add_all_digests();
-
-	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
-
-	if (0 == EVP_SignInit_ex(mdctx, EVP_sha1(), NULL))
-	{
-#ifdef AUTHSSL_DEBUG
-		std::cerr << "EVP_SignInit Failure!" << std::endl;
-#endif
-	}
-
-	if (0 == EVP_SignUpdate(mdctx, conftxt.c_str(), conftxt.length()))
-	{
-#ifdef AUTHSSL_DEBUG
-		std::cerr << "EVP_SignUpdate Failure!" << std::endl;
-#endif
-	}
-
-
-	if (0 == EVP_SignFinal(mdctx, signature, &signlen, pkey))
-	{
-#ifdef AUTHSSL_DEBUG
-		std::cerr << "EVP_SignFinal Failure!" << std::endl;
-#endif
-	}
-
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "Conf Signature is(" << signlen << "): ";
-#endif
-	for(i = 0; i < signlen; i++) 
-	{
-#ifdef AUTHSSL_DEBUG
-		fprintf(stderr, "%02x", signature[i]);
-#endif
-		conftxt += signature[i];
-	}
-#ifdef AUTHSSL_DEBUG
-	std::cerr << std::endl;
-#endif
-	EVP_MD_CTX_destroy(mdctx);
-
-	FILE *cfd = fopen(configfile.c_str(), "wb");
-	if (cfd == NULL)
-	{
-#ifdef AUTHSSL_DEBUG
-		std::cerr << "Failed to open: " << configfile << std::endl;
-#endif
-		sslMtx.unlock(); /**** UNLOCK ****/
-
-		return false;
-	}
-
-	int wrec;
-	if (1 != (wrec = fwrite(conftxt.c_str(), conftxt.length(), 1, cfd)))
-	{
-#ifdef AUTHSSL_DEBUG
-		std::cerr << "Error writing: " << configfile << std::endl;
-		std::cerr << "Wrote: " << wrec << "/" << 1 << " Records" << std::endl;
-#endif
-	}
-
-	fclose(cfd);
-
-	sslMtx.unlock(); /**** UNLOCK ****/
-
-	return true;
-}
+//bool    AuthSSL::saveCertificates()
+//{
+//	// construct file name.
+//	// create the file in memory - hash + sign.
+//	// write out data to a file.
+//
+//	sslMtx.lock();   /***** LOCK *****/
+//
+//	std::string configfile = mCertConfigFile;
+//	std::string neighdir = mNeighDir;
+//
+//	sslMtx.unlock(); /**** UNLOCK ****/
+//
+//	/* add on the slash */
+//	if (neighdir != "")
+//	{
+//		neighdir += "/";
+//	}
+//
+//	std::map<std::string, std::string>::iterator mit;
+//
+//	std::string conftxt;
+//	std::string empty("");
+//	unsigned int i;
+//
+//#ifdef AUTHSSL_DEBUG
+//	std::cerr << "AuthSSL::saveCertificates()";
+//	std::cerr << std::endl;
+//#endif
+//	sslMtx.lock();   /***** LOCK *****/
+//
+//	/* iterate through both lists */
+//	std::map<std::string, sslcert *>::iterator it;
+//
+//	for(it = mCerts.begin(); it != mCerts.end(); it++)
+//	{
+//// SAVE ALL CERTS
+//#if PQI_USE_PQISSL
+//#endif
+//// Save only Authed Certs;
+//		if (it->second->authed)
+//		{
+//			X509 *x509 = it->second->certificate;
+//			std::string hash;
+//#if PQI_SSLONLY
+//			std::string neighfile = neighdir + getCertName(x509) + ".pqi";
+//#else
+//			std::string neighfile = neighdir + (it->first) + ".pqi";
+//#endif
+//
+//			if (saveX509ToFile(x509, neighfile, hash))
+//			{
+//				conftxt += "CERT ";
+//#if PQI_SSLONLY
+//				conftxt += getCertName(x509);
+//#else
+//				conftxt += (it->first);
+//#endif
+//				conftxt += "\n";
+//				conftxt += hash;
+//				conftxt += "\n";
+//			}
+//		}
+//	}
+//
+//
+//	// now work out signature of it all. This relies on the
+//	// EVP library of openSSL..... We are going to use signing
+//	// for the moment.
+//
+//	unsigned int signlen = EVP_PKEY_size(pkey);
+//	unsigned char signature[signlen];
+//
+//	//OpenSSL_add_all_digests();
+//
+//	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+//
+//	if (0 == EVP_SignInit_ex(mdctx, EVP_sha1(), NULL))
+//	{
+//#ifdef AUTHSSL_DEBUG
+//		std::cerr << "EVP_SignInit Failure!" << std::endl;
+//#endif
+//	}
+//
+//	if (0 == EVP_SignUpdate(mdctx, conftxt.c_str(), conftxt.length()))
+//	{
+//#ifdef AUTHSSL_DEBUG
+//		std::cerr << "EVP_SignUpdate Failure!" << std::endl;
+//#endif
+//	}
+//
+//
+//	if (0 == EVP_SignFinal(mdctx, signature, &signlen, pkey))
+//	{
+//#ifdef AUTHSSL_DEBUG
+//		std::cerr << "EVP_SignFinal Failure!" << std::endl;
+//#endif
+//	}
+//
+//#ifdef AUTHSSL_DEBUG
+//	std::cerr << "Conf Signature is(" << signlen << "): ";
+//#endif
+//	for(i = 0; i < signlen; i++)
+//	{
+//#ifdef AUTHSSL_DEBUG
+//		fprintf(stderr, "%02x", signature[i]);
+//#endif
+//		conftxt += signature[i];
+//	}
+//#ifdef AUTHSSL_DEBUG
+//	std::cerr << std::endl;
+//#endif
+//	EVP_MD_CTX_destroy(mdctx);
+//
+//	FILE *cfd = fopen(configfile.c_str(), "wb");
+//	if (cfd == NULL)
+//	{
+//#ifdef AUTHSSL_DEBUG
+//		std::cerr << "Failed to open: " << configfile << std::endl;
+//#endif
+//		sslMtx.unlock(); /**** UNLOCK ****/
+//
+//		return false;
+//	}
+//
+//	int wrec;
+//	if (1 != (wrec = fwrite(conftxt.c_str(), conftxt.length(), 1, cfd)))
+//	{
+//#ifdef AUTHSSL_DEBUG
+//		std::cerr << "Error writing: " << configfile << std::endl;
+//		std::cerr << "Wrote: " << wrec << "/" << 1 << " Records" << std::endl;
+//#endif
+//	}
+//
+//	fclose(cfd);
+//
+//	sslMtx.unlock(); /**** UNLOCK ****/
+//
+//	return true;
+//}
 
 
 /****** 
@@ -2782,13 +2728,13 @@ bool    AuthSSL::saveCertificates()
  *
  */
 
-bool    AuthSSL::loadCertificates()
-{
-	bool oldFormat;
-	std::map<std::string, std::string> keyValueMap;
-
-	return loadCertificates(oldFormat, keyValueMap);
-}
+//bool    AuthSSL::loadCertificates()
+//{
+//	bool oldFormat;
+//	std::map<std::string, std::string> keyValueMap;
+//
+//	return loadCertificates(oldFormat, keyValueMap);
+//}
 
 /*********************
  * NOTE no need to Lock here. locking handled in ProcessX509()
@@ -2796,310 +2742,310 @@ bool    AuthSSL::loadCertificates()
 static const uint32_t OPT_LEN = 16;
 static const uint32_t VAL_LEN = 1000;
 
-bool    AuthSSL::loadCertificates(bool &oldFormat, std::map<std::string, std::string> &keyValueMap)
-{
-
-	/*******************************************
-	 * open the configuration file.
-	 * read in CERT + Hash.
-	 *
-	 * construct file name.
-	 * create the file in memory - hash + sign.
-	 * write out data to a file.
-	 *****************************************/
-
-	sslMtx.lock();   /***** LOCK *****/
-
-	std::string configfile = mCertConfigFile;
-	std::string neighdir = mNeighDir;
-
-	sslMtx.unlock(); /**** UNLOCK ****/
-
-	/* add on the slash */
-	if (neighdir != "")
-	{
-		neighdir += "/";
-	}
-
-	oldFormat = false;
-	
-	std::string conftxt;
-
-	unsigned int maxnamesize = 1024;
-	char name[maxnamesize];
-
-	int c;
-	unsigned int i;
-
-	FILE *cfd = fopen(configfile.c_str(), "rb");
-	if (cfd == NULL)
-	{
-#ifdef AUTHSSL_DEBUG
-		std::cerr << "Unable to Load Configuration File!" << std::endl;
-		std::cerr << "File: " << configfile << std::endl;
-#endif
-		return false;
-	}
-
-	std::list<std::string> fnames;
-	std::list<std::string> hashes;
-	std::map<std::string, std::string>::iterator mit;
-	std::map<std::string, std::string> tmpsettings;
-
-	unsigned int signlen = EVP_PKEY_size(pkey);
-	unsigned char conf_signature[signlen];
-	char *ret = NULL;
-
-	for(ret = fgets(name, maxnamesize, cfd); 
-			((ret != NULL) && (!strncmp(name, "CERT ", 5)));
-				ret = fgets(name, maxnamesize, cfd))
-	{
-		for(i = 5; (name[i] != '\n') && (i < (unsigned) maxnamesize); i++);
-
-		if (name[i] == '\n')
-		{
-			name[i] = '\0';
-		}
-
-		// so the name is first....
-		std::string fname = &(name[5]);
-
-		// now read the 
-		std::string hash;
-		std::string signature;
-
-		for(i = 0; i < signlen; i++)
-		{
-			if (EOF == (c = fgetc(cfd)))
-			{
-#ifdef AUTHSSL_DEBUG
-				std::cerr << "Error Reading Signature of: ";
-				std::cerr << fname;
-				std::cerr << std::endl;
-				std::cerr << "ABorting Load!";
-				std::cerr << std::endl;
-#endif
-				return -1;
-			}
-			unsigned char uc = (unsigned char) c;
-			signature += (unsigned char) uc;
-		}
-		if ('\n' != (c = fgetc(cfd)))
-		{
-#ifdef AUTHSSL_DEBUG
-			std::cerr << "Warning Mising seperator" << std::endl;
-#endif
-		}
-
-#ifdef AUTHSSL_DEBUG
-		std::cerr << "Read fname:" << fname << std::endl;
-		std::cerr << "Signature:" << std::endl;
-		for(i = 0; i < signlen; i++) 
-		{
-			fprintf(stderr, "%02x", (unsigned char) signature[i]);
-		}
-		std::cerr << std::endl;
-		std::cerr << std::endl;
-#endif
-
-		// push back.....
-		fnames.push_back(fname);
-		hashes.push_back(signature);
-
-		conftxt += "CERT ";
-		conftxt += fname;
-		conftxt += "\n";
-		conftxt += signature;
-		conftxt += "\n";
-
-		// be sure to write over a bit...
-		name[0] = 'N';
-		name[1] = 'O';
-	}
-
-	// string already waiting!
-	for(; ((ret != NULL) && (!strncmp(name, "OPT ", 4)));
-				ret = fgets(name, maxnamesize, cfd))
-	{
-		for(i = 4; (name[i] != '\n') && (i < OPT_LEN); i++);
-		// terminate the string.
-		name[i] = '\0';
-
-		// so the name is first....
-		std::string opt = &(name[4]);
-
-		// now read the 
-		std::string val;     // cleaned up value.
-		std::string valsign; // value in the file.
-		for(i = 0; i < VAL_LEN; i++)
-		{
-			if (EOF == (c = fgetc(cfd)))
-			{
-#ifdef AUTHSSL_DEBUG
-				std::cerr << "Error Reading Value of: ";
-				std::cerr << opt;
-				std::cerr << std::endl;
-				std::cerr << "ABorting Load!";
-				std::cerr << std::endl;
-#endif
-				return -1;
-			}
-			// remove zeros on strings...
-			if (c != '\0')
-			{
-				val += (unsigned char) c;
-			}
-			valsign += (unsigned char) c;
-		}
-		if ('\n' != (c = fgetc(cfd)))
-		{
-#ifdef AUTHSSL_DEBUG
-			std::cerr << "Warning Mising seperator" << std::endl;
-#endif
-		}
-
-#ifdef AUTHSSL_DEBUG
-		std::cerr << "Read OPT:" << opt;
-		std::cerr << " Val:" << val << std::endl;
-#endif
-
-		// push back.....
-		tmpsettings[opt] = val;
-
-		conftxt += "OPT ";
-		conftxt += opt;
-		conftxt += "\n";
-		conftxt += valsign;
-		conftxt += "\n";
-
-		// be sure to write over a bit...
-		name[0] = 'N';
-		name[1] = 'O';
-	}
-
-	// only read up to the first newline symbol....
-	// continue...
-	for(i = 0; (name[i] != '\n') && (i < signlen); i++);
-
-	if (i != signlen)
-	{
-		for(i++; i < signlen; i++)
-		{
-			c = fgetc(cfd);
-			if (c == EOF)
-			{
-#ifdef AUTHSSL_DEBUG
-				std::cerr << "Error Reading Conf Signature:";
-				std::cerr << std::endl;
-#endif
-				return 1;
-			}
-			unsigned char uc = (unsigned char) c;
-			name[i] = uc;
-		}
-	}
-
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "Configuration File Signature: " << std::endl;
-	for(i = 0; i < signlen; i++) 
-	{
-		fprintf(stderr, "%02x", (unsigned char) name[i]);
-	}
-	std::cerr << std::endl;
-#endif
-
-
-	// when we get here - should have the final signature in the buffer.
-	// check.
-	//
-	// compare signatures.
-	// instead of verifying with the public key....
-	// we'll sign it again - and compare .... FIX LATER...
-	
-	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
-
-	if (0 == EVP_SignInit(mdctx, EVP_sha1()))
-	{
-#ifdef AUTHSSL_DEBUG
-#endif
-		std::cerr << "EVP_SignInit Failure!" << std::endl;
-	}
-
-	if (0 == EVP_SignUpdate(mdctx, conftxt.c_str(), conftxt.length()))
-	{
-#ifdef AUTHSSL_DEBUG
-		std::cerr << "EVP_SignUpdate Failure!" << std::endl;
-#endif
-	}
-
-	if (0 == EVP_SignFinal(mdctx, conf_signature, &signlen, pkey))
-	{
-#ifdef AUTHSSL_DEBUG
-		std::cerr << "EVP_SignFinal Failure!" << std::endl;
-#endif
-	}
-
-	EVP_MD_CTX_destroy(mdctx);
-	fclose(cfd);
-
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "Recalced File Signature: " << std::endl;
-	for(i = 0; i < signlen; i++) 
-	{
-		fprintf(stderr, "%02x", conf_signature[i]);
-	}
-	std::cerr << std::endl;
-#endif
-
-	bool same = true;
-	for(i = 0; i < signlen; i++)
-	{
-		if ((unsigned char) name[i] != conf_signature[i])
-		{
-			same = false;
-		}
-	}
-
-	if (same == false)
-	{
-#ifdef AUTHSSL_DEBUG
-		std::cerr << "ERROR VALIDATING CONFIGURATION!" << std::endl;
-		std::cerr << "PLEASE FIX!" << std::endl;
-#endif
-		return false;
-	}
-
-	std::list<std::string>::iterator it;
-	std::list<std::string>::iterator it2;
-	for(it = fnames.begin(), it2 = hashes.begin(); it != fnames.end(); it++, it2++)
-	{
-		std::string neighfile = neighdir + (*it) + ".pqi";
-		X509 *x509 = loadX509FromFile(neighfile, (*it2));
-		if (x509 != NULL)
-		{
-			std::string id;
-			if (ProcessX509(x509, id))
-			{
-#ifdef AUTHSSL_DEBUG
-				std::cerr << "Loaded Certificate: " << id;
-				std::cerr << std::endl;
-#endif
-			}
-		}
-	}
-	for(mit = tmpsettings.begin(); mit != tmpsettings.end(); mit++)
-	{
-		keyValueMap[mit -> first] = mit -> second;
-	}
-
-	mToSaveCerts = false;
-
-	if (keyValueMap.size() > 0)
-	{
-		oldFormat = true;
-		mToSaveCerts = true;
-	}
-
-	return true;
-}
-
+//bool    AuthSSL::loadCertificates(bool &oldFormat, std::map<std::string, std::string> &keyValueMap)
+//{
+//
+//	/*******************************************
+//	 * open the configuration file.
+//	 * read in CERT + Hash.
+//	 *
+//	 * construct file name.
+//	 * create the file in memory - hash + sign.
+//	 * write out data to a file.
+//	 *****************************************/
+//
+//	sslMtx.lock();   /***** LOCK *****/
+//
+//	std::string configfile = mCertConfigFile;
+//	std::string neighdir = mNeighDir;
+//
+//	sslMtx.unlock(); /**** UNLOCK ****/
+//
+//	/* add on the slash */
+//	if (neighdir != "")
+//	{
+//		neighdir += "/";
+//	}
+//
+//	oldFormat = false;
+//
+//	std::string conftxt;
+//
+//	unsigned int maxnamesize = 1024;
+//	char name[maxnamesize];
+//
+//	int c;
+//	unsigned int i;
+//
+//	FILE *cfd = fopen(configfile.c_str(), "rb");
+//	if (cfd == NULL)
+//	{
+//#ifdef AUTHSSL_DEBUG
+//		std::cerr << "Unable to Load Configuration File!" << std::endl;
+//		std::cerr << "File: " << configfile << std::endl;
+//#endif
+//		return false;
+//	}
+//
+//	std::list<std::string> fnames;
+//	std::list<std::string> hashes;
+//	std::map<std::string, std::string>::iterator mit;
+//	std::map<std::string, std::string> tmpsettings;
+//
+//	unsigned int signlen = EVP_PKEY_size(pkey);
+//	unsigned char conf_signature[signlen];
+//	char *ret = NULL;
+//
+//	for(ret = fgets(name, maxnamesize, cfd);
+//			((ret != NULL) && (!strncmp(name, "CERT ", 5)));
+//				ret = fgets(name, maxnamesize, cfd))
+//	{
+//		for(i = 5; (name[i] != '\n') && (i < (unsigned) maxnamesize); i++);
+//
+//		if (name[i] == '\n')
+//		{
+//			name[i] = '\0';
+//		}
+//
+//		// so the name is first....
+//		std::string fname = &(name[5]);
+//
+//		// now read the
+//		std::string hash;
+//		std::string signature;
+//
+//		for(i = 0; i < signlen; i++)
+//		{
+//			if (EOF == (c = fgetc(cfd)))
+//			{
+//#ifdef AUTHSSL_DEBUG
+//				std::cerr << "Error Reading Signature of: ";
+//				std::cerr << fname;
+//				std::cerr << std::endl;
+//				std::cerr << "ABorting Load!";
+//				std::cerr << std::endl;
+//#endif
+//				return -1;
+//			}
+//			unsigned char uc = (unsigned char) c;
+//			signature += (unsigned char) uc;
+//		}
+//		if ('\n' != (c = fgetc(cfd)))
+//		{
+//#ifdef AUTHSSL_DEBUG
+//			std::cerr << "Warning Mising seperator" << std::endl;
+//#endif
+//		}
+//
+//#ifdef AUTHSSL_DEBUG
+//		std::cerr << "Read fname:" << fname << std::endl;
+//		std::cerr << "Signature:" << std::endl;
+//		for(i = 0; i < signlen; i++)
+//		{
+//			fprintf(stderr, "%02x", (unsigned char) signature[i]);
+//		}
+//		std::cerr << std::endl;
+//		std::cerr << std::endl;
+//#endif
+//
+//		// push back.....
+//		fnames.push_back(fname);
+//		hashes.push_back(signature);
+//
+//		conftxt += "CERT ";
+//		conftxt += fname;
+//		conftxt += "\n";
+//		conftxt += signature;
+//		conftxt += "\n";
+//
+//		// be sure to write over a bit...
+//		name[0] = 'N';
+//		name[1] = 'O';
+//	}
+//
+//	// string already waiting!
+//	for(; ((ret != NULL) && (!strncmp(name, "OPT ", 4)));
+//				ret = fgets(name, maxnamesize, cfd))
+//	{
+//		for(i = 4; (name[i] != '\n') && (i < OPT_LEN); i++);
+//		// terminate the string.
+//		name[i] = '\0';
+//
+//		// so the name is first....
+//		std::string opt = &(name[4]);
+//
+//		// now read the
+//		std::string val;     // cleaned up value.
+//		std::string valsign; // value in the file.
+//		for(i = 0; i < VAL_LEN; i++)
+//		{
+//			if (EOF == (c = fgetc(cfd)))
+//			{
+//#ifdef AUTHSSL_DEBUG
+//				std::cerr << "Error Reading Value of: ";
+//				std::cerr << opt;
+//				std::cerr << std::endl;
+//				std::cerr << "ABorting Load!";
+//				std::cerr << std::endl;
+//#endif
+//				return -1;
+//			}
+//			// remove zeros on strings...
+//			if (c != '\0')
+//			{
+//				val += (unsigned char) c;
+//			}
+//			valsign += (unsigned char) c;
+//		}
+//		if ('\n' != (c = fgetc(cfd)))
+//		{
+//#ifdef AUTHSSL_DEBUG
+//			std::cerr << "Warning Mising seperator" << std::endl;
+//#endif
+//		}
+//
+//#ifdef AUTHSSL_DEBUG
+//		std::cerr << "Read OPT:" << opt;
+//		std::cerr << " Val:" << val << std::endl;
+//#endif
+//
+//		// push back.....
+//		tmpsettings[opt] = val;
+//
+//		conftxt += "OPT ";
+//		conftxt += opt;
+//		conftxt += "\n";
+//		conftxt += valsign;
+//		conftxt += "\n";
+//
+//		// be sure to write over a bit...
+//		name[0] = 'N';
+//		name[1] = 'O';
+//	}
+//
+//	// only read up to the first newline symbol....
+//	// continue...
+//	for(i = 0; (name[i] != '\n') && (i < signlen); i++);
+//
+//	if (i != signlen)
+//	{
+//		for(i++; i < signlen; i++)
+//		{
+//			c = fgetc(cfd);
+//			if (c == EOF)
+//			{
+//#ifdef AUTHSSL_DEBUG
+//				std::cerr << "Error Reading Conf Signature:";
+//				std::cerr << std::endl;
+//#endif
+//				return 1;
+//			}
+//			unsigned char uc = (unsigned char) c;
+//			name[i] = uc;
+//		}
+//	}
+//
+//#ifdef AUTHSSL_DEBUG
+//	std::cerr << "Configuration File Signature: " << std::endl;
+//	for(i = 0; i < signlen; i++)
+//	{
+//		fprintf(stderr, "%02x", (unsigned char) name[i]);
+//	}
+//	std::cerr << std::endl;
+//#endif
+//
+//
+//	// when we get here - should have the final signature in the buffer.
+//	// check.
+//	//
+//	// compare signatures.
+//	// instead of verifying with the public key....
+//	// we'll sign it again - and compare .... FIX LATER...
+//
+//	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+//
+//	if (0 == EVP_SignInit(mdctx, EVP_sha1()))
+//	{
+//#ifdef AUTHSSL_DEBUG
+//#endif
+//		std::cerr << "EVP_SignInit Failure!" << std::endl;
+//	}
+//
+//	if (0 == EVP_SignUpdate(mdctx, conftxt.c_str(), conftxt.length()))
+//	{
+//#ifdef AUTHSSL_DEBUG
+//		std::cerr << "EVP_SignUpdate Failure!" << std::endl;
+//#endif
+//	}
+//
+//	if (0 == EVP_SignFinal(mdctx, conf_signature, &signlen, pkey))
+//	{
+//#ifdef AUTHSSL_DEBUG
+//		std::cerr << "EVP_SignFinal Failure!" << std::endl;
+//#endif
+//	}
+//
+//	EVP_MD_CTX_destroy(mdctx);
+//	fclose(cfd);
+//
+//#ifdef AUTHSSL_DEBUG
+//	std::cerr << "Recalced File Signature: " << std::endl;
+//	for(i = 0; i < signlen; i++)
+//	{
+//		fprintf(stderr, "%02x", conf_signature[i]);
+//	}
+//	std::cerr << std::endl;
+//#endif
+//
+//	bool same = true;
+//	for(i = 0; i < signlen; i++)
+//	{
+//		if ((unsigned char) name[i] != conf_signature[i])
+//		{
+//			same = false;
+//		}
+//	}
+//
+//	if (same == false)
+//	{
+//#ifdef AUTHSSL_DEBUG
+//		std::cerr << "ERROR VALIDATING CONFIGURATION!" << std::endl;
+//		std::cerr << "PLEASE FIX!" << std::endl;
+//#endif
+//		return false;
+//	}
+//
+//	std::list<std::string>::iterator it;
+//	std::list<std::string>::iterator it2;
+//	for(it = fnames.begin(), it2 = hashes.begin(); it != fnames.end(); it++, it2++)
+//	{
+//		std::string neighfile = neighdir + (*it) + ".pqi";
+//		X509 *x509 = loadX509FromFile(neighfile, (*it2));
+//		if (x509 != NULL)
+//		{
+//			std::string id;
+//                        if (ProcessX509(x509, id))
+//			{
+//#ifdef AUTHSSL_DEBUG
+//				std::cerr << "Loaded Certificate: " << id;
+//				std::cerr << std::endl;
+//#endif
+//			}
+//		}
+//	}
+//	for(mit = tmpsettings.begin(); mit != tmpsettings.end(); mit++)
+//	{
+//		keyValueMap[mit -> first] = mit -> second;
+//	}
+//
+//	mToSaveCerts = false;
+//
+//	if (keyValueMap.size() > 0)
+//	{
+//		oldFormat = true;
+//		mToSaveCerts = true;
+//	}
+//
+//	return true;
+//}
+//

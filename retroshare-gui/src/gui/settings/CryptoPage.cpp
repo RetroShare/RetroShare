@@ -128,7 +128,7 @@ CryptoPage::exportPublicKey()
                                                 QDir::homePath(),
                                                 "RetroShare Certificate (*.pqi)");
 
-    if ( rsPeers->SaveCertificateToFile(rsPeers->getOwnId(), qdir.toStdString()) )
+    if ( rsPeers->saveCertificateToFile(rsPeers->getOwnId(), qdir.toStdString()) )
     {
         QMessageBox::information(this, tr("RetroShare"),
                          tr("Certificate file successfully created"),

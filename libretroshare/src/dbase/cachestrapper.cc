@@ -832,7 +832,9 @@ bool CacheStrapper::loadList(std::list<RsItem *> load)
 			CacheData cd;
 
 			cd.pid = rscc->pid;
-                        cd.pname = AuthSSL::getAuthSSL()->getName(cd.pid);
+                        peerConnectState pca;
+                        mConnMgr->getFriendNetStatus(rscc->pid, pca);
+                        cd.pname = pca.name;
 			cd.cid.type = rscc->cachetypeid;
 			cd.cid.subid = rscc->cachesubid;
 			cd.path = rscc->path;

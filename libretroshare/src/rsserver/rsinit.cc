@@ -765,7 +765,7 @@ static bool checkAccount(std::string accountdir, accountId &id)
 
                 /* Generating GPGme Account */
 int      RsInit::GetPGPLogins(std::list<std::string> &pgpIds) {
-        AuthGPG::getAuthGPG()->availablePGPCertificatesWithPrivateKeys(pgpIds);
+        AuthGPG::getAuthGPG()->availableGPGCertificatesWithPrivateKeys(pgpIds);
 	return 1;
 }
 
@@ -774,8 +774,8 @@ int      RsInit::GetPGPLoginDetails(std::string id, std::string &name, std::stri
         std::cerr << "RsInit::GetPGPLoginDetails for \"" << id << "\"";
         std::cerr << std::endl;
 
-        name = AuthGPG::getAuthGPG()->getPGPName(id);
-        email = AuthGPG::getAuthGPG()->getPGPEmail(id);
+        name = AuthGPG::getAuthGPG()->getGPGName(id);
+        email = AuthGPG::getAuthGPG()->getGPGEmail(id);
         if (name != "") {
             return 1;
         } else {
@@ -1875,7 +1875,7 @@ int RsServer::StartupRetroShare()
 
         AuthSSL::getAuthSSL() -> setConfigDirectories(certConfigFile, certNeighDir);
 
-        AuthSSL::getAuthSSL() -> loadCertificates();
+        //AuthSSL::getAuthSSL() -> loadCertificates();
 
 	/**************************************************************************/
 	/* setup classes / structures */
@@ -1888,11 +1888,11 @@ int RsServer::StartupRetroShare()
         mConnMgr = new p3ConnectMgr();
         AuthSSL::getAuthSSL()->mConnMgr = mConnMgr;
         //load all the SSL certs as friends
-        std::list<std::string> sslIds;
-        AuthSSL::getAuthSSL()->getAuthenticatedList(sslIds);
-        for (std::list<std::string>::iterator sslIdsIt = sslIds.begin(); sslIdsIt != sslIds.end(); sslIdsIt++) {
-            mConnMgr->addFriend(*sslIdsIt);
-        }
+//        std::list<std::string> sslIds;
+//        AuthSSL::getAuthSSL()->getAuthenticatedList(sslIds);
+//        for (std::list<std::string>::iterator sslIdsIt = sslIds.begin(); sslIdsIt != sslIds.end(); sslIdsIt++) {
+//            mConnMgr->addFriend(*sslIdsIt);
+//        }
 	pqiNetAssistFirewall *mUpnpMgr = new upnphandler();
         //p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr, RsInitConfig::configDir);
 

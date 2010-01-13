@@ -1732,7 +1732,7 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
                 if (AuthGPG::getAuthGPG()->SignDataBin(data, size, sigbuf, &siglen))
 		{
 			signedMsg->personalSignature.signData.setBinData(sigbuf, siglen);
-                        signedMsg->personalSignature.keyId = AuthGPG::getAuthGPG()->PGPOwnId();
+                        signedMsg->personalSignature.keyId = AuthGPG::getAuthGPG()->getGPGOwnId();
 		}
 	}
 
@@ -2451,7 +2451,7 @@ bool 	p3GroupDistrib::locked_validateDistribSignedMsg(
 	std::cerr << std::endl;
 #endif
 
-        if (AuthGPG::getAuthGPG()->isPGPValid(newMsg->personalSignature.keyId))
+        if (AuthGPG::getAuthGPG()->isGPGValid(newMsg->personalSignature.keyId))
 	{
 #ifdef DISTRIB_DEBUG
 		std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Peer Known";

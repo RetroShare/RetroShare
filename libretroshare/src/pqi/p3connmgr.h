@@ -135,7 +135,8 @@ class peerConnectState
 	public:
 	peerConnectState(); /* init */
 
-	std::string id;
+        std::string id;
+        std::string gpg_id;
 
 	uint32_t netMode; /* EXT / UPNP / UDP / INVALID */
 	uint32_t visState; /* STD, GRAY, DARK */	
@@ -167,6 +168,7 @@ class peerConnectState
 	time_t lastattempt;
 
 	std::string name;
+        std::string location;
 
 	uint32_t    state;
 	uint32_t    actions;
@@ -231,11 +233,13 @@ bool    setAddressList(std::string id, std::list<IpAddressTimed> IpAddressTimedL
 bool 	setNetworkMode(std::string id, uint32_t netMode);
 bool 	setVisState(std::string id, uint32_t visState);
 
+bool    setLocation(std::string pid, std::string location);//location is shown in the gui to differentiate ssl certs
+
 	/* add/remove friends */
-bool 	addFriend(std::string id, uint32_t netMode = RS_NET_MODE_UDP, 
+bool 	addFriend(std::string ssl_id, std::string gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
 	   uint32_t visState = RS_VIS_STATE_STD , time_t lastContact = 0);
 
-bool	removeFriend(std::string);
+bool	removeFriend(std::string ssl_id);
 bool	addNeighbour(std::string);
 
 	/*************** External Control ****************/
@@ -244,14 +248,14 @@ bool	addNeighbour(std::string);
 const std::string getOwnId();
 bool	getOwnNetStatus(peerConnectState &state);
 
-bool	isFriend(std::string id);
-bool	isOnline(std::string id);
+bool	isFriend(std::string ssl_id);
+bool	isOnline(std::string ssl_id);
 bool	getFriendNetStatus(std::string id, peerConnectState &state);
 bool	getOthersNetStatus(std::string id, peerConnectState &state);
 
-void	getOnlineList(std::list<std::string> &peers);
-void	getFriendList(std::list<std::string> &peers);
-void	getOthersList(std::list<std::string> &peers);
+void	getOnlineList(std::list<std::string> &ssl_peers);
+void	getFriendList(std::list<std::string> &ssl_peers);
+//void	getOthersList(std::list<std::string> &peers); /deprecated
 
 
 	/**************** handle monitors *****************/

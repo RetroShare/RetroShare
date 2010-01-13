@@ -236,6 +236,7 @@ void NotifyQt::UpdateGUI()
 
 			/* id the name */
 			std::string name = rsPeers->getPeerName(id);
+                        std::cerr << "NotifyQT got message for peer id : " << id << "; name : " << name << std::endl;
 			std::string realmsg = "<strong>" + name + "</strong>";
 			switch(type)
 			{

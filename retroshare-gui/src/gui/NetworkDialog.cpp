@@ -188,10 +188,10 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 
                 // That's what context menus are made for
 		RsPeerDetails detail;
-                if(!rsPeers->getPGPDetails(peer_id, detail))		// that is not suppose to fail.
+                if(!rsPeers->getGPGDetails(peer_id, detail))		// that is not suppose to fail.
 			return ;
 
-                if(peer_id != rsPeers->getPGPOwnId())
+                if(peer_id != rsPeers->getGPGOwnId())
 		{
                         if(detail.ownsign)
 			{
@@ -217,7 +217,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 #endif
 			}
 		}
-                if (  peer_id == rsPeers->getPGPOwnId())
+                if (  peer_id == rsPeers->getGPGOwnId())
 		{
 		    exportcertAct = new QAction(QIcon(IMAGE_EXPIORT), tr( "Export my Cert" ), this );
 		    connect( exportcertAct , SIGNAL( triggered() ), this, SLOT( on_actionExportKey_activated() ) );
@@ -260,8 +260,8 @@ void NetworkDialog::makeFriend()
 	QTreeWidgetItem *wi = getCurrentNeighbour();
         std::string authId = wi->text(4).toStdString() ;
 
-        rsPeers->SignGPGCertificate(authId);
-	rsPeers->addFriend(authId);
+        rsPeers->signGPGCertificate(authId);
+        rsPeers->addDummyFriend(authId);
 
 	insertConnect() ;
 }
@@ -348,9 +348,9 @@ void NetworkDialog::insertConnect()
         std::list<std::string> neighs; //these are GPG ids
 	std::list<std::string>::iterator it;
         if (ui.showUnvalidKeys->isChecked()) {
-            rsPeers->getPGPAllList(neighs);
+            rsPeers->getGPGAllList(neighs);
         } else {
-            rsPeers->getPGPValidList(neighs);
+            rsPeers->getGPGValidList(neighs);
         }
 
 	/* get a link to the table */
@@ -364,17 +364,17 @@ void NetworkDialog::insertConnect()
 	}
 
         RsPeerDetails ownGPGDetails ;
-        rsPeers->getPGPDetails(rsPeers->getPGPOwnId(), ownGPGDetails);
+        rsPeers->getGPGDetails(rsPeers->getGPGOwnId(), ownGPGDetails);
 
         QList<QTreeWidgetItem *> items;
 	for(it = neighs.begin(); it != neighs.end(); it++)
 	{
-                if (*it == rsPeers->getPGPOwnId()) {
+                if (*it == rsPeers->getGPGOwnId()) {
                     continue;
                 }
 
                 RsPeerDetails detail;
-                if (!rsPeers->getPGPDetails(*it, detail))
+                if (!rsPeers->getGPGDetails(*it, detail))
                 {
                         continue; /* BAD */
                 }
@@ -525,9 +525,10 @@ std::string NetworkDialog::loadneighbour()
 
 	std::string file = fileName.toStdString();
 	std::string id;
+        std::string gpg_id;
 	if (file != "")
 	{
-        	rsPeers->LoadCertificateFromFile(file, id);
+                rsPeers->loadCertificateFromFile(file, id, gpg_id);
 	}
 	return id;
 }
@@ -608,7 +609,7 @@ void NetworkDialog::on_actionExportKey_activated()
                                                 QDir::homePath(),
                                                 "RetroShare Certificate (*.pqi)");
 
-    if ( rsPeers->SaveCertificateToFile(rsPeers->getOwnId(), qdir.toStdString()) )
+    if ( rsPeers->saveCertificateToFile(rsPeers->getOwnId(), qdir.toStdString()) )
     {
         QMessageBox::information(this, tr("RetroShare"),
                          tr("Certificate file successfully created"),
