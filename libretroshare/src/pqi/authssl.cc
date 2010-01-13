@@ -49,6 +49,9 @@
 /********************************************************************************/
 /********************************************************************************/
 
+// initialisation du pointeur de singleton à zéro
+AuthSSL *AuthSSL::instance_ssl = new AuthSSL();
+
 sslcert::sslcert(X509 *x509, std::string pid)
 {
 	certificate = x509;
@@ -397,12 +400,6 @@ X509 *SignX509Certificate(X509_NAME *issuer, EVP_PKEY *privkey, X509_REQ *req, l
 AuthSSL::AuthSSL()
 	:init(0), sslctx(NULL), pkey(NULL), mToSaveCerts(false), mConfigSaveActive(true)
 {
-}
-
-AuthSSL *AuthSSL::getAuthSSL()
-{
-        return &instance_sslroot;
-        //return NULL;
 }
 
 bool AuthSSL::active()
@@ -2041,10 +2038,11 @@ bool AuthSSL::AuthX509(X509 *x509)
                 sigoutl = 0;
                 goto err;
         }
-
+        std::cerr << "AuthSSL::AuthX509() X509 authenticated" << std::endl;
         return true;
 
   err:
+        std::cerr << "AuthSSL::AuthX509() X509 NOT authenticated" << std::endl;
         return false;
 }
 	/* validate + get id */
@@ -2200,11 +2198,13 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                         /* do the REAL Authentication */
                         if (!AuthX509(X509_STORE_CTX_get_current_cert(ctx)))
                         {
+                                fprintf(stderr, "AuthSSL::VerifyX509Callback() X509 not authenticated.\n");
                                 return false;
                         }
                         std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
-                        if (!AuthGPG::getAuthGPG()->isPGPAuthenticated(pgpid))
+                        if (!AuthGPG::getAuthGPG()->isPGPSigned(pgpid))
                         {
+                                fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not signed by ourself.\n");
                                 return false;
                         }
                         preverify_ok = true;
@@ -2213,8 +2213,9 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                         (err == X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE))
                 {
                         std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
-                        if (!AuthGPG::getAuthGPG()->isPGPAuthenticated(pgpid))
+                        if (!AuthGPG::getAuthGPG()->isPGPSigned(pgpid))
                         {
+                                fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not signed by ourself.\n");
                                 return false;
                         }
                         preverify_ok = true;

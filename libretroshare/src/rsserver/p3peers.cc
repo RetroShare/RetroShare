@@ -318,7 +318,7 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 
         d.issuer 	= authDetail.issuer;
 
-        d.trusted       = AuthGPG::getAuthGPG()->isPGPAuthenticated(AuthSSL::getAuthSSL()->getGPGId(id));
+        d.ownsign       = AuthGPG::getAuthGPG()->isPGPSigned(AuthSSL::getAuthSSL()->getGPGId(id));
 
 
 	/* generate */
@@ -954,7 +954,7 @@ int ensureExtension(std::string &name, std::string def_ext)
 
 
 RsPeerDetails::RsPeerDetails()
-	:trustLvl(0), ownsign(false), trusted(false), state(0), netMode(0),
+        :trustLvl(0), ownsign(false), state(0), netMode(0),
 	lastConnect(0), connectPeriod(0)
 {
 	return;
@@ -987,8 +987,7 @@ std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail)
 	out << std::endl;
 
 	out << " trustLvl:    " << detail.trustLvl;
-	out << " ownSign:     " << detail.ownsign;
-	out << " trusted:     " << detail.trusted;
+        out << " ownSign:     " << detail.ownsign;
 	out << std::endl;
 
 	out << " state:       " << detail.state;

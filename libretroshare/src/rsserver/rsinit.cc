@@ -769,10 +769,6 @@ int      RsInit::GetPGPLogins(std::list<std::string> &pgpIds) {
 	return 1;
 }
 
-bool      RsInit::getPGPEngineFileName(std::string &fileName) {
-        return AuthGPG::getAuthGPG()->getPGPEngineFileName(fileName);
-}
-
 int      RsInit::GetPGPLoginDetails(std::string id, std::string &name, std::string &email)
 {
         std::cerr << "RsInit::GetPGPLoginDetails for \"" << id << "\"";

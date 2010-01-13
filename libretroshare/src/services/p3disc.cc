@@ -30,6 +30,7 @@
 #include "services/p3disc.h"
 
 #include "pqi/authssl.h"
+#include "pqi/authgpg.h"
 #include "pqi/p3connmgr.h"
 
 #include <iostream>
@@ -561,7 +562,7 @@ void p3disc::sendPeerIssuer(std::string to, std::string about)
 #endif
 	}
 
-        std::string aboutIssuerId = AuthSSL::getAuthSSL()->getIssuerName(about);
+        std::string aboutIssuerId = AuthSSL::getAuthSSL()->getGPGId(about);
 	if (aboutIssuerId == "")
 	{
 		/* major error! */
@@ -575,7 +576,7 @@ void p3disc::sendPeerIssuer(std::string to, std::string about)
 	// Set Target as input cert.
 	di -> PeerId(to);
 
-        di -> issuerCert = AuthSSL::getAuthSSL()->SaveCertificateToString(aboutIssuerId);
+        di -> issuerCert = AuthGPG::getAuthGPG()->SaveCertificateToString(aboutIssuerId);
 
 #ifdef P3DISC_DEBUG
 	std::cerr << "Saved certificate to string in RsDiscIssuer. " << std::endl ;
@@ -800,7 +801,7 @@ void p3disc::recvPeerIssuerMsg(RsDiscIssuer *item)
 
 	/* load certificate */
 	std::string peerId;
-        //bool loaded = AuthSSL::getAuthSSL()->LoadCertificateFromString(item->issuerCert, peerId);
+        bool loaded = AuthGPG::getAuthGPG()->LoadCertificateFromString(item->issuerCert);
 
 	/* cleanup (handled by caller) */
 

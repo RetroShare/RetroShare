@@ -27,6 +27,15 @@
  *
  */
 
+/****
+ * Here's GPG policy :
+ * By default, all pgpg keys imported via a RS user (make friend and accept friend action) are signed at level 0.
+ * All signed keys by RS are set to be trusted marginally. You can change it to full or no trust in the friend profile
+ * For a key to be marginaly valid, it has to be signed by one fully trusted key, or at least by 3 marginally trusted keys.
+ * All keys that have at least marginal validity are designed as valid in RS. They are shown in the RS gui in order to be signed.
+ * If there is no validity then the key is not shown.
+ */
+
 #ifndef RS_GPG_AUTH_HEADER
 #define RS_GPG_AUTH_HEADER
 
@@ -52,10 +61,6 @@ class gpgcert
                 std::string id;
                 std::string name;
                 std::string email;
-//                std::string location;
-//                std::string org;
-//
-//                std::string issuer;
 
                 std::string fpr; /* fingerprint */
                 std::list<std::string> signers;
@@ -64,7 +69,6 @@ class gpgcert
                 uint32_t validLvl;
 
                 bool ownsign;
-                bool trusted; // means valid in pgp world.
 
 		gpgme_key_t key;
 };
@@ -100,12 +104,7 @@ class AuthGPG
         AuthGPG();
         ~AuthGPG();
 
-        static AuthGPG *getAuthGPG();
-
         bool    availablePGPCertificates(std::list<std::string> &ids);
-
-        //get the pgpg engine used by the pgp functions
-        bool    getPGPEngineFileName(std::string &fileName);
 
 	int	GPGInit(std::string ownId);
 	int	GPGInit(std::string name, std::string comment, 
@@ -132,8 +131,6 @@ class AuthGPG
  * (see storage at the end of the class)
  *
  ****/
-
-		/* initialisation -> done by derived classes */
   bool    active(); 
 
         /* Init by generating new Own PGP Cert, or selecting existing PGP Cert */
@@ -152,19 +149,16 @@ class AuthGPG
  * provide access to details in cache list.
  *
  ****/
-
-    /* get Details from the Certificates */
     std::string getPGPName(GPG_id pgp_id);
     std::string getPGPEmail(GPG_id pgp_id);
 
-
-    /* PGP versions of Certificate Fns */
+    /* PGP web of trust management */
     GPG_id PGPOwnId();
     bool	getPGPAllList(std::list<std::string> &ids);
-    bool	getPGPAuthenticatedList(std::list<std::string> &ids);
-    bool	getPGPUnknownList(std::list<std::string> &ids);
+    bool	getPGPSignedList(std::list<std::string> &ids);
+    bool	getPGPValidList(std::list<std::string> &ids);
     bool	isPGPValid(std::string id);
-    bool	isPGPAuthenticated(std::string id);
+    bool	isPGPSigned(std::string id);
 
 /*********************************************************************************/
 /************************* STAGE 4 ***********************************************/
@@ -173,9 +167,6 @@ class AuthGPG
  * STAGE 4: Loading and Saving Certificates. (Strings and Files)
  *
  ****/
-
-
-		/* Load/Save certificates */
   bool LoadCertificateFromString(std::string pem);
   std::string SaveCertificateToString(std::string id);
 
@@ -189,12 +180,11 @@ class AuthGPG
  * done in gpgroot already.
  *
  ****/
-
-		/* Signatures */
-  bool AuthCertificate(std::string uid);
-  bool SignCertificate(std::string id);
+  bool SignCertificateLevel0(std::string id);
   bool RevokeCertificate(std::string id);  /* Particularly hard - leave for later */
-  bool TrustCertificate(std::string id, bool trust);
+  bool TrustCertificateNone(std::string id);
+  bool TrustCertificateMarginally(std::string id);
+  bool TrustCertificateFully(std::string id);
 
 /*********************************************************************************/
 /************************* STAGE 7 ***********************************************/
@@ -205,8 +195,6 @@ class AuthGPG
  * There should also be Encryption Functions... (do later).
  *
  ****/
-
-
   bool SignData(std::string input, std::string &sign);
   bool SignData(const void *data, const uint32_t len, std::string &sign);
   bool SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen);
@@ -214,42 +202,36 @@ class AuthGPG
   bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int);
   bool decryptText(gpgme_data_t CIPHER, gpgme_data_t PLAIN);
   bool encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER);
+//END of PGP public functions
 
+  static AuthGPG *getAuthGPG() throw() // pour obtenir l'instance
+      { return instance_gpg; }
 
-/*********************************************************************************/
-/************************* PGP Specific functions ********************************/
-/*********************************************************************************/
+private:
 
+    static AuthGPG *instance_gpg; // pointeur vers le singleton
 
-bool checkSignature(std::string id, std::string hash, std::string signature);
+    RsMutex pgpMtx;
+    /* Below is protected via the mutex */
 
-        private:
+    certmap mKeyList;
 
-        RsMutex pgpMtx;
-	/* Below is protected via the mutex */
+    bool gpgmeInit;
+    bool gpgmeKeySelected;
+    bool gpgmeX509Selected;
 
-	certmap mKeyList;
+    gpgme_engine_info_t INFO;
+    gpgme_ctx_t CTX;
 
-	bool gpgmeInit;
-	bool gpgmeKeySelected;
-	bool gpgmeX509Selected;
+    std::string mOwnGpgId;
+    std::string mX509id;
 
-	gpgme_engine_info_t INFO;
-	gpgme_ctx_t CTX;
+    gpgcert mOwnGpgCert;
 
-	std::string mOwnId;
-	std::string mX509id;
-
-	gpgcert mOwnGpgCert;
-
-	std::string passphrase;
+    std::string passphrase;
 };
 
-// the single instance of this
-static AuthGPG instance_gpgroot;
-
 /* Sign a key */
-
 typedef enum
 {
   SIGN_START,
@@ -266,7 +248,6 @@ typedef enum
 
 
 /* Change the key ownertrust */
-
 typedef enum
 {
   TRUST_START,
@@ -286,7 +267,6 @@ typedef enum
  * each callback, to keep track of states, errors 
  * and other data.
  */
-
 class EditParams
 {
 	public: 
@@ -310,7 +290,6 @@ class EditParams
 };
 
 /* Data specific to key signing */
-
 class SignParams 
 {
 	public:
@@ -323,6 +302,5 @@ class SignParams
 		this->passphrase = passphrase;
 	}
 };
-
 
 #endif

@@ -87,9 +87,6 @@ class AuthSSL
 {
 	public:
 
-        // the single instance of this
-        static AuthSSL *getAuthSSL();
-
         /* Initialisation Functions (Unique) */
 	AuthSSL();
 bool    validateOwnCertificate(X509 *x509, EVP_PKEY *pkey);
@@ -185,8 +182,13 @@ bool 	CheckCertificate(std::string peerId, X509 *x509); /* check that they are e
 	/* Special Config Loading (backwards compatibility) */
 bool  	loadCertificates(bool &oldFormat, std::map<std::string, std::string> &keyValueMap);
 
+  static AuthSSL *getAuthSSL() throw() // pour obtenir l'instance
+      { return instance_ssl; }
 
 	private:
+
+        // the single instance of this
+        static AuthSSL *instance_ssl;
 
 	/* Helper Functions */
 bool 	ProcessX509(X509 *x509, std::string &id);
@@ -220,9 +222,6 @@ bool 	locked_FindCert(std::string id, sslcert **cert);
 	std::map<std::string, sslcert *> mCerts;
 
 };
-
-// the single instance of this
-static AuthSSL instance_sslroot;
 
 X509_REQ *GenerateX509Req(
                 std::string pkey_file, std::string passwd,

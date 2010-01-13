@@ -87,8 +87,7 @@ class RsPeerDetails
 	uint32_t trustLvl;
 	uint32_t validLvl;
 
-	bool ownsign; /* we have signed certificate */
-	bool trusted; /* we trust their signature on others */
+        bool ownsign; /* we have signed certificate */
 
 	/* Network details (only valid if friend) */
 	uint32_t		state;
