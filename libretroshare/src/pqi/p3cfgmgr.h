@@ -90,7 +90,6 @@ const uint32_t CONFIG_TYPE_CHANNELS 	= 0x0103;
 const uint32_t CONFIG_TYPE_CACHE 	= 0xff01;
 
 class p3ConfigMgr;
-class p3AuthMgr;
 
 class pqiConfig
 {
@@ -138,7 +137,7 @@ bool    HasConfigChanged(uint16_t idx);
 class p3ConfigMgr
 {
 	public:
-	p3ConfigMgr(p3AuthMgr *am, std::string bdir, std::string fname, std::string signame);
+        p3ConfigMgr(std::string bdir, std::string fname, std::string signame);
 
 void	tick();
 void	saveConfiguration();
@@ -151,10 +150,6 @@ void	addConfiguration(std::string file, pqiConfig *conf);
 void	completeConfiguration();
 
 	private:
-
-
-	/* these are constants - so shouldn't need mutex */
-	p3AuthMgr *mAuthMgr;
 
 const std::string basedir;
 const std::string metafname;

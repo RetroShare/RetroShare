@@ -30,7 +30,6 @@
 #include <iomanip>
 #include "pqi/pqistore.h"
 #include "pqi/pqibin.h"
-#include "pqi/p3authmgr.h"
 
 const uint32_t BLOG_MAX_FWD_OFFSET = (60 * 60 * 24 * 2); /* 2 Days */
 const uint32_t FRIEND_QBLOG_REPOST_PERIOD = 60; /* every minute for testing */

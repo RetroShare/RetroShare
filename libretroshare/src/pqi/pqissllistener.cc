@@ -55,9 +55,8 @@ const int pqissllistenzone = 49787;
  */
 
 
-pqissllistenbase::pqissllistenbase(struct sockaddr_in addr, p3AuthMgr *am, p3ConnectMgr *cm)
-	:laddr(addr), active(false), 
-	mAuthMgr((AuthSSL *) am), mConnMgr(cm)
+pqissllistenbase::pqissllistenbase(struct sockaddr_in addr, p3ConnectMgr *cm)
+        :laddr(addr), active(false), mConnMgr(cm)
 
 {
 	if (!(mAuthMgr -> active()))
@@ -521,8 +520,8 @@ int	pqissllistenbase::continueaccepts()
  *
  */
 
-pqissllistener::pqissllistener(struct sockaddr_in addr, p3AuthMgr *am, p3ConnectMgr *cm)
-	:pqissllistenbase(addr, am, cm)
+pqissllistener::pqissllistener(struct sockaddr_in addr, p3ConnectMgr *cm)
+        :pqissllistenbase(addr, cm)
 {
 	return;
 }

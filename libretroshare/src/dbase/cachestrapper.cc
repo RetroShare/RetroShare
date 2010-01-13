@@ -504,8 +504,8 @@ void 	CacheStore::locked_storeCacheEntry(const CacheData &data)
  *
  ********************************* CacheStrapper ********************************/
 
-CacheStrapper::CacheStrapper(p3AuthMgr *am, p3ConnectMgr *cm)
-	:p3Config(CONFIG_TYPE_CACHE), mAuthMgr(am), mConnMgr(cm)
+CacheStrapper::CacheStrapper(p3ConnectMgr *cm)
+        :p3Config(CONFIG_TYPE_CACHE), mConnMgr(cm)
 {
 	return;
 }
@@ -832,7 +832,7 @@ bool CacheStrapper::loadList(std::list<RsItem *> load)
 			CacheData cd;
 
 			cd.pid = rscc->pid;
-			cd.pname = mAuthMgr->getName(cd.pid);
+                        cd.pname = getAuthSSL()->getName(cd.pid);
 			cd.cid.type = rscc->cachetypeid;
 			cd.cid.subid = rscc->cachesubid;
 			cd.path = rscc->path;

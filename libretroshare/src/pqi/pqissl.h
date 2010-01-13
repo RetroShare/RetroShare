@@ -95,7 +95,7 @@ class pqissl: public NetBinInterface
 {
 public:
 	pqissl(pqissllistener *l, PQInterface *parent, 
-		p3AuthMgr *am, p3ConnectMgr *cm);
+                p3ConnectMgr *cm);
 virtual ~pqissl();
 
 	// NetInterface

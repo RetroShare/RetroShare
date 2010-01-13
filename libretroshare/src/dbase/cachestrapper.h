@@ -277,7 +277,7 @@ class p3AuthMgr;
 class CacheStrapper: public pqiMonitor, public p3Config
 {
 	public:
-	CacheStrapper(p3AuthMgr *am, p3ConnectMgr *cm);
+        CacheStrapper(p3ConnectMgr *cm);
 virtual ~CacheStrapper() { return; }
 
 	/************* from pqiMonitor *******************/

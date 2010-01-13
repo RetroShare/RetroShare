@@ -54,7 +54,6 @@
 
 #include "pqi/pqi_base.h"
 #include "pqi/pqinetwork.h"
-#include "pqi/p3authmgr.h"
 
 typedef std::string SSL_id;
 
@@ -64,6 +63,7 @@ class sslcert
 {
         public:
         sslcert(X509 *x509, std::string id);
+        sslcert();
 
         /* certificate parameters */
         std::string id;
@@ -85,7 +85,7 @@ class sslcert
 };
 
 
-class AuthSSL: public p3AuthMgr
+class AuthSSL
 {
 	public:
 
@@ -116,7 +116,7 @@ virtual bool    isAuthenticated(std::string id);
 virtual	std::string getName(std::string id);
 virtual std::string getIssuerName(std::string id);
 virtual GPG_id getGPGId(SSL_id id);
-virtual bool    getDetails(std::string id, pqiAuthDetails &details);
+virtual bool    getCertDetails(std::string id, sslcert &cert);
 
         /* first party trust info (dummy) */
 virtual bool isTrustingMe(std::string id) ;

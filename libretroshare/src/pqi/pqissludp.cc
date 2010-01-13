@@ -52,8 +52,8 @@ static const uint32_t PQI_SSLUDP_DEF_CONN_PERIOD = 300;  /* 5  minutes? */
 
 /********** PQI SSL UDP STUFF **************************************/
 
-pqissludp::pqissludp(PQInterface *parent, p3AuthMgr *am, p3ConnectMgr *cm)
-	:pqissl(NULL, parent, am, cm), tou_bio(NULL), 
+pqissludp::pqissludp(PQInterface *parent, p3ConnectMgr *cm)
+        :pqissl(NULL, parent, cm), tou_bio(NULL),
 	listen_checktime(0), mConnectPeriod(PQI_SSLUDP_DEF_CONN_PERIOD)
 {
 	sockaddr_clear(&remote_addr);

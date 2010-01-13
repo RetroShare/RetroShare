@@ -51,7 +51,7 @@ class pqissllistenbase: public pqilistener
 	public:
 
 
-	pqissllistenbase(struct sockaddr_in addr, p3AuthMgr *am, p3ConnectMgr *cm);
+        pqissllistenbase(struct sockaddr_in addr, p3ConnectMgr *cm);
 virtual ~pqissllistenbase();
 
 /*************************************/
@@ -99,7 +99,7 @@ class pqissllistener: public pqissllistenbase
 {
 	public:
 
-	pqissllistener(struct sockaddr_in addr, p3AuthMgr *am, p3ConnectMgr *cm);
+        pqissllistener(struct sockaddr_in addr, p3ConnectMgr *cm);
 virtual ~pqissllistener();
 
 int 	addlistenaddr(std::string id, pqissl *acc);

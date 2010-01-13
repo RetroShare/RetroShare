@@ -87,7 +87,7 @@ static const int PQISSL_MAX_READ_ZERO_COUNT = 40;
  *
  */
 
-pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3AuthMgr *am, p3ConnectMgr *cm)
+pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3ConnectMgr *cm)
 	:NetBinInterface(parent, parent->PeerId()), 
 	waiting(WAITING_NOT), active(false), certvalid(false), 
 	sslmode(PQISSL_ACTIVE), ssl_connection(NULL), sockfd(-1), 
@@ -97,15 +97,7 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3AuthMgr *am, p3ConnectM
 	sameLAN(false), n_read_zero(0), 
 	mConnectDelay(0), mConnectTS(0),
         mConnectTimeout(0), mTimeoutTS(0), quietShutdown(false),
-
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-	mAuthMgr((AuthXPGP *) am), mConnMgr(cm)
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
-	mAuthMgr((AuthSSL *) am), mConnMgr(cm)
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
+        mConnMgr(cm)
 
 {
 	/* set address to zero */

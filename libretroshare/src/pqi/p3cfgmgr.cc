@@ -26,7 +26,7 @@
 #include "util/rsdir.h"
 #include "rsiface/rspeers.h"
 #include "pqi/p3cfgmgr.h"
-#include "pqi/p3authmgr.h"
+#include "pqi/authssl.h"
 #include "pqi/pqibin.h"
 #include "pqi/pqistore.h"
 #include "pqi/pqinotify.h"
@@ -40,8 +40,8 @@
 
 #define CONFIG_DEBUG 1
 
-p3ConfigMgr::p3ConfigMgr(p3AuthMgr *am, std::string dir, std::string fname, std::string signame)
-	:mAuthMgr(am), basedir(dir), metafname(fname), metasigfname(signame),
+p3ConfigMgr::p3ConfigMgr(std::string dir, std::string fname, std::string signame)
+        :basedir(dir), metafname(fname), metasigfname(signame),
 	mConfigSaveActive(true)
 {
 
@@ -160,7 +160,7 @@ void	p3ConfigMgr::saveConfiguration()
 
 	/* sign data */
 	std::string signature;
-	mAuthMgr->SignData(membio->memptr(), membio->memsize(), signature);
+        getAuthSSL()->SignData(membio->memptr(), membio->memsize(), signature);
 
 #ifdef CONFIG_DEBUG 
 	std::cerr << "p3ConfigMgr::saveConfiguration() MetaFile Signature:";
@@ -274,7 +274,7 @@ void	p3ConfigMgr::loadConfiguration()
 
 	/* get signature */
 	std::string signature;
-	mAuthMgr->SignData(membio->memptr(), membio->memsize(), signature);
+        getAuthSSL()->SignData(membio->memptr(), membio->memsize(), signature);
 
 #ifdef CONFIG_DEBUG 
 	std::cerr << "p3ConfigMgr::loadConfiguration() New MetaFile Signature:";

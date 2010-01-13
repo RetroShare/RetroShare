@@ -38,7 +38,6 @@
 #include "pqi/pqipersongrp.h"
 
 class p3ConnectMgr;
-class p3AuthMgr;
 
 #include "pqi/pqimonitor.h"
 #include "serialiser/rsdiscitems.h"
@@ -72,7 +71,6 @@ class autoneighbour: public autoserver
 
 };
 
-class p3AuthMgr;
 class p3ConnectMgr;
 
 
@@ -81,7 +79,7 @@ class p3disc: public p3Service, public pqiMonitor
 	public:
 
 
-        p3disc(p3AuthMgr *am, p3ConnectMgr *cm, pqipersongrp *persGrp);
+        p3disc(p3ConnectMgr *cm, pqipersongrp *persGrp);
 
 	/************* from pqiMonitor *******************/
 virtual void statusChange(const std::list<pqipeer> &plist);
@@ -123,7 +121,6 @@ int 	idServers();
 
 	private:
 
-	p3AuthMgr *mAuthMgr;
 	p3ConnectMgr *mConnMgr;
         pqipersongrp *mPqiPersonGrp;
         time_t lastSentHeartbeatTime;

@@ -29,7 +29,6 @@
 #include "pqi/pqi.h"
 #include "pqi/pqistore.h"
 #include "pqi/p3cfgmgr.h"
-#include "pqi/p3authmgr.h"
 #include "services/p3service.h"
 #include "dbase/cachestrapper.h"
 #include "serialiser/rsforumitems.h"
@@ -212,8 +211,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		CacheStrapper *cs, CacheTransfer *cft,
 		std::string sourcedir, std::string storedir, 
 		uint32_t configId, 
-		uint32_t storePeriod, uint32_t pubPeriod, 
-		p3AuthMgr *mgr);
+                uint32_t storePeriod, uint32_t pubPeriod);
 
 
 /***************************************************************************************/

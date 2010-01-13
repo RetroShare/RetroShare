@@ -42,6 +42,8 @@ const int p3facemsgzone = 11453;
 #include "services/p3msgservice.h"
 #include "services/p3chatservice.h"
 
+#include "pqi/authssl.h"
+
 /* external reference point */
 RsMsgs *rsMsgs = NULL;
 
@@ -154,7 +156,7 @@ bool	p3Msgs::getNewChat(std::list<ChatInfo> &chats)
 void p3Msgs::initRsChatInfo(RsChatMsgItem *c, ChatInfo &i)
 {
 	i.rsid = c -> PeerId();
-	i.name = mAuthMgr->getName(i.rsid);
+        i.name = getAuthSSL()->getName(i.rsid);
 	i.chatflags = 0 ;
 	i.msg  = c -> message;
 

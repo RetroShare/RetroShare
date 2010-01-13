@@ -46,8 +46,8 @@
 // for blocking signals
 #include <signal.h>
 
-#include "pqi/authgpg.h"
 #include "pqi/authssl.h"
+#include "pqi/authgpg.h"
 
 class accountId
 {
@@ -469,7 +469,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
 	 * 2) Get List of Available Accounts.
 	 * 4) Get List of GPG Accounts.
 	 */
-	getAuthMgr() -> InitAuth(NULL, NULL, NULL);
+        getAuthSSL() -> InitAuth(NULL, NULL, NULL);
 
 	// first check config directories, and set bootstrap values.
 	setupBaseDir();
@@ -766,50 +766,27 @@ static bool checkAccount(std::string accountdir, accountId &id)
 
 
                 /* Generating GPGme Account */
-int      RsInit::GetPGPLogins(std::list<std::string> &pgpIds)
-{
-    #ifdef PQI_USE_SSLONLY
-	return 0;
-    #else  // PGP+SSL
-	GPGAuthMgr *mgr = (GPGAuthMgr *) getAuthMgr();
-
-	mgr->availablePGPCertificates(pgpIds);
+int      RsInit::GetPGPLogins(std::list<std::string> &pgpIds) {
+        getAuthGPG()->availablePGPCertificates(pgpIds);
 	return 1;
-    #endif
 }
 
-bool      RsInit::getPGPEngineFileName(std::string &fileName)
-{
-    #ifdef PQI_USE_SSLONLY
-        return false;
-    #else  // PGP+SSL
-        GPGAuthMgr *mgr = (GPGAuthMgr *) getAuthMgr();
-
-        return mgr->getPGPEngineFileName(fileName);
-    #endif
+bool      RsInit::getPGPEngineFileName(std::string &fileName) {
+        return getAuthGPG()->getPGPEngineFileName(fileName);
 }
 
 int      RsInit::GetPGPLoginDetails(std::string id, std::string &name, std::string &email)
 {
-  std::cerr << "RsInit::GetPGPLoginDetails for \"" << id << "\"";
-  std::cerr << std::endl;
+        std::cerr << "RsInit::GetPGPLoginDetails for \"" << id << "\"";
+        std::cerr << std::endl;
 
-    #ifdef PQI_USE_SSLONLY
-	return 0;
-    #else  // PGP+SSL
-
-	GPGAuthMgr *mgr = (GPGAuthMgr *) getAuthMgr();
-	pqiAuthDetails details;
-	if (!mgr->getDetails(id, details))
-	{
-		return 0;
-	}
-
-	name = details.name;
-	email = details.email;
-
-	return 1;
-    #endif
+        name = getAuthGPG()->getPGPName(getAuthSSL()->getGPGId(id));
+        email = getAuthGPG()->getPGPEmail(getAuthSSL()->getGPGId(id));
+        if (name != "") {
+            return 1;
+        } else {
+            return 0;
+        }
 }
 
 /* Before any SSL stuff can be loaded, the correct PGP must be selected / generated:
@@ -821,7 +798,7 @@ bool RsInit::SelectGPGAccount(std::string id)
 	std::string gpgId = id;
 	std::string name = id;
 
-	GPGAuthMgr *gpgAuthMgr = (GPGAuthMgr *) getAuthMgr();
+        GPGAuthMgr *gpgAuthMgr = getAuthGPG();
 	if (0 < gpgAuthMgr -> GPGInit(gpgId))
 	{
 		ok = true;
@@ -841,7 +818,7 @@ bool RsInit::SelectGPGAccount(std::string id)
 
 bool RsInit::LoadGPGPassword(std::string inPGPpasswd)
 {
-	GPGAuthMgr *gpgAuthMgr = (GPGAuthMgr *) getAuthMgr();
+        GPGAuthMgr *gpgAuthMgr =getAuthGPG();
 
 	bool ok = false;
 	if (0 < gpgAuthMgr -> LoadGPGPassword(inPGPpasswd))
@@ -1221,25 +1198,8 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 	  return 0;
 	}
 
-	//std::string ca_loc = RsInitConfig::basedir + RsInitConfig::dirSeperator;
-	//ca_loc += configCaFile;
-
-	p3AuthMgr *authMgr = getAuthMgr();
-
 	bool ok = false;
 
-  #if defined(PQI_USE_SSLONLY)
-        std::cerr << "Calling initAuth debug 2." << std::endl;
-        if (0 < authMgr -> InitAuth(RsInitConfig::load_cert.c_str(), RsInitConfig::load_key.c_str(),RsInitConfig::passwd.c_str()))
-	{
-		ok = true;
-	}
-	else
-	{
-		std::cerr << "AuthSSL::InitAuth Failed" << std::endl;
-	}
-
-  #else /* X509 Certificates */
 	/* The SSL / SSL + PGP version requires, SSL init + PGP init.  */
 	const char* sslPassword;
 	sslPassword = RsInitConfig::passwd.c_str();
@@ -1256,7 +1216,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		gpgme_data_t plain;
                 gpgme_data_new_from_mem(&plain, sslPassword, strlen(sslPassword), 1);
                 gpgme_data_new_from_stream (&cipher, sslPassphraseFile);
-                if (0 < authMgr->encryptText(plain, cipher)) {
+                if (0 < getAuthGPG()->encryptText(plain, cipher)) {
 		    std::cerr << "Encrypting went ok !" << std::endl;
 		}
                 gpgme_data_release (cipher);
@@ -1277,7 +1237,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 			gpgme_data_t plain;
 			gpgme_data_new (&plain);
 			gpgme_error_t error_reading_file = gpgme_data_new_from_stream (&cipher, sslPassphraseFile);
-			if (0 < authMgr->decryptText(cipher, plain)) {
+                        if (0 < getAuthGPG()->decryptText(cipher, plain)) {
 			    std::cerr << "Decrypting went ok !" << std::endl;
                             gpgme_data_write (plain, "", 1);
 			    sslPassword = gpgme_data_release_and_get_mem(plain, NULL);
@@ -1293,7 +1253,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 
 	std::cerr << "RsInitConfig::load_key.c_str() : " << RsInitConfig::load_key.c_str() << std::endl;
         std::cerr << "sslPassword : " << sslPassword << std::endl;;
-	if (0 < authMgr -> InitAuth(RsInitConfig::load_cert.c_str(), RsInitConfig::load_key.c_str(), sslPassword))
+        if (0 < getAuthSSL() -> InitAuth(RsInitConfig::load_cert.c_str(), RsInitConfig::load_key.c_str(), sslPassword))
 	{
 		ok = true;
 	}
@@ -1302,7 +1262,6 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		std::cerr << "SSL Auth Failed!";
 		std::cerr << std::endl;
 	}
-  #endif /* X509 Certificates */
 
 	if (ok)
 	{
@@ -1869,9 +1828,7 @@ int RsServer::StartupRetroShare()
 	/* (1) Load up own certificate (DONE ALREADY) - just CHECK */
 	/**************************************************************************/
 
-	mAuthMgr = getAuthMgr();
-
-        if (1 != mAuthMgr -> InitAuth(NULL, NULL, NULL))
+        if (1 != getAuthSSL() -> InitAuth(NULL, NULL, NULL))
 	{
 		std::cerr << "main() - Fatal Error....." << std::endl;
 		std::cerr << "Invalid Certificate configuration!" << std::endl;
@@ -1879,7 +1836,7 @@ int RsServer::StartupRetroShare()
 		exit(1);
 	}
 
-	std::string ownId = mAuthMgr->OwnId();
+        std::string ownId = getAuthSSL()->OwnId();
 
 	/**************************************************************************/
 	/* Any Initial Configuration (Commandline Options)  */
@@ -1924,9 +1881,9 @@ int RsServer::StartupRetroShare()
         bool oldFormat = false;
 	std::map<std::string, std::string> oldConfigMap;
 
-	mAuthMgr -> setConfigDirectories(certConfigFile, certNeighDir);
+        getAuthSSL() -> setConfigDirectories(certConfigFile, certNeighDir);
 
-	mAuthMgr -> loadCertificates();
+        getAuthSSL() -> loadCertificates();
 
 	/**************************************************************************/
 	/* setup classes / structures */
@@ -1936,7 +1893,7 @@ int RsServer::StartupRetroShare()
 	/* Setup Notify Early - So we can use it. */
 	rsNotify = new p3Notify();
 
-	mConnMgr = new p3ConnectMgr(mAuthMgr);
+        mConnMgr = new p3ConnectMgr();
 	pqiNetAssistFirewall *mUpnpMgr = new upnphandler();
         //p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr, RsInitConfig::configDir);
 
@@ -1945,7 +1902,7 @@ int RsServer::StartupRetroShare()
 	//pqih = new pqipersongrpDummy(none, flags);
 
 	/****** New Ft Server **** !!! */
-        ftserver = new ftServer(mAuthMgr, mConnMgr);
+        ftserver = new ftServer(mConnMgr);
         ftserver->setP3Interface(pqih); 
 	ftserver->setConfigDirectory(RsInitConfig::configDir);
 
@@ -1962,15 +1919,15 @@ int RsServer::StartupRetroShare()
 	rsFiles = ftserver;
 
 
-        mConfigMgr = new p3ConfigMgr(mAuthMgr, RsInitConfig::configDir, "rs-v0.5.cfg", "rs-v0.5.sgn");
+        mConfigMgr = new p3ConfigMgr(RsInitConfig::configDir, "rs-v0.5.cfg", "rs-v0.5.sgn");
 	mGeneralConfig = new p3GeneralConfig();
 
 	/* create Services */
-        ad = new p3disc(mAuthMgr, mConnMgr, pqih);
+        ad = new p3disc(mConnMgr, pqih);
 	msgSrv = new p3MsgService(mConnMgr);
 	chatSrv = new p3ChatService(mConnMgr);
 
-	p3tunnel *tn = new p3tunnel(mAuthMgr,mConnMgr, pqih);
+        p3tunnel *tn = new p3tunnel(mConnMgr, pqih);
 	pqih -> addService(tn);
 	mConnMgr->setP3tunnel(tn);
 
@@ -2000,7 +1957,7 @@ int RsServer::StartupRetroShare()
 
 	p3Forums *mForums = new p3Forums(RS_SERVICE_TYPE_FORUM,
 			mCacheStrapper, mCacheTransfer,
-			localcachedir, remotecachedir, mAuthMgr);
+                        localcachedir, remotecachedir);
 
         CachePair cp4(mForums, mForums, CacheId(RS_SERVICE_TYPE_FORUM, 0));
 	mCacheStrapper -> addCachePair(cp4);
@@ -2008,7 +1965,7 @@ int RsServer::StartupRetroShare()
 
 	p3Channels *mChannels = new p3Channels(RS_SERVICE_TYPE_CHANNEL,
 			mCacheStrapper, mCacheTransfer, rsFiles,
-			localcachedir, remotecachedir, channelsdir, mAuthMgr);
+                        localcachedir, remotecachedir, channelsdir);
 
         CachePair cp5(mChannels, mChannels, CacheId(RS_SERVICE_TYPE_CHANNEL, 0));
 	mCacheStrapper -> addCachePair(cp5);
@@ -2177,7 +2134,7 @@ int RsServer::StartupRetroShare()
 
 	/* Setup GUI Interfaces. */
 
-	rsPeers = new p3Peers(mConnMgr, mAuthMgr);
+        rsPeers = new p3Peers(mConnMgr);
 	rsMsgs  = new p3Msgs(mAuthMgr, msgSrv, chatSrv);
 	rsDisc  = new p3Discovery(ad);
 

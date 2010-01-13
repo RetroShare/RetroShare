@@ -34,7 +34,7 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsfiles.h"
 
-#include "pqi/p3authmgr.h"
+#include "pqi/authssl.h"
 #include "pqi/p3connmgr.h"
 #include "pqi/pqinotify.h"
 

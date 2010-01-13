@@ -29,6 +29,7 @@
 
 #include <iostream>
 #include <sstream>
+#include "pqi/authssl.h"
 
 #include "util/rsdebug.h"
 const int p3facemsgzone = 11453;
@@ -102,8 +103,8 @@ int RsServer::UpdateAllConfig()
 
  	RsConfig &config = iface.mConfig;
 
-	config.ownId = mAuthMgr->OwnId();
-	config.ownName = mAuthMgr->getName(config.ownId);
+        config.ownId = getAuthSSL()->OwnId();
+        config.ownName = getAuthSSL()->getName(config.ownId);
 	peerConnectState pstate;
 	mConnMgr->getOwnNetStatus(pstate);
 
@@ -156,7 +157,7 @@ void    RsServer::ConfigFinalSave()
 	/* force saving of transfers TODO */
 	//ftserver->saveFileTransferStatus();
 
-	mAuthMgr->FinalSaveCertificates();
+	getAuthSSL()->FinalSaveCertificates();
 	mConfigMgr->completeConfiguration();
 }
 

@@ -30,7 +30,7 @@
 #include "services/p3tunnel.h"
 #include "pqi/pqissltunnel.h"
 
-#include "pqi/p3authmgr.h"
+#include "pqi/authssl.h"
 #include "pqi/p3connmgr.h"
 
 #include <errno.h>
@@ -39,8 +39,8 @@
 #include "util/rsprint.h"
 #include "util/rsversion.h"
 
-p3tunnel::p3tunnel(p3AuthMgr *am, p3ConnectMgr *cm, pqipersongrp *perGrp)
-	:p3Service(RS_SERVICE_TYPE_TUNNEL), mAuthMgr(am), mConnMgr(cm), mPqiPersonGrp(perGrp)
+p3tunnel::p3tunnel(p3ConnectMgr *cm, pqipersongrp *perGrp)
+        :p3Service(RS_SERVICE_TYPE_TUNNEL), mConnMgr(cm), mPqiPersonGrp(perGrp)
 {
 	RsStackMutex stack(mTunnelMtx); /********** STACK LOCKED MTX ******/
 

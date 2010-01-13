@@ -790,43 +790,29 @@ GPG_id AuthSSL::getGPGId(SSL_id id) {
     return getIssuerName(id);
 }
 
-bool    AuthSSL::getDetails(std::string id, pqiAuthDetails &details)
+bool    AuthSSL::getCertDetails(SSL_id id, sslcert &cert)
 {
 #ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::getDetails() \"" << id << "\"";
+        std::cerr << "AuthSSL::getCertDetails() \"" << id << "\"";
 	std::cerr << std::endl;
 #endif
 	sslMtx.lock();   /***** LOCK *****/
 
 	bool valid = false;
-	sslcert *cert = NULL;
+        sslcert *tcert = NULL;
 	if (id == mOwnId)
 	{
-		cert = mOwnCert;
+                cert = *mOwnCert;
 		valid = true;
 	}
-	else if (locked_FindCert(id, &cert))
+        else if (locked_FindCert(id, &tcert))
 	{
 		valid = true;
 	}
 
 	if (valid)
 	{
-		/* fill details */
-		details.id 	= cert->id;
-		details.name 	= cert->name;
-		details.email 	= cert->email;
-		details.location= cert->location;
-		details.org 	= cert->org;
-		details.issuer  = cert->issuer;
-
-		details.fpr	= cert->fpr;
-		details.signers = cert->signers;
-
-		//details.trustLvl= cert->trustLvl;
-		//details.ownsign = cert->ownsign;
-		//details.trusted = cert->trusted;
-		details.trusted = cert->authed;
+                cert = *tcert;
 	}
 
 	sslMtx.unlock(); /**** UNLOCK ****/
@@ -2145,8 +2131,7 @@ int pem_passwd_cb(char *buf, int size, int rwflag, void *password)
 
 static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx)
 {
-	AuthSSL *authssl = (AuthSSL *) getAuthMgr();
-	return authssl->VerifyX509Callback(preverify_ok, ctx);
+        return getAuthSSL()->VerifyX509Callback(preverify_ok, ctx);
 
 }
 
@@ -2258,7 +2243,7 @@ int	LoadCheckX509andGetName(const char *cert_file, std::string &userName, std::s
 	bool valid = false;
 	if (x509)
 	{
-		valid = ((AuthSSL *) getAuthMgr())->ValidateCertificate(x509, userId);
+                valid = getAuthSSL()->ValidateCertificate(x509, userId);
 	}
 
 	if (valid)
@@ -2311,7 +2296,7 @@ int	LoadCheckX509andGetIssuerName(const char *cert_file, std::string &issuerName
 	bool valid = false;
 	if (x509)
 	{
-		valid = ((AuthSSL *) getAuthMgr())->ValidateCertificate(x509, userId);
+                valid = getAuthSSL()->ValidateCertificate(x509, userId);
 	}
 
 	if (valid)

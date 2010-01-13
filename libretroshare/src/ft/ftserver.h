@@ -79,7 +79,7 @@ class ftServer: public RsFiles, public ftDataSend, public RsThread
 	/******************** Setup ************************************/
 	/***************************************************************/
 
-	ftServer(p3AuthMgr *authMgr, p3ConnectMgr *connMgr);
+        ftServer(p3ConnectMgr *connMgr);
 
 	/* Assign important variables */
 void	setConfigDirectory(std::string path);

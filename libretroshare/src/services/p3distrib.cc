@@ -34,6 +34,7 @@
 #include "util/rsdir.h"
 #include "pqi/pqinotify.h"
 #include "pqi/pqibin.h"
+#include "pqi/authssl.h"
 
 /*****
  * #define DISTRIB_DEBUG 1
@@ -49,13 +50,11 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 		CacheStrapper *cs, CacheTransfer *cft,
 		std::string sourcedir, std::string storedir, 
 		uint32_t configId, 
-		uint32_t storePeriod, uint32_t pubPeriod, 
-		p3AuthMgr *mgr)
+                uint32_t storePeriod, uint32_t pubPeriod)
 
 	:CacheSource(subtype, true, cs, sourcedir), 
 	CacheStore(subtype, true, cs, cft, storedir), 
-	p3Config(configId), nullService(subtype),
-	mAuthMgr(mgr),
+        p3Config(configId), nullService(subtype),
 	mStorePeriod(storePeriod), 
 	mPubPeriod(pubPeriod), 
 	mLastPublishTime(0),
@@ -67,7 +66,7 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 	/* force publication of groups (cleared if local cache file found) */
 	mGroupsRepublish = true;
 
-	mOwnId = mAuthMgr->OwnId();
+        mOwnId = getAuthSSL()->OwnId();
 	return;
 }
 
@@ -1729,10 +1728,10 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 	{
 		unsigned int siglen = EVP_PKEY_size(publishKey);
         	unsigned char sigbuf[siglen];
-		if (mAuthMgr->SignDataBin(data, size, sigbuf, &siglen))
+                if (getAuthGPG()->SignDataBin(data, size, sigbuf, &siglen))
 		{
 			signedMsg->personalSignature.signData.setBinData(sigbuf, siglen);
-			signedMsg->personalSignature.keyId = mAuthMgr->OwnId();
+                        signedMsg->personalSignature.keyId = getAuthGPG()->PGPOwnId();
 		}
 	}
 
@@ -2451,7 +2450,7 @@ bool 	p3GroupDistrib::locked_validateDistribSignedMsg(
 	std::cerr << std::endl;
 #endif
 
-	if (mAuthMgr->isValid(newMsg->personalSignature.keyId))
+        if (getAuthGPG()->isPGPValid(newMsg->personalSignature.keyId))
 	{
 #ifdef DISTRIB_DEBUG
 		std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Peer Known";

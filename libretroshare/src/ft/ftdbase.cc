@@ -262,8 +262,8 @@ void	ftFiMonitor::setSharedDirectories(std::list<SharedDirInfo> dirList)
 
 
 
-ftCacheStrapper::ftCacheStrapper(p3AuthMgr *am, p3ConnectMgr *cm)
-	:CacheStrapper(am, cm)
+ftCacheStrapper::ftCacheStrapper(p3ConnectMgr *cm)
+        :CacheStrapper(cm)
 {
 	return;
 }

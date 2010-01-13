@@ -55,15 +55,15 @@ const int ftserverzone = 29539;
  ***/
 
 	/* Setup */
-ftServer::ftServer(p3AuthMgr *authMgr, p3ConnectMgr *connMgr)
-	: mP3iface(NULL),
-	mAuthMgr(authMgr), mConnMgr(connMgr),
+ftServer::ftServer(p3ConnectMgr *connMgr)
+        :       mP3iface(NULL),
+                mConnMgr(connMgr),
 		mCacheStrapper(NULL),
 		mFiStore(NULL), mFiMon(NULL),
 		mFtController(NULL), mFtExtra(NULL),
 		mFtDataplex(NULL), mFtSearch(NULL)
 {
-	mCacheStrapper = new ftCacheStrapper(authMgr, connMgr);
+        mCacheStrapper = new ftCacheStrapper(connMgr);
 }
 
 void	ftServer::setConfigDirectory(std::string path)
@@ -858,7 +858,7 @@ bool     ftServer::handleCacheData()
 		data.name = ci->file.name;
 		data.path = ci->file.path;
 		data.pid = ci->PeerId();
-		data.pname = mAuthMgr->getName(ci->PeerId());
+                data.pname = getAuthSSL()->getName(ci->PeerId());
 		mCacheStrapper->recvCacheResponse(data, time(NULL));
 
 		delete ci;

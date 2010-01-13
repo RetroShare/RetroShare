@@ -78,7 +78,7 @@ virtual bool    loadList(std::list<RsItem *> load);
 class ftCacheStrapper: public CacheStrapper, public ftSearch
 {
 	public:
-	ftCacheStrapper(p3AuthMgr *am, p3ConnectMgr *cm);
+        ftCacheStrapper(p3ConnectMgr *cm);
 
 	/* overloaded search function */
 virtual bool search(std::string hash, uint32_t hintflags, FileInfo &info) const;

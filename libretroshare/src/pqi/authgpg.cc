@@ -318,10 +318,10 @@ int	GPGAuthMgr::GPGInit(std::string ownId)
 		return 0;
 	}
 
-	mOwnGpgCert.user.name = newKey->uids->name;
-	mOwnGpgCert.user.email = newKey->uids->email;
-	mOwnGpgCert.user.fpr = newKey->subkeys->fpr;
-	mOwnGpgCert.user.id = ownId;
+        mOwnGpgCert.name = newKey->uids->name;
+        mOwnGpgCert.email = newKey->uids->email;
+        mOwnGpgCert.fpr = newKey->subkeys->fpr;
+        mOwnGpgCert.id = ownId;
 	mOwnGpgCert.key = newKey;
 
 	mOwnId = ownId;
@@ -362,16 +362,16 @@ int	GPGAuthMgr::GPGInit(std::string name, std::string comment,
 		return 0;
 	}
 	
-	mOwnGpgCert.user.name = name; 
-	mOwnGpgCert.user.email = email;
-	mOwnGpgCert.user.fpr = newKey->subkeys->fpr;
-	mOwnGpgCert.user.id = newKey->subkeys->keyid;
+        mOwnGpgCert.name = name;
+        mOwnGpgCert.email = email;
+        mOwnGpgCert.fpr = newKey->subkeys->fpr;
+        mOwnGpgCert.id = newKey->subkeys->keyid;
 	mOwnGpgCert.key = newKey;
 
 	this->passphrase = inPassphrase;
 	setPGPPassword_locked(inPassphrase);
 
-	mOwnId = mOwnGpgCert.user.id;
+        mOwnId = mOwnGpgCert.id;
 	gpgmeKeySelected = true;
 
 	return 1;
@@ -454,11 +454,11 @@ bool   GPGAuthMgr::storeAllKeys_locked()
 		 * Don't really need to worry about other ids either.
 		 */
 		gpgme_subkey_t mainsubkey = KEY->subkeys;
-		nu.user.id  = mainsubkey->keyid;
-        	nu.user.fpr = mainsubkey->fpr;
+                nu.id  = mainsubkey->keyid;
+                nu.fpr = mainsubkey->fpr;
 
-		std::cerr << "MAIN KEYID: " << nu.user.id;
-		std::cerr << " FPR: " << nu.user.fpr;
+                std::cerr << "MAIN KEYID: " << nu.id;
+                std::cerr << " FPR: " << nu.fpr;
 		std::cerr << std::endl;
 
 
@@ -478,8 +478,8 @@ bool   GPGAuthMgr::storeAllKeys_locked()
 		 */
 
 		gpgme_user_id_t mainuid = KEY->uids;
-        	nu.user.name  = mainuid->name;
-        	nu.user.email = mainuid->email;		
+                nu.name  = mainuid->name;
+                nu.email = mainuid->email;
 		gpgme_key_sig_t mainsiglist = mainuid->signatures;
 		while(mainsiglist != NULL)
 		{
@@ -491,11 +491,11 @@ bool   GPGAuthMgr::storeAllKeys_locked()
 				 */
 				
 				std::string keyid = mainsiglist->keyid;
-				if (nu.user.signers.end() == std::find(
-					nu.user.signers.begin(), 
-					nu.user.signers.end(),keyid))
+                                if (nu.signers.end() == std::find(
+                                        nu.signers.begin(),
+                                        nu.signers.end(),keyid))
 				{
-					nu.user.signers.push_back(keyid);
+                                        nu.signers.push_back(keyid);
 				}
 			}
 			mainsiglist = mainsiglist->next;
@@ -530,17 +530,17 @@ bool   GPGAuthMgr::storeAllKeys_locked()
 		 * signature notation supplied is GPGME_KEYLIST_MODE_SIG_NOTATION is on
 		 */
 
-		nu.user.trustLvl = KEY->owner_trust; 
-		nu.user.ownsign = KEY->can_sign;   
-		nu.user.validLvl = mainuid->validity;
-		nu.user.trusted = (mainuid->validity > GPGME_VALIDITY_MARGINAL); 
+                nu.trustLvl = KEY->owner_trust;
+                nu.ownsign = KEY->can_sign;
+                nu.validLvl = mainuid->validity;
+                nu.trusted = (mainuid->validity > GPGME_VALIDITY_MARGINAL);
 
 		/* grab a reference, so the key remains */
 		gpgme_key_ref(KEY);
 		nu.key = KEY;
 
 		/* store in map */
-		mKeyList[nu.user.id] = nu;
+                mKeyList[nu.id] = nu;
 	}
 
 	if (GPG_ERR_NO_ERROR != gpgme_op_keylist_end(CTX))
@@ -575,7 +575,7 @@ bool   GPGAuthMgr::updateTrustAllKeys_locked()
 	for(it = mKeyList.begin(); it != mKeyList.end(); it++)
 	{
 		/* check for trust items associated with key */	
-		std::string peerid = it->second.user.email;
+                std::string peerid = it->second.email;
 		std::cerr << "Searching GPGme for TrustInfo on: " << peerid;
 		std::cerr << std::endl;
 
@@ -634,26 +634,26 @@ bool   GPGAuthMgr::printAllKeys_locked()
 	certmap::const_iterator it;
 	for(it = mKeyList.begin(); it != mKeyList.end(); it++)
 	{
-		std::cerr << "PGP Key: " << it->second.user.id;
+                std::cerr << "PGP Key: " << it->second.id;
 		std::cerr << std::endl;
 
-		std::cerr << "\tName: " << it->second.user.name;
+                std::cerr << "\tName: " << it->second.name;
 		std::cerr << std::endl;
-		std::cerr << "\tEmail: " << it->second.user.email;
+                std::cerr << "\tEmail: " << it->second.email;
 		std::cerr << std::endl;
 
-		std::cerr << "\ttrustLvl: " << it->second.user.trustLvl;
+                std::cerr << "\ttrustLvl: " << it->second.trustLvl;
 		std::cerr << std::endl;
-		std::cerr << "\townsign?: " << it->second.user.ownsign;
+                std::cerr << "\townsign?: " << it->second.ownsign;
 		std::cerr << std::endl;
-		std::cerr << "\ttrusted/valid: " << it->second.user.trusted;
+                std::cerr << "\ttrusted/valid: " << it->second.trusted;
 		std::cerr << std::endl;
-		std::cerr << "\tEmail: " << it->second.user.email;
+                std::cerr << "\tEmail: " << it->second.email;
 		std::cerr << std::endl;
 
 		std::list<std::string>::const_iterator sit;
-		for(sit = it->second.user.signers.begin();
-			sit != it->second.user.signers.end(); sit++)
+                for(sit = it->second.signers.begin();
+                        sit != it->second.signers.end(); sit++)
 		{
 			std::cerr << "\t\tSigner ID:" << *sit;
 
@@ -663,7 +663,7 @@ bool   GPGAuthMgr::printAllKeys_locked()
 			certmap::const_iterator kit = mKeyList.find(*sit);
 			if (kit != mKeyList.end())
 			{
-				std::cerr << " Name:" << kit->second.user.name;
+                                std::cerr << " Name:" << kit->second.name;
 				std::cerr << std::endl;
 			}
 		}
@@ -677,14 +677,14 @@ bool   GPGAuthMgr::printOwnKeys_locked()
 	certmap::iterator it;
 	for(it = mKeyList.begin(); it != mKeyList.end(); it++)
 	{
-		if (it->second.user.ownsign)
+                if (it->second.ownsign)
 		{
-			std::cerr << "Own PGP Key: " << it->second.user.id;
+                        std::cerr << "Own PGP Key: " << it->second.id;
 			std::cerr << std::endl;
 
-			std::cerr << "\tName: " << it->second.user.name;
+                        std::cerr << "\tName: " << it->second.name;
 			std::cerr << std::endl;
-			std::cerr << "\tEmail: " << it->second.user.email;
+                        std::cerr << "\tEmail: " << it->second.email;
 			std::cerr << std::endl;
 		}
 	}
@@ -943,30 +943,22 @@ std::string GPGAuthMgr::getPGPName(GPG_id id)
 
 	certmap::iterator it;
 	if (mKeyList.end() != (it = mKeyList.find(id)))
-		return it->second.user.name;
+                return it->second.name;
 
 	return std::string();
 }
 
-bool	GPGAuthMgr::getDetails(GPG_id id, pqiAuthDetails &details)
+/**** These Two are common */
+std::string GPGAuthMgr::getPGPEmail(GPG_id id)
 {
-        //RsStackMutex stack(pgpMtx); /******* LOCKED ******/
-        if(pgpMtx.trylock())
-        {
-                /* if we cannot find a ssl cert - might be a pgp cert */
-                certmap::iterator it;
-                if (mKeyList.end() != (it = mKeyList.find(id)))
-                {
-                        /* what do we want from the gpg mgr */
-                        details = it->second.user;
-                        pgpMtx.unlock() ;
-                        return true;
-                }
-                pgpMtx.unlock() ;
-        }
-        return false;
-}
+        RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
+        certmap::iterator it;
+        if (mKeyList.end() != (it = mKeyList.find(id)))
+                return it->second.email;
+
+        return std::string();
+}
 
 /**** GPG versions ***/
 
@@ -1030,7 +1022,7 @@ bool	GPGAuthMgr::getPGPAuthenticatedList(std::list<std::string> &ids)
 	certmap::iterator it;
 	for(it = mKeyList.begin(); it != mKeyList.end(); it++)
 	{
-		if (it->second.user.trusted)
+                if (it->second.trusted)
 		{
 			ids.push_back(it->first);
 		}
@@ -1045,7 +1037,7 @@ bool	GPGAuthMgr::getPGPUnknownList(std::list<std::string> &ids)
 	certmap::iterator it;
 	for(it = mKeyList.begin(); it != mKeyList.end(); it++)
 	{
-		if (!(it->second.user.trusted))
+                if (!(it->second.trusted))
 		{
 			ids.push_back(it->first);
 		}
@@ -1074,7 +1066,7 @@ bool	GPGAuthMgr::isPGPAuthenticated(GPG_id id)
 		 * which is the 'trusted' flag.
 		 */
 
-		return (it->second.user.trusted);
+                return (it->second.trusted);
 	}
 	return false;
 }

@@ -26,7 +26,7 @@
 #include "services/p3photoservice.h"
 
 #include "pqi/pqibin.h"
-#include "pqi/p3authmgr.h"
+#include "pqi/authssl.h"
 
 #include "util/rsdir.h"
 
@@ -55,7 +55,7 @@ p3PhotoService::p3PhotoService(uint16_t type, CacheStrapper *cs, CacheTransfer *
 
      { 	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
 
-	mOwnId = getAuthMgr()->OwnId();
+        mOwnId = getAuthSSL()->OwnId();
      } 	
 
 //	createDummyData();

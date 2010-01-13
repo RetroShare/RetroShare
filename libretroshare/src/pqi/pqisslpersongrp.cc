@@ -28,7 +28,7 @@
 #include "util/rsdebug.h"
 
 #include "pqi/pqisslpersongrp.h"
-#include "pqi/p3authmgr.h"
+#include "pqi/authssl.h"
 
 
 const int pqipersongrpzone = 354;
@@ -50,8 +50,7 @@ const int pqipersongrpzone = 354;
 
 pqilistener * pqisslpersongrp::createListener(struct sockaddr_in laddr)
 {
-	p3AuthMgr *authMgr = getAuthMgr();
-	pqilistener *listener = new pqissllistener(laddr, authMgr, mConnMgr);
+        pqilistener *listener = new pqissllistener(laddr, mConnMgr);
 	return listener;
 }
 
@@ -63,9 +62,8 @@ pqiperson * pqisslpersongrp::createPerson(std::string id, pqilistener *listener)
 		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, out.str());
 	}
 
-	p3AuthMgr *authMgr = getAuthMgr();
 	pqiperson *pqip = new pqiperson(id, this);
-	pqissl *pqis   = new pqissl((pqissllistener *) listener, pqip, authMgr, mConnMgr);
+        pqissl *pqis   = new pqissl((pqissllistener *) listener, pqip, mConnMgr);
 
 	/* construct the serialiser ....
 	 * Needs:
@@ -83,7 +81,7 @@ pqiperson * pqisslpersongrp::createPerson(std::string id, pqilistener *listener)
 
 	pqip -> addChildInterface(PQI_CONNECT_TCP, pqisc);
 
-	pqissltunnel *pqitun 	= new pqissltunnel(pqip, authMgr, mConnMgr);
+        pqissltunnel *pqitun 	= new pqissltunnel(pqip, mConnMgr);
 	RsSerialiser *rss3 = new RsSerialiser();
 	rss3->addSerialType(new RsFileItemSerialiser());
 	rss3->addSerialType(new RsCacheItemSerialiser());
@@ -92,7 +90,7 @@ pqiperson * pqisslpersongrp::createPerson(std::string id, pqilistener *listener)
 	pqip -> addChildInterface(PQI_CONNECT_TUNNEL, pqicontun);
 
 #ifndef PQI_DISABLE_UDP
-        pqissludp *pqius 	= new pqissludp(pqip, authMgr, mConnMgr);
+        pqissludp *pqius 	= new pqissludp(pqip, mConnMgr);
 
         RsSerialiser *rss2 = new RsSerialiser();
         rss2->addSerialType(new RsFileItemSerialiser());

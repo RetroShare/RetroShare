@@ -28,13 +28,12 @@
 
 #include "rsiface/rspeers.h"
 #include "pqi/p3connmgr.h"
-#include "pqi/p3authmgr.h"
 
 class p3Peers: public RsPeers 
 {
 	public:
 
-	p3Peers(p3ConnectMgr *cm, p3AuthMgr *am);
+        p3Peers(p3ConnectMgr *cm);
 virtual ~p3Peers() { return; }
 
 	/* Updates ... */
@@ -95,7 +94,6 @@ virtual	bool TrustCertificate(std::string id, bool trust);
 	private:
 
 	p3ConnectMgr *mConnMgr;
-	p3AuthMgr    *mAuthMgr;
 };
 
 #endif

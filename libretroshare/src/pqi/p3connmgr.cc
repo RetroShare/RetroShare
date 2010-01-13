@@ -128,19 +128,17 @@ std::string textPeerConnectState(peerConnectState &state)
 
 
 
-p3ConnectMgr::p3ConnectMgr(p3AuthMgr *am)
+p3ConnectMgr::p3ConnectMgr()
 	:p3Config(CONFIG_TYPE_PEERS), 
-	mAuthMgr(am), mNetStatus(RS_NET_UNKNOWN), 
+        mNetStatus(RS_NET_UNKNOWN),
 	mStunStatus(0), mStunFound(0), mStunMoreRequired(true), 
 	mStatusChanged(false)
 {
 	/* setup basics of own state */
-	if (am)
-	{
-		ownState.id = mAuthMgr->OwnId();
-		ownState.name = mAuthMgr->getName(ownState.id);
-		ownState.netMode = RS_NET_MODE_UDP;
-	}
+        ownState.id = getAuthSSL()->OwnId();
+        ownState.name = getAuthSSL()->getName(ownState.id);
+        ownState.netMode = RS_NET_MODE_UDP;
+
 	//use_extr_addr_finder = true ;
 	use_extr_addr_finder = false;
         allow_tunnel_connection = true;
@@ -1344,15 +1342,7 @@ void p3ConnectMgr::tickMonitors()
 
 const std::string p3ConnectMgr::getOwnId()
 {
-	if (mAuthMgr)
-	{
-		return mAuthMgr->OwnId();
-	}
-	else
-	{
-		std::string nullStr;
-		return nullStr;
-	}
+                return getAuthSSL()->OwnId();
 }
 
 
@@ -1384,7 +1374,7 @@ bool p3ConnectMgr::isOnline(std::string id)
 	else
 	{
 #ifdef CONN_DEBUG
-		std::cerr << "p3ConnectMgr::isOnline(" << id << ") is Not Friend" << std::endl << "p3ConnectMgr::isOnline() OwnId: " << mAuthMgr->OwnId() << std::endl;
+                std::cerr << "p3ConnectMgr::isOnline(" << id << ") is Not Friend" << std::endl << "p3ConnectMgr::isOnline() OwnId: " << getAuthSSL()->OwnId() << std::endl;
 #endif
 		/* not a friend */
 	}
@@ -2024,7 +2014,7 @@ bool p3ConnectMgr::addFriend(std::string id, uint32_t netMode, uint32_t visState
 	}
 
 	/* check with the AuthMgr if its authorised */
-	if (!mAuthMgr->isAuthenticated(id))
+        if (!getAuthSSL()->isAuthenticated(id))
 	{
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::addFriend() Failed Authentication" << std::endl;
@@ -2074,8 +2064,8 @@ bool p3ConnectMgr::addFriend(std::string id, uint32_t netMode, uint32_t visState
 	}
 
 	/* get details from AuthMgr */
-	pqiAuthDetails detail;
-	if (!mAuthMgr->getDetails(id, detail))
+        sslcert detail;
+        if (!getAuthSSL()->getCertDetails(id, detail))
 	{
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::addFriend() Failed to get Details" << std::endl;
@@ -2184,15 +2174,15 @@ bool p3ConnectMgr::addNeighbour(std::string id)
 	}
 
 	/* check with the AuthMgr if its valid */
-	if (!mAuthMgr->isValid(id))
+        if (!getAuthSSL()->isValid(id))
 	{
 		/* no auth */
 		return false;
 	}
 
 	/* get details from AuthMgr */
-	pqiAuthDetails detail;
-	if (!mAuthMgr->getDetails(id, detail))
+        sslcert detail;
+        if (!getAuthSSL()->getCertDetails(id, detail))
 	{
 		/* no details */
 		return false;
@@ -2469,7 +2459,7 @@ bool   p3ConnectMgr::retryConnectNotify(std::string id)
 bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
 {
 
-	if (id == mAuthMgr->OwnId())
+        if (id == getAuthSSL()->OwnId())
 	{
                 {
                         RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
@@ -2519,7 +2509,7 @@ bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
 
 bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
 {
-	if (id == mAuthMgr->OwnId())
+        if (id == getAuthSSL()->OwnId())
 	{
             if (ownState.currentserveraddr.sin_addr.s_addr != addr.sin_addr.s_addr ||
                 ownState.currentserveraddr.sin_port != addr.sin_port) {
@@ -2619,7 +2609,7 @@ bool    p3ConnectMgr::setAddressList(std::string id, std::list<IpAddressTimed> I
 
 bool    p3ConnectMgr::setNetworkMode(std::string id, uint32_t netMode)
 {
-	if (id == mAuthMgr->OwnId())
+        if (id == getAuthSSL()->OwnId())
 	{
 		uint32_t visState = ownState.visState;
 		setOwnNetConfig(netMode, visState);
@@ -2649,7 +2639,7 @@ bool    p3ConnectMgr::setNetworkMode(std::string id, uint32_t netMode)
 
 bool    p3ConnectMgr::setVisState(std::string id, uint32_t visState)
 {
-	if (id == mAuthMgr->OwnId())
+        if (id == getAuthSSL()->OwnId())
 	{
 		uint32_t netMode = ownState.netMode;
 		setOwnNetConfig(netMode, visState);

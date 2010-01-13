@@ -28,7 +28,7 @@
 #include <iomanip>
 
 #include "pqi/pqibin.h"
-#include "pqi/p3authmgr.h"
+#include "pqi/authssl.h"
 
 const uint32_t RANK_MAX_FWD_OFFSET = (60 * 60 * 24 * 2); /* 2 Days */
 

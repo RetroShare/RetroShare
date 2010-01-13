@@ -30,6 +30,7 @@
 #include "tcponudp/tou.h"
 #include <sstream>
 
+#include "pqi/authssl.h"
 #include <sys/time.h>
 #include <time.h>
 
@@ -244,7 +245,7 @@ void 	RsServer::run()
 				//ftserver->saveFileTransferStatus();
 
 				/* see if we need to resave certs */
-				mAuthMgr->CheckSaveCertificates(); 
+                                getAuthSSL()->CheckSaveCertificates();
 	
 				/* hour loop */
 				if (++min >= 60)

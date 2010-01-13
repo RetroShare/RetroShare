@@ -34,11 +34,11 @@
 #include "pqi/pqi.h"
 
 class p3ConnectMgr;
-class p3AuthMgr;
 
 #include "pqi/pqimonitor.h"
 #include "services/p3service.h"
 #include "serialiser/rstunnelitems.h"
+#include "pqi/authssl.h"
 
 class p3tunnel: public p3Service, public pqiMonitor
 {
@@ -46,7 +46,7 @@ class p3tunnel: public p3Service, public pqiMonitor
 
 virtual void	statusChange(const std::list<pqipeer> &plist);
 
-	p3tunnel(p3AuthMgr *am, p3ConnectMgr *cm, pqipersongrp *persGrp);
+        p3tunnel(p3ConnectMgr *cm, pqipersongrp *persGrp);
 
 int	tick();
 
@@ -69,7 +69,6 @@ void recvTunnelData(RsTunnelDataItem *item);
 
 	private:
 
-	p3AuthMgr *mAuthMgr;
 	p3ConnectMgr *mConnMgr;
 	pqipersongrp *mPqiPersonGrp;
 	std::string ownId;

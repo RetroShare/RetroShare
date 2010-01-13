@@ -27,7 +27,6 @@
 #define MRK_PQI_CONNECTION_MANAGER_HEADER
 
 #include "pqi/pqimonitor.h"
-#include "pqi/p3authmgr.h"
 #include "serialiser/rsconfigitems.h"
 
 //#include "pqi/p3dhtmgr.h"
@@ -191,7 +190,7 @@ class p3ConnectMgr: public pqiConnectCb, public p3Config
 {
 	public:
 
-	p3ConnectMgr(p3AuthMgr *authMgr); 
+        p3ConnectMgr();
 
 void 	tick();
 
@@ -371,8 +370,6 @@ void 	addPeer(RsPeerConfigItem *item);
 #endif
 
 private:
-
-	p3AuthMgr *mAuthMgr;
 
 	p3tunnel *mP3tunnel;
 

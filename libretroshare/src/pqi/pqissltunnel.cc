@@ -90,9 +90,8 @@ const int pqisslzone = 37714;
  *
  */
 
-pqissltunnel::pqissltunnel(PQInterface *parent, p3AuthMgr *am, p3ConnectMgr *cm)
-	:NetBinInterface(parent, parent->PeerId()),
-	mAuthMgr((AuthSSL *) am), mConnMgr(cm)
+pqissltunnel::pqissltunnel(PQInterface *parent, p3ConnectMgr *cm)
+        :NetBinInterface(parent, parent->PeerId()), mConnMgr(cm)
 {
 	active = false;
 	waiting = TUNNEL_WAITING_NOT;

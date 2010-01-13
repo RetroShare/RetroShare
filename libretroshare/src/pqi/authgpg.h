@@ -31,12 +31,16 @@
 #define RS_GPG_AUTH_HEADER
 
 #include <gpgme.h>
-#include "pqi/p3authmgr.h"
 #include <openssl/ssl.h>
 #include <openssl/evp.h>
 #include "util/rsthreads.h"
+#include <string>
+#include <list>
+#include <map>
 
 #define GPG_id std::string
+
+class AuthGPG;
 
 /* gpgcert is the identifier for a person.
  * It is a wrapper class for a GPGme OpenPGP certificate.
@@ -47,7 +51,23 @@ class gpgcert
 		gpgcert();
 		~gpgcert();
 
-		pqiAuthDetails user;
+                std::string id;
+                std::string name;
+                std::string email;
+//                std::string location;
+//                std::string org;
+//
+//                std::string issuer;
+
+                std::string fpr; /* fingerprint */
+                std::list<std::string> signers;
+
+                uint32_t trustLvl;
+                uint32_t validLvl;
+
+                bool ownsign;
+                bool trusted; // means valid in pgp world.
+
 		gpgme_key_t key;
 };
 
@@ -136,7 +156,7 @@ class GPGAuthMgr
     /* get Details from the Certificates */
     bool	isAuthenticated(std::string id);
     std::string getPGPName(GPG_id pgp_id);
-    bool	getDetails(std::string id, pqiAuthDetails &details);
+    std::string getPGPEmail(GPG_id pgp_id);
 
 
     /* PGP versions of Certificate Fns */
@@ -146,7 +166,6 @@ class GPGAuthMgr
     bool	getPGPUnknownList(std::list<std::string> &ids);
     bool	isPGPValid(std::string id);
     bool	isPGPAuthenticated(std::string id);
-    bool	getPGPDetails(std::string id, pqiAuthDetails &details);
 
 /*********************************************************************************/
 /************************* STAGE 4 ***********************************************/

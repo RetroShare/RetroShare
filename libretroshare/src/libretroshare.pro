@@ -156,7 +156,7 @@ HEADERS += dbase/cachestrapper.h \
            pqi/authssl.h \
            pqi/authgpg.h \
            pqi/cleanupxpgp.h \
-           pqi/p3authmgr.h \
+ #          pqi/p3authmgr.h \
            pqi/p3cfgmgr.h \
            pqi/p3connmgr.h \
            pqi/p3dhtmgr.h \
@@ -336,7 +336,7 @@ SOURCES += \
 				pqi/pqissl.cc \
                                 pqi/pqissltunnel.cc \
 				pqi/pqistore.cc \
-				pqi/p3authmgr.cc \
+#				pqi/p3authmgr.cc \
 				pqi/p3cfgmgr.cc \
 				pqi/p3connmgr.cc \
 				pqi/p3dhtmgr.cc \

@@ -74,7 +74,7 @@ struct data_with_length {
 class pqissltunnel: public NetBinInterface
 {
 public:
-	pqissltunnel(PQInterface *parent, p3AuthMgr *am, p3ConnectMgr *cm);
+        pqissltunnel(PQInterface *parent, p3ConnectMgr *cm);
 virtual ~pqissltunnel();
 
 	// NetInterface
