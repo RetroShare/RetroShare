@@ -27,6 +27,7 @@
 #include "rsserver/p3face.h"
 #include "pqi/p3connmgr.h"
 #include "pqi/authssl.h"
+#include "pqi/authgpg.h"
 #include <rsiface/rsinit.h>
 
 #include <iostream>
@@ -202,7 +203,7 @@ std::string p3Peers::getOwnId()
 	std::cerr << std::endl;
 #endif
 
-        return getAuthSSL()->OwnId();
+        return AuthSSL::getAuthSSL()->OwnId();
 }
 
 bool	p3Peers::getOnlineList(std::list<std::string> &ids)
@@ -237,7 +238,7 @@ bool	p3Peers::getOthersList(std::list<std::string> &ids)
 #endif
 
 	/* get from mAuthMgr */
-        getAuthSSL()->getAllList(ids);
+        AuthSSL::getAuthSSL()->getAllList(ids);
 	return true;
 }
 
@@ -260,7 +261,7 @@ bool    p3Peers::isOnline(std::string id)
 
 bool    p3Peers::isTrustingMe(std::string id) const
 {
-        return getAuthSSL()->isTrustingMe(id) ;
+        return AuthSSL::getAuthSSL()->isTrustingMe(id) ;
 }
 
 bool    p3Peers::isFriend(std::string id)
@@ -302,7 +303,7 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 
 	/* get from mAuthMgr (first) */
         sslcert authDetail;
-        if (!getAuthSSL()->getCertDetails(id, authDetail))
+        if (!AuthSSL::getAuthSSL()->getCertDetails(id, authDetail))
 	{
 		return false;
 	}
@@ -317,7 +318,7 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 
 	d.issuer 	= authDetail.issuer;
 
-        d.trusted       = getAuthGPG()->isPGPAuthenticated(getAuthSSL()->getGPGId(id));
+        d.trusted       = AuthGPG::getAuthGPG()->isPGPAuthenticated(AuthSSL::getAuthSSL()->getGPGId(id));
 
 
 	/* generate */
@@ -326,7 +327,7 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 	/* get from mConnectMgr */
 	peerConnectState pcs;
 
-        if (id == getAuthSSL()->OwnId())
+        if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
 		mConnMgr->getOwnNetStatus(pcs);
 	}
@@ -470,7 +471,7 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 std::string p3Peers::getPeerPGPName(std::string id)
 {
 	/* get from mAuthMgr as it should have more peers? */
-        return getAuthSSL()->getIssuerName(id);
+        return AuthSSL::getAuthSSL()->getIssuerName(id);
 }
 
 std::string p3Peers::getPeerName(std::string id)
@@ -481,7 +482,7 @@ std::string p3Peers::getPeerName(std::string id)
 #endif
 
 	/* get from mAuthMgr as it should have more peers? */
-        return getAuthSSL()->getName(id);
+        return AuthSSL::getAuthSSL()->getName(id);
 }
 
 
@@ -501,7 +502,7 @@ bool	p3Peers::getPGPFriendList(std::list<std::string> &ids)
 	for(it = certids.begin(); it != certids.end(); it++)
 	{
                 sslcert detail;
-                if (!getAuthSSL()->getCertDetails(*it, detail))
+                if (!AuthSSL::getAuthSSL()->getCertDetails(*it, detail))
         	{
 			continue;
 		}
@@ -544,7 +545,7 @@ bool	p3Peers::getPGPAllList(std::list<std::string> &ids)
 #endif
 
 	/* get from mAuthMgr */
-        getAuthGPG()->getPGPAllList(ids);
+        AuthGPG::getAuthGPG()->getPGPAllList(ids);
 	return true;
 }
 
@@ -556,7 +557,7 @@ std::string p3Peers::getPGPOwnId()
 #endif
 
 	/* get from mAuthMgr */
-        return getAuthGPG()->PGPOwnId();
+        return AuthGPG::getAuthGPG()->PGPOwnId();
 }
 
 
@@ -734,12 +735,12 @@ p3Peers::GetRetroshareInvite()
 	std::cerr << "p3Peers::GetRetroshareInvite()";
 	std::cerr << std::endl;
 
-        std::string ownId = getAuthSSL()->OwnId();
-        std::string certstr = getAuthSSL()->SaveCertificateToString(ownId);
-        std::string name = getAuthSSL()->getName(ownId);
+        std::string ownId = AuthSSL::getAuthSSL()->OwnId();
+        std::string certstr = AuthSSL::getAuthSSL()->SaveCertificateToString(ownId);
+        std::string name = AuthSSL::getAuthSSL()->getName(ownId);
 	
-        std::string pgpownId = getAuthGPG()->PGPOwnId();
-        std::string pgpcertstr = getAuthGPG()->SaveCertificateToString(pgpownId);
+        std::string pgpownId = AuthGPG::getAuthGPG()->PGPOwnId();
+        std::string pgpcertstr = AuthGPG::getAuthGPG()->SaveCertificateToString(pgpownId);
 	
 	std::cerr << "p3Peers::GetRetroshareInvite() SSL Cert:";
 	std::cerr << std::endl;
@@ -768,7 +769,7 @@ bool 	p3Peers::LoadCertificateFromFile(std::string fname, std::string &id)
 	std::cerr << std::endl;
 #endif
 
-        return getAuthSSL()->LoadCertificateFromFile(fname, id);
+        return AuthSSL::getAuthSSL()->LoadCertificateFromFile(fname, id);
 }
 
 
@@ -833,14 +834,14 @@ bool 	p3Peers::LoadCertificateFromString(std::string cert, std::string &id)
 			std::cerr << "pgpcert .... " << std::endl;
 			std::cerr << pgpcert << std::endl;
 
-                        ret = getAuthGPG()->LoadCertificateFromString(pgpcert);
+                        ret = AuthGPG::getAuthGPG()->LoadCertificateFromString(pgpcert);
 		}
 		if (sslcert != "")
 		{
 			std::cerr << "sslcert .... " << std::endl;
 			std::cerr << sslcert << std::endl;
 
-                        ret = getAuthSSL()->LoadCertificateFromString(sslcert, id);
+                        ret = AuthSSL::getAuthSSL()->LoadCertificateFromString(sslcert, id);
 		}
 	}
 
@@ -860,7 +861,7 @@ bool 	p3Peers::SaveCertificateToFile(std::string id, std::string fname)
 
 	ensureExtension(fname, "pqi");
 
-        return getAuthSSL()->SaveCertificateToFile(id, fname);
+        return AuthSSL::getAuthSSL()->SaveCertificateToFile(id, fname);
 }
 
 std::string p3Peers::SaveCertificateToString(std::string id)
@@ -870,7 +871,7 @@ std::string p3Peers::SaveCertificateToString(std::string id)
 	std::cerr << std::endl;
 #endif
 
-        return getAuthSSL()->SaveCertificateToString(id);
+        return AuthSSL::getAuthSSL()->SaveCertificateToString(id);
 }
 
 bool 	p3Peers::AuthCertificate(std::string id, std::string code)
@@ -880,7 +881,7 @@ bool 	p3Peers::AuthCertificate(std::string id, std::string code)
 	std::cerr << std::endl;
 #endif
 
-        if (getAuthSSL()->AuthCertificate(id))
+        if (AuthSSL::getAuthSSL()->AuthCertificate(id))
 	{
 #ifdef P3PEERS_DEBUG
 		std::cerr << "p3Peers::AuthCertificate() OK ... Adding as Friend";
@@ -900,7 +901,7 @@ bool 	p3Peers::SignCertificate(std::string id)
 	std::cerr << std::endl;
 #endif
 
-        return getAuthSSL()->SignCertificate(id);
+        return AuthSSL::getAuthSSL()->SignCertificate(id);
 }
 
 bool 	p3Peers::TrustCertificate(std::string id, bool trust)
@@ -910,7 +911,7 @@ bool 	p3Peers::TrustCertificate(std::string id, bool trust)
 	std::cerr << std::endl;
 #endif
 
-        return getAuthSSL()->TrustCertificate(id, trust);
+        return AuthSSL::getAuthSSL()->TrustCertificate(id, trust);
 }
 
 

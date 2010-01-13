@@ -32,6 +32,7 @@
 #include "cleanupxpgp.h"
 
 #include "pqinetwork.h"
+#include "authgpg.h"
 
 /******************** notify of new Cert **************************/
 #include "pqinotify.h"
@@ -62,6 +63,12 @@ sslcert::sslcert(X509 *x509, std::string pid)
 	issuer = getX509CNString(x509->cert_info->issuer);
 
 	authed = false;
+}
+
+sslcert::sslcert()
+{
+        email = "";
+        authed = false;
 }
 
 X509_REQ *GenerateX509Req(
@@ -392,6 +399,12 @@ X509 *SignX509Certificate(X509_NAME *issuer, EVP_PKEY *privkey, X509_REQ *req, l
 AuthSSL::AuthSSL()
 	:init(0), sslctx(NULL), pkey(NULL), mToSaveCerts(false), mConfigSaveActive(true)
 {
+}
+
+AuthSSL *AuthSSL::getAuthSSL()
+{
+        return &instance_sslroot;
+        //return NULL;
 }
 
 bool AuthSSL::active()
@@ -1899,7 +1912,7 @@ X509 *AuthSSL::SignX509Req(X509_REQ *req, long days)
         std::cerr << "Digest Applied: len: " << hashoutl << std::endl;
 
         /* NOW Sign via GPG Functions */
-        if (!getAuthGPG()->SignDataBin(buf_hashout, hashoutl, buf_sigout, (unsigned int *) &sigoutl))
+        if (!AuthGPG::getAuthGPG()->SignDataBin(buf_hashout, hashoutl, buf_sigout, (unsigned int *) &sigoutl))
         {
                 sigoutl = 0;
                 goto err;
@@ -2011,7 +2024,7 @@ bool AuthSSL::AuthX509(X509 *x509)
         memmove(buf_sigout, signature->data, sigoutl);
 
         /* NOW Sign via GPG Functions */
-        if (!getAuthGPG()->VerifySignBin(buf_hashout, hashoutl, buf_sigout, (unsigned int) sigoutl))
+        if (!AuthGPG::getAuthGPG()->VerifySignBin(buf_hashout, hashoutl, buf_sigout, (unsigned int) sigoutl))
         {
                 sigoutl = 0;
                 goto err;
@@ -2131,7 +2144,7 @@ int pem_passwd_cb(char *buf, int size, int rwflag, void *password)
 
 static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx)
 {
-        return getAuthSSL()->VerifyX509Callback(preverify_ok, ctx);
+        return AuthSSL::getAuthSSL()->VerifyX509Callback(preverify_ok, ctx);
 
 }
 
@@ -2243,7 +2256,7 @@ int	LoadCheckX509andGetName(const char *cert_file, std::string &userName, std::s
 	bool valid = false;
 	if (x509)
 	{
-                valid = getAuthSSL()->ValidateCertificate(x509, userId);
+                valid =AuthSSL::getAuthSSL()->ValidateCertificate(x509, userId);
 	}
 
 	if (valid)
@@ -2296,7 +2309,7 @@ int	LoadCheckX509andGetIssuerName(const char *cert_file, std::string &issuerName
 	bool valid = false;
 	if (x509)
 	{
-                valid = getAuthSSL()->ValidateCertificate(x509, userId);
+                valid = AuthSSL::getAuthSSL()->ValidateCertificate(x509, userId);
 	}
 
 	if (valid)

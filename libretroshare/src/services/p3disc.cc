@@ -91,7 +91,7 @@ p3disc::p3disc(p3ConnectMgr *cm, pqipersongrp *pqih)
         lastSentHeartbeatTime = 0;
 
 	//add own version to versions map
-        versions[getAuthSSL()->OwnId()] = RsUtil::retroshareVersion();
+        versions[AuthSSL::getAuthSSL()->OwnId()] = RsUtil::retroshareVersion();
 	return;
 }
 
@@ -516,7 +516,7 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 
 	unsigned char **binptr = (unsigned char **) &(di -> certDER.bin_data);
 
-        getAuthSSL()->SaveCertificateToBinary(about, binptr, &certLen);
+        AuthSSL::getAuthSSL()->SaveCertificateToBinary(about, binptr, &certLen);
 #ifdef P3DISC_DEBUG
 	std::cerr << "Saved certificate to binary in p3discReply. Length=" << certLen << std::endl ;
 #endif
@@ -565,7 +565,7 @@ void p3disc::sendPeerIssuer(std::string to, std::string about)
 #endif
 	}
 
-        std::string aboutIssuerId = getAuthSSL()->getIssuerName(about);
+        std::string aboutIssuerId = AuthSSL::getAuthSSL()->getIssuerName(about);
 	if (aboutIssuerId == "")
 	{
 		/* major error! */
@@ -579,7 +579,7 @@ void p3disc::sendPeerIssuer(std::string to, std::string about)
 	// Set Target as input cert.
 	di -> PeerId(to);
 
-        di -> issuerCert = getAuthSSL()->SaveCertificateToString(aboutIssuerId);
+        di -> issuerCert = AuthSSL::getAuthSSL()->SaveCertificateToString(aboutIssuerId);
 
 #ifdef P3DISC_DEBUG
 	std::cerr << "Saved certificate to string in RsDiscIssuer. " << std::endl ;
@@ -719,7 +719,7 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 	uint8_t *certptr = (uint8_t *) item->certDER.bin_data;
 	uint32_t len = item->certDER.bin_len;
 
-        bool loaded = getAuthSSL()->LoadCertificateFromBinary(certptr, len, peerId);
+        bool loaded = AuthSSL::getAuthSSL()->LoadCertificateFromBinary(certptr, len, peerId);
 
 	uint32_t type = 0;
 	uint32_t flags = 0;
@@ -732,7 +732,7 @@ void p3disc::recvPeerFriendMsg(RsDiscReply *item)
 	{
 		std::cerr << "  Found a peer that trust me: " << peerId << " (" << rsPeers->getPeerName(peerId) << ")" << std::endl ;
 		flags |= RS_NET_FLAGS_TRUSTS_ME;
-                getAuthSSL()->addTrustingPeer(peerId) ;
+                AuthSSL::getAuthSSL()->addTrustingPeer(peerId) ;
 	}
 
 	/* generate type */
@@ -804,7 +804,7 @@ void p3disc::recvPeerIssuerMsg(RsDiscIssuer *item)
 
 	/* load certificate */
 	std::string peerId;
-        bool loaded = getAuthSSL()->LoadCertificateFromString(item->issuerCert, peerId);
+        bool loaded = AuthSSL::getAuthSSL()->LoadCertificateFromString(item->issuerCert, peerId);
 
 	/* cleanup (handled by caller) */
 

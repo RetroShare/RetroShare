@@ -48,8 +48,6 @@
 #include <string>
 #include <map>
 
-#include "authgpg.h"
-
 #include "util/rsthreads.h"
 
 #include "pqi/pqi_base.h"
@@ -89,7 +87,10 @@ class AuthSSL
 {
 	public:
 
-	/* Initialisation Functions (Unique) */
+        // the single instance of this
+        static AuthSSL *getAuthSSL();
+
+        /* Initialisation Functions (Unique) */
 	AuthSSL();
 bool    validateOwnCertificate(X509 *x509, EVP_PKEY *pkey);
 
@@ -115,7 +116,7 @@ virtual bool    isValid(std::string id);
 virtual bool    isAuthenticated(std::string id);
 virtual	std::string getName(std::string id);
 virtual std::string getIssuerName(std::string id);
-virtual GPG_id getGPGId(SSL_id id);
+virtual std::string getGPGId(SSL_id id);
 virtual bool    getCertDetails(std::string id, sslcert &cert);
 
         /* first party trust info (dummy) */
@@ -185,11 +186,9 @@ bool 	CheckCertificate(std::string peerId, X509 *x509); /* check that they are e
 bool  	loadCertificates(bool &oldFormat, std::map<std::string, std::string> &keyValueMap);
 
 
-
 	private:
 
 	/* Helper Functions */
-
 bool 	ProcessX509(X509 *x509, std::string &id);
 
 X509 *	loadX509FromPEM(std::string pem);
@@ -204,7 +203,7 @@ bool 	locked_FindCert(std::string id, sslcert **cert);
 
 
 	/* Data */
-	RsMutex sslMtx;  /**** LOCKING */
+        RsMutex sslMtx;  /**** LOCKING */
 
 	int init;
 	std::string mCertConfigFile;
@@ -222,14 +221,8 @@ bool 	locked_FindCert(std::string id, sslcert **cert);
 
 };
 
-// the single instance of this, but only when SSL Only
+// the single instance of this
 static AuthSSL instance_sslroot;
-
-AuthSSL *getAuthSSL()
-{
-        return &instance_sslroot;
-}
-
 
 X509_REQ *GenerateX509Req(
                 std::string pkey_file, std::string passwd,
@@ -248,12 +241,6 @@ std::string getX509CNString(X509_NAME *name);
 std::string getX509OrgString(X509_NAME *name);
 std::string getX509LocString(X509_NAME *name);
 std::string getX509CountryString(X509_NAME *name);
-
-#if 0
-std::list<std::string> getXPGPsigners(XPGP *cert);
-std::string getXPGPAuthCode(XPGP *xpgp);
-
-#endif
 
 std::string getX509Info(X509 *cert);
 bool 	getX509id(X509 *x509, std::string &xid);

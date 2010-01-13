@@ -55,7 +55,7 @@ p3PhotoService::p3PhotoService(uint16_t type, CacheStrapper *cs, CacheTransfer *
 
      { 	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
 
-        mOwnId = getAuthSSL()->OwnId();
+        mOwnId = AuthSSL::getAuthSSL()->OwnId();
      } 	
 
 //	createDummyData();

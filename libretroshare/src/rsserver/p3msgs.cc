@@ -156,7 +156,7 @@ bool	p3Msgs::getNewChat(std::list<ChatInfo> &chats)
 void p3Msgs::initRsChatInfo(RsChatMsgItem *c, ChatInfo &i)
 {
 	i.rsid = c -> PeerId();
-        i.name = getAuthSSL()->getName(i.rsid);
+        i.name = AuthSSL::getAuthSSL()->getName(i.rsid);
 	i.chatflags = 0 ;
 	i.msg  = c -> message;
 

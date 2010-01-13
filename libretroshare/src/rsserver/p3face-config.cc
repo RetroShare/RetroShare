@@ -103,8 +103,8 @@ int RsServer::UpdateAllConfig()
 
  	RsConfig &config = iface.mConfig;
 
-        config.ownId = getAuthSSL()->OwnId();
-        config.ownName = getAuthSSL()->getName(config.ownId);
+        config.ownId = AuthSSL::getAuthSSL()->OwnId();
+        config.ownName = AuthSSL::getAuthSSL()->getName(config.ownId);
 	peerConnectState pstate;
 	mConnMgr->getOwnNetStatus(pstate);
 
@@ -157,7 +157,7 @@ void    RsServer::ConfigFinalSave()
 	/* force saving of transfers TODO */
 	//ftserver->saveFileTransferStatus();
 
-	getAuthSSL()->FinalSaveCertificates();
+        AuthSSL::getAuthSSL()->FinalSaveCertificates();
 	mConfigMgr->completeConfiguration();
 }
 

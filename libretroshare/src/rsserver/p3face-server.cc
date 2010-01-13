@@ -245,7 +245,7 @@ void 	RsServer::run()
 				//ftserver->saveFileTransferStatus();
 
 				/* see if we need to resave certs */
-                                getAuthSSL()->CheckSaveCertificates();
+                                AuthSSL::getAuthSSL()->CheckSaveCertificates();
 	
 				/* hour loop */
 				if (++min >= 60)

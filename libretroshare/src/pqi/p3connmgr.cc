@@ -135,8 +135,8 @@ p3ConnectMgr::p3ConnectMgr()
 	mStatusChanged(false)
 {
 	/* setup basics of own state */
-        ownState.id = getAuthSSL()->OwnId();
-        ownState.name = getAuthSSL()->getName(ownState.id);
+        ownState.id = AuthSSL::getAuthSSL()->OwnId();
+        ownState.name = AuthSSL::getAuthSSL()->getName(ownState.id);
         ownState.netMode = RS_NET_MODE_UDP;
 
 	//use_extr_addr_finder = true ;
@@ -1342,7 +1342,7 @@ void p3ConnectMgr::tickMonitors()
 
 const std::string p3ConnectMgr::getOwnId()
 {
-                return getAuthSSL()->OwnId();
+                return AuthSSL::getAuthSSL()->OwnId();
 }
 
 
@@ -1374,7 +1374,7 @@ bool p3ConnectMgr::isOnline(std::string id)
 	else
 	{
 #ifdef CONN_DEBUG
-                std::cerr << "p3ConnectMgr::isOnline(" << id << ") is Not Friend" << std::endl << "p3ConnectMgr::isOnline() OwnId: " << getAuthSSL()->OwnId() << std::endl;
+                std::cerr << "p3ConnectMgr::isOnline(" << id << ") is Not Friend" << std::endl << "p3ConnectMgr::isOnline() OwnId: " << AuthSSL::getAuthSSL()->OwnId() << std::endl;
 #endif
 		/* not a friend */
 	}
@@ -2014,7 +2014,7 @@ bool p3ConnectMgr::addFriend(std::string id, uint32_t netMode, uint32_t visState
 	}
 
 	/* check with the AuthMgr if its authorised */
-        if (!getAuthSSL()->isAuthenticated(id))
+        if (!AuthSSL::getAuthSSL()->isAuthenticated(id))
 	{
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::addFriend() Failed Authentication" << std::endl;
@@ -2065,7 +2065,7 @@ bool p3ConnectMgr::addFriend(std::string id, uint32_t netMode, uint32_t visState
 
 	/* get details from AuthMgr */
         sslcert detail;
-        if (!getAuthSSL()->getCertDetails(id, detail))
+        if (!AuthSSL::getAuthSSL()->getCertDetails(id, detail))
 	{
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::addFriend() Failed to get Details" << std::endl;
@@ -2174,7 +2174,7 @@ bool p3ConnectMgr::addNeighbour(std::string id)
 	}
 
 	/* check with the AuthMgr if its valid */
-        if (!getAuthSSL()->isValid(id))
+        if (!AuthSSL::getAuthSSL()->isValid(id))
 	{
 		/* no auth */
 		return false;
@@ -2182,7 +2182,7 @@ bool p3ConnectMgr::addNeighbour(std::string id)
 
 	/* get details from AuthMgr */
         sslcert detail;
-        if (!getAuthSSL()->getCertDetails(id, detail))
+        if (!AuthSSL::getAuthSSL()->getCertDetails(id, detail))
 	{
 		/* no details */
 		return false;
@@ -2459,7 +2459,7 @@ bool   p3ConnectMgr::retryConnectNotify(std::string id)
 bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
 {
 
-        if (id == getAuthSSL()->OwnId())
+        if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
                 {
                         RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
@@ -2509,7 +2509,7 @@ bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
 
 bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
 {
-        if (id == getAuthSSL()->OwnId())
+        if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
             if (ownState.currentserveraddr.sin_addr.s_addr != addr.sin_addr.s_addr ||
                 ownState.currentserveraddr.sin_port != addr.sin_port) {
@@ -2609,7 +2609,7 @@ bool    p3ConnectMgr::setAddressList(std::string id, std::list<IpAddressTimed> I
 
 bool    p3ConnectMgr::setNetworkMode(std::string id, uint32_t netMode)
 {
-        if (id == getAuthSSL()->OwnId())
+        if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
 		uint32_t visState = ownState.visState;
 		setOwnNetConfig(netMode, visState);
@@ -2639,7 +2639,7 @@ bool    p3ConnectMgr::setNetworkMode(std::string id, uint32_t netMode)
 
 bool    p3ConnectMgr::setVisState(std::string id, uint32_t visState)
 {
-        if (id == getAuthSSL()->OwnId())
+        if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
 		uint32_t netMode = ownState.netMode;
 		setOwnNetConfig(netMode, visState);

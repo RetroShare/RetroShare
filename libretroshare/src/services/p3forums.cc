@@ -297,7 +297,7 @@ std::string p3Forums::createForumMsg(std::string fId, std::string pId,
 	fmsg->msg   = msg;
 	if (signIt)
 	{
-                fmsg->srcId = getAuthSSL()->OwnId();
+                fmsg->srcId = AuthSSL::getAuthSSL()->OwnId();
 	}
 	fmsg->timestamp = time(NULL);
 

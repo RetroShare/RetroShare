@@ -160,7 +160,7 @@ void	p3ConfigMgr::saveConfiguration()
 
 	/* sign data */
 	std::string signature;
-        getAuthSSL()->SignData(membio->memptr(), membio->memsize(), signature);
+        AuthSSL::getAuthSSL()->SignData(membio->memptr(), membio->memsize(), signature);
 
 #ifdef CONFIG_DEBUG 
 	std::cerr << "p3ConfigMgr::saveConfiguration() MetaFile Signature:";
@@ -274,7 +274,7 @@ void	p3ConfigMgr::loadConfiguration()
 
 	/* get signature */
 	std::string signature;
-        getAuthSSL()->SignData(membio->memptr(), membio->memsize(), signature);
+        AuthSSL::getAuthSSL()->SignData(membio->memptr(), membio->memsize(), signature);
 
 #ifdef CONFIG_DEBUG 
 	std::cerr << "p3ConfigMgr::loadConfiguration() New MetaFile Signature:";

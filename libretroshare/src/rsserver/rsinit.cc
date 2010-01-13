@@ -469,7 +469,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
 	 * 2) Get List of Available Accounts.
 	 * 4) Get List of GPG Accounts.
 	 */
-        getAuthSSL() -> InitAuth(NULL, NULL, NULL);
+        AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL);
 
 	// first check config directories, and set bootstrap values.
 	setupBaseDir();
@@ -767,12 +767,12 @@ static bool checkAccount(std::string accountdir, accountId &id)
 
                 /* Generating GPGme Account */
 int      RsInit::GetPGPLogins(std::list<std::string> &pgpIds) {
-        getAuthGPG()->availablePGPCertificates(pgpIds);
+        AuthGPG::getAuthGPG()->availablePGPCertificates(pgpIds);
 	return 1;
 }
 
 bool      RsInit::getPGPEngineFileName(std::string &fileName) {
-        return getAuthGPG()->getPGPEngineFileName(fileName);
+        return AuthGPG::getAuthGPG()->getPGPEngineFileName(fileName);
 }
 
 int      RsInit::GetPGPLoginDetails(std::string id, std::string &name, std::string &email)
@@ -780,8 +780,8 @@ int      RsInit::GetPGPLoginDetails(std::string id, std::string &name, std::stri
         std::cerr << "RsInit::GetPGPLoginDetails for \"" << id << "\"";
         std::cerr << std::endl;
 
-        name = getAuthGPG()->getPGPName(getAuthSSL()->getGPGId(id));
-        email = getAuthGPG()->getPGPEmail(getAuthSSL()->getGPGId(id));
+        name = AuthGPG::getAuthGPG()->getPGPName(AuthSSL::getAuthSSL()->getGPGId(id));
+        email = AuthGPG::getAuthGPG()->getPGPEmail(AuthSSL::getAuthSSL()->getGPGId(id));
         if (name != "") {
             return 1;
         } else {
@@ -798,8 +798,7 @@ bool RsInit::SelectGPGAccount(std::string id)
 	std::string gpgId = id;
 	std::string name = id;
 
-        GPGAuthMgr *gpgAuthMgr = getAuthGPG();
-	if (0 < gpgAuthMgr -> GPGInit(gpgId))
+        if (0 < AuthGPG::getAuthGPG() -> GPGInit(gpgId))
 	{
 		ok = true;
 		std::cerr << "PGP Auth Success!";
@@ -818,10 +817,9 @@ bool RsInit::SelectGPGAccount(std::string id)
 
 bool RsInit::LoadGPGPassword(std::string inPGPpasswd)
 {
-        GPGAuthMgr *gpgAuthMgr =getAuthGPG();
 
 	bool ok = false;
-	if (0 < gpgAuthMgr -> LoadGPGPassword(inPGPpasswd))
+        if (0 < AuthGPG::getAuthGPG() -> LoadGPGPassword(inPGPpasswd))
 	{
 		ok = true;
 		std::cerr << "PGP LoadPwd Success!";
@@ -994,7 +992,7 @@ bool     RsInit::GenerateSSLCertificate(std::string name, std::string org, std::
 			nbits, errString);
 
 	long days = 3000;
-        X509 *x509 = getAuthSSL()->SignX509Req(req, days);
+        X509 *x509 = AuthSSL::getAuthSSL()->SignX509Req(req, days);
 
 	X509_REQ_free(req);
 	if (x509 == NULL) {
@@ -1216,7 +1214,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		gpgme_data_t plain;
                 gpgme_data_new_from_mem(&plain, sslPassword, strlen(sslPassword), 1);
                 gpgme_data_new_from_stream (&cipher, sslPassphraseFile);
-                if (0 < getAuthGPG()->encryptText(plain, cipher)) {
+                if (0 < AuthGPG::getAuthGPG()->encryptText(plain, cipher)) {
 		    std::cerr << "Encrypting went ok !" << std::endl;
 		}
                 gpgme_data_release (cipher);
@@ -1237,7 +1235,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 			gpgme_data_t plain;
 			gpgme_data_new (&plain);
 			gpgme_error_t error_reading_file = gpgme_data_new_from_stream (&cipher, sslPassphraseFile);
-                        if (0 < getAuthGPG()->decryptText(cipher, plain)) {
+                        if (0 < AuthGPG::getAuthGPG()->decryptText(cipher, plain)) {
 			    std::cerr << "Decrypting went ok !" << std::endl;
                             gpgme_data_write (plain, "", 1);
 			    sslPassword = gpgme_data_release_and_get_mem(plain, NULL);
@@ -1253,7 +1251,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 
 	std::cerr << "RsInitConfig::load_key.c_str() : " << RsInitConfig::load_key.c_str() << std::endl;
         std::cerr << "sslPassword : " << sslPassword << std::endl;;
-        if (0 < getAuthSSL() -> InitAuth(RsInitConfig::load_cert.c_str(), RsInitConfig::load_key.c_str(), sslPassword))
+        if (0 < AuthSSL::getAuthSSL() -> InitAuth(RsInitConfig::load_cert.c_str(), RsInitConfig::load_key.c_str(), sslPassword))
 	{
 		ok = true;
 	}
@@ -1828,7 +1826,7 @@ int RsServer::StartupRetroShare()
 	/* (1) Load up own certificate (DONE ALREADY) - just CHECK */
 	/**************************************************************************/
 
-        if (1 != getAuthSSL() -> InitAuth(NULL, NULL, NULL))
+        if (1 != AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL))
 	{
 		std::cerr << "main() - Fatal Error....." << std::endl;
 		std::cerr << "Invalid Certificate configuration!" << std::endl;
@@ -1836,7 +1834,7 @@ int RsServer::StartupRetroShare()
 		exit(1);
 	}
 
-        std::string ownId = getAuthSSL()->OwnId();
+        std::string ownId = AuthSSL::getAuthSSL()->OwnId();
 
 	/**************************************************************************/
 	/* Any Initial Configuration (Commandline Options)  */
@@ -1881,9 +1879,9 @@ int RsServer::StartupRetroShare()
         bool oldFormat = false;
 	std::map<std::string, std::string> oldConfigMap;
 
-        getAuthSSL() -> setConfigDirectories(certConfigFile, certNeighDir);
+        AuthSSL::getAuthSSL() -> setConfigDirectories(certConfigFile, certNeighDir);
 
-        getAuthSSL() -> loadCertificates();
+        AuthSSL::getAuthSSL() -> loadCertificates();
 
 	/**************************************************************************/
 	/* setup classes / structures */

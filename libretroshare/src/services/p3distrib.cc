@@ -35,6 +35,7 @@
 #include "pqi/pqinotify.h"
 #include "pqi/pqibin.h"
 #include "pqi/authssl.h"
+#include "pqi/authgpg.h"
 
 /*****
  * #define DISTRIB_DEBUG 1
@@ -66,7 +67,7 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 	/* force publication of groups (cleared if local cache file found) */
 	mGroupsRepublish = true;
 
-        mOwnId = getAuthSSL()->OwnId();
+        mOwnId = AuthSSL::getAuthSSL()->OwnId();
 	return;
 }
 
@@ -1728,10 +1729,10 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 	{
 		unsigned int siglen = EVP_PKEY_size(publishKey);
         	unsigned char sigbuf[siglen];
-                if (getAuthGPG()->SignDataBin(data, size, sigbuf, &siglen))
+                if (AuthGPG::getAuthGPG()->SignDataBin(data, size, sigbuf, &siglen))
 		{
 			signedMsg->personalSignature.signData.setBinData(sigbuf, siglen);
-                        signedMsg->personalSignature.keyId = getAuthGPG()->PGPOwnId();
+                        signedMsg->personalSignature.keyId = AuthGPG::getAuthGPG()->PGPOwnId();
 		}
 	}
 
@@ -2450,7 +2451,7 @@ bool 	p3GroupDistrib::locked_validateDistribSignedMsg(
 	std::cerr << std::endl;
 #endif
 
-        if (getAuthGPG()->isPGPValid(newMsg->personalSignature.keyId))
+        if (AuthGPG::getAuthGPG()->isPGPValid(newMsg->personalSignature.keyId))
 	{
 #ifdef DISTRIB_DEBUG
 		std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Peer Known";

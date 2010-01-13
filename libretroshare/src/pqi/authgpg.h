@@ -40,8 +40,6 @@
 
 #define GPG_id std::string
 
-class AuthGPG;
-
 /* gpgcert is the identifier for a person.
  * It is a wrapper class for a GPGme OpenPGP certificate.
  */
@@ -76,7 +74,7 @@ class gpgcert
  */
 typedef std::map<std::string, gpgcert> certmap;
 	
-class GPGAuthMgr
+class AuthGPG
 {
 	private:
 
@@ -99,10 +97,12 @@ class GPGAuthMgr
 
 	public:
 
-	GPGAuthMgr();
-	~GPGAuthMgr();
+        AuthGPG();
+        ~AuthGPG();
 
-	bool    availablePGPCertificates(std::list<std::string> &ids);
+        static AuthGPG *getAuthGPG();
+
+        bool    availablePGPCertificates(std::list<std::string> &ids);
 
         //get the pgpg engine used by the pgp functions
         bool    getPGPEngineFileName(std::string &fileName);
@@ -154,7 +154,6 @@ class GPGAuthMgr
  ****/
 
     /* get Details from the Certificates */
-    bool	isAuthenticated(std::string id);
     std::string getPGPName(GPG_id pgp_id);
     std::string getPGPEmail(GPG_id pgp_id);
 
@@ -224,10 +223,9 @@ class GPGAuthMgr
 
 bool checkSignature(std::string id, std::string hash, std::string signature);
 
-
         private:
 
-	RsMutex pgpMtx;
+        RsMutex pgpMtx;
 	/* Below is protected via the mutex */
 
 	certmap mKeyList;
@@ -248,13 +246,7 @@ bool checkSignature(std::string id, std::string hash, std::string signature);
 };
 
 // the single instance of this
-static GPGAuthMgr instance_gpgroot;
-
-GPGAuthMgr *getAuthGPG()
-{
-        return &instance_gpgroot;
-}
-
+static AuthGPG instance_gpgroot;
 
 /* Sign a key */
 
