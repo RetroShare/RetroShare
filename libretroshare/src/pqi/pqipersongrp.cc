@@ -314,7 +314,7 @@ int     pqipersongrp::addPeer(std::string id)
 #endif
 
 	SearchModule *sm = NULL;
-  { //RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/ This might be dangerous, but usefull for accepting new frinds right upon connection
+  { RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 	std::map<std::string, SearchModule *>::iterator it;
 	it = mods.find(id);
 	if (it != mods.end())

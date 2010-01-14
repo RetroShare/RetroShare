@@ -2185,10 +2185,10 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
             //sslcert *cert = NULL;
             std::string certId;
             getX509id(X509_STORE_CTX_get_current_cert(ctx), certId);
-//            if (!mConnMgr->isFriend(certId)) {
-//                //we've got a new ssl id
-//                preverify_ok = false;
-//            }
+            if (!mConnMgr->isFriend(certId)) {
+                //we've got a new ssl id
+                preverify_ok = false;
+            }
 
             //is the connection was initiated by us, then it was for a specific peer id wich is stored is in the context
             //check that the peerid in the context is the same as the cert one
@@ -2211,13 +2211,13 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                 }
             }
 
-            //Add, even if it might already be added
+            //just to be sure
             mConnMgr->addFriend(certId, getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer));
 
             //set location
             mConnMgr->setLocation(certId, getX509LocString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->subject));
 
-            //Check if peer isn't already connected
+            //Cgheck if peer isn't already connected
             peerConnectState detail;
             if (mConnMgr->getFriendNetStatus(certId, detail)) {
                 if (detail.state & RS_PEER_CONNECTED && detail.connecttype & RS_NET_CONN_TUNNEL) {

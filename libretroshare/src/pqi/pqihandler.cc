@@ -129,7 +129,7 @@ int	pqihandler::status()
 
 bool	pqihandler::AddSearchModule(SearchModule *mod)
 {
-        //RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/ This might be dangerous, but usefull for accepting new frinds right upon connection
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 	// if peerid used -> error.
 	std::map<std::string, SearchModule *>::iterator it;
 	if (mod->peerid != mod->pqi->PeerId())
