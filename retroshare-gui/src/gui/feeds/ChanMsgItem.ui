@@ -30,7 +30,8 @@
      </property>
      <property name="styleSheet">
       <string notr="true">QFrame#frame{border: 3px solid #D3D3D3;
-background: white;
+background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+stop:0 #FFFFFF, stop:1 #F2F2F2);;
 border-radius: 10px;}</string>
      </property>
      <property name="frameShape">
@@ -239,6 +240,8 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
