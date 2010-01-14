@@ -442,7 +442,7 @@ bool     RsDiscSerialiser::serialiseReply(RsDiscReply *item, void *data, uint32_
             uint32_t size = 16000;
             RsPeerNetItem pitem = *pitemIt;
             ok &= rss->serialise(&pitem, pitemData, &size);
-            memcpy(data + offset, pitemData, size);
+            memcpy((void *) (((char *) data) + offset), pitemData, size);
             free(pitemData);
             offset += size;
 	}
@@ -506,7 +506,7 @@ RsDiscReply *RsDiscSerialiser::deserialiseReply(void *data, uint32_t *pktsize)
         while (offset < rssize) {
             void *peerNetdata = malloc(16000);
             uint32_t peerNetSize = (*pktsize) - offset;
-            memcpy(peerNetdata, data + offset, peerNetSize);
+            memcpy(peerNetdata,  (void *) (((char *) data) + offset), peerNetSize);
             RsPeerNetItem *rsPeerNetItem = (RsPeerNetItem*)rss->deserialise(peerNetdata, &peerNetSize);
             offset += peerNetSize;
             item->rsPeerList.push_back(*rsPeerNetItem);
