@@ -48,8 +48,6 @@
 #include <QRegExpValidator>
 #include <QRegExp>
 
-#include <boost/lexical_cast.hpp>
-
 #include <QDebug>
 #include <sstream>
 #include <iostream>
@@ -349,9 +347,9 @@ int TextPage::nextId() const {
         wizard()->setField(CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(certstr));
 
         wizard()->setField("ext_friend_ip", QString::fromStdString(pd.extAddr));
-        wizard()->setField("ext_friend_port", QString::fromStdString(boost::lexical_cast<std::string>(pd.extPort)));
+        wizard()->setField("ext_friend_port", QString::number(pd.extPort));
         wizard()->setField("local_friend_ip", QString::fromStdString(pd.localAddr));
-        wizard()->setField("local_friend_port", QString::fromStdString(boost::lexical_cast<std::string>(pd.localPort)));
+        wizard()->setField("local_friend_port", QString::number(pd.localPort));
 
         return ConnectFriendWizard::Page_Conclusion ;
     }

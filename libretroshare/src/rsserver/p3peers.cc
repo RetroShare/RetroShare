@@ -29,7 +29,6 @@
 #include "pqi/authssl.h"
 #include "pqi/authgpg.h"
 #include <rsiface/rsinit.h>
-#include <boost/lexical_cast.hpp>
 
 
 #include <iostream>
@@ -963,7 +962,10 @@ bool 	p3Peers::loadDetailsFromStringCert(std::string certstr, RsPeerDetails &pd)
                     if (parsePosition != std::string::npos) {
                         std::string local_port = subCert.substr(0, parsePosition);
                         std::cerr << "Local port : " << local_port << std::endl;
-                        pd.localPort = (boost::lexical_cast<uint16_t>(local_port));
+                        std::istringstream instream(local_port);
+                        uint16_t local_port_int;
+                        instream >> local_port_int;
+                        pd.localPort = (local_port_int);
                     }
                 }
             }
@@ -986,7 +988,10 @@ bool 	p3Peers::loadDetailsFromStringCert(std::string certstr, RsPeerDetails &pd)
                     if (parsePosition != std::string::npos) {
                         std::string ext_port = subCert.substr(0, parsePosition);
                         std::cerr << "Ext port : " << ext_port << std::endl;
-                        pd.extPort = (boost::lexical_cast<uint16_t>(ext_port));
+                        std::istringstream instream(ext_port);
+                        uint16_t ext_port_int;
+                        instream >> ext_port_int;
+                        pd.extPort = (ext_port_int);
                     }
                 }
             }

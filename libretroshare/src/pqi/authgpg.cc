@@ -29,7 +29,6 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
-#include <boost/lexical_cast.hpp>
 #include "serialiser/rsconfigitems.h"
 
 
@@ -1383,7 +1382,10 @@ int	AuthGPG::privateTrustCertificate(std::string id, int trustlvl)
 	
 	gpgcert trustCert = mKeyList.find(id)->second;
 	gpgme_key_t trustKey = trustCert.key;
-        class TrustParams sparams((boost::lexical_cast<std::string>(trustlvl)));
+        std::string trustString;
+        std::ostringstream trustStrOut;
+        trustStrOut << trustlvl;
+        class TrustParams sparams(trustStrOut.str());
         class EditParams params(TRUST_START, &sparams);
 	gpgme_data_t out;
         gpg_error_t ERR;
