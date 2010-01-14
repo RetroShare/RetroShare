@@ -19,6 +19,9 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget#SubFileItem{border: none;}</string>
+  </property>
   <layout class="QGridLayout" name="gridLayout_4">
    <property name="margin">
     <number>0</number>
@@ -83,23 +86,7 @@ background: white;}
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <spacer>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Expanding</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>26</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="2" colspan="2">
+        <item row="0" column="1" colspan="2">
          <widget class="QProgressBar" name="progressBar">
           <property name="sizePolicy">
            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
@@ -113,6 +100,9 @@ background: white;}
             <height>0</height>
            </size>
           </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
           <property name="value">
            <number>24</number>
           </property>
@@ -121,7 +111,7 @@ background: white;}
           </property>
          </widget>
         </item>
-        <item row="2" column="3">
+        <item row="2" column="2">
          <layout class="QGridLayout" name="gridLayout">
           <item row="0" column="0">
            <widget class="QPushButton" name="expandButton">
@@ -185,7 +175,7 @@ background: white;}
           </item>
          </layout>
         </item>
-        <item row="2" column="0" colspan="3">
+        <item row="2" column="0" colspan="2">
          <spacer>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -201,7 +191,7 @@ background: white;}
           </property>
          </spacer>
         </item>
-        <item row="0" column="4">
+        <item row="0" column="3">
          <widget class="QPushButton" name="cancelButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -221,7 +211,7 @@ background: white;}
           </property>
          </widget>
         </item>
-        <item row="2" column="4">
+        <item row="2" column="3">
          <widget class="QPushButton" name="playButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">

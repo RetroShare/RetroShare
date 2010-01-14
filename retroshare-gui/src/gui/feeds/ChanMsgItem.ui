@@ -197,6 +197,9 @@ p, li { white-space: pre-wrap; }
       </item>
       <item row="2" column="0" colspan="2">
        <widget class="QFrame" name="expandFrame">
+        <property name="styleSheet">
+         <string notr="true">QFrame#expandFrame{ border: none;}</string>
+        </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>
@@ -240,6 +243,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>

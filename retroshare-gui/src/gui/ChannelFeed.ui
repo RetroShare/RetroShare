@@ -446,6 +446,9 @@ p, li { white-space: pre-wrap; }
              <height>331</height>
             </rect>
            </property>
+           <property name="styleSheet">
+            <string notr="true">QWidget#scrollAreaWidgetContents{border: none;}</string>
+           </property>
            <layout class="QVBoxLayout" name="verticalLayout">
             <property name="spacing">
              <number>0</number>
