@@ -93,7 +93,7 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 
   connect( ui.threadTreeWidget, SIGNAL( itemSelectionChanged() ), this, SLOT( changedThread2() ) );
   connect( ui.viewBox, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( insertThreads() ) );
-  connect(ui.postText, SIGNAL( anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
+  connect( ui.postText, SIGNAL( anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
 
   
   connect(ui.expandButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
@@ -126,6 +126,9 @@ ForumsDialog::ForumsDialog(QWidget *parent)
   forummenu->addAction(ui.actionCreate_Forum); 
   forummenu->addSeparator();
   ui.forumpushButton->setMenu(forummenu);
+  
+  ui.postText->setOpenExternalLinks ( false );
+  ui.postText->setOpenLinks ( false );
   
 
   /* Hide platform specific features */
@@ -1073,7 +1076,7 @@ void ForumsDialog::anchorClicked (const QUrl& link )
 		    std::cerr << "ForumsDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
     #endif
     
-	if (link.scheme() == "file") {
+	if (link.scheme() == "retroshare://") {
 	    std::string fileName = link.queryItemValue(QString("fileName")).toStdString();
 	    std::string fileHash = link.queryItemValue(QString("fileHash")).toStdString();
 	    uint32_t fileSize = link.queryItemValue(QString("fileSize")).toInt();
@@ -1086,7 +1089,7 @@ void ForumsDialog::anchorClicked (const QUrl& link )
   if (fileName != "" && fileHash != "") {
 		
 		std::list<std::string> srcIds;
-		//srcIds.push_front(dialogId);
+		//srcIds.push_front();
 		rsFiles->FileRequest(fileName, fileHash, fileSize, "", 0, srcIds);
 
 		QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);

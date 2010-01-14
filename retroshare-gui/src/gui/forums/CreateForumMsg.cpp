@@ -350,8 +350,8 @@ void CreateForumMsg::fileHashingFinished(SubFileItem* file) {
 	sprintf(fileSizeChar, "%lld", file->FileSize());
 	std::string fileSize = *(&fileSizeChar);
 
-	std::string mesgString = "<a href='file:?fileHash=" + (file->FileHash()) + "&fileName=" + (file->FileName()) + "&fileSize=" + fileSize + "'>" 
-	+ "file:?fileHash=" + (file->FileHash()) + "&fileName=" + (file->FileName()) + "&fileSize=" + fileSize  + "</a>";
+	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>" 
+	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>";
 #ifdef CHAT_DEBUG
 	    std::cerr << "CreateForumMsg::anchorClicked mesgString : " << mesgString << std::endl;
 #endif
