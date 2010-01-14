@@ -153,13 +153,13 @@ virtual bool    getGPGSignedList(std::list<std::string> &gpg_ids)   = 0;//friend
 virtual bool    getGPGValidList(std::list<std::string> &gpg_ids)   = 0;
 virtual bool    getGPGAllList(std::list<std::string> &gpg_ids) 	= 0;
 virtual bool	getGPGDetails(std::string gpg_id, RsPeerDetails &d) = 0;
-virtual bool    getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> &ids) = 0;
+virtual bool    getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> &ssl_ids) = 0;
 
 	/* Add/Remove Friends */
 virtual	bool addFriend(std::string ssl_id, std::string gpg_id)        			= 0;
 virtual	bool addDummyFriend(std::string gpg_id)        			= 0; //we want to add a empty ssl friend for this gpg id
 virtual	bool isDummyFriend(std::string ssl_id)                  = 0;
-virtual	bool removeFriend(std::string id)  			= 0;
+virtual	bool removeFriend(std::string ssl_or_gpg_id)  			= 0;
 
 	/* Network Stuff */
 virtual	bool connectAttempt(std::string ssl_id)			= 0;
@@ -178,8 +178,8 @@ virtual bool getAllowTunnelConnection() = 0 ;
 	/* Auth Stuff */
 virtual	std::string GetRetroshareInvite() 			= 0;
 
-virtual	bool loadCertificateFromFile(std::string fname, std::string &id, std::string &gpg_id)  = 0;
-virtual	bool loadDetailsFromStringCert(std::string cert, RsPeerDetails &pd) = 0;
+virtual	bool loadCertificateFromFile(std::string fname, std::string &ssl_id, std::string &gpg_id)  = 0;
+virtual	bool loadDetailsFromStringCert(std::string certGPG, RsPeerDetails &pd) = 0;
 virtual	bool saveCertificateToFile(std::string id, std::string fname)  = 0;
 virtual	std::string saveCertificateToString(std::string id)  	= 0;
 

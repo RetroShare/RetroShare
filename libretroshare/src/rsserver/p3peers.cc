@@ -634,7 +634,7 @@ bool 	p3Peers::isDummyFriend(std::string ssl_id) {
         return ret;
     }
 
-bool 	p3Peers::removeFriend(std::string id)
+bool 	p3Peers::removeFriend(std::string ssl_or_gpgid)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::removeFriend() " << id;
