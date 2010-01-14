@@ -279,6 +279,13 @@ void  PeersDialog::insertPeers()
 
         rsPeers->getGPGAcceptedList(gpgFriends);
 
+        //add own gpg id, if we have more than on location (ssl client)
+        std::list<std::string> ownSslContacts;
+        rsPeers->getSSLChildListOfGPGId(rsPeers->getGPGOwnId(), ownSslContacts);
+        if (ownSslContacts.size() > 0) {
+            gpgFriends.push_back(rsPeers->getGPGOwnId());
+        }
+
         /* get a link to the table */
         QTreeWidget *peertreeWidget = ui.peertreeWidget;
 
@@ -294,7 +301,7 @@ void  PeersDialog::insertPeers()
         int index = 0;
         while (index < peertreeWidget->topLevelItemCount()) {
             std::string gpg_id = (peertreeWidget->topLevelItem(index))->text(3).toStdString();
-            if (!rsPeers->isGPGAccepted(gpg_id)) {
+            if (!rsPeers->isGPGAccepted(gpg_id) && gpg_id != rsPeers->getGPGOwnId()) {
                 peertreeWidget->takeTopLevelItem(index);
             } else {
                 index++;
@@ -305,9 +312,9 @@ void  PeersDialog::insertPeers()
         //add the gpg friends
         for(it = gpgFriends.begin(); it != gpgFriends.end(); it++) {
             std::cerr << "" << *it << std::endl;
-            if (*it == rsPeers->getGPGOwnId()) {
-                continue;
-            }
+//            if (*it == rsPeers->getGPGOwnId()) {
+//                continue;
+//            }
 
             /* make a widget per friend */
             QTreeWidgetItem *gpg_item;
@@ -320,7 +327,8 @@ void  PeersDialog::insertPeers()
             }
 
             RsPeerDetails detail;
-            if (!rsPeers->getPeerDetails(*it, detail) || !detail.accept_connection) {
+            if ((!rsPeers->getPeerDetails(*it, detail) || !detail.accept_connection)
+                && detail.gpg_id != rsPeers->getGPGOwnId()) {
                 //don't accept anymore connection, remove from the view
                 peertreeWidget->takeTopLevelItem(peertreeWidget->indexOfTopLevelItem(gpg_item));
                 continue;
@@ -352,6 +360,10 @@ void  PeersDialog::insertPeers()
             std::list<std::string> sslContacts;
             rsPeers->getSSLChildListOfGPGId(detail.gpg_id, sslContacts);
             for(std::list<std::string>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); sslIt++) {
+//            if (*it == rsPeers->getGPGOwnId()) {
+//                continue;
+//            }
+
 
                 QTreeWidgetItem *sslItem;
 

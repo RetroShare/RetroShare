@@ -1998,6 +1998,13 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in radd
 
 bool p3ConnectMgr::addFriend(std::string id, std::string gpg_id, uint32_t netMode, uint32_t visState, time_t lastContact)
 {
+    if (id == AuthSSL::getAuthSSL()->OwnId()) {
+#ifdef CONN_DEBUG
+                std::cerr << "p3ConnectMgr::addFriend() cannot add own id as a friend." << std::endl;
+#endif
+                /* (1) already exists */
+                return false;
+    }
         /* so four possibilities
 	 * (1) already exists as friend -> do nothing.
 	 * (2) is in others list -> move over.
@@ -2028,7 +2035,7 @@ bool p3ConnectMgr::addFriend(std::string id, std::string gpg_id, uint32_t netMod
 	}
 
         //Authentication is now tested at connection time, we don't store the ssl cert anymore
-        if (!AuthGPG::getAuthGPG()->isGPGAccepted(gpg_id))
+        if (!AuthGPG::getAuthGPG()->isGPGAccepted(gpg_id) &&  gpg_id != AuthGPG::getAuthGPG()->getGPGOwnId())
         {
 #ifdef CONN_DEBUG
                 std::cerr << "p3ConnectMgr::addFriend() gpg is not accepted" << std::endl;
