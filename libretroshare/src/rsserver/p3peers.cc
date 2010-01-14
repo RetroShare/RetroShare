@@ -641,10 +641,10 @@ bool 	p3Peers::removeFriend(std::string ssl_or_gpgid)
 	std::cerr << std::endl;
 #endif
         //will remove if it's a gpg id
-        AuthGPG::getAuthGPG()->setAcceptToConnectGPGCertificate(id, false);
+        AuthGPG::getAuthGPG()->setAcceptToConnectGPGCertificate(ssl_or_gpgid, false);
 
         //will remove if it's a ssl id
-        mConnMgr->removeFriend(id);
+        mConnMgr->removeFriend(ssl_or_gpgid);
         return true;
 
 }
