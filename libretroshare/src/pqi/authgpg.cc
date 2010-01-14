@@ -651,7 +651,9 @@ void print_pgpme_verify_summary(unsigned int summary)
 		std::cerr << " KEY_REVOKED ";
 	if (summary & GPGME_SIGSUM_KEY_EXPIRED)
 		std::cerr << " KEY_EXPIRED ";
-	if (summary & GPGME_SIGSUM_KEY_MISSING)
+        if (summary & GPGME_SIGSUM_SIG_EXPIRED)
+                std::cerr << " SIG_EXPIRED ";
+        if (summary & GPGME_SIGSUM_KEY_MISSING)
 		std::cerr << " KEY_MISSING ";
 	if (summary & GPGME_SIGSUM_CRL_MISSING)
 		std::cerr << " CRL_MISSING ";
@@ -791,7 +793,7 @@ bool AuthGPG::VerifySignature_locked(const void *data, int datalen, const void *
 		return false ;
 	}
 
-	gpgme_signature_t sg = res->signatures;
+        gpgme_signature_t sg = res->signatures;
 	bool valid = false;
 
 	while(sg != NULL)
