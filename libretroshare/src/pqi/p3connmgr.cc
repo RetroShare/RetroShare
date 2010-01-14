@@ -2005,23 +2005,24 @@ bool p3ConnectMgr::addFriend(std::string id, std::string gpg_id, uint32_t netMod
                 /* (1) already exists */
                 return false;
     }
-        /* so four possibilities
-	 * (1) already exists as friend -> do nothing.
-	 * (2) is in others list -> move over.
-	 * (3) is non-existant -> create new one.
-	 */
+    /* so four possibilities
+     * (1) already exists as friend -> do nothing.
+     * (2) is in others list -> move over.
+     * (3) is non-existant -> create new one.
+     */
 
 #ifdef CONN_DEBUG
-        std::cerr << "p3ConnectMgr::addFriend() " << id << "; gpg_id : " << gpg_id << std::endl;
+    std::cerr << "p3ConnectMgr::addFriend() " << id << "; gpg_id : " << gpg_id << std::endl;
 #endif
 
 #ifdef CONN_DEBUG
-        std::cerr << "p3ConnectMgr::addFriend() removing dummy friend" << std::endl;
+    std::cerr << "p3ConnectMgr::addFriend() removing dummy friend" << std::endl;
 #endif
-        //remove any dummy friend because we just add a real ssl friend
-        removeFriend("dummy"+ gpg_id);
+    //remove any dummy friend because we just add a real ssl friend
+    removeFriend("dummy"+ gpg_id);
 
-	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+    {
+        RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 
         std::map<std::string, peerConnectState>::iterator it;
@@ -2113,6 +2114,10 @@ bool p3ConnectMgr::addFriend(std::string id, std::string gpg_id, uint32_t netMod
 	netAssistFriend(id, true);
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+    }
+        //usefull because we might add a friend by receiving an ssl connection, so we want the monitors to act right now
+        tickMonitors();
 
 	return true;
 }
