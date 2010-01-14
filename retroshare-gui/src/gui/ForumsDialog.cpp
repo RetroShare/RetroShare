@@ -93,6 +93,8 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 
   connect( ui.threadTreeWidget, SIGNAL( itemSelectionChanged() ), this, SLOT( changedThread2() ) );
   connect( ui.viewBox, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( insertThreads() ) );
+  connect(ui.postText, SIGNAL( anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
+
   
   connect(ui.expandButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
 
@@ -1065,3 +1067,49 @@ void ForumsDialog::replytomessage()
 	}
 }
 
+void ForumsDialog::anchorClicked (const QUrl& link ) 
+{
+    #ifdef FORUM_DEBUG
+		    std::cerr << "ForumsDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
+    #endif
+    
+	if (link.scheme() == "file") {
+	    std::string fileName = link.queryItemValue(QString("fileName")).toStdString();
+	    std::string fileHash = link.queryItemValue(QString("fileHash")).toStdString();
+	    uint32_t fileSize = link.queryItemValue(QString("fileSize")).toInt();
+	    
+    #ifdef FORUM_DEBUG
+		    std::cerr << "ForumsDialog::anchorClicked FileRequest : fileName : " << fileName << ". fileHash : " << fileHash << ". fileSize : " << fileSize;
+		    std::cerr << ". source id : " << dialogId << std::endl;
+    #endif
+
+  if (fileName != "" && fileHash != "") {
+		
+		std::list<std::string> srcIds;
+		//srcIds.push_front(dialogId);
+		rsFiles->FileRequest(fileName, fileHash, fileSize, "", 0, srcIds);
+
+		QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
+		mb.setButtonText( QMessageBox::Ok, "OK" );
+		mb.exec();
+    } 
+	  else 
+	  {
+		QMessageBox mb(tr("File Request Error"), tr("The file link is malformed."),QMessageBox::Information,QMessageBox::Ok,0,0);
+		mb.setButtonText( QMessageBox::Ok, "OK" );
+		mb.exec();
+    }
+    } 
+    else if (link.scheme() == "http") 
+    {
+	    QDesktopServices::openUrl(link);
+    } 
+    else if (link.scheme() == "") 
+    {
+	    //it's probably a web adress, let's add http:// at the beginning of the link
+	    QString newAddress = link.toString();
+	    newAddress.prepend("http://");
+	    QDesktopServices::openUrl(QUrl(newAddress));
+    }
+
+}

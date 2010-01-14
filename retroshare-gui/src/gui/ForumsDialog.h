@@ -37,6 +37,8 @@ public:
   
   void loadForumEmoticons();
   
+  
+  void anchorClicked (const QUrl &);
 
 private slots:
 

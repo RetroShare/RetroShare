@@ -26,6 +26,8 @@
 #include <QWidget>
 #include <string>
 
+#include "gui/feeds/SubFileItem.h"
+
 #include "ui_CreateForumMsg.h"
 
 class CreateForumMsg : public QMainWindow
@@ -38,6 +40,8 @@ public:
   void  newMsg(); /* cleanup */
   
   void loadEmoticonsForums();
+  
+  void fileHashingFinished(SubFileItem* file);
 
 private slots:
 
@@ -47,7 +51,10 @@ private slots:
 
   void smileyWidgetForums();
 	void addSmileys();
-
+	void addFile();
+	void addAttachment(std::string);
+	
+  
 private:
 
   std::string mForumId;

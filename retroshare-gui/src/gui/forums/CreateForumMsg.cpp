@@ -24,9 +24,27 @@
 #include <gui/settings/rsharesettings.h>
 
 #include <QtGui>
+#include <QFileDialog>
+#include <QString>
 #include <QTextStream>
+#include <QHashIterator>
+#include <QDesktopServices>
+#include <QTextCodec>
+#include <QTextEdit>
+#include <QTextCursor>
+#include <QTextList>
+#include <QString>
+#include <QtDebug>
+#include <QIcon>
+#include <QPixmap>
 
 #include "rsiface/rsforums.h"
+#include "rsiface/rsfiles.h"
+
+#include "gui/feeds/SubFileItem.h"
+
+#include <sstream>
+
 
 /** Constructor */
 CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
@@ -42,6 +60,8 @@ CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
   connect( ui.postmessage_action, SIGNAL( triggered (bool) ), this, SLOT( createMsg( ) ) );
   connect( ui.close_action, SIGNAL( triggered (bool) ), this, SLOT( cancelMsg( ) ) );
   connect( ui.emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidgetForums()));
+  connect( ui.attachFileButton, SIGNAL(clicked() ), this , SLOT(addFile()));
+
 
   newMsg();
   
@@ -281,3 +301,78 @@ void CreateForumMsg::addSmileys()
 {
 	ui.forumMessage->setText(ui.forumMessage->toHtml() + qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
 }
+
+void CreateForumMsg::addFile()
+{
+	// select a file
+	QString qfile = QFileDialog::getOpenFileName(this, tr("Add Extra File"), "", "", 0,
+				QFileDialog::DontResolveSymlinks);
+	std::string filePath = qfile.toStdString();
+	if (filePath != "")
+	{
+	    CreateForumMsg::addAttachment(filePath);
+	}
+}
+
+void CreateForumMsg::addAttachment(std::string filePath) {
+	    /* add a SubFileItem to the attachment section */
+	    std::cerr << "CreateForumMsg::addFile() hashing file.";
+	    std::cerr << std::endl;
+
+	    /* add widget in for new destination */
+	    SubFileItem *file = new SubFileItem(filePath);
+	    //file->
+	    	    
+	    ui.vboxLayout->addWidget(file, 1, 0);
+
+	    //when the file is local or is finished hashing, call the fileHashingFinished method to send a chat message
+	    if (file->getState() == SFI_STATE_LOCAL) {
+		fileHashingFinished(file);
+	    } else {
+		QObject::connect(file,SIGNAL(fileFinished(SubFileItem *)), SLOT(fileHashingFinished(SubFileItem *))) ;
+	    }
+}
+
+void CreateForumMsg::fileHashingFinished(SubFileItem* file) {
+	std::cerr << "CreateForumMsg::fileHashingFinished() started.";
+	std::cerr << std::endl;
+
+	//check that the file is ok tos end
+	if (file->getState() == SFI_STATE_ERROR) {
+	#ifdef CHAT_DEBUG
+		    std::cerr << "CreateForumMsg::fileHashingFinished error file is not hashed.";
+	#endif
+	    return;
+	}
+
+	//convert fileSize from uint_64 to string for html link
+	char fileSizeChar [100];
+	sprintf(fileSizeChar, "%lld", file->FileSize());
+	std::string fileSize = *(&fileSizeChar);
+
+	std::string mesgString = "<a href='file:?fileHash=" + (file->FileHash()) + "&fileName=" + (file->FileName()) + "&fileSize=" + fileSize + "'>" 
+	+ "file:?fileHash=" + (file->FileHash()) + "&fileName=" + (file->FileName()) + "&fileSize=" + fileSize  + "</a>";
+#ifdef CHAT_DEBUG
+	    std::cerr << "CreateForumMsg::anchorClicked mesgString : " << mesgString << std::endl;
+#endif
+
+	const char * messageString = mesgString.c_str ();
+
+	//convert char massageString to w_char
+	wchar_t* message;
+	int requiredSize = mbstowcs(NULL, messageString, 0); // C4996
+	/* Add one to leave room for the NULL terminator */
+	message = (wchar_t *)malloc( (requiredSize + 1) * sizeof( wchar_t ));
+	if (! message) {
+	    std::cerr << ("Memory allocation failure.\n");
+	}
+	int size = mbstowcs( message, messageString, requiredSize + 1); // C4996
+	if (size == (size_t) (-1)) {
+	   printf("Couldn't convert string--invalid multibyte character.\n");
+	}
+  	
+	ui.forumMessage->setHtml(QString::fromStdWString(message));
+
+}
+
+
