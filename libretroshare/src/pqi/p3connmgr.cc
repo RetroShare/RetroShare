@@ -2143,34 +2143,45 @@ bool p3ConnectMgr::removeFriend(std::string id)
 
 	/* move to othersList */
 	bool success = false;
+        std::list<std::string> toRemove;
         std::map<std::string, peerConnectState>::iterator it;
-	if (mFriendList.end() != (it = mFriendList.find(id)))
-	{
-
+        //remove ssl and gpg_ids
+        for(it = mFriendList.begin(); it != mFriendList.end(); it++)
+        {
+            if (it->second.id == id || it->second.gpg_id == id) {
 #ifdef CONN_DEBUG
         std::cerr << "p3ConnectMgr::removeFriend() friend found in the list." << id << std::endl;
 #endif
                 peerConnectState peer = it->second;
 
-		mFriendList.erase(it);
+                toRemove.push_back(it->second.id);
 
 		peer.state &= (~RS_PEER_S_FRIEND);
 		peer.state &= (~RS_PEER_S_CONNECTED);
 		peer.state &= (~RS_PEER_S_ONLINE);
 		peer.actions = RS_PEER_MOVED;
 		peer.inConnAttempt = false;
-                //mOthersList[id] = peer;
+                mOthersList[id] = peer;
 		mStatusChanged = true;
 
-		success = true;
+                success = true;
+            }
 	}
+
+        std::list<std::string>::iterator toRemoveIt;
+        for(toRemoveIt = toRemove.begin(); toRemoveIt != toRemove.end(); toRemoveIt++) {
+            if (mFriendList.end() != (it = mFriendList.find(*toRemoveIt))) {
+                mFriendList.erase(it);
+            }
+        }
+
 
 #ifdef CONN_DEBUG
         std::cerr << "p3ConnectMgr::removeFriend() new mFriendList.size() : " << mFriendList.size() << std::endl;
 #endif
         IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
-	return success;
+        return !toRemove.empty();
 }
 
 
