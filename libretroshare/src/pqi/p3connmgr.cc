@@ -463,6 +463,7 @@ void    p3ConnectMgr::statusTick()
 #endif
 	std::list<std::string> retryIds;
 	std::list<std::string>::iterator it2;
+        std::list<std::string> dummyToRemove;
 
 	time_t now = time(NULL);
 	time_t oldavail = now - MAX_AVAIL_PERIOD;
@@ -473,6 +474,18 @@ void    p3ConnectMgr::statusTick()
         std::map<std::string, peerConnectState>::iterator it;
 	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
 	{
+            if (it->second.id == ("dummy" + it->second.gpg_id)) {
+                //if there is other friends for the same gpg key (that obviously are not "dummy"), we will remove this useless dummy friend
+                std::map<std::string, peerConnectState>::iterator it2;
+                for(it2 = mFriendList.begin(); it2 != mFriendList.end(); it2++) {
+                    if ((it->second.id != it2->second.id) && (it->second.gpg_id == it2->second.gpg_id)) {
+                        dummyToRemove.push_back(it->first);
+                        break;
+                    }
+                }
+                continue;
+            }
+
 		if (it->second.state & RS_PEER_S_CONNECTED)
 		{
 			continue;
@@ -495,6 +508,10 @@ void    p3ConnectMgr::statusTick()
 		}
 	}
       }
+
+        for (std::list<std::string>::iterator dummyIt = dummyToRemove.begin(); dummyIt != dummyToRemove.end(); dummyIt++) {
+            removeFriend(*dummyIt);
+        }
 
 #ifndef P3CONNMGR_NO_AUTO_CONNECTION 
 
@@ -2014,12 +2031,6 @@ bool p3ConnectMgr::addFriend(std::string id, std::string gpg_id, uint32_t netMod
 #ifdef CONN_DEBUG
         std::cerr << "p3ConnectMgr::addFriend() " << id << "; gpg_id : " << gpg_id << std::endl;
 #endif
-
-#ifdef CONN_DEBUG
-        std::cerr << "p3ConnectMgr::addFriend() removing dummy friend" << std::endl;
-#endif
-        //remove any dummy friend because we just add a real ssl friend
-        removeFriend("dummy"+ gpg_id);
 
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
