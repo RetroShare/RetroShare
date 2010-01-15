@@ -2032,6 +2032,7 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("forums.cfg", mForums);
 	mConfigMgr->addConfiguration("channels.cfg", mChannels);
 	mConfigMgr->addConfiguration("turtle.cfg", tr);
+        mConfigMgr->addConfiguration("p3disc.cfg", ad);
 
 	ftserver->addConfiguration(mConfigMgr);
 

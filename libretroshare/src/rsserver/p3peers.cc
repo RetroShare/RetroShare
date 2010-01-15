@@ -571,7 +571,7 @@ std::string p3Peers::getGPGId(std::string sslid_or_gpgid)
             return AuthGPG::getAuthGPG()->getGPGOwnId();
         }
         peerConnectState pcs;
-        if (mConnMgr->getFriendNetStatus(sslid_or_gpgid, pcs)) {
+        if (mConnMgr->getFriendNetStatus(sslid_or_gpgid, pcs) || mConnMgr->getOthersNetStatus(sslid_or_gpgid, pcs)) {
             return pcs.gpg_id;
         } else {
             if ( AuthGPG::getAuthGPG()->isGPGId(sslid_or_gpgid)) {
@@ -637,9 +637,14 @@ bool 	p3Peers::isDummyFriend(std::string ssl_id) {
 bool 	p3Peers::removeFriend(std::string ssl_or_gpgid)
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::removeFriend() " << id;
-	std::cerr << std::endl;
+        std::cerr << "p3Peers::removeFriend() " << id << std::endl;
 #endif
+        if (ssl_or_gpgid == AuthGPG::getAuthGPG()->getGPGOwnId()) {
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::removeFriend() fail : we're not going to remove our own GPG id."  << std::endl;
+#endif
+            return false;
+        }
         //will remove if it's a gpg id
         AuthGPG::getAuthGPG()->setAcceptToConnectGPGCertificate(ssl_or_gpgid, false);
 

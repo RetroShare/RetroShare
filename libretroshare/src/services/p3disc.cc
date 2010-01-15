@@ -81,15 +81,13 @@ const uint32_t P3DISC_FLAGS_ASK_VERSION		= 0x0080;
  *****************************************************************************************/
 
 p3disc::p3disc(p3ConnectMgr *cm, pqipersongrp *pqih)
-        :p3Service(RS_SERVICE_TYPE_DISC), mConnMgr(cm), mPqiPersonGrp(pqih)
+        :p3Service(RS_SERVICE_TYPE_DISC), mConnMgr(cm), mPqiPersonGrp(pqih), p3Config(CONFIG_TYPE_P3DISC)
 {
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
 
 	addSerialType(new RsDiscSerialiser());
 
-	mRemoteDisc = true;
-	mLocalDisc  = false;
-        lastSentHeartbeatTime = 0;
+        lastSentHeartbeatTime = time(NULL);
 
 	//add own version to versions map
         versions[AuthSSL::getAuthSSL()->OwnId()] = RsUtil::retroshareVersion();
@@ -136,14 +134,9 @@ int p3disc::handleIncoming()
 
 	bool discOn;
 
-	{
-		RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
-		discOn = mRemoteDisc;
-	}
-
 	// if off discard item.
-	if (!mRemoteDisc)
-	{
+        peerConnectState detail;
+        if (!mConnMgr->getOwnNetStatus(detail) || (detail.visState & RS_VIS_STATE_NODISC)) {
 		while(NULL != (item = recvItem()))
 		{
 #ifdef P3DISC_DEBUG
@@ -219,19 +212,24 @@ void p3disc::statusChange(const std::list<pqipeer> &plist)
 	std::cerr << "p3disc::statusChange()";
 	std::cerr << std::endl;
 #endif
+        // if off discard item.
+        peerConnectState detail;
+        if (!mConnMgr->getOwnNetStatus(detail) || (detail.visState & RS_VIS_STATE_NODISC)) {
+            return;
+        }
 
 	std::list<pqipeer>::const_iterator pit;
 	/* if any have switched to 'connected' then we notify */
         for(pit =  plist.begin(); pit != plist.end(); pit++) {
                 if ((pit->state & RS_PEER_S_FRIEND) && (pit->actions & RS_PEER_CONNECTED)) {
-                        /* send their own details to them. Usefull for ext ip address detection */
-//                        sendPeerDetails(pit->id, pit->id);
-//                        /* send our details to them */
                         sendOwnVersion(pit->id);
                         sendAllInfoToJustConnectedPeer(pit->id);
                         sendJustConnectedPeerInfoToAllPeer(pit->id);
 		}
-	}
+                if (!(pit->state & RS_PEER_S_FRIEND) && (pit->actions & RS_PEER_MOVED)) {
+                        this->removeFriend(pit->id);
+                }
+        }
 }
 
 void p3disc::sendAllInfoToJustConnectedPeer(std::string id)
@@ -418,6 +416,11 @@ void p3disc::sendHeartbeat(std::string to)
 
 void p3disc::recvPeerDetails(RsDiscReply *item)
 {
+        // if off discard item.
+        peerConnectState detail;
+        if (!mConnMgr->getOwnNetStatus(detail) || (detail.visState & RS_VIS_STATE_NODISC)) {
+            return;
+        }
 
 #ifdef P3DISC_DEBUG
         std::cerr << "p3disc::recvPeerFriendMsg() From: " << item->PeerId() << " About " << item->aboutId << std::endl;
@@ -445,16 +448,24 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
             std::cerr << std::endl;
             #endif
             if (pitem->pid != rsPeers->getOwnId()) {
-                mConnMgr->addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, pitem->visState, 0);
+                //check that the friend is not a deleted one
+                if (deletedSSLFriendsIds.find(pitem->pid) == deletedSSLFriendsIds.end()) {
+                    //||  {
+                    mConnMgr->addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, RS_VIS_STATE_NODISC, 0); //add with no disc bay default. If friend already exist, it will do nothing
+                } else if ((pitem->lastContact - deletedSSLFriendsIds[pitem->pid]) > 3600*48) { // the friend was seen 48hours before we deleted it, we will readd it
+                    mConnMgr->addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, RS_VIS_STATE_NODISC, 0); //add with no disc bay default. If friend already exist, it will do nothing
+                }
                 RsPeerDetails storedDetails;
-                rsPeers->getPeerDetails(pitem->pid, storedDetails);
-                if (    (!(storedDetails.state & RS_PEER_CONNECTED) && storedDetails.lastConnect < (pitem->lastContact - 10000))
-                        || item->PeerId() == pitem->pid) { //update if it's fresh info or if it's from the peer itself
+                if (rsPeers->getPeerDetails(pitem->pid, storedDetails) //update only if we got a detail
+                    && ((!(storedDetails.state & RS_PEER_CONNECTED) && storedDetails.lastConnect < (pitem->lastContact - 10000))
+                        || item->PeerId() == pitem->pid)) { //update if it's fresh info or if it's from the peer itself
                     //their info is fresher than ours (there is a 10000 seconds margin), update ours
                     mConnMgr->setLocalAddress(pitem->pid, pitem->currentlocaladdr);
                     mConnMgr->setExtAddress(pitem->pid, pitem->currentremoteaddr);
-                    mConnMgr->setVisState(pitem->pid, pitem->visState);
                     mConnMgr->setNetworkMode(pitem->pid, pitem->netMode);
+                    if (item->PeerId() == pitem->pid) {
+                        mConnMgr->setVisState(pitem->pid, pitem->visState); //update vistate only if it's from the peer itself
+                    }
                     if (storedDetails.location == "") {
                         mConnMgr->setLocation(pitem->pid, pitem->location);
                     }
@@ -484,28 +495,6 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
         /* cleanup (handled by caller) */
 }
 
-
-//void p3disc::recvPeerIssuerMsg(RsDiscIssuer *item)
-//{
-//
-//#ifdef P3DISC_DEBUG
-//	std::cerr << "p3disc::recvPeerIssuerMsg() From: " << item->PeerId();
-//	std::cerr << std::endl;
-//	std::cerr << "p3disc::recvPeerIssuerMsg() Cert: " << item->issuerCert;
-//	std::cerr << std::endl;
-//#endif
-//
-//	/* tells us their exact address (mConnectMgr can ignore if it looks wrong) */
-//
-//	/* load certificate */
-//        std::string gpgId;
-//        bool loaded = AuthGPG::getAuthGPG()->LoadCertificateFromString(item->issuerCert, gpgId);
-//
-//	/* cleanup (handled by caller) */
-//
-//	return;
-//}
-
 void p3disc::recvPeerVersionMsg(RsDiscVersion *item)
 {
 #ifdef P3DISC_DEBUG
@@ -529,6 +518,24 @@ void p3disc::recvHeartbeatMsg(RsDiscHeartbeat *item)
         mPqiPersonGrp->getPeer(item->PeerId())->receiveHeartbeat();
 
         return;
+}
+
+void p3disc::removeFriend(std::string ssl_id) {
+#ifdef P3DISC_DEBUG
+        std::cerr << "p3disc::removeFriend() called for : " << ssl_id << std::endl;
+#endif
+    //if we deleted the gpg_id, don't store the friend deletion as if we add back the gpg_id, we won't have the ssl friends back
+        std::string gpg_id = rsPeers->getGPGId(ssl_id);
+#ifdef P3DISC_DEBUG
+        std::cerr << "p3disc::removeFriend() gpg_id : " << gpg_id << std::endl;
+#endif
+    if (gpg_id == AuthGPG::getAuthGPG()->getGPGOwnId() || rsPeers->isGPGAccepted(rsPeers->getGPGId(ssl_id))) {
+ #ifdef P3DISC_DEBUG
+        std::cerr << "p3disc::removeFriend() storing the friend deletion." << ssl_id << std::endl;
+#endif
+        deletedSSLFriendsIds[ssl_id] = time(NULL);//just keep track of the deleted time
+        IndicateConfigChanged();
+    }
 }
 
 /*************************************************************************************/
@@ -713,3 +720,65 @@ int convertTRangeToTDelta(int trange)
 	return (int) (pow(10.0, trange) - 1.5); // (int) xxx98.5 -> xxx98
 }
 
+// -----------------------------------------------------------------------------------//
+// --------------------------------  Config functions  ------------------------------ //
+// -----------------------------------------------------------------------------------//
+//
+RsSerialiser *p3disc::setupSerialiser()
+{
+        RsSerialiser *rss = new RsSerialiser ;
+        rss->addSerialType(new RsGeneralConfigSerialiser());
+        return rss ;
+}
+
+std::list<RsItem*> p3disc::saveList(bool& cleanup)
+{
+        std::cerr << "p3disc::saveList() called" << std::endl ;
+        cleanup = true ;
+        std::list<RsItem*> lst ;
+
+        // Now save config for network digging strategies
+        RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
+        std::map<std::string, time_t>::iterator mapIt;
+        for (mapIt = deletedSSLFriendsIds.begin(); mapIt != deletedSSLFriendsIds.end(); mapIt++) {
+            RsTlvKeyValue kv;
+            kv.key = mapIt->first;
+            std::ostringstream time_string;
+            time_string << mapIt->second;
+            kv.value = time_string.str();
+            vitem->tlvkvs.pairs.push_back(kv) ;
+            std::cerr << "p3disc::saveList() saving : " << mapIt->first << " ; " << mapIt->second << std::endl ;
+        }
+        lst.push_back(vitem);
+
+        return lst ;
+}
+
+bool p3disc::loadList(std::list<RsItem*> load)
+{
+        std::cerr << "p3disc::loadList() Item Count: " << load.size() << std::endl;
+
+        RsStackMutex stack(mDiscMtx); /****** STACK LOCK MUTEX *******/
+
+        /* load the list of accepted gpg keys */
+        std::list<RsItem *>::iterator it;
+        for(it = load.begin(); it != load.end(); it++) {
+                RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet *>(*it);
+
+                if(vitem) {
+                        std::cerr << "p3disc::loadList() General Variable Config Item:" << std::endl;
+                        vitem->print(std::cerr, 10);
+                        std::cerr << std::endl;
+
+                        std::list<RsTlvKeyValue>::iterator kit;
+                        for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) {
+                            std::istringstream instream(kit->value);
+                            time_t deleted_time_t;
+                            instream >> deleted_time_t;
+                            deletedSSLFriendsIds[kit->key] = deleted_time_t;
+                        }
+                }
+                delete (*it);
+        }
+        return true;
+}

@@ -74,7 +74,7 @@ class autoneighbour: public autoserver
 class p3ConnectMgr;
 
 
-class p3disc: public p3Service, public pqiMonitor
+class p3disc: public p3Service, public pqiMonitor, public p3Config
 {
 	public:
 
@@ -91,7 +91,16 @@ int	tick();
 bool 	potentialproxies(std::string id, std::list<std::string> &proxyIds);
 void 	getversions(std::map<std::string, std::string> &versions);
 
-	private:
+        protected:
+/*****************************************************************/
+/***********************  p3config  ******************************/
+/* Key Functions to be overloaded for Full Configuration */
+virtual RsSerialiser *setupSerialiser();
+virtual std::list<RsItem *> saveList(bool &cleanup);
+virtual bool    loadList(std::list<RsItem *> load);
+/*****************************************************************/
+
+    private:
 
 
 void sendAllInfoToJustConnectedPeer(std::string id);
@@ -112,7 +121,9 @@ void recvPeerDetails(RsDiscReply *item);
 void recvPeerVersionMsg(RsDiscVersion *item);
 void recvHeartbeatMsg(RsDiscHeartbeat *item);
 
-	/* handle network shape */
+void removeFriend(std::string ssl_id); //keep tracks of removed friend so we're not gonna add them again immediately
+
+/* handle network shape */
 int     addDiscoveryData(std::string fromId, std::string aboutId,
 		struct sockaddr_in laddr, struct sockaddr_in raddr,
 		uint32_t flags, time_t ts);
@@ -129,10 +140,9 @@ int 	idServers();
 	/* data */
 	RsMutex mDiscMtx;
 
-	bool mRemoteDisc;
-	bool mLocalDisc;
+        std::map<std::string, time_t> deletedSSLFriendsIds;
 
-	std::map<std::string, autoneighbour> neighbours;
+        std::map<std::string, autoneighbour> neighbours;
 	std::map<std::string, std::string> versions;
 };
 

@@ -65,6 +65,8 @@ const uint32_t CONFIG_TYPE_MSGS 	       = 0x0004;
 const uint32_t CONFIG_TYPE_CACHE_OLDID  = 0x0005;
 const uint32_t CONFIG_TYPE_AUTHGPG	 	 = 0x006;
 
+const uint32_t CONFIG_TYPE_P3DISC	 	 = 0x00B;
+
 
 /* new FileTransfer */
 const uint32_t CONFIG_TYPE_FT_SHARED 	 = 0x0007;
