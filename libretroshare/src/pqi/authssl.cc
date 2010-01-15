@@ -2217,10 +2217,10 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
             //set location
             mConnMgr->setLocation(certId, getX509LocString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->subject));
 
-            //Cgheck if peer isn't already connected
+            //Check if peer isn't already connected
             peerConnectState detail;
             if (mConnMgr->getFriendNetStatus(certId, detail)) {
-                if (detail.state & RS_PEER_CONNECTED && detail.connecttype & RS_NET_CONN_TUNNEL) {
+                if (detail.state & RS_PEER_CONNECTED && !(detail.connecttype & RS_NET_CONN_TUNNEL)) {
                     fprintf(stderr, "AuthSSL::VerifyX509Callback this peer is already connected, refuse a new connection.");
                 }
             }
