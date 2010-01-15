@@ -13,6 +13,26 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QToolButton, QPushButton, QComboBox { 
+border-image: url(:/images/btn_26.png) 4;
+border-width: 4;
+padding: 0px 6px;
+font-size: 12px;
+}
+
+QToolButton:hover, QPushButton:hover, QComboBox:hover { 
+border-image: url(:/images/btn_26_hover.png) 4;
+}
+
+QToolButton:disabled, QPushButton:disabled, QComboBox::disabled {
+color:gray;
+}
+
+QToolButton:pressed, QPushButton:pressed{
+border-image: url(:/images/btn_26_pressed.png) 4;
+}</string>
+  </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <property name="horizontalSpacing">
     <number>0</number>
@@ -123,6 +143,9 @@ p, li { white-space: pre-wrap; }
           </property>
           <property name="toolTip">
            <string>Expand</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
           </property>
           <property name="text">
            <string/>
@@ -243,6 +266,8 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>

@@ -324,6 +324,26 @@ p, li { white-space: pre-wrap; }
             <property name="toolTip">
              <string>Post To Channel</string>
             </property>
+            <property name="styleSheet">
+             <string notr="true">QToolButton, QPushButton, QComboBox { 
+border-image: url(:/images/btn_26.png) 4;
+border-width: 4;
+padding: 0px 6px;
+font-size: 12px;
+}
+
+QToolButton:hover, QPushButton:hover, QComboBox:hover { 
+border-image: url(:/images/btn_26_hover.png) 4;
+}
+
+QToolButton:disabled, QPushButton:disabled, QComboBox::disabled {
+color:gray;
+}
+
+QToolButton:pressed, QPushButton:pressed{
+border-image: url(:/images/btn_26_pressed.png) 4;
+}</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -350,6 +370,26 @@ p, li { white-space: pre-wrap; }
             <property name="toolTip">
              <string>Unsubcribe To Channel</string>
             </property>
+            <property name="styleSheet">
+             <string notr="true">QToolButton, QPushButton, QComboBox { 
+border-image: url(:/images/btn_26.png) 4;
+border-width: 4;
+padding: 0px 6px;
+font-size: 12px;
+}
+
+QToolButton:hover, QPushButton:hover, QComboBox:hover { 
+border-image: url(:/images/btn_26_hover.png) 4;
+}
+
+QToolButton:disabled, QPushButton:disabled, QComboBox::disabled {
+color:gray;
+}
+
+QToolButton:pressed, QPushButton:pressed{
+border-image: url(:/images/btn_26_pressed.png) 4;
+}</string>
+            </property>
             <property name="text">
              <string>Unsubscribe</string>
             </property>
@@ -371,6 +411,26 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="toolTip">
              <string>Subscribe To Channel</string>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QToolButton, QPushButton, QComboBox { 
+border-image: url(:/images/btn_26.png) 4;
+border-width: 4;
+padding: 0px 6px;
+font-size: 12px;
+}
+
+QToolButton:hover, QPushButton:hover, QComboBox:hover { 
+border-image: url(:/images/btn_26_hover.png) 4;
+}
+
+QToolButton:disabled, QPushButton:disabled, QComboBox::disabled {
+color:gray;
+}
+
+QToolButton:pressed, QPushButton:pressed{
+border-image: url(:/images/btn_26_pressed.png) 4;
+}</string>
             </property>
             <property name="text">
              <string>Subscribe</string>
