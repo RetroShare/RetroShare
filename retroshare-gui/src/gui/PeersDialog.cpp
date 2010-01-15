@@ -404,39 +404,50 @@ void  PeersDialog::insertPeers()
                 /* change color and icon */
                 int i;
                 if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
-                    sslItem -> setIcon(0,(QIcon(IMAGE_ONLINE)));
+                    gpg_item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
+                    gpg_item -> setText(1, tr("Online"));
+                    sslItem -> setIcon(0,(QIcon(":/images/connect_established.png")));
                     QFont font;
                     font.setBold(true);
                     for(i = 0; i < 3; i++) {
-                        sslItem -> setTextColor(i,(Qt::darkBlue));
+                        gpg_item -> setTextColor(i,(Qt::darkBlue));
+                        gpg_item -> setFont(i,font);
                         sslItem -> setFont(i,font);
                     }
                } else if (sslDetail.state & RS_PEER_STATE_UNREACHABLE) {
-                    sslItem -> setIcon(0,(QIcon(IMAGE_UNREACHABLE)));
+                    gpg_item -> setIcon(0,(QIcon(IMAGE_UNREACHABLE)));
+                    gpg_item -> setText(1, tr("Unreachable"));
                     QFont font;
                     font.setBold(false);
                     for(i = 0; i < 3; i++) {
-                        sslItem -> setTextColor(i,(Qt::darkRed));
+                        gpg_item -> setTextColor(i,(Qt::darkRed));
+                        gpg_item -> setFont(i,font);
                         sslItem -> setFont(i,font);
                     }
                 } else if (sslDetail.state & RS_PEER_STATE_ONLINE) {
                     /* bright green */
-                    sslItem -> setIcon(0,(QIcon(IMAGE_AVAIBLE)));
+                    gpg_item -> setIcon(0,(QIcon(IMAGE_AVAIBLE)));
+                    gpg_item -> setText(1, tr("Avaible"));
                     QFont font;
                     font.setBold(true);
                     for(i = 0; i < 3; i++) {
-                        sslItem -> setTextColor(i,(Qt::darkCyan));
+                        gpg_item -> setTextColor(i,(Qt::darkCyan));
+                        gpg_item -> setFont(i,font);
                         sslItem -> setFont(i,font);
                     }
                 } else {
                     if (time(NULL) - sslDetail.lastConnect < 3600) {
-                        sslItem -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
+                        gpg_item -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
+                        gpg_item -> setText(1, tr("Offline"));                        
                     } else {
-                        sslItem -> setIcon(0,(QIcon(IMAGE_OFFLINE2)));
+                        gpg_item -> setIcon(0,(QIcon(IMAGE_OFFLINE2)));
+                        gpg_item -> setText(1, tr("Offline"));                        
                     }
                     QFont font;
                     font.setBold(false);
                     for(i = 0; i < 3; i++) {
+                        gpg_item -> setTextColor(i,(Qt::black));
+                        gpg_item -> setFont(i,font);
                         sslItem -> setTextColor(i,(Qt::black));
                         sslItem -> setFont(i,font);
                     }
