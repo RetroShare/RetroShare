@@ -247,7 +247,18 @@ void MessagesDialog::replytomessage()
 	/* fill it in */
 	//std::cerr << "MessagesDialog::newmessage()" << std::endl;
 	nMsgDialog->newMsg();
+	
+	QString text = QString::fromStdWString(msgInfo.title);
+			
+	if (text.startsWith("Re:", Qt::CaseInsensitive))
+	{
+	nMsgDialog->insertTitleText( QString::fromStdWString(msgInfo.title).toStdString()) ;
+	}
+	else
+	{
 	nMsgDialog->insertTitleText( (QString("Re: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
+	}
+	
 	nMsgDialog->setWindowTitle(tr("Re: ") + QString::fromStdWString(msgInfo.title) ) ;
 
 
@@ -282,7 +293,17 @@ void MessagesDialog::replyallmessage()
 	/* fill it in */
 	//std::cerr << "MessagesDialog::newmessage()" << std::endl;
 	nMsgDialog->newMsg();
+	
+	QString text = QString::fromStdWString(msgInfo.title);
+			
+	if (text.startsWith("Re:", Qt::CaseInsensitive))
+	{
+	nMsgDialog->insertTitleText( QString::fromStdWString(msgInfo.title).toStdString()) ;
+	}
+	else
+	{
 	nMsgDialog->insertTitleText( (QString("Re: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
+	}
 	nMsgDialog->setWindowTitle(tr("Re: ") + QString::fromStdWString(msgInfo.title) ) ;
 
 
@@ -327,7 +348,18 @@ void MessagesDialog::forwardmessage()
 	/* fill it in */
 	//std::cerr << "MessagesDialog::newmessage()" << std::endl;
 	nMsgDialog->newMsg();
+	
+	QString text = QString::fromStdWString(msgInfo.title);
+			
+	if (text.startsWith("Fwd:", Qt::CaseInsensitive))
+	{
+	nMsgDialog->insertTitleText( QString::fromStdWString(msgInfo.title).toStdString()) ;
+	}
+	else
+	{
 	nMsgDialog->insertTitleText( (QString("Fwd: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
+	}
+	
 	nMsgDialog->setWindowTitle(tr("Fwd: ") + QString::fromStdWString(msgInfo.title) ) ;
 
 
@@ -585,6 +617,46 @@ void MessagesDialog::insertMessages()
 
 		// Subject
 		item -> setText(2, QString::fromStdWString(it->title));
+		
+		// Change Message icon when Subject is Re: or Fwd:
+		QString text = QString::fromStdWString(it->title);
+			
+    if (text.startsWith("Re:", Qt::CaseInsensitive))
+    {
+		item -> setIcon(2, (QIcon(":/images/message-mail-replied-read.png")));
+    }
+    else if (text.startsWith("Fwd:", Qt::CaseInsensitive))
+    {
+		item -> setIcon(2, (QIcon(":/images/message-mail-forwarded-read.png")));
+    }
+    else
+		{
+    item -> setIcon(2, (QIcon(":/images/message-mail-read.png")));
+		}
+		
+		if (it -> msgflags & RS_MSG_NEW)
+		{
+			for(int i = 0; i < 10; i++)
+			{
+				QFont qf = item->font(i);
+				qf.setBold(true);
+				item->setFont(i, qf);
+			}
+			QString text = QString::fromStdWString(it->title);
+			
+      if (text.startsWith("Re:", Qt::CaseInsensitive))
+      {
+      item -> setIcon(2, (QIcon(":/images/message-mail-replied.png")));
+      }
+      else if (text.startsWith("Fwd:", Qt::CaseInsensitive))
+      {
+      item -> setIcon(2, (QIcon(":/images/message-mail-forwarded.png")));
+      }
+      else
+      {
+      item -> setIcon(2, (QIcon(":/images/message-mail.png")));
+      }
+		}
 
 		// No of Files.
 		{
@@ -599,22 +671,6 @@ void MessagesDialog::insertMessages()
 		if ((oldSelected) && (mid == it->msgId))
 		{
 			newSelected = item;
-		}
-
-		if (it -> msgflags & RS_MSG_NEW)
-		{
-			for(int i = 0; i < 10; i++)
-			{
-				QFont qf = item->font(i);
-				qf.setBold(true);
-				item->setFont(i, qf);
-				item -> setIcon(2, (QIcon(":/images/message-mail.png")));
-
-			}
-		}
-		else
-		{
-        item -> setIcon(2, (QIcon(":/images/message-mail-read.png")));
 		}
 
 		/* add to the list */
