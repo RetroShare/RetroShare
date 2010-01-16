@@ -2167,7 +2167,7 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                         (err == X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE))
                 {
                         std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
-                        if (!AuthGPG::getAuthGPG()->isGPGAccepted(pgpid))
+                        if (!AuthGPG::getAuthGPG()->isGPGAccepted(pgpid) && pgpid != AuthGPG::getAuthGPG()->getGPGOwnId())
                         {
                                 fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not signed by ourself.\n");
                                 return false;
