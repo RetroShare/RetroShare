@@ -1197,7 +1197,7 @@ void TransfersDialog::pasteLink()
         //downloadFileRequested(linkData.getName (), linkData.getSize ().toInt (),
         //    linkData.getHash (), "", -1, -1, -1, -1);
         rsFiles->FileRequest (linkData.getName ().toStdString (), linkData.getHash ().toStdString (),
-            linkData.getSize().toULongLong(), "", 0, srcIds);
+            linkData.getSize().toULongLong(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds);
     }
 }
 

@@ -810,7 +810,7 @@ void PopupChatDialog::anchorClicked (const QUrl& link ) {
 		fileHash != "") {
 		std::list<std::string> srcIds;
 		srcIds.push_front(dialogId);
-		rsFiles->FileRequest(fileName, fileHash, fileSize, "", 0, srcIds);
+		rsFiles->FileRequest(fileName, fileHash, fileSize, "", RS_FILE_HINTS_ASSUME_AVAILABILITY, srcIds);
 
 		QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
 		mb.setButtonText( QMessageBox::Ok, "OK" );

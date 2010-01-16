@@ -38,10 +38,9 @@ public:
   void loadForumEmoticons();
   
   
-  void anchorClicked (const QUrl &);
-
 private slots:
 
+  void anchorClicked (const QUrl &);
   void insertThreads();
   /** Create the context popup menu and it's submenus */
   void forumListCustomPopupMenu( QPoint point ); 
