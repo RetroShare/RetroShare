@@ -398,8 +398,17 @@ void  PeersDialog::insertPeers()
                     sslItem -> setToolTip( 0, tr("location : ") + QString::fromStdString(sslDetail.location));
                 }
 
-                /* not displayed, used to find back the item */
+                /* not displayed, used to find back the item */                
                 sslItem -> setText(1, QString::fromStdString(sslDetail.autoconnect));
+                
+                if (sslDetail.autoconnect !="Offline")
+                {
+                sslItem -> setIcon(0, (QIcon(":/images/connect_creating.png")));
+                }
+                else
+                {
+                sslItem -> setIcon(0, (QIcon(":/images/connect_no.png")));
+                }
 
                 /* change color and icon */
                 int i;

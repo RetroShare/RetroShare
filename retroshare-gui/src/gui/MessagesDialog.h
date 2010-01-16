@@ -60,6 +60,8 @@ private slots:
   
   void removemessage();
   
+  void anchorClicked (const QUrl &);
+  
   void getcurrentrecommended();
 //  void getallrecommended();
 

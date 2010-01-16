@@ -215,6 +215,7 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
     _smheader->resizeSection ( 3, 220 );
     _smheader->resizeSection ( 4, 10 );
 
+
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
@@ -531,6 +532,11 @@ void  ChanMsgDialog::insertForwardPastedText(std::string msg)
 void  ChanMsgDialog::insertMsgText(std::string msg)
 {
 	ui.msgText->setText(QString::fromStdString(msg));
+}
+
+void  ChanMsgDialog::insertHtmlText(std::string msg)
+{
+	ui.msgText->setHtml(QString("<a href='") + QString::fromStdString(std::string(msg + "'> ") ) + QString::fromStdString(std::string(msg)) + "</a>") ;
 }
 
 

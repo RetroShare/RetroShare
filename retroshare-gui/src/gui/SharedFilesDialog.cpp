@@ -341,6 +341,26 @@ void SharedFilesDialog::sendLinkTo( /*std::string rsid*/ )
     nMsgDialog->show();
 }
 
+void SharedFilesDialog::sendHtmlLinkTo(  )
+{
+    copyLinkLocal ();
+
+    /* create a message */
+    ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+
+
+    /* fill it in
+    * files are receommended already
+    * just need to set peers
+    */
+    std::cerr << "SharedFilesDialog::sendLinkTo()" << std::endl;
+    nMsgDialog->newMsg();
+    nMsgDialog->insertTitleText("RetroShare Link");
+    nMsgDialog->insertHtmlText(QApplication::clipboard()->text().toStdString());
+
+    nMsgDialog->show();
+}
+
 void SharedFilesDialog::sendLinkToCloud()
 {
 	copyLinkLocal ();
@@ -615,7 +635,10 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 	  connect( copylinklocalAct , SIGNAL( triggered() ), this, SLOT( copyLinkLocal() ) );
 
 	  sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), this );
-	  connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( /*std::string rsid*/ ) ) );
+	  connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
+	  
+	  sendhtmllinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link (html)" ), this );
+	  connect( sendhtmllinkAct , SIGNAL( triggered() ), this, SLOT( sendHtmlLinkTo( ) ) );
 
 	  sendlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link to Cloud" ), this );
 	  connect( sendlinkCloudAct , SIGNAL( triggered() ), this, SLOT( sendLinkToCloud(  ) ) );
@@ -636,6 +659,7 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 	  contextMnu2.addSeparator();
 	  contextMnu2.addAction( copylinklocalAct);
 	  contextMnu2.addAction( sendlinkAct);
+	  contextMnu2.addAction( sendhtmllinkAct);
 	  contextMnu2.addSeparator();
 	  contextMnu2.addAction( sendlinkCloudAct);
 	  contextMnu2.addAction( addlinkCloudAct);

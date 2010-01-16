@@ -75,12 +75,13 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   connect(ui.replyallmessageButton, SIGNAL(clicked()), this, SLOT(replyallmessage()));
   connect(ui.forwardmessageButton, SIGNAL(clicked()), this, SLOT(forwardmessage()));
 
-  //connect(ui.printbutton, SIGNAL(clicked()), this, SLOT(print()));
   connect(ui.actionPrint, SIGNAL(triggered()), this, SLOT(print()));
   connect(ui.actionPrintPreview, SIGNAL(triggered()), this, SLOT(printpreview()));
 
   connect(ui.expandFilesButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
   connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getcurrentrecommended()));
+  
+  connect( ui.msgText, SIGNAL( anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
   
 
   mCurrCertId = "";
@@ -903,3 +904,57 @@ void MessagesDialog::printpreview()
     preview->show();
 }
 
+void MessagesDialog::anchorClicked (const QUrl& link ) 
+{
+    #ifdef FORUM_DEBUG
+		    std::cerr << "MessagesDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
+    #endif
+    
+	if (link.scheme() == "retroshare")
+	{
+		QStringList L = link.toString().split("|") ;
+
+		std::string fileName = L.at(1).toStdString() ;
+		uint64_t fileSize = L.at(2).toULongLong();
+		std::string fileHash = L.at(3).toStdString() ;
+
+#ifdef FORUM_DEBUG
+		std::cerr << "MessagesDialog::anchorClicked FileRequest : fileName : " << fileName << ". fileHash : " << fileHash << ". fileSize : " << fileSize << std::endl;
+#endif
+
+		if (fileName != "" && fileHash != "")
+		{
+			std::list<std::string> srcIds;
+
+			if(rsFiles->FileRequest(fileName, fileHash, fileSize, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
+			{
+				QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
+				mb.setButtonText( QMessageBox::Ok, "OK" );
+				mb.exec();
+			}
+			else
+			{
+				QMessageBox mb(tr("File Request canceled"), tr("The file has not been added to your download list, because you already have it."),QMessageBox::Information,QMessageBox::Ok,0,0);
+				mb.setButtonText( QMessageBox::Ok, "OK" );
+				mb.exec();
+			}
+		} 
+		else 
+		{
+			QMessageBox mb(tr("File Request Error"), tr("The file link is malformed."),QMessageBox::Information,QMessageBox::Ok,0,0);
+			mb.setButtonText( QMessageBox::Ok, "OK" );
+			mb.exec();
+		}
+	} 
+	else if (link.scheme() == "http") 
+	{
+		QDesktopServices::openUrl(link);
+	} 
+	else if (link.scheme() == "") 
+	{
+		//it's probably a web adress, let's add http:// at the beginning of the link
+		QString newAddress = link.toString();
+		newAddress.prepend("http://");
+		QDesktopServices::openUrl(QUrl(newAddress));
+	}
+}
