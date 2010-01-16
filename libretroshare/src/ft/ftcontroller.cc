@@ -611,6 +611,20 @@ bool	ftController::handleAPendingRequest()
 	return true ;
 }
 
+bool ftController::alreadyHaveFile(const std::string& hash)
+{
+	FileInfo info ;
+
+	// check for downloads
+	if(FileDetails(hash, info))
+		return true ;
+
+	// check for file lists
+	if (mSearch->search(hash, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA, info))
+		return true ;
+	
+	return false ;
+}
 
 bool 	ftController::FileRequest(std::string fname, std::string hash,
 			uint64_t size, std::string dest, uint32_t flags,
@@ -634,6 +648,10 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	}
 
 	/* check if we have the file */
+
+	if(alreadyHaveFile(hash))
+		return true ;
+
 	FileInfo info;
 	std::list<std::string>::iterator it;
 	std::list<TransferInfo>::iterator pit;
@@ -666,58 +684,59 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	 * This is important as some guis request duplicate files regularly.
 	 */
 
-  { RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	{ 
+		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	std::map<std::string, ftFileControl>::iterator dit;
-	dit = mDownloads.find(hash);
-	if (dit != mDownloads.end())
-	{
-		/* we already have it! */
-
-#ifdef CONTROL_DEBUG
-		std::cerr << "ftController::FileRequest() Already Downloading File";
-		std::cerr << std::endl;
-		std::cerr << "\tNo need to download";
-		std::cerr << std::endl;
-#endif
-		/* but we should add this peer - if they don't exist!
-		 * (needed for channels).
-		 */
-
-		for(it = srcIds.begin(); it != srcIds.end(); it++)
+		std::map<std::string, ftFileControl>::iterator dit;
+		dit = mDownloads.find(hash);
+		if (dit != mDownloads.end())
 		{
-			uint32_t i, j;
-			if ((dit->second).mTransfer->getPeerState(*it, i, j))
-			{
+			/* we already have it! */
+
 #ifdef CONTROL_DEBUG
-				std::cerr << "ftController::FileRequest() Peer Existing";
+			std::cerr << "ftController::FileRequest() Already Downloading File";
+			std::cerr << std::endl;
+			std::cerr << "\tNo need to download";
+			std::cerr << std::endl;
+#endif
+			/* but we should add this peer - if they don't exist!
+			 * (needed for channels).
+			 */
+
+			for(it = srcIds.begin(); it != srcIds.end(); it++)
+			{
+				uint32_t i, j;
+				if ((dit->second).mTransfer->getPeerState(*it, i, j))
+				{
+#ifdef CONTROL_DEBUG
+					std::cerr << "ftController::FileRequest() Peer Existing";
+					std::cerr << std::endl;
+#endif
+					continue; /* already added peer */
+				}
+
+#ifdef CONTROL_DEBUG
+				std::cerr << "ftController::FileRequest() Adding Peer: " << *it;
 				std::cerr << std::endl;
 #endif
-				continue; /* already added peer */
+				(dit->second).mTransfer->addFileSource(*it);
+				setPeerState(dit->second.mTransfer, *it,
+						rate, mConnMgr->isOnline(*it));
+
+				IndicateConfigChanged(); /* new peer for transfer -> save */
 			}
 
+			if (srcIds.size() == 0)
+			{
 #ifdef CONTROL_DEBUG
-			std::cerr << "ftController::FileRequest() Adding Peer: " << *it;
-			std::cerr << std::endl;
+				std::cerr << "ftController::FileRequest() WARNING: No Src Peers";
+				std::cerr << std::endl;
 #endif
-			(dit->second).mTransfer->addFileSource(*it);
-			setPeerState(dit->second.mTransfer, *it,
-				rate, mConnMgr->isOnline(*it));
+			}
 
-			IndicateConfigChanged(); /* new peer for transfer -> save */
+			return true;
 		}
-
-		if (srcIds.size() == 0)
-		{
-#ifdef CONTROL_DEBUG
-			std::cerr << "ftController::FileRequest() WARNING: No Src Peers";
-			std::cerr << std::endl;
-#endif
-		}
-
-		return true;
-	}
-  } /******* UNLOCKED ********/
+	} /******* UNLOCKED ********/
 
 	bool doCallback = false;
 	uint32_t callbackCode = 0;
@@ -741,19 +760,6 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	}
 	else
 	{
-		if (mSearch->search(hash, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY, info))
-		{
-			/* have it already */
-			/* add in as completed transfer */
-#ifdef CONTROL_DEBUG
-			std::cerr << "ftController::FileRequest() Matches Local File";
-			std::cerr << std::endl;
-			std::cerr << "\tNo need to download";
-			std::cerr << std::endl;
-#endif
-			return true;
-		}
-
 		/* do a source search - for any extra sources */
 		if (mSearch->search(hash, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info))
 		{
@@ -802,17 +808,18 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	std::string savepath;
 	std::string destination;
 
-  { RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	{ 
+		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	savepath = mPartialsPath + "/" + hash;
-	destination = dest + "/" + fname;
+		savepath = mPartialsPath + "/" + hash;
+		destination = dest + "/" + fname;
 
-	/* if no destpath - send to download directory */
-	if (dest == "")
-	{
-		destination = mDownloadPath + "/" + fname;
-	}
-  } /******* UNLOCKED ********/
+		/* if no destpath - send to download directory */
+		if (dest == "")
+		{
+			destination = mDownloadPath + "/" + fname;
+		}
+	} /******* UNLOCKED ********/
 
   // We check that flags are consistent.  In particular, for know
   // we can't send chunkmaps through normal traffic, so availability must be assumed whenever the traffic is not

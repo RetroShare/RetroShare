@@ -245,10 +245,13 @@ void	ftServer::run()
 bool ftServer::FileRequest(std::string fname, std::string hash, uint64_t size, std::string dest, uint32_t flags, std::list<std::string> srcIds)
 {
    std::cerr << "Requesting " << fname << std::endl ;
-//	return mFtController->FileRequest(fname, hash, size,
-//						dest, flags, srcIds);
+
+	if(mFtController->alreadyHaveFile(hash))
+		return false ;
+
 	const DwlDetails details(fname, hash, size, dest, flags, srcIds, Normal);
 	mFtDwlQueue->insertDownload(details);
+
 	return true ;
 }
 

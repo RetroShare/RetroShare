@@ -132,6 +132,9 @@ bool 	FileRequest(std::string fname, std::string hash,
 			uint64_t size, std::string dest, uint32_t flags,
 			std::list<std::string> &sourceIds);
 
+	/// Do we already have this file, either in download or in file lists ?
+bool  alreadyHaveFile(const std::string& hash) ;
+
 bool 	setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy s);
 
 bool 	FileCancel(std::string hash);

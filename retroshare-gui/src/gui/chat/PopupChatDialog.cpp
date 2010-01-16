@@ -795,38 +795,51 @@ void PopupChatDialog::fileHashingFinished(SubFileItem* file) {
 }
 
 void PopupChatDialog::anchorClicked (const QUrl& link ) {
-    #ifdef CHAT_DEBUG
-		    std::cerr << "PopupChatDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
-    #endif
+#ifdef CHAT_DEBUG
+	std::cerr << "PopupChatDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
+#endif
 	if (link.scheme() == "file") {
-	    std::string fileName = link.queryItemValue(QString("fileName")).toStdString();
-	    std::string fileHash = link.queryItemValue(QString("fileHash")).toStdString();
-	    uint32_t fileSize = link.queryItemValue(QString("fileSize")).toInt();
-    #ifdef CHAT_DEBUG
-		    std::cerr << "PopupChatDialog::anchorClicked FileRequest : fileName : " << fileName << ". fileHash : " << fileHash << ". fileSize : " << fileSize;
-		    std::cerr << ". source id : " << dialogId << std::endl;
-    #endif
-	    if (fileName != "" &&
-		fileHash != "") {
-		std::list<std::string> srcIds;
-		srcIds.push_front(dialogId);
-		rsFiles->FileRequest(fileName, fileHash, fileSize, "", RS_FILE_HINTS_ASSUME_AVAILABILITY, srcIds);
+		std::string fileName = link.queryItemValue(QString("fileName")).toStdString();
+		std::string fileHash = link.queryItemValue(QString("fileHash")).toStdString();
+		uint32_t fileSize = link.queryItemValue(QString("fileSize")).toInt();
+#ifdef CHAT_DEBUG
+		std::cerr << "PopupChatDialog::anchorClicked FileRequest : fileName : " << fileName << ". fileHash : " << fileHash << ". fileSize : " << fileSize;
+		std::cerr << ". source id : " << dialogId << std::endl;
+#endif
+		if (fileName != "" &&
+				fileHash != "") {
+			std::list<std::string> srcIds;
+			srcIds.push_front(dialogId);
 
-		QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
-		mb.setButtonText( QMessageBox::Ok, "OK" );
-		mb.exec();
-	    } else {
-		QMessageBox mb(tr("File Request Error"), tr("The file link is malformed."),QMessageBox::Information,QMessageBox::Ok,0,0);
-		mb.setButtonText( QMessageBox::Ok, "OK" );
-		mb.exec();
-	    }
-	} else if (link.scheme() == "http") {
-	    QDesktopServices::openUrl(link);
-	} else if (link.scheme() == "") {
-	    //it's probably a web adress, let's add http:// at the beginning of the link
-	    QString newAddress = link.toString();
-	    newAddress.prepend("http://");
-	    QDesktopServices::openUrl(QUrl(newAddress));
+			if(rsFiles->FileRequest(fileName, fileHash, fileSize, "", RS_FILE_HINTS_ASSUME_AVAILABILITY, srcIds))
+			{
+				QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
+				mb.setButtonText( QMessageBox::Ok, "OK" );
+				mb.exec();
+			}
+			else
+			{
+				QMessageBox mb(tr("File Request canceled"), tr("The file has not been added to your download list, because you already have it, or you're already downloading it."),QMessageBox::Information,QMessageBox::Ok,0,0);
+				mb.setButtonText( QMessageBox::Ok, "OK" );
+				mb.exec();
+			}
+
+		} 
+		else 
+		{
+			QMessageBox mb(tr("File Request Error"), tr("The file link is malformed."),QMessageBox::Information,QMessageBox::Ok,0,0);
+			mb.setButtonText( QMessageBox::Ok, "OK" );
+			mb.exec();
+		}
+	} 
+	else if (link.scheme() == "http") 
+		QDesktopServices::openUrl(link);
+	else if (link.scheme() == "") 
+	{
+		//it's probably a web adress, let's add http:// at the beginning of the link
+		QString newAddress = link.toString();
+		newAddress.prepend("http://");
+		QDesktopServices::openUrl(QUrl(newAddress));
 	}
 
 }

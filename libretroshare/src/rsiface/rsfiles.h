@@ -98,92 +98,93 @@ class RsFiles
 {
 	public:
 
-	RsFiles() { return; }
-virtual ~RsFiles() { return; }
+		RsFiles() { return; }
+		virtual ~RsFiles() { return; }
 
-/****************************************/
-	/* download */
+		/****************************************/
+		/* download */
 
 
-/***
- *  Control of Downloads.
- ***/
-virtual bool FileRequest(std::string fname, std::string hash, uint64_t size,
-		std::string dest, uint32_t flags, std::list<std::string> srcIds) = 0;
-virtual bool FileCancel(std::string hash) = 0;
-virtual bool setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy) = 0;
-virtual bool FileControl(std::string hash, uint32_t flags) = 0;
-virtual bool FileClearCompleted() = 0;
+		/***
+		 *  Control of Downloads.
+		 ***/
 
-/***
- * Control of Downloads Priority.
- ***/
-virtual bool changePriority(const std::string hash, int priority) = 0;
-virtual bool getPriority(const std::string hash, int & priority) = 0;
-virtual bool clearDownload(const std::string hash) = 0;
-virtual void clearQueue() = 0;
-virtual void getDwlDetails(std::list<DwlDetails> & details) = 0;
+		/// Returns false is we already have the file. Otherwise, initiates the dl and returns true.
+		virtual bool FileRequest(std::string fname, std::string hash, uint64_t size, std::string dest, uint32_t flags, std::list<std::string> srcIds) = 0;
+		virtual bool FileCancel(std::string hash) = 0;
+		virtual bool setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy) = 0;
+		virtual bool FileControl(std::string hash, uint32_t flags) = 0;
+		virtual bool FileClearCompleted() = 0;
 
-/***
- * Download / Upload Details.
- ***/
-virtual bool FileDownloads(std::list<std::string> &hashs) = 0;
-virtual bool FileUploads(std::list<std::string> &hashs) = 0;
-virtual bool FileDetails(std::string hash, uint32_t hintflags, FileInfo &info) = 0;
+		/***
+		 * Control of Downloads Priority.
+		 ***/
+		virtual bool changePriority(const std::string hash, int priority) = 0;
+		virtual bool getPriority(const std::string hash, int & priority) = 0;
+		virtual bool clearDownload(const std::string hash) = 0;
+		virtual void clearQueue() = 0;
+		virtual void getDwlDetails(std::list<DwlDetails> & details) = 0;
 
-/// Gives chunk details about the downloaded file with given hash.
-virtual bool FileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info) = 0 ;
+		/***
+		 * Download / Upload Details.
+		 ***/
+		virtual bool FileDownloads(std::list<std::string> &hashs) = 0;
+		virtual bool FileUploads(std::list<std::string> &hashs) = 0;
+		virtual bool FileDetails(std::string hash, uint32_t hintflags, FileInfo &info) = 0;
 
-/// details about the upload with given hash
-virtual bool FileUploadChunksDetails(const std::string& hash,const std::string& peer_id,CompressedChunkMap& map) = 0 ;
+		/// Gives chunk details about the downloaded file with given hash.
+		virtual bool FileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info) = 0 ;
 
-/***
- * Extra List Access
- ***/
-virtual bool ExtraFileAdd(std::string fname, std::string hash, uint64_t size,
+		/// details about the upload with given hash
+		virtual bool FileUploadChunksDetails(const std::string& hash,const std::string& peer_id,CompressedChunkMap& map) = 0 ;
+
+		/***
+		 * Extra List Access
+		 ***/
+		virtual bool ExtraFileAdd(std::string fname, std::string hash, uint64_t size,
 				uint32_t period, uint32_t flags) = 0;
-virtual bool ExtraFileRemove(std::string hash, uint32_t flags) = 0;
-virtual bool ExtraFileHash(std::string localpath,
+		virtual bool ExtraFileRemove(std::string hash, uint32_t flags) = 0;
+		virtual bool ExtraFileHash(std::string localpath,
 				uint32_t period, uint32_t flags) = 0;
-virtual bool ExtraFileStatus(std::string localpath, FileInfo &info) = 0;
-virtual bool ExtraFileMove(std::string fname, std::string hash, uint64_t size,
+		virtual bool ExtraFileStatus(std::string localpath, FileInfo &info) = 0;
+		virtual bool ExtraFileMove(std::string fname, std::string hash, uint64_t size,
 				std::string destpath) = 0;
 
 
 
-/***
- * Directory Listing / Search Interface
- */
-virtual int RequestDirDetails(std::string uid, std::string path, DirDetails &details) = 0;
-virtual int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) = 0;
+		/***
+		 * Directory Listing / Search Interface
+		 */
+		virtual int RequestDirDetails(std::string uid, std::string path, DirDetails &details) = 0;
+		virtual int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) = 0;
 
-virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,uint32_t flags) = 0;
-virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,uint32_t flags) = 0;
+		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,uint32_t flags) = 0;
+		virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,uint32_t flags) = 0;
 
-/***
- * Utility Functions.
- ***/
-virtual bool ConvertSharedFilePath(std::string path, std::string &fullpath) = 0;
-virtual void ForceDirectoryCheck() = 0;
-virtual bool InDirectoryCheck() = 0;
+		/***
+		 * Utility Functions.
+		 ***/
+		virtual bool ConvertSharedFilePath(std::string path, std::string &fullpath) = 0;
+		virtual void ForceDirectoryCheck() = 0;
+		virtual bool InDirectoryCheck() = 0;
 
-/***
- * Directory Control
- ***/
-virtual void    setDownloadDirectory(std::string path) = 0;
-virtual void    setPartialsDirectory(std::string path) = 0;
-virtual std::string getDownloadDirectory() = 0;
-virtual std::string getPartialsDirectory() = 0;
+		/***
+		 * Directory Control
+		 ***/
+		virtual void    setDownloadDirectory(std::string path) = 0;
+		virtual void    setPartialsDirectory(std::string path) = 0;
+		virtual std::string getDownloadDirectory() = 0;
+		virtual std::string getPartialsDirectory() = 0;
 
-virtual bool    getSharedDirectories(std::list<SharedDirInfo> &dirs) = 0;
-virtual bool    addSharedDirectory(SharedDirInfo dir) = 0;
-virtual bool    updateShareFlags(const SharedDirInfo& dir) = 0;	// updates the flags. The directory should already exist !
-virtual bool    removeSharedDirectory(std::string dir) = 0;
+		virtual bool    getSharedDirectories(std::list<SharedDirInfo> &dirs) = 0;
+		virtual bool    addSharedDirectory(SharedDirInfo dir) = 0;
+		virtual bool    updateShareFlags(const SharedDirInfo& dir) = 0;	// updates the flags. The directory should already exist !
+		virtual bool    removeSharedDirectory(std::string dir) = 0;
 
-virtual void	setShareDownloadDirectory(bool value) = 0;
-virtual bool	getShareDownloadDirectory() = 0;
-virtual bool 	shareDownloadDirectory() = 0;
-virtual bool 	unshareDownloadDirectory() = 0;
+		virtual void	setShareDownloadDirectory(bool value) = 0;
+		virtual bool	getShareDownloadDirectory() = 0;
+		virtual bool 	shareDownloadDirectory() = 0;
+		virtual bool 	unshareDownloadDirectory() = 0;
 
 };
 

@@ -1091,12 +1091,19 @@ void ForumsDialog::anchorClicked (const QUrl& link )
 		if (fileName != "" && fileHash != "")
 		{
 			std::list<std::string> srcIds;
-			//srcIds.push_front();
-			rsFiles->FileRequest(fileName, fileHash, fileSize, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds);
 
-			QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
-			mb.setButtonText( QMessageBox::Ok, "OK" );
-			mb.exec();
+			if(rsFiles->FileRequest(fileName, fileHash, fileSize, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
+			{
+				QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
+				mb.setButtonText( QMessageBox::Ok, "OK" );
+				mb.exec();
+			}
+			else
+			{
+				QMessageBox mb(tr("File Request canceled"), tr("The file has not been added to your download list, because you already have it."),QMessageBox::Information,QMessageBox::Ok,0,0);
+				mb.setButtonText( QMessageBox::Ok, "OK" );
+				mb.exec();
+			}
 		} 
 		else 
 		{
