@@ -68,16 +68,21 @@ gpgcert::~gpgcert()
 
 gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passphrase_info, int prev_was_bad, int fd)
 {
-	std::string text = rsicontrol->getNotify().askForPassword("GPG key passphrase","GPG key passphrase") ;
+	static std::string sp = "" ;
 
-//	QString text = QInputDialog::getText(NULL, "GPG key passphrase",
-//					  "GPG key passphrase", QLineEdit::Password,
-//					  NULL, NULL);
+	std::string text ;
 
+	if(sp == "" || prev_was_bad)
+	{
+		if(prev_was_bad)
+			text = rsicontrol->getNotify().askForPassword("GPG key passphrase",std::string("Wrong password !\n\nPlease enter the password to unlock the following GPG key:\n\n  ")+uid_hint+"\n") ;
+		else
+			text = rsicontrol->getNotify().askForPassword("GPG key passphrase",std::string("Please enter the password to unlock the following GPG key:\n\n")+uid_hint+"\n") ;
+		sp = text ;
+	}
+	else
+		text = sp ;
 
-	if (prev_was_bad)
-		fprintf(stderr, "pgp_pwd_callback() Prev was bad!\n");
-	//fprintf(stderr, "pgp_pwd_callback() Set Password to:\"%s\"\n", passwd);
 	fprintf(stderr, "pgp_pwd_callback() Set Password\n");
 
 #ifndef WINDOWS_SYS
