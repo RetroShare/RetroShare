@@ -329,7 +329,7 @@ void CreateForumMsg::addAttachment(std::string filePath) {
 	    if (file->getState() == SFI_STATE_LOCAL) {
 		fileHashingFinished(file);
 	    } else {
-		QObject::connect(file,SIGNAL(fileFinished(SubFileItem *)), SLOT(fileHashingFinished(SubFileItem *))) ;
+		QObject::connect(file,SIGNAL(fileFinished(SubFileItem *)),this, SLOT(fileHashingFinished(SubFileItem *))) ;
 	    }
 }
 

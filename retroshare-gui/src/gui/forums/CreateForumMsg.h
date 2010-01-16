@@ -41,10 +41,9 @@ public:
   
   void loadEmoticonsForums();
   
-  void fileHashingFinished(SubFileItem* file);
-
 private slots:
 
+  void fileHashingFinished(SubFileItem* file);
 	/* actions to take.... */
   void  createMsg();
   void  cancelMsg();
