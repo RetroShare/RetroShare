@@ -620,7 +620,7 @@ bool ftController::alreadyHaveFile(const std::string& hash)
 		return true ;
 
 	// check for file lists
-	if (mSearch->search(hash, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA, info))
+	if (mSearch->search(hash, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY, info))
 		return true ;
 	
 	return false ;
