@@ -53,6 +53,7 @@ ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, std::string chanId
   small();
   updateItemStatic();
   updateItem();
+
 }
 
 
@@ -87,7 +88,7 @@ void ChanMsgItem::updateItemStatic()
 	{
 		/* subject */
 		titleLabel->setText(QString::fromStdWString(cmi.subject));
-		subjectLabel->setText(QString::fromStdWString(cmi.subject));
+		subjectLabel->setText(QString::fromStdWString(cmi.msg));
 	}
 		
 	msgLabel->setText(QString::fromStdWString(cmi.msg));
@@ -118,7 +119,7 @@ void ChanMsgItem::updateItemStatic()
 
 	/* don't really want this at all! */
 	unsubscribeButton->hide();
-	playButton->hide();
+	//playButton->hide();
 }
 
 
@@ -218,6 +219,5 @@ void ChanMsgItem::playMedia()
 	std::cerr << std::endl;
 #endif
 }
-
 
 
