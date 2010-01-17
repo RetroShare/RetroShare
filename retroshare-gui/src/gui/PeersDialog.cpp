@@ -127,10 +127,8 @@ PeersDialog::PeersDialog(QWidget *parent)
         headerItem->setTextAlignment(1, Qt::AlignLeft | Qt::AlignVCenter);
 	headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
 
-
-
+  loadtabsettings();
   loadEmoticonsgroupchat();
-
 
   connect(ui.lineEdit, SIGNAL(textChanged ( ) ), this, SLOT(checkChat( ) ));
   connect(ui.Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
@@ -187,6 +185,17 @@ PeersDialog::PeersDialog(QWidget *parent)
   menu->addAction(ui.actionSet_your_Personal_Message);
   
   ui.menupushButton->setMenu(menu);
+  
+  QMenu *lookmenu = new QMenu();
+  lookmenu->addAction(ui.actionSet_Tabs_Right); 
+  lookmenu->addAction(ui.actionSet_Tabs_Left);
+  lookmenu->addAction(ui.actionSet_Tabs_North);
+  lookmenu->addAction(ui.actionSet_Tabs_South);
+  lookmenu->addSeparator();
+  lookmenu->addAction(ui.actionSet_Tabs_Triangular);
+  lookmenu->addAction(ui.actionSet_Tabs_Rounded);
+  
+  ui.lookpushButton->setMenu(lookmenu);
 
   
   updateAvatar();
@@ -1421,3 +1430,84 @@ void PeersDialog::statusmessage()
     static StatusMessage *statusmsgdialog = new StatusMessage();
     statusmsgdialog->show();
 }
+
+void PeersDialog::on_actionSet_Tabs_North_activated()
+{
+	_settings->beginGroup("PeersDialog");
+	
+  ui.peertabWidget->setTabPosition(QTabWidget::North);
+  
+  _settings->setValue("TabWidget_Position",ui.peertabWidget->tabPosition());
+  _settings->endGroup();
+}
+
+void PeersDialog::on_actionSet_Tabs_South_activated()
+{
+	_settings->beginGroup("PeersDialog");
+
+  ui.peertabWidget->setTabPosition(QTabWidget::South);
+  
+  _settings->setValue("TabWidget_Position",ui.peertabWidget->tabPosition());  
+  _settings->endGroup();
+}
+
+void PeersDialog::on_actionSet_Tabs_Left_activated()
+{
+	_settings->beginGroup("PeersDialog");
+
+  ui.peertabWidget->setTabPosition(QTabWidget::West);
+  
+  _settings->setValue("TabWidget_Position",ui.peertabWidget->tabPosition());  
+  _settings->endGroup();
+}
+
+void PeersDialog::on_actionSet_Tabs_Right_activated()
+{
+	_settings->beginGroup("PeersDialog");
+	
+  ui.peertabWidget->setTabPosition(QTabWidget::East);
+  
+  _settings->setValue("TabWidget_Position",ui.peertabWidget->tabPosition());  
+  _settings->endGroup();
+}
+
+void PeersDialog::on_actionSet_Tabs_Triangular_activated()
+{
+  ui.peertabWidget->setTabShape(QTabWidget::Triangular);
+}
+
+void PeersDialog::on_actionSet_Tabs_Rounded_activated()
+{
+  ui.peertabWidget->setTabShape(QTabWidget::Rounded);
+}
+
+void PeersDialog::loadtabsettings()
+{
+   _settings->beginGroup("PeersDialog");
+
+  if(_settings->value("TabWidget_Position","0").toInt() == 0)
+  {
+  qDebug() << "Tab North";
+  ui.peertabWidget->setTabPosition(QTabWidget::North);
+  }
+
+  else if (_settings->value("TabWidget_Position","1").toInt() == 1)
+  {
+  qDebug() << "Tab South";
+  ui.peertabWidget->setTabPosition(QTabWidget::South);
+  }
+
+  else if (_settings->value("TabWidget_Position","2").toInt() ==2)
+  {
+  qDebug() << "Tab West";
+  ui.peertabWidget->setTabPosition(QTabWidget::West);
+  }
+
+  else if(_settings->value("TabWidget_Position","3").toInt() ==3)
+  {
+  qDebug() << "Tab East";
+  ui.peertabWidget->setTabPosition(QTabWidget::East);
+  }
+
+  _settings->endGroup();
+  }
