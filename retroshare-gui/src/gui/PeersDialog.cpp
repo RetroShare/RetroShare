@@ -432,7 +432,12 @@ void  PeersDialog::insertPeers()
                 int i;
                 if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
                     gpg_item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
-                    gpg_item -> setText(1, tr("Online"));
+                    
+                      if (rsMsgs->getCustomStateString(sslDetail.id) != "") {
+                          gpg_item -> setText(1, tr("Online") + tr(" - ") + QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id))) ;
+                      } else {
+                          gpg_item -> setText(1, tr("Online"));
+                      } 
                     sslItem -> setIcon(0,(QIcon(":/images/connect_established.png")));
                     QFont font;
                     font.setBold(true);
@@ -443,7 +448,13 @@ void  PeersDialog::insertPeers()
                     }
                } else if (sslDetail.state & RS_PEER_STATE_UNREACHABLE) {
                     gpg_item -> setIcon(0,(QIcon(IMAGE_UNREACHABLE)));
-                    gpg_item -> setText(1, tr("Unreachable"));
+                        
+                        if (rsMsgs->getCustomStateString(sslDetail.id) != "") {
+                          gpg_item -> setText(1, tr("Unreachable") + tr(" - ") + QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id))) ;
+                        } else {
+                          gpg_item -> setText(1, tr("Unreachable"));
+                        } 
+                    
                     QFont font;
                     font.setBold(false);
                     for(i = 0; i < 3; i++) {
@@ -454,7 +465,12 @@ void  PeersDialog::insertPeers()
                 } else if (sslDetail.state & RS_PEER_STATE_ONLINE) {
                     /* bright green */
                     gpg_item -> setIcon(0,(QIcon(IMAGE_AVAIBLE)));
-                    gpg_item -> setText(1, tr("Avaible"));
+                        
+                        if (rsMsgs->getCustomStateString(sslDetail.id) != "") {
+                          gpg_item -> setText(1, tr("Avaible") + tr(" - ") + QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id))) ;
+                        } else {
+                          gpg_item -> setText(1, tr("Aviable"));
+                        }                     
                     QFont font;
                     font.setBold(true);
                     for(i = 0; i < 3; i++) {
@@ -465,10 +481,21 @@ void  PeersDialog::insertPeers()
                 } else {
                     if (time(NULL) - sslDetail.lastConnect < 3600) {
                         gpg_item -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
-                        gpg_item -> setText(1, tr("Offline"));                        
+                        
+                        if (rsMsgs->getCustomStateString(sslDetail.id) != "") {
+                          gpg_item -> setText(1, tr("Offline") + tr(" - ") + QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id))) ;
+                        } else {
+                          gpg_item -> setText(1, tr("Offline"));
+                        } 
+                                                
                     } else {
                         gpg_item -> setIcon(0,(QIcon(IMAGE_OFFLINE2)));
-                        gpg_item -> setText(1, tr("Offline"));                        
+                        
+                        if (rsMsgs->getCustomStateString(sslDetail.id) != "") {
+                        gpg_item -> setText(1, tr("Offline") + tr(" - ") + QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id))) ;
+                        } else {
+                        gpg_item -> setText(1, tr("Offline"));
+                        }                        
                     }
                     QFont font;
                     font.setBold(false);
