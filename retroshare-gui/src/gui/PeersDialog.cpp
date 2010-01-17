@@ -458,6 +458,7 @@ void  PeersDialog::insertPeers()
                     for(i = 0; i < 3; i++) {
                         gpg_item -> setTextColor(i,(Qt::darkBlue));
                         gpg_item -> setFont(i,font);
+                        sslItem -> setTextColor(i,(Qt::darkBlue));
                         sslItem -> setFont(i,font);
                     }
                } else if (sslDetail.state & RS_PEER_STATE_UNREACHABLE) {
