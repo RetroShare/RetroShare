@@ -600,6 +600,9 @@ p, li { white-space: pre-wrap; }
           </item>
           <item row="0" column="2">
            <widget class="QPushButton" name="lookpushButton">
+            <property name="toolTip">
+             <string>Display</string>
+            </property>
             <property name="styleSheet">
              <string notr="true">QPushButton::menu-indicator { 
 subcontrol-origin: padding;
@@ -1253,6 +1256,16 @@ background: white;}</string>
   <action name="actionSet_Tabs_Rounded">
    <property name="text">
     <string>Set Tabs Rounded</string>
+   </property>
+  </action>
+  <action name="actionSort_Status_Descending_Order">
+   <property name="text">
+    <string>Sort Status Descending Order</string>
+   </property>
+  </action>
+  <action name="actionSort_Status_Ascending_Order">
+   <property name="text">
+    <string>Sort Status Ascending Order</string>
    </property>
   </action>
  </widget>

@@ -187,6 +187,9 @@ PeersDialog::PeersDialog(QWidget *parent)
   ui.menupushButton->setMenu(menu);
   
   QMenu *lookmenu = new QMenu();
+  lookmenu->addAction(ui.actionSort_Status_Descending_Order); 
+  lookmenu->addAction(ui.actionSort_Status_Ascending_Order);
+  lookmenu->addSeparator();
   lookmenu->addAction(ui.actionSet_Tabs_Right); 
   lookmenu->addAction(ui.actionSet_Tabs_Left);
   lookmenu->addAction(ui.actionSet_Tabs_North);
@@ -1538,3 +1541,13 @@ void PeersDialog::loadtabsettings()
 
   _settings->endGroup();
   }
+
+void PeersDialog::on_actionSort_Status_Descending_Order_activated()
+{
+  ui.peertreeWidget->sortItems ( 1, Qt::DescendingOrder );
+}
+
+void PeersDialog::on_actionSort_Status_Ascending_Order_activated()
+{
+  ui.peertreeWidget->sortItems ( 1, Qt::AscendingOrder );
+}
