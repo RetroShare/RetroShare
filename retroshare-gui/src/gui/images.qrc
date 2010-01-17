@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/" >
-        <file>images/no-preview.png</file>
+        <file>images/pgp.png</file>
         <file>images/rs_wizard.png</file>
         <file>images/about.png</file>
         <file>images/irkick.png</file>
@@ -365,6 +365,7 @@
         <file>images/toaster/toaster-background.png</file>
         <file>images/toaster/toaster-backrs3.png</file>
         <file>images/toaster/toaster-backrs4.png</file>
+        <file>images/thumb-default-video.png</file>
         <file>images/user/add_user24.png</file>
         <file>images/user/friends24.png</file>
         <file>images/user/identity16.png</file>

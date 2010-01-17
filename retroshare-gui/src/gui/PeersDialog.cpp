@@ -40,6 +40,7 @@
 
 #include "GenCertDialog.h"
 #include "gui/connect/ConnectFriendWizard.h"
+#include "gui/forums/CreateForum.h"
 
 #include <sstream>
 
@@ -100,7 +101,9 @@ PeersDialog::PeersDialog(QWidget *parent)
 
   connect( ui.avatartoolButton, SIGNAL(clicked()), SLOT(getAvatar()));
   connect( ui.mypersonalstatuslabel, SIGNAL(clicked()), SLOT(statusmessage()));
-  
+  connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));
+  connect( ui.actionSet_your_Personal_Message, SIGNAL(triggered()), this, SLOT(statusmessage()));
+
   ui.peertabWidget->addTab(new ProfileWidget(),QString(tr("Profile")));
 
   ui.peertreeWidget->setColumnCount(4);
@@ -177,6 +180,12 @@ PeersDialog::PeersDialog(QWidget *parent)
   menu->addAction(ui.actionAdd_Friend); 
   menu->addSeparator();
   menu->addAction(ui.actionCreate_new_Profile);
+  menu->addSeparator();
+  menu->addAction(ui.actionCreate_New_Forum);
+  menu->addAction(ui.actionCreate_New_Channel);
+  menu->addAction(ui.actionSet_your_Avatar);
+  menu->addAction(ui.actionSet_your_Personal_Message);
+  
   ui.menupushButton->setMenu(menu);
 
   
@@ -1377,6 +1386,26 @@ void PeersDialog::on_actionCreate_new_Profile_activated()
 {
     static GenCertDialog *gencertdialog = new GenCertDialog();
     gencertdialog->show();
+    
+}
+
+void PeersDialog::on_actionCreate_New_Forum_activated()
+{
+    static CreateForum *cf = new CreateForum(this);
+    cf->show();
+    
+}
+
+void PeersDialog::on_actionCreate_New_Channel_activated()
+{
+    CreateForum *cf = new CreateForum(NULL, false);
+
+    cf->setWindowTitle(tr("Create a new Channel"));
+    cf->ui.labelicon->setPixmap(QPixmap(":/images/add_channel64.png"));
+    QString titleStr("<span style=\"font-size:24pt; font-weight:500;"
+                               "color:#32CD32;\">%1</span>");
+    cf->ui.textlabelcreatforums->setText( titleStr.arg( tr("New Channel") ) ) ;
+    cf->show();
     
 }
 

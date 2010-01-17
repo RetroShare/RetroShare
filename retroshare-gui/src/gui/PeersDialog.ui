@@ -661,9 +661,6 @@ background: white;}</string>
          <attribute name="headerDefaultSectionSize">
           <number>200</number>
          </attribute>
-         <attribute name="headerDefaultSectionSize">
-          <number>200</number>
-         </attribute>
          <column>
           <property name="text">
            <string>Person</string>
@@ -1148,6 +1145,60 @@ background: white;}</string>
    </property>
    <property name="text">
     <string>Create new Profile</string>
+   </property>
+  </action>
+  <action name="actionCreate_New_Forum">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/new_forum16.png</normaloff>:/images/new_forum16.png</iconset>
+   </property>
+   <property name="text">
+    <string>Create New Forum</string>
+   </property>
+   <property name="toolTip">
+    <string>Create new Forum</string>
+   </property>
+   <property name="shortcut">
+    <string>F</string>
+   </property>
+  </action>
+  <action name="actionCreate_New_Channel">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/add_channel24.png</normaloff>:/images/add_channel24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Create New Channel</string>
+   </property>
+   <property name="toolTip">
+    <string>Create new Channel</string>
+   </property>
+   <property name="shortcut">
+    <string>C</string>
+   </property>
+  </action>
+  <action name="actionSet_your_Avatar">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add your Avatar Picture</string>
+   </property>
+   <property name="shortcut">
+    <string>A</string>
+   </property>
+  </action>
+  <action name="actionSet_your_Personal_Message">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/message-news.png</normaloff>:/images/message-news.png</iconset>
+   </property>
+   <property name="text">
+    <string>Set your Personal Message</string>
+   </property>
+   <property name="toolTip">
+    <string>Set your Personal Message</string>
    </property>
   </action>
  </widget>

@@ -323,7 +323,7 @@ void CreateForumMsg::addAttachment(std::string filePath) {
 	    SubFileItem *file = new SubFileItem(filePath);
 	    //file->
 	    	    
-	    ui.vboxLayout->addWidget(file, 1, 0);
+	    ui.verticalLayout->addWidget(file, 1, 0);
 
 	    //when the file is local or is finished hashing, call the fileHashingFinished method to send a chat message
 	    if (file->getState() == SFI_STATE_LOCAL) {

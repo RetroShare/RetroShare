@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>435</width>
-    <height>205</height>
+    <width>515</width>
+    <height>207</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -65,15 +65,18 @@ border-radius: 10px;}</string>
        <widget class="QLabel" name="label">
         <property name="maximumSize">
          <size>
-          <width>120</width>
-          <height>90</height>
+          <width>156</width>
+          <height>107</height>
          </size>
         </property>
         <property name="text">
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../images.qrc">:/images/no-preview.png</pixmap>
+         <pixmap resource="../images.qrc">:/images/thumb-default-video.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -266,6 +269,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
