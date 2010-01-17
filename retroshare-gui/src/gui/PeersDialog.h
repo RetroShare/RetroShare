@@ -55,10 +55,11 @@ class PeersDialog : public RsAutoUpdatePage
 
 		QPixmap picture;
 		virtual void updateDisplay() ;	// overloaded from RsAutoUpdatePage
+    virtual void keyPressEvent(QKeyEvent *) ;
 
 		public slots:
 
-			void  insertPeers();
+		void  insertPeers();
 		void toggleSendItem( QTreeWidgetItem *item, int col );
 
 		void insertChat();

@@ -282,6 +282,17 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
 
 }
 
+void PeersDialog::keyPressEvent(QKeyEvent *e)
+{
+	if(e->key() == Qt::Key_Delete)
+	{
+		removefriend() ;
+		e->accept() ;
+	}
+	else
+		MainPage::keyPressEvent(e) ;
+}
+
 void PeersDialog::updateDisplay()
 {
 	insertPeers() ;
