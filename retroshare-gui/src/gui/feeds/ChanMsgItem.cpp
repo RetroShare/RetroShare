@@ -19,6 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 #include <QtGui>
+#include <QDateTime>
 
 #include "ChanMsgItem.h"
 
@@ -90,6 +91,11 @@ void ChanMsgItem::updateItemStatic()
 		titleLabel->setText(QString::fromStdWString(cmi.subject));
 		subjectLabel->setText(QString::fromStdWString(cmi.msg));
 	}
+	
+	QDateTime qtime;
+	qtime.setTime_t(cmi.ts);
+	QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm:ss");
+	datetimelabel->setText(timestamp);
 		
 	msgLabel->setText(QString::fromStdWString(cmi.msg));
 
