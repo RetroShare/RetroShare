@@ -741,10 +741,11 @@ bool AuthGPG::DoOwnSignature_locked(const void *data, unsigned int datalen, void
 	/* now extract the data from gpgmeSig */
 	size_t len = 0; 
 	int len2 = len;
-	gpgme_data_write (gpgmeSig, "", 1); 	// to be able to convert it into a string
+//	gpgme_data_write (gpgmeSig, "", 1); 	// to be able to convert it into a string
 	char *export_sig = gpgme_data_release_and_get_mem(gpgmeSig, &len);
-        fprintf(stderr, "AuthGPG::Signature len: %d \n", len2);
-	if (len < *outl)
+	fprintf(stderr, "AuthGPG::Signature len: %d \n", len);
+
+	if (len < *outl)	// -1 because we added a 0 at the end.
 	{
 		*outl = len;
 	}
@@ -766,13 +767,19 @@ bool AuthGPG::VerifySignature_locked(const void *data, int datalen, const void *
 	std::cerr << "VerifySignature: datalen: " << datalen << " siglen: " << siglen;
 	std::cerr << std::endl;
 	
+	if(siglen==73)
+	{
+		std::cerr << "Reducing to 72 to overcome an old bug." << std::endl ;
+		siglen=72 ;
+	}
+
 	if (GPG_ERR_NO_ERROR != gpgme_data_new_from_mem(&gpgmeData, (const char *) data, datalen, 1))
 	{
 		std::cerr << "Error create Data";
 		std::cerr << std::endl;
 	}
 
-        if (siglen != 0 && GPG_ERR_NO_ERROR != gpgme_data_new_from_mem(&gpgmeSig, (const char *) sig, siglen - 1, 1))
+	if (siglen != 0 && GPG_ERR_NO_ERROR != gpgme_data_new_from_mem(&gpgmeSig, (const char *) sig, siglen, 1))
 	{
 		std::cerr << "Error create Sig";
 		std::cerr << std::endl;
