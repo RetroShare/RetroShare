@@ -828,14 +828,13 @@ bool RsInit::SelectGPGAccount(std::string id)
 //}
 
 
-bool     GeneratePGPCertificate(std::string name, std::string comment, std::string email, std::string passwd, std::string &pgpId, std::string &errString)
-{
-	return true;
+bool     RsInit::GeneratePGPCertificate(std::string name, std::string email, std::string passwd, std::string &pgpId, std::string &errString) {
+        AuthGPG::getAuthGPG()->GeneratePGPCertificate(name, email, passwd, pgpId, errString);
 }
 
 
                 /* Create SSL Certificates */
-bool     RsInit::GenerateSSLCertificate(std::string name, std::string org, std::string loc, std::string country, std::string passwd, std::string &sslId, std::string &errString)
+bool     RsInit::GenerateSSLCertificate(std::string gpg_id, std::string org, std::string loc, std::string country, std::string passwd, std::string &sslId, std::string &errString)
 {
 	// generate the private_key / certificate.
 	// save to file.
@@ -849,13 +848,9 @@ bool     RsInit::GenerateSSLCertificate(std::string name, std::string org, std::
 		return false;
 	}
 
-	if (name.length() < 3)
-	{
-		errString = "Name is too short (must be 3+ chars)";
-		return false;
-	}
-
 	int nbits = 2048;
+
+        std::string name = AuthGPG::getAuthGPG()->getGPGName(gpg_id);
 
 	// Create the filename .....
 	// Temporary Directory for creating files....
@@ -873,102 +868,6 @@ bool     RsInit::GenerateSSLCertificate(std::string name, std::string org, std::
 	std::string cert_name = basename + "_cert.pem";
 
 	bool gen_ok = false;
-
-   #if defined(PQI_USE_SSLONLY)
-	X509_REQ *req = GenerateX509Req(
-			key_name.c_str(),
-			password.c_str(),
-			name.c_str(),
-			"", //ui -> gen_email -> value(),
-			org.c_str(),
-			loc.c_str(),
-			"", //ui -> gen_state -> value(),
-			country.c_str(),
-			nbits, errString);
-
-	/* load private key */
-	/* now convert to a self-signed certificate */
-	EVP_PKEY *privkey = NULL;
-	long days = 3000;
-
-	gen_ok = true;
-        /********** Test Loading the private Key.... ************/
-        FILE *tst_in = NULL;
-        if (NULL == (tst_in = fopen(key_name.c_str(), "rb")))
-        {
-                fprintf(stderr,"RsGenerateCert() Couldn't Open Private Key");
-                fprintf(stderr," : %s\n", key_name.c_str());
-                gen_ok = false;
-        }
-
-        if ((gen_ok) && (NULL == (privkey =
-                PEM_read_PrivateKey(tst_in,NULL,NULL,(void *) password.c_str()))))
-        {
-                fprintf(stderr,"RsGenerateCert() Couldn't Read Private Key");
-                fprintf(stderr," : %s\n", key_name.c_str());
-		gen_ok = false;
-        }
-
-	
-	X509 *cert = NULL;
-	if (gen_ok)
-	{
-		cert = SignX509Certificate(X509_REQ_get_subject_name(req), 
-						privkey,req,days);
-
-		/* Print the signed Certificate! */
-       		BIO *bio_out = NULL;
-        	bio_out = BIO_new(BIO_s_file());
-        	BIO_set_fp(bio_out,stdout,BIO_NOCLOSE);
-
-        	/* Print it out */
-        	int nmflag = 0;
-        	int reqflag = 0;
-
-        	X509_print_ex(bio_out, cert, nmflag, reqflag);
-
-        	BIO_flush(bio_out);
-        	BIO_free(bio_out);
-
-	}
-	else
-        {
-                fprintf(stderr,"RsGenerateCert() Didn't Sign Certificate\n");
-		gen_ok = false;
-        }
-
-	/* Save cert to file */
-        // open the file.
-        FILE *out = NULL;
-        if (NULL == (out = fopen(cert_name.c_str(), "w")))
-        {
-                fprintf(stderr,"RsGenerateCert() Couldn't create Cert File");
-                fprintf(stderr," : %s\n", cert_name.c_str());
-                return 0;
-        }
-
-        if (!PEM_write_X509(out,cert))
-        {
-                fprintf(stderr,"RsGenerateCert() Couldn't Save Cert");
-                fprintf(stderr," : %s\n", cert_name.c_str());
-                return 0;
-        }
-
-	if (cert)
-	{	
-		gen_ok = true;
-	}
-
-	X509_free(cert);
-	X509_REQ_free(req);
-        fclose(tst_in);
-	fclose(out);
-        EVP_PKEY_free(privkey);
-
-
-  #else /* X509 Certificates */
-  /**************** PQI_USE_PGP ******************/
-
 
 	/* Extra step required for SSL + PGP, user must have selected
 	 * or generated a suitable key so the signing can happen.
@@ -1041,9 +940,6 @@ bool     RsInit::GenerateSSLCertificate(std::string name, std::string org, std::
 		fclose(out);
 		X509_free(x509);
 	}
-
-
-  #endif /* X509 Certificates */
 
 	if (!gen_ok)
 	{

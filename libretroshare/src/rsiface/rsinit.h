@@ -59,7 +59,7 @@ class RsInit
 		/* Generating GPGme Account */
 		static int 	GetPGPLogins(std::list<std::string> &pgpIds);
 		static int 	GetPGPLoginDetails(std::string id, std::string &name, std::string &email);
-		static bool	GeneratePGPCertificate(std::string name, std::string comment, std::string email, std::string passwd, std::string &pgpId, std::string &errString);
+                static bool	GeneratePGPCertificate(std::string name, std::string email, std::string passwd, std::string &pgpId, std::string &errString);
 
 		/* Login PGP */
 		static bool 	SelectGPGAccount(std::string id);

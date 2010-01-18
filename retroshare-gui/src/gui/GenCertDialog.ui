@@ -1010,11 +1010,13 @@
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Create a new RetroShare profile&lt;/span&gt;&lt;br /&gt;&lt;br /&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Please fill in the information which will&lt;br /&gt;allow your RetroShare to connect to&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Friends.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Create a new RetroShare profile&lt;/span&gt;&lt;br /&gt;&lt;br /&gt;Retroshare uses gpg keys. Please fill in the location field, it will be permanently attached to this retroshare installation. You can generate a new retroshare location profile with the same gpg key on another computer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
      </property>
      <property name="indent">
       <number>100</number>
@@ -1028,65 +1030,69 @@ p, li { white-space: pre-wrap; }
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
-       <layout class="QGridLayout">
-        <property name="margin">
-         <number>9</number>
+       <widget class="QLabel" name="no_gpg_key_label">
+        <property name="text">
+         <string>It looks like you don't own any GPG keys. Please fill in the form below to generate one, or use your favorite gnupg keys manager.</string>
         </property>
-        <property name="spacing">
-         <number>6</number>
+        <property name="wordWrap">
+         <bool>true</bool>
         </property>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_6">
-          <property name="text">
-           <string>Organisation:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1" colspan="2">
-         <widget class="QLineEdit" name="genOrg"/>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_7">
-          <property name="text">
-           <string>Location:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1" colspan="2">
-         <widget class="QLineEdit" name="genLoc"/>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_8">
-          <property name="text">
-           <string>Country:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1" colspan="2">
-         <widget class="QLineEdit" name="genCountry"/>
-        </item>
-        <item row="0" column="1" colspan="2">
-         <widget class="QComboBox" name="genPGPuser"/>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <layout class="QFormLayout" name="formLayout">
+        <property name="fieldGrowthPolicy">
+         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+        </property>
+        <item row="1" column="0">
+         <widget class="QLabel" name="genPGPuserlabel">
           <property name="text">
            <string>OpenPGP User</string>
           </property>
          </widget>
         </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="genPGPuser"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="name_label">
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="name_input"/>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="location_label">
+          <property name="text">
+           <string>Location:</string>
+          </property>
+         </widget>
+        </item>
         <item row="5" column="1">
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
+         <widget class="QLineEdit" name="genLoc"/>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="email_label">
+          <property name="text">
+           <string>Email</string>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="email_input"/>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="password_label">
+          <property name="text">
+           <string>GPG Password</string>
           </property>
-         </spacer>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLineEdit" name="password_input"/>
         </item>
        </layout>
       </item>
@@ -1124,9 +1130,12 @@ p, li { white-space: pre-wrap; }
  </widget>
  <tabstops>
   <tabstop>genPGPuser</tabstop>
-  <tabstop>genOrg</tabstop>
+  <tabstop>name_input</tabstop>
+  <tabstop>email_input</tabstop>
+  <tabstop>password_input</tabstop>
   <tabstop>genLoc</tabstop>
-  <tabstop>genCountry</tabstop>
+  <tabstop>genButton</tabstop>
+  <tabstop>infopushButton</tabstop>
  </tabstops>
  <resources>
   <include location="images.qrc"/>

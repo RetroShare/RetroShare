@@ -64,6 +64,8 @@ private:
 
   /** Qt Designer generated object */
   Ui::GenCertDialog ui;
+
+  bool foundGPGKeys;
 };
 
 #endif

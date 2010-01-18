@@ -111,8 +111,6 @@ class AuthGPG : public p3Config
 
         bool    availableGPGCertificatesWithPrivateKeys(std::list<std::string> &ids);
 
-	int	GPGInit(std::string ownId);
-
 	/* SKTAN */
 	void showData(gpgme_data_t dh);
 	void createDummyFriends(void); //NYI
@@ -135,9 +133,9 @@ class AuthGPG : public p3Config
   bool    active(); 
 
         /* Init by generating new Own PGP Cert, or selecting existing PGP Cert */
-  int     InitAuth();
+  int     GPGInit(std::string ownId);
   bool    CloseAuth();
-
+  bool    GeneratePGPCertificate(std::string name, std::string email, std::string passwd, std::string &pgpId, std::string &errString);
   
 /*********************************************************************************/
 /************************* STAGE 3 ***********************************************/

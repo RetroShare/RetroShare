@@ -50,20 +50,15 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
 
   //ui.genName->setFocus(Qt::OtherFocusReason);
 
-    ui.genCountry->hide();
-    ui.label_6->hide();
-    ui.genOrg->hide();
-    ui.label_8->hide();
-
     /* get all available pgp private certificates....
      * mark last one as default.
      */
     std::cerr << "Finding PGPUsers" << std::endl;
 
+    foundGPGKeys = false;
     std::list<std::string> pgpIds;
     std::list<std::string>::iterator it;
-    if (RsInit::GetPGPLogins(pgpIds))
-    {
+    if (RsInit::GetPGPLogins(pgpIds)) {
             for(it = pgpIds.begin(); it != pgpIds.end(); it++)
             {
                     const QVariant & userData = QVariant(QString::fromStdString(*it));
@@ -71,10 +66,22 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
                     RsInit::GetPGPLoginDetails(*it, name, email);
                     std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
                     ui.genPGPuser->addItem(QString::fromStdString(name), userData);
+                    foundGPGKeys = true;
             }
     }
 
-
+    if (foundGPGKeys) {
+        ui.no_gpg_key_label->hide();
+        ui.name_label->hide();
+        ui.name_input->hide();
+        ui.email_label->hide();
+        ui.email_input->hide();
+        ui.password_label->hide();
+        ui.password_input->hide();
+    } else {
+        ui.genPGPuserlabel->hide();
+        ui.genPGPuser->hide();
+    }
 }
 
 /** Destructor. */
@@ -111,24 +118,47 @@ void GenCertDialog::genPerson()
 {
 
 	/* Check the data from the GUI. */
-	std::string genOrg  = ui.genOrg->text().toStdString();
 	std::string genLoc  = ui.genLoc->text().toStdString();
-	std::string genCountry = ui.genCountry->text().toStdString();
-	std::string err;
+        std::string PGPId;
 
-	int pgpidx = ui.genPGPuser->currentIndex();
-	if (pgpidx < 0)
-	{
-		/* Message Dialog */
-		QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
-	                        "Generate ID Failure",
-			        "Missing PGP Certificate",
-			          QMessageBox::Ok);
-		return;
-	}
+        if (foundGPGKeys) {
+            int pgpidx = ui.genPGPuser->currentIndex();
+            if (pgpidx < 0)
+            {
+                    /* Message Dialog */
+                    QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
+                                    "Generate ID Failure",
+                                    "Missing PGP Certificate",
+                                      QMessageBox::Ok);
+                    return;
+            }
+            QVariant data = ui.genPGPuser->itemData(pgpidx);
+            PGPId = (data.toString()).toStdString();
+        } else {
+            //generate a new gpg key
+            std::string err_string;
+            ui.no_gpg_key_label->setText(tr("Generating new GPG key, please be patient. Fill in your GPG password when asked."));
+            ui.no_gpg_key_label->show();
+            ui.name_label->hide();
+            ui.name_input->hide();
+            ui.email_label->hide();
+            ui.email_input->hide();
+            ui.password_label->hide();
+            ui.password_input->hide();
+            ui.genPGPuserlabel->hide();
+            ui.genPGPuser->hide();
+            ui.location_label->hide();
+            ui.genLoc->hide();
+            ui.infopushButton->hide();
+            ui.genButton->hide();
+            QMessageBox::StandardButton info = QMessageBox::information( NULL,
+                            "Generating GPG key",
+                            "This process can take some time, please be patient after pressing the OK button",
+                              QMessageBox::Ok);
+            //info->
+            RsInit::GeneratePGPCertificate(ui.name_input->text().toStdString(), ui.email_input->text().toStdString(), ui.password_input->text().toStdString(), PGPId, err_string);
+        }
 
-	QVariant data = ui.genPGPuser->itemData(pgpidx);
-	std::string PGPId = (data.toString()).toStdString();
 
 	//generate a random ssl password
 	std::cerr << " generating sslPasswd." << std::endl;
@@ -146,8 +176,9 @@ void GenCertDialog::genPerson()
         //RsInit::LoadGPGPassword(PGPpasswd);
 
 	std::string sslId;
-        std::cerr << "Generating SSL cert with name : " << ui.genPGPuser->itemText(pgpidx).toStdString()  << std::endl;
-        bool okGen = RsInit::GenerateSSLCertificate(ui.genPGPuser->itemText(pgpidx).toStdString(), genOrg, genLoc, genCountry, sslPasswd, sslId, err);
+        std::cerr << "Generating SSL cert with gpg id : " << PGPId << std::endl;
+        std::string err;
+        bool okGen = RsInit::GenerateSSLCertificate(PGPId, "", genLoc, "", sslPasswd, sslId, err);
 
 	if (okGen)
 	{
