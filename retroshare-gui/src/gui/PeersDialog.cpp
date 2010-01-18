@@ -201,6 +201,12 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
+      QAction* expandAll = new QAction(tr( "Expand all" ), this );
+      connect( expandAll , SIGNAL( triggered() ), ui.peertreeWidget, SLOT (expandAll()) );
+
+      QAction* collapseAll = new QAction(tr( "Collapse all" ), this );
+      connect( collapseAll , SIGNAL( triggered() ), ui.peertreeWidget, SLOT(collapseAll()) );
+
       chatAct = new QAction(QIcon(IMAGE_CHAT), tr( "Chat" ), this );
       connect( chatAct , SIGNAL( triggered() ), this, SLOT( chatfriend() ) );
 
@@ -259,16 +265,17 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       widgetAction->setDefaultWidget(widget); 
 
       contextMnu.clear();
+      contextMnu.addAction( expandAll);
+      contextMnu.addAction( collapseAll);
+      contextMnu.addSeparator();
       contextMnu.addAction( widgetAction);
       if (c->type() != 0) {
           //this is a SSL key
           contextMnu.addAction( chatAct);
           contextMnu.addAction( msgAct);
-          contextMnu.addSeparator();
       }
       contextMnu.addAction( configurefriendAct);
       //contextMnu.addAction( profileviewAct);
-      contextMnu.addSeparator();
       if (c->type() != 0) {
           //this is a SSL key
           contextMnu.addAction( connectfriendAct);
