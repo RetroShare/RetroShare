@@ -64,12 +64,15 @@ private slots:
 	void checkUpdate();
 
 	void createChannel();
-	void sendMsg();
+	//void sendMsg();
 
 	void channelSelection();
 
 	void subscribeChannel();
 	void unsubscribeChannel();
+	
+	void createMsg();
+
 
 private:
 

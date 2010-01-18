@@ -33,8 +33,8 @@
 #include "gui/forums/CreateForum.h"
 
 #include "gui/ChanGroupDelegate.h"
-
 #include "GeneralMsgDialog.h"
+#include "gui/channels/CreateChannelMsg.h"
 
 /****
  * #define CHAN_DEBUG
@@ -48,7 +48,7 @@ ChannelFeed::ChannelFeed(QWidget *parent)
   	setupUi(this);
 
   	connect(actionCreate_Channel, SIGNAL(triggered()), this, SLOT(createChannel()));
-  	connect(postButton, SIGNAL(clicked()), this, SLOT(sendMsg()));
+  	connect(postButton, SIGNAL(clicked()), this, SLOT(createMsg()));
   	connect(subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeChannel ( void ) ) );
   	connect(unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
 
@@ -205,26 +205,6 @@ void ChannelFeed::channelSelection()
 	updateChannelMsgs();
 }
 
-void ChannelFeed::sendMsg()
-{
-#ifdef CHAN_DEBUG
-	std::cerr << "ChannelFeed::sendMsg()";
-	std::cerr << std::endl;
-#endif
-
-	if (mChannelId != "")
-	{
-		openMsg(FEEDHOLDER_MSG_CHANNEL, mChannelId, "");
-	}
-	else
-	{
-#ifdef CHAN_DEBUG
-		std::cerr << "ChannelFeed::sendMsg() no Channel Selected!";
-		std::cerr << std::endl;
-#endif
-	}
-
-}
 
 
 /*************************************************************************************/
@@ -241,7 +221,6 @@ void ChannelFeed::openChat(std::string peerId)
 	return;
 }
 
-
 void ChannelFeed::openMsg(uint32_t type, std::string grpId, std::string inReplyTo)
 {
 #ifdef CHAN_DEBUG
@@ -252,6 +231,20 @@ void ChannelFeed::openMsg(uint32_t type, std::string grpId, std::string inReplyT
 
 
 	msgDialog->addDestination(type, grpId, inReplyTo);
+
+	msgDialog->show();
+	return;
+}
+
+
+void ChannelFeed::createMsg()
+{
+	if (mChannelId == "")
+	{
+	return;
+	}
+
+	CreateChannelMsg *msgDialog = new CreateChannelMsg(mChannelId);
 
 	msgDialog->show();
 	return;
