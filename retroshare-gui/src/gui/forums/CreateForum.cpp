@@ -19,6 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QtGui>
 #include <QMessageBox>
 
 #include "CreateForum.h"
@@ -36,6 +37,9 @@ CreateForum::CreateForum(QWidget *parent, bool isForum)
   // connect up the buttons.
   connect( ui.cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancelForum( ) ) );
   connect( ui.createButton, SIGNAL( clicked ( bool ) ), this, SLOT( createForum( ) ) );
+  
+  connect( ui.LogoButton, SIGNAL(clicked() ), this , SLOT(addChannelLogo()));	
+	connect( ui.ChannelLogoButton, SIGNAL(clicked() ), this , SLOT(addChannelLogo()));
 
   newForum();
 
@@ -64,6 +68,7 @@ void  CreateForum::newForum()
 
 		ui.msgAnon->setChecked(true);
 		//ui.msgAuth->setEnabled(false);
+		ui.groupBoxLogo->hide();
 	}
 	else
 	{
@@ -143,3 +148,27 @@ void  CreateForum::cancelForum()
 	return;
 }
 
+void CreateForum::addChannelLogo()
+{
+	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg)");
+	if(!fileName.isEmpty())
+	{
+		picture = QPixmap(fileName).scaled(64,64, Qt::IgnoreAspectRatio);
+		
+		// to show the selected 
+		ui.ChannelLogoButton->setIcon(picture);
+
+		std::cerr << "Sending avatar image down the pipe" << std::endl ;
+
+		// send avatar down the pipe for other peers to get it.
+		QByteArray ba;
+		QBuffer buffer(&ba);
+		buffer.open(QIODevice::WriteOnly);
+		picture.save(&buffer, "PNG"); // writes image into ba in PNG format
+
+		std::cerr << "Image size = " << ba.size() << std::endl ;
+
+		//rsMsgs->setOwnAvatarData((unsigned char *)(ba.data()),ba.size()) ;	// last char 0 included.
+
+	}
+}

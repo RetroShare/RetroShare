@@ -178,11 +178,21 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
       
       QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply to Author" ), this );
       connect( replyauthorAct , SIGNAL( triggered() ), this, SLOT( replytomessage() ) );
+      
+      QAction* expandAll = new QAction(tr( "Expand all" ), this );
+      connect( expandAll , SIGNAL( triggered() ), ui.threadTreeWidget, SLOT (expandAll()) );
+
+      QAction* collapseAll = new QAction(tr( "Collapse all" ), this );
+      connect( collapseAll , SIGNAL( triggered() ), ui.threadTreeWidget, SLOT(collapseAll()) );
+
 
       contextMnu.clear();
       contextMnu.addAction( replyAct);
       contextMnu.addAction( viewAct);
       contextMnu.addAction( replyauthorAct);
+      contextMnu.addSeparator();
+      contextMnu.addAction( expandAll);
+      contextMnu.addAction( collapseAll);
       contextMnu.exec( mevent->globalPos() );
 
 }
@@ -1040,7 +1050,7 @@ void ForumsDialog::replytomessage()
 	}
 	
 	fId = mCurrForumId;
-  	pId = mCurrPostId;
+  pId = mCurrPostId;
 
 	ForumMsgInfo msgInfo ;
 	rsForums->getForumMessage(fId,pId,msgInfo) ;

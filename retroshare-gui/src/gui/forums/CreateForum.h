@@ -39,6 +39,7 @@ void  newForum(); /* cleanup */
   /** Qt Designer generated object */
   Ui::CreateForum ui;
 
+  QPixmap picture;
 
 public slots:
   /** Overloaded QWidget.show */
@@ -49,6 +50,9 @@ private slots:
 	/* actions to take.... */
 void  createForum();
 void  cancelForum();
+
+void addChannelLogo();
+
 
 private:
 
