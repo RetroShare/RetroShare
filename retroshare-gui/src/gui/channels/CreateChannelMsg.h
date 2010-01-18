@@ -42,6 +42,8 @@ public:
 						bool local, std::string srcId);
 
 	void newChannelMsg();
+	
+	QPixmap picture;
 
 protected:
 virtual void dragEnterEvent(QDragEnterEvent *event);
@@ -53,6 +55,8 @@ private slots:
 
 	void cancelMsg();
 	void sendMsg();
+	
+	void addThumbnail();
 
 private:
 

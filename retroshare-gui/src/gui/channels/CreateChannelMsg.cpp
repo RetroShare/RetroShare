@@ -44,7 +44,8 @@ CreateChannelMsg::CreateChannelMsg(std::string cId)
   connect(buttonBox, SIGNAL(rejected()), this, SLOT(cancelMsg()));
 
 	connect(addFileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
-	connect(addfilepushButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
+	connect(addfilepushButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));	
+	connect(addThumbnailButton, SIGNAL(clicked() ), this , SLOT(addThumbnail()));
 
 	setAcceptDrops(true);
 	
@@ -456,8 +457,31 @@ void CreateChannelMsg::sendMessage(std::wstring subject, std::wstring msg, std::
 
 }
 
+void CreateChannelMsg::addThumbnail()
+{
+	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg)");
+	if(!fileName.isEmpty())
+	{
+		picture = QPixmap(fileName).scaled(156,107, Qt::IgnoreAspectRatio);
+		
+		// to show the selected 
+		thumbnail_label->setPixmap(picture);
 
+		std::cerr << "Sending avatar image down the pipe" << std::endl ;
 
+		// send avatar down the pipe for other peers to get it.
+		QByteArray ba;
+		QBuffer buffer(&ba);
+		buffer.open(QIODevice::WriteOnly);
+		picture.save(&buffer, "PNG"); // writes image into ba in PNG format
+
+		std::cerr << "Image size = " << ba.size() << std::endl ;
+
+		//rsMsgs->setOwnAvatarData((unsigned char *)(ba.data()),ba.size()) ;	// last char 0 included.
+
+		//updateThumbnail() ;
+	}
+}
 			
 
 

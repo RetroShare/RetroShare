@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>505</width>
+    <width>509</width>
     <height>464</height>
    </rect>
   </property>
@@ -159,7 +159,7 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QPushButton" name="pushButton">
+             <widget class="QPushButton" name="addThumbnailButton">
               <property name="text">
                <string>Add Channel Thumbnail</string>
               </property>
@@ -172,7 +172,7 @@ p, li { white-space: pre-wrap; }
            </layout>
           </item>
           <item row="1" column="1">
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="thumbnail_label">
             <property name="maximumSize">
              <size>
               <width>156</width>
@@ -352,7 +352,7 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>460</width>
+               <width>464</width>
                <height>282</height>
               </rect>
              </property>
@@ -425,6 +425,7 @@ background: white;}</string>
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
