@@ -1096,6 +1096,13 @@ p, li { white-space: pre-wrap; }
         </item>
        </layout>
       </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="progress_label">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -1122,7 +1129,7 @@ p, li { white-space: pre-wrap; }
    <item row="2" column="2">
     <widget class="QPushButton" name="genButton">
      <property name="text">
-      <string>Generate New Profil</string>
+      <string>Generate New Profile</string>
      </property>
     </widget>
    </item>

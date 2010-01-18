@@ -61,6 +61,8 @@ private:
   /** Loads the saved connectidialog settings */
   //  void loadSettings();
   void loadCertificates();
+  
+  QMovie *movie;
 
   /** Qt Designer generated object */
   Ui::GenCertDialog ui;
