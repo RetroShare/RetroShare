@@ -109,7 +109,7 @@ PeersDialog::PeersDialog(QWidget *parent)
   ui.peertreeWidget->setColumnCount(4);
   ui.peertreeWidget->setColumnHidden ( 3, true);
   ui.peertreeWidget->setColumnHidden ( 2, true);
-  ui.peertreeWidget->sortItems( 2, Qt::AscendingOrder );
+  ui.peertreeWidget->sortItems( 0, Qt::AscendingOrder );
 
   /* Set header resize modes and initial section sizes */
 //	QHeaderView * _header = ui.peertreeWidget->header () ;
@@ -236,6 +236,7 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
 
       QTreeWidgetItem *c = getCurrentPeer();
       if (c->type() == 0) {
+          //this is a GPG key
           removefriendAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Deny Friend" ), this );
       } else {
           removefriendAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Remove Friend Location" ), this );
@@ -255,7 +256,13 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       iconLabel->setMaximumSize( iconLabel->frameSize().height() + 24, 24 );
       hbox->addWidget(iconLabel);
        
-      textLabel = new QLabel( tr("<strong>Friends</strong>"), this );
+      if (c->type() == 0) {
+          //this is a GPG key
+         textLabel = new QLabel( tr("<strong>GPG Key</strong>"), this );
+      } else {
+         textLabel = new QLabel( tr("<strong>Retroshare instance</strong>"), this );
+      }
+
       hbox->addWidget(textLabel);
       
       spacerItem = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
@@ -268,15 +275,21 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
 
       contextMnu.clear();
       contextMnu.addAction( widgetAction);
-      contextMnu.addAction( chatAct);
-      contextMnu.addAction( msgAct);
-      contextMnu.addSeparator();
+      if (c->type() != 0) {
+          //this is a SSL key
+          contextMnu.addAction( chatAct);
+          contextMnu.addAction( msgAct);
+          contextMnu.addSeparator();
+      }
       contextMnu.addAction( configurefriendAct);
       //contextMnu.addAction( profileviewAct);
       contextMnu.addSeparator();
-      contextMnu.addAction( connectfriendAct);
-      contextMnu.addAction( exportfriendAct);
+      if (c->type() != 0) {
+          //this is a SSL key
+          contextMnu.addAction( connectfriendAct);
+      }
       contextMnu.addAction( removefriendAct);
+      //contextMnu.addAction( exportfriendAct);
       contextMnu.exec( mevent->globalPos() );
       
 
@@ -389,14 +402,11 @@ void  PeersDialog::insertPeers()
             }
 
             //update the childs (ssl certs)
+            bool gpg_connected = false;
+            bool gpg_online = false;
             std::list<std::string> sslContacts;
             rsPeers->getSSLChildListOfGPGId(detail.gpg_id, sslContacts);
             for(std::list<std::string>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); sslIt++) {
-//            if (*it == rsPeers->getGPGOwnId()) {
-//                continue;
-//            }
-
-
                 QTreeWidgetItem *sslItem;
 
                 //find the corresponding sslItem child item of the gpg item
@@ -433,90 +443,37 @@ void  PeersDialog::insertPeers()
                 /* not displayed, used to find back the item */                
                 sslItem -> setText(1, QString::fromStdString(sslDetail.autoconnect));
                 
-                if (sslDetail.autoconnect !="Offline")
-                {
-                sslItem -> setIcon(0, (QIcon(":/images/connect_creating.png")));
-                }
-                else
-                {
-                sslItem -> setIcon(0, (QIcon(":/images/connect_no.png")));
-                }
-
                 /* change color and icon */
                 int i;
                 if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
-                    gpg_item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
-                    
-                      if (rsMsgs->getCustomStateString(sslDetail.id) != "") {
-                          gpg_item -> setText(1, tr("Online") + tr(" - ") + QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id))) ;
-                      } else {
-                          gpg_item -> setText(1, tr("Online"));
-                      } 
+                    gpg_connected = true;
+
                     sslItem -> setIcon(0,(QIcon(":/images/connect_established.png")));
                     QFont font;
                     font.setBold(true);
                     for(i = 0; i < 3; i++) {
-                        gpg_item -> setTextColor(i,(Qt::darkBlue));
-                        gpg_item -> setFont(i,font);
                         sslItem -> setTextColor(i,(Qt::darkBlue));
                         sslItem -> setFont(i,font);
                     }
-               } else if (sslDetail.state & RS_PEER_STATE_UNREACHABLE) {
-                    gpg_item -> setIcon(0,(QIcon(IMAGE_UNREACHABLE)));
+               } else if (sslDetail.state & RS_PEER_STATE_ONLINE) {
+                    gpg_online = true;
                         
-                        if (rsMsgs->getCustomStateString(sslDetail.id) != "") {
-                          gpg_item -> setText(1, tr("Unreachable") + tr(" - ") + QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id))) ;
-                        } else {
-                          gpg_item -> setText(1, tr("Unreachable"));
-                        } 
-                    
-                    QFont font;
-                    font.setBold(false);
-                    for(i = 0; i < 3; i++) {
-                        gpg_item -> setTextColor(i,(Qt::darkRed));
-                        gpg_item -> setFont(i,font);
-                        sslItem -> setFont(i,font);
-                    }
-                } else if (sslDetail.state & RS_PEER_STATE_ONLINE) {
-                    /* bright green */
-                    gpg_item -> setIcon(0,(QIcon(IMAGE_AVAIBLE)));
-                        
-                        if (rsMsgs->getCustomStateString(sslDetail.id) != "") {
-                          gpg_item -> setText(1, tr("Avaible") + tr(" - ") + QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id))) ;
-                        } else {
-                          gpg_item -> setText(1, tr("Aviable"));
-                        }                     
                     QFont font;
                     font.setBold(true);
                     for(i = 0; i < 3; i++) {
-                        gpg_item -> setTextColor(i,(Qt::darkCyan));
-                        gpg_item -> setFont(i,font);
+                        sslItem -> setTextColor(i,(Qt::black));
                         sslItem -> setFont(i,font);
                     }
                 } else {
-                    if (time(NULL) - sslDetail.lastConnect < 3600) {
-                        gpg_item -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
-                        
-                        if (rsMsgs->getCustomStateString(sslDetail.id) != "") {
-                          gpg_item -> setText(1, tr("Offline") + tr(" - ") + QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id))) ;
-                        } else {
-                          gpg_item -> setText(1, tr("Offline"));
-                        } 
-                                                
+                    if (sslDetail.autoconnect !="Offline") {
+                        sslItem -> setIcon(0, (QIcon(":/images/connect_creating.png")));
                     } else {
-                        gpg_item -> setIcon(0,(QIcon(IMAGE_OFFLINE2)));
-                        
-                        if (rsMsgs->getCustomStateString(sslDetail.id) != "") {
-                        gpg_item -> setText(1, tr("Offline") + tr(" - ") + QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id))) ;
-                        } else {
-                        gpg_item -> setText(1, tr("Offline"));
-                        }                        
+                        sslItem -> setIcon(0, (QIcon(":/images/connect_no.png")));
                     }
+
                     QFont font;
                     font.setBold(false);
                     for(i = 0; i < 3; i++) {
-                        gpg_item -> setTextColor(i,(Qt::black));
-                        gpg_item -> setFont(i,font);
                         sslItem -> setTextColor(i,(Qt::black));
                         sslItem -> setFont(i,font);
                     }
@@ -525,19 +482,46 @@ void  PeersDialog::insertPeers()
                 #ifdef PEERS_DEBUG
                 std::cerr << "PeersDialog::insertPeers() inserting sslItem." << std::endl;
                 #endif
-                /* add to the list. If item is already in the list, it won't be duplicated thanks to Qt */
+                /* add sl child to the list. If item is already in the list, it won't be duplicated thanks to Qt */
                 gpg_item->addChild(sslItem);
                 if (newChild) {
                     gpg_item->setExpanded(true);
                 }
             }
 
-            /* add to the list. If item is already in the list, it won't be duplicated thanks to Qt */
+            int i = 0;
+            if (gpg_connected) {
+                gpg_item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
+                gpg_item -> setText(1, tr("Online"));
+                QFont font;
+                font.setBold(true);
+                for(i = 0; i < 3; i++) {
+                    gpg_item -> setTextColor(i,(Qt::darkBlue));
+                    gpg_item -> setFont(i,font);
+                }
+            } else if (gpg_online) {
+                gpg_item -> setIcon(0,(QIcon(IMAGE_AVAIBLE)));
+                gpg_item -> setText(1, tr("Available"));
+                QFont font;
+                font.setBold(true);
+                for(i = 0; i < 3; i++) {
+                    gpg_item -> setTextColor(i,(Qt::black));
+                    gpg_item -> setFont(i,font);
+                }
+            } else {
+                gpg_item -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
+                gpg_item -> setText(1, tr("Offline"));
+                QFont font;
+                font.setBold(false);
+                for(i = 0; i < 3; i++) {
+                    gpg_item -> setTextColor(i,(Qt::black));
+                    gpg_item -> setFont(i,font);
+                }
+            }
+
+            /* add gpg item to the list. If item is already in the list, it won't be duplicated thanks to Qt */
             peertreeWidget->addTopLevelItem(gpg_item);
-
         }
-
-
 }
 
 /* Utility Fns */
@@ -1553,13 +1537,3 @@ void PeersDialog::loadtabsettings()
 
   _settings->endGroup();
   }
-
-void PeersDialog::on_actionSort_Status_Descending_Order_activated()
-{
-  ui.peertreeWidget->sortItems ( 1, Qt::DescendingOrder );
-}
-
-void PeersDialog::on_actionSort_Status_Ascending_Order_activated()
-{
-  ui.peertreeWidget->sortItems ( 1, Qt::AscendingOrder );
-}

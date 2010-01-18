@@ -138,9 +138,6 @@ class PeersDialog : public RsAutoUpdatePage
 
     void on_actionSet_Tabs_Triangular_activated();
     void on_actionSet_Tabs_Rounded_activated();
-    
-    void on_actionSort_Status_Descending_Order_activated();
-    void on_actionSort_Status_Ascending_Order_activated();
 
 signals:
 		void friendsUpdated() ;
